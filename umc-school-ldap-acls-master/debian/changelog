@@ -1,217 +1,223 @@
-sfb-master-acls (2.0.1-0) unstable; urgency=low
+umc-school-ldap-acls-master (3.0.0-1) unstable; urgency=low
+
+  * package renamed to umc-school-ldap-acls-master
+
+ -- Sönke Schwardt <schwardt@univention.de>  Mon, 20 Oct 2008 13:37:33 +0200
+
+umc-school-ldap-acls-master (2.0.1-0) unstable; urgency=low
 
   * granted access to sambaBadPasswordCount to teachers and admin to be
     able to reset pupil passwords
 
  -- Sönke Schwardt <schwardt@univention.de>  Wed, 20 Aug 2008 16:31:42 +0200
 
-sfb-master-acls (2.0.0-0) unstable; urgency=low
+umc-school-ldap-acls-master (2.0.0-0) unstable; urgency=low
 
   * port to UCS 2.0
 
  -- Arvid Requate <requate@univention.de>  Mon, 14 Apr 2008 10:43:49 +0200
 
-sfb-master-acls (1.2.20) unstable; urgency=low
+umc-school-ldap-acls-master (1.2.20) unstable; urgency=low
 
   * fixed "room group acl"
 
  -- Sönke Schwardt <schwardt@univention.de>  Thu, 17 Jan 2008 16:06:10 +0100
 
-sfb-master-acls (1.2.19) unstable; urgency=low
+umc-school-ldap-acls-master (1.2.19) unstable; urgency=low
 
   * allow teachers and ouadmins to create and edit "room groups"
 
  -- Sönke Schwardt <schwardt@univention.de>  Tue, 08 Jan 2008 10:07:46 +0100
 
-sfb-master-acls (1.2.18) unstable; urgency=low
+umc-school-ldap-acls-master (1.2.18) unstable; urgency=low
 
   * allow dc slaves to modify class groups (permission is required for
     teacher assignment in UMC)
 
  -- Soenke Schwardt <schwardt@univention.de>  Mon, 05 Nov 2007 11:11:12 +0100
 
-sfb-master-acls (1.2.17) unstable; urgency=low
+umc-school-ldap-acls-master (1.2.17) unstable; urgency=low
 
   * added write access to sambaNextRid for slaves and memberservers
 
  -- Sönke Schwardt <schwardt@univention.de>  Fri, 10 Aug 2007 12:52:44 +0200
 
-sfb-master-acls (1.2.16) unstable; urgency=low
+umc-school-ldap-acls-master (1.2.16) unstable; urgency=low
 
   * slave may replicate the subtree cn=console,cn=univention
 
  -- Andreas Büsching <buesching@univention.de>  Fri, 22 Jun 2007 14:57:10 +0200
 
-sfb-master-acls (1.2.15) unstable; urgency=low
+umc-school-ldap-acls-master (1.2.15) unstable; urgency=low
 
   * fixed access to cn=univention for memberserver and dc slaves
 
  -- Sönke Schwardt <schwardt@univention.de>  Wed, 25 Apr 2007 16:50:39 +0200
  
-sfb-master-acls (1.2.14) unstable; urgency=low
+umc-school-ldap-acls-master (1.2.14) unstable; urgency=low
 
   * fixed typo 
 
  -- Sönke Schwardt <schwardt@univention.de>  Wed, 25 Apr 2007 14:00:55 +0200
 
-sfb-master-acls (1.2.13) unstable; urgency=low
+umc-school-ldap-acls-master (1.2.13) unstable; urgency=low
 
   * relax ldap acl so memberserver and dc slaves are able do read/write
     cn=idmap,cn=univention
 
  -- Sönke Schwardt <schwardt@univention.de>  Wed, 25 Apr 2007 13:30:17 +0200
 
-sfb-master-acls (1.2.12) unstable; urgency=low
+umc-school-ldap-acls-master (1.2.12) unstable; urgency=low
 
   * added dependency 
 
  -- Sönke Schwardt <schwardt@univention.de>  Wed, 18 Apr 2007 13:58:40 +0200
 
-sfb-master-acls (1.2.11) unstable; urgency=low
+umc-school-ldap-acls-master (1.2.11) unstable; urgency=low
 
   * removed obsolete DHCP ACL
 
  -- Sönke Schwardt <schwardt@univention.de>  Wed, 18 Apr 2007 13:44:16 +0200
 
-sfb-master-acls (1.2.10) unstable; urgency=low
+umc-school-ldap-acls-master (1.2.10) unstable; urgency=low
 
   * add custom attribute and LDAP-ACLs to allow a DC to offer services for two OUs
 
  -- Ingo Steuwer <steuwer@univention.de>  Wed, 18 Apr 2007 12:04:44 +0200
 
-sfb-master-acls (1.2.9) unstable; urgency=low
+umc-school-ldap-acls-master (1.2.9) unstable; urgency=low
 
   * added permission for slave dcs to modify attrs "objectClass" and
     "univentionPolicyReference" of dhcp objects
 
  -- Sönke Schwardt <schwardt@univention.de>  Mon, 16 Apr 2007 13:37:37 +0200
 
-sfb-master-acls (1.2.8) unstable; urgency=low
+umc-school-ldap-acls-master (1.2.8) unstable; urgency=low
 
   * added permission for slave dcs to read cn=nagios 
 
  -- Sönke Schwardt <schwardt@univention.de>  Wed, 28 Mar 2007 17:13:25 +0200
 
-sfb-master-acls (1.2.7) unstable; urgency=low
+umc-school-ldap-acls-master (1.2.7) unstable; urgency=low
 
   * fixed wrong acls
   * added permission for slave dcs to read cn=custom attributes,cn=univention
 
  -- Sönke Schwardt <schwardt@univention.de>  Wed, 28 Mar 2007 17:12:37 +0200
 
-sfb-master-acls (1.2.6) unstable; urgency=low
+umc-school-ldap-acls-master (1.2.6) unstable; urgency=low
 
   * do not revert changes from 1.2.3 to 1.2.4
 
  -- Sönke Schwardt <schwardt@univention.de>  Mon,  5 Mar 2007 17:28:39 +0100
 
-sfb-master-acls (1.2.5) unstable; urgency=low
+umc-school-ldap-acls-master (1.2.5) unstable; urgency=low
 
   * access granted to sambaBadPasswordCount to users of group adminXXX
 
  -- Sönke Schwardt <schwardt@univention.de>  Fri, 16 Feb 2007 16:37:49 +0100
 
-sfb-master-acls (1.2.4) unstable; urgency=low
+umc-school-ldap-acls-master (1.2.4) unstable; urgency=low
 
   * give ou-users default-access to their ou (read of some attributes, change
     of own passwords)
 
  -- Ingo Steuwer <steuwer@anton.knut.univention.de>  Fri, 16 Jun 2006 16:31:28 +0200
 
-sfb-master-acls (1.2.3) unstable; urgency=low
+umc-school-ldap-acls-master (1.2.3) unstable; urgency=low
 
   * ouadmins are allowed to add new shares, not only to change them 
 
  -- Ingo Steuwer <steuwer@anton.knut.univention.de>  Mon, 22 May 2006 13:11:19 +0200
 
-sfb-master-acls (1.2.2) unstable; urgency=low
+umc-school-ldap-acls-master (1.2.2) unstable; urgency=low
 
   * bugfix for join of ou-admins 
 
  -- Ingo Steuwer <steuwer@anton.knut.univention.de>  Tue, 16 May 2006 13:40:00 +0200
 
-sfb-master-acls (1.2.1) unstable; urgency=low
+umc-school-ldap-acls-master (1.2.1) unstable; urgency=low
 
   * additional ACL-file to meet UCS 1.3-1 enhancements 
   * restart slapd on installation
 
  -- Ingo Steuwer <steuwer@anton.knut.univention.de>  Tue, 16 May 2006 09:49:22 +0200
 
-sfb-master-acls (1.2.0) unstable; urgency=low
+umc-school-ldap-acls-master (1.2.0) unstable; urgency=low
 
   * allow ou-admins to join DC-Slave and Memberservers
 
  -- Ingo Steuwer <steuwer@univention.de>  Wed, 10 May 2006 14:01:25 +0200
 
-sfb-master-acls (1.1.3) unstable; urgency=low
+umc-school-ldap-acls-master (1.1.3) unstable; urgency=low
 
   * allow admin-internal attributes to be stored for adding groups 
 
  -- Ingo Steuwer <steuwer@univention.de>  Thu,  4 May 2006 08:33:39 +0200
 
-sfb-master-acls (1.1.2) unstable; urgency=low
+umc-school-ldap-acls-master (1.1.2) unstable; urgency=low
 
   * change to OpenLDAP 2.2 compatible ACLs 
 
  -- Ingo Steuwer <steuwer@univention.de>  Mon, 12 Dec 2005 13:47:49 +0100
 
-sfb-master-acls (1.1.1) unstable; urgency=low
+umc-school-ldap-acls-master (1.1.1) unstable; urgency=low
 
   * fixed missing sambaPWHistory
 
  -- Ingo Steuwer <steuwer@univention.de>  Thu, 21 Apr 2005 10:53:31 +0200
 
-sfb-master-acls (1.1) unstable; urgency=low
+umc-school-ldap-acls-master (1.1) unstable; urgency=low
 
   * integrated new attribute for UCS 1.2-4 (sambaPWHistory)
   * allow Servers to change their Password
 
  -- Ingo Steuwer <steuwer@univention.de>  Wed, 20 Apr 2005 16:35:29 +0200
 
-sfb-master-acls (1.0.5) unstable; urgency=low
+umc-school-ldap-acls-master (1.0.5) unstable; urgency=low
 
   * added write-access to SambaNTPassword for ouadmins
   
  -- Ingo Steuwer <steuwer@univention.de>  Wed,  6 Apr 2005 12:53:03 +0200
 
-sfb-master-acls (1.0.4) unstable; urgency=low
+umc-school-ldap-acls-master (1.0.4) unstable; urgency=low
 
   * define access to new temporary objects
 
  -- Ingo Steuwer <steuwer@univention.de>  Thu, 31 Mar 2005 07:59:26 +0200
 
-sfb-master-acls (1.0.3) unstable; urgency=low
+umc-school-ldap-acls-master (1.0.3) unstable; urgency=low
 
   * memberserver needed more read-access and some write-access
 
  -- Ingo Steuwer <steuwer@univention.de>  Tue, 15 Mar 2005 17:00:24 +0100
 
-sfb-master-acls (1.0.2) unstable; urgency=low
+umc-school-ldap-acls-master (1.0.2) unstable; urgency=low
 
   * added acces for Lehrer to all users in his ou (for changing passwords)
   * added more potential admins in an admin-container
 
  -- Ingo Steuwer <steuwer@univention.de>  Thu, 10 Feb 2005 10:27:27 +0100
 
-sfb-master-acls (1.0.1) unstable; urgency=low
+umc-school-ldap-acls-master (1.0.1) unstable; urgency=low
 
   * more access-rights to Teachers and local Admins for changing Passwords (old rights weren't enough)
 
  -- Ingo Steuwer <steuwer@univention.de>  Mon,  6 Dec 2004 10:53:24 +0100
 
-sfb-master-acls (1.0.0-3) unstable; urgency=low
+umc-school-ldap-acls-master (1.0.0-3) unstable; urgency=low
 
   * Slave-controller can read groups-container
 
  -- Ingo Steuwer <steuwer@univention.de>  Fri,  8 Oct 2004 08:42:24 +0200
 
-sfb-master-acls (1.0.0-2) unstable; urgency=low
+umc-school-ldap-acls-master (1.0.0-2) unstable; urgency=low
 
   * Use $ldap_base consequently 
 
  -- Ingo Steuwer <steuwer@univention.de>  Wed, 14 Jul 2004 08:38:47 +0200
 
-sfb-master-acls (1.0.0-1) unstable; urgency=low
+umc-school-ldap-acls-master (1.0.0-1) unstable; urgency=low
 
   * Initial Release.
 

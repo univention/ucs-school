@@ -3,8 +3,8 @@ Multifile: etc/ldap/slapd.conf
 
 Type: subfile
 Multifile: etc/ldap/slapd.conf
-Subfile: etc/ldap/slapd.conf.d/65schuladministration
+Subfile: etc/ldap/slapd.conf.d/65ucsschool
 
 Type: subfile
 Multifile: etc/ldap/slapd.conf
-Subfile: etc/ldap/slapd.conf.d/55schuladministration_presettings
+Subfile: etc/ldap/slapd.conf.d/55ucsschool_presettings

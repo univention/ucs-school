@@ -2,8 +2,25 @@
 
 #DEBHELPER#
 
+eval $(univention-config-registry shell)
+
+if [ ! "$server_role" = "domaincontroller_master" -a "$server_role" = "domaincontroller_backup" ] ; then
+	exit 0
+fi
+
 test -x /etc/init.d/slapd && /etc/init.d/slapd restart
 
-eval `univention-config-registry shell`
-univention-directory-manager container/cn create --ignore_exist --position="cn=custom attributes,cn=univention,$ldap_base" --set name=OU-ACL
-univention-directory-manager settings/customattribute create --ignore_exist --position="cn=OU-ACL,cn=custom attributes,cn=univention,$ldap_base" --set name=OU-ACL-Write --set module=container/ou --set objectClass=univentionLDAPACL --set ldapMapping=univentionLDAPAccessWrite --set shortDescription="verantwortlicher_DC" --set longDescription="verantwortlicher_DC" --set tabName="verantwortlicher_DC" --set syntax=string --set multivalue=0
+univention-directory-manager container/cn create --ignore_exist \
+		--position="cn=custom attributes,cn=univention,$ldap_base" --set name=OU-ACL
+
+univention-directory-manager settings/customattribute create --ignore_exist \
+		--position="cn=OU-ACL,cn=custom attributes,cn=univention,$ldap_base" \
+		--set name=OU-ACL-Write \
+		--set module=container/ou \
+		--set objectClass=univentionLDAPACL \
+		--set ldapMapping=univentionLDAPAccessWrite \
+		--set shortDescription="verantwortlicher_DC" \
+		--set longDescription="verantwortlicher_DC" \
+		--set tabName="verantwortlicher_DC" \
+		--set syntax=string \
+		--set multivalue=0
