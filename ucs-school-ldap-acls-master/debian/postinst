@@ -4,7 +4,7 @@
 
 eval $(univention-config-registry shell)
 
-if [ ! "$server_role" = "domaincontroller_master" -a "$server_role" = "domaincontroller_backup" ] ; then
+if [ ! "$server_role" = "domaincontroller_master" -a ! "$server_role" = "domaincontroller_backup" ] ; then
 	exit 0
 fi
 
