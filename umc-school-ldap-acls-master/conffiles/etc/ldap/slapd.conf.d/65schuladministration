@@ -1,0 +1,133 @@
+access to dn="cn=Subschema"
+	by * read
+
+access to dn.regex="^@%@ldap/base@%@$$"
+	by dn.regex="^uid=([^,]+),cn=(lehrer|admins),cn=users,ou=([^,]+),@%@ldap/base@%@$$" read
+    by * none break
+
+# Slave-Controller duerfen globale Container computers, shares, dns, dhcp, kerberos und policies lesen
+access to dn.regex="(^(.+,)?cn=(groups|dns|dhcp|policies|computers|kerberos|shares),|^(uid=[^,]+,|)cn=users,|^)@%@ldap/base@%@$$"
+        by dn.regex="^cn=dc[^,]+,cn=dc,cn=server,cn=computers,ou=[^,]+,@%@ldap/base@%@$$" read
+        by * none break
+
+# Lehrer und ouadmins duerfen Schueler-Passwoerter aendern 
+access to dn.regex="^uid=([^,]+),cn=schueler,cn=users,ou=([^,]+),@%@ldap/base@%@$$" attrs=krb5KeyVersionNumber,krb5KDCFlags,krb5Key,krb5PasswordEnd,sambaAcctFlags,sambaPwdLastSet,sambaLMPassword,sambaNTPassword,shadowLastChange,shadowMax,userPassword,pwhistory,sambaPwdCanChange,sambaPwdMustChange,sambaPasswordHistory,sambaBadPasswordCount
+	by dn.regex="^uid=([^,]+),cn=(lehrer|admins),cn=users,ou=$2,@%@ldap/base@%@$$" write
+	by * none break
+	  
+# Lehrer duerfen Schueler-Gruppen  bearbeiten
+access to dn.regex="^cn=([^,]+),cn=schueler,cn=groups,ou=([^,]+),@%@ldap/base@%@$$" attrs=uniqueMember,memberUid
+	by dn.regex="^uid=([^,]+),cn=(lehrer|admins),cn=users,ou=$2,@%@ldap/base@%@$$" write
+	by * none break
+
+# Lehrer und ouadmins duerfen Raum-Gruppen anlegen und bearbeiten
+access to dn.regex="^cn=raeume,cn=groups,ou=([^,]+),dc=schule,dc=bremen,dc=de$$" attrs=children,entry
+	by dn.regex="^uid=([^,]+),cn=(lehrer|admins),cn=users,ou=$1,dc=schule,dc=bremen,dc=de$$" write
+	by * none break
+access to dn.regex="^cn=([^,]+),cn=raeume,cn=groups,ou=([^,]+),dc=schule,dc=bremen,dc=de$$"
+	by dn.regex="^uid=([^,]+),cn=(lehrer|admins),cn=users,ou=$2,dc=schule,dc=bremen,dc=de$$" write
+	by * none break
+
+# Lehrer duerfen Druck-Quotas bearbeiten
+# ToDo
+
+# Lehrer duerfen Platten-Quotas bearbeiten
+# ToDo
+
+# Rechner duerfen ihr passwort aendern
+access to dn.regex="cn=.*,cn=server,cn=computers,ou=([^,]+),@%@ldap/base@%@$$" attrs=userPassword,krb5Key,krb5KDCFlags,sambaNTPassword,sambaLMPassword,shadowLastChange,sambaPwdLastSet,pwhistory,krb5KeyVersionNumber,univentionWindowsReinstall,sambaPwdCanChange,sambaPwdMustChange
+   by self write
+   by * none break
+access to dn.regex="cn=.*,cn=dc,cn=server,cn=computers,ou=([^,]+),@%@ldap/base@%@$$" attrs=userPassword,krb5Key,krb5KDCFlags,sambaNTPassword,sambaLMPassword,shadowLastChange,sambaPwdLastSet,pwhistory,krb5KeyVersionNumber,univentionWindowsReinstall,sambaPwdCanChange,sambaPwdMustChange
+   by self write
+   by * none break
+
+
+# Mitglieder der lokalen Administratoren duerfen Passwoerter unter users aendern
+access to dn.regex="^uid=(.+),cn=users,ou=([^,]+),@%@ldap/base@%@$$" attrs=krb5KeyVersionNumber,krb5KDCFlags,krb5Key,krb5PasswordEnd,sambaAcctFlags,sambaPwdLastSet,sambaLMPassword,sambaNTPassword,shadowLastChange,shadowMax,userPassword,pwhistory,sambaPwdCanChange,sambaPwdMustChange,sambaPasswordHistory,sambaBadPasswordCount
+	by group/univentionGroup/uniqueMember.expand="cn=admins$2,cn=ouadmins,cn=groups,@%@ldap/base@%@" write
+	by * none break
+
+# Mitglieder der lokalen Administratoren duerfen Gruppen anlegen, Klassengruppen aber nicht aendern
+access to dn.regex="^(cn=lehrer,|cn=schueler,|)cn=groups,ou=([^,]+),@%@ldap/base@%@$$" attrs=children,entry
+	by group/univentionGroup/uniqueMember.expand="cn=admins$2,cn=ouadmins,cn=groups,@%@ldap/base@%@" write
+	by * none break
+access to dn.regex="^cn=([^,]+),(cn=lehrer,|cn=schueler,|)cn=groups,ou=([^,]+),@%@ldap/base@%@$$" filter="objectClass=univentionGroup"
+	by group/univentionGroup/uniqueMember.expand="cn=admins$3,cn=ouadmins,cn=groups,@%@ldap/base@%@" write
+	by * none break
+
+# Mitglieder der lokalen Administratoren duerfen Shares anlegen, Klassenshares aber nicht aendern
+access to dn.regex="^cn=shares,ou=([^,]+),@%@ldap/base@%@$$"  attrs=children,entry
+	by group/univentionGroup/uniqueMember.expand="cn=admins$1,cn=ouadmins,cn=groups,@%@ldap/base@%@" write
+	by * none break
+access to dn.regex="^cn=([^,]+),cn=shares,ou=([^,]+),@%@ldap/base@%@$$" filter="objectClass=univentionShare"
+	by group/univentionGroup/uniqueMember.expand="cn=admins$2,cn=ouadmins,cn=groups,@%@ldap/base@%@" write
+	by * none break
+
+# Mitglieder der lokalen Administratoren muessen einige temporaere Objekte schreiben duerfen
+# da keine regulaeren Ausdruecke auf Gruppenmitgliedschaften moeglich sind wird dies allen Lehrern erlaubt
+access to dn.regex="^cn=([^,]+),cn=(groupName|sid|gid|gidNumber|mac),cn=temporary,cn=univention,@%@ldap/base@%@$$" filter="(&(objectClass=lock)(!(objectClass=posixAccount)))"
+	by dn.regex="^uid=([^,]+),cn=(lehrer|admins),cn=users,ou=([^,]+),@%@ldap/base@%@$$" write
+	by * none break
+access to dn.regex="^cn=(groupName|sid|gid|gidNumber|mac),cn=temporary,cn=univention,@%@ldap/base@%@$$" attrs=children,entry
+	by dn.regex="^uid=([^,]+),cn=(lehrer|admins),cn=users,ou=([^,]+),@%@ldap/base@%@$$" write
+	by * none break
+access to dn.regex="^cn=gidNumber,cn=temporary,cn=univention,@%@ldap/base@%@$$" attrs=univentionLastUsedValue
+	by dn.regex="^uid=([^,]+),cn=(lehrer|admins),cn=users,ou=([^,]+),@%@ldap/base@%@$$" write
+	by * none break
+
+# Mitglieder der lokalen Administratoren duerfen MAC's im Rechner- und DHCP-Objekt aendern
+access to dn.regex="^cn=([^,]+),cn=computers,ou=([^,]+),@%@ldap/base@%@$$" attr=macAddress,sambaNTPassword
+	by group/univentionGroup/uniqueMember.expand="cn=admins$2,cn=ouadmins,cn=groups,@%@ldap/base@%@" write
+	by * none break
+access to dn.regex="(^cn=([^,]+),|^)cn=([^,]+),cn=dhcp,ou=([^,]+),@%@ldap/base@%@$$" 
+	by group/univentionGroup/uniqueMember.expand="cn=admins$3,cn=ouadmins,cn=groups,@%@ldap/base@%@" write
+	by * none break
+
+# Mitglieder der lokalen Administratoren duerfen den DC-Slave und Memberserver joinen (benoetigt Passwortaenderung)
+access to dn.regex="(^cn=dc[^,]+,cn=dc|cn=mb[^,]+),cn=server,cn=computers,ou=([^,]+),@%@ldap/base@%@$$" attrs=krb5KeyVersionNumber,krb5KDCFlags,krb5Key,krb5PasswordEnd,sambaAcctFlags,sambaPwdLastSet,sambaLMPassword,sambaNTPassword,shadowLastChange,shadowMax,userPassword,pwhistory,sambaPwdCanChange,sambaPwdMustChange,sambaPasswordHistory
+	by group/univentionGroup/uniqueMember.expand="cn=admins$2,cn=ouadmins,cn=groups,@%@ldap/base@%@" write
+	by * none break
+
+access to dn.regex="^zoneName=[^,]+,cn=dns,@%@ldap/base@%@$$" attr=sOARecord
+	by group/univentionGroup/uniqueMember.expand="cn=admins[^,]+,cn=ouadmins,cn=groups,@%@ldap/base@%@" write
+	by * none break
+
+# Mitglieder der lokalen Administratoren duerfen Windows-Rechner joinen -> kennen lokales root-Passwort
+
+# Slave-Controller duerfen Eintraege Ihrer ou lesen und schreiben (Passwortaenderungen etc.)
+# Lehrer duerfen sie lesen, ou-eigene bekommen Standard-ACLs, ou-fremde Server/user duerfen nichts
+access to dn.regex="^(.+,)?ou=([^,]+),@%@ldap/base@%@$$"
+    by dn.regex="^cn=dc$2,cn=dc,cn=server,cn=computers,ou=$2,@%@ldap/base@%@$$" write
+    by group/univentionLDAPACL/univentionLDAPAccessWrite.expand=ou=$2,@%@ldap/base@%@ write
+    by dn.regex="^cn=dc([^,]+),cn=dc,cn=server,cn=computers,ou=([^,]+),@%@ldap/base@%@$$" none
+    by dn.regex="^uid=([^,]+),cn=(lehrer|admins),cn=users,ou=$2,@%@ldap/base@%@$$" read
+    by dn.regex="^uid=(.+,)?cn=users,ou=$2,@%@ldap/base@%@$$" none break
+    by dn.regex="^uid=(.+,)?ou=([^,]+),@%@ldap/base@%@$$" none
+    by * none break
+
+# Slave-Controller duerfen Klassen-Gruppen bearbeiten (AUSNAHME! Wird fuer Lehrerzuordnung in UMC benoetigt!)
+access to dn.regex="^cn=([^,]+),cn=klassen,cn=schueler,cn=groups,ou=([^,]+),@%@ldap/base@%@$$" attrs=uniqueMember,memberUid
+    by dn.regex="^cn=dc$2,cn=dc,cn=server,cn=computers,ou=$2,@%@ldap/base@%@$$" write
+	by * none break
+
+# Slave-Controller duerfen nagios-Container und Inhalt replizieren
+access to dn.regex="^(.+,)?cn=nagios,@%@ldap/base@%@"
+  by dn.regex="^cn=dc([^,]+),cn=dc,cn=server,cn=computers,ou=([^,]+),@%@ldap/base@%@$$" read
+  by * none break
+
+# Member-Server duerfen bestimmte Attribute lesen
+access to dn.regex="^(.+,)?ou=([^,]+),@%@ldap/base@%@$$" attrs=userPassword,krb5Key,krb5KDCFlags,sambaNTPassword,sambaLMPassword,shadowLastChange,sambaPwdLastSet,pwhistory,krb5KeyVersionNumber,univentionWindowsReinstall,sambaPwdCanChange,sambaPwdMustChange
+   by dn.regex="cn=mb$2-[^,]+,cn=server,cn=computers,ou=$2,@%@ldap/base@%@" read
+   by * none break
+
+# Lehrer duerfen globale Container univention, policies, groups und dns lesen (werden bei Schuelern/Rechnern angezeigt)
+access to dn.regex="(^(.+,)?cn=(univention|policies|dns|groups),|^)@%@ldap/base@%@$$"
+	by dn.regex="^uid=([^,]+),cn=(lehrer|admins),cn=users,ou=([^,]+),@%@ldap/base@%@$$" read
+    by * none break
+
+# Slave-Controller und normale Lehrer duerfen sonst nichts lesen, Schueler sowieso nicht
+access to *
+    by dn.regex="^cn=dc([^,]+),cn=dc,cn=server,cn=computers,ou=([^,]+),@%@ldap/base@%@$$" none
+    by * none break
+
