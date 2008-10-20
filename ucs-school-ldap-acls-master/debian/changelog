@@ -1,3 +1,12 @@
+ucs-school-ldap-acls-master (3.0.1-1) unstable; urgency=low
+
+  * fixed ldap acls
+    - removed static ldap base DN
+  	- allow slaved to replicate and modify sambaDomain object
+    (Bugs #12380, #12382)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Mon, 20 Oct 2008 14:33:00 +0200
+
 ucs-school-ldap-acls-master (3.0.0-1) unstable; urgency=low
 
   * package renamed to ucs-school-ldap-acls-master
