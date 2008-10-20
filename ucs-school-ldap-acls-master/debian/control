@@ -1,11 +1,11 @@
-Source: umc-school-ldap-acls-master
+Source: ucs-school-ldap-acls-master
 Section: univention
 Priority: optional
 Maintainer: univention GmbH <packages@univention.de>
 Build-Depends: debhelper (>> 3.0.0), univention-config-dev
 Standards-Version: 3.5.2
 
-Package: umc-school-ldap-acls-master
+Package: ucs-school-ldap-acls-master
 Architecture: all
 Depends: univention-ldap-server, univention-ldap-config (>= 1.43-19.178.200704181127)
 Conflicts: univention-server-slave, univention-server-member, univention-mobile-client, univention-managed-client, univention-basesystem

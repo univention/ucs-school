@@ -1,7 +1,7 @@
 #!/usr/bin/make -f
 
-package=umc-school-ldap-acls-master
-D=${CURDIR}/debian/umc-school-ldap-acls-master
+package=ucs-school-ldap-acls-master
+D=${CURDIR}/debian/ucs-school-ldap-acls-master
 
 build: build-stamp
 
