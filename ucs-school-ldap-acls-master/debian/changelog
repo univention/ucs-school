@@ -1,3 +1,9 @@
+ucs-school-ldap-acls-master (3.0.200-3) unstable; urgency=low
+
+  * fixed ACL for cn=samba
+
+ -- Sönke Schwardt <schwardt@univention.de>  Mon, 20 Oct 2008 17:56:30 +0200
+
 ucs-school-ldap-acls-master (3.0.200-2) unstable; urgency=low
 
   * fixed UCR info file
