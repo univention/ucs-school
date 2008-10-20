@@ -1,0 +1,35 @@
+#!/bin/sh
+#
+#
+
+
+eval `univention-config-registry shell`
+
+ONLYLIST=0
+if [ "$1" == "-l" ] ; then
+  ONLYLIST=1
+fi
+
+if [ -n "$restoremanagement_contact" ] ; then
+
+	HOSTLIST=$(ldapsearch -x -LLL '(&(objectClass=sfbwHostRestoreManagement)(sfbwFlagWinHostReinstall=1))' uid | ldapsearch-wrapper | grep uid: | sed -e 's|^uid: ||' -e 's|\$$||')
+	if [ -z "$HOSTLIST" ] ; then
+		HOSTCNT=0
+	else
+		HOSTCNT=$(echo "$HOSTLIST" | wc -l)
+	fi
+
+	case $ONLYLIST in
+		0)  if [ "$HOSTCNT" = "0" ] ; then
+				exit 0
+            fi
+			echo -e "Es sind $HOSTCNT Rechner für eine Neuinstallation vorgesehen:\n\n$HOSTLIST" | mail -s "Neuinstallation von $HOSTCNT Rechnern" $restoremanagement_contact
+			;;
+		1) if [ "$HOSTCNT" = "0" ] ; then
+               echo "Es sind keine Rechner zur Installation vorgesehen."
+               exit 0
+           fi
+		   echo -e "Es sind $HOSTCNT Rechner für eine Neuinstallation vorgesehen:\n\n$HOSTLIST"
+			;;
+	esac
+fi

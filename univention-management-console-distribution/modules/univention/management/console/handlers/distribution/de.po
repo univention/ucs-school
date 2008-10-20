@@ -1,0 +1,244 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2008-06-16 13:48+0200\n"
+"PO-Revision-Date: 2008-06-16 13:49+0200\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: __init__.py:60
+msgid "Data Distribution"
+msgstr "Materialverteilung"
+
+#: __init__.py:61 _revamp.py:118
+msgid "Teaching Material Distribution"
+msgstr "Unterrichtsmaterial-Verteilung"
+
+#: __init__.py:66 __init__.py:67
+msgid "Search Distribution Projects"
+msgstr "Suche Verteilungsprojekt"
+
+#: __init__.py:77 __init__.py:78
+msgid "distribute teaching material"
+msgstr "Unterrichtsmaterial verteilen"
+
+#: __init__.py:91 __init__.py:92
+msgid "show selected project"
+msgstr "Ausgewählte Projekte anzeigen"
+
+#: __init__.py:99 __init__.py:100
+msgid "collect teaching material"
+msgstr "Unterrichtsmaterial einsammeln"
+
+#: __init__.py:253
+msgid "No files have been uploaded!"
+msgstr "Es wurden keine Dateien hochgeladen!"
+
+#: __init__.py:260
+#, python-format
+msgid "projectname \"%(projectname)s\" is already in use!"
+msgstr "Projektname \"%(projectname)s\" wurde bereits verwendet!"
+
+#: __init__.py:273
+#, python-format
+msgid "Cannot find user with uid=%(uid)s\"."
+msgstr "Kann Benutzer \"%(uid)s\" nicht finden."
+
+#: __init__.py:281
+#, python-format
+msgid "Cannot determine home directory of user \"%(username)s\"."
+msgstr "Kann Homeverzeichnis von Benutzer \"%(username)s\" nicht bestimmen."
+
+#: __init__.py:340
+msgid "%m/%d/%Y %H:%M"
+msgstr "%d.%m.%Y %H:%M"
+
+#: __init__.py:388
+#, python-format
+msgid ""
+"Error occurred while setting up automatic deadline (exitcode = %s). "
+"Automatic deadline may not work."
+msgstr ""
+"Ein Fehler trat beim Setzen der automatischen Deadline auf (exitcode=%s). "
+"Automatische Deadline funktioniert ggf. nicht."
+
+#: __init__.py:396
+msgid ""
+"Error occurred while setting up automatic deadline (job number). Automatic "
+"deadline may not work."
+msgstr ""
+"Ein Fehler trat beim Setzen der automatischen Deadline auf (job number). "
+"Automatische Deadline funktioniert ggf. nicht."
+
+#: __init__.py:421 __init__.py:448
+msgid "no projectname given"
+msgstr "Kein Projektname angegeben!"
+
+#: __init__.py:425 __init__.py:453
+#, python-format
+msgid "project \"%(projectname)s\": file %(fn)s does not exist"
+msgstr "Projekt \"%(projectname)s\": Datei %(fn)s existiert nicht"
+
+#: __init__.py:480
+#, python-format
+msgid "An error occurred while collecting data (exitcode: %s)"
+msgstr "Ein Fehler ist beim Einsammeln der Dateien aufgetreten (exitcode: %s)"
+
+#: __init__.py:499
+#, python-format
+msgid "An error occurred while removing automatic deadline (exitcode: %s)"
+msgstr "Ein Fehler ist beim Entfernen der Deadline aufgetreten (exitcode: %s)"
+
+#: _revamp.py:90 _revamp.py:91
+msgid "Add Project"
+msgstr "Projekt hinzufügen"
+
+#: _revamp.py:98
+msgid "Project"
+msgstr "Projekt"
+
+#: _revamp.py:98 _types.py:45 _types.py:54
+msgid "Description"
+msgstr "Beschreibung"
+
+#: _revamp.py:98
+msgid "Sender"
+msgstr "Besitzer"
+
+#: _revamp.py:98
+msgid "#Users"
+msgstr "Anz. Benutzer"
+
+#: _revamp.py:98
+msgid "#Files"
+msgstr "Anz. Dateien"
+
+#: _revamp.py:105
+#, python-format
+msgid "Collect Project \"%(projectname)s\""
+msgstr "Projekt \"%(projectname)s\" einsammeln"
+
+#: _revamp.py:109 _revamp.py:273
+msgid "--- no description ---"
+msgstr "--- ohne Beschreibung ---"
+
+#: _revamp.py:120
+msgid "Search"
+msgstr "Suchen"
+
+#: _revamp.py:132
+msgid "Action finished successfully"
+msgstr "Aktion erfolgreich beendet"
+
+#: _revamp.py:134
+msgid "Action failed"
+msgstr "Aktion fehlgeschlagen"
+
+#: _revamp.py:201
+msgid "Please select class:"
+msgstr "Bitte Klasse auswählen:"
+
+#: _revamp.py:216
+msgid "Please select school:"
+msgstr "Bitte Schule auswählen:"
+
+#: _revamp.py:223
+msgid "Create Project"
+msgstr "Projekt erstellen"
+
+#: _revamp.py:238
+msgid "ERROR"
+msgstr "FEHLER"
+
+#: _revamp.py:241
+msgid "Create new distribution"
+msgstr "Neues Projekt erstellen"
+
+#: _revamp.py:267
+msgid "Collect Distributed Teaching Material"
+msgstr "Unterrichtsmaterial einsammeln"
+
+#: _revamp.py:270
+msgid "Projectname:"
+msgstr "Projektname:"
+
+#: _revamp.py:274
+msgid "Description:"
+msgstr "Beschreibung:"
+
+#: _revamp.py:276
+msgid "%m/%d/%Y at %H:%M"
+msgstr "%d.%m.%Y um %H:%M"
+
+#: _revamp.py:278
+msgid "no deadline given - please collect data manually"
+msgstr "keine Deadline definiert - bitte Dateien manuell einsammeln"
+
+#: _revamp.py:279
+msgid "Deadline:"
+msgstr "Deadline:"
+
+#: _revamp.py:280
+msgid "Sender:"
+msgstr "Besitzer:"
+
+#: _revamp.py:281
+msgid "Sender Project Dir:"
+msgstr "Besitzer-Projektverzeichnis:"
+
+#: _revamp.py:285
+msgid "Files:"
+msgstr "Dateien:"
+
+#: _revamp.py:289
+msgid "Recipients:"
+msgstr "Empfänger:"
+
+#: _revamp.py:295
+msgid "Collect Data"
+msgstr "Dateien einsammeln"
+
+#: _types.py:42
+msgid "Search Key"
+msgstr "Suchkriterium"
+
+#: _types.py:45 _types.py:53
+msgid "Project Name"
+msgstr "Projektname"
+
+#: _types.py:49
+msgid "School"
+msgstr "Schule"
+
+#: _types.py:55
+msgid "Group DN"
+msgstr "GruppenDN"
+
+#: _types.py:56
+msgid "Select Attendees:"
+msgstr "Benutzer auswählen:"
+
+#: _types.py:58
+msgid "Deadline (e.g. 03/24/2008 08:05)"
+msgstr "Deadline (z.B. 04.06.2008 08:05)"
+
+#: _types.py:58
+msgid ""
+"^[ ]*(10|11|12|0\\d)/(30|31|[012]\\d)/20\\d\\d (20|21|22|23|[01]\\d):[0-5]\\d"
+"[ ]*$"
+msgstr ""
+"^[ ]*(30|31|[012]\\d)\\.(10|11|12|0\\d)\\.20\\d\\d (20|21|22|23|[01]\\d):[0-"
+"5]\\d[ ]*$"
+
+#: _types.py:59
+msgid "Upload Files"
+msgstr "Dateien hochladen"

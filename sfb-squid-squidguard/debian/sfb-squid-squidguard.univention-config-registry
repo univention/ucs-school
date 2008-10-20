@@ -1,0 +1,18 @@
+Type: file
+File: etc/init.d/winbind
+
+Type: file
+File: etc/squid/squid.conf
+Variables: ldap/server/name
+Variables: ldap/base
+Variables: proxy/redirect
+Variables: proxy/force
+Variables: proxy/ldapauth
+Variables: proxy/parent
+Variables: proxy/basicauth
+Variables: proxy/ntlmauth
+
+Type: module
+Module: sfb-squid-squidguard.py
+Variables: proxy/filter/.*
+Variables: windows/domain

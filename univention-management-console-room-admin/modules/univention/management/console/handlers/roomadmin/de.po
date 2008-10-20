@@ -1,0 +1,307 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2008-01-10 13:54+0100\n"
+"PO-Revision-Date: 2008-01-10 13:56+0100\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=ISO-8859-1\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: __init__.py:58
+msgid "Room Admin"
+msgstr "Computerraum Administration"
+
+#: __init__.py:59 _revamp.py:68
+msgid "Computer Room Administration"
+msgstr "Computerraum-Administration"
+
+#: __init__.py:64 __init__.py:65
+msgid "Administrate rooms"
+msgstr "Räume administrieren"
+
+#: __init__.py:75 __init__.py:76
+msgid "add room"
+msgstr "Raum hinzufügen"
+
+#: __init__.py:83 __init__.py:84
+msgid "edit room"
+msgstr "Raum bearbeiten"
+
+#: __init__.py:95 __init__.py:96
+msgid "set room"
+msgstr "Raum bearbeiten"
+
+#: __init__.py:107 __init__.py:108
+msgid "remove room"
+msgstr "Raum entfernen"
+
+#: __init__.py:118 __init__.py:119
+msgid "List rooms and associated computers"
+msgstr "Computerräume und zugeordnete Computer anzeigen"
+
+#: __init__.py:126
+msgid "Enable internet access"
+msgstr "Internet-Zugriff erlauben"
+
+#: __init__.py:127
+msgid "Enable access to internet for selected computers"
+msgstr "Für ausgewählte Computer den Internet-Zugriff erlauben"
+
+#: __init__.py:133
+msgid "Disable internet access"
+msgstr "Internet-Zugriff verweigern"
+
+#: __init__.py:134
+msgid "Disable access to internet for selected computers"
+msgstr "Für ausgewählte Computer den Internet-Zugriff verweigern"
+
+#: __init__.py:208
+msgid ""
+"An error occured while getting rooms! Please consult local administrator."
+msgstr ""
+"Beim Ermitteln der Räume ist ein Fehler aufgetreten. Bitte wenden Sie sich "
+"an Ihren Administrator."
+
+#: __init__.py:440 __init__.py:502 __init__.py:553 __init__.py:637
+msgid ""
+"No admin connection to the LDAP database available, please try again later"
+msgstr ""
+"Konnte keine Verbindung zum LDAP-Server aufbauen. Bitte versuchen Sie es "
+"später erneut."
+
+#: __init__.py:465
+msgid ""
+"An error occured while getting group description! Please consult local "
+"administrator."
+msgstr ""
+"Beim Ermitteln der Raumbeschreibungen ist ein Fehler aufgetreten. Bitte "
+"wenden Sie sich an Ihren Administrator."
+
+#: __init__.py:526 __init__.py:534
+#, python-format
+msgid "user is not allowed to execute %s"
+msgstr "Benutzer darf %s nicht ausführen"
+
+#: __init__.py:528 __init__.py:536
+msgid ""
+"You are not allowed to execute this action. Please contact local "
+"administrator."
+msgstr ""
+"Sie sind nicht befugt, diese Aktion auszuführen. Bitte wenden Sie sich an "
+"Ihren Administrator."
+
+#: __init__.py:575
+msgid "Cannot change room members"
+msgstr "Konnte Raum nicht bearbeiten"
+
+#: __init__.py:598
+#, python-format
+msgid ""
+"An error occured while updating room! Please consult local administrator. (%"
+"s)"
+msgstr "Ein Fehler trat während der Raumaktualisierung auf. Bitte wenden Sie sich an Ihren Administrator. (%s)"
+
+#: __init__.py:617
+msgid "Cannot create room - object already exists!"
+msgstr "Konnte Raum nicht anlegen - LDAP-Objekt existiert bereits!"
+
+#: __init__.py:620
+msgid "Cannot create room - groupname already used!"
+msgstr "Konnte Raum nicht anlegen - Gruppenname existiert bereits!"
+
+#: __init__.py:627
+#, python-format
+msgid ""
+"An error occured while creating room! Please consult local administrator.  (%"
+"s)"
+msgstr ""
+"Konnte Raum nicht anlegen - Bitte wenden Sie sich an Ihren Administrator! (%"
+"s)"
+
+#: _revamp.py:73
+msgid "--- Please choose ---"
+msgstr "--- Bitte auswählen ---"
+
+#: _revamp.py:80
+msgid "All"
+msgstr "Alle"
+
+#: _revamp.py:106
+msgid "Computer Room"
+msgstr "Computerraum"
+
+#: _revamp.py:122
+msgid "Monitor Desktop With UltraVNC"
+msgstr "Computername"
+
+#: _revamp.py:122 _revamp.py:303 _types.py:69
+msgid "Room"
+msgstr "Raum"
+
+#: _revamp.py:122
+msgid "Logged On"
+msgstr "Angemeldeter Benutzer"
+
+#: _revamp.py:122
+msgid "Internet Access"
+msgstr "Internet-Zugriff"
+
+#: _revamp.py:164
+msgid "unknown"
+msgstr "unbekannt"
+
+#: _revamp.py:173
+msgid "offline"
+msgstr "offline"
+
+#: _revamp.py:201
+msgid "enable internet access"
+msgstr "Internet-Zugriff erlauben"
+
+#: _revamp.py:202
+msgid "disable internet access"
+msgstr "Internet-Zugriff sperren"
+
+#: _revamp.py:205 _revamp.py:344
+msgid "Select the Operation"
+msgstr "--- wählen Sie eine Aktion ---"
+
+#: _revamp.py:280 _revamp.py:438
+msgid "Please select school:"
+msgstr "Bitte Schule auswählen:"
+
+#: _revamp.py:288 _revamp.py:289
+msgid "Create new room"
+msgstr "Neuen Raum erstellen"
+
+#: _revamp.py:296 _revamp.py:352
+msgid "Search"
+msgstr "Suchen"
+
+#: _revamp.py:303 _types.py:44 _types.py:74
+msgid "Description"
+msgstr "Beschreibung"
+
+#: _revamp.py:323
+#, python-format
+msgid "Edit room \"%(room)s\""
+msgstr "Raum \"%(room)s\" bearbeiten"
+
+#: _revamp.py:341 _revamp.py:343
+msgid "Remove Rooms"
+msgstr "Räume entfernen"
+
+#: _revamp.py:347
+msgid "No groups could be found."
+msgstr "Es konnten keine Gruppen gefunden werden."
+
+#: _revamp.py:353
+msgid "Search Result"
+msgstr "Suchergebnis"
+
+#: _revamp.py:415
+msgid "Create Room"
+msgstr "Raum erstellen"
+
+#: _revamp.py:417
+msgid "Save Changes"
+msgstr "Änderungen speichern"
+
+#: _revamp.py:449
+msgid "Create room and assign computers"
+msgstr "Raum erstellen und Computer zuordnen"
+
+#: _revamp.py:451
+#, python-format
+msgid "Assign computers to room \"%(room)s\""
+msgstr "Computerzuordnung für Raum \"%(room)s\""
+
+#: _revamp.py:466
+#, python-format
+msgid "Created room \"%(room)s\" successfully."
+msgstr "Raum \"%(room)s\" erfolgreich erstellt."
+
+#: _revamp.py:468
+#, python-format
+msgid "Updated room \"%(room)s\" successfully."
+msgstr "Raum \"%(room)s\" erfolgreich aktualisiert."
+
+#: _revamp.py:493
+msgid "No room has been selected"
+msgstr "Es wurde kein Raum ausgewählt."
+
+#: _revamp.py:499
+msgid "Please confirm removal of following rooms:"
+msgstr "Bitte bestätigen Sie das Entfernen der folgenden Räume:"
+
+#: _revamp.py:511
+msgid "Remove"
+msgstr "Entfernen"
+
+#: _revamp.py:516
+msgid "Deleted rooms successfully."
+msgstr "Räume wurden erfolgreich entfernt."
+
+#: _revamp.py:518
+msgid "Error while deleting following rooms:"
+msgstr "Fehler traten beim Entfernen der folgenden Räume auf:"
+
+#: _revamp.py:520
+msgid "Please ask local administrator for further details."
+msgstr "Bitte wenden Sie sich an Ihren Administrator für nähere Informationen."
+
+#: _types.py:41
+msgid "Search Key"
+msgstr "Suchkriterium"
+
+#: _types.py:44
+msgid "Room Name"
+msgstr "Raumname"
+
+#: _types.py:55
+msgid "granted"
+msgstr "erlaubt"
+
+#: _types.py:56
+msgid "denied"
+msgstr "gesperrt"
+
+#: _types.py:67
+msgid "IP Addresses"
+msgstr "IP-Adresse"
+
+#: _types.py:68
+msgid "Computer"
+msgstr "Computer"
+
+#: _types.py:70
+msgid "RoomDN"
+msgstr "RaumDN"
+
+#: _types.py:71
+msgid "User"
+msgstr "Benutzer"
+
+#: _types.py:72
+msgid "Department"
+msgstr "Schule"
+
+#: _types.py:73
+msgid "Message"
+msgstr "Nachricht"
+
+#: _types.py:75
+msgid "Select room members:"
+msgstr "Im Raum vorhandene Computer auswählen:"
+
+#: _types.py:77
+msgid "School"
+msgstr "Schule"

@@ -1,0 +1,46 @@
+Type: file
+File: etc/freeradius/radiusd.conf
+User: root
+Group: freerad
+Mode: 640
+Variables: ldap/server/name
+Variables: ldap/base
+Variables: freeradius/conf/log/strippednames
+Variables: freeradius/conf/log/strippednames
+Variables: freeradius/conf/log/auth
+Variables: freeradius/conf/log/auth/badpass
+Variables: freeradius/conf/log/auth/goodpass
+Variables: freeradius/conf/servers/start
+Variables: freeradius/conf/servers/max
+Variables: freeradius/conf/servers/spare/min
+Variables: freeradius/conf/servers/spare/max
+Variables: freeradius/conf/servers/maxrequests
+Variables: ldap/hostdn
+
+Type: file
+File: etc/freeradius/eap.conf
+User: root
+Group: freerad
+Mode: 640
+Variables: ldap/server/name
+Variables: ldap/base
+
+Type: file
+File: etc/security/netfilter.d/40sfb-wlan
+Variables: interfaces/eth0/network
+Variables: freeradius/firewall/server/start
+Variables: freeradius/firewall/server/end
+Variables: freeradius/firewall/privateip/start
+Variables: freeradius/firewall/privateip/end
+Variables: freeradius/firewall/enable/internalserver
+Variables: freeradius/firewall/enable/broadcasts
+Variables: freeradius/firewall/enable/radiusserver
+Variables: freeradius/firewall/dnsserver
+
+Type: file
+File: etc/init.d/sfb-wlan-bridge
+Variables: freeradius/bridge/interface/name
+Variables: freeradius/bridge/interface/primary
+Variables: freeradius/bridge/interface/secondary
+Variables: interfaces/.*
+Variables: gateway

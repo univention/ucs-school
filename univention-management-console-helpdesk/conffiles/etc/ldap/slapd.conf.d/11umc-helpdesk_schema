@@ -1,0 +1,16 @@
+# Warning: This file is auto-generated and might be overwritten by
+#          univention-baseconfig.
+#          Please edit the files in the following directory instead:
+# Warnung: Diese Datei wurde automatisch generiert und kann durch
+#          univention-baseconfig überschrieben werden.
+#          Bitte bearbeiten Sie an Stelle dessen die Dateien in
+#          folgendem Verzeichnis:
+#
+#       /etc/univention/templates/files/etc/ldap/slapd.conf.d/
+#
+
+@!@
+import os.path
+if configRegistry['ldap/server/type']=="master":
+	print 'include         /usr/share/univention-ldap/schema/umc-helpdesk.schema'
+@!@

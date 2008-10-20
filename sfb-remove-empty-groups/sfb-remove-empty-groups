@@ -1,0 +1,59 @@
+#!/bin/sh
+#
+
+if [ "$1" = "-h" -o "$1" = "--help" ] ; then
+	echo "syntax: $0          searches for all empty groups"
+	echo "        $0 <OU>     searches for empty groups in given ou"
+	exit 0
+fi
+
+LOGFN=/var/log/sfb-remove-empty-groups.log
+TMPFN=$(mktemp)
+OU="*"
+
+echo "**************************************************"  | tee -a $LOGFN 2>&1
+echo -n "*** STARTTIME: "  | tee -a $LOGFN 2>&1
+date | tee -a $LOGFN 2>&1
+echo "**************************************************"  | tee -a $LOGFN 2>&1
+
+if [ -n "$1" ] ; then
+  OU="$1"
+  echo "Searching for empty class groups in ou $OU ..." | tee -a $LOGFN 2>&1
+else
+  echo "Searching for empty class groups..." | tee -a $LOGFN 2>&1
+fi
+
+for ou in $(ldapsearch -x ou=$OU | grep ^dn: | cut -d' ' -f2- | sort) ; do ldapsearch -LLL -x -b cn=klassen,cn=schueler,cn=groups,$ou '(&(objectClass=posixGroup)(!(uniqueMember=*)))' | ldapsearch-wrapper | grep ^dn | cut -d' ' -f2-; done | tee $TMPFN
+
+echo ""
+echo "Search finished"
+echo ""
+echo "Please check file $TMPFN!"
+echo "All listed group DNs (and corresponding shares) will be deleted"
+echo "if you enter 'yes'! If unsure or wrong objects are listed then"
+echo "press CTRL-C now!"
+echo ""
+echo -n "Proceed? [NO/yes] "
+read answer
+if [ ! "$answer" = "yes" -a ! "$answer" = "YES" ] ; then
+	echo ""
+	echo "stopped as requested" | tee -a $LOGFN 2>&1
+	exit 0
+fi
+
+while read GRPDN ; do
+	SHAREDN=$(echo $GRPDN | sed -e 's|,cn=schueler,cn=groups,|,cn=shares,|')
+
+	echo "Removing share: $SHAREDN" | tee -a $LOGFN 2>&1
+	univention-directory-manager shares/share remove --dn "$SHAREDN"  | tee -a $LOGFN 2>&1
+	echo "Removing share finished" | tee -a $LOGFN 2>&1
+	echo "Removing group: $GRPDN"  | tee -a $LOGFN 2>&1
+	univention-directory-manager groups/group remove --dn "$GRPDN" | tee -a $LOGFN 2>&1
+	echo "Removing group finished" | tee -a $LOGFN 2>&1
+done < $TMPFN
+
+echo "" | tee -a $LOGFN 2>&1
+echo "**************************************************"  | tee -a $LOGFN 2>&1
+echo -n "*** ENDTIME: "  | tee -a $LOGFN 2>&1
+date | tee -a $LOGFN 2>&1
+echo "**************************************************"  | tee -a $LOGFN 2>&1

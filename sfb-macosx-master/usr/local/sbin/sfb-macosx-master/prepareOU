@@ -1,0 +1,123 @@
+#!/bin/sh
+#
+echo -n "please enter ou> "
+read OU
+
+if [ -z "$OU" ] ; then
+  echo "ENTER OU!"
+  exit 0
+fi
+
+eval $(univention-config-registry shell)
+
+###########
+# GROUPS
+###########
+univention-directory-manager settings/customattribute create \
+	--ignore_exists \
+	--position "cn=custom attributes,cn=univention,${ldap_base}" \
+	--set name="MacOSX-apple-group-mcxflags" \
+	--set module="groups/group" \
+	--set tabName="MacOSX" \
+	--set shortDescription="apple-mcxflags" \
+	--set objectClass="apple-group" \
+	--set syntax=string \
+	--set ldapMapping="apple-mcxflags" \
+	--set default='<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+        <key>has_mcx_settings</key>
+        <false/>
+</dict>
+</plist>'
+
+univention-directory-manager settings/customattribute create \
+	--ignore_exists \
+	--position "cn=custom attributes,cn=univention,${ldap_base}" \
+	--set name="MacOSX-apple-group-homeurl" \
+	--set module="groups/group" \
+	--set tabName="MacOSX" \
+	--set shortDescription="apple-group-homeurl" \
+	--set objectClass="apple-group" \
+	--set syntax=string \
+	--set ldapMapping="apple-group-homeurl"
+
+
+#############################
+# CREATE MACOSX ADMIN GROUP
+#############################
+univention-directory-manager groups/group create \
+	--ignore_exists \
+	--position "cn=groups,ou=$OU,${ldap_base}" \
+	--set name="macosxadmins${OU}" \
+	--set description="MacOSX Admins"
+
+
+#############
+# USERS
+#############
+univention-directory-manager settings/customattribute create \
+	--ignore_exists \
+	--position "cn=custom attributes,cn=univention,${ldap_base}" \
+	--set name="MacOSX-apple-user-homeurl" \
+	--set module="users/user" \
+	--set tabName="MacOSX" \
+	--set shortDescription="apple-user-homeurl" \
+	--set objectClass="apple-user" \
+	--set syntax=string \
+	--set ldapMapping="apple-user-homeurl"
+
+univention-directory-manager settings/customattribute create \
+	--ignore_exists \
+	--position "cn=custom attributes,cn=univention,${ldap_base}" \
+	--set name="MacOSX-apple-user-authauthority" \
+	--set module="users/user" \
+	--set tabName="MacOSX" \
+	--set shortDescription="authAuthority" \
+	--set objectClass="apple-user" \
+	--set syntax=string \
+	--set ldapMapping="authAuthority"
+
+#############
+# COMPUTERS
+#############
+
+univention-directory-manager settings/customattribute create \
+	--ignore_exists \
+	--position "cn=custom attributes,cn=univention,dc=schule,dc=bremen,dc=de" \
+	--set name="MacOSX-computer-apple-mcxflags" \
+	--set module="computers/macos" \
+	--set tabName="MacOSX" \
+	--set shortDescription="apple-mcxflags" \
+	--set objectClass="apple-computer" \
+	--set syntax=string \
+	--set ldapMapping="apple-mcxflags"
+
+#################
+# ADD CONTAINERS
+#################
+
+univention-directory-manager container/cn create --ignore_exists --position "ou=${OU},${ldap_base}" --set name=macosx --set description="Container for MacOSX Server"
+univention-directory-manager container/cn create --ignore_exists --position "cn=macosx,ou=${OU},${ldap_base}" --set name=config
+univention-directory-manager container/cn create --ignore_exists --position "cn=macosx,ou=${OU},${ldap_base}" --set name=mounts
+univention-directory-manager container/cn create --ignore_exists --position "cn=macosx,ou=${OU},${ldap_base}" --set name=accesscontrols
+univention-directory-manager container/cn create --ignore_exists --position "cn=macosx,ou=${OU},${ldap_base}" --set name=certificateauthorities
+univention-directory-manager container/cn create --ignore_exists --position "cn=macosx,ou=${OU},${ldap_base}" --set name=computers
+univention-directory-manager container/cn create --ignore_exists --position "cn=macosx,ou=${OU},${ldap_base}" --set name=computer_lists
+univention-directory-manager container/cn create --ignore_exists --position "cn=macosx,ou=${OU},${ldap_base}" --set name=locations
+univention-directory-manager container/cn create --ignore_exists --position "cn=macosx,ou=${OU},${ldap_base}" --set name=machines
+univention-directory-manager container/cn create --ignore_exists --position "cn=macosx,ou=${OU},${ldap_base}" --set name=neighborhoods
+univention-directory-manager container/cn create --ignore_exists --position "cn=macosx,ou=${OU},${ldap_base}" --set name=people
+univention-directory-manager container/cn create --ignore_exists --position "cn=macosx,ou=${OU},${ldap_base}" --set name=presets_users
+univention-directory-manager container/cn create --ignore_exists --position "cn=macosx,ou=${OU},${ldap_base}" --set name=presets_computer_lists
+univention-directory-manager container/cn create --ignore_exists --position "cn=macosx,ou=${OU},${ldap_base}" --set name=presets_groups
+univention-directory-manager container/cn create --ignore_exists --position "cn=macosx,ou=${OU},${ldap_base}" --set name=printers
+univention-directory-manager container/cn create --ignore_exists --position "cn=macosx,ou=${OU},${ldap_base}" --set name=autoserversetup
+univention-directory-manager container/cn create --ignore_exists --position "cn=macosx,ou=${OU},${ldap_base}" --set name=filemakerservers
+univention-directory-manager container/ou create --ignore_exists --position "cn=config,cn=macosx,ou=${OU},${ldap_base}" --set name=macosxodconfig
+
+#####################
+# RESTART CLI SERVER
+#####################
+# FIXME for UCS2.0
+pkill -f "/usr/bin/python2.4 -OO /usr/share/univention-admin-tools/univention-cli-server"

@@ -1,0 +1,6 @@
+[config]
+path = /var/lib/samba/startupconfig
+guest ok = Yes
+browseable = No
+strict locking = No
+

@@ -1,0 +1,5 @@
+usr/share/univention-ldap/schema
+usr/sbin
+var/log/sfb
+var/log/univention/pipes
+usr/lib/univention-directory-listener/system

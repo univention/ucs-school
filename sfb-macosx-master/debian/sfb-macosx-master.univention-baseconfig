@@ -1,0 +1,7 @@
+Type: subfile
+Multifile: etc/ldap/slapd.conf
+Subfile: etc/ldap/slapd.conf.d/11sfb-macosx_schema
+
+Type: subfile
+Multifile: etc/ldap/slapd.conf
+Subfile: etc/ldap/slapd.conf.d/58schuladministration-macosx

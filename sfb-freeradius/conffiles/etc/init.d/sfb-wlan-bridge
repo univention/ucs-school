@@ -1,0 +1,108 @@
+#! /bin/sh
+@%@BCWARNING=# @%@
+
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+DESC="bridge"
+NAME=bridge
+DAEMON=/usr/sbin/brctl
+SCRIPTNAME=/etc/init.d/$NAME
+
+@!@
+bridgeinterface = configRegistry.get('freeradius/bridge/interface/name', 'br0')
+primaryinterface = configRegistry.get('freeradius/bridge/interface/primary', 'eth0')
+secondaryinterface = configRegistry.get('freeradius/bridge/interface/secondary', 'eth1')
+print 'BRIDGE="%s"' % bridgeinterface
+print 'IF_PRIMARY="%s"' % primaryinterface
+print 'IF_SECONDARY="%s"' % secondaryinterface
+print ''
+localip = configRegistry.get('interfaces/%s/address' % primaryinterface)
+print 'LOCALIP="%s"' % localip
+gateway = configRegistry.get('gateway')
+print 'GATEWAY="%s"' % gateway
+netmask = configRegistry.get('interfaces/%s/netmask' % primaryinterface)
+print 'NETMASK="%s"' % netmask
+broadcast = configRegistry.get('interfaces/%s/broadcast' % primaryinterface)
+print 'BROADCAST="%s"' % broadcast
+@!@
+
+
+# Gracefully exit if the package has been removed.
+test -x $DAEMON || exit 0
+
+bridge_start() {
+  # create bridge
+  /usr/sbin/brctl addbr $BRIDGE
+
+  # add uplink interface
+  /usr/sbin/brctl addif $BRIDGE $IF_PRIMARY
+  /usr/sbin/brctl addif $BRIDGE $IF_SECONDARY
+
+  # reset ip addresses
+  /sbin/ifconfig $IF_PRIMARY 0.0.0.0
+  /sbin/ifconfig $IF_SECONDARY 0.0.0.0
+
+  # set bridge ip address and bring bridge up
+  /sbin/ifconfig $BRIDGE $LOCALIP netmask $NETMASK broadcast $BROADCAST up
+
+  # erase old default route if present
+  route -n | grep "^0.0.0.0" && route del default
+  route -n | grep "^0.0.0.0" && route del default
+
+  # set new default route
+  route add default gw $GATEWAY dev $BRIDGE
+  echo 1 > /proc/sys/net/bridge/bridge-nf-call-arptables
+  echo 1 > /proc/sys/net/bridge/bridge-nf-call-ip6tables
+  echo 1 > /proc/sys/net/bridge/bridge-nf-call-iptables
+  echo 0 > /proc/sys/net/bridge/bridge-nf-filter-vlan-tagged
+}
+
+bridge_stop() {
+  # bring bridge down
+  /sbin/ifconfig $BRIDGE down
+
+  # remove interfaces from bridge
+  /usr/sbin/brctl delif $BRIDGE $IF_PRIMARY
+  /usr/sbin/brctl delif $BRIDGE $IF_SECONDARY
+  # remove bridge
+  /usr/sbin/brctl delbr $BRIDGE
+
+  # restart interfaces
+  ifdown $IF_PRIMARY
+  ifdown $IF_SECONDARY
+  ifup $IF_PRIMARY
+  ifup $IF_SECONDARY
+}
+
+case "$1" in
+  start)
+        echo -n "Starting $DESC: $NAME"
+        bridge_start
+        echo "."
+        ;;
+  stop)
+        echo -n "Stopping $DESC: $NAME"
+        bridge_stop
+        echo "."
+        ;;
+  restart|force-reload)
+        echo -n "Restarting $DESC: $NAME"
+        bridge_stop
+        sleep 1s
+        bridge_start
+        echo "."
+        ;;
+  test)
+  	echo -n "Testing $DESC: $NAME"
+        bridge_start
+        echo "."
+	sleep 90s
+        bridge_stop
+        echo "."
+        ;;
+   *)
+        echo "Usage: $SCRIPTNAME {start|stop|restart|force-reload}" >&2
+        exit 1
+        ;;
+esac
+
+exit 0

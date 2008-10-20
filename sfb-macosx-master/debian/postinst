@@ -1,0 +1,10 @@
+#!/bin/sh
+
+#DEBHELPER#
+
+univention-config-registry commit /etc/ldap/slapd.conf
+
+test -x /etc/init.d/slapd && /etc/init.d/slapd restart
+
+eval `univention-config-registry shell`
+

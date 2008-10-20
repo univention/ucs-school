@@ -1,0 +1,1510 @@
+#!/usr/bin/python2.4 -OO
+
+#-> doesn't do:
+# check usernames for correct values (no spaces)
+# change the user's position in the tree (change the school i.e.)
+# select Schools that are separated by kommata
+# modify users school or type (pupil/teacher)
+
+#-> needs definition:
+# import access rights
+
+# init list of created users and passwords
+created_users = {}
+# string of problems during process
+problem_hints = ""
+# separator char in infile
+sepchar='\t'
+# wipe the following trailing and leading characters from group names
+wipe_char_group='-'
+
+# count access to ldap to reconnect after 1000 changes
+locounts=0
+
+import sys, string, ldap, re, codecs, os, smtplib, copy, random, time, traceback
+
+import univention.debug
+univention.debug.init('/var/log/univention/admin-cmd.log', 1, 0)
+
+import univention.admin.uldap
+import univention.admin.modules
+import univention.admin.objects
+import univention.config_registry
+
+configRegistry=univention.config_registry.ConfigRegistry()
+configRegistry.load()
+
+ldap_base=configRegistry['ldap/base']
+domainname=configRegistry['domainname']
+
+verified_ous = []
+verified_groups = []
+verified_group_shares = []
+
+class sfb_person_modify:
+	def __init__(self,line):
+
+		# parse line here
+
+		# there are 10 strings each line
+		parsed =[]
+		b_pos = 0
+		e_pos = 0
+## 		for i in range(10):
+## 			e_pos = string.find(line,";",b_pos)
+## 			parsed.append(codecs.latin_1_decode(line[b_pos:e_pos])[0])
+## 			b_pos=e_pos+1
+		parsed=line.split(sepchar)
+
+		self.modtype   = parsed[0] # A,M or D: add, modify or delete
+		self.login     = parsed[1]
+		self.sname     = parsed[2] # surename
+		self.name      = parsed[3] # first name
+		self.sNr       = parsed[4] # schoolNr(s)
+		self.cNr       = parsed[5] # classNr
+		self.rights    = parsed[6] # users which may change this entry
+		self.mail      = parsed[7]
+		self.isTeacher = parsed[8]
+		self.isActive  = parsed[9][:1]
+		self.problem_hints = ""
+
+		if ',' in self.sNr:
+			self.allsNrs= self.sNr.split(',')
+			self.sNr=self.allsNrs[0]
+			self.other_sNr=self.allsNrs[1:]
+		else:
+			self.allsNrs=[self.sNr]
+			self.other_sNr=[]
+
+		# split into multiple class number if comma is present
+		if ',' in self.cNr:
+			self.cNr = self.cNr.split(',')
+		else:
+			self.cNr = [ self.cNr ]
+		# wipe invalid character from class numbers
+		for i in range(len(self.cNr)):
+			self.cNr[i] = self.wipeInvalidCharGroup( self.cNr[i] )
+		# remove empty strings
+		self.cNr = [ x for x in self.cNr if x ]
+		# sort classes
+		self.cNr.sort()
+
+	def wipeInvalidCharGroup(self, groupName):
+		global wipe_char_group
+
+		ok = False
+		while groupName and not ok:
+			if groupName[0] in wipe_char_group:
+				groupName = groupName[1:]
+			else:
+				ok = True
+		ok = False
+		while groupName and not ok:
+			if groupName[-1] in wipe_char_group:
+				groupName = groupName[0:-1]
+			else:
+				ok = True
+		return groupName
+
+	def getOtherPersons(self):
+		persons=[]
+
+		for schoolNr in self.other_sNr:
+			person = copy.deepcopy(self)
+			person.login = "%s_%s"%(self.login,schoolNr)
+			person.sNr=schoolNr
+			person.other_sNr=[] # has no "slave"-accounts
+			self.mail="" # no extra mail address
+			person.cNr=[] # no class in other ou
+
+			persons.append(person)
+
+		return persons
+
+	def getPosition_dn(self):
+		type = "schueler"
+		if self.isTeacher=="1": type="lehrer"
+		return "cn="+type+",cn=users,ou="+self.sNr+","+ldap_base
+
+	def getDN(self):
+		return "uid="+self.login+","+self.getPosition_dn()
+
+	def default_groups(self):
+		default_groups=[]
+
+		# default group
+		default_groups.append("cn=Domain Users "+self.sNr+",cn=groups,ou="+self.sNr+","+ldap_base)
+
+		type = "schueler"
+		if self.isTeacher=="1": type="lehrer"
+		# class if available
+		for cnr in self.cNr:
+			default_groups.append("cn=" + cnr + ",cn=klassen,cn=schueler,cn=groups,ou=" + self.sNr + "," + ldap_base)
+
+		default_groups.append("cn=%s%s,cn=groups,ou=%s,%s"%(type,self.sNr,self.sNr,baseDN))
+
+		return default_groups
+
+
+def count_lo():
+	pass # was a workaround for slapd locking-failures, not necessary any more
+	global locounts
+	global lo
+	locounts=locounts+1
+	#print 'locounts %s'%locounts,
+	if locounts>1000:
+		try:
+			print 'ldap-lookup count exceeded, reconnect'
+			lo=univention.admin.uldap.access(host=configRegistry['ldap/master'], base=baseDN, binddn='cn=admin,'+baseDN, bindpw=pwd, start_tls=tls)
+			locounts=0
+		except Exception, e:
+			univention.debug.debug(univention.debug.ADMIN, univention.debug.WARN, 'authentication error: %s' % str(e))
+			print 'ERROR: authentication error: %s' % str(e)
+			sys.exit(1)
+
+
+def verify_school_ou(schoolNr, co, lo, baseDN):
+	global problem_hints
+	
+	if schoolNr in verified_ous:
+		print "verify ou for school nr %s already done"%schoolNr
+		return True
+
+	print "verify ou for school nr %s"%schoolNr
+	# list of needed sub-containers, the dictionary-key adds the container as default during create in verify_container
+	container={'0printerPath':['cn=printers'],
+			   '1userPath':['cn=users','cn=schueler,cn=users','cn=lehrer,cn=users','cn=admins,cn=users'],
+			   '2computerPath':['cn=computers','cn=server,cn=computers'],
+			   '3networkPath':['cn=networks'],
+			   '4groupPath':['cn=groups','cn=schueler,cn=groups','cn=lehrer,cn=groups','cn=klassen,cn=schueler,cn=groups','cn=raeume,cn=groups'],
+			   '5dhcpPath':['cn=dhcp'],
+			   '6policyPath':['cn=policies'],
+			   '7sharePath':['cn=shares','cn=klassen,cn=shares'],
+			   '8none':['cn=dc,cn=server,cn=computers']
+			   }
+	container_policies = { 'cn=lehrer,cn=users': ['cn=default-lehrer,cn=console,cn=policies,dc=schule,dc=bremen,dc=de'] }
+
+	ou_base="ou=%s,%s"%(schoolNr,baseDN)
+	verify_container(ou_base, ou_module, co, lo, superordinate, baseDN, path='')
+	keys=container.keys()
+	keys.sort()
+	for path in keys:
+		for dn in container[path]:
+			if path[1:]=='none': path=' '
+			verify_container('%s,%s'%(dn,ou_base),cn_module, co, lo, superordinate, baseDN, path=path[1:])
+
+
+	# create server if not exsistant
+	objects = univention.admin.modules.lookup(server_module, co, lo, scope='sub', superordinate=superordinate, base=baseDN,
+											  filter=univention.admin.filter.expression('cn','dc%s'%schoolNr))
+	count_lo()
+	server_exists=0
+	correct_server_exists=0
+	if objects:
+		server_exists = 1 # can't create another server with this id
+		for object in objects:
+			if object.dn == "cn=dc%s,cn=dc,cn=server,cn=computers,ou=%s,%s"%(schoolNr,schoolNr,baseDN):
+				correct_server_exists=1
+	if server_exists and not correct_server_exists:
+		print "There is already a server entry in the wrong container"
+	if not server_exists:
+		position.setDn("cn=dc,cn=server,cn=computers,ou=%s,%s"%(schoolNr,baseDN))
+		object=server_module.object(co, lo, position=position, superordinate=superordinate)
+		count_lo()
+		object.open()
+		object["name"]="dc%s"%schoolNr
+		object["unixhome"]="/dev/null"
+		object["shell"]="/bin/bash"
+		object["primaryGroup"]="cn=DC Slave Hosts,cn=groups,%s"%baseDN
+		create_object(object)
+		print "need to create server: %s"%object.dn
+
+	# create groups if not exsistant
+	groups=["cn=admins%s,cn=ouadmins,cn=groups,%s"%(schoolNr,baseDN),
+			"cn=schueler%s,cn=groups,ou=%s,%s"%(schoolNr,schoolNr,baseDN),
+			"cn=lehrer%s,cn=groups,ou=%s,%s"%(schoolNr,schoolNr,baseDN)]
+	for group in groups:
+		verify_group(group, co, lo, superordinate, baseDN)
+
+	# create dhcp-service if not exsistant
+	objects = univention.admin.modules.lookup(dhcp_service_module, co, lo, scope='sub', superordinate=superordinate, base=baseDN,
+											  filter=univention.admin.filter.expression('cn','%s'%schoolNr))
+	count_lo()
+	service_exists=0
+	if objects:
+		for object in objects:
+			if object.dn == "cn=%s,cn=dhcp,ou=%s,%s"%(schoolNr,schoolNr,baseDN):
+				service_exists=1
+				dhcp_service_object=object
+	if not service_exists:
+		position.setDn("cn=dhcp,ou=%s,%s"%(schoolNr,baseDN))
+		object=dhcp_service_module.object(co, lo, position=position, superordinate=superordinate)
+		count_lo()
+		object.open()
+		object["service"]="%s"%schoolNr
+		create_object(object)
+		dhcp_service_object=object
+		print "need to create dhcp service: %s"%object.dn
+
+	# create dhcp-server if not exsistant
+	objects = univention.admin.modules.lookup(dhcp_server_module, co, lo, scope='sub', superordinate=dhcp_service_object, base=baseDN,
+											  filter=univention.admin.filter.expression('cn','dc%s'%schoolNr))
+	count_lo()
+	server_exists=0
+	if objects:
+		for object in objects:
+			if object.dn == "cn=dc%s,cn=%s,cn=dhcp,ou=%s,%s"%(schoolNr,schoolNr,schoolNr,baseDN):
+				server_exists=1
+	if not server_exists:
+		position.setDn("cn=%s,cn=dhcp,ou=%s,%s"%(schoolNr,schoolNr,baseDN))
+		object=dhcp_server_module.object(co, lo, position=position, superordinate=dhcp_service_object)
+		count_lo()
+		object.open()
+		object["server"]="dc%s"%schoolNr
+		create_object(object)
+		print "need to create dhcp server: %s"%object.dn
+
+	# create userlogon-share if not exsistant
+	objects = univention.admin.modules.lookup(share_module, co, lo, scope='sub', superordinate=dhcp_service_object, base='cn=shares,ou=%s,%s' % (schoolNr,baseDN),
+											  filter=univention.admin.filter.expression('cn','userlogon'))
+	count_lo()
+	share_exists=0
+	if objects:
+		for object in objects:
+			if object.dn == "cn=userlogon,cn=shares,ou=%s,%s"%(schoolNr,baseDN):
+				share_exists=1
+	if not share_exists:
+		position.setDn("cn=shares,ou=%s,%s"%(schoolNr,baseDN))
+		object=share_module.object(co, lo, position=position)
+		count_lo()
+		object.open()
+		object.options=['samba']
+		object["name"]="userlogon"
+		object["host"]="dc%s.%s" % (schoolNr,configRegistry['domainname'])
+		object['path']='/var/lib/samba/userlogon'
+		create_object(object)
+		print "need to create share: %s"%object.dn
+
+	# create ou-root if not exsistant
+	objects = univention.admin.modules.lookup(user_module, co, lo, scope='sub', base=baseDN,
+											  filter=univention.admin.filter.expression('uid','root%s'%schoolNr))
+	count_lo()
+	root_exists=0
+	if objects:
+		for object in objects:
+			if object.dn == "uid=root%s,cn=users,ou=%s,%s"%(schoolNr,schoolNr,baseDN):
+				root_exists=1
+	if not root_exists:
+		#passwd=get_passwd()
+		passwd='12345678' # default password
+		position.setDn("cn=users,ou=%s,%s"%(schoolNr,baseDN))
+		object=user_module.object(co, lo, position=position)
+		count_lo()
+		object.open()
+		object['username']="root%s"%schoolNr
+		#object.options=['samba'] # this is not necessasary since new root-options in samba
+		object['lastname']='root'
+		object['password']=passwd
+		try:
+			if not create_object(object) == "1":
+				print "need to create root user: %s"%object.dn
+				created_users["root%s"%schoolNr]=passwd
+			else:
+				print "there were problems creating this user:",object.dn()
+				problem_hints = problem_hints + "there were problems creating this user: "+object.dn()+"\n"
+		except:
+			print "ERROR:", sys.exc_info()[0], sys.exc_info()[1]
+			traceback.print_exc (100, sys.stdout)
+			print "create this user manually: root%s"%schoolNr
+			problem_hints = problem_hints + "create this user manually: root%s"%schoolNr
+
+	if not schoolNr in verified_ous:
+		verified_ous.append(schoolNr)
+
+	# attach policies if needed
+	for containerdn in container_policies.keys():
+		# verify for each container that container does exist
+		verify_container('%s,%s' % (containerdn,ou_base), cn_module, co, lo, superordinate, baseDN, '')
+		pollist = container_policies[containerdn]
+
+		# test if all policy objects exist and if all referenced objects are policy objects
+		for poldn in pollist:
+			oc = lo.get( poldn, ['objectClass'] )
+			if not oc:
+				print "Object to be referenced does not exist: " + poldn
+				problem_hints = problem_hints + "there were problems verifying this ou %s\n" % schoolNr
+				break
+			elif not 'univentionPolicy' in oc['objectClass']:
+				print "Object to be referenced is no valid policy: " + poldn
+				problem_hints = problem_hints + "there were problems verifying this ou %s\n" % schoolNr
+				break
+		else:
+			# add univentionPolicyReference if neccessary
+			oc = lo.get( '%s,%s' % (containerdn,ou_base), ['objectClass'] )
+			if not 'univentionPolicyReference' in oc.get('objectClass',[]):
+				lo.modify('%s,%s' % (containerdn,ou_base), [ ('objectClass','','univentionPolicyReference') ] )
+			# add all missing policies
+			pl = lo.get( '%s,%s' % (containerdn,ou_base), ['univentionPolicyReference'] )
+			modlist=[]
+			for poldn in pollist:
+				if not poldn in pl.get('univentionPolicyReference',[]):
+					modlist.append(('univentionPolicyReference','',poldn))
+					print 'need to attach policy: %s' % poldn
+			lo.modify('%s,%s' % (containerdn,ou_base),modlist)
+
+def create_sub_object(object):
+	# create a user object without mailPrimaryAddress but with
+	# univentionAbordnung objectclass and univentionAbordnungMasterDn
+	# with dn of the user who has the same mailPrimaryAddress
+
+	# univentionAbordnungMasterDn
+	mail = object['mailPrimaryAddress']
+	object['mailPrimaryAddress'] = []
+	ml = []
+
+	# create sub account without mailPrimaryAddress
+	dn = object.create()
+
+	# search mailPrimaryAddress
+	result = object.lo.search(filter='(&(objectClass=univentionMail)(objectClass=posixAccount)(mailPrimaryAddress=%s))' % mail, attr=['mailPrimaryAddress'])
+	superdn, attrs = result[0]
+
+	# append objectclass and attribut to sub account
+	ml.append(('objectClass', None, "univentionAbordnung"))
+	ml.append(("univentionAbordnungMasterDn", None, superdn))
+	try:
+		object.lo.modify(dn, ml)
+	except:
+		problem_hints += "problems while setting univentionAbordnung to " + dn + "\n"
+	
+
+def create_object(object):
+	ignore_exists = 0
+	exists=0
+	try:
+		dn=object.create()
+	except univention.admin.uexceptions.objectExists:
+		if not ignore_exists:
+			print 'ERROR: Object exists-1 (objectExists)'
+			traceback.print_exc (100, sys.stdout)
+		else:
+			exists=1
+	except univention.admin.uexceptions.uidAlreadyUsed:
+		if not ignore_exists:
+			print 'ERROR: Object exists-2 (uidAlreadyUsed)'
+			traceback.print_exc (100, sys.stdout)
+		else:
+			exists=1
+	except univention.admin.uexceptions.dhcpServerAlreadyUsed:
+		if not ignore_exists:
+			print 'ERROR: Object exists-3 (dhcpServerAlreadyUsed)'
+			traceback.print_exc (100, sys.stdout)
+		else:
+			exists=1
+	except univention.admin.uexceptions.noLock:
+		if not ignore_exists:
+			print 'ERROR: Object exists-4 (noLock)'
+			traceback.print_exc (100, sys.stdout)
+		else:
+			exists=1
+	except univention.admin.uexceptions.mailAddressUsed:
+		create_sub_object(object)
+
+	return exists
+
+
+def verify_container(position_dn, module, co, lo, superordinate, base, path="userPath"):
+	# look if goal-container exists, else create it
+	container_exists = 0
+	type=position_dn[0:string.find(position_dn,"=")]
+	name=position_dn[string.find(position_dn,"=")+1:string.find(position_dn,",")]
+	position=position_dn[string.find(position_dn,",")+1:]
+	objects=''
+	try:
+		objects = univention.admin.modules.lookup(module, co, lo, scope='sub', superordinate=superordinate, base=position,
+												  filter=univention.admin.filter.expression(type,name))
+		count_lo()
+	except:
+		pass
+	if objects:
+		for object in objects:
+			if codecs.latin_1_encode(univention.admin.objects.dn(object))[0]==position_dn:
+				container_exists = 1
+
+	if not container_exists:
+		print "need to create container %s"%position_dn
+		position=univention.admin.uldap.position(base)
+		position.setDn(position_dn[string.find(position_dn,",")+1:])
+		object = module.object(co, lo, position, superordinate=superordinate)
+		count_lo()
+		object.open()
+		object["name"] = position_dn[3:string.find(position_dn,",")]
+
+		if position_dn[:2] == "cn" and path: # is path container
+			object[path] = codecs.latin_1_encode("1")[0]
+
+		exists = create_object(object)
+
+def verify_group_share(schoolNr, classNr, co, lo, superordinate, base):
+
+	if (schoolNr, classNr.lower()) in verified_group_shares:
+		return True
+
+	position_dn="cn=%s,cn=klassen,cn=shares,ou=%s,%s"%(classNr,schoolNr,base)
+	module = univention.admin.modules.get("shares/share")
+	more_instances = 1
+	container_position = base
+	while more_instances:
+		container_position = position_dn[string.rfind(position_dn,",",0,len(position_dn)-len(container_position)-1)+1:]
+		if container_position == position_dn:
+			more_instances = 0
+		elif container_position[:2] == "cn":
+			verify_container(container_position, cn_module, co, lo, superordinate, base, path="groupPath")
+		elif container_position[:2] == "ou":
+			verify_container(container_position, ou_module, co, lo, superordinate, base)
+		else: print "WARNING: unknown container type",container_position
+
+	# look if share exists, else create it
+	share_exists = 0
+	type=position_dn[0:string.find(position_dn,"=")]
+	name=position_dn[string.find(position_dn,"=")+1:string.find(position_dn,",")]
+	position=position_dn[string.find(position_dn,",")+1:]
+	objects = univention.admin.modules.lookup(module, co, lo, scope='sub', superordinate=superordinate, base=position,
+											  filter=univention.admin.filter.expression(type,name))
+	count_lo()
+	if objects:
+		for object in objects:
+			if codecs.latin_1_encode(univention.admin.objects.dn(object))[0].lower() == position_dn.lower():
+				share_exists = 1
+	if not share_exists:
+		print "need to create groupshare %s"%position_dn
+
+		# get gid form corresponding group
+		group_dn="cn=%s,cn=klassen,cn=schueler,cn=groups,ou=%s,%s"%(classNr,schoolNr,base)
+		gids=lo.get(group_dn,['gidNumber'])
+		count_lo()
+		gid = 0
+		if len(gids) > 1:
+			print "WARNING: more than one corresponding gid found"
+			gid=gids["gidNumber"][0]
+		elif len(gids) < 1:
+			print "WARNING: no corresponding gid found"
+		else:
+			gid=gids["gidNumber"][0]
+
+
+		# set default server
+		serverfqdn = "dc%s.%s"%(schoolNr,domainname)
+
+		# get alternative server (defined at ou object if a dc slave is responsible for more than one ou)
+		ou_dn = "ou=%s,%s"%(schoolNr,base)
+		ou_attr_LDAPAccessWrite = lo.get(ou_dn,['univentionLDAPAccessWrite'])
+		count_lo()
+		alternativeServer_dn = None
+		if len(ou_attr_LDAPAccessWrite) > 0:
+			alternativeServer_dn = ou_attr_LDAPAccessWrite["univentionLDAPAccessWrite"][0]
+			if len(ou_attr_LDAPAccessWrite) > 1:
+				print "WARNING: more than one corresponding univentionLDAPAccessWrite found at ou=%s" % schoolNr
+
+		# build fqdn of alternative server and set serverfqdn
+		if alternativeServer_dn:
+			alternativeServer_attr = lo.get(alternativeServer_dn,['uid'])
+			count_lo()
+			if len(alternativeServer_attr) > 0:
+				alternativeServer_uid = alternativeServer_attr['uid'][0]
+				alternativeServer_uid = alternativeServer_uid.replace('$','')
+				if len(alternativeServer_uid) > 0:
+					serverfqdn = "%s.%s" % (alternativeServer_uid, domainname)
+
+
+		position=univention.admin.uldap.position(base)
+		position.setDn(position_dn[string.find(position_dn,",")+1:])
+		object = module.object(co, lo, position, superordinate=superordinate)
+		count_lo()
+		object.open()
+		object["name"] = "%s"%classNr
+		object["host"] = serverfqdn
+		object["path"] = "/home/groups/klassen/%s"%classNr
+		object["writeable"] = "1"
+		object["sambaWriteable"] = "1"
+		object["sambaBrowseable"] = "1"
+		object["sambaForceGroup"] = "+%s"%classNr
+		object["sambaCreateMode"] = "0770"
+		object["sambaDirectoryMode"] = "0770"
+		object["owner"]="0"
+		object["group"]=gid
+		object["directorymode"]="0770"
+
+		exists = create_object(object)
+
+	if not classNr in verified_group_shares:
+		verified_group_shares.append((schoolNr, classNr.lower()))
+
+
+def verify_group(position_dn, co, lo, superordinate, base):
+	# look if group exists, else create it
+
+	if position_dn in verified_groups:
+		return True
+
+	group_exists = 0
+	type=position_dn[0:string.find(position_dn,"=")]
+	name=position_dn[string.find(position_dn,"=")+1:string.find(position_dn,",")]
+	position=position_dn[string.find(position_dn,",")+1:]
+
+	more_instances = 1
+	container_position = base
+	while more_instances:
+		container_position = position_dn[string.rfind(position_dn,",",0,len(position_dn)-len(container_position)-1)+1:]
+		if container_position == position_dn:
+			more_instances = 0
+		elif container_position[:2] == "cn":
+			verify_container(container_position, cn_module, co, lo, superordinate, base, path="groupPath")
+		elif container_position[:2] == "ou":
+			verify_container(container_position, ou_module, co, lo, superordinate, base)
+		else: print "WARNING: unknown container type",container_position
+
+	objects = univention.admin.modules.lookup(group_module, co, lo, scope='sub', superordinate=superordinate, base=position,
+											  filter=univention.admin.filter.expression(type,name))
+	count_lo()
+	if objects:
+		for object in objects:
+			if codecs.latin_1_encode(univention.admin.objects.dn(object))[0].lower() == position_dn.lower():
+				group_exists = 1
+
+	if not group_exists:
+		print "need to create group %s"%position_dn
+		position=univention.admin.uldap.position(base)
+		position.setDn(position_dn[string.find(position_dn,",")+1:])
+		object = group_module.object(co, lo, position, superordinate=superordinate)
+		count_lo()
+		object.open()
+		object["name"] = position_dn[3:string.find(position_dn,",")]
+
+
+		exists = create_object(object)
+
+	if not position_dn in verified_groups:
+		verified_groups.append(position_dn)
+
+def delete_dn(dn, module, co, lo):
+	position.setDn(dn[string.find(dn,",")+1:])
+	object=univention.admin.objects.get(module, co, lo, position=position, dn=dn)
+	count_lo()
+	object.open()
+	try:
+		object.remove()
+		print "deleted:",dn
+		return ""
+	except univention.admin.uexceptions.noObject:
+		print "ERROR: delete this user manually (not found):",dn
+		traceback.print_exc (100, sys.stdout)
+		return "ERROR: delete this user manually (not found): "+dn+"\n"
+	except:
+		print "ERROR: delete this user manually (maybe not found):",dn
+		traceback.print_exc (100, sys.stdout)
+		return  "ERROR: delete this user manually (maybe not found):"+dn+"\n"
+
+def delete_user(person, module, co, lo):
+
+	# search all objects with univentionAbordnungMaster == dn of the person
+	# we want to delete, make one of them to the new master account 
+	# (set primaryMailAddress and remove univentionAbordnungMaster attribute
+	# and univentionAbordnung objectclass) and change dn in univentionAbordnungMaster
+	# in the rest
+	dn = person.getDN()
+	mail = person.mail
+	base = person.getPosition_dn()
+	uid = person.login
+	newdn = ""
+
+	# get primaryMail from account
+	master = lo.search(base=base, filter="(uid=%s)" % uid, attr=['mailPrimaryAddress'])
+	if master:
+		tmpdn, attr = master[0]
+		if attr.has_key("mailPrimaryAddress") and attr['mailPrimaryAddress']:
+			mail = attr['mailPrimaryAddress']
+
+	# delete account
+	person.problem_hints += delete_dn(person.getDN(),module,co,lo)
+
+	# search sub accounts
+	result = lo.search(filter='(univentionAbordnungMasterDn=%s)' % dn, attr=['objectClass'])
+
+	# first sub account becomes new master account
+	if result:
+		newdn, attr = result[0]
+		ocs = []
+		for i in attr['objectClass']:
+			if not i == "univentionAbordnung": ocs.append(i)
+		ml = []
+		ml.append(('objectClass', attr['objectClass'], ocs))
+		ml.append(("mailPrimaryAddress", None, mail))
+		ml.append(("univentionAbordnungMasterDn", dn, ""))
+		try:
+			lo.modify(newdn, ml)
+		except:
+			person.problem_hints += "problems while making " + newdn + " a master account\n"
+		del result[0]
+
+	# modify sub accounts
+	for i in result:
+		subdn, attr = i
+		ml = []
+		ml.append(("univentionAbordnungMasterDn", dn, newdn))
+		try:
+			lo.modify(subdn, ml)
+		except:
+			person.problem_hints += "problems while setting new master dn to sub account " + subdn + "\n"
+
+def modify_user(person, module, co, lo):
+	default_groups = person.default_groups()
+	object=univention.admin.objects.get(module, co, lo, position='', dn=person.getDN(), arg='')
+	count_lo()
+	object.open()
+	object["username"]=person.login
+	object["primaryGroup"]=default_groups[0]
+	object["unixhome"]="/home/"+person.login
+	object["firstname"]=person.name
+	object["lastname"]=person.sname
+	object["e-mail"]=person.mail
+	if object.has_key('mailPrimaryAddress'):
+		object['mailPrimaryAddress']=person.mail
+	if person.isActive == "1":
+		object["disabled"]="0"
+	else:
+		object["disabled"]="1"
+
+	remove_groups = []
+	for group in object['groups']:
+		if group not in default_groups:
+			kpos = string.find(group,',')
+			if group[:9] == 'cn=schueler' or group[:11] == 'cn=lehrer' or group[kpos+1:kpos+23] == 'cn=klassen,cn=schueler':
+				# group looks like a default group, so we don't need it anymore
+				print "remove from group: %s"%group
+				remove_groups.append(group)
+	for group in remove_groups:
+		object['groups'].remove(group)
+
+	for group in default_groups:
+		if group not in object["groups"]:
+			object["groups"].append(group)
+			verify_group(group, co, lo, superordinate, baseDN)
+			print "need to add group %s"%group
+
+	#print "user is in groups: %s" % object['groups']
+
+	for cnr in person.cNr:
+		verify_group_share(person.sNr,cnr,co,lo,superordinate,baseDN)
+
+	try:
+		object.modify()
+		o_sNr=lo.search(base=person.getDN(), scope='base', attr=['departmentNumber'])
+		count_lo()
+		if not o_sNr == person.allsNrs:
+			lo.modify(person.getDN(),[("departmentNumber",o_sNr,person.allsNrs)])
+			count_lo()
+		print "modified:",person.getDN()
+	except:
+		print "ERROR:", sys.exc_info()[0], sys.exc_info()[1]
+		traceback.print_exc (100, sys.stdout)
+		print "modify this user manually:",person.getDN()
+		person.problem_hints = person.problem_hints + "modify this user manually: "+person.getDN()+"\n"
+
+
+def check_user(person, baseDN, module):
+	objects = univention.admin.modules.lookup(module, co, lo, scope='sub', superordinate=superordinate, base=person.getPosition_dn(),
+											  filter=univention.admin.filter.expression('uid',person.login))
+	count_lo()
+	user_exists=0
+	if objects:
+		for object in objects:
+			if object.dn == person.getDN():
+				user_exists = 1
+
+	return user_exists
+
+def get_passwd():
+	makepasswd = os.popen('makepasswd --chars=8')
+	return makepasswd.readline()[:-1] # without newline
+
+def create_passwd():
+	charlistA = 'abcdefghijklmnopqrstuvwxyz'
+	charlistB = '0123456789'
+	passwd=''
+	passwd += charlistA[ random.randrange(0,len(charlistA)) ] + charlistA[ random.randrange(0,len(charlistA)) ]
+	passwd += charlistB[ random.randrange(0,len(charlistB)) ] + charlistB[ random.randrange(0,len(charlistB)) ]
+	passwd += charlistA[ random.randrange(0,len(charlistA)) ] + charlistA[ random.randrange(0,len(charlistA)) ]
+	return passwd
+
+def create_user(person, baseDN, module, password):
+	try:
+		if check_user(person, baseDN, user_module):
+			print "ERROR: User already exists: %s"%person.getDN()
+			person.problem_hints +="ERROR: User already exists: %s\n" % person.getDN()
+			return 0
+	except: # happens if container does not exsist
+		pass
+
+	# check if ou exists at all
+	objects = univention.admin.modules.lookup(ou_module, co, lo, scope='sub', superordinate=superordinate, base=baseDN,
+										  filter=univention.admin.filter.expression('ou',person.sNr))
+	count_lo()
+## 	ou_exists=0
+## 	if objects:
+## 		for object in objects:
+## 			if codecs.latin_1_encode(univention.admin.objects.dn(object))[0]==('ou=%s,%s'%(person.sNr,baseDN)):
+## 				ou_exists = 1
+## 	if not ou_exists:
+	verify_school_ou(person.sNr, co, lo, baseDN)
+	# check if needed subtree exists, this should not be neccessary be after verify of the ou but we may crash if someone makes changes by hand
+	more_instances = 1
+	container_position = baseDN
+	while more_instances:
+		container_position = person.getPosition_dn()[string.rfind(person.getPosition_dn(),",",0,
+															  len(person.getPosition_dn())-len(container_position)-1)+1:]
+		if container_position == person.getPosition_dn():
+			more_instances = 0
+		if container_position[:2] == "cn":
+			verify_container(container_position, cn_module, co, lo, superordinate, baseDN)
+		elif container_position[:2] == "ou":
+			verify_container(container_position, ou_module, co, lo, superordinate, baseDN)
+		else: print "WARNING: unknown container type",container_position
+
+
+	groups = person.default_groups()
+	for group in groups:
+		verify_group(group, co, lo, superordinate, baseDN)
+	for cnr in person.cNr:
+		verify_group_share(person.sNr,cnr,co,lo,superordinate,baseDN)
+
+	position=univention.admin.uldap.position(baseDN)
+	position.setDn(person.getPosition_dn())
+
+	object=user_module.object(co, lo, position=position, superordinate=superordinate)
+	count_lo()
+	object.open()
+
+	object["username"]=person.login
+	object["primaryGroup"]=groups[0]
+	if len(groups) > 1:
+		object["groups"]=groups[1:]
+	object["unixhome"]="/home/"+person.login
+	if object.has_key('mailbox'):
+		object["mailbox"]="/var/spool/%s/"%person.login
+	object["password"]=password
+	object["firstname"]=person.name
+	object["lastname"]=person.sname
+	object["e-mail"]=person.mail
+	if object.has_key('mailPrimaryAddress'):
+		object['mailPrimaryAddress']=person.mail
+	if person.isActive == "1":
+		object["disabled"]="0"
+	else:
+		object["disabled"]="1"
+	object["pwdChangeNextLogin"]="1"
+
+	try:
+		if not create_object(object) == "1":
+			lo.modify(person.getDN(),[("departmentNumber",[],person.allsNrs)])
+			count_lo()
+			print "created:",person.getDN()
+			created_users[person.login]=password
+		else:
+			print "ERROR: there were problems creating this user:",person.getDN()
+			person.problem_hints = person.problem_hints + "ERROR: there were problems creating this user: "+person.getDN()+"\n"
+
+	except:
+		print "ERROR:", sys.exc_info()[0], sys.exc_info()[1]
+		print "ERROR: create this user manually:",person.getDN()
+		traceback.print_exc (100, sys.stdout)
+		person.problem_hints = person.problem_hints + "ERROR: create this user manually: " + person.getDN()+"\n"
+
+	return 1
+
+def import_user():
+	# argument is infile
+	if len(sys.argv)>1:
+		infile = sys.argv[1]
+	else:
+		print "must have one Argument for infile"
+		sys.exit()
+
+	print "infile is  : "+infile
+	inf = open(infile,'r')
+
+        if not os.path.exists("/root/sfb"):
+                os.mkdir("/root/sfb")
+                print "created /root/sfb"
+
+	# outfile for passwords of created users
+	outfile = None
+	#outfile = "/root/sfb/create-user-passwd-%s.csv" % time.strftime("%Y%m%d-%H%M%S")
+	#outf = open(outfile,'w')
+
+#	if len(sys.argv)>2:
+#		outfile = sys.argv[2]
+#		print "outfile is : ./"+outfile
+#		if os.path.exists(outfile):
+#			print 'outfile %s does already exist. Stopping here.' % outfile
+#			sys.exit()
+#		outf = open(outfile,'w')
+
+	problem_hints=""
+	passwd_used=1
+	linecnt=0
+
+	line=inf.readline()
+	while not line=="":
+		linecnt += 1
+		print 'Processing line %d: %s' % (linecnt, line),
+		try:
+			main_person = sfb_person_modify(line)
+		except:
+			msg = 'ERROR: Problems parsing line, skipped: %d: %s' % (linecnt, line)
+			print msg
+			traceback.print_exc (100, sys.stdout)
+			problem_hints += msg + '\n'
+			## read next line
+			line = inf.readline()
+			continue
+
+		persons = [main_person]
+		persons.extend(main_person.getOtherPersons())
+		passwd = create_passwd()
+		# passwd = '12345678'
+
+		if main_person.modtype == "A":
+			#if passwd_used:
+			#	passwd=''
+			#	passwd_used=0
+			for person in persons:
+				try:
+					#if passwd=='':
+					#	create password, only if not already done. So one user has the same initial passwd in all his accounts
+					#	passwd=get_passwd()
+					#	passwd_used=0
+					#if create_user(person, baseDN, user_module, passwd):
+					#	passwd_used=1
+					result = create_user(person, baseDN, user_module, passwd)
+					if result and outfile:
+						outf.write('%s\t%s\t%s\t%s\t%s\t%s\t%s\n' % (person.sNr, ','.join(person.cNr), person.sname, person.name, passwd, person.mail, person.login))
+				except:
+					msg = "ERROR: There were problems creating this user: " + str(person.getDN())
+					print msg
+					traceback.print_exc (100, sys.stdout)
+					person.problem_hints += msg + "\n"
+
+		elif main_person.modtype in ["M","D"]:
+			# look if there are exsiting persons in other ou's remaining, this will fail if the users's departmentNumbers
+			# are changed manually
+			filter=univention.admin.filter.conjunction("|",[univention.admin.filter.expression('uid',"%s_*"%main_person.login),
+															univention.admin.filter.expression('uid',"%s"%main_person.login)])
+			objects = univention.admin.modules.lookup(user_module, co, lo, scope='sub', superordinate=superordinate, base=baseDN,
+											  filter=filter)
+			count_lo()
+			found = []
+			for object in objects:
+				ou=object.dn[string.find(object.dn,"ou=")+3:string.find(object.dn,",",string.find(object.dn,"ou=")+3)]
+				# teacher or student
+				if 'cn=schueler,cn=users' in object.dn:
+					main_person.isTeacher = '0'
+				else:
+					main_person.isTeacher = '1'
+
+				if ou in main_person.allsNrs:
+					found.append(ou)
+				else:
+					main_person.problem_hints += "delete unmentioned user %s \n"%object.dn
+					main_person.problem_hints += delete_dn(object.dn,user_module,co,lo)
+
+			for person in persons:
+				if person.modtype == "M":
+					if person.sNr in found:
+						try:
+							modify_user(person, user_module, co, lo)
+						except:
+							msg = "ERROR: There were problems modifying this user: "  + str(person.getDN())
+							print msg
+							traceback.print_exc (100, sys.stdout)
+							person.problem_hints += msg + "\n"
+					else:
+						try:
+							print "WARNING: user to modify not found, ",
+							result = create_user(person, baseDN, user_module, passwd)
+							if result and outfile:
+								outf.write('%s\t%s\t%s\t%s\t%s\t%s\t%s\n' % (person.sNr, ','.join(person.cNr), person.sname, person.name, passwd, person.mail, person.login))
+						except:
+							msg = "ERROR: There were problems creating this user: "  + str(person.getDN())
+							print msg
+							traceback.print_exc (100, sys.stdout)
+							person.problem_hints += msg + "\n"
+
+				else: # main_person.modtype == "D":
+					# NOTE: there is no need for this try-catch-block because delete_dn handles exceptions by itself
+					#try:
+					delete_user(person, user_module, co, lo)
+					#except:
+						#msg = "There were problems deleting this user:" , person.getDN()
+						#print msg
+						#traceback.print_exc (100, sys.stdout)
+						#person.problem_hints += msg + "\n"
+
+				main_person.problem_hints += person.problem_hints
+		else:
+			print "WARNING: unknown operation type:",main_person.modtype
+			main_person.problem_hints += "unknown operation type for this user: "+main_person.getDN()+"\n"
+
+		problem_hints += main_person.problem_hints
+
+		#print 'Processing of line %d completed' % linecnt
+
+		# read next line
+		line=inf.readline()
+
+	if outfile:
+		outf.close()
+
+	# report created users
+	message=""
+	#if not created_users.keys() == []:
+	#	message = "The following Users/Passwords were created. Please change the Password immediatly !\n\n\n"
+	#	for el in created_users.keys():
+	#		message = message+ el + " - " + created_users[el] +"\n"
+
+	if not problem_hints == "":
+		message = message + "\n\nProblems during last run:\n\n" + problem_hints
+
+	print message
+
+def create_networks(schoolNr, networks):
+	verify_school_ou(schoolNr, co, lo, baseDN)
+
+	for net in networks:
+		if check_network(schoolNr,net):
+			print "Network %s exists in school %s!"%(net,schoolNr)
+			continue
+		octals=net.split('.')
+		subnet='%s.%s.%s'%(octals[0],octals[1],octals[2])
+		print "generate net %s (subnet %s)"%(net,subnet)
+
+		position.setDn("cn=dns,%s"%(baseDN))
+		object=dns_reverse_zone_module.object(co, lo, position=position, superordinate=superordinate)
+		count_lo()
+		object.open()
+		object['subnet']=subnet
+		object['nameserver']=configRegistry['ldap/master']
+		object['contact']='root@%s'%domainname
+		create_object(object)
+
+		position.setDn("cn=%s,cn=dhcp,ou=%s,%s"%(schoolNr,schoolNr,baseDN))
+		object=dhcp_service_module.object(co, lo, position=position, superordinate=superordinate)
+		count_lo()
+		object=dhcp_subnet_module.object(co, lo, position=position, superordinate=dhcp_subnet_module)
+		count_lo()
+		object.open()
+		object['subnet']=net
+		object['subnetmask']='255.255.255.0'
+		create_object(object)
+
+		position.setDn("cn=networks,ou=%s,%s"%(schoolNr,baseDN))
+		object=network_module.object(co, lo, position=position, superordinate=superordinate)
+		count_lo()
+		object.open()
+		object['name']='%s-%s'%(schoolNr,net)
+		object['netmask']='24'
+		object['network']=net
+		object['dhcpEntryZone']='cn=%s,cn=dhcp,ou=%s,%s'%(schoolNr,schoolNr,baseDN)
+		object['dnsEntryZoneForward']='zoneName=%s,cn=dns,%s'%(domainname,baseDN)
+		object['dnsEntryZoneReverse']='zoneName=%s.%s.%s.in-addr.arpa,cn=dns,%s'%(octals[2],octals[1],octals[0],baseDN)
+		object['ipRange']=[['%s.20'%subnet,'%s.250'%subnet]]
+		create_object(object)
+
+def check_network(schoolNr, net):
+	objects = univention.admin.modules.lookup(network_module, co, lo, scope='sub', superordinate=superordinate,
+											  base='cn=networks,ou=%s,%s'%(schoolNr,baseDN),
+											  filter=univention.admin.filter.expression('cn','%s-%s'%(schoolNr,net)))
+	count_lo()
+	net_exists=0
+	if objects:
+		for object in objects:
+			if object.dn == "cn=%s-%s,cn=networks,ou=%s,%s"%(schoolNr,net,schoolNr,baseDN):
+				net_exists = 1
+
+	return net_exists
+
+def check_macAddress(mac,base=''):
+	if not base:
+		base=baseDN
+	result=lo.search(base=base, scope='sub',filter='(macAddress=%s)'%mac,attr=['macAddress'])
+	count_lo()
+
+	if result and result[0][1]['macAddress'][0]==mac:
+			return result[0][0]
+
+def generate_new_mac(schoolNr,IP):
+	ipnum=string.replace(IP,'.','')
+	if IP:
+		mac_start = '%s:%s:%s:%s:'%(schoolNr[:2],schoolNr[-2:],ipnum[:2],ipnum[-2:])
+	else:
+		mac_start = '%s:%s:00:00:'%(schoolNr[:2],schoolNr[-2:],ipnum[:2],ipnum[-2:])
+	mac='%s00:00'%mac_start
+	i=10
+	j=10
+	while check_macAddress(mac,base='cn=computers,ou=%s,%s'%(schoolNr,baseDN)):
+		if i==99:
+			i=10
+			j+=1
+		else:
+			i+=1
+		mac='%s%s:%s'%(mac_start,i,j)
+
+	return mac
+
+def check_computer(module, name, schoolNr):
+	objects = univention.admin.modules.lookup(module, co, lo, scope='sub', superordinate=superordinate,
+											  base='cn=computers,ou=%s,%s'%(schoolNr,baseDN),
+											  filter=univention.admin.filter.expression('cn','%s'%name))
+	count_lo()
+	computer_exists=0
+	if objects:
+		for object in objects:
+			if object.dn == "cn=%s,cn=computers,ou=%s,%s"%(name,schoolNr,baseDN):
+				computer_exists = 1
+
+	return computer_exists
+
+def get_computer_dn(name):
+	module = univention.admin.modules.get("computers/computer")
+	objects = univention.admin.modules.lookup(module, co, lo, scope='sub', superordinate=superordinate, filter=univention.admin.filter.expression('cn','%s'%name))
+	if objects:
+		for object in objects:
+			if object.dn.startswith("cn=%s," %name):
+				return object.dn
+	return None
+
+def import_networks():
+	# argument is infile
+	if len(sys.argv)>1:
+		infile = sys.argv[1]
+	else:
+		print "must have one Argument for infile"
+		sys.exit()
+
+	print "infile is  : "+infile
+	inf = open(infile,'r')
+
+	problem_hints=""
+
+	line=inf.readline()
+	while not line=="":
+
+		parsed=line[:-1].split(sepchar)
+
+		schoolNr = parsed[0]
+		network  = parsed[1]
+
+		network=string.replace(network,' ','')
+		networks=network.split(',')
+
+		create_networks(schoolNr, networks)
+
+		# read next line
+		line=inf.readline()
+
+def set_inventory_number_for_computer():
+	# argument is infile
+	if len(sys.argv)>1:
+		infile = sys.argv[1]
+	else:
+		print "must have one Argument for infile"
+		sys.exit()
+
+	print "infile is  : "+infile
+	inf = open(infile,'r')
+
+	problem_hints=""
+
+	line=inf.readline()
+	while not line == "":
+
+		parsed=line.split(sepchar)
+		ctype    = parsed[0]
+		name     = parsed[1]
+		MAC      = parsed[2]
+		inventoryNumbers = parsed[3].strip().split(',')
+
+		dn = get_computer_dn(name)
+		if not dn:
+			print "Computer to modify not found: %s" % name
+			problem_hints = problem_hints + "Computer to modify not found: %s" % name
+		else:
+			try:
+				computerModule = univention.admin.modules.get("computers/%s"%ctype)
+			except:
+				print "failed to get module of type computers/%s" % ctype
+				traceback.print_exc (100, sys.stdout)
+				problem_hints = problem_hints + "failed to get module of type computers/%s" % ctype
+				line=inf.readline()
+				continue
+			computerObject = univention.admin.objects.get(computerModule, co, lo, position='', dn=dn, arg='')
+			computerObject.open()
+			if computerObject['mac'] == MAC.replace('-',':').replace(' ',':').lower():
+				try:
+					computerObject['inventoryNumber'] = inventoryNumbers
+					computerObject.modify()
+					print "modified inventory Number for %s" % dn
+				except:
+					print "failed to modify computer %s" % name
+					traceback.print_exc (100, sys.stdout)
+					problem_hints = problem_hints + "failed to modify computer %s" % name
+			else:
+				print "mac address does not match while modifying %s" % name
+				problem_hints = problem_hints + "mac address does not match while modifying %s" % name
+
+		line=inf.readline()
+
+
+def import_computer():
+	# argument is infile
+	if len(sys.argv)>1:
+		infile = sys.argv[1]
+	else:
+		print "must have one Argument for infile"
+		sys.exit()
+
+	print "infile is  : "+infile
+	inf = open(infile,'r')
+
+	problem_hints=""
+	linecnt=0
+
+	line=inf.readline()
+	while not line=="":
+		linecnt += 1
+		print 'Processing line %d: %s' % (linecnt, line),
+
+		parsed=line.split(sepchar)
+
+		ctype    = parsed[0]
+		name     = parsed[1]
+		MAC      = parsed[2]
+		schoolNr = parsed[3]
+		IP       = parsed[4]
+		IP=string.replace(IP,' ','')
+		IP=string.replace(IP,'\n','')
+		inventoryNumbers = parsed[5].strip().split(',')
+
+		verify_school_ou(schoolNr, co, lo, baseDN)
+
+		octals=IP.split('.')
+		subnet='%s.%s.%s'%(octals[0],octals[1],octals[2])
+		net = '%s.0'%subnet
+
+		module = univention.admin.modules.get("computers/%s"%ctype)
+		if check_computer(module,name,schoolNr):
+			print "computer %s already exists (school %s)"%(name,schoolNr)
+		else:
+			mac_used=check_macAddress(MAC)
+			if mac_used:
+				old_mac=MAC
+				MAC=generate_new_mac(schoolNr,IP)
+				print 'mac %s already used, set mac to %s (resolve manually)'%(old_mac,MAC)
+
+			print "generate computer %s (school %s)"%(name,schoolNr)
+
+			if not check_network(schoolNr,net):
+				create_networks(schoolNr,[net])
+
+			position.setDn("cn=computers,ou=%s,%s"%(schoolNr,baseDN))
+			object=module.object(co, lo, position=position, superordinate=superordinate)
+			count_lo()
+			object.open()
+			object['name']=name
+			object['mac']=MAC
+			object['network']='cn=%s-%s,cn=networks,ou=%s,%s'%(schoolNr,net,schoolNr,baseDN)
+			object['inventoryNumber']=inventoryNumbers
+			if not IP==net:
+				object['ip']=IP
+				print "set ip to %s is not net %s"%(IP,net)
+			try:
+				create_object(object)
+			except:
+				print "WARNING: Error creating computer %s"%object.dn
+				traceback.print_exc (100, sys.stdout)
+
+		print 'Processing of line %d completed' % linecnt
+
+		# read next line
+		line=inf.readline()
+
+def import_group():
+	# argument is infile
+	if len(sys.argv)>1:
+		infile = sys.argv[1]
+	else:
+		print "must have one Argument for infile"
+		sys.exit()
+
+	print "infile is  : "+infile
+	inf = open(infile,'r')
+
+	problem_hints=""
+
+	line=inf.readline()[:-1]
+	while not line=="":
+
+		parsed=line.split(sepchar)
+
+		action = parsed[0]   # action=A(dd, M(odify, D(elete
+		schoolNr = parsed[1]
+		ClassID = parsed[2]
+		Descrpt = parsed[3]
+
+		group_dn="cn=%s,cn=klassen,cn=schueler,cn=groups,ou=%s,%s"%(ClassID,schoolNr,baseDN)
+		share_dn="cn=%s,cn=klassen,cn=shares,ou=%s,%s"%(ClassID,schoolNr,baseDN)
+
+		if action in ['A','M']:	# Add/Modify group
+## 			verify_group(group_dn, co, lo, superordinate, baseDN)
+## 			object = univention.admin.objects.get(group_module, co, lo, position='', dn=group_dn, arg='')
+## 			object.open()
+## 			object['description']=Descrpt
+## 			object.modify()
+## 			verify_group_share(schoolNr, ClassID, co, lo, superordinate, baseDN)
+
+
+## 		elif action == 'M':	# M)odify group
+			verify_group(group_dn, co, lo, superordinate, baseDN)
+			object = univention.admin.objects.get(group_module, co, lo, position='', dn=group_dn, arg='')
+			count_lo()
+			object.open()
+			oldDescrpt = object['description']
+			object['description']=Descrpt
+			print "Changed Description of %s from %s to %s"%(group_dn, oldDescrpt, Descrpt)
+			object.modify()
+			verify_group_share(schoolNr, ClassID, co, lo, superordinate, baseDN)
+
+		elif action == 'D':	# D)elete group
+			delete_dn(group_dn, group_module, co, lo)
+			delete_dn(share_dn, group_module, co, lo)
+
+
+		line=inf.readline()[:-1]
+
+def activate_groupmembers():
+	#  syntax: $0 <groupXXX> [0|1] [0|1]"
+	# <groupXXX>    group
+	# [0|1]         optional: deactivate | activate
+	# [0|1]         optional: keep passwords | set random passwords
+
+	chgrp = 1
+	chpasswd = 0
+	status = None
+
+	if len(sys.argv) < 2:
+		print 'must have at least one argument'
+		print 'activate_groupmembers <groupXXX> <newStatus> <changePassword>'
+		print ''
+		print '<groupXXX>        group that shall be dis-/enabled'
+		print '<newstatus>       0=disabled, 1=enabled'
+		print '<changePassword>  0=keep passwords, 1=set random passwords'
+		print '                  the logfile groupXXX.csv contains all activated users'
+		sys.exit()
+	if len(sys.argv) > 1:
+		actgrp = sys.argv[1]
+	if len(sys.argv) > 2:
+		status = int(sys.argv[2])
+	if len(sys.argv) > 3:
+		chpasswd = int(sys.argv[3])
+
+	if status not in [0,1]:
+		print 'invalid value for <newstatus>!'
+		sys.exit()
+	elif chpasswd not in [0,1]:
+		print 'invalid value for <changePassword>!'
+		sys.exit()
+
+	# inverted logic
+	disabled=str( 1 - status )
+
+	###
+
+	if not os.path.exists("/root/sfb"):
+		os.mkdir("/root/sfb")
+		print "created /root/sfb"
+
+	# outfile = os.path.basename(actgrp+'.csv')
+	outfile = "/root/sfb/activate-grp-%s-%s.csv" % (time.strftime("%Y%m%d-%H%M%S"), actgrp)
+	print "outfile is : "+outfile
+	if os.path.exists(outfile):
+		print 'outfile %s does already exist. Stopping here.' % outfile
+		sys.exit()
+	outf = open(outfile,'w')
+
+
+	# get group
+	objects = univention.admin.modules.lookup(group_module, co, lo, scope='sub', superordinate=superordinate, base=baseDN,
+											  filter=univention.admin.filter.expression('cn',actgrp))
+	for grp in objects:
+
+		# get group members
+		if "uniqueMember" in grp.oldattr:
+			grpmembers = grp.oldattr["uniqueMember"]
+			for memberdn in grpmembers:
+
+				membergrplist = ""
+				grpobjlist = univention.admin.modules.lookup(group_module, co, lo, scope='sub', superordinate=superordinate, base=baseDN,
+														  filter=univention.admin.filter.expression('uniqueMember', memberdn))
+				for grpobj in grpobjlist:
+					if grpobj.dn != grp.dn:
+						if len(membergrplist):
+							membergrplist += "," + grpobj.oldattr["cn"][0]
+						else:
+							membergrplist += grpobj.oldattr["cn"][0]
+
+				# modify each member
+				memberobj = univention.admin.objects.get(user_module, co, lo, position='', dn=memberdn, arg='')
+				count_lo()
+				memberobj.open()
+
+				memberobj['disabled'] = str(disabled)
+				memberobj.modify()
+
+				print memberdn,
+				if status == 0:
+					print 'deactivated',
+				else:
+					print 'activated',
+
+				passwd = '*'
+				if chpasswd:
+					passwd = create_passwd()
+					memberobj['password'] = passwd
+					memberobj['overridePWHistory'] = '1'
+					memberobj['overridePWLength'] = '1'
+					memberobj.modify()
+					print 'and set random password',
+
+				# write csv line
+				snr = memberdn[ memberdn.find('ou=') + 3 : ]
+				snr = snr[ : snr.find(',') ]
+				outf.write('%s\t%s\t%s\t%s\t%s\t%s\t%s\n' % (snr, actgrp, memberobj['firstname'], memberobj['lastname'], passwd, memberobj['mailPrimaryAddress'], membergrplist))
+
+				print
+
+	outf.close()
+
+def export_computer():
+	#  syntax: $0 <ou> <filename>"
+	# <ou>        computers of OU <ou> shall be exported
+	# <filename>  output filename
+
+	if len(sys.argv) != 3:
+		print 'must have at least two arguments'
+		print 'export_computer <ou> <output-filename>'
+		print ''
+		sys.exit()
+	ou = sys.argv[1]
+	outfile = sys.argv[2]
+
+	# outfile = os.path.basename(actgrp+'.csv')
+	print "outfile is : "+outfile
+	if os.path.exists(outfile):
+		print 'outfile %s does already exist. Stopping here.' % outfile
+		sys.exit()
+	outf = open(outfile,'w')
+
+	ouBaseDN = "ou=%s,%s" % (ou, baseDN)
+
+	# get group
+	print 'looking for objects... please wait...'
+	objects = univention.admin.modules.lookup(computer_module, co, lo, scope='sub', superordinate=superordinate, base=ouBaseDN, filter=None)
+	print 'writing data of %d objects...' % len(objects)
+	for host in objects:
+		host.open()
+		inventoryNumber = ''
+		ip = ''
+		mac = ''
+		if host.has_key('inventoryNumber') and host['inventoryNumber']:
+			inventoryNumber = host['inventoryNumber'][0]
+		if host.has_key('ip') and host['ip']:
+			ip = host['ip'][0]
+		if host.has_key('mac') and host['mac']:
+			mac = host['mac'][0]
+#		Name,OU,1.Zeile Inventar-Nr.,IP-Adresse
+		outf.write('%s\t%s\t%s\t%s\t%s\n' % (host['name'], ou, inventoryNumber, ip, mac))
+	outf.close()
+
+#------------------------------------------------------------------------------------------#
+
+# init univention-directory-manager
+
+baseDN=configRegistry['ldap/base']
+tls=2
+
+secretFile=open('/etc/ldap.secret','r')
+pwdLine=secretFile.readline()
+pwd=re.sub('\n','',pwdLine)
+
+locounts=0
+try:
+	lo=univention.admin.uldap.access(host=configRegistry['ldap/master'], base=baseDN, binddn='cn=admin,'+baseDN, bindpw=pwd, start_tls=tls)
+except Exception, e:
+	univention.debug.debug(univention.debug.ADMIN, univention.debug.WARN, 'authentication error: %s' % str(e))
+	print 'ERROR: authentication error: %s' % str(e)
+	sys.exit(1)
+
+co=univention.admin.config.config()
+user_module=univention.admin.modules.get("users/user")
+group_module=univention.admin.modules.get("groups/group")
+cn_module=univention.admin.modules.get("container/cn")
+ou_module=univention.admin.modules.get("container/ou")
+server_module=univention.admin.modules.get("computers/domaincontroller_slave")
+share_module=univention.admin.modules.get("shares/share")
+computer_module=univention.admin.modules.get("computers/computer")
+
+dhcp_server_module=univention.admin.modules.get("dhcp/server")
+dhcp_service_module=univention.admin.modules.get("dhcp/service")
+dhcp_subnet_module=univention.admin.modules.get("dhcp/subnet")
+
+dns_reverse_zone_module=univention.admin.modules.get("dns/reverse_zone")
+
+network_module=univention.admin.modules.get("networks/network")
+
+position=univention.admin.uldap.position(baseDN)
+superordinate=None
+
+# get default group
+default_group = "cn=Domain Users,cn=groups,%s"%ldap_base # fallback
+setting_module = univention.admin.modules.get("settings/default")
+for object in univention.admin.modules.lookup(setting_module, co, lo, scope='sub', superordinate=superordinate, base='', filter=''):
+	if object.has_key("defaultGroup"):
+		default_group=object["defaultGroup"]
+	else: print "WARNING, no default group found"
+count_lo()
+
+# select action
+if sys.argv[0].endswith("import_user") or sys.argv[0].endswith("SFB_import"):
+	import_user()
+elif sys.argv[0].endswith("import_networks"):
+	import_networks()
+elif sys.argv[0].endswith("import_computer"):
+	import_computer()
+elif sys.argv[0].endswith("import_inventory_number"):
+	set_inventory_number_for_computer()
+elif sys.argv[0].endswith("import_group"):
+	import_group()
+elif sys.argv[0].endswith("create_ou"):
+	# argument is schoolNr
+	if len(sys.argv)>1:
+		schoolNr = sys.argv[1]
+	else:
+		print "must have one Argument for schoolNr"
+		sys.exit()
+	verify_school_ou(schoolNr, co, lo, baseDN)
+elif sys.argv[0].endswith("activate_groupmembers"):
+	activate_groupmembers()
+elif sys.argv[0].endswith("export_computer"):
+	export_computer()
+else:
+	print "unknown action defined by the filename"

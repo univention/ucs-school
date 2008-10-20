@@ -1,0 +1,101 @@
+#!/usr/bin/make -f
+# Sample debian/rules that uses debhelper.
+# GNU copyright 1997 to 1999 by Joey Hess.
+
+DM=$(CURDIR)/debian/sfb-restore-management-master
+DS=$(CURDIR)/debian/sfb-restore-management-slave
+
+# Uncomment this to turn on verbose mode.
+#export DH_VERBOSE=1
+
+ifneq (,$(findstring debug,$(DEB_BUILD_OPTIONS)))
+	CFLAGS += -g
+endif
+ifeq (,$(findstring nostrip,$(DEB_BUILD_OPTIONS)))
+	INSTALL_PROGRAM += -s
+endif
+
+configure: configure-stamp
+configure-stamp:
+	dh_testdir
+	# Add here commands to configure the package.
+
+	touch configure-stamp
+
+
+build: build-stamp
+
+build-stamp: configure-stamp 
+	dh_testdir
+
+	# Add here commands to compile the package.
+
+	touch build-stamp
+
+clean:
+	dh_testdir
+	dh_testroot
+	rm -f build-stamp configure-stamp
+
+	# Add here commands to clean up after the build process.
+
+	dh_clean
+
+install: build
+	dh_testdir
+	dh_testroot
+	dh_clean -k
+	dh_installdirs
+
+	univention-install-config-registry
+
+#   master packet
+	install -m 755 -o root -g root -d ${DM}/usr/share/univention-ldap/schema
+	install -m 644 sfb-restore-management.schema ${DM}/usr/share/univention-ldap/schema
+
+#   slave packet
+	install -m 755 -o root -g root -d ${DS}/usr/sbin
+	install -m 755 -o root -g root -d ${DS}/var/log/sfb
+	install -m 755 -o root -g root -d ${DS}/var/log/univention/pipes/
+	install -m 755 -o root -g root -d ${DS}/usr/lib/univention-directory-listener/system
+	install -m 755 sfb-rmm ${DS}/usr/sbin
+	install -m 755 sfb-rmm-daemon ${DS}/usr/sbin
+	install -m 755 sfb-rmm.py ${DS}/usr/lib/univention-directory-listener/system
+
+
+# Build architecture-independent files here.
+binary-indep: build install
+# We have nothing to do by default.
+
+# Build architecture-dependent files here.
+binary-arch: build install
+	dh_testdir
+	dh_testroot
+#	dh_installdebconf	
+#	dh_installdocs
+	dh_installexamples
+	dh_installmenu
+#	dh_installlogrotate
+#	dh_installemacsen
+#	dh_installpam
+#	dh_installmime
+	dh_installinit
+#	dh_installcron
+	dh_installman
+	dh_installinfo
+#	dh_undocumented
+	dh_installchangelogs 
+	dh_link
+	dh_strip
+	dh_compress
+	dh_fixperms
+#	dh_makeshlibs
+	dh_installdeb
+#	dh_perl
+	dh_shlibdeps
+	dh_gencontrol
+	dh_md5sums
+	dh_builddeb
+
+binary: binary-indep binary-arch
+.PHONY: build clean binary-indep binary-arch binary install configure

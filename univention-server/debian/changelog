@@ -1,0 +1,420 @@
+univention-server (2.2.100-1) unstable; urgency=low
+
+  * fixed restart of samba on password change of local machine account
+
+ -- Sönke Schwardt <schwardt@univention.de>  Thu, 11 Sep 2008 11:57:44 +0200
+
+univention-server (2.2.12-1) unstable; urgency=low
+
+  * redirect the normal output to /dev/null in check_connection
+
+ -- Stefan Gohmann <gohmann@univention.de>  Wed, 28 Nov 2007 08:25:28 +0100
+
+univention-server (2.2.11-1) unstable; urgency=low
+
+  * fix a syntax error in the chech_connection cron job on managed and
+    mobile clients
+
+ -- Stefan Gohmann <gohmann@univention.de>  Fri,  9 Nov 2007 07:17:39 +0100
+
+univention-server (2.2.10-2) unstable; urgency=low
+
+  * the check_connection script on a managed client is now under
+    /usr/share/univention-managed-client instead of
+    /usr/share/univention-fat-client
+
+ -- Stefan Gohmann <gohmann@univention.de>  Wed,  7 Nov 2007 12:53:09 +0100
+
+univention-server (2.2.10-1) unstable; urgency=low
+
+  * unset the baseconfig var ldap/server/addition only if the value is
+    set
+
+ -- Stefan Gohmann <gohmann@univention.de>  Wed, 24 Oct 2007 13:00:31 +0200
+
+univention-server (2.2.9-1) unstable; urgency=low
+
+  * change path in managedclient bootsplah from fatclient to
+    managedclient
+
+ -- Stefan Gohmann <gohmann@univention.de>  Wed, 24 Oct 2007 07:49:37 +0200
+
+univention-server (2.2.8-2) unstable; urgency=low
+
+  * Add dependencies on univention-archive-key to all system roles.
+
+ -- Moritz Muehlenhoff <muehlenhoff@univention.de>  Wed, 17 Oct 2007 14:27:57 +0200
+
+univention-server (2.2.8-1) unstable; urgency=low
+
+  * switch the bootsplash theme from fatclient to managedclient
+
+ -- Stefan Gohmann <gohmann@univention.de>  Wed, 17 Oct 2007 09:52:31 +0200
+
+univention-server (2.2.7-1) unstable; urgency=low
+
+  * fixed policy handling in startup scripts
+
+ -- Stefan Gohmann <gohmann@univention.de>  Wed, 17 Oct 2007 09:37:42 +0200
+
+univention-server (2.2.6-2) unstable; urgency=low
+
+  * depend on univention-lilo or univention-grub
+
+ -- Stefan Gohmann <gohmann@univention.de>  Wed, 10 Oct 2007 13:10:53 +0200
+
+univention-server (2.2.6-1) unstable; urgency=low
+
+  * fixed policy handling in startup scripts
+
+ -- Sönke Schwardt <schwardt@univention.de>  Tue, 02 Oct 2007 15:44:33 +0200
+
+univention-server (2.2.5-1) unstable; urgency=low
+
+  * fixed logfile permissions
+  * added mapping of old 1.3-2 policy names to new 2.0-0 policy names
+    for mobile clients and managed clients
+
+ -- Sönke Schwardt <schwardt@univention.de>  Mon, 01 Oct 2007 15:44:13 +0200
+
+univention-server (2.2.4-6) unstable; urgency=low
+
+  * depend on openssh-server instead of ssh
+
+ -- Stefan Gohmann <gohmann@univention.de>  Thu, 27 Sep 2007 10:25:18 +0200
+
+univention-server (2.2.4-5) unstable; urgency=low
+
+  * call univention-baseconfig shell in the univention-server master postinst
+    script.
+
+ -- Stefan Gohmann <gohmann@univention.de>  Mon, 17 Sep 2007 15:58:44 +0200
+
+univention-server (2.2.4-4) unstable; urgency=low
+
+  * make the pre dependency to univention-config-registry obsolete
+
+ -- Stefan Gohmann <gohmann@univention.de>  Mon, 17 Sep 2007 10:46:38 +0200
+
+univention-server (2.2.4-3) unstable; urgency=low
+
+  * remove univention-config-registry dependency for univention-server-
+    master
+
+ -- Stefan Gohmann <gohmann@univention.de>  Mon, 17 Sep 2007 10:23:55 +0200
+
+univention-server (2.2.4-2) unstable; urgency=low
+
+  * change dependency to ntp or ntp-server. The ntp package replaces the
+    ntp-server package
+
+ -- Stefan Gohmann <gohmann@univention.de>  Fri, 14 Sep 2007 14:53:27 +0200
+
+univention-server (2.2.4-1) unstable; urgency=low
+
+  * change package priority from optional to standard
+
+ -- Stefan Gohmann <gohmann@univention.de>  Fri, 14 Sep 2007 13:47:05 +0200
+
+univention-server (2.2.3-2) unstable; urgency=low
+
+  * more dependency/wording stuff
+
+ -- Stefan Gohmann <gohmann@univention.de>  Fri, 31 Aug 2007 15:15:04 +0200
+
+univention-server (2.2.3-1) unstable; urgency=low
+
+  * use the correct red color for the bootsplah progessbar on DC Backup
+
+ -- Stefan Gohmann <gohmann@univention.de>  Wed, 29 Aug 2007 08:50:12 +0200
+
+univention-server (2.2.2-1) unstable; urgency=low
+
+  * new bootsplash images
+
+ -- Stefan Gohmann <gohmann@univention.de>  Mon, 27 Aug 2007 12:10:59 +0200
+
+univention-server (2.1.6-1) unstable; urgency=low
+
+  * install hibernate and acpid on a mobile client
+  * install acpid on a managed client
+
+ -- Stefan Gohmann <gohmann@univention.de>  Fri, 24 Aug 2007 14:10:37 +0200
+
+univention-server (2.1.5-1) unstable; urgency=low
+
+  * install univention-system-setup on Managed and Mobile Clients
+
+ -- Stefan Gohmann <gohmann@univention.de>  Thu, 23 Aug 2007 14:54:21 +0200
+
+univention-server (2.1.4-1) unstable; urgency=low
+
+  * don't create /usr/share/univention-install/.joined in univention-
+    server-master preinst
+
+ -- Stefan Gohmann <gohmann@univention.de>  Wed, 22 Aug 2007 12:07:58 +0200
+
+univention-server (2.1.3-1) unstable; urgency=low
+
+  * check if makepasswd returned an empty password during the server password
+    change
+
+ -- Stefan Gohmann <gohmann@univention.de>  Wed, 22 Aug 2007 08:26:12 +0200
+
+univention-server (2.1.2-11) unstable; urgency=low
+
+  * Depend on univention-system-setup
+
+ -- Moritz Muehlenhoff <muehlenhoff@univention.de>  Wed,  8 Aug 2007 13:54:12 +0200
+
+univention-server (2.1.2-10) unstable; urgency=low
+
+  * Adapt to Univention Directory Replication
+
+ -- Moritz Muehlenhoff <muehlenhoff@univention.de>  Wed,  8 Aug 2007 13:44:07 +0200
+
+univention-server (2.1.2-9) unstable; urgency=low
+
+  * Adapt to Univention Directory Listener
+
+ -- Moritz Muehlenhoff <muehlenhoff@univention.de>  Wed,  8 Aug 2007 13:36:13 +0200
+
+univention-server (2.1.2-8) unstable; urgency=low
+
+  * added a meta package for the basesystem
+  * depend on univention-grub
+
+ -- Stefan Gohmann <gohmann@univention.de>  Tue,  7 Aug 2007 15:19:37 +0200
+
+univention-server (2.1.2-7) unstable; urgency=low
+
+  * more wording change univention-config-registry and univention-
+    baseconfig
+
+ -- Stefan Gohmann <gohmann@univention.de>  Fri,  3 Aug 2007 09:45:42 +0200
+
+univention-server (2.1.2-6) unstable; urgency=low
+
+  * Adapt to Univention Directory Replication.
+
+ -- Moritz Muehlenhoff <muehlenhoff@univention.de>  Thu,  2 Aug 2007 11:29:06 +0200
+
+univention-server (2.1.2-5) unstable; urgency=low
+
+  * Adapt to Univention Directory Policy.
+
+ -- Moritz Muehlenhoff <muehlenhoff@univention.de>  Wed,  1 Aug 2007 17:20:06 +0200
+
+univention-server (2.1.2-4) unstable; urgency=low
+
+  * Adapt to Univention Directory Policy.
+
+ -- Moritz Muehlenhoff <muehlenhoff@univention.de>  Wed,  1 Aug 2007 17:16:33 +0200
+
+univention-server (2.1.2-3) unstable; urgency=low
+
+  * Depend on univention-directory-listener and univention-directory-notifier
+    instead of univention-ldap-listener and univention-ldap-notifier
+
+ -- Moritz Muehlenhoff <muehlenhoff@univention.de>  Tue, 31 Jul 2007 12:11:32 +0200
+
+univention-server (2.1.2-2) unstable; urgency=low
+
+  * Make server and client roles depend on univention-firewall.
+
+ -- Moritz Muehlenhoff <muehlenhoff@univention.de>  Wed, 25 Jul 2007 10:37:14 +0200
+
+univention-server (2.1.2-1) unstable; urgency=low
+
+  * set bootsplash images
+
+ -- Stefan Gohmann <gohmann@univention.de>  Wed, 20 Jun 2007 16:57:05 +0200
+
+univention-server (2.1.1-6) unstable; urgency=low
+
+  * don't call univention-appendsplash and lilo in the postinst script
+
+ -- Stefan Gohmann <gohmann@univention.de>  Tue, 19 Jun 2007 06:21:03 +0200
+
+univention-server (2.1.1-5) unstable; urgency=low
+
+  * remove univention-console from the dependency list
+
+ -- Stefan Gohmann <gohmann@univention.de>  Mon, 18 Jun 2007 12:03:28 +0200
+
+univention-server (2.1.1-4) unstable; urgency=low
+
+  * remove univention-basetools from the univention-managed-client dependency
+    list
+
+ -- Stefan Gohmann <gohmann@univention.de>  Thu, 14 Jun 2007 15:31:04 +0200
+
+univention-server (2.1.1-3) unstable; urgency=low
+
+  * remove less from the package dependency list
+
+ -- Stefan Gohmann <gohmann@univention.de>  Thu, 14 Jun 2007 11:51:23 +0200
+
+univention-server (2.1.1-2) unstable; urgency=low
+
+  * encoded files utf-8
+
+ -- Janis Meybohm <meybohm@univention.de>  Wed, 13 Jun 2007 11:21:46 +0200
+
+univention-server (2.1.1-1) unstable; urgency=low
+
+  * do not change the server password if a failed.ldif exists
+
+ -- Stefan Gohmann <gohmann@univention.de>  Tue, 12 Jun 2007 14:49:31 +0200
+
+univention-server (2.1.0-6) unstable; urgency=low
+
+  * remove univention-local-users from the DC Slave dependency list
+
+ -- Stefan Gohmann <gohmann@univention.de>  Wed,  6 Jun 2007 08:59:50 +0200
+
+univention-server (2.1.0-5) unstable; urgency=low
+
+  * add univention-bind to the univention-server-master dependency
+
+ -- Stefan Gohmann <gohmann@univention.de>  Thu, 31 May 2007 15:11:21 +0200
+
+univention-server (2.1.0-4) unstable; urgency=low
+
+  * set package priority from required to optional
+
+ -- Stefan Gohmann <gohmann@univention.de>  Fri, 25 May 2007 09:56:59 +0200
+
+univention-server (2.1.0-3) unstable; urgency=low
+
+  * integrate univention-managed-client (univention-fat-client) and
+    univention-mobile-client packages form cvs
+
+ -- Stefan Gohmann <gohmann@univention.de>  Fri, 25 May 2007 08:50:26 +0200
+
+univention-server (2.0.0-2) unstable; urgency=low
+
+  * remove univention-basetools from dependency list
+
+ -- Stefan Gohmann <gohmann@univention.de>  Fri, 25 May 2007 07:45:42 +0200
+
+univention-server (2.0.0-1) unstable; urgency=low
+
+  * update to ucs 2.0 policies
+
+ -- Stefan Gohmann <gohmann@univention.de>  Thu, 24 May 2007 16:00:35 +0200
+
+univention-server (1.22) unstable; urgency=low
+
+  * add GPL headers
+
+ -- Andreas BÃŒsching <buesching@univention.de>  Mon,  4 Dec 2006 12:03:22 +0100
+
+univention-server (1.21) unstable; urgency=low
+
+  * depend on univention-setup
+
+ -- Stefan Gohmann <gohmann@univention.de>  Wed, 22 Nov 2006 17:36:44 +0100
+
+univention-server (1.20) unstable; urgency=low
+
+  * added sendmail as alternative for dependency on univention-mail*  
+
+ -- Wolf Wiegand <wiegand@univention.de>  Tue,  8 Aug 2006 18:18:49 +0200
+
+univention-server (1.19) unstable; urgency=low
+
+  * added pre-depends for univention-baseconfig
+
+ -- Janis Meybohm <meybohm@univention.de>  Thu, 27 Jul 2006 14:53:04 +0200
+
+univention-server (1.18) unstable; urgency=low
+
+  * cleanup the package dependencies
+
+ -- Stefan Gohmann <gohmann@univention.de>  Tue, 18 Jul 2006 08:39:09 +0200
+
+univention-server (1.16) unstable; urgency=low
+
+  * modified postinst script: recreate initrd image when the installation is
+    an update otherwise just append bootsplash images
+
+ -- Andreas Büsching <buesching@univention.de>  Tue, 13 Dec 2005 11:00:06 +0100
+
+univention-server (1.13) unstable; urgency=low
+
+  * new background images for the bootsplash 
+
+ -- Andreas Büsching <buesching@univention.de>  Mon, 12 Dec 2005 11:25:06 +0100
+
+univention-server (1.12) unstable; urgency=low
+
+  * check for ha samba
+
+ -- Stefan Gohmann <gohmann@univention.de>  Thu,  7 Jul 2005 07:47:39 +0200
+
+univention-server (1.11) unstable; urgency=low
+
+  * reset ldap/server/addition
+
+ -- Stefan Gohmann <gohmann@univention.de>  Wed, 27 Apr 2005 09:27:14 +0200
+
+univention-server (1.10) unstable; urgency=low
+
+  * fix syntax errors
+
+ -- Stefan Gohmann <gohmann@univention.de>  Fri, 15 Apr 2005 15:01:44 +0200
+
+univention-server (1.9) unstable; urgency=low
+
+  * fix cron job syntax
+
+ -- Stefan Gohmann <gohmann@univention.de>  Wed,  1 Dec 2004 13:19:48 +0100
+
+univention-server (1.8) unstable; urgency=low
+
+  * conflict to exim
+
+ -- Stefan Gohmann <gohmann@univention.de>  Thu, 23 Sep 2004 10:28:51 +0200
+
+univention-server (1.7) unstable; urgency=low
+
+  * Add dependency to univention-license-import.
+
+ -- Roland Bauerschmidt <bauerschmidt@univention.de>  Tue, 20 Jul 2004 10:54:52 +0200
+
+univention-server (1.6) unstable; urgency=low
+
+  * Add proper package description.
+
+ -- Roland Bauerschmidt <bauerschmidt@univention.de>  Fri, 30 Apr 2004 10:37:01 +0200
+
+univention-server (1.5) unstable; urgency=low
+
+  * cron job for password change
+
+ -- Stefan Gohmann <gohmann@univention.de>  Wed, 14 Apr 2004 19:32:42 +0200
+
+univention-server (1.4) unstable; urgency=low
+
+  * added univention-debmirror to univention-server-backup
+
+ -- Stefan Gohmann <gohmann@univention.de>  Thu, 29 Jan 2004 15:05:32 +0100
+
+univention-server (1.3) unstable; urgency=low
+
+  * split package
+
+ -- Stefan Gohmann <gohmann@univention.de>  Thu, 10 Oct 2003 17:09:12 +0200
+
+univention-server (1.2) unstable; urgency=low
+
+  * new versioning scheme
+
+ -- Roland Bauerschmidt <bauerschmidt@univention.de>  Tue, 20 May 2003 13:49:41 +0200
+
+univention-server (0.1.univention) unstable; urgency=low
+
+  * Initial Release.
+
+ -- Stefan Gohmann <gohmann@univention.de>  Thu, 11 Mar 2003 11:09:12 +0200

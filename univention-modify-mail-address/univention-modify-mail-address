@@ -1,0 +1,80 @@
+#!/usr/bin/python2.4 -OO
+# Copyright 2007 Univention GmbH
+# -*- mode: python -*-
+
+import sys, codecs, univention.config_registry, os, re, string
+import ldap
+from optparse import OptionParser
+
+import univention.admin.uldap
+import univention.admin.modules
+import univention.admin.objects
+
+configRegistry=univention.config_registry.ConfigRegistry()
+configRegistry.load()
+
+co=univention.admin.config.config()
+user_module=univention.admin.modules.get("users/user")
+
+######### main 
+
+parser = OptionParser()
+
+parser.add_option( '-s', '--simulate', action = 'store_false',
+		   dest = 'action', default = True,
+		   help = 'if set the operations are simulated and no changes are made' )
+parser.add_option( '-o', '--old-domain', type = 'string', action = 'store',
+		   dest = 'old_domain', default = '',
+		   help = 'defines the old mail domain' )
+parser.add_option( '-n', '--new-domain', type = 'string', action = 'store',
+		   dest = 'new_domain', default = '',
+		   help = 'defines the new mail domain' )
+parser.add_option( '-b', '--search-base', type = 'string', action = 'store',
+		   dest = 'search_base', default = configRegistry[ 'ldap/base' ],
+		   help = 'defines the LDAP base for the search' )
+
+( options, args ) = parser.parse_args()
+
+# check options
+if not options.old_domain or not options.new_domain:
+	parser.print_help()
+	sys.exit( 1 )
+
+# LDAP connection
+secretFile=open('/etc/ldap.secret','r')
+pwdLine=secretFile.readline()
+ucsPwd=re.sub('\n','',pwdLine)
+
+ldap_base=configRegistry['ldap/base']
+
+try:
+	lo_ucs = univention.admin.uldap.access(host=configRegistry['ldap/master'], base=ldap_base, binddn='cn=admin,'+ldap_base, bindpw=ucsPwd, start_tls=2)
+except:
+	print >> sys.stderr, 'error: could not connect to LDAP server:', configRegistry['ldap/master']
+	sys.exit( 1 )
+
+try:
+	users = univention.admin.modules.lookup( user_module, None, lo_ucs, scope = 'sub', superordinate = None, base = options.search_base, filter = 'mail=*%s' % options.old_domain )
+except:
+	print >> sys.stderr, 'error: searching for users failed. possibly from LDAP base: ', options.search_base
+	sys.exit( 1 )
+
+for user in users:
+	user.open()
+	addresses  = []
+
+	print 'Found user:', user.dn
+	print '  old e-mail addresses:', ', '.join( user[ 'e-mail' ] )
+	for addr in user[ 'e-mail' ]:
+
+		if addr.endswith( options.old_domain ):
+			name, domain = addr.split( '@', 1 )
+			addr = u'%s@%s' % ( name, options.new_domain )
+		if not addr in addresses:
+			addresses.append( addr )
+
+	print '  new e-mail addresses:', ', '.join( addresses )
+	if options.action:
+		user[ 'e-mail' ] = addresses
+		user.modify()
+	

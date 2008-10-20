@@ -1,0 +1,15 @@
+#!/bin/sh
+
+#DEBHELPER#
+
+eval `univention-config-registry shell`
+
+if [ "$server_role" = "domaincontroller_master" ] || [ "$server_role" = "domaincontroller_backup" ]; then
+
+	echo "kill all running univention-cli-server"
+	pkill -f '/usr/bin/python.*univention-directory-manager-tools.*univention-cli-server' || true
+
+	/usr/lib/univention-install/38univention-management-console-helpdesk.inst || true
+fi
+
+exit 0

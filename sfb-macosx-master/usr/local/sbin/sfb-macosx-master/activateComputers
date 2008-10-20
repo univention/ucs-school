@@ -1,0 +1,22 @@
+#!/bin/sh
+#
+echo -n "please enter ou> "
+read OU
+
+# use linebreak as delimiter
+IFS="
+"
+# activate all groups
+#for dn in `ldapsearch -xLLL '(&(objectclass=univentionMacOSClient)(!(apple-mcxflags=*)))' -b ou=${OU},dc=schule,dc=bremen,dc=de | ldapsearch-wrapper | grep ^dn | cut -b5-` ; do
+for dn in `ldapsearch -xLLL '(&(objectclass=univentionMacOSClient)(!(apple-mcxflags=*)))' -b ou=${OU},dc=schule,dc=bremen,dc=de | ldapsearch-wrapper | grep ^dn | cut -b5-` ; do
+  univention-directory-manager computers/macos modify \
+	  --dn "$dn" \
+      --customattribute apple-mcxflags="<!DOCTYPE plist PUBLIC \"-//Apple Computer//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">
+<plist version=\"1.0\">
+<dict>  
+        <key>use_comp_name_for_machine_name</key>
+        <true/>
+</dict> 
+</plist>
+"
+done

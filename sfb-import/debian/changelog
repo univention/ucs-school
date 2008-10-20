@@ -1,0 +1,279 @@
+sfb-import (2.0.0-14) unstable; urgency=low
+
+  * beautify custom attribute (Ticket: #2008092210000151)
+
+ -- Felix Botner <fbotner@visdalen.knut.univention.de>  Mon, 29 Sep 2008 12:19:17 +0200
+
+sfb-import (2.0.0-13) unstable; urgency=low
+
+  * ucr -> univention-baseconfig (Ticket: #2008092210000151)
+
+ -- Felix Botner <fbotner@visdalen.knut.univention.de>  Mon, 29 Sep 2008 10:31:46 +0200
+
+sfb-import (2.0.0-12) unstable; urgency=low
+
+  * no log file for created users (Ticket: #2008092210000151)
+
+ -- Felix Botner <fbotner@visdalen.knut.univention.de>  Fri, 26 Sep 2008 16:39:59 +0200
+
+sfb-import (2.0.0-11) unstable; urgency=low
+
+  * random default passwords for new account (A) (Ticket: #2008092210000151) 
+
+ -- Felix Botner <fbotner@visdalen.knut.univention.de>  Fri, 26 Sep 2008 16:37:01 +0200
+
+sfb-import (2.0.0-10) unstable; urgency=low
+
+  * random default passwords for new account (A) (Ticket: #2008092210000151)
+
+ -- Felix Botner <fbotner@visdalen.knut.univention.de>  Fri, 26 Sep 2008 11:04:14 +0200
+
+sfb-import (2.0.0-9) unstable; urgency=low
+
+  * random default passwords for new account (A) (Bug: #2008092210000151) 
+
+ -- Felix Botner <fbotner@visdalen.knut.univention.de>  Fri, 26 Sep 2008 10:27:24 +0200
+
+sfb-import (2.0.0-8) unstable; urgency=low
+
+  * fixed build dependency problems (Bug: #2008092210000151) 
+
+ -- Felix Botner <fbotner@visdalen.knut.univention.de>  Thu, 25 Sep 2008 14:55:13 +0200
+
+sfb-import (2.0.0-7) unstable; urgency=low
+
+  * fixed build dependency problems (Bug: #2008092210000151)
+
+ -- Felix Botner <fbotner@visdalen.knut.univention.de>  Thu, 25 Sep 2008 14:49:44 +0200
+
+sfb-import (2.0.0-6) unstable; urgency=low
+
+  * replaced traceback.print_exc ()  with traceback.print_exc (100,sys.stdout)
+
+ -- Felix Botner <fbotner@visdalen.knut.univention.de>  Thu, 25 Sep 2008 14:33:33 +0200
+
+sfb-import (2.0.0-5) unstable; urgency=low
+
+  * ticket 2008092210000151
+  * create user: if mailPrimaryAddress already exists, a account
+    without mailPrimaryAddress but with LDAP attribute 
+    "univentionAbordnung = the dn of the object with the mailPrimaryAddress" 
+    will be created
+  * remove user: delete user, check if there are any account with 
+    "univentionAbordnung=my dn" give one of them the mailPrimaryAddress 
+    and change "univentionAbordnung" in the rest
+    
+
+ -- Felix Botner <fbotner@visdalen.knut.univention.de>  Thu, 25 Sep 2008 13:32:57 +0200
+
+sfb-import (2.0.0-4) unstable; urgency=low
+
+  * bug #12025: fixed unwanted traceback while creating error msg
+
+ -- Sönke Schwardt <schwardt@univention.de>  Mon, 25 Aug 2008 11:04:50 +0200
+
+sfb-import (2.0.0-3) unstable; urgency=low
+
+  * made errors more verbose with tracebacks (Ticket #2008052310000085)
+
+ -- Jan Christoph Ebersbach <ebersbach@univention.de>  Wed, 13 Aug 2008 10:01:56 +0200
+
+sfb-import (2.0.0-1) unstable; urgency=low
+
+  * improved output messages
+  * erroneous lines will be reported - processing continues
+
+ -- Jan Christoph Ebersbach <ebersbach@univention.de>  Tue, 12 Aug 2008 16:35:45 +0200
+
+sfb-import (2.0.0-0) unstable; urgency=low
+
+  * port to UCS 2.0
+
+ -- Arvid Requate <requate@univention.de>  Fri, 11 Apr 2008 16:16:33 +0200
+
+sfb-import (1.2.8) unstable; urgency=low
+
+  * add teachers to specified class groups
+
+ -- Sönke Schwardt <schwardt@univention.de>  Mon, 10 Mar 2008 13:07:28 +0100
+
+sfb-import (1.2.7) unstable; urgency=low
+
+  * added output while adding default umc policy
+
+ -- Sönke Schwardt <schwardt@univention.de>  Mon, 03 Mar 2008 16:44:07 +0100
+
+sfb-import (1.2.6) unstable; urgency=low
+
+  * attach default umc policy
+    cn=default-lehrer,cn=console,cn=policies,dc=schule,dc=bremen,dc=de
+  	to cn=lehrer,cn=users,ou=XXX,BASEDN while verifying ou
+
+ -- Sönke Schwardt <schwardt@univention.de>  Tue, 26 Feb 2008 12:26:58 +0100
+
+sfb-import (1.2.5) unstable; urgency=low
+
+  * updated activate_groupmembers: always create logfile
+
+ -- Sönke Schwardt <schwardt@univention.de>  Tue, 05 Feb 2008 14:22:56 +0100
+
+sfb-import (1.2.4) unstable; urgency=low
+
+  * updated create_ou: added cn=raeume,cn=groups,ou=XXX,BASEDN
+
+ -- Sönke Schwardt <schwardt@univention.de>  Thu, 10 Jan 2008 16:49:11 +0100
+
+sfb-import (1.2.3) unstable; urgency=low
+
+  * give detailed which line is currently processed on import_users, import_computers
+
+ -- Sönke Schwardt <schwardt@univention.de>  Tue, 21 Aug 2007 11:10:15 +0200
+
+sfb-import (1.2.2) unstable; urgency=low
+
+  * wipe leading and trailing "-" from groupnames
+
+ -- Soenke Schwardt <schwardt@univention.de>  Thu, 28 Jun 2007 10:24:27 +0200
+
+sfb-import (1.2.1) unstable; urgency=low
+
+  * added mac address to output of export_computer
+
+ -- Soenke Schwardt <schwardt@univention.de>  Mon, 11 Jun 2007 15:46:32 +0200
+
+sfb-import (1.2.0) unstable; urgency=low
+
+  * added "export_computer" function
+
+ -- Soenke Schwardt <schwardt@univention.de>  Mon, 11 Jun 2007 12:55:09 +0200
+
+sfb-import (1.1.8) unstable; urgency=low
+
+  * updated "activate_groupmembers" part of SFB_import
+    csv file contains now additional column with user's groups
+
+ -- Sönke Schwardt <schwardt@univention.de>  Fri, 20 Apr 2007 16:24:30 +0200
+
+sfb-import (1.1.7) unstable; urgency=low
+
+  * improved sfb-change-share-server
+
+ -- Sönke Schwardt <schwardt@univention.de>  Wed, 18 Apr 2007 15:59:27 +0200
+
+sfb-import (1.1.6) unstable; urgency=low
+
+  * added script sfb-change-share-server
+
+ -- Sönke Schwardt <schwardt@univention.de>  Wed, 18 Apr 2007 15:16:54 +0200
+
+sfb-import (1.1.5) unstable; urgency=low
+
+  * while creating new shares the import script checks if this ou is hosted on
+    another dc slave and modifies the share accordingly
+
+ -- Sönke Schwardt <schwardt@univention.de>  Wed, 18 Apr 2007 14:14:07 +0200
+
+sfb-import (1.1.4-1) unstable; urgency=low
+
+  * fixed output
+
+ -- Sönke Schwardt <schwardt@univention.de>  Thu,  8 Mar 2007 15:39:09 +0100
+
+sfb-import (1.1.3-3) unstable; urgency=low
+
+  * deactivated random passwords for import_user
+  * default filename for activate_groupmembers
+    /root/sfb/activate-grp-%Y%m%d-%H%M%S-<grpname>.csv
+
+ -- Sönke Schwardt <schwardt@univention.de>  Thu,  8 Mar 2007 14:15:24 +0100
+
+sfb-import (1.1.3-2) unstable; urgency=low
+
+  * create log file only while changing passwords
+  * added a bunch of \n in csv-file
+
+ -- Sönke Schwardt <schwardt@univention.de>  Fri, 23 Feb 2007 14:37:24 +0100
+
+sfb-import (1.1.3-1) unstable; urgency=low
+
+  * merged activate-groupmembers into SFB_import
+  * added creation of random passwords to activate_groupmembers
+  * remove some wrong whitespaces
+
+ -- Sönke Schwardt <schwardt@univention.de>  Fri, 23 Feb 2007 11:40:36 +0100
+
+sfb-import (1.1.2-1) unstable; urgency=low
+
+  * create random password for all new users and write log to <INFILE>.csv
+    (password scheme: 2 characters, 2 digits, 2 characters)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Tue, 20 Feb 2007 10:53:30 +0100
+
+sfb-import (1.1.1-2) unstable; urgency=low
+
+  * ignore flag 'isTeacher' and find type by checking DN
+
+ -- Andreas Büsching <buesching@univention.de>  Fri,  3 Nov 2006 15:21:33 +0100
+
+sfb-import (1.1.0) unstable; urgency=low
+
+  * support for inventory-numbers
+
+ -- Ingo Steuwer <steuwer@univention.de>  Thu,  9 Feb 2006 11:40:47 +0100
+
+sfb-import (1.0.5) unstable; urgency=low
+
+  * create default-shares for userlogon-scripts 
+
+ -- Ingo Steuwer <steuwer@anton.knut.univention.de>  Wed, 30 Nov 2005 11:24:34 +0100
+
+sfb-import (1.0.4) unstable; urgency=low
+
+  * Bugfix: every user got "Domain Users" as primary group
+
+ -- Ingo Steuwer <steuwer@anton.knut.univention.de>  Tue, 30 Aug 2005 10:10:38 +0200
+
+sfb-import (1.0.3) unstable; urgency=low
+
+  * create ou-roots with posix-accounts for new root-defaults (UCS 1.2-4)
+
+ -- Ingo Steuwer <steuwer@univention.de>  Fri, 13 May 2005 08:42:05 +0200
+
+sfb-import (1.0.2) unstable; urgency=low
+
+  * create additional container for ou-admins
+
+ -- Ingo Steuwer <steuwer@univention.de>  Thu, 10 Feb 2005 13:18:47 +0100
+
+sfb-import (1.0.1-4) unstable; urgency=low
+
+  * reconnect to openldap regulary, long connects generate internal errors in openldap-libs
+  * default free ip's start with .20
+  * bugfix: set mailPrimaryAddress
+
+ -- Ingo Steuwer <steuwer@univention.de>  Fri,  8 Oct 2004 11:18:50 +0200
+
+sfb-import (1.0.1-3) unstable; urgency=low
+
+  * fixed Bug during password-presets
+
+ -- Ingo Steuwer <steuwer@univention.de>  Mon, 20 Sep 2004 12:11:11 +0200
+
+sfb-import (1.0.1-2) unstable; urgency=low
+
+  * added import of groups
+  * bugfix in import_networks
+
+ -- Ingo Steuwer <steuwer@univention.de>  Thu, 16 Sep 2004 13:47:57 +0200
+
+sfb-import (1.0.1-1) unstable; urgency=low
+
+  * Set default password for users and set change-Flag, get hostname/domainname from baseconfig, code cleanup 
+
+ -- Ingo Steuwer <steuwer@univention.de>  Wed, 14 Jul 2004 08:42:54 +0200
+
+sfb-import (1.0.0-1) unstable; urgency=low
+
+  * Initial Release.
+
+ -- univention GmbH Ingo Steuwer  <steuwer@univention.de>  Mon, 28 Jun 2004 11:49:54 +0200

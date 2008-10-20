@@ -1,0 +1,11 @@
+Source: sfb-admin-scripts
+Section: univention
+Priority: optional
+Maintainer: univention GmbH , Ingo Steuwer <steuwer@univention.de>
+Build-Depends: debhelper (>> 3.0.0)
+Standards-Version: 1.0.0
+
+Package: sfb-admin-scripts
+Architecture: any
+Depends: univention-directory-manager
+Description: utils-scripts for schooladmins

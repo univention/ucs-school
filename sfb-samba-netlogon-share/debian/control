@@ -1,0 +1,11 @@
+Source: sfb-samba-netlogon-share
+Section: master
+Priority: optional
+Maintainer: Univention GmbH <packages@univention.de>
+Build-Depends: debhelper (>= 3.0.0), univention-config-dev
+Standards-Version: 1.0.0
+
+Package: sfb-samba-netlogon-share
+Architecture: all
+Depends: univention-samba 
+Description: Adds a Samba share that is readable by guest users to allow access to net logo scripts.

@@ -1,0 +1,7 @@
+#!/bin/sh
+
+#DEBHELPER#
+
+univention-config-registry set samba/netlogonscript/logon/cmd?"/usr/bin/logger -p \"local7.info\" -t \"ucs-netlogon-logon\" -i \"%U on %m (%I) logged on\""
+univention-config-registry commit /etc/samba/smb.conf
+univention-config-registry commit /etc/samba/univention-netlogon-logon.conf

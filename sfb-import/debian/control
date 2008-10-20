@@ -1,0 +1,15 @@
+Source: sfb-import
+Section: master
+Priority: optional
+Maintainer: univention GmbH , Ingo Steuwer <steuwer@univention.de>
+Build-Depends: debhelper (>> 3.0.0), univention-config-dev
+Standards-Version: 1.0.0
+
+Package: sfb-import
+Architecture: all
+Depends: univention-directory-manager
+Description: Importing objects like users and computers
+
+Package: sfb-import-schema
+Architecture: all
+Description: ldap import schema and custom attributes

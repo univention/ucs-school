@@ -1,0 +1,5 @@
+sfb-samba-netlogon-share (1.0.0-1) unstable; urgency=low
+
+  * initial version
+
+ -- Jan Christoph Ebersbach <ebersbach@univention.de>  Fr, 25 Jul 2008 14:56:39 +0200

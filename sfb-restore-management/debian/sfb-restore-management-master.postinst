@@ -1,0 +1,112 @@
+#!/bin/sh
+#
+# SFB Restore Management
+#  postinst script for the debian package
+#
+# Copyright (C) 2007 Univention GmbH
+#
+# http://www.univention.de/
+#
+# All rights reserved.
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License version 2 as
+# published by the Free Software Foundation.
+#
+# Binary versions of this file provided by Univention to you as
+# well as other copyrighted, protected or trademarked materials like
+# Logos, graphics, fonts, specific documentations and configurations,
+# cryptographic keys etc. are subject to a license agreement between
+# you and Univention.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+
+#DEBHELPER#
+
+eval `univention-config-registry shell`
+
+if test -x /etc/init.d/slapd ; then
+
+    if [ "$server_role" = "domaincontroller_master" ] ; then
+        /etc/init.d/slapd restart
+
+		univention-directory-manager settings/customattribute create --ignore_exists --position "cn=custom attributes,cn=univention,$ldap_base" \
+			--set name="sfbFlagReinstallHost" 		--set module="computers/windows" \
+			--set tabName="Restore-Management" 		--set tabPosition="0" \
+			--set objectClass="sfbwHostRestoreManagement" \
+			--set shortDescription="Neuinstallation" \
+			--set syntax="boolean" 					--set ldapMapping="sfbwFlagWinHostReinstall"
+
+		ldapmodify -x -D "cn=admin,$ldap_base" -w $(cat /etc/ldap.secret) <<EOF
+dn: cn=sfbFlagReinstallHost,cn=custom attributes,cn=univention,$ldap_base
+changetype: modify
+replace: univentionAdminPropertyLayoutTabName
+univentionAdminPropertyLayoutTabName: (Re)installation
+EOF
+
+		univention-directory-manager settings/customattribute create --ignore_exists --position "cn=custom attributes,cn=univention,$ldap_base" \
+			--set name="sfbFlagReinstallHostUseWOL" 		--set module="computers/windows" \
+			--set tabName="Restore-Management" 		--set tabPosition="1" \
+			--set objectClass="sfbwHostRestoreManagement" \
+			--set shortDescription="WakeupOnLan aktivieren" \
+			--set syntax="boolean" 					--set ldapMapping="sfbwFlagWinHostReinstallUseWOL"
+
+		ldapmodify -x -D "cn=admin,$ldap_base" -w $(cat /etc/ldap.secret) <<EOF
+dn: cn=sfbFlagReinstallHostUseWOL,cn=custom attributes,cn=univention,$ldap_base
+changetype: modify
+replace: univentionAdminPropertyLayoutTabName
+univentionAdminPropertyLayoutTabName: (Re)installation
+EOF
+
+		univention-directory-manager settings/customattribute create --ignore_exists --position "cn=custom attributes,cn=univention,$ldap_base" \
+			--set name="sfbFlagReinstallHostWOLNow" 		--set module="computers/windows" \
+			--set tabName="Restore-Management" 		--set tabPosition="4" \
+			--set objectClass="sfbwHostRestoreManagement" \
+			--set shortDescription="WakeupOnLan-Paket sofort senden" \
+			--set syntax="boolean" 					--set ldapMapping="sfbwFlagWinHostReinstallWOLNow"
+
+		ldapmodify -x -D "cn=admin,$ldap_base" -w $(cat /etc/ldap.secret) <<EOF
+dn: cn=sfbFlagReinstallHostWOLNow,cn=custom attributes,cn=univention,$ldap_base
+changetype: modify
+replace: univentionAdminPropertyLayoutTabName
+univentionAdminPropertyLayoutTabName: (Re)installation
+EOF
+
+		univention-directory-manager settings/customattribute create --ignore_exists --position "cn=custom attributes,cn=univention,$ldap_base" \
+			--set name="sfbReinstallHostWOLHour" 		--set module="computers/windows" \
+			--set tabName="Restore-Management" 		--set tabPosition="2" \
+			--set objectClass="sfbwHostRestoreManagement" \
+			--set shortDescription="WakeupOnLan-Stunde" \
+			--set syntax="HourSimple" 	--set ldapMapping="sfbwWinHostReinstallWOLHour"
+
+		ldapmodify -x -D "cn=admin,$ldap_base" -w $(cat /etc/ldap.secret) <<EOF
+dn: cn=sfbReinstallHostWOLHour,cn=custom attributes,cn=univention,$ldap_base
+changetype: modify
+replace: univentionAdminPropertyLayoutTabName
+univentionAdminPropertyLayoutTabName: (Re)installation
+EOF
+
+		univention-directory-manager settings/customattribute create --ignore_exists --position "cn=custom attributes,cn=univention,$ldap_base" \
+			--set name="sfbReinstallHostWOLMinute" 		--set module="computers/windows" \
+			--set tabName="Restore-Management" 		--set tabPosition="3" \
+			--set objectClass="sfbwHostRestoreManagement" \
+			--set shortDescription="WakeupOnLan-Minute" \
+			--set syntax="MinuteSimple" 	--set ldapMapping="sfbwWinHostReinstallWOLMinute"
+
+		ldapmodify -x -D "cn=admin,$ldap_base" -w $(cat /etc/ldap.secret) <<EOF
+dn: cn=sfbReinstallHostWOLMinute,cn=custom attributes,cn=univention,$ldap_base
+changetype: modify
+replace: univentionAdminPropertyLayoutTabName
+univentionAdminPropertyLayoutTabName: (Re)installation
+EOF
+    else
+        grep -q crestart /etc/init.d/slapd && /etc/init.d/slapd crestart || true
+    fi
+fi

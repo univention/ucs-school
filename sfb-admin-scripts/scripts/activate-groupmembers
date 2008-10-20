@@ -1,0 +1,48 @@
+#!/bin/bash
+
+get_userdn(){
+	dn=`ldapsearch -x uid=$1 uid | /usr/bin/ldapsearch-wrapper| grep "^dn: uid=" | sed -e "s/dn: uid=//"`
+	echo $dn
+}
+	
+
+set_groupmembers_disabled(){
+	for user in `ldapsearch -x "cn=$1" |/usr/bin/ldapsearch-wrapper| grep ^uniqueMember | sed -e "s/uniqueMember: //"`
+	  do
+	  /usr/sbin/univention-directory-manager users/user modify --dn $user --set disabled=$2 --binddn $binddn --bindpwd $passwd --logfile $HOME/.activate-groupmembers.log
+	done
+}
+
+get_passwd() {
+	uid=`whoami`
+	read -sp "Password for user $uid: " passwd;	echo ""
+	binddn=`ldapsearch -x "uid=$uid" |/usr/bin/ldapsearch-wrapper| grep "^dn: uid=" | sed -e "s/dn: //"`
+}
+
+if [ $# == 1 ]
+	then
+	get_passwd
+	echo "Activate members of group $1:"
+	set_groupmembers_disabled $1 "0"
+else
+	if [ $# == 2 ]
+		then
+		if [ $2 == "0" ]
+			then
+			get_passwd
+			echo "Deactivate members of group $1:"
+			set_groupmembers_disabled $1 "1"
+		else
+			get_passwd
+			echo "Activate members of group $1:"
+			set_groupmembers_disabled $1 "0"
+		fi
+	else
+		echo ""
+		echo "wrong number of options, usage:"
+		echo "$0 <group> [0|1]"
+		echo ""
+		echo " 0|1 is optional for (de-)activating the groupmembers."
+		echo " default is activate (1)"
+	fi
+fi

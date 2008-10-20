@@ -1,0 +1,56 @@
+# Warning: This file is auto-generated and might be overwritten by 
+#          univention-baseconfig.
+#          Please edit the following file instead:
+# Warnung: Diese Datei wurde automatisch generiert und kann durch 
+#          univention-baseconfig überschrieben werden. 
+#          Bitte bearbeiten Sie an Stelle dessen die folgende Datei:
+# 
+#       /etc/univention/templates/files/etc/apache2/sites-available/default
+
+ServerAdmin webmaster@@%@hostname@%@.@%@domainname@%@
+ServerSignature On
+
+CustomLog /var/log/apache2/access.log combined
+ErrorLog /var/log/apache2/error.log
+# Possible values include: debug, info, notice, warn, error, crit,
+# alert, emerg.
+LogLevel @%@apache2/loglevel@%@
+
+DocumentRoot /var/www/
+<Directory />
+	Options FollowSymLinks
+	AllowOverride None
+</Directory>
+
+ScriptAlias /cgi-bin/ /usr/lib/cgi-bin/
+<Directory "/usr/lib/cgi-bin">
+	AllowOverride None
+	Options ExecCGI -MultiViews +SymLinksIfOwnerMatch
+	Order allow,deny
+	Allow from all
+</Directory>
+
+Alias /doc/ "/usr/share/doc/"
+<Directory "/usr/share/doc/">
+Options Indexes MultiViews FollowSymLinks
+AllowOverride None
+Order deny,allow
+Deny from all
+Allow from 127.0.0.0/255.0.0.0 ::1/128
+</Directory>
+
+<Directory /var/www/>
+	Options Indexes FollowSymLinks MultiViews
+	@!@
+if baseConfig.has_key('apache2/allowoverride'):
+	print 'AllowOverride %s' % baseConfig['apache2/allowoverride']
+else:
+	print 'AllowOverride AuthConfig Limit'
+@!@
+	Order allow,deny
+	allow from all
+	@!@
+if baseConfig.has_key('apache2/startsite'):
+	print 'RedirectMatch ^/$ /%s' % baseConfig['apache2/startsite']
+@!@
+</Directory>

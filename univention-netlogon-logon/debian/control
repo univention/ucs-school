@@ -1,0 +1,12 @@
+Source: univention-netlogon-logon
+Section: unknown
+Priority: optional
+Maintainer: Univention GmbH <packages@univention.de>
+Build-Depends: debhelper (>= 4.0.0), univention-config-dev
+Standards-Version: 3.6.1
+
+Package: univention-netlogon-logon
+Architecture: any
+Depends: bsdutils
+Description: Univention Netlogon Skript - logs samba logon events
+ This package contains a samba netlogon script that logs samba logon events.

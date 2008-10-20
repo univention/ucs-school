@@ -1,0 +1,159 @@
+#!/usr/bin/python2.4
+# -*- coding: utf-8 -*-
+#
+# Univention Management Console Distribution Module
+#
+# Copyright (C) 2008 Univention GmbH
+#
+# http://www.univention.de/
+# 
+# All rights reserved.
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License version 2 as
+# published by the Free Software Foundation.
+#
+# Binary versions of this file provided by Univention to you as
+# well as other copyrighted, protected or trademarked materials like
+# Logos, graphics, fonts, specific documentations and configurations,
+# cryptographic keys etc. are subject to a license agreement between
+# you and Univention.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+
+import pickle, os, sys, subprocess, fcntl, shutil
+import univention.debug as ud
+import univention.config_registry
+import univention.admin.modules
+import univention.admin.objects
+import univention.management.console as umc
+from optparse import OptionParser
+
+configRegistry = univention.config_registry.ConfigRegistry()
+configRegistry.load()
+
+_ = umc.Translation( 'univention.management.console.handlers.distribution' ).translate
+
+import inspect
+def debugmsg( component, level, msg ):
+	info = inspect.getframeinfo(inspect.currentframe().f_back)[0:3]
+	printInfo = []
+	if len(info[0])>28:
+		printInfo.append('...'+info[0][-25:])
+	else:
+		printInfo.append(info[0])
+	printInfo.extend(info[1:3])
+	ud.debug(component, level, "%s:%s: %s" % (printInfo[0], printInfo[1], msg))
+
+
+
+
+def collectData( project ):
+	postfix_datadir_sender = configRegistry.get('umc/datadistribution/datadir/sender', 'Materialverteilung')
+	postfix_datadir_recipient = configRegistry.get('umc/datadistribution/datadir/recipient', 'Unterrichtsmaterial')
+
+	debugmsg( ud.ADMIN, ud.INFO, 'collecting data for project "%s"' % project['name'] )
+
+	# recreate sender project directory if necessary
+	if not os.path.exists( project['sender']['homedir'] ):
+		try:
+			os.makedirs( project['sender']['homedir'], 0700 )
+			debugmsg( ud.ADMIN, ud.WARN, 'recreate homedir: uidNumber=%s  grpNumber=%s' % (project['sender']['obj']['uidNumber'], project['sender']['obj']['gidNumber']) )
+			os.chown( project['sender']['homedir'],
+					  int(project['sender']['obj']['uidNumber']),
+					  int(project['sender']['obj']['gidNumber']) )
+		except Exception, ex:
+			debugmsg( ud.ADMIN, ud.ERROR, 'cannot create home directory %(target)s for sender %(sender): %(msg)s' %  {
+				'target': project['sender']['homedir'], 'sender': project['sender']['obj']['username'], 'msg': ex } )
+
+	if not os.path.exists( project['sender']['projectdir'] ):
+		try:
+			os.makedirs( project['sender']['projectdir'], 0700 )
+			debugmsg( ud.ADMIN, ud.WARN, 'recreate projectdir: uidNumber=%s  grpNumber=%s' % (project['sender']['obj']['uidNumber'], project['sender']['obj']['gidNumber']) )
+			os.chown( project['sender']['projectdir'],
+					  int(project['sender']['obj']['uidNumber']),
+					  int(project['sender']['obj']['gidNumber']) )
+		except Exception, ex:
+			debugmsg( ud.ADMIN, ud.ERROR, 'cannot create project directory %(target)s for sender %(sender): %(msg)s' % {
+				'target': project['sender']['projectdir'],
+				'sender': project['sender']['obj']['username'],
+				'msg': ex
+				} )
+
+	# collect data from all recipients
+	for recipient in project['recipients']:
+		targetdir = os.path.join( project['sender']['projectdir'], recipient['obj']['username'] )
+		if not os.path.exists( targetdir ):
+			try:
+				os.makedirs( targetdir, 0700 )
+				os.chown( targetdir,
+						  int(project['sender']['obj']['uidNumber']),
+						  int(project['sender']['obj']['gidNumber']) )
+			except Exception, ex:
+				debugmsg( ud.ADMIN, ud.ERROR, 'cannot create project directory %(target)s for recipient %(recipient): %(msg)s' % {
+					'target': targetdir,
+					'recipient': recipient['obj']['username'],
+					'msg': ex
+					} )
+
+		for fn in project['files']:
+			src = os.path.join( recipient['projectdir'], fn )
+			target = os.path.join( targetdir, fn )
+			if os.path.isfile( src ):
+				try:
+					shutil.copy( src, target )
+					os.chown( target,
+							  int(project['sender']['obj']['uidNumber']),
+							  int(project['sender']['obj']['gidNumber']) )
+				except Exception, ex:
+					print _('Cannot copy %(src)s to %(dst)') % { 'src': src, 'dst': target }
+					debugmsg( ud.ADMIN, ud.ERROR, 'Cannot copy %(src)s to %(dst): %(msg)s' % { 'src': src, 'dst': target, 'msg': ex } )
+			else:
+				debugmsg( ud.ADMIN, ud.ERROR, '%(src)s does not exist.' % { 'src': src } )
+				print _('%(src)s does not exist.') % { 'src': src }
+
+
+def main():
+	debug_level = int( configRegistry.get('umc/module/debug','1') )
+	if debug_level < 1:
+		debug_level = 1
+	if configRegistry.get('umc/datadistribution/debug', None):
+		debug_level = int( configRegistry.get('umc/datadistribution/debug','1') )
+
+	parser = OptionParser()
+	parser.add_option( '-d', '--debug', action = 'store', type = 'int',
+					   dest = 'debug', default = debug_level,
+					   help = 'if given than debugging is activated and set to the specified level' )
+
+	( options, args ) = parser.parse_args()
+
+	# open logging
+	ud.init( '/var/log/univention/management-console-module-distribution.log', 1, 1 )
+	ud.set_level( ud.ADMIN, options.debug )
+	debugmsg(ud.ADMIN, ud.ERROR, 'started umc-distribution-collect: args=%s' % args)
+
+	if len(args) and os.path.isfile( args[0] ):
+		fd_project = open( args[0], 'r' )
+		project = pickle.load( fd_project )
+		fd_project.close()
+
+		collectData( project )
+
+		try:
+			os.remove( args[0] )
+		except Exception, ex:
+			debugmsg(ud.ADMIN, ud.ERROR, 'cannot remove %s: %s' % (args[0], str(ex)))
+
+	debugmsg(ud.ADMIN, ud.ERROR, 'finished umc-distribution-collect: args=%s' % args)
+
+
+if __name__ == "__main__":
+	main()
+

@@ -1,0 +1,11 @@
+sfb-old-homedirs (1.0.0-0) unstable; urgency=low
+
+  * port to UCS 2.0
+
+ -- Arvid Requate <requate@univention.de>  Mon, 14 Apr 2008 10:50:04 +0200
+
+sfb-old-homedirs (0.1) unstable; urgency=low
+
+  * initial releas
+
+ -- Wolf Wiegand <wiegand@univention.de>  Tue, 18 Jul 2006 13:11:31 +0200

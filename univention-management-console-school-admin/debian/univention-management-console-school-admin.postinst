@@ -1,0 +1,15 @@
+#!/bin/sh
+
+#DEBHELPER#
+
+eval `univention-config-registry shell ldap/base ldap/hostdn server/role`
+
+if [ "$server_role" = "domaincontroller_master" ] || [ "$server_role" = "domaincontroller_backup" ]; then
+
+	/usr/lib/univention-install/38univention-management-console-school-admin.inst || true
+fi
+
+univention-config-registry set umc/schooladmin/groups/regex?"^%(departmentNumber)s[-0-9a-zA-Z]+$"
+univention-config-registry set umc/schooladmin/groups/defaultgroupprefix?"%(departmentNumber)s-"
+
+exit 0

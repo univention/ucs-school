@@ -1,0 +1,18 @@
+univention-netlogon-logon (1.0.0-0) unstable; urgency=low
+
+  * port to UCS 2.0
+
+ -- Arvid Requate <requate@univention.de>  Tue,  6 May 2008 19:07:08 +0200
+
+univention-netlogon-logon (0.2) unstable; urgency=low
+
+  * changed netlogon script to use drive x:
+
+ -- Sönke Schwardt <schwardt@univention.de>  Tue, 05 Feb 2008 12:04:56 +0100
+
+univention-netlogon-logon (0.1) unstable; urgency=low
+
+  * Initial Release.
+
+ -- Sönke Schwardt <schwardt@univention.de>  Mon, 14 Jan 2008 14:45:23 +0100
+

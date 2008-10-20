@@ -1,0 +1,25 @@
+sfb-macosx-master (2.0.0) unstable; urgency=low
+
+  * imported from UCS 1.3
+
+ -- Jan Christoph Ebersbach <ebersbach@univention.de>  Mon, 21 Jul 2008 14:36:05 +0200
+
+sfb-macosx-master (1.0.2) unstable; urgency=low
+
+  * improved login.hook.univention (do not call ldapsearch or mount if
+    ldap server or nfs server are unreachable)
+  * added template for edu.mit.Kerberos
+
+ -- Sönke Schwardt <schwardt@univention.de>  Mon, 30 Jun 2008 15:06:14 +0200
+
+sfb-macosx-master (1.0.1) unstable; urgency=low
+
+  * fix for slapd.conf baseconfig template
+
+ -- Sönke Schwardt <schwardt@univention.de>  Fri, 27 Jun 2008 10:41:55 +0200
+
+sfb-macosx-master (1.0.0) unstable; urgency=low
+
+  * initial release
+
+ -- Sönke Schwardt <schwardt@univention.de>  Thu, 17 Jan 2008 16:06:10 +0100

@@ -1,0 +1,45 @@
+# Warning: This file is auto-generated and might be overwritten by
+#          univention-config-registry.
+#          Please edit the following file instead:
+# Warnung: Diese Datei wurde automatisch generiert und kann durch
+#          univention-config-registry überschrieben werden.
+#          Bitte bearbeiten Sie an Stelle dessen die folgende Datei:
+#
+#       /etc/univention/templates/files/etc/default/nut
+#
+
+@!@
+if configRegistry.has_key('ups/monitoring') and configRegistry['ups/monitoring'] == 'no':
+	print '# start upsd'
+	print 'START_UPSD=no'
+
+	print '# start upsmon'
+	print 'START_UPSMON=no'
+else:
+	print '# start upsd'
+	print 'START_UPSD=yes'
+
+	print '# start upsmon'
+	print 'START_UPSMON=yes'
+@!@
+
+# At the end of an emergency system halt, the upsmon master will signal the
+# UPS to switch off. This may fail for any number of reasons, however, most
+# notably if line power returns during the shutdown process. (See the
+# section "Power races" in /usr/share/doc/nut/docs/shutdown.txt.gz)
+#
+# The system will wait this long for the UPS to cut power, and then reboot.
+# It should be long enough to exhaust the batteries (in case line power
+# continues to be unavailable), but not so long that the system remains
+# offline for an unreasonable amount of time (if line power has returned).
+#
+# See the sleep(1) man page for compatible time syntax. If you specify the
+# time in seconds, use the "s" suffix.
+#
+###########################################################################
+################################# WARNING #################################
+###########################################################################
+# this workaround might be dangerous under some circumstances
+# Please read http://bugs.debian.org/358696 for more details
+#
+#POWEROFF_WAIT=15m

@@ -1,0 +1,4 @@
+@!@
+if configRegistry['ldap/server/type'] == "master":
+	print 'include         /usr/share/univention-ldap/schema/sfb-macosx.schema'
+@!@

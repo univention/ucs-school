@@ -1,0 +1,39 @@
+#! /bin/sh
+
+if ! test -e "/usr/share/univention-join/.joined"; then
+    echo "join first"
+    exit 1
+fi
+
+name="univention-sfb-import-custom-attributes"
+file="/usr/lib/univention-install/.index.txt"
+ldapbase=$(univention-baseconfig get ldap/base) 
+version="2"
+
+touch $file
+
+test -n "`grep "$name v$version successful" $file`" && exit 1
+
+res=`univention-admin settings/customattribute list $@ --filter name=Abordnung | grep "DN: "`
+if [ -z "$res" ]; then
+    univention-admin settings/customattribute create $@ \
+    --position cn="custom attributes,cn=univention,$ldapbase" \
+    --set longDescription="DN des Hauptaccount (Abordnung)" \
+    --set module=users/user \
+    --set shortDescription="Abordnung" \
+    --set ldapMapping=univentionAbordnungMasterDn \
+    --set objectClass=univentionAbordnung \
+    --set name=Abordnung \
+    --set multivalue=0 \
+    --set syntax=string \
+    --set tabName=SfBW \
+    --set tabPosition=1
+
+    if [ $? != 0 ]; then exit 1; fi
+
+fi
+
+test -n "`grep "$name v$version successful" $file`" || echo "$name v$version successful" >> $file
+
+exit 0
+

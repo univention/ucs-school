@@ -1,0 +1,79 @@
+#!/usr/bin/python2.4
+#
+#
+
+import subprocess, re, sys
+import univention.config_registry
+
+REou = re.compile('^(.*?,)?ou=([^,]+),.*?$')
+
+
+# get all available OU
+
+cmd = 'ldapsearch -xLLL -s one objectClass=organizationalUnit dn | grep ^dn'
+
+cmdpipe = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
+outpipe = cmdpipe.stdout
+output = outpipe.read()
+
+output = re.sub('(^|\n)dn: ','\n', output)
+output = re.sub('^\n','', output)
+output = re.sub('\n$','', output)
+
+for dn in output.splitlines():
+	try:
+		ou = REou.search(dn).group(2)
+	except:
+		continue
+	cmd = '/usr/local/sbin/SFB_import/create_ou %s' % ou
+	print '---[VERIFYING OU %s]---' % ou
+	print '==>', cmd
+	p = subprocess.Popen(cmd, shell=True)
+	p.wait()
+
+
+cmd = 'ldapsearch -xLLL "(objectClass=univentionGroup)" dn uniqueMember | ldapsearch-wrapper'
+
+cmdpipe = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
+outpipe = cmdpipe.stdout
+output = outpipe.read()
+
+REclean = re.compile('dn: [^\n]+\n\n')
+
+# cleanout all non-computer members 
+output = re.sub('uniqueMember: (?![^\n]+,cn=computers,)[^\n]+\n','', output)
+
+# cleanout all empty groups
+output = re.sub('dn: [^\n]+\n\n', '', output)
+
+# cleanout all unique members
+output = re.sub('uniqueMember: [^\n]+\n','', output)
+output = re.sub('\n\n','\n', output)
+output = re.sub('(^|\n)dn: ','\n', output)
+output = re.sub('^\n','', output)
+output = re.sub('\n$','', output)
+
+configRegistry = univention.config_registry.ConfigRegistry()
+configRegistry.load()
+ldapbase = configRegistry.get('ldap/base','dc=schule,dc=bremen,dc=de')
+
+for dn in output.splitlines():
+	try:
+		ou = REou.search(dn).group(2)
+	except:
+		continue
+
+	print '---[TRYING TO MOVE NEXT GROUP]---'
+
+	pos = 'cn=raeume,cn=groups,ou=%s,%s' % (ou, ldapbase)
+
+	# dn ends with cn=raeume?
+	if dn.endswith(',%s' % pos):
+		print 'skipping dn %s - already at correct position' % dn
+		continue
+
+	cmd = 'univention-directory-manager groups/group move --binddn "cn=admin,%s"  --bindpwd "$(cat /etc/ldap.secret)" --dn "%s" --position "%s"' % (ldapbase, dn, pos)
+
+	print '==>', cmd
+	p = subprocess.Popen(cmd, shell=True)
+	p.wait()

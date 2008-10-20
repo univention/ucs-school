@@ -1,0 +1,46 @@
+#!/bin/sh
+
+createLogfile () {
+	if [ ! -e $1 ] ; then
+		touch $1
+		chown $2 $1
+		chmod $3 $1
+	fi
+}
+
+for path in /usr/share/univention-management-console/www/icon /usr/share/univention-management-console/www/style /usr/share/univention-management-console/www/includes; do
+    if [ -d $path -a ! -h $path ]; then
+        rm -r $path
+    fi
+done
+
+test -h /usr/share/univention-management-console/www/index.php || ln -s /usr/share/univention-webui/www/index.php /usr/share/univention-management-console/www
+# test -h /usr/share/univention-management-console/www/includes || ln -s /usr/share/univention-webui/www/includes /usr/share/univention-management-console/www
+# test -h /usr/share/univention-management-console/www/style || ln -s /usr/share/univention-webui-style/style /usr/share/univention-management-console/www
+# test -h /usr/share/univention-management-console/www/icon || ln -s /usr/share/univention-webui-style/icon /usr/share/univention-management-console/www
+
+test -h /var/www/univention-management-console || ln -s /usr/share/univention-management-console/www /var/www/univention-management-console
+
+
+univention-baseconfig set umc/web/timeout?300
+univention-baseconfig set umc/web/language?de_DE.utf8
+univention-baseconfig set umc/web/debug/level?1
+
+# set memory limit for php processes to 32 (if not already set)
+eval $(univention-baseconfig shell php/memory/limit)
+
+if [ -n "$php_memory_limit" ]; then
+        if [ "$php_memory_limit" -lt 32 ]; then
+                univention-baseconfig set php/memory/limit=32
+        fi
+else
+    univention-baseconfig set php/memory/limit=32
+fi
+
+createLogfile /var/log/univention/management-console-web.log "www-data:adm" 640
+
+#DEBHELPER#
+
+a2ensite univention-management-console
+
+/etc/init.d/apache2 reload || true

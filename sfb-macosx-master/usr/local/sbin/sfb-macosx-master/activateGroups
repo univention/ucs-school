@@ -1,0 +1,32 @@
+#!/bin/sh
+#
+echo -n "please enter ou> "
+read OU
+echo -n "please enter smb server name> "
+read SERVER
+
+eval $(univention-config-registry shell)
+
+# use linebreak as delimiter
+IFS="
+"
+# activate all groups
+for dn in `ldapsearch -xLLL '(&(objectclass=posixGroup)(!(apple-mcxflags=*)))' -b ou=${OU},${ldap_base} | ldapsearch-wrapper | grep ^dn | cut -b5-` ; do
+  univention-directory-manager groups/group modify \
+	  --dn "$dn" \
+      --customattribute apple-mcxflags='<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>  
+	<key>has_mcx_settings</key>
+	<false/>
+</dict> 
+</plist>'
+done
+
+# set group share
+for dn in `ldapsearch -xLLL '(objectclass=posixGroup)' -b cn=schueler,cn=groups,ou=${OU},${ldap_base} | ldapsearch-wrapper | grep ^dn | cut -b5-` ; do
+  grpname=$(echo "$dn" | sed -re 's/^cn=([^,]*),.*/\1/')
+  univention-directory-manager groups/group modify \
+	  --dn "$dn" \
+      --customattribute apple-group-homeurl="<home_dir><url>smb://${SERVER}/${grpname}</url><path></path></home_dir>"
+done

@@ -1,0 +1,12 @@
+Source: sfb-freeradius
+Section: univention
+Priority: optional
+Maintainer: Univention GmbH <packages@univention.de>
+Build-Depends: debhelper, univention-config-dev
+
+Package: sfb-freeradius
+Architecture: all
+Conflicts: univention-kernel-image-2.6, univention-kernel-image
+Depends: univention-config-registry, univention-kernel-image-2.6.18, freeradius, freeradius-ldap, bridge-utils, iptables
+Description: SfBW wireless LAN authentication via freeradius
+ SfBW wireless LAN authentication via freeradius

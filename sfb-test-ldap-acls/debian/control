@@ -1,0 +1,11 @@
+Source: sfb-test-ldap-acls
+Section: univention
+Priority: optional
+Maintainer: Univention GmbH  <feedback@univention.de>
+Build-Depends: debhelper (>> 3.0.0), univention-config-dev
+Standards-Version: 3.5.2
+
+Package: sfb-test-ldap-acls
+Architecture: all
+Depends: univention-ldap-server, univention-ldap-config (>= 1.43-19.178.200704181127), sfb-import
+Description: Collection of test scripts for the LDAP ACLs

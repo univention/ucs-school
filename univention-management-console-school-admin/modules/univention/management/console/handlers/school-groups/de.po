@@ -1,0 +1,234 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR ORGANIZATION
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2007-10-23 13:18+0200\n"
+"PO-Revision-Date: 2007-10-23 13:20+0200\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=ISO-8859-1\n"
+"Content-Transfer-Encoding: ENCODING\n"
+"Generated-By: pygettext.py 1.5\n"
+
+#: __init__.py:56
+msgid "school groupmanager"
+msgstr "Gruppenverwaltung"
+
+#: __init__.py:57
+msgid "Administrate Additional Groups"
+msgstr "Zusatzgruppen administrieren"
+
+#: __init__.py:62
+msgid "List additional groups"
+msgstr "Gruppen anzeigen"
+
+#: __init__.py:63
+msgid "List additional groups of one school"
+msgstr "Gruppen einer Schule anzeigen"
+
+#: __init__.py:73 __init__.py:74
+msgid "Edit group"
+msgstr "Gruppe bearbeiten"
+
+#: __init__.py:87 __init__.py:88
+msgid "Add group"
+msgstr "Gruppe hinzufügen"
+
+#: __init__.py:101 __init__.py:102
+msgid "Remove groups"
+msgstr "Gruppe löschen"
+
+#: __init__.py:110
+msgid "Modify group"
+msgstr "Gruppe bearbeiten"
+
+#: __init__.py:111
+msgid "Modify members of one additional group"
+msgstr "Mitgliederliste einer Gruppe bearbeiten"
+
+#: __init__.py:121 __init__.py:122
+msgid "Assign teachers to groups"
+msgstr "Lehrer-Zuordnung"
+
+#: __init__.py:132 __init__.py:133 __init__.py:146 __init__.py:147
+msgid "Assign teachers to specific group"
+msgstr "Lehrer-Zuordnung"
+
+#: __init__.py:276
+msgid "No group selected"
+msgstr "keine Gruppe/Klasse ausgewählt"
+
+#: __init__.py:413
+msgid ""
+"An error occured while getting group id! Please consult local administrator."
+msgstr ""
+"Ein Fehler ist beim Ermitteln der Gruppen-ID aufgetreten. Bitte kontaktieren "
+"Sie Ihren Administrator."
+
+#: __init__.py:479 __init__.py:500 __init__.py:585 __init__.py:683
+#: __init__.py:710 __init__.py:755 __init__.py:819
+msgid "No Connection to the LDAP-Database available, please try again later"
+msgstr ""
+"Verbindung zur LDAP-Datenbank nicht verfügbar, bitte später erneut versuchen."
+
+#: __init__.py:525 __init__.py:735
+msgid ""
+"An error occured while getting group description! Please consult local "
+"administrator."
+msgstr ""
+"Ein Fehler ist beim Ermitteln der Gruppenbeschreibung aufgetreten. Bitte "
+"kontaktieren Sie Ihren Administrator."
+
+#: __init__.py:607 __init__.py:777
+msgid "Cannot change group members"
+msgstr "Die Liste der Gruppenmitglieder konnte nicht verändert werden."
+
+#: __init__.py:635 __init__.py:804 __init__.py:808
+msgid ""
+"An error occured while modifying group! Please consult local administrator."
+msgstr ""
+"Ein Fehler ist beim Ändern der Gruppe aufgetreten. Bitte kontaktieren Sie "
+"Ihren Administrator."
+
+#: __init__.py:653
+msgid "Cannot create group - object already exists!"
+msgstr "Gruppe konnte nicht angelegt werden - Gruppe existiert bereits!"
+
+#: __init__.py:656
+msgid "Cannot create group - groupname already used!"
+msgstr ""
+"Gruppe konnte nicht angelegt werden - Gruppenname wird bereits verwendet!"
+
+#: __init__.py:663
+msgid ""
+"An error occured while creating group! Please consult local administrator."
+msgstr ""
+"Ein Fehler ist beim Anlegen der Gruppe aufgetreten. Bitte kontaktieren Sie "
+"Ihren Administrator."
+
+#: _revamp.py:75 _revamp.py:266 _revamp.py:317 _revamp.py:422
+msgid "Please select school:"
+msgstr "Schule auswählen:"
+
+#: _revamp.py:83 _revamp.py:84
+msgid "Create new group"
+msgstr "Neue Gruppe erstellen"
+
+#: _revamp.py:90 _revamp.py:136 _revamp.py:322 _revamp.py:351
+msgid "Search"
+msgstr "Suche"
+
+#: _revamp.py:97 _revamp.py:329 _types.py:60
+msgid "Group"
+msgstr "Gruppe"
+
+#: _revamp.py:97 _revamp.py:329 _types.py:44 _types.py:64
+msgid "Description"
+msgstr "Beschreibung"
+
+#: _revamp.py:107
+#, python-format
+msgid "Edit group \"%(group)s\""
+msgstr "Bearbeite Gruppe \"%(group)s\""
+
+#: _revamp.py:125 _revamp.py:127
+msgid "Remove Groups"
+msgstr "Gruppen löschen"
+
+#: _revamp.py:128
+msgid "Select the Operation"
+msgstr "--- wählen Sie eine Aktion ---"
+
+#: _revamp.py:131 _revamp.py:347
+msgid "No groups could be found."
+msgstr "Gruppe konnte nicht gefunden werden."
+
+#: _revamp.py:137 _revamp.py:352
+msgid "Search Result"
+msgstr "Suchergebnis"
+
+#: _revamp.py:208
+msgid "all groups"
+msgstr "alle Klassen"
+
+#: _revamp.py:215
+msgid "all groups with search option"
+msgstr "alle Klassen (mit Suchoption)"
+
+#: _revamp.py:233
+msgid "Please select class:"
+msgstr "Klasse auswählen:"
+
+#: _revamp.py:242 _revamp.py:280
+msgid "Create Group"
+msgstr "Gruppe erstellen"
+
+#: _revamp.py:244 _revamp.py:402
+msgid "Save Changes"
+msgstr "Änderungen speichern"
+
+#: _revamp.py:282
+#, python-format
+msgid "Create Group (Department %s)"
+msgstr "Gruppe erstellen (Schule %s)"
+
+#: _revamp.py:284
+#, python-format
+msgid "Edit Group \"%s\""
+msgstr "Bearbeite Gruppe \"%s\""
+
+#: _revamp.py:341
+#, python-format
+msgid "Assign teachers to group \"%(group)s\""
+msgstr "Lehrer-Zuordnung für Gruppe \"%(group)s\""
+
+#: _revamp.py:433
+#, python-format
+msgid "Assign teachers to group \"%s\""
+msgstr "Lehrer-Zuordnung für Gruppe \"%s\""
+
+#: _revamp.py:453
+msgid "No group has been selected"
+msgstr "Es wurde keine Gruppe ausgewählt"
+
+#: _revamp.py:459
+msgid "Please confirm removal of following groups:"
+msgstr "Bitte bestätigen Sie das Löschen der folgenden Gruppen:"
+
+#: _revamp.py:471
+msgid "Remove"
+msgstr "Löschen"
+
+#: _revamp.py:476
+msgid "Groups successfully deleted"
+msgstr "Gruppen erfolgreich gelöscht"
+
+#: _revamp.py:478
+msgid "Error while deleting following groups"
+msgstr "Ein Fehler trat während des Löschens der Gruppen auf"
+
+#: _revamp.py:480
+msgid "Please ask local administrator for further details."
+msgstr ""
+"Bitte benachrichtigen Sie Ihren Administrator, falls Sie Hilfe benötigen."
+
+#: _types.py:41
+msgid "Search Key"
+msgstr "Eigenschaft"
+
+#: _types.py:44
+msgid "Group Name"
+msgstr "Gruppenname"
+
+#: _types.py:59
+msgid "School"
+msgstr "Schule"
+
+#: _types.py:65
+msgid "Select group members:"
+msgstr "Guppenmitglieder auswählen:"

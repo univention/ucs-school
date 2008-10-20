@@ -1,0 +1,44 @@
+#!/bin/bash
+
+get_userdn(){
+	dn=`ldapsearch -x uid=$1 uid | /usr/bin/ldapsearch-wrapper| grep "^dn: uid=" | sed -e "s/dn: uid=//"`
+	echo $dn
+}
+	
+
+set_groupmembers_mail(){
+	for user in `ldapsearch -x "cn=$1" |/usr/bin/ldapsearch-wrapper| grep ^uniqueMember | sed -e "s/uniqueMember: //"`
+	  do
+	  uidfilter=`echo $user | sed -e 's/,.*//'`
+
+	  if [ ! -n "`ldapsearch -x $uidfilter objectClass -LLL | grep -i  univentionMail`" ]; 
+		  then
+		  echo "dn: $user" > /tmp/activate-mail-for-user.ldif
+		  echo "changetype: modify" >> /tmp/activate-mail-for-user.ldif
+		  echo "add: objectClass" >> /tmp/activate-mail-for-user.ldif
+		  echo "objectClass: univentionMail" >> /tmp/activate-mail-for-user.ldif
+		  ldapmodify -x -D $binddn -w $passwd -f /tmp/activate-mail-for-user.ldif >> $HOME/.activate-mail-for-group.log 2>&1
+	  fi
+	  mail=`ldapsearch -x $uidfilter mail -LLL |grep ^mail | sed -e 's/mail: //'`
+	  /usr/sbin/univention-directory-manager users/user modify --dn $user --set mailPrimaryAddress=$mail --binddn $binddn --bindpwd $passwd --logfile $HOME/.activate-mail-for-group.log
+	done
+}
+
+get_passwd() {
+	uid=`whoami`
+	read -sp "Password for user $uid: " passwd;	echo ""
+	binddn=`ldapsearch -x "uid=$uid" |/usr/bin/ldapsearch-wrapper| grep "^dn: uid=" | sed -e "s/dn: //"`
+}
+
+if [ $# == 1 ]
+	then
+	get_passwd
+	echo "Activate mailsettings for group $1:"
+	set_groupmembers_mail $1 "0"
+else
+	echo "sync-script for setting mailPrimaryAddress from mail, this will enable mailing for members of a school"
+	echo ""
+	echo "wrong number of options, usage:"
+	echo "$0 <group>"
+	echo ""
+fi

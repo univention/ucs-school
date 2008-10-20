@@ -1,0 +1,53 @@
+univention-config-registry set "restoremanagement/policy?cn=boot501,cn=boot,cn=dhcp,cn=policies,dc=ucs,dc=test"
+univention-config-registry set "restoremanagement/pattern?acronis.0"
+
+----------------------------------------------------------------------------------
+
+root@dc002:~# sfb-rmm
+/usr/sbin/sfb-rmm: ERROR: no action given!
+
+syntax: /usr/sbin/sfb-rmm <action> <dn>
+  <action> is one of --setpol, --unsetpol
+  --setpol    set policy
+  --unsetpol  remove policy
+
+current policy: cn=acronis,cn=policies,ou=002,dc=schule,dc=bremen,dc=de
+
+----------------------------------------------------------------------------------
+
+Auf dem Master muss das Paket sfb-restore-management-master installiert
+werden. Es enthält Anpassungen für den Univention Admin, so daß bei
+Windows-Rechnern auf dem Reiter "(Re)installation" die folgenden Punkte
+auftauchen:
+- Neuinstallation
+- WakeupOnLan aktivieren
+- WakeupOnLan-Stunde
+- WakeupOnLan-Minute
+- WakeupOnLan-Paket sofort senden
+Während der Installation des Paketes wird der LDAP-Server neugestartet,
+da ein zusätzliches LDAP-Schema geladen wird.
+
+
+Auf den Slave-Rechnern muss das Paket sfb-restore-management-slave
+installiert werden. Während der Installation werden die
+Univention-Config-Registry-Variablen "restoremanagement/policy" und
+"restoremanagement/pattern" automatisch auf Defaultwerte gesetzt:
+
+restoremanagement/policy="cn=acronis,cn=policies,ou=SCHULNR,dc=schule,dc=bremen,dc=de"
+restoremanagement/pattern="bootwiz.sys"
+
+Diese beiden Config-Registry-Variablen bestimmen die DHCP-Boot-Richtlinie,
+die für das Booten der Acronis-PXE-Umgebung verwendet wird, und den
+Dateinamen der Acronis-PXE-Umgebung, nach der in den Syslog-Meldungen
+gesucht wird. Wird der vorgegebene Dateiname in einer Syslog-Meldung des
+TFTP-Daemons gefunden, wird das Feld "Neuinstallation" automatisch
+zurückgesetzt und die DHCP-Boot-Richtlinie entfernt.
+
+Sollten diese Config-Registry-Variablen angepasst werden, muss der Daemon
+sfb-rmm-daemon über den Befehl
+/etc/init.d/sfb-restore-management-slave restart
+neu gestartet werden, damit die Änderungen übernommen werden.
+
+Wird im Univention Admin "WakeupOnLan" aktiviert, wird der entsprechende
+Windows-Rechner zum angegebenen Zeitpunkt oder sofort über ein WOL-Paket
+aufgeweckt.

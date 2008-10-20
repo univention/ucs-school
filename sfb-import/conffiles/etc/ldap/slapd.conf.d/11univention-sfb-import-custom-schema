@@ -1,0 +1,4 @@
+@!@
+if baseConfig['server/role'] == "domaincontroller_master":
+	print "include     /usr/share/univention-ldap/schema/sfb-import.schema"
+@!@

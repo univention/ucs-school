@@ -1,0 +1,17 @@
+univention-nagios-plugin-proxyauth (0.0.1-3) unstable; urgency=low
+
+  * fixed typo 
+
+ -- Felix Botner <fbotner@visdalen.knut.univention.de>  Mon, 20 Oct 2008 13:16:32 +0200
+
+univention-nagios-plugin-proxyauth (0.0.1-2) unstable; urgency=low
+
+  * more output
+
+ -- Felix Botner <fbotner@visdalen.knut.univention.de>  Thu, 16 Oct 2008 14:21:32 +0200
+
+univention-nagios-plugin-proxyauth (0.0.1-1) unstable; urgency=low
+
+  * initial release of the proxyauth nagios plugin
+
+ -- Felix Botner <fbotner@univention.de>  Thu, 16 Oct 2008 13:27:58 +0200

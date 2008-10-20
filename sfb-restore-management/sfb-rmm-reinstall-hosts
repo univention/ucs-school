@@ -1,0 +1,112 @@
+#!/bin/sh
+#
+#
+
+eval `univention-config-registry shell`
+
+help() {
+	echo ""
+    echo "syntax: $0 <action> host1 ... hostN"
+	echo "  <action> is one of --tag, --untag, --setpol, --unsetpol"
+	echo "  --tag       tag host for reinstallation"
+	echo "  --untag     remove tag"
+	echo "  --setpol    remove tag and set policy for reinstallation"
+	echo "  --unsetpol  remove policy"
+	echo ""
+	echo "current policy: $restoremanagement_policy"
+}
+
+
+if [ -z "$restoremanagement_policy" ] ; then
+	echo "config-registry variable restoremanagement/policy is not set!"
+	exit 1
+fi
+
+case $1 in
+	--tag)
+		ACTION=TAG
+		shift
+		;;
+	--untag)
+		ACTION=UNTAG
+		shift
+		;;
+	--setpol)
+		ACTION=SETPOL
+		shift
+		;;
+	--unsetpol)
+		ACTION=UNSETPOL
+		shift
+		;;
+esac
+
+if [ -z "$ACTION" ] ; then
+    echo "no action given!"
+	help
+    exit 1
+fi
+
+if [ -z "$1" ] ; then
+	echo "no host given!"
+	help
+	exit 2
+fi
+
+HOSTPASSWD=$(cat /etc/machine.secret)
+
+while [ -n "$1" ] ; do
+	HOST="$1"
+	shift
+
+	echo -n "Host ${HOST}: "
+	DN=$(ldapsearch -x uid=${HOST}\$ dn | ldapsearch-wrapper | grep ^dn | sed -e 's|dn: ||')
+
+	if [ "$ACTION" = "TAG" ] ; then
+		univention-directory-manager computers/windows modify --binddn "$ldap_hostdn" --bindpwd "$HOSTPASSWD" --dn $DN --customattribute Neuinstallation="1"
+	fi
+
+	if [ "$ACTION" = "UNTAG" ] ; then
+		univention-directory-manager computers/windows modify --binddn "$ldap_hostdn" --bindpwd "$HOSTPASSWD" --dn $DN --customattribute Neuinstallation="0"
+	fi
+
+	# find corresponding dhcp object
+	if [ "$ACTION" = "SETPOL" -o "$ACTION" = "UNSETPOL" ] ; then
+		OK=1
+		HOSTDATA=$(ldapsearch -LLL -x -b $DN aRecord macAddress)
+		ARECORD=$(echo "$HOSTDATA" | grep "aRecord" | sed -e 's|aRecord: ||')
+		MACADDR=$(echo "$HOSTDATA" | grep "macAddress" | sed -e 's|macAddress: ||')
+		if [ -z "$ARECORD" -o -z "$MACADDR" ] ; then
+			echo "aRecord or macAddress is not set for host $DN"
+			OK=0
+		fi
+
+		if [ "$OK" = "1" ] ; then
+			DHCPDN=$(ldapsearch -LLL -x "(&(objectClass=univentionDhcpHost)(univentionDhcpFixedAddress=$ARECORD)(dhcpHWAddress=ethernet $MACADDR))" dn | sed -e 's|dn: ||')
+			if [ -z "$DHCPDN" ] ; then
+				echo "cannot find dhcp object for host $DN"
+				OK=0
+			fi
+			POLICYSTATUS=$(ldapsearch -LLL -x -b $DHCPDN "(univentionPolicyReference=$restoremanagement_policy)" dn)
+		fi
+	fi
+
+	if [ "$ACTION" = "SETPOL" -a "$OK" = "1" ] ; then
+		if [ -z "$POLICYSTATUS" ] ; then
+		    # set policy and reset flag
+			univention-directory-manager computers/windows modify --binddn "$ldap_hostdn" --bindpwd "$HOSTPASSWD" --dn $DN --customattribute Neuinstallation="0"
+			univention-directory-manager dhcp/host modify --binddn "$ldap_hostdn" --bindpwd "$HOSTPASSWD" --dn $DHCPDN --policy-reference "$restoremanagement_policy"
+		else
+			echo "policy already set"
+		fi
+	fi
+
+	if [ "$ACTION" = "UNSETPOL" -a "$OK" = "1" ] ; then
+		if [ -n "$POLICYSTATUS" ] ; then
+		    # remove policy
+			univention-directory-manager dhcp/host modify --binddn "$ldap_hostdn" --bindpwd "$HOSTPASSWD" --dn $DHCPDN --policy-dereference "$restoremanagement_policy"
+		else
+			echo "cannot remove policy - wasn't set"
+		fi
+	fi
+done

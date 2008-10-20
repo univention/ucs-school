@@ -1,0 +1,118 @@
+#!/bin/sh
+#
+#
+# Univention Nagios Plugin
+#  check_univention_winbind: check winbind status
+#
+# Copyright (C) 2007 Univention GmbH
+#
+# http://www.univention.de/
+#
+# All rights reserved.
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License version 2 as
+# published by the Free Software Foundation.
+#
+# Binary versions of this file provided by Univention to you as
+# well as other copyrighted, protected or trademarked materials like
+# Logos, graphics, fonts, specific documentations and configurations,
+# cryptographic keys etc. are subject to a license agreement between
+# you and Univention.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+
+
+VERSION="1.00"
+PROGNAME=`/usr/bin/basename $0`
+VERBOSE=0
+
+STATE_OK=0
+STATE_WARNING=1
+STATE_CRITICAL=2
+STATE_UNKNOWN=3
+
+fail () {
+    echo $2
+    exit $1
+}
+
+WINBINDD=`which winbindd` || fail $STATE_CRITICAL "could not find winbindd"
+WBINFO=`which wbinfo` || fail $STATE_CRITICAL "could not find wbinfo"
+NET=`which net` || fail $STATE_CRITICAL "could not find net"
+
+# check if winbind is working
+check_winbind_working () {
+    msg=`$WBINFO -t 2>&1`
+
+    if [ 0 -ne "$?" ]; then
+        fail $STATE_CRITICAL "$WBINFO failed with: ${msg:0:30}"
+    fi
+}
+
+# check if winbind is running with at least 2 processes
+check_winbind () {
+
+    pids=`pidof $WINBINDD 2>/dev/null`
+
+    if [ 0 -ne "$?" ]; then
+        fail $STATE_CRITICAL "$WINBINDD is not running"
+    fi
+
+    pids_counter=0
+    for i in $pids; do ((pids_counter++)); done
+
+    if [ 2 -gt $pids_counter ]; then
+        fail $STATE_CRITICAL "not enough $WINBINDD processes"
+    fi
+}
+
+# check samba domain
+check_domain () {
+    
+    msg=`$NET rpc testjoin 2>&1`
+
+    if [ 0 -ne "$?" ]; then
+        fail $STATE_CRITICAL "$NET rpc testjoin failed with: ${msg:0:20}"
+    fi
+}
+
+# version
+print_revision() {
+    echo "$1: version $2"
+    exit $STATE_OK
+}
+
+# usage
+print_usage() {
+    echo "Usage: $PROGNAME"
+    echo "Usage: $PROGNAME -h|--help"
+    echo "Usage: $PROGNAME -v|--version"
+    exit $STATE_OK
+}
+
+while getopts ':hv' OPTION ; do
+    case $OPTION in
+        h) print_usage ;; 
+        v) print_revision $PROGNAME $VERSION;;
+	*) print_usage ;;
+    esac
+done
+
+########
+# main #
+########
+
+check_winbind
+check_winbind_working
+check_domain
+
+# ok
+fail $STATE_OK "proxyauth fine"

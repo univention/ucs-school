@@ -1,0 +1,178 @@
+#! /bin/sh
+#
+# skeleton	Example initscript
+#		This file should be used to construct scripts to be
+#		placed in /etc/init.d.
+#
+# Author:	Miquel van Smoorenburg <miquels@cistron.nl>.
+#		Ian Murdock <imurdock@gnu.ai.mit.edu>.
+#
+#		Please remove the "Author" lines above and replace them
+#		with your own name if you copy and modify this script.
+#
+# Version:	@(#)skeleton  2.85-23  28-Jul-2004  miquels@cistron.nl
+#
+
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+DESC="firewall"
+NAME=firewall
+DAEMON=/sbin/iptables
+SCRIPTNAME=/etc/init.d/$NAME
+
+# Gracefully exit if the package has been removed.
+test -x $DAEMON || exit 0
+
+firewall_start() {
+
+
+
+
+
+
+#############
+# VARIABLEN #
+#############
+
+NETZ=10.101.105
+GATEWAY=$NETZ.1
+DC=$NETZ.2
+
+#MB1=$NETZ.3
+#MB2=$NETZ.4
+#RADIUS=$NETZ.3
+
+START_SERVERS=$NETZ.2            # erste  IP der schulinternen Server
+END_SERVERS=$NETZ.19             # letzte IP der schulinternen Server
+
+START_IP_PRIV=$NETZ.240          # erste  IP der Gastnotebooks
+END_IP_PRIV=$NETZ.254            # letzte IP der Gastnotebooks
+
+
+
+
+#######################
+# erst alles resetten #
+#######################
+
+iptables -F INPUT
+iptables -F OUTPUT
+iptables -F FORWARD
+iptables -F POSTROUTING -t nat
+iptables -F PREROUTING -t nat
+
+iptables -P INPUT ACCEPT
+iptables -P FORWARD ACCEPT
+iptables -P OUTPUT ACCEPT
+
+
+
+
+### feste Regeln, die den Zugriff aufs Internet erlauben ###
+
+# Zugriff auf Wurmport 135 (egal wohin) sperren
+iptables -A FORWARD -m iprange --src-range    $START_IP_PRIV-$END_IP_PRIV    -p tcp --dport 135 -j DROP
+
+# DHCP erlauben
+iptables -A FORWARD -p udp --dport 67 -j ACCEPT
+
+# icmp (ping u.a.) erlauben
+iptables -A FORWARD -p icmp -d ! 10.0.0.0/8 -j ACCEPT
+
+# DNS zum DC und Brekom erlauben
+iptables -A FORWARD -d     $DC     -p udp --dport 53 -j ACCEPT
+iptables -A FORWARD -d 10.108.1.10 -p udp --dport 53 -j ACCEPT
+
+# Zugriff auf Router erlauben
+iptables -A FORWARD -d    $GATEWAY    -j ACCEPT
+
+# Zugriff auf Radius-Dienste erlauben
+iptables -A INPUT -p udp --dport 1812:1813 -j ACCEPT
+
+
+
+
+
+#####################################################################
+# individuelles Regelset:
+#####################################################################
+#             EDITIERBAR
+#####################################################################
+#
+# Das private Notebook darf auf was noch zugreifen?
+#
+#####################################################################
+
+# Zugriff auf interne Server erlauben
+# iptables -A FORWARD -m iprange --dst-range    $START_SERVERS-$END_SERVERS   -j ACCEPT
+
+# Zugriff auf Broadcast erlauben (Netzwerkumgebung Windows)
+# iptables -A FORWARD -d $NETZ.255 -j ACCEPT
+
+# Zugriff auf Radius-Server erlauben:
+# iptables -A INPUT -j ACCEPT
+
+# weiteres erlauben:
+# ...
+
+#####################################################################
+
+
+
+
+
+
+
+### feste Regeln, die den Rest verbieten, was bisher nicht explizit erlaubt wurde ###
+
+# Bestehendes nicht unterbinden
+iptables -A FORWARD -m state --state ESTABLISHED,RELATED -j ACCEPT
+
+# Zugriff auf Radius-Server verbieten:
+iptables -A INPUT -m iprange --src-range    $START_IP_PRIV-$END_IP_PRIV   -p all -j DROP
+
+# Den Rest verbieten
+iptables -A FORWARD -m iprange --src-range    $START_IP_PRIV-$END_IP_PRIV    -d 10.0.0.0/8 -j DROP
+
+
+
+
+
+}
+
+firewall_stop() {
+       iptables -F INPUT
+       iptables -F OUTPUT
+       iptables -F FORWARD
+       iptables -F dropchain
+       iptables -F logdropchain
+       iptables -F POSTROUTING -t nat
+       iptables -F PREROUTING -t nat
+        
+       iptables -P INPUT ACCEPT
+       iptables -P FORWARD ACCEPT
+       iptables -P OUTPUT ACCEPT
+}
+
+case "$1" in
+  start)
+	echo -n "Starting $DESC: $NAME"
+        firewall_start
+        echo "."
+	;;
+  stop)
+	echo -n "Stopping $DESC: $NAME"
+	firewall_stop
+	echo "."
+	;;
+  restart|force-reload)
+	echo -n "Restarting $DESC: $NAME"
+	firewall_start
+	echo "."
+	;;
+  *)
+	echo "Usage: $SCRIPTNAME {start|stop|restart|force-reload}" >&2
+	exit 1
+	;;
+esac
+
+exit 0
