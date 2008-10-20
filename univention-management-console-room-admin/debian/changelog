@@ -1,3 +1,9 @@
+univention-management-console-room-admin (2.0.200-1) unstable; urgency=low
+
+  * bumped version for ucs@school
+
+ -- Sönke Schwardt <schwardt@univention.de>  Mon, 20 Oct 2008 15:32:07 +0200
+
 univention-management-console-room-admin (2.0.0-4) unstable; urgency=low
 
   * version bump

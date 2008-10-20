@@ -1,3 +1,9 @@
+ucs-school-ldap-acls-master (3.0.200-1) unstable; urgency=low
+
+  * bumped version for ucs@school
+
+ -- Sönke Schwardt <schwardt@univention.de>  Mon, 20 Oct 2008 15:33:49 +0200
+
 ucs-school-ldap-acls-master (3.0.1-1) unstable; urgency=low
 
   * fixed ldap acls

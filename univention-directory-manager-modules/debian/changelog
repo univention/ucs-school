@@ -1,3 +1,9 @@
+univention-directory-manager-modules (2.2.2000-1) unstable; urgency=low
+
+  * bumped version for ucs@school
+
+ -- Sönke Schwardt <schwardt@univention.de>  Mon, 20 Oct 2008 15:33:21 +0200
+
 univention-directory-manager-modules (2.2.1000-2) unstable; urgency=low
 
   * bugfix and a option "ldap base dn" in proof_uniqueMembers (Bug: #12061)

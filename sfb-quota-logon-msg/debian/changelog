@@ -1,3 +1,9 @@
+sfb-quota-logon-msg (1.0.200-1) unstable; urgency=low
+
+  * bumped version for ucs@school
+
+ -- Sönke Schwardt <schwardt@univention.de>  Mon, 20 Oct 2008 15:36:54 +0200
+
 sfb-quota-logon-msg (1.0.0-0) unstable; urgency=low
 
   * port to UCS 2.0

@@ -1,3 +1,9 @@
+univention-server (2.2.200-2) unstable; urgency=low
+
+  * bumped version for ucs@school
+
+ -- Sönke Schwardt <schwardt@univention.de>  Mon, 20 Oct 2008 15:29:54 +0200
+
 univention-server (2.2.100-1) unstable; urgency=low
 
   * fixed restart of samba on password change of local machine account

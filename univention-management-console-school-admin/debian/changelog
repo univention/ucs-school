@@ -1,3 +1,9 @@
+univention-management-console-school-admin (1.0.200-1) unstable; urgency=low
+
+  * bumped version for ucs@school
+
+ -- Sönke Schwardt <schwardt@univention.de>  Mon, 20 Oct 2008 15:31:58 +0200
+
 univention-management-console-school-admin (1.0.1-2) unstable; urgency=low
 
   * unlock user if new password is set by teacher/admin

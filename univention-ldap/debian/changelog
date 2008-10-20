@@ -1,3 +1,9 @@
+univention-ldap (2.4.200-1) unstable; urgency=low
+
+  * bumped version for ucs@school
+
+ -- Sönke Schwardt <schwardt@univention.de>  Mon, 20 Oct 2008 15:33:02 +0200
+
 univention-ldap (2.4.11-4) unstable; urgency=low
 
   * put slapd.pid and slapd.args back into /var/run/slapd

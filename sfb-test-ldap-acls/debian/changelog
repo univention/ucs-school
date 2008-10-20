@@ -1,3 +1,9 @@
+sfb-test-ldap-acls (2.0.200-1) unstable; urgency=low
+
+  * bumped version for ucs@school
+
+ -- Sönke Schwardt <schwardt@univention.de>  Mon, 20 Oct 2008 15:34:41 +0200
+
 sfb-test-ldap-acls (2.0.1-0) unstable; urgency=low
 
   * switch to ou 798 and 799

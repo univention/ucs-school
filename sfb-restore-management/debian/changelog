@@ -1,3 +1,9 @@
+sfb-restore-management (2.0.200-1) unstable; urgency=low
+
+  * bumped version for ucs@school
+
+ -- Sönke Schwardt <schwardt@univention.de>  Mon, 20 Oct 2008 15:36:47 +0200
+
 sfb-restore-management (2.0.0-1) unstable; urgency=low
 
   * change univention-ldap-listener to univention-directory-listener

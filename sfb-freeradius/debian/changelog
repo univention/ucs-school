@@ -1,3 +1,9 @@
+sfb-freeradius (1.0.200-1) unstable; urgency=low
+
+  * bumped version for ucs@school
+
+ -- Sönke Schwardt <schwardt@univention.de>  Mon, 20 Oct 2008 15:37:10 +0200
+
 sfb-freeradius (1.0.2-1) unstable; urgency=low
 
   * fixed postinst and firewall script

@@ -1,3 +1,9 @@
+univention-management-console-proxy-settings (1.1.200-1) unstable; urgency=low
+
+  * bumped version for ucs@school
+
+ -- Sönke Schwardt <schwardt@univention.de>  Mon, 20 Oct 2008 15:32:24 +0200
+
 univention-management-console-proxy-settings (1.1.0-5) unstable; urgency=low
 
   * fixed handling of UCR variables of "default" profile

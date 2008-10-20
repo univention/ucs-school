@@ -1,3 +1,9 @@
+univention-netlogon-proxy (2.0.200-1) unstable; urgency=low
+
+  * bumped version for ucs@school
+
+ -- Sönke Schwardt <schwardt@univention.de>  Mon, 20 Oct 2008 15:31:05 +0200
+
 univention-netlogon-proxy (2.0.0-3) unstable; urgency=low
 
   * 01_use_firefox_for_creating_profile.patch applied plus UCS 2.0 'wording'

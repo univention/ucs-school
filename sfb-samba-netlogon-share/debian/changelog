@@ -1,3 +1,9 @@
+sfb-samba-netlogon-share (1.0.200-1) unstable; urgency=low
+
+  * bumped version for ucs@school
+
+ -- Sönke Schwardt <schwardt@univention.de>  Mon, 20 Oct 2008 15:36:33 +0200
+
 sfb-samba-netlogon-share (1.0.0-1) unstable; urgency=low
 
   * initial version

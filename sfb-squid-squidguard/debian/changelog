@@ -1,3 +1,9 @@
+sfb-squid-squidguard (2.0.200-1) unstable; urgency=low
+
+  * bumped version for ucs@school
+
+ -- Sönke Schwardt <schwardt@univention.de>  Mon, 20 Oct 2008 15:36:27 +0200
+
 sfb-squid-squidguard (2.0.2-4) unstable; urgency=low
 
   * fixed listener module pupilgroups

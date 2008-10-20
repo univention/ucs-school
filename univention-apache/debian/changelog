@@ -1,3 +1,9 @@
+univention-apache (2.0.200-1) unstable; urgency=low
+
+  * bumped version for ucs@school
+
+ -- Sönke Schwardt <schwardt@univention.de>  Mon, 20 Oct 2008 15:33:32 +0200
+
 univention-apache (2.0.16-2) unstable; urgency=low
 
   * post_max_size and upload_max_filesize in php5.ini can now be set by UCR

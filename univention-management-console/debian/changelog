@@ -1,3 +1,9 @@
+univention-management-console (0.9.200-1) unstable; urgency=low
+
+  * bumped version for ucs@school
+
+ -- Sönke Schwardt <schwardt@univention.de>  Mon, 20 Oct 2008 15:32:52 +0200
+
 univention-management-console (0.9.32-5) unstable; urgency=low
 
   * bug #12027: SearchForm: dialog does not close if SearchForm button is
