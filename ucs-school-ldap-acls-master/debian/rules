@@ -23,6 +23,8 @@ install: build
 
 	dh_install
 
+	install -m 755 70ucsschool-ldap-acls-master.inst ${D}/usr/lib/univention-install/70ucsschool-ldap-acls-master.inst
+
 	univention-install-config-registry
 
 binary-indep: build install
@@ -30,7 +32,7 @@ binary-indep: build install
 	dh_testroot -i
 	dh_installchangelogs -i
 	dh_installdocs -i
-	dh_installexamples -i
+#	dh_installexamples -i
 #	dh_installmenu -i
 #	dh_installdebconf -i
 #	dh_installlogrotate -i

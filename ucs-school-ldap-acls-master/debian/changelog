@@ -1,3 +1,9 @@
+ucs-school-ldap-acls-master (4.0.0-1) unstable; urgency=low
+
+  * update LDAP ACLs to a more generic approach
+
+ -- Sönke Schwardt <schwardt@univention.de>  Thu, 04 Jun 2009 18:05:22 +0200
+
 ucs-school-ldap-acls-master (3.0.200-3) unstable; urgency=low
 
   * fixed ACL for cn=samba

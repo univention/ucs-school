@@ -1,46 +1,61 @@
 # Slave-Controller und Member-Server: Update von sambaNextRid bei Join-Vorgang (covers new and old ldap style)
 access to filter="(objectClass=sambaDomain)" attrs=sambaNextRid
-   by dn.regex="^cn=mb[^,]+,cn=server,cn=computers,ou=[^,]+,@%@ldap/base@%@" write
-   by dn.regex="^cn=dc[^,]+,cn=dc,cn=server,cn=computers,ou=[^,]+,@%@ldap/base@%@$$" write
+   by group/univentionGroup/uniqueMember.expand="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
+   by group/univentionGroup/uniqueMember.expand="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
+   by group/univentionGroup/uniqueMember.expand="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
+   by group/univentionGroup/uniqueMember.expand="cn=Member-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
    by * none break
 
 # Slave-Controller und Memberserver duerfen ausschließlich den univention-Container replizieren
 access to dn.regex="^cn=univention,@%@ldap/base@%@"
-  by dn.regex="^cn=dc([^,]+),cn=dc,cn=server,cn=computers,ou=([^,]+),@%@ldap/base@%@$$" read
-  by dn.regex="^cn=mb[^,]+,cn=server,cn=computers,ou=[^,]+,@%@ldap/base@%@" read
-  by * none break
+   by group/univentionGroup/uniqueMember.expand="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
+   by group/univentionGroup/uniqueMember.expand="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
+   by group/univentionGroup/uniqueMember.expand="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
+   by group/univentionGroup/uniqueMember.expand="cn=Member-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
+   by * none break
 
 # Slave-Controller duerfen custom attributes-Container und dessen Inhalt replizieren
 access to dn.regex="^(.*,)?cn=custom attributes,cn=univention,@%@ldap/base@%@"
-  by dn.regex="^cn=dc[^,]+,cn=dc,cn=server,cn=computers,ou=[^,]+,@%@ldap/base@%@$$" read
-  by dn.regex="^cn=mb[^,]+,cn=server,cn=computers,ou=[^,]+,@%@ldap/base@%@" read
-  by * none break
+   by group/univentionGroup/uniqueMember.expand="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
+   by group/univentionGroup/uniqueMember.expand="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
+   by group/univentionGroup/uniqueMember.expand="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
+   by group/univentionGroup/uniqueMember.expand="cn=Member-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
+   by * none break
 
 # Slave-Controller benoetigen den Console-Container für die Berechtigungen an der Lehrerconsole
 access to dn.subtree="cn=console,cn=univention,@%@ldap/base@%@"
-   by dn.regex="^cn=dc[^,]+,cn=dc,cn=server,cn=computers,ou=[^,]+,@%@ldap/base@%@$$" read
+   by group/univentionGroup/uniqueMember.expand="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
+   by group/univentionGroup/uniqueMember.expand="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
    by * none break 
 
 # Slave-Controller und Member-Server benoetigen idmap-Container
 access to dn.base="cn=idmap,cn=univention,@%@ldap/base@%@"
-   by dn.regex="^cn=dc[^,]+,cn=dc,cn=server,cn=computers,ou=[^,]+,@%@ldap/base@%@$$" write
-   by dn.regex="^cn=mb[^,]+,cn=server,cn=computers,ou=[^,]+,@%@ldap/base@%@" write
+   by group/univentionGroup/uniqueMember.expand="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
+   by group/univentionGroup/uniqueMember.expand="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
+   by group/univentionGroup/uniqueMember.expand="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
+   by group/univentionGroup/uniqueMember.expand="cn=Member-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
    by * none break 
 
 # Slave-Controller und Member-Server benoetigen ID-Mapping
 access to dn.regex=".*,cn=idmap,cn=univention,@%@ldap/base@%@" filter="(|(&(objectClass=sambaUnixIdPool)(objectClass=organizationalRole)(objectClass=top))(&(objectClass=sambaIdmapEntry)(objectClass=sambaSidEntry)))"
-   by dn.regex="^cn=mb[^,]+,cn=server,cn=computers,ou=[^,]+,@%@ldap/base@%@" write
-   by dn.regex="^cn=dc[^,]+,cn=dc,cn=server,cn=computers,ou=[^,]+,@%@ldap/base@%@$$" write
+   by group/univentionGroup/uniqueMember.expand="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
+   by group/univentionGroup/uniqueMember.expand="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
+   by group/univentionGroup/uniqueMember.expand="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
+   by group/univentionGroup/uniqueMember.expand="cn=Member-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
    by * none break
 
 # Slave-Controller duerfen samba-Container und dessen Inhalt replizieren
 access to dn.regex="^(.*,)?cn=samba,@%@ldap/base@%@"
-  by dn.regex="^cn=dc[^,]+,cn=dc,cn=server,cn=computers,ou=[^,]+,@%@ldap/base@%@$$" read
-  by dn.regex="^cn=mb[^,]+,cn=server,cn=computers,ou=[^,]+,@%@ldap/base@%@" read
-  by * none break
+   by group/univentionGroup/uniqueMember.expand="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
+   by group/univentionGroup/uniqueMember.expand="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
+   by group/univentionGroup/uniqueMember.expand="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
+   by group/univentionGroup/uniqueMember.expand="cn=Member-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
+   by * none break
 
-# sonst dürfen sie nichts replizieren
+# sonst dürfen sie nichts aus cn=univention,BASEDN replizieren
 access to dn.regex="(.*)cn=univention,@%@ldap/base@%@"
-   by dn.regex="^cn=dc[^,]+,cn=dc,cn=server,cn=computers,ou=[^,]+,@%@ldap/base@%@$$" none
-   by dn.regex="^cn=mb[^,]+,cn=server,cn=computers,ou=[^,]+,@%@ldap/base@%@" none
+   by group/univentionGroup/uniqueMember.expand="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" none
+   by group/univentionGroup/uniqueMember.expand="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" none
+   by group/univentionGroup/uniqueMember.expand="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" none
+   by group/univentionGroup/uniqueMember.expand="cn=Member-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" none
    by * none break

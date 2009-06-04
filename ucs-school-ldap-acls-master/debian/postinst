@@ -1,4 +1,32 @@
 #!/bin/sh
+#
+# ucs@school LDAP ACL package
+#  postinst file
+#
+# Copyright (C) 2004-2009 Univention GmbH
+#
+# http://www.univention.de/
+#
+# All rights reserved.
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License version 2 as
+# published by the Free Software Foundation.
+#
+# Binary versions of this file provided by Univention to you as
+# well as other copyrighted, protected or trademarked materials like
+# Logos, graphics, fonts, specific documentations and configurations,
+# cryptographic keys etc. are subject to a license agreement between
+# you and Univention.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #DEBHELPER#
 
@@ -8,19 +36,15 @@ if [ ! "$server_role" = "domaincontroller_master" -a ! "$server_role" = "domainc
 	exit 0
 fi
 
+/usr/lib/univention-install/70ucsschool-ldap-acls-master.inst || true
+
+univention-config-registry set \
+	ucsschool/ldap/district/enable?"no" \
+	ucsschool/ldap/defaultcontainer/pupils?"schueler" \
+	ucsschool/ldap/defaultcontainer/teachers?"lehrer" \
+	ucsschool/ldap/defaultcontainer/staff?"mitarbeiter" \
+	ucsschool/ldap/defaultcontainer/admins?"admins"
+
 test -x /etc/init.d/slapd && /etc/init.d/slapd restart
 
-univention-directory-manager container/cn create --ignore_exist \
-		--position="cn=custom attributes,cn=univention,$ldap_base" --set name=OU-ACL
-
-univention-directory-manager settings/customattribute create --ignore_exist \
-		--position="cn=OU-ACL,cn=custom attributes,cn=univention,$ldap_base" \
-		--set name=OU-ACL-Write \
-		--set module=container/ou \
-		--set objectClass=univentionLDAPACL \
-		--set ldapMapping=univentionLDAPAccessWrite \
-		--set shortDescription="verantwortlicher_DC" \
-		--set longDescription="verantwortlicher_DC" \
-		--set tabName="verantwortlicher_DC" \
-		--set syntax=string \
-		--set multivalue=0
+exit 0

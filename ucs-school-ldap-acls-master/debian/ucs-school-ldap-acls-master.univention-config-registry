@@ -1,10 +1,25 @@
 Type: multifile
 Multifile: etc/ldap/slapd.conf
+Variables: ucsschool/ldap/district/enable
+Variables: ucsschool/ldap/defaultcontainer/pupils
+Variables: ucsschool/ldap/defaultcontainer/teachers
+Variables: ucsschool/ldap/defaultcontainer/staff
+Variables: ucsschool/ldap/defaultcontainer/admins
 
 Type: subfile
 Multifile: etc/ldap/slapd.conf
 Subfile: etc/ldap/slapd.conf.d/65ucsschool
+Variables: ucsschool/ldap/district/enable
+Variables: ucsschool/ldap/defaultcontainer/pupils
+Variables: ucsschool/ldap/defaultcontainer/teachers
+Variables: ucsschool/ldap/defaultcontainer/staff
+Variables: ucsschool/ldap/defaultcontainer/admins
 
 Type: subfile
 Multifile: etc/ldap/slapd.conf
 Subfile: etc/ldap/slapd.conf.d/55ucsschool_presettings
+Variables: ucsschool/ldap/district/enable
+Variables: ucsschool/ldap/defaultcontainer/pupils
+Variables: ucsschool/ldap/defaultcontainer/teachers
+Variables: ucsschool/ldap/defaultcontainer/staff
+Variables: ucsschool/ldap/defaultcontainer/admins
