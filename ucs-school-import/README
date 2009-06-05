@@ -28,13 +28,13 @@ Skriptes "SFB_import" oder "import_user" mit dem Dateinamen als Option.
 
  - Netzwerk importieren:
 Netzwerke können in einer Datei zeilenweise einer Schule zugeordnet werden, Trennzeichen
-ist Tab:
+ist ein Semikolon:
 
-<Schul-Nr> <Netzwerk>
+<Schul-Nr>;<Netzwerk>
 
 z.B.:
 
-308	10.101.69.0
+308;10.101.69.0
 
 Das Netzwerk wird mit Maske 255.255.255.0 angelegt, dementsprechend sollte der Eintrag auf
 ".0" enden. Mittels dieser Netzwerke werden entpsrechende DNS und DHCP-Zonen voreingestellt.
@@ -46,11 +46,11 @@ voreingestellt.
 Computer werden in einer Datei zeilenweise mit Tab als Trennzeichen definiert und über 
 import_computer mit dem Dateinamen als Option angelegt. Format der Datei ist:
 
-<computertyp>	<computername>	<MAC>	<Schul-Nr>	<IP oder Netzwerk>
+<computertyp>;<computername>;<MAC>;<Schul-Nr>;<IP oder Netzwerk>
 
 z.B.:
 
-windows winrechner      00:11:22:33:44:56       10      10.0.101.0
+windows;winrechner;00:11:22:33:44:56;10;10.0.101.0
 
 Wird der Rechner einem bereits angelegtem Netzwerk zugeordnet (IP endet auf .0), wird die 
 IP automatisch vergeben, der Computer bekommt einen DHCP und einen DNS-Eintrag.

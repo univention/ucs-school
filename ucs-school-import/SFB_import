@@ -14,7 +14,8 @@ created_users = {}
 # string of problems during process
 problem_hints = ""
 # separator char in infile
-sepchar='\t'
+sepchar=';'
+
 # wipe the following trailing and leading characters from group names
 wipe_char_group='-'
 
@@ -36,6 +37,7 @@ configRegistry.load()
 
 ldap_base=configRegistry['ldap/base']
 domainname=configRegistry['domainname']
+externaldomainname='schule.berlin.de'
 
 verified_ous = []
 verified_groups = []
@@ -50,31 +52,36 @@ class sfb_person_modify:
 		parsed =[]
 		b_pos = 0
 		e_pos = 0
-## 		for i in range(10):
-## 			e_pos = string.find(line,";",b_pos)
-## 			parsed.append(codecs.latin_1_decode(line[b_pos:e_pos])[0])
-## 			b_pos=e_pos+1
-		parsed=line.split(sepchar)
+ 		for i in range(21):
+ 			e_pos = string.find(line,";",b_pos)
+ 			parsed.append(codecs.utf_8_decode(line[b_pos:e_pos])[0])
+ 			b_pos=e_pos+1
+                parsed=line.split(sepchar)
 
 		self.modtype   = parsed[0] # A,M or D: add, modify or delete
-		self.login     = parsed[1]
-		self.sname     = parsed[2] # surename
-		self.name      = parsed[3] # first name
-		self.sNr       = parsed[4] # schoolNr(s)
-		self.cNr       = parsed[5] # classNr
-		self.rights    = parsed[6] # users which may change this entry
-		self.mail      = parsed[7]
-		self.isTeacher = parsed[8]
-		self.isActive  = parsed[9][:1]
-		self.problem_hints = ""
+                self.isTeacher = parsed[20][0]
+                self.name      = (utf8_to_ascii(unicode(parsed[2]))).replace(' ', '') # first name
+                self.sname     = (utf8_to_ascii(unicode(parsed[1]))).replace(' ', '') # surename
+                if self.isTeacher=="1":
+                        self.login     = (self.name[0]+self.sname).lower()[:8]
+                        print "DEBUG: Teacher found: creating login name " + self.login
+                else:
+                        self.login     = self.name.lower()[:8]
+                        print "DEBUG: Student found: creating login name " + self.login
+                self.sNr       = parsed[10]# schoolNr(s)
+                self.cNr       = parsed[16]+parsed[17]# classNr
+                self.rights    = parsed[6] # users which may change this entry
+                self.mail      = self.login+"@"+externaldomainname
+                self.isActive  = parsed[11][:1]
+                self.problem_hints = ""
 
-		if ',' in self.sNr:
-			self.allsNrs= self.sNr.split(',')
-			self.sNr=self.allsNrs[0]
-			self.other_sNr=self.allsNrs[1:]
-		else:
-			self.allsNrs=[self.sNr]
-			self.other_sNr=[]
+                if ',' in self.sNr:
+                        self.allsNrs= self.sNr.split(',')
+                        self.sNr=self.allsNrs[0]
+                        self.other_sNr=self.allsNrs[1:]
+                else:
+                        self.allsNrs=[self.sNr]
+                        self.other_sNr=[]
 
 		# split into multiple class number if comma is present
 		if ',' in self.cNr:
@@ -162,10 +169,35 @@ def count_lo():
 			print 'ERROR: authentication error: %s' % str(e)
 			sys.exit(1)
 
+xlate={0xc0:'A', 0xc1:'A', 0xc2:'A', 0xc3:'A', 0xc4:'A', 0xc5:'A',
+       0xc6:'Ae', 0xc7:'C',
+       0xc8:'E', 0xc9:'E', 0xca:'E', 0xcb:'E',
+       0xcc:'I', 0xcd:'I', 0xce:'I', 0xcf:'I',
+       0xd0:'Th', 0xd1:'N',
+       0xd2:'O', 0xd3:'O', 0xd4:'O', 0xd5:'O', 0xd6:'O', 0xd8:'O',
+       0xd9:'U', 0xda:'U', 0xdb:'U', 0xdc:'U',
+       0xdd:'Y', 0xde:'th', 0xdf:'ss',
+       0xe0:'a', 0xe1:'a', 0xe2:'a', 0xe3:'a', 0xe4:'a', 0xe5:'a',
+       0xe6:'ae', 0xe7:'c',
+       0xe8:'e', 0xe9:'e', 0xea:'e', 0xeb:'e',
+       0xec:'i', 0xed:'i', 0xee:'i', 0xef:'i',
+       0xf0:'th', 0xf1:'n',
+       0xf2:'o', 0xf3:'o', 0xf4:'o', 0xf5:'o', 0xf6:'o', 0xf8:'o',
+       0xf9:'u', 0xfa:'u', 0xfb:'u', 0xfc:'u',
+       0xfd:'y', 0xfe:'th', 0xff:'y',
+       0xae:'R', 0xaf:'_', 0xb8:'c',
+       0xba:'o', 0x17e : 'z',
+       0x100: 'A', 0x101 : 'a', 0x102 : 'A'
+       }
+
+nonasciire = re.compile(u'([\x00-\x7f]+)|([^\x00-\x7f])', re.UNICODE).sub
+
+def utf8_to_ascii (unicrap):
+        return str(nonasciire(lambda x: x.group(1) or xlate.setdefault(ord(x.group(2)), ''), unicrap))
 
 def verify_school_ou(schoolNr, co, lo, baseDN):
 	global problem_hints
-	
+
 	if schoolNr in verified_ous:
 		print "verify ou for school nr %s already done"%schoolNr
 		return True
@@ -295,8 +327,8 @@ def verify_school_ou(schoolNr, co, lo, baseDN):
 			if object.dn == "uid=root%s,cn=users,ou=%s,%s"%(schoolNr,schoolNr,baseDN):
 				root_exists=1
 	if not root_exists:
-		#passwd=get_passwd()
-		passwd='12345678' # default password
+		passwd=get_passwd()
+		#passwd='12345678' # default password
 		position.setDn("cn=users,ou=%s,%s"%(schoolNr,baseDN))
 		object=user_module.object(co, lo, position=position)
 		count_lo()
@@ -313,7 +345,7 @@ def verify_school_ou(schoolNr, co, lo, baseDN):
 				print "there were problems creating this user:",object.dn()
 				problem_hints = problem_hints + "there were problems creating this user: "+object.dn()+"\n"
 		except:
-			print "ERROR:", sys.exc_info()[0], sys.exc_info()[1]
+			print "ERROR:", sys.exc_info()[0], sys.exc_info()[1]					
 			traceback.print_exc (100, sys.stdout)
 			print "create this user manually: root%s"%schoolNr
 			problem_hints = problem_hints + "create this user manually: root%s"%schoolNr
@@ -375,8 +407,8 @@ def create_sub_object(object):
 	try:
 		object.lo.modify(dn, ml)
 	except:
-		problem_hints += "problems while setting univentionAbordnung to " + dn + "\n"
-	
+		problem_hints = "problems while setting univentionAbordnung to " + dn + "\n"
+
 
 def create_object(object):
 	ignore_exists = 0
@@ -721,7 +753,6 @@ def check_user(person, baseDN, module):
 		for object in objects:
 			if object.dn == person.getDN():
 				user_exists = 1
-
 	return user_exists
 
 def get_passwd():
@@ -739,10 +770,14 @@ def create_passwd():
 
 def create_user(person, baseDN, module, password):
 	try:
-		if check_user(person, baseDN, user_module):
-			print "ERROR: User already exists: %s"%person.getDN()
-			person.problem_hints +="ERROR: User already exists: %s\n" % person.getDN()
-			return 0
+		loginname = person.login
+		i = 1
+		while(check_user(person, baseDN, user_module)):
+			print "WARING: User already exists: %s"%person.getDN()
+			person.problem_hints +="WARNING: Username already exists: %s" % person.getDN()+" appended counted number\n"
+			person.login = loginname+str(i)
+			print "INFO: Trying with new username: ", person.login
+			i = i+1
 	except: # happens if container does not exsist
 		pass
 
@@ -802,7 +837,7 @@ def create_user(person, baseDN, module, password):
 		object["disabled"]="0"
 	else:
 		object["disabled"]="1"
-	object["pwdChangeNextLogin"]="1"
+	object["pwdChangeNextLogin"]="0"
 
 	try:
 		if not create_object(object) == "1":
@@ -871,8 +906,9 @@ def import_user():
 
 		persons = [main_person]
 		persons.extend(main_person.getOtherPersons())
-		passwd = create_passwd()
-		# passwd = '12345678'
+		#passwd = create_passwd()
+        #passwd = get_passwd()
+		passwd = '12345678'
 
 		if main_person.modtype == "A":
 			#if passwd_used:
@@ -1040,7 +1076,7 @@ def check_macAddress(mac,base=''):
 	count_lo()
 
 	if result and result[0][1]['macAddress'][0]==mac:
-			return result[0][0]
+		return result[0][0]
 
 def generate_new_mac(schoolNr,IP):
 	ipnum=string.replace(IP,'.','')

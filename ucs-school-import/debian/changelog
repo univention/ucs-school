@@ -1,8 +1,35 @@
-sfb-import (2.0.200-1) unstable; urgency=low
+sfb-import (4.0.0-1) unstable; urgency=low
 
-  * bumped version for ucs@school
+  * modified parsing order to match input files from customer
+  * exchange of special characters (like aczents) to ascii characters
+  * modified username creation to match customers needs (Ticket #2009051910000126)
 
- -- Sönke Schwardt <schwardt@univention.de>  Mon, 20 Oct 2008 15:37:06 +0200
+ -- Roman Asendorf <asendorf@univention.de>  Thu, 28 May 2009 08:38:11 +0200
+
+sfb-import (4.0.0-0) unstable; urgency=low
+
+  * ported to UCS 2.2
+
+ -- Sönke Schwardt <schwardt@univention.de>  Tue, 26 May 2008 09:19:22 +0200
+
+sfb-import (3.0.0-2) unstable; urgency=low
+
+  * removed password expiry date/request to change the password on the next
+    login from imported users. Ticket #2008011410000091
+
+ -- Jan Christoph Ebersbach <ebersbach@univention.de>  Thu,  5 Feb 2009 16:32:46 +0100
+
+sfb-import (3.0.0-1) unstable; urgency=low
+
+  * fixed join script
+
+ -- Sönke Schwardt <schwardt@univention.de>  Wed, 10 Dec 2008 15:53:15 +0100
+
+sfb-import (3.0.0-0) unstable; urgency=low
+
+  * ported to UCS 2.1
+
+ -- Sönke Schwardt <schwardt@univention.de>  Wed, 10 Dec 2008 12:05:23 +0200
 
 sfb-import (2.0.0-14) unstable; urgency=low
 
