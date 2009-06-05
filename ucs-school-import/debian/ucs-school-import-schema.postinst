@@ -35,7 +35,7 @@ server_role=`univention-baseconfig get server/role`
 
 # run join script
 if [ "$server_role" = "domaincontroller_master" ]; then
-        /usr/lib/univention-install/82univention-sfb-import-custom-attributes.inst || true
+        /usr/lib/univention-install/82univention-ucs-school-import-custom-attributes.inst || true
         /etc/init.d/slapd restart
 fi
 
