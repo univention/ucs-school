@@ -1,4 +1,5 @@
 #!/usr/bin/python2.4 -OO
+# -*- coding: utf-8 -*-
 
 #-> doesn't do:
 # check usernames for correct values (no spaces)
@@ -35,15 +36,32 @@ import univention.config_registry
 configRegistry=univention.config_registry.ConfigRegistry()
 configRegistry.load()
 
-ldap_base=configRegistry['ldap/base']
+baseDN=configRegistry['ldap/base']
 domainname=configRegistry['domainname']
+
+# TODO: Code für die Benutzernamen-Erzeugung entfernen
+
+# FIXME: Verweis auf Berlin entfernen
 externaldomainname='schule.berlin.de'
+
+district_enabled = False
+if configRegistry['ucsschool/ldap/district/enable'].lower () in ('1', 'yes', 'true'):
+	district_enabled = True
 
 verified_ous = []
 verified_groups = []
 verified_group_shares = []
 
-class sfb_person_modify:
+cn_pupils = configRegistry['ucsschool/ldap/default/container/pupils']
+cn_teachers = configRegistry['ucsschool/ldap/default/container/teachers']
+cn_admins = configRegistry['ucsschool/ldap/default/container/admins']
+cn_staff = configRegistry['ucsschool/ldap/default/container/staff']
+
+if not (cn_pupils and cn_teachers and cn_admins and cn_staff):
+	print 'ERROR: Unable to progress, one of these UCR variables is not set correctly:\n\tucsschool/ldap/default/container/pupils\n\tucsschool/ldap/default/container/teachers\n\tucsschool/ldap/default/container/staff\n\tucsschool/ldap/default/container/admins'
+	sys.exit (1)
+
+class ucsschool_person_modify:
 	def __init__(self,line):
 
 		# parse line here
@@ -52,36 +70,37 @@ class sfb_person_modify:
 		parsed =[]
 		b_pos = 0
 		e_pos = 0
- 		for i in range(21):
- 			e_pos = string.find(line,";",b_pos)
- 			parsed.append(codecs.utf_8_decode(line[b_pos:e_pos])[0])
- 			b_pos=e_pos+1
-                parsed=line.split(sepchar)
+		for i in range(21):
+			e_pos = string.find(line,";",b_pos)
+			parsed.append(codecs.utf_8_decode(line[b_pos:e_pos])[0])
+			b_pos=e_pos+1
+			parsed=line.split(sepchar)
 
 		self.modtype   = parsed[0] # A,M or D: add, modify or delete
-                self.isTeacher = parsed[20][0]
-                self.name      = (utf8_to_ascii(unicode(parsed[2]))).replace(' ', '') # first name
-                self.sname     = (utf8_to_ascii(unicode(parsed[1]))).replace(' ', '') # surename
-                if self.isTeacher=="1":
-                        self.login     = (self.name[0]+self.sname).lower()[:8]
-                        print "DEBUG: Teacher found: creating login name " + self.login
-                else:
-                        self.login     = self.name.lower()[:8]
-                        print "DEBUG: Student found: creating login name " + self.login
-                self.sNr       = parsed[10]# schoolNr(s)
-                self.cNr       = parsed[16]+parsed[17]# classNr
-                self.rights    = parsed[6] # users which may change this entry
-                self.mail      = self.login+"@"+externaldomainname
-                self.isActive  = parsed[11][:1]
-                self.problem_hints = ""
+		self.isTeacher = parsed[20][0]
+		self.isStaff   = parsed[21][0]
+		self.name      = (utf8_to_ascii(unicode(parsed[2]))).replace(' ', '') # first name
+		self.sname     = (utf8_to_ascii(unicode(parsed[1]))).replace(' ', '') # surename
+		if self.isTeacher=="1":
+			self.login     = (self.name[0]+self.sname).lower()[:8]
+			print "DEBUG: Teacher found: creating login name " + self.login
+		else:
+			self.login     = self.name.lower()[:8]
+			print "DEBUG: Student found: creating login name " + self.login
+		self.sNr       = parsed[10]# schoolNr(s)
+		self.cNr       = parsed[16]+parsed[17]# classNr
+		self.rights    = parsed[6] # users which may change this entry
+		self.mail      = self.login+"@"+externaldomainname
+		self.isActive  = parsed[11][:1]
+		self.problem_hints = ""
 
-                if ',' in self.sNr:
-                        self.allsNrs= self.sNr.split(',')
-                        self.sNr=self.allsNrs[0]
-                        self.other_sNr=self.allsNrs[1:]
-                else:
-                        self.allsNrs=[self.sNr]
-                        self.other_sNr=[]
+		if ',' in self.sNr:
+			self.allsNrs= self.sNr.split(',')
+			self.sNr=self.allsNrs[0]
+			self.other_sNr=self.allsNrs[1:]
+		else:
+			self.allsNrs=[self.sNr]
+			self.other_sNr=[]
 
 		# split into multiple class number if comma is present
 		if ',' in self.cNr:
@@ -129,9 +148,12 @@ class sfb_person_modify:
 		return persons
 
 	def getPosition_dn(self):
-		type = "schueler"
-		if self.isTeacher=="1": type="lehrer"
-		return "cn="+type+",cn=users,ou="+self.sNr+","+ldap_base
+		cn = cn_pupils
+		if self.isTeacher == "1":
+			cn = cn_teachers
+		elif self.isStaff == "1":
+			cn = cn_staff
+		return "cn=%s,cn=users," % (cn, getDN (self.sNr))
 
 	def getDN(self):
 		return "uid="+self.login+","+self.getPosition_dn()
@@ -140,15 +162,18 @@ class sfb_person_modify:
 		default_groups=[]
 
 		# default group
-		default_groups.append("cn=Domain Users "+self.sNr+",cn=groups,ou="+self.sNr+","+ldap_base)
+		default_groups.append("cn=Domain Users "+self.sNr+",cn=groups," + getDN (self.sNr))
 
-		type = "schueler"
-		if self.isTeacher=="1": type="lehrer"
+		user_cn = cn_pupils
+		if self.isTeacher == "1":
+			user_cn = cn_teachers
+		elif self.isStaff == "1":
+			user_cn = cn_staff
 		# class if available
 		for cnr in self.cNr:
-			default_groups.append("cn=" + cnr + ",cn=klassen,cn=schueler,cn=groups,ou=" + self.sNr + "," + ldap_base)
+			default_groups.append("cn=" + cnr + ",cn=klassen,cn=%s,cn=groups,%s" % (cn_pupils, getDN (self.sNr)))
 
-		default_groups.append("cn=%s%s,cn=groups,ou=%s,%s"%(type,self.sNr,self.sNr,baseDN))
+		default_groups.append("cn=%s%s,cn=groups,%s"%(user_cn, self.sNr, getDN (self.sNr)))
 
 		return default_groups
 
@@ -195,6 +220,41 @@ nonasciire = re.compile(u'([\x00-\x7f]+)|([^\x00-\x7f])', re.UNICODE).sub
 def utf8_to_ascii (unicrap):
         return str(nonasciire(lambda x: x.group(1) or xlate.setdefault(ord(x.group(2)), ''), unicrap))
 
+def extract_district (schoolNr):
+	try:
+		return schoolNr[:2]
+	except IndexError:
+		# TODO: add more debug output
+		print "ERROR: Unable to extract district from school number: %s' % schoolNr + \
+				'\n\tIf you don't use the district model deactivate UCR variable ucsschool/ldap/district/enable"
+
+def getDN (schoolNr, base='school', basedn=baseDN):
+	"""
+	@param	base Values are either school, district or base
+	@return	According to the base a specific part of dn is returned.
+			Let's suppose the following school dn:
+			ou=SCHOOL,ou=DISTRICT,dc=BASE,dc=DN
+
+			The following is returned
+			'base'		-> dc=BASE,dc=DN
+			'district'	-> ou=DISTRICT,dc=BASE,dc=DN
+			'school'	-> ou=SCHOOL,ou=DISTRICT,dc=BASE,dc=DN
+	"""
+	dn = '%(school)s%(district)s%(basedn)s'
+	values = {'school':'%s,'%schoolNr, 'district':'', 'basedn':basedn}
+	if district_enabled:
+		district = extract_district (schoolNr)
+		if not district:
+			print "ERROR: Unable to continue execution without district number. School number: %s" % schoolNr
+			sys.exit(1)
+		values['district'] = 'ou=%s,' % district
+	if base == 'district':
+		values['school'] = ''
+	elif base == 'base':
+		values['district'] = ''
+		values['school'] = ''
+	return dn % values
+
 def verify_school_ou(schoolNr, co, lo, baseDN):
 	global problem_hints
 
@@ -205,18 +265,20 @@ def verify_school_ou(schoolNr, co, lo, baseDN):
 	print "verify ou for school nr %s"%schoolNr
 	# list of needed sub-containers, the dictionary-key adds the container as default during create in verify_container
 	container={'0printerPath':['cn=printers'],
-			   '1userPath':['cn=users','cn=schueler,cn=users','cn=lehrer,cn=users','cn=admins,cn=users'],
+			   '1userPath':['cn=users','cn=%s,cn=users' % cn_pupils,'cn=%s,cn=users' % cn_teachers,'cn=%s,cn=users' % cn_staff,'cn=%s,cn=users' % cn_admins],
 			   '2computerPath':['cn=computers','cn=server,cn=computers'],
 			   '3networkPath':['cn=networks'],
-			   '4groupPath':['cn=groups','cn=schueler,cn=groups','cn=lehrer,cn=groups','cn=klassen,cn=schueler,cn=groups','cn=raeume,cn=groups'],
+			   '4groupPath':['cn=groups','cn=%s,cn=groups' % cn_pupils,'cn=%s,cn=groups' % cn_teachers,'cn=%s,cn=groups' % cn_staff,'cn=klassen,cn=%s,cn=groups' % cn_pupils,'cn=raeume,cn=groups'],
 			   '5dhcpPath':['cn=dhcp'],
 			   '6policyPath':['cn=policies'],
 			   '7sharePath':['cn=shares','cn=klassen,cn=shares'],
 			   '8none':['cn=dc,cn=server,cn=computers']
 			   }
-	container_policies = { 'cn=lehrer,cn=users': ['cn=default-lehrer,cn=console,cn=policies,dc=schule,dc=bremen,dc=de'] }
+	# FIXME: die Policies sollten besser mit der Gruppe verknüpft werden, um
+	# z.B. Mitarbeiter und Lehrer im selben Container pflegen zu können
+	container_policies = { 'cn=%s,cn=users' % cn_teachers: ['cn=default-lehrer,cn=console,cn=policies,' + baseDN] }
 
-	ou_base="ou=%s,%s"%(schoolNr,baseDN)
+	ou_base = getDN (schoolNr)
 	verify_container(ou_base, ou_module, co, lo, superordinate, baseDN, path='')
 	keys=container.keys()
 	keys.sort()
@@ -234,13 +296,14 @@ def verify_school_ou(schoolNr, co, lo, baseDN):
 	correct_server_exists=0
 	if objects:
 		server_exists = 1 # can't create another server with this id
+		correct_server = "cn=dc%s,cn=dc,cn=server,cn=computers,%s"%(schoolNr, getDN (schoolNr))
 		for object in objects:
-			if object.dn == "cn=dc%s,cn=dc,cn=server,cn=computers,ou=%s,%s"%(schoolNr,schoolNr,baseDN):
+			if object.dn == correct_server:
 				correct_server_exists=1
 	if server_exists and not correct_server_exists:
 		print "There is already a server entry in the wrong container"
 	if not server_exists:
-		position.setDn("cn=dc,cn=server,cn=computers,ou=%s,%s"%(schoolNr,baseDN))
+		position.setDn("cn=dc,cn=server,cn=computers,"+getDN (schoolNr))
 		object=server_module.object(co, lo, position=position, superordinate=superordinate)
 		count_lo()
 		object.open()
@@ -252,9 +315,11 @@ def verify_school_ou(schoolNr, co, lo, baseDN):
 		print "need to create server: %s"%object.dn
 
 	# create groups if not exsistant
-	groups=["cn=admins%s,cn=ouadmins,cn=groups,%s"%(schoolNr,baseDN),
-			"cn=schueler%s,cn=groups,ou=%s,%s"%(schoolNr,schoolNr,baseDN),
-			"cn=lehrer%s,cn=groups,ou=%s,%s"%(schoolNr,schoolNr,baseDN)]
+	# TODO: evtl. müssen die admins überarbeitet werden
+	groups=["cn=admins%s,cn=ouadmins,cn=groups,%s" % (schoolNr, baseDN),
+			"cn=%s%s,cn=groups,%s" % (cn_pupils, schoolNr, getDN (schoolNr)),
+			"cn=%s%s,cn=groups,%s" % (cn_teachers, schoolNr, getDN (schoolNr)),
+			"cn=%s%s,cn=groups,%s" % (cn_staff, schoolNr, getDN (schoolNr))]
 	for group in groups:
 		verify_group(group, co, lo, superordinate, baseDN)
 
@@ -264,12 +329,13 @@ def verify_school_ou(schoolNr, co, lo, baseDN):
 	count_lo()
 	service_exists=0
 	if objects:
+		service = "cn=%s,cn=dhcp,%s"%(schoolNr, getDN (schoolNr))
 		for object in objects:
-			if object.dn == "cn=%s,cn=dhcp,ou=%s,%s"%(schoolNr,schoolNr,baseDN):
+			if object.dn == service:
 				service_exists=1
 				dhcp_service_object=object
 	if not service_exists:
-		position.setDn("cn=dhcp,ou=%s,%s"%(schoolNr,baseDN))
+		position.setDn("cn=dhcp," + getDN (schoolNr))
 		object=dhcp_service_module.object(co, lo, position=position, superordinate=superordinate)
 		count_lo()
 		object.open()
@@ -284,11 +350,12 @@ def verify_school_ou(schoolNr, co, lo, baseDN):
 	count_lo()
 	server_exists=0
 	if objects:
+		server = "cn=dc%s,cn=%s,cn=dhcp,%s"%(schoolNr,schoolNr, getDN (schoolNr))
 		for object in objects:
-			if object.dn == "cn=dc%s,cn=%s,cn=dhcp,ou=%s,%s"%(schoolNr,schoolNr,schoolNr,baseDN):
+			if object.dn == server:
 				server_exists=1
 	if not server_exists:
-		position.setDn("cn=%s,cn=dhcp,ou=%s,%s"%(schoolNr,schoolNr,baseDN))
+		position.setDn("cn=%s,cn=dhcp,%s"%(schoolNr, getDN (schoolNr)))
 		object=dhcp_server_module.object(co, lo, position=position, superordinate=dhcp_service_object)
 		count_lo()
 		object.open()
@@ -297,16 +364,19 @@ def verify_school_ou(schoolNr, co, lo, baseDN):
 		print "need to create dhcp server: %s"%object.dn
 
 	# create userlogon-share if not exsistant
-	objects = univention.admin.modules.lookup(share_module, co, lo, scope='sub', superordinate=dhcp_service_object, base='cn=shares,ou=%s,%s' % (schoolNr,baseDN),
-											  filter=univention.admin.filter.expression('cn','userlogon'))
+	objects = univention.admin.modules.lookup(share_module, co, lo, \
+			scope='sub', superordinate=dhcp_service_object, \
+			base='cn=shares,%s' % ( getDN (schoolNr)), \
+			filter=univention.admin.filter.expression('cn','userlogon'))
 	count_lo()
 	share_exists=0
 	if objects:
+		share = "cn=userlogon,cn=shares," + getDN (schoolNr)
 		for object in objects:
-			if object.dn == "cn=userlogon,cn=shares,ou=%s,%s"%(schoolNr,baseDN):
+			if object.dn == share:
 				share_exists=1
 	if not share_exists:
-		position.setDn("cn=shares,ou=%s,%s"%(schoolNr,baseDN))
+		position.setDn("cn=shares," + getDN (schoolNr))
 		object=share_module.object(co, lo, position=position)
 		count_lo()
 		object.open()
@@ -323,13 +393,14 @@ def verify_school_ou(schoolNr, co, lo, baseDN):
 	count_lo()
 	root_exists=0
 	if objects:
+		root = "uid=root%s,cn=users,%s" % (schoolNr, getDN (schoolNr))
 		for object in objects:
-			if object.dn == "uid=root%s,cn=users,ou=%s,%s"%(schoolNr,schoolNr,baseDN):
+			if object.dn == root:
 				root_exists=1
 	if not root_exists:
 		passwd=get_passwd()
 		#passwd='12345678' # default password
-		position.setDn("cn=users,ou=%s,%s"%(schoolNr,baseDN))
+		position.setDn("cn=users," + getDN (schoolNr))
 		object=user_module.object(co, lo, position=position)
 		count_lo()
 		object.open()
@@ -482,7 +553,7 @@ def verify_group_share(schoolNr, classNr, co, lo, superordinate, base):
 	if (schoolNr, classNr.lower()) in verified_group_shares:
 		return True
 
-	position_dn="cn=%s,cn=klassen,cn=shares,ou=%s,%s"%(classNr,schoolNr,base)
+	position_dn="cn=%s,cn=klassen,cn=shares,%s"%(classNr, getDN (schoolNr, basedn=base))
 	module = univention.admin.modules.get("shares/share")
 	more_instances = 1
 	container_position = base
@@ -512,7 +583,7 @@ def verify_group_share(schoolNr, classNr, co, lo, superordinate, base):
 		print "need to create groupshare %s"%position_dn
 
 		# get gid form corresponding group
-		group_dn="cn=%s,cn=klassen,cn=schueler,cn=groups,ou=%s,%s"%(classNr,schoolNr,base)
+		group_dn="cn=%s,cn=klassen,cn=%s,cn=groups,%s"%(classNr, cn_pupils, getDN (schoolNr, basedn=base))
 		gids=lo.get(group_dn,['gidNumber'])
 		count_lo()
 		gid = 0
@@ -529,7 +600,7 @@ def verify_group_share(schoolNr, classNr, co, lo, superordinate, base):
 		serverfqdn = "dc%s.%s"%(schoolNr,domainname)
 
 		# get alternative server (defined at ou object if a dc slave is responsible for more than one ou)
-		ou_dn = "ou=%s,%s"%(schoolNr,base)
+		ou_dn = getDN (schoolNr, basedn=base)
 		ou_attr_LDAPAccessWrite = lo.get(ou_dn,['univentionLDAPAccessWrite'])
 		count_lo()
 		alternativeServer_dn = None
@@ -711,7 +782,9 @@ def modify_user(person, module, co, lo):
 	for group in object['groups']:
 		if group not in default_groups:
 			kpos = string.find(group,',')
-			if group[:9] == 'cn=schueler' or group[:11] == 'cn=lehrer' or group[kpos+1:kpos+23] == 'cn=klassen,cn=schueler':
+			if group[:9] == ('cn=%s' % cn_pupils) or \
+					group[:11] == ('cn=%s' % cn_teachers) or \
+					group[kpos+1:kpos+23] == ('cn=klassen,cn=%s' % cn_pupils):
 				# group looks like a default group, so we don't need it anymore
 				print "remove from group: %s"%group
 				remove_groups.append(group)
@@ -788,7 +861,7 @@ def create_user(person, baseDN, module, password):
 ## 	ou_exists=0
 ## 	if objects:
 ## 		for object in objects:
-## 			if codecs.latin_1_encode(univention.admin.objects.dn(object))[0]==('ou=%s,%s'%(person.sNr,baseDN)):
+## 			if codecs.latin_1_encode(univention.admin.objects.dn(object))[0]==(getDN (person.sNr)):
 ## 				ou_exists = 1
 ## 	if not ou_exists:
 	verify_school_ou(person.sNr, co, lo, baseDN)
@@ -894,7 +967,7 @@ def import_user():
 		linecnt += 1
 		print 'Processing line %d: %s' % (linecnt, line),
 		try:
-			main_person = sfb_person_modify(line)
+			main_person = ucsschool_person_modify(line)
 		except:
 			msg = 'ERROR: Problems parsing line, skipped: %d: %s' % (linecnt, line)
 			print msg
@@ -943,7 +1016,7 @@ def import_user():
 			for object in objects:
 				ou=object.dn[string.find(object.dn,"ou=")+3:string.find(object.dn,",",string.find(object.dn,"ou=")+3)]
 				# teacher or student
-				if 'cn=schueler,cn=users' in object.dn:
+				if ('cn=%s,cn=users' % cn_pupils) in object.dn:
 					main_person.isTeacher = '0'
 				else:
 					main_person.isTeacher = '1'
@@ -1033,7 +1106,7 @@ def create_networks(schoolNr, networks):
 		object['contact']='root@%s'%domainname
 		create_object(object)
 
-		position.setDn("cn=%s,cn=dhcp,ou=%s,%s"%(schoolNr,schoolNr,baseDN))
+		position.setDn("cn=%s,cn=dhcp,%s"%(schoolNr, getDN (schoolNr)))
 		object=dhcp_service_module.object(co, lo, position=position, superordinate=superordinate)
 		count_lo()
 		object=dhcp_subnet_module.object(co, lo, position=position, superordinate=dhcp_subnet_module)
@@ -1043,14 +1116,14 @@ def create_networks(schoolNr, networks):
 		object['subnetmask']='255.255.255.0'
 		create_object(object)
 
-		position.setDn("cn=networks,ou=%s,%s"%(schoolNr,baseDN))
+		position.setDn("cn=networks,%s" + getDN (schoolNr))
 		object=network_module.object(co, lo, position=position, superordinate=superordinate)
 		count_lo()
 		object.open()
 		object['name']='%s-%s'%(schoolNr,net)
 		object['netmask']='24'
 		object['network']=net
-		object['dhcpEntryZone']='cn=%s,cn=dhcp,ou=%s,%s'%(schoolNr,schoolNr,baseDN)
+		object['dhcpEntryZone']='cn=%s,cn=dhcp,%s'%(schoolNr, getDN (schoolNr))
 		object['dnsEntryZoneForward']='zoneName=%s,cn=dns,%s'%(domainname,baseDN)
 		object['dnsEntryZoneReverse']='zoneName=%s.%s.%s.in-addr.arpa,cn=dns,%s'%(octals[2],octals[1],octals[0],baseDN)
 		object['ipRange']=[['%s.20'%subnet,'%s.250'%subnet]]
@@ -1058,13 +1131,14 @@ def create_networks(schoolNr, networks):
 
 def check_network(schoolNr, net):
 	objects = univention.admin.modules.lookup(network_module, co, lo, scope='sub', superordinate=superordinate,
-											  base='cn=networks,ou=%s,%s'%(schoolNr,baseDN),
+											  base='cn=networks,%s'%(getDN (schoolNr)),
 											  filter=univention.admin.filter.expression('cn','%s-%s'%(schoolNr,net)))
 	count_lo()
 	net_exists=0
 	if objects:
+		net = "cn=%s-%s,cn=networks,%s"%(schoolNr,net, getDN (schoolNr))
 		for object in objects:
-			if object.dn == "cn=%s-%s,cn=networks,ou=%s,%s"%(schoolNr,net,schoolNr,baseDN):
+			if object.dn == net:
 				net_exists = 1
 
 	return net_exists
@@ -1087,7 +1161,7 @@ def generate_new_mac(schoolNr,IP):
 	mac='%s00:00'%mac_start
 	i=10
 	j=10
-	while check_macAddress(mac,base='cn=computers,ou=%s,%s'%(schoolNr,baseDN)):
+	while check_macAddress(mac,base='cn=computers,' + getDN (schoolNr)):
 		if i==99:
 			i=10
 			j+=1
@@ -1099,13 +1173,13 @@ def generate_new_mac(schoolNr,IP):
 
 def check_computer(module, name, schoolNr):
 	objects = univention.admin.modules.lookup(module, co, lo, scope='sub', superordinate=superordinate,
-											  base='cn=computers,ou=%s,%s'%(schoolNr,baseDN),
+											  base='cn=computers,'+ getDN (schoolNr),
 											  filter=univention.admin.filter.expression('cn','%s'%name))
 	count_lo()
 	computer_exists=0
 	if objects:
 		for object in objects:
-			if object.dn == "cn=%s,cn=computers,ou=%s,%s"%(name,schoolNr,baseDN):
+			if object.dn == "cn=%s,cn=computers,%s"%(name, getDN (schoolNr)):
 				computer_exists = 1
 
 	return computer_exists
@@ -1252,13 +1326,13 @@ def import_computer():
 			if not check_network(schoolNr,net):
 				create_networks(schoolNr,[net])
 
-			position.setDn("cn=computers,ou=%s,%s"%(schoolNr,baseDN))
+			position.setDn("cn=computers," + getDN (schoolNr))
 			object=module.object(co, lo, position=position, superordinate=superordinate)
 			count_lo()
 			object.open()
 			object['name']=name
 			object['mac']=MAC
-			object['network']='cn=%s-%s,cn=networks,ou=%s,%s'%(schoolNr,net,schoolNr,baseDN)
+			object['network']='cn=%s-%s,cn=networks,%s'%(schoolNr,net, getDN (schoolNr))
 			object['inventoryNumber']=inventoryNumbers
 			if not IP==net:
 				object['ip']=IP
@@ -1297,8 +1371,8 @@ def import_group():
 		ClassID = parsed[2]
 		Descrpt = parsed[3]
 
-		group_dn="cn=%s,cn=klassen,cn=schueler,cn=groups,ou=%s,%s"%(ClassID,schoolNr,baseDN)
-		share_dn="cn=%s,cn=klassen,cn=shares,ou=%s,%s"%(ClassID,schoolNr,baseDN)
+		group_dn="cn=%s,cn=klassen,cn=%s,cn=groups,%s"%(ClassID, cn_pupils, getDN (schoolNr))
+		share_dn="cn=%s,cn=klassen,cn=shares,%s"%(ClassID, getDN (schoolNr))
 
 		if action in ['A','M']:	# Add/Modify group
 ## 			verify_group(group_dn, co, lo, superordinate, baseDN)
@@ -1450,7 +1524,7 @@ def export_computer():
 		sys.exit()
 	outf = open(outfile,'w')
 
-	ouBaseDN = "ou=%s,%s" % (ou, baseDN)
+	ouBaseDN = getDN (ou)
 
 	# get group
 	print 'looking for objects... please wait...'
@@ -1474,8 +1548,6 @@ def export_computer():
 #------------------------------------------------------------------------------------------#
 
 # init univention-directory-manager
-
-baseDN=configRegistry['ldap/base']
 tls=2
 
 secretFile=open('/etc/ldap.secret','r')
@@ -1511,7 +1583,7 @@ position=univention.admin.uldap.position(baseDN)
 superordinate=None
 
 # get default group
-default_group = "cn=Domain Users,cn=groups,%s"%ldap_base # fallback
+default_group = "cn=Domain Users,cn=groups,%s"%baseDN # fallback
 setting_module = univention.admin.modules.get("settings/default")
 for object in univention.admin.modules.lookup(setting_module, co, lo, scope='sub', superordinate=superordinate, base='', filter=''):
 	if object.has_key("defaultGroup"):
@@ -1520,7 +1592,7 @@ for object in univention.admin.modules.lookup(setting_module, co, lo, scope='sub
 count_lo()
 
 # select action
-if sys.argv[0].endswith("import_user") or sys.argv[0].endswith("SFB_import"):
+if sys.argv[0].endswith("import_user") or sys.argv[0].endswith("ucs-school-import"):
 	import_user()
 elif sys.argv[0].endswith("import_networks"):
 	import_networks()

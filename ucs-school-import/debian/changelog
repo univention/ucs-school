@@ -1,3 +1,16 @@
+ucs-school-import (4.0.0-4) unstable; urgency=low
+
+  * implemented district layer which can be activated by UCR variable
+    ucsschool/ldap/district/enable. Ticket #2009060410000116
+  * implemented variable names for teachers, pupils, staff and admins
+    containers which can be set by UCR variables
+    ucsschool/ldap/default/container/teachers
+    ucsschool/ldap/default/container/pupils
+    ucsschool/ldap/default/container/staff
+    ucsschool/ldap/default/container/admins
+
+ -- Jan Christoph Ebersbach <ebersbach@univention.de>  Fri,  5 Jun 2009 17:46:52 +0200
+
 ucs-school-import (4.0.0-3) unstable; urgency=low
 
   * changed remaining references to sfb to ucs-school. Ticket #2009060410000116
