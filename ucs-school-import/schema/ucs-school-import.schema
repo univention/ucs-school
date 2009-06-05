@@ -4,10 +4,10 @@
 # univention owns the namespace 10176.
 #
 #
-# Univention SFB Import OID Prefix: 1.3.6.1.4.1.10176.9999.2
+# Univention UCS@School Import OID Prefix: 1.3.6.1.4.1.10176.9999.2
 #
-#  1.3.6.1.4.1.10176.9999.2.50    sfb import object
-#  1.3.6.1.4.1.10176.9999.2.50XX  sfb import attributes
+#  1.3.6.1.4.1.10176.9999.2.50    ucs@school import object
+#  1.3.6.1.4.1.10176.9999.2.50XX  ucs@school import attributes
 
 attributetype ( 1.3.6.1.4.1.10176.99999.2.5001
         NAME 'univentionAbordnungMasterDn'

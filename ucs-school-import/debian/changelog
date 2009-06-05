@@ -1,3 +1,9 @@
+ucs-school-import (4.0.0-3) unstable; urgency=low
+
+  * changed remaining references to sfb to ucs-school. Ticket #2009060410000116
+
+ -- Jan Christoph Ebersbach <ebersbach@univention.de>  Fri,  5 Jun 2009 11:40:43 +0200
+
 ucs-school-import (4.0.0-2) unstable; urgency=low
 
   * renamed package to ucs-school-import. Ticket #2009060410000116

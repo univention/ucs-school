@@ -1,4 +1,4 @@
-Paket sfb-import Kurzdoku
+Paket ucs-school-import Kurzdoku
 
 Ziel:
 
@@ -8,8 +8,8 @@ Netzwerken und Rechnern.
 
 Skripte:
 
-Alle Skripte liegen unter /usr/local/sbin/SFB_import. Ausgangspunkt ist das Skript 
-"SFB_import", alle anderen Skripte sind nur symbolische links auf diese Datei.
+Alle Skripte liegen unter /usr/share/ucs-school-import/scripts. Ausgangspunkt ist das Skript 
+"ucs-school-import", alle anderen Skripte sind nur symbolische links auf diese Datei.
 
 Alle Skripte legen automatisch eine Schule (also deren ou-Baum im LDAP) an, sobald
 ein Element in dieser Schule angelegt werden soll (entspricht der Funktionalität von
@@ -24,7 +24,7 @@ Stelle im LDAP angelegt.
 
  - Benutzer importieren:
 Das Importieren von neuen oder geänderten Benutzern erfolgt durch den Aufruf des 
-Skriptes "SFB_import" oder "import_user" mit dem Dateinamen als Option.
+Skriptes "ucs-school-import" oder "import_user" mit dem Dateinamen als Option.
 
  - Netzwerk importieren:
 Netzwerke können in einer Datei zeilenweise einer Schule zugeordnet werden, Trennzeichen

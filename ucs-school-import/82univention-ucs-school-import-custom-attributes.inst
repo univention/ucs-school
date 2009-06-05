@@ -5,7 +5,7 @@ if ! test -e "/usr/share/univention-join/.joined"; then
     exit 1
 fi
 
-name="univention-sfb-import-custom-attributes"
+name="univention-ucs-school-import-custom-attributes"
 file="/usr/lib/univention-install/.index.txt"
 ldapbase=$(univention-config-registry get ldap/base) 
 VERSION="2"

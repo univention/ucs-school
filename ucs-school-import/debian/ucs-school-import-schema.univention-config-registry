@@ -4,5 +4,5 @@ Variables: server/role
 
 Type: subfile
 Multifile: etc/ldap/slapd.conf
-Subfile: etc/ldap/slapd.conf.d/11univention-sfb-import-custom-schema
+Subfile: etc/ldap/slapd.conf.d/11univention-ucs-school-import-custom-schema
 Variables: server/role
