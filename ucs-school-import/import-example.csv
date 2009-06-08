@@ -1,3 +1,4 @@
-mod;nachname;vornamen;geburtsdatum;geburtsort;geschlecht;postleitzahl;ort;strasse;hausnummer;berliner_schulnummer;schuelerstatus;schuelerstatus_grund;vorherige_berliner_schulnummer;schuljahr;schulzweig;jahrgangsstufe;klasse_alpha;nichtdeutscher_herkunft;lernmittelbefreiung;lehrer
-A;Asendorf;Roman;01.01.00;Berlin;m;10117;Berlin;Strasse;1;01a03;a;1;;2008/09;1;3;A;0;0;0
-A;Asendorf;Roman;01.01.77;Berlin;m;10117;Berlin;Strasse;1;01a03;a;1;;2008/09;1;;;0;0;1
+mod;login;nachname;vornamne;geburtsdatum;geburtsort;geschlecht;postleitzahl;ort;strasse;hausnummer;berliner_schulnummer;schuelerstatus;schuelerstatus_grund;vorherige_berliner_schulnummer;schuljahr;schulzweig;jahrgangsstufe;klasse_alpha;nichtdeutscher_herkunft;lernmittelbefreiung;lehrer;mitarbeiter
+A;roman;Asendorf;Roman;01.01.00;Berlin;m;10117;Berlin;Strasse;01a03;a;1;;;2008/09;1;3;A;0;0;0;0
+A;r.asendorf;Asendorf;Roman;01.01.77;Berlin;m;10117;Berlin;Strasse;01a03;a;1;;;2008/09;1;;;0;0;1;0
+A;j.ebersbac;Ebersbach;Jan Christoph;17.04.1981;Irgendwo;m;12345;Berlin;Strasse;01a03;a;1;;;2008/09;1;;;0;0;0;1
