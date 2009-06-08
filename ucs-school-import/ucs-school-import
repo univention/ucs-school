@@ -80,14 +80,14 @@ class ucsschool_person_modify:
 
 		self.modtype   = parsed[0] # A,M or D: add, modify or delete
 		if not generate_logins:
-			self.login     = parsed[1]
+			self.login = parsed[1]
 		self.sname     = (utf8_to_ascii(unicode(parsed[2]))).replace(' ', '') # surename
 		self.name      = (utf8_to_ascii(unicode(parsed[3]))).replace(' ', '') # first name
-		self.sNr       = parsed[11] # schoolNr(s)
-		self.cNr       = parsed[17] #classNr
-		self.rights    = parsed[6] # users which may change this entry
+		self.sNr       = parsed[10] # schoolNr(s)
+		self.cNr       = parsed[17] + parsed[18] # classNr
+		self.rights    = parsed[6] # users which may change this entry # NOT USED
 		self.mail      = self.login+"@"+externaldomainname
-		self.isActive  = parsed[12][0]
+		self.isActive  = parsed[11][0]
 		self.isTeacher = parsed[21][0]
 		self.isStaff   = parsed[22][0]
 		self.problem_hints = ""
@@ -159,7 +159,7 @@ class ucsschool_person_modify:
 			cn = cn_teachers
 		elif self.isStaff == "1":
 			cn = cn_staff
-		return "cn=%s,cn=users," % (cn, getDN (self.sNr))
+		return "cn=%s,cn=users,%s" % (cn, getDN (self.sNr))
 
 	def getDN(self):
 		return "uid="+self.login+","+self.getPosition_dn()
@@ -247,7 +247,7 @@ def getDN (schoolNr, base='school', basedn=baseDN):
 			'school'	-> ou=SCHOOL,ou=DISTRICT,dc=BASE,dc=DN
 	"""
 	dn = '%(school)s%(district)s%(basedn)s'
-	values = {'school':'%s,'%schoolNr, 'district':'', 'basedn':basedn}
+	values = {'school':'ou=%s,'%schoolNr, 'district':'', 'basedn':basedn}
 	if district_enabled:
 		district = extract_district (schoolNr)
 		if not district:
@@ -523,7 +523,9 @@ def create_object(object):
 
 
 def verify_container(position_dn, module, co, lo, superordinate, base, path="userPath"):
-	# look if goal-container exists, else create it
+	"""
+	look if goal-container exists, else create it
+	"""
 	container_exists = 0
 	type=position_dn[0:string.find(position_dn,"=")]
 	name=position_dn[string.find(position_dn,"=")+1:string.find(position_dn,",")]
@@ -1023,6 +1025,7 @@ def import_user():
 			for object in objects:
 				ou=object.dn[string.find(object.dn,"ou=")+3:string.find(object.dn,",",string.find(object.dn,"ou=")+3)]
 				# teacher or student
+				# TODO: add staff members also
 				if ('cn=%s,cn=users' % cn_pupils) in object.dn:
 					main_person.isTeacher = '0'
 				else:
@@ -1616,6 +1619,8 @@ elif sys.argv[0].endswith("create_ou"):
 	else:
 		print "must have one Argument for schoolNr"
 		sys.exit()
+	if district_enabled:
+		verify_container (getDN (schoolNr, base='district'), ou_module, co, lo, superordinate, baseDN)
 	verify_school_ou(schoolNr, co, lo, baseDN)
 elif sys.argv[0].endswith("activate_groupmembers"):
 	activate_groupmembers()
