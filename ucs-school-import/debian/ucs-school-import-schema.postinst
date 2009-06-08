@@ -37,23 +37,6 @@ server_role=`univention-baseconfig get server/role`
 if [ "$server_role" = "domaincontroller_master" ]; then
         /usr/lib/univention-install/82univention-ucs-school-import-custom-attributes.inst || true
         /etc/init.d/slapd restart
-
-	# create extended attribute for ucs@school
-	univention-directory-manager settings/extended_attribute create $@ --ignore_exist \
-			--position="cn=ucsschool,cn=custom attributes,cn=univention,$ldap_base" \
-			--set name="ucsschool-user-role" \
-			--set module="users/user" \
-			--set objectClass="univentionUcsSchoolUser" \
-			--set ldapMapping="ucsschoolRole" \
-			--set shortDescription="User role" \
-			--set longDescription="Role of user in ucs@school context (e.g. teacher, administration)" \
-			--set tabName="ucs@school" \
-			--set tabPosition=1 \
-			--set syntax="string" \
-			--set multivalue=1 \
-			--set mayChange=1 \
-			--set 'translationShortDescription="de_DE" "Benutzerrolle"' \
-			--set 'translationLongDescription="de_DE" "Rolle des Benutzers im ucs@school-Kontext (z.B. teacher oder administration)"'
 fi
 
 exit 0

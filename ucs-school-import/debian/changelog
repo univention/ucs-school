@@ -1,3 +1,16 @@
+ucs-school-import (4.0.0-8) unstable; urgency=low
+
+  * added LDAP schema for the extended attribute ucsschool-user-role
+  * fixed serveral small issues with the import and create_ou script. Ticket #2009060410000116
+
+ -- Jan Christoph Ebersbach <ebersbach@univention.de>  Mon,  8 Jun 2009 16:30:54 +0200
+
+ucs-school-import (4.0.0-7) unstable; urgency=low
+
+  * changed OIDs of extended attributes to the ucs@school OIDs. Ticket #2009060410000116
+
+ -- Jan Christoph Ebersbach <ebersbach@univention.de>  Mon,  8 Jun 2009 15:02:49 +0200
+
 ucs-school-import (4.0.0-6) unstable; urgency=low
 
   * added field logins for the imported data. Ticket #2009060410000116
