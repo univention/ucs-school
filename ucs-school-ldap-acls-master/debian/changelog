@@ -1,3 +1,9 @@
+ucs-school-ldap-acls-master (4.0.0-2) unstable; urgency=low
+
+  * moved extended attribute creation to ucs-school-import. Ticket #2009060410000116
+
+ -- Jan Christoph Ebersbach <ebersbach@univention.de>  Mon,  8 Jun 2009 14:43:00 +0200
+
 ucs-school-ldap-acls-master (4.0.0-1) unstable; urgency=low
 
   * update LDAP ACLs to a more generic approach
