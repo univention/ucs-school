@@ -39,9 +39,8 @@ configRegistry.load()
 baseDN=configRegistry['ldap/base']
 domainname=configRegistry['domainname']
 
-# TODO: Code für die Benutzernamen-Erzeugung entfernen
-
-# FIXME: Verweis auf Berlin entfernen
+# FIXME: Are e-mail addresses provided?? otherwise it might be useful to
+# configure this via UCR
 externaldomainname='schule.berlin.de'
 
 district_enabled = False
@@ -56,6 +55,9 @@ cn_pupils = configRegistry['ucsschool/ldap/default/container/pupils']
 cn_teachers = configRegistry['ucsschool/ldap/default/container/teachers']
 cn_admins = configRegistry['ucsschool/ldap/default/container/admins']
 cn_staff = configRegistry['ucsschool/ldap/default/container/staff']
+
+# TODO: make this configurable via UCR
+generate_logins = False
 
 if not (cn_pupils and cn_teachers and cn_admins and cn_staff):
 	print 'ERROR: Unable to progress, one of these UCR variables is not set correctly:\n\tucsschool/ldap/default/container/pupils\n\tucsschool/ldap/default/container/teachers\n\tucsschool/ldap/default/container/staff\n\tucsschool/ldap/default/container/admins'
@@ -74,25 +76,29 @@ class ucsschool_person_modify:
 			e_pos = string.find(line,";",b_pos)
 			parsed.append(codecs.utf_8_decode(line[b_pos:e_pos])[0])
 			b_pos=e_pos+1
-			parsed=line.split(sepchar)
+		parsed=line.split(sepchar)
 
 		self.modtype   = parsed[0] # A,M or D: add, modify or delete
-		self.isTeacher = parsed[20][0]
-		self.isStaff   = parsed[21][0]
-		self.name      = (utf8_to_ascii(unicode(parsed[2]))).replace(' ', '') # first name
-		self.sname     = (utf8_to_ascii(unicode(parsed[1]))).replace(' ', '') # surename
-		if self.isTeacher=="1":
-			self.login     = (self.name[0]+self.sname).lower()[:8]
-			print "DEBUG: Teacher found: creating login name " + self.login
-		else:
-			self.login     = self.name.lower()[:8]
-			print "DEBUG: Student found: creating login name " + self.login
-		self.sNr       = parsed[10]# schoolNr(s)
-		self.cNr       = parsed[16]+parsed[17]# classNr
+		if not generate_logins:
+			self.login     = parsed[1]
+		self.sname     = (utf8_to_ascii(unicode(parsed[2]))).replace(' ', '') # surename
+		self.name      = (utf8_to_ascii(unicode(parsed[3]))).replace(' ', '') # first name
+		self.sNr       = parsed[11] # schoolNr(s)
+		self.cNr       = parsed[17] #classNr
 		self.rights    = parsed[6] # users which may change this entry
 		self.mail      = self.login+"@"+externaldomainname
-		self.isActive  = parsed[11][:1]
+		self.isActive  = parsed[12][0]
+		self.isTeacher = parsed[21][0]
+		self.isStaff   = parsed[22][0]
 		self.problem_hints = ""
+
+		if generate_logins:
+			if self.isTeacher == "1" or self.isStaff == "1":
+				self.login = ('%s.%s' % (self.name[0], self.sname[:8])).lower()
+				print "DEBUG: Teacher found: creating login name " + self.login
+			else:
+				self.login = self.name[:6].lower()
+				print "DEBUG: Student found: creating login name " + self.login
 
 		if ',' in self.sNr:
 			self.allsNrs= self.sNr.split(',')
@@ -842,17 +848,18 @@ def create_passwd():
 	return passwd
 
 def create_user(person, baseDN, module, password):
-	try:
-		loginname = person.login
-		i = 1
-		while(check_user(person, baseDN, user_module)):
-			print "WARING: User already exists: %s"%person.getDN()
-			person.problem_hints +="WARNING: Username already exists: %s" % person.getDN()+" appended counted number\n"
-			person.login = loginname+str(i)
-			print "INFO: Trying with new username: ", person.login
-			i = i+1
-	except: # happens if container does not exsist
-		pass
+	if generate_logins:
+		try:
+			loginname = person.login
+			i = 1
+			while(check_user(person, baseDN, user_module)):
+				print "WARING: User already exists: %s"%person.getDN()
+				person.problem_hints +="WARNING: Username already exists: %s" % person.getDN()+" appended counted number\n"
+				person.login = loginname+str(i)
+				print "INFO: Trying with new username: ", person.login
+				i = i+1
+		except: # happens if container does not exsist
+			pass
 
 	# check if ou exists at all
 	objects = univention.admin.modules.lookup(ou_module, co, lo, scope='sub', superordinate=superordinate, base=baseDN,
