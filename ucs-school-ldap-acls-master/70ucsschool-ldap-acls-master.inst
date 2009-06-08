@@ -41,18 +41,6 @@ test -n "$(grep "${JSNAME} v${VERSION} successful" ${JSFILE})" && exit 1
 
 eval $(univention-config-registry shell)
 
-
-# create required containers if neccessary
-univention-directory-manager container/cn create $@ \
-	--ignore_exist \
-	--position="cn=custom attributes,cn=univention,$ldap_base" \
-	--set name=OU-ACL
-
-univention-directory-manager container/cn create $@ \
-	--ignore_exist \
-	--position="cn=ucsschool,cn=custom attributes,cn=univention,$ldap_base" \
-	--set name=OU-ACL
-
 # create new group container
 univention-directory-manager container/cn create $@ \
 	--ignore_exist \
