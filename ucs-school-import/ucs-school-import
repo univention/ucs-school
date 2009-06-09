@@ -214,30 +214,30 @@ def count_lo():
 			sys.exit(1)
 
 xlate={0xc0:'A', 0xc1:'A', 0xc2:'A', 0xc3:'A', 0xc4:'A', 0xc5:'A',
-       0xc6:'Ae', 0xc7:'C',
-       0xc8:'E', 0xc9:'E', 0xca:'E', 0xcb:'E',
-       0xcc:'I', 0xcd:'I', 0xce:'I', 0xcf:'I',
-       0xd0:'Th', 0xd1:'N',
-       0xd2:'O', 0xd3:'O', 0xd4:'O', 0xd5:'O', 0xd6:'O', 0xd8:'O',
-       0xd9:'U', 0xda:'U', 0xdb:'U', 0xdc:'U',
-       0xdd:'Y', 0xde:'th', 0xdf:'ss',
-       0xe0:'a', 0xe1:'a', 0xe2:'a', 0xe3:'a', 0xe4:'a', 0xe5:'a',
-       0xe6:'ae', 0xe7:'c',
-       0xe8:'e', 0xe9:'e', 0xea:'e', 0xeb:'e',
-       0xec:'i', 0xed:'i', 0xee:'i', 0xef:'i',
-       0xf0:'th', 0xf1:'n',
-       0xf2:'o', 0xf3:'o', 0xf4:'o', 0xf5:'o', 0xf6:'o', 0xf8:'o',
-       0xf9:'u', 0xfa:'u', 0xfb:'u', 0xfc:'u',
-       0xfd:'y', 0xfe:'th', 0xff:'y',
-       0xae:'R', 0xaf:'_', 0xb8:'c',
-       0xba:'o', 0x17e : 'z',
-       0x100: 'A', 0x101 : 'a', 0x102 : 'A'
-       }
+		0xc6:'Ae', 0xc7:'C',
+		0xc8:'E', 0xc9:'E', 0xca:'E', 0xcb:'E',
+		0xcc:'I', 0xcd:'I', 0xce:'I', 0xcf:'I',
+		0xd0:'Th', 0xd1:'N',
+		0xd2:'O', 0xd3:'O', 0xd4:'O', 0xd5:'O', 0xd6:'O', 0xd8:'O',
+		0xd9:'U', 0xda:'U', 0xdb:'U', 0xdc:'U',
+		0xdd:'Y', 0xde:'th', 0xdf:'ss',
+		0xe0:'a', 0xe1:'a', 0xe2:'a', 0xe3:'a', 0xe4:'a', 0xe5:'a',
+		0xe6:'ae', 0xe7:'c',
+		0xe8:'e', 0xe9:'e', 0xea:'e', 0xeb:'e',
+		0xec:'i', 0xed:'i', 0xee:'i', 0xef:'i',
+		0xf0:'th', 0xf1:'n',
+		0xf2:'o', 0xf3:'o', 0xf4:'o', 0xf5:'o', 0xf6:'o', 0xf8:'o',
+		0xf9:'u', 0xfa:'u', 0xfb:'u', 0xfc:'u',
+		0xfd:'y', 0xfe:'th', 0xff:'y',
+		0xae:'R', 0xaf:'_', 0xb8:'c',
+		0xba:'o', 0x17e : 'z',
+		0x100: 'A', 0x101 : 'a', 0x102 : 'A'
+		}
 
 nonasciire = re.compile(u'([\x00-\x7f]+)|([^\x00-\x7f])', re.UNICODE).sub
 
 def utf8_to_ascii (unicrap):
-        return str(nonasciire(lambda x: x.group(1) or xlate.setdefault(ord(x.group(2)), ''), unicrap))
+	return str(nonasciire(lambda x: x.group(1) or xlate.setdefault(ord(x.group(2)), ''), unicrap))
 
 def extract_district (schoolNr):
 	try:
@@ -333,8 +333,8 @@ def verify_school_ou(schoolNr, co, lo, baseDN):
 		object["unixhome"]="/dev/null"
 		object["shell"]="/bin/bash"
 		object["primaryGroup"]="cn=DC Slave Hosts,cn=groups,%s"%baseDN
-		create_object(object)
 		print "need to create server: %s"%object.dn
+		create_object(object)
 
 	# create groups if not exsistant
 	# TODO: evtl. müssen die admins überarbeitet werden
@@ -967,13 +967,9 @@ def import_user():
 	print "infile is  : "+infile
 	inf = open(infile,'r')
 
-        if not os.path.exists("/root/sfb"):
-                os.mkdir("/root/sfb")
-                print "created /root/sfb"
-
 	# outfile for passwords of created users
 	outfile = None
-	#outfile = "/root/sfb/create-user-passwd-%s.csv" % time.strftime("%Y%m%d-%H%M%S")
+	#outfile = "/var/lib/ucs-school-import/create-user-passwd-%s.csv" % time.strftime("%Y%m%d-%H%M%S")
 	#outf = open(outfile,'w')
 
 #	if len(sys.argv)>2:
@@ -1006,7 +1002,7 @@ def import_user():
 		persons = [main_person]
 		persons.extend(main_person.getOtherPersons())
 		#passwd = create_passwd()
-        #passwd = get_passwd()
+		#passwd = get_passwd()
 		passwd = '12345678'
 
 		if main_person.modtype == "A":
@@ -1379,6 +1375,85 @@ def import_computer():
 		# read next line
 		line=inf.readline()
 
+def import_router():
+	# argument is infile
+	if len(sys.argv)>1:
+		infile = sys.argv[1]
+	else:
+		print "must have one Argument for infile"
+		sys.exit()
+
+	print "infile is  : "+infile
+	inf = open(infile,'r')
+
+	problem_hints=""
+	linecnt=0
+
+	line=inf.readline()
+	while not line=="":
+		linecnt += 1
+		print 'Processing line %d: %s' % (linecnt, line),
+
+		parsed=line.split(sepchar)
+
+		ctype    = 'ipmanagedclient'
+		name     = ''
+		MAC      = parsed[0]
+		schoolNr = parsed[1]
+		IP       = parsed[2]
+		IP=string.replace(IP,' ','')
+		IP=string.replace(IP,'\n','')
+		inventoryNumbers = parsed[3].strip().split(',')
+
+		name     = 'router%s' % schoolNr
+
+		verify_school_ou(schoolNr, co, lo, baseDN)
+
+		octals=IP.split('.')
+		subnet='%s.%s.%s'%(octals[0],octals[1],octals[2])
+		net = '%s.0'%subnet
+
+		module = univention.admin.modules.get("computers/%s"%ctype)
+		if not module:
+			print 'ERROR: Type "%s" not found for computer "%s".' % (ctype, name)
+			print 'Ignoring of line %d' % linecnt
+		else:
+			if check_computer(module,name,schoolNr):
+				print "computer %s already exists (school %s)"%(name,schoolNr)
+			else:
+				mac_used=check_macAddress(MAC)
+				if mac_used:
+					old_mac=MAC
+					MAC=generate_new_mac(schoolNr,IP)
+					print 'mac %s already used, set mac to %s (resolve manually)'%(old_mac,MAC)
+
+				print "generate computer %s (school %s)"%(name,schoolNr)
+
+				if not check_network(schoolNr,net):
+					create_networks(schoolNr,[net])
+
+				position.setDn("cn=computers,%s" % (getDN (schoolNr), ))
+				object=module.object(co, lo, position=position, superordinate=superordinate)
+				count_lo()
+				object.open()
+				object['name']=name
+				object['mac']=MAC
+				object['network']='cn=%s-%s,cn=networks,%s'%(schoolNr,net, getDN (schoolNr))
+				object['inventoryNumber']=inventoryNumbers
+				if not IP==net:
+					object['ip']=IP
+					print "set ip to %s is not net %s"%(IP,net)
+				try:
+					create_object(object)
+				except:
+					print "WARNING: Error creating computer %s"%object.dn
+					traceback.print_exc (100, sys.stdout)
+
+			print 'Processing of line %d completed' % linecnt
+
+		# read next line
+		line=inf.readline()
+
 def import_group():
 	# argument is infile
 	if len(sys.argv)>1:
@@ -1432,6 +1507,74 @@ def import_group():
 
 		line=inf.readline()[:-1]
 
+def import_printer():
+	# argument is infile
+	if len(sys.argv)>1:
+		infile = sys.argv[1]
+	else:
+		print "must have one Argument for infile"
+		sys.exit()
+
+	print "infile is  : "+infile
+	inf = open(infile,'r')
+
+	line=inf.readline()[:-1]
+	while not line=="":
+
+		parsed=line.split(sepchar)
+
+		action = parsed[0]   # action=A(dd, M(odify, D(elete
+		schoolNr = parsed[1]
+		printerName = parsed[2]
+		printerUri = parsed[3]
+		printerModel = parsed[4]
+
+		position_dn ="cn=%s,cn=printers,%s" % (printerName, getDN (schoolNr))
+		container ="cn=printers,%s" % (getDN (schoolNr), )
+
+		objects=''
+		try:
+			objects = univention.admin.modules.lookup(printer_module, co, lo, scope='sub', superordinate=superordinate, base=container,
+													  filter=univention.admin.filter.expression(type,name))
+			count_lo()
+		except:
+			pass
+		if objects:
+			for object in objects:
+				if codecs.latin_1_encode(univention.admin.objects.dn(object))[0]==position_dn:
+					container_exists = 1
+
+		if action in ['A','M']: # Add/Modify printer
+			position=univention.admin.uldap.position(baseDN)
+			position.setDn(container)
+			if action == 'A':
+				object = printer_module.object(co, lo, position, superordinate=superordinate)
+			else:
+				object = univention.admin.objects.get(printer_module, co, lo, position='', dn=position_dn, arg='')
+			count_lo()
+			object.open()
+			object['name'] = printerName
+			object['spoolHost'] = 'dc%s.%s' % (schoolNr, configRegistry['domainname'])
+			object['uri'] = printerUri
+			if printerModel:
+				object['model'] = printerModel
+			else:
+				object['model'] = 'None'
+			if action == 'A':
+				create_object (object)
+			else:
+				try:
+					print 'modifying object %s' % position_dn
+					object.modify()
+				except:
+					traceback.print_exc (100, sys.stdout)
+
+		elif action == 'D':	# D)elete group
+			delete_dn(position_dn, printer_module, co, lo)
+
+
+		line=inf.readline()[:-1]
+
 def activate_groupmembers():
 	#  syntax: $0 <groupXXX> [0|1] [0|1]"
 	# <groupXXX>    group
@@ -1470,12 +1613,8 @@ def activate_groupmembers():
 
 	###
 
-	if not os.path.exists("/root/sfb"):
-		os.mkdir("/root/sfb")
-		print "created /root/sfb"
-
 	# outfile = os.path.basename(actgrp+'.csv')
-	outfile = "/root/sfb/activate-grp-%s-%s.csv" % (time.strftime("%Y%m%d-%H%M%S"), actgrp)
+	outfile = "/var/lib/ucs-school-import/activate-grp-%s-%s.csv" % (time.strftime("%Y%m%d-%H%M%S"), actgrp)
 	print "outfile is : "+outfile
 	if os.path.exists(outfile):
 		print 'outfile %s does already exist. Stopping here.' % outfile
@@ -1602,6 +1741,7 @@ cn_module=univention.admin.modules.get("container/cn")
 ou_module=univention.admin.modules.get("container/ou")
 server_module=univention.admin.modules.get("computers/domaincontroller_slave")
 share_module=univention.admin.modules.get("shares/share")
+printer_module=univention.admin.modules.get("shares/printer")
 computer_module=univention.admin.modules.get("computers/computer")
 
 dhcp_server_module=univention.admin.modules.get("dhcp/server")
@@ -1631,10 +1771,14 @@ elif sys.argv[0].endswith("import_networks"):
 	import_networks()
 elif sys.argv[0].endswith("import_computer"):
 	import_computer()
+elif sys.argv[0].endswith("import_router"):
+	import_router()
 elif sys.argv[0].endswith("import_inventory_number"):
 	set_inventory_number_for_computer()
 elif sys.argv[0].endswith("import_group"):
 	import_group()
+elif sys.argv[0].endswith("import_printer"):
+	import_printer()
 elif sys.argv[0].endswith("create_ou"):
 	# argument is schoolNr
 	if len(sys.argv)>1:

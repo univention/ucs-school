@@ -56,6 +56,8 @@ install: build
 	ln -s ucs-school-import debian/$(PACKAGE)/usr/share/$(PACKAGE)/scripts/import_networks
 	ln -s ucs-school-import debian/$(PACKAGE)/usr/share/$(PACKAGE)/scripts/import_computer
 	ln -s ucs-school-import debian/$(PACKAGE)/usr/share/$(PACKAGE)/scripts/import_inventory_number
+	ln -s ucs-school-import debian/$(PACKAGE)/usr/share/$(PACKAGE)/scripts/import_printer
+	ln -s ucs-school-import debian/$(PACKAGE)/usr/share/$(PACKAGE)/scripts/import_router
 	ln -s ucs-school-import debian/$(PACKAGE)/usr/share/$(PACKAGE)/scripts/activate_groupmembers
 	ln -s ucs-school-import debian/$(PACKAGE)/usr/share/$(PACKAGE)/scripts/export_computer
 	install -m 755 ucs-school-change-share-server debian/$(PACKAGE)/usr/share/$(PACKAGE)/scripts

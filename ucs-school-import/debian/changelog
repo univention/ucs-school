@@ -1,3 +1,12 @@
+ucs-school-import (4.0.0-11) unstable; urgency=low
+
+  * changed output directory of user lists to /var/lib/ucs-school-import
+  * added import_printer functionality
+  * added import_router functionality
+  * corrected broken indention Ticket #2009060410000116
+
+ -- Jan Christoph Ebersbach <ebersbach@univention.de>  Tue,  9 Jun 2009 17:57:25 +0200
+
 ucs-school-import (4.0.0-10) unstable; urgency=low
 
   * fixed an issue with MAC address matching for exisiting computers
