@@ -1,3 +1,10 @@
+ucs-school-import (4.0.0-10) unstable; urgency=low
+
+  * fixed an issue with MAC address matching for exisiting computers
+  * made export_computer and activate_groupmembers use sepchar as separator. Ticket #2009060410000116
+
+ -- Jan Christoph Ebersbach <ebersbach@univention.de>  Tue,  9 Jun 2009 13:28:50 +0200
+
 ucs-school-import (4.0.0-9) unstable; urgency=low
 
   * changed OID of univentionAbordnungMasterDn back to it's original value

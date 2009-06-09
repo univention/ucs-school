@@ -1286,7 +1286,7 @@ def set_inventory_number_for_computer():
 				continue
 			computerObject = univention.admin.objects.get(computerModule, co, lo, position='', dn=dn, arg='')
 			computerObject.open()
-			if computerObject['mac'] == MAC.replace('-',':').replace(' ',':').lower():
+			if MAC.replace('-',':').replace(' ',':').lower() in computerObject['mac']:
 				try:
 					computerObject['inventoryNumber'] = inventoryNumbers
 					computerObject.modify()
@@ -1486,6 +1486,7 @@ def activate_groupmembers():
 	# get group
 	objects = univention.admin.modules.lookup(group_module, co, lo, scope='sub', superordinate=superordinate, base=baseDN,
 											  filter=univention.admin.filter.expression('cn',actgrp))
+	out_line = ('%%s%(sep)s' * 7 + '\n') % {'sep':sepchar}
 	for grp in objects:
 
 		# get group members
@@ -1529,7 +1530,7 @@ def activate_groupmembers():
 				# write csv line
 				snr = memberdn[ memberdn.find('ou=') + 3 : ]
 				snr = snr[ : snr.find(',') ]
-				outf.write('%s\t%s\t%s\t%s\t%s\t%s\t%s\n' % (snr, actgrp, memberobj['firstname'], memberobj['lastname'], passwd, memberobj['mailPrimaryAddress'], membergrplist))
+				outf.write(out_line % (snr, actgrp, memberobj['firstname'], memberobj['lastname'], passwd, memberobj['mailPrimaryAddress'], membergrplist))
 
 				print
 
@@ -1561,6 +1562,7 @@ def export_computer():
 	print 'looking for objects... please wait...'
 	objects = univention.admin.modules.lookup(computer_module, co, lo, scope='sub', superordinate=superordinate, base=ouBaseDN, filter=None)
 	print 'writing data of %d objects...' % len(objects)
+	out_line = ('%%s%(sep)s' * 5 + '\n') % {'sep':sepchar}
 	for host in objects:
 		host.open()
 		inventoryNumber = ''
@@ -1573,7 +1575,7 @@ def export_computer():
 		if host.has_key('mac') and host['mac']:
 			mac = host['mac'][0]
 #		Name,OU,1.Zeile Inventar-Nr.,IP-Adresse
-		outf.write('%s\t%s\t%s\t%s\t%s\n' % (host['name'], ou, inventoryNumber, ip, mac))
+		outf.write(out_line % (host['name'], ou, inventoryNumber, ip, mac))
 	outf.close()
 
 #------------------------------------------------------------------------------------------#
