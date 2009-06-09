@@ -87,10 +87,23 @@ class ucsschool_person_modify:
 		self.cNr       = parsed[17] + parsed[18] # classNr
 		self.rights    = parsed[6] # users which may change this entry # NOT USED
 		self.mail      = self.login+"@"+externaldomainname
-		self.isActive  = parsed[11][0]
 		self.isTeacher = parsed[21][0]
+		self.isActive  = parsed[11][0]
 		self.isStaff   = parsed[22][0]
 		self.problem_hints = ""
+
+		# FIXME: this should be the default for the import format
+		#self.modtype   = parsed[0] # A,M or D: add, modify or delete
+		#self.login     = parsed[1]
+		#self.sname     = parsed[2] # surename
+		#self.name      = parsed[3] # first name
+		#self.sNr       = parsed[4] # schoolNr(s)
+		#self.cNr       = parsed[5] # classNr
+		#self.rights    = parsed[6] # users which may change this entry
+		#self.mail      = parsed[7]
+		#self.isTeacher = parsed[8]
+		#self.isActive  = parsed[9][:1]
+		#self.problem_hints = ""
 
 		if generate_logins:
 			if self.isTeacher == "1" or self.isStaff == "1":
@@ -168,7 +181,7 @@ class ucsschool_person_modify:
 		default_groups=[]
 
 		# default group
-		default_groups.append("cn=Domain Users "+self.sNr+",cn=groups," + getDN (self.sNr))
+		default_groups.append("cn=Domain Users "+self.sNr+",cn=groups,%s" % (getDN (self.sNr), ))
 
 		user_cn = cn_pupils
 		if self.isTeacher == "1":
@@ -268,6 +281,9 @@ def verify_school_ou(schoolNr, co, lo, baseDN):
 		print "verify ou for school nr %s already done"%schoolNr
 		return True
 
+	if district_enabled:
+		verify_container (getDN (schoolNr, base='district'), ou_module, co, lo, superordinate, baseDN)
+
 	print "verify ou for school nr %s"%schoolNr
 	# list of needed sub-containers, the dictionary-key adds the container as default during create in verify_container
 	container={'0printerPath':['cn=printers'],
@@ -341,7 +357,7 @@ def verify_school_ou(schoolNr, co, lo, baseDN):
 				service_exists=1
 				dhcp_service_object=object
 	if not service_exists:
-		position.setDn("cn=dhcp," + getDN (schoolNr))
+		position.setDn("cn=dhcp,%s" % (getDN (schoolNr), ))
 		object=dhcp_service_module.object(co, lo, position=position, superordinate=superordinate)
 		count_lo()
 		object.open()
@@ -377,12 +393,12 @@ def verify_school_ou(schoolNr, co, lo, baseDN):
 	count_lo()
 	share_exists=0
 	if objects:
-		share = "cn=userlogon,cn=shares," + getDN (schoolNr)
+		share = "cn=userlogon,cn=shares,%s" % (getDN (schoolNr), )
 		for object in objects:
 			if object.dn == share:
 				share_exists=1
 	if not share_exists:
-		position.setDn("cn=shares," + getDN (schoolNr))
+		position.setDn("cn=shares,%s" % (getDN (schoolNr), ))
 		object=share_module.object(co, lo, position=position)
 		count_lo()
 		object.open()
@@ -406,7 +422,7 @@ def verify_school_ou(schoolNr, co, lo, baseDN):
 	if not root_exists:
 		passwd=get_passwd()
 		#passwd='12345678' # default password
-		position.setDn("cn=users," + getDN (schoolNr))
+		position.setDn("cn=users,%s" % (getDN (schoolNr), ))
 		object=user_module.object(co, lo, position=position)
 		count_lo()
 		object.open()
@@ -488,6 +504,7 @@ def create_sub_object(object):
 
 
 def create_object(object):
+	print 'creating object', object.dn
 	ignore_exists = 0
 	exists=0
 	try:
@@ -1126,7 +1143,7 @@ def create_networks(schoolNr, networks):
 		object['subnetmask']='255.255.255.0'
 		create_object(object)
 
-		position.setDn("cn=networks,%s" + getDN (schoolNr))
+		position.setDn("cn=networks,%s" % (getDN (schoolNr), ))
 		object=network_module.object(co, lo, position=position, superordinate=superordinate)
 		count_lo()
 		object.open()
@@ -1134,7 +1151,7 @@ def create_networks(schoolNr, networks):
 		object['netmask']='24'
 		object['network']=net
 		object['dhcpEntryZone']='cn=%s,cn=dhcp,%s'%(schoolNr, getDN (schoolNr))
-		object['dnsEntryZoneForward']='zoneName=%s,cn=dns,%s'%(domainname,baseDN)
+		object['dnsEntryZoneForward']='zoneName=%s,cn=dns,%s'%(domainname, baseDN)
 		object['dnsEntryZoneReverse']='zoneName=%s.%s.%s.in-addr.arpa,cn=dns,%s'%(octals[2],octals[1],octals[0],baseDN)
 		object['ipRange']=[['%s.20'%subnet,'%s.250'%subnet]]
 		create_object(object)
@@ -1146,7 +1163,7 @@ def check_network(schoolNr, net):
 	count_lo()
 	net_exists=0
 	if objects:
-		net = "cn=%s-%s,cn=networks,%s"%(schoolNr,net, getDN (schoolNr))
+		net = "cn=%s-%s,cn=networks,%s"%(schoolNr, net, getDN (schoolNr))
 		for object in objects:
 			if object.dn == net:
 				net_exists = 1
@@ -1171,7 +1188,7 @@ def generate_new_mac(schoolNr,IP):
 	mac='%s00:00'%mac_start
 	i=10
 	j=10
-	while check_macAddress(mac,base='cn=computers,' + getDN (schoolNr)):
+	while check_macAddress(mac,base='cn=computers,%s' % (getDN (schoolNr), )):
 		if i==99:
 			i=10
 			j+=1
@@ -1183,7 +1200,7 @@ def generate_new_mac(schoolNr,IP):
 
 def check_computer(module, name, schoolNr):
 	objects = univention.admin.modules.lookup(module, co, lo, scope='sub', superordinate=superordinate,
-											  base='cn=computers,'+ getDN (schoolNr),
+											  base='cn=computers,%s' % (getDN (schoolNr), ),
 											  filter=univention.admin.filter.expression('cn','%s'%name))
 	count_lo()
 	computer_exists=0
@@ -1322,38 +1339,42 @@ def import_computer():
 		net = '%s.0'%subnet
 
 		module = univention.admin.modules.get("computers/%s"%ctype)
-		if check_computer(module,name,schoolNr):
-			print "computer %s already exists (school %s)"%(name,schoolNr)
+		if not module:
+			print 'ERROR: Type "%s" not found for computer "%s".' % (ctype, name)
+			print 'Ignoring of line %d' % linecnt
 		else:
-			mac_used=check_macAddress(MAC)
-			if mac_used:
-				old_mac=MAC
-				MAC=generate_new_mac(schoolNr,IP)
-				print 'mac %s already used, set mac to %s (resolve manually)'%(old_mac,MAC)
+			if check_computer(module,name,schoolNr):
+				print "computer %s already exists (school %s)"%(name,schoolNr)
+			else:
+				mac_used=check_macAddress(MAC)
+				if mac_used:
+					old_mac=MAC
+					MAC=generate_new_mac(schoolNr,IP)
+					print 'mac %s already used, set mac to %s (resolve manually)'%(old_mac,MAC)
 
-			print "generate computer %s (school %s)"%(name,schoolNr)
+				print "generate computer %s (school %s)"%(name,schoolNr)
 
-			if not check_network(schoolNr,net):
-				create_networks(schoolNr,[net])
+				if not check_network(schoolNr,net):
+					create_networks(schoolNr,[net])
 
-			position.setDn("cn=computers," + getDN (schoolNr))
-			object=module.object(co, lo, position=position, superordinate=superordinate)
-			count_lo()
-			object.open()
-			object['name']=name
-			object['mac']=MAC
-			object['network']='cn=%s-%s,cn=networks,%s'%(schoolNr,net, getDN (schoolNr))
-			object['inventoryNumber']=inventoryNumbers
-			if not IP==net:
-				object['ip']=IP
-				print "set ip to %s is not net %s"%(IP,net)
-			try:
-				create_object(object)
-			except:
-				print "WARNING: Error creating computer %s"%object.dn
-				traceback.print_exc (100, sys.stdout)
+				position.setDn("cn=computers,%s" % (getDN (schoolNr), ))
+				object=module.object(co, lo, position=position, superordinate=superordinate)
+				count_lo()
+				object.open()
+				object['name']=name
+				object['mac']=MAC
+				object['network']='cn=%s-%s,cn=networks,%s'%(schoolNr,net, getDN (schoolNr))
+				object['inventoryNumber']=inventoryNumbers
+				if not IP==net:
+					object['ip']=IP
+					print "set ip to %s is not net %s"%(IP,net)
+				try:
+					create_object(object)
+				except:
+					print "WARNING: Error creating computer %s"%object.dn
+					traceback.print_exc (100, sys.stdout)
 
-		print 'Processing of line %d completed' % linecnt
+			print 'Processing of line %d completed' % linecnt
 
 		# read next line
 		line=inf.readline()
@@ -1619,8 +1640,6 @@ elif sys.argv[0].endswith("create_ou"):
 	else:
 		print "must have one Argument for schoolNr"
 		sys.exit()
-	if district_enabled:
-		verify_container (getDN (schoolNr, base='district'), ou_module, co, lo, superordinate, baseDN)
 	verify_school_ou(schoolNr, co, lo, baseDN)
 elif sys.argv[0].endswith("activate_groupmembers"):
 	activate_groupmembers()

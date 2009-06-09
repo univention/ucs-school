@@ -33,26 +33,34 @@ if [ -z "$res" ]; then
 
 fi
 
-res=`univention-directory-manager settings/customattribute list $@ --filter name=ucsschool-user-role | grep "DN: "`
-if [ -z "$res" ]; then
-	# create extended attribute for ucs@school
-	univention-directory-manager settings/extended_attribute create $@ --ignore_exist \
-			--position="cn=ucsschool,cn=custom attributes,cn=univention,$ldap_base" \
-			--set name="ucsschool-user-role" \
-			--set module="users/user" \
-			--set objectClass="univentionUcsSchoolUser" \
-			--set ldapMapping="ucsschoolRole" \
-			--set shortDescription="User role" \
-			--set longDescription="Role of user in ucs@school context (e.g. teacher, administration)" \
-			--set tabName="ucs@school" \
-			--set tabPosition=1 \
-			--set syntax="string" \
-			--set multivalue=1 \
-			--set mayChange=1 \
-			--set 'translationShortDescription="de_DE" "Benutzerrolle"' \
-			--set 'translationLongDescription="de_DE" "Rolle des Benutzers im ucs@school-Kontext (z.B. teacher oder administration)"'
-    if [ $? != 0 ]; then exit 1; fi
-fi
+# create required containers if neccessary
+univention-directory-manager container/cn create $@ \
+	--ignore_exist \
+	--position="cn=custom attributes,cn=univention,$ldap_base" \
+	--set name=OU-ACL
+
+univention-directory-manager container/cn create $@ \
+	--ignore_exist \
+	--position="cn=ucsschool,cn=custom attributes,cn=univention,$ldap_base" \
+	--set name=OU-ACL
+
+# create extended attribute for ucs@school
+univention-directory-manager settings/extended_attribute create $@ --ignore_exist \
+		--position="cn=ucsschool,cn=custom attributes,cn=univention,$ldap_base" \
+		--set name="ucsschool-user-role" \
+		--set module="users/user" \
+		--set objectClass="univentionUcsSchoolUser" \
+		--set ldapMapping="ucsschoolRole" \
+		--set shortDescription="User role" \
+		--set longDescription="Role of user in ucs@school context (e.g. teacher, administration)" \
+		--set tabName="ucs@school" \
+		--set tabPosition=1 \
+		--set syntax="string" \
+		--set multivalue=1 \
+		--set mayChange=1 \
+		--set 'translationShortDescription="de_DE" "Benutzerrolle"' \
+		--set 'translationLongDescription="de_DE" "Rolle des Benutzers im ucs@school-Kontext (z.B. teacher oder administration)"'
+if [ $? != 0 ]; then exit 1; fi
 
 test -n "`grep "$name v${VERSION} successful" $file`" || echo "$name v${VERSION} successful" >> $file
 

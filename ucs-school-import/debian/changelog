@@ -1,3 +1,14 @@
+ucs-school-import (4.0.0-9) unstable; urgency=low
+
+  * changed OID of univentionAbordnungMasterDn back to it's original value
+  * made import_computer more robust against wrong computer types
+  * fixed an issue introduced by the last changes that caused an exception to
+    be raised
+  * moved container creation for custom attributes from
+    ucs-school-ldap-acls-master to ucs-school-import. Ticket #2009060410000116
+
+ -- Jan Christoph Ebersbach <ebersbach@univention.de>  Tue,  9 Jun 2009 11:09:58 +0200
+
 ucs-school-import (4.0.0-8) unstable; urgency=low
 
   * added LDAP schema for the extended attribute ucsschool-user-role
