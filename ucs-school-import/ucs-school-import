@@ -1436,10 +1436,10 @@ def import_router():
 				object=module.object(co, lo, position=position, superordinate=superordinate)
 				count_lo()
 				object.open()
-				object['name']=name
-				object['mac']=MAC
-				object['network']='cn=%s-%s,cn=networks,%s'%(schoolNr,net, getDN (schoolNr))
-				object['inventoryNumber']=inventoryNumbers
+				object['name']            = name
+				object['mac']             = MAC
+				object['network']         = 'cn=%s-%s,cn=networks,%s'%(schoolNr,net, getDN (schoolNr))
+				object['inventoryNumber'] = inventoryNumbers
 				if not IP==net:
 					object['ip']=IP
 					print "set ip to %s is not net %s"%(IP,net)
@@ -1448,6 +1448,53 @@ def import_router():
 				except:
 					print "WARNING: Error creating computer %s"%object.dn
 					traceback.print_exc (100, sys.stdout)
+
+
+			# check if routing policy needs to be created
+			objects = univention.admin.modules.lookup(dhcp_service_module, co, lo, scope='sub', superordinate=superordinate, base=baseDN,
+													  filter=univention.admin.filter.expression('cn','%s'%schoolNr))
+			count_lo()
+			dhcp_service_object=None
+			if objects:
+				service = "cn=%s,cn=dhcp,%s"%(schoolNr, getDN (schoolNr))
+				for object in objects:
+					if object.dn == service:
+						dhcp_service_object = object
+			if not dhcp_service_object:
+				print "ERROR: Unable to set default router for dhcp because service dhcp service does not exist: %s"%object.dn
+			else:
+				objects = univention.admin.modules.lookup(policy_dhcp_routing_module, co, lo, scope='sub', superordinate=superordinate, base=baseDN,
+														  filter=univention.admin.filter.expression('cn','%s'%schoolNr))
+				dhcp_routing_object = None
+				if objects:
+					policy = "cn=%s,cn=routing,cn=dhcp,cn=policies,%s"%(schoolNr, getDN (schoolNr))
+					for object in objects:
+						if object.dn == policy:
+							dhcp_routing_object = object
+				if not dhcp_routing_object:
+					verify_container ("cn=dhcp,cn=policies,%s" % (getDN (schoolNr), ), cn_module, co, lo, superordinate, baseDN)
+					verify_container ("cn=routing,cn=dhcp,cn=policies,%s" % (getDN (schoolNr), ), cn_module, co, lo, superordinate, baseDN)
+					position.setDn ("cn=routing,cn=dhcp,cn=policies,%s" % (getDN (schoolNr), ))
+					dhcp_routing_object = policy_dhcp_routing_module.object(co, lo, position=position, superordinate=superordinate)
+					count_lo()
+					dhcp_routing_object.open()
+					dhcp_routing_object['name']    = schoolNr
+					dhcp_routing_object['routers'] = IP
+					try:
+						create_object(dhcp_routing_object)
+
+						# add reference  to the newly created policy
+						print 'connecting dhcp object (%s) with dhcp routing policy (%s)' % (dhcp_service_object.dn, dhcp_routing_object.dn)
+						lob = lo.get( dhcp_service_object.dn, ['objectClass'] )
+						if 'univentionPolicyReference' not in lob.get ('objectClass', []):
+							lo.modify(dhcp_service_object.dn, [ ('objectClass','','univentionPolicyReference') ] )
+
+						lob = lo.get( dhcp_service_object.dn, ['univentionPolicyReference'] )
+						if dhcp_routing_object.dn not in lob.get ('univentionPolicyReference', []):
+							lo.modify(dhcp_service_object.dn, [ ('univentionPolicyReference','',dhcp_routing_object.dn) ] )
+					except:
+						print "WARNING: Error creating policy %s" % dhcp_routing_object.dn
+						traceback.print_exc (100, sys.stdout)
 
 			print 'Processing of line %d completed' % linecnt
 
@@ -1569,7 +1616,7 @@ def import_printer():
 				except:
 					traceback.print_exc (100, sys.stdout)
 
-		elif action == 'D':	# D)elete group
+		elif action == 'D':	# D)elete printer
 			delete_dn(position_dn, printer_module, co, lo)
 
 
@@ -1751,6 +1798,8 @@ dhcp_subnet_module=univention.admin.modules.get("dhcp/subnet")
 dns_reverse_zone_module=univention.admin.modules.get("dns/reverse_zone")
 
 network_module=univention.admin.modules.get("networks/network")
+
+policy_dhcp_routing_module=univention.admin.modules.get("policies/dhcp_routing")
 
 position=univention.admin.uldap.position(baseDN)
 superordinate=None
