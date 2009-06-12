@@ -136,13 +136,13 @@ access to dn.regex="^zoneName=[^,]+,cn=dns,@%@ldap/base@%@$$" attrs=sOARecord
 	by * none break
 
 # Slave-Controller und Memberserver aus der Verwaltungsnetz-Gruppe duerfen Inhalt des Schüler-Containers nicht replizieren
-access to dn.regex="(^.+,cn=@%@UAS-PUPILS@%@,cn=users,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$"
+access to dn.regex="^.+,cn=@%@UAS-PUPILS@%@,cn=users,ou=[^,]+,@$@DISTRICT@$@@%@ldap/base@%@$$"
 	by group/univentionGroup/uniqueMember.expand="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" none
 	by group/univentionGroup/uniqueMember.expand="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" none
 	by * none break
 
 # Slave-Controller und Memberserver aus der Verwaltungsnetz-Gruppe duerfen nur Mitarbeiter mit passender UCS@School-Rollle replizieren
-access to dn.regex="(^.+,cn=@$@STAFF@$@,cn=users,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" filter="(!(ucsschoolRole=administration))"
+access to dn.regex="^.+,cn=@$@STAFF@$@,cn=users,ou=[^,]+,@$@DISTRICT@$@@%@ldap/base@%@$$" filter="(!(ucsschoolRole=administration))"
 	by group/univentionGroup/uniqueMember.expand="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" none
 	by group/univentionGroup/uniqueMember.expand="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" none
 	by * none break
