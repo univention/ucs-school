@@ -38,13 +38,6 @@ fi
 
 /usr/lib/univention-install/70ucsschool-ldap-acls-master.inst || true
 
-univention-config-registry set \
-	ucsschool/ldap/district/enable?"no" \
-	ucsschool/ldap/defaultcontainer/pupils?"schueler" \
-	ucsschool/ldap/defaultcontainer/teachers?"lehrer" \
-	ucsschool/ldap/defaultcontainer/staff?"mitarbeiter" \
-	ucsschool/ldap/defaultcontainer/admins?"admins"
-
 test -x /etc/init.d/slapd && /etc/init.d/slapd restart
 
 exit 0
