@@ -9,10 +9,10 @@ def replace_ucr_variables(template):
 	dir_ucsschool[ 'DISTRICT' ] = ''
 	if configRegistry.get('ucsschool/ldap/district/enable','no').lower() in ( 'yes', 'true', '1' ):
 		dir_ucsschool[ 'DISTRICT' ] = 'ou=[^,]+,'
-	dir_ucsschool[ 'PUPILS' ] =   configRegistry.get('ucsschool/ldap/defaultcontainer/pupils', 'schueler')
-	dir_ucsschool[ 'TEACHERS' ] = configRegistry.get('ucsschool/ldap/defaultcontainer/teachers', 'lehrer')
-	dir_ucsschool[ 'STAFF' ] =	  configRegistry.get('ucsschool/ldap/defaultcontainer/staff', 'mitarbeiter')
-	dir_ucsschool[ 'ADMINS' ] =	  configRegistry.get('ucsschool/ldap/defaultcontainer/admins', 'admins')
+	dir_ucsschool[ 'PUPILS' ] =   configRegistry.get('ucsschool/ldap/default/container/pupils', 'schueler')
+	dir_ucsschool[ 'TEACHERS' ] = configRegistry.get('ucsschool/ldap/default/container/teachers', 'lehrer')
+	dir_ucsschool[ 'STAFF' ] =	  configRegistry.get('ucsschool/ldap/default/container/staff', 'mitarbeiter')
+	dir_ucsschool[ 'ADMINS' ] =	  configRegistry.get('ucsschool/ldap/default/container/admins', 'admins')
 
 	while 1:
 		i = variable_token.finditer(template)
