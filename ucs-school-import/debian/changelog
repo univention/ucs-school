@@ -1,3 +1,15 @@
+ucs-school-import (4.0.0-14) unstable; urgency=low
+
+  * fixed an issue with dhcp/subnet object
+  * renamed change_networks to change_network
+  * changed behavior of change_network to allow only one network to be
+    improted
+  * implemented nameserver, defaultrouter and netbiosserver policy creation
+    for networks
+  * All changes are related to Ticket #2009060410000116
+
+ -- Jan Christoph Ebersbach <ebersbach@univention.de>  Wed, 17 Jun 2009 19:19:01 +0200
+
 ucs-school-import (4.0.0-13) unstable; urgency=low
 
   * added creation of school groups
@@ -15,6 +27,7 @@ ucs-school-import (4.0.0-13) unstable; urgency=low
   * improved networks import to allow setting the DNS and WINS/NetBIOS server
   * included import_router in import_computer
   * All changes are related to Ticket #2009060410000116
+
  -- Jan Christoph Ebersbach <ebersbach@univention.de>  Tue, 16 Jun 2009 16:45:48 +0200
 
 ucs-school-import (4.0.0-12) unstable; urgency=low
