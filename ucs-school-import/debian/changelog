@@ -1,3 +1,22 @@
+ucs-school-import (4.0.0-13) unstable; urgency=low
+
+  * added creation of school groups
+    DC-Verwaltungsnetz
+    Member-Verwaltungsnetz
+    DC-Edukativnetz
+    Member-Edukativnetz
+    OU????-DC-Verwaltungsnetz
+    OU????-Member-Verwaltungsnetz
+    OU????-DC-Edukativnetz
+    OU????-Member-Edukativnetz
+  * fixed an issue related to Bug #14789 that caused DHCP and DNS entries to
+    point to wrong ip-addresses
+  * the router import has been changed to set default router on DHCP subnet instead of DHCP service configuration
+  * improved networks import to allow setting the DNS and WINS/NetBIOS server
+  * included import_router in import_computer
+  * All changes are related to Ticket #2009060410000116
+ -- Jan Christoph Ebersbach <ebersbach@univention.de>  Tue, 16 Jun 2009 16:45:48 +0200
+
 ucs-school-import (4.0.0-12) unstable; urgency=low
 
   * the router import has been improved to set default router in DHCP configuration Ticket #2009060410000116
