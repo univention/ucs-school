@@ -281,6 +281,9 @@ def verify_school_ou(schoolNr, co, lo, baseDN):
 		print "verify ou for school nr %s already done"%schoolNr
 		return True
 
+	# create ucsschool container if it does not exists
+	verify_container ('cn=ucsschool,cn=groups,%s' % baseDN, cn_module, co, lo, superordinate, baseDN)
+
 	if district_enabled:
 		verify_container (getDN (schoolNr, base='district'), ou_module, co, lo, superordinate, baseDN)
 
@@ -309,11 +312,35 @@ def verify_school_ou(schoolNr, co, lo, baseDN):
 			if path[1:]=='none': path=' '
 			verify_container('%s,%s'%(dn,ou_base),cn_module, co, lo, superordinate, baseDN, path=path[1:])
 
-
 	# create server if not exsistant
 	objects = univention.admin.modules.lookup(server_module, co, lo, scope='sub', superordinate=superordinate, base=baseDN,
 											  filter=univention.admin.filter.expression('cn','dc%s'%schoolNr))
 	count_lo()
+
+	# create groups if not exsistant
+	# TODO: evtl. müssen die admins überarbeitet werden
+	groups=["cn=admins%s,cn=ouadmins,cn=groups,%s" % (schoolNr, baseDN),
+			"cn=%s%s,cn=groups,%s" % (cn_pupils, schoolNr, getDN (schoolNr)),
+			"cn=%s%s,cn=groups,%s" % (cn_teachers, schoolNr, getDN (schoolNr)),
+			"cn=%s%s,cn=groups,%s" % (cn_staff, schoolNr, getDN (schoolNr))]
+	for group in groups:
+		verify_group(group, co, lo, superordinate, baseDN)
+
+	groups=[
+			"cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,%s" % (baseDN, ),
+			"cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,%s" % (baseDN, ),
+			"cn=DC-Edukativnetz,cn=ucsschool,cn=groups,%s" % (baseDN, ),
+			"cn=Member-Edukativnetz,cn=ucsschool,cn=groups,%s" % (baseDN, ),
+
+			"cn=OU%s-DC-Verwaltungsnetz,cn=ucsschool,cn=groups,%s" % (schoolNr, baseDN),
+			"cn=OU%s-Member-Verwaltungsnetz,cn=ucsschool,cn=groups,%s" % (schoolNr, baseDN),
+			"cn=OU%s-DC-Edukativnetz,cn=ucsschool,cn=groups,%s" % (schoolNr, baseDN),
+			"cn=OU%s-Member-Edukativnetz,cn=ucsschool,cn=groups,%s" % (schoolNr, baseDN),
+			]
+	for group in groups:
+		verify_group(group, co, lo, superordinate, baseDN)
+
+	# create server if not existent
 	server_exists=0
 	correct_server_exists=0
 	if objects:
@@ -333,17 +360,9 @@ def verify_school_ou(schoolNr, co, lo, baseDN):
 		object["unixhome"]="/dev/null"
 		object["shell"]="/bin/bash"
 		object["primaryGroup"]="cn=DC Slave Hosts,cn=groups,%s"%baseDN
+		object["groups"].append ("cn=OU%s-DC-Verwaltungsnetz,cn=ucsschool,cn=groups,%s" % (schoolNr, baseDN))
 		print "need to create server: %s"%object.dn
 		create_object(object)
-
-	# create groups if not exsistant
-	# TODO: evtl. müssen die admins überarbeitet werden
-	groups=["cn=admins%s,cn=ouadmins,cn=groups,%s" % (schoolNr, baseDN),
-			"cn=%s%s,cn=groups,%s" % (cn_pupils, schoolNr, getDN (schoolNr)),
-			"cn=%s%s,cn=groups,%s" % (cn_teachers, schoolNr, getDN (schoolNr)),
-			"cn=%s%s,cn=groups,%s" % (cn_staff, schoolNr, getDN (schoolNr))]
-	for group in groups:
-		verify_group(group, co, lo, superordinate, baseDN)
 
 	# create dhcp-service if not exsistant
 	objects = univention.admin.modules.lookup(dhcp_service_module, co, lo, scope='sub', superordinate=superordinate, base=baseDN,
@@ -438,7 +457,7 @@ def verify_school_ou(schoolNr, co, lo, baseDN):
 				print "there were problems creating this user:",object.dn()
 				problem_hints = problem_hints + "there were problems creating this user: "+object.dn()+"\n"
 		except:
-			print "ERROR:", sys.exc_info()[0], sys.exc_info()[1]					
+			print "ERROR:", sys.exc_info()[0], sys.exc_info()[1]
 			traceback.print_exc (100, sys.stdout)
 			print "create this user manually: root%s"%schoolNr
 			problem_hints = problem_hints + "create this user manually: root%s"%schoolNr
@@ -736,7 +755,7 @@ def delete_dn(dn, module, co, lo):
 def delete_user(person, module, co, lo):
 
 	# search all objects with univentionAbordnungMaster == dn of the person
-	# we want to delete, make one of them to the new master account 
+	# we want to delete, make one of them to the new master account
 	# (set primaryMailAddress and remove univentionAbordnungMaster attribute
 	# and univentionAbordnung objectclass) and change dn in univentionAbordnungMaster
 	# in the rest
@@ -1298,7 +1317,7 @@ def set_inventory_number_for_computer():
 		line=inf.readline()
 
 
-def import_computer():
+def import_computer(computer='computer'):
 	# argument is infile
 	if len(sys.argv)>1:
 		infile = sys.argv[1]
@@ -1319,8 +1338,12 @@ def import_computer():
 
 		parsed=line.split(sepchar)
 
-		ctype    = parsed[0]
-		name     = parsed[1]
+		if computer == 'computer':
+			ctype = parsed[0]
+			name  = parsed[1]
+		elif computer == 'router':
+			ctype = 'ipmanagedclient'
+			name  = ''
 		MAC      = parsed[2]
 		schoolNr = parsed[3]
 		IP       = parsed[4]
@@ -1328,11 +1351,14 @@ def import_computer():
 		IP=string.replace(IP,'\n','')
 		inventoryNumbers = parsed[5].strip().split(',')
 
+		if computer == 'router':
+			name = 'router%s' % schoolNr
+
 		verify_school_ou(schoolNr, co, lo, baseDN)
 
-		octals=IP.split('.')
-		subnet='%s.%s.%s'%(octals[0],octals[1],octals[2])
-		net = '%s.0'%subnet
+		octals = IP.split('.')
+		subnet = '%s.%s.%s'%(octals[0],octals[1],octals[2])
+		net    = '%s.0'%subnet
 
 		module = univention.admin.modules.get("computers/%s"%ctype)
 		if not module:
@@ -1357,18 +1383,73 @@ def import_computer():
 				object=module.object(co, lo, position=position, superordinate=superordinate)
 				count_lo()
 				object.open()
-				object['name']=name
-				object['mac']=MAC
-				object['network']='cn=%s-%s,cn=networks,%s'%(schoolNr,net, getDN (schoolNr))
+				object['name'] = name
+				object['mac']  = MAC
+				# FIXME: Bug #14789 in UDM - network has to be set after
+				# the objekt has been created
+				#object['network']='cn=%s-%s,cn=networks,%s'%(schoolNr,net, getDN (schoolNr))
 				object['inventoryNumber']=inventoryNumbers
 				if not IP==net:
 					object['ip']=IP
 					print "set ip to %s is not net %s"%(IP,net)
 				try:
 					create_object(object)
+
+					# FIXME: because of Bug #14789 network has to be set here
+					object = univention.admin.objects.get (module, co, lo, position='', dn="cn=%s,cn=computers,%s" % (name, getDN (schoolNr)), arg='')
+					object.open ()
+					object['network']='cn=%s-%s,cn=networks,%s'%(schoolNr,net, getDN (schoolNr))
+					object.modify ()
 				except:
 					print "WARNING: Error creating computer %s"%object.dn
 					traceback.print_exc (100, sys.stdout)
+
+			if computer == 'router':
+				# check if routing policy needs to be created
+				objects = univention.admin.modules.lookup(dhcp_subnet_module, co, lo, scope='sub', superordinate=superordinate, base=baseDN,
+														  filter=univention.admin.filter.expression('cn','%s'%schoolNr))
+				count_lo()
+				dhcp_subnet_object=None
+				if objects:
+					service = "cn=%s,cn=dhcp,%s"%(schoolNr, getDN (schoolNr))
+					for object in objects:
+						if object.dn == service:
+							dhcp_subnet_object = object
+				if not dhcp_subnet_object:
+					print "ERROR: Unable to set default router for dhcp because service dhcp service does not exist: %s"%object.dn
+				else:
+					objects = univention.admin.modules.lookup(policy_dhcp_routing_module, co, lo, scope='sub', superordinate=superordinate, base=baseDN,
+															  filter=univention.admin.filter.expression('cn','%s'%schoolNr))
+					dhcp_routing_object = None
+					if objects:
+						policy = "cn=%s,cn=routing,cn=dhcp,cn=policies,%s"%(schoolNr, getDN (schoolNr))
+						for object in objects:
+							if object.dn == policy:
+								dhcp_routing_object = object
+					if not dhcp_routing_object:
+						verify_container ("cn=dhcp,cn=policies,%s" % (getDN (schoolNr), ), cn_module, co, lo, superordinate, baseDN)
+						verify_container ("cn=routing,cn=dhcp,cn=policies,%s" % (getDN (schoolNr), ), cn_module, co, lo, superordinate, baseDN)
+						position.setDn ("cn=routing,cn=dhcp,cn=policies,%s" % (getDN (schoolNr), ))
+						dhcp_routing_object = policy_dhcp_routing_module.object(co, lo, position=position, superordinate=superordinate)
+						count_lo()
+						dhcp_routing_object.open()
+						dhcp_routing_object['name']    = schoolNr
+						dhcp_routing_object['routers'] = IP
+						try:
+							create_object(dhcp_routing_object)
+
+							# add reference  to the newly created policy
+							print 'connecting dhcp object (%s) with dhcp routing policy (%s)' % (dhcp_subnet_object.dn, dhcp_routing_object.dn)
+							lob = lo.get (dhcp_subnet_object.dn, ['objectClass'])
+							if 'univentionPolicyReference' not in lob.get ('objectClass', []):
+								lo.modify (dhcp_subnet_object.dn, [ ('objectClass','','univentionPolicyReference') ])
+
+							lob = lo.get (dhcp_subnet_object.dn, ['univentionPolicyReference'])
+							if dhcp_routing_object.dn not in lob.get ('univentionPolicyReference', []):
+								lo.modify (dhcp_subnet_object.dn, [ ('univentionPolicyReference','',dhcp_routing_object.dn) ])
+						except:
+							print "WARNING: Error creating policy %s" % dhcp_routing_object.dn
+							traceback.print_exc (100, sys.stdout)
 
 			print 'Processing of line %d completed' % linecnt
 
@@ -1376,130 +1457,7 @@ def import_computer():
 		line=inf.readline()
 
 def import_router():
-	# argument is infile
-	if len(sys.argv)>1:
-		infile = sys.argv[1]
-	else:
-		print "must have one Argument for infile"
-		sys.exit()
-
-	print "infile is  : "+infile
-	inf = open(infile,'r')
-
-	problem_hints=""
-	linecnt=0
-
-	line=inf.readline()
-	while not line=="":
-		linecnt += 1
-		print 'Processing line %d: %s' % (linecnt, line),
-
-		parsed=line.split(sepchar)
-
-		ctype    = 'ipmanagedclient'
-		name     = ''
-		MAC      = parsed[0]
-		schoolNr = parsed[1]
-		IP       = parsed[2]
-		IP=string.replace(IP,' ','')
-		IP=string.replace(IP,'\n','')
-		inventoryNumbers = parsed[3].strip().split(',')
-
-		name     = 'router%s' % schoolNr
-
-		verify_school_ou(schoolNr, co, lo, baseDN)
-
-		octals=IP.split('.')
-		subnet='%s.%s.%s'%(octals[0],octals[1],octals[2])
-		net = '%s.0'%subnet
-
-		module = univention.admin.modules.get("computers/%s"%ctype)
-		if not module:
-			print 'ERROR: Type "%s" not found for computer "%s".' % (ctype, name)
-			print 'Ignoring of line %d' % linecnt
-		else:
-			if check_computer(module,name,schoolNr):
-				print "computer %s already exists (school %s)"%(name,schoolNr)
-			else:
-				mac_used=check_macAddress(MAC)
-				if mac_used:
-					old_mac=MAC
-					MAC=generate_new_mac(schoolNr,IP)
-					print 'mac %s already used, set mac to %s (resolve manually)'%(old_mac,MAC)
-
-				print "generate computer %s (school %s)"%(name,schoolNr)
-
-				if not check_network(schoolNr,net):
-					create_networks(schoolNr,[net])
-
-				position.setDn("cn=computers,%s" % (getDN (schoolNr), ))
-				object=module.object(co, lo, position=position, superordinate=superordinate)
-				count_lo()
-				object.open()
-				object['name']            = name
-				object['mac']             = MAC
-				object['network']         = 'cn=%s-%s,cn=networks,%s'%(schoolNr,net, getDN (schoolNr))
-				object['inventoryNumber'] = inventoryNumbers
-				if not IP==net:
-					object['ip']=IP
-					print "set ip to %s is not net %s"%(IP,net)
-				try:
-					create_object(object)
-				except:
-					print "WARNING: Error creating computer %s"%object.dn
-					traceback.print_exc (100, sys.stdout)
-
-
-			# check if routing policy needs to be created
-			objects = univention.admin.modules.lookup(dhcp_service_module, co, lo, scope='sub', superordinate=superordinate, base=baseDN,
-													  filter=univention.admin.filter.expression('cn','%s'%schoolNr))
-			count_lo()
-			dhcp_service_object=None
-			if objects:
-				service = "cn=%s,cn=dhcp,%s"%(schoolNr, getDN (schoolNr))
-				for object in objects:
-					if object.dn == service:
-						dhcp_service_object = object
-			if not dhcp_service_object:
-				print "ERROR: Unable to set default router for dhcp because service dhcp service does not exist: %s"%object.dn
-			else:
-				objects = univention.admin.modules.lookup(policy_dhcp_routing_module, co, lo, scope='sub', superordinate=superordinate, base=baseDN,
-														  filter=univention.admin.filter.expression('cn','%s'%schoolNr))
-				dhcp_routing_object = None
-				if objects:
-					policy = "cn=%s,cn=routing,cn=dhcp,cn=policies,%s"%(schoolNr, getDN (schoolNr))
-					for object in objects:
-						if object.dn == policy:
-							dhcp_routing_object = object
-				if not dhcp_routing_object:
-					verify_container ("cn=dhcp,cn=policies,%s" % (getDN (schoolNr), ), cn_module, co, lo, superordinate, baseDN)
-					verify_container ("cn=routing,cn=dhcp,cn=policies,%s" % (getDN (schoolNr), ), cn_module, co, lo, superordinate, baseDN)
-					position.setDn ("cn=routing,cn=dhcp,cn=policies,%s" % (getDN (schoolNr), ))
-					dhcp_routing_object = policy_dhcp_routing_module.object(co, lo, position=position, superordinate=superordinate)
-					count_lo()
-					dhcp_routing_object.open()
-					dhcp_routing_object['name']    = schoolNr
-					dhcp_routing_object['routers'] = IP
-					try:
-						create_object(dhcp_routing_object)
-
-						# add reference  to the newly created policy
-						print 'connecting dhcp object (%s) with dhcp routing policy (%s)' % (dhcp_service_object.dn, dhcp_routing_object.dn)
-						lob = lo.get( dhcp_service_object.dn, ['objectClass'] )
-						if 'univentionPolicyReference' not in lob.get ('objectClass', []):
-							lo.modify(dhcp_service_object.dn, [ ('objectClass','','univentionPolicyReference') ] )
-
-						lob = lo.get( dhcp_service_object.dn, ['univentionPolicyReference'] )
-						if dhcp_routing_object.dn not in lob.get ('univentionPolicyReference', []):
-							lo.modify(dhcp_service_object.dn, [ ('univentionPolicyReference','',dhcp_routing_object.dn) ] )
-					except:
-						print "WARNING: Error creating policy %s" % dhcp_routing_object.dn
-						traceback.print_exc (100, sys.stdout)
-
-			print 'Processing of line %d completed' % linecnt
-
-		# read next line
-		line=inf.readline()
+	import_computer (computer='router')
 
 def import_group():
 	# argument is infile
