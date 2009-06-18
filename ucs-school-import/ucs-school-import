@@ -63,6 +63,10 @@ cn_teachers = configRegistry['ucsschool/ldap/default/container/teachers']
 cn_admins   = configRegistry['ucsschool/ldap/default/container/admins']
 cn_staff    = configRegistry['ucsschool/ldap/default/container/staff']
 
+role_pupil   = 'pupil'
+role_teacher = 'teacher'
+role_staff   = 'staff'
+
 # TODO: make this configurable via UCR
 generate_logins = False
 
@@ -168,17 +172,21 @@ class ucsschool_person_modify:
 			person.other_sNr=[] # has no "slave"-accounts
 			self.mail="" # no extra mail address
 			person.cNr=[] # no class in other ou
+			person.isTeacher = '0'
+			person.isStaff = '0'
+			if self.getRole () == role_teacher:
+				person.isTeacher = '1'
+			elif self.getRole () == role_staff:
+				person.isTeacher = '1'
 
 			persons.append(person)
 
 		return persons
 
 	def getPosition_dn(self):
-		cn = cn_pupils
-		if self.isTeacher == "1":
-			cn = cn_teachers
-		elif self.isStaff == "1":
-			cn = cn_staff
+		cn = {role_teacher:cn_teachers,
+				role_pupil:cn_pupils,
+				role_staff:cn_staff}[self.getRole ()]
 		return "cn=%s,cn=users,%s" % (cn, getDN (self.sNr))
 
 	def getDN(self):
@@ -190,11 +198,9 @@ class ucsschool_person_modify:
 		# default group
 		default_groups.append("cn=Domain Users "+self.sNr+",cn=groups,%s" % (getDN (self.sNr), ))
 
-		user_cn = cn_pupils
-		if self.isTeacher == "1":
-			user_cn = cn_teachers
-		elif self.isStaff == "1":
-			user_cn = cn_staff
+		user_cn = {role_teacher:cn_teachers,
+				role_pupil:cn_pupils,
+				role_staff:cn_staff}[self.getRole ()]
 		# class if available
 		for cnr in self.cNr:
 			default_groups.append("cn=" + cnr + ",cn=klassen,cn=%s,cn=groups,%s" % (cn_pupils, getDN (self.sNr)))
@@ -203,6 +209,14 @@ class ucsschool_person_modify:
 
 		return default_groups
 
+	def getRole(self):
+		"""returns the user's role"""
+		role = role_pupil
+		if self.isTeacher == '1':
+			role = role_teacher
+		elif self.isStaff == '1':
+			role = role_staff
+		return role
 
 def count_lo():
 	pass # was a workaround for slapd locking-failures, not necessary any more
@@ -319,11 +333,6 @@ def verify_school_ou(schoolNr, co, lo, baseDN):
 			if path[1:]=='none': path=' '
 			verify_container('%s,%s'%(dn,ou_base),cn_module, co, lo, superordinate, baseDN, path=path[1:])
 
-	# create server if not exsistant
-	objects = univention.admin.modules.lookup(server_module, co, lo, scope='sub', superordinate=superordinate, base=baseDN,
-											  filter=univention.admin.filter.expression('cn','dc%s'%schoolNr))
-	count_lo()
-
 	# create groups if not exsistant
 	groups=["cn=admins%s,cn=ouadmins,cn=groups,%s" % (schoolNr, baseDN),
 			"cn=%s%s,cn=groups,%s" % (cn_pupils, schoolNr, getDN (schoolNr)),
@@ -345,14 +354,19 @@ def verify_school_ou(schoolNr, co, lo, baseDN):
 			]
 	for group in groups:
 		verify_group(group, co, lo, superordinate, baseDN)
-	
+
 
 	for dc in school_dcs.split ():
-		dcdn = 'dc%s' % schoolNr
+		dccn = 'dc%s' % schoolNr
 		dcgroup = "cn=OU%s-DC-Edukativnetz,cn=ucsschool,cn=groups,%s" % (schoolNr, baseDN)
 		if dc == 'verwaltung':
-			dcdn += 'v' # this is the name convention, a trailing v for Verwaltungsnetz DCs
+			dccn += 'v' # this is the name convention, a trailing v for Verwaltungsnetz DCs
 			dcgroup = "cn=OU%s-DC-Verwaltungsnetz,cn=ucsschool,cn=groups,%s" % (schoolNr, baseDN)
+
+		# create server if not exsistant
+		objects = univention.admin.modules.lookup(server_module, co, lo, scope='sub', superordinate=superordinate, base=baseDN,
+												  filter=univention.admin.filter.expression('cn', dccn))
+		count_lo()
 
 		# create server if not existent
 		server_exists=0
@@ -370,7 +384,7 @@ def verify_school_ou(schoolNr, co, lo, baseDN):
 			object=server_module.object(co, lo, position=position, superordinate=superordinate)
 			count_lo()
 			object.open()
-			object["name"]=dcdn
+			object["name"]=dccn
 			object["unixhome"]="/dev/null"
 			object["shell"]="/bin/bash"
 			object["primaryGroup"]="cn=DC Slave Hosts,cn=groups,%s"%baseDN
@@ -851,6 +865,8 @@ def modify_user(person, module, co, lo):
 		object["disabled"]="0"
 	else:
 		object["disabled"]="1"
+	# ATTENTION: it's not possible to change the ucsschool-user-role with the
+	# import script
 
 	remove_groups = []
 	for group in object['groups']:
@@ -985,6 +1001,7 @@ def create_user(person, baseDN, module, password):
 		object["disabled"]="0"
 	else:
 		object["disabled"]="1"
+	object["ucsschool-user-role"]=person.getRole ()
 	object["pwdChangeNextLogin"]="0"
 
 	try:
@@ -1086,12 +1103,13 @@ def import_user():
 			found = []
 			for object in objects:
 				ou=object.dn[string.find(object.dn,"ou=")+3:string.find(object.dn,",",string.find(object.dn,"ou=")+3)]
-				# teacher or student
-				# FIXME: add staff members also
-				if ('cn=%s,cn=users' % cn_pupils) in object.dn:
-					main_person.isTeacher = '0'
-				else:
+				# get from LDAP the user type: teacher, staff or student
+				main_person.isTeacher = '0'
+				main_person.isStaff   = '0'
+				if role_teacher in object['ucsschool-user-role']:
 					main_person.isTeacher = '1'
+				elif role_staff in object['ucsschool-user-role']:
+					main_person.isStaff = '1'
 
 				if ou in main_person.allsNrs:
 					found.append(ou)
@@ -1566,54 +1584,54 @@ def import_computer(computer='computer'):
 
 		if computer == 'router':
 			set_router_for_subnet (ip, schoolNr, overwrite_policy=True)
-			return
-
-		module = univention.admin.modules.get("computers/%s"%ctype)
-		if not module:
-			print 'ERROR: Type "%s" not found for computer "%s".' % (ctype, name)
-			print 'Ignoring of line %d' % linecnt
+			print 'Router set for subnet.'
 		else:
-			if check_computer(module,name,schoolNr):
-				print "computer %s already exists (school %s)"%(name,schoolNr)
+			module = univention.admin.modules.get("computers/%s"%ctype)
+			if not module:
+				print 'ERROR: Type "%s" not found for computer "%s".' % (ctype, name)
+				print 'Ignoring of line %d' % linecnt
 			else:
-				mac_used=check_macAddress(MAC)
-				if mac_used:
-					old_mac=MAC
-					MAC=generate_new_mac(schoolNr, ip.ip_ext)
-					print 'mac %s already used, set mac to %s (resolve manually)'%(old_mac,MAC)
+				if check_computer(module,name,schoolNr):
+					print "computer %s already exists (school %s)"%(name,schoolNr)
+				else:
+					mac_used=check_macAddress(MAC)
+					if mac_used:
+						old_mac=MAC
+						MAC=generate_new_mac(schoolNr, ip.ip_ext)
+						print 'mac %s already used, set mac to %s (resolve manually)'%(old_mac,MAC)
 
-				print "generate computer %s (school %s)"%(name,schoolNr)
+					print "generate computer %s (school %s)"%(name,schoolNr)
 
-				create_network(schoolNr, ip)
+					create_network(schoolNr, ip)
 
-				position.setDn("cn=computers,%s" % (getDN (schoolNr), ))
-				object=module.object(co, lo, position=position, superordinate=superordinate)
-				count_lo()
-				object.open()
-				object['name'] = name
-				object['mac']  = MAC
-				# FIXME: Bug #14789 in UDM - network has to be set after
-				# the objekt has been created
-				#object['network']='cn=%s-%s,cn=networks,%s'%(schoolNr, ip.network_ext, getDN (schoolNr))
-				object['inventoryNumber']=inventoryNumbers
-				if not ip.ip == ip.network:
-					object['ip'] = ip.ip_ext
-					print "set ip to %s is not net %s" % (ip.ip_ext, ip.network_ext)
-				try:
-					create_object(object)
-
+					position.setDn("cn=computers,%s" % (getDN (schoolNr), ))
+					object=module.object(co, lo, position=position, superordinate=superordinate)
+					count_lo()
+					object.open()
+					object['name'] = name
+					object['mac']  = MAC
+					# FIXME: Bug #14789 in UDM - network has to be set after
+					# the objekt has been created
+					#object['network']='cn=%s-%s,cn=networks,%s'%(schoolNr, ip.network_ext, getDN (schoolNr))
+					object['inventoryNumber']=inventoryNumbers
+					if not ip.ip == ip.network:
+						object['ip'] = ip.ip_ext
+						print "set ip to %s is not net %s" % (ip.ip_ext, ip.network_ext)
 					try:
-						# FIXME: because of Bug #14789 network has to be set here
-						object = univention.admin.objects.get (module, co, lo, position='', dn="cn=%s,cn=computers,%s" % (name, getDN (schoolNr)), arg='')
-						object.open ()
-						object['network'] = 'cn=%s-%s,cn=networks,%s' % (schoolNr, ip.network_ext, getDN (schoolNr))
-						object.modify ()
+						create_object(object)
+
+						try:
+							# FIXME: because of Bug #14789 network has to be set here
+							object = univention.admin.objects.get (module, co, lo, position='', dn="cn=%s,cn=computers,%s" % (name, getDN (schoolNr)), arg='')
+							object.open ()
+							object['network'] = 'cn=%s-%s,cn=networks,%s' % (schoolNr, ip.network_ext, getDN (schoolNr))
+							object.modify ()
+						except:
+							print "WARNING: Error setting network for computer %s"%object.dn
+							traceback.print_exc (100, sys.stdout)
 					except:
-						print "WARNING: Error setting network for computer %s"%object.dn
+						print "WARNING: Error creating computer %s"%object.dn
 						traceback.print_exc (100, sys.stdout)
-				except:
-					print "WARNING: Error creating computer %s"%object.dn
-					traceback.print_exc (100, sys.stdout)
 
 			print 'Processing of line %d completed' % linecnt
 
@@ -1900,6 +1918,7 @@ pwdLine=secretFile.readline()
 pwd=re.sub('\n','',pwdLine)
 
 locounts=0
+lo = None
 try:
 	lo=univention.admin.uldap.access(host=configRegistry['ldap/master'], base=baseDN, binddn='cn=admin,'+baseDN, bindpw=pwd, start_tls=tls)
 except Exception, e:
@@ -1907,30 +1926,51 @@ except Exception, e:
 	print 'ERROR: authentication error: %s' % str(e)
 	sys.exit(1)
 
-co=univention.admin.config.config()
-user_module=univention.admin.modules.get("users/user")
-group_module=univention.admin.modules.get("groups/group")
-cn_module=univention.admin.modules.get("container/cn")
-ou_module=univention.admin.modules.get("container/ou")
-server_module=univention.admin.modules.get("computers/domaincontroller_slave")
-share_module=univention.admin.modules.get("shares/share")
-printer_module=univention.admin.modules.get("shares/printer")
-computer_module=univention.admin.modules.get("computers/computer")
+co            = univention.admin.config.config()
+position      = univention.admin.uldap.position(baseDN)
+superordinate = None
 
-dhcp_server_module=univention.admin.modules.get("dhcp/server")
-dhcp_service_module=univention.admin.modules.get("dhcp/service")
-dhcp_subnet_module=univention.admin.modules.get("dhcp/subnet")
 
-dns_reverse_zone_module=univention.admin.modules.get("dns/reverse_zone")
+user_module                = univention.admin.modules.get("users/user")
+group_module               = univention.admin.modules.get("groups/group")
+cn_module                  = univention.admin.modules.get("container/cn")
+ou_module                  = univention.admin.modules.get("container/ou")
+server_module              = univention.admin.modules.get("computers/domaincontroller_slave")
+share_module               = univention.admin.modules.get("shares/share")
+printer_module             = univention.admin.modules.get("shares/printer")
+computer_module            = univention.admin.modules.get("computers/computer")
 
-network_module=univention.admin.modules.get("networks/network")
+dhcp_server_module         = univention.admin.modules.get("dhcp/server")
+dhcp_service_module        = univention.admin.modules.get("dhcp/service")
+dhcp_subnet_module         = univention.admin.modules.get("dhcp/subnet")
 
-policy_dhcp_routing_module=univention.admin.modules.get("policies/dhcp_routing")
-policy_dhcp_netbios_module=univention.admin.modules.get("policies/dhcp_netbios")
-policy_dhcp_dns_module=univention.admin.modules.get("policies/dhcp_dns")
+dns_reverse_zone_module    = univention.admin.modules.get("dns/reverse_zone")
 
-position=univention.admin.uldap.position(baseDN)
-superordinate=None
+network_module             = univention.admin.modules.get("networks/network")
+
+policy_dhcp_routing_module = univention.admin.modules.get("policies/dhcp_routing")
+policy_dhcp_netbios_module = univention.admin.modules.get("policies/dhcp_netbios")
+policy_dhcp_dns_module     = univention.admin.modules.get("policies/dhcp_dns")
+
+for m in (
+		user_module,
+		group_module,
+		cn_module,
+		ou_module,
+		server_module,
+		share_module,
+		printer_module,
+		computer_module,
+		dhcp_server_module,
+		dhcp_service_module,
+		dhcp_subnet_module,
+		dns_reverse_zone_module,
+		network_module,
+		policy_dhcp_routing_module,
+		policy_dhcp_netbios_module,
+		policy_dhcp_dns_module,
+		):
+	univention.admin.modules.init (lo, position, m)
 
 # get default group
 default_group = "cn=Domain Users,cn=groups,%s"%baseDN # fallback
