@@ -53,7 +53,7 @@ univention-directory-manager settings/extended_attribute create $@ --ignore_exis
 		--set ldapMapping="ucsschoolRole" \
 		--set shortDescription="User role" \
 		--set longDescription="Role of user in ucs@school context (e.g. teacher, administration)" \
-		--set tabName="ucs@school" \
+		--set tabName="ucsschool" \
 		--set tabPosition=1 \
 		--set syntax="string" \
 		--set multivalue=1 \
