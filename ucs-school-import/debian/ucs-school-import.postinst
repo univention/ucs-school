@@ -33,4 +33,5 @@ univention-config-registry set \
 	ucsschool/ldap/default/container/teachers?lehrer \
 	ucsschool/ldap/default/container/admins?admins \
 	ucsschool/ldap/default/container/pupils?schueler \
-	ucsschool/ldap/default/container/staff?mitarbeiter
+	ucsschool/ldap/default/container/staff?mitarbeiter \
+	ucsschool/ldap/default/dcs?edukativ

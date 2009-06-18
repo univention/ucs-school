@@ -49,6 +49,7 @@ install: build
 	dh_testroot
 	dh_clean -k
 	dh_installdirs
+	install -m 755 ipaddr.py debian/ucs-school-import/usr/share/$(PACKAGE)/scripts
 	install -m 755 ucs-school-import debian/ucs-school-import/usr/share/$(PACKAGE)/scripts
 	ln -s ucs-school-import debian/$(PACKAGE)/usr/share/$(PACKAGE)/scripts/create_ou
 	ln -s ucs-school-import debian/$(PACKAGE)/usr/share/$(PACKAGE)/scripts/import_user

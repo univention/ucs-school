@@ -7,7 +7,7 @@ fi
 
 name="univention-ucs-school-import-custom-attributes"
 file="/usr/lib/univention-install/.index.txt"
-ldapbase=$(univention-config-registry get ldap/base) 
+ldap_base=$(univention-config-registry get ldap/base) 
 VERSION="2"
 
 touch $file
@@ -17,7 +17,7 @@ test -n "`grep "$name v${VERSION} successful" $file`" && exit 0
 res=`univention-directory-manager settings/customattribute list $@ --filter name=Abordnung | grep "DN: "`
 if [ -z "$res" ]; then
     univention-directory-manager settings/customattribute create $@ \
-    --position cn="custom attributes,cn=univention,$ldapbase" \
+    --position cn="custom attributes,cn=univention,$ldap_base" \
     --set longDescription="DN des Hauptaccount (Abordnung)" \
     --set module=users/user \
     --set shortDescription="Abordnung" \
