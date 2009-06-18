@@ -10,10 +10,11 @@ Architecture: all
 Replaces: sfb-import
 Conflicts: sfb-import
 Provides: sfb-import
-Depends: univention-directory-manager
+Depends: univention-directory-manager, ucs-school-import-schema
 Description: Importing objects like users and computers
 
 Package: ucs-school-import-schema
+Depends: python-univention-directory-manager-cli (>= 4.0.19-1)
 Replaces: sfb-import-schema
 Conflicts: sfb-import-schema
 Provides: sfb-import-schema

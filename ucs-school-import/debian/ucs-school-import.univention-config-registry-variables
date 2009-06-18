@@ -1,0 +1,29 @@
+[ucsschool/ldap/district/enable]
+Description[de]=Aktiviert Bezirke für die UCS@school-Umgebung
+Description[en]=Activates districts for the UCS@school environment
+Type=str
+
+[ucsschool/ldap/default/container/pupils]
+Description[de]=Standard-Container für Schüler
+Description[en]=Default container for pupils
+Type=str
+
+[ucsschool/ldap/default/container/teachers]
+Description[de]=Standard-Container für Lehrer
+Description[en]=Default container for teachers
+Type=str
+
+[ucsschool/ldap/default/container/admins]
+Description[de]=Standard-Container für Administratoren
+Description[en]=Default container for administrators
+Type=str
+
+[ucsschool/ldap/default/container/staff]
+Description[de]=Standard-Container für Mitarbeiter
+Description[en]=Default container for staff members
+Type=str
+
+[ucsschool/ldap/default/dcs]
+Description[de]=Spezifiziert welche Schul-DCs beim Erzeugen einer Schule angelegt werden sollen (Werte: edukativ und/oder verwaltung)
+Description[en]=Specifies which school DCs are created during the school set up (values: edukativ and/or verwaltung)
+Type=str

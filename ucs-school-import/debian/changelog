@@ -1,3 +1,20 @@
+ucs-school-import (4.0.0-15) unstable; urgency=low
+
+  * fixed several small issues with policy and network creation
+  * changed behavior of import_router to only create/update the dhcp-routing
+    policy instead of creating a computer object
+  * added UCR variable descriptions
+  * added UCR variable ucsschool/ldap/default/dcs that dertermines which DCs
+    are added during school creation
+  * added python-univention-directory-manager-cli dependency to package
+    ucs-school-import-schema
+  * added ucs-school-import-schema dependency to package ucs-school-import
+  * fixed a typo in join script
+    82univention-ucs-school-import-custom-attributes.inst
+  * All changes are related to Ticket #2009060410000116
+
+ -- Jan Christoph Ebersbach <ebersbach@univention.de>  Thu, 18 Jun 2009 10:11:58 +0200
+
 ucs-school-import (4.0.0-14) unstable; urgency=low
 
   * fixed an issue with dhcp/subnet object

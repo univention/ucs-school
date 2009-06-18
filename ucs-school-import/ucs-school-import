@@ -49,14 +49,19 @@ district_enabled = False
 if configRegistry['ucsschool/ldap/district/enable'].lower () in ('1', 'yes', 'true'):
 	district_enabled = True
 
-verified_ous = []
-verified_groups = []
+school_dcs = configRegistry['ucsschool/ldap/default/dcs']
+# create edukativ DC by default
+if school_dcs.strip () == '':
+	school_dcs = 'edukativ'
+
+verified_ous          = []
+verified_groups       = []
 verified_group_shares = []
 
-cn_pupils = configRegistry['ucsschool/ldap/default/container/pupils']
+cn_pupils   = configRegistry['ucsschool/ldap/default/container/pupils']
 cn_teachers = configRegistry['ucsschool/ldap/default/container/teachers']
-cn_admins = configRegistry['ucsschool/ldap/default/container/admins']
-cn_staff = configRegistry['ucsschool/ldap/default/container/staff']
+cn_admins   = configRegistry['ucsschool/ldap/default/container/admins']
+cn_staff    = configRegistry['ucsschool/ldap/default/container/staff']
 
 # TODO: make this configurable via UCR
 generate_logins = False
@@ -320,7 +325,6 @@ def verify_school_ou(schoolNr, co, lo, baseDN):
 	count_lo()
 
 	# create groups if not exsistant
-	# TODO: evtl. müssen die admins überarbeitet werden
 	groups=["cn=admins%s,cn=ouadmins,cn=groups,%s" % (schoolNr, baseDN),
 			"cn=%s%s,cn=groups,%s" % (cn_pupils, schoolNr, getDN (schoolNr)),
 			"cn=%s%s,cn=groups,%s" % (cn_teachers, schoolNr, getDN (schoolNr)),
@@ -341,34 +345,42 @@ def verify_school_ou(schoolNr, co, lo, baseDN):
 			]
 	for group in groups:
 		verify_group(group, co, lo, superordinate, baseDN)
+	
 
-	# create server if not existent
-	server_exists=0
-	correct_server_exists=0
-	if objects:
-		server_exists = 1 # can't create another server with this id
-		correct_server = "cn=dc%s,cn=dc,cn=server,cn=computers,%s"%(schoolNr, getDN (schoolNr))
-		for object in objects:
-			if object.dn == correct_server:
-				correct_server_exists=1
-	if server_exists and not correct_server_exists:
-		print "There is already a server entry in the wrong container"
-	if not server_exists:
-		position.setDn("cn=dc,cn=server,cn=computers,"+getDN (schoolNr))
-		object=server_module.object(co, lo, position=position, superordinate=superordinate)
-		count_lo()
-		object.open()
-		object["name"]="dc%s"%schoolNr
-		object["unixhome"]="/dev/null"
-		object["shell"]="/bin/bash"
-		object["primaryGroup"]="cn=DC Slave Hosts,cn=groups,%s"%baseDN
-		object["groups"].append ("cn=OU%s-DC-Verwaltungsnetz,cn=ucsschool,cn=groups,%s" % (schoolNr, baseDN))
-		print "need to create server: %s"%object.dn
-		create_object(object)
+	for dc in school_dcs.split ():
+		dcdn = 'dc%s' % schoolNr
+		dcgroup = "cn=OU%s-DC-Edukativnetz,cn=ucsschool,cn=groups,%s" % (schoolNr, baseDN)
+		if dc == 'verwaltung':
+			dcdn += 'v' # this is the name convention, a trailing v for Verwaltungsnetz DCs
+			dcgroup = "cn=OU%s-DC-Verwaltungsnetz,cn=ucsschool,cn=groups,%s" % (schoolNr, baseDN)
+
+		# create server if not existent
+		server_exists=0
+		correct_server_exists=0
+		if objects:
+			server_exists = 1 # can't create another server with this id
+			correct_server = "cn=%s,cn=dc,cn=server,cn=computers,%s"%(dccn, getDN (schoolNr))
+			for object in objects:
+				if object.dn == correct_server:
+					correct_server_exists=1
+		if server_exists and not correct_server_exists:
+			print "There is already a server entry in the wrong container"
+		if not server_exists:
+			position.setDn("cn=dc,cn=server,cn=computers,"+getDN (schoolNr))
+			object=server_module.object(co, lo, position=position, superordinate=superordinate)
+			count_lo()
+			object.open()
+			object["name"]=dcdn
+			object["unixhome"]="/dev/null"
+			object["shell"]="/bin/bash"
+			object["primaryGroup"]="cn=DC Slave Hosts,cn=groups,%s"%baseDN
+			object["groups"].append (dcgroup)
+			print "need to create server: %s"%object.dn
+			create_object(object)
 
 	# create dhcp-service if not exsistant
 	objects = univention.admin.modules.lookup(dhcp_service_module, co, lo, scope='sub', superordinate=superordinate, base=baseDN,
-											  filter=univention.admin.filter.expression('cn','%s'%schoolNr))
+											  filter=univention.admin.filter.expression('cn', schoolNr))
 	count_lo()
 	service_exists=0
 	if objects:
@@ -1075,7 +1087,7 @@ def import_user():
 			for object in objects:
 				ou=object.dn[string.find(object.dn,"ou=")+3:string.find(object.dn,",",string.find(object.dn,"ou=")+3)]
 				# teacher or student
-				# TODO: add staff members also
+				# FIXME: add staff members also
 				if ('cn=%s,cn=users' % cn_pupils) in object.dn:
 					main_person.isTeacher = '0'
 				else:
@@ -1148,20 +1160,45 @@ def import_user():
 
 def create_network(schoolNr, network, defaultrouter=None, nameserver=None, netbiosserver=None):
 	"""
-	@param	network	The network MUST contain the netmask!!
+	@param	network	The network address MUST contain the netmask!! it could also be a ipaddr.IPv4 object
+	@param	defaultrouter	IP-Adress, if no netmask is profided it's derived from network
+	@param	nameserver	IP-Adress, if no netmask is profided it's derived from network
+	@param	netbiosserver	IP-Adress, if no netmask is profided it's derived from network
 	"""
 
 	verify_school_ou(schoolNr, co, lo, baseDN)
 
-	ip = network
-	if isinstance (ip, basestring):
-		ip = ipaddr.IPv4 (network)
-
-	if check_network(schoolNr, ip):
-		print "Network %s/%d exists in school %s!"%(ip.network_ext, ip.perfixlen, schoolNr)
+	# convert parameters to ipaddr.IPv4
+	if isinstance (network, basestring):
+		network = ipaddr.IPv4 (network)
+	if network.prefixlen == 32:
+		print 'ERROR: no netmask specified for network %s' % network.network_ext
 		return
 
-	print "generate network %s/%d" % (ip.network_ext, ip.prefixlen)
+	if isinstance (defaultrouter, basestring):
+		if '/' not in defaultrouter:
+			defaultrouter = ipaddr.IPv4 ('%s/%d' % (defaultrouter, network.prefixlen))
+		else:
+			defaultrouter = ipaddr.IPv4 (defaultrouter)
+
+	if isinstance (nameserver, basestring):
+		if '/' not in nameserver:
+			nameserver = ipaddr.IPv4 ('%s/%d' % (nameserver, network.prefixlen))
+		else:
+			nameserver = ipaddr.IPv4 (nameserver)
+
+	if isinstance (netbiosserver, basestring):
+		if '/' not in netbiosserver:
+			netbiosserver = ipaddr.IPv4 ('%s/%d' % (netbiosserver, network.prefixlen))
+		else:
+			netbiosserver = ipaddr.IPv4 (netbiosserver)
+
+
+	if check_network(schoolNr, network):
+		print "Network %s/%d exists in school %s!"%(network.network_ext, network.prefixlen, schoolNr)
+		return
+
+	print "generate network %s/%d" % (network.network_ext, network.prefixlen)
 	if defaultrouter:
 		print "defaultrouter: %s" % defaultrouter
 	if nameserver:
@@ -1171,13 +1208,13 @@ def create_network(schoolNr, network, defaultrouter=None, nameserver=None, netbi
 
 	# workaround for Bug #14795
 	subnetbytes = 0
-	tmp = ip.netmask_ext.split ('.')
+	tmp = network.netmask_ext.split ('.')
 	for i in tmp:
 		if i == '255':
 			subnetbytes += 1
 		else:
 			break
-	subnet = '.'.join (ip.network_ext.split ('.')[:subnetbytes])
+	subnet = '.'.join (network.network_ext.split ('.')[:subnetbytes])
 	# END workaround
 
 	position.setDn("cn=dns,%s"%(baseDN))
@@ -1196,41 +1233,41 @@ def create_network(schoolNr, network, defaultrouter=None, nameserver=None, netbi
 	object=dhcp_subnet_module.object(co, lo, position=position, superordinate=dhcp_subnet_module)
 	count_lo()
 	object.open()
-	object['subnet']=ip.network_ext
-	object['subnetmask']=ip.netmask_ext
+	object['subnet']=network.network_ext
+	object['subnetmask']=network.netmask_ext
 	create_object(object)
 
 	position.setDn("cn=networks,%s" % (getDN (schoolNr), ))
 	object=network_module.object(co, lo, position=position, superordinate=superordinate)
 	count_lo()
 	object.open()
-	object['name']='%s-%s/%d'%(schoolNr, ip.network_ext, ip.prefixlen)
-	object['netmask']=str (ip.prefixlen)
-	object['network']=ip.network_ext
+	object['name']='%s-%s'%(schoolNr, network.network_ext)
+	object['netmask']=str (network.prefixlen)
+	object['network']=network.network_ext
 	object['dhcpEntryZone']='cn=%s,cn=dhcp,%s'%(schoolNr, getDN (schoolNr))
 	object['dnsEntryZoneForward']='zoneName=%s,cn=dns,%s'%(domainname, baseDN)
 	object['dnsEntryZoneReverse']='zoneName=%s.in-addr.arpa,cn=dns,%s'%('.'.join (reversed (subnet.split ('.'))),baseDN)
-	if (1 << (32 - ip.prefixlen)) - 2 > 0: # - 2 for network and broadcast address
+	if (1 << (32 - network.prefixlen)) - 2 > 0: # - 2 for network and broadcast address
 		# half of the whole ip address scope is used for DHCP
-		numberofdhcpaddresses = (1 << (32 - ip.prefixlen)) / 2
-		startaddress          = ipaddr.IPv4 (ip.network + numberofdhcpaddresses - 1 ) # -1 for network addres
-		endaddress            = ipaddr.IPv4 (startaddress.ip + numberofdhcpaddresses - 1) # -1 for broadcast address
+		numberofdhcpaddresses = (1 << (32 - network.prefixlen)) / 2
+		startaddress          = ipaddr.IPv4 (network.network + numberofdhcpaddresses - 1 ) # -1 for network addres
+		endaddress            = ipaddr.IPv4 (startaddress.network + numberofdhcpaddresses - 1) # -1 for broadcast address
 		object['ipRange']     = [[startaddress.ip_ext, endaddress.ip_ext]]
 	create_object(object)
 
 	# set netbios and router for dhcp subnet
 	if defaultrouter:
 		print 'setting default router'
-		set_router_for_subnet (ipaddr.IPv4 (defaultrouter), schoolNr)
-	
+		set_router_for_subnet (defaultrouter, schoolNr)
+
 	if netbiosserver:
 		print 'setting netbios server'
-		set_netbiosserver_for_subnet (ipaddr.IPv4 (netbiosserver), schoolNr)
+		set_netbiosserver_for_subnet (netbiosserver, schoolNr)
 
 	# set default value for nameserver
 	if nameserver:
 		print 'setting nameserver'
-		set_nameserver_for_subnet (ipaddr.IPv4 (nameserver), schoolNr)
+		set_nameserver_for_subnet (nameserver, schoolNr)
 
 
 def check_network(schoolNr, network):
@@ -1239,11 +1276,11 @@ def check_network(schoolNr, network):
 	"""
 	objects = univention.admin.modules.lookup(network_module, co, lo, scope='sub', superordinate=superordinate,
 											  base='cn=networks,%s'%(getDN (schoolNr)),
-											  filter=univention.admin.filter.expression('cn','%s-%s/%d'%(schoolNr,network, network.prefixlen)))
+											  filter=univention.admin.filter.expression('cn','%s-%s'%(schoolNr, network.network_ext)))
 	count_lo()
 	network_exists=0
 	if objects:
-		n = "cn=%s-%s/%d,cn=networks,%s"%(schoolNr, network, network.prefixlen, getDN (schoolNr))
+		n = "cn=%s-%s,cn=networks,%s"%(schoolNr, network.network_ext, getDN (schoolNr))
 		for object in objects:
 			if object.dn == n:
 				network_exists = 1
@@ -1387,15 +1424,15 @@ def set_inventory_number_for_computer():
 
 		line=inf.readline()
 
-def set_policy_for_dhcp_subnet (ip, schoolNr, policy_module, policy_dn, values={}):
+def set_policy_for_dhcp_subnet (ip, schoolNr, policy_module, policy_dn, cn, values={}, overwrite_policy=False):
 	"""
 	@param	ip	ipaddr object for the router
 	@param	schoolNr	school number
 	"""
 	# check if routing policy needs to be created
-	so = "cn=%s,cn=%s,cn=dhcp,%s" % (ip.network_ext, schoolNr, getDN (schoolNr))
+	so = "cn=%s,cn=dhcp,%s" % (schoolNr, getDN (schoolNr))
 	objects = univention.admin.modules.lookup(dhcp_subnet_module, co, lo, scope='sub', superordinate=so,
-			base=baseDN, filter=univention.admin.filter.expression('cn',ip.network_ext))
+			base=baseDN, filter=univention.admin.filter.expression('cn', ip.network_ext))
 	count_lo()
 	dhcp_subnet_object=None
 	subnet = "cn=%s,cn=%s,cn=dhcp,%s" % (ip.network_ext, schoolNr, getDN (schoolNr))
@@ -1408,14 +1445,13 @@ def set_policy_for_dhcp_subnet (ip, schoolNr, policy_module, policy_dn, values={
 		return
 
 	objects = univention.admin.modules.lookup(policy_module, co, lo, scope='sub', superordinate=superordinate,
-			base=baseDN, filter=univention.admin.filter.expression('cn',schoolNr))
+			base=baseDN, filter=univention.admin.filter.expression('cn', cn))
 	policy_object = None
 	if objects:
 		for o in objects:
 			if o.dn == policy_dn:
 				policy_object = o
 	if not policy_object:
-		print 'there'
 		position_dn = ','.join (policy_dn.split (',')[1:])
 		verify_containers (position_dn, cn_module, co, lo, superordinate, baseDN)
 		position.setDn (position_dn)
@@ -1430,8 +1466,7 @@ def set_policy_for_dhcp_subnet (ip, schoolNr, policy_module, policy_dn, values={
 			print "WARNING: Error creating policy %s" % policy_object.dn
 			traceback.print_exc (100, sys.stdout)
 			policy_object = None
-	else:
-		print 'here'
+	elif overwrite_policy:
 		policy_object.open ()
 		for k, v in values.iteritems ():
 			policy_object[k] = v
@@ -1441,11 +1476,9 @@ def set_policy_for_dhcp_subnet (ip, schoolNr, policy_module, policy_dn, values={
 			print "WARNING: Error modifying policy %s" % policy_object.dn
 			traceback.print_exc (100, sys.stdout)
 			policy_object = None
-		print 'done'
 
 	if policy_object:
-		# add reference  to the newly created policy
-		print 'connecting dhcp subnet (%s) with policy (%s)' % (dhcp_subnet_object.dn, policy_object.dn)
+		# add policy reference to dhcp_subnet_object
 		try:
 			lob = lo.get (dhcp_subnet_object.dn, ['objectClass'])
 			if 'univentionPolicyReference' not in lob.get ('objectClass', []):
@@ -1453,44 +1486,45 @@ def set_policy_for_dhcp_subnet (ip, schoolNr, policy_module, policy_dn, values={
 
 			lob = lo.get (dhcp_subnet_object.dn, ['univentionPolicyReference'])
 			if policy_object.dn not in lob.get ('univentionPolicyReference', []):
+				print 'connecting dhcp subnet (%s) with policy (%s)' % (dhcp_subnet_object.dn, policy_object.dn)
 				lo.modify (dhcp_subnet_object.dn, [ ('univentionPolicyReference','',policy_object.dn) ])
 		except:
 			print "WARNING: Error modifying policy %s" % policy_object.dn
 			traceback.print_exc (100, sys.stdout)
 			policy_object = None
 
-def set_netbiosserver_for_subnet (ip, schoolNr):
+def set_netbiosserver_for_subnet (ip, schoolNr, overwrite_policy=False):
 	"""
 	@param	ip	ipaddr object for the netbios server
 	@param	schoolNr	school number
 	"""
-	dn = "cn=%s,cn=netbios,cn=dhcp,cn=policies,%s"%(schoolNr, getDN (schoolNr))
 	values = {
-			'name':'%s-%s/%d' % (schoolNr, ip.network_ext, ip.prefixlen),
+			'name':'%s-%s' % (schoolNr, ip.network_ext),
 			'netbios_name_servers':ip.ip_ext}
-	set_policy_for_dhcp_subnet (ip, schoolNr, policy_dhcp_netbios_module, dn, values=values)
+	dn = "cn=%s,cn=netbios,cn=dhcp,cn=policies,%s" % (values['name'], getDN (schoolNr))
+	set_policy_for_dhcp_subnet (ip, schoolNr, policy_dhcp_netbios_module, dn, values['name'], values=values, overwrite_policy=overwrite_policy)
 
-def set_nameserver_for_subnet (ip, schoolNr):
+def set_nameserver_for_subnet (ip, schoolNr, overwrite_policy=False):
 	"""
 	@param	ip	ipaddr object for the netbios server
 	@param	schoolNr	school number
 	"""
-	dn = "cn=%s,cn=dns,cn=dhcp,cn=policies,%s" % (schoolNr, getDN (schoolNr))
 	values = {
-			'name':'%s-%s/%d' % (schoolNr, ip.network_ext, ip.prefixlen),
+			'name':'%s-%s' % (schoolNr, ip.network_ext),
 			'domain_name_servers':ip.ip_ext}
-	set_policy_for_dhcp_subnet (ip, schoolNr, policy_dhcp_dns_module, dn, values=values)
+	dn = "cn=%s,cn=dns,cn=dhcp,cn=policies,%s" % (values['name'], getDN (schoolNr))
+	set_policy_for_dhcp_subnet (ip, schoolNr, policy_dhcp_dns_module, dn, values['name'], values=values, overwrite_policy=overwrite_policy)
 
-def set_router_for_subnet (ip, schoolNr):
+def set_router_for_subnet (ip, schoolNr, overwrite_policy=False):
 	"""
 	@param	ip	ipaddr object for the router
 	@param	schoolNr	school number
 	"""
-	dn = "cn=%s,cn=routing,cn=dhcp,cn=policies,%s"%(schoolNr, getDN (schoolNr))
 	values = {
-			'name':'%s-%s/%d' % (schoolNr, ip.network_ext, ip.prefixlen),
+			'name':'%s-%s' % (schoolNr, ip.network_ext),
 			'routers':ip.ip_ext}
-	set_policy_for_dhcp_subnet (ip, schoolNr, policy_dhcp_routing_module, dn, values=values)
+	dn = "cn=%s,cn=routing,cn=dhcp,cn=policies,%s" % (values['name'], getDN (schoolNr))
+	set_policy_for_dhcp_subnet (ip, schoolNr, policy_dhcp_routing_module, dn, values['name'], values=values, overwrite_policy=overwrite_policy)
 
 def import_computer(computer='computer'):
 	# argument is infile
@@ -1517,6 +1551,8 @@ def import_computer(computer='computer'):
 			ctype = parsed[0]
 			name  = parsed[1]
 		elif computer == 'router':
+			# ctype and name are not used at the moment since no computer
+			# object is created by import_router
 			ctype = 'ipmanagedclient'
 			name  = ''
 		MAC      = parsed[2]
@@ -1524,13 +1560,13 @@ def import_computer(computer='computer'):
 		IP       = parsed[4]
 		inventoryNumbers = parsed[5].strip().split(',')
 
-		if computer == 'router':
-			name = 'router%s' % schoolNr
-
 		verify_school_ou(schoolNr, co, lo, baseDN)
 
 		ip = ipaddr.IPv4 (IP)
-		print ip.network_ext
+
+		if computer == 'router':
+			set_router_for_subnet (ip, schoolNr, overwrite_policy=True)
+			return
 
 		module = univention.admin.modules.get("computers/%s"%ctype)
 		if not module:
@@ -1570,7 +1606,7 @@ def import_computer(computer='computer'):
 						# FIXME: because of Bug #14789 network has to be set here
 						object = univention.admin.objects.get (module, co, lo, position='', dn="cn=%s,cn=computers,%s" % (name, getDN (schoolNr)), arg='')
 						object.open ()
-						object['network']='cn=%s-%s/%d,cn=networks,%s'%(schoolNr, ip.network_ext, ip.prefixlen, getDN (schoolNr))
+						object['network'] = 'cn=%s-%s,cn=networks,%s' % (schoolNr, ip.network_ext, getDN (schoolNr))
 						object.modify ()
 					except:
 						print "WARNING: Error setting network for computer %s"%object.dn
@@ -1579,15 +1615,16 @@ def import_computer(computer='computer'):
 					print "WARNING: Error creating computer %s"%object.dn
 					traceback.print_exc (100, sys.stdout)
 
-			if computer == 'router':
-				set_router_for_subnet (ip, schoolNr)
-
 			print 'Processing of line %d completed' % linecnt
 
 		# read next line
 		line=inf.readline()
 
 def import_router():
+	"""
+	No computer object is created on importing routers! But the dhcp-routing
+	policy is set to the IP address of the router
+	"""
 	import_computer (computer='router')
 
 def import_group():
