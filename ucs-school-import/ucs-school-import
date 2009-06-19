@@ -361,10 +361,10 @@ def verify_school_ou(schoolNr, co, lo, baseDN):
 
 	for dc in school_dcs.split ():
 		dccn = 'dc%s-01' % schoolNr.lower ()
-		dcgroup = "cn=OU%s-DC-Edukativnetz,cn=ucsschool,cn=groups,%s" % (schoolNr, baseDN)
+		dcgroup = "cn=OU%s-DC-Edukativnetz,cn=ucsschool,cn=groups,%s" % (schoolNr.lower (), baseDN)
 		if dc == 'verwaltung':
 			dccn = 'dc%sv-01' % schoolNr.lower () # this is the name convention, a trailing v for Verwaltungsnetz DCs
-			dcgroup = "cn=OU%s-DC-Verwaltungsnetz,cn=ucsschool,cn=groups,%s" % (schoolNr, baseDN)
+			dcgroup = "cn=OU%s-DC-Verwaltungsnetz,cn=ucsschool,cn=groups,%s" % (schoolNr.lower (), baseDN)
 
 		# create server if not exsistant
 		objects = univention.admin.modules.lookup(server_module, co, lo, scope='sub', superordinate=superordinate, base=baseDN,
@@ -391,9 +391,10 @@ def verify_school_ou(schoolNr, co, lo, baseDN):
 			object["unixhome"]="/dev/null"
 			object["shell"]="/bin/bash"
 			object["primaryGroup"]="cn=DC Slave Hosts,cn=groups,%s"%baseDN
-			object["groups"].append (dcgroup)
-			print "need to create server: %s"%object.dn
+			if dcgroup not in object["groups"]:
+				object["groups"].append (dcgroup)
 			create_object(object)
+			print "need to create server: %s"%object.dn
 
 	# create dhcp-service if not exsistant
 	objects = univention.admin.modules.lookup(dhcp_service_module, co, lo, scope='sub', superordinate=superordinate, base=baseDN,
@@ -557,10 +558,10 @@ def create_sub_object(o):
 
 
 def create_object(o, ignore_exists=0):
-	print 'creating object', o.dn
 	exists=0
 	try:
 		dn=o.create()
+		print 'creating object', dn
 	except univention.admin.uexceptions.objectExists:
 		if not ignore_exists:
 			print 'ERROR: Object exists-1 (objectExists)'
