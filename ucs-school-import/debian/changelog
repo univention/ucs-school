@@ -1,3 +1,15 @@
+ucs-school-import (4.0.0-19) unstable; urgency=low
+
+  * force all usernames to lower case
+  * force all computer names to lower case
+  * force all school numbers below the school OU to lower case
+  * removed execute bit from ipaddr.py
+  * removed unused imports for smtplib and ldap
+  * added some more examples
+  * All changes are related to Ticket #2009060410000116
+
+ -- Jan Christoph Ebersbach <ebersbach@univention.de>  Fri, 19 Jun 2009 13:52:54 +0200
+
 ucs-school-import (4.0.0-18) unstable; urgency=low
 
   * fixed the creation of container ucsschool in join script. Ticket #2009060410000116
