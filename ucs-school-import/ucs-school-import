@@ -376,7 +376,7 @@ def verify_school_ou(schoolNr, co, lo, baseDN):
 		correct_server_exists=0
 		if objects:
 			server_exists = 1 # can't create another server with this id
-			correct_server = "cn=%s-01,cn=dc,cn=server,cn=computers,%s"%(dccn, getDN (schoolNr))
+			correct_server = "cn=%s,cn=dc,cn=server,cn=computers,%s"%(dccn, getDN (schoolNr))
 			for object in objects:
 				if object.dn == correct_server:
 					correct_server_exists=1
@@ -387,7 +387,7 @@ def verify_school_ou(schoolNr, co, lo, baseDN):
 			object=server_module.object(co, lo, position=position, superordinate=superordinate)
 			count_lo()
 			object.open()
-			object["name"]='%s-01' % dccn
+			object["name"]=dccn
 			object["unixhome"]="/dev/null"
 			object["shell"]="/bin/bash"
 			object["primaryGroup"]="cn=DC Slave Hosts,cn=groups,%s"%baseDN
