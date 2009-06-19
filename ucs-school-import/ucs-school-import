@@ -360,10 +360,10 @@ def verify_school_ou(schoolNr, co, lo, baseDN):
 
 
 	for dc in school_dcs.split ():
-		dccn = 'dc%s' % schoolNr.lower ()
+		dccn = 'dc%s-01' % schoolNr.lower ()
 		dcgroup = "cn=OU%s-DC-Edukativnetz,cn=ucsschool,cn=groups,%s" % (schoolNr, baseDN)
 		if dc == 'verwaltung':
-			dccn += 'v' # this is the name convention, a trailing v for Verwaltungsnetz DCs
+			dccn = 'dc%sv-01' % schoolNr.lower () # this is the name convention, a trailing v for Verwaltungsnetz DCs
 			dcgroup = "cn=OU%s-DC-Verwaltungsnetz,cn=ucsschool,cn=groups,%s" % (schoolNr, baseDN)
 
 		# create server if not exsistant
@@ -376,7 +376,7 @@ def verify_school_ou(schoolNr, co, lo, baseDN):
 		correct_server_exists=0
 		if objects:
 			server_exists = 1 # can't create another server with this id
-			correct_server = "cn=%s,cn=dc,cn=server,cn=computers,%s"%(dccn, getDN (schoolNr))
+			correct_server = "cn=%s-01,cn=dc,cn=server,cn=computers,%s"%(dccn, getDN (schoolNr))
 			for object in objects:
 				if object.dn == correct_server:
 					correct_server_exists=1
@@ -387,7 +387,7 @@ def verify_school_ou(schoolNr, co, lo, baseDN):
 			object=server_module.object(co, lo, position=position, superordinate=superordinate)
 			count_lo()
 			object.open()
-			object["name"]=dccn
+			object["name"]='%s-01' % dccn
 			object["unixhome"]="/dev/null"
 			object["shell"]="/bin/bash"
 			object["primaryGroup"]="cn=DC Slave Hosts,cn=groups,%s"%baseDN
@@ -417,7 +417,7 @@ def verify_school_ou(schoolNr, co, lo, baseDN):
 		print "need to create dhcp service: %s"%object.dn
 
 	# create dhcp-server if not exsistant
-	dhcp_server_cn = 'dc%s'%schoolNr.lower ()
+	dhcp_server_cn = 'dc%s-01'%schoolNr.lower ()
 	objects = univention.admin.modules.lookup(dhcp_server_module, co, lo, scope='sub', superordinate=dhcp_service_object, base=baseDN,
 											  filter=univention.admin.filter.expression('cn',dhcp_server_cn))
 	count_lo()
@@ -437,7 +437,7 @@ def verify_school_ou(schoolNr, co, lo, baseDN):
 		print "need to create dhcp server: %s"%object.dn
 
 	# create userlogon-share if not exsistant
-	share_server_cn = 'dc%s.%s'%(schoolNr.lower (), configRegistry['domainname'])
+	share_server_cn = 'dc%s-01.%s'%(schoolNr.lower (), configRegistry['domainname'])
 	objects = univention.admin.modules.lookup(share_module, co, lo, \
 			scope='sub', superordinate=dhcp_service_object, \
 			base='cn=shares,%s' % ( getDN (schoolNr)), \
@@ -691,7 +691,7 @@ def verify_group_share(schoolNr, classNr, co, lo, superordinate, base):
 
 
 		# set default server
-		serverfqdn = "dc%s.%s"%(schoolNr.lower (),domainname)
+		serverfqdn = "dc%s-01.%s"%(schoolNr.lower (),domainname)
 
 		# get alternative server (defined at ou object if a dc slave is responsible for more than one ou)
 		ou_dn = getDN (schoolNr, basedn=base)
@@ -1753,7 +1753,7 @@ def import_printer():
 			count_lo()
 			object.open()
 			object['name'] = printerName
-			object['spoolHost'] = 'dc%s.%s' % (schoolNr.lower (), configRegistry['domainname'])
+			object['spoolHost'] = 'dc%s-01.%s' % (schoolNr.lower (), configRegistry['domainname'])
 			object['uri'] = printerUri
 			if printerModel:
 				object['model'] = printerModel
