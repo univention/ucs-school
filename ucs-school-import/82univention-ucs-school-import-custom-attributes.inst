@@ -37,12 +37,7 @@ fi
 univention-directory-manager container/cn create $@ \
 	--ignore_exist \
 	--position="cn=custom attributes,cn=univention,$ldap_base" \
-	--set name=OU-ACL
-
-univention-directory-manager container/cn create $@ \
-	--ignore_exist \
-	--position="cn=ucsschool,cn=custom attributes,cn=univention,$ldap_base" \
-	--set name=OU-ACL
+	--set name=ucsschool
 
 # create extended attribute for ucs@school
 univention-directory-manager settings/extended_attribute create $@ --ignore_exist \
