@@ -51,7 +51,7 @@ univention-directory-manager container/cn create $@ \
 for grp in "DC-Verwaltungsnetz" "Member-Verwaltungsnetz" "DC-Edukativnetz" "Member-Edukativnetz" ; do
 	univention-directory-manager groups/group create $@ \
 		--ignore_exist \
-		--position="cn=groups,$ldap_base" \
+		--position="cn=ucsschool,cn=groups,$ldap_base" \
 		--set name="$grp"
 done
 
