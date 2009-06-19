@@ -1,3 +1,9 @@
+ucs-school-import (4.0.0-18) unstable; urgency=low
+
+  * fixed the creation of container ucsschool in join script. Ticket #2009060410000116
+
+ -- Jan Christoph Ebersbach <ebersbach@univention.de>  Fri, 19 Jun 2009 10:33:50 +0200
+
 ucs-school-import (4.0.0-17) unstable; urgency=low
 
   * disabled default-lehrer policy temporarly
