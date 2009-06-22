@@ -1,3 +1,20 @@
+ucs-school-import (4.0.0-23) unstable; urgency=low
+
+  * removed creation of root account
+  * IP range is now specified by the import data
+  * Netbiosserver and Nameserver are allowed to be outside the network they
+    serve
+  * router import is done via the network import format
+  * Netbios node type has been set to H-8
+  * DHCP broadcast address is set by import network
+  * ucsschool container is now a group path
+  * policy containers have been removed from userpath
+  * DCs are now part of the DC-Edukativnetz or DC-Verwaltungsnetz group
+  * DHCP server objects are created for every DC created
+  * All changes are related to Ticket #2009060410000116
+
+ -- Jan Christoph Ebersbach <ebersbach@univention.de>  Mon, 22 Jun 2009 14:43:24 +0200
+
 ucs-school-import (4.0.0-22) unstable; urgency=low
 
   * fix for lower case school numbers in groups. Ticket #2009060410000116
