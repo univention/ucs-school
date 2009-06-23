@@ -1,3 +1,16 @@
+ucs-school-import (4.0.0-24) unstable; urgency=low
+
+  * added UCR variables for group name prefix
+    ucsschool/ldap/default/groupprefix/admins
+    ucsschool/ldap/default/groupprefix/pupils
+    ucsschool/ldap/default/groupprefix/teachers
+    ucsschool/ldap/default/groupprefix/staff
+  * fixed an issue with wrong groups for imported users
+  * set default search domain for DHCP DNS policy
+  * All changes are related to Ticket #2009060410000116
+
+ -- Jan Christoph Ebersbach <ebersbach@univention.de>  Tue, 23 Jun 2009 09:10:06 +0200
+
 ucs-school-import (4.0.0-23) unstable; urgency=low
 
   * removed creation of root account

@@ -23,6 +23,26 @@ Description[de]=Standard-Container für Mitarbeiter
 Description[en]=Default container for staff members
 Type=str
 
+[ucsschool/ldap/default/groupprefix/pupils]
+Description[de]=Standard-Prefix für die Schüler-Gruppen
+Description[en]=Default prefix for pupils groups
+Type=str
+
+[ucsschool/ldap/default/groupprefix/teachers]
+Description[de]=Standard-Prefix für die Lehrer-Gruppen
+Description[en]=Default prefix for teacher groups
+Type=str
+
+[ucsschool/ldap/default/groupprefix/admins]
+Description[de]=Standard-Prefix für die Administrator-Gruppen
+Description[en]=Default prefix for admin groups
+Type=str
+
+[ucsschool/ldap/default/groupprefix/staff]
+Description[de]=Standard-Prefix für die Mitarbeiter-Gruppen
+Description[en]=Default prefix for staff groups
+Type=str
+
 [ucsschool/ldap/default/dcs]
 Description[de]=Spezifiziert welche Schul-DCs beim Erzeugen einer Schule angelegt werden sollen (Werte: edukativ und/oder verwaltung)
 Description[en]=Specifies which school DCs are created during the school set up (values: edukativ and/or verwaltung)
