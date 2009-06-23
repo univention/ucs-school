@@ -1,3 +1,13 @@
+ucs-school-ldap-acls-master (4.0.1-1) unstable; urgency=low
+
+  * fixed access to OU in district mode and performance updates (Ticket#: 2009060410000107)
+    - use dn.subtree/dn.base instead of dn.regex if possible
+    - do not use expand if there's nothing to expand
+    - moved memberserver ACL to fix failed.ldif on slave join
+    - grant access to OU in DISTRICT mode
+
+ -- Sönke Schwardt <schwardt@univention.de>  Tue, 23 Jun 2009 16:38:12 +0200
+
 ucs-school-ldap-acls-master (4.0.0-6) unstable; urgency=low
 
   * changed group container for ucs@school specific groups to ucsschool. Ticket #2009060410000116

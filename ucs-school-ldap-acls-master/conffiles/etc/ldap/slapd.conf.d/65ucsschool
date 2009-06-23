@@ -41,8 +41,8 @@ access to dn.regex="^@%@ldap/base@%@$$"
 
 # Slave-Controller duerfen globale Container computers, shares, dns, dhcp, kerberos und policies sowie Benutzer lesen
 access to dn.regex="(^(.+,)?cn=(groups|dns|dhcp|policies|computers|kerberos|shares),|^(uid=[^,]+,|)cn=users,|^)@%@ldap/base@%@$$"
-	by group/univentionGroup/uniqueMember.expand="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
-	by group/univentionGroup/uniqueMember.expand="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
+	by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
+	by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
 	by * none break
 
 # Lehrer und ouadmins duerfen Schueler-Passwoerter aendern 
@@ -113,7 +113,7 @@ access to dn.regex="^cn=(groupName|sid|gid|gidNumber|mac),cn=temporary,cn=univen
 	by dn.regex="^uid=([^,]+),cn=(@$@TEACHERS@$@|@$@STAFF@$@|@$@ADMINS@$@),cn=users,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" write
 	by * none break
 
-access to dn.regex="^cn=gidNumber,cn=temporary,cn=univention,@%@ldap/base@%@$$" attrs=univentionLastUsedValue
+access to dn.base="cn=gidNumber,cn=temporary,cn=univention,@%@ldap/base@%@" attrs=univentionLastUsedValue
 	by dn.regex="^uid=([^,]+),cn=(@$@TEACHERS@$@|@$@STAFF@$@|@$@ADMINS@$@),cn=users,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" write
 	by * none break
 
@@ -136,15 +136,28 @@ access to dn.regex="^zoneName=[^,]+,cn=dns,@%@ldap/base@%@$$" attrs=sOARecord
 	by * none break
 
 # Slave-Controller und Memberserver aus der Verwaltungsnetz-Gruppe duerfen Inhalt des Schüler-Containers nicht replizieren
-access to dn.regex="^.+,cn=@%@UAS-PUPILS@%@,cn=users,ou=[^,]+,@$@DISTRICT@$@@%@ldap/base@%@$$"
-	by group/univentionGroup/uniqueMember.expand="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" none
-	by group/univentionGroup/uniqueMember.expand="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" none
+access to dn.regex="^.+,cn=@$@PUPILS@$@,cn=users,ou=[^,]+,@$@DISTRICT@$@@%@ldap/base@%@$$"
+	by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" none
+	by group/univentionGroup/uniqueMember="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" none
 	by * none break
 
 # Slave-Controller und Memberserver aus der Verwaltungsnetz-Gruppe duerfen nur Mitarbeiter mit passender UCS@School-Rollle replizieren
 access to dn.regex="^.+,cn=@$@STAFF@$@,cn=users,ou=[^,]+,@$@DISTRICT@$@@%@ldap/base@%@$$" filter="(!(ucsschoolRole=administration))"
-	by group/univentionGroup/uniqueMember.expand="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" none
-	by group/univentionGroup/uniqueMember.expand="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" none
+	by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" none
+	by group/univentionGroup/uniqueMember="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" none
+	by * none break
+
+# Memberserver duerfen bestimmte Attribute lesen
+access to dn.regex="^(.+,)?ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" attrs=userPassword,krb5Key,krb5KDCFlags,sambaNTPassword,sambaLMPassword,shadowLastChange,sambaPwdLastSet,pwhistory,krb5KeyVersionNumber,univentionWindowsReinstall,sambaPwdCanChange,sambaPwdMustChange
+	by group/univentionGroup/uniqueMember="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
+	by group/univentionGroup/uniqueMember="cn=Member-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
+	by * none break
+
+# DCs erhalten vorerst Lesezugriff auf das OU-Objekt selbst (im DISTRICT-Mode notwendig; falls ohne DISTRICT-Mode
+# entzieht die nächste ACL den OU-fremden DCs das Leserecht wieder)
+access to dn.regex="^ou=([^,]+),@%@ldap/base@%@$$"
+	by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read break
+	by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read break
 	by * none break
 
 # Slave-Controller duerfen Eintraege Ihrer ou lesen und schreiben (Passwortaenderungen etc.)
@@ -153,8 +166,8 @@ access to dn.regex="^(.+,)?ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$"
 	by group/univentionGroup/uniqueMember.expand="cn=OU$2-DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
 	by group/univentionGroup/uniqueMember.expand="cn=OU$2-DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
     by group/univentionLDAPACL/univentionLDAPAccessWrite.expand="ou=$2,@$@DISTRICT@$@@%@ldap/base@%@" write
-	by group/univentionGroup/uniqueMember.expand="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" none
-	by group/univentionGroup/uniqueMember.expand="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" none
+	by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" none
+	by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" none
     by dn.regex="^uid=([^,]+),cn=(@$@TEACHERS@$@|@$@STAFF@$@|@$@ADMINS@$@),cn=users,ou=$2,@$@DISTRICT@$@@%@ldap/base@%@$$" read
     by dn.regex="^uid=(.+,)?cn=users,ou=$2,@$@DISTRICT@$@@%@ldap/base@%@$$" none break
     by dn.regex="^uid=(.+,)?ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" none
@@ -162,37 +175,32 @@ access to dn.regex="^(.+,)?ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$"
 
 # Slave-Controller duerfen Klassen-Gruppen bearbeiten (AUSNAHME! Wird fuer Lehrerzuordnung in UMC benoetigt!)
 access to dn.regex="^cn=klassen,cn=@$@PUPILS@$@,cn=groups,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" attrs=children,entry
-	by group/univentionGroup/uniqueMember.expand="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
-	by group/univentionGroup/uniqueMember.expand="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
+	by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
+	by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
 	by * none break
 
 access to dn.regex="^cn=([^,]+),cn=klassen,cn=@$@PUPILS@$@,cn=groups,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$"
-	by group/univentionGroup/uniqueMember.expand="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
-	by group/univentionGroup/uniqueMember.expand="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
+	by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
+	by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
 	by * none break
 
 # Slave-Controller duerfen nagios-Container und Inhalt replizieren
-access to dn.regex="^(.+,)?cn=nagios,@%@ldap/base@%@"
-	by group/univentionGroup/uniqueMember.expand="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
-	by group/univentionGroup/uniqueMember.expand="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
+access to dn.subtree="cn=nagios,@%@ldap/base@%@"
+	by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
+	by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
 	by * none break
 
-# Member-Server duerfen bestimmte Attribute lesen
-access to dn.regex="^(.+,)?ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" attrs=userPassword,krb5Key,krb5KDCFlags,sambaNTPassword,sambaLMPassword,shadowLastChange,sambaPwdLastSet,pwhistory,krb5KeyVersionNumber,univentionWindowsReinstall,sambaPwdCanChange,sambaPwdMustChange
-	by group/univentionGroup/uniqueMember.expand="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
-	by group/univentionGroup/uniqueMember.expand="cn=Member-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
-	by * none break
-
-# Lehrer duerfen globale Container univention, policies, groups und dns lesen (werden bei Schuelern/Rechnern angezeigt)
+# Schüler, Lehrer, Mitarbeiter, Admins duerfen globale Container univention, policies, groups und dns lesen 
+# (werden bei Schuelern/Rechnern angezeigt)
 access to dn.regex="(^(.+,)?cn=(univention|policies|dns|groups),|^)@%@ldap/base@%@$$"
 	by dn.regex="^uid=([^,]+),cn=(@$@TEACHERS@$@|@$@STAFF@$@|@$@ADMINS@$@),cn=users,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" read
     by * none break
 
 # Slave-Controller und normale Lehrer duerfen sonst nichts lesen, Schueler sowieso nicht
 access to *
-	by group/univentionGroup/uniqueMember.expand="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" none
-	by group/univentionGroup/uniqueMember.expand="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" none
-    by * none break
+	by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" none
+	by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" none
+	by * none break
 
 """
 
