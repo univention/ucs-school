@@ -58,10 +58,15 @@ verified_ous          = []
 verified_groups       = []
 verified_group_shares = []
 
-cn_pupils   = configRegistry['ucsschool/ldap/default/container/pupils']
-cn_teachers = configRegistry['ucsschool/ldap/default/container/teachers']
-cn_admins   = configRegistry['ucsschool/ldap/default/container/admins']
-cn_staff    = configRegistry['ucsschool/ldap/default/container/staff']
+cn_pupils   = configRegistry.get ('ucsschool/ldap/default/container/pupils', 'pupils')
+cn_teachers = configRegistry.get ('ucsschool/ldap/default/container/teachers', 'teachers')
+cn_admins   = configRegistry.get ('ucsschool/ldap/default/container/admins', 'admins')
+cn_staff    = configRegistry.get ('ucsschool/ldap/default/container/staff', 'staff')
+
+grp_prefix_pupils   = configRegistry.get ('ucsschool/ldap/default/groupprefix/pupils', 'pupils')
+grp_prefix_teachers = configRegistry.get ('ucsschool/ldap/default/groupprefix/teachers', 'teachers')
+grp_prefix_admins   = configRegistry.get ('ucsschool/ldap/default/groupprefix/admins', 'admins')
+grp_prefix_staff    = configRegistry.get ('ucsschool/ldap/default/groupprefix/staff', 'staff')
 
 role_pupil   = 'pupil'
 role_teacher = 'teacher'
@@ -200,14 +205,14 @@ class ucsschool_person_modify:
 		# default group
 		default_groups.append("cn=Domain Users "+self.sNr+",cn=groups,%s" % (getDN (self.sNr), ))
 
-		user_cn = {role_teacher:cn_teachers,
-				role_pupil:cn_pupils,
-				role_staff:cn_staff}[self.getRole ()]
+		user_grp_prefix = {role_teacher:grp_prefix_teachers,
+				role_pupil:grp_prefix_pupils,
+				role_staff:grp_prefix_staff}[self.getRole ()]
 		# class if available
 		for cnr in self.cNr:
 			default_groups.append("cn=" + cnr + ",cn=klassen,cn=%s,cn=groups,%s" % (cn_pupils, getDN (self.sNr)))
 
-		default_groups.append("cn=%s%s,cn=groups,%s"%(user_cn, self.sNr, getDN (self.sNr)))
+		default_groups.append("cn=%s%s,cn=groups,%s"%(user_grp_prefix, self.sNr, getDN (self.sNr)))
 
 		return default_groups
 
@@ -1448,7 +1453,7 @@ def set_policy_for_dhcp_subnet (network, schoolNr, policy_module, policy_dn, cn,
 				policy_object = o
 	if not policy_object:
 		position_dn = ','.join (policy_dn.split (',')[1:])
-		verify_containers (position_dn, cn_module, co, lo, superordinate, baseDN, 'policyPath')
+		verify_containers (position_dn, cn_module, co, lo, superordinate, baseDN, path='policyPath')
 		position.setDn (position_dn)
 		policy_object = policy_module.object(co, lo, position=position, superordinate=superordinate)
 		count_lo()
@@ -1509,6 +1514,7 @@ def set_nameserver_for_subnet (network, ip, schoolNr, overwrite_policy=False):
 	"""
 	values = {
 			'name':'%s-%s' % (schoolNr.lower (), network.network_ext),
+			'domain_name':domainname,
 			'domain_name_servers':ip.ip_ext}
 	dn = "cn=%s,cn=dns,cn=dhcp,cn=policies,%s" % (values['name'], getDN (schoolNr))
 	set_policy_for_dhcp_subnet (network, schoolNr, policy_dhcp_dns_module, dn, values['name'], values=values, overwrite_policy=overwrite_policy)
