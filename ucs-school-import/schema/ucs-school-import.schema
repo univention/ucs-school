@@ -27,8 +27,7 @@ attributetype ( 1.3.6.1.4.1.10176.4000.2.5101
         DESC 'Role of user in ucs@school context (e.g. teacher, administration)'
         EQUALITY caseIgnoreMatch
         SUBSTR caseIgnoreSubstringsMatch
-        SYNTAX 1.3.6.1.4.1.1466.115.121.1.15
-        SINGLE-VALUE )
+        SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
 
 objectclass ( 1.3.6.1.4.1.10176.4000.2.51 NAME 'univentionUcsSchoolUser'
         DESC 'Role of user in ucs@school context (e.g. teacher, administration)'
