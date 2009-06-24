@@ -1351,7 +1351,7 @@ def import_networks(router_only=False):
 		if iprange[0].ip < network.network + 1 \
 				or iprange[0].ip > iprange[1].ip \
 				or iprange[1].ip >= network.broadcast:
-			print 'ERROR: IP host range not valid: %s' % iprange
+			print 'ERROR: IP host range not valid: %s-%s' % (iprange[0].ip_ext, iprange[1].ip_ext)
 			line=inf.readline()
 			continue
 
