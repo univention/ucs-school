@@ -2,6 +2,8 @@
 # -*- coding: latin1 -*-
 import re
 
+aclset = ""
+
 def replace_ucr_variables(template):
 	variable_token = re.compile('@[$]@')
 
@@ -29,7 +31,19 @@ def replace_ucr_variables(template):
 
 
 
-aclset = """
+if configRegistry.get('ucsschool/ldap/district/enable','no').lower() in ( 'yes', 'true', '1' ):
+   aclset += """
+# DCs erhalten Lesezugriff auf das OU-Objekt selbst (im DISTRICT-Mode notwendig)
+access to dn.regex="^ou=([^,]+),@%@ldap/base@%@$$"
+	by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
+	by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
+	by * none break
+
+"""
+
+
+
+aclset += """
 
 access to dn="cn=Subschema"
 	by * read
@@ -142,7 +156,7 @@ access to dn.regex="^.+,cn=@$@PUPILS@$@,cn=users,ou=[^,]+,@$@DISTRICT@$@@%@ldap/
 	by * none break
 
 # Slave-Controller und Memberserver aus der Verwaltungsnetz-Gruppe duerfen nur Mitarbeiter mit passender UCS@School-Rollle replizieren
-access to dn.regex="^.+,cn=@$@STAFF@$@,cn=users,ou=[^,]+,@$@DISTRICT@$@@%@ldap/base@%@$$" filter="(!(ucsschoolRole=administration))"
+access to dn.regex="^.+,cn=@$@STAFF@$@,cn=users,ou=[^,]+,@$@DISTRICT@$@@%@ldap/base@%@$$" filter="(!(ucsschoolRole=staff))"
 	by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" none
 	by group/univentionGroup/uniqueMember="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" none
 	by * none break
@@ -152,21 +166,6 @@ access to dn.regex="^(.+,)?ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" attrs=use
 	by group/univentionGroup/uniqueMember="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
 	by group/univentionGroup/uniqueMember="cn=Member-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
 	by * none break
-
-"""
-
-
-if configRegistry.get('ucsschool/ldap/district/enable','no').lower() in ( 'yes', 'true', '1' ):
-   aclset += """
-# DCs erhalten Lesezugriff auf das OU-Objekt selbst (im DISTRICT-Mode notwendig)
-access to dn.regex="^ou=([^,]+),@%@ldap/base@%@$$"
-	by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
-	by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
-	by * none break
-
-"""
-
-aclset += """
 
 # Slave-Controller duerfen Eintraege Ihrer ou lesen und schreiben (Passwortaenderungen etc.)
 # Lehrer duerfen sie lesen, ou-eigene bekommen Standard-ACLs, ou-fremde Server/user duerfen nichts
