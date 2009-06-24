@@ -181,9 +181,9 @@ class ucsschool_person_modify:
 			person.cNr=[] # no class in other ou
 			person.isTeacher = '0'
 			person.isStaff = '0'
-			if self.getRole () == role_teacher:
+			if role_teacher in self.getRole ():
 				person.isTeacher = '1'
-			elif self.getRole () == role_staff:
+			if role_staff in self.getRole ():
 				person.isTeacher = '1'
 
 			persons.append(person)
@@ -191,9 +191,12 @@ class ucsschool_person_modify:
 		return persons
 
 	def getPosition_dn(self):
-		cn = {role_teacher:cn_teachers,
-				role_pupil:cn_pupils,
-				role_staff:cn_staff}[self.getRole ()]
+		# resolution order for the position is pupil, teacher, staff
+		cn = cn_pupils
+		if role_teacher in self.getRole ():
+			cn = cn_teachers
+		elif role_staff in self.getRole ():
+			cn = cn_staff
 		return "cn=%s,cn=users,%s" % (cn, getDN (self.sNr))
 
 	def getDN(self):
@@ -205,25 +208,28 @@ class ucsschool_person_modify:
 		# default group
 		default_groups.append("cn=Domain Users "+self.sNr+",cn=groups,%s" % (getDN (self.sNr), ))
 
-		user_grp_prefix = {role_teacher:grp_prefix_teachers,
-				role_pupil:grp_prefix_pupils,
-				role_staff:grp_prefix_staff}[self.getRole ()]
-		# class if available
-		for cnr in self.cNr:
-			default_groups.append("cn=" + cnr + ",cn=klassen,cn=%s,cn=groups,%s" % (cn_pupils, getDN (self.sNr)))
+		for role in self.getRole ():
+			user_grp_prefix = {role_teacher:grp_prefix_teachers,
+					role_pupil:grp_prefix_pupils,
+					role_staff:grp_prefix_staff}[role]
+			# class if available
+			for cnr in self.cNr:
+				default_groups.append("cn=" + cnr + ",cn=klassen,cn=%s,cn=groups,%s" % (cn_pupils, getDN (self.sNr)))
 
-		default_groups.append("cn=%s%s,cn=groups,%s"%(user_grp_prefix, self.sNr, getDN (self.sNr)))
+			default_groups.append("cn=%s%s,cn=groups,%s"%(user_grp_prefix, self.sNr, getDN (self.sNr)))
 
 		return default_groups
 
 	def getRole(self):
-		"""returns the user's role"""
-		role = role_pupil
+		"""returns the user's roles"""
+		roles = []
 		if self.isTeacher == '1':
-			role = role_teacher
-		elif self.isStaff == '1':
-			role = role_staff
-		return role
+			roles.append (role_teacher)
+		if self.isStaff == '1':
+			roles.append (role_staff)
+		if not roles:
+			roles.append (role_pupil)
+		return roles
 
 def count_lo():
 	pass # was a workaround for slapd locking-failures, not necessary any more
@@ -980,7 +986,7 @@ def create_user(person, baseDN, module, password):
 		object["disabled"]="0"
 	else:
 		object["disabled"]="1"
-	object["ucsschool-user-role"]=person.getRole ()
+	object["ucsschool-user-role"] = person.getRole ()
 	object["pwdChangeNextLogin"]="0"
 
 	try:
@@ -1087,7 +1093,7 @@ def import_user():
 				main_person.isStaff   = '0'
 				if role_teacher in object['ucsschool-user-role']:
 					main_person.isTeacher = '1'
-				elif role_staff in object['ucsschool-user-role']:
+				if role_staff in object['ucsschool-user-role']:
 					main_person.isStaff = '1'
 
 				if ou in main_person.allsNrs:
