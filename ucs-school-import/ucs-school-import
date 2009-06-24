@@ -1180,7 +1180,7 @@ def create_network(schoolNr, network, iprange=None, defaultrouter=None, nameserv
 	if netbiosserver:
 		print "netbiosserver: %s" % netbiosserver
 
-	# workaround for Bug #14795
+	# WORKAROUND for Bug #14795
 	subnetbytes = 0
 	tmp = network.netmask_ext.split ('.')
 	for i in tmp:
@@ -1189,7 +1189,7 @@ def create_network(schoolNr, network, iprange=None, defaultrouter=None, nameserv
 		else:
 			break
 	subnet = '.'.join (network.network_ext.split ('.')[:subnetbytes])
-	# END workaround
+	# END WORKAROUND
 
 	position.setDn("cn=dns,%s"%(baseDN))
 	object=dns_reverse_zone_module.object(co, lo, position=position, superordinate=superordinate)
@@ -1693,9 +1693,13 @@ def import_printer():
 		# completely new
 		action = parsed[0]   # action=A(dd, M(odify, D(elete
 		schoolNr = parsed[1]
-		printerName = parsed[2]
-		printerUri = parsed[3]
-		printerModel = parsed[4]
+		spoolHost = parsed[2].lower ()
+		if '.' not in spoolHost:
+			spoolHost = '%s.%s' % (spoolHost, configRegistry['domainname'])
+		printerName = parsed[3]
+		printerUri = parsed[4]
+		printerModel = parsed[5]
+		printerWindowsDriver = parsed[6]
 
 		position_dn ="cn=%s,cn=printers,%s" % (printerName, getDN (schoolNr))
 		container ="cn=printers,%s" % (getDN (schoolNr), )
@@ -1722,12 +1726,15 @@ def import_printer():
 			count_lo()
 			object.open()
 			object['name'] = printerName
-			object['spoolHost'] = 'dc%s-01.%s' % (schoolNr.lower (), configRegistry['domainname'])
+			object['spoolHost'] = [spoolHost]
+			object['setQuota'] = '0' # WORKAROUND for Bug #14858
 			object['uri'] = printerUri
 			if printerModel:
 				object['model'] = printerModel
 			else:
 				object['model'] = 'None'
+			if printerWindowsDriver:
+				object['univentionWinPrintDrvName'] = printerWindowsDriver
 			if action == 'A':
 				create_object (object)
 			else:
