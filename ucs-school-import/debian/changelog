@@ -1,3 +1,20 @@
+ucs-school-import (4.0.0-28) unstable; urgency=low
+
+  * changed separator to tab
+  * swapped isTeacher and isActive fields in favor of compatibility to the
+    former data format
+  * made isTeacher, isStaff (default: 0) and isActive (default: 1) and fields optional
+  * set default netmask to 24 for import_network and import_computer
+  * made iprange optional for import_network
+  * set default iprange for /24 networks to 20-250
+  * made printer model and window driver optional for import_printer
+  * removed all line end chars from imported data
+  * fixed an issue with import_group which didn't create the OU if it doesn't exist
+  * updated examples
+  * All changes are related to Ticket #2009060410000116
+
+ -- Jan Christoph Ebersbach <ebersbach@univention.de>  Thu, 25 Jun 2009 16:54:33 +0200
+
 ucs-school-import (4.0.0-27) unstable; urgency=low
 
   * allowed users to have multiple roles

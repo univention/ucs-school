@@ -1,9 +1,15 @@
-A;roman;Asendorf;Roman;28G01;3A;;roman@schule.berlin.de;1;0;0
-A;r.asendorf;Asendorf;Roman;28G01;;;r.asendorf@schule.berlin.de;1;1;0
-A;j.ebersbac;Ebersbach;Jan Christoph;28G01;;;j.ebersbac@schule.berlin.de;1;0;1
-M;roman;Asendorf;Roman;28G01;3A;;roman@schule.berlin.de;1;0;0
-M;r.asendorf;Asendorf;Roman;28G01;;;r.asendorf@schule.berlin.de;1;1;0
-M;j.ebersbac;Ebersbach;Jan Christoph;28G01;;;j.ebersbac@schule.berlin.de;1;0;1
-D;roman;Asendorf;Roman;28G01;3A;;roman@schule.berlin.de;1;0;0
-D;r.asendorf;Asendorf;Roman;28G01;;;r.asendorf@schule.berlin.de;1;1;0
-D;j.ebersbac;Ebersbach;Jan Christoph;28G01;;;j.ebersbac@schule.berlin.de;1;0;1
+A	roman	Asendorf	Roman	28G01	1A		roman@schule.bremen.de
+A	rina	Mueller	Rina	28G01	1A		rina@schule.bremen.de		1
+A	r.asendorf	Asendorf	Roman	28G01	1A		r.asendorf@schule.bremen.de	1	1
+A	j.ebersbac	Ebersbach	Jan Christoph	28G01	1A		j.ebersba@schule.bremen.de	1	1	1
+A	h.tappert	Tappert	Horst	28G01	1A		h.tappert@schule.bremen.de	0	1	1
+M	roman	Asendorf	Roman	28G01	1A		roman@schule.bremen.de		0
+M	rina	Mueller	Rina	28G01	1A		rina@schule.bremen.de		0
+M	r.asendorf	Asendorf	Roman	28G01	1A		r.asendorf@schule.bremen.de	1	0
+M	j.ebersbac	Ebersbach	Jan Christoph	28G01	1A		j.ebersba@schule.bremen.de	1	0	1
+M	h.tappert	Tappert	Horst	28G01	1A		h.tappert@schule.bremen.de	1	0	0
+D	roman	Asendorf	Roman	28G01	1A		roman@schule.bremen.de		0
+D	rina	Mueller	Rina	28G01	1A		rina@schule.bremen.de		0
+D	r.asendorf	Asendorf	Roman	28G01	1A		r.asendorf@schule.bremen.de	1	0
+D	j.ebersbac	Ebersbach	Jan Christoph	28G01	1A		j.ebersba@schule.bremen.de	1	0	1
+D	h.tappert	Tappert	Horst	28G01	1A		h.tappert@schule.bremen.de	1	0	0

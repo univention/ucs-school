@@ -15,7 +15,7 @@ created_users = {}
 # string of problems during process
 problem_hints = ""
 # separator char in infile
-sepchar=';'
+sepchar='	'
 
 # wipe the following trailing and leading characters from group names
 wipe_char_group='-'
@@ -75,6 +75,9 @@ role_staff   = 'staff'
 # TODO: make this configurable via UCR
 generate_logins = False
 
+# IP address prefix len conecerning the netmask
+default_prefixlen = 24
+
 if not (cn_pupils and cn_teachers and cn_admins and cn_staff):
 	print 'ERROR: Unable to progress, one of these UCR variables is not set correctly:\n\tucsschool/ldap/default/container/pupils\n\tucsschool/ldap/default/container/teachers\n\tucsschool/ldap/default/container/staff\n\tucsschool/ldap/default/container/admins'
 	sys.exit (1)
@@ -83,32 +86,8 @@ class ucsschool_person_modify:
 	def __init__(self,line):
 
 		# parse line here
+		parsed = line[:-1].split(sepchar)
 
-		# there are 10 strings each line
-		parsed =[]
-		b_pos = 0
-		e_pos = 0
-		for i in range(21):
-			e_pos = string.find(line,";",b_pos)
-			parsed.append(codecs.utf_8_decode(line[b_pos:e_pos])[0])
-			b_pos=e_pos+1
-		parsed=line.split(sepchar)
-
-		#self.modtype   = parsed[0] # A,M or D: add, modify or delete
-		#if not generate_logins:
-		#	self.login = parsed[1]
-		#self.sname     = (utf8_to_ascii(unicode(parsed[2]))).replace(' ', '') # surename
-		#self.name      = (utf8_to_ascii(unicode(parsed[3]))).replace(' ', '') # first name
-		#self.sNr       = parsed[10] # schoolNr(s)
-		#self.cNr       = parsed[17] + parsed[18] # classNr
-		#self.rights    = parsed[6] # users which may change this entry # NOT USED
-		#self.mail      = self.login+"@"+externaldomainname
-		#self.isTeacher = parsed[21][0]
-		#self.isActive  = parsed[11][0]
-		#self.isStaff   = parsed[22][0]
-		#self.problem_hints = ""
-
-		# FIXME: this should be the default for the import format
 		self.modtype   = parsed[0] # A,M or D: add, modify or delete
 		self.login     = parsed[1].lower ()
 		self.sname     = parsed[2] # surename
@@ -117,10 +96,18 @@ class ucsschool_person_modify:
 		self.cNr       = parsed[5] # classNr
 		self.rights    = parsed[6] # users which may change this entry
 		self.mail      = parsed[7]
-		# order changed
-		self.isActive  = parsed[8][0] # was: 9
-		self.isTeacher = parsed[9][0] # was: 8
-		self.isStaff   = parsed[10][0]
+
+		def parseBoolstring (parsed, idx, default='0'):
+			res = default
+			if len (parsed) > idx:
+				string = parsed[idx]
+				if string and string[0] == '1':
+					res = '1'
+			return res
+
+		self.isTeacher = parseBoolstring (parsed, 8)
+		self.isActive  = parseBoolstring (parsed, 9, default='1')
+		self.isStaff   = parseBoolstring (parsed, 10)
 		self.problem_hints = ""
 
 		if generate_logins:
@@ -1225,7 +1212,8 @@ def create_network(schoolNr, network, iprange=None, defaultrouter=None, nameserv
 	object['name']='%s-%s'%(schoolNr.lower (), network.network_ext)
 	object['netmask']=str (network.prefixlen)
 	object['network']=network.network_ext
-	object['ipRange']=[[iprange[0].ip_ext, iprange[1].ip_ext]]
+	if iprange:
+		object['ipRange']=[[iprange[0].ip_ext, iprange[1].ip_ext]]
 	object['dhcpEntryZone']='cn=%s,cn=dhcp,%s'%(schoolNr.lower (), getDN (schoolNr))
 	object['dnsEntryZoneForward']='zoneName=%s,cn=dns,%s'%(domainname, baseDN)
 	object['dnsEntryZoneReverse']='zoneName=%s.in-addr.arpa,cn=dns,%s'%('.'.join (reversed (subnet.split ('.'))),baseDN)
@@ -1336,38 +1324,54 @@ def import_networks(router_only=False):
 		network       = parsed[1] # netmask new
 		# the broadcast address is generated automatically by the
 		# combination of network and netmask
-		iprange       = parsed[2] # new
-		defaultrouter = parsed[3] # new
-		nameserver    = parsed[4] # new
-		netbiosserver = parsed[5] # new
+		def parseString (parsed, idx, default=None):
+			res = default
+			if len (parsed) > idx:
+				string = parsed[idx]
+				if string:
+					res = string
+			return res
+		iprange       = parseString (parsed, 2) # new
+		defaultrouter = parseString (parsed, 3) # new
+		nameserver    = parseString (parsed, 4) # new
+		netbiosserver = parseString (parsed, 5) # new
 
 		# convert parameters to ipaddr.IPv4
 		network = ipaddr.IPv4 (network)
-		if network.prefixlen == 32:
-			print 'ERROR: no netmask specified for network %s' % network.network_ext
-			line=inf.readline()
-			continue
+		if '/' not in parsed[1]:
+			network.prefixlen = default_prefixlen
+			print 'WARNING: no netmask specified for network %s using %s' % (network.network_ext, network.netmask_ext)
 
-		tmp = iprange.split ('-')
-		if len (tmp) != 2:
-			print 'ERROR: IP host range not valid: %s' % iprange
-			line=inf.readline()
-			continue
-		iprange = (ipaddr.IPv4 (tmp[0]), ipaddr.IPv4 (tmp[1]))
-		if iprange[0].ip < network.network + 1 \
-				or iprange[0].ip > iprange[1].ip \
-				or iprange[1].ip >= network.broadcast:
-			print 'ERROR: IP host range not valid: %s-%s' % (iprange[0].ip_ext, iprange[1].ip_ext)
-			line=inf.readline()
-			continue
+		if iprange:
+			tmp = iprange.split ('-')
+			if len (tmp) != 2:
+				print 'ERROR: IP host range not valid: %s' % iprange
+				line=inf.readline()
+				continue
+			iprange = (ipaddr.IPv4 (tmp[0]), ipaddr.IPv4 (tmp[1]))
+			if iprange[0].ip < network.network + 1 \
+					or iprange[0].ip > iprange[1].ip \
+					or iprange[1].ip >= network.broadcast:
+				print 'ERROR: IP host range not valid: %s-%s' % (iprange[0].ip_ext, iprange[1].ip_ext)
+				line=inf.readline()
+				continue
+		elif network.prefixlen == 24:
+			iprange = (ipaddr.IPv4 (network.ip + 20),
+					ipaddr.IPv4 (network.ip + 250))
 
-		defaultrouter = ipaddr.IPv4 (defaultrouter)
-		nameserver = ipaddr.IPv4 (nameserver)
-		netbiosserver = ipaddr.IPv4 (netbiosserver)
+		if defaultrouter:
+			defaultrouter = ipaddr.IPv4 (defaultrouter)
+		if nameserver:
+			nameserver = ipaddr.IPv4 (nameserver)
+		if netbiosserver:
+			netbiosserver = ipaddr.IPv4 (netbiosserver)
 
 		if router_only:
-			set_router_for_subnet (network, defaultrouter, schoolNr, overwrite_policy=True)
-			print 'Router set for subnet.'
+			if defaultrouter:
+				set_router_for_subnet (network, defaultrouter, schoolNr, overwrite_policy=True)
+				print 'Router set for subnet.'
+			else:
+				print 'No router specified for subnet.'
 		else:
 			create_network(schoolNr, network, \
 					iprange=iprange, \
@@ -1394,7 +1398,7 @@ def set_inventory_number_for_computer():
 	line=inf.readline()
 	while not line == "":
 
-		parsed=line.split(sepchar)
+		parsed=line[:-1].split(sepchar)
 		ctype    = parsed[0]
 		name     = parsed[1]
 		MAC      = parsed[2]
@@ -1555,18 +1559,22 @@ def import_computer():
 		linecnt += 1
 		print 'Processing line %d: %s' % (linecnt, line),
 
-		parsed=line.split(sepchar)
+		parsed=line[:-1].split(sepchar)
 
 		ctype = parsed[0]
 		name  = parsed[1].lower ()
 		MAC      = parsed[2]
 		schoolNr = parsed[3]
-		IP       = parsed[4] # netmask needed, new
+		IP       = parsed[4]
 		inventoryNumbers = parsed[5].strip().split(',')
 
 		verify_school_ou(schoolNr, co, lo, baseDN)
 
 		ip = ipaddr.IPv4 (IP)
+
+		if '/' not in IP:
+			ip.prefixlen = default_prefixlen
+			print 'WARNING: no netmask specified for ip address %s using %s' % (ip.ip_ext, ip.netmask_ext)
 
 		module = univention.admin.modules.get("computers/%s"%ctype)
 		if not module:
@@ -1643,7 +1651,7 @@ def import_group():
 	line=inf.readline()[:-1]
 	while not line=="":
 
-		parsed=line.split(sepchar)
+		parsed=line[:-1].split(sepchar)
 
 		action = parsed[0]   # action=A(dd, M(odify, D(elete
 		schoolNr = parsed[1]
@@ -1652,6 +1660,8 @@ def import_group():
 
 		group_dn="cn=%s,cn=klassen,cn=%s,cn=groups,%s"%(ClassID, cn_pupils, getDN (schoolNr))
 		share_dn="cn=%s,cn=klassen,cn=shares,%s"%(ClassID, getDN (schoolNr))
+
+		verify_school_ou(schoolNr, co, lo, baseDN)
 
 		if action in ['A','M']:	# Add/Modify group
 ## 			verify_group(group_dn, co, lo, superordinate, baseDN)
@@ -1694,7 +1704,7 @@ def import_printer():
 	line=inf.readline()[:-1]
 	while not line=="":
 
-		parsed=line.split(sepchar)
+		parsed=line[:-1].split(sepchar)
 
 		# completely new
 		action = parsed[0]   # action=A(dd, M(odify, D(elete
@@ -1704,8 +1714,15 @@ def import_printer():
 			spoolHost = '%s.%s' % (spoolHost, configRegistry['domainname'])
 		printerName = parsed[3]
 		printerUri = parsed[4]
-		printerModel = parsed[5]
-		printerWindowsDriver = parsed[6]
+		def parseString (parsed, idx, default=None):
+			res = default
+			if len (parsed) > idx:
+				string = parsed[idx]
+				if string:
+					res = string
+			return res
+		printerModel = parseString (parsed, 5)
+		printerWindowsDriver = parseString (parsed, 6)
 
 		position_dn ="cn=%s,cn=printers,%s" % (printerName, getDN (schoolNr))
 		container ="cn=printers,%s" % (getDN (schoolNr), )
