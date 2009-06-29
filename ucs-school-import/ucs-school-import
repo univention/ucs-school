@@ -875,6 +875,7 @@ def create_passwd():
 	passwd += charlistA[ random.randrange(0,len(charlistA)) ] + charlistA[ random.randrange(0,len(charlistA)) ]
 	passwd += charlistB[ random.randrange(0,len(charlistB)) ] + charlistB[ random.randrange(0,len(charlistB)) ]
 	passwd += charlistA[ random.randrange(0,len(charlistA)) ] + charlistA[ random.randrange(0,len(charlistA)) ]
+	passwd += charlistB[ random.randrange(0,len(charlistB)) ] + charlistB[ random.randrange(0,len(charlistB)) ]
 	return passwd
 
 def create_user(person, baseDN, module, password):
@@ -1581,18 +1582,19 @@ def import_computer():
 				if not ip.ip == ip.network:
 					object['ip'] = ip.ip_ext
 					print "set ip to %s is not net %s" % (ip.ip_ext, ip.network_ext)
+				object['network'] = 'cn=%s-%s,cn=networks,%s' % (schoolNr.lower (), ip.network_ext, getDN (schoolNr))
 				try:
 					create_object(object)
 
-					try:
-						# FIXME: because of Bug #14789 network has to be set here
-						object = univention.admin.objects.get (module, co, lo, position='', dn="cn=%s,cn=computers,%s" % (name, getDN (schoolNr)), arg='')
-						object.open ()
-						object['network'] = 'cn=%s-%s,cn=networks,%s' % (schoolNr.lower (), ip.network_ext, getDN (schoolNr))
-						object.modify ()
-					except:
-						print "WARNING: Error setting network for computer %s"%object.dn
-						traceback.print_exc (100, sys.stdout)
+					#try:
+					#	# FIXME: because of Bug #14789 network has to be set here
+					#	object = univention.admin.objects.get (module, co, lo, position='', dn="cn=%s,cn=computers,%s" % (name, getDN (schoolNr)), arg='')
+					#	object.open ()
+					#	object['network'] = 'cn=%s-%s,cn=networks,%s' % (schoolNr.lower (), ip.network_ext, getDN (schoolNr))
+					#	object.modify ()
+					#except:
+					#	print "WARNING: Error setting network for computer %s"%object.dn
+					#	traceback.print_exc (100, sys.stdout)
 				except:
 					print "WARNING: Error creating computer %s"%object.dn
 					traceback.print_exc (100, sys.stdout)
