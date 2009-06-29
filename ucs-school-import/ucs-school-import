@@ -1575,9 +1575,6 @@ def import_computer():
 				object.open()
 				object['name'] = name
 				object['mac']  = MAC
-				# FIXME: Bug #14789 in UDM - network has to be set after
-				# the objekt has been created
-				#object['network']='cn=%s-%s,cn=networks,%s'%(schoolNr.lower (), ip.network_ext, getDN (schoolNr))
 				object['inventoryNumber']=inventoryNumbers
 				if not ip.ip == ip.network:
 					object['ip'] = ip.ip_ext
@@ -1585,16 +1582,6 @@ def import_computer():
 				object['network'] = 'cn=%s-%s,cn=networks,%s' % (schoolNr.lower (), ip.network_ext, getDN (schoolNr))
 				try:
 					create_object(object)
-
-					#try:
-					#	# FIXME: because of Bug #14789 network has to be set here
-					#	object = univention.admin.objects.get (module, co, lo, position='', dn="cn=%s,cn=computers,%s" % (name, getDN (schoolNr)), arg='')
-					#	object.open ()
-					#	object['network'] = 'cn=%s-%s,cn=networks,%s' % (schoolNr.lower (), ip.network_ext, getDN (schoolNr))
-					#	object.modify ()
-					#except:
-					#	print "WARNING: Error setting network for computer %s"%object.dn
-					#	traceback.print_exc (100, sys.stdout)
 				except:
 					print "WARNING: Error creating computer %s"%object.dn
 					traceback.print_exc (100, sys.stdout)
