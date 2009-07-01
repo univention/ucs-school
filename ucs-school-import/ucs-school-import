@@ -589,6 +589,7 @@ def verify_group_share(schoolNr, classNr, co, lo, superordinate, base):
 
 	position_dn="cn=%s,cn=klassen,cn=shares,%s"%(classNr, getDN (schoolNr, basedn=base))
 	module = univention.admin.modules.get("shares/share")
+	univention.admin.modules.init (lo, position, module)
 	more_instances = 1
 	container_position = base
 	while more_instances:
@@ -1268,8 +1269,7 @@ def check_computer(module, name, schoolNr):
 	return computer_exists
 
 def get_computer_dn(name):
-	module = univention.admin.modules.get("computers/computer")
-	objects = univention.admin.modules.lookup(module, co, lo, scope='sub', superordinate=superordinate, filter=univention.admin.filter.expression('cn','%s'%name))
+	objects = univention.admin.modules.lookup(computer_module, co, lo, scope='sub', superordinate=superordinate, filter=univention.admin.filter.expression('cn','%s'%name))
 	if objects:
 		for object in objects:
 			if object.dn.startswith("cn=%s," %name):
@@ -1386,6 +1386,7 @@ def set_inventory_number_for_computer():
 		else:
 			try:
 				computerModule = univention.admin.modules.get("computers/%s"%ctype)
+				univention.admin.modules.init (lo, position, computerModule)
 			except:
 				print "failed to get module of type computers/%s" % ctype
 				traceback.print_exc (100, sys.stdout)
@@ -1556,6 +1557,8 @@ def import_computer():
 			print 'ERROR: Type "%s" not found for computer "%s".' % (ctype, name)
 			print 'Ignoring of line %d' % linecnt
 		else:
+			univention.admin.modules.init (lo, position, module)
+
 			if check_computer(module,name,schoolNr):
 				print "computer %s already exists (school %s)"%(name,schoolNr)
 			else:
@@ -1922,6 +1925,8 @@ policy_dhcp_routing_module = univention.admin.modules.get("policies/dhcp_routing
 policy_dhcp_netbios_module = univention.admin.modules.get("policies/dhcp_netbios")
 policy_dhcp_dns_module     = univention.admin.modules.get("policies/dhcp_dns")
 
+setting_module             = univention.admin.modules.get("settings/default")
+
 for m in (
 		user_module,
 		group_module,
@@ -1939,12 +1944,12 @@ for m in (
 		policy_dhcp_routing_module,
 		policy_dhcp_netbios_module,
 		policy_dhcp_dns_module,
+		setting_module,
 		):
 	univention.admin.modules.init (lo, position, m)
 
 # get default group
 default_group = "cn=Domain Users,cn=groups,%s"%baseDN # fallback
-setting_module = univention.admin.modules.get("settings/default")
 for object in univention.admin.modules.lookup(setting_module, co, lo, scope='sub', superordinate=superordinate, base='', filter=''):
 	if object.has_key("defaultGroup"):
 		default_group=object["defaultGroup"]

@@ -1,3 +1,10 @@
+ucs-school-import (4.0.0-32) unstable; urgency=low
+
+  * extended attributes were not initialized because the computer modules were
+    not opened correctly. Ticket #2009060410000116
+
+ -- Jan Christoph Ebersbach <ebersbach@univention.de>  Wed,  1 Jul 2009 10:19:59 +0200
+
 ucs-school-import (4.0.0-31) unstable; urgency=low
 
   * removed workaround for Bug #14789. Ticket #2009060410000116
