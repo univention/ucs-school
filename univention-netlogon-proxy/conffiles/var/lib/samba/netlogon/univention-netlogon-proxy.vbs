@@ -1,15 +1,4 @@
-'#
-'# Warning: This file is auto-generated and might be overwritten by
-'#          univention-config-registry.
-'#          Please edit the files in the following directory instead:
-'# Warnung: Diese Datei wurde automatisch generiert und kann durch
-'#          univention-config-registry ueberschrieben werden.
-'#          Bitte bearbeiten Sie an Stelle dessen die Dateien in
-'#          folgendem Verzeichnis:
-'#
-'#       /etc/univention/templates/files/var/lib/samba/netlogon/univention-netlogon-proxy.vbs
-'#
-
+@%@BCWARNING=' @%@
 '
 ' set constants (maybe changed by Univention Config Registry)
 '
@@ -228,7 +217,7 @@ If ENABLEDIEXPLORER = True Then
     ' [HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Internet Settings]
     ' "ProxyEnable"=dword:00000001
     ' "ProxyServer"="10.200.18.30:12345"
-    ' "ProxyOverride"="localhost; 127.0.0.1; dc002; adam.schule.bremen.de"
+    ' "ProxyOverride"="localhost; 127.0.0.1; dc002; dc002.schule.test"
     
     wlist = replace(PROXYWHITELIST, " ", "; ")
     regfile = TMPDIR & "\set-proxy.reg"

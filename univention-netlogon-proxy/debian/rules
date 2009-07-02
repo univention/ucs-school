@@ -1,9 +1,9 @@
 #!/usr/bin/make -f
 #
 # Univention Netlogon Proxy
-#  rules file for the debian package
+#  rules file
 #
-# Copyright (C) 2007 Univention GmbH
+# Copyright (C) 2007-2009 Univention GmbH
 #
 # http://www.univention.de/
 #
@@ -56,6 +56,7 @@ install: build
 	dh_installdirs
 
 	univention-install-config-registry
+	univention-install-config-registry-info
 
 
 # Build architecture-independent files here.
