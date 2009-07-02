@@ -1,0 +1,55 @@
+#!/bin/sh
+
+if ! test -e "/usr/share/univention-join/.joined"; then
+	echo "The server has not joined yet"
+	exit 1
+fi
+
+JSNAME="univention-management-console-helpdesk"
+JSFILE="/usr/lib/univention-install/.index.txt"
+VERSION="1"
+
+touch "${JSFILE}"
+test -n "$(grep "${JSNAME} v${VERSION} successful" ${JSFILE})" && exit 1
+
+eval $(univention-config-registry shell ldap/base)
+
+univention-directory-manager container/cn create $@ --ignore_exists --position cn=univention,$ldap_base --set name=console
+univention-directory-manager container/cn create $@ --ignore_exists --position cn=console,cn=univention,$ldap_base --set name=config
+
+# create HELPDESK settings
+univention-directory-manager settings/console_helpdesk create $@ --ignore_exists --position cn=config,cn=console,cn=univention,$ldap_base \
+																				 --set name="helpdesk-default" \
+																				 --set description="Helpdesk Einstellungen" \
+																				 --append category="Hardware" \
+																				 --append category="Software" \
+																				 --append category="Sonstiges"
+
+# create HELPDESK operations
+univention-directory-manager settings/console_operation create $@ --ignore_exists --position cn=operations,cn=console,cn=univention,$ldap_base \
+																				 --set name=helpdesk \
+																				 --set description="HELPDESK operations" \
+																				 --append operation="helpdesk/*" \
+																				 --append operation="helpdesk/form/*" \
+																				 --append operation="helpdesk/form/show" \
+																				 --append operation="helpdesk/form/send"
+
+univention-directory-manager settings/console_acl create $@ --ignore_exists --position cn=acls,cn=console,cn=univention,$ldap_base \
+																				 --set name=helpdesk-all \
+																				 --set category="UMC Helpdesk" \
+																				 --set ldapbase="$ldap_base" \
+																				 --set command="helpdesk/*" \
+																				 --set description="All UMC Helpdesk operations"
+
+# default policies
+univention-directory-manager container/cn create $@ --ignore_exists --position cn=policies,$ldap_base --set name=console
+univention-directory-manager policies/console_access modify $@ --dn cn=default-admin,cn=console,cn=policies,$ldap_base \
+	--append allow=cn=helpdesk-all,cn=acls,cn=console,cn=univention,$ldap_base
+
+univention-directory-manager policies/console_access create $@ --ignore_exists --position cn=console,cn=policies,$ldap_base \
+	--set name=helpdesk-admin --append allow=cn=helpdesk-all,cn=acls,cn=console,cn=univention,$ldap_base
+
+
+test -n "$(grep "${JSNAME} v${VERSION} successful" ${JSFILE})" || echo "${JSNAME} v${VERSION} successful" >> "${JSFILE}"
+
+exit 0
