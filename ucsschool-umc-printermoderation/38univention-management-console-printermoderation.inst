@@ -1,0 +1,55 @@
+#!/bin/sh
+
+VERSION=1
+
+if ! test -e "/usr/share/univention-join/.joined"; then
+	echo "The server has not joined yet"
+	exit 1
+fi
+
+touch /usr/lib/univention-install/.index.txt
+
+test -n "`grep "univention-management-console-printermoderation v${VERSION} successful" /usr/lib/univention-install/.index.txt`" && exit 1
+
+eval $( univention-config-registry shell ldap/base )
+
+univention-directory-manager container/cn create $@ --ignore_exists --position cn=univention,$ldap_base --set name=console
+univention-directory-manager container/cn create $@ --ignore_exists --position cn=console,cn=univention,$ldap_base --set name=config
+
+# create DISTRIBUTE operations
+univention-directory-manager settings/console_operation create $@ --ignore_exists --position cn=operations,cn=console,cn=univention,$ldap_base \
+																				 --set name=printermoderation \
+																				 --set description="Printer moderation operations" \
+																				 --append operation="printermoderation/*" \
+																				 --append operation="printermoderation/job/*" \
+																				 --append operation="printermoderation/job/print" \
+																				 --append operation="printermoderation/job/delete" \
+																				 --append operation="printermoderation/job/review"
+
+univention-directory-manager settings/console_operation modify $@ --ignore_exists --dn cn=printermoderation,cn=operations,cn=console,cn=univention,$ldap_base \
+																				 --append operation="printermoderation/*" \
+																				 --append operation="printermoderation/job/*" \
+																				 --append operation="printermoderation/job/print" \
+																				 --append operation="printermoderation/job/delete" \
+																				 --append operation="printermoderation/job/review"
+
+univention-directory-manager settings/console_acl create $@ --ignore_exists --position cn=acls,cn=console,cn=univention,$ldap_base \
+																				 --set name=printermoderation-all \
+																				 --set category="Druckserver" \
+																				 --set ldapbase="$ldap_base" \
+																				 --set command="printermoderation/*" \
+																				 --set description="All printer moderation operations"
+
+# default policies
+univention-directory-manager container/cn create $@ --ignore_exists --position cn=policies,$ldap_base --set name=console
+
+univention-directory-manager policies/console_access modify $@ --dn cn=default-admin,cn=console,cn=policies,$ldap_base \
+	--append allow=cn=printermoderation-all,cn=acls,cn=console,cn=univention,$ldap_base
+
+univention-directory-manager policies/console_access create $@ --ignore_exists --position cn=console,cn=policies,$ldap_base \
+	--set name=printermoderation-admin --append allow=cn=printermoderation-all,cn=acls,cn=console,cn=univention,$ldap_base
+
+
+test -n "`grep "univention-management-console-printermoderation v${VERSION} successful" /usr/lib/univention-install/.index.txt`" || echo "univention-management-console-printermoderation v${VERSION} successful" >>/usr/lib/univention-install/.index.txt
+
+exit 0

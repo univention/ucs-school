@@ -1,0 +1,169 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.0.0-1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2008-10-31 16:05+0100\n"
+"PO-Revision-Date: 2008-10-31 16:19+0100\n"
+"Last-Translator: Jan Christoph Ebersbach <ebersbach@univention.de>\n"
+"Language-Team: Jan Christoph Ebersbach <ebersbach@univention.de>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: __init__.py:78 _revamp.py:145
+msgid "Printer Moderation"
+msgstr "Druckermoderation"
+
+#: __init__.py:79
+msgid "Printer Moderation for Classrooms"
+msgstr "Druckermoderation für Klassenräume"
+
+#: __init__.py:84 __init__.py:85
+msgid "List print jobs"
+msgstr "Liste der Druckaufträge"
+
+#: __init__.py:95 __init__.py:96
+msgid "Print job"
+msgstr "Druckauftrag"
+
+#: __init__.py:107 __init__.py:108
+msgid "Delete print job"
+msgstr "Lösche Druckauftrag"
+
+#: __init__.py:118 __init__.py:119
+msgid "Review print job"
+msgstr "Betrachte Druckauftrag"
+
+#: __init__.py:180
+msgid "Unable to copy printjob to temporary directory"
+msgstr "Es war nicht möglich den Druckjob in das temporäre Verzeichnis zu kopieren"
+
+#: __init__.py:198 __init__.py:226
+msgid "File does not exist"
+msgstr "Datei existiert nicht"
+
+#: __init__.py:203
+msgid "Printer not specified"
+msgstr "Drucker nicht angegeben"
+
+#: __init__.py:237
+msgid "Error deleting file"
+msgstr "Fehler beim Löschen der Datei"
+
+#: __init__.py:434 __init__.py:454 __init__.py:504 _revamp.py:180
+msgid "No group selected"
+msgstr "Keine Gruppe ausgewählt"
+
+#: _revamp.py:40
+msgid "Back"
+msgstr "Zurück"
+
+#: _revamp.py:57
+msgid "Username"
+msgstr "Benutzername"
+
+#: _revamp.py:57
+msgid "Full Name"
+msgstr "Name"
+
+#: _revamp.py:57
+msgid "Printjob Name"
+msgstr "Name des Druckauftrags"
+
+#: _revamp.py:57
+msgid "Creation Time"
+msgstr "Auftragszeitpunkt"
+
+#: _revamp.py:58
+msgid "Operations"
+msgstr "Operationen"
+
+#: _revamp.py:75
+msgid "Review"
+msgstr ""
+
+#: _revamp.py:77
+msgid "Print"
+msgstr "Drucken"
+
+#: _revamp.py:79
+msgid "Delete"
+msgstr "Löschen"
+
+#: _revamp.py:120
+msgid " Select the Operation"
+msgstr "Wähle die Operation aus"
+
+#: _revamp.py:126
+msgid "Select a printer"
+msgstr "Wähle einen Drucker"
+
+#: _revamp.py:134
+msgid "No printers available"
+msgstr ""
+
+#: _revamp.py:164
+msgid "Please select department:"
+msgstr ""
+
+#: _revamp.py:176
+msgid "Select Class"
+msgstr "Wähle eine Klasse"
+
+#: _revamp.py:193
+msgid "Refresh"
+msgstr "Aktualisieren"
+
+#: _revamp.py:199
+msgid "Print Selected Items"
+msgstr "Drucke ausgewählte Elemente"
+
+#: _revamp.py:200
+msgid "Delete Selected Items"
+msgstr "Lösche ausgewählte Elemente"
+
+#: _revamp.py:213
+msgid "Deleted Print Jobs"
+msgstr "Gelöschte Aufträge"
+
+#: _revamp.py:241
+msgid "Printed Jobs"
+msgstr "Gedruckte Aufträge"
+
+#: _revamp.py:272
+msgid "Review Printjob"
+msgstr "Betrache Druckauftrag"
+
+#: _revamp.py:281
+msgid "Review printjob"
+msgstr "Betrache Druckauftrag"
+
+#: _types.py:36
+msgid "School"
+msgstr "Schule"
+
+#: _types.py:37
+msgid "User"
+msgstr "Benutzer"
+
+#: _types.py:38
+msgid "Group"
+msgstr "Gruppe"
+
+#: _types.py:39
+msgid "Filename"
+msgstr "Dateiname"
+
+#: _types.py:40
+msgid "Printer"
+msgstr "Drucker"
+
+#: _types.py:41
+msgid "DNs and Filenames"
+msgstr "DNs und Dateinamen"

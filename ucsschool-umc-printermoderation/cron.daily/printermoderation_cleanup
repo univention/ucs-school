@@ -1,0 +1,4 @@
+#!/bin/sh
+CACHEDIR=/var/cache/printermoderation
+
+find ${CACHEDIR} -P | sed -e '1d' | xargs rm -rf
