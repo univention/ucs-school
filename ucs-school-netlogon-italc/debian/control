@@ -1,10 +1,10 @@
-Source: univention-netlogon-italc
+Source: ucs-school-netlogon-italc
 Section: univention
 Priority: optional
 Maintainer: Univention GmbH <packages@univention.de>
 Build-Depends: debhelper, univention-config-dev
 
-Package: univention-netlogon-italc
+Package: ucs-school-netlogon-italc
 Architecture: any
 Depends: univention-config-registry
 Description: univention netlogon script

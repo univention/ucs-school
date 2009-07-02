@@ -1,3 +1,9 @@
+univention-netlogon-italc (3.0.0-0) unstable; urgency=low
+
+  * ported package to component ucs@school
+
+ -- Sönke Schwardt <schwardt@univention.de>  Tue, 02 Jul 2009 13:29:23 +0200
+
 univention-netlogon-italc (2.0.0-0) unstable; urgency=low
 
   * ported to UCS 2.2
