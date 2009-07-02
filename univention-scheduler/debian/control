@@ -1,0 +1,15 @@
+Source: univention-scheduler
+Section: univention
+Priority: optional
+Maintainer: Univention GmbH <packages@univention.de>
+Build-Depends: debhelper, python-central
+Standards-Version: 3.7.2
+XS-Python-Version: all
+
+Package: univention-scheduler
+Architecture: all
+Depends: univention-reservation-database, univention-reservation-dbconnector, univention-config-registry (>=3.1.1)
+Description: Scheduling daemon that starts and stops reservations.
+ This package contains the scheduling daemon that scans the database in time
+ intervals and starts and stops reservations.
+XB-Python-Version: all
