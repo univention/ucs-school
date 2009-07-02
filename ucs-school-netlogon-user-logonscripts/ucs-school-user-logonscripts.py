@@ -9,7 +9,7 @@ else:
 domainname=listener.baseConfig['domainname']
 ip=listener.baseConfig['interfaces/eth0/address']
 
-name='sfb-user-logonscript'
+name='ucs-school-user-logonscript'
 description='Create user-specific netlogon-scripts'
 filter='(|(&(objectClass=posixAccount)(objectClass=organizationalPerson)(!(uid=*$)))(objectClass=posixGroup)(objectClass=univentionShare))'
 atributes=[]
@@ -45,11 +45,11 @@ def connect():
 def getGlobalLinks():
 	# search in baseconfig for shares which are common for all users
 	share_keys = []
-	univention.debug.debug(univention.debug.LISTENER, univention.debug.INFO, "sfb-user-logonscripts: search for global links")
-	if listener.baseConfig.has_key('sfb/userlogon/commonshares') and listener.baseConfig['sfb/userlogon/commonshares']:
+	univention.debug.debug(univention.debug.LISTENER, univention.debug.INFO, "ucsschool-user-logonscripts: search for global links")
+	if listener.baseConfig.has_key('ucsschool/userlogon/commonshares') and listener.baseConfig['ucsschool/userlogon/commonshares']:
 		l = getConnection()
 		ldapbase = listener.baseConfig['ldap/base']
-		share_keys = listener.baseConfig['sfb/userlogon/commonshares'].split(',')
+		share_keys = listener.baseConfig['ucsschool/userlogon/commonshares'].split(',')
 		for key in share_keys:
 			# check if share exists
 			res_shares = []
@@ -58,15 +58,15 @@ def getGlobalLinks():
 			except:
 				pass
 			if len(res_shares) > 0:
-				univention.debug.debug(univention.debug.LISTENER, univention.debug.INFO, "sfb-user-logonscripts: search global links for %s" % key)
-				if listener.baseConfig.has_key('sfb/userlogon/commonshares/server/%s' % key):
-					server = listener.baseConfig['sfb/userlogon/commonshares/server/%s' % key]
-					if listener.baseConfig.has_key('sfb/userlogon/commonshares/letter/%s' % key):
-						letter = listener.baseConfig['sfb/userlogon/commonshares/letter/%s' % key].replace(':','')
+				univention.debug.debug(univention.debug.LISTENER, univention.debug.INFO, "ucsschool-user-logonscripts: search global links for %s" % key)
+				if listener.baseConfig.has_key('ucsschool/userlogon/commonshares/server/%s' % key):
+					server = listener.baseConfig['ucsschool/userlogon/commonshares/server/%s' % key]
+					if listener.baseConfig.has_key('ucsschool/userlogon/commonshares/letter/%s' % key):
+						letter = listener.baseConfig['ucsschool/userlogon/commonshares/letter/%s' % key].replace(':','')
 						globalLinks[key] = {'server':server,'letter':letter}
 					else:
 						globalLinks[key] = {'server':server}
-	univention.debug.debug(univention.debug.LISTENER, univention.debug.INFO, "sfb-user-logonscripts: got global links %s" % globalLinks)
+	univention.debug.debug(univention.debug.LISTENER, univention.debug.INFO, "ucsschool-user-logonscripts: got global links %s" % globalLinks)
 
 	
 def generateMacScript(uid, linkgoal):
@@ -107,7 +107,7 @@ def writeMacLinkScripts(uid, homepath, links):
 				try:
 					os.remove(os.path.join(homepath, "Desktop", desktopFolderName,file))
 				except:
-					univention.debug.debug(univention.debug.LISTENER, univention.debug.ERROR, "sfb-user-logonscripts: failed to remove %s" % file)
+					univention.debug.debug(univention.debug.LISTENER, univention.debug.ERROR, "ucsschool-user-logonscripts: failed to remove %s" % file)
 					raise
 
 			for linkname, linkgoal in links:
@@ -215,7 +215,7 @@ oLink.Save
 		if mappings[key].has_key('letter'):
 			if lettersinuse.has_key (mappings[key]['letter']):
 				univention.debug.debug(univention.debug.LISTENER, univention.debug.WARN, \
-						'sfb-user-logonscripts: the assigned letter "%s" for share "%s" is already in use by share "%s"' % \
+						'ucsschool-user-logonscripts: the assigned letter "%s" for share "%s" is already in use by share "%s"' % \
 						(mappings[key]['letter'], mappings[key]['server'], lettersinuse[mappings[key]['letter']]))
 			else:
 				skript = skript + 'MapDrive "%s:","\\\\%s\\%s"\n' % (mappings[key]['letter'],mappings[key]['server'], key)
@@ -225,7 +225,7 @@ oLink.Save
 		if globalLinks[key].has_key('letter'):
 			if lettersinuse.has_key (globalLinks[key]['letter']):
 				univention.debug.debug(univention.debug.LISTENER, univention.debug.WARN, \
-						'sfb-user-logonscripts: the assigned letter "%s" for share "%s" is already in use by share "%s"' % \
+						'ucsschool-user-logonscripts: the assigned letter "%s" for share "%s" is already in use by share "%s"' % \
 						(globalLinks[key]['letter'], globalLinks[key]['server'], lettersinuse[globalLinks[key]['letter']]))
 			else:
 				skript = skript + 'MapDrive "%s:","\\\\%s\\%s"\n' % (globalLinks[key]['letter'],globalLinks[key]['server'], key)
@@ -235,8 +235,8 @@ oLink.Save
 	if listener.baseConfig.has_key('samba/homedirletter') and listener.baseConfig['samba/homedirletter']:
 		homePath = "%s:\Eigene Dateien" % listener.baseConfig['samba/homedirletter']
 
-	if listener.baseConfig.has_key('sfb/userlogon/mysharespath') and listener.baseConfig['sfb/userlogon/mysharespath']:
-		homePath = listener.baseConfig['sfb/userlogon/mysharespath']
+	if listener.baseConfig.has_key('ucsschool/userlogon/mysharespath') and listener.baseConfig['ucsschool/userlogon/mysharespath']:
+		homePath = listener.baseConfig['ucsschool/userlogon/mysharespath']
 
 	if homePath:
 		skript = skript + 'SetMyShares "%s"\n' % homePath
@@ -255,12 +255,12 @@ def getConnection():
 		try:
 			l=connect()
 		except ldap.LDAPError, msg:
-			univention.debug.debug(univention.debug.LISTENER, univention.debug.INFO, 'sfb-user-logonscripts: %s: failed to connect to ldap-server, wait..., ' % msg[0]['desc'])
+			univention.debug.debug(univention.debug.LISTENER, univention.debug.INFO, 'ucsschool-user-logonscripts: %s: failed to connect to ldap-server, wait..., ' % msg[0]['desc'])
 			connect_count=connect_count+1
 			if connect_count >= 30:
-				univention.debug.debug(univention.debug.LISTENER, univention.debug.ERROR, 'sfb-user-logonscripts: %s: failed to connect to ldap-server, ' % msg[0]['desc'])
+				univention.debug.debug(univention.debug.LISTENER, univention.debug.ERROR, 'ucsschool-user-logonscripts: %s: failed to connect to ldap-server, ' % msg[0]['desc'])
 			else:
-				univention.debug.debug(univention.debug.LISTENER, univention.debug.WARN, 'sfb-user-logonscripts: Can not connect LDAP Server (%s), retry in 10 seconds' % msg[0]['desc'])
+				univention.debug.debug(univention.debug.LISTENER, univention.debug.WARN, 'ucsschool-user-logonscripts: Can not connect LDAP Server (%s), retry in 10 seconds' % msg[0]['desc'])
 				time.sleep(10)
 		else:
 			connected=1
@@ -269,7 +269,7 @@ def getConnection():
 
 
 def groupchange(dn, new, old):
-	univention.debug.debug(univention.debug.LISTENER, univention.debug.INFO, 'sfb-user-logonscripts: sync by group')
+	univention.debug.debug(univention.debug.LISTENER, univention.debug.INFO, 'ucsschool-user-logonscripts: sync by group')
 	if new:
 		use = new
 		if old:
@@ -289,7 +289,7 @@ def groupchange(dn, new, old):
 				userchange(dn, 'search' ,{})
 
 def sharechange(dn, new, old):
-	univention.debug.debug(univention.debug.LISTENER, univention.debug.INFO, 'sfb-user-logonscripts: sync by share')
+	univention.debug.debug(univention.debug.LISTENER, univention.debug.INFO, 'ucsschool-user-logonscripts: sync by share')
 	if new:
 		use = new
 	elif old:
@@ -308,7 +308,7 @@ def sharechange(dn, new, old):
 		groupchange(dn, group, None)
 
 def userchange(dn, new, old):
-	univention.debug.debug(univention.debug.LISTENER, univention.debug.INFO, 'sfb-user-logonscripts: sync by user')
+	univention.debug.debug(univention.debug.LISTENER, univention.debug.INFO, 'ucsschool-user-logonscripts: sync by user')
 
 	l = getConnection()
 
@@ -324,21 +324,21 @@ def userchange(dn, new, old):
 		
 		if new == 'search': # called from groupchange
 			try:
-				univention.debug.debug(univention.debug.LISTENER, univention.debug.INFO, 'sfb-user-logonscripts: got to search %s' % dn)
+				univention.debug.debug(univention.debug.LISTENER, univention.debug.INFO, 'ucsschool-user-logonscripts: got to search %s' % dn)
 				res = l.search_s(dn, ldap.SCOPE_BASE, 'objectClass=*')
 				if len(res) > 0:
 					new = res[0][1]
 					# get groups we are member of:
 					membershipIDs.append(new['gidNumber'][0])
 			except:
-				univention.debug.debug(univention.debug.LISTENER, univention.debug.WARN, 'sfb-user-logonscripts: LDAP-search failed for user %s' % (dn))
+				univention.debug.debug(univention.debug.LISTENER, univention.debug.WARN, 'ucsschool-user-logonscripts: LDAP-search failed for user %s' % (dn))
 		else:
 			membershipIDs.append(new['gidNumber'][0])
 
 		try:
-			univention.debug.debug(univention.debug.LISTENER, univention.debug.INFO, 'sfb-user-logonscripts:  got uid %s' % new['uid'][0])
+			univention.debug.debug(univention.debug.LISTENER, univention.debug.INFO, 'ucsschool-user-logonscripts:  got uid %s' % new['uid'][0])
 		except:
-			univention.debug.debug(univention.debug.LISTENER, univention.debug.ERROR, 'sfb-user-logonscripts: failed to get uid')
+			univention.debug.debug(univention.debug.LISTENER, univention.debug.ERROR, 'ucsschool-user-logonscripts: failed to get uid')
 			return
 
 			
@@ -346,19 +346,19 @@ def userchange(dn, new, old):
 		# shares suchen mit GID wie Gruppe		
 
 
-		univention.debug.debug(univention.debug.LISTENER, univention.debug.INFO, 'sfb-user-logonscripts: handle user %s' % dn)
+		univention.debug.debug(univention.debug.LISTENER, univention.debug.INFO, 'ucsschool-user-logonscripts: handle user %s' % dn)
 		try:
 			res_groups = l.search_s(ldapbase, ldap.SCOPE_SUBTREE, '(&(objectClass=posixGroup)(uniqueMember=%s))' % dn, ['gidNumber'])
 		except:
-			univention.debug.debug(univention.debug.LISTENER, univention.debug.ERROR, 'sfb-user-logonscripts: LDAP-search failed memberships of %s' % (dn))
+			univention.debug.debug(univention.debug.LISTENER, univention.debug.ERROR, 'ucsschool-user-logonscripts: LDAP-search failed memberships of %s' % (dn))
 			res_groups=[]
 			
 		for group in res_groups:
 			if not group[1]['gidNumber'][0] in membershipIDs:
-				univention.debug.debug(univention.debug.LISTENER, univention.debug.INFO, 'sfb-user-logonscripts: add group %s' % group[1]['gidNumber'][0])
+				univention.debug.debug(univention.debug.LISTENER, univention.debug.INFO, 'ucsschool-user-logonscripts: add group %s' % group[1]['gidNumber'][0])
 				membershipIDs.append(group[1]['gidNumber'][0])					
 
-		univention.debug.debug(univention.debug.LISTENER, univention.debug.INFO, 'sfb-user-logonscripts: groups are %s' % membershipIDs)
+		univention.debug.debug(univention.debug.LISTENER, univention.debug.INFO, 'ucsschool-user-logonscripts: groups are %s' % membershipIDs)
 
 
 		mappings = {}
@@ -368,7 +368,7 @@ def userchange(dn, new, old):
 			try:
 				res_shares = l.search_s(ldapbase, ldap.SCOPE_SUBTREE, '(&(objectClass=univentionShareSamba)(univentionShareGid=%s))' % ID, ['cn','univentionShareHost','univentionShareSambaName'])
 			except:
-				univention.debug.debug(univention.debug.LISTENER, univention.debug.WARN, 'sfb-user-logonscripts: LDAP-search failed for shares with gid %s' % (ID))
+				univention.debug.debug(univention.debug.LISTENER, univention.debug.WARN, 'ucsschool-user-logonscripts: LDAP-search failed for shares with gid %s' % (ID))
 				res_shares=[]
 				
 			for share in res_shares:
@@ -385,13 +385,13 @@ def userchange(dn, new, old):
 				#linkgoal = "\\%s\%s" % (hostname, linkname)
 				linkgoal = (hostname, linkname)
 
-				univention.debug.debug(univention.debug.LISTENER, univention.debug.INFO, 'sfb-user-logonscripts: add link %s to %s' % (linkname,linkgoal))
+				univention.debug.debug(univention.debug.LISTENER, univention.debug.INFO, 'ucsschool-user-logonscripts: add link %s to %s' % (linkname,linkgoal))
 				links.append((linkname,linkgoal))
 				# create mapping for classroom share
 				classmatches = classre.match (share[0])
 				if classmatches and len (classmatches.groups ()) == 2:
-					if listener.baseConfig.has_key('sfb/userlogon/classshareletter'):
-						letter = listener.baseConfig['sfb/userlogon/classshareletter'].replace(':','')
+					if listener.baseConfig.has_key('ucsschool/userlogon/classshareletter'):
+						letter = listener.baseConfig['ucsschool/userlogon/classshareletter'].replace(':','')
 					else:
 						letter = 'K'
 					mappings[linkname] = {'server': hostname, 'letter': letter}
@@ -404,7 +404,7 @@ def userchange(dn, new, old):
 				links.append((linkname,linkgoal))
 
 		writeWindowsLinkSkripts(new['uid'][0], links, mappings)
-		if listener.baseConfig.has_key('sfb/userlogon/mac') and listener.baseConfig['sfb/userlogon/mac'].lower() in ['yes','true']:
+		if listener.baseConfig.has_key('ucsschool/userlogon/mac') and listener.baseConfig['ucsschool/userlogon/mac'].lower() in ['yes','true']:
 			writeMacLinkScripts(new['uid'][0], new['homeDirectory'][0], links)
 
 	elif old and not new:

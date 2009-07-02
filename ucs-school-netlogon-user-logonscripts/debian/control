@@ -1,16 +1,16 @@
-Source: sfb-user-logonscripts
+Source: ucs-school-user-logonscripts
 Section: univention
 Priority: optional
 Maintainer: Univention GmbH <packages@univention.de>
 Build-Depends: debhelper (>> 3.0.0), univention-config-dev
 Standards-Version: 3.5.2
 
-Package: sfb-user-logonscripts
+Package: ucs-school-user-logonscripts
 Architecture: all
 Depends: univention-config-registry, univention-ldap-client, univention-directory-manager-tools, univention-directory-listener, univention-samba, sysutils
-Description: UCS - Userspecific Logon-Scripts
- This Package provides a listener-module which creates
- specific logon-scripts for each local user.
+Description: ucs@school userspecific netlogon scripts
+ This package provides a listener-module that creates
+ specific netlogon scripts for each local user.
  .
  It is part of Univention Corporate Server (UCS), an
  integrated, directory driven solution for managing
