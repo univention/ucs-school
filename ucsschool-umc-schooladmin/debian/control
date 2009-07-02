@@ -1,0 +1,16 @@
+Source: univention-management-console-school-admin
+Section: univention
+Priority: optional
+Maintainer: Univention GmbH <packages@univention.de>
+Build-Depends: debhelper, python, python-all-dev, python-central, univention-config-dev
+Standards-Version: 3.7.2
+XS-Python-Version: 2.4
+
+Package: univention-management-console-school-admin
+Architecture: all
+Depends: univention-config-registry, univention-directory-manager-tools, python-univention-management-console
+XB-Python-Version: ${python:Versions}
+Description: Univention Management Console module to administrate pupils and teachers
+ This package contains an Univention Management Console module that provides
+ a simplificated view on Univention Directory Manager Users to administrate
+ school-specific accounts and settings for pupils and teachers.
