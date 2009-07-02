@@ -1,0 +1,61 @@
+univention-reservation-customdata (3.0.0-0) unstable; urgency=low
+
+  * ported to UCS 2.2
+
+ -- Sönke Schwardt <schwardt@univention.de>  Tue, 26 May 2008 09:19:22 +0200
+
+univention-reservation-customdata (2.0.0-0) unstable; urgency=low
+
+  * ported to UCS 2.1
+
+ -- Sönke Schwardt <schwardt@univention.de>  Wed, 10 Dec 2008 12:05:23 +0200
+
+univention-reservation-customdata (1.1.1-11) unstable; urgency=low
+
+  * Create proxy setting "Kein_Internet" in UCR (fixing Bug #12017)
+
+ -- Arvid Requate <arequate@visdalen.knut.univention.de>  Wed, 29 Oct 2008 19:48:15 +0100
+
+univention-reservation-customdata (1.1.1-10) unstable; urgency=low
+
+  * remove empty line in lessontimes.csv (for Bug #12036)
+  * set connection encoding to 'utf8' for MySQLdb import
+
+ -- Arvid Requate <arequate@visdalen.knut.univention.de>  Wed, 22 Oct 2008 14:19:55 +0200
+
+univention-reservation-customdata (1.1.1-9) unstable; urgency=low
+
+  * changed distribution settings (Bug #12048)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Mon, 06 Oct 2008 11:47:59 +0200
+
+univention-reservation-customdata (1.1.1-7) unstable; urgency=low
+
+  * use csv module to allow quoting (for Bug #12017)
+  * change AdminUID to 0 (for Bug #12035)
+
+ -- Arvid Requate <requate@univention.de>  Fri, 26 Sep 2008 11:59:10 +0200
+
+univention-reservation-customdata (1.1.1-6) unstable; urgency=low
+
+  * fixed dependency versions
+
+ -- Sönke Schwardt <schwardt@univention.de>  Thu, 25 Sep 2008 17:09:00 +0200
+
+univention-reservation-customdata (1.1.1-5) unstable; urgency=low
+
+  * bumped version
+
+ -- Sönke Schwardt <schwardt@univention.de>  Thu, 25 Sep 2008 14:57:48 +0200
+
+univention-reservation-customdata (1.1.1-4) unstable; urgency=low
+
+  * add dependency on univention-printserver-pdf
+
+ -- Arvid Requate <requate@univention.de>  Mon, 22 Sep 2008 17:20:18 +0200
+
+univention-reservation-customdata (1.1.1-1) unstable; urgency=low
+
+  * Initial release. (Closes: #12017)
+
+ -- Arvid Requate <requate@univention.de>  Mon, 25 Aug 2008 13:45:04 +0200

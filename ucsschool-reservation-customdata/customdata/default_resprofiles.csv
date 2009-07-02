@@ -1,0 +1,4 @@
+# "Identifier of resprofile","name","description"
+profile_1,"Unbeschränkt","Unbeschränkter Zugang"
+profile_2,"Kein Internet","Kein Zugang zum Internet"
+profile_3,"Kein Datenzugang","Kein Zugang zu Shares und Internet"
