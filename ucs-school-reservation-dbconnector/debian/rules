@@ -6,7 +6,7 @@
 # Copyright (C) 2008 Univention GmbH
 #
 # http://www.univention.de/
-# 
+#
 # All rights reserved.
 #
 # This program is free software; you can redistribute it and/or modify
@@ -30,7 +30,7 @@
 
 PYVERS=$(shell pyversions -vr)
 
-PACKAGE_NAME=univention-reservation-dbconnector
+PACKAGE_NAME=ucs-school-reservation-dbconnector
 D=$(CURDIR)/debian/${PACKAGE_NAME}
 
 configure: configure-stamp
@@ -48,16 +48,16 @@ clean:
 	dh_testdir
 	dh_testroot
 	rm -f build-stamp
-	dh_clean 
+	dh_clean
 
 install: install-stamp
 install-stamp: build-stamp $(PYVERS:%=install-ext-%)
 install-ext-%: build-stamp
 	dh_testdir
 	dh_testroot
-	dh_clean -k 
-	dh_installdirs 
-	
+	dh_clean -k
+	dh_installdirs
+
 	install -dD -m644 $(D)/usr/lib/python$*/site-packages/univention/reservation
 	install -m644 modules/univention/reservation/__init__.py $(D)/usr/lib/python$*/site-packages/univention/reservation
 	install -m644 modules/univention/reservation/dbconnector.py $(D)/usr/lib/python$*/site-packages/univention/reservation
