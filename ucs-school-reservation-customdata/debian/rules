@@ -6,7 +6,7 @@
 # Copyright (C) 2008 Univention GmbH
 #
 # http://www.univention.de/
-# 
+#
 # All rights reserved.
 #
 # This program is free software; you can redistribute it and/or modify
@@ -28,13 +28,13 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
-PACKAGE_NAME_DEFAULTPROFILE=univention-reservation-defaultprofile
-PACKAGE_NAME_LESSONTIMES=univention-reservation-lessontimes
+PACKAGE_NAME_DEFAULTPROFILE=ucs-school-reservation-defaultprofile
+PACKAGE_NAME_LESSONTIMES=ucs-school-reservation-lessontimes
 D_DEFAULTPROFILE=$(CURDIR)/debian/${PACKAGE_NAME_DEFAULTPROFILE}
 D_LESSONTIMES=$(CURDIR)/debian/${PACKAGE_NAME_LESSONTIMES}
 
-SQL_TARGET_DIRECTORY=usr/share/univention-reservation-database
-CSV_TARGET_DIRECTORY=usr/share/univention-reservation-customdata
+SQL_TARGET_DIRECTORY=usr/share/ucs-school-reservation-database
+CSV_TARGET_DIRECTORY=usr/share/ucs-school-reservation-customdata
 
 configure: configure-stamp
 configure-stamp:
@@ -51,19 +51,19 @@ clean:
 	dh_testdir
 	dh_testroot
 	rm -f build-stamp
-	dh_clean 
+	dh_clean
 
 install: build-stamp
 	dh_testdir
 	dh_testroot
-	dh_clean -k 
-	dh_installdirs 
-	
+	dh_clean -k
+	dh_installdirs
+
 	install -d $(D_DEFAULTPROFILE)/$(SQL_TARGET_DIRECTORY)
 	install -m644 sql/defaultprofile.py $(D_DEFAULTPROFILE)/$(SQL_TARGET_DIRECTORY)/
 	install -d $(D_DEFAULTPROFILE)/$(CSV_TARGET_DIRECTORY)
 	install -m644 customdata/default_resprofiles.csv customdata/default_profoptrel.csv customdata/default_ressettings.csv $(D_DEFAULTPROFILE)/$(CSV_TARGET_DIRECTORY)/
-	
+
 	install -d $(D_LESSONTIMES)/$(SQL_TARGET_DIRECTORY)
 	install -m644 sql/lessontimes.sql $(D_LESSONTIMES)/$(SQL_TARGET_DIRECTORY)/
 	install -d $(D_LESSONTIMES)/$(CSV_TARGET_DIRECTORY)

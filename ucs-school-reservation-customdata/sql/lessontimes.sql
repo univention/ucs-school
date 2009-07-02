@@ -8,7 +8,7 @@ USE reservation;
 # Table lessontimes
 ######################################
 
-LOAD DATA INFILE '/usr/share/univention-reservation-customdata/lessontimes.csv'
+LOAD DATA INFILE '/usr/share/ucs-school-reservation-customdata/lessontimes.csv'
   IGNORE
   INTO TABLE lessontimes
   FIELDS TERMINATED BY ',' ENCLOSED BY '"'

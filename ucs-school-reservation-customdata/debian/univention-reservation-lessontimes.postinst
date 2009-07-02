@@ -3,7 +3,7 @@
 # Univention Reservation Lessontimes
 #  postinst file for this package
 #
-# Copyright (C) 2008 Univention GmbH
+# Copyright (C) 2008-2009 Univention GmbH
 #
 # http://www.univention.de/
 # 
@@ -28,9 +28,9 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
+#DEBHELPER#
 
-
-mysql -u reservation --password=$(cat /etc/reservation-sql.secret) -f < /usr/share/univention-reservation-database/lessontimes.sql
+mysql -u reservation --password=$(cat /etc/reservation-sql.secret) -f < /usr/share/ucs-school-reservation-database/lessontimes.sql
 
 exit 0
 
