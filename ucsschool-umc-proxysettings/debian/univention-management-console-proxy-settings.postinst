@@ -1,0 +1,11 @@
+#!/bin/sh
+
+#DEBHELPER#
+
+eval `univention-config-registry shell ldap/base server/role`
+
+if [ "$server_role" = "domaincontroller_master" ] || [ "$server_role" = "domaincontroller_backup" ]; then
+	/usr/lib/univention-install/38univention-management-console-proxy-settings.inst || true
+fi
+
+exit 0
