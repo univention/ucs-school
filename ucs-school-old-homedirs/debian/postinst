@@ -35,3 +35,5 @@ univention-config-registry set ucsschool/listener/oldhomedir/targetdir?"/home/ba
 
 # conditional restart of univention directory listener
 /etc/init.d/univention-directory-listener crestart
+
+exit 0
