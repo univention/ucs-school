@@ -1,65 +1,71 @@
-univention-reservation-database (3.0.0-0) unstable; urgency=low
+ucs-school-reservation-database (4.0.0-0) unstable; urgency=low
+
+  * ported package to component ucs@school
+
+ -- Sönke Schwardt <schwardt@univention.de>  Tue, 02 Jul 2009 13:29:23 +0200
+
+ucs-school-reservation-database (3.0.0-0) unstable; urgency=low
 
   * ported to UCS 2.2
 
  -- Sönke Schwardt <schwardt@univention.de>  Tue, 26 May 2008 09:19:22 +0200
 
-univention-reservation-database (2.0.0-0) unstable; urgency=low
+ucs-school-reservation-database (2.0.0-0) unstable; urgency=low
 
   * ported to UCS 2.1
 
  -- Sönke Schwardt <schwardt@univention.de>  Wed, 10 Dec 2008 12:05:23 +0200
 
-univention-reservation-database (1.1.1-9) unstable; urgency=low
+ucs-school-reservation-database (1.1.1-9) unstable; urgency=low
 
   * set database default character set and collation to utf8 (for Bug #12036)
 
  -- Arvid Requate <arequate@visdalen.knut.univention.de>  Wed, 22 Oct 2008 14:20:52 +0200
 
-univention-reservation-database (1.1.1-8) unstable; urgency=low
+ucs-school-reservation-database (1.1.1-8) unstable; urgency=low
 
   * bumped version
 
  -- Sönke Schwardt <schwardt@univention.de>  Thu, 25 Sep 2008 14:58:34 +0200
 
-univention-reservation-database (1.1.1-7) unstable; urgency=low
+ucs-school-reservation-database (1.1.1-7) unstable; urgency=low
 
   * renamed database vacation to vacations. Bug #12126
 
  -- Jan Christoph Ebersbach <ebersbach@univention.de>  Mon, 22 Sep 2008 11:06:28 +0200
 
-univention-reservation-database (1.1.1-6) unstable; urgency=low
+ucs-school-reservation-database (1.1.1-6) unstable; urgency=low
 
   * fixed copy-paste bug in key name resprofileID. Bug #12246
 
  -- Jan Christoph Ebersbach <ebersbach@univention.de>  Mon, 22 Sep 2008 11:00:43 +0200
 
-univention-reservation-database (1.1.1-5) unstable; urgency=low
+ucs-school-reservation-database (1.1.1-5) unstable; urgency=low
 
   * removed some tables (Bug: #12041 #12047)
 
  -- Felix Botner <fbotner@visdalen.knut.univention.de>  Fri, 19 Sep 2008 17:35:37 +0200
 
-univention-reservation-database (1.1.1-4) unstable; urgency=low
+ucs-school-reservation-database (1.1.1-4) unstable; urgency=low
 
   * more tables in more packages (samba, proxy) (Bug: #12041 #12047) 
 
  -- Felix Botner <fbotner@visdalen.knut.univention.de>  Thu,  4 Sep 2008 14:40:09 +0200
 
-univention-reservation-database (1.1.1-3) unstable; urgency=low
+ucs-school-reservation-database (1.1.1-3) unstable; urgency=low
 
   * fix definition of profoptrel table
   * allow user "reservation" to use "load data" statements
 
  -- Arvid Requate <requate@univention.de>  Mon, 25 Aug 2008 15:15:40 +0200
 
-univention-reservation-database (1.1.1-2) unstable; urgency=low
+ucs-school-reservation-database (1.1.1-2) unstable; urgency=low
 
   * removed a double attribute from the table layout
 
  -- Stefan Gohmann <gohmann@univention.de>  Fri, 22 Aug 2008 09:18:39 +0200
 
-univention-reservation-database (1.1.1-1) unstable; urgency=low
+ucs-school-reservation-database (1.1.1-1) unstable; urgency=low
 
   * Initial release.
 

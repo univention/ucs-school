@@ -6,7 +6,7 @@
 # Copyright (C) 2008 Univention GmbH
 #
 # http://www.univention.de/
-# 
+#
 # All rights reserved.
 #
 # This program is free software; you can redistribute it and/or modify
@@ -28,7 +28,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
-PACKAGE_NAME=univention-reservation-database
+PACKAGE_NAME=ucs-school-reservation-database
 D=$(CURDIR)/debian/$(PACKAGE_NAME)
 
 configure: configure-stamp
@@ -46,14 +46,14 @@ clean:
 	dh_testdir
 	dh_testroot
 	rm -f build-stamp
-	dh_clean 
+	dh_clean
 
 install: build-stamp
 	dh_testdir
 	dh_testroot
-	dh_clean -k 
-	dh_installdirs 
-	
+	dh_clean -k
+	dh_installdirs
+
 	install -m644 sql/datatbase.sql $(D)/usr/share/$(PACKAGE_NAME)/
 	install -m644 sql/tables.sql $(D)/usr/share/$(PACKAGE_NAME)/
 

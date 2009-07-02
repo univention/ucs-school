@@ -28,10 +28,10 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
+#DEBHELPER#
 
-
-mysql -f < /usr/share/univention-reservation-database/datatbase.sql
-mysql -f < /usr/share/univention-reservation-database/tables.sql
+mysql -f < /usr/share/ucs-school-reservation-database/datatbase.sql
+mysql -f < /usr/share/ucs-school-reservation-database/tables.sql
 
 # create mysql user
 if [ ! -e /etc/reservation-sql.secret ]; then
