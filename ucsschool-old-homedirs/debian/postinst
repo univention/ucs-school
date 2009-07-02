@@ -1,0 +1,7 @@
+#!/bin/sh
+
+#DEBHELPER#
+
+univention-config-registry set system/old_homedir_target?/home/backup/
+
+/etc/init.d/univention-directory-listener restart
