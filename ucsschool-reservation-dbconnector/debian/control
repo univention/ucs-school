@@ -1,0 +1,14 @@
+Source: univention-reservation-dbconnector
+Section: univention
+Priority: optional
+Maintainer: Univention GmbH <packages@univention.de>
+Build-Depends: debhelper, python-central
+Standards-Version: 3.7.2
+XS-Python-Version: all
+
+Package: univention-reservation-dbconnector
+Architecture: all
+Depends: univention-reservation-database, python-mysqldb
+Description: Database connector for the reservation system.
+ This package contains the database bindings for the reservation system.
+XB-Python-Version: all
