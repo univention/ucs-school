@@ -1,0 +1,28 @@
+@%@BCWARNING=' @%@
+
+'
+' CONFIG SECTION
+' set constants (changed by Univention Config Registry)
+'
+@!@
+print 'ITALCPUBLICKEYDST = "%s"' % configRegistry.get('samba/netlogonscript/italc/key/public/localpath', 'C:\\Programme\\iTALC\\keys\\public\\teacher\\key')
+print 'ITALCPUBLICKEYSRC = "%s"' % configRegistry.get('samba/netlogonscript/italc/key/public/remotename', 'italc-teacher-key.pub')
+@!@
+
+'
+' CONFIG SECTION END
+'
+
+dim LOGONSERVER
+set shell = createobject("wscript.shell") 
+LOGONSERVER = mid(shell.Environment("PROCESS")("LOGONSERVER"),3) 
+
+keysrc = "\\" + LOGONSERVER + "\netlogon\" + ITALCPUBLICKEYSRC
+keydst = ITALCPUBLICKEYDST
+
+set fso = CreateObject("Scripting.FileSystemObject")
+If fso.FileExists(keysrc) Then
+'    Wscript.Echo "File: " & keysrc
+'    Wscript.Echo "File: " & keydst
+    fso.CopyFile keysrc, keydst, true
+End If

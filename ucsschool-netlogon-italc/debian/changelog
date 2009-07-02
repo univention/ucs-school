@@ -1,0 +1,11 @@
+univention-netlogon-italc (2.0.0-0) unstable; urgency=low
+
+  * ported to UCS 2.2
+
+ -- Sönke Schwardt <schwardt@univention.de>  Tue, 26 May 2008 09:19:22 +0200
+
+univention-netlogon-italc (1.0.0-1) unstable; urgency=low
+
+  * Initial release
+
+ -- Sönke Schwardt <schwardt@univention.de>  Wed, 25 Mar 2009 10:14:51 +0100

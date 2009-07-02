@@ -1,0 +1,4 @@
+Type: file
+File: var/lib/samba/startupconfig/scripts/univentionitalc.cmd
+Variables: samba/netlogonscript/italc/key/public/localpath
+Variables: samba/netlogonscript/italc/key/public/serverpath
