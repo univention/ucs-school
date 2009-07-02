@@ -1,0 +1,7 @@
+UCR-Variables of this UMC module:
+
+umc/module/roomadmin/hideitems
+==============================
+Comma separated list of all column that shall be hidden in room list mode.
+Valid values: macAddress,ipAddress,inventorynumber
+Default: ""

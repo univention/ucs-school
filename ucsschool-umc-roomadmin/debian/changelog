@@ -1,0 +1,321 @@
+univention-management-console-room-admin (4.0.2-0) unstable; urgency=low
+
+  * fixed WOL  (Ticket#: 2009052110000041)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Wed, 27 May 2009 13:57:49 +0200
+
+univention-management-console-room-admin (4.0.1-0) unstable; urgency=low
+
+  * added inventory number to room list (Ticket#: 2009052110000041)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Wed, 27 May 2009 09:50:51 +0200
+
+univention-management-console-room-admin (4.0.0-0) unstable; urgency=low
+
+  * ported to UCS 2.2
+
+ -- Sönke Schwardt <schwardt@univention.de>  Tue, 26 May 2008 09:19:22 +0200
+
+univention-management-console-room-admin (3.0.3-1) unstable; urgency=low
+
+  * added ip address and mac address to room list
+  * added wake on lan feature to room list (Ticket#: 2009052110000041)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Mon, 25 May 2009 17:52:34 +0200
+
+univention-management-console-room-admin (3.0.2-1) unstable; urgency=low
+
+  * added VNC click feature to user icon (Ticket #2008102010000213)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Thu, 02 Apr 2009 16:51:13 +0200
+
+univention-management-console-room-admin (3.0.1-1) unstable; urgency=low
+
+  * renamed "demo mode" to "video mode" in GUI 
+    (mode is called "demo mode" internally further on)
+  * added "supervising mode" (aka "Rechner beaufsichtigen")
+  * replaced SelectionButton with ChoiceButton in room list to be able to
+    open new tabs
+  * updated translation
+  * UMC module drops connection and reconnects to italc client if demo
+    mode on demo server has been stopped (otherwise server cannot be
+    demo client) Ticket #2008102010000213
+
+ -- Sönke Schwardt <schwardt@univention.de>  Thu, 02 Apr 2009 15:40:27 +0200
+
+univention-management-console-room-admin (3.0.0-19) unstable; urgency=low
+
+  * renamed UCR variable to configure the user information update interval to
+    umc/schooladmin/italc/updateinterval
+  * removed the demo mode from the general room 'all'
+  * added icons for the Demo Mode
+  * made the connection initiation pro active to being able to rebuild
+    connections
+  * unused connections are closed after a timeout defined by UCR
+    umc/web/timeout.
+  * replaced the multiple imports of traceback with one import at the
+    beginning. Ticket #2008102010000213
+
+ -- Jan Christoph Ebersbach <ebersbach@univention.de>  Wed, 18 Mar 2009 11:39:54 +0100
+
+univention-management-console-room-admin (3.0.0-18) unstable; urgency=low
+
+  * sorted the Demo Master selection the same as the list of computers
+  * made the Demo Mode work for fullscreen and windowed mode
+  * added a persistent storage for running demos.
+  * made the user information update interval configurable via UCR
+    (umc/schooladmin/userinfo/updateinterval) Ticket #2008102010000213
+
+ -- Jan Christoph Ebersbach <ebersbach@univention.de>  Mon, 16 Mar 2009 17:45:17 +0100
+
+univention-management-console-room-admin (3.0.0-17) unstable; urgency=low
+
+  * added a first implementation of the demo mode. Ticket #2008102010000213
+
+ -- Jan Christoph Ebersbach <ebersbach@univention.de>  Thu, 26 Feb 2009 18:31:06 +0100
+
+univention-management-console-room-admin (3.0.0-16) unstable; urgency=low
+
+  * added loading image. Ticket #2008102010000213
+
+ -- Jan Christoph Ebersbach <ebersbach@univention.de>  Wed, 25 Feb 2009 09:29:12 +0100
+
+univention-management-console-room-admin (3.0.0-15) unstable; urgency=low
+
+  * added AJAX functionality to automatically refresh screenshots and
+    usernames. Ticket #2008102010000213
+
+ -- Jan Christoph Ebersbach <ebersbach@univention.de>  Wed, 25 Feb 2009 09:17:38 +0100
+
+univention-management-console-room-admin (3.0.0-14) unstable; urgency=low
+
+  * set update timeout back to 10 seconds. (Ticket #2008102010000213)
+
+ -- Jan Christoph Ebersbach <ebersbach@univention.de>  Mon, 23 Feb 2009 12:01:48 +0100
+
+univention-management-console-room-admin (3.0.0-13) unstable; urgency=low
+
+  * added dependency for univention-dojo. (Ticket #2008102010000213)
+
+ -- Jan Christoph Ebersbach <ebersbach@univention.de>  Mon, 23 Feb 2009 11:50:21 +0100
+
+univention-management-console-room-admin (3.0.0-12) unstable; urgency=low
+
+  * added default screenshot if there is no screenshot available. (Ticket #2008102010000213)
+
+ -- Jan Christoph Ebersbach <ebersbach@univention.de>  Mon, 23 Feb 2009 11:48:47 +0100
+
+univention-management-console-room-admin (3.0.0-11) unstable; urgency=low
+
+  * added refresh button to the room list (Ticket #2008102010000213)
+
+ -- Jan Christoph Ebersbach <ebersbach@univention.de>  Mon, 23 Feb 2009 10:55:57 +0100
+
+univention-management-console-room-admin (3.0.0-10) unstable; urgency=low
+
+  * decreased refresh timer to 10 seconds
+  * fixed bug in screenshots on demand (Ticket #2008102010000213)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Thu, 12 Feb 2009 13:32:45 +0100
+
+univention-management-console-room-admin (3.0.0-9) unstable; urgency=low
+
+  * added funktionality to load screenshots on demand. Ticket #2008102010000213
+
+ -- Jan Christoph Ebersbach <ebersbach@univention.de>  Wed, 11 Feb 2009 17:20:02 +0100
+
+univention-management-console-room-admin (3.0.0-8) unstable; urgency=low
+
+  * create new italc key pair if one of those files is missing (Ticket #2008102010000213)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Wed, 11 Feb 2009 16:03:08 +0100
+
+univention-management-console-room-admin (3.0.0-8) unstable; urgency=low
+
+  * added funktionality to load screenshots on demand. Ticket #2008102010000213
+
+ -- Jan Christoph Ebersbach <ebersbach@univention.de>  Wed, 11 Feb 2009 17:20:02 +0100
+
+univention-management-console-room-admin (3.0.0-7) unstable; urgency=low
+
+  * included ivsConnection in ItalcConnection. Ticket #2008102010000213
+
+ -- Jan Christoph Ebersbach <ebersbach@univention.de>  Tue, 10 Feb 2009 15:30:21 +0100
+
+univention-management-console-room-admin (3.0.0-6) unstable; urgency=low
+
+  * replaced exec_italc_action and ItalcActionRequests with ItalcConnection. Ticket #2008102010000213
+  * fix the error-prone reuse of cn in _revamp.py->_web_roomadmin_room_list
+
+ -- Jan Christoph Ebersbach <ebersbach@univention.de>  Mon,  9 Feb 2009 16:44:28 +0100
+
+univention-management-console-room-admin (3.0.0-5) unstable; urgency=low
+
+  * fixed a typo in de translation. Ticket #2008102010000213
+
+ -- Jan Christoph Ebersbach <ebersbach@univention.de>  Tue,  3 Feb 2009 15:00:22 +0100
+
+univention-management-console-room-admin (3.0.0-4) unstable; urgency=low
+
+  * italc is now used to retrieve the name of the currently working user from
+    remote computers. Ticket #2008102010000213
+
+ -- Jan Christoph Ebersbach <ebersbach@univention.de>  Tue,  3 Feb 2009 14:48:22 +0100
+
+univention-management-console-room-admin (3.0.0-3) unstable; urgency=low
+
+  * included italc actions for computers. Ticket #2008102010000213
+
+ -- Jan Christoph Ebersbach <ebersbach@univention.de>  Fri, 30 Jan 2009 13:24:30 +0100
+
+univention-management-console-room-admin (3.0.0-2) unstable; urgency=low
+
+  * new user icons (Ticket: #2008110710000077)
+
+ -- Felix Botner <fbotner@visdalen.knut.univention.de>  Tue, 20 Jan 2009 14:39:25 +0100
+
+univention-management-console-room-admin (3.0.0-1) unstable; urgency=low
+
+  * new group/user icons (Ticket: #2008110710000077)
+
+ -- Felix Botner <fbotner@visdalen.knut.univention.de>  Tue, 20 Jan 2009 14:39:01 +0100
+
+univention-management-console-room-admin (3.0.0-0) unstable; urgency=low
+
+  * ported to UCS 2.1
+
+ -- Sönke Schwardt <schwardt@univention.de>  Wed, 10 Dec 2008 12:05:23 +0200
+
+univention-management-console-room-admin (2.0.0-4) unstable; urgency=low
+
+  * version bump
+
+ -- Arvid Requate <requate@univention.de>  Mon, 28 Apr 2008 12:44:29 +0200
+
+univention-management-console-room-admin (1.0.0-3) unstable; urgency=low
+
+  * install icons into the propper place
+
+ -- Arvid Requate <requate@univention.de>  Mon, 28 Apr 2008 11:41:21 +0200
+
+univention-management-console-room-admin (1.0.0-2) unstable; urgency=low
+
+  * http://host/umc maps to the GUI, use http://host/univention-management-console instead in URLs
+
+ -- Arvid Requate <requate@univention.de>  Fri, 25 Apr 2008 10:23:40 +0200
+
+univention-management-console-room-admin (1.0.0-1) unstable; urgency=low
+
+  * install into pycentral
+
+ -- Arvid Requate <requate@univention.de>  Thu, 24 Apr 2008 11:30:56 +0200
+
+univention-management-console-room-admin (1.0.0-0) unstable; urgency=low
+
+  * port to UCS 2.0
+
+ -- Arvid Requate <requate@univention.de>  Mon, 14 Apr 2008 16:54:11 +0200
+
+univention-management-console-room-admin (1.8-3) unstable; urgency=low
+
+  * fixed ou handling
+  * fixed search filter
+
+ -- Sönke Schwardt <schwardt@univention.de>  Mon, 28 Jan 2008 14:00:59 +0100
+
+univention-management-console-room-admin (1.7-1) unstable; urgency=low
+
+  * fixed ou handling
+
+ -- Sönke Schwardt <schwardt@univention.de>  Fri, 18 Jan 2008 11:54:12 +0100
+
+univention-management-console-room-admin (1.6-2) unstable; urgency=low
+
+  * updated join script
+
+ -- Sönke Schwardt <schwardt@univention.de>  Fri, 11 Jan 2008 09:31:03 +0100
+
+univention-management-console-room-admin (1.6-1) unstable; urgency=low
+
+  * added functions to create/edit/remove room groups
+  * display associated rooms while listing computers
+
+ -- Sönke Schwardt <schwardt@univention.de>  Thu, 10 Jan 2008 14:06:52 +0100
+
+univention-management-console-room-admin (1.5-1) unstable; urgency=low
+
+  * bump version
+
+ -- Sönke Schwardt <schwardt@univention.de>  Thu, 27 Sep 2007 16:02:53 +0200
+
+univention-management-console-room-admin (1.4-1) unstable; urgency=low
+
+  * added column internet access
+  * updated icon set
+  * updated translation
+  
+ -- Sönke Schwardt <schwardt@univention.de>  Tue, 25 Sep 2007 15:40:55 +0200
+
+univention-management-console-room-admin (1.3) unstable; urgency=low
+
+  * sort computer group and group member list alphabetically 
+
+ -- Andreas Büsching <buesching@univention.de>  Thu, 20 Sep 2007 11:26:57 +0200
+
+univention-management-console-room-admin (1.2) unstable; urgency=low
+
+  * fixed rules file
+
+ -- Sönke Schwardt <schwardt@univention.de>  Fri, 24 Aug 2007 13:33:24 +0200
+
+univention-management-console-room-admin (1.1) unstable; urgency=low
+
+  * fixed name of join script
+
+ -- Sönke Schwardt <schwardt@univention.de>  Fri, 24 Aug 2007 12:08:30 +0200
+
+univention-management-console-room-admin (1.0) unstable; urgency=low
+
+  * fixed bug while determining currently logged in user
+  * added possibility to switch off/on access to internet via proxy
+  
+ -- Sönke Schwardt <schwardt@univention.de>  Mon, 30 Jul 2007 10:16:32 +0200
+
+univention-management-console-room-admin (0.6) unstable; urgency=low
+
+  * optimized parsing of smbstatus
+
+ -- Sönke Schwardt <schwardt@univention.de>  Thu, 24 May 2007 17:00:40 +0200
+
+univention-management-console-room-admin (0.5) unstable; urgency=low
+
+  * ultravnc.php: if no port is specified, fall back to 5900
+
+ -- Andreas Büsching <buesching@univention.de>  Thu, 24 May 2007 10:37:08 +0200
+
+univention-management-console-room-admin (0.4) unstable; urgency=low
+
+  * join script cleanup
+
+ -- Sönke Schwardt <schwardt@univention.de>  Wed, 23 May 2007 17:22:17 +0200
+
+univention-management-console-room-admin (0.3) unstable; urgency=low
+
+  * updated module icon
+
+ -- Sönke Schwardt <schwardt@univention.de>  Tue, 22 May 2007 14:25:44 +0200
+
+univention-management-console-room-admin (0.2-1) unstable; urgency=low
+
+  * updated german translation
+  * create shortcut file for UltraVNC
+  * display online/offline status of hosts
+  * fixed regex for smbstatus
+
+ -- Sönke Schwardt <schwardt@univention.de>  Mon, 21 May 2007 15:47:35 +0200
+
+univention-management-console-room-admin (0.1-0) unstable; urgency=low
+
+  * Initial Release.
+
+ -- Sönke Schwardt <schwardt@univention.de>  Tue, 15 May 2007 10:15:23 +0200

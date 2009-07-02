@@ -1,0 +1,15 @@
+Source: univention-management-console-room-admin
+Section: univention
+Priority: optional
+Maintainer: Univention GmbH <packages@univention.de>
+Build-Depends: debhelper, python, python-all-dev, python-central, univention-config-dev
+Standards-Version: 3.7.2
+XS-Python-Version: 2.4
+
+Package: univention-management-console-room-admin
+Architecture: all
+Depends: univention-config-registry, python-univention-management-console, samba, fping, python-italc, italc-client, python-json, wakeonlan
+XB-Python-Version: ${python:Versions}
+Description: UMC module to administrate pc rooms
+ This package contains an Univention Management Console module to administrate
+ pc rooms.

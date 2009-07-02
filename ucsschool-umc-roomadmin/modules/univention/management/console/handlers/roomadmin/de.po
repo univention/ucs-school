@@ -1,0 +1,484 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2009-05-27 09:51+0200\n"
+"PO-Revision-Date: 2009-05-27 09:51+0200\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=ISO-8859-1\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: __init__.py:67
+msgid "Room admin"
+msgstr "Computerraum Administration"
+
+#: __init__.py:68
+msgid "Computer room administration"
+msgstr "Computerraum-Administration"
+
+#: __init__.py:82 __init__.py:83
+msgid "Administrate rooms"
+msgstr "Räume administrieren"
+
+#: __init__.py:93 __init__.py:94
+msgid "add room"
+msgstr "Raum hinzufügen"
+
+#: __init__.py:101 __init__.py:102
+msgid "edit room"
+msgstr "Raum bearbeiten"
+
+#: __init__.py:113 __init__.py:114
+msgid "set room"
+msgstr "Raum bearbeiten"
+
+#: __init__.py:125 __init__.py:126
+msgid "remove room"
+msgstr "Raum entfernen"
+
+#: __init__.py:136 __init__.py:137
+msgid "Power On Computers By Wake On LAN"
+msgstr "Computer über Wake-On-LAN einschalten"
+
+#: __init__.py:144 __init__.py:145
+msgid "List rooms and associated computers"
+msgstr "Computerräume und zugeordnete Computer anzeigen"
+
+#: __init__.py:152
+msgid "Enable internet access"
+msgstr "Internet-Zugriff erlauben"
+
+#: __init__.py:153
+msgid "Enable access to internet for selected computers"
+msgstr "Für ausgewählte Computer den Internet-Zugriff erlauben"
+
+#: __init__.py:159
+msgid "Disable internet access"
+msgstr "Internet-Zugriff verweigern"
+
+#: __init__.py:160
+msgid "Disable access to internet for selected computers"
+msgstr "Für ausgewählte Computer den Internet-Zugriff verweigern"
+
+#: __init__.py:166
+msgid "Reboot"
+msgstr "Neustarten"
+
+#: __init__.py:167
+msgid "Reboot selected computers"
+msgstr "Ausgewählte Computer neustarten"
+
+#: __init__.py:173
+msgid "Shutdown"
+msgstr "Herunterfahren"
+
+#: __init__.py:174
+msgid "Shutdown selected computers"
+msgstr "Ausgewählte Computer herunterfahren"
+
+#: __init__.py:180 _revamp.py:314
+msgid "Lock Screen"
+msgstr "Bildschirm sperren"
+
+#: __init__.py:181
+msgid "Lock screen for selected computers"
+msgstr "Für ausgewählte Computer den Bildschrim sperren"
+
+#: __init__.py:187 _revamp.py:315
+msgid "Unlock Screen"
+msgstr "Bildschirm entsperren"
+
+#: __init__.py:188
+msgid "Unlock screen for selected computers"
+msgstr "Für ausgewählte Computer den Bildschrim entsperren"
+
+#: __init__.py:194 _revamp.py:316
+msgid "Lock Input Devices"
+msgstr "Eingabegeräte sperren"
+
+#: __init__.py:195
+msgid "Lock input devices for selected computers"
+msgstr "Für ausgewählte Computer die Eingabegeräte sperren"
+
+#: __init__.py:201 _revamp.py:317
+msgid "Unlock Input Devices"
+msgstr "Eingabegeräte entsperren"
+
+#: __init__.py:202
+msgid "Unlock input devices for selected computers"
+msgstr "Für ausgewählte Computer die Eingabegeräte entsperren"
+
+#: __init__.py:208
+msgid "Logout User"
+msgstr "Benutzer abmelden"
+
+#: __init__.py:209
+msgid "Logout users for selected computers"
+msgstr "Für ausgewählte Computer die Benutzer abmelden"
+
+#: __init__.py:215 __init__.py:224
+msgid "Start demo mode"
+msgstr "Starte Demo Modus"
+
+#: __init__.py:216 __init__.py:225
+msgid "Start demo mode for selected clients"
+msgstr "Starte Demo Modus für ausgewählte Computer"
+
+#: __init__.py:233
+msgid "Stop demo mode"
+msgstr "Stoppe Demo Modus"
+
+#: __init__.py:234
+msgid "Stop running demo mode"
+msgstr "Stoppe laufenden Demo Modus"
+
+#: __init__.py:240
+msgid "Request snapshot"
+msgstr "Screenshot anfordern"
+
+#: __init__.py:241
+msgid "Request snapshot for selected computers"
+msgstr "Screenshot für ausgewählte Computer anfordern"
+
+#: __init__.py:248
+msgid "Request data"
+msgstr "Daten anfordern"
+
+#: __init__.py:249
+msgid "Request JSON encoded data"
+msgstr ""
+
+#: __init__.py:256 __init__.py:257
+msgid "Supervising mode"
+msgstr "Computer beaufsichtigen"
+
+#: __init__.py:710
+msgid ""
+"An error occured while getting rooms! Please consult local administrator."
+msgstr ""
+"Beim Ermitteln der Räume ist ein Fehler aufgetreten. Bitte wenden Sie sich "
+"an Ihren Administrator."
+
+#: __init__.py:1041 __init__.py:1094 __init__.py:1152 __init__.py:1237
+msgid ""
+"No admin connection to the LDAP database available, please try again later"
+msgstr ""
+"Konnte keine Verbindung zum LDAP-Server aufbauen. Bitte versuchen Sie es "
+"später erneut."
+
+#: __init__.py:1073
+msgid ""
+"An error occured while getting group description! Please consult local "
+"administrator."
+msgstr ""
+"Beim Ermitteln der Raumbeschreibungen ist ein Fehler aufgetreten. Bitte "
+"wenden Sie sich an Ihren Administrator."
+
+#: __init__.py:1125 __init__.py:1133
+#, python-format
+msgid "user is not allowed to execute %s"
+msgstr "Benutzer darf %s nicht ausführen"
+
+#: __init__.py:1127 __init__.py:1135
+msgid ""
+"You are not allowed to execute this action. Please contact local "
+"administrator."
+msgstr ""
+"Sie sind nicht befugt, diese Aktion auszuführen. Bitte wenden Sie sich an "
+"Ihren Administrator."
+
+#: __init__.py:1175
+msgid "Cannot change room members"
+msgstr "Konnte Raum nicht bearbeiten"
+
+#: __init__.py:1198
+#, python-format
+msgid ""
+"An error occured while updating room! Please consult local administrator. (%"
+"s)"
+msgstr ""
+"Ein Fehler trat während der Raumaktualisierung auf. Bitte wenden Sie sich an "
+"Ihren Administrator. (%s)"
+
+#: __init__.py:1217
+msgid "Cannot create room - object already exists!"
+msgstr "Konnte Raum nicht anlegen - LDAP-Objekt existiert bereits!"
+
+#: __init__.py:1220
+msgid "Cannot create room - groupname already used!"
+msgstr "Konnte Raum nicht anlegen - Gruppenname existiert bereits!"
+
+#: __init__.py:1227
+#, python-format
+msgid ""
+"An error occured while creating room! Please consult local administrator.  (%"
+"s)"
+msgstr ""
+"Konnte Raum nicht anlegen - Bitte wenden Sie sich an Ihren Administrator! (%"
+"s)"
+
+#: __init__.py:1518 __init__.py:1519 __init__.py:1527 _revamp.py:224
+#: _revamp.py:703 _revamp.py:706 _revamp.py:709
+msgid "unknown"
+msgstr "unbekannt"
+
+#: _revamp.py:72
+msgid "Computer Room Administration"
+msgstr "Computerraum-Administration"
+
+#: _revamp.py:77
+msgid "--- Please choose ---"
+msgstr "--- Bitte auswählen ---"
+
+#: _revamp.py:84
+msgid "All"
+msgstr "Alle"
+
+#: _revamp.py:110
+msgid "Computer Room"
+msgstr "Computerraum"
+
+#: _revamp.py:118
+msgid "Refresh"
+msgstr "Aktualisieren"
+
+#: _revamp.py:127
+msgid "Stop video mode"
+msgstr "Video-Modus beenden"
+
+#: _revamp.py:155
+msgid "Monitor Desktop With UltraVNC"
+msgstr "Computername"
+
+#: _revamp.py:155 _revamp.py:438 _types.py:85
+msgid "Room"
+msgstr "Raum"
+
+#: _revamp.py:155
+msgid "Logged On"
+msgstr "Angemeldeter Benutzer"
+
+#: _revamp.py:157
+msgid "Addresses"
+msgstr "Adressen"
+
+#: _revamp.py:159
+msgid "Inventory#"
+msgstr "Inventarnr."
+
+#: _revamp.py:160
+msgid "Internet Access"
+msgstr "Internet-Zugriff"
+
+#: _revamp.py:162
+msgid "Video mode"
+msgstr "Video-Modus"
+
+#: _revamp.py:237
+msgid "offline"
+msgstr "offline"
+
+#: _revamp.py:312
+msgid "enable internet access"
+msgstr "Internet-Zugriff erlauben"
+
+#: _revamp.py:313
+msgid "disable internet access"
+msgstr "Internet-Zugriff sperren"
+
+#: _revamp.py:318
+msgid "Power On By Wake On LAN"
+msgstr "Per Wake-On-LAN einschalten"
+
+#: _revamp.py:319
+msgid "Logout Users"
+msgstr "Benutzer abmelden"
+
+#: _revamp.py:320
+msgid "Reboot Computers"
+msgstr "Ausgewählte Computer neustarten"
+
+#: _revamp.py:321
+msgid "Shutdown Computers"
+msgstr "Ausgewählte Computer herunterfahren"
+
+#: _revamp.py:329
+msgid "Supervising Computers"
+msgstr "Ausgewählte Computer beaufsichtigen"
+
+#: _revamp.py:333
+msgid "Start supervising mode"
+msgstr "Computer beaufsichtigen"
+
+#: _revamp.py:334
+msgid "Start video mode (window)"
+msgstr "Video-Modus starten (Fenster)"
+
+#: _revamp.py:335
+msgid "Start video mode (fullscreen)"
+msgstr "Video-Modus starten (Vollbild)"
+
+#: _revamp.py:338 _revamp.py:479
+msgid "Select the Operation"
+msgstr "--- wählen Sie eine Aktion ---"
+
+#: _revamp.py:415
+msgid "Please select school:"
+msgstr "Bitte Schule auswählen:"
+
+#: _revamp.py:423 _revamp.py:424
+msgid "Create new room"
+msgstr "Neuen Raum erstellen"
+
+#: _revamp.py:431 _revamp.py:487
+msgid "Search"
+msgstr "Suchen"
+
+#: _revamp.py:438 _types.py:44 _types.py:90
+msgid "Description"
+msgstr "Beschreibung"
+
+#: _revamp.py:458
+#, python-format
+msgid "Edit room \"%(room)s\""
+msgstr "Raum \"%(room)s\" bearbeiten"
+
+#: _revamp.py:476 _revamp.py:478
+msgid "Remove Rooms"
+msgstr "Räume entfernen"
+
+#: _revamp.py:482
+msgid "No groups could be found."
+msgstr "Es konnten keine Gruppen gefunden werden."
+
+#: _revamp.py:488
+msgid "Search Result"
+msgstr "Suchergebnis"
+
+#: _revamp.py:550
+msgid "Create Room"
+msgstr "Raum erstellen"
+
+#: _revamp.py:552
+msgid "Save Changes"
+msgstr "Änderungen speichern"
+
+#: _revamp.py:584
+msgid "Create room and assign computers"
+msgstr "Raum erstellen und Computer zuordnen"
+
+#: _revamp.py:586
+#, python-format
+msgid "Assign computers to room \"%(room)s\""
+msgstr "Computerzuordnung für Raum \"%(room)s\""
+
+#: _revamp.py:601
+#, python-format
+msgid "Created room \"%(room)s\" successfully."
+msgstr "Raum \"%(room)s\" erfolgreich erstellt."
+
+#: _revamp.py:603
+#, python-format
+msgid "Updated room \"%(room)s\" successfully."
+msgstr "Raum \"%(room)s\" erfolgreich aktualisiert."
+
+#: _revamp.py:628
+msgid "No room has been selected"
+msgstr "Es wurde kein Raum ausgewählt."
+
+#: _revamp.py:634
+msgid "Please confirm removal of following rooms:"
+msgstr "Bitte bestätigen Sie das Entfernen der folgenden Räume:"
+
+#: _revamp.py:646
+msgid "Remove"
+msgstr "Entfernen"
+
+#: _revamp.py:651
+msgid "Deleted rooms successfully."
+msgstr "Räume wurden erfolgreich entfernt."
+
+#: _revamp.py:653
+msgid "Error while deleting following rooms:"
+msgstr "Fehler traten beim Entfernen der folgenden Räume auf:"
+
+#: _revamp.py:655
+msgid "Please ask local administrator for further details."
+msgstr "Bitte wenden Sie sich an Ihren Administrator für nähere Informationen."
+
+#: _revamp.py:692
+msgid "Supervising Mode"
+msgstr "Computer beaufsichtigen"
+
+#: _types.py:41
+msgid "Search Key"
+msgstr "Suchkriterium"
+
+#: _types.py:44
+msgid "Room Name"
+msgstr "Raumname"
+
+#: _types.py:55
+msgid "granted"
+msgstr "erlaubt"
+
+#: _types.py:56
+msgid "denied"
+msgstr "gesperrt"
+
+#: _types.py:81
+msgid "Date"
+msgstr "Datum"
+
+#: _types.py:82
+msgid "IP address"
+msgstr "IP-Adresse"
+
+#: _types.py:83
+msgid "IP addresses"
+msgstr "IP-Adresse"
+
+#: _types.py:84
+msgid "Computer"
+msgstr "Computer"
+
+#: _types.py:86
+msgid "RoomDN"
+msgstr "RaumDN"
+
+#: _types.py:87
+msgid "User"
+msgstr "Benutzer"
+
+#: _types.py:88
+msgid "Department"
+msgstr "Schule"
+
+#: _types.py:89
+msgid "Message"
+msgstr "Nachricht"
+
+#: _types.py:91
+msgid "Select room members:"
+msgstr "Im Raum vorhandene Computer auswählen:"
+
+#: _types.py:92
+msgid "Select video master:"
+msgstr "Video-Quelle auswählen:"
+
+#: _types.py:94
+msgid "School"
+msgstr "Schule"
+
+#~ msgid "IP Address"
+#~ msgstr "IP-Adresse"
+
+#~ msgid "MAC Address"
+#~ msgstr "MAC-Adresse"

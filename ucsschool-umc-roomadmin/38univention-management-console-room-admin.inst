@@ -1,0 +1,56 @@
+#!/bin/sh
+
+JSNAME="univention-management-console-room-admin"
+JSFILE="/usr/lib/univention-install/.index.txt"
+VERSION="1"
+
+if ! test -e "/usr/share/univention-join/.joined"; then
+	echo "The server has not joined yet"
+	exit 1
+fi
+
+
+touch "${JSFILE}"
+test -n "$(grep "${JSNAME} v${VERSION} successful" ${JSFILE})" && exit 1
+
+eval $( univention-config-registry shell ldap/base )
+
+univention-directory-manager container/cn create $@ --ignore_exists --position cn=univention,$ldap_base --set name=console
+univention-directory-manager container/cn create $@ --ignore_exists --position cn=console,cn=univention,$ldap_base --set name=config
+
+# create ROOMADMIN operations
+univention-directory-manager settings/console_operation create $@ --ignore_exists --position cn=operations,cn=console,cn=univention,$ldap_base \
+																				 --set name=roomadmin \
+																				 --set description="ROOMADMIN operations" \
+																				 --append operation="roomadmin/*" \
+																				 --append operation="roomadmin/room/*" \
+																				 --append operation="roomadmin/room/list" \
+																				 --append operation="roomadmin/set/access/internet/*"
+
+univention-directory-manager settings/console_operation modify $@ --ignore_exists --dn cn=roomadmin,cn=operations,cn=console,cn=univention,$ldap_base \
+																				 --append operation="roomadmin/room/add" \
+																				 --append operation="roomadmin/room/edit" \
+																				 --append operation="roomadmin/room/remove" \
+																				 --append operation="roomadmin/room/search" \
+																				 --append operation="roomadmin/room/set"
+
+univention-directory-manager settings/console_acl create $@ --ignore_exists --position cn=acls,cn=console,cn=univention,$ldap_base \
+																				 --set name=roomadmin-all \
+																				 --set category="UMC Room Administration" \
+																				 --set ldapbase="$ldap_base" \
+																				 --set command="roomadmin/*" \
+																				 --set description="All UMC Room Administration operations"
+
+# default policies
+univention-directory-manager container/cn create $@ --ignore_exists --position cn=policies,$ldap_base --set name=console
+
+univention-directory-manager policies/console_access modify $@ --dn cn=default-admin,cn=console,cn=policies,$ldap_base \
+	--append allow=cn=roomadmin-all,cn=acls,cn=console,cn=univention,$ldap_base
+
+univention-directory-manager policies/console_access create $@ --ignore_exists --position cn=console,cn=policies,$ldap_base \
+	--set name=roomadmin-admin --append allow=cn=roomadmin-all,cn=acls,cn=console,cn=univention,$ldap_base
+
+
+test -n "$(grep "${JSNAME} v${VERSION} successful" ${JSFILE})" || echo "${JSNAME} v${VERSION} successful" >> "${JSFILE}"
+
+exit 0
