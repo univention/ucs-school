@@ -1,9 +1,9 @@
 #!/bin/sh
 #
 # Univention Reservation Scheduler
-#  postinst script of the univention-scheduler package
+#  init script of the scheduler
 #
-# Copyright (C) 2008 Univention GmbH
+# Copyright (C) 2008-2009 Univention GmbH
 #
 # http://www.univention.de/
 # 
@@ -28,23 +28,33 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
-createLogfile () {
-    if [ ! -e $1 ] ; then
-        touch $1
-        chown $2 $1
-        chmod $3 $1
-    fi
-}
+PID="/var/run/univention-scheduler"
 
-createLogfile /var/log/univention/scheduler.log "root:adm" 640
-createLogfile /var/log/univention/scheduler-status.log "root:adm" 640
+case "$1" in
+	start)
+		echo -n "Starting univention-scheduler daemon: "
+		start-stop-daemon --start --quiet --pidfile "$PID" -a /usr/sbin/univention-scheduler
+		echo "done"
+		;;
+	stop)
+		echo -n "Stopping univention-scheduler daemon: "
+		start-stop-daemon --stop --quiet --pidfile "$PID" -a /usr/sbin/univention-scheduler
+		echo "done"
+		;;
+	restart|force-reload)
+		$0 stop
+		$0 start
+		;;
+	crestart)
+		SCHEDULER=`cat $PID 2>/dev/null`
+		if [ -n "$SCHEDULER" ]; then
+		    ps xaw | grep scheduler | grep -q "$SCHEDULER" && $0 restart
+		fi
+		;;
+	*)
+		echo "Usage: /etc/init.d/univention-scheduler {start|stop|restart|crestart|force-reload}"
+		exit 1
+		;;
+esac
 
-univention-config-registry set scheduler/debug/level?2
-univention-config-registry set scheduler/interval?60
-univention-config-registry set scheduler/sql/server?localhost
-univention-config-registry set scheduler/sql/port?3306
-univention-config-registry set scheduler/sql/backend?mysql
-
-#DEBHELPER#
-
-/etc/init.d/univention-scheduler crestart || true
+exit 0

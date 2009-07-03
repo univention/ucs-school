@@ -3,7 +3,7 @@
 # Univention Reservation Scheduler
 #  Start script for the Scheduler
 #
-# Copyright (C) 2004, 2005, 2006 Univention GmbH
+# Copyright (C) 2008-2009 Univention GmbH
 #
 # http://www.univention.de/
 # 
@@ -29,4 +29,3 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 /usr/bin/python2.4 -W ignore /usr/lib/python2.4/site-packages/univention/reservation/scheduler/main.py
-
