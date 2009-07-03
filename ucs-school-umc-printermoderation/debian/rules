@@ -3,7 +3,7 @@
 # Univention Management Console Distribution Module
 #  rules file for generating the deb package
 #
-# Copyright (C) 2008 Univention GmbH
+# Copyright (C) 2008-2009 Univention GmbH
 #
 # http://www.univention.de/
 #
@@ -31,7 +31,7 @@
 version=`dpkg-parsechangelog | grep "Version" | sed -e 's/Version: //'`
 copyrightyear=`date +%Y`
 
-PACKAGE_NAME=univention-management-console-printermoderation
+PACKAGE_NAME=ucs-school-umc-printermoderation
 D=$(CURDIR)/debian/${PACKAGE_NAME}
 # DESTDIR=debian/tmp
 
@@ -71,7 +71,7 @@ install-ext-%:
 	install -m 0755 cron.daily/printermoderation_cleanup $(D)/etc/cron.daily/
 
     # install join script
-	install -m 0755 38univention-management-console-printermoderation.inst ${D}/usr/lib/univention-install/
+	install -m 0755 38ucs-school-umc-printermoderation.inst ${D}/usr/lib/univention-install/
 
 	univention-install-config-registry
 

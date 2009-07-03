@@ -1,16 +1,22 @@
-univention-management-console-printermoderation (3.0.0-0) unstable; urgency=low
+ucs-school-umc-printermoderation (4.0.0-0) unstable; urgency=low
+
+  * ported package to component ucs@school
+
+ -- Sönke Schwardt <schwardt@univention.de>  Tue, 02 Jul 2009 13:29:23 +0200
+
+ucs-school-umc-printermoderation (3.0.0-0) unstable; urgency=low
 
   * ported to UCS 2.2
 
  -- Sönke Schwardt <schwardt@univention.de>  Tue, 26 May 2008 09:19:22 +0200
 
-univention-management-console-printermoderation (2.0.0-0) unstable; urgency=low
+ucs-school-umc-printermoderation (2.0.0-0) unstable; urgency=low
 
   * ported to UCS 2.1
 
  -- Sönke Schwardt <schwardt@univention.de>  Wed, 10 Dec 2008 12:05:23 +0200
 
-univention-management-console-printermoderation (1.0.0-1) unstable; urgency=low
+ucs-school-umc-printermoderation (1.0.0-1) unstable; urgency=low
 
   * Initial Release.
 
