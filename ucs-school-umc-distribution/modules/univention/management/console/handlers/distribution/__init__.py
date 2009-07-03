@@ -4,7 +4,7 @@
 # Univention Management Console
 #  module: Distribution Module
 #
-# Copyright (C) 2007 Univention GmbH
+# Copyright (C) 2007-2009 Univention GmbH
 #
 # http://www.univention.de/
 #
@@ -51,8 +51,8 @@ import _revamp
 import _types
 import _schoolldap
 
-DISTRIBUTION_DATA_PATH = '/var/lib/univention-management-console-distribution'
-DISTRIBUTION_CMD = '/usr/lib/univention-management-console-distribution/umc-distribution'
+DISTRIBUTION_DATA_PATH = '/var/lib/ucs-school-umc-distribution'
+DISTRIBUTION_CMD = '/usr/lib/ucs-school-umc-distribution/umc-distribution'
 
 _ = umc.Translation( 'univention.management.console.handlers.distribution' ).translate
 

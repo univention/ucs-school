@@ -1,9 +1,9 @@
 #!/usr/bin/make -f
 #
-# Univention Management Console Distribution Module
+# UCS@School UMC Distribution Module
 #  rules file for generating the deb package
 #
-# Copyright (C) 2008 Univention GmbH
+# Copyright (C) 2007-2009 Univention GmbH
 #
 # http://www.univention.de/
 # 
@@ -31,7 +31,7 @@
 version=`dpkg-parsechangelog | grep "Version" | sed -e 's/Version: //'`
 copyrightyear=`date +%Y`
 
-PACKAGE_NAME=univention-management-console-distribution
+PACKAGE_NAME=ucs-school-umc-distribution
 D=$(CURDIR)/debian/${PACKAGE_NAME}
 # DESTDIR=debian/tmp
 
@@ -66,8 +66,8 @@ install-ext-%:
 	make PACKAGE=${PACKAGE_NAME} install-images
 
     # install join script
-	install -m 0755 38univention-management-console-distribution.inst ${D}/usr/lib/univention-install/
-	install -m 0755 umc-distribution ${D}/usr/lib/univention-management-console-distribution/umc-distribution
+	install -m 0755 38ucs-school-umc-distribution.inst ${D}/usr/lib/univention-install/
+	install -m 0755 umc-distribution ${D}/usr/lib/ucs-school-umc-distribution/umc-distribution
 
 	univention-install-config-registry
 

@@ -1,18 +1,7 @@
-'#
-'# Warning: This file is auto-generated and might be overwritten by
-'#          univention-config-registry.
-'#          Please edit the files in the following directory instead:
-'# Warnung: Diese Datei wurde automatisch generiert und kann durch
-'#          univention-config-registry ueberschrieben werden.
-'#          Bitte bearbeiten Sie an Stelle dessen die Dateien in
-'#          folgendem Verzeichnis:
-'#
-'#       /etc/univention/templates/files/var/lib/samba/netlogon/umc-distribution.vbs
-'#
-'#
+@%@BCWARNING='# @%@
 
 @!@
-path = configRegistry.get('umc/datadistribution/datadir/recipient','Unterrichtsmaterial')
+path = configRegistry.get('ucsschool/datadistribution/datadir/recipient','Unterrichtsmaterial')
 dirname = path
 if '/' in path:
     dirname = path.rsplit('/',1)[1]

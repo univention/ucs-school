@@ -3,7 +3,7 @@
 #
 # Univention Management Console Distribution Module
 #
-# Copyright (C) 2008 Univention GmbH
+# Copyright (C) 2008-2009 Univention GmbH
 #
 # http://www.univention.de/
 #
@@ -40,8 +40,8 @@ from optparse import OptionParser
 configRegistry = univention.config_registry.ConfigRegistry()
 configRegistry.load()
 
-DISTRIBUTION_DATA_PATH = '/var/lib/univention-management-console-distribution'
-DISTRIBUTION_CMD = '/usr/lib/univention-management-console-distribution/umc-distribution'
+DISTRIBUTION_DATA_PATH = '/var/lib/ucs-school-umc-distribution'
+DISTRIBUTION_CMD = '/usr/lib/ucs-school-umc-distribution/umc-distribution'
 
 import inspect
 def debugmsg( component, level, msg ):
@@ -83,9 +83,9 @@ def _create_dir( targetdir, homedir=None, permissions=0700, owner=0, group=0 ):
 
 def initProject( project ):
 	global DISTRIBUTION_DATA_PATH
-	DISTRIBUTION_DATA_PATH = configRegistry.get('umc/datadistribution/cache', DISTRIBUTION_DATA_PATH)
-	postfix_datadir_sender = configRegistry.get('umc/datadistribution/datadir/sender', 'Unterrichtsmaterial')
-	postfix_datadir_recipient = configRegistry.get('umc/datadistribution/datadir/recipient', 'Unterrichtsmaterial')
+	DISTRIBUTION_DATA_PATH = configRegistry.get('ucsschool/datadistribution/cache', DISTRIBUTION_DATA_PATH)
+	postfix_datadir_sender = configRegistry.get('ucsschool/datadistribution/datadir/sender', 'Unterrichtsmaterial')
+	postfix_datadir_recipient = configRegistry.get('ucsschool/datadistribution/datadir/recipient', 'Unterrichtsmaterial')
 
 	fn_project = os.path.join( DISTRIBUTION_DATA_PATH, project['name'] )
 
@@ -263,8 +263,8 @@ def distributeData( project ):
 
 
 def collectData( project ):
-	postfix_datadir_sender = configRegistry.get('umc/datadistribution/datadir/sender', 'Materialverteilung')
-	postfix_datadir_recipient = configRegistry.get('umc/datadistribution/datadir/recipient', 'Unterrichtsmaterial')
+	postfix_datadir_sender = configRegistry.get('ucsschool/datadistribution/datadir/sender', 'Materialverteilung')
+	postfix_datadir_recipient = configRegistry.get('ucsschool/datadistribution/datadir/recipient', 'Unterrichtsmaterial')
 
 	if not project.get('collectFiles'):
 		debugmsg( ud.ADMIN, ud.INFO, 'collecting data for project "%s" is disabled - nothing to do' % project['name'] )
@@ -336,8 +336,8 @@ def main():
 	debug_level = int( configRegistry.get('umc/module/debug/level','1') )
 	if debug_level < 1:
 		debug_level = 1
-	if configRegistry.get('umc/datadistribution/debug/level', None):
-		debug_level = int( configRegistry.get('umc/datadistribution/debug/level') )
+	if configRegistry.get('ucsschool/datadistribution/debug/level', None):
+		debug_level = int( configRegistry.get('ucsschool/datadistribution/debug/level') )
 
 	parser = OptionParser()
 	parser.add_option( '-d', '--debug', action = 'store', type = 'int',
@@ -359,7 +359,7 @@ def main():
 	( options, args ) = parser.parse_args()
 
 	# open logging
-	ud.init( '/var/log/univention/management-console-module-distribution.log', 1, 1 )
+	ud.init( '/var/log/univention/ucs-school-umc-distribution.log', 1, 1 )
 	ud.set_level( ud.ADMIN, options.debug )
 	debugmsg(ud.ADMIN, ud.ERROR, 'umc-distribution started: args=%s' % sys.argv)
 
