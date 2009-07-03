@@ -3,7 +3,7 @@
 # Univention Management Console
 #  module: Helpdesk Module
 #
-# Copyright (C) 2007 Univention GmbH
+# Copyright (C) 2007-2009 Univention GmbH
 #
 # http://www.univention.de/
 #
@@ -102,12 +102,12 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 		if self.configRegistry.has_key( bc_key ):
 			tmp = self.configRegistry[ bc_key ]
 
-		bc_key = 'umc/helpdesk/hostdn'
+		bc_key = 'ucsschool/helpdesk/hostdn'
 		if self.configRegistry.has_key( bc_key ):
 			tmp = self.configRegistry[ bc_key ]
 
 		if tmp:
-			regex = re.compile('^.+,ou=([0-9]+),.*$')
+			regex = re.compile('^.+?,ou=([0-9]+),.*$')
 			match = regex.match(tmp)
 			if match:
 				department = match.groups()[0]
@@ -124,16 +124,16 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 			if object.options.has_key( key ) and object.options[ key ]:
 				ud.debug( ud.ADMIN, ud.INFO, 'HELPDESK: helpdesk_form_send ' + key + '=' + object.options[ key ].replace('%','_') )
 
-		if self.configRegistry.has_key('umc/helpdesk/recipient') and self.configRegistry['umc/helpdesk/recipient']:
+		if self.configRegistry.has_key('ucsschool/helpdesk/recipient') and self.configRegistry['ucsschool/helpdesk/recipient']:
 			if self.configRegistry.has_key('hostname') and self.configRegistry['hostname'] and \
 			   self.configRegistry.has_key('domainname') and self.configRegistry['domainname']:
-				sender = 'umc-helpdesk@%s.%s' % (self.configRegistry['hostname'], self.configRegistry['domainname'])
+				sender = 'ucsschool-helpdesk@%s.%s' % (self.configRegistry['hostname'], self.configRegistry['domainname'])
 			else:
-				sender = 'umc-helpdesk@localhost'
+				sender = 'ucsschool-helpdesk@localhost'
 
 			func = notifier.Callback( self._helpdesk_form_send_thread,
 										sender,
-										self.configRegistry['umc/helpdesk/recipient'].split(' '),
+										self.configRegistry['ucsschool/helpdesk/recipient'].split(' '),
 										object.options[ 'username' ],
 										object.options[ 'department' ],
 										object.options[ 'category' ],
@@ -143,7 +143,7 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 			thread = notifier.threads.Simple( 'HelpdeskMessage', func, cb )
 			thread.run()
 		else:
-			ud.debug( ud.ADMIN, ud.ERROR, 'HELPDESK: cannot send mail - config-registry variable "umc/helpdesk/recipient" is not set' )
+			ud.debug( ud.ADMIN, ud.ERROR, 'HELPDESK: cannot send mail - config-registry variable "ucsschool/helpdesk/recipient" is not set' )
 			self.finished( object.id(), None )
 
 

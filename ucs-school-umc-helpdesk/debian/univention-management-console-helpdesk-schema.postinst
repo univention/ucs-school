@@ -3,7 +3,7 @@
 # Univention Management Console Helpdesk Schema
 #  postinst script for the debian package
 #
-# Copyright (C) 2008 Univention GmbH
+# Copyright (C) 2008-2009 Univention GmbH
 #
 # http://www.univention.de/
 #
@@ -30,7 +30,7 @@
 
 #DEBHELPER#
 
-eval `univention-config-registry shell`
+eval $(univention-config-registry shell)
 
 if test -x /etc/init.d/slapd
     then

@@ -1,10 +1,10 @@
-#!/usr/bin/python
+#!/usr/bin/python2.4
 # -*- coding: utf-8 -*-
 #
-# Univention Nagios
-#  univention admin nagios module
+# UCS@School Helpdesk
+#  univention admin helpdesk module
 #
-# Copyright (C) 2004, 2005, 2006 Univention GmbH
+# Copyright (C) 2006-2009 Univention GmbH
 #
 # http://www.univention.de/
 #
