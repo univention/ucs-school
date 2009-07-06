@@ -1,9 +1,8 @@
 #!/usr/bin/python2.4
 #
 # Univention Management Console
-#  module: manages a CUPS server
 #
-# Copyright (C) 2007 Univention GmbH
+# Copyright (C) 2007-2009 Univention GmbH
 #
 # http://www.univention.de/
 #

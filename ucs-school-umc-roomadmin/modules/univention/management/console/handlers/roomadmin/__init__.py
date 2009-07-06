@@ -1,9 +1,8 @@
 #!/usr/bin/python2.4
 #
 # Univention Management Console
-#  module: Helpdesk Module
 #
-# Copyright (C) 2007 Univention GmbH
+# Copyright (C) 2007-2009 Univention GmbH
 #
 # http://www.univention.de/
 #
@@ -646,17 +645,17 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 		self.ldap_anon = _schoolldap.SchoolLDAPConnection()
 		self.ldap_master = _schoolldap.SchoolLDAPConnection( ldapserver = self.configRegistry['ldap/master'] )
 
-		if self.configRegistry.has_key ('umc/schooladmin/italc/updateinterval'):
+		if self.configRegistry.get('umc/roomadmin/italc/updateinterval'):
 			try:
-				italc_update_interval = int (self.configRegistry['umc/schooladmin/italc/updateinterval'])
+				italc_update_interval = int (self.configRegistry['umc/roomadmin/italc/updateinterval'])
 			except ValueError:
 				pass
 			if italc_update_interval < 3:
 				italc_update_interval = 3
 
-		if self.configRegistry.has_key ('umc/schooladmin/italc/timeout'):
+		if self.configRegistry.get('umc/roomadmin/italc/timeout'):
 			try:
-				italc_connection_timeout = int (self.configRegistry['umc/schooladmin/italc/timeout'])
+				italc_connection_timeout = int (self.configRegistry['umc/roomadmin/italc/timeout'])
 			except ValueError:
 				pass
 			if italc_connection_timeout < 30:
@@ -820,7 +819,7 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 			curgrpmembers = computerdict.keys()
 
 
-		hideitems = self.configRegistry.get('umc/module/roomadmin/hideitems','').lower().replace(" ","").split(',')
+		hideitems = self.configRegistry.get('umc/roomadmin/hideitems','').lower().replace(" ","").split(',')
 
 		demomode = {}
 
@@ -1078,8 +1077,8 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 		roommember = self.ldap_master.get_group_member_list( roomdn, filterbase=self.ldap_master.searchbaseComputers, attrib='hosts' )
 
 		roomnamedefault = None
-		if self.configRegistry.has_key('umc/schooladmin/groups/defaultgroupprefix') and self.configRegistry['umc/schooladmin/groups/defaultgroupprefix']:
-			roomnamedefault = self.configRegistry['umc/schooladmin/groups/defaultgroupprefix']
+		if self.configRegistry.get('umc/roomadmin/groups/defaultgroupprefix'):
+			roomnamedefault = self.configRegistry['umc/roomadmin/groups/defaultgroupprefix']
 			roomnamedefault = roomnamedefault % { 'departmentNumber': self.ldap_master.departmentNumber }
 			debugmsg( ud.ADMIN, ud.INFO, 'roomnamedefault = %s' % roomnamedefault)
 
@@ -1109,8 +1108,8 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 		roommember = []
 
 		roomnamedefault = None
-		if self.configRegistry.has_key('umc/schooladmin/groups/defaultgroupprefix') and self.configRegistry['umc/schooladmin/groups/defaultgroupprefix']:
-			roomnamedefault = self.configRegistry['umc/schooladmin/groups/defaultgroupprefix']
+		if self.configRegistry.get('umc/roomadmin/groups/defaultgroupprefix'):
+			roomnamedefault = self.configRegistry['umc/roomadmin/groups/defaultgroupprefix']
 			roomnamedefault = roomnamedefault % { 'departmentNumber': self.ldap_master.departmentNumber }
 			debugmsg( ud.ADMIN, ud.INFO, 'roomnamedefault = %s' % roomnamedefault)
 

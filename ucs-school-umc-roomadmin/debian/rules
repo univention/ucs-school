@@ -3,7 +3,7 @@
 # Univention Management Console Room Admin Module
 #  rules file for generating the deb package
 #
-# Copyright (C) 2004, 2005, 2006 Univention GmbH
+# Copyright (C) 2005-2009 Univention GmbH
 #
 # http://www.univention.de/
 # 
@@ -31,7 +31,7 @@
 version=`dpkg-parsechangelog | grep "Version" | sed -e 's/Version: //'`
 copyrightyear=`date +%Y`
 
-PACKAGE_NAME=univention-management-console-room-admin
+PACKAGE_NAME=ucs-school-umc-roomadmin
 D=$(CURDIR)/debian/${PACKAGE_NAME}
 # DESTDIR=debian/tmp
 
@@ -70,7 +70,7 @@ install-ext-%:
 	install -m 0644 ultravnc.vnc $(D)/usr/share/univention-management-console/www/
 
     # install join script
-	install -m 0755 38univention-management-console-room-admin.inst ${D}/usr/lib/univention-install/
+	install -m 0755 38ucs-school-umc-roomadmin.inst ${D}/usr/lib/univention-install/
 	install -m 0755 js/request_snapshot.js ${D}/usr/share/univention-management-console/www/js/umc/roomadmin/
 
 	univention-install-config-registry
