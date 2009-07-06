@@ -1,0 +1,5 @@
+[Addlink]
+setup.ini, progman.groups,, "group1=""MyNetwork"""
+setup.ini, group1,,"""LinkToNetwork"",""\\anton\steuwer"""
+
+

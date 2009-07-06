@@ -1,0 +1,95 @@
+#!/bin/sh
+
+SCRIPTNAME=univention-management-console-reservation
+VERSION=1
+JOINREGISTRY=/usr/lib/univention-install/.index.txt
+
+if ! test -e "/usr/share/univention-join/.joined"; then
+	echo "The server has not joined yet"
+	exit 1
+fi
+
+touch ${JOINREGISTRY}
+
+test -n "`grep "${SCRIPTNAME} v${VERSION} successful" ${JOINREGISTRY}`" && exit 1
+
+eval $( univention-config-registry shell ldap/base )
+
+# <create RESERVATION operations>
+# <preparation>
+univention-directory-manager container/cn create $@ --ignore_exists \
+				--position "cn=univention,$ldap_base" --set name=console
+univention-directory-manager container/cn create $@ --ignore_exists \
+				--position "cn=console,cn=univention,$ldap_base" --set name=operations
+# </preparation>
+univention-directory-manager settings/console_operation create $@ --ignore_exists \
+				--position "cn=operations,cn=console,cn=univention,$ldap_base" \
+				--set name=reservation \
+				--set description="RESERVATION operations" \
+				--append operation="reservation/*" \
+
+univention-directory-manager settings/console_operation modify $@ --ignore_exists \
+				--dn "cn=reservation,cn=operations,cn=console,cn=univention,$ldap_base" \
+				--append operation="reservation/list" \
+				--append operation="reservation/edit" \
+				--append operation="reservation/remove" \
+				--append operation="reservation/profile/list" \
+				--append operation="reservation/profile/edit" \
+				--append operation="reservation/profile/write" \
+				--append operation="reservation/profile/remove" \
+				--append operation="reservation/lessontimes/edit"
+# </create RESERVATION operations>
+
+
+# <create RESERVATION ACL>
+# <preparation>
+univention-directory-manager container/cn create $@ --ignore_exists \
+				--position "cn=console,cn=univention,$ldap_base" --set name=acls
+# </preparation>
+univention-directory-manager settings/console_acl create $@ --ignore_exists \
+				--position "cn=acls,cn=console,cn=univention,$ldap_base" \
+				--set name=reservation-all \
+				--set category="UMC Room Reservation" \
+				--set ldapbase="$ldap_base" \
+				--set command="reservation/*" \
+				--set description="All UMC Room Reservation operations"
+
+univention-directory-manager settings/console_acl create $@ --ignore_exists \
+				--position "cn=acls,cn=console,cn=univention,$ldap_base" \
+				--set name=reservation-own \
+				--set category="UMC Room Reservation" \
+				--set ldapbase="$ldap_base" \
+				--set command="reservation/list" \
+				--set command="reservation/profile/list" \
+				--set command="reservation/list:target=own" \
+				--set command="reservation/edit:target=own" \
+				--set command="reservation/remove:target=own" \
+				--set command="reservation/profile/list:target=own" \
+				--set command="reservation/profile/edit:target=own" \
+				--set command="reservation/profile/write:target=own" \
+				--set command="reservation/profile/remove:target=own" \
+				--set description="UMC Room Reservation operations on own data"
+# </create RESERVATION ACL>
+
+# <add ACL 'reservation-all' to policy 'default-admin'>
+univention-directory-manager policies/console_access modify $@ \
+				--dn "cn=default-admin,cn=console,cn=policies,$ldap_base" \
+				--append allow="cn=reservation-all,cn=acls,cn=console,cn=univention,$ldap_base"
+# </add ACL 'reservation-all' to policy 'default-admin'>
+
+# <create separate policies>
+univention-directory-manager policies/console_access create $@ --ignore_exists \
+				--position "cn=console,cn=policies,$ldap_base" \
+				--set name=reservation-admin \
+				--append allow="cn=reservation-all,cn=acls,cn=console,cn=univention,$ldap_base"
+
+univention-directory-manager policies/console_access create $@ --ignore_exists \
+				--position "cn=console,cn=policies,$ldap_base" \
+				--set name=reservation-user \
+				--append allow="cn=reservation-own,cn=acls,cn=console,cn=univention,$ldap_base"
+# </create separate policies>
+
+
+test -n "`grep "${SCRIPTNAME} v${VERSION} successful" ${JOINREGISTRY}`" || echo "${SCRIPTNAME} v${VERSION} successful" >> ${JOINREGISTRY}
+
+exit 0

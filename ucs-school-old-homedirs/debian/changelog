@@ -1,0 +1,29 @@
+ucs-school-old-homedirs (4.0.0-0) unstable; urgency=low
+
+  * ported package to component ucs@school
+
+ -- Sönke Schwardt <schwardt@univention.de>  Tue, 02 Jul 2009 13:29:23 +0200
+
+ucs-school-old-homedirs (3.0.0-0) unstable; urgency=low
+
+  * ported to UCS 2.2
+
+ -- Sönke Schwardt <schwardt@univention.de>  Tue, 26 May 2008 09:19:22 +0200
+
+ucs-school-old-homedirs (2.0.0-0) unstable; urgency=low
+
+  * ported to UCS 2.1
+
+ -- Sönke Schwardt <schwardt@univention.de>  Wed, 10 Dec 2008 12:05:23 +0200
+
+ucs-school-old-homedirs (1.0.0-0) unstable; urgency=low
+
+  * port to UCS 2.0
+
+ -- Arvid Requate <requate@univention.de>  Mon, 14 Apr 2008 10:50:04 +0200
+
+ucs-school-old-homedirs (0.1) unstable; urgency=low
+
+  * initial release
+
+ -- Wolf Wiegand <wiegand@univention.de>  Tue, 18 Jul 2006 13:11:31 +0200

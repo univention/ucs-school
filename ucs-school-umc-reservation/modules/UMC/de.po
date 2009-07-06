@@ -1,0 +1,524 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2008-10-31 14:37+0100\n"
+"PO-Revision-Date: 2008-10-06 13:41+0200\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: __init__.py:67
+msgid "Lesson Configuration"
+msgstr "Unterrichts-Vorbereitung"
+
+#: __init__.py:68 _revamp.py:87
+msgid "School Lesson Configuration"
+msgstr "Unterrichts-Vorbereitung"
+
+#: __init__.py:79
+msgid "Reservations"
+msgstr "Unterrichtsvorbereitung"
+
+#: __init__.py:80
+msgid "List Reserations"
+msgstr "Unterrichtsvorbereitung anzeigen"
+
+#: __init__.py:91 __init__.py:92 _revamp.py:186 _revamp.py:247
+msgid "Edit Reservation"
+msgstr "Unterrichtsvorbereitung bearbeiten"
+
+#: __init__.py:115 __init__.py:116 _revamp.py:204
+msgid "Remove Reservation"
+msgstr "Unterrichtsvorbereitung stronieren"
+
+#: __init__.py:124 _revamp.py:671
+msgid "Reservation Profiles"
+msgstr "Unterrichtsprofile"
+
+#: __init__.py:125
+msgid "List Reservation Profiles"
+msgstr "Unterrichtsprofile anzeigen"
+
+#: __init__.py:136 __init__.py:137
+msgid "Edit Reservation Profile"
+msgstr "Unterrichtsprofil bearbeiten"
+
+#: __init__.py:146 __init__.py:147
+msgid "Save Reservation Profile"
+msgstr "Unterrichtsprofil speichern"
+
+#: __init__.py:152 __init__.py:153
+msgid "Remove Reservation Profile"
+msgstr "Unterrichtsprofil entfernen"
+
+#: __init__.py:158
+msgid "Edit Lessontimes"
+msgstr "Schulstundenzeiten bearbeiten"
+
+#: __init__.py:159 _revamp.py:972
+msgid "Edit Lessontime Definitions"
+msgstr "Schulstundenzeiten bearbeiten"
+
+#: __init__.py:739
+#, python-format
+msgid "Reservation for Room \"%s\": %s %s-%s"
+msgstr "Konfiguration in Raum \"%s\": %s %s-%s"
+
+#: __init__.py:741
+msgid "%Y-%m-%d"
+msgstr "%d.%m.%Y"
+
+#: __init__.py:845
+#, python-format
+msgid "Error while setting up reservation (status=%s)"
+msgstr "Fehler beim Anlegen der Unterrichtsvorbereitung (status=%s)"
+
+#: __init__.py:1133
+msgid "Copy of"
+msgstr "Kopie von"
+
+#: __init__.py:1250
+#, python-format
+msgid "Lesson '%s' and '%s' overlap, please correct"
+msgstr "Schulstunden '%s' und '%s' überlappen, bitte korregieren"
+
+#: __init__.py:1279
+msgid "Lessontime Definitions Saved"
+msgstr "Schulstunden-Definitionen gespeichert"
+
+#: _revamp.py:66
+msgid "Search"
+msgstr "Suchen"
+
+#: _revamp.py:99 _revamp.py:100
+msgid "New Reservation"
+msgstr "Neue Unterrichtsvorbereitung"
+
+#: _revamp.py:118 _revamp.py:697
+msgid "Show all"
+msgstr "Alle anzeigen"
+
+#: _revamp.py:126 _revamp.py:703
+msgid "Searchresults"
+msgstr "Suchergebnis"
+
+#: _revamp.py:137 _revamp.py:269 _revamp.py:518 _revamp.py:604 _types.py:423
+#: _types.py:470 _types.py:476
+msgid "Date"
+msgstr "Datum"
+
+#: _revamp.py:137 _revamp.py:293 _revamp.py:518 _revamp.py:604 _types.py:424
+#: _types.py:452
+msgid "Start Time"
+msgstr "Anfangszeit"
+
+#: _revamp.py:137 _revamp.py:518 _revamp.py:604 _types.py:425 _types.py:453
+msgid "End Time"
+msgstr "Endzeit"
+
+#: _revamp.py:137 _revamp.py:518 _revamp.py:604 _types.py:53 _types.py:427
+msgid "Room"
+msgstr "Raum"
+
+#: _revamp.py:137 _revamp.py:518 _revamp.py:604
+msgid "Class/Group"
+msgstr "Klasse/AG"
+
+#: _revamp.py:137 _revamp.py:518 _revamp.py:604 _revamp.py:706 _revamp.py:929
+#: _types.py:428
+msgid "Reservation Profile"
+msgstr "Unterrichtsprofil"
+
+#: _revamp.py:137 _revamp.py:706 _types.py:53 _types.py:478 _types.py:508
+msgid "Owner"
+msgstr "Besitzer"
+
+#: _revamp.py:137 _revamp.py:706
+msgid "Edit"
+msgstr "Bearbeiten"
+
+#: _revamp.py:137 _revamp.py:706
+msgid "Delete"
+msgstr "Löschen"
+
+#: _revamp.py:187
+msgid "Click to edit this reservation"
+msgstr "Unterrichtsvorbereitung bearbeiten"
+
+#: _revamp.py:192 _revamp.py:210 _revamp.py:215
+msgid "You are not the owner of this reservation"
+msgstr "Sie sind nicht Besitzer dieser Unterrichtsvorbereitung"
+
+#: _revamp.py:205
+msgid "Click to remove this reservation"
+msgstr "Unterrichtsvorbereitung entfernen"
+
+#: _revamp.py:223
+msgid "No Matching Reservations Found"
+msgstr "Keine passenden Unterrichtsvorbereitungen gefunden"
+
+#: _revamp.py:225
+msgid "Click search button to list reservations"
+msgstr "Zur Anzeige von Unterrichtsvorbereitungen auf Suchen klicken"
+
+#: _revamp.py:245
+msgid "Create Reservation"
+msgstr "Unterrichtsvorbereitung buchen"
+
+#: _revamp.py:259
+msgid "Reservation created."
+msgstr "Unterrichtsvorbereitung gebucht."
+
+#: _revamp.py:362
+msgid "Please select school:"
+msgstr "Bitte Schule auswählen:"
+
+#: _revamp.py:469
+#, python-format
+msgid "Distribution project %s has been created for this reservation."
+msgstr ""
+"Verteilungsprojekt \"%s\" wurde für diese Unterrichtsvorbereitung erstellt."
+
+#: _revamp.py:501
+msgid "Save Reservation"
+msgstr "Unterrichtsvorbereitung speichern"
+
+#: _revamp.py:503 _revamp.py:898 _revamp.py:1013
+msgid "Save Changes"
+msgstr "Änderungen speichern"
+
+#: _revamp.py:512
+msgid "Collision: Reservation not possible."
+msgstr "Konflikt: Unterrichtsvorbereitung nicht möglich."
+
+#: _revamp.py:514
+msgid "Collision: Override Existing Reservation?"
+msgstr "Konflikt: Existiernde Unterrichtsvorbereitung außer Kraft setzen?"
+
+#: _revamp.py:516
+msgid "Colliding Reservation:"
+msgstr "Überlappende Unterrichtsvorbereitung:"
+
+#: _revamp.py:559
+msgid "Override"
+msgstr "Trotzdem buchen"
+
+#: _revamp.py:591
+msgid "No Reservation has been selected"
+msgstr "Keine Unterrichtsvorbereitung ausgewählt"
+
+#: _revamp.py:603
+msgid "Please Confirm Cancellation of Following Reservation:"
+msgstr "Bitte Stornierung der folgenden Unterrichtsvorbereitung bestätigen:"
+
+#: _revamp.py:644 _revamp.py:945
+msgid "Remove"
+msgstr "Entfernen"
+
+#: _revamp.py:649
+msgid "Reservation successfully cancelled"
+msgstr "Unterrichtsvorbereitung erfolgreich storniert."
+
+#: _revamp.py:651
+msgid "Error While Cancelling Reservation"
+msgstr "Fehler bei der Stornierung der Unterrichtsvorbereitung"
+
+#: _revamp.py:653 _revamp.py:954
+msgid "Please ask local administrator for further details."
+msgstr "Bitte wenden Sie sich an den lokalen Administrator."
+
+#: _revamp.py:681 _revamp.py:682
+msgid "New Reservation Profile"
+msgstr "Neues Unterrichtsprofil"
+
+#: _revamp.py:706 _revamp.py:929 _types.py:62
+msgid "Description"
+msgstr "Beschreibung"
+
+#: _revamp.py:706
+msgid "Copy"
+msgstr "Kopieren"
+
+#: _revamp.py:734
+msgid "Edit Profile"
+msgstr "Unterrichtsprofil bearbeiten"
+
+#: _revamp.py:736
+msgid "Click to edit this profile"
+msgstr "Unterrichtsprofil bearbeiten"
+
+#: _revamp.py:742 _revamp.py:777
+msgid "This profile is a given default"
+msgstr ""
+
+#: _revamp.py:744 _revamp.py:779
+msgid "You are not the owner of this profile"
+msgstr "Sie sind nicht Besitzer dieses Unterrichtsprofils"
+
+#: _revamp.py:755
+msgid "Copy Reservation Profile"
+msgstr "Unterrichtsprofil kopieren"
+
+#: _revamp.py:757
+msgid "Click to copy and edit this profile"
+msgstr "Unterrichtsprofil bearbeiten"
+
+#: _revamp.py:768
+msgid "Remove Profile"
+msgstr "Unterrichtsprofil speichern"
+
+#: _revamp.py:770
+msgid "Click to remove this profile"
+msgstr "Unterrichtsprofil entfernen"
+
+#: _revamp.py:788
+msgid "No Matching Reservation Profiles Found"
+msgstr "Keine passenden Unterrichtsprofile gefunden."
+
+#: _revamp.py:790
+msgid "Click search button to list reservation profiles"
+msgstr "Zur Anzeige von Unterrichtsprofilen auf Suchen klicken"
+
+#: _revamp.py:807
+msgid "Edit Configuration Profile"
+msgstr "Unterrichtsprofil bearbeiten"
+
+#: _revamp.py:896
+msgid "Create Reservation Profile"
+msgstr "Unterrichtsprofil speichern"
+
+#: _revamp.py:916
+msgid "No Reservation Profile has been Selected"
+msgstr "Kein Unterrichtsprofil ausgewählt"
+
+#: _revamp.py:928
+msgid "Please Confirm Removal of Following Reservation Profile:"
+msgstr "Bitte Löschen des folgenden Unterrichtsprofils bestätigen:"
+
+#: _revamp.py:950
+msgid "Reservation profile successfully removed"
+msgstr "Unterrichtsprofil erfolgrech gelöscht."
+
+#: _revamp.py:952
+msgid "Error While Removing Reservation Profile"
+msgstr "Fehler beim Löschen des Unterrichtsprofils"
+
+#: _types.py:43
+msgid "Please choose and add"
+msgstr "Bitte wählen und hinzufügen"
+
+#: _types.py:50 _types.py:59
+msgid "Search Key"
+msgstr "Suchkriterium"
+
+#: _types.py:53
+msgid "Group"
+msgstr "Klasse/AG"
+
+#: _types.py:62 _types.py:506
+msgid "Profile Name"
+msgstr "Unterrichtsprofil"
+
+#: _types.py:119
+msgid "Now"
+msgstr "Sofort"
+
+#: _types.py:150
+msgid "End of Lesson"
+msgstr "Ende dieser Schulstunde"
+
+#: _types.py:152
+msgid "In 45 min."
+msgstr "In 45 Min."
+
+#: _types.py:153
+msgid "In 1.5 hours"
+msgstr "In 1,5 Stunden"
+
+#: _types.py:154
+msgid "In 3 hours"
+msgstr "In 3 Stunden"
+
+#: _types.py:155
+msgid "End of day"
+msgstr "Ende des Tages"
+
+#: _types.py:162 _types.py:394
+msgid "None"
+msgstr "Keine"
+
+#: _types.py:163
+msgid "Daily"
+msgstr "Täglich"
+
+#: _types.py:164
+msgid "Every 2nd Day"
+msgstr "Jeden zweiten Tag"
+
+#: _types.py:165
+msgid "Every 3rd Day"
+msgstr "Jeden dritten Tag"
+
+#: _types.py:166
+msgid "Every 4th Day"
+msgstr "Jeden vierten Tag"
+
+#: _types.py:167
+msgid "Every 5th Day"
+msgstr "Jeden fünften Tag"
+
+#: _types.py:168
+msgid "Every 6th Day"
+msgstr "Jeden sechsten Tag"
+
+#: _types.py:169
+msgid "Weekly"
+msgstr "Wöchentlich"
+
+#: _types.py:170
+msgid "Biweekly"
+msgstr "Zweiwöchig"
+
+#: _types.py:184
+msgid "No Exception"
+msgstr "Ohne Ausnahme"
+
+#: _types.py:185
+msgid "Public Holidays"
+msgstr "Feiertage"
+
+#: _types.py:186
+msgid "Autumn Holidays"
+msgstr "Herbstferien"
+
+#: _types.py:187
+msgid "Christmas Holidays"
+msgstr "Weihnachtsferien"
+
+#: _types.py:198
+msgid "No Term"
+msgstr "Halbjahr"
+
+#: _types.py:199 _types.py:201
+msgid "Winter Term"
+msgstr "Winterhalbjahr"
+
+#: _types.py:200
+msgid "Summer Term"
+msgstr "Sommerhalbjahr"
+
+#: _types.py:245
+msgid "Reserve Program Licenses"
+msgstr "Programmlizenzen reservieren"
+
+#: _types.py:282
+msgid "Deny Programs"
+msgstr "Gesperrte Programme"
+
+#: _types.py:309
+msgid "Program Licenses"
+msgstr "Programmlizenzen"
+
+#: _types.py:310
+msgid "List of Program Licenses"
+msgstr "Liste lizensierter Programme"
+
+#: _types.py:317
+msgid "Disabled Program"
+msgstr "Gesperrtes Programm"
+
+#: _types.py:318
+msgid "List of Disabled Programs"
+msgstr "Liste sperrbarer Programme"
+
+#: _types.py:366
+msgid "Internet Filter"
+msgstr "Internetfilter"
+
+#: _types.py:374 _types.py:394
+msgid "Default"
+msgstr "Standard"
+
+#: _types.py:391
+msgid "Printmode"
+msgstr "Druckmodus"
+
+#: _types.py:394
+msgid "All"
+msgstr "Alle Drucker erlaubt"
+
+#: _types.py:417
+msgid "Department"
+msgstr "Schule"
+
+#: _types.py:418
+msgid "Message"
+msgstr "Nachricht"
+
+#: _types.py:426
+msgid "Class/Project Group"
+msgstr "Klasse/AG"
+
+#: _types.py:429
+msgid "Reservation"
+msgstr "Unterrichtsvorbereitung"
+
+#: _types.py:430
+msgid "Collect Pupils Files at End of Reservation"
+msgstr "Projektdateien am Ende des Unterrichts einsammeln."
+
+#: _types.py:431
+msgid "Class Share"
+msgstr "Klassenfreigabe"
+
+#: _types.py:432
+msgid "Schoolshare"
+msgstr "Marktplatz"
+
+#: _types.py:433
+msgid "Extra Shares"
+msgstr "Sonstige Ordner / Arbeitsgruppen"
+
+#: _types.py:434
+msgid "Rhythm"
+msgstr "Rhythmus"
+
+#: _types.py:435
+msgid "Digital Teaching Resource"
+msgstr "Digitales Unterrichtsmaterial"
+
+#: _types.py:436
+msgid "Upload Digital Teaching Resources"
+msgstr "Digitale Unterrichtsmaterialien hinterlegen"
+
+#: _types.py:439
+msgid "Number of Licenses"
+msgstr "Zu nutzende Lizenzen"
+
+#: _types.py:450
+msgid "Name"
+msgstr "Name"
+
+#: _types.py:451 _types.py:469 _types.py:507
+msgid "Description (optional)"
+msgstr "Beschreibung (optional)"
+
+#: _types.py:455
+msgid "Lessontime Definitions"
+msgstr "Schulstunden Definitionen"
+
+#: _types.py:467
+msgid "Reservation ID"
+msgstr "Unterrichtsvorbereitung"
+
+#: _types.py:468
+msgid "Reservation Name"
+msgstr "Unterrichtsvorbereitung"

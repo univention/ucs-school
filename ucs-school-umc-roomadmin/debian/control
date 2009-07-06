@@ -1,0 +1,20 @@
+Source: ucs-school-umc-roomadmin
+Section: univention
+Priority: optional
+Maintainer: Univention GmbH <packages@univention.de>
+Build-Depends: debhelper, python2.4, python-all-dev, python-central, univention-config-dev
+Standards-Version: 3.7.2
+XS-Python-Version: 2.4
+
+Package: ucs-school-umc-roomadmin
+Architecture: all
+Depends: univention-config-registry, python-univention-management-console, samba, fping, python-italc, italc-client, python-json, wakeonlan, python2.4
+XB-Python-Version: ${python:Versions}
+Description: UMC module to administrate computer rooms
+ This package contains an Univention Management Console module 
+ to administrate computer rooms in UCS@School environment.
+ .
+ This package is part of Univention Corporate Server (UCS),
+ an integrated, directory driven solution for managing
+ corporate environments. For more information about UCS,
+ refer to: http://www.univention.de/

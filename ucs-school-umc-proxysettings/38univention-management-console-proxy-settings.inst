@@ -1,0 +1,58 @@
+#!/bin/sh
+
+VERSION=1
+
+if ! test -e "/usr/share/univention-join/.joined"; then
+	echo "The server has not joined yet"
+	exit 1
+fi
+
+touch /usr/lib/univention-install/.index.txt
+
+test -n "`grep "univention-management-console-proxy-settings v${VERSION} successful" /usr/lib/univention-install/.index.txt`" && exit 1
+
+eval $( univention-config-registry shell ldap/base )
+
+univention-directory-manager container/cn create $@ --ignore_exists --position cn=univention,$ldap_base --set name=console
+univention-directory-manager container/cn create $@ --ignore_exists --position cn=console,cn=univention,$ldap_base --set name=config
+
+# create PROXYSETTINGS operations
+univention-directory-manager settings/console_operation create $@ --ignore_exists --position cn=operations,cn=console,cn=univention,$ldap_base \
+																				 --set name=proxysettings \
+																				 --set description="Proxy related Operations" \
+																				 --append operation="proxysettings/*" \
+																				 --append operation="proxysettings/overview" \
+																				 --append operation="proxysettings/show/*" \
+																				 --append operation="proxysettings/set/*"
+
+univention-directory-manager settings/console_operation modify $@ --ignore_exists --dn cn=proxysettings,cn=operations,cn=console,cn=univention,$ldap_base \
+																				 --append operation="proxysettings/show/profileassignment" \
+																				 --append operation="proxysettings/set/profileassignment"
+
+univention-directory-manager settings/console_acl create $@ --ignore_exists --position cn=acls,cn=console,cn=univention,$ldap_base \
+																				 --set name=proxysettings-all \
+																				 --set category="UMC Proxy Settings" \
+																				 --set ldapbase="$ldap_base" \
+																				 --set command="proxysettings/*" \
+																				 --set description="All UMC Proxy related operations"
+
+univention-directory-manager settings/console_acl create $@ --ignore_exists --position cn=acls,cn=console,cn=univention,$ldap_base \
+																				 --set name=proxysettings-assign-profiles \
+																				 --set category="UMC Proxy Settings" \
+																				 --set ldapbase="$ldap_base" \
+																				 --set command="proxysettings/set/profileassignment" \
+																				 --set command="proxysettings/show/profileassignment" \
+																				 --set description="UMC Proxy Filter: assign profiles"
+
+# default policies
+univention-directory-manager container/cn create $@ --ignore_exists --position cn=policies,$ldap_base --set name=console
+univention-directory-manager policies/console_access modify $@ --dn cn=default-admin,cn=console,cn=policies,$ldap_base \
+	--append allow=cn=proxysettings-all,cn=acls,cn=console,cn=univention,$ldap_base
+
+univention-directory-manager policies/console_access create $@ --ignore_exists --position cn=console,cn=policies,$ldap_base \
+	--set name=proxysettings-admin --append allow=cn=proxysettings-all,cn=acls,cn=console,cn=univention,$ldap_base
+
+
+test -n "`grep "univention-management-console-proxy-settings v${VERSION} successful" /usr/lib/univention-install/.index.txt`" || echo "univention-management-console-proxy-settings v${VERSION} successful" >>/usr/lib/univention-install/.index.txt
+
+exit 0

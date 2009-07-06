@@ -1,0 +1,120 @@
+#!/bin/sh
+#
+# Univention UCS@School
+#
+# Copyright (C) 2007-2009 Univention GmbH
+#
+# http://www.univention.de/
+#
+# All rights reserved.
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License version 2 as
+# published by the Free Software Foundation.
+#
+# Binary versions of this file provided by Univention to you as
+# well as other copyrighted, protected or trademarked materials like
+# Logos, graphics, fonts, specific documentations and configurations,
+# cryptographic keys etc. are subject to a license agreement between
+# you and Univention.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+
+VERSION=1
+
+if ! test -e "/usr/share/univention-join/.joined"; then
+	echo "The server has not joined yet"
+	exit 1
+fi
+
+touch /usr/lib/univention-install/.index.txt
+
+test -n "`grep "ucs-school-umc-schooladmin v${VERSION} successful" /usr/lib/univention-install/.index.txt`" && exit 1
+
+eval $( univention-config-registry shell ldap/base )
+
+univention-directory-manager container/cn create $@ --ignore_exists --position cn=univention,$ldap_base --set name=console
+
+# create school-account operations
+univention-directory-manager settings/console_operation create $@ --ignore_exists --position cn=operations,cn=console,cn=univention,$ldap_base \
+    --set name=school-accounts \
+    --set description="School-Accounts operations" \
+    --append operation="schoolaccounts/*" \
+    --append operation="schoolaccounts/class/show" \
+    --append operation="schoolaccounts/pupil/search" \
+    --append operation="schoolaccounts/teacher/show" \
+    --append operation="schoolaccounts/user/passwd"
+
+univention-directory-manager settings/console_acl create $@ --ignore_exists --position cn=acls,cn=console,cn=univention,$ldap_base \
+    --set name=school-accounts-all \
+    --set category="UMC School-Accounts" \
+    --set ldapbase="$ldap_base" \
+    --set command="schoolaccounts/*" \
+    --set description="All UMC School-Accounts operations"
+
+# create school-group operations
+univention-directory-manager settings/console_operation create $@ --ignore_exists --position cn=operations,cn=console,cn=univention,$ldap_base \
+    --set name=school-groups \
+    --set description="School-Groups operations" \
+    --append operation="schoolgroups/*" \
+    --append operation="schoolgroups/groups/list" \
+    --append operation="schoolgroups/group/edit" \
+    --append operation="schoolgroups/group/set" \
+    --append operation="schoolgroups/group/add" \
+    --append operation="schoolgroups/groups/remove"
+
+
+univention-directory-manager settings/console_operation modify $@ --ignore_exists --dn cn=school-groups,cn=operations,cn=console,cn=univention,$ldap_base \
+    --append operation="schoolgroups/group/teacher/*" \
+    --append operation="schoolgroups/group/teacher/set" \
+    --append operation="schoolgroups/group/teacher/list" \
+    --append operation="schoolgroups/group/teacher/edit"
+
+univention-directory-manager settings/console_operation modify $@ --ignore_exists --dn cn=school-groups,cn=operations,cn=console,cn=univention,$ldap_base \
+    --append operation="schoolgroups/group/unused/list" \
+    --append operation="schoolgroups/group/unused/remove"
+
+univention-directory-manager settings/console_acl create $@ --ignore_exists --position cn=acls,cn=console,cn=univention,$ldap_base \
+    --set name=school-groups-all \
+    --set category="UMC School-Groups" \
+    --set ldapbase="$ldap_base" \
+    --set command="schoolgroups/*" \
+    --set description="All UMC School-Groups operations"
+
+univention-directory-manager settings/console_acl create $@ --ignore_exists --position cn=acls,cn=console,cn=univention,$ldap_base \
+    --set name=school-groups-teacher \
+    --set category="UMC School-Groups" \
+    --set ldapbase="$ldap_base" \
+    --set command="schoolgroups/groups/list" \
+    --set command="schoolgroups/group/edit" \
+    --set command="schoolgroups/group/set" \
+    --set description="UMC School-Groups: modify existing groups"
+
+# default policies
+univention-directory-manager container/cn create $@ --ignore_exists --position cn=policies,$ldap_base --set name=console
+univention-directory-manager policies/console_access create $@ --ignore_exists --position cn=console,cn=policies,$ldap_base \
+	--set name=default-admin \
+	--append allow=cn=school-accounts-all,cn=acls,cn=console,cn=univention,$ldap_base \
+	--append allow=cn=school-groups-all,cn=acls,cn=console,cn=univention,$ldap_base
+
+univention-directory-manager policies/console_access modify $@ --ignore_exists --dn cn=default-admin,cn=console,cn=policies,$ldap_base \
+	--append allow=cn=school-accounts-all,cn=acls,cn=console,cn=univention,$ldap_base \
+	--append allow=cn=school-groups-all,cn=acls,cn=console,cn=univention,$ldap_base
+
+univention-directory-manager policies/console_access create $@ --ignore_exists --position cn=console,cn=policies,$ldap_base \
+	--set name=school-accounts-admin --append allow=cn=school-accounts-all,cn=acls,cn=console,cn=univention,$ldap_base
+
+univention-directory-manager policies/console_access create $@ --ignore_exists --position cn=console,cn=policies,$ldap_base \
+	--set name=school-groups-admin --append allow=cn=school-groups-all,cn=acls,cn=console,cn=univention,$ldap_base
+
+
+test -n "`grep "ucs-school-umc-schooladmin v${VERSION} successful" /usr/lib/univention-install/.index.txt`" || echo "ucs-school-umc-schooladmin v${VERSION} successful" >>/usr/lib/univention-install/.index.txt
+
+exit 0

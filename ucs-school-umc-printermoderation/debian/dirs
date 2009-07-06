@@ -1,0 +1,9 @@
+usr/lib/univention-install/
+usr/share/locale/de/LC_MESSAGES
+usr/share/univention-management-console/www/themes/images/default/24x24/printermoderation
+usr/share/univention-management-console/www/themes/images/default/64x64/printermoderation
+usr/lib/python2.4/site-packages/univention/management/console/handlers/printermoderation
+var/lib/ucs-school-umc-printermoderation
+usr/lib/ucs-school-umc-printermoderation
+var/cache/printermoderation
+etc/cron.daily

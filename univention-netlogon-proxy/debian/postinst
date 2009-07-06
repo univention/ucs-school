@@ -1,9 +1,9 @@
-#! /bin/sh
+#!/bin/sh
 #
 # Univention Netlogon Proxy
 #  postinst script
 #
-# Copyright (C) 2007 Univention GmbH
+# Copyright (C) 2007-2009 Univention GmbH
 #
 # http://www.univention.de/
 #
@@ -28,29 +28,27 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
-set -e
+#DEBHELPER#
 
 case "$1" in
     configure)
 
-	eval `univention-config-registry shell`
+		eval `univention-config-registry shell`
 
-	univention-config-registry set samba/netlogonscript/proxy/host?"$hostname.$domainname" \
-							  samba/netlogonscript/proxy/port?3128 \
-							  samba/netlogonscript/proxy/whitelist?"127.0.0.1 localhost $hostname.$domainname" \
-							  samba/netlogonscript/proxy/enable/firefox?true \
-							  samba/netlogonscript/proxy/enable/iexplorer?true
-    ;;
+		univention-config-registry set samba/netlogonscript/proxy/host?"$hostname.$domainname" \
+			 					 	  samba/netlogonscript/proxy/port?3128 \
+			 					 	  samba/netlogonscript/proxy/whitelist?"127.0.0.1 localhost $hostname.$domainname" \
+			 					 	  samba/netlogonscript/proxy/enable/firefox?true \
+			 					 	  samba/netlogonscript/proxy/enable/iexplorer?true
+		;;
 
     abort-upgrade|abort-remove|abort-deconfigure)
-    ;;
+		;;
 
     *)
         echo "postinst called with unknown argument \`$1'" >&2
         exit 1
-    ;;
+		;;
 esac
-
-#DEBHELPER#
 
 exit 0
