@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2008-10-31 14:37+0100\n"
-"PO-Revision-Date: 2008-10-06 13:41+0200\n"
+"PO-Revision-Date: 2009-07-06 16:55+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -257,7 +257,7 @@ msgstr "Unterrichtsprofil bearbeiten"
 
 #: _revamp.py:742 _revamp.py:777
 msgid "This profile is a given default"
-msgstr ""
+msgstr "Dieses Profil ist ein festgelegter Vorgabewert"
 
 #: _revamp.py:744 _revamp.py:779
 msgid "You are not the owner of this profile"
