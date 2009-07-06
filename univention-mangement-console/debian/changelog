@@ -1,3 +1,9 @@
+univention-management-console (1.5.0-0) unstable; urgency=low
+
+  * ported package to component ucs@school
+
+ -- Sönke Schwardt <schwardt@univention.de>  Mon, 06 Jul 2009 17:13:47 +0200
+
 univention-management-console (1.1.4-1) unstable; urgency=low
 
   * merged dojo date widget; Bug #12977 
