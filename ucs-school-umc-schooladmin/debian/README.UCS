@@ -1,0 +1,2 @@
+umc/schooladmin/groups/regex?"^%(departmentNumber)s[-0-9a-zA-Z]+$"
+umc/schooladmin/groups/defaultgroupprefix?"%(departmentNumber)s-"

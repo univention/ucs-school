@@ -1,7 +1,6 @@
-#!/usr/bin/python2.4
+#!/bin/sh
 #
-# Univention Management Console
-#  school accounts module: manages passwords for pupils and teachers
+# Univention UCS@School
 #
 # Copyright (C) 2007-2009 Univention GmbH
 #
@@ -28,28 +27,16 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
-import univention.management.console as umc
-import univention.management.console.dialog as umcd
-import univention.debug as ud
-import univention.config_registry
-import univention.uldap
+#DEBHELPER#
 
-_ = umc.Translation( 'univention.management.console.handlers.school-accounts' ).translate
+eval $(univention-config-registry shell)
 
-class SchoolAccounts_SearchKeys( umc.StaticSelection ):
-	def __init__( self, required = True ):
-		umc.StaticSelection.__init__( self, unicode( _( 'Search Key' ) ), required = required )
+if [ "$server_role" = "domaincontroller_master" ] || [ "$server_role" = "domaincontroller_backup" ]; then
 
-	def choices( self ):
-		return ( ( 'uid', _( 'Username' ) ),
-				 ( 'givenName', _( 'First Name' ) ),
-				 ( 'sn', _( 'Last Name' ) ),
-				 )
+	/usr/lib/univention-install/38ucs-school-umc-schooladmin.inst || true
+fi
 
-umcd.copy( umc.StaticSelection, SchoolAccounts_SearchKeys )
+univention-config-registry set umc/schooladmin/groups/regex?"^%(departmentNumber)s[-0-9a-zA-Z]+$" \
+								umc/schooladmin/groups/defaultgroupprefix?"%(departmentNumber)s-"
 
-ou = umc.String( _( 'Department' ) )
-user = umc.String( _( 'User' ) )
-group = umc.String( _( 'Group' ) )
-searchkeys = SchoolAccounts_SearchKeys()
-searchfilter = umc.String( '&nbsp;' , required = False )
+exit 0

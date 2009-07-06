@@ -3,7 +3,7 @@
 # Univention Management Console
 #  module: school groups Module
 #
-# Copyright (C) 2007 Univention GmbH
+# Copyright (C) 2007-2009 Univention GmbH
 #
 # http://www.univention.de/
 #
@@ -583,7 +583,7 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 			ud.debug( ud.ADMIN, ud.INFO, 'SCHOOLGROUPS: classmember=%s' % classmember)
 		ud.debug( ud.ADMIN, ud.INFO, 'SCHOOLGROUPS: classmemberfilter=%s' % classmemberfilter)
 
-		if self.configRegistry.has_key('umc/schooladmin/groups/regex') and self.configRegistry['umc/schooladmin/groups/regex']:
+		if self.configRegistry.get('umc/schooladmin/groups/regex'):
 			regex = self.configRegistry['umc/schooladmin/groups/regex']
 			ud.debug( ud.ADMIN, ud.INFO, 'SCHOOLGROUPS: group.regex (PRE) = %s' % regex)
 
