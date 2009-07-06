@@ -1,3 +1,9 @@
+ucs-school-umc-schooladmin (4.0.0-1) unstable; urgency=low
+
+  * fixed dirs file (Bug: #14958)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Mon, 06 Jul 2009 17:21:53 +0200
+
 ucs-school-umc-schooladmin (4.0.0-0) unstable; urgency=low
 
   * ported package to component ucs@school

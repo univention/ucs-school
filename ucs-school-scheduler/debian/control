@@ -6,7 +6,7 @@ Build-Depends: debhelper, python-central
 Standards-Version: 3.7.2
 XS-Python-Version: 2.4
 
-Package: univention-scheduler
+Package: ucs-school-scheduler
 Architecture: all
 XB-Python-Version: all
 Depends: ucs-school-reservation-database, ucs-school-reservation-dbconnector, univention-config-registry (>=3.1.1), python2.4

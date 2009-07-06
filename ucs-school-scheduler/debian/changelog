@@ -1,3 +1,9 @@
+ucs-school-scheduler (4.0.0-2) unstable; urgency=low
+
+  * fixed control file (Bug: #14958)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Mon, 06 Jul 2009 17:19:12 +0200
+
 ucs-school-scheduler (4.0.0-1) unstable; urgency=low
 
   * fixed dependencies (Bug: #14958)
