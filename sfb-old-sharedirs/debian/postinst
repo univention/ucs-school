@@ -1,4 +1,0 @@
-#!/bin/sh
-
-univention-config-registry set system/old_sharedir_target?/home/backup/groups/ system/old_sharedir_prefixes?/home/
-/etc/init.d/univention-directory-listener restart
