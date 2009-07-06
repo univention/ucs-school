@@ -1,4 +1,4 @@
-usr/lib/univention-install/
+usr/lib/univention-install
 usr/share/locale/de/LC_MESSAGES
 usr/share/univention-management-console/www/themes/images/default/24x24/distribution
 usr/share/univention-management-console/www/themes/images/default/64x64/distribution
