@@ -1,0 +1,229 @@
+univention-management-console-reservation (3.0.0-0) unstable; urgency=low
+
+  * ported to UCS 2.2
+
+ -- Sönke Schwardt <schwardt@univention.de>  Tue, 26 May 2008 09:19:22 +0200
+
+univention-management-console-reservation (2.0.0-2) unstable; urgency=low
+
+  * new user icons (Ticket: #2008110710000077)
+
+ -- Felix Botner <fbotner@visdalen.knut.univention.de>  Tue, 20 Jan 2009 14:39:25 +0100
+
+univention-management-console-reservation (2.0.0-1) unstable; urgency=low
+
+  * new group/user icons (Ticket: #2008110710000077)
+
+ -- Felix Botner <fbotner@visdalen.knut.univention.de>  Tue, 20 Jan 2009 14:39:00 +0100
+
+univention-management-console-reservation (2.0.0-0) unstable; urgency=low
+
+  * ported to UCS 2.1
+
+ -- Sönke Schwardt <schwardt@univention.de>  Wed, 10 Dec 2008 12:05:23 +0200
+
+univention-management-console-reservation (1.1.1-8) unstable; urgency=low
+
+  * remove cancel button from lessontimes dialog (fixing Bug #12633)
+
+ -- Arvid Requate <arequate@visdalen.knut.univention.de>  Wed, 26 Nov 2008 13:12:41 +0100
+
+univention-management-console-reservation (1.1.1-7) unstable; urgency=low
+
+  * fix passing of None values to _revamp (for Bug #12523)
+
+ -- Arvid Requate <arequate@visdalen.knut.univention.de>  Tue, 25 Nov 2008 12:11:52 +0100
+
+univention-management-console-reservation (1.1.1-6) unstable; urgency=low
+
+  * document basic usage example for umcd.ComboboxButton (for Bug #12040)
+
+ -- Arvid Requate <arequate@visdalen.knut.univention.de>  Tue, 18 Nov 2008 16:33:03 +0100
+
+univention-management-console-reservation (1.1.1-5) unstable; urgency=low
+
+  * dependency on UMC-printermoderation, UMC-proxy-settings and UMD-distribution (Bug #12634)
+  * rename label for Proxy-Settings 'Filter' to 'Internet Filter' (Bug #12632)
+
+ -- Arvid Requate <arequate@visdalen.knut.univention.de>  Tue, 18 Nov 2008 14:45:15 +0100
+
+univention-management-console-reservation (1.1.1-4) unstable; urgency=low
+
+  * updated terminology and GUI layout according to MS3 milestone meeting (for Bug #12038)
+
+ -- Arvid Requate <arequate@visdalen.knut.univention.de>  Fri, 31 Oct 2008 17:34:47 +0100
+
+univention-management-console-reservation (1.1.1-3) unstable; urgency=low
+
+  * allow for empty description values in reservation/profiles/list (Bug #12523)
+  * limit creation of distribution projects to cases where no distributionID is set already
+
+ -- Arvid Requate <arequate@visdalen.knut.univention.de>  Thu, 30 Oct 2008 14:20:40 +0100
+
+univention-management-console-reservation (1.1.1-2) unstable; urgency=low
+
+  * run collision detection code also when the user changes an existing reservation (Bug #12519)
+
+ -- Arvid Requate <arequate@visdalen.knut.univention.de>  Thu, 30 Oct 2008 10:48:58 +0100
+
+univention-management-console-reservation (1.1.1-1) unstable; urgency=low
+
+  * disable UMC-modification of default profiles (Bug #12477)
+  * update version number to standard UCS scheme
+
+ -- Arvid Requate <arequate@visdalen.knut.univention.de>  Thu, 30 Oct 2008 10:22:53 +0100
+
+univention-management-console-reservation (0.1-22) unstable; urgency=low
+
+  * fix start_time selection (Bug #12486)
+  * create ACL for reservation/profile/write command and fix ACL target option checks (Bug #12476)
+  * Adjusted heading for new reservations (Bug #12474)
+
+ -- Arvid Requate <arequate@visdalen.knut.univention.de>  Wed, 29 Oct 2008 19:43:16 +0100
+
+univention-management-console-reservation (0.1-21) unstable; urgency=low
+
+  * updated translation file for lessontimes (for Bug #12036)
+
+ -- Arvid Requate <arequate@visdalen.knut.univention.de>  Thu, 23 Oct 2008 13:38:47 +0200
+
+univention-management-console-reservation (0.1-20) unstable; urgency=low
+
+  * fix syntax typo in _types.py (Bug #12461)
+  * update translation file line numbers
+
+ -- Arvid Requate <arequate@visdalen.knut.univention.de>  Thu, 23 Oct 2008 12:10:01 +0200
+
+univention-management-console-reservation (0.1-19) unstable; urgency=low
+
+  * fix timetable by using datetime.time objects (for Bug #12036)
+
+ -- Arvid Requate <arequate@visdalen.knut.univention.de>  Wed, 22 Oct 2008 17:03:56 +0200
+
+univention-management-console-reservation (0.1-18) unstable; urgency=low
+
+  * update german translation file (for Bug #12036)
+
+ -- Arvid Requate <arequate@visdalen.knut.univention.de>  Wed, 22 Oct 2008 15:38:55 +0200
+
+univention-management-console-reservation (0.1-17) unstable; urgency=low
+
+  * make lessontimes table editable (Bug #12036)
+  * use lessontimes table (Bug #12036)
+  * set replacedByID when overriding (Bug #12035)
+
+ -- Arvid Requate <arequate@visdalen.knut.univention.de>  Thu, 16 Oct 2008 20:19:47 +0200
+
+univention-management-console-reservation (0.1-16) unstable; urgency=low
+
+  * change german names "Reservierung" and "R.-System" to "Unterrichtskonfiguration",
+    "Reservierungsprofil" to "Unterrrichtsprofil"
+
+ -- Arvid Requate <arequate@visdalen.knut.univention.de>  Thu, 16 Oct 2008 13:57:37 +0200
+
+univention-management-console-reservation (0.1-15) unstable; urgency=low
+
+  * rename profiles_list to profile_list according to UMC ACLs (for Bug #12038)
+  * add startup commands without options to ACL to allow display of the module
+
+ -- Arvid Requate <requate@univention.de>  Mon,  6 Oct 2008 15:59:31 +0200
+
+univention-management-console-reservation (0.1-14) unstable; urgency=low
+
+  * updated translation (Bug #12048)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Mon, 06 Oct 2008 13:53:07 +0200
+
+univention-management-console-reservation (0.1-13) unstable; urgency=low
+
+  * added distribution of teaching material (Bug #12048)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Mon, 06 Oct 2008 13:37:34 +0200
+
+univention-management-console-reservation (0.1-12) unstable; urgency=low
+
+  * deactivate display of input widgets related to iteration of reservations (for Bug #12015)
+
+ -- Arvid Requate <requate@univention.de>  Thu,  2 Oct 2008 17:41:08 +0200
+
+univention-management-console-reservation (0.1-11) unstable; urgency=low
+
+  * updated german translation (Bug #12038)
+
+ -- Arvid Requate <requate@univention.de>  Thu,  2 Oct 2008 17:37:57 +0200
+
+univention-management-console-reservation (0.1-10) unstable; urgency=low
+
+  * include missing icons (Bug #12038)
+
+ -- Arvid Requate <requate@univention.de>  Thu,  2 Oct 2008 17:27:09 +0200
+
+univention-management-console-reservation (0.1-9) unstable; urgency=low
+
+  * convert times from isotime sting to datetime for python.MySQLdb (Bug #12321)
+
+ -- Arvid Requate <requate@univention.de>  Wed,  1 Oct 2008 18:47:52 +0200
+
+univention-management-console-reservation (0.1-8) unstable; urgency=low
+
+  * remove display of searchfilter (for Bug #12038)
+
+ -- Arvid Requate <requate@univention.de>  Mon, 29 Sep 2008 13:55:40 +0200
+
+univention-management-console-reservation (0.1-7) unstable; urgency=low
+
+  * readd custom icons (for Bug #12038)
+  * translate between uids/gids and names for between dbconnector and _revamp (for Bug #12035)
+  * dbconnector returns datetime objects, not strings, fix date handling accordingly (for Bug #12035)
+  * make use of UMC ACL options : use 'module/command: target=own' instead of 'module/command/own'
+
+ -- Arvid Requate <requate@univention.de>  Fri, 26 Sep 2008 11:21:06 +0200
+
+univention-management-console-reservation (0.1-6) unstable; urgency=low
+
+  * fixed dependency versions
+  
+ -- Sönke Schwardt <schwardt@univention.de>  Thu, 25 Sep 2008 17:00:36 +0200
+
+univention-management-console-reservation (0.1-5) unstable; urgency=low
+
+  * depend on python-univention-management-console
+  * create UMC operations according to ACL concept
+
+ -- Arvid Requate <requate@univention.de>  Mon, 22 Sep 2008 18:31:38 +0200
+
+univention-management-console-reservation (0.1-4) unstable; urgency=low
+
+  * depend on univention-reservation-lessontimes and univention-reservation-defaultprofiles
+
+ -- Arvid Requate <requate@univention.de>  Mon, 22 Sep 2008 17:25:14 +0200
+
+univention-management-console-reservation (0.1-3) unstable; urgency=low
+
+  * depend on univention-reservation-dbconnector as storage backend
+  * depend on univention-scheduler for automatic installation, which pulls
+    an updated version of univention-config-registry
+  * depend on univention-reservation-customdata which provides the
+    default_ressettings and pulls updated versions of univention-samba and
+    univention-printserver
+
+ -- Arvid Requate <requate@univention.de>  Mon, 22 Sep 2008 14:00:09 +0200
+
+univention-management-console-reservation (0.1-2) unstable; urgency=low
+
+  * map proxysettings in concept to webfrontend
+
+ -- Arvid Requate <requate@univention.de>  Thu, 11 Sep 2008 11:16:24 +0200
+
+univention-management-console-reservation (0.1-1) unstable; urgency=low
+
+  * replace demodata by reservationdb backend (Bug #12035)
+  * some wording changes (Bug: #12038)
+
+ -- Arvid Requate <requate@univention.de>  Tue,  9 Sep 2008 14:51:25 +0200
+
+univention-management-console-reservation (0.1-0) unstable; urgency=low
+
+  * Initial Release.
+
+ -- Arvid Requate <requate@univention.de>  Thu, 29 May 2008 14:03:49 +0200

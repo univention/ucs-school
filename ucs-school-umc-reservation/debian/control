@@ -1,0 +1,15 @@
+Source: univention-management-console-reservation
+Section: univention
+Priority: optional
+Maintainer: Univention GmbH <packages@univention.de>
+Build-Depends: debhelper, python, python-all-dev, python-central, univention-config-dev
+Standards-Version: 3.7.2
+XS-Python-Version: 2.4
+
+Package: univention-management-console-reservation
+Architecture: all
+Depends: univention-config-registry, univention-management-console (>=0.9.100), python-univention-management-console (>=0.9.100), samba, fping, univention-reservation-dbconnector, univention-scheduler, univention-reservation-defaultprofile, univention-reservation-lessontimes, univention-management-console-printermoderation, univention-management-console-proxy-settings, univention-management-console-distribution
+XB-Python-Version: ${python:Versions}
+Description: UMC module to reserve and assign pc rooms
+ This package contains an Univention Management Console module to reserver and assign
+ pc rooms for certain purposes.
