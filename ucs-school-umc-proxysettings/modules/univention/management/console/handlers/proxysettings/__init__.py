@@ -1,9 +1,9 @@
 #!/usr/bin/python2.4
 #
-# Univention Management Console
+# Univention Management Console Module
 #  module: Proxy Settings Module
 #
-# Copyright (C) 2007 Univention GmbH
+# Copyright (C) 2007-2009 Univention GmbH
 #
 # http://www.univention.de/
 #
