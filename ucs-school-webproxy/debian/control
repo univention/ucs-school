@@ -1,0 +1,12 @@
+Source: sfb-squid-squidguard
+Section: univention
+Priority: optional
+Maintainer: Univention GmbH <packages@univention.de>
+Build-Depends: debhelper, univention-config-dev
+
+Package: sfb-squid-squidguard
+Architecture: all
+Conflicts: univention-squid
+Depends: squid, squidguard, winbind, univention-config-registry
+Description: univention squid
+ squid+squidguard extension
