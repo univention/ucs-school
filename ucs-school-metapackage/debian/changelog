@@ -1,3 +1,9 @@
+ucs-school-metapackage (1.0.0-2) unstable; urgency=low
+
+  * added ucs-school-webproxy (Bug: #14958)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Tue, 07 Jul 2009 14:26:35 +0200
+
 ucs-school-metapackage (1.0.0-1) unstable; urgency=low
 
   * fixed dependencies (Bug: #14958)
