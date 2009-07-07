@@ -1,9 +1,9 @@
 #!/usr/bin/python2.4
 #
-# Univention Management Console
+# Univention Management Console Module
 #  proxy settings module: revamp module command result for the specific user interface
 #
-# Copyright (C) 2007 Univention GmbH
+# Copyright (C) 2007-2009 Univention GmbH
 #
 # http://www.univention.de/
 #
