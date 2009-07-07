@@ -1,9 +1,9 @@
 #!/usr/bin/make -f
 #
-# Univention Squid
+# UCS@School
 #  rules file for the debian package
 #
-# Copyright (C) 2004, 2005, 2006 Univention GmbH
+# Copyright (C) 2006-2009 Univention GmbH
 #
 # http://www.univention.de/
 #
@@ -28,7 +28,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
-D=$(CURDIR)/debian/sfb-squid-squidguard
+D=$(CURDIR)/debian/ucs-school-webproxy
 
 configure: configure-stamp
 configure-stamp:
@@ -58,9 +58,9 @@ install: build
 	dh_installdirs
 
 	cp blocked-by-squid.html $(D)/var/www/
-	cp logcollector.cfg $(D)/etc/logcollector.d/sfb-squid-squidguard
+	cp logcollector.cfg $(D)/etc/logcollector.d/ucs-school-webproxy
 
-	install -m 755 27sfb-squid-squidguard.inst ${D}/usr/lib/univention-install/27sfb-squid-squidguard.inst
+	install -m 755 27ucs-school-webproxy.inst ${D}/usr/lib/univention-install/27ucs-school-webproxy.inst
 	install -m 755 pupilgroup.py ${D}/usr/lib/univention-directory-listener/system/
 
 	univention-install-config-registry

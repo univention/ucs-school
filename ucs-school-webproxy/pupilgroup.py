@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 #
-# Univention Directory Listener Pupilgroups
+# Univention Directory Listener Module Pupilgroups
 #  listener module: pupilgroups
 #
-# Copyright (C) 2008 Univention GmbH
+# Copyright (C) 2008-2009 Univention GmbH
 #
 # http://www.univention.de/
 #

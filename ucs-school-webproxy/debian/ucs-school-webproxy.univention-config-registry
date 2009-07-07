@@ -8,7 +8,7 @@ Variables: ldap/base
 Variables: proxy/.*
 
 Type: module
-Module: sfb-squid-squidguard.py
+Module: ucs-school-webproxy.py
 Variables: proxy/filter/.*
 Variables: windows/domain
 Variables: hostname

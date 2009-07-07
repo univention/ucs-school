@@ -1,12 +1,18 @@
-Source: sfb-squid-squidguard
+Source: ucs-school-webproxy
 Section: univention
 Priority: optional
 Maintainer: Univention GmbH <packages@univention.de>
 Build-Depends: debhelper, univention-config-dev
 
-Package: sfb-squid-squidguard
+Package: ucs-school-webproxy
 Architecture: all
 Conflicts: univention-squid
 Depends: squid, squidguard, winbind, univention-config-registry
-Description: univention squid
- squid+squidguard extension
+Description: meta package for UCS@School webproxy
+ This meta package installs and configures squid and squidguard
+ as HTTP proxy with transparent NTLM authentication.
+ .
+ This package is part of Univention Corporate Server (UCS),
+ an integrated, directory driven solution for managing
+ corporate environments. For more information about UCS,
+ refer to: http://www.univention.de/
