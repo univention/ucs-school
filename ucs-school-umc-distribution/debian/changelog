@@ -1,3 +1,9 @@
+ucs-school-umc-distribution (4.0.1-1) unstable; urgency=low
+
+  * fixed collecting distributed files with deadline (Bug: #14987)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Tue, 07 Jul 2009 14:39:46 +0200
+
 ucs-school-umc-distribution (4.0.0-1) unstable; urgency=low
 
   * fixed files in debian directory (Bug: #14958)

@@ -177,14 +177,14 @@ def initProject( project ):
 		# '%H:%M %d.%m.%Y'
 		deadline = time.strftime( '%H:%M %m%d%Y', time.localtime( project['deadline'] ) )
 
-		debugmsg( ud.ADMIN, ud.INFO, 'DING1')
+		debugmsg( ud.ADMIN, ud.INFO, 'debug marker 1')
 
 		fn_atjob = tempfile.mkstemp('.tmp', 'umc-distribution.')[1]
 		fd = open(fn_atjob, 'w')
-		fd.write( '%s %s\n' % (DISTRIBUTION_CMD, fn_project ) )
+		fd.write( '%s --collect %s\n' % (DISTRIBUTION_CMD, fn_project ) )
 		fd.close()
 
-		debugmsg( ud.ADMIN, ud.INFO, 'DING2')
+		debugmsg( ud.ADMIN, ud.INFO, 'debug marker 2')
 		# deadline is set - setup at-job and then call revamp function
 		#
 		# user@host:~$ at "11:30 061208" -f /tmp/attest
@@ -193,9 +193,9 @@ def initProject( project ):
 		# user@host:~$
 		proc = subprocess.Popen( '/usr/bin/at %s -f %s' % (deadline, fn_atjob), shell=True,
 								 stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, close_fds=True)
-		debugmsg( ud.ADMIN, ud.INFO, 'DING3')
+		debugmsg( ud.ADMIN, ud.INFO, 'debug marker 3')
 		stdout,stderr = proc.communicate()
-		debugmsg( ud.ADMIN, ud.INFO, 'DING4')
+		debugmsg( ud.ADMIN, ud.INFO, 'debug marker 4')
 
 		if proc.returncode != 0:
 			debugmsg( ud.ADMIN, ud.ERROR, 'init_project: "at" command returned exitcode %s' % proc.returncode )
@@ -203,7 +203,7 @@ def initProject( project ):
 			debugmsg( ud.ADMIN, ud.ERROR, 'init_project: "at" command returned (stderr):\n%s' % stderr )
 			sys.exit(3)
 
-		debugmsg( ud.ADMIN, ud.INFO, 'DING5')
+		debugmsg( ud.ADMIN, ud.INFO, 'debug marker 5')
 		REjobnumber = re.compile('job (\d+) at')
 		match = REjobnumber.search(stderr)
 		if not match:
@@ -213,7 +213,7 @@ def initProject( project ):
 		else:
 			atjob = match.group(1)
 			project['atjob'] = atjob
-		debugmsg( ud.ADMIN, ud.INFO, 'DING6')
+		debugmsg( ud.ADMIN, ud.INFO, 'debug marker 6')
 
 	# save user info
 	debugmsg( ud.ADMIN, ud.INFO, 'init_project: saving %s' % fn_project )
