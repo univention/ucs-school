@@ -1,6 +1,6 @@
 etc/squid
 var/www
-var/lib/sfb-squid-squidguard
+var/lib/ucs-school-webproxy
 etc/logcollector.d
 usr/lib/univention-install
 usr/lib/univention-directory-listener/system

@@ -1,8 +1,9 @@
-#)
+#!/usr/bin/python2.4
+#
 # Univention Config Registry
 #  enable/disable internet access in squidguard config
 #
-# Copyright (C) 2007 Univention GmbH
+# Copyright (C) 2007-2009 Univention GmbH
 #
 # http://www.univention.de/
 #
@@ -50,13 +51,13 @@ import os
 import re
 
 conf_squidguard = '/etc/squid/squidGuard.conf'
-confdir_squidguard = '/var/lib/sfb-squid-squidguard'
+confdir_squidguard = '/var/lib/ucs-school-webproxy'
 
 def preinst(configRegistry, changes):
-	os.system('touch /tmp/sfb-preinst')
+	pass
 
 def postinst(configRegistry, changes):
-	os.system('touch /tmp/sfb-postinst')
+	pass
 
 def handler(configRegistry, changes):
 	rewrite_squidguard_config = False

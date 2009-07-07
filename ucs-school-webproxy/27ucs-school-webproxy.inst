@@ -1,8 +1,9 @@
-#! /bin/sh
+#!/bin/sh
 #
+# UCS@School
 #  join script
 #
-# Copyright (C) 2001, 2002, 2003, 2004, 2005, 2006 Univention GmbH
+# Copyright (C) 2006-2009 Univention GmbH
 #
 # http://www.univention.de/
 #
@@ -36,27 +37,27 @@ fi
 
 touch /usr/lib/univention-install/.index.txt
 
-test -n "`grep "sfb-squid-squidguard v${VERSION} successful" /usr/lib/univention-install/.index.txt`" && exit 1
+test -n "$(grep "ucs-school-webproxy v${VERSION} successful" /usr/lib/univention-install/.index.txt)" && exit 1
 
 eval `univention-config-registry shell`
 
-if [ "$server_role" = "domaincontroller_slave" -o "$server_role" = "memberserver" ]; then
-	if [ "$1" == "--binddn" ]; then
-		dn="$2"
-		joinuser="$(ldapsearch -x -LLL -b $dn uid | grep ^uid: | cut -d' ' -f2-)"
-	fi
-	if [ "$3" == "--bindpwd" ]; then
-		passwd="$4"
-	fi
-	if [ -n "$joinuser" -a -n "$passwd" ]; then
-		net rpc join -U "${joinuser}%${passwd}"
-	fi
+if [ "$1" == "--binddn" ]; then
+	dn="$2"
+	joinuser="$(ldapsearch -x -LLL -b $dn uid | grep ^uid: | cut -d' ' -f2-)"
+fi
+if [ "$3" == "--bindpwd" ]; then
+	passwd="$4"
+fi
+if [ -n "$joinuser" -a -n "$passwd" ]; then
+	net rpc join -U "${joinuser}%${passwd}"
 fi
 
 /etc/init.d/samba restart >/dev/null 2>&1
+sleep 2s
 /etc/init.d/winbind restart >/dev/null 2>&1
+sleep 2s
 /etc/init.d/squid restart >/dev/null 2>&1
 
-test -n "`grep "sfb-squid-squidguard v${VERSION} successful" /usr/lib/univention-install/.index.txt`" || echo "sfb-squid-squidguard v${VERSION} successful" >>/usr/lib/univention-install/.index.txt
+test -n "$(grep "ucs-school-webproxy v${VERSION} successful" /usr/lib/univention-install/.index.txt)" || echo "ucs-school-webproxy v${VERSION} successful" >>/usr/lib/univention-install/.index.txt
 
 exit 0

@@ -1,9 +1,9 @@
-#! /bin/sh
+#!/bin/sh
 #
-# Univention Squid
+# UCS@School
 #  postinst script
 #
-# Copyright (C) 2004, 2005, 2006 Univention GmbH
+# Copyright (C) 2006-2009 Univention GmbH
 #
 # http://www.univention.de/
 #
@@ -35,7 +35,7 @@ case "$1" in
 		/etc/init.d/univention-directory-listener crestart
 
 		# setting of some proxy/* UCR variables is required
-		eval `univention-config-registry shell`
+		eval $(univention-config-registry shell)
 		univention-config-registry set proxy/redirect=squidguard \
 									proxy/force=no \
 									proxy/ldapauth=no \
@@ -44,29 +44,33 @@ case "$1" in
 									samba/winbind/trusted/domains/only=no \
 									samba/logonscript?univention-netlogon-proxy.vbs \
 									proxy/filter/redirecttarget?"http://$hostname.$domainname/blocked-by-squid.html" \
-									proxy/filter/domain/whitelisted/1?"www.univention.de"
+									proxy/filter/domain/whitelisted/1?"www.univention.de" \
+									"samba/global/options/winbind use default domain?yes"
+
 
 		# set correct permissions
 		dpkg-statoverride --update --force --add root proxy 750 /var/run/samba/winbindd_privileged/ || true
-		dpkg-statoverride --update --force --add root proxy 2770 /var/lib/sfb-squid-squidguard/ || true
+		dpkg-statoverride --update --force --add root proxy 2770 /var/lib/ucs-school-webproxy/ || true
 		chown proxy:proxy /var/spool/squid/swap.* || true
 
 		# init squidguard db
-		touch /var/lib/sfb-squid-squidguard/whitelisted-domain || true
-		touch /var/lib/sfb-squid-squidguard/whitelisted-url || true
-		touch /var/lib/sfb-squid-squidguard/blacklisted-domain || true
-		touch /var/lib/sfb-squid-squidguard/blacklisted-url || true
-		chown root:proxy /var/lib/sfb-squid-squidguard/*listed-* || true
+		touch /var/lib/ucs-school-webproxy/whitelisted-domain || true
+		touch /var/lib/ucs-school-webproxy/whitelisted-url || true
+		touch /var/lib/ucs-school-webproxy/blacklisted-domain || true
+		touch /var/lib/ucs-school-webproxy/blacklisted-url || true
+		chown root:proxy /var/lib/ucs-school-webproxy/*listed-* || true
 		/usr/bin/squidGuard -C all || true
-		chmod ug+rw /var/lib/sfb-squid-squidguard/*listed-* || true
+		chmod ug+rw /var/lib/ucs-school-webproxy/*listed-* || true
 
 		univention-config-registry commit /etc/init.d/winbind
 
-		[ -d /var/run/squid/ ] || mkdir /var/run/squid/
+		mkdir -p /var/run/squid/
 		chown proxy:proxy /var/run/squid/
 
 		/etc/init.d/samba reload
+		sleep 2s
 		/etc/init.d/winbind restart
+		sleep 2s
 		/etc/init.d/squid restart
 		;;
 
