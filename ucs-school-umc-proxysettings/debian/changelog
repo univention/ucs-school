@@ -14,7 +14,7 @@ ucs-school-umc-proxysettings (2.0.0-1) unstable; urgency=low
 
   * new group/user icons (Ticket: #2008110710000077) 
 
- -- Felix Botner <fbotner@visdalen.knut.univention.de>  Thu, 15 Jan 2009 13:55:22 +0100
+ -- Felix Botner <fbotner@univention.de>  Thu, 15 Jan 2009 13:55:22 +0100
 
 ucs-school-umc-proxysettings (2.0.0-0) unstable; urgency=low
 
@@ -27,7 +27,7 @@ ucs-school-umc-proxysettings (1.1.0-6) unstable; urgency=low
   * update index while writing new filter items to UCR (Bug #12550)
   * disable caching for proxysettings/show/profiles
 
- -- Arvid Requate <arequate@visdalen.knut.univention.de>  Fri,  7 Nov 2008 13:50:56 +0100
+ -- Arvid Requate <arequate@univention.de>  Fri,  7 Nov 2008 13:50:56 +0100
 
 ucs-school-umc-proxysettings (1.1.0-5) unstable; urgency=low
 
