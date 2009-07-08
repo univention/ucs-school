@@ -79,7 +79,7 @@ generate_logins = False
 default_prefixlen = 24
 
 if not (cn_pupils and cn_teachers and cn_admins and cn_staff):
-	print 'ERROR: Unable to progress, one of these UCR variables is not set correctly:\n\tucsschool/ldap/default/container/pupils\n\tucsschool/ldap/default/container/teachers\n\tucsschool/ldap/default/container/staff\n\tucsschool/ldap/default/container/admins'
+	print 'ERROR: Unable to proceed: one of these UCR variables is not set correctly:\n\tucsschool/ldap/default/container/pupils\n\tucsschool/ldap/default/container/teachers\n\tucsschool/ldap/default/container/staff\n\tucsschool/ldap/default/container/admins'
 	sys.exit (1)
 
 class ucsschool_person_modify:
@@ -196,9 +196,9 @@ class ucsschool_person_modify:
 		default_groups.append("cn=Domain Users "+self.sNr+",cn=groups,%s" % (getDN (self.sNr), ))
 
 		for role in self.getRole ():
-			user_grp_prefix = {role_teacher:grp_prefix_teachers,
-					role_pupil:grp_prefix_pupils,
-					role_staff:grp_prefix_staff}[role]
+			user_grp_prefix = { role_teacher:grp_prefix_teachers,
+							    role_pupil:grp_prefix_pupils,
+							    role_staff:grp_prefix_staff }[role]
 			# class if available
 			for cnr in self.cNr:
 				default_groups.append("cn=" + cnr + ",cn=klassen,cn=%s,cn=groups,%s" % (cn_pupils, getDN (self.sNr)))
