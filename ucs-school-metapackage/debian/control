@@ -21,7 +21,7 @@ Description: UCS@School meta package for UCS DC Master System (multi DC mode)
 
 Package: ucs-school-slave
 Architecture: all
-Depends: ucs-school-italc, ucs-school-netlogon-italc, ucs-school-umc-distribution, ucs-school-umc-helpdesk, ucs-school-umc-printermoderation, ucs-school-umc-proxysettings, ucs-school-umc-reservation, ucs-school-umc-roomadmin, ucs-school-umc-schooladmin, univention-netlogon-proxy, ucs-school-webproxy
+Depends: ucs-school-netlogon-italc, ucs-school-umc-distribution, ucs-school-umc-helpdesk, ucs-school-umc-printermoderation, ucs-school-umc-proxysettings, ucs-school-umc-reservation, ucs-school-umc-roomadmin, ucs-school-umc-schooladmin, univention-netlogon-proxy, ucs-school-webproxy
 Description: UCS@School meta package for UCS DC Slave System
  This meta package installs all required packages for UCS@School on
  a UCS domaincontroller slave. The package ucs-school-master
@@ -34,7 +34,7 @@ Description: UCS@School meta package for UCS DC Slave System
 
 Package: ucs-school-singlemaster
 Architecture: all
-Depends: ucs-school-import, ucs-school-import-schema, ucs-school-ldap-acls-master, ucs-school-italc, ucs-school-netlogon-italc, ucs-school-umc-distribution, ucs-school-umc-helpdesk, ucs-school-umc-printermoderation, ucs-school-umc-proxysettings, ucs-school-umc-reservation, ucs-school-umc-roomadmin, ucs-school-umc-schooladmin, univention-netlogon-proxy, ucs-school-umc-helpdesk-schema, ucs-school-import-schema, ucs-school-webproxy
+Depends: ucs-school-import, ucs-school-import-schema, ucs-school-ldap-acls-master, ucs-school-netlogon-italc, ucs-school-umc-distribution, ucs-school-umc-helpdesk, ucs-school-umc-printermoderation, ucs-school-umc-proxysettings, ucs-school-umc-reservation, ucs-school-umc-roomadmin, ucs-school-umc-schooladmin, univention-netlogon-proxy, ucs-school-umc-helpdesk-schema, ucs-school-import-schema, ucs-school-webproxy
 Description: UCS@School meta package for UCS DC Master System (single master mode)
  This meta package installs all required packages for UCS@School on
  a UCS domaincontroller master. The domaincontroller master will be 
