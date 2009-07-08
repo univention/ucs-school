@@ -40,4 +40,6 @@ if [ ! -f "/etc/italc/keys/private/teacher/key" -o ! -f "/etc/italc/keys/public/
     /usr/bin/ica -role teacher -createkeypair
 fi
 
+univention-config-registry set umc/roomadmin/groups/defaultgroupprefix?"%(departmentNumber)s-"
+
 exit 0
