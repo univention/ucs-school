@@ -36,10 +36,10 @@ univention-config-registry set \
 	ucsschool/ldap/default/container/admins?admins \
 	ucsschool/ldap/default/container/pupils?schueler \
 	ucsschool/ldap/default/container/staff?mitarbeiter \
-	ucsschool/ldap/default/groupprefix/teachers?lehrer \
-	ucsschool/ldap/default/groupprefix/admins?admins \
-	ucsschool/ldap/default/groupprefix/pupils?schueler \
-	ucsschool/ldap/default/groupprefix/staff?mitarbeiter \
+	ucsschool/ldap/default/groupprefix/teachers?"lehrer-" \
+	ucsschool/ldap/default/groupprefix/admins?"admins-" \
+	ucsschool/ldap/default/groupprefix/pupils?"schueler-" \
+	ucsschool/ldap/default/groupprefix/staff?"mitarbeiter-" \
 	ucsschool/ldap/default/dcs?edukativ
 
 exit 0
