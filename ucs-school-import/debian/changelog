@@ -1,3 +1,9 @@
+ucs-school-import (4.0.0-33) unstable; urgency=low
+
+  * renamed tab for customattribute "Abordnung" to "ucsschool" (Ticket: #2009060410000116)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Wed, 08 Jul 2009 12:11:27 +0200
+
 ucs-school-import (4.0.0-32) unstable; urgency=low
 
   * extended attributes were not initialized because the computer modules were
