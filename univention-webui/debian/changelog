@@ -1,4 +1,4 @@
-univention-webui (2.0.12-1) unstable; urgency=low
+univention-webui (2.0.12-0) unstable; urgency=low
 
   * applied patch that fixes the date widget (Bug #14721)
 
