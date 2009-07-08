@@ -3,7 +3,7 @@
 # Univention Webui
 #  uniconf.py
 #
-# Copyright (C) 2004, 2005, 2006 Univention GmbH
+# Copyright (C) 2004-2009 Univention GmbH
 #
 # http://www.univention.de/
 #
@@ -70,6 +70,11 @@ class uniconf:
 		self.firstrun=0
 		self.input=0
 		self.name=n
+		# request
+		self.req = None
+		if self.args and self.args.has_key ('req'):
+			self.req = self.args['req']
+			del self.args['req']
 		for i in self.atts.keys():
 			if not type(self.atts[i]) in [types.StringType, types.UnicodeType]:
 				if not self.atts[i]==None:

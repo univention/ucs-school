@@ -3,7 +3,7 @@
  * Univention Webui
  *  index.php
  *
- * Copyright (C) 2004, 2005, 2006 Univention GmbH
+ * Copyright (C) 2004-2009 Univention GmbH
  *
  * http://www.univention.de/
  *
@@ -38,6 +38,19 @@ if (!get_cfg_var(register_globals))
     $$key = $_POST[$key];
 }
 
+/* uncomment the following to debug POST message */
+/*
+function printPostValue($pvalue, $message) {
+        if (is_array($pvalue))
+                foreach($pvalue as $key => $value)
+                        printPostValue($value, $message.$key.": ");
+        else
+                echo $message.$pvalue." <br> \n";
+
+}
+
+printPostValue($_POST, "POST: ");
+*/
 
 include ("includes/config.inc");	# Konfigurations-Klasse
 $config = new webui_config($_SERVER["HTTP_USER_AGENT"], $session_id);
@@ -95,6 +108,11 @@ if(!isset($logout))
 	if(isset($opts)){
 		fwrite($pipe, "opts: ".$opts."\n");
 	}
+	# send a notification when the session was caught by the timeout
+	if ($sessioninvalid == '1') {
+		fwrite($pipe, "Sessioninvalid: 1\n");
+	}
+	fwrite($pipe, "SessionId: ".$config->session_id."\n");
 	fwrite($pipe, "Number: -1\n\n\0");
 
 	$fp=fopen($config->session_dir.$config->number, "w");

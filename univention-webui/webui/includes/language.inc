@@ -3,7 +3,7 @@
  * Univention Webui
  *  language.inc
  *
- * Copyright (C) 2004, 2005, 2006 Univention GmbH
+ * Copyright (C) 2004-2009 Univention GmbH
  *
  * http://www.univention.de/
  *
@@ -35,6 +35,12 @@
 		putenv('LANG=$lng');
 		setlocale(LC_ALL, $lng);
 		bindtextdomain('index', '/usr/share/univention-admin/www/locale');
+		textdomain('index');
+	}
+	else {
+		putenv('LANG=$lang');
+		setlocale(LC_ALL, $lang);
+		bindtextdomain('index', '/usr/share/locale');
 		textdomain('index');
 	}
 ?>

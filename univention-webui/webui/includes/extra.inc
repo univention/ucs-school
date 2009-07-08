@@ -3,7 +3,7 @@
  * Univention Webui
  *  extra.inc
  *
- * Copyright (C) 2004, 2005, 2006 Univention GmbH
+ * Copyright (C) 2004-2009 Univention GmbH
  *
  * http://www.univention.de/
  *
@@ -200,6 +200,81 @@ class question_date extends extra{
 class question_text extends extra{
 	function show(){
 
+	  $validationbox = false;
+	  if (isset($this->attribute["validregex"])) {
+	    $validationbox = true;
+	    $validregex = $this->attribute["validregex"];
+	  }
+
+	  $isrequired = false;
+	  if (isset($this->attribute["isrequired"])) {
+	    $isrequired = true;
+	    if (! $validationbox) {
+	      $validationbox = true;
+	      $validregex = ".*"; # allow all
+	    }
+	  }
+
+	  $invalidmessage = false;
+	  if (isset($this->attribute["invalidmessage"]))
+	      $invalidmessage = $this->attribute["invalidmessage"];
+
+          # include dojo
+	  if ($validationbox)
+	    $str .= "<script type=\"text/javascript\">dojo.require(\"dijit.form.ValidationTextBox\");</script>\n";
+	  else
+	    $str .= "<script type=\"text/javascript\">dojo.require(\"dijit.form.TextBox\");</script>\n";
+	  
+	  if (isset($this->attribute["passive"])) 
+	    $access = "disabled";
+	  $str .= "<table border=\"0\" cellspacing=\"0\" cellpadding=\"0\">\n";
+	  
+	  if ($this->basket["description"]) 
+	    {
+	      $str .= "<tr><td class=\"description\">\n<img src=\"style/blank_spacer.gif\" height=\"2\" width=\"2\"></img>\n";
+	      $str .= $this->basket["description"];
+	      if ($this->warn) 
+		$str .= "<img src=\"style/".$this->warn.".gif\" alt=\"\" class=\"warn\"></img>\n";
+	      $str .= "</td></tr>\n";
+	    }
+	  $str .= "<tr><td>\n";
+	  $str .= "<input title=\"".$this->basket["helptext"]."\" tabindex=\"".$this->tabindex."\" ";
+	  if ($this->attribute["width"]) 
+	    $str .= "style=\"width:".($this->attribute["width"])."px\" ";
+	  else
+	    $str .= "style=\"width:300px\" "; # width is interpreted by dojo, 300px seems to be the default in the past
+	  if ($this->js && isset($this->basket["update"])) 
+	    $str .= "onChange=\"sendForm(".$this->update_byteindex.")\" ";
+	  if ($this->warn) 
+	    $str .= " class=\"text_warn\" ";
+	  else 
+	    $str .= " class=\"text\" ";
+	  if ($validationbox)
+	    {
+              # enable as dijit.ValidationTextBox
+	      $str .= " dojoType=\"dijit.form.ValidationTextBox\"";
+	      # add regexp
+	      $str .= " regExp=\"".$validregex."\"";
+	      if ($isrequired) # value is required
+		$str .= " required=\"true\"";
+	      if ($invalidmessage) # user defined message for invalid values
+		$str .= " invalidMessage=\"".$invalidmessage."\"";
+	    }
+	  else
+	    # enable as dijit.TextBox
+	    if (!isset($this->attribute["puretext"])) 
+	       $str .= " dojoType=\"dijit.form.TextBox\"";
+	  $str .= " type=\"text\" $access name=\"usrinput[".$this->byteindex."]\" value=\"".$this->basket["content"]."\"></input>\n";
+	  if (isset($this->basket["update"])) 
+	    $str .= $this->basket["update"]."\n";
+	  $str .= "</td></tr>\n</table>\n";
+	  return $str;
+	}
+}
+
+class question_dojo_date_widget extends extra {
+	function show(){
+		$str .= "<script type=\"text/javascript\">dojo.require(\"dijit.form.DateTextBox\");</script>\n";
 		if(isset($this->attribute["passive"])) $access = "disabled";
 		$str .= "<table border=\"0\" cellspacing=\"0\" cellpadding=\"0\">\n";
 		if($this->basket["description"]) {
@@ -213,15 +288,17 @@ class question_text extends extra{
 		if($this->attribute["width"]) $str .= "style=\"width:".($this->attribute["width"])."px\" ";
 		if($this->js && isset($this->basket["update"])) $str .= "onChange=\"sendForm(".$this->update_byteindex.")\" ";
 		if($this->warn) $str .= " class=\"text_warn\" ";
-		else $str .= " class=\"text\" ";
-		$str .= " type=\"text\" $access name=\"usrinput[".$this->byteindex."]\" value=\"".$this->basket["content"]."\"></input>\n";
+		else $str .= " class=\"date_widget\" ";
+		$str .= " type=\"text\" $access name=\"usrinput[".$this->byteindex."]\" value=\"".$this->basket["content"]."\"";
+		$str .= " dojoType=\"dijit.form.DateTextBox\"";
+		$str .= "></input>\n";
 		if(isset($this->basket["update"])) $str .= $this->basket["update"]."\n";
 		$str .= "</td></tr>\n</table>\n";
 		return $str;
+		return $str;
 	}
-
-
 }
+
 
 class question_file extends extra{
 	function show(){
@@ -251,77 +328,112 @@ class question_file extends extra{
 
 class question_ltext extends extra{
 	function show(){
-		if(isset($this->attribute["passive"])) $access = "disabled";
-		$str .= "<table border=\"0\" cellspacing=\"0\" cellpadding=\"0\">\n";
-		if($this->basket["description"]){
-			$str .= "<tr><td class=\"description\"><img src=\"style/blank_spacer.gif\" height=\"2\" width=\"2\"></img>\n".$this->basket["description"];
-			if($this->warn) $str .= "<img src=\"style/".$this->warn.".gif\" alt=\"\" class=\"warn\"></img>\n";
-			$str .= "</td></tr>\n";
-			}
-		$str .= "<tr><td>\n";
-		$str .= "<textarea $access title=\"".$this->basket["helptext"]."\" tabindex=\"".$this->tabindex."\" ";
-		if($this->attribute["width"] || $this->attribute["height"]){
-			$str .= "style=\" ";
-			if($this->attribute["width"]) $str .= "width:".($this->attribute["width"])."px; ";
-			if($this->attribute["height"]) $str .= "height:".($this->attribute["height"])."px";
-			$str .= "\" ";
-			if(isset($this->attribute["readonly"])) $str .= " readonly=\"\" ";
-			}
-		if($this->js && isset($this->basket["update"])) $str .= "onChange=\"sendForm(".$this->update_byteindex.")\" ";
-		if($this->warn) $str .= "class=\"longtext_warn\"";
-		else $str .= "class=\"longtext\"";
-		$str .= "name=\"usrinput[".$this->byteindex."]\">\n";
-		$str .= $this->basket["content"]."</textarea>\n";
-		$str .= "</td></tr>\n";
-		if(isset($this->basket["update"])) $str .= "<tr><td>\n".$this->basket["update"]."</td></tr>\n";
-		$str .= "</table>\n";
-		return $str;
+	  $str .= "<script type=\"text/javascript\">dojo.require(\"dijit.form.SimpleTextarea\");</script>\n";
+	  if (isset($this->attribute["passive"])) 
+	    $access = "disabled";
+	  $str .= "<table border=\"0\" cellspacing=\"0\" cellpadding=\"0\">\n";
+	  if ($this->basket["description"])
+	    {
+	      $str .= "<tr><td class=\"description\"><img src=\"style/blank_spacer.gif\" height=\"2\" width=\"2\"></img>\n".$this->basket["description"];
+	      if ($this->warn) 
+		$str .= "<img src=\"style/".$this->warn.".gif\" alt=\"\" class=\"warn\"></img>\n";
+	      $str .= "</td></tr>\n";
+	    }
+	  $str .= "<tr><td>\n";
+	  $str .= "<textarea dojoType=\"dijit.form.SimpleTextarea\" $access title=\"".$this->basket["helptext"]."\" tabindex=\"".$this->tabindex."\" ";
+	  if ($this->attribute["width"] || $this->attribute["height"])
+	    {
+	      $str .= "style=\" ";
+	      if ($this->attribute["width"]) 
+		$str .= "width:".($this->attribute["width"])."px; ";
+	      if ($this->attribute["height"]) 
+		$str .= "height:".($this->attribute["height"])."px";
+	      $str .= "\" ";
+	      if (isset($this->attribute["readonly"])) 
+		$str .= " readonly=\"\" ";
+	    }
+	  if ($this->js && isset($this->basket["update"])) 
+	    $str .= "onChange=\"sendForm(".$this->update_byteindex.")\" ";
+	  if ($this->warn) 
+	    $str .= "class=\"longtext_warn\"";
+	  else 
+	    $str .= "class=\"longtext\"";
+	  $str .= "name=\"usrinput[".$this->byteindex."]\">\n";
+	  $str .= $this->basket["content"]."</textarea>\n";
+	  $str .= "</td></tr>\n";
+	  if (isset($this->basket["update"])) 
+	    $str .= "<tr><td>\n".$this->basket["update"]."</td></tr>\n";
+	  $str .= "</table>\n";
 
-	}
-
+	  return $str;	  
+	}	
 }
 
 class question_secure extends extra{
 	function show(){
-		if(isset($this->attribute["passive"])) $access = "disabled";
-    		$str .= "<table border=\"0\" cellspacing=\"0\" cellpadding=\"0\">\n";
-		$str .= "<tr><td class=\"description\"><img src=\"style/blank_spacer.gif\" width=\"2\" height=\"2\"></img>\n".$this->basket["description"];
-		if($this->warn) $str .= "<img src=\"style/".$this->warn.".gif\" alt=\"\" class=\"warn\"></img>\n";
-		$str .= "</td></tr>\n";
-		$str .= "<tr><td><input title=\"".$this->basket["helptext"]."\" tabindex=\"".$this->tabindex."\"";
-		if($this->attribute["width"]) $str .= "style=\"width:".($this->attribute["width"])."px\" ";
-		if($this->js && isset($this->basket["update"])) $str .= "onChange=\"sendForm(".$this->update_byteindex.")\" ";
-		if($this->warn) $str .= " class=\"text_warn\" ";
-		else $str .= " class=\"text\" ";
-		$str .= "type=\"password\" $access name=\"usrinput[".$this->byteindex."]\" value=\"".$this->basket["content"]."\"></input>\n";
-		if(isset($this->basket["update"])) $str .= $this->basket["update"]."\n";
-		$str .= "</td></tr>\n</table>\n";
-		return $str;
+	  $str .= "<script type=\"text/javascript\">dojo.require(\"dijit.form.TextBox\");</script>\n";
+	  if (isset($this->attribute["passive"])) 
+	    $access = "disabled";
+	  $str .= "<table border=\"0\" cellspacing=\"0\" cellpadding=\"0\">\n";
+	  $str .= "<tr><td class=\"description\"><img src=\"style/blank_spacer.gif\" width=\"2\" height=\"2\"></img>\n".$this->basket["description"];
+	  if ($this->warn) 
+	    $str .= "<img src=\"style/".$this->warn.".gif\" alt=\"\" class=\"warn\"></img>\n";
+	  $str .= "</td></tr>\n";
+	  $str .= "<tr><td><input title=\"".$this->basket["helptext"]."\" tabindex=\"".$this->tabindex."\"";
+	  if ($this->attribute["width"]) 
+	    $str .= "style=\"width:".($this->attribute["width"])."px\" ";
+	  else
+	    $str .= "style=\"width:300px\" ";
+	  if ($this->js && isset($this->basket["update"])) 
+	    $str .= "onChange=\"sendForm(".$this->update_byteindex.")\" ";
+	  if ($this->warn) 
+	    $str .= " class=\"text_warn\" ";
+	  else 
+	    $str .= " class=\"text\" ";
+	  if (isset($this->attribute["puretext"])) 
+	    $str .= "type=\"password\"";
+	  else
+	    $str .= "type=\"password\" dojoType=\"dijit.form.TextBox\"";
+	  $str .= " $access name=\"usrinput[".$this->byteindex."]\" value=\"".$this->basket["content"]."\"></input>\n";
+	  if (isset($this->basket["update"])) 
+	    $str .= $this->basket["update"]."\n";
+	  $str .= "</td></tr>\n</table>\n";
+	  
+	  return $str;
 	}
-
 }
 
 class question_bool extends extra{
 	function show(){
-		if(isset($this->attribute["passive"])) $access = "disabled";
-		if(trim($this->basket["content"])!="") $is='checked';
-		$str .= "<table border=\"0\" cellpadding=\"0\" cellspacing=\"0\"><tr>\n";
-		$str .= "<td valign=\"middle\">\n";
-		$str .= "<input title=\"".$this->basket["helptext"]."\" tabindex=\"".$this->tabindex."\" class=\"bool\" type=\"checkbox\" $access ";
-		if($this->js && isset($this->basket["update"])) $str .= "onChange=\"sendForm(".$this->update_byteindex.")\" ";
-		$str .= "name=\"usrinput[".$this->byteindex."]\" value=\"checked\" $is></input></td>\n";
-		if(trim($this->basket["description"]) != ''){
-			$str .= "<td class=\"description\" align=\"left\" valign=\"middle\">\n";
-			$str .= "<img src=\"style/blank_spacer.gif\" width=\"2\" height=\"2\"></img>\n";
-			$str .= $this->basket["description"]."\n";
-			$str .= "</td>\n";
-			}
-		$str .= "<td>\n";
-		if($this->warn) $str .= "<img src=\"style/".$this->warn.".gif\" alt=\"\" class=\"warn\"></img>\n";
-		if(isset($this->basket["update"])) $str .= $this->basket["update"];
-		$str .= "</td></tr>\n</table>\n";
-		$is='';
-		return $str;
+	  if (isset($this->attribute["passive"])) 
+	    $access = "disabled";
+	  if (trim($this->basket["content"])!="") 
+	    $is='checked';
+
+	  $str .= "<script type=\"text/javascript\">dojo.require(\"dijit.form.CheckBox\");</script>\n";
+	  $str .= "<table border=\"0\" cellpadding=\"0\" cellspacing=\"0\"><tr>\n";
+	  $str .= "<td valign=\"middle\">\n";
+	  $str .= "<input dojoType=\"dijit.form.CheckBox\" title=\"".$this->basket["helptext"]."\"";
+	  $str .= " tabindex=\"".$this->tabindex."\" class=\"bool\" type=\"checkbox\" $access ";
+	  if ($this->js && isset($this->basket["update"])) 
+	    $str .= "onChange=\"sendForm(".$this->update_byteindex.")\" ";
+	  $str .= "name=\"usrinput[".$this->byteindex."]\" value=\"checked\" $is></input></td>\n";
+	  if (trim($this->basket["description"]) != '')
+	    {
+	      $str .= "<td class=\"description\" align=\"left\" valign=\"middle\">\n";
+	      $str .= "<img src=\"style/blank_spacer.gif\" width=\"2\" height=\"2\"></img>\n";
+	      $str .= $this->basket["description"]."\n";
+	      $str .= "</td>\n";
+	    }
+	  $str .= "<td>\n";
+	  if ($this->warn) 
+	    $str .= "<img src=\"style/".$this->warn.".gif\" alt=\"\" class=\"warn\"></img>\n";
+	  if (isset($this->basket["update"])) 
+	    $str .= $this->basket["update"];
+	  $str .= "</td></tr>\n</table>\n";
+	  $is='';
+	  
+	  return $str;
 	}
 }
 
@@ -574,100 +686,334 @@ class link extends extra{
 	}
 }
 
+
+// single select drop-down
 class question_select extends extra_multi{
+  function show(){
+    $appendstr = "";
+    if(isset($this->attribute["passive"])) 
+      $access = "disabled";
+    $str .= "\n\n";
+    $str .= "<script type=\"text/javascript\">dojo.require(\"dijit.form.FilteringSelect\");</script>\n";
+    $str .= "<table border=\"0\" cellpadding=\"0\" cellspacing=\"0\">\n";
+    $str .= "<tr><td class=\"description\"><img src=\"style/blank_spacer.gif\" width=\"2\" height=\"2\"></img>".$this->basket["description"]."\n";
+    if($this->warn) 
+      $str .= "<img src=\"style/".$this->warn.".gif\" alt=\"\" class=\"warn\"></img>\n";
+    $str .= "</td></tr>\n<tr><td>\n";
+    $str .= "<select dojoType=\"dijit.form.FilteringSelect\" autocomplete=\"true\" $access title=\"".$this->basket["helptext"]."\" tabindex=\"".$this->tabindex."\"";
+    
+    if($this->warn) 
+      $str .= " class=\"select_warn\" ";
+    else 
+      $str .= " class=\"select\" ";
+    
+    if($this->attribute["width"]) 
+      $str .= "style=\"width:".($this->attribute["width"])."px\" ";
+    
+    if($this->js && isset($this->basket["update"])) 
+      $str .= "onChange=\"sendForm(".$this->update_byteindex.")\" ";
+    
+    if ($access != "disabled")
+      $str .= "name=\"usrinput[question_select#".$this->tabindex."][]\"";
+    $str .= ">\n";
+    if($this->basket["choice"])
+      foreach($this->basket["choice"] as $key=>$val) {
+	if(trim($this->basket["var"][$key]["content"])!="") {
+	  $is='selected';
+	  if ($access == "disabled") {
+	    $appendstr = "<input type=\"hidden\" name=\"usrinput[question_select#".$this->tabindex."][]\"";
+	    $appendstr .= " value=\"".$this->basket["var"][$key]["byteindex"]."\"></input>\n";
+	  }
+	}
+	for($x=0; $x < $this->basket["choice"][$key]["level"]; $x++) 
+	  $space .= "&nbsp;";
+	$str .= "<option value=\"".$this->basket["var"][$key]["byteindex"]."\" $is>";
+	$str .= $space.$this->basket["choice"][$key]["description"];
+	$str .= "</option>\n";
+	$is = '';
+	$space = '';
+      }
+    $str .="</select>\n";
+    if(isset($this->basket["update"])) 
+      $str .= $this->basket["update"]."\n";
+    $str .= $appendstr;
+    $str .= "</td></tr>\n</table>\n";
+    return $str;
+  }
+}
+
+class language_dojo_select extends extra_multi{
+	// http://aktuell.de.selfhtml.org/artikel/php/httpsprache/
+	function lang_getfrombrowser ($allowed_languages, $default_language, $lang_variable = null, $strict_mode = true) {
+		// $_SERVER['HTTP_ACCEPT_LANGUAGE'] verwenden, wenn keine Sprachvariable mitgegeben wurde
+		if ($lang_variable === null) {
+			$lang_variable = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
+		}
+
+		// wurde irgendwelche Information mitgeschickt?
+		if (empty($lang_variable)) {
+			// Nein? => Standardsprache zurückgeben
+			return $default_language;
+		}
+
+		// Den Header auftrennen
+		$accepted_languages = preg_split('/,\s*/', $lang_variable);
+
+		// Die Standardwerte einstellen
+		$current_lang = $default_language;
+		$current_q = 0;
+
+		// Nun alle mitgegebenen Sprachen abarbeiten
+		foreach ($accepted_languages as $accepted_language) {
+			// Alle Infos über diese Sprache rausholen
+			$res = preg_match ('/^([a-z]{1,8}(?:-[a-z]{1,8})*)'.
+				'(?:;\s*q=(0(?:\.[0-9]{1,3})?|1(?:\.0{1,3})?))?$/i', $accepted_language, $matches);
+
+			// war die Syntax gültig?
+			if (!$res) {
+				// Nein? Dann ignorieren
+				continue;
+			}
+
+			// Sprachcode holen und dann sofort in die Einzelteile trennen
+			$lang_code = explode ('-', $matches[1]);
+
+			// Wurde eine Qualität mitgegeben?
+			if (isset($matches[2])) {
+				// die Qualität benutzen
+				$lang_quality = (float)$matches[2];
+			} else {
+				// Kompabilitätsmodus: Qualität 1 annehmen
+				$lang_quality = 1.0;
+			}
+
+			// Bis der Sprachcode leer ist...
+			while (count ($lang_code)) {
+				// mal sehen, ob der Sprachcode angeboten wird
+				if (in_array (strtolower (join ('-', $lang_code)), $allowed_languages)) {
+					// Qualität anschauen
+					if ($lang_quality > $current_q) {
+						// diese Sprache verwenden
+						$current_lang = strtolower (join ('-', $lang_code));
+						$current_q = $lang_quality;
+						// Hier die innere while-Schleife verlassen
+						break;
+					}
+				}
+				// Wenn wir im strengen Modus sind, die Sprache nicht versuchen zu minimalisieren
+				if ($strict_mode) {
+					// innere While-Schleife aufbrechen
+					break;
+				}
+				// den rechtesten Teil des Sprachcodes abschneiden
+				array_pop ($lang_code);
+			}
+		}
+
+		// die gefundene Sprache zurückgeben
+		return $current_lang;
+	}
+
 	function show(){
 		$appendstr = "";
-		if(isset($this->attribute["passive"])) $access = "disabled";
+		if(isset($this->attribute["passive"])) 
+			$access = "disabled";
+		$str .= "\n\n";
+		$str .= "<script type=\"text/javascript\">dojo.require(\"dijit.form.FilteringSelect\");</script>\n";
 		$str .= "<table border=\"0\" cellpadding=\"0\" cellspacing=\"0\">\n";
 		$str .= "<tr><td class=\"description\"><img src=\"style/blank_spacer.gif\" width=\"2\" height=\"2\"></img>".$this->basket["description"]."\n";
-		if($this->warn) $str .= "<img src=\"style/".$this->warn.".gif\" alt=\"\" class=\"warn\"></img>\n";
+		if($this->warn) 
+			$str .= "<img src=\"style/".$this->warn.".gif\" alt=\"\" class=\"warn\"></img>\n";
 		$str .= "</td></tr>\n<tr><td>\n";
-        	$str .= "<select $access title=\"".$this->basket["helptext"]."\" tabindex=\"".$this->tabindex."\"";
-		if($this->warn) $str .= " class=\"select_warn\" ";
-		else $str .= " class=\"select\" ";
-		if($this->attribute["width"]) $str .= "style=\"width:".($this->attribute["width"])."px\" ";
-		if($this->js && isset($this->basket["update"])) $str .= "onchange=\"sendForm(".$this->update_byteindex.")\" ";
+		$str .= "<select dojoType=\"dijit.form.FilteringSelect\" autocomplete=\"true\" $access title=\"".$this->basket["helptext"]."\" tabindex=\"".$this->tabindex."\"";
+
+		if($this->warn) 
+			$str .= " class=\"select_warn\" ";
+		else 
+			$str .= " class=\"select\" ";
+
+		if($this->attribute["width"]) 
+			$str .= "style=\"width:".($this->attribute["width"])."px\" ";
+
+		if($this->js && isset($this->basket["update"])) 
+			$str .= "onChange=\"sendForm(".$this->update_byteindex.")\" ";
+
 		if ($access != "disabled")
-			$str .= "name=\"usrinput[multiple#".$this->tabindex."][]\"";
+			$str .= "name=\"usrinput[language_dojo_select#".$this->tabindex."][]\"";
 		$str .= ">\n";
-		if($this->basket["choice"])
+		if($this->basket["choice"]) {
+			$allowed_languages = array ();
+			$default_language = 'en';
 			foreach($this->basket["choice"] as $key=>$val) {
-	        		if(trim($this->basket["var"][$key]["content"])!="") {
+				if(trim($this->basket["var"][$key]["content"])!="") {
+					$default_language = $key;
+				}
+				array_push ($allowed_languages, $key);
+			}
+			$lang = $this->lang_getfrombrowser ($allowed_languages, $default_language, null, false);
+			foreach($this->basket["choice"] as $key=>$val) {
+				if($key == $lang) {
 					$is='selected';
+				}
+				if(trim($this->basket["var"][$key]["content"])!="") {
+					//$is='selected';
 					if ($access == "disabled") {
-						$appendstr = "<input type=\"hidden\" name=\"usrinput[multiple#".$this->tabindex."][]\"";
+						$appendstr = "<input type=\"hidden\" name=\"usrinput[language_dojo_select#".$this->tabindex."][]\"";
 						$appendstr .= " value=\"".$this->basket["var"][$key]["byteindex"]."\"></input>\n";
 					}
 				}
-				for($x=0; $x < $this->basket["choice"][$key]["level"]; $x++) $space .= "&nbsp;";
-        			$str .= "<option value=\"".$this->basket["var"][$key]["byteindex"]."\" $is >\n";
+
+				for($x=0; $x < $this->basket["choice"][$key]["level"]; $x++) 
+					$space .= "&nbsp;";
+				$str .= "<option value=\"".$this->basket["var"][$key]["byteindex"]."\" $is>";
 				$str .= $space.$this->basket["choice"][$key]["description"];
 				$str .= "</option>\n";
-	        		$is = '';
+				$is = '';
 				$space = '';
 			}
-        	$str .="</select>\n";
-   		if(isset($this->basket["update"])) $str .= $this->basket["update"]."\n";
+		}
+		$str .="</select>\n";
+		if(isset($this->basket["update"])) 
+			$str .= $this->basket["update"]."\n";
 		$str .= $appendstr;
 		$str .= "</td></tr>\n</table>\n";
 		return $str;
 	}
 }
 
-class question_mselect extends extra_multi{
-	function show(){
-		if(isset($this->attribute["passive"])) $access = "disabled";
-		$str .= "<table border=\"0\" cellspacing=\"0\" cellpadding=\"0\">\n";
-		$str .= "<tr><td class=\"description\"><img src=\"style/blank_spacer.gif\" width=\"2\" height=\"2\"></img>".$this->basket["description"]."\n";
-		if($this->warn) $str .= "<img src=\"style/".$this->warn.".gif\" alt=\"\" class=\"warn\"></img>\n";
-		$str .= "</td></tr><tr><td>\n";
-        	$str .= "<select $access title=\"".$this->basket["helptext"]."\" tabindex=\"".$this->tabindex."\"";
-		if($this->warn) $str .= " class=\"mselect_warn\" ";
-		else $str .= " class=\"mselect\" ";
-		if($this->js && isset($this->basket["update"])) $str .= "onChange=\"sendForm(".$this->update_byteindex.")\" ";
-		if($this->attribute["width"] || $this->attribute["height"]){
-			$str .= "style=\" ";
-			if($this->attribute["width"]) $str .= "width:".($this->attribute["width"])."px; ";
-			if($this->attribute["height"]) $str .= "height:".($this->attribute["height"])."px";
-			$str .= "\" ";
-			}
-		$str .= "name=\"usrinput[multiple#".$this->tabindex."][]\" multiple size=\"5\">\n";
-        	if($this->basket["choice"])
-			foreach($this->basket["choice"] as $key=>$val)
-		      		{
-				if(trim($this->basket["var"][$key]["content"])!="") $is='selected';
-	 	       		$str .= "<option value=\"".$this->basket["var"][$key]["byteindex"]."\" $is>\n";
-				$str .= $this->basket["choice"][$key]["description"];
-				$str .= "</option>\n";
-        			$is = '';
-        			}
-        	$str .="</select>\n";
-		$str .= "</td></tr>\n</table>\n";
-   		if(isset($this->basket["update"])) $str .= $this->basket["update"]."\n";
-		return $str;
-	}
-
+// dojo ComboBoxWidget: allows one of the given options or any other
+class question_dojo_comboselect extends extra_multi{
+  function show(){
+    $appendstr = "";
+    if(isset($this->attribute["passive"])) $access = "disabled";
+	$str .= "\n\n";
+	$str .= "<script type=\"text/javascript\">dojo.require(\"dijit.form.ComboBox\");</script>\n";
+	$str .= "<table border=\"0\" cellpadding=\"0\" cellspacing=\"0\">\n";
+	$str .= "<tr><td class=\"description\"><img src=\"style/blank_spacer.gif\" width=\"2\" height=\"2\"></img>".$this->basket["description"]."\n";
+	if($this->warn) $str .= "<img src=\"style/".$this->warn.".gif\" alt=\"\" class=\"warn\"></img>\n";
+	$str .= "</td></tr>\n<tr><td>\n";
+	$str .= "<select dojoType=\"dijit.form.ComboBox\" autocomplete=\"true\" $access title=\"".$this->basket["helptext"]."\" tabindex=\"".$this->tabindex."\"";
+	
+	if($this->warn) 
+	  $str .= " class=\"select_warn\" ";
+	else 
+	  $str .= " class=\"select\" ";
+	
+	if($this->attribute["width"]) 
+	  $str .= "style=\"width:".($this->attribute["width"])."px\" ";
+	
+	if($this->js && isset($this->basket["update"])) 
+	  $str .= "onChange=\"sendForm(".$this->update_byteindex.")\" ";
+	
+	// - this breaks the whole page if used with dojo_combobox
+	//if ($access != "disabled")
+	//  $str .= "name=\"usrinput[multiple#".$this->tabindex."][]\"";
+	$str .= ">\n";
+	if($this->basket["choice"])
+	  foreach($this->basket["choice"] as $key=>$val) {
+	    if(trim($this->basket["var"][$key]["content"])!="") {
+	      $is='selected';
+	      if ($access == "disabled") {
+		$appendstr = "<input type=\"hidden\" name=\"usrinput[multiple#".$this->tabindex."][]\"";
+		$appendstr .= " value=\"".$this->basket["var"][$key]["byteindex"]."\"></input>\n";
+	      }
+	    }
+	    for($x=0; $x < $this->basket["choice"][$key]["level"]; $x++) $space .= "&nbsp;";
+	    $str .= "<option value=\"".$this->basket["var"][$key]["byteindex"]."\" $is>";
+	    $str .= $space.$this->basket["choice"][$key]["description"];
+	    $str .= "</option>\n";
+	    $is = '';
+	    $space = '';
+	  }
+	$str .="</select>\n";
+	if(isset($this->basket["update"])) $str .= $this->basket["update"]."\n";
+	$str .= $appendstr;
+	$str .= "</td></tr>\n</table>\n";
+	return $str;
+  }
 }
 
+
+class question_mselect extends extra_multi{
+	function show(){
+	  if (isset($this->attribute["passive"])) 
+	    $access = "disabled";
+
+	  $str .= "<script type=\"text/javascript\">dojo.require(\"dijit.form.MultiSelect\");</script>\n";
+
+	  $str .= "<table border=\"0\" cellspacing=\"0\" cellpadding=\"0\">\n";
+	  $str .= "<tr><td class=\"description\"><img src=\"style/blank_spacer.gif\" width=\"2\" height=\"2\"></img>".$this->basket["description"]."\n";
+	  if ($this->warn) 
+	    $str .= "<img src=\"style/".$this->warn.".gif\" alt=\"\" class=\"warn\"></img>\n";
+	  $str .= "</td></tr><tr><td>\n";
+	  $str .= "<select $access title=\"".$this->basket["helptext"]."\" tabindex=\"".$this->tabindex."\"";
+          # FIXME: enabling dojo.form.MultiSelect leads to unusable question_mselect
+	  #$str .= " dojoType=\"dijit.form.MultiSelect\"";
+	  if ($this->warn) 
+	    $str .= " class=\"mselect_warn\" ";
+	  else 
+	    $str .= " class=\"mselect\" ";
+	  if ($this->js && isset($this->basket["update"])) 
+	    $str .= "onChange=\"sendForm(".$this->update_byteindex.")\" ";
+	  if ($this->attribute["width"] || $this->attribute["height"])
+	    {
+	      $str .= "style=\" ";
+	      if ($this->attribute["width"]) 
+		$str .= "width:".($this->attribute["width"])."px; ";
+	      if ($this->attribute["height"]) 
+		$str .= "height:".($this->attribute["height"])."px";
+	      $str .= "\" ";
+	    }
+	  $str .= "name=\"usrinput[multiple#".$this->tabindex."][]\" multiple size=\"5\">\n";
+	  if ($this->basket["choice"])	    
+	    foreach($this->basket["choice"] as $key=>$val)
+	      {
+		if (trim($this->basket["var"][$key]["content"])!="") 
+		  $is='selected';
+		$str .= "<option value=\"".$this->basket["var"][$key]["byteindex"]."\" $is>\n";
+		$str .= $this->basket["choice"][$key]["description"];
+		$str .= "</option>\n";
+		$is = '';
+	      }
+	  $str .="</select>\n";
+	  $str .= "</td></tr>\n</table>\n";
+	  if (isset($this->basket["update"])) 
+	    $str .= $this->basket["update"]."\n";
+	  
+	  return $str;
+	}
+}
+
+# FIXME: nowhere used? dijit-forms are not tested...
 class question_choice extends extra_multi{
 	function show(){
-		if(isset($this->attribute["passive"])) $access = "disabled";
-		$str .= "<div title=\"".$this->basket["helptext"]."\" >\n";
-		if (isset($this->basket["description"]) && trim($this->basket["description"]) != "")
-			$str .= $this->basket["description"]."<br />\n";
-		if($this->warn) $str .= "<img src=\"style/".$this->warn.".gif\" alt=\"\" class=\"warn\"></img>\n";
-        	 foreach($this->basket["choice"] as $key=>$val)
-        		{
-        		if(trim($this->basket["var"][$key]["content"])!="")$is='checked';
-      			$str .= "<input tabindex=\"".$this->tabindex."\" class=\"choice\" ";
-			if($this->js && isset($this->basket["update"])) $str .= "onClick=\"sendForm(".$this->update_byteindex.")\" ";
-			$str .= "type=\"radio\" name=\"usrinput[multiple#".$this->tabindex."][]\" $access value=\"".$this->basket["var"][$key]["byteindex"]."\" $is></input>\n";
-        		$str .= $this->basket["choice"][$key]["description"]."<br />\n";
-        		$is='';
-        		}
-        	if(isset($this->basket["update"])) $str .= $this->basket["update"]."\n";
-		$str.="</div>\n";
-		return $str;
+	  if (isset($this->attribute["passive"])) 
+	    $access = "disabled";
+	  
+	  $str .= "<script type=\"text/javascript\">dojo.require(\"dijit.form.CeckBox\");</script>\n";
+	
+	  $str .= "<div title=\"".$this->basket["helptext"]."\" >\n";
+	  if (isset($this->basket["description"]) && trim($this->basket["description"]) != "")
+	    $str .= $this->basket["description"]."<br />\n";
+	  if ($this->warn) 
+	    $str .= "<img src=\"style/".$this->warn.".gif\" alt=\"\" class=\"warn\"></img>\n";
+	  foreach ($this->basket["choice"] as $key=>$val)
+	    {
+	      if (trim($this->basket["var"][$key]["content"])!="") 
+		$is = 'checked';
+	      $str .= "<input tabindex=\"".$this->tabindex."\" class=\"choice\" dojoType=\"dijit.form.RadioButton\" ";
+	      if ($this->js && isset($this->basket["update"])) 
+		$str .= "onClick=\"sendForm(".$this->update_byteindex.")\" ";
+	      $str .= "type=\"radio\" name=\"usrinput[multiple#".$this->tabindex."][]\"";
+	      $str .= "$access value=\"".$this->basket["var"][$key]["byteindex"]."\" $is></input>\n";
+	      $str .= $this->basket["choice"][$key]["description"]."<br />\n";
+	      $is='';
+	    }
+	  if (isset($this->basket["update"])) 
+	    $str .= $this->basket["update"]."\n";
+	  $str .= "</div>\n";
+	  
+	  return $str;
 	}
 }
 
@@ -825,7 +1171,8 @@ class notebook{
 		$pressed = FALSE;
 		$factor = 7; // pixel per letter
 		$one_line=TRUE;
-		for($i=1; $i < $this->count+1; $i++){ # i is index for button-object-array
+		for($i=1; $i < $this->count+2; $i++){ # i is index for button-object-array
+			# we have to check +2, otherwise the last tab on a new line wouldn't be displayed
 
   		    $itemlength = $factor*(strlen($this->all_notebook[$i]->basket[text]));
 			if ($this->all_notebook[$i]->attribute["closebutton"] == "1") {
@@ -835,14 +1182,19 @@ class notebook{
 			  $spare = 20; // width pixel between
 			}
 
-			if((($length + $itemlength) > 764) || $i == $this->count){ # 780 at all - 14 (right) - 2 (left) -> 764
-				if($i == $this->count){
+			if((($length + $itemlength + $spare) > 778) || $i > $this->count){ # 780 at all - 14 (right) - 2 (left) -> 764 + 14 (otherwise we got an ugly user view)
+				if((($length + $itemlength + $spare) > 778)){
+					# This tab line is full, print this line an than check the next line!
+					$one_line=FALSE;
+					$end=$i;
+				} else if($i == $this->count) {
 					$end=$i+1;
 					$length += ($itemlength+$spare);
-					}
-				else {	$one_line=FALSE;
+				} else {
+					# This tab line is full, print this line an than check the next line!
+					$one_line=FALSE;
 					$end=$i;
-					}
+				}
 				$all = $end-$j;
 				$first=$j;
 				$space = 0; #round((580-$length*$factor) / ($end-$j));
@@ -1006,8 +1358,12 @@ class question_group{
 				case 'question_ltext': $this->member = new question_ltext($tag, $this->conti_ref, $this->config, $attribute);return;
 				case 'question_mselect': $this->member = new question_mselect($tag, $this->conti_ref, $this->config, $attribute);return;
 				case 'question_select': $this->member = new question_select($tag, $this->conti_ref, $this->config, $attribute);return;
+				case 'question_dojo_select': $this->member = new question_dojo_select($tag, $this->conti_ref, $this->config, $attribute);return;
+				case 'language_dojo_select': $this->member = new language_dojo_select($tag, $this->conti_ref, $this->config, $attribute);return;
+				case 'question_dojo_comboselect': $this->member = new question_dojo_comboselect($tag, $this->conti_ref, $this->config, $attribute);return;
 				case 'question_choice': $this->member = new question_choice($tag, $this->conti_ref, $this->config, $attribute);return;
 				case 'question_group': $this->member = new question_group($tag, $this->conti_ref, $this->config, $attribute);return;
+				case 'question_dojo_date_widget': $this->member = new question_dojo_date_widget($tag, $this->conti_ref, $this->config, $attribute);return;
 				default: $tag=""; $close="";
 				}
 			}
@@ -1041,6 +1397,197 @@ class question_group{
 
 
 ###########################################
+class dynamic_longtable extends webui_translator
+{
+  var $count_row;
+  var $hide;
+
+  function put_start(&$tag, &$attribute, $byteindex)
+  {
+    if ($tag=="row") 
+      $this->conti_ref->next_row();
+    $this->start($tag, $attribute, $byteindex);
+  }
+
+  function put_value(&$value)
+  {
+    if(!$this->hide)
+      $this->value($value);
+  }
+
+  function finish(&$tag)
+  {
+    if ($this->extra)
+      {
+	$this->end($tag);
+      }
+    else
+      {
+	if ($tag=="dynamic_longtable")
+	  return TRUE;
+	else
+	  return FALSE;
+      }
+  }
+
+  function show() {
+
+    $str = "\n<!-- start dynamic_longtable of type ".$type."-->\n";
+    $str .= "<script type=\"text/javascript\">dojo.require(\"dijit.layout.StackContainer\");</script>\n";
+    $str .= "<script type=\"text/javascript\">dojo.require(\"dijit.layout.ContentPane\");</script>\n";
+
+
+    # copy & paste from class table
+    $space_bottom="";
+    if (isset($this->attribute["type"]))
+      {
+	$attrib_str .= " class=\"".$this->attribute["type"]."\"";
+	$type = $this->attribute["type"];
+      }
+    else
+      {
+	$type = "default";
+	$attrib_str .= " class=\"table_default\"";
+      }
+
+    if ($this->attribute["type"] == 'content_main')
+      {
+	$space_bottom="<tr><td class=\"content_spacer\">&nbsp;</td></tr>\n";
+      }
+
+    if($this->attribute["width"])
+      {
+        if(is_numeric($this->attribute["width"]))
+        {
+          $attrib_str .= "style=\"width:".($this->attribute["width"])."px\" ";
+        }
+        else
+        {
+          $attrib_str .= "style=\"width:".($this->attribute["width"])."\" ";
+        }
+      }
+    # -> end of copy&paste from class table
+
+    # config-vars
+    $stackNumber = 1;
+    $totalrows = 0; # the transfered total is the number of "real" entries, without header etc.
+    if (is_numeric($this->attribute['total']))
+      $totalrows = $this->attribute['total'];
+    $headerrows = 0;
+    if (is_numeric($this->attribute['header']))
+      $headerrows = $this->attribute['header'];
+    $displayedrows = 0;
+    $olddisplayedrows = -1;
+    $visiblerows = 0;
+    if (is_numeric($this->attribute['visible']))
+      $visiblerows = $this->attribute['visible'];
+
+
+    ## Buttons
+    $button_str = "";
+    # show buttons only if more than one StackContainer, which means: if total > visible
+    if ( $totalrows > $visiblerows ) {
+      $button_str .="<div class=\"dynlongtable-buttons\" id=\"dynlongtable_buttons\" align=\"center\">\n";
+
+      # back button
+      $button_str .= "<button class=\"dynlongtable-button\" dojoType=\"dijit.form.Button\">\n";
+      $button_str .= "  <img alt=\"&lt;\" style=\"margin: 4px;\" src=\"style/l_ar_small.gif\" />\n";
+      $button_str .= "  <script type=\"dojo/method\" event=\"onClick\" args=\"evt\">\n";
+      $button_str .= "     dijit.byId(\"longtable\").back()\n";
+      $button_str .= "  </script>\n";
+      $button_str .= "</button>\n";    
+    
+      # direct access buttons
+      $button_str .= "<span class=\"dynlongtable-controller\" dojoType=\"dijit.layout.StackController\" containerId=\"longtable\"></span>\n";
+
+      # forward button
+      $button_str .= "<button class=\"dynlongtable-button\" dojoType=\"dijit.form.Button\">\n";
+      $button_str .= "  <img alt=\"&gt;\" style=\"margin: 4px;\" src=\"style/r_ar_small.gif\" />\n";
+      $button_str .= "  <script type=\"dojo/method\" event=\"onClick\" args=\"evt\">\n";
+      $button_str .= "     dijit.byId(\"longtable\").forward()\n";
+      $button_str .= "  </script>\n";
+      $button_str .= "</button>\n";
+      
+      $button_str .="</div>\n";
+      ## End Buttons
+	}    	  
+
+    $str .= "<div class=\"dynlongtable-container\" id=\"longtable\" dojoType=\"dijit.layout.StackContainer\" dolayout=\"false\"";
+    #FIXME: define in CSS ?
+    $str .= " style=\"margin:5px, border:none\">\n"; 
+    
+    # buttons - top # commented out
+    # $str .= $button_str;
+
+    # if totalrows is not correct we will loop forever, so we check also if displayedrows has been changed
+    while ( $totalrows > $displayedrows && $olddisplayedrows != $displayedrows) {
+      $olddisplayedrows = $displayedrows;
+      $str .= "<div class=\"dynlongtable-pane\" dojoType=\"dijit.layout.ContentPane\" title=\"".$stackNumber."\">\n";
+      
+      # Debug-message
+      # $str .= "<h2> Content pane Nr. ".$stackNumber.", shows from element ".$displayedrows." to ".($displayedrows+$visiblerows)."</h2>\n";
+      
+      $str .= "<table $attrib_str  summary=\"\">\n";
+					       
+      $rowsinthispane = 0;
+      $checkedrows = 0;
+      foreach ($this->conti_ref->content as $key => $value) {	
+        # key is a number
+	# $this->config->debug_put("key:".$key); 
+        # value is HTML
+	# $this->config->debug_put("value:".$value); 
+
+        # detect if header, show
+	
+	if ($headerrows && $key <= $headerrows)
+	  $str .= $value;
+	else  # show $displayedrows element up to $displayedrows + $visible
+	  {
+	    $checkedrows += 1; # rows checked without header
+	    if ($rowsinthispane < $visiblerows && $checkedrows > $displayedrows)
+	      {
+		$str .= $value;
+		$rowsinthispane += 1;
+		$displayedrows += 1;
+	      }	    
+            
+	    else # detect if footer		 
+	      if ($key > $totalrows + $headerrows + 1)
+		$str .= $value;	
+	  }
+      }
+      
+      $str .= $space_bottom."</table>\n";      
+      $str .= "</div>\n";
+
+      $stackNumber += 1;
+    }
+    
+    # last pane for debug, should be "false"
+    if (false) {
+      $str .= "<div dojoType=\"dijit.layout.ContentPane\" title=\"debug\">\n";      
+      $str .= "<h2> Debug pane </h2>\n<br>\n";
+      $str .= "visible: ".$this->attribute['visible']."<br>\n";
+      $str .= "total: ".$this->attribute['total']."<br>\n";
+      $str .= "headerrows: ".$headerrows."<br>\n";
+      $str .= "start: ".$this->attribute['start']."<br>\n";
+      $str .= "displayed: ".$displayedrows."<br>\n";    
+      $str .= "</div>\n";
+    }
+
+    # close longtable div
+    $str .= "</div>\n";
+
+    # buttons - foot
+    $str .= $button_str;
+
+
+    $str .= "<!-- finished dynmic_longtable of type ".$type."-->\n\n";
+    return $str;
+  }
+
+}
+
 class long_table extends webui_translator
 {
   var $count_row;
@@ -1127,7 +1674,6 @@ class table extends webui_translator
 
   function show()
   {
-
     if (isset($this->attribute["border"])) // border is deprecated
       {
 	if ($this->attribute["border"]=="1")
@@ -1154,6 +1700,18 @@ class table extends webui_translator
 	$space_bottom="<tr><td class=\"content_spacer\">&nbsp;</td></tr>\n";
       }
 
+    if($this->attribute["width"])
+      {
+        if(is_numeric($this->attribute["width"]))
+        {
+          $attrib_str .= "style=\"width:".($this->attribute["width"])."px\" ";
+        }
+        else
+        {
+          $attrib_str .= "style=\"width:".($this->attribute["width"])."\" ";
+        }
+      }
+
     $table = "\n<!-- start table of type ".$type."-->\n";
     $table .= "<table $attrib_str  summary=\"\">\n".$this->conti_ref->show_all().$space_bottom."</table>\n";
     $table .= "<!-- finished table of type ".$type."-->\n\n";
@@ -1161,6 +1719,10 @@ class table extends webui_translator
   }
 
 } //table
+
+#class dynamic_longtable extends table
+#{
+#}
 
 class tgroup extends webui_translator{
 function put_start(&$tag, &$attribute, $byteindex){
@@ -1458,6 +2020,50 @@ function wrap_view(){
 	  }
 	return $str;
 }
+}
+
+###
+# old widgets, replaced by dojo/dijit implementations
+###
+
+class question_select_old extends extra_multi{
+	function show(){
+		$appendstr = "";
+		if(isset($this->attribute["passive"])) $access = "disabled";
+		$str .= "<table border=\"0\" cellpadding=\"0\" cellspacing=\"0\">\n";
+		$str .= "<tr><td class=\"description\"><img src=\"style/blank_spacer.gif\" width=\"2\" height=\"2\"></img>".$this->basket["description"]."\n";
+		if($this->warn) $str .= "<img src=\"style/".$this->warn.".gif\" alt=\"\" class=\"warn\"></img>\n";
+		$str .= "</td></tr>\n<tr><td>\n";
+        	$str .= "<select $access title=\"".$this->basket["helptext"]."\" tabindex=\"".$this->tabindex."\"";
+		if($this->warn) $str .= " class=\"select_warn\" ";
+		else $str .= " class=\"select\" ";
+		if($this->attribute["width"]) $str .= "style=\"width:".($this->attribute["width"])."px\" ";
+		if($this->js && isset($this->basket["update"])) $str .= "onchange=\"sendForm(".$this->update_byteindex.")\" ";
+		if ($access != "disabled")
+			$str .= "name=\"usrinput[multiple#".$this->tabindex."][]\"";
+		$str .= ">\n";
+		if($this->basket["choice"])
+			foreach($this->basket["choice"] as $key=>$val) {
+	        		if(trim($this->basket["var"][$key]["content"])!="") {
+					$is='selected';
+					if ($access == "disabled") {
+						$appendstr = "<input type=\"hidden\" name=\"usrinput[multiple#".$this->tabindex."][]\"";
+						$appendstr .= " value=\"".$this->basket["var"][$key]["byteindex"]."\"></input>\n";
+					}
+				}
+				for($x=0; $x < $this->basket["choice"][$key]["level"]; $x++) $space .= "&nbsp;";
+        			$str .= "<option value=\"".$this->basket["var"][$key]["byteindex"]."\" $is >\n";
+				$str .= $space.$this->basket["choice"][$key]["description"];
+				$str .= "</option>\n";
+	        		$is = '';
+				$space = '';
+			}
+        	$str .="</select>\n";
+   		if(isset($this->basket["update"])) $str .= $this->basket["update"]."\n";
+		$str .= $appendstr;
+		$str .= "</td></tr>\n</table>\n";
+		return $str;
+	}
 }
 
 ?>

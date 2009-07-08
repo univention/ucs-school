@@ -3,7 +3,7 @@
  * Univention Webui
  *  translator.inc
  *
- * Copyright (C) 2004, 2005, 2006 Univention GmbH
+ * Copyright (C) 2004-2009 Univention GmbH
  *
  * http://www.univention.de/
  *
@@ -81,6 +81,8 @@ class webui_translator{
 						case 'url': $attrib_str.="src=\"".$value."\""; break;
 						case 'size': $size=$value; break;
 						case 'nofill': $attrib_str .= "width=\"1\""; break;
+						case 'onmouseover': $attrib_str .= "onmouseover=\"".$value."\""; break;
+						case 'onmouseout': $attrib_str .= "onmouseout=\"".$value."\""; break;
 						}
     				}
 			if(!$this->not_valid){
@@ -133,14 +135,19 @@ class webui_translator{
 					case 'question_bool': $this->extra = new question_bool($tag, $this->conti_ref, $this->config, $attribute, $this->warn);return;
 					case 'question_secure': $this->extra = new question_secure($tag, $this->conti_ref, $this->config, $attribute, $this->warn);return;
 					case 'question_date': $this->extra = new question_date($tag, $this->conti_ref, $this->config, $attribute, $this->warn);return;
+					case 'question_dojo_date_widget': $this->extra = new question_dojo_date_widget($tag, $this->conti_ref, $this->config, $attribute, $this->warn);return;
 					case 'question_text': $this->extra = new question_text($tag, $this->conti_ref, $this->config, $attribute, $this->warn);return;
 					case 'question_ltext': $this->extra = new question_ltext($tag, $this->conti_ref, $this->config, $attribute, $this->warn);return;
 					case 'question_mselect': $this->extra = new question_mselect($tag, $this->conti_ref, $this->config, $attribute, $this->warn);return;
 					case 'question_select': $this->extra = new question_select($tag, $this->conti_ref, $this->config, $attribute, $this->warn);return;
+					case 'question_dojo_select': $this->extra = new question_dojo_select($tag, $this->conti_ref, $this->config, $attribute, $this->warn);return;
+					case 'language_dojo_select': $this->extra = new language_dojo_select($tag, $this->conti_ref, $this->config, $attribute, $this->warn);return;
+					case 'question_dojo_comboselect': $this->extra = new question_dojo_comboselect($tag, $this->conti_ref, $this->config, $attribute, $this->warn);return;
 					case 'question_choice': $this->extra = new question_choice($tag, $this->conti_ref, $this->config, $attribute, $this->warn);return;
 					case 'question_group': $this->extra = new question_group($tag, $this->conti_ref, $this->config, $attribute, $this->warn); return;
 					case 'question_file': $this->extra = new question_file($tag, $this->conti_ref, $this->config, $attribute, $this->warn); return;
 					case 'long_table': $this->extra = new long_table(new dummy_container($this->config,$this->conti_ref->tabindex), $this->config, $attribute); return;
+					case 'dynamic_longtable': $this->extra = new dynamic_longtable(new dummy_container($this->config,$this->conti_ref->tabindex), $this->config, $attribute); return;
 					case 'table': $this->extra = new table(new dummy_container($this->config,$this->conti_ref->tabindex), $this->config, $attribute); return;
 					case 'tgroup': $this->extra = new tgroup(new dummy_container($this->config,$this->conti_ref->tabindex), $this->config, $attribute); return;
 					case 'row': 	if(isset($this->attribute["border"]) && !isset($attribute["border"])) $attribute["border"]=$this->attribute["border"];

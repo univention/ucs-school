@@ -3,7 +3,7 @@
  * Univention Webui
  *  container.inc
  *
- * Copyright (C) 2004, 2005, 2006 Univention GmbH
+ * Copyright (C) 2004-2009 Univention GmbH
  *
  * http://www.univention.de/
  *
@@ -73,43 +73,12 @@ class webui_container{
 		  $maincontent = _("Your current session has been closed.");
 		  require("config.php");
 		  system("rm -r ".$temp_dir.$session_id.'/');
+		  header("Location: index.php");
 		  break;
 		case '2':
-		  $headertext = _("Invalid credentials");
-		  $maincontent = _("Your credentials are not valid anymore.<br /><br />Please login again.");
+		  header("Location: index.php?sessioninvalid=1");
 		  break;
 		}
-
-		$htmlcontent = "<table class=\"content_header\"><tr><td>\n";
-		$htmlcontent .= "</td></tr></table>\n";
-
-		$htmlcontent .= "<table class=\"tabs\" summary=\"\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\">\n";
-		$htmlcontent .= "<tr><td class=\"notebook_spacer\"></td></tr>\n";
-		$htmlcontent .= "    <tr><td><table class=\"tabs\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\">\n";
-		$htmlcontent .= "     <tr class=\"notebook\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\"><nobr>\n";
-		$htmlcontent .= "<td class=\"tab_on\">\n";
-		$htmlcontent .= "<a class=\"notebook_on\" onClick=\"sendForm(629)\" title=\"".$headertext."\">&nbsp;".$headertext."</a>\n";
-		$htmlcontent .= "</td>\n";
-		$htmlcontent .= "<td class=\"tab\"><img class=\"note\" src=\"style/reiter_rot18x24.gif\" alt=\"\"></td>\n";
-		$htmlcontent .= "</nobr></tr>\n";
-		$htmlcontent .= "    </table></td></tr><tr><td class=\"notebook_spacer\"></td></tr>\n";
-		$htmlcontent .= "<tr class=\"notebook_pressed\">\n";
-		$htmlcontent .= "<td class=\"notebook_pressed\">\n";
-		$htmlcontent .= "   <table class=\"tabs\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\"><tr></tr></table>\n";
-		$htmlcontent .= "</td></tr><tr><td class=\"notebook_spacer\"></td></tr>\n";
-		$htmlcontent .= "</table>\n";
-
-		$htmlcontent .= "<table class=\"content_main\"><tr><td>\n";
-		$htmlcontent .= "  <table class=\"table_default\"><tr><td class=\"note_layout\">\n";
-		$htmlcontent .= "  ".$maincontent."\n";
-		$htmlcontent .= "  </td></tr><tr><td class=\"note_layout\">\n";
-		$htmlcontent .= "  <a href=\"index.php\">"._("Login")."</a>\n";
-		$htmlcontent .= "  </td></tr>";
-		$htmlcontent .= "  <tr><td class=\"content_spacer\">&nbsp;</td></tr></table>\n";
-		$htmlcontent .= "  </td></tr></table>\n";
-
-		$this->content .= $htmlcontent;
-		$this->show();
 	}
 
 	function put($str){
@@ -130,14 +99,46 @@ class webui_container{
 		echo "<title>".$this->site_title."   ".$this->title."</title>\n";
 		echo "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"></meta>\n";
 		echo "<link rel=\"SHORTCUT ICON\" href=\"/style/favicon.ico\"></link>\n";
+		echo "<style type=\"text/css\">\n";
+		echo "@import \"/univention-dojo/dojo/resources/dojo.css\";\n";
+		echo "\n</style>\n";
+		echo "<link id=\"themeStyles\" rel=\"stylesheet\" href=\"/univention-dojo/dijit/themes/tundra/tundra.css\" type=\"text/css\"></link>\n";
 		echo "<link rel=\"stylesheet\" href=\"/style/stylesheet.css\" type=\"text/css\"></link>\n";
+		echo "<link rel=\"stylesheet\" href=\"/style/univention-dijit.css\" type=\"text/css\"></link>\n";
 		echo "<script type=\"text/javascript\" src=\"/style/tip.js\"></script>\n";
+		echo "<script type=\"text/javascript\" src=\"/univention-dojo/dojo/dojo.js\" ></script>\n";
+		echo "<script type=\"text/javascript\" src=\"/univention-dojo/unijit/unijit.js\"></script>\n";
+		echo "<script type=\"text/javascript\"> \n";
+		# Todo: this should be moved into the univention-dojo package
+		echo "\t var hideLoader = function(){ \n";
+		echo "\t\t dojo.style(\"preloader\", \"display\", \"none\"); \n";
+		echo "\t\t dojo.fadeOut({ \n";
+		echo "\t\t\t node:\"preloader\", \n";
+		echo "\t\t\t duration:700, \n";
+		echo "\t\t\t onEnd: function(){ \n";
+		echo "\t\t\t\t dojo.style(\"preloader\", \"display\", \"none\"); \n";
+		echo "\t\t\t } \n";
+		echo "\t\t\t }).play(); \n";
+		echo "\t }\n";
+		echo "\t dojo.require(\"dojo.parser\"); \n";
+		echo "\t dojo.addOnLoad(function(){ \n";
+		echo "\t\t dojo.parser.parse(); \n";
+		echo "\t\t hideLoader(); \n";
+		echo "}); \n";
+
+		# // import all potetial dijit-elements here?
+#		echo "\t dojo.require(\"unijit.form.ComboBox\"); \n";
+#		echo "\t dojo.require(\"unijit.form.FilteringSelect\"); \n";
+		echo "</script>\n";
+
 		echo "</head>\n\n";
 		if($this->ref_config->refresh)
-			echo"<body onload=\"doRefresh(".($this->ref_config->refresh)."); clear_cached(); \">\n";
+			echo"<body class=\"tundra\" onload=\"doRefresh(".($this->ref_config->refresh)."); clear_cached(); \">\n";
 		else
-			echo"<body onload=\"clear_cached()\">\n";
+			echo"<body class=\"tundra\" onload=\"clear_cached()\">\n";
 		$this->ref_config->debug_show();
+
+		echo "<div id=\"preloader\"></div> \n";
 
 		echo "<table class=\"global\" cellspacing=\"0\" cellpadding=\"0\">\n";// table1
 		echo "  <tr class=\"global_head\">\n"; //line 1

@@ -3,7 +3,7 @@
 # Univention Webui
 #  syntax.py
 #
-# Copyright (C) 2004, 2005, 2006 Univention GmbH
+# Copyright (C) 2004-2009 Univention GmbH
 #
 # http://www.univention.de/
 #
@@ -175,39 +175,46 @@ class question_syntax(uniconf.uniconf):
 				mode = 0
 
 			if self.syntax.name == 'fileMode':
-				l = [(04, _('read')), (02, _('write')), (01, _('execute'))]
+				l = [(04, _('Read')), (02, _('Write')), (01, _('Execute'))]
 			else:
-				l = [(04, _('read')), (02, _('write')), (01, _('access'))]
+				l = [(04, _('Read')), (02, _('Write')), (01, _('Access'))]
 
-			t=text('',{},{'text':[name],'helptext':self.args.get('helptext', '')})
-			self.subobjs.append(t)
+			# self.subobjs.append(t)
+
+			rows=[]
+			headcols=[]
+
+			t=text('',{},{'text':[name], 'type': 'description', 'helptext':self.args.get('helptext', '')})
+			headcols.append(tablecol('',{"border":"0", 'type': 'description', 'colspan': '4'},{'obs':[t]}))
+			rows.append(tablerow('',{'type': 'filemode'},{'obs':headcols}))
+			self.subobjs.append(table('',{"border":"0"},{'obs':rows}))
 
 			rows=[]
 			headcols=[]
 			t=text('',{},{'text':[''],'helptext':self.args.get('helptext', '')})
-			headcols.append(tablecol('',{"border":"0"},{'obs':[t]}))
+			headcols.append(tablecol('',{"border":"0", 'type': 'filemode'},{'obs':[t]}))
 			for m, d in l:
 				t=text('',{},{'text':[d],'helptext':self.args.get('helptext', '')})
-				headcols.append(tablecol('',{"border":"0"},{'obs':[t]}))
-			rows.append(tablerow('',{},{'obs':headcols}))
+				headcols.append(tablecol('',{"border":"0", 'type': 'filemode', 'align': 'center'},{'obs':[t]}))
+			rows.append(tablerow('',{'type': 'filemode'},{'obs':headcols}))
 
-			for u in ['user', 'group', 'others']:
+			for u in [_('Owner'), _('Group'), _('Others')]:
 				bodycols=[]
 				t=text('',{},{'text':[u],'helptext':self.args.get('helptext', '')})
-				bodycols.append(tablecol('',{"border":"0"},{'obs':[t]}))
+				bodycols.append(tablecol('',{"border":"0", 'type': 'filemode'},{'obs':[t]}))
 				for m, d in l:
-					if u == 'user':
+					if u == _('Owner'):
 						m = m << 6
-					elif u == 'group':
+					elif u == _('Group'):
 						m = m << 3
 					if (mode & m) == m:
 						v = 'selected'
 					else:
 						v = ''
 					o=question_bool('', self.atts, {'usertext': v, 'helptext': self.args.get('helptext', '')})
-					bodycols.append(tablecol('',{"border":"0"}, {'obs':[o]}))
+					bodycols.append(tablecol('',{"border":"0", 'type': 'filemode', 'align': 'center'}, {'obs':[o]}))
 					self.subfields.append(o)
-				rows.append(tablerow('',{},{'obs':bodycols}))
+				rows.append(tablerow('',{'type': 'filemode'},{'obs':bodycols}))
 
 			self.subobjs.append(table('',{"border":"0"},{'obs':rows}))
 
@@ -272,7 +279,7 @@ class question_syntax(uniconf.uniconf):
 				required=" (*)"
 
 			self.subfields.append(question_secure("%s%s" % (_("Password"), required),self.atts,{"usertext":"","helptext":_("A password must have at least 8 characters")}))
-			self.subfields.append(question_secure("%s%s" % (_("Password (again)"), required),self.atts,{"usertext":"","helptext":_("Please retype the password to rule out typos.")}))
+			self.subfields.append(question_secure("%s%s" % (_("Password (retype)"), required),self.atts,{"usertext":"","helptext":_("Please retype the password to rule out typos.")}))
 
 			rows=[]
 			rows.append(tablerow("",{},{"obs":[\
@@ -289,9 +296,11 @@ class question_syntax(uniconf.uniconf):
 			if self.syntax.name == 'LDAP_Search':
 				obj = self.save.get( 'edit_object', None )
 				filter = self.syntax.filter
+				univention.debug.debug(univention.debug.ADMIN, univention.debug.INFO, 'LDAPSEARCH: filter=%s' % str(filter) )
 				if obj:
 					prop = univention.admin.property()
 					filter = prop._replace( filter, obj )
+					univention.debug.debug(univention.debug.ADMIN, univention.debug.INFO, 'LDAPSEARCH: filter2=%s' % str(filter) )
 				self.syntax._prepare( self.lo, filter )
 				for dn, val, attr in self.syntax.values:
 					attrs = self.lo.get( dn )
@@ -310,10 +319,13 @@ class question_syntax(uniconf.uniconf):
 						except:
 							val = ''
 					else:
-						if attrs.has_key(val):
-							val = attrs[val]
+						if val == 'dn':
+							val = dn
 						else:
-							val = ''
+							if attrs.has_key(val):
+								val = attrs[val]
+							else:
+								val = ''
 
 					if ':' in attr:
 						attr = attr.split( ':', 1 )[ 1 ].strip()
@@ -327,10 +339,13 @@ class question_syntax(uniconf.uniconf):
 						except:
 							attr = ''
 					else:
-						if attrs.has_key(attr):
-							attr = attrs[attr]
+						if attr == 'dn':
+							attr = dn
 						else:
-							attr = ''
+							if attrs.has_key(attr):
+								attr = attrs[attr]
+							else:
+								attr = ''
 
 					# convert val and attr to lists
 					if not isinstance( val, ( list, tuple ) ):
@@ -344,6 +359,8 @@ class question_syntax(uniconf.uniconf):
 
 					# val and attr have same length ==> merge them
 					self.syntax.choices.extend( zip(val, attr) )
+
+				univention.debug.debug(univention.debug.ADMIN, univention.debug.INFO, 'LDAPSEARCH: self.syntax.choices=%s' % str(self.syntax.choices) )
 
 			choicelist=[]
 			if self.search:
@@ -372,6 +389,10 @@ class question_syntax(uniconf.uniconf):
 
 		elif self.syntax.type == 'simpleDate':
 			self.subfields.append(question_date(name,self.atts,{"usertext":value,"helptext":self.args.get('helptext', '')}))
+			self.subobjs.append(self.subfields[0])
+
+		elif self.syntax.type == 'iso8601Date':
+			self.subfields.append(question_dojo_date_widget(name,self.atts,{"usertext":value,"helptext":self.args.get('helptext', '')}))
 			self.subobjs.append(self.subfields[0])
 
 		elif self.syntax.type == 'complex':

@@ -3,7 +3,7 @@
 # Univention Webui
 #  question.py
 #
-# Copyright (C) 2004, 2005, 2006 Univention GmbH
+# Copyright (C) 2004-2009 Univention GmbH
 #
 # http://www.univention.de/
 #
@@ -64,14 +64,18 @@ class question_text(question):
 	
 	def mytype(self):
 		return "question_text"
-	
+
 	def myxvars(self):
+		v = {}
 		if self.xvars.has_key("usertext"):
-			return {"usertext":self.xvars["usertext"]}
+			v["usertext"] = self.xvars["usertext"]
 		elif self.args.has_key("usertext"):
-			return {"usertext":self.args["usertext"]}
-		return {"usertext":None}
-	
+			v ["usertext"] = self.args["usertext"]
+		else:
+			v["usertext"] = None
+
+		return v
+
 
 class question_ltext(question_text):
 	
@@ -82,6 +86,12 @@ class question_date(question_text):
 
 	def mytype(self):
 		return "question_date"
+
+
+class question_dojo_date_widget(question_text):
+
+	def mytype(self):
+		return "question_dojo_date_widget"
 
 
 class question_ip_adress(question_date):
@@ -172,6 +182,18 @@ class question_select(question_choice):
 	def mytype(self):
 		return "question_select"
 
+class question_dojo_select(question_choice):
+	def mytype(self):
+		return "question_dojo_select"
+
+class language_dojo_select(question_choice):
+	def mytype(self):
+		return "language_dojo_select"
+
+class question_dojo_comboselect(question_choice):
+	def mytype(self):
+		return "question_dojo_comboselect"
+
 class question_mselect(question_select):
 	def mytype(self):
 		return "question_mselect"
@@ -179,7 +201,7 @@ class question_mselect(question_select):
 	def getselected(self):
 		selected=[]
 		for selection in self.choicelist:
-			if self.xvars.get(selection["name"]):
+			if self.xvars.get(unicode(selection["name"])):
 					if selection["name"]=="ascii-null-escape":
 						selected.append("0")
 					else:

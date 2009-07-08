@@ -3,7 +3,7 @@
  * Univention Webui
  *  parser.inc
  *
- * Copyright (C) 2004, 2005, 2006 Univention GmbH
+ * Copyright (C) 2004-2009 Univention GmbH
  *
  * http://www.univention.de/
  *
@@ -169,6 +169,15 @@ class webui_out{			# PHP ---> Python
 					$this->input[$type[1]] = $value[0].".".trim($value[1]).".".$value[2];
                                         if(trim($this->input[$type[1]])=="..")$this->input[$type[1]]="";
 					break;
+				case 'language_dojo_select':
+				case 'question_select':
+				  // with enabled dijit.form.FilteringSelect and IE, this array contains not only 
+				  // the selected ID but also the string representation. We need only the ID which 
+				  // is the second value. As we don't know the browser, we just get the last item.
+					if (end($value)) { // check if the value is set, see Bug #13063
+						$this->input[end($value)] = '1';
+					}
+					break;					
 				case 'multiple':
 					$value = array_flip($value);
 					foreach($value as $k => $v)
@@ -177,7 +186,9 @@ class webui_out{			# PHP ---> Python
 					}
 				}
 			else
-				$this->input[$key] = $value;
+			  {
+			    $this->input[$key] = $value;
+			  }
 			}
 		ksort($this->input, SORT_NUMERIC);
 		reset($this->input);
