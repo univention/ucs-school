@@ -589,7 +589,8 @@ def verify_group_share(schoolNr, classNr, co, lo, superordinate, base):
 
 	position_dn="cn=%s,cn=klassen,cn=shares,%s"%(classNr, getDN (schoolNr, basedn=base))
 	module = univention.admin.modules.get("shares/share")
-	univention.admin.modules.init (lo, position, module)
+	position_basedn = univention.admin.uldap.position(baseDN)
+	univention.admin.modules.init (lo, position_basedn, module)
 	more_instances = 1
 	container_position = base
 	while more_instances:
@@ -1386,7 +1387,8 @@ def set_inventory_number_for_computer():
 		else:
 			try:
 				computerModule = univention.admin.modules.get("computers/%s"%ctype)
-				univention.admin.modules.init (lo, position, computerModule)
+				position_basedn = univention.admin.uldap.position(baseDN)
+				univention.admin.modules.init (lo, position_basedn, computerModule)
 			except:
 				print "failed to get module of type computers/%s" % ctype
 				traceback.print_exc (100, sys.stdout)
@@ -1557,7 +1559,8 @@ def import_computer():
 			print 'ERROR: Type "%s" not found for computer "%s".' % (ctype, name)
 			print 'Ignoring of line %d' % linecnt
 		else:
-			univention.admin.modules.init (lo, position, module)
+			position_basedn = univention.admin.uldap.position(baseDN)
+			univention.admin.modules.init (lo, position_basedn, module)
 
 			if check_computer(module,name,schoolNr):
 				print "computer %s already exists (school %s)"%(name,schoolNr)
