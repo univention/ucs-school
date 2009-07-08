@@ -440,7 +440,7 @@ ucs-school-import (1.2.7) unstable; urgency=low
 ucs-school-import (1.2.6) unstable; urgency=low
 
   * attach default umc policy
-    cn=default-lehrer,cn=console,cn=policies,dc=schule,dc=bremen,dc=de
+    cn=default-lehrer,cn=console,cn=policies,BASEDN
   	to cn=lehrer,cn=users,ou=XXX,BASEDN while verifying ou
 
  -- Sönke Schwardt <schwardt@univention.de>  Tue, 26 Feb 2008 12:26:58 +0100
