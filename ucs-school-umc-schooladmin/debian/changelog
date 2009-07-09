@@ -1,3 +1,9 @@
+ucs-school-umc-schooladmin (4.0.1-1) unstable; urgency=low
+
+  * added UMC ACLs to default UCS@School UMC policies (Bug: #14880)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Wed, 08 Jul 2009 16:43:13 +0200
+
 ucs-school-umc-schooladmin (4.0.0-1) unstable; urgency=low
 
   * fixed dirs file (Bug: #14958)

@@ -1,3 +1,9 @@
+ucs-school-umc-printermoderation (4.0.1-1) unstable; urgency=low
+
+  * added UMC ACLs to default UCS@School UMC policies (Bug: #14880)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Wed, 08 Jul 2009 16:18:36 +0200
+
 ucs-school-umc-printermoderation (4.0.0-0) unstable; urgency=low
 
   * ported package to component ucs@school
