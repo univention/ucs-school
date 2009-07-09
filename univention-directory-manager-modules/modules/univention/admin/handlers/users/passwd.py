@@ -3,7 +3,7 @@
 # Univention Admin Modules
 #  admin module for password part of the user
 #
-# Copyright (C) 2004, 2005, 2006 Univention GmbH
+# Copyright (C) 2004-2009 Univention GmbH
 #
 # http://www.univention.de/
 #
@@ -52,7 +52,7 @@ long_description=''
 options={}
 property_descriptions={
 	'username': univention.admin.property(
-			short_description=_('Username'),
+			short_description=_('User name'),
 			long_description='',
 			syntax=univention.admin.syntax.uid,
 			multivalue=0,
@@ -84,7 +84,7 @@ property_descriptions={
 }
 
 layout=[
-	univention.admin.tab(_('Change Password'),_('Change Password'),[
+	univention.admin.tab(_('Change password'),_('Change password'),[
 		[univention.admin.field("password"), univention.admin.field("filler")],
 	]),
 ]

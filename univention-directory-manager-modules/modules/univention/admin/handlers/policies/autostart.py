@@ -3,7 +3,7 @@
 # Univention Admin Modules
 #  admin policy for the autostart settings
 #
-# Copyright (C) 2004, 2005, 2006 Univention GmbH
+# Copyright (C) 2004-2009 Univention GmbH
 #
 # http://www.univention.de/
 # 
@@ -43,7 +43,7 @@ _=translation.translate
 class autoStartFixedAttributes(univention.admin.syntax.select):
 	name='releaseFixedAttributes'
 	choices=[
-		('univentionAutoStartScript',_('Autostart Session')),
+		('univentionAutoStartScript',_('Autostart session')),
 		]
 
 module='policies/autostart'
@@ -71,7 +71,7 @@ property_descriptions={
 			identifies=1,
 		),
 	'autostartScript': univention.admin.property(
-			short_description=_('Autostart Session'),
+			short_description=_('Autostart session'),
 			long_description=_('Session script to be launched by autostart'),
 			syntax=univention.admin.syntax.string,
 			multivalue=0,
@@ -81,7 +81,7 @@ property_descriptions={
 			identifies=0
 		),
 	'requiredObjectClasses': univention.admin.property(
-			short_description=_('Required Object Classes'),
+			short_description=_('Required object classes'),
 			long_description='',
 			syntax=univention.admin.syntax.string,
 			multivalue=1,
@@ -91,7 +91,7 @@ property_descriptions={
 			identifies=0
 		),
 	'prohibitedObjectClasses': univention.admin.property(
-			short_description=_('Prohibited Object Classes'),
+			short_description=_('Excluded object classes'),
 			long_description='',
 			syntax=univention.admin.syntax.string,
 			multivalue=1,
@@ -101,7 +101,7 @@ property_descriptions={
 			identifies=0
 		),
 	'fixedAttributes': univention.admin.property(
-			short_description=_('Fixed Attributes'),
+			short_description=_('Fixed attributes'),
 			long_description='',
 			syntax=autoStartFixedAttributes,
 			multivalue=1,
@@ -111,7 +111,7 @@ property_descriptions={
 			identifies=0
 		),
 	'emptyAttributes': univention.admin.property(
-			short_description=_('Empty Attributes'),
+			short_description=_('Empty attributes'),
 			long_description='',
 			syntax=autoStartFixedAttributes,
 			multivalue=1,
@@ -139,7 +139,7 @@ layout=[
 	univention.admin.tab(_('Object'),_('Object'), [
 		[univention.admin.field('requiredObjectClasses') , univention.admin.field('prohibitedObjectClasses') ],
 		[univention.admin.field('fixedAttributes'), univention.admin.field('emptyAttributes')]
-	]),
+	], advanced = True),
 ]
 
 mapping=univention.admin.mapping.mapping()

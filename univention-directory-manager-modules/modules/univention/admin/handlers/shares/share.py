@@ -3,7 +3,7 @@
 # Univention Admin Modules
 #  admin module for share objects
 #
-# Copyright (C) 2004, 2005, 2006 Univention GmbH
+# Copyright (C) 2004-2009 Univention GmbH
 #
 # http://www.univention.de/
 #
@@ -49,7 +49,7 @@ operations=['add','edit','remove','search','move']
 usewizard=1
 wizardmenustring=_("Shares")
 wizarddescription=_("Add, edit and delete shares")
-wizardoperations={"add":[_("Add"), _("Add Share Object")],"find":[_("Find"), _("Find Shares Object(s)")]}
+wizardoperations={"add":[_("Add"), _("Add share object")],"find":[_("Search"), _("Search share Object(s)")]}
 syntax_filter=univention.admin.filter.conjunction('&', [
 	univention.admin.filter.expression('objectClass', 'univentionShare'),
 	univention.admin.filter.expression('cn', '*'),
@@ -61,20 +61,20 @@ short_description=_('Share: Directory')
 long_description=''
 options={
 	'samba': univention.admin.option(
-			short_description=_('Export for Samba Clients'),
+			short_description=_('Export for Samba clients'),
 			editable=1,
 			default=1
 		),
 	'nfs': univention.admin.option(
-			short_description=_('Export for NFS Clients'),
+			short_description=_('Export for NFS clients'),
 			editable=1,
 			default=1
 		),
 	'webaccess': univention.admin.option(
-			short_description=_('Export for Web Clients'),
+			short_description=_('Export for Web clients'),
 			editable=1,
 			default=0
-		),								
+		),
 }
 property_descriptions={
 	'name': univention.admin.property(
@@ -88,8 +88,8 @@ property_descriptions={
 			identifies=1
 		),
 	'printablename': univention.admin.property(
-			short_description=_('Printable Name'),
-			long_description=_('Printable Name'),
+			short_description=_('Printable name'),
+			long_description=_('Printable name'),
 			syntax=univention.admin.syntax.string,
 			multivalue=0,
 			options=[],
@@ -108,7 +108,7 @@ property_descriptions={
 			identifies=0
 		),
 	'path': univention.admin.property(
-			short_description=_('Path'),
+			short_description=_('Directory'),
 			long_description=_('Directory that is exported.'),
 			syntax=univention.admin.syntax.sharePath,
 			multivalue=0,
@@ -118,7 +118,7 @@ property_descriptions={
 			identifies=0
 		),
 	'owner': univention.admin.property(
-			short_description=_('Directory Owner'),
+			short_description=_('Directory owner'),
 			long_description=_('The owner of the directory. If none is given root will be owner.'),
 			syntax=univention.admin.syntax.userID,
 			multivalue=0,
@@ -129,7 +129,7 @@ property_descriptions={
 			default="0"
 		),
 	'group': univention.admin.property(
-			short_description=_('Directory Group'),
+			short_description=_('Directory owner group'),
 			long_description=_('The primary group of the directory, if none give group 0 will be used.'),
 			syntax=univention.admin.syntax.groupID,
 			multivalue=0,
@@ -140,7 +140,7 @@ property_descriptions={
 			default="0"
 		),
 	'directorymode': univention.admin.property(
-			short_description=_('Directory Mode'),
+			short_description=_('Directory mode'),
 			long_description=_('Mode of the directory.'),
 			syntax=univention.admin.syntax.directoryMode,
 			multivalue=0,
@@ -152,7 +152,7 @@ property_descriptions={
 			default="0755"
 		),
 	'writeable': univention.admin.property(
-			short_description=_('NFS Writeable'),
+			short_description=_('NFS write access'),
 			long_description=_('Define if the share is writable when accessed via NFS.'),
 			syntax=univention.admin.syntax.boolean,
 			multivalue=0,
@@ -163,7 +163,7 @@ property_descriptions={
 			default='0'
 		),
 	'sync': univention.admin.property(
-			short_description=_('NFS Synchronisation'),
+			short_description=_('NFS synchronisation'),
 			long_description=_('Use synchronous or asynchronous mode for the NFS share.'),
 			syntax=univention.admin.syntax.nfssync,
 			multivalue=0,
@@ -183,8 +183,8 @@ property_descriptions={
 			identifies=0,
 		),
 	'root_squash': univention.admin.property(
-			short_description=_('Rewrite root Access'),
-			long_description=_('Rewrite accesses to a non-privileged ID.'),
+			short_description=_('Redirect root access'),
+			long_description=_('Redirect accesses to a non-privileged ID.'),
 			syntax=univention.admin.syntax.boolean,
 			multivalue=0,
 			options=['nfs'],
@@ -193,7 +193,7 @@ property_descriptions={
 			identifies=0,
 		),
 	'nfs_hosts': univention.admin.property(
-			short_description=_('Allowed Hosts'),
+			short_description=_('Allowed hosts'),
 			long_description=_('A network or a selection of hosts that may mount this share.'),
 			syntax=univention.admin.syntax.string_numbers_letters_dots_spaces,
 			multivalue=1,
@@ -203,7 +203,7 @@ property_descriptions={
 			identifies=0,
 		),
 	'sambaWriteable': univention.admin.property(
-			short_description=_('Samba Writeable'),
+			short_description=_('Samba write access'),
 			long_description=_('Define if the share is writable when accessed via Samba.'),
 			syntax=univention.admin.syntax.boolean,
 			multivalue=0,
@@ -211,10 +211,10 @@ property_descriptions={
 			required=0,
 			may_change=1,
 			identifies=0,
-			default='0'
+			default='1'
 		),
 	'sambaName': univention.admin.property(
-			short_description=_('Samba Name'),
+			short_description=_('Samba name'),
 			long_description=_('This is the NetBIOS name. Among other places, it appears in the Windows Network Neighborhood.'),
 			syntax=univention.admin.syntax.string_numbers_letters_dots_spaces,
 			multivalue=0,
@@ -226,7 +226,7 @@ property_descriptions={
 		),
 	'sambaBrowseable': univention.admin.property(
 			short_description=_('Browseable'),
-			long_description=_('Share is listed in the Windows Network Neighborhood'),
+			long_description=_('Share is listed in the Windows Network environment'),
 			syntax=univention.admin.syntax.boolean,
 			multivalue=0,
 			options=['samba'],
@@ -246,8 +246,30 @@ property_descriptions={
 			identifies=0,
 			default='0'
 		),
+	'sambaDosFilemode': univention.admin.property(
+			short_description=_('Users with write access may modify permissions'),
+			long_description=_('users who has write access to a file or directory are able to change the permissions '),
+			syntax=univention.admin.syntax.boolean,
+			multivalue=0,
+			options=['samba'],
+			required=0,
+			may_change=1,
+			identifies=0,
+			default='0'
+		),
+	'sambaHideUnreadable': univention.admin.property(
+			short_description=_('Hide unreadable files/directories'),
+			long_description=_('Files and directories with no read access are hidden'),
+			syntax=univention.admin.syntax.boolean,
+			multivalue=0,
+			options=['samba'],
+			required=0,
+			may_change=1,
+			identifies=0,
+			default='0'
+		),
 	'sambaCreateMode': univention.admin.property(
-			short_description=_('File Mode'),
+			short_description=_('File mode'),
 			long_description=_('When a file is created, the necessary permissions are calculated  according to the mapping from DOS modes to UNIX permissions, and the resulting UNIX mode is then bit-wise \'AND\'ed with this parameter. This parameter may be thought of as a bit-wise MASK for the UNIX modes of a file. Any bit not set here will be removed from the modes set on a file when it is created.'),
 			syntax=univention.admin.syntax.fileMode,
 			multivalue=0,
@@ -259,7 +281,7 @@ property_descriptions={
 			default='0744'
 		),
 	'sambaDirectoryMode': univention.admin.property(
-			short_description=_('Directory Mode'),
+			short_description=_('Directory mode'),
 			long_description=_('When a directory is created, the necessary permissions are calculated  according to the mapping from DOS modes to UNIX permissions, and the resulting UNIX mode is then bit-wise \'AND\'ed with this parameter. This parameter may be thought of as a bit-wise MASK for the UNIX modes of a directory. Any bit not set here will be removed from the modes set on a directory when it is created.'),
 			syntax=univention.admin.syntax.directoryMode,
 			multivalue=0,
@@ -271,7 +293,7 @@ property_descriptions={
 			default='0755'
 		),
 	'sambaForceCreateMode': univention.admin.property(
-			short_description=_('Force File Mode'),
+			short_description=_('Force file mode'),
 			long_description=_('This parameter specifies a set of UNIX mode bit permissions that will always be set on a file created by Samba. This is done by bitwise \'OR\'ing these bits onto the mode bits of a file that is being created or having its permissions changed. The modes in this parameter are bitwise \'OR\'ed onto the file mode after the mask set in the create mask parameter is applied.'),
 			syntax=univention.admin.syntax.fileMode,
 			multivalue=0,
@@ -283,7 +305,7 @@ property_descriptions={
 			default='0'
 		),
 	'sambaForceDirectoryMode': univention.admin.property(
-			short_description=_('Force Directory Mode'),
+			short_description=_('Force directory mode'),
 			long_description=_('This parameter specifies a set of UNIX mode bit permissions that will always be set on a directory created by Samba. This is done by bitwise \'OR\'ing these bits onto the mode bits of a directory that is being created or having its permissions changed. The modes in this parameter are bitwise \'OR\'ed onto the directory mode after the mask set in the create mask parameter is applied.'),
 			syntax=univention.admin.syntax.directoryMode,
 			multivalue=0,
@@ -295,7 +317,7 @@ property_descriptions={
 			default='0'
 		),
 	'sambaSecurityMode': univention.admin.property(
-			short_description=_('Security Mode'),
+			short_description=_('Security mode'),
 			long_description=_('This parameter controls what UNIX permission bits can be modified when a Windows NT client is manipulating the UNIX permission on a file using the native NT security dialog box. This parameter is applied as a mask (AND\'ed with) to the changed permission bits, thus preventing any bits not in this mask from being modified. Essentially, zero bits in this mask may be treated as a set of bits the user is not allowed to change.'),
 			syntax=univention.admin.syntax.fileMode,
 			multivalue=0,
@@ -307,7 +329,7 @@ property_descriptions={
 			default='0777'
 		),
 	'sambaDirectorySecurityMode': univention.admin.property(
-			short_description=_('Directory Security Mode'),
+			short_description=_('Directory security mode'),
 			long_description=_('This parameter controls what UNIX permission bits can be modified when a Windows NT client is manipulating the UNIX permission on a directory using the native NT security dialog box. This parameter is applied as a mask (AND\'ed with) to the changed permission bits, thus preventing any bits not in this mask from being modified. Essentially, zero bits in this mask may be treated as a set of bits the user is not allowed to change.'),
 			syntax=univention.admin.syntax.directoryMode,
 			multivalue=0,
@@ -319,7 +341,7 @@ property_descriptions={
 			default='0777'
 		),
 	'sambaForceSecurityMode': univention.admin.property(
-			short_description=_('Force Security Mode'),
+			short_description=_('Force security mode'),
 			long_description=_('This parameter controls what UNIX permission bits can be modified when a Windows NT client is manipulating the UNIX permission on a file using the native NT security dialog box. This parameter is applied as a mask (OR\'ed with) to the changed permission bits, thus forcing any bits in this mask that the user may have modified to be on. Essentially, one bits in this mask may be treated as a set of bits that, when modifying security on a file, the user has always set to be \'on\'.'),
 			syntax=univention.admin.syntax.fileMode,
 			multivalue=0,
@@ -331,7 +353,7 @@ property_descriptions={
 			default='0'
 		),
 	'sambaForceDirectorySecurityMode': univention.admin.property(
-			short_description=_('Force Directory Security Mode'),
+			short_description=_('Force directory security mode'),
 			long_description=_('This parameter controls what UNIX permission bits can be modified when a Windows NT client is manipulating the UNIX permission on a directory using the native NT security dialog box. This parameter is applied as a mask (OR\'ed with) to the changed permission bits, thus forcing any bits in this mask that the user may have modified to be on. Essentially, one bits in this mask may be treated as a set of bits that, when modifying security on a directory, the user has always set to be \'on\'.'),
 			syntax=univention.admin.syntax.directoryMode,
 			multivalue=0,
@@ -354,7 +376,7 @@ property_descriptions={
 			default='1'
 		),
 	'sambaBlockingLocks': univention.admin.property(
-			short_description=_('Blocking Locks'),
+			short_description=_('Blocking locks'),
 			long_description=_('This parameter controls the behavior of Samba when given a request by a client to obtain a byte range lock on a region of an open file, and the request has a time limit associated with it. If this parameter is set and the lock range requested cannot be immediately satisfied, samba will internally queue the lock request, and periodically attempt to obtain the lock until the timeout period expires.'),
 			syntax=univention.admin.syntax.boolean,
 			multivalue=0,
@@ -365,7 +387,7 @@ property_descriptions={
 			default='1'
 		),
 	'sambaStrictLocking': univention.admin.property(
-			short_description=_('Strict Locking'),
+			short_description=_('Strict locking'),
 			long_description=_('This is a boolean that controls the handling of file locking in the server. When this is set to yes, the server will check every read and write access for file locks, and deny access if locks exist. This can be slow on some systems. When strict locking is disabled, the server performs file lock checks only when the client explicitly asks for them.'),
 			syntax=univention.admin.syntax.boolean,
 			multivalue=0,
@@ -388,7 +410,7 @@ property_descriptions={
 
 		),
 	'sambaLevel2Oplocks': univention.admin.property(
-			short_description=_('Level 2 Oplocks'),
+			short_description=_('Level 2 oplocks'),
 			long_description=_('This parameter controls whether Samba supports level2 (read-only) oplocks on a share. Level2, or read-only oplocks allow Windows NT clients that have an oplock on a file to downgrade from a read-write oplock to a read-only oplock once a second client opens the file (instead of releasing all oplocks on a second open, as in traditional, exclusive oplocks). This allows all openers of the file that support level2 oplocks to cache the file for read-ahead only (ie. they may not cache writes or lock requests) and increases performance for many accesses of files that are not commonly written (such as application .EXE files). Once one of the clients which have a read-only oplock writes to the file all clients are notified (no  reply  is  needed or waited for) and told to break their oplocks to "none" and delete any read-ahead caches. It is recommended that this parameter be turned on to speed access to shared executables.'),
 			syntax=univention.admin.syntax.boolean,
 			multivalue=0,
@@ -399,7 +421,7 @@ property_descriptions={
 			default='1'
 		),
 	'sambaFakeOplocks': univention.admin.property(
-			short_description=_('Fake Oplocks'),
+			short_description=_('Fake oplocks'),
 			long_description=_('Oplocks are the way that Samba clients get permission from a server to locally cache file operations.  If a server grants an oplock (opportunistic lock) then the client is free to assume that it is the only one accessing the file and it will aggressively cache file data. With some  oplock  types the client may even cache file open/close operations. This can give enormous performance benefits. When you activate this parameter, Samba will always grant oplock requests no matter how many clients are using the file. It is generally much better to use the real oplocks support rather than this parameter. If you enable this option on all read-only shares or shares that you know will only be accessed from one client at a time such as physically read-only media like CDROMs, you will see a big performance improvement on many operations. If you enable this option on shares where multiple clients may be accessing the files read-write at the same  time you can get data corruption. Use this option carefully!'),
 			syntax=univention.admin.syntax.boolean,
 			multivalue=0,
@@ -410,7 +432,7 @@ property_descriptions={
 			default='0'
 		),
 	'sambaBlockSize': univention.admin.property(
-			short_description=_('Block Size'),
+			short_description=_('Block size'),
 			long_description='',
 			syntax=univention.admin.syntax.integer,
 			multivalue=0,
@@ -420,7 +442,7 @@ property_descriptions={
 			identifies=0
 		),
 	'sambaCscPolicy': univention.admin.property(
-			short_description=_('Client-side Caching Policy'),
+			short_description=_('Client-side caching policy'),
 			long_description=_('The way clients capable of offline caching will cache the files in the share.'),
 			syntax=cscPolicy,
 			multivalue=0,
@@ -431,7 +453,7 @@ property_descriptions={
 			default='manual'
 		),
 	'sambaHostsAllow': univention.admin.property(
-			short_description=_('Allowed Hosts'),
+			short_description=_('Allowed hosts'),
 			long_description='',
 			syntax=univention.admin.syntax.string,
 			multivalue=1,
@@ -441,7 +463,7 @@ property_descriptions={
 			identifies=0
 		),
 	'sambaHostsDeny': univention.admin.property(
-			short_description=_('Denied Hosts'),
+			short_description=_('Denied hosts'),
 			long_description='',
 			syntax=univention.admin.syntax.string,
 			multivalue=1,
@@ -451,7 +473,7 @@ property_descriptions={
 			identifies=0
 		),
 	'sambaValidUsers': univention.admin.property(
-			short_description=_('Valid Users'),
+			short_description=_('Valid users'),
 			long_description='',
 			syntax=univention.admin.syntax.string,
 			multivalue=0,
@@ -461,7 +483,7 @@ property_descriptions={
 			identifies=0
 		),
 	'sambaInvalidUsers': univention.admin.property(
-			short_description=_('Invalid Users'),
+			short_description=_('Invalid users'),
 			long_description='',
 			syntax=univention.admin.syntax.string,
 			multivalue=0,
@@ -471,7 +493,7 @@ property_descriptions={
 			identifies=0
 		),
 	'sambaForceUser': univention.admin.property(
-			short_description=_('Force User'),
+			short_description=_('Force user'),
 			long_description=_('This specifies a UNIX user name that will be assigned as the default user for all users connecting to this service. This is useful for sharing files. You should also use it carefully as using it incorrectly can cause security problems.'),
 			syntax=univention.admin.syntax.string,
 			multivalue=0,
@@ -481,7 +503,7 @@ property_descriptions={
 			identifies=0
 		),
 	'sambaForceGroup': univention.admin.property(
-			short_description=_('Force Group'),
+			short_description=_('Force group'),
 			long_description=_('This specifies a UNIX group name that will be assigned as the default primary group for all users connecting to this service. This is useful for sharing files by ensuring that all access to files on service will use the named group for their permissions checking. Thus, by assigning permissions for this group to the files and directories within this service the Samba administrator can restrict or allow sharing of these files.'),
 			syntax=univention.admin.syntax.string,
 			multivalue=0,
@@ -491,7 +513,7 @@ property_descriptions={
 			identifies=0
 		),
 	'sambaHideFiles': univention.admin.property(
-			short_description=_('Hide Files'),
+			short_description=_('Hide files'),
 			long_description='',
 			syntax=univention.admin.syntax.string,
 			multivalue=0,
@@ -501,7 +523,7 @@ property_descriptions={
 			identifies=0
 		),
 	'sambaNtAclSupport': univention.admin.property(
-			short_description=_('NT ACL Support'),
+			short_description=_('NT ACL support'),
 			long_description=_('This boolean parameter controls whether Samba will attempt to map UNIX permissions into Windows NT access control lists.'),
 			syntax=univention.admin.syntax.boolean,
 			multivalue=0,
@@ -523,7 +545,7 @@ property_descriptions={
 			default='0'
 		),
 	'sambaPostexec': univention.admin.property(
-			short_description=_('Postexec Script'),
+			short_description=_('Postexec script'),
 			long_description=_('This option specifies a command to be run whenever the service is disconnected. It takes the usual substitutions.'),
 			syntax=univention.admin.syntax.string,
 			multivalue=0,
@@ -533,7 +555,7 @@ property_descriptions={
 			identifies=0
 		),
 	'sambaPreexec': univention.admin.property(
-			short_description=_('Preexec Script'),
+			short_description=_('Preexec script'),
 			long_description=_('This option specifies a command to be run whenever the service is connected to. It takes the usual substitutions.'),
 			syntax=univention.admin.syntax.string,
 			multivalue=0,
@@ -543,7 +565,7 @@ property_descriptions={
 			identifies=0
 		),
 	'sambaWriteList': univention.admin.property(
-			short_description=_('Write List'),
+			short_description=_('Users with write access'),
 			long_description='',
 			syntax=univention.admin.syntax.string,
 			multivalue=0,
@@ -553,7 +575,7 @@ property_descriptions={
 			identifies=0
 		),
 	'sambaVFSObjects': univention.admin.property(
-			short_description=_('VFS Objects'),
+			short_description=_('VFS objects'),
 			long_description=_('Specifies which VFS Objects to use.'),
 			syntax=univention.admin.syntax.string,
 			multivalue=0,
@@ -563,7 +585,7 @@ property_descriptions={
 			identifies=0
 		),
 	'sambaMSDFSRoot': univention.admin.property(
-			short_description=_('MSDFS Root'),
+			short_description=_('MSDFS root'),
 			long_description=_('Export share as MSDFS root'),
 			syntax=univention.admin.syntax.boolean,
 			multivalue=0,
@@ -574,7 +596,7 @@ property_descriptions={
 			default='0'
 		),
 	'sambaInheritOwner': univention.admin.property(
-			short_description=_('Inherit Owner'),
+			short_description=_('Inherit owner'),
 			long_description=_('Ownership for new files and directories is controlled by the ownership of the parent directory.'),
 			syntax=univention.admin.syntax.boolean,
 			multivalue=0,
@@ -585,7 +607,7 @@ property_descriptions={
 			default='0'
 		),
 	'sambaInheritPermissions': univention.admin.property(
-			short_description=_('Inherit Permissions'),
+			short_description=_('Inherit permissions'),
 			long_description=_('New files and directories inherit the mode of the parent directory.'),
 			syntax=univention.admin.syntax.boolean,
 			multivalue=0,
@@ -595,9 +617,19 @@ property_descriptions={
 			identifies=0,
 			default='0'
 		),
+	'sambaCustomSettings': univention.admin.property(
+			short_description=_('Custom share settings'),
+			long_description=_('Set new custom share settings'),
+			syntax=univention.admin.syntax.keyAndValue,
+			multivalue=1,
+			options=['samba'],
+			required=0,
+			may_change=1,
+			identifies=0,
+		),
 	'webaccessName': univention.admin.property(
 			short_description=_('Name'),
-			long_description=_('Name of the webaccess share.'),
+			long_description=_('Name of the web access share.'),
 			syntax=univention.admin.syntax.string,
 			multivalue=0,
 			options=['webaccess'],
@@ -606,8 +638,8 @@ property_descriptions={
 			identifies=0,
 		),
 	'webaccessIpaddress': univention.admin.property(
-			short_description=_('IP Address'),
-			long_description=_('IP address of the webaccess share host.'),
+			short_description=_('IP address'),
+			long_description=_('IP address of the web access share host.'),
 			syntax=univention.admin.syntax.ipAddress,
 			multivalue=0,
 			options=['webaccess'],
@@ -617,46 +649,51 @@ property_descriptions={
 		),
 }
 layout=[
-	univention.admin.tab(_('General'),_('General Settings'),[
+	univention.admin.tab(_('General'),_('General settings'),[
 			[univention.admin.field('name')],
 			[univention.admin.field('host'), univention.admin.field('path')],
 			[univention.admin.field('owner'), univention.admin.field('group')],
 			[univention.admin.field('directorymode')]
 		]),
-	univention.admin.tab(_('NFS General'),_('General NFS Settings'),[
+	univention.admin.tab(_('NFS general'),_('General NFS settings'),[
 			[univention.admin.field('writeable'), univention.admin.field('sync')],
 			[univention.admin.field('subtree_checking'), univention.admin.field('root_squash')],
 			[univention.admin.field('nfs_hosts')],
 		]),
-	univention.admin.tab(_('Webaccess General'),_('General Webaccess Settings'),[
+	univention.admin.tab(_('Web access general'),_('General Webaccess Settings'),[
 			[univention.admin.field('webaccessName'), univention.admin.field('webaccessIpaddress')],
 		]),
-	univention.admin.tab(_('Samba General'),_('General Samba Settings'),[
-			[univention.admin.field('sambaName'), univention.admin.field('sambaWriteable')],
+	univention.admin.tab(_('Samba general'),_('General Samba settings'),[
+			[univention.admin.field('sambaName')],
 			[univention.admin.field('sambaBrowseable'), univention.admin.field('sambaPublic')],
 			[univention.admin.field('sambaPostexec'), univention.admin.field('sambaPreexec')],
 			[univention.admin.field('sambaVFSObjects'), univention.admin.field('sambaMSDFSRoot') ],
+			[univention.admin.field('sambaDosFilemode'), univention.admin.field('sambaHideUnreadable') ],
 		]),
-	univention.admin.tab(_('Samba Permissions'),_('Samba Permission Settings'),[
+	univention.admin.tab(_('Samba permissions'),_('Samba permission settings'),[
+			[univention.admin.field('sambaWriteable')],
 			[univention.admin.field('sambaForceUser'), univention.admin.field('sambaForceGroup')],
 			[univention.admin.field('sambaValidUsers'), univention.admin.field('sambaInvalidUsers') ],
 			[univention.admin.field('sambaHostsAllow'), univention.admin.field('sambaHostsDeny') ],
 			[univention.admin.field('sambaWriteList'), univention.admin.field('sambaHideFiles') ],
 			[univention.admin.field('sambaNtAclSupport'), univention.admin.field('sambaInheritAcls')],
 			[univention.admin.field('sambaInheritOwner'), univention.admin.field('sambaInheritPermissions')],
-		]),
-	univention.admin.tab(_('Samba Extended Permissions'),_('Samba Extended Permission Settings'),[
+		], advanced = True),
+	univention.admin.tab(_('Samba extended permissions'),_('Samba extended permission settings'),[
 			[univention.admin.field('sambaCreateMode'), univention.admin.field('sambaDirectoryMode')],
 			[univention.admin.field('sambaForceCreateMode'), univention.admin.field('sambaForceDirectoryMode')],
 			[univention.admin.field('sambaSecurityMode'), univention.admin.field('sambaDirectorySecurityMode')],
 			[univention.admin.field('sambaForceSecurityMode'), univention.admin.field('sambaForceDirectorySecurityMode')],
-		]),
-	univention.admin.tab(_('Samba Performance'),_('Samba Performance Settings'),[
+		], advanced = True),
+	univention.admin.tab(_('Samba performance'),_('Samba performance settings'),[
 			[univention.admin.field('sambaLocking'), univention.admin.field('sambaBlockingLocks')],
 			[univention.admin.field('sambaStrictLocking'), univention.admin.field('sambaOplocks')],
 			[univention.admin.field('sambaLevel2Oplocks'), univention.admin.field('sambaFakeOplocks')],
 			[univention.admin.field('sambaBlockSize'), univention.admin.field('sambaCscPolicy')],
-		])
+		], advanced = True),
+	univention.admin.tab(_('Samba custom settings'),_('Custom settings for Samba shares'), [
+			[univention.admin.field('sambaCustomSettings') , ],
+		], advanced = True),
 ]
 
 def boolToString(value):
@@ -669,6 +706,19 @@ def stringToBool(value):
 		return '1'
 	else:
 		return '0'
+
+def mapKeyAndValue(old):
+	lst = []
+	for entry in old:
+		lst.append( '%s = %s' % (entry[0], entry[1]) )
+	return lst
+
+def unmapKeyAndValue(old):
+	lst = []
+	for entry in old:
+		lst.append( entry.split(' = ', 1) )
+	return lst
+
 
 def insertQuotes(value):
 	'Turns @group name, user name into @"group name", "user name"'
@@ -707,6 +757,8 @@ mapping.register('subtree_checking', 'univentionShareNFSSubTree', boolToString, 
 mapping.register('sambaName', 'univentionShareSambaName', None, univention.admin.mapping.ListToString)
 mapping.register('sambaBrowseable', 'univentionShareSambaBrowseable', boolToString, stringToBool)
 mapping.register('sambaPublic', 'univentionShareSambaPublic', boolToString, stringToBool)
+mapping.register('sambaDosFilemode', 'univentionShareSambaDosFilemode', boolToString, stringToBool)
+mapping.register('sambaHideUnreadable', 'univentionShareSambaHideUnreadable', boolToString, stringToBool)
 mapping.register('sambaCreateMode', 'univentionShareSambaCreateMode', None, univention.admin.mapping.ListToString)
 mapping.register('sambaDirectoryMode', 'univentionShareSambaDirectoryMode', None, univention.admin.mapping.ListToString)
 mapping.register('sambaForceCreateMode', 'univentionShareSambaForceCreateMode', None, univention.admin.mapping.ListToString)
@@ -740,6 +792,7 @@ mapping.register('sambaVFSObjects', 'univentionShareSambaVFSObjects', None, univ
 mapping.register('sambaMSDFSRoot', 'univentionShareSambaMSDFS', boolToString, stringToBool)
 mapping.register('sambaInheritOwner', 'univentionShareSambaInheritOwner', boolToString, stringToBool)
 mapping.register('sambaInheritPermissions', 'univentionShareSambaInheritPermissions', boolToString, stringToBool)
+mapping.register('sambaCustomSettings', 'univentionShareSambaCustomSetting', mapKeyAndValue, unmapKeyAndValue)
 mapping.register('webaccessName', 'univentionShareWebaccessName', None, univention.admin.mapping.ListToString)
 mapping.register('webaccessIpaddress', 'univentionShareWebaccessIpaddress', None, univention.admin.mapping.ListToString)
 mapping.register('webaccessHordeauth', 'univentionShareWebaccessHordeauth', boolToString, stringToBool)

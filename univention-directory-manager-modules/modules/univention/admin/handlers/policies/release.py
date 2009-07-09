@@ -3,7 +3,7 @@
 # Univention Admin Modules
 #  admin policy for the release settings
 #
-# Copyright (C) 2004, 2005, 2006 Univention GmbH
+# Copyright (C) 2004-2009 Univention GmbH
 #
 # http://www.univention.de/
 # 
@@ -71,7 +71,7 @@ property_descriptions={
 			identifies=1,
 		),
 	'activate': univention.admin.property(
-			short_description=_('Activate the Policy'),
+			short_description=_('Activate policy'),
 			long_description='',
 			syntax=univention.admin.syntax.TrueFalseUp,
 			multivalue=0,
@@ -81,7 +81,7 @@ property_descriptions={
 			identifies=0
 		),
 	'releaseVersion': univention.admin.property(
-			short_description=_('Release Version'),
+			short_description=_('Release version'),
 			long_description='',
 			syntax=univention.admin.syntax.string,
 			multivalue=0,
@@ -91,7 +91,7 @@ property_descriptions={
 			identifies=0
 		),
 	'requiredObjectClasses': univention.admin.property(
-			short_description=_('Required Object Classes'),
+			short_description=_('Required object classes'),
 			long_description='',
 			syntax=univention.admin.syntax.string,
 			multivalue=1,
@@ -101,7 +101,7 @@ property_descriptions={
 			identifies=0
 		),
 	'prohibitedObjectClasses': univention.admin.property(
-			short_description=_('Prohibited Object Classes'),
+			short_description=_('Excluded object classes'),
 			long_description='',
 			syntax=univention.admin.syntax.string,
 			multivalue=1,
@@ -111,7 +111,7 @@ property_descriptions={
 			identifies=0
 		),
 	'fixedAttributes': univention.admin.property(
-			short_description=_('Fixed Attributes'),
+			short_description=_('Fixed attributes'),
 			long_description='',
 			syntax=releaseFixedAttributes,
 			multivalue=1,
@@ -121,7 +121,7 @@ property_descriptions={
 			identifies=0
 		),
 	'emptyAttributes': univention.admin.property(
-			short_description=_('Empty Attributes'),
+			short_description=_('Empty attributes'),
 			long_description='',
 			syntax=releaseFixedAttributes,
 			multivalue=1,
@@ -142,14 +142,14 @@ property_descriptions={
 		)
 }
 layout=[
-	univention.admin.tab(_('General'),_('Update'), [
+	univention.admin.tab(_('General'),_('Release updates'), [
 		[univention.admin.field('name', hide_in_resultmode=1) ],
 		[univention.admin.field('activate'), univention.admin.field('releaseVersion') ]
 	]),
 	univention.admin.tab(_('Object'),_('Object'), [
 		[univention.admin.field('requiredObjectClasses') , univention.admin.field('prohibitedObjectClasses') ],
 		[univention.admin.field('fixedAttributes'), univention.admin.field('emptyAttributes')]
-	]),
+	], advanced = True),
 ]
 
 mapping=univention.admin.mapping.mapping()

@@ -3,7 +3,7 @@
 # Univention Admin Modules
 #  admin module for the dns host records
 #
-# Copyright (C) 2004, 2005, 2006 Univention GmbH
+# Copyright (C) 2004-2009 Univention GmbH
 #
 # http://www.univention.de/
 #
@@ -106,10 +106,10 @@ layout=[
 	]),
 	univention.admin.tab(_('Mail'), _('Mail Exchangers for this Host'), fields=[
 		[univention.admin.field('mx')],
-	]),
+	], advanced = True),
 	univention.admin.tab(_('Text'), _('Optional Text'), fields=[
 		[univention.admin.field('txt')],
-	])
+	], advanced = True)
 ]
 
 

@@ -3,7 +3,7 @@
 # Univention Admin Modules
 #  admin module for groups
 #
-# Copyright (C) 2004, 2005, 2006 Univention GmbH
+# Copyright (C) 2004-2009 Univention GmbH
 #
 # http://www.univention.de/
 #
@@ -29,6 +29,7 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 import sys, string, copy, re
+import univention.admin
 import univention.admin.filter
 import univention.admin.handlers
 import univention.admin.allocators
@@ -42,18 +43,18 @@ operations=['add','edit','remove','search','move']
 usewizard=1
 wizardmenustring=_("Groups")
 wizarddescription=_("Add, edit and delete groups")
-wizardoperations={"add":[_("Add"), _("Add Group Object")],"find":[_("Find"), _("Find Group Object(s)")]}
+wizardoperations={"add":[_("Add"), _("Add group object")],"find":[_("Search"), _("Search group object(s)")]}
 
 childs=0
 short_description=_('Group: Group')
 long_description=''
 options={
 	'posix': univention.admin.option(
-			short_description=_('Posix Group'),
+			short_description=_('Posix group'),
 			default=1
 		),
 	'samba': univention.admin.option(
-			short_description=_('Samba Group'),
+			short_description=_('Samba group'),
 			default=1
 		)
 }
@@ -94,7 +95,7 @@ property_descriptions={
 			options=['samba']
 		),
 	'sambaGroupType': univention.admin.property(
-			short_description=_('Samba Group Type'),
+			short_description=_('Samba group type'),
 			long_description='',
 			syntax=univention.admin.syntax.sambaGroupType,
 			multivalue=0,
@@ -131,13 +132,14 @@ property_descriptions={
 			syntax=univention.admin.syntax.hostDn,
 			multivalue=1,
 			options=['posix'],
+			license=['UGS', 'UCS'],
 			required=0,
 			may_change=1,
 			dontsearch=1,
 			identifies=0
 		),
 	'mailAddress': univention.admin.property(
-			short_description=_('Mail Address'),
+			short_description=_('Mail address'),
 			long_description='',
 			syntax=univention.admin.syntax.emailAddress,
 			multivalue=0,
@@ -148,7 +150,7 @@ property_descriptions={
 			identifies=0
 		),
 	'memberOf': univention.admin.property(
-			short_description=_('Member Of'),
+			short_description=_('Member of'),
 			long_description='',
 			syntax=univention.admin.syntax.groupDn,
 			multivalue=1,
@@ -159,7 +161,7 @@ property_descriptions={
 			identifies=0
 		),
 	'nestedGroup': univention.admin.property(
-			short_description=_('Nested Group'),
+			short_description=_('Nested group'),
 			long_description='',
 			syntax=univention.admin.syntax.groupDn,
 			multivalue=1,
@@ -171,8 +173,12 @@ property_descriptions={
 		)
 }
 
+# overwrite properties by UCR variables
+ucr_properties = ['dontsearch']
+univention.admin.ucr_overwrite_properties (module, ucr_properties, property_descriptions)
+
 layout=[
-	univention.admin.tab(_('General'),_('Basic Values'),[
+	univention.admin.tab(_('General'),_('Basic settings'),[
 		[univention.admin.field("name"), univention.admin.field("description")],
 		[univention.admin.field("gidNumber"),univention.admin.field("sambaRID")],
 		[univention.admin.field("sambaGroupType"), univention.admin.field("mailAddress")]
@@ -180,16 +186,17 @@ layout=[
 	univention.admin.tab(_('Members'),_('Members of this Group'),[
 		[univention.admin.field("users")]
 	] ),
-	univention.admin.tab(_('Host Members'),_('Host Members of this Group'),[
+	univention.admin.tab(_('Host members'),_('Host members of this group'),[
 		[univention.admin.field("hosts")]
-	] ),
-	univention.admin.tab(_('Nested Groups'),_('Membership of other Groups'),[
+	], advanced = True ),
+	univention.admin.tab(_('Nested groups'),_('Membership of other groups'),[
 		[univention.admin.field("nestedGroup")]
-	] ),
-	univention.admin.tab(_('Member Of'),_('Membership in other Groups'),[
+	], advanced = True ),
+	univention.admin.tab(_('Member of'),_('Membership in other groups'),[
 			[univention.admin.field("memberOf")]
-	] )
+	], advanced = True )
 ]
+
 
 mapping=univention.admin.mapping.mapping()
 mapping.register('name', 'cn', None, univention.admin.mapping.ListToString)
@@ -387,8 +394,18 @@ class object(univention.admin.handlers.simpleLdap):
 		if old != new:
 			ml.append( ( 'uniqueMember', old, new ) )
 			uids = self.lo.getAttr( self.dn, 'memberUid' )
-			new = map( lambda x: x[ x.find( '=' ) + 1 : x.find( ',' ) ], new )
-			ml.append( ( 'memberUid', uids, new ) )
+			new_uids = []
+			for member in new:
+				if member.startswith('uid='): # UID is stored in DN --> use UID directly
+					new_uids.append( member[ member.find('=') + 1 : member.find(',') ] ) # string between first '=' and first ','
+				else: # UID is not stored in DN --> fetch UID by DN
+					uid_list = self.lo.getAttr(member, 'uid')
+					# a group have no uid attribute, see Bug #12644
+					if len(uid_list) > 0:
+						new_uids.append(uid_list[0])
+						if len(uid_list) > 1:
+							univention.debug.debug(univention.debug.ADMIN, univention.debug.WARN, 'groups/group: A groupmember has multiple UIDs (%s %s)' % (member, str(uid_list)))
+			ml.append( ( 'memberUid', uids, new_uids ) )
 		return ml
 
 	def _ldap_post_create(self):
@@ -439,7 +456,7 @@ class object(univention.admin.handlers.simpleLdap):
 			newmembers=copy.deepcopy(members)
 			newmembers=self.__case_insensitive_remove_from_list(self.dn, newmembers)
 			univention.debug.debug(univention.debug.ADMIN, univention.debug.INFO, 'groups/group: remove from supergroup %s'%group)
-			self.lo.modify(group, [('uniqueMember', members, newmembers)])
+			self.__set_membership_attributes( group, members, newmembers )
 
 	def _ldap_post_move(self, olddn):
 
@@ -462,7 +479,7 @@ class object(univention.admin.handlers.simpleLdap):
 			newmembers=self.__case_insensitive_remove_from_list(olddn, newmembers)
 			newmembers.append(self.dn)
 			univention.debug.debug(univention.debug.ADMIN, univention.debug.INFO, 'groups/group: updating supergroup %s'%group)
-			self.lo.modify(group, [('uniqueMember', members, newmembers)])
+			self.__set_membership_attributes( group, members, newmembers )
 
 	def cancel(self):
 		for i,j in self.alloc:
@@ -473,8 +490,26 @@ class object(univention.admin.handlers.simpleLdap):
 
 		if self.exists():
 			old_groups = self.oldinfo.get('memberOf', [])
+			old_name = self.oldinfo.get('name')
+			new_name = self.info.get('name')
 		else:
 			old_groups = []
+			old_name = ""
+			new_name = ""
+
+		# rewrite membership attributes in "supergroup" if we have a new name (rename)
+		if not old_name == new_name:
+			univention.debug.debug(univention.debug.ADMIN, univention.debug.INFO, 'groups/group: rewrite memberuid after rename')
+			newdn = self.dn
+			newdn = newdn.replace(old_name, new_name, 1)
+			for group in self.info.get('memberOf', []):
+				if type(group) == type([]):
+					group=group[0]
+				members=self.lo.getAttr(group, 'uniqueMember')
+				newmembers=copy.deepcopy(members)
+				newmembers=self.__case_insensitive_remove_from_list(self.dn, newmembers)
+				newmembers.append(newdn)
+				self.__set_membership_attributes( group, members, newmembers )
 
 		add_to_group=[]
 		remove_from_group=[]
@@ -496,8 +531,7 @@ class object(univention.admin.handlers.simpleLdap):
 			newmembers=copy.deepcopy(members)
 			newmembers.append(self.dn)
 			univention.debug.debug(univention.debug.ADMIN, univention.debug.INFO, 'groups/group: add to supergroup %s'%group)
-			self.lo.modify(group, [('uniqueMember', members, newmembers)])
-			self.__rewrite_member_uid( group )
+			self.__set_membership_attributes( group, members, newmembers )
 
 		for group in remove_from_group:
 			if type(group) == type([]):
@@ -508,25 +542,24 @@ class object(univention.admin.handlers.simpleLdap):
 			newmembers=copy.deepcopy(members)
 			newmembers=self.__case_insensitive_remove_from_list(self.dn, newmembers)
 			univention.debug.debug(univention.debug.ADMIN, univention.debug.INFO, 'groups/group: remove from supergroup %s'%group)
-			self.lo.modify(group, [('uniqueMember', members, newmembers)])
-			self.__rewrite_member_uid( group )
+			self.__set_membership_attributes( group, members, newmembers )
 
-	def __rewrite_member_uid( self, group, members = [] ):
-		uids = self.lo.getAttr( group, 'memberUid' )
-		if not members:
-			members = self.lo.getAttr( group, 'uniqueMember' )
-		new = map( lambda x: x[ x.find( '=' ) + 1 : x.find( ',' ) ], members )
-		self.lo.modify(group, [ ( 'memberUid', uids, new ) ] )
-		
+	def __set_membership_attributes( self, group, members, newmembers ):
+		newuids = map( lambda x: x[ x.find( '=' ) + 1 : x.find( ',' ) ], newmembers )
+		self.lo.modify( group, [ ( 'uniqueMember', members, newmembers ) ] )
+		#don't set the memberUid attribute for nested groups, see Bug #11868
+		# uids = self.lo.getAttr( group, 'memberUid' )
+		# self.lo.modify( group, [ ( 'memberUid', uids, newuids ) ] )
+
 	def __case_insensitive_in_list(self, dn, list):
 		for element in list:
-			if dn.lower() == element.lower():
+			if dn.decode('utf8').lower() == element.decode('utf8').lower():
 				return True
 		return False
 
 	def __case_insensitive_remove_from_list(self, dn, list):
 		for element in list:
-			if dn.lower() == element.lower():
+			if dn.decode('utf8').lower() == element.decode('utf8').lower():
 				remove_element = element
 		list.remove(remove_element)
 		return list

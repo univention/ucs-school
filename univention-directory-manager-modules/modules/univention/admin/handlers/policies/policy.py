@@ -3,7 +3,7 @@
 # Univention Admin Modules
 #  admin module for the policies
 #
-# Copyright (C) 2004, 2005, 2006 Univention GmbH
+# Copyright (C) 2004-2009 Univention GmbH
 #
 # http://www.univention.de/
 # 
@@ -70,7 +70,7 @@ property_descriptions={
 			identifies=1
 		)
 }
-layout=[ univention.admin.tab(_('General'),_('Basic Values'),[ [univention.admin.field("name")] ]) ]
+layout=[ univention.admin.tab(_('General'),_('Basic settings'),[ [univention.admin.field("name")] ]) ]
 
 mapping=univention.admin.mapping.mapping()
 

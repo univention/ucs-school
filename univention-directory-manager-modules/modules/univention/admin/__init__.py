@@ -3,7 +3,7 @@
 # Univention Admin Modules
 #  basic functionality
 #
-# Copyright (C) 2004, 2005, 2006 Univention GmbH
+# Copyright (C) 2004-2009 Univention GmbH
 #
 # http://www.univention.de/
 # 
@@ -30,12 +30,36 @@
 
 import copy, types, string, re
 import mapping
+import univention.baseconfig
 import univention.debug
+
+baseConfig=univention.baseconfig.baseConfig()
+baseConfig.load()
 
 __path__.append("handlers")
 
+def ucr_overwrite_properties (module, ucr_properties, property_descriptions):
+	"""
+	Overwrite properties in property_descriptions by UCR variables
+	"""
+	if module and ucr_properties and property_descriptions:
+		for k, v in property_descriptions.iteritems ():
+			for p in ucr_properties:
+				p_v = baseConfig.get ('directory/manager/web/modules/%s/properties/%s/%s' % (module, k, p), None)
+				if p_v != None:
+					if hasattr (v, p):
+						try:
+							setattr (v, p, type (getattr (v, p)) (p_v))
+							univention.debug.debug(univention.debug.ADMIN, univention.debug.INFO, \
+									"properties: applied directory/manager/web/modules/%s/properties/%s/%s='%s'" % (module, k, p, p_v))
+						except ValueError:
+							univention.debug.debug(univention.debug.ADMIN, univention.debug.ERROR, \
+									"properties: unable to apply directory/manager/web/modules/%s/properties/%s/%s='%s'" % (module, k, p, p_v))
+					else:
+						univention.debug.debug(univention.debug.ADMIN, univention.debug.ERROR, \
+								"properties: no property found for directory/manager/web/modules/%s/properties/%s/%s='%s'" % (module, k, p, p_v))
 class property:
-	def __init__(self, short_description='', long_description='', syntax=None, module_search=None, multivalue=0, one_only=0, parent=None, options=[], required=0, may_change=1, identifies=0, unique=0, default=None, dontsearch=0, show_in_lists=0, editable=1, configObjectPosition=None,configAttributeName=None):
+	def __init__(self, short_description='', long_description='', syntax=None, module_search=None, multivalue=0, one_only=0, parent=None, options=[], license=[], required=0, may_change=1, identifies=0, unique=0, default=None, dontsearch=0, show_in_lists=0, editable=1, configObjectPosition=None,configAttributeName=None):
 		self.short_description=short_description
 		self.long_description=long_description
 		if type(syntax) == types.ClassType:
@@ -47,6 +71,7 @@ class property:
 		self.one_only=one_only
 		self.parent=parent
 		self.options=options
+		self.license=license
 		self.required=required
 		self.may_change=may_change
 		self.identifies=identifies
@@ -185,14 +210,54 @@ class option:
 				return False
 		return True
 
+def ucr_overwrite_layout (module, ucr_property, tab):
+	"""
+	Overwrite the advanced setting in the layout
+	"""
+	desc = tab.short_description
+	if hasattr (tab.short_description, 'data'):
+		desc = tab.short_description.data
+	p_v = baseConfig.get ('directory/manager/web/modules/%s/layout/%s/%s' % (module, desc, ucr_property), None)
+	if not p_v:
+		return None
+
+	if p_v.lower() in ['0', 'false', 'no', 'off']:
+		return False
+	else:
+		return True
+
+
+class extended_attribute(object):
+	def __init__(self, name, objClass, ldapMapping, deleteObjClass = False, syntax = 'string', hook = None):
+		self.name = name
+		self.objClass = objClass
+		self.ldapMapping = ldapMapping
+		self.deleteObjClass = deleteObjClass
+		self.syntax = syntax
+		self.hook = hook
+
+	def __repr__(self):
+		hook = None
+		if self.hook:
+			hook = self.hook.type
+		return " univention.admin.extended_attribute: { name: '%s', oc: '%s', attr: '%s', delOC: '%s', syntax: '%s', hook: '%s' }" % (self.name, self.objClass, self.ldapMapping, self.deleteObjClass, self.syntax, hook)
+
+
 class tab:
-	def __init__(self, short_description='', long_description='', fields=[]):
+	def __init__(self, short_description='', long_description='', fields=[], advanced = False):
 		self.short_description=short_description
 		self.long_description=long_description
 		self.fields=fields
+		self.advanced = advanced
+
+	def set_fields(self, fields):
+		self.fields = fields
+
+	def get_fields(self):
+		return self.fields
 
 	def __repr__(self):
-		string = " univention.admin.tab: { short_description: '%s', long_description: '%s', fields: [" % (self.short_description, self.long_description)
+		string = " univention.admin.tab: { short_description: '%s', long_description: '%s', advanced: '%s', fields: [" % (self.short_description, self.long_description, self.advanced)
 		for field in self.fields:
 			string = "%s %s," % (string, field)
 		return string + " ] }"

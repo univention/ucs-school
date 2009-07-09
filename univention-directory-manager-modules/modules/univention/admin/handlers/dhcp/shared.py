@@ -3,7 +3,7 @@
 # Univention Admin Modules
 #  admin module for the dhcp shares
 #
-# Copyright (C) 2004, 2005, 2006 Univention GmbH
+# Copyright (C) 2004-2009 Univention GmbH
 #
 # http://www.univention.de/
 # 
@@ -42,13 +42,13 @@ module='dhcp/shared'
 operations=['add','edit','remove','search','move']
 superordinate='dhcp/service'
 childs=1
-short_description=_('DHCP: Shared Network')
+short_description=_('DHCP: Shared network')
 long_description=''
 options={
 }
 property_descriptions={
 	'name': univention.admin.property(
-			short_description=_('Shared Network Name'),
+			short_description=_('Shared network name'),
 			long_description='',
 			syntax=univention.admin.syntax.uid,
 			multivalue=0,
@@ -61,7 +61,7 @@ property_descriptions={
 options={
 }
 layout=[
-	univention.admin.tab(_('General'), _('Basic Values'), [
+	univention.admin.tab(_('General'), _('Basic settings'), [
 		[univention.admin.field('name')]
 	]),
 ]

@@ -4,7 +4,7 @@
 # Univention Nagios
 #  univention admin nagios module
 #
-# Copyright (C) 2004, 2005, 2006 Univention GmbH
+# Copyright (C) 2004-2009 Univention GmbH
 #
 # http://www.univention.de/
 #
@@ -42,7 +42,7 @@ _=translation.translate
 module = 'nagios/timeperiod'
 
 childs = 0
-short_description = _('Nagios Time Period')
+short_description = _('Nagios time period')
 long_description = ''
 operations = [ 'search', 'edit', 'add', 'remove' ]
 

@@ -3,7 +3,7 @@
 # Univention Admin Modules
 #  admin policy for the password history
 #
-# Copyright (C) 2004, 2005, 2006 Univention GmbH
+# Copyright (C) 2004-2009 Univention GmbH
 #
 # http://www.univention.de/
 # 
@@ -43,9 +43,9 @@ _=translation.translate
 class pwhistoryFixedAttributes(univention.admin.syntax.select):
 	name='pwhistoryFixedAttributes'
 	choices=[
-		('univentionPWHistoryLen',_('History Length')),
-		('univentionPWExpiryInterval',_('Expiry Interval')),
-		('univentionPWLength',_('Password Length'))
+		('univentionPWHistoryLen',_('History length')),
+		('univentionPWExpiryInterval',_('Password expiry interval')),
+		('univentionPWLength',_('Password length'))
 		]
 
 module='policies/pwhistory'
@@ -56,8 +56,8 @@ policy_apply_to=["users/user"]
 policy_position_dn_prefix="cn=pwhistory,cn=users"
 usewizard=1
 childs=0
-short_description=_('Policy: Password Policy')
-policy_short_description=_('Password Policy')
+short_description=_('Policy: Passwords')
+policy_short_description=_('Passwords')
 long_description=''
 options={
 }
@@ -83,7 +83,7 @@ property_descriptions={
 			identifies=0
 		),
 	'expiryInterval': univention.admin.property(
-			short_description=_('Expiry Interval'),
+			short_description=_('Password expiry interval'),
 			long_description='',
 			syntax=univention.admin.syntax.integer,
 			multivalue=0,
@@ -93,7 +93,7 @@ property_descriptions={
 			identifies=0
 		),
 	'pwLength': univention.admin.property(
-			short_description=_('Password Length'),
+			short_description=_('Password length'),
 			long_description='',
 			syntax=univention.admin.syntax.integer,
 			multivalue=0,
@@ -103,7 +103,7 @@ property_descriptions={
 			identifies=0
 		),
 	'requiredObjectClasses': univention.admin.property(
-			short_description=_('Required Object Classes'),
+			short_description=_('Required object classes'),
 			long_description='',
 			syntax=univention.admin.syntax.string,
 			multivalue=1,
@@ -113,7 +113,7 @@ property_descriptions={
 			identifies=0
 		),
 	'prohibitedObjectClasses': univention.admin.property(
-			short_description=_('Prohibited Object Classes'),
+			short_description=_('Excluded object classes'),
 			long_description='',
 			syntax=univention.admin.syntax.string,
 			multivalue=1,
@@ -123,7 +123,7 @@ property_descriptions={
 			identifies=0
 		),
 	'fixedAttributes': univention.admin.property(
-			short_description=_('Fixed Attributes'),
+			short_description=_('Fixed attributes'),
 			long_description='',
 			syntax=pwhistoryFixedAttributes,
 			multivalue=1,
@@ -133,7 +133,7 @@ property_descriptions={
 			identifies=0
 		),
 	'emptyAttributes': univention.admin.property(
-			short_description=_('Empty Attributes'),
+			short_description=_('Empty attributes'),
 			long_description='',
 			syntax=pwhistoryFixedAttributes,
 			multivalue=1,
@@ -154,7 +154,7 @@ property_descriptions={
 			)
 }
 layout=[
-	univention.admin.tab(_('General'),_('Password Policy'), [
+	univention.admin.tab(_('General'),_('Passwords'), [
 		[univention.admin.field('name', hide_in_resultmode=1), univention.admin.field('filler', hide_in_resultmode=1)],
 		[univention.admin.field('length'), univention.admin.field('expiryInterval') ],
 		[univention.admin.field('pwLength') ]
@@ -162,7 +162,7 @@ layout=[
 	univention.admin.tab(_('Object'),_('Object'), [
 		[univention.admin.field('requiredObjectClasses') , univention.admin.field('prohibitedObjectClasses') ],
 		[univention.admin.field('fixedAttributes'),univention.admin.field('emptyAttributes')]
-	]),
+	], advanced = True),
 ]
 
 mapping=univention.admin.mapping.mapping()

@@ -3,7 +3,7 @@
 # Univention Admin Modules
 #  admin module for the computer objects
 #
-# Copyright (C) 2004, 2005, 2006 Univention GmbH
+# Copyright (C) 2004-2009 Univention GmbH
 #
 # http://www.univention.de/
 # 
@@ -52,7 +52,7 @@ module='computers/computer'
 usewizard=1
 wizardmenustring=_("Computer")
 wizarddescription=_("Add, edit and delete computers")
-wizardoperations={"add":[_("Add"), _("Add Computer")],"find":[_("Find"), _("Find Computer(s)")]}
+wizardoperations={"add":[_("Add"), _("Add Computer")],"find":[_("Search"), _("Search computer(s)")]}
 
 childmodules=["computers/managedclient","computers/macos","computers/thinclient","computers/windows","computers/domaincontroller_master", "computers/domaincontroller_backup", "computers/domaincontroller_slave", "computers/memberserver", "computers/mobileclient", "computers/trustaccount", "computers/ipmanagedclient"]
 
@@ -74,8 +74,17 @@ property_descriptions={
 			may_change=1,
 			identifies=1
 		),
+	'description': univention.admin.property(
+			short_description=_('Description'),
+			long_description='',
+			syntax=univention.admin.syntax.string,
+			multivalue=0,
+			required=0,
+			may_change=1,
+			identifies=0
+		),
 	'mac': univention.admin.property(
-			short_description=_('MAC Address'),
+			short_description=_('MAC address'),
 			long_description='',
 			syntax=univention.admin.syntax.string,
 			multivalue=1,
@@ -85,7 +94,7 @@ property_descriptions={
 			identifies=0
 		),
 	'ip': univention.admin.property(
-			short_description=_('IP Address'),
+			short_description=_('IP address'),
 			long_description='',
 			syntax=univention.admin.syntax.ipAddress,
 			multivalue=1,
@@ -95,7 +104,7 @@ property_descriptions={
 			identifies=0
 		),
 	'inventoryNumber': univention.admin.property(
-			short_description=_('Inventory Number'),
+			short_description=_('Inventory number'),
 			long_description='',
 			syntax=univention.admin.syntax.string,
 			multivalue=1,
@@ -108,6 +117,7 @@ property_descriptions={
 
 mapping=univention.admin.mapping.mapping()
 mapping.register('name', 'cn', None, univention.admin.mapping.ListToString)
+mapping.register('description', 'description', None, univention.admin.mapping.ListToString)
 mapping.register('inventoryNumber', 'univentionInventoryNumber')
 mapping.register('mac', 'macAddress' )
 mapping.register('ip', 'aRecord' )

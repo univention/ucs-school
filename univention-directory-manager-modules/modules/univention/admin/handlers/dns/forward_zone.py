@@ -3,7 +3,7 @@
 # Univention Admin Modules
 #  admin module for the DNS forward objects
 #
-# Copyright (C) 2004, 2005, 2006 Univention GmbH
+# Copyright (C) 2004-2009 Univention GmbH
 #
 # http://www.univention.de/
 #
@@ -28,7 +28,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
-import sys, string
+import re, sys, string
 import univention.admin.filter
 import univention.admin.handlers
 import univention.admin.localization
@@ -44,13 +44,13 @@ module='dns/forward_zone'
 operations=['add','edit','remove','search']
 usewizard=1
 childs=1
-short_description=_('DNS: Forward Lookup Zone')
+short_description=_('DNS: Forward lookup zone')
 long_description=''
 options={
 }
 property_descriptions={
 	'zone': univention.admin.property(
-			short_description=_('Zone Name'),
+			short_description=_('Zone name'),
 			long_description='',
 			syntax=univention.admin.syntax.string,
 			multivalue=0,
@@ -71,7 +71,7 @@ property_descriptions={
 			default=('10800', [])
 		),
 	'contact': univention.admin.property(
-			short_description=_('Responsible Person'),
+			short_description=_('Contact person'),
 			long_description='',
 			syntax=univention.admin.syntax.string,
 			multivalue=0,
@@ -82,7 +82,7 @@ property_descriptions={
 			default=(makeContactPerson, [], ''),
 		),
 	'serial': univention.admin.property(
-			short_description=_('Serial Number'),
+			short_description=_('Serial number'),
 			long_description='',
 			syntax=univention.admin.syntax.integer,
 			multivalue=0,
@@ -93,7 +93,7 @@ property_descriptions={
 			default=('1', [])
 		),
 	'refresh': univention.admin.property(
-			short_description=_('Refresh Interval'),
+			short_description=_('Refresh interval'),
 			long_description='',
 			syntax=univention.admin.syntax.unixTimeInterval,
 			multivalue=0,
@@ -104,7 +104,7 @@ property_descriptions={
 			default=('28800', [])
 		),
 	'retry': univention.admin.property(
-			short_description=_('Retry Interval'),
+			short_description=_('Retry interval'),
 			long_description='',
 			syntax=univention.admin.syntax.unixTimeInterval,
 			multivalue=0,
@@ -115,7 +115,7 @@ property_descriptions={
 			default=('7200', [])
 		),
 	'expire': univention.admin.property(
-			short_description=_('Expire Interval'),
+			short_description=_('Expiry interval'),
 			long_description='',
 			syntax=univention.admin.syntax.unixTimeInterval,
 			multivalue=0,
@@ -137,7 +137,7 @@ property_descriptions={
 			default=('10800', [])
 		),
 	'nameserver': univention.admin.property(
-			short_description=_('Name Server'),
+			short_description=_('Name server'),
 			long_description='',
 			syntax=univention.admin.syntax.dnsName,
 			multivalue=1,
@@ -155,28 +155,66 @@ property_descriptions={
 			may_change=1,
 			identifies=0,
 			dontsearch=1
-		)
+		),
+	'mx': univention.admin.property(
+			short_description=_('Mail exchanger host'),
+			long_description='',
+			syntax=univention.admin.syntax.dnsMX,
+			multivalue=1,
+			options=[],
+			required=0,
+			may_change=1
+		),
+	'txt': univention.admin.property(
+			short_description=_('TXT record'),
+			long_description='',
+			syntax=univention.admin.syntax.string,
+			multivalue=1,
+			options=[],
+			required=0,
+			may_change=1
+		),
 }
 layout=[
-	univention.admin.tab(_('General'), _('Basic Values'), [
+	univention.admin.tab(_('General'), _('Basic settings'), [
 		[univention.admin.field('zone')],
 		[univention.admin.field('zonettl')]
 	]),
-	univention.admin.tab(_('Start of Authority'), _('Primary Name Server Information'), [
+	univention.admin.tab(_('Start of Authority'), _('Primary name server information'), [
 		[univention.admin.field('contact'), univention.admin.field("filler")],
 		[univention.admin.field('nameserver', first_only=1, short_description=_('Primary Name Server')), univention.admin.field('serial')],
 		[univention.admin.field('refresh'), univention.admin.field('retry')],
 		[univention.admin.field('expire'), univention.admin.field('ttl')]
 	]),
-	univention.admin.tab(_('Name Servers'), _('Additional Name Servers'), [
+	univention.admin.tab(_('Name servers'), _('Additional name servers'), [
 		[univention.admin.field('nameserver')]
-	])
+	]),
+	univention.admin.tab(_('MX records'), _('Mail exchanger records'), [
+		[univention.admin.field('mx')]
+	]),
+	univention.admin.tab(_('TXT records'), _('Text records'), [
+		[univention.admin.field('txt')]
+	]),
 ]
+
+def mapMX(old):
+	lst = []
+	for entry in old:
+		lst.append( '%s %s' % (entry[0], entry[1]) )
+	return lst
+
+def unmapMX(old):
+	lst = []
+	for entry in old:
+		lst.append( entry.split(' ', 1) )
+	return lst
 
 mapping=univention.admin.mapping.mapping()
 mapping.register('zone', 'zoneName', None, univention.admin.mapping.ListToString)
 mapping.register('nameserver', 'nSRecord')
 mapping.register('zonettl', 'dNSTTL', None, univention.admin.mapping.ListToString)
+mapping.register('mx', 'mXRecord', mapMX, unmapMX)
+mapping.register('txt', 'tXTRecord', None, univention.admin.mapping.ListToString)
 
 class object(univention.admin.handlers.simpleLdap):
 	module=module
@@ -227,7 +265,13 @@ class object(univention.admin.handlers.simpleLdap):
 	def _ldap_modlist(self):
 		ml=univention.admin.handlers.simpleLdap._ldap_modlist(self)
 		if self.hasChanged(['nameserver', 'contact', 'serial', 'refresh', 'retry', 'expire', 'ttl']):
-
+			ipaddr = re.compile ('^([0-9]{1,3}\.){3}[0-9]{1,3}$') # matches ip addresses - they shouldn't end with a dot!
+			if len (self['nameserver'][0]) > 0 \
+				and ipaddr.match (self['nameserver'][0]) == None \
+				and self['nameserver'][0].find (':') == -1 \
+				and self['nameserver'][0].find ('.') != -1 \
+				and not self['nameserver'][0][-1] == '.':
+				self['nameserver'][0] = '%s.' % self['nameserver'][0]
 			soa='%s %s %s %s %s %s %s' % (self['nameserver'][0], self['contact'].replace('@','.',1), self['serial'], self['refresh'], self['retry'], self['expire'], self['ttl'])
 			ml.append(('sOARecord', self.oldattr.get('sOARecord', []), [soa]))
 		return ml

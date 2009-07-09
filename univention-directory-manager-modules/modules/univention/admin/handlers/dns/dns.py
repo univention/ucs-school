@@ -3,7 +3,7 @@
 # Univention Admin Modules
 #  admin module for the DNS objects
 #
-# Copyright (C) 2004, 2005, 2006 Univention GmbH
+# Copyright (C) 2004-2009 Univention GmbH
 #
 # http://www.univention.de/
 # 
@@ -38,8 +38,6 @@ import univention.admin.handlers.dns.reverse_zone
 import univention.admin.handlers.dns.alias
 import univention.admin.handlers.dns.host_record
 import univention.admin.handlers.dns.srv_record
-import univention.admin.handlers.dns.zone_mx_record
-import univention.admin.handlers.dns.zone_txt_record
 import univention.admin.handlers.dns.ptr_record
 
 
@@ -55,13 +53,13 @@ long_description=''
 operations=['search']
 usewizard=1
 wizardmenustring=_("DNS")
-wizarddescription=_("Add, edit and delete DNS Objects")
-wizardoperations={"add":[_("Add"), _("Add DNS Object")],"find":[_("Find"), _("Find DNS Object(s)")]}
+wizarddescription=_("Add, edit and delete DNS objects")
+wizardoperations={"add":[_("Add"), _("Add DNS object")],"find":[_("Search"), _("Search DNS object(s)")]}
 wizardpath="univentionDnsObject"
 wizardsuperordinates=["None","dns/forward_zone","dns/reverse_zone"]
-wizardtypesforsuper={"None":["dns/forward_zone","dns/reverse_zone"],"dns/forward_zone":["dns/alias","dns/host_record","dns/srv_record","dns/zone_mx_record","dns/zone_txt_record"],"dns/reverse_zone":["dns/ptr_record"]}
+wizardtypesforsuper={"None":["dns/forward_zone","dns/reverse_zone"],"dns/forward_zone":["dns/alias","dns/host_record","dns/srv_record"],"dns/reverse_zone":["dns/ptr_record"]}
 
-childmodules=["dns/forward_zone","dns/reverse_zone","dns/alias","dns/host_record","dns/srv_record","dns/zone_mx_record","dns/zone_txt_record","dns/ptr_record"]
+childmodules=["dns/forward_zone","dns/reverse_zone","dns/alias","dns/host_record","dns/srv_record","dns/ptr_record"]
 virtual=1
 options={
 }
@@ -77,7 +75,7 @@ property_descriptions={
 			identifies=1
 		)
 }
-layout=[ univention.admin.tab(_('General'),_('Basic Values'),[ [univention.admin.field("name")] ]) ]
+layout=[ univention.admin.tab(_('General'),_('Basic settings'),[ [univention.admin.field("name")] ]) ]
 
 mapping=univention.admin.mapping.mapping()
 
@@ -110,8 +108,6 @@ def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub', unique=0,
 			ret+=univention.admin.handlers.dns.host_record.lookup(co, lo, filter_s, base, superordinate, scope, unique, required, timeout, sizelimit)
 			ret+= univention.admin.handlers.dns.alias.lookup(co, lo, filter_s, base, superordinate, scope, unique, required, timeout, sizelimit)
 			ret+= univention.admin.handlers.dns.srv_record.lookup(co, lo, filter_s, base, superordinate, scope, unique, required, timeout, sizelimit)
-			ret+= univention.admin.handlers.dns.zone_mx_record.lookup(co, lo, filter_s, base, superordinate, scope, unique, required, timeout, sizelimit)
-			ret+= univention.admin.handlers.dns.zone_txt_record.lookup(co, lo, filter_s, base, superordinate, scope, unique, required, timeout, sizelimit)
 		else:
 			ret+= univention.admin.handlers.dns.ptr_record.lookup(co, lo, filter_s, base, superordinate, scope, unique, required, timeout, sizelimit)
 	else:

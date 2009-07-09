@@ -3,7 +3,7 @@
 # Univention Admin Modules
 #  wrapper around univention.license that translates error codes to exceptions
 #
-# Copyright (C) 2004, 2005, 2006 Univention GmbH
+# Copyright (C) 2004-2009 Univention GmbH
 #
 # http://www.univention.de/
 #
@@ -52,6 +52,8 @@ class License( object ):
 		self.disable_add = 0
 		self._expired = False
 		self.types= []
+		self.sysAccountNames = ( 'Administrator', 'join-backup', 'join-slave', 'spam' )
+		self.sysAccountsFound = 0
 		self.licenses = {
 				License.CLIENT : None, License.ACCOUNT : None,
 				License.DESKTOP : None, License.GROUPWARE : None,
@@ -167,6 +169,7 @@ class License( object ):
 		self.select( module )
 		self.__readLicense()
 		disable_add = 0
+		self.__countSysAccounts( lo )
 
 		if self.new_license:
 			self.__countObject( License.ACCOUNT, lo )
@@ -199,9 +202,9 @@ class License( object ):
 		lic_client, lic_account, lic_desktop, lic_groupware = lic
 		real_client, real_account, real_desktop, real_groupware = real
 		if lic_client and lic_account:
-			if self.__cmp_gt( lic_client, lic_account ) and self.__cmp_gt( real_client, lic_client ):
+			if self.__cmp_gt( lic_account, lic_client ) and self.__cmp_gt( real_client, lic_client ):
 				disable_add = 1
-			elif self.__cmp_gt( lic_account, lic_client ) and self.__cmp_gt( int( real_account ) - License.SYSACCOUNTS, lic_account ):
+			elif self.__cmp_gt( lic_client, lic_account ) and self.__cmp_gt( int( real_account ) - License.SYSACCOUNTS, lic_account ):
 				disable_add = 2
 			elif self.__cmp_eq(lic_client, lic_account):
 				if self.__cmp_gt( real_client, lic_client ):
@@ -222,6 +225,19 @@ class License( object ):
 				univention.debug.debug(univention.debug.ADMIN, univention.debug.INFO, 'LICENSE: 4')
 				disable_add = 4
 		return disable_add
+
+	def __countSysAccounts( self, lo ):
+		userfilter = [ univention.admin.filter.expression('uid', account) for account in self.sysAccountNames ]
+                filter=univention.admin.filter.conjunction('&', [
+                         univention.admin.filter.conjunction('|', userfilter),
+                         self.filters[License.ACCOUNT] ])
+		try:
+			searchResult = lo.searchDn(filter=str(filter))
+			self.sysAccountsFound = len(searchResult)
+		except uexceptions.noObject:
+			pass
+		univention.debug.debug(univention.debug.ADMIN, univention.debug.INFO,
+				'LICENSE: Univention sysAccountsFound: %d' % self.sysAccountsFound )
 
 	def __countObject( self, obj, lo ):
 		if self.licenses[ obj ] and not self.licenses[ obj ] == 'unlimited':

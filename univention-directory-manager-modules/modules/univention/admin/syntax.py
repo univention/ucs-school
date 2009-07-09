@@ -3,7 +3,7 @@
 # Univention Admin Modules
 #  syntax definitions
 #
-# Copyright (C) 2004, 2005, 2006 Univention GmbH
+# Copyright (C) 2004-2009 Univention GmbH
 #
 # http://www.univention.de/
 #
@@ -35,9 +35,28 @@ import univention.admin.uexceptions
 import univention.admin.localization
 import base64
 import copy
+import sys, os
 
 translation=univention.admin.localization.translation('univention/admin')
 _=translation.translate
+
+#
+# load all additional syntax files from */site-packages/univention/admin/syntax.d/*.py
+#
+def import_syntax_files():
+	for dir in sys.path:
+		if os.path.exists( os.path.join( dir, 'univention/admin/syntax.py' ) ):
+			if os.path.isdir( os.path.join( dir, 'univention/admin/syntax.d/' ) ):
+				for f in os.listdir( os.path.join( dir, 'univention/admin/syntax.d/' ) ):
+					if f.endswith('.py'):
+						fn = os.path.join( dir, 'univention/admin/syntax.d/', f )
+						try:
+							fd = open( fn, 'r' )
+							exec fd in univention.admin.syntax.__dict__
+							univention.debug.debug(univention.debug.ADMIN, univention.debug.INFO, 'admin.syntax.import_syntax_files: importing "%s"' % fn)
+						except:
+							univention.debug.debug(univention.debug.ADMIN, univention.debug.ERROR, 'admin.syntax.import_syntax_files: loading %s failed' % fn )
+
 
 choice_update_functions = []
 def __register_choice_update_function(func):
@@ -73,7 +92,11 @@ class select:
 		return '*'
 
 class complex:
-	type='complex'
+	type = 'complex'
+	delimiter = ' '
+	# possible delimiters:
+	# delimiter = '='   ==> single string is used to concatenate all subitems
+	# delimiter = [ '', ': ', '=', '' ] ==> list of strings: e.g. 4 delimiter strings given to concatenate 3 subitems
 	def parse(self, texts):
 		parsed=[]
 
@@ -119,7 +142,16 @@ class complex:
 
 		if not newTexts:
 			return ''
-		return string.join(newTexts, ' ')
+
+		txt = ''
+		if type(self.delimiter) == type([]):
+			for i in range(0,len(newTexts)):
+				txt += self.delimiter[i] + newTexts[i]
+			txt += self.delimiter[-1]
+		elif type(self.delimiter) == type(''):
+			txt = self.delimiter.join(newTexts)
+
+		return txt
 
 	def new(self):
 		s=[]
@@ -237,6 +269,18 @@ class mail_folder_name(simple):
 		else:
 			return text
 
+class mail_folder_type(select):
+	name='mail_folder_type'
+	choices=[
+		('',        _('undefined') ),
+		('mail',    _('mails' ) ),
+		('event',   _('events') ),
+		('contact', _('contacts') ),
+		('task',    _('tasks') ),
+		('note',    _('notes') ),
+		('journal', _('journals') ),
+	]
+
 class string_numbers_letters_dots(simple):
 	name='string_numbers_letters_dots'
 
@@ -272,6 +316,16 @@ class phone(simple):
 		else:
 			raise univention.admin.uexceptions.valueError, _("Value may not contain other than numbers, letters and dots!")
 
+class IA5string(string):
+	name='IA5string'
+
+	def parse(self, text):
+		try:
+			text.decode("utf-8").encode('ascii')
+		except UnicodeEncodeError:
+			raise univention.admin.uexceptions.valueError, _("Field must only contain ASCII characters!")
+		return text
+
 class uid(simple):
 	name='uid'
 	min_length=1
@@ -291,10 +345,27 @@ class uid_umlauts(simple):
 	_re = re.compile('(?u)(^\w[\w -.]*\w$)|\w*$')
 
 	def parse(self, text):
-		if self._re.match(text) != None and text != 'admin':
+		if self._re.match(text.decode("utf-8")) != None and text != 'admin':
 			return text
 		else:
-			raise univention.admin.uexceptions.valueError, _("Value may not contain other than numbers, letters and dots, and may not be admin!")
+			raise univention.admin.uexceptions.valueError, _("Username must only contain numbers, letters and dots, and may not be 'admin'!")
+
+class uid_umlauts_lower_except_first_letter(simple):
+	name='uid'
+	min_length=1
+	max_length=16
+	_re = re.compile('(?u)(^\w[\w -.]*\w$)|\w*$')
+
+	def parse(self, text):
+		unicode_text=text.decode("utf-8")
+		for c in unicode_text[1:]:
+			if c.isupper():
+				raise univention.admin.uexceptions.valueError, _("Only the first letter of the username may be uppercase!")
+
+		if self._re.match(unicode_text) != None and unicode_text != 'admin':
+			return text
+		else:
+			raise univention.admin.uexceptions.valueError, _("Username must only contain numbers, letters and dots, and may not be 'admin'!")
 
 class gid(simple):
 	name='gid'
@@ -581,6 +652,12 @@ class dnsNameDot(simple):
 
 		raise univention.admin.uexceptions.valueError, _("Value may not contain other than numbers, letters and dots!")
 
+
+class keyAndValue(complex):
+	name = 'keyAndValue'
+	delimiter = ' = '
+	subsyntaxes = [(_('Key'), string), (_('Value'), string)]
+	all_required = 1
 
 class dnsMX(complex):
 	name='dnsMX'
@@ -1045,7 +1122,7 @@ class authenticationServer(string):
 class fileServer(string):
         name='fileServer'
         searchFilter='(&(cn=*)(|(objectClass=univentionDomainController)(objectClass=univentionMemberServer)))'
-        description=_('FileServer')
+        description=_('File Server')
 
 class repositoryServer(string):
 	name='repositoryServer'
@@ -1214,159 +1291,286 @@ class language(select):
 	choices=[
 		('', ''),
 		('af_ZA', 'Afrikaans/South Africa'),
+		('af_ZA.UTF-8', 'Afrikaans/South Africa(UTF-8)'),
 		('sq_AL', 'Albanian/Albania'),
+		('sq_AL.UTF-8', 'Albanian/Albania(UTF-8)'),
 		('am_ET', 'Amharic/Ethiopia'),
-		('ar_AE', 'Arabic/United Arab Emirates'),
-		('ar_BH', 'Arabic/Bahrain'),
 		('ar_DZ', 'Arabic/Algeria'),
+		('ar_DZ.UTF-8', 'Arabic/Algeria(UTF-8)'),
+		('ar_BH', 'Arabic/Bahrain'),
+		('ar_BH.UTF-8', 'Arabic/Bahrain(UTF-8)'),
 		('ar_EG', 'Arabic/Egypt'),
+		('ar_EG.UTF-8', 'Arabic/Egypt(UTF-8)'),
 		('ar_IN', 'Arabic/India'),
 		('ar_IQ', 'Arabic/Iraq'),
+		('ar_IQ.UTF-8', 'Arabic/Iraq(UTF-8)'),
 		('ar_JO', 'Arabic/Jordan'),
+		('ar_JO.UTF-8', 'Arabic/Jordan(UTF-8)'),
 		('ar_KW', 'Arabic/Kuwait'),
+		('ar_KW.UTF-8', 'Arabic/Kuwait(UTF-8)'),
 		('ar_LB', 'Arabic/Lebanon'),
+		('ar_LB.UTF-8', 'Arabic/Lebanon(UTF-8)'),
 		('ar_LY', 'Arabic/Libyan Arab Jamahiriya'),
+		('ar_LY.UTF-8', 'Arabic/Libyan Arab Jamahiriya(UTF-8)'),
 		('ar_MA', 'Arabic/Morocco'),
+		('ar_MA.UTF-8', 'Arabic/Morocco(UTF-8)'),
 		('ar_OM', 'Arabic/Oman'),
+		('ar_OM.UTF-8', 'Arabic/Oman(UTF-8)'),
 		('ar_QA', 'Arabic/Qatar'),
+		('ar_QA.UTF-8', 'Arabic/Qatar(UTF-8)'),
 		('ar_SA', 'Arabic/Saudi Arabia'),
+		('ar_SA.UTF-8', 'Arabic/Saudi Arabia(UTF-8)'),
 		('ar_SD', 'Arabic/Sudan'),
+		('ar_SD.UTF-8', 'Arabic/Sudan(UTF-8)'),
 		('ar_SY', 'Arabic/Syrian Arab Republic'),
+		('ar_SY.UTF-8', 'Arabic/Syrian Arab Republic(UTF-8)'),
 		('ar_TN', 'Arabic/Tunisia'),
+		('ar_TN.UTF-8', 'Arabic/Tunisia(UTF-8)'),
+		('ar_AE', 'Arabic/United Arab Emirates'),
+		('ar_AE.UTF-8', 'Arabic/United Arab Emirates(UTF-8)'),
 		('ar_YE', 'Arabic/Yemen'),
+		('ar_YE.UTF-8', 'Arabic/Yemen(UTF-8)'),
 		('an_ES', 'Aragonese/Spain'),
+		('an_ES.UTF-8', 'Aragonese/Spain(UTF-8)'),
 		('hy_AM', 'Armenian/Armenia'),
 		('az_AZ', 'Azeri/Azerbaijan'),
 		('eu_ES@euro', 'Basque/Spain'),
+		('eu_ES.UTF-8', 'Basque/Spain(UTF-8)'),
 		('be_BY', 'Belarusian/Belarus'),
+		('be_BY.UTF-8', 'Belarusian/Belarus(UTF-8)'),
 		('bn_BD', 'Bengali/BD'),
 		('bn_IN', 'Bengali/India'),
 		('bs_BA', 'Bosnian/Bosnia and Herzegowina'),
+		('bs_BA.UTF-8', 'Bosnian/Bosnia and Herzegowina(UTF-8)'),
 		('br_FR@euro', 'Breton/France'),
+		('br_FR.UTF-8', 'Breton/France(UTF-8)'),
 		('bg_BG', 'Bulgarian/Bulgaria'),
+		('bg_BG.UTF-8', 'Bulgarian/Bulgaria(UTF-8)'),
 		('ca_ES@euro', 'Catalan/Spain'),
-		('zh_CN', 'Chinese/P.R. of China'),
+		('ca_ES.UTF-8', 'Catalan/Spain(UTF-8)'),
 		('zh_HK', 'Chinese/Hong Kong'),
+		('zh_HK.UTF-8', 'Chinese/Hong Kong(UTF-8)'),
+		('zh_CN', 'Chinese/P.R. of China'),
+		('zh_CN.UTF-8', 'Chinese/P.R. of China(UTF-8)'),
 		('zh_SG', 'Chinese/Singapore'),
+		('zh_SG.UTF-8', 'Chinese/Singapore(UTF-8)'),
 		('zh_TW', 'Chinese/Taiwan R.O.C.'),
+		('zh_TW.UTF-8', 'Chinese/Taiwan R.O.C.(UTF-8)'),
 		('kw_GB', 'Cornish/Britain'),
+		('kw_GB.UTF-8', 'Cornish/Britain(UTF-8)'),
 		('hr_HR', 'Croatian/Croatia'),
+		('hr_HR.UTF-8', 'Croatian/Croatia(UTF-8)'),
 		('cs_CZ', 'Czech/Czech Republic'),
+		('cs_CZ.UTF-8', 'Czech/Czech Republic(UTF-8)'),
 		('da_DK', 'Danish/Denmark'),
+		('da_DK.UTF-8', 'Danish/Denmark(UTF-8)'),
 		('nl_BE@euro', 'Dutch/Belgium'),
+		('nl_BE.UTF-8', 'Dutch/Belgium(UTF-8)'),
 		('nl_NL@euro', 'Dutch/Netherlands'),
+		('nl_NL.UTF-8', 'Dutch/Netherlands(UTF-8)'),
 		('en_AU', 'English/Australia'),
+		('en_AU.UTF-8', 'English/Australia(UTF-8)'),
 		('en_BW', 'English/Botswana'),
+		('en_BW.UTF-8', 'English/Botswana(UTF-8)'),
 		('en_CA', 'English/Canada'),
+		('en_CA.UTF-8', 'English/Canada(UTF-8)'),
 		('en_DK', 'English/Denmark'),
+		('en_DK.UTF-8', 'English/Denmark(UTF-8)'),
 		('en_GB', 'English/Great Britain'),
+		('en_GB.UTF-8', 'English/Great Britain(UTF-8)'),
 		('en_HK', 'English/Hong Kong'),
-		('en_IE@euro', 'English/Ireland'),
+		('en_HK.UTF-8', 'English/Hong Kong(UTF-8)'),
 		('en_IN', 'English/India'),
+		('en_IE@euro', 'English/Ireland'),
+		('en_IE.UTF-8', 'English/Ireland(UTF-8)'),
 		('en_NZ', 'English/New Zealand'),
+		('en_NZ.UTF-8', 'English/New Zealand(UTF-8)'),
 		('en_PH', 'English/Philippines'),
+		('en_PH.UTF-8', 'English/Philippines(UTF-8)'),
 		('en_SG', 'English/Singapore'),
-		('en_US', 'English/USA'),
+		('en_SG.UTF-8', 'English/Singapore(UTF-8)'),
 		('en_ZA', 'English/South Africa'),
+		('en_ZA.UTF-8', 'English/South Africa(UTF-8)'),
+		('en_US', 'English/USA'),
+		('en_US.UTF-8', 'English/USA(UTF-8)'),
 		('en_ZW', 'English/Zimbabwe'),
+		('en_ZW.UTF-8', 'English/Zimbabwe(UTF-8)'),
 		('eo_EO', 'Esperanto/Esperanto'),
 		('et_EE', 'Estonian/Estonia'),
+		('et_EE.UTF-8', 'Estonian/Estonia(UTF-8)'),
 		('fo_FO', 'Faroese/Faroe Islands'),
+		('fo_FO.UTF-8', 'Faroese/Faroe Islands(UTF-8)'),
 		('fi_FI@euro', 'Finnish/Finland'),
+		('fi_FI.UTF-8', 'Finnish/Finland(UTF-8)'),
 		('fr_BE@euro', 'French/Belgium'),
+		('fr_BE.UTF-8', 'French/Belgium(UTF-8)'),
 		('fr_CA', 'French/Canada'),
-		('fr_CH', 'French/Switzerland'),
+		('fr_CA.UTF-8', 'French/Canada(UTF-8)'),
 		('fr_FR@euro', 'French/France'),
+		('fr_FR.UTF-8', 'French/France(UTF-8)'),
 		('fr_LU@euro', 'French/Luxemburg'),
+		('fr_LU.UTF-8', 'French/Luxemburg(UTF-8)'),
+		('fr_CH', 'French/Switzerland'),
+		('fr_CH.UTF-8', 'French/Switzerland(UTF-8)'),
 		('gl_ES@euro', 'Galician/Spain'),
+		('gl_ES.UTF-8', 'Galician/Spain(UTF-8)'),
 		('ka_GE', 'Georgian/Georgia'),
+		('ka_GE.UTF-8', 'Georgian/Georgia(UTF-8)'),
 		('de_AT@euro', 'German/Austria'),
+		('de_AT.UTF-8', 'German/Austria(UTF-8)'),
 		('de_BE@euro', 'German/Belgium'),
-		('de_CH', 'German/Switzerland'),
+		('de_BE.UTF-8', 'German/Belgium(UTF-8)'),
 		('de_DE', 'German/Germany'),
+		('de_DE.UTF-8', 'German/Germany(UTF-8)'),
 		('de_DE@euro', 'German/Germany(euro)'),
 		('de_LU@euro', 'German/Luxemburg'),
+		('de_LU.UTF-8', 'German/Luxemburg(UTF-8)'),
+		('de_CH', 'German/Switzerland'),
+		('de_CH.UTF-8', 'German/Switzerland(UTF-8)'),
 		('el_GR@euro', 'Greek/Greece'),
+		('el_GR.UTF-8', 'Greek/Greece(UTF-8)'),
 		('kl_GL', 'Greenlandic/Greenland'),
-		('he_IL', 'Hebrew/Israel'),
+		('kl_GL.UTF-8', 'Greenlandic/Greenland(UTF-8)'),
 		('iw_IL', 'Hebrew/Israel'),
+		('iw_IL.UTF-8', 'Hebrew/Israel(UTF-8)'),
+		('he_IL', 'Hebrew/Israel'),
+		('he_IL.UTF-8', 'Hebrew/Israel(UTF-8)'),
 		('hi_IN', 'Hindi/India'),
 		('hu_HU', 'Hungarian/Hungary'),
+		('hu_HU.UTF-8', 'Hungarian/Hungary(UTF-8)'),
 		('is_IS', 'Icelandic/Iceland'),
+		('is_IS.UTF-8', 'Icelandic/Iceland(UTF-8)'),
 		('id_ID', 'Indonesian/Indonesia'),
+		('id_ID.UTF-8', 'Indonesian/Indonesia(UTF-8)'),
 		('ga_IE@euro', 'Irish/Ireland'),
-		('it_CH', 'Italian/Switzerland'),
+		('ga_IE.UTF-8', 'Irish/Ireland(UTF-8)'),
 		('it_IT@euro', 'Italian/Italy'),
+		('it_IT.UTF-8', 'Italian/Italy(UTF-8)'),
+		('it_CH', 'Italian/Switzerland'),
+		('it_CH.UTF-8', 'Italian/Switzerland(UTF-8)'),
 		('ja_JP', 'Japanese/Japan'),
 		('ko_KR', 'Korean/Republic of Korea'),
 		('lo_LA', 'Lao/Laos'),
 		('lv_LV', 'Latvian/Latvia'),
+		('lv_LV.UTF-8', 'Latvian/Latvia(UTF-8)'),
 		('lt_LT', 'Lithuanian/Lithuania'),
+		('lt_LT.UTF-8', 'Lithuanian/Lithuania(UTF-8)'),
 		('lug_UG', 'Luganda/Uganda'),
 		('mk_MK', 'Macedonian/Macedonia'),
+		('mk_MK.UTF-8', 'Macedonian/Macedonia(UTF-8)'),
 		('ms_MY', 'Malay/Malaysia'),
+		('ms_MY.UTF-8', 'Malay/Malaysia(UTF-8)'),
 		('ml_IN', 'Malayalam/India'),
 		('mt_MT', 'Maltese/malta'),
+		('mt_MT.UTF-8', 'Maltese/malta(UTF-8)'),
 		('gv_GB', 'Manx Gaelic/Britain'),
+		('gv_GB.UTF-8', 'Manx Gaelic/Britain(UTF-8)'),
 		('mi_NZ', 'Maori/New Zealand'),
+		('mi_NZ.UTF-8', 'Maori/New Zealand(UTF-8)'),
 		('mr_IN', 'Marathi/India'),
 		('mn_MN', 'Mongolian/Mongolia'),
 		('se_NO', 'Northern Saami/Norway'),
-		('no_NO', 'Norwegian/Norway'),
 		('nn_NO', 'Norwegian, Nynorsk/Norway'),
+		('nn_NO.UTF-8', 'Norwegian, Nynorsk/Norway(UTF-8)'),
+		('no_NO', 'Norwegian/Norway'),
+		('no_NO.UTF-8', 'Norwegian/Norway(UTF-8)'),
 		('oc_FR', 'Occitan/France'),
+		('oc_FR.UTF-8', 'Occitan/France(UTF-8)'),
 		('fa_IR', 'Persian/Iran'),
 		('pl_PL', 'Polish/Poland'),
+		('pl_PL.UTF-8', 'Polish/Poland(UTF-8)'),
 		('pt_BR', 'Portuguese/Brasil'),
+		('pt_BR.UTF-8', 'Portuguese/Brasil(UTF-8)'),
 		('pt_PT@euro', 'Portuguese/Portugal'),
+		('pt_PT.UTF-8', 'Portuguese/Portugal(UTF-8)'),
 		('ro_RO', 'Romanian/Romania'),
+		('ro_RO.UTF-8', 'Romanian/Romania(UTF-8)'),
 		('ru_RU', 'Russian/Russia'),
+		('ru_RU.UTF-8', 'Russian/Russia(UTF-8)'),
 		('ru_UA', 'Russian/Ukraine'),
+		('ru_UA.UTF-8', 'Russian/Ukraine(UTF-8)'),
 		('gd_GB', 'Scots Gaelic/Great Britain'),
+		('gd_GB.UTF-8', 'Scots Gaelic/Great Britain(UTF-8)'),
 		('sr_YU@cyrillic', 'Serbian/Yugoslavia'),
 		('sk_SK', 'Slovak/Slovak'),
+		('sk_SK.UTF-8', 'Slovak/Slovak(UTF-8)'),
 		('sl_SI', 'Slovenian/Slovenia'),
+		('sl_SI.UTF-8', 'Slovenian/Slovenia(UTF-8)'),
 		('st_ZA', 'Sotho/South Africa'),
+		('st_ZA.UTF-8', 'Sotho/South Africa(UTF-8)'),
 		('es_AR', 'Spanish/Argentina'),
+		('es_AR.UTF-8', 'Spanish/Argentina(UTF-8)'),
 		('es_BO', 'Spanish/Bolivia'),
+		('es_BO.UTF-8', 'Spanish/Bolivia(UTF-8)'),
 		('es_CL', 'Spanish/Chile'),
+		('es_CL.UTF-8', 'Spanish/Chile(UTF-8)'),
 		('es_CO', 'Spanish/Colombia'),
+		('es_CO.UTF-8', 'Spanish/Colombia(UTF-8)'),
 		('es_CR', 'Spanish/Costa Rica'),
+		('es_CR.UTF-8', 'Spanish/Costa Rica(UTF-8)'),
 		('es_DO', 'Spanish/Dominican Republic'),
+		('es_DO.UTF-8', 'Spanish/Dominican Republic(UTF-8)'),
 		('es_EC', 'Spanish/Ecuador'),
-		('es_ES@euro', 'Spanish/Spain'),
-		('es_GT', 'Spanish/Guatemala'),
-		('es_HN', 'Spanish/Honduras'),
-		('es_MX', 'Spanish/Mexico'),
-		('es_NI', 'Spanish/Nicaragua'),
-		('es_PA', 'Spanish/Panama'),
-		('es_PE', 'Spanish/Peru'),
-		('es_PR', 'Spanish/Puerto Rico'),
-		('es_PY', 'Spanish/Paraguay'),
+		('es_EC.UTF-8', 'Spanish/Ecuador(UTF-8)'),
 		('es_SV', 'Spanish/El Salvador'),
+		('es_SV.UTF-8', 'Spanish/El Salvador(UTF-8)'),
+		('es_GT', 'Spanish/Guatemala'),
+		('es_GT.UTF-8', 'Spanish/Guatemala(UTF-8)'),
+		('es_HN', 'Spanish/Honduras'),
+		('es_HN.UTF-8', 'Spanish/Honduras(UTF-8)'),
+		('es_MX', 'Spanish/Mexico'),
+		('es_MX.UTF-8', 'Spanish/Mexico(UTF-8)'),
+		('es_NI', 'Spanish/Nicaragua'),
+		('es_NI.UTF-8', 'Spanish/Nicaragua(UTF-8)'),
+		('es_PA', 'Spanish/Panama'),
+		('es_PA.UTF-8', 'Spanish/Panama(UTF-8)'),
+		('es_PY', 'Spanish/Paraguay'),
+		('es_PY.UTF-8', 'Spanish/Paraguay(UTF-8)'),
+		('es_PE', 'Spanish/Peru'),
+		('es_PE.UTF-8', 'Spanish/Peru(UTF-8)'),
+		('es_PR', 'Spanish/Puerto Rico'),
+		('es_PR.UTF-8', 'Spanish/Puerto Rico(UTF-8)'),
+		('es_ES@euro', 'Spanish/Spain'),
+		('es_ES.UTF-8', 'Spanish/Spain(UTF-8)'),
 		('es_US', 'Spanish/USA'),
+		('es_US.UTF-8', 'Spanish/USA(UTF-8)'),
 		('es_UY', 'Spanish/Uruguay'),
+		('es_UY.UTF-8', 'Spanish/Uruguay(UTF-8)'),
 		('es_VE', 'Spanish/Venezuela'),
+		('es_VE.UTF-8', 'Spanish/Venezuela(UTF-8)'),
 		('sv_FI@euro', 'Swedish/Finland'),
+		('sv_FI.UTF-8', 'Swedish/Finland(UTF-8)'),
 		('sv_SE', 'Swedish/Sweden'),
+		('sv_SE.UTF-8', 'Swedish/Sweden(UTF-8)'),
 		('tl_PH', 'Tagalog/Philippines'),
+		('tl_PH.UTF-8', 'Tagalog/Philippines(UTF-8)'),
 		('tg_TJ', 'Tajik/Tajikistan'),
+		('tg_TJ.UTF-8', 'Tajik/Tajikistan(UTF-8)'),
 		('ta_IN', 'Tamil/India'),
 		('tt_RU', 'Tatar/Tatarstan'),
 		('te_IN', 'Telgu/India'),
 		('th_TH', 'Thai/Thailand'),
+		('th_TH.UTF-8', 'Thai/Thailand(UTF-8)'),
 		('ti_ER', 'Tigrigna/Eritrea'),
 		('ti_ET', 'Tigrigna/Ethiopia'),
 		('tr_TR', 'Turkish/Turkey'),
+		('tr_TR.UTF-8', 'Turkish/Turkey(UTF-8)'),
 		('uk_UA', 'Ukrainian/Ukraine'),
+		('uk_UA.UTF-8', 'Ukrainian/Ukraine(UTF-8)'),
 		('ur_PK', 'Urdu/Pakistan'),
 		('uz_UZ', 'Uzbek/Uzbekistan'),
+		('uz_UZ.UTF-8', 'Uzbek/Uzbekistan(UTF-8)'),
 		('vi_VN', 'Vietnamese/Vietnam'),
 		('wa_BE@euro', 'Walloon/Belgium'),
+		('wa_BE.UTF-8', 'Walloon/Belgium(UTF-8)'),
 		('cy_GB', 'Welsh/Great Britain'),
+		('cy_GB.UTF-8', 'Welsh/Great Britain(UTF-8)'),
 		('xh_ZA', 'Xhosa/South Africa'),
+		('xh_ZA.UTF-8', 'Xhosa/South Africa(UTF-8)'),
 		('yi_US', 'Yiddish/USA'),
+		('yi_US.UTF-8', 'Yiddish/USA(UTF-8)'),
 		('zu_ZA', 'Zulu/South Africa'),
+		('zu_ZA.UTF-8', 'Zulu/South Africa(UTF-8)'),	
 	]
 
 class Month(select):
@@ -1840,4 +2044,32 @@ class nfsMounts(complex):
 	name='nfsMounts'
 	subsyntaxes=[(_('NFS-Share'), LDAP_Search( filter = 'objectClass=univentionShareNFS', attribute = [ 'shares/share: printablename' ], value = 'shares/share: dn' )), ('Mount point', string)]
 	all_required=1
+
+class languageCode(string):
+	name='langCode'
+	min_length=5
+	max_length=5
+	_re = re.compile('^[a-z][a-z]_[A-Z][A-Z]$')
+
+	def parse(self, text):
+		if self._re.match(text) != None:
+			return text
+		else:
+			raise univention.admin.uexceptions.valueError, _('Language code must be in format "xx_XX"!')
+
+
+class translationTuple(complex):
+	name = 'translationTuple'
+	delimiter = ': '
+	subsyntaxes = [(_('Language code (e.g. en_US)'), languageCode), (_('Text'), string)]
+	all_required = 1
+
+class translationTupleShortDescription(translationTuple):
+	subsyntaxes = [(_('Language code (e.g. en_US)'), languageCode), (_('Translated short description'), string)]
+
+class translationTupleLongDescription(translationTuple):
+	subsyntaxes = [(_('Language code (e.g. en_US)'), languageCode), (_('Translated long description'), string)]
+
+class translationTupleTabName(translationTuple):
+	subsyntaxes = [(_('Language code (e.g. en_US)'), languageCode), (_('Translated tab name'), string)]
 

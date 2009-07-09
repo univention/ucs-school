@@ -3,7 +3,7 @@
 # Univention Admin Modules
 #  methods and defines for nagios attributes
 #
-# Copyright (C) 2004, 2005, 2006 Univention GmbH
+# Copyright (C) 2004-2009 Univention GmbH
 #
 # http://www.univention.de/
 #
@@ -73,11 +73,11 @@ nagios_properties = {
 }
 
 
-nagios_tab_A = univention.admin.tab( _( 'Nagios Services' ), _( 'Nagios Service Settings' ), [
+nagios_tab_A = univention.admin.tab( _( 'Nagios services' ), _( 'Nagios Service Settings' ), [
 		[ univention.admin.field( "nagiosServices" ) ],
 	] )
 
-nagios_tab_B = univention.admin.tab( _( 'Nagios Notification' ), _( 'Nagios Notification Settings' ), [
+nagios_tab_B = univention.admin.tab( _( 'Nagios notification' ), _( 'Nagios Notification Settings' ), [
 		[ univention.admin.field( "nagiosContactEmail" ) ],
 		[ univention.admin.field( "nagiosParents" ) ],
 	] )
@@ -317,12 +317,31 @@ class Support( object ):
 					newattrs = filter(lambda x: x != fqdn, attrs['univentionNagiosHostname'])
 					self.lo.modify(dn, [ ('univentionNagiosHostname', oldattrs, newattrs) ])
 
+	def nagiosRemoveHostFromParent(self):
+		self.nagiosRemoveFromParent = False
+
+		if self.oldattr.has_key('aRecord') and self.oldattr['aRecord']:
+			res=self.lo.search('(&(objectClass=dNSZone)(aRecord=%s)(zoneName=*)(relativeDomainName=*))' % self.oldattr['aRecord'][0])
+			if not res:
+				univention.debug.debug(univention.debug.ADMIN, univention.debug.INFO, 'nagios.py: NRHFP: couldn''t find fqdn of %s' % self.dn)
+			else:
+				# found my own fqdn
+				fqdn = res[0][1]['relativeDomainName'][0]+'.'+res[0][1]['zoneName'][0]
+
+				searchResult=self.lo.search( filter = '(&(objectClass=univentionNagiosHostClass)(univentionNagiosParent=%s))' % fqdn,
+											 base = self.position.getDomain(), attr = [ 'univentionNagiosParent' ] )
+
+				for (dn, attrs) in searchResult:
+					oldattrs = attrs['univentionNagiosParent']
+					newattrs = filter(lambda x: x != fqdn, attrs['univentionNagiosParent'])
+					self.lo.modify(dn, [ ('univentionNagiosParent', oldattrs, newattrs) ])
 
 
 	def nagios_ldap_post_modify(self):
 		if self.nagiosRemoveFromServices:
 			# nagios support has been disabled
 			self.nagiosRemoveHostFromServices()
+			self.nagiosRemoveHostFromParent()
 		else:
 			# modify service objects if needed
 			if 'nagios' in self.options:
@@ -338,7 +357,9 @@ class Support( object ):
 
 	def nagios_ldap_post_remove(self):
 		self.nagiosRemoveHostFromServices()
+		self.nagiosRemoveHostFromParent()
 
 
 	def nagios_cleanup(self):
 		self.nagiosRemoveHostFromServices()
+		self.nagiosRemoveHostFromParent()

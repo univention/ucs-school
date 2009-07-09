@@ -3,7 +3,7 @@
 # Univention Admin Modules
 #  admin module for the dc objects
 #
-# Copyright (C) 2004, 2005, 2006 Univention GmbH
+# Copyright (C) 2004-2009 Univention GmbH
 #
 # http://www.univention.de/
 # 
@@ -58,7 +58,7 @@ short_description=_('Container: Domain')
 long_description=''
 options={
 	'kerberos': univention.admin.option(
-			short_description=_('Kerberos Realm'),
+			short_description=_('Kerberos realm'),
 			default=1
 		)
 }
@@ -74,7 +74,7 @@ property_descriptions={
 			identifies=1
 		),
 	'domainPassword': univention.admin.property(
-			short_description=_('Domain Password'),
+			short_description=_('Domain password'),
 			long_description='',
 			syntax=univention.admin.syntax.passwd,
 			multivalue=0,
@@ -84,7 +84,7 @@ property_descriptions={
 			identifies=0
 		),
 	'dnsForwardZone': univention.admin.property(
-			short_description=_('DNS Forward Zone'),
+			short_description=_('DNS forward lookup zone'),
 			long_description='',
 			syntax=univention.admin.syntax.dnsName,
 			multivalue=1,
@@ -95,7 +95,7 @@ property_descriptions={
 			identifies=0
 		),
 	'dnsReverseZone': univention.admin.property(
-			short_description=_('DNS Reverse Zone'),
+			short_description=_('DNS reverse lookup zone'),
 			long_description='',
 			syntax=univention.admin.syntax.reverseLookupSubnet,
 			multivalue=1,
@@ -105,7 +105,7 @@ property_descriptions={
 			identifies=0
 		),
 	'sambaDomainName': univention.admin.property(
-			short_description=_('Samba Domain Name'),
+			short_description=_('Samba domain name'),
 			long_description='',
 			syntax=univention.admin.syntax.string,
 			multivalue=1,
@@ -148,7 +148,7 @@ property_descriptions={
 			identifies=0
 		),
 	'kerberosRealm': univention.admin.property(
-			short_description=_('Kerberos Realm'),
+			short_description=_('Kerberos realm'),
 			long_description='',
 			syntax=univention.admin.syntax.string,
 			multivalue=0,
@@ -159,7 +159,7 @@ property_descriptions={
 			identifies=0
 		),
 	'mailRelay': univention.admin.property(
-			short_description=_('Mail Relay Server'),
+			short_description=_('Mail relay server'),
 			long_description='',
 			syntax=univention.admin.syntax.string,
 			multivalue=1,
@@ -169,21 +169,21 @@ property_descriptions={
 		),
 }
 layout=[
-	univention.admin.tab(_('General'),_('Basic Values'),[[univention.admin.field("name")]]),
-	univention.admin.tab(_('Domain Password'),_('Administrator Password for this Domain'),[[univention.admin.field("domainPassword")]]),
+	univention.admin.tab(_('General'),_('Basic settings'),[[univention.admin.field("name")]]),
+	univention.admin.tab(_('Domain Password'),_('Administrator password for this domain'),[[univention.admin.field("domainPassword")]], advanced = True),
 	univention.admin.tab(_('DNS'),_('DNS Zones'),[
 			[univention.admin.field("dnsForwardZone"),univention.admin.field("dnsReverseZone")]
-		]),
+		], advanced = True),
 	univention.admin.tab(_('Samba'),_('Samba Settings'),[
 			[univention.admin.field("sambaDomainName"), univention.admin.field("sambaSID")],
 			[univention.admin.field("sambaNextUserRid"), univention.admin.field("sambaNextGroupRid")]
-		]),
+		], advanced = True),
 	univention.admin.tab(_('Kerberos'), _('Kerberos Settings'),[
 			[univention.admin.field('kerberosRealm')]
-		]),
+		], advanced = True),
 	univention.admin.tab(_('Mail'), _('Mail Settings'),[
 			[univention.admin.field('mailRelay')]
-		]),
+		], advanced = True),
 ]
 
 mapping=univention.admin.mapping.mapping()

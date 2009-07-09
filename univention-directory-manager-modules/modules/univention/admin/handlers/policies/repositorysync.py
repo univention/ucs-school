@@ -3,7 +3,7 @@
 # Univention Admin Modules
 #  admin policy for the repository sync
 #
-# Copyright (C) 2004, 2005, 2006 Univention GmbH
+# Copyright (C) 2004-2009 Univention GmbH
 #
 # http://www.univention.de/
 # 
@@ -44,7 +44,7 @@ _=translation.translate
 class repositorySyncFixedAttributes(univention.admin.syntax.select):
 	name='repositorySyncFixedAttributes'
 	choices=[
-		('univentionRepositoryCron',_('Repository Sync')),
+		('univentionRepositoryCron',_('Repository synchronisation')),
 		]
 
 module='policies/repositorysync'
@@ -55,8 +55,8 @@ policy_apply_to=["computers/domaincontroller_master", "computers/domaincontrolle
 policy_position_dn_prefix="cn=repository,cn=update"
 
 childs=0
-short_description=_('Policy: Repository Sync')
-policy_short_description=_('Repository Sync')
+short_description=_('Policy: Repository synchronisation')
+policy_short_description=_('Repository synchronisation')
 long_description=''
 options={
 }
@@ -92,7 +92,7 @@ property_descriptions={
 			identifies=0
 		),
 	'weekday': univention.admin.property(
-			short_description=_('Weekday'),
+			short_description=_('Day of week'),
 			long_description='',
 			syntax=univention.admin.syntax.Weekday,
 			multivalue=1,
@@ -122,7 +122,7 @@ property_descriptions={
 			identifies=0
 		),
 	'requiredObjectClasses': univention.admin.property(
-			short_description=_('Required Object Classes'),
+			short_description=_('Required object classes'),
 			long_description='',
 			syntax=univention.admin.syntax.string,
 			multivalue=1,
@@ -132,7 +132,7 @@ property_descriptions={
 			identifies=0
 		),
 	'prohibitedObjectClasses': univention.admin.property(
-			short_description=_('Prohibited Object Classes'),
+			short_description=_('Excluded object classes'),
 			long_description='',
 			syntax=univention.admin.syntax.string,
 			multivalue=1,
@@ -142,7 +142,7 @@ property_descriptions={
 			identifies=0
 		),
 	'fixedAttributes': univention.admin.property(
-			short_description=_('Fixed Attributes'),
+			short_description=_('Fixed attributes'),
 			long_description='',
 			syntax=repositorySyncFixedAttributes,
 			multivalue=1,
@@ -152,7 +152,7 @@ property_descriptions={
 			identifies=0
 		),
 	'emptyAttributes': univention.admin.property(
-			short_description=_('Empty Attributes'),
+			short_description=_('Empty attributes'),
 			long_description='',
 			syntax=repositorySyncFixedAttributes,
 			multivalue=1,
@@ -173,7 +173,7 @@ property_descriptions={
 		)
 }
 layout=[
-	univention.admin.tab(_('General'),_('Repository Sync Settings'), [
+	univention.admin.tab(_('General'),_('Repository syncronisation settings'), [
 		[univention.admin.field('name', hide_in_resultmode=1) ],
 		[univention.admin.field('month'), univention.admin.field('weekday') ],
 		[univention.admin.field('day'), univention.admin.field('hour') ],
@@ -182,7 +182,7 @@ layout=[
 	univention.admin.tab(_('Object'),_('Object'), [
 		[univention.admin.field('requiredObjectClasses') , univention.admin.field('prohibitedObjectClasses') ],
 		[univention.admin.field('fixedAttributes'), univention.admin.field('emptyAttributes')]
-	]),
+	], advanced = True),
 ]
 
 mapping=univention.admin.mapping.mapping()

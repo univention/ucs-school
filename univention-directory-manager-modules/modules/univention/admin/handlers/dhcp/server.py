@@ -3,7 +3,7 @@
 # Univention Admin Modules
 #  admin module for the DHCP server
 #
-# Copyright (C) 2004, 2005, 2006 Univention GmbH
+# Copyright (C) 2004-2009 Univention GmbH
 #
 # http://www.univention.de/
 #
@@ -48,7 +48,7 @@ options={
 
 property_descriptions={
 	'server': univention.admin.property(
-			short_description=_('Server Name'),
+			short_description=_('Server name'),
 			long_description='',
 			syntax=univention.admin.syntax.string,
 			multivalue=0,
@@ -60,7 +60,7 @@ property_descriptions={
 }
 
 layout=[
-	univention.admin.tab(_('General'), _('General Settings'), [
+	univention.admin.tab(_('General'), _('General settings'), [
 		[univention.admin.field('server')]
 	])
 ]

@@ -3,7 +3,7 @@
 # Univention Admin Modules
 #  admin policy for the desktop settings
 #
-# Copyright (C) 2004, 2005, 2006 Univention GmbH
+# Copyright (C) 2004-2009 Univention GmbH
 #
 # http://www.univention.de/
 # 
@@ -42,8 +42,8 @@ _=translation.translate
 
 class desktopFixedAttributes(univention.admin.syntax.select):
 	name='desktopFixedAttributes'
-	choices=[(('univentionDesktopLanguage'),_('Desktop Language')),
-			 (('univentionDesktopProfile'),_('Desktop Profile'))
+	choices=[(('univentionDesktopLanguage'),_('Desktop language')),
+			 (('univentionDesktopProfile'),_('Desktop profile'))
 			 ]
 			
 
@@ -56,7 +56,7 @@ policy_position_dn_prefix="cn=desktop"
 usewizard=1
 childs=0
 short_description=_('Policy: Desktop')
-policy_short_description=_('Desktop Settings')
+policy_short_description=_('Desktop settings')
 long_description=''
 options={
 }
@@ -72,7 +72,7 @@ property_descriptions={
 			identifies=1,
 		),
 	'language': univention.admin.property(
-			short_description=_('Desktop Language'),
+			short_description=_('Desktop language'),
 			long_description='',
 			syntax=univention.admin.syntax.language,
 			multivalue=0,
@@ -82,7 +82,7 @@ property_descriptions={
 			identifies=0
 		),
 	'profile': univention.admin.property(
-			short_description=_('Desktop Profile'),
+			short_description=_('Desktop profile'),
 			long_description='',
 			syntax=univention.admin.syntax.kdeProfiles,
 			multivalue=1,
@@ -92,7 +92,7 @@ property_descriptions={
 			identifies=0
 		),
 	'logonScripts': univention.admin.property(
-			short_description=_('Logon Scripts'),
+			short_description=_('Logon scripts'),
 			long_description='',
 			syntax=univention.admin.syntax.string,
 			multivalue=1,
@@ -102,7 +102,7 @@ property_descriptions={
 			identifies=0
 		),
 	'logoutScripts': univention.admin.property(
-			short_description=_('Logout Scripts'),
+			short_description=_('Logout scripts'),
 			long_description='',
 			syntax=univention.admin.syntax.string,
 			multivalue=1,
@@ -112,7 +112,7 @@ property_descriptions={
 			identifies=0
 		),
 	'requiredObjectClasses': univention.admin.property(
-			short_description=_('Required Object Classes'),
+			short_description=_('Required object classes'),
 			long_description='',
 			syntax=univention.admin.syntax.string,
 			multivalue=1,
@@ -122,7 +122,7 @@ property_descriptions={
 			identifies=0
 		),
 	'prohibitedObjectClasses': univention.admin.property(
-			short_description=_('Prohibited Object Classes'),
+			short_description=_('Excluded object classes'),
 			long_description='',
 			syntax=univention.admin.syntax.string,
 			multivalue=1,
@@ -132,7 +132,7 @@ property_descriptions={
 			identifies=0
 		),
 	'fixedAttributes': univention.admin.property(
-			short_description=_('Fixed Attributes'),
+			short_description=_('Fixed attributes'),
 			long_description='',
 			syntax=desktopFixedAttributes,
 			multivalue=1,
@@ -142,7 +142,7 @@ property_descriptions={
 			identifies=0
 		),
 	'emptyAttributes': univention.admin.property(
-			short_description=_('Empty Attributes'),
+			short_description=_('Empty attributes'),
 			long_description='',
 			syntax=desktopFixedAttributes,
 			multivalue=1,
@@ -163,7 +163,7 @@ property_descriptions={
 		)
 }
 layout=[
-	univention.admin.tab(_('General'),_('Desktop Settings'), [
+	univention.admin.tab(_('General'),_('Desktop settings'), [
 		[univention.admin.field('name', hide_in_resultmode=1), univention.admin.field('language'), univention.admin.field("filler", hide_in_normalmode=1) ],
 		[univention.admin.field('profile'), univention.admin.field("filler")],
 		[univention.admin.field('logonScripts'), univention.admin.field("filler")],
@@ -172,7 +172,7 @@ layout=[
 	univention.admin.tab(_('Object'),_('Object'), [
 		[univention.admin.field('requiredObjectClasses') , univention.admin.field('prohibitedObjectClasses') ],
 		[univention.admin.field('fixedAttributes'), univention.admin.field("emptyAttributes")]
-	]),
+	], advanced = True),
 ]
 
 mapping=univention.admin.mapping.mapping()

@@ -3,7 +3,7 @@
 # Univention Admin Modules
 #  admin module for user settings
 #
-# Copyright (C) 2004, 2005, 2006 Univention GmbH
+# Copyright (C) 2004-2009 Univention GmbH
 #
 # http://www.univention.de/
 #
@@ -44,13 +44,13 @@ module='settings/user'
 superordinate='settings/admin'
 childs=0
 operations=['search', 'edit', 'remove']
-short_description=_('Preferences: Univention Admin User Settings')
+short_description=_('Preferences: Univention Directory Manager user settings')
 long_description=''
 options={
 }
 property_descriptions={
 	'username': univention.admin.property(
-			short_description=_('Username'),
+			short_description=_('User name'),
 			long_description='',
 			syntax=univention.admin.syntax.string,
 			multivalue=0,
@@ -60,7 +60,7 @@ property_descriptions={
 			identifies=1,
 		),
 	'listWizards': univention.admin.property(
-			short_description=_('Visible Univention Admin Wizards'),
+			short_description=_('Visible wizards'),
 			long_description='',
 			syntax=univention.admin.syntax.univentionAdminWizards,
 			multivalue=1,
@@ -70,7 +70,7 @@ property_descriptions={
 			identifies=0
 		),
 	'selfAttributes': univention.admin.property(
-			short_description=_('Accessible User Attributes'),
+			short_description=_('Accessible user attributes'),
 			long_description='',
 			syntax=univention.admin.syntax.userAttributeList,
 			multivalue=1,
@@ -100,7 +100,7 @@ property_descriptions={
 			identifies=0,
 		),
 	'listWebModules': univention.admin.property(
-			short_description=_('Visible Univention Admin Modules'),
+			short_description=_('Visible modules'),
 			long_description='',
 			syntax=univention.admin.syntax.univentionAdminWebModules,
 			multivalue=1,
@@ -110,7 +110,7 @@ property_descriptions={
 			identifies=0
 		),
 	'baseDN': univention.admin.property(
-			short_description=_('LDAP Base DN'),
+			short_description=_('LDAP base DN'),
 			long_description='',
 			syntax=univention.admin.syntax.ldapDn,
 			multivalue=0,
@@ -221,7 +221,7 @@ property_descriptions={
 		)
 }
 layout=[
-	univention.admin.tab(_('Univention Admin'),_('Univention Admin User Settings'),[
+	univention.admin.tab(_('Univention Directory Manager'),_('Univention Directory Manager User Settings'),[
 		[univention.admin.field("username"), univention.admin.field('baseDN')],
 		[univention.admin.field('listWizards'), univention.admin.field('listWebModules')],
 		[ univention.admin.field( 'selfAttributes' ), univention.admin.field( 'listAttributes' )],

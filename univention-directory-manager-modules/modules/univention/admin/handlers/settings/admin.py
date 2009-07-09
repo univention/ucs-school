@@ -3,7 +3,7 @@
 # Univention Admin Modules
 #  admin module for the global univention admin settings
 #
-# Copyright (C) 2004, 2005, 2006 Univention GmbH
+# Copyright (C) 2004-2009 Univention GmbH
 #
 # http://www.univention.de/
 #
@@ -43,7 +43,7 @@ module='settings/admin'
 superordinate='settings/cn'
 childs=1
 operations=['search', 'edit']
-short_description=_('Preferences: Univention Admin Global Settings')
+short_description=_('Preferences: Univention Directory Manger Global Settings')
 long_description=''
 options={
 }

@@ -3,7 +3,7 @@
 # Univention Directory Manager Modules
 #  rules file for creating the deb package
 #
-# Copyright (C) 2004, 2005, 2006, 2007 Univention GmbH
+# Copyright (C) 2004-2009 Univention GmbH
 #
 # http://www.univention.de/
 #
@@ -76,12 +76,15 @@ install-ext-%:
 	install -m755 scripts/proof_class_b_reverse ${TOOLS_DEST}/usr/share/univention-directory-manager-tools
 	install -m755 scripts/proof_hostShadowAccounts ${TOOLS_DEST}/usr/share/univention-directory-manager-tools
 	install -m755 scripts/proof_dns_dhcp_records ${TOOLS_DEST}/usr/share/univention-directory-manager-tools
+	install -m755 scripts/listpwexpiry ${TOOLS_DEST}/usr/share/univention-directory-manager-tools
 
 	# new tools with daemon mode
 	install -m755 univention-cli-client $(TOOLS_DEST)/usr/share/univention-directory-manager-tools/univention-cli-client
 	install -m755 univention-cli-server $(TOOLS_DEST)/usr/share/univention-directory-manager-tools/univention-cli-server
 
 	install -m755 univention-sync-memberuid $(TOOLS_DEST)/usr/share/univention-directory-manager-tools/univention-sync-memberuid
+
+	install -m 644 etc/bash_completion.d/univention-directory-manager $(TOOLS_DEST)/etc/bash_completion.d/univention-directory-manager
 
 	# install admin modules
 

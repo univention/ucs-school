@@ -4,7 +4,7 @@
 # Univention Nagios
 #  univention admin nagios module
 #
-# Copyright (C) 2004, 2005, 2006 Univention GmbH
+# Copyright (C) 2004-2009 Univention GmbH
 #
 # http://www.univention.de/
 #
@@ -41,7 +41,7 @@ _=translation.translate
 module = 'nagios/service'
 
 childs = 0
-short_description = _('Nagios Service')
+short_description = _('Nagios service')
 long_description = ''
 operations = [ 'search', 'edit', 'add', 'remove' ]
 
@@ -54,7 +54,7 @@ ldap_search_period = univention.admin.syntax.LDAP_Search(
 property_descriptions={
 	'name': univention.admin.property(
 			short_description= _('Name'),
-			long_description= _('Name of Service'),
+			long_description= _('Service name'),
 			syntax=univention.admin.syntax.string_numbers_letters_dots,
 			multivalue=0,
 			options=[],
@@ -64,7 +64,7 @@ property_descriptions={
 		),
 	'description': univention.admin.property(
 			short_description= _('Description'),
-			long_description= _('Service-Description'),
+			long_description= _('Service description'),
 			syntax=univention.admin.syntax.string,
 			multivalue=0,
 			options=[],
@@ -73,7 +73,7 @@ property_descriptions={
 			identifies=0
 		),
 	'checkCommand': univention.admin.property(
-			short_description= _('Plugin Command'),
+			short_description= _('Plugin command'),
 			long_description= _('Command name of Nagios plugin'),
 			syntax=univention.admin.syntax.string,
 			multivalue=0,
@@ -83,7 +83,7 @@ property_descriptions={
 			identifies=0
 		),
 	'checkArgs': univention.admin.property(
-			short_description = _('Plugin Command Arguments'),
+			short_description = _('Plugin command arguments'),
 			long_description = _('Arguments of used Nagios plugin'),
 			syntax=univention.admin.syntax.string,
 			multivalue=0,
@@ -103,7 +103,7 @@ property_descriptions={
 			identifies=0
 		),
 	'checkPeriod': univention.admin.property(
-			short_description = _('Check Period'),
+			short_description = _('Check period'),
 			long_description = _('Check services within check period'),
 			syntax=ldap_search_period,
 			multivalue=0,
@@ -124,7 +124,7 @@ property_descriptions={
 			identifies=0
 		),
 	'normalCheckInterval': univention.admin.property(
-			short_description = _('Check Interval'),
+			short_description = _('Check interval'),
 			long_description = _('Interval between checks'),
 			syntax=univention.admin.syntax.integer,
 			multivalue=0,
@@ -135,7 +135,7 @@ property_descriptions={
 			identifies=0
 		),
 	'retryCheckInterval': univention.admin.property(
-			short_description = _('Retry Check Interval'),
+			short_description = _('Retry check interval'),
 			long_description = _('Interval between re-checks if service is in non-OK-state'),
 			syntax=univention.admin.syntax.integer,
 			multivalue=0,
@@ -146,7 +146,7 @@ property_descriptions={
 			identifies=0
 		),
 	'notificationInterval': univention.admin.property(
-			short_description = _('Notification Interval'),
+			short_description = _('Notification interval'),
 			long_description = _('Interval between notifications'),
 			syntax=univention.admin.syntax.integer,
 			multivalue=0,
@@ -157,7 +157,7 @@ property_descriptions={
 			identifies=0
 		),
 	'notificationPeriod': univention.admin.property(
-			short_description = _('Notification Period'),
+			short_description = _('Notification period'),
 			long_description = _('Send notifications during this period'),
 			syntax=ldap_search_period,
 			multivalue=0,
@@ -207,7 +207,7 @@ property_descriptions={
 			identifies=0
 		),
 	'assignedHosts': univention.admin.property(
-			short_description = _('Assigned Hosts'),
+			short_description = _('Assigned hosts'),
 			long_description = _('Check services on these hosts'),
 			syntax=univention.admin.syntax.nagiosHostsEnabledDn,
 			multivalue=1,
@@ -220,21 +220,21 @@ property_descriptions={
 
 
 layout=[
-	univention.admin.tab( _('General'), _('Basic Values'),
+	univention.admin.tab( _('General'), _('Basic settings'),
 			[ [ univention.admin.field( "name" ), univention.admin.field( "description" ) ],
 			  [ univention.admin.field( "checkCommand" ), univention.admin.field( "checkArgs" ) ],
 			  [ univention.admin.field( "useNRPE" ) ]
 			  ] ),
-	univention.admin.tab( _('Interval'), _('Check Settings'),
+	univention.admin.tab( _('Interval'), _('Check settings'),
 			[ [ univention.admin.field( "normalCheckInterval" ), univention.admin.field( "retryCheckInterval" ) ],
 			  [ univention.admin.field( "maxCheckAttempts" ), univention.admin.field( "checkPeriod" ) ]
-			  ] ),
-	univention.admin.tab( _('Notification'), _('Notification Settings'),
+			  ], advanced = True ),
+	univention.admin.tab( _('Notification'), _('Notification settings'),
 			[ [ univention.admin.field( "notificationInterval" ), univention.admin.field( "notificationPeriod" ) ],
 			  [ univention.admin.field( "notificationOptionWarning" ), univention.admin.field( "notificationOptionCritical" ) ],
 			  [ univention.admin.field( "notificationOptionUnreachable" ), univention.admin.field( "notificationOptionRecovered" ) ]
-			  ] ),
-	univention.admin.tab( _('Hosts'), _('Assigned Hosts'),
+			  ], advanced = True ),
+	univention.admin.tab( _('Hosts'), _('Assigned hosts'),
 			[ [ univention.admin.field( "assignedHosts" ) ]
 			  ] )
 	]
@@ -358,14 +358,18 @@ class object(univention.admin.handlers.simpleLdap):
 		ml=univention.admin.handlers.simpleLdap._ldap_modlist(self)
 
 		options = []
-		if self[ 'notificationOptionWarning' ]:
+		if self[ 'notificationOptionWarning' ] in [ '1' ]:
 			options.append('w')
-		if self[ 'notificationOptionCritical' ]:
+		if self[ 'notificationOptionCritical' ] in [ '1' ]:
 			options.append('c')
-		if self[ 'notificationOptionUnreachable' ]:
+		if self[ 'notificationOptionUnreachable' ] in [ '1' ]:
 			options.append('u')
-		if self[ 'notificationOptionRecovered' ]:
+		if self[ 'notificationOptionRecovered' ] in [ '1' ]:
 			options.append('r')
+
+		# univentionNagiosNotificationOptions is required in LDAP schema
+		if len(options) == 0:
+			options.append('n')
 
 		newoptions = ','.join(options)
 		ml.append( ('univentionNagiosNotificationOptions', self.oldattr.get('univentionNagiosNotificationOptions', []), newoptions) )

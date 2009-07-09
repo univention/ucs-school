@@ -3,7 +3,7 @@
 # Univention Admin Modules
 #  admin module for the user objects
 #
-# Copyright (C) 2004, 2005, 2006 Univention GmbH
+# Copyright (C) 2004-2009 Univention GmbH
 #
 # http://www.univention.de/
 #
@@ -79,7 +79,7 @@ class _default_gecos:
 		for umlaut, code in _umlauts.items():
 			gecos = gecos.replace( umlaut, code )
 
-		return gecos
+		return gecos.encode('ascii', 'replace')
 
 module='users/user'
 operations=['add','edit','remove','search','move']
@@ -87,8 +87,8 @@ template='settings/usertemplate'
 usewizard=1
 wizardmenustring=_("Users")
 wizarddescription=_("Add, edit and delete users")
-wizardoperations={"add":[_("Add"), _("Add User")],"find":[_("Find"), _("Find User(s)")]}
-uid_umlauts = 0
+wizardoperations={"add":[_("Add"), _("Add User")],"find":[_("Search"), _("Search for user(s)")]}
+uid_umlauts_mixedcase = 0
 
 childs=0
 short_description=_('User')
@@ -96,48 +96,54 @@ long_description=''
 
 options={
 	'posix': univention.admin.option(
-			short_description=_('Posix Account'),
+			short_description=_('Posix account'),
 			default=1,
 			objectClasses = ['posixAccount', 'shadowAccount'],
 		),
 	'samba': univention.admin.option(
-			short_description=_('Samba Account'),
+			short_description=_('Samba account'),
 			default=1,
 			objectClasses = ['sambaSamAccount'],
 		),
 	'kerberos': univention.admin.option(
-			short_description=_('Kerberos Principal'),
+			short_description=_('Kerberos principal'),
 			default=1,
 			objectClasses = ['krb5Principal', 'krb5KDCEntry'],
 		),
 	'mail': univention.admin.option(
-			short_description=_('Mail Account'),
+			short_description=_('Mail account'),
 			default=1,
 			objectClasses = ['univentionMail'],
 		),
 	'groupware': univention.admin.option(
-			short_description=_('Groupware Account'),
+			short_description=_('Groupware account'),
 			default=0,
 			editable=1,
 			objectClasses = ['univentionKolabInetOrgPerson'],
 		),
 	'pki': univention.admin.option(
-			short_description=_('Public Key Infrastructure Account'),
+			short_description=_('Public key infrastructure account'),
 			default=0,
 			editable=1,
 			objectClasses = ['pkiUser'],
 		),
 	'person': univention.admin.option(
-			short_description=_('Personal Information'),
+			short_description=_('Personal information'),
 			default=1,
 			objectClasses = ['person', 'organizationalPerson', 'inetOrgPerson'],
+		),
+	'ldap_pwd' : univention.admin.option(
+			short_description=_( 'Simple authentication account' ),
+			default=0,
+			editable=1,
+			objectClasses = [ 'simpleSecurityObject', 'uidObject' ],
 		)
 }
 property_descriptions={
 	'username': univention.admin.property(
-			short_description=_('Username'),
+			short_description=_('User name'),
 			long_description='',
-			syntax=univention.admin.syntax.uid,
+			syntax=univention.admin.syntax.uid_umlauts_lower_except_first_letter,
 			multivalue=0,
 			required=1,
 			may_change=1,
@@ -165,7 +171,7 @@ property_descriptions={
 			options=['posix','samba']
 		),
 	'firstname': univention.admin.property(
-			short_description=_('First Name'),
+			short_description=_('First name'),
 			long_description='',
 			syntax=univention.admin.syntax.string,
 			multivalue=0,
@@ -175,7 +181,7 @@ property_descriptions={
 			identifies=0
 		),
 	'lastname': univention.admin.property(
-			short_description=_('Last Name'),
+			short_description=_('Last name'),
 			long_description='',
 			syntax=univention.admin.syntax.string,
 			multivalue=0,
@@ -186,7 +192,7 @@ property_descriptions={
 	'gecos': univention.admin.property(
 			short_description=_('GECOS'),
 			long_description='',
-			syntax=univention.admin.syntax.string,
+			syntax=univention.admin.syntax.IA5string,
 			options=['posix'],
 			multivalue=0,
 			required=0,
@@ -224,7 +230,7 @@ property_descriptions={
 			identifies=0
 		),
 	'userexpiry': univention.admin.property(
-			short_description=_('Account Expiration Date'),
+			short_description=_('Account expiry date'),
 			long_description=_('Enter date as day.month.year.'),
 			syntax=univention.admin.syntax.date,
 			multivalue=0,
@@ -235,7 +241,7 @@ property_descriptions={
 			identifies=0
 		),
 	'passwordexpiry': univention.admin.property(
-			short_description=_('Password Expiration Date'),
+			short_description=_('Password expiry date'),
 			long_description=_('Enter date as day.month.year.'),
 			syntax=univention.admin.syntax.date,
 			multivalue=0,
@@ -247,7 +253,7 @@ property_descriptions={
 			identifies=0
 		),
 	'pwdChangeNextLogin': univention.admin.property(
-			short_description=_('Change Password on Next Login'),
+			short_description=_('Change password on next login'),
 			long_description=_('Change password on next login'),
 			syntax=univention.admin.syntax.boolean,
 			multivalue=0,
@@ -284,7 +290,7 @@ property_descriptions={
 			long_description='',
 			syntax=univention.admin.syntax.userPasswd,
 			multivalue=0,
-			options=['posix', 'samba', 'kerberos', 'mail'],
+			options=['posix', 'samba', 'kerberos', 'mail', 'ldap_pwd' ],
 			required=1,
 			may_change=1,
 			identifies=0,
@@ -301,7 +307,7 @@ property_descriptions={
 			identifies=0
 		),
 	'e-mail': univention.admin.property(
-			short_description=_('E-Mail Address'),
+			short_description=_('E-mail address(es)'),
 			long_description='',
 			syntax=univention.admin.syntax.emailAddress,
 			multivalue=1,
@@ -312,7 +318,7 @@ property_descriptions={
 			default=(['<mailPrimaryAddress>'])
 		),
 	'postcode': univention.admin.property(
-			short_description=_('Postal Code'),
+			short_description=_('Postal code'),
 			long_description='',
 			syntax=univention.admin.syntax.string,
 			multivalue=0,
@@ -332,7 +338,7 @@ property_descriptions={
 			identifies=0
 		),
 	'phone': univention.admin.property(
-			short_description=_('Telephone Number'),
+			short_description=_('Telephone number(s)'),
 			long_description='',
 			syntax=univention.admin.syntax.phone,
 			multivalue=1,
@@ -342,7 +348,7 @@ property_descriptions={
 			identifies=0
 		),
 	'employeeNumber': univention.admin.property(
-			short_description=_('Employee Number'),
+			short_description=_('Employee number'),
 			long_description='',
 			syntax=univention.admin.syntax.string,
 			multivalue=0,
@@ -352,7 +358,7 @@ property_descriptions={
 			identifies=0
 		),
 	'roomNumber': univention.admin.property(
-			short_description=_('Room Number'),
+			short_description=_('Room number'),
 			long_description='',
 			syntax=univention.admin.syntax.string,
 			multivalue=0,
@@ -362,7 +368,7 @@ property_descriptions={
 			identifies=0
 		),
 	'secretary': univention.admin.property(
-			short_description=_('Secretary'),
+			short_description=_('Superior'),
 			long_description='',
 			syntax=univention.admin.syntax.userDn,
 			multivalue=1,
@@ -372,7 +378,7 @@ property_descriptions={
 			identifies=0
 		),
 	'departmentNumber': univention.admin.property(
-			short_description=_('Department Number'),
+			short_description=_('Department number'),
 			long_description='',
 			syntax=univention.admin.syntax.string,
 			multivalue=0,
@@ -382,7 +388,7 @@ property_descriptions={
 			identifies=0
 		),
 	'employeeType': univention.admin.property(
-			short_description=_('Employee Type'),
+			short_description=_('Employee type'),
 			long_description='',
 			syntax=univention.admin.syntax.string,
 			multivalue=0,
@@ -392,7 +398,7 @@ property_descriptions={
 			identifies=0
 		),
 	'homePostalAddress': univention.admin.property(
-			short_description=_('Home Postal Address'),
+			short_description=_('Private postal address'),
 			long_description='',
 			syntax=univention.admin.syntax.string,
 			multivalue=1,
@@ -402,7 +408,7 @@ property_descriptions={
 			identifies=0
 		),
 	'homeTelephoneNumber': univention.admin.property(
-			short_description=_('Home Telephone Number'),
+			short_description=_('Private telephone number'),
 			long_description='',
 			syntax=univention.admin.syntax.phone,
 			multivalue=1,
@@ -412,7 +418,7 @@ property_descriptions={
 			identifies=0
 		),
 	'mobileTelephoneNumber': univention.admin.property(
-			short_description=_('Mobile Telephone Number'),
+			short_description=_('Mobile phone number'),
 			long_description='',
 			syntax=univention.admin.syntax.phone,
 			multivalue=1,
@@ -422,7 +428,7 @@ property_descriptions={
 			identifies=0
 		),
 	'pagerTelephoneNumber': univention.admin.property(
-			short_description=_('Pager Telephone Number'),
+			short_description=_('Pager telephone number'),
 			long_description='',
 			syntax=univention.admin.syntax.phone,
 			multivalue=1,
@@ -432,7 +438,7 @@ property_descriptions={
 			identifies=0
 		),
 	'unixhome': univention.admin.property(
-			short_description=_('Unix Home Directory'),
+			short_description=_('Unix home directory'),
 			long_description='',
 			syntax=univention.admin.syntax.absolutePath,
 			multivalue=0,
@@ -444,7 +450,7 @@ property_descriptions={
 		),
 
 	'shell': univention.admin.property(
-			short_description=_('Login Shell'),
+			short_description=_('Login shell'),
 			long_description='',
 			syntax=univention.admin.syntax.string,
 			multivalue=0,
@@ -455,7 +461,7 @@ property_descriptions={
 			default=('/bin/bash', [])
 		),
 	'sambahome': univention.admin.property(
-			short_description=_('Windows Home Path'),
+			short_description=_('Windows home path'),
 			long_description='',
 			syntax=univention.admin.syntax.string,
 			multivalue=0,
@@ -465,7 +471,7 @@ property_descriptions={
 			identifies=0
 		),
 	'scriptpath': univention.admin.property(
-			short_description=_('Windows Script Path'),
+			short_description=_('Windows logon script'),
 			long_description='',
 			syntax=univention.admin.syntax.string,
 			multivalue=0,
@@ -475,7 +481,7 @@ property_descriptions={
 			identifies=0
 		),
 	'profilepath': univention.admin.property(
-			short_description=_('Windows Profile Path'),
+			short_description=_('Windows profile directory'),
 			long_description='',
 			syntax=univention.admin.syntax.string,
 			multivalue=0,
@@ -485,7 +491,7 @@ property_descriptions={
 			identifies=0
 		),
 	'homedrive': univention.admin.property(
-			short_description=_('Windows Home Drive'),
+			short_description=_('Windows home drive'),
 			long_description='',
 			syntax=univention.admin.syntax.string,
 			multivalue=0,
@@ -517,7 +523,7 @@ property_descriptions={
 			identifies=0
 		),
 	'primaryGroup': univention.admin.property(
-			short_description=_('Primary Group'),
+			short_description=_('Primary group'),
 			long_description='',
 			syntax=univention.admin.syntax.primaryGroup,
 			multivalue=0,
@@ -528,7 +534,7 @@ property_descriptions={
 			identifies=0
 		),
 	'mailPrimaryAddress': univention.admin.property(
-			short_description=_('Primary E-Mail Address'),
+			short_description=_('Primary e-mail address'),
 			long_description='',
 			syntax=univention.admin.syntax.emailAddress,
 			multivalue=0,
@@ -539,7 +545,7 @@ property_descriptions={
 			identifies=0,
 		),
 	'mailGlobalSpamFolder': univention.admin.property(
-			short_description=_('Use Global Spam Folder'),
+			short_description=_('Use global spam folder'),
 			long_description=_('Move Spam to a global spam folder instead of a local folder'),
 			syntax=univention.admin.syntax.boolean,
 			multivalue=0,
@@ -550,7 +556,7 @@ property_descriptions={
 			identifies=0
 		),
 	'mailAlternativeAddress': univention.admin.property(
-			short_description=_('Alternative E-Mail Addresses'),
+			short_description=_('Alternative e-mail addresses'),
 			long_description='',
 			syntax=univention.admin.syntax.emailAddress,
 			multivalue=1,
@@ -561,7 +567,7 @@ property_descriptions={
 			identifies=0,
 		),
 	'overridePWHistory': univention.admin.property(
-			short_description=_('Override Password History'),
+			short_description=_('Override password history'),
 			long_description='',
 			syntax=univention.admin.syntax.boolean,
 			multivalue=0,
@@ -572,7 +578,7 @@ property_descriptions={
 			identifies=0,
 		),
 	'overridePWLength': univention.admin.property(
-			short_description=_('Override Password Length'),
+			short_description=_('Override password length'),
 			long_description='',
 			syntax=univention.admin.syntax.boolean,
 			multivalue=0,
@@ -583,7 +589,7 @@ property_descriptions={
 			identifies=0,
 		),
 	'homeShare': univention.admin.property(
-			short_description=_('Home Share'),
+			short_description=_('Home share'),
 			long_description=_('Share, the user\'s home directory resides on'),
 			syntax=univention.admin.syntax.module('shares/share'),
 			multivalue=0,
@@ -594,8 +600,8 @@ property_descriptions={
 			identifies=0,
 		),
 	'homeSharePath': univention.admin.property(
-			short_description=_('Home Share Path'),
-			long_description=_('Path on the Home Share'),
+			short_description=_('Home share path'),
+			long_description=_('Path to the home directory on the home share'),
 			syntax=univention.admin.syntax.string,
 			multivalue=0,
 			options=['samba', 'posix', 'kerberos' ],
@@ -606,7 +612,7 @@ property_descriptions={
 			default=('<username>', ['username']) # FIXME: should escape umlauts
 		),
 	'sambaUserWorkstations': univention.admin.property(
-			short_description=_('Samba User Workstations'),
+			short_description=_('Allowed hosts'),
 			long_description=(''),
 			syntax=univention.admin.syntax.string,
 			multivalue=1,
@@ -628,7 +634,7 @@ property_descriptions={
 			identifies=0,
 		),
 	'kolabForwardActive': univention.admin.property(
-			short_description=_("Forward Mail"),
+			short_description=_("Forward mail"),
 			long_description='',
 			syntax=univention.admin.syntax.TrueFalseUp,
 			multivalue=0,
@@ -639,7 +645,7 @@ property_descriptions={
 			identifies=0
 		),
 	'kolabForwardAddress': univention.admin.property(
-			short_description=_("Forward Address"),
+			short_description=_("Forwarding address"),
 			long_description='',
 			syntax=univention.admin.syntax.emailAddress,
 			multivalue=0,
@@ -650,7 +656,7 @@ property_descriptions={
 			identifies=0
 		),
 	'kolabForwardKeepCopy': univention.admin.property(
-			short_description=_("Forward Keep Copy"),
+			short_description=_("Keep a copy of forwarded mail"),
 			long_description='',
 			syntax=univention.admin.syntax.TrueFalseUp,
 			multivalue=0,
@@ -661,7 +667,7 @@ property_descriptions={
 			identifies=0
 		),
 	'kolabHomeServer': univention.admin.property(
-			short_description=_("Kolab Home Server"),
+			short_description=_("Kolab home server"),
 			long_description='',
 			syntax=univention.admin.syntax.kolabHomeServer,
 			multivalue=0,
@@ -672,7 +678,7 @@ property_descriptions={
 			identifies=0
 		),
 	'kolabForwardUCE': univention.admin.property(
-			short_description=_("Forward Spam"),
+			short_description=_("Forward spam"),
 			long_description='',
 			syntax=univention.admin.syntax.TrueFalseUp,
 			multivalue=0,
@@ -705,7 +711,7 @@ property_descriptions={
 			identifies=0
 		),
 	'kolabDelegate': univention.admin.property(
-			short_description=_("E-mail addresses of delegate users"),
+			short_description=_("E-mail addresses of delegated users"),
 			long_description='',
 			syntax=univention.admin.syntax.emailAddress,
 			multivalue=1,
@@ -727,7 +733,7 @@ property_descriptions={
 			identifies=0
 		),
 	'kolabVacationActive': univention.admin.property(
-			short_description=_("Activate Vacation Notice"),
+			short_description=_("Activate out of office notice"),
 			long_description='',
 			syntax=univention.admin.syntax.TrueFalseUp,
 			multivalue=0,
@@ -738,7 +744,7 @@ property_descriptions={
 			identifies=0
 		),
 	'kolabVacationText': univention.admin.property(
-			short_description=_("Vacation Text"),
+			short_description=_("Text of out of office notice"),
 			long_description='',
 			syntax=univention.admin.syntax.long_string,
 			multivalue=0,
@@ -749,7 +755,7 @@ property_descriptions={
 			identifies=0
 		),
 	'kolabVacationResendInterval':univention.admin.property(
-			short_description=_("Vacation Notice Resend Interval"),
+			short_description=_("Out of office notice resend interval"),
 			long_description='',
 			syntax=vacationResendDays,
 			multivalue=0,
@@ -761,7 +767,7 @@ property_descriptions={
 			default='7'
 		),
 	'kolabVacationReplyToUCE': univention.admin.property(
-			short_description=_("Vacation Notice Spam Reply"),
+			short_description=_("Send out of office notice to spam mails"),
 			long_description='',
 			syntax=univention.admin.syntax.TrueFalseUp,
 			multivalue=0,
@@ -772,7 +778,7 @@ property_descriptions={
 			identifies=0
 		),
 	'kolabVacationReactDomain': univention.admin.property(
-			short_description=_("Vacation Notice To"),
+			short_description=_("Limit out of office notices to some mail domains"),
 			long_description=_( 'Contains a list of sender domains the vacation notice is send to.' ),
 			syntax=univention.admin.syntax.string,
 			multivalue=1,
@@ -783,7 +789,7 @@ property_descriptions={
 			identifies=0
 		),
 	'kolabVacationNoReactDomain': univention.admin.property(
-			short_description=_("No Vacation Notice To"),
+			short_description=_("Exclude mail domains from out of office notices"),
 			long_description=_('Contains a list of sender domains the vacation notice is not send to.'),
 			syntax=univention.admin.syntax.string,
 			multivalue=1,
@@ -794,7 +800,7 @@ property_descriptions={
 			identifies=0
 		),
 	'kolabInvitationPolicy': univention.admin.property(
-			short_description=_("Invitation Policy"),
+			short_description=_("Policies for automatic acceptance of invitations"),
 			long_description='',
 			syntax=univention.admin.syntax.kolabInvitationPolicy,
 			multivalue=1,
@@ -805,7 +811,7 @@ property_descriptions={
 			identifies=0
 		),
 	'kolabDisableSieve': univention.admin.property(
-			short_description=_("Disable Kolab Sieve Scripts"),
+			short_description=_("Disable Kolab Sieve scripts"),
 			long_description='',
 			syntax=univention.admin.syntax.TrueFalseUp,
 			multivalue=0,
@@ -816,8 +822,8 @@ property_descriptions={
 			identifies=0
 		),
 	'userCertificate': univention.admin.property(
-			short_description=_("PKI User Certificate"),
-			long_description=_( 'Public Key Infrastructure - User Certificate ' ),
+			short_description=_("PKI user certificate"),
+			long_description=_( 'Public key infrastructure - user certificate ' ),
 			syntax=univention.admin.syntax.binaryfile,
 			multivalue=0,
 			required=0,
@@ -1040,59 +1046,63 @@ property_descriptions={
 for key, value in mungeddial.properties.items():
 	property_descriptions[ key ] = value
 
+# overwrite properties by UCR variables
+ucr_properties = ['required', 'dontsearch']
+univention.admin.ucr_overwrite_properties (module, ucr_properties, property_descriptions)
+
 default_property_descriptions=copy.deepcopy(property_descriptions) # for later reset of descriptions
 
 layout=[
-	univention.admin.tab(_('General'),_('Basic Values'),[
+	univention.admin.tab(_('General'),_('Basic settings'),[
 		[univention.admin.field("username"), univention.admin.field("description",width=300)],
 		[univention.admin.field("password"),
 		 [univention.admin.field("overridePWHistory"), univention.admin.field("overridePWLength")]],
 		[univention.admin.field("firstname"), univention.admin.field("lastname")],
 		[univention.admin.field("title"), univention.admin.field("organisation")],
 	]),
-	univention.admin.tab(_('User Account'),_('Account Settings'),[
+	univention.admin.tab(_('User account'),_('Account settings'),[
 		[univention.admin.field("userexpiry"), univention.admin.field("passwordexpiry")],
 		[univention.admin.field("disabled"), univention.admin.field("pwdChangeNextLogin")],
 		[univention.admin.field("locked")],
 	]),
-	univention.admin.tab(_('Mail'),_('Mail Preferences'),[
+	univention.admin.tab(_('Mail'),_('Mail preferences'),[
 		[univention.admin.field("mailPrimaryAddress")],
 		[univention.admin.field("mailAlternativeAddress")],
 		[univention.admin.field("mailGlobalSpamFolder")],
 	]),
-	univention.admin.tab(_('Contact'),_('Contact Information'),[
+	univention.admin.tab(_('Contact'),_('Contact information'),[
 		[univention.admin.field("e-mail"), univention.admin.field("phone")],
 		[univention.admin.field("street"), univention.admin.field("filler")],
 		[univention.admin.field("postcode"), univention.admin.field("city")],
 	]),
-	univention.admin.tab(_('Organisation'),_('Organisational Information'),[
+	univention.admin.tab(_('Organisation'),_('Organisational information'),[
 		[univention.admin.field("employeeNumber")],
 		[univention.admin.field("employeeType")],
 		[univention.admin.field("roomNumber")],
 		[univention.admin.field("departmentNumber")],
 		[univention.admin.field("secretary")]
 	]),
-	univention.admin.tab(_('Private Contact'),_('Private Contact Information'),[
+	univention.admin.tab(_('Contact (private)'),_('Private contact information'),[
 		[univention.admin.field("mobileTelephoneNumber"), univention.admin.field("homeTelephoneNumber")],
 		[univention.admin.field("pagerTelephoneNumber"),univention.admin.field("homePostalAddress")]
 	]),
-	univention.admin.tab(_('Linux/UNIX'),_('Unix Account Settings'), [
+	univention.admin.tab(_('Linux/UNIX'),_('Unix account settings'), [
 		[univention.admin.field("unixhome"), univention.admin.field("shell")],
 		[univention.admin.field("uidNumber"), univention.admin.field("gidNumber")],
 		[univention.admin.field("homeShare"), univention.admin.field("homeSharePath")],
 		[univention.admin.field("gecos"),]
-	]),
-	univention.admin.tab(_('Windows'),_('Windows Account Settings'),[
+	], advanced = True),
+	univention.admin.tab(_('Windows'),_('Windows account settings'),[
 		[univention.admin.field("sambahome"), univention.admin.field("homedrive")],
 		[univention.admin.field("scriptpath"), univention.admin.field("profilepath")],
 		[univention.admin.field("sambaRID")],
 		[univention.admin.field("sambaLogonHours"), univention.admin.field("sambaUserWorkstations")]
 	]),
-	univention.admin.tab(_('Groups'),_('Group Memberships'), [
+	univention.admin.tab(_('Groups'),_('Group memberships'), [
 		[univention.admin.field("primaryGroup")],
 		[univention.admin.field("groups")]
 	]),
-	univention.admin.tab(_('Vacation Notice'),_('Vacation Notice'), [
+	univention.admin.tab(_('Out of office notice'),_('Out of office notice'), [
 		[univention.admin.field('kolabVacationText'),
 		 [univention.admin.field('kolabVacationActive'),
 		  univention.admin.field('kolabVacationReplyToUCE'),
@@ -1100,7 +1110,7 @@ layout=[
 		[univention.admin.field('kolabVacationAddress')],
 		[univention.admin.field('kolabVacationReactDomain'), univention.admin.field('kolabVacationNoReactDomain')]
 	]),
-	univention.admin.tab(_('Groupware'),_('Groupware Settings'), [
+	univention.admin.tab(_('Groupware'),_('Groupware settings'), [
 		[univention.admin.field('kolabHomeServer'), univention.admin.field('kolabDisableSieve')],
 		[univention.admin.field('kolabForwardAddress'),
 		 [univention.admin.field('kolabForwardActive'),
@@ -1111,9 +1121,9 @@ layout=[
 		[univention.admin.field("filler"), univention.admin.field("filler")],
 		[univention.admin.field('kolabDelegate')]
 	]),
-	univention.admin.tab(_('Invitation'),_('Invitation'), [
+	univention.admin.tab(_('Invitation'),_('Invitation acceptance'), [
 		[univention.admin.field('kolabInvitationPolicy')],
-	]),
+	], advanced = True),
 	univention.admin.tab(_('User Certificate'),_('User Certificate'), [
 		[univention.admin.field("userCertificate")],
 		[univention.admin.field('certificateSubjectCommonName'), univention.admin.field('certificateSubjectOrganisationalUnit')],
@@ -1126,7 +1136,7 @@ layout=[
 		[univention.admin.field('certificateIssuerMail'), ],
 		[univention.admin.field('certificateDateNotBefore'), univention.admin.field('certificateDateNotAfter') ],
 		[univention.admin.field('certificateVersion'), univention.admin.field('certificateSerial') ],
-	]),
+	], advanced = True),
 ]
 
 # append tab with CTX flags
@@ -1415,6 +1425,8 @@ class object( univention.admin.handlers.simpleLdap, mungeddial.Support ):
 
 		self.locked=0
 
+		self.old_username = None
+
 		univention.admin.handlers.simpleLdap.__init__(self, co, lo, position, dn, superordinate)
 		mungeddial.Support.__init__( self )
 
@@ -1425,7 +1437,7 @@ class object( univention.admin.handlers.simpleLdap, mungeddial.Support ):
 		self.options=[]
 		if self.oldattr.has_key('objectClass'):
 			ocs = set(self.oldattr['objectClass'])
-			for opt in ('posix', 'samba', 'person', 'kerberos', 'mail', 'groupware', 'pki'):
+			for opt in ('posix', 'samba', 'person', 'kerberos', 'mail', 'groupware', 'pki', 'ldap_pwd'):
 				if options[opt].matches(ocs):
 					self.options.append(opt)
 		else:
@@ -1465,18 +1477,24 @@ class object( univention.admin.handlers.simpleLdap, mungeddial.Support ):
 				s=self.descriptions['username'].syntax
 				try:
 					username_match=s.parse(uid)
-				except univention.admin.uexceptions.valueError,e: # uid contains already umlauts, so we switch
+				except univention.admin.uexceptions.valueError,e: # uid contains already mixed case umlauts, so we switch
 					self.set_uid_umlauts()
 				self['username']=uid
 			# FIXME: we should NEVER catch all exceptions
 			except Exception, e:
+				# at least write some debuging output..
+				univention.debug.debug(univention.debug.ADMIN, univention.debug.INFO, 'Cought exception: %s' % e )
+				univention.debug.debug(univention.debug.ADMIN, univention.debug.INFO, 'Continuing without dn..')
 				self.dn=None
 				return
 
 		try:
 			self['firstname']=self.oldattr.get('givenName',[''])[0]
 			self['lastname']=self.oldattr.get('sn',[''])[0]
-		except Exception, e:
+		except Exception, e:					# FIXME: we should NEVER catch all exceptions
+			# at least write some debuging output..
+			univention.debug.debug(univention.debug.ADMIN, univention.debug.INFO, 'Cought exception: %s' % e )
+			univention.debug.debug(univention.debug.ADMIN, univention.debug.INFO, 'Continuing without dn..')
 			self.dn=None
 			return
 
@@ -1496,7 +1514,10 @@ class object( univention.admin.handlers.simpleLdap, mungeddial.Support ):
 			is_disabled = 0
 			self.modifypassword=0
 			self['password']='********'
-			if 'posix' in self.options or 'mail' in self.options:
+			if 'posix' in self.options or 'mail' in self.options or 'ldap_pwd' in self.options:
+				#if 'username' not in self.oldattr and 'username' in self.info and len(self.info['username'][0]) > 0:
+				#	self.info['username'][0] = self.info['username'][0].lower()
+
 				userPassword=self.oldattr.get('userPassword',[''])[0]
 				if userPassword:
 					self.info['password']=userPassword
@@ -1518,9 +1539,21 @@ class object( univention.admin.handlers.simpleLdap, mungeddial.Support ):
 						if primaryGroupResult:
 							self['primaryGroup']=primaryGroupResult[0]
 						else:
-							self['primaryGroup']=None
+							try:
+								primaryGroup = self.lo.search( filter='(objectClass=univentionDefault)', base='cn=univention,'+self.position.getDomain(), attr=['univentionDefaultGroup'])
+								try:
+									primaryGroup = primaryGroup[0][1]["univentionDefaultGroup"][0]
+								except:
+									primaryGroup = None
+							except:
+								primaryGroup = None
+
+							univention.debug.debug(univention.debug.ADMIN, univention.debug.INFO, 'user: could not find primaryGroup, setting primaryGroup to %s' % primaryGroup)
+
+							self['primaryGroup']=primaryGroup
+							self.newPrimaryGroupDn=primaryGroup
+							self.__primary_group()
 							self.save()
-							raise univention.admin.uexceptions.primaryGroup
 					else:
 						self['primaryGroup']=None
 						self.save()
@@ -1680,21 +1713,34 @@ class object( univention.admin.handlers.simpleLdap, mungeddial.Support ):
 
 		if self.exists():
 			old_groups = self.oldinfo.get('groups', [])
+			old_uid = self.oldinfo.get( 'username', '' )
+			new_uid = self.info.get('username')
+			new_groups = self.info.get('groups', [])
 		else:
 			old_groups = []
+			old_uid = ""
+			new_uid=""
+			new_groups = []
 
 		add_to_group=[]
 		remove_from_group=[]
 
+		# change memberUid if we have a new username
+		if not old_uid == new_uid:
+			univention.debug.debug(univention.debug.ADMIN, univention.debug.INFO, 'users/user: rewrite memberuid after rename')
+			for group in new_groups:
+				self.__rewrite_member_uid( group )
+
 		def case_insensitive_in_list(dn, list):
+			
 			for element in list:
-				if dn.lower() == element.lower():
+				if dn.decode('utf8').lower() == element.decode('utf8').lower():
 					return True
 			return False
 
 		def case_insensitive_remove_from_list(dn, list):
 			for element in list:
-				if dn.lower() == element.lower():
+				if dn.decode('utf8').lower() == element.decode('utf8').lower():
 					remove_element = element
 			list.remove(remove_element)
 			return list
@@ -1743,7 +1789,7 @@ class object( univention.admin.handlers.simpleLdap, mungeddial.Support ):
 			members = self.lo.getAttr( group, 'uniqueMember' )
 		new = map( lambda x: x[ x.find( '=' ) + 1 : x.find( ',' ) ], members )
 		self.lo.modify(group, [ ( 'memberUid', uids, new ) ] )
-		
+
 	def __primary_group(self):
 		self.newPrimaryGroupDn=0
 		self.oldPrimaryGroupDn=0
@@ -1782,7 +1828,7 @@ class object( univention.admin.handlers.simpleLdap, mungeddial.Support ):
 
 		def case_insensitive_in_list(dn, list):
 			for element in list:
-				if dn.lower() == element.lower():
+				if dn.decode('utf8').lower() == element.decode('utf8').lower():
 					return True
 			return False
 
@@ -1791,6 +1837,8 @@ class object( univention.admin.handlers.simpleLdap, mungeddial.Support ):
 			newmembers=copy.deepcopy(members)
 			newmembers.append(self.dn)
 			self.lo.modify(self.newPrimaryGroupDn, [('uniqueMember', members, newmembers)])
+		univention.debug.debug(univention.debug.ADMIN, univention.debug.INFO, 'users/user: rewrite memberuid in %s' % self.newPrimaryGroupDn)
+		self.__rewrite_member_uid(self.newPrimaryGroupDn)
 		self.save()
 
 	def krb5_principal(self):
@@ -1804,11 +1852,11 @@ class object( univention.admin.handlers.simpleLdap, mungeddial.Support ):
 			self.__krb5_principal=self['username']+'@'+realm
 		return self.__krb5_principal
 
-	def set_uid_umlauts(self, umlauts=1):
-		self.uid_umlauts=umlauts
-		if umlauts:
+	def set_uid_umlauts(self, mixedcase=1):
+		self.uid_umlauts_mixedcase=mixedcase
+		if mixedcase:
 			self.descriptions['username'] = univention.admin.property(
-				short_description=_('Username'),
+				short_description=_('User name'),
 				long_description='',
 				syntax=univention.admin.syntax.uid_umlauts,
 				multivalue=0,
@@ -1818,9 +1866,9 @@ class object( univention.admin.handlers.simpleLdap, mungeddial.Support ):
 				)
 		else:
 			self.descriptions['username'] = univention.admin.property(
-				short_description=_('Username'),
+				short_description=_('User name'),
 				long_description='',
-				syntax=univention.admin.syntax.uid,
+				syntax=univention.admin.syntax.uid_umlauts_lower_except_first_letter,
 				multivalue=0,
 				required=1,
 				may_change=1,
@@ -1838,7 +1886,7 @@ class object( univention.admin.handlers.simpleLdap, mungeddial.Support ):
 			self.modifypassword=0
 		else:
 			self.modifypassword=1
-		
+
 		if self['mailPrimaryAddress']:
 			self['mailPrimaryAddress']=self['mailPrimaryAddress'].lower()
 
@@ -1848,12 +1896,13 @@ class object( univention.admin.handlers.simpleLdap, mungeddial.Support ):
 			error=0
 			uid=None
 
-			if not ( 'posix' in self.options or 'samba' in self.options or 'person' in self.options):
+			if not ( 'posix' in self.options or 'samba' in self.options or 'person' in self.options or 'ldap_pwd' in self.options):
 				#no objectClass which provides uid...
-				raise univention.admin.uexceptions.invalidOptions, _('Need one of %s, %s or %s in options to create user.')%(
+				raise univention.admin.uexceptions.invalidOptions, _('Need one of %s, %s, %s or %s in options to create user.')%(
 					'posix',
 					'samba',
-					'person')
+					'person',
+					'ldap_pwd')
 
 			if 'posix' in self.options or 'samba' in self.options:
 				if self['primaryGroup']:
@@ -1872,12 +1921,16 @@ class object( univention.admin.handlers.simpleLdap, mungeddial.Support ):
 						return []
 			try:
 				uid=univention.admin.allocators.request(self.lo, self.position, 'uid', value=self['username'])
+				if 'posix' in self.options:
+					if self['unixhome'] == '/home/%s' % self.old_username:
+						self['unixhome'] = '/home/%s' % self['username']
 			except univention.admin.uexceptions.noLock, e:
 				username=self['username']
 				del(self.info['username'])
 				self.oldinfo={}
 				self.dn=None
 				self._exists=0
+				self.old_username = username
 				univention.admin.allocators.release(self.lo, self.position, 'uid', username)
 				raise univention.admin.uexceptions.uidAlreadyUsed, ': %s' % username
 
@@ -1951,7 +2004,9 @@ class object( univention.admin.handlers.simpleLdap, mungeddial.Support ):
 				#('sambaAcctFlags', [acctFlags.decode()])
 			if 'person' in self.options:
 				ocs.extend(['organizationalPerson','inetOrgPerson'])
-			if 'kerberos' in self.options:
+			if 'ldap_pwd' in self.options:
+				ocs.extend(['simpleSecurityObject','uidObject'])
+ 			if 'kerberos' in self.options:
 				domain=univention.admin.uldap.domain(self.lo, self.position)
 				realm=domain.getKerberosRealm()
 				if realm:
@@ -2008,6 +2063,7 @@ class object( univention.admin.handlers.simpleLdap, mungeddial.Support ):
 				self.oldinfo={}
 				self.dn=None
 				self._exists=0
+				self.old_username = username
 				univention.admin.allocators.release(self.lo, self.position, 'uid', username)
 				raise univention.admin.uexceptions.uidAlreadyUsed, ': %s' % username
 
@@ -2073,6 +2129,19 @@ class object( univention.admin.handlers.simpleLdap, mungeddial.Support ):
 				ocs=self.oldattr.get('objectClass', [])
 				if 'pkiUser' in ocs:
 					ml.insert(0, ('objectClass', 'pkiUser', ''))
+			# ldap_pwd option add / remove
+			if 'ldap_pwd' in self.options and not 'ldap_pwd' in self.old_options:
+				univention.debug.debug(univention.debug.ADMIN, univention.debug.INFO, 'added ldap_pwd option')
+				ocs=self.oldattr.get('objectClass', [])
+				if not 'simpleSecurityObject' in ocs:
+					ml.insert(0, ('objectClass', '', 'simpleSecurityObject'))
+					ml.insert(0, ('objectClass', '', 'uidObject'))
+			if not 'ldap_pwd' in self.options and 'ldap_pwd' in self.old_options:
+				univention.debug.debug(univention.debug.ADMIN, univention.debug.INFO, 'remove ldap_pwd option')
+				ocs=self.oldattr.get('objectClass', [])
+				if 'simpleSecurityObject' in ocs:
+					ml.insert(0, ('objectClass', 'simpleSecurityObject', ''))
+					ml.insert(0, ('objectClass', 'uidObject', ''))
 
 
 
@@ -2181,7 +2250,7 @@ class object( univention.admin.handlers.simpleLdap, mungeddial.Support ):
 						else:
 							expiry=time.strftime("%d.%m.%y",time.gmtime((long(time.time()) + (expiryInterval*3600*24))))
 					if expiry == '0':
-						krb5PasswordEnd='0'
+						krb5PasswordEnd=''
 					else:
 						krb5PasswordEnd="%s" % "20"+expiry[6:8]+expiry[3:5]+expiry[0:2]+"000000Z"
 					univention.debug.debug(univention.debug.ADMIN, univention.debug.INFO, 'krb5PasswordEnd: %s' % krb5PasswordEnd)
@@ -2213,7 +2282,7 @@ class object( univention.admin.handlers.simpleLdap, mungeddial.Support ):
 				disabled="!"
 
 			#                             FIXME: required for join user root
-			if 'posix' in self.options or ('samba' in self.options and self['username'] == 'root') or 'mail' in self.options:
+			if 'posix' in self.options or ('samba' in self.options and self['username'] == 'root') or 'mail' in self.options or 'ldap_pwd' in self.options:
 				password_crypt = "{crypt}%s%s" % (disabled, univention.admin.password.crypt(self['password']))
 				#shadowlastchange=str(long(time.time())/3600/24)
 				ml.append(('userPassword', self.oldattr.get('userPassword', [''])[0], password_crypt))
@@ -2666,6 +2735,7 @@ def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub', unique=0,
 			]),
 			univention.admin.filter.expression('objectClass', 'univentionMail'),
 			univention.admin.filter.expression('objectClass', 'sambaSamAccount'),
+			univention.admin.filter.expression('objectClass', 'simpleSecurityObject'),
 			univention.admin.filter.conjunction('&', [
 				univention.admin.filter.expression('objectClass', 'person'),
 				univention.admin.filter.expression('objectClass', 'organizationalPerson'),
@@ -2695,6 +2765,7 @@ def identify(dn, attr, canonical=0):
 			  and 'shadowAccount' in attr.get('objectClass', []))
 			 or 'univentionMail' in attr.get('objectClass', [])
 			 or 'sambaSamAccount' in attr.get('objectClass', [])
+			 or 'simpleSecurityObject' in attr.get('objectClass', [])
 			 or
 			 ('person' in attr.get('objectClass', [])
 			  and	'organizationalPerson' in attr.get('objectClass', [])

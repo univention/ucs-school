@@ -3,7 +3,7 @@
 # Univention Admin Modules
 #  admin module for prohibited usernames
 #
-# Copyright (C) 2004, 2005, 2006 Univention GmbH
+# Copyright (C) 2004-2009 Univention GmbH
 #
 # http://www.univention.de/
 # 
@@ -45,8 +45,8 @@ operations=['add','edit','remove','search','move']
 superordinate='settings/cn'
 
 childs=0
-short_description=_('Settings: Prohibited Usernames')
-long_description=_('Univention Prohibited Usernames')
+short_description=_('Settings: Prohibited user names')
+long_description=_('Univention Prohibited user names')
 options={
 }
 property_descriptions={
@@ -61,8 +61,8 @@ property_descriptions={
 			identifies=1,
 		),
 	'usernames': univention.admin.property(
-			short_description=_('Prohibited Username'),
-			long_description=_('Prohibited Username'),
+			short_description=_('Prohibited user name'),
+			long_description=_('Prohibited user name'),
 			syntax=univention.admin.syntax.string,
 			multivalue=1,
 			options=[],
@@ -72,7 +72,7 @@ property_descriptions={
 		),
 }
 layout=[
-	univention.admin.tab(_('General'),_('Prohibited Usernames'), [
+	univention.admin.tab(_('General'),_('Prohibited user names'), [
 		[univention.admin.field('name') ],
 		[univention.admin.field('usernames')],
 	]),

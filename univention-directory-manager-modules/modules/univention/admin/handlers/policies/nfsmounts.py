@@ -3,7 +3,7 @@
 # Univention Admin Modules
 #  admin policy for nfs mounts
 #
-# Copyright (C) 2004, 2005, 2006, 2007 Univention GmbH
+# Copyright (C) 2004-2009 Univention GmbH
 #
 # http://www.univention.de/
 # 
@@ -43,7 +43,7 @@ _=translation.translate
 class ldapServerFixedAttributes(univention.admin.syntax.select):
 	name='updateFixedAttributes'
 	choices=[
-		('univentionNFSMounts',_('Mount NFS Shares')),
+		('univentionNFSMounts',_('Mount NFS shares')),
 		]
 
 module='policies/nfsmounts'
@@ -54,8 +54,8 @@ policy_apply_to=["computers/domaincontroller_master", "computers/domaincontrolle
 policy_position_dn_prefix="cn=nfsmounts"
 
 childs=0
-short_description=_('Policy: NFS Mounts')
-policy_short_description=_('NFS Mounts')
+short_description=_('Policy: NFS mounts')
+policy_short_description=_('NFS mounts')
 long_description=''
 options={
 }
@@ -71,7 +71,7 @@ property_descriptions={
 			identifies=1,
 		),
 	'nfsMounts': univention.admin.property(
-			short_description=_('NFS Shares to mount'),
+			short_description=_('NFS shares to mount'),
 			long_description='',
 			syntax=univention.admin.syntax.nfsMounts,
 			multivalue=1,
@@ -81,7 +81,7 @@ property_descriptions={
 			identifies=0
 		),
 	'requiredObjectClasses': univention.admin.property(
-			short_description=_('Required Object Classes'),
+			short_description=_('Required object classes'),
 			long_description='',
 			syntax=univention.admin.syntax.string,
 			multivalue=1,
@@ -91,7 +91,7 @@ property_descriptions={
 			identifies=0
 		),
 	'prohibitedObjectClasses': univention.admin.property(
-			short_description=_('Prohibited Object Classes'),
+			short_description=_('Excluded object classes'),
 			long_description='',
 			syntax=univention.admin.syntax.string,
 			multivalue=1,
@@ -101,7 +101,7 @@ property_descriptions={
 			identifies=0
 		),
 	'fixedAttributes': univention.admin.property(
-			short_description=_('Fixed Attributes'),
+			short_description=_('Fixed attributes'),
 			long_description='',
 			syntax=ldapServerFixedAttributes,
 			multivalue=1,
@@ -111,7 +111,7 @@ property_descriptions={
 			identifies=0
 		),
 	'emptyAttributes': univention.admin.property(
-			short_description=_('Empty Attributes'),
+			short_description=_('Empty attributes'),
 			long_description='',
 			syntax=ldapServerFixedAttributes,
 			multivalue=1,
@@ -132,14 +132,14 @@ property_descriptions={
 		)
 }
 layout=[
-	univention.admin.tab(_('General'),_('Basic Values'), [
+	univention.admin.tab(_('General'),_('Basic settings'), [
 		[univention.admin.field('name', hide_in_resultmode=1) ],
 		[univention.admin.field('nfsMounts') ]
 	]),
 	univention.admin.tab(_('Object'),_('Object'), [
 		[univention.admin.field('requiredObjectClasses') , univention.admin.field('prohibitedObjectClasses') ],
 		[univention.admin.field('fixedAttributes'), univention.admin.field('emptyAttributes')]
-	]),
+	], advanced = True),
 ]
 
 def unmapMounts(old):

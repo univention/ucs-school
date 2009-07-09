@@ -3,7 +3,7 @@
 # Univention Admin Modules
 #  wrapper around univention.uldap that replaces exceptions
 #
-# Copyright (C) 2004, 2005, 2006 Univention GmbH
+# Copyright (C) 2004-2009 Univention GmbH
 #
 # http://www.univention.de/
 #
@@ -52,6 +52,11 @@ def getBaseDN(host='localhost'):
 
 def getAdminConnection(start_tls=2,decode_ignorelist=[]):
 	lo=univention.uldap.getAdminConnection(start_tls, decode_ignorelist=decode_ignorelist)
+	pos=position(lo.base)
+	return access(lo=lo), pos
+
+def getMachineConnection(start_tls=2,decode_ignorelist=[]):
+	lo=univention.uldap.getMachineConnection(start_tls, decode_ignorelist=decode_ignorelist)
 	pos=position(lo.base)
 	return access(lo=lo), pos
 
@@ -239,6 +244,7 @@ class access:
 		self.start_tls=start_tls
 		self.require_license=0
 		self.allow_modify=1
+		self.licensetypes = [ 'UCS' ]
 
 
 	def bind(self, binddn, bindpw):
@@ -256,6 +262,9 @@ class access:
 				raise univention.admin.uexceptions.licenseGPLversion
 
 			res=univention.admin.license.init_select(self.lo, 'admin')
+
+			self.licensetypes = univention.admin.license._license.types
+
 			if res == 1:
 				self.allow_modify=0
 				raise univention.admin.uexceptions.licenseClients

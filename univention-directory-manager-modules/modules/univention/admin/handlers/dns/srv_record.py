@@ -3,7 +3,7 @@
 # Univention Admin Modules
 #  admin module for DNS service records
 #
-# Copyright (C) 2004, 2005, 2006 Univention GmbH
+# Copyright (C) 2004-2009 Univention GmbH
 #
 # http://www.univention.de/
 #
@@ -42,7 +42,7 @@ operations=['add','edit','remove','search']
 superordinate='dns/forward_zone'
 usewizard=1
 childs=0
-short_description=_('DNS: Service Record')
+short_description=_('DNS: Service record')
 long_description=''
 options={
 }
@@ -79,7 +79,7 @@ property_descriptions={
 		),
 }
 layout=[
-	univention.admin.tab(_('General'), _('Basic Values'), fields=[
+	univention.admin.tab(_('General'), _('Basic settings'), fields=[
 		[univention.admin.field('name')],
 		[univention.admin.field('location')],
 		[univention.admin.field('zonettl')]
@@ -87,7 +87,7 @@ layout=[
 ]
 
 def unmapName(old):
-	service, protocol = old[0].split('.')
+	service, protocol = old[0].split('.',1)
 	service=service[1:]
 	protocol=protocol[1:]
 	return [service, protocol]

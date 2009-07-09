@@ -3,7 +3,7 @@
 # Univention Admin Modules
 #  admin module for mail imap folders
 #
-# Copyright (C) 2004, 2005, 2006 Univention GmbH
+# Copyright (C) 2004-2009 Univention GmbH
 #
 # http://www.univention.de/
 # 
@@ -38,12 +38,13 @@ translation=univention.admin.localization.translation('univention.admin.handlers
 _=translation.translate
 
 module='mail/folder'
-operations=['add','edit','remove','search','move']
+operations=['add','edit','remove','search'] # removed 'move' as a workaround for bug #11664
+#operations=['add','edit','remove','search','move']
 usewizard=1
 
 
 childs=0
-short_description=_('Mail: IMAP Folder')
+short_description=_('Mail: IMAP folder')
 long_description=''
 
 module_search_filter=univention.admin.filter.conjunction('&', [
@@ -61,7 +62,7 @@ property_descriptions={
 			identifies=1
 		),
 	'mailDomain': univention.admin.property(
-			short_description=_('Mail Domain'),
+			short_description=_('Mail domain'),
 			long_description='',
 			syntax=univention.admin.syntax.mailDomain,
 			multivalue=0,
@@ -88,7 +89,7 @@ property_descriptions={
 			identifies=0,
 		),
 	'cyrus-userquota': univention.admin.property(
-			short_description=_('Maximum Quota in MB'),
+			short_description=_('Quota in MB'),
 			long_description='',
 			syntax=univention.admin.syntax.integer,
 			multivalue=0,
@@ -97,7 +98,7 @@ property_descriptions={
 			identifies=0,
 		),
 	'kolabHomeServer': univention.admin.property(
-			short_description=_('Kolab Home Server'),
+			short_description=_('Kolab home server'),
 			long_description='',
 			syntax=univention.admin.syntax.kolabHomeServer,
 			multivalue=0,
@@ -106,7 +107,7 @@ property_descriptions={
 			identifies=0,
 		),
 	'userNamespace': univention.admin.property(
-			short_description=_( 'Should Be Visible For Outlook' ),
+			short_description=_( 'Should be visible for Outlook' ),
 			long_description=_( "Outlook does not display folders outside of the 'user' namespace." ),
 			syntax=univention.admin.syntax.TrueFalseUp,
 			multivalue=0,
@@ -115,13 +116,34 @@ property_descriptions={
 			identifies=0,
 			default=''
 		),
+	'mailPrimaryAddress': univention.admin.property(
+			short_description=_('E-Mail address'),
+			long_description='',
+			syntax=univention.admin.syntax.emailAddress,
+			multivalue=0,
+			required=0,
+			dontsearch=0,
+			may_change=1,
+			identifies=0,
+		),
+	'folderType': univention.admin.property(
+			short_description=_('IMAP folder type'),
+			long_description='',
+			syntax=univention.admin.syntax.mail_folder_type,
+			multivalue=0,
+			required=0,
+			dontsearch=0,
+			may_change=1,
+			identifies=0,
+		),
 }
 
 layout=[
-	univention.admin.tab(_('General'),_('Basic Values'),[
+	univention.admin.tab(_('General'),_('Basic settings'),[
 	[univention.admin.field("name"), univention.admin.field("mailDomain")],
 	[univention.admin.field("kolabHomeServer"), univention.admin.field("cyrus-userquota")],
-	[univention.admin.field("userNamespace")],
+	[univention.admin.field("folderType"), univention.admin.field("mailPrimaryAddress")],
+	[univention.admin.field("userNamespace"), ],
 	] ),
 	univention.admin.tab(_('Access Rights'),_('Access rights for shared folder'),[
 	[univention.admin.field("sharedFolderUserACL")],
@@ -133,6 +155,8 @@ mapping=univention.admin.mapping.mapping()
 mapping.register('cyrus-userquota', 'cyrus-userquota', None, univention.admin.mapping.ListToString)
 mapping.register('kolabHomeServer', 'kolabHomeServer', None, univention.admin.mapping.ListToString)
 mapping.register('userNamespace', 'univentionKolabUserNamespace', None, univention.admin.mapping.ListToString)
+mapping.register('mailPrimaryAddress', 'mailPrimaryAddress', None, univention.admin.mapping.ListToString)
+mapping.register('folderType', 'univentionKolabSharedFolderType', None, univention.admin.mapping.ListToString)
 
 class object(univention.admin.handlers.simpleLdap):
 	module=module
@@ -159,6 +183,12 @@ class object(univention.admin.handlers.simpleLdap):
 		if self.dn:
 			cn=self.oldattr.get('cn',[])
 			if cn:
+				# 'name' is not a ldap attribute and oldinfo['name'] is
+				# always empty, that is way searching for 'name' causes trouble
+				# we delete the 'name' key in oldinfo so that the "change test"
+				# succeeds
+				if self.oldinfo.has_key('name') and not self.oldinfo['name']:
+					del self.oldinfo['name']
 				self['name']=cn[0].split('@')[0]
 				self['mailDomain']=cn[0].split('@')[1]
 
@@ -187,6 +217,8 @@ class object(univention.admin.handlers.simpleLdap):
 		if self[ 'userNamespace' ] == 'TRUE':
 			address = '%s@%s' % ( self[ 'name' ], self[ 'mailDomain' ] )
 			univention.admin.allocators.release( self.lo, self.position, 'mailPrimaryAddress', value = address )
+		if self[ 'mailPrimaryAddress' ]:
+			univention.admin.allocators.release( self.lo, self.position, 'mailPrimaryAddress', value = self[ 'mailPrimaryAddress' ] )
 
 	def _ldap_addlist(self):
 		ocs=[]
@@ -202,6 +234,20 @@ class object(univention.admin.handlers.simpleLdap):
 				univention.admin.allocators.release( self.lo, self.position, 'mailPrimaryAddress', value = address )
 				raise univention.admin.uexceptions.mailAddressUsed
 
+		if self[ 'mailPrimaryAddress' ]:
+			if self[ 'userNamespace' ] == 'TRUE':
+				al.append(('univentionKolabSharedFolderDeliveryAddress', '%s+%s@%s' % ( self['name'].split('/',1)[0], self[ 'name' ], self[ 'mailDomain' ] ) ) )
+			else:
+				al.append(('univentionKolabSharedFolderDeliveryAddress', 'univentioninternalpostuser+shared/%s@%s' % ( self[ 'name' ], self[ 'mailDomain' ] ) ) )
+
+			address = '%s@%s' % ( self[ 'name' ], self[ 'mailDomain' ] )
+			if self[ 'userNamespace' ] != 'TRUE' or self[ 'mailPrimaryAddress' ] != address:
+				try:
+					self.alloc.append( ( 'mailPrimaryAddress', self[ 'mailPrimaryAddress' ] ) )
+					univention.admin.allocators.request( self.lo, self.position, 'mailPrimaryAddress', value = self[ 'mailPrimaryAddress' ] )
+				except:
+					univention.admin.allocators.release( self.lo, self.position, 'mailPrimaryAddress', value = self[ 'mailPrimaryAddress' ] )
+					raise univention.admin.uexceptions.mailAddressUsed
 
 		ocs.append('kolabSharedFolder')
 		ocs.append('univentionKolabSharedFolder')
@@ -215,6 +261,8 @@ class object(univention.admin.handlers.simpleLdap):
 		if self[ 'userNamespace' ] == 'TRUE':
 			address = '%s@%s' % ( self[ 'name' ], self[ 'mailDomain' ] )
 			univention.admin.allocators.release( self.lo, self.position, 'mailPrimaryAddress', value = address )
+		if self[ 'mailPrimaryAddress' ]:
+			univention.admin.allocators.release( self.lo, self.position, 'mailPrimaryAddress', value = self[ 'mailPrimaryAddress' ] )
 
 	def _ldap_modlist(self):
 		# we get a list of modifications to be done (called 'ml' down below)
@@ -229,11 +277,37 @@ class object(univention.admin.handlers.simpleLdap):
 				if i == 'mailPrimaryAddress': break
 			else:
 				address = '%s@%s' % ( self[ 'name' ], self[ 'mailDomain' ] )
+
 				try:
 					univention.admin.allocators.request( self.lo, self.position, 'mailPrimaryAddress', value = address )
 				except:
 					univention.admin.allocators.release( self.lo, self.position, 'mailPrimaryAddress', value = address )
 					raise univention.admin.uexceptions.mailAddressUsed
+
+		if self.hasChanged( 'mailPrimaryAddress' ) and self[ 'mailPrimaryAddress' ]:
+			for i, j in self.alloc:
+				if i == 'mailPrimaryAddress': break
+			else:
+				if self[ 'userNamespace' ] == 'TRUE':
+					ml.append( ( 'univentionKolabSharedFolderDeliveryAddress',
+								 self.oldattr.get( 'univentionKolabSharedFolderDeliveryAddress', [] ),
+								 [ '%s+%s@%s' % ( self['name'].split('/',1)[0], self[ 'name' ], self[ 'mailDomain' ] ) ] ) )
+				else:
+					ml.append( ( 'univentionKolabSharedFolderDeliveryAddress',
+								 self.oldattr.get( 'univentionKolabSharedFolderDeliveryAddress', [] ),
+								 [ 'univentioninternalpostuser+shared/%s@%s' % ( self[ 'name' ], self[ 'mailDomain' ] ) ] ) )
+
+				address = '%s@%s' % ( self[ 'name' ], self[ 'mailDomain' ] )
+				if self[ 'userNamespace' ] != 'TRUE' or self[ 'mailPrimaryAddress' ] != address:
+					try:
+						self.alloc.append( ( 'mailPrimaryAddress', self[ 'mailPrimaryAddress' ] ) )
+						univention.admin.allocators.request( self.lo, self.position, 'mailPrimaryAddress', value = self[ 'mailPrimaryAddress' ] )
+					except:
+						univention.admin.allocators.release( self.lo, self.position, 'mailPrimaryAddress', value = self[ 'mailPrimaryAddress' ] )
+						raise univention.admin.uexceptions.mailAddressUsed
+
+		if not self[ 'mailPrimaryAddress' ]:
+			ml.append( ( 'univentionKolabSharedFolderDeliveryAddress', self.oldattr.get( 'univentionKolabSharedFolderDeliveryAddress', [] ), [] ) )
 
 		rewrite_acl = False
 		new_acls_tmp = []

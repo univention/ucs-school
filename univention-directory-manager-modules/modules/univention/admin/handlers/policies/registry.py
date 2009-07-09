@@ -3,7 +3,7 @@
 # Univention Admin Modules
 #  admin policy for the registry configuration
 #
-# Copyright (C) 2007 Univention GmbH
+# Copyright (C) 2007-2009 Univention GmbH
 #
 # http://www.univention.de/
 #
@@ -52,7 +52,7 @@ policy_position_dn_prefix="cn=registry"
 usewizard=1
 childs=0
 short_description=_('Policy: Config Registry')
-policy_short_description=_('Config Registry Settings')
+policy_short_description=_('Config Registry settings')
 long_description=''
 options={
 }
@@ -78,7 +78,7 @@ property_descriptions={
 			identifies=0,
 		),
 	'requiredObjectClasses': univention.admin.property(
-			short_description=_('Required Object Classes'),
+			short_description=_('Required object classes'),
 			long_description='',
 			syntax=univention.admin.syntax.string,
 			multivalue=1,
@@ -88,7 +88,7 @@ property_descriptions={
 			identifies=0
 		),
 	'prohibitedObjectClasses': univention.admin.property(
-			short_description=_('Prohibited Object Classes'),
+			short_description=_('Excluded object classes'),
 			long_description='',
 			syntax=univention.admin.syntax.string,
 			multivalue=1,
@@ -98,7 +98,7 @@ property_descriptions={
 			identifies=0
 		),
 	'fixedAttributes': univention.admin.property(
-			short_description=_('Fixed Attributes'),
+			short_description=_('Fixed attributes'),
 			long_description='',
 			syntax=registryFixedAttributes,
 			multivalue=1,
@@ -108,7 +108,7 @@ property_descriptions={
 			identifies=0
 		),
 	'emptyAttributes': univention.admin.property(
-			short_description=_('Empty Attributes'),
+			short_description=_('Empty attributes'),
 			long_description='',
 			syntax=registryFixedAttributes,
 			multivalue=1,
@@ -129,14 +129,14 @@ property_descriptions={
 		)
 }
 layout=[
-	univention.admin.tab(_('General'),_('Config Registry Settings'), [
+	univention.admin.tab(_('General'),_('Config Registry settings'), [
 		[univention.admin.field('name', hide_in_resultmode=1), univention.admin.field('filler', hide_in_normalmode=1) ],
 		[univention.admin.field('registry'), univention.admin.field('filler')],
 	]),
 	univention.admin.tab(_('Object'),_('Object'), [
 		[univention.admin.field('requiredObjectClasses') , univention.admin.field('prohibitedObjectClasses') ],
 		[univention.admin.field('fixedAttributes'), univention.admin.field('emptyAttributes')]
-	]),
+	], advanced = True),
 ]
 
 mapping=univention.admin.mapping.mapping()
@@ -167,8 +167,8 @@ class object(univention.admin.handlers.simplePolicy):
 		if self.dn:
 			self['registry']=[]
 			for key in self.oldattr.keys():
-				if key.startswith('univentionRegistry;entry-'):
-					key_name=key.split('univentionRegistry;entry-')[1].replace('-','/')
+				if key.startswith('univentionRegistry;entry-hex-'):
+					key_name=key.split('univentionRegistry;entry-hex-')[1].decode('hex')
 					self['registry'].append('%s=%s' % (key_name, self.oldattr[key][0].strip()))
 		self.save()
 
@@ -185,15 +185,15 @@ class object(univention.admin.handlers.simplePolicy):
 					old_keys.append(line.split('=')[0])
 			for k in old_keys:
 				if not k in new_keys:
-					ml.append( ('univentionRegistry;entry-%s' % k.replace('/','-'), self.oldattr.get('univentionRegistry;entry-%s' % k.replace('/','-'), ''), ''))
+					ml.append( ('univentionRegistry;entry-hex-%s' % k.encode('hex'), self.oldattr.get('univentionRegistry;entry-hex-%s' % k.encode('hex'), ''), ''))
 			for k in new_keys:
 				for line in self.info['registry']:
 					if line.startswith('%s=' % k ):
 						value=string.join(line.split('=')[1:])
 						if value == "None":
-							ml.append( ('univentionRegistry;entry-%s' % k.replace('/','-'), self.oldattr.get('univentionRegistry;entry-%s' % k.replace('/','-'), ''), None ) )
+							ml.append( ('univentionRegistry;entry-hex-%s' % k.encode('hex'), self.oldattr.get('univentionRegistry;entry-hex-%s' % k.encode('hex'), ''), None ) )
 						else:
-							ml.append( ('univentionRegistry;entry-%s' % k.replace('/','-'), self.oldattr.get('univentionRegistry;entry-%s' % k.replace('/','-'), ''), value ) )
+							ml.append( ('univentionRegistry;entry-hex-%s' % k.encode('hex'), self.oldattr.get('univentionRegistry;entry-hex-%s' % k.encode('hex'), ''), value ) )
 						break
 		return ml
 

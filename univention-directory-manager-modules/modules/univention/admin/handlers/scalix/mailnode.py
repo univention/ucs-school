@@ -3,7 +3,7 @@
 # Univention Admin Modules
 #  admin module for the scalix mailnode
 #
-# Copyright (C) 2004, 2005, 2006 Univention GmbH
+# Copyright (C) 2004-2009 Univention GmbH
 #
 # http://www.univention.de/
 # 
@@ -72,7 +72,7 @@ property_descriptions={
 }
 
 layout=[
-	univention.admin.tab(_('General'),_('Basic Values'),[
+	univention.admin.tab(_('General'),_('Basic settings'),[
 	[univention.admin.field("name"), univention.admin.field("server")],
 	] ),
 ]

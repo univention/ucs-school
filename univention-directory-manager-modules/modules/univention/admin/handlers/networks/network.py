@@ -3,7 +3,7 @@
 # Univention Admin Modules
 #  admin module for network objects
 #
-# Copyright (C) 2004, 2005, 2006 Univention GmbH
+# Copyright (C) 2004-2009 Univention GmbH
 #
 # http://www.univention.de/
 # 
@@ -43,9 +43,9 @@ _=translation.translate
 module='networks/network'
 operations=['add','edit','remove','search']
 usewizard=1
-wizardmenustring=_("Network")
+wizardmenustring=_("Networks")
 wizarddescription=_("Add, edit and delete networks")
-wizardoperations={"add":[_("Add"), _("Add Network Object")],"find":[_("Find"), _("Find Network Object(s)")]}
+wizardoperations={"add":[_("Add"), _("Add network object")],"find":[_("Search"), _("Search network object(s)")]}
 
 childs=0
 short_description=_('Networks: Network')
@@ -62,7 +62,7 @@ property_descriptions={
 			identifies=1
 		),
 	'network': univention.admin.property(
-			short_description=_('Network'),
+			short_description=_('Networks'),
 			long_description='',
 			syntax=univention.admin.syntax.ipAddress,
 			multivalue=0,
@@ -80,7 +80,7 @@ property_descriptions={
 			identifies=0
 		),
 	'nextIp': univention.admin.property(
-			short_description=_('Next IP Address'),
+			short_description=_('Next IP address'),
 			long_description='',
 			syntax=univention.admin.syntax.string,
 			multivalue=0,
@@ -99,7 +99,7 @@ property_descriptions={
 			identifies=0
 		),
 	'dnsEntryZoneForward': univention.admin.property(
-			short_description=_('DNS Entry Position'),
+			short_description=_('DNS forward lookup zone'),
 			long_description='',
 			syntax=univention.admin.syntax.dnsEntryNetwork,
 			multivalue=0,
@@ -110,7 +110,7 @@ property_descriptions={
 			identifies=0
 		),
 	'dnsEntryZoneReverse': univention.admin.property(
-			short_description=_('DNS Entry Zone Reverse'),
+			short_description=_('DNS reverse lookup zone'),
 			long_description='',
 			syntax=univention.admin.syntax.dnsEntryReverseNetwork,
 			multivalue=0,
@@ -121,7 +121,7 @@ property_descriptions={
 			identifies=0
 		),
 	'dhcpEntryZone': univention.admin.property(
-			short_description=_('DHCP Entry'),
+			short_description=_('DHCP service'),
 			long_description='',
 			syntax=univention.admin.syntax.dhcpEntryNetwork,
 			multivalue=0,
@@ -144,14 +144,14 @@ property_descriptions={
 }
 
 layout=[
-	univention.admin.tab(_('General'),_('Basic Values'), [
+	univention.admin.tab(_('General'),_('Basic settings'), [
 		[univention.admin.field('name'), univention.admin.field('filler')],
 		[univention.admin.field('network'), univention.admin.field('netmask')],
 	]),
-	univention.admin.tab(_('IP'),_('IP Address Ranges'), [
+	univention.admin.tab(_('IP'),_('IP address ranges'), [
 		[univention.admin.field('ipRange')],
 	]),
-	univention.admin.tab(_('DNS'),_('DNS Preferences'), [
+	univention.admin.tab(_('DNS'),_('DNS preferences'), [
 		[univention.admin.field('dnsEntryZoneForward') ],
 		[ univention.admin.field('dnsEntryZoneReverse')],
 	]),
@@ -177,9 +177,9 @@ mapping.register('name', 'cn', None, univention.admin.mapping.ListToString)
 mapping.register('network', 'univentionNetwork', None, univention.admin.mapping.ListToString)
 mapping.register('netmask','univentionNetmask', None, univention.admin.mapping.ListToString)
 mapping.register('nextIp','univentionNextIp', None, univention.admin.mapping.ListToString)
-mapping.register('dnsEntryZoneForward','univentionDnsForwardZone', None, univention.admin.mapping.ListToString)
-mapping.register('dnsEntryZoneReverse','univentionDnsReverseZone', None, univention.admin.mapping.ListToString)
-mapping.register('dhcpEntryZone','univentionDhcpEntry', None, univention.admin.mapping.ListToString)
+mapping.register('dnsEntryZoneForward','univentionDnsForwardZone', univention.admin.mapping.IgnoreNone, univention.admin.mapping.ListToString)
+mapping.register('dnsEntryZoneReverse','univentionDnsReverseZone', univention.admin.mapping.IgnoreNone, univention.admin.mapping.ListToString)
+mapping.register('dhcpEntryZone','univentionDhcpEntry', univention.admin.mapping.IgnoreNone, univention.admin.mapping.ListToString)
 
 class object(univention.admin.handlers.simpleLdap):
 	module=module
@@ -351,5 +351,5 @@ def lookup(co, lo, filter_s, base='', superordinate=None, scope='sub', unique=0,
 
 def identify(dn, attr, canonical=0):
 	
-	return 'univentionNetworkClass' in attr.get('objecClass', [])
+	return 'univentionNetworkClass' in attr.get('objectClass', [])
 
