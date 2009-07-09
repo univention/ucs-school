@@ -88,8 +88,8 @@ install: build
 	ln -s ucs-school-import debian/$(PACKAGE)/usr/share/$(PACKAGE)/scripts/activate_groupmembers
 	ln -s ucs-school-import debian/$(PACKAGE)/usr/share/$(PACKAGE)/scripts/export_computer
 	install -m 755 ucs-school-change-share-server debian/$(PACKAGE)/usr/share/$(PACKAGE)/scripts
+	install -m 755 35ucs-school-import.inst debian/$(PACKAGE)/usr/lib/univention-install/
 
-	install -m 755 35ucs-school-import.inst $(D2)/usr/lib/univention-install/
 	install -m 755 82univention-ucs-school-import-custom-attributes.inst $(D2)/usr/lib/univention-install/
 	install -m 755 schema/ucs-school-import.schema $(D2)/usr/share/univention-ldap/schema
 
