@@ -1,3 +1,17 @@
+ucs-school-import (4.0.0-36) unstable; urgency=low
+
+  * automagically add default UMC policy to user groups for pupils,
+    teachers, staff and admins (Bug: #14880)
+    Attached policy can be specified by setting UCR variables:
+    - ucsschool/ldap/default/policy/umc/pupils
+    - ucsschool/ldap/default/policy/umc/teachers
+    - ucsschool/ldap/default/policy/umc/staff
+    - ucsschool/ldap/default/policy/umc/admins
+    Set UCR variable to policy DN that shall be attached or set variable
+    to "None" to deactivate auto-attachment.
+
+ -- Sönke Schwardt <schwardt@univention.de>  Thu, 09 Jul 2009 10:33:08 +0200
+
 ucs-school-import (4.0.0-35) unstable; urgency=low
 
   * switched default group prefix from "lehrer" to "lehrer-" etc. (Bug: #14958)

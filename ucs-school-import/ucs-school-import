@@ -58,22 +58,26 @@ verified_ous          = []
 verified_groups       = []
 verified_group_shares = []
 
-cn_pupils   = configRegistry.get ('ucsschool/ldap/default/container/pupils', 'schueler')
-cn_teachers = configRegistry.get ('ucsschool/ldap/default/container/teachers', 'lehrer')
-cn_admins   = configRegistry.get ('ucsschool/ldap/default/container/admins', 'admins')
-cn_staff    = configRegistry.get ('ucsschool/ldap/default/container/staff', 'mitarbeiter')
+cn_pupils   = configRegistry.get('ucsschool/ldap/default/container/pupils', 'schueler')
+cn_teachers = configRegistry.get('ucsschool/ldap/default/container/teachers', 'lehrer')
+cn_admins	= configRegistry.get('ucsschool/ldap/default/container/admins', 'admins')
+cn_staff	= configRegistry.get('ucsschool/ldap/default/container/staff', 'mitarbeiter')
 
-grp_prefix_pupils   = configRegistry.get ('ucsschool/ldap/default/groupprefix/pupils', 'schueler-')
-grp_prefix_teachers = configRegistry.get ('ucsschool/ldap/default/groupprefix/teachers', 'lehrer-')
-grp_prefix_admins   = configRegistry.get ('ucsschool/ldap/default/groupprefix/admins', 'admins-')
-grp_prefix_staff    = configRegistry.get ('ucsschool/ldap/default/groupprefix/staff', 'mitarbeiter-')
+grp_prefix_pupils   = configRegistry.get('ucsschool/ldap/default/groupprefix/pupils', 'schueler-')
+grp_prefix_teachers = configRegistry.get('ucsschool/ldap/default/groupprefix/teachers', 'lehrer-')
+grp_prefix_admins	= configRegistry.get('ucsschool/ldap/default/groupprefix/admins', 'admins-')
+grp_prefix_staff	= configRegistry.get('ucsschool/ldap/default/groupprefix/staff', 'mitarbeiter-')
+
+grp_policy_pupils	= configRegistry.get('ucsschool/ldap/default/policy/umc/pupils', 'cn=ucsschool-umc-pupils-default,cn=console,cn=policies,%s' % baseDN)
+grp_policy_teachers = configRegistry.get('ucsschool/ldap/default/policy/umc/teachers', 'cn=ucsschool-umc-teachers-default,cn=console,cn=policies,%s' % baseDN)
+grp_policy_admins	= configRegistry.get('ucsschool/ldap/default/policy/umc/admins', 'cn=ucsschool-umc-admins-default,cn=console,cn=policies,%s' % baseDN)
+grp_policy_staff	= configRegistry.get('ucsschool/ldap/default/policy/umc/staff', 'cn=ucsschool-umc-staff-default,cn=console,cn=policies,%s' % baseDN)
 
 role_pupil   = 'pupil'
 role_teacher = 'teacher'
 role_staff   = 'staff'
 
-# TODO: make this configurable via UCR
-generate_logins = False
+generate_logins = configRegistry.get('ucsschool/import/generate/logins', 'no').lower() in ( 'yes', 'true', '1' )
 
 # IP address prefix len conecerning the netmask
 default_prefixlen = 24
@@ -269,6 +273,42 @@ def getDN (schoolNr, base='school', basedn=baseDN):
 		values['school'] = ''
 	return dn % values
 
+
+def verify_policy(objdn, schoolNr, policy_dn_list):
+	# test if all policy objects exist and if all referenced objects are policy objects
+	for poldn in policy_dn_list:
+		oc = lo.get( poldn, ['objectClass'] )
+		if not oc:
+			print "Object to be referenced does not exist: " + poldn
+			problem_hints = problem_hints + "there were problems verifying ou %s: Object to be referenced does not exist: %s\n" % (schoolNr, poldn)
+			break
+		elif not 'univentionPolicy' in oc['objectClass']:
+			print "Object to be referenced is no valid policy: " + poldn
+			problem_hints = problem_hints + "there were problems verifying ou %s: Object to be referenced is no valid policy: %s\n" % (schoolNr, poldn)
+			break
+	else:
+		# add univentionPolicyReference if neccessary
+		oc = lo.get( objdn, ['objectClass'] )
+		if not 'univentionPolicyReference' in oc.get('objectClass',[]):
+			try:
+				lo.modify( objdn, [ ('objectClass','','univentionPolicyReference') ] )
+			except:
+				print 'Objectclass univentionPolicyReference cannot be added to %s\n' % (objdn)
+				problem_hints = problem_hints + "there were problems verifying ou %s: Objectclass univentionPolicyReference cannot be added to %s\n" % (schoolNr, objdn)
+		# add all missing policies
+		pl = lo.get( objdn, ['univentionPolicyReference'] )
+		modlist=[]
+		for poldn in policy_dn_list:
+			if not poldn in pl.get('univentionPolicyReference',[]):
+				modlist.append(('univentionPolicyReference','',poldn))
+				print 'need to attach policy: %s' % poldn
+		try:
+			lo.modify(objdn, modlist)
+		except:
+			print 'Policies %s cannot be referenced to %s\n' % (policy_dn_list, objdn)
+			problem_hints = problem_hints + "there were problems verifying ou %s: policies %s cannot be referenced to %s\n" % (schoolNr, policy_dn_list, objdn)
+
+
 def verify_school_ou(schoolNr, co, lo, baseDN):
 	global problem_hints
 
@@ -309,12 +349,15 @@ def verify_school_ou(schoolNr, co, lo, baseDN):
 			verify_container('%s,%s'%(dn,ou_base),cn_module, co, lo, superordinate, baseDN, path=path[1:])
 
 	# create groups if not exsistant
-	groups=["cn=%s%s,cn=ouadmins,cn=groups,%s" % (grp_prefix_admins, schoolNr.lower (), baseDN),
-			"cn=%s%s,cn=groups,%s" % (cn_pupils, schoolNr.lower (), getDN (schoolNr)),
-			"cn=%s%s,cn=groups,%s" % (cn_teachers, schoolNr.lower (), getDN (schoolNr)),
-			"cn=%s%s,cn=groups,%s" % (cn_staff, schoolNr.lower (), getDN (schoolNr))]
-	for group in groups:
+	groups=[ ( "cn=%s%s,cn=ouadmins,cn=groups,%s" % (grp_prefix_admins, schoolNr.lower (), baseDN), grp_policy_admins ),
+			 ( "cn=%s%s,cn=groups,%s" % (cn_pupils, schoolNr.lower (), getDN (schoolNr)),           grp_policy_pupils ),
+			 ( "cn=%s%s,cn=groups,%s" % (cn_teachers, schoolNr.lower (), getDN (schoolNr)),			grp_policy_teachers ),
+			 ( "cn=%s%s,cn=groups,%s" % (cn_staff, schoolNr.lower (), getDN (schoolNr)),			grp_policy_staff ),
+			 ]
+	for group, grppolicy in groups:
 		verify_group(group, co, lo, superordinate, baseDN)
+		if grppolicy and grppolicy != 'None':
+			verify_policy(group, schoolNr, [ grppolicy ])
 
 	groups=[
 			"cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,%s" % (baseDN, ),

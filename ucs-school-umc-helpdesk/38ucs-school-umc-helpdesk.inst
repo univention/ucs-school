@@ -69,13 +69,25 @@ univention-directory-manager settings/console_acl create $@ --ignore_exists --po
 																				 --set command="helpdesk/*" \
 																				 --set description="All UMC Helpdesk operations"
 
-# default policies
-univention-directory-manager container/cn create $@ --ignore_exists --position cn=policies,$ldap_base --set name=console
-univention-directory-manager policies/console_access modify $@ --dn cn=default-admin,cn=console,cn=policies,$ldap_base \
-	--append allow=cn=helpdesk-all,cn=acls,cn=console,cn=univention,$ldap_base
+# create policy container if missing
+univention-directory-manager container/cn create $@ --ignore_exists --position "cn=policies,$ldap_base" --set name=console
+if [ $? != 0 ]; then exit 1; fi
 
-univention-directory-manager policies/console_access create $@ --ignore_exists --position cn=console,cn=policies,$ldap_base \
-	--set name=helpdesk-admin --append allow=cn=helpdesk-all,cn=acls,cn=console,cn=univention,$ldap_base
+# create empty UMC access policies if missing
+for policyname in ucsschool-umc-pupils-default ucsschool-umc-teachers-default ucsschool-umc-staff-default ucsschool-umc-admins-default helpdesk-admin ; do
+	univention-directory-manager policies/console_access create $@ --ignore_exists \
+			--position "cn=console,cn=policies,$ldap_base" \
+			--set name="${policyname}"
+	if [ $? != 0 ]; then exit 1; fi
+fi
+
+# default policies
+for policyname in ucsschool-umc-teachers-default ucsschool-umc-admins-default default-admin helpdesk-admin ; do
+	univention-directory-manager policies/console_access modify $@ --ignore_exists \
+		--dn "cn=${policyname},cn=console,cn=policies,$ldap_base" \
+		--append "allow=cn=helpdesk-all,cn=acls,cn=console,cn=univention,$ldap_base"
+	if [ $? != 0 ]; then exit 1; fi
+done
 
 
 test -n "$(grep "${JSNAME} v${VERSION} successful" ${JSFILE})" || echo "${JSNAME} v${VERSION} successful" >> "${JSFILE}"
