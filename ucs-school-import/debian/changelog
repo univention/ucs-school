@@ -1,3 +1,9 @@
+ucs-school-import (4.0.3-1) unstable; urgency=low
+
+  * fixed version of join scripts (Bug: #14958)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Thu, 09 Jul 2009 15:46:30 +0200
+
 ucs-school-import (4.0.2-1) unstable; urgency=low
 
   * fixed group prefix (Bug: #14958)
