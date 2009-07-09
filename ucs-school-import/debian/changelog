@@ -1,6 +1,13 @@
+ucs-school-import (4.0.0-38) unstable; urgency=low
+
+  * added missing copyright header (Bug: #14958)
+  * fixed join script (Bug: #14880)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Thu, 09 Jul 2009 11:09:13 +0200
+
 ucs-school-import (4.0.0-37) unstable; urgency=low
 
-  * added missing file (Bug: #14880)
+  * added missing join script (Bug: #14880)
 
  -- Sönke Schwardt <schwardt@univention.de>  Thu, 09 Jul 2009 11:03:25 +0200
 
