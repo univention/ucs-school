@@ -1,3 +1,9 @@
+ucs-school-import (4.0.0-37) unstable; urgency=low
+
+  * added missing file (Bug: #14880)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Thu, 09 Jul 2009 11:03:25 +0200
+
 ucs-school-import (4.0.0-36) unstable; urgency=low
 
   * automagically add default UMC policy to user groups for pupils,
