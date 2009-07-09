@@ -54,7 +54,7 @@ for policyname in ucsschool-umc-pupils-default ucsschool-umc-teachers-default uc
 			--position cn=console,cn=policies,$ldap_base \
 			--set name="${policyname}"
 	if [ $? != 0 ]; then exit 1; fi
-fi
+done
 
 
 test -n "$(grep "$name v${VERSION} successful" $file)" || echo "$name v${VERSION} successful" >> $file

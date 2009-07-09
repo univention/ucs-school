@@ -1,3 +1,9 @@
+ucs-school-umc-roomadmin (5.0.1-2) unstable; urgency=low
+
+  * fixed typo in join script (Bug: #14880)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Thu, 09 Jul 2009 11:18:37 +0200
+
 ucs-school-umc-roomadmin (5.0.1-1) unstable; urgency=low
 
   * added UMC ACLs to default UCS@School UMC policies (Bug: #14880)

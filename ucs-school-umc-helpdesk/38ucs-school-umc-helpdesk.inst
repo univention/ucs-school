@@ -79,7 +79,7 @@ for policyname in ucsschool-umc-pupils-default ucsschool-umc-teachers-default uc
 			--position "cn=console,cn=policies,$ldap_base" \
 			--set name="${policyname}"
 	if [ $? != 0 ]; then exit 1; fi
-fi
+done
 
 # default policies
 for policyname in ucsschool-umc-teachers-default ucsschool-umc-admins-default default-admin helpdesk-admin ; do

@@ -1,3 +1,9 @@
+ucs-school-import (4.0.0-39) unstable; urgency=low
+
+  * fixed typo in join script (Bug: #14880)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Thu, 09 Jul 2009 11:16:43 +0200
+
 ucs-school-import (4.0.0-38) unstable; urgency=low
 
   * added missing copyright header (Bug: #14958)
