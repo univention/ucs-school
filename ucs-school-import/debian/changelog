@@ -1,12 +1,6 @@
-ucs-school-import (4.0.0-40) unstable; urgency=low
+ucs-school-import (4.0.1-1) unstable; urgency=low
 
-  * bumped version (Bug: #14880)
-
- -- Sönke Schwardt <schwardt@univention.de>  Thu, 09 Jul 2009 11:36:44 +0200
-
-ucs-school-import (4.0.0-39) unstable; urgency=low
-
-  * fixed typo in join script (Bug: #14880)
+  * fixed join script installation (Bug: #14880)
 
  -- Sönke Schwardt <schwardt@univention.de>  Thu, 09 Jul 2009 11:16:43 +0200
 

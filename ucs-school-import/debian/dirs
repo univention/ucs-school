@@ -1,2 +1,3 @@
 usr/share/ucs-school-import/scripts
 var/lib/ucs-school-import
+usr/lib/univention-install
