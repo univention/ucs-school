@@ -58,15 +58,15 @@ verified_ous          = []
 verified_groups       = []
 verified_group_shares = []
 
-cn_pupils   = configRegistry.get ('ucsschool/ldap/default/container/pupils', 'pupils')
-cn_teachers = configRegistry.get ('ucsschool/ldap/default/container/teachers', 'teachers')
+cn_pupils   = configRegistry.get ('ucsschool/ldap/default/container/pupils', 'schueler')
+cn_teachers = configRegistry.get ('ucsschool/ldap/default/container/teachers', 'lehrer')
 cn_admins   = configRegistry.get ('ucsschool/ldap/default/container/admins', 'admins')
-cn_staff    = configRegistry.get ('ucsschool/ldap/default/container/staff', 'staff')
+cn_staff    = configRegistry.get ('ucsschool/ldap/default/container/staff', 'mitarbeiter')
 
-grp_prefix_pupils   = configRegistry.get ('ucsschool/ldap/default/groupprefix/pupils', 'pupils')
-grp_prefix_teachers = configRegistry.get ('ucsschool/ldap/default/groupprefix/teachers', 'teachers')
-grp_prefix_admins   = configRegistry.get ('ucsschool/ldap/default/groupprefix/admins', 'admins')
-grp_prefix_staff    = configRegistry.get ('ucsschool/ldap/default/groupprefix/staff', 'staff')
+grp_prefix_pupils   = configRegistry.get ('ucsschool/ldap/default/groupprefix/pupils', 'schueler-')
+grp_prefix_teachers = configRegistry.get ('ucsschool/ldap/default/groupprefix/teachers', 'lehrer-')
+grp_prefix_admins   = configRegistry.get ('ucsschool/ldap/default/groupprefix/admins', 'admins-')
+grp_prefix_staff    = configRegistry.get ('ucsschool/ldap/default/groupprefix/staff', 'mitarbeiter-')
 
 role_pupil   = 'pupil'
 role_teacher = 'teacher'
@@ -79,7 +79,7 @@ generate_logins = False
 default_prefixlen = 24
 
 if not (cn_pupils and cn_teachers and cn_admins and cn_staff):
-	print 'ERROR: Unable to progress, one of these UCR variables is not set correctly:\n\tucsschool/ldap/default/container/pupils\n\tucsschool/ldap/default/container/teachers\n\tucsschool/ldap/default/container/staff\n\tucsschool/ldap/default/container/admins'
+	print 'ERROR: Unable to proceed: one of these UCR variables is not set correctly:\n\tucsschool/ldap/default/container/pupils\n\tucsschool/ldap/default/container/teachers\n\tucsschool/ldap/default/container/staff\n\tucsschool/ldap/default/container/admins'
 	sys.exit (1)
 
 class ucsschool_person_modify:
@@ -196,9 +196,9 @@ class ucsschool_person_modify:
 		default_groups.append("cn=Domain Users "+self.sNr+",cn=groups,%s" % (getDN (self.sNr), ))
 
 		for role in self.getRole ():
-			user_grp_prefix = {role_teacher:grp_prefix_teachers,
-					role_pupil:grp_prefix_pupils,
-					role_staff:grp_prefix_staff}[role]
+			user_grp_prefix = { role_teacher:grp_prefix_teachers,
+							    role_pupil:grp_prefix_pupils,
+							    role_staff:grp_prefix_staff }[role]
 			# class if available
 			for cnr in self.cNr:
 				default_groups.append("cn=" + cnr + ",cn=klassen,cn=%s,cn=groups,%s" % (cn_pupils, getDN (self.sNr)))
@@ -309,7 +309,7 @@ def verify_school_ou(schoolNr, co, lo, baseDN):
 			verify_container('%s,%s'%(dn,ou_base),cn_module, co, lo, superordinate, baseDN, path=path[1:])
 
 	# create groups if not exsistant
-	groups=["cn=admins%s,cn=ouadmins,cn=groups,%s" % (schoolNr.lower (), baseDN),
+	groups=["cn=%s%s,cn=ouadmins,cn=groups,%s" % (grp_prefix_admins, schoolNr.lower (), baseDN),
 			"cn=%s%s,cn=groups,%s" % (cn_pupils, schoolNr.lower (), getDN (schoolNr)),
 			"cn=%s%s,cn=groups,%s" % (cn_teachers, schoolNr.lower (), getDN (schoolNr)),
 			"cn=%s%s,cn=groups,%s" % (cn_staff, schoolNr.lower (), getDN (schoolNr))]

@@ -1,9 +1,9 @@
 #!/bin/sh
 #
-# Univention Print Server
+# UCS@School
 #  postinst script for the debian package
 #
-# Copyright (C) 2004, 2005, 2006, 2007, 2008 Univention GmbH
+# Copyright (C) 2008-2009 Univention GmbH
 #
 # http://www.univention.de/
 #
@@ -28,14 +28,18 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
+#DEBHELPER#
+
 univention-config-registry set \
 	ucsschool/ldap/district/enable?false \
 	ucsschool/ldap/default/container/teachers?lehrer \
 	ucsschool/ldap/default/container/admins?admins \
 	ucsschool/ldap/default/container/pupils?schueler \
 	ucsschool/ldap/default/container/staff?mitarbeiter \
-	ucsschool/ldap/default/groupprefix/teachers?lehrer \
-	ucsschool/ldap/default/groupprefix/admins?admins \
-	ucsschool/ldap/default/groupprefix/pupils?schueler \
-	ucsschool/ldap/default/groupprefix/staff?mitarbeiter \
+	ucsschool/ldap/default/groupprefix/teachers?"lehrer-" \
+	ucsschool/ldap/default/groupprefix/admins?"admins-" \
+	ucsschool/ldap/default/groupprefix/pupils?"schueler-" \
+	ucsschool/ldap/default/groupprefix/staff?"mitarbeiter-" \
 	ucsschool/ldap/default/dcs?edukativ
+
+exit 0

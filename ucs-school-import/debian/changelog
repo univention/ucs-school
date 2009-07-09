@@ -1,3 +1,11 @@
+ucs-school-import (4.0.0-35) unstable; urgency=low
+
+  * switched default group prefix from "lehrer" to "lehrer-" etc. (Bug: #14958)
+  * script ucs-school-import now uses german container names by default
+  * ou admin container is named by UCR variable
+
+ -- Sönke Schwardt <schwardt@univention.de>  Wed, 08 Jul 2009 15:33:54 +0200
+
 ucs-school-import (4.0.0-34) unstable; urgency=low
 
   * fixed traceback on initializing UDM modules (Ticket: #2009060410000116)
@@ -440,7 +448,7 @@ ucs-school-import (1.2.7) unstable; urgency=low
 ucs-school-import (1.2.6) unstable; urgency=low
 
   * attach default umc policy
-    cn=default-lehrer,cn=console,cn=policies,dc=schule,dc=bremen,dc=de
+    cn=default-lehrer,cn=console,cn=policies,BASEDN
   	to cn=lehrer,cn=users,ou=XXX,BASEDN while verifying ou
 
  -- Sönke Schwardt <schwardt@univention.de>  Tue, 26 Feb 2008 12:26:58 +0100
