@@ -40,7 +40,7 @@ VERSION="1"
 
 touch $file
 
-test -n "$(grep "$name v${VERSION} successful" $file)" && exit 0
+test -n "$(grep "$name v${VERSION} successful" $file)" && exit 1
 
 eval $( univention-config-registry shell ldap/base )
 
