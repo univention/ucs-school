@@ -39,7 +39,7 @@ VERSION="2"
 
 touch $file
 
-test -n "`grep "$name v${VERSION} successful" $file`" && exit 0
+test -n "`grep "$name v${VERSION} successful" $file`" && exit 1
 
 univention-directory-manager settings/customattribute create $@  --ignore_exist \
     --position cn="custom attributes,cn=univention,$ldap_base" \
