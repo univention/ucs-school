@@ -36,7 +36,7 @@ fi
 name="ucs-school-import"
 file="/usr/lib/univention-install/.index.txt"
 ldap_base=$(univention-config-registry get ldap/base) 
-VERSION="1"
+VERSION=1
 
 touch $file
 
