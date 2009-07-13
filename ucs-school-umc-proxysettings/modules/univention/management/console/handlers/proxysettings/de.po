@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2008-08-27 16:54+0200\n"
-"PO-Revision-Date: 2008-08-27 16:54+0200\n"
+"PO-Revision-Date: 2009-07-13 19:08+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -17,15 +17,15 @@ msgstr ""
 
 #: __init__.py:59 __init__.py:60
 msgid "Proxy Filter Settings"
-msgstr "Proxy-Filter Einstellungen"
+msgstr "Webfilter Einstellungen"
 
 #: __init__.py:65
 msgid "Proxy Filter Profile"
-msgstr "Proxy-Filterprofil"
+msgstr "Webfilter-Profil"
 
 #: __init__.py:66
 msgid "List proxy filter profiles"
-msgstr "Proxy-Filterprofil anzeigen"
+msgstr "Webfilter-Profil anzeigen"
 
 #: __init__.py:74
 msgid "Assign Profiles"
@@ -33,7 +33,7 @@ msgstr "Profile zuordnen"
 
 #: __init__.py:75
 msgid "Assign proxy filter profiles to groups"
-msgstr "Proxy-Filterprofile an Gruppen zuordnen"
+msgstr "Webfilter-Profile an Gruppen zuordnen"
 
 #: __init__.py:85
 msgid "Assign Profile"
@@ -41,15 +41,15 @@ msgstr "Profil zuordnen"
 
 #: __init__.py:86
 msgid "Assign proxy filter profile to group"
-msgstr "Proxy-Filterprofil zuordnen"
+msgstr "Webfilter-Profil zuordnen"
 
 #: __init__.py:96
 msgid "Remove Proxy Filter Profile"
-msgstr "Proxy-Filterprofil entfernen"
+msgstr "Webfilter-Profil entfernen"
 
 #: __init__.py:97
 msgid "Remove proxy filter profile"
-msgstr "Proxy-Filterprofil entfernen"
+msgstr "Webfilter-Profil entfernen"
 
 #: __init__.py:103 __init__.py:116
 msgid "Profile [default]"
@@ -102,7 +102,7 @@ msgstr "Filter-Profil \"%s\" ist reserviert, bitte anderen Namen wählen"
 
 #: _revamp.py:142
 msgid "Edit Proxy Filter Profile"
-msgstr "Proxy-Filterprofil bearbeiten"
+msgstr "Webfilter-Profil bearbeiten"
 
 #: _revamp.py:158 _revamp.py:179
 msgid "Type"
@@ -134,15 +134,15 @@ msgstr "--- default ---"
 
 #: _revamp.py:253
 msgid "Please set new profile here:"
-msgstr "Bitte Proxy-Filterprofil auswählen:"
+msgstr "Bitte Webfilter-Profil auswählen:"
 
 #: _revamp.py:267
 msgid "Assign Proxy Filter Profile To Group"
-msgstr "Proxy-Filterprofil mit Gruppe verknüpfen"
+msgstr "Webfilter-Profil mit Gruppe verknüpfen"
 
 #: _revamp.py:288
 msgid "Create New Proxy Filter Profile"
-msgstr "Proxy-Filterprofil erstellen"
+msgstr "Webfilter-Profil erstellen"
 
 #: _revamp.py:302 _revamp.py:335
 #, python-format
@@ -183,7 +183,7 @@ msgstr "Verknüpfte Gruppen"
 
 #: _revamp.py:370
 msgid "Remove Proxy Filter Profiles"
-msgstr "Proxy-Filterprofil entfernen"
+msgstr "Webfilter-Profil entfernen"
 
 #: _revamp.py:371
 msgid "remove"
