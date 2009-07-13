@@ -48,8 +48,6 @@ import italc
 from json import JsonReader, JsonWriter
 import PyQt4.QtCore
 
-import univention.config_registry
-
 import os, re, fnmatch, time, random
 import traceback
 random.seed ()
