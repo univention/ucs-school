@@ -1,3 +1,9 @@
+ucs-school-umc-proxysettings (4.0.2-1) unstable; urgency=low
+
+  * renamed german "Proxy-Filter" to "Webfilter" (Ticket: #2009071010000184)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Mon, 13 Jul 2009 19:09:30 +0200
+
 ucs-school-umc-proxysettings (4.0.1-2) unstable; urgency=low
 
   * fixed typo in join script (Bug: #14880)
