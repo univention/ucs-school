@@ -5,7 +5,7 @@ Maintainer: Univention GmbH <packages@univention.de>
 Build-Depends: debhelper, univention-config-dev
 
 Package: ucs-school-netlogon-italc
-Architecture: any
+Architecture: all
 Depends: univention-config-registry
 Description: univention netlogon script
  Univention machine startup script - copies iTALC public teacher key to windows system
