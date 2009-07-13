@@ -384,7 +384,7 @@ def verify_school_ou(schoolNr, co, lo, baseDN):
 			 ]
 	for group, grppolicy in groups:
 		verify_group(group, co, lo, superordinate, baseDN)
-		if grppolicy and grppolicy != 'None':
+		if grppolicy and grppolicy.lower() != 'none':
 			verify_policy(group, schoolNr, [ grppolicy ])
 
 	groups=[
