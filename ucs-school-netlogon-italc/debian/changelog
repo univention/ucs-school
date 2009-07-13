@@ -1,6 +1,12 @@
+ucs-school-netlogon-italc (3.0.0-3) unstable; urgency=low
+
+  * fixed architecture (Bug: #14958)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Mon, 13 Jul 2009 19:29:04 +0200
+
 ucs-school-netlogon-italc (3.0.0-2) unstable; urgency=low
 
-  * renamed config file
+  * renamed config file (Bug: #15068)
 
  -- Sönke Schwardt <schwardt@univention.de>  Mon, 13 Jul 2009 19:23:30 +0200
 
