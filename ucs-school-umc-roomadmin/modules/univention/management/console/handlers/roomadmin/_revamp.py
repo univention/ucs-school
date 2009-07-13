@@ -34,6 +34,7 @@ import univention.management.console.dialog as umcd
 import univention.management.console.protocol as umcp
 
 import univention.debug as ud
+import univention.config_registry
 
 _ = umc.Translation( 'univention.management.console.handlers.roomadmin' ).translate
 
@@ -175,6 +176,11 @@ class Web( object ):
 		sorted_members = sorted( sorted_members, cmp = lambda x, y: cmp( x.lower(), y.lower() ),
 								 key = operator.itemgetter( 0 ) )
 
+		configRegistry = univention.config_registry.ConfigRegistry()
+		configRegistry.load()
+		vncPort = configRegistry.get('umc/roomadmin/vnc/port','5900')
+		vncEnabled = configRegistry.get('umc/roomadmin/vnc/enable','yes').lower() in ('yes','true','1')
+
 		idlist = []
 		for cn, memberdn in sorted_members:
 			computer = computers[memberdn]
@@ -183,14 +189,13 @@ class Web( object ):
 
 			# computername and VNC link
 			icon = 'roomadmin/%s' % self._determine_host_icon( computer )
-			if computer.has_key('aRecord') and computer['aRecord']:
+			if computer.has_key('aRecord') and computer['aRecord'] and vncEnabled:
 				img = umcd.Link( description = cn,
 								 icon=icon,
-								 link='/univention-management-console/ultravnc.php?hostname=%s' % computer['aRecord'][0]
+								 link='/univention-management-console/ultravnc.php?hostname=%s&port=%s' % (computer['aRecord'][0], vncPort)
 								)
 				btn = umcd.Link( description = cn,
-								 link='/univention-management-console/ultravnc.php?hostname=%s' % computer['aRecord'][0] )
-				ipaddr = computer['aRecord'][0]
+								 link='/univention-management-console/ultravnc.php?hostname=%s&port=%s' % (computer['aRecord'][0], vncPort) )
 			else:
 				img = umcd.Image( icon )
 				btn = umcd.Text( cn )
@@ -206,18 +211,21 @@ class Web( object ):
 			roomlist = [ umcd.Image('roomadmin/room'), ', '.join(roomlist) ]
 
 			# user that is logged on
-			if ipaddr:
-				userlst = [ umcd.Link( description = cn,
-									   icon = 'roomadmin/user',
-									   link = '/univention-management-console/ultravnc.php?hostname=%s' % ipaddr,
-									   attributes = {	'onmouseover' : "umc.roomadmin.showSnapshot (this, '%s', '%s');" % (self._sessionid, ipaddr),
-														'onmouseout':"umc.roomadmin.hideSnapshot ('%s');" % (ipaddr, ),
-														}
-									   ) ]
-# 				userlst = [ umcd.Image('roomadmin/user', attributes = {
-# 					'onmouseover':"umc.roomadmin.showSnapshot (this, '%s', '%s');" % (self._sessionid, ipaddr),
-# 					'onmouseout':"umc.roomadmin.hideSnapshot ('%s');" % (ipaddr, ),
-# 					}) ]
+			if computer.has_key('aRecord') and computer['aRecord']:
+				ipaddr = computer['aRecord'][0]
+				if vncEnabled:
+					userlst = [ umcd.Link( description = cn,
+										   icon = 'roomadmin/user',
+										   link = '/univention-management-console/ultravnc.php?hostname=%s&port=%s' % (ipaddr, vncPort),
+										   attributes = {	'onmouseover' : "umc.roomadmin.showSnapshot (this, '%s', '%s');" % (self._sessionid, ipaddr),
+															'onmouseout':"umc.roomadmin.hideSnapshot ('%s');" % (ipaddr, ),
+															}
+										   ) ]
+				else:
+					userlst = [ umcd.Image('roomadmin/user', attributes = {
+						'onmouseover':"umc.roomadmin.showSnapshot (this, '%s', '%s');" % (self._sessionid, ipaddr),
+						'onmouseout':"umc.roomadmin.hideSnapshot ('%s');" % (ipaddr, ),
+						}) ]
 			else:
 				userlst = [ umcd.Image('roomadmin/user') ]
 			username = _('unknown')
