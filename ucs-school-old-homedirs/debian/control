@@ -1,7 +1,7 @@
 Source: ucs-school-old-homedirs
 Section: univention
 Priority: optional
-Maintainer: univention GmbH <packages@univention.de>
+Maintainer: Univention GmbH <packages@univention.de>
 Build-Depends: debhelper (>> 3.0.0), univention-config-dev
 Standards-Version: 3.5.2
 
