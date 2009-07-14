@@ -1,3 +1,9 @@
+ucs-school-metapackage (1.0.0-4) unstable; urgency=low
+
+  * enlarged dependency list (Bug: #15009)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Tue, 14 Jul 2009 11:43:54 +0200
+
 ucs-school-metapackage (1.0.0-3) unstable; urgency=low
 
   * fixed dependency list (Bug: #14958)
