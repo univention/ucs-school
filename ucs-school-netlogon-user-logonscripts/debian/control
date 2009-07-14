@@ -1,11 +1,11 @@
-Source: ucs-school-user-logonscripts
+Source: ucs-school-netlogon-user-logonscripts
 Section: univention
 Priority: optional
 Maintainer: Univention GmbH <packages@univention.de>
 Build-Depends: debhelper (>> 3.0.0), univention-config-dev
 Standards-Version: 3.5.2
 
-Package: ucs-school-user-logonscripts
+Package: ucs-school-netlogon-user-logonscripts
 Architecture: all
 Depends: univention-config-registry, univention-ldap-client, univention-directory-manager-tools, univention-directory-listener, univention-samba, sysutils
 Description: ucs@school userspecific netlogon scripts
