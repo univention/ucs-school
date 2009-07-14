@@ -1,4 +1,4 @@
-ucs-school-umc-reservation (4.0.1-3) unstable; urgency=low
+ucs-school-umc-reservation (4.0.2-1) unstable; urgency=low
 
   * fixed traceback in distribution part of reservation module (Bug: #15079)
 
