@@ -1,3 +1,9 @@
+ucs-school-old-homedirs (4.0.0-1) unstable; urgency=low
+
+  * fixed packaging error (Bug: #14958)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Tue, 14 Jul 2009 09:57:48 +0200
+
 ucs-school-old-homedirs (4.0.0-0) unstable; urgency=low
 
   * ported package to component ucs@school
