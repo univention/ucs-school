@@ -60,8 +60,8 @@ import pwd, grp
 
 _ = umc.Translation( 'univention.management.console.handlers.reservation' ).translate
 
-DISTRIBUTION_DATA_PATH = '/var/lib/univention-management-console-distribution'
-DISTRIBUTION_CMD = '/usr/lib/univention-management-console-distribution/umc-distribution'
+DISTRIBUTION_DATA_PATH = '/var/lib/ucs-school-umc-distribution'
+DISTRIBUTION_CMD = '/usr/lib/ucs-school-umc-distribution/umc-distribution'
 
 icon = 'reservation/module'
 short_description = _( 'Lesson Configuration' )
