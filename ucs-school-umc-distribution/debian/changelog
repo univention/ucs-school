@@ -1,3 +1,9 @@
+ucs-school-umc-distribution (4.0.3-1) unstable; urgency=low
+
+  * fixed traceback if specified deadline is in the past (Bug: #15088)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Tue, 14 Jul 2009 16:01:04 +0200
+
 ucs-school-umc-distribution (4.0.2-2) unstable; urgency=low
 
   * fixed typo in join script (Bug: #14880)

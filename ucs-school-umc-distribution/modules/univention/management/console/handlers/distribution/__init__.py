@@ -297,7 +297,8 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 				if deadline_str:
 					deadline_struct = time.strptime( deadline_str.strip(), _('%m/%d/%Y %H:%M') )
 					deadline_time = time.mktime( deadline_struct )
-					project['deadline'] = deadline_time
+					if deadline_time > time.time()+120:
+						project['deadline'] = deadline_time
 				files = []
 				for fileitem in umcobject.options.get('fileupload',[]):
 					files.append( [ fileitem['filename'], fileitem['tmpfname'] ] )

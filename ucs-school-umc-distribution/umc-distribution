@@ -171,6 +171,8 @@ def initProject( project ):
 
 			project['recipients'].append(user)
 
+	exitcode = None
+
 	# check deadline
 	if project['deadline']:
 		debugmsg( ud.ADMIN, ud.INFO, 'init_project: deadline = %s' % time.ctime( project['deadline'] ) )
@@ -201,18 +203,20 @@ def initProject( project ):
 			debugmsg( ud.ADMIN, ud.ERROR, 'init_project: "at" command returned exitcode %s' % proc.returncode )
 			debugmsg( ud.ADMIN, ud.ERROR, 'init_project: "at" command returned (stdout):\n%s' % stdout )
 			debugmsg( ud.ADMIN, ud.ERROR, 'init_project: "at" command returned (stderr):\n%s' % stderr )
-			sys.exit(3)
-
-		debugmsg( ud.ADMIN, ud.INFO, 'debug marker 5')
-		REjobnumber = re.compile('job (\d+) at')
-		match = REjobnumber.search(stderr)
-		if not match:
-			debugmsg( ud.ADMIN, ud.ERROR, 'init_project: cannot get "at" job number (stdout):\n%s' % stdout )
-			debugmsg( ud.ADMIN, ud.ERROR, 'init_project: cannot get "at" job number (stderr):\n%s' % stderr )
-			sys.exit(4)
+			debugmsg( ud.ADMIN, ud.ERROR, 'init_project: scheduled shutdown with exitcode 3' )
+			exitcode = 3
 		else:
-			atjob = match.group(1)
-			project['atjob'] = atjob
+			debugmsg( ud.ADMIN, ud.INFO, 'debug marker 5')
+			REjobnumber = re.compile('job (\d+) at')
+			match = REjobnumber.search(stderr)
+			if not match:
+				debugmsg( ud.ADMIN, ud.ERROR, 'init_project: cannot get "at" job number (stdout):\n%s' % stdout )
+				debugmsg( ud.ADMIN, ud.ERROR, 'init_project: cannot get "at" job number (stderr):\n%s' % stderr )
+				debugmsg( ud.ADMIN, ud.ERROR, 'init_project: scheduled shutdown with exitcode 4' )
+				exitcode = 4
+			else:
+				atjob = match.group(1)
+				project['atjob'] = atjob
 		debugmsg( ud.ADMIN, ud.INFO, 'debug marker 6')
 
 	# save user info
@@ -227,6 +231,10 @@ def initProject( project ):
 		distributeData( project )
 
 	debugmsg( ud.ADMIN, ud.INFO, 'saved project %s' % project['name'])
+
+	if exitcode:
+		debugmsg( ud.ADMIN, ud.ERROR, 'init_project: exitcode is %s - comitting suicide' % exitcode )
+		sys.exit(exitcode)
 
 
 
