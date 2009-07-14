@@ -1,3 +1,9 @@
+ucs-school-umc-reservation (4.0.1-3) unstable; urgency=low
+
+  * fixed traceback in distribution part of reservation module (Bug: #15079)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Tue, 14 Jul 2009 11:24:31 +0200
+
 ucs-school-umc-reservation (4.0.1-2) unstable; urgency=low
 
   * fixed typo in join script (Bug: #14880)
