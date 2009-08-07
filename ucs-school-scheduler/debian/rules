@@ -59,7 +59,7 @@ install-ext-%: build-stamp
 	dh_installdirs
 	dh_installinit --no-start
 
-	install -m755 univention-scheduler $(D)/usr/sbin
+	install -m755 ucs-school-scheduler $(D)/usr/sbin
 
 	install -d $(D)/usr/lib/python$*/site-packages/univention/reservation/scheduler
 	install -d $(D)/usr/lib/python$*/site-packages/univention/reservation/scheduler/listener
