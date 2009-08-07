@@ -47,6 +47,6 @@ univention-config-registry set scheduler/debug/level?2 \
 
 #DEBHELPER#
 
-/etc/init.d/univention-scheduler crestart || true
+/etc/init.d/ucs-school-scheduler crestart || true
 
 exit 0

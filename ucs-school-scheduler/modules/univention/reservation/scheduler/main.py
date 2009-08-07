@@ -59,7 +59,7 @@ def daemon ():
 			os.chdir("/")
 			os.umask(0)
 		else:
-			pf=open('/var/run/univention-scheduler', 'w+')
+			pf=open('/var/run/ucs-scheduler-scheduler', 'w+')
 			pf.write(str(pid))
 			pf.close()
 			os._exit(0)

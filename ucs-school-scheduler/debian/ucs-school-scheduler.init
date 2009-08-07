@@ -28,17 +28,17 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
-PID="/var/run/univention-scheduler"
+PID="/var/run/ucs-school-scheduler"
 
 case "$1" in
 	start)
-		echo -n "Starting univention-scheduler daemon: "
-		start-stop-daemon --start --quiet --pidfile "$PID" -a /usr/sbin/univention-scheduler
+		echo -n "Starting ucs-school-scheduler daemon: "
+		start-stop-daemon --start --quiet --pidfile "$PID" -a /usr/sbin/ucs-school-scheduler
 		echo "done"
 		;;
 	stop)
-		echo -n "Stopping univention-scheduler daemon: "
-		start-stop-daemon --stop --quiet --pidfile "$PID" -a /usr/sbin/univention-scheduler
+		echo -n "Stopping ucs-school-scheduler daemon: "
+		start-stop-daemon --stop --quiet --pidfile "$PID" -a /usr/sbin/ucs-school-scheduler
 		echo "done"
 		;;
 	restart|force-reload)
@@ -52,7 +52,7 @@ case "$1" in
 		fi
 		;;
 	*)
-		echo "Usage: /etc/init.d/univention-scheduler {start|stop|restart|crestart|force-reload}"
+		echo "Usage: /etc/init.d/ucs-school-scheduler {start|stop|restart|crestart|force-reload}"
 		exit 1
 		;;
 esac
