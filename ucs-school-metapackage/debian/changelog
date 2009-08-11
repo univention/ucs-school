@@ -1,3 +1,11 @@
+ucs-school-metapackage (1.0.3-1) unstable; urgency=low
+
+  * do not overwrite the DC Slave netlogon scripts with the DC Master
+    netlogon scripts by setting samba/netlogon/sync to download during
+    the first installation of the meta package on a DC Slave. Bug #15066
+
+ -- Stefan Gohmann <gohmann@univention.de>  Tue, 11 Aug 2009 13:57:06 +0200
+
 ucs-school-metapackage (1.0.2-1) unstable; urgency=low
 
   * added a dependency to the UDM tools from UCS 2.2-2 or above. Bug
