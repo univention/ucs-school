@@ -1,3 +1,10 @@
+ucs-school-metapackage (1.0.2-1) unstable; urgency=low
+
+  * added a dependency to the UDM tools from UCS 2.2-2 or above. Bug
+    #15049
+
+ -- Stefan Gohmann <gohmann@univention.de>  Tue, 11 Aug 2009 12:04:29 +0200
+
 ucs-school-metapackage (1.0.1-1) unstable; urgency=low
 
   * added a dependency to the UCS LDAP package from UCS 2.2-1 or above.
