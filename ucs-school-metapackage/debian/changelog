@@ -1,3 +1,11 @@
+ucs-school-metapackage (1.0.1-1) unstable; urgency=low
+
+  * added a dependency to the UCS LDAP package from UCS 2.2-1 or above.
+    Bug #15146
+  * removed some duplicated packages from the dependency list
+
+ -- Stefan Gohmann <gohmann@univention.de>  Tue, 11 Aug 2009 11:35:09 +0200
+
 ucs-school-metapackage (1.0.0-4) unstable; urgency=low
 
   * enlarged dependency list (Bug: #15009)

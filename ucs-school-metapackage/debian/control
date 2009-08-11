@@ -7,7 +7,7 @@ Standards-Version: 1.0.0
 
 Package: ucs-school-master
 Architecture: all
-Depends: ucs-school-import, ucs-school-import-schema, ucs-school-ldap-acls-master, ucs-school-umc-helpdesk-schema, ucs-school-import-schema
+Depends: univention-ldap-server (>> 4.0.6-1), ucs-school-import, ucs-school-ldap-acls-master, ucs-school-umc-helpdesk-schema
 Description: UCS@School meta package for UCS DC Master System (multi DC mode)
  This meta package installs all required packages for UCS@School on
  a UCS domaincontroller master. The domaincontroller master will be 
@@ -34,7 +34,7 @@ Description: UCS@School meta package for UCS DC Slave System
 
 Package: ucs-school-singlemaster
 Architecture: all
-Depends: ucs-school-import, ucs-school-import-schema, ucs-school-ldap-acls-master, ucs-school-netlogon-italc, ucs-school-umc-distribution, ucs-school-umc-helpdesk, ucs-school-umc-printermoderation, ucs-school-umc-proxysettings, ucs-school-umc-reservation, ucs-school-umc-roomadmin, ucs-school-umc-schooladmin, univention-netlogon-proxy, ucs-school-umc-helpdesk-schema, ucs-school-import-schema, ucs-school-webproxy, ucs-school-netlogon-user-logonscripts, ucs-school-old-homedirs, ucs-school-old-sharedirs
+Depends: univention-ldap-server (>> 4.0.6-1), ucs-school-import, ucs-school-ldap-acls-master, ucs-school-netlogon-italc, ucs-school-umc-distribution, ucs-school-umc-helpdesk, ucs-school-umc-printermoderation, ucs-school-umc-proxysettings, ucs-school-umc-reservation, ucs-school-umc-roomadmin, ucs-school-umc-schooladmin, univention-netlogon-proxy, ucs-school-umc-helpdesk-schema, ucs-school-webproxy, ucs-school-netlogon-user-logonscripts, ucs-school-old-homedirs, ucs-school-old-sharedirs
 Description: UCS@School meta package for UCS DC Master System (single master mode)
  This meta package installs all required packages for UCS@School on
  a UCS domaincontroller master. The domaincontroller master will be 
