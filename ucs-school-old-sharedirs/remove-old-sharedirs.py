@@ -83,6 +83,15 @@ def handler(dn, new, old):
 	# remove empty share directories
 	if old and not new:
 
+		if old.has_key('univentionShareHost'):
+			fqdn = '%s.%s' % (configRegistry['hostname'], configRegistry['domainname'])
+			if not fqdn in old['univentionShareHost']:
+				univention.debug.debug(univention.debug.LISTENER, univention.debug.WARN, "Didn't do anything because this server is not in the share host list cn=%s" % (old["cn"][0]))
+				return
+		else:
+			univention.debug.debug(univention.debug.LISTENER, univention.debug.WARN, "not removing share directory of share %s: univentionShareHost ist not set" % (old["cn"][0]))
+			return
+
 		# check if target directory is okay
 
 		ret=check_target_dir(configRegistry)
