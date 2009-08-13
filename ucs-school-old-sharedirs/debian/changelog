@@ -1,3 +1,10 @@
+ucs-school-old-sharedirs (4.0.2-1) unstable; urgency=low
+
+  * check if the local host is in the list of the share hosts.
+    Bug #14963
+
+ -- Stefan Gohmann <gohmann@univention.de>  Thu, 13 Aug 2009 14:19:40 +0200
+
 ucs-school-old-sharedirs (4.0.0-0) unstable; urgency=low
 
   * ported package to component ucs@school
