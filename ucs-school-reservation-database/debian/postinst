@@ -61,7 +61,7 @@ if [ ! -e /etc/reservation-sql.secret ]; then
 	chown www-data /etc/reservation-sql.secret
 	rm -f $tmp
 	# set passwd for database user reservation
-	echo "SET PASSWORD FOR 'reservation' = PASSWORD('$passwd')" | mysql
+	echo "SET PASSWORD FOR 'reservation' = PASSWORD('$passwd')" | mysql -u root --password=$(cat /etc/mysql.secret)
 	unset passwd
 fi
 
