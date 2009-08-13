@@ -1,3 +1,9 @@
+ucs-school-umc-reservation (4.0.3-1) unstable; urgency=low
+
+  * replace % characters during debug output (Bug: #15337)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Thu, 13 Aug 2009 15:16:45 +0200
+
 ucs-school-umc-reservation (4.0.2-1) unstable; urgency=low
 
   * fixed traceback in distribution part of reservation module (Bug: #15079)

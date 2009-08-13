@@ -293,9 +293,8 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 			except Exception, e:
 				debugmsg( ud.ADMIN, ud.ERROR, 'getting groups failed: %s' % str(e) )
 				import traceback, sys
-				info = sys.exc_info()
-				lines = traceback.format_exception(*info)
-				debugmsg( ud.ADMIN, ud.ERROR, 'TRACEBACK\n%s' % ''.join(lines) )
+				lines = traceback.format_exc().replace('%','#')
+				debugmsg( ud.ADMIN, ud.ERROR, 'TRACEBACK\n%s' % lines )
 
 		return groupdict
 
@@ -333,9 +332,8 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 			except Exception, e:
 				debugmsg( ud.ADMIN, ud.ERROR, 'getting rooms failed: %s' % str(e) )
 				import traceback, sys
-				info = sys.exc_info()
-				lines = traceback.format_exception(*info)
-				debugmsg( ud.ADMIN, ud.ERROR, 'TRACEBACK\n%s' % ''.join(lines) )
+				lines = traceback.format_exc().replace('%','#')
+				debugmsg( ud.ADMIN, ud.ERROR, 'TRACEBACK\n%s' % lines )
 				rooms = []
 
 			debugmsg( ud.ADMIN, ud.INFO, 'rooms=%s' % rooms )
