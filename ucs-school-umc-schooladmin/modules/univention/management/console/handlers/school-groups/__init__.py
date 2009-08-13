@@ -440,9 +440,8 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 					gid = gr['gidNumber']
 			except Exception, e:
 				ud.debug( ud.ADMIN, ud.ERROR, 'SCHOOLGROUPS: getting group id failed (group=%s): %s' % (groupdn, e) )
-				info = sys.exc_info()
-				lines = traceback.format_exception(*info)
-				ud.debug( ud.ADMIN, ud.ERROR, 'TRACEBACK\n%s' % ''.join(lines) )
+				lines = traceback.format_exc().replace('%','#')
+				ud.debug( ud.ADMIN, ud.ERROR, 'TRACEBACK\n%s' % lines )
 				report = _('An error occured while getting group id! Please consult local administrator.')
 
 			ud.debug( ud.ADMIN, ud.WARN, 'SCHOOLGROUPS: verify_group_share: using gid=%s' % gid)
@@ -492,9 +491,8 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 				ud.debug( ud.ADMIN, ud.WARN, 'SCHOOLGROUPS: verify_group_share: object exists')
 			except Exception, e:
 				ud.debug( ud.ADMIN, ud.ERROR, 'SCHOOLGROUPS: verify_group_share: creating object failed (dn=%s): %s' % (position_dn, e) )
-				info = sys.exc_info()
-				lines = traceback.format_exception(*info)
-				ud.debug( ud.ADMIN, ud.ERROR, 'TRACEBACK\n%s' % ''.join(lines) )
+				lines = traceback.format_exc().replace('%','#')
+				ud.debug( ud.ADMIN, ud.ERROR, 'TRACEBACK\n%s' % lines )
 
 
 
@@ -551,9 +549,8 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 					description = gr['description']
 			except Exception, e:
 				ud.debug( ud.ADMIN, ud.ERROR, 'SCHOOLGROUPS: getting group description failed (group=%s): %s' % (groupdn, e) )
-				info = sys.exc_info()
-				lines = traceback.format_exception(*info)
-				ud.debug( ud.ADMIN, ud.ERROR, 'TRACEBACK\n%s' % ''.join(lines) )
+				lines = traceback.format_exc().replace('%','#')
+				ud.debug( ud.ADMIN, ud.ERROR, 'TRACEBACK\n%s' % lines )
 				report = _('An error occured while getting group description! Please consult local administrator.')
 		else:
 			description = None
@@ -661,9 +658,8 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 					dn = gr.modify()
 			except Exception, e:
 				ud.debug( ud.ADMIN, ud.ERROR, 'SCHOOLGROUPS: change of group members failed (group=%s): %s' % (groupdn, e) )
-				info = sys.exc_info()
-				lines = traceback.format_exception(*info)
-				ud.debug( ud.ADMIN, ud.ERROR, 'TRACEBACK\n%s' % ''.join(lines) )
+				lines = traceback.format_exc().replace('%','#')
+				ud.debug( ud.ADMIN, ud.ERROR, 'TRACEBACK\n%s' % lines )
 				report = _('An error occured while modifying group! Please consult local administrator.')
 		else:
 			# no groupdn present ==> create new group
@@ -691,9 +687,8 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 				report = _('Cannot create group - groupname already used!')
 			except Exception, e:
 				ud.debug( ud.ADMIN, ud.ERROR, 'SCHOOLGROUPS: creating group %s at %s failed: %s' % (group, tmpPosition.getDn(), e) )
-				info = sys.exc_info()
-				lines = traceback.format_exception(*info)
-				ud.debug( ud.ADMIN, ud.ERROR, 'TRACEBACK\n%s' % ''.join(lines) )
+				lines = traceback.format_exc().replace('%','#')
+				ud.debug( ud.ADMIN, ud.ERROR, 'TRACEBACK\n%s' % lines )
 				report = _('An error occured while creating group! Please consult local administrator.')
 
 			self._verify_group_share( group, 'cn=%s,%s' % (group, self.searchbaseExtGroups) )
@@ -762,9 +757,8 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 					description = gr['description']
 			except Exception, e:
 				ud.debug( ud.ADMIN, ud.ERROR, 'SCHOOLGROUPS: getting group description failed (group=%s): %s' % (groupdn, e) )
-				info = sys.exc_info()
-				lines = traceback.format_exception(*info)
-				ud.debug( ud.ADMIN, ud.ERROR, 'TRACEBACK\n%s' % ''.join(lines) )
+				lines = traceback.format_exc().replace('%','#')
+				ud.debug( ud.ADMIN, ud.ERROR, 'TRACEBACK\n%s' % lines )
 				report = _('An error occured while getting group description! Please consult local administrator.')
 		else:
 			description = None
@@ -830,9 +824,8 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 					dn = gr.modify()
 			except Exception, e:
 				ud.debug( ud.ADMIN, ud.ERROR, 'SCHOOLGROUPS: change of group members failed (group=%s): %s' % (groupdn, e) )
-				info = sys.exc_info()
-				lines = traceback.format_exception(*info)
-				ud.debug( ud.ADMIN, ud.ERROR, 'TRACEBACK\n%s' % ''.join(lines) )
+				lines = traceback.format_exc().replace('%','#')
+				ud.debug( ud.ADMIN, ud.ERROR, 'TRACEBACK\n%s' % lines )
 				report = _('An error occured while modifying group! Please consult local administrator.')
 		else:
 			# no groupdn present ==> error
@@ -879,9 +872,8 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 				except Exception, e:
 					ud.debug( ud.ADMIN, ud.ERROR, 'SCHOOLGROUPS: removal of share %s failed: %s' % (sharedn, e) )
 					message.append( sharedn )
-					info = sys.exc_info()
-					lines = traceback.format_exception(*info)
-					ud.debug( ud.ADMIN, ud.ERROR, 'TRACEBACK:\n%s' % ''.join(lines) )
+					lines = traceback.format_exc().replace('%','#')
+					ud.debug( ud.ADMIN, ud.ERROR, 'TRACEBACK:\n%s' % lines )
 
 				try:
 					tmpPosition = univention.admin.uldap.position(self.searchbaseExtGroups)
@@ -892,9 +884,8 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 				except Exception, e:
 					ud.debug( ud.ADMIN, ud.ERROR, 'SCHOOLGROUPS: removal of group %s failed: %s' % (dn, e) )
 					message.append( dn )
-					info = sys.exc_info()
-					lines = traceback.format_exception(*info)
-					ud.debug( ud.ADMIN, ud.ERROR, 'TRACEBACK:\n%s' % ''.join(lines) )
+					lines = traceback.format_exc().replace('%','#')
+					ud.debug( ud.ADMIN, ud.ERROR, 'TRACEBACK:\n%s' % lines )
 
 		ud.debug( ud.ADMIN, ud.INFO, 'SCHOOLGROUPS: confirmed=%s  grplist=%s' % (confirmed, groupdnlist))
 
@@ -956,9 +947,8 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 
 		except Exception, e:
 			ud.debug( ud.ADMIN, ud.ERROR, 'SCHOOLGROUPS: searching groups failed (membercnt=%s): %s' % (membercnt, e) )
-			info = sys.exc_info()
-			lines = traceback.format_exception(*info)
-			ud.debug( ud.ADMIN, ud.ERROR, 'TRACEBACK\n%s' % ''.join(lines) )
+			lines = traceback.format_exc().replace('%','#')
+			ud.debug( ud.ADMIN, ud.ERROR, 'TRACEBACK\n%s' % lines )
 			self.finished( 	umcobj.id(), [ [], [] ] ,
 							report = _( 'An error occured while searching for unused groups. Please try again later or contact local administrator.' ),
 							success = False )
@@ -1018,9 +1008,8 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 						message.append( '- %s: %s' % (str(e.__class__), dn) )
 					except:
 						message.append( '- %s: %s' % (str(e), dn) )
-					info = sys.exc_info()
-					lines = traceback.format_exception(*info)
-					ud.debug( ud.ADMIN, ud.ERROR, 'TRACEBACK:\n%s' % ''.join(lines) )
+					lines = traceback.format_exc().replace('%','#')
+					ud.debug( ud.ADMIN, ud.ERROR, 'TRACEBACK:\n%s' % lines )
 					continue
 
 				if len(groupresult) != 1:
@@ -1067,9 +1056,8 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 						message.append( '- %s: %s' % (str(e.__class__), sharedn) )
 					except:
 						message.append( '- %s: %s' % (str(e), sharedn) )
-					info = sys.exc_info()
-					lines = traceback.format_exception(*info)
-					ud.debug( ud.ADMIN, ud.ERROR, 'TRACEBACK:\n%s' % ''.join(lines) )
+					lines = traceback.format_exc().replace('%','#')
+					ud.debug( ud.ADMIN, ud.ERROR, 'TRACEBACK:\n%s' % lines )
 
 				try:
 					tmpPosition = univention.admin.uldap.position(posGrp)
@@ -1083,9 +1071,8 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 						message.append( '- %s: %s' % (str(e.__class__), dn) )
 					except:
 						message.append( '- %s: %s' % (str(e), dn) )
-					info = sys.exc_info()
-					lines = traceback.format_exception(*info)
-					ud.debug( ud.ADMIN, ud.ERROR, 'TRACEBACK:\n%s' % ''.join(lines) )
+					lines = traceback.format_exc().replace('%','#')
+					ud.debug( ud.ADMIN, ud.ERROR, 'TRACEBACK:\n%s' % lines )
 
 		ud.debug( ud.ADMIN, ud.INFO, 'SCHOOLGROUPS: remove unused: confirmed=%s  grplist=%s' % (confirmed, groupdnlist))
 
