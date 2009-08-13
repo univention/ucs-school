@@ -134,7 +134,7 @@ class SchedulerStartListener (AbstractListener):
 						r.setError ('110-%d' % retcode)
 					return
 			except Exception:
-				debug.debug (debug.MAIN, debug.ERROR, '%s\nE: UCR command failed: %s' % (traceback.format_exc (), ['univention-config-registry'] + values))
+				debug.debug (debug.MAIN, debug.ERROR, '%s\nE: UCR command failed: %s' % (traceback.format_exc().replace('%','#'), ['univention-config-registry'] + values))
 				if isinstance (o.relative, Profile):
 					r.setError ('120-%d' % retcode)
 				else:
@@ -218,7 +218,7 @@ class SchedulerStartListener (AbstractListener):
 						r.setError ('111-%d' % retcode)
 					return
 			except Exception:
-				debug.debug (debug.MAIN, debug.ERROR, '%s\nE: command failed: %s' % (traceback.format_exc (), s.cmdStart))
+				debug.debug (debug.MAIN, debug.ERROR, '%s\nE: command failed: %s' % (traceback.format_exc().replace('%','#'), s.cmdStart))
 				if isinstance (o.relative, Profile):
 					r.setError ('121-%d' % retcode)
 				else:

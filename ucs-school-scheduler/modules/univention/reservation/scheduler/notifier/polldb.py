@@ -111,7 +111,7 @@ def getStartable (connection):
 			#if r:
 			#	startable.append (r)
 		except Exception:
-			debug.debug (debug.MAIN, debug.ERROR, '%s\nE: Reservation does not exist. ID: %s' % (traceback.format_exc (), res[0]))
+			debug.debug (debug.MAIN, debug.ERROR, '%s\nE: Reservation does not exist. ID: %s' % (traceback.format_exc().replace('%','#'), res[0]))
 	cursor.close ()
 	return startable
 
@@ -135,7 +135,7 @@ def getStoppable (connection):
 		try:
 			stoppable.append (Reservation.get (res[0]))
 		except Exception:
-			debug.debug (debug.MAIN, debug.ERROR, '%s\nE: Reservation does not exist. ID: %s' % (traceback.format_exc (), res[0]))
+			debug.debug (debug.MAIN, debug.ERROR, '%s\nE: Reservation does not exist. ID: %s' % (traceback.format_exc().replace('%','#'), res[0]))
 	cursor.close ()
 	return stoppable
 # Helper functions END
@@ -181,7 +181,7 @@ class PollDB (Singleton):
 				try:
 					l.notify (event)
 				except Exception:
-					debug.debug (debug.MAIN, debug.ERROR, '%s\nE: Notifier failed' % (traceback.format_exc (), ))
+					debug.debug (debug.MAIN, debug.ERROR, '%s\nE: Notifier failed' % (traceback.format_exc().replace('%','#'), ))
 
 	def register (self, listener):
 		"""
