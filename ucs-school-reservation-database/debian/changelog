@@ -1,3 +1,9 @@
+ucs-school-reservation-database (4.0.2-1) unstable; urgency=low
+
+  * use the new mysql password for root. Bug #12872
+
+ -- Stefan Gohmann <gohmann@univention.de>  Thu, 13 Aug 2009 13:39:10 +0200
+
 ucs-school-reservation-database (4.0.1-1) unstable; urgency=low
 
   * set the root password for the mysql server to a random password and
