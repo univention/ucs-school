@@ -30,6 +30,22 @@
 
 #DEBHELPER#
 
+# set the root password
+if [ ! -e /etc/mysql.secret ]; then
+	tmp=$(mktemp)
+	makepasswd --nocrypt > $tmp
+	passwd=$(cat $tmp)
+	hash=$(mkpasswd --hash=md5 -s < $tmp)
+	touch /etc/mysql.secret
+	chmod 600 /etc/mysql.secret
+	echo $passwd > /etc/mysql.secret
+	chown root /etc/mysql.secret
+	rm -f $tmp
+	# set passwd for database user reservation
+	/usr/bin/mysqladmin -u root password "$passwd"
+	unset passwd
+fi
+
 mysql -f < /usr/share/ucs-school-reservation-database/datatbase.sql
 mysql -f < /usr/share/ucs-school-reservation-database/tables.sql
 
