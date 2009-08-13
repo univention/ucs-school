@@ -1,3 +1,9 @@
+ucs-school-umc-printermoderation (4.0.2-1) unstable; urgency=low
+
+  * replace % characters during debug output (Bug: #15337)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Thu, 13 Aug 2009 15:53:38 +0200
+
 ucs-school-umc-printermoderation (4.0.1-2) unstable; urgency=low
 
   * fixed typo in join script (Bug: #14880)

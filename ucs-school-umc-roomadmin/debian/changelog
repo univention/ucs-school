@@ -1,3 +1,9 @@
+ucs-school-umc-roomadmin (5.0.3-1) unstable; urgency=low
+
+  * * replace % characters during debug output (Bug: #15337)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Thu, 13 Aug 2009 15:07:36 +0200
+
 ucs-school-umc-roomadmin (5.0.2-1) unstable; urgency=low
 
   * added UCR variables for setting disabling VNC feature and for setting

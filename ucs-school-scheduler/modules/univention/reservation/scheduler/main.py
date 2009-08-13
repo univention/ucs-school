@@ -118,7 +118,7 @@ def connect ():
 		try:
 			polldb.poll (CONNECTION)
 		except Exception:
-			debug.debug (debug.MAIN, debug.ERROR, '%s\nF: poll failed.' % traceback.format_exc ())
+			debug.debug (debug.MAIN, debug.ERROR, '%s\nF: poll failed.' % traceback.format_exc().replace('%','#'))
 			dbdisconnect ()
 			CONNECTION = dbconnect (host=HOST, port=PORT, user=USER, passwd=PASSWORD, db=DB)
 		time.sleep (INTERVAL)
@@ -129,7 +129,7 @@ def main():
 			connect()
 			debug.debug (debug.MAIN, debug.DEBUG, 'D: Connected.')
 		except:
-			debug.debug (debug.MAIN, debug.ERROR, '%s\nE: Connect failed.' % traceback.format_exc ())
+			debug.debug (debug.MAIN, debug.ERROR, '%s\nE: Connect failed.' % traceback.format_exc().replace('%','#'))
 			time.sleep(30)
 
 	univention.reservation.scheduler.close_debug ()

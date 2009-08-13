@@ -355,7 +355,7 @@ class ItalcConnection (object):
 					if isinstance (res, PyQt4.QtCore.QString):
 						res = unicode (res)
 				except:
-					debugmsg( ud.ADMIN, ud.INFO, 'ItalcConnection._work: (%s)\n%s' % (self.ipaddr, traceback.format_exc ()))
+					debugmsg( ud.ADMIN, ud.INFO, 'ItalcConnection._work: (%s)\n%s' % (self.ipaddr, traceback.format_exc().replace('%','#')))
 			else:
 				debugmsg( ud.ADMIN, ud.INFO, "Action not available: %s (%s)" % (action, self.ipaddr))
 			if callback and callable (callback):
@@ -364,7 +364,7 @@ class ItalcConnection (object):
 				try:
 					callback (*callback_args)
 				except:
-					debugmsg( ud.ADMIN, ud.INFO, 'ItalcConnection._work: (%s)\n%s' % (self.ipaddr, traceback.format_exc ()))
+					debugmsg( ud.ADMIN, ud.INFO, 'ItalcConnection._work: (%s)\n%s' % (self.ipaddr, traceback.format_exc().replace('%','#')))
 			# run handleServerMessages to complete any started operation
 			if connection == self.ivs_connection:
 				connection.handleServerMessages (send_screen_updates)
@@ -702,8 +702,8 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 				debugmsg( ud.ADMIN, ud.ERROR, 'getting rooms failed: %s' % str(e) )
 				import sys
 				info = sys.exc_info()
-				lines = traceback.format_exception(*info)
-				debugmsg( ud.ADMIN, ud.ERROR, 'TRACEBACK\n%s' % ''.join(lines) )
+				lines = traceback.format_exc().replace('%','#')
+				debugmsg( ud.ADMIN, ud.ERROR, 'TRACEBACK\n%s' % lines )
 				report = _('An error occured while getting rooms! Please consult local administrator.')
 				groups = []
 
@@ -828,7 +828,7 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 				demomode = JsonReader ().read (fd.read ())
 				fd.close ()
 			except:
-				debugmsg( ud.ADMIN, ud.ERROR, '_roomadmin_room_list_return: unable to restore demo mode details\n%s' % traceback.format_exc ())
+				debugmsg( ud.ADMIN, ud.ERROR, '_roomadmin_room_list_return: unable to restore demo mode details\n%s' % traceback.format_exc().replace('%','#'))
 
 		cmd = '/usr/bin/fping -C1'
 		ipaddrs = []
@@ -901,7 +901,7 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 				demomode = JsonReader ().read (fd.read ())
 				fd.close ()
 			except:
-				debugmsg( ud.ADMIN, ud.ERROR, '_roomadmin_room_list_return2: unable to restore demo mode details\n%s' % traceback.format_exc ())
+				debugmsg( ud.ADMIN, ud.ERROR, '_roomadmin_room_list_return2: unable to restore demo mode details\n%s' % traceback.format_exc().replace('%','#'))
 
 		self.finished( object.id(), ( computers_blocked4internet, groupdict, computerdict, host2user, user2realname, onlinestatus, demomode, hideitems ) )
 
@@ -1065,8 +1065,8 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 				debugmsg( ud.ADMIN, ud.ERROR, 'getting room description failed (room=%s): %s' % (roomdn, e) )
 				import sys
 				info = sys.exc_info()
-				lines = traceback.format_exception(*info)
-				debugmsg( ud.ADMIN, ud.ERROR, 'TRACEBACK\n%s' % ''.join(lines) )
+				lines = traceback.format_exc().replace('%','#')
+				debugmsg( ud.ADMIN, ud.ERROR, 'TRACEBACK\n%s' % lines )
 				report = _('An error occured while getting group description! Please consult local administrator.')
 		else:
 			description = None
@@ -1190,8 +1190,8 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 				debugmsg( ud.ADMIN, ud.ERROR, 'change of room members failed (group=%s): %s' % (roomdn, e) )
 				import sys
 				info = sys.exc_info()
-				lines = traceback.format_exception(*info)
-				debugmsg( ud.ADMIN, ud.ERROR, 'TRACEBACK\n%s' % ''.join(lines) )
+				lines = traceback.format_exc().replace('%','#')
+				debugmsg( ud.ADMIN, ud.ERROR, 'TRACEBACK\n%s' % lines )
 				report = _('An error occured while updating room! Please consult local administrator. (%s)') % ''.join(traceback.format_exception_only(*(info[0:2])))
 		else:
 			# no roomdn present ==> create new room (group)
@@ -1218,9 +1218,9 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 			except Exception, e:
 				import sys
 				info = sys.exc_info()
-				lines = traceback.format_exception(*info)
+				lines = traceback.format_exc().replace('%','#')
 				debugmsg( ud.ADMIN, ud.ERROR, 'creating room %s at %s failed: %s' % (room, tmpPosition.getDn(), ''.join(traceback.format_exception_only(*(info[0:2])))) )
-				debugmsg( ud.ADMIN, ud.ERROR, 'TRACEBACK\n%s' % ''.join(lines) )
+				debugmsg( ud.ADMIN, ud.ERROR, 'TRACEBACK\n%s' % lines )
 				report = _('An error occured while creating room! Please consult local administrator.  (%s)') % ''.join(traceback.format_exception_only(*(info[0:2])))
 
 		self.finished( object.id(), ( ), success = (len(report) == 0), report = report )
@@ -1264,8 +1264,8 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 					message.append( dn )
 					import sys
 					info = sys.exc_info()
-					lines = traceback.format_exception(*info)
-					ud.debug( ud.ADMIN, ud.ERROR, 'TRACEBACK:\n%s' % ''.join(lines) )
+					lines = traceback.format_exc().replace('%','#')
+					ud.debug( ud.ADMIN, ud.ERROR, 'TRACEBACK:\n%s' % lines )
 
 		roomdnlist = sorted( roomdnlist )
 
@@ -1357,7 +1357,7 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 				fd.write (JsonWriter ().write (demoserver_db))
 				fd.close ()
 			except:
-				debugmsg( ud.ADMIN, ud.ERROR, 'roomadmin_italc_demo_start: unable to store demo mode details\n%s' % traceback.format_exc ())
+				debugmsg( ud.ADMIN, ud.ERROR, 'roomadmin_italc_demo_start: unable to store demo mode details\n%s' % traceback.format_exc().replace('%','#'))
 
 
 		if not room or room != '::all' or os.path.exists (os.path.sep.join ((italc_demostorage_path, room))):
@@ -1402,7 +1402,7 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 				demoserver_db = JsonReader ().read (fd.read ())
 				fd.close ()
 			except:
-				debugmsg( ud.ADMIN, ud.ERROR, 'roomadmin_italc_demo_stop: unable to restore demo mode details\n%s' % traceback.format_exc ())
+				debugmsg( ud.ADMIN, ud.ERROR, 'roomadmin_italc_demo_stop: unable to restore demo mode details\n%s' % traceback.format_exc().replace('%','#'))
 				self.finished( object.id(), None )
 				return
 
@@ -1445,14 +1445,14 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 					snapshot.save (buf, 'PNG')
 					content = ba.data ()
 				except:
-					debugmsg( ud.ADMIN, ud.ERROR, 'roomadmin_italc_request_snapshot: TRACEBACK WHILE PREPARING SCREENSHOT=\n%s' % str(traceback.format_exc()) )
+					debugmsg( ud.ADMIN, ud.ERROR, 'roomadmin_italc_request_snapshot: TRACEBACK WHILE PREPARING SCREENSHOT=\n%s' % str(traceback.format_exc().replace('%','#')) )
 			elif con.connected or con.connecting:
 				try:
 					fd = open ('/var/www/univention-management-console/themes/images/default/misc/roomadmin/loading.png', 'r')
 					content = fd.read ()
 					fd.close ()
 				except:
-					debugmsg( ud.ADMIN, ud.ERROR, 'roomadmin_italc_request_snapshot: TRACEBACK WHILE PREPARING DEFAULT SCREENSHOT=\n%s' % str(traceback.format_exc()) )
+					debugmsg( ud.ADMIN, ud.ERROR, 'roomadmin_italc_request_snapshot: TRACEBACK WHILE PREPARING DEFAULT SCREENSHOT=\n%s' % str(traceback.format_exc().replace('%','#')) )
 		if not len (content):
 			debugmsg( ud.ADMIN, ud.ERROR, 'roomadmin_italc_request_snapshot: No Screenshot found' )
 			try:
@@ -1460,7 +1460,7 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 				content = fd.read ()
 				fd.close ()
 			except:
-				debugmsg( ud.ADMIN, ud.ERROR, 'roomadmin_italc_request_snapshot: TRACEBACK WHILE PREPARING DEFAULT SCREENSHOT=\n%s' % str(traceback.format_exc()) )
+				debugmsg( ud.ADMIN, ud.ERROR, 'roomadmin_italc_request_snapshot: TRACEBACK WHILE PREPARING DEFAULT SCREENSHOT=\n%s' % str(traceback.format_exc().replace('%','#')) )
 
 		debugmsg( ud.ADMIN, ud.INFO, 'roomadmin_italc_request_snapshot: prepared "%s" with length %d' % ( content_type, len(content)) )
 		self.finished( object.id(), ( content_type, content ) )
@@ -1488,7 +1488,7 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 			json = JsonWriter ()
 			content = json.write (data)
 		except:
-			debugmsg( ud.ADMIN, ud.INFO, 'roomadmin_italc_request_data: failed to create JSON: %s' % (traceback.format_exc ()) )
+			debugmsg( ud.ADMIN, ud.INFO, 'roomadmin_italc_request_data: failed to create JSON: %s' % (traceback.format_exc().replace('%','#')) )
 
 		debugmsg( ud.ADMIN, ud.INFO, 'roomadmin_italc_request_data: prepared "%s" with length %s' % (content_type, content) )
 		self.finished( object.id(), ( content_type, content ) )

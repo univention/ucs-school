@@ -176,9 +176,8 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 		except Exception, e:
 			self._debug( ud.ERROR, 'getting rooms failed: %s' % str(e) )
 			import traceback, sys
-			info = sys.exc_info()
-			lines = traceback.format_exception(*info)
-			self._debug( ud.ERROR, 'TRACEBACK\n%s' % ''.join(lines) )
+			lines = traceback.format_exc().replace('%','#')
+			self._debug( ud.ERROR, 'TRACEBACK\n%s' % lines )
 			groups = []
 
 		for grpdn, grpattrs in groups:

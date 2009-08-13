@@ -233,7 +233,7 @@ class Printjob (object):
 			except:
 				debugmsg(ud.ADMIN, ud.ERROR, \
 						'Error deleting file: %s\n%s' % \
-						(self.fullfilename, traceback.format_exc()))
+						(self.fullfilename, traceback.format_exc().replace('%','#')))
 				messages.append (_ ('Error deleting file') + \
 						(': %s' % self.fullfilename))
 		return messages
