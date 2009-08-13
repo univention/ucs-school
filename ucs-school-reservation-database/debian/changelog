@@ -1,3 +1,10 @@
+ucs-school-reservation-database (4.0.1-1) unstable; urgency=low
+
+  * set the root password for the mysql server to a random password and
+    save the password in /etc/mysql.secret. Bug #12872
+
+ -- Stefan Gohmann <gohmann@univention.de>  Thu, 13 Aug 2009 12:09:08 +0200
+
 ucs-school-reservation-database (4.0.0-0) unstable; urgency=low
 
   * ported package to component ucs@school
