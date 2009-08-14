@@ -1,3 +1,9 @@
+ucs-school-import (4.0.5-1) unstable; urgency=low
+
+  * create_ou now checks given arguments (Bug: #15343)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Thu, 13 Aug 2009 16:46:47 +0200
+
 ucs-school-import (4.0.4-1) unstable; urgency=low
 
   * small improvement of default UMC policy handling (Bug: #14880)
