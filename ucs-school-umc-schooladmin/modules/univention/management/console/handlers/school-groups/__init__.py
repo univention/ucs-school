@@ -267,19 +267,19 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 			self.searchScopeExtGroups = 'one'
 
 			if len(self.availableOU) == 0:
-				# get host ou
-				hostdn = self.configRegistry[ 'ldap/hostdn' ]
-				hostou = lo.explodeDn( hostdn[hostdn.find('ou='):], 1 )[0]
-				self.availableOU = [ hostou ]
-
-				# OU-ACL-Write
-				# get available OUs
-				ouresult = univention.admin.modules.lookup( self.oumodule, self.co, lo,
-															scope = 'sub', superordinate = None,
-															base = self.configRegistry[ 'ldap/base' ],
-															filter = 'univentionLDAPAccessWrite=%s' % self.configRegistry['ldap/hostdn'] )
-				for ou in ouresult:
-					self.availableOU.append(ou['name'])
+				# OU list override
+				oulist = self.configRegistry.get('ucsschool/local/oulist')
+				if oulist:
+					self.availableOU = [ x.strip() for x in oulist.split(',') ]
+					ud.debug( ud.ADMIN, ud.INFO, 'SCHOOLGROUPS: availableOU overridden by UCR' )
+				else:
+					self.availableOU = []
+					# get available OUs
+					ouresult = univention.admin.modules.lookup( self.oumodule, self.co, self.lo,
+																scope = 'one', superordinate = None,
+																base = self.configRegistry[ 'ldap/base' ] )
+					for ou in ouresult:
+						self.availableOU.append(ou['name'])
 
 				ud.debug( ud.ADMIN, ud.INFO, 'SCHOOLGROUPS: availableOU=%s' % self.availableOU )
 
