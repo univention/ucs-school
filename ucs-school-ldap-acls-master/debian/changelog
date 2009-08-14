@@ -1,3 +1,10 @@
+ucs-school-ldap-acls-master (4.0.4-1) unstable; urgency=low
+
+  * grant write access to all organisational units for group
+    DC Backup Hosts (Bug: #15326)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Thu, 13 Aug 2009 18:47:16 +0200
+
 ucs-school-ldap-acls-master (4.0.3-1) unstable; urgency=low
 
   * LDAP ACLs now use UCR variable to determine ouadmin group (Bug: #14958)
