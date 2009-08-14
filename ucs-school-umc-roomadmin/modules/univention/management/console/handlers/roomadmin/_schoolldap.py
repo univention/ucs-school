@@ -31,12 +31,6 @@ import univention.debug as ud
 import univention.config_registry
 import univention.uldap
 
-import notifier
-import notifier.popen
-
-import univention.config_registry
-
-
 class SchoolLDAPConnection(object):
 	idcounter = 1
 	def __init__(self, ldapserver=None, binddn='',  bindpw='', username=None):
@@ -74,7 +68,12 @@ class SchoolLDAPConnection(object):
 		lo = univention.uldap.access( host = self.ldapserver, base = self.configRegistry[ 'ldap/base' ], start_tls = 2 )
 
 		if self.username and not self.binddn:
-			self.binddn = lo.searchDn( filter = 'uid=%s' % self.username )[0]
+			ud.debug( ud.ADMIN, ud.INFO, 'SchoolLDAPConnection[%d]: using username "%s"' % (self.id, self.username) )
+			result = lo.searchDn( filter = 'uid=%s' % self.username )
+			if result:
+				self.binddn = result[0]
+			else:
+				ud.debug( ud.ADMIN, ud.INFO, 'SchoolLDAPConnection[%d]: cannot determine dn of uid "%s"' % (self.id, self.username) )
 
 		if self.binddn:
 			ud.debug( ud.ADMIN, ud.INFO, 'SchoolLDAPConnection[%d]: binddn: %s' % (self.id, self.binddn) )
@@ -108,6 +107,7 @@ class SchoolLDAPConnection(object):
 		self.searchbasePupils = "cn=schueler,cn=users,%s" % self.searchbaseDepartment
 		self.searchbaseTeachers = "cn=lehrer,cn=users,%s" % self.searchbaseDepartment
 		self.searchbaseShares = "cn=shares,%s" % self.searchbaseDepartment
+		self.searchbasePrinters = "cn=printers,%s" % self.searchbaseDepartment
 
 
 	def checkConnection(self, ldapserver='', binddn='',  bindpw='', username=None):
@@ -143,6 +143,7 @@ class SchoolLDAPConnection(object):
 		self.usermodule = univention.admin.modules.get('users/user')
 		self.groupmodule = univention.admin.modules.get('groups/group')
 		self.sharemodule = univention.admin.modules.get('shares/share')
+		self.printermodule = univention.admin.modules.get('shares/printer')
 		self.oumodule = univention.admin.modules.get('container/ou')
 
 		# stop here if no ldap connection is present
@@ -152,19 +153,19 @@ class SchoolLDAPConnection(object):
 		self.searchScopeExtGroups = 'one'
 
 		if len(self.availableOU) == 0:
-			# get host ou
-			hostdn = self.configRegistry[ 'ldap/hostdn' ]
-			hostou = self.lo.explodeDn( hostdn[hostdn.find('ou='):], 1 )[0]
-			self.availableOU = [ hostou ]
-
-			# OU-ACL-Write
-			# get available OUs
-			ouresult = univention.admin.modules.lookup( self.oumodule, self.co, self.lo,
-														scope = 'sub', superordinate = None,
-														base = self.configRegistry[ 'ldap/base' ],
-														filter = 'univentionLDAPAccessWrite=%s' % self.configRegistry['ldap/hostdn'] )
-			for ou in ouresult:
-				self.availableOU.append(ou['name'])
+			# OU list override
+			oulist = self.configRegistry.get('ucsschool/local/oulist')
+			if oulist:
+				self.availableOU = [ x.strip() for x in oulist.split(',') ]
+				ud.debug( ud.ADMIN, ud.INFO, 'SchoolLDAPConnection[%d]: availableOU overridden by UCR' % self.id)
+			else:
+				self.availableOU = []
+				# get available OUs
+				ouresult = univention.admin.modules.lookup( self.oumodule, self.co, self.lo,
+															scope = 'one', superordinate = None,
+															base = self.configRegistry[ 'ldap/base' ] )
+				for ou in ouresult:
+					self.availableOU.append(ou['name'])
 
 			ud.debug( ud.ADMIN, ud.INFO, 'SchoolLDAPConnection[%d]: availableOU=%s' % (self.id, self.availableOU ) )
 
