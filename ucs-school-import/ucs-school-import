@@ -50,7 +50,7 @@ wipe_char_group='-'
 # count access to ldap to reconnect after 1000 changes
 locounts=0
 
-import sys, string, re, codecs, os, copy, random, time, traceback
+import sys, string, re, codecs, os, copy, random, time, traceback, re
 
 import ipaddr
 
@@ -337,7 +337,7 @@ def verify_policy(objdn, schoolNr, policy_dn_list):
 			problem_hints = problem_hints + "there were problems verifying ou %s: policies %s cannot be referenced to %s\n" % (schoolNr, policy_dn_list, objdn)
 
 
-def verify_school_ou(schoolNr, co, lo, baseDN):
+def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None):
 	global problem_hints
 
 	if schoolNr in verified_ous:
@@ -2054,13 +2054,33 @@ elif sys.argv[0].endswith("import_group"):
 elif sys.argv[0].endswith("import_printer"):
 	import_printer()
 elif sys.argv[0].endswith("create_ou"):
-	# argument is schoolNr
-	if len(sys.argv)>1:
-		schoolNr = sys.argv[1]
-	else:
-		print "must have one Argument for schoolNr"
-		sys.exit()
-	verify_school_ou(schoolNr, co, lo, baseDN)
+	dcName=None
+	if len(sys.argv)>1 and sys.argv[1][0] != '-':
+		ouname = sys.argv[1]
+		if len(sys.argv)>2:
+			dcName = sys.argv[2]
+
+		# hostname based upon RFC 952: <let>[*[<let-or-digit-or-hyphen>]<let-or-digit>]
+		if not re.match('^[a-zA-Z0-9](([a-zA-Z0-9-_]*)([a-zA-Z0-9]$))?$', ouname):
+			print 'ERROR: invalid ou name given'
+			sys.exit(1)
+
+		# hostname based upon RFC 952: <let>[*[<let-or-digit-or-hyphen>]<let-or-digit>]
+		if dcName and not re.match('^[a-zA-Z](([a-zA-Z0-9-_]*)([a-zA-Z0-9]$))?$', dcName):
+			print 'ERROR: invalid domaincontroller name given'
+			sys.exit(1)
+
+		verify_school_ou(ouname, co, lo, baseDN, dcName=dcName)
+		sys.exit(0)
+
+	print 'syntax: create_ou <ou_name> [<dc_name>]'
+	print '	  ou_name	 name of ou that shall be created or verified'
+	print '	  dc_name	 name of domaincontroller for specified OU'
+	print 'At least ou_name has to be passed to create_ou as argument.'
+	print 'If dc_name is not specified the default domaincontroller name'
+	print 'will be used. Defaultname: dc<ou_name>-01'
+	sys.exit(1)
+
 elif sys.argv[0].endswith("activate_groupmembers"):
 	activate_groupmembers()
 elif sys.argv[0].endswith("export_computer"):
