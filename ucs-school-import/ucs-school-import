@@ -403,21 +403,37 @@ def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None):
 
 
 	for dc in school_dcs.split ():
-		dccn = 'dc%s-01' % schoolNr.lower ()
+		if dcName:
+			dccn = dcName
+		else:
+			dccn = 'dc%s-01' % schoolNr.lower ()
 		dcgroups = ["cn=OU%s-DC-Edukativnetz,cn=ucsschool,cn=groups,%s" % (schoolNr.lower (), baseDN),
-				"cn=DC-Edukativnetz,cn=ucsschool,cn=groups,%s" % (baseDN, )]
+					"cn=DC-Edukativnetz,cn=ucsschool,cn=groups,%s" % (baseDN, )]
+
 		if dc == 'verwaltung':
-			dccn = 'dc%sv-01' % schoolNr.lower () # this is the name convention, a trailing v for Verwaltungsnetz DCs
+			if dcName:
+				dccn = '%sv' % dcName
+			else:
+				dccn = 'dc%sv-01' % schoolNr.lower () # this is the name convention, a trailing v for Verwaltungsnetz DCs
 			dcgroups = ["cn=OU%s-DC-Verwaltungsnetz,cn=ucsschool,cn=groups,%s" % (schoolNr.lower (), baseDN),
 					"cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,%s" % (baseDN, )]
 
 		# create server if not exsistant
-		objects = univention.admin.modules.lookup(server_module, co, lo, scope='sub', superordinate=superordinate, base=baseDN,
+		objects = univention.admin.modules.lookup(computer_module, co, lo, scope='sub', superordinate=superordinate, base=baseDN,
 												  filter=univention.admin.filter.expression('cn', dccn))
 		count_lo()
 
+		# * check if computer exists
+		# * if computer is exists, test the following things
+		#   * is computer a dc master or dc backup ==> do not add computer to any groups
+		#   * is computer a dc slave ==> add computer to groups specified by dcgroups
+		#   * is computer no dc ==> return error and exit
+		# 
+
 		# create server if not existent
 		server_exists=0
+		is_master_or_backup = False
+		is_slave = False
 		correct_server_exists=0
 		if objects:
 			server_exists = 1 # can't create another server with this id
@@ -425,8 +441,42 @@ def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None):
 			for object in objects:
 				if object.dn == correct_server:
 					correct_server_exists=1
-		if server_exists and not correct_server_exists:
-			print "There is already a server entry in the wrong container"
+
+		if server_exists:
+			# check if existing system is a DC master or DC backup
+			masterobjs = univention.admin.modules.lookup(dcmaster_module, co, lo, scope='sub', superordinate=superordinate, base=baseDN,
+														 filter=univention.admin.filter.expression('cn', dccn))
+			backupobjs = univention.admin.modules.lookup(dcbackup_module, co, lo, scope='sub', superordinate=superordinate, base=baseDN,
+														 filter=univention.admin.filter.expression('cn', dccn))
+			is_master_or_backup = ( masterobjs or backupobjs )
+			# check if existing system is a DC slave
+			slaveobjs = univention.admin.modules.lookup(server_module, co, lo, scope='sub', superordinate=superordinate, base=baseDN,
+														 filter=univention.admin.filter.expression('cn', dccn))
+			is_slave = len(slaveobjs) > 0
+
+			if dcName:
+				# manual dc name has been specified by user
+
+				if not is_master_or_backup and not is_slave:
+					print 'WARNING: given system name %s is already in use and no domaincontroller system. Please choose another name' % dcName
+					sys.exit(1)
+
+				if is_master_or_backup and is_slave:
+					print 'ERROR: implementation error: %s seems to be dc slave and dc master at the same time' % dcName
+					sys.exit(1)
+
+				if len(slaveobjs) > 1:
+					print 'ERROR: more than one system with cn=%s found' % dcName
+					sys.exit(1)
+
+				if is_slave:
+					obj = slaveobjs[0]
+					obj.open()
+					for dcgroup in dcgroups:
+						if dcgroup not in obj["groups"]:
+							obj["groups"].append(dcgroup)
+					modify_object(obj)
+
 		if not server_exists:
 			position.setDn("cn=dc,cn=server,cn=computers,"+getDN (schoolNr))
 			object=server_module.object(co, lo, position=position, superordinate=superordinate)
@@ -482,7 +532,7 @@ def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None):
 			create_object(object)
 			print "need to create dhcp server: %s"%object.dn
 
-		# create userlogon-share if not exsistant
+		# create userlogon-share if not existant
 		objects = univention.admin.modules.lookup(share_module, co, lo, \
 				scope='sub', superordinate=dhcp_service_object, \
 				base='cn=shares,%s' % ( getDN (schoolNr)), \
@@ -564,6 +614,15 @@ def create_sub_object(o):
 		o.lo.modify(dn, ml)
 	except:
 		problem_hints = "problems while setting univentionAbordnung to " + dn + "\n"
+
+def modify_object(o):
+	try:
+		dn = o.modify()
+		print 'modifed object:', o.dn
+	except:
+		print "ERROR while modifying object %s" % o.dn
+		print 'ERROR:', sys.exc_info()[0], sys.exc_info()[1]
+		traceback.print_exc(100, sys.stdout)
 
 
 def create_object(o, ignore_exists=0):
@@ -1990,6 +2049,8 @@ user_module                = univention.admin.modules.get("users/user")
 group_module               = univention.admin.modules.get("groups/group")
 cn_module                  = univention.admin.modules.get("container/cn")
 ou_module                  = univention.admin.modules.get("container/ou")
+dcmaster_module              = univention.admin.modules.get("computers/domaincontroller_master")
+dcbackup_module              = univention.admin.modules.get("computers/domaincontroller_backup")
 server_module              = univention.admin.modules.get("computers/domaincontroller_slave")
 share_module               = univention.admin.modules.get("shares/share")
 printer_module             = univention.admin.modules.get("shares/printer")

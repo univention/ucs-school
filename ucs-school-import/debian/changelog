@@ -1,3 +1,12 @@
+ucs-school-import (4.0.5-2) unstable; urgency=low
+
+  * create_ou now handles second argument "dcName"
+    If a dc slave with specified name exists it will be added to all
+    UCS@school group of specified ou. If dcName refers to a dc
+    master/backup nothing special will happen. (Bug: #15433)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Fri, 14 Aug 2009 17:23:41 +0200
+
 ucs-school-import (4.0.5-1) unstable; urgency=low
 
   * create_ou now checks given arguments (Bug: #15343)
