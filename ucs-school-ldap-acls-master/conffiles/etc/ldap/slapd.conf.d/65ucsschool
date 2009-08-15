@@ -172,6 +172,7 @@ access to dn.regex="^(.+,)?ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" attrs=use
 # Master und Backup-Systeme duerfen die Einträge aller OUs lesen und schreiben
 access to dn.regex="^(.+,)?ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$"
 	by group/univentionGroup/uniqueMember.expand="cn=DC Backup Hosts,cn=groups,@%@ldap/base@%@" write
+	by * none break
 
 
 # Slave-Controller duerfen Eintraege Ihrer ou lesen und schreiben (Passwortaenderungen etc.)
