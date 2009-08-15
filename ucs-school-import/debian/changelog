@@ -1,3 +1,9 @@
+ucs-school-import (4.0.7-1) unstable; urgency=low
+
+  * Don't create the custom attributes by default. Bug #15373
+
+ -- Stefan Gohmann <gohmann@univention.de>  Sat, 15 Aug 2009 20:15:49 +0200
+
 ucs-school-import (4.0.6-1) unstable; urgency=low
 
   * create_ou now handles second argument "dcName"
