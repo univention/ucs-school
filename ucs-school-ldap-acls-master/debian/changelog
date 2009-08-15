@@ -1,3 +1,10 @@
+ucs-school-ldap-acls-master (4.0.5-1) unstable; urgency=low
+
+  * give other a change to read and write ou's like cn=admin and members
+    of Domain Admins. Bug #15326
+
+ -- Stefan Gohmann <gohmann@univention.de>  Sat, 15 Aug 2009 20:27:02 +0200
+
 ucs-school-ldap-acls-master (4.0.4-1) unstable; urgency=low
 
   * grant write access to all organisational units for group
