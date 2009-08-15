@@ -41,43 +41,46 @@ touch $file
 
 test -n "`grep "$name v${VERSION} successful" $file`" && exit 1
 
-univention-directory-manager settings/customattribute create $@  --ignore_exist \
-    --position cn="custom attributes,cn=univention,$ldap_base" \
-    --set longDescription="DN des Hauptaccount (Abordnung)" \
-    --set module=users/user \
-    --set shortDescription="Abordnung" \
-    --set ldapMapping=univentionAbordnungMasterDn \
-    --set objectClass=univentionAbordnung \
-    --set name=Abordnung \
-    --set multivalue=0 \
-    --set syntax=string \
-    --set tabName=ucsschool \
-    --set tabPosition=1
-if [ $? != 0 ]; then exit 1; fi
 
-# create required containers if neccessary
-univention-directory-manager container/cn create $@ \
-	--ignore_exist \
-	--position="cn=custom attributes,cn=univention,$ldap_base" \
-	--set name=ucsschool
+# Don't create the custom attributes by default. See Bug #15373
 
-# create extended attribute for ucs@school
-univention-directory-manager settings/extended_attribute create $@ --ignore_exist \
-		--position="cn=ucsschool,cn=custom attributes,cn=univention,$ldap_base" \
-		--set name="ucsschool-user-role" \
-		--set module="users/user" \
-		--set objectClass="univentionUcsSchoolUser" \
-		--set ldapMapping="ucsschoolRole" \
-		--set shortDescription="User role" \
-		--set longDescription="Role of user in ucs@school context (e.g. teacher, administration)" \
-		--set tabName="ucsschool" \
-		--set tabPosition=1 \
-		--set syntax="string" \
-		--set multivalue=1 \
-		--set mayChange=1 \
-		--set 'translationShortDescription="de_DE" "Benutzerrolle"' \
-		--set 'translationLongDescription="de_DE" "Rolle des Benutzers im ucs@school-Kontext (z.B. teacher oder administration)"'
-if [ $? != 0 ]; then exit 1; fi
+#univention-directory-manager settings/customattribute create $@  --ignore_exist \
+#    --position cn="custom attributes,cn=univention,$ldap_base" \
+#    --set longDescription="DN des Hauptaccount (Abordnung)" \
+#    --set module=users/user \
+#    --set shortDescription="Abordnung" \
+#    --set ldapMapping=univentionAbordnungMasterDn \
+#    --set objectClass=univentionAbordnung \
+#    --set name=Abordnung \
+#    --set multivalue=0 \
+#    --set syntax=string \
+#    --set tabName=ucsschool \
+#    --set tabPosition=1
+#if [ $? != 0 ]; then exit 1; fi
+#
+## create required containers if neccessary
+#univention-directory-manager container/cn create $@ \
+#	--ignore_exist \
+#	--position="cn=custom attributes,cn=univention,$ldap_base" \
+#	--set name=ucsschool
+#
+## create extended attribute for ucs@school
+#univention-directory-manager settings/extended_attribute create $@ --ignore_exist \
+#		--position="cn=ucsschool,cn=custom attributes,cn=univention,$ldap_base" \
+#		--set name="ucsschool-user-role" \
+#		--set module="users/user" \
+#		--set objectClass="univentionUcsSchoolUser" \
+#		--set ldapMapping="ucsschoolRole" \
+#		--set shortDescription="User role" \
+#		--set longDescription="Role of user in ucs@school context (e.g. teacher, administration)" \
+#		--set tabName="ucsschool" \
+#		--set tabPosition=1 \
+#		--set syntax="string" \
+#		--set multivalue=1 \
+#		--set mayChange=1 \
+#		--set 'translationShortDescription="de_DE" "Benutzerrolle"' \
+#		--set 'translationLongDescription="de_DE" "Rolle des Benutzers im ucs@school-Kontext (z.B. teacher oder administration)"'
+#if [ $? != 0 ]; then exit 1; fi
 
 test -n "`grep "$name v${VERSION} successful" $file`" || echo "$name v${VERSION} successful" >> $file
 
