@@ -289,7 +289,7 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 					self.departmentNumber = '438'
 					self._switch_ou(self.departmentNumber)
 				else:
-					self._switch_ou(hostou)
+					self._switch_ou(self.availableOU[0])
 
 			if self.binddn.find('ou=') > 0:
 				self.searchbaseDepartment = self.binddn[self.binddn.find('ou='):]
