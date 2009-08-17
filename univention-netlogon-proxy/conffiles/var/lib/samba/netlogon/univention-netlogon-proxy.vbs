@@ -159,7 +159,7 @@ If ENABLEDFIREFOX = True Then
         debugf.WriteLine( "WARNING: creating new profile: " & profini )
         runExternalCmd( FIREFOXBINARY & " -createprofile default" )
       Else
-        debugf.WriteLine( "WARNING: Did not found the firefox bynari: " & FIREFOXBINARY)
+        debugf.WriteLine( "WARNING: Did not found the firefox binary: " & FIREFOXBINARY)
       End If
     End If
     
