@@ -155,8 +155,12 @@ If ENABLEDFIREFOX = True Then
     '
     profini = APPDATA & "\Mozilla\Firefox\profiles.ini"
     If Not fso.FileExists( profini ) Then
-      debugf.WriteLine( "WARNING: creating new profile: " & profini )
-      runExternalCmd( FIREFOXBINARY & " -createprofile default" )
+      If fso.FileExists ( FIREFOXBINARY ) Then
+        debugf.WriteLine( "WARNING: creating new profile: " & profini )
+        runExternalCmd( FIREFOXBINARY & " -createprofile default" )
+      Else
+        debugf.WriteLine( "WARNING: Did not found the firefox bynari: " & FIREFOXBINARY)
+      End If
     End If
     
     '
