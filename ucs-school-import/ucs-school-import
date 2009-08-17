@@ -517,35 +517,37 @@ def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None):
 		objects = univention.admin.modules.lookup(dhcp_server_module, co, lo, scope='sub', superordinate=dhcp_service_object, base=baseDN,
 												  filter=univention.admin.filter.expression('cn',dccn))
 		count_lo()
-		server_exists=0
 		if objects:
-			server = "cn=%s,cn=%s,cn=dhcp,%s"%(dccn,schoolNr.lower (), getDN (schoolNr))
-			for object in objects:
-				if object.dn == server:
-					server_exists=1
-		if not server_exists:
+			# move existing dhcp server object to OU
+			dhcpserver = "cn=%s,cn=%s,cn=dhcp,%s" % (dccn, schoolNr.lower(), getDN(schoolNr))
+			if len(objects) > 1:
+				print 'WARNING: more than one dhcp-server object found! Moving only one!'
+			obj = objects[0]
+			obj.open()
+			move_object(obj, dhcpserver)
+		else:
+			# create fresh dhcp server object
 			position.setDn("cn=%s,cn=dhcp,%s"%(schoolNr.lower (), getDN (schoolNr)))
 			object=dhcp_server_module.object(co, lo, position=position, superordinate=dhcp_service_object)
 			count_lo()
 			object.open()
 			object["server"]=dccn
+			print "need to create dhcp server: %s" % object.dn
 			create_object(object)
-			print "need to create dhcp server: %s"%object.dn
 
 		# create userlogon-share if not existant
 		objects = univention.admin.modules.lookup(share_module, co, lo, \
-				scope='sub', superordinate=dhcp_service_object, \
-				base='cn=shares,%s' % ( getDN (schoolNr)), \
+				scope='sub', superordinate=superordinate, \
+				base='cn=shares,%s' % ( getDN(schoolNr)), \
 				filter=univention.admin.filter.expression('cn','userlogon'))
 		count_lo()
-		share_exists=0
-		if objects:
-			share = "cn=userlogon,cn=shares,%s" % (getDN (schoolNr), )
-			for object in objects:
-				if object.dn == share:
-					share_exists=1
-		if not share_exists:
-			position.setDn("cn=shares,%s" % (getDN (schoolNr), ))
+#		if objects:
+#			share = "cn=userlogon,cn=shares,%s" % (getDN(schoolNr), )
+#			for object in objects:
+#				if object.dn == share:
+#					share_exists=1
+		if not objects:
+			position.setDn("cn=shares,%s" % (getDN(schoolNr), ))
 			object=share_module.object(co, lo, position=position)
 			count_lo()
 			object.open()
@@ -614,6 +616,25 @@ def create_sub_object(o):
 		o.lo.modify(dn, ml)
 	except:
 		problem_hints = "problems while setting univentionAbordnung to " + dn + "\n"
+
+
+def move_object(o, newdn):
+	try:
+		print 'moving object: old DN=%s   new DN=%s' % (o.dn, newdn)
+		o.move(newdn)
+	except univention.admin.uexceptions.noObject:
+		print "ERROR while moving object %s: object not found" % o.dn
+		print 'ERROR:', sys.exc_info()[0], sys.exc_info()[1]
+		traceback.print_exc(100, sys.stdout)
+	except univention.admin.uexceptions.ldapError:
+		print "ERROR while moving object %s: ldap error" % o.dn
+		print 'ERROR:', sys.exc_info()[0], sys.exc_info()[1]
+		traceback.print_exc(100, sys.stdout)
+	except univention.admin.uexceptions.invalidOperation, msg:
+		print "ERROR while moving object %s: invalid operation: %s" % (o.dn, msg)
+		print 'ERROR:', sys.exc_info()[0], sys.exc_info()[1]
+		traceback.print_exc(100, sys.stdout)
+
 
 def modify_object(o):
 	try:
