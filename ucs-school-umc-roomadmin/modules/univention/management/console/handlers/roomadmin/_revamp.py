@@ -108,6 +108,7 @@ class Web( object ):
 			curgrpmembers = computers.keys()
 
 		choicebutton = umcd.ChoiceButton( _( 'Computer Room' ), choices = choices, default = default )
+		choicebutton['width'] = '250'
 		buttons = [ choicebutton ]
 
 		if room and room != '':
@@ -132,7 +133,7 @@ class Web( object ):
 					buttons.extend ((umcd.Text (''), umcd.Text ('')))
 				else:
 					buttons.extend ((umcd.Text (''), umcd.Text (''), umcd.Text (''), umcd.Text (''), umcd.Text ('')))
-				italc_demo_master_selection = umcd.make( self[ 'roomadmin/italc/demo/start/window' ][ 'masterip' ], attributes = { 'width' : '200' } )
+				italc_demo_master_selection = umcd.make( self[ 'roomadmin/italc/demo/start/window' ][ 'masterip' ], attributes = { 'width' : '250' } )
 				italc_demo_master_selection.syntax.clearChoices ()
 
 				buttons.append (italc_demo_master_selection)
