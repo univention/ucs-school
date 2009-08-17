@@ -1,3 +1,9 @@
+ucs-school-umc-reservation (4.0.5-1) unstable; urgency=low
+
+  * expand some input fields in the UMC module. Bug #14989
+
+ -- Stefan Gohmann <gohmann@univention.de>  Mon, 17 Aug 2009 08:09:31 +0200
+
 ucs-school-umc-reservation (4.0.4-1) unstable; urgency=low
 
   * all school OUs will be now available for Domain Admins - if a OU-user

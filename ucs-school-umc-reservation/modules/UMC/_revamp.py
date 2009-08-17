@@ -267,7 +267,7 @@ class Web( object ):
 
 		### Date
 		descr_text = umc.String( _( 'Date' ), required = True )
-		input_date = umcd.DateInput( ( 'date_start', descr_text ), default=opts['date_start']  )
+		input_date = umcd.DateInput( ( 'date_start', descr_text ), default=opts['date_start'], attributes = { 'width' : '200' }  )
 		idlist_ok_button.append( input_date.id() )
 		row = [input_date]
 
@@ -290,7 +290,8 @@ class Web( object ):
 						opts = choice_opts ,
 						incomplete = False )
 			choices.append( { 'description' : description, 'actions' : [ umcd.Action( req, idlist_ok_button ) ] } )
-		input_time_begin = umcd.ChoiceButton( _('Start Time'), choices, default = defaultID, close_dialog = False, attributes = { 'width' : '120' } )
+		input_time_begin = umcd.ChoiceButton( _('Start Time'), choices, default = defaultID, close_dialog = False, attributes = { 'width' : '300' } )
+		input_time_begin[ 'width' ] = '200'
 		idlist_ok_button.append(input_time_begin.id())
 		row.append(input_time_begin)
 
@@ -300,7 +301,7 @@ class Web( object ):
 		#self[ 'reservation/edit' ][ 'time_end' ][1].set_time_begin(opts['time_begin'])
 
 		#input_time_end = umcd.Selection( ( 'time_end' , syntax['time_end'] ), default = opts['time_end'] )
-		input_time_end = umcd.make( self[ 'reservation/edit' ][ 'time_end' ], default = opts['time_end'], attributes = { 'width' : '120' } )
+		input_time_end = umcd.make( self[ 'reservation/edit' ][ 'time_end' ], default = opts['time_end'], attributes = { 'width' : '200' } )
 		## With new umcd.ComboboxButton:
 		#choices_time_end = []
 		#defaultID_time_end = 0
@@ -372,7 +373,7 @@ class Web( object ):
 							incomplete = True )
 				choices.append( { 'description' : ou, 'actions' : [ umcd.Action( req ) ] } )
 
-			input_ou = umcd.ChoiceButton( _('Please select school:'), choices, default = defaultID, close_dialog = False, attributes = { 'width' : '120' } )
+			input_ou = umcd.ChoiceButton( _('Please select school:'), choices, default = defaultID, close_dialog = False, attributes = { 'width' : '200' } )
 			idlist_ok_button.append(input_ou.id())
 
 		### stop here if no OU has been selected
@@ -400,7 +401,7 @@ class Web( object ):
 			syntax['roomname']._choices.append( ( roomdata[ 0 ][ 'cn' ][ 0 ], cn ) )
 
 		#input_room = umcd.Selection( ( 'roomname' , syntax['roomname'] ), default = opts['roomname'] )
-		input_room = umcd.make( self[ 'reservation/edit' ][ 'roomname' ], default = opts['roomname'], attributes = { 'width' : '120' } )
+		input_room = umcd.make( self[ 'reservation/edit' ][ 'roomname' ], default = opts['roomname'], attributes = { 'width' : '200' } )
 		idlist_ok_button.append(input_room.id())
 		#lst.add_row( [ input_room ] )
 
@@ -429,7 +430,7 @@ class Web( object ):
 			syntax['groupname']._choices.append( ( grpdata[ 0 ][ 'cn' ][ 0 ], cn.replace(schoolprefix,'') ) )
 
 		#input_group = umcd.Selection( ( 'groupname' , syntax['groupname'] ), default = opts['groupname'] )
-		input_group = umcd.make( self[ 'reservation/edit' ][ 'groupname' ], default = opts['groupname'], attributes = { 'width' : '120' } )
+		input_group = umcd.make( self[ 'reservation/edit' ][ 'groupname' ], default = opts['groupname'], attributes = { 'width' : '200' } )
 		idlist_ok_button.append(input_group.id())
 
 		if len(availableOU) > 1 and not '438' in availableOU:
