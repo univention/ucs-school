@@ -1,3 +1,11 @@
+ucs-school-import (4.0.8-1) unstable; urgency=low
+
+  * move dhcp server object to specified ou if object already exists 
+  	(Bug: #15344)
+  * fixed wrong superordinate while creating userlogon share  
+
+ -- Sönke Schwardt <schwardt@univention.de>  Mon, 17 Aug 2009 11:20:54 +0200
+
 ucs-school-import (4.0.7-1) unstable; urgency=low
 
   * Don't create the custom attributes by default. Bug #15373
