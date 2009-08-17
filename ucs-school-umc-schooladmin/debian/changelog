@@ -1,3 +1,9 @@
+ucs-school-umc-schooladmin (4.0.4-1) unstable; urgency=low
+
+  * fixed typo in the german translation. Bug #15031
+
+ -- Stefan Gohmann <gohmann@univention.de>  Mon, 17 Aug 2009 07:00:57 +0200
+
 ucs-school-umc-schooladmin (4.0.3-1) unstable; urgency=low
 
   * all school OUs will be now available for Domain Admins - if a OU-user
