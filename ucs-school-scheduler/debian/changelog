@@ -1,3 +1,9 @@
+ucs-school-scheduler (4.0.3-1) unstable; urgency=low
+
+  * start ucs-school-scheduler automatically during installation (Bug: #15389)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Mon, 17 Aug 2009 15:06:19 +0200
+
 ucs-school-scheduler (4.0.2-1) unstable; urgency=low
 
   * replace % characters during debug output (Bug: #15337)
