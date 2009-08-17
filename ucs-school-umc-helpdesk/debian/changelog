@@ -1,4 +1,4 @@
-ucs-school-umc-helpdesk (3.0.2-1) unstable; urgency=low
+ucs-school-umc-helpdesk (3.0.3-1) unstable; urgency=low
 
   * determine ou by userdn or by list of available ou (Bug: #15073)
 
