@@ -202,7 +202,7 @@ class ucsschool_person_modify:
 			if role_teacher in self.getRole ():
 				person.isTeacher = '1'
 			if role_staff in self.getRole ():
-				person.isTeacher = '1'
+				person.isStaff = '1'
 
 			persons.append(person)
 
@@ -519,12 +519,13 @@ def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None):
 		count_lo()
 		if objects:
 			# move existing dhcp server object to OU
-			dhcpserver = "cn=%s,cn=%s,cn=dhcp,%s" % (dccn, schoolNr.lower(), getDN(schoolNr))
+			newDHCPServerDN = "cn=%s,cn=%s,cn=dhcp,%s" % (dccn, schoolNr.lower(), getDN(schoolNr))
 			if len(objects) > 1:
 				print 'WARNING: more than one dhcp-server object found! Moving only one!'
 			obj = objects[0]
 			obj.open()
-			move_object(obj, dhcpserver)
+			if obj.dn != newDHCPServerDN:
+				move_object(obj, newDHCPServerDN)
 		else:
 			# create fresh dhcp server object
 			position.setDn("cn=%s,cn=dhcp,%s"%(schoolNr.lower (), getDN (schoolNr)))
@@ -619,6 +620,9 @@ def create_sub_object(o):
 
 
 def move_object(o, newdn):
+	if o.dn == newdn:
+		return
+
 	try:
 		print 'moving object: old DN=%s   new DN=%s' % (o.dn, newdn)
 		o.move(newdn)
@@ -1109,7 +1113,7 @@ def create_user(person, baseDN, module, password):
 		object["disabled"]="0"
 	else:
 		object["disabled"]="1"
-	object["ucsschool-user-role"] = person.getRole ()
+#	object["ucsschool-user-role"] = person.getRole ()
 	object["pwdChangeNextLogin"]="0"
 
 	try:
@@ -1212,12 +1216,12 @@ def import_user():
 			for object in objects:
 				ou=object.dn[string.find(object.dn,"ou=")+3:string.find(object.dn,",",string.find(object.dn,"ou=")+3)]
 				# get from LDAP the user type: teacher, staff or student
-				main_person.isTeacher = '0'
-				main_person.isStaff   = '0'
-				if role_teacher in object['ucsschool-user-role']:
-					main_person.isTeacher = '1'
-				if role_staff in object['ucsschool-user-role']:
-					main_person.isStaff = '1'
+# 				main_person.isTeacher = '0'
+# 				main_person.isStaff   = '0'
+# 				if role_teacher in object['ucsschool-user-role']:
+# 					main_person.isTeacher = '1'
+# 				if role_staff in object['ucsschool-user-role']:
+# 					main_person.isStaff = '1'
 
 				if ou in main_person.allsNrs:
 					found.append(ou)

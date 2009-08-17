@@ -1,3 +1,10 @@
+ucs-school-import (4.0.9-1) unstable; urgency=low
+
+  * do not move dhcp server object if olddn==newdn (Bug: #15344)
+  * disabled usage of extended attribute ucsschool-user-role
+
+ -- Sönke Schwardt <schwardt@univention.de>  Mon, 17 Aug 2009 17:05:54 +0200
+
 ucs-school-import (4.0.8-1) unstable; urgency=low
 
   * move dhcp server object to specified ou if object already exists 
