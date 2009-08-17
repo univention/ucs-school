@@ -175,7 +175,7 @@ class SchoolLDAPConnection(object):
 				self.departmentNumber = '438'
 				self.switch_ou(self.departmentNumber)
 			else:
-				self.switch_ou(hostou)
+				self.switch_ou(self.availableOU[0])
 
 		if self.binddn.find('ou=') > 0:
 			self.searchbaseDepartment = self.binddn[self.binddn.find('ou='):]

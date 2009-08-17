@@ -1,3 +1,9 @@
+ucs-school-umc-reservation (4.0.6-1) unstable; urgency=low
+
+  * Fixed traceback in availableOU handling (Bug: #15348)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Mon, 17 Aug 2009 10:41:34 +0200
+
 ucs-school-umc-reservation (4.0.5-1) unstable; urgency=low
 
   * expand some input fields in the UMC module. Bug #14989
