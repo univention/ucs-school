@@ -46,6 +46,7 @@ import smtplib
 
 import _revamp
 import _types
+import _schoolldap
 
 _ = umc.Translation( 'univention.management.console.handlers.helpdesk' ).translate
 
@@ -89,28 +90,31 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 		self.configRegistry = univention.config_registry.ConfigRegistry()
 		self.configRegistry.load()
 
+		## inititate an anonymous LDAP connection to the local directory
+		self.ldap_anon = _schoolldap.SchoolLDAPConnection()
+
 
 	def helpdesk_form_show( self, object ):
 		username = _( 'unknown' )
 		if self._username:
 			username = self._username
 		department = _( 'unknown' )
-		categories = [ _( 'none' ) ]
 
-		tmp = None
-		bc_key = 'ldap/hostdn'
-		if self.configRegistry.has_key( bc_key ):
-			tmp = self.configRegistry[ bc_key ]
+		# use first available OU
+		if self.ldap_anon.availableOU:
+			department = self.ldap_anon.availableOU[0]
 
-		bc_key = 'ucsschool/helpdesk/hostdn'
-		if self.configRegistry.has_key( bc_key ):
-			tmp = self.configRegistry[ bc_key ]
-
-		if tmp:
-			regex = re.compile('^.+?,ou=([0-9]+),.*$')
-			match = regex.match(tmp)
+		# use username
+		if username:
+			regex = re.compile(',ou=([^,]+),')
+			match = regex.match(username)
 			if match:
 				department = match.groups()[0]
+
+		# override department by UCR variable ucsschool/helpdesk/fixedou if variable is set
+		val = self.configRegistry.get( 'ucsschool/helpdesk/fixedou' )
+		if val:
+			department = val
 
 		ud.debug( ud.ADMIN, ud.INFO, 'HELPDESK: username=%s  department=%s' % (username, department) )
 

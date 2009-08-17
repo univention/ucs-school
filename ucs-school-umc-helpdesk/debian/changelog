@@ -1,3 +1,9 @@
+ucs-school-umc-helpdesk (3.0.2-1) unstable; urgency=low
+
+  * determine ou by userdn or by list of available ou (Bug: #15073)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Mon, 17 Aug 2009 14:14:37 +0200
+
 ucs-school-umc-helpdesk (3.0.1-2) unstable; urgency=low
 
   * fixed typo in join script (Bug: #14880)
