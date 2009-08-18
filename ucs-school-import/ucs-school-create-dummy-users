@@ -1,0 +1,64 @@
+#!/bin/sh
+#
+
+OU="$(echo "$1" | tr -cd 'a-zA-Z0-9-')"
+USERNAMECACHE_P="$(mktemp)"
+USERNAMECACHE_T="$(mktemp)"
+FIRSTNAMES="Anton Bertram Christina Daniela Ernst Friderike Gisela Hans Ines Jens Klaus Lisa Marlene Norbert Otto Pauline"
+LASTNAMES="Meyer Schmidt Schulz Müller Schneider Fischer Weber Wagner Becker Koch Richter Lange"
+CLASSES="1A 1B 2A 2B 3B 3C 4B 4r Froesche Igel"
+
+if [ -z "$OU" -o "$OU" = "-h" -o "$OU" = "--help" ] ; then
+	echo "syntax: $0 <ou>"
+	exit 1
+fi
+
+rotate_classes() {
+	CLASSES="$(echo "$CLASSES" | cut -d' ' -f2-) $(echo "$CLASSES" | cut -d' ' -f1)"
+}
+
+get_class() {
+	CLASS="$OU-$(echo "$CLASSES" | cut -d' ' -f1)"
+}
+
+get_username_pupils() {
+	usernamepart="$1"
+	let i=1
+	while grep -qc "${usernamepart}$i" "$USERNAMECACHE_P" ; do
+		let i=i+1
+	done
+	ACCOUNTNAME="${usernamepart}$i"
+	echo "$ACCOUNTNAME" >> "$USERNAMECACHE_P"
+}
+
+get_username_teacher() {
+	fname="$1"
+	lname="$2"
+	let i=1
+	while grep -qc "${fname:0:1}.${lname:0:8}$i" "$USERNAMECACHE_T" ; do
+		let i=i+1
+	done
+	ACCOUNTNAME="${fname:0:1}.${lname:0:8}$i"
+	echo "$ACCOUNTNAME" >> "$USERNAMECACHE_T"
+}
+
+eval $(/usr/sbin/ucr shell)
+
+# create pupils
+for fn in $FIRSTNAMES ; do
+	for ln in $LASTNAMES ; do
+		get_username_pupils "$fn"
+		get_class
+		echo -e "A\t${ACCOUNTNAME}\t$ln\t$fn\t$OU\t$CLASS\t\t${ACCOUNTNAME}@${domainname}\t0\t1\t0"
+		rotate_classes
+	done
+done
+
+# create teachers
+for fn in Daniel Gabriele ; do
+	for ln in Krause Lehmann ; do
+		get_username_teacher "$fn" "$ln"
+		classlist="$(echo $CLASSES | tr ' ' ',')"
+		echo -e "A\t${ACCOUNTNAME}\t$ln\t$fn\t$OU\t$classlist\t\t${ACCOUNTNAME}@${domainname}\t1\t1\t0"
+	done
+done

@@ -1,3 +1,9 @@
+ucs-school-import (4.0.10-1) unstable; urgency=low
+
+  * added ucs-school-create-dummy-users script (Bug: #15412)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Tue, 18 Aug 2009 10:09:36 +0200
+
 ucs-school-import (4.0.9-1) unstable; urgency=low
 
   * do not move dhcp server object if olddn==newdn (Bug: #15344)
