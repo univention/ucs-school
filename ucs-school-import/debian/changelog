@@ -1,3 +1,9 @@
+ucs-school-import (4.0.11-1) unstable; urgency=low
+
+  * fixed duplicate detection of dhcp_server objects (Bug: #15344)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Tue, 18 Aug 2009 13:48:49 +0200
+
 ucs-school-import (4.0.10-1) unstable; urgency=low
 
   * added ucs-school-create-dummy-users script (Bug: #15412)

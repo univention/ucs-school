@@ -514,15 +514,14 @@ def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None):
 			print "need to create dhcp service: %s"%object.dn
 
 		# create dhcp-server if not exsistant
-		objects = univention.admin.modules.lookup(dhcp_server_module, co, lo, scope='sub', superordinate=dhcp_service_object, base=baseDN,
-												  filter=univention.admin.filter.expression('cn',dccn))
+		objects = lo.searchDn( filter = '(&(objectClass=dhcpServer)(cn=%s)' % dccn, base=baseDN )
 		count_lo()
 		if objects:
 			# move existing dhcp server object to OU
 			newDHCPServerDN = "cn=%s,cn=%s,cn=dhcp,%s" % (dccn, schoolNr.lower(), getDN(schoolNr))
 			if len(objects) > 1:
 				print 'WARNING: more than one dhcp-server object found! Moving only one!'
-			obj = objects[0]
+			obj = univention.admin.objects.get(dhcp_service_module, co, lo, position='', dn=objects[0], arg='')
 			obj.open()
 			if obj.dn != newDHCPServerDN:
 				move_object(obj, newDHCPServerDN)
