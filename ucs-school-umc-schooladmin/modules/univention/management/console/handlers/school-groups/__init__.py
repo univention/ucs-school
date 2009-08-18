@@ -275,7 +275,7 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 				else:
 					self.availableOU = []
 					# get available OUs
-					ouresult = univention.admin.modules.lookup( self.oumodule, self.co, self.lo,
+					ouresult = univention.admin.modules.lookup( self.oumodule, self.co, lo,
 																scope = 'one', superordinate = None,
 																base = self.configRegistry[ 'ldap/base' ] )
 					for ou in ouresult:
