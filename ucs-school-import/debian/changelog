@@ -1,3 +1,9 @@
+ucs-school-import (4.0.12-1) unstable; urgency=low
+
+  * fixed traceback (Bug: #15424)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Wed, 19 Aug 2009 16:16:51 +0200
+
 ucs-school-import (4.0.11-1) unstable; urgency=low
 
   * fixed duplicate detection of dhcp_server objects (Bug: #15344)

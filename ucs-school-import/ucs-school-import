@@ -514,7 +514,7 @@ def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None):
 			print "need to create dhcp service: %s"%object.dn
 
 		# create dhcp-server if not exsistant
-		objects = lo.searchDn( filter = '(&(objectClass=dhcpServer)(cn=%s)' % dccn, base=baseDN )
+		objects = lo.searchDn( filter = '(&(objectClass=dhcpServer)(cn=%s))' % dccn, base=baseDN )
 		count_lo()
 		if objects:
 			# move existing dhcp server object to OU
