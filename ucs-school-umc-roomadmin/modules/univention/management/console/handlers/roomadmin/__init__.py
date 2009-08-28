@@ -767,13 +767,13 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 #PID     Username      Group         Machine                        
 #-------------------------------------------------------------------
 #23355   schueler312   Account Operators  007bondpc    (10.200.18.100)
-
+#18646     Administrator  Domain Admins  labor-pc2    (::ffff:10.200.10.152)
 
 	def _roomadmin_room_list_return( self, pid, status, buffer, object, computers_blocked4internet, groupdict, computerdict ):
 		host2user = {}
 		user2realname = {}
 		userlist = []
-		regex = re.compile( '^\s*?(?P<pid>[0-9]+)\s\s+(?P<username>[^ ]+)\s\s+(?P<group>.+)\s\s+(?P<host>[^ ]+)\s\s+\((?P<ipaddr>[.0-9]+)\)\s*$' )
+		regex = re.compile( '^\s*?(?P<pid>[0-9]+)\s\s+(?P<username>[^ ]+)\s\s+(?P<group>.+)\s\s+(?P<host>[^ ]+)\s\s+\((::ffff:)?(?P<ipaddr>[.0-9]+)\)\s*$' )
 
 #		debugmsg( ud.ADMIN, ud.INFO, 'smbstatus -b:\n%s' % '\n'.join(buffer) )
 

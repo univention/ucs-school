@@ -1,3 +1,9 @@
+ucs-school-umc-roomadmin (5.0.7-1) unstable; urgency=low
+
+  * output of smbstatus changed with samba 3.2 (Bug: #15515)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Fri, 28 Aug 2009 13:55:03 +0200
+
 ucs-school-umc-roomadmin (5.0.6-1) unstable; urgency=low
 
   * expand the choice buttons a little bit. Bug #14958
