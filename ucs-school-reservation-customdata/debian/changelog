@@ -1,3 +1,9 @@
+ucs-school-reservation-customdata (4.0.1-1) unstable; urgency=low
+
+  * fixed missing default lessons and default profiles (Bug: #15540)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Mon, 31 Aug 2009 17:50:29 +0200
+
 ucs-school-reservation-customdata (4.0.0-0) unstable; urgency=low
 
   * ported package to component ucs@school
