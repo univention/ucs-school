@@ -1,3 +1,10 @@
+ucs-school-webproxy (5.0.1-1) unstable; urgency=low
+
+  * renamed pupilgroup.py to pupilgroups.py
+  * fixed OU handling (Bug: #15538)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Mon, 31 Aug 2009 16:04:02 +0200
+
 ucs-school-webproxy (5.0.0-2) unstable; urgency=low
 
   * added dependency to ucs-school-webproxy (Bug: #14981)

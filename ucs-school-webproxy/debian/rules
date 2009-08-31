@@ -61,7 +61,7 @@ install: build
 	cp logcollector.cfg $(D)/etc/logcollector.d/ucs-school-webproxy
 
 	install -m 755 27ucs-school-webproxy.inst ${D}/usr/lib/univention-install/27ucs-school-webproxy.inst
-	install -m 755 pupilgroup.py ${D}/usr/lib/univention-directory-listener/system/
+	install -m 755 pupilgroups.py ${D}/usr/lib/univention-directory-listener/system/
 
 	univention-install-config-registry
 

@@ -44,23 +44,20 @@ def initialize():
 	pass
 
 def handler(dn, new, old):
+	univention.debug.debug(univention.debug.LISTENER, univention.debug.ERROR, 'pupilgroups: dn: %s' % dn)
 	configRegistry = univention.config_registry.ConfigRegistry()
 	configRegistry.load()
-	hostdn=configRegistry['ldap/hostdn']
-	# Base DN for 'Klassen' und 'AGs'
-	#pupilgroupsBase= 'cn=schueler,cn=groups,ou=309,dc=schule,dc=bremen,dc=de'
-	pupilGroupsBase=dnPattern % hostdn[hostdn.find('ou='):]
-	# univention.debug.debug(univention.debug.LISTENER, univention.debug.INFO, 'pupilgroups: GroupsBase: %s' % pupilGroupsBase)
 	listener.setuid(0)
 	try:
-		if dn.rfind(pupilGroupsBase) != -1:
+		if dnPattern.search(dn):
 			if new and new.has_key('memberUid'):
 				key=keyPattern % new['cn'][0].replace(' ','_')
-				# univention.debug.debug(univention.debug.LISTENER, univention.debug.INFO, 'pupilgroups: key: %s' % key)
 				keyval = '%s=%s' % (key, ','.join(new['memberUid']))
+				univention.debug.debug(univention.debug.LISTENER, univention.debug.INFO, 'pupilgroups: %s' % keyval)
 				univention.config_registry.handler_set( [ keyval.encode() ] )
 			elif old:	# old lost its last memberUid OR old was removed
 				key = keyPattern % old['cn'][0].replace(' ','_')
+				univention.debug.debug(univention.debug.LISTENER, univention.debug.INFO, 'pupilgroups: %s' % key)
 				univention.config_registry.handler_unset( [ key.encode() ] )
 	finally:
 		listener.unsetuid()
