@@ -31,13 +31,14 @@
 import listener
 import univention.config_registry
 import univention.debug
+import re
 
 name='pupilgroups'
 description='Map pupil group lists to UCR'
 filter="(objectClass=univentionGroup)"
 attributes=['memberUid']
 
-dnPattern='cn=schueler,cn=groups,%s'
+dnPattern=re.compile('cn=schueler,cn=groups,ou=[^,]+,dc=', re.I)
 keyPattern='proxy/filter/usergroup/%s'
 
 def initialize():
