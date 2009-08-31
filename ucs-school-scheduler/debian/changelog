@@ -1,3 +1,9 @@
+ucs-school-scheduler (4.0.4-2) unstable; urgency=low
+
+  * added delay during restart (Bug: #15540)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Mon, 31 Aug 2009 18:59:05 +0200
+
 ucs-school-scheduler (4.0.4-1) unstable; urgency=low
 
   * fixed typo in pid file name (Bug: #15391)
