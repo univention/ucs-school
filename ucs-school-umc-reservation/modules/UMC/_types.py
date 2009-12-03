@@ -241,18 +241,18 @@ def Property (func):
 	return property(doc=func.__doc__, **func())
 
 class ProgramAllowSelection( umc.StaticSelection ):
-        def __init__( self, required = True ):
-                umc.StaticSelection.__init__( self, _( 'Reserve Program Licenses' ), required = required )
+	def __init__( self, required = True ):
+		umc.StaticSelection.__init__( self, _( 'Reserve Program Licenses' ), required = required )
 
 	inactive_applications = None
 
-        def choices( self ):
-                # build list of Programs
+	def choices( self ):
+		# build list of Programs
 		if not self.inactive_applications:
 			self.inactive_applications = reservationdb.getApplicationsDict(imageActive=False)
 		lst = [ ('pleaseselect', label_please_choose_and_add) ]
 		lst.extend( [ [ self.inactive_applications[appname].id, appname ] for appname in self.inactive_applications ] )
-                return lst
+		return lst
 
 umcd.copy( umc.StaticSelection, ProgramAllowSelection )
 
@@ -278,18 +278,18 @@ umcd.copy( umc.StaticSelection, ProgramAllowSelection )
 # umcd.copy( umc.StaticSelection, ProgramLicenseSelection )
 # 
 class ProgramDenySelection( umc.StaticSelection ):
-        def __init__( self, required = True ):
-                umc.StaticSelection.__init__( self, _( 'Deny Programs' ), required = required )
+	def __init__( self, required = True ):
+		umc.StaticSelection.__init__( self, _( 'Deny Programs' ), required = required )
 
 	active_applications = None
 
-        def choices( self ):
+	def choices( self ):
 		if not self.active_applications:
 			self.active_applications = reservationdb.getApplicationsDict(imageActive=True)
 		lst = [ ('pleaseselect', label_please_choose_and_add) ]
-                # build list of Programs
+		# build list of Programs
 		lst.extend( [ [ self.active_applications[appname].id, appname ] for appname in self.active_applications ] )
-                return lst
+		return lst
 
 umcd.copy( umc.StaticSelection, ProgramDenySelection )
 
@@ -305,18 +305,18 @@ umcd.copy( umc.StaticSelection, ProgramDenySelection )
 # umcd.copy( umc.StaticSelection, ProgramAllowSelectionSearch )
 # 
 class ProgramAllowSelectionList( umc.String ):
-        def __init__( self, required = True ):
-                umc.String.__init__( self, _( 'Program Licenses' ), required = required )
-                self.label = _( 'List of Program Licenses' )
-                self.multivalue = True
+	def __init__( self, required = True ):
+		umc.String.__init__( self, _( 'Program Licenses' ), required = required )
+		self.label = _( 'List of Program Licenses' )
+		self.multivalue = True
 
 umcd.copy( umc.StaticSelection, ProgramAllowSelectionList )
 
 class ProgramDenySelectionList( umc.String ):
-        def __init__( self, required = True ):
-                umc.String.__init__( self, _( 'Disabled Program'), required = required )
-                self.label = _( 'List of Disabled Programs' )
-                self.multivalue = True
+	def __init__( self, required = True ):
+		umc.String.__init__( self, _( 'Disabled Program'), required = required )
+		self.label = _( 'List of Disabled Programs' )
+		self.multivalue = True
 
 umcd.copy( umc.StaticSelection, ProgramDenySelectionList )
 
@@ -362,14 +362,14 @@ umcd.copy( umc.StaticSelection, ProgramDenySelectionList )
 # umcd.copy( umc.StaticSelection, ShareSelectionList )
 
 class ProxyfilterSelection( umc.StaticSelection ):
-        def __init__( self, required = True):
-                title = _( 'Internet Filter' )
-                umc.StaticSelection.__init__( self, title, required = required )
+	def __init__( self, required = True):
+		title = _( 'Internet Filter' )
+		umc.StaticSelection.__init__( self, title, required = required )
 
 	proxyfilterlist = None
 
-        def choices( self ):
-                # build list of Proxyfilters
+	def choices( self ):
+		# build list of Proxyfilters
 		if not self.proxyfilterlist:
 			self.proxyfilterlist = [('default', _('Default'))]
 			# get UCR
@@ -382,17 +382,17 @@ class ProxyfilterSelection( umc.StaticSelection ):
 				# type: whitelist-block ODER blacklist-pass ODER whitelist-blacklist-pass
 				name = key[:key.rfind('/filtertype')].replace(proxyfilterkeybase,'',1)
 				self.proxyfilterlist.append((name, name))
-                return self.proxyfilterlist
+		return self.proxyfilterlist
 
 umcd.copy( umc.StaticSelection, ProxyfilterSelection )
 
 class PrintmodeSelection( umc.StaticSelection ):
-        def __init__( self, required = True ):
-                umc.StaticSelection.__init__( self, _( 'Printmode' ), required = required )
+	def __init__( self, required = True ):
+		umc.StaticSelection.__init__( self, _( 'Printmode' ), required = required )
 
-        def choices( self ):
-                lst = [('default', _('Default')), ('all', _('All')), ('none', _('None'))]
-                return lst
+	def choices( self ):
+		lst = [('default', _('Default')), ('all', _('All')), ('none', _('None'))]
+		return lst
 
 umcd.copy( umc.StaticSelection, PrintmodeSelection )
 
