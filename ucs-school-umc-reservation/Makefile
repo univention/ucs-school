@@ -2,7 +2,7 @@
 #
 # UCS@School
 #
-# Copyright (C) 2008-2009 Univention GmbH
+# Copyright (C) 2008-2010 Univention GmbH
 #
 # http://www.univention.de/
 # 
@@ -47,10 +47,9 @@ clean:
 	@find modules/ -name '*.mo' -exec rm \{\} \;
 
 install-modules: modules
-	install -d debian/$(PACKAGE)/usr/share/pycentral/$(PACKAGE)/site-packages
 	@for i in $(MODULES); do\
 		relpath=$$(echo $$i | sed -e "s|$(RELPATH_SRC)|$(RELPATH_UMC)|"); \
-		o=debian/$(PACKAGE)/usr/share/pycentral/$(PACKAGE)/site-packages/$${relpath}; \
+		o=debian/$(PACKAGE)/usr/share/pyshared/$${relpath}; \
 		install -d "`dirname $$o`";\
 		install -m755 $$i $$o;\
 	done

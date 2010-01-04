@@ -46,9 +46,8 @@ modules: $(MODULES)
 admin-modules: $(ADMIN_MODULES)
 
 install-admin-modules: admin-modules
-	install -d debian/$(PACKAGE)/usr/share/pycentral/$(PACKAGE)/site-packages
 	@for i in $(ADMIN_MODULES); do\
-		o=debian/$(PACKAGE)/usr/share/pycentral/$(PACKAGE)/site-packages/$${i#modules};\
+		o=debian/$(PACKAGE)/usr/share/pyshared/$${i#modules};\
 		install -d "`dirname $$o`";\
 		install -m644 $$i $$o;\
 	done
@@ -65,9 +64,8 @@ clean:
 	@find modules/ -name '*.mo' -exec rm \{\} \;
 
 install-modules: modules
-	install -d debian/$(PACKAGE)/usr/share/pycentral/$(PACKAGE)/site-packages
 	@for i in $(MODULES); do\
-		o=debian/$(PACKAGE)/usr/share/pycentral/$(PACKAGE)/site-packages/$${i#modules};\
+		o=debian/$(PACKAGE)/usr/share/pyshared/$${i#modules};\
 		install -d "`dirname $$o`";\
 		install -m755 $$i $$o;\
 	done
