@@ -1,5 +1,5 @@
 Source: ucs-school-italc
-Section: x11
+Section: univention
 Priority: optional
 Maintainer: Univention GmbH <packages@univention.de>
 Build-Depends: cdbs, debhelper (>= 5.0), dpatch, libqt4-dev, sip4, python-qt4-dev, libitalc-dev, zlib1g-dev, libjpeg62-dev, libssl-dev, imagemagick, libxtst-dev
