@@ -1,3 +1,9 @@
+univention-webui (3.0.0-0) unstable; urgency=low
+
+  * ported package to UCS 2.3 UCS@school
+
+ -- Sönke Schwardt <schwardt@univention.de>  Mon, 04 Jan 2010 10:40:34 +0200
+
 univention-webui (2.0.12-0) unstable; urgency=low
 
   * applied patch that fixes the date widget (Bug #14721)

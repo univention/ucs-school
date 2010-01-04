@@ -1,3 +1,9 @@
+ucs-school-umc-helpdesk (4.0.0-0) unstable; urgency=low
+
+  * ported package to UCS 2.3 UCS@school
+
+ -- Sönke Schwardt <schwardt@univention.de>  Mon, 04 Jan 2010 10:40:34 +0200
+
 ucs-school-umc-helpdesk (3.0.3-1) unstable; urgency=low
 
   * determine ou by userdn or by list of available ou (Bug: #15073)

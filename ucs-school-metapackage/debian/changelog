@@ -1,3 +1,9 @@
+ucs-school-metapackage (2.0.0-0) unstable; urgency=low
+
+  * ported package to UCS 2.3 UCS@school
+
+ -- Sönke Schwardt <schwardt@univention.de>  Mon, 04 Jan 2010 10:40:34 +0200
+
 ucs-school-metapackage (1.0.4-1) unstable; urgency=low
 
   * during first installation of singleserver meta package

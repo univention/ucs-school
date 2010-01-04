@@ -1,3 +1,9 @@
+univention-management-console (2.0.0-0) unstable; urgency=low
+
+  * ported package to UCS 2.3 UCS@school
+
+ -- Sönke Schwardt <schwardt@univention.de>  Mon, 04 Jan 2010 10:40:34 +0200
+
 univention-management-console (1.5.0-0) unstable; urgency=low
 
   * ported package to component ucs@school

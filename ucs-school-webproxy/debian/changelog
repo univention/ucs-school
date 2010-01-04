@@ -1,3 +1,9 @@
+ucs-school-webproxy (6.0.0-0) unstable; urgency=low
+
+  * ported package to UCS 2.3 UCS@school
+
+ -- Sönke Schwardt <schwardt@univention.de>  Mon, 04 Jan 2010 10:40:34 +0200
+
 ucs-school-webproxy (5.0.2-1) unstable; urgency=low
 
   * fixed OU handling (Bug: #15538)

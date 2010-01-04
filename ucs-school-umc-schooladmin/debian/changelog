@@ -1,3 +1,9 @@
+ucs-school-umc-schooladmin (5.0.0-0) unstable; urgency=low
+
+  * ported package to UCS 2.3 UCS@school
+
+ -- Sönke Schwardt <schwardt@univention.de>  Mon, 04 Jan 2010 10:40:34 +0200
+
 ucs-school-umc-schooladmin (4.0.6-1) unstable; urgency=low
 
   * Fixed traceback in availableOU handling (Bug: #15348)
