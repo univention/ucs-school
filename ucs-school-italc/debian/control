@@ -2,7 +2,7 @@ Source: ucs-school-italc
 Section: univention
 Priority: optional
 Maintainer: Univention GmbH <packages@univention.de>
-Build-Depends: cdbs, debhelper (>= 5.0), dpatch, libqt4-dev, sip4, python2.4, python-qt4-dev, libitalc-dev, zlib1g-dev, libjpeg62-dev, libssl-dev, imagemagick, libxtst-dev, python-sip4-dev, python-sip4
+Build-Depends: cdbs, debhelper (>= 5.0), dpatch, libqt4-dev, sip4, python2.4, python-qt4-dev, libitalc-dev, zlib1g-dev, libjpeg62-dev, libssl-dev, imagemagick, libxtst-dev, python-sip4-dev, python-sip4, python2.4-dev
 Standards-Version: 3.7.3
 
 Package: python-italc
