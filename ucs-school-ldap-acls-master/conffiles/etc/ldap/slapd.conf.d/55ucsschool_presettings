@@ -1,5 +1,5 @@
 # Slave-Controller und Member-Server: Update von sambaNextRid bei Join-Vorgang (covers new and old ldap style)
-access to filter="(objectClass=sambaDomain)" attrs=sambaNextRid
+access to filter="(objectClass=sambaDomain)" attrs=sambaNextRid,sambaPwdHistoryLength,sambaMaxPwdAge
    by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
    by group/univentionGroup/uniqueMember="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
    by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
