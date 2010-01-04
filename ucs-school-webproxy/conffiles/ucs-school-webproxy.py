@@ -39,7 +39,7 @@
 # proxy/filter/url/blacklisted/1: http://www.gesperrt.de/gesperrt.html
 # proxy/filter/url/whitelisted/1: http://www.inhalt.de/interessanter-inhalt.html
 # proxy/filter/hostgroup/blacklisted/RaumA: 10.200.18.199,10.200.18.195,10.200.18.197
-# proxy/filter/redirecttarget: http://dc308.schule.bremen.de/blocked-by-squid.html
+# proxy/filter/redirecttarget: http://dc712.somewhere.de/blocked-by-squid.html
 # proxy/filter/usergroup/308-1B: michael3,daniel7,klara4,meike2
 # proxy/filter/groupdefault/308-1B: myprofile
 # proxy/filter/setting/myprofile/domain/blacklisted/1: www.porno.de
