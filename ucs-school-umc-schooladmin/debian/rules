@@ -1,9 +1,9 @@
 #!/usr/bin/make -f
 #
-# Univention Management Console Module
+# Univention UCS@school
 #  rules file for generating the deb package
 #
-# Copyright (C) 2005-2009 Univention GmbH
+# Copyright (C) 2005-2010 Univention GmbH
 #
 # http://www.univention.de/
 # 
