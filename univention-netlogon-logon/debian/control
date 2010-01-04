@@ -1,5 +1,5 @@
 Source: univention-netlogon-logon
-Section: unknown
+Section: univention
 Priority: optional
 Maintainer: Univention GmbH <packages@univention.de>
 Build-Depends: debhelper (>= 4.0.0), univention-config-dev
