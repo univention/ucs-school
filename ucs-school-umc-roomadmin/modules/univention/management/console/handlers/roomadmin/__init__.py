@@ -143,6 +143,7 @@ command_description = {
 		method = 'roomadmin_room_list',
 		values = { 'room' : _types.room	},
 		startup = True,
+		caching = True,
 		priority = 100
 	),
 	'roomadmin/set/access/internet/enable': umch.command(
