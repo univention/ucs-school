@@ -1,3 +1,10 @@
+ucs-school-ldap-acls-master (5.0.1-1) unstable; urgency=low
+
+  * grant write access to attributes sambaPwdHistoryLength and
+    sambaMaxPwdAge of samba domain object (Bug #15129)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Mon, 04 Jan 2010 14:46:22 +0100
+
 ucs-school-ldap-acls-master (5.0.0-0) unstable; urgency=low
 
   * ported package to UCS 2.3 UCS@school
