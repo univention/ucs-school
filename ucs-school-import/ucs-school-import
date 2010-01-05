@@ -41,8 +41,8 @@
 created_users = {}
 # string of problems during process
 problem_hints = ""
-# separator char in infile
-sepchar='	'
+# separator char in infile (default: \t for Tabulator)
+sepchar='\t'
 
 # wipe the following trailing and leading characters from group names
 wipe_char_group='-'
@@ -117,7 +117,7 @@ class ucsschool_person_modify:
 	def __init__(self,line):
 
 		# parse line here
-		parsed = line[:-1].split(sepchar)
+		parsed = line.strip('\r\n').split(sepchar)
 
 		self.modtype   = parsed[0] # A,M or D: add, modify or delete
 		self.login     = parsed[1].lower ()
@@ -1030,7 +1030,7 @@ def check_user(person, baseDN, module):
 
 def get_passwd():
 	makepasswd = os.popen('makepasswd --chars=8')
-	return makepasswd.readline()[:-1] # without newline
+	return makepasswd.readline().strip('\r\n') # without newline
 
 def create_passwd():
 	charlistA = 'abcdefghijklmnopqrstuvwxyz'
@@ -1404,6 +1404,7 @@ def generate_new_mac(schoolNr,IP):
 	if IP:
 		mac_start = '%s:%s:%s:%s:'%(schoolNr[:2],schoolNr[-2:],ipnum[:2],ipnum[-2:])
 	else:
+		# FIXME: following line seems to be broken
 		mac_start = '%s:%s:00:00:'%(schoolNr[:2],schoolNr[-2:],ipnum[:2],ipnum[-2:])
 	mac='%s00:00'%mac_start
 	i=10
@@ -1455,7 +1456,7 @@ def import_networks(router_only=False):
 	line=inf.readline()
 	while not line == "":
 
-		parsed=line[:-1].split(sepchar)
+		parsed=line.strip('\r\n').split(sepchar)
 
 		schoolNr      = parsed[0]
 		# the network MUST include the netmask
@@ -1536,7 +1537,7 @@ def set_inventory_number_for_computer():
 	line=inf.readline()
 	while not line == "":
 
-		parsed=line[:-1].split(sepchar)
+		parsed=line.strip('\r\n').split(sepchar)
 		ctype    = parsed[0]
 		name     = parsed[1]
 		MAC      = parsed[2]
@@ -1699,7 +1700,7 @@ def import_computer():
 		linecnt += 1
 		print 'Processing line %d: %s' % (linecnt, line),
 
-		parsed=line[:-1].split(sepchar)
+		parsed=line.strip('\r\n').split(sepchar)
 
 		ctype = parsed[0]
 		name  = parsed[1].lower ()
@@ -1779,10 +1780,10 @@ def import_group():
 
 	problem_hints=""
 
-	line=inf.readline()[:-1]
+	line=inf.readline().strip('\r\n')
 	while not line=="":
 
-		parsed=line[:-1].split(sepchar)
+		parsed=line.strip('\r\n').split(sepchar)
 
 		action = parsed[0]   # action=A(dd, M(odify, D(elete
 		schoolNr = parsed[1]
@@ -1819,7 +1820,7 @@ def import_group():
 			delete_dn(share_dn, group_module, co, lo)
 
 
-		line=inf.readline()[:-1]
+		line=inf.readline().strip('\r\n')
 
 def import_printer():
 	# argument is infile
@@ -1832,10 +1833,10 @@ def import_printer():
 	print "infile is  : "+infile
 	inf = open(infile,'r')
 
-	line=inf.readline()[:-1]
+	line=inf.readline().strip('\r\n')
 	while not line=="":
 
-		parsed=line[:-1].split(sepchar)
+		parsed=line.strip('\r\n').split(sepchar)
 
 		# completely new
 		action = parsed[0]   # action=A(dd, M(odify, D(elete
@@ -1902,7 +1903,7 @@ def import_printer():
 			delete_dn(position_dn, printer_module, co, lo)
 
 
-		line=inf.readline()[:-1]
+		line=inf.readline().strip('\r\n')
 
 def activate_groupmembers():
 	#  syntax: $0 <groupXXX> [0|1] [0|1]"

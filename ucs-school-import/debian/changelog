@@ -1,3 +1,9 @@
+ucs-school-import (5.0.1-1) unstable; urgency=low
+
+  * fixed handling of import files with DOS/UNIX linefeeds (Bug #16274)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Mon, 04 Jan 2010 16:03:31 +0100
+
 ucs-school-import (5.0.0-0) unstable; urgency=low
 
   * ported package to UCS 2.3 UCS@school
