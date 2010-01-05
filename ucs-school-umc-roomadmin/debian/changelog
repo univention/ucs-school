@@ -1,3 +1,9 @@
+ucs-school-umc-roomadmin (6.0.1-1) unstable; urgency=low
+
+  * activated caching for room list (Bug #15893)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Tue, 05 Jan 2010 10:57:54 +0100
+
 ucs-school-umc-roomadmin (6.0.0-0) unstable; urgency=low
 
   * ported package to UCS 2.3 UCS@school
