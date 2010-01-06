@@ -1,4 +1,4 @@
-univention-netlogon-logon (2.0.0-0) unstable; urgency=low
+univention-netlogon-logon (4.0.0-0) unstable; urgency=low
 
   * ported package to UCS 2.3 UCS@school
 

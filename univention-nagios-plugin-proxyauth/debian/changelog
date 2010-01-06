@@ -1,4 +1,4 @@
-univention-nagios-plugin-proxyauth (1.0.0-0) unstable; urgency=low
+univention-nagios-plugin-proxyauth (3.0.0-0) unstable; urgency=low
 
   * ported package to UCS 2.3 UCS@school
 
