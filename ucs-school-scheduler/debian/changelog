@@ -1,3 +1,10 @@
+ucs-school-scheduler (5.0.1-1) unstable; urgency=low
+
+  * stop scheduler in prerm only if package gets removed - (Bug #17277)
+    otherwise scheduler is not running after package update
+
+ -- Sönke Schwardt <schwardt@univention.de>  Thu, 07 Jan 2010 12:24:14 +0100
+
 ucs-school-scheduler (5.0.0-0) unstable; urgency=low
 
   * ported package to UCS 2.3 UCS@school
