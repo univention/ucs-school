@@ -30,6 +30,8 @@
 
 #DEBHELPER#
 
-/etc/init.d/ucs-school-scheduler stop || true
+if [ ! "$1" = "upgrade" ] ; then
+	/etc/init.d/ucs-school-scheduler stop || true
+fi
 
 exit 0
