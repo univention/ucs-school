@@ -39,6 +39,7 @@ import univention.debug as debug
 
 ucr = ConfigRegistry (write_registry=ConfigRegistry.SCHEDULE)
 re_option = re.compile ('@%@option:([a-zA-Z]+)@%@')
+re_option_int2bool = re.compile ('@%@option-int2bool(-invert)?:([a-zA-Z]+)@%@')
 
 class SchedulerStopListener (AbstractListener):
 	def __init__ (self):
@@ -117,6 +118,42 @@ class SchedulerStopListener (AbstractListener):
 						debug.debug (debug.MAIN, debug.ERROR, 'E: option %s without value\n\tNot setting UCR variables: %s\n\tStopping further execution of commands.' % (name, s.ucrStop))
 						r.setError ('105')
 						return
+			for invert, name in re_option_int2bool.findall (values):
+				if name != s.name:
+					# find setting that matches this name
+					found = False
+					options = r.options
+					if r.profile:
+						options += r.profile.options
+					for opt in options:
+						if opt.setting and opt.setting.name == name:
+							replacement = True
+							if opt.value == None or ( str(opt.value).isdigit() and int(str(opt.value)) == 0 ):
+								replacement = False
+
+							if invert:
+								replacement = not replacement
+
+							replacement = str(replacement).lower()
+							values = values.replace('@%%@option-int2bool%s:%s@%%@' % (invert, name), replacement)
+
+							found = True
+							break
+					if not found:
+						debug.debug (debug.MAIN, debug.ERROR, 'E: unable to retrieve option: %s\n\tNot setting UCR variables: %s\n\tStopping further execution of commands.' % (name, s.ucrStop))
+						r.setError ('105')
+						return
+				else:
+					replacement = True
+					if o.value == None or ( str(o.value).isdigit() and int(str(o.value)) == 0 ):
+						replacement = False
+
+					if invert:
+						replacement = not replacement
+
+					replacement = str(replacement).lower()
+					values = values.replace('@%%@option-int2bool%s:%s@%%@' % (invert, name), replacement)
+
 			retcode = 0
 			try:
 				# FIXME: values.split () does not work with spaces in the value!
