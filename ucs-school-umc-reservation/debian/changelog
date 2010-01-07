@@ -1,3 +1,9 @@
+ucs-school-umc-reservation (5.0.1-1) unstable; urgency=low
+
+  * fixed traceback during profile search (Bug #15509)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Tue, 05 Jan 2010 12:36:05 +0100
+
 ucs-school-umc-reservation (5.0.0-0) unstable; urgency=low
 
   * ported package to UCS 2.3 UCS@school

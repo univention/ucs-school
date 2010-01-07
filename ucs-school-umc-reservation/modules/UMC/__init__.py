@@ -1084,7 +1084,15 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 		if action == 'search':
 			# get all items matching to regex
 			for profile in profile_list:
-				ownername = pwd.getpwuid(profile.owner)[0]
+				try:
+					ownername = pwd.getpwuid(profile.owner)[0]
+				except KeyError:
+					ownername = 'uidNumber=%s' % profile.owner
+					self._debug( ud.WARN, 'cannot find realname for uidNumber=%s' % profile.owner )
+				except TypeError:
+					self._debug( ud.ERROR, 'DATABASE ERROR: profile.owner=%s is no integer!' % profile.owner )
+					ownername = "DATABASE-ERROR"
+
 				if key == 'ownername':
 					value = ownername
 				elif key == 'profile_name':
