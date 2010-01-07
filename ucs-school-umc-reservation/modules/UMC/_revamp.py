@@ -652,9 +652,8 @@ class Web( object ):
 			lst.add_row( row )
 
 			opts = { 'reservationID': reservationID, 'confirmed': True, 'target': acltarget }
-			req_list = umcp.Command( args = [ 'reservation/list' ] )
 			req = umcp.Command( args = [ 'reservation/remove' ], opts = opts )
-			actions = ( umcd.Action( req ), umcd.Action( req_list ) )
+			actions = ( umcd.Action( req ) )
 			item_btn_ok = umcd.Button( _('Remove'), 'actions/ok', actions = actions, close_dialog = False )
 			item_btn_cancel = umcd.CancelButton( attributes = { 'align' : 'right' } )
 			lst.add_row( [ item_btn_ok, item_btn_cancel ] )
@@ -667,6 +666,7 @@ class Web( object ):
 				lst.add_row( [ _('Please ask local administrator for further details.') ] )
 			for msg in messages:
 				lst.add_row( [ msg ] )
+			lst.add_row( [ umcd.CloseButton( ) ] )
 
 		res.dialog = [ umcd.Frame( [ lst ], header ) ]
 
