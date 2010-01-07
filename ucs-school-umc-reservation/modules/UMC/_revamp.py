@@ -889,17 +889,17 @@ class Web( object ):
 #		lst.add_row([input_programs_whitelist, input_programs_blacklist])
 
 		#\item Auswahl erlaubter Zugriffe auf Serverfreigaben
-		lst_shares = umcd.List()
+		input_allow_homeshare = umcd.make( self[ 'reservation/profile/edit' ][ 'homeshare' ] , default = int(opts['homeshare']) )
 		input_allow_classshare = umcd.make( self[ 'reservation/profile/edit' ][ 'classshare' ] , default = int(opts['classshare']) )
 		input_allow_schoolshare = umcd.make( self[ 'reservation/profile/edit' ][ 'schoolshare' ], default = int(opts['schoolshare']) )
 		input_allow_extrashares = umcd.make( self[ 'reservation/profile/edit' ][ 'extrashares' ] , default = int(opts['extrashares']) )
+		idlist_ok_button.append(input_allow_homeshare.id())
 		idlist_ok_button.append(input_allow_classshare.id())
 		idlist_ok_button.append(input_allow_schoolshare.id())
 		idlist_ok_button.append(input_allow_extrashares.id())
-		lst_shares.add_row( [input_allow_classshare ] )
-		lst_shares.add_row( [input_allow_schoolshare ] )
-		lst_shares.add_row( [input_allow_extrashares ] )
-		lst.add_row([input_internetfilter, umcd.Frame( [ lst_shares ] )])
+		lst.add_row([input_internetfilter])
+		lst.add_row([input_allow_homeshare, input_allow_classshare ] )
+		lst.add_row([input_allow_schoolshare, input_allow_extrashares ] )
 
 		# build set/cancel button
 		#req_list = umcp.Command( args = [ 'reservation/profile/list' ] )
