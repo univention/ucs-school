@@ -1,3 +1,10 @@
+ucs-school-reservation-customdata (5.0.2-1) unstable; urgency=low
+
+  * do not set all UCR variables to "true" if customer selected a
+    different value (Bug #17255)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Thu, 07 Jan 2010 11:58:17 +0100
+
 ucs-school-reservation-customdata (5.0.1-1) unstable; urgency=low
 
   * changed default settings:  (Bug #17114)
