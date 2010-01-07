@@ -1,3 +1,11 @@
+ucs-school-scheduler (5.0.2-1) unstable; urgency=low
+
+  * added handling for additional keywords in scheduled UCR settings: (Bug #17255)
+    @%@option-int2bool:VARNAME@%@ and
+    @%@option-int2bool-inverted:VARNAME@%@
+
+ -- Sönke Schwardt <schwardt@univention.de>  Thu, 07 Jan 2010 12:27:05 +0100
+
 ucs-school-scheduler (5.0.1-1) unstable; urgency=low
 
   * stop scheduler in prerm only if package gets removed - (Bug #17277)
