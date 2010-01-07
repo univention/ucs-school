@@ -84,7 +84,7 @@ class Web( object ):
 
 		opts = _types.defaults.merge(object.options, 'reservation_list')
 
-		headline = _( "School Lesson Configuration" )
+		headline = _( "School lesson configuration" )
 		#lst = umcd.List()
 		framelst = []
 		idlist_create_button = []
@@ -96,8 +96,8 @@ class Web( object ):
 		req.set_flag( 'web:startup', True )
 		req.set_flag( 'web:startup_reload', True )
 		req.set_flag( 'web:startup_dialog', True )
-		req.set_flag( 'web:startup_format', _('New Reservation') )
-		createbtn = umcd.Button( _('New Reservation'), icon, umcd.Action( req, idlist_create_button ) )
+		req.set_flag( 'web:startup_format', _('New reservation') )
+		createbtn = umcd.Button( _('New reservation'), icon, umcd.Action( req, idlist_create_button ) )
 		#lst.add_row([createbtn])
 		#framelst.append( umcd.Frame( [ lst ], headline ) )
 
@@ -134,7 +134,7 @@ class Web( object ):
 
 			#subheadline = '%s ( %s=%s )' % ( _('Searchresults'), _(opts['key']), opts['searchfilter'])
 			idlist_remove = []
-			tablelst.set_header( [ _( 'Date' ), _( 'Start Time' ), _( 'End Time' ), _( 'Room'), _( 'Class/Group'), _( 'Reservation Profile' ), _('Owner'), _( 'Edit' ), _( 'Delete' ) ] )
+			tablelst.set_header( [ _( 'Date' ), _( 'Start Time' ), _( 'End Time' ), _( 'Room'), _( 'Class/Group'), _( 'Reservation profile' ), _('Owner'), _( 'Edit' ), _( 'Delete' ) ] )
 			for reservationID, reservation_name, description, date_start, time_begin, time_end, roomname, groupname, ownername, profile_name in searchresult:
 				row = []
 				datelist=date_start.split('-')
@@ -183,7 +183,7 @@ class Web( object ):
 					req.set_flag( 'web:startup', True )
 					req.set_flag( 'web:startup_reload', True )
 					req.set_flag( 'web:startup_dialog', True )
-					req.set_flag( 'web:startup_format', _('Edit Reservation')+' [%(roomname)s/%(date_start)s]' )
+					req.set_flag( 'web:startup_format', _('Edit reservation')+' [%(roomname)s/%(date_start)s]' )
 					editbtn = umcd.Button( '', icon, umcd.Action( req ) , helptext =  _('Click to edit this reservation') )
 					row.append(editbtn)
 				else:
@@ -201,7 +201,7 @@ class Web( object ):
 					req.set_flag( 'web:startup', True )
 					req.set_flag( 'web:startup_reload', True )
 					req.set_flag( 'web:startup_dialog', True )
-					req.set_flag( 'web:startup_format', _('Remove Reservation') )
+					req.set_flag( 'web:startup_format', _('Remove reservation') )
 					delbtn = umcd.Button( '', icon, umcd.Action( req ) , helptext = _('Click to remove this reservation') )
 					row.append(delbtn)
 				else:
@@ -220,7 +220,7 @@ class Web( object ):
 				tablelst.add_row( row )
 		else:
 			if opts.get('action') == 'search':
-				tablelst.add_row( [_('No Matching Reservations Found')] )
+				tablelst.add_row( [_('No matching reservations found')] )
 			else:
 				tablelst.add_row( [_('Click search button to list reservations')] )
 
@@ -242,9 +242,9 @@ class Web( object ):
 		debugmsg( ud.ADMIN, ud.INFO, '_web_reservation_edit: opts: %s' % str( opts ) )
 
 		if not _defined('reservationID', opts):
-			headline = _( "Create Reservation" )
+			headline = _( "Create reservation" )
 		else:
-			headline = _( "Edit Reservation" )
+			headline = _( "Edit reservation" )
 
 		lst = umcd.List()
 		idlist_ok_button = []
@@ -290,7 +290,7 @@ class Web( object ):
 						opts = choice_opts ,
 						incomplete = False )
 			choices.append( { 'description' : description, 'actions' : [ umcd.Action( req, idlist_ok_button ) ] } )
-		input_time_begin = umcd.ChoiceButton( _('Start Time'), choices, default = defaultID, close_dialog = False, attributes = { 'width' : '300' } )
+		input_time_begin = umcd.ChoiceButton( _('Start time'), choices, default = defaultID, close_dialog = False, attributes = { 'width' : '300' } )
 		input_time_begin[ 'width' ] = '200'
 		idlist_ok_button.append(input_time_begin.id())
 		row.append(input_time_begin)
@@ -512,24 +512,24 @@ class Web( object ):
 			req = umcp.Command( args = [ 'reservation/edit' ], opts = write_opts )
 			actions = ( umcd.Action( req, idlist_ok_button ) )#, umcd.Action( req_list, idlist_ok_button ) )
 			if not _defined('reservationID', opts):
-				item_btn_set = umcd.Button( _('Save Reservation'), 'actions/ok', actions = actions, close_dialog = False )
+				item_btn_set = umcd.Button( _('Save reservation'), 'actions/ok', actions = actions, close_dialog = False )
 			else:
-				item_btn_set = umcd.Button( _('Save Changes'), 'actions/ok', actions = actions )
+				item_btn_set = umcd.Button( _('Save changes'), 'actions/ok', actions = actions )
 			item_btn_cancel = umcd.CancelButton( attributes = { 'align' : 'right' } )
 			lst.add_row( [ item_btn_set, item_btn_cancel ] )
 		elif action in ('collisionmessage', 'override'):
 			#ud.debug( ud.ADMIN, ud.INFO, '_web_reservation_edit: action: %s' % action )
 			reservationID, reservation_name, description, date_start, time_begin, time_end, roomname, groupname, profile = opts['collision']
-			#header =  _('Collision: Confirm Cancellation of Following Reservation:')
+			#header =  _('Collision: confirm cancellation of following reservation:')
 
 			if action == 'collisionmessage':
-				headline =  _('Collision: Reservation not possible.')
+				headline =  _('Collision: reservation not possible.')
 			else:
-				headline =  _('Collision: Override Existing Reservation?')
+				headline =  _('Collision: override existing reservation?')
 
-			msghead =  _('Colliding Reservation:')
+			msghead =  _('Colliding reservation:')
 			msglst = umcd.List()
-			msglst.set_header( [ '', _( 'Date' ), _( 'Start Time' ), _( 'End Time' ), _( 'Room'), _( 'Class/Group'), _( 'Reservation Profile' ) ] )
+			msglst.set_header( [ '', _( 'Date' ), _( 'Start Time' ), _( 'End Time' ), _( 'Room'), _( 'Class/Group'), _( 'Reservation profile' ) ] )
 			ou = object.options['ou']
 			row = []
 			datelist=date_start.split('-')
@@ -602,7 +602,7 @@ class Web( object ):
 
 		if not confirmed and not reservation:
 			lst = umcd.List()
-			res.dialog = [ umcd.Frame( [ lst ], _('No Reservation has been selected') ) ]
+			res.dialog = [ umcd.Frame( [ lst ], _('No reservation has been selected') ) ]
 			self.revamped( object.id(), res )
 			return
 
@@ -614,8 +614,8 @@ class Web( object ):
 
 		lst = umcd.List()
 		if not confirmed:
-			header =  _('Please Confirm Cancellation of Following Reservation:')
-			lst.set_header( [ '', _( 'Date' ), _( 'Start Time' ), _( 'End Time' ), _( 'Room'), _( 'Class/Group'), _( 'Reservation Profile' ) ] )
+			header =  _('Please confirm cancellation of following reservation:')
+			lst.set_header( [ '', _( 'Date' ), _( 'Start time' ), _( 'End time' ), _( 'Room'), _( 'Class/Group'), _( 'Reservation profile' ) ] )
 			reservationID, reservation_name, description, date_start, time_begin, time_end, roomname, groupname, profile = reservationdata
 			ou = object.options['ou']
 			row = []
@@ -659,9 +659,9 @@ class Web( object ):
 			lst.add_row( [ item_btn_ok, item_btn_cancel ] )
 		else:
 			if success:
-				header = _('Reservation successfully cancelled')
+				header = _('Reservation cancelled successfully')
 			else:
-				header = _('Error While Cancelling Reservation')
+				header = _('Error while cancelling reservation')
 				lst.add_row( [] )
 				lst.add_row( [ _('Please ask local administrator for further details.') ] )
 			for msg in messages:
@@ -682,7 +682,7 @@ class Web( object ):
 		opts = _types.defaults.merge(object.options, 'reservation_profile_list')
 		debugmsg( ud.ADMIN, ud.INFO, '_web_profile_list: opts: %s' % str( opts ) )
 
-		headline = _( "Reservation Profiles" )
+		headline = _( "Reservation profiles" )
 		framelst = []
 
 		# 'create new' button
@@ -692,7 +692,7 @@ class Web( object ):
 		req.set_flag( 'web:startup', True )
 		req.set_flag( 'web:startup_reload', True )
 		req.set_flag( 'web:startup_dialog', True )
-		req.set_flag( 'web:startup_format', _('New Reservation Profile') )
+		req.set_flag( 'web:startup_format', _('New reservation profile') )
 		createbtn = umcd.Button( _('New Reservation Profile'), icon, umcd.Action( req ) )
 		seperator_line = umcd.HTML(text='<hr>')
 
@@ -717,7 +717,7 @@ class Web( object ):
 		headline = '%s:' % _('Searchresults')
 		tablelst = umcd.List()
 		if searchresult:
-			tablelst.set_header( [ _( 'Reservation Profile' ), _( 'Description' ), _('Owner'), _('Edit'), _('Copy'), _('Delete') ] )
+			tablelst.set_header( [ _( 'Reservation profile' ), _( 'Description' ), _('Owner'), _('Edit'), _('Copy'), _('Delete') ] )
 			for resprofileID, profile_name, description, ownername, isglobaldefault in searchresult:
 				row = []
 				#icon = 'reservation/profile_lights'
@@ -766,7 +766,7 @@ class Web( object ):
 				req.set_flag( 'web:startup', True )
 				req.set_flag( 'web:startup_reload', True )
 				req.set_flag( 'web:startup_dialog', True )
-				req.set_flag( 'web:startup_format', _('Copy Reservation Profile')+' [(%(profile_name)s]' )
+				req.set_flag( 'web:startup_format', _('Copy reservation profile')+' [(%(profile_name)s]' )
 				icon = 'reservation/copy'
 				copybtn = umcd.Button( '', icon, umcd.Action( req ), helptext = _('Click to copy and edit this profile') )
 				row.append(copybtn)
@@ -779,7 +779,7 @@ class Web( object ):
 					req.set_flag( 'web:startup', True )
 					req.set_flag( 'web:startup_reload', True )
 					req.set_flag( 'web:startup_dialog', True )
-					req.set_flag( 'web:startup_format', _('Remove Profile') )
+					req.set_flag( 'web:startup_format', _('Remove profile') )
 					icon = 'reservation/profile_lights_del'
 					delbtn = umcd.Button( '', icon, umcd.Action( req ), helptext = _('Click to remove this profile') )
 					row.append(delbtn)
@@ -799,7 +799,7 @@ class Web( object ):
 				tablelst.add_row( row )
 		else:
 			if opts.get('action') == 'search':
-				tablelst.add_row( [_('No Matching Reservation Profiles Found')] )
+				tablelst.add_row( [_('No matching reservation profiles found')] )
 			else:
 				tablelst.add_row( [_('Click search button to list reservation profiles')] )
 
@@ -818,7 +818,7 @@ class Web( object ):
 		opts = _types.defaults.merge(object.options, 'reservation_profile_edit')
 		debugmsg( ud.ADMIN, ud.INFO, '_web_profile_edit: opts: %s' % str( opts ) )
 
-		headline = _( "Edit Configuration Profile" )
+		headline = _( "Edit reservation profile" )
 		#framelst = []
 
 		lst = umcd.List()
@@ -907,9 +907,9 @@ class Web( object ):
 		actions = ( umcd.Action( req, idlist_ok_button ) )#, umcd.Action( req_list ) )
 		#if 'new_profile' in opts:
 		if not _defined('resprofileID', opts):
-			item_btn_set = umcd.Button( _('Create Reservation Profile'), 'actions/ok', actions = actions )
+			item_btn_set = umcd.Button( _('Create reservation profile'), 'actions/ok', actions = actions )
 		else:
-			item_btn_set = umcd.Button( _('Save Changes'), 'actions/ok', actions = actions )
+			item_btn_set = umcd.Button( _('Save changes'), 'actions/ok', actions = actions )
 		item_btn_cancel = umcd.CancelButton( attributes = { 'align' : 'right' } )
 		lst.add_row( [ item_btn_set, item_btn_cancel ] )
 
@@ -927,7 +927,7 @@ class Web( object ):
 
 		if not confirmed and not resprofileID:
 			lst = umcd.List()
-			res.dialog = [ umcd.Frame( [ lst ], _('No Reservation Profile has been Selected') ) ]
+			res.dialog = [ umcd.Frame( [ lst ], _('No reservation profile has been selected') ) ]
 			self.revamped( object.id(), res )
 			return
 
@@ -939,8 +939,8 @@ class Web( object ):
 
 		lst = umcd.List()
 		if not confirmed:
-			header =  _('Please Confirm Removal of Following Reservation Profile:')
-			lst.set_header( [ '', _( 'Reservation Profile' ), _('Description') ] )
+			header =  _('Please confirm removal of following reservation profile:')
+			lst.set_header( [ '', _( 'Reservation profile' ), _('Description') ] )
 			profile_name, description = profiledata
 			row = []
 
@@ -963,7 +963,7 @@ class Web( object ):
 			if success:
 				header = _('Reservation profile successfully removed')
 			else:
-				header = _('Error While Removing Reservation Profile')
+				header = _('Error while removing reservation profile')
 				lst.add_row( [] )
 				lst.add_row( [ _('Please ask local administrator for further details.') ] )
 			for msg in messages:
@@ -983,7 +983,7 @@ class Web( object ):
 
 		message = res.dialog
 
-		headline = _( "Edit Lessontime Definitions" )
+		headline = _( "Edit lessontime definitions" )
 
 		lst = umcd.List()
 		idlist_ok_button = []
@@ -1024,7 +1024,7 @@ class Web( object ):
 		req = umcp.Command( args = [ 'reservation/lessontimes/edit' ], opts = write_opts )
 		actions = ( umcd.Action( req, idlist_ok_button ) )
 		#item_btn_set = umcd.SetButton( actions )
-		item_btn_set = umcd.Button( _('Save Changes'), 'actions/ok', actions = actions )
+		item_btn_set = umcd.Button( _('Save changes'), 'actions/ok', actions = actions )
 		#item_btn_cancel = umcd.CancelButton( attributes = { 'align' : 'right' } )
 		lst.add_row( [ item_btn_set ] )
 

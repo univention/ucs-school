@@ -64,8 +64,8 @@ DISTRIBUTION_DATA_PATH = '/var/lib/ucs-school-umc-distribution'
 DISTRIBUTION_CMD = '/usr/lib/ucs-school-umc-distribution/umc-distribution'
 
 icon = 'reservation/module'
-short_description = _( 'Lesson Configuration' )
-long_description = _( 'School Lesson Configuration' )
+short_description = _( 'Lesson configuration' )
+long_description = _( 'School lesson configuration' )
 categories = [ 'all' ]
 
 def joineddict(*args):
@@ -112,8 +112,8 @@ command_description = {
 #				   } ),
 #	),
 	'reservation/remove': umch.command(
-		short_description = _( 'Remove Reservation' ),
-		long_description = _( 'Remove Reservation' ),
+		short_description = _( 'Remove reservation' ),
+		long_description = _( 'Remove reservation' ),
 		method = 'reservation_remove',
 		values = joineddict(
 			_types.Reservation.values,
@@ -121,8 +121,8 @@ command_description = {
 				   } ),
 	),
 	'reservation/profile/list': umch.command(
-		short_description = _( 'Reservation Profiles' ),
-		long_description = _( 'List Reservation Profiles' ),
+		short_description = _( 'Reservation profiles' ),
+		long_description = _( 'List reservation profiles' ),
 		method = 'reservation_profile_list',
 		values = { 'key' : _types.searchkey_profile,
 			   'searchfilter' : _types.sfilter,
@@ -133,8 +133,8 @@ command_description = {
 		priority = 80
 	),
 	'reservation/profile/edit': umch.command(
-		short_description = _( 'Edit Reservation Profile' ),
-		long_description = _( 'Edit Reservation Profile' ),
+		short_description = _( 'Edit reservation profile' ),
+		long_description = _( 'Edit reservation profile' ),
 		method = 'reservation_profile_edit',
 		values = joineddict(
 			_types.Profile.values,
@@ -143,20 +143,20 @@ command_description = {
 				   } ),
 	),
 	'reservation/profile/write': umch.command(
-		short_description = _( 'Save Reservation Profile' ),
-		long_description = _( 'Save Reservation Profile' ),
+		short_description = _( 'Save reservation profile' ),
+		long_description = _( 'Save reservation profile' ),
 		method = 'reservation_profile_write',
 		values = _types.Profile.values,
 	),
 	'reservation/profile/remove': umch.command(
-		short_description = _( 'Remove Reservation Profile' ),
+		short_description = _( 'Remove reservation profile' ),
 		long_description = _( 'Remove Reservation Profile' ),
 		method = 'reservation_profile_remove',
 		values = _types.Profile.values,
 	),
 	'reservation/lessontimes/edit': umch.command(
-		short_description = _( 'Edit Lessontimes' ),
-		long_description = _( 'Edit Lessontime Definitions' ),
+		short_description = _( 'Edit lessontimes' ),
+		long_description = _( 'Edit lessontime definitions' ),
 		method = 'reservation_lessontimes_edit',
 		values = _types.Lessontime.values,
 		startup = True,
