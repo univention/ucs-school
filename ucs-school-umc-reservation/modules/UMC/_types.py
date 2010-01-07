@@ -421,13 +421,13 @@ sfilter = umc.String( '&nbsp;' , required = False )
 searchkey_reservation = Reservation_SearchKeys()
 searchkey_profile = Profile_SearchKeys()
 date = umc.String( _( 'Date' ) )
-syntax['time_begin'] = SyntaxTimeStart( _( 'Start Time' ) )
-syntax['time_end'] = SyntaxTimeEnd( _( 'End Time' ) )
-syntax['groupname'] = SyntaxUserGroup( _( 'Class/Project Group' ) )
+syntax['time_begin'] = SyntaxTimeStart( _( 'Start time' ) )
+syntax['time_end'] = SyntaxTimeEnd( _( 'End time' ) )
+syntax['groupname'] = SyntaxUserGroup( _( 'Class/Project group' ) )
 syntax['roomname'] = SyntaxHostGroup( _( 'Room' ) )
-syntax['resprofileID'] = SyntaxProfile( _( 'Reservation Profile' ) )
+syntax['resprofileID'] = SyntaxProfile( _( 'Reservation profile' ) )
 reservation = umc.String( _( 'Reservation' ) )
-collectfiles = umc.Boolean( _( 'Collect Pupils Files at End of Reservation' ) )
+collectfiles = umc.Boolean( _( 'Collect pupil's files at end of reservation' ) )
 classshare = umc.Boolean( _( 'Access to class share' ) )
 schoolshare = umc.Boolean( _( 'Access to school share' ) )
 homeshare = umc.Boolean( _( 'Access to home share' ) )
@@ -437,7 +437,7 @@ filename = umc.String( _( 'Digital Teaching Resource' ) )
 fileupload = umc.FileUploader( _( 'Upload Digital Teaching Resources' ), required = False )
 licensedprogram_whitelist = ProgramAllowSelection()
 freeprogram_blacklist = ProgramDenySelection()
-licenses_avail = umc.Integer( _( 'Number of Licenses' ) )
+licenses_avail = umc.Integer( _( 'Number of licenses' ) )
 #programsearch = ProgramAllowSelectionSearch()
 syntax['licensedprogram_whitelist'] = ProgramAllowSelectionList( required = False )
 syntax['freeprogram_blacklist'] = ProgramDenySelectionList( required = False )
@@ -450,8 +450,8 @@ printmode = PrintmodeSelection()
 timeregex = '^[ ]*(20|21|22|23|[01]\d|\d):[0-5]\d[ ]*$'
 syntax['lessontime_name'] = umc.String( _( 'Name' ) )
 syntax['description'] = umc.String( _( 'Description (optional)' ), required = False )
-syntax['startTime'] = umc.String( _( 'Start Time' ), regex = timeregex)
-syntax['endTime'] = umc.String( _( 'End Time' ), regex = timeregex)
+syntax['startTime'] = umc.String( _( 'Start time' ), regex = timeregex)
+syntax['endTime'] = umc.String( _( 'End time' ), regex = timeregex)
 # lessontime_table_syntax = dict( [ ( key, syntax[key] ) for key in 'lessontime_name', 'description', 'startTime', 'endTime' ] )
 lessontime_table = umc.MultiDictValue( _( 'Lessontime Definitions' ),
 	syntax = { 'lessontime_name' : syntax['lessontime_name'],
@@ -504,7 +504,7 @@ class Reservation (object):
 class Profile (object):
 	values = {
 	   'resprofileID': syntax['resprofileID'],
-	   'profile_name': umc.String( _( 'Profile Name' ) ),
+	   'profile_name': umc.String( _( 'Profile name' ) ),
 	   'description': umc.String( _( 'Description (optional)' ), required = False ),
 	   'ownername': umc.String( _( 'Owner' ) ),
 	   'homeshare': homeshare,
