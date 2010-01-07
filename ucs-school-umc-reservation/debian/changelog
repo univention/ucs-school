@@ -1,3 +1,10 @@
+ucs-school-umc-reservation (5.0.3-1) unstable; urgency=low
+
+  * do not actually remove reservations but tag them for deletion (Bug #15542)
+    (reservation will be deleted by ucs-school-scheduler)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Thu, 07 Jan 2010 13:35:05 +0100
+
 ucs-school-umc-reservation (5.0.2-1) unstable; urgency=low
 
   * control access to homeshare (Bug #17114)

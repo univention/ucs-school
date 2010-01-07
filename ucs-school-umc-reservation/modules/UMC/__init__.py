@@ -433,6 +433,9 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 			for reservation in reservation_list:
 				#for key in reservationdb.Reservation.ROWS:
 				#	self._debug( ud.INFO, 'db.reservation[%s]: %s' % (key, getattr(reservation,key, None)) )
+				# ignore reservations marked for deletion
+				if reservation.deleteFlag:
+					continue
 				# get all items matching to regex
 				if key == 'groupname':
 					groupname = usergiddict.get(reservation.usergroup, currentOU+'-')
@@ -472,6 +475,9 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 				#self._debug( ud.INFO, 'searchresult_filtered=%s' % searchresult )
 		else:
 			for reservation in reservation_list:
+				# ignore reservations marked for deletion
+				if reservation.deleteFlag:
+					continue
 				if self.condition_reservation_date_window(reservation) \
 					and reservation.owner == self._uid:
 					#order = ('reservationID', 'reservation_name', 'description', 'date_start', 'time_begin', 'time_end', 'room', 'group', 'owner')
@@ -643,6 +649,9 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 						if reservationID and str(reservation.id) == reservationID:
 							#debugmsg( ud.ADMIN, ud.INFO, 'reservation_write: no collision: reservationID reuse')
 							# No self-collision, continue checks
+							continue
+						# no collision with reservations marked for deletion
+						if reservation.deleteFlag:
 							continue
 						#sameroom = False
 						#samegroup = False
@@ -1031,8 +1040,9 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 			r = reservationdb.Reservation.get( reservationID )
 			if confirmed:
 				if r:
-					r.delete()
-					self._debug( ud.INFO, 'removed %s' % reservationID )
+					r.deleteFlag = True
+					r.updateDeleteFlag()
+					self._debug( ud.INFO, 'tagged reservation %s for deletion' % reservationID )
 			else:
 			#order = ('reservationID', 'description', 'date_start', 'time_begin', 'time_end', 'hostgroup', 'usergroup')
 				if r:
