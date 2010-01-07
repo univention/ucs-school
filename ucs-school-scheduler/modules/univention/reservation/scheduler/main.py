@@ -89,7 +89,7 @@ def connect ():
 	ucr.load ()
 
 	# default values
-	INTERVAL   = int (ucr.get ('scheduler/interval', 60)) # scan interval in seconds
+	INTERVAL   = int (ucr.get ('scheduler/interval', 20)) # scan interval in seconds
 	HOST       = ucr.get ('scheduler/sql/server', 'localhost')
 	PORT       = int (ucr.get ('scheduler/sql/port', 3306))
 	BACKEND    = ucr.get ('scheduler/sql/backend', 'mysql')
