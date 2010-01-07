@@ -1,3 +1,11 @@
+ucs-school-reservation-customdata (5.0.1-1) unstable; urgency=low
+
+  * changed default settings:  (Bug #17114)
+    - added homeshare
+    - added missing default values for existing profiles
+
+ -- Sönke Schwardt <schwardt@univention.de>  Thu, 07 Jan 2010 11:54:25 +0100
+
 ucs-school-reservation-customdata (5.0.0-0) unstable; urgency=low
 
   * ported package to UCS 2.3 UCS@school
