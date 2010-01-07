@@ -40,10 +40,17 @@ createLogfile /var/log/univention/scheduler.log "root:adm" 640
 createLogfile /var/log/univention/scheduler-status.log "root:adm" 640
 
 univention-config-registry set scheduler/debug/level?2 \
-								scheduler/interval?60 \
+								scheduler/interval?20 \
 								scheduler/sql/server?localhost \
 								scheduler/sql/port?3306 \
 								scheduler/sql/backend?mysql
+
+# decrease scheduler interval to 20 seconds of old defaultvalue is still set (Bug #15542)
+if [ "$1" = "configure" -a -n "$2" ] && dpkg --compare-versions "$2" lt 5.0.0; then
+	if [ "$(univention-config-registry get scheduler/interval)" = "60" ] ; then
+		univention-config-registry set scheduler/interval=20
+	fi
+fi
 
 #DEBHELPER#
 
