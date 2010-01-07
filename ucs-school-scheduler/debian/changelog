@@ -1,3 +1,11 @@
+ucs-school-scheduler (5.0.3-1) unstable; urgency=low
+
+  * stop all running reservations that are overdue or all running (Bug #15542)
+    reservations that are tagged for deletion
+  * remove all reservations tagged for deletion
+
+ -- Sönke Schwardt <schwardt@univention.de>  Thu, 07 Jan 2010 12:30:00 +0100
+
 ucs-school-scheduler (5.0.2-1) unstable; urgency=low
 
   * added handling for additional keywords in scheduled UCR settings: (Bug #17255)

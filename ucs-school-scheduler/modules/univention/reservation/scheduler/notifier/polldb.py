@@ -119,6 +119,8 @@ def getStoppable (connection):
 	"""
 	Helper function that retrieves stoppable Reservations for the current
 	datetime
+	These are all running reservations whose endTime has been reached or
+	running reservations that have been marked for deletion
 	"""
 	_d = debug.function ('notifier.polldb.getStoppable')
 	stoppable = []
@@ -130,7 +132,7 @@ def getStoppable (connection):
 	# reservations with errors are stoppable!!
 	# ITERATIONS: disabled for the moment
 	#cursor.execute ("SELECT reservationID FROM %s WHERE TIME (endTime) < TIME (%%s) AND (status <> %%s AND status <> %%s OR status RLIKE '^%s 1(05|10|11|20|21)-[0-9]+$')" % (RESERVATION_TABLE, ERROR), (dt, WAITING, DONE))
-	cursor.execute ("SELECT reservationID FROM %s WHERE endTime < %%s AND (status <> %%s AND status <> %%s)" % RESERVATION_TABLE, (dt, WAITING, DONE))
+	cursor.execute ("SELECT reservationID FROM %s WHERE ( endTime < %%s OR deleteFlag = True ) AND (status <> %%s AND status <> %%s)" % RESERVATION_TABLE, (dt, WAITING, DONE))
 	for res in cursor.fetchall ():
 		try:
 			stoppable.append (Reservation.get (res[0]))
@@ -138,7 +140,24 @@ def getStoppable (connection):
 			debug.debug (debug.MAIN, debug.ERROR, '%s\nE: Reservation does not exist. ID: %s' % (traceback.format_exc().replace('%','#'), res[0]))
 	cursor.close ()
 	return stoppable
+
+def removeReservationsTaggedForDeletion(connection):
+	"""
+	Helper function that removes reservations from database that have been marked for deletion
+	"""
+	_d = debug.function ('notifier.polldb.removeReservationsTaggedForDeletion')
+	cursor = connection.cursor ()
+	cursor.execute ("SELECT reservationID FROM %s WHERE deleteFlag = True" % RESERVATION_TABLE )
+	for res in cursor.fetchall ():
+		try:
+			reservation = Reservation.get(res[0])
+			reservation.delete()
+		except Exception:
+			debug.debug (debug.MAIN, debug.ERROR, '%s\nE: Deletion of reservation %s failed' % (traceback.format_exc().replace('%','#'), res[0]))
+	cursor.close ()
 # Helper functions END
+
+
 
 class PollDB (Singleton):
 	"""
@@ -169,7 +188,11 @@ class PollDB (Singleton):
 		# according to the specification first the reservations must be stopped
 		# and than started
 		_d = debug.function ('notifier.polldb.PollDB.poll')
+		# stop all reservations that are overdue or marked for deletion
 		self._notify_listeners (StopEvent (getStoppable (connection)))
+		# delete all reservations tagged for deletion
+		removeReservationsTaggedForDeletion(connection)
+		# start all reservations that are overdue
 		self._notify_listeners (StartEvent (getStartable (connection)))
 
 	def _notify_listeners (self, event):
