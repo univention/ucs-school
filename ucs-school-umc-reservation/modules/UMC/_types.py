@@ -428,9 +428,10 @@ syntax['roomname'] = SyntaxHostGroup( _( 'Room' ) )
 syntax['resprofileID'] = SyntaxProfile( _( 'Reservation Profile' ) )
 reservation = umc.String( _( 'Reservation' ) )
 collectfiles = umc.Boolean( _( 'Collect Pupils Files at End of Reservation' ) )
-classshare = umc.Boolean( _( 'Class Share' ) )
-schoolshare = umc.Boolean( _( 'Schoolshare' ) )
-extrashares = umc.Boolean( _( 'Extra Shares' ) )
+classshare = umc.Boolean( _( 'Access to class share' ) )
+schoolshare = umc.Boolean( _( 'Access to school share' ) )
+homeshare = umc.Boolean( _( 'Access to home share' ) )
+extrashares = umc.Boolean( _( 'Access to other shares' ) )
 syntax['rhythm'] = SyntaxIterationRhythm( _( 'Rhythm' ) )
 filename = umc.String( _( 'Digital Teaching Resource' ) )
 fileupload = umc.FileUploader( _( 'Upload Digital Teaching Resources' ), required = False )
@@ -506,6 +507,7 @@ class Profile (object):
 	   'profile_name': umc.String( _( 'Profile Name' ) ),
 	   'description': umc.String( _( 'Description (optional)' ), required = False ),
 	   'ownername': umc.String( _( 'Owner' ) ),
+	   'homeshare': homeshare,
 	   'schoolshare': schoolshare,
 	   'classshare': classshare,
 	   'extrashares': extrashares,
@@ -518,9 +520,10 @@ class Profile (object):
 			'profile_name': '',
 			'description': '',
 			'ownername': '',
-	   		'schoolshare': True,
-	   		'classshare': True,
-	   		'extrashares': True,
+			'homeshare': True,
+			'schoolshare': True,
+			'classshare': True,
+			'extrashares': True,
 			'internetfilter': 'default',
 			'swID-act-list': '',
 			'swID-deact-list': '',

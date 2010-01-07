@@ -1,3 +1,9 @@
+ucs-school-umc-reservation (5.0.2-1) unstable; urgency=low
+
+  * control access to homeshare (Bug #17114)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Thu, 07 Jan 2010 13:32:39 +0100
+
 ucs-school-umc-reservation (5.0.1-1) unstable; urgency=low
 
   * fixed traceback during profile search (Bug #15509)
