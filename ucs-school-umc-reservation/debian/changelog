@@ -1,3 +1,9 @@
+ucs-school-umc-reservation (5.0.4-1) unstable; urgency=low
+
+  * show success/error msg after deletion of reservation (Bug #17278)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Thu, 07 Jan 2010 13:48:48 +0100
+
 ucs-school-umc-reservation (5.0.3-1) unstable; urgency=low
 
   * do not actually remove reservations but tag them for deletion (Bug #15542)
