@@ -134,7 +134,7 @@ class InsufficientRelations (Exception):
 ##### DB-Object classes
 class Reservation (object):
 	# this list of class attributes serves as API for the UMC module
-	ROWS = ['reservationID', 'name', 'description', 'owner', 'hostgroup', 'usergroup', 'startTime', 'endTime', 'iterationDays', 'iterationEnd', 'iterateVacations', 'resprofileID', 'status', 'replacedByID']
+	ROWS = ['reservationID', 'name', 'description', 'owner', 'hostgroup', 'usergroup', 'startTime', 'endTime', 'iterationDays', 'iterationEnd', 'iterateInVacations', 'resprofileID', 'status', 'replacedByID', 'deleteFlag']
 
 	def __init__ (self):
 		self.id = None
@@ -150,6 +150,7 @@ class Reservation (object):
 		self.iterateInVacations = None
 		self.status = None
 		self.replacedByID = None
+		self.deleteFlag = None
 
 		self._resprofileID = None
 		self._profile = None
@@ -187,6 +188,7 @@ class Reservation (object):
 		self.status = r.status
 		self.replacedByID = r.replacedByID
 		self.resprofileID = r.resprofileID
+		self.deleteFlag = r.deleteFlag
 		self._profile = None
 		self._options = None
 
@@ -277,6 +279,7 @@ class Reservation (object):
 				r.replacedByID = res[13]
 			else:
 				r.replacedByID = None
+			r.deleteFlag = res[14]
 			cursor.close ()
 			return r
 		cursor.close ()
@@ -327,7 +330,8 @@ class Reservation (object):
 				'iterateInVacations':self.iterateInVacations,
 				'resprofileID':self.resprofileID,
 				'status':self.status,
-				'replacedByID':self.replacedByID}
+				'replacedByID':self.replacedByID,
+				'deleteFlag':self.deleteFlag}
 
 	def save (self):
 		"""
@@ -385,6 +389,18 @@ class Reservation (object):
 	def setDone (self):
 		self.status = DONE
 		return self.status
+
+	def updateDeleteFlag (self):
+		"""
+		Updates deleteFlag field in DB if Reservation is already stored in database
+		(self.id != None)
+		"""
+		if self.id != None:
+			if not CONNECTION:
+				raise ConnectionNotAvailable ()
+			cursor = CONNECTION.cursor ()
+			cursor.execute ("UPDATE %s SET deleteFlag=%%s WHERE reservationID=%%s" % RESERVATION_TABLE, (self.deleteFlag, self.id))
+			cursor.close ()
 
 	def updateStatus (self):
 		"""

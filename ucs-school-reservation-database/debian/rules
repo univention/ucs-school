@@ -54,8 +54,9 @@ install: build-stamp
 	dh_clean -k
 	dh_installdirs
 
-	install -m644 sql/datatbase.sql $(D)/usr/share/$(PACKAGE_NAME)/
-	install -m644 sql/tables.sql $(D)/usr/share/$(PACKAGE_NAME)/
+	for fn in sql/*sql ; do \
+		install -m644 $$fn $(D)/usr/share/$(PACKAGE_NAME)/ ; \
+	done
 
 binary-indep: build install
 	dh_testdir -i

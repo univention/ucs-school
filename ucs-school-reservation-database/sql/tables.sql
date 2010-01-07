@@ -25,6 +25,7 @@ CREATE TABLE IF NOT EXISTS reservation (
 	resprofileID 		INT UNSIGNED,
 	status 				VARCHAR(255) NOT NULL,
 	replacedByID 		INT UNSIGNED,
+	deleteFlag			BOOLEAN,
 
 	PRIMARY KEY (reservationID)
 );
