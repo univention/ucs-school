@@ -1,3 +1,9 @@
+ucs-school-import (5.0.2-1) unstable; urgency=low
+
+  * fixed bug in ucs-school-create-dummy-users (Bug #17118)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Fri, 08 Jan 2010 14:14:23 +0100
+
 ucs-school-import (5.0.1-1) unstable; urgency=low
 
   * fixed handling of import files with DOS/UNIX linefeeds (Bug #16274)
