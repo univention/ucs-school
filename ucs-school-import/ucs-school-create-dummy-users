@@ -58,7 +58,7 @@ done
 for fn in Daniel Gabriele ; do
 	for ln in Krause Lehmann ; do
 		get_username_teacher "$fn" "$ln"
-		classlist="$(echo $CLASSES | tr ' ' ',')"
+		classlist="${OU}-$(echo $CLASSES | sed -e "s| |,$OU-|g")"
 		echo -e "A\t${ACCOUNTNAME}\t$ln\t$fn\t$OU\t$classlist\t\t${ACCOUNTNAME}@${domainname}\t1\t1\t0"
 	done
 done
