@@ -162,6 +162,7 @@ class Web( object ):
 																			opts = { 'ou' : ou } ) ) ] } )
 
 			ouselect = umcd.ChoiceButton( _('Please select department:'), ouchoices, default = defaultchoice )
+			ouselect['width'] = '300'
 			lst.add_row( [ ouselect ] )
 
 		groupchoices = []
@@ -174,6 +175,7 @@ class Web( object ):
 										       opts = { 'selectedgroup' : group, 'ou': currentOU } ) ) ] } )
 
 		groupselect = umcd.ChoiceButton( _('Select Class'), groupchoices, default = defaultchoice )
+		groupselect['width'] = '300'
 		lst.add_row( [ groupselect ] )
 
 		# stop if no group is selected
@@ -278,7 +280,7 @@ class Web( object ):
 
 		if printjob:
 			llst = umcd.List ()
-			_review = umcd.Link (_ ('Review printjob') + (' %s' % printjob.name), \
+			_review = umcd.Link (_ ('Review Printjob') + (' %s' % printjob.name), \
 					'/univention-management-console/filedownload.php?filename=%s' \
 					% printjob.getRelativeTmpfilename (), 'printermoderation/pdf')
 			llst.add_row ([_review, ' %s' % printjob.name])

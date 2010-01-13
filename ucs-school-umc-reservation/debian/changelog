@@ -1,3 +1,9 @@
+ucs-school-umc-reservation (5.0.7-1) unstable; urgency=low
+
+  * style update for UCS 2.3 (Bug #17102)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Wed, 13 Jan 2010 14:07:17 +0100
+
 ucs-school-umc-reservation (5.0.6-1) unstable; urgency=low
 
   * fixed wrong string delimiter (Bug #17102)

@@ -151,7 +151,7 @@ class Web( object ):
 				for id, url, kind in searchresult['whitelisted']:
 					default.append( { 'id': id, 'urldomain' : url, 'kind' : kind } )
 			kind = umcd.Selection( ( 'kind', _types.kind ), default = 'domain' )
-			kind[ 'width' ] = '120'
+			kind[ 'width' ] = '300'
 			urldomain = umcd.TextInput( ( 'urldomain', _types.url_domain ) )
 			urldomain[ 'width' ] = '300'
 			itemlist = umcd.DynamicList( self[ 'proxysettings/set/filteritems' ][ 'whitelistitems' ],
@@ -172,7 +172,7 @@ class Web( object ):
 				for id, url, kind in searchresult['blacklisted']:
 					default.append( { 'id': id, 'urldomain' : url, 'kind' : kind } )
 			kind = umcd.Selection( ( 'kind', _types.kind ), default = 'domain' )
-			kind[ 'width' ] = '120'
+			kind[ 'width' ] = '300'
 			urldomain = umcd.TextInput( ( 'urldomain', _types.url_domain ) )
 			urldomain[ 'width' ] = '300'
 			itemlist = umcd.DynamicList( self[ 'proxysettings/set/filteritems' ][ 'blacklistitems' ],
@@ -186,9 +186,12 @@ class Web( object ):
 		#
 		# add save and close buttons
 		#
+		lst = umcd.List()
 		req = umcp.Command( args = [ 'proxysettings/set/filteritems' ] )
 		cancel = umcd.CancelButton()
-		framelst.append( [ (umcd.SetButton( umcd.Action( req, idlist ) ), cancel ) ] )
+		setbtn = umcd.SetButton( umcd.Action( req, idlist ), attributes = { 'class': 'submit', 'defaultbutton': '1' } )
+		lst.add_row( [ umcd.HTML('<div style="padding-right: 325px">&nbsp;</div>'), cancel, setbtn ] )
+		framelst.append( umcd.Frame( [ lst ] ) )
 
 		res.dialog = framelst
 
@@ -225,6 +228,7 @@ class Web( object ):
 																			incomplete = True ) ) ] } )
 
 			ouselect = umcd.ChoiceButton( _('Please select school:'), ouchoices, default = defaultchoice, close_dialog = False )
+			ouselect['width'] = '300'
 			lst.add_row( [ ouselect ] )
 			idlist.append( ouselect.id() )
 
@@ -241,6 +245,7 @@ class Web( object ):
 																			incomplete = True ) ) ] } )
 
 		grpselect = umcd.ChoiceButton( _('Please select group:'), grpchoices, default = defaultchoice, close_dialog = False )
+		grpselect['width'] = '300'
 		lst.add_row( [ grpselect ] )
 		idlist.append( grpselect.id() )
 
@@ -251,7 +256,7 @@ class Web( object ):
 			choices.append( [ p[1], p[1] ] )
 		debugmsg( ud.ADMIN, ud.INFO, 'CHOICES: %s' % str(choices) )
 		mysyntax = _types.ProfileSelection( _('Please set new profile here:' ), choices = choices )
-		profileselect = umcd.Selection( ('profile', mysyntax), default = current_profile, attributes = { 'width': '200' } )
+		profileselect = umcd.Selection( ('profile', mysyntax), default = current_profile, attributes = { 'width': '300' } )
 		lst.add_row( [ profileselect ] )
 		idlist.append( profileselect.id() )
 
@@ -262,7 +267,7 @@ class Web( object ):
 		reqShow = umcp.Command( args = [ 'proxysettings/show/profileassignment' ], opts = { 'profile': [], 'grp': group, 'ou': currentOU } )
 
 		actions = ( umcd.Action( reqSet, idlist ), umcd.Action( reqShow, idlist ) )
-		lst.add_row( [ umcd.SetButton( actions = actions ) ] )
+		lst.add_row( [ umcd.SetButton( actions = actions, attributes = { 'class': 'submit', 'defaultbutton': '1' } ) ] )
 
 		res.dialog = umcd.Frame( [ lst ], _('Assign Proxy Filter Profile To Group') )
 
@@ -301,7 +306,7 @@ class Web( object ):
 			req.set_flag( 'web:startup_dialog', True )
 			req.set_flag( 'web:startup_format', _('Profile [%(profile)s]') )
 
-			item_addbtn = umcd.Button( _('Add'), 'actions/ok', umcd.Action( req, inputitems ), attributes = { 'helptext': _('Profile name:'), 'width': '250' } )
+			item_addbtn = umcd.Button( _('Add'), 'actions/ok', umcd.Action( req, inputitems ), attributes = { 'helptext': str(_('Profile name:')), 'width': '250' } )
 			lst.add_row( [ input_profile, input_filtertype, item_addbtn ] )
 			framelst.append( umcd.Frame( [ lst ], headline ) )
 
@@ -417,8 +422,8 @@ class Web( object ):
 			req = umcp.Command( args = [ 'proxysettings/remove/profile' ], opts = opts )
 			actions = ( umcd.Action( req ) )
 			item_btn_ok = umcd.Button( _('Remove'), 'actions/ok', actions = actions, close_dialog = False )
-			item_btn_cancel = umcd.CancelButton( attributes = { 'align' : 'right' } )
-			tablelst.add_row( [ item_btn_ok, item_btn_cancel ] )
+			item_btn_cancel = umcd.CancelButton()
+			tablelst.add_row( [ item_btn_cancel, item_btn_ok ] )
 		else:
 			if success:
 				header = _('Deleted profile successfully.')

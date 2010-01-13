@@ -70,6 +70,7 @@ class Web( object ):
 																					 'key': key } ) ) ] } )
 
 			ouselect = umcd.ChoiceButton( _('Please select school:'), ouchoices, default = defaultchoice, close_dialog = False )
+			ouselect['width'] = '300'
 			lstheader.add_row( [ ouselect ] )
 
 		req = umcp.Command( args = [ 'schoolgroups/group/add' ],
@@ -228,6 +229,7 @@ class Web( object ):
 				default = len(choices)-1
 
 		item_choicebutton = umcd.ChoiceButton( _( 'Please select class:' ), choices = choices, default = default, close_dialog = False )
+		item_choicebutton['width'] = '300'
 
 
 		# build set/cancel button
@@ -236,10 +238,10 @@ class Web( object ):
 		req = umcp.Command( args = [ 'schoolgroups/group/set' ], opts = opts )
 		actions = ( umcd.Action( req, item_id_list ) )
 		if newgrp or not groupdn:
-			item_btn_set = umcd.Button( _('Create Group'), 'actions/ok', actions = actions )
+			item_btn_set = umcd.Button( _('Create Group'), 'actions/ok', actions = actions, attributes = {'class': 'submit', 'defaultbutton': '1'} )
 		else:
-			item_btn_set = umcd.Button( _('Save Changes'), 'actions/ok', actions = actions )
-		item_btn_cancel = umcd.CancelButton( attributes = { 'align' : 'right' } )
+			item_btn_set = umcd.Button( _('Save Changes'), 'actions/ok', actions = actions, attributes = {'class': 'submit', 'defaultbutton': '1'} )
+		item_btn_cancel = umcd.CancelButton()
 
 
 		# FIXME TODO HACK HARDCODED for SFB:
@@ -261,6 +263,7 @@ class Web( object ):
 																					 } ), item_id_list ) ] } )
 
 			ouselect = umcd.ChoiceButton( _('Please select school:'), ouchoices, default = defaultchoice, close_dialog = False )
+			ouselect['width'] = '300'
 
 
 		# build layout
@@ -269,7 +272,7 @@ class Web( object ):
 			lst.add_row( [ ouselect ] )
 		lst.add_row( [ item_choicebutton ] )
 		lst.add_row( [ item_userlist ] )
-		lst.add_row( [ item_btn_set, item_btn_cancel ] )
+		lst.add_row( [ item_btn_cancel, item_btn_set ] )
 
 
 		if newgrp:
@@ -312,6 +315,7 @@ class Web( object ):
 																					 'key': key } ) ) ] } )
 
 			ouselect = umcd.ChoiceButton( _('Please select school:'), ouchoices, default = defaultchoice, close_dialog = False )
+			ouselect['width'] = '300'
 			lstheader.add_row( [ ouselect ] )
 
 		if object.incomplete or object.options.get( 'hidesearchresult', False ):
@@ -392,8 +396,8 @@ class Web( object ):
 
 		req = umcp.Command( args = [ 'schoolgroups/group/teacher/set' ], opts = opts )
 		actions = ( umcd.Action( req, item_id_list ) )
-		item_btn_set = umcd.Button( _('Save Changes'), 'actions/ok', actions = actions )
-		item_btn_cancel = umcd.CancelButton( attributes = { 'align' : 'right' } )
+		item_btn_set = umcd.Button( _('Save Changes'), 'actions/ok', actions = actions, attributes = {'class': 'submit', 'defaultbutton': '1'} )
+		item_btn_cancel = umcd.CancelButton()
 
 
 		# FIXME TODO HACK HARDCODED for SFB:
@@ -413,14 +417,14 @@ class Web( object ):
 																					 } ), item_id_list ) ] } )
 
 			ouselect = umcd.ChoiceButton( _('Please select school:'), ouchoices, default = defaultchoice, close_dialog = False )
-
+			ouselect['width'] = '300'
 
 		# build layout
 		lst.add_row( [ item_group, item_description ] )
 		if not ouselect == None:
 			lst.add_row( [ ouselect ] )
 		lst.add_row( [ item_userlist ] )
-		lst.add_row( [ item_btn_set, item_btn_cancel ] )
+		lst.add_row( [ item_btn_cancel, item_btn_set ] )
 
 
 		header = _( 'Assign teachers to group "%s"' ) % group
@@ -461,9 +465,9 @@ class Web( object ):
 			opts = { 'groupdn': groupdnlist, 'confirmed': True, 'ou': currentOU }
 			req = umcp.Command( args = [ 'schoolgroups/groups/remove' ], opts = opts )
 			actions = ( umcd.Action( req ) )
-			item_btn_ok = umcd.Button( _('Remove'), 'actions/ok', actions = actions, close_dialog = False )
-			item_btn_cancel = umcd.CancelButton( attributes = { 'align' : 'right' } )
-			lst.add_row( [ item_btn_ok, item_btn_cancel ] )
+			item_btn_ok = umcd.Button( _('Remove'), 'actions/ok', actions = actions, close_dialog = False, attributes = {'class': 'submit'} )
+			item_btn_cancel = umcd.CancelButton()
+			lst.add_row( [ item_btn_cancel, item_btn_ok ] )
 		else:
 			if success:
 				header = _('Groups successfully deleted')
@@ -510,6 +514,7 @@ class Web( object ):
 																					 } ) ) ] } )
 
 			ouselect = umcd.ChoiceButton( _('Please select school:'), ouchoices, default = defaultchoice, close_dialog = False )
+			ouselect['width'] = '300'
 			lst.add_row( [ ouselect ] )
 			item_id_list.append( ouselect.id() )
 
@@ -519,7 +524,7 @@ class Web( object ):
 		opts = { 'ou': currentOU }
 		req = umcp.Command( args = [ 'schoolgroups/groups/unused/list' ], opts = opts )
 		actions = ( umcd.Action( req, item_id_list ) )
-		item_updatebtn = umcd.Button( _('Update list'), 'actions/ok', actions = actions, close_dialog = False )
+		item_updatebtn = umcd.Button( _('Update list'), 'actions/ok', actions = actions, close_dialog = False, attributes = {'class': 'submit', 'defaultbutton': '1'} )
 		lst.add_row( [ _('Number of pupils per group (max 5):'), item_membercnt, item_updatebtn ] )
 
 		lstresult = umcd.List()
@@ -593,9 +598,9 @@ class Web( object ):
 			opts = { 'groupdn': groupdnlist, 'confirmed': True, 'ou': currentOU }
 			req = umcp.Command( args = [ 'schoolgroups/groups/unused/remove' ], opts = opts )
 			actions = ( umcd.Action( req ) )
-			item_btn_ok = umcd.Button( _('Remove'), 'actions/ok', actions = actions, close_dialog = False )
-			item_btn_cancel = umcd.CancelButton( attributes = { 'align' : 'right' } )
-			lst.add_row( [ item_btn_ok, item_btn_cancel ] )
+			item_btn_ok = umcd.Button( _('Remove'), 'actions/ok', actions = actions, close_dialog = False, attributes = {'class': 'submit'} )
+			item_btn_cancel = umcd.CancelButton()
+			lst.add_row( [ item_btn_cancel, item_btn_ok ] )
 		else:
 			if success:
 				header = _('Groups successfully deleted')

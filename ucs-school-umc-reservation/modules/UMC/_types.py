@@ -46,8 +46,8 @@ AdminUser = 'root'
 AdminUserUID = pwd.getpwnam(AdminUser)[2]
 
 class Reservation_SearchKeys( umc.StaticSelection ):
-	def __init__( self, required = True ):
-		umc.StaticSelection.__init__( self, unicode( _( 'Search Key' ) ), required = required )
+	def __init__( self, label, required = True ):
+		umc.StaticSelection.__init__( self, label, required = required )
 
 	def choices( self ):
 		return ( ( 'roomname', _( 'Room' ) ), ( 'groupname', _( 'Group' ) ), ( 'ownername', _( 'Owner' ) ) )
@@ -55,8 +55,8 @@ class Reservation_SearchKeys( umc.StaticSelection ):
 umcd.copy( umc.StaticSelection, Reservation_SearchKeys )
 
 class Profile_SearchKeys( umc.StaticSelection ):
-	def __init__( self, required = True ):
-		umc.StaticSelection.__init__( self, unicode( _( 'Search Key' ) ), required = required )
+	def __init__( self, label, required = True ):
+		umc.StaticSelection.__init__( self, label, required = required )
 
 	def choices( self ):
 		return ( ( 'profile_name', _( 'Profile Name' ) ), ( 'description', _( 'Description' ) ) )
@@ -418,8 +418,8 @@ department = umc.String( _( 'Department' ) )
 message = umc.Text( _( 'Message' ) )
 
 sfilter = umc.String( '&nbsp;' , required = False )
-searchkey_reservation = Reservation_SearchKeys()
-searchkey_profile = Profile_SearchKeys()
+searchkey_reservation = Reservation_SearchKeys( _( 'Search Key' ) )
+searchkey_profile = Profile_SearchKeys( _( 'Search Key' ) )
 date = umc.String( _( 'Date' ) )
 syntax['time_begin'] = SyntaxTimeStart( _( 'Start time' ) )
 syntax['time_end'] = SyntaxTimeEnd( _( 'End time' ) )

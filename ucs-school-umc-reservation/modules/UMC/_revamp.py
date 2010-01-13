@@ -70,7 +70,7 @@ class Web( object ):
 			my_filter = opts['filter']
 		else:
 			my_filter = '*'
-		text = umcd.make( self[ cmdname ][ 'filter' ], default = my_filter, attributes = { 'width' : '250' } )
+		text = umcd.make( self[ cmdname ][ 'filter' ], default = my_filter, attributes = { 'width' : '300' } )
 		form = umcd.SearchForm( cmdname, [ [ ( text, '*' ) ] ], opts, close_dialog = False )
 		lst.add_row( [ form ] )
 
@@ -113,9 +113,9 @@ class Web( object ):
 		#date_type = umc.String( _( 'Date' ), required = False )
 		#searchdate = umcd.DateInput( ( 'date_start', date_type ), default=opts['date_start']  )
 		#idlist_create_button.append(searchdate.id())
-		key = umcd.make( self[ umccommand ][ 'key' ], default = opts['key'], attributes = { 'width' : '100' } )
-		text = umcd.make( self[ umccommand ][ 'searchfilter' ], default = opts['searchfilter'], attributes = { 'width' : '250' } )
-		form = umcd.SearchForm( umccommand, [ [ ( key, opts['key'] ), ( text, opts['searchfilter'] ) ] ], opts = {'action': 'search'}, search_button_label = _("Show all") )
+		key = umcd.make( self[ umccommand ][ 'key' ], default = opts['key'], attributes = { 'width' : '300' } )
+		text = umcd.make( self[ umccommand ][ 'searchfilter' ], default = opts['searchfilter'], attributes = { 'width' : '300' } )
+		form = umcd.SearchForm( umccommand, [ [ ( key, opts['key'] ), ( text, opts['searchfilter'] ) ] ], opts = {'action': 'search'}, search_button_label = _("Search") )
 		# the searchform
 		lst.add_row( [ form ] )
 		framelst.append( umcd.Frame( [ lst ], headline ) )
@@ -267,9 +267,10 @@ class Web( object ):
 
 		### Date
 		descr_text = umc.String( _( 'Date' ), required = True )
-		input_date = umcd.DateInput( ( 'date_start', descr_text ), default=opts['date_start'], attributes = { 'width' : '200' }  )
+		input_date = umcd.DateInput( ( 'date_start', descr_text ), default=opts['date_start'], attributes = { 'width' : '300' }  )
 		idlist_ok_button.append( input_date.id() )
 		row = [input_date]
+		lst.add_row( row )
 
 		## TODO: Offer ComboBox Select
 		# v0.1: default = opts.get('time_begin') or time.strftime('%H:%M')
@@ -291,9 +292,8 @@ class Web( object ):
 						incomplete = False )
 			choices.append( { 'description' : description, 'actions' : [ umcd.Action( req, idlist_ok_button ) ] } )
 		input_time_begin = umcd.ChoiceButton( _('Start time'), choices, default = defaultID, close_dialog = False, attributes = { 'width' : '300' } )
-		input_time_begin[ 'width' ] = '200'
 		idlist_ok_button.append(input_time_begin.id())
-		row.append(input_time_begin)
+		row = [ input_time_begin ]
 
 		# v0.1: descr_text = umc.String( _( 'End Time' ), required = True )
 		# v0.1: input_time_end = umcd.TextInput( ( 'time_end', descr_text ), default=default  )
@@ -301,7 +301,7 @@ class Web( object ):
 		#self[ 'reservation/edit' ][ 'time_end' ][1].set_time_begin(opts['time_begin'])
 
 		#input_time_end = umcd.Selection( ( 'time_end' , syntax['time_end'] ), default = opts['time_end'] )
-		input_time_end = umcd.make( self[ 'reservation/edit' ][ 'time_end' ], default = opts['time_end'], attributes = { 'width' : '200' } )
+		input_time_end = umcd.make( self[ 'reservation/edit' ][ 'time_end' ], default = opts['time_end'], attributes = { 'width' : '300' } )
 		## With new umcd.ComboboxButton:
 		#choices_time_end = []
 		#defaultID_time_end = 0
@@ -373,7 +373,7 @@ class Web( object ):
 							incomplete = True )
 				choices.append( { 'description' : ou, 'actions' : [ umcd.Action( req ) ] } )
 
-			input_ou = umcd.ChoiceButton( _('Please select school:'), choices, default = defaultID, close_dialog = False, attributes = { 'width' : '200' } )
+			input_ou = umcd.ChoiceButton( _('Please select school:'), choices, default = defaultID, close_dialog = False, attributes = { 'width' : '300' } )
 			idlist_ok_button.append(input_ou.id())
 
 		### stop here if no OU has been selected
@@ -401,7 +401,7 @@ class Web( object ):
 			syntax['roomname']._choices.append( ( roomdata[ 0 ][ 'cn' ][ 0 ], cn ) )
 
 		#input_room = umcd.Selection( ( 'roomname' , syntax['roomname'] ), default = opts['roomname'] )
-		input_room = umcd.make( self[ 'reservation/edit' ][ 'roomname' ], default = opts['roomname'], attributes = { 'width' : '200' } )
+		input_room = umcd.make( self[ 'reservation/edit' ][ 'roomname' ], default = opts['roomname'], attributes = { 'width' : '300' } )
 		idlist_ok_button.append(input_room.id())
 		#lst.add_row( [ input_room ] )
 
@@ -430,7 +430,7 @@ class Web( object ):
 			syntax['groupname']._choices.append( ( grpdata[ 0 ][ 'cn' ][ 0 ], cn.replace(schoolprefix,'') ) )
 
 		#input_group = umcd.Selection( ( 'groupname' , syntax['groupname'] ), default = opts['groupname'] )
-		input_group = umcd.make( self[ 'reservation/edit' ][ 'groupname' ], default = opts['groupname'], attributes = { 'width' : '200' } )
+		input_group = umcd.make( self[ 'reservation/edit' ][ 'groupname' ], default = opts['groupname'], attributes = { 'width' : '300' } )
 		idlist_ok_button.append(input_group.id())
 
 		if len(availableOU) > 1 and not '438' in availableOU:
@@ -483,6 +483,7 @@ class Web( object ):
 			lst.add_row( [ _('Distribution project %s has been created for this reservation.') % object.options.get('distributionID') ] )
 		else:
 			input_fileupload = umcd.make( self[ 'reservation/edit' ][ 'files' ], default= opts['files'] )
+			input_fileupload['colspan'] = '2'
 			idlist_ok_button.append(input_fileupload.id())
 			lst.add_row( [ input_fileupload ] )
 
@@ -512,11 +513,11 @@ class Web( object ):
 			req = umcp.Command( args = [ 'reservation/edit' ], opts = write_opts )
 			actions = ( umcd.Action( req, idlist_ok_button ) )#, umcd.Action( req_list, idlist_ok_button ) )
 			if not _defined('reservationID', opts):
-				item_btn_set = umcd.Button( _('Save reservation'), 'actions/ok', actions = actions, close_dialog = False )
+				item_btn_set = umcd.Button( _('Create'), 'actions/ok', actions = actions, close_dialog = False, attributes = { 'class': 'submit', 'defaultbutton': '1' } )
 			else:
-				item_btn_set = umcd.Button( _('Save changes'), 'actions/ok', actions = actions )
-			item_btn_cancel = umcd.CancelButton( attributes = { 'align' : 'right' } )
-			lst.add_row( [ item_btn_set, item_btn_cancel ] )
+				item_btn_set = umcd.Button( _('Save'), 'actions/ok', actions = actions, attributes = { 'class': 'submit', 'defaultbutton': '1' } )
+			item_btn_cancel = umcd.CancelButton()
+			lst.add_row( [ item_btn_cancel, item_btn_set ] )
 		elif action in ('collisionmessage', 'override'):
 			#ud.debug( ud.ADMIN, ud.INFO, '_web_reservation_edit: action: %s' % action )
 			reservationID, reservation_name, description, date_start, time_begin, time_end, roomname, groupname, profile = opts['collision']
@@ -565,6 +566,9 @@ class Web( object ):
 			msglst.add_row( row )
 
 			row = []
+			item_btn_cancel = umcd.CancelButton( attributes = { 'align' : 'right' } )
+			row.append(item_btn_cancel)
+
 			if action == 'override':
 				override_opts = copy.copy(opts)
 				override_opts['action'] = 'override'
@@ -573,8 +577,6 @@ class Web( object ):
 				item_btn_ok = umcd.Button( _('Override'), 'actions/ok', actions = actions, close_dialog = False )
 				row.append(item_btn_ok)
 
-			item_btn_cancel = umcd.CancelButton( attributes = { 'align' : 'right' } )
-			row.append(item_btn_cancel)
 			msglst.add_row( row )
 			msgframe = umcd.Frame( [msglst], msghead )
 			#msgframe[ 'colspan' ] = '3'
@@ -615,13 +617,13 @@ class Web( object ):
 		lst = umcd.List()
 		if not confirmed:
 			header =  _('Please confirm cancellation of following reservation:')
-			lst.set_header( [ '', _( 'Date' ), _( 'Start time' ), _( 'End time' ), _( 'Room'), _( 'Class/Group'), _( 'Reservation profile' ) ] )
+			lst.set_header( [ _( 'Date' ), _( 'Start time' ), _( 'End time' ), _( 'Room'), _( 'Class/Group'), _( 'Reservation profile' ) ] )
 			reservationID, reservation_name, description, date_start, time_begin, time_end, roomname, groupname, profile = reservationdata
 			ou = object.options['ou']
 			row = []
 			datelist=date_start.split('-')
 			datelist.reverse()
-			item_date='.'.join(datelist)
+			item_date = umcd.Text('.'.join(datelist))
 			if description:
 				string = profile+' ['+description+']'
 			else:
@@ -639,9 +641,8 @@ class Web( object ):
 			else:
 				time_end_string = time_end
 
-			icon = 'reservation/reservation'
-			iconwidget = umcd.Button( '', icon, () )
-			row.append(iconwidget)
+#			icon = 'reservation/reservation'
+#			iconwidget = umcd.Image( icon )
 			row.append(item_date)
 			row.append(time_begin_string)
 			row.append(time_end_string)
@@ -654,9 +655,9 @@ class Web( object ):
 			opts = { 'reservationID': reservationID, 'confirmed': True, 'target': acltarget }
 			req = umcp.Command( args = [ 'reservation/remove' ], opts = opts )
 			actions = ( umcd.Action( req ) )
-			item_btn_ok = umcd.Button( _('Remove'), 'actions/ok', actions = actions, close_dialog = False )
-			item_btn_cancel = umcd.CancelButton( attributes = { 'align' : 'right' } )
-			lst.add_row( [ item_btn_ok, item_btn_cancel ] )
+			item_btn_ok = umcd.Button( _('Remove'), 'actions/ok', actions = actions, close_dialog = False, attributes = { 'class': 'submit', 'defaultbutton': '1' } )
+			item_btn_cancel = umcd.CancelButton()
+			lst.add_row( [ item_btn_cancel, umcd.Fill(2), item_btn_ok ] )
 		else:
 			if success:
 				header = _('Reservation cancelled successfully')
@@ -705,10 +706,10 @@ class Web( object ):
 		#headline = _( 'Search' )
 
 		umccommand = 'reservation/profile/list'
-		select = umcd.make( self[ umccommand ][ 'key' ], default = opts['key'], attributes = { 'width' : '200' } )
-		text = umcd.make( self[ umccommand ][ 'searchfilter' ], default = opts['searchfilter'], attributes = { 'width' : '250' } )
+		select = umcd.make( self[ umccommand ][ 'key' ], default = opts['key'], attributes = { 'width' : '300' } )
+		text = umcd.make( self[ umccommand ][ 'searchfilter' ], default = opts['searchfilter'], attributes = { 'width' : '300' } )
 		#form = umcd.SearchForm( umccommand, [ [ ( select, 'profile_name' ), ( text, '*' ) ] ], opts )
-		form = umcd.SearchForm( umccommand, [ [ ( select, opts['key'] ), ( text, opts['searchfilter'] ) ] ], opts = {'action': 'search'}, search_button_label = _("Show all") )
+		form = umcd.SearchForm( umccommand, [ [ ( select, opts['key'] ), ( text, opts['searchfilter'] ) ] ], opts = {'action': 'search'}, search_button_label = _("Search") )
 		lst.add_row([ form ] )
 		framelst.append( umcd.Frame( [ lst ], headline ) )
 
@@ -907,11 +908,11 @@ class Web( object ):
 		actions = ( umcd.Action( req, idlist_ok_button ) )#, umcd.Action( req_list ) )
 		#if 'new_profile' in opts:
 		if not _defined('resprofileID', opts):
-			item_btn_set = umcd.Button( _('Create reservation profile'), 'actions/ok', actions = actions )
+			item_btn_set = umcd.Button( _('Create'), 'actions/ok', actions = actions, attributes = { 'class': 'submit', 'defaultbutton': '1' } )
 		else:
-			item_btn_set = umcd.Button( _('Save changes'), 'actions/ok', actions = actions )
-		item_btn_cancel = umcd.CancelButton( attributes = { 'align' : 'right' } )
-		lst.add_row( [ item_btn_set, item_btn_cancel ] )
+			item_btn_set = umcd.Button( _('Save'), 'actions/ok', actions = actions, attributes = { 'class': 'submit', 'defaultbutton': '1' } )
+		item_btn_cancel = umcd.CancelButton()
+		lst.add_row( [ item_btn_cancel, item_btn_set ] )
 
 		res.dialog = umcd.Frame( [ lst ], headline )
 		self.revamped( object.id(), res )
@@ -940,13 +941,13 @@ class Web( object ):
 		lst = umcd.List()
 		if not confirmed:
 			header =  _('Please confirm removal of following reservation profile:')
-			lst.set_header( [ '', _( 'Reservation profile' ), _('Description') ] )
+			lst.set_header( [ _( 'Reservation profile' ), _('Description') ] )
 			profile_name, description = profiledata
 			row = []
 
-			icon = 'reservation/profile_lights'
-			iconwidget = umcd.Button( '', icon, () )
-			row.append(iconwidget)
+# 			icon = 'reservation/profile_lights'
+# 			iconwidget = umcd.Image( icon )
+#			row.append(iconwidget)
 			row.append(profile_name)
 			row.append(description)
 
@@ -956,9 +957,9 @@ class Web( object ):
 			req_list = umcp.Command( args = [ 'reservation/profile/list' ] )
 			req = umcp.Command( args = [ 'reservation/profile/remove' ], opts = opts )
 			actions = ( umcd.Action( req ), umcd.Action( req_list ) )
-			item_btn_ok = umcd.Button( _('Remove'), 'actions/ok', actions = actions, close_dialog = False )
-			item_btn_cancel = umcd.CancelButton( attributes = { 'align' : 'right' } )
-			lst.add_row( [ item_btn_ok, item_btn_cancel ] )
+			item_btn_ok = umcd.Button( _('Remove'), 'actions/ok', actions = actions, close_dialog = False, attributes = { 'class': 'submit', 'defaultbutton': '1' } )
+			item_btn_cancel = umcd.CancelButton()
+			lst.add_row( [ item_btn_cancel, item_btn_ok ] )
 		else:
 			if success:
 				header = _('Reservation profile successfully removed')
@@ -997,36 +998,36 @@ class Web( object ):
 		#	defaultList.append( { 'lessontime_name' : lessontime_name, 'description' : description,
 		#	                  'startTime' : startTime, 'endTime' : endTime } )
 
-                #input_lessontime_name = umcd.TextInput( ( 'lessontime_name', _types.descr_text ) )
-                #input_description = umcd.TextInput( ( 'description', self[ 'reservation/lessontimes/edit' ][ 'description' ] ) )
-                #input_startTime = umcd.TextInput( ( 'startTime', self[ 'reservation/lessontimes/edit' ][ 'startTime' ] ) )
-                #input_endTime = umcd.TextInput( ( 'endTime', self[ 'reservation/lessontimes/edit' ][ 'endTime' ] ) )
-		
+		#input_lessontime_name = umcd.TextInput( ( 'lessontime_name', _types.descr_text ) )
+		#input_description = umcd.TextInput( ( 'description', self[ 'reservation/lessontimes/edit' ][ 'description' ] ) )
+		#input_startTime = umcd.TextInput( ( 'startTime', self[ 'reservation/lessontimes/edit' ][ 'startTime' ] ) )
+		#input_endTime = umcd.TextInput( ( 'endTime', self[ 'reservation/lessontimes/edit' ][ 'endTime' ] ) )
+
 		heading = []
 		widgets = []
 		attrs = [ 'lessontime_name', 'startTime', 'endTime', 'description' ]
-		widthlist = [ '80', '40', '40', '300' ]
+		widthlist = [ '270', '50', '50', '270' ]
 		width = dict( zip(attrs, widthlist) )
 		for key in attrs:
 			heading.append( self[ 'reservation/lessontimes/edit' ][ key ][1].label )
 			widgets.append( umcd.TextInput( ( key, self[ 'reservation/lessontimes/edit' ][ key ][1] ), attributes = { 'width' : width[key] } ) )
 			#widgets.append( umcd.make( ( key, self[ 'reservation/lessontimes/edit' ][ key ] ) ) )
-                multiInput = umcd.DynamicList( ('lessontimes', _types.lessontime_table) , heading, widgets,
-                                                                  default = object.options['lessontimes'] )
-                multiInput[ 'colspan' ] = str(len(heading))
+			multiInput = umcd.DynamicList( ('lessontimes', _types.lessontime_table) , heading, widgets,
+										   default = object.options['lessontimes'] )
+			multiInput[ 'colspan' ] = '2'
 		idlist_ok_button.append( multiInput.id() )
-                lst.add_row( [ multiInput ] )
+		lst.add_row( [ multiInput ] )
 
-                lst.add_row( [ ] )	# empty line
+		lst.add_row( [ ] )	# empty line
 
 		write_opts = copy.copy(object.options)
 		write_opts['action'] = 'write'
 		req = umcp.Command( args = [ 'reservation/lessontimes/edit' ], opts = write_opts )
 		actions = ( umcd.Action( req, idlist_ok_button ) )
 		#item_btn_set = umcd.SetButton( actions )
-		item_btn_set = umcd.Button( _('Save changes'), 'actions/ok', actions = actions )
+		item_btn_set = umcd.Button( _('Save'), 'actions/ok', actions = actions, attributes = { 'class': 'submit', 'defaultbutton': '1' } )
 		#item_btn_cancel = umcd.CancelButton( attributes = { 'align' : 'right' } )
-		lst.add_row( [ item_btn_set ] )
+		lst.add_row( [ umcd.HTML('<div style="padding-right: 80px;">&nbsp;</div>'), item_btn_set ] )
 
 		res.dialog = umcd.Frame( [ lst ], headline )
 		self.revamped( object.id(), res )
