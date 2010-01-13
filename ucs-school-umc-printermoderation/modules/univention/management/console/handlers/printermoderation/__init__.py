@@ -149,12 +149,12 @@ class Printjob (object):
 		stats = os.stat (self.fullfilename)
 		self.ctime = datetime.datetime.fromtimestamp (stats[stat.ST_CTIME])
 
-		s = self.filename.index ('-') + 2
-		e = len (self.filename) - 5
-		if s >= e:
-			self.name = self.filename
+		if '-' in self.filename:
+			self.name = self.filename.split('-',1)[1]
+			if self.name.endswith('.pdf'):
+				self.name = self.name[:-4]
 		else:
-			self.name = self.filename[s:e]
+			self.name = self.filename
 
 	def getRelativeFilename (self):
 		relative = self.fullfilename[len(CUPSPDF_DIR):]
