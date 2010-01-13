@@ -1,3 +1,15 @@
+ucs-school-umc-printermoderation (5.0.2-1) unstable; urgency=low
+
+  * style update for UCS 2.3 (Bug #17102)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Wed, 13 Jan 2010 14:16:50 +0100
+
+ucs-school-umc-printermoderation (5.0.1-1) unstable; urgency=low
+
+  * fixed missing characters of print job name (Bug #15527)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Wed, 13 Jan 2010 14:04:40 +0100
+
 ucs-school-umc-printermoderation (5.0.0-0) unstable; urgency=low
 
   * ported package to UCS 2.3 UCS@school
