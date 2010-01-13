@@ -199,7 +199,7 @@ msgstr "Gruppe erstellen"
 
 #: _revamp.py:241 _revamp.py:395
 msgid "Save Changes"
-msgstr "Änderungen speichern"
+msgstr "Speichern"
 
 #: _revamp.py:279
 #, python-format
@@ -252,7 +252,7 @@ msgstr "Bitte zu entfernende Gruppen auswählen:"
 
 #: _revamp.py:522
 msgid "Update list"
-msgstr "Liste aktualisieren"
+msgstr "Aktualisieren"
 
 #: _revamp.py:523
 msgid "Number of pupils per group (max 5):"

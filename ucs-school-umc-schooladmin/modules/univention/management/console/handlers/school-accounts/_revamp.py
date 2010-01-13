@@ -104,6 +104,7 @@ class Web( object ):
 																			opts = { 'ou' : ou } ) ) ] } )
 
 			ouselect = umcd.ChoiceButton( _('Please select department:'), ouchoices, default = defaultchoice )
+			ouselect['width'] = '300'
 			lst.add_row( [ ouselect ] )
 
 		groupchoices = []
@@ -116,6 +117,7 @@ class Web( object ):
 										       opts = { 'selectedgroup' : group, 'ou': currentOU } ) ) ] } )
 
 		groupselect = umcd.ChoiceButton( _('show class'), groupchoices, default = defaultchoice )
+		groupselect['width'] = '300'
 		lst.add_row( [ groupselect ] )
 
 		# stop if no group is selected
@@ -177,6 +179,7 @@ class Web( object ):
 																					 'filter': searchfilter }, incomplete = True ) ) ] } )
 
 			ouselect = umcd.ChoiceButton( _('Please select department:'), ouchoices, default = defaultchoice )
+			ouselect['width'] = '300'
 			lst.add_row( [ ouselect ] )
 
 
@@ -228,6 +231,7 @@ class Web( object ):
 																			opts = { 'ou' : ou } ) ) ] } )
 
 			ouselect = umcd.ChoiceButton( _('Please select department:'), ouchoices, default = defaultchoice )
+			ouselect['width'] = '300'
 			lst.add_row( [ ouselect ] )
 
 		# create user table
@@ -274,7 +278,7 @@ class Web( object ):
 					    opts = { 'reallyChangePasswords' : True,
 								 'userdns' : object.options[ 'userdns' ],
 								 'ou': currentOU } )
-			setbut = umcd.SetButton( umcd.Action( req, [ password.id(), pwdChangeNextLogin.id() ] ) )
+			setbut = umcd.SetButton( umcd.Action( req, [ password.id(), pwdChangeNextLogin.id() ] ), attributes = {'class': 'submit', 'defaultbutton': '1'} )
 			buttonlst = umcd.List()
 			buttonlst.add_row( [ pwdChangeNextLogin ] )
 			buttonlst.add_row( [ password, setbut ] )

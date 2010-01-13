@@ -555,10 +555,10 @@ class Web( object ):
 		req = umcp.Command( args = [ 'roomadmin/room/set' ], opts = opts )
 		actions = ( umcd.Action( req, item_id_list ), )
 		if createroom:
-			item_btn_set = umcd.Button( _('Create Room'), 'actions/ok', actions = actions, close_dialog = False )
+			item_btn_set = umcd.Button( _('Create Room'), 'actions/ok', actions = actions, close_dialog = False, attributes = { 'class': 'submit', 'defaultbutton': '1' } )
 		else:
-			item_btn_set = umcd.Button( _('Save Changes'), 'actions/ok', actions = actions, close_dialog = False )
-		item_btn_cancel = umcd.CancelButton( attributes = { 'align' : 'right' } )
+			item_btn_set = umcd.Button( _('Save Changes'), 'actions/ok', actions = actions, close_dialog = False, attributes = { 'class': 'submit', 'defaultbutton': '1' } )
+		item_btn_cancel = umcd.CancelButton()
 
 
 		# FIXME TODO HACK HARDCODED for SFB:
@@ -586,7 +586,7 @@ class Web( object ):
 		if ouselect != None:
 			lst.add_row( [ ouselect ] )
 		lst.add_row( [ item_roommembers ] )
-		lst.add_row( [ item_btn_set, item_btn_cancel ] )
+		lst.add_row( [ item_btn_cancel, item_btn_set ] )
 
 		if createroom:
 			header = _( 'Create room and assign computers' )

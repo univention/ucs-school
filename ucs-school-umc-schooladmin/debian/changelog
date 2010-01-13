@@ -1,3 +1,9 @@
+ucs-school-umc-schooladmin (5.0.2-1) unstable; urgency=low
+
+  * style update for UCS 2.3 (Bug #17102)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Wed, 13 Jan 2010 14:12:30 +0100
+
 ucs-school-umc-schooladmin (5.0.1-1) unstable; urgency=low
 
   * use correct hostname for new share (Bug #15697)

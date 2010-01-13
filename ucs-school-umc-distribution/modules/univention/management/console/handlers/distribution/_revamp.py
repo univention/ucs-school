@@ -137,7 +137,7 @@ class Web( object ):
 			if msg:
 				lst.add_row( [ msg ] )
 
-		btn = umcd.CloseButton()
+		btn = umcd.CloseButton( attributes = {'class': 'submit'} )
 		lst.add_row( [ btn ] )
 
 		return umcd.Frame( [ lst ], headline )
@@ -171,6 +171,7 @@ class Web( object ):
 		item_description = umcd.make( self[ 'distribution/project/distribute' ][ 'description' ], default = umcobject.options.get('description','') )
 		item_deadline = umcd.make( self[ 'distribution/project/distribute' ][ 'deadline' ], default = umcobject.options.get('deadline','') )
 		item_fileupload = umcd.make( self[ 'distribution/project/distribute' ][ 'fileupload' ], maxfiles = 0, default = umcobject.options.get('fileupload') )
+		item_fileupload['colspan'] = '2'
 		item_id_list.extend( [ item_projectname.id(), item_description.id(), item_deadline.id(), item_fileupload.id() ] )
 
 		# build user selection widget
@@ -198,7 +199,7 @@ class Web( object ):
 			if groupdn == grp['dn']:
 				default = len(choices)-1
 
-		item_groupselect = umcd.ChoiceButton( _( 'Please select class:' ), choices = choices, default = default, close_dialog = False )
+		item_groupselect = umcd.ChoiceButton( _( 'Please select class:' ), choices = choices, default = default, close_dialog = False, attributes = { 'width': '300' } )
 		item_id_list.append( item_groupselect.id() )
 
 		# select OU
@@ -213,15 +214,15 @@ class Web( object ):
 																			opts = { 'ou' : ou,
 																					 } ), item_id_list ) ] } )
 
-			item_ouselect = umcd.ChoiceButton( _('Please select school:'), ouchoices, default = defaultchoice, close_dialog = False )
+			item_ouselect = umcd.ChoiceButton( _('Please select school:'), ouchoices, default = defaultchoice, close_dialog = False, attributes = { 'width': '300' } )
 
 
 		opts = { 'ou' : currentOU,
 				 'complete': '1' }
 		req = umcp.Command( args = [ 'distribution/project/distribute' ], opts = opts )
 		actions = ( umcd.Action( req, item_id_list ) )
-		item_create = umcd.Button( _('Create Project'), 'actions/ok', actions = actions, close_dialog = False )
-		item_cancel = umcd.CancelButton( attributes = { 'align' : 'right' } )
+		item_create = umcd.Button( _('Create Project'), 'actions/ok', actions = actions, close_dialog = False, attributes = {'class': 'submit', 'defaultbutton': '1'} )
+		item_cancel = umcd.CancelButton()
 
 
 
@@ -247,7 +248,7 @@ class Web( object ):
 		lst.add_row( [ item_groupselect ] )
 		lst.add_row( [ item_userlist ] )
 		lst.add_row( [ item_fileupload ] )
-		lst.add_row( [ item_create, item_cancel ] )
+		lst.add_row( [ item_cancel, item_create ] )
 
 		res.dialog.append( umcd.Frame( [ lst ], headline ) )
 
@@ -284,21 +285,21 @@ class Web( object ):
 		lstfiles = umcd.List()
 		for f in cmddata['project']['files']:
 			lstfiles.add_row( [ [ umcd.Image('distribution/file'), f ] ] )
-		lst.add_row( [ _('Files:'), lstfiles ] )
+		lst.add_row( [ umcd.Text( _('Files:'), attributes = { 'valign': 'top' }), lstfiles ] )
 		if cmddata['project']['recipients']:
 			lstrecipients = umcd.List()
 			for recipient in cmddata['project']['recipients']:
 				lstrecipients.add_row( [ [ umcd.Image('distribution/user'), '%s %s (%s)' % (recipient['obj']['firstname'], recipient['obj']['lastname'], recipient['obj']['username']) ] ] )
-			lst.add_row( [ _('Recipients:'), lstrecipients ] )
+			lst.add_row( [ umcd.Text( _('Recipients:'), attributes = { 'valign': 'top' } ), lstrecipients ] )
 		else:
 			lst.add_row( [ _('Recipients:'), _('no recipients specified') ] )
 
 		opts = { 'projectname' : cmddata['project']['name'] }
 		req = umcp.Command( args = [ 'distribution/project/collect' ], opts = opts )
 		actions = ( umcd.Action( req ) )
-		item_collect = umcd.Button( _('Collect Data'), 'actions/ok', actions = actions, close_dialog = False )
-		item_cancel = umcd.CancelButton( attributes = { 'align' : 'right' } )
-		lst.add_row( [ item_collect, item_cancel ] )
+		item_collect = umcd.Button( _('Collect Data'), 'actions/ok', actions = actions, close_dialog = False, attributes = {'class': 'submit'} )
+		item_cancel = umcd.CancelButton()
+		lst.add_row( [ item_cancel, item_collect ] )
 
 		res.dialog = umcd.Frame( [ lst ], headline )
 		self.revamped( umcobject.id(), res )

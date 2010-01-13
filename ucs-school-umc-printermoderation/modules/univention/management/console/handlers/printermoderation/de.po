@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0.0-1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-10-31 16:05+0100\n"
-"PO-Revision-Date: 2009-07-03 14:36+0200\n"
+"POT-Creation-Date: 2010-01-13 11:43+0100\n"
+"PO-Revision-Date: 2010-01-13 11:43+0100\n"
 "Last-Translator: Jan Christoph Ebersbach <ebersbach@univention.de>\n"
 "Language-Team: Jan Christoph Ebersbach <ebersbach@univention.de>\n"
 "MIME-Version: 1.0\n"
@@ -41,7 +41,8 @@ msgstr "Betrachte Druckauftrag"
 
 #: __init__.py:180
 msgid "Unable to copy printjob to temporary directory"
-msgstr "Es war nicht möglich den Druckjob in das temporäre Verzeichnis zu kopieren"
+msgstr ""
+"Es war nicht möglich den Druckjob in das temporäre Verzeichnis zu kopieren"
 
 #: __init__.py:198 __init__.py:226
 msgid "File does not exist"
@@ -55,7 +56,7 @@ msgstr "Drucker nicht angegeben"
 msgid "Error deleting file"
 msgstr "Fehler beim Löschen der Datei"
 
-#: __init__.py:434 __init__.py:454 __init__.py:504 _revamp.py:180
+#: __init__.py:435 __init__.py:455 __init__.py:505 _revamp.py:182
 msgid "No group selected"
 msgstr "Keine Gruppe ausgewählt"
 
@@ -85,7 +86,7 @@ msgstr "Operationen"
 
 #: _revamp.py:75
 msgid "Review"
-msgstr "Review"
+msgstr "Anzeigen"
 
 #: _revamp.py:77
 msgid "Print"
@@ -111,36 +112,32 @@ msgstr "Keine Drucker verfügbar"
 msgid "Please select department:"
 msgstr "Bitte Schule auswählen:"
 
-#: _revamp.py:176
+#: _revamp.py:177
 msgid "Select Class"
 msgstr "Wähle eine Klasse"
 
-#: _revamp.py:193
+#: _revamp.py:195
 msgid "Refresh"
 msgstr "Aktualisieren"
 
-#: _revamp.py:199
+#: _revamp.py:201
 msgid "Print Selected Items"
 msgstr "Drucke ausgewählte Elemente"
 
-#: _revamp.py:200
+#: _revamp.py:202
 msgid "Delete Selected Items"
 msgstr "Lösche ausgewählte Elemente"
 
-#: _revamp.py:213
+#: _revamp.py:215
 msgid "Deleted Print Jobs"
 msgstr "Gelöschte Aufträge"
 
-#: _revamp.py:241
+#: _revamp.py:243
 msgid "Printed Jobs"
 msgstr "Gedruckte Aufträge"
 
-#: _revamp.py:272
+#: _revamp.py:274 _revamp.py:283
 msgid "Review Printjob"
-msgstr "Betrache Druckauftrag"
-
-#: _revamp.py:281
-msgid "Review printjob"
 msgstr "Betrache Druckauftrag"
 
 #: _types.py:36
@@ -166,3 +163,6 @@ msgstr "Drucker"
 #: _types.py:41
 msgid "DNs and Filenames"
 msgstr "DNs und Dateinamen"
+
+#~ msgid "Review printjob"
+#~ msgstr "Betrache Druckauftrag"

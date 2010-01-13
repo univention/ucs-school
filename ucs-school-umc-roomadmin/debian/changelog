@@ -1,3 +1,9 @@
+ucs-school-umc-roomadmin (6.0.2-1) unstable; urgency=low
+
+  * style update for UCS 2.3 (Bug #17102)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Wed, 13 Jan 2010 14:09:41 +0100
+
 ucs-school-umc-roomadmin (6.0.1-1) unstable; urgency=low
 
   * activated caching for room list (Bug #15893)
