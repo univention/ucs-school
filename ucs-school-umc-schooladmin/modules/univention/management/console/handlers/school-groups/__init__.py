@@ -446,8 +446,11 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 
 			ud.debug( ud.ADMIN, ud.WARN, 'SCHOOLGROUPS: verify_group_share: using gid=%s' % gid)
 
-			# set default server
-			serverfqdn = "%s.%s" % (self.configRegistry.get('hostname'), self.configRegistry.get('domainname'))
+			# set default fileserver
+			# if UCR variable is set, use that value instead of building the serverfqdn manually
+			serverfqdn = self.configRegistry.get('ucsschool/ldap/groups/fileserver', None)
+			if not serverfqdn:
+				serverfqdn = "%s.%s" % (self.configRegistry.get('hostname'), self.configRegistry.get('domainname'))
 
 			# get alternative server (defined at ou object if a dc slave is responsible for more than one ou)
 			ou_dn = "ou=%s,%s" % (self.departmentNumber, self.configRegistry['ldap/base'])
