@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: 1.0.0-1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-01-13 11:43+0100\n"
-"PO-Revision-Date: 2010-01-13 11:43+0100\n"
+"PO-Revision-Date: 2010-01-14 14:57+0100\n"
 "Last-Translator: Jan Christoph Ebersbach <ebersbach@univention.de>\n"
 "Language-Team: Jan Christoph Ebersbach <ebersbach@univention.de>\n"
 "MIME-Version: 1.0\n"
@@ -86,7 +86,7 @@ msgstr "Operationen"
 
 #: _revamp.py:75
 msgid "Review"
-msgstr "Anzeigen"
+msgstr "Überprüfen"
 
 #: _revamp.py:77
 msgid "Print"
