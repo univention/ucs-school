@@ -1,3 +1,9 @@
+ucs-school-umc-printermoderation (5.0.3-1) unstable; urgency=low
+
+  * updated translation (Bug #17102)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Thu, 14 Jan 2010 14:57:22 +0100
+
 ucs-school-umc-printermoderation (5.0.2-1) unstable; urgency=low
 
   * style update for UCS 2.3 (Bug #17102)
