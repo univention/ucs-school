@@ -286,7 +286,7 @@ class Web( object ):
 					demostatus = umcd.Image('roomadmin/demomaster')
 
 			row = [ (img, btn), roomlist, userlst ]
-			if not 'ipaddress' in hideitems or not 'macAddress' in hideitems:
+			if not 'ipaddress' in hideitems or not 'macaddress' in hideitems:
 				addrlst = []
 				if not 'ipaddress' in hideitems and str_ipaddr:
 					addrlst.append( str_ipaddr )

@@ -1,3 +1,9 @@
+ucs-school-umc-roomadmin (6.0.3-1) unstable; urgency=low
+
+  * fixed typo (Bug #17357)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Thu, 14 Jan 2010 15:17:20 +0100
+
 ucs-school-umc-roomadmin (6.0.2-1) unstable; urgency=low
 
   * style update for UCS 2.3 (Bug #17102)
