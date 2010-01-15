@@ -191,18 +191,17 @@ class Web( object ):
 			# computername and VNC link
 			icon = 'roomadmin/%s' % self._determine_host_icon( computer )
 			if computer.has_key('aRecord') and computer['aRecord'] and vncEnabled:
-				img = umcd.Link( description = cn,
+				link = umcd.Link( description = cn,
 								 icon=icon,
-								 link='/univention-management-console/ultravnc.php?hostname=%s&port=%s' % (computer['aRecord'][0], vncPort)
+								 link='/univention-management-console/ultravnc.php?hostname=%s&port=%s' % (computer['aRecord'][0], vncPort),
+								 icon_and_text = True
 								)
-				btn = umcd.Link( description = cn,
-								 link='/univention-management-console/ultravnc.php?hostname=%s&port=%s' % (computer['aRecord'][0], vncPort) )
 			else:
 				img = umcd.Image( icon )
 				btn = umcd.Text( cn )
-			img[ 'type' ] = 'object_links'
-			btn[ 'type' ] = 'object_links'
-
+				img[ 'type' ] = 'object_links'
+				btn[ 'type' ] = 'object_links'
+				link = ( img, btn )
 
 			# room name(s)
 			roomlist = []
@@ -285,7 +284,7 @@ class Web( object ):
 				elif ipaddr == demomode['masterip']:
 					demostatus = umcd.Image('roomadmin/demomaster')
 
-			row = [ (img, btn), roomlist, userlst ]
+			row = [ link, roomlist, userlst ]
 			if not 'ipaddress' in hideitems or not 'macaddress' in hideitems:
 				addrlst = []
 				if not 'ipaddress' in hideitems and str_ipaddr:

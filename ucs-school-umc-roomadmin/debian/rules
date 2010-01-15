@@ -74,6 +74,7 @@ install-ext-%:
 	install -m 0755 js/request_snapshot.js ${D}/usr/share/univention-management-console/www/js/umc/roomadmin/
 
 	univention-install-config-registry
+	univention-install-config-registry-info
 
 binary-indep: build install
 	dh_testdir -i
