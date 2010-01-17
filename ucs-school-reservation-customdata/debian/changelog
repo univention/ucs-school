@@ -1,3 +1,9 @@
+ucs-school-reservation-customdata (5.0.2-2) unstable; urgency=low
+
+  * changed description for default profile (Bug #17114)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Sun, 17 Jan 2010 17:37:11 +0100
+
 ucs-school-reservation-customdata (5.0.2-1) unstable; urgency=low
 
   * do not set all UCR variables to "true" if customer selected a
