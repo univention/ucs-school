@@ -1,4 +1,4 @@
-ucs-school-reservation-customdata (5.0.2-2) unstable; urgency=low
+ucs-school-reservation-customdata (5.0.3-1) unstable; urgency=low
 
   * changed description for default profile (Bug #17114)
 
