@@ -34,7 +34,7 @@ import grp
 from univention.reservation.scheduler.listener import AbstractListener
 
 from univention.config_registry import ConfigRegistry
-from univention.reservation.dbconnector import Profile
+from univention.reservation.dbconnector import Profile, DISTRIBUTIONID
 import univention.debug as debug
 
 ucr = ConfigRegistry (write_registry=ConfigRegistry.SCHEDULE)
@@ -48,7 +48,7 @@ class SchedulerStartListener (AbstractListener):
 		"""
 		_d = debug.function ('listener.start.__init__')
 		super (SchedulerStartListener, self).__init__ ('Scheduler Start Listener')
-	
+
 	def _applyOptionStartCmd (self, r, o):
 		_d = debug.function ('listener.start._applyOptionStartCmd')
 		if not o.setting:
@@ -180,6 +180,12 @@ class SchedulerStartListener (AbstractListener):
 
 		# 2. execute cmdStart
 		if s.cmdStart != None and s.cmdStart.strip () != '':
+			# execute Distribution start command for iterable reservations only
+			# if this is the first iteration! Otherwise don't do anything
+			if s.name == DISTRIBUTIONID and not r.wasFirstRun():
+				debug.debug (debug.MAIN, debug.INFO, 'I: Ignoring cmdStart setting "%s" for reservation "%s" because it was not the first run for this reservation' % (s.name, r.id))
+				return
+
 			# replace placeholders
 			cmd = s.cmdStart
 			if r.id != None:
