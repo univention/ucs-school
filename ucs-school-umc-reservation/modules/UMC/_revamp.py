@@ -29,7 +29,7 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 import operator
-from datetime import date
+import datetime
 import time
 import copy
 import _types
@@ -134,8 +134,8 @@ class Web( object ):
 
 			#subheadline = '%s ( %s=%s )' % ( _('Searchresults'), _(opts['key']), opts['searchfilter'])
 			idlist_remove = []
-			tablelst.set_header( [ _( 'Date' ), _( 'Start Time' ), _( 'End Time' ), _( 'Room'), _( 'Class/Group'), _( 'Reservation profile' ), _('Owner'), _( 'Edit' ), _( 'Delete' ) ] )
-			for reservationID, reservation_name, description, date_start, time_begin, time_end, roomname, groupname, ownername, profile_name in searchresult:
+			tablelst.set_header( [ _( 'Date' ), _( 'Start Time' ), _( 'End Time' ), _( 'Room'), _( 'Class/Group'), _( 'Reservation profile' ), _('Owner'), _( 'Edit' ), _( 'Delete' ), _('Status') ] )
+			for reservationID, reservation_name, description, date_start, time_begin, time_end, roomname, groupname, ownername, isIterable, isError, errorStatus, profile_name in searchresult:
 				row = []
 				datelist=date_start.split('-')
 				datelist.reverse()
@@ -214,6 +214,15 @@ class Web( object ):
 					icon = 'reservation/reservation_del_disabled'
 					delbtn = umcd.Button( '', icon, actions=() , helptext = _('You are not the owner of this reservation') )
 					row.append(delbtn)
+
+				# Status icons
+				status = []
+				if isIterable:
+					status.append (umcd.Image('reservation/reservation_recurring'))
+				if isError:
+					status.append (umcd.Image('reservation/reservation_error'))
+
+				row.append(status)
 
 				#else:
 				#	row.append(umcd.Fill( 2 ))
@@ -320,38 +329,41 @@ class Web( object ):
 		row.append(input_time_end)
 		lst.add_row( row )
 
-		#ud.debug( ud.ADMIN, ud.INFO, '_web_reservation_edit: time' )
-#		if opts['time_begin'] != 'now':
-#			## Iteration
-#			choices = []
-#			defaultID = 0
-#			for iterationDays, description in _types.syntax['rhythm'].choices():
-#				choice_opts = copy.copy(opts)
-#				choice_opts['iterationDays'] = iterationDays
-#				choice_opts['action'] = 'edit'
-#				if iterationDays == opts['iterationDays']:
-#					defaultID = len( choices)
-#				req = umcp.Command( args = [ 'reservation/edit' ],
-#							opts = choice_opts ,
-#							incomplete = True )
-#				choices.append( { 'description' : description, 'actions' : [ umcd.Action( req, idlist_ok_button ) ] } )
-#
-#			input_iterationDays = umcd.ChoiceButton( _('Please select rhythm:'), choices, default = defaultID, close_dialog = False, attributes = { 'width' : '120' } )
-#			idlist_ok_button.append(input_iterationDays.id())
-#			row = [input_iterationDays]
-#
-#			if int(opts['iterationDays']) != 0:
-#				## Start-Stop
-#				descr_text = umc.String( _( 'Until' ), required = True )
-#				input_iterationEnd = umcd.DateInput( ( 'iterationEnd', descr_text ), default = opts['iterationEnd']  )
-#				idlist_ok_button.append(input_iterationEnd.id())
-#				row.append( input_iterationEnd )
-#				## Terms
-#				#input_terms = umcd.make( self[ 'reservation/edit' ][ 'terms' ], default = '::notset',
-#				#			attributes = { 'width' : '200' } )
-#				#row.append( input_terms )
-#
-#			lst.add_row( row )
+		ud.debug( ud.ADMIN, ud.INFO, '_web_reservation_edit: time' )
+		if opts['time_begin'] != 'now':
+			## Iteration
+			choices = []
+			defaultID = 0
+			for iterationDays, description in _types.syntax['rhythm'].choices():
+				choice_opts = copy.copy(opts)
+				choice_opts['iterationDays'] = iterationDays
+				choice_opts['action'] = 'edit'
+				if iterationDays == opts['iterationDays']:
+					defaultID = len( choices)
+				req = umcp.Command( args = [ 'reservation/edit' ],
+							opts = choice_opts ,
+							incomplete = True )
+				choices.append( { 'description' : description, 'actions' : [ umcd.Action( req, idlist_ok_button ) ] } )
+
+			input_iterationDays = umcd.ChoiceButton( '%s:' % _('Please select rhythm'), choices, default = defaultID, close_dialog = False, attributes = { 'width' : '120' } )
+			idlist_ok_button.append(input_iterationDays.id())
+			row = [input_iterationDays]
+
+			if int(opts['iterationDays']) != 0:
+				## Start-Stop
+				if not opts['iterationEnd']:
+					# default iteration end is in 180 days
+					opts['iterationEnd'] = datetime.date.fromordinal(datetime.date.today().toordinal() + 180).strftime("%Y-%m-%d")
+				descr_text = umc.String( '%s:' % _( 'Until' ), required = True )
+				input_iterationEnd = umcd.DateInput( ( 'iterationEnd', descr_text ), default = opts['iterationEnd']  )
+				idlist_ok_button.append(input_iterationEnd.id())
+				row.append( input_iterationEnd )
+				## Terms
+				#input_terms = umcd.make( self[ 'reservation/edit' ][ 'terms' ], default = '::notset',
+				#			attributes = { 'width' : '200' } )
+				#row.append( input_terms )
+
+			lst.add_row( row )
 
 
 		#ud.debug( ud.ADMIN, ud.INFO, '_web_reservation_edit: ou' )
@@ -518,6 +530,7 @@ class Web( object ):
 				item_btn_set = umcd.Button( _('Save'), 'actions/ok', actions = actions, attributes = { 'class': 'submit', 'defaultbutton': '1' } )
 			item_btn_cancel = umcd.CancelButton()
 			lst.add_row( [ item_btn_cancel, item_btn_set ] )
+
 		elif action in ('collisionmessage', 'override'):
 			#ud.debug( ud.ADMIN, ud.INFO, '_web_reservation_edit: action: %s' % action )
 			reservationID, reservation_name, description, date_start, time_begin, time_end, roomname, groupname, profile = opts['collision']

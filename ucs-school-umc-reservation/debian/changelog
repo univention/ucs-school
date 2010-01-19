@@ -1,3 +1,34 @@
+ucs-school-umc-reservation (5.0.11-1) unstable; urgency=low
+
+  * stop setting the 'deadline' attribute for umc-distribution projects
+    (Ticket#: 2008110710000095) (Bug 12310)
+
+ -- Arvid Requate <requate@univention.de>  Thu, 10 Sep 2009 11:15:27 +0200
+
+ucs-school-umc-reservation (5.0.10-1) unstable; urgency=low
+
+  * fixed a bug in the translation (Ticket#: 2009082610000205) (Bug 12310)
+
+ -- Andreas Büsching <buesching@univention.de>  Tue,  1 Sep 2009 17:46:57 +0200
+
+ucs-school-umc-reservation (5.0.9-1) unstable; urgency=low
+
+  * added images for reservation error and recurring reservations. 
+    Ticket #2008110710000095 (Bug 12310)
+
+ -- Jan Christoph Ebersbach <ebersbach@univention.de>  Mon, 17 Aug 2009 17:48:58 +0200
+
+ucs-school-umc-reservation (5.0.8-1) unstable; urgency=low
+
+  * implemented iterateable reservations
+  * added status column to mark errors and iterateable reservations visibly
+  * reactivated widgets to select reservation recurrence
+  * remove project file creation code to import reusable code from
+    umc-distribution
+  * all changes are related to Ticket #2008110710000095 (Bug 12310)
+
+ -- Jan Christoph Ebersbach <ebersbach@univention.de>  Fri, 14 Aug 2009 12:04:51 +0200
+
 ucs-school-umc-reservation (5.0.7-1) unstable; urgency=low
 
   * style update for UCS 2.3 (Bug #17102)
