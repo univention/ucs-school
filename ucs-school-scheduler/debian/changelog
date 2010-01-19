@@ -1,17 +1,17 @@
-univention-scheduler (5.0.10-1) unstable; urgency=low
+ucs-school-scheduler (5.0.10-1) unstable; urgency=low
 
   * added extra debug output for ingored startup/stup commands. 
     Ticket #2008110710000095 (Bug 12310)
 
  -- Jan Christoph Ebersbach <ebersbach@univention.de>  Wed, 26 Aug 2009 18:26:04 +0200
 
-univention-scheduler (5.0.9-1) unstable; urgency=low
+ucs-school-scheduler (5.0.9-1) unstable; urgency=low
 
   * replace % characters during debug output (Bug: #15337) (Bug 12310)
 
  -- Sönke Schwardt <schwardt@univention.de>  Thu, 13 Aug 2009 14:50:35 +0200
 
-univention-scheduler (5.0.8-1) unstable; urgency=low
+ucs-school-scheduler (5.0.8-1) unstable; urgency=low
 
   * implemented functionality to distribute and collect files only at the
     beginning/end of an iterateable reservation
@@ -19,7 +19,7 @@ univention-scheduler (5.0.8-1) unstable; urgency=low
 
  -- Jan Christoph Ebersbach <ebersbach@univention.de>  Tue, 18 Aug 2009 10:52:35 +0200
 
-univention-scheduler (5.0.7-1) unstable; urgency=low
+ucs-school-scheduler (5.0.7-1) unstable; urgency=low
 
   * added functions wasFirstRun and wasLastRun
   * added DISTRIBUTIONID constant
@@ -27,7 +27,7 @@ univention-scheduler (5.0.7-1) unstable; urgency=low
 
  -- Jan Christoph Ebersbach <ebersbach@univention.de>  Tue, 18 Aug 2009 10:47:37 +0200
 
-univention-scheduler (5.0.6-1) unstable; urgency=low
+ucs-school-scheduler (5.0.6-1) unstable; urgency=low
 
   * implemented iteratable reservations - reenabled old code. Ticket #2008110710000095 (Bug 12310)
 
