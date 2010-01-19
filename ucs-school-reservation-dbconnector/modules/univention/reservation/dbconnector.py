@@ -29,14 +29,19 @@
 # TODO: setting.delete () does not cause [reservation|profile].options to be invalidated
 # TODO: enable different sql-backends: sqlite, postgresql, mysql (default)
 
+import datetime
 import sys
 
 import MySQLdb
 
 WAITING = 'WAITING'
+ITER_WAITING = 'ITER_WAITING'
 ACTIVE = 'ACTIVE'
 ERROR = 'ERROR'
+ITER_ERROR = 'ITER_ERROR'
 DONE = 'DONE'
+
+DISTRIBUTIONID = 'distributionID'
 
 RESERVATION_TABLE = 'reservation'
 PROFILE_TABLE = 'resprofiles'
@@ -145,7 +150,7 @@ class Reservation (object):
 		self.usergroup = None
 		self.startTime = None
 		self.endTime = None
-		self.iterationDays = None
+		self._iterationDays = None
 		self.iterationEnd = None
 		self.iterateInVacations = None
 		self.status = None
@@ -191,6 +196,16 @@ class Reservation (object):
 		self.deleteFlag = r.deleteFlag
 		self._profile = None
 		self._options = None
+
+	@Property
+	def iterationDays ():
+		def fget (self):
+			return self._iterationDays
+		def fset (self, iterationDays):
+			self._iterationDays = iterationDays
+			if self.status == WAITING and iterationDays not in (0, None):
+				self.setWaiting()
+		return locals ()
 
 	@Property
 	def reservationID ():
@@ -366,24 +381,64 @@ class Reservation (object):
 		return self.status == ACTIVE
 
 	def isWaiting (self):
-		return self.status == WAITING
+		return self.status in (WAITING, ITER_WAITING)
 
 	def isError (self):
-		return self.status.startswith (ERROR)
+		return self.status.startswith (ERROR) or self.status.startswith (ITER_ERROR)
 
 	def isDone (self):
 		return self.status == DONE
+
+	def isIterable (self):
+		return self.iterationDays not in (0, None)
+
+	def wasLastRun(self, date=None):
+		lastrun = False
+		if not self.isIterable():
+			if self.endTime.date() <= datetime.date.today():
+				lastrun = True
+		else:
+			if date == None:
+				date = datetime.date.today()
+			elif isinstance(date, datetime.datetime):
+				date = date.date ()
+
+			if self.iterationEnd:
+				iterationEnd = self.iterationEnd.date()
+				delta = iterationEnd - date
+				if delta.days <= 0:
+					lastrun = True
+				elif (delta.days / self.iterationDays) < 1:
+					lastrun = True
+		return lastrun
+
+	def wasFirstRun(self, date=None):
+		firstrun = False
+		if date == None:
+			date = datetime.date.today()
+		elif isinstance(date, datetime.datetime):
+			date = date.date ()
+
+		if self.startTime.date() == date:
+			firstrun = True
+		return firstrun
 
 	def setActive (self):
 		self.status = ACTIVE
 		return self.status
 
 	def setWaiting (self):
-		self.status = WAITING
+		if not self.isIterable():
+			self.status = WAITING
+		else:
+			self.status = ITER_WAITING
 		return self.status
 
 	def setError (self, code):
-		self.status = "%s %s" % (ERROR, code)
+		err = ERROR
+		if self.isIterable():
+			err = ITER_ERROR
+		self.status = "%s %s" % (err, code)
 		return self.status
 
 	def setDone (self):
@@ -1241,7 +1296,6 @@ class Lesson (object):
 
 ##### Test to verify that all DB-Objects work expectedly
 def test ():
-	import datetime
 	r = Reservation ()
 	r.name = 'reservation'
 	r.description = 'description'
@@ -1251,11 +1305,20 @@ def test ():
 	r.startTime = datetime.datetime (2000, 01, 01, 12, 0, 0)
 	r.endTime = datetime.datetime (2001, 01, 01, 13, 0, 0)
 	r.iterationDays = 1
-	r.iterationEnd = datetime.datetime (2001, 01, 01, 0, 0, 0)
+	r.iterationEnd = datetime.datetime (2001, 02, 01, 0, 0, 0)
 	r.iterateInVacations = False
 	r.save ()
 	assert r.id != None
 	assert r.id == r.reservationID
+	assert r.isIterable() == True
+	assert r.wasFirstRun(r.startTime.date() - datetime.timedelta(days=1)) == False
+	assert r.wasFirstRun(r.startTime) == True
+	assert r.wasFirstRun(r.startTime.date() + datetime.timedelta(days=1)) == False
+	assert r.wasFirstRun(r.iterationEnd) == False
+	assert r.wasLastRun(r.iterationEnd) == True
+	assert r.wasLastRun(r.startTime) == False
+	assert r.wasLastRun(r.iterationEnd.date() - datetime.timedelta(days=1)) == False
+	assert r.wasLastRun(r.startTime.date() + datetime.timedelta(days=1)) == False
 
 	r_new = Reservation.get (r.id)
 	assert r_new.reservationID == r_new.id
