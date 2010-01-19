@@ -1,10 +1,10 @@
-univention-reservation-dbconnector (5.0.4-1) unstable; urgency=low
+ucs-school-reservation-dbconnector (5.0.4-1) unstable; urgency=low
 
   * made wasLastRun more stable (Bug 12130)
 
  -- Jan Christoph Ebersbach <ebersbach@univention.de>  Wed, 26 Aug 2009 18:28:13 +0200
 
-univention-reservation-dbconnector (5.0.3-1) unstable; urgency=low
+ucs-school-reservation-dbconnector (5.0.3-1) unstable; urgency=low
 
   * added functions wasFirstRun and wasLastRun
   * added DISTRIBUTIONID constant
@@ -12,7 +12,7 @@ univention-reservation-dbconnector (5.0.3-1) unstable; urgency=low
 
  -- Jan Christoph Ebersbach <ebersbach@univention.de>  Tue, 18 Aug 2009 10:51:10 +0200
 
-univention-reservation-dbconnector (5.0.2-1) unstable; urgency=low
+ucs-school-reservation-dbconnector (5.0.2-1) unstable; urgency=low
 
   * implemented iterations for reservations (Bug 12130)
 
