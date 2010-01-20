@@ -1,3 +1,10 @@
+ucs-school-umc-roomadmin (5.0.9-1) unstable; urgency=low
+
+  * do not perform all iTALC actions to current UMC user if UMC user is
+    logged on one of selected computers (Bug #17398)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Tue, 19 Jan 2010 14:40:38 +0100
+
 ucs-school-umc-roomadmin (5.0.8-1) unstable; urgency=low
 
   * output of smbstatus changed with samba 3.2 (Bug: #15515)

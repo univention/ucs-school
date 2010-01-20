@@ -284,7 +284,7 @@ class ItalcConnection (object):
 
 	username_regex = re.compile( '^(?P<realname>[^(]+) +\((?P<username>[^ )]+)\)$' )
 
-	def __init__ (self, ipaddr, role=italc.ISD.RoleTeacher):
+	def __init__ (self, ipaddr, role=italc.ISD.RoleTeacher, priviledged_user=None):
 		debugmsg( ud.ADMIN, ud.INFO, 'ItalcConnection.__init__: %s' % (ipaddr, ))
 		self.ipaddr         = ipaddr
 		self.role           = role
@@ -296,6 +296,7 @@ class ItalcConnection (object):
 		# separate isdConnection is needed
 		self.isd_connection = None
 		self.queue          = []
+		self._priviledged_user = priviledged_user
 		self._user          = None
 		self._username      = None
 		self._realname      = None
@@ -519,9 +520,9 @@ class ItalcConnection (object):
 				return False
 			self.async_open ()
 
-		# Not all actions are allowed on teacher computers
-		# If User is unknown it's assumed that this is a teacher's computer
-		if (self.getUsername () and self.getUsername ().find ('.') != -1) or not self.getUser ():
+		# Not all actions are desired on every computer:
+		# do not perform action if iTALC username is equal to UMC username
+		if (self.getUsername() and self._priviledged_user and self.getUsername() == self._priviledged_user):
 			if action in ('lockDisplay', 'logoutUser', 'powerDownComputer', 'restartComputer'):
 				return False
 			if action == 'disableLocalInputs':
@@ -618,13 +619,13 @@ class ItalcConnection (object):
 		return self._snapshot_size
 
 	@classmethod
-	def getConnection (cls, ipaddr):
+	def getConnection (cls, ipaddr, priviledged_user=None):
 		debugmsg( ud.ADMIN, ud.INFO, 'ItalcConnection.getConnection (%s)' % ipaddr)
 		con = None
 		if italc_connections.has_key (ipaddr):
 			con = italc_connections[ipaddr]
 		else:
-			italc_connections[ipaddr] = ItalcConnection (ipaddr)
+			italc_connections[ipaddr] = ItalcConnection (ipaddr, priviledged_user=priviledged_user)
 			con = cls.getConnection (ipaddr)
 		# WARNING: the connection will be opened, immediately 
 		con.async_open ()
@@ -873,7 +874,7 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 
 		# find user names via italc connection
 		for ip in ipaddrs:
-			con = ItalcConnection.getConnection (ip)
+			con = ItalcConnection.getConnection (ip, priviledged_user=self._username)
 			if not host2user.has_key (ip) and con.connected:
 				for dn in computerdict.keys ():
 					if computerdict[dn].has_key ('aRecord') \
@@ -1285,7 +1286,7 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 
 		if ipaddrs:
 			for ip in ipaddrs:
-				con = ItalcConnection.getConnection (ip)
+				con = ItalcConnection.getConnection (ip, priviledged_user=self._username)
 				con.execute (action, args)
 
 		self.finished( object.id(), finish_args )
@@ -1342,7 +1343,7 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 			debugmsg( ud.ADMIN, ud.ERROR, 'startClientDemo')
 			for ipaddr in ipaddrs:
 				if ipaddr and ipaddr != masterip:
-					client_con = ItalcConnection.getConnection (ipaddr)
+					client_con = ItalcConnection.getConnection (ipaddr, priviledged_user=self._username)
 					if client_con.connected or client_con.connecting:
 						demoserver_db['ipaddrs'].append (ipaddr)
 						client_con.execute ('stopDemo')
@@ -1366,7 +1367,7 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 			# TODO: display appropriate error message
 
 		if masterip and ipaddrs:
-			master_con = ItalcConnection.getConnection (masterip)
+			master_con = ItalcConnection.getConnection (masterip, priviledged_user=self._username)
 			if master_con.connected:
 				port = 5858
 				demoserver_db = {'masterip': masterip, 'ipaddrs': []}
@@ -1408,7 +1409,7 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 				return
 
 			for clientip in demoserver_db['ipaddrs']:
-				client_con = ItalcConnection.getConnection (clientip)
+				client_con = ItalcConnection.getConnection (clientip, priviledged_user=self._username)
 				client_con.execute ('stopDemo')
 				if client_con.connected:
 					debugmsg( ud.ADMIN, ud.INFO, 'roomadmin_italc_demo_stop client: %s connected' % client_con.ipaddr)
@@ -1416,7 +1417,7 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 					debugmsg( ud.ADMIN, ud.INFO, 'roomadmin_italc_demo_stop client: %s disconnected' % client_con.ipaddr)
 
 			if demoserver_db['masterip']:
-				master_con = ItalcConnection.getConnection (demoserver_db['masterip'])
+				master_con = ItalcConnection.getConnection (demoserver_db['masterip'], priviledged_user=self._username)
 				master_con.denyAllClients ()
 				master_con.execute ('stopDemo')
 				if master_con.connected:
@@ -1436,7 +1437,7 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 		content_type = 'image/png'
 		content = ''
 		if ipaddr:
-			con = ItalcConnection.getConnection (ipaddr)
+			con = ItalcConnection.getConnection (ipaddr, priviledged_user=self._username)
 			snapshot = con.getScaledSnapshot ()
 			if snapshot:
 				try:
@@ -1477,7 +1478,7 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 		data['label'] = 'roomadmin data'
 		data['items'] = []
 		for ipaddr in italc_connections.keys ():
-			con = ItalcConnection.getConnection (ipaddr)
+			con = ItalcConnection.getConnection (ipaddr, priviledged_user=self._username)
 			if con and con.connected:
 				item = {}
 				if con.getUser ():
@@ -1516,7 +1517,7 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 				username = _('unknown')
 				realname = _('unknown')
 
-				con = ItalcConnection.getConnection (ipaddr)
+				con = ItalcConnection.getConnection (ipaddr, priviledged_user=self._username)
 				if con.connected:
 					username = con.getUsername ()
 					realname = con.getRealname ()
