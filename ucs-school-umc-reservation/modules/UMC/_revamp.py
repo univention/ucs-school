@@ -345,7 +345,7 @@ class Web( object ):
 							incomplete = True )
 				choices.append( { 'description' : description, 'actions' : [ umcd.Action( req, idlist_ok_button ) ] } )
 
-			input_iterationDays = umcd.ChoiceButton( '%s:' % _('Please select rhythm'), choices, default = defaultID, close_dialog = False, attributes = { 'width' : '120' } )
+			input_iterationDays = umcd.ChoiceButton( _('Please select interval'), choices, default = defaultID, close_dialog = False, attributes = { 'width' : '300' } )
 			idlist_ok_button.append(input_iterationDays.id())
 			row = [input_iterationDays]
 
@@ -354,7 +354,7 @@ class Web( object ):
 				if not opts['iterationEnd']:
 					# default iteration end is in 180 days
 					opts['iterationEnd'] = datetime.date.fromordinal(datetime.date.today().toordinal() + 180).strftime("%Y-%m-%d")
-				descr_text = umc.String( '%s:' % _( 'Until' ), required = True )
+				descr_text = umc.String( _( 'Until' ), required = True )
 				input_iterationEnd = umcd.DateInput( ( 'iterationEnd', descr_text ), default = opts['iterationEnd']  )
 				idlist_ok_button.append(input_iterationEnd.id())
 				row.append( input_iterationEnd )
