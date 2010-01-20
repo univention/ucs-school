@@ -3,7 +3,7 @@
 # Univention Config Registry
 #  enable/disable internet access in squidguard config
 #
-# Copyright (C) 2007-2009 Univention GmbH
+# Copyright (C) 2007-2010 Univention GmbH
 #
 # http://www.univention.de/
 #

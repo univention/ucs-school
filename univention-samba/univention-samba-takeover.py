@@ -4,7 +4,7 @@
 # Univention Samba
 #  takes over another samba domain
 #
-# Copyright (C) 2006-2009 Univention GmbH
+# Copyright (C) 2006-2010 Univention GmbH
 #
 # http://www.univention.de/
 #

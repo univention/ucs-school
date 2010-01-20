@@ -3,7 +3,7 @@
 # Univention Samba BDC
 #  runit script for the samba sync daemon
 #
-# Copyright (C) 2006-2009 Univention GmbH
+# Copyright (C) 2006-2010 Univention GmbH
 #
 # http://www.univention.de/
 #

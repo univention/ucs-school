@@ -3,7 +3,7 @@
 # Univention Samba
 #  listener module: manages samba share configuration
 #
-# Copyright (C) 2001-2009 Univention GmbH
+# Copyright (C) 2001-2010 Univention GmbH
 #
 # http://www.univention.de/
 #
