@@ -189,12 +189,12 @@ msgid "Start time"
 msgstr "Anfangszeit"
 
 #: _revamp.py:348
-msgid "Please select rhythm"
-msgstr "Wiederholungsintervall:"
+msgid "Please select interval"
+msgstr "Wiederholungsintervall"
 
 #: _revamp.py:357
 msgid "Until"
-msgstr "Wiederholen bis:"
+msgstr "Wiederholen bis"
 
 #: _revamp.py:388
 msgid "Please select school:"
