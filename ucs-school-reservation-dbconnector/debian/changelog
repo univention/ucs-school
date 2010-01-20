@@ -1,3 +1,9 @@
+ucs-school-reservation-dbconnector (5.0.5-1) unstable; urgency=low
+
+  * copyright update (Bug #17102)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Wed, 20 Jan 2010 15:54:35 +0200
+
 ucs-school-reservation-dbconnector (5.0.4-1) unstable; urgency=low
 
   * made wasLastRun more stable (Bug 12130)
