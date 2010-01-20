@@ -1,3 +1,9 @@
+ucs-school-reservation-customdata (5.0.4-1) unstable; urgency=low
+
+  * copyright update (Bug #17102)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Wed, 20 Jan 2010 15:54:35 +0200
+
 ucs-school-reservation-customdata (5.0.3-1) unstable; urgency=low
 
   * changed description for default profile (Bug #17114)

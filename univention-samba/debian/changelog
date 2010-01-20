@@ -1,3 +1,9 @@
+univention-samba (4.0.10-8) unstable; urgency=low
+
+  * copyright update (Bug #17102)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Wed, 20 Jan 2010 15:54:35 +0200
+
 univention-samba (4.0.10-7) unstable; urgency=low
 
   * ignore share "homes" while setting "invalid users" for all other
