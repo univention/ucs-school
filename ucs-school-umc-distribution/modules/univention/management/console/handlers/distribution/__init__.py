@@ -105,6 +105,38 @@ command_description = {
 	),
 }
 
+def saveProject(projectfile, project):
+	fd_project = open(projectfile, 'w')
+	pickle.dump(project, fd_project)
+	fd_project.close()
+
+def getProject(projectfile=None):
+	project = {
+			'name': None,
+			'description': None,
+			'cachedir': None,
+			'files': [],
+			'filesnew': [],
+			'filesremove': [],
+			'starttime': None,
+			'deadline': None,
+			'atjob': None,
+			'collectFiles': True,
+			'sender': {},
+			'sender_uid': None,
+			'recipients': [],
+			'recipients_dn': [],
+			}
+
+	if projectfile != None:
+		fd_project = open(projectfile, 'r' )
+		tmp_project = pickle.load(fd_project)
+		fd_project.close()
+		if tmp_project:
+			for k in project.iterkeys():
+				if tmp_project.has_key(k):
+					project[k] = tmp_project[k]
+	return project
 
 import inspect
 def debugmsg( component, level, msg ):
@@ -216,9 +248,7 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 			debugmsg( ud.ADMIN, ud.INFO, 'distribution_search: WALK = %s' % fn_projectlist )
 			for fn_project in fn_projectlist:
 				if os.path.isfile( os.path.join(DISTRIBUTION_DATA_PATH, fn_project) ):
-					fd_project = open( os.path.join(DISTRIBUTION_DATA_PATH, fn_project), 'r' )
-					project = pickle.load( fd_project )
-					fd_project.close()
+					project = getProject(os.path.join(DISTRIBUTION_DATA_PATH, fn_project))
 
 					skey = umcobject.options.get('key','name')
 					sfilter = umcobject.options.get('filter','*')
@@ -263,19 +293,18 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 					userfilter = '(|%s)' % userfilter
 				debugmsg( ud.ADMIN, ud.INFO, 'userfilter = %s' % userfilter )
 
-			project = { 'name': umcobject.options.get('projectname',''),
-						'description': umcobject.options.get('description',''),
-						'cachedir': None,
-						'files': [],
-						'starttime': None,
-						'deadline': None,
-						'atjob': None,
-						'collectFiles': True,
-						'sender': {},
-						'sender_uid': None,
-						'recipients': [],
-						'recipients_dn': [],
-						}
+			if umcobject.options.get('update','0') == '1' and umcobject.options.get('complete','0') == '1':
+				fn_project = os.path.join( DISTRIBUTION_DATA_PATH, umcobject.options.get('projectname','') )
+				if os.path.exists( fn_project ):
+					project = getProject(fn_project)
+				else:
+					umcobject.options['complete'] = '0'
+					msg.append( _('projectname "%(projectname)s" is already in use!') % { 'projectname': project['name'] } )
+					debugmsg( ud.ADMIN, ud.WARN, 'project name "%s" already in use' % project['name'])
+			else:
+				project = getProject ()
+				project['name'] = umcobject.options.get('projectname','')
+				project['description'] = umcobject.options.get('description','')
 
 			# test if files have been uploaded
 			if not umcobject.options.get('fileupload',[]) and umcobject.options.get('complete','0') == '1':
@@ -308,9 +337,7 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 				project['files'] = umcobject.options.get('fileupload',[])
 
 				# save user info
-				fd_project = open(fn_project, 'w')
-				pickle.dump( project, fd_project )
-				fd_project.close()
+				saveProject(fn_project, project)
 
 				debugmsg( ud.ADMIN, ud.INFO, 'project "%s" has been saved' % project['name'])
 
@@ -368,9 +395,7 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 				debugmsg( ud.ADMIN, ud.ERROR, 'project "%(projectname)s": file %(fn)s does not exist' % { 'projectname': projectname, 'fn': os.path.join(DISTRIBUTION_DATA_PATH, projectname)  } )
 				report = _('project "%(projectname)s": file %(fn)s does not exist' ) % { 'projectname': projectname, 'fn': os.path.join(DISTRIBUTION_DATA_PATH, projectname)  }
 			else:
-				fd_project = open( os.path.join(DISTRIBUTION_DATA_PATH, projectname), 'r' )
-				project = pickle.load( fd_project )
-				fd_project.close()
+				project = getProject(os.path.join(DISTRIBUTION_DATA_PATH, projectname))
 
 		self.finished( umcobject.id(), { 'availableOU': self.ldap_anon.availableOU,
 										 'project': project,
@@ -396,9 +421,7 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 				debugmsg( ud.ADMIN, ud.ERROR, 'project "%(projectname)s": file %(fn)s does not exist' % ( projectname, fn_project ) )
 				report = _('project "%(projectname)s": file %(fn)s does not exist' ) % { 'projectname': projectname, 'fn': fn_project  }
 			else:
-				fd_project = open( fn_project, 'r' )
-				project = pickle.load( fd_project )
-				fd_project.close()
+				project = getProject(fn_project)
 
 		if report:
 			self.finished( umcobject.id(), { 'availableOU': self.ldap_anon.availableOU,

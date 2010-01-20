@@ -37,6 +37,8 @@ import univention.management.console.tools as umct
 import univention.admin.modules
 import univention.admin.objects
 
+from univention.management.console.handlers.distribution import getProject, saveProject
+
 import univention.debug as ud
 import univention.uldap
 
@@ -359,6 +361,18 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 	def condition_reservation_date_window(self, reservation):
 		#endtime = time.strptime( reservation.endTime , "%Y-%m-%d %H:%M:%S")
 		#endtime_obj = datetime.datetime( *endtime[0:6] )
+		if reservation.isIterable ():
+			if self.date_window_end:
+				if reservation.startTime <= self.date_window_end:
+					if reservation.iterationEnd:
+						if reservation.iterationEnd >= self.date_window_begin:
+							return True
+						else:
+							return False
+					return True
+				return False
+			else:
+				return True
 		if reservation.endTime >= self.date_window_begin:
 			if self.date_window_end:
 				if reservation.endTime <= self.date_window_end:
@@ -465,7 +479,7 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 					l = [ str(reservation.id), reservation.name, reservation.description,
 						date_start, time_begin,
 						time_end,
-						roomname, groupname, ownername ]
+						roomname, groupname, ownername, reservation.isIterable(), reservation.isError(), reservation.status ]
 					p = reservationdb.Profile.get( reservation.resprofileID )
 					if p:
 						l.append(p.name)
@@ -490,7 +504,7 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 					l = [ str(reservation.id), reservation.name, reservation.description,
 						date_start, time_begin,
 						time_end,
-						roomname, groupname, ownername ]
+						roomname, groupname, ownername, reservation.isIterable(), reservation.isError(), reservation.status ]
 					p = reservationdb.Profile.get( reservation.resprofileID )
 					if p:
 						l.append(p.name)
@@ -649,6 +663,7 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 						if reservationID and str(reservation.id) == reservationID:
 							#debugmsg( ud.ADMIN, ud.INFO, 'reservation_write: no collision: reservationID reuse')
 							# No self-collision, continue checks
+							debugmsg( ud.ADMIN, ud.INFO, 'reservation_write: reservationID and str(reservation.id) == reservationID')
 							continue
 						# no collision with reservations marked for deletion
 						if reservation.deleteFlag:
@@ -661,40 +676,51 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 							continue
 						startDate = reservation.startTime.date()
 						if reservation.iterationDays != 0:
+							debugmsg( ud.ADMIN, ud.INFO, 'reservation_write: reservation.iterationDays != 0')
 							iterationEndDate = reservation.iterationEnd.date()
 							if startDate2 > iterationEndDate:
+								debugmsg( ud.ADMIN, ud.INFO, 'reservation_write: startDate2 > iterationEndDate')
 								continue
 							runDate = copy.copy(startDate)
 							runDate2 = copy.copy(startDate2)
 							if runDate2 > runDate:
+								debugmsg( ud.ADMIN, ud.INFO, 'reservation_write: runDate2 > runDate')
 								iterationDays = datetime.timedelta(days= reservation.iterationDays)
 								while runDate2 > runDate:
 									runDate += iterationDays
 							elif int(object.options['iterationDays']) != 0:
+								debugmsg( ud.ADMIN, ud.INFO, 'reservation_write: int(object.options["iterationDays"]) != 0')
 								iterationEndDate2 = iterationEnd.date()
 								if runDate > iterationEndDate2:
+									debugmsg( ud.ADMIN, ud.INFO, 'reservation_write: runDate > iterationEndDate2')
 									continue
 								iterationDays2 = datetime.timedelta(days= int(object.options['iterationDays']))
 								while runDate > runDate2:
 									runDate2 += iterationDays2
 							if runDate != runDate2:
+								debugmsg( ud.ADMIN, ud.INFO, 'reservation_write: runDate != runDate2')
 								continue
 						elif int(object.options['iterationDays']) != 0:
+							debugmsg( ud.ADMIN, ud.INFO, 'reservation_write: int(object.options["iterationDays"]) != 0')
 							iterationEndDate2 = iterationEnd.date()
 							runDate = startDate
 							if runDate > iterationEndDate2:
+								debugmsg( ud.ADMIN, ud.INFO, 'reservation_write: runDate > iterationEndDate2')
 								continue
 							iterationDays2 = datetime.timedelta(days= int(object.options['iterationDays']))
 							runDate2 = copy.copy(startDate2)
 							while runDate > runDate2:
 								runDate2 += iterationDays2
 							if runDate != runDate2:
+								debugmsg( ud.ADMIN, ud.INFO, 'reservation_write: runDate != runDate2')
 								continue
 						else:
 							if startDate != startDate2:
+								debugmsg( ud.ADMIN, ud.INFO, 'reservation_write: startDate != startDate2')
 								continue
-						if startTime > reservation.endTime or\
-						   endTime < reservation.startTime:
+						if startTime.time() > reservation.endTime.time() or\
+						   endTime.time() < reservation.startTime.time():
+							debugmsg( ud.ADMIN, ud.INFO, 'reservation_write: startTime > reservation.endTime or endTime < reservation.startTime')
 							continue
 						### all criteria match: collision
 						#order = ('reservationID', 'name', 'description', 'date_start', 'time_begin', 'time_end', 'hostgroup', 'usergroup')
@@ -761,25 +787,28 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 						grpdn, grpattrs = groups[0]
 						recipients_dn = grpattrs.get('uniqueMember', [])
 
-					project = { 'name': project_name,
-								'description': project_description,
-								'cachedir': None,
-								'files': object.options.get('files', []),
-								'starttime': time_start,
-								'deadline': time_end,
-								'atjob': None,
-								'collectFiles': collectfiles,
-								'sender': {},
-								'sender_uid': self._username,
-								'recipients': [],
-								'recipients_dn': recipients_dn,
-								}
+					project = getProject()
+					project['name'] = project_name
+					project['description'] = project_description
+					project['filesnew'] = object.options.get('files', [])
+					project['starttime'] = time_start
+					# Setting the deadline causes umc-distribution to generate
+					# an "at" job to collect.
+					#
+					# A) This is not necessary as the scheduler will regularly
+					# run the cmdStop from the ressettings table at time_end.
+					# B) The current scheduler policy for distribution projects
+					# in the context of iterating dates is to not collect after
+					# every iteration at time_end but only once at iterationEnd.
+					#
+					# project['deadline'] = time_end
+					project['collectFiles'] = collectfiles
+					project['sender_uid'] = self._username
+					project['recipients_dn'] = recipients_dn
 
 					# save user info
 					fn_project = os.path.join( DISTRIBUTION_DATA_PATH, project['name'] )
-					fd_project = open(fn_project, 'w')
-					pickle.dump( project, fd_project )
-					fd_project.close()
+					saveProject(fn_project, project)
 
 					object.options['distributionID'] = project_name
 

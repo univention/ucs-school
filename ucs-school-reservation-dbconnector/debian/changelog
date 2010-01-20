@@ -1,3 +1,23 @@
+ucs-school-reservation-dbconnector (5.0.4-1) unstable; urgency=low
+
+  * made wasLastRun more stable (Bug 12130)
+
+ -- Jan Christoph Ebersbach <ebersbach@univention.de>  Wed, 26 Aug 2009 18:28:13 +0200
+
+ucs-school-reservation-dbconnector (5.0.3-1) unstable; urgency=low
+
+  * added functions wasFirstRun and wasLastRun
+  * added DISTRIBUTIONID constant
+  * all changes are related to Ticket #2008110710000095 (Bug 12130)
+
+ -- Jan Christoph Ebersbach <ebersbach@univention.de>  Tue, 18 Aug 2009 10:51:10 +0200
+
+ucs-school-reservation-dbconnector (5.0.2-1) unstable; urgency=low
+
+  * implemented iterations for reservations (Bug 12130)
+
+ -- Jan Christoph Ebersbach <ebersbach@univention.de>  Mon, 17 Aug 2009 17:30:41 +0200
+
 ucs-school-reservation-dbconnector (5.0.1-1) unstable; urgency=low
 
   * added handling for additional column "deleteFlag" (Bug #15542)
