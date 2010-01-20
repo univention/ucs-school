@@ -26,7 +26,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
-from univention.reservation.dbconnector import Vacation, Reservation, RESERVATION_TABLE, WAITING, DONE, ERROR
+from univention.reservation.dbconnector import Vacation, Reservation, RESERVATION_TABLE, WAITING, ITER_WAITING, DONE, ERROR, ITER_ERROR
 from univention.reservation.scheduler.listener import AbstractListener
 from univention.config_registry import ConfigRegistry
 from univention.reservation.scheduler.notifier import AbstractEvent, StartEvent, StopEvent
@@ -59,9 +59,8 @@ def filterIterations (date, reservation):
 	if reservation == None:
 		return None
 	## this reservation is not iterated at all
-	if reservation.iterationDays == None \
-			or reservation.iterationDays == 0:
-		## today is the last/only day where reservation is executed
+	if not reservation.isIterable():
+		## today is the last/only day when the reservation is executed
 		if (reservation.iterationEnd != None \
 				and reservation.iterationEnd.date () == date) \
 				or (reservation.startTime != None \
@@ -101,15 +100,15 @@ def getStartable (connection):
 	# The following select statement must select certain errors because not all
 	# reservations with errors are stoppable!!
 	# ITERATIONS: disabled for the moment
-	#cursor.execute ("SELECT reservationID FROM %s WHERE TIME (startTime) <= TIME (%%s) AND TIME (endTime) > TIME (%%s) AND (status = %%s OR status = %%s OR status RLIKE '^%s 1(05|15|16|25|26)-[0-9]+$')" % (RESERVATION_TABLE, ERROR), (dt, dt, WAITING, DONE))
-	cursor.execute ("SELECT reservationID FROM %s WHERE startTime <= %%s AND endTime > %%s AND status = %%s" % RESERVATION_TABLE, (dt, dt, WAITING))
+	cursor.execute ("SELECT reservationID FROM %(table)s WHERE TIME (startTime) <= TIME (%%s) AND TIME (endTime) > TIME (%%s) AND (status = %%s OR status = %%s OR status = %%s OR status RLIKE '^(%(error)s|%(itererror)s) 1(05|15|16|25|26)-[0-9]+$')" % {'table': RESERVATION_TABLE, 'error': ERROR, 'itererror': ITER_ERROR}, (dt, dt, WAITING, ITER_WAITING, DONE))
+	#cursor.execute ("SELECT reservationID FROM %s WHERE startTime <= %%s AND endTime > %%s AND status = %%s" % RESERVATION_TABLE, (dt, dt, WAITING))
 	for res in cursor.fetchall ():
 		try:
-			startable.append (Reservation.get (res[0]))
+			#startable.append (Reservation.get (res[0]))
 			# ITERATIONS: disabled for the moment
-			#r = filterIterations (dt.date (), Reservation.get (res[0]))
-			#if r:
-			#	startable.append (r)
+			r = filterIterations (dt.date (), Reservation.get (res[0]))
+			if r:
+				startable.append (r)
 		except Exception:
 			debug.debug (debug.MAIN, debug.ERROR, '%s\nE: Reservation does not exist. ID: %s' % (traceback.format_exc().replace('%','#'), res[0]))
 	cursor.close ()
@@ -128,11 +127,13 @@ def getStoppable (connection):
 	cursor = connection.cursor ()
 	# WARNING: iterationEnd and iterationDays are not respected! This function
 	# catches everything that's running and restores a sane state
-	# The following select statement must select certain errors because not all
+	# The following select statement must select only certain errors because not all
 	# reservations with errors are stoppable!!
 	# ITERATIONS: disabled for the moment
+	#cursor.execute ("SELECT reservationID FROM %s WHERE endTime < %%s AND (status <> %%s AND status <> %%s)" % RESERVATION_TABLE, (dt, WAITING, DONE))
+	#cursor.execute ("SELECT reservationID FROM %s WHERE ( endTime < %%s OR deleteFlag = True ) AND (status <> %%s AND status <> %%s)" % RESERVATION_TABLE, (dt, WAITING, DONE))
+	cursor.execute ("SELECT reservationID FROM %(table)s WHERE ( TIME (endTime) < TIME (%%s) OR deleteFlag = True ) AND (status <> %%s AND status <> %%s AND status <> %%s OR status RLIKE '^(%(error)s|%(itererror)s) 1(05|10|11|20|21)-[0-9]+$')" % {'table': RESERVATION_TABLE, 'error': ERROR, 'itererror': ITER_ERROR}, (dt, WAITING, ITER_WAITING, DONE))
 	#cursor.execute ("SELECT reservationID FROM %s WHERE TIME (endTime) < TIME (%%s) AND (status <> %%s AND status <> %%s OR status RLIKE '^%s 1(05|10|11|20|21)-[0-9]+$')" % (RESERVATION_TABLE, ERROR), (dt, WAITING, DONE))
-	cursor.execute ("SELECT reservationID FROM %s WHERE ( endTime < %%s OR deleteFlag = True ) AND (status <> %%s AND status <> %%s)" % RESERVATION_TABLE, (dt, WAITING, DONE))
 	for res in cursor.fetchall ():
 		try:
 			stoppable.append (Reservation.get (res[0]))

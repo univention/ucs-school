@@ -26,6 +26,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
+import datetime
 from subprocess import Popen, PIPE, STDOUT
 import traceback
 import re
@@ -34,7 +35,7 @@ import grp
 from univention.reservation.scheduler.listener import AbstractListener
 
 from univention.config_registry import ConfigRegistry
-from univention.reservation.dbconnector import Profile
+from univention.reservation.dbconnector import Profile, DISTRIBUTIONID
 import univention.debug as debug
 
 ucr = ConfigRegistry (write_registry=ConfigRegistry.SCHEDULE)
@@ -48,7 +49,7 @@ class SchedulerStopListener (AbstractListener):
 		"""
 		_d = debug.function ('listener.stop.__init__')
 		super (SchedulerStopListener, self).__init__ ('Scheduler Stop Listener')
-	
+
 	def _applyOptionStopCmd (self, r, o):
 		_d = debug.function ('listener.stop._applyOptionStopCmd')
 		if not o.setting:
@@ -180,6 +181,12 @@ class SchedulerStopListener (AbstractListener):
 
 		# 2. execute cmdStop
 		if s.cmdStop != None and s.cmdStop.strip () != '':
+			# execute Distribution stop command for iterable reservations only
+			# if this was the last iteration! Otherwise don't do anything
+			if s.name == DISTRIBUTIONID and not r.wasLastRun():
+				debug.debug (debug.MAIN, debug.INFO, 'I: Ignoring cmdStop setting "%s" for reservation "%s" because it was not the last run for this reservation' % (s.name, r.id))
+				return
+
 			# replace placeholders
 			cmd = s.cmdStop
 			if r.id != None:
@@ -284,5 +291,23 @@ class SchedulerStopListener (AbstractListener):
 						r.updateStatus ()
 						break
 			if not r.isError ():
-				r.setDone ()
+				if r.isIterable():
+					if r.iterationEnd:
+						# delta between the two dates
+						iterationEnd = r.iterationEnd
+						if isinstance(iterationEnd, datetime.datetime):
+							iterationEnd = iterationEnd.date()
+						date = datetime.date.today()
+						d = iterationEnd - date
+						## figure out whether today is one of these days
+						# reservation is not repeated today if this is not equal 0
+						# or today is after iterationEnd
+						if d.days <= 0:
+							r.setDone ()
+						elif (d.days / r.iterationDays) > 0:
+							r.setWaiting()
+						else:
+							r.setDone ()
+				else:
+					r.setDone ()
 				r.updateStatus ()
