@@ -284,7 +284,7 @@ class ItalcConnection (object):
 
 	username_regex = re.compile( '^(?P<realname>[^(]+) +\((?P<username>[^ )]+)\)$' )
 
-	def __init__ (self, ipaddr, role=italc.ISD.RoleTeacher, priviledged_user=None):
+	def __init__ (self, ipaddr, role=italc.ISD.RoleTeacher, priviledged_user=None, ip2user=None):
 		debugmsg( ud.ADMIN, ud.INFO, 'ItalcConnection.__init__: %s' % (ipaddr, ))
 		self.ipaddr         = ipaddr
 		self.role           = role
@@ -296,6 +296,7 @@ class ItalcConnection (object):
 		# separate isdConnection is needed
 		self.isd_connection = None
 		self.queue          = []
+		self._ip2user = ip2user
 		self._priviledged_user = priviledged_user
 		self._user          = None
 		self._username      = None
@@ -522,7 +523,12 @@ class ItalcConnection (object):
 
 		# Not all actions are desired on every computer:
 		# do not perform action if iTALC username is equal to UMC username
-		if (self.getUsername() and self._priviledged_user and self.getUsername() == self._priviledged_user):
+		if (self.getUsername() and self._priviledged_user and self.getUsername() == self._priviledged_user) or (self._priviledged_user == self._ip2user.get(self.ipaddr)):
+			debugmsg( ud.ADMIN, ud.INFO, 'ItalcConnection.execute(): action against privileged user: action=%s  privUser=%s  getUsername=%s  ip2user[%s]=%s' % (action,
+																																								self._priviledged_user,
+																																								self.getUsername(),
+																																								self.ipaddr,
+																																								self._ip2user.get(self.ipaddr)))
 			if action in ('lockDisplay', 'logoutUser', 'powerDownComputer', 'restartComputer'):
 				return False
 			if action == 'disableLocalInputs':
@@ -619,13 +625,13 @@ class ItalcConnection (object):
 		return self._snapshot_size
 
 	@classmethod
-	def getConnection (cls, ipaddr, priviledged_user=None):
+	def getConnection (cls, ipaddr, priviledged_user=None, ip2user=None):
 		debugmsg( ud.ADMIN, ud.INFO, 'ItalcConnection.getConnection (%s)' % ipaddr)
 		con = None
 		if italc_connections.has_key (ipaddr):
 			con = italc_connections[ipaddr]
 		else:
-			italc_connections[ipaddr] = ItalcConnection (ipaddr, priviledged_user=priviledged_user)
+			italc_connections[ipaddr] = ItalcConnection (ipaddr, priviledged_user=priviledged_user, ip2user=ip2user)
 			con = cls.getConnection (ipaddr)
 		# WARNING: the connection will be opened, immediately 
 		con.async_open ()
@@ -634,6 +640,7 @@ class ItalcConnection (object):
 class handler( umch.simpleHandler, _revamp.Web  ):
 	def __init__( self ):
 		global command_description, italc_update_interval, italc_connection_timeout
+		self._ip2user = {}
 		umch.simpleHandler.__init__( self, command_description )
 		_revamp.Web.__init__( self )
 
@@ -757,10 +764,7 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 
 
 		cmd = '/usr/bin/smbstatus -b'
-		proc = notifier.popen.Shell( cmd, stdout = True )
-		cb = notifier.Callback( self._roomadmin_room_list_return, object, computers_blocked4internet, groupdict, computerdict )
-		proc.signal_connect( 'finished', cb )
-		proc.start()
+		result = umct.run_process( cmd, timeout = 0, output = True )
 
 #root@master30:/root# smbstatus -b
 #
@@ -771,22 +775,25 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 #18646     Administrator  Domain Admins  labor-pc2    (::ffff:10.200.10.152)
 #4764      g.lehmann1    Domain Users musterschule  winxpsp3-italc (::ffff:10.200.10.143)
 
-	def _roomadmin_room_list_return( self, pid, status, buffer, object, computers_blocked4internet, groupdict, computerdict ):
+		buffer = result.get('stdout','').read().split('\n')
+
+		self._ip2user.clear()
 		host2user = {}
 		user2realname = {}
 		userlist = []
 		regex = re.compile( '^\s*?(?P<pid>[0-9]+)\s\s+(?P<username>[^ ]+)\s\s+(?P<group>.+)\s\s+(?P<host>[^ ]+)\s+\((::ffff:)?(?P<ipaddr>[.0-9]+)\)\s*$' )
 
-#		debugmsg( ud.ADMIN, ud.INFO, 'smbstatus -b:\n%s' % '\n'.join(buffer) )
+		debugmsg( ud.ADMIN, ud.INFO, 'smbstatus -b: (%s)\n%s' % (result.get('exit'), '\n'.join(buffer)) )
 
 		for line in buffer:
 			matches = regex.match(line)
 			if matches:
 				items = matches.groupdict()
 				host2user[ items['host'].strip().lower() ] = items['username'].strip()
+				self._ip2user[ items['ipaddr'].strip() ] = items['username'].strip()
 				userlist.append( items['username'].strip() )
 
-#		debugmsg( ud.ADMIN, ud.INFO, 'host2user=%s' % host2user )
+		debugmsg( ud.ADMIN, ud.INFO, 'host2user=%s' % host2user )
 
 		if self.ldap_anon.checkConnection(username = self._username, bindpw = self._password):
 			while userlist:
@@ -842,18 +849,14 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 				ipaddrs.append (computer['aRecord'][0])
 				runfping = True
 
-		if runfping:
-			debugmsg( ud.ADMIN, ud.INFO, 'cmd=%s' % cmd )
-
-			proc = notifier.popen.Shell( cmd, stdout = True, stderr = True )
-			cb = notifier.Callback( self._roomadmin_room_list_return2, ipaddrs, object, computers_blocked4internet, groupdict, computerdict, host2user, user2realname, demomode, hideitems )
-			proc.signal_connect( 'finished', cb )
-			proc.start()
-
-		else:
+		if not runfping:
 			debugmsg( ud.ADMIN, ud.INFO, 'do not call fping' )
 			self.finished( object.id(), ( computers_blocked4internet, groupdict, computerdict, host2user, user2realname, {}, demomode, hideitems ) )
+			return
 
+		debugmsg( ud.ADMIN, ud.INFO, 'cmd=%s' % cmd )
+
+		result = umct.run_process( cmd, timeout = 0, output = True )
 
 #root@master30:/root# fping -C1 10.200.18.30 10.200.18.31 10.200.18.100 10.200.18.32 > /dev/null
 #10.200.18.30  : 0.54
@@ -861,12 +864,20 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 #10.200.18.100 : 0.53
 #10.200.18.32  : -
 
-	def _roomadmin_room_list_return2( self, pid, status, bufstdout, bufstderr, ipaddrs, object, computers_blocked4internet, groupdict, computerdict, host2user, user2realname, demomode, hideitems ):
+		try:
+			bufstdout = result.get('stdout').read()
+		except:
+			bufstdout = ''
+		try:
+			bufstderr = result.get('stderr').read()
+		except:
+			bufstderr = ''
+		debugmsg( ud.ADMIN, ud.INFO, '%s: (%s)\n%s\n---\n%s' % (cmd, result.get('exit'), bufstdout, bufstderr))
 		onlinestatus={}
 
 		regex = re.compile( '^(?P<ipaddr>[.0-9]+) +\: (?P<status>[-.0-9]+)$' )
 
-		for line in bufstderr:
+		for line in bufstderr.splitlines():
 			matches = regex.match(line)
 			if matches:
 				items = matches.groupdict()
@@ -874,7 +885,7 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 
 		# find user names via italc connection
 		for ip in ipaddrs:
-			con = ItalcConnection.getConnection (ip, priviledged_user=self._username)
+			con = ItalcConnection.getConnection (ip, priviledged_user=self._username, ip2user=self._ip2user)
 			if not host2user.has_key (ip) and con.connected:
 				for dn in computerdict.keys ():
 					if computerdict[dn].has_key ('aRecord') \
@@ -1286,7 +1297,7 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 
 		if ipaddrs:
 			for ip in ipaddrs:
-				con = ItalcConnection.getConnection (ip, priviledged_user=self._username)
+				con = ItalcConnection.getConnection (ip, priviledged_user=self._username, ip2user=self._ip2user)
 				con.execute (action, args)
 
 		self.finished( object.id(), finish_args )
@@ -1343,7 +1354,7 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 			debugmsg( ud.ADMIN, ud.ERROR, 'startClientDemo')
 			for ipaddr in ipaddrs:
 				if ipaddr and ipaddr != masterip:
-					client_con = ItalcConnection.getConnection (ipaddr, priviledged_user=self._username)
+					client_con = ItalcConnection.getConnection (ipaddr, priviledged_user=self._username, ip2user=self._ip2user)
 					if client_con.connected or client_con.connecting:
 						demoserver_db['ipaddrs'].append (ipaddr)
 						client_con.execute ('stopDemo')
@@ -1367,7 +1378,7 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 			# TODO: display appropriate error message
 
 		if masterip and ipaddrs:
-			master_con = ItalcConnection.getConnection (masterip, priviledged_user=self._username)
+			master_con = ItalcConnection.getConnection (masterip, priviledged_user=self._username, ip2user=self._ip2user)
 			if master_con.connected:
 				port = 5858
 				demoserver_db = {'masterip': masterip, 'ipaddrs': []}
@@ -1409,7 +1420,7 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 				return
 
 			for clientip in demoserver_db['ipaddrs']:
-				client_con = ItalcConnection.getConnection (clientip, priviledged_user=self._username)
+				client_con = ItalcConnection.getConnection (clientip, priviledged_user=self._username, ip2user=self._ip2user)
 				client_con.execute ('stopDemo')
 				if client_con.connected:
 					debugmsg( ud.ADMIN, ud.INFO, 'roomadmin_italc_demo_stop client: %s connected' % client_con.ipaddr)
@@ -1417,7 +1428,7 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 					debugmsg( ud.ADMIN, ud.INFO, 'roomadmin_italc_demo_stop client: %s disconnected' % client_con.ipaddr)
 
 			if demoserver_db['masterip']:
-				master_con = ItalcConnection.getConnection (demoserver_db['masterip'], priviledged_user=self._username)
+				master_con = ItalcConnection.getConnection (demoserver_db['masterip'], priviledged_user=self._username, ip2user=self._ip2user)
 				master_con.denyAllClients ()
 				master_con.execute ('stopDemo')
 				if master_con.connected:
@@ -1437,7 +1448,7 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 		content_type = 'image/png'
 		content = ''
 		if ipaddr:
-			con = ItalcConnection.getConnection (ipaddr, priviledged_user=self._username)
+			con = ItalcConnection.getConnection (ipaddr, priviledged_user=self._username, ip2user=self._ip2user)
 			snapshot = con.getScaledSnapshot ()
 			if snapshot:
 				try:
@@ -1478,7 +1489,7 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 		data['label'] = 'roomadmin data'
 		data['items'] = []
 		for ipaddr in italc_connections.keys ():
-			con = ItalcConnection.getConnection (ipaddr, priviledged_user=self._username)
+			con = ItalcConnection.getConnection (ipaddr, priviledged_user=self._username, ip2user=self._ip2user)
 			if con and con.connected:
 				item = {}
 				if con.getUser ():
@@ -1517,7 +1528,7 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 				username = _('unknown')
 				realname = _('unknown')
 
-				con = ItalcConnection.getConnection (ipaddr, priviledged_user=self._username)
+				con = ItalcConnection.getConnection (ipaddr, priviledged_user=self._username, ip2user=self._ip2user)
 				if con.connected:
 					username = con.getUsername ()
 					realname = con.getRealname ()
