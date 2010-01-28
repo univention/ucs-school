@@ -779,6 +779,7 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 #4764      g.lehmann1    Domain Users musterschule  winxpsp3-italc (::ffff:10.200.10.143)
 
 	def _roomadmin_room_list_return( self, pid, status, buffer, object, computers_blocked4internet, groupdict, computerdict ):
+		self._ip2user.clear()
 		host2user = {}
 		user2realname = {}
 		userlist = []
@@ -791,6 +792,7 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 			if matches:
 				items = matches.groupdict()
 				host2user[ items['host'].strip().lower() ] = items['username'].strip()
+				self._ip2user[ items['ipaddr'].strip() ] = items['username'].strip()
 				userlist.append( items['username'].strip() )
 
 #		debugmsg( ud.ADMIN, ud.INFO, 'host2user=%s' % host2user )
