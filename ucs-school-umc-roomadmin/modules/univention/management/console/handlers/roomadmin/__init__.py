@@ -764,7 +764,10 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 
 
 		cmd = '/usr/bin/smbstatus -b'
-		result = umct.run_process( cmd, timeout = 0, output = True )
+		proc = notifier.popen.Shell( cmd, stdout = True )
+		cb = notifier.Callback( self._roomadmin_room_list_return, object, computers_blocked4internet, groupdict, computerdict )
+		proc.signal_connect( 'finished', cb )
+		proc.start()
 
 #root@master30:/root# smbstatus -b
 #
@@ -775,25 +778,22 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 #18646     Administrator  Domain Admins  labor-pc2    (::ffff:10.200.10.152)
 #4764      g.lehmann1    Domain Users musterschule  winxpsp3-italc (::ffff:10.200.10.143)
 
-		buffer = result.get('stdout','').read().split('\n')
-
-		self._ip2user.clear()
+	def _roomadmin_room_list_return( self, pid, status, buffer, object, computers_blocked4internet, groupdict, computerdict ):
 		host2user = {}
 		user2realname = {}
 		userlist = []
 		regex = re.compile( '^\s*?(?P<pid>[0-9]+)\s\s+(?P<username>[^ ]+)\s\s+(?P<group>.+)\s\s+(?P<host>[^ ]+)\s+\((::ffff:)?(?P<ipaddr>[.0-9]+)\)\s*$' )
 
-		debugmsg( ud.ADMIN, ud.INFO, 'smbstatus -b: (%s)\n%s' % (result.get('exit'), '\n'.join(buffer)) )
+#		debugmsg( ud.ADMIN, ud.INFO, 'smbstatus -b:\n%s' % '\n'.join(buffer) )
 
 		for line in buffer:
 			matches = regex.match(line)
 			if matches:
 				items = matches.groupdict()
 				host2user[ items['host'].strip().lower() ] = items['username'].strip()
-				self._ip2user[ items['ipaddr'].strip() ] = items['username'].strip()
 				userlist.append( items['username'].strip() )
 
-		debugmsg( ud.ADMIN, ud.INFO, 'host2user=%s' % host2user )
+#		debugmsg( ud.ADMIN, ud.INFO, 'host2user=%s' % host2user )
 
 		if self.ldap_anon.checkConnection(username = self._username, bindpw = self._password):
 			while userlist:
@@ -849,14 +849,18 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 				ipaddrs.append (computer['aRecord'][0])
 				runfping = True
 
-		if not runfping:
+		if runfping:
+			debugmsg( ud.ADMIN, ud.INFO, 'cmd=%s' % cmd )
+
+			proc = notifier.popen.Shell( cmd, stdout = True, stderr = True )
+			cb = notifier.Callback( self._roomadmin_room_list_return2, ipaddrs, object, computers_blocked4internet, groupdict, computerdict, host2user, user2realname, demomode, hideitems )
+			proc.signal_connect( 'finished', cb )
+			proc.start()
+
+		else:
 			debugmsg( ud.ADMIN, ud.INFO, 'do not call fping' )
 			self.finished( object.id(), ( computers_blocked4internet, groupdict, computerdict, host2user, user2realname, {}, demomode, hideitems ) )
-			return
 
-		debugmsg( ud.ADMIN, ud.INFO, 'cmd=%s' % cmd )
-
-		result = umct.run_process( cmd, timeout = 0, output = True )
 
 #root@master30:/root# fping -C1 10.200.18.30 10.200.18.31 10.200.18.100 10.200.18.32 > /dev/null
 #10.200.18.30  : 0.54
@@ -864,20 +868,12 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 #10.200.18.100 : 0.53
 #10.200.18.32  : -
 
-		try:
-			bufstdout = result.get('stdout').read()
-		except:
-			bufstdout = ''
-		try:
-			bufstderr = result.get('stderr').read()
-		except:
-			bufstderr = ''
-		debugmsg( ud.ADMIN, ud.INFO, '%s: (%s)\n%s\n---\n%s' % (cmd, result.get('exit'), bufstdout, bufstderr))
+	def _roomadmin_room_list_return2( self, pid, status, bufstdout, bufstderr, ipaddrs, object, computers_blocked4internet, groupdict, computerdict, host2user, user2realname, demomode, hideitems ):
 		onlinestatus={}
 
 		regex = re.compile( '^(?P<ipaddr>[.0-9]+) +\: (?P<status>[-.0-9]+)$' )
 
-		for line in bufstderr.splitlines():
+		for line in bufstderr:
 			matches = regex.match(line)
 			if matches:
 				items = matches.groupdict()
