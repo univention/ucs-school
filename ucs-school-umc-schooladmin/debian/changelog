@@ -1,3 +1,10 @@
+ucs-school-umc-schooladmin (5.0.4-2) unstable; urgency=low
+
+  * added description for UCR variable ucsschool/ldap/groups/fileserver
+    (Bug #17154)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Tue, 09 Feb 2010 10:38:08 +0100
+
 ucs-school-umc-schooladmin (5.0.4-1) unstable; urgency=low
 
   * copyright update (Bug #17102)
