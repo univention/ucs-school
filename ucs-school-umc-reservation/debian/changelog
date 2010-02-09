@@ -1,3 +1,9 @@
+ucs-school-umc-reservation (5.0.15-1) unstable; urgency=low
+
+  * fixed file distribution (Bug 12310)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Tue, 09 Feb 2010 17:08:37 +0100
+
 ucs-school-umc-reservation (5.0.14-1) unstable; urgency=low
 
   * copyright update (Bug #17102)
