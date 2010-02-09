@@ -1,0 +1,5 @@
+[ucsschool/ldap/groups/fileserver]
+Description[de]=Fileserver für Gruppenfreigaben (Defaultwert: "")
+Description[en]=Fileserver for group shares (default: "")
+Type=str
+Categories=management-umc
