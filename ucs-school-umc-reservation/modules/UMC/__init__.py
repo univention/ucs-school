@@ -790,7 +790,7 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 					project = getProject()
 					project['name'] = project_name
 					project['description'] = project_description
-					project['filesnew'] = object.options.get('files', [])
+					project['files'] = object.options.get('files', [])
 					project['starttime'] = time_start
 					# Setting the deadline causes umc-distribution to generate
 					# an "at" job to collect.
