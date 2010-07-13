@@ -1,8 +1,0 @@
-usr/lib/univention-install/
-usr/share/locale/de/LC_MESSAGES
-usr/share/univention-management-console/www/themes/images/default/64x64/school-accounts
-usr/share/univention-management-console/www/themes/images/default/24x24/school-accounts
-usr/lib/python2.4/site-packages/univention/management/console/handlers/school-accounts
-usr/share/univention-management-console/www/themes/images/default/64x64/school-groups
-usr/share/univention-management-console/www/themes/images/default/24x24/school-groups
-usr/lib/python2.4/site-packages/univention/management/console/handlers/school-groups

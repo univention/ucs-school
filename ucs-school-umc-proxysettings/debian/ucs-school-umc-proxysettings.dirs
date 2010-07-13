@@ -1,5 +1,0 @@
-usr/lib/univention-install/
-usr/share/locale/de/LC_MESSAGES
-usr/share/univention-management-console/www/themes/images/default/24x24/proxysettings
-usr/share/univention-management-console/www/themes/images/default/64x64/proxysettings
-usr/lib/python2.4/site-packages/univention/management/console/handlers/proxysettings
