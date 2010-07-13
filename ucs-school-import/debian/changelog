@@ -1,3 +1,10 @@
+ucs-school-import (6.0.0-1) unstable; urgency=low
+
+  * bump version for UCS 2.4 ucs@school
+  * implement pre and post hook scripts for import script; Bug #18981
+
+ -- Andreas Büsching <buesching@univention.de>  Tue, 13 Jul 2010 19:14:30 +0200
+
 ucs-school-import (5.0.3-1) unstable; urgency=low
 
   * copyright update (Bug #17102)

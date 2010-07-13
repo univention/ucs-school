@@ -51,7 +51,8 @@ wipe_char_group='-'
 locounts=0
 
 import sys, string, re, codecs, os, copy, random, time, traceback, re
-
+import subprocess
+import tempfile
 import ipaddr
 
 import univention.debug
@@ -112,6 +113,56 @@ default_prefixlen = 24
 if not (cn_pupils and cn_teachers and cn_admins and cn_staff):
 	print 'ERROR: Unable to proceed: one of these UCR variables is not set correctly:\n\tucsschool/ldap/default/container/pupils\n\tucsschool/ldap/default/container/teachers\n\tucsschool/ldap/default/container/staff\n\tucsschool/ldap/default/container/admins'
 	sys.exit (1)
+
+# exception classes
+class DeleteObjectError( Exception ): pass
+class CreateObjectError( Exception ): pass
+
+class Hooks( object ):
+	OBJECTS = ( 'user', 'group', 'printer', 'computer', 'network', 'router', 'ou' )
+	OPERATIONS = { 'A' : 'create', 'M' : 'modify', 'D' : 'remove' }
+
+	PATH = '/usr/share/ucs-school-import/hooks/'
+
+	def _create_temp_file( self, line ):
+		tmpfile = tempfile.NamedTemporaryFile()
+		tmpfile.write( line )
+		tmpfile.flush()
+		return tmpfile
+
+	def __run( self, phase, module, action, **kwargs ):
+		# verify path
+		path = os.path.join( Hooks.PATH, '%s_%s_%s.d' % ( module, Hooks.OPERATIONS[ action ], phase ) )
+		if not os.path.isdir( path ) or not os.listdir( path ):
+			return False
+
+		# create temporary file with data
+		if 'line' in kwargs:
+			tmpfile = self._create_temp_file( kwargs.get( 'line' ) )
+
+		# invoke hook scripts
+		# <script> <temporary file> [<ldap dn>]
+		command =  [ 'run-parts', path ]
+		if 'line' in kwargs:
+			command.extend( ( '--arg', tmpfile.name ) )
+		if 'dn' in kwargs:
+			command.extend( ( '--arg', kwargs[ 'dn' ] ) )
+
+		ret_code = subprocess.call( command )
+
+		# close temporary file (also deletes the file)
+		if 'line' in kwargs:
+			tmpfile.close()
+
+		return ret_code == 0
+
+	def pre( self, module, action, **kwargs ):
+		return self.__run( 'pre', module, action, **kwargs )
+
+	def post( self, module, action, **kwargs ):
+		return self.__run( 'post', module, action, **kwargs )
+
+hooks = Hooks()
 
 class ucsschool_person_modify:
 	def __init__(self,line):
@@ -345,10 +396,10 @@ def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None):
 		return True
 
 	# create ucsschool container if it does not exists
-	verify_container ('cn=ucsschool,cn=groups,%s' % baseDN, cn_module, co, lo, superordinate, baseDN, 'groupPath')
+	created, dn = verify_container ('cn=ucsschool,cn=groups,%s' % baseDN, cn_module, co, lo, superordinate, baseDN, 'groupPath')
 
 	if district_enabled:
-		verify_container (getDN (schoolNr, base='district'), ou_module, co, lo, superordinate, baseDN)
+		verify_container(getDN (schoolNr, base='district'), ou_module, co, lo, superordinate, baseDN)
 
 	print "verify ou for school nr %s"%schoolNr
 	# list of needed sub-containers, the dictionary-key adds the container as default during create in verify_container
@@ -368,7 +419,11 @@ def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None):
 	container_policies = { }
 
 	ou_base = getDN (schoolNr)
-	verify_container(ou_base, ou_module, co, lo, superordinate, baseDN, path='')
+
+	# invoke pre hooks
+	hooks.pre( 'ou', 'A', line = ou_base )
+
+	created, dn = verify_container(ou_base, ou_module, co, lo, superordinate, baseDN, path='')
 	keys=container.keys()
 	keys.sort()
 	for path in keys:
@@ -489,7 +544,10 @@ def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None):
 			for dcgroup in dcgroups:
 				if dcgroup not in object["groups"]:
 					object["groups"].append (dcgroup)
-			create_object(object)
+			try:
+				create_object(object)
+			except:
+				pass
 			print "need to create server: %s"%object.dn
 
 		# create dhcp-service if not exsistant
@@ -509,7 +567,10 @@ def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None):
 			count_lo()
 			object.open()
 			object["service"]=schoolNr.lower ()
-			create_object(object)
+			try:
+				create_object(object)
+			except:
+				pass
 			dhcp_service_object=object
 			print "need to create dhcp service: %s"%object.dn
 
@@ -533,7 +594,10 @@ def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None):
 			object.open()
 			object["server"]=dccn
 			print "need to create dhcp server: %s" % object.dn
-			create_object(object)
+			try:
+				create_object(object)
+			except:
+				pass
 
 		# create userlogon-share if not existant
 		objects = univention.admin.modules.lookup(share_module, co, lo, \
@@ -555,7 +619,10 @@ def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None):
 			object["name"]="userlogon"
 			object["host"]=dccn
 			object['path']='/var/lib/samba/userlogon'
-			create_object(object)
+			try:
+				create_object(object)
+			except:
+				pass
 			print "need to create share: %s"%object.dn
 
 	if not schoolNr in verified_ous:
@@ -591,6 +658,11 @@ def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None):
 					modlist.append(('univentionPolicyReference','',poldn))
 					print 'need to attach policy: %s' % poldn
 			lo.modify('%s,%s' % (containerdn,ou_base),modlist)
+
+	# invoke post hooks
+	if created:
+		# for OUs the temporary file contains the LDAP DN
+		hooks.post( 'ou', 'A', dn = ou_base, line = ou_base )
 
 def create_sub_object(o):
 	# create a user object without mailPrimaryAddress but with
@@ -649,39 +721,42 @@ def modify_object(o):
 		traceback.print_exc(100, sys.stdout)
 
 
-def create_object(o, ignore_exists=0):
-	exists=0
+def create_object( o, ignore_exists = False ):
+	exists = False
+	msg = ''
+	dn = None
 	try:
 		dn=o.create()
 		print 'creating object', dn
 	except univention.admin.uexceptions.objectExists:
 		if not ignore_exists:
-			print 'ERROR: Object exists-1 (objectExists)'
-			traceback.print_exc (100, sys.stdout)
+			msg = 'ERROR: Object exists-1 (objectExists)'
 		else:
-			exists=1
+			exists = True
 	except univention.admin.uexceptions.uidAlreadyUsed:
 		if not ignore_exists:
-			print 'ERROR: Object exists-2 (uidAlreadyUsed)'
-			traceback.print_exc (100, sys.stdout)
+			msg = 'ERROR: Object exists-2 (uidAlreadyUsed)'
 		else:
-			exists=1
+			exists = True
 	except univention.admin.uexceptions.dhcpServerAlreadyUsed:
 		if not ignore_exists:
-			print 'ERROR: Object exists-3 (dhcpServerAlreadyUsed)'
-			traceback.print_exc (100, sys.stdout)
+			msg = 'ERROR: Object exists-3 (dhcpServerAlreadyUsed)'
 		else:
-			exists=1
+			exists = True
 	except univention.admin.uexceptions.noLock:
 		if not ignore_exists:
-			print 'ERROR: Object exists-4 (noLock)'
-			traceback.print_exc (100, sys.stdout)
+			msg = 'ERROR: Object exists-4 (noLock)'
 		else:
-			exists=1
+			exists = True
 	except univention.admin.uexceptions.mailAddressUsed:
 		create_sub_object(o)
 
-	return exists
+	if msg:
+		print msg
+		traceback.print_exc (100, sys.stdout)
+		raise CreateObjectError( exists, dn )
+
+	return ( exists, dn )
 
 
 def verify_containers (position_dn, module, co, lo, superordinate, base, path=""):
@@ -722,6 +797,8 @@ def verify_container(position_dn, module, co, lo, superordinate, base, path="use
 			if codecs.latin_1_encode(univention.admin.objects.dn(object))[0]==position_dn:
 				container_exists = 1
 
+	created = False
+	dn = None
 	if not container_exists:
 		print "need to create container %s"%position_dn
 		position=univention.admin.uldap.position(base)
@@ -734,7 +811,13 @@ def verify_container(position_dn, module, co, lo, superordinate, base, path="use
 		if position_dn[:2] == "cn" and path: # is path container
 			object[path] = codecs.latin_1_encode("1")[0]
 
-		exists = create_object(object)
+		try:
+			exists, dn = create_object(object)
+			created = True
+		except CreateObjectError, e:
+			exists, dn = e.args
+
+	return ( created, dn )
 
 def verify_group_share(schoolNr, classNr, co, lo, superordinate, base):
 
@@ -828,7 +911,10 @@ def verify_group_share(schoolNr, classNr, co, lo, superordinate, base):
 		object["group"]=gid
 		object["directorymode"]="0770"
 
-		exists = create_object(object)
+		try:
+			create_object(object)
+		except:
+			pass
 
 	if not classNr in verified_group_shares:
 		verified_group_shares.append((schoolNr, classNr.lower()))
@@ -875,7 +961,10 @@ def verify_group(position_dn, co, lo, superordinate, base):
 		object["name"] = position_dn[3:string.find(position_dn,",")]
 
 
-		exists = create_object(object)
+		try:
+			create_object(object)
+		except:
+			pass
 
 	if not position_dn in verified_groups:
 		verified_groups.append(position_dn)
@@ -888,15 +977,15 @@ def delete_dn(dn, module, co, lo):
 	try:
 		object.remove()
 		print "deleted:",dn
-		return ""
+		return True
 	except univention.admin.uexceptions.noObject:
-		print "ERROR: delete this user manually (not found):",dn
-		traceback.print_exc (100, sys.stdout)
-		return "ERROR: delete this user manually (not found): "+dn+"\n"
+		message = 'ERROR: delete this user manually (not found): ' + dn
 	except:
-		print "ERROR: delete this user manually (maybe not found):",dn
-		traceback.print_exc (100, sys.stdout)
-		return  "ERROR: delete this user manually (maybe not found):"+dn+"\n"
+		message = 'ERROR: delete this user manually (maybe not found):' + dn
+
+	print message
+	traceback.print_exc( 100, sys.stdout )
+	raise DeleteObjectError( message )
 
 def delete_user(person, module, co, lo):
 
@@ -910,6 +999,7 @@ def delete_user(person, module, co, lo):
 	base = person.getPosition_dn()
 	uid = person.login
 	newdn = ""
+	success = True
 
 	# get primaryMail from account
 	master = lo.search(base=base, filter="(uid=%s)" % uid, attr=['mailPrimaryAddress'])
@@ -919,7 +1009,11 @@ def delete_user(person, module, co, lo):
 			mail = attr['mailPrimaryAddress']
 
 	# delete account
-	person.problem_hints += delete_dn(person.getDN(),module,co,lo)
+	try:
+		delete_dn(person.getDN(),module,co,lo)
+	except DeleteObjectError, e:
+		person.problem_hints += str( e ) + '\n'
+		success = False
 
 	# search sub accounts
 	result = lo.search(filter='(univentionAbordnungMasterDn=%s)' % dn, attr=['objectClass'])
@@ -949,6 +1043,8 @@ def delete_user(person, module, co, lo):
 			lo.modify(subdn, ml)
 		except:
 			person.problem_hints += "problems while setting new master dn to sub account " + subdn + "\n"
+
+	return success
 
 def modify_user(person, module, co, lo):
 	default_groups = person.default_groups()
@@ -1116,7 +1212,12 @@ def create_user(person, baseDN, module, password):
 	object["pwdChangeNextLogin"]="0"
 
 	try:
-		if not create_object(object) == "1":
+		try:
+			exists, dn = create_object(object)
+		except CreateObjectError, e:
+			exists, dn = e.args
+
+		if not exists:
 			lo.modify(person.getDN(),[("departmentNumber",[],person.allsNrs)])
 			count_lo()
 			print "created:",person.getDN()
@@ -1182,6 +1283,11 @@ def import_user():
 		#passwd = get_passwd()
 		#passwd = '12345678'
 
+		# invoke pre hooks
+		hooks.pre( 'user', main_person.modtype, line = line )
+		# variable to store success of operation and LDAP dn
+		success = True
+		dn = None
 		if main_person.modtype == "A":
 			#if passwd_used:
 			#	passwd=''
@@ -1202,7 +1308,9 @@ def import_user():
 					print msg
 					traceback.print_exc (100, sys.stdout)
 					person.problem_hints += msg + "\n"
-
+					success = False
+				if not dn:
+					dn = person.getDN()
 		elif main_person.modtype in ["M","D"]:
 			# look if there are exsiting persons in other ou's remaining, this will fail if the users's departmentNumbers
 			# are changed manually
@@ -1226,7 +1334,11 @@ def import_user():
 					found.append(ou)
 				else:
 					main_person.problem_hints += "delete unmentioned user %s \n"%object.dn
-					main_person.problem_hints += delete_dn(object.dn,user_module,co,lo)
+					try:
+						delete_dn(object.dn,user_module,co,lo)
+					except DeleteObjectError, e:
+						success = False
+						main_person.problem_hints += str( e ) + '\n'
 
 			for person in persons:
 				if person.modtype == "M":
@@ -1238,6 +1350,7 @@ def import_user():
 							print msg
 							traceback.print_exc (100, sys.stdout)
 							person.problem_hints += msg + "\n"
+							success = False
 					else:
 						try:
 							print "WARNING: user to modify not found, ",
@@ -1249,11 +1362,13 @@ def import_user():
 							print msg
 							traceback.print_exc (100, sys.stdout)
 							person.problem_hints += msg + "\n"
+							success = False
 
 				else: # main_person.modtype == "D":
 					# NOTE: there is no need for this try-catch-block because delete_dn handles exceptions by itself
 					#try:
-					delete_user(person, user_module, co, lo)
+					success = delete_user(person, user_module, co, lo)
+					dn = person.getDN()
 					#except:
 						#msg = "There were problems deleting this user:" , person.getDN()
 						#print msg
@@ -1264,8 +1379,12 @@ def import_user():
 		else:
 			print "WARNING: unknown operation type:",main_person.modtype
 			main_person.problem_hints += "unknown operation type for this user: "+main_person.getDN()+"\n"
+			success = False
 
 		problem_hints += main_person.problem_hints
+		# invoke post hooks on success
+		if success:
+			hooks.post( 'user', main_person.modtype, dn = dn, line = line )
 
 		#print 'Processing of line %d completed' % linecnt
 
@@ -1294,7 +1413,8 @@ def create_network(schoolNr, network, iprange=None, defaultrouter=None, nameserv
 	@param	nameserver	IP-Adress, if no netmask is profided it's derived from network
 	@param	netbiosserver	IP-Adress, if no netmask is profided it's derived from network
 	"""
-
+	success = False
+	dn = None
 	verify_school_ou(schoolNr, co, lo, baseDN)
 
 
@@ -1331,7 +1451,10 @@ def create_network(schoolNr, network, iprange=None, defaultrouter=None, nameserv
 	# the nameserver/SOA at the dns_reverse_zone object is always the ldap/master server!
 	object['nameserver'] = configRegistry['ldap/master']
 	object['contact']    = 'root@%s'%domainname
-	create_object(object, ignore_exists=1)
+	try:
+		create_object( object, ignore_exists = True )
+	except:
+		pass
 
 	position.setDn("cn=%s,cn=dhcp,%s"%(schoolNr.lower (), getDN (schoolNr)))
 	object=dhcp_service_module.object(co, lo, position=position, superordinate=superordinate)
@@ -1342,7 +1465,10 @@ def create_network(schoolNr, network, iprange=None, defaultrouter=None, nameserv
 	object['subnet']=network.network_ext
 	object['subnetmask']=network.netmask_ext
 	object['broadcastaddress']=network.broadcast_ext
-	create_object(object)
+	try:
+		create_object( object )
+	except:
+		success = False
 
 	position.setDn("cn=networks,%s" % (getDN (schoolNr), ))
 	object=network_module.object(co, lo, position=position, superordinate=superordinate)
@@ -1356,7 +1482,11 @@ def create_network(schoolNr, network, iprange=None, defaultrouter=None, nameserv
 	object['dhcpEntryZone']='cn=%s,cn=dhcp,%s'%(schoolNr.lower (), getDN (schoolNr))
 	object['dnsEntryZoneForward']='zoneName=%s,cn=dns,%s'%(domainname, baseDN)
 	object['dnsEntryZoneReverse']='zoneName=%s.in-addr.arpa,cn=dns,%s'%('.'.join (reversed (subnet.split ('.'))),baseDN)
-	create_object(object)
+
+	try:
+		exists, dn = create_object( object )
+	except:
+		success = False
 
 	# set netbios and router for dhcp subnet
 	if defaultrouter:
@@ -1372,6 +1502,7 @@ def create_network(schoolNr, network, iprange=None, defaultrouter=None, nameserv
 		print 'setting nameserver'
 		set_nameserver_for_subnet (network, nameserver, schoolNr)
 
+	return ( success, dn )
 
 def check_network(schoolNr, network):
 	"""
@@ -1455,7 +1586,7 @@ def import_networks(router_only=False):
 
 	line=inf.readline()
 	while not line == "":
-
+		success = True
 		parsed=line.strip('\r\n').split(sepchar)
 
 		schoolNr      = parsed[0]
@@ -1474,6 +1605,14 @@ def import_networks(router_only=False):
 		defaultrouter = parseString (parsed, 3) # new
 		nameserver    = parseString (parsed, 4) # new
 		netbiosserver = parseString (parsed, 5) # new
+
+		# invoke pre hooks
+		if router_only:
+			hooks.pre( 'router', 'A', line = line )
+		else:
+			hooks.pre( 'network', 'A', line = line )
+		dn = None
+		success = True
 
 		# convert parameters to ipaddr.IPv4
 		network = ipaddr.IPv4 (network)
@@ -1507,16 +1646,19 @@ def import_networks(router_only=False):
 
 		if router_only:
 			if defaultrouter:
-				set_router_for_subnet (network, defaultrouter, schoolNr, overwrite_policy=True)
+				success, dn = set_router_for_subnet (network, defaultrouter, schoolNr, overwrite_policy=True)
 				print 'Router set for subnet.'
 			else:
 				print 'No router specified for subnet.'
 		else:
-			create_network(schoolNr, network, \
-					iprange=iprange, \
-					defaultrouter=defaultrouter, \
-					nameserver=nameserver, \
-					netbiosserver=netbiosserver)
+			success, dn = create_network( schoolNr, network, iprange=iprange, defaultrouter=defaultrouter, nameserver=nameserver, netbiosserver=netbiosserver )
+
+		# invoke post hooks
+		if success:
+			if router_only:
+				hooks.post( 'network', 'A', dn = dn, line = line )
+			else:
+				hooks.post( 'router', 'A', dn = dn, line = line )
 
 		# read next line
 		line=inf.readline()
@@ -1628,8 +1770,10 @@ def set_policy_for_dhcp_subnet (network, schoolNr, policy_module, policy_dn, cn,
 			traceback.print_exc (100, sys.stdout)
 			policy_object = None
 
+	dn = None
 	if policy_object:
 		# add policy reference to dhcp_subnet_object
+		dn = policy_object.dn
 		try:
 			lob = lo.get (dhcp_subnet_object.dn, ['objectClass'])
 			if 'univentionPolicyReference' not in lob.get ('objectClass', []):
@@ -1643,6 +1787,9 @@ def set_policy_for_dhcp_subnet (network, schoolNr, policy_module, policy_dn, cn,
 			print "WARNING: Error modifying policy %s" % policy_object.dn
 			traceback.print_exc (100, sys.stdout)
 			policy_object = None
+			return ( False, dn )
+
+	return ( True, dn )
 
 def set_netbiosserver_for_subnet (network, ip, schoolNr, overwrite_policy=False):
 	"""
@@ -1656,7 +1803,7 @@ def set_netbiosserver_for_subnet (network, ip, schoolNr, overwrite_policy=False)
 			'netbios_node_type':'8',
 			'netbios_name_servers':ip.ip_ext}
 	dn = "cn=%s,cn=netbios,cn=dhcp,cn=policies,%s" % (values['name'], getDN (schoolNr))
-	set_policy_for_dhcp_subnet (network, schoolNr, policy_dhcp_netbios_module, dn, values['name'], values=values, overwrite_policy=overwrite_policy)
+	return set_policy_for_dhcp_subnet (network, schoolNr, policy_dhcp_netbios_module, dn, values['name'], values=values, overwrite_policy=overwrite_policy)
 
 def set_nameserver_for_subnet (network, ip, schoolNr, overwrite_policy=False):
 	"""
@@ -1668,7 +1815,7 @@ def set_nameserver_for_subnet (network, ip, schoolNr, overwrite_policy=False):
 			'domain_name':domainname,
 			'domain_name_servers':ip.ip_ext}
 	dn = "cn=%s,cn=dns,cn=dhcp,cn=policies,%s" % (values['name'], getDN (schoolNr))
-	set_policy_for_dhcp_subnet (network, schoolNr, policy_dhcp_dns_module, dn, values['name'], values=values, overwrite_policy=overwrite_policy)
+	return set_policy_for_dhcp_subnet (network, schoolNr, policy_dhcp_dns_module, dn, values['name'], values=values, overwrite_policy=overwrite_policy)
 
 def set_router_for_subnet (network, ip, schoolNr, overwrite_policy=False):
 	"""
@@ -1679,7 +1826,7 @@ def set_router_for_subnet (network, ip, schoolNr, overwrite_policy=False):
 			'name':'%s-%s' % (schoolNr.lower (), network.network_ext),
 			'routers':ip.ip_ext}
 	dn = "cn=%s,cn=routing,cn=dhcp,cn=policies,%s" % (values['name'], getDN (schoolNr))
-	set_policy_for_dhcp_subnet (network, schoolNr, policy_dhcp_routing_module, dn, values['name'], values=values, overwrite_policy=overwrite_policy)
+	return set_policy_for_dhcp_subnet (network, schoolNr, policy_dhcp_routing_module, dn, values['name'], values=values, overwrite_policy=overwrite_policy)
 
 def import_computer():
 	# argument is infile
@@ -1713,6 +1860,11 @@ def import_computer():
 
 		ip = ipaddr.IPv4 (IP)
 
+		# invoke pre hooks
+		hooks.pre( 'computer', 'A', line = line )
+
+		success = True
+		dn = None
 		if '/' not in IP:
 			ip.prefixlen = default_prefixlen
 			print 'WARNING: no netmask specified for ip address %s using %s' % (ip.ip_ext, ip.netmask_ext)
@@ -1721,6 +1873,7 @@ def import_computer():
 		if not module:
 			print 'ERROR: Type "%s" not found for computer "%s".' % (ctype, name)
 			print 'Ignoring of line %d' % linecnt
+			success = False
 		else:
 			position_basedn = univention.admin.uldap.position(baseDN)
 			univention.admin.modules.init (lo, position_basedn, module)
@@ -1736,7 +1889,7 @@ def import_computer():
 
 				print "generate computer %s (school %s)"%(name,schoolNr)
 
-				create_network(schoolNr, ip)
+				success = create_network(schoolNr, ip)
 
 				position.setDn("cn=computers,%s" % (getDN (schoolNr), ))
 				object=module.object(co, lo, position=position, superordinate=superordinate)
@@ -1754,8 +1907,13 @@ def import_computer():
 				except:
 					print "WARNING: Error creating computer %s"%object.dn
 					traceback.print_exc (100, sys.stdout)
+					success = False
 
 			print 'Processing of line %d completed' % linecnt
+
+		# invoke post hooks
+		if success:
+			hooks.post( 'computer', 'A', dn = object.dn, line = line )
 
 		# read next line
 		line=inf.readline()
@@ -1795,6 +1953,11 @@ def import_group():
 
 		verify_school_ou(schoolNr, co, lo, baseDN)
 
+		# invoke pre hooks
+		hooks.pre( 'group', action, line = line )
+		success = True
+		dn = None
+
 		if action in ['A','M']:	# Add/Modify group
 ## 			verify_group(group_dn, co, lo, superordinate, baseDN)
 ## 			object = univention.admin.objects.get(group_module, co, lo, position='', dn=group_dn, arg='')
@@ -1814,11 +1977,17 @@ def import_group():
 			print "Changed Description of %s from %s to %s"%(group_dn, oldDescrpt, Descrpt)
 			object.modify()
 			verify_group_share(schoolNr, ClassID, co, lo, superordinate, baseDN)
-
+			dn = object.dn
 		elif action == 'D':	# D)elete group
-			delete_dn(group_dn, group_module, co, lo)
-			delete_dn(share_dn, group_module, co, lo)
+			try:
+				delete_dn(group_dn, group_module, co, lo)
+				delete_dn(share_dn, group_module, co, lo)
+				dn = group_dn
+			except:
+				success = False
 
+		if success:
+			hooks.post( 'group', action, dn = dn, line = line )
 
 		line=inf.readline().strip('\r\n')
 
@@ -1854,10 +2023,16 @@ def import_printer():
 					res = string
 			return res
 		printerModel = parseString (parsed, 5)
-		printerWindowsDriver = parseString (parsed, 6)
+		#printerWindowsDriver = parseString (parsed, 6)
+		printerWindowsDriver = None
 
 		position_dn ="cn=%s,cn=printers,%s" % (printerName, getDN (schoolNr))
 		container ="cn=printers,%s" % (getDN (schoolNr), )
+
+		# invoke pre hooks
+		hooks.pre( 'printer', action, line = line )
+		dn = None
+		success = True
 
 		objects=''
 		try:
@@ -1891,17 +2066,30 @@ def import_printer():
 			if printerWindowsDriver:
 				object['univentionWinPrintDrvName'] = printerWindowsDriver
 			if action == 'A':
-				create_object (object)
+				try:
+					create_object(object)
+				except:
+					success = False
+				dn = object.dn
 			else:
 				try:
 					print 'modifying object %s' % position_dn
 					object.modify()
 				except:
 					traceback.print_exc (100, sys.stdout)
+					success = False
+				dn = object.dn
 
 		elif action == 'D':	# D)elete printer
-			delete_dn(position_dn, printer_module, co, lo)
+			dn = position_dn
+			try:
+				delete_dn(position_dn, printer_module, co, lo)
+			except:
+				success = False
 
+		# invoke post hooks
+		if success:
+			hooks.post( 'printer', action, dn = dn, line = line )
 
 		line=inf.readline().strip('\r\n')
 
