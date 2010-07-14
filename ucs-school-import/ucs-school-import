@@ -1368,13 +1368,14 @@ def import_user():
 					# NOTE: there is no need for this try-catch-block because delete_dn handles exceptions by itself
 					#try:
 					success = delete_user(person, user_module, co, lo)
-					dn = person.getDN()
 					#except:
 						#msg = "There were problems deleting this user:" , person.getDN()
 						#print msg
 						#traceback.print_exc (100, sys.stdout)
 						#person.problem_hints += msg + "\n"
 
+				if not dn:
+					dn = person.getDN()
 				main_person.problem_hints += person.problem_hints
 		else:
 			print "WARNING: unknown operation type:",main_person.modtype
@@ -1413,14 +1414,14 @@ def create_network(schoolNr, network, iprange=None, defaultrouter=None, nameserv
 	@param	nameserver	IP-Adress, if no netmask is profided it's derived from network
 	@param	netbiosserver	IP-Adress, if no netmask is profided it's derived from network
 	"""
-	success = False
+	success = True
 	dn = None
 	verify_school_ou(schoolNr, co, lo, baseDN)
 
 
 	if check_network(schoolNr, network):
 		print "Network %s/%d exists in school %s!"%(network.network_ext, network.prefixlen, schoolNr)
-		return
+		return ( False, dn )
 
 	print "generate network %s/%d" % (network.network_ext, network.prefixlen)
 	if iprange:
@@ -1656,9 +1657,9 @@ def import_networks(router_only=False):
 		# invoke post hooks
 		if success:
 			if router_only:
-				hooks.post( 'network', 'A', dn = dn, line = line )
-			else:
 				hooks.post( 'router', 'A', dn = dn, line = line )
+			else:
+				hooks.post( 'network', 'A', dn = dn, line = line )
 
 		# read next line
 		line=inf.readline()
@@ -1722,6 +1723,9 @@ def set_policy_for_dhcp_subnet (network, schoolNr, policy_module, policy_dn, cn,
 	@param	network	network where policy object shall be added
 	@param	schoolNr	school number
 	"""
+	dn = None
+	success = True
+
 	# check if routing policy needs to be created
 	so = "cn=%s,cn=dhcp,%s" % (schoolNr.lower (), getDN (schoolNr))
 	objects = univention.admin.modules.lookup(dhcp_subnet_module, co, lo, scope='sub', superordinate=so,
@@ -1735,7 +1739,7 @@ def set_policy_for_dhcp_subnet (network, schoolNr, policy_module, policy_dn, cn,
 				dhcp_subnet_object = o
 	if not dhcp_subnet_object:
 		print "ERROR: Unable to set policy for dhcp subnet because it does not exist: %s" % subnet
-		return
+		return ( False, dn )
 
 	objects = univention.admin.modules.lookup(policy_module, co, lo, scope='sub', superordinate=superordinate,
 			base=baseDN, filter=univention.admin.filter.expression('cn', cn))
@@ -1759,6 +1763,7 @@ def set_policy_for_dhcp_subnet (network, schoolNr, policy_module, policy_dn, cn,
 			print "WARNING: Error creating policy %s" % policy_object.dn
 			traceback.print_exc (100, sys.stdout)
 			policy_object = None
+			success = False
 	elif overwrite_policy:
 		policy_object.open ()
 		for k, v in values.iteritems ():
@@ -1770,7 +1775,6 @@ def set_policy_for_dhcp_subnet (network, schoolNr, policy_module, policy_dn, cn,
 			traceback.print_exc (100, sys.stdout)
 			policy_object = None
 
-	dn = None
 	if policy_object:
 		# add policy reference to dhcp_subnet_object
 		dn = policy_object.dn
@@ -1787,9 +1791,9 @@ def set_policy_for_dhcp_subnet (network, schoolNr, policy_module, policy_dn, cn,
 			print "WARNING: Error modifying policy %s" % policy_object.dn
 			traceback.print_exc (100, sys.stdout)
 			policy_object = None
-			return ( False, dn )
+			success = False
 
-	return ( True, dn )
+	return ( success, dn )
 
 def set_netbiosserver_for_subnet (network, ip, schoolNr, overwrite_policy=False):
 	"""
@@ -2023,8 +2027,6 @@ def import_printer():
 					res = string
 			return res
 		printerModel = parseString (parsed, 5)
-		#printerWindowsDriver = parseString (parsed, 6)
-		printerWindowsDriver = None
 
 		position_dn ="cn=%s,cn=printers,%s" % (printerName, getDN (schoolNr))
 		container ="cn=printers,%s" % (getDN (schoolNr), )
@@ -2063,8 +2065,6 @@ def import_printer():
 				object['model'] = printerModel
 			else:
 				object['model'] = 'None'
-			if printerWindowsDriver:
-				object['univentionWinPrintDrvName'] = printerWindowsDriver
 			if action == 'A':
 				try:
 					create_object(object)
