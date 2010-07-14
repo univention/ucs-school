@@ -1,3 +1,9 @@
+ucs-school-import (6.0.4-1) unstable; urgency=low
+
+  * run post hook script for user only if creation was successful; Bug #18981
+
+ -- Andreas Büsching <buesching@univention.de>  Wed, 14 Jul 2010 17:01:09 +0200
+
 ucs-school-import (6.0.3-1) unstable; urgency=low
 
   * hook scripts: file for ou operations contains ou name and dcname (if

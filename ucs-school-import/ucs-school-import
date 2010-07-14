@@ -131,6 +131,10 @@ class Hooks( object ):
 		return tmpfile
 
 	def __run( self, phase, module, action, **kwargs ):
+		# verify phase
+		if not action in Hooks.OPERATIONS:
+			return False
+
 		# verify path
 		path = os.path.join( Hooks.PATH, '%s_%s_%s.d' % ( module, Hooks.OPERATIONS[ action ], phase ) )
 		if not os.path.isdir( path ) or not os.listdir( path ):
@@ -1144,6 +1148,8 @@ def create_passwd():
 	return passwd
 
 def create_user(person, baseDN, module, password):
+	success = True
+
 	if generate_logins:
 		try:
 			loginname = person.login
@@ -1221,7 +1227,7 @@ def create_user(person, baseDN, module, password):
 			exists, dn = create_object(object)
 		except CreateObjectError, e:
 			exists, dn = e.args
-
+			success = False
 		if not exists:
 			lo.modify(person.getDN(),[("departmentNumber",[],person.allsNrs)])
 			count_lo()
@@ -1237,7 +1243,7 @@ def create_user(person, baseDN, module, password):
 		traceback.print_exc (100, sys.stdout)
 		person.problem_hints = person.problem_hints + "ERROR: create this user manually: " + person.getDN()+"\n"
 
-	return 1
+	return success
 
 def import_user():
 	# argument is infile
@@ -1308,6 +1314,7 @@ def import_user():
 					result = create_user(person, baseDN, user_module, passwd)
 					if result and outfile:
 						outf.write('%s\t%s\t%s\t%s\t%s\t%s\t%s\n' % (person.sNr, ','.join(person.cNr), person.sname, person.name, passwd, person.mail, person.login))
+					success = result
 				except:
 					msg = "ERROR: There were problems creating this user: " + str(person.getDN())
 					print msg
