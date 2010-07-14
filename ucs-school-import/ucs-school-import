@@ -421,7 +421,12 @@ def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None):
 	ou_base = getDN (schoolNr)
 
 	# invoke pre hooks
-	hooks.pre( 'ou', 'A', line = schoolNr )
+	if dcName:
+		dccn = dcName
+	else:
+		dccn = ''
+	myline = '%s\t%s' % ( schoolNr, dccn )
+	hooks.pre( 'ou', 'A', line = myline )
 
 	created, dn = verify_container(ou_base, ou_module, co, lo, superordinate, baseDN, path='')
 	keys=container.keys()
@@ -662,7 +667,7 @@ def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None):
 	# invoke post hooks
 	if created:
 		# for OUs the temporary file contains the LDAP DN
-		hooks.post( 'ou', 'A', dn = ou_base, line = schoolNr )
+		hooks.post( 'ou', 'A', dn = ou_base, line = myline )
 
 def create_sub_object(o):
 	# create a user object without mailPrimaryAddress but with
