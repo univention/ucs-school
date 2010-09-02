@@ -1,0 +1,4 @@
+Type: file
+File: var/lib/samba/netlogon/umc-distribution.vbs
+Variables: samba/homedirletter
+Variables: ucsschool/datadistribution/datadir/recipient

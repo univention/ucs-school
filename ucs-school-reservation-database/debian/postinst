@@ -1,0 +1,77 @@
+#!/bin/sh
+#
+# Univention Reservation Database
+#  postinst file for this package
+#
+# Copyright (C) 2008-2010 Univention GmbH
+#
+# http://www.univention.de/
+# 
+# All rights reserved.
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License version 2 as
+# published by the Free Software Foundation.
+#
+# Binary versions of this file provided by Univention to you as
+# well as other copyrighted, protected or trademarked materials like
+# Logos, graphics, fonts, specific documentations and configurations,
+# cryptographic keys etc. are subject to a license agreement between
+# you and Univention.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+
+#DEBHELPER#
+
+# set the root password
+if [ ! -e /etc/mysql.secret ]; then
+	tmp=$(mktemp)
+	makepasswd --nocrypt > $tmp
+	passwd=$(cat $tmp)
+	hash=$(mkpasswd --hash=md5 -s < $tmp)
+	touch /etc/mysql.secret
+	chmod 600 /etc/mysql.secret
+	echo $passwd > /etc/mysql.secret
+	chown root /etc/mysql.secret
+	rm -f $tmp
+	# set passwd for database user reservation
+	/usr/bin/mysqladmin -u root password "$passwd"
+	unset passwd
+fi
+
+# create database during fresh installation
+if [ "$1" = "configure" -a -z "$2" ] ; then
+	mysql -f --password=$(cat /etc/mysql.secret) < /usr/share/ucs-school-reservation-database/datatbase.sql
+	mysql -f --password=$(cat /etc/mysql.secret) < /usr/share/ucs-school-reservation-database/tables.sql
+fi
+# perform database update if previous package version is lower than 5.0.0
+if [ "$1" = "configure" -a -n "$2" ] && dpkg --compare-versions "$2" lt 5.0.0; then
+	mysql -f --password=$(cat /etc/mysql.secret) < /usr/share/ucs-school-reservation-database/tables-update-5.0.0.sql
+fi
+
+
+# create mysql user
+if [ ! -e /etc/reservation-sql.secret ]; then
+	tmp=$(mktemp)
+	makepasswd --nocrypt > $tmp
+	passwd=$(cat $tmp)
+	hash=$(mkpasswd --hash=md5 -s < $tmp)
+	touch /etc/reservation-sql.secret
+	chmod 600 /etc/reservation-sql.secret
+	echo $passwd > /etc/reservation-sql.secret
+	chown www-data /etc/reservation-sql.secret
+	rm -f $tmp
+	# set passwd for database user reservation
+	echo "SET PASSWORD FOR 'reservation' = PASSWORD('$passwd')" | mysql -u root --password=$(cat /etc/mysql.secret)
+	unset passwd
+fi
+
+exit 0
+

@@ -1,0 +1,5 @@
+@!@
+import os.path
+if configRegistry.get('ldap/server/type') == "master":
+	print 'include         /usr/share/univention-ldap/schema/umc-helpdesk.schema'
+@!@

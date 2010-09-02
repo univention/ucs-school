@@ -1,0 +1,428 @@
+#!/usr/bin/python2.4
+# -*- coding: utf-8 -*-
+#
+# Univention Management Console Distribution Module
+#
+# Copyright (C) 2008-2010 Univention GmbH
+#
+# http://www.univention.de/
+#
+# All rights reserved.
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License version 2 as
+# published by the Free Software Foundation.
+#
+# Binary versions of this file provided by Univention to you as
+# well as other copyrighted, protected or trademarked materials like
+# Logos, graphics, fonts, specific documentations and configurations,
+# cryptographic keys etc. are subject to a license agreement between
+# you and Univention.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+
+import pickle, os, sys, subprocess, fcntl, shutil, tempfile, time, re
+import univention.debug as ud
+import univention.config_registry
+import univention.admin.modules
+import univention.admin.objects
+import univention.management.console as umc
+import univention.management.console.handlers.distribution._schoolldap as _schoolldap
+from optparse import OptionParser
+
+configRegistry = univention.config_registry.ConfigRegistry()
+configRegistry.load()
+
+DISTRIBUTION_DATA_PATH = '/var/lib/ucs-school-umc-distribution'
+DISTRIBUTION_CMD = '/usr/lib/ucs-school-umc-distribution/umc-distribution'
+
+import inspect
+def debugmsg( component, level, msg ):
+	info = inspect.getframeinfo(inspect.currentframe().f_back)[0:3]
+	printInfo = []
+	if len(info[0])>28:
+		printInfo.append('...'+info[0][-25:])
+	else:
+		printInfo.append(info[0])
+	printInfo.extend(info[1:3])
+	ud.debug(component, level, "%s:%s: %s" % (printInfo[0], printInfo[1], msg))
+
+
+def _create_dir( targetdir, homedir=None, permissions=0700, owner=0, group=0 ):
+	# does target dir already exist?
+	try:
+		if not os.path.exists( targetdir ):
+			# create targetdir
+			os.makedirs( targetdir, permissions )
+
+			# if homedir is not set, then only chown target dir
+			if homedir:
+				tmpdir = homedir
+				targetdir = '/%s' % targetdir.strip('/')
+				if len(targetdir[ len(homedir) : ].strip('/')) > 0:
+					for dirpart in targetdir[ len(homedir) : ].strip('/').split('/'):
+						tmpdir = os.path.join( tmpdir, dirpart )
+						os.chown( tmpdir, owner, group )
+				os.chown( homedir, owner, group )
+
+		# chown target dir
+		if os.path.exists( targetdir ):
+			os.chown( targetdir, owner, group )
+		else:
+			debugmsg( ud.ADMIN, ud.ERROR, '%s does not exist - creation failed' % (targetdir) )
+	except Exception, e:
+		debugmsg( ud.ADMIN, ud.ERROR, 'failed to create/chown "%s": %s' % (targetdir, str(e)))
+
+
+def initProject( project ):
+	global DISTRIBUTION_DATA_PATH
+	DISTRIBUTION_DATA_PATH = configRegistry.get('ucsschool/datadistribution/cache', DISTRIBUTION_DATA_PATH)
+	postfix_datadir_sender = configRegistry.get('ucsschool/datadistribution/datadir/sender', 'Unterrichtsmaterial')
+	postfix_datadir_recipient = configRegistry.get('ucsschool/datadistribution/datadir/recipient', 'Unterrichtsmaterial')
+
+	fn_project = os.path.join( DISTRIBUTION_DATA_PATH, project['name'] )
+
+	ldap_anon = _schoolldap.SchoolLDAPConnection()
+	ldap_master = _schoolldap.SchoolLDAPConnection( ldapserver = configRegistry['ldap/master'] )
+
+	# get sender object
+	sender_obj = None
+	try:
+		userresult = univention.admin.modules.lookup( ldap_anon.usermodule, ldap_anon.co, ldap_anon.lo,
+													  scope = 'sub', superordinate = None,
+													  base = configRegistry['ldap/base'], filter = ('uid=%s' % project['sender_uid'] ) )
+		if userresult and userresult[0]:
+			sender_obj = userresult[0]
+			sender_obj.open()
+			debugmsg( ud.ADMIN, ud.INFO, 'found sender %s' % sender_obj['username'])
+	except:
+		debugmsg( ud.ADMIN, ud.ERROR, 'error while searching user object of uid=%s' % project['sender_uid'] )
+
+	if not sender_obj:
+		debugmsg( ud.ADMIN, ud.ERROR, 'Cannot find user with uid=%s' % project['sender_uid'] )
+		sys.exit(1)
+
+	project['sender']['obj'] = sender_obj
+	if not project['sender']['obj']['unixhome']:
+		debugmsg( ud.ADMIN, ud.ERROR, 'Cannot determine home directory of user "%s".' % project['sender_uid'] )
+		sys.exit(2)
+
+	# create project cache directory
+	project_data_dir = os.path.join( DISTRIBUTION_DATA_PATH, '%s.data' % project['name'] )
+	debugmsg( ud.ADMIN, ud.INFO, 'creating project cache dir: %s' % project_data_dir )
+	project['cachedir'] = project_data_dir
+	_create_dir( project_data_dir, permissions=0700, owner=0, group=0 )
+
+	# create sender project directory
+	debugmsg( ud.ADMIN, ud.INFO, 'sender: unixhome=%s' % sender_obj['unixhome'] )
+	project['sender']['homedir'] = sender_obj['unixhome']
+	project['sender']['projectdir'] = os.path.join( project['sender']['homedir'], postfix_datadir_sender, project['name'] )
+	_create_dir( project['sender']['projectdir'], project['sender']['homedir'], permissions=0700, owner = int(sender_obj['uidNumber']), group = int(sender_obj['gidNumber']) )
+
+	# move files to sender directory and to project cache directory
+	debugmsg( ud.ADMIN, ud.INFO, 'copy files to sender directory and cache directory' )
+	filelist = project['files']
+	project['files'] = []
+	for fileitem in filelist:
+		# copy to sender directory
+		target = os.path.join( project['sender']['projectdir'], fileitem['filename'] )
+		debugmsg( ud.ADMIN, ud.INFO, 'coping %s to %s' % ( fileitem['tmpfname'], target ) )
+		try:
+			shutil.copy( fileitem['tmpfname'], target )
+			os.chown( target, int(sender_obj['uidNumber']), int(sender_obj['gidNumber']) )
+		except Exception, e:
+			debugmsg( ud.ADMIN, ud.ERROR, 'failed to copy/chown "%s" to "%s": %s' % (fileitem['tmpfname'], target, str(e)))
+
+		# move to cache directory
+		target = os.path.join( project_data_dir, fileitem['filename'] )
+		debugmsg( ud.ADMIN, ud.INFO, 'moving %s to %s' % ( fileitem['tmpfname'], target ) )
+		try:
+			shutil.move( fileitem['tmpfname'], target )
+			os.chown( target, 0, 0 )
+		except Exception, e:
+			debugmsg( ud.ADMIN, ud.ERROR, 'failed to copy/chown "%s" to "%s": %s' % (fileitem['tmpfname'], target, str(e)))
+		project['files'].append( fileitem['filename'] )
+
+	user = {}
+	# build recipient list
+	for userdn in project['recipients_dn']:
+		user = { 'obj': None,
+				 'homedir': None,
+				 'projectdir': None,
+				 }
+		debugmsg( ud.ADMIN, ud.INFO, 'recipient: dn=%s' % userdn )
+		# get UDM user object and add it to recipient list
+		userresult = univention.admin.modules.lookup( ldap_anon.usermodule, ldap_anon.co, ldap_anon.lo,
+													  scope = 'sub', superordinate = None, base = userdn, filter = '')
+		if userresult and userresult[0]:
+			uobj = userresult[0]
+			uobj.open()
+			user['obj'] = uobj
+
+			user['homedir'] = uobj['unixhome']
+			user['projectdir'] = os.path.join( uobj['unixhome'], postfix_datadir_recipient, project['name'] )
+
+			project['recipients'].append(user)
+
+	exitcode = None
+
+	# check deadline
+	if project['deadline']:
+		debugmsg( ud.ADMIN, ud.INFO, 'init_project: deadline = %s' % time.ctime( project['deadline'] ) )
+		# '%H:%M %d.%m.%Y'
+		deadline = time.strftime( '%H:%M %m%d%Y', time.localtime( project['deadline'] ) )
+
+		debugmsg( ud.ADMIN, ud.INFO, 'debug marker 1')
+
+		fn_atjob = tempfile.mkstemp('.tmp', 'umc-distribution.')[1]
+		fd = open(fn_atjob, 'w')
+		fd.write( '%s --collect %s\n' % (DISTRIBUTION_CMD, fn_project ) )
+		fd.close()
+
+		debugmsg( ud.ADMIN, ud.INFO, 'debug marker 2')
+		# deadline is set - setup at-job and then call revamp function
+		#
+		# user@host:~$ at "11:30 061208" -f /tmp/attest
+		# warning: commands will be executed using /bin/sh
+		# job 4 at Thu Jun 12 11:30:00 2008
+		# user@host:~$
+		proc = subprocess.Popen( '/usr/bin/at %s -f %s' % (deadline, fn_atjob), shell=True,
+								 stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, close_fds=True)
+		debugmsg( ud.ADMIN, ud.INFO, 'debug marker 3')
+		stdout,stderr = proc.communicate()
+		debugmsg( ud.ADMIN, ud.INFO, 'debug marker 4')
+
+		if proc.returncode != 0:
+			debugmsg( ud.ADMIN, ud.ERROR, 'init_project: "at" command returned exitcode %s' % proc.returncode )
+			debugmsg( ud.ADMIN, ud.ERROR, 'init_project: "at" command returned (stdout):\n%s' % stdout )
+			debugmsg( ud.ADMIN, ud.ERROR, 'init_project: "at" command returned (stderr):\n%s' % stderr )
+			debugmsg( ud.ADMIN, ud.ERROR, 'init_project: scheduled shutdown with exitcode 3' )
+			exitcode = 3
+		else:
+			debugmsg( ud.ADMIN, ud.INFO, 'debug marker 5')
+			REjobnumber = re.compile('job (\d+) at')
+			match = REjobnumber.search(stderr)
+			if not match:
+				debugmsg( ud.ADMIN, ud.ERROR, 'init_project: cannot get "at" job number (stdout):\n%s' % stdout )
+				debugmsg( ud.ADMIN, ud.ERROR, 'init_project: cannot get "at" job number (stderr):\n%s' % stderr )
+				debugmsg( ud.ADMIN, ud.ERROR, 'init_project: scheduled shutdown with exitcode 4' )
+				exitcode = 4
+			else:
+				atjob = match.group(1)
+				project['atjob'] = atjob
+		debugmsg( ud.ADMIN, ud.INFO, 'debug marker 6')
+
+	# save user info
+	debugmsg( ud.ADMIN, ud.INFO, 'init_project: saving %s' % fn_project )
+	fd_project = open(fn_project, 'w')
+	pickle.dump( project, fd_project )
+	fd_project.close()
+	debugmsg( ud.ADMIN, ud.INFO, 'init_project: %s saved' % fn_project )
+
+	if not project['starttime']:
+		debugmsg( ud.ADMIN, ud.INFO, 'no starttime set - distributing data now')
+		distributeData( project )
+
+	debugmsg( ud.ADMIN, ud.INFO, 'saved project %s' % project['name'])
+
+	if exitcode:
+		debugmsg( ud.ADMIN, ud.ERROR, 'init_project: exitcode is %s - comitting suicide' % exitcode )
+		sys.exit(exitcode)
+
+
+
+def distributeData( project ):
+	# create sender project directory
+	_create_dir( project['sender']['projectdir'], project['sender']['homedir'], permissions=0700, owner = int(project['sender']['obj']['uidNumber']), group = int(project['sender']['obj']['gidNumber']) )
+
+	# iterate over all recipients
+	for user in project['recipients']:
+		debugmsg( ud.ADMIN, ud.INFO, 'recipient: uid=%s' % user['obj']['username'] )
+
+		# create user project directory
+		_create_dir( user['projectdir'], user['homedir'], permissions=0700, owner = int(user['obj']['uidNumber']), group = int(user['obj']['gidNumber']) )
+
+		# copy files from cache to recipient
+		for fn in project['files']:
+			src = os.path.join( project['cachedir'], fn )
+			target = os.path.join( user['projectdir'], fn )
+			try:
+				shutil.copyfile( src, target )
+			except Exception, e:
+				debugmsg( ud.ADMIN, ud.ERROR, 'failed to copy "%s" to "%s": %s' % (src, target, str(e)))
+			try:
+				os.chown( target, int(user['obj']['uidNumber']), int(user['obj']['gidNumber']) )
+			except Exception, e:
+				debugmsg( ud.ADMIN, ud.ERROR, 'failed to chown "%s": %s' % (target, str(e)))
+
+	# cleanup cache directory
+	try:
+		shutil.rmtree( project['cachedir'] )
+	except Exception, e:
+		debugmsg( ud.ADMIN, ud.ERROR, 'failed to cleanup cache directory "%s": %s' % (project['cachedir'], str(e)))
+
+
+
+def collectData( project ):
+	postfix_datadir_sender = configRegistry.get('ucsschool/datadistribution/datadir/sender', 'Materialverteilung')
+	postfix_datadir_recipient = configRegistry.get('ucsschool/datadistribution/datadir/recipient', 'Unterrichtsmaterial')
+
+	if not project.get('collectFiles'):
+		debugmsg( ud.ADMIN, ud.INFO, 'collecting data for project "%s" is disabled - nothing to do' % project['name'] )
+		return
+
+	debugmsg( ud.ADMIN, ud.INFO, 'collecting data for project "%s"' % project['name'] )
+
+	# recreate sender project directory if necessary
+	if not os.path.exists( project['sender']['homedir'] ):
+		try:
+			os.makedirs( project['sender']['homedir'], 0700 )
+			debugmsg( ud.ADMIN, ud.WARN, 'recreate homedir: uidNumber=%s  grpNumber=%s' % (project['sender']['obj']['uidNumber'], project['sender']['obj']['gidNumber']) )
+			os.chown( project['sender']['homedir'],
+					  int(project['sender']['obj']['uidNumber']),
+					  int(project['sender']['obj']['gidNumber']) )
+		except Exception, ex:
+			debugmsg( ud.ADMIN, ud.ERROR, 'cannot create home directory %(target)s for sender %(sender): %(msg)s' %  {
+				'target': project['sender']['homedir'], 'sender': project['sender']['obj']['username'], 'msg': ex } )
+
+	if not os.path.exists( project['sender']['projectdir'] ):
+		try:
+			os.makedirs( project['sender']['projectdir'], 0700 )
+			debugmsg( ud.ADMIN, ud.WARN, 'recreate projectdir: uidNumber=%s  grpNumber=%s' % (project['sender']['obj']['uidNumber'], project['sender']['obj']['gidNumber']) )
+			os.chown( project['sender']['projectdir'],
+					  int(project['sender']['obj']['uidNumber']),
+					  int(project['sender']['obj']['gidNumber']) )
+		except Exception, ex:
+			debugmsg( ud.ADMIN, ud.ERROR, 'cannot create project directory %(target)s for sender %(sender): %(msg)s' % {
+				'target': project['sender']['projectdir'],
+				'sender': project['sender']['obj']['username'],
+				'msg': ex
+				} )
+
+	# collect data from all recipients
+	for recipient in project['recipients']:
+		targetdir = os.path.join( project['sender']['projectdir'], recipient['obj']['username'] )
+		if not os.path.exists( targetdir ):
+			try:
+				os.makedirs( targetdir, 0700 )
+				os.chown( targetdir,
+						  int(project['sender']['obj']['uidNumber']),
+						  int(project['sender']['obj']['gidNumber']) )
+			except Exception, ex:
+				debugmsg( ud.ADMIN, ud.ERROR, 'cannot create project directory %(target)s for recipient %(recipient): %(msg)s' % {
+					'target': targetdir,
+					'recipient': recipient['obj']['username'],
+					'msg': ex
+					} )
+
+		for fn in project['files']:
+			src = os.path.join( recipient['projectdir'], fn )
+			target = os.path.join( targetdir, fn )
+			if os.path.isfile( src ):
+				try:
+					shutil.copy( src, target )
+					os.chown( target,
+							  int(project['sender']['obj']['uidNumber']),
+							  int(project['sender']['obj']['gidNumber']) )
+				except Exception, ex:
+					print 'Cannot copy %(src)s to %(dst)' % { 'src': src, 'dst': target }
+					debugmsg( ud.ADMIN, ud.ERROR, 'Cannot copy %(src)s to %(dst): %(msg)s' % { 'src': src, 'dst': target, 'msg': ex } )
+			else:
+				debugmsg( ud.ADMIN, ud.ERROR, '%(src)s does not exist.' % { 'src': src } )
+				print '%(src)s does not exist.' % { 'src': src }
+
+
+def main():
+	exitcode = 0
+	debug_level = int( configRegistry.get('umc/module/debug/level','1') )
+	if debug_level < 1:
+		debug_level = 1
+	if configRegistry.get('ucsschool/datadistribution/debug/level', None):
+		debug_level = int( configRegistry.get('ucsschool/datadistribution/debug/level') )
+
+	parser = OptionParser()
+	parser.add_option( '-d', '--debug', action = 'store', type = 'int',
+					   dest = 'debug', default = debug_level,
+					   help = 'if set, debugging is activated and set to the specified level' )
+
+	parser.add_option( '-i', '--init', action = 'store_true',
+					   dest = 'init', default = False,
+					   help = 'init specified project' )
+
+	parser.add_option( '-c', '--collect', action = 'store_true',
+					   dest = 'collect', default = False,
+					   help = 'collect specified project' )
+
+	parser.add_option( '-s', '--distribute', action = 'store_true',
+					   dest = 'distribute', default = False,
+					   help = 'distribute specified project' )
+
+	( options, args ) = parser.parse_args()
+
+	# open logging
+	ud.init( '/var/log/univention/ucs-school-umc-distribution.log', 1, 1 )
+	ud.set_level( ud.ADMIN, options.debug )
+	debugmsg(ud.ADMIN, ud.ERROR, 'umc-distribution started: args=%s' % sys.argv)
+
+	if int(options.collect) + int(options.distribute) + int(options.init) != 1:
+		debugmsg(ud.ADMIN, ud.ERROR, 'please specify one argument: --init or --collect or --distribute')
+		sys.exit(250)
+
+	if len(args):
+		if not os.path.exists( args[0] ):
+			debugmsg(ud.ADMIN, ud.ERROR, 'umc-distribution: file does not exist: %s' % args[0])
+			exitcode = 10
+		elif not os.path.isfile( args[0] ):
+			debugmsg(ud.ADMIN, ud.ERROR, 'umc-distribution: is not a file: %s' % args[0])
+			exitcode = 20
+		else:
+			ok = False
+			try:
+				fd_project = open( args[0], 'r' )
+				project = pickle.load( fd_project )
+				fd_project.close()
+				ok = True
+			except Exception, e:
+				debugmsg(ud.ADMIN, ud.ERROR, 'umc-distribution finished: loading %s failed: %s' % (args[0], str(e)))
+				ok = False
+				exitcode = 30
+
+			if ok:
+				if options.init:
+					initProject( project )
+					debugmsg(ud.ADMIN, ud.ERROR, 'umc-distribution finished: initialising: args=%s' % sys.argv)
+
+				elif options.distribute:
+					distributeData( project )
+					debugmsg(ud.ADMIN, ud.ERROR, 'umc-distribution finished: distributing: args=%s' % sys.argv)
+
+				elif options.collect:
+					collectData( project )
+					# remove project file
+					try:
+						os.remove( args[0] )
+					except Exception, ex:
+						debugmsg(ud.ADMIN, ud.ERROR, 'cannot remove %s: %s' % (args[0], str(ex)))
+					# remove project cache dir if existant
+					if os.path.exists( project['cachedir'] ):
+						try:
+							shutil.rmtree( project['cachedir'] )
+						except Exception, e:
+							debugmsg( ud.ADMIN, ud.ERROR, 'failed to cleanup cache directory "%s": %s' % (project['cachedir'], str(e)))
+							exitcode = 40
+
+					debugmsg(ud.ADMIN, ud.ERROR, 'umc-distribution finished: collecting: args=%s' % sys.argv)
+
+	debugmsg(ud.ADMIN, ud.ERROR, 'finished umc-distribution: args=%s' % sys.argv)
+	sys.exit(exitcode)
+
+if __name__ == "__main__":
+	main()
+

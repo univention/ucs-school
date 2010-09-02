@@ -1,0 +1,32 @@
+Source: ucs-school-umc-helpdesk
+Section: univention
+Priority: optional
+Maintainer: Univention GmbH <packages@univention.de>
+Build-Depends: debhelper, python2.4, python-all-dev, python-central, univention-config-dev
+Standards-Version: 3.7.2
+XS-Python-Version: 2.4
+
+Package: ucs-school-umc-helpdesk
+Architecture: all
+Depends: univention-management-console, univention-config-registry, univention-directory-manager-tools, ucs-school-umc-helpdesk-schema
+XB-Python-Version: ${python:Versions}
+Description: Univention Directory Manager module to administrate helpdesk categories of UMC
+ This package contains an Univention Directory Manager module that provides a
+ web frontend or commandline tool to administrate helpdesk categories used
+ in Univention Management Console.
+ .
+ This package is part of Univention Corporate Server (UCS),
+ an integrated, directory driven solution for managing
+ corporate environments. For more information about UCS,
+ refer to: http://www.univention.de/
+
+Package: ucs-school-umc-helpdesk-schema
+Architecture: all
+Description: LDAP Schema for univention-management-console-helpdesk
+ This package contains an LDAP Schema extension for the
+ Univention Management Console Helpdesk module.
+ .
+ This package is part of Univention Corporate Server (UCS),
+ an integrated, directory driven solution for managing
+ corporate environments. For more information about UCS,
+ refer to: http://www.univention.de/

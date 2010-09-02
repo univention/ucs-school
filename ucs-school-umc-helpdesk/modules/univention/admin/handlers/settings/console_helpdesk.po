@@ -1,0 +1,52 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: univention-management-console-helpdesk 0.1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2007-05-10 13:36+0200\n"
+"PO-Revision-Date: 2007-05-10 13:39+0200\n"
+"Last-Translator: Sönke Schwardt <schwardt@univention.de>\n"
+"Language-Team: German <DE@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=ISO-8859-1\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: console_helpdesk.py:49
+msgid "Settings: Console Helpdesk"
+msgstr "Einstellungen: UMC Helpdesk"
+
+#: console_helpdesk.py:50
+msgid "Settings for Univention Console Helpdesk Module"
+msgstr "Einstellungen für UMC-Helpdesk-Modul"
+
+#: console_helpdesk.py:59
+msgid "Name"
+msgstr "Name"
+
+#: console_helpdesk.py:60
+msgid "Name of Console-Helpdesk-Settings-Object"
+msgstr "Name des Objekts für UMC-Helpdesk-Einstellungen"
+
+#: console_helpdesk.py:69 console_helpdesk.py:70
+msgid "Description"
+msgstr "Beschreibung"
+
+#: console_helpdesk.py:80
+msgid "Category"
+msgstr "Kategorie"
+
+#: console_helpdesk.py:81
+msgid "Helpdesk Category"
+msgstr "UMC-Helpdesk-Kategorie"
+
+#: console_helpdesk.py:93
+msgid "General"
+msgstr "Allgemein"
+
+#: console_helpdesk.py:93
+msgid "Basic Values"
+msgstr "Allgemeine Einstellungen"

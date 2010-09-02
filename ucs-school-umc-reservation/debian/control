@@ -1,0 +1,20 @@
+Source: ucs-school-umc-reservation
+Section: univention
+Priority: optional
+Maintainer: Univention GmbH <packages@univention.de>
+Build-Depends: debhelper, python2.4, python-all-dev, python-central, univention-config-dev
+Standards-Version: 3.7.2
+XS-Python-Version: 2.4
+
+Package: ucs-school-umc-reservation
+Architecture: all
+Depends: univention-config-registry, univention-management-console (>=1.2.0), python-univention-management-console (>=1.2.0), samba, fping, ucs-school-reservation-dbconnector, ucs-school-scheduler, ucs-school-reservation-defaultprofile, ucs-school-reservation-lessontimes, ucs-school-umc-printermoderation, ucs-school-umc-proxysettings, ucs-school-umc-distribution
+XB-Python-Version: ${python:Versions}
+Description: UMC module to reserve and assign computer rooms
+ This package contains an Univention Management Console module to reserve and assign
+ computer rooms for certain purposes.
+ .
+ This package is part of Univention Corporate Server (UCS),
+ an integrated, directory driven solution for managing
+ corporate environments. For more information about UCS,
+ refer to: http://www.univention.de/

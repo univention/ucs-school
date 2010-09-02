@@ -1,0 +1,32 @@
+Source: ucs-school-reservation-customdata
+Section: univention
+Priority: optional
+Maintainer: Univention GmbH <packages@univention.de>
+Build-Depends: debhelper
+Standards-Version: 3.7.2
+
+Package: ucs-school-reservation-lessontimes
+Architecture: all
+Depends: ucs-school-reservation-database
+Description: Lesson name to realtime mapping for the reservation system.
+ This package ships lessontime definitions for the reservation
+ system in SQL format. This package must be installed
+ on every reservation system.
+ .
+ This package is part of Univention Corporate Server (UCS),
+ an integrated, directory driven solution for managing
+ corporate environments. For more information about UCS,
+ refer to: http://www.univention.de/
+
+Package: ucs-school-reservation-defaultprofile
+Architecture: all
+Depends: ucs-school-reservation-database, python-mysqldb, univention-samba (>=2.0.4), univention-printserver (>=1.0.9-5), univention-printserver-pdf, python2.4
+Description: Lesson name to realtime mapping for the reservation system.
+ This package ships lessontime data for the reservation
+ system in SQL format. This package must be installed
+ on every reservation system.
+ .
+ This package is part of Univention Corporate Server (UCS),
+ an integrated, directory driven solution for managing
+ corporate environments. For more information about UCS,
+ refer to: http://www.univention.de/

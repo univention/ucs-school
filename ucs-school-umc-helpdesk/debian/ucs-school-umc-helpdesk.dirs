@@ -1,0 +1,5 @@
+usr/lib/univention-install
+usr/share/locale/de/LC_MESSAGES
+usr/share/univention-management-console/www/themes/images/default/64x64/helpdesk
+usr/lib/python2.4/site-packages/univention/admin/handlers/settings
+usr/lib/python2.4/site-packages/univention/management/console/handlers/helpdesk

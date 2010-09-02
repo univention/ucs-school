@@ -1,0 +1,6 @@
+usr/lib/univention-install/
+usr/share/locale/de/LC_MESSAGES
+usr/share/univention-management-console/www/themes/images/default/24x24/roomadmin/
+usr/share/univention-management-console/www/themes/images/default/64x64/roomadmin
+usr/lib/python2.4/site-packages/univention/management/console/handlers/roomadmin
+usr/share/univention-management-console/www/js/umc/roomadmin

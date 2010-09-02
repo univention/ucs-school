@@ -1,0 +1,16 @@
+Source: univention-netlogon-proxy
+Section: univention
+Priority: optional
+Maintainer: Univention GmbH <packages@univention.de>
+Build-Depends: debhelper, univention-config-dev
+
+Package: univention-netlogon-proxy
+Architecture: any
+Depends: univention-config-registry
+Description: netlogon script sets proxy settings for firefox and IE
+ Univention netlogon script - sets proxy settings for firefox and IE
+ .
+ It is part of Univention Corporate Server (UCS), an
+ integrated, directory driven solution for managing
+ corporate environments. For more information about UCS,
+ refer to: http://www.univention.de/

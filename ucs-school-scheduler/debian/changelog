@@ -1,0 +1,220 @@
+ucs-school-scheduler (5.0.11-1) unstable; urgency=low
+
+  * copyright update (Bug #17102)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Wed, 20 Jan 2010 15:54:35 +0200
+
+ucs-school-scheduler (5.0.10-1) unstable; urgency=low
+
+  * added extra debug output for ingored startup/stup commands. 
+    Ticket #2008110710000095 (Bug 12310)
+
+ -- Jan Christoph Ebersbach <ebersbach@univention.de>  Wed, 26 Aug 2009 18:26:04 +0200
+
+ucs-school-scheduler (5.0.9-1) unstable; urgency=low
+
+  * replace % characters during debug output (Bug: #15337) (Bug 12310)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Thu, 13 Aug 2009 14:50:35 +0200
+
+ucs-school-scheduler (5.0.8-1) unstable; urgency=low
+
+  * implemented functionality to distribute and collect files only at the
+    beginning/end of an iterateable reservation
+  * all changes are related to Ticket #2008110710000095 (Bug 12310)
+
+ -- Jan Christoph Ebersbach <ebersbach@univention.de>  Tue, 18 Aug 2009 10:52:35 +0200
+
+ucs-school-scheduler (5.0.7-1) unstable; urgency=low
+
+  * added functions wasFirstRun and wasLastRun
+  * added DISTRIBUTIONID constant
+  * all changes are related to Ticket #2008110710000095 (Bug 12310)
+
+ -- Jan Christoph Ebersbach <ebersbach@univention.de>  Tue, 18 Aug 2009 10:47:37 +0200
+
+ucs-school-scheduler (5.0.6-1) unstable; urgency=low
+
+  * implemented iteratable reservations - reenabled old code. Ticket #2008110710000095 (Bug 12310)
+
+ -- Jan Christoph Ebersbach <ebersbach@univention.de>  Mon, 17 Aug 2009 17:38:32 +0200
+
+ucs-school-scheduler (5.0.5-1) unstable; urgency=low
+
+  * added handling for additional keywords in scheduled UCR settings: (Bug #17255)
+    @%@option-int2bool:VARNAME@%@ and
+    @%@option-int2bool-inverted:VARNAME@%@
+
+ -- Sönke Schwardt <schwardt@univention.de>  Thu, 07 Jan 2010 15:30:43 +0100
+
+ucs-school-scheduler (5.0.4-1) unstable; urgency=low
+
+  * decreased default scheduling interval from 60 seconds to 20 seconds
+    (Bug #15542)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Thu, 07 Jan 2010 12:31:08 +0100
+
+ucs-school-scheduler (5.0.3-1) unstable; urgency=low
+
+  * stop all running reservations that are overdue or all running (Bug #15542)
+    reservations that are tagged for deletion
+  * remove all reservations tagged for deletion
+
+ -- Sönke Schwardt <schwardt@univention.de>  Thu, 07 Jan 2010 12:30:00 +0100
+
+ucs-school-scheduler (5.0.2-1) unstable; urgency=low
+
+  * added handling for additional keywords in scheduled UCR settings: (Bug #17255)
+    @%@option-int2bool:VARNAME@%@ and
+    @%@option-int2bool-inverted:VARNAME@%@
+
+ -- Sönke Schwardt <schwardt@univention.de>  Thu, 07 Jan 2010 12:27:05 +0100
+
+ucs-school-scheduler (5.0.1-1) unstable; urgency=low
+
+  * stop scheduler in prerm only if package gets removed - (Bug #17277)
+    otherwise scheduler is not running after package update
+
+ -- Sönke Schwardt <schwardt@univention.de>  Thu, 07 Jan 2010 12:24:14 +0100
+
+ucs-school-scheduler (5.0.0-0) unstable; urgency=low
+
+  * ported package to UCS 2.3 UCS@school
+
+ -- Sönke Schwardt <schwardt@univention.de>  Mon, 04 Jan 2010 10:40:34 +0200
+
+ucs-school-scheduler (4.0.4-2) unstable; urgency=low
+
+  * added delay during restart (Bug: #15540)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Mon, 31 Aug 2009 18:59:05 +0200
+
+ucs-school-scheduler (4.0.4-1) unstable; urgency=low
+
+  * fixed typo in pid file name (Bug: #15391)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Mon, 17 Aug 2009 15:25:21 +0200
+
+ucs-school-scheduler (4.0.3-1) unstable; urgency=low
+
+  * start ucs-school-scheduler automatically during installation (Bug: #15389)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Mon, 17 Aug 2009 15:06:19 +0200
+
+ucs-school-scheduler (4.0.2-1) unstable; urgency=low
+
+  * replace % characters during debug output (Bug: #15337)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Thu, 13 Aug 2009 14:50:35 +0200
+
+ucs-school-scheduler (4.0.1-1) unstable; urgency=low
+
+  * renamed init script and pid file (Bug: #15288)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Fri, 07 Aug 2009 09:20:03 +0200
+
+ucs-school-scheduler (4.0.0-2) unstable; urgency=low
+
+  * fixed control file (Bug: #14958)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Mon, 06 Jul 2009 17:19:12 +0200
+
+ucs-school-scheduler (4.0.0-1) unstable; urgency=low
+
+  * fixed dependencies (Bug: #14958)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Mon, 06 Jul 2009 17:03:57 +0200
+
+ucs-school-scheduler (4.0.0-0) unstable; urgency=low
+
+  * ported package to component ucs@school
+
+ -- Sönke Schwardt <schwardt@univention.de>  Tue, 02 Jul 2009 13:29:23 +0200
+
+ucs-school-scheduler (3.0.0-0) unstable; urgency=low
+
+  * ported to UCS 2.2
+
+ -- Sönke Schwardt <schwardt@univention.de>  Tue, 26 May 2008 09:19:22 +0200
+
+ucs-school-scheduler (2.0.0-0) unstable; urgency=low
+
+  * ported to UCS 2.1
+
+ -- Sönke Schwardt <schwardt@univention.de>  Wed, 10 Dec 2008 12:05:23 +0200
+
+ucs-school-scheduler (1.1.1-12) unstable; urgency=low
+
+  * translate Posix GIDs to group names in start and stop for UCR and CMD (Bug #12473)
+  * return error code 105 if ressetting template variables are unset
+
+ -- Arvid Requate <arequate@visdalen.knut.univention.de>  Wed, 29 Oct 2008 19:49:29 +0100
+
+ucs-school-scheduler (1.1.1-11) unstable; urgency=low
+
+  * fixed debug initialization and output. Bug #12015
+  * removed /var/log/univention/scheduler-status.log. Bug #12015
+
+ -- Jan Christoph Ebersbach <ebersbach@univention.de>  Mon, 29 Sep 2008 13:15:11 +0200
+
+ucs-school-scheduler (1.1.1-10) unstable; urgency=low
+
+  * bumped version
+
+ -- Sönke Schwardt <schwardt@univention.de>  Thu, 25 Sep 2008 14:59:53 +0200
+
+ucs-school-scheduler (1.1.1-9) unstable; urgency=low
+
+  * depend on updated version of univention-config-registry providing the
+    'schedule' layer
+
+ -- Arvid Requate <requate@univention.de>  Mon, 22 Sep 2008 14:43:31 +0200
+
+ucs-school-scheduler (1.1.1-8) unstable; urgency=low
+
+  * disabled iterations for the moment. Bug #12015 
+
+ -- Jan Christoph Ebersbach <ebersbach@univention.de>  Mon, 22 Sep 2008 12:00:12 +0200
+
+ucs-school-scheduler (1.1.1-7) unstable; urgency=low
+
+  * s/python-pycentral/python-central/. Bug #12015 
+
+ -- Jan Christoph Ebersbach <ebersbach@univention.de>  Mon, 22 Sep 2008 11:41:25 +0200
+
+ucs-school-scheduler (1.1.1-6) unstable; urgency=low
+
+  * added missing python-pycentral build dependency. Bug #12015 
+
+ -- Jan Christoph Ebersbach <ebersbach@univention.de>  Mon, 22 Sep 2008 11:33:49 +0200
+
+ucs-school-scheduler (1.1.1-5) unstable; urgency=low
+
+  * Fixed QA issues: year of Copyright, errors in debian directory, copy & paste bugs. Bug #12015
+
+ -- Jan Christoph Ebersbach <ebersbach@univention.de>  Mon, 22 Sep 2008 10:43:01 +0200
+
+ucs-school-scheduler (1.1.1-4) unstable; urgency=low
+
+  * Enabled daemon mode. Bug #12015 
+
+ -- Jan Christoph Ebersbach <ebersbach@univention.de>  Mon,  8 Sep 2008 14:41:06 +0200
+
+ucs-school-scheduler (1.1.1-3) unstable; urgency=low
+
+  * Completed second test run - added iterations. Bug #12015
+
+ -- Jan Christoph Ebersbach <ebersbach@univention.de>  Mon,  8 Sep 2008 13:58:38 +0200
+
+ucs-school-scheduler (1.1.1-2) unstable; urgency=low
+
+  * Completed first test run - Iterations are still missing. Bug #12015
+
+ -- Jan Christoph Ebersbach <ebersbach@univention.de>  Thu,  4 Sep 2008 17:22:26 +0200
+
+ucs-school-scheduler (1.1.1-1) unstable; urgency=low
+
+  * Initial packaging of upstream release.
+
+ -- Jan Christoph Ebersbach <ebersbach@univention.de>  Tue, 02 Sep 2008 10:37:45 +0200
+

@@ -1,0 +1,84 @@
+#!/usr/bin/make -f
+#
+# Univention Reservation Database
+#  rules file for generating the deb package
+#
+# Copyright (C) 2008-2010 Univention GmbH
+#
+# http://www.univention.de/
+#
+# All rights reserved.
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License version 2 as
+# published by the Free Software Foundation.
+#
+# Binary versions of this file provided by Univention to you as
+# well as other copyrighted, protected or trademarked materials like
+# Logos, graphics, fonts, specific documentations and configurations,
+# cryptographic keys etc. are subject to a license agreement between
+# you and Univention.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+
+PYVERS=$(shell pyversions -vr)
+
+PACKAGE_NAME=ucs-school-reservation-dbconnector
+D=$(CURDIR)/debian/${PACKAGE_NAME}
+
+configure: configure-stamp
+configure-stamp:
+	dh_testdir
+	# Add here commands to configure the package.
+	touch configure-stamp
+
+build: build-stamp
+build-stamp:
+	dh_testdir
+	touch build-stamp
+
+clean:
+	dh_testdir
+	dh_testroot
+	rm -f build-stamp
+	dh_clean
+
+install: install-stamp
+install-stamp: build-stamp $(PYVERS:%=install-ext-%)
+install-ext-%: build-stamp
+	dh_testdir
+	dh_testroot
+	dh_clean -k
+	dh_installdirs
+
+	install -dD -m644 $(D)/usr/lib/python$*/site-packages/univention/reservation
+	install -m644 modules/univention/reservation/__init__.py $(D)/usr/lib/python$*/site-packages/univention/reservation
+	install -m644 modules/univention/reservation/dbconnector.py $(D)/usr/lib/python$*/site-packages/univention/reservation
+
+binary-indep: build install
+	dh_testdir -i
+	dh_testroot -i
+	dh_installchangelogs -i
+	dh_installman -i
+	dh_pycentral
+	dh_link -i
+	dh_compress -i
+	dh_fixperms -i
+	dh_installdeb -i
+	dh_gencontrol -i
+	dh_md5sums -i
+	dh_builddeb -i
+
+binary-arch: build install
+
+binary: binary-arch binary-indep
+.PHONY: build clean binary-indep binary-arch binary install configure
+
+#DEBHELPER#

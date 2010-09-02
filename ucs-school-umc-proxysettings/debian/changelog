@@ -1,0 +1,160 @@
+ucs-school-umc-proxysettings (5.0.2-1) unstable; urgency=low
+
+  * copyright update (Bug #17102)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Wed, 20 Jan 2010 15:54:35 +0200
+
+ucs-school-umc-proxysettings (5.0.1-1) unstable; urgency=low
+
+  * style update for UCS 2.3 (Bug #17102)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Wed, 13 Jan 2010 14:05:25 +0100
+
+ucs-school-umc-proxysettings (5.0.0-0) unstable; urgency=low
+
+  * ported package to UCS 2.3 UCS@school
+
+ -- Sönke Schwardt <schwardt@univention.de>  Mon, 04 Jan 2010 10:40:34 +0200
+
+ucs-school-umc-proxysettings (4.0.5-1) unstable; urgency=low
+
+  * Fixed traceback in availableOU handling (Bug: #15348)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Mon, 17 Aug 2009 10:41:23 +0200
+
+ucs-school-umc-proxysettings (4.0.4-1) unstable; urgency=low
+
+  * all school OUs will be now available for Domain Admins - if a OU-user
+    signs on he gets only "his" OU presented - manual override via UCR
+    variable ucsschool/local/oulist (OUs have to be comma separated)
+    (Bug: #15348)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Fri, 14 Aug 2009 17:41:19 +0200
+
+ucs-school-umc-proxysettings (4.0.3-1) unstable; urgency=low
+
+  * replace % characters during debug output (Bug: #15337)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Thu, 13 Aug 2009 15:22:58 +0200
+
+ucs-school-umc-proxysettings (4.0.2-1) unstable; urgency=low
+
+  * renamed german "Proxy-Filter" to "Webfilter" (Ticket: #2009071010000184)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Mon, 13 Jul 2009 19:09:30 +0200
+
+ucs-school-umc-proxysettings (4.0.1-2) unstable; urgency=low
+
+  * fixed typo in join script (Bug: #14880)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Thu, 09 Jul 2009 11:17:54 +0200
+
+ucs-school-umc-proxysettings (4.0.1-1) unstable; urgency=low
+
+  * added UMC ACLs to default UCS@School UMC policies (Bug: #14880)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Wed, 08 Jul 2009 16:24:38 +0200
+
+ucs-school-umc-proxysettings (4.0.0-0) unstable; urgency=low
+
+  * ported package to component ucs@school
+
+ -- Sönke Schwardt <schwardt@univention.de>  Tue, 02 Jul 2009 13:29:23 +0200
+
+ucs-school-umc-proxysettings (3.0.0-0) unstable; urgency=low
+
+  * ported to UCS 2.2
+
+ -- Sönke Schwardt <schwardt@univention.de>  Tue, 26 May 2008 09:19:22 +0200
+
+ucs-school-umc-proxysettings (2.0.0-1) unstable; urgency=low
+
+  * new group/user icons (Ticket: #2008110710000077) 
+
+ -- Felix Botner <fbotner@univention.de>  Thu, 15 Jan 2009 13:55:22 +0100
+
+ucs-school-umc-proxysettings (2.0.0-0) unstable; urgency=low
+
+  * ported to UCS 2.1
+
+ -- Sönke Schwardt <schwardt@univention.de>  Wed, 10 Dec 2008 12:05:23 +0200
+
+ucs-school-umc-proxysettings (1.1.0-6) unstable; urgency=low
+
+  * update index while writing new filter items to UCR (Bug #12550)
+  * disable caching for proxysettings/show/profiles
+
+ -- Arvid Requate <arequate@univention.de>  Fri,  7 Nov 2008 13:50:56 +0100
+
+ucs-school-umc-proxysettings (1.1.0-5) unstable; urgency=low
+
+  * fixed handling of UCR variables of "default" profile
+
+ -- Sönke Schwardt <schwardt@univention.de>  Wed, 03 Sep 2008 17:49:15 +0200
+
+ucs-school-umc-proxysettings (1.1.0-4) unstable; urgency=low
+
+  * changed call of SearchForm (API changed because of bug #12027)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Thu, 28 Aug 2008 15:15:20 +0200
+
+ucs-school-umc-proxysettings (1.1.0-3) unstable; urgency=low
+
+  * added missing file
+
+ -- Sönke Schwardt <schwardt@univention.de>  Thu, 28 Aug 2008 12:10:25 +0200
+
+ucs-school-umc-proxysettings (1.1.0-2) unstable; urgency=low
+
+  * fixed join script
+
+ -- Sönke Schwardt <schwardt@univention.de>  Thu, 28 Aug 2008 10:35:21 +0200
+
+ucs-school-umc-proxysettings (1.1.0-1) unstable; urgency=low
+
+  * added profile list management
+
+ -- Sönke Schwardt <schwardt@univention.de>  Wed, 27 Aug 2008 17:21:02 +0200
+
+ucs-school-umc-proxysettings (1.0.0-2) unstable; urgency=low
+
+  * refactoring for management of several proxy filter profiles
+
+ -- Arvid Requate <requate@univention.de>  Wed, 14 May 2008 10:18:25 +0200
+
+ucs-school-umc-proxysettings (1.0.0-1) unstable; urgency=low
+
+  * install into pycentral
+
+ -- Arvid Requate <requate@univention.de>  Thu, 24 Apr 2008 10:48:13 +0200
+
+ucs-school-umc-proxysettings (1.0.0-0) unstable; urgency=low
+
+  * port to UCS 2.0
+
+ -- Arvid Requate <requate@univention.de>  Mon, 14 Apr 2008 16:52:19 +0200
+
+ucs-school-umc-proxysettings (0.4-2) unstable; urgency=low
+
+  * renamed join-script to match entry in .index.txt
+
+ -- Sönke Schwardt <schwardt@univention.de>  Mon, 26 Nov 2007 17:49:54 +0100
+
+ucs-school-umc-proxysettings (0.3-1) unstable; urgency=low
+
+  * in searchresult the image is no link button any longer
+
+ -- Sönke Schwardt <schwardt@univention.de>  Wed, 08 Aug 2007 11:07:14 +0200
+
+ucs-school-umc-proxysettings (0.2-1) unstable; urgency=low
+
+  * added icon for domains
+  * fixed packaging files
+
+ -- Sönke Schwardt <schwardt@univention.de>  Thu, 02 Aug 2007 16:23:01 +0200
+
+ucs-school-umc-proxysettings (0.1-0) unstable; urgency=low
+
+  * Initial Release.
+
+ -- Sönke Schwardt <schwardt@univention.de>  Wed, 25 Jul 2007 14:33:34 +0200
