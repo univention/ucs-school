@@ -1,3 +1,9 @@
+ucs-school-umc-reservation (6.0.0-1) unstable; urgency=low
+
+  * bump version for UCS 2.4
+
+ -- Andreas Büsching <buesching@univention.de>  Thu, 02 Sep 2010 10:53:52 +0200
+
 ucs-school-umc-reservation (5.0.15-1) unstable; urgency=low
 
   * fixed file distribution (Bug 12310)
