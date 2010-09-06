@@ -1,3 +1,10 @@
+ucs-school-import (6.0.6-1) unstable; urgency=low
+
+  * do not call computer_post-Hook if import fails due to existing
+    computer object (Bug #19225)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Mon, 06 Sep 2010 15:51:54 +0200
+
 ucs-school-import (6.0.5-1) unstable; urgency=low
 
   * added create_ou-Hook for creating share Marktplatz (Bug #17370)

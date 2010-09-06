@@ -1896,6 +1896,7 @@ def import_computer():
 
 			if check_computer(module,name,schoolNr):
 				print "computer %s already exists (school %s)"%(name,schoolNr)
+				success = False
 			else:
 				mac_used=check_macAddress(MAC)
 				if mac_used:
