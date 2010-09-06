@@ -67,7 +67,7 @@ if [ -z "$sharemode" ] ; then
 	sharemode="0775"
 fi
 
-sharegrp="$ucrschool_import_generate_share_marktplatz_group"
+sharegrp="$ucsschool_import_generate_share_marktplatz_group"
 if [ -z "$sharegrp" ] ; then
 	sharegrp="Domain Users"
 fi
