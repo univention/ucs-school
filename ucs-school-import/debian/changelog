@@ -1,3 +1,9 @@
+ucs-school-import (6.0.5-1) unstable; urgency=low
+
+  * added create_ou-Hook for creating share Marktplatz (Bug #17370)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Mon, 06 Sep 2010 14:52:24 +0200
+
 ucs-school-import (6.0.4-1) unstable; urgency=low
 
   * run post hook script for user only if creation was successful; Bug #18981

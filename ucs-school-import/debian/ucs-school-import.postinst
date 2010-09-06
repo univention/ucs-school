@@ -44,6 +44,16 @@ univention-config-registry set \
 
 eval $(univention-config-registry shell)
 
+use_marktplatz="no"
+if [ "$1" = "configure" -a -z "$2" ] ; then
+	use_marktplatz="yes"
+fi
+univention-config-registry set \
+	"ucsschool/import/generate/share/marktplatz?${use_marktplatz}" \
+	"ucsschool/import/generate/share/marktplatz/sharepath?/home/groups/Marktplatz" \
+	"ucsschool/import/generate/share/marktplatz/permissions?0775" \
+	"ucsschool/import/generate/share/marktplatz/group?Domain Users"
+
 if [ "$server_role" = "domaincontroller_master" ] || [ "$server_role" = "domaincontroller_backup" ]; then
 	/usr/lib/univention-install/35ucs-school-import.inst || true
 fi

@@ -47,3 +47,23 @@ Type=str
 Description[de]=Spezifiziert welche Schul-DCs beim Erzeugen einer Schule angelegt werden sollen (Werte: edukativ und/oder verwaltung)
 Description[en]=Specifies which school DCs are created during the school set up (values: edukativ and/or verwaltung)
 Type=str
+
+[ucsschool/import/generate/share/marktplatz]
+Description[de]=Die Freigabe "Marktplatz" automatisch bei der OU-Erstellung generieren? (Default: yes)
+Description[en]=Create share "Marktplatz" during ou creation? (default: yes)
+Type=str
+
+[ucsschool/import/generate/share/marktplatz/sharepath]
+Description[de]=Vorgabepfad der Freigabe "Marktplatz" (Default: /home/groups/Marktplatz)
+Description[en]=Default path of share "Marktplatz" (default: /home/groups/Marktplatz)
+Type=str
+
+[ucsschool/import/generate/share/marktplatz/permissions]
+Description[de]=Vorgabezugriffsrechte für die Freigabe "Marktplatz" (Default: 0775)
+Description[en]=Default permissions of share "Marktplatz" (default: 0775)
+Type=str
+
+[ucsschool/import/generate/share/marktplatz/group]
+Description[de]=Vorgabegruppe der Freigabe "Marktplatz" (Default: Domain Users)
+Description[en]=Default group of share "Marktplatz" (default: Domain Users)
+Type=str
