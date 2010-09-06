@@ -1069,9 +1069,9 @@ def modify_user(person, module, co, lo):
 	if object.has_key('mailPrimaryAddress'):
 		object['mailPrimaryAddress']=person.mail
 	if person.isActive == "1":
-		object["disabled"]="0"
+		object["disabled"]="none"
 	else:
-		object["disabled"]="1"
+		object["disabled"]="all"
 	# ATTENTION: it's not possible to change the ucsschool-user-role with the
 	# import script
 
@@ -1216,11 +1216,10 @@ def create_user(person, baseDN, module, password):
 	if object.has_key('mailPrimaryAddress'):
 		object['mailPrimaryAddress']=person.mail
 	if person.isActive == "1":
-		object["disabled"]="0"
+		object["disabled"]="none"
 	else:
-		object["disabled"]="1"
+		object["disabled"]="all"
 #	object["ucsschool-user-role"] = person.getRole ()
-	object["pwdChangeNextLogin"]="0"
 
 	try:
 		try:
@@ -2140,7 +2139,10 @@ def activate_groupmembers():
 		sys.exit()
 
 	# inverted logic
-	disabled=str( 1 - status )
+	if status == 0:
+		disabled = "all"
+	else:
+		disabled = "none"
 
 	###
 
@@ -2179,7 +2181,7 @@ def activate_groupmembers():
 				count_lo()
 				memberobj.open()
 
-				memberobj['disabled'] = str(disabled)
+				memberobj['disabled'] = disabled
 				memberobj.modify()
 
 				print memberdn,

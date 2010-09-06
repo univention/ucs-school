@@ -1,3 +1,11 @@
+ucs-school-import (6.0.8-1) unstable; urgency=low
+
+  * fixed two tracebacks during user creation (Bug #19202)
+    - new syntax for UDM property "disabled" ==> 0 --> none, 1 --> all
+    - removed explicit assignment of property pwdChangeNextLogin
+
+ -- Sönke Schwardt <schwardt@univention.de>  Mon, 06 Sep 2010 17:58:46 +0200
+
 ucs-school-import (6.0.7-1) unstable; urgency=low
 
   * fixed typo in create_ou hook for creating share Marktplatz (Bug #17370)
