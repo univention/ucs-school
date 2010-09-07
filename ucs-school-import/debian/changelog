@@ -1,3 +1,9 @@
+ucs-school-import (6.0.9-1) unstable; urgency=low
+
+  * fixed creation of dummy users (Bug #17499)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Mon, 06 Sep 2010 18:20:28 +0200
+
 ucs-school-import (6.0.8-1) unstable; urgency=low
 
   * fixed two tracebacks during user creation (Bug #19202)

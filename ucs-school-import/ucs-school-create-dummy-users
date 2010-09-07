@@ -1,12 +1,42 @@
 #!/bin/sh
 #
+# -*- coding: utf-8 -*-
+#
+# Univention UCS@School
+#
+# Copyright (C) 2007-2010 Univention GmbH
+#
+# http://www.univention.de/
+#
+# All rights reserved.
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License version 2 as
+# published by the Free Software Foundation.
+#
+# Binary versions of this file provided by Univention to you as
+# well as other copyrighted, protected or trademarked materials like
+# Logos, graphics, fonts, specific documentations and configurations,
+# cryptographic keys etc. are subject to a license agreement between
+# you and Univention.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 OU="$(echo "$1" | tr -cd 'a-zA-Z0-9-')"
-USERNAMECACHE_P="$(mktemp)"
-USERNAMECACHE_T="$(mktemp)"
-FIRSTNAMES="Anton Bertram Christina Daniela Ernst Friderike Gisela Hans Ines Jens Klaus Lisa Marlene Norbert Otto Pauline"
+USERNAMECACHE_P="$(mktemp /tmp/tmp.ucsschool.p.XXXXXXXXX)"
+USERNAMECACHE_T="$(mktemp /tmp/tmp.ucsschool.t.XXXXXXXXX)"
+FIRSTNAMES="Anton Bertram Christina Daniela Ernst Friderike Gisela Hans Ines Jens Klaus Lisa Marlene Norbert Otto Pauline Richard Silke Tim Ulrike Victor Wilhelmine"
 LASTNAMES="Meyer Schmidt Schulz Müller Schneider Fischer Weber Wagner Becker Koch Richter Lange"
 CLASSES="1A 1B 2A 2B 3B 3C 4B 4r Froesche Igel"
+
+trap "rm -Rf ${USERNAMECACHE_P} ${USERNAMECACHE_P}.* ${USERNAMECACHE_T} ${USERNAMECACHE_T}.*" EXIT
 
 if [ -z "$OU" -o "$OU" = "-h" -o "$OU" = "--help" ] ; then
 	echo "syntax: $0 <ou>"
@@ -22,24 +52,33 @@ get_class() {
 }
 
 get_username_pupils() {
-	usernamepart="$1"
-	let i=1
-	while grep -qc "${usernamepart}$i" "$USERNAMECACHE_P" ; do
+	local usernamepart="$1"
+	local fn="${USERNAMECACHE_P}.${usernamepart}"
+	if [ ! -f "$fn" ] ; then
+		let i=1
+	else
+		let i="$(cat $fn)"
 		let i=i+1
-	done
+	fi
+	echo "$i" > "$fn"
 	ACCOUNTNAME="${usernamepart}$i"
-	echo "$ACCOUNTNAME" >> "$USERNAMECACHE_P"
 }
 
 get_username_teacher() {
-	fname="$1"
-	lname="$2"
-	let i=1
-	while grep -qc "${fname:0:1}.${lname:0:8}$i" "$USERNAMECACHE_T" ; do
+	local fname="$1"
+	local lname="$(echo $2 | tr '[:upper:]' '[:lower:]')"
+	local usernamepart="${fname:0:1}.${lname:0:8}"
+
+	local fn="${USERNAMECACHE_T}.${usernamepart}"
+	if [ ! -f "$fn" ] ; then
+		let i=1
+	else
+		let i="$(cat $fn)"
 		let i=i+1
-	done
-	ACCOUNTNAME="${fname:0:1}.${lname:0:8}$i"
-	echo "$ACCOUNTNAME" >> "$USERNAMECACHE_T"
+	fi
+	echo "$i" > "$fn"
+
+	ACCOUNTNAME="${usernamepart}$i"
 }
 
 eval $(/usr/sbin/ucr shell)
