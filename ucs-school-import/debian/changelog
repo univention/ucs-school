@@ -1,3 +1,9 @@
+ucs-school-import (6.0.10-1) unstable; urgency=low
+
+  * fixed default value of "active" field (Bug #19250)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Tue, 07 Sep 2010 16:31:26 +0200
+
 ucs-school-import (6.0.9-1) unstable; urgency=low
 
   * fixed creation of dummy users (Bug #17499)

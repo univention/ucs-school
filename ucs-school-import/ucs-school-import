@@ -185,10 +185,11 @@ class ucsschool_person_modify:
 
 		def parseBoolstring (parsed, idx, default='0'):
 			res = default
-			if len (parsed) > idx:
-				string = parsed[idx]
-				if string and string[0] == '1':
+			if len(parsed) > idx:
+				if parsed[idx].strip().startswith('1'):
 					res = '1'
+				elif parsed[idx].strip().startswith('0'):
+					res = '0'
 			return res
 
 		self.isTeacher = parseBoolstring (parsed, 8)
