@@ -1,3 +1,9 @@
+ucs-school-webproxy (7.0.2-1) unstable; urgency=low
+
+  * always recreate squidGuard list files on UCR changes (Bug #19194)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Fri, 10 Sep 2010 11:29:47 +0200
+
 ucs-school-webproxy (7.0.1-1) unstable; urgency=low
 
   * fix permissions of /var/spool/squid before (re)starting or reloading

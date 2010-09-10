@@ -234,8 +234,7 @@ def handler(configRegistry, changes):
 
 	if rewrite_squidguard_proxy_settings:
 		proxy_settinglist = []
-		changeskeylist = changes.keys()
-		for key in changeskeylist:
+		for key in configRegistry.keys():
 			regex = re.compile('^proxy/filter/setting/([^/]+)/.*$')
 			match = regex.match(key)
 			if match:
