@@ -1,3 +1,11 @@
+ucs-school-webproxy (7.0.1-1) unstable; urgency=low
+
+  * fix permissions of /var/spool/squid before (re)starting or reloading
+    squid (Bug #10229)
+  * do not commit squid.conf on every change of UCR webfilter variables
+
+ -- Sönke Schwardt <schwardt@univention.de>  Fri, 10 Sep 2010 11:24:08 +0200
+
 ucs-school-webproxy (7.0.0-1) unstable; urgency=low
 
   * bump version for UCS 2.4
