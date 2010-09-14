@@ -18,6 +18,9 @@ Dim MyShortcut, MyDesktop, DesktopPath
 DesktopPath = WSHShell.SpecialFolders("Desktop")
 
 Set FSO = CreateObject("scripting.filesystemobject")
+If FSO.FolderExists( DRIVE & ":\" & DIRPATH ) = False Then
+   Set objFolder = FSO.CreateFolder( DRIVE & ":\" & DIRPATH )
+End If
 If FSO.FolderExists( DRIVE & ":\" & DIRPATH ) = True Then
    Set MyShortcut = WSHShell.CreateShortcut(DesktopPath & "\" & DIRNAME & ".lnk")
    MyShortcut.TargetPath = WSHShell.ExpandEnvironmentStrings( DRIVE & ":\" & DIRPATH )
