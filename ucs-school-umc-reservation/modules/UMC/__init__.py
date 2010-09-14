@@ -767,14 +767,17 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 					time_end_struct = time.strptime( '%s %s' % (object.options['date_start'], object.options['time_end']), '%Y-%m-%d %H:%M' )
 					time_end = time.mktime( time_end_struct )
 
-					project_name = ('R%.3f' % time.time()).replace('.','-')
+					project_name = '%s-%s-%s' % ( self._username,
+												  object.options.get('groupname'),
+												  time.strftime( _('%Y-%m-%d'), time_start_struct ),
+												  )
 
-					project_description = _('Reservation for Room "%s": %s %s-%s') % (
-						object.options['roomname'],
-						time.strftime( _('%Y-%m-%d'), time_start_struct ),
-						object.options['time_begin'],
-						object.options['time_end'],
-						)
+					project_description = _('Reservation for Room "%(room)s": %(date)s %(start)s-%(end)s') % {
+						'room': object.options['roomname'],
+						'date': time.strftime( _('%Y-%m-%d'), time_start_struct ),
+						'start': object.options['time_begin'],
+						'end': object.options['time_end'],
+						}
 
 
 					groups = self.ldap_anon.lo.search( filter='(&(objectClass=univentionGroup)(cn=%s))' % object.options.get('groupname'), base=self.ldap_anon.searchbaseExtGroups,
@@ -808,6 +811,10 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 
 					# save user info
 					fn_project = os.path.join( DISTRIBUTION_DATA_PATH, project['name'] )
+					i=0
+					while os.path.exists( fn_project ):
+						i=i+1
+						fn_project = os.path.join( DISTRIBUTION_DATA_PATH, '%s-%d' % (project['name'], i) )
 					saveProject(fn_project, project)
 
 					object.options['distributionID'] = project_name

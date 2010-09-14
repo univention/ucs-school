@@ -1,3 +1,11 @@
+ucs-school-umc-reservation (6.0.1-1) unstable; urgency=low
+
+  * create distribution project name from teachers name, group name and
+    start date (Bug #18078)
+  * some layout fixes
+
+ -- Sönke Schwardt <schwardt@univention.de>  Tue, 14 Sep 2010 17:23:17 +0200
+
 ucs-school-umc-reservation (6.0.0-1) unstable; urgency=low
 
   * bump version for UCS 2.4

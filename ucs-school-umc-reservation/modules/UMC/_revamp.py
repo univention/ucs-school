@@ -134,7 +134,7 @@ class Web( object ):
 
 			#subheadline = '%s ( %s=%s )' % ( _('Searchresults'), _(opts['key']), opts['searchfilter'])
 			idlist_remove = []
-			tablelst.set_header( [ _( 'Date' ), _( 'Start Time' ), _( 'End Time' ), _( 'Room'), _( 'Class/Group'), _( 'Reservation profile' ), _('Owner'), _( 'Edit' ), _( 'Delete' ), _('Status') ] )
+			tablelst.set_header( [ _( 'Date' ), _( 'Start Time' ), _( 'End Time' ), _( 'Room'), _( 'Class/Group'), _( 'Reservation profile' ), _('Owner') ] )
 			for reservationID, reservation_name, description, date_start, time_begin, time_end, roomname, groupname, ownername, isIterable, isError, errorStatus, profile_name in searchresult:
 				row = []
 				datelist=date_start.split('-')
@@ -172,6 +172,7 @@ class Web( object ):
 					acltarget = 'own'
 				else:
 					acltarget = 'other'
+				btnlist = []
 				if self.permitted('reservation/edit', { 'target': acltarget } ):
 					# edit
 					icon = 'reservation/edit'
@@ -184,13 +185,8 @@ class Web( object ):
 					req.set_flag( 'web:startup_reload', True )
 					req.set_flag( 'web:startup_dialog', True )
 					req.set_flag( 'web:startup_format', _('Edit reservation')+' [%(roomname)s/%(date_start)s]' )
-					editbtn = umcd.Button( '', icon, umcd.Action( req ) , helptext =  _('Click to edit this reservation') )
-					row.append(editbtn)
-				else:
-					# edit
-					icon = 'reservation/edit_disabled'
-					editbtn = umcd.Button( '', icon, actions=() , helptext = _('You are not the owner of this reservation') )
-					row.append(editbtn)
+					editbtn = umcd.Button( _('Edit'), icon, umcd.Action( req ) , helptext =  _('Click to edit this reservation') )
+					btnlist.append(editbtn)
 
 				if self.permitted('reservation/remove', { 'target': acltarget } ):
 					# delete
@@ -202,18 +198,11 @@ class Web( object ):
 					req.set_flag( 'web:startup_reload', True )
 					req.set_flag( 'web:startup_dialog', True )
 					req.set_flag( 'web:startup_format', _('Remove reservation') )
-					delbtn = umcd.Button( '', icon, umcd.Action( req ) , helptext = _('Click to remove this reservation') )
-					row.append(delbtn)
-				else:
-					# edit
-					icon = 'reservation/edit_disabled'
-					editbtn = umcd.Button( '', icon, actions=() , helptext = _('You are not the owner of this reservation') )
-					row.append(editbtn)
+					delbtn = umcd.Button( _('Remove'), icon, umcd.Action( req ) , helptext = _('Click to remove this reservation') )
+					btnlist.append(delbtn)
 
-					# delete
-					icon = 'reservation/reservation_del_disabled'
-					delbtn = umcd.Button( '', icon, actions=() , helptext = _('You are not the owner of this reservation') )
-					row.append(delbtn)
+				if btnlist:
+					row.append(btnlist)
 
 				# Status icons
 				status = []
@@ -492,7 +481,9 @@ class Web( object ):
 # 
 		# Teaching Resource Upload
 		if object.options.get('distributionID'):
-			lst.add_row( [ _('Distribution project %s has been created for this reservation.') % object.options.get('distributionID') ] )
+			txt = umcd.Text( _('Distribution project %s has been created for this reservation.') % object.options.get('distributionID') )
+			txt['colspan'] = '2'
+			lst.add_row( [ txt ] )
 		else:
 			input_fileupload = umcd.make( self[ 'reservation/edit' ][ 'files' ], default= opts['files'] )
 			input_fileupload['colspan'] = '2'
@@ -501,6 +492,7 @@ class Web( object ):
 
 			# Copy back to teacher
 			input_collectfiles = umcd.make( self[ 'reservation/edit' ][ 'collectfiles' ], default= int(opts['collectfiles']) )
+			input_collectfiles['colspan'] = '2'
 			idlist_ok_button.append(input_collectfiles.id())
 			lst.add_row( [ input_collectfiles ] )
 

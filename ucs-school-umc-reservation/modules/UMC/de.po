@@ -74,7 +74,7 @@ msgstr "Schulstundenzeiten bearbeiten"
 #: __init__.py:772
 #, python-format
 msgid "Reservation for Room \"%s\": %s %s-%s"
-msgstr "Konfiguration in Raum \"%s\": %s %s-%s"
+msgstr "Unterrichtsvorbereitung für Raum \"%s\": %s %s-%s"
 
 #: __init__.py:774
 msgid "%Y-%m-%d"
