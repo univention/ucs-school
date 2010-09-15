@@ -140,6 +140,35 @@ def getProject(projectfile=None):
 					project[k] = tmp_project[k]
 	return project
 
+
+def isDistributed(project):
+	if not project:
+		raise Exception('no valid project')
+	if not 'cachedir' in project:
+		return True
+	return not os.path.exists( project['cachedir'] )
+
+
+def purgeProject(projectfile=None):
+	if not projectfile or not os.path.exists( projectfile ):
+		debugmsg(ud.ADMIN, ud.ERROR, 'cannot remove empty or non existing projectfile %s' % projectfile)
+		return
+
+	debugmsg(ud.ADMIN, ud.INFO, 'trying to purge projectfile %s' % projectfile)
+	project = getProject(projectfile)
+	cachedir = project['cachedir']
+	debugmsg(ud.ADMIN, ud.INFO, 'trying to purge cachedir of project %s: (%s)' % (project['name'],cachedir))
+	if cachedir and os.path.exists( cachedir ):
+		try:
+			shutil.rmtree( cachedir )
+		except Exception, e:
+			debugmsg( ud.ADMIN, ud.ERROR, 'failed to cleanup cache directory "%s": %s' % (cachedir, str(e)))
+	try:
+		os.remove( projectfile )
+	except Exception, e:
+		debugmsg(ud.ADMIN, ud.ERROR, 'cannot remove %s: %s' % (projectfile, str(e)))
+
+
 import inspect
 def debugmsg( component, level, msg ):
 	info = inspect.getframeinfo(inspect.currentframe().f_back)[0:3]
