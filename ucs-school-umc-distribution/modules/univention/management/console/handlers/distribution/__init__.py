@@ -124,6 +124,7 @@ def getProject(projectfile=None):
 			'deadline': None,
 			'atjob': None,
 			'collectFiles': True,
+			'keepProject': False,
 			'sender': {},
 			'sender_uid': None,
 			'recipients': [],
@@ -385,7 +386,7 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 						}
 
 			if cmddata['cmdexitcode'] == 'success':
-				cmd = '%s --init %s' % (DISTRIBUTION_CMD, os.path.join(DISTRIBUTION_DATA_PATH, project['name']))
+				cmd = '%s --init --force %s' % (DISTRIBUTION_CMD, os.path.join(DISTRIBUTION_DATA_PATH, project['name']))
 				debugmsg( ud.ADMIN, ud.INFO, 'calling "%s"' % cmd )
 				proc = notifier.popen.RunIt( cmd, stderr = True )
 				cb = notifier.Callback( self._distribution_project_distribute_return, umcobject, cmddata )
@@ -463,7 +464,7 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 						'cmdexitcode': 'success',
 						'project': project }
 
-			cmd = '%s --collect %s\n' % (DISTRIBUTION_CMD, os.path.join(DISTRIBUTION_DATA_PATH, fn_project))
+			cmd = '%s --collect --force %s\n' % (DISTRIBUTION_CMD, os.path.join(DISTRIBUTION_DATA_PATH, fn_project))
 			debugmsg( ud.ADMIN, ud.ERROR, 'distribution_project_collect_return: cmd = "%s"' % cmd )
 			proc = notifier.popen.RunIt( cmd, stderr = True )
 			cb = notifier.Callback( self._distribution_project_collect_return, umcobject, cmddata )

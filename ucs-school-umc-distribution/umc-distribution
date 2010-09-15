@@ -272,11 +272,11 @@ def distributeData( project ):
 
 
 
-def collectData( project ):
+def collectData( project, forced=False ):
 	postfix_datadir_sender = configRegistry.get('ucsschool/datadistribution/datadir/sender', 'Materialverteilung')
 	postfix_datadir_recipient = configRegistry.get('ucsschool/datadistribution/datadir/recipient', 'Unterrichtsmaterial')
 
-	if not project.get('collectFiles'):
+	if not project.get('collectFiles') and not forced:
 		debugmsg( ud.ADMIN, ud.INFO, 'collecting data for project "%s" is disabled - nothing to do' % project['name'] )
 		return
 
@@ -366,6 +366,10 @@ def main():
 					   dest = 'distribute', default = False,
 					   help = 'distribute specified project' )
 
+	parser.add_option( '-f', '--force', action = 'store_true',
+					   dest = 'force', default = False,
+					   help = 'force action' )
+
 	( options, args ) = parser.parse_args()
 
 	# open logging
@@ -406,12 +410,13 @@ def main():
 					debugmsg(ud.ADMIN, ud.ERROR, 'umc-distribution finished: distributing: args=%s' % sys.argv)
 
 				elif options.collect:
-					collectData( project )
-					# remove project file
-					try:
-						os.remove( args[0] )
-					except Exception, ex:
-						debugmsg(ud.ADMIN, ud.ERROR, 'cannot remove %s: %s' % (args[0], str(ex)))
+					collectData( project, options.force )
+					# remove project file if requested
+					if not project.get('keepProject') or options.force:
+						try:
+							os.remove( args[0] )
+						except Exception, ex:
+							debugmsg(ud.ADMIN, ud.ERROR, 'cannot remove %s: %s' % (args[0], str(ex)))
 					# remove project cache dir if existant
 					if os.path.exists( project['cachedir'] ):
 						try:
