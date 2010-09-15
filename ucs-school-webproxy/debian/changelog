@@ -1,3 +1,9 @@
+ucs-school-webproxy (7.0.3-1) unstable; urgency=low
+
+  * convert to GNU APGL V3 (Bug #19780)
+
+ -- Janek Walkenhorst <walkenhorst@univention.de>  Wed, 15 Sep 2010 10:28:53 +0200
+
 ucs-school-webproxy (7.0.2-1) unstable; urgency=low
 
   * always recreate squidGuard list files on UCR changes (Bug #19194)
