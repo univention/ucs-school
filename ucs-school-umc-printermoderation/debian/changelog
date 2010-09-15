@@ -1,3 +1,9 @@
+ucs-school-umc-printermoderation (6.0.2-1) unstable; urgency=low
+
+  * convert to GNU APGL V3 (Bug #19780)
+
+ -- Janek Walkenhorst <walkenhorst@univention.de>  Wed, 15 Sep 2010 10:28:59 +0200
+
 ucs-school-umc-printermoderation (6.0.1-1) unstable; urgency=low
 
   * create default pdf printer during installation/join script (Bug #18340)
