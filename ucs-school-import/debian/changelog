@@ -1,3 +1,9 @@
+ucs-school-import (6.0.11-1) unstable; urgency=low
+
+  * convert to GNU APGL V3 (Bug #19780)
+
+ -- Janek Walkenhorst <walkenhorst@univention.de>  Wed, 15 Sep 2010 10:29:53 +0200
+
 ucs-school-import (6.0.10-1) unstable; urgency=low
 
   * fixed default value of "active" field (Bug #19250)
