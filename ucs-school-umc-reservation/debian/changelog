@@ -1,3 +1,12 @@
+ucs-school-umc-reservation (6.0.3-1) unstable; urgency=low
+
+  * changed default project name of reservations (Bug #18078)
+  * keep project file if collectFiles==False and reservation ends or reservation will be deleted (Bug #20004)
+  * return message to user about status of distribution file (Bug #18078)
+  * remove reservation and project if reservation has not started yet (Bug #12350)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Wed, 15 Sep 2010 16:33:21 +0200
+
 ucs-school-umc-reservation (6.0.2-1) unstable; urgency=low
 
   * convert to GNU APGL V3 (Bug #19780)

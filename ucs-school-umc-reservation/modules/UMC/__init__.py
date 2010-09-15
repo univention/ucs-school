@@ -39,7 +39,7 @@ import univention.management.console.tools as umct
 import univention.admin.modules
 import univention.admin.objects
 
-from univention.management.console.handlers.distribution import getProject, saveProject
+from univention.management.console.handlers.distribution import getProject, saveProject, purgeProject, isDistributed
 
 import univention.debug as ud
 import univention.uldap
@@ -171,8 +171,8 @@ command_description = {
 def debugmsg( component, level, msg ):
 	info = inspect.getframeinfo(inspect.currentframe().f_back)[0:3]
 	printInfo = []
-	if len(info[0])>20:
-		printInfo.append('...'+info[0][-17:])
+	if len(info[0])>35:
+		printInfo.append('...'+info[0][-32:])
 	else:
 		printInfo.append(info[0])
 	printInfo.extend(info[1:3])
@@ -253,8 +253,8 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 	def _debug(self, level, msg):
 		info = inspect.getframeinfo(inspect.currentframe().f_back)[0:3]
 		printInfo = []
-		if len(info[0])>25:
-			printInfo.append('...'+info[0][-22:])
+		if len(info[0])>35:
+			printInfo.append('...'+info[0][-32:])
 		else:
 			printInfo.append(info[0])
 		printInfo.extend(info[1:3])
@@ -769,9 +769,10 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 					time_end_struct = time.strptime( '%s %s' % (object.options['date_start'], object.options['time_end']), '%Y-%m-%d %H:%M' )
 					time_end = time.mktime( time_end_struct )
 
-					project_name = '%s-%s-%s' % ( self._username,
+					project_name = '%s-%s-%s-%s' % ( self._username,
 												  object.options.get('groupname'),
 												  time.strftime( _('%Y-%m-%d'), time_start_struct ),
+												  object.options['time_begin'],
 												  )
 
 					project_description = _('Reservation for Room "%(room)s": %(date)s %(start)s-%(end)s') % {
@@ -808,17 +809,23 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 					#
 					# project['deadline'] = time_end
 					project['collectFiles'] = collectfiles
+					project['keepProject'] = not(collectfiles)
 					project['sender_uid'] = self._username
 					project['recipients_dn'] = recipients_dn
 
 					# save user info
-					fn_project = os.path.join( DISTRIBUTION_DATA_PATH, project['name'] )
+					tmp_projectname = project['name']
+					fn_project = os.path.join( DISTRIBUTION_DATA_PATH, tmp_projectname )
 					i=0
 					while os.path.exists( fn_project ):
 						i=i+1
-						fn_project = os.path.join( DISTRIBUTION_DATA_PATH, '%s-%d' % (project['name'], i) )
+						tmp_projectname = '%s_v%d' % (project['name'], i)
+						fn_project = os.path.join( DISTRIBUTION_DATA_PATH, tmp_projectname )
+					project['name'] = tmp_projectname
+					project_name = tmp_projectname
 					saveProject(fn_project, project)
 
+					# distributionID contains the filename of project ; distributionName contains the user-readable project name
 					object.options['distributionID'] = project_name
 
 					debugmsg( ud.ADMIN, ud.ALL, 'DEBUG: options=%s' % object.options )
@@ -1072,7 +1079,7 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 		confirmed = object.options.get('confirmed')
 		reservationID = object.options.get('reservationID')
 
-		message = []
+		messages = []
 		reservationdata = []
 		if reservationID:
 			r = reservationdb.Reservation.get( reservationID )
@@ -1081,6 +1088,30 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 					r.deleteFlag = True
 					r.updateDeleteFlag()
 					self._debug( ud.INFO, 'tagged reservation %s for deletion' % reservationID )
+
+					# get distributionID/project_name
+					project_name = None
+					for o in r.options:
+						if o.setting.id:
+							if o.setting.name == 'distributionID':
+								project_name = o.value
+
+					# remove distribution project if specified
+					if project_name:
+						fn_project = os.path.join( DISTRIBUTION_DATA_PATH, project_name )
+						project = getProject(fn_project)
+						if not isDistributed(project):
+							self._debug( ud.INFO, 'removing reservation %s: project has not been distributed yet; purging distribution project' % reservationID )
+							messages.append( _('The distribution project "%(project)s" has been removed since the files have not been distributed yet.') % { 'project': project['name'] } )
+							purgeProject( fn_project )
+						else:
+							self._debug( ud.INFO, 'removing reservation %s: project has been distributed; keeping distribution project' % reservationID )
+							if project['collectFiles']:
+								messages.append( _('The files of distribution project "%(project)s" will be collected now.') % { 'project': project['name'] } )
+							else:
+								self._debug( ud.INFO, 'removing reservation %s: project has been distributed' % reservationID )
+								messages.append( _('The distribution project "%(project)s" has not been removed. Please collect distributed files manually via UMC distribution module.') % { 'project': project['name'] } )
+
 			else:
 			#order = ('reservationID', 'description', 'date_start', 'time_begin', 'time_end', 'hostgroup', 'usergroup')
 				if r:
@@ -1105,7 +1136,7 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 					else:
 						reservationdata.append( str(r.resprofileID) )
 
-		self.finished( object.id(), (len(message)==0, message, reservationdata) )
+		self.finished( object.id(), (True, messages, reservationdata) )
 
 	def reservation_profile_list( self, object ):
 		debugmsg( ud.ADMIN, ud.INFO, 'profile_list: options=%s' % object.options )
