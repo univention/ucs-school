@@ -1,0 +1,18 @@
+Source: ucs-school-info
+Section: univention
+Priority: optional
+Maintainer: Univention GmbH <packages@univention.de>
+Standards-Version: 1.0.0
+Build-Depends: debhelper, univention-config-dev
+
+Package: ucs-school-info
+Architecture: all
+Depends: python (>= 2.4), python-univention-ipaddr
+Description: UCS@school: provides info script
+ This package provides a script for listing users, computers
+ and networks in UCS@school environment.
+ .
+ This package is part of Univention Corporate Server (UCS),
+ an integrated, directory driven solution for managing
+ corporate environments. For more information about UCS,
+ refer to: http://www.univention.de/
