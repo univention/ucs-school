@@ -1,7 +1,7 @@
-A	28G01	dc28g01v-01	hansi	file:/hallo		HL-5250DN series
-M	28G01	dc28g01v-01	hansi	file:/hallo		HL-5250DN series
-D	28G01	dc28g01v-01	hansi	file:/hallo		HL-5250DN series
-A	28G01	dc28g01v-01	horst	file:/hort
-D	28G01	dc28g01v-01	horst	file:/hort
-A	28G01	dc28g01v-01	hoho	file:/hoho	None
-D	28G01	dc28g01v-01	hoho	file:/hoho	None
+A	Mitte	dcmittev-01	hansi	file:/hallo		HL-5250DN series
+M	Mitte	dcmittev-01	hansi	file:/hallo		HL-5250DN series
+D	Mitte	dcmittev-01	hansi	file:/hallo		HL-5250DN series
+A	Mitte	dcmittev-01	horst	file:/hort
+D	Mitte	dcmittev-01	horst	file:/hort
+A	Mitte	dcmittev-01	hoho	file:/hoho	None
+D	Mitte	dcmittev-01	hoho	file:/hoho	None

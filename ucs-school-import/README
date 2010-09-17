@@ -3,7 +3,7 @@ Paket ucs-school-import Kurzdoku
 Ziel:
 
 Die in diesem Paket enthaltenen Skripte dienen der spezifischen Administration
-der Domäne schule.bremen.de, genauer dem import von Bentzern (Schüler/Lehrer),
+einer ucs@school-DomÃ¤ne, genauer dem import von Bentzern (SchÃ¼ler/Lehrer),
 Netzwerken und Rechnern.
 
 Skripte:
@@ -12,22 +12,22 @@ Alle Skripte liegen unter /usr/share/ucs-school-import/scripts. Ausgangspunkt is
 "ucs-school-import", alle anderen Skripte sind nur symbolische links auf diese Datei.
 
 Alle Skripte legen automatisch eine Schule (also deren ou-Baum im LDAP) an, sobald
-ein Element in dieser Schule angelegt werden soll (entspricht der Funktionalität von
+ein Element in dieser Schule angelegt werden soll (entspricht der FunktionalitÃ¤t von
 create_ou).
 
 
  - Schule anlegen:
 Um eine Schule anzulegen kann das Skript "create_ou" aufgerufen werden, als Option 
-wird dabei die Schulnummer übergeben (z.B. "create_ou 308"). Das sollte besonders
+wird dabei die Schulnummer Ã¼bergeben (z.B. "create_ou 308"). Das sollte besonders
 _vor_ der Installation eines Schulservers erfolgen, ansonsten wird dieser an falscher
 Stelle im LDAP angelegt.
 
  - Benutzer importieren:
-Das Importieren von neuen oder geänderten Benutzern erfolgt durch den Aufruf des 
+Das Importieren von neuen oder geÃ¤nderten Benutzern erfolgt durch den Aufruf des 
 Skriptes "ucs-school-import" oder "import_user" mit dem Dateinamen als Option.
 
  - Netzwerk importieren:
-Netzwerke können in einer Datei zeilenweise einer Schule zugeordnet werden, Trennzeichen
+Netzwerke kÃ¶nnen in einer Datei zeilenweise einer Schule zugeordnet werden, Trennzeichen
 ist ein Semikolon:
 
 <Schul-Nr>;<Netzwerk>
@@ -39,11 +39,11 @@ z.B.:
 Das Netzwerk wird mit Maske 255.255.255.0 angelegt, dementsprechend sollte der Eintrag auf
 ".0" enden. Mittels dieser Netzwerke werden entpsrechende DNS und DHCP-Zonen voreingestellt.
 Der Import erfolgt dann durch import_networks mit dem Dateinamen als Option.
-Per Default wird ein Bereich von IPs .10 bis .250 für die freie vergabe (siehe unten) 
+Per Default wird ein Bereich von IPs .10 bis .250 fÃ¼r die freie vergabe (siehe unten) 
 voreingestellt. 
 
  - Computer importieren
-Computer werden in einer Datei zeilenweise mit Tab als Trennzeichen definiert und über 
+Computer werden in einer Datei zeilenweise mit Tab als Trennzeichen definiert und Ã¼ber 
 import_computer mit dem Dateinamen als Option angelegt. Format der Datei ist:
 
 <computertyp>;<computername>;<MAC>;<Schul-Nr>;<IP oder Netzwerk>
