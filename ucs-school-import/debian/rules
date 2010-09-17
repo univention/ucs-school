@@ -97,6 +97,7 @@ install: build
 	install -m 755 schema/ucs-school-import.schema $(D2)/usr/share/univention-ldap/schema
 
 	# Hooks
+	install -m 755 hooks/ou_create_post.d/40dhcpsearchbase_create debian/$(PACKAGE)/usr/share/ucs-school-import/hooks/ou_create_post.d/
 	install -m 755 hooks/ou_create_post.d/52marktplatz_create debian/$(PACKAGE)/usr/share/ucs-school-import/hooks/ou_create_post.d/
 
 	univention-install-config-registry
