@@ -1,3 +1,9 @@
+ucs-school-import (6.0.13-2) unstable; urgency=low
+
+  * fix copyright information (Bug #19780)
+
+ -- Janek Walkenhorst <walkenhorst@univention.de>  Fri, 17 Sep 2010 16:37:55 +0200
+
 ucs-school-import (6.0.13-1) unstable; urgency=low
 
   * add hooks/ou_create_post.d/40dhcpsearchbase_create (Bug #15052)
