@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-11-12 17:28+0100\n"
-"PO-Revision-Date: 2008-11-12 17:37+0100\n"
+"POT-Creation-Date: 2010-09-20 12:24+0200\n"
+"PO-Revision-Date: 2010-09-20 12:25+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -15,142 +15,148 @@ msgstr ""
 "Content-Transfer-Encoding: ENCODING\n"
 "Generated-By: pygettext.py 1.5\n"
 
-#: __init__.py:56
+#: __init__.py:58
 msgid "school usermanager"
 msgstr "Benutzerverwaltung"
 
-#: __init__.py:57
+#: __init__.py:59
 msgid "Administrate Pupils and Teachers"
 msgstr "Verwalten von Schüler- und Lehreraccounts "
 
-#: __init__.py:62 __init__.py:63
+#: __init__.py:64 __init__.py:65
 msgid "Display pupils of one class."
 msgstr "Schüler einer Klasse anzeigen"
 
-#: __init__.py:74 __init__.py:75 _revamp.py:163
+#: __init__.py:76 __init__.py:77 _revamp.py:167
 msgid "Search pupils"
 msgstr "Schüler suchen"
 
-#: __init__.py:86 __init__.py:87
+#: __init__.py:88 __init__.py:89
 msgid "Display teachers of one school"
 msgstr "Lehrer anzeigen"
 
-#: __init__.py:98
+#: __init__.py:100
 msgid "Reset password for users."
 msgstr "Benutzerpasswörter zurücksetzen"
 
-#: __init__.py:99
+#: __init__.py:101
 msgid "Reset password for users"
 msgstr "Benutzerpasswörter zurücksetzen"
 
-#: __init__.py:102
+#: __init__.py:104
 msgid "new password"
 msgstr "neues Passwort"
 
-#: __init__.py:103
+#: __init__.py:105
 msgid "User has to change password at next login"
 msgstr "Benutzer muss Passwort bei der nächsten Anmeldung ändern"
 
-#: __init__.py:226 __init__.py:248 _revamp.py:122
+#: __init__.py:228 __init__.py:250 _revamp.py:126
 msgid "No group selected"
 msgstr "keine Gruppe ausgewählt"
 
-#: __init__.py:290 __init__.py:312 __init__.py:439
+#: __init__.py:292 __init__.py:314 __init__.py:445
 msgid "No Connection to the LDAP-Database available, please try again later"
 msgstr ""
 "Verbindung zur LDAP-Datenbank nicht verfügbar, bitte später erneut versuchen."
 
-#: __init__.py:349
+#: __init__.py:350
 #, python-format
 msgid "%s: password has been reset successfully"
 msgstr "%s: Passwort wurde erfolgreich gesetzt."
 
-#: __init__.py:353 __init__.py:358
+#: __init__.py:354
+#, python-format
+msgid "password reset failed for user %(user)s (permission denied)"
+msgstr "Passwort-Reset für Benutzer %(user)s ist fehlgeschlagen (Zugriff verweigert)."
+
+#: __init__.py:359 __init__.py:364
 #, python-format
 msgid "password reset failed for user %(user)s (%(exception)s)"
-msgstr "Passwort-Reset für Benutzer %(user)s ist fehlgeschlagen (%(exception)s)."
+msgstr ""
+"Passwort-Reset für Benutzer %(user)s ist fehlgeschlagen (%(exception)s)."
 
-#: __init__.py:395
+#: __init__.py:401
 msgid "No passwords changed, need a new password."
 msgstr ""
 "Das Passwort wurden nicht geändert, da kein neues Passwort angegeben wurde."
 
-#: __init__.py:397
+#: __init__.py:403
 msgid "No passwords changed."
 msgstr "Keine Passwörter geändert."
 
-#: _revamp.py:45
+#: _revamp.py:47
 msgid "username"
 msgstr "Benutzername"
 
-#: _revamp.py:45
+#: _revamp.py:47
 msgid "full name"
 msgstr "Vor- und Nachname"
 
-#: _revamp.py:45
+#: _revamp.py:47
 msgid "Password expiry"
 msgstr "Passwort Ablaufdatum"
 
-#: _revamp.py:47
+#: _revamp.py:49
 msgid "select"
 msgstr "Auswählen"
 
-#: _revamp.py:80
+#: _revamp.py:82
 msgid "reset passwords"
 msgstr "Passwörter setzen"
 
-#: _revamp.py:82
+#: _revamp.py:84
 msgid "Select the Operation"
 msgstr "Operation auswählen"
 
-#: _revamp.py:92
+#: _revamp.py:94
 msgid "Administrate pupils"
 msgstr "Schüleraccounts administrieren"
 
-#: _revamp.py:106 _revamp.py:179 _revamp.py:230
+#: _revamp.py:108 _revamp.py:183 _revamp.py:235
 msgid "Please select department:"
 msgstr "Schule auswählen:"
 
-#: _revamp.py:118
+#: _revamp.py:121
 msgid "show class"
 msgstr "Klasse anzeigen:"
 
-#: _revamp.py:134 _revamp.py:198 _revamp.py:238
+#: _revamp.py:138 _revamp.py:203 _revamp.py:244
 msgid "reset password"
 msgstr "Passwort zurücksetzen"
 
-#: _revamp.py:216
+#: _revamp.py:221
 msgid "Administrate teachers"
 msgstr "Lehreraccounts administrieren"
 
-#: _revamp.py:256
+#: _revamp.py:262
 msgid "reset passwords for users"
 msgstr "Passwort für Benutzer zurücksetzen"
 
-#: _types.py:41
+#: _types.py:43
 msgid "Search Key"
 msgstr "Suchkriterium"
 
-#: _types.py:44
+#: _types.py:46
 msgid "Username"
 msgstr "Benutzername"
 
-#: _types.py:45
+#: _types.py:47
 msgid "First Name"
 msgstr "Vorname"
 
-#: _types.py:46
+#: _types.py:48
 msgid "Last Name"
 msgstr "Nachname"
 
-#: _types.py:51
+#: _types.py:53
 msgid "Department"
 msgstr "Schule"
 
-#: _types.py:52
+#: _types.py:54
 msgid "User"
 msgstr "Benutzer"
 
-#: _types.py:53
+#: _types.py:55
 msgid "Group"
 msgstr "Gruppe"

@@ -1,3 +1,9 @@
+ucs-school-umc-schooladmin (6.0.2-1) unstable; urgency=low
+
+  * fixed traceback on password reset (Bug #19986)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Mon, 20 Sep 2010 12:37:19 +0200
+
 ucs-school-umc-schooladmin (6.0.1-1) unstable; urgency=low
 
   * convert to GNU APGL V3 (Bug #19780)

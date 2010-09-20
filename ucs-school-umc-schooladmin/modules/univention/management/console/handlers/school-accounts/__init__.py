@@ -336,7 +336,7 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 				dn = ur.modify()
 
 				ur.open()
-				ur['locked'] = '0'
+				ur['locked'] = 'none'
 				dn = ur.modify()
 
 				ur = univention.admin.objects.get(self.usermodule, None, lo, None, dn)
@@ -348,6 +348,11 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 				dn = ur.modify()
 
 				messages.append( _('%s: password has been reset successfully') % (ur['username']))
+			except univention.admin.uexceptions.permissionDenied, e:
+				ud.debug( ud.ADMIN, ud.ERROR, '_reset_passwords: dn=%s' % ur.dn)
+				ud.debug( ud.ADMIN, ud.ERROR, '_reset_passwords: exception=%s' % str(e.__class__))
+				messages.append( _('password reset failed for user %(user)s (permission denied)') % { 'user': ur['username'] })
+				failedlist.append(ur)
 			except univention.admin.uexceptions.base, e:
 				ud.debug( ud.ADMIN, ud.ERROR, '_reset_passwords: dn=%s' % ur.dn)
 				ud.debug( ud.ADMIN, ud.ERROR, '_reset_passwords: exception=%s' % str(e.__class__))
