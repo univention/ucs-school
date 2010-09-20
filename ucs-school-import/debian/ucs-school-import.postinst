@@ -46,6 +46,7 @@ univention-config-registry set \
 
 eval $(univention-config-registry shell)
 
+# set UCR-Variables only during installation to "yes" and not during update
 use_marktplatz="no"
 use_dhcpsearchbase="no"
 if [ "$1" = "configure" -a -z "$2" ] ; then
@@ -53,7 +54,7 @@ if [ "$1" = "configure" -a -z "$2" ] ; then
 	use_dhcpsearchbase="yes"
 fi
 univention-config-registry set \
-	"ucsschool/import/generate/dhcp/searchbase/policy?${use_dhcpsearchbase}" \
+	"ucsschool/import/generate/policy/dhcp/searchbase?${use_dhcpsearchbase}" \
 	"ucsschool/import/generate/share/marktplatz?${use_marktplatz}" \
 	"ucsschool/import/generate/share/marktplatz/sharepath?/home/groups/Marktplatz" \
 	"ucsschool/import/generate/share/marktplatz/permissions?0775" \

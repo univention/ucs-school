@@ -67,3 +67,8 @@ Type=str
 Description[de]=Vorgabegruppe der Freigabe "Marktplatz" (Default: Domain Users)
 Description[en]=Default group of share "Marktplatz" (default: Domain Users)
 Type=str
+
+[ucsschool/import/generate/policy/dhcp/searchbase]
+Description[de]=UCR-Richtlinie für DHCP-Suchbasis bei OU-Erstellung generieren? (Default: yes)
+Description[en]=Create UCR-Policy for DHCP searchbase during ou creation? (default: yes)
+Type=str

@@ -1,7 +1,7 @@
 #!/bin/sh
 #
-# 52marktplatz_create
-#  Creates a Markplatz share for the specified OUs
+# 40dhcpsearchbase_create
+#  Creates a UCR-policy for DHCP searchbase
 #
 # Depends: ucs-school-import
 #
@@ -41,8 +41,8 @@ is_ucr_true() {
 
 eval "$(ucr shell)"
 
-if ! is_ucr_true "$ucsschool_import_generate_dhcp_searchbase_policy" ; then
-	echo "$(basename $0): creation of UCR policy for DHCP searchbase has been disabled by ucsschool/import/generate/dhcp/searchbase/policy"
+if ! is_ucr_true "$ucsschool_import_generate_policy_dhcp_searchbase" ; then
+	echo "$(basename $0): creation of UCR policy for DHCP searchbase has been disabled by ucsschool/import/generate/policy/dhcp/searchbase"
 	exit 0
 fi
 
@@ -53,14 +53,20 @@ fi
 
 # create policy
 univention-directory-manager policies/registry create \
+	--ignore_exists \
 	--position "cn=policies,ou=${ou}${district},${ldap_base}" \
-	--set "name=dhcpsearchbase" \
-	--set "registry=dhcpd/ldap/base=cn=dhcp,ou=${ou}${district},${ldap_base}"
+	--set "name=ou-default-ucr-policy"
+
+# add value to policy
+univention-directory-manager policies/registry modify \
+	--dn "cn=ou-default-ucr-policy,cn=policies,ou=${ou}${district},${ldap_base}" \
+	--append "registry=dhcpd/ldap/base=cn=dhcp,ou=${ou}${district},${ldap_base}"
+
 # link to OU
 univention-directory-manager container/ou modify \
 	--dn "ou=${ou}${district},${ldap_base}" \
 	--policy-reference "cn=dhcpsearchbase,cn=policies,ou=${ou}${district},${ldap_base}"
 
-echo "$(basename $0): added new UCR policy for OU ou=${ou}${district},${ldap_base}"
+echo "$(basename $0): added new UCR policy cn=ou-default-ucr-policy,cn=policies,ou=${ou}${district},${ldap_base} to OU ou=${ou}${district},${ldap_base}"
 
 exit 0

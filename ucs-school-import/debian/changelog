@@ -1,3 +1,12 @@
+ucs-school-import (6.0.16-1) unstable; urgency=low
+
+  * renamed ucsschool/import/generate/dhcp/searchbase/policy to
+    ucsschool/import/generate/policy/dhcp/searchbase (Bug #15052)
+  * added description for UCR variable
+  * append value to ucr policy in a second step (policy may exist)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Mon, 20 Sep 2010 11:35:20 +0200
+
 ucs-school-import (6.0.15-1) unstable; urgency=low
 
   * create extended attribute "ucsschool-user-role" upon installation 
