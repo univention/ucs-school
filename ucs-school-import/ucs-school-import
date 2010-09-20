@@ -1127,8 +1127,7 @@ def modify_user(person, module, co, lo):
 		object["disabled"]="none"
 	else:
 		object["disabled"]="all"
-	# ATTENTION: it's not possible to change the ucsschool-user-role with the
-	# import script
+	object["ucsschool-user-role"] = person.getRole ()
 
 	remove_groups = []
 	for group in object['groups']:
@@ -1274,7 +1273,7 @@ def create_user(person, baseDN, module, password):
 		object["disabled"]="none"
 	else:
 		object["disabled"]="all"
-#	object["ucsschool-user-role"] = person.getRole ()
+	object["ucsschool-user-role"] = person.getRole ()
 
 	try:
 		try:
@@ -1389,12 +1388,12 @@ def import_user():
 			for object in objects:
 				ou=object.dn[string.find(object.dn,"ou=")+3:string.find(object.dn,",",string.find(object.dn,"ou=")+3)]
 				# get from LDAP the user type: teacher, staff or student
-# 				main_person.isTeacher = '0'
-# 				main_person.isStaff   = '0'
-# 				if role_teacher in object['ucsschool-user-role']:
-# 					main_person.isTeacher = '1'
-# 				if role_staff in object['ucsschool-user-role']:
-# 					main_person.isStaff = '1'
+				main_person.isTeacher = '0'
+				main_person.isStaff   = '0'
+				if role_teacher in object['ucsschool-user-role']:
+					main_person.isTeacher = '1'
+				if role_staff in object['ucsschool-user-role']:
+					main_person.isStaff = '1'
 
 				if ou in main_person.allsNrs:
 					found.append(ou)

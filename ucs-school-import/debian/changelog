@@ -1,3 +1,10 @@
+ucs-school-import (6.0.15-1) unstable; urgency=low
+
+  * create extended attribute "ucsschool-user-role" upon installation 
+  * set "ucsschool-user-role" when importing new user (Bug #19204)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Mon, 20 Sep 2010 09:51:21 +0200
+
 ucs-school-import (6.0.14-1) unstable; urgency=low
 
   * fix hooks/ou_create_post.d/40dhcpsearchbase_create (Bug #15052)

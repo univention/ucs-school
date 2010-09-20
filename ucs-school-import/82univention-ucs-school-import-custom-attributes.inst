@@ -29,20 +29,11 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-if ! test -e "/usr/share/univention-join/.joined"; then
-    echo "join first"
-    exit 1
-fi
+VERSION=3
+. /usr/share/univention-join/joinscripthelper.lib
+joinscript_init
 
-name="univention-ucs-school-import-custom-attributes"
-file="/usr/lib/univention-install/.index.txt"
-ldap_base=$(univention-config-registry get ldap/base) 
-VERSION=2
-
-touch $file
-
-test -n "`grep "$name v${VERSION} successful" $file`" && exit 1
-
+eval "$(ucr shell)"
 
 # Don't create the custom attributes by default. See Bug #15373
 
@@ -59,31 +50,60 @@ test -n "`grep "$name v${VERSION} successful" $file`" && exit 1
 #    --set tabName=ucsschool \
 #    --set tabPosition=1
 #if [ $? != 0 ]; then exit 1; fi
-#
-## create required containers if neccessary
-#univention-directory-manager container/cn create $@ \
-#	--ignore_exist \
-#	--position="cn=custom attributes,cn=univention,$ldap_base" \
-#	--set name=ucsschool
-#
-## create extended attribute for ucs@school
-#univention-directory-manager settings/extended_attribute create $@ --ignore_exist \
-#		--position="cn=ucsschool,cn=custom attributes,cn=univention,$ldap_base" \
-#		--set name="ucsschool-user-role" \
-#		--set module="users/user" \
-#		--set objectClass="univentionUcsSchoolUser" \
-#		--set ldapMapping="ucsschoolRole" \
-#		--set shortDescription="User role" \
-#		--set longDescription="Role of user in ucs@school context (e.g. teacher, administration)" \
-#		--set tabName="ucsschool" \
-#		--set tabPosition=1 \
-#		--set syntax="string" \
-#		--set multivalue=1 \
-#		--set mayChange=1 \
-#		--set 'translationShortDescription="de_DE" "Benutzerrolle"' \
-#		--set 'translationLongDescription="de_DE" "Rolle des Benutzers im ucs@school-Kontext (z.B. teacher oder administration)"'
-#if [ $? != 0 ]; then exit 1; fi
 
-test -n "`grep "$name v${VERSION} successful" $file`" || echo "$name v${VERSION} successful" >> $file
+# create required containers if neccessary
+univention-directory-manager container/cn create "$@" \
+	--ignore_exists \
+	--position="cn=custom attributes,cn=univention,$ldap_base" \
+	--set name=ucsschool
+
+# create extended attribute for ucs@school
+univention-directory-manager settings/extended_attribute create "$@" --ignore_exists \
+		--position="cn=ucsschool,cn=custom attributes,cn=univention,$ldap_base" \
+		--set name="ucsschool-user-role" \
+		--set module="users/user" \
+		--set objectClass="univentionUcsSchoolUser" \
+		--set ldapMapping="ucsschoolRole" \
+		--set shortDescription="User role" \
+		--set longDescription="Role of user in UCS@school context (teacher, staff or pupil)" \
+		--set tabName="UCSschool" \
+		--set tabPosition=1 \
+		--set syntax="string" \
+		--set multivalue=1 \
+		--set mayChange=1 \
+		--set 'translationShortDescription="de_DE" "Benutzerrolle"' \
+		--set 'translationLongDescription="de_DE" "Rolle des Benutzers im UCS@school-Kontext (teacher, staff oder pupil )"'
+if [ $? != 0 ]; then exit 1; fi
+
+if [ "$server_role" = "domaincontroller_master" ] ; then
+	ldapserver="localhost"
+	binddn="cn=admin,$ldap_base"
+	bindpwd="$(< /etc/ldap.secret)"
+else
+	ldapserver="$ldap_master"
+	binddn=""
+	bindpwd=""
+	local save_args=("$@")
+	while [ $# -gt 0 ]
+	do
+	        case "$1" in
+	                --binddn) binddn="$2"; shift 2 ;;
+	                --bindpwd) bindpw="$2"; shift 2 ;;
+	                *) ;;
+	        esac
+	done
+	set -- "${save_args[@]}"
+fi
+
+# modify tab name for extended attribute to "UCS@school"
+ldapmodify -x -h "$ldapserver" -D "$binddn" -w "$bindpwd" << EOF
+dn: cn=ucsschool-user-role,cn=ucsschool,cn=custom attributes,cn=univention,$ldap_base
+changetype: modify
+replace: univentionUDMPropertyLayoutTabName
+univentionUDMPropertyLayoutTabName: UCS@school
+
+EOF
+
+joinscript_save_current_version
 
 exit 0
