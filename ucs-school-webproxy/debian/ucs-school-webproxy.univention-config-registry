@@ -18,6 +18,7 @@ Variables: proxy/redirect
 Variables: proxy/clamav
 Variables: proxy/parent/host
 Variables: proxy/parent/port
+Variables: proxy/ntlmauth/.*
 
 Type: module
 Module: ucs-school-webproxy.py
