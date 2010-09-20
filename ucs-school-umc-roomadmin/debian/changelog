@@ -1,3 +1,10 @@
+ucs-school-umc-roomadmin (7.0.2-1) unstable; urgency=low
+
+  * changed text/descriptions of/in drop down widget (Bug #19897)
+  * fixed width of drow down widget
+
+ -- Sönke Schwardt <schwardt@univention.de>  Mon, 20 Sep 2010 16:45:11 +0200
+
 ucs-school-umc-roomadmin (7.0.1-1) unstable; urgency=low
 
   * convert to GNU APGL V3 (Bug #19780)

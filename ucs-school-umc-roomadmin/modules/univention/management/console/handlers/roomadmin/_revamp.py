@@ -318,16 +318,16 @@ class Web( object ):
 		choices = [ { 'description': '---', 'actions': '::none' },
 					{ 'description': 'INVERT SELECTION', 'actions': '::invert',     'idlist': idlist },
 					{ 'description': 'SELECT ALL',       'actions': '::select_all', 'idlist': idlist },
-					createChoiceEntry( 'roomadmin/set/access/internet/enable', _( 'enable internet access' ) ),
-					createChoiceEntry( 'roomadmin/set/access/internet/disable', _( 'disable internet access' ) ),
-					createChoiceEntry( 'roomadmin/italc/lock/screen', _( 'Lock Screen' ) ),
-					createChoiceEntry( 'roomadmin/italc/unlock/screen', _( 'Unlock Screen' ) ),
-					createChoiceEntry( 'roomadmin/italc/lock/input', _( 'Lock Input Devices' ) ),
-					createChoiceEntry( 'roomadmin/italc/unlock/input', _( 'Unlock Input Devices' ) ),
-					createChoiceEntry( 'roomadmin/wol/send', _( 'Power On By Wake On LAN') ),
-					createChoiceEntry( 'roomadmin/italc/logout', _( 'Logout Users' ) ),
-					createChoiceEntry( 'roomadmin/italc/reboot', _( 'Reboot Computers' ) ),
-					createChoiceEntry( 'roomadmin/italc/shutdown', _( 'Shutdown Computers' ) ),
+					createChoiceEntry( 'roomadmin/set/access/internet/enable', _( 'Enable internet access' ) ),
+					createChoiceEntry( 'roomadmin/set/access/internet/disable', _( 'Disable internet access' ) ),
+					createChoiceEntry( 'roomadmin/italc/lock/screen', _( 'Lock screen' ) ),
+					createChoiceEntry( 'roomadmin/italc/unlock/screen', _( 'Unlock screen' ) ),
+					createChoiceEntry( 'roomadmin/italc/lock/input', _( 'Lock input devices' ) ),
+					createChoiceEntry( 'roomadmin/italc/unlock/input', _( 'Unlock input devices' ) ),
+					createChoiceEntry( 'roomadmin/wol/send', _( 'Power on by wake on LAN') ),
+					createChoiceEntry( 'roomadmin/italc/logout', _( 'Logout users' ) ),
+					createChoiceEntry( 'roomadmin/italc/reboot', _( 'Reboot computers' ) ),
+					createChoiceEntry( 'roomadmin/italc/shutdown', _( 'Shutdown computers' ) ),
 					]
 
 		if room and room != '::all':
@@ -335,7 +335,7 @@ class Web( object ):
 			req.set_flag( 'web:startup', True )
 			req.set_flag( 'web:startup_reload', True )
 			req.set_flag( 'web:startup_dialog', True )
-			req.set_flag( 'web:startup_format', _('Supervising Computers') )
+			req.set_flag( 'web:startup_format', _('Supervising computers') )
 			actions = [ umcd.Action( req, idlist, True ) ]
 
 			choices.extend ([
@@ -344,7 +344,8 @@ class Web( object ):
 				createChoiceEntry( 'roomadmin/italc/demo/start/fullscreen', _( 'Start video mode (fullscreen)' ) ),
 				])
 
-		select = umcd.ChoiceButton( _( 'Select the Operation' ), choices, close_dialog = False )
+		select = umcd.ChoiceButton( _( 'For selected objects ...' ), choices, close_dialog = False )
+		select['width'] = '200'
 
 		# use length of headerlist for fill-item
 		tablelst.add_row( [ umcd.Fill( len(headerlist)-1 ), select ] )
@@ -422,6 +423,7 @@ class Web( object ):
 																			incomplete = True ) ) ] } )
 
 			ouselect = umcd.ChoiceButton( _('Please select school:'), ouchoices, default = defaultchoice, close_dialog = False )
+			ouselect['width'] = '200'
 			lstheader.add_row( [ ouselect ] )
 
 		req = umcp.Command( args = [ 'roomadmin/room/add' ],
