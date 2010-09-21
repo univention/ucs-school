@@ -32,6 +32,12 @@
 
 #DEBHELPER#
 
+# make sure there is a /etc/init.d/squid
+if [ ! -f "/etc/default/squid" ] ; then
+	cp -v /etc/default/squid.debian /etc/default/squid
+	chmod a+x /etc/default/squid
+fi
+
 if [ "$1" = "upgrade" -a -n "$2" ]; then
 	if dpkg --compare-versions "$2" lt 3.0.0-1;  then
 		/etc/init.d/squid stop	# to move the pid file

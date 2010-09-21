@@ -1,3 +1,10 @@
+ucs-school-webproxy (7.0.7-1) unstable; urgency=low
+
+  * copy /etc/init.d/squid.debian back to /etc/init.d/squid to make sure
+    that the init.d-script exists (Bug #10229)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Tue, 21 Sep 2010 17:15:19 +0200
+
 ucs-school-webproxy (7.0.6-1) unstable; urgency=low
 
   * set default of proxy/ntlmauth/keepalive to yes; Bug #18455
