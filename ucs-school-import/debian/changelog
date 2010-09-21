@@ -1,3 +1,10 @@
+ucs-school-import (6.0.17-1) unstable; urgency=low
+
+  * added missing "Categories" entries (Bug #18532)
+  * added new UCR category 
+
+ -- Sönke Schwardt <schwardt@univention.de>  Tue, 21 Sep 2010 12:21:37 +0200
+
 ucs-school-import (6.0.16-1) unstable; urgency=low
 
   * renamed ucsschool/import/generate/dhcp/searchbase/policy to

@@ -2,73 +2,88 @@
 Description[de]=Aktiviert Bezirke für die UCS@school-Umgebung
 Description[en]=Activates districts for the UCS@school environment
 Type=str
+Categories=ucsschool-base
 
 [ucsschool/ldap/default/container/pupils]
 Description[de]=Standard-Container für Schüler
 Description[en]=Default container for pupils
 Type=str
+Categories=ucsschool-base
 
 [ucsschool/ldap/default/container/teachers]
 Description[de]=Standard-Container für Lehrer
 Description[en]=Default container for teachers
 Type=str
+Categories=ucsschool-base
 
 [ucsschool/ldap/default/container/admins]
 Description[de]=Standard-Container für Administratoren
 Description[en]=Default container for administrators
 Type=str
+Categories=ucsschool-base
 
 [ucsschool/ldap/default/container/staff]
 Description[de]=Standard-Container für Mitarbeiter
 Description[en]=Default container for staff members
 Type=str
+Categories=ucsschool-base
 
 [ucsschool/ldap/default/groupprefix/pupils]
 Description[de]=Standard-Prefix für die Schüler-Gruppen
 Description[en]=Default prefix for pupils groups
 Type=str
+Categories=ucsschool-base
 
 [ucsschool/ldap/default/groupprefix/teachers]
 Description[de]=Standard-Prefix für die Lehrer-Gruppen
 Description[en]=Default prefix for teacher groups
 Type=str
+Categories=ucsschool-base
 
 [ucsschool/ldap/default/groupprefix/admins]
 Description[de]=Standard-Prefix für die Administrator-Gruppen
 Description[en]=Default prefix for admin groups
 Type=str
+Categories=ucsschool-base
 
 [ucsschool/ldap/default/groupprefix/staff]
 Description[de]=Standard-Prefix für die Mitarbeiter-Gruppen
 Description[en]=Default prefix for staff groups
 Type=str
+Categories=ucsschool-base
 
 [ucsschool/ldap/default/dcs]
 Description[de]=Spezifiziert welche Schul-DCs beim Erzeugen einer Schule angelegt werden sollen (Werte: edukativ und/oder verwaltung)
 Description[en]=Specifies which school DCs are created during the school set up (values: edukativ and/or verwaltung)
 Type=str
+Categories=ucsschool-base
 
 [ucsschool/import/generate/share/marktplatz]
 Description[de]=Die Freigabe "Marktplatz" automatisch bei der OU-Erstellung generieren? (Default: yes)
 Description[en]=Create share "Marktplatz" during ou creation? (default: yes)
 Type=str
+Categories=ucsschool-base
 
 [ucsschool/import/generate/share/marktplatz/sharepath]
 Description[de]=Vorgabepfad der Freigabe "Marktplatz" (Default: /home/groups/Marktplatz)
 Description[en]=Default path of share "Marktplatz" (default: /home/groups/Marktplatz)
 Type=str
+Categories=ucsschool-base
 
 [ucsschool/import/generate/share/marktplatz/permissions]
 Description[de]=Vorgabezugriffsrechte für die Freigabe "Marktplatz" (Default: 0775)
 Description[en]=Default permissions of share "Marktplatz" (default: 0775)
 Type=str
+Categories=ucsschool-base
 
 [ucsschool/import/generate/share/marktplatz/group]
 Description[de]=Vorgabegruppe der Freigabe "Marktplatz" (Default: Domain Users)
 Description[en]=Default group of share "Marktplatz" (default: Domain Users)
 Type=str
+Categories=ucsschool-base
 
 [ucsschool/import/generate/policy/dhcp/searchbase]
 Description[de]=UCR-Richtlinie für DHCP-Suchbasis bei OU-Erstellung generieren? (Default: yes)
 Description[en]=Create UCR-Policy for DHCP searchbase during ou creation? (default: yes)
 Type=str
+Categories=ucsschool-base
