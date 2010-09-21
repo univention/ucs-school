@@ -71,7 +71,31 @@ Type=str
 Categories=service-webproxy
 
 [proxy/ntlmauth/keepalive]
-Description[de]=keep_alive Option für ntlm_auth 
+Description[de]=keep_alive Option für ntlm_auth
 Description[en]=keep_alive option for ntlm_auth
+Type=str
+Categories=service-webproxy
+
+[proxy/ntlmauth/keepalive]
+Description[de]=keep_alive Option für ntlm_auth
+Description[en]=keep_alive option for ntlm_auth
+Type=str
+Categories=service-webproxy
+
+[proxy/ipauth/allow]
+Description[de]=Liste von Netzmasken. Clients aus diesen Netzen verwenden den IP-basierten Authentisierungscache (Leerzeichen separariert)
+Description[en]=List of netmasks. Clients in these networks will use the IP-base authentiction cache (space separated)
+Type=str
+Categories=service-webproxy
+
+[proxy/ipauth/deny]
+Description[de]=Liste von Netzmasken. Clients aus diesen Netzen werden vom IP-basierten Authentisierungscache ausgeschlossen (Leerzeichen separariert)
+Description[en]=List of netmasks. Clients in these networks will be excluded from the usage of the IP-base authentiction cache (space separated)
+Type=str
+Categories=service-webproxy
+
+[proxy/ipauth/ttl]
+Description[de]=Die TTL für den IP-basierten Authentisierungscache
+Description[en]=The TTL for the IP-based authentication cache
 Type=str
 Categories=service-webproxy

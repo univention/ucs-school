@@ -48,7 +48,9 @@ case "$1" in
 									proxy/filter/redirecttarget?"http://$hostname.$domainname/blocked-by-squid.html" \
 									proxy/filter/domain/whitelisted/1?"www.univention.de" \
 									"samba/global/options/winbind use default domain?yes" \
-									"proxy/ntlmauth/children?10"
+									proxy/ntlmauth/children?10 \
+									proxy/ipauth/ttl?180 \
+									proxy/ipauth/allow?0.0.0.0/0.0.0.0
 
 
 		# set correct permissions
