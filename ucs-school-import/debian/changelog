@@ -1,3 +1,9 @@
+ucs-school-import (6.0.18-1) unstable; urgency=low
+
+  * fixed typo in 40dhcpsearchbase_create (Bug #15052)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Tue, 21 Sep 2010 14:03:17 +0200
+
 ucs-school-import (6.0.17-1) unstable; urgency=low
 
   * added missing "Categories" entries (Bug #18532)

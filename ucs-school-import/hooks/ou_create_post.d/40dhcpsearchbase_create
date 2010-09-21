@@ -65,7 +65,7 @@ univention-directory-manager policies/registry modify \
 # link to OU
 univention-directory-manager container/ou modify \
 	--dn "ou=${ou}${district},${ldap_base}" \
-	--policy-reference "cn=dhcpsearchbase,cn=policies,ou=${ou}${district},${ldap_base}"
+	--policy-reference "cn=ou-default-ucr-policy,cn=policies,ou=${ou}${district},${ldap_base}"
 
 echo "$(basename $0): added new UCR policy cn=ou-default-ucr-policy,cn=policies,ou=${ou}${district},${ldap_base} to OU ou=${ou}${district},${ldap_base}"
 
