@@ -1,3 +1,9 @@
+ucs-school-webproxy (7.0.6-1) unstable; urgency=low
+
+  * set default of proxy/ntlmauth/keepalive to yes; Bug #18455
+
+ -- Andreas Büsching <buesching@univention.de>  Tue, 21 Sep 2010 16:22:22 +0200
+
 ucs-school-webproxy (7.0.5-1) unstable; urgency=low
 
   * add support for IP based authentication caching; Bug #18906
