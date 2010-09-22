@@ -33,9 +33,9 @@
 #DEBHELPER#
 
 # make sure there is a /etc/init.d/squid
-if [ ! -f "/etc/default/squid" ] ; then
-	cp -v /etc/default/squid.debian /etc/default/squid
-	chmod a+x /etc/default/squid
+if [ ! -f "/etc/init.d/squid" ] ; then
+	cp -v /etc/init.d/squid.debian /etc/init.d/squid
+	chmod a+x /etc/init.d/squid
 fi
 
 if [ "$1" = "upgrade" -a -n "$2" ]; then

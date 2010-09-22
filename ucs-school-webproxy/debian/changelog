@@ -1,3 +1,9 @@
+ucs-school-webproxy (7.0.7-2) unstable; urgency=low
+
+  * fixed preinst (Bug #10229)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Wed, 22 Sep 2010 12:04:43 +0200
+
 ucs-school-webproxy (7.0.7-1) unstable; urgency=low
 
   * copy /etc/init.d/squid.debian back to /etc/init.d/squid to make sure
