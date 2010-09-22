@@ -1,3 +1,11 @@
+univention-management-console (3.1.1-1) unstable; urgency=low
+
+  * add button ToggleCheckboxes; Bug #19779
+  * update mapping for umcd.List to support ToggleCheckboxes in header
+  * updated german translation
+
+ -- Andreas Büsching <buesching@univention.de>  Wed, 22 Sep 2010 11:43:51 +0200
+
 univention-management-console (3.1.0-1) unstable; urgency=low
 
   * import from UCS 2.4
