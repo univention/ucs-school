@@ -332,7 +332,8 @@ class Web( object ):
 			nogrpicon = 'proxysettings/nogroup'
 			img = umcd.Image( icon )
 
-			tablelst.set_header( [ _( 'Profilename' ), _('Profile Type'), _('Associated Groups') ] )
+			btnCheck = umcd.ToggleCheckboxes()
+			tablelst.set_header( [ _( 'Profilename' ), _('Profile Type'), _('Associated Groups'), btnCheck ] )
 			for itemid, profile, profiletype, groups in searchresult:
 
 				req = umcp.Command( args = [ 'proxysettings/show/sitefilters' ], opts =  { 'profile': profile, 'filtertype': profiletype } )
@@ -368,6 +369,7 @@ class Web( object ):
 
 				tablelst.add_row( row )
 
+			btnCheck.checkboxes( item_id_list )
 			choices = []
 			if self.permitted('proxysettings/remove/profile', {} ):
 				req = umcp.Command( opts = {'profile': [], 'itemid': [], 'confirmed' : False} )
