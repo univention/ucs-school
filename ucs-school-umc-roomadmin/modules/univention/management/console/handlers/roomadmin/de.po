@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-09-20 16:22+0200\n"
+"POT-Creation-Date: 2010-09-23 11:30+0200\n"
 "PO-Revision-Date: 2010-09-20 16:34+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -51,7 +51,7 @@ msgstr "Computer über Wake-On-LAN einschalten"
 msgid "List rooms and associated computers"
 msgstr "Computerräume und zugeordnete Computer anzeigen"
 
-#: __init__.py:152 _revamp.py:321
+#: __init__.py:152 _revamp.py:331
 msgid "Enable internet access"
 msgstr "Internet-Zugriff erlauben"
 
@@ -59,7 +59,7 @@ msgstr "Internet-Zugriff erlauben"
 msgid "Enable access to internet for selected computers"
 msgstr "Für ausgewählte Computer den Internet-Zugriff erlauben"
 
-#: __init__.py:159 _revamp.py:322
+#: __init__.py:159 _revamp.py:332
 msgid "Disable internet access"
 msgstr "Internet-Zugriff verweigern"
 
@@ -224,8 +224,8 @@ msgstr ""
 "Konnte Raum nicht anlegen - Bitte wenden Sie sich an Ihren Administrator! (%"
 "s)"
 
-#: __init__.py:1531 __init__.py:1532 __init__.py:1540 _revamp.py:233
-#: _revamp.py:713 _revamp.py:716 _revamp.py:719
+#: __init__.py:1531 __init__.py:1532 __init__.py:1540 _revamp.py:239
+#: _revamp.py:727 _revamp.py:730 _revamp.py:733
 msgid "unknown"
 msgstr "unbekannt"
 
@@ -253,179 +253,179 @@ msgstr "Aktualisieren"
 msgid "Stop video mode"
 msgstr "Video-Modus beenden"
 
-#: _revamp.py:158
+#: _revamp.py:160 _revamp.py:162
 msgid "Monitor Desktop With UltraVNC"
 msgstr "Computername"
 
-#: _revamp.py:158 _revamp.py:448 _types.py:86
+#: _revamp.py:160 _revamp.py:460 _types.py:86
 msgid "Room"
 msgstr "Raum"
 
-#: _revamp.py:158
+#: _revamp.py:160 _revamp.py:162
 msgid "Logged On"
 msgstr "Angemeldeter Benutzer"
 
-#: _revamp.py:160
+#: _revamp.py:164
 msgid "Addresses"
 msgstr "Adressen"
 
-#: _revamp.py:162
+#: _revamp.py:166
 msgid "Inventory#"
 msgstr "Inventarnr."
 
-#: _revamp.py:163
+#: _revamp.py:167
 msgid "Internet Access"
 msgstr "Internet-Zugriff"
 
-#: _revamp.py:165
+#: _revamp.py:169
 msgid "Video mode"
 msgstr "Video-Modus"
 
-#: _revamp.py:246
+#: _revamp.py:252
 msgid "offline"
 msgstr "offline"
 
-#: _revamp.py:323
+#: _revamp.py:333
 msgid "Lock screen"
 msgstr "Bildschirm sperren"
 
-#: _revamp.py:324
+#: _revamp.py:334
 msgid "Unlock screen"
 msgstr "Bildschirm entsperren"
 
-#: _revamp.py:325
+#: _revamp.py:335
 msgid "Lock input devices"
 msgstr "Eingabegeräte sperren"
 
-#: _revamp.py:326
+#: _revamp.py:336
 msgid "Unlock input devices"
 msgstr "Eingabegeräte entsperren"
 
-#: _revamp.py:327
+#: _revamp.py:337
 msgid "Power on by wake on LAN"
 msgstr "Per Wake-On-LAN einschalten"
 
-#: _revamp.py:328
+#: _revamp.py:338
 msgid "Logout users"
 msgstr "Benutzer abmelden"
 
-#: _revamp.py:329
+#: _revamp.py:339
 msgid "Reboot computers"
 msgstr "Computer neustarten"
 
-#: _revamp.py:330
+#: _revamp.py:340
 msgid "Shutdown computers"
 msgstr "Computer herunterfahren"
 
-#: _revamp.py:338
+#: _revamp.py:348
 msgid "Supervising computers"
 msgstr "Ausgewählte Computer beaufsichtigen"
 
-#: _revamp.py:342
+#: _revamp.py:352
 msgid "Start supervising mode"
 msgstr "Computer beaufsichtigen"
 
-#: _revamp.py:343
+#: _revamp.py:353
 msgid "Start video mode (window)"
 msgstr "Video-Modus starten (Fenster)"
 
-#: _revamp.py:344
+#: _revamp.py:354
 msgid "Start video mode (fullscreen)"
 msgstr "Video-Modus starten (Vollbild)"
 
-#: _revamp.py:347
+#: _revamp.py:357
 msgid "For selected objects ..."
 msgstr "Bei ausgewählten Objekten ..."
 
-#: _revamp.py:425
+#: _revamp.py:435
 msgid "Please select school:"
 msgstr "Bitte Schule auswählen:"
 
-#: _revamp.py:433 _revamp.py:434
+#: _revamp.py:444 _revamp.py:445
 msgid "Create new room"
 msgstr "Neuen Raum erstellen"
 
-#: _revamp.py:441 _revamp.py:497
+#: _revamp.py:452 _revamp.py:511
 msgid "Search"
 msgstr "Suchen"
 
-#: _revamp.py:448 _types.py:45 _types.py:91
+#: _revamp.py:460 _types.py:45 _types.py:91
 msgid "Description"
 msgstr "Beschreibung"
 
-#: _revamp.py:468
+#: _revamp.py:480
 #, python-format
 msgid "Edit room \"%(room)s\""
 msgstr "Raum \"%(room)s\" bearbeiten"
 
-#: _revamp.py:486 _revamp.py:488
+#: _revamp.py:499 _revamp.py:501
 msgid "Remove Rooms"
 msgstr "Räume entfernen"
 
-#: _revamp.py:489
+#: _revamp.py:502
 msgid "Select the Operation"
 msgstr "--- wählen Sie eine Aktion ---"
 
-#: _revamp.py:492
+#: _revamp.py:506
 msgid "No groups could be found."
 msgstr "Es konnten keine Gruppen gefunden werden."
 
-#: _revamp.py:498
+#: _revamp.py:512
 msgid "Search Result"
 msgstr "Suchergebnis"
 
-#: _revamp.py:560
+#: _revamp.py:574
 msgid "Create Room"
 msgstr "Raum erstellen"
 
-#: _revamp.py:562
+#: _revamp.py:576
 msgid "Save Changes"
 msgstr "Speichern"
 
-#: _revamp.py:594
+#: _revamp.py:608
 msgid "Create room and assign computers"
 msgstr "Raum erstellen und Computer zuordnen"
 
-#: _revamp.py:596
+#: _revamp.py:610
 #, python-format
 msgid "Assign computers to room \"%(room)s\""
 msgstr "Computerzuordnung für Raum \"%(room)s\""
 
-#: _revamp.py:611
+#: _revamp.py:625
 #, python-format
 msgid "Created room \"%(room)s\" successfully."
 msgstr "Raum \"%(room)s\" erfolgreich erstellt."
 
-#: _revamp.py:613
+#: _revamp.py:627
 #, python-format
 msgid "Updated room \"%(room)s\" successfully."
 msgstr "Raum \"%(room)s\" erfolgreich aktualisiert."
 
-#: _revamp.py:638
+#: _revamp.py:652
 msgid "No room has been selected"
 msgstr "Es wurde kein Raum ausgewählt."
 
-#: _revamp.py:644
+#: _revamp.py:658
 msgid "Please confirm removal of following rooms:"
 msgstr "Bitte bestätigen Sie das Entfernen der folgenden Räume:"
 
-#: _revamp.py:656
+#: _revamp.py:670
 msgid "Remove"
 msgstr "Entfernen"
 
-#: _revamp.py:661
+#: _revamp.py:675
 msgid "Deleted rooms successfully."
 msgstr "Räume wurden erfolgreich entfernt."
 
-#: _revamp.py:663
+#: _revamp.py:677
 msgid "Error while deleting following rooms:"
 msgstr "Fehler traten beim Entfernen der folgenden Räume auf:"
 
-#: _revamp.py:665
+#: _revamp.py:679
 msgid "Please ask local administrator for further details."
 msgstr "Bitte wenden Sie sich an Ihren Administrator für nähere Informationen."
 
-#: _revamp.py:702
+#: _revamp.py:716
 msgid "Supervising Mode"
 msgstr "Computer beaufsichtigen"
 

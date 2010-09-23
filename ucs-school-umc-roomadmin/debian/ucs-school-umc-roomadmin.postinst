@@ -44,4 +44,13 @@ fi
 
 univention-config-registry set umc/roomadmin/groups/defaultgroupprefix?"%(departmentNumber)s-"
 
+# Bug #19779: default remove some of the columns of the listing
+if [ "$1" = "configure" ]; then
+	if [ -n "$2" ] && dpkg --compare-versions "$2" lt "7.0.3-1"; then
+		univention-config-registry set umc/roomadmin/hideitems="room,macaddress,inventorynumber"
+	else
+		univention-config-registry set umc/roomadmin/hideitems?"room,macaddress,inventorynumber"
+	fi
+fi
+
 exit 0

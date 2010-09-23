@@ -54,11 +54,11 @@ import os, re, fnmatch, time, random
 import traceback
 random.seed ()
 
+from types import StringTypes
+
 import _revamp
 import _types
 import _schoolldap
-
-from types import StringTypes
 
 _ = umc.Translation( 'univention.management.console.handlers.roomadmin' ).translate
 

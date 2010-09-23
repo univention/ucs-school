@@ -1,6 +1,6 @@
 [umc/roomadmin/hideitems]
-Description[de]=Kommaseparierte Liste mit Angaben, die in der Computerraum-Administration ausgeblendet werden (Werte: macaddress,ipaddress,inventorynumber; Defaultwert: <leer>)
-Description[en]=Commaseparated keyword list of values to be hidden in UMC room admin module (valid values: macaddress,ipaddress,inventorynumber default: <empty>)
+Description[de]=Kommaseparierte Liste mit Angaben, die in der Computerraum-Administration ausgeblendet werden (Werte: macaddress,ipaddress,inventorynumber,room; Defaultwert: <leer>)
+Description[en]=Commaseparated keyword list of values to be hidden in UMC room admin module (valid values: macaddress,ipaddress,inventorynumber,room default: <empty>)
 Type=str
 Categories=management-umc
 

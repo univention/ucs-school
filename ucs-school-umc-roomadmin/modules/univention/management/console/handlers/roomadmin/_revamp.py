@@ -155,7 +155,11 @@ class Web( object ):
 
 		tablelst = umcd.List()
 
-		headerlist = [ _( 'Monitor Desktop With UltraVNC' ), _('Room'), _( 'Logged On' ) ]
+
+		if not 'room' in hideitems:
+			headerlist = [ _( 'Monitor Desktop With UltraVNC' ), _('Room'), _( 'Logged On' ) ]
+		else:
+			headerlist = [ _( 'Monitor Desktop With UltraVNC' ), _( 'Logged On' ) ]
 		if not 'ipaddress' in hideitems or not 'macaddress' in hideitems:
 			headerlist.append( _( 'Addresses' ) )
 		if not 'inventorynumber' in hideitems:
@@ -163,7 +167,8 @@ class Web( object ):
 		headerlist.append( _('Internet Access') )
 		if demomode:
 			headerlist.append( _('Video mode') )
-		headerlist.append( '' )
+		btntoggle = umcd.ToggleCheckboxes()
+		headerlist.append( btntoggle )
 		tablelst.set_header( headerlist )
 
 		boxes = []
@@ -196,21 +201,22 @@ class Web( object ):
 				link = umcd.Link( description = cn,
 								 icon=icon,
 								 link='/univention-management-console/ultravnc.php?hostname=%s&port=%s' % (computer['aRecord'][0], vncPort),
-								 icon_and_text = True
-								)
+								 icon_and_text = True, attributes = { 'style' : 'vertical-align: middle'} )
 			else:
 				img = umcd.Image( icon )
 				btn = umcd.Text( cn )
 				img[ 'type' ] = 'object_links'
 				btn[ 'type' ] = 'object_links'
-				link = ( img, btn )
+				link = umcd.Cell( umcd.List( content = [ ( img, btn ) ], attributes = { 'style' : 'vertical-align: middle; padding: 0;' } ), attributes = { 'type' : 'umc_list_element umc_nowrap' } )
 
 			# room name(s)
-			roomlist = []
-			for grpcn, grpdn, grpdata in sorted_groups:
-				if memberdn in grpdata[1]:
-					roomlist.append(grpcn)
-			roomlist = [ umcd.Image('roomadmin/room'), ', '.join(roomlist) ]
+			if not 'room' in hideitems:
+				roomlist = []
+				for grpcn, grpdn, grpdata in sorted_groups:
+					if memberdn in grpdata[1]:
+						roomlist.append(grpcn)
+				# roomlist = [ umcd.Image('roomadmin/room'), ', '.join(roomlist) ]
+				roomlist = umcd.Cell( umcd.List( content = [ [ umcd.Image('roomadmin/room'), umcd.Text( ', '.join(roomlist) ) ] ], attributes = { 'style' : 'vertical-align: middle; padding: 0;' } ), attributes = { 'type' : 'umc_list_element umc_nowrap' } )
 
 			# user that is logged on
 			if computer.has_key('aRecord') and computer['aRecord']:
@@ -236,26 +242,27 @@ class Web( object ):
 				if user2realname.has_key( username ):
 					username = "%s (%s)" % (user2realname[ username ], username)
 				if ipaddr:
-					userdiv = umcd.HTML (("<div id='%s.username'>" % ipaddr) + username + '</div>')
+					userdiv = umcd.HTML (("<div class='button_link' id='%s.username'>" % ipaddr) + username + '</div>')
 					userlst.append(userdiv)
 				else:
-					userlst.append(username)
+					userlst.append( umcd.Text( username ) )
 			else:
 				if computer.has_key('aRecord') and computer['aRecord'] and onlinestatus.has_key(computer['aRecord'][0]):
 					if not onlinestatus[ computer['aRecord'][0] ]:
-						userlst = [ umcd.Image('roomadmin/offline'), _('offline') ]
+						userlst = [ umcd.Image('roomadmin/offline'), umcd.Text( _('offline') ) ]
 					else:
 						if ipaddr:
-							userdiv = umcd.HTML (("<div id='%s.username'>" % ipaddr) + username + '</div>')
+							userdiv = umcd.HTML (("<div class='button_link' id='%s.username'>" % ipaddr) + username + '</div>')
 							userlst.append(userdiv)
 						else:
-							userlst.append(username)
+							userlst.append( umcd.Text( username ) )
 				else:
 					if ipaddr:
-						userdiv = umcd.HTML (("<div id='%s.username'>" % ipaddr) + username + '</div>')
+						userdiv = umcd.HTML (("<div class='button_link' id='%s.username'>" % ipaddr) + username + '</div>')
 						userlst.append(userdiv)
 					else:
-						userlst.append(username)
+						userlst.append( umcd.Text( username ) )
+			userlst = umcd.Cell( umcd.List( content = [ userlst ], attributes = { 'style' : 'vertical-align: middle;' }, default_type = 'button_link' ), attributes = { 'type' : 'umc_list_element umc_nowrap' } )
 			if room and room != '::all' and ipaddr:
 				italc_demo_master_selection.syntax.addChoice (ipaddr, '%s: %s' % (cn, username))
 
@@ -286,7 +293,10 @@ class Web( object ):
 				elif ipaddr == demomode['masterip']:
 					demostatus = umcd.Image('roomadmin/demomaster')
 
-			row = [ link, roomlist, userlst ]
+			if not 'room' in hideitems:
+				row = [ link, roomlist, userlst ]
+			else:
+				row = [ link, userlst ]
 			if not 'ipaddress' in hideitems or not 'macaddress' in hideitems:
 				addrlst = []
 				if not 'ipaddress' in hideitems and str_ipaddr:
@@ -303,7 +313,7 @@ class Web( object ):
 				row.append( demostatus )
 			row.append( chk )
 			tablelst.add_row( row )
-
+		btntoggle.checkboxes( idlist )
 
 		def createChoiceEntry(cmd, description):
 			req_set = umcp.Command( args = [ cmd ], opts = { 'ipaddrs': [], 'room' : room } )
@@ -446,7 +456,8 @@ class Web( object ):
 		lst = umcd.List()
 		item_id_list = []
 		if roomgroups:
-			lst.set_header( [ _( 'Room' ), _( 'Description' ) ] )
+			btnToggle = umcd.ToggleCheckboxes()
+			lst.set_header( [ _( 'Room' ), _( 'Description' ), btnToggle ] )
 
 			# sort groups by cn attribute
 			sorted_groups = []
@@ -473,6 +484,7 @@ class Web( object ):
 				if self.permitted('roomadmin/room/remove', {} ):
 					static_options = { 'room': roomattr['cn'][0], 'roomdn' : roomdn, 'ou': currentOU }
 					chk_button = umcd.Checkbox( static_options = static_options )
+					chk_button[ 'webui-id' ] = chk_button.id()
 					item_id_list.append( chk_button.id() )
 					row.append(	chk_button )
 
@@ -489,6 +501,7 @@ class Web( object ):
 				choices = [ ( 'roomadmin/room/remove', _( 'Remove Rooms' ) ) ]
 				select = umcd.SelectionButton( _( 'Select the Operation' ), choices, actions )
 				lst.add_row( [ umcd.Fill( 2 ), select ] )
+			btnToggle.checkboxes(item_id_list )
 		else:
 			lst.add_row( [ _( 'No groups could be found.' ) ] )
 

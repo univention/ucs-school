@@ -39,7 +39,7 @@ _ = umc.Translation( 'univention.management.console.handlers.roomadmin' ).transl
 
 class Room_SearchKeys( umc.StaticSelection ):
 	def __init__( self, required = True ):
-		umc.StaticSelection.__init__( self, unicode( _( 'Search Key' ) ), required = required )
+		umc.StaticSelection.__init__( self, _( 'Search Key' ), required = required )
 
 	def choices( self ):
 		return ( ( 'name', _( 'Room Name' ) ), ( 'description', _( 'Description' ) ) )
