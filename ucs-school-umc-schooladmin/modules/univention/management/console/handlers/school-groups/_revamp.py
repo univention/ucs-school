@@ -94,7 +94,8 @@ class Web( object ):
 		lst = umcd.List()
 		item_id_list = []
 		if groups:
-			lst.set_header( [ _( 'Group' ), _( 'Description' ) ] )
+			btnCheck = umcd.ToggleCheckboxes()
+			lst.set_header( [ _( 'Group' ), _( 'Description' ), btnCheck ] )
 			for group in groups:
 				req = umcp.Command( args = [ 'schoolgroups/group/edit' ],
 									opts =  { 'group' : group['name'],
@@ -115,6 +116,7 @@ class Web( object ):
 					row.append(	chk_button )
 
 				lst.add_row( row )
+			btnCheck.checkboxes( item_id_list )
 
 			if self.permitted('schoolgroups/groups/remove', {} ):
 				req = umcp.Command( args = [ 'schoolgroups/groups/remove' ],
@@ -124,7 +126,7 @@ class Web( object ):
 				req.set_flag( 'web:startup_dialog', True )
 				req.set_flag( 'web:startup_format', _('Remove Groups') )
 				actions = ( umcd.Action( req, item_id_list ) )
-				choices = [ ( 'schoolgroups/groups/remove', _( 'Remove Groups' ) ) ]
+				choices = [ ( 'schoolgroups/groups/remove', _( 'Remove' ) ) ]
 				select = umcd.SelectionButton( _( 'Select the Operation' ), choices, actions )
 				lst.add_row( [ umcd.Fill( 2 ), select ] )
 		else:
@@ -559,7 +561,7 @@ class Web( object ):
 			req.set_flag( 'web:startup_dialog', True )
 			req.set_flag( 'web:startup_format', _('Remove Groups') )
 			actions = ( umcd.Action( req, item_id_list ) )
-			choices = [ ( 'schoolgroups/groups/remove', _( 'Remove Groups' ) ) ]
+			choices = [ ( 'schoolgroups/groups/remove', _( 'Remove' ) ) ]
 			select = umcd.SelectionButton( _( 'Select the Operation' ), choices, actions )
 			lstresult.add_row( [ umcd.Fill( 4 ), select ] )
 

@@ -240,7 +240,7 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 			userlist.append( ur )
 
 		userlist = sorted( userlist, cmp = lambda x, y: cmp( x.lower(), y.lower() ),
-						   key = lambda x: x[ 'username' ] )
+						   key = lambda x: x[ 'firstname' ] )
 
 		return userlist
 
@@ -262,7 +262,7 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 				accountlist += self._generate_userlist( userlist )
 
 		accountlist = sorted( accountlist, cmp = lambda x, y: cmp( x.lower(), y.lower() ),
-							  key = lambda x: x[ 'username' ] )
+							  key = lambda x: x[ 'firstname' ] )
 
 		return accountlist
 
@@ -276,7 +276,7 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 			teacherlist.append( ar )
 
 		teacherlist = sorted( teacherlist, cmp = lambda x, y: cmp( x.lower(), y.lower() ),
-							  key = lambda x: x[ 'username' ] )
+							  key = lambda x: x[ 'firstname' ] )
 
 		return teacherlist
 
@@ -426,7 +426,7 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 		if searchkey in sortmap:
 			sortkey = sortmap[ searchkey ]
 		else:
-			sortkey = 'username'
+			sortkey = 'firstname'
 
 		accountlist = sorted( accountlist, cmp = lambda x, y: cmp( x.lower(), y.lower() ),
 							  key = lambda x: x[ sortkey ] )

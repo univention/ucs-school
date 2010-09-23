@@ -44,24 +44,26 @@ _ = umc.Translation( 'univention.management.console.handlers.school-accounts' ).
 class Web( object ):
 
 	def _generate_userlist_header( self, checkbox = False ):
-		header = [ '', _( 'username' ), _( 'full name' ), _( 'Password expiry' ) ]
+		header = [ _( 'User' ), _( 'Password expiry' ) ]
 		if checkbox:
-			header.append( _('select') )
+			header.append( checkbox )
 		return header
 
 	def _generate_userlist_element( self, usermodule, checkbox = False ):
-		icon = "school-accounts/user"
-		element = [ umcd.Image( icon ),
-			    usermodule['username'],
-			    '%s %s' % (usermodule['firstname'], usermodule['lastname'] ),
-			    str(usermodule['passwordexpiry'])]
+		user = umcd.Text( '%s %s (%s)' % ( usermodule['firstname'], usermodule['lastname'], usermodule['username'] ) )
+		if not usermodule['passwordexpiry']:
+			expiry = umcd.HTML( '<i>%s</i>' % _( 'none' ) )
+		else:
+			expiry = umcd.Text( str( usermodule['passwordexpiry'] ) )
+		element = [ umcd.Cell( user, attributes = { 'type' : 'umc_list_element umc_nowrap' } ), umcd.Cell( expiry, attributes = { 'align' : 'center' } ) ]
 		if checkbox:
 			element.append( checkbox )
 		return element
 
 	def _generate_userlist_table( self, accountlist, additional_static_options = {} ):
 		tablelst = umcd.List()
-		tablelst.set_header( self._generate_userlist_header( checkbox = True) )
+		btnCheck = umcd.ToggleCheckboxes()
+		tablelst.set_header( self._generate_userlist_header( checkbox = btnCheck ) )
 		boxes = []
 
 		for usermodule in accountlist: # got univention.admin.modules here
@@ -71,6 +73,7 @@ class Web( object ):
 			boxes.append( chk.id() )
 			tablelst.add_row( self._generate_userlist_element( usermodule, checkbox = chk ) )
 
+		btnCheck.checkboxes( boxes )
 		return (tablelst, boxes)
 
 	def _generate_userlist_select( self, boxes, choices, req_opts = {} ):
@@ -82,7 +85,7 @@ class Web( object ):
 		req.set_flag( 'web:startup_format', _( 'reset passwords' ) )
 		actions = ( umcd.Action( req, boxes, True ) )
 		select = umcd.SelectionButton( _( 'Select the Operation' ), choices, actions )
-		return [ umcd.Fill( 4 ), select ]
+		return [ umcd.Fill( 2 ), select ]
 
 	def _web_schoolaccounts_class_show ( self, object, res ):
 		availableOU, grouplist, accountlist, selectedgroup, messages = res.dialog

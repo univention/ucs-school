@@ -40,7 +40,7 @@ _ = umc.Translation( 'univention.management.console.handlers.school-groups' ).tr
 
 class SchoolGroup_SearchKeys( umc.StaticSelection ):
 	def __init__( self, required = True ):
-		umc.StaticSelection.__init__( self, unicode( _( 'Search Key' ) ), required = required )
+		umc.StaticSelection.__init__( self, _( 'Search Key' ), required = required )
 
 	def choices( self ):
 		return ( ( 'name', _( 'Group Name' ) ), ( 'description', _( 'Description' ) ) )

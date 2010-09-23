@@ -1,3 +1,11 @@
+ucs-school-umc-schooladmin (6.0.3-1) unstable; urgency=low
+
+  * translation updates
+  * minor layout fixes; Bug #19895
+  * add ToggleCheckboxes to lists; Bug #19779
+
+ -- Andreas Büsching <buesching@univention.de>  Thu, 23 Sep 2010 16:09:23 +0200
+
 ucs-school-umc-schooladmin (6.0.2-1) unstable; urgency=low
 
   * fixed traceback on password reset (Bug #19986)
