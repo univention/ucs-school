@@ -1,3 +1,9 @@
+ucs-school-umc-roomadmin (7.0.4-1) unstable; urgency=low
+
+  * do not show host account if it is logged on; Bug #20098
+
+ -- Andreas Büsching <buesching@univention.de>  Thu, 23 Sep 2010 16:56:06 +0200
+
 ucs-school-umc-roomadmin (7.0.3-1) unstable; urgency=low
 
   * hide some items in room overview by default

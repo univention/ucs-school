@@ -237,8 +237,10 @@ class Web( object ):
 			else:
 				userlst = [ umcd.Image('roomadmin/user') ]
 			username = _('unknown')
-			if host2user.has_key( cn.lower() ):
-				username = host2user[ cn.lower() ]
+			tmpuser = host2user.get( cn.lower() )
+			# if a user is logged on and it is not a host account
+			if tmpuser and not tmpuser[ -1 ] == '$':
+				username = tmpuser
 				if user2realname.has_key( username ):
 					username = "%s (%s)" % (user2realname[ username ], username)
 				if ipaddr:
