@@ -55,13 +55,13 @@ def debugmsg( component, level, msg ):
 	ud.debug(component, level, "%s:%s: %s" % (printInfo[0], printInfo[1], msg))
 
 class Web( object ):
-	def _generate_printjoblist_header (self):
-		header = [ '', _( 'Username' ), _( 'Full Name' ), _( 'Printjob Name' ), _( 'Creation Time' ) ]
-		header.append (_ ('Operations'))
+	def _generate_printjoblist_header (self, button = None):
+		header = [ _( 'User' ), _( 'Printjob Name' ), _( 'Creation Time' ), _('Operations') ]
+		if button:
+			header.append( button )
 		return header
 
 	def _generate_printjoblist_operations (self, printjob, checkbox, additional_static_options):
-		operations = umcd.List ()
 		line = []
 
 		myoptions = additional_static_options.copy()
@@ -81,25 +81,22 @@ class Web( object ):
 		b_delete = umcd.Button (_ ('Delete'), 'printermoderation/delete', _delete)
 		line.append (b_delete)
 
-		if checkbox:
-			line.append( checkbox )
-
-		operations.add_row (line)
-		return operations
+		return  umcd.Cell( line, attributes = { 'type' : 'umc_list_element umc_nowrap' } )
 
 	def _generate_printjoblist_element (self, printjob, checkbox, additional_static_options):
-		icon = "printermoderation/pdf"
-		element = [umcd.Image( icon ),
-				printjob.owner.info['username'],
-				'%s %s' % (printjob.owner.info['firstname'], printjob.owner.info['lastname']),
-				printjob.name,
-				umcd.Date (printjob.ctime.strftime ('%d.%m.%y %H:%M'))]
-		element.append (self._generate_printjoblist_operations (printjob, checkbox, additional_static_options))
+		user = umcd.Text( '%s %s (%s)' % (printjob.owner.info['firstname'], printjob.owner.info['lastname'], printjob.owner.info['username']) )
+		element = [	umcd.Cell( user, attributes = { 'type' : 'umc_list_element umc_nowrap' } ), printjob.name, umcd.Date (printjob.ctime.strftime ('%d.%m.%y %H:%M')) ]
+		element.append ( self._generate_printjoblist_operations (printjob, checkbox, additional_static_options) )
+		if checkbox:
+			element.append( checkbox )
+		else:
+			element.append( '' )
 		return element
 
 	def _generate_printjoblist_table (self, printjoblist, additional_static_options):
 		tablelst = umcd.List()
-		tablelst.set_header (self._generate_printjoblist_header ())
+		btnCheck = umcd.ToggleCheckboxes()
+		tablelst.set_header (self._generate_printjoblist_header( btnCheck ) )
 		boxes = []
 
 		for printjob in printjoblist: # got Printjob here
@@ -109,6 +106,7 @@ class Web( object ):
 			boxes.append( chk.id() )
 			tablelst.add_row( self._generate_printjoblist_element( printjob, chk, additional_static_options ) )
 
+		btnCheck.checkboxes( boxes )
 		return (tablelst, boxes)
 
 	def _generate_printjoblist_select(self, boxes, choices, req_opts):
@@ -200,10 +198,10 @@ class Web( object ):
 				umcp.Command( args = ['printermoderation/list'], \
 				opts = { 'selectedgroup' : selectedgroup, 'ou': currentOU }))])
 		select = self._generate_printjoblist_select( boxes, \
-				[ ('printermoderation/job/print', _ ('Print Selected Items')), \
-				('printermoderation/job/delete', _( 'Delete Selected Items' )) ], \
+				[ ('printermoderation/job/print', _ ('Print')), \
+				('printermoderation/job/delete', _( 'Delete' )) ], \
 				req_opts = {'selectedgroup' : selectedgroup, 'ou': currentOU })
-		tablelst.add_row ([umcd.Fill (4), refresh, select])
+		tablelst.add_row ([umcd.Fill (3), refresh, select])
 
 		lst.add_row( [ tablelst ] )
 
@@ -224,8 +222,7 @@ class Web( object ):
 		table = umcd.List()
 		table.set_header (self._generate_printjoblist_header ()[:-1])
 		for printjob in deletedjobs:
-			table.add_row ([umcd.Image ('printermoderation/delete'),
-					printjob.owner.info['username'], \
+			table.add_row ( [ printjob.owner.info['username'], \
 					'%s %s' % (printjob.owner.info['firstname'], printjob.owner.info['lastname']), \
 					printjob.name,
 					umcd.Date (printjob.ctime.strftime ('%d.%m.%y %H:%M'))])
@@ -256,8 +253,7 @@ class Web( object ):
 			table = umcd.List()
 			table.set_header (self._generate_printjoblist_header ()[:-1])
 			for printjob in printedjobs:
-				table.add_row ([umcd.Image ('printermoderation/printok'),
-						printjob.owner.info['username'], \
+				table.add_row ([ printjob.owner.info['username'], \
 						'%s %s' % (printjob.owner.info['firstname'], printjob.owner.info['lastname']), \
 						printjob.name,
 						umcd.Date (printjob.ctime.strftime ('%d.%m.%y %H:%M'))])

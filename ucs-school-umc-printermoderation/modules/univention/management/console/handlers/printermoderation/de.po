@@ -30,7 +30,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0.0-1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-01-13 11:43+0100\n"
+"POT-Creation-Date: 2010-09-23 14:29+0200\n"
 "PO-Revision-Date: 2010-01-14 14:57+0100\n"
 "Last-Translator: Jan Christoph Ebersbach <ebersbach@univention.de>\n"
 "Language-Team: Jan Christoph Ebersbach <ebersbach@univention.de>\n"
@@ -38,120 +38,108 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: __init__.py:78 _revamp.py:145
+#: __init__.py:80 _revamp.py:146
 msgid "Printer Moderation"
 msgstr "Druckermoderation"
 
-#: __init__.py:79
+#: __init__.py:81
 msgid "Printer Moderation for Classrooms"
 msgstr "Druckermoderation für Klassenräume"
 
-#: __init__.py:84 __init__.py:85
+#: __init__.py:86 __init__.py:87
 msgid "List print jobs"
 msgstr "Liste der Druckaufträge"
 
-#: __init__.py:95 __init__.py:96
+#: __init__.py:97 __init__.py:98
 msgid "Print job"
 msgstr "Druckauftrag"
 
-#: __init__.py:107 __init__.py:108
+#: __init__.py:109 __init__.py:110
 msgid "Delete print job"
 msgstr "Lösche Druckauftrag"
 
-#: __init__.py:118 __init__.py:119
+#: __init__.py:120 __init__.py:121
 msgid "Review print job"
 msgstr "Betrachte Druckauftrag"
 
-#: __init__.py:180
+#: __init__.py:182
 msgid "Unable to copy printjob to temporary directory"
 msgstr ""
 "Es war nicht möglich den Druckjob in das temporäre Verzeichnis zu kopieren"
 
-#: __init__.py:198 __init__.py:226
+#: __init__.py:200 __init__.py:228
 msgid "File does not exist"
 msgstr "Datei existiert nicht"
 
-#: __init__.py:203
+#: __init__.py:205
 msgid "Printer not specified"
 msgstr "Drucker nicht angegeben"
 
-#: __init__.py:237
+#: __init__.py:239
 msgid "Error deleting file"
 msgstr "Fehler beim Löschen der Datei"
 
-#: __init__.py:435 __init__.py:455 __init__.py:505 _revamp.py:182
+#: __init__.py:437 __init__.py:457 __init__.py:507 _revamp.py:183
 msgid "No group selected"
 msgstr "Keine Gruppe ausgewählt"
 
-#: _revamp.py:40
+#: _revamp.py:42
 msgid "Back"
 msgstr "Zurück"
 
-#: _revamp.py:57
-msgid "Username"
-msgstr "Benutzername"
+#: _revamp.py:59 _types.py:39
+msgid "User"
+msgstr "Benutzer"
 
-#: _revamp.py:57
-msgid "Full Name"
-msgstr "Name"
-
-#: _revamp.py:57
+#: _revamp.py:59
 msgid "Printjob Name"
 msgstr "Name des Druckauftrags"
 
-#: _revamp.py:57
+#: _revamp.py:59
 msgid "Creation Time"
 msgstr "Auftragszeitpunkt"
 
-#: _revamp.py:58
+#: _revamp.py:60
 msgid "Operations"
 msgstr "Operationen"
 
-#: _revamp.py:75
+#: _revamp.py:78
 msgid "Review"
 msgstr "Überprüfen"
 
-#: _revamp.py:77
+#: _revamp.py:80 _revamp.py:202
 msgid "Print"
 msgstr "Drucken"
 
-#: _revamp.py:79
+#: _revamp.py:82 _revamp.py:203
 msgid "Delete"
 msgstr "Löschen"
 
-#: _revamp.py:120
+#: _revamp.py:121
 msgid " Select the Operation"
 msgstr "Wähle die Operation aus"
 
-#: _revamp.py:126
+#: _revamp.py:127
 msgid "Select a printer"
 msgstr "Wähle einen Drucker"
 
-#: _revamp.py:134
+#: _revamp.py:135
 msgid "No printers available"
 msgstr "Keine Drucker verfügbar"
 
-#: _revamp.py:164
+#: _revamp.py:165
 msgid "Please select department:"
 msgstr "Bitte Schule auswählen:"
 
-#: _revamp.py:177
+#: _revamp.py:178
 msgid "Select Class"
 msgstr "Wähle eine Klasse"
 
-#: _revamp.py:195
+#: _revamp.py:196
 msgid "Refresh"
 msgstr "Aktualisieren"
 
-#: _revamp.py:201
-msgid "Print Selected Items"
-msgstr "Drucke ausgewählte Elemente"
-
-#: _revamp.py:202
-msgid "Delete Selected Items"
-msgstr "Lösche ausgewählte Elemente"
-
-#: _revamp.py:215
+#: _revamp.py:216
 msgid "Deleted Print Jobs"
 msgstr "Gelöschte Aufträge"
 
@@ -159,33 +147,41 @@ msgstr "Gelöschte Aufträge"
 msgid "Printed Jobs"
 msgstr "Gedruckte Aufträge"
 
-#: _revamp.py:274 _revamp.py:283
+#: _revamp.py:273 _revamp.py:282
 msgid "Review Printjob"
 msgstr "Betrache Druckauftrag"
 
-#: _types.py:36
+#: _types.py:38
 msgid "School"
 msgstr "Schule"
 
-#: _types.py:37
-msgid "User"
-msgstr "Benutzer"
-
-#: _types.py:38
+#: _types.py:40
 msgid "Group"
 msgstr "Gruppe"
 
-#: _types.py:39
+#: _types.py:41
 msgid "Filename"
 msgstr "Dateiname"
 
-#: _types.py:40
+#: _types.py:42
 msgid "Printer"
 msgstr "Drucker"
 
-#: _types.py:41
+#: _types.py:43
 msgid "DNs and Filenames"
 msgstr "DNs und Dateinamen"
+
+#~ msgid "Username"
+#~ msgstr "Benutzername"
+
+#~ msgid "Full Name"
+#~ msgstr "Name"
+
+#~ msgid "Print Selected Items"
+#~ msgstr "Drucke ausgewählte Elemente"
+
+#~ msgid "Delete Selected Items"
+#~ msgstr "Lösche ausgewählte Elemente"
 
 #~ msgid "Review printjob"
 #~ msgstr "Betrache Druckauftrag"
