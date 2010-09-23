@@ -1,3 +1,9 @@
+ucs-school-webproxy (7.0.7-3) unstable; urgency=low
+
+  * minor fixes in UCR variable documentation; Bug #18906
+
+ -- Andreas Büsching <buesching@univention.de>  Thu, 23 Sep 2010 17:01:26 +0200
+
 ucs-school-webproxy (7.0.7-2) unstable; urgency=low
 
   * fixed preinst (Bug #10229)
