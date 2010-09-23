@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-10-01 14:25+0200\n"
+"POT-Creation-Date: 2010-09-23 11:52+0200\n"
 "PO-Revision-Date: 2010-01-11 14:55+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -39,39 +39,39 @@ msgstr "Ausgewählte Projekte anzeigen"
 msgid "collect teaching material"
 msgstr "Unterrichtsmaterial einsammeln"
 
-#: __init__.py:283
-msgid "No files have been uploaded!"
-msgstr "Es wurden keine Dateien hochgeladen!"
-
-#: __init__.py:290
+#: __init__.py:302 __init__.py:319
 #, python-format
 msgid "projectname \"%(projectname)s\" is already in use!"
 msgstr "Projektname \"%(projectname)s\" wurde bereits verwendet!"
 
-#: __init__.py:298
+#: __init__.py:312
+msgid "No files have been uploaded!"
+msgstr "Es wurden keine Dateien hochgeladen!"
+
+#: __init__.py:327
 msgid "%m/%d/%Y %H:%M"
 msgstr "%d.%m.%Y %H:%M"
 
-#: __init__.py:348
+#: __init__.py:375
 #, python-format
 msgid "Error occurred while distributing files (status=%s)"
 msgstr "Fehler während Dateiverteilung aufgetreten (status=%s)"
 
-#: __init__.py:367 __init__.py:394
+#: __init__.py:392 __init__.py:417
 msgid "no projectname given"
 msgstr "Kein Projektname angegeben!"
 
-#: __init__.py:371 __init__.py:399
+#: __init__.py:396 __init__.py:422
 #, python-format
 msgid "project \"%(projectname)s\": file %(fn)s does not exist"
 msgstr "Projekt \"%(projectname)s\": Datei %(fn)s existiert nicht"
 
-#: __init__.py:426
+#: __init__.py:447
 #, python-format
 msgid "An error occurred while collecting data (exitcode: %s)"
 msgstr "Ein Fehler ist beim Einsammeln der Dateien aufgetreten (exitcode: %s)"
 
-#: __init__.py:445
+#: __init__.py:466
 #, python-format
 msgid "An error occurred while removing automatic deadline (exitcode: %s)"
 msgstr "Ein Fehler ist beim Entfernen der Deadline aufgetreten (exitcode: %s)"
@@ -105,13 +105,17 @@ msgstr "Anz. Dateien"
 msgid "Collect Project \"%(projectname)s\""
 msgstr "Projekt \"%(projectname)s\" einsammeln"
 
-#: _revamp.py:109 _revamp.py:273
+#: _revamp.py:109 _revamp.py:274
 msgid "--- no description ---"
 msgstr "--- ohne Beschreibung ---"
 
 #: _revamp.py:120
 msgid "Search"
 msgstr "Suchen"
+
+#: _revamp.py:126
+msgid "Search results"
+msgstr "Suchergebnis"
 
 #: _revamp.py:132
 msgid "Action finished successfully"
@@ -121,71 +125,71 @@ msgstr "Aktion erfolgreich beendet"
 msgid "Action failed"
 msgstr "Aktion fehlgeschlagen"
 
-#: _revamp.py:201
+#: _revamp.py:202
 msgid "Please select class:"
 msgstr "Bitte Klasse auswählen:"
 
-#: _revamp.py:216
+#: _revamp.py:217
 msgid "Please select school:"
 msgstr "Bitte Schule auswählen:"
 
-#: _revamp.py:223
+#: _revamp.py:224
 msgid "Create Project"
 msgstr "Projekt erstellen"
 
-#: _revamp.py:238
+#: _revamp.py:239
 msgid "ERROR"
 msgstr "FEHLER"
 
-#: _revamp.py:241
+#: _revamp.py:242
 msgid "Create new distribution"
 msgstr "Neues Projekt erstellen"
 
-#: _revamp.py:267
+#: _revamp.py:268
 msgid "Collect Distributed Teaching Material"
 msgstr "Unterrichtsmaterial einsammeln"
 
-#: _revamp.py:270
+#: _revamp.py:271
 msgid "Projectname:"
 msgstr "Projektname:"
 
-#: _revamp.py:274
+#: _revamp.py:275
 msgid "Description:"
 msgstr "Beschreibung:"
 
-#: _revamp.py:276
+#: _revamp.py:277
 msgid "%m/%d/%Y at %H:%M"
 msgstr "%d.%m.%Y um %H:%M"
 
-#: _revamp.py:278
+#: _revamp.py:279
 msgid "no deadline given - please collect data manually"
 msgstr "keine Deadline definiert - bitte Dateien manuell einsammeln"
 
-#: _revamp.py:279
+#: _revamp.py:280
 msgid "Deadline:"
 msgstr "Deadline:"
 
-#: _revamp.py:280
+#: _revamp.py:281
 msgid "Sender:"
 msgstr "Besitzer:"
 
-#: _revamp.py:283
+#: _revamp.py:284
 msgid "Sender Project Dir:"
 msgstr "Besitzer-Projektverzeichnis:"
 
-#: _revamp.py:287
+#: _revamp.py:288
 msgid "Files:"
 msgstr "Dateien:"
 
-#: _revamp.py:292 _revamp.py:294
+#: _revamp.py:293 _revamp.py:295
 msgid "Recipients:"
 msgstr "Empfänger:"
 
-#: _revamp.py:294
+#: _revamp.py:295
 msgid "no recipients specified"
 msgstr "keine Empfänger angegeben"
 
-#: _revamp.py:299
+#: _revamp.py:300
 msgid "Collect Data"
 msgstr "Einsammeln"
 

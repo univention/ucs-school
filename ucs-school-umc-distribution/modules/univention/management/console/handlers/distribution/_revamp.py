@@ -125,7 +125,7 @@ class Web( object ):
 			self.revamped( umcobject.id(), res )
 			return
 
-		res.dialog.append(lstresult)
+		res.dialog.append( umcd.Frame( [ lstresult ], _( 'Search results' ) ) )
 		self.revamped( umcobject.id(), res )
 
 
