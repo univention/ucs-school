@@ -532,7 +532,9 @@ class Web( object ):
 		lst.add_row( [ _('Number of pupils per group (max 5):'), item_membercnt, item_updatebtn ] )
 
 		lstresult = umcd.List()
-		lstresult.set_header( [ _( 'Group' ), _( 'Description' ), _( 'Pupils' ), _( 'Teachers' ) ] )
+		btnCheck = umcd.ToggleCheckboxes()
+		chkboxes = []
+		lstresult.set_header( [ _( 'Group' ), _( 'Description' ), _( 'Pupils' ), _( 'Teachers' ), btnCheck ] )
 		for grp in empty_groups:
 			uidlist_pupils = []
 			for uid, uiddn in grp['listpupils']:
@@ -549,9 +551,11 @@ class Web( object ):
 				static_options = { 'group': grp['name'], 'groupdn': grp['dn'], 'ou': currentOU }
 				chk_button = umcd.Checkbox( static_options = static_options )
 				item_id_list.append( chk_button.id() )
-				row.append(	chk_button )
+				chkboxes.append( chk_button.id() )
+				row.append( chk_button )
 
 			lstresult.add_row( row )
+		btnCheck.checkboxes( chkboxes )
 
 		if self.permitted('schoolgroups/groups/unused/remove', {} ):
 			req = umcp.Command( args = [ 'schoolgroups/groups/unused/remove' ],
