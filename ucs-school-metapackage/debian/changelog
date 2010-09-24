@@ -1,3 +1,9 @@
+ucs-school-metapackage (3.0.1-2) unstable; urgency=low
+
+  * added ucs-school-info (Bug #18024)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Fri, 24 Sep 2010 17:12:32 +0200
+
 ucs-school-metapackage (3.0.1-1) unstable; urgency=low
 
   * convert to GNU APGL V3 (Bug #19780)

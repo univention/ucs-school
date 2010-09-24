@@ -202,7 +202,7 @@ def network(base=baseDN):
 
 if __name__ == '__main__':
 	# parse arguments
-	usage = "Usage: %prog [options] SCHOOLNUMBER [SCHOOLNUMBER...]"
+	usage = "Usage: %prog [options] <ou> [<ou>...]"
 
 	parser = OptionParser(usage=usage)
 	parser.add_option("-u", "--user", dest="user", action="store_true",
@@ -220,7 +220,7 @@ if __name__ == '__main__':
 
 	if not args:
 		parser.print_help()
-		parser.error('No argument SCHOOLNUMBER given.')
+		parser.error('No argument <ou> given.')
 
 	# start execution
 	configRegistry = ConfigRegistry()
