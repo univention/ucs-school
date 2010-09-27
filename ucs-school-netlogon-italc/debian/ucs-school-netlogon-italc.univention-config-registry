@@ -1,4 +1,4 @@
 Type: file
-File: var/lib/samba/startupconfig/scripts/ucs-school-italc.cmd
+File: var/lib/samba/netlogon/ucs-school-italc.cmd
 Variables: samba/netlogonscript/italc/key/public/localpath
 Variables: samba/netlogonscript/italc/key/public/serverpath
