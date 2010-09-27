@@ -1,3 +1,9 @@
+ucs-school-umc-printermoderation (6.0.3-2) unstable; urgency=low
+
+  * fixed postinst so joinscript is called during installation (Bug #20130)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Mon, 27 Sep 2010 13:40:29 +0200
+
 ucs-school-umc-printermoderation (6.0.3-1) unstable; urgency=low
 
   * some layout fixes; Bug #19895

@@ -1,3 +1,9 @@
+ucs-school-webproxy (7.0.8-1) unstable; urgency=low
+
+  * joinscript is not required anymore (Bug #20130)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Mon, 27 Sep 2010 13:34:50 +0200
+
 ucs-school-webproxy (7.0.7-3) unstable; urgency=low
 
   * minor fixes in UCR variable documentation; Bug #18906
