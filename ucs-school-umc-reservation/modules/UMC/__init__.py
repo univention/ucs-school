@@ -772,7 +772,7 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 					project_name = '%s-%s-%s-%s' % ( self._username,
 												  object.options.get('groupname'),
 												  time.strftime( _('%Y-%m-%d'), time_start_struct ),
-												  object.options['time_begin'],
+												  object.options['time_begin'].replace(':',''),
 												  )
 
 					project_description = _('Reservation for Room "%(room)s": %(date)s %(start)s-%(end)s') % {
