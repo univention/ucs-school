@@ -34,8 +34,8 @@
 
 univention-config-registry set \
 	samba/netlogonscript/italc/key/public/localpath?"C:\\Programme\\iTALC\\keys\\public\\teacher\\key" \
-	samba/netlogonscript/italc/key/public/serverpath?"\\\\%dctemp%\\config\\scripts\\italc-key.pub"
+	samba/netlogonscript/italc/key/public/serverpath?"%LOGONSERVER%\\netlogon\\italc\\italc-key.pub"
 
-ln -s /etc/italc/keys/public/teacher/key /var/lib/samba/startupconfig/scripts/italc-key.pub
+ln -s /etc/italc/keys/public/teacher/key /var/lib/samba/netlogon/italc/italc-key.pub
 
 exit 0

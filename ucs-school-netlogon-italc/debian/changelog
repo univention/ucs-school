@@ -1,3 +1,10 @@
+ucs-school-netlogon-italc (5.0.2-1) unstable; urgency=low
+
+  * link italc public key to /var/lib/samba/netlogon/italc/ (Bug #20136)
+  * moved ucs-school-italc.cmd to /var/lib/samba/netlogon/
+
+ -- Sönke Schwardt <schwardt@univention.de>  Mon, 27 Sep 2010 14:15:53 +0200
+
 ucs-school-netlogon-italc (5.0.1-1) unstable; urgency=low
 
   * convert to GNU APGL V3 (Bug #19780)
