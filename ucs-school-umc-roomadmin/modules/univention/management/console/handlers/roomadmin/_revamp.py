@@ -717,7 +717,7 @@ class Web( object ):
 
 		headline = _( "Supervising Mode" )
 
-		lst = umcd.List()
+		lst = umcd.List( default_type = 'umc_mini_padding' )
 
 		row = []
 		hosts_sorted = sorted( hosts, cmp = lambda x, y: cmp( x.get('hostname'), y.get('hostname') ) )
@@ -738,13 +738,17 @@ class Web( object ):
 				lst.add_row( row )
 				row = []
 
-			row.append( ( umcd.Image( icon ), umcd.Text(hostname), umcd.HTML('<br>'),
-						  umcd.Image( 'roomadmin/user' ), umcd.HTML (("<div id='%s.username'>" % ipaddr) + username + '</div>') ) )
+			infotable = umcd.List( default_type = 'umc_mini_padding' )
+			infotable.add_row( [ umcd.Image( icon ), umcd.Text(hostname) ], attributes = { 'type' : 'umc_mini_padding umc_nowrap' } )
+			infotable.add_row( [ umcd.Image( 'roomadmin/user' ), umcd.HTML (("<div id='%s.username'>" % ipaddr) + username + '</div>') ], attributes = { 'type' : 'umc_nowrap umc_mini_padding' } )
+			# row.append( ( umcd.Image( icon ), umcd.Text(hostname), umcd.HTML('<br>'),
+			# 			  umcd.Image( 'roomadmin/user' ), umcd.HTML (("<div id='%s.username'>" % ipaddr) + username + '</div>') ) )
+			row.append( infotable )
 			row.append( umcd.HTML( '<div id="%s.screenshot"><img src="ajax.py?session_id=%s&umcpcmd=roomadmin/italc/request/snapshot&ipaddr=%s&date=%s" width="200" height="150" /></div>'  %
 								   (ipaddr, self._sessionid, ipaddr, int(time.time())) ) )
 
 		if len(row):
-			lst.add_row( row )
+			lst.add_row( umcd.Row( row, attributes = { 'type' : 'umc_nowrap' } ) )
 
 		lst.add_row( [ javascript ] )
 
