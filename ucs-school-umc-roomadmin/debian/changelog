@@ -1,3 +1,9 @@
+ucs-school-umc-roomadmin (7.0.6-1) unstable; urgency=low
+
+  * ignore host accounts that are logged on to a machine; Bug #20098
+
+ -- Andreas Büsching <buesching@univention.de>  Mon, 27 Sep 2010 17:41:24 +0200
+
 ucs-school-umc-roomadmin (7.0.5-1) unstable; urgency=low
 
   * layout fix in italc supervising mode; Bug #19865

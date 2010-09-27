@@ -239,7 +239,7 @@ class Web( object ):
 			username = _('unknown')
 			tmpuser = host2user.get( cn.lower() )
 			# if a user is logged on and it is not a host account
-			if tmpuser and not tmpuser[ -1 ] == '$':
+			if tmpuser:
 				username = tmpuser
 				if user2realname.has_key( username ):
 					username = "%s (%s)" % (user2realname[ username ], username)

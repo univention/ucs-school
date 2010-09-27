@@ -792,9 +792,13 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 			matches = regex.match(line)
 			if matches:
 				items = matches.groupdict()
-				host2user[ items['host'].strip().lower() ] = items['username'].strip()
-				self._ip2user[ items['ipaddr'].strip() ] = items['username'].strip()
-				userlist.append( items['username'].strip() )
+				username = items['username'].strip()
+				# if this line describes the login of a machine account it should be ignored
+				if username[ -1 ] == '$':
+					continue
+				host2user[ items['host'].strip().lower() ] = username
+				self._ip2user[ items['ipaddr'].strip() ] = username
+				userlist.append( username )
 
 		debugmsg( ud.ADMIN, ud.INFO, 'host2user=%s' % host2user )
 
