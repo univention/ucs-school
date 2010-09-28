@@ -35,14 +35,11 @@
 if [ "$1" = "configure" ] ; then
 	# Bug #20136
 	if [ -n "$2" ] && dpkg --compare-versions "$2" lt 5.0.3-1; then
-		univention-config-registry set \
-		 	samba/netlogonscript/italc/key/public/localpath="C:\\Programme\\iTALC\\keys\\public\\teacher\\key" \
-		 	samba/netlogonscript/italc/key/public/serverpath="%LOGONSERVER%\\netlogon\\italc\\italc-key.pub"
+		ucr set samba/netlogonscript/italc/key/public/serverpath="%LOGONSERVER%\\netlogon\\italc\\italc-key.pub"
 	else
-		univention-config-registry set \
-		 	samba/netlogonscript/italc/key/public/localpath?"C:\\Programme\\iTALC\\keys\\public\\teacher\\key" \
-		 	samba/netlogonscript/italc/key/public/serverpath?"%LOGONSERVER%\\netlogon\\italc\\italc-key.pub"
-   fi
+		ucr set samba/netlogonscript/italc/key/public/serverpath?"%LOGONSERVER%\\netlogon\\italc\\italc-key.pub"
+	fi
+	ucr set samba/netlogonscript/italc/key/public/localpath?"C:\\Programme\\iTALC\\keys\\public\\teacher\\key"
 fi
 
 TARGET="/etc/italc/keys/public/teacher/key"

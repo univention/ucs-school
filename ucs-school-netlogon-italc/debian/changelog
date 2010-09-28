@@ -1,7 +1,13 @@
+ucs-school-netlogon-italc (5.0.3-2) unstable; urgency=low
+
+  * only overwrite one UCR variable (Bug #20136)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Tue, 28 Sep 2010 12:38:07 +0200
+
 ucs-school-netlogon-italc (5.0.3-1) unstable; urgency=low
 
   * change UCR values during update (Bug #20136)
-  * avoid error message during update
+  * avoid symlink error message during update
 
  -- Sönke Schwardt <schwardt@univention.de>  Tue, 28 Sep 2010 11:44:49 +0200
 
