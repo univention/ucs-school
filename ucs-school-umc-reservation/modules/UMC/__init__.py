@@ -55,6 +55,7 @@ import time
 import copy
 import operator
 import pickle
+import errno
 
 import _revamp
 import _types
@@ -1099,18 +1100,24 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 					# remove distribution project if specified
 					if project_name:
 						fn_project = os.path.join( DISTRIBUTION_DATA_PATH, project_name )
-						project = getProject(fn_project)
-						if not isDistributed(project):
-							self._debug( ud.INFO, 'removing reservation %s: project has not been distributed yet; purging distribution project' % reservationID )
-							messages.append( _('The distribution project "%(project)s" has been removed since the files have not been distributed yet.') % { 'project': project['name'] } )
-							purgeProject( fn_project )
-						else:
-							self._debug( ud.INFO, 'removing reservation %s: project has been distributed; keeping distribution project' % reservationID )
-							if project['collectFiles']:
-								messages.append( _('The files of distribution project "%(project)s" will be collected now.') % { 'project': project['name'] } )
+						try:
+							project = getProject(fn_project)
+							if not isDistributed(project):
+								self._debug( ud.INFO, 'removing reservation %s: project has not been distributed yet; purging distribution project' % reservationID )
+								messages.append( _('The distribution project "%(project)s" has been removed since the files have not been distributed yet.') % { 'project': project['name'] } )
+								purgeProject( fn_project )
 							else:
-								self._debug( ud.INFO, 'removing reservation %s: project has been distributed' % reservationID )
-								messages.append( _('The distribution project "%(project)s" has not been removed. Please collect distributed files manually via UMC distribution module.') % { 'project': project['name'] } )
+								self._debug( ud.INFO, 'removing reservation %s: project has been distributed; keeping distribution project' % reservationID )
+								if project['collectFiles']:
+									messages.append( _('The files of distribution project "%(project)s" will be collected now.') % { 'project': project['name'] } )
+								else:
+									self._debug( ud.INFO, 'removing reservation %s: project has been distributed' % reservationID )
+									messages.append( _('The distribution project "%(project)s" has not been removed. Please collect distributed files manually via UMC distribution module.') % { 'project': project['name'] } )
+						except IOError, e:
+							if e.errno != errno.ENOENT:
+								raise e
+							self._debug( ud.INFO, 'removing reservation %s: project has already been collected manually' % reservationID )
+							messages.append( _('The distribution project "%(project)s" has already been collected manually.') % { 'project': project_name } )
 
 			else:
 			#order = ('reservationID', 'description', 'date_start', 'time_begin', 'time_end', 'hostgroup', 'usergroup')

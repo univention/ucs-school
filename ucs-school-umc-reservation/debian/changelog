@@ -1,3 +1,10 @@
+ucs-school-umc-reservation (6.0.4-2) unstable; urgency=low
+
+  * fixed traceback if user tries to remove a reservation whose
+    distribution project has already been collected (Bug #12350)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Tue, 28 Sep 2010 11:34:20 +0200
+
 ucs-school-umc-reservation (6.0.4-1) unstable; urgency=low
 
   * removed ':' within project name (Bug #18078)
