@@ -32,10 +32,23 @@
 
 #DEBHELPER#
 
-univention-config-registry set \
-	samba/netlogonscript/italc/key/public/localpath?"C:\\Programme\\iTALC\\keys\\public\\teacher\\key" \
-	samba/netlogonscript/italc/key/public/serverpath?"%LOGONSERVER%\\netlogon\\italc\\italc-key.pub"
+if [ "$1" = "configure" ] ; then
+	# Bug #20136
+	if [ -n "$2" ] && dpkg --compare-versions "$2" lt 5.0.3-1; then
+		univention-config-registry set \
+		 	samba/netlogonscript/italc/key/public/localpath="C:\\Programme\\iTALC\\keys\\public\\teacher\\key" \
+		 	samba/netlogonscript/italc/key/public/serverpath="%LOGONSERVER%\\netlogon\\italc\\italc-key.pub"
+	else
+		univention-config-registry set \
+		 	samba/netlogonscript/italc/key/public/localpath?"C:\\Programme\\iTALC\\keys\\public\\teacher\\key" \
+		 	samba/netlogonscript/italc/key/public/serverpath?"%LOGONSERVER%\\netlogon\\italc\\italc-key.pub"
+   fi
+fi
 
-ln -s /etc/italc/keys/public/teacher/key /var/lib/samba/netlogon/italc/italc-key.pub
+TARGET="/etc/italc/keys/public/teacher/key"
+LINKNAME="/var/lib/samba/netlogon/italc/italc-key.pub"
+if [ ! -e "$LINKNAME" -a ! -L "$LINKNAME" ] ; then
+	ln -s "$TARGET" "$LINKNAME"
+fi
 
 exit 0

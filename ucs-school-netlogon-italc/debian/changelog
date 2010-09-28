@@ -1,3 +1,10 @@
+ucs-school-netlogon-italc (5.0.3-1) unstable; urgency=low
+
+  * change UCR values during update (Bug #20136)
+  * avoid error message during update
+
+ -- Sönke Schwardt <schwardt@univention.de>  Tue, 28 Sep 2010 11:44:49 +0200
+
 ucs-school-netlogon-italc (5.0.2-2) unstable; urgency=low
 
   * fixed UCR template path (Bug #20136)
