@@ -1,0 +1,99 @@
+#!/usr/bin/python2.4
+#
+import optparse, sys, os, socket, copy
+import univention.uldap as uuldap
+import univention.config_registry
+import ldap
+
+
+def main():
+	configRegistry = univention.config_registry.ConfigRegistry()
+	configRegistry.load()
+
+	parser = optparse.OptionParser( )
+	parser.add_option("-n", "--dry-run", dest="dryrun", default=False, action="store_true", help="perform dry-run")
+	parser.add_option("-o", "--ou", dest="ou", default=[], action="store", help="process only ou OU")
+	parser.add_option("-D", "--binddn", dest="binddn", default=None, action="store", help="bind DN")
+	parser.add_option("-w", "--bindpwd", dest="bindpwd", default=None, action="store", help="bind password")
+	(options, args) = parser.parse_args()
+
+	if not options.binddn:
+		if not configRegistry.get('server/role','') == 'domaincontroller_master':
+			print 'E: please run command as user root on'
+			print 'E: domaincontroller_master or specify binddn and bindpwd!'
+			sys.exit(2)
+		elif os.getuid() != 0:
+			print 'E: please run command as user root or'
+			print 'E: specify binddn and bindpwd!'
+			sys.exit(3)
+
+	# get LDAP connection to dc master
+	try:
+		if options.binddn:
+			lo = univention.uldap.access( host = configRegistry.get('ldap/master'), base = configRegistry.get('ldap/base'),
+										  binddn = options.binddn, bindpw = options.bindpwd, start_tls = 2, decode_ignorelist = [])
+		else:
+			lo = uuldap.getAdminConnection()
+	except Exception, e:
+		print 'E: cannot connect to ldap server: %s' % str(e)
+		sys.exit(1)
+
+
+	oufilter=''
+	if options.ou:
+		oufilter='(ou=%s)' % options.ou
+
+	try:
+		oulist = lo.searchDn( filter = '(&(ou=*)%s)' % oufilter, scope='one', base=configRegistry.get('ldap/base') )
+	except ldap.NO_SUCH_OBJECT:
+		oulist = []
+
+	if not oulist:
+		print 'no ou found'
+
+	for ou in oulist:
+		for usertype, uservalue in ( ('pupils', 'pupil'), ('teachers', 'teacher'), ('staff', 'staff') ):
+			container = configRegistry.get('ucsschool/ldap/default/container/%s' % usertype)
+			if not container:
+				print 'UCR variable ucsschool/ldap/default/container/%s is not set!' % usertype
+				sys.exit(4)
+
+			userbase = 'cn=%s,cn=users,%s' % (container, ou)
+			print 'processing ou %s' % userbase
+			try:
+				userlist = lo.search( base=userbase, filter='(&(uid=*)(!(ucsschoolRole=*)))' )
+			except ldap.NO_SUCH_OBJECT:
+				userlist = []
+
+			userlistlen = len(userlist)
+			i=0
+			for userdn, userattr in userlist:
+				i += 1
+				modlist = []
+
+				old = userattr.get('objectClass')
+				if not 'univentionUcsSchoolUser' in old:
+					new = copy.deepcopy( userattr.get('objectClass') )
+					new.append('univentionUcsSchoolUser')
+					modlist.append( [ 'objectClass', old, new ] )
+
+				old = userattr.get('ucsschoolRole')
+				if not old:
+					modlist.append( [ 'ucsschoolRole', '', uservalue ] )
+
+				if modlist:
+					if not options.dryrun:
+						print '(%s/%s) modifying %s' % (i, userlistlen, userdn)
+						try:
+							lo.modify(userdn, modlist)
+							pass
+						except Exception, e:
+							print 'modifying %s failed: %s' % (userdn, str(e))
+					else:
+						print '(%s/%s) would modify %s' % (i, userlistlen, userdn)
+
+
+	print 'done.'
+
+if __name__ == '__main__':
+	main()

@@ -1,3 +1,9 @@
+ucs-school-import (6.0.19-1) unstable; urgency=low
+
+  * set LDAP attribute "ucsschoolRole" during update (Bug #19204)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Tue, 28 Sep 2010 16:31:38 +0200
+
 ucs-school-import (6.0.18-1) unstable; urgency=low
 
   * fixed typo in 40dhcpsearchbase_create (Bug #15052)

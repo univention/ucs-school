@@ -87,3 +87,9 @@ Description[de]=UCR-Richtlinie für DHCP-Suchbasis bei OU-Erstellung generieren?
 Description[en]=Create UCR-Policy for DHCP searchbase during ou creation? (default: yes)
 Type=str
 Categories=ucsschool-base
+
+[ucsschool/update/user/role]
+Description[de]=UCS@school Benutzerrolle während des Updates automatisch setzen? (Default: yes)
+Description[en]=Set UCS@school user role during update? (default: yes)
+Type=str
+Categories=ucsschool-base
