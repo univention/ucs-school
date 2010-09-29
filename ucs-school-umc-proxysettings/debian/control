@@ -8,7 +8,7 @@ XS-Python-Version: 2.4
 
 Package: ucs-school-umc-proxysettings
 Architecture: all
-Depends: univention-config-registry, python-univention-management-console
+Depends: univention-config-registry, python-univention-management-console (>= 3.0.63-1)
 XB-Python-Version: ${python:Versions}
 Description: UMC module to administrate squid proxy
  This package contains an Univention Management Console module to administrate

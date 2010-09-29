@@ -1,3 +1,10 @@
+ucs-school-umc-printermoderation (6.0.3-3) unstable; urgency=low
+
+  * depedning on version (>= 3.0.63-1) of
+    python-univention-management-console; Bug #19779
+
+ -- Andreas Büsching <buesching@univention.de>  Wed, 29 Sep 2010 15:46:38 +0200
+
 ucs-school-umc-printermoderation (6.0.3-2) unstable; urgency=low
 
   * fixed postinst so joinscript is called during installation (Bug #20130)

@@ -1,3 +1,10 @@
+ucs-school-umc-proxysettings (6.0.2-2) unstable; urgency=low
+
+  * depedning on version (>= 3.0.63-1) of
+    python-univention-management-console; Bug #19779
+
+ -- Andreas Büsching <buesching@univention.de>  Wed, 29 Sep 2010 15:47:05 +0200
+
 ucs-school-umc-proxysettings (6.0.2-1) unstable; urgency=low
 
   * add ToggleCheckboxes button to profil listing; Bug #19779
