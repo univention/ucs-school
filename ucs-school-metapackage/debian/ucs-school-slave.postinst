@@ -31,8 +31,10 @@
 
 if [ "$1" = configure -a -z "$2" ]; then
 	# overwrite the netlogon sync setting during the installation
-	univention-config-registry set samba/netlogon/sync=download 
+	univention-config-registry set samba/netlogon/sync=download
 fi
+
+ucr set repository/online/component/ucsschool/version=current
 
 #DEBHELPER#
 

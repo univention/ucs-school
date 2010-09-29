@@ -1,8 +1,8 @@
 #!/bin/sh
 #
-# UCS@School
+# UCS@school
 #
-# Copyright 2009-2010 Univention GmbH
+# Copyright 2010 Univention GmbH
 #
 # http://www.univention.de/
 #
@@ -28,20 +28,6 @@
 # License with the Debian GNU/Linux or Univention distribution in file
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
-
-if [ "$1" = "configure" -a -z "$2" ]; then
-	# set name of example school ou
-	ucr set ucsschool/defaultschoolname?musterschule
-
-	eval $(ucr shell)
-
-	# set default container for freshly joined windows machines
-	ucr set samba/defaultcontainer/computer?"cn=computers,ou=${ucsschool_defaultschoolname},${ldap_base}"
-	# set dhcp ldap base based on example school ou
-	ucr set dhcpd/ldap/base?"cn=dhcp,ou=${ucsschool_defaultschoolname},${ldap_base}"
-	# create example school
-	/usr/share/ucs-school-import/scripts/create_ou "$ucsschool_defaultschoolname" "$hostname"
-fi
 
 ucr set repository/online/component/ucsschool/version=current
 
