@@ -1,3 +1,9 @@
+ucs-school-import (6.0.20-1) unstable; urgency=low
+
+  * fix traceback on existing dhcp/subnet (Bug #18885)
+
+ -- Janek Walkenhorst <walkenhorst@univention.de>  Thu, 30 Sep 2010 11:45:07 +0200
+
 ucs-school-import (6.0.19-1) unstable; urgency=low
 
   * set LDAP attribute "ucsschoolRole" during update (Bug #19204)

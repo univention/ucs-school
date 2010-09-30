@@ -635,19 +635,22 @@ def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None):
 				object.open()
 				subnet = ipaddr.IP('%s/%s' % (object['subnet'], object['subnetmask'], ))
 				if [True for interface in interfaces if subnet.compare_networks(interface) == 0]: # subnet matches any local subnet
-					print "need to copy dhcp subnet %s: %s" % (subnet, object.dn, )
 					position.setDn("cn=%s,cn=dhcp,%s"%(schoolNr.lower (), getDN (schoolNr)))
-					newobject=dhcp_subnet_module.object(co, lo, position=position, superordinate=dhcp_service_object)
-					count_lo()
-					newobject.open()
-					for key in object.keys():
-						value = object[key]
-						newobject[key] = value
-					try:
-						create_object(newobject)
-					except:
-						print "Failed to copy dhcp subnet %s to %s" % (object.dn, position.getDn(), )
-						problem_hints = problem_hints + "there were problems verifying this ou %s\n" % schoolNr
+					if lo.searchDn( filter='(&(objectClass=univentionDhcpSubnet)(cn=%s))' % object['subnet'], base=position.getDn()):
+						print "do not need to copy dhcp subnet %s: %s (target already exists)" % (subnet, object.dn, )
+					else:
+						print "need to copy dhcp subnet %s: %s" % (subnet, object.dn, )
+						newobject=dhcp_subnet_module.object(co, lo, position=position, superordinate=dhcp_service_object)
+						count_lo()
+						newobject.open()
+						for key in object.keys():
+							value = object[key]
+							newobject[key] = value
+						try:
+							create_object(newobject)
+						except:
+							print "Failed to copy dhcp subnet %s to %s" % (object.dn, position.getDn(), )
+							problem_hints = problem_hints + "there were problems verifying this ou %s\n" % schoolNr
 				else:
 					print "Skipping non-local subnet %s" % subnet
 		else:
