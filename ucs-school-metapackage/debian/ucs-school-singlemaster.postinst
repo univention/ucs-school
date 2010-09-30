@@ -29,9 +29,15 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+# Bug 20196
+if [ "$1" = "configure" -a -n "$2" ] && dpkg --compare-versions "$2" lt 3.0.3-1 ; then
+	ucr set ucsschool/import/generate/policy/dhcp/dns/clearou=no
+fi
+
 if [ "$1" = "configure" -a -z "$2" ]; then
 	# set name of example school ou
 	ucr set ucsschool/defaultschoolname?musterschule
+	ucr set ucsschool/import/generate/policy/dhcp/dns/clearou=no
 
 	eval $(ucr shell)
 
