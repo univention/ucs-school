@@ -395,6 +395,38 @@ def verify_policy(objdn, schoolNr, policy_dn_list):
 			problem_hints = problem_hints + "there were problems verifying ou %s: policies %s cannot be referenced to %s\n" % (schoolNr, policy_dn_list, objdn)
 
 
+def create_policy(cn, container, values, policy_module):
+	"""
+	@param cn					name of policy
+	@param container			target ldap container
+	@param properties			policy object properties
+	@param policy_module		UDM module
+	returns DN if policy has been created, otherwise None
+	"""
+	created = False
+	exists = False
+	verify_containers(container, cn_module, co, lo, superordinate, baseDN, path='policyPath')
+
+	objlist = univention.admin.modules.lookup(policy_module, co, lo, scope='one', superordinate=superordinate,
+											  base=container, filter=univention.admin.filter.expression('cn', cn))
+	exists = bool(objlist)
+	if not objlist:
+		cnpos=univention.admin.uldap.position(baseDN)
+		cnpos.setDn(container)
+		policy_object = policy_module.object(co, lo, position=cnpos, superordinate=superordinate)
+		policy_object.open()
+		for k, v in values.iteritems():
+			policy_object[k] = v
+		try:
+			# FIXME: the UDM function create() of simplePolicy does not have a return value
+			create_object(policy_object)
+			created = True
+		except:
+			print "WARNING: Error creating policy cn=%s,%s failed" % (cn, container)
+			traceback.print_exc(100, sys.stdout)
+	return ( exists, created )
+
+
 def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None):
 	global problem_hints
 
@@ -443,7 +475,7 @@ def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None):
 			if path[1:]=='none': path=' '
 			verify_container('%s,%s'%(dn,ou_base),cn_module, co, lo, superordinate, baseDN, path=path[1:])
 
-	# create groups if not exsistant
+	# create groups if not existant
 	groups=[ ( "cn=%s%s,cn=ouadmins,cn=groups,%s" % (grp_prefix_admins, schoolNr.lower(), baseDN), grp_policy_admins ),
 			 ( "cn=%s%s,cn=groups,%s" % (grp_prefix_pupils, schoolNr.lower(), getDN(schoolNr)),	grp_policy_pupils ),
 			 ( "cn=%s%s,cn=groups,%s" % (grp_prefix_teachers, schoolNr.lower(), getDN(schoolNr)),	grp_policy_teachers ),
@@ -695,11 +727,35 @@ def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None):
 	if not schoolNr in verified_ous:
 		verified_ous.append(schoolNr)
 
+	# if requested, then create dhcp_dns policy that clears univentionDhcpDomainNameServers at OU level
+	# to prevent problems with "wrong" DHCP DNS policy connected to ldap base
+	if configRegistry.is_true('ucsschool/import/generate/policy/dhcp/dns/clearou', True):
+		name = 'dhcp-dns-clear'
+		container = 'cn=policies,%s' % getDN(schoolNr)
+		dn = 'cn=%s,%s' % (name, container)
+		values = {
+			'name': name,
+			'emptyAttributes': [ 'univentionDhcpDomainNameServers' ],
+			}
+		exists, created = create_policy( name, container, values, policy_dhcp_dns_module )
+		if not created and not exists:
+				print "Policy object %s cannot be created"  % dn
+				problem_hints = problem_hints + "there were problems creating policy object %s\n" % dn
+		else:
+			if not getDN(schoolNr) in container_policies:
+				container_policies[''] = [ dn ]
+			else:
+				container_policies[''].append( dn )
+
 	# attach policies if needed
-	for containerdn in container_policies.keys():
+	for cnpart in container_policies.keys():
 		# verify for each container that container does exist
-		verify_container('%s,%s' % (containerdn,ou_base), cn_module, co, lo, superordinate, baseDN, '')
-		pollist = container_policies[containerdn]
+		containerdn = '%s,%s' % (cnpart,ou_base)
+		if not cnpart:
+			containerdn = ou_base
+		else:
+			verify_container(containerdn, cn_module, co, lo, superordinate, baseDN, '')
+		pollist = container_policies[cnpart]
 
 		# test if all policy objects exist and if all referenced objects are policy objects
 		for poldn in pollist:
@@ -714,17 +770,17 @@ def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None):
 				break
 		else:
 			# add univentionPolicyReference if neccessary
-			oc = lo.get( '%s,%s' % (containerdn,ou_base), ['objectClass'] )
+			oc = lo.get( containerdn, ['objectClass'] )
 			if not 'univentionPolicyReference' in oc.get('objectClass',[]):
-				lo.modify('%s,%s' % (containerdn,ou_base), [ ('objectClass','','univentionPolicyReference') ] )
+				lo.modify(containerdn, [ ('objectClass','','univentionPolicyReference') ] )
 			# add all missing policies
-			pl = lo.get( '%s,%s' % (containerdn,ou_base), ['univentionPolicyReference'] )
+			pl = lo.get( containerdn, ['univentionPolicyReference'] )
 			modlist=[]
 			for poldn in pollist:
 				if not poldn in pl.get('univentionPolicyReference',[]):
 					modlist.append(('univentionPolicyReference','',poldn))
 					print 'need to attach policy: %s' % poldn
-			lo.modify('%s,%s' % (containerdn,ou_base),modlist)
+			lo.modify(containerdn,modlist)
 
 	# invoke post hooks
 	if created:

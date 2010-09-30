@@ -32,7 +32,7 @@
 
 #DEBHELPER#
 
-eval $(ucr shell)
+eval "$(ucr shell)"
 
 # run join script
 if [ "$server_role" = "domaincontroller_master" ] || [ "$server_role" = "domaincontroller_backup" ]; then

@@ -1,3 +1,10 @@
+ucs-school-import (6.0.21-1) unstable; urgency=low
+
+  * create DHCP DNS policy to clear dns server for OU and attach policy to
+    new OU during create_ou (Bug #20196)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Thu, 30 Sep 2010 18:14:39 +0200
+
 ucs-school-import (6.0.20-1) unstable; urgency=low
 
   * fix traceback on existing dhcp/subnet (Bug #18885)

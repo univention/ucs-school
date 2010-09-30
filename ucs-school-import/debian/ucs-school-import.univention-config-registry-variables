@@ -84,7 +84,13 @@ Categories=ucsschool-base
 
 [ucsschool/import/generate/policy/dhcp/searchbase]
 Description[de]=UCR-Richtlinie für DHCP-Suchbasis bei OU-Erstellung generieren? (Default: yes)
-Description[en]=Create UCR-Policy for DHCP searchbase during ou creation? (default: yes)
+Description[en]=Create UCR policy for DHCP searchbase during ou creation? (default: yes)
+Type=str
+Categories=ucsschool-base
+
+[ucsschool/import/generate/policy/dhcp/dns/clearou]
+Description[de]=DHCP-DNS-Richtlinie zum Leersetzen des DNS-Servers am OU-Objekt generieren? (Default: yes)
+Description[en]=Create and attach DHCP DNS policy to clear DNS server at OU object? (default: yes)
 Type=str
 Categories=ucsschool-base
 
