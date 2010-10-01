@@ -1,3 +1,10 @@
+ucs-school-import (6.0.22-1) unstable; urgency=low
+
+  * due to Bug 20222 remove UCR variable description and set default value
+    of ucsschool/import/generate/policy/dhcp/dns/clearou to False (Bug #20196)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Fri, 01 Oct 2010 14:51:54 +0200
+
 ucs-school-import (6.0.21-1) unstable; urgency=low
 
   * create DHCP DNS policy to clear dns server for OU and attach policy to

@@ -1,3 +1,10 @@
+ucs-school-metapackage (3.0.4-1) unstable; urgency=low
+
+  * due to Bug #20222 do not set ucsschool/import/generate/policy/dhcp/dns/clearou
+    (Bug #20196)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Fri, 01 Oct 2010 14:53:32 +0200
+
 ucs-school-metapackage (3.0.3-1) unstable; urgency=low
 
   * set ucsschool/import/generate/policy/dhcp/dns/clearou=no during update

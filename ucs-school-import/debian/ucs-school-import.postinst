@@ -56,7 +56,6 @@ if [ "$1" = "configure" -a -z "$2" ] ; then
 fi
 univention-config-registry set \
 	"ucsschool/import/generate/policy/dhcp/searchbase?${use_dhcpsearchbase}" \
-	"ucsschool/import/generate/policy/dhcp/dns/clearou?yes" \
 	"ucsschool/import/generate/share/marktplatz?${use_marktplatz}" \
 	"ucsschool/import/generate/share/marktplatz/sharepath?/home/groups/Marktplatz" \
 	"ucsschool/import/generate/share/marktplatz/permissions?0775" \

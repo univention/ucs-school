@@ -729,7 +729,7 @@ def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None):
 
 	# if requested, then create dhcp_dns policy that clears univentionDhcpDomainNameServers at OU level
 	# to prevent problems with "wrong" DHCP DNS policy connected to ldap base
-	if configRegistry.is_true('ucsschool/import/generate/policy/dhcp/dns/clearou', True):
+	if configRegistry.is_true('ucsschool/import/generate/policy/dhcp/dns/clearou', False):
 		name = 'dhcp-dns-clear'
 		container = 'cn=policies,%s' % getDN(schoolNr)
 		dn = 'cn=%s,%s' % (name, container)
