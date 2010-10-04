@@ -725,7 +725,7 @@ class Web( object ):
 		headline = '%s:' % _('Searchresults')
 		tablelst = umcd.List()
 		if searchresult:
-			tablelst.set_header( [ _( 'Reservation profile' ), _( 'Description' ), _('Owner'), _('Edit'), _('Copy'), _('Delete') ] )
+			tablelst.set_header( [ _( 'Reservation profile' ), _( 'Description' ), _('Owner') ] )
 			for resprofileID, profile_name, description, ownername, isglobaldefault in searchresult:
 				row = []
 				#icon = 'reservation/profile_lights'
@@ -745,6 +745,17 @@ class Web( object ):
 					acltarget = 'own'
 				else:
 					acltarget = 'other'
+				btnlist = []
+				# copy
+				req = umcp.Command( args = [ 'reservation/profile/edit' ], opts =  { 'action': 'copy', 'resprofileID': resprofileID, 'profile_name': profile_name } )
+				req.set_flag( 'web:startup', True )
+				req.set_flag( 'web:startup_reload', True )
+				req.set_flag( 'web:startup_dialog', True )
+				req.set_flag( 'web:startup_format', _('Copy reservation profile')+' [(%(profile_name)s]' )
+				icon = 'reservation/copy'
+				copybtn = umcd.Button( _('Copy'), icon, umcd.Action( req ), helptext = _('Click to copy and edit this profile') )
+				btnlist.append(copybtn)
+
 				if self.permitted('reservation/profile/edit', { 'target': acltarget } ) and not isglobaldefault:
 					# edit
 					select_opts = { 'resprofileID': resprofileID, 'profile_name': profile_name, 'target': acltarget }
@@ -755,29 +766,8 @@ class Web( object ):
 					req.set_flag( 'web:startup_dialog', True )
 					req.set_flag( 'web:startup_format', _('Edit Profile')+' [%(profile_name)s]' )
 					icon = 'reservation/edit'
-					editbtn = umcd.Button( '', icon, umcd.Action( req ) , helptext = _('Click to edit this profile') )
-					row.append(editbtn)
-				else:
-					# edit
-					icon = 'reservation/edit_disabled'
-					if isglobaldefault:
-						helptext = _('This profile is a given default')
-					else:
-						helptext = _('You are not the owner of this profile')
-					editbtn = umcd.Button( '', icon, actions=() , helptext = helptext )
-					row.append(editbtn)
-				#else:
-				#	row.append(umcd.Fill( 1 ))
-
-				# copy
-				req = umcp.Command( args = [ 'reservation/profile/edit' ], opts =  { 'action': 'copy', 'resprofileID': resprofileID, 'profile_name': profile_name } )
-				req.set_flag( 'web:startup', True )
-				req.set_flag( 'web:startup_reload', True )
-				req.set_flag( 'web:startup_dialog', True )
-				req.set_flag( 'web:startup_format', _('Copy reservation profile')+' [(%(profile_name)s]' )
-				icon = 'reservation/copy'
-				copybtn = umcd.Button( '', icon, umcd.Action( req ), helptext = _('Click to copy and edit this profile') )
-				row.append(copybtn)
+					editbtn = umcd.Button( _('Edit'), icon, umcd.Action( req ) , helptext = _('Click to edit this profile') )
+					btnlist.append(editbtn)
 
 				if self.permitted('reservation/profile/remove', { 'target': acltarget } ) and not isglobaldefault:
 					# delete
@@ -789,20 +779,11 @@ class Web( object ):
 					req.set_flag( 'web:startup_dialog', True )
 					req.set_flag( 'web:startup_format', _('Remove profile') )
 					icon = 'reservation/profile_lights_del'
-					delbtn = umcd.Button( '', icon, umcd.Action( req ), helptext = _('Click to remove this profile') )
-					row.append(delbtn)
+					delbtn = umcd.Button( _('Remove'), icon, umcd.Action( req ), helptext = _('Click to remove this profile') )
+					btnlist.append(delbtn)
 
-				else:
-					# delete
-					icon = 'reservation/profile_lights_del_disabled'
-					if isglobaldefault:
-						helptext = _('This profile is a given default')
-					else:
-						helptext = _('You are not the owner of this profile')
-					delbtn = umcd.Button( '', icon, actions=(), helptext = helptext )
-					row.append(delbtn)
-				#else:
-				#	row.append(umcd.Fill( 1 ))
+				if btnlist:
+					row.append(btnlist)
 
 				tablelst.add_row( row )
 		else:

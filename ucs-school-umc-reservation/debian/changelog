@@ -1,3 +1,9 @@
+ucs-school-umc-reservation (6.0.5-1) unstable; urgency=low
+
+  * fixed missing buttons (Bug #20228)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Mon, 04 Oct 2010 10:54:31 +0200
+
 ucs-school-umc-reservation (6.0.4-2) unstable; urgency=low
 
   * fixed traceback if user tries to remove a reservation whose
