@@ -945,7 +945,7 @@ class Web( object ):
 			req_list = umcp.Command( args = [ 'reservation/profile/list' ] )
 			req = umcp.Command( args = [ 'reservation/profile/remove' ], opts = opts )
 			actions = ( umcd.Action( req ), umcd.Action( req_list ) )
-			item_btn_ok = umcd.Button( _('Remove'), 'actions/ok', actions = actions, close_dialog = False, attributes = { 'class': 'submit', 'defaultbutton': '1' } )
+			item_btn_ok = umcd.Button( _('Remove'), 'actions/ok', actions = actions, close_dialog = True, attributes = { 'class': 'submit', 'defaultbutton': '1' } )
 			item_btn_cancel = umcd.CancelButton()
 			lst.add_row( [ item_btn_cancel, item_btn_ok ] )
 		else:
