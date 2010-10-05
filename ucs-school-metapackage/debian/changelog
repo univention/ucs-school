@@ -1,3 +1,9 @@
+ucs-school-metapackage (3.0.4-2) unstable; urgency=low
+
+  * added dependency to python-univention >> 5.0.7-10 (Bug #20241)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Tue, 05 Oct 2010 17:45:26 +0200
+
 ucs-school-metapackage (3.0.4-1) unstable; urgency=low
 
   * due to Bug #20222 do not set ucsschool/import/generate/policy/dhcp/dns/clearou
