@@ -1,3 +1,9 @@
+univention-python (5.0.7-10) unstable; urgency=low
+
+  * fix traceback when fetching ldap connection with machine account (Bug #20241)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Mon, 04 Oct 2010 18:07:05 +0200
+
 univention-python (5.0.5-1) unstable; urgency=low
 
   * fix required character test (Bug #14943)
