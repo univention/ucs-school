@@ -71,8 +71,8 @@ Type=str
 Categories=ucsschool-base
 
 [ucsschool/import/generate/share/marktplatz/permissions]
-Description[de]=Vorgabezugriffsrechte für die Freigabe "Marktplatz" (Default: 0775)
-Description[en]=Default permissions of share "Marktplatz" (default: 0775)
+Description[de]=Vorgabezugriffsrechte für die Freigabe "Marktplatz" (Default: 0777)
+Description[en]=Default permissions of share "Marktplatz" (default: 0777)
 Type=str
 Categories=ucsschool-base
 

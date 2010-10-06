@@ -58,7 +58,7 @@ univention-config-registry set \
 	"ucsschool/import/generate/policy/dhcp/searchbase?${use_dhcpsearchbase}" \
 	"ucsschool/import/generate/share/marktplatz?${use_marktplatz}" \
 	"ucsschool/import/generate/share/marktplatz/sharepath?/home/groups/Marktplatz" \
-	"ucsschool/import/generate/share/marktplatz/permissions?0775" \
+	"ucsschool/import/generate/share/marktplatz/permissions?0777" \
 	"ucsschool/import/generate/share/marktplatz/group?Domain Users"
 
 if [ "$server_role" = "domaincontroller_master" ] || [ "$server_role" = "domaincontroller_backup" ]; then

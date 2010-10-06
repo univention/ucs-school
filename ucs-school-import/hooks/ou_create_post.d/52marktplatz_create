@@ -65,7 +65,7 @@ fi
 
 sharemode="$ucsschool_import_generate_share_marktplatz_permissions"
 if [ -z "$sharemode" ] ; then
-	sharemode="0775"
+	sharemode="0777"
 fi
 
 sharegrp="$ucsschool_import_generate_share_marktplatz_group"

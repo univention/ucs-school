@@ -1,3 +1,9 @@
+ucs-school-import (6.0.23-1) unstable; urgency=low
+
+  * fixed permissions of Marktplatz share to 0777 (Bug #17370)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Wed, 06 Oct 2010 11:10:33 +0200
+
 ucs-school-import (6.0.22-1) unstable; urgency=low
 
   * due to Bug 20222 remove UCR variable description and set default value
