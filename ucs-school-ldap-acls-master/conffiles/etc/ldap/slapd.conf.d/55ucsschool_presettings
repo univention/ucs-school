@@ -54,14 +54,6 @@ access to dn.subtree="cn=samba,@%@ldap/base@%@"
    by group/univentionGroup/uniqueMember="cn=Member-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
    by * none break
 
-# Slave-Controller und Memberserver duerfen mail-Container und dessen Inhalt replizieren
-access to dn.subtree="cn=mail,@%@ldap/base@%@"
-   by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
-   by group/univentionGroup/uniqueMember="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
-   by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
-   by group/univentionGroup/uniqueMember="cn=Member-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
-   by * none break
-
 # sonst dürfen sie nichts aus cn=univention,BASEDN replizieren
 access to dn.subtree="cn=univention,@%@ldap/base@%@"
    by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" none
