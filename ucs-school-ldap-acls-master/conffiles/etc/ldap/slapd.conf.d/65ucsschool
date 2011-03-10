@@ -35,10 +35,12 @@ def replace_ucr_variables(template):
 
 if configRegistry.get('ucsschool/ldap/district/enable','no').lower() in ( 'yes', 'true', '1' ):
    aclset += """
-# DCs erhalten Lesezugriff auf das OU-Objekt selbst (im DISTRICT-Mode notwendig)
+# DCs und Memberserver erhalten Lesezugriff auf das OU-Objekt selbst (im DISTRICT-Mode notwendig)
 access to dn.regex="^ou=([^,]+),@%@ldap/base@%@$$"
 	by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
 	by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
+	by group/univentionGroup/uniqueMember="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
+	by group/univentionGroup/uniqueMember="cn=Member-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
 	by * none break
 
 """
@@ -55,10 +57,12 @@ access to dn.regex="^@%@ldap/base@%@$$"
 	by dn.regex="^uid=([^,]+),cn=(@$@TEACHERS@$@|@$@STAFF@$@|@$@ADMINS@$@),cn=users,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" read
 	by * none break
 
-# Slave-Controller duerfen globale Container computers, shares, dns, dhcp, kerberos und policies sowie Benutzer lesen
+# Slave-Controller und Memberserver duerfen globale Container computers, shares, dns, dhcp, kerberos und policies sowie Benutzer lesen
 access to dn.regex="(^(.+,)?cn=(groups|dns|dhcp|policies|computers|kerberos|shares),|^(uid=[^,]+,|)cn=users,|^)@%@ldap/base@%@$$"
 	by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
 	by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
+	by group/univentionGroup/uniqueMember="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
+	by group/univentionGroup/uniqueMember="cn=Member-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
 	by * none break
 
 # Lehrer und ouadmins duerfen Schueler-Passwoerter aendern 
@@ -176,11 +180,13 @@ access to dn.regex="^(.+,)?ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$"
 
 
 # Slave-Controller duerfen Eintraege Ihrer ou lesen und schreiben (Passwortaenderungen etc.)
-# Lehrer duerfen sie lesen, ou-eigene bekommen Standard-ACLs, ou-fremde Server/user duerfen nichts
+# Lehrer und Memberserver duerfen sie lesen, ou-eigene bekommen Standard-ACLs, ou-fremde Server/user duerfen nichts
 access to dn.regex="^(.+,)?ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$"
 	by group/univentionGroup/uniqueMember.expand="cn=OU$2-DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
 	by group/univentionGroup/uniqueMember.expand="cn=OU$2-DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
     by group/univentionLDAPACL/univentionLDAPAccessWrite.expand="ou=$2,@$@DISTRICT@$@@%@ldap/base@%@" write
+	by group/univentionGroup/uniqueMember.expand="cn=OU$2-Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
+	by group/univentionGroup/uniqueMember.expand="cn=OU$2-Member-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
 	by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" none
 	by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" none
     by dn.regex="^uid=([^,]+),cn=(@$@TEACHERS@$@|@$@STAFF@$@|@$@ADMINS@$@),cn=users,ou=$2,@$@DISTRICT@$@@%@ldap/base@%@$$" read
@@ -203,6 +209,8 @@ access to dn.regex="^cn=([^,]+),cn=klassen,cn=@$@PUPILS@$@,cn=groups,ou=([^,]+),
 access to dn.subtree="cn=nagios,@%@ldap/base@%@"
 	by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
 	by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
+	by group/univentionGroup/uniqueMember="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
+	by group/univentionGroup/uniqueMember="cn=Member-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
 	by * none break
 
 # Schüler, Lehrer, Mitarbeiter, Admins duerfen globale Container univention, policies, groups und dns lesen 
@@ -215,6 +223,8 @@ access to dn.regex="(^(.+,)?cn=(univention|policies|dns|groups),|^)@%@ldap/base@
 access to *
 	by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" none
 	by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" none
+	by group/univentionGroup/uniqueMember="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" none
+	by group/univentionGroup/uniqueMember="cn=Member-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" none
 	by * none break
 
 """

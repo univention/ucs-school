@@ -26,6 +26,8 @@ access to dn.subtree="cn=custom attributes,cn=univention,@%@ldap/base@%@"
 access to dn.subtree="cn=console,cn=univention,@%@ldap/base@%@"
    by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
    by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
+   by group/univentionGroup/uniqueMember="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
+   by group/univentionGroup/uniqueMember="cn=Member-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
    by * none break 
 
 # Slave-Controller und Member-Server benoetigen idmap-Container
@@ -44,7 +46,7 @@ access to dn.subtree="cn=idmap,cn=univention,@%@ldap/base@%@" filter="(|(&(objec
    by group/univentionGroup/uniqueMember="cn=Member-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
    by * none break
 
-# Slave-Controller duerfen samba-Container und dessen Inhalt replizieren
+# Slave-Controller und Memberserver duerfen samba-Container und dessen Inhalt replizieren
 access to dn.subtree="cn=samba,@%@ldap/base@%@"
    by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
    by group/univentionGroup/uniqueMember="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read

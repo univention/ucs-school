@@ -1,3 +1,15 @@
+ucs-school-ldap-acls-master (5.0.4-1) unstable; urgency=low
+
+  * adjusted memberserver ACL (Bug #21699)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Thu, 10 Mar 2011 17:03:49 +0100
+
+ucs-school-ldap-acls-master (5.0.3-1) unstable; urgency=low
+
+  * adjusted memberserver ACL (Bug #21699)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Thu, 10 Mar 2011 15:15:03 +0100
+
 ucs-school-ldap-acls-master (5.0.2-1) unstable; urgency=low
 
   * copyright update (Bug #17102)
