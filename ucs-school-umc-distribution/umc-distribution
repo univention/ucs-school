@@ -134,7 +134,7 @@ def initProject( project ):
 	project['files'] = []
 	for fileitem in filelist:
 		# copy to sender directory
-		target = os.path.join( project['sender']['projectdir'], fileitem['filename'] )
+		target = str( os.path.join( project['sender']['projectdir'], fileitem['filename'] ) )
 		debugmsg( ud.ADMIN, ud.INFO, 'coping %s to %s' % ( fileitem['tmpfname'], target ) )
 		try:
 			shutil.copy( fileitem['tmpfname'], target )
@@ -143,7 +143,7 @@ def initProject( project ):
 			debugmsg( ud.ADMIN, ud.ERROR, 'failed to copy/chown "%s" to "%s": %s' % (fileitem['tmpfname'], target, str(e)))
 
 		# move to cache directory
-		target = os.path.join( project_data_dir, fileitem['filename'] )
+		target = str( os.path.join( project_data_dir, fileitem['filename'] ) )
 		debugmsg( ud.ADMIN, ud.INFO, 'moving %s to %s' % ( fileitem['tmpfname'], target ) )
 		try:
 			shutil.move( fileitem['tmpfname'], target )
@@ -253,8 +253,8 @@ def distributeData( project ):
 
 		# copy files from cache to recipient
 		for fn in project['files']:
-			src = os.path.join( project['cachedir'], fn )
-			target = os.path.join( user['projectdir'], fn )
+			src = str( os.path.join( project['cachedir'], fn ) )
+			target = str( os.path.join( user['projectdir'], fn ) )
 			try:
 				shutil.copyfile( src, target )
 			except Exception, e:
@@ -266,7 +266,7 @@ def distributeData( project ):
 
 	# cleanup cache directory
 	try:
-		shutil.rmtree( project['cachedir'] )
+		shutil.rmtree( str( project['cachedir'] ) )
 	except Exception, e:
 		debugmsg( ud.ADMIN, ud.ERROR, 'failed to cleanup cache directory "%s": %s' % (project['cachedir'], str(e)))
 
@@ -325,8 +325,8 @@ def collectData( project, forced=False ):
 					} )
 
 		for fn in project['files']:
-			src = os.path.join( recipient['projectdir'], fn )
-			target = os.path.join( targetdir, fn )
+			src = str( os.path.join( recipient['projectdir'], fn ) )
+			target = str( os.path.join( targetdir, fn ) )
 			if os.path.isfile( src ):
 				try:
 					shutil.copy( src, target )
@@ -420,7 +420,7 @@ def main():
 					# remove project cache dir if existant
 					if os.path.exists( project['cachedir'] ):
 						try:
-							shutil.rmtree( project['cachedir'] )
+							shutil.rmtree( str( project['cachedir'] ) )
 						except Exception, e:
 							debugmsg( ud.ADMIN, ud.ERROR, 'failed to cleanup cache directory "%s": %s' % (project['cachedir'], str(e)))
 							exitcode = 40

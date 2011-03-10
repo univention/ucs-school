@@ -1,3 +1,9 @@
+ucs-school-umc-distribution (6.0.6-1) unstable; urgency=low
+
+  * fixed problems when distributing files with non-ASCII characters (Bug #20270)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Thu, 10 Mar 2011 15:38:06 +0100
+
 ucs-school-umc-distribution (6.0.5-1) unstable; urgency=low
 
   * layout fixes; Bug #19895
