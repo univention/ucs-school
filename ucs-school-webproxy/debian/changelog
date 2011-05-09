@@ -1,3 +1,9 @@
+ucs-school-webproxy (7.0.9-1) unstable; urgency=low
+
+  * prevent racing condition during recreation of squidGuard db files (Bug #22465)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Mon, 09 May 2011 19:21:26 +0200
+
 ucs-school-webproxy (7.0.8-1) unstable; urgency=low
 
   * joinscript is not required anymore (Bug #20130)
