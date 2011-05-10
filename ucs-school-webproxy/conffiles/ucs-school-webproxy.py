@@ -57,6 +57,29 @@ FN_CONFIG = 'squidGuard.conf'
 DIR_DATA = '/var/lib/ucs-school-webproxy'
 DIR_TEMP = os.path.join( DIR_DATA, 'temp.%s' % os.getpid() )
 
+def logerror(msg):
+	logfd = open( PATH_LOG, 'a+')
+	print >> logfd, '%s [%s] %s' % (time.strftime('%Y-%m-%d %H:%M:%S'), os.getpid(), msg)
+
+def move_file(fnsrc, fndst):
+	if os.path.isfile( fnsrc ):
+		try:
+			os.rename( fnsrc, fndst )
+		except OSError, e:
+			if e.errno == 18:  # 18 ==> cross-device rename/move has been tried
+				tmpdst = '%s.%s' % (fndst, os.getpid())
+				try:
+					open(tmpdst,'w').write( open(fnsrc,'r').read() )
+					os.rename(tmpdst, fndst)
+					os.remove(fnsrc)
+				except Exception, e:
+					logerror('cannot cross-device move %s via %s to %s: Exception %s' % (fnsrc, tmpdst, fndst, e))
+					raise
+		except Exception, e:
+			logerror('cannot move %s to %s: Exception %s' % (fnsrc, fndst, e))
+			raise
+
+
 def preinst(configRegistry, changes):
 	pass
 
@@ -70,12 +93,7 @@ def handler(configRegistry, changes):
 	rewrite_squidguard_NTLMuserlist = True
 	windows_domain_changed = True
 
-	logfd = open( PATH_LOG, 'a+')
-
 	touchfnlist = []
-
-	def logerror(msg):
-		print >> logfd, '%s [%s] %s' % (time.strftime('%Y-%m-%d %H:%M:%S'), os.getpid(), msg)
 
 	def groupdefault_is_set_for(usergroupname):
 		return configRegistry.has_key('proxy/filter/groupdefault/%s' % usergroupname)
@@ -307,18 +325,13 @@ def handler(configRegistry, changes):
 	os.system('chmod ug+rw %s/* 2> /dev/null' % DIR_TEMP)
 	os.system('chown root:proxy %s/*  2> /dev/null' % DIR_TEMP)
 
-	# move all files from DIR_TEMP to DIR_DATA (should be atomar)
+	# move all files from DIR_TEMP to DIR_DATA (should be atomic)
 	for fn in os.listdir(DIR_TEMP):
 		if fn == FN_CONFIG:
 			continue
 		fnsrc = os.path.join(DIR_TEMP, fn)
 		fndst = os.path.join(DIR_DATA, fn)
-		if os.path.isfile( fnsrc ):
-			try:
-				os.rename( fnsrc, fndst )
-			except Exception, e:
-				logerror('cannot move %s to %s: Exception %s' % (fnsrc, fndst, e))
-				raise
+		move_file(fnsrc, fndst)
 
 	# fix squidguard config (replace DIR_TEMP with DIR_DATA)
 	content = open( fn_temp_config, "r").read()
@@ -326,11 +339,7 @@ def handler(configRegistry, changes):
 	open( fn_temp_config, "w").write(content)
 
 	# move fixed config file to /etc/squid
-	try:
-		os.rename( fn_temp_config, fn_config )
-	except Exception, e:
-		logerror('cannot move %s to %s: Exception %s' % (fn_temp_config, fn_config, e))
-		raise
+	move_file(fn_temp_config, fn_config)
 
 	# remove temp directory
 	try:
