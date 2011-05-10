@@ -303,24 +303,14 @@ def handler(configRegistry, changes):
 	# create all db files
 	os.system('squidGuard -c %s -C all' % fn_temp_config)
 
-	# fix squidguard config (replace DIR_TEMP with DIR_DATA)
-	content = open( fn_temp_config, "r").read()
-	content = content.replace('\ndbhome %s/\n\n' % DIR_TEMP, '\ndbhome %s/\n\n' % DIR_DATA)
-	open( fn_temp_config, "w").write(content)
-
-	# move fixed config file to /etc/squid
-	try:
-		os.rename( fn_temp_config, fn_config )
-	except Exception, e:
-		logerror('cannot move %s to %s: Exception %s' % (fn_temp_config, fn_config, e))
-		raise
-
 	# fix permissions
 	os.system('chmod ug+rw %s/* 2> /dev/null' % DIR_TEMP)
 	os.system('chown root:proxy %s/*  2> /dev/null' % DIR_TEMP)
 
 	# move all files from DIR_TEMP to DIR_DATA (should be atomar)
 	for fn in os.listdir(DIR_TEMP):
+		if fn == FN_CONFIG:
+			continue
 		fnsrc = os.path.join(DIR_TEMP, fn)
 		fndst = os.path.join(DIR_DATA, fn)
 		if os.path.isfile( fnsrc ):
@@ -329,6 +319,18 @@ def handler(configRegistry, changes):
 			except Exception, e:
 				logerror('cannot move %s to %s: Exception %s' % (fnsrc, fndst, e))
 				raise
+
+	# fix squidguard config (replace DIR_TEMP with DIR_DATA)
+	content = open( fn_temp_config, "r").read()
+	content = content.replace('\ndbhome %s/\n' % DIR_TEMP, '\ndbhome %s/\n' % DIR_DATA)
+	open( fn_temp_config, "w").write(content)
+
+	# move fixed config file to /etc/squid
+	try:
+		os.rename( fn_temp_config, fn_config )
+	except Exception, e:
+		logerror('cannot move %s to %s: Exception %s' % (fn_temp_config, fn_config, e))
+		raise
 
 	# remove temp directory
 	try:
