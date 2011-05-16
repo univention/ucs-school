@@ -1,3 +1,9 @@
+ucs-school-umc-reservation (6.0.7-1) unstable; urgency=low
+
+  * removed outdated workaround (Bug #14980)
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Mon, 16 May 2011 17:40:40 +0200
+
 ucs-school-umc-reservation (6.0.6-1) unstable; urgency=low
 
   * close tab after removal (Bug #20228)

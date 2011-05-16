@@ -1,3 +1,9 @@
+ucs-school-umc-helpdesk (5.0.2-1) unstable; urgency=low
+
+  * removed outdated workaround (Bug #14980)
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Mon, 16 May 2011 17:41:51 +0200
+
 ucs-school-umc-helpdesk (5.0.1-1) unstable; urgency=low
 
   * convert to GNU APGL V3 (Bug #19780)

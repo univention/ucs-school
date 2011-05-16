@@ -174,25 +174,14 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 
 				ud.debug( ud.ADMIN, ud.INFO, 'SCHOOLACCOUNTS: availableOU=%s' % self.availableOU )
 
-				# TODO FIXME HARDCODED HACK for SFB
-				# set departmentNumber and available OU to hardcoded defaults
-				if '438' in self.availableOU:
-					self.departmentNumber = '438'
-					self._switch_ou(self.departmentNumber)
-				else:
-					self._switch_ou(self.availableOU[0])
+				self._switch_ou(self.availableOU[0])
 
 			if self.binddn.find('ou=') > 0:
 				self.searchbaseDepartment = self.binddn[self.binddn.find('ou='):]
 				self.departmentNumber = lo.explodeDn( self.searchbaseDepartment, 1 )[0]
 
-				# TODO FIXME HARDCODED HACK for SFB
-				# set departmentNumber and available OU to hardcoded defaults
-				if '438' in self.availableOU:
-					self.departmentNumber = '438'
-				else:
-					# cut list down to default OU
-					self.availableOU = [ self.departmentNumber ]
+				# cut list down to default OU
+				self.availableOU = [ self.departmentNumber ]
 
 				self._switch_ou(self.departmentNumber)
 

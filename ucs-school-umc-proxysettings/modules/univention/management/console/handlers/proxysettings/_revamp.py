@@ -214,9 +214,7 @@ class Web( object ):
 		idlist = []
 		lst = umcd.List()
 
-		# FIXME TODO HACK HARDCODED for SFB:
-		# if 438 is in availableOU then disable selection of OU
-		if len(availableOU) > 1 and not '438' in availableOU:
+		if len(availableOU) > 1:
 			defaultchoice = 0
 			ouchoices = []
 			for ou in availableOU:

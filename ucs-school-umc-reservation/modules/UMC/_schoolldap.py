@@ -171,25 +171,14 @@ class SchoolLDAPConnection(object):
 
 			ud.debug( ud.ADMIN, ud.INFO, 'SchoolLDAPConnection[%d]: availableOU=%s' % (self.id, self.availableOU ) )
 
-			# TODO FIXME HARDCODED HACK for SFB
-			# set departmentNumber and available OU to hardcoded defaults
-			if '438' in self.availableOU:
-				self.departmentNumber = '438'
-				self.switch_ou(self.departmentNumber)
-			else:
-				self.switch_ou(self.availableOU[0])
+			self.switch_ou(self.availableOU[0])
 
 		if self.binddn.find('ou=') > 0:
 			self.searchbaseDepartment = self.binddn[self.binddn.find('ou='):]
 			self.departmentNumber = self.lo.explodeDn( self.searchbaseDepartment, 1 )[0]
 
-			# TODO FIXME HARDCODED HACK for SFB
-			# set departmentNumber and available OU to hardcoded defaults
-			if '438' in self.availableOU:
-				self.departmentNumber = '438'
-			else:
-				# cut list down to default OU
-				self.availableOU = [ self.departmentNumber ]
+			# cut list down to default OU
+			self.availableOU = [ self.departmentNumber ]
 
 			self.switch_ou(self.departmentNumber)
 

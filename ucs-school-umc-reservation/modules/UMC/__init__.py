@@ -211,12 +211,7 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 		#self.ldap_master = _schoolldap.SchoolLDAPConnection( ldapserver = umc.registry['ldap/master'],
 		#				username = self._uid, bindpw = self._password )
 
-		# TODO FIXME HARDCODED HACK for SFB
-		# set available OU to hardcoded defaults
-		if '438' in self.ldap_anon.availableOU:
-			defaultOU = '438'
-		else:
-			defaultOU = self.ldap_anon.availableOU[0]
+		defaultOU = self.ldap_anon.availableOU[0]
 		debugmsg( ud.ADMIN, ud.INFO, 'registration.__init__: availableOU=%s' % self.ldap_anon.availableOU )
 
 		### defaults
@@ -395,10 +390,6 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 		currentOU = _types.defaults.get(object.options, 'reservation_list', 'ou')
 		debugmsg( ud.ADMIN, ud.INFO, 'reservation_list: currentOU: %s' % currentOU )
 
-		#currentOU=object.options.get('ou')
-		#if '438' in self.ldap_anon.availableOU:
-		#	currentOU='438'
-
 		if currentOU != self.ldap_anon.departmentNumber:
 			#self.ldap_master.switch_ou( currentOU )
 			self.ldap_anon.switch_ou( currentOU )
@@ -568,10 +559,6 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 		currentOU = _types.defaults.get(object.options, 'reservation_edit', 'ou')
 		debugmsg( ud.ADMIN, ud.INFO, 'reservation_edit: currentOU: %s' % currentOU )
 		self.ldap_anon.checkConnection(username = self._username, bindpw = self._password)
-
-		#currentOU=object.options.get('ou')
-		#if '438' in self.ldap_anon.availableOU:
-		#	currentOU='438'
 
 		if currentOU != self.ldap_anon.departmentNumber:
 			#self.ldap_master.switch_ou( currentOU )

@@ -1017,15 +1017,9 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 		# get searchfilter
 		sfilter = object.options.get('filter', '*')
 
-		# TODO FIXME HARDCODED HACK for SFB
-		# set available OU to hardcoded defaults
-		if '438' in self.ldap_master.availableOU:
-			self.ldap_anon.switch_ou( '438' )
-			self.ldap_master.switch_ou( '438' )
-		else:
-			if object.options.get('ou',None):
-				self.ldap_anon.switch_ou( object.options.get('ou') )
-				self.ldap_master.switch_ou( object.options.get('ou') )
+		if object.options.get('ou',None):
+			self.ldap_anon.switch_ou( object.options.get('ou') )
+			self.ldap_master.switch_ou( object.options.get('ou') )
 
 		roomgroupdict = {}
 		computerdict = {}
@@ -1059,15 +1053,9 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 						   success = False )
 			return
 
-		# TODO FIXME HARDCODED HACK for SFB
-		# set available OU to hardcoded defaults
-		if '438' in self.ldap_master.availableOU:
-			self.ldap_master.switch_ou( '438' )
-			self.ldap_anon.switch_ou( '438' )
-		else:
-			if object.options.get('ou',None):
-				self.ldap_master.switch_ou( object.options.get('ou') )
-				self.ldap_anon.switch_ou( object.options.get('ou') )
+		if object.options.get('ou',None):
+			self.ldap_master.switch_ou( object.options.get('ou') )
+			self.ldap_anon.switch_ou( object.options.get('ou') )
 
 		# get room DN and room description
 		roomdn = object.options.get( 'roomdn', None )
@@ -1112,15 +1100,9 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 						   success = False )
 			return
 
-		# TODO FIXME HARDCODED HACK for SFB
-		# set available OU to hardcoded defaults
-		if '438' in self.ldap_master.availableOU:
-			self.ldap_master.switch_ou( '438' )
-			self.ldap_anon.switch_ou( '438' )
-		else:
-			if object.options.get('ou',None):
-				self.ldap_master.switch_ou( object.options.get('ou') )
-				self.ldap_anon.switch_ou( object.options.get('ou') )
+		if object.options.get('ou',None):
+			self.ldap_master.switch_ou( object.options.get('ou') )
+			self.ldap_anon.switch_ou( object.options.get('ou') )
 
 		description = None
 		roommember = []
@@ -1154,11 +1136,11 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 			return
 
 
-# {  'roomdn': u'cn=002-Raum017b,cn=raeume,cn=groups,ou=002,dc=schule,dc=bremen,dc=de',
-#	 'roommembers': [u'cn=win002-01,cn=computers,ou=002,dc=schule,dc=bremen,dc=de',
-#						u'cn=w002pc01,cn=computers,ou=002,dc=schule,dc=bremen,dc=de',
-#						u'cn=w002pc02,cn=computers,ou=002,dc=schule,dc=bremen,dc=de',
-#						u'cn=w002pc03,cn=computers,ou=002,dc=schule,dc=bremen,dc=de'],
+# {  'roomdn': u'cn=002-Raum017b,cn=raeume,cn=groups,ou=002,dc=univention,dc=schule',
+#	 'roommembers': [u'cn=win002-01,cn=computers,ou=002,dc=univention,dc=schule',
+#						u'cn=w002pc01,cn=computers,ou=002,dc=univention,dc=schule',
+#						u'cn=w002pc02,cn=computers,ou=002,dc=univention,dc=schule',
+#						u'cn=w002pc03,cn=computers,ou=002,dc=univention,dc=schule'],
 #	 'createroom': False,
 #	 'description': u'Beschreibung',
 # 	 'room': u'002-Raum017b'
@@ -1170,15 +1152,9 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 						   success = False )
 			return
 
-		# TODO FIXME HARDCODED HACK for SFB
-		# set available OU to hardcoded defaults
-		if '438' in self.ldap_master.availableOU:
-			self.ldap_anon.switch_ou('438')
-			self.ldap_master.switch_ou('438')
-		else:
-			if object.options.get('ou',None):
-				self.ldap_anon.switch_ou( object.options.get('ou') )
-				self.ldap_master.switch_ou( object.options.get('ou') )
+		if object.options.get('ou',None):
+			self.ldap_anon.switch_ou( object.options.get('ou') )
+			self.ldap_master.switch_ou( object.options.get('ou') )
 
 		roomdn = object.options.get( 'roomdn', None )
 		room = object.options.get( 'room', None )
@@ -1255,15 +1231,9 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 						   success = False )
 			return
 
-		# TODO FIXME HARDCODED HACK for SFB
-		# set available OU to hardcoded defaults
-		if '438' in self.ldap_master.availableOU:
-			self.ldap_anon.switch_ou('438')
-			self.ldap_master.switch_ou('438')
-		else:
-			if object.options.get('ou',None):
-				self.ldap_anon.switch_ou( object.options.get('ou') )
-				self.ldap_master.switch_ou( object.options.get('ou') )
+		if object.options.get('ou',None):
+			self.ldap_anon.switch_ou( object.options.get('ou') )
+			self.ldap_master.switch_ou( object.options.get('ou') )
 
 		roomdnlist = object.options.get( 'roomdn', [] )
 		confirmed = object.options.get( 'confirmed', False )

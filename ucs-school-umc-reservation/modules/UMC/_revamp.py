@@ -359,9 +359,7 @@ class Web( object ):
 
 		#ud.debug( ud.ADMIN, ud.INFO, '_web_reservation_edit: ou' )
 		### Build school selection widget
-		# FIXME TODO HACK HARDCODED for SFB:
-		# if 438 is in availableOU then disable selection of OU
-		if len(availableOU) > 1 and not '438' in availableOU:
+		if len(availableOU) > 1:
 			choices = []
 			defaultID = 0
 			for ou in availableOU:
@@ -436,7 +434,7 @@ class Web( object ):
 		input_group = umcd.make( self[ 'reservation/edit' ][ 'groupname' ], default = opts['groupname'], attributes = { 'width' : '300' } )
 		idlist_ok_button.append(input_group.id())
 
-		if len(availableOU) > 1 and not '438' in availableOU:
+		if len(availableOU) > 1:
 			lst.add_row( [ input_ou, input_room, input_group ] )
 		else:
 			lst.add_row( [ input_room, input_group ] )

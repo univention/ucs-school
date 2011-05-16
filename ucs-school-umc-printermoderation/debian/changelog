@@ -1,6 +1,12 @@
+ucs-school-umc-printermoderation (6.0.4-1) unstable; urgency=low
+
+  * removed outdated workaround (Bug #14980)
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Mon, 16 May 2011 17:41:32 +0200
+
 ucs-school-umc-printermoderation (6.0.3-3) unstable; urgency=low
 
-  * depedning on version (>= 3.0.63-1) of
+  * depending on version (>= 3.0.63-1) of
     python-univention-management-console; Bug #19779
 
  -- Andreas Büsching <buesching@univention.de>  Wed, 29 Sep 2010 15:46:38 +0200

@@ -419,9 +419,7 @@ class Web( object ):
 
 		lstheader = umcd.List()
 
-		# FIXME TODO HACK HARDCODED for SFB:
-		# if 438 is in availableOU then disable selection of OU
-		if len(availableOU) > 1 and not '438' in availableOU:
+		if len(availableOU) > 1:
 			ouchoices = []
 			defaultchoice = 0
 			for ou in availableOU:
@@ -579,10 +577,8 @@ class Web( object ):
 		item_btn_cancel = umcd.CancelButton()
 
 
-		# FIXME TODO HACK HARDCODED for SFB:
-		# if 438 is in availableOU then disable selection of OU
 		ouselect = None
-# 		if len(availableOU) > 1 and not '438' in availableOU:
+# 		if len(availableOU) > 1:
 # 			ouchoices = []
 # 			defaultchoice = 0
 # 			for ou in availableOU:
