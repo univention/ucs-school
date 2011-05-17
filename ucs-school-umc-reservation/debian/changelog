@@ -1,3 +1,9 @@
+ucs-school-umc-reservation (6.0.8-1) unstable; urgency=low
+
+  * fixed default ou problem with multiple available ou (Bug #14980)
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Tue, 17 May 2011 13:16:15 +0200
+
 ucs-school-umc-reservation (6.0.7-1) unstable; urgency=low
 
   * removed outdated workaround (Bug #14980)

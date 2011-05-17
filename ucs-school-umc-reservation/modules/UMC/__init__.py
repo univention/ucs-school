@@ -387,6 +387,10 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 		debugmsg( ud.ADMIN, ud.INFO, 'reservation_list: options=%s' % object.options )
 		## Authenticate the LDAP connection to get access to all information available to us
 		self.ldap_anon.checkConnection(username = self._username, bindpw = self._password)
+		# set ou default - self._username and self._password are set AFTER __init__ has been called
+		_types.defaults['reservation_list']['ou'] = self.ldap_anon.availableOU[0]
+		_types.defaults['reservation_edit']['ou'] = self.ldap_anon.availableOU[0]
+
 		currentOU = _types.defaults.get(object.options, 'reservation_list', 'ou')
 		debugmsg( ud.ADMIN, ud.INFO, 'reservation_list: currentOU: %s' % currentOU )
 
