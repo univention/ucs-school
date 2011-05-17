@@ -1,3 +1,9 @@
+ucs-school-umc-helpdesk (5.0.3-1) unstable; urgency=low
+
+  * fixed default ou related traceback (Bug #14980)
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Tue, 17 May 2011 13:50:10 +0200
+
 ucs-school-umc-helpdesk (5.0.2-1) unstable; urgency=low
 
   * removed outdated workaround (Bug #14980)

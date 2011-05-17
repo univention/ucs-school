@@ -102,6 +102,8 @@ class handler( umch.simpleHandler, _revamp.Web  ):
 			username = self._username
 		department = _( 'unknown' )
 
+		self.ldap_anon.checkConnection(username = self._username, bindpw = self._password)
+
 		# use first available OU
 		if self.ldap_anon.availableOU:
 			department = self.ldap_anon.availableOU[0]
