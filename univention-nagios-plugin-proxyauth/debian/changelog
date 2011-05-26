@@ -1,3 +1,9 @@
+univention-nagios-plugin-proxyauth (5.0.2-1) unstable; urgency=low
+
+  * added SUID wrapper (Bug #22623)
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Thu, 26 May 2011 17:05:33 +0200
+
 univention-nagios-plugin-proxyauth (5.0.1-1) unstable; urgency=low
 
   * convert to GNU APGL V3 (Bug #19780)

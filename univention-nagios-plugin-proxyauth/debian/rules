@@ -1,9 +1,9 @@
 #!/usr/bin/make -f
 #
-# Univention Print Server
+# UCS@school
 #  rules file for the debian package
 #
-# Copyright 2004-2010 Univention GmbH
+# Copyright 2004-2011 Univention GmbH
 #
 # http://www.univention.de/
 #
@@ -48,6 +48,7 @@ configure-stamp:
 
 build: build-stamp
 build-stamp: configure-stamp
+	gcc -o check_univention_proxyauth_suidwrapper check_univention_proxyauth_suidwrapper.c
 	dh_testdir
 	touch build-stamp
 
@@ -67,6 +68,8 @@ install: build
 	dh_installdirs
 	install -m 755 check_univention_proxyauth ${D}/usr/lib/nagios/plugins
 	install -m 755 univention-proxyauth.cfg ${D}/etc/nagios-plugins/config
+	install -m 755 -o root -g root check_univention_proxyauth_suidwrapper ${D}/usr/lib/nagios/plugins
+	chmod u+s ${D}/usr/lib/nagios/plugins/check_univention_proxyauth_suidwrapper
 	dh_install
 
 binary-indep: build install
@@ -80,7 +83,7 @@ binary-arch: build install
 	dh_link
 	dh_strip
 	dh_compress
-	dh_fixperms
+	dh_fixperms -X/usr/lib/nagios/plugins/check_univention_proxyauth_suidwrapper
 	dh_installdeb
 	dh_shlibdeps
 	dh_gencontrol

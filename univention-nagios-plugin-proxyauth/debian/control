@@ -6,7 +6,7 @@ Build-Depends: debhelper (>= 4.0.0)
 Standards-Version: 3.5.2
 
 Package: univention-nagios-plugin-proxyauth
-Architecture: all
+Architecture: any
 Depends: nagios-plugins, nagios-nrpe-server, winbind, samba-common
 Description: UCS: nagios plugin for proxy authentication
  This package installs the required files to allow monitoring
