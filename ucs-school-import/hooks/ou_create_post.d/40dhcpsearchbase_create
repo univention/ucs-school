@@ -1,11 +1,11 @@
-#!/bin/sh
+#!/bin/bash
 #
 # 40dhcpsearchbase_create
 #  Creates a UCR-policy for DHCP searchbase
 #
 # Depends: ucs-school-import
 #
-# Copyright 2010 Univention GmbH
+# Copyright 2010-2012 Univention GmbH
 #
 # http://www.univention.de/
 #

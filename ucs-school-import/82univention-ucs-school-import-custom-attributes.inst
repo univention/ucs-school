@@ -1,8 +1,8 @@
-#! /bin/sh
+#!/bin/bash
 #
 # Univention UCS@School
 #
-# Copyright 2007-2010 Univention GmbH
+# Copyright 2007-2012 Univention GmbH
 #
 # http://www.univention.de/
 #
@@ -37,7 +37,7 @@ eval "$(ucr shell)"
 
 # Don't create the custom attributes by default. See Bug #15373
 
-#univention-directory-manager settings/customattribute create $@  --ignore_exist \
+#univention-directory-manager settings/customattribute create "$@" --ignore_exist \
 #    --position cn="custom attributes,cn=univention,$ldap_base" \
 #    --set longDescription="DN des Hauptaccount (Abordnung)" \
 #    --set module=users/user \

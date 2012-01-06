@@ -1,11 +1,11 @@
-#!/bin/sh
+#!/bin/bash
 #
 # 52marktplatz_create
 #  Creates a Markplatz share for the specified OUs
 #
 # Depends: ucs-school-import
 #
-# Copyright 2010 Univention GmbH
+# Copyright 2010-2012 Univention GmbH
 #
 # http://www.univention.de/
 #
