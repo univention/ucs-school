@@ -1,0 +1,2 @@
+82univention-ucs-school-import-custom-attributes.inst       usr/lib/univention-install/
+schema/ucs-school-import.schema                             usr/share/univention-ldap/schema

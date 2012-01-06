@@ -29,114 +29,15 @@
 # License with the Debian GNU/Linux or Univention distribution in file
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
-#
 
-D=$(CURDIR)/debian/installdir
-D2=$(CURDIR)/debian/ucs-school-import-schema
-PACKAGE=ucs-school-import
-
-
-# Uncomment this to turn on verbose mode.
-#export DH_VERBOSE=1
-
-ifneq (,$(findstring debug,$(DEB_BUILD_OPTIONS)))
-	CFLAGS += -g
-endif
-ifeq (,$(findstring nostrip,$(DEB_BUILD_OPTIONS)))
-	INSTALL_PROGRAM += -s
-endif
-
-configure: configure-stamp
-configure-stamp:
-	dh_testdir
-	# Add here commands to configure the package.
-
-	touch configure-stamp
-
-
-build: build-stamp
-
-build-stamp: configure-stamp 
-	dh_testdir
-
-	# Add here commands to compile the package.
-
-	touch build-stamp
-
-clean:
-	dh_testdir
-	dh_testroot
-	rm -f build-stamp configure-stamp
-
-	# Add here commands to clean up after the build process.
-
-	dh_clean
-
-install: build
-	dh_testdir
-	dh_testroot
-	dh_clean -k
-	dh_installdirs
-	install -m 644 ipaddr.py debian/ucs-school-import/usr/share/$(PACKAGE)/scripts
-	install -m 755 ucs-school-create-dummy-users debian/$(PACKAGE)/usr/share/$(PACKAGE)/scripts
-	install -m 755 ucs-school-import debian/$(PACKAGE)/usr/share/$(PACKAGE)/scripts
-	ln -s ucs-school-import debian/$(PACKAGE)/usr/share/$(PACKAGE)/scripts/create_ou
-	ln -s ucs-school-import debian/$(PACKAGE)/usr/share/$(PACKAGE)/scripts/import_user
-	ln -s ucs-school-import debian/$(PACKAGE)/usr/share/$(PACKAGE)/scripts/import_group
-	ln -s ucs-school-import debian/$(PACKAGE)/usr/share/$(PACKAGE)/scripts/import_networks
-	ln -s ucs-school-import debian/$(PACKAGE)/usr/share/$(PACKAGE)/scripts/import_computer
-	ln -s ucs-school-import debian/$(PACKAGE)/usr/share/$(PACKAGE)/scripts/import_inventory_number
-	ln -s ucs-school-import debian/$(PACKAGE)/usr/share/$(PACKAGE)/scripts/import_printer
-	ln -s ucs-school-import debian/$(PACKAGE)/usr/share/$(PACKAGE)/scripts/import_router
-	ln -s ucs-school-import debian/$(PACKAGE)/usr/share/$(PACKAGE)/scripts/activate_groupmembers
-	ln -s ucs-school-import debian/$(PACKAGE)/usr/share/$(PACKAGE)/scripts/export_computer
-	ln -s ucs-school-import debian/$(PACKAGE)/usr/share/$(PACKAGE)/scripts/set_ou_sharefileserver
-	install -m 755 ucs-school-change-share-server debian/$(PACKAGE)/usr/share/$(PACKAGE)/scripts
-	install -m 755 ucs-school-add-role debian/$(PACKAGE)/usr/share/$(PACKAGE)/scripts
-	install -m 755 35ucs-school-import.inst debian/$(PACKAGE)/usr/lib/univention-install/
-
-	install -m 755 82univention-ucs-school-import-custom-attributes.inst $(D2)/usr/lib/univention-install/
-	install -m 755 schema/ucs-school-import.schema $(D2)/usr/share/univention-ldap/schema
-
-	# Hooks
-	install -m 755 hooks/ou_create_post.d/40dhcpsearchbase_create debian/$(PACKAGE)/usr/share/ucs-school-import/hooks/ou_create_post.d/
-	install -m 755 hooks/ou_create_post.d/52marktplatz_create debian/$(PACKAGE)/usr/share/ucs-school-import/hooks/ou_create_post.d/
-
+override_dh_auto_install:
+	dh_auto_install
 	univention-install-config-registry
 
-# Build architecture-independent files here.
-binary-indep: build install
-# We have nothing to do by default.
+override_dh_auto_clean:
+	dh_auto_clean
+	rm -f debian/ucs-school-import.conffiles
+	rm -f debian/ucs-school-import-schema.conffiles
 
-# Build architecture-dependent files here.
-binary-arch: build install
-	dh_testdir
-	dh_testroot
-#	dh_installdebconf	
-#	dh_installdocs
-	dh_installexamples
-	dh_installmenu
-#	dh_installlogrotate
-#	dh_installemacsen
-#	dh_installpam
-#	dh_installmime
-#	dh_installinit
-	dh_installcron
-	dh_installman
-	dh_installinfo
-#	dh_undocumented
-	dh_installchangelogs 
-	dh_link
-	dh_strip
-	dh_compress
-	dh_fixperms
-#	dh_makeshlibs
-	dh_installdeb
-#	dh_perl
-	dh_shlibdeps
-	dh_gencontrol
-	dh_md5sums
-	dh_builddeb
-
-binary: binary-indep binary-arch
-.PHONY: build clean binary-indep binary-arch binary install configure
+%:
+	dh $@
