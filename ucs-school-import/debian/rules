@@ -90,6 +90,7 @@ install: build
 	ln -s ucs-school-import debian/$(PACKAGE)/usr/share/$(PACKAGE)/scripts/import_router
 	ln -s ucs-school-import debian/$(PACKAGE)/usr/share/$(PACKAGE)/scripts/activate_groupmembers
 	ln -s ucs-school-import debian/$(PACKAGE)/usr/share/$(PACKAGE)/scripts/export_computer
+	ln -s ucs-school-import debian/$(PACKAGE)/usr/share/$(PACKAGE)/scripts/set_ou_sharefileserver
 	install -m 755 ucs-school-change-share-server debian/$(PACKAGE)/usr/share/$(PACKAGE)/scripts
 	install -m 755 ucs-school-add-role debian/$(PACKAGE)/usr/share/$(PACKAGE)/scripts
 	install -m 755 35ucs-school-import.inst debian/$(PACKAGE)/usr/lib/univention-install/

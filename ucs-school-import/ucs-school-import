@@ -52,10 +52,20 @@ wipe_char_group='-'
 # count access to ldap to reconnect after 1000 changes
 locounts=0
 
-import sys, string, re, codecs, os, copy, random, time, traceback, re
-import subprocess
-import tempfile
+import codecs
+import copy
 import ipaddr
+import optparse
+import os
+import random
+import re
+import re
+import string
+import subprocess
+import sys
+import tempfile
+import time
+import traceback
 
 import univention.debug
 univention.debug.init('/var/log/univention/admin-cmd.log', 1, 0)
@@ -288,6 +298,8 @@ class ucsschool_person_modify:
 			user_grp_prefix = { role_teacher:grp_prefix_teachers,
 							    role_pupil:grp_prefix_pupils,
 							    role_staff:grp_prefix_staff }[role]
+			if role == role_staff and not configRegistry.is_true('ucsschool/ldap/noneducational/create/objects', True):
+				continue
 			# class if available
 			for cnr in self.cNr:
 				default_groups.append("cn=" + cnr + ",cn=klassen,cn=%s,cn=groups,%s" % (cn_pupils, getDN (self.sNr)))
@@ -427,7 +439,7 @@ def create_policy(cn, container, values, policy_module):
 	return ( exists, created )
 
 
-def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None):
+def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None, ShareFileServer=None):
 	global problem_hints
 
 	if schoolNr in verified_ous:
@@ -443,15 +455,18 @@ def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None):
 	print "verify ou for school nr %s"%schoolNr
 	# list of needed sub-containers, the dictionary-key adds the container as default during create in verify_container
 	container={'0printerPath':['cn=printers'],
-			   '1userPath':['cn=users','cn=%s,cn=users' % cn_pupils,'cn=%s,cn=users' % cn_teachers,'cn=%s,cn=users' % cn_staff,'cn=%s,cn=users' % cn_admins],
+			   '1userPath':['cn=users','cn=%s,cn=users' % cn_pupils,'cn=%s,cn=users' % cn_teachers,'cn=%s,cn=users' % cn_admins],
 			   '2computerPath':['cn=computers','cn=server,cn=computers'],
 			   '3networkPath':['cn=networks'],
-			   '4groupPath':['cn=groups','cn=%s,cn=groups' % cn_pupils,'cn=%s,cn=groups' % cn_teachers,'cn=%s,cn=groups' % cn_staff,'cn=klassen,cn=%s,cn=groups' % cn_pupils,'cn=raeume,cn=groups'],
+			   '4groupPath':['cn=groups','cn=%s,cn=groups' % cn_pupils,'cn=%s,cn=groups' % cn_teachers,'cn=klassen,cn=%s,cn=groups' % cn_pupils,'cn=raeume,cn=groups'],
 			   '5dhcpPath':['cn=dhcp'],
 			   '6policyPath':['cn=policies'],
 			   '7sharePath':['cn=shares','cn=klassen,cn=shares'],
 			   '8none':['cn=dc,cn=server,cn=computers']
 			   }
+	if configRegistry.is_true('ucsschool/ldap/noneducational/create/objects', True):
+		container['1userPath'].append('cn=%s,cn=users' % cn_staff)
+		container['4groupPath'].append('cn=%s,cn=groups' % cn_staff)
 	# FIXME: die Policies sollten besser mit der Gruppe verknüpft werden, um
 	# z.B. Mitarbeiter und Lehrer im selben Container pflegen zu können
 	#container_policies = { 'cn=%s,cn=users' % cn_teachers: ['cn=default-lehrer,cn=console,cn=policies,' + baseDN] }
@@ -468,6 +483,37 @@ def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None):
 	hooks.pre( 'ou', 'A', line = myline )
 
 	created, dn = verify_container(ou_base, ou_module, co, lo, superordinate, baseDN, path='')
+	if created:
+		# get name of new dc
+		finalDCname = 'dc%s-01' % schoolNr.lower ()
+		if dcName:
+			finalDCname = dcName
+
+		# if fileserver is not set then use dc name
+		if ShareFileServer is None:
+			ShareFileServer = finalDCname
+
+		# looking for DN of fileserver
+		objects = lo.searchDn(filter='(&(objectClass=univentionHost)(cn=%s))' % ShareFileServer, base=baseDN)
+		if len(objects) != 1:
+			# no object found
+			if ShareFileServer == 'dc%s-01' % schoolNr.lower() or (dcName and ShareFileServer == dcName):
+				pass # ignore warning - dc object will be created later
+			else:
+				print 'WARNING: sharefileserver "%s" not found! using "%s" as sharefileserver' % (ShareFileServer, finalDCname)
+				ShareFileServer = finalDCname
+			ShareFileServer = "cn=%s,cn=dc,cn=server,cn=computers,%s"%(ShareFileServer, getDN(schoolNr))
+		else:
+			# use found dn
+			ShareFileServer = objects[0]
+
+		r = lo.modify(dn, [ ('objectClass','','ucsschoolOrganizationalUnit'),
+				('ucsschoolClassShareFileServer','',ShareFileServer)
+				] )
+	else:
+		if ShareFileServer is not None:
+			print "WARNING: sharefileserver ignored because OU already exists!"
+
 	keys=container.keys()
 	keys.sort()
 	for path in keys:
@@ -479,24 +525,37 @@ def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None):
 	groups=[ ( "cn=%s%s,cn=ouadmins,cn=groups,%s" % (grp_prefix_admins, schoolNr.lower(), baseDN), grp_policy_admins ),
 			 ( "cn=%s%s,cn=groups,%s" % (grp_prefix_pupils, schoolNr.lower(), getDN(schoolNr)),	grp_policy_pupils ),
 			 ( "cn=%s%s,cn=groups,%s" % (grp_prefix_teachers, schoolNr.lower(), getDN(schoolNr)),	grp_policy_teachers ),
+		 ]
+	if configRegistry.is_true('ucsschool/ldap/noneducational/create/objects', True):
+		groups.append(
 			 ( "cn=%s%s,cn=groups,%s" % (grp_prefix_staff, schoolNr.lower(), getDN(schoolNr)),	grp_policy_staff ),
-			 ]
+			 )
 	for group, grppolicy in groups:
 		verify_group(group, co, lo, superordinate, baseDN)
 		if grppolicy and grppolicy.lower() != 'none':
 			verify_policy(group, schoolNr, [ grppolicy ])
 
-	groups=[
+	groups_management=[
 			"cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,%s" % (baseDN, ),
 			"cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,%s" % (baseDN, ),
+			]
+	groups_education=[
 			"cn=DC-Edukativnetz,cn=ucsschool,cn=groups,%s" % (baseDN, ),
 			"cn=Member-Edukativnetz,cn=ucsschool,cn=groups,%s" % (baseDN, ),
+			]
 
+	groups_managementOU=[
 			"cn=OU%s-DC-Verwaltungsnetz,cn=ucsschool,cn=groups,%s" % (schoolNr.lower (), baseDN),
 			"cn=OU%s-Member-Verwaltungsnetz,cn=ucsschool,cn=groups,%s" % (schoolNr.lower (), baseDN),
+			]
+	groups_educationOU=[
 			"cn=OU%s-DC-Edukativnetz,cn=ucsschool,cn=groups,%s" % (schoolNr.lower (), baseDN),
 			"cn=OU%s-Member-Edukativnetz,cn=ucsschool,cn=groups,%s" % (schoolNr.lower (), baseDN),
 			]
+	if configRegistry.is_true('ucsschool/ldap/noneducational/create/objects', True):
+		groups = groups_management + groups_education + groups_managementOU + groups_educationOU
+	else:
+		groups = groups_education + groups_educationOU
 	for group in groups:
 		verify_group(group, co, lo, superordinate, baseDN)
 
@@ -510,6 +569,8 @@ def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None):
 					"cn=DC-Edukativnetz,cn=ucsschool,cn=groups,%s" % (baseDN, )]
 
 		if dc == 'verwaltung':
+			if not configRegistry.is_true('ucsschool/ldap/noneducational/create/objects', True):
+				continue
 			if dcName:
 				dccn = '%sv' % dcName
 			else:
@@ -1014,6 +1075,17 @@ def verify_group_share(schoolNr, classNr, co, lo, superordinate, base):
 				alternativeServer_uid = alternativeServer_uid.replace('$','')
 				if len(alternativeServer_uid) > 0:
 					serverfqdn = "%s.%s" % (alternativeServer_uid, domainname)
+		# fetch serverfqdn from OU
+		result = lo.get(getDN (schoolNr, basedn=base), ['ucsschoolClassShareFileServer'])
+		if result:
+			serverDomainName = lo.get(result['ucsschoolClassShareFileServer'][0], ['associatedDomain'])
+			if serverDomainName:
+				serverDomainName = serverDomainName['associatedDomain'][0]
+			else:
+				serverDomainName = domainname
+			result = lo.get(result['ucsschoolClassShareFileServer'][0], ['cn'])
+			if result:
+				serverfqdn = "%s.%s" % (result['cn'][0], serverDomainName)
 
 
 		position=univention.admin.uldap.position(base)
@@ -2363,6 +2435,40 @@ def export_computer():
 		outf.write(out_line % (host['name'], ou, inventoryNumber, ip, mac))
 	outf.close()
 
+def set_ou_sharefileserver():
+	if len(sys.argv) != 3:
+		print 'set_ou_sharefileserver <ouname> <ShareFileServer>'
+		print 'ouname and ShareFileServer is required'
+		sys.exit(1)
+	ouname = sys.argv[1]
+	ShareFileServer = sys.argv[2]
+	if not re.match('^[a-zA-Z0-9](([a-zA-Z0-9-_]*)([a-zA-Z0-9]$))?$', ouname):
+		print 'ERROR: invalid ouname name given'
+		sys.exit(1)
+	if not re.match('^[a-zA-Z0-9](([a-zA-Z0-9-_]*)([a-zA-Z0-9]$))?$', ShareFileServer):
+		print 'ERROR: invalid ShareFileServer name given'
+		sys.exit(1)
+	objects = lo.searchDn(filter='(&(objectClass=univentionHost)(cn=%s))' % ShareFileServer, base=baseDN)
+	if len(objects) != 1:
+		print 'ERROR: sharefileserver "%s" not found!' % ShareFileServer
+		sys.exit(1)
+	else:
+		ShareFileServer = objects[0]
+	r = lo.get(getDN(ouname), ['objectClass'])
+	if 'ucsschoolOrganizationalUnit' not in r['objectClass']:
+		r = lo.modify(getDN(ouname), [ ('objectClass','','ucsschoolOrganizationalUnit'),
+					       ('ucsschoolClassShareFileServer','',ShareFileServer)
+					       ] )
+	else:
+		r = lo.get(getDN(ouname), ['ucsschoolClassShareFileServer'])
+		if r:
+			r = r['ucsschoolClassShareFileServer'][0]
+		else:
+			r = ''
+		r = lo.modify(getDN(ouname), [ ('ucsschoolClassShareFileServer',r,ShareFileServer)
+					       ] )
+	sys.exit(0)
+
 #------------------------------------------------------------------------------------------#
 
 # init univention-directory-manager
@@ -2457,10 +2563,19 @@ elif sys.argv[0].endswith("import_printer"):
 	import_printer()
 elif sys.argv[0].endswith("create_ou"):
 	dcName=None
-	if len(sys.argv)>1 and sys.argv[1][0] != '-':
-		ouname = sys.argv[1]
-		if len(sys.argv)>2:
-			dcName = sys.argv[2]
+	usage = 'create_ou [options] <ou_name> [<dc_name>]\n'
+	usage+= '\t  ou_name\t name of ou that shall be created or verified\n'
+	usage+= '\t  dc_name\t name of domaincontroller for specified OU\n'
+	usage+= 'At least ou_name has to be passed to create_ou as argument.\n'
+	usage+= 'If dc_name is not specified the default domaincontroller name\n'
+	usage+= 'will be used. Defaultname: dc<ou_name>-01'
+	parser = optparse.OptionParser(usage=usage)
+	parser.add_option('--sharefileserver', action='store', type='string', dest='ShareFileServer', default=None, help="The name of the fileserver to be used for class shares in this OU")
+	(options, args, ) = parser.parse_args()
+	if len(args) > 0:
+		ouname = args[0]
+		if len(args) > 1:
+			dcName = args[1]
 
 		# hostname based upon RFC 952: <let>[*[<let-or-digit-or-hyphen>]<let-or-digit>]
 		if not re.match('^[a-zA-Z0-9](([a-zA-Z0-9-_]*)([a-zA-Z0-9]$))?$', ouname):
@@ -2471,21 +2586,16 @@ elif sys.argv[0].endswith("create_ou"):
 		if dcName and not re.match('^[a-zA-Z](([a-zA-Z0-9-_]*)([a-zA-Z0-9]$))?$', dcName):
 			print 'ERROR: invalid domaincontroller name given'
 			sys.exit(1)
-
-		verify_school_ou(ouname, co, lo, baseDN, dcName=dcName)
+		verify_school_ou(ouname, co, lo, baseDN, dcName=dcName, ShareFileServer=options.ShareFileServer)
 		sys.exit(0)
-
-	print 'syntax: create_ou <ou_name> [<dc_name>]'
-	print '	  ou_name	 name of ou that shall be created or verified'
-	print '	  dc_name	 name of domaincontroller for specified OU'
-	print 'At least ou_name has to be passed to create_ou as argument.'
-	print 'If dc_name is not specified the default domaincontroller name'
-	print 'will be used. Defaultname: dc<ou_name>-01'
+	parser.print_help()
 	sys.exit(1)
 
 elif sys.argv[0].endswith("activate_groupmembers"):
 	activate_groupmembers()
 elif sys.argv[0].endswith("export_computer"):
 	export_computer()
+elif sys.argv[0].endswith("set_ou_sharefileserver"):
+	set_ou_sharefileserver()
 else:
 	print "unknown action defined by the filename"

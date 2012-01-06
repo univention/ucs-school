@@ -33,3 +33,16 @@ objectclass ( 1.3.6.1.4.1.10176.4000.2.51 NAME 'univentionUcsSchoolUser'
         DESC 'Role of user in ucs@school context (e.g. teacher, administration)'
         SUP top AUXILIARY
         MAY ( ucsschoolRole ) )
+
+attributetype ( 1.3.6.1.4.1.10176.4000.2.5201 NAME 'ucsschoolClassShareFileServer'
+        DESC 'TODO'
+        EQUALITY distinguishedNameMatch
+        SUBSTR caseIgnoreSubstringsMatch
+        SYNTAX 1.3.6.1.4.1.1466.115.121.1.12 )
+
+# SUP organizationalUnit
+
+objectclass ( 1.3.6.1.4.1.10176.4000.2.52 NAME 'ucsschoolOrganizationalUnit'
+        DESC 'TODO'
+        AUXILIARY
+        MAY ( ucsschoolClassShareFileServer ) )

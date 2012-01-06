@@ -1,3 +1,38 @@
+ucs-school-import (7.0.6-1) unstable; urgency=low
+
+  * create_ou: if given fileserver does not exist use default dc name or
+    given dc name (Bug #20285)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Sun, 19 Dec 2010 19:02:58 +0100
+
+ucs-school-import (7.0.5-1) unstable; urgency=low
+
+  * search for --sharefileserver DN (Bug #20285)
+
+ -- Janek Walkenhorst <walkenhorst@univention.de>  Mon, 29 Nov 2010 11:50:04 +0100
+
+ucs-school-import (7.0.4-1) unstable; urgency=low
+
+  * rename set_ou_fileserver to set_ou_sharefileserver (Bug #20285)
+
+ -- Janek Walkenhorst <walkenhorst@univention.de>  Mon, 29 Nov 2010 09:34:13 +0100
+
+ucs-school-import (7.0.3-2) unstable; urgency=low
+
+  * add --sharefileserver (Bug #20285)
+  * add set_ou_fileserver
+  * use optparse
+
+ -- Janek Walkenhorst <walkenhorst@univention.de>  Mon, 15 Nov 2010 12:33:17 +0100
+
+ucs-school-import (7.0.2-1) unstable; urgency=low
+
+  * add UCRV ucsschool/ldap/noneducational/create/objects to control
+    creation of noneducational groups (Bug #20640)
+  * change default of ucsschool/ldap/default/dcs to "edukativ verwaltung"
+
+ -- Janek Walkenhorst <walkenhorst@univention.de>  Wed, 10 Nov 2010 13:56:20 +0100
+
 ucs-school-import (6.0.23-1) unstable; urgency=low
 
   * fixed permissions of Marktplatz share to 0777 (Bug #17370)

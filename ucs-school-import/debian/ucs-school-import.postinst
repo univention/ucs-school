@@ -42,7 +42,8 @@ univention-config-registry set \
 	ucsschool/ldap/default/groupprefix/admins?"admins-" \
 	ucsschool/ldap/default/groupprefix/pupils?"schueler-" \
 	ucsschool/ldap/default/groupprefix/staff?"mitarbeiter-" \
-	ucsschool/ldap/default/dcs?edukativ \
+	ucsschool/ldap/default/dcs?"edukativ verwaltung" \
+	ucsschool/ldap/noneducational/create/objects?"true" \
 	ucsschool/update/user/role?yes
 
 eval "$(univention-config-registry shell)"
