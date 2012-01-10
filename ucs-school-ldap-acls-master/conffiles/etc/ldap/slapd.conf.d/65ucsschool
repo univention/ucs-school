@@ -1,5 +1,5 @@
 @!@
-# -*- coding: latin1 -*-
+# -*- coding: utf-8 -*-
 import re
 
 aclset = ""
@@ -155,7 +155,7 @@ access to dn.regex="^zoneName=[^,]+,cn=dns,@%@ldap/base@%@$$" attrs=sOARecord
 	by dn.regex="^uid=([^,]+),cn=@$@ADMINS@$@,cn=users,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" write
 	by * none break
 
-# Slave-Controller und Memberserver aus der Verwaltungsnetz-Gruppe duerfen Inhalt des Schüler-Containers nicht replizieren
+# Slave-Controller und Memberserver aus der Verwaltungsnetz-Gruppe duerfen Inhalt des SchÃ¼ler-Containers nicht replizieren
 access to dn.regex="^.+,cn=@$@PUPILS@$@,cn=users,ou=[^,]+,@$@DISTRICT@$@@%@ldap/base@%@$$"
 	by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" none
 	by group/univentionGroup/uniqueMember="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" none
@@ -173,7 +173,7 @@ access to dn.regex="^(.+,)?ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" attrs=use
 	by group/univentionGroup/uniqueMember="cn=Member-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
 	by * none break
 
-# Master und Backup-Systeme duerfen die Einträge aller OUs lesen und schreiben
+# Master und Backup-Systeme duerfen die EintrÃ¤ge aller OUs lesen und schreiben
 access to dn.regex="^(.+,)?ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$"
 	by group/univentionGroup/uniqueMember.expand="cn=DC Backup Hosts,cn=groups,@%@ldap/base@%@" write
 	by * none break
@@ -213,7 +213,7 @@ access to dn.subtree="cn=nagios,@%@ldap/base@%@"
 	by group/univentionGroup/uniqueMember="cn=Member-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
 	by * none break
 
-# Schüler, Lehrer, Mitarbeiter, Admins duerfen globale Container univention, policies, groups und dns lesen 
+# SchÃ¼ler, Lehrer, Mitarbeiter, Admins duerfen globale Container univention, policies, groups und dns lesen 
 # (werden bei Schuelern/Rechnern angezeigt)
 access to dn.regex="(^(.+,)?cn=(univention|policies|dns|groups),|^)@%@ldap/base@%@$$"
 	by dn.regex="^uid=([^,]+),cn=(@$@TEACHERS@$@|@$@STAFF@$@|@$@ADMINS@$@),cn=users,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" read
