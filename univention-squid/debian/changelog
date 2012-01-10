@@ -1,3 +1,9 @@
+univention-squid (5.1.0-1) unstable; urgency=low
+
+  * added squid/auth/groups and squid/redirect (Bug #25700)
+
+ -- Felix Botner <botner@univention.de>  Tue, 10 Jan 2012 15:52:43 +0100
+
 univention-squid (5.0.3-19) unstable; urgency=low
 
   * Fix group lookup (Bug #22576) 

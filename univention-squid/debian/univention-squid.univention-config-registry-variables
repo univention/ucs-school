@@ -34,6 +34,12 @@ Description[en]=User groups that are allowed to access squid
 Type=str
 Categories=service-webproxy
 
+[squid/auth/groups]
+Description[de]=Autorisierung am Squid auf Basis von Gruppenzugehörigkeit (Default: yes)
+Description[en]=Squid Authorization based on group membership (Default: yes)
+Type=str
+Categories=service-webproxy
+
 [squid/allowfrom]
 Description[de]=Zusätzliche Netzwerke, von denen auf squid zugegriffen werden darf
 Description[en]=Additional networks squid allows access from
@@ -98,5 +104,11 @@ Categories=service-webproxy
 [squid/ipauth/ttl]
 Description[de]=Die TTL in Sekunden für den IP-basierten Authentisierungscache (0=deaktiviert)
 Description[en]=The TTL in seconds for the IP-based authentication cache (0=disabled)
+Type=str
+Categories=service-webproxy
+
+[squid/redirect]
+Description[de]=Gibt ein Programm für den URL redirector an (Mögliche Werte: squidguard)
+Description[en]=Specifies the location of the executable for the URL redirector (Valid values: squidguard)
 Type=str
 Categories=service-webproxy
