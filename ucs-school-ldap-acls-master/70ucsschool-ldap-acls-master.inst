@@ -30,34 +30,26 @@
 # <http://www.gnu.org/licenses/>.
 
 VERSION=1
-JSNAME="ucsschool-ldap-acls-master"
-JSFILE="/usr/lib/univention-install/.index.txt"
+. /usr/share/univention-join/joinscripthelper.lib
+joinscript_init
 
-if ! test -e "/usr/share/univention-join/.joined"; then
-    echo "The server has not joined yet"
-    exit 1
-fi
+eval "$(univention-config-registry shell)"
 
-touch "${JSFILE}"
-test -n "$(grep "${JSNAME} v${VERSION} successful" ${JSFILE})" && exit 1
-
-eval $(univention-config-registry shell)
-
-# create new group container
-univention-directory-manager container/cn create $@ \
+# create new UCS@school group container
+univention-directory-manager container/cn create "$@" \
 	--ignore_exist \
 	--position="cn=groups,$ldap_base" \
 	--set name="ucsschool"
 
-# create global groups required for LDAP ACLs for ucs@school
+# create global groups required for LDAP ACLs for UCS@school
 for grp in "DC-Verwaltungsnetz" "Member-Verwaltungsnetz" "DC-Edukativnetz" "Member-Edukativnetz" ; do
-	univention-directory-manager groups/group create $@ \
+	univention-directory-manager groups/group create "$@" \
 		--ignore_exist \
 		--position="cn=ucsschool,cn=groups,$ldap_base" \
 		--set name="$grp"
 done
 
 
-test -n "$(grep "${JSNAME} v${VERSION} successful" ${JSFILE})" || echo "${JSNAME} v${VERSION} successful" >> "${JSFILE}"
+joinscript_save_current_version
 
 exit 0
