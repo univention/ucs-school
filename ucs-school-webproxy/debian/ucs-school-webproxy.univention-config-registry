@@ -1,32 +1,6 @@
-Type: file
-File: etc/init.d/winbind
-
-Type: file
-File: etc/init.d/squid
-
-Type: file
-File: etc/squid/squid.conf
-Variables: ldap/server/name
-Variables: ldap/base
-Variables: interfaces/.*
-Variables: proxy/ldapauth
-Variables: proxy/force
-Variables: proxy/ntlmauth
-Variables: proxy/basicauth
-Variables: proxy/allow/localnet
-Variables: proxy/redirect
-Variables: proxy/clamav
-Variables: proxy/parent/host
-Variables: proxy/parent/port
-Variables: proxy/ntlmauth/.*
-Variables: proxy/ipauth/.*
-
 Type: module
 Module: ucs-school-webproxy.py
 Variables: proxy/filter/.*
 Variables: windows/domain
 Variables: hostname
 Variables: domainname
-
-Type: file
-File: etc/default/squid

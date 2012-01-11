@@ -3,7 +3,7 @@
 # Univention Directory Listener Module Pupilgroups
 #  listener module: pupilgroups
 #
-# Copyright 2008-2010 Univention GmbH
+# Copyright 2008-2012 Univention GmbH
 #
 # http://www.univention.de/
 #
@@ -30,6 +30,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+__package__=''		# workaround for PEP 366
 import listener
 import univention.config_registry
 import univention.debug

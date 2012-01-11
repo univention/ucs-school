@@ -3,7 +3,7 @@
 # UCS@School
 #  rules file for the debian package
 #
-# Copyright 2006-2010 Univention GmbH
+# Copyright 2006-2012 Univention GmbH
 #
 # http://www.univention.de/
 #
@@ -30,57 +30,13 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-D=$(CURDIR)/debian/ucs-school-webproxy
-
-configure: configure-stamp
-configure-stamp:
-	dh_testdir
-
-	touch configure-stamp
-
-
-build: build-stamp
-
-build-stamp: configure-stamp
-	dh_testdir
-
-	touch build-stamp
-
-clean:
-	dh_testdir
-	dh_testroot
-	rm -f build-stamp configure-stamp
-
-	dh_clean
-
-install: build
-	dh_testdir
-	dh_testroot
-	dh_clean -k
-	dh_installdirs
-
-	cp blocked-by-squid.html $(D)/var/www/
-	cp logcollector.cfg $(D)/etc/logcollector.d/ucs-school-webproxy
-
-	install -m 755 pupilgroups.py ${D}/usr/lib/univention-directory-listener/system/
-
+override_dh_auto_install:
+	dh_auto_install
 	univention-install-config-registry
 
+override_dh_auto_test:
+	dh_auto_test
+	ucslint
 
-# Build architecture-independent files here.
-binary-indep: build install
-
-# Build architecture-dependent files here.
-binary-arch: build install
-	dh_testdir
-	dh_testroot
-	dh_strip
-	dh_fixperms
-	dh_installdeb
-	dh_shlibdeps
-	dh_gencontrol
-	dh_md5sums
-	dh_builddeb
-
-binary: binary-indep binary-arch
-.PHONY: build clean binary-indep binary-arch binary install configure
+%:
+	dh $@

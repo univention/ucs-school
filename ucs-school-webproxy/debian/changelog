@@ -1,3 +1,10 @@
+ucs-school-webproxy (8.0.0-1) unstable; urgency=low
+
+  * ucs 3.0 update (Bug #25700)
+  * removed squid configs/settings (as they are part of univention-squid) 
+
+ -- Felix Botner <botner@univention.de>  Tue, 10 Jan 2012 17:29:51 +0100
+
 ucs-school-webproxy (7.0.10-1) unstable; urgency=low
 
   * added workaround for bug #15085

@@ -1,0 +1,80 @@
+#!/bin/sh
+#
+# UCS@School
+#  preinst script
+#
+# Copyright 2008-2012 Univention GmbH
+#
+# http://www.univention.de/
+#
+# All rights reserved.
+#
+# The source code of this program is made available
+# under the terms of the GNU Affero General Public License version 3
+# (GNU AGPL V3) as published by the Free Software Foundation.
+#
+# Binary versions of this program provided by Univention to you as
+# well as other copyrighted, protected or trademarked materials like
+# Logos, graphics, fonts, specific documentations and configurations,
+# cryptographic keys etc. are subject to a license agreement between
+# you and Univention and not subject to the GNU AGPL V3.
+#
+# In the case you use this program under the terms of the GNU AGPL V3,
+# the program is provided in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public
+# License with the Debian GNU/Linux or Univention distribution in file
+# /usr/share/common-licenses/AGPL-3; if not, see
+# <http://www.gnu.org/licenses/>.
+
+#DEBHELPER#
+
+eval "$(univention-config-registry shell)"
+
+# update to 3.0-0 cleanup Bug #25700
+if [ "$1" = configure -a -n "$2" ] && dpkg --compare-versions "$2" lt 8.0.0-1; then
+
+	# convert proxy/.* vars to squid/*
+	if [ -n "$proxy_redirect" ]; then ucr set squid/redirect="$proxy_redirect"; fi
+	if [ -n "$proxy_ldapauth" ]; then ucr set squid/ldapauth="$proxy_ldapauth"; fi
+	if [ -n "$proxy_force" ]; then ucr set squid/transparentproxy="$proxy_force"; fi
+	if [ -n "$proxy_ntlmauth" ]; then ucr set squid/ntlmauth="$proxy_ntlmauth"; fi
+	if [ -n "$proxy_ntlmauth_children" ]; then ucr set squid/ntlmauth/children="$proxy_ntlmauth_children"; fi
+	if [ -n "$proxy_ntlmauth_keepalive" ]; then ucr set squid/ntlmauth/keepalive="$proxy_ntlmauth_keepalive"; fi
+	if [ -n "$proxy_basicauth" ]; then ucr set squid/basicauth="$proxy_basicauth"; fi
+	if [ -n "$proxy_allow_localnet" ]; then ucr set squid/allow/localnet="$proxy_allow_localnet"; fi
+	if [ -n "$proxy_parent_host" ]; then ucr set squid/parent/host="$proxy_parent_host"; fi
+	if [ -n "$proxy_parent_port" ]; then ucr set squid/parent/port="$proxy_parent_port"; fi
+	if [ -n "$proxy_ipauth_allow" ]; then ucr set squid/ipauth/allow="$proxy_ipauth_allow"; fi
+	if [ -n "$proxy_ipauth_deny" ]; then ucr set squid/ipauth/deny="$proxy_ipauth_deny"; fi
+	if [ -n "$proxy_ipauth_ttl" ]; then ucr set squid/ipauth/ttl="$proxy_ipauth_ttl"; fi
+
+	# remove unused var
+	ucr unset proxy/clamav proxy/redirect proxy/ldapauth proxy/force \
+	proxy/ntlmauth proxy/ntlmauth/children proxy/ntlmauth/keepalive \
+	proxy/basicauth proxy/allow/localnet proxy/parent/host proxy/parent/port \
+	proxy/ipauth/allow proxy/ipauth/deny proxy/ipauth/ttl \
+
+fi
+
+# defaults (set them before univention-squid!)
+ucr set \
+	squid/redirect?squidguard \
+	squid/transparentproxy?no \
+	squid/ldapauth?no \
+	squid/ntlmauth?yes \
+	squid/basicauth?yes \
+	squid/auth/groups?no \
+	squid/ntlmauth/children?10 \
+	squid/ntlmauth/keepalive?yes \
+	squid/ipauth/ttl?180 \
+	squid/ipauth/allow?0.0.0.0/0.0.0.0 \
+	proxy/filter/redirecttarget?"http://$hostname.$domainname/blocked-by-squid.html" \
+	proxy/filter/domain/whitelisted/1?"www.univention.de" \
+	"samba/global/options/winbind use default domain?yes" \
+	samba/winbind/trusted/domains/only=no 
+
+exit 0

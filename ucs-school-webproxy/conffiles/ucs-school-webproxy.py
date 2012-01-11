@@ -1,9 +1,9 @@
-#!/usr/bin/python2.4
+#!/usr/bin/python2.6
 #
 # Univention Config Registry
 #  enable/disable internet access in squidguard config
 #
-# Copyright 2007-2011 Univention GmbH
+# Copyright 2007-2012 Univention GmbH
 #
 # http://www.univention.de/
 #
@@ -349,5 +349,5 @@ def handler(configRegistry, changes):
 		raise
 
 	# and finally
-#	os.system('kill -HUP `cat /var/run/squid.pid`')
-	os.system('/etc/init.d/squid reload')
+	#os.system('kill -HUP `cat /var/run/squid3.pid`')
+	os.system('/etc/init.d/squid3 reload')
