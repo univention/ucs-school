@@ -1,0 +1,9 @@
+#!/bin/sh
+
+if [ "$1" = purge ]; then
+	rm -rf /etc/italc
+fi;
+
+#DEBHELPER#
+
+exit 0

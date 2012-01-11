@@ -1,0 +1,11 @@
+#!/usr/bin/make -f
+
+%:
+	dh $@
+
+override_dh_clean:
+	tar xvfj italc-2.0.0.tar.bz2 --strip-components=1
+	dh_clean
+
+override_dh_install:                                                                                                                                                                                            
+        dh_install --sourcedir=debian/tmp                                                                                                                                                                       

@@ -1,0 +1,252 @@
+italc (1:2.0.0-1) unstable; urgency=low
+
+  * integrated upstream tgz of italc-2.0.0
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Wed, 11 Jan 2012 12:28:17 +0100
+
+italc (1:1.9.4-1) unstable; urgency=low
+
+  * upstream snapshot up to commit 2422eede9250d1bc625777321bec601e2647c843
+  * added libpam0g-dev build dependency for new italc_auth_helper
+  * package italc_auth_helper binary into italc-client package
+
+ -- Tobias Doerffel <doerffel@univention.de>  Wed, 01 Dec 2010 16:24:52 +0100
+
+italc (1:1.9.3-1) unstable; urgency=low
+
+  * upstream snapshot up to commit 26aa16ca06adeeda8c7b32624cd967a085e2f3b2
+
+ -- Tobias Doerffel <doerffel@univention.de>  Mon, 29 Nov 2010 17:56:07 +0100
+
+italc (1:1.9.2-4) unstable; urgency=low
+
+  * upstream snapshot up to commit 71269c79cb91baf3479403622c382d9f7a837173
+
+ -- Tobias Doerffel <doerffel@univention.de>  Fri, 25 Nov 2010 15:07:53 +0100
+
+italc (1:1.9.2-3) unstable; urgency=low
+
+  * upstream snapshot up to commit 37cbca6560edbb05f28fd7897ddc38282b873280
+
+ -- Tobias Doerffel <doerffel@univention.de>  Thu, 24 Nov 2010 15:53:12 +0100
+
+italc (1:1.9.2-2) unstable; urgency=low
+
+  * package missing Configuration framework headers in libitalc-dev
+
+ -- Tobias Doerffel <doerffel@univention.de>  Thu, 24 Nov 2010 15:12:56 +0100
+
+italc (1:1.9.2-1) unstable; urgency=low
+
+  * upstream snapshot up to commit 919fc45bc57b19fa2a0da487fe762d90b4260ff3
+  * added gcj as new build dependency so the iTALC's internal JavaViewer can
+    be built
+  * added binary package italc-management-console
+  * binary package fixed descriptions
+  * added more docs from upstream
+
+ -- Tobias Doerffel <doerffel@univention.de>  Thu, 24 Nov 2010 10:56:33 +0100
+
+italc (1:1.9.1-1) unstable; urgency=low
+
+  * upstream snapshot up to commit e4665f0fb9a03e8f547fded4da212c3c67c5c6e0
+
+ -- Tobias Doerffel <doerffel@univention.de>  Thu, 11 Nov 2010 17:33:13 +0200
+
+italc (1:1.9.0-8) unstable; urgency=low
+
+  * removed git-specific binary patch
+
+ -- Tobias Doerffel <doerffel@univention.de>  Mon, 25 Oct 2010 17:13:06 +0200
+
+italc (1:1.9.0-7) unstable; urgency=low
+
+  * upstream snapshot up to commit 4f4a18e0665d9b22ba1d800add467060b0b43afc
+
+ -- Tobias Doerffel <doerffel@univention.de>  Mon, 25 Oct 2010 17:06:52 +0200
+
+italc (1:1.9.0-6) unstable; urgency=low
+
+  * upstream snapshot up to commit 34648155eafe3d42b549bf15e5faffd4536f1fe2
+
+ -- Tobias Doerffel <doerffel@univention.de>  Fri, 22 Oct 2010 17:14:17 +0200
+
+italc (1:1.9.0-5) unstable; urgency=low
+
+  * upstream snapshot up to commit 466098b50b863d96186732d740d813506c1641cf
+
+ -- Tobias Doerffel <doerffel@univention.de>  Thu, 21 Oct 2010 17:17:58 +0200
+
+italc (1:1.9.0-4) unstable; urgency=low
+
+  * upstream snapshot up to commit 36948b523492e4fd91294475857efbac774a634d
+
+ -- Tobias Doerffel <doerffel@univention.de>  Wed, 20 Oct 2010 11:21:47 +0200
+
+italc (1:1.9.0-3) unstable; urgency=low
+
+  * upstream snapshot up to commit 0b411cabc68d8a7a244b1b46e6a72e3ce965dcbd
+
+ -- Tobias Doerffel <doerffel@univention.de>  Tue, 19 Oct 2010 14:47:36 +0200
+
+italc (1:1.9.0-2) unstable; urgency=low
+
+  * added build dependencies
+    - libxdamage-dev
+    - libxfixes-dev
+    - libxinerama-dev
+    - libxrandr-dev
+
+ -- Tobias Doerffel <doerffel@univention.de>  Tue, 19 Oct 2010 13:16:53 +0200
+
+italc (1:1.9.0-1) unstable; urgency=low
+
+  * iTALC 2 test version
+
+ -- Tobias Doerffel <doerffel@univention.de>  Tue, 19 Oct 2010 10:30:50 +0200
+
+italc (1:1.0.9-1.8.201001041439) ucs2-3-0-0; urgency=low
+
+  * auto-build
+
+ -- Univention builddaemon <buildd@univention.de>  Mon, 04 Jan 2010 14:39:50 +0100
+
+italc (1:1.0.9-1) unstable; urgency=low
+
+  * New upstream release
+
+ -- Arvid Requate <requate@univention.de>  Tue, 13 Jan 2009 15:35:08 +0100
+
+italc (1:1.0.9~rc3-1) unstable; urgency=low
+
+  * Package new upstream version
+    - upstream ported the code to qt4.4 (Closes: #481974)
+
+ -- Patrick Winnertz <winnie@debian.org>  Tue, 17 Jun 2008 13:46:54 +0200
+
+italc (1:1.0.8-1) unstable; urgency=low
+
+  * Fix FTBFS by switching from openssl to libssl-dev build-dep. 
+    Thanks to Laurent Bigonville <bigon@bigon.be> (Closes: #477022)
+  * Packaging new upstream version.
+  * 
+
+ -- Patrick Winnertz <winnie@debian.org>  Tue, 13 May 2008 10:54:16 +0200
+
+italc (1:1.0.7-2) unstable; urgency=low
+
+  * Fix FTBFS on amd64 (Closes: #472439)
+    + Add patch from upstream
+
+ -- Patrick Winnertz <winnie@debian.org>  Thu, 27 Mar 2008 16:10:54 +0100
+
+italc (1:1.0.7-1) unstable; urgency=low
+
+  * New upstrem release. 
+
+ -- Patrick Winnertz <winnie@debian.org>  Mon, 17 Mar 2008 10:13:42 +0100
+
+italc (1:1.0.6-1) unstable; urgency=low
+
+  * Move Homepage Header from Package Section into global Section.
+  * Add the forgotten libitalc.install in order to install the lib correctly.
+    Patch ica/Makefile.am and ima/Makefile.am in order to show
+    the new place of the lib (Closes: #460889)
+
+ -- Patrick Winnertz <winnie@debian.org>  Tue, 12 Feb 2008 14:47:20 +0100
+
+italc (1:1.0.4-1) unstable; urgency=low
+
+  * New upstream version
+  * Add options for dh_shlibdeps to debian/rules to prevent a ftbfs
+  * Added new package libitalc to control since now both
+    applications needs this lib.
+  * Changed my maintainer address.
+  * Add compiler flags to rules
+  * Modified menu file to fit into the new layout
+  * Add Homepage: tag and remove Homepage from description
+  * use new standard-version (3.7.3)
+
+ -- Patrick Winnertz <winnie@debian.org>  Wed, 05 Dec 2007 16:28:26 +0100
+
+italc (1:1.0.2-2) unstable; urgency=low
+
+  * Upload of the package to unstable
+
+ -- Patrick Winnertz <patrick.winnertz@skolelinux.org>  Wed, 16 May 2007 13:45:10 +0200
+
+italc (1:1.0.2-1) experimental; urgency=low
+
+  * Packaging new upstream release
+  * FTBFS Bug on kfreeBSD send to upstream and this is fixed in 
+    this version now. (Closes: #414096)
+
+ -- Patrick Winnertz <patrick.winnertz@skolelinux.org>  Tue, 10 Apr 2007 15:29:41 +0200
+
+italc (1:1.0.0-1) experimental; urgency=low
+
+  * Packaging new upstream version.
+    Must use epoch since 1.0.0 seems to be lesser than 1.0.0.0~rc2
+  * Added build dependency libxtst-dev
+  * Modified rules:
+    - Removed build of icon, since this is now upstream
+    - Added --with-linux to enable build on kfreeBSD. Thanks to Cyril
+    Brulebois. (Closes: #414096)
+
+ -- Patrick Winnertz <patrick.winnertz@skolelinux.org>  Sat, 24 Mar 2007 15:44:11 +0100
+
+italc (1.0.0.0~rc2-1) experimental; urgency=low
+
+  * Packaging new upstream release
+  * Adopting this package from Steffen Joeris with his acceptance
+  * Increasing the debhelper level to 5
+  * Adding the build-depends: 
+     - libqt4-dev 
+     - zlib1g-dev
+     - libjpeg62-dev 
+     - openssl
+  * italc-master now has a dependency against italc-client, since
+    the client server (ica ) also have to run on the master.
+  * Updated Copyright file, since some files were removed
+  * Removed build depends libxaw7-dev, libqt3-mt-dev, libssl-dev, libxtst-dev
+    since they are obsolete
+  * Removed patches since upstream adopted them
+  * Added README.Debian to make key creation easier for local administrators
+
+ -- Patrick Winnertz <patrick.winnertz@skolelinux.org>  Wed, 27 Dec 2006 20:16:04 +0100
+
+italc (0.9.6.2-3) unstable; urgency=low
+
+  * Change build-depends against libxaw8-dev to libxaw7-dev
+    (Closes: #370197)
+  * Expand 20-configure.patch to adjust to newer X libraries
+    Thanks to Peter Eisentraut
+  * Bump standard version to 3.7.2
+  * Provide the italc-keygen program which is needed for
+    the key generation to enable the connection
+    Thanks to Patrick Winnertz for some further skolelinux packaging
+  * Fix spelling error in descriptions (Closes: #363282, #363979)
+  * Upload sponsored by Morten Werner Olsen.
+
+ -- Steffen Joeris <steffen.joeris@skolelinux.de>  Sun,  4 Jun 2006 13:23:38 +0200
+
+italc (0.9.6.2-2) unstable; urgency=low
+
+  [ Steffen Joeris ]
+  * Include patch to prevent italc to segfault on architectures
+    where the size of a pointer is greater than the size of
+    an integer, such as ia64. (Closes: #340684)
+    Thanks to Dann Frazier.
+
+  [ Florian Ragwitz ]
+  * Removed build-dep on xlibs-dev, which is deprecated now, and depend on the
+    individual libraries we need.
+
+ -- Florian Ragwitz <rafl@debian.org>  Mon,  9 Jan 2006 15:51:40 +0100
+
+italc (0.9.6.2-1) unstable; urgency=low
+
+  * Initial release (Closes: #338678)
+
+ -- Steffen Joeris <steffen.joeris@skolelinux.de>  Sat, 12 Nov 2005 00:20:36 +0100
+

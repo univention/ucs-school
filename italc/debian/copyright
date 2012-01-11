@@ -1,0 +1,211 @@
+This package was originally debianized by Steffen Joeris <steffen.joeris@skolelinux.de> on
+Sat, 12 Nov 2005 00:20:36 +0100.
+
+It was downloaded from http://italc.sourceforge.net/download.php
+
+Copyright Holders: 
+
+Main Developer:	   Tobias Doerffel <tobias@doerffel.de>
+		   
+		   
+Other Developers:
+
+		Rohit Kumar <rokumar@novell.com>
+		Copyright (C) 2005
+		List of files:
+./ica/x11/rfb/rfb.h
+./ica/x11/libvncserver/scale.c
+./ica/x11/libvncserver/auth.c
+./ica/x11/libvncserver/sockets.c
+./ica/x11/libvncserver/rfbserver.c
+./common/include/rfb/rfb.h
+./common/include/rfb/rfbproto.h
+
+		Dan McGuirk <mcguirk@incompleteness.net>
+		Copyright (C) 2001
+		List of files:
+./ica/x11/rfb/rfb.h
+./ica/x11/libvncserver/corre.c
+./ica/x11/libvncserver/tabletrans24template.c
+./ica/x11/libvncserver/rre.c
+./ica/x11/libvncserver/scale.c
+./ica/x11/libvncserver/tableinittctemplate.c
+./ica/x11/libvncserver/tableinitcmtemplate.c
+./ica/x11/libvncserver/stats.c
+./ica/x11/libvncserver/tableinit24.c
+./ica/x11/libvncserver/auth.c
+./ica/x11/libvncserver/tabletranstemplate.c
+./ica/x11/libvncserver/hextile.c
+./ica/x11/libvncserver/translate.c
+./ica/x11/libvncserver/sockets.c
+./ica/x11/libvncserver/rfbserver.c
+./ica/x11/libvncserver/cutpaste.c
+./common/include/rfb/rfb.h
+
+		RealVNC Ltd.
+		Copyright (C) 2002
+		List of files:
+./ica/x11/rfb/rfb.h
+./ica/x11/libvncserver/corre.c
+./ica/x11/libvncserver/scale.c
+./ica/x11/libvncserver/zrlepalettehelper.c
+./ica/x11/libvncserver/zrlepalettehelper.h
+./ica/x11/libvncserver/zrletypes.h
+./ica/x11/libvncserver/stats.c
+./ica/x11/libvncserver/zrleoutstream.c
+./ica/x11/libvncserver/zrleoutstream.h
+./ica/x11/libvncserver/zrleencodetemplate.c
+./ica/x11/libvncserver/zrle.c
+./ica/x11/libvncserver/httpd.c
+./ica/x11/libvncserver/rfbserver.c
+./common/include/rfb/rfb.h
+
+		AT&T Laboratories Cambridge
+		Copyright (C) 1999
+		List of files:
+./ica/x11/rfb/rfb.h
+./ica/x11/libvncserver/corre.c
+./ica/x11/libvncserver/tabletrans24template.c
+./ica/x11/libvncserver/rre.ci
+./ica/x11/libvncserver/scale.c
+./ica/x11/libvncserver/d3des.c
+./ica/x11/libvncserver/d3des.h
+./ica/x11/libvncserver/tableinittctemplate.c
+./ica/x11/libvncserver/tableinitcmtemplate.c
+./ica/x11/libvncserver/cursor.c
+./ica/x11/libvncserver/stats.c
+./ica/x11/libvncserver/tight.c
+./ica/x11/libvncserver/tableinit24.c
+./ica/x11/libvncserver/auth.c
+./ica/x11/libvncserver/tabletranstemplate.c
+./ica/x11/libvncserver/hextile.c
+./ica/x11/libvncserver/zlib.c
+./ica/x11/libvncserver/translate.c
+./ica/x11/libvncserver/httpd.c
+./ica/x11/libvncserver/vncauth.c
+./ica/x11/libvncserver/sockets.c
+./ica/x11/libvncserver/rfbserver.c
+./ica/x11/libvncserver/cutpaste.c
+./common/include/rfb/rfb.h
+./common/include/rfb/rfbproto.h
+./tightvnc4win_italc.diff
+
+		James "Wez" Weatherall
+		Copyright (C) 2001
+		List of files:
+./ica/x11/libvncserver/rfbregion.c
+
+		Johannes E. Schindelin
+		Copyright (C) 2001
+		List of files:
+./ica/x11/libvncserver/rfbregion.c
+./ica/x11/libvncserver/scale.c
+./ica/x11/libvncserver/auth.c
+./ica/x11/libvncserver/sockets.c
+./ica/x11/libvncserver/rfbserver.c
+./common/include/rfb/rfbproto.h
+
+		Sun Microsystems, Inc.
+		Copyright (C) 2003
+		List of files:
+./ica/x11/libvncserver/zrlepalettehelper.c
+./ica/x11/libvncserver/zrlepalettehelper.h
+./ica/x11/libvncserver/zrleoutstream.c
+./ica/x11/libvncserver/zrleoutstream.h
+./ica/x11/libvncserver/zrleencodetemplate.c
+./ica/x11/libvncserver/zrle.c
+
+		Richard Outerbridge
+		Copyright (C) 1988-1992
+		List of files:
+./ica/x11/libvncserver/d3des.c
+./ica/x11/libvncserver/d3des.h
+./common/include/rfb/rfbproto.h
+
+		Constantin Kaplinsky
+		Copyright (C) 2000,2001
+		List of files:
+./ica/x11/libvncserver/cursor.c
+./ica/x11/libvncserver/tight.c
+
+		Tridia Corporation
+		Copyright (C) 2000
+		List of files:
+./ica/x11/libvncserver/zlib.c
+./common/include/rfb/rfbproto.h
+
+ 		Karl J. Runge <runge@karlrunge.com>
+		Copyright (C) 2004-2006
+		List of files:
+./ica/x11/x11vnc/tkx11vnc.h
+./ica/x11/x11vnc/x11vnc.c
+./ica/x11/x11vnc/help.c
+
+		Free Software Foundation, Inc.
+		Copyright (C) 1989, 1991
+		List of files:
+./ica/x11/x11vnc/help.c
+
+		The Open Group
+		Copyright (C) 1987, 1998
+		List of files:
+./ica/x11/x11vnc/nox11.h
+
+		Markus Franz Xaver
+		Copyright (C) 2002
+		List of files:
+./ica/src/lzoconf.h
+./ica/src/minilzo.c
+./ica/src/minilzo.h
+
+		Johannes Oberhumer
+		Copyright (C) 2002
+		List of files:
+./ica/src/lzoconf.h
+./ica/src/minilzo.c
+./ica/src/minilzo.h
+
+		Joseph Wenniger <jowenn@kde.org>
+		Copyright (C) 2001-2003
+		List of files:
+./ima/src/kmultitabbar.h
+./ima/src/kmultitabbar.cpp
+
+		Trolltech ASA
+		Copyright (C) 1992-2006
+		List of files:
+./ima/src/3rdparty/qnetworkinterface.h
+./ima/src/3rdparty/qnetworkinterface_win.cpp
+./ima/src/3rdparty/qnetworkinterface_win_p.h	
+./ima/src/3rdparty/qnetworkinterface.cpp
+./ima/src/3rdparty/qnetworkinterface_p.h
+./ima/src/3rdparty/qnetworkinterface_unix.cpp
+
+		Tatu Ylonen <ylo@cs.hut.fi>
+		Copyright (C) 1995
+		List of files:
+./common/src/dsa_key.cpp
+
+		Harakan Software
+		Copyright (C) 2001
+		List of files:
+./common/include/rfb/rfbproto.h
+
+		X Consortium
+		Copyright (C) 1987
+		List of files:
+./common/include/rfb/keysym.h
+
+License:
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License, version 2
+as published by the Free Software Foundation.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANDABILITY of FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU General Public License for details.
+
+On Debian GNU/Linux systems, the complete text of the GNU General
+Public License can be found in /usr/share/common-licenses/GPL.
