@@ -16,7 +16,7 @@ qt_sip_flags = config.pyqt_sip_flags
 
 # Run SIP to generate the code.  Note that we tell SIP where to find the qt
 # module's specification files using the -I flag.
-os.system(" ".join([config.sip_bin, "-c", ".", "-b", build_file, "-I", config.pyqt_sip_dir, qt_sip_flags, "../italc.sip"]))
+os.system(" ".join([config.sip_bin, "-c", ".", "-b", build_file, "-I", config.pyqt_sip_dir, qt_sip_flags, "italc.sip"]))
 
 # We are going to install the SIP specification file for this module and
 # its configuration module.

@@ -3,7 +3,7 @@
 #
 # Univention UCS@school
 #
-# Copyright 2004-2010 Univention GmbH
+# Copyright 2004-2012 Univention GmbH
 #
 # http://www.univention.de/
 #
@@ -30,128 +30,8 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-# Uncomment this to turn on verbose mode.
-#export DH_VERBOSE=1
+override_dh_auto_test:
+	ucslint
 
-include /usr/share/dpatch/dpatch.make
-# This has to be exported to make some magic below work.
-export DH_OPTIONS
-export QTDIR=/usr/share/qt4
-export QMAKESPEC=$(QTDIR)/mkspecs/linux-g++
-
-CXXFLAGS = -Wall -g
-
-ifneq (,$(findstring noopt,$(DEB_BUILD_OPTIONS)))
-	CXXFLAGS += -O0
-else
-	CXXFLAGS += -O2
-endif
-
-PYTHONS := $(shell pyversions -vr debian/control)
-DBG_PYTHONS := $(shell pyversions -vd)
-
-.PRECIOUS: build-%/configure-stamp # dbg-build-%/configure-stamp
-
-configure: $(PYTHONS:%=build-%/configure-stamp) # $(DBG_PYTHONS:%=dbg-build-%/configure-stamp)
-
-build-%/configure-stamp: patch-stamp
-	dh_testdir
-	mkdir -p build-$*
-	cd build-$* && python$* ../config.py
-	touch $@
-
-dbg-build-%/configure-stamp: patch-stamp
-	dh_testdir
-	mkdir -p dbg-build-$*
-	cd dbg-build-$* && python$*-dbg ../config.py
-	touch $@
-
-build: $(PYTHONS:%=build-%/build-stamp) # $(DBG_PYTHONS:%=dbg-build-%/build-stamp)
-
-build-%/build-stamp: build-%/configure-stamp
-	dh_testdir
-	$(MAKE) -C build-$*
-	touch $@
-
-dbg-build-%/build-stamp: dbg-build-%/configure-stamp
-	dh_testdir
-	$(MAKE) -C dbg-build-$*
-	touch $@
-
-clean: unpatch
-	dh_testdir
-	dh_testroot
-	rm -f *-stamp
-	rm -rf $(PYTHONS:%=build-%) $(DBG_PYTHONS:%=dbg-build-%)
-	rm -rf debian/python-italc debian/python-italc-dbg
-	dh_clean
-
-install: install-indep install-arch
-
-install-indep:
-	dh_testdir
-	dh_testroot
-	dh_clean -k -i 
-	dh_installdirs -i
-
-install-arch:
-	dh_testdir
-	dh_testroot
-	dh_clean -k -a 
-	dh_installdirs -a
-	set -e; \
-	for version in ${PYTHONS};\
-	do\
-		$(MAKE) -C build-$$version install DESTDIR=$(CURDIR)/debian/tmp;\
-	done
-
-	# set -e; \
-        # for version in ${DBG_PYTHONS}; do \
-	# 	$(MAKE) -C dbg-build-$$version install DESTDIR=$(CURDIR)/debian/python-italc-dbg;\
-        # done
-
-	dh_install -a --sourcedir=$(CURDIR)/debian/tmp
-
-	mkdir -p $(CURDIR)/debian/python-italc/usr/lib/
-
-	# for i in $$(find debian/python-*-dbg -name '*.so'); do \
-	#   b=$$(basename $$i .so); \
-	#   mv $$i $$(dirname $$i)/$${b}_d.so; \
-	# done
-	# find debian/python-*-dbg ! -type d \
-	#	! \( -name '*.so' -o -name '*config_d.py' \) | xargs rm -f
-
-	#find debian/python-*-dbg -depth -type d -empty -exec rmdir {} \;
-
-
-# Must not depend on anything. This is to be called by
-# binary-arch/binary-indep
-# in another 'make' thread.
-binary-common:
-	dh_testdir
-	dh_testroot
-	dh_installchangelogs
-	dh_installdocs
-	dh_installexamples
-	dh_link
-ifeq (,$(findstring -i, $(DH_OPTIONS)))
-	DH_OPTIONS= dh_strip -ppython-italc #--dbg-package=python-italc-dbg
-endif
-	dh_fixperms
-	DH_PYCENTRAL=nomove dh_pycentral
-	dh_installdeb
-	dh_shlibdeps 
-	dh_gencontrol
-	dh_md5sums
-	dh_builddeb -- -Z bzip2
-
-# Build architecture independant packages using the common target.
-binary-indep: install-indep
-	$(MAKE) -f debian/rules DH_OPTIONS=-i binary-common
-
-# Build architecture dependant packages using the common target.
-binary-arch: build install-arch
-	$(MAKE) -f debian/rules DH_OPTIONS=-a binary-common
-
-binary: binary-arch
-.PHONY: build clean binary-indep binary-arch binary install install-indep install-arch configure
+%:
+	dh $@

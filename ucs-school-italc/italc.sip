@@ -17,7 +17,8 @@ public:
 		CommonSecret = 0x04
 	} ;
 
-	void setLogonCredentials( const QString &username, const QString &password );
+	void setLogonUsername( const QString &username );
+    void setLogonPassword( const QString &password );
 
 } ;
 
@@ -148,7 +149,8 @@ public:
 		ThumbnailQuality,
 		SnapshotQuality,
 		RemoteControlQuality,
-		DemoQuality,
+		DemoServerQuality,
+		DemoClientQuality,
 		NumQualityLevels
 	} ;
 

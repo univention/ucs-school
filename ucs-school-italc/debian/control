@@ -2,14 +2,12 @@ Source: ucs-school-italc
 Section: univention
 Priority: optional
 Maintainer: Univention GmbH <packages@univention.de>
-Build-Depends: cdbs, debhelper (>= 5.0), dpatch, libqt4-dev, sip4, python2.4, python-qt4-dev, libitalc-dev (>= 1:1.9.4), python-sip4-dev, python-sip4, python2.4-dev
-XS-Python-Version: 2.4
+Build-Depends: debhelper (>> 7.0), libqt4-dev, sip4, python2.6, python-qt4,  python-qt4-dev, libitalc-dev (>> 1:2.0.0), python-sip4-dev, python-sip4, python2.6-dev, python-support, ucslint
 Standards-Version: 3.7.3
 
 Package: python-italc
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, ${python:Depends}, python-sip4, python-qt4, libitalc (>= 1:1.9.4), python2.4
-XB-Python-Version: ${python:Versions}
+Depends: ${shlibs:Depends}, ${misc:Depends}, ${python:Depends}, python-sip4, python-qt4, libitalc (>> 1:2.0.0), python2.6
 Description: Intelligent Teaching and Learning with Computers
  iTALC makes it possible, to access and influence the pupils
  activities just from the computer of the teacher. With the

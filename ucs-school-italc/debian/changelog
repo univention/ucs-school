@@ -1,3 +1,10 @@
+ucs-school-italc (6.0.0-0) unstable; urgency=low
+
+  * bumped package version for UCS@school 3.0
+  * bumped minimum supported TALC 2 API to v2.0.0
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Wed, 11 Jan 2012 15:02:36 +0100
+
 ucs-school-italc (5.1.11-1) unstable; urgency=low
 
   * added Logger::setLogToStdErr(bool)
