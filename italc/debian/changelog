@@ -2,7 +2,7 @@ italc (1:2.0.0-2) unstable; urgency=low
 
   * install additional header files (Bug #25689)
 
- --
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Wed, 11 Jan 2012 15:42:18 +0100
 
 italc (1:2.0.0-1) unstable; urgency=low
 
