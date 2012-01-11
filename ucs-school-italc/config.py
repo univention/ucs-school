@@ -40,15 +40,11 @@ makefile = pyqtconfig.QtGuiModuleMakefile(
 # Add the library we are wrapping.  The name doesn't include any platform
 # specific prefixes or extensions (e.g. the "lib" prefix on UNIX, or the
 # ".dll" extension on Windows).
-makefile.extra_libs = ["italc_core"]
+makefile.extra_libs = ["ItalcCore"]
 # makefile.extra_lib_dirs.append("/usr/lib/italc")
 
 extra_include_dirs = ["/usr/include", "/usr/include/libitalc", "/usr/include/libitalc/rfb"]
 makefile.extra_include_dirs.extend(extra_include_dirs)
-# A syntax error occures when this flag is not set - libitalc is built
-# with libjpeg anyway so it doesn't hurt to include it
-extra_cxxflags = ['-DHAVE_LIBJPEG']
-makefile.extra_cxxflags.extend(extra_cxxflags)
 
 # Generate the Makefile itself.
 makefile.generate()

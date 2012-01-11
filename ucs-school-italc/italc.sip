@@ -3,13 +3,63 @@
 %Import QtCore/QtCoremod.sip
 %Import QtGui/QtGuimod.sip
 
-struct ISD {
+class AuthenticationCredentials {
+
 %TypeHeaderCode
-#include <libitalc/isd_base.h>
+#include <libitalc/AuthenticationCredentials.h>
 %End
 
 public:
-	enum userRoles
+	enum TypeFlags
+	{
+		PrivateKey = 0x01,
+		UserLogon = 0x02,
+		CommonSecret = 0x04
+	} ;
+
+	void setLogonCredentials( const QString &username, const QString &password );
+
+} ;
+
+
+class ItalcConfiguration
+{
+
+%TypeHeaderCode
+#include <libitalc/ItalcConfiguration.h>
+%End
+
+public:
+	ItalcConfiguration();
+
+	void setLogLevel( int );
+	void setLogToStdErr( bool );
+	void setLimittedLogFileSize( bool );
+	void setLogFileSizeLimit( int );
+	void setLogFileDirectory( const QString & );
+	void setKeyAuthenticationEnabled( bool );
+	void setLogonAuthenticationEnabled( bool );
+	void setPrivateKeyBaseDir( const QString & );
+	void setPublicKeyBaseDir( const QString & );
+	void setLogonGroups( const QStringList & );
+
+} ;
+
+
+namespace ItalcCore {
+
+%TypeHeaderCode
+#include <libitalc/ItalcCore.h>
+%End
+
+	bool init();
+	bool initAuthentication( int credentialTypes );
+	void destroy();
+
+	ItalcConfiguration *config;
+	AuthenticationCredentials *authenticationCredentials;
+
+	enum UserRoles
 	{
 		RoleNone,
 		RoleTeacher,
@@ -18,117 +68,152 @@ public:
 		RoleOther,
 		RoleCount
 	} ;
+	typedef ItalcCore::UserRoles UserRole;
 
-};
+	void setRole( ItalcCore::UserRole role );
+%MethodCode
+		ItalcCore::role = a0;
+%End
 
-//void __setRole( ISD::userRoles );
+} ;
 
-class isdConnection {
+
+class ItalcCoreConnection {
 
 %TypeHeaderCode
-#include <libitalc/isd_connection.h>
+#include <libitalc/ItalcCoreConnection.h>
 %End
 
 public:
-	enum states
+	ItalcCoreConnection( ItalcVncConnection *vncConn );
+	~ItalcCoreConnection();
+
+	ItalcVncConnection *vncConnection();
+	bool isConnected() const;
+
+	const QString &user() const;
+	const QString &userHomeDir();
+
+	int slaveStateFlags() const;
+
+	bool isDemoServerRunning() const;
+	bool isDemoClientRunning() const;
+	bool isScreenLockRunning() const;
+	bool isInputLockRunning() const;
+	bool isSystemTrayIconRunning() const;
+	bool isMessageBoxRunning() const;
+
+	void sendGetUserInformationRequest();
+	void execCmds( const QString &cmds);
+	void startDemo( const QString &host, int port, bool fullscreen = false );
+	void stopDemo();
+	void lockScreen();
+	void unlockScreen();
+	void lockInput();
+	void unlockInput();
+	void logonUser( const QString &uname, const QString &pw, const QString &domain );
+	void logoutUser();
+	void displayTextMessage( const QString &msg );
+
+	void powerOnComputer( const QString &mac );
+	void powerDownComputer();
+	void restartComputer();
+	void disableLocalInputs( bool disabled );
+
+	void setRole( const ItalcCore::UserRole role );
+
+	void startDemoServer( int sourcePort, int destinationPort );
+	void stopDemoServer();
+	void demoServerAllowHost( const QString &host );
+	void demoServerUnallowHost( const QString &host );
+
+	void reportSlaveStateFlags();
+
+
+private:
+	ItalcCoreConnection( const ItalcCoreConnection& );
+
+};
+
+
+class ItalcVncConnection {
+
+%TypeHeaderCode
+#include <libitalc/ItalcVncConnection.h>
+%End
+
+public:
+	enum QualityLevels
+	{
+		ThumbnailQuality,
+		SnapshotQuality,
+		RemoteControlQuality,
+		DemoQuality,
+		NumQualityLevels
+	} ;
+
+	enum States
 	{
 		Disconnected,
-		Connecting,
-		Connected,
 		HostUnreachable,
-		ConnectionRefused,
+		AuthenticationFailed,
 		ConnectionFailed,
-		InvalidServer,
-		AuthFailed,
-		UnknownError
-	};
-	isdConnection( const QString & _host, QObject * _parent = 0 );
-	virtual ~isdConnection();
-	virtual states open( );
-	virtual void close( );
-	void gracefulClose( );
-	states reset( const QString & _host = "", int * _cnt = NULL );
-	states state( ) const;
-	bool hasData( ) const;
-	bool handleServerMessages( );
-	//bool handleServerMessages( bool _send_screen_update );
+		Connected
+	} ;
 
-	const QString & user( );
-	const QString & userHomeDir( );
-	QString host( ) const;
-	int port( ) const;
-	int demoServerPort( ) const;
+	ItalcVncConnection( QObject *parent = NULL );
+	virtual ~ItalcVncConnection();
 
-	bool sendGetUserInformationRequest( );
-	bool execCmds( const QString & _cmd );
-	bool startDemo( const QString & _port, bool _full_screen = FALSE );
-	bool stopDemo( );
-	bool lockDisplay( );
-	bool unlockDisplay( );
-	bool logonUser( const QString & _uname, const QString & _pw,
-						const QString & _domain );
-	bool logoutUser( );
-	bool displayTextMessage( const QString & _msg );
-	bool sendFile( const QString & _fname );
-	bool collectFiles( const QString & _nfilter );
+	const QImage image( int x = 0, int y = 0, int w = 0, int h = 0 );
+	QImage scaledScreen();
 
-	bool wakeOtherComputer( const QString & _mac );
-	bool powerDownComputer( );
-	bool restartComputer( );
-	bool disableLocalInputs( bool _disabled );
+	void start();
+	void stop();
 
-	bool setRole( const ISD::userRoles _role );
-	bool demoServerRun( int _quality, int _port );
-	bool demoServerAllowClient( const QString & _client );
-	bool demoServerDenyClient( const QString & _client );
+	void reset( const QString &host );
+	void setHost( const QString &host );
+	void setPort( int port );
 
-	bool hideTrayIcon( );
-	//static bool initAuthentication( );
-	static bool initAuthentication( const ISD::userRoles &role=ISD::RoleOther );
-%MethodCode
-	__role=a0;
-	bool res=isdConnection::initAuthentication();
-    sipRes=Py_BuildValue("b",res);
-%End
+	States state() const;
+	bool isConnected() const;
+	bool isRunning() const;
+
+	void setQuality( QualityLevels q );
+	QualityLevels quality() const;
+
+	QSize framebufferSize() const;
+	void setScaledSize( const QSize &s );
+	void rescaleScreen();
+
+	void setFramebufferUpdateInterval( int interval );
+
 private:
-	isdConnection(const isdConnection&);
+	ItalcVncConnection( const ItalcVncConnection& );
+
 };
 
-class ivsConnection : isdConnection {
+
+
+class Logger {
 
 %TypeHeaderCode
-#include <libitalc/ivs_connection.h>
+#include <libitalc/Logger.h>
 %End
 
 public:
-	enum quality
+	enum LogLevels
 	{
-		QualityLow,
-		QualityMedium,
-		QualityHigh,
-		QualityDemoLow,
-		QualityDemoMedium,
-		QualityDemoHigh
-	};
+		LogLevelNothing,
+		LogLevelCritical,
+		LogLevelError,
+		LogLevelWarning,
+		LogLevelInfo,
+		LogLevelDebug,
+		NumLogLevels
+	} ;
 
-	ivsConnection( const QString & _host, quality _q = QualityLow,
-						bool _use_auth_file = FALSE,
-						QObject * _parent = NULL );
+	Logger( const QString &appName );
+	~Logger();
 
-	virtual ~ivsConnection();
-	virtual void close(  );
-	QImage scaledScreen(  );
-	const QImage & screen(  ) const;
-	QSize framebufferSize(  ) const;
-	void setScaledSize( const QSize & _s );
-	void rescaleScreen(  );
-	bool handleServerMessages( bool _send_screen_update, int _tries = 5 );
-	bool softwareCursor(  ) const;
-	const QPoint & cursorPos(  ) const;
-	const QPoint & cursorHotSpot(  ) const;
-	QImage cursorShape(  ) const;
-	bool takeSnapshot(  );
+} ;
 
-private:
-	ivsConnection(const ivsConnection&);
-};
