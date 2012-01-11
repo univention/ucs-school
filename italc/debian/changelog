@@ -1,6 +1,12 @@
+italc (1:2.0.0-2) unstable; urgency=low
+
+  * install additional header files (Bug #25689)
+
+ --
+
 italc (1:2.0.0-1) unstable; urgency=low
 
-  * integrated upstream tgz of italc-2.0.0
+  * integrated upstream tgz of italc-2.0.0 (Bug #25689)
 
  -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Wed, 11 Jan 2012 12:28:17 +0100
 

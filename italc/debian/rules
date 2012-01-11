@@ -9,3 +9,5 @@ override_dh_clean:
 
 override_dh_install:                                                                                                                                                                                            
         dh_install --sourcedir=debian/tmp                                                                                                                                                                       
+        install -D -m 644 obj-*/rfb/rfbconfig.h debian/libitalc-dev/usr/include/libitalc/rfb/
+        install -D -m 644 obj-*/italcconfig.h debian/libitalc-dev/usr/include/libitalc/
