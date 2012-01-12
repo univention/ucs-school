@@ -58,6 +58,12 @@ Description[en]=Port of a parent proxy for squid
 Type=str
 Categories=service-webproxy
 
+[squid/parent/options]
+Description[de]=Optionen für Verbindung mir dem übergeordneten Proxys (Default: default)
+Description[en]=Options for the parent proxy connection (default: default)
+Type=str
+Categories=service-webproxy
+
 [squid/parent/directnetworks]
 Description[de]=Netzwerke, auf die squid nicht über einen übergeordneten Proxy zugreift
 Description[en]=Networks, which squid accesses without using a parent proxy

@@ -17,6 +17,7 @@ Variables: squid/allowfrom
 Variables: squid/allow/localnet
 Variables: squid/parent/host
 Variables: squid/parent/port
+Variables: squid/parent/options
 Variables: squid/parent/directnetworks
 Variables: squid/debug/level
 Variables: squid/httpport
