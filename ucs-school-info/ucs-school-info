@@ -1,9 +1,9 @@
-#!/usr/bin/python2.4
+#!/usr/bin/python2.6
 # -*- coding: utf-8 -*-
 #
 # Univention UCS@school
 #
-# Copyright 2010 Univention GmbH
+# Copyright 2010-2012 Univention GmbH
 #
 # http://www.univention.de/
 #
@@ -37,7 +37,7 @@ import univention.admin.modules
 import sys
 from univention.config_registry import ConfigRegistry
 from optparse import OptionParser
-import univention.ipaddr as ipaddr
+import ipaddr
 
 baseDN = None
 co = None
@@ -151,10 +151,8 @@ def network(base=baseDN):
 		print '\t%s' % n['name']
 		print '\tNetwork:\t%s' % n["network"]
 
-		netmask = ''
-		net_ip = None
-		net_ip = ipaddr.IP('%s/%s' % (n['network'], n['netmask']))
-		netmask = net_ip.netmask_ext
+		net_ip = ipaddr.IPv4Network('%s/%s' % (n['network'], n['netmask']))
+		netmask = str(net_ip.netmask)
 		print '\tNetmask:\t%s' % netmask
 
 		if n['dhcpEntryZone']:
@@ -165,7 +163,7 @@ def network(base=baseDN):
 
 			for subnet in  get_objects('dhcp/subnet', base=_base, superordinate=n['dhcpEntryZone']):
 				subnet.open()
-				brd_ip = ipaddr.IP('%s/%s' % (subnet['broadcastaddress'], n['netmask']))
+				brd_ip = ipaddr.IPv4Address(subnet['broadcastaddress'])
 				if brd_ip not in net_ip:
 					continue
 
