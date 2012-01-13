@@ -716,9 +716,8 @@ def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None, ShareFileServer=None
 			interfaces = []
 			for interface_name in set([ key.split('/')[1] for key in configRegistry.keys() if key.startswith('interfaces/eth')]):
 				try:
-					netmask = ipaddr.IP(configRegistry['interfaces/%s/netmask' % interface_name])
-					address = ipaddr.IP(configRegistry['interfaces/%s/address' % interface_name])
-					address.prefixlen = netmask._prefix_from_ip_int(netmask.ip)
+					address = ipaddr.IPv4Network('%s/%s' % (configRegistry['interfaces/%s/address' % interface_name],
+					                                        configRegistry['interfaces/%s/netmask' % interface_name], ))
 					interfaces.append(address)
 				except ValueError, error:
 					print "Skipping invalid interface %s:\n%s" % (interface_name, error, )
@@ -726,8 +725,8 @@ def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None, ShareFileServer=None
 			for objectDN in objects:
 				object = univention.admin.objects.get(dhcp_subnet_module, co, lo, position='', dn=objectDN, arg='')
 				object.open()
-				subnet = ipaddr.IP('%s/%s' % (object['subnet'], object['subnetmask'], ))
-				if [True for interface in interfaces if subnet.compare_networks(interface) == 0]: # subnet matches any local subnet
+				subnet = ipaddr.IPv4Network('%s/%s' % (object['subnet'], object['subnetmask'], ))
+				if subnet in interfaces: # subnet matches any local subnet
 					position.setDn("cn=%s,cn=dhcp,%s"%(schoolNr.lower (), getDN (schoolNr)))
 					if lo.searchDn( filter='(&(objectClass=univentionDhcpSubnet)(cn=%s))' % object['subnet'], base=position.getDn()):
 						print "do not need to copy dhcp subnet %s: %s (target already exists)" % (subnet, object.dn, )
@@ -1605,7 +1604,7 @@ def import_user():
 
 def create_network(schoolNr, network, iprange=None, defaultrouter=None, nameserver=None, netbiosserver=None):
 	"""
-	@param	network	The network address MUST contain the netmask!! it could also be a ipaddr.IPv4 object
+	@param	network	The network address MUST contain the netmask!! it could also be a ipaddr.IPv4Network object
 	@param	defaultrouter	IP-Adress, if no netmask is profided it's derived from network
 	@param	nameserver	IP-Adress, if no netmask is profided it's derived from network
 	@param	netbiosserver	IP-Adress, if no netmask is profided it's derived from network
@@ -1616,12 +1615,12 @@ def create_network(schoolNr, network, iprange=None, defaultrouter=None, nameserv
 
 
 	if check_network(schoolNr, network):
-		print "Network %s/%d exists in school %s!"%(network.network_ext, network.prefixlen, schoolNr)
+		print "Network %s/%d exists in school %s!" % (network.network, network.prefixlen, schoolNr)
 		return ( False, dn )
 
-	print "generate network %s/%d" % (network.network_ext, network.prefixlen)
+	print "generate network %s/%d" % (network.network, network.prefixlen)
 	if iprange:
-		print "iprange: %s-%s" % (iprange[0].ip_ext, iprange[1].ip_ext)
+		print "iprange: %s-%s" % (iprange[0], iprange[1])
 	if defaultrouter:
 		print "defaultrouter: %s" % defaultrouter
 	if nameserver:
@@ -1631,13 +1630,13 @@ def create_network(schoolNr, network, iprange=None, defaultrouter=None, nameserv
 
 	# WORKAROUND for Bug #14795
 	subnetbytes = 0
-	tmp = network.netmask_ext.split ('.')
+	tmp = str(network.netmask).split ('.')
 	for i in tmp:
 		if i == '255':
 			subnetbytes += 1
 		else:
 			break
-	subnet = '.'.join (network.network_ext.split ('.')[:subnetbytes])
+	subnet = '.'.join (str(network.network).split ('.')[:subnetbytes])
 	# END WORKAROUND
 
 	position.setDn("cn=dns,%s"%(baseDN))
@@ -1659,9 +1658,9 @@ def create_network(schoolNr, network, iprange=None, defaultrouter=None, nameserv
 	object=dhcp_subnet_module.object(co, lo, position=position, superordinate=dhcp_subnet_module)
 	count_lo()
 	object.open()
-	object['subnet']=network.network_ext
-	object['subnetmask']=network.netmask_ext
-	object['broadcastaddress']=network.broadcast_ext
+	object['subnet'] = str(network.network)
+	object['subnetmask'] = str(network.netmask)
+	object['broadcastaddress'] = str(network.broadcast)
 	try:
 		create_object( object )
 	except:
@@ -1671,11 +1670,11 @@ def create_network(schoolNr, network, iprange=None, defaultrouter=None, nameserv
 	object=network_module.object(co, lo, position=position, superordinate=superordinate)
 	count_lo()
 	object.open()
-	object['name']='%s-%s'%(schoolNr.lower (), network.network_ext)
+	object['name']='%s-%s'%(schoolNr.lower (), network.network)
 	object['netmask']=str (network.prefixlen)
-	object['network']=network.network_ext
+	object['network']=str(network.network)
 	if iprange:
-		object['ipRange']=[[iprange[0].ip_ext, iprange[1].ip_ext]]
+		object['ipRange']=[[str(iprange[0]), str(iprange[1])]]
 	object['dhcpEntryZone']='cn=%s,cn=dhcp,%s'%(schoolNr.lower (), getDN (schoolNr))
 	object['dnsEntryZoneForward']='zoneName=%s,cn=dns,%s'%(domainname, baseDN)
 	object['dnsEntryZoneReverse']='zoneName=%s.in-addr.arpa,cn=dns,%s'%('.'.join (reversed (subnet.split ('.'))),baseDN)
@@ -1703,15 +1702,15 @@ def create_network(schoolNr, network, iprange=None, defaultrouter=None, nameserv
 
 def check_network(schoolNr, network):
 	"""
-	@param	network	ipaddr.IPv4 object
+	@param	network	ipaddr.IPv4Network object
 	"""
 	objects = univention.admin.modules.lookup(network_module, co, lo, scope='sub', superordinate=superordinate,
 											  base='cn=networks,%s'%(getDN (schoolNr)),
-											  filter=univention.admin.filter.expression('cn','%s-%s'%(schoolNr.lower (), network.network_ext)))
+											  filter=univention.admin.filter.expression('cn','%s-%s'%(schoolNr.lower (), network.network)))
 	count_lo()
 	network_exists=0
 	if objects:
-		n = "cn=%s-%s,cn=networks,%s"%(schoolNr.lower (), network.network_ext, getDN (schoolNr))
+		n = "cn=%s-%s,cn=networks,%s"%(schoolNr.lower (), network.network, getDN (schoolNr))
 		for object in objects:
 			if object.dn == n:
 				network_exists = 1
@@ -1811,11 +1810,13 @@ def import_networks(router_only=False):
 		dn = None
 		success = True
 
-		# convert parameters to ipaddr.IPv4
-		network = ipaddr.IPv4 (network)
-		if '/' not in parsed[1]:
-			network.prefixlen = default_prefixlen
-			print 'WARNING: no netmask specified for network %s using %s' % (network.network_ext, network.netmask_ext)
+		# convert parameters to ipaddr.IPv4Network
+		if '/' not in network:
+			network = '%s/%s' % (network, default_prefixlen, )
+			network = ipaddr.IPv4Network(network)
+			print 'WARNING: no netmask specified for network %s using %s' % (network.network, network.netmask)
+		else:
+			network = ipaddr.IPv4Network(network)
 
 		if iprange:
 			tmp = iprange.split ('-')
@@ -1823,23 +1824,23 @@ def import_networks(router_only=False):
 				print 'ERROR: IP host range not valid: %s' % iprange
 				line=inf.readline()
 				continue
-			iprange = (ipaddr.IPv4 (tmp[0]), ipaddr.IPv4 (tmp[1]))
-			if iprange[0].ip < network.network + 1 \
-					or iprange[0].ip > iprange[1].ip \
-					or iprange[1].ip >= network.broadcast:
-				print 'ERROR: IP host range not valid: %s-%s' % (iprange[0].ip_ext, iprange[1].ip_ext)
+			iprange = (ipaddr.IPv4Address(tmp[0]), ipaddr.IPv4Address(tmp[1]))
+			if iprange[0] < network.network + 1 \
+					or iprange[0] > iprange[1] \
+					or iprange[1] >= network.broadcast:
+				print 'ERROR: IP host range not valid: %s-%s' % (iprange[0], iprange[1])
 				line=inf.readline()
 				continue
 		elif network.prefixlen == 24:
-			iprange = (ipaddr.IPv4 (network.ip + 20),
-					ipaddr.IPv4 (network.ip + 250))
+			iprange = (network.network + 20,
+			           network.network + 250)
 
 		if defaultrouter:
-			defaultrouter = ipaddr.IPv4 (defaultrouter)
+			defaultrouter = ipaddr.IPv4Address(defaultrouter)
 		if nameserver:
-			nameserver = ipaddr.IPv4 (nameserver)
+			nameserver = ipaddr.IPv4Address(nameserver)
 		if netbiosserver:
-			netbiosserver = ipaddr.IPv4 (netbiosserver)
+			netbiosserver = ipaddr.IPv4Address(netbiosserver)
 
 		if router_only:
 			if defaultrouter:
@@ -1925,10 +1926,10 @@ def set_policy_for_dhcp_subnet (network, schoolNr, policy_module, policy_dn, cn,
 	# check if routing policy needs to be created
 	so = "cn=%s,cn=dhcp,%s" % (schoolNr.lower (), getDN (schoolNr))
 	objects = univention.admin.modules.lookup(dhcp_subnet_module, co, lo, scope='sub', superordinate=so,
-			base=baseDN, filter=univention.admin.filter.expression('cn', network.network_ext))
+			base=baseDN, filter=univention.admin.filter.expression('cn', str(network.network)))
 	count_lo()
 	dhcp_subnet_object=None
-	subnet = "cn=%s,cn=%s,cn=dhcp,%s" % (network.network_ext, schoolNr.lower (), getDN (schoolNr))
+	subnet = "cn=%s,cn=%s,cn=dhcp,%s" % (str(network.network), schoolNr.lower (), getDN (schoolNr))
 	if objects:
 		for o in objects:
 			if o.dn == subnet:
@@ -1999,9 +2000,9 @@ def set_netbiosserver_for_subnet (network, ip, schoolNr, overwrite_policy=False)
 	The Netbios node type is set to 8 H-node: Hybrid - WINS, then broadcast
 	"""
 	values = {
-			'name':'%s-%s' % (schoolNr.lower (), network.network_ext),
+			'name':'%s-%s' % (schoolNr.lower (), network.network),
 			'netbios_node_type':'8',
-			'netbios_name_servers':ip.ip_ext}
+			'netbios_name_servers':str(ip)}
 	dn = "cn=%s,cn=netbios,cn=dhcp,cn=policies,%s" % (values['name'], getDN (schoolNr))
 	return set_policy_for_dhcp_subnet (network, schoolNr, policy_dhcp_netbios_module, dn, values['name'], values=values, overwrite_policy=overwrite_policy)
 
@@ -2011,9 +2012,9 @@ def set_nameserver_for_subnet (network, ip, schoolNr, overwrite_policy=False):
 	@param	schoolNr	school number
 	"""
 	values = {
-			'name':'%s-%s' % (schoolNr.lower (), network.network_ext),
+			'name':'%s-%s' % (schoolNr.lower (), network.network),
 			'domain_name':domainname,
-			'domain_name_servers':ip.ip_ext}
+			'domain_name_servers':str(ip)}
 	dn = "cn=%s,cn=dns,cn=dhcp,cn=policies,%s" % (values['name'], getDN (schoolNr))
 	return set_policy_for_dhcp_subnet (network, schoolNr, policy_dhcp_dns_module, dn, values['name'], values=values, overwrite_policy=overwrite_policy)
 
@@ -2023,8 +2024,8 @@ def set_router_for_subnet (network, ip, schoolNr, overwrite_policy=False):
 	@param	schoolNr	school number
 	"""
 	values = {
-			'name':'%s-%s' % (schoolNr.lower (), network.network_ext),
-			'routers':ip.ip_ext}
+			'name':'%s-%s' % (schoolNr.lower (), network.network),
+			'routers':str(ip)}
 	dn = "cn=%s,cn=routing,cn=dhcp,cn=policies,%s" % (values['name'], getDN (schoolNr))
 	return set_policy_for_dhcp_subnet (network, schoolNr, policy_dhcp_routing_module, dn, values['name'], values=values, overwrite_policy=overwrite_policy)
 
@@ -2058,7 +2059,7 @@ def import_computer():
 
 		verify_school_ou(schoolNr, co, lo, baseDN)
 
-		ip = ipaddr.IPv4 (IP)
+		ip = ipaddr.IPv4Network(IP)
 
 		# invoke pre hooks
 		hooks.pre( 'computer', 'A', line = line )
@@ -2066,8 +2067,8 @@ def import_computer():
 		success = True
 		dn = None
 		if '/' not in IP:
-			ip.prefixlen = default_prefixlen
-			print 'WARNING: no netmask specified for ip address %s using %s' % (ip.ip_ext, ip.netmask_ext)
+			ip = ipaddr.IPv4Network('%s/%s' % (IP, default_prefixlen, ))
+			print 'WARNING: no netmask specified for ip address %s using %s' % (ip.ip, ip.netmask)
 
 		module = univention.admin.modules.get("computers/%s"%ctype)
 		if not module:
@@ -2085,7 +2086,7 @@ def import_computer():
 				mac_used=check_macAddress(MAC)
 				if mac_used:
 					old_mac=MAC
-					MAC=generate_new_mac(schoolNr, ip.ip_ext)
+					MAC=generate_new_mac(schoolNr, str(ip.network))
 					print 'mac %s already used, set mac to %s (resolve manually)'%(old_mac,MAC)
 
 				print "generate computer %s (school %s)"%(name,schoolNr)
@@ -2100,9 +2101,9 @@ def import_computer():
 				object['mac']  = MAC
 				object['inventoryNumber']=inventoryNumbers
 				if not ip.ip == ip.network:
-					object['ip'] = ip.ip_ext
-					print "set ip to %s is not net %s" % (ip.ip_ext, ip.network_ext)
-				object['network'] = 'cn=%s-%s,cn=networks,%s' % (schoolNr.lower (), ip.network_ext, getDN (schoolNr))
+					object['ip'] = str(ip.ip)
+					print "set ip to %s is not net %s" % (ip.ip, ip.network)
+				object['network'] = 'cn=%s-%s,cn=networks,%s' % (schoolNr.lower (), ip.network, getDN (schoolNr))
 				try:
 					create_object(object)
 				except:

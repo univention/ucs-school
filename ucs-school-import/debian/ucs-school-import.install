@@ -1,4 +1,3 @@
-ipaddr.py                                                   usr/share/ucs-school-import/scripts
 ucs-school-create-dummy-users                               usr/share/ucs-school-import/scripts
 ucs-school-import                                           usr/share/ucs-school-import/scripts
 ucs-school-change-share-server                              usr/share/ucs-school-import/scripts
