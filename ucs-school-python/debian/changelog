@@ -1,0 +1,5 @@
+ucs-school-python (1.0.0-1) unstable; urgency=low
+
+  * Initial release  (Bug #15037)
+
+ -- Felix Botner <botner@univention.de>  Mon, 16 Jan 2012 14:43:47 +0100

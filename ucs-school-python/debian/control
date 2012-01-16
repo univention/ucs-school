@@ -1,0 +1,21 @@
+Source: ucs-school-python
+Section: univention
+Priority: optional
+Maintainer: Univention GmbH <packages@univention.de>
+Build-Depends: debhelper (>= 7),
+ ucslint,
+ python-all,
+ python-support (>= 0.90)
+
+Package: python-ucs-school
+Architecture: all
+Depends: ${misc:Depends}, ${python:Depends}
+Provides: ${python:Provides}
+Description: UCS@school - common Python modules
+ This package contains Python modules used by various
+ components of UCS@school.
+ .
+ It is part of Univention Corporate Server (UCS), an
+ integrated, directory driven solution for managing
+ corporate environments. For more information about UCS,
+ refer to: http://www.univention.de/
