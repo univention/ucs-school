@@ -1,9 +1,8 @@
-#!/usr/bin/python2.6
-# -*- coding: utf-8 -*-
+#!/usr/bin/python2.4
 #
-# UCS@school python lib
+# Univention Management Console
 #
-# Copyright 2007-2012 Univention GmbH
+# Copyright 2007-2010 Univention GmbH
 #
 # http://www.univention.de/
 #
@@ -33,7 +32,6 @@
 import univention.debug as ud
 import univention.config_registry
 import univention.uldap
-import univention.admin.config
 
 class SchoolLDAPConnection(object):
 	idcounter = 1
