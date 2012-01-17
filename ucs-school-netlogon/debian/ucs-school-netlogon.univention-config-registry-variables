@@ -1,0 +1,24 @@
+[ucsschool/netlogon/script/.*]
+Description[de]=Definiert Skripte (*.vbs, *.cmd, *.bat) die das netlogon Script ausführen soll (z.B., ucsschool/netlogon/script/40=mylogon.cmd)
+Description[en]=Defines scripts (*.vbs, *.cmd, *.bat) which will be executed by the logon script (e.g., ucsschool/netlogon/script/40=mylogon.cmd)
+Type=str
+Categories=ucsschool-netlogon
+
+[ucsschool/netlogon/windowStyle]
+Description[de]=Setzt den Window Style für das Ausführen der definierten Logon Skripte (default: 1, möglich: 0-10)
+Description[en]=Defines the windows style which will be used for executing the defined logon scripts (default: 1, possible: 0-10)
+Type=str
+Categories=ucsschool-netlogon
+
+[ucsschool/netlogon/checkReturn]
+Description[de]=Gibt an, ob der Rückgabewert der Logon Skript geprüft werden soll (default: true)
+Description[en]=Specifies whether the return value of the logon scripts should be checked (default: true)
+Type=str
+Categories=ucsschool-netlogon
+
+[ucsschool/import/set/netlogon/script/path]
+Description[de]=Name des "Master" Logon Skript, dieses führt alle definierten Logon Skripte aus (default: ucs-school-logon.vbs)
+Description[en]=Name of the "Master" logon script that executes all defined logon scripts (default: ucs-school-logon.vbs)
+Type=str
+Categories=ucsschool-netlogon
+

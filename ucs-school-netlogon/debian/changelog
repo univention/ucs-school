@@ -1,0 +1,5 @@
+ucs-school-netlogon (1.0.0-1) unstable; urgency=low
+
+  * initial release (Bug #14882) 
+
+ -- Felix Botner <botner@univention.de>  Tue, 17 Jan 2012 15:55:10 +0100
