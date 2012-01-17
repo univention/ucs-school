@@ -1,3 +1,9 @@
+ucs-school-italc (6.0.0-1) unstable; urgency=low
+
+  * updated setup.py (Bug #25689)
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Tue, 17 Jan 2012 16:52:02 +0100
+
 ucs-school-italc (6.0.0-0) unstable; urgency=low
 
   * bumped package version for UCS@school 3.0
