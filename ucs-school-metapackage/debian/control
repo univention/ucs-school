@@ -7,7 +7,7 @@ Standards-Version: 3.8.2
 
 Package: ucs-school-master
 Architecture: all
-Depends: univention-ldap-server (>> 4.0.6-1), univention-directory-manager-tools (>> 4.0.29-1), ucs-school-import, ucs-school-ldap-acls-master, ucs-school-umc-helpdesk-schema, ucs-school-info
+Depends: univention-ldap-server (>> 4.0.6-1), univention-directory-manager-tools (>> 4.0.29-1), ucs-school-import, ucs-school-ldap-acls-master, ucs-school-umc-helpdesk-schema, ucs-school-info, 
 Description: UCS@School meta package for UCS DC Master System (multi DC mode)
  This meta package installs all required packages for UCS@School on
  a UCS domaincontroller master. The domaincontroller master will be 
@@ -21,7 +21,7 @@ Description: UCS@School meta package for UCS DC Master System (multi DC mode)
 
 Package: ucs-school-slave
 Architecture: all
-Depends: univention-directory-manager-tools (>> 4.0.29-1), ucs-school-netlogon-italc, ucs-school-umc-distribution, ucs-school-umc-helpdesk, ucs-school-umc-printermoderation, ucs-school-umc-proxysettings, ucs-school-umc-reservation, ucs-school-umc-roomadmin, ucs-school-umc-schooladmin, univention-netlogon-proxy, ucs-school-webproxy, univention-samba, univention-samba-slave-pdc, ucs-school-netlogon-user-logonscripts, ucs-school-old-homedirs, ucs-school-old-sharedirs, ucs-school-info, univention-management-console (>= 3.0.63-1), univention-webui (>= 4.0.24-1), python-univention (>> 5.0.7-10)
+Depends: univention-directory-manager-tools (>> 4.0.29-1), ucs-school-netlogon-italc, ucs-school-umc-distribution, ucs-school-umc-helpdesk, ucs-school-umc-printermoderation, ucs-school-umc-proxysettings, ucs-school-umc-reservation, ucs-school-umc-roomadmin, ucs-school-umc-schooladmin, univention-netlogon-proxy, ucs-school-webproxy, univention-samba, univention-samba-slave-pdc, ucs-school-netlogon-user-logonscripts, ucs-school-old-homedirs, ucs-school-old-sharedirs, ucs-school-info, univention-management-console (>= 3.0.63-1), univention-webui (>= 4.0.24-1), python-univention (>> 5.0.7-10), ucs-school-netlogon
 Description: UCS@School meta package for UCS DC Slave System
  This meta package installs all required packages for UCS@School on
  a UCS domaincontroller slave. The package ucs-school-master
@@ -34,7 +34,7 @@ Description: UCS@School meta package for UCS DC Slave System
 
 Package: ucs-school-singlemaster
 Architecture: all
-Depends: univention-ldap-server (>> 4.0.6-1), univention-directory-manager-tools (>> 4.0.29-1), ucs-school-import, ucs-school-ldap-acls-master, ucs-school-netlogon-italc, ucs-school-umc-distribution, ucs-school-umc-helpdesk, ucs-school-umc-printermoderation, ucs-school-umc-proxysettings, ucs-school-umc-reservation, ucs-school-umc-roomadmin, ucs-school-umc-schooladmin, univention-netlogon-proxy, ucs-school-umc-helpdesk-schema, ucs-school-webproxy, ucs-school-netlogon-user-logonscripts, ucs-school-old-homedirs, ucs-school-old-sharedirs, ucs-school-info, univention-management-console (>= 3.0.63-1), univention-webui (>= 4.0.24-1), python-univention (>> 5.0.7-10)
+Depends: univention-ldap-server (>> 4.0.6-1), univention-directory-manager-tools (>> 4.0.29-1), ucs-school-import, ucs-school-ldap-acls-master, ucs-school-netlogon-italc, ucs-school-umc-distribution, ucs-school-umc-helpdesk, ucs-school-umc-printermoderation, ucs-school-umc-proxysettings, ucs-school-umc-reservation, ucs-school-umc-roomadmin, ucs-school-umc-schooladmin, univention-netlogon-proxy, ucs-school-umc-helpdesk-schema, ucs-school-webproxy, ucs-school-netlogon-user-logonscripts, ucs-school-old-homedirs, ucs-school-old-sharedirs, ucs-school-info, univention-management-console (>= 3.0.63-1), univention-webui (>= 4.0.24-1), python-univention (>> 5.0.7-10), ucs-school-netlogon
 Description: UCS@School meta package for UCS DC Master System (single master mode)
  This meta package installs all required packages for UCS@School on
  a UCS domaincontroller master. The domaincontroller master will be 
