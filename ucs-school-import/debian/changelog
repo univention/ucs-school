@@ -1,3 +1,10 @@
+ucs-school-import (8.0.1-1) unstable; urgency=low
+
+  * add UCRV for profile path and netlogon script (Bug #25776)
+  * update for UCS 3.0 UDM
+
+ -- Janek Walkenhorst <walkenhorst@univention.de>  Tue, 17 Jan 2012 12:09:09 +0100
+
 ucs-school-import (8.0.0-1) unstable; urgency=low
 
   * update to UCS@school 3.0 (Bug #25687)

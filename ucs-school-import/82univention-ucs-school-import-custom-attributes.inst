@@ -66,7 +66,7 @@ univention-directory-manager settings/extended_attribute create "$@" --ignore_ex
 		--set ldapMapping="ucsschoolRole" \
 		--set shortDescription="User role" \
 		--set longDescription="Role of user in UCS@school context (teacher, staff or pupil)" \
-		--set tabName="UCSschool" \
+		--set tabName="UCS@school" \
 		--set tabPosition=1 \
 		--set syntax="string" \
 		--set multivalue=1 \
@@ -75,34 +75,15 @@ univention-directory-manager settings/extended_attribute create "$@" --ignore_ex
 		--set 'translationLongDescription="de_DE" "Rolle des Benutzers im UCS@school-Kontext (teacher, staff oder pupil )"'
 if [ $? != 0 ]; then exit 1; fi
 
-if [ "$server_role" = "domaincontroller_master" ] ; then
-	ldapserver="localhost"
-	binddn="cn=admin,$ldap_base"
-	bindpwd="$(< /etc/ldap.secret)"
-else
-	ldapserver="$ldap_master"
-	binddn=""
-	bindpwd=""
-	local save_args=("$@")
-	while [ $# -gt 0 ]
-	do
-	        case "$1" in
-	                --binddn) binddn="$2"; shift 2 ;;
-	                --bindpwd) bindpw="$2"; shift 2 ;;
-	                *) ;;
-	        esac
-	done
-	set -- "${save_args[@]}"
-fi
-
-# modify tab name for extended attribute to "UCS@school"
-ldapmodify -x -h "$ldapserver" -D "$binddn" -w "$bindpwd" << EOF
-dn: cn=ucsschool-user-role,cn=ucsschool,cn=custom attributes,cn=univention,$ldap_base
-changetype: modify
-replace: univentionUDMPropertyLayoutTabName
-univentionUDMPropertyLayoutTabName: UCS@school
-
-EOF
+# create service type "Windows Profile Server"
+univention-directory-manager container/cn create "$@" --ignore_exists \
+	--position "cn=univention,$ldap_base" \
+	--set name="services"
+if [ $? != 0 ]; then exit 1; fi
+univention-directory-manager settings/service create "$@" --ignore_exists \
+	--position "cn=services,cn=univention,$ldap_base" \
+	--set name="Windows Profile Server"
+if [ $? != 0 ]; then exit 1; fi
 
 joinscript_save_current_version
 

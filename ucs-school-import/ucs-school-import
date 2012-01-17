@@ -73,6 +73,7 @@ univention.debug.init('/var/log/univention/admin-cmd.log', 1, 0)
 import univention.admin.uldap
 import univention.admin.modules
 import univention.admin.objects
+import univention.admin.config
 import univention.config_registry
 
 configRegistry=univention.config_registry.ConfigRegistry()
@@ -112,6 +113,11 @@ grp_policy_pupils	= configRegistry.get('ucsschool/ldap/default/policy/umc/pupils
 grp_policy_teachers = configRegistry.get('ucsschool/ldap/default/policy/umc/teachers', 'cn=ucsschool-umc-teachers-default,cn=console,cn=policies,%s' % baseDN)
 grp_policy_admins	= configRegistry.get('ucsschool/ldap/default/policy/umc/admins', 'cn=ucsschool-umc-admins-default,cn=console,cn=policies,%s' % baseDN)
 grp_policy_staff	= configRegistry.get('ucsschool/ldap/default/policy/umc/staff', 'cn=ucsschool-umc-staff-default,cn=console,cn=policies,%s' % baseDN)
+
+UCRV_serverprofile_option = configRegistry.get('ucsschool/import/set/serverprofile/path', 'ldap').strip().lower()
+if UCRV_serverprofile_option not in ('yes', 'no', 'ldap', ):
+	UCRV_serverprofile_option = 'ldap'
+UCRV_netlogon_script_path = configRegistry.get('ucsschool/import/set/netlogon/script/path')
 
 role_pupil   = 'pupil'
 role_teacher = 'teacher'
@@ -687,7 +693,7 @@ def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None, ShareFileServer=None
 			newDHCPServerDN = "cn=%s,cn=%s,cn=dhcp,%s" % (dccn, schoolNr.lower(), getDN(schoolNr))
 			if len(objects) > 1:
 				print 'WARNING: more than one dhcp-server object found! Moving only one!'
-			obj = univention.admin.objects.get(dhcp_server_module, co, lo, position='', dn=objects[0], arg='')
+			obj = univention.admin.objects.get(dhcp_server_module, co, lo, position='', dn=objects[0])
 			obj.open()
 			dhcpServerContainer = ','.join(objects[0].split(',')[1:])
 			if obj.dn != newDHCPServerDN:
@@ -723,7 +729,7 @@ def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None, ShareFileServer=None
 					print "Skipping invalid interface %s:\n%s" % (interface_name, error, )
 			objects = lo.searchDn( filter = '(objectClass=univentionDhcpSubnet)', base=dhcpServerContainer )
 			for objectDN in objects:
-				object = univention.admin.objects.get(dhcp_subnet_module, co, lo, position='', dn=objectDN, arg='')
+				object = univention.admin.objects.get(dhcp_subnet_module, co, lo, position='', dn=objectDN)
 				object.open()
 				subnet = ipaddr.IPv4Network('%s/%s' % (object['subnet'], object['subnetmask'], ))
 				if subnet in interfaces: # subnet matches any local subnet
@@ -1242,7 +1248,7 @@ def delete_user(person, module, co, lo):
 
 def modify_user(person, module, co, lo):
 	default_groups = person.default_groups()
-	object=univention.admin.objects.get(module, co, lo, position='', dn=person.getDN(), arg='')
+	object=univention.admin.objects.get(module, co, lo, position='', dn=person.getDN())
 	count_lo()
 	object.open()
 	object["username"]=person.login
@@ -1331,6 +1337,27 @@ def create_passwd():
 	passwd += charlistB[ random.randrange(0,len(charlistB)) ] + charlistB[ random.randrange(0,len(charlistB)) ]
 	return passwd
 
+def calculateProfilePath(ou):
+	if ou in calculateProfilePath.results:
+		return calculateProfilePath.results[ou]
+	if UCRV_serverprofile_option == 'ldap':
+		for service in ('Windows Profile Server', 'Samba 4', ):
+			computers = univention.admin.modules.lookup(computer_module, co, lo, scope='sub', base=ou, filter=univention.admin.filter.expression('univentionService', service))
+			count_lo()
+			for computer in computers:
+				calculateProfilePath.results[ou] = calculateProfilePath.string % (computer['name'], )
+				break
+			else:
+				continue
+			break
+	elif UCRV_serverprofile_option == 'yes':
+		calculateProfilePath.results[ou] = calculateProfilePath.string % '%LOGONSERVER%'
+	elif UCRV_serverprofile_option == 'no':
+		calculateProfilePath.results[ou] = None
+	return calculateProfilePath.results[ou]
+calculateProfilePath.results = {}
+calculateProfilePath.string = '\\\\%s\\%%USERNAME%%\\windows-profiles\\default'
+
 def create_user(person, baseDN, module, password):
 	success = True
 
@@ -1404,6 +1431,11 @@ def create_user(person, baseDN, module, password):
 	else:
 		object["disabled"]="all"
 	object["ucsschool-user-role"] = person.getRole ()
+	if UCRV_netlogon_script_path:
+		object["scriptpath"] = UCRV_netlogon_script_path
+	profilePath = calculateProfilePath(getDN(person.sNr, basedn=baseDN))
+	if profilePath:
+		object["profilepath"] = profilePath
 
 	try:
 		try:
@@ -1898,7 +1930,7 @@ def set_inventory_number_for_computer():
 				problem_hints = problem_hints + "failed to get module of type computers/%s" % ctype
 				line=inf.readline()
 				continue
-			computerObject = univention.admin.objects.get(computerModule, co, lo, position='', dn=dn, arg='')
+			computerObject = univention.admin.objects.get(computerModule, co, lo, position='', dn=dn)
 			computerObject.open()
 			if MAC.replace('-',':').replace(' ',':').lower() in computerObject['mac']:
 				try:
@@ -2162,7 +2194,7 @@ def import_group():
 
 		if action in ['A','M']:	# Add/Modify group
 ## 			verify_group(group_dn, co, lo, superordinate, baseDN)
-## 			object = univention.admin.objects.get(group_module, co, lo, position='', dn=group_dn, arg='')
+## 			object = univention.admin.objects.get(group_module, co, lo, position='', dn=group_dn)
 ## 			object.open()
 ## 			object['description']=Descrpt
 ## 			object.modify()
@@ -2171,7 +2203,7 @@ def import_group():
 
 ## 		elif action == 'M':	# M)odify group
 			verify_group(group_dn, co, lo, superordinate, baseDN)
-			object = univention.admin.objects.get(group_module, co, lo, position='', dn=group_dn, arg='')
+			object = univention.admin.objects.get(group_module, co, lo, position='', dn=group_dn)
 			count_lo()
 			object.open()
 			oldDescrpt = object['description']
@@ -2252,7 +2284,7 @@ def import_printer():
 			if action == 'A':
 				object = printer_module.object(co, lo, position, superordinate=superordinate)
 			else:
-				object = univention.admin.objects.get(printer_module, co, lo, position='', dn=position_dn, arg='')
+				object = univention.admin.objects.get(printer_module, co, lo, position='', dn=position_dn)
 			count_lo()
 			object.open()
 			object['name'] = printerName
@@ -2363,7 +2395,7 @@ def activate_groupmembers():
 							membergrplist += grpobj.oldattr["cn"][0]
 
 				# modify each member
-				memberobj = univention.admin.objects.get(user_module, co, lo, position='', dn=memberdn, arg='')
+				memberobj = univention.admin.objects.get(user_module, co, lo, position='', dn=memberdn)
 				count_lo()
 				memberobj.open()
 
@@ -2493,6 +2525,7 @@ position      = univention.admin.uldap.position(baseDN)
 superordinate = None
 
 
+univention.admin.modules.update()
 user_module                = univention.admin.modules.get("users/user")
 group_module               = univention.admin.modules.get("groups/group")
 cn_module                  = univention.admin.modules.get("container/cn")

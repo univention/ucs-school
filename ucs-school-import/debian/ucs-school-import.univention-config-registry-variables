@@ -88,6 +88,18 @@ Description[en]=Create UCR policy for DHCP searchbase during ou creation? (defau
 Type=str
 Categories=ucsschool-base
 
+[ucsschool/import/set/serverprofile/path]
+Description[de]=Soll beim _Anlegen_ von Benutzern der Pfad für serverseitige Profile im LDAP gesetzt werden? (no|yes|ldap) (Standard: ldap)
+Description[en]=Should the path for server-side profiles be set in LDAP on user _creation_? (no|yes|ldap) (default: ldap)
+Type=str
+Categories=ucsschool-base
+
+[ucsschool/import/set/netlogon/script/path]
+Description[de]=Der Pfad zum Netlogon-Skript der beim _Anlegen_ von Benutzern gesetzt werden soll. Unset um ihn nicht zu setzen.
+Description[en]=Path to netlogon script to set for each user on _creation_. Unset to not set any.
+Type=str
+Categories=ucsschool-base
+
 [ucsschool/update/user/role]
 Description[de]=UCS@school Benutzerrolle während des Updates automatisch setzen? (Default: yes)
 Description[en]=Set UCS@school user role during update? (default: yes)
