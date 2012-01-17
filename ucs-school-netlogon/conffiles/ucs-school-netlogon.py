@@ -85,7 +85,7 @@ def handler(configRegistry, changes):
 
 	# delete old ucsschool/import/set/netlogon/script/path
 	old = changes.get("ucsschool/import/set/netlogon/script/path", "")
-	if len(old) > 0 and old[0]:
+	if old and len(old) > 0 and old[0]:
 		old = os.path.join(netlogonDir, old[0])
 		if os.path.isfile(old):
 			os.remove(old)
