@@ -1,8 +1,9 @@
-#!/usr/bin/python2.4
+#!/usr/bin/python2.6
+# -*- coding: utf-8 -*-
 #
-# Univention Management Console
+# UCS@school python lib
 #
-# Copyright 2007-2010 Univention GmbH
+# Copyright 2007-2012 Univention GmbH
 #
 # http://www.univention.de/
 #
@@ -32,6 +33,8 @@
 import univention.debug as ud
 import univention.config_registry
 import univention.uldap
+import univention.admin.config
+import univention.admin.modules
 
 class SchoolLDAPConnection(object):
 	idcounter = 1
@@ -39,6 +42,8 @@ class SchoolLDAPConnection(object):
 		self.id = SchoolLDAPConnection.idcounter
 		SchoolLDAPConnection.idcounter += 1
 		ud.debug( ud.ADMIN, ud.INFO, 'SchoolLDAPConnection[%d]: init' % self.id )
+
+		univention.admin.modules.update()
 
 		self.ldapserver = ldapserver
 		self.binddn = binddn
@@ -70,8 +75,10 @@ class SchoolLDAPConnection(object):
 		lo = univention.uldap.access( host = self.ldapserver, base = self.configRegistry[ 'ldap/base' ], start_tls = 2 )
 
 		if self.username and not self.binddn:
+			# map username to dn with machine account ldap connection
 			ud.debug( ud.ADMIN, ud.INFO, 'SchoolLDAPConnection[%d]: using username "%s"' % (self.id, self.username) )
-			result = lo.searchDn( filter = 'uid=%s' % self.username )
+			mc = univention.uldap.getMachineConnection(ldap_master = False)
+			result = mc.searchDn( filter = 'uid=%s' % self.username )
 			if result:
 				self.binddn = result[0]
 			else:
@@ -81,11 +88,12 @@ class SchoolLDAPConnection(object):
 			ud.debug( ud.ADMIN, ud.INFO, 'SchoolLDAPConnection[%d]: binddn: %s' % (self.id, self.binddn) )
 			#lo.close() #FIXME: how to close the connection?
 
-			lo = univention.admin.uldap.access( host = self.ldapserver,
-												base = self.configRegistry['ldap/base'],
-												binddn = self.binddn,
-												bindpw = self.bindpw,
-												start_tls = 2 )
+			lo = univention.admin.uldap.access( 
+				host = self.ldapserver,
+				base = self.configRegistry['ldap/base'],
+				binddn = self.binddn,
+				bindpw = self.bindpw,
+				start_tls = 2 )
 
 		self.lo = lo
 		self._init_ou()
@@ -163,9 +171,10 @@ class SchoolLDAPConnection(object):
 			else:
 				self.availableOU = []
 				# get available OUs
-				ouresult = univention.admin.modules.lookup( self.oumodule, self.co, self.lo,
-															scope = 'one', superordinate = None,
-															base = self.configRegistry[ 'ldap/base' ] )
+				ouresult = univention.admin.modules.lookup(
+					self.oumodule, self.co, self.lo,
+					scope = 'one', superordinate = None,
+					base = self.configRegistry[ 'ldap/base' ])
 				for ou in ouresult:
 					self.availableOU.append(ou['name'])
 
