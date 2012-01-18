@@ -34,13 +34,29 @@ import univention.uldap
 import sys
 import os
 
+logging = '>> %TEMP%\%USERNAME%-ucs-school-netlogon.log 2>&1'
+
 def printHeader(fn, netlogon):
 
 	if not fn:
 		fn = open(netlogon, 'w')
 		print >> fn, 'Set objShell = WScript.CreateObject("WScript.Shell")'
 		print >> fn, 'Set objFSO = CreateObject("Scripting.FileSystemObject")'
+		print >> fn
+		print >> fn, 'temp = objShell.ExpandEnvironmentStrings("%TEMP%")'
+		print >> fn, 'username = objShell.ExpandEnvironmentStrings("%USERNAME%")'
+		print >> fn, 'logfile = objFSO.BuildPath(temp, username & "-ucs-school-netlogon.log")'
 		print >> fn, 'baseName = objFSO.GetParentFolderName(Wscript.ScriptFullName)'
+		print >> fn
+		print >> fn, 'set fh = objFSO.CreateTextFile(logfile, True)'
+		print >> fn, 'fh.Close'
+		print >> fn
+		print >> fn, 'sub printToLog(logfile, message)'
+		print >> fn, '    set fh = objFSO.OpenTextFile(logfile, 8, True)'
+		print >> fn, '    fh.WriteLine("")'
+		print >> fn, '    fh.WriteLine(message)'
+		print >> fn, '    fh.Close'
+		print >> fn, 'end sub'
 		print >> fn
 
 	return fn
@@ -48,24 +64,26 @@ def printHeader(fn, netlogon):
 
 def runCmd(script, fn, windowStyle, checkReturn):
 
-	print >> fn, 'return = objShell.Run("%s", %s, true)' % (script, windowStyle)
+	print >> fn, 'printToLog logfile, "running %s"' % script
+	print >> fn, 'return = objShell.Run("%s %s", %s, true)' % (script, logging, windowStyle)
 
 	if checkReturn:
 		print >> fn, 'if return <> 0  then'
-		print >> fn, '    MsgBox "run.cmd failed with error code: " & return'
+		print >> fn, '    MsgBox "%s failed with error code: " & return' % script
 		print >> fn, 'end if'
 
 	print >> fn
 	print >> fn
 
-def runVbs(script, fn, windowStyle, checkReturn):
+def runVbs(script, fn, windowStyle, checkReturn, vbsInt, vbsOpts):
 
+	print >> fn, 'printToLog logfile, "running %s"' % script
 	print >> fn, 'script = objFSO.BuildPath(baseName, "%s")' % script
-	print >> fn, 'return = objShell.run("wscript " & script, %s, true)' % windowStyle
+	print >> fn, 'return = objShell.run("%s %s " & script & " %s", %s, true)' % (vbsInt, vbsOpts, logging, windowStyle)
 	
 	if checkReturn:
 		print >> fn, 'if return <> 0  then'
-		print >> fn, '    MsgBox "run.cmd failed with error code: " & return'
+		print >> fn, '    MsgBox "%s failed with error code: " & return' % script
 		print >> fn, 'end if'
 
 	print >> fn
@@ -106,6 +124,8 @@ def handler(configRegistry, changes):
 			scripts[number] = script
 	windowStyle = configRegistry.get("ucsschool/netlogon/windowStyle", "1")
 	checkReturn = configRegistry.is_true("ucsschool/netlogon/checkReturn", True)
+	vbsInt = configRegistry.get("ucsschool/netlogon/vbs/interpreter", "cscript")
+	vbsOpts = configRegistry.get("ucsschool/netlogon/vbs/options", "")
 
 	fn = False
 	for key in sorted(scripts.keys()):
@@ -116,7 +136,7 @@ def handler(configRegistry, changes):
 			runCmd(script, fn, windowStyle, checkReturn)
 		elif script.endswith(".vbs"):
 			fn = printHeader(fn, netlogon)
-			runVbs(script, fn, windowStyle, checkReturn)
+			runVbs(script, fn, windowStyle, checkReturn, vbsInt, vbsOpts)
 		else:
 			# hmm, do nothing 
 			pass	

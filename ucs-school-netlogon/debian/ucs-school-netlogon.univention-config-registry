@@ -3,6 +3,8 @@ Module: ucs-school-netlogon.py
 Variables: ucsschool/netlogon/script/.*
 Variables: ucsschool/netlogon/windowStyle
 Variables: ucsschool/netlogon/checkReturn
+Variables: ucsschool/netlogon/vbs/interpreter
+Variables: ucsschool/netlogon/vbs/options
 Variables: ucsschool/import/set/netlogon/script/path
 Variables: kerberos/realm
 Variables: hostname

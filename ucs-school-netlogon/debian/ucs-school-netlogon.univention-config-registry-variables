@@ -22,3 +22,14 @@ Description[en]=Name of the "Master" logon script that executes all defined logo
 Type=str
 Categories=ucsschool-netlogon
 
+[ucsschool/netlogon/vbs/interpreter]
+Description[de]=Interpreter für VBS logon Skripte (default: cscript, möglich: cscript, wscript)
+Description[en]=Interpreter for VBS logon scripts (default: cscript, possible: cscript, wscript)
+Type=str
+Categories=ucsschool-netlogon
+
+[ucsschool/netlogon/vbs/options]
+Description[de]=Optionen für den VBS Interpreter (default: None)
+Description[en]=Options for the VBS interpreter (default: None)
+Type=str
+Categories=ucsschool-netlogon
