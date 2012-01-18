@@ -1,3 +1,27 @@
+ucs-school-netlogon-user-logonscripts (6.0.4-1) unstable; urgency=low
+
+  * fixed small typo (Bug #22222)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Tue, 19 Apr 2011 09:11:02 +0200
+
+ucs-school-netlogon-user-logonscripts (6.0.3-1) unstable; urgency=low
+
+  * added UCR variable ucsschool/userlogon/shares/validservers to define "valid"
+    share servers (Bug #22222)
+  * changed default behaviour: do not add all shares found in ldap - only add
+    shares of current system
+  * if "valid" servers are defined, only those shared will be connected automatically
+  * if '*' is in list of "valid" servers, all shares will be connected automatically
+
+ -- Sönke Schwardt <schwardt@univention.de>  Thu, 14 Apr 2011 12:40:36 +0200
+
+ucs-school-netlogon-user-logonscripts (6.0.2-1) unstable; urgency=low
+
+  * edit the mapping for my pictures and check if the directory already
+    exists (Bug #18515) 
+
+ -- Sönke Schwardt <schwardt@univention.de>  Thu, 14 Apr 2011 12:37:18 +0200
+
 ucs-school-netlogon-user-logonscripts (6.0.1-1) unstable; urgency=low
 
   * convert to GNU APGL V3 (Bug #19780)

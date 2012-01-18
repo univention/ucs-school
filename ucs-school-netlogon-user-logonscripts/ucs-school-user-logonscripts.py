@@ -97,7 +97,7 @@ def getGlobalLinks():
 						globalLinks[key] = {'server':server}
 	univention.debug.debug(univention.debug.LISTENER, univention.debug.INFO, "ucsschool-user-logonscripts: got global links %s" % globalLinks)
 
-	
+
 def generateMacScript(uid, linkgoal):
 	return '''#!/bin/sh # generated script for accessing a samba share
 /usr/bin/osascript <<EOF
@@ -174,7 +174,7 @@ Set objFSO = CreateObject("Scripting.FileSystemObject")
 Set objFolder = objFSO.CreateFolder(FolderPath)
 
 \' Link to HOMEDRIVE
-Set oShell = CreateObject("Wscript.Shell") 
+Set oShell = CreateObject("Wscript.Shell")
 homepath = oShell.Environment("Process").Item("HOMEDRIVE") & oShell.Environment("Process").Item("HOMEPATH")
 
 Set oWS = WScript.CreateObject("WScript.Shell")
@@ -192,32 +192,57 @@ Function SetMyShares(strPersonal)
  strComputer = GetComputerName
  Set objReg = GetObject("winmgmts:{impersonationLevel=impersonate}!" & strComputer & "\\root\\default:StdRegProv")
 
- intRet1= objReg.SetStringValue(HKEY_CURRENT_USER, strkeyPath1, "Personal", strPersonal)
+ \' Check if folder Eigene Dateien exists
+ Set fso = CreateObject("Scripting.FileSystemObject")
+ If not (fso.FolderExists(strPersonal)) then
+	 ON ERROR RESUME NEXT
+	 Set f = fso.CreateFolder(strPersonal)
+ End If
+
+ intRet1= objReg.SetStringValue(HKEY_CURRENT_USER, strKeyPath1, "Personal", strPersonal)
  If intRet1 <> 0 Then
     Wscript.echo "Error: Setting Shell Folder Key Personal"
  End If
 
- intRet2= objReg.SetStringValue(HKEY_CURRENT_USER, strkeyPath2, "Personal", strPersonal)
+ intRet2= objReg.SetStringValue(HKEY_CURRENT_USER, strKeyPath2, "Personal", strPersonal)
  If intRet2 <> 0 Then
      Wscript.echo "Error: Setting User Shell Folder Key Personal"
  End If
+
+ \' Check if folder Eigene Bilder exists
+ Set fso = CreateObject("Scripting.FileSystemObject")
+ If not (fso.FolderExists(strPersonal & "\Eigene Bilder")) then
+	 ON ERROR RESUME NEXT
+	 Set f = fso.CreateFolder(strPersonal & "\Eigene Bilder")
+ End If
+
+ intRet3= objReg.SetStringValue(HKEY_CURRENT_USER, strKeyPath1, "My Pictures", strPersonal & "\Eigene Bilder")
+ If intRet3 <> 0 Then
+	Wscript.echo "Error: Setting Shell Folder Key Personal"
+ End If
+
+ intRet4= objReg.SetStringValue(HKEY_CURRENT_USER, strKeyPath2, "My Pictures", strPersonal & "\Eigene Bilder")
+ If intRet4 <> 0 Then
+	 Wscript.echo "Error: Setting User Shell Folder Key Personal"
+ End If
+
  end function
 
-Function MapDrive(Drive,Share) 
- ON ERROR RESUME NEXT 
- If FileSysObj.DriveExists(share)=True then 
- if FileSysObj.DriveExists(Drive)=True then 
- WSHNetwork.RemoveNetworkDrive Drive 
- end if 
- end if 
- WSHNetwork.MapNetworkDrive Drive, Share 
- If err.number >0 then 
- msgbox "ERROR: " & err.description & vbcr & Drive & " " & share 
- err.clear 
- End if 
- end function 
+Function MapDrive(Drive,Share)
+ ON ERROR RESUME NEXT
+ If FileSysObj.DriveExists(share)=True then
+ if FileSysObj.DriveExists(Drive)=True then
+ WSHNetwork.RemoveNetworkDrive Drive
+ end if
+ end if
+ WSHNetwork.MapNetworkDrive Drive, Share
+ If err.number >0 then
+ msgbox "ERROR: " & err.description & vbcr & Drive & " " & share
+ err.clear
+ End if
+ end function
 ''' % desktopfolder
-	
+
 	for linkname, linkgoal in links:
 		#\' oLink.Arguments = ""
 		#\' oLink.Description = "MyProgram"
@@ -226,18 +251,18 @@ Function MapDrive(Drive,Share)
 		#\' oLink.WindowStyle = "1"
 		#\' oLink.WorkingDirectory = "C:\\Program Files\\MyApp"
 
-		linkskript = '''		
+		linkskript = '''
 Set oWS = WScript.CreateObject("WScript.Shell")
 
 sLinkFile = FolderPath + "\\%s.LNK"
 
 Set oLink = oWS.CreateShortcut(sLinkFile)
 
-oLink.TargetPath = "\\\\%s"
+oLink.TargetPath = "%s"
 oLink.Save
-''' % (linkname,"\\%s\%s" % (linkgoal[0], linkgoal[1]))
+''' % (linkname,"\\\\%s\\%s" % (linkgoal[0], linkgoal[1]))
 		skript = skript + linkskript
-	
+
 	lettersinuse = {}
 
 	for key in mappings.keys():
@@ -350,7 +375,7 @@ def userchange(dn, new, old):
 			pass
 		ldapbase = listener.baseConfig['ldap/base']
 		membershipIDs = []
-		
+
 		if new == 'search': # called from groupchange
 			try:
 				univention.debug.debug(univention.debug.LISTENER, univention.debug.INFO, 'ucsschool-user-logonscripts: got to search %s' % dn)
@@ -370,9 +395,9 @@ def userchange(dn, new, old):
 			univention.debug.debug(univention.debug.LISTENER, univention.debug.ERROR, 'ucsschool-user-logonscripts: failed to get uid')
 			return
 
-			
+
 		# Gruppen suchen mit uniqueMember=dn
-		# shares suchen mit GID wie Gruppe		
+		# shares suchen mit GID wie Gruppe
 
 
 		univention.debug.debug(univention.debug.LISTENER, univention.debug.INFO, 'ucsschool-user-logonscripts: handle user %s' % dn)
@@ -381,11 +406,11 @@ def userchange(dn, new, old):
 		except:
 			univention.debug.debug(univention.debug.LISTENER, univention.debug.ERROR, 'ucsschool-user-logonscripts: LDAP-search failed memberships of %s' % (dn))
 			res_groups=[]
-			
+
 		for group in res_groups:
 			if not group[1]['gidNumber'][0] in membershipIDs:
 				univention.debug.debug(univention.debug.LISTENER, univention.debug.INFO, 'ucsschool-user-logonscripts: add group %s' % group[1]['gidNumber'][0])
-				membershipIDs.append(group[1]['gidNumber'][0])					
+				membershipIDs.append(group[1]['gidNumber'][0])
 
 		univention.debug.debug(univention.debug.LISTENER, univention.debug.INFO, 'ucsschool-user-logonscripts: groups are %s' % membershipIDs)
 
@@ -399,10 +424,10 @@ def userchange(dn, new, old):
 			except:
 				univention.debug.debug(univention.debug.LISTENER, univention.debug.WARN, 'ucsschool-user-logonscripts: LDAP-search failed for shares with gid %s' % (ID))
 				res_shares=[]
-				
+
 			for share in res_shares:
 				# linkname is identical to the sharename
-				linkname = share[1]['cn'][0] 
+				linkname = share[1]['cn'][0]
 				if share[1].has_key('univentionShareSambaName'):
 					linkname = share[1]['univentionShareSambaName'][0]
 
@@ -414,16 +439,18 @@ def userchange(dn, new, old):
 				#linkgoal = "\\%s\%s" % (hostname, linkname)
 				linkgoal = (hostname, linkname)
 
-				univention.debug.debug(univention.debug.LISTENER, univention.debug.INFO, 'ucsschool-user-logonscripts: add link %s to %s' % (linkname,linkgoal))
-				links.append((linkname,linkgoal))
-				# create mapping for classroom share
-				classmatches = classre.match (share[0])
-				if classmatches and len (classmatches.groups ()) == 2:
-					if listener.baseConfig.has_key('ucsschool/userlogon/classshareletter'):
-						letter = listener.baseConfig['ucsschool/userlogon/classshareletter'].replace(':','')
-					else:
-						letter = 'K'
-					mappings[linkname] = {'server': hostname, 'letter': letter}
+				validservers = listener.baseConfig.get('ucsschool/userlogon/shares/validservers', listener.baseConfig.get('hostname') ).split(',')
+				if hostname in validservers or '*' in validservers:
+					univention.debug.debug(univention.debug.LISTENER, univention.debug.INFO, 'ucsschool-user-logonscripts: add link %s to %s' % (linkname,linkgoal))
+					links.append((linkname,linkgoal))
+					# create mapping for classroom share
+					classmatches = classre.match (share[0])
+					if classmatches and len (classmatches.groups ()) == 2:
+						if listener.baseConfig.has_key('ucsschool/userlogon/classshareletter'):
+							letter = listener.baseConfig['ucsschool/userlogon/classshareletter'].replace(':','')
+						else:
+							letter = 'K'
+						mappings[linkname] = {'server': hostname, 'letter': letter}
 
 		# get global links
 		for key in globalLinks.keys():
@@ -439,7 +466,7 @@ def userchange(dn, new, old):
 	elif old and not new:
 		if os.path.exists("%s/%s" % (scriptpath, old['uid'][0])):
 			os.remove("%s/%s" % (scriptpath, old['uid'][0]))
-		
+
 
 def handler(dn, new, old):
 
@@ -447,7 +474,7 @@ def handler(dn, new, old):
 	# user or group?
 	if dn[:3] == 'uid':
 		userchange(dn, new, old)
-	else:		
+	else:
 		if (new and 'univentionShare' in new['objectClass']) or (old and 'univentionShare' in old['objectClass']):
 			sharechange(dn, new, old)
 		else:
@@ -459,13 +486,13 @@ def initialize():
 
 
 def clean():
-        listener.setuid(0)
-        try:
-                if os.path.exists(scriptpath):
-                        for f in os.listdir(scriptpath):
-                                os.unlink(os.path.join(scriptpath, f))
-        finally:
-                listener.unsetuid()
+	listener.setuid(0)
+	try:
+		if os.path.exists(scriptpath):
+			for f in os.listdir(scriptpath):
+				os.unlink(os.path.join(scriptpath, f))
+	finally:
+		listener.unsetuid()
 
 def postrun():
 	pass
