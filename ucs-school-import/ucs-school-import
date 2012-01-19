@@ -1974,13 +1974,15 @@ def set_inventory_number_for_computer():
 
 		line=inf.readline()
 
-def set_policy_for_dhcp_subnet (network, schoolNr, policy_module, policy_dn, cn, values={}, overwrite_policy=False):
+def set_policy_for_dhcp_subnet (network, schoolNr, policy_module, policy_dn, cn, values=None, overwrite_policy=False):
 	"""
 	@param	network	network where policy object shall be added
 	@param	schoolNr	school number
 	"""
 	dn = None
 	success = True
+	if values is None:
+		values = {}
 
 	# check if routing policy needs to be created
 	so = "cn=%s,cn=dhcp,%s" % (schoolNr.lower (), getDN (schoolNr))
