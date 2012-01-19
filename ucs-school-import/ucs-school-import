@@ -1865,10 +1865,24 @@ def import_networks(router_only=False):
 		# convert parameters to ipaddr.IPv4Network
 		if '/' not in network:
 			network = '%s/%s' % (network, default_prefixlen, )
-			network = ipaddr.IPv4Network(network)
+			try:
+				network = ipaddr.IPv4Network(network)
+			except ipaddr.AddressValueError, e:
+				print line
+				print "%s is not a valid ip address" % e
+				sys.exit(0)
 			print 'WARNING: no netmask specified for network %s using %s' % (network.network, network.netmask)
 		else:
-			network = ipaddr.IPv4Network(network)
+			try:
+				network = ipaddr.IPv4Network(network)
+			except ipaddr.AddressValueError, e:
+				print line
+				print "%s is not a valid ip address" % e
+				sys.exit(0)
+			except ipaddr.NetmaskValueError, e:
+				print line
+				print "%s is not a valid netmask" % e
+				sys.exit(0)
 
 		if iprange:
 			tmp = iprange.split ('-')
@@ -2129,7 +2143,16 @@ def import_computer():
 
 		verify_school_ou(schoolNr, co, lo, baseDN)
 
-		ip = ipaddr.IPv4Network(IP)
+		try:
+			ip = ipaddr.IPv4Network(IP)
+		except ipaddr.AddressValueError, e:
+			print line
+			print "%s is not a valid ip address" % e
+			sys.exit(0)
+		except ipaddr.NetmaskValueError, e:
+			print line
+			print "%s is not a valid netmask" % e
+			sys.exit(0)
 
 		# invoke pre hooks
 		hooks.pre( 'computer', 'A', line = line )
