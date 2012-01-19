@@ -1,3 +1,9 @@
+ucs-school-metapackage (4.0.2-1) unstable; urgency=low
+
+  * activate setting profile path on user creation for single-master (Bug #25776)
+
+ -- Janek Walkenhorst <walkenhorst@univention.de>  Thu, 19 Jan 2012 17:08:10 +0100
+
 ucs-school-metapackage (4.0.1-1) unstable; urgency=low
 
   * added dependency to ucs-school-netlogon in ucs-school-singlemaster

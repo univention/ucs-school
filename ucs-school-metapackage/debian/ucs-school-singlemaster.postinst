@@ -31,6 +31,7 @@
 if [ "$1" = "configure" -a -z "$2" ]; then
 	# set name of example school ou
 	ucr set ucsschool/defaultschoolname?musterschule
+	ucr set 'ucsschool/import/set/serverprofile/path?yes'
 
 	eval "$(ucr shell)"
 
