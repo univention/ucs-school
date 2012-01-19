@@ -1,7 +1,15 @@
+ucs-school-import (8.0.6-1) unstable; urgency=low
+
+  * verify_ou: break loop if dhcp_service_object exists
+  * create_network: create objects with ignore_exists = True
+  (Bug #22486)
+
+ -- Felix Botner <botner@univention.de>  Thu, 19 Jan 2012 13:08:39 +0100
+
 ucs-school-import (8.0.5-1) unstable; urgency=low
 
   * fixed default parameter values in set_policy_for_dhcp_subnet
-    (Bug #23719)
+  (Bug #23719)
 
  -- Felix Botner <botner@univention.de>  Thu, 19 Jan 2012 12:34:31 +0100
 

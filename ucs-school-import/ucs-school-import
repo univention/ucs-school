@@ -672,6 +672,7 @@ def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None, ShareFileServer=None
 				if object.dn == service:
 					service_exists=1
 					dhcp_service_object=object
+					break
 		if not service_exists:
 			position.setDn("cn=dhcp,%s" % (getDN (schoolNr), ))
 			object=dhcp_service_module.object(co, lo, position=position, superordinate=superordinate)
@@ -1702,7 +1703,7 @@ def create_network(schoolNr, network, iprange=None, defaultrouter=None, nameserv
 	object['subnetmask'] = str(network.netmask)
 	object['broadcastaddress'] = str(network.broadcast)
 	try:
-		create_object( object )
+		create_object( object, ignore_exists = True )
 	except:
 		success = False
 
@@ -1720,7 +1721,7 @@ def create_network(schoolNr, network, iprange=None, defaultrouter=None, nameserv
 	object['dnsEntryZoneReverse']='zoneName=%s.in-addr.arpa,cn=dns,%s'%('.'.join (reversed (subnet.split ('.'))),baseDN)
 
 	try:
-		exists, dn = create_object( object )
+		exists, dn = create_object( object, ignore_exists = True )
 	except:
 		success = False
 
