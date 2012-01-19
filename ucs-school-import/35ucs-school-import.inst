@@ -36,6 +36,21 @@ joinscript_init
 
 eval "$(ucr shell)"
 
+if [ $JS_LAST_EXECUTED_VERSION -lt 1 ]; then
+	# create policy container if missing
+	univention-directory-manager container/cn create "$@" --ignore_exists --position "cn=policies,$ldap_base" --set name=console
+	if [ $? != 0 ]; then exit 1; fi
+
+	# create empty UMC access policies if missing
+	for policyname in ucsschool-umc-pupils-default ucsschool-umc-teachers-default ucsschool-umc-staff-default ucsschool-umc-admins-default ; do
+	 	univention-directory-manager policies/console_access create "$@" --ignore_exists \
+	 			--position cn=console,cn=policies,$ldap_base \
+	 			--set name="${policyname}"
+	 	if [ $? != 0 ]; then exit 1; fi
+	done
+fi
+
+
 if [ $JS_LAST_EXECUTED_VERSION -lt 2 ]; then
 	# Update to UCS@school 2.4 - add missing LDAP attribute - Bug 20161
 	if [ "$server_role" = "domaincontroller_master" ] ; then

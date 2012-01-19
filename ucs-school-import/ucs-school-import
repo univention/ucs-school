@@ -119,6 +119,8 @@ UCRV_serverprofile_option = configRegistry.get('ucsschool/import/set/serverprofi
 if UCRV_serverprofile_option not in ('yes', 'no', 'ldap', ):
 	UCRV_serverprofile_option = 'ldap'
 UCRV_netlogon_script_path = configRegistry.get('ucsschool/import/set/netlogon/script/path')
+UCRV_sambahome = configRegistry.get('ucsschool/import/set/sambahome')
+UCRV_homedrive = configRegistry.get('ucsschool/import/set/homedrive')
 
 role_pupil   = 'pupil'
 role_teacher = 'teacher'
@@ -1437,6 +1439,10 @@ def create_user(person, baseDN, module, password):
 	object["ucsschool-user-role"] = person.getRole ()
 	if UCRV_netlogon_script_path:
 		object["scriptpath"] = UCRV_netlogon_script_path
+	if UCRV_sambahome:
+		object["sambahome"] = UCRV_sambahome
+	if UCRV_homedrive:
+		object["homedrive"] = UCRV_homedrive
 	profilePath = calculateProfilePath(getDN(person.sNr, basedn=baseDN))
 	if profilePath:
 		object["profilepath"] = profilePath
