@@ -100,6 +100,18 @@ Description[en]=Path to netlogon script to set for each user on _creation_. Unse
 Type=str
 Categories=ucsschool-base
 
+[ucsschool/import/set/sambahome]
+Description[de]=Windows-Heimatverzeichnis das beim _Anlegen_ von Benutzern gesetzt werden soll. Unset um es nicht zu setzen.
+Description[en]=Windows home path to set for each user on _creation_. Unset to not set any.
+Type=str
+Categories=ucsschool-base
+
+[ucsschool/import/set/homedrive]
+Description[de]=Der Laufwerksbuchstabe für das Heimatverzeichnis der beim _Anlegen_ von Benutzern gesetzt werden soll. Unset um ihn nicht zu setzen.
+Description[en]=Drive letter for home directory to set for each user on _creation_. Unset to not set any.
+Type=str
+Categories=ucsschool-base
+
 [ucsschool/update/user/role]
 Description[de]=UCS@school Benutzerrolle während des Updates automatisch setzen? (Default: yes)
 Description[en]=Set UCS@school user role during update? (default: yes)

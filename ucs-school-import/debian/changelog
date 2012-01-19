@@ -1,3 +1,9 @@
+ucs-school-import (8.0.10-1) unstable; urgency=low
+
+  * add UCRV to configure defaults for sambahome/homedrive (Bug #25867)
+
+ -- Janek Walkenhorst <walkenhorst@univention.de>  Thu, 19 Jan 2012 17:35:29 +0100
+
 ucs-school-import (8.0.9-1) unstable; urgency=low
 
   * fix profile path calculation (Bug #25776)
