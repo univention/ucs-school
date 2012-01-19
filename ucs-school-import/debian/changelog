@@ -1,3 +1,9 @@
+ucs-school-import (8.0.9-1) unstable; urgency=low
+
+  * fix profile path calculation (Bug #25776)
+
+ -- Janek Walkenhorst <walkenhorst@univention.de>  Thu, 19 Jan 2012 17:11:17 +0100
+
 ucs-school-import (8.0.8-1) unstable; urgency=low
 
   * ignore white space lines in ucs-school-import (Bug #17207) 

@@ -1352,6 +1352,8 @@ def calculateProfilePath(ou):
 			else:
 				continue
 			break
+		else:
+			calculateProfilePath.results[ou] = None
 	elif UCRV_serverprofile_option == 'yes':
 		calculateProfilePath.results[ou] = calculateProfilePath.string % '%LOGONSERVER%'
 	elif UCRV_serverprofile_option == 'no':
