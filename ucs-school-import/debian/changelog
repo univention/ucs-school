@@ -1,3 +1,9 @@
+ucs-school-import (8.0.2-1) unstable; urgency=low
+
+  * set computerPath for ou's dc container (Bug #14983)
+
+ -- Felix Botner <botner@univention.de>  Thu, 19 Jan 2012 10:34:11 +0100
+
 ucs-school-import (8.0.1-1) unstable; urgency=low
 
   * add UCRV for profile path and netlogon script (Bug #25776)

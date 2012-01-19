@@ -462,7 +462,7 @@ def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None, ShareFileServer=None
 	# list of needed sub-containers, the dictionary-key adds the container as default during create in verify_container
 	container={'0printerPath':['cn=printers'],
 			   '1userPath':['cn=users','cn=%s,cn=users' % cn_pupils,'cn=%s,cn=users' % cn_teachers,'cn=%s,cn=users' % cn_admins],
-			   '2computerPath':['cn=computers','cn=server,cn=computers'],
+			   '2computerPath':['cn=computers','cn=server,cn=computers','cn=dc,cn=server,cn=computers'],
 			   '3networkPath':['cn=networks'],
 			   '4groupPath':['cn=groups','cn=%s,cn=groups' % cn_pupils,'cn=%s,cn=groups' % cn_teachers,'cn=klassen,cn=%s,cn=groups' % cn_pupils,'cn=raeume,cn=groups'],
 			   '5dhcpPath':['cn=dhcp'],
