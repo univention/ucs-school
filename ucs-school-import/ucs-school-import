@@ -2472,7 +2472,6 @@ def activate_groupmembers():
 				memberobj.open()
 
 				memberobj['disabled'] = disabled
-				memberobj.modify()
 
 				print memberdn,
 				if status == 0:
@@ -2486,8 +2485,9 @@ def activate_groupmembers():
 					memberobj['password'] = passwd
 					memberobj['overridePWHistory'] = '1'
 					memberobj['overridePWLength'] = '1'
-					memberobj.modify()
 					print 'and set random password',
+
+				memberobj.modify()
 
 				# write csv line
 				snr = memberdn[ memberdn.find('ou=') + 3 : ]
