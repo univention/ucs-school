@@ -1461,10 +1461,18 @@ def create_user(person, baseDN, module, password):
 	return success
 
 def import_user():
+
+	# usage
+	usage = os.path.basename(sys.argv[0]) + " user-importfile\n"
+	usage += "creates/modifies/deletes user accounts according to import file for ucs@school"	
+	parser = optparse.OptionParser(usage=usage)
+	options, args = parser.parse_args()
+
 	# argument is infile
 	if len(sys.argv)>1:
 		infile = sys.argv[1]
 	else:
+		parser.print_help()
 		print "must have one Argument for infile"
 		sys.exit()
 
@@ -1800,10 +1808,21 @@ def get_computer_dn(name):
 	return None
 
 def import_networks(router_only=False):
+
+	# usage
+	usage = os.path.basename(sys.argv[0]) + " network-importfile\n"
+	if router_only:
+		usage += "modifies default routers according to import file for ucs@school"
+	else:
+		usage += "creates network objects according to import file for ucs@school"
+	parser = optparse.OptionParser(usage=usage)
+	options, args = parser.parse_args()
+
 	# argument is infile
 	if len(sys.argv)>1:
 		infile = sys.argv[1]
 	else:
+		parser.print_help()
 		print "must have one Argument for infile"
 		sys.exit()
 
@@ -1894,10 +1913,18 @@ def import_networks(router_only=False):
 		line=inf.readline()
 
 def set_inventory_number_for_computer():
+
+	# usage
+	usage = os.path.basename(sys.argv[0]) + " computer-importfile\n"
+	usage += "modifies computer inventory number according to import file for ucs@school"
+	parser = optparse.OptionParser(usage=usage)
+	options, args = parser.parse_args()
+
 	# argument is infile
 	if len(sys.argv)>1:
 		infile = sys.argv[1]
 	else:
+		parser.print_help()
 		print "must have one Argument for infile"
 		sys.exit()
 
@@ -2062,10 +2089,18 @@ def set_router_for_subnet (network, ip, schoolNr, overwrite_policy=False):
 	return set_policy_for_dhcp_subnet (network, schoolNr, policy_dhcp_routing_module, dn, values['name'], values=values, overwrite_policy=overwrite_policy)
 
 def import_computer():
+
+	# usage
+	usage = os.path.basename(sys.argv[0]) + " computer-importfile\n"
+	usage += "creates computer objects according to import file for ucs@school"
+	parser = optparse.OptionParser(usage=usage)
+	options, args = parser.parse_args()
+
 	# argument is infile
 	if len(sys.argv)>1:
 		infile = sys.argv[1]
 	else:
+		parser.print_help()
 		print "must have one Argument for infile"
 		sys.exit()
 
@@ -2160,10 +2195,18 @@ def import_router():
 	import_networks (router_only=True)
 
 def import_group():
+
+	# usage
+	usage = os.path.basename(sys.argv[0]) + " group-importfile\n"
+	usage += "creates/modifies/deletes group objects accoring to import file for ucs@school"
+	parser = optparse.OptionParser(usage=usage)
+	options, args = parser.parse_args()
+
 	# argument is infile
 	if len(sys.argv)>1:
 		infile = sys.argv[1]
 	else:
+		parser.print_help()
 		print "must have one Argument for infile"
 		sys.exit()
 
@@ -2226,10 +2269,18 @@ def import_group():
 		line=inf.readline().strip('\r\n')
 
 def import_printer():
+
+	# usage
+	usage = os.path.basename(sys.argv[0]) + " printer-importfile\n"
+	usage += "creates/modifies/deletes printer objects according to import file for ucs@school"
+	parser = optparse.OptionParser(usage=usage)
+	options, args = parser.parse_args()
+
 	# argument is infile
 	if len(sys.argv)>1:
 		infile = sys.argv[1]
 	else:
+		parser.print_help()
 		print "must have one Argument for infile"
 		sys.exit()
 
@@ -2333,26 +2384,47 @@ def activate_groupmembers():
 	chpasswd = 0
 	status = None
 
+
+	# usage
+	usage = os.path.basename(sys.argv[0]) + " <groupName> <newStatus> <changePassword>\n"
+	usage += "(de)activates group members for ucs@school\n\n"
+	  
+	usage += "Options:\n"
+	usage += "  <groupName>      group that shall be dis-/enabled\n"
+	usage += "  <newStatus>      0=disabled, 1=enabled\n"
+	usage += "  <changePassword> 0=keep passwords, 1=set random passwords\n"
+	usage += "                   the logfile groupName.csv contains all activated users\n"
+	usage += "  -h, --help       show this help message and exit"
+	parser = optparse.OptionParser(usage=usage)
+	options, args = parser.parse_args()
+
 	if len(sys.argv) < 2:
+		parser.print_usage()
 		print 'must have at least one argument'
-		print 'activate_groupmembers <groupXXX> <newStatus> <changePassword>'
-		print ''
-		print '<groupXXX>        group that shall be dis-/enabled'
-		print '<newstatus>       0=disabled, 1=enabled'
-		print '<changePassword>  0=keep passwords, 1=set random passwords'
-		print '                  the logfile groupXXX.csv contains all activated users'
 		sys.exit()
 	if len(sys.argv) > 1:
 		actgrp = sys.argv[1]
 	if len(sys.argv) > 2:
-		status = int(sys.argv[2])
+		try:
+			status = int(sys.argv[2])
+		except:
+			parser.print_usage()
+			print 'invalid value for <newstatus>!'
+			sys.exit()
 	if len(sys.argv) > 3:
-		chpasswd = int(sys.argv[3])
+		try:
+			chpasswd = int(sys.argv[3])
+		except:
+			parser.print_usage()
+			print 'invalid value for <changePassword>!'
+			sys.exit()
 
 	if status not in [0,1]:
+		parser.print_usage()
 		print 'invalid value for <newstatus>!'
 		sys.exit()
 	elif chpasswd not in [0,1]:
+		parser.print_usage()
 		print 'invalid value for <changePassword>!'
 		sys.exit()
 
@@ -2431,10 +2503,20 @@ def export_computer():
 	# <ou>        computers of OU <ou> shall be exported
 	# <filename>  output filename
 
+	# usage
+	usage = os.path.basename(sys.argv[0]) + " <ouName> <fileName>\n"
+	usage += "export computer for specified ou in ucs@school\n\n"
+	  
+	usage += "Options:\n"
+	usage += "  <ouName>         name of the ou from which the computers shall be exported\n"
+	usage += "  <fileName>       export file\n"
+	usage += "  -h, --help       show this help message and exit"
+	parser = optparse.OptionParser(usage=usage)
+	options, args = parser.parse_args()
+
 	if len(sys.argv) != 3:
+		parser.print_usage()
 		print 'must have at least two arguments'
-		print 'export_computer <ou> <output-filename>'
-		print ''
 		sys.exit()
 	ou = sys.argv[1]
 	outfile = sys.argv[2]
@@ -2469,8 +2551,21 @@ def export_computer():
 	outf.close()
 
 def set_ou_sharefileserver():
+
+	# usage
+	usage = os.path.basename(sys.argv[0]) + " <ouName> <shareFileServer>\n"
+	usage += "sets shareFileServer for ou in ucs@school\n\n"
+	  
+	usage += "Options:\n"
+	usage += "  <ouName>         name of the ou\n"
+	usage += "  <shareFileServer>       name of the shareFileServer\n"
+	usage += "  -h, --help       show this help message and exit"
+	parser = optparse.OptionParser(usage=usage)
+	options, args = parser.parse_args()
+
+
 	if len(sys.argv) != 3:
-		print 'set_ou_sharefileserver <ouname> <ShareFileServer>'
+		parser.print_usage()
 		print 'ouname and ShareFileServer is required'
 		sys.exit(1)
 	ouname = sys.argv[1]
