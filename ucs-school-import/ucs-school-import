@@ -59,7 +59,6 @@ import optparse
 import os
 import random
 import re
-import re
 import string
 import subprocess
 import sys
@@ -81,6 +80,8 @@ configRegistry.load()
 
 baseDN=configRegistry['ldap/base']
 domainname=configRegistry['domainname']
+
+emptyLineRe = re.compile(r'^\W*$')
 
 # FIXME: Are e-mail addresses provided?? otherwise it might be useful to
 # configure this via UCR
@@ -1497,9 +1498,13 @@ def import_user():
 	passwd_used=1
 	linecnt=0
 
-	line=inf.readline()
-	while not line=="":
+	for line in inf:
 		linecnt += 1
+
+		if emptyLineRe.match(line):
+			print 'Skipping empty line'
+			continue
+
 		print 'Processing line %d: %s' % (linecnt, line),
 		try:
 			main_person = ucsschool_person_modify(line)
@@ -1623,10 +1628,7 @@ def import_user():
 		if success:
 			hooks.post( 'user', main_person.modtype, dn = dn, line = line )
 
-		#print 'Processing of line %d completed' % linecnt
-
-		# read next line
-		line=inf.readline()
+	inf.close()
 
 	if outfile:
 		outf.close()
@@ -1832,8 +1834,11 @@ def import_networks(router_only=False):
 
 	problem_hints=""
 
-	line=inf.readline()
-	while not line == "":
+	for line in inf:	
+
+		if emptyLineRe.match(line):
+			continue
+
 		success = True
 		parsed=line.strip('\r\n').split(sepchar)
 
@@ -1924,8 +1929,7 @@ def import_networks(router_only=False):
 			else:
 				hooks.post( 'network', 'A', dn = dn, line = line )
 
-		# read next line
-		line=inf.readline()
+	inf.close()
 
 def set_inventory_number_for_computer():
 
@@ -1948,8 +1952,10 @@ def set_inventory_number_for_computer():
 
 	problem_hints=""
 
-	line=inf.readline()
-	while not line == "":
+	for line in inf:
+
+		if emptyLineRe.match(line):
+			continue
 
 		parsed=line.strip('\r\n').split(sepchar)
 		ctype    = parsed[0]
@@ -1987,7 +1993,7 @@ def set_inventory_number_for_computer():
 				print "mac address does not match while modifying %s" % name
 				problem_hints = problem_hints + "mac address does not match while modifying %s" % name
 
-		line=inf.readline()
+	inf.close()
 
 def set_policy_for_dhcp_subnet (network, schoolNr, policy_module, policy_dn, cn, values=None, overwrite_policy=False):
 	"""
@@ -2127,13 +2133,15 @@ def import_computer():
 	problem_hints=""
 	linecnt=0
 
-	line=inf.readline()
-	while not line=="":
+	for line in inf:
 		linecnt += 1
+
+		if emptyLineRe.match(line):
+			print 'Skipping empty line'
+			continue
+
 		print 'Processing line %d: %s' % (linecnt, line),
-
 		parsed=line.strip('\r\n').split(sepchar)
-
 		ctype = parsed[0]
 		name  = parsed[1].lower ()
 		MAC      = parsed[2]
@@ -2210,8 +2218,7 @@ def import_computer():
 		if success:
 			hooks.post( 'computer', 'A', dn = object.dn, line = line )
 
-		# read next line
-		line=inf.readline()
+	inf.close()
 
 def import_router():
 	"""
@@ -2241,8 +2248,10 @@ def import_group():
 
 	problem_hints=""
 
-	line=inf.readline().strip('\r\n')
-	while not line=="":
+	for line in inf:
+
+		if emptyLineRe.match(line):
+			continue
 
 		parsed=line.strip('\r\n').split(sepchar)
 
@@ -2292,7 +2301,7 @@ def import_group():
 		if success:
 			hooks.post( 'group', action, dn = dn, line = line )
 
-		line=inf.readline().strip('\r\n')
+	inf.close()
 
 def import_printer():
 
@@ -2313,8 +2322,10 @@ def import_printer():
 	print "infile is  : "+infile
 	inf = open(infile,'r')
 
-	line=inf.readline().strip('\r\n')
-	while not line=="":
+	for line in inf:
+
+		if emptyLineRe.match(line):
+			continue
 
 		parsed=line.strip('\r\n').split(sepchar)
 
@@ -2398,7 +2409,7 @@ def import_printer():
 		if success:
 			hooks.post( 'printer', action, dn = dn, line = line )
 
-		line=inf.readline().strip('\r\n')
+	inf.close()
 
 def activate_groupmembers():
 	#  syntax: $0 <groupXXX> [0|1] [0|1]"

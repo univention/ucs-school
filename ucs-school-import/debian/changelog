@@ -1,3 +1,9 @@
+ucs-school-import (8.0.8-1) unstable; urgency=low
+
+  * ignore white space lines in ucs-school-import (Bug #17207) 
+
+ -- Felix Botner <botner@univention.de>  Thu, 19 Jan 2012 16:05:23 +0100
+
 ucs-school-import (8.0.7-1) unstable; urgency=low
 
   * catch NetmaskValueError and AddressValueError in
