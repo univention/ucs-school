@@ -1,3 +1,14 @@
+ucs-school-netlogon-user-logonscripts (7.0.0-1) unstable; urgency=low
+
+  * update to UCS@school 3.0 
+  * use getMachineConnection in listener for ldap con
+  * check for samba 3 or samba 4
+  * set ucsschool/netlogon/script
+  * added descriptions of ucr vars
+    (Bug #25777)
+
+ -- Felix Botner <botner@univention.de>  Thu, 19 Jan 2012 09:38:28 +0100
+
 ucs-school-netlogon-user-logonscripts (6.0.4-1) unstable; urgency=low
 
   * fixed small typo (Bug #22222)

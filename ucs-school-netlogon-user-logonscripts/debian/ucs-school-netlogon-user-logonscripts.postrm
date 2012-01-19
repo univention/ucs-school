@@ -1,9 +1,9 @@
 #!/bin/sh
 #
 # Univention UCS@School
-#  postinst script
+#  postrm script
 #
-# Copyright 2007-2010 Univention GmbH
+# Copyright 2007-2012 Univention GmbH
 #
 # http://www.univention.de/
 #
@@ -32,18 +32,20 @@
 
 #DEBHELPER#
 
-eval $(ucr shell)
+if [ -z "$2" ]; then
 
-univention-config-registry set ucsschool/userlogon/commonshares?"Marktplatz" \
-						ucsschool/userlogon/commonshares/server/Marktplatz?"$hostname" \
-						ucsschool/userlogon/commonshares/letter/Marktplatz?"M" \
-						ucsschool/userlogon/classshareletter?"K"
+	# samba 3
+	if [ -d "/var/lib/samba/userlogon/user" ]; then
+		rm -rf /var/lib/samba/userlogon/user
+	fi
 
-mkdir -p /var/lib/samba/userlogon/user
-chown listener /var/lib/samba/userlogon/user
-
-# restart listern only listener was running before
-/etc/init.d/univention-directory-listener crestart
-
+	# samba 4
+	myrealm=$(echo $kerberos_realm |  awk '{print tolower($0)}')
+	if [ -n "$myrealm" ]; then
+		if [ -d "/var/lib/samba/sysvol/$myrealm/scripts/user" ]; then
+			rm -rf "/var/lib/samba/sysvol/$myrealm/scripts/user"
+		fi
+	fi
+fi
 
 exit 0

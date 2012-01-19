@@ -1,0 +1,41 @@
+[ucsschool/userlogon/commonshares/.*]
+Description[de]=Komma separierte Liste von Netzwerkfreigaben, die für alle Benutzer eingebunden werden
+Description[en]=Comma-separated list of network shares that are included for all users
+Type=str
+Categories=ucsschool-netlogon
+
+[ucsschool/userlogon/commonshares/server/.*]
+Description[de]=Definiert den Server einer Netzwerkfreigabe
+Description[en]=Defines the network share server
+Type=str
+Categories=ucsschool-netlogon
+
+[ucsschool/userlogon/commonshares/letter/.*]
+Description[de]=Definiert den Laufwerksbuchstaben der Netzwerkfreigabe
+Description[en]=Defines the drive letter of the network share
+Type=str
+Categories=ucsschool-netlogon
+
+[ucsschool/userlogon/mysharespath]
+Description[de]=Pfad für das persönliche Verzeichnis (default: $(ucr get samba/homedirletter):\Eigene Dateien)
+Description[en]=Path to the personal sirectory (default: $(ucr get samba/homedirletter):\Eigene Dateien)
+Type=str
+Categories=ucsschool-netlogon
+
+[ucsschool/userlogon/shares/validservers]
+Description[de]=Definiert von welchen Servern Freigaben eingebunden werden (default: leer, möglich: leer [nur Freigaben vom lokalen Rechner], Komma separierte Liste von Rechnernamen [Freigaben von diesen Rechnern], * [alle Freigaben])
+Description[en]=Defines the valid servers for network shares (default: empty, possible: empty [only shares from the local host], Comma-separated list of servers [shares from these servers], * [all shares]
+Type=str
+Categories=ucsschool-netlogon
+
+[ucsschool/userlogon/classshareletter]
+Description[de]=Definiert den Laufwerksbuchstaben der Klassenfreigabe (default: K)
+Description[en]=Defines the drive letter of the class share (default: K)
+Type=str
+Categories=ucsschool-netlogon
+
+[ucsschool/userlogon/mac]
+Description[de]=Falls auf "true" gesetzt, wird ein Mac OS logon Skript erzeugt
+Description[en]=If set to "true" Mac OS logon scripts will be created
+Type=str
+Categories=ucsschool-netlogon
