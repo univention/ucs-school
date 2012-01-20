@@ -455,6 +455,19 @@ def create_policy(cn, container, values, policy_module):
 			traceback.print_exc(100, sys.stdout)
 	return ( exists, created )
 
+def object_exists(module, co, lo, scope, superordinate, base, filter, dn):
+
+	objects = univention.admin.modules.lookup(
+		module, co, lo, scope=scope,
+		superordinate=superordinate, 
+		base=base, filter=filter)
+
+	if objects:
+		for o in objects:
+			if o.dn.lower() == dn.lower():
+				return o
+	
+	return None
 
 def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None, ShareFileServer=None):
 	global problem_hints
@@ -498,7 +511,12 @@ def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None, ShareFileServer=None
 	else:
 		dccn = ''
 	myline = '%s\t%s' % ( schoolNr, dccn )
-	hooks.pre( 'ou', 'A', line = myline )
+
+	# check existens of ou before calling the hooks
+	if not object_exists(
+		ou_module, co, lo, 'sub', superordinate, baseDN, 
+		univention.admin.filter.expression('ou', schoolNr), ou_base):
+		hooks.pre( 'ou', 'A', line = myline )
 
 	created, dn = verify_container(ou_base, ou_module, co, lo, superordinate, baseDN, path='')
 	if created:

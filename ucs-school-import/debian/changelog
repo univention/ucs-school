@@ -1,3 +1,9 @@
+ucs-school-import (8.0.15-1) unstable; urgency=low
+
+  * run ou create hooks only if ou not exists (Bug #21083)
+
+ -- Felix Botner <botner@univention.de>  Fri, 20 Jan 2012 14:46:11 +0100
+
 ucs-school-import (8.0.14-1) unstable; urgency=low
 
   * update joinscript to UCS 3.0 UMC (Bug #25687)
