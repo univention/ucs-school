@@ -1,9 +1,8 @@
-#!/bin/sh
+#!/bin/bash
 #
-# Univention UCS@School
-#  postinst script
+# Univention UCS@school user netlogon join script
 #
-# Copyright 2007-2012 Univention GmbH
+# Copyright 2012 Univention GmbH
 #
 # http://www.univention.de/
 #
@@ -30,29 +29,17 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-#DEBHELPER#
+VERSION="1"
 
-. /usr/share/univention-lib/all.sh
-
-eval "$(ucr shell)"
-
-univention-config-registry set \
-	ucsschool/userlogon/commonshares?"Marktplatz" \
-	ucsschool/userlogon/commonshares/server/Marktplatz?"$hostname" \
-	ucsschool/userlogon/commonshares/letter/Marktplatz?"M" \
-	ucsschool/userlogon/classshareletter?"K" \
-	ucsschool/netlogon/script/20?'user\%USERNAME%.vbs' \
-	samba/homedirletter?I
-
-# samba 3
-mkdir -p /var/lib/samba/userlogon/user
-chown listener /var/lib/samba/userlogon/user
-
-# samba 4
-call_joinscript 80ucs-school-netlogon-user-logonscripts.inst
-
-# restart listener only if listener was running before
-/etc/init.d/univention-directory-listener crestart
+. /usr/share/univention-join/joinscripthelper.lib
+joinscript_init
 
 
-exit 0
+# samba 4 netlogon share
+myrealm=$(echo $kerberos_realm |  awk '{print tolower($0)}')
+if [ -n "$myrealm" ]; then
+	mkdir -p "/var/lib/samba/sysvol/$myrealm/scripts/user"
+	chown listener "/var/lib/samba/sysvol/$myrealm/scripts/user"
+fi
+
+joinscript_save_current_version

@@ -1,3 +1,9 @@
+ucs-school-netlogon-user-logonscripts (7.0.1-1) unstable; urgency=low
+
+  * added join script for samba 4 netlogon share (Bug #25777)
+
+ -- Felix Botner <botner@univention.de>  Fri, 20 Jan 2012 17:26:08 +0100
+
 ucs-school-netlogon-user-logonscripts (7.0.0-1) unstable; urgency=low
 
   * update to UCS@school 3.0 
