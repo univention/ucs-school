@@ -451,9 +451,10 @@ def create_policy(cn, container, values, policy_module):
 def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None, ShareFileServer=None):
 	global problem_hints
 
-	if schoolNr in verified_ous:
-		print "verify ou for school nr %s already done"%schoolNr
-		return True
+	for verified_ou in verified_ous:
+		if schoolNr.lower() == verified_ou.lower():
+			print "verify ou for school nr %s already done"%schoolNr
+			return True
 
 	# create ucsschool container if it does not exists
 	created, dn = verify_container ('cn=ucsschool,cn=groups,%s' % baseDN, cn_module, co, lo, superordinate, baseDN, 'groupPath')
@@ -987,7 +988,7 @@ def verify_container(position_dn, module, co, lo, superordinate, base, path="use
 		pass
 	if objects:
 		for object in objects:
-			if codecs.latin_1_encode(univention.admin.objects.dn(object))[0]==position_dn:
+			if codecs.latin_1_encode(univention.admin.objects.dn(object))[0].lower()==position_dn.lower():
 				container_exists = 1
 
 	created = False

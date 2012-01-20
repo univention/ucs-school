@@ -1,3 +1,9 @@
+ucs-school-import (8.0.11-1) unstable; urgency=low
+
+  * verify container and ou's case-insensitive (Bug #20081) 
+
+ -- Felix Botner <botner@univention.de>  Fri, 20 Jan 2012 11:08:26 +0100
+
 ucs-school-import (8.0.10-1) unstable; urgency=low
 
   * add UCRV to configure defaults for sambahome/homedrive (Bug #25867)
