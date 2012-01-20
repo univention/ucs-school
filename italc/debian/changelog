@@ -1,3 +1,9 @@
+italc (1:2.0.1-1) unstable; urgency=low
+
+  * generate key pair and copy public key (Bug #20261)
+
+ -- Janek Walkenhorst <walkenhorst@univention.de>  Fri, 20 Jan 2012 10:43:13 +0100
+
 italc (1:2.0.0-2) unstable; urgency=low
 
   * install additional header files (Bug #25689)
