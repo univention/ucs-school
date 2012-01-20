@@ -611,6 +611,7 @@ def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None, ShareFileServer=None
 			for object in objects:
 				if object.dn == correct_server:
 					correct_server_exists=1
+					break
 
 		if server_exists:
 			# check if existing system is a DC master or DC backup
@@ -780,6 +781,7 @@ def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None, ShareFileServer=None
 #			for object in objects:
 #				if object.dn == share:
 #					share_exists=1
+#					break
 		if not objects:
 			position.setDn("cn=shares,%s" % (getDN(schoolNr), ))
 			object=share_module.object(co, lo, position=position)
@@ -990,6 +992,7 @@ def verify_container(position_dn, module, co, lo, superordinate, base, path="use
 		for object in objects:
 			if codecs.latin_1_encode(univention.admin.objects.dn(object))[0].lower()==position_dn.lower():
 				container_exists = 1
+				break
 
 	created = False
 	dn = None
@@ -1046,6 +1049,8 @@ def verify_group_share(schoolNr, classNr, co, lo, superordinate, base):
 		for object in objects:
 			if codecs.latin_1_encode(univention.admin.objects.dn(object))[0].lower() == position_dn.lower():
 				share_exists = 1
+				break
+
 	if not share_exists:
 		print "need to create groupshare %s"%position_dn
 
@@ -1155,6 +1160,7 @@ def verify_group(position_dn, co, lo, superordinate, base):
 		for object in objects:
 			if codecs.latin_1_encode(univention.admin.objects.dn(object))[0].lower() == position_dn.lower():
 				group_exists = 1
+				break
 
 	if not group_exists:
 		print "need to create group %s"%position_dn
@@ -1318,15 +1324,16 @@ def modify_user(person, module, co, lo):
 
 
 def check_user(person, baseDN, module):
-	objects = univention.admin.modules.lookup(module, co, lo, scope='sub', superordinate=superordinate, base=person.getPosition_dn(),
-											  filter=univention.admin.filter.expression('uid',person.login))
+	objects = univention.admin.modules.lookup(
+		module, co, lo, scope='sub', superordinate=superordinate, 
+		base=person.getPosition_dn(),
+		filter=univention.admin.filter.expression('uid',person.login))
 	count_lo()
-	user_exists=0
 	if objects:
 		for object in objects:
 			if object.dn == person.getDN():
-				user_exists = 1
-	return user_exists
+				return 1
+	return None
 
 def get_passwd():
 	makepasswd = os.popen('makepasswd --chars=8')
@@ -1756,18 +1763,18 @@ def check_network(schoolNr, network):
 	"""
 	@param	network	ipaddr.IPv4Network object
 	"""
-	objects = univention.admin.modules.lookup(network_module, co, lo, scope='sub', superordinate=superordinate,
-											  base='cn=networks,%s'%(getDN (schoolNr)),
-											  filter=univention.admin.filter.expression('cn','%s-%s'%(schoolNr.lower (), network.network)))
+	objects = univention.admin.modules.lookup(
+		network_module, co, lo, scope='sub', superordinate=superordinate,
+		base='cn=networks,%s'%(getDN (schoolNr)),
+		filter=univention.admin.filter.expression('cn','%s-%s'%(schoolNr.lower (), network.network)))
 	count_lo()
-	network_exists=0
 	if objects:
 		n = "cn=%s-%s,cn=networks,%s"%(schoolNr.lower (), network.network, getDN (schoolNr))
 		for object in objects:
 			if object.dn == n:
-				network_exists = 1
+				return 1
 
-	return network_exists
+	return None
 
 def check_macAddress(mac,base=''):
 	if not base:
@@ -1799,20 +1806,21 @@ def generate_new_mac(schoolNr,IP):
 	return mac
 
 def check_computer(module, name, schoolNr):
-	objects = univention.admin.modules.lookup(module, co, lo, scope='sub', superordinate=superordinate,
-											  base='cn=computers,%s' % (getDN (schoolNr), ),
-											  filter=univention.admin.filter.expression('cn','%s'%name))
+	objects = univention.admin.modules.lookup(
+		module, co, lo, scope='sub', superordinate=superordinate,
+		base='cn=computers,%s' % (getDN (schoolNr), ),
+		filter=univention.admin.filter.expression('cn','%s'%name))
 	count_lo()
-	computer_exists=0
 	if objects:
 		for object in objects:
 			if object.dn == "cn=%s,cn=computers,%s"%(name, getDN (schoolNr)):
-				computer_exists = 1
-
-	return computer_exists
+				return 1
+	return None
 
 def get_computer_dn(name):
-	objects = univention.admin.modules.lookup(computer_module, co, lo, scope='sub', superordinate=superordinate, filter=univention.admin.filter.expression('cn','%s'%name))
+	objects = univention.admin.modules.lookup(
+		computer_module, co, lo, scope='sub', superordinate=superordinate,
+		filter=univention.admin.filter.expression('cn','%s'%name))
 	if objects:
 		for object in objects:
 			if object.dn.startswith("cn=%s," %name):
@@ -2374,6 +2382,7 @@ def import_printer():
 			for object in objects:
 				if codecs.latin_1_encode(univention.admin.objects.dn(object))[0]==position_dn:
 					container_exists = 1
+					break
 
 		if action in ['A','M']: # Add/Modify printer
 			position=univention.admin.uldap.position(baseDN)
