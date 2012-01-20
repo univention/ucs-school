@@ -329,20 +329,28 @@ class ucsschool_person_modify:
 		return roles
 
 def count_lo():
-	pass # was a workaround for slapd locking-failures, not necessary any more
+
 	global locounts
 	global lo
 	locounts=locounts+1
-	#print 'locounts %s'%locounts,
-	if locounts>1000:
-		try:
-			print 'ldap-lookup count exceeded, reconnect'
-			lo=univention.admin.uldap.access(host=configRegistry['ldap/master'], base=baseDN, binddn='cn=admin,'+baseDN, bindpw=pwd, start_tls=tls)
-			locounts=0
-		except Exception, e:
-			univention.debug.debug(univention.debug.ADMIN, univention.debug.WARN, 'authentication error: %s' % str(e))
-			print 'ERROR: authentication error: %s' % str(e)
-			sys.exit(1)
+
+	return
+
+	# was a workaround for slapd locking-failures, not necessary any more
+
+	#if locounts>1000:
+	#	try:
+	#		print 'ldap-lookup count exceeded, reconnect'
+	#		lo=univention.admin.uldap.access(
+	#			host=configRegistry['ldap/master'], base=baseDN, 
+	#			binddn='cn=admin,'+baseDN, bindpw=pwd, start_tls=tls)
+	#		locounts=0
+	#	except Exception, e:
+	#		univention.debug.debug(
+	#			univention.debug.ADMIN, univention.debug.WARN,
+	#			'authentication error: %s' % str(e))
+	#		print 'ERROR: authentication error: %s' % str(e)
+	#		sys.exit(1)
 
 def extract_district (schoolNr):
 	try:
