@@ -1,3 +1,9 @@
+ucs-school-import (8.0.14-1) unstable; urgency=low
+
+  * update joinscript to UCS 3.0 UMC (Bug #25687)
+
+ -- Janek Walkenhorst <walkenhorst@univention.de>  Fri, 20 Jan 2012 14:32:09 +0100
+
 ucs-school-import (8.0.13-1) unstable; urgency=low
 
   * no more reconnect after 1000 ldap-lookups (Bug #20221)
