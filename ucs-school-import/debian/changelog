@@ -1,3 +1,9 @@
+ucs-school-import (8.0.17-1) unstable; urgency=low
+
+  * add memberserver to member-edu(verwalt) groups (Bug #20151)
+
+ -- Felix Botner <botner@univention.de>  Fri, 20 Jan 2012 16:15:41 +0100
+
 ucs-school-import (8.0.16-1) unstable; urgency=low
 
   * inventory number in computer import is now optional (Bug #20150)

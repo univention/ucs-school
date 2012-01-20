@@ -2207,6 +2207,22 @@ def import_computer():
 			print "%s is not a valid netmask" % e
 			sys.exit(0)
 
+		# groups
+		groups = {}
+		if ctype == "memberserver":
+			for zone in school_dcs.split():
+				grp = None
+				if zone == "edukativ":
+					grp = "Member-Edukativnetz"
+				elif zone == "verwaltung":
+					grp = "Member-Verwaltungsnetz"
+				else:
+					grp = None
+
+				if grp:
+					groups["cn=OU%s-%s,cn=ucsschool,cn=groups,%s" % (schoolNr.lower(), grp, baseDN)] = 1
+					groups["cn=%s,cn=ucsschool,cn=groups,%s" % (grp, baseDN)] = 1
+
 		# invoke pre hooks
 		hooks.pre( 'computer', 'A', line = line )
 
@@ -2251,6 +2267,9 @@ def import_computer():
 					object['ip'] = str(ip.ip)
 					print "set ip to %s is not net %s" % (ip.ip, ip.network)
 				object['network'] = 'cn=%s-%s,cn=networks,%s' % (schoolNr.lower (), ip.network, getDN (schoolNr))
+				for grp in groups:
+					if not grp in object['groups']:
+						object['groups'].append(grp)
 				try:
 					create_object(object)
 				except:
