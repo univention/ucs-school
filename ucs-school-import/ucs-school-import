@@ -2190,7 +2190,9 @@ def import_computer():
 		MAC      = parsed[2]
 		schoolNr = parsed[3]
 		IP       = parsed[4]
-		inventoryNumbers = parsed[5].strip().split(',')
+		inventoryNumbers = None
+		if len(parsed) > 5:
+			inventoryNumbers = parsed[5].strip().split(',')
 
 		verify_school_ou(schoolNr, co, lo, baseDN)
 
@@ -2243,7 +2245,8 @@ def import_computer():
 				object.open()
 				object['name'] = name
 				object['mac']  = MAC
-				object['inventoryNumber']=inventoryNumbers
+				if inventoryNumbers:
+					object['inventoryNumber']=inventoryNumbers
 				if not ip.ip == ip.network:
 					object['ip'] = str(ip.ip)
 					print "set ip to %s is not net %s" % (ip.ip, ip.network)
