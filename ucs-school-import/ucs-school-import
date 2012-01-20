@@ -91,10 +91,11 @@ district_enabled = False
 if configRegistry['ucsschool/ldap/district/enable'].lower () in ('1', 'yes', 'true'):
 	district_enabled = True
 
-school_dcs = configRegistry['ucsschool/ldap/default/dcs']
 # create edukativ DC by default
-if school_dcs.strip () == '':
-	school_dcs = 'edukativ'
+school_dcs = configRegistry.get('ucsschool/ldap/default/dcs', 'edukativ')
+
+# add members to edukativ member groups by defauls
+school_members = configRegistry.get('ucsschool/ldap/default/memberservers', 'edukativ')
 
 verified_ous          = []
 verified_groups       = []
@@ -2210,7 +2211,7 @@ def import_computer():
 		# groups
 		groups = {}
 		if ctype == "memberserver":
-			for zone in school_dcs.split():
+			for zone in school_members.split():
 				grp = None
 				if zone == "edukativ":
 					grp = "Member-Edukativnetz"

@@ -43,6 +43,7 @@ univention-config-registry set \
 	ucsschool/ldap/default/groupprefix/pupils?"schueler-" \
 	ucsschool/ldap/default/groupprefix/staff?"mitarbeiter-" \
 	ucsschool/ldap/default/dcs?"edukativ verwaltung" \
+	ucsschool/ldap/default/memberservers?"edukativ verwaltung" \
 	ucsschool/ldap/noneducational/create/objects?"true" \
 	ucsschool/update/user/role?yes
 
