@@ -1,3 +1,10 @@
+ucs-school-import (8.0.20-1) unstable; urgency=low
+
+  * add already existing dc to global dc groups
+    for proper ldap replication (Bug #20229)
+
+ -- Felix Botner <botner@univention.de>  Mon, 23 Jan 2012 11:25:20 +0100
+
 ucs-school-import (8.0.19-1) unstable; urgency=low
 
   * removed ucsschool/ldap/default/memberservers

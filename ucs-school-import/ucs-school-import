@@ -461,6 +461,10 @@ def object_exists(module, co, lo, scope, superordinate, base, filter, dn):
 		base=base, filter=filter)
 
 	if objects:
+		if not dn:
+			if len(objects) == 1:
+				return objects[0]
+			return None
 		for o in objects:
 			if o.dn.lower() == dn.lower():
 				return o
@@ -510,6 +514,55 @@ def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None, ShareFileServer=None
 		dccn = ''
 	myline = '%s\t%s' % ( schoolNr, dccn )
 
+	# verify global dc groups
+	groups_management = [
+		"cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,%s" % baseDN,
+		"cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,%s" % baseDN]
+	groups_education=[
+		"cn=DC-Edukativnetz,cn=ucsschool,cn=groups,%s" % baseDN,
+		"cn=Member-Edukativnetz,cn=ucsschool,cn=groups,%s" % baseDN]
+	groups_managementOU=[
+		"cn=OU%s-DC-Verwaltungsnetz,cn=ucsschool,cn=groups,%s" % (schoolNr.lower(), baseDN),
+		"cn=OU%s-Member-Verwaltungsnetz,cn=ucsschool,cn=groups,%s" % (schoolNr.lower(), baseDN)]
+	groups_educationOU=[
+		"cn=OU%s-DC-Edukativnetz,cn=ucsschool,cn=groups,%s" % (schoolNr.lower(), baseDN),
+		"cn=OU%s-Member-Edukativnetz,cn=ucsschool,cn=groups,%s" % (schoolNr.lower(), baseDN)]
+
+	if configRegistry.is_true('ucsschool/ldap/noneducational/create/objects', True):
+		groups = groups_management + groups_education + groups_managementOU + groups_educationOU
+	else:
+		groups = groups_education + groups_educationOU
+	for group in groups:
+		verify_group(group, co, lo, superordinate, baseDN)
+
+	# add already existing dc to global dc groups
+	# for proper ldap replication
+	if dccn:
+		dcobject = object_exists(
+			computer_module, co, lo, 'sub', superordinate, baseDN,
+			univention.admin.filter.expression('cn', dccn), None)
+	
+		if dcobject:
+			zone = "edukativ"
+			dcobject.open()
+			for grp in dcobject['groups']:
+				if grp.startswith("cn=DC-Verwaltungsnetz"):
+					zone = "verwaltung"
+			groups = []
+			if zone == "edukativ":
+				groups.append("cn=DC-Edukativnetz,cn=ucsschool,cn=groups,%s" % baseDN)
+				groups.append("cn=OU%s-DC-Edukativnetz,cn=ucsschool,cn=groups,%s" % (schoolNr.lower(), baseDN))
+			if zone == "verwaltung":
+				groups.append("cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,%s" % baseDN)
+				groups.append("cn=OU%s-DC-Verwaltungsnetz,cn=ucsschool,cn=groups,%s" % (schoolNr.lower(), baseDN))
+			modified = False
+			for grp in groups:
+				if not grp in dcobject['groups']:
+					modified = True
+					dcobject['groups'].append(grp)
+			if modified:
+				dcobject.modify()
+		
 	# check existens of ou before calling the hooks
 	if not object_exists(
 		ou_module, co, lo, 'sub', superordinate, baseDN, 
@@ -569,29 +622,6 @@ def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None, ShareFileServer=None
 		if grppolicy and grppolicy.lower() != 'none':
 			verify_policy(group, schoolNr, [ grppolicy ])
 
-	groups_management=[
-			"cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,%s" % (baseDN, ),
-			"cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,%s" % (baseDN, ),
-			]
-	groups_education=[
-			"cn=DC-Edukativnetz,cn=ucsschool,cn=groups,%s" % (baseDN, ),
-			"cn=Member-Edukativnetz,cn=ucsschool,cn=groups,%s" % (baseDN, ),
-			]
-
-	groups_managementOU=[
-			"cn=OU%s-DC-Verwaltungsnetz,cn=ucsschool,cn=groups,%s" % (schoolNr.lower (), baseDN),
-			"cn=OU%s-Member-Verwaltungsnetz,cn=ucsschool,cn=groups,%s" % (schoolNr.lower (), baseDN),
-			]
-	groups_educationOU=[
-			"cn=OU%s-DC-Edukativnetz,cn=ucsschool,cn=groups,%s" % (schoolNr.lower (), baseDN),
-			"cn=OU%s-Member-Edukativnetz,cn=ucsschool,cn=groups,%s" % (schoolNr.lower (), baseDN),
-			]
-	if configRegistry.is_true('ucsschool/ldap/noneducational/create/objects', True):
-		groups = groups_management + groups_education + groups_managementOU + groups_educationOU
-	else:
-		groups = groups_education + groups_educationOU
-	for group in groups:
-		verify_group(group, co, lo, superordinate, baseDN)
 
 
 	for dc in school_dcs.split ():
