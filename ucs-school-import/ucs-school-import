@@ -94,9 +94,6 @@ if configRegistry['ucsschool/ldap/district/enable'].lower () in ('1', 'yes', 'tr
 # create edukativ DC by default
 school_dcs = configRegistry.get('ucsschool/ldap/default/dcs', 'edukativ')
 
-# add members to edukativ member groups by defauls
-school_members = configRegistry.get('ucsschool/ldap/default/memberservers', 'edukativ')
-
 verified_ous          = []
 verified_groups       = []
 verified_group_shares = []
@@ -2194,6 +2191,9 @@ def import_computer():
 		inventoryNumbers = None
 		if len(parsed) > 5:
 			inventoryNumbers = parsed[5].strip().split(',')
+		zone = None
+		if len(parsed) > 6:
+			zone = parsed[6]
 
 		verify_school_ou(schoolNr, co, lo, baseDN)
 
@@ -2211,18 +2211,12 @@ def import_computer():
 		# groups
 		groups = {}
 		if ctype == "memberserver":
-			for zone in school_members.split():
-				grp = None
-				if zone == "edukativ":
-					grp = "Member-Edukativnetz"
-				elif zone == "verwaltung":
-					grp = "Member-Verwaltungsnetz"
-				else:
-					grp = None
-
-				if grp:
-					groups["cn=OU%s-%s,cn=ucsschool,cn=groups,%s" % (schoolNr.lower(), grp, baseDN)] = 1
-					groups["cn=%s,cn=ucsschool,cn=groups,%s" % (grp, baseDN)] = 1
+			if zone == "edukativ":
+				groups["cn=OU%s-Member-Edukativnetz,cn=ucsschool,cn=groups,%s" % (schoolNr.lower(), baseDN)] = 1
+				groups["cn=Member-Edukativnetz,cn=ucsschool,cn=groups,%s" % baseDN] = 1
+			if zone == "verwaltung":
+				groups["cn=OU%s-Member-Verwaltungsnetz,cn=ucsschool,cn=groups,%s" % (schoolNr.lower(), baseDN)] = 1
+				groups["cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,%s" % baseDN] = 1
 
 		# invoke pre hooks
 		hooks.pre( 'computer', 'A', line = line )

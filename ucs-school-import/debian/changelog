@@ -1,3 +1,10 @@
+ucs-school-import (8.0.19-1) unstable; urgency=low
+
+  * removed ucsschool/ldap/default/memberservers
+  * new optional parameter for computer import (Bug #20151) 
+
+ -- Felix Botner <botner@univention.de>  Mon, 23 Jan 2012 09:48:40 +0100
+
 ucs-school-import (8.0.18-1) unstable; urgency=low
 
   * add new var ucsschool/ldap/default/memberservers (Bug #20151) 

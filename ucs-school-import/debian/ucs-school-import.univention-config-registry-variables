@@ -58,14 +58,6 @@ Description[en]=Specifies which school DCs are created during the school set up 
 Type=str
 Categories=ucsschool-base
 
-[ucsschool/ldap/default/memberservers]
-Description[de]=Spezifiziert in welche Gruppen Schul-Memberserver beim Erzeugen aufgenommen werden (Werte: edukativ und/oder verwaltung)
-Description[en]=Specifies the group membership of school memberservers (values: edukativ and/or verwaltung)
-Type=str
-Categories=ucsschool-base
-
-
-
 [ucsschool/import/generate/share/marktplatz]
 Description[de]=Die Freigabe "Marktplatz" automatisch bei der OU-Erstellung generieren? (Default: yes)
 Description[en]=Create share "Marktplatz" during ou creation? (default: yes)
