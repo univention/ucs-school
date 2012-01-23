@@ -161,6 +161,7 @@ class Hooks( object ):
 
 		# create temporary file with data
 		if 'line' in kwargs:
+			kwargs['line'] = kwargs['line'].strip() + "\n"
 			tmpfile = self._create_temp_file( kwargs.get( 'line' ) )
 
 		# invoke hook scripts
