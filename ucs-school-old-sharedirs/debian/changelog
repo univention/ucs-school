@@ -1,3 +1,9 @@
+ucs-school-old-sharedirs (6.0.2-1) unstable; urgency=low
+
+  * fixed insufficiently quoted commmands (Bug #20820)
+
+ -- Sönke Schwardt <schwardt@univention.de>  Fri, 26 Nov 2010 15:50:17 +0100
+
 ucs-school-old-sharedirs (6.0.1-1) unstable; urgency=low
 
   * convert to GNU APGL V3 (Bug #19780)

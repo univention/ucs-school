@@ -57,7 +57,7 @@ def check_target_dir(configRegistry):
 	if not os.path.isdir(target_dir):
 		# create directory
 		listener.setuid(0)
-		ret,ret_str = commands.getstatusoutput("mkdir -p %s" % target_dir)
+		ret,ret_str = commands.getstatusoutput("mkdir -p '%s'" % target_dir)
 		if not ret==0:
 			return "failed to create target directory %s" % target_dir
 
@@ -122,9 +122,9 @@ def handler(dn, new, old):
 			return
 
 		# make sure that we are dealing with a local filesystem
-		ret, ret_str = commands.getstatusoutput('stat -f %s | grep "Type:" | sed "s/.*Type:\ //"'%share_dir)
+		ret, ret_str = commands.getstatusoutput("stat -f '%s' | grep 'Type:' | sed 's/.*Type:\ //'" % share_dir)
 
-		if ret_str in ["nfs", "nfs4", "cifs", "smbfs", "nfsd"]:
+		if ret_str.strip() in ["nfs", "nfs4", "cifs", "smbfs", "nfsd"]:
 			univention.debug.debug(univention.debug.LISTENER, univention.debug.INFO, "not removing share directory of share %s: is not on a local filesystem" % old["cn"][0])
 			return
 
@@ -135,7 +135,7 @@ def handler(dn, new, old):
 			try:
 				listener.setuid(0)
 				# for some reason, shutil cannot be imported, so we'll do it using mv
-				ret, ret_str = commands.getstatusoutput("mv %s %s" % (share_dir, target_dir))
+				ret, ret_str = commands.getstatusoutput("mv '%s' '%s'" % (share_dir, target_dir))
 			except:
 				univention.debug.debug(univention.debug.LISTENER, univention.debug.ERROR, "failed to move share directory of share %s from %s to %s: %s" % (old["cn"][0], share_dir, target_dir, sys.exc_info()[0]))
 		finally:
