@@ -72,7 +72,7 @@ sharegrp="$ucsschool_import_generate_share_marktplatz_group"
 if [ -z "$sharegrp" ] ; then
 	sharegrp="Domain Users"
 fi
-grpuidnumber="$(ldapsearch -xLLL "(&(objectclass=univentionGroup)(cn=${sharegrp}))" gidNumber | sed -ne 's/^gidNumber: //p')"
+grpuidnumber="$(univention-ldapsearch -LLL "(&(objectclass=univentionGroup)(cn=${sharegrp}))" gidNumber | sed -ne 's/^gidNumber: //p')"
 
 udm shares/share create --ignore_exists \
 	--position "cn=shares,ou=${ou}${district},${ldap_base}" \
