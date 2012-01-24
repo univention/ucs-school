@@ -118,3 +118,21 @@ Description[de]=Gibt ein Programm für den URL redirector an (Mögliche Werte: s
 Description[en]=Specifies the location of the executable for the URL redirector (Valid values: squidguard)
 Type=str
 Categories=service-webproxy
+
+[squid/krb5auth]
+Description[de]=Squid Modul zur Kerberos Authentifikation aktivieren
+Description[en]=Configure squid helper for kerberos authentication
+Type=str
+Categories=service-webproxy
+
+[squid/krb5auth/children]
+Description[de]=Zahl der squid_kerb_auth Prozesse
+Description[en]=Number of squid_kerb_auth processes
+Type=str
+Categories=service-webproxy
+
+[squid/krb5auth/keepalive]
+Description[de]=keep_alive Option für squid_kerb_auth 
+Description[en]=keep_alive option for squid_kerb_auth
+Type=str
+Categories=service-webproxy

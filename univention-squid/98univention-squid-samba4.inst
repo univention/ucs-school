@@ -1,0 +1,183 @@
+#! /bin/bash
+#
+# Univention Squid Samba4
+#  join script
+#
+# Copyright 2010-2012 Univention GmbH
+#
+# http://www.univention.de/
+#
+# All rights reserved.
+#
+# The source code of this program is made available
+# under the terms of the GNU Affero General Public License version 3
+# (GNU AGPL V3) as published by the Free Software Foundation.
+#
+# Binary versions of this program provided by Univention to you as
+# well as other copyrighted, protected or trademarked materials like
+# Logos, graphics, fonts, specific documentations and configurations,
+# cryptographic keys etc. are subject to a license agreement between
+# you and Univention and not subject to the GNU AGPL V3.
+#
+# In the case you use this program under the terms of the GNU AGPL V3,
+# the program is provided in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public
+# License with the Debian GNU/Linux or Univention distribution in file
+# /usr/share/common-licenses/AGPL-3; if not, see
+# <http://www.gnu.org/licenses/>.
+
+VERSION=1
+. /usr/share/univention-join/joinscripthelper.lib
+joinscript_init
+
+eval "$(univention-config-registry shell)"
+
+
+servicename='http-proxy'
+servicedescription="$servicedescription Service Account for $hostname"
+spn_instance='HTTP'
+
+
+extract_binddn_and_bindpwd_from_args() {
+	## parse binddn and bindpwd from command line arguments into shell variables
+	eval $(echo "$@" | sed -n 's/.*--binddn \(.*\) --bindpwd \(.*\).*/binddn="\1"\nbindpwd="\2"/p')
+	if [ -n "$binddn" ]; then
+		dcaccount="$(ldapsearch -x -ZZ -D "$ldap_hostdn" -y /etc/machine.secret -s base -b "$binddn" -LLL uid | ldapsearch-wrapper | sed -n 's/^uid: \(.*\)$/\1/p')"
+	fi
+}
+
+
+samba_private_dir="/var/lib/samba/private"
+
+service_accountname="$servicename-$hostname"
+keytab_filename="$service_accountname.keytab"
+keytab_path="$samba_private_dir/$keytab_filename"
+
+if ! [ -f "$keytab_path" ]; then
+
+	secret_filename="/etc/$servicename.secret"
+	password=$(makepasswd)
+
+	## check if this host is a Samba4 DC
+	cn=$(ldapsearch -x -ZZ -LLL -D "$ldap_hostdn" -y /etc/machine.secret "(&(univentionService=Samba 4)(cn=$hostname))" cn | sed -n 's/^cn: \(.*\)/\1/p')
+
+	if [ "$cn" = "$hostname" ]; then
+
+		## save password for debugging
+		touch "$secret_filename"
+		chmod 600 "$secret_filename"
+		chown proxy "$secret_filename"
+		echo -n "$password" > "$secret_filename"
+
+		/usr/sbin/samba-tool user add "$service_accountname" "$password" \
+			--description "$servicedescription"
+
+		service_account_dn=$(ldbsearch -H $samba_private_dir/sam.ldb samAccountName="$service_accountname" dn | sed -n 's/^dn: \(.*\)/\1/p')
+
+		if [ -z "$service_account_dn" ]; then
+			echo "ERROR: samAccountName not found for service account $service_accountname"
+			exit 1
+		fi
+
+		ldbmodify -H "$samba_private_dir/sam.ldb" <<-%EOF
+		dn: $service_account_dn
+		changetype: modify
+		add: servicePrincipalName
+		servicePrincipalName: $spn_instance/$(hostname -f)
+		-
+		%EOF
+
+		ldbadd -H "$samba_private_dir/secrets.ldb" <<-%EOF
+		dn: samAccountName=$service_accountname,CN=Principals
+		objectClass: kerberosSecret
+		sAMAccountName: $service_accountname
+		servicePrincipalName: $spn_instance/$(hostname -f)
+		realm: $kerberos_realm
+		secret: $password
+		msDS-KeyVersionNumber: 1
+		privateKeytab: $keytab_filename
+		%EOF
+
+		if ! [ -f "$keytab_path" ]; then
+			echo "ERROR: keytab not created for samAccountName=$service_accountname"
+			exit 1
+		fi
+		chown proxy "$keytab_path"
+
+	else
+		### in this case we are not a Samba4-DC
+
+		## check if we are in a samba4 domain
+		samba4servicedcs=$(ldapsearch -x -ZZ -LLL -D "$ldap_hostdn" -y /etc/machine.secret "(&(univentionService=Samba 4)(objectClass=univentionDomainController))" cn | sed -n 's/^cn: \(.*\)/\1/p')	## currently there is no u-d-m module computers/dc
+
+		if [ -n "$samba4servicedcs" ]; then
+			samba4dcs=( $samba4servicedcs )
+			s4dc="${samba4dcs[0]}"	# pick the first samba4 DC listed
+			s4dc_fqdn="$s4dc.$domainname"
+
+			## save password for debugging
+			touch "$secret_filename"
+			chmod 600 "$secret_filename"
+			chown proxy "$secret_filename"
+			echo -n "$password" > "$secret_filename"
+
+			## create service_accountname via udm, but servicePrincipalName is missing
+			univention-directory-manager users/user create "$@" \
+				--position "cn=users,$ldap_base" \
+				--set username="$service_accountname" \
+				--set password="$password" \
+				--set description="$servicedescription"
+
+			## create service keytab manually
+			if ! [ -d "$samba_private_dir" ]; then
+				mkdir -p "$samba_private_dir"
+			fi
+			/usr/lib/univention-heimdal/univention-create-keytab --keytab="$keytab_path" \
+				--principal="host/$service_accountname.$domainname" \
+				--alias="$spn_instance/$hostname.$domainname" \
+				--alias="$service_accountname" \
+				--kvno=1 --password="$password"
+
+			chown proxy "$keytab_path"
+
+			## using ldap-tools here
+			## ldbmodify might be an option, depends on package ldb-tools
+			## samba-tool might be another option, but it needs samba4-common-bin and python-samba4
+
+			extract_binddn_and_bindpwd_from_args "$@"
+			samba4_bind_dn="CN=$dcaccount,CN=Users,$ldap_base"
+
+			## wait for S4 Connector and possibly DRS
+			count=0
+			while [ -z "$service_account_dn" ] && [ $count -le 300 ]; do
+				sleep 1
+				service_account_dn=$(ldapsearch -H $"ldaps://$s4dc_fqdn" -D"$samba4_bind_dn" -w "$bindpwd" samAccountName="$service_accountname" dn | sed -n 's/^dn: \(.*\)/\1/p')
+				count=$((count+1))
+			done
+
+			if [ -z "$service_account_dn" ]; then
+				echo "ERROR: $service_accountname not found in samba4 directory on host $s4dc.$domainname"
+				echo "ERROR: cannot add attribute \"servicePrincipalName: $spn_instance/$(hostname -f)\""
+				exit 1
+			fi
+
+			ldapmodify -H "ldaps://$s4dc_fqdn" -D"$samba4_bind_dn" -w "$bindpwd" <<-%EOF
+			dn: $service_account_dn
+			changetype: modify
+			add: servicePrincipalName
+			servicePrincipalName: $spn_instance/$(hostname -f)
+			--
+			%EOF
+
+		fi
+	fi
+fi
+
+joinscript_save_current_version
+
+exit 0
+

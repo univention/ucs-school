@@ -1,3 +1,7 @@
+univention-squid (5.1.3-1) unstable; urgency=low
+
+  * merge from ucs3.0-1 into scope (Bug #25771)
+
 univention-squid (5.1.2-1) unstable; urgency=low
 
   * respect ldap port in squid_ldap_auth and squid_ldap_group (Bug #25894)
@@ -15,6 +19,48 @@ univention-squid (5.1.0-1) unstable; urgency=low
   * added squid/auth/groups and squid/redirect (Bug #25700)
 
  -- Felix Botner <botner@univention.de>  Tue, 10 Jan 2012 15:52:43 +0100
+
+univention-squid (5.0.4-6) unstable; urgency=low
+
+  * improve handling of non-Samba4-DC case in squid-samba4 joinscript
+  * bugfixes in squid-samba4 joinscript (Bug #24277)
+
+ -- Arvid Requate <requate@univention.de>  Tue, 24 Jan 2012 22:07:54 +0100
+
+univention-squid (5.0.4-5) unstable; urgency=low
+
+  * fix syntax in joinscript (Bug #24277)
+
+ -- Arvid Requate <requate@univention.de>  Tue, 24 Jan 2012 17:25:38 +0100
+
+univention-squid (5.0.4-4) unstable; urgency=low
+
+  * add krb5 principal for HTTP/ service if there is a writable Samba 4 DC
+    in this domain (Bug #24277)
+
+ -- Arvid Requate <requate@univention.de>  Tue, 24 Jan 2012 16:11:58 +0100
+
+univention-squid (5.0.4-3) unstable; urgency=low
+
+  * fix ucslint issues (Bug #24277)
+
+ -- Arvid Requate <requate@univention.de>  Mon, 23 Jan 2012 18:05:25 +0100
+
+univention-squid (5.0.4-2) unstable; urgency=low
+
+  * add squid/krb5auth configuration option (Bug #24277)
+  * add krb5 principal for HTTP/ service if host runs Samba 4
+  * strip kerberos realm from usernames in ldap_group lookups
+
+ -- Arvid Requate <requate@univention.de>  Mon, 23 Jan 2012 17:35:45 +0100
+
+
+univention-squid (5.0.4-1) unstable; urgency=low
+
+  * use ldap/server/port for squid LDAP binds (Bug #24281)
+  * strip samba domain from usernames in ldap_group lookups
+
+ -- Arvid Requate <requate@univention.de>  Mon, 23 Jan 2012 16:13:46 +0100
 
 univention-squid (5.0.3-19) unstable; urgency=low
 
