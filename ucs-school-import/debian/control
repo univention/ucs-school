@@ -10,7 +10,7 @@ Architecture: all
 Replaces: sfb-import
 Conflicts: sfb-import
 Provides: sfb-import
-Depends: univention-directory-manager, ucs-school-import-schema
+Depends: univention-directory-manager, ucs-school-import-schema, univention-policy-tools (>= 5.0.7)
 Description: UCS@School: Importing objects like users and computers
  This package provides scripts for importing objects like users, groups,
  networks and computers.

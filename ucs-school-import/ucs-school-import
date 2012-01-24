@@ -74,6 +74,7 @@ import univention.admin.modules
 import univention.admin.objects
 import univention.admin.config
 import univention.config_registry
+import univention.lib.policy_result
 
 configRegistry=univention.config_registry.ConfigRegistry()
 configRegistry.load()
@@ -97,6 +98,8 @@ school_dcs = configRegistry.get('ucsschool/ldap/default/dcs', 'edukativ')
 verified_ous          = []
 verified_groups       = []
 verified_group_shares = []
+
+pwLengthOu = {}
 
 cn_pupils   = configRegistry.get('ucsschool/ldap/default/container/pupils', 'schueler')
 cn_teachers = configRegistry.get('ucsschool/ldap/default/container/teachers', 'lehrer')
@@ -1390,18 +1393,36 @@ def check_user(person, baseDN, module):
 				return 1
 	return None
 
-def get_passwd():
-	makepasswd = os.popen('makepasswd --chars=8')
-	return makepasswd.readline().strip('\r\n') # without newline
+def create_passwd(dn):
 
-def create_passwd():
-	charlistA = 'abcdefghijklmnopqrstuvwxyz'
-	charlistB = '0123456789'
-	passwd=''
-	passwd += charlistA[ random.randrange(0,len(charlistA)) ] + charlistA[ random.randrange(0,len(charlistA)) ]
-	passwd += charlistB[ random.randrange(0,len(charlistB)) ] + charlistB[ random.randrange(0,len(charlistB)) ]
-	passwd += charlistA[ random.randrange(0,len(charlistA)) ] + charlistA[ random.randrange(0,len(charlistA)) ]
-	passwd += charlistB[ random.randrange(0,len(charlistB)) ] + charlistB[ random.randrange(0,len(charlistB)) ]
+	# default
+	pwLength = 8
+
+	if dn:
+		# get baseDn pw policy
+		if not pwLengthOu.get(baseDN):
+			try:
+				results, policies = univention.lib.policy_result.policy_result(baseDN)
+				pwLengthOu[baseDN] = int(results.get("univentionPWLength", ["8"])[0])
+			except Exception:
+				pass
+		pwLength = pwLengthOu.get(baseDN, pwLength)
+
+		# get ou pw policy
+		ou = 'ou=' + dn[dn.find('ou=') + 3 :]
+		if not pwLengthOu.get(ou):
+			try:
+				results, policies = univention.lib.policy_result.policy_result(ou)
+				pwLengthOu[ou] = int(results.get("univentionPWLength", ["8"])[0])
+			except Exception:
+				pass
+		pwLength = pwLengthOu.get(ou, pwLength)
+
+	charlist = 'abcdefghijklmnopqrstuvwxyz0123456789'
+	passwd = ''
+	for i in range(pwLength):
+		passwd += charlist[random.randrange(0,len(charlist))]
+
 	return passwd
 
 def calculateProfilePath(ou):
@@ -1443,18 +1464,9 @@ def create_user(person, baseDN, module, password):
 		except: # happens if container does not exsist
 			pass
 
-	# check if ou exists at all
-	objects = univention.admin.modules.lookup(ou_module, co, lo, scope='sub', superordinate=superordinate, base=baseDN,
-										  filter=univention.admin.filter.expression('ou',person.sNr))
-	count_lo()
-## 	ou_exists=0
-## 	if objects:
-## 		for object in objects:
-## 			if codecs.latin_1_encode(univention.admin.objects.dn(object))[0]==(getDN (person.sNr)):
-## 				ou_exists = 1
-## 	if not ou_exists:
 	verify_school_ou(person.sNr, co, lo, baseDN)
-	# check if needed subtree exists, this should not be neccessary be after verify of the ou but we may crash if someone makes changes by hand
+	# check if needed subtree exists, this should not be neccessary be after 
+	# verify of the ou but we may crash if someone makes changes by hand
 	more_instances = 1
 	container_position = baseDN
 	while more_instances:
@@ -1490,6 +1502,8 @@ def create_user(person, baseDN, module, password):
 	if object.has_key('mailbox'):
 		object["mailbox"]="/var/spool/%s/"%person.login
 	object["password"]=password
+	object['overridePWHistory'] = '1'
+	object['overridePWLength'] = '1'
 	object["firstname"]=person.name
 	object["lastname"]=person.sname
 	object["e-mail"]=person.mail
@@ -1566,7 +1580,6 @@ def import_user():
 #		outf = open(outfile,'w')
 
 	problem_hints=""
-	passwd_used=1
 	linecnt=0
 
 	for line in inf:
@@ -1584,15 +1597,11 @@ def import_user():
 			print msg
 			traceback.print_exc (100, sys.stdout)
 			problem_hints += msg + '\n'
-			## read next line
-			line = inf.readline()
 			continue
 
 		persons = [main_person]
 		persons.extend(main_person.getOtherPersons())
-		passwd = create_passwd()
-		#passwd = get_passwd()
-		#passwd = '12345678'
+		passwd = create_passwd(persons[0].getDN())
 
 		# invoke pre hooks
 		hooks.pre( 'user', main_person.modtype, line = line )
@@ -1600,17 +1609,8 @@ def import_user():
 		success = True
 		dn = None
 		if main_person.modtype == "A":
-			#if passwd_used:
-			#	passwd=''
-			#	passwd_used=0
 			for person in persons:
 				try:
-					#if passwd=='':
-					#	create password, only if not already done. So one user has the same initial passwd in all his accounts
-					#	passwd=get_passwd()
-					#	passwd_used=0
-					#if create_user(person, baseDN, user_module, passwd):
-					#	passwd_used=1
 					result = create_user(person, baseDN, user_module, passwd)
 					if result and outfile:
 						outf.write('%s\t%s\t%s\t%s\t%s\t%s\t%s\n' % (person.sNr, ','.join(person.cNr), person.sname, person.name, passwd, person.mail, person.login))
@@ -1965,14 +1965,12 @@ def import_networks(router_only=False):
 			tmp = iprange.split ('-')
 			if len (tmp) != 2:
 				print 'ERROR: IP host range not valid: %s' % iprange
-				line=inf.readline()
 				continue
 			iprange = (ipaddr.IPv4Address(tmp[0]), ipaddr.IPv4Address(tmp[1]))
 			if iprange[0] < network.network + 1 \
 					or iprange[0] > iprange[1] \
 					or iprange[1] >= network.broadcast:
 				print 'ERROR: IP host range not valid: %s-%s' % (iprange[0], iprange[1])
-				line=inf.readline()
 				continue
 		elif network.prefixlen == 24:
 			iprange = (network.network + 20,
@@ -2048,7 +2046,6 @@ def set_inventory_number_for_computer():
 				print "failed to get module of type computers/%s" % ctype
 				traceback.print_exc (100, sys.stdout)
 				problem_hints = problem_hints + "failed to get module of type computers/%s" % ctype
-				line=inf.readline()
 				continue
 			computerObject = univention.admin.objects.get(computerModule, co, lo, position='', dn=dn)
 			computerObject.open()
@@ -2610,7 +2607,7 @@ def activate_groupmembers():
 
 				passwd = '*'
 				if chpasswd:
-					passwd = create_passwd()
+					passwd = create_passwd(memberdn)
 					memberobj['password'] = passwd
 					memberobj['overridePWHistory'] = '1'
 					memberobj['overridePWLength'] = '1'
