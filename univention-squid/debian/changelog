@@ -1,3 +1,9 @@
+univention-squid (5.1.2-1) unstable; urgency=low
+
+  * respect ldap port in squid_ldap_auth and squid_ldap_group (Bug #25894)
+
+ -- Felix Botner <botner@univention.de>  Tue, 24 Jan 2012 10:46:29 +0100
+
 univention-squid (5.1.1-1) unstable; urgency=low
 
   * added squid/parent/options (Bug #25773) 
