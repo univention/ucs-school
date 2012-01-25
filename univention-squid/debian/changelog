@@ -1,7 +1,13 @@
+univention-squid (5.1.3-6) unstable; urgency=low
+
+  * avoid GSSAPI in ldap-operations (Bug #25771)
+
+ -- Arvid Requate <requate@univention.de>  Wed, 25 Jan 2012 18:27:42 +0100
+
 univention-squid (5.1.3-5) unstable; urgency=low
 
   * skip temporary storage of cleartext password of http-proxy service
-    account (Bug #24277)
+    account (Bug #25771)
 
  -- Arvid Requate <requate@univention.de>  Wed, 25 Jan 2012 18:23:00 +0100
 
