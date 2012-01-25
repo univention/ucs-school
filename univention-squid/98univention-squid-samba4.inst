@@ -59,19 +59,12 @@ keytab_path="$samba_private_dir/$keytab_filename"
 
 if ! [ -f "$keytab_path" ]; then
 
-	secret_filename="/etc/$servicename.secret"
 	password=$(makepasswd)
 
 	## check if this host is a Samba4 DC
 	cn=$(ldapsearch -x -ZZ -LLL -D "$ldap_hostdn" -y /etc/machine.secret "(&(univentionService=Samba 4)(cn=$hostname))" cn | sed -n 's/^cn: \(.*\)/\1/p')
 
 	if [ "$cn" = "$hostname" ]; then
-
-		## save password for debugging
-		touch "$secret_filename"
-		chmod 600 "$secret_filename"
-		chown proxy "$secret_filename"
-		echo -n "$password" > "$secret_filename"
 
 		/usr/sbin/samba-tool user add "$service_accountname" "$password" \
 			--description "$servicedescription"
@@ -116,12 +109,6 @@ if ! [ -f "$keytab_path" ]; then
 
 		if [ -n "$s4connectorservicehosts" ]; then
 
-			## save password for debugging
-			touch "$secret_filename"
-			chmod 600 "$secret_filename"
-			chown proxy "$secret_filename"
-			echo -n "$password" > "$secret_filename"
-
 			## create service_accountname via udm, but servicePrincipalName is missing
 			univention-directory-manager users/user create "$@" \
 				--position "cn=users,$ldap_base" \
@@ -133,6 +120,7 @@ if ! [ -f "$keytab_path" ]; then
 			if ! [ -d "$samba_private_dir" ]; then
 				mkdir -p "$samba_private_dir"
 			fi
+
 			/usr/lib/univention-heimdal/univention-create-keytab --keytab="$keytab_path" \
 				--principal="host/$service_accountname.$domainname" \
 				--alias="$spn_instance/$hostname.$domainname" \
