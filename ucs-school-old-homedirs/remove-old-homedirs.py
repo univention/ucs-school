@@ -1,6 +1,6 @@
 # Univention UCS@School
 #
-# Copyright 2007-2010 Univention GmbH
+# Copyright 2007-2012 Univention GmbH
 #
 # http://www.univention.de/
 #
@@ -27,16 +27,16 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-name='remove-old-homedirs'
-description='moves directories of removed users away from home'
-filter='(objectClass=posixAccount)'
-attributes=[]
-
-#import shutil
+__package__=''  # workaround for PEP 366
 import listener
 import re
 import univention.config_registry, commands, sys, os
 import univention.debug
+
+name='remove-old-homedirs'
+description='moves directories of removed users away from home'
+filter='(objectClass=posixAccount)'
+attributes=[]
 
 target_dir_config = "ucsschool/listener/oldhomedir/targetdir"
 
@@ -54,7 +54,7 @@ def check_target_dir(configRegistry):
 	if not os.path.isdir(target_dir):
 		# create directory
 		listener.setuid(0)
-		ret,ret_str = commands.getstatusoutput("mkdir -p %s"%target_dir)
+		ret,ret_str = commands.getstatusoutput("mkdir -p '%s'"%target_dir)
 		if not ret==0:
 			return "failed to create target directory %s"%target_dir
 
@@ -91,9 +91,9 @@ def handler(dn, new, old):
 			return
 
 		# make sure that we are dealing with a local filesystem
-		ret, ret_str = commands.getstatusoutput('stat -f %s | grep "Type:" | sed "s/.*Type:\ //"'%home_dir)
+		ret, ret_str = commands.getstatusoutput("stat -f '%s' | grep 'Type:' | sed 's/.*Type:\ //'" % home_dir)
 
-		if ret_str in ["nfs", "nfs4", "cifs", "smbfs", "nfsd"]:
+		if ret_str.strip() in ["nfs", "nfs4", "cifs", "smbfs", "nfsd"]:
 			univention.debug.debug(univention.debug.LISTENER, univention.debug.INFO, "not removing home directory of user %s, is not on a local filesystem"%old["uid"][0])
 			return
 
@@ -104,7 +104,7 @@ def handler(dn, new, old):
 			try:
 				listener.setuid(0)
 				# for some reason, shutil cannot be imported, so we'll do it using mv
-				ret, ret_str = commands.getstatusoutput("mv %s %s"%(home_dir, target_dir))
+				ret, ret_str = commands.getstatusoutput("mv '%s' '%s'" % (home_dir, target_dir))
 			except:
 				univention.debug.debug(univention.debug.LISTENER, univention.debug.ERROR, "failed to move home directory of user %s from %s to %s: %s"%(old["uid"][0], home_dir, target_dir, sys.exc_info()[0]))
 		finally:

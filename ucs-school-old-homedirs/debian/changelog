@@ -1,3 +1,10 @@
+ucs-school-old-homedirs (7.0.0-1) unstable; urgency=low
+
+  * UCS 3.0 update (Bug #25694) 
+  * fixed insufficiently quoted commmands (Bug #20820)
+
+ -- Felix Botner <botner@univention.de>  Wed, 25 Jan 2012 11:14:04 +0100
+
 ucs-school-old-homedirs (6.0.1-1) unstable; urgency=low
 
   * convert to GNU APGL V3 (Bug #19780)
