@@ -1,3 +1,9 @@
+ucs-school-old-sharedirs (7.0.0-1) unstable; urgency=low
+
+  * UCS 3.0 update (Bug #25694)
+
+ -- Felix Botner <botner@univention.de>  Wed, 25 Jan 2012 10:53:23 +0100
+
 ucs-school-old-sharedirs (6.0.2-1) unstable; urgency=low
 
   * fixed insufficiently quoted commmands (Bug #20820)

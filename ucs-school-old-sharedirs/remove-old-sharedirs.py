@@ -2,7 +2,7 @@
 # Univention UCS@School
 #  listener module
 #
-# Copyright 2007-2010 Univention GmbH
+# Copyright 2007-2012 Univention GmbH
 #
 # http://www.univention.de/
 #
@@ -29,16 +29,16 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-name='remove-old-sharedirs'
-description='moves directories of removed group shares to backup folder'
-filter='(objectClass=univentionShare)'
-attributes=[]
-
-#import shutil
+__package__=''  # workaround for PEP 366
 import listener
 import re
 import univention.config_registry, commands, sys, os
 import univention.debug
+
+name='remove-old-sharedirs'
+description='moves directories of removed group shares to backup folder'
+filter='(objectClass=univentionShare)'
+attributes=[]
 
 target_dir_config = "ucsschool/listener/oldsharedir/targetdir"
 source_dir_prefixes = "ucsschool/listener/oldsharedir/prefixes"
