@@ -1,0 +1,5 @@
+ucs-school-radius-802.1x (1.0.0-1) unstable; urgency=low
+
+  * Initial release (Bug #24062)
+
+ -- Janek Walkenhorst <walkenhorst@univention.de>  Thu, 26 Jan 2012 11:15:07 +0100
