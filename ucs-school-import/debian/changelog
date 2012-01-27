@@ -1,3 +1,10 @@
+ucs-school-import (8.0.24-1) unstable; urgency=low
+
+  * add new option -o for outfile with passwords of created users
+    (Bug #15180)
+
+ -- Felix Botner <botner@univention.de>  Fri, 27 Jan 2012 10:57:55 +0100
+
 ucs-school-import (8.0.23-1) unstable; urgency=low
 
   * create user password according to password length policy 

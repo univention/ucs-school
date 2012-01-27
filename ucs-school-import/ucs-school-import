@@ -1550,34 +1550,33 @@ def create_user(person, baseDN, module, password):
 def import_user():
 
 	# usage
-	usage = os.path.basename(sys.argv[0]) + " user-importfile\n"
+	usage = os.path.basename(sys.argv[0]) + " IMPORTFILE [Options]\n"
 	usage += "creates/modifies/deletes user accounts according to import file for ucs@school"	
 	parser = optparse.OptionParser(usage=usage)
+	parser.add_option("-o", "--outfile", dest="outfile", help="output file with passwords of created users")
 	options, args = parser.parse_args()
 
 	# argument is infile
-	if len(sys.argv)>1:
-		infile = sys.argv[1]
+	if len(args) > 0:
+		infile = args[0]
 	else:
 		parser.print_help()
 		print "must have one Argument for infile"
 		sys.exit()
 
-	print "infile is  : "+infile
+	print "infile is: " + infile
 	inf = open(infile,'r')
 
-	# outfile for passwords of created users
-	outfile = None
-	#outfile = "/var/lib/ucs-school-import/create-user-passwd-%s.csv" % time.strftime("%Y%m%d-%H%M%S")
-	#outf = open(outfile,'w')
+	# output file
+	OUT = None
+	if options.outfile:
+		if os.path.isfile(options.outfile):
+			parser.print_help()
+			print "outfile exists, will not overwrite existing file"
+			sys.exit()
+		print "outfile is: " + options.outfile 
+		OUT = open(options.outfile, "w")
 
-#	if len(sys.argv)>2:
-#		outfile = sys.argv[2]
-#		print "outfile is : ./"+outfile
-#		if os.path.exists(outfile):
-#			print 'outfile %s does already exist. Stopping here.' % outfile
-#			sys.exit()
-#		outf = open(outfile,'w')
 
 	problem_hints=""
 	linecnt=0
@@ -1605,6 +1604,7 @@ def import_user():
 
 		# invoke pre hooks
 		hooks.pre( 'user', main_person.modtype, line = line )
+
 		# variable to store success of operation and LDAP dn
 		success = True
 		dn = None
@@ -1612,8 +1612,8 @@ def import_user():
 			for person in persons:
 				try:
 					result = create_user(person, baseDN, user_module, passwd)
-					if result and outfile:
-						outf.write('%s\t%s\t%s\t%s\t%s\t%s\t%s\n' % (person.sNr, ','.join(person.cNr), person.sname, person.name, passwd, person.mail, person.login))
+					if result and OUT:
+						OUT.write("%s\t%s\t%s" % (person.login, passwd, line))
 					success = result
 				except:
 					msg = "ERROR: There were problems creating this user: " + str(person.getDN())
@@ -1626,10 +1626,12 @@ def import_user():
 		elif main_person.modtype in ["M","D"]:
 			# look if there are exsiting persons in other ou's remaining, this will fail if the users's departmentNumbers
 			# are changed manually
-			filter=univention.admin.filter.conjunction("|",[univention.admin.filter.expression('uid',"%s_*"%main_person.login),
-															univention.admin.filter.expression('uid',"%s"%main_person.login)])
-			objects = univention.admin.modules.lookup(user_module, co, lo, scope='sub', superordinate=superordinate, base=baseDN,
-											  filter=filter)
+			filter = univention.admin.filter.conjunction(
+				"|",[univention.admin.filter.expression('uid',"%s_*"%main_person.login),
+				univention.admin.filter.expression('uid',"%s"%main_person.login)])
+			objects = univention.admin.modules.lookup(
+				user_module, co, lo, scope='sub', superordinate=superordinate,
+				base=baseDN, filter=filter)
 			count_lo()
 			found = []
 			for object in objects:
@@ -1667,8 +1669,6 @@ def import_user():
 						try:
 							print "WARNING: user to modify not found, ",
 							result = create_user(person, baseDN, user_module, passwd)
-							if result and outfile:
-								outf.write('%s\t%s\t%s\t%s\t%s\t%s\t%s\n' % (person.sNr, ','.join(person.cNr), person.sname, person.name, passwd, person.mail, person.login))
 						except:
 							msg = "ERROR: There were problems creating this user: "  + str(person.getDN())
 							print msg
@@ -1695,22 +1695,18 @@ def import_user():
 			success = False
 
 		problem_hints += main_person.problem_hints
+
 		# invoke post hooks on success
 		if success:
 			hooks.post( 'user', main_person.modtype, dn = dn, line = line )
 
+	# close files
 	inf.close()
-
-	if outfile:
-		outf.close()
+	if OUT:
+		OUT.close()
 
 	# report created users
 	message=""
-	#if not created_users.keys() == []:
-	#	message = "The following Users/Passwords were created. Please change the Password immediatly !\n\n\n"
-	#	for el in created_users.keys():
-	#		message = message+ el + " - " + created_users[el] +"\n"
-
 	if not problem_hints == "":
 		message = message + "\n\nProblems during last run:\n\n" + problem_hints
 
