@@ -39,8 +39,6 @@
 #-> needs definition:
 # import access rights
 
-# init list of created users and passwords
-created_users = {}
 # string of problems during process
 problem_hints = ""
 # separator char in infile (default: \t for Tabulator)
@@ -918,32 +916,6 @@ def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None, ShareFileServer=None
 		# for OUs the temporary file contains the LDAP DN
 		hooks.post( 'ou', 'A', dn = ou_base, line = myline )
 
-def create_sub_object(o):
-	# create a user object without mailPrimaryAddress but with
-	# univentionAbordnung objectclass and univentionAbordnungMasterDn
-	# with dn of the user who has the same mailPrimaryAddress
-
-	# univentionAbordnungMasterDn
-	mail = o['mailPrimaryAddress']
-	o['mailPrimaryAddress'] = []
-	ml = []
-
-	# create sub account without mailPrimaryAddress
-	dn = o.create()
-
-	# search mailPrimaryAddress
-	result = o.lo.search(filter='(&(objectClass=univentionMail)(objectClass=posixAccount)(mailPrimaryAddress=%s))' % mail, attr=['mailPrimaryAddress'])
-	superdn, attrs = result[0]
-
-	# append objectclass and attribut to sub account
-	ml.append(('objectClass', None, "univentionAbordnung"))
-	ml.append(("univentionAbordnungMasterDn", None, superdn))
-	try:
-		o.lo.modify(dn, ml)
-	except:
-		problem_hints = "problems while setting univentionAbordnung to " + dn + "\n"
-
-
 def move_object(o, newdn):
 	if o.dn == newdn:
 		return
@@ -1002,8 +974,6 @@ def create_object( o, ignore_exists = False ):
 			msg = 'ERROR: Object exists-4 (noLock)'
 		else:
 			exists = True
-	except univention.admin.uexceptions.mailAddressUsed:
-		create_sub_object(o)
 
 	if msg:
 		print msg
@@ -1448,7 +1418,7 @@ def calculateProfilePath(ou):
 calculateProfilePath.results = {}
 calculateProfilePath.string = '\\\\%s\\%%USERNAME%%\\windows-profiles\\default'
 
-def create_user(person, baseDN, module, password):
+def create_user(person, baseDN, module, password, OUTFILE, line):
 	success = True
 
 	if generate_logins:
@@ -1534,7 +1504,8 @@ def create_user(person, baseDN, module, password):
 			lo.modify(person.getDN(),[("departmentNumber",[],person.allsNrs)])
 			count_lo()
 			print "created:",person.getDN()
-			created_users[person.login]=password
+			if OUTFILE:
+				OUTFILE.write("%s\t%s\t%s" % (person.login, password, line))
 		else:
 			print "ERROR: there were problems creating this user:",person.getDN()
 			person.problem_hints = person.problem_hints + "ERROR: there were problems creating this user: "+person.getDN()+"\n"
@@ -1611,9 +1582,7 @@ def import_user():
 		if main_person.modtype == "A":
 			for person in persons:
 				try:
-					result = create_user(person, baseDN, user_module, passwd)
-					if result and OUT:
-						OUT.write("%s\t%s\t%s" % (person.login, passwd, line))
+					result = create_user(person, baseDN, user_module, passwd, OUT, line)
 					success = result
 				except:
 					msg = "ERROR: There were problems creating this user: " + str(person.getDN())
@@ -1668,7 +1637,7 @@ def import_user():
 					else:
 						try:
 							print "WARNING: user to modify not found, ",
-							result = create_user(person, baseDN, user_module, passwd)
+							result = create_user(person, baseDN, user_module, passwd, OUT, line)
 						except:
 							msg = "ERROR: There were problems creating this user: "  + str(person.getDN())
 							print msg

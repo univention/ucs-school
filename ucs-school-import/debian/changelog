@@ -1,3 +1,9 @@
+ucs-school-import (8.0.26-1) unstable; urgency=low
+
+  * ignore user if mailPrimaryAddress is already used (Bug #19252) 
+
+ -- Felix Botner <botner@univention.de>  Fri, 27 Jan 2012 14:13:47 +0100
+
 ucs-school-import (8.0.25-1) unstable; urgency=low
 
   * adjust LDAP DNs for default policies; Bug #15037
