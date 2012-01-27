@@ -111,10 +111,10 @@ grp_prefix_teachers = configRegistry.get('ucsschool/ldap/default/groupprefix/tea
 grp_prefix_admins	= configRegistry.get('ucsschool/ldap/default/groupprefix/admins', 'admins-')
 grp_prefix_staff	= configRegistry.get('ucsschool/ldap/default/groupprefix/staff', 'mitarbeiter-')
 
-grp_policy_pupils	= configRegistry.get('ucsschool/ldap/default/policy/umc/pupils', 'cn=ucsschool-umc-pupils-default,cn=console,cn=policies,%s' % baseDN)
-grp_policy_teachers = configRegistry.get('ucsschool/ldap/default/policy/umc/teachers', 'cn=ucsschool-umc-teachers-default,cn=console,cn=policies,%s' % baseDN)
-grp_policy_admins	= configRegistry.get('ucsschool/ldap/default/policy/umc/admins', 'cn=ucsschool-umc-admins-default,cn=console,cn=policies,%s' % baseDN)
-grp_policy_staff	= configRegistry.get('ucsschool/ldap/default/policy/umc/staff', 'cn=ucsschool-umc-staff-default,cn=console,cn=policies,%s' % baseDN)
+grp_policy_pupils	= configRegistry.get('ucsschool/ldap/default/policy/umc/pupils', 'cn=ucsschool-umc-pupils-default,cn=UMC,cn=policies,%s' % baseDN)
+grp_policy_teachers = configRegistry.get('ucsschool/ldap/default/policy/umc/teachers', 'cn=ucsschool-umc-teachers-default,cn=UMC,cn=policies,%s' % baseDN)
+grp_policy_admins	= configRegistry.get('ucsschool/ldap/default/policy/umc/admins', 'cn=ucsschool-umc-admins-default,cn=UMC,cn=policies,%s' % baseDN)
+grp_policy_staff	= configRegistry.get('ucsschool/ldap/default/policy/umc/staff', 'cn=ucsschool-umc-staff-default,cn=UMC,cn=policies,%s' % baseDN)
 
 UCRV_serverprofile_option = configRegistry.get('ucsschool/import/set/serverprofile/path', 'ldap').strip().lower()
 if UCRV_serverprofile_option not in ('yes', 'no', 'ldap', ):
@@ -506,7 +506,7 @@ def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None, ShareFileServer=None
 		container['4groupPath'].append('cn=%s,cn=groups' % cn_staff)
 	# FIXME: die Policies sollten besser mit der Gruppe verknüpft werden, um
 	# z.B. Mitarbeiter und Lehrer im selben Container pflegen zu können
-	#container_policies = { 'cn=%s,cn=users' % cn_teachers: ['cn=default-lehrer,cn=console,cn=policies,' + baseDN] }
+	#container_policies = { 'cn=%s,cn=users' % cn_teachers: ['cn=default-lehrer,cn=UMC,cn=policies,' + baseDN] }
 	container_policies = { }
 
 	ou_base = getDN (schoolNr)
