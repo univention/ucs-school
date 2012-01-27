@@ -3,6 +3,14 @@
 	<module id="school-groups" icon="school-groups" version="1.0">
 	<name>Groups</name>
 	<description>Administration of groups</description>
+	<flavor icon="school-groups" id="class">
+	  <name>Class</name>
+	  <description>Administration of classes</description>
+	</flavor>
+	<flavor icon="school-groups" id="workgroup">
+	  <name>Workgroup</name>
+	  <description>Administration of workgroups</description>
+	</flavor>
 	<categories>
 		<category name="ucs-school-admin"/>
 	</categories>
