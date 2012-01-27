@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<umc version="2.0">
+	<module id="school-groups" icon="school-groups" version="1.0">
+	<name>Groups</name>
+	<description>Administration of groups</description>
+	<categories>
+		<category name="ucs-school-admin"/>
+	</categories>
+	<command name="school-groups/query" function="query"></command>
+	<command name="school-groups/colors" function="colors"></command>
+	<command name="school-groups/get" function="get"></command>
+	</module>
+</umc>

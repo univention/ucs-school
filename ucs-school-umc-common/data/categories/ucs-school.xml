@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<umc version="2.0">
+  <categories>
+    <category id="ucs-school-admin">
+      <name>UCS@school administration</name>
+    </category>
+    <category id="ucs-school-class">
+      <name>UCS@school class</name>
+    </category>
+  </categories>
+</umc>
