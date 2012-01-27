@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<umc version="2.0">
+  <module id="helpdesk" icon="helpdesk" version="1.0">
+	<name>Helpdesk</name>
+	<description>Sending reports about problems to the helpdesk</description>
+	<categories>
+	  <category name="ucsschool"/>
+	</categories>
+
+	<command name="helpdesk/form/show" function="form_show">
+	</command>
+	<command name="helpdesk/form/send" function="form_show">
+	</command>
+  </module>
+</umc>

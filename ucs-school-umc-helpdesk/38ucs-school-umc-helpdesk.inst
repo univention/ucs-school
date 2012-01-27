@@ -3,7 +3,7 @@
 # UCS@School
 #  join script
 #
-# Copyright 2008-2010 Univention GmbH
+# Copyright 2008-2012 Univention GmbH
 #
 # http://www.univention.de/
 #
@@ -30,22 +30,19 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-if ! test -e "/usr/share/univention-join/.joined"; then
-	echo "The server has not joined yet"
-	exit 1
-fi
+VERSION=3
 
-JSNAME="ucs-school-umc-helpdesk"
-JSFILE="/usr/lib/univention-install/.index.txt"
-VERSION="1"
+. /usr/share/univention-join/joinscripthelper.lib
+. /usr/share/univention-lib/umc.sh
+. /usr/share/ucs-school-lib/umc.sh
 
-touch "${JSFILE}"
-test -n "$(grep "${JSNAME} v${VERSION} successful" ${JSFILE})" && exit 1
+joinscript_init
 
-eval $(univention-config-registry shell ldap/base)
+umc_init
 
-univention-directory-manager container/cn create $@ --ignore_exists --position cn=univention,$ldap_base --set name=console
-univention-directory-manager container/cn create $@ --ignore_exists --position cn=console,cn=univention,$ldap_base --set name=config
+umc_operation_create "helpdesk-all" "Helpdesk" "" "helpdesk/*"
+
+umc_policy_append "default-umc-all" "helpdesk-all"
 
 # create HELPDESK settings
 univention-directory-manager settings/console_helpdesk create $@ --ignore_exists --position cn=config,cn=console,cn=univention,$ldap_base \
@@ -55,43 +52,9 @@ univention-directory-manager settings/console_helpdesk create $@ --ignore_exists
 																				 --append category="Software" \
 																				 --append category="Sonstiges"
 
-# create HELPDESK operations
-univention-directory-manager settings/console_operation create $@ --ignore_exists --position cn=operations,cn=console,cn=univention,$ldap_base \
-																				 --set name=helpdesk \
-																				 --set description="HELPDESK operations" \
-																				 --append operation="helpdesk/*" \
-																				 --append operation="helpdesk/form/*" \
-																				 --append operation="helpdesk/form/show" \
-																				 --append operation="helpdesk/form/send"
+ucs_school_policies_create "helpdesk-admin"
+ucs_school_policies_append "helpdesk-all" "helpdesk-admin"
 
-univention-directory-manager settings/console_acl create $@ --ignore_exists --position cn=acls,cn=console,cn=univention,$ldap_base \
-																				 --set name=helpdesk-all \
-																				 --set category="UMC Helpdesk" \
-																				 --set ldapbase="$ldap_base" \
-																				 --set command="helpdesk/*" \
-																				 --set description="All UMC Helpdesk operations"
-
-# create policy container if missing
-univention-directory-manager container/cn create $@ --ignore_exists --position "cn=policies,$ldap_base" --set name=console
-if [ $? != 0 ]; then exit 1; fi
-
-# create empty UMC access policies if missing
-for policyname in ucsschool-umc-pupils-default ucsschool-umc-teachers-default ucsschool-umc-staff-default ucsschool-umc-admins-default helpdesk-admin ; do
-	univention-directory-manager policies/console_access create $@ --ignore_exists \
-			--position "cn=console,cn=policies,$ldap_base" \
-			--set name="${policyname}"
-	if [ $? != 0 ]; then exit 1; fi
-done
-
-# default policies
-for policyname in ucsschool-umc-teachers-default ucsschool-umc-admins-default default-admin helpdesk-admin ; do
-	univention-directory-manager policies/console_access modify $@ --ignore_exists \
-		--dn "cn=${policyname},cn=console,cn=policies,$ldap_base" \
-		--append "allow=cn=helpdesk-all,cn=acls,cn=console,cn=univention,$ldap_base"
-	if [ $? != 0 ]; then exit 1; fi
-done
-
-
-test -n "$(grep "${JSNAME} v${VERSION} successful" ${JSFILE})" || echo "${JSNAME} v${VERSION} successful" >> "${JSFILE}"
+joinscript_save_current_version
 
 exit 0

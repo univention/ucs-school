@@ -72,13 +72,6 @@ install-modules: modules
 		install -m755 $$i $$o;\
 	done
 
-install-images:
-	@for i in $(IMAGES); do\
-		o=debian/$(PACKAGE)/usr/share/univention-management-console/www/themes/$$i;\
-		install -d "`dirname $$o`";\
-		install -m755 $$i $$o;\
-	done
-
 install-locales-backend: $(MO_FILES_BACKEND)
 	@for i in $(MO_FILES_BACKEND); do\
 		lang=`basename $$i .mo`;\
