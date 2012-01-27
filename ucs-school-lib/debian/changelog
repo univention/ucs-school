@@ -1,0 +1,19 @@
+ucs-school-lib (1.0.2-1) unstable; urgency=low
+
+  * renamed source package to ucs-school-lib; Bug #15037
+  * add shell function to create ucs@school policy objects
+
+ -- Andreas Büsching <buesching@univention.de>  Fri, 27 Jan 2012 09:23:56 +0100
+
+ucs-school-lib (1.0.1-1) unstable; urgency=low
+
+  * use machine account to map username to binddn in
+    schoolldap.py (Bug #15037) 
+
+ -- Felix Botner <botner@univention.de>  Tue, 17 Jan 2012 12:32:40 +0100
+
+ucs-school-lib (1.0.0-1) unstable; urgency=low
+
+  * Initial release  (Bug #15037)
+
+ -- Felix Botner <botner@univention.de>  Mon, 16 Jan 2012 14:43:47 +0100
