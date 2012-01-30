@@ -80,5 +80,5 @@ print '\t\twith_ntdomain_hack = %s' % configRegistry.get('freeradius/conf/auth-t
 	# attribute, and do prefix/suffix checks in order to obtain
 	# the "best" user name for the request.
 	#
-	ntlm_auth = "/usr/bin/ucs-school-ntlm-auth --request-nt-key --username=%{%{Stripped-User-Name}:-%{User-Name:-None}} --challenge=%{mschap:Challenge:-00} --nt-response=%{mschap:NT-Response:-00}"
+	ntlm_auth = "/usr/bin/ucs-school-ntlm-auth --request-nt-key --username=%{%{Stripped-User-Name}:-%{User-Name:-None}} --challenge=%{mschap:Challenge:-00} --nt-response=%{mschap:NT-Response:-00} --station-id=%{outer.request:Calling-Station-Id}"
 }

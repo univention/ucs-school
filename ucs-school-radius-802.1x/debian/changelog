@@ -1,3 +1,9 @@
+ucs-school-radius-802.1x (1.0.1-1) unstable; urgency=low
+
+  * support MAC filtering (Bug #24062)
+
+ -- Janek Walkenhorst <walkenhorst@univention.de>  Mon, 30 Jan 2012 14:42:06 +0100
+
 ucs-school-radius-802.1x (1.0.0-1) unstable; urgency=low
 
   * Initial release (Bug #24062)

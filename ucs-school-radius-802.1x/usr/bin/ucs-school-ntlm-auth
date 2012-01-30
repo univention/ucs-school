@@ -37,20 +37,24 @@ import sys
 import time
 import univention.pyMsChapV2 as pyMsChapV2
 
-def getNTPasswordHash(username):
+def getNTPasswordHash(username, stationId):
+	'stationId may be None if it was not supplied to the program'
 	# TODO: check if user is authorized to use the W-LAN - else return None
 	# TODO: retrieve NT-password-hash from LDAP and return it
 	if username == 'Administrator':
 		return None
+	if stationId == '\x01\x23\x34\x56\x78\xAB':
+		return None
 	if username == 'Benutzer':
 		return pyMsChapV2.NtPasswordHash(u'univention'.encode('utf-16le'))
 
-def main(argv):
+def main():
 	parser = optparse.OptionParser()
 	parser.add_option('--request-nt-key', action='store_true', dest='requestNtKey')
 	parser.add_option('--username', dest='Username')
 	parser.add_option('--challenge', dest='Challenge')
 	parser.add_option('--nt-response', dest='Response')
+	parser.add_option('--station-id', dest='stationId')
 	(options, args, ) = parser.parse_args()
 	if not options.requestNtKey:
 		print 'Missing required parameter --request-nt-key!'
@@ -64,9 +68,16 @@ def main(argv):
 	if not options.Response:
 		print 'Missing required parameter --nt-response!'
 		return 1
+	if not options.stationId:
+		stationId = None
+	else:
+		# safely decode station id (fails with exception on mis-formatted id, thus returning 1)
+		stationId = options.stationId
+		stationId = stationId[0:2] + stationId[3:5] + stationId[6:8] + stationId[9:11] + stationId[12:14] + stationId[15:17]
+		stationId = stationId.decode('hex')
 	options.Challenge = options.Challenge.decode('hex')
 	options.Response = options.Response.decode('hex')
-	PasswordHash = getNTPasswordHash(options.Username)
+	PasswordHash = getNTPasswordHash(options.Username, stationId)
 	if PasswordHash and pyMsChapV2.ChallengeResponse(options.Challenge, PasswordHash) == options.Response:
 		print 'NT_KEY: %s' % (pyMsChapV2.HashNtPasswordHash(PasswordHash).encode('hex').upper(), )
 		return 0
@@ -75,4 +86,4 @@ def main(argv):
 		return 1
 
 if __name__ == "__main__":
-	sys.exit(main(sys.argv))
+	sys.exit(main())
