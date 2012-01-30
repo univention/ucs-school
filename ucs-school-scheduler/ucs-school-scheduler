@@ -3,7 +3,7 @@
 # Univention Reservation Scheduler
 #  Start script for the Scheduler
 #
-# Copyright 2008-2010 Univention GmbH
+# Copyright 2008-2012 Univention GmbH
 #
 # http://www.univention.de/
 #
@@ -30,4 +30,4 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-/usr/bin/python2.4 -W ignore /usr/lib/python2.4/site-packages/univention/reservation/scheduler/main.py
+/usr/bin/python2.6 -W ignore /usr/lib/pymodules/python2.6/univention/reservation/scheduler/main.py

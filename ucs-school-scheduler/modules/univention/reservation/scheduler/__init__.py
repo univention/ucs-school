@@ -1,7 +1,7 @@
-#!/usr/bin/python2.4
+#!/usr/bin/python2.6
 # -*- coding: utf-8 -*-
 #
-# Copyright 2008-2010 Univention GmbH
+# Copyright 2008-2012 Univention GmbH
 #
 # http://www.univention.de/
 #
@@ -36,7 +36,7 @@ ucr.load ()
 
 def init_debug():
 	_d = univention.debug.function('scheduler.init_debug')
-	if ucr.has_key('scheduler/debug/function'):
+	if ucr.get('scheduler/debug/function', ""):
 		try:
 			function_level = int (ucr['scheduler/debug/function'])
 		except:
@@ -44,7 +44,7 @@ def init_debug():
 	else:
 		function_level = 0
 	univention.debug.init('/var/log/univention/scheduler.log', 1, function_level)
-	if ucr.has_key('scheduler/debug/level'): # values between 0-4 are allowed
+	if ucr.get('scheduler/debug/level', ""): # values between 0-4 are allowed
 		debug_level=int (ucr['scheduler/debug/level'])
 	else:
 		debug_level = 2
