@@ -1,3 +1,9 @@
+ucs-school-reservation-dbconnector (7.0.0-1) unstable; urgency=low
+
+  * update to UCS@school 3.0 (Bug #25695) 
+
+ -- Felix Botner <botner@univention.de>  Mon, 30 Jan 2012 11:50:21 +0100
+
 ucs-school-reservation-dbconnector (6.0.1-1) unstable; urgency=low
 
   * convert to GNU APGL V3 (Bug #19780)
