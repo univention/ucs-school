@@ -1,8 +1,8 @@
-#/usr/bin/python2.4
+#/usr/bin/python2.6
 #
 # Univention UCS@School
 #
-# Copyright 2007-2010 Univention GmbH
+# Copyright 2007-2012 Univention GmbH
 #
 # http://www.univention.de/
 #
