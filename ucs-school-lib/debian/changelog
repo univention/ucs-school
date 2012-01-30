@@ -1,3 +1,9 @@
+ucs-school-lib (1.0.3-1) unstable; urgency=low
+
+  * renamed default-admin to default-umc-all; Bug #15037
+
+ -- Alexander Kläser <klaeser@univention.de>  Mon, 30 Jan 2012 11:23:25 +0100
+
 ucs-school-lib (1.0.2-1) unstable; urgency=low
 
   * renamed source package to ucs-school-lib; Bug #15037

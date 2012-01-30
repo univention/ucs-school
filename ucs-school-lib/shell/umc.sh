@@ -42,7 +42,7 @@ ucs_school_policies_create () {
 
 	additional_policy="$1"; shift
 
-	for policyname in ucsschool-umc-teachers-default ucsschool-umc-admins-default default-admin $additional_policy ; do
+	for policyname in ucsschool-umc-teachers-default ucsschool-umc-admins-default default-umc-all $additional_policy ; do
 		udm policies/umc create $BIND_ARGS --ignore_exists \
 			--position "cn=UMC,cn=policies,$ldap_base" --set name="${policyname}"
 		if [ $? != 0 ]; then exit 1; fi
@@ -54,7 +54,7 @@ ucs_school_policies_append () {
 
 	operation_set="$1"; shift
 	additional_policy="$1"; shift
-	for policyname in ucsschool-umc-teachers-default ucsschool-umc-admins-default default-admin $additional_policy ; do
+	for policyname in ucsschool-umc-teachers-default ucsschool-umc-admins-default default-umc-all $additional_policy ; do
 		udm policies/umc modify $BIND_ARGS --ignore_exists \
 			--dn "cn=${policyname},cn=UMC,cn=policies,$ldap_base" \
 			--append "allow=cn=$operation_set,cn=operations,cn=UMC,cn=univention,$ldap_base"
