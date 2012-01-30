@@ -1,0 +1,6 @@
+Module: schoolgroups
+Python: umc/python
+Definition: umc/schoolgroups.xml
+Category: umc/categories/schoolgroups.xml
+Javascript: umc/js
+Icons: umc/icons
