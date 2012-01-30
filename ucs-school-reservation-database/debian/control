@@ -2,8 +2,8 @@ Source: ucs-school-reservation-database
 Section: univention
 Priority: optional
 Maintainer: Univention GmbH <packages@univention.de>
-Build-Depends: debhelper
-Standards-Version: 3.7.2
+Build-Depends: debhelper, ucslint
+Standards-Version: 3.8.2
 
 Package: ucs-school-reservation-database
 Architecture: all

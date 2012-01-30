@@ -3,7 +3,7 @@
 # Univention Reservation Database
 #  rules file for generating the deb package
 #
-# Copyright 2008-2010 Univention GmbH
+# Copyright 2008-2012 Univention GmbH
 #
 # http://www.univention.de/
 #
@@ -30,50 +30,9 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-PACKAGE_NAME=ucs-school-reservation-database
-D=$(CURDIR)/debian/$(PACKAGE_NAME)
+override_dh_auto_test:
+	ucslint
+	dh_auto_test
 
-configure: configure-stamp
-configure-stamp:
-	dh_testdir
-	# Add here commands to configure the package.
-	touch configure-stamp
-
-build: build-stamp
-build-stamp:
-	dh_testdir
-	touch build-stamp
-
-clean:
-	dh_testdir
-	dh_testroot
-	rm -f build-stamp
-	dh_clean
-
-install: build-stamp
-	dh_testdir
-	dh_testroot
-	dh_clean -k
-	dh_installdirs
-
-	for fn in sql/*sql ; do \
-		install -m644 $$fn $(D)/usr/share/$(PACKAGE_NAME)/ ; \
-	done
-
-binary-indep: build install
-	dh_testdir -i
-	dh_testroot -i
-	dh_installchangelogs -i
-	dh_installman -i
-	dh_link -i
-	dh_compress -i
-	dh_fixperms -i
-	dh_installdeb -i
-	dh_gencontrol -i
-	dh_md5sums -i
-	dh_builddeb -i
-
-binary-arch: build install
-
-binary: binary-arch binary-indep
-.PHONY: build clean binary-indep binary-arch binary install configure
+%:
+	dh $@
