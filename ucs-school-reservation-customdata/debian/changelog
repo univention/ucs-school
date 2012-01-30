@@ -1,3 +1,9 @@
+ucs-school-reservation-customdata (7.0.1-1) unstable; urgency=low
+
+  * removed quoting from csv.reader (Bug #25695)
+
+ -- Felix Botner <botner@univention.de>  Mon, 30 Jan 2012 13:22:25 +0100
+
 ucs-school-reservation-customdata (7.0.0-1) unstable; urgency=low
 
   * update to UCS@school 3.0 (Bug #25695) 

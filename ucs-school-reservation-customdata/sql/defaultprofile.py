@@ -49,7 +49,7 @@ cursor.execute("""DELETE FROM resprofiles WHERE isglobaldefault = True""")
 ## first read default_profoptrel
 g=open('/usr/share/ucs-school-reservation-customdata/default_profoptrel.csv', "rb")
 import_profoptrel={}
-for row in csv.reader(g, quoting=csv.QUOTE_NONNUMERIC, escapechar="\\", doublequote=False):	## read records and store them sorted by resprofileID
+for row in csv.reader(g, escapechar="\\", doublequote=False):	## read records and store them sorted by resprofileID
 	if row[0].startswith('#'):
 		continue
 	if not len(row) == 3:
@@ -62,7 +62,7 @@ for row in csv.reader(g, quoting=csv.QUOTE_NONNUMERIC, escapechar="\\", doublequ
 g.close()
 ## insert each record and determine the ID it was given by autoincrement.
 f=open('/usr/share/ucs-school-reservation-customdata/default_resprofiles.csv', "rb")
-for row in csv.reader(f, quoting=csv.QUOTE_NONNUMERIC, escapechar="\\", doublequote=False):
+for row in csv.reader(f, escapechar="\\", doublequote=False):
 	if row[0].startswith('#'):
 		continue
 	if not len(row) == 3:
