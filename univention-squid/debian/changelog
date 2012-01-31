@@ -1,3 +1,9 @@
+univention-squid (5.1.3-9) unstable; urgency=low
+
+  * fix squid3.conf template (Bug #25771)
+
+ -- Arvid Requate <requate@univention.de>  Tue, 31 Jan 2012 12:50:26 +0100
+
 univention-squid (5.1.3-8) unstable; urgency=low
 
   * fix joinscript univention-squid-samba4 (Bug #25771)
