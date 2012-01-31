@@ -1,5 +1,5 @@
-ucs-school-umc-common (1.0.0-0) unstable; urgency=low
+ucs-school-umc-common (1.0.0-1) unstable; urgency=low
 
-  * Initial Release.
+  * Initial Release (Bug #25701)
 
  -- Alexander Kläser <klaeser@univention.de>  Fri, 27 Jan 2012 15:51:18 +0100
