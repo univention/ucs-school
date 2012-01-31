@@ -32,18 +32,13 @@
 DESTDIR=debian/tmp/
 ADMIN_MODULES=$(shell find modules/univention/admin -name '*.py')
 MO_FILES_ADMIN=$(shell find modules/univention/admin -name '*.po' | sed 's/\.po/\.mo/g')
-MODULES=$(shell find modules/univention/management -name '*.py')
-MO_FILES_BACKEND=$(shell find modules/univention/management -name '*.po' | sed 's/\.po/\.mo/g')
-IMAGES=$(shell find images -name '*.gif' -o -name '*.png')
 
 MODULENAME=$(PACKAGE:ucs-school-umc-%=%)
 
 %.mo:	%.po
 	msgfmt -o $@ $<
 
-all:	$(ADMIN_MODULES) $(MO_FILES_ADMIN) $(MODULES) $(MO_FILES_BACKEND) 
-
-modules: $(MODULES)
+all:	$(ADMIN_MODULES) $(MO_FILES_ADMIN) 
 
 admin-modules: $(ADMIN_MODULES)
 
@@ -64,19 +59,3 @@ install-locales-admin: $(MO_FILES_ADMIN)
 
 clean:
 	@find modules/ -name '*.mo' -exec rm \{\} \;
-
-install-modules: modules
-	@for i in $(MODULES); do\
-		o=debian/$(PACKAGE)/usr/share/pyshared/$${i#modules};\
-		install -d "`dirname $$o`";\
-		install -m755 $$i $$o;\
-	done
-
-install-locales-backend: $(MO_FILES_BACKEND)
-	@for i in $(MO_FILES_BACKEND); do\
-		lang=`basename $$i .mo`;\
-		domain=`dirname $$i | sed 's,^modules/,,;s,/,-,g'`;\
-		o=debian/$(PACKAGE)/usr/share/locale/$$lang/LC_MESSAGES/$$domain.mo;\
-		install -d "`dirname $$o`";\
-		install -m 644 $$i $$o;\
-	done

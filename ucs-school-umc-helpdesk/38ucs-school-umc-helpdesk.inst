@@ -42,15 +42,23 @@ umc_init
 
 umc_operation_create "helpdesk-all" "Helpdesk" "" "helpdesk/*"
 
-umc_policy_append "default-umc-all" "helpdesk-all"
+# create container for UMC config objects
+udm container/cn create $@ --ignore_exists --position cn=UMC,cn=univention,$ldap_base --set name=config
 
 # create HELPDESK settings
-univention-directory-manager settings/console_helpdesk create $@ --ignore_exists --position cn=config,cn=console,cn=univention,$ldap_base \
-																				 --set name="helpdesk-default" \
-																				 --set description="Helpdesk Einstellungen" \
-																				 --append category="Hardware" \
-																				 --append category="Software" \
-																				 --append category="Sonstiges"
+# Update to UCS 3.0, move old helpdesk category object
+if [ "$1" = configure -a -n "$2" ] && dpkg --compare-versions "$2" lt 6.0.0-1; then
+	udm settings/console_helpdesk move $@ --dn "cn=helpdesk-default,cn=config,cn=console,cn=univention,$ldap_base" \
+		--position "cn=config,cn=UMC,cn=univention,$ldap_base"
+else
+	udm settings/console_helpdesk create $@ --ignore_exists \
+		--position "cn=config,cn=UMC,cn=univention,$ldap_base" \
+		--set name="helpdesk-default" \
+		--set description="Helpdesk Einstellungen" \
+		--append category="Hardware" \
+		--append category="Software" \
+		--append category="Sonstiges"
+fi
 
 ucs_school_policies_create "helpdesk-admin"
 ucs_school_policies_append "helpdesk-all" "helpdesk-admin"

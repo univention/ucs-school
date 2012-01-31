@@ -46,18 +46,6 @@ dojo.declare("umc.modules.helpdesk", [ umc.widgets.Module, umc.i18n.Mixin ], {
 	//		This module is a template module in order to aid the development of
 	//		new modules for Univention Management Console.
 
-	// the property field that acts as unique identifier for the object
-	idProperty: 'id',
-
-	// internal reference to the grid
-	_grid: null,
-
-	// internal reference to the search page
-	_searchPage: null,
-
-	// internal reference to the detail page for editing an object
-	_detailPage: null,
-
 	postMixInProperties: function() {
 		// is called after all inherited properties/methods have been mixed
 		// into the object (originates from dijit._Widget)
@@ -75,7 +63,7 @@ dojo.declare("umc.modules.helpdesk", [ umc.widgets.Module, umc.i18n.Mixin ], {
 		// is called after all DOM nodes have been setup
 		// (originates from dijit._Widget)
 
-		// it is important to call the parent's postMixInProperties() method
+		// it is important to call the parent's buildRendering() method
 		this.inherited(arguments);
 
 		// start the standby animation in order prevent any interaction before the
@@ -83,178 +71,131 @@ dojo.declare("umc.modules.helpdesk", [ umc.widgets.Module, umc.i18n.Mixin ], {
 		this.standby(true);
 
 		// render the page containing search form and grid
-		this.renderSearchPage();
+		this.umcpCommand( 'helpdesk/configuration' ).then( dojo.hitch( this, function( response ) {
+			if ( response.result.recipient ) {
+				this.renderPage( response.result.username, response.result.department );
+				this.standby( false );
+			} else {
+				umc.dialog.alert( this._( 'The helpdesk module is not configured properly. The recipient email address is not set.' ) );
+			}
+		} ) );
 	},
 
-	renderSearchPage: function(containers, superordinates) {
-		// render all GUI elements for the search formular and the grid
-
-		// setup search page and its main widgets
-		// for the styling, we need a title pane surrounding search form and grid
-		this._searchPage = new umc.widgets.Page({
-			headerText: this.description,
-			helpText: ''
-		});
-
-		// umc.widgets.Module is also a StackContainer instance that can hold
-		// different pages (see also umc.widgets.TabbedModule)
-		this.addChild(this._searchPage);
+	renderPage: function( username, department ) {
 
 		// umc.widgets.ExpandingTitlePane is an extension of dijit.layout.BorderContainer
-		var titlePane = new umc.widgets.ExpandingTitlePane({
-			title: this._('Search results')
-		});
-		this._searchPage.addChild(titlePane);
-
+		var titlePane = new umc.widgets.ExpandingTitlePane( {
+			title: this._( 'Message to the helpdesk team' )
+		} );
 
 		//
-		// data grid
-		//
-
-		// define grid actions
-		var actions = [{
-			name: 'add',
-			label: this._('Add object'),
-			description: this._('Create a new object'),
-			iconClass: 'umcIconAdd',
-			isContextAction: false,
-			isStandardAction: true,
-			callback: dojo.hitch(this, '_addObject')
-		}, {
-			name: 'edit',
-			label: this._('Edit'),
-			description: this._('Edit the selected object'),
-			iconClass: 'umcIconEdit',
-			isStandardAction: true,
-			isMultiAction: false,
-			callback: dojo.hitch(this, '_editObject')
-		}, {
-			name: 'delete',
-			label: this._('Delete'),
-			description: this._('Deleting the selected objects.'),
-			isStandardAction: true,
-			isMultiAction: true,
-			iconClass: 'umcIconDelete',
-			callback: dojo.hitch(this, '_deleteObjects')
-		}];
-
-		// define the grid columns
-		var columns = [{
-			name: 'name',
-			label: this._('Name'),
-			width: '60%'
-		}, {
-			name: 'color',
-			label: this._('Favorite color'),
-			width: '40%'
-		}];
-
-		// generate the data grid
-		this._grid = new umc.widgets.Grid({
-			// property that defines the widget's position in a dijit.layout.BorderContainer,
-			// 'center' is its default value, so no need to specify it here explicitely
-			// region: 'center',
-			actions: actions,
-			// defines which data fields are displayed in the grids columns
-			columns: columns,
-			// a generic UMCP module store object is automatically provided
-			// as this.moduleStore (see also umc.store.getModuleStore())
-			moduleStore: this.moduleStore,
-			// initial query
-			query: { colors: 'None', name: '' }
-		});
-
-		// add the grid to the title pane
-		titlePane.addChild(this._grid);
-
-
-		//
-		// search form
+		// form
 		//
 
 		// add remaining elements of the search form
-		var widgets = [{
-			type: 'ComboBox',
-			name: 'color',
-			description: this._('Defines the .'),
-			label: this._('Category'),
-			// Values are dynamically loaded from the server via a UMCP request.
-			// Use the property dynamicOptions to pass additional values to the server.
-			// Use staticValues to pass an array directly (see umc.widgets._SelectMixin).
-			dynamicValues: 'helpdesk/colors'
+		var widgets = [ {
+			type: 'TextBox',
+			name: 'username',
+			label: this._('User name'),
+			value: username,
+			disabled: true
 		}, {
 			type: 'TextBox',
-			name: 'name',
-			description: this._('Specifies the substring pattern which is searched for in the displayed name'),
-			label: this._('Search pattern')
-		}];
+			name: 'department',
+			label: this._('School'),
+			value: department,
+			disabled: true
+		}, {
+			type: 'ComboBox',
+			name: 'category',
+			label: this._( 'Category' ),
+			dynamicValues: 'helpdesk/categories'
+		}, {
+			type: 'TextArea',
+			name: 'message',
+			label: this._( 'Message' )
+		} ];
 
 		// the layout is an 2D array that defines the organization of the form elements...
 		// here we arrange the form elements in one row and add the 'submit' button
 		var layout = [
-			[ 'color', 'name', 'submit' ]
+			'username',
+			'department',
+			'category',
+			'message'
 		];
 
-		// generate the search form
-		this._searchForm = new umc.widgets.SearchForm({
+		// generate the form
+		this._form = new umc.widgets.Form({
 			// property that defines the widget's position in a dijit.layout.BorderContainer
 			region: 'top',
 			widgets: widgets,
-			layout: layout,
-			onSearch: dojo.hitch(this, function(values) {
-				// call the grid's filter function
-				// (could be also done via dojo.connect() and dojo.disconnect() )
-				this._grid.filter(values);
-			})
+			layout: layout
 		});
 
 		// turn off the standby animation as soon as all form values have been loaded
-		this.connect(this._searchForm, 'onValuesInitialized', function() {
-			this.standby(false);
+		this.connect( this._form, 'onValuesInitialized', function() {
+			this.standby( false );
 		});
 
-		// add search form to the title pane
-		titlePane.addChild(this._searchForm);
+		// add form to the title pane
+		titlePane.addChild(this._form);
 
-		//
-		// conclusion
-		//
 
-		// we need to call page's startup method manually as all widgets have
-		// been added to the page container object
-		this._searchPage.startup();
 
-		// create a DetailPage instance
-		this._detailPage = new umc.modules._helpdesk.DetailPage({
-			moduleStore: this.moduleStore
+		// submit changes
+		var buttons = [ {
+            name: 'submit',
+            label: this._( 'Send' ),
+            'default': true,
+            callback: dojo.hitch( this, function() {
+				var values = this._form.gatherFormValues();
+				if ( values.message ) {
+					this.onSubmit( this._form.gatherFormValues() );
+				} else {
+					umc.dialog.alert( this._( 'The required message is missing. Therefore, no report has been sent to the helpdesk team.' ) );
+				}
+            } )
+        }, {
+            name: 'close',
+            label: this._('Close'),
+            callback: dojo.hitch(this, function() {
+				var values = this._form.gatherFormValues();
+				if ( values.message ) {
+					umc.dialog.confirm( this._( 'Should the UMC module be closed? All unsaved modification will be lost.' ), [ {
+						label: this._( 'Close' ),
+						callback: dojo.hitch( this, function() {
+							dojo.publish('/umc/tabs/close', [ this ] );
+						} )
+					}, {
+						label: this._( 'Cancel' ),
+						'default': true
+					} ] );
+				} else {
+					dojo.publish('/umc/tabs/close', [ this ] );
+				}
+            } )
+        } ];
+
+		this._page = new umc.widgets.Page({
+			headerText: this.description,
+			helpText: '',
+			footerButtons: buttons
 		});
-		this.addChild(this._detailPage);
 
-		// connect to the onClose event of the detail page... we need to manage
-		// visibility of sub pages here
-		// ... this.connect() will destroy signal handlers upon widget
-		// destruction automatically
-		this.connect(this._detailPage, 'onClose', function() {
-			this.selectChild(this._searchPage);
-		});
+		this.addChild(this._page);
+		this._page.addChild( titlePane );
 	},
 
-	_addObject: function() {
-		umc.dialog.alert(this._('Feature not yet implemented'));
-	},
-
-	_editObject: function(ids, items) {
-		if (ids.length != 1) {
-			// should not happen
-			return;
-		}
-
-		this.selectChild(this._detailPage);
-		this._detailPage.load(ids[0]);
-	},
-
-	_deleteObjects: function(ids, items) {
-		umc.dialog.alert(this._('Feature not yet implemented'));
+	onSubmit: function( values ) {
+		this.umcpCommand( 'helpdesk/send', values ).then( dojo.hitch( this, function ( response ) {
+			if ( response.result ) {
+				umc.dialog.alert( this._( 'The report has been sent to the helpdesk team' ) );
+				this._form._widgets.message.set( 'value', '' );
+			} else {
+				umc.dialog.alert( this._( 'The message could not be send to the helpdesk team: ' ) + response.message );
+			}
+		} ) );
 	}
 });
 

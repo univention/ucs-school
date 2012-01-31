@@ -1,4 +1,4 @@
-#!/usr/bin/python2.4
+#!/usr/bin/python2.6
 #
 # Univention Management Console
 #  module: Helpdesk Module
@@ -30,15 +30,14 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-import univention.management.console as umc
-import univention.management.console.categories as umcc
-import univention.management.console.protocol as umcp
-import univention.management.console.handlers as umch
-import univention.management.console.dialog as umcd
-import univention.management.console.tools as umct
+from univention.management.console.modules import Base
 
-import univention.debug as ud
-import univention.config_registry
+from univention.management.console.log import MODULE
+from univention.management.console.config import ucr
+
+from univention.lib.i18n import Translation
+
+from ucsschool.lib import SchoolLDAPConnection
 
 import notifier
 import notifier.popen
@@ -46,138 +45,109 @@ import notifier.popen
 import os, re
 import smtplib
 
-import _revamp
-import _types
-import _schoolldap
+_ = Translation( 'ucs-school-umc-helpdesk' ).translate
 
-_ = umc.Translation( 'univention.management.console.handlers.helpdesk' ).translate
+class Instance( Base ):
+	def init( self ):
+		MODULE.error( 'init module' )
+		## inititate an LDAP connection to the local directory
+		self.ldap_anon = SchoolLDAPConnection( binddn = self._user_dn, bindpw = self._password, username = self._username )
 
-icon = 'helpdesk/module'
-short_description = _( 'Helpdesk' )
-long_description = _( 'Contact Helpdesk' )
-categories = [ 'all' ]
-
-command_description = {
-	'helpdesk/form/show': umch.command(
-		short_description = _( 'Display helpdesk mail formular' ),
-		long_description = _( 'Display helpdesk mail formular' ),
-		method = 'helpdesk_form_show',
-		values = { 'username' : _types.user,
-				   'department' : _types.department,
-				   'category' : _types.category,
-				   'message' : _types.message,
-				   },
-		startup = True,
-		priority = 100
-	),
-	'helpdesk/form/send': umch.command(
-		short_description = _( 'Send helpdesk mail formular' ),
-		long_description = _( 'Send helpdesk mail formular' ),
-		method = 'helpdesk_form_send',
-		values = { 'username' : _types.user,
-				   'department' : _types.department,
-				   'category' : _types.category,
-				   'message' : _types.message,
-				   },
-	),
-}
-
-class handler( umch.simpleHandler, _revamp.Web  ):
-	def __init__( self ):
-		global command_description
-		umch.simpleHandler.__init__( self, command_description )
-		_revamp.Web.__init__( self )
-
-		# generate config objects
-		self.configRegistry = univention.config_registry.ConfigRegistry()
-		self.configRegistry.load()
-
-		## inititate an anonymous LDAP connection to the local directory
-		self.ldap_anon = _schoolldap.SchoolLDAPConnection()
-
-
-	def helpdesk_form_show( self, object ):
+	def configuration( self, request ):
+		MODULE.error( 'return configuration' )
 		username = _( 'unknown' )
 		if self._username:
 			username = self._username
 		department = _( 'unknown' )
 
-		self.ldap_anon.checkConnection(username = self._username, bindpw = self._password)
-
 		# use first available OU
 		if self.ldap_anon.availableOU:
-			department = self.ldap_anon.availableOU[0]
+			department = self.ldap_anon.availableOU[ 0 ]
 
 		# use username
-		if username:
+		if self._user_dn:
 			regex = re.compile(',ou=([^,]+),')
-			match = regex.match(username)
+			match = regex.match( self._user_dn )
 			if match:
-				department = match.groups()[0]
+				department = match.groups()[ 0 ]
 
 		# override department by UCR variable ucsschool/helpdesk/fixedou if variable is set
-		val = self.configRegistry.get( 'ucsschool/helpdesk/fixedou' )
+		val = ucr.get( 'ucsschool/helpdesk/fixedou' )
 		if val:
 			department = val
 
-		ud.debug( ud.ADMIN, ud.INFO, 'HELPDESK: username=%s  department=%s' % (username, department) )
+		MODULE.info( 'username=%s  department=%s' % ( self._username, department ) )
 
-		self.finished( object.id(), ( username, department ) )
+		self.finished( request.id, {
+			'username' : self._username,
+			'department' : department,
+			'recipient' : ucr.has_key( 'ucsschool/helpdesk/recipient' ) and ucr[ 'ucsschool/helpdesk/recipient' ] } )
 
 
-	def helpdesk_form_send( self, object ):
-		ud.debug( ud.ADMIN, ud.INFO, 'HELPDESK: helpdesk_form_send' )
+	def send( self, request ):
+		def _send_thread( sender, recipients, username, department, category, message ):
+			MODULE.info( 'sending mail: thread running' )
 
-		for key in ['username', 'department', 'category', 'message' ]:
-			if object.options.has_key( key ) and object.options[ key ]:
-				ud.debug( ud.ADMIN, ud.INFO, 'HELPDESK: helpdesk_form_send ' + key + '=' + object.options[ key ].replace('%','_') )
+			msg = u'From: ' + sender + u'\r\n'
+			msg += u'To: ' + (', '.join(recipients)) + u'\r\n'
+			msg += u'Subject: %s (%s: %s)\r\n' % (category, _('Department'), department)
+			msg += u'\r\n'
+			msg += u'%s: %s\r\n' % ( _( 'Sender' ), username )
+			msg += u'%s: %s\r\n' % ( _( 'Department' ), department )
+			msg += u'%s: %s\r\n' % ( _( 'Category' ), category )
+			msg += u'%s:\r\n' % _( 'Message' )
+			msg += message + u'\r\n'
+			msg += u'\r\n'
 
-		if self.configRegistry.has_key('ucsschool/helpdesk/recipient') and self.configRegistry['ucsschool/helpdesk/recipient']:
-			if self.configRegistry.has_key('hostname') and self.configRegistry['hostname'] and \
-			   self.configRegistry.has_key('domainname') and self.configRegistry['domainname']:
-				sender = 'ucsschool-helpdesk@%s.%s' % (self.configRegistry['hostname'], self.configRegistry['domainname'])
+			msg = msg.encode('latin1')
+
+			server = smtplib.SMTP('localhost')
+			server.set_debuglevel(0)
+			server.sendmail(sender, recipients, msg)
+			server.quit()
+
+		def _send_return( thread, result, request ):
+			import traceback
+
+			if not isinstance( result, BaseException ):
+				MODULE.info( 'sending mail: completed successfully' )
+				self.finished( request.id, True )
+			else:
+				msg = '%s\n%s: %s\n' % ( ''.join( traceback.format_tb( thread.exc_info[ 2 ] ) ), thread.exc_info[ 0 ].__name__, str( thread.exc_info[ 1 ] ) )
+				MODULE.process( 'sending mail:An internal error occurred: %s' % msg )
+				self.finished( request.id, False, msg, False )
+
+
+		keys = [ 'username', 'department', 'category', 'message' ]
+		self.required_options( request, *keys )
+		for key in keys:
+			if request.options[ key ]:
+				MODULE.info( 'send ' + key + '=' + request.options[ key ].replace('%','_') )
+
+		if ucr.has_key( 'ucsschool/helpdesk/recipient' ) and ucr[ 'ucsschool/helpdesk/recipient' ]:
+			if ucr.has_key( 'hostname' ) and ucr[ 'hostname' ] and ucr.has_key( 'domainname' ) and ucr[ 'domainname' ]:
+				sender = 'ucsschool-helpdesk@%s.%s' % ( ucr[ 'hostname' ], ucr[ 'domainname' ] )
 			else:
 				sender = 'ucsschool-helpdesk@localhost'
 
-			func = notifier.Callback( self._helpdesk_form_send_thread,
-										sender,
-										self.configRegistry['ucsschool/helpdesk/recipient'].split(' '),
-										object.options[ 'username' ],
-										object.options[ 'department' ],
-										object.options[ 'category' ],
-										object.options[ 'message' ] )
-			ud.debug( ud.ADMIN, ud.INFO, 'HELPDESK: sending mail: starting thread' )
-			cb = notifier.Callback( self._helpdesk_form_send_return, object )
+			func = notifier.Callback( _send_thread,
+									  sender,	ucr[ 'ucsschool/helpdesk/recipient' ].split( ' ' ),
+									  request.options[ 'username' ], request.options[ 'department' ],
+									  request.options[ 'category' ], request.options[ 'message' ] )
+			MODULE.info( 'sending mail: starting thread' )
+			cb = notifier.Callback( _send_return, request )
 			thread = notifier.threads.Simple( 'HelpdeskMessage', func, cb )
 			thread.run()
 		else:
-			ud.debug( ud.ADMIN, ud.ERROR, 'HELPDESK: cannot send mail - config-registry variable "ucsschool/helpdesk/recipient" is not set' )
-			self.finished( object.id(), None )
+			MODULE.error( 'HELPDESK: cannot send mail - config-registry variable "ucsschool/helpdesk/recipient" is not set' )
+			self.finished( request.id, False, _( 'The email address for the helpdesk team is not configured.' ) )
 
+	def categories( self, request ):
+		categories = []
+		lo = self.ldap_anon.getConnection()
+		res = lo.searchDn( filter = 'objectClass=univentionUMCHelpdeskClass' )
+		# use only first object found
+		if res and res[ 0 ]:
+			categories = lo.getAttr( res[ 0 ], 'univentionUMCHelpdeskCategory' )
 
-	def _helpdesk_form_send_thread( self, sender, recipients, username, department, category, message ):
-		ud.debug( ud.ADMIN, ud.INFO, 'HELPDESK: sending mail: thread running' )
-
-		msg = u'From: ' + sender + u'\r\n'
-		msg += u'To: ' + (', '.join(recipients)) + u'\r\n'
-		msg += u'Subject: %s (%s: %s)\r\n' % (category, _('Department'), department)
-		msg += u'\r\n'
-		msg += u'%s: %s\r\n' % ( _( 'Sender' ), username )
-		msg += u'%s: %s\r\n' % ( _( 'Department' ), department )
-		msg += u'%s: %s\r\n' % ( _( 'Category' ), category )
-		msg += u'%s:\r\n' % _( 'Message' )
-		msg += message + u'\r\n'
-		msg += u'\r\n'
-
-		msg = msg.encode('latin1')
-
-		server = smtplib.SMTP('localhost')
-		server.set_debuglevel(0)
-		server.sendmail(sender, recipients, msg)
-		server.quit()
-
-
-	def _helpdesk_form_send_return( self, thread, result, object ):
-		ud.debug( ud.ADMIN, ud.INFO, 'HELPDESK: sending mail: complete' )
-		self.finished( object.id(), None )
-
+		self.finished( request.id, map( lambda x: { 'id' : x, 'label' : x }, categories ) )

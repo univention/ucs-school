@@ -2,14 +2,17 @@
 <umc version="2.0">
   <module id="helpdesk" icon="helpdesk" version="1.0">
 	<name>Helpdesk</name>
-	<description>Sending reports about problems to the helpdesk</description>
+	<description>Contact the helpdesk team</description>
 	<categories>
+	  <category name="system"/>
 	  <category name="ucsschool"/>
 	</categories>
 
-	<command name="helpdesk/form/show" function="form_show">
+	<command name="helpdesk/configuration" function="configuration">
 	</command>
-	<command name="helpdesk/form/send" function="form_show">
+	<command name="helpdesk/send" function="send">
+	</command>
+	<command name="helpdesk/categories" function="categories">
 	</command>
   </module>
 </umc>
