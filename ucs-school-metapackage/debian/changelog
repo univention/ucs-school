@@ -1,3 +1,9 @@
+ucs-school-metapackage (4.0.2-2) unstable; urgency=low
+
+  * Set S4 connector binddn and bindpw in slave join script (Bug #25985)
+
+ -- Stefan Gohmann <gohmann@univention.de>  Tue, 31 Jan 2012 16:14:32 +0100
+
 ucs-school-metapackage (4.0.2-1) unstable; urgency=low
 
   * activate setting profile path on user creation for single-master (Bug #25776)

@@ -1,8 +1,9 @@
 #!/bin/sh
 #
 # UCS@School
+#  join script
 #
-# Copyright 2009-2012 Univention GmbH
+# Copyright 2011-2012 Univention GmbH
 #
 # http://www.univention.de/
 #
@@ -29,17 +30,18 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-if [ "$1" = configure -a -z "$2" ]; then
-	# overwrite the netlogon sync setting during the installation
-	univention-config-registry set samba/netlogon/sync=download
+VERSION=1
+. /usr/share/univention-join/joinscripthelper.lib
+joinscript_init
+
+eval "$(ucr shell)"
+
+if [ $JS_LAST_EXECUTED_VERSION -lt 1 ]; then
+	ucr set connector/ldap/bindpw?"/etc/machine.secret" \
+			connector/ldap/binddn?"$ldap_hostdn" \
+			connector/s4/allow/secondary?'true'
 fi
 
-ucr set repository/online/component/ucsschool/version=current
-
-#DEBHELPER#
-
-# The join script does not require LDAP access, so we can call it directly:
-/usr/lib/univention-install/62ucs-school-slave.inst
+joinscript_save_current_version
 
 exit 0
-
