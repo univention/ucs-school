@@ -294,7 +294,7 @@ def LDAP_Connection( func ):
 	connection and invokes the function again. if it still fails an
 	LDAP_ConnectionError is raised.
 
-	The LDAP connection is openede to ldap/server/name with the current 
+	The LDAP connection is opened to ldap/server/name with the current 
 	user DN or the host DN in case of a local user. This connection is intended
 	only for read access. In order to write changes to the LDAP master, an
 	additional, temporary connection needs to be opened explicitly.
@@ -363,6 +363,11 @@ def LDAP_Connection( func ):
 	return wrapper_func
 
 class SchoolSearchBase(object):
+	"""This class serves as wrapper for all the different search bases (users,
+	groups, pupils, teachers etc.). It is initiate with a particular ou.
+	The class is inteded for read access only, instead of switching the a
+	search base, a new instance can simply be created.
+	"""
 	def __init__( self, ou, dn = None ):
 		self._departmentNumber = ou
 		if dn:
@@ -408,6 +413,20 @@ class SchoolSearchBase(object):
 		return "cn=shares,%s" % self.department
 
 class SchoolBaseModule(UMC_Base):
+	"""This classe serves as base class for UCS@school UMC modules that need
+	LDAP access. It initiates the list of availabe OUs (self.availableOU) and
+	initiates the search bases (self.searchBase). set_credentials() is called
+	automatically to allow LDAP connections. In order to integrate this class
+	into a module, use the following paradigm:
+
+	class Instance( SchoolBaseModule ):
+		def __init__( self ):
+			# initiate list of internal variables
+			SchoolBaseModule.__init__(self)
+
+		def init(self):
+			SchoolBaseModule.init(self)
+	"""
 	def __init__(self):
 		UMC_Base.__init__(self)
 		self.availableOU = []
