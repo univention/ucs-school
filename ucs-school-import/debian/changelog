@@ -1,3 +1,9 @@
+ucs-school-import (8.0.29-1) unstable; urgency=low
+
+  * parse printer URI (Bug #26004)
+
+ -- Janek Walkenhorst <walkenhorst@univention.de>  Wed, 01 Feb 2012 17:46:34 +0100
+
 ucs-school-import (8.0.28-1) unstable; urgency=low
 
   * removed count_lo() (Bug #20221)

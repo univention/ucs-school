@@ -2379,7 +2379,7 @@ def import_printer():
 			object['name'] = printerName
 			object['spoolHost'] = [spoolHost]
 			object['setQuota'] = '0' # WORKAROUND for Bug #14858
-			object['uri'] = printerUri
+			object['uri'] = printer_module.unmapPrinterURI((printerUri, ))
 			if printerModel:
 				object['model'] = printerModel
 			else:
