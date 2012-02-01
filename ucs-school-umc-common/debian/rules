@@ -2,7 +2,7 @@
 #
 # UCS@School
 #
-# Copyright 2009-2012 Univention GmbH
+# Copyright 2012 Univention GmbH
 #
 # http://www.univention.de/
 #
@@ -32,6 +32,11 @@
 override_dh_auto_test:
 	dh_auto_test
 	ucslint
+
+override_dh_auto_build:
+	dh-umc-module-build --core
+	dh_auto_build
+	mv de.mo ucs-school-common.mo
 
 %:
 	dh $@
