@@ -37,6 +37,7 @@ name='remove-old-homedirs'
 description='moves directories of removed users away from home'
 filter='(objectClass=posixAccount)'
 attributes=[]
+modrdn='1'
 
 target_dir_config = "ucsschool/listener/oldhomedir/targetdir"
 
@@ -60,13 +61,13 @@ def check_target_dir(configRegistry):
 
 	return ""
 
-def handler(dn, new, old):
+def handler(dn, new, old, command):
 
 	configRegistry = univention.config_registry.ConfigRegistry()
 	configRegistry.load()
 
 	# remove empty home directories
-	if old and not new:
+	if old and not new and command == "d":
 
 		# check if target directory is okay
 

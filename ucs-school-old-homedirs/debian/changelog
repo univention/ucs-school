@@ -1,3 +1,9 @@
+ucs-school-old-homedirs (7.0.1-1) unstable; urgency=low
+
+  * added modrdn in listener (Bug #20820) 
+
+ -- Felix Botner <botner@univention.de>  Wed, 01 Feb 2012 15:35:57 +0100
+
 ucs-school-old-homedirs (7.0.0-1) unstable; urgency=low
 
   * UCS 3.0 update (Bug #25694) 
