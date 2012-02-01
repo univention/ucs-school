@@ -1,0 +1,2 @@
+dev/dh-umc-* usr/bin
+dev/dh_umc.py usr/share/pyshared/univention/
