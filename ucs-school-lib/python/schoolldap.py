@@ -308,7 +308,7 @@ def LDAP_Connection( func ):
 
 	example:
 	  @LDAP_Connection
-	  def do_ldap_stuff(arg1, arg2, ldap_connection = None, ldap_position = None, searchBase = None ):
+	  def do_ldap_stuff(arg1, arg2, ldap_connection = None, ldap_position = None, search_base = None ):
 		  ...
 		  ldap_connection.searchDn( ..., position = ldap_position )
 		  ...
@@ -340,7 +340,16 @@ def LDAP_Connection( func ):
 
 		# set keyword argument for search base
 		_init_search_base( lo )
-		kwargs[ 'search_base' ] = _search_base
+		if kwargs.get('search_base', None):
+			# search_base is already specified, do not override it
+			pass
+		elif 'request' in kwargs and kwargs['request'].options.get('ou', None):
+			# 'ou' has been specified as request parameter, set the search 
+			# base accordingly
+			kwargs[ 'search_base' ] = SchoolSearchBase( _search_base.availableOU, kwargs['request'].options.get('ou') )
+		else:
+			# default search base
+			kwargs[ 'search_base' ] = _search_base
 
 		# try to execute the method with the given connection
 		# in case of an error, re-open a new LDAP connection and try again
@@ -427,7 +436,7 @@ class SchoolSearchBase(object):
 		self._availableOU = availableOU
 		self._departmentNumber = ou or availableOU[0]
 		# FIXME: search for OU to get correct dn
-		self._department = dn or 'ou=%s,%s' % (ou, ucr.get( 'ldap/base' ) )
+		self._department = dn or 'ou=%s,%s' % (self.departmentNumber, ucr.get( 'ldap/base' ) )
 
 	@property
 	def availableOU(self):

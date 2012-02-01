@@ -1,3 +1,10 @@
+ucs-school-lib (1.0.8-1) unstable; urgency=low
+
+  * integrated evaluation of 'ou' request option for search_base; Bug #25701
+  * bug fixes
+
+ -- Alexander Kläser <klaeser@univention.de>  Wed, 01 Feb 2012 18:09:39 +0100
+
 ucs-school-lib (1.0.7-1) unstable; urgency=low
 
   * minor fixes; Bug #25701
