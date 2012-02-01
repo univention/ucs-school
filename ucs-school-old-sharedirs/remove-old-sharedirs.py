@@ -39,6 +39,7 @@ name='remove-old-sharedirs'
 description='moves directories of removed group shares to backup folder'
 filter='(objectClass=univentionShare)'
 attributes=[]
+modrdn='1'
 
 target_dir_config = "ucsschool/listener/oldsharedir/targetdir"
 source_dir_prefixes = "ucsschool/listener/oldsharedir/prefixes"
@@ -77,13 +78,13 @@ def check_source_dir(configRegistry, share_dir):
 
 	return "%s is not matched by %s" % (share_dir, source_dir_prefixes)
 
-def handler(dn, new, old):
+def handler(dn, new, old, command):
 
 	configRegistry = univention.config_registry.ConfigRegistry()
 	configRegistry.load()
 
 	# remove empty share directories
-	if old and not new:
+	if old and not new and command == "d":
 
 		if old.has_key('univentionShareHost'):
 			fqdn = '%s.%s' % (configRegistry['hostname'], configRegistry['domainname'])
