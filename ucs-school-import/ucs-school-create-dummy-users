@@ -31,7 +31,6 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-OU="$(echo "$1" | tr -cd 'a-zA-Z0-9-')"
 USERNAMECACHE_P="$(mktemp /tmp/tmp.ucsschool.p.XXXXXXXXX)"
 USERNAMECACHE_T="$(mktemp /tmp/tmp.ucsschool.t.XXXXXXXXX)"
 FIRSTNAMES="Anton Bertram Christina Daniela Ernst Friderike Gisela Hans Ines Jens Klaus Lisa Marlene Norbert Otto Pauline Richard Silke Tim Ulrike Victor Wilhelmine"
@@ -40,9 +39,35 @@ CLASSES="1A 1B 2A 2B 3B 3C 4B 4r Froesche Igel"
 
 trap "rm -Rf ${USERNAMECACHE_P} ${USERNAMECACHE_P}.* ${USERNAMECACHE_T} ${USERNAMECACHE_T}.*" EXIT
 
-if [ -z "$OU" -o "$OU" = "-h" -o "$OU" = "--help" ] ; then
-	echo "syntax: $0 <ou>"
-	exit 1
+# options
+usage() {
+
+	echo "$(basename $0): [options] <ou>"
+	echo "  create a dummy user import file"
+	echo
+	echo "Arguments:"
+	echo "  <ou>  name of the school ou"
+	echo
+	echo "Options:"
+	echo "  -h, --help  show this help message and exit"
+	
+	exit 0
+}
+
+while [ $# -ge 1 ] ; do
+	case $1 in
+		-h|--help) shift 1; usage;;
+		*)
+			if [ -z "$OU" ]; then
+				OU="$(echo "$1" | tr -cd 'a-zA-Z0-9-')"
+			fi 
+			shift 1
+			;;
+	esac
+done
+
+if [ -z "$OU" ] ; then
+	usage
 fi
 
 rotate_classes() {
