@@ -299,17 +299,22 @@ def LDAP_Connection( func ):
 	only for read access. In order to write changes to the LDAP master, an
 	additional, temporary connection needs to be opened explicitly.
 
-	When using the decorator the method adds two additional keyword arguments.
+	Information for available OUs is initiated from LDAP, as well.
+
+	This decorator can only be used after set_credentials() has been executed.
+
+	When using the decorator the method adds three additional keyword arguments.
 
 	example:
 	  @LDAP_Connection
-	  def do_ldap_stuff(arg1, arg2, ldap_connection = None, ldap_position = None ):
+	  def do_ldap_stuff(arg1, arg2, ldap_connection = None, ldap_position = None, searchBase = None ):
 		  ...
 		  ldap_connection.searchDn( ..., position = ldap_position )
 		  ...
 	"""
 	def wrapper_func( *args, **kwargs ):
-		global _ldap_connection, _ldap_position, _user_dn, _password, _licenseCheck
+		global _ldap_connection, _ldap_position, _user_dn, _password, _licenseCheck, _search_base
+
 
 		if _ldap_connection is not None:
 			# reuse LDAP connection
@@ -328,10 +333,16 @@ def LDAP_Connection( func ):
 			except LDAPError, e:
 				raise LDAP_ConnectionError( 'Opening LDAP connection failed: %s' % str( e ) )
 
-		# try to execute the method with the given connection
-		# in case of an error, re-open a new LDAP connection and try again
+		# set keyword arguments
 		kwargs[ 'ldap_connection' ] = lo
 		kwargs[ 'ldap_position' ] = po
+
+		# set keyword argument for search base
+		_init_ou(lo)
+		kwargs[ 'search_base' ] = _search_base
+
+		# try to execute the method with the given connection
+		# in case of an error, re-open a new LDAP connection and try again
 		try:
 			ret = func( *args, **kwargs )
 			_ldap_connection = lo
@@ -362,19 +373,64 @@ def LDAP_Connection( func ):
 
 	return wrapper_func
 
+def _init_search_base(ldap_connection):
+	global _search_base
+
+	if _search_base:
+		# search base has already been initiated... we are done
+		return
+
+	# initiate the list of available OUs and set the default search base
+	if ldap_connection.binddn.find('ou=') > 0:
+		# we got an OU in the user DN -> school teacher or assistent
+		# restrict the visibility to current school
+		# (note that there can be schools with a DN such as ou=25g18,ou=25,dc=...)
+		department = ldap_connection.binddn[ldap_connection.binddn.find('ou='):] 
+		departmentNumber = ldap_connection.explodeDn( department, 1 )[0],
+		_search_base = SchoolSearchBase([ departmentNumber ], departmentNumber, department)
+		MODULE.info('LDAP_Connection: setting department: %s' % _search_base.department)
+	else:
+		MODULE.warn( 'LDAP_Connection: unable to identify ou of this account - showing all OUs!' )
+		#_ouswitchenabled = True
+		oulist = ucr.get('ucsschool/local/oulist')
+		availableOU = []
+		if oulist:
+			# OU list override via UCR variable (it can be necessary to adjust the list of
+			# visible schools on specific systems manually)
+			availableOU = [ x.strip() for x in oulist.split(',') ]
+			MODULE.info( 'LDAP_Connection: availableOU overridden by UCR variable ucsschool/local/oulist')
+		else:
+			# get a list of available OUs via UDM module container/ou
+			ouresult = udm_modules.lookup( 
+					'container/ou', None, lo,
+					scope = 'one', superordinate = None,
+					base = ucr.get( 'ldap/base' ) )
+			availableOU = [ ou['name'] for ou in ouresult ]
+
+		# use the first available OU as default search base
+		if not len(_availableOU):
+			MODULE.warn('LDAP_Connection: ERROR, COULD NOT FIND ANY OU!!!')
+			_search_base = SchoolSearchBase([''])
+			raise EnvironmentError('Could not find any valid ou!')
+		else:
+			MODULE.info( 'LDAP_Connection: availableOU=%s' % availableOU )
+			_search_base = SchoolSearchBase(availableOU)
+
 class SchoolSearchBase(object):
 	"""This class serves as wrapper for all the different search bases (users,
 	groups, pupils, teachers etc.). It is initiate with a particular ou.
 	The class is inteded for read access only, instead of switching the a
 	search base, a new instance can simply be created.
 	"""
-	def __init__( self, ou, dn = None ):
-		self._departmentNumber = ou
-		if dn:
-			self._department = dn
-		else:
-			# FIXME: search for OU to get correct dn
-			self._department = 'ou=%s,%s' % (ou, ucr.get( 'ldap/base' ) )
+	def __init__( self, availableOU, ou = None, dn = None ):
+		self._availableOU = availableOU
+		self._departmentNumber = ou or availableOU[0]
+		# FIXME: search for OU to get correct dn
+		self._department = dn or 'ou=%s,%s' % (ou, ucr.get( 'ldap/base' ) )
+
+	@property
+	def availableOU(self):
+		return self._availableOU
 
 	@property
 	def departmentNumber(self):
@@ -431,55 +487,9 @@ class SchoolBaseModule(UMC_Base):
 	"""
 	def __init__(self):
 		UMC_Base.__init__(self)
-		self.availableOU = []
-		self.searchBase = None
 		
 	def init(self):
 		'''Initialize the module. Invoked when ACLs, commands and
 		credentials are available'''
 		set_credentials( self._user_dn, self._password )
-		self._init_ous()
-
-	@LDAP_Connection
-	def _init_ous( self, ldap_connection = None, ldap_position = None ):
-		'''Initiates information for available OUs from LDAP.
-		Call this method after set_credentials() has been executed.'''
-
-		if ldap_connection.binddn.find('ou=') > 0:
-			# we got an OU in the user DN -> school teacher or assistent
-			# restrict the visibility to current school
-			# (note that there can be schools with a DN such as ou=25g18,ou=25,dc=...)
-			self.searchBase = SchoolSearchBase(
-					ldap_connection.explodeDn( self.searchBase.department, 1 )[0],
-					ldap_connection.binddn[ldap_connection.binddn.find('ou='):] )
-			MODULE.info('SchoolBaseModule: setting department: %s' % self.searchBase.department)
-
-			# cut list down to default OU
-			self.availableOU = [ self.searchBase.departmentNumber ]
-		else:
-			MODULE.warn( 'SchoolBaseModule: unable to identify ou of this account - showing all OUs!' )
-			#self.ouswitchenabled = True
-
-			oulist = ucr.get('ucsschool/local/oulist')
-			if oulist:
-				# OU list override via UCR variable (it can be necessary to adjust the list of
-				# visible schools on specific systems manually)
-				self.availableOU = [ x.strip() for x in oulist.split(',') ]
-				MODULE.info( 'SchoolBaseModule: availableOU overridden by UCR variable ucsschool/local/oulist')
-			else:
-				# get a list of available OUs via UDM module container/ou
-				ouresult = udm_modules.lookup( 
-						'container/ou', None, ldap_connection,
-						scope = 'one', superordinate = None,
-						base = ucr.get( 'ldap/base' ) )
-				self.availableOU = [ ou['name'] for ou in ouresult ]
-
-			# use the first available OU
-			if not len(self.availableOU):
-				MODULE.warn('SchoolBaseModule: ERROR, COULD NOT FIND ANY OU!!!')
-				self.searchBase = SchoolSearchBase('')
-				raise EnvironmentError('Could not find any valid ou!')
-			else:
-				MODULE.info( 'SchoolBaseModule: availableOU=%s' % self.availableOU )
-				self.searchBase = SchoolSearchBase(self.availableOU[0])
 

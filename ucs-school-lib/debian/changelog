@@ -1,3 +1,9 @@
+ucs-school-lib (1.0.6-1) unstable; urgency=low
+
+  * refactored search bases and LDAP_Connection; Bug #25701
+
+ -- Alexander Kläser <klaeser@univention.de>  Wed, 01 Feb 2012 14:20:56 +0100
+
 ucs-school-lib (1.0.5-1) unstable; urgency=low
 
   * added documentation; Bug #25701
