@@ -423,9 +423,11 @@ class SchoolBaseModule(UMC_Base):
 		def __init__( self ):
 			# initiate list of internal variables
 			SchoolBaseModule.__init__(self)
+			# ... custom code
 
 		def init(self):
 			SchoolBaseModule.init(self)
+			# ... custom code
 	"""
 	def __init__(self):
 		UMC_Base.__init__(self)
