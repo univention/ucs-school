@@ -36,6 +36,23 @@ import univention.uldap
 import univention.admin.config
 import univention.admin.modules
 
+import univention.admin as udm
+import univention.admin.modules as udm_modules
+import univention.admin.objects as udm_objects
+import univention.admin.uldap as udm_uldap
+import univention.admin.syntax as udm_syntax
+import univention.admin.uexceptions as udm_errors
+
+from ldap import LDAPError
+
+from univention.management.console.config import ucr
+from univention.management.console.log import MODULE
+from univention.management.console.modules import Base as UMC_Base
+
+# load UDM modules
+udm_modules.update()
+
+
 class SchoolLDAPConnection(object):
 	idcounter = 1
 	def __init__(self, ldapserver=None, binddn='',  bindpw='', username=None):
@@ -234,4 +251,214 @@ class SchoolLDAPConnection(object):
 		memberlist = sorted( memberlist )
 
 		return memberlist
+
+
+# current user
+_user_dn = None
+_password = None
+
+def set_credentials( dn, passwd ):
+	global _user_dn, _password
+
+	# the DN is None if we have a local user (e.g., root)
+	if not dn:
+		# try to get machine account password
+		try:
+			_password = open('/etc/machine.secret','r').read().strip()
+			_user_dn = ucr.get('ldap/hostdn')
+			MODULE.warn( 'Using machine account for local user: %s' % _user_dn )
+		except IOError, e:
+			_password = None
+			_user_dn = None
+			MODULE.warn( 'Cannot read /etc/machine.secret: %s' % e)
+	else:
+		_user_dn = dn
+		_password = passwd
+		MODULE.info( 'Saved LDAP DN for user %s' % _user_dn )
+
+
+# decorator for LDAP connections
+_ldap_connection = None
+_ldap_position = None
+_licenseCheck = 0
+
+class LDAP_ConnectionError( Exception ):
+	pass
+
+def LDAP_Connection( func ):
+	"""This decorator function provides an open LDAP connection that can
+	be accessed via the variable ldap_connection and a valid position
+	within the LDAP directory in the variable ldap_position. It reuses
+	an already open connection or creates a new one. If the function
+	fails with an LDAP error, the decorators tries to reopen the LDAP
+	connection and invokes the function again. if it still fails an
+	LDAP_ConnectionError is raised.
+
+	The LDAP connection is openede to ldap/server/name with the current 
+	user DN or the host DN in case of a local user. This connection is intended
+	only for read access. In order to write changes to the LDAP master, an
+	additional, temporary connection needs to be opened explicitly.
+
+	When using the decorator the method adds two additional keyword arguments.
+
+	example:
+	  @LDAP_Connection
+	  def do_ldap_stuff(arg1, arg2, ldap_connection = None, ldap_position = None ):
+		  ...
+		  ldap_connection.searchDn( ..., position = ldap_position )
+		  ...
+	"""
+	def wrapper_func( *args, **kwargs ):
+		global _ldap_connection, _ldap_position, _user_dn, _password, _licenseCheck
+
+		if _ldap_connection is not None:
+			# reuse LDAP connection
+			MODULE.info( 'Using open LDAP connection for user %s' % _user_dn )
+			lo = _ldap_connection
+			po = _ldap_position
+		else:
+			# open a new LDAP connection
+			MODULE.info( 'Opening LDAP connection for user %s' % _user_dn )
+			try:
+				lo = udm_uldap.access( host = ucr.get( 'ldap/server/name' ), base = ucr.get( 'ldap/base' ), binddn = _user_dn, bindpw = _password, start_tls = 2 )
+
+				po = udm_uldap.position( lo.base )
+			except udm_errors.noObject, e:
+				raise e
+			except LDAPError, e:
+				raise LDAP_ConnectionError( 'Opening LDAP connection failed: %s' % str( e ) )
+
+		# try to execute the method with the given connection
+		# in case of an error, re-open a new LDAP connection and try again
+		kwargs[ 'ldap_connection' ] = lo
+		kwargs[ 'ldap_position' ] = po
+		try:
+			ret = func( *args, **kwargs )
+			_ldap_connection = lo
+			_ldap_position = po
+			return ret
+		except ( LDAPError, udm_errors.base ), e:
+			MODULE.info( 'LDAP operation for user %s has failed' % _user_dn )
+			try:
+				lo = udm_uldap.access( host = ucr.get( 'ldap/master' ), base = ucr.get( 'ldap/base' ), binddn= _user_dn, bindpw = _password )
+				lo.requireLicense()
+				po = udm_uldap.position( lo.base )
+			except udm_errors.noObject, e:
+				raise e
+			except ( LDAPError, udm_errors.base ), e:
+				raise LDAP_ConnectionError( 'Opening LDAP connection failed: %s' % str( e ) )
+
+			kwargs[ 'ldap_connection' ] = lo
+			kwargs[ 'ldap_position' ] = po
+			try:
+				ret = func( *args, **kwargs )
+				_ldap_connection = lo
+				_ldap_position = po
+				return ret
+			except udm_errors.base, e:
+				raise LDAP_ConnectionError( str( e ) )
+
+		return []
+
+	return wrapper_func
+
+class SchoolSearchBase(object):
+	def __init__( self, ou, dn = None ):
+		self._departmentNumber = ou
+		if dn:
+			self._department = dn
+		else:
+			# FIXME: search for OU to get correct dn
+			self._department = 'ou=%s,%s' % (ou, ucr.get( 'ldap/base' ) )
+
+	@property
+	def departmentNumber(self):
+		return self._departmentNumber
+
+	@property
+	def department(self):
+		return self._department
+
+	@property
+	def users(self):
+		return "cn=users,%s" % self.department
+	
+	@property
+	def extGroups(self):
+		return "cn=schueler,cn=groups,%s" % self.department
+	
+	@property
+	def classes(self):
+		return "cn=klassen,cn=schueler,cn=groups,%s" % self.department
+
+	@property
+	def pupils(self):
+		return "cn=schueler,cn=users,%s" % self.department
+
+	@property
+	def teachers(self):
+		return "cn=lehrer,cn=users,%s" % self.department
+
+	@property
+	def classShares(self):
+		return "cn=klassen,cn=shares,%s" % self.department
+
+	@property
+	def shares(self):
+		return "cn=shares,%s" % self.department
+
+class SchoolBaseModule(UMC_Base):
+	def __init__(self):
+		UMC_Base.__init__(self)
+		self.availableOU = []
+		self.searchBase = None
+		
+	def init(self):
+		'''Initialize the module. Invoked when ACLs, commands and
+		credentials are available'''
+		set_credentials( self._user_dn, self._password )
+		self._init_ous()
+
+	@LDAP_Connection
+	def _init_ous( self, ldap_connection = None, ldap_position = None ):
+		'''Initiates information for available OUs from LDAP.
+		Call this method after set_credentials() has been executed.'''
+
+		if ldap_connection.binddn.find('ou=') > 0:
+			# we got an OU in the user DN -> school teacher or assistent
+			# restrict the visibility to current school
+			# (note that there can be schools with a DN such as ou=25g18,ou=25,dc=...)
+			self.searchBase = SchoolSearchBase(
+					ldap_connection.explodeDn( self.searchBase.department, 1 )[0],
+					ldap_connection.binddn[ldap_connection.binddn.find('ou='):] )
+			MODULE.info('SchoolBaseModule: setting department: %s' % self.searchBase.department)
+
+			# cut list down to default OU
+			self.availableOU = [ self.searchBase.departmentNumber ]
+		else:
+			MODULE.warn( 'SchoolBaseModule: unable to identify ou of this account - showing all OUs!' )
+			#self.ouswitchenabled = True
+
+			oulist = ucr.get('ucsschool/local/oulist')
+			if oulist:
+				# OU list override via UCR variable (it can be necessary to adjust the list of
+				# visible schools on specific systems manually)
+				self.availableOU = [ x.strip() for x in oulist.split(',') ]
+				MODULE.info( 'SchoolBaseModule: availableOU overridden by UCR variable ucsschool/local/oulist')
+			else:
+				# get a list of available OUs via UDM module container/ou
+				ouresult = udm_modules.lookup( 
+						'container/ou', None, ldap_connection,
+						scope = 'one', superordinate = None,
+						base = ucr.get( 'ldap/base' ) )
+				self.availableOU = [ ou['name'] for ou in ouresult ]
+
+			# use the first available OU
+			if not len(self.availableOU):
+				MODULE.warn('SchoolBaseModule: ERROR, COULD NOT FIND ANY OU!!!')
+				self.searchBase = SchoolSearchBase('')
+				raise EnvironmentError('Could not find any valid ou!')
+			else:
+				MODULE.info( 'SchoolBaseModule: availableOU=%s' % self.availableOU )
+				self.searchBase = SchoolSearchBase(self.availableOU[0])
 
