@@ -37,7 +37,7 @@ from univention.management.console.config import ucr
 
 from univention.lib.i18n import Translation
 
-from ucsschool.lib import SchoolLDAPConnection
+from ucsschool.lib import LDAP_Connection, LDAP_ConnectionError, set_credentials, SchoolSearchBase, SchoolBaseModule
 
 import notifier
 import notifier.popen
@@ -47,40 +47,20 @@ import smtplib
 
 _ = Translation( 'ucs-school-umc-helpdesk' ).translate
 
-class Instance( Base ):
-	def init( self ):
-		MODULE.error( 'init module' )
-		## inititate an LDAP connection to the local directory
-		self.ldap_anon = SchoolLDAPConnection( binddn = self._user_dn, bindpw = self._password, username = self._username )
-
-	def configuration( self, request ):
+class Instance( SchoolBaseModule ):
+	@LDAP_Connection
+	def configuration( self, request, ldap_connection = None, ldap_position = None, search_base = None ):
 		MODULE.error( 'return configuration' )
 		username = _( 'unknown' )
 		if self._username:
 			username = self._username
 		department = _( 'unknown' )
 
-		# use first available OU
-		if self.ldap_anon.availableOU:
-			department = self.ldap_anon.availableOU[ 0 ]
-
-		# use username
-		if self._user_dn:
-			regex = re.compile(',ou=([^,]+),')
-			match = regex.match( self._user_dn )
-			if match:
-				department = match.groups()[ 0 ]
-
-		# override department by UCR variable ucsschool/helpdesk/fixedou if variable is set
-		val = ucr.get( 'ucsschool/helpdesk/fixedou' )
-		if val:
-			department = val
-
-		MODULE.info( 'username=%s  department=%s' % ( self._username, department ) )
+		MODULE.info( 'username=%s  department=%s' % ( self._username, search_base.departmentNumber ) )
 
 		self.finished( request.id, {
 			'username' : self._username,
-			'department' : department,
+			'department' : search_base.departmentNumber,
 			'recipient' : ucr.has_key( 'ucsschool/helpdesk/recipient' ) and ucr[ 'ucsschool/helpdesk/recipient' ] } )
 
 
@@ -142,12 +122,12 @@ class Instance( Base ):
 			MODULE.error( 'HELPDESK: cannot send mail - config-registry variable "ucsschool/helpdesk/recipient" is not set' )
 			self.finished( request.id, False, _( 'The email address for the helpdesk team is not configured.' ) )
 
-	def categories( self, request ):
+	@LDAP_Connection
+	def categories( self, request, ldap_connection = None, ldap_position = None, search_base = None ):
 		categories = []
-		lo = self.ldap_anon.getConnection()
-		res = lo.searchDn( filter = 'objectClass=univentionUMCHelpdeskClass' )
+		res = ldap_connection.searchDn( filter = 'objectClass=univentionUMCHelpdeskClass', base = ldap_position.getBase() )
 		# use only first object found
 		if res and res[ 0 ]:
-			categories = lo.getAttr( res[ 0 ], 'univentionUMCHelpdeskCategory' )
+			categories = ldap_connection.getAttr( res[ 0 ], 'univentionUMCHelpdeskCategory' )
 
 		self.finished( request.id, map( lambda x: { 'id' : x, 'label' : x }, categories ) )

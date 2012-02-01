@@ -113,6 +113,7 @@ dojo.declare("umc.modules.helpdesk", [ umc.widgets.Module, umc.i18n.Mixin ], {
 		}, {
 			type: 'TextArea',
 			name: 'message',
+			style: 'height: 200px;',
 			label: this._( 'Message' )
 		} ];
 

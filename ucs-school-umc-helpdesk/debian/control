@@ -2,13 +2,20 @@ Source: ucs-school-umc-helpdesk
 Section: univention
 Priority: optional
 Maintainer: Univention GmbH <packages@univention.de>
-Build-Depends: debhelper (>= 7.0.50~), python2.6, python-all-dev, python-support, univention-config-dev
+Build-Depends: debhelper (>= 7.0.50~),
+ python-support,
+ univention-config-dev,
+ univention-management-console-dev
 Standards-Version: 3.7.2
 XS-Python-Version: 2.6
 
 Package: ucs-school-umc-helpdesk
 Architecture: all
-Depends: univention-management-console, univention-config-registry, univention-directory-manager-tools, ucs-school-umc-helpdesk-schema
+Depends: univention-management-console,
+ univention-config-registry,
+ univention-directory-manager-tools,
+ ucs-school-umc-helpdesk-schema,
+ ucs-school-umc-common
 Description: Univention Directory Manager module to administrate helpdesk categories of UMC
  This package contains an Univention Directory Manager module that provides a
  web frontend or commandline tool to administrate helpdesk categories used
