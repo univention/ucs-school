@@ -940,7 +940,6 @@ def create_object( o, ignore_exists = False ):
 
 	if msg:
 		print msg
-		traceback.print_exc (100, sys.stdout)
 		raise CreateObjectError( exists, dn )
 
 	return ( exists, dn )
@@ -1163,10 +1162,16 @@ def verify_group(position_dn, co, lo, superordinate, base):
 		verified_groups.append(position_dn)
 
 def delete_dn(dn, module, co, lo):
+
+	try:
+		lo.search(base=dn, scope="base")
+	except univention.admin.uexceptions.noObject:
+		return
+
 	position.setDn(dn[string.find(dn,",")+1:])
 	object=univention.admin.objects.get(module, co, lo, position=position, dn=dn)
-	object.open()
 	try:
+		object.open()
 		object.remove()
 		print "deleted:",dn
 		return True
@@ -1181,60 +1186,14 @@ def delete_dn(dn, module, co, lo):
 
 def delete_user(person, module, co, lo):
 
-	# search all objects with univentionAbordnungMaster == dn of the person
-	# we want to delete, make one of them to the new master account
-	# (set primaryMailAddress and remove univentionAbordnungMaster attribute
-	# and univentionAbordnung objectclass) and change dn in univentionAbordnungMaster
-	# in the rest
-	dn = person.getDN()
-	mail = person.mail
-	base = person.getPosition_dn()
-	uid = person.login
-	newdn = ""
 	success = True
-
-	# get primaryMail from account
-	master = lo.search(base=base, filter="(uid=%s)" % uid, attr=['mailPrimaryAddress'])
-	if master:
-		tmpdn, attr = master[0]
-		if attr.has_key("mailPrimaryAddress") and attr['mailPrimaryAddress']:
-			mail = attr['mailPrimaryAddress']
 
 	# delete account
 	try:
-		delete_dn(person.getDN(),module,co,lo)
+		delete_dn(person.getDN(), module, co, lo)
 	except DeleteObjectError, e:
-		person.problem_hints += str( e ) + '\n'
+		person.problem_hints += str(e) + '\n'
 		success = False
-
-	# search sub accounts
-	result = lo.search(filter='(univentionAbordnungMasterDn=%s)' % dn, attr=['objectClass'])
-
-	# first sub account becomes new master account
-	if result:
-		newdn, attr = result[0]
-		ocs = []
-		for i in attr['objectClass']:
-			if not i == "univentionAbordnung": ocs.append(i)
-		ml = []
-		ml.append(('objectClass', attr['objectClass'], ocs))
-		ml.append(("mailPrimaryAddress", None, mail))
-		ml.append(("univentionAbordnungMasterDn", dn, ""))
-		try:
-			lo.modify(newdn, ml)
-		except:
-			person.problem_hints += "problems while making " + newdn + " a master account\n"
-		del result[0]
-
-	# modify sub accounts
-	for i in result:
-		subdn, attr = i
-		ml = []
-		ml.append(("univentionAbordnungMasterDn", dn, newdn))
-		try:
-			lo.modify(subdn, ml)
-		except:
-			person.problem_hints += "problems while setting new master dn to sub account " + subdn + "\n"
 
 	return success
 
@@ -1444,23 +1403,20 @@ def create_user(person, baseDN, module, password, OUTFILE, line):
 	try:
 		try:
 			exists, dn = create_object(object)
-		except CreateObjectError, e:
-			exists, dn = e.args
-			success = False
-		if not exists:
 			lo.modify(person.getDN(),[("departmentNumber",[],person.allsNrs)])
 			print "created:",person.getDN()
-			if OUTFILE:
-				OUTFILE.write("%s\t%s\t%s" % (person.login, password, line))
-		else:
+			if OUTFILE: OUTFILE.write("%s\t%s\t%s" % (person.login, password, line))
+		except CreateObjectError, e:
+			success = False
 			print "ERROR: there were problems creating this user:",person.getDN()
-			person.problem_hints = person.problem_hints + "ERROR: there were problems creating this user: "+person.getDN()+"\n"
+			person.problem_hints += "ERROR: there were problems creating this user: "+person.getDN()+"\n"
 
 	except:
+		success = False
 		print "ERROR:", sys.exc_info()[0], sys.exc_info()[1]
 		print "ERROR: create this user manually:",person.getDN()
 		traceback.print_exc (100, sys.stdout)
-		person.problem_hints = person.problem_hints + "ERROR: create this user manually: " + person.getDN()+"\n"
+		person.problem_hints += "ERROR: create this user manually: " + person.getDN()+"\n"
 
 	return success
 
@@ -1594,13 +1550,7 @@ def import_user():
 
 				else: # main_person.modtype == "D":
 					# NOTE: there is no need for this try-catch-block because delete_dn handles exceptions by itself
-					#try:
 					success = delete_user(person, user_module, co, lo)
-					#except:
-						#msg = "There were problems deleting this user:" , person.getDN()
-						#print msg
-						#traceback.print_exc (100, sys.stdout)
-						#person.problem_hints += msg + "\n"
 
 				if not dn:
 					dn = person.getDN()
@@ -2385,8 +2335,10 @@ def import_printer():
 
 		objects=''
 		try:
-			objects = univention.admin.modules.lookup(printer_module, co, lo, scope='sub', superordinate=superordinate, base=container,
-													  filter=univention.admin.filter.expression(type,name))
+			objects = univention.admin.modules.lookup(
+				printer_module, co, lo, scope='sub',
+				superordinate=superordinate, base=container,
+				filter=univention.admin.filter.expression(type,name))
 		except:
 			pass
 		if objects:

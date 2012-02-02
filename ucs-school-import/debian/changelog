@@ -1,3 +1,11 @@
+ucs-school-import (8.0.32-1) unstable; urgency=low
+
+  * delete object only if it exists in delete_dn()
+  * do not print traceback of known exceptions in create_object()
+    (Bug #22486)
+
+ -- Felix Botner <botner@univention.de>  Thu, 02 Feb 2012 17:18:20 +0100
+
 ucs-school-import (8.0.31-1) unstable; urgency=low
 
   * catch more AddressValueError in import_computer() (Bug #19017)
