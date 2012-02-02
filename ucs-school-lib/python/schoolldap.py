@@ -45,6 +45,8 @@ import univention.admin.uexceptions as udm_errors
 
 from ldap import LDAPError
 
+import re
+
 from univention.management.console.config import ucr
 from univention.management.console.log import MODULE
 from univention.management.console.modules import Base
@@ -514,6 +516,45 @@ class SchoolBaseModule( Base ):
 		grouplist = map( lambda grp: { 'id' : grp[ 'name' ], 'label' : grp[ 'name' ].replace( '%s-' % search_base.school, '' ) }, groupresult )
 		self.finished( request.id, grouplist )
 
+	@LDAP_Connection
+	def users( self, request, ldap_connection = None, ldap_position = None, search_base = None):
+		"""Returns a list of all users given 'pattern', 'school' and 'group'"""
+		#self.required_options( request, 'school' )
+		#self.required_options( request, 'group' )
+
+		# get the correct base
+		base = search_base.users
+		group = request.options.get('group')
+		if group == '$teachers$':
+			base = search_base.teachers
+		elif group == '$pupils$':
+			base = search_base.pupils
+
+		# get the LDAP filter
+		ldapFilter = LDAP_Filter.forUsers(request.options.get('pattern'))
+
+		# search for all users, teachers, or pupils
+		userresult = udm_modules.lookup( 'users/user', None, ldap_connection, 
+				scope = 'sub', base = base, filter = ldapFilter)
+		if group not in (None, 'None', '$teachers$', '$pupils$'):
+			# search for users of a particular group with the given filter
+			groupModule = udm_modules.get('groups/group')
+			groupObj = groupModule.object(None, ldap_connection, None, group)
+			groupObj.open()
+			if groupObj:
+				groupUserDNs = set(groupObj['users'])
+				userresult = [ i for i in userresult if i.dn in groupUserDNs ]
+
+		result = []
+		userlist = [ { 
+			'label': i['displayName'],
+			'username': i['username'],
+			'$dn$': i.dn
+		} for i in userresult ]
+		result = sorted( userlist, cmp = lambda x, y: cmp( x.lower(), y.lower() ), key = lambda x: x[ 'label' ] )
+		self.finished( request.id, result )
+
+
 class LDAP_Filter:
 
 	@staticmethod
@@ -524,15 +565,15 @@ class LDAP_Filter:
 	def forGroups( pattern ):
 		return LDAP_Filter.forAll( pattern, 'name', 'description' )
 
+	regWhiteSpaces = re.compile(r'\s+')
 	@staticmethod
 	def forAll( pattern, *args ):
-		if pattern and pattern[ 0 ] == '*':
-			pattern = pattern[ 1 : ]
-		if pattern and pattern[ -1 ] == '*':
-			pattern = pattern[ : -1 ]
-
 		expressions = []
-		for word in pattern.split( ' ' ):
-			expressions.extend( map( lambda attr: '(%s=*%s*)' % ( attr, word ), args ) )
+		for word in LDAP_Filter.regWhiteSpaces.split( pattern or '' ):
+			if not word:
+				word = '*'
+			elif word.find('*') < 0:
+				word = '*%s*' % word
+			expressions.extend( map( lambda attr: '(%s=%s)' % ( attr, word ), args ) )
 
 		return '(|%s)' % ''.join( expressions )

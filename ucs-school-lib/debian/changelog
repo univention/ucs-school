@@ -1,3 +1,11 @@
+ucs-school-lib (1.0.12-1) unstable; urgency=low
+
+  * added method SchoolBaseModule.users()
+  * fixed errors for empty strings in LDAP_Filter.forAll()
+  Bug #25701
+
+ -- Alexander Kläser <klaeser@univention.de>  Thu, 02 Feb 2012 18:01:18 +0100
+
 ucs-school-lib (1.0.11-1) unstable; urgency=low
 
   * add class LDAP_Filter: creates LDAP filter based on simple search
