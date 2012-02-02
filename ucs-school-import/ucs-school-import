@@ -1852,31 +1852,46 @@ def import_networks(router_only=False):
 			try:
 				network = ipaddr.IPv4Network(network)
 			except ipaddr.AddressValueError, e:
-				print line
-				print "%s is not a valid ip address" % e
-				sys.exit(0)
+				print line.strip()
+				print "ERROR: %s is not a valid ip address" % e
+				continue
 			print 'WARNING: no netmask specified for network %s using %s' % (network.network, network.netmask)
 		else:
 			try:
 				network = ipaddr.IPv4Network(network)
 			except ipaddr.AddressValueError, e:
-				print line
-				print "%s is not a valid ip address" % e
-				sys.exit(0)
+				print line.strip()
+				print "ERROR: %s is not a valid ip address" % e
+				continue
 			except ipaddr.NetmaskValueError, e:
-				print line
-				print "%s is not a valid netmask" % e
-				sys.exit(0)
+				print line.strip()
+				print "ERROR: %s is not a valid netmask" % e
+				continue
 
 		if iprange:
 			tmp = iprange.split ('-')
 			if len (tmp) != 2:
 				print 'ERROR: IP host range not valid: %s' % iprange
 				continue
-			iprange = (ipaddr.IPv4Address(tmp[0]), ipaddr.IPv4Address(tmp[1]))
+			iprangeStart = ""
+			iprangeEnd = ""
+			try:
+				iprangeStart = ipaddr.IPv4Address(tmp[0])
+			except ipaddr.AddressValueError, e:
+				print line.strip()
+				print "ERROR: %s is not a valid ip address" % e
+				continue
+			try:
+				iprangeEnd = ipaddr.IPv4Address(tmp[1])
+			except ipaddr.AddressValueError, e:
+				print line.strip()
+				print "ERROR: %s is not a valid ip address" % e
+				continue
+			iprange = (iprangeStart, iprangeEnd)
 			if iprange[0] < network.network + 1 \
 					or iprange[0] > iprange[1] \
 					or iprange[1] >= network.broadcast:
+				print line.strip()
 				print 'ERROR: IP host range not valid: %s-%s' % (iprange[0], iprange[1])
 				continue
 		elif network.prefixlen == 24:
@@ -1884,11 +1899,26 @@ def import_networks(router_only=False):
 			           network.network + 250)
 
 		if defaultrouter:
-			defaultrouter = ipaddr.IPv4Address(defaultrouter)
+			try:
+				defaultrouter = ipaddr.IPv4Address(defaultrouter)
+			except ipaddr.AddressValueError, e:
+				print line.strip()
+				print "ERROR: %s is not a valid ip address" % e
+				continue
 		if nameserver:
-			nameserver = ipaddr.IPv4Address(nameserver)
+			try:
+				nameserver = ipaddr.IPv4Address(nameserver)
+			except ipaddr.AddressValueError, e:
+				print line.strip()
+				print "ERROR: %s is not a valid ip address" % e
+				continue
 		if netbiosserver:
-			netbiosserver = ipaddr.IPv4Address(netbiosserver)
+			try:
+				netbiosserver = ipaddr.IPv4Address(netbiosserver)
+			except ipaddr.AddressValueError, e:
+				print line.strip()
+				print "ERROR: %s is not a valid ip address" % e
+				continue
 
 		if router_only:
 			if defaultrouter:
