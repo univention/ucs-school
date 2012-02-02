@@ -1,3 +1,12 @@
+ucs-school-old-sharedirs (7.0.2-1) unstable; urgency=low
+
+  * timestamp name
+  * check fs on source and destination
+  * shutil.move()
+  * check fs with whitelist (Bug #25694)
+
+ -- Felix Botner <botner@univention.de>  Thu, 02 Feb 2012 14:56:33 +0100
+
 ucs-school-old-sharedirs (7.0.1-1) unstable; urgency=low
 
   * added modrdn in listener (Bug #25694) 
