@@ -1,3 +1,10 @@
+ucs-school-lib (1.0.11-1) unstable; urgency=low
+
+  * add class LDAP_Filter: creates LDAP filter based on simple search
+    patterns; Bug #25701
+
+ -- Andreas Büsching <buesching@univention.de>  Thu, 02 Feb 2012 12:33:01 +0100
+
 ucs-school-lib (1.0.10-1) unstable; urgency=low
 
   * renamed extGroups -> workgroups; Bug #25701

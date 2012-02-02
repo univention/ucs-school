@@ -500,3 +500,39 @@ class SchoolBaseModule( Base ):
 		credentials are available'''
 		set_credentials( self._user_dn, self._password )
 
+	@LDAP_Connection
+	def schools( self, request, ldap_connection = None, ldap_position = None, search_base = None ):
+		"""Returns a list of all available school"""
+		self.finished( request.id, search_base.availableSchools )
+
+	@LDAP_Connection
+	def classes( self, request, ldap_connection = None, ldap_position = None, search_base = None ):
+		"""Returns a list of all classes of the given school"""
+		self.required_options( request, 'school' )
+
+		groupresult = udm_modules.lookup( 'groups/group', None, ldap_connection, scope = 'sub', base = search_base.classes )
+		grouplist = map( lambda grp: { 'id' : grp[ 'name' ], 'label' : grp[ 'name' ].replace( '%s-' % search_base.school, '' ) }, groupresult )
+		self.finished( request.id, grouplist )
+
+class LDAP_Filter:
+
+	@staticmethod
+	def forUsers( pattern ):
+		return LDAP_Filter.forAll( pattern, 'lastname', 'username', 'firstname' )
+
+	@staticmethod
+	def forGroups( pattern ):
+		return LDAP_Filter.forAll( pattern, 'name', 'description' )
+
+	@staticmethod
+	def forAll( pattern, *args ):
+		if pattern and pattern[ 0 ] == '*':
+			pattern = pattern[ 1 : ]
+		if pattern and pattern[ -1 ] == '*':
+			pattern = pattern[ : -1 ]
+
+		expressions = []
+		for word in pattern.split( ' ' ):
+			expressions.extend( map( lambda attr: '(%s=*%s*)' % ( attr, word ), args ) )
+
+		return '(|%s)' % ''.join( expressions )
