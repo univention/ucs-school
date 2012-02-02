@@ -47,9 +47,6 @@ sepchar='\t'
 # wipe the following trailing and leading characters from group names
 wipe_char_group='-'
 
-# count access to ldap to reconnect after 1000 changes
-locounts=0
-
 import codecs
 import copy
 import ipaddr
@@ -2637,7 +2634,6 @@ secretFile=open('/etc/ldap.secret','r')
 pwdLine=secretFile.readline()
 pwd=re.sub('\n','',pwdLine)
 
-locounts=0
 lo = None
 try:
 	lo=univention.admin.uldap.access(host=configRegistry['ldap/master'], base=baseDN, binddn='cn=admin,'+baseDN, bindpw=pwd, start_tls=tls)
