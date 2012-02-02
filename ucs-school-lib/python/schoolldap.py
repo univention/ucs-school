@@ -455,7 +455,7 @@ class SchoolSearchBase(object):
 		return "cn=users,%s" % self.schoolDN
 	
 	@property
-	def workingGroups(self):
+	def workgroups(self):
 		return "cn=schueler,cn=groups,%s" % self.schoolDN
 	
 	@property

@@ -1,3 +1,9 @@
+ucs-school-lib (1.0.10-1) unstable; urgency=low
+
+  * renamed extGroups -> workgroups; Bug #25701
+
+ -- Alexander Kläser <klaeser@univention.de>  Thu, 02 Feb 2012 10:54:04 +0100
+
 ucs-school-lib (1.0.9-1) unstable; urgency=low
 
   * renamed the following properties
