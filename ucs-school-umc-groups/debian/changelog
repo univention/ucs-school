@@ -1,5 +1,11 @@
+ucs-school-umc-groups (0.0.1-1) unstable; urgency=low
+
+  * adjusted JS and python code; Bug #25701
+
+ -- Alexander Kläser <klaeser@univention.de>  Thu, 02 Feb 2012 18:02:21 +0100
+
 ucs-school-umc-groups (0.0.0-1) unstable; urgency=low
 
-  * Initial release. (Closes: #XXXXXX)
+  * Initial release; Bug #25701
 
  -- Alexander Kläser <klaeser@univention.de>  Mon, 30 Jan 2012 12:11:07 +0100

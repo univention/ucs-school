@@ -31,82 +31,77 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-import uuid
+from univention.management.console.config import ucr
 
 from univention.lib.i18n import Translation
 from univention.management.console.modules import UMC_OptionTypeError, Base
 from univention.management.console.log import MODULE
 from univention.management.console.protocol.definitions import *
 
+import univention.admin.modules as udm_modules
+
+from ucsschool.lib.schoolldap import LDAP_Connection, LDAP_ConnectionError, set_credentials, SchoolSearchBase, SchoolBaseModule, LDAP_Filter
+
 _ = Translation( 'ucs-school-umc-groups' ).translate
 
-class Instance( Base ):
-	# list of dummy entries
-	entries = map(lambda x: { 'id': str(uuid.uuid4()), 'name': x[0], 'color': x[1] }, [
-		['Zackary Cavaco', 'Blue'],
-		['Shon Hodermarsky', 'Green'],
-		['Jude Nachtrieb', 'Green'],
-		['Najarian', 'Blue'],
-		['Oswaldo Lefeld', 'Blue'],
-		['Vannessa Kopatz', 'Orange'],
-		['Marcellus Hoga', 'Orange'],
-		['Violette Connerty', 'Orange'],
-		['Lucina Jeanquart', 'Blue'],
-		['Mose Maslonka', 'Green'],
-		['Emmie Dezayas', 'Green'],
-		['Douglass Glaubke', 'Green'],
-		['Deeann Delilli', 'Blue'],
-		['Janett Cooch', 'Orange'],
-		['Ike Collozo', 'Orange'],
-		['Tamala Pecatoste', 'Orange'],
-		['Shakira Cottillion', 'Blue'],
-		['Colopy', 'Blue'],
-		['Vivan Noggles', 'Green'],
-		['Shawnda Hamalak', 'Blue'],
-	])
+
+class Instance( SchoolBaseModule ):
+	def __init__( self ):
+		# initiate list of internal variables
+		SchoolBaseModule.__init__(self)
 
 	def init(self):
-		# this initialization method is called when the module process is created
-		pass
+		SchoolBaseModule.init(self)
 
-	def colors( self, request ):
-		"""Returns a list of all existing colors."""
-		MODULE.info( 'schoolgroups.colors: options: %s' % str( request.options ) )
-		allColors = set(map(lambda x: x['color'], Instance.entries))
-		allColors = map(lambda x: { 'id': x, 'label': x }, allColors)
-		allColors.append({ 'id': 'None', 'label': _('All colors') })
-		MODULE.info( 'schoolgroups.colors: result: %s' % str( allColors ) )
-		self.finished(request.id, allColors)
+	def _get_module(objType, dn):
+		module = mo
 
-	def query( self, request ):
-		"""Searches for entries in a dummy list
+	@LDAP_Connection
+	def query( self, request, search_base = None, ldap_connection = None, ldap_position = None ):
+		"""Searches for entries:
 
 		requests.options = {}
-		  'name' -- search pattern for name (default: '')
-		  'color' -- color to match, 'None' for all colors (default: 'None')
+		  'pattern' -- search pattern (default: '')
+		  'school' -- particular school name as internal base for the search parameters
+		  		  (default: automatically chosen search base in LDAP_Connection)
 
-		return: [ { 'id' : <unique identifier>, 'name' : <display name>, 'color' : <name of favorite color> }, ... ]
+		return: [ { '$dn$' : <LDAP DN>, 'name': '...', 'description': '...' }, ... ]
 		"""
 		MODULE.info( 'schoolgroups.query: options: %s' % str( request.options ) )
-		color = request.options.get('color', 'None')
-		pattern = request.options.get('name', '')
-		result = filter(lambda x: (color == 'None' or color == x['color']) and x['name'].find(pattern) >= 0, Instance.entries)
-		MODULE.info( 'schoolgroups.query: results: %s' % str( result ) )
+		
+		# get the correct base for the search
+		base = search_base.classes
+		if request.flavor == 'workgroup':
+			# only show workgroups
+			base = search_base.workgroups
+
+		# LDAP search for groups
+		ldapFilter = LDAP_Filter.forGroups(request.options.get('pattern', ''))
+		MODULE.info('### filter:%s' % ldapFilter)
+		groupresult = udm_modules.lookup( 'groups/group', None, ldap_connection, scope = 'one', base = base, filter = ldapFilter)
+		grouplist = [ { 
+			'name': i['name'],
+			'description': i.oldinfo.get('description',''),
+			'$dn$': i.dn
+		} for i in groupresult ]
+		result = sorted( grouplist, cmp = lambda x, y: cmp( x.lower(), y.lower() ), key = lambda x: x[ 'name' ] )
+
+		MODULE.info( 'schoolgroups.query: result: %s' % str( result ) )
 		self.finished( request.id, result )
 
 	def get( self, request ):
 		"""Returns the objects for the given IDs
 
-		requests.options = [ <ID>, ... ]
+		requests.options = [ <DN>, ... ]
 
-		return: [ { 'id' : <unique identifier>, 'name' : <display name>, 'color' : <name of favorite color> }, ... ]
+		return: [ { '$dn$' : <unique identifier>, 'name' : <display name>, 'color' : <name of favorite color> }, ... ]
 		"""
 		MODULE.info( 'schoolgroups.get: options: %s' % str( request.options ) )
 		ids = request.options
 		result = []
 		if isinstance( ids, ( list, tuple ) ):
 			ids = set(ids)
-			result = filter(lambda x: x['id'] in ids, Instance.entries)
+			result = [ ]
 		else:
 			MODULE.warn( 'schoolgroups.get: wrong parameter, expected list of strings, but got: %s' % str( ids ) )
 			raise UMC_OptionTypeError( 'Expected list of strings, but got: %s' % str(ids) )

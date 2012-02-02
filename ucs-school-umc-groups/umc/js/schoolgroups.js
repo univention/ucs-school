@@ -49,7 +49,7 @@ dojo.declare("umc.modules.schoolgroups", [ umc.widgets.Module, umc.i18n.Mixin ],
 	//		new modules for Univention Management Console.
 
 	// the property field that acts as unique identifier for the object
-	idProperty: 'id',
+	idProperty: '$dn$',
 
 	// internal reference to the grid
 	_grid: null,
@@ -79,10 +79,6 @@ dojo.declare("umc.modules.schoolgroups", [ umc.widgets.Module, umc.i18n.Mixin ],
 
 		// it is important to call the parent's postMixInProperties() method
 		this.inherited(arguments);
-
-		// start the standby animation in order prevent any interaction before the
-		// form values are loaded
-		this.standby(true);
 
 		// render the page containing search form and grid
 		this.renderSearchPage();
@@ -144,11 +140,11 @@ dojo.declare("umc.modules.schoolgroups", [ umc.widgets.Module, umc.i18n.Mixin ],
 		var columns = [{
 			name: 'name',
 			label: this._('Name'),
-			width: '60%'
+			width: '200px'
 		}, {
-			name: 'color',
-			label: this._('Favorite color'),
-			width: '40%'
+			name: 'description',
+			label: this._('Description'),
+			width: 'auto'
 		}];
 
 		// generate the data grid
@@ -163,7 +159,7 @@ dojo.declare("umc.modules.schoolgroups", [ umc.widgets.Module, umc.i18n.Mixin ],
 			// as this.moduleStore (see also umc.store.getModuleStore())
 			moduleStore: this.moduleStore,
 			// initial query
-			query: { colors: 'None', name: '' }
+			query: { name: '' }
 		});
 
 		// add the grid to the title pane
@@ -177,16 +173,12 @@ dojo.declare("umc.modules.schoolgroups", [ umc.widgets.Module, umc.i18n.Mixin ],
 		// add remaining elements of the search form
 		var widgets = [{
 			type: 'ComboBox',
-			name: 'color',
-			description: this._('Defines the .'),
-			label: this._('Category'),
-			// Values are dynamically loaded from the server via a UMCP request.
-			// Use the property dynamicOptions to pass additional values to the server.
-			// Use staticValues to pass an array directly (see umc.widgets._SelectMixin).
-			dynamicValues: 'schoolgroups/colors'
+			name: 'school',
+			dynamicValues: 'schoolgroups/schools',
+			label: this._('School')
 		}, {
 			type: 'TextBox',
-			name: 'name',
+			name: 'pattern',
 			description: this._('Specifies the substring pattern which is searched for in the displayed name'),
 			label: this._('Search pattern')
 		}];
@@ -194,7 +186,7 @@ dojo.declare("umc.modules.schoolgroups", [ umc.widgets.Module, umc.i18n.Mixin ],
 		// the layout is an 2D array that defines the organization of the form elements...
 		// here we arrange the form elements in one row and add the 'submit' button
 		var layout = [
-			[ 'color', 'name', 'submit' ]
+			[ 'school', 'pattern', 'submit' ]
 		];
 
 		// generate the search form
@@ -210,11 +202,6 @@ dojo.declare("umc.modules.schoolgroups", [ umc.widgets.Module, umc.i18n.Mixin ],
 			})
 		});
 
-		// turn off the standby animation as soon as all form values have been loaded
-		this.connect(this._searchForm, 'onValuesInitialized', function() {
-			this.standby(false);
-		});
-
 		// add search form to the title pane
 		titlePane.addChild(this._searchForm);
 
@@ -228,7 +215,8 @@ dojo.declare("umc.modules.schoolgroups", [ umc.widgets.Module, umc.i18n.Mixin ],
 
 		// create a DetailPage instance
 		this._detailPage = new umc.modules._schoolgroups.DetailPage({
-			moduleStore: this.moduleStore
+			moduleStore: this.moduleStore,
+			moduleFlavor: this.moduleFlavor
 		});
 		this.addChild(this._detailPage);
 

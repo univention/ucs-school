@@ -44,6 +44,9 @@ dojo.declare("umc.modules._schoolgroups.DetailPage", [ umc.widgets.Page, umc.wid
 	// reference to the module's store object
 	moduleStore: null,
 
+	// specifies the module flavor
+	moduleFlavor: null,
+
 	// use i18n information from umc.modules.schoolgroups
 	i18nClass: 'umc.modules.schoolgroups',
 
@@ -63,19 +66,21 @@ dojo.declare("umc.modules._schoolgroups.DetailPage", [ umc.widgets.Page, umc.wid
 		this.standbyOpacity = 1;
 
 		// set the page header
-		this.headerText = this._('Object properties');
-		this.helpText = this._('This page demonstrates how object properties can be viewed for editing.');
+		this.headerText = this.moduleFlavor == 'workgroup' ? this._('Edit workgroup') : this._('Edit class');
+		this.helpText = this.moduleFlavor == 'workgroup' ? 
+				this._('This page allows to edit workgroup settings and to administrate which teachers/pupils belong to the group.') :
+				this._('This page allows to specify teachers who are associated with the class');
 
 		// configure buttons for the footer of the detail page
 		this.footerButtons = [{
 			name: 'submit',
-			label: this._('Save'),
+			label: this._('Save changes'),
 			callback: dojo.hitch(this, function() {
 				this._save(this._form.gatherFormValues());
 			})
 		}, {
-			name: 'cancel',
-			label: this._('Cancel'),
+			name: 'back',
+			label: this._('Back to overview'),
 			callback: dojo.hitch(this, 'onClose')
 		}];
 	},
@@ -96,30 +101,59 @@ dojo.declare("umc.modules._schoolgroups.DetailPage", [ umc.widgets.Page, umc.wid
 		// specify all widgets
 		var widgets = [{
 			type: 'TextBox',
-			name: 'id',
-			label: this._('Identifier'),
+			name: 'name',
+			label: this.moduleFlavor == 'workgroup' ? this._('Workgroup name') : this._('Class name'),
 			disabled: true
 		}, {
 			type: 'TextBox',
-			name: 'name',
-			label: this._('Displayed name'),
-			description: this._('Name that is displayed')
+			name: 'description',
+			label: this._('Description'),
+			description: this._('Verbose description of the current group')
 		}, {
-			type: 'ComboBox',
-			name: 'color',
-			label: this._('Favorite color'),
-			description: this._('Favorite color associated with the current entry'),
-			dynamicValues: 'schoolgroups/colors'
+			type: 'MultiObjectSelect',
+			name: 'members',
+			label: this.moduleFlavor == 'workgroup' ? this._('Workgroup members') : this._('Class teachers'),
+			description: this.moduleFlavor == 'workgroup' ? this._('Teachers and pupils that belong to the current workgroup') : this._('Teachers of the specified class'),
+			queryWidgets: [{
+				type: 'ComboBox',
+				name: 'school',
+				dynamicValues: 'schoolgroups/schools',
+				label: this._('School')
+			}, {
+				type: 'ComboBox',
+				name: 'group',
+				depends: 'school',
+				staticValues: [ 
+					{ id: '$teachers$', label: this._('All teachers') },
+					{ id: '$pupils$', label: this._('All pupils') }
+				],
+				dynamicValues: 'schoolgroups/classes'
+			}, {
+				type: 'TextBox',
+				name: 'pattern',
+				label: this._('Search pattern')
+			}],
+			queryCommand: 'schoolgroups/users',
+			formatter: function(dnList) {
+				var tmp = dojo.map(dnList, function(idn) {
+					return {
+						id: idn,
+						label: umc.tools.explodeDn(idn, true).shift() || ''
+					};
+				});
+				return tmp;
+			},
+			autoSearch: false
 		}];
 
 		// specify the layout... additional dicts are used to group form elements
 		// together into title panes
 		var layout = [{
-			label: this._('Read-only properties'),
-			layout: [ 'id' ]
+			label: this._('Properties'),
+			layout: [ 'name', 'description' ]
 		}, {
-			label: this._('Editable properties'),
-			layout: [ 'name', 'color' ]
+			label: this._('Members'),
+			layout: [ 'members' ]
 		}];
 
 		// create the form

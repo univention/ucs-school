@@ -15,7 +15,9 @@
 	  <description>Administration of workgroups</description>
 	</flavor>
 	<command name="schoolgroups/query" function="query"></command>
-	<command name="schoolgroups/colors" function="colors"></command>
 	<command name="schoolgroups/get" function="get"></command>
+	<command name="schoolgroups/schools" function="schools"></command>
+	<command name="schoolgroups/classes" function="classes"></command>
+	<command name="schoolgroups/users" function="users"></command>
 	</module>
 </umc>
