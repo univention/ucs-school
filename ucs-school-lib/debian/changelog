@@ -1,3 +1,13 @@
+ucs-school-lib (1.0.9-1) unstable; urgency=low
+
+  * renamed the following properties
+    - availableOU -> availableSchools
+    - department -> schoolDN
+    - departmentNumber -> school
+    Bug #25701
+
+ -- Alexander Kläser <klaeser@univention.de>  Thu, 02 Feb 2012 10:10:37 +0100
+
 ucs-school-lib (1.0.8-1) unstable; urgency=low
 
   * integrated evaluation of 'ou' request option for search_base; Bug #25701

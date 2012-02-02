@@ -72,7 +72,7 @@ udm_modules.update()
 # 		self.configRegistry = univention.config_registry.ConfigRegistry()
 # 		self.configRegistry.load()
 
-# 		self.availableOU = []
+# 		self.availableSchools = []
 # 		self.ouswitchenabled = False
 
 # 		self.lo = self.getConnection()
@@ -124,7 +124,7 @@ udm_modules.update()
 # 	def switch_ou( self, ou ):
 # 		# FIXME search for OU to get correct dn
 # 		self.searchbaseDepartment = 'ou=%s,%s' % (ou, self.configRegistry[ 'ldap/base' ] )
-# 		self.departmentNumber = ou
+# 		self.school = ou
 
 # 		self.searchbaseComputers = 'cn=computers,%s' % self.searchbaseDepartment
 # 		self.searchbaseUsers = "cn=users,%s" % self.searchbaseDepartment
@@ -164,7 +164,7 @@ udm_modules.update()
 
 
 # 	def _init_ou(self):
-# 		self.departmentNumber = None
+# 		self.school = None
 
 # 		self.computermodule = univention.admin.modules.get('computers/computer')
 # 		self.usermodule = univention.admin.modules.get('users/user')
@@ -179,34 +179,34 @@ udm_modules.update()
 
 # 		self.searchScopeExtGroups = 'one'
 
-# 		if len(self.availableOU) == 0:
+# 		if len(self.availableSchools) == 0:
 # 			# OU list override
 # 			oulist = self.configRegistry.get('ucsschool/local/oulist')
 # 			if oulist:
-# 				self.availableOU = [ x.strip() for x in oulist.split(',') ]
-# 				ud.debug( ud.ADMIN, ud.INFO, 'SchoolLDAPConnection[%d]: availableOU overridden by UCR' % self.id)
+# 				self.availableSchools = [ x.strip() for x in oulist.split(',') ]
+# 				ud.debug( ud.ADMIN, ud.INFO, 'SchoolLDAPConnection[%d]: availableSchools overridden by UCR' % self.id)
 # 			else:
-# 				self.availableOU = []
+# 				self.availableSchools = []
 # 				# get available OUs
 # 				ouresult = univention.admin.modules.lookup(
 # 					self.oumodule, self.co, self.lo,
 # 					scope = 'one', superordinate = None,
 # 					base = self.configRegistry[ 'ldap/base' ])
 # 				for ou in ouresult:
-# 					self.availableOU.append(ou['name'])
+# 					self.availableSchools.append(ou['name'])
 
-# 			ud.debug( ud.ADMIN, ud.INFO, 'SchoolLDAPConnection[%d]: availableOU=%s' % (self.id, self.availableOU ) )
+# 			ud.debug( ud.ADMIN, ud.INFO, 'SchoolLDAPConnection[%d]: availableSchools=%s' % (self.id, self.availableSchools ) )
 
-# 			self.switch_ou(self.availableOU[0])
+# 			self.switch_ou(self.availableSchools[0])
 
 # 		if self.binddn.find('ou=') > 0:
 # 			self.searchbaseDepartment = self.binddn[self.binddn.find('ou='):]
-# 			self.departmentNumber = self.lo.explodeDn( self.searchbaseDepartment, 1 )[0]
+# 			self.school = self.lo.explodeDn( self.searchbaseDepartment, 1 )[0]
 
 # 			# cut list down to default OU
-# 			self.availableOU = [ self.departmentNumber ]
+# 			self.availableSchools = [ self.school ]
 
-# 			self.switch_ou(self.departmentNumber)
+# 			self.switch_ou(self.school)
 
 # 		else:
 # 			if self.binddn:
@@ -343,10 +343,10 @@ def LDAP_Connection( func ):
 		if kwargs.get('search_base', None):
 			# search_base is already specified, do not override it
 			pass
-		elif 'request' in kwargs and kwargs['request'].options.get('ou', None):
-			# 'ou' has been specified as request parameter, set the search 
+		elif 'request' in kwargs and kwargs['request'].options.get('school', None):
+			# 'school' has been specified as request parameter, set the search 
 			# base accordingly
-			kwargs[ 'search_base' ] = SchoolSearchBase( _search_base.availableOU, kwargs['request'].options.get('ou') )
+			kwargs[ 'search_base' ] = SchoolSearchBase( _search_base.availableSchools, kwargs['request'].options.get('school') )
 		else:
 			# default search base
 			kwargs[ 'search_base' ] = _search_base
@@ -390,41 +390,41 @@ def _init_search_base(ldap_connection):
 		# search base has already been initiated... we are done
 		return
 
-	# initiate the list of available OUs and set the default search base
+	# initiate the list of available schools and set the default search base
 	if ldap_connection.binddn.find('ou=') > 0:
 		# we got an OU in the user DN -> school teacher or assistent
 		# restrict the visibility to current school
 		# (note that there can be schools with a DN such as ou=25g18,ou=25,dc=...)
-		department = ldap_connection.binddn[ldap_connection.binddn.find('ou='):] 
-		departmentNumber = ldap_connection.explodeDn( department, 1 )[0],
-		_search_base = SchoolSearchBase([ departmentNumber ], departmentNumber, department)
-		MODULE.info('LDAP_Connection: setting department: %s' % _search_base.department)
+		schoolDN = ldap_connection.binddn[ldap_connection.binddn.find('ou='):] 
+		school = ldap_connection.explodeDn( schoolDN, 1 )[0],
+		_search_base = SchoolSearchBase([ school ], school, schoolDN)
+		MODULE.info('LDAP_Connection: setting schoolDN: %s' % _search_base.schoolDN)
 	else:
 		MODULE.warn( 'LDAP_Connection: unable to identify ou of this account - showing all OUs!' )
 		#_ouswitchenabled = True
 		oulist = ucr.get('ucsschool/local/oulist')
-		availableOU = []
+		availableSchools = []
 		if oulist:
 			# OU list override via UCR variable (it can be necessary to adjust the list of
 			# visible schools on specific systems manually)
-			availableOU = [ x.strip() for x in oulist.split(',') ]
-			MODULE.info( 'LDAP_Connection: availableOU overridden by UCR variable ucsschool/local/oulist')
+			availableSchools = [ x.strip() for x in oulist.split(',') ]
+			MODULE.info( 'LDAP_Connection: availableSchools overridden by UCR variable ucsschool/local/oulist')
 		else:
 			# get a list of available OUs via UDM module container/ou
 			ouresult = udm_modules.lookup( 
 					'container/ou', None, ldap_connection,
 					scope = 'one', superordinate = None,
 					base = ucr.get( 'ldap/base' ) )
-			availableOU = [ ou['name'] for ou in ouresult ]
+			availableSchools = [ ou['name'] for ou in ouresult ]
 
 		# use the first available OU as default search base
-		if not len(availableOU):
+		if not len(availableSchools):
 			MODULE.warn('LDAP_Connection: ERROR, COULD NOT FIND ANY OU!!!')
 			_search_base = SchoolSearchBase([''])
 			raise EnvironmentError('Could not find any valid ou!')
 		else:
-			MODULE.info( 'LDAP_Connection: availableOU=%s' % availableOU )
-			_search_base = SchoolSearchBase(availableOU)
+			MODULE.info( 'LDAP_Connection: availableSchools=%s' % availableSchools )
+			_search_base = SchoolSearchBase(availableSchools)
 
 class SchoolSearchBase(object):
 	"""This class serves as wrapper for all the different search bases (users,
@@ -432,55 +432,55 @@ class SchoolSearchBase(object):
 	The class is inteded for read access only, instead of switching the a
 	search base, a new instance can simply be created.
 	"""
-	def __init__( self, availableOU, ou = None, dn = None ):
-		self._availableOU = availableOU
-		self._departmentNumber = ou or availableOU[0]
+	def __init__( self, availableSchools, school = None, dn = None ):
+		self._availableSchools = availableSchools
+		self._school = school or availableSchools[0]
 		# FIXME: search for OU to get correct dn
-		self._department = dn or 'ou=%s,%s' % (self.departmentNumber, ucr.get( 'ldap/base' ) )
+		self._schoolDN = dn or 'ou=%s,%s' % (self.school, ucr.get( 'ldap/base' ) )
 
 	@property
-	def availableOU(self):
-		return self._availableOU
+	def availableSchools(self):
+		return self._availableSchools
 
 	@property
-	def departmentNumber(self):
-		return self._departmentNumber
+	def school(self):
+		return self._school
 
 	@property
-	def department(self):
-		return self._department
+	def schoolDN(self):
+		return self._schoolDN
 
 	@property
 	def users(self):
-		return "cn=users,%s" % self.department
+		return "cn=users,%s" % self.schoolDN
 	
 	@property
-	def extGroups(self):
-		return "cn=schueler,cn=groups,%s" % self.department
+	def workingGroups(self):
+		return "cn=schueler,cn=groups,%s" % self.schoolDN
 	
 	@property
 	def classes(self):
-		return "cn=klassen,cn=schueler,cn=groups,%s" % self.department
+		return "cn=klassen,cn=schueler,cn=groups,%s" % self.schoolDN
 
 	@property
 	def pupils(self):
-		return "cn=schueler,cn=users,%s" % self.department
+		return "cn=schueler,cn=users,%s" % self.schoolDN
 
 	@property
 	def teachers(self):
-		return "cn=lehrer,cn=users,%s" % self.department
+		return "cn=lehrer,cn=users,%s" % self.schoolDN
 
 	@property
 	def classShares(self):
-		return "cn=klassen,cn=shares,%s" % self.department
+		return "cn=klassen,cn=shares,%s" % self.schoolDN
 
 	@property
 	def shares(self):
-		return "cn=shares,%s" % self.department
+		return "cn=shares,%s" % self.schoolDN
 
 class SchoolBaseModule( Base ):
 	"""This classe serves as base class for UCS@school UMC modules that need
-	LDAP access. It initiates the list of availabe OUs (self.availableOU) and
+	LDAP access. It initiates the list of availabe OUs (self.availableSchools) and
 	initiates the search bases (self.searchBase). set_credentials() is called
 	automatically to allow LDAP connections. In order to integrate this class
 	into a module, use the following paradigm:
