@@ -507,31 +507,34 @@ class SchoolBaseModule( Base ):
 		"""Returns a list of all available school"""
 		self.finished( request.id, search_base.availableSchools )
 
+	def _groups( self, ldap_connection, school, ldap_base ):
+		"""Returns a list of all groups of the given school"""
+		groupresult = udm_modules.lookup( 'groups/group', None, ldap_connection, scope = 'sub', base = ldap_base )
+		return map( lambda grp: { 'id' : grp.dn, 'label' : grp[ 'name' ].replace( '%s-' % school, '' ) }, groupresult )
+
 	@LDAP_Connection
 	def classes( self, request, ldap_connection = None, ldap_position = None, search_base = None ):
 		"""Returns a list of all classes of the given school"""
 		self.required_options( request, 'school' )
-
-		groupresult = udm_modules.lookup( 'groups/group', None, ldap_connection, scope = 'sub', base = search_base.classes )
-		grouplist = map( lambda grp: { 'id' : grp[ 'name' ], 'label' : grp[ 'name' ].replace( '%s-' % search_base.school, '' ) }, groupresult )
-		self.finished( request.id, grouplist )
+		self.finished( request.id, self._groups( ldap_connection, search_base.school, search_base.classes ) )
 
 	@LDAP_Connection
-	def users( self, request, ldap_connection = None, ldap_position = None, search_base = None):
-		"""Returns a list of all users given 'pattern', 'school' and 'group'"""
-		#self.required_options( request, 'school' )
-		#self.required_options( request, 'group' )
+	def workgroups( self, request, ldap_connection = None, ldap_position = None, search_base = None ):
+		"""Returns a list of all working groups of the given school"""
+		self.required_options( request, 'school' )
+		self.finished( request.id, self._groups( ldap_connection, search_base.school, search_base.workgroups ) )
 
+	def _users( self, ldap_connection, search_base, group = None, pattern = '' ):
+		"""Returns a list of all users given 'pattern', 'school' (search base) and 'group'"""
 		# get the correct base
 		base = search_base.users
-		group = request.options.get('group')
 		if group == '$teachers$':
 			base = search_base.teachers
 		elif group == '$pupils$':
 			base = search_base.pupils
 
 		# get the LDAP filter
-		ldapFilter = LDAP_Filter.forUsers(request.options.get('pattern'))
+		ldapFilter = LDAP_Filter.forUsers( pattern )
 
 		# search for all users, teachers, or pupils
 		userresult = udm_modules.lookup( 'users/user', None, ldap_connection, 
@@ -545,15 +548,7 @@ class SchoolBaseModule( Base ):
 				groupUserDNs = set(groupObj['users'])
 				userresult = [ i for i in userresult if i.dn in groupUserDNs ]
 
-		result = []
-		userlist = [ { 
-			'label': i['displayName'],
-			'username': i['username'],
-			'$dn$': i.dn
-		} for i in userresult ]
-		result = sorted( userlist, cmp = lambda x, y: cmp( x.lower(), y.lower() ), key = lambda x: x[ 'label' ] )
-		self.finished( request.id, result )
-
+		return userresult
 
 class LDAP_Filter:
 
@@ -577,3 +572,12 @@ class LDAP_Filter:
 			expressions.extend( map( lambda attr: '(%s=%s)' % ( attr, word ), args ) )
 
 		return '(|%s)' % ''.join( expressions )
+
+class Display:
+	@staticmethod
+	def user( udm_object ):
+		fullname = udm_object[ 'lastname' ]
+		if 'firstname' in udm_object:
+			fullname += ', %(firstname)s' % udm_object
+
+		return fullname + ' (%(username)s)' % udm_object
