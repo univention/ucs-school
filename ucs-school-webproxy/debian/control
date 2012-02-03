@@ -7,7 +7,7 @@ Standards-Version: 3.8.2
 
 Package: ucs-school-webproxy
 Architecture: all
-Depends: univention-squid, squidguard, univention-config-registry, ucs-school-umc-proxysettings
+Depends: univention-squid (>= 5.0.5), squidguard, univention-config-registry, ucs-school-umc-proxysettings
 Description: meta package for UCS@School webproxy
  This meta package installs and configures squid and squidguard
  as HTTP proxy with transparent NTLM authentication.

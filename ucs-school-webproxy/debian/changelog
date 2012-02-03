@@ -1,3 +1,9 @@
+ucs-school-webproxy (8.0.1-1) unstable; urgency=low
+
+  * added dependency to univention-squid in 3.0-1 (Bug #25700) 
+
+ -- Felix Botner <botner@univention.de>  Fri, 03 Feb 2012 09:31:55 +0100
+
 ucs-school-webproxy (8.0.0-1) unstable; urgency=low
 
   * ucs 3.0 update (Bug #25700)
