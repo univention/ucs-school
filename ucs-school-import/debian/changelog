@@ -1,3 +1,9 @@
+ucs-school-import (8.0.34-1) unstable; urgency=low
+
+  * dependency to univention-policy >= 5.0.8-1 (Bug #25909)
+
+ -- Felix Botner <botner@univention.de>  Fri, 03 Feb 2012 08:43:01 +0100
+
 ucs-school-import (8.0.33-1) unstable; urgency=low
 
   * fixed argument handling in activate_groupmembers() (Bug #24544) 
