@@ -1,3 +1,9 @@
+ucs-school-import (8.0.33-1) unstable; urgency=low
+
+  * fixed argument handling in activate_groupmembers() (Bug #24544) 
+
+ -- Felix Botner <botner@univention.de>  Fri, 03 Feb 2012 08:30:35 +0100
+
 ucs-school-import (8.0.32-1) unstable; urgency=low
 
   * delete object only if it exists in delete_dn()
