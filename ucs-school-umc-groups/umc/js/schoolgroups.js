@@ -175,7 +175,9 @@ dojo.declare("umc.modules.schoolgroups", [ umc.widgets.Module, umc.i18n.Mixin ],
 			type: 'ComboBox',
 			name: 'school',
 			dynamicValues: 'schoolgroups/schools',
-			label: this._('School')
+			label: this._('School'),
+			umcpCommand: this.umcpCommand,
+			autoHide: true
 		}, {
 			type: 'TextBox',
 			name: 'pattern',

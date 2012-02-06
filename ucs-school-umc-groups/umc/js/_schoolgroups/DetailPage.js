@@ -124,7 +124,9 @@ dojo.declare("umc.modules._schoolgroups.DetailPage", [ umc.widgets.Page, umc.wid
 				type: 'ComboBox',
 				name: 'school',
 				label: this._('School'),
-				dynamicValues: 'schoolgroups/schools'
+				dynamicValues: 'schoolgroups/schools',
+				umcpCommand: this.umcpCommand,
+				autoHide: true
 			}, {
 				type: 'ComboBox',
 				name: 'group',
@@ -135,7 +137,8 @@ dojo.declare("umc.modules._schoolgroups.DetailPage", [ umc.widgets.Page, umc.wid
 					{ id: '$teachers$', label: this._('All teachers') },
 					{ id: '$pupils$', label: this._('All pupils') }
 				],
-				dynamicValues: 'schoolgroups/classes'
+				dynamicValues: 'schoolgroups/classes',
+				umcpCommand: this.umcpCommand
 			}, {
 				type: 'TextBox',
 				name: 'pattern',

@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-groups\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2012-02-02 13:30+0100\n"
+"POT-Creation-Date: 2012-02-06 11:47+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,23 +16,27 @@ msgstr ""
 msgid "Add object"
 msgstr ""
 
-#: umc/js/_schoolgroups/DetailPage.js:128
+#: umc/js/_schoolgroups/DetailPage.js:137
 msgid "All pupils"
 msgstr ""
 
-#: umc/js/_schoolgroups/DetailPage.js:127
+#: umc/js/_schoolgroups/DetailPage.js:136
 msgid "All teachers"
 msgstr ""
 
-#: umc/js/_schoolgroups/DetailPage.js:83
+#: umc/js/_schoolgroups/DetailPage.js:135
+msgid "All users"
+msgstr ""
+
+#: umc/js/_schoolgroups/DetailPage.js:89
 msgid "Back to overview"
 msgstr ""
 
-#: umc/js/_schoolgroups/DetailPage.js:105
+#: umc/js/_schoolgroups/DetailPage.js:111
 msgid "Class name"
 msgstr ""
 
-#: umc/js/_schoolgroups/DetailPage.js:115
+#: umc/js/_schoolgroups/DetailPage.js:121
 msgid "Class teachers"
 msgstr ""
 
@@ -48,7 +52,7 @@ msgstr ""
 msgid "Deleting the selected objects."
 msgstr ""
 
-#: umc/js/schoolgroups.js:146 umc/js/_schoolgroups/DetailPage.js:110
+#: umc/js/schoolgroups.js:146 umc/js/_schoolgroups/DetailPage.js:116
 msgid "Description"
 msgstr ""
 
@@ -56,7 +60,7 @@ msgstr ""
 msgid "Edit"
 msgstr ""
 
-#: umc/js/_schoolgroups/DetailPage.js:69
+#: umc/js/_schoolgroups/DetailPage.js:75
 msgid "Edit class"
 msgstr ""
 
@@ -64,19 +68,19 @@ msgstr ""
 msgid "Edit the selected object"
 msgstr ""
 
-#: umc/js/_schoolgroups/DetailPage.js:69
+#: umc/js/_schoolgroups/DetailPage.js:75
 msgid "Edit workgroup"
 msgstr ""
 
-#: umc/js/_schoolgroups/DetailPage.js:175
+#: umc/js/_schoolgroups/DetailPage.js:189
 msgid "Feature not implemented yet!"
 msgstr ""
 
-#: umc/js/schoolgroups.js:233 umc/js/schoolgroups.js:247
+#: umc/js/schoolgroups.js:234 umc/js/schoolgroups.js:248
 msgid "Feature not yet implemented"
 msgstr ""
 
-#: umc/js/_schoolgroups/DetailPage.js:155
+#: umc/js/_schoolgroups/DetailPage.js:169
 msgid "Members"
 msgstr ""
 
@@ -84,19 +88,23 @@ msgstr ""
 msgid "Name"
 msgstr ""
 
-#: umc/js/_schoolgroups/DetailPage.js:152
+#: umc/js/_schoolgroups/DetailPage.js:166
 msgid "Properties"
 msgstr ""
 
-#: umc/js/_schoolgroups/DetailPage.js:77
+#: umc/js/_schoolgroups/DetailPage.js:83
 msgid "Save changes"
 msgstr ""
 
-#: umc/js/schoolgroups.js:178 umc/js/_schoolgroups/DetailPage.js:121
+#: umc/js/schoolgroups.js:178 umc/js/_schoolgroups/DetailPage.js:126
 msgid "School"
 msgstr ""
 
-#: umc/js/schoolgroups.js:183 umc/js/_schoolgroups/DetailPage.js:134
+#: umc/js/_schoolgroups/DetailPage.js:144
+msgid "Search name"
+msgstr ""
+
+#: umc/js/schoolgroups.js:184
 msgid "Search pattern"
 msgstr ""
 
@@ -104,37 +112,41 @@ msgstr ""
 msgid "Search results"
 msgstr ""
 
-#: umc/js/schoolgroups.js:182
+#: umc/js/schoolgroups.js:183
 msgid ""
 "Specifies the substring pattern which is searched for in the displayed name"
 msgstr ""
 
-#: umc/js/_schoolgroups/DetailPage.js:116
+#: umc/js/_schoolgroups/DetailPage.js:122
 msgid "Teachers and pupils that belong to the current workgroup"
 msgstr ""
 
-#: umc/js/_schoolgroups/DetailPage.js:116
+#: umc/js/_schoolgroups/DetailPage.js:122
 msgid "Teachers of the specified class"
 msgstr ""
 
-#: umc/js/_schoolgroups/DetailPage.js:71
+#: umc/js/_schoolgroups/DetailPage.js:77
 msgid ""
 "This page allows to edit workgroup settings and to administrate which "
 "teachers/pupils belong to the group."
 msgstr ""
 
-#: umc/js/_schoolgroups/DetailPage.js:72
+#: umc/js/_schoolgroups/DetailPage.js:78
 msgid "This page allows to specify teachers who are associated with the class"
 msgstr ""
 
-#: umc/js/_schoolgroups/DetailPage.js:111
+#: umc/js/_schoolgroups/DetailPage.js:132
+msgid "User group / class"
+msgstr ""
+
+#: umc/js/_schoolgroups/DetailPage.js:117
 msgid "Verbose description of the current group"
 msgstr ""
 
-#: umc/js/_schoolgroups/DetailPage.js:115
+#: umc/js/_schoolgroups/DetailPage.js:121
 msgid "Workgroup members"
 msgstr ""
 
-#: umc/js/_schoolgroups/DetailPage.js:105
+#: umc/js/_schoolgroups/DetailPage.js:111
 msgid "Workgroup name"
 msgstr ""
