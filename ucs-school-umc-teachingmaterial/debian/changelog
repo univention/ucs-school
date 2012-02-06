@@ -1,0 +1,5 @@
+ucs-school-umc-teachingmaterial (0.0.0-1) unstable; urgency=low
+
+  * Initial release; Bug #25707
+
+ -- Alexander Kläser <klaeser@univention.de>  Mon, 06 Feb 2012 13:29:49 +0100

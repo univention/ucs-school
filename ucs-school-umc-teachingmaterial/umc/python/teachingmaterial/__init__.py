@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # Univention Management Console module:
-#   Administration of groups
+#   
 #
 # Copyright 2012 Univention GmbH
 #
@@ -42,12 +42,29 @@ import univention.admin.modules as udm_modules
 
 from ucsschool.lib.schoolldap import LDAP_Connection, LDAP_ConnectionError, set_credentials, SchoolSearchBase, SchoolBaseModule, LDAP_Filter, Display
 
-_ = Translation( 'ucs-school-umc-groups' ).translate
+import uuid
 
+_ = Translation( 'ucs-school-umc-teachingmaterial' ).translate
 
 class Instance( SchoolBaseModule ):
+	# list of dummy entries
+	entries = map(lambda x: { 
+		'id': str(uuid.uuid4()), 
+		'name': x[0], 
+		'description': x[1],
+		'owner': x[2],
+		'nusers': x[3],
+		'files': x[4],
+		'nfiles': len(x[4]),
+		'distributed': x[5]
+	}, [
+		['Informatik-AG', 'Testprojekt der Informatik AG bei', 'Hans Schneemann', 23, ['test.png'], True],
+		['Klassenarbeit 11d', 'Klassenarbeit für die Klasse 11d', 'Daniel Krause', 12, ['formular.doc', 'anschreiben.doc'], False],
+		['Vokabeltest', 'Französisch Vokabeltest (Fr. Schneemann)', 'Silvia Schneemann', 18, ['vokabeln.xls'], False],
+		['Projektarbeit', 'Projektarbeit Leistungskurs Schwimmen', 'Franz Lehmann', 4, ['film.avi', 'aufsatz_vorlage.doc'], True]
+	])
+
 	def __init__( self ):
-		# initiate list of internal variables
 		SchoolBaseModule.__init__(self)
 
 	def init(self):
@@ -57,71 +74,46 @@ class Instance( SchoolBaseModule ):
 	def users( self, request, search_base = None, ldap_connection = None, ldap_position = None ):
 		# parse group parameter
 		group = request.options.get('group')
-		user_type = None
 		if not group or group == 'None':
 			group = None
-		elif group.lower() == '$teachers$':
-			group = None
-			user_type = 'teacher'
-		elif group.lower() == '$pupils$':
-			group = None
-			user_type = 'pupil'
 
+		# get list of all users matching the given pattern
 		result = [ {
 			'id': i.dn,
 			'label': Display.user(i)
-		} for i in self._users( ldap_connection, search_base, group = group, user_type = user_type, pattern = request.options.get('pattern') ) ]
+		} for i in self._users( ldap_connection, search_base, group = group, user_type = 'pupil', pattern = request.options.get('pattern') ) ]
 		self.finished( request.id, result )
 
-	@LDAP_Connection
-	def query( self, request, search_base = None, ldap_connection = None, ldap_position = None ):
-		"""Searches for entries:
+	def query( self, request ):
+		"""Searches for entries in a dummy list
 
 		requests.options = {}
-		  'pattern' -- search pattern (default: '')
-		  'school' -- particular school name as internal base for the search parameters
-		  		  (default: automatically chosen search base in LDAP_Connection)
+		  'pattern' -- search pattern for name (default: '')
 
-		return: [ { '$dn$' : <LDAP DN>, 'name': '...', 'description': '...' }, ... ]
+		###return: [ { 'id' : <unique identifier>, 'name' : <display name>, 'color' : <name of favorite color> }, ... ]
 		"""
-		MODULE.info( 'schoolgroups.query: options: %s' % str( request.options ) )
-		
-		# get the correct base for the search
-		base = search_base.classes
-		if request.flavor == 'workgroup':
-			# only show workgroups
-			base = search_base.workgroups
-
-		# LDAP search for groups
-		ldapFilter = LDAP_Filter.forGroups(request.options.get('pattern', ''))
-		MODULE.info('### filter:%s' % ldapFilter)
-		groupresult = udm_modules.lookup( 'groups/group', None, ldap_connection, scope = 'one', base = base, filter = ldapFilter)
-		grouplist = [ { 
-			'name': i['name'],
-			'description': i.oldinfo.get('description',''),
-			'$dn$': i.dn
-		} for i in groupresult ]
-		result = sorted( grouplist, cmp = lambda x, y: cmp( x.lower(), y.lower() ), key = lambda x: x[ 'name' ] )
-
-		MODULE.info( 'schoolgroups.query: result: %s' % str( result ) )
+		MODULE.info( 'teachingmaterial.query: options: %s' % str( request.options ) )
+		pattern = request.options.get('pattern', '').lower()
+		result = [ i for i in Instance.entries if i['name'].lower().find(pattern) >= 0 or i['description'].lower().find(pattern) >= 0 ]
+		MODULE.info( 'teachingmaterial.query: results: %s' % str( result ) )
 		self.finished( request.id, result )
 
 	def get( self, request ):
 		"""Returns the objects for the given IDs
 
-		requests.options = [ <DN>, ... ]
+		requests.options = [ <ID>, ... ]
 
-		return: [ { '$dn$' : <unique identifier>, 'name' : <display name>, 'color' : <name of favorite color> }, ... ]
+		return: [ { 'id' : <unique identifier>, 'name' : <display name>, 'color' : <name of favorite color> }, ... ]
 		"""
-		MODULE.info( 'schoolgroups.get: options: %s' % str( request.options ) )
+		MODULE.info( 'teachingmaterial.get: options: %s' % str( request.options ) )
 		ids = request.options
 		result = []
 		if isinstance( ids, ( list, tuple ) ):
 			ids = set(ids)
-			result = [ ]
+			result = filter(lambda x: x['id'] in ids, Instance.entries)
 		else:
-			MODULE.warn( 'schoolgroups.get: wrong parameter, expected list of strings, but got: %s' % str( ids ) )
+			MODULE.warn( 'teachingmaterial.get: wrong parameter, expected list of strings, but got: %s' % str( ids ) )
 			raise UMC_OptionTypeError( 'Expected list of strings, but got: %s' % str(ids) )
-		MODULE.info( 'schoolgroups.get: results: %s' % str( result ) )
+		MODULE.info( 'teachingmaterial.get: results: %s' % str( result ) )
 		self.finished( request.id, result )
 
