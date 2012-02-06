@@ -150,17 +150,13 @@ dojo.declare("umc.modules.teachingmaterial", [ umc.widgets.Module, umc.i18n.Mixi
 
 		// define the grid columns
 		var columns = [{
-			name: 'name',
-			label: this._('Project Name'),
-			width: '40%'
-		}, {
 			name: 'description',
 			label: this._('Description'),
-			width: '60%'
+			width: 'auto'
 		}, {
 			name: 'owner',
 			label: this._('Owner'),
-			width: '100px'
+			width: '175px'
 		}, {
 			name: 'nusers',
 			label: this._('#Users'),
@@ -196,6 +192,14 @@ dojo.declare("umc.modules.teachingmaterial", [ umc.widgets.Module, umc.i18n.Mixi
 
 		// add remaining elements of the search form
 		var widgets = [{
+			type: 'ComboBox',
+			name: 'filter',
+			label: 'Filter',
+			staticValues: [
+				{ id: 'private', label: this._('Only own projects') },
+				{ id: 'all', label: this._('All projects') }
+			]
+		}, {
 			type: 'TextBox',
 			name: 'pattern',
 			description: this._('Specifies the substring pattern which is searched for in the projects'),
@@ -205,7 +209,7 @@ dojo.declare("umc.modules.teachingmaterial", [ umc.widgets.Module, umc.i18n.Mixi
 		// the layout is an 2D array that defines the organization of the form elements...
 		// here we arrange the form elements in one row and add the 'submit' button
 		var layout = [
-			[ 'pattern', 'submit' ]
+			[ 'filter', 'pattern', 'submit' ]
 		];
 
 		// generate the search form

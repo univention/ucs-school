@@ -96,12 +96,6 @@ dojo.declare("umc.modules._teachingmaterial.DetailPage", [ umc.widgets.Page, umc
 		// specify all widgets
 		var widgets = [{
 			type: 'TextBox',
-			name: 'name',
-			label: this._('Name'),
-			description: this._('The name of the teaching material project'),
-			disabled: true
-		}, {
-			type: 'TextBox',
 			name: 'description',
 			label: this._('Description'),
 			description: this._('The description of the teaching material project')
