@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<umc version="2.0">
+	<module id="schoolusers" icon="schoolusers" version="1.0">
+	<name>Passwords</name>
+	<description>Resetting account passwords</description>
+	<flavor icon="schoolusers-student" id="pupil">
+	  <name>Students (passwords)</name>
+	  <description>Resetting passwords of student accounts</description>
+	</flavor>
+	<flavor icon="schoolusers-teacher" id="teacher">
+	  <name>Teacher (passwords)</name>
+	  <description>Resetting passwords of teacher accounts</description>
+	</flavor>
+	<categories>
+		<category name="ucs-school-admin"/>
+	</categories>
+	<command name="schoolusers/query" function="query"></command>
+	<command name="schoolusers/schools" function="schools"></command>
+	<command name="schoolusers/classes" function="classes"></command>
+	<command name="schoolusers/password/reset" function="password_reset"></command>
+	</module>
+</umc>

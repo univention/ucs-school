@@ -1,0 +1,5 @@
+ucs-school-umc-users (0.1.0-1) unstable; urgency=low
+
+  * Initial release. (Closes: Bug #25954)
+
+ -- Andreas Büsching <buesching@univention.de>  Sat, 28 Jan 2012 15:18:11 +0100
