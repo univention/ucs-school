@@ -524,27 +524,44 @@ class SchoolBaseModule( Base ):
 		self.required_options( request, 'school' )
 		self.finished( request.id, self._groups( ldap_connection, search_base.school, search_base.workgroups ) )
 
-	def _users( self, ldap_connection, search_base, group = None, pattern = '' ):
+	def _users( self, ldap_connection, search_base, group = None, user_type = None, pattern = '' ):
 		"""Returns a list of all users given 'pattern', 'school' (search base) and 'group'"""
 		# get the correct base
 		base = search_base.users
-		if group == '$teachers$':
+		if user_type and user_type.lower() in ('teacher', 'teachers'):
 			base = search_base.teachers
-		elif group == '$pupils$':
+		elif user_type and user_type.lower() in ('pupil', 'pupils'):
 			base = search_base.pupils
 
-		# get the LDAP filter
-		ldapFilter = LDAP_Filter.forUsers( pattern )
-
-		# search for all users, teachers, or pupils
-		userresult = udm_modules.lookup( 'users/user', None, ldap_connection, 
-				scope = 'sub', base = base, filter = ldapFilter)
-		if group not in (None, 'None', '$teachers$', '$pupils$'):
-			# search for users of a particular group with the given filter
+		# open the group
+		groupObj = None
+		if group not in (None, 'None'):
 			groupModule = udm_modules.get('groups/group')
 			groupObj = groupModule.object(None, ldap_connection, None, group)
 			groupObj.open()
+
+		# query the users
+		userresult = []
+		if not pattern and groupObj:
+			# special case: no filter is given and a group is selected
+			# in this case, it is more efficient to get all users from the group directly
+			userModule = udm_modules.get('users/user')
+			userresult = []
+			for idn in groupObj['users']:
+				userObj = userModule.object(None, ldap_connection, None, idn)
+				userObj.open()
+				if userObj:
+					userresult.append(userObj)
+		else:
+			# get the LDAP filter
+			ldapFilter = LDAP_Filter.forUsers( pattern )
+
+			# search for all users
+			userresult = udm_modules.lookup( 'users/user', None, ldap_connection, 
+					scope = 'sub', base = base, filter = ldapFilter)
+
 			if groupObj:
+				# filter users to be members of the specified group
 				groupUserDNs = set(groupObj['users'])
 				userresult = [ i for i in userresult if i.dn in groupUserDNs ]
 
@@ -564,14 +581,18 @@ class LDAP_Filter:
 	@staticmethod
 	def forAll( pattern, *args ):
 		expressions = []
-		for word in LDAP_Filter.regWhiteSpaces.split( pattern or '' ):
-			if not word:
-				word = '*'
-			elif word.find('*') < 0:
-				word = '*%s*' % word
-			expressions.extend( map( lambda attr: '(%s=%s)' % ( attr, word ), args ) )
+		for iword in LDAP_Filter.regWhiteSpaces.split( pattern or '' ):
+			# evaluate the subexpression (search word over different attributes)
+			if not iword:
+				iword = '*'
+			elif iword.find('*') < 0:
+				iword = '*%s*' % iword
+			subexpr = ''.join([ '(%s=%s)' % ( jattr, iword ) for jattr in args ])
 
-		return '(|%s)' % ''.join( expressions )
+			# append to list of all search expressions
+			expressions.append('(|%s)' % subexpr)
+
+		return '(&%s)' % ''.join( expressions )
 
 class Display:
 	@staticmethod
