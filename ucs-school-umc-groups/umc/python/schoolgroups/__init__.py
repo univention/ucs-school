@@ -40,7 +40,7 @@ from univention.management.console.protocol.definitions import *
 
 import univention.admin.modules as udm_modules
 
-from ucsschool.lib.schoolldap import LDAP_Connection, LDAP_ConnectionError, set_credentials, SchoolSearchBase, SchoolBaseModule, LDAP_Filter
+from ucsschool.lib.schoolldap import LDAP_Connection, LDAP_ConnectionError, set_credentials, SchoolSearchBase, SchoolBaseModule, LDAP_Filter, Display
 
 _ = Translation( 'ucs-school-umc-groups' ).translate
 
@@ -55,6 +55,26 @@ class Instance( SchoolBaseModule ):
 
 	def _get_module(objType, dn):
 		module = mo
+
+	@LDAP_Connection
+	def users( self, request, search_base = None, ldap_connection = None, ldap_position = None ):
+		# parse group parameter
+		group = request.options.get('group')
+		user_type = None
+		if not group or group == 'None':
+			group = None
+		elif group.lower() == '$teachers$':
+			group = None
+			user_type = 'teacher'
+		elif group.lower() == '$pupils$':
+			group = None
+			user_type = 'pupil'
+
+		result = [ {
+			'id': i.dn,
+			'label': Display.user(i)
+		} for i in self._users( ldap_connection, search_base, group = group, user_type = user_type, pattern = request.options.get('pattern') ) ]
+		self.finished( request.id, result )
 
 	@LDAP_Connection
 	def query( self, request, search_base = None, ldap_connection = None, ldap_position = None ):

@@ -47,6 +47,9 @@ dojo.declare("umc.modules._schoolgroups.DetailPage", [ umc.widgets.Page, umc.wid
 	// specifies the module flavor
 	moduleFlavor: null,
 
+	// internal reference to the flavored umcpCommand function
+	umcpCommand: null,
+
 	// use i18n information from umc.modules.schoolgroups
 	i18nClass: 'umc.modules.schoolgroups',
 
@@ -59,6 +62,9 @@ dojo.declare("umc.modules._schoolgroups.DetailPage", [ umc.widgets.Page, umc.wid
 
 		// it is important to call the parent's postMixInProperties() method
 		this.inherited(arguments);
+
+		// set the umcpCommand reference
+		this.umcpCommand = this.moduleStore.umcpCommand;
 
 		// Set the opacity for the standby animation to 100% in order to mask
 		// GUI changes when the module is opened. Call this.standby(true|false)
@@ -117,13 +123,15 @@ dojo.declare("umc.modules._schoolgroups.DetailPage", [ umc.widgets.Page, umc.wid
 			queryWidgets: [{
 				type: 'ComboBox',
 				name: 'school',
-				dynamicValues: 'schoolgroups/schools',
-				label: this._('School')
+				label: this._('School'),
+				dynamicValues: 'schoolgroups/schools'
 			}, {
 				type: 'ComboBox',
 				name: 'group',
+				label: this._('User group / class'),
 				depends: 'school',
 				staticValues: [ 
+					{ id: 'None', label: this._('All users') },
 					{ id: '$teachers$', label: this._('All teachers') },
 					{ id: '$pupils$', label: this._('All pupils') }
 				],
@@ -131,9 +139,13 @@ dojo.declare("umc.modules._schoolgroups.DetailPage", [ umc.widgets.Page, umc.wid
 			}, {
 				type: 'TextBox',
 				name: 'pattern',
-				label: this._('Search pattern')
+				label: this._('Search name')
 			}],
-			queryCommand: 'schoolgroups/users',
+			queryCommand: dojo.hitch(this, function(options) {
+				return this.umcpCommand('schoolgroups/users', options).then(function(data) {
+					return data.result;
+				});
+			}),
 			formatter: function(dnList) {
 				var tmp = dojo.map(dnList, function(idn) {
 					return {
