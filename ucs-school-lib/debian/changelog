@@ -1,3 +1,11 @@
+ucs-school-lib (1.0.15-1) unstable; urgency=low
+
+  * the decorator LDAP_Connection supports creating several connections at
+    once using the user or the machine account to the local LDAP server or
+    the DC master; Bug #25701
+
+ -- Andreas Büsching <buesching@univention.de>  Mon, 06 Feb 2012 15:59:07 +0100
+
 ucs-school-lib (1.0.14-1) unstable; urgency=low
 
   * optimize SchoolBaseModule._users() for search with no pattern in a 

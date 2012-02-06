@@ -45,6 +45,7 @@ import univention.admin.uexceptions as udm_errors
 
 from ldap import LDAPError
 
+from functools import wraps
 import re
 
 from univention.management.console.config import ucr
@@ -280,15 +281,59 @@ def set_credentials( dn, passwd ):
 
 
 # decorator for LDAP connections
-_ldap_connection = None
-_ldap_position = None
+_ldap_connections = {}
 _search_base = None
 _licenseCheck = 0
+
+USER_READ = 'ldap_user_read'
+USER_WRITE = 'ldap_user_write'
+MACHINE_READ = 'ldap_machine_read'
+MACHINE_WRITE = 'ldap_machine_write'
 
 class LDAP_ConnectionError( Exception ):
 	pass
 
-def LDAP_Connection( func ):
+def open_ldap_connection( binddn, bindpw, ldap_server ):
+	'''Opens a new LDAP connection using the given user LDAP DN and
+	password. The connection is open to the given server or if None the
+	server defined by the UCR variable ldap/server/name is used.'''
+
+	try:
+		lo = udm_uldap.access( host = ldap_server, base = ucr.get( 'ldap/base' ), binddn = binddn, bindpw = bindpw, start_tls = 2 )
+	except udm_errors.noObject, e:
+		raise e
+	except LDAPError, e:
+		raise LDAP_ConnectionError( 'Opening LDAP connection failed: %s' % str( e ) )
+
+	return lo
+
+def get_ldap_connections( connection_types, force = False ):
+	global _ldap_connections, _user_dn, _password
+
+	connections = {}
+	read_server = ucr.get( 'ldap/server/name' )
+	write_server = ucr.get( 'ldap/master' )
+
+	for conn in connection_types:
+		MODULE.info( 'connection type: %s' % conn )
+		if _ldap_connections.get( conn ) and not force:
+			connections[ conn ] = _ldap_connections[ conn ]
+			continue
+		if conn == USER_READ:
+			lo = open_ldap_connection( _user_dn, _password, read_server )
+		elif conn == USER_WRITE:
+			lo = open_ldap_connection( _user_dn, _password, write_server )
+		elif conn == MACHINE_READ:
+			lo = univention.uldap.getMachineConnections( ldap_master = False )
+		elif conn == MACHINE_WRITE:
+			lo = univention.uldap.getMachineConnections( ldap_master = True )
+
+		connections[ conn ] = lo
+		_ldap_connections[ conn ] = lo
+
+	return connections
+
+def LDAP_Connection( *connection_types ):
 	"""This decorator function provides an open LDAP connection that can
 	be accessed via the variable ldap_connection and a valid position
 	within the LDAP directory in the variable ldap_position. It reuses
@@ -309,81 +354,62 @@ def LDAP_Connection( func ):
 	When using the decorator the method adds three additional keyword arguments.
 
 	example:
-	  @LDAP_Connection
-	  def do_ldap_stuff(arg1, arg2, ldap_connection = None, ldap_position = None, search_base = None ):
+	  @LDAP_Connection( USER_READ, USER_WRITE )
+	  def do_ldap_stuff(arg1, arg2, ldap_user_write = None, ldap_user_read = None, ldap_position = None, search_base = None ):
 		  ...
 		  ldap_connection.searchDn( ..., position = ldap_position )
 		  ...
 	"""
-	def wrapper_func( *args, **kwargs ):
-		global _ldap_connection, _ldap_position, _user_dn, _password, _licenseCheck, _search_base
 
+	if connection_types and not USER_READ in connection_types and not MACHINE_READ in connection_types:
+		raise AttributeError( 'At least one read-only connection is required' )
+	elif not connection_types:
+		_connection_types = ( USER_READ, )
+	else:
+		_connection_types = connection_types
 
-		if _ldap_connection is not None:
-			# reuse LDAP connection
-			MODULE.info( 'Using open LDAP connection for user %s' % _user_dn )
-			lo = _ldap_connection
-			po = _ldap_position
-		else:
-			# open a new LDAP connection
-			MODULE.info( 'Opening LDAP connection for user %s' % _user_dn )
+	def inner_wrapper( func ):
+		def wrapper_func( *args, **kwargs ):
+			global _licenseCheck, _search_base
+
+			connections = get_ldap_connections( _connection_types )
+
+			read_connection = connections.get( USER_READ ) or connections.get( MACHINE_READ )
+			# set keyword arguments
+			kwargs.update( connections )
+			kwargs[ 'ldap_position' ] = udm_uldap.position( read_connection.base )
+
+			# set keyword argument for search base
+			_init_search_base( read_connection )
+			if kwargs.get('search_base', None):
+				# search_base is already specified, do not override it
+				pass
+			elif 'request' in kwargs and kwargs['request'].options.get('school', None):
+				# 'school' has been specified as request parameter, set the search 
+				# base accordingly
+				kwargs[ 'search_base' ] = SchoolSearchBase( _search_base.availableSchools, kwargs['request'].options.get('school') )
+			else:
+				# default search base
+				kwargs[ 'search_base' ] = _search_base
+
+			# try to execute the method with the given connection
+			# in case of an error, re-open a new LDAP connection and try again
 			try:
-				lo = udm_uldap.access( host = ucr.get( 'ldap/server/name' ), base = ucr.get( 'ldap/base' ), binddn = _user_dn, bindpw = _password, start_tls = 2 )
-
-				po = udm_uldap.position( lo.base )
-			except udm_errors.noObject, e:
-				raise e
-			except LDAPError, e:
-				raise LDAP_ConnectionError( 'Opening LDAP connection failed: %s' % str( e ) )
-
-		# set keyword arguments
-		kwargs[ 'ldap_connection' ] = lo
-		kwargs[ 'ldap_position' ] = po
-
-		# set keyword argument for search base
-		_init_search_base( lo )
-		if kwargs.get('search_base', None):
-			# search_base is already specified, do not override it
-			pass
-		elif 'request' in kwargs and kwargs['request'].options.get('school', None):
-			# 'school' has been specified as request parameter, set the search 
-			# base accordingly
-			kwargs[ 'search_base' ] = SchoolSearchBase( _search_base.availableSchools, kwargs['request'].options.get('school') )
-		else:
-			# default search base
-			kwargs[ 'search_base' ] = _search_base
-
-		# try to execute the method with the given connection
-		# in case of an error, re-open a new LDAP connection and try again
-		try:
-			ret = func( *args, **kwargs )
-			_ldap_connection = lo
-			_ldap_position = po
-			return ret
-		except ( LDAPError, udm_errors.base ), e:
-			MODULE.info( 'LDAP operation for user %s has failed' % _user_dn )
-			try:
-				lo = udm_uldap.access( host = ucr.get( 'ldap/master' ), base = ucr.get( 'ldap/base' ), binddn= _user_dn, bindpw = _password )
-				lo.requireLicense()
-				po = udm_uldap.position( lo.base )
-			except udm_errors.noObject, e:
-				raise e
+				return func( *args, **kwargs )
 			except ( LDAPError, udm_errors.base ), e:
-				raise LDAP_ConnectionError( 'Opening LDAP connection failed: %s' % str( e ) )
+				MODULE.info( 'LDAP operation has failed' )
+				connections = get_ldap_connections( _connection_types, force = True )
 
-			kwargs[ 'ldap_connection' ] = lo
-			kwargs[ 'ldap_position' ] = po
-			try:
-				ret = func( *args, **kwargs )
-				_ldap_connection = lo
-				_ldap_position = po
-				return ret
-			except udm_errors.base, e:
-				raise LDAP_ConnectionError( str( e ) )
+				kwargs.update( connections )
+				try:
+					return func( *args, **kwargs )
+				except udm_errors.base, e:
+					raise LDAP_ConnectionError( str( e ) )
 
-		return []
+			return []
 
-	return wrapper_func
+		return wraps( func )( wrapper_func )
+	return inner_wrapper
 
 def _init_search_base(ldap_connection):
 	global _search_base
@@ -455,11 +481,11 @@ class SchoolSearchBase(object):
 	@property
 	def users(self):
 		return "cn=users,%s" % self.schoolDN
-	
+
 	@property
 	def workgroups(self):
 		return "cn=schueler,cn=groups,%s" % self.schoolDN
-	
+
 	@property
 	def classes(self):
 		return "cn=klassen,cn=schueler,cn=groups,%s" % self.schoolDN
@@ -502,8 +528,8 @@ class SchoolBaseModule( Base ):
 		credentials are available'''
 		set_credentials( self._user_dn, self._password )
 
-	@LDAP_Connection
-	def schools( self, request, ldap_connection = None, ldap_position = None, search_base = None ):
+	@LDAP_Connection()
+	def schools( self, request, ldap_user_read = None, ldap_position = None, search_base = None ):
 		"""Returns a list of all available school"""
 		self.finished( request.id, search_base.availableSchools )
 
@@ -512,17 +538,17 @@ class SchoolBaseModule( Base ):
 		groupresult = udm_modules.lookup( 'groups/group', None, ldap_connection, scope = 'sub', base = ldap_base )
 		return map( lambda grp: { 'id' : grp.dn, 'label' : grp[ 'name' ].replace( '%s-' % school, '' ) }, groupresult )
 
-	@LDAP_Connection
-	def classes( self, request, ldap_connection = None, ldap_position = None, search_base = None ):
+	@LDAP_Connection()
+	def classes( self, request, ldap_user_read = None, ldap_position = None, search_base = None ):
 		"""Returns a list of all classes of the given school"""
 		self.required_options( request, 'school' )
-		self.finished( request.id, self._groups( ldap_connection, search_base.school, search_base.classes ) )
+		self.finished( request.id, self._groups( ldap_user_read, search_base.school, search_base.classes ) )
 
-	@LDAP_Connection
-	def workgroups( self, request, ldap_connection = None, ldap_position = None, search_base = None ):
+	@LDAP_Connection()
+	def workgroups( self, request, ldap_user_read = None, ldap_position = None, search_base = None ):
 		"""Returns a list of all working groups of the given school"""
 		self.required_options( request, 'school' )
-		self.finished( request.id, self._groups( ldap_connection, search_base.school, search_base.workgroups ) )
+		self.finished( request.id, self._groups( ldap_user_read, search_base.school, search_base.workgroups ) )
 
 	def _users( self, ldap_connection, search_base, group = None, user_type = None, pattern = '' ):
 		"""Returns a list of all users given 'pattern', 'school' (search base) and 'group'"""
