@@ -1,3 +1,9 @@
+ucs-school-umc-common (1.0.1-4) unstable; urgency=low
+
+  * removed empty Depends line in debian/control; Bug #25701
+
+ -- Alexander Kläser <klaeser@univention.de>  Tue, 07 Feb 2012 18:09:11 +0100
+
 ucs-school-umc-common (1.0.1-3) unstable; urgency=low
 
   * version bump; Bug #25701
