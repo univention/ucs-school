@@ -1,6 +1,12 @@
+ucs-school-umc-teachingmaterial (0.0.1-2) unstable; urgency=low
+
+  * fixed type in debian/control; Bug #25707
+
+ -- Alexander Kläser <klaeser@univention.de>  Tue, 07 Feb 2012 18:02:12 +0100
+
 ucs-school-umc-teachingmaterial (0.0.1-1) unstable; urgency=low
 
-  * added ucslint to build dependencies; Bug #25701
+  * added ucslint to build dependencies; Bug #25707
 
  -- Alexander Kläser <klaeser@univention.de>  Tue, 07 Feb 2012 17:47:39 +0100
 

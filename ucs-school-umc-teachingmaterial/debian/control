@@ -13,7 +13,7 @@ XS-Python-Version: 2.6
 Package: ucs-school-umc-teachingmaterial
 Architecture: all
 Depends: ${misc:Depends},
- univention-management-console
+ univention-management-console,
  univention-config-registry,
  univention-directory-manager-tools,
  ucs-school-umc-common
