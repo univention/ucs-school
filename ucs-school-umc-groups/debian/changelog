@@ -1,6 +1,12 @@
+ucs-school-umc-groups (0.0.3-3) unstable; urgency=low
+
+  * added ucslint to build dependencies; Bug #25701
+
+ -- Alexander Kläser <klaeser@univention.de>  Tue, 07 Feb 2012 17:46:54 +0100
+
 ucs-school-umc-groups (0.0.3-2) unstable; urgency=low
 
-  * fixed debian/control; Bug #25701 
+  * fixed debian/control; Bug #25701
 
  -- Alexander Kläser <klaeser@univention.de>  Tue, 07 Feb 2012 16:32:29 +0100
 
