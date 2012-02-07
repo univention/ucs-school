@@ -1,3 +1,9 @@
+ucs-school-umc-groups (0.0.3-2) unstable; urgency=low
+
+  * fixed debian/control; Bug #25701 
+
+ -- Alexander Kläser <klaeser@univention.de>  Tue, 07 Feb 2012 16:32:29 +0100
+
 ucs-school-umc-groups (0.0.3-1) unstable; urgency=low
 
   * use ComboBoxes with the feature autoHide; Bug #25701

@@ -5,16 +5,21 @@ Maintainer: Univention GmbH <packages@univention.de>
 Build-Depends: debhelper (>= 7.0.50~),
  python-support,
  univention-management-console-dev,
- python-all
-Standards-Version: 3.5.2
+ univention-config-dev
+Standards-Version: 3.7.2
 XS-Python-Version: 2.6
 
 Package: ucs-school-umc-groups
 Architecture: all
 Depends: ${misc:Depends},
- univention-management-console-server
-Description: UMC dummy module
- This package contains a UMC dummy module.
+ univention-management-console,
+ univention-config-registry,
+ univention-directory-manager-tools,
+ ucs-school-umc-common
+Description: UMC module to administrate school groups
+ This package provides a Univention Management Console module that allows to
+ administrate classes (declare associated teachers) and workgroups (full
+ administration).
  .
  It is part of Univention Corporate Server (UCS), an
  integrated, directory driven solution for managing
