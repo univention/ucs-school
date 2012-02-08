@@ -1,3 +1,10 @@
+ucs-school-metapackage (4.0.3-1) unstable; urgency=low
+
+  * set directory/manager/samba3/legacy=yes on master and single-master
+    (Bug #26034)
+
+ -- Arvid Requate <requate@univention.de>  Wed, 08 Feb 2012 10:14:23 +0100
+
 ucs-school-metapackage (4.0.2-2) unstable; urgency=low
 
   * Set S4 connector binddn and bindpw in slave join script (Bug #25985)

@@ -29,7 +29,9 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-ucr set repository/online/component/ucsschool/version=current
+univention-config-registry set \
+	repository/online/component/ucsschool/version=current \
+	directory/manager/samba3/legacy?yes
 
 #DEBHELPER#
 

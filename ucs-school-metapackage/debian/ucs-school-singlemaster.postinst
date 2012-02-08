@@ -43,7 +43,9 @@ if [ "$1" = "configure" -a -z "$2" ]; then
 	/usr/share/ucs-school-import/scripts/create_ou "$ucsschool_defaultschoolname" "$hostname"
 fi
 
-ucr set repository/online/component/ucsschool/version=current
+univention-config-registry set \
+	repository/online/component/ucsschool/version=current \
+	directory/manager/samba3/legacy?yes
 
 #DEBHELPER#
 
