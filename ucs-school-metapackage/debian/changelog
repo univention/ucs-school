@@ -1,3 +1,11 @@
+ucs-school-metapackage (4.0.3-2) unstable; urgency=low
+
+  * Disable DRS replication in ucs-school-slave (Bug #25989)
+  * Set connector/s4/allow/secondary?true in ucs-school-slave
+  * set directory/manager/samba3/legacy=yes also in ucs-school-slave
+
+ -- Arvid Requate <requate@univention.de>  Wed, 08 Feb 2012 11:32:10 +0100
+
 ucs-school-metapackage (4.0.3-1) unstable; urgency=low
 
   * set directory/manager/samba3/legacy=yes on master and single-master

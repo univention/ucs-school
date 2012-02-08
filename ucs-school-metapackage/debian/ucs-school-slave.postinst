@@ -34,7 +34,12 @@ if [ "$1" = configure -a -z "$2" ]; then
 	univention-config-registry set samba/netlogon/sync=download
 fi
 
-ucr set repository/online/component/ucsschool/version=current
+univention-config-registry set \
+	repository/online/component/ucsschool/version=current \
+	directory/manager/samba3/legacy?yes \
+	connector/s4/allow/secondary?true \
+	samba4/rpc/endpoint/drsuapi?false \
+	samba4/service/drepl?false
 
 #DEBHELPER#
 
