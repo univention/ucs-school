@@ -48,32 +48,31 @@ import smtplib
 _ = Translation( 'ucs-school-umc-helpdesk' ).translate
 
 class Instance( SchoolBaseModule ):
-	@LDAP_Connection
-	def configuration( self, request, ldap_connection = None, ldap_position = None, search_base = None ):
+	@LDAP_Connection()
+	def configuration( self, request, ldap_user_read = None, ldap_position = None, search_base = None ):
 		MODULE.error( 'return configuration' )
 		username = _( 'unknown' )
 		if self._username:
 			username = self._username
-		department = _( 'unknown' )
 
-		MODULE.info( 'username=%s  department=%s' % ( self._username, search_base.departmentNumber ) )
+		MODULE.info( 'username=%s  school=%s' % ( self._username, search_base.school ) )
 
 		self.finished( request.id, {
-			'username' : self._username,
-			'department' : search_base.departmentNumber,
+			'username' : username,
+			'school' : search_base.school,
 			'recipient' : ucr.has_key( 'ucsschool/helpdesk/recipient' ) and ucr[ 'ucsschool/helpdesk/recipient' ] } )
 
 
 	def send( self, request ):
-		def _send_thread( sender, recipients, username, department, category, message ):
+		def _send_thread( sender, recipients, username, school, category, message ):
 			MODULE.info( 'sending mail: thread running' )
 
 			msg = u'From: ' + sender + u'\r\n'
 			msg += u'To: ' + (', '.join(recipients)) + u'\r\n'
-			msg += u'Subject: %s (%s: %s)\r\n' % (category, _('Department'), department)
+			msg += u'Subject: %s (%s: %s)\r\n' % (category, _('School'), school)
 			msg += u'\r\n'
 			msg += u'%s: %s\r\n' % ( _( 'Sender' ), username )
-			msg += u'%s: %s\r\n' % ( _( 'Department' ), department )
+			msg += u'%s: %s\r\n' % ( _( 'School' ), school )
 			msg += u'%s: %s\r\n' % ( _( 'Category' ), category )
 			msg += u'%s:\r\n' % _( 'Message' )
 			msg += message + u'\r\n'
@@ -98,7 +97,7 @@ class Instance( SchoolBaseModule ):
 				self.finished( request.id, False, msg, False )
 
 
-		keys = [ 'username', 'department', 'category', 'message' ]
+		keys = [ 'username', 'school', 'category', 'message' ]
 		self.required_options( request, *keys )
 		for key in keys:
 			if request.options[ key ]:
@@ -112,7 +111,7 @@ class Instance( SchoolBaseModule ):
 
 			func = notifier.Callback( _send_thread,
 									  sender,	ucr[ 'ucsschool/helpdesk/recipient' ].split( ' ' ),
-									  request.options[ 'username' ], request.options[ 'department' ],
+									  request.options[ 'username' ], request.options[ 'school' ],
 									  request.options[ 'category' ], request.options[ 'message' ] )
 			MODULE.info( 'sending mail: starting thread' )
 			cb = notifier.Callback( _send_return, request )
@@ -122,12 +121,12 @@ class Instance( SchoolBaseModule ):
 			MODULE.error( 'HELPDESK: cannot send mail - config-registry variable "ucsschool/helpdesk/recipient" is not set' )
 			self.finished( request.id, False, _( 'The email address for the helpdesk team is not configured.' ) )
 
-	@LDAP_Connection
-	def categories( self, request, ldap_connection = None, ldap_position = None, search_base = None ):
+	@LDAP_Connection()
+	def categories( self, request, ldap_user_read = None, ldap_position = None, search_base = None ):
 		categories = []
-		res = ldap_connection.searchDn( filter = 'objectClass=univentionUMCHelpdeskClass', base = ldap_position.getBase() )
+		res = ldap_user_read.searchDn( filter = 'objectClass=univentionUMCHelpdeskClass', base = ldap_position.getBase() )
 		# use only first object found
 		if res and res[ 0 ]:
-			categories = ldap_connection.getAttr( res[ 0 ], 'univentionUMCHelpdeskCategory' )
+			categories = ldap_user_read.getAttr( res[ 0 ], 'univentionUMCHelpdeskCategory' )
 
 		self.finished( request.id, map( lambda x: { 'id' : x, 'label' : x }, categories ) )

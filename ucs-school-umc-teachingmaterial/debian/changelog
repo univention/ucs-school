@@ -1,3 +1,9 @@
+ucs-school-umc-teachingmaterial (0.0.2-1) unstable; urgency=low
+
+  * adapted module to API changes; Bug #25707
+
+ -- Alexander Kläser <klaeser@univention.de>  Wed, 08 Feb 2012 14:20:46 +0100
+
 ucs-school-umc-teachingmaterial (0.0.1-4) unstable; urgency=low
 
   * adapted dependencies; Bug #25707

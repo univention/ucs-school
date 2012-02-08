@@ -70,8 +70,8 @@ class Instance( SchoolBaseModule ):
 	def init(self):
 		SchoolBaseModule.init(self)
 
-	@LDAP_Connection
-	def users( self, request, search_base = None, ldap_connection = None, ldap_position = None ):
+	@LDAP_Connection()
+	def users( self, request, search_base = None, ldap_user_read = None, ldap_position = None ):
 		# parse group parameter
 		group = request.options.get('group')
 		if not group or group == 'None':

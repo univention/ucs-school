@@ -53,8 +53,8 @@ class Instance( SchoolBaseModule ):
 	def init(self):
 		SchoolBaseModule.init(self)
 
-	@LDAP_Connection
-	def users( self, request, search_base = None, ldap_connection = None, ldap_position = None ):
+	@LDAP_Connection()
+	def users( self, request, search_base = None, ldap_user_read = None, ldap_position = None ):
 		# parse group parameter
 		group = request.options.get('group')
 		user_type = None
@@ -70,11 +70,11 @@ class Instance( SchoolBaseModule ):
 		result = [ {
 			'id': i.dn,
 			'label': Display.user(i)
-		} for i in self._users( ldap_connection, search_base, group = group, user_type = user_type, pattern = request.options.get('pattern') ) ]
+		} for i in self._users( ldap_user_read, search_base, group = group, user_type = user_type, pattern = request.options.get('pattern') ) ]
 		self.finished( request.id, result )
 
-	@LDAP_Connection
-	def query( self, request, search_base = None, ldap_connection = None, ldap_position = None ):
+	@LDAP_Connection()
+	def query( self, request, search_base = None, ldap_user_read = None, ldap_position = None ):
 		"""Searches for entries:
 
 		requests.options = {}
@@ -95,7 +95,7 @@ class Instance( SchoolBaseModule ):
 		# LDAP search for groups
 		ldapFilter = LDAP_Filter.forGroups(request.options.get('pattern', ''))
 		MODULE.info('### filter:%s' % ldapFilter)
-		groupresult = udm_modules.lookup( 'groups/group', None, ldap_connection, scope = 'one', base = base, filter = ldapFilter)
+		groupresult = udm_modules.lookup( 'groups/group', None, ldap_user_read, scope = 'one', base = base, filter = ldapFilter)
 		grouplist = [ { 
 			'name': i['name'],
 			'description': i.oldinfo.get('description',''),

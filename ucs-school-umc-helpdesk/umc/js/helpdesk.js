@@ -73,7 +73,7 @@ dojo.declare("umc.modules.helpdesk", [ umc.widgets.Module, umc.i18n.Mixin ], {
 		// render the page containing search form and grid
 		this.umcpCommand( 'helpdesk/configuration' ).then( dojo.hitch( this, function( response ) {
 			if ( response.result.recipient ) {
-				this.renderPage( response.result.username, response.result.department );
+				this.renderPage( response.result.username, response.result.school );
 				this.standby( false );
 			} else {
 				umc.dialog.alert( this._( 'The helpdesk module is not configured properly. The recipient email address is not set.' ) );
@@ -81,7 +81,7 @@ dojo.declare("umc.modules.helpdesk", [ umc.widgets.Module, umc.i18n.Mixin ], {
 		} ) );
 	},
 
-	renderPage: function( username, department ) {
+	renderPage: function( username, school ) {
 
 		// umc.widgets.ExpandingTitlePane is an extension of dijit.layout.BorderContainer
 		var titlePane = new umc.widgets.ExpandingTitlePane( {
@@ -101,9 +101,9 @@ dojo.declare("umc.modules.helpdesk", [ umc.widgets.Module, umc.i18n.Mixin ], {
 			disabled: true
 		}, {
 			type: 'TextBox',
-			name: 'department',
+			name: 'school',
 			label: this._('School'),
-			value: department,
+			value: school,
 			disabled: true
 		}, {
 			type: 'ComboBox',
@@ -121,7 +121,7 @@ dojo.declare("umc.modules.helpdesk", [ umc.widgets.Module, umc.i18n.Mixin ], {
 		// here we arrange the form elements in one row and add the 'submit' button
 		var layout = [
 			'username',
-			'department',
+			'school',
 			'category',
 			'message'
 		];
