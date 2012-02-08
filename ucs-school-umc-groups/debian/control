@@ -6,9 +6,7 @@ Build-Depends: debhelper (>= 7.0.50~),
  python-support,
  univention-management-console-dev,
  univention-config-dev,
- ucslint,
- python-ucs-school,
- shell-ucs-school
+ ucslint
 Standards-Version: 3.7.2
 XS-Python-Version: 2.6
 
@@ -17,8 +15,11 @@ Architecture: all
 Depends: ${misc:Depends},
  univention-management-console,
  univention-config-registry,
- univention-directory-manager-tools,
- ucs-school-umc-common
+ ucs-school-umc-common,
+ python-ucs-school,
+ shell-ucs-school,
+ python-univention-directory-manager,
+ univention-directory-manager-tools
 Description: UMC module to administrate school groups
  This package provides a Univention Management Console module that allows to
  administrate classes (declare associated teachers) and workgroups (full
