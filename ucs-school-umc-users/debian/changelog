@@ -1,3 +1,9 @@
+ucs-school-umc-users (0.1.0-2) unstable; urgency=low
+
+  * adapted dependencies; Bug #25954
+
+ -- Alexander Kläser <klaeser@univention.de>  Wed, 08 Feb 2012 12:13:24 +0100
+
 ucs-school-umc-users (0.1.0-1) unstable; urgency=low
 
   * Initial release. (Closes: Bug #25954)
