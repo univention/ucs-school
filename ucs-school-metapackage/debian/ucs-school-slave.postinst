@@ -37,6 +37,8 @@ fi
 univention-config-registry set \
 	repository/online/component/ucsschool/version=current \
 	directory/manager/samba3/legacy?yes \
+	connector/s4/mapping/sid_to_ucs?no \
+	connector/s4/mapping/sid_to_s4?yes \
 	connector/s4/allow/secondary?true \
 	samba4/rpc/endpoint/drsuapi?false \
 	samba4/service/drepl?false

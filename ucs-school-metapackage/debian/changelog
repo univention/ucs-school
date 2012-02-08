@@ -1,3 +1,9 @@
+ucs-school-metapackage (4.0.4-1) unstable; urgency=low
+
+  * Configure SID mapping (Bug #26005)
+
+ -- Stefan Gohmann <gohmann@univention.de>  Wed, 08 Feb 2012 14:32:42 +0100
+
 ucs-school-metapackage (4.0.3-2) unstable; urgency=low
 
   * Disable DRS replication in ucs-school-slave (Bug #25989)
