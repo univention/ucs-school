@@ -19,7 +19,7 @@ Variables: ucsschool/ldap/default/groupprefix/admins
 
 Type: subfile
 Multifile: etc/ldap/slapd.conf
-Subfile: etc/ldap/slapd.conf.d/55ucsschool_presettings
+Subfile: etc/ldap/slapd.conf.d/61ucsschool_presettings
 Variables: ucsschool/ldap/district/enable
 Variables: ucsschool/ldap/default/container/pupils
 Variables: ucsschool/ldap/default/container/teachers
