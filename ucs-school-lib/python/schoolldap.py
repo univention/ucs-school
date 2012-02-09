@@ -42,6 +42,7 @@ import univention.admin.objects as udm_objects
 import univention.admin.uldap as udm_uldap
 import univention.admin.syntax as udm_syntax
 import univention.admin.uexceptions as udm_errors
+from univention.management.console.protocol.message import Message
 
 from ldap import LDAPError
 
@@ -372,25 +373,23 @@ def LDAP_Connection( *connection_types ):
 		def wrapper_func( *args, **kwargs ):
 			global _licenseCheck, _search_base
 
+			# set LDAP keyword arguments
 			connections = get_ldap_connections( _connection_types )
-
 			read_connection = connections.get( USER_READ ) or connections.get( MACHINE_READ )
-			# set keyword arguments
 			kwargs.update( connections )
 			kwargs[ 'ldap_position' ] = udm_uldap.position( read_connection.base )
 
 			# set keyword argument for search base
 			_init_search_base( read_connection )
-			if kwargs.get('search_base', None):
-				# search_base is already specified, do not override it
-				pass
-			elif 'request' in kwargs and kwargs['request'].options.get('school', None):
-				# 'school' has been specified as request parameter, set the search 
-				# base accordingly
-				kwargs[ 'search_base' ] = SchoolSearchBase( _search_base.availableSchools, kwargs['request'].options.get('school') )
-			else:
-				# default search base
-				kwargs[ 'search_base' ] = _search_base
+			if not kwargs.get('search_base'):
+				# search_base is not set manually
+				kwargs['search_base'] = _search_base
+				if len(args) > 1 and isinstance(args[1], Message):
+					# we have a Message instance (i.e. a request), try to set the search_base
+					# according to the specified option 'school'
+					school = args[1].options.get('school')
+					if school:
+						kwargs[ 'search_base' ] = SchoolSearchBase( _search_base.availableSchools, school )
 
 			# try to execute the method with the given connection
 			# in case of an error, re-open a new LDAP connection and try again
@@ -466,6 +465,14 @@ class SchoolSearchBase(object):
 		# FIXME: search for OU to get correct dn
 		self._schoolDN = dn or 'ou=%s,%s' % (self.school, ucr.get( 'ldap/base' ) )
 
+		# prefixes
+		self._containerAdmins = ucr.get('ucsschool/ldap/default/container/admins', 'admins')
+		self._containerPupils = ucr.get('ucsschool/ldap/default/container/pupils', 'schueler')
+		self._containerStaff = ucr.get('ucsschool/ldap/default/container/staff', 'mitarbeiter')
+		self._containerTeachers = ucr.get('ucsschool/ldap/default/container/teachers', 'lehrer')
+		self._containerClass = ucr.get('ucsschool/ldap/default/container/class', 'klassen')
+		self._containerRooms = ucr.get('ucsschool/ldap/default/container/rooms', 'raeume')
+
 	@property
 	def availableSchools(self):
 		return self._availableSchools
@@ -484,27 +491,32 @@ class SchoolSearchBase(object):
 
 	@property
 	def workgroups(self):
-		return "cn=schueler,cn=groups,%s" % self.schoolDN
+		return "cn=%s,cn=groups,%s" % (self._containerPupils, self.schoolDN)
 
 	@property
 	def classes(self):
-		return "cn=klassen,cn=schueler,cn=groups,%s" % self.schoolDN
+		return "cn=%s,cn=%s,cn=groups,%s" % (self._containerClass, self._containerPupils, self.schoolDN)
 
 	@property
 	def pupils(self):
-		return "cn=schueler,cn=users,%s" % self.schoolDN
+		return "cn=%s,cn=users,%s" % (self._containerPupils, self.schoolDN)
 
 	@property
 	def teachers(self):
-		return "cn=lehrer,cn=users,%s" % self.schoolDN
+		return "cn=%s,cn=users,%s" % (self._containerTeachers, self.schoolDN)
 
 	@property
 	def classShares(self):
-		return "cn=klassen,cn=shares,%s" % self.schoolDN
+		return "cn=%s,cn=shares,%s" % (self._containerClass, self.schoolDN)
 
 	@property
 	def shares(self):
 		return "cn=shares,%s" % self.schoolDN
+
+	@property
+	def rooms(self):
+		return "cn=%s,cn=groups,%s" % (self._containerRooms, self.schoolDN)
+
 
 class SchoolBaseModule( Base ):
 	"""This classe serves as base class for UCS@school UMC modules that need
@@ -549,6 +561,13 @@ class SchoolBaseModule( Base ):
 		"""Returns a list of all working groups of the given school"""
 		self.required_options( request, 'school' )
 		self.finished( request.id, self._groups( ldap_user_read, search_base.school, search_base.workgroups ) )
+
+	@LDAP_Connection()
+	def rooms( self, request, ldap_user_read = None, ldap_position = None, search_base = None ):
+		"""Returns a list of all available school"""
+		self.required_options( request, 'school' )
+		MODULE.info('### rooms: school=%s base=%s' % (search_base.school, search_base.rooms))
+		self.finished( request.id, self._groups( ldap_user_read, search_base.school, search_base.rooms ) )
 
 	def _users( self, ldap_connection, search_base, group = None, user_type = None, pattern = '' ):
 		"""Returns a list of all users given 'pattern', 'school' (search base) and 'group'"""
@@ -597,26 +616,37 @@ class LDAP_Filter:
 
 	@staticmethod
 	def forUsers( pattern ):
-		return LDAP_Filter.forAll( pattern, 'lastname', 'username', 'firstname' )
+		return LDAP_Filter.forAll( pattern, ['lastname', 'username', 'firstname'] )
 
 	@staticmethod
 	def forGroups( pattern ):
-		return LDAP_Filter.forAll( pattern, 'name', 'description' )
+		return LDAP_Filter.forAll( pattern, ['name', 'description'] )
+
+	@staticmethod
+	def forComputers( pattern ):
+		return LDAP_Filter.forAll( pattern, ['name', 'description'], ['mac', 'ip'] )
 
 	regWhiteSpaces = re.compile(r'\s+')
 	@staticmethod
-	def forAll( pattern, *args ):
+	def forAll( pattern, subMatch = [], fullMatch = []):
 		expressions = []
 		for iword in LDAP_Filter.regWhiteSpaces.split( pattern or '' ):
 			# evaluate the subexpression (search word over different attributes)
+			subexpr = []
+
+			# all expressions for a full string match
+			if iword:
+				subexpr += [ '(%s=%s)' % ( jattr, iword ) for jattr in fullMatch ]
+
+			# all expressions for a substring match
 			if not iword:
 				iword = '*'
 			elif iword.find('*') < 0:
 				iword = '*%s*' % iword
-			subexpr = ''.join([ '(%s=%s)' % ( jattr, iword ) for jattr in args ])
+			subexpr += [ '(%s=%s)' % ( jattr, iword ) for jattr in subMatch ]
 
 			# append to list of all search expressions
-			expressions.append('(|%s)' % subexpr)
+			expressions.append('(|%s)' % ''.join(subexpr))
 
 		return '(&%s)' % ''.join( expressions )
 

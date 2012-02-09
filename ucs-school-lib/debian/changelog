@@ -1,3 +1,12 @@
+ucs-school-lib (1.0.17-1) unstable; urgency=low
+
+  * extended SchoolSearchBase for rooms and to use UCR variables
+  * fixed handling of 'school' option in request parameter
+  * extended LDAP_Filter.forAll() to work with substring and full matches
+  Bug #25702
+
+ -- Alexander Kläser <klaeser@univention.de>  Thu, 09 Feb 2012 17:42:52 +0100
+
 ucs-school-lib (1.0.16-1) unstable; urgency=low
 
   * removed last shift as it would cause an error in dash; Bug #25701
