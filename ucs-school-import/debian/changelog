@@ -1,3 +1,10 @@
+ucs-school-import (8.0.38-1) unstable; urgency=low
+
+  * removed handling of ucsschoolRole attribute (Bug #26021)
+  * added handling of new user container (Bug #26021)
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Wed, 08 Feb 2012 15:59:50 +0100
+
 ucs-school-import (8.0.37-1) unstable; urgency=low
 
   * always run ou pre hook (Bug #21083)

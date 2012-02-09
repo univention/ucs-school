@@ -98,6 +98,7 @@ pwLengthOu = {}
 
 cn_pupils   = configRegistry.get('ucsschool/ldap/default/container/pupils', 'schueler')
 cn_teachers = configRegistry.get('ucsschool/ldap/default/container/teachers', 'lehrer')
+cn_teachers_staff = configRegistry.get('ucsschool/ldap/default/container/teachers-and-staff', 'lehrer und mitarbeiter')
 cn_admins	= configRegistry.get('ucsschool/ldap/default/container/admins', 'admins')
 cn_staff	= configRegistry.get('ucsschool/ldap/default/container/staff', 'mitarbeiter')
 
@@ -127,8 +128,14 @@ generate_logins = configRegistry.get('ucsschool/import/generate/logins', 'no').l
 # IP address prefix len conecerning the netmask
 default_prefixlen = 24
 
-if not (cn_pupils and cn_teachers and cn_admins and cn_staff):
-	print 'ERROR: Unable to proceed: one of these UCR variables is not set correctly:\n\tucsschool/ldap/default/container/pupils\n\tucsschool/ldap/default/container/teachers\n\tucsschool/ldap/default/container/staff\n\tucsschool/ldap/default/container/admins'
+if not (cn_pupils and cn_teachers and cn_teachers_staff and cn_admins and cn_staff):
+	print '''ERROR: Unable to proceed: one of the following UCR variables is not set correctly:
+	ucsschool/ldap/default/container/pupils
+	ucsschool/ldap/default/container/teachers
+	ucsschool/ldap/default/container/teachers-and-staff
+	ucsschool/ldap/default/container/staff
+	ucsschool/ldap/default/container/admins
+'''
 	sys.exit (1)
 
 # exception classes
@@ -285,7 +292,9 @@ class ucsschool_person_modify:
 	def getPosition_dn(self):
 		# resolution order for the position is pupil, teacher, staff
 		cn = cn_pupils
-		if role_teacher in self.getRole ():
+		if role_teacher in self.getRole() and role_staff in self.getRole():
+			cn = cn_teachers_staff
+		elif role_teacher in self.getRole ():
 			cn = cn_teachers
 		elif role_staff in self.getRole ():
 			cn = cn_staff
@@ -473,7 +482,7 @@ def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None, ShareFileServer=None
 			   '8none':['cn=dc,cn=server,cn=computers']
 			   }
 	if configRegistry.is_true('ucsschool/ldap/noneducational/create/objects', True):
-		container['1userPath'].append('cn=%s,cn=users' % cn_staff)
+		container['1userPath'].extend(['cn=%s,cn=users' % cn_staff, 'cn=%s,cn=users' % cn_teachers_staff])
 		container['4groupPath'].append('cn=%s,cn=groups' % cn_staff)
 	# FIXME: die Policies sollten besser mit der Gruppe verknüpft werden, um
 	# z.B. Mitarbeiter und Lehrer im selben Container pflegen zu können
@@ -1209,7 +1218,6 @@ def modify_user(person, module, co, lo):
 		object["disabled"]="none"
 	else:
 		object["disabled"]="all"
-	object["ucsschool-user-role"] = person.getRole ()
 
 	remove_groups = []
 	for group in object['groups']:
@@ -1385,7 +1393,7 @@ def create_user(person, baseDN, module, password, OUTFILE, line):
 		object["disabled"]="none"
 	else:
 		object["disabled"]="all"
-	object["ucsschool-user-role"] = person.getRole ()
+
 	if UCRV_netlogon_script_path:
 		object["scriptpath"] = UCRV_netlogon_script_path
 	if UCRV_sambahome:
@@ -1507,9 +1515,13 @@ def import_user():
 				# get from LDAP the user type: teacher, staff or student
 				main_person.isTeacher = '0'
 				main_person.isStaff   = '0'
-				if role_teacher in object['ucsschool-user-role']:
+
+				if object.dn.endswith(',cn=%s,cn=users,%s' % (cn_teachers_staff, getDN(ou))):
 					main_person.isTeacher = '1'
-				if role_staff in object['ucsschool-user-role']:
+					main_person.isStaff = '1'
+				elif object.dn.endswith(',cn=%s,cn=users,%s' % (cn_teachers, getDN(ou))):
+					main_person.isTeacher = '1'
+				elif object.dn.endswith(',cn=%s,cn=users,%s' % (cn_staff, getDN(ou))):
 					main_person.isStaff = '1'
 
 				if ou in main_person.allsNrs:
