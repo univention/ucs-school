@@ -37,7 +37,7 @@ eval "$(ucr shell)"
 
 # removing old extended attribute (Bug #26021)
 extattrdn="cn=ucsschool-user-role,cn=ucsschool,cn=custom attributes,cn=univention,$ldap_base"
-if udm settings/extended_attribute list | grep -q "^DN: $extattrdn" ; then
+if udm settings/extended_attribute list "$@" | grep -q "^DN: $extattrdn" ; then
 	echo "Removing deprecated extended attribute ucsschool-user-role..."
 	univention-directory-manager settings/extended_attribute remove "$@" --dn "$extattrdn"
 fi
