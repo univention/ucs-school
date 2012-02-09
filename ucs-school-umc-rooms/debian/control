@@ -1,0 +1,29 @@
+Source: ucs-school-umc-rooms
+Section: univention
+Priority: optional
+Maintainer: Univention GmbH <packages@univention.de>
+Build-Depends: debhelper (>= 7.0.50~),
+ python-support,
+ univention-management-console-dev,
+ univention-config-dev,
+ ucslint
+Standards-Version: 3.7.2
+XS-Python-Version: 2.6
+
+Package: ucs-school-umc-rooms
+Architecture: all
+Depends: ${misc:Depends},
+ univention-management-console,
+ univention-config-registry,
+ ucs-school-umc-common,
+ python-ucs-school,
+ shell-ucs-school,
+ python-univention-directory-manager
+Description: UMC module to administrate rooms and their computers
+ This package provides a Univention Management Console module that allows to
+ administrate school rooms and their associated computers.
+ .
+ It is part of Univention Corporate Server (UCS), an
+ integrated, directory driven solution for managing
+ corporate environments. For more information about UCS,
+ refer to: http://www.univention.de/
