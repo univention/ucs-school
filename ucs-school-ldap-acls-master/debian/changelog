@@ -1,3 +1,10 @@
+ucs-school-ldap-acls-master (7.0.1-1) unstable; urgency=low
+
+  * removed handling of ucsschoolRole attribute (Bug #26021)
+  * added handling of new user container (Bug #26021)
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Wed, 08 Feb 2012 14:12:14 +0100
+
 ucs-school-ldap-acls-master (7.0.0-0) unstable; urgency=low
 
   * bumped version for UCS@school 3.0 (Bug #25690)
