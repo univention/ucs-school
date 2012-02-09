@@ -20,7 +20,7 @@ def replace_ucr_variables(template):
 	dir_ucsschool[ 'PUPILS' ] =   configRegistry.get('ucsschool/ldap/default/container/pupils', 'schueler')
 	dir_ucsschool[ 'TEACHERS' ] = configRegistry.get('ucsschool/ldap/default/container/teachers', 'lehrer')
 	dir_ucsschool[ 'STAFF' ] =	  configRegistry.get('ucsschool/ldap/default/container/staff', 'mitarbeiter')
-	dir_ucsschool[ 'TEACHERS-STAFF' ] = configRegistry.get('ucsschool/ldap/default/container/teachers-and-staff, 'lehrer und mitarbeiter')
+	dir_ucsschool[ 'TEACHERS-STAFF' ] = configRegistry.get('ucsschool/ldap/default/container/teachers-and-staff', 'lehrer und mitarbeiter')
 	dir_ucsschool[ 'ADMINS' ] =	  configRegistry.get('ucsschool/ldap/default/container/admins', 'admins')
 	dir_ucsschool[ 'GRPADMINS' ] =	  configRegistry.get('ucsschool/ldap/default/groupprefix/admins', 'admins-')
 
