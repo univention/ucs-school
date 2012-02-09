@@ -152,7 +152,7 @@ access to dn.regex="^zoneName=[^,]+,cn=dns,@%@ldap/base@%@$$" attrs=sOARecord
 	by * none break
 
 # domaincontroller slaves and memberservers of management group are not allowed to replicate pupils and teachers
-access to dn.regex="^.+,(@$@TEACHERS@$@|@$@PUPILS@$@),cn=users,ou=[^,]+,@$@DISTRICT@$@@%@ldap/base@%@$$"
+access to dn.regex="^.+,cn=(@$@TEACHERS@$@|@$@PUPILS@$@),cn=users,ou=[^,]+,@$@DISTRICT@$@@%@ldap/base@%@$$"
 	by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" none
 	by group/univentionGroup/uniqueMember="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" none
 	by * none break
