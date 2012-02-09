@@ -1,3 +1,9 @@
+ucs-school-lib (1.0.18-1) unstable; urgency=low
+
+  * extended SchoolSearchBase for computers; Bug #25702
+
+ -- Alexander Kläser <klaeser@univention.de>  Thu, 09 Feb 2012 19:06:17 +0100
+
 ucs-school-lib (1.0.17-1) unstable; urgency=low
 
   * extended SchoolSearchBase for rooms and to use UCR variables

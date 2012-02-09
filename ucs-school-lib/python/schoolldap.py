@@ -517,6 +517,10 @@ class SchoolSearchBase(object):
 	def rooms(self):
 		return "cn=%s,cn=groups,%s" % (self._containerRooms, self.schoolDN)
 
+	@property
+	def computers(self):
+		return "cn=computers,%s" % self.schoolDN
+
 
 class SchoolBaseModule( Base ):
 	"""This classe serves as base class for UCS@school UMC modules that need
