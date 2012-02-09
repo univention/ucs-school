@@ -22,7 +22,6 @@ Package: ucs-school-reservation-defaultprofile
 Architecture: all
 Depends: ucs-school-reservation-database,
  python-mysqldb,
- univention-samba,
  univention-printserver,
  univention-printserver-pdf
 Description: Lesson name to realtime mapping for the reservation system.
