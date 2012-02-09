@@ -84,21 +84,10 @@ access to dn.regex="^cn=([^,]+),cn=raeume,cn=groups,ou=([^,]+),@$@DISTRICT@$@@%@
 	by dn.regex="^uid=([^,]+),cn=(@$@TEACHERS@$@|@$@STAFF@$@|@$@ADMINS@$@),cn=users,ou=$2,@$@DISTRICT@$@@%@ldap/base@%@$$" write
 	by * none break
 
-# Lehrer duerfen Druck-Quotas bearbeiten
-# ToDo
-
-# Lehrer duerfen Platten-Quotas bearbeiten
-# ToDo
-
 # Rechner duerfen ihr passwort aendern
 access to dn.regex="cn=.*,cn=server,cn=computers,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" attrs=userPassword,krb5Key,krb5KDCFlags,sambaNTPassword,sambaLMPassword,shadowLastChange,sambaPwdLastSet,pwhistory,krb5KeyVersionNumber,univentionWindowsReinstall,sambaPwdCanChange,sambaPwdMustChange
    by self write
    by * none break
-
-access to dn.regex="cn=.*,cn=dc,cn=server,cn=computers,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" attrs=userPassword,krb5Key,krb5KDCFlags,sambaNTPassword,sambaLMPassword,shadowLastChange,sambaPwdLastSet,pwhistory,krb5KeyVersionNumber,univentionWindowsReinstall,sambaPwdCanChange,sambaPwdMustChange
-   by self write
-   by * none break
-
 
 # Mitglieder der lokalen Administratoren duerfen Passwoerter unter users aendern
 access to dn.regex="^uid=(.+),cn=users,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" attrs=krb5KeyVersionNumber,krb5KDCFlags,krb5Key,krb5PasswordEnd,sambaAcctFlags,sambaPwdLastSet,sambaLMPassword,sambaNTPassword,shadowLastChange,shadowMax,userPassword,pwhistory,sambaPwdCanChange,sambaPwdMustChange,sambaPasswordHistory,sambaBadPasswordCount
