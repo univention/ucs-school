@@ -50,17 +50,6 @@ if [ $JS_LAST_EXECUTED_VERSION -lt 1 ]; then
 	done
 fi
 
-
-if [ $JS_LAST_EXECUTED_VERSION -lt 2 ]; then
-	# Update to UCS@school 2.4 - add missing LDAP attribute - Bug 20161
-	if [ "$server_role" = "domaincontroller_master" ] ; then
-		if [ "$ucsschool_update_user_role" = "yes" -o "$ucsschool_update_user_role" = "true" ] ; then
-			/usr/share/ucs-school-import/scripts/ucs-school-add-role
-		fi
-	fi
-fi
-
-
 joinscript_save_current_version
 
 exit 0

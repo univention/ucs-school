@@ -1,7 +1,6 @@
 ucs-school-create-dummy-users                               usr/share/ucs-school-import/scripts
 ucs-school-import                                           usr/share/ucs-school-import/scripts
 ucs-school-change-share-server                              usr/share/ucs-school-import/scripts
-ucs-school-add-role                                         usr/share/ucs-school-import/scripts
 35ucs-school-import.inst                                    usr/lib/univention-install/
 hooks/ou_create_post.d/40dhcpsearchbase_create              usr/share/ucs-school-import/hooks/ou_create_post.d
 hooks/ou_create_post.d/52marktplatz_create                  usr/share/ucs-school-import/hooks/ou_create_post.d
