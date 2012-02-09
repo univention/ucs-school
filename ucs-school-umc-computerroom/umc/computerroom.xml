@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<umc version="2.0">
+	<module id="computerroom" icon="computerroom" version="1.0">
+	<name>Computer room</name>
+	<description>Control computers of pupils in a room</description>
+	<categories>
+		<category name="ucs-school-class"/>
+	</categories>
+	<command name="computerroom/query" function="query"></command>
+	<command name="computerroom/schools" function="schools"></command>
+	<command name="computerroom/rooms" function="rooms"></command>
+	<command name="computerroom/get" function="get"></command>
+	</module>
+</umc>
