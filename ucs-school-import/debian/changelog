@@ -1,3 +1,9 @@
+ucs-school-import (8.0.35-1) unstable; urgency=low
+
+  * added rename_class (Bug #20645) 
+
+ -- Felix Botner <botner@univention.de>  Thu, 09 Feb 2012 13:09:48 +0100
+
 ucs-school-import (8.0.34-1) unstable; urgency=low
 
   * dependency to univention-policy >= 5.0.8-1 (Bug #25909)

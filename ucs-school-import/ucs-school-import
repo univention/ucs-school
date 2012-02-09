@@ -2607,6 +2607,146 @@ def set_ou_sharefileserver():
 					       ] )
 	sys.exit(0)
 
+def rename_class():
+
+	# usage
+	usage = "%prog [options] <importFile>\n"
+	usage += "  renames class groups and shares according to import file for ucs@school\n\n"
+	usage += "Arguments:\n"
+	usage += "  <importFile> rename class import file"
+	parser = optparse.OptionParser(usage=usage)
+	options, args = parser.parse_args()
+
+	# argument is infile
+	if len(args) > 0:
+		infile = args[0]
+	else:
+		parser.print_help()
+		print "must have one Argument for infile"
+		sys.exit()
+
+	# get all groups and shares
+	myGroups = {}
+	myShares = {}
+	for group in univention.admin.modules.lookup(
+		group_module, co, lo, scope="sub",
+		superordinate=superordinate, 
+		base=baseDN, filter="(objectClass=univentionGroup)"):
+		cn = group.dn.split(",")[0].replace("cn=", "", 1)
+		myGroups[cn] = group
+	for share in univention.admin.modules.lookup(
+		share_module, co, lo, scope="sub",
+		superordinate=superordinate, 
+		base=baseDN, filter="(objectClass=univentionShare)"):
+		cn = share.dn.split(",")[0].replace("cn=", "", 1)
+		myShares[cn] = share
+
+	print "infile is  : "+infile
+	inf = open(infile,'r')
+
+	# get old and new group name from infile
+	newGroups = []
+	lineCounter = 0
+	for line in inf:
+		lineCounter += 1
+		if emptyLineRe.match(line):
+			continue
+		parsed = line.strip('\r\n').split(sepchar)
+
+		# save old and new name and the udm share and group
+		# object
+		groupObject = myGroups.get(parsed[0], None)
+		shareObject = myShares.get(parsed[0], None)
+		newGroups.append({
+			"oldName":parsed[0],
+			"newName":parsed[1],
+			"share":shareObject,
+			"group":groupObject,
+			"line":line.strip(),
+			"lineCounter":"%s" % lineCounter})
+
+	# check groups
+	error = ""
+	for i in newGroups:
+		oldName = i.get("oldName")
+		newName = i.get("newName")
+		line = i.get("line")
+		lineCounter = i.get("lineCounter")
+
+		# groups
+		if not myGroups.get(oldName):
+			error = "old group %s not found" % oldName
+		elif myGroups.get(newName):
+			error = "new group %s already exists" % newName
+		else:
+			del myGroups[oldName]
+			myGroups[newName] = 1
+
+		# shares
+		if not myShares.get(oldName):
+			error = "old share %s not found" % oldName
+		elif myShares.get(newName):
+			error = "new share %s already exists" % newName
+		else:
+			del myShares[oldName]
+			myShares[newName] = 1
+
+		if error:
+			print "ERROR: %s (line %s: %s)" % (error, lineCounter, line)
+			print "do nothing"
+			sys.exit(0)
+
+	# do it, rename groups and shares and modify share path
+	messages = []
+	for i in newGroups:
+		groupObject = i.get("group")
+		shareObject = i.get("share")
+		newName = i.get("newName")
+		oldName = i.get("oldName")
+		line = i.get("line")
+		if groupObject and shareObject and newName and oldName:
+
+			success = True
+
+			# group pre mod hook
+			hooks.pre("group", "M", line=line)
+
+			# rename group
+			groupObject.open()
+			groupObject['name'] = newName
+			try:
+				groupObject.modify()
+				messages.append("Renaming of group %s to %s successfully" % (oldName, newName))
+			except Exception, e:
+				success = False
+				messages.append("Renaming of group %s to %s failed: %s" % (oldname, newName, str(e)))
+
+			# rename share and share path
+			shareObject.open()
+			path = shareObject['path'].split(os.path.sep)
+			path[-1] = newName
+			shareObject['name'] = newName
+			shareObject['path'] = os.path.sep.join(path)	
+			try:
+				shareObject.modify()
+				messages.append("Renaming of share %s to %s successfully" % (oldName, newName))
+			except Exception, e:
+				success = False
+				messages.append("Renaming of share %s to %s failed: %s" % (oldname, newName, str(e)))
+
+			# group post mod hook
+			if success:
+				hooks.post('group', "M", dn=groupObject.dn, line=line)
+
+
+	# print warnings
+	for msg in messages:
+		print msg
+
+	return
+
+#------------------------------------------------------------------------------------------#
+# MAIN                                                                                     #
 #------------------------------------------------------------------------------------------#
 
 # init univention-directory-manager
@@ -2618,7 +2758,9 @@ pwd=re.sub('\n','',pwdLine)
 
 lo = None
 try:
-	lo=univention.admin.uldap.access(host=configRegistry['ldap/master'], base=baseDN, binddn='cn=admin,'+baseDN, bindpw=pwd, start_tls=tls)
+	lo = univention.admin.uldap.access(
+		host=configRegistry['ldap/master'], base=baseDN,
+		binddn='cn=admin,'+baseDN, bindpw=pwd, start_tls=tls)
 except Exception, e:
 	univention.debug.debug(univention.debug.ADMIN, univention.debug.WARN, 'authentication error: %s' % str(e))
 	print 'ERROR: authentication error: %s' % str(e)
@@ -2628,31 +2770,25 @@ co            = univention.admin.config.config()
 position      = univention.admin.uldap.position(baseDN)
 superordinate = None
 
-
 univention.admin.modules.update()
 user_module                = univention.admin.modules.get("users/user")
 group_module               = univention.admin.modules.get("groups/group")
 cn_module                  = univention.admin.modules.get("container/cn")
 ou_module                  = univention.admin.modules.get("container/ou")
-dcmaster_module              = univention.admin.modules.get("computers/domaincontroller_master")
-dcbackup_module              = univention.admin.modules.get("computers/domaincontroller_backup")
+dcmaster_module            = univention.admin.modules.get("computers/domaincontroller_master")
+dcbackup_module            = univention.admin.modules.get("computers/domaincontroller_backup")
 server_module              = univention.admin.modules.get("computers/domaincontroller_slave")
 share_module               = univention.admin.modules.get("shares/share")
 printer_module             = univention.admin.modules.get("shares/printer")
 computer_module            = univention.admin.modules.get("computers/computer")
-
 dhcp_server_module         = univention.admin.modules.get("dhcp/server")
 dhcp_service_module        = univention.admin.modules.get("dhcp/service")
 dhcp_subnet_module         = univention.admin.modules.get("dhcp/subnet")
-
 dns_reverse_zone_module    = univention.admin.modules.get("dns/reverse_zone")
-
 network_module             = univention.admin.modules.get("networks/network")
-
 policy_dhcp_routing_module = univention.admin.modules.get("policies/dhcp_routing")
 policy_dhcp_netbios_module = univention.admin.modules.get("policies/dhcp_netbios")
 policy_dhcp_dns_module     = univention.admin.modules.get("policies/dhcp_dns")
-
 setting_module             = univention.admin.modules.get("settings/default")
 
 for m in (
@@ -2740,5 +2876,7 @@ elif sys.argv[0].endswith("export_computer"):
 	export_computer()
 elif sys.argv[0].endswith("set_ou_sharefileserver"):
 	set_ou_sharefileserver()
+elif sys.argv[0].endswith("rename_class"):
+	rename_class()
 else:
 	print "unknown action defined by the filename"
