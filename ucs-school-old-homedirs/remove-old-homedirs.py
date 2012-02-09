@@ -109,7 +109,7 @@ def check_filesystem(dir):
 				if fs.lower() == myFs.lower():
 					# ok, 
 					return ""
-				break
+			break
 	return "%s for %s is not on a known filesystem" % (myFs, dir)
 
 # move directory

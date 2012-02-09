@@ -1,3 +1,9 @@
+ucs-school-old-homedirs (7.0.3-1) unstable; urgency=low
+
+  * fixed listener module (Bug #25693)
+
+ -- Felix Botner <botner@univention.de>  Thu, 09 Feb 2012 10:15:51 +0100
+
 ucs-school-old-homedirs (7.0.2-1) unstable; urgency=low
 
   * timestamp name
