@@ -1296,7 +1296,7 @@ def create_passwd(dn):
 				pass
 		pwLength = pwLengthOu.get(ou, pwLength)
 
-	charlist = 'abcdefghijklmnopqrstuvwxyz0123456789'
+	charlist = 'abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ!"$%&/()=?'
 	passwd = ''
 	for i in range(pwLength):
 		passwd += charlist[random.randrange(0,len(charlist))]
