@@ -1,3 +1,9 @@
+ucs-school-lib (1.0.19-1) unstable; urgency=low
+
+  * corrected automatically chosen search base; Bug #25702
+
+ -- Alexander Kläser <klaeser@univention.de>  Fri, 10 Feb 2012 11:46:19 +0100
+
 ucs-school-lib (1.0.18-1) unstable; urgency=low
 
   * extended SchoolSearchBase for computers; Bug #25702
