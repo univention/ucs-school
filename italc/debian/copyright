@@ -1,201 +1,13 @@
-This package was originally debianized by Steffen Joeris <steffen.joeris@skolelinux.de> on
-Sat, 12 Nov 2005 00:20:36 +0100.
+This package was originally debianized by Univention GmbH <packages@univention.de> on
+Fri, 10 Feb 2012 12:54:36 +0100.
 
 It was downloaded from http://italc.sourceforge.net/download.php
 
 Copyright Holders: 
 
-Main Developer:	   Tobias Doerffel <tobias@doerffel.de>
+Main Developer:	   Tobias Doerffel <tobydox@users.sf.net>
 		   
 		   
-Other Developers:
-
-		Rohit Kumar <rokumar@novell.com>
-		Copyright (C) 2005
-		List of files:
-./ica/x11/rfb/rfb.h
-./ica/x11/libvncserver/scale.c
-./ica/x11/libvncserver/auth.c
-./ica/x11/libvncserver/sockets.c
-./ica/x11/libvncserver/rfbserver.c
-./common/include/rfb/rfb.h
-./common/include/rfb/rfbproto.h
-
-		Dan McGuirk <mcguirk@incompleteness.net>
-		Copyright (C) 2001
-		List of files:
-./ica/x11/rfb/rfb.h
-./ica/x11/libvncserver/corre.c
-./ica/x11/libvncserver/tabletrans24template.c
-./ica/x11/libvncserver/rre.c
-./ica/x11/libvncserver/scale.c
-./ica/x11/libvncserver/tableinittctemplate.c
-./ica/x11/libvncserver/tableinitcmtemplate.c
-./ica/x11/libvncserver/stats.c
-./ica/x11/libvncserver/tableinit24.c
-./ica/x11/libvncserver/auth.c
-./ica/x11/libvncserver/tabletranstemplate.c
-./ica/x11/libvncserver/hextile.c
-./ica/x11/libvncserver/translate.c
-./ica/x11/libvncserver/sockets.c
-./ica/x11/libvncserver/rfbserver.c
-./ica/x11/libvncserver/cutpaste.c
-./common/include/rfb/rfb.h
-
-		RealVNC Ltd.
-		Copyright (C) 2002
-		List of files:
-./ica/x11/rfb/rfb.h
-./ica/x11/libvncserver/corre.c
-./ica/x11/libvncserver/scale.c
-./ica/x11/libvncserver/zrlepalettehelper.c
-./ica/x11/libvncserver/zrlepalettehelper.h
-./ica/x11/libvncserver/zrletypes.h
-./ica/x11/libvncserver/stats.c
-./ica/x11/libvncserver/zrleoutstream.c
-./ica/x11/libvncserver/zrleoutstream.h
-./ica/x11/libvncserver/zrleencodetemplate.c
-./ica/x11/libvncserver/zrle.c
-./ica/x11/libvncserver/httpd.c
-./ica/x11/libvncserver/rfbserver.c
-./common/include/rfb/rfb.h
-
-		AT&T Laboratories Cambridge
-		Copyright (C) 1999
-		List of files:
-./ica/x11/rfb/rfb.h
-./ica/x11/libvncserver/corre.c
-./ica/x11/libvncserver/tabletrans24template.c
-./ica/x11/libvncserver/rre.ci
-./ica/x11/libvncserver/scale.c
-./ica/x11/libvncserver/d3des.c
-./ica/x11/libvncserver/d3des.h
-./ica/x11/libvncserver/tableinittctemplate.c
-./ica/x11/libvncserver/tableinitcmtemplate.c
-./ica/x11/libvncserver/cursor.c
-./ica/x11/libvncserver/stats.c
-./ica/x11/libvncserver/tight.c
-./ica/x11/libvncserver/tableinit24.c
-./ica/x11/libvncserver/auth.c
-./ica/x11/libvncserver/tabletranstemplate.c
-./ica/x11/libvncserver/hextile.c
-./ica/x11/libvncserver/zlib.c
-./ica/x11/libvncserver/translate.c
-./ica/x11/libvncserver/httpd.c
-./ica/x11/libvncserver/vncauth.c
-./ica/x11/libvncserver/sockets.c
-./ica/x11/libvncserver/rfbserver.c
-./ica/x11/libvncserver/cutpaste.c
-./common/include/rfb/rfb.h
-./common/include/rfb/rfbproto.h
-./tightvnc4win_italc.diff
-
-		James "Wez" Weatherall
-		Copyright (C) 2001
-		List of files:
-./ica/x11/libvncserver/rfbregion.c
-
-		Johannes E. Schindelin
-		Copyright (C) 2001
-		List of files:
-./ica/x11/libvncserver/rfbregion.c
-./ica/x11/libvncserver/scale.c
-./ica/x11/libvncserver/auth.c
-./ica/x11/libvncserver/sockets.c
-./ica/x11/libvncserver/rfbserver.c
-./common/include/rfb/rfbproto.h
-
-		Sun Microsystems, Inc.
-		Copyright (C) 2003
-		List of files:
-./ica/x11/libvncserver/zrlepalettehelper.c
-./ica/x11/libvncserver/zrlepalettehelper.h
-./ica/x11/libvncserver/zrleoutstream.c
-./ica/x11/libvncserver/zrleoutstream.h
-./ica/x11/libvncserver/zrleencodetemplate.c
-./ica/x11/libvncserver/zrle.c
-
-		Richard Outerbridge
-		Copyright (C) 1988-1992
-		List of files:
-./ica/x11/libvncserver/d3des.c
-./ica/x11/libvncserver/d3des.h
-./common/include/rfb/rfbproto.h
-
-		Constantin Kaplinsky
-		Copyright (C) 2000,2001
-		List of files:
-./ica/x11/libvncserver/cursor.c
-./ica/x11/libvncserver/tight.c
-
-		Tridia Corporation
-		Copyright (C) 2000
-		List of files:
-./ica/x11/libvncserver/zlib.c
-./common/include/rfb/rfbproto.h
-
- 		Karl J. Runge <runge@karlrunge.com>
-		Copyright (C) 2004-2006
-		List of files:
-./ica/x11/x11vnc/tkx11vnc.h
-./ica/x11/x11vnc/x11vnc.c
-./ica/x11/x11vnc/help.c
-
-		Free Software Foundation, Inc.
-		Copyright (C) 1989, 1991
-		List of files:
-./ica/x11/x11vnc/help.c
-
-		The Open Group
-		Copyright (C) 1987, 1998
-		List of files:
-./ica/x11/x11vnc/nox11.h
-
-		Markus Franz Xaver
-		Copyright (C) 2002
-		List of files:
-./ica/src/lzoconf.h
-./ica/src/minilzo.c
-./ica/src/minilzo.h
-
-		Johannes Oberhumer
-		Copyright (C) 2002
-		List of files:
-./ica/src/lzoconf.h
-./ica/src/minilzo.c
-./ica/src/minilzo.h
-
-		Joseph Wenniger <jowenn@kde.org>
-		Copyright (C) 2001-2003
-		List of files:
-./ima/src/kmultitabbar.h
-./ima/src/kmultitabbar.cpp
-
-		Trolltech ASA
-		Copyright (C) 1992-2006
-		List of files:
-./ima/src/3rdparty/qnetworkinterface.h
-./ima/src/3rdparty/qnetworkinterface_win.cpp
-./ima/src/3rdparty/qnetworkinterface_win_p.h	
-./ima/src/3rdparty/qnetworkinterface.cpp
-./ima/src/3rdparty/qnetworkinterface_p.h
-./ima/src/3rdparty/qnetworkinterface_unix.cpp
-
-		Tatu Ylonen <ylo@cs.hut.fi>
-		Copyright (C) 1995
-		List of files:
-./common/src/dsa_key.cpp
-
-		Harakan Software
-		Copyright (C) 2001
-		List of files:
-./common/include/rfb/rfbproto.h
-
-		X Consortium
-		Copyright (C) 1987
-		List of files:
-./common/include/rfb/keysym.h
-
 License:
 
 This program is free software; you can redistribute it and/or
@@ -209,3 +21,1584 @@ See the GNU General Public License for details.
 
 On Debian GNU/Linux systems, the complete text of the GNU General
 Public License can be found in /usr/share/common-licenses/GPL.
+
+
+Other developers and licenses:
+
+./ica/JavaViewer/SessionRecorder.java: GPL (v2 or later)
+  [Copyright: 2002 Constantin Kaplinsky. All Rights Reserved]
+
+./ica/JavaViewer/VncViewer.java: GPL (v2 or later)
+  [Copyright: 2004 Kenn Min Chong, John Witchel. All Rights Reserved / 2002 Constantin Kaplinsky. All Rights Reserved / 2001,2002 HorizonLive.com, Inc. All Rights Reserved / 1999 AT&T Laboratories Cambridge. All Rights Reserved / 2004 Alban Chazot. All Rights Reserved / 2002-2005 Ultr@VNC Team. All Rights Reserved]
+
+./ica/JavaViewer/AuthPanel.java: GPL (v2 or later)
+  [Copyright: 1999 AT&T Laboratories Cambridge. All Rights Reserved]
+
+./ica/JavaViewer/RecordingFrame.java: GPL (v2 or later)
+  [Copyright: 2002 Constantin Kaplinsky. All Rights Reserved]
+
+./ica/JavaViewer/RfbProto.java: GPL (v2 or later)
+  [Copyright: 2000 Tridia Corporation. All Rights Reserved / 2001,2002 Constantin Kaplinsky. All Rights Reserved / 2004 Kenn Min Chong, John Witchel. All Rights Reserved / 2001,2002 HorizonLive.com, Inc. All Rights Reserved / 1999 AT&T Laboratories Cambridge. All Rights Reserved / 2002-2004 Ultr@VNC Team. All Rights Reserved]
+
+./ica/JavaViewer/FTPFrame.java: GPL (v2 or later)
+  [Copyright: 2004 Kenn Min Chong, John Witchel. All Rights Reserved / 2002-2005 Ultr@VNC Team. All Rights Reserved]
+
+./ica/JavaViewer/DesCipher.java: BSD (2 clause) 
+  [Copyright: 1996 by Jef Poskanzer <jef@acme.com>. All rights reserved / 1999 AT&T Laboratories Cambridge. All Rights Reserved / 1996 Widget Workshop, Inc. All Rights Reserved]
+
+./ica/JavaViewer/DH.java: please check file
+  [Lee Griffiths, Jan 2004]
+
+./ica/JavaViewer/ClipboardFrame.java: GPL (v2 or later)
+  [Copyright: 1999 AT&T Laboratories Cambridge. All Rights Reserved / 2001 HorizonLive.com, Inc. All Rights Reserved]
+
+./ica/JavaViewer/OptionsFrame.java: GPL (v2 or later)
+  [Copyright: 2000 Tridia Corporation. All Rights Reserved / 1999 AT&T Laboratories Cambridge. All Rights Reserved / 2001 Constantin Kaplinsky. All Rights Reserved / 2001 HorizonLive.com, Inc. All Rights Reserved]
+
+./ica/JavaViewer/VncCanvas.java: GPL (v2 or later)
+  [Copyright: 2000 Tridia Corporation. All Rights Reserved / 2001,2002 Constantin Kaplinsky. All Rights Reserved / 2001,2002 HorizonLive.com, Inc. All Rights Reserved / 1999 AT&T Laboratories Cambridge. All Rights Reserved]
+
+./ica/JavaViewer/ButtonPanel.java: GPL (v2 or later)
+  [Copyright: 2004 Kenn Min Chong, John Witchel. All Rights Reserved / 2001,2002 HorizonLive.com, Inc. All Rights Reserved / 1999 AT&T Laboratories Cambridge. All Rights Reserved / 2002-2003 Ultr@VNC Team. All Rights Reserved]
+
+./ica/src/RfbItalcCursor.cpp: GPL (v2 or later)
+  [Copyright: 2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./ica/src/ItalcSlaveManager.cpp: GPL (v2 or later)
+  [Copyright: 2010 Univention GmbH / 2010-2011 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./ica/src/RfbItalcCursor.h: GPL (v2 or later)
+  [Copyright: 2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net> / 2007-2008 Urs Wolfer <uwolfer @ kde.org>]
+
+./ica/src/IcaMain.cpp: GPL (v2 or later)
+  [Copyright: 2006-2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./ica/src/WindowsService.h: GPL (v2 or later)
+  [Copyright: 2006-2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./ica/src/RfbLZORLE.cpp: GPL (v2 or later)
+  [Copyright: 2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./ica/src/RfbLZORLE.h: GPL (v2 or later)
+  [Copyright: 2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net> / 2007-2008 Urs Wolfer <uwolfer @ kde.org>]
+
+./ica/src/DemoServerMaster.h: GPL (v2 or later)
+  [Copyright: 2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net> / 2010 Univention GmbH]
+
+./ica/src/ItalcVncServer.h: GPL (v2 or later)
+  [Copyright: 2006-2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./ica/src/DemoServerSlave.h: GPL (v2 or later)
+  [Copyright: 2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net> / 2010 Univention GmbH]
+
+./ica/src/DemoServerSlave.cpp: GPL (v2 or later)
+  [Copyright: 2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net> / 2010 Univention GmbH]
+
+./ica/src/DemoClientSlave.h: GPL (v2 or later)
+  [Copyright: 2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net> / 2010 Univention GmbH]
+
+./ica/src/ScreenLockSlave.h: GPL (v2 or later)
+  [Copyright: 2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net> / 2010 Univention GmbH]
+
+./ica/src/DemoClientSlave.cpp: GPL (v2 or later)
+  [Copyright: 2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net> / 2010 Univention GmbH]
+
+./ica/src/DemoClient.h: GPL (v2 or later)
+  [Copyright: 2006-2009 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./ica/src/ItalcCoreServer.h: GPL (v2 or later)
+  [Copyright: 2006-2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./ica/src/MessageBoxSlave.h: GPL (v2 or later)
+  [Copyright: 2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net> / 2010 Univention GmbH]
+
+./ica/src/ScreenLockSlaveLauncher.cpp: GPL (v2 or later)
+  [Copyright: 2010 Univention GmbH / 2010-2011 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./ica/src/ScreenLockSlaveLauncher.h: GPL (v2 or later)
+  [Copyright: 2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net> / 2010 Univention GmbH]
+
+./ica/src/SystemTrayIconSlave.cpp: GPL (v2 or later)
+  [Copyright: 2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net> / 2010 Univention GmbH]
+
+./ica/src/DemoServerMaster.cpp: GPL (v2 or later)
+  [Copyright: 2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net> / 2010 Univention GmbH]
+
+./ica/src/ItalcSlaveManager.h: GPL (v2 or later)
+  [Copyright: 2010 Univention GmbH / 2010-2011 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./ica/src/WindowsService.cpp: GPL (v2 or later)
+  [Copyright: 2006-2011 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./ica/src/InputLockSlave.h: GPL (v2 or later)
+  [Copyright: 2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net> / 2010 Univention GmbH]
+
+./ica/src/DemoClient.cpp: GPL (v2 or later)
+  [Copyright: 2006-2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./ica/src/AccessDialogSlave.h: GPL (v2 or later)
+  [Copyright: 2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net> / 2010 Univention GmbH]
+
+./ica/src/IcaSlave.h: GPL (v2 or later)
+  [Copyright: 2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net> / 2010 Univention GmbH]
+
+./ica/src/DesktopAccessPermission.cpp: GPL (v2 or later)
+  [Copyright: 2006-2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./ica/src/DesktopAccessPermission.h: GPL (v2 or later)
+  [Copyright: 2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./ica/src/AccessDialogSlave.cpp: GPL (v2 or later)
+  [Copyright: 2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net> / 2010 Univention GmbH]
+
+./ica/src/MessageBoxSlave.cpp: GPL (v2 or later)
+  [Copyright: 2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./ica/src/ItalcVncServer.cpp: GPL (v2 or later)
+  [Copyright: 2006-2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./ica/src/DemoServer.h: GPL (v2 or later)
+  [Copyright: 2006-2011 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./ica/src/ScreenLockSlave.cpp: GPL (v2 or later)
+  [Copyright: 2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net> / 2010 Univention GmbH]
+
+./ica/src/DemoServer.cpp: GPL (v2 or later)
+  [Copyright: 2006-2011 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./ica/src/LocalSystemIca.cpp: GPL (v2 or later)
+  [Copyright: 2007-2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./ica/src/SystemTrayIconSlave.h: GPL (v2 or later)
+  [Copyright: 2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net> / 2010 Univention GmbH]
+
+./ica/src/InputLockSlave.cpp: GPL (v2 or later)
+  [Copyright: 2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net> / 2010 Univention GmbH]
+
+./ica/src/ItalcCoreServer.cpp: GPL (v2 or later)
+  [Copyright: 2006-2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./ica/x11/rfb/rfbregion.h: no copyright header or license unknown / please check file
+  [Copyright: 2001 James "Wez" Weatherall, Johannes E. Schindelin]
+
+./ica/x11/x11vnc/macosx.c: GPL (v2 or later)
+  [Copyright: 2002-2010 Karl J. Runge <runge@karlrunge.com>]
+
+./ica/x11/x11vnc/pm.h: GPL (v2 or later)
+  [Copyright: 2002-2010 Karl J. Runge <runge@karlrunge.com>]
+
+./ica/x11/x11vnc/win_utils.c: GPL (v2 or later)
+  [Copyright: 2002-2010 Karl J. Runge <runge@karlrunge.com>]
+
+./ica/x11/x11vnc/macosxCGS.c: GPL (v2 or later)
+  [Copyright: 2002-2010 Karl J. Runge <runge@karlrunge.com>]
+
+./ica/x11/x11vnc/userinput.c: GPL (v2 or later)
+  [Copyright: 2002-2010 Karl J. Runge <runge@karlrunge.com>]
+
+./ica/x11/x11vnc/enums.h: GPL (v2 or later)
+  [Copyright: 2002-2010 Karl J. Runge <runge@karlrunge.com>]
+
+./ica/x11/x11vnc/xkb_bell.c: GPL (v2 or later)
+  [Copyright: 2002-2010 Karl J. Runge <runge@karlrunge.com>]
+
+./ica/x11/x11vnc/avahi.h: GPL (v2 or later)
+  [Copyright: 2002-2010 Karl J. Runge <runge@karlrunge.com>]
+
+./ica/x11/x11vnc/userinput.h: GPL (v2 or later)
+  [Copyright: 2002-2010 Karl J. Runge <runge@karlrunge.com>]
+
+./ica/x11/x11vnc/v4l.c: GPL (v2 or later)
+  [Copyright: 2002-2010 Karl J. Runge <runge@karlrunge.com>]
+
+./ica/x11/x11vnc/params.h: GPL (v2 or later)
+  [Copyright: 2002-2010 Karl J. Runge <runge@karlrunge.com>]
+
+./ica/x11/x11vnc/xevents.c: GPL (v2 or later)
+  [Copyright: 2002-2010 Karl J. Runge <runge@karlrunge.com>]
+
+./ica/x11/x11vnc/x11vnc.c: GPL (v2)
+  [Copyright: 2002-2010 Karl J. Runge <runge@karlrunge.com>]
+
+./ica/x11/x11vnc/xrandr.h: GPL (v2 or later)
+  [Copyright: 2002-2010 Karl J. Runge <runge@karlrunge.com>]
+
+./ica/x11/x11vnc/remote.h: GPL (v2 or later)
+  [Copyright: 2002-2010 Karl J. Runge <runge@karlrunge.com>]
+
+./ica/x11/x11vnc/xrecord.h: GPL (v2 or later)
+  [Copyright: 2002-2010 Karl J. Runge <runge@karlrunge.com>]
+
+./ica/x11/x11vnc/v4l.h: GPL (v2 or later)
+  [Copyright: 2002-2010 Karl J. Runge <runge@karlrunge.com>]
+
+./ica/x11/x11vnc/cursor.c: GPL (v2 or later)
+  [Copyright: 2002-2010 Karl J. Runge <runge@karlrunge.com>]
+
+./ica/x11/x11vnc/pm.c: GPL (v2 or later)
+  [Copyright: 2002-2010 Karl J. Runge <runge@karlrunge.com>]
+
+./ica/x11/x11vnc/connections.h: GPL (v2 or later)
+  [Copyright: 2002-2010 Karl J. Runge <runge@karlrunge.com>]
+
+./ica/x11/x11vnc/nox11.h: please check file
+  [Copyright: 1987, 1998 The Open Group / 1987 by Digital Equipment Corporation, Maynard, Massachusetts]
+
+./ica/x11/x11vnc/pointer.c: GPL (v2 or later)
+  [Copyright: 2002-2010 Karl J. Runge <runge@karlrunge.com>]
+
+./ica/x11/x11vnc/inet.c: GPL (v2 or later)
+  [Copyright: 2002-2010 Karl J. Runge <runge@karlrunge.com>]
+
+./ica/x11/x11vnc/macosxCGP.h: GPL (v2 or later)
+  [Copyright: 2002-2010 Karl J. Runge <runge@karlrunge.com>]
+
+./ica/x11/x11vnc/enc.h: GPL (v2 or later)
+  [Copyright: 2002-2010 Karl J. Runge <runge@karlrunge.com>]
+
+./ica/x11/x11vnc/help.h: GPL (v2 or later)
+  [Copyright: 2002-2010 Karl J. Runge <runge@karlrunge.com>]
+
+./ica/x11/x11vnc/avahi.c: GPL (v2 or later)
+  [Copyright: 2002-2010 Karl J. Runge <runge@karlrunge.com>]
+
+./ica/x11/x11vnc/remote.c: GPL (v2 or later)
+  [Copyright: 2002-2010 Karl J. Runge <runge@karlrunge.com>]
+
+./ica/x11/x11vnc/keyboard.c: GPL (v2 or later)
+  [Copyright: 2002-2010 Karl J. Runge <runge@karlrunge.com>]
+
+./ica/x11/x11vnc/connections.c: GPL (v2 or later)
+  [Copyright: 2002-2010 Karl J. Runge <runge@karlrunge.com>]
+
+./ica/x11/x11vnc/macosxCG.c: GPL (v2 or later)
+  [Copyright: 2002-2010 Karl J. Runge <runge@karlrunge.com>]
+
+./ica/x11/x11vnc/selection.h: GPL (v2 or later)
+  [Copyright: 2002-2010 Karl J. Runge <runge@karlrunge.com>]
+
+./ica/x11/x11vnc/8to24.h: GPL (v2 or later)
+  [Copyright: 2002-2010 Karl J. Runge <runge@karlrunge.com>]
+
+./ica/x11/x11vnc/help.c: GPL (v2 or later)
+  [Copyright: 2002-2010 Karl J. Runge <runge@karlrunge.com>]
+
+./ica/x11/x11vnc/xevents.h: GPL (v2 or later)
+  [Copyright: 2002-2010 Karl J. Runge <runge@karlrunge.com>]
+
+./ica/x11/x11vnc/xinerama.c: GPL (v2 or later)
+  [Copyright: 2002-2010 Karl J. Runge <runge@karlrunge.com>]
+
+./ica/x11/x11vnc/xrandr.c: GPL (v2 or later)
+  [Copyright: 2002-2010 Karl J. Runge <runge@karlrunge.com>]
+
+./ica/x11/x11vnc/inet.h: GPL (v2 or later)
+  [Copyright: 2002-2010 Karl J. Runge <runge@karlrunge.com>]
+
+./ica/x11/x11vnc/gui.c: GPL (v2 or later)
+  [Copyright: 2002-2010 Karl J. Runge <runge@karlrunge.com>]
+
+./ica/x11/x11vnc/xrecord.c: GPL (v2 or later)
+  [Copyright: 2002-2010 Karl J. Runge <runge@karlrunge.com>]
+
+./ica/x11/x11vnc/solid.h: GPL (v2 or later)
+  [Copyright: 2002-2010 Karl J. Runge <runge@karlrunge.com>]
+
+./ica/x11/x11vnc/screen.h: GPL (v2 or later)
+  [Copyright: 2002-2010 Karl J. Runge <runge@karlrunge.com>]
+
+./ica/x11/x11vnc/xwrappers.c: GPL (v2 or later)
+  [Copyright: 2002-2010 Karl J. Runge <runge@karlrunge.com>]
+
+./ica/x11/x11vnc/win_utils.h: GPL (v2 or later)
+  [Copyright: 2002-2010 Karl J. Runge <runge@karlrunge.com>]
+
+./ica/x11/x11vnc/sslcmds.h: GPL (v2 or later)
+  [Copyright: 2002-2010 Karl J. Runge <runge@karlrunge.com>]
+
+./ica/x11/x11vnc/macosxCG.h: GPL (v2 or later)
+  [Copyright: 2002-2010 Karl J. Runge <runge@karlrunge.com>]
+
+./ica/x11/x11vnc/sslhelper.h: GPL (v2 or later)
+  [Copyright: 2002-2010 Karl J. Runge <runge@karlrunge.com>]
+
+./ica/x11/x11vnc/gui.h: GPL (v2 or later)
+  [Copyright: 2002-2010 Karl J. Runge <runge@karlrunge.com>]
+
+./ica/x11/x11vnc/ssltools.h: GPL (v2 or later)
+  [Copyright: 2002-2010 Karl J. Runge <runge@karlrunge.com>]
+
+./ica/x11/x11vnc/util.h: GPL (v2 or later)
+  [Copyright: 2002-2010 Karl J. Runge <runge@karlrunge.com>]
+
+./ica/x11/x11vnc/macosx_opengl.h: GPL (v2 or later)
+  [Copyright: 2002-2010 Karl J. Runge <runge@karlrunge.com>]
+
+./ica/x11/x11vnc/rates.c: GPL (v2 or later)
+  [Copyright: 2002-2010 Karl J. Runge <runge@karlrunge.com>]
+
+./ica/x11/x11vnc/screen.c: GPL (v2 or later)
+  [Copyright: 2002-2010 Karl J. Runge <runge@karlrunge.com>]
+
+./ica/x11/x11vnc/linuxfb.h: GPL (v2 or later)
+  [Copyright: 2002-2010 Karl J. Runge <runge@karlrunge.com>]
+
+./ica/x11/x11vnc/blackout_t.h: GPL (v2 or later)
+  [Copyright: 2002-2010 Karl J. Runge <runge@karlrunge.com>]
+
+./ica/x11/x11vnc/8to24.c: GPL (v2 or later)
+  [Copyright: 2002-2010 Karl J. Runge <runge@karlrunge.com>]
+
+./ica/x11/x11vnc/uinput.c: GPL (v2 or later)
+  [Copyright: 2002-2010 Karl J. Runge <runge@karlrunge.com>]
+
+./ica/x11/x11vnc/scan.c: GPL (v2 or later)
+  [Copyright: 2002-2010 Karl J. Runge <runge@karlrunge.com>]
+
+./ica/x11/x11vnc/sslcmds.c: GPL (v2 or later)
+  [Copyright: 2002-2010 Karl J. Runge <runge@karlrunge.com>]
+
+./ica/x11/x11vnc/user.c: GPL (v2 or later)
+  [Copyright: 2002-2010 Karl J. Runge <runge@karlrunge.com>]
+
+./ica/x11/x11vnc/winattr_t.h: GPL (v2 or later)
+  [Copyright: 2002-2010 Karl J. Runge <runge@karlrunge.com>]
+
+./ica/x11/x11vnc/options.h: GPL (v2 or later)
+  [Copyright: 2002-2010 Karl J. Runge <runge@karlrunge.com>]
+
+./ica/x11/x11vnc/util.c: GPL (v2 or later)
+  [Copyright: 2002-2010 Karl J. Runge <runge@karlrunge.com>]
+
+./ica/x11/x11vnc/solid.c: GPL (v2 or later)
+  [Copyright: 2002-2010 Karl J. Runge <runge@karlrunge.com>]
+
+./ica/x11/x11vnc/scrollevent_t.h: GPL (v2 or later)
+  [Copyright: 2002-2010 Karl J. Runge <runge@karlrunge.com>]
+
+./ica/x11/x11vnc/unixpw.c: GPL (v2 or later)
+  [Copyright: 2002-2010 Karl J. Runge <runge@karlrunge.com>]
+
+./ica/x11/x11vnc/uinput.h: GPL (v2 or later)
+  [Copyright: 2002-2010 Karl J. Runge <runge@karlrunge.com>]
+
+./ica/x11/x11vnc/macosxCGS.h: GPL (v2 or later)
+  [Copyright: 2002-2010 Karl J. Runge <runge@karlrunge.com>]
+
+./ica/x11/x11vnc/user.h: GPL (v2 or later)
+  [Copyright: 2002-2010 Karl J. Runge <runge@karlrunge.com>]
+
+./ica/x11/x11vnc/options.c: GPL (v2 or later)
+  [Copyright: 2002-2010 Karl J. Runge <runge@karlrunge.com>]
+
+./ica/x11/x11vnc/tkx11vnc.h: GENERATED FILE
+  [Copyright: 2004-2009 Karl J. Runge <runge@karlrunge.com>\n"]
+
+./ica/x11/x11vnc/unixpw.h: GPL (v2 or later)
+  [Copyright: 2002-2010 Karl J. Runge <runge@karlrunge.com>]
+
+./ica/x11/x11vnc/xwrappers.h: GPL (v2 or later)
+  [Copyright: 2002-2010 Karl J. Runge <runge@karlrunge.com>]
+
+./ica/x11/x11vnc/allowed_input_t.h: GPL (v2 or later)
+  [Copyright: 2002-2010 Karl J. Runge <runge@karlrunge.com>]
+
+./ica/x11/x11vnc/sslhelper.c: GPL (v2 or later)
+  [Copyright: 2002-2010 Karl J. Runge <runge@karlrunge.com>]
+
+./ica/x11/x11vnc/cleanup.c: GPL (v2 or later)
+  [Copyright: 2002-2010 Karl J. Runge <runge@karlrunge.com>]
+
+./ica/x11/x11vnc/keyboard.h: GPL (v2 or later)
+  [Copyright: 2002-2010 Karl J. Runge <runge@karlrunge.com>]
+
+./ica/x11/x11vnc/cursor.h: GPL (v2 or later)
+  [Copyright: 2002-2010 Karl J. Runge <runge@karlrunge.com>]
+
+./ica/x11/x11vnc/selection.c: GPL (v2 or later)
+  [Copyright: 2002-2010 Karl J. Runge <runge@karlrunge.com>]
+
+./ica/x11/x11vnc/x11vnc_defs.c: GPL (v2 or later)
+  [Copyright: 2002-2010 Karl J. Runge <runge@karlrunge.com>]
+
+./ica/x11/x11vnc/xdamage.h: GPL (v2 or later)
+  [Copyright: 2002-2010 Karl J. Runge <runge@karlrunge.com>]
+
+./ica/x11/x11vnc/appshare.c: GPL (v2 or later)
+  [Copyright: 2002-2010 Karl J. Runge <runge@karlrunge.com>]
+
+./ica/x11/x11vnc/pointer.h: GPL (v2 or later)
+  [Copyright: 2002-2010 Karl J. Runge <runge@karlrunge.com>]
+
+./ica/x11/x11vnc/rates.h: GPL (v2 or later)
+  [Copyright: 2002-2010 Karl J. Runge <runge@karlrunge.com>]
+
+./ica/x11/x11vnc/scan.h: GPL (v2 or later)
+  [Copyright: 2002-2010 Karl J. Runge <runge@karlrunge.com>]
+
+./ica/x11/x11vnc/xkb_bell.h: GPL (v2 or later)
+  [Copyright: 2002-2010 Karl J. Runge <runge@karlrunge.com>]
+
+./ica/x11/x11vnc/cleanup.h: GPL (v2 or later)
+  [Copyright: 2002-2010 Karl J. Runge <runge@karlrunge.com>]
+
+./ica/x11/x11vnc/nox11_funcs.h: *No copyright* GENERATED FILE
+
+./ica/x11/x11vnc/xinerama.h: GPL (v2 or later)
+  [Copyright: 2002-2010 Karl J. Runge <runge@karlrunge.com>]
+
+./ica/x11/x11vnc/xdamage.c: GPL (v2 or later)
+  [Copyright: 2002-2010 Karl J. Runge <runge@karlrunge.com>]
+
+./ica/x11/x11vnc/macosxCGP.c: GPL (v2 or later)
+  [Copyright: 2002-2010 Karl J. Runge <runge@karlrunge.com>]
+
+./ica/x11/x11vnc/x11vnc.h: GPL (v2 or later)
+  [Copyright: 2002-2010 Karl J. Runge <runge@karlrunge.com>]
+
+./ica/x11/x11vnc/macosx.h: GPL (v2 or later)
+  [Copyright: 2002-2010 Karl J. Runge <runge@karlrunge.com>]
+
+./ica/x11/x11vnc/macosx_opengl.c: GPL (v2 or later)
+  [Copyright: 2002-2010 Karl J. Runge <runge@karlrunge.com>]
+
+./ica/x11/x11vnc/linuxfb.c: GPL (v2 or later)
+  [Copyright: 2002-2010 Karl J. Runge <runge@karlrunge.com>]
+
+./ica/x11/libvncserver/tableinittctemplate.c: GPL (v2 or later)
+  [Copyright: 1999 AT&T Laboratories Cambridge / 2001 Dan McGuirk <mcguirk@incompleteness.net>]
+
+./ica/x11/libvncserver/scale.c: GPL (v2 or later)
+  [Copyright: 1999 AT&T Laboratories Cambridge / 2001 Dan McGuirk <mcguirk@incompleteness.net> / 2005 Rohit Kumar, Johannes E. Schindelin / 2002 RealVNC Ltd]
+
+./ica/x11/libvncserver/corre.c: GPL (v2 or later)
+  [Copyright: 1999 AT&T Laboratories Cambridge / 2001 Dan McGuirk <mcguirk@incompleteness.net> / 2002 RealVNC Ltd]
+
+./ica/x11/libvncserver/draw.c: no copyright header or license unknown / please check file
+
+./ica/x11/libvncserver/font.c: no copyright header or license unknown / please check file
+
+./ica/x11/libvncserver/zrleoutstream.h: GPL (v2 or later)
+  [Copyright: 2002 RealVNC Ltd. All Rights Reserved / 2003 Sun Microsystems, Inc]
+
+./ica/x11/libvncserver/zrletypes.h: GPL (v2 or later)
+  [Copyright: 2002 RealVNC Ltd. All Rights Reserved]
+
+./ica/x11/libvncserver/tabletrans24template.c: GPL (v2 or later)
+  [Copyright: 1999 AT&T Laboratories Cambridge / 2001 Dan McGuirk <mcguirk@incompleteness.net>]
+
+./ica/x11/libvncserver/ultra.c: no copyright header or license unknown / please check file
+
+./ica/x11/libvncserver/cursor.c: GPL (v2 or later)
+  [Copyright: 2000, 2001 Const Kaplinsky. All Rights Reserved / 1999 AT&T Laboratories Cambridge. All Rights Reserved]
+
+./ica/x11/libvncserver/zlib.c: GPL (v2 or later)
+  [Copyright: 2000 Tridia Corporation. All Rights Reserved / 1999 AT&T Laboratories Cambridge. All Rights Reserved]
+
+./ica/x11/libvncserver/tight.c: GPL (v2 or later)
+  [Copyright: 2000, 2001 Const Kaplinsky. All Rights Reserved / 1999 AT&T Laboratories Cambridge. All Rights Reserved]
+
+./ica/x11/libvncserver/tabletranstemplate.c: GPL (v2 or later)
+  [Copyright: 1999 AT&T Laboratories Cambridge / 2001 Dan McGuirk <mcguirk@incompleteness.net>]
+
+./ica/x11/libvncserver/httpd.c: GPL (v2 or later)
+  [Copyright: 1999 AT&T Laboratories Cambridge. All Rights Reserved / 2002 RealVNC Ltd]
+
+./ica/x11/libvncserver/selbox.c: no copyright header or license unknown / please check file
+
+./ica/x11/libvncserver/tableinit24.c: GPL (v2 or later)
+  [Copyright: 1999 AT&T Laboratories Cambridge / 2001 Dan McGuirk <mcguirk@incompleteness.net>]
+
+./ica/x11/libvncserver/sockets.c: GPL (v2 or later)
+  [Copyright: 1999 AT&T Laboratories Cambridge / 2001 Dan McGuirk <mcguirk@incompleteness.net> / 2005 Rohit Kumar, Johannes E. Schindelin]
+
+./ica/x11/libvncserver/stats.c: GPL (v2 or later)
+  [Copyright: 1999 AT&T Laboratories Cambridge / 2001 Dan McGuirk <mcguirk@incompleteness.net> / 2002 RealVNC Ltd]
+
+./ica/x11/libvncserver/translate.c: GPL (v2 or later)
+  [Copyright: 1999 AT&T Laboratories Cambridge / 2001 Dan McGuirk <mcguirk@incompleteness.net>]
+
+./ica/x11/libvncserver/auth.c: GPL (v2 or later)
+  [Copyright: 1999 AT&T Laboratories Cambridge / 2001 Dan McGuirk <mcguirk@incompleteness.net> / 2005 Rohit Kumar, Johannes E. Schindelin]
+
+./ica/x11/libvncserver/rfbserver.c: GPL (v2 or later)
+  [Copyright: 1999 AT&T Laboratories Cambridge / 2001 Dan McGuirk <mcguirk@incompleteness.net> / 2005 Rohit Kumar, Johannes E. Schindelin / 2002 RealVNC Ltd]
+
+./ica/x11/libvncserver/private.h: no copyright header or license unknown / please check file
+
+./ica/x11/libvncserver/zrle.c: GPL (v2 or later)
+  [Copyright: 2002 RealVNC Ltd. All Rights Reserved / 2003 Sun Microsystems, Inc]
+
+./ica/x11/libvncserver/hextile.c: GPL (v2 or later)
+  [Copyright: 1999 AT&T Laboratories Cambridge / 2001 Dan McGuirk <mcguirk@incompleteness.net>]
+
+./ica/x11/libvncserver/zrleencodetemplate.c: GPL (v2 or later)
+  [Copyright: 2002 RealVNC Ltd. All Rights Reserved / 2003 Sun Microsystems, Inc]
+
+./ica/x11/libvncserver/cutpaste.c: GPL (v2 or later)
+  [Copyright: 1999 AT&T Laboratories Cambridge / 2001 Dan McGuirk <mcguirk@incompleteness.net>]
+
+./ica/x11/libvncserver/cargs.c: GPL (latest version)
+  [Copyright: 1999 AT&T Laboratories Cambridge / 2001 Johannes E. Schindelin <Johannes.Schindelin@gmx.de> / 2001 Dan McGuirk <mcguirk@incompleteness.net>]
+
+./ica/x11/libvncserver/rre.c: GPL (v2 or later)
+  [Copyright: 1999 AT&T Laboratories Cambridge / 2001 Dan McGuirk <mcguirk@incompleteness.net>]
+
+./ica/x11/libvncserver/zrlepalettehelper.c: GPL (v2 or later)
+  [Copyright: 2002 RealVNC Ltd. All Rights Reserved / 2003 Sun Microsystems, Inc]
+
+./ica/x11/libvncserver/rfbregion.c: no copyright header or license unknown / please check file
+  [Copyright: 2001 James "Wez" Weatherall, Johannes E. Schindelin]
+
+./ica/x11/libvncserver/scale.h: no copyright header or license unknown / please check file
+
+./ica/x11/libvncserver/tableinitcmtemplate.c: GPL (v2 or later)
+  [Copyright: 1999 AT&T Laboratories Cambridge / 2001 Dan McGuirk <mcguirk@incompleteness.net>]
+
+./ica/x11/libvncserver/zrleoutstream.c: GPL (v2 or later)
+  [Copyright: 2002 RealVNC Ltd. All Rights Reserved / 2003 Sun Microsystems, Inc]
+
+./ica/x11/libvncserver/zrlepalettehelper.h: GPL (v2 or later)
+  [Copyright: 2002 RealVNC Ltd. All Rights Reserved / 2003 Sun Microsystems, Inc]
+
+./ica/x11/libvncserver/main.c: GPL (latest version)
+  [Copyright: 1999 AT&T Laboratories Cambridge / 2001 Johannes E. Schindelin <Johannes.Schindelin@gmx.de> / 2001 Dan McGuirk <mcguirk@incompleteness.net>]
+
+./ica/x11/common/lzodefs.h: GPL (v2 or later) 
+  [Copyright: 2005 Markus Franz Xaver Johannes Oberhumer / 1999 Markus Franz Xaver Johannes Oberhumer / 2004 Markus Franz Xaver Johannes Oberhumer / 2000 Markus Franz Xaver Johannes Oberhumer / 2009 Markus Franz Xaver Johannes Oberhumer / 2008 Markus Franz Xaver Johannes Oberhumer / 2001 Markus Franz Xaver Johannes Oberhumer / 1997 Markus Franz Xaver Johannes Oberhumer / 2011 Markus Franz Xaver Johannes Oberhumer / 2007 Markus Franz Xaver Johannes Oberhumer / 2003 Markus Franz Xaver Johannes Oberhumer / 2010 Markus Franz Xaver Johannes Oberhumer / 2002 Markus Franz Xaver Johannes Oberhumer / 1998 Markus Franz Xaver Johannes Oberhumer / 2006 Markus Franz Xaver Johannes Oberhumer / 1996 Markus Franz Xaver Johannes Oberhumer]
+
+./ica/x11/common/zywrletemplate.c: BSD (3 clause) 
+  [Copyright: HOLDERS AND CONTRIBUTORS / 2006 *]
+
+./ica/x11/common/vncauth.c: GPL (v2 or later)
+  [Copyright: 1999 AT&T Laboratories Cambridge. All Rights Reserved]
+
+./ica/x11/common/d3des.h: public domain
+  [Copyright: 1988,1989,1990,1991,1992 by Richard Outerbridge / 1999 AT&T Laboratories Cambridge. All Rights Reserved]
+
+./ica/x11/common/d3des.c: public domain
+  [Copyright: 1988,1989,1990,1991,1992 by Richard Outerbridge / 1999 AT&T Laboratories Cambridge. All Rights Reserved]
+
+./ica/x11/common/minilzo.c: GPL (v2 or later) 
+  [Copyright: 2005 Markus Franz Xaver Johannes Oberhumer / 1999 Markus Franz Xaver Johannes Oberhumer / 2004 Markus Franz Xaver Johannes Oberhumer / 2000 Markus Franz Xaver Johannes Oberhumer / 2009 Markus Franz Xaver Johannes Oberhumer / 2008 Markus Franz Xaver Johannes Oberhumer / 2001 Markus Franz Xaver Johannes Oberhumer / 1997 Markus Franz Xaver Johannes Oberhumer / 2007 Markus Franz Xaver Johannes Oberhumer / 2011 Markus Franz Xaver Johannes Oberhumer / 2003 Markus Franz Xaver Johannes Oberhumer / 2010 Markus Franz Xaver Johannes Oberhumer / 2002 Markus Franz Xaver Johannes Oberhumer / 1998 Markus Franz Xaver Johannes Oberhumer / 2006 Markus Franz Xaver Johannes Oberhumer / 1996 Markus Franz Xaver Johannes Oberhumer]
+
+./ica/x11/common/lzoconf.h: GPL (v2 or later) 
+  [Copyright: 2005 Markus Franz Xaver Johannes Oberhumer / 1999 Markus Franz Xaver Johannes Oberhumer / 2004 Markus Franz Xaver Johannes Oberhumer / 2000 Markus Franz Xaver Johannes Oberhumer / 2009 Markus Franz Xaver Johannes Oberhumer / 2008 Markus Franz Xaver Johannes Oberhumer / 2001 Markus Franz Xaver Johannes Oberhumer / 1997 Markus Franz Xaver Johannes Oberhumer / 2007 Markus Franz Xaver Johannes Oberhumer / 2011 Markus Franz Xaver Johannes Oberhumer / 2003 Markus Franz Xaver Johannes Oberhumer / 2010 Markus Franz Xaver Johannes Oberhumer / 2002 Markus Franz Xaver Johannes Oberhumer / 1998 Markus Franz Xaver Johannes Oberhumer / 2006 Markus Franz Xaver Johannes Oberhumer / 1996 Markus Franz Xaver Johannes Oberhumer]
+
+./ica/x11/common/minilzo.h: GPL (v2 or later) 
+  [Copyright: 2005 Markus Franz Xaver Johannes Oberhumer / 1999 Markus Franz Xaver Johannes Oberhumer / 2004 Markus Franz Xaver Johannes Oberhumer / 2000 Markus Franz Xaver Johannes Oberhumer / 2009 Markus Franz Xaver Johannes Oberhumer / 2008 Markus Franz Xaver Johannes Oberhumer / 2001 Markus Franz Xaver Johannes Oberhumer / 1997 Markus Franz Xaver Johannes Oberhumer / 2007 Markus Franz Xaver Johannes Oberhumer / 2011 Markus Franz Xaver Johannes Oberhumer / 2003 Markus Franz Xaver Johannes Oberhumer / 2010 Markus Franz Xaver Johannes Oberhumer / 2002 Markus Franz Xaver Johannes Oberhumer / 1998 Markus Franz Xaver Johannes Oberhumer / 2006 Markus Franz Xaver Johannes Oberhumer / 1996 Markus Franz Xaver Johannes Oberhumer]
+
+./ica/x11/libvncclient/corre.c: GPL (v2 or later)
+  [Copyright: 1999 AT&T Laboratories Cambridge. All Rights Reserved]
+
+./ica/x11/libvncclient/ultra.c: GPL (v2 or later)
+  [Copyright: 2000 Tridia Corporation. All Rights Reserved / 1999 AT&T Laboratories Cambridge. All Rights Reserved]
+
+./ica/x11/libvncclient/cursor.c: GPL (v2 or later)
+  [Copyright: 2001,2002 Constantin Kaplinsky. All Rights Reserved]
+
+./ica/x11/libvncclient/zlib.c: GPL (v2 or later)
+  [Copyright: 2000 Tridia Corporation. All Rights Reserved / 1999 AT&T Laboratories Cambridge. All Rights Reserved]
+
+./ica/x11/libvncclient/tight.c: GPL (v2 or later)
+  [Copyright: 2000, 2001 Const Kaplinsky. All Rights Reserved]
+
+./ica/x11/libvncclient/tls.c: GPL (v2 or later)
+  [Copyright: 2009 Vic Lee]
+
+./ica/x11/libvncclient/sockets.c: GPL (v2 or later)
+  [Copyright: 1999 AT&T Laboratories Cambridge. All Rights Reserved]
+
+./ica/x11/libvncclient/tls.h: GPL (v2 or later)
+  [Copyright: 2009 Vic Lee]
+
+./ica/x11/libvncclient/zrle.c: GPL (v2 or later)
+  [Copyright: 2005 Johannes E. Schindelin. All Rights Reserved]
+
+./ica/x11/libvncclient/hextile.c: GPL (v2 or later)
+  [Copyright: 1999 AT&T Laboratories Cambridge. All Rights Reserved]
+
+./ica/x11/libvncclient/rfbproto.c: GPL (v2 or later)
+  [Copyright: 2000 Tridia Corporation. All Rights Reserved / 2000-2002 Constantin Kaplinsky. All Rights Reserved / 1999 AT&T Laboratories Cambridge. All Rights Reserved]
+
+./ica/x11/libvncclient/rre.c: GPL (v2 or later)
+  [Copyright: 1999 AT&T Laboratories Cambridge. All Rights Reserved]
+
+./ica/x11/libvncclient/listen.c: GPL (v2 or later)
+  [Copyright: 1999 AT&T Laboratories Cambridge. All Rights Reserved]
+
+./ica/x11/libvncclient/vncviewer.c: GPL (v2 or later)
+  [Copyright: 1999 AT&T Laboratories Cambridge. All Rights Reserved]
+
+./ica/helpers/ItalcAuthHelper.cpp: no copyright header or license unknown / please check file
+
+./ica/win32/rdr/ZlibOutStream.cxx: GPL (v2 or later)
+  [Copyright: 2002 RealVNC Ltd. All Rights Reserved]
+
+./ica/win32/rdr/MemInStream.h: GPL (v2 or later)
+  [Copyright: 2002 RealVNC Ltd. All Rights Reserved]
+
+./ica/win32/rdr/InStream.h: GPL (v2 or later)
+  [Copyright: 2002 RealVNC Ltd. All Rights Reserved]
+
+./ica/win32/rdr/MemOutStream.h: GPL (v2 or later)
+  [Copyright: 2002 RealVNC Ltd. All Rights Reserved]
+
+./ica/win32/rdr/NullOutStream.cxx: GPL (v2 or later)
+  [Copyright: 2002 RealVNC Ltd. All Rights Reserved]
+
+./ica/win32/rdr/types.h: GPL (v2 or later)
+  [Copyright: 2002 RealVNC Ltd. All Rights Reserved]
+
+./ica/win32/rdr/FdInStream.cxx: GPL (v2 or later)
+  [Copyright: 2002 RealVNC Ltd. All Rights Reserved / 2002 Ultr@VNC Team Members. All Rights Reserved]
+
+./ica/win32/rdr/FdOutStream.h: GPL (v2 or later)
+  [Copyright: 2002 RealVNC Ltd. All Rights Reserved]
+
+./ica/win32/rdr/NullOutStream.h: GPL (v2 or later)
+  [Copyright: 2002 RealVNC Ltd. All Rights Reserved]
+
+./ica/win32/rdr/OutStream.h: GPL (v2 or later)
+  [Copyright: 2002 RealVNC Ltd. All Rights Reserved]
+
+./ica/win32/rdr/FdOutStream.cxx: GPL (v2 or later)
+  [Copyright: 2002 RealVNC Ltd. All Rights Reserved]
+
+./ica/win32/rdr/InStream.cxx: GPL (v2 or later)
+  [Copyright: 2002 RealVNC Ltd. All Rights Reserved]
+
+./ica/win32/rdr/ZlibInStream.h: GPL (v2 or later)
+  [Copyright: 2002 RealVNC Ltd. All Rights Reserved]
+
+./ica/win32/rdr/Exception.h: GPL (v2 or later)
+  [Copyright: 2002 RealVNC Ltd. All Rights Reserved]
+
+./ica/win32/rdr/FdInStream.h: GPL (v2 or later)
+  [Copyright: 2002 RealVNC Ltd. All Rights Reserved]
+
+./ica/win32/rdr/ZlibOutStream.h: GPL (v2 or later)
+  [Copyright: 2002 RealVNC Ltd. All Rights Reserved]
+
+./ica/win32/rdr/ZlibInStream.cxx: GPL (v2 or later)
+  [Copyright: 2002 RealVNC Ltd. All Rights Reserved]
+
+./ica/win32/rdr/FixedMemOutStream.h: GPL (v2 or later)
+  [Copyright: 2002 RealVNC Ltd. All Rights Reserved]
+
+./ica/win32/ultravnc-italc.cpp: no copyright header or license unknown / please check file
+
+./ica/win32/winvnc/DSMPlugin/DSMPlugin.cpp: GPL (v2 or later)
+  [Copyright: 2002 Ultr@VNC Team Members. All Rights Reserved]
+
+./ica/win32/winvnc/DSMPlugin/DSMPlugin.h: GPL (v2 or later)
+  [Copyright: 2002 Ultr@Vnc Team Members. All Rights Reserved]
+
+./ica/win32/winvnc/libjpeg-turbo-win/jpeglib.h: no copyright header or license unknown / please check file
+
+./ica/win32/winvnc/vnchooks/VNCHooks.h: GPL (v2 or later)
+  [Copyright: 1997 AT&T Laboratories Cambridge. All Rights Reserved / 2002 RealVNC Ltd. All Rights Reserved]
+
+./ica/win32/winvnc/vnchooks/SharedData.cpp: GPL (v2 or later)
+  [Copyright: 2001 Const Kaplinsky. All Rights Reserved / 1999 AT&T Laboratories Cambridge. All Rights Reserved]
+
+./ica/win32/winvnc/vnchooks/resource.h: no copyright header or license unknown / please check file
+
+./ica/win32/winvnc/vnchooks/VNCHooks.cpp: GPL (v2 or later)
+  [Copyright: 1997 AT&T Laboratories Cambridge. All Rights Reserved / 2002 RealVNC Ltd. All Rights Reserved / 2002 Ultr@VNC Team Members. All Rights Reserved]
+
+./ica/win32/winvnc/vnchooks/SharedData.h: GPL (v2 or later)
+  [Copyright: 2001 Const Kaplinsky. All Rights Reserved]
+
+./ica/win32/winvnc/rfb/zywrletemplate.c: BSD (3 clause) 
+  [Copyright: HOLDERS AND CONTRIBUTORS / 2006 *]
+
+./ica/win32/winvnc/rfb/zrleEncode.h: GPL (v2 or later)
+  [Copyright: 2002 RealVNC Ltd. All Rights Reserved]
+
+./ica/win32/winvnc/omnithread/nt.cpp: LGPL (v2 or later)
+  [Copyright: 1995-1999 AT&T Laboratories Cambridge]
+
+./ica/win32/winvnc/omnithread/omnithread.h: LGPL (v2 or later)
+  [Copyright: 1994,1995,1996, 1997 Olivetti & Oracle Research Laboratory]
+
+./ica/win32/winvnc/omnithread/nt.h: LGPL (v2 or later)
+  [Copyright: 1995, 1996, 1997 Olivetti & Oracle Research Laboratory]
+
+./ica/win32/winvnc/omnithread/threaddata.cpp: LGPL (v2 or later)
+  [Copyright: 2000 AT&T Laboratories Cambridge]
+
+./ica/win32/winvnc/zlib/zlib.h: no copyright header or license unknown / please check file
+
+./ica/win32/winvnc/lzo/minilzo.h: no copyright header or license unknown / please check file
+
+./ica/win32/winvnc/winvnc/vnckeymap.h: GPL (v2 or later)
+  [Copyright: 2002 RealVNC Ltd. All Rights Reserved / 1999 AT&T Laboratories Cambridge. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/security.cpp: GPL (v2 or later)
+  [Copyright: 2002-2010 Ultr@VNC Team Members. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/vnctimedmsgbox.h: GPL (v2 or later)
+  [Copyright: 1999 AT&T Laboratories Cambridge. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/vncencodezrle.cpp: GPL (v2 or later)
+  [Copyright: 2002 RealVNC Ltd. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/translate.cpp: GPL (v2 or later)
+  [Copyright: 1999 AT&T Laboratories Cambridge. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/vncauth.c: GPL (v2 or later)
+  [Copyright: 1999 AT&T Laboratories Cambridge. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/vncsetauth.h: GPL (v2 or later)
+  [Copyright: 1999 AT&T Laboratories Cambridge. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/vsocket.cpp: GPL (v2 or later)
+  [Copyright: 2002 RealVNC Ltd. All Rights Reserved / 2001 HorizonLive.com, Inc. All Rights Reserved / 1999 AT&T Laboratories Cambridge. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/vncEncodeTight.cpp: GPL (v2 or later)
+  [Copyright: 2000 Const Kaplinsky. All Rights Reserved / 2000 Tridia Corporation. All Rights Reserved / 1999 AT&T Laboratories Cambridge. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/keysymdef.h: please check file
+  [Copyright: 1987, 1994, 1998 The Open Group / 1987 by Digital Equipment Corporation, Maynard, Massachusetts]
+
+./ica/win32/winvnc/winvnc/vncproperties.h: GPL (v2 or later)
+  [Copyright: 2002-2010 Ultr@VNC Team Members. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/vncListDlg.cpp: GPL (v2 or later)
+  [Copyright: 2002 Ultr@Vnc Team Members. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/vncEncodeZlib.h: GPL (v2 or later)
+  [Copyright: 2000 Tridia Corporation. All Rights Reserved / 1999 AT&T Laboratories Cambridge. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/getinfo.cpp: GPL (v2 or later)
+  [Copyright: 2002-2010 Ultr@VNC Team Members. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/d3des.h: no copyright header or license unknown / please check file
+  [Copyright: 1988,1989,1990,1991,1992 by Richard Outerbridge / 1999 AT&T Laboratories Cambridge. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/Dtwinver.h: GPL (v2 or later)
+  [Copyright: 1997 - 2004 by PJ Naughter. (Web: www.naughter.com, Email: pjna@naughter.com) / details at the top of each module. If you want to distribute source / 2002-2010 Ultr@VNC Team Members. All Rights Reserved / / Usage Details:]
+
+./ica/win32/winvnc/winvnc/rfbUpdateTracker.h: GPL (v2 or later)
+  [Copyright: 2002 RealVNC Ltd. All Rights Reserved / 2002 Ultr@VNC Team Members. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/rfbRegion_X11.cxx: GPL (v2 or later)
+  [Copyright: 2002-2003 RealVNC Ltd. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/vncbuffer.h: GPL (v2 or later)
+  [Copyright: 2002 RealVNC Ltd. All Rights Reserved / 1999 AT&T Laboratories Cambridge. All Rights Reserved / 2002 Ultr@VNC Team Members. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/vnctimedmsgbox.cpp: GPL (v2 or later)
+  [Copyright: 1999 AT&T Laboratories Cambridge. All Rights Reserved / 2002 Ultr@VNC Team Members. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/vncencoderre.h: GPL (v2 or later)
+  [Copyright: 2002 RealVNC Ltd. All Rights Reserved / 1999 AT&T Laboratories Cambridge. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/winvnc.h: GPL (v2 or later)
+  [Copyright: 1999 AT&T Laboratories Cambridge. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/service.cpp: GPL (v2 or later)
+  [Copyright: 2002 RealVNC Ltd. All Rights Reserved / 1999 AT&T Laboratories Cambridge. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/HideDesktop.cpp: GPL (v2 or later)
+  [Copyright: 2002 RealVNC Ltd. All Rights Reserved / 1999 AT&T Laboratories Cambridge. All Rights Reserved / 2002 Ultr@VNC Team Members. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/vncsockconnect.h: GPL (v2 or later)
+  [Copyright: 1999 AT&T Laboratories Cambridge. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/vncEncodeUltra2.cpp: GPL (v2 or later)
+  [Copyright: 2000 Tridia Corporation. All Rights Reserved / 1999 AT&T Laboratories Cambridge. All Rights Reserved / 2002 Ultr@VNC Team Members. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/vncconndialog.cpp: GPL (v2 or later)
+  [Copyright: 1999 AT&T Laboratories Cambridge. All Rights Reserved / 2002 Ultr@VNC Team Members. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/rfbUpdateTracker.cpp: GPL (v2 or later)
+  [Copyright: 2002 RealVNC Ltd. All Rights Reserved / 2002 Ultr@VNC Team Members. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/vncpropertiesPoll.h: GPL (v2 or later)
+  [Copyright: 2002-2010 Ultr@VNC Team Members. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/vncdesktopthread.h: GPL (v2 or later)
+  [Copyright: 2002-2010 Ultr@VNC Team Members. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/vncEncodeUltra.h: GPL (v2 or later)
+  [Copyright: 2000 Tridia Corporation. All Rights Reserved / 1999 AT&T Laboratories Cambridge. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/vncdesktopthread.cpp: GPL (v2 or later)
+  [Copyright: 2002-2010 Ultr@VNC Team Members. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/vncmenu.h: GPL (v2 or later)
+  [Copyright: 1999 AT&T Laboratories Cambridge. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/vncdesktopsink.cpp: GPL (v2 or later)
+  [Copyright: 2002-2010 Ultr@VNC Team Members. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/vncencoder.cpp: GPL (v2 or later)
+  [Copyright: 2002 RealVNC Ltd. All Rights Reserved / 1999 AT&T Laboratories Cambridge. All Rights Reserved / 2002 Ultr@VNC Team Members. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/vncclient.cpp: GPL (v2 or later)
+  [Copyright: 2002 RealVNC Ltd. All Rights Reserved / 2000-2002 Const Kaplinsky. All Rights Reserved / 1999 AT&T Laboratories Cambridge. All Rights Reserved / 2002 Ultr@VNC Team Members. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/vncdesktop.cpp: GPL (v2 or later)
+  [Copyright: 2002 RealVNC Ltd. All Rights Reserved / 2000-2002 Const Kaplinsky. All Rights Reserved / 1999 AT&T Laboratories Cambridge. All Rights Reserved / 2002 Ultr@VNC Team Members. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/rfbRect.h: GPL (v2 or later)
+  [Copyright: 2002-2003 RealVNC Ltd. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/vncOSVersion.h: GPL (v2 or later)
+  [Copyright: 2002 Ultr@VNC Team Members. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/vncservice.h: GPL (v2 or later)
+  [Copyright: 2002 RealVNC Ltd. All Rights Reserved / 1999 AT&T Laboratories Cambridge. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/CpuUsage.cpp: GPL (v2 or later)
+  [Copyright: 2002-2010 Ultr@VNC Team Members. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/vncEncodeZlibHex.h: GPL (v2 or later)
+  [Copyright: 2000 Tridia Corporation. All Rights Reserved / 1999 AT&T Laboratories Cambridge. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/d3des.c: no copyright header or license unknown / please check file
+  [Copyright: 1988,1989,1990,1991,1992 by Richard Outerbridge / 1999 AT&T Laboratories Cambridge. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/read_write_ini.cpp: GPL (v2 or later)
+  [Copyright: 2002-2010 Ultr@VNC Team Members. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/vtypes.h: GPL (v2 or later)
+  [Copyright: 1999 AT&T Laboratories Cambridge. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/vnclog.cpp: GPL (v2 or later)
+  [Copyright: 2002 RealVNC Ltd. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/buildtime.cpp: GPL (v2 or later)
+  [Copyright: 2002 RealVNC Ltd. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/vncencoderCursor.cpp: GPL (v2 or later)
+  [Copyright: 2000 Const Kaplinsky. All Rights Reserved / 2002-2010 Ultr@VNC Team Members. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/vncabout.cpp: GPL (v2 or later)
+  [Copyright: 2002 RealVNC Ltd. All Rights Reserved / 1999 AT&T Laboratories Cambridge. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/httpconnect.h: GPL (v2 or later)
+  [Copyright: 2002-2010 Ultr@VNC Team Members. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/TextChat.h: GPL (v2 or later)
+  [Copyright: 2002 Ultr@VNC Team Members. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/tableinittctemplate.cpp: no copyright header or license unknown / please check file
+
+./ica/win32/winvnc/winvnc/vncdesktop.h: GPL (v2 or later)
+  [Copyright: 2002 RealVNC Ltd. All Rights Reserved / 2000-2002 Const Kaplinsky. All Rights Reserved / 1999 AT&T Laboratories Cambridge. All Rights Reserved / 2002 Ultr@VNC Team Members. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/resource.h: no copyright header or license unknown / please check file
+
+./ica/win32/winvnc/winvnc/IPC.cpp: GPL (v2 or later)
+  [Copyright: 2002-2010 Ultr@VNC Team Members. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/inifile.h: GPL (v2 or later)
+  [Copyright: 2002-2010 Ultr@VNC Team Members. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/Dtwinver.cpp: GPL (v2 or later)
+  [Copyright: 2002-2010 Ultr@VNC Team Members. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/benchmark.cpp: no copyright header or license unknown / please check file
+
+./ica/win32/winvnc/winvnc/vncinsthandler.cpp: GPL (v2 or later)
+  [Copyright: 1999 AT&T Laboratories Cambridge. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/vncmemcpy.h: no copyright header or license unknown / please check file
+
+./ica/win32/winvnc/winvnc/Localization.h: no copyright header or license unknown / please check file
+
+./ica/win32/winvnc/winvnc/vnchttpconnect.h: GPL (v2 or later)
+  [Copyright: 1999 AT&T Laboratories Cambridge. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/vncEncodeUltra2.h: GPL (v2 or later)
+  [Copyright: 2000 Tridia Corporation. All Rights Reserved / 1999 AT&T Laboratories Cambridge. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/helpers.cpp: GPL (v2 or later)
+  [Copyright: 2002-2010 Ultr@VNC Team Members. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/vnclogon.cpp: no copyright header or license unknown / please check file
+
+./ica/win32/winvnc/winvnc/winvnc.cpp: GPL (v2 or later)
+  [Copyright: 2007 Ultr@VNC Team Members. All Rights Reserved / 1999 AT&T Laboratories Cambridge. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/vncauth.h: GPL (v2 or later)
+  [Copyright: 1999 AT&T Laboratories Cambridge. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/vncacceptdialog.h: GPL (v2 or later)
+  [Copyright: 1999 AT&T Laboratories Cambridge. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/vnclogon.h: no copyright header or license unknown / please check file
+
+./ica/win32/winvnc/winvnc/vncntlm.cpp: GPL (v2 or later)
+  [Copyright: 2002-2010 Ultr@VNC Team Members. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/vncclient.h: GPL (v2 or later)
+  [Copyright: 2002 RealVNC Ltd. All Rights Reserved / 2000-2002 Const Kaplinsky. All Rights Reserved / 1999 AT&T Laboratories Cambridge. All Rights Reserved / 2002 Ultr@VNC Team Members. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/CpuUsage.h: GPL (v2 or later)
+  [Copyright: 2002-2010 Ultr@VNC Team Members. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/vnckeymap.cpp: GPL (v2 or later)
+  [Copyright: 2002 RealVNC Ltd. All Rights Reserved / 1999 AT&T Laboratories Cambridge. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/tabletranstemplate.cpp: no copyright header or license unknown / please check file
+
+./ica/win32/winvnc/winvnc/vncinsthandler.h: GPL (v2 or later)
+  [Copyright: 1999 AT&T Laboratories Cambridge. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/inifile.cpp: GPL (v2 or later)
+  [Copyright: 2002-2010 Ultr@VNC Team Members. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/vnclog.h: GPL (v2 or later)
+  [Copyright: 2002 RealVNC Ltd. All Rights Reserved / 1999 AT&T Laboratories Cambridge. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/vncEncodeUltra.cpp: GPL (v2 or later)
+  [Copyright: 2000 Tridia Corporation. All Rights Reserved / 1999 AT&T Laboratories Cambridge. All Rights Reserved / 2002 Ultr@VNC Team Members. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/minmax.h: GPL (v2 or later)
+  [Copyright: 1999 AT&T Laboratories Cambridge. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/vncbuffer.cpp: GPL (v2 or later)
+  [Copyright: 2002 RealVNC Ltd. All Rights Reserved / 2000-2002 Const Kaplinsky. All Rights Reserved / 1999 AT&T Laboratories Cambridge. All Rights Reserved / 2002 Ultr@VNC Team Members. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/rfbRegion_X11.h: GPL (v2 or later)
+  [Copyright: 2002-2003 RealVNC Ltd. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/vncserver.cpp: GPL (v2 or later)
+  [Copyright: 2002 RealVNC Ltd. All Rights Reserved / 2000-2002 Const Kaplinsky. All Rights Reserved / 1999 AT&T Laboratories Cambridge. All Rights Reserved / 2002 Ultr@Vnc Team Members. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/videodriver.cpp: GPL (v2 or later)
+  [Copyright: 2002-2010 Ultr@VNC Team Members. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/stdhdrs.h: GPL (v2 or later)
+  [Copyright: 2002 RealVNC Ltd. All Rights Reserved / 1999 AT&T Laboratories Cambridge. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/vncencoderre.cpp: GPL (v2 or later)
+  [Copyright: 2002 RealVNC Ltd. All Rights Reserved / 1999 AT&T Laboratories Cambridge. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/rfbRegion_win32.h: GPL (v2 or later)
+  [Copyright: 2002-2003 RealVNC Ltd. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/vncacceptdialog.cpp: GPL (v2 or later)
+  [Copyright: 1999 AT&T Laboratories Cambridge. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/vncsockconnect.cpp: GPL (v2 or later)
+  [Copyright: 1999 AT&T Laboratories Cambridge. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/translate.h: GPL (v2 or later)
+  [Copyright: 1999 AT&T Laboratories Cambridge. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/vncproperties.cpp: GPL (v2 or later)
+  [Copyright: 2002 RealVNC Ltd. All Rights Reserved / 2000-2002 Const Kaplinsky. All Rights Reserved / 2002 TightVNC. All Rights Reserved / 1999 AT&T Laboratories Cambridge. All Rights Reserved / 2002 Ultr@VNC Team Members. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/TextChat.cpp: GPL (v2 or later)
+  [Copyright: 2002 Ultr@VNC Team Members. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/Timer.cpp: GPL (v2 or later)
+  [Copyright: 2002 RealVNC Ltd. All Rights Reserved / 2000-2002 Const Kaplinsky. All Rights Reserved / 1999 AT&T Laboratories Cambridge. All Rights Reserved / 2002 Ultr@VNC Team Members. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/vncDesktopSW.cpp: GPL (v2 or later)
+  [Copyright: 2002 Ultr@VNC Team Members. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/Timer.h: GPL (v2 or later)
+  [Copyright: 2002 RealVNC Ltd. All Rights Reserved / 2000-2002 Const Kaplinsky. All Rights Reserved / 1999 AT&T Laboratories Cambridge. All Rights Reserved / 2002 Ultr@VNC Team Members. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/rfbRegion_win32.cpp: GPL (v2 or later)
+  [Copyright: 2002-2003 RealVNC Ltd. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/vncencodehext.cpp: GPL (v2 or later)
+  [Copyright: 2002 RealVNC Ltd. All Rights Reserved / 1999 AT&T Laboratories Cambridge. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/HideDesktop.h: GPL (v2 or later)
+  [Copyright: 2002 RealVNC Ltd. All Rights Reserved / 1999 AT&T Laboratories Cambridge. All Rights Reserved / 2002 Ultr@VNC Team Members. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/vncabout.h: GPL (v2 or later)
+  [Copyright: 1999 AT&T Laboratories Cambridge. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/httpconnect.cpp: GPL (v2 or later)
+  [Copyright: 2002-2010 Ultr@VNC Team Members. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/rfbMisc.h: GPL (v2 or later)
+  [Copyright: 2002 RealVNC Ltd. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/vncencoder.h: GPL (v2 or later)
+  [Copyright: 2002 RealVNC Ltd. All Rights Reserved / 2000-2002 Const Kaplinsky. All Rights Reserved / 1999 AT&T Laboratories Cambridge. All Rights Reserved / 2002 Ultr@VNC Team Members. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/stdhdrs.cpp: GPL (v2 or later)
+  [Copyright: 2002 RealVNC Ltd. All Rights Reserved / 1999 AT&T Laboratories Cambridge. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/vncencodecorre.cpp: GPL (v2 or later)
+  [Copyright: 2002 RealVNC Ltd. All Rights Reserved / 1999 AT&T Laboratories Cambridge. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/vncOSVersion.cpp: GPL (v2 or later)
+  [Copyright: 2002 Ultr@VNC Team Members. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/rfbRegion.h: GPL (v2 or later)
+  [Copyright: 2002-2003 RealVNC Ltd. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/vncserver.h: GPL (v2 or later)
+  [Copyright: 2002 RealVNC Ltd. All Rights Reserved / 2000-2002 Const Kaplinsky. All Rights Reserved / 1999 AT&T Laboratories Cambridge. All Rights Reserved / 2002 Ultr@VNC Team Members. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/vncencodezrle.h: GPL (v2 or later)
+  [Copyright: 2002 RealVNC Ltd. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/vnchttpconnect.cpp: GPL (v2 or later)
+  [Copyright: 2000 Const Kaplinsky. All Rights Reserved / 2002 RealVNC Ltd. All Rights Reserved / 1999 AT&T Laboratories Cambridge. All Rights Reserved / 2002 Ultr@VNC Team Members. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/service_motor.cpp: GPL (v2 or later)
+  [Copyright: 2002-2010 Ultr@VNC Team Members. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/black_layered.cpp: GPL (v2 or later)
+  [Copyright: 2002-2010 Ultr@VNC Team Members. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/IPC.h: GPL (v2 or later)
+  [Copyright: 2002-2010 Ultr@VNC Team Members. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/vncEncodeZlib.cpp: GPL (v2 or later)
+  [Copyright: 2000 Tridia Corporation. All Rights Reserved / 1999 AT&T Laboratories Cambridge. All Rights Reserved / 2002 Ultr@VNC Team Members. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/rfb.h: GPL (v2 or later)
+  [Copyright: 2002 RealVNC Ltd. All Rights Reserved / 1999 AT&T Laboratories Cambridge. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/vncpropertiesPoll.cpp: GPL (v2 or later)
+  [Copyright: 2002 RealVNC Ltd. All Rights Reserved / 2000-2002 Const Kaplinsky. All Rights Reserved / 2002 TightVNC. All Rights Reserved / 1999 AT&T Laboratories Cambridge. All Rights Reserved / 2002 Ultr@VNC Team Members. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/vncEncodeZlibHex.cpp: GPL (v2 or later)
+  [Copyright: 2000 Tridia Corporation. All Rights Reserved / 1999 AT&T Laboratories Cambridge. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/videodrivercheck.cpp: GPL (v2 or later)
+  [Copyright: 2002-2010 Ultr@VNC Team Members. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/vncsetauth.cpp: GPL (v2 or later)
+  [Copyright: 2002 RealVNC Ltd. All Rights Reserved / 1999 AT&T Laboratories Cambridge. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/vncpasswd.h: GPL (v2 or later)
+  [Copyright: 2002 RealVNC Ltd. All Rights Reserved / 1999 AT&T Laboratories Cambridge. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/initipp.cpp: GPL (v2 or later)
+  [Copyright: 2002-2010 Ultr@VNC Team Members. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/vncencodecorre.h: GPL (v2 or later)
+  [Copyright: 2002 RealVNC Ltd. All Rights Reserved / 1999 AT&T Laboratories Cambridge. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/vncListDlg.h: GPL (v2 or later)
+  [Copyright: 2002 Ultr@VNC Team Members. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/vncconndialog.h: GPL (v2 or later)
+  [Copyright: 1999 AT&T Laboratories Cambridge. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/vncencodemgr.h: GPL (v2 or later)
+  [Copyright: 2002 RealVNC Ltd. All Rights Reserved / 2000-2002 Const Kaplinsky. All Rights Reserved / 1999 AT&T Laboratories Cambridge. All Rights Reserved / 2002 Ultr@VNC Team Members. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/vncmenu.cpp: GPL (v2 or later)
+  [Copyright: 2002 RealVNC Ltd. All Rights Reserved / 1999 AT&T Laboratories Cambridge. All Rights Reserved / 2002 Ultr@VNC Team Members. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/tableinitcmtemplate.cpp: no copyright header or license unknown / please check file
+
+./ica/win32/winvnc/winvnc/vncencodehext.h: GPL (v2 or later)
+  [Copyright: 2002 RealVNC Ltd. All Rights Reserved / 1999 AT&T Laboratories Cambridge. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/vncEncodeTight.h: GPL (v2 or later)
+  [Copyright: 2000 Tridia Corporation. All Rights Reserved / 2000 Constantin Kaplinsky. All Rights Reserved / 1999 AT&T Laboratories Cambridge. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/vncMultiMonitor.cpp: GPL (v2 or later)
+  [Copyright: 2002-2010 Ultr@VNC Team Members. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/vsocket.h: GPL (v2 or later)
+  [Copyright: 2001 HorizonLive.com, Inc. All Rights Reserved / 1999 AT&T Laboratories Cambridge. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/vncservice.cpp: GPL (v2 or later)
+  [Copyright: 2002 RealVNC Ltd. All Rights Reserved / 1999 AT&T Laboratories Cambridge. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/videodriver.h: GPL (v2 or later)
+  [Copyright: 2002-2010 Ultr@VNC Team Members. All Rights Reserved]
+
+./ica/win32/winvnc/winvnc/vistahook.cpp: GPL (v2 or later)
+  [Copyright: 2002-2010 Ultr@VNC Team Members. All Rights Reserved]
+
+./ica/win32/common/win32_helpers.h: GPL (v2 or later)
+  [Copyright: 2002-2010 Ultr@VNC Team Members. All Rights Reserved]
+
+./ica/win32/common/win32_helpers.cpp: GPL (v2 or later)
+  [Copyright: 2002-2010 Ultr@VNC Team Members. All Rights Reserved]
+
+./ica/win32/common/ScopeGuard.h: no copyright header or license unknown / please check file
+  [Copyright: 2000 Andrei Alexandrescu and Petru Marginean / 2005 Joshua Lehrer, FactSet Research Systems ]
+
+./ica/win32/common/Clipboard.cpp: GPL (v2 or later)
+  [Copyright: 2002-2010 Ultr@VNC Team Members. All Rights Reserved]
+
+./ica/win32/common/Clipboard.h: GPL (v2 or later)
+  [Copyright: 2002-2010 Ultr@VNC Team Members. All Rights Reserved]
+
+./ica/win32/ultravnc.cpp: no copyright header or license unknown / please check file
+
+./ica/win32/addon/ms-logon/MSLogonACL/vncImportACL.h: GPL (v2 or later)
+  [Copyright: 2004 Martin Scharpf. All Rights Reserved]
+
+./ica/win32/addon/ms-logon/MSLogonACL/buildtime.h: no copyright header or license unknown / please check file
+
+./ica/win32/addon/ms-logon/MSLogonACL/resource.h: no copyright header or license unknown / please check file
+
+./ica/win32/addon/ms-logon/MSLogonACL/vncExportACL.cpp: GPL (v2 or later)
+  [Copyright: 2004 Martin Scharpf. All Rights Reserved]
+
+./ica/win32/addon/ms-logon/MSLogonACL/vncImportACL.cpp: GPL (v2 or later)
+  [Copyright: 2004 Martin Scharpf. All Rights Reserved]
+
+./ica/win32/addon/ms-logon/MSLogonACL/MSLogonACL.h: GPL (v2 or later)
+  [Copyright: 2004 Martin Scharpf. All Rights Reserved]
+
+./ica/win32/addon/ms-logon/MSLogonACL/vncExportACL.h: GPL (v2 or later)
+  [Copyright: 2004 Martin Scharpf. All Rights Reserved]
+
+./ica/win32/addon/ms-logon/MSLogonACL/MSLogonACL.cpp: GPL (v2 or later)
+  [Copyright: 2004 Martin Scharpf. All Rights Reserved]
+
+./ica/win32/addon/ms-logon/authadm/resource.h: no copyright header or license unknown / please check file
+
+./ica/win32/addon/ms-logon/authadm/authadmin.h: no copyright header or license unknown / please check file
+
+./ica/win32/addon/ms-logon/authadm/authadmin.cpp: GPL (v2 or later)
+  [Copyright: 2002 Ultr@VNC Team Members. All Rights Reserved]
+
+./ica/win32/addon/ms-logon/ldapauthNT4/resource.h: no copyright header or license unknown / please check file
+
+./ica/win32/addon/ms-logon/ldapauthNT4/ldapAuthnt4.cpp: GPL (v2 or later)
+  [Copyright: 2002 Ultr@VNC Team Members. All Rights Reserved]
+
+./ica/win32/addon/ms-logon/ldapauthNT4/ldapAuthnt4.h: no copyright header or license unknown / please check file
+
+./ica/win32/addon/ms-logon/ldapauth9x/ldapAuth9x.cpp: GPL (v2 or later)
+  [Copyright: 2002 Ultr@VNC Team Members. All Rights Reserved]
+
+./ica/win32/addon/ms-logon/ldapauth9x/ldapAuth9x.h: no copyright header or license unknown / please check file
+
+./ica/win32/addon/ms-logon/ldapauth9x/resource.h: no copyright header or license unknown / please check file
+
+./ica/win32/addon/ms-logon/ldapauth/resource.h: no copyright header or license unknown / please check file
+
+./ica/win32/addon/ms-logon/ldapauth/ldapAuth.h: no copyright header or license unknown / please check file
+
+./ica/win32/addon/ms-logon/ldapauth/ldapAuth.cpp: GPL (v2 or later)
+  [Copyright: 2002 Ultr@VNC Team Members. All Rights Reserved]
+
+./ica/win32/addon/ms-logon/authSSP/vncAccessControl.h: GPL (v2 or later)
+  [Copyright: 2004 Martin Scharpf, B. Braun Melsungen AG. All Rights Reserved / 2002 Ultr@VNC Team Members. All Rights Reserved]
+
+./ica/win32/addon/ms-logon/authSSP/authSSP.h: GPL (v2 or later)
+  [Copyright: 2004 Martin Scharpf, B. Braun Melsungen AG. All Rights Reserved / 2002 Ultr@VNC Team Members. All Rights Reserved]
+
+./ica/win32/addon/ms-logon/authSSP/EventLogging.cpp: GPL (v2 or later)
+  [Copyright: 2004 Martin Scharpf, B. Braun Melsungen AG. All Rights Reserved / 2002 Ultr@VNC Team Members. All Rights Reserved]
+
+./ica/win32/addon/ms-logon/authSSP/vncAccessControl.cpp: GPL (v2 or later)
+  [Copyright: 2004 Martin Scharpf. All Rights Reserved]
+
+./ica/win32/addon/ms-logon/authSSP/GenClientServerContext.cpp: GPL (v2 or later)
+  [Copyright: 2004 Martin Scharpf, B. Braun Melsungen AG. All Rights Reserved / 2002 Ultr@VNC Team Members. All Rights Reserved]
+
+./ica/win32/addon/ms-logon/authSSP/Auth_Seq.h: GPL (v2 or later)
+  [Copyright: 2004 Martin Scharpf, B. Braun Melsungen AG. All Rights Reserved]
+
+./ica/win32/addon/ms-logon/authSSP/resource.h: no copyright header or license unknown / please check file
+
+./ica/win32/addon/ms-logon/authSSP/vncSecurityEditor.cpp: GPL (v2 or later)
+  [Copyright: 2004 Martin Scharpf. All Rights Reserved]
+
+./ica/win32/addon/ms-logon/authSSP/vncSecurityEditorProps.h: GPL (v2 or later)
+  [Copyright: 2004 Martin Scharpf, B. Braun Melsungen AG. All Rights Reserved]
+
+./ica/win32/addon/ms-logon/authSSP/authSSP.cpp: GPL (v2 or later)
+  [Copyright: 2004 Martin Scharpf, B. Braun Melsungen AG. All Rights Reserved / 2002 Ultr@VNC Team Members. All Rights Reserved]
+
+./ica/win32/addon/ms-logon/authSSP/EventLogging.h: GPL (v2 or later)
+  [Copyright: 2004 Martin Scharpf, B. Braun Melsungen AG. All Rights Reserved / 2002 Ultr@VNC Team Members. All Rights Reserved]
+
+./ica/win32/addon/ms-logon/authSSP/GenClientServerContext.h: GPL (v2 or later)
+  [Copyright: 2004 Martin Scharpf, B. Braun Melsungen AG. All Rights Reserved / 2002 Ultr@VNC Team Members. All Rights Reserved]
+
+./ica/win32/addon/ms-logon/authSSP/vncSecurityEditor.h: GPL (v2 or later)
+  [Copyright: 2004 Martin Scharpf, B. Braun Melsungen AG. All Rights Reserved]
+
+./ica/win32/addon/ms-logon/authSSP/vncSSP.cpp: GPL (v2 or later)
+  [Copyright: 2004 Martin Scharpf. All Rights Reserved / 2002 Ultr@VNC Team Members. All Rights Reserved]
+
+./ica/win32/addon/ms-logon/authSSP/vncSSP.h: GPL (v2 or later)
+  [Copyright: 2004 Martin Scharpf, B. Braun Melsungen AG. All Rights Reserved / 2002 Ultr@VNC Team Members. All Rights Reserved]
+
+./ica/win32/addon/ms-logon/workgrpdomnt4/workgrpdomnt4.cpp: GPL (v2 or later)
+  [Copyright: 2002 Ultr@VNC Team Members. All Rights Reserved]
+
+./ica/win32/addon/ms-logon/workgrpdomnt4/resource.h: no copyright header or license unknown / please check file
+
+./ica/win32/addon/ms-logon/workgrpdomnt4/workgrpdomnt4.h: no copyright header or license unknown / please check file
+
+./ica/win32/addon/ms-logon/logging/logging.cpp: GPL (v2 or later)
+  [Copyright: 2002 Ultr@VNC Team Members. All Rights Reserved]
+
+./ica/win32/addon/ms-logon/logging/resource.h: no copyright header or license unknown / please check file
+
+./ica/win32/addon/ms-logon/logging/logging.h: no copyright header or license unknown / please check file
+
+./ica/win32/addon/ms-logon/testauth/ntlogon.cpp: no copyright header or license unknown / please check file
+
+./ica/win32/addon/ms-logon/testauth/resource.h: no copyright header or license unknown / please check file
+
+./ica/win32/addon/versioninfo.h: GPL (v2 or later)
+  [Copyright: 2004 Martin Scharpf, B. Braun Melsungen AG. All Rights Reserved / 2002 Ultr@VNC Team Members. All Rights Reserved]
+
+./ica/win32/addon/logger/messages.h: no copyright header or license unknown / please check file
+
+./ima/src/RemoteControlWidget.cpp: GPL (v2 or later)
+  [Copyright: 2006-2011 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./ima/src/SideBar.cpp: GPL (v2 or later) 
+  [Copyright: 2004-2010 Tobias Doerffel <tobydox/at/users.sourceforge.net>]
+
+./ima/src/Dialogs.cpp: GPL (v2 or later)
+  [Copyright: 2006-2011 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./ima/src/SnapshotList.h: GPL (v2 or later)
+  [Copyright: 2004-2009 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./ima/src/ToolButton.h: GPL (v2 or later)
+  [Copyright: 2006-2010 Tobias Doerffel <tobydox/at/users.sourceforge.net>]
+
+./ima/src/Client.h: GPL (v2 or later)
+  [Copyright: 2004-2011 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./ima/src/MainWindow.h: GPL (v2 or later)
+  [Copyright: 2004-2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./ima/src/SnapshotList.cpp: GPL (v2 or later)
+  [Copyright: 2004-2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./ima/src/ClassroomManager.h: GPL (v2 or later)
+  [Copyright: 2004-2011 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./ima/src/ConfigWidget.cpp: GPL (v2 or later)
+  [Copyright: 2004-2011 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./ima/src/RunCommandsDialog.h: GPL (v2 or later)
+  [Copyright: 2004-2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./ima/src/Client.cpp: GPL (v2 or later)
+  [Copyright: 2004-2011 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./ima/src/ClassroomManager.cpp: GPL (v2 or later)
+  [Copyright: 2004-2011 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./ima/src/RunCommandsDialog.cpp: GPL (v2 or later)
+  [Copyright: 2004-2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./ima/src/OverviewWidget.cpp: GPL (v2 or later)
+  [Copyright: 2004-2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./ima/src/MainToolBar.cpp: GPL (v2 or later)
+  [Copyright: 2007-2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./ima/src/MainToolBar.h: GPL (v2 or later)
+  [Copyright: 2007-2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./ima/src/Dialogs.h: GPL (v2 or later)
+  [Copyright: 2004-2011 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./ima/src/RemoteControlWidget.h: GPL (v2 or later)
+  [Copyright: 2006-2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./ima/src/MainWindow.cpp: GPL (v2 or later)
+  [Copyright: 2004-2011 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./ima/src/SideBar.h: GPL (v2 or later) 
+  [Copyright: 2004-2010 Tobias Doerffel <tobydox/at/users.sourceforge.net>]
+
+./ima/src/ToolButton.cpp: GPL (v2 or later)
+  [Copyright: 2006-2009 Tobias Doerffel <tobydox/at/users.sourceforge.net>]
+
+./ima/src/SideBarWidget.cpp: GPL (v2 or later)
+  [Copyright: 2004-2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./ima/src/ConfigWidget.h: GPL (v2 or later)
+  [Copyright: 2004-2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./ima/src/OverviewWidget.h: GPL (v2 or later)
+  [Copyright: 2004-2009 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./ima/src/SideBarWidget.h: GPL (v2 or later)
+  [Copyright: 2004-2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./ima/src/main.cpp: GPL (v2 or later)
+  [Copyright: 2004-2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./imc/src/KeyFileAssistant.h: GPL (v2 or later)
+  [Copyright: 2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./imc/src/FileSystemBrowser.h: GPL (v2 or later)
+  [Copyright: 2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./imc/src/MainWindow.h: GPL (v2 or later)
+  [Copyright: 2010-2011 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./imc/src/LogonGroupEditor.h: GPL (v2 or later)
+  [Copyright: 2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./imc/src/SystemConfigurationModifier.h: GPL (v2 or later)
+  [Copyright: 2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./imc/src/KeyFileAssistantModePage.cpp: GPL (v2 or later)
+  [Copyright: 2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./imc/src/KeyFileAssistant.cpp: GPL (v2 or later)
+  [Copyright: 2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./imc/src/ImcCore.h: GPL (v2 or later)
+  [Copyright: 2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./imc/src/Win32AclEditor.h: GPL (v2 or later)
+  [Copyright: 2004 Martin Scharpf, B. Braun Melsungen AG. All Rights Reserved]
+
+./imc/src/LogonGroupEditor.cpp: GPL (v2 or later)
+  [Copyright: 2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./imc/src/MainWindow.cpp: GPL (v2 or later)
+  [Copyright: 2010-2011 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./imc/src/KeyDirectoriesPage.h: GPL (v2 or later)
+  [Copyright: 2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./imc/src/Win32AclEditor.cpp: GPL (v2 or later)
+  [Copyright: 2004 Martin Scharpf. All Rights Reserved]
+
+./imc/src/ImcCore.cpp: GPL (v2 or later)
+  [Copyright: 2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./imc/src/KeyDirectoriesPage.cpp: GPL (v2 or later)
+  [Copyright: 2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./imc/src/KeyFileAssistantModePage.h: GPL (v2 or later)
+  [Copyright: 2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./imc/src/FileSystemBrowser.cpp: GPL (v2 or later)
+  [Copyright: 2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./imc/src/netfw.h: *No copyright* GENERATED FILE
+
+./imc/src/SystemConfigurationModifier.cpp: GPL (v2 or later)
+  [Copyright: 2010-2011 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./imc/src/LogonAclSettings.h: GPL (v2 or later)
+  [Copyright: 2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./imc/src/main.cpp: GPL (v2 or later)
+  [Copyright: 2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./lib/src/Inject.cpp: GPL (v2 or later)
+  [Copyright: 2006-2009 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./lib/src/ItalcCoreConnection.cpp: GPL (v2 or later)
+  [Copyright: 2008-2011 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./lib/src/AuthenticationCredentials.cpp: GPL (v2 or later)
+  [Copyright: 2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./lib/src/ItalcCore.cpp: GPL (v2 or later)
+  [Copyright: 2006-2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./lib/src/DsaKey.cpp: GPL (v2 or later)
+  [Copyright: 2006-2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./lib/src/ProgressWidget.cpp: GPL (v2 or later)
+  [Copyright: 2006-2008 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./lib/src/Configuration/XmlStore.cpp: GPL (v2 or later)
+  [Copyright: 2009-2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./lib/src/Configuration/LocalStore.cpp: GPL (v2 or later)
+  [Copyright: 2009 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./lib/src/Configuration/Object.cpp: GPL (v2 or later)
+  [Copyright: 2009 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./lib/src/LocalSystem.cpp: GPL (v2 or later)
+  [Copyright: 2006-2011 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./lib/src/AboutDialog.cpp: GPL (v2 or later)
+  [Copyright: 2011 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./lib/src/Logger.cpp: GPL (v2 or later)
+  [Copyright: 2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./lib/src/ItalcVncConnection.cpp: GPL (v2 or later)
+  [Copyright: 2007-2008 Urs Wolfer <uwolfer @ kde.org> / 2008-2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./lib/src/PasswordDialog.cpp: GPL (v2 or later)
+  [Copyright: 2010-2011 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./lib/src/Ipc/SlaveLauncher.cpp: GPL (v2 or later)
+  [Copyright: 2010 Univention GmbH / 2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./lib/src/Ipc/Master.cpp: GPL (v2 or later)
+  [Copyright: 2010 Univention GmbH / 2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./lib/src/Ipc/Core.cpp: GPL (v2 or later)
+  [Copyright: 2010 Univention GmbH / 2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./lib/src/Ipc/QtSlaveLauncher.cpp: GPL (v2 or later)
+  [Copyright: 2010 Univention GmbH / 2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./lib/src/Ipc/Slave.cpp: GPL (v2 or later)
+  [Copyright: 2010 Univention GmbH / 2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./lib/src/DecoratedMessageBox.cpp: GPL (v2 or later)
+  [Copyright: 2006-2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./lib/src/SystemKeyTrapper.cpp: GPL (v2 or later)
+  [Copyright: 2006-2011 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./lib/src/3rdparty/XEventLog.h: no copyright header or license unknown / please check file
+
+./lib/src/3rdparty/XEventLog.cpp: public domain
+  [Author: Hans Dietrich]
+
+./lib/src/LogonAuthentication.cpp: GPL (v2 or later)
+  [Copyright: 2011 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./lib/src/VncView.cpp: GPL (v2 or later)
+  [Copyright: 2006-2011 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./lib/src/dh.cpp: public domain
+  [Author: 2004, Lee Griffiths]
+
+./lib/src/LockWidget.cpp: GPL (v2 or later)
+  [Copyright: 2006-2011 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./lib/src/FastQImage.cpp: GPL (v2 or later)LGPL (v2 or later)
+  [Copyright: 2000-2001 Pete Shinners / 2006-2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net> / 2007 Rene Dudfield, Richard Goedeken]
+
+./lib/src/Snapshot.cpp: GPL (v2 or later)
+  [Copyright: 2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./lib/src/ItalcConfiguration.cpp: GPL (v2 or later)
+  [Copyright: 2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./lib/include/ItalcCoreConnection.h: GPL (v2 or later)
+  [Copyright: 2008-2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./lib/include/AuthenticationCredentials.h: GPL (v2 or later)
+  [Copyright: 2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./lib/include/SystemKeyTrapper.h: GPL (v2 or later)
+  [Copyright: 2006-2011 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./lib/include/LockWidget.h: GPL (v2 or later)
+  [Copyright: 2006-2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./lib/include/Logger.h: GPL (v2 or later)
+  [Copyright: 2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./lib/include/SocketDevice.h: GPL (v2 or later)
+  [Copyright: 2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./lib/include/Configuration/Object.h: GPL (v2 or later)
+  [Copyright: 2009-2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./lib/include/Configuration/Store.h: GPL (v2 or later)
+  [Copyright: 2009-2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./lib/include/Configuration/UiMapping.h: GPL (v2 or later)
+  [Copyright: 2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./lib/include/Configuration/LocalStore.h: GPL (v2 or later)
+  [Copyright: 2009-2011 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./lib/include/Configuration/XmlStore.h: GPL (v2 or later)
+  [Copyright: 2009-2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./lib/include/ItalcRfbExt.h: GPL (v2 or later)
+  [Copyright: 2004-2011 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./lib/include/QuadTree.h: GPL (v2 or later)
+  [Copyright: 2010-2011 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./lib/include/ItalcCore.h: GPL (v2 or later)
+  [Copyright: 2006-2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./lib/include/rfb/rfbclient.h: GPL (v2 or later)
+  [Copyright: 2000, 2001 Const Kaplinsky. All Rights Reserved / 2000 Tridia Corporation. All Rights Reserved / 1999 AT&T Laboratories Cambridge. All Rights Reserved]
+
+./lib/include/rfb/rfbproto.h: GPL (v2 or later)
+  [Copyright: 2005 Rohit Kumar, Johannes E. Schindelin / 2000 Tridia Corporation. All Rights Reserved / 2000-2002 Constantin Kaplinsky. All Rights Reserved / 1999 AT&T Laboratories Cambridge. All Rights Reserved]
+
+./lib/include/rfb/dh.h: public domain
+  [Author: 2004, Lee Griffiths]
+
+./lib/include/rfb/keysym.h: MIT/X11 (BSD like) 
+  [Copyright: 1987 by Digital Equipment Corporation, Maynard, Massachusetts / 1987 X Consortium]
+
+./lib/include/rfb/rfbint.h: no copyright header or license unknown / please check file
+  [Copyright: 2008 Free Software Foundation, Inc. This is free software; see the source for copying conditions. There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. */]
+
+./lib/include/rfb/rfb.h: GPL (v2 or later)
+  [Copyright: 1999 AT&T Laboratories Cambridge / 2002 RealVNC Ltd / 2005 Rohit Kumar <rokumar@novell.com> / 2001 Dan McGuirk <mcguirk@incompleteness.net>]
+
+./lib/include/VncView.h: GPL (v2 or later)
+  [Copyright: 2006-2011 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./lib/include/AboutDialog.h: GPL (v2 or later)
+  [Copyright: 2011 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./lib/include/Snapshot.h: GPL (v2 or later)
+  [Copyright: 2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./lib/include/Ipc/Core.h: GPL (v2 or later)
+  [Copyright: 2010 Univention GmbH / 2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./lib/include/Ipc/Slave.h: GPL (v2 or later)
+  [Copyright: 2010 Univention GmbH / 2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./lib/include/Ipc/SlaveLauncher.h: GPL (v2 or later)
+  [Copyright: 2010 Univention GmbH / 2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./lib/include/Ipc/Master.h: GPL (v2 or later)
+  [Copyright: 2010 Univention GmbH / 2010-2011 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./lib/include/Ipc/QtSlaveLauncher.h: GPL (v2 or later)
+  [Copyright: 2010 Univention GmbH / 2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./lib/include/LogonAuthentication.h: GPL (v2 or later)
+  [Copyright: 2011 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./lib/include/DecoratedMessageBox.h: GPL (v2 or later)
+  [Copyright: 2006-2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./lib/include/FastQImage.h: GPL (v2 or later)
+  [Copyright: 2006-2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./lib/include/Inject.h: GPL (v2 or later)
+  [Copyright: 2006-2009 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./lib/include/LocalSystem.h: GPL (v2 or later)
+  [Copyright: 2006-2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./lib/include/ItalcConfiguration.h: GPL (v2 or later)
+  [Copyright: 2010-2011 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./lib/include/PasswordDialog.h: GPL (v2 or later)
+  [Copyright: 2010-2011 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./lib/include/DsaKey.h: GPL (v2 or later)
+  [Copyright: 2006-2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./lib/include/ItalcVncConnection.h: GPL (v2 or later)
+  [Copyright: 2007-2008 Urs Wolfer <uwolfer @ kde.org> / 2008-2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./lib/include/QtUserEvents.h: GPL (v2 or later)
+  [Copyright: 2006-2009 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
+./lib/include/ProgressWidget.h: GPL (v2 or later)
+  [Copyright: 2006-2009 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>]
+
