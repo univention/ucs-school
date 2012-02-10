@@ -1,6 +1,12 @@
+italc (1:2.0.1-4) unstable; urgency=low
+
+  * change order of build and ucslint run (Bug #25689)
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 10 Feb 2012 14:43:02 +0100
+
 italc (1:2.0.1-3) unstable; urgency=low
 
-  * added missing ucslint.overrides (Bug #25689)
+  * add missing ucslint.overrides (Bug #25689)
 
  -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 10 Feb 2012 14:10:07 +0100
 
