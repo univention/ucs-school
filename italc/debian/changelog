@@ -2,6 +2,9 @@ italc (1:2.0.1-2) unstable; urgency=low
 
   * install join script correctly (Bug #20261)
   * fix build on amd64 (Bug #25689)
+  * add missing dependencies (Bug #25689)
+  * update copyright information (Bug #25689)
+  * run ucslint (Bug #25689)
 
  -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 10 Feb 2012 11:55:41 +0100
 
