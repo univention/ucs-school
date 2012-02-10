@@ -41,8 +41,17 @@ joinscript_init
 umc_init
 umc_operation_create "schoolusers-all" "Reset passwords" "" "schoolusers/*"
 umc_operation_create "schoolusers-pupil" "Pupils (passwords)" "pupil" "schoolusers/*"
-umc_operation_create "schoolusers-teacher" "Teachers (passwords)" "teacher" "schoolusers/*"
-umc_policy_append "default-umc-all" "schoolusers-all"
+
+# create empty UMC access policies
+ucs_school_policies_create
+
+# policy for admins
+for ipol in ucsschool-umc-admins-default default-umc-all; do
+	umc_policy_append "$ipol" "schoolusers-all"
+done
+
+# policy for teachers
+umc_policy_append "ucsschool-umc-teachers-default" "schoolgroups-pupil"
 
 joinscript_save_current_version
 

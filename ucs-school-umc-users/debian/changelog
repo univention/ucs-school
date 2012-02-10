@@ -1,3 +1,9 @@
+ucs-school-umc-users (0.1.1-1) unstable; urgency=low
+
+  * adapted join script; Bug #25954
+
+ -- Alexander Kläser <klaeser@univention.de>  Fri, 10 Feb 2012 15:46:10 +0100
+
 ucs-school-umc-users (0.1.0-3) unstable; urgency=low
 
   * adapted dependencies; Bug #25954
