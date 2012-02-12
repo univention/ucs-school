@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<umc version="2.0">
+	<module id="roomreservation" icon="roomreservation" version="1.0">
+	<name>Room reservation</name>
+	<description>Manage reservations for computer rooms</description>
+	<categories>
+		<category name="ucs-school-class"/>
+	</categories>
+	<command name="roomreservation/query" function="query"></command>
+	<command name="roomreservation/schools" function="schools"></command>
+	<command name="roomreservation/rooms" function="rooms"></command>
+	<command name="roomreservation/get" function="get"></command>
+	</module>
+</umc>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<umc version="2.0">
+  <module id="lessontimes" icon="lessontimes" version="1.0">
+	<name>Lesson times</name>
+	<description>Configure the lessons times</description>
+	<categories>
+	  <category name="ucs-school-admin"/>
+	</categories>
+
+	<command name="lessontimes/configuration" function="configuration">
+	</command>
+	<command name="lessontimes/send" function="send">
+	</command>
+  </module>
+</umc>
