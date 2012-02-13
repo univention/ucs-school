@@ -1,3 +1,9 @@
+ucs-school-webproxy (8.0.2-1) unstable; urgency=low
+
+  * configure samba4 to use the source3 winbindd (Bug #24281)
+
+ -- Arvid Requate <requate@univention.de>  Mon, 13 Feb 2012 15:50:47 +0100
+
 ucs-school-webproxy (8.0.1-1) unstable; urgency=low
 
   * added dependency to univention-squid in 3.0-1 (Bug #25700) 
