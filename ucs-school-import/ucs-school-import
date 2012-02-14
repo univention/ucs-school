@@ -497,6 +497,7 @@ def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None, ShareFileServer=None
 	else:
 		dccn = ''
 	myline = '%s\t%s' % ( schoolNr, dccn )
+	hooks.pre( 'ou', 'A', line = myline )
 
 	# verify global dc groups
 	groups_management = [
@@ -519,18 +520,18 @@ def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None, ShareFileServer=None
 	for group in groups:
 		verify_group(group, co, lo, superordinate, baseDN)
 
-	# add already existing dc to global dc groups
+	# add already existing dc (slave) to global dc groups
 	# for proper ldap replication
 	if dccn:
 		dcobject = object_exists(
-			computer_module, co, lo, 'sub', superordinate, baseDN,
+			server_module, co, lo, 'sub', superordinate, baseDN,
 			univention.admin.filter.expression('cn', dccn), None)
 	
 		if dcobject:
 			zone = "edukativ"
 			dcobject.open()
 			for grp in dcobject['groups']:
-				if grp.startswith("cn=DC-Verwaltungsnetz"):
+				if grp.startswith("cn=DC-Verwaltungsnetz,"):
 					zone = "verwaltung"
 			groups = []
 			if zone == "edukativ":
@@ -547,7 +548,6 @@ def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None, ShareFileServer=None
 			if modified:
 				dcobject.modify()
 		
-	hooks.pre( 'ou', 'A', line = myline )
 
 	created, dn = verify_container(ou_base, ou_module, co, lo, superordinate, baseDN, path='')
 	if created:
