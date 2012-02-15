@@ -55,7 +55,9 @@ use_dhcpsearchbase="no"
 if [ "$1" = "configure" -a -z "$2" ] ; then
 	use_marktplatz="yes"
 	use_dhcpsearchbase="yes"
-	univention-config-registry set "ucsschool/import/set/homedrive?$(univention-config-registry get samba/homedirletter):"
+	univention-config-registry set \
+		"ucsschool/import/set/homedrive?$(univention-config-registry get samba/homedirletter):" \
+		ucsschool/import/generate/policy/dhcp/dns/clearou?"true"
 fi
 univention-config-registry set \
 	"ucsschool/import/generate/policy/dhcp/searchbase?${use_dhcpsearchbase}" \

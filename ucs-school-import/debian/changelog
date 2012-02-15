@@ -1,3 +1,10 @@
+ucs-school-import (8.040.-1) unstable; urgency=low
+
+  * set ucsschool/import/generate/policy/dhcp/dns/clearou to yes
+    for new installations (Bug #15099)
+
+ -- Felix Botner <botner@univention.de>  Wed, 15 Feb 2012 15:44:24 +0100
+
 ucs-school-import (8.0.39-1) unstable; urgency=low
 
   * add only (already existing) slave dc's to global dc groups 
