@@ -117,3 +117,9 @@ Description[de]=UCS@school Benutzerrolle während des Updates automatisch setzen
 Description[en]=Set UCS@school user role during update? (default: yes)
 Type=str
 Categories=ucsschool-base
+
+[ucsschool/import/generate/policy/dhcp/dns/clearou]
+Description[de]=Falls auf true gesetzt, wird beim Anlegen von Schul-Ous eine leere DHCP DNS Richtlinie für die OU angelegt.
+Description[en]=If true a blank DHCP DNS policy for the ou is created when creating school ou's.
+Type=str
+Categories=ucsschool-base

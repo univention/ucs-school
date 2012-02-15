@@ -1,4 +1,10 @@
-ucs-school-import (8.040.-1) unstable; urgency=low
+ucs-school-import (8.0.40-2) unstable; urgency=low
+
+  * added description for .../dns/clearou (Bug #15099) 
+
+ -- Felix Botner <botner@univention.de>  Wed, 15 Feb 2012 16:19:18 +0100
+
+ucs-school-import (8.0.40-1) unstable; urgency=low
 
   * set ucsschool/import/generate/policy/dhcp/dns/clearou to yes
     for new installations (Bug #15099)
