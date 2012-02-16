@@ -1,3 +1,9 @@
+ucs-school-umc-groups (0.0.5-1) unstable; urgency=low
+
+  * adapted icons; Bug #25701
+
+ -- Alexander Kläser <klaeser@univention.de>  Thu, 16 Feb 2012 17:30:49 +0100
+
 ucs-school-umc-groups (0.0.4-1) unstable; urgency=low
 
   * adapted module to API changes; Bug #25701

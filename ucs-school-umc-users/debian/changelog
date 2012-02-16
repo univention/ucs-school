@@ -1,3 +1,9 @@
+ucs-school-umc-users (0.1.2-1) unstable; urgency=low
+
+  * adapted icons; Bug #25954
+
+ -- Alexander Kläser <klaeser@univention.de>  Thu, 16 Feb 2012 17:32:51 +0100
+
 ucs-school-umc-users (0.1.1-1) unstable; urgency=low
 
   * adapted join script; Bug #25954

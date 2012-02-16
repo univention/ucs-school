@@ -6,11 +6,11 @@
 	<categories>
 		<category name="ucs-school-admin"/>
 	</categories>
-	<flavor icon="udm-users" id="class">
+	<flavor icon="schoolgroups-class" id="class">
 	  <name>Classes</name>
 	  <description>Administration of school classes</description>
 	</flavor>
-	<flavor icon="udm-users" id="workgroup">
+	<flavor icon="schoolgroups-workgroup" id="workgroup">
 	  <name>Workgroups</name>
 	  <description>Administration of workgroups</description>
 	</flavor>
