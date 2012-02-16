@@ -34,7 +34,6 @@
 
 eval "$(univention-config-registry shell)"
 
-. /usr/share/univention-lib/all.sh
 
 case "$1" in
     configure)
@@ -51,21 +50,6 @@ case "$1" in
 		chown root:proxy /var/lib/ucs-school-webproxy/*listed-* || true
 		/usr/bin/squidGuard -C all || true
 		chmod ug+rw /var/lib/ucs-school-webproxy/*listed-* || true
-
-		univention-config-registry set \
-			samba4/service/winbind?'winbindd'
-
-		if [ "$(univention-config-registry get samba4/service/winbind)" = 'winbindd' ]; then
-			is_ucr_true "winbind/autostart"
-			if [ "$?" = '1' ]; then
-				univention-config-registry unset winbind/autostart
-			fi
-
-			if [ -x /etc/init.d/samba4 ]; then
-				/etc/init.d/samba4 restart
-				sleep 2s
-			fi
-		fi
 
 		if [ -x /etc/init.d/samba ]; then
 			/etc/init.d/samba reload
