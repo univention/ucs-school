@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<umc version="2.0">
+	<module id="printermoderation" icon="printermoderation" version="1.0">
+	<name>Printer moderation</name>
+	<description>Moderating print jobs of pupils</description>
+	<categories>
+		<category name="ucs-school-admin"/>
+	</categories>
+	<command name="printermoderation/query" function="query"></command>
+	<command name="printermoderation/colors" function="colors"></command>
+	<command name="printermoderation/get" function="get"></command>
+	</module>
+</umc>

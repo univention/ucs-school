@@ -1,0 +1,6 @@
+Module: printermoderation
+Python: umc/python
+Definition: umc/printermoderation.xml
+Category: umc/categories/printermoderation.xml
+Javascript: umc/js
+Icons: umc/icons
