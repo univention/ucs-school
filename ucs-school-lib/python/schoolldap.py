@@ -442,7 +442,8 @@ def _init_search_base(ldap_connection):
 					'container/ou', None, ldap_connection,
 					scope = 'one', superordinate = None,
 					base = ucr.get( 'ldap/base' ) )
-			availableSchools = [ ou['name'] for ou in ouresult ]
+			ignore_ous = ucr.get( 'ucsschool/ldap/ignore/ous', 'Domain Controllers' ).split( ',' )
+			availableSchools = [ ou['name'] for ou in ouresult if not ou[ 'name' ] in ignore_ous ]
 
 		# use the first available OU as default search base
 		if not len(availableSchools):

@@ -1,0 +1,5 @@
+[ucsschool/ldap/ignore/ous]
+Description[de]=Liste von OUs die keine Schulen repräsentieren
+Description[en]=List of OUs that do not represent a school
+Type=str
+Categories=ucsschool-base
