@@ -1,5 +1,11 @@
+ucs-school-umc-computerroom (0.1.1-1) unstable; urgency=low
+
+  * changed icon; Bug #25702
+
+ -- Alexander Kläser <klaeser@univention.de>  Tue, 28 Feb 2012 13:04:56 +0100
+
 ucs-school-umc-computerroom (0.1.0-1) unstable; urgency=low
 
-  * Initial release (Bug #XXXXXX)
+  * Initial release (Bug #25702)
 
  -- Alexander Kläser <klaeser@univention.de>  Wed, 08 Feb 2012 16:03:48 +0100
