@@ -1,3 +1,9 @@
+ucs-school-lib (1.0.21-2) unstable; urgency=low
+
+  * fix build dependencies; Bug #25705
+
+ -- Andreas Büsching <buesching@univention.de>  Tue, 28 Feb 2012 17:36:18 +0100
+
 ucs-school-lib (1.0.21-1) unstable; urgency=low
 
   * SchoolSearchBase: add property of LDAP base of printers; Bug #25705
