@@ -515,6 +515,10 @@ class SchoolSearchBase(object):
 		return "cn=shares,%s" % self.schoolDN
 
 	@property
+	def printers(self):
+		return "cn=printers,%s" % self.schoolDN
+
+	@property
 	def rooms(self):
 		return "cn=%s,cn=groups,%s" % (self._containerRooms, self.schoolDN)
 
