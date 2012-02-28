@@ -1,3 +1,9 @@
+univention-management-console-frontend (1.0.277-1) unstable; urgency=low
+
+  * UMC web server: support HTTP GET requests with different MIME types; Bug #26267
+
+ -- Andreas Büsching <buesching@univention.de>  Tue, 28 Feb 2012 11:44:04 +0100
+
 univention-management-console-frontend (1.0.276-1) unstable; urgency=low
 
   * fixed LoginDialog for Internet Explorer compatibility mode (Bug #25020) 
