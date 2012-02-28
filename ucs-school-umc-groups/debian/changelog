@@ -1,3 +1,9 @@
+ucs-school-umc-groups (0.0.6-1) unstable; urgency=low
+
+  * changed icons; Bug #25701
+
+ -- Alexander Kläser <klaeser@univention.de>  Tue, 28 Feb 2012 11:50:18 +0100
+
 ucs-school-umc-groups (0.0.5-1) unstable; urgency=low
 
   * adapted icons; Bug #25701
