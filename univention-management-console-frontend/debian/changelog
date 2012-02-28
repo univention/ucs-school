@@ -1,3 +1,9 @@
+univention-management-console-frontend (1.0.278-1) unstable; urgency=low
+
+  * add ProgressInfo widget; Bug #26273
+
+ -- Andreas Büsching <buesching@univention.de>  Tue, 28 Feb 2012 14:43:50 +0100
+
 univention-management-console-frontend (1.0.277-1) unstable; urgency=low
 
   * UMC web server: support HTTP GET requests with different MIME types; Bug #26267
