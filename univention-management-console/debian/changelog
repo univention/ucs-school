@@ -1,3 +1,10 @@
+univention-management-console (4.0.205-1) unstable; urgency=low
+
+  * passing an UMCP response objects as the result to the finished method of
+    a module works now; Bug #26267
+
+ -- Andreas Büsching <buesching@univention.de>  Wed, 29 Feb 2012 14:59:45 +0100
+
 univention-management-console (4.0.204-1) unstable; urgency=low
 
   * minor fixes when handling different MIME types in UMCP messages; Bug #26267
