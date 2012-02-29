@@ -30,16 +30,18 @@
 
 dojo.provide("umc.modules.computerroom");
 
+dojo.require("dijit.Dialog");
 dojo.require("umc.dialog");
 dojo.require("umc.i18n");
 dojo.require("umc.tools");
 dojo.require("umc.widgets.ExpandingTitlePane");
+dojo.require("umc.widgets.TitlePane");
 dojo.require("umc.widgets.Grid");
-dojo.require("umc.widgets.TabbedModule");
+dojo.require("umc.widgets.Module");
 dojo.require("umc.widgets.Page");
 dojo.require("umc.widgets.Form");
 
-dojo.declare("umc.modules.computerroom", [ umc.widgets.TabbedModule, umc.i18n.Mixin ], {
+dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ], {
 	// summary:
 	//		Template module to ease the UMC module development.
 	// description:
@@ -58,8 +60,13 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.TabbedModule, umc.i18n.Mi
 	// internal reference to the detail page for editing an object
 	_detailPage: null,
 
-	// internal reference to the form
-	_form: null,
+	// internal reference to the form for the active profile settings
+	_profileForm: null,
+
+	// internal reference to the expanding title pane
+	_titlePane: null,
+
+	_metaInfo: null,
 
 	postMixInProperties: function() {
 		// is called after all inherited properties/methods have been mixed
@@ -85,16 +92,25 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.TabbedModule, umc.i18n.Mi
 		this.renderSearchPage();
 	},
 
+	_updateHeader: function(room) {
+		var label = dojo.replace('{roomLabel}: {room} ' +
+				'(<a href="javascript:void(0)" ' +
+				'onclick=\'dijit.byId("{id}").changeRoom()\'>{changeLabel}</a>)', {
+			roomLabel: this._('Selected room'),
+			room: room ? umc.tools.explodeDn(room, true)[0] : this._('No room selected'),
+			changeLabel: this._('change room'),
+			id: this.id
+		});
+		this._metaInfo.set('content', label);
+	},
+
 	renderSearchPage: function(containers, superordinates) {
 		// render all GUI elements for the search formular and the grid
 
-		// setup search page and its main widgets
-		// for the styling, we need a title pane surrounding search form and grid
+		// render the search page
 		this._searchPage = new umc.widgets.Page({
 			headerText: this.description,
-			helpText: '',
-			closable: false,
-			title: this._('Room overview')
+			helpText: ''
 		});
 
 		// umc.widgets.Module is also a StackContainer instance that can hold
@@ -102,11 +118,17 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.TabbedModule, umc.i18n.Mi
 		this.addChild(this._searchPage);
 
 		// umc.widgets.ExpandingTitlePane is an extension of dijit.layout.BorderContainer
-		var titlePane = new umc.widgets.ExpandingTitlePane({
-			title: this._('Search results')
+		this._titlePane = new umc.widgets.ExpandingTitlePane({
+			title: this._('Room administration')
 		});
-		this._searchPage.addChild(titlePane);
+		this._searchPage.addChild(this._titlePane);
 
+		this._metaInfo = new umc.widgets.Text({
+			region: 'top',
+			style: 'padding-bottom: 10px;'
+		});
+		this._searchPage.addChild(this._metaInfo);
+		this._updateHeader();
 
 		//
 		// data grid
@@ -187,15 +209,11 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.TabbedModule, umc.i18n.Mi
 		var columns = [{
 			name: 'name',
 			label: this._('Name'),
-			width: '30%'
-		}, {
-			name: 'description',
-			label: this._('Description'),
 			width: '40%'
 		}, {
 			name: 'user',
 			label: this._('User'),
-			width: '30%'
+			width: '60%'
 		}];
 
 		// generate the data grid
@@ -214,12 +232,95 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.TabbedModule, umc.i18n.Mi
 		});
 
 		// add the grid to the title pane
-		titlePane.addChild(this._grid);
-
+		this._titlePane.addChild(this._grid);
 
 		//
-		// search form
+		// profile form
 		//
+
+		// add remaining elements of the search form
+		var widgets = [{
+			type: 'ComboBox',
+			name: 'webProfile',
+			label: this._('Active web access profile'),
+			size: 'TwoThirds',
+			staticValues: [ 'Wikipedia', 'Facebook' ]
+		}, {
+			type: 'ComboBox',
+			name: 'sharesProfile',
+			label: this._('Active shares'),
+			size: 'TwoThirds',
+			staticValues: [ 'All shares', 'Only class shares', 'no shares' ]
+		}, {
+			type: 'ComboBox',
+			name: 'printer',
+			label: this._('Print mode'),
+			size: 'TwoThirds',
+			staticValues: [
+				this._('Printing deactivated'),
+				this._('Moderated printing'),
+				this._('Free printing')
+			]
+		}, {
+			type: 'ComboBox',
+			name: 'period',
+			label: this._('Reservation until end of'),
+			size: 'TwoThirds',
+			staticValues: [
+				this._('1st lesson'),
+				this._('2nd lesson'),
+				this._('3rd lesson'),
+				this._('4th lesson'),
+				this._('6th lesson')
+			]
+		}];
+
+		var buttons = [{
+			name: 'submit',
+			style: 'display:none;'
+		}];
+
+		var layout = [
+			[ 'webProfile', 'sharesProfile', 'printer', 'period', 'submit' ]
+		];
+
+		// generate the search form
+		this._profileForm = new umc.widgets.Form({
+			// property that defines the widget's position in a dijit.layout.BorderContainer
+			region: 'top',
+			widgets: widgets,
+			layout: layout,
+			buttons: buttons
+		});
+
+		// add search form to the title pane
+		this._titlePane.addChild(this._profileForm);
+
+		//
+		// conclusion
+		//
+
+		// we need to call page's startup method manually as all widgets have
+		// been added to the page container object
+		this._searchPage.startup();
+	},
+
+	postCreate: function() {
+		this.changeRoom();
+	},
+
+	_dummy: function() {
+		umc.dialog.alert(this._('Feature not yet implemented'));
+	},
+
+	changeRoom: function() {
+		// define a cleanup function
+		var dialog = null, form = null;
+		var _cleanup = function() {
+			dialog.hide();
+			dialog.destroyRecursive();
+			form.destroyRecursive();
+		};
 
 		// add remaining elements of the search form
 		var widgets = [{
@@ -235,76 +336,45 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.TabbedModule, umc.i18n.Mi
 			label: this._('Selected room'),
 			depends: 'school',
 			dynamicValues: 'computerroom/rooms'
-		}, {
-			type: 'ComboBox',
-			name: 'webProfile',
-			label: this._('Active web access profile'),
-			staticValues: [ 'Wikipedia', 'Facebook' ]
-		}, {
-			type: 'ComboBox',
-			name: 'sharesProfile',
-			label: this._('Active shares'),
-			staticValues: [ 'All shares', 'Only class shares', 'no shares' ]
-		}, {
-			type: 'ComboBox',
-			name: 'period',
-			label: this._('Reservation until end of'),
-			size: 'TwoThirds',
-			staticValues: [
-				this._('1st lesson'),
-				this._('2nd lesson'),
-				this._('3rd lesson'),
-				this._('4th lesson'),
-				this._('6th lesson')
-			]
 		}];
 
-		// the layout is an 2D array that defines the organization of the form elements...
-		// here we arrange the form elements in one row and add the 'submit' button
-		var layout = [
-			[ 'school', 'room', 'submit' ],
-			[ 'webProfile', 'sharesProfile', 'period' ]
-		];
+		// define buttons and callbacks
+		var buttons = [{
+			name: 'submit',
+			label: this._('Change room'),
+			style: 'float:right',
+			callback: dojo.hitch(this, function(vals) {
+				// reload the grid
+				this._grid.filter(vals);
+
+				// update the header text containing the room
+				this._updateHeader(vals.room);
+
+				// destroy the dialog
+				_cleanup();
+			})
+		}, {
+			name: 'cancel',
+			label: this._('Cancel'),
+			callback: _cleanup
+		}];
 
 		// generate the search form
-		this._form = new umc.widgets.Form({
+		var form = new umc.widgets.Form({
 			// property that defines the widget's position in a dijit.layout.BorderContainer
-			region: 'top',
 			widgets: widgets,
-			layout: layout,
-			onSearch: dojo.hitch(this, function(values) {
-				// call the grid's filter function
-				// (could be also done via dojo.connect() and dojo.disconnect() )
-				this._grid.filter(values);
-			})
+			layout: [ [ 'school', 'room' ] ],
+			buttons: buttons
 		});
 
-		// hook up to events
-		this.connect(this._form.getWidget('room'), 'onChange', 'filter');
-
-		// add search form to the title pane
-		titlePane.addChild(this._form);
-
-		//
-		// conclusion
-		//
-
-		// we need to call page's startup method manually as all widgets have
-		// been added to the page container object
-		this._searchPage.startup();
-	},
-
-	_dummy: function() {
-		umc.dialog.alert(this._('Feature not yet implemented'));
-	},
-
-	filter: function() {
-		// update the grid results
-		var values = this._form.gatherFormValues();
-		this._grid.filter({
-			room: values.room,
-			school: values.school
+		// show the dialog
+		dialog = new dijit.Dialog({
+			title: this._('Change room'),
+			content: form,
+			'class' : 'umcPopup',
+			style: 'max-width: 400px;'
 		});
+		dialog.show();
 	}
 });
 

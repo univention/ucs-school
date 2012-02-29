@@ -1,3 +1,9 @@
+ucs-school-umc-computerroom (0.1.2-1) unstable; urgency=low
+
+  * changed GUI; Bug #25702
+
+ -- Alexander Kläser <klaeser@univention.de>  Wed, 29 Feb 2012 18:09:36 +0100
+
 ucs-school-umc-computerroom (0.1.1-1) unstable; urgency=low
 
   * changed icon; Bug #25702
