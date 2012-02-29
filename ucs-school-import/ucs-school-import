@@ -978,8 +978,9 @@ def verify_container(position_dn, module, co, lo, superordinate, base, path="use
 	position=position_dn[string.find(position_dn,",")+1:]
 	objects=''
 	try:
-		objects = univention.admin.modules.lookup(module, co, lo, scope='sub', superordinate=superordinate, base=position,
-												  filter=univention.admin.filter.expression(type,name))
+		objects = univention.admin.modules.lookup(
+			module, co, lo, scope='sub', superordinate=superordinate,
+			base=position, filter=univention.admin.filter.expression(type,name))
 	except:
 		pass
 	if objects:
@@ -998,7 +999,7 @@ def verify_container(position_dn, module, co, lo, superordinate, base, path="use
 		object.open()
 		object["name"] = position_dn[3:string.find(position_dn,",")]
 
-		if position_dn[:2] == "cn" and path: # is path container
+		if position_dn[:2] == "cn" and path and not name == "users": # is path container
 			object[path] = codecs.latin_1_encode("1")[0]
 
 		try:

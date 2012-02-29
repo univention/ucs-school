@@ -1,3 +1,9 @@
+ucs-school-import (8.0.41-1) unstable; urgency=low
+
+  * do not register cn=users as a userPath container (Bug #26054)
+
+ -- Felix Botner <botner@univention.de>  Wed, 29 Feb 2012 14:27:50 +0100
+
 ucs-school-import (8.0.40-2) unstable; urgency=low
 
   * added description for .../dns/clearou (Bug #15099) 
