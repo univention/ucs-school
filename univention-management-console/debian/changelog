@@ -1,15 +1,37 @@
-univention-management-console (4.0.205-1) unstable; urgency=low
+univention-management-console (4.0.221-1) unstable; urgency=low
 
   * passing an UMCP response objects as the result to the finished method of
     a module works now; Bug #26267
 
  -- Andreas Büsching <buesching@univention.de>  Wed, 29 Feb 2012 14:59:45 +0100
 
-univention-management-console (4.0.204-1) unstable; urgency=low
+univention-management-console (4.0.220-1) unstable; urgency=low
 
   * minor fixes when handling different MIME types in UMCP messages; Bug #26267
 
  -- Andreas Büsching <buesching@univention.de>  Tue, 28 Feb 2012 11:46:13 +0100
+
+univention-management-console (4.0.205-1) unstable; urgency=low
+
+  * added standard text to debian/control in umc-module-template
+    (Bug #23876)
+
+ -- Lukas Walter <walter@univention.de>  Wed, 29 Feb 2012 10:33:36 +0100
+
+univention-management-console (4.0.204-2) unstable; urgency=low
+
+  * version bump (Bug #23876)
+
+ -- Florian Best <best@univention.de>  Tue, 28 Feb 2012 16:35:14 +0100
+
+univention-management-console (4.0.204-1) unstable; urgency=low
+
+  * added build-dependency on ucslint to umc module template
+  * module description passed to umc-module-create is now used
+    in the debian/control file of generated dummy modules
+  (Bug #23876)
+
+ -- Lukas Walter <walter@univention.de>  Tue, 28 Feb 2012 14:58:16 +0100
 
 univention-management-console (4.0.203-1) unstable; urgency=low
 
