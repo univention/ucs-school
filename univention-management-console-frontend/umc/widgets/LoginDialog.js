@@ -52,6 +52,8 @@ dojo.declare('umc.widgets.LoginDialog', [ umc.widgets.StandbyMixin, umc.i18n.Mix
 	// use the framework wide translation file
 	i18nClass: 'umc.app',
 
+	open: false,
+
 	availableLanguages: null,
 
 	postMixInProperties: function() {
@@ -61,7 +63,8 @@ dojo.declare('umc.widgets.LoginDialog', [ umc.widgets.StandbyMixin, umc.i18n.Mix
 				{id: 'en-US', label: this._('English')}
 			]});
 
-		this.domNode = dojo.byId('umc_LoginDialog');
+		this.containerNode = dojo.byId('umc_LoginDialog');
+		this.domNode = dojo.byId('umc_LoginWrapper');
 	},
 
 	defaultLang: function () {
@@ -112,7 +115,7 @@ dojo.declare('umc.widgets.LoginDialog', [ umc.widgets.StandbyMixin, umc.i18n.Mix
 			style: 'margin-left: auto; margin-right: auto; margin-top: 1em; width: 280px;',
 			content: ''
 		});
-		this._text.placeAt(this.domNode, 'first');
+		this._text.placeAt(this.containerNode, 'first');
 
 		// create the language combobox
 		var default_lang = this.defaultLang();
@@ -285,6 +288,12 @@ dojo.declare('umc.widgets.LoginDialog', [ umc.widgets.StandbyMixin, umc.i18n.Mix
 	},
 
 	show: function() {
+		// only open the dialog if it has not been opened before
+		if (this.get('open')) {
+			return;
+		}
+		this.set('open', true);
+
 		// update info text
 		var msg = '';
 		if (umc.tools.status('setupGui')) {
@@ -320,6 +329,12 @@ dojo.declare('umc.widgets.LoginDialog', [ umc.widgets.StandbyMixin, umc.i18n.Mix
 	},
 
 	hide: function() {
+		// only close the dialog if it has not been closed already
+		if (!this.get('open')) {
+			return;
+		}
+		this.set('open', false);
+
 		// hide the dialog
 		dojo.query('.umcShowHide').style('display', 'none');
 		dijit._DialogLevelManager.hide(this);
