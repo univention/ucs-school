@@ -172,14 +172,14 @@ dojo.declare("umc.modules.schoolusers", [ umc.widgets.Module, umc.i18n.Mixin ], 
 			description: this._('Select the school.'),
 			label: this._( 'School' ),
 			autoHide: true,
-			size: 'twoThirds',
+			size: 'TwoThirds',
 			dynamicValues: 'schoolusers/schools'
 		}, {
 			type: 'ComboBox',
 			name: 'class',
 			description: this._('Select the class.'),
 			label: this._('Class'),
-			size: 'twoThirds',
+			size: 'TwoThirds',
 			staticValues: [
 				{ 'id' : 'None', 'label' : this._( 'All classes' ) }
 			],

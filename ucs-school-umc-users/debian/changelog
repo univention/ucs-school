@@ -1,3 +1,9 @@
+ucs-school-umc-users (0.1.5-1) unstable; urgency=low
+
+  * corrected size for combo boxes; Bug #25954
+
+ -- Alexander Kläser <klaeser@univention.de>  Thu, 01 Mar 2012 20:01:40 +0100
+
 ucs-school-umc-users (0.1.4-1) unstable; urgency=low
 
   * changed icons; Bug #25954
