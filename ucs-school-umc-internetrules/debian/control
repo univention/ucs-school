@@ -5,16 +5,23 @@ Maintainer: Univention GmbH <packages@univention.de>
 Build-Depends: debhelper (>= 7.0.50~),
  python-support,
  univention-management-console-dev,
- python-all
+ univention-config-dev,
+ ucslint
 Standards-Version: 3.7.2
 XS-Python-Version: 2.6
 
 Package: ucs-school-umc-internetrules
 Architecture: all
 Depends: ${misc:Depends},
- univention-management-console-server
-Description: UMC dummy module
- This package contains a UMC dummy module.
+ univention-management-console,
+ univention-config-registry,
+ ucs-school-umc-common,
+ python-ucs-school,
+ shell-ucs-school,
+ python-univention-directory-manager
+Description: UMC module to administrate internet rules
+ This package contains two UMC modules for administrating
+ internet rules and for associating them with groups.
  .
  It is part of Univention Corporate Server (UCS), an
  integrated, directory driven solution for managing
