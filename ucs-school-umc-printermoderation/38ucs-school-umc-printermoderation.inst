@@ -1,9 +1,10 @@
 #!/bin/sh
+# -*- coding: utf-8 -*-
 #
-# UCS@School
+# Univention Management Console Module printermoderation
 #  join script
 #
-# Copyright 2008-2010 Univention GmbH
+# Copyright 2012 Univention GmbH
 #
 # http://www.univention.de/
 #
@@ -30,73 +31,19 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-VERSION=2
+VERSION=1
+
 . /usr/share/univention-join/joinscripthelper.lib
+. /usr/share/univention-lib/umc.sh
+
 joinscript_init
 
-eval "$(ucr shell)"
-
-univention-directory-manager container/cn create "$@" --ignore_exists --position cn=univention,$ldap_base --set name=console
-univention-directory-manager container/cn create "$@" --ignore_exists --position cn=console,cn=univention,$ldap_base --set name=config
-
-# create UMC operations
-univention-directory-manager settings/console_operation create "$@" --ignore_exists --position cn=operations,cn=console,cn=univention,$ldap_base \
-																				 --set name=printermoderation \
-																				 --set description="Printer moderation operations" \
-																				 --append operation="printermoderation/*" \
-																				 --append operation="printermoderation/job/*" \
-																				 --append operation="printermoderation/job/print" \
-																				 --append operation="printermoderation/job/delete" \
-																				 --append operation="printermoderation/job/review"
-
-univention-directory-manager settings/console_operation modify "$@" --ignore_exists --dn cn=printermoderation,cn=operations,cn=console,cn=univention,$ldap_base \
-																				 --append operation="printermoderation/*" \
-																				 --append operation="printermoderation/job/*" \
-																				 --append operation="printermoderation/job/print" \
-																				 --append operation="printermoderation/job/delete" \
-																				 --append operation="printermoderation/job/review"
-
-univention-directory-manager settings/console_acl create "$@" --ignore_exists --position cn=acls,cn=console,cn=univention,$ldap_base \
-																				 --set name=printermoderation-all \
-																				 --set category="Druckserver" \
-																				 --set ldapbase="$ldap_base" \
-																				 --set command="printermoderation/*" \
-																				 --set description="All printer moderation operations"
-
-# create policy container if missing
-univention-directory-manager container/cn create "$@" --ignore_exists --position "cn=policies,$ldap_base" --set name=console
-if [ $? != 0 ]; then exit 1; fi
-
-# create empty UMC access policies if missing
-for policyname in ucsschool-umc-pupils-default ucsschool-umc-teachers-default ucsschool-umc-staff-default ucsschool-umc-admins-default printermoderation-admin ; do
-	univention-directory-manager policies/console_access create "$@" --ignore_exists \
-			--position "cn=console,cn=policies,$ldap_base" \
-			--set name="${policyname}"
-	if [ $? != 0 ]; then exit 1; fi
-done
-
-# default policies
-for policyname in ucsschool-umc-teachers-default ucsschool-umc-admins-default default-admin printermoderation-admin ; do
-	univention-directory-manager policies/console_access modify "$@" --ignore_exists \
-		--dn "cn=${policyname},cn=console,cn=policies,$ldap_base" \
-		--append "allow=cn=printermoderation-all,cn=acls,cn=console,cn=univention,$ldap_base"
-	if [ $? != 0 ]; then exit 1; fi
-done
-
-# create default PDF printer
-position="cn=printers,$ldap_base"
-if [ "$server_role" = "domaincontroller_slave" ] ; then
-	position="cn=printers,ou=${ldap_hostdn#*,ou=}"
-fi
-udm shares/printer create "$@" --ignore_exists \
-	--position "$position" \
-	--set name="PDFDrucker" \
-	--set spoolHost="$hostname.$domainname" \
-	--set uri="cups-pdf:/" \
-	--set description="Moderierter PDF-Drucker" \
-	--set model="None"
-
+umc_init
+umc_operation_create "printermoderation-all" "Printer moderation" "" "printermoderation/*"
+umc_policy_append "default-umc-all" "printermoderation-all"
 
 joinscript_save_current_version
 
 exit 0
+
+

@@ -1,3 +1,9 @@
+ucs-school-umc-printermoderation (0.1.1-1) unstable; urgency=low
+
+  * renamed join script (35* -> 38*); Bug #25705
+
+ -- Alexander Kläser <klaeser@univention.de>  Thu, 01 Mar 2012 14:07:23 +0100
+
 ucs-school-umc-printermoderation (0.1.0-1) unstable; urgency=low
 
   * Initial release (Bug #25705)
