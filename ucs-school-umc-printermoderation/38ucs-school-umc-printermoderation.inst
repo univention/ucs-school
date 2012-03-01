@@ -35,12 +35,14 @@ VERSION=1
 
 . /usr/share/univention-join/joinscripthelper.lib
 . /usr/share/univention-lib/umc.sh
+. /usr/share/ucs-school-lib/umc.sh
 
 joinscript_init
 
 umc_init
 umc_operation_create "printermoderation-all" "Printer moderation" "" "printermoderation/*"
-umc_policy_append "default-umc-all" "printermoderation-all"
+ucs_school_policies_create
+ucs_school_policies_append "printermoderation-all"
 
 joinscript_save_current_version
 
