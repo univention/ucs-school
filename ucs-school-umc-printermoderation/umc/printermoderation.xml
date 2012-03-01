@@ -4,7 +4,7 @@
 	<name>Printer moderation</name>
 	<description>Moderating print jobs of pupils</description>
 	<categories>
-		<category name="ucs-school-admin"/>
+		<category name="ucs-school-class"/>
 	</categories>
 	<command name="printermoderation/query" function="query"></command>
 	<command name="printermoderation/schools" function="schools"></command>
