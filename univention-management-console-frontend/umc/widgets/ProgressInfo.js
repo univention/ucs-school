@@ -31,6 +31,7 @@
 dojo.provide("umc.widgets.ProgressInfo");
 
 dojo.require("umc.widgets.ContainerWidget");
+dojo.require("dijit.ProgressBar");
 
 dojo.declare("umc.widgets.ProgressInfo", umc.widgets.ContainerWidget, {
 	// summary:
