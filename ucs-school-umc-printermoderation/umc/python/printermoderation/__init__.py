@@ -80,16 +80,6 @@ class Instance( SchoolBaseModule ):
 		except:
 			MODULE.error( 'error occured while creating %s' % CUPSPDF_DIR )
 
-	def init( self ):
-		SchoolBaseModule.init( self )
-		locale.setlocale( locale.LC_ALL, str( self.locale ) )
-
-	@LDAP_Connection()
-	def groups( self, request, ldap_user_read = None, ldap_position = None, search_base = None ):
-		classes = self._groups( ldap_user_read, search_base.school, search_base.classes )
-		workgroups = self._groups( ldap_user_read, search_base.school, search_base.workgroups )
-		self.finished( request.id, classes + workgroups )
-
 	@LDAP_Connection()
 	def printers( self, request, ldap_user_read = None, ldap_position = None, search_base = None ):
 		"""List all available printers except PDF printers
