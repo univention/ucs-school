@@ -113,8 +113,8 @@ dojo.declare("umc.modules._internetrules.AssignPage", [ umc.widgets.Page, umc.i1
 			type: 'ComboBox',
 			name: 'school',
 			dynamicValues: 'internetrules/schools',
-			label: this._('School')
-			//autoHide: true
+			label: this._('School'),
+			autoHide: true
 		}, {
 			type: 'TextBox',
 			name: 'pattern',
