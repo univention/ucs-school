@@ -181,14 +181,14 @@ dojo.declare("umc.modules.printermoderation", [ umc.widgets.Module, umc.i18n.Mix
 			description: this._('Select the school.'),
 			label: this._( 'School' ),
 			autoHide: true,
-			size: 'twoThirds',
+			size: 'TwoThirds',
 			dynamicValues: 'printermoderation/schools'
 		}, {
 			type: 'ComboBox',
 			name: 'class',
 			description: this._('Select a class or workgroup.'),
 			label: this._('Class or workroup'),
-			size: 'twoThirds',
+			size: 'TwoThirds',
 			staticValues: [
 				{ 'id' : 'None', 'label' : this._( 'All classes and workgroups' ) }
 			],

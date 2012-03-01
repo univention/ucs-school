@@ -1,3 +1,9 @@
+ucs-school-umc-printermoderation (7.0.4-1) unstable; urgency=low
+
+  * fixed size for combo boxes in search form; Bug #25705
+
+ -- Alexander Kläser <klaeser@univention.de>  Thu, 01 Mar 2012 20:08:28 +0100
+
 ucs-school-umc-printermoderation (7.0.3-1) unstable; urgency=low
 
   * changed module category; Bug #25705
