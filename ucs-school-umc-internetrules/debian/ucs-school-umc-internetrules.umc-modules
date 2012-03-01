@@ -1,0 +1,6 @@
+Module: internetrules
+Python: umc/python
+Definition: umc/internetrules.xml
+Category: umc/categories/internetrules.xml
+Javascript: umc/js
+Icons: umc/icons

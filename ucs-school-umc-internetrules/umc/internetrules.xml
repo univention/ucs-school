@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<umc version="2.0">
+	<module id="internetrules" icon="internetrules" version="1.0">
+	<name>Define internet rules</name>
+	<description>Defines and manages internet rules</description>
+	<categories>
+		<category name="ucs-school-admin"/>
+	</categories>
+	<flavor icon="internetrules-admin" id="admin">
+	  <name>Define internet rules</name>
+	  <description>Define and manage internet rules</description>
+	</flavor>
+	<flavor icon="internetrules-assign" id="assign">
+	  <name>Assign internet rules</name>
+	  <description>Assign internet rules to classes and workgroups</description>
+	</flavor>
+	<command name="internetrules/query" function="query"></command>
+	<command name="internetrules/get" function="get"></command>
+	<command name="internetrules/groups/query" function="groups_query"></command>
+	<command name="internetrules/schools" function="schools"></command>
+	</module>
+</umc>
