@@ -12,9 +12,10 @@ XS-Python-Version: 2.6
 Package: ucs-school-umc-printermoderation
 Architecture: all
 Depends: ${misc:Depends},
- univention-management-console-server
-Description: UMC dummy module
- This package contains a UMC dummy module.
+ univention-management-console-server,
+ poppler-utils
+Description: UCS@school UMC module for moderating print
+ This package contains a UMC module for moderating print jobs of pupils
  .
  It is part of Univention Corporate Server (UCS), an
  integrated, directory driven solution for managing

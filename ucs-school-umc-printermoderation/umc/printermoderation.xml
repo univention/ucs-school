@@ -7,7 +7,12 @@
 		<category name="ucs-school-admin"/>
 	</categories>
 	<command name="printermoderation/query" function="query"></command>
-	<command name="printermoderation/colors" function="colors"></command>
+	<command name="printermoderation/schools" function="schools"></command>
+	<command name="printermoderation/groups" function="groups"></command>
+	<command name="printermoderation/printers" function="printers"></command>
+	<command name="printermoderation/print" function="printit"></command>
 	<command name="printermoderation/get" function="get"></command>
+	<command name="printermoderation/download" function="download"></command>
+	<command name="printermoderation/delete" function="delete"></command>
 	</module>
 </umc>

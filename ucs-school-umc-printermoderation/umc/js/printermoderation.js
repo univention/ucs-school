@@ -26,9 +26,12 @@
  * /usr/share/common-licenses/AGPL-3; if not, see
  * <http://www.gnu.org/licenses/>.
  */
-/*global console dojo dojox dijit umc */
+/*global console dojo dojox dijit window umc */
 
 dojo.provide("umc.modules.printermoderation");
+
+dojo.require( "dojo.date" );
+dojo.require( "dojo.date.locale" );
 
 dojo.require("umc.dialog");
 dojo.require("umc.i18n");
@@ -38,15 +41,13 @@ dojo.require("umc.widgets.Grid");
 dojo.require("umc.widgets.Module");
 dojo.require("umc.widgets.Page");
 dojo.require("umc.widgets.SearchForm");
-
-dojo.require("umc.modules._printermoderation.DetailPage");
+dojo.require("umc.widgets.ProgressInfo");
 
 dojo.declare("umc.modules.printermoderation", [ umc.widgets.Module, umc.i18n.Mixin ], {
 	// summary:
-	//		Template module to ease the UMC module development.
+	//		Print job moderation
 	// description:
-	//		This module is a template module in order to aid the development of
-	//		new modules for Univention Management Console.
+	//		This module helps to control the print jobs of the pupils.
 
 	// the property field that acts as unique identifier for the object
 	idProperty: 'id',
@@ -57,28 +58,22 @@ dojo.declare("umc.modules.printermoderation", [ umc.widgets.Module, umc.i18n.Mix
 	// internal reference to the search page
 	_searchPage: null,
 
-	// internal reference to the detail page for editing an object
-	_detailPage: null,
+	// widget for displaying the progress of an operation
+	_progressInfo: null,
 
 	postMixInProperties: function() {
-		// is called after all inherited properties/methods have been mixed
-		// into the object (originates from dijit._Widget)
-
-		// it is important to call the parent's postMixInProperties() method
 		this.inherited(arguments);
 
-		// Set the opacity for the standby animation to 100% in order to mask
-		// GUI changes when the module is opened. Call this.standby(true|false)
-		// to enabled/disable the animation.
 		this.standbyOpacity = 1;
 	},
 
 	buildRendering: function() {
-		// is called after all DOM nodes have been setup
-		// (originates from dijit._Widget)
-
-		// it is important to call the parent's postMixInProperties() method
 		this.inherited(arguments);
+
+		// setup a progress bar with some info text
+		this._progressInfo = new umc.widgets.ProgressInfo( {
+			style: 'min-width: 400px;'
+		} );
 
 		// start the standby animation in order prevent any interaction before the
 		// form values are loaded
@@ -90,16 +85,11 @@ dojo.declare("umc.modules.printermoderation", [ umc.widgets.Module, umc.i18n.Mix
 
 	renderSearchPage: function(containers, superordinates) {
 		// render all GUI elements for the search formular and the grid
-
-		// setup search page and its main widgets
-		// for the styling, we need a title pane surrounding search form and grid
 		this._searchPage = new umc.widgets.Page({
 			headerText: this.description,
 			helpText: ''
 		});
 
-		// umc.widgets.Module is also a StackContainer instance that can hold
-		// different pages (see also umc.widgets.TabbedModule)
 		this.addChild(this._searchPage);
 
 		// umc.widgets.ExpandingTitlePane is an extension of dijit.layout.BorderContainer
@@ -115,60 +105,70 @@ dojo.declare("umc.modules.printermoderation", [ umc.widgets.Module, umc.i18n.Mix
 
 		// define grid actions
 		var actions = [{
-			name: 'add',
-			label: this._('Add object'),
-			description: this._('Create a new object'),
-			iconClass: 'umcIconAdd',
-			isContextAction: false,
+			name: 'view',
+			label: this._( 'View' ),
+			description: this._( 'View the print job.' ),
 			isStandardAction: true,
-			callback: dojo.hitch(this, '_addObject')
+			isMultiAction: true,
+			callback: dojo.hitch( this, function( ids, items ) {
+				dojo.forEach( items, dojo.hitch( this, function ( item ) {
+					// document.location.host + '//' + document.location.host +
+					var url = dojo.replace( '/umcp/command/printermoderation/download?username={0}&printjob={1}', [ item.username, item.filename ] );
+					window.open( url );
+				} ) );
+			} )
 		}, {
-			name: 'edit',
-			label: this._('Edit'),
-			description: this._('Edit the selected object'),
-			iconClass: 'umcIconEdit',
+			name: 'print',
+			label: this._( 'Print' ),
+			description: this._( 'Print the document.' ),
 			isStandardAction: true,
-			isMultiAction: false,
-			callback: dojo.hitch(this, '_editObject')
+			isMultiAction: true,
+			callback: dojo.hitch(this, '_printJobs')
 		}, {
 			name: 'delete',
-			label: this._('Delete'),
-			description: this._('Deleting the selected objects.'),
+			label: this._( 'Delete' ),
+			description: this._( 'Delete the print job.' ),
 			isStandardAction: true,
 			isMultiAction: true,
 			iconClass: 'umcIconDelete',
-			callback: dojo.hitch(this, '_deleteObjects')
+			callback: dojo.hitch(this, '_deletePrintJobs')
 		}];
 
 		// define the grid columns
 		var columns = [{
-			name: 'name',
-			label: this._('Name'),
-			width: '60%'
+			name: 'user',
+			label: this._( 'User' ),
+			width: '30%'
 		}, {
-			name: 'color',
-			label: this._('Favorite color'),
-			width: '40%'
+			name: 'printjob',
+			label: this._( 'Print job' ),
+			width: '35%'
+		}, {
+			name: 'pages',
+			label: this._( 'Pages' ),
+			width: '8%'
+		}, {
+			name: 'date',
+			label: this._( 'Date' ),
+			width: '20%',
+			formatter: dojo.hitch( this, function( key, rowIndex ) {
+				return dojo.date.locale.format( new Date( key[ 0 ], key[ 1 ] - 1, key[ 2 ], key[ 3 ], key[ 4 ] ), { formatLength: 'short' } );
+			} )
 		}];
 
 		// generate the data grid
 		this._grid = new umc.widgets.Grid({
-			// property that defines the widget's position in a dijit.layout.BorderContainer,
-			// 'center' is its default value, so no need to specify it here explicitely
-			// region: 'center',
 			actions: actions,
-			// defines which data fields are displayed in the grids columns
+			defaultAction: 'view',
 			columns: columns,
-			// a generic UMCP module store object is automatically provided
-			// as this.moduleStore (see also umc.store.getModuleStore())
 			moduleStore: this.moduleStore,
+			sortIndex: -4,
 			// initial query
-			query: { colors: 'None', name: '' }
+			query: { 'class' : 'None', pattern: '' }
 		});
 
 		// add the grid to the title pane
 		titlePane.addChild(this._grid);
-
 
 		//
 		// search form
@@ -177,24 +177,33 @@ dojo.declare("umc.modules.printermoderation", [ umc.widgets.Module, umc.i18n.Mix
 		// add remaining elements of the search form
 		var widgets = [{
 			type: 'ComboBox',
-			name: 'color',
-			description: this._('Defines the .'),
-			label: this._('Category'),
-			// Values are dynamically loaded from the server via a UMCP request.
-			// Use the property dynamicOptions to pass additional values to the server.
-			// Use staticValues to pass an array directly (see umc.widgets._SelectMixin).
-			dynamicValues: 'printermoderation/colors'
+			name: 'school',
+			description: this._('Select the school.'),
+			label: this._( 'School' ),
+			autoHide: true,
+			size: 'twoThirds',
+			dynamicValues: 'printermoderation/schools'
+		}, {
+			type: 'ComboBox',
+			name: 'class',
+			description: this._('Select a class or workgroup.'),
+			label: this._('Class or workroup'),
+			size: 'twoThirds',
+			staticValues: [
+				{ 'id' : 'None', 'label' : this._( 'All classes and workgroups' ) }
+			],
+			dynamicValues: 'printermoderation/groups',
+			depends: 'school'
 		}, {
 			type: 'TextBox',
-			name: 'name',
-			description: this._('Specifies the substring pattern which is searched for in the displayed name'),
-			label: this._('Search pattern')
+			name: 'pattern',
+			value: '',
+			description: this._('Specifies the substring pattern which is searched for in the first name, surname and username'),
+			label: this._('Name')
 		}];
 
-		// the layout is an 2D array that defines the organization of the form elements...
-		// here we arrange the form elements in one row and add the 'submit' button
 		var layout = [
-			[ 'color', 'name', 'submit' ]
+			[ 'school', 'class', 'pattern', 'submit' ]
 		];
 
 		// generate the search form
@@ -218,45 +227,120 @@ dojo.declare("umc.modules.printermoderation", [ umc.widgets.Module, umc.i18n.Mix
 		// add search form to the title pane
 		titlePane.addChild(this._searchForm);
 
-		//
-		// conclusion
-		//
-
-		// we need to call page's startup method manually as all widgets have
-		// been added to the page container object
 		this._searchPage.startup();
-
-		// create a DetailPage instance
-		this._detailPage = new umc.modules._printermoderation.DetailPage({
-			moduleStore: this.moduleStore
-		});
-		this.addChild(this._detailPage);
-
-		// connect to the onClose event of the detail page... we need to manage
-		// visibility of sub pages here
-		// ... this.connect() will destroy signal handlers upon widget
-		// destruction automatically
-		this.connect(this._detailPage, 'onClose', function() {
-			this.selectChild(this._searchPage);
-		});
 	},
 
-	_addObject: function() {
-		umc.dialog.alert(this._('Feature not yet implemented'));
+	_deletePrintJobs: function(ids, items) {
+		umc.dialog.confirm( this._( 'Should the selected print jobs be deleted?' ), [ {
+			label: this._( 'Delete' ),
+			callback: dojo.hitch( this, function() {
+				var finished_func = dojo.hitch( this, function() {
+					this._progressInfo.update( items.length, this._( 'Finished' ) );
+					this.moduleStore.onChange();
+					this.standby( false );
+				} );
+				var deferred = new dojo.Deferred();
+
+				this._progressInfo.set( 'maximum', items.length );
+				this._progressInfo.update( 0, '', this._( 'Deleting print jobs ...' ) );
+				this.standby( true, this._progressInfo );
+				deferred.resolve();
+
+				dojo.forEach( items, dojo.hitch( this, function( item, i ) {
+					deferred = deferred.then( dojo.hitch( this, function() {
+						this._progressInfo.update( i, dojo.replace( this._( 'Print job {0} from {1}' ), [ item.printjob, item.user ] ) );
+						return this.umcpCommand( 'printermoderation/delete', {
+							username: item.username,
+							printjob: item.filename
+						} );
+					} ), finished_func );
+				} ) );
+				deferred.then( finished_func, finished_func );
+			} )
+		}, {
+			label: this._( 'Cancel' ),
+			'default': true
+		} ] );
 	},
 
-	_editObject: function(ids, items) {
-		if (ids.length != 1) {
-			// should not happen
-			return;
+	_printJobs: function(ids, items) {
+		var dialog = null, form = null;
+
+		var _cleanup = function() {
+			dialog.hide();
+			dialog.destroyRecursive();
+			form.destroyRecursive();
+		};
+
+		var _print = dojo.hitch( this, function( printer ) {
+			var deferred = new dojo.Deferred();
+			var finished_func = dojo.hitch(this, function() {
+				this.moduleStore.onChange();
+				this._progressInfo.update( ids.length, this._( 'Finished' ) );
+				this.standby( false );
+			} );
+			this._progressInfo.set( 'maximum', ids.length );
+			this._progressInfo.updateTitle( this._( 'Printing ...' ) );
+			this.standby( true, this._progressInfo );
+			deferred.resolve();
+
+			dojo.forEach( items, function( item, i ) {
+				deferred = deferred.then( dojo.hitch( this, function() {
+					this._progressInfo.update( i, dojo.replace( this._( 'Print job <i>{printjob}</i> of <i>{user}</i>' ), item ) );
+					return umc.tools.umcpCommand( 'printermoderation/print', {
+						username: item.username,
+						printjob: item.filename,
+						printer: printer
+					} );
+				} ) );
+			}, this);
+
+			// finish the progress bar and add error handler
+			deferred = deferred.then( finished_func, finished_func );
+		} );
+
+		var message = '';
+		if ( ids.length == 1 ) {
+			message = dojo.replace( this._( 'A printer must be selected on which the document <i>{printjob}</i> should be printed.' ), items[ 0 ] );
+		} else {
+			message = dojo.replace( this._( 'A printer must be selected on which the {0} documents should be printed.' ), [ items.length ] );
 		}
+		message = '<p>' + message + '</p>';
+		form = new umc.widgets.Form( {
+			style: 'max-width: 500px;',
+			widgets: [ {
+				type: 'Text',
+				name: 'info',
+				content: message
+			},{
+				type: 'ComboBox',
+				name: 'printer',
+				dynamicValues: 'printermoderation/printers',
+				label: this._( 'Printer' )
+			} ],
+			buttons: [ {
+				name: 'submit',
+				label: this._( 'Print' ),
+				style: 'float: right;',
+				callback: function() {
+					var printer = form.getWidget( 'printer' );
+					_cleanup();
+					_print( printer.get( 'value' ) );
+				}
+			}, {
+				name: 'cancel',
+				label: this._( 'Cancel' ),
+				callback: _cleanup
+			}],
+			layout: [ 'info', 'printer' ]
+		});
 
-		this.selectChild(this._detailPage);
-		this._detailPage.load(ids[0]);
-	},
-
-	_deleteObjects: function(ids, items) {
-		umc.dialog.alert(this._('Feature not yet implemented'));
+		dialog = new dijit.Dialog( {
+			title: this._( 'Print' ),
+			content: form,
+			'class': 'umcPopup'
+		} );
+		dialog.show();
 	}
 });
 
