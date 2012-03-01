@@ -1,3 +1,10 @@
+ucs-school-lib (1.0.22-1) unstable; urgency=low
+
+  * add method groups to UMC module base class to retrieve a list of all
+    classes and workgroups; Bug #25954
+
+ -- Andreas Büsching <buesching@univention.de>  Thu, 01 Mar 2012 16:32:50 +0100
+
 ucs-school-lib (1.0.21-2) unstable; urgency=low
 
   * fix build dependencies; Bug #25705

@@ -556,7 +556,7 @@ class SchoolBaseModule( Base ):
 
 	def _groups( self, ldap_connection, school, ldap_base ):
 		"""Returns a list of all groups of the given school"""
-		groupresult = udm_modules.lookup( 'groups/group', None, ldap_connection, scope = 'sub', base = ldap_base )
+		groupresult = udm_modules.lookup( 'groups/group', None, ldap_connection, scope = 'one', base = ldap_base )
 		return map( lambda grp: { 'id' : grp.dn, 'label' : grp[ 'name' ].replace( '%s-' % school, '' ) }, groupresult )
 
 	@LDAP_Connection()
@@ -570,6 +570,14 @@ class SchoolBaseModule( Base ):
 		"""Returns a list of all working groups of the given school"""
 		self.required_options( request, 'school' )
 		self.finished( request.id, self._groups( ldap_user_read, search_base.school, search_base.workgroups ) )
+
+	@LDAP_Connection()
+	def groups( self, request, ldap_user_read = None, ldap_position = None, search_base = None ):
+		"""Returns a list of all groups (classes and workgroups) of the given school"""
+		self.required_options( request, 'school' )
+		classes = self._groups( ldap_user_read, search_base.school, search_base.classes )
+		workgroups = self._groups( ldap_user_read, search_base.school, search_base.workgroups )
+		self.finished( request.id, classes + workgroups )
 
 	@LDAP_Connection()
 	def rooms( self, request, ldap_user_read = None, ldap_position = None, search_base = None ):
