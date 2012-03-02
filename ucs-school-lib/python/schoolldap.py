@@ -609,7 +609,7 @@ class SchoolBaseModule( Base ):
 			# in this case, it is more efficient to get all users from the group directly
 			userModule = udm_modules.get('users/user')
 			userresult = []
-			for idn in groupObj['users']:
+			for idn in filter( lambda u: u.endswith( base ), groupObj['users'] ):
 				userObj = userModule.object(None, ldap_connection, None, idn)
 				userObj.open()
 				if userObj:

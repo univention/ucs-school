@@ -1,3 +1,10 @@
+ucs-school-lib (1.0.23-1) unstable; urgency=low
+
+  * respect the given user type when searching for users of a specific
+    group; Bug #25705
+
+ -- Andreas Büsching <buesching@univention.de>  Fri, 02 Mar 2012 09:48:23 +0100
+
 ucs-school-lib (1.0.22-1) unstable; urgency=low
 
   * add method groups to UMC module base class to retrieve a list of all
