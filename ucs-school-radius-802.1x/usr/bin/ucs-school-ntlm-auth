@@ -35,18 +35,52 @@
 import optparse
 import sys
 import time
+import univention.admin.filter
+import univention.config_registry
 import univention.pyMsChapV2 as pyMsChapV2
+import univention.uldap
+
+userToGroup = {} # { "user": ["group1", "group2", ], }
+groupInfo = {} # { "group1": (23, True, ), }
+def loadInfo():
+	configRegistry = univention.config_registry.ConfigRegistry()
+	configRegistry.load()
+	for key in configRegistry:
+		if key.startswith('proxy/filter/usergroup/'):
+			group = key[len('proxy/filter/usergroup/'):]
+			users = configRegistry[key].split(',')
+			for user in users:
+				if user not in userToGroup:
+					userToGroup[user] = []
+				userToGroup[user].append(group)
+		elif key.startswith('proxy/filter/groupdefault/'):
+			group = key[len('proxy/filter/groupdefault/'):]
+			rule = configRegistry[key]
+			priority = None
+			try:
+				priority = int(configRegistry.get('proxy/setting/%s/priority' % (rule, ), ''))
+			except ValueError:
+				pass
+			wlanEnabled = configRegistry.is_true('proxy/setting/%s/wlan' % (rule, ))
+			if wlanEnabled is not None and priority is not None:
+				groupInfo[group] = (priority, wlanEnabled, )
 
 def getNTPasswordHash(username, stationId):
 	'stationId may be None if it was not supplied to the program'
-	# TODO: check if user is authorized to use the W-LAN - else return None
-	# TODO: retrieve NT-password-hash from LDAP and return it
-	if username == 'Administrator':
+	groups = userToGroup.get(username)
+	if groups is None:
 		return None
-	if stationId == '\x01\x23\x34\x56\x78\xAB':
+	groups = [groupInfo[group] for group in groups if group in groupInfo]
+	if not groups:
 		return None
-	if username == 'Benutzer':
-		return pyMsChapV2.NtPasswordHash(u'univention'.encode('utf-16le'))
+	(maxPriority, _, ) = max(groups)
+	if not True in [wlanEnabled for (priority, wlanEnabled, ) in groups if priority == maxPriority]:
+		return None
+	# user is authorized to use the W-LAN, retrieve NT-password-hash from LDAP and return it
+	result = ldapConnection.search(filter=str(univention.admin.filter.expression('uid', username)), attr=['sambaNTPassword'])
+	if not result:
+		return None
+	return result[0][1]['sambaNTPassword'][0].decode('hex')
 
 def main():
 	parser = optparse.OptionParser()
@@ -86,4 +120,6 @@ def main():
 		return 1
 
 if __name__ == "__main__":
+	ldapConnection = univention.uldap.getMachineConnection()
+	loadInfo()
 	sys.exit(main())
