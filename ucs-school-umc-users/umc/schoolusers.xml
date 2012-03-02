@@ -16,7 +16,7 @@
 	</categories>
 	<command name="schoolusers/query" function="query"></command>
 	<command name="schoolusers/schools" function="schools"></command>
-	<command name="schoolusers/classes" function="classes"></command>
+	<command name="schoolusers/groups" function="groups"></command>
 	<command name="schoolusers/password/reset" function="password_reset"></command>
 	</module>
 </umc>

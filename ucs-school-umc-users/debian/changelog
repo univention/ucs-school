@@ -1,3 +1,9 @@
+ucs-school-umc-users (0.1.6-1) unstable; urgency=low
+
+  * re-implement functionality of old user management module; Bug #25954
+
+ -- Andreas Büsching <buesching@univention.de>  Fri, 02 Mar 2012 09:50:06 +0100
+
 ucs-school-umc-users (0.1.5-1) unstable; urgency=low
 
   * corrected size for combo boxes; Bug #25954

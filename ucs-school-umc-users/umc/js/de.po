@@ -3,8 +3,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-users\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2012-01-31 09:29+0100\n"
-"PO-Revision-Date: 2012-01-31 09:30+0100\n"
+"POT-Creation-Date: 2012-03-01 18:14+0100\n"
+"PO-Revision-Date: 2012-03-01 18:15+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
@@ -12,103 +12,97 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: umc/js/schoolusers.js:119
-msgid "Add object"
-msgstr ""
+#: umc/js/schoolusers.js:162
+msgid "All classes and workgroups"
+msgstr "Alle Klassen und Arbeitsgruppen"
 
-#: umc/js/_schoolusers/DetailPage.js:78
+#: umc/js/schoolusers.js:292
 msgid "Cancel"
-msgstr ""
+msgstr "Abbrechen"
 
-#: umc/js/schoolusers.js:182
-msgid "Category"
-msgstr ""
+#: umc/js/schoolusers.js:159
+msgid "Class or workgroup"
+msgstr "Klasse oder Arbeitsgruppe"
 
-#: umc/js/schoolusers.js:120
-msgid "Create a new object"
-msgstr ""
-
-#: umc/js/schoolusers.js:181
-msgid "Defines the ."
-msgstr ""
-
-#: umc/js/schoolusers.js:135
-msgid "Delete"
-msgstr ""
-
-#: umc/js/schoolusers.js:136
-msgid "Deleting the selected objects."
-msgstr ""
-
-#: umc/js/_schoolusers/DetailPage.js:105
-msgid "Displayed name"
-msgstr ""
-
-#: umc/js/schoolusers.js:127
-msgid "Edit"
-msgstr ""
-
-#: umc/js/schoolusers.js:128
-msgid "Edit the selected object"
-msgstr ""
-
-#: umc/js/_schoolusers/DetailPage.js:121
-msgid "Editable properties"
-msgstr ""
-
-#: umc/js/schoolusers.js:150 umc/js/_schoolusers/DetailPage.js:110
-msgid "Favorite color"
-msgstr ""
-
-#: umc/js/_schoolusers/DetailPage.js:111
-msgid "Favorite color associated with the current entry"
-msgstr ""
-
-#: umc/js/_schoolusers/DetailPage.js:141
-msgid "Feature not implemented yet!"
-msgstr ""
-
-#: umc/js/schoolusers.js:245 umc/js/schoolusers.js:259
-msgid "Feature not yet implemented"
-msgstr ""
-
-#: umc/js/_schoolusers/DetailPage.js:100
-msgid "Identifier"
-msgstr ""
-
-#: umc/js/schoolusers.js:146
-msgid "Name"
-msgstr ""
-
-#: umc/js/_schoolusers/DetailPage.js:106
-msgid "Name that is displayed"
-msgstr ""
-
-#: umc/js/_schoolusers/DetailPage.js:66
-msgid "Object properties"
-msgstr ""
-
-#: umc/js/_schoolusers/DetailPage.js:118
-msgid "Read-only properties"
-msgstr ""
-
-#: umc/js/_schoolusers/DetailPage.js:72
-msgid "Save"
-msgstr ""
-
-#: umc/js/schoolusers.js:191
-msgid "Search pattern"
-msgstr ""
-
-#: umc/js/schoolusers.js:107
-msgid "Search results"
-msgstr ""
-
-#: umc/js/schoolusers.js:190
+#: umc/js/schoolusers.js:265
 msgid ""
-"Specifies the substring pattern which is searched for in the displayed name"
+"Clicking the <i>Reset</i> button will set the password for all {0} selected "
+"students to the given password. For security reasons the students should be "
+"forced to change the passwort on the next login."
 msgstr ""
+"Durch Klicken auf die <i>Zurücksetzen</i>-Schaltfläche wird das Passwort der "
+"{0} ausgewählten Schüler auf das angegebene gesetzt. Aus Sicherheitsgründen "
+"sollten die Schüler zur Änderung des Passworts bei der nächsten Anmeldung "
+"aufgefordert werden."
 
-#: umc/js/_schoolusers/DetailPage.js:67
-msgid "This page demonstrates how object properties can be viewed for editing."
+#: umc/js/schoolusers.js:224
+msgid "Failed to reset the password for the following users:"
+msgstr "Das Zurücksetzen des Passworts ist für die folgenden Benutzer fehlgeschlagen"
+
+#: umc/js/schoolusers.js:221
+msgid "Finished"
+msgstr "Fertiggestellt"
+
+#: umc/js/schoolusers.js:121 umc/js/schoolusers.js:171
+msgid "Name"
+msgstr "Name"
+
+#: umc/js/schoolusers.js:275
+msgid "New password"
+msgstr "Neues Passwort"
+
+#: umc/js/schoolusers.js:125
+msgid "Password expiration date"
+msgstr "Passwortablaufdatum"
+
+#: umc/js/schoolusers.js:279
+msgid "Reset"
+msgstr "Zurücksetzen"
+
+#: umc/js/schoolusers.js:111
+msgid "Reset password"
+msgstr "Passwort zurücksetzen"
+
+#: umc/js/schoolusers.js:299
+msgid "Reset passwords"
+msgstr "Passwörter zurücksetzen"
+
+#: umc/js/schoolusers.js:112
+msgid "Resets password of user."
+msgstr "Setzt Passwörter von Benutzern zurück"
+
+#: umc/js/schoolusers.js:151
+msgid "School"
+msgstr "Schule"
+
+#: umc/js/schoolusers.js:99
+msgid "Search results"
+msgstr "Suchergebnisse"
+
+#: umc/js/schoolusers.js:158
+msgid "Select a class or workgroup."
+msgstr "Auswahl einer Klasse oder Arbeitsgruppe."
+
+#: umc/js/schoolusers.js:150
+msgid "Select the school."
+msgstr "Auswahl der Schule."
+
+#: umc/js/schoolusers.js:237
+msgid "Setting passwords"
+msgstr "Passwort setzen"
+
+#: umc/js/schoolusers.js:170
+msgid ""
+"Specifies the substring pattern which is searched for in the first name, "
+"surname and username"
 msgstr ""
+"Definiert die Zeichenkette, die im Vorname, Nachname und Benutzernamen "
+"gesucht wird"
+
+#: umc/js/schoolusers.js:243
+msgid "User: "
+msgstr "Benutzer: "
+
+#: umc/js/schoolusers.js:270
+msgid "user has to change password on next login"
+msgstr "Benutzer muss das Passwort bei der nächsten Anmeldung ändern"

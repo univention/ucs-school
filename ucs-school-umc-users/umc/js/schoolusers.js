@@ -37,9 +37,8 @@ dojo.require("umc.widgets.ExpandingTitlePane");
 dojo.require("umc.widgets.Grid");
 dojo.require("umc.widgets.Module");
 dojo.require("umc.widgets.Page");
+dojo.require("umc.widgets.ProgressInfo");
 dojo.require("umc.widgets.SearchForm");
-
-// dojo.require("umc.modules._schoolusers.DetailPage");
 
 dojo.declare("umc.modules.schoolusers", [ umc.widgets.Module, umc.i18n.Mixin ], {
 	// summary:
@@ -58,34 +57,21 @@ dojo.declare("umc.modules.schoolusers", [ umc.widgets.Module, umc.i18n.Mixin ], 
 	_searchPage: null,
 
 	// internal reference to the detail page for editing an object
-	// _detailPage: null,
-	_progressBar: null,
-	_progressContainer: null,
+	_progressInfo: null,
 
 	uninitialize: function() {
 		this.inherited(arguments);
 
-		this._progressContainer.destroyRecursive();
+		this._progressInfo.destroyRecursive();
 	},
 
 	postMixInProperties: function() {
-		// is called after all inherited properties/methods have been mixed
-		// into the object (originates from dijit._Widget)
-
-		// it is important to call the parent's postMixInProperties() method
 		this.inherited(arguments);
 
-		// Set the opacity for the standby animation to 100% in order to mask
-		// GUI changes when the module is opened. Call this.standby(true|false)
-		// to enabled/disable the animation.
 		this.standbyOpacity = 1;
 	},
 
 	buildRendering: function() {
-		// is called after all DOM nodes have been setup
-		// (originates from dijit._Widget)
-
-		// it is important to call the parent's postMixInProperties() method
 		this.inherited(arguments);
 
 		// start the standby animation in order prevent any interaction before the
@@ -99,15 +85,11 @@ dojo.declare("umc.modules.schoolusers", [ umc.widgets.Module, umc.i18n.Mixin ], 
 	renderSearchPage: function(containers, superordinates) {
 		// render all GUI elements for the search formular and the grid
 
-		// setup search page and its main widgets
-		// for the styling, we need a title pane surrounding search form and grid
 		this._searchPage = new umc.widgets.Page({
 			headerText: this.description,
 			helpText: ''
 		});
 
-		// umc.widgets.Module is also a StackContainer instance that can hold
-		// different pages (see also umc.widgets.TabbedModule)
 		this.addChild(this._searchPage);
 
 		// umc.widgets.ExpandingTitlePane is an extension of dijit.layout.BorderContainer
@@ -137,24 +119,27 @@ dojo.declare("umc.modules.schoolusers", [ umc.widgets.Module, umc.i18n.Mixin ], 
 			label: this._('Name'),
 			width: '60%'
 		}, {
-			name: 'expires',
+			name: 'passwordexpiry',
 			label: this._('Password expiration date'),
-			width: '40%'
+			width: '40%',
+			'formatter': function( key ) {
+				if ( key ) {
+					var date = dojo.date.locale.parse( key, { datePattern : 'yyyy-MM-dd', selector: 'date' } );
+					if ( date ) {
+						return dojo.date.locale.format( date, { selector: 'date' } );
+					}
+				}
+				return '-';
+			}
 		}];
 
 		// generate the data grid
 		this._grid = new umc.widgets.Grid({
-			// property that defines the widget's position in a dijit.layout.BorderContainer,
-			// 'center' is its default value, so no need to specify it here explicitely
-			// region: 'center',
 			actions: actions,
-			// defines which data fields are displayed in the grids columns
 			columns: columns,
-			// a generic UMCP module store object is automatically provided
-			// as this.moduleStore (see also umc.store.getModuleStore())
-			moduleStore: this.moduleStore
+			moduleStore: this.moduleStore,
 			// initial query
-			// query: { colors: 'None', name: '' }
+			query: { 'class': 'None', pattern: '' }
 		});
 
 		// add the grid to the title pane
@@ -177,13 +162,13 @@ dojo.declare("umc.modules.schoolusers", [ umc.widgets.Module, umc.i18n.Mixin ], 
 		}, {
 			type: 'ComboBox',
 			name: 'class',
-			description: this._('Select the class.'),
-			label: this._('Class'),
+			description: this._('Select a class or workgroup.'),
+			label: this._( 'Class or workgroup' ),
 			size: 'TwoThirds',
 			staticValues: [
-				{ 'id' : 'None', 'label' : this._( 'All classes' ) }
+				{ 'id' : 'None', 'label' : this._( 'All classes and workgroups' ) }
 			],
-			dynamicValues: 'schoolusers/classes',
+			dynamicValues: 'schoolusers/groups',
 			depends: 'school'
 		}, {
 			type: 'TextBox',
@@ -221,40 +206,14 @@ dojo.declare("umc.modules.schoolusers", [ umc.widgets.Module, umc.i18n.Mixin ], 
 		titlePane.addChild(this._searchForm);
 
 		// setup a progress bar with some info text
-		this._progressContainer = new umc.widgets.ContainerWidget({});
-		this._progressBar = new dijit.ProgressBar({
-			style: 'background-color: #fff;'
-		});
-		this._progressContainer.addChild(this._progressBar);
-		this._progressContainer.addChild(new umc.widgets.Text({
-			content: this._('Please wait, your requests are being processed...')
-		}));
+		this._progressInfo = new umc.widgets.ProgressInfo( {
+			style: 'min-width: 400px'
+		} );
 
-
-		//
-		// conclusion
-		//
-
-		// we need to call page's startup method manually as all widgets have
-		// been added to the page container object
 		this._searchPage.startup();
-
-		// // create a DetailPage instance
-		// this._detailPage = new umc.modules._schoolusers.DetailPage({
-		// 	moduleStore: this.moduleStore
-		// });
-		// this.addChild(this._detailPage);
-
-		// // connect to the onClose event of the detail page... we need to manage
-		// // visibility of sub pages here
-		// // ... this.connect() will destroy signal handlers upon widget
-		// // destruction automatically
-		// this.connect(this._detailPage, 'onClose', function() {
-		// 	this.selectChild(this._searchPage);
-		// });
 	},
 
-	_resetPasswords: function( ids ) {
+	_resetPasswords: function( ids, items ) {
 		var dialog = null, form = null;
 
 		var _cleanup = function() {
@@ -263,28 +222,46 @@ dojo.declare("umc.modules.schoolusers", [ umc.widgets.Module, umc.i18n.Mixin ], 
 			form.destroyRecursive();
 		};
 
-		var _set_passwords = dojo.hitch( this, function( password, nextLogin ) {
-			dojo.forEach(ids, function(iid, i) {
-				var deferred = new dojo.Deferred();
-				deferred.resolve();
+		var errors = [];
+		var finished_func = dojo.hitch( this, function() {
+			this.moduleStore.onChange();
+			this._progressInfo.update( ids.length, this._( 'Finished' ) );
+			this.standby( false );
+			if ( errors.length ) {
+				var message = this._( 'Failed to reset the password for the following users:' ) + '<br><ul>';
+				dojo.forEach( errors, function( item ) {
+					message += '<li>' + item.name + ' (' + item.message + ')</li>';
+				} );
+				message += '</ul>';
+				umc.dialog.alert( message );
+			}
+		} );
 
+		var _set_passwords = dojo.hitch( this, function( password, nextLogin ) {
+			var deferred = new dojo.Deferred();
+
+			this._progressInfo.set( 'maximum', ids.length );
+			this._progressInfo.updateTitle( this._( 'Setting passwords' ) );
+			deferred.resolve();
+			this.standby( true, this._progressInfo );
+
+			dojo.forEach( items, function( item, i ) {
 				deferred = deferred.then( dojo.hitch( this, function() {
-					this.updateProgress(i, ids.length );
+					this._progressInfo.update( i, this._( 'User: ' ) + item.name );
 					return umc.tools.umcpCommand( 'schoolusers/password/reset', {
-						userDN: iid,
-						newPassword: passwordWidget.get( 'value' )
+						userDN: item.id,
+						newPassword: password,
+						nextLogin: nextLogin
+					} ).then( function( response ) {
+						if ( dojo.isString( response.result ) ) {
+							errors.push( { name: item.name, message: response.result } );
+						}
 					} );
 				} ) );
-			}, this);
+			}, this );
 
 			// finish the progress bar and add error handler
-			deferred = deferred.then( dojo.hitch(this, function() {
-				this.moduleStore.onChange();
-				this.updateProgress( ids.length, ids.length );
-			} ), dojo.hitch(this, function( error ) {
-				this.moduleStore.onChange();
-				this.updateProgress( ids.length, ids.length );
-			} ) );
+			deferred = deferred.then( finished_func, finished_func );
 		} );
 
 		form = new umc.widgets.Form({
@@ -292,7 +269,7 @@ dojo.declare("umc.modules.schoolusers", [ umc.widgets.Module, umc.i18n.Mixin ], 
 			widgets: [ {
 				type: 'Text',
 				name: 'info',
-				content: this._( 'Reset passwords ...' )
+				content: '<p>' + dojo.replace( this._( 'Clicking the <i>Reset</i> button will set the password for all {0} selected students to the given password. For security reasons the students should be forced to change the passwort on the next login.' ), [ items.length ] ) + '</p>'
 			},{
 				type: 'CheckBox',
 				name: 'changeOnNextLogin',
@@ -306,7 +283,7 @@ dojo.declare("umc.modules.schoolusers", [ umc.widgets.Module, umc.i18n.Mixin ], 
 			} ],
 			buttons: [ {
 				name: 'submit',
-				label: this._( 'Set' ),
+				label: this._( 'Reset' ),
 				style: 'float: right;',
 				callback: function() {
 					var passwordWidget = form.getWidget( 'newPassword' );
@@ -331,24 +308,6 @@ dojo.declare("umc.modules.schoolusers", [ umc.widgets.Module, umc.i18n.Mixin ], 
 			'class': 'umcPopup'
 		} );
 		dialog.show();
-	},
-
-	updateProgress: function(i, n) {
-		var progress = this._progressBar;
-		if (i === 0) {
-			// initiate the progressbar and start the standby
-			progress.set('maximum', n);
-			progress.set('value', 0);
-			this.standby(true, this._progressContainer);
-		}
-		else if (i >= n || i < 0) {
-			// finish the progress bar
-			progress.set('value', n);
-			this.standby(false);
-		}
-		else {
-			progress.set('value', i);
-		}
 	}
 });
 
