@@ -1,3 +1,10 @@
+ucs-school-lib (1.0.24-1) unstable; urgency=low
+
+  * just try to read the scholl from the request options if it is a
+    dictionary; Bug #25705
+
+ -- Andreas Büsching <buesching@univention.de>  Fri, 02 Mar 2012 16:07:33 +0100
+
 ucs-school-lib (1.0.23-1) unstable; urgency=low
 
   * respect the given user type when searching for users of a specific

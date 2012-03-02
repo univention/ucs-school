@@ -387,7 +387,7 @@ def LDAP_Connection( *connection_types ):
 				if len(args) > 1 and isinstance(args[1], Message):
 					# we have a Message instance (i.e. a request), try to set the search_base
 					# according to the specified option 'school'
-					school = args[1].options.get('school')
+					school = isinstance( args[1].options, dict ) and args[1].options.get('school') or None
 					if school:
 						kwargs[ 'search_base' ] = SchoolSearchBase( _search_base.availableSchools, school )
 
