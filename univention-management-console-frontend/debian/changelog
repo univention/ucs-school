@@ -1,3 +1,9 @@
+univention-management-console-frontend (1.0.303-1) unstable; urgency=low
+
+  * MultiObjectSelect: support data structures with labels; Bug #26362
+
+ -- Andreas Büsching <buesching@univention.de>  Mon, 05 Mar 2012 16:17:44 +0100
+
 univention-management-console-frontend (1.0.302-1) unstable; urgency=low
 
   * ProgressInfo: added missing dojo.require('dijit.ProgressBar'); Bug #26273
