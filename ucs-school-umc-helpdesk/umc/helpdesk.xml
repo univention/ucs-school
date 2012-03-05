@@ -4,7 +4,7 @@
 	<name>Helpdesk</name>
 	<description>Contact the helpdesk team</description>
 	<categories>
-	  <category name="ucs-school-admin"/>
+	  <category name="ucs-school-class"/>
 	</categories>
 	<command name="helpdesk/configuration" function="configuration">
 	</command>

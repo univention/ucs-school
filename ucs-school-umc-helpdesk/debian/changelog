@@ -1,3 +1,9 @@
+ucs-school-umc-helpdesk (6.0.3-1) unstable; urgency=low
+
+  * changed module category; Bug #25706
+
+ -- Alexander Kläser <klaeser@univention.de>  Mon, 05 Mar 2012 16:08:45 +0100
+
 ucs-school-umc-helpdesk (6.0.2-1) unstable; urgency=low
 
   * adapted module to API changes; Bug #25706
