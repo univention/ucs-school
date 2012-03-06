@@ -1,3 +1,9 @@
+univention-management-console (4.0.222-1) unstable; urgency=low
+
+  * support overwriting flavors by others; Bug #26380
+
+ -- Andreas Büsching <buesching@univention.de>  Tue, 06 Mar 2012 17:18:48 +0100
+
 univention-management-console (4.0.221-1) unstable; urgency=low
 
   * passing an UMCP response objects as the result to the finished method of
