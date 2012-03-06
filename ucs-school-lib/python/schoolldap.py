@@ -56,207 +56,6 @@ from univention.management.console.modules import Base
 # load UDM modules
 udm_modules.update()
 
-### OLD CODE!!!
-# class SchoolLDAPConnection(object):
-# 	idcounter = 1
-# 	def __init__(self, ldapserver=None, binddn='',  bindpw='', username=None):
-# 		self.id = SchoolLDAPConnection.idcounter
-# 		SchoolLDAPConnection.idcounter += 1
-# 		ud.debug( ud.ADMIN, ud.INFO, 'SchoolLDAPConnection[%d]: init' % self.id )
-
-# 		univention.admin.modules.update()
-
-# 		self.ldapserver = ldapserver
-# 		self.binddn = binddn
-# 		self.bindpw = bindpw
-# 		self.username = username
-# 		self.co = None
-# 		self.lo = None
-
-# 		self.configRegistry = univention.config_registry.ConfigRegistry()
-# 		self.configRegistry.load()
-
-# 		self.availableSchools = []
-# 		self.ouswitchenabled = False
-
-# 		self.lo = self.getConnection()
-
-# 	def getConnection(self):
-# 		if self.lo:
-# 			return self.lo
-
-# 		if self.ldapserver == None:
-# 			ud.debug( ud.ADMIN, ud.INFO, 'SchoolLDAPConnection[%d]: no ldapserver given - using default' % self.id )
-# 			self.ldapserver = self.configRegistry[ 'ldap/server/name' ]
-
-# 		self.co = univention.admin.config.config()
-
-# 		# create authenticated ldap connection
-# 		ud.debug( ud.ADMIN, ud.INFO, 'SchoolLDAPConnection[%d]: hostname: %s' % (self.id, self.ldapserver) )
-# 		lo = univention.uldap.access( host = self.ldapserver, base = self.configRegistry[ 'ldap/base' ], start_tls = 2 )
-
-# 		if self.username and not self.binddn:
-# 			# map username to dn with machine account ldap connection
-# 			ud.debug( ud.ADMIN, ud.INFO, 'SchoolLDAPConnection[%d]: using username "%s"' % (self.id, self.username) )
-# 			mc = univention.uldap.getMachineConnection(ldap_master = False)
-# 			result = mc.searchDn( filter = 'uid=%s' % self.username )
-# 			if result:
-# 				self.binddn = result[0]
-# 			else:
-# 				ud.debug( ud.ADMIN, ud.INFO, 'SchoolLDAPConnection[%d]: cannot determine dn of uid "%s"' % (self.id, self.username) )
-
-# 		if self.binddn:
-# 			ud.debug( ud.ADMIN, ud.INFO, 'SchoolLDAPConnection[%d]: binddn: %s' % (self.id, self.binddn) )
-# 			#lo.close() #FIXME: how to close the connection?
-
-# 			lo = univention.admin.uldap.access( 
-# 				host = self.ldapserver,
-# 				base = self.configRegistry['ldap/base'],
-# 				binddn = self.binddn,
-# 				bindpw = self.bindpw,
-# 				start_tls = 2 )
-
-# 		self.lo = lo
-# 		self._init_ou()
-
-# 		if not self.lo:
-# 			ud.debug( ud.ADMIN, ud.INFO, 'SchoolLDAPConnection[%d]: failed to get ldap connection' % self.id )
-
-# 		return self.lo
-
-
-# 	def switch_ou( self, ou ):
-# 		# FIXME search for OU to get correct dn
-# 		self.searchbaseDepartment = 'ou=%s,%s' % (ou, self.configRegistry[ 'ldap/base' ] )
-# 		self.school = ou
-
-# 		self.searchbaseComputers = 'cn=computers,%s' % self.searchbaseDepartment
-# 		self.searchbaseUsers = "cn=users,%s" % self.searchbaseDepartment
-# 		self.searchbaseExtGroups = "cn=schueler,cn=groups,%s" % self.searchbaseDepartment
-# 		self.searchbaseRooms = 'cn=raeume,cn=groups,%s' % self.searchbaseDepartment
-# 		self.searchbaseClasses = "cn=klassen,cn=schueler,cn=groups,%s" % self.searchbaseDepartment
-# 		self.searchbasePupils = "cn=schueler,cn=users,%s" % self.searchbaseDepartment
-# 		self.searchbaseTeachers = "cn=lehrer,cn=users,%s" % self.searchbaseDepartment
-# 		self.searchbaseShares = "cn=shares,%s" % self.searchbaseDepartment
-# 		self.searchbasePrinters = "cn=printers,%s" % self.searchbaseDepartment
-
-
-# 	def checkConnection(self, ldapserver='', binddn='',  bindpw='', username=None):
-# 		reconnect = False
-# 		if ldapserver and ldapserver != self.ldapserver:
-# 			self.ldapserver = ldapserver
-# 			reconnect = True
-# 		if binddn and binddn != self.binddn:
-# 			self.binddn = binddn
-# 			reconnect = True
-# 		if bindpw and bindpw != self.bindpw:
-# 			self.bindpw = bindpw
-# 			reconnect = True
-# 		if username and username != self.username:
-# 			self.username = username
-# 			reconnect = True
-
-# 		if reconnect:
-# 			self.lo = None
-# 			self.getConnection()
-
-# 		if not self.lo:
-# 			ud.debug( ud.ADMIN, ud.INFO, 'SchoolLDAPConnection[%d]: no connection established - trying reconnect' % self.id )
-# 			self.getConnection()
-
-# 		return (self.lo != None)
-
-
-# 	def _init_ou(self):
-# 		self.school = None
-
-# 		self.computermodule = univention.admin.modules.get('computers/computer')
-# 		self.usermodule = univention.admin.modules.get('users/user')
-# 		self.groupmodule = univention.admin.modules.get('groups/group')
-# 		self.sharemodule = univention.admin.modules.get('shares/share')
-# 		self.printermodule = univention.admin.modules.get('shares/printer')
-# 		self.oumodule = univention.admin.modules.get('container/ou')
-
-# 		# stop here if no ldap connection is present
-# 		if not self.lo:
-# 			return
-
-# 		self.searchScopeExtGroups = 'one'
-
-# 		if len(self.availableSchools) == 0:
-# 			# OU list override
-# 			oulist = self.configRegistry.get('ucsschool/local/oulist')
-# 			if oulist:
-# 				self.availableSchools = [ x.strip() for x in oulist.split(',') ]
-# 				ud.debug( ud.ADMIN, ud.INFO, 'SchoolLDAPConnection[%d]: availableSchools overridden by UCR' % self.id)
-# 			else:
-# 				self.availableSchools = []
-# 				# get available OUs
-# 				ouresult = univention.admin.modules.lookup(
-# 					self.oumodule, self.co, self.lo,
-# 					scope = 'one', superordinate = None,
-# 					base = self.configRegistry[ 'ldap/base' ])
-# 				for ou in ouresult:
-# 					self.availableSchools.append(ou['name'])
-
-# 			ud.debug( ud.ADMIN, ud.INFO, 'SchoolLDAPConnection[%d]: availableSchools=%s' % (self.id, self.availableSchools ) )
-
-# 			self.switch_ou(self.availableSchools[0])
-
-# 		if self.binddn.find('ou=') > 0:
-# 			self.searchbaseDepartment = self.binddn[self.binddn.find('ou='):]
-# 			self.school = self.lo.explodeDn( self.searchbaseDepartment, 1 )[0]
-
-# 			# cut list down to default OU
-# 			self.availableSchools = [ self.school ]
-
-# 			self.switch_ou(self.school)
-
-# 		else:
-# 			if self.binddn:
-# 				ud.debug( ud.ADMIN, ud.INFO, 'SchoolLDAPConnection[%d]: was not able to identify ou of this account - OU select box enabled!' % self.id )
-# 			else:
-# 				ud.debug( ud.ADMIN, ud.INFO, 'SchoolLDAPConnection[%d]: was not able to identify ou of this account - anonymous connection!' % self.id )
-# 			self.ouswitchenabled = True
-
-
-# 	def get_group_member_list( self, groupdn, filterbase = None, attrib = 'users' ):
-# 		"""
-# 		Returns a list of dn that are member of specified group <groupdn>.
-# 		Only those DN are returned that are located within subtree <filterbase>.
-# 		By default, the DN of user members are returned. By passing 'hosts' to <attrib>
-# 		only computer members are returned. 
-# 		"""
-# 		memberlist = []
-
-# 		if not self.checkConnection():
-# 			return memberlist
-
-# 		if not groupdn:
-# 			return memberlist
-
-# 		try:
-# 			groupresult = univention.admin.modules.lookup( self.groupmodule, self.co, self.lo,
-# 														   scope = 'sub', superordinate = None,
-# 														   base = groupdn, filter = '')
-# 			ud.debug( ud.ADMIN, ud.INFO, 'SchoolLDAPConnection[%d]: group(%s) = %s' % (self.id, groupdn, groupresult) )
-# 			for gr in groupresult:
-# 				ud.debug( ud.ADMIN, ud.INFO, 'SchoolLDAPConnection[%d]: group(%s) gr=%s' % (self.id, groupdn, gr) )
-# 				gr.open()
-# 				ud.debug( ud.ADMIN, ud.INFO, 'SchoolLDAPConnection[%d]: group(%s) gr["%s"]=%s' % (self.id, groupdn, attrib, gr[attrib]) )
-# 				for memberdn in gr[attrib]:
-# 					if filterbase == None or memberdn.endswith(filterbase):
-# 						memberlist.append( memberdn )
-# 		except Exception, e:
-# 			ud.debug( ud.ADMIN, ud.ERROR, 'SchoolLDAPConnection[%d]: get_group_member_list: lookup failed: %s' % (self.id, e) )
-
-# 		ud.debug( ud.ADMIN, ud.INFO, 'SchoolLDAPConnection[%d]: group(%s) memberlist=%s' % (self.id, groupdn, memberlist) )
-
-# 		memberlist = sorted( memberlist )
-
-# 		return memberlist
-
-
 # current user
 _user_dn = None
 _password = None
@@ -456,7 +255,7 @@ def _init_search_base(ldap_connection):
 
 class SchoolSearchBase(object):
 	"""This class serves as wrapper for all the different search bases (users,
-	groups, pupils, teachers etc.). It is initiate with a particular ou.
+	groups, students, teachers etc.). It is initiate with a particular ou.
 	The class is inteded for read access only, instead of switching the a
 	search base, a new instance can simply be created.
 	"""
@@ -468,7 +267,7 @@ class SchoolSearchBase(object):
 
 		# prefixes
 		self._containerAdmins = ucr.get('ucsschool/ldap/default/container/admins', 'admins')
-		self._containerPupils = ucr.get('ucsschool/ldap/default/container/pupils', 'schueler')
+		self._containerStudents = ucr.get('ucsschool/ldap/default/container/pupils', 'schueler')
 		self._containerStaff = ucr.get('ucsschool/ldap/default/container/staff', 'mitarbeiter')
 		self._containerTeachers = ucr.get('ucsschool/ldap/default/container/teachers', 'lehrer')
 		self._containerClass = ucr.get('ucsschool/ldap/default/container/class', 'klassen')
@@ -492,15 +291,15 @@ class SchoolSearchBase(object):
 
 	@property
 	def workgroups(self):
-		return "cn=%s,cn=groups,%s" % (self._containerPupils, self.schoolDN)
+		return "cn=%s,cn=groups,%s" % (self._containerStudents, self.schoolDN)
 
 	@property
 	def classes(self):
-		return "cn=%s,cn=%s,cn=groups,%s" % (self._containerClass, self._containerPupils, self.schoolDN)
+		return "cn=%s,cn=%s,cn=groups,%s" % (self._containerClass, self._containerStudents, self.schoolDN)
 
 	@property
-	def pupils(self):
-		return "cn=%s,cn=users,%s" % (self._containerPupils, self.schoolDN)
+	def students(self):
+		return "cn=%s,cn=users,%s" % (self._containerStudents, self.schoolDN)
 
 	@property
 	def teachers(self):
@@ -592,8 +391,8 @@ class SchoolBaseModule( Base ):
 		base = search_base.users
 		if user_type and user_type.lower() in ('teacher', 'teachers'):
 			base = search_base.teachers
-		elif user_type and user_type.lower() in ('pupil', 'pupils'):
-			base = search_base.pupils
+		elif user_type and user_type.lower() in ('student', 'students'):
+			base = search_base.students
 
 		# open the group
 		groupObj = None

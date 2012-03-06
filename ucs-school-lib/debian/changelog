@@ -1,3 +1,9 @@
+ucs-school-lib (1.0.25-1) unstable; urgency=low
+
+  * replaced pupils with students; Bug #25705
+
+ -- Andreas Büsching <buesching@univention.de>  Tue, 06 Mar 2012 11:43:25 +0100
+
 ucs-school-lib (1.0.24-1) unstable; urgency=low
 
   * just try to read the scholl from the request options if it is a
