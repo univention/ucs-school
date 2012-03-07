@@ -44,7 +44,7 @@ from ucsschool.lib.schoolldap import LDAP_Connection, LDAP_ConnectionError, set_
 
 import uuid
 
-_ = Translation( 'ucs-school-umc-teachingmaterial' ).translate
+_ = Translation( 'ucs-school-umc-distribution' ).translate
 
 class Instance( SchoolBaseModule ):
 	# list of dummy entries
@@ -92,10 +92,10 @@ class Instance( SchoolBaseModule ):
 
 		###return: [ { 'id' : <unique identifier>, 'name' : <display name>, 'color' : <name of favorite color> }, ... ]
 		"""
-		MODULE.info( 'teachingmaterial.query: options: %s' % str( request.options ) )
+		MODULE.info( 'distribution.query: options: %s' % str( request.options ) )
 		pattern = request.options.get('pattern', '').lower()
 		result = [ i for i in Instance.entries if i['name'].lower().find(pattern) >= 0 or i['description'].lower().find(pattern) >= 0 ]
-		MODULE.info( 'teachingmaterial.query: results: %s' % str( result ) )
+		MODULE.info( 'distribution.query: results: %s' % str( result ) )
 		self.finished( request.id, result )
 
 	def get( self, request ):
@@ -105,15 +105,15 @@ class Instance( SchoolBaseModule ):
 
 		return: [ { 'id' : <unique identifier>, 'name' : <display name>, 'color' : <name of favorite color> }, ... ]
 		"""
-		MODULE.info( 'teachingmaterial.get: options: %s' % str( request.options ) )
+		MODULE.info( 'distribution.get: options: %s' % str( request.options ) )
 		ids = request.options
 		result = []
 		if isinstance( ids, ( list, tuple ) ):
 			ids = set(ids)
 			result = filter(lambda x: x['id'] in ids, Instance.entries)
 		else:
-			MODULE.warn( 'teachingmaterial.get: wrong parameter, expected list of strings, but got: %s' % str( ids ) )
+			MODULE.warn( 'distribution.get: wrong parameter, expected list of strings, but got: %s' % str( ids ) )
 			raise UMC_OptionTypeError( 'Expected list of strings, but got: %s' % str(ids) )
-		MODULE.info( 'teachingmaterial.get: results: %s' % str( result ) )
+		MODULE.info( 'distribution.get: results: %s' % str( result ) )
 		self.finished( request.id, result )
 

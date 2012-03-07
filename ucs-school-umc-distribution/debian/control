@@ -1,4 +1,4 @@
-Source: ucs-school-umc-teachingmaterial
+Source: ucs-school-umc-distribution
 Section: univention
 Priority: optional
 Maintainer: Univention GmbH <packages@univention.de>
@@ -10,7 +10,7 @@ Build-Depends: debhelper (>= 7.0.50~),
 Standards-Version: 3.7.2
 XS-Python-Version: 2.6
 
-Package: ucs-school-umc-teachingmaterial
+Package: ucs-school-umc-distribution
 Architecture: all
 Depends: ${misc:Depends},
  univention-management-console,

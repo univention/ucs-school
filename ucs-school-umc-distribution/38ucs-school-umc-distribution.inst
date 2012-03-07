@@ -1,7 +1,7 @@
 #!/bin/sh
 # -*- coding: utf-8 -*-
 #
-# Univention Management Console Module teachingmaterial
+# Univention Management Console Module distribution
 #  join script
 #
 # Copyright 2012 Univention GmbH
@@ -41,9 +41,9 @@ joinscript_init
 
 umc_init
 
-umc_operation_create "teachingmaterial-all" "Teaching material" "" "teachingmaterial/*"
-ucs_school_policies_create "teachingmaterial-admin"
-ucs_school_policies_append "teachingmaterial-all" "teachingmaterial-admin"
+umc_operation_create "distribution-all" "Teaching material" "" "distribution/*"
+ucs_school_policies_create "distribution-admin"
+ucs_school_policies_append "distribution-all" "distribution-admin"
 
 joinscript_save_current_version
 

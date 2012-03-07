@@ -28,7 +28,7 @@
  */
 /*global console dojo dojox dijit umc */
 
-dojo.provide("umc.modules.teachingmaterial");
+dojo.provide("umc.modules.distribution");
 
 dojo.require("umc.dialog");
 dojo.require("umc.i18n");
@@ -39,9 +39,9 @@ dojo.require("umc.widgets.Module");
 dojo.require("umc.widgets.Page");
 dojo.require("umc.widgets.SearchForm");
 
-dojo.require("umc.modules._teachingmaterial.DetailPage");
+dojo.require("umc.modules._distribution.DetailPage");
 
-dojo.declare("umc.modules.teachingmaterial", [ umc.widgets.Module, umc.i18n.Mixin ], {
+dojo.declare("umc.modules.distribution", [ umc.widgets.Module, umc.i18n.Mixin ], {
 	// summary:
 	//		Template module to ease the UMC module development.
 	// description:
@@ -237,7 +237,7 @@ dojo.declare("umc.modules.teachingmaterial", [ umc.widgets.Module, umc.i18n.Mixi
 		this._searchPage.startup();
 
 		// create a DetailPage instance
-		this._detailPage = new umc.modules._teachingmaterial.DetailPage({
+		this._detailPage = new umc.modules._distribution.DetailPage({
 			moduleStore: this.moduleStore
 		});
 		this.addChild(this._detailPage);

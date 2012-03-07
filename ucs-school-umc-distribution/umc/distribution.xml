@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<umc version="2.0">
+	<module id="distribution" icon="distribution" version="1.0">
+	<name>Distribute materials</name>
+	<description>Create, distribute, and collect teaching materials</description>
+	<categories>
+		<category name="ucs-school-class"/>
+	</categories>
+	<command name="distribution/query" function="query"></command>
+	<command name="distribution/colors" function="colors"></command>
+	<command name="distribution/get" function="get"></command>
+	<command name="distribution/schools" function="schools"></command>
+	<command name="distribution/classes" function="classes"></command>
+	<command name="distribution/users" function="users"></command>
+	</module>
+</umc>

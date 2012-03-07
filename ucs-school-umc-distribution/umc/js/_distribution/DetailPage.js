@@ -28,7 +28,7 @@
  */
 /*global console MyError dojo dojox dijit umc */
 
-dojo.provide("umc.modules._teachingmaterial.DetailPage");
+dojo.provide("umc.modules._distribution.DetailPage");
 
 dojo.require("umc.dialog");
 dojo.require("umc.i18n");
@@ -37,15 +37,15 @@ dojo.require("umc.widgets.Form");
 dojo.require("umc.widgets.Page");
 dojo.require("umc.widgets.StandbyMixin");
 
-dojo.declare("umc.modules._teachingmaterial.DetailPage", [ umc.widgets.Page, umc.widgets.StandbyMixin, umc.i18n.Mixin ], {
+dojo.declare("umc.modules._distribution.DetailPage", [ umc.widgets.Page, umc.widgets.StandbyMixin, umc.i18n.Mixin ], {
 	// summary:
 	//		This class represents the detail view of our dummy module.
 
 	// reference to the module's store object
 	moduleStore: null,
 
-	// use i18n information from umc.modules.teachingmaterial
-	i18nClass: 'umc.modules.teachingmaterial',
+	// use i18n information from umc.modules.distribution
+	i18nClass: 'umc.modules.distribution',
 
 	// internal reference to the formular containing all form widgets of an UDM object
 	_form: null,
@@ -119,7 +119,7 @@ dojo.declare("umc.modules._teachingmaterial.DetailPage", [ umc.widgets.Page, umc
 				type: 'ComboBox',
 				name: 'school',
 				label: this._('School'),
-				dynamicValues: 'teachingmaterial/schools',
+				dynamicValues: 'distribution/schools',
 				autoHide: true
 			}, {
 				type: 'ComboBox',
@@ -129,14 +129,14 @@ dojo.declare("umc.modules._teachingmaterial.DetailPage", [ umc.widgets.Page, umc
 				staticValues: [ 
 					{ id: 'None', label: this._('All pupils') }
 				],
-				dynamicValues: 'teachingmaterial/classes',
+				dynamicValues: 'distribution/classes',
 			}, {
 				type: 'TextBox',
 				name: 'pattern',
 				label: this._('Search name')
 			}],
 			queryCommand: dojo.hitch(this, function(options) {
-				return umc.tools.umcpCommand('teachingmaterial/users', options).then(function(data) {
+				return umc.tools.umcpCommand('distribution/users', options).then(function(data) {
 					return data.result;
 				});
 			}),
