@@ -49,7 +49,7 @@ dojo.declare("umc.modules.distribution", [ umc.widgets.Module, umc.i18n.Mixin ],
 	//		new modules for Univention Management Console.
 
 	// the property field that acts as unique identifier for the object
-	idProperty: 'id',
+	idProperty: 'name',
 
 	// internal reference to the grid
 	_grid: null,

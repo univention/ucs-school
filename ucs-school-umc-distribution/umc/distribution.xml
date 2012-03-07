@@ -7,8 +7,9 @@
 		<category name="ucs-school-class"/>
 	</categories>
 	<command name="distribution/query" function="query"></command>
-	<command name="distribution/colors" function="colors"></command>
 	<command name="distribution/get" function="get"></command>
+	<command name="distribution/put" function="put"></command>
+	<command name="distribution/add" function="add"></command>
 	<command name="distribution/schools" function="schools"></command>
 	<command name="distribution/classes" function="classes"></command>
 	<command name="distribution/users" function="users"></command>

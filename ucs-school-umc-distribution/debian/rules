@@ -43,3 +43,7 @@ override_dh_auto_build:
 override_dh_auto_install:
 	dh-umc-module-install
 	dh_auto_install
+
+override_dh_fixperms:
+	dh_fixperms
+	chmod 755 debian/ucs-school-umc-distribution/usr/lib/ucs-school-umc-distribution/umc-distribution
