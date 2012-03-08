@@ -164,7 +164,6 @@ dojo.declare("umc.modules.schoolusers", [ umc.widgets.Module, umc.i18n.Mixin ], 
 			name: 'class',
 			description: this._('Select a class or workgroup.'),
 			label: this._( 'Class or workgroup' ),
-			size: 'TwoThirds',
 			staticValues: [
 				{ 'id' : 'None', 'label' : this._( 'All classes and workgroups' ) }
 			],
@@ -173,6 +172,7 @@ dojo.declare("umc.modules.schoolusers", [ umc.widgets.Module, umc.i18n.Mixin ], 
 		}, {
 			type: 'TextBox',
 			name: 'pattern',
+			size: 'TwoThirds',
 			value: '',
 			description: this._('Specifies the substring pattern which is searched for in the first name, surname and username'),
 			label: this._('Name')

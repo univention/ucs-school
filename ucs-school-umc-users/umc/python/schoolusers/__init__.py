@@ -51,12 +51,12 @@ _ = Translation( 'ucs-school-umc-schoolusers' ).translate
 class Instance( SchoolBaseModule ):
 	@LDAP_Connection()
 	def query( self, request, ldap_user_read = None, ldap_position = None, search_base = None ):
-		"""Searches for pupils
+		"""Searches for students
 
 		requests.options = {}
 		  'school' -- school OU (optiona)
 		  'class' -- if not  set to 'all' the print jobs of the given class are listed only
-		  'pattern' -- search pattern that must match the name or username of the pupils
+		  'pattern' -- search pattern that must match the name or username of the students
 
 		return: [ { 'id' : <unique identifier>, 'name' : <display name>, 'color' : <name of favorite color> }, ... ]
 		"""

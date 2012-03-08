@@ -3,8 +3,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-users\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: Tue, 31 Jan 2012 09:29:24 +0100\n"
-"PO-Revision-Date: 2012-03-01 16:03+0100\n"
+"POT-Creation-Date: Sat, 03 Mar 2012 14:52:35 +0100\n"
+"PO-Revision-Date: 2012-03-08 14:52+0100\n"
 "Last-Translator: Univention GmbH <packages@univention.de>\n"
 "Language-Team: Univention GmbH <packages@univention.de>\n"
 "Language: de\n"
@@ -15,6 +15,12 @@ msgstr ""
 msgid "Passwords"
 msgstr "Passwörter"
 
+msgid "Passwords (students)"
+msgstr "Passwörter (Schüler)"
+
+msgid "Passwords (teachers)"
+msgstr "Passwörter (Lehrer)"
+
 msgid "Resetting account passwords"
 msgstr "Zurücksetzen von Passwörtern"
 
@@ -23,9 +29,3 @@ msgstr "Zurücksetzen von Schülerpasswörtern"
 
 msgid "Resetting passwords of teacher accounts"
 msgstr "Zurücksetzen von Lehrerpasswörtern"
-
-msgid "Students (passwords)"
-msgstr "Schüler (Passwörter)"
-
-msgid "Teacher (passwords)"
-msgstr "Lehrer (Passwörter)"
