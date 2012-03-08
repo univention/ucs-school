@@ -7,15 +7,21 @@
 		<category name="ucs-school-admin"/>
 	</categories>
 	<flavor icon="schoolgroups-class" id="class">
-	  <name>Classes</name>
-	  <description>Administration of school classes</description>
+	  <name>Assigning class teachers</name>
+	  <description>Administrate properties of classes and teachers associated with them</description>
 	</flavor>
 	<flavor icon="schoolgroups-workgroup" id="workgroup">
-	  <name>Workgroups</name>
-	  <description>Administration of workgroups</description>
+	  <name>Editing workgroups</name>
+	  <description>Edit members of workgroups</description>
+	</flavor>
+	<flavor icon="schoolgroups-workgroup" id="workgroup-admin" overwrites="workgroup">
+	  <name>Administrating workgroups</name>
+	  <description>Administrate workgroups</description>
 	</flavor>
 	<command name="schoolgroups/query" function="query"></command>
 	<command name="schoolgroups/get" function="get"></command>
+	<command name="schoolgroups/put" function="put"></command>
+	<command name="schoolgroups/add" function="add"></command>
 	<command name="schoolgroups/schools" function="schools"></command>
 	<command name="schoolgroups/classes" function="classes"></command>
 	<command name="schoolgroups/users" function="users"></command>

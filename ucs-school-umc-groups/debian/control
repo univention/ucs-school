@@ -20,6 +20,7 @@ Depends: ${misc:Depends},
  shell-ucs-school,
  python-univention-directory-manager,
  univention-directory-manager-tools
+Replaces: ucs-school-umc-schooladmin
 Description: UMC module to administrate school groups
  This package provides a Univention Management Console module that allows to
  administrate classes (declare associated teachers) and workgroups (full

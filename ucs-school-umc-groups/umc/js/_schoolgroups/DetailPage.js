@@ -72,10 +72,10 @@ dojo.declare("umc.modules._schoolgroups.DetailPage", [ umc.widgets.Page, umc.wid
 		this.standbyOpacity = 1;
 
 		// set the page header
-		this.headerText = this.moduleFlavor == 'workgroup' ? this._('Edit workgroup') : this._('Edit class');
-		this.helpText = this.moduleFlavor == 'workgroup' ? 
-				this._('This page allows to edit workgroup settings and to administrate which teachers/pupils belong to the group.') :
-				this._('This page allows to specify teachers who are associated with the class');
+		this.headerText = this.moduleFlavor == 'class' ? this._( 'Edit class' ) : this._( 'Edit workgroup' );
+		this.helpText = this.moduleFlavor == 'class' ? 
+			this._('This page allows to specify teachers who are associated with the class') :
+			this._('This page allows to edit workgroup settings and to administrate which teachers/students belong to the group.');
 
 		// configure buttons for the footer of the detail page
 		this.footerButtons = [{
@@ -103,24 +103,35 @@ dojo.declare("umc.modules._schoolgroups.DetailPage", [ umc.widgets.Page, umc.wid
 
 	renderDetailPage: function() {
 		// render the form containing all detail information that may be edited
+		var groups = [];
+		if ( this.moduleFlavor == 'workgroup-admin' ) {
+			groups.push( { id: 'None', label: this._('All users') } );
+		}
+		if ( this.moduleFlavor == 'class' || this.moduleFlavor == 'workgroup-admin' ) {
+			groups.push( { id: 'teacher', label: this._('All teachers') } );
+		}
+		if ( this.moduleFlavor == 'workgroup' || this.moduleFlavor == 'workgroup-admin' ) {
+			groups.push( { id: 'student', label: this._('All students') } );
+		}
 
 		// specify all widgets
 		var widgets = [{
 			type: 'TextBox',
 			name: 'name',
-			label: this.moduleFlavor == 'workgroup' ? this._('Workgroup name') : this._('Class name'),
-			disabled: true
+			label: this.moduleFlavor == 'class' ? this._( 'Class' ) : this._( 'Workgroup' ),
+			disabled: this.moduleFlavor != 'workgroup-admin'
 		}, {
 			type: 'TextBox',
 			name: 'description',
 			label: this._('Description'),
-			description: this._('Verbose description of the current group')
+			description: this._('Verbose description of the group'),
+			disabled: this.moduleFlavor != 'workgroup-admin'
 		}, {
 			type: 'MultiObjectSelect',
 			name: 'members',
-			label: this.moduleFlavor == 'workgroup' ? this._('Workgroup members') : this._('Class teachers'),
-			description: this.moduleFlavor == 'workgroup' ? this._('Teachers and pupils that belong to the current workgroup') : this._('Teachers of the specified class'),
-			queryWidgets: [{
+			label: this.moduleFlavor == 'class' ? this._( 'Teachers' ) : this.moduleFlavor == 'workgroup' ? this._( 'Students' ) : this._( 'Members' ),
+			description: this.moduleFlavor == 'class' ? this._('Teachers of the specified class') : this._('Teachers and students that belong to the current workgroup'),
+			queryWidgets: [ {
 				type: 'ComboBox',
 				name: 'school',
 				label: this._('School'),
@@ -130,34 +141,29 @@ dojo.declare("umc.modules._schoolgroups.DetailPage", [ umc.widgets.Page, umc.wid
 			}, {
 				type: 'ComboBox',
 				name: 'group',
-				label: this._('User group / class'),
+				label: this._('User group or class'),
 				depends: 'school',
-				staticValues: [ 
-					{ id: 'None', label: this._('All users') },
-					{ id: '$teachers$', label: this._('All teachers') },
-					{ id: '$pupils$', label: this._('All pupils') }
-				],
+				staticValues: groups,
 				dynamicValues: 'schoolgroups/classes',
 				umcpCommand: this.umcpCommand
 			}, {
 				type: 'TextBox',
 				name: 'pattern',
-				label: this._('Search name')
+				label: this._('Name')
 			}],
 			queryCommand: dojo.hitch(this, function(options) {
 				return this.umcpCommand('schoolgroups/users', options).then(function(data) {
 					return data.result;
 				});
 			}),
-			formatter: function(dnList) {
-				var tmp = dojo.map(dnList, function(idn) {
-					return {
-						id: idn,
-						label: umc.tools.explodeDn(idn, true).shift() || ''
-					};
-				});
-				return tmp;
-			},
+			queryOptions: dojo.hitch( this, function() {
+				if ( this.moduleFlavor == 'class' ) {
+					return { group: 'teacher' };
+				} else if ( this.moduleFlavor == 'workgroup' ) {
+					return { group: 'student' };
+				}
+				return {};
+			} ),
 			autoSearch: false
 		}];
 
@@ -186,8 +192,16 @@ dojo.declare("umc.modules._schoolgroups.DetailPage", [ umc.widgets.Page, umc.wid
 		this.connect(this._form, 'onSubmit', '_save');
 	},
 
-	_save: function(values) {
-		umc.dialog.alert(this._('Feature not implemented yet!'));
+	_save: function( values ) {
+		var deferred = null;
+		if ( values.$dn$ ) {
+			deferred = this.moduleStore.put( values );
+		} else {
+			deferred = this.moduleStore.add( values );
+		}
+		deferred.then( dojo.hitch( this, function() {
+			this.onClose();
+		} ) );
 	},
 
 	load: function(id) {

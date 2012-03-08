@@ -44,16 +44,16 @@ umc_init
 # operation sets for admins (class and workgroup administration) and teachers
 # (only the workgroup administration)
 umc_operation_create "schoolgroups-all" "Group administration" "" "schoolgroups/*"
-umc_operation_create "schoolgroups-workgroup" "Workgroup administration" "workgroup" "schoolgroups/*"
+umc_operation_create "schoolgroups-workgroup-admin" "Workgroup administration" "workgroup-admin" "schoolgroups/*"
+umc_operation_create "schoolgroups-class" "Class administration" "class" "schoolgroups/*"
+umc_operation_create "schoolgroups-workgroup" "Workgroup editing" "workgroup" "schoolgroups/query" "schoolgroups/classes" "schoolgroups/users" "schoolgroups/schools" "schoolgroups/put" "schoolgroups/get"
 
 # create empty UMC access policies
 ucs_school_policies_create
 
-# policy for admins (not allowed to teachers)
-for ipol in ucsschool-umc-admins-default default-umc-all; do
-	umc_policy_append "$ipol" "schoolgroups-all"
-done
-
+umc_policy_append "default-umc-all" "schoolgroups-all"
+# policy for school admins (not allowed to teachers)
+umc_policy_append "ucsschool-umc-admins-default" "schoolgroups-workgroup-admin" "schoolgroups-class"
 # policy for teachers
 umc_policy_append "ucsschool-umc-teachers-default" "schoolgroups-workgroup"
 

@@ -110,15 +110,7 @@ dojo.declare("umc.modules.schoolgroups", [ umc.widgets.Module, umc.i18n.Mixin ],
 		//
 
 		// define grid actions
-		var actions = [{
-			name: 'add',
-			label: this._('Add object'),
-			description: this._('Create a new object'),
-			iconClass: 'umcIconAdd',
-			isContextAction: false,
-			isStandardAction: true,
-			callback: dojo.hitch(this, '_addObject')
-		}, {
+		var actions = [ {
 			name: 'edit',
 			label: this._('Edit'),
 			description: this._('Edit the selected object'),
@@ -126,21 +118,35 @@ dojo.declare("umc.modules.schoolgroups", [ umc.widgets.Module, umc.i18n.Mixin ],
 			isStandardAction: true,
 			isMultiAction: false,
 			callback: dojo.hitch(this, '_editObject')
-		}, {
-			name: 'delete',
-			label: this._('Delete'),
-			description: this._('Deleting the selected objects.'),
-			isStandardAction: true,
-			isMultiAction: true,
-			iconClass: 'umcIconDelete',
-			callback: dojo.hitch(this, '_deleteObjects')
-		}];
+		} ];
+
+		// just workgroups can be deleted or added
+		if ( this.moduleFlavor == 'workgroup-admin' ) {
+			actions.push( {
+				name: 'add',
+				label: this._('Add workgroup'),
+				description: this._('Create a new workgroup'),
+				iconClass: 'umcIconAdd',
+				isContextAction: false,
+				isStandardAction: true,
+				callback: dojo.hitch(this, '_addObject')
+			} );
+			actions.push( {
+				name: 'delete',
+				label: this._('Delete'),
+				description: this._('Deleting the selected objects.'),
+				isStandardAction: true,
+				isMultiAction: true,
+				iconClass: 'umcIconDelete',
+				callback: dojo.hitch(this, '_deleteObjects')
+			} );
+		}
 
 		// define the grid columns
 		var columns = [{
 			name: 'name',
-			label: this._('Name'),
-			width: '200px'
+			label: this._( 'Name' ),
+			width: '20%'
 		}, {
 			name: 'description',
 			label: this._('Description'),
@@ -176,7 +182,7 @@ dojo.declare("umc.modules.schoolgroups", [ umc.widgets.Module, umc.i18n.Mixin ],
 			name: 'school',
 			dynamicValues: 'schoolgroups/schools',
 			label: this._('School'),
-			umcpCommand: this.umcpCommand,
+			umcpCommand: dojo.hitch( this, 'umcpCommand' ),
 			autoHide: true
 		}, {
 			type: 'TextBox',
@@ -232,7 +238,7 @@ dojo.declare("umc.modules.schoolgroups", [ umc.widgets.Module, umc.i18n.Mixin ],
 	},
 
 	_addObject: function() {
-		umc.dialog.alert(this._('Feature not yet implemented'));
+		this.selectChild( this._detailPage );
 	},
 
 	_editObject: function(ids, items) {

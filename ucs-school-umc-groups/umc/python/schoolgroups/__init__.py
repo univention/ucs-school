@@ -31,28 +31,23 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-from univention.management.console.config import ucr
+import copy
 
 from univention.lib.i18n import Translation
-from univention.management.console.modules import UMC_OptionTypeError, Base
+
+from univention.management.console.config import ucr
+from univention.management.console.modules import UMC_OptionTypeError, UMC_CommandError, Base
 from univention.management.console.log import MODULE
 from univention.management.console.protocol.definitions import *
 
 import univention.admin.modules as udm_modules
+import univention.admin.objects as udm_objects
 
-from ucsschool.lib.schoolldap import LDAP_Connection, LDAP_ConnectionError, set_credentials, SchoolSearchBase, SchoolBaseModule, LDAP_Filter, Display
+from ucsschool.lib.schoolldap import LDAP_Connection, LDAP_ConnectionError, set_credentials, SchoolSearchBase, SchoolBaseModule, LDAP_Filter, Display, USER_READ, USER_WRITE
 
 _ = Translation( 'ucs-school-umc-groups' ).translate
 
-
 class Instance( SchoolBaseModule ):
-	def __init__( self ):
-		# initiate list of internal variables
-		SchoolBaseModule.__init__(self)
-
-	def init(self):
-		SchoolBaseModule.init(self)
-
 	@LDAP_Connection()
 	def users( self, request, search_base = None, ldap_user_read = None, ldap_position = None ):
 		# parse group parameter
@@ -60,12 +55,9 @@ class Instance( SchoolBaseModule ):
 		user_type = None
 		if not group or group == 'None':
 			group = None
-		elif group.lower() == '$teachers$':
+		elif group.lower() in ( 'teacher', 'student' ):
+			user_type = group.lower()
 			group = None
-			user_type = 'teacher'
-		elif group.lower() == '$pupils$':
-			group = None
-			user_type = 'pupil'
 
 		result = [ {
 			'id': i.dn,
@@ -85,42 +77,120 @@ class Instance( SchoolBaseModule ):
 		return: [ { '$dn$' : <LDAP DN>, 'name': '...', 'description': '...' }, ... ]
 		"""
 		MODULE.info( 'schoolgroups.query: options: %s' % str( request.options ) )
-		
+
 		# get the correct base for the search
 		base = search_base.classes
-		if request.flavor == 'workgroup':
+		if request.flavor in ( 'workgroup', 'workgroup-admin' ):
 			# only show workgroups
 			base = search_base.workgroups
 
-		# LDAP search for groups
-		ldapFilter = LDAP_Filter.forGroups(request.options.get('pattern', ''))
-		groupresult = udm_modules.lookup( 'groups/group', None, ldap_user_read, scope = 'one', base = base, filter = ldapFilter)
-		grouplist = [ { 
-			'name': i['name'],
-			'description': i.oldinfo.get('description',''),
-			'$dn$': i.dn
-		} for i in groupresult ]
-		result = sorted( grouplist, cmp = lambda x, y: cmp( x.lower(), y.lower() ), key = lambda x: x[ 'name' ] )
+		groupresult = udm_modules.lookup( 'groups/group', None, ldap_user_read, scope = 'one', base = base )
 
-		MODULE.info( 'schoolgroups.query: result: %s' % str( result ) )
-		self.finished( request.id, result )
+		self.finished( request.id, map( lambda grp: { '$dn$' : grp.dn, 'name' : grp[ 'name' ].replace( '%s-' % search_base.school, '' ), 'description' : grp[ 'description' ] }, groupresult ) )
 
-	def get( self, request ):
+	@LDAP_Connection()
+	def get( self, request, search_base = None, ldap_user_read = None, ldap_position = None ):
 		"""Returns the objects for the given IDs
 
-		requests.options = [ <DN>, ... ]
+		requests.options = [ <DN> ]
 
-		return: [ { '$dn$' : <unique identifier>, 'name' : <display name>, 'color' : <name of favorite color> }, ... ]
+		return: { '$dn$' : <unique identifier>, 'name' : <display name> }
 		"""
 		MODULE.info( 'schoolgroups.get: options: %s' % str( request.options ) )
-		ids = request.options
-		result = []
-		if isinstance( ids, ( list, tuple ) ):
-			ids = set(ids)
-			result = [ ]
-		else:
-			MODULE.warn( 'schoolgroups.get: wrong parameter, expected list of strings, but got: %s' % str( ids ) )
-			raise UMC_OptionTypeError( 'Expected list of strings, but got: %s' % str(ids) )
-		MODULE.info( 'schoolgroups.get: results: %s' % str( result ) )
-		self.finished( request.id, result )
 
+		grp = udm_objects.get( udm_modules.get( 'groups/group' ), None, ldap_user_read, ldap_position, request.options[ 0 ] )
+		if not grp:
+			raise UMC_OptionTypeError( 'unknown group object' )
+
+		grp.open()
+		result = {}
+		result[ '$dn$' ] = grp.dn
+		result[ 'name' ] = grp[ 'name' ].replace( '%s-' % search_base.school, '' )
+		result[ 'description' ] = grp[ 'description' ]
+
+		if request.flavor == 'class':
+			# members are teachers
+			memberDNs = [ usr for usr in grp[ 'users' ] if usr.endswith( search_base.teachers ) ]
+		elif request.flavor == 'workgroup-admin':
+			memberDNs = grp[ 'users' ]
+		else:
+			memberDNs = [ usr for usr in grp[ 'users' ] if usr.endswith( search_base.students ) ]
+
+		# read members:
+		user_mod = udm_modules.get( 'users/user' )
+		members = []
+		for member_dn in memberDNs:
+			user = udm_objects.get( user_mod, None, ldap_user_read, ldap_position, member_dn )
+			if not user:
+				continue
+			user.open()
+			members.append( { 'id' : user.dn, 'label' : Display.user( user ) } )
+		result[ 'members' ] = members
+
+		self.finished( request.id, [ result, ] )
+
+	def _remove_users_by_base( self, members, base ):
+		"""Removes the LDAP objects from the given list of LDAP-DN that match teachers"""
+		students = []
+		for user in members:
+			if user.endswith( base ):
+				continue
+			students.append( user )
+		return students
+
+	@LDAP_Connection( USER_READ, USER_WRITE )
+	def put( self, request, search_base = None, ldap_user_write = None, ldap_user_read = None, ldap_position = None ):
+		"""Returns the objects for the given IDs
+
+		requests.options = [ { object : ..., options : ... }, ... ]
+
+		return: True|<error message>
+		"""
+		if not request.options:
+			raise UMC_CommandError( 'Invalid arguments' )
+
+		group = request.options[ 0 ].get( 'object', {} )
+		grp = udm_objects.get( udm_modules.get( 'groups/group' ), None, ldap_user_write, ldap_position, group[ '$dn$' ] )
+		if not grp:
+			raise UMC_OptionTypeError( 'unknown group object' )
+
+		grp.open()
+		grp[ 'description' ] = group[ 'description' ]
+		if request.flavor == 'class':
+			grp[ 'users' ] = self._remove_users_by_base( grp[ 'users' ], search_base.teachers ) + group[ 'members' ]
+		elif request.flavor == 'workgroup-admin':
+			grp[ 'users' ] = group[ 'members' ]
+		elif request.flavor == 'workgroup':
+			if [ dn for dn in grp[ 'users' ] if dn.endswith( search_base.teachers ) ]:
+				raise UMC_CommandError( 'Adding teachers is not allowed' )
+			grp[ 'users' ] = self._remove_users_by_base( grp[ 'users' ], search_base.students ) + grp[ 'members' ]
+
+		grp.modify()
+
+		self.finished( request.id, True )
+
+	@LDAP_Connection( USER_READ, USER_WRITE )
+	def add( self, request, search_base = None, ldap_user_write = None, ldap_user_read = None, ldap_position = None ):
+		"""Returns the objects for the given IDs
+
+		requests.options = [ { $dn$ : ..., }, ... ]
+
+		return: True|<error message>
+		"""
+		if not request.options:
+			raise UMC_CommandError( 'Invalid arguments' )
+
+		if request.flavor != 'workgroup-admin':
+			raise UMC_CommandError( 'not supported' )
+		group = request.options[ 0 ].get( 'object', {} )
+		ldap_position.setDn( search_base.workgroups )
+		grp = udm_modules.get( 'groups/group' ).object( None, ldap_user_write, ldap_position )
+		grp.open()
+
+		grp[ 'name' ] = '%s-' % search_base.school + group[ 'name' ]
+		grp[ 'description' ] = group[ 'description' ]
+		grp[ 'users' ] = group[ 'members' ]
+
+		grp.create()
+
+		self.finished( request.id, True )
