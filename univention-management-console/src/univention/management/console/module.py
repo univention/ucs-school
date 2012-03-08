@@ -239,7 +239,7 @@ class Manager( dict ):
 					mod.flavors.remove( flavor )
 
 			overwrites = set()
-			for flavor in flavors:
+			for flavor in mod.flavors:
 				overwrites.update( flavor.overwrites )
 
 			mod.flavors = JSON_List( filter( lambda f: f.id not in overwrites, mod.flavors ) )

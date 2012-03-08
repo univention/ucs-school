@@ -1,3 +1,9 @@
+univention-management-console (4.0.223-1) unstable; urgency=low
+
+  * just read overwrites from allowed flavors; Bug #26380
+
+ -- Andreas Büsching <buesching@univention.de>  Thu, 08 Mar 2012 14:05:24 +0100
+
 univention-management-console (4.0.222-1) unstable; urgency=low
 
   * support overwriting flavors by others; Bug #26380
