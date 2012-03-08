@@ -1,3 +1,9 @@
+ucs-school-umc-printermoderation (7.0.5-1) unstable; urgency=low
+
+  * renamed module; Bug #25705
+
+ -- Andreas Büsching <buesching@univention.de>  Thu, 08 Mar 2012 16:00:58 +0100
+
 ucs-school-umc-printermoderation (7.0.4-1) unstable; urgency=low
 
   * fixed size for combo boxes in search form; Bug #25705
