@@ -182,11 +182,13 @@ dojo.declare("umc.modules.schoolgroups", [ umc.widgets.Module, umc.i18n.Mixin ],
 			name: 'school',
 			dynamicValues: 'schoolgroups/schools',
 			label: this._('School'),
+			size: 'TwoThirds',
 			umcpCommand: dojo.hitch( this, 'umcpCommand' ),
 			autoHide: true
 		}, {
 			type: 'TextBox',
 			name: 'pattern',
+			size: 'TwoThirds',
 			description: this._('Specifies the substring pattern which is searched for in the displayed name'),
 			label: this._('Search pattern')
 		}];

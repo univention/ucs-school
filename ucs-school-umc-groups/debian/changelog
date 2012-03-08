@@ -1,3 +1,9 @@
+ucs-school-umc-groups (0.1.1-1) unstable; urgency=low
+
+  * resize widgets in search form; Bug #25701
+
+ -- Andreas Büsching <buesching@univention.de>  Thu, 08 Mar 2012 15:56:51 +0100
+
 ucs-school-umc-groups (0.1.0-1) unstable; urgency=low
 
   * imported UMC module for group management to UCS@school 3.0; Bug #25701
