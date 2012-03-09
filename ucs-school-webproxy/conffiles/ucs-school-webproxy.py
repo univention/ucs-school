@@ -49,13 +49,17 @@
 # proxy/filter/setting/myprofile/url/whitelisted/1: http://www.allessupi.de/toll.html
 # proxy/filter/setting/myprofile/filtertype: whitelist-block ODER blacklist-pass ODER whitelist-blacklist-pass
 
-import os, re, time
+import errno
+import os
+import re
+import subprocess
+import tempfile
+import time
 
 PATH_LOG = '/var/log/univention/ucs-school-webproxy.log'
 DIR_ETC = '/etc/squid'
 FN_CONFIG = 'squidGuard.conf'
 DIR_DATA = '/var/lib/ucs-school-webproxy'
-DIR_TEMP = os.path.join( DIR_DATA, 'temp.%s' % os.getpid() )
 
 def logerror(msg):
 	logfd = open( PATH_LOG, 'a+')
@@ -65,20 +69,9 @@ def move_file(fnsrc, fndst):
 	if os.path.isfile( fnsrc ):
 		try:
 			os.rename( fnsrc, fndst )
-		except OSError, e:
-			if e.errno == 18:  # 18 ==> cross-device rename/move has been tried
-				tmpdst = '%s.%s' % (fndst, os.getpid())
-				try:
-					open(tmpdst,'w').write( open(fnsrc,'r').read() )
-					os.rename(tmpdst, fndst)
-					os.remove(fnsrc)
-				except Exception, e:
-					logerror('cannot cross-device move %s via %s to %s: Exception %s' % (fnsrc, tmpdst, fndst, e))
-					raise
 		except Exception, e:
 			logerror('cannot move %s to %s: Exception %s' % (fnsrc, fndst, e))
 			raise
-
 
 def preinst(configRegistry, changes):
 	pass
@@ -87,51 +80,29 @@ def postinst(configRegistry, changes):
 	pass
 
 def handler(configRegistry, changes):
-	rewrite_squidguard_config = True
-	rewrite_squidguard_proxy_settings = True
-	rewrite_squidguard_blacklist = True
-	rewrite_squidguard_NTLMuserlist = True
-	windows_domain_changed = True
-
-	touchfnlist = []
-
-	def groupdefault_is_set_for(usergroupname):
-		return configRegistry.has_key('proxy/filter/groupdefault/%s' % usergroupname)
-
-# NOTE: automatic change detection has been disabled and all config files will be recreated to
-#       be able to do an atomic copy of all file before reloading squid / squidguard
-#
-# 	for key in changes.keys():
-# 		if key.startswith('proxy/filter/hostgroup/blacklisted/') or key == 'proxy/filter/redirecttarget' or key.startswith('proxy/filter/groupdefault'):
-# 			rewrite_squidguard_config = True
-# 		elif key.startswith('proxy/filter/usergroup/'):
-# 			rewrite_squidguard_config = True
-# 			rewrite_squidguard_NTLMuserlist = True
-# 		elif key.startswith('proxy/filter/setting/'):
-# 			rewrite_squidguard_config = True
-# 			rewrite_squidguard_proxy_settings = True
-# 		elif key.startswith('proxy/filter/'):
-# 			rewrite_squidguard_blacklist = True
-# 		elif key == 'windows/domain':
-# 			rewrite_squidguard_NTLMuserlist = True
-# 			windows_domain_changed = True
-
-	default_redirect = 'http://%s.%s/blocked-by-squid.html' % (configRegistry['hostname'], configRegistry['domainname'])
-	if configRegistry.has_key('proxy/filter/redirecttarget'):
-		default_redirect = configRegistry['proxy/filter/redirecttarget']
-
-
 	# create temporary directory
-	try:
-		os.mkdir( DIR_TEMP )
-	except OSError, e:
-		if e.errno != 17:
-			logerror('creating %s failed: %s' % (DIR_TEMP, e))
-			raise
+	DIR_TEMP = tempfile.mkdtemp(dir=DIR_DATA)
 
 	fn_config = os.path.join(DIR_ETC, FN_CONFIG)
 	fn_temp_config = os.path.join(DIR_TEMP, FN_CONFIG)
+
+	createTemporaryConfig(fn_temp_config, configRegistry, DIR_TEMP)
+	writeUsergroupMemberLists(configRegistry, DIR_TEMP)
+	writeBlackWhiteLists(configRegistry, DIR_TEMP)
+	writeSettinglist(configRegistry, DIR_TEMP)
+	finalizeConfig(fn_temp_config, DIR_TEMP, DIR_DATA)
+	moveConfig(fn_temp_config, fn_config, FN_CONFIG, DIR_TEMP, DIR_DATA)
+	removeTempDirectory(DIR_TEMP)
+	subprocess.call(('/etc/init.d/squid3', 'reload', ))
+
+def createTemporaryConfig(fn_temp_config, configRegistry, DIR_TEMP):
 	# create config in temporary directory with temporary "dbhome" setting
+	touchfnlist = []
+	if 'proxy/filter/redirecttarget' in configRegistry:
+		default_redirect = configRegistry['proxy/filter/redirecttarget']
+	else:
+		default_redirect = 'http://%s.%s/blocked-by-squid.html' % (configRegistry['hostname'], configRegistry['domainname'])
+
 	f = open( fn_temp_config, "w")
 
 	f.write('logdir /var/log/squid\n')
@@ -139,13 +110,13 @@ def handler(configRegistry, changes):
 
 	keylist = configRegistry.keys()
 
-	proxy_settinglist = []
+	proxy_settinglist = set()
+	regex = re.compile('^proxy/filter/setting/([^/]+)/.*$')
 	for key in keylist:
-		regex = re.compile('^proxy/filter/setting/([^/]+)/.*$')
 		match = regex.match(key)
 		if match:
-			if match.group(1) not in proxy_settinglist:
-				proxy_settinglist.append(match.group(1))
+			proxy_settinglist.add(match.group(1))
+	proxy_settinglist = list(proxy_settinglist)
 
 	roomlist = []
 	usergrouplist = []
@@ -165,7 +136,7 @@ def handler(configRegistry, changes):
 			f.write('}\n\n')
 		if key.startswith('proxy/filter/usergroup/'):
 			usergroupname=key.rsplit('/', 1)[1]
-			if groupdefault_is_set_for(usergroupname):
+			if 'proxy/filter/groupdefault/%s' % (usergroupname, ) in configRegistry: # groupdefault is set for usergroupname
 				usergrouplist.append(usergroupname)
 				f.write('src usergroup-%s {\n' % usergroupname )
 				f.write('	 userlist usergroup-%s\n' % usergroupname )
@@ -287,35 +258,21 @@ def handler(configRegistry, changes):
 	for fn in touchfnlist:
 		tmp = open( os.path.join(DIR_TEMP, fn), 'a+')
 
-
-	if rewrite_squidguard_NTLMuserlist:
-		if not windows_domain_changed:
-			keylist = changes.keys()
-		else:
-			keylist = configRegistry.keys()
-		domain=configRegistry['windows/domain']
-		for key in keylist:
-			if key.startswith('proxy/filter/usergroup/'):
-				usergroupname=key.rsplit('/', 1)[1]
-				filename='usergroup-%s' % usergroupname
-				dbfn = '%s/%s' % (DIR_TEMP, filename)
-				f = open(dbfn, "w")
-				for memberUid in configRegistry[key].split(','):
-					f.write('%s\n' % (memberUid) )
-					f.write('%s\\%s\n' % (domain, memberUid) )
-
-				f.close()
-
-	if rewrite_squidguard_blacklist:
-		keylist = configRegistry.keys()
+def writeSettinglist(configRegistry, DIR_TEMP):
+	proxy_settinglist = set()
+	regex = re.compile('^proxy/filter/setting((?:-user)?)/([^/]+)/.*$')
+	for key in configRegistry:
+		match = regex.match(key)
+		if match:
+			proxy_settinglist.add(match.groups())
+	for (userpart, proxy_setting, ) in proxy_settinglist:
 		for filtertype in [ 'domain', 'url' ]:
 			for itemtype in [ 'blacklisted', 'whitelisted' ]:
-				filename='%s-%s' % (itemtype, filtertype)
+				filename='%s-%s-%s%s' % (itemtype, filtertype, proxy_setting, userpart)
 				dbfn = '%s/%s' % (DIR_TEMP, filename)
 				f = open(dbfn, "w")
-
-				for key in keylist:
-					if key.startswith('proxy/filter/%s/%s/' % (filtertype, itemtype)):
+				for key in configRegistry:
+					if key.startswith('proxy/filter/setting%s/%s/%s/%s/' % (userpart, proxy_setting, filtertype, itemtype)):
 						value = configRegistry[ key ]
 						if value.startswith('http://'):
 							value = value[ len('http://') : ]
@@ -323,56 +280,60 @@ def handler(configRegistry, changes):
 							value = value[ len('https://') : ]
 						if value.startswith('ftp://'):
 							value = value[ len('ftp://') : ]
-
 						if filtertype == 'url':
 							if value.startswith('www.'):
 								value = value[ len('www.') : ]
-
 						f.write('%s\n' % value)
-
 				f.close()
 
-	if rewrite_squidguard_proxy_settings:
-		proxy_settinglist = set()
-		regex = re.compile('^proxy/filter/setting((?:-user)?)/([^/]+)/.*$')
-		for key in configRegistry.keys():
-			match = regex.match(key)
-			if match:
-				proxy_settinglist.add(match.groups())
+def writeBlackWhiteLists(configRegistry, DIR_TEMP):
+	for filtertype in [ 'domain', 'url' ]:
+		for itemtype in [ 'blacklisted', 'whitelisted' ]:
+			filename='%s-%s' % (itemtype, filtertype)
+			dbfn = '%s/%s' % (DIR_TEMP, filename)
+			f = open(dbfn, "w")
+			for key in configRegistry:
+				if key.startswith('proxy/filter/%s/%s/' % (filtertype, itemtype)):
+					value = configRegistry[ key ]
+					if value.startswith('http://'):
+						value = value[ len('http://') : ]
+					if value.startswith('https://'):
+						value = value[ len('https://') : ]
+					if value.startswith('ftp://'):
+						value = value[ len('ftp://') : ]
+					if filtertype == 'url':
+						if value.startswith('www.'):
+							value = value[ len('www.') : ]
+					f.write('%s\n' % value)
+			f.close()
 
-		keylist = configRegistry.keys()
-		for (userpart, proxy_setting, ) in proxy_settinglist:
-			for filtertype in [ 'domain', 'url' ]:
-				for itemtype in [ 'blacklisted', 'whitelisted' ]:
-					filename='%s-%s-%s%s' % (itemtype, filtertype, proxy_setting, userpart)
-					dbfn = '%s/%s' % (DIR_TEMP, filename)
-					f = open(dbfn, "w")
+def writeUsergroupMemberLists(configRegistry, DIR_TEMP):
+	domain=configRegistry['windows/domain']
+	for key in configRegistry:
+		if key.startswith('proxy/filter/usergroup/'):
+			usergroupname=key.rsplit('/', 1)[1]
+			filename='usergroup-%s' % usergroupname
+			dbfn = '%s/%s' % (DIR_TEMP, filename)
+			f = open(dbfn, "w")
+			for memberUid in configRegistry[key].split(','):
+				f.write('%s\n' % (memberUid) )
+				f.write('%s\\%s\n' % (domain, memberUid) )
+			f.close()
 
-					for key in keylist:
-						if key.startswith('proxy/filter/setting%s/%s/%s/%s/' % (userpart, proxy_setting, filtertype, itemtype)):
-							value = configRegistry[ key ]
-							if value.startswith('http://'):
-								value = value[ len('http://') : ]
-							if value.startswith('https://'):
-								value = value[ len('https://') : ]
-							if value.startswith('ftp://'):
-								value = value[ len('ftp://') : ]
-
-							if filtertype == 'url':
-								if value.startswith('www.'):
-									value = value[ len('www.') : ]
-
-							f.write('%s\n' % value)
-
-					f.close()
-
+def finalizeConfig(fn_temp_config, DIR_TEMP, DIR_DATA):
 	# create all db files
-	os.system('squidGuard -c %s -C all' % fn_temp_config)
-
+	subprocess.call(('squidGuard', '-c', fn_temp_config, '-C', 'all', ))
 	# fix permissions
-	os.system('chmod ug+rw %s/* 2> /dev/null' % DIR_TEMP)
-	os.system('chown root:proxy %s/*  2> /dev/null' % DIR_TEMP)
+	subprocess.call(('chmod', '-R', 'ug+rw',      DIR_TEMP, ))
+	subprocess.call(('chown', '-R', 'root:proxy', DIR_TEMP, ))
+	# fix squidguard config (replace DIR_TEMP with DIR_DATA)
+	content = open( fn_temp_config, "r").read()
+	content = content.replace('\ndbhome %s/\n' % DIR_TEMP, '\ndbhome %s/\n' % DIR_DATA)
+	tempConfig = open(fn_temp_config, "w")
+	tempConfig.write(content)
+	tempConfig.close()
 
+def moveConfig(fn_temp_config, fn_config, FN_CONFIG, DIR_TEMP, DIR_DATA):
 	# move all files from DIR_TEMP to DIR_DATA (should be atomic)
 	for fn in os.listdir(DIR_TEMP):
 		if fn == FN_CONFIG:
@@ -380,22 +341,12 @@ def handler(configRegistry, changes):
 		fnsrc = os.path.join(DIR_TEMP, fn)
 		fndst = os.path.join(DIR_DATA, fn)
 		move_file(fnsrc, fndst)
-
-	# fix squidguard config (replace DIR_TEMP with DIR_DATA)
-	content = open( fn_temp_config, "r").read()
-	content = content.replace('\ndbhome %s/\n' % DIR_TEMP, '\ndbhome %s/\n' % DIR_DATA)
-	open( fn_temp_config, "w").write(content)
-
 	# move fixed config file to /etc/squid
 	move_file(fn_temp_config, fn_config)
 
-	# remove temp directory
+def removeTempDirectory(DIR_TEMP):
 	try:
 		os.rmdir(DIR_TEMP)
 	except Exception, e:
 		logerror('cannot remove temp directory %s: Exception %s' % (DIR_TEMP, e))
 		raise
-
-	# and finally
-	#os.system('kill -HUP `cat /var/run/squid3.pid`')
-	os.system('/etc/init.d/squid3 reload')
