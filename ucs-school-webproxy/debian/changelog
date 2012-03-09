@@ -1,3 +1,10 @@
+ucs-school-webproxy (8.0.4-1) unstable; urgency=low
+
+  * add IP based group filtering (Bug #26382)
+  * add priority to rules
+
+ -- Janek Walkenhorst <walkenhorst@univention.de>  Fri, 09 Mar 2012 16:42:52 +0100
+
 ucs-school-webproxy (8.0.3-1) unstable; urgency=low
 
   * fixed dep to univention-squid (Bug #25806)
