@@ -149,6 +149,9 @@ def handler(configRegistry, changes):
 
 	roomlist = []
 	usergrouplist = []
+	roomIPs = {} # { 'theBigRoom': ['127.0.0.1', '127.4.5.7'] }
+	roomRule = {} # { 'kmiyagi': 'theBigRoom' }
+	roomRules = [] # [ 'kmiyagi' ]
 	for key in keylist:
 		if key.startswith('proxy/filter/hostgroup/blacklisted/'):
 			room = key[ len('proxy/filter/hostgroup/blacklisted/') : ]
@@ -168,6 +171,24 @@ def handler(configRegistry, changes):
 				f.write('	 userlist usergroup-%s\n' % usergroupname )
 				f.write('}\n\n')
 				touchfnlist.append( 'usergroup-%s' % usergroupname )
+		if key.startswith('proxy/filter/room/'):
+			parts = key.split('/')
+			if len(parts) == 5:
+				room = parts[3]
+				if parts[-1] == 'ip':
+					roomIPs[room] = configRegistry[key].split()
+				elif parts[-1] == 'rule':
+					roomRule[configRegistry[key]] = room
+					if room not in roomIPs:
+						roomIPs[room] = []
+		elif key.startswith('proxy/filter/setting-user/'):
+			roomRules.append(key.split('/')[3])
+
+	for (room, IPs, ) in roomIPs.items():
+		f.write('src room-%s {\n' % (room, ))
+		for IP in IPs:
+			f.write('	ip	%s\n' % (IP, ))
+		f.write('}\n')
 
 	f.write('dest blacklist {\n')
 	f.write('	 domainlist blacklisted-domain\n')
@@ -181,7 +202,7 @@ def handler(configRegistry, changes):
 	f.write('}\n\n')
 	touchfnlist.extend( ['whitelisted-domain', 'whitelisted-url'] )
 
-	for proxy_setting in proxy_settinglist:
+	for proxy_setting in proxy_settinglist + [username + '-user' for username in roomRule]:
 		f.write('dest blacklist-%s {\n' % proxy_setting)
 		f.write('	 domainlist blacklisted-domain-%s\n' % proxy_setting)
 		f.write('	 urllist	blacklisted-url-%s\n' % proxy_setting)
@@ -203,27 +224,55 @@ def handler(configRegistry, changes):
 		f.write('		 redirect %s\n' % default_redirect)
 		f.write('	 }\n\n')
 
+	for (username, room, ) in roomRule.items():
+		if username not in roomRules:
+			continue
+		filtertype = configRegistry.get('proxy/filter/setting-user/%s/filtertype' % (username, ), 'whitelist-blacklist-pass')
+		if filtertype == 'whitelist-blacklist-pass':
+			f.write('	room-%s {\n' % (room, ))
+			f.write('		pass whitelist-%s-user !blacklist-%s-user all\n' % (username, username, ))
+			f.write('		redirect %s\n' % default_redirect)
+			f.write('	}\n')
+		elif filtertype == 'whitelist-block':
+			f.write('	room-%s {\n' % (room, ))
+			f.write('		pass whitelist-%s-user none\n' % (username, ))
+			f.write('		redirect %s\n' % default_redirect)
+			f.write('	}\n')
+		elif filtertype == 'blacklist-pass':
+			f.write('	room-%s {\n' % (room, ))
+			f.write('		pass !blacklist-%s-user all\n' % (username, ))
+			f.write('		redirect %s\n' % default_redirect)
+			f.write('	}\n')
+
+	usergroupSetting = [] # [ (priority, usergroupname, proxy_setting, ) ] # for sorting by priority
 	for usergroupname in usergrouplist:
 		proxy_setting_key_for_group='proxy/filter/groupdefault/%s' % usergroupname
 		if configRegistry[proxy_setting_key_for_group] in proxy_settinglist:
 			proxy_setting=configRegistry[proxy_setting_key_for_group]
+			priority = configRegistry.get('proxy/filter/setting/%s/priority' % (proxy_setting, ), '0')
+			if priority.isdigit():
+				priority = int(priority)
+			else:
+				priority = 0
+			usergroupSetting.append((priority, usergroupname, proxy_setting, ))
 
-			filtertype = configRegistry.get('proxy/filter/setting/%s/filtertype' % proxy_setting, 'whitelist-blacklist-pass')
-			if filtertype == 'whitelist-blacklist-pass':
-				f.write('	 usergroup-%s {\n' % usergroupname)
-				f.write('		 pass whitelist-%s !blacklist-%s all\n' % (proxy_setting, proxy_setting) )
-				f.write('		 redirect %s\n' % default_redirect)
-				f.write('	 }\n\n')
-			elif filtertype == 'whitelist-block':
-				f.write('	 usergroup-%s {\n' % usergroupname)
-				f.write('		 pass whitelist-%s none\n' % proxy_setting )
-				f.write('		 redirect %s\n' % default_redirect)
-				f.write('	 }\n\n')
-			elif filtertype == 'blacklist-pass':
-				f.write('	 usergroup-%s {\n' % usergroupname)
-				f.write('		 pass !blacklist-%s all\n' % proxy_setting )
-				f.write('		 redirect %s\n' % default_redirect)
-				f.write('	 }\n\n')
+	for (priority, usergroupname, proxy_setting, ) in reversed(sorted(usergroupSetting)):
+		filtertype = configRegistry.get('proxy/filter/setting/%s/filtertype' % proxy_setting, 'whitelist-blacklist-pass')
+		if filtertype == 'whitelist-blacklist-pass':
+			f.write('	 usergroup-%s {\n' % usergroupname)
+			f.write('		 pass whitelist-%s !blacklist-%s all\n' % (proxy_setting, proxy_setting) )
+			f.write('		 redirect %s\n' % default_redirect)
+			f.write('	 }\n\n')
+		elif filtertype == 'whitelist-block':
+			f.write('	 usergroup-%s {\n' % usergroupname)
+			f.write('		 pass whitelist-%s none\n' % proxy_setting )
+			f.write('		 redirect %s\n' % default_redirect)
+			f.write('	 }\n\n')
+		elif filtertype == 'blacklist-pass':
+			f.write('	 usergroup-%s {\n' % usergroupname)
+			f.write('		 pass !blacklist-%s all\n' % proxy_setting )
+			f.write('		 redirect %s\n' % default_redirect)
+			f.write('	 }\n\n')
 
 	f.write('	 default {\n')
 	f.write('		  pass whitelist !blacklist all\n')
@@ -284,24 +333,23 @@ def handler(configRegistry, changes):
 				f.close()
 
 	if rewrite_squidguard_proxy_settings:
-		proxy_settinglist = []
+		proxy_settinglist = set()
+		regex = re.compile('^proxy/filter/setting((?:-user)?)/([^/]+)/.*$')
 		for key in configRegistry.keys():
-			regex = re.compile('^proxy/filter/setting/([^/]+)/.*$')
 			match = regex.match(key)
 			if match:
-				if match.group(1) not in proxy_settinglist:
-					proxy_settinglist.append(match.group(1))
+				proxy_settinglist.add(match.groups())
 
 		keylist = configRegistry.keys()
-		for proxy_setting in proxy_settinglist:
+		for (userpart, proxy_setting, ) in proxy_settinglist:
 			for filtertype in [ 'domain', 'url' ]:
 				for itemtype in [ 'blacklisted', 'whitelisted' ]:
-					filename='%s-%s-%s' % (itemtype, filtertype, proxy_setting)
+					filename='%s-%s-%s%s' % (itemtype, filtertype, proxy_setting, userpart)
 					dbfn = '%s/%s' % (DIR_TEMP, filename)
 					f = open(dbfn, "w")
 
 					for key in keylist:
-						if key.startswith('proxy/filter/setting/%s/%s/%s/' % (proxy_setting, filtertype, itemtype)):
+						if key.startswith('proxy/filter/setting%s/%s/%s/%s/' % (userpart, proxy_setting, filtertype, itemtype)):
 							value = configRegistry[ key ]
 							if value.startswith('http://'):
 								value = value[ len('http://') : ]
