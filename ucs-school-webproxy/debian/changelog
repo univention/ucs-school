@@ -1,3 +1,9 @@
+ucs-school-webproxy (8.0.6-1) unstable; urgency=low
+
+  * added dependency to ucs-school-umc-internetrules (Bug #25803) 
+
+ -- Felix Botner <botner@univention.de>  Mon, 12 Mar 2012 15:00:49 +0100
+
 ucs-school-webproxy (8.0.5-1) unstable; urgency=low
 
   * removed ipauth and ldapauth options (Bug #25803)
