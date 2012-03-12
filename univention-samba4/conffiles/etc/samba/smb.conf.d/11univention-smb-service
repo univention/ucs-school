@@ -1,0 +1,52 @@
+@!@
+if configRegistry.get('samba4/service/smb', 'smbd'):
+	print '; ---------------------<smb service configuration>-----------------------'
+
+	if configRegistry['samba4/role'] != 'MEMBER':	## otherwise it's already set in 10global
+		print '\tsecurity = ads'
+
+	print '''
+	debug hirestimestamp = yes
+	debug pid = yes
+
+	dcerpc endpoint servers = -unixinfo -rpcecho -spoolss -winreg -wkssvc -srvsvc''',
+
+	if configRegistry.is_false('samba4/rpc/endpoint/drsuapi'):
+		print '-drsuapi'
+
+	print '''
+	domain logons = yes
+	passdb backend = samba4
+	auth methods = guest samba4
+	server signing = on
+
+	np:proxy = epmapper browser protected_storage lsass lsarpc netlogon samr
+
+	rpc_server:winreg = embedded
+	rpc_server:srvsvc = embedded
+	rpc_server:netdfs = embedded
+	rpc_server:wkssvc = embedded
+	rpc_server:spoolss = embedded
+
+	rpc_server:epmapper = disabled
+	rpc_server:lsarpc = disabled
+	rpc_server:netlogon = disabled
+	rpc_server:samr = disabled
+	rpc_server:rpcecho = disabled
+	rpc_server:dssetup = disabled
+	rpc_server:svctl = disabled
+	rpc_server:ntsvcs = disabled
+	rpc_server:eventlog = disabled
+	rpc_server:initshutdown = disabled
+
+	rpc_daemon:epmd = disabled
+	rpc_daemon:lsasd = disabled
+
+	rpc_server:tcpip = no'''
+
+elif configRegistry.get('samba4/service/smb', 'smbd') == 's4':
+	if configRegistry.get('samba4/ntacl/backend', 'native') == 'tdb':
+		print '\tposix:eadb = /var/lib/samba/private/samba4_eadb.tdb'
+
+print '; ---------------------</smb service configuration>----------------------'
+@!@

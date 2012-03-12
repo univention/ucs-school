@@ -1,0 +1,209 @@
+#!/bin/sh
+#
+# Univention Samba4
+#  postinst script
+#
+# Copyright 2004-2012 Univention GmbH
+#
+# http://www.univention.de/
+#
+# All rights reserved.
+#
+# The source code of this program is made available
+# under the terms of the GNU Affero General Public License version 3
+# (GNU AGPL V3) as published by the Free Software Foundation.
+#
+# Binary versions of this program provided by Univention to you as
+# well as other copyrighted, protected or trademarked materials like
+# Logos, graphics, fonts, specific documentations and configurations,
+# cryptographic keys etc. are subject to a license agreement between
+# you and Univention and not subject to the GNU AGPL V3.
+#
+# In the case you use this program under the terms of the GNU AGPL V3,
+# the program is provided in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public
+# License with the Debian GNU/Linux or Univention distribution in file
+# /usr/share/common-licenses/AGPL-3; if not, see
+# <http://www.gnu.org/licenses/>.
+
+. /usr/share/univention-lib/all.sh
+
+if [ "$1" = "configure" ] && [ -z "$2" ]; then
+	if [ -d '/var/lib/samba' ]; then
+		mkdir -p /var/lib/samba3
+		## backup existing samba3 lib dir
+		cp -a /var/lib/samba/* /var/lib/samba3
+	fi
+fi
+
+#DEBHELPER#
+
+if [ -z "$2" ]; then
+	mkdir -p /home/groups
+
+	mkdir -p /etc/univention/skel/windows-profiles
+	for dname in Win95 WinNT Win2k WinXP Win2K3 Vista Vista.V2 ; do
+		mkdir -p /etc/univention/skel/windows-profiles/$dname
+	done
+fi
+
+## samba3 defaults copied from univention-samba
+univention-config-registry set \
+	samba/share/home?yes \
+	samba/share/groups?no \
+	samba/adminusers?"administrator join-backup" \
+	samba/encrypt_passwords?yes \
+	samba/use_spnego?yes \
+	samba/client_use_spnego?yes \
+	samba/oplocks?yes \
+	samba/kernel_oplocks?yes \
+	samba/large_readwrite?yes \
+	samba/deadtime?15 \
+	samba/read_raw?yes \
+	samba/write_raw?yes \
+	samba/max_xmit?65535 \
+	samba/getwd_cache?yes \
+	samba/store_dos_attributes?yes \
+	samba/preserve_case?yes \
+	samba/short_preserve_case?yes \
+	samba/guest_account?nobody \
+	samba/map_to_guest?"Bad User"
+
+## more samba3 defaults copied from univention-samba
+if [ "$server_role" != "memberserver" ]
+then
+	if [ -n "$samba_netbios_name" ]
+	then
+		tmphostname=$samba_netbios_name
+	else
+		tmphostname="$hostname"
+	fi
+	univention-config-registry set samba/profileserver?$tmphostname \
+								   samba/profilepath?'%U\windows-profiles\%a' \
+								   samba/homedirserver?$tmphostname \
+								   samba/homedirpath?%U \
+								   samba/homedirletter?I
+fi
+
+univention-config-registry set \
+	samba/debug/level?2 \
+	samba4/sysvol/sync/jitter?60 \
+	samba4/service/smb?'smbd' \
+	samba4/service/nmb?'nmbd' \
+	samba4/ntacl/backend?'native'
+
+# configure firewall
+# http://technet.microsoft.com/en-us/library/dd772723%28WS.10%29.aspx
+ucr set security/packetfilter/package/univention-samba4/tcp/389/all="ACCEPT" \
+		security/packetfilter/package/univention-samba4/tcp/389/all/en="LDAP" \
+		security/packetfilter/package/univention-samba4/udp/389/all="ACCEPT" \
+		security/packetfilter/package/univention-samba4/udp/389/all/en="LDAP" \
+		security/packetfilter/package/univention-samba4/tcp/636/all="ACCEPT" \
+		security/packetfilter/package/univention-samba4/tcp/636/all/en="LDAPS" \
+		security/packetfilter/package/univention-samba4/tcp/53/all="ACCEPT" \
+		security/packetfilter/package/univention-samba4/tcp/53/all/en="DNS" \
+		security/packetfilter/package/univention-samba4/udp/53/all="ACCEPT" \
+		security/packetfilter/package/univention-samba4/udp/53/all/en="DNS" \
+		security/packetfilter/package/univention-samba4/udp/123/all="ACCEPT" \
+		security/packetfilter/package/univention-samba4/udp/123/all/en="TIME" \
+		security/packetfilter/package/univention-samba4/tcp/135/all="ACCEPT" \
+		security/packetfilter/package/univention-samba4/tcp/135/all/en="RPC (Samba)" \
+		security/packetfilter/package/univention-samba4/tcp/137:139/all="ACCEPT" \
+		security/packetfilter/package/univention-samba4/tcp/137:139/all/en="netbios (Samba)" \
+		security/packetfilter/package/univention-samba4/udp/137:139/all="ACCEPT" \
+		security/packetfilter/package/univention-samba4/udp/137:139/all/en="netbios (Samba)" \
+		security/packetfilter/package/univention-samba4/tcp/445/all="ACCEPT" \
+		security/packetfilter/package/univention-samba4/tcp/445/all/en="microsoft-ds (Samba)" \
+		security/packetfilter/package/univention-samba4/udp/445/all="ACCEPT" \
+		security/packetfilter/package/univention-samba4/udp/445/all/en="microsoft-ds (Samba)" \
+		security/packetfilter/package/univention-samba4/tcp/1024/all="ACCEPT" \
+		security/packetfilter/package/univention-samba4/tcp/1024/all/en="KDM (Samba)" \
+		security/packetfilter/package/univention-samba4/tcp/3268/all="ACCEPT" \
+		security/packetfilter/package/univention-samba4/tcp/3268/all/en="LDAP GC (Samba)" \
+		security/packetfilter/package/univention-samba4/tcp/3269/all="ACCEPT" \
+		security/packetfilter/package/univention-samba4/tcp/3269/all/en="LDAP GC SSL (Samba)" \
+		security/packetfilter/package/univention-samba4/tcp/88/all="ACCEPT" \
+		security/packetfilter/package/univention-samba4/tcp/88/all/en="Kerberos" \
+		security/packetfilter/package/univention-samba4/udp/88/all="ACCEPT" \
+		security/packetfilter/package/univention-samba4/udp/88/all/en="Kerberos" \
+		security/packetfilter/package/univention-samba4/tcp/464/all="ACCEPT" \
+		security/packetfilter/package/univention-samba4/tcp/464/all/en="Kerberos change/set password" \
+		security/packetfilter/package/univention-samba4/udp/464/all="ACCEPT" \
+		security/packetfilter/package/univention-samba4/udp/464/all/en="Kerberos change/set password" \
+		security/packetfilter/package/univention-samba4/tcp/749/all="ACCEPT" \
+		security/packetfilter/package/univention-samba4/tcp/749/all/en="Kerberos admin"
+[ -x "/etc/init.d/univention-firewall" ] && invoke-rc.d univention-firewall restart
+
+if [ "$1" = "configure" ]; then
+
+
+	if [ -z "$2" ]; then
+    	univention-config-registry set samba4/autostart="no"                                                                                                                                            
+
+		# only set this for new installations
+		if [ "$server_role" = "domaincontroller_master" ]; then
+			univention-config-registry set windows/wins-support=yes
+		else
+			univention-config-registry set windows/wins-support?no
+			univention-config-registry set windows/wins-server?$ldap_master
+		fi
+
+	elif [ -n "$2" ]; then
+
+		if [ -r /var/run/samba.pid ]; then
+			processname=$(ps -p $(cat /var/run/samba.pid) -o comm= )
+			if [ "$processname" = 'samba' ]; then
+				/etc/init.d/samba4 restart
+			fi
+		fi
+
+	fi
+
+	if test -f /etc/init.d/univention-directory-listener; then
+		/etc/init.d/univention-directory-listener crestart
+	fi
+fi
+
+call_joinscript 96univention-samba4.inst
+## cannot call joinscript 98univention-samba4-dns.inst here, maybe the s4-connector did not run yet
+
+
+eval "$(univention-config-registry shell)"
+
+##### Join-Script fragments that need to be executed automatically also on Master and Backup:
+if [ "$server_role" = "domaincontroller_master" ] || [ "$server_role" = "domaincontroller_backup" ]; then
+
+	## The following block of code can be removed after ucs3.0-1
+	if [ -n "$2" ] && dpkg --compare-versions "$2" lt-nl "1.0.126-3"; then
+		## Set DNS records again in case Bug #26285 occured in UCS 3.0-0. 
+		## Flow control copied from 96univention-samba4.inst
+
+		if [ "$samba4_role" = 'DC' ]; then
+
+			s4connectorservicedcs="$(ldapsearch -x -ZZ -LLL -D "$ldap_hostdn" -y /etc/machine.secret "(&(univentionService=S4 Connector)(objectClass=univentionDomainController))" cn | sed -n 's/^cn: \(.*\)/\1/p')"
+
+			if [ "$s4connectorservicedcs" = "$hostname" ]; then
+
+				/usr/share/univention-samba4/scripts/setup-dns-in-ucsldap.sh --dc --gc --pdc "$@"
+
+			else
+
+				/usr/share/univention-samba4/scripts/setup-dns-in-ucsldap.sh --dc "$@"
+
+			fi
+
+		elif [ "$samba4_role" = "RODC" ]; then
+
+			/usr/share/univention-samba4/scripts/setup-dns-in-ucsldap.sh --rodc "$@"
+
+		fi
+
+	fi
+
+fi
+
+exit 0
