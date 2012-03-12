@@ -1,4 +1,4 @@
-univention-samba4 (1.1.1-1) unstable; urgency=low
+univention-samba4 (1.0.127-1) unstable; urgency=low
 
   * fork based on ucs3.0-1 for ucs@school 3.0 (Bug #25991)
 
