@@ -1,3 +1,10 @@
+univention-samba4 (1.0.128-1) unstable; urgency=low
+
+  * New UCR variable samba4/join/site selects a site to join to
+  * Create subnet object for default network (Bug #25991)
+
+ -- Arvid Requate <requate@univention.de>  Mon, 12 Mar 2012 12:09:19 +0100
+
 univention-samba4 (1.0.127-1) unstable; urgency=low
 
   * fork based on ucs3.0-1 for ucs@school 3.0 (Bug #25991)

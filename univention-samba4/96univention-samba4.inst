@@ -232,22 +232,44 @@ if [ "$samba4_role" = 'DC' ]; then
 			sleep 1
 		fi
 
-		samba-tool domain join "$domainname" "$samba4_role" -U"$dcaccount"%"$bindpwd" --realm="$kerberos_realm" \
-								--machinepass="$(cat /etc/machine.secret)"
+		if [ -z "$samba4_join_site" ]; then
+			samba-tool domain join "$domainname" "$samba4_role" -U"$dcaccount"%"$bindpwd" --realm="$kerberos_realm" \
+									--machinepass="$(cat /etc/machine.secret)"
+		else
+			samba-tool domain join "$domainname" "$samba4_role" -U"$dcaccount"%"$bindpwd" --realm="$kerberos_realm" \
+									--machinepass="$(cat /etc/machine.secret)" \
+									--site="$samba4_join_site"
+		fi
 		if [ $? != 0 ]; then
 			# try again with --server
 			if [ -n "$samba4_dc" ]; then
-				samba-tool domain join "$domainname" "$samba4_role" -U"$dcaccount"%"$bindpwd" --realm="$kerberos_realm" --server "$samba4_dc" \
+				if [ -z "$samba4_join_site" ]; then
+					samba-tool domain join "$domainname" "$samba4_role" -U"$dcaccount"%"$bindpwd" --realm="$kerberos_realm" --server "$samba4_dc" \
 										--machinepass="$(cat /etc/machine.secret)"
+				else
+					samba-tool domain join "$domainname" "$samba4_role" -U"$dcaccount"%"$bindpwd" --realm="$kerberos_realm" --server "$samba4_dc" \
+										--machinepass="$(cat /etc/machine.secret)" \
+										--site="$samba4_join_site"
+				fi
 			else
-				samba-tool domain join "$domainname" "$samba4_role" -U"$dcaccount"%"$bindpwd" --realm="$kerberos_realm" --server "$ldap_master" \
+				if [ -z "$samba4_join_site" ]; then
+					samba-tool domain join "$domainname" "$samba4_role" -U"$dcaccount"%"$bindpwd" --realm="$kerberos_realm" --server "$ldap_master" \
 										--machinepass="$(cat /etc/machine.secret)"
+				else
+					samba-tool domain join "$domainname" "$samba4_role" -U"$dcaccount"%"$bindpwd" --realm="$kerberos_realm" --server "$ldap_master" \
+										--machinepass="$(cat /etc/machine.secret)" \
+										--site="$samba4_join_site"
+				fi
 			fi
 		fi
 
-		## Adding DNS records is currently necessary, probably this will can be avoided with dlz-dlopen on samba4
+		## Adding DNS records is currently necessary, probably this can be avoided with samba_dnsupdate
 		## see https://wiki.samba.org/index.php/Samba4/HOWTO/Join_a_domain_as_a_DC#A_note_on_DNS_updates
-		/usr/share/univention-samba4/scripts/setup-dns-in-ucsldap.sh --dc "$@"
+		if [ -z "$samba4_join_site" ]; then
+			/usr/share/univention-samba4/scripts/setup-dns-in-ucsldap.sh --dc "$@"
+		else
+			/usr/share/univention-samba4/scripts/setup-dns-in-ucsldap.sh --dc --site="$samba4_join_site" "$@"
+		fi
 
 		operatingSystem_attribute add
 
@@ -332,13 +354,18 @@ elif [ "$samba4_role" = "RODC" ]; then
 		sleep 1
 	fi
 
-	samba-tool domain join "$domainname" "$samba4_role" -U"$dcaccount"%"$bindpwd" --realm="$kerberos_realm" \
+	if [ -z "$samba4_join_site" ]; then
+		samba-tool domain join "$domainname" "$samba4_role" -U"$dcaccount"%"$bindpwd" --realm="$kerberos_realm" \
 							--machinepass="$(cat /etc/machine.secret)"
 
-	## Adding DNS records is currently necessary, probably this will can be avoided with dlz-dlopen on samba4
-	## see https://wiki.samba.org/index.php/Samba4/HOWTO/Join_a_domain_as_a_DC#A_note_on_DNS_updates
-	# TODO this is non-standard: by definition of FSMO roles, there can only be one PDC emulator in the domain
-	/usr/share/univention-samba4/scripts/setup-dns-in-ucsldap.sh --rodc "$@"
+		/usr/share/univention-samba4/scripts/setup-dns-in-ucsldap.sh --rodc "$@"
+	else
+		samba-tool domain join "$domainname" "$samba4_role" -U"$dcaccount"%"$bindpwd" --realm="$kerberos_realm" \
+							--machinepass="$(cat /etc/machine.secret)" \
+							--site="$samba4_join_site"
+
+		/usr/share/univention-samba4/scripts/setup-dns-in-ucsldap.sh --rodc --site="$samba4_join_site" "$@"
+	fi
 
 	operatingSystem_attribute add
 
@@ -398,6 +425,51 @@ elif [ "$samba4_role" = "MEMBER" ]; then
 									samba/share/sysvol?no
 
 	# set_machine_secret	## currently disabled
+
+fi
+
+if [ -n "$samba4_join_site" ]; then
+
+	/usr/share/univention-samba4/scripts/univention-samba4-site-tool.py \
+			--site "$samba4_join_site" --createsite \
+			--ignore-exists
+
+	default_network_and_prefix() {
+		eval "$(/usr/sbin/univention-config-registry shell \
+						interfaces/eth0/network interfaces/eth1/network \
+						interfaces/eth2/network interfaces/eth3/network \
+						interfaces/eth0/ipv6/default/address interfaces/eth1/ipv6/default/address \
+						interfaces/eth2/ipv6/default/address interfaces/eth4/ipv6/default/address \
+						interfaces/eth0/ipv6/default/prefix interfaces/eth1/ipv6/default/prefix \
+						interfaces/eth2/ipv6/default/prefix interfaces/eth4/ipv6/default/prefix)"
+
+		if [ -n "$interfaces_eth0_network" ] && [ -n "$interfaces_eth0_netmask" ]; then
+			network="$interfaces_eth0_network/$interfaces_eth0_netmask"
+		elif [ -n "$interfaces_eth1_network" ] && [ -n "$interfaces_eth1_netmask" ]; then
+			network="$interfaces_eth1_network/$interfaces_eth1_netmask"
+		elif [ -n "$interfaces_eth2_network" ] && [ -n "$interfaces_eth2_netmask" ]; then
+			network="$interfaces_eth2_network/$interfaces_eth2_netmask"
+		elif [ -n "$interfaces_eth3_network" ] && [ -n "$interfaces_eth3_netmask" ]; then
+			network="$interfaces_eth3_network/$interfaces_eth3_netmask"
+		elif [ -n "$interfaces_eth0_ipv6_default_address" ] && [ -n "$interfaces_eth0_ipv6_default_prefix" ]; then
+			network="$interfaces_eth0_ipv6_default_address/$interfaces_eth0_ipv6_default_prefix"
+		elif [ -n "$interfaces_eth1_ipv6_default_address" ] && [ -n "$interfaces_eth1_ipv6_default_prefix" ]; then
+			network="$interfaces_eth1_ipv6_default_address/$interfaces_eth1_ipv6_default_prefix"
+		elif [ -n "$interfaces_eth2_ipv6_default_address" ] && [ -n "$interfaces_eth2_ipv6_default_prefix" ]; then
+			network="$interfaces_eth2_ipv6_default_address/$interfaces_eth2_ipv6_default_prefix"
+		elif [ -n "$interfaces_eth3_ipv6_default_address" ] && [ -n "$interfaces_eth3_ipv6_default_prefix" ]; then
+			network="$interfaces_eth3_ipv6_default_address/$interfaces_eth3_ipv6_default_prefix"
+		fi
+		if [ -n "$network" ]; then
+			python -c 'import ipaddr,sys; ip=ipaddr.IPNetwork(sys.argv[1]); print "%s/%s" % ( ip.network, ip.prefixlen)' "$network"
+		fi
+	}
+
+	subnet=$(default_network_and_prefix)
+	/usr/share/univention-samba4/scripts/univention-samba4-site-tool.py \
+			--subnet "$subnet" --createsubnet \
+			--site "$samba4_join_site" \
+			--ignore-exists
 
 fi
 
