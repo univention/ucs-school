@@ -1,3 +1,10 @@
+ucs-school-lib (1.0.21-1) unstable; urgency=low
+
+  * new shell function school_ou extracts left most ou from ldap/hostdn
+    (for Bug #25991)
+
+ -- Arvid Requate <requate@univention.de>  Mon, 12 Mar 2012 11:02:10 +0100
+
 ucs-school-lib (1.0.25-1) unstable; urgency=low
 
   * replaced pupils with students; Bug #25705
@@ -44,6 +51,7 @@ ucs-school-lib (1.0.20-1) unstable; urgency=low
 
  -- Andreas Büsching <buesching@univention.de>  Thu, 23 Feb 2012 17:10:20 +0100
 
+>>>>>>> .r31373
 ucs-school-lib (1.0.19-1) unstable; urgency=low
 
   * corrected automatically chosen search base; Bug #25702
