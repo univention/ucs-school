@@ -42,7 +42,7 @@ if [ $JS_LAST_EXECUTED_VERSION -lt 1 ]; then
 		connector/ldap/bindpw?"/etc/machine.secret" \
 		connector/ldap/binddn?"$ldap_hostdn" \
 		connector/s4/allow/secondary?'true' \
-		connector/s4/mapping/dns/syncmode?'read'
+		connector/s4/mapping/dns/syncmode?'write'
 
 	if [ "$server_role" = "domaincontroller_slave" ]; then
 		site=$(school_ou)
