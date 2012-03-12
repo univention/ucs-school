@@ -176,8 +176,29 @@ if [ -z "$samba4_role" ]; then
 	univention-config-registry set samba4/role="$samba4_role"
 fi
 
+extract_binddn_and_bindpwd_from_args "$@"
+
+## create a site for this system?
+if [ -n "$samba4_join_site" ] && [ "$samba4_role" != "MEMBER" ]; then
+
+	if [ -z "$dcaccount" ] &&  [ -z "$bindpwd" ]; then
+		echo "Administative credentials are needed to join to existing Samba4 domain. Please run:"
+		printf "\tunivention-run-join-scripts --ask-pass\n"
+		echo "to complete the domain join."
+		exit 1
+	fi
+
+	/usr/share/univention-samba4/scripts/univention-samba4-site-tool.py \
+			-H "ldap://$ldap_master" \
+			-U"$dcaccount"%"$bindpwd" \
+			--site "$samba4_join_site" --createsite \
+			--ignore-exists
+fi
+
+
 SYSVOL_PATH='/var/lib/samba/sysvol'
 /usr/share/univention-samba4/scripts/mount_extfs_with_user_xattr.py
+
 
 if [ "$samba4_role" = 'DC' ]; then
 
@@ -211,8 +232,6 @@ if [ "$samba4_role" = 'DC' ]; then
 
 	else	## otherwise we will simply join the new DC
 
-		extract_binddn_and_bindpwd_from_args "$@"
-
 		if [ -z "$dcaccount" ] &&  [ -z "$bindpwd" ]; then
 			echo "Administative credentials are needed to join to existing Samba4 domain. Please run:"
 			printf "\tunivention-run-join-scripts --ask-pass\n"
@@ -233,33 +252,59 @@ if [ "$samba4_role" = 'DC' ]; then
 		fi
 
 		if [ -z "$samba4_join_site" ]; then
+			## normal domain join
 			samba-tool domain join "$domainname" "$samba4_role" -U"$dcaccount"%"$bindpwd" --realm="$kerberos_realm" \
 									--machinepass="$(cat /etc/machine.secret)"
+			if [ $? != 0 ]; then
+				# try again with --server
+				samba-tool domain join "$domainname" "$samba4_role" -U"$dcaccount"%"$bindpwd" --realm="$kerberos_realm" --server "$samba4_dc" \
+										--machinepass="$(cat /etc/machine.secret)"
+			else
+				samba-tool domain join "$domainname" "$samba4_role" -U"$dcaccount"%"$bindpwd" --realm="$kerberos_realm" --server "$ldap_master" \
+										--machinepass="$(cat /etc/machine.secret)"
+			fi
+
 		else
-			samba-tool domain join "$domainname" "$samba4_role" -U"$dcaccount"%"$bindpwd" --realm="$kerberos_realm" \
+			## site join
+
+			is_ucr_true samba4/service/drepl
+			rc=$?
+			if [ "$rc" -eq 0 ] || [ -z "$samba4_service_drepl" ]; then
+
+				samba-tool domain join "$domainname" "$samba4_role" -U"$dcaccount"%"$bindpwd" --realm="$kerberos_realm" \
 									--machinepass="$(cat /etc/machine.secret)" \
 									--site="$samba4_join_site"
-		fi
-		if [ $? != 0 ]; then
-			# try again with --server
-			if [ -n "$samba4_dc" ]; then
-				if [ -z "$samba4_join_site" ]; then
-					samba-tool domain join "$domainname" "$samba4_role" -U"$dcaccount"%"$bindpwd" --realm="$kerberos_realm" --server "$samba4_dc" \
-										--machinepass="$(cat /etc/machine.secret)"
-				else
+				# try again with --server
+				if [ -n "$samba4_dc" ]; then
 					samba-tool domain join "$domainname" "$samba4_role" -U"$dcaccount"%"$bindpwd" --realm="$kerberos_realm" --server "$samba4_dc" \
 										--machinepass="$(cat /etc/machine.secret)" \
 										--site="$samba4_join_site"
-				fi
-			else
-				if [ -z "$samba4_join_site" ]; then
-					samba-tool domain join "$domainname" "$samba4_role" -U"$dcaccount"%"$bindpwd" --realm="$kerberos_realm" --server "$ldap_master" \
-										--machinepass="$(cat /etc/machine.secret)"
 				else
 					samba-tool domain join "$domainname" "$samba4_role" -U"$dcaccount"%"$bindpwd" --realm="$kerberos_realm" --server "$ldap_master" \
 										--machinepass="$(cat /etc/machine.secret)" \
 										--site="$samba4_join_site"
 				fi
+
+			elif [ "$rc" -eq 1 ]; then
+				## site join with essential DRS replication only
+
+				samba-tool domain join "$domainname" "$samba4_role" -U"$dcaccount"%"$bindpwd" --realm="$kerberos_realm" \
+									--machinepass="$(cat /etc/machine.secret)" \
+									--site="$samba4_join_site" \
+									--domain-critical-only
+				# try again with --server
+				if [ -n "$samba4_dc" ]; then
+					samba-tool domain join "$domainname" "$samba4_role" -U"$dcaccount"%"$bindpwd" --realm="$kerberos_realm" --server "$samba4_dc" \
+										--machinepass="$(cat /etc/machine.secret)" \
+										--site="$samba4_join_site" \
+										--domain-critical-only
+				else
+					samba-tool domain join "$domainname" "$samba4_role" -U"$dcaccount"%"$bindpwd" --realm="$kerberos_realm" --server "$ldap_master" \
+										--machinepass="$(cat /etc/machine.secret)" \
+										--site="$samba4_join_site" \
+										--domain-critical-only
+				fi
+
 			fi
 		fi
 
@@ -325,7 +370,6 @@ if [ "$samba4_role" = 'DC' ]; then
 
 elif [ "$samba4_role" = "RODC" ]; then
 
-	extract_binddn_and_bindpwd_from_args "$@"
 	if [ -z "$dcaccount" ] &&  [ -z "$bindpwd" ]; then
 		echo "Administative credentials are needed to join to existing Samba4 domain. Please run:"
 		printf "\tunivention-run-join-scripts --ask-pass\n"
@@ -418,7 +462,6 @@ elif [ "$samba4_role" = "RODC" ]; then
 
 elif [ "$samba4_role" = "MEMBER" ]; then
 
-	extract_binddn_and_bindpwd_from_args "$@"
 	samba-tool domain join "$domainname" "$samba4_role" -U"$dcaccount"%"$bindpwd" --realm="$kerberos_realm" \
 							--machinepass="$(cat /etc/machine.secret)"
 	univention-config-registry set samba/share/netlogon?no \
@@ -428,11 +471,7 @@ elif [ "$samba4_role" = "MEMBER" ]; then
 
 fi
 
-if [ -n "$samba4_join_site" ]; then
-
-	/usr/share/univention-samba4/scripts/univention-samba4-site-tool.py \
-			--site "$samba4_join_site" --createsite \
-			--ignore-exists
+if [ -n "$samba4_join_site" ] && [ "$samba4_role" != "MEMBER" ]; then
 
 	default_network_and_prefix() {
 		eval "$(/usr/sbin/univention-config-registry shell \
@@ -465,8 +504,10 @@ if [ -n "$samba4_join_site" ]; then
 		fi
 	}
 
+	## create subnet locally
 	subnet=$(default_network_and_prefix)
 	/usr/share/univention-samba4/scripts/univention-samba4-site-tool.py \
+			-H "/var/lib/samba/private/sam.ldb" \
 			--subnet "$subnet" --createsubnet \
 			--site "$samba4_join_site" \
 			--ignore-exists

@@ -2,6 +2,7 @@
 from samba.samdb import SamDB
 import ldb
 import optparse
+import samba.getopt
 import sys
 from samba.param import LoadParm
 from samba.auth import system_session
@@ -9,6 +10,13 @@ from univention import config_registry
 
 
 parser = optparse.OptionParser("$prog [options] <host>")
+sambaopts = samba.getopt.SambaOptions(parser)
+parser.add_option_group(sambaopts)
+parser.add_option_group(samba.getopt.VersionOptions(parser))
+# use command line creds if available
+credopts = samba.getopt.CredentialsOptions(parser)
+parser.add_option_group(credopts)
+parser.add_option("-H", "--url", dest="database_url")
 parser.add_option("-v", "--verbose", action="store_true", dest="verbose")
 parser.add_option("--ignore-exists", action="store_true", dest="ignore_exists")
 parser.add_option("--createsite", action="store_true", dest="createsite")
@@ -19,6 +27,10 @@ parser.add_option("--site", dest="site")
 parser.add_option("--sitelink", dest="sitelink")
 parser.add_option("--subnet", dest="subnet")
 opts, args = parser.parse_args()
+
+if not opts.database_url:
+	print >> sys.stderr, "Option -H or --url needed"
+	sys.exit(1)
 
 if opts.createsitelink:
 	if not opts.sitelink:
@@ -41,12 +53,13 @@ if opts.createsubnet or opts.modifysubnet:
 if not (opts.createsitelink or opts.createsite or opts.createsubnet or opts.modifysubnet): 
 	parser.print_help()
 
-lp = LoadParm()
-lp.load('/etc/samba/smb.conf')
-samdb = SamDB('/var/lib/samba/private/sam.ldb', session_info=system_session(lp), lp=lp)
+lp = sambaopts.get_loadparm()
+creds = credopts.get_credentials(lp)
 
 configRegistry = config_registry.ConfigRegistry()
 configRegistry.load()
+
+samdb = SamDB(opts.database_url, credentials=creds, session_info=system_session(lp), lp=lp)
 
 samba4_ldap_base = configRegistry.get('samba4/ldap/base')
 ldif_dict = {
@@ -58,7 +71,7 @@ ldif_dict = {
 
 if opts.createsite:
 
-	res = samdb.search("CN=Configuration,%s" % ldap_base, scope=ldb.SCOPE_SUBTREE, expression="(&(objectClass=site)(cn=%s))" % opts.site)
+	res = samdb.search("CN=Configuration,%s" % samba4_ldap_base, scope=ldb.SCOPE_SUBTREE, expression="(&(objectClass=site)(cn=%s))" % opts.site)
 	if res:
 		print >> sys.stderr, "site already exists" % opts.site
 		if not opts.ignore_exists:
@@ -110,7 +123,7 @@ siteList: CN=%(branchsite_name)s,CN=Sites,CN=Configuration,%(samba4_ldap_base)s
 		print "added site %s to sitelink %s" % (opts.site, opts.sitelink)
 
 elif opts.site:
-	res = samdb.search("CN=Configuration,%s" % ldap_base, scope=ldb.SCOPE_SUBTREE, expression="(&(objectClass=site)(cn=%s))" % opts.site)
+	res = samdb.search("CN=Configuration,%s" % samba4_ldap_base, scope=ldb.SCOPE_SUBTREE, expression="(&(objectClass=site)(cn=%s))" % opts.site)
 	if not res:
 		print >> sys.stderr, "site %s not found" % opts.site
 		sys.exit(1)
@@ -139,7 +152,7 @@ siteList: CN=%(branchsite_name)s,CN=Sites,CN=Configuration,%(samba4_ldap_base)s
 	print "created sitelink %s" % opts.sitelink
 
 if opts.createsubnet:
-	res = samdb.search("CN=Configuration,%s" % ldap_base, scope=ldb.SCOPE_SUBTREE, expression="(&(objectClass=subnet)(cn=%s))" % opts.subnet)
+	res = samdb.search("CN=Configuration,%s" % samba4_ldap_base, scope=ldb.SCOPE_SUBTREE, expression="(&(objectClass=subnet)(cn=%s))" % opts.subnet)
 	if res:
 		print >> sys.stderr, "subnet %s already exists" % opts.subnet
 		if not opts.ignore_exists:
@@ -160,12 +173,12 @@ objectCategory: CN=Subnet,CN=Schema,CN=Configuration,%(samba4_ldap_base)s
 	print "created subnet %s for site %s" % (opts.subnet, opts.site)
 
 elif opts.modifysubnet:
-	res = samdb.search("CN=Configuration,%s" % ldap_base, scope=ldb.SCOPE_SUBTREE, expression="(&(objectClass=subnet)(cn=%s))" % opts.subnet)
+	res = samdb.search("CN=Configuration,%s" % samba4_ldap_base, scope=ldb.SCOPE_SUBTREE, expression="(&(objectClass=subnet)(cn=%s))" % opts.subnet)
 	if not res:
 		print >> sys.stderr, "subnet %s not found" % opts.subnet
 		sys.exit(1)
 
-	res = samdb.search("CN=Configuration,%s" % ldap_base, scope=ldb.SCOPE_SUBTREE, expression="(&(objectClass=site)(cn=%s))" % opts.site)
+	res = samdb.search("CN=Configuration,%s" % samba4_ldap_base, scope=ldb.SCOPE_SUBTREE, expression="(&(objectClass=site)(cn=%s))" % opts.site)
 	if not res:
 		print >> sys.stderr, "site %s not found" % opts.site
 		sys.exit(1)

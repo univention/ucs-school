@@ -61,7 +61,7 @@ while getopts "$optspec" option; do
 			fi
 			OPTIND=$((OPTIND+1))
 			;;
-		site)
+		site|site=*)
 			## allow "--site=foo" and "--site foo"
 			val=${OPTARG#*=}
 			if [ "$val" != "$OPTARG" ]; then
