@@ -1,0 +1,156 @@
+#!/bin/bash
+#
+# Univention S4 Connector
+#  join script
+#
+# Copyright 2004-2011 Univention GmbH
+#
+# http://www.univention.de/
+#
+# All rights reserved.
+#
+# The source code of this program is made available
+# under the terms of the GNU Affero General Public License version 3
+# (GNU AGPL V3) as published by the Free Software Foundation.
+#
+# Binary versions of this program provided by Univention to you as
+# well as other copyrighted, protected or trademarked materials like
+# Logos, graphics, fonts, specific documentations and configurations,
+# cryptographic keys etc. are subject to a license agreement between
+# you and Univention and not subject to the GNU AGPL V3.
+#
+# In the case you use this program under the terms of the GNU AGPL V3,
+# the program is provided in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public
+# License with the Debian GNU/Linux or Univention distribution in file
+# /usr/share/common-licenses/AGPL-3; if not, see
+# <http://www.gnu.org/licenses/>.
+
+VERSION=2
+. /usr/share/univention-join/joinscripthelper.lib
+joinscript_init
+
+. /usr/share/univention-lib/all.sh
+
+eval "$(univention-config-registry shell)"
+
+NAME="S4 Connector"
+
+univention-config-registry set \
+	connector/s4/ldap/host?"$ldap_master" \
+	connector/s4/ldap/base?"$samba4_ldap_base" \
+	connector/s4/ldap/binddn?"cn=ucs-s4sync,cn=Users,$samba4_ldap_base" \
+	connector/s4/ldap/bindpw?"/etc/samba4.secret" \
+	connector/s4/ldap/ssl?"no" \
+	connector/s4/mapping/group/language?en \
+	connector/s4/ldap/protocol?ldapi \
+	connector/s4/ldap/socket?/var/lib/samba/private/ldap_priv/ldapi
+
+if ! is_ucr_true 'connector/s4/allow/secondary'; then
+	s4connectorservicehost_dns="$(univention-directory-manager computers/computer list "$@" --filter "(&(univentionService=${NAME})(!(cn=$hostname)))" | sed -ne 's|^DN: ||p')"
+fi
+
+if [ -n "$s4connectorservicehost_dns" ]; then	## there already is a system providing this service
+
+	## copy /etc/samba4.secret required by univention-s4search if connector/s4/ldap/binddn is set.
+	HOSTPWD="/etc/machine.secret"
+	HOSTACCOUNT="$hostname\$"
+
+	echo "$s4connectorservicehost_dns" | while read s4chost_dn; do
+
+		s4chost=$(echo "$s4chost_dn" | sed -n 's/cn=\([^,]*\).*/\1/p')
+
+		if [ "$s4chost" = "$hostname" ]; then
+			continue
+		fi
+		univention-scp $HOSTPWD "-r $HOSTACCOUNT@$s4chost:/etc/samba4.secret /etc/"
+		if [ $? = 0 ]; then
+			break
+		fi
+
+	done
+	if ! [ -r /etc/samba4.secret ]; then
+		echo "ERROR: Failed to copy /etc/samba4.secret. Please copy it manually from the main host running the Samba4 Connector."
+	fi
+
+	/etc/init.d/univention-s4-connector stop
+
+	## Don't autostart S4 Connector on other host by default, more config to be done for this to be useful
+	univention-config-registry set connector/s4/autostart?no
+
+else										## we are first system to provide this service
+
+	## create an admin user for synchronisation
+	if [ -e /etc/samba4.secret ]; then
+		samba-tool user add ucs-s4sync "$(cat /etc/samba4.secret)" -U Administrator%$(cat /etc/samba4.secret)
+		samba-tool group addmembers "Domain Admins" ucs-s4sync #maybe we could use a more restrict group?
+	fi
+
+	if [ $JS_LAST_EXECUTED_VERSION -le 0 ]; then
+		/usr/share/univention-heimdal/salt_krb5Keys 
+		/usr/sbin/univention-password_sync_ucs_to_s4 Administrator     ## this account already exists in Samba4, set UCS password for it
+		if [ $? != 0 ]; then
+			/etc/init.d/samba4 restart
+			sleep 3
+			/usr/sbin/univention-password_sync_ucs_to_s4 Administrator     ## this account already exists in Samba4, set UCS password for it
+		fi
+		/usr/share/univention-s4-connector/sync_krbtgt
+	fi
+
+	ucs_addServiceToLocalhost "${NAME}" "$@"
+
+	univention-config-registry set connector/s4/autostart?yes
+
+	old_sleep="$connector_s4_poll_sleep"
+	old_retry="$connector_s4_retryrejected"
+
+	univention-config-registry set connector/s4/poll/sleep=1 connector/s4/retryrejected=2
+
+	/etc/init.d/univention-s4-connector restart
+
+	univention-config-registry set dns/backend=samba4
+	if [ -x /etc/init.d/bind9 ]; then
+		/etc/init.d/bind9 restart
+	fi
+
+	# Wait until the local S4 contains the DNS record
+	echo -n "Wait for bind9: "
+	count=0
+	while [ $count -le 600 ]; do
+		timeout=$(LC_ALL=C host -W 1 "$ldap_master" 2>&1| grep 'has \(IPv6 \)\?address ')
+		if [ -n "$timeout" ]; then
+			echo " done"
+			break
+		else
+			echo -n "."
+			# restart samba4 every 200 seconds
+			expr $count % 200 >/dev/null || /etc/init.d/samba4 restart
+			sleep 1
+		fi;
+		count=$((count+1))
+	done
+
+	univention-config-registry set connector/s4/poll/sleep="$old_sleep" connector/s4/retryrejected="$old_retry"
+
+	if [ $count -gt 600 ]; then
+		echo " failed"
+		univention-config-registry set dns/backend=ldap
+		if [ -x /etc/init.d/bind9 ]; then
+			/etc/init.d/bind9 restart
+		fi
+
+		echo "**************************************************************"
+		echo "* ERROR: Failed to configure Samba4 as backend for bind.     *"
+		echo "*        Please check the samba and the s4-connector logfile.*"
+		echo "**************************************************************"
+		exit 1
+	fi
+fi
+
+joinscript_save_current_version
+
+exit 0
