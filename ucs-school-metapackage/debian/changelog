@@ -1,3 +1,10 @@
+ucs-school-metapackage (4.0.7-1) unstable; urgency=low
+
+  * Don't synchronize the the DNS data from the school to the master
+    LDAP (Bug #26465)
+
+ -- Stefan Gohmann <gohmann@univention.de>  Mon, 12 Mar 2012 20:12:01 +0100
+
 ucs-school-metapackage (4.0.6-1) unstable; urgency=low
 
   * add service "UCS@school" to host on installation (Bug #26053)
