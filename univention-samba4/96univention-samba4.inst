@@ -267,9 +267,9 @@ if [ "$samba4_role" = 'DC' ]; then
 		else
 			## site join
 
-			is_ucr_true samba4/service/drepl
+			is_ucr_true samba4/join/essentialonly
 			rc=$?
-			if [ "$rc" -eq 0 ] || [ -z "$samba4_service_drepl" ]; then
+			if [ "$rc" -eq 0 ] || [ -z "$samba4_join_essentialonly" ]; then
 
 				samba-tool domain join "$domainname" "$samba4_role" -U"$dcaccount"%"$bindpwd" --realm="$kerberos_realm" \
 									--machinepass="$(cat /etc/machine.secret)" \
