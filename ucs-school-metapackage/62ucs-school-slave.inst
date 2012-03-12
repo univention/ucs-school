@@ -30,16 +30,28 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-VERSION=1
+VERSION=2
 . /usr/share/univention-join/joinscripthelper.lib
 joinscript_init
 
 eval "$(ucr shell)"
+. /usr/share/ucs-school-lib/base.sh
 
 if [ $JS_LAST_EXECUTED_VERSION -lt 1 ]; then
-	ucr set connector/ldap/bindpw?"/etc/machine.secret" \
-			connector/ldap/binddn?"$ldap_hostdn" \
-			connector/s4/allow/secondary?'true'
+	univention-config-registry set \
+		connector/ldap/bindpw?"/etc/machine.secret" \
+		connector/ldap/binddn?"$ldap_hostdn" \
+		connector/s4/allow/secondary?'true'
+
+	if [ "$server_role" = "domaincontroller_slave" ]; then
+		site=$(school_ou)
+		if [ -n "$site" ]; then
+			univention-config-registry set \
+				samba4/join/site?"$site"
+		else
+			echo "ERROR: unknown school OU!"
+		fi
+	fi
 fi
 
 joinscript_save_current_version
