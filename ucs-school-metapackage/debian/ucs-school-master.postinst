@@ -29,11 +29,15 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+. /usr/share/univention-lib/all.sh
+
 univention-config-registry set \
 	repository/online/component/ucsschool/version=current \
 	directory/manager/samba3/legacy?yes \
 	connector/s4/mapping/sid_to_ucs?no \
 	connector/s4/mapping/sid_to_s4?yes
+
+call_joinscript 62ucs-school-master.inst
 
 #DEBHELPER#
 

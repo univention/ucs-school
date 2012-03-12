@@ -1,3 +1,9 @@
+ucs-school-metapackage (4.0.6-1) unstable; urgency=low
+
+  * add service "UCS@school" to host on installation (Bug #26053)
+
+ -- Janek Walkenhorst <walkenhorst@univention.de>  Mon, 12 Mar 2012 12:00:03 +0100
+
 ucs-school-metapackage (4.0.5-1) unstable; urgency=low
 
   * set samba4/join/site to school OU in join script (Bug #25991)

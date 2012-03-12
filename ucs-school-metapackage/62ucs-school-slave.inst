@@ -35,7 +35,7 @@ VERSION=2
 joinscript_init
 
 eval "$(ucr shell)"
-. /usr/share/ucs-school-lib/base.sh
+. /usr/share/ucs-school-lib/all.sh
 
 if [ $JS_LAST_EXECUTED_VERSION -lt 1 ]; then
 	univention-config-registry set \
@@ -53,6 +53,8 @@ if [ $JS_LAST_EXECUTED_VERSION -lt 1 ]; then
 		fi
 	fi
 fi
+
+ucs_addServiceToLocalhost 'UCS@school' "$@"
 
 joinscript_save_current_version
 
