@@ -1,3 +1,9 @@
+univention-squid (5.0.9-1) unstable; urgency=low
+
+  * fixed squid.conf template (Bug #25771) 
+
+ -- Felix Botner <botner@univention.de>  Tue, 13 Mar 2012 11:22:00 +0100
+
 univention-squid (5.0.8-1) unstable; urgency=low
 
   * added squid ldap <-> ntlm authentication module
