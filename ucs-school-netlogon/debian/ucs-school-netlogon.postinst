@@ -36,6 +36,7 @@ univention-config-registry set \
 	ucsschool/netlogon/windowStyle?1 \
 	ucsschool/netlogon/checkReturn?true \
 	ucsschool/import/set/netlogon/script/path?ucs-school-logon.vbs \
-	ucsschool/netlogon/vbs/interpreter?"cscript"
+	ucsschool/netlogon/vbs/interpreter?"wscript" \
+	ucsschool/netlogon/vbs/options="//B //Nologo"
 
 exit 0
