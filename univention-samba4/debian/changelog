@@ -1,3 +1,10 @@
+univention-samba4 (1.0.128-7) unstable; urgency=low
+
+  * allocate and create a local rid pool in case samba4/service/drepl
+    is switched off during join (Bug #25991)
+
+ -- Arvid Requate <requate@univention.de>  Tue, 13 Mar 2012 19:39:09 +0100
+
 univention-samba4 (1.0.128-6) unstable; urgency=low
 
   * shell syntax fix (Bug #25991)

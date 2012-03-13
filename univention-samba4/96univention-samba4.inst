@@ -153,6 +153,95 @@ create_site() {
 			--ignore-exists
 }
 
+allocate_rid_pool() {
+
+	allocate_numberofrids="$1"
+
+	ridmanager=$(ldbsearch -H "ldap://$ldap_master" -U"$dcaccount"%"$bindpwd" -b "$samba4_ldap_base" -s base rIDManagerReference |
+					ldapsearch-wrapper | sed -n 's/^rIDManagerReference: \(.*\)/\1/p')
+
+	if [ -z "$ridmanager" ]; then
+		echo "Error: Could not determine RID Manager" >&2
+		return 1
+	fi
+
+	rIDAvailablePool=$(ldbsearch -H "ldap://$ldap_master" -U"$dcaccount"%"$bindpwd" -b "$ridmanager" -s base rIDAvailablePool |
+						ldapsearch-wrapper | sed -n 's/^rIDAvailablePool: \(.*\)/\1/p')
+
+	if [ -z "$ridmanager" ]; then
+		echo "Error: Could not determine rIDAvailablePool" >&2
+		return 1
+	fi
+
+	floor="${rIDAvailablePool%-*}"
+	ceil="${rIDAvailablePool#*-}"
+	newfloor=$(($floor + $allocate_numberofrids))
+
+	if [ "$newfloor" -lt "$ceil" ]; then
+		ldbmodify -H ldap://master -U"$dcaccount"%"$bindpwd" <<-%EOF >/dev/null 2>&1
+			dn: $ridmanager
+			changetype: modify
+			delete: rIDAvailablePool
+			rIDAvailablePool: $rIDAvailablePool
+			-
+			add: rIDAvailablePool
+			rIDAvailablePool: $newfloor-$ceil
+			%EOF
+		rc="$?"
+		if [ "$rc" -eq 0 ]; then
+			upperbound=$(($newfloor - 1))
+			ridrange="$floor-$upperbound"
+			echo "$ridrange"
+			return 0
+		else
+			echo "Error updating rIDAvailablePool" >&2
+			new_rIDAvailablePool=$(ldbsearch -H "ldap://$ldap_master" -U"$dcaccount"%"$bindpwd" -b "$ridmanager" -s base rIDAvailablePool |
+									ldapsearch-wrapper | sed -n 's/^rIDAvailablePool: \(.*\)/\1/p')
+			if [ "$rIDAvailablePool" != "$new_rIDAvailablePool" ]; then
+				echo "rIDAvailablePool modification race, try again" >&2
+				return 2
+			fi
+			return 1
+		fi
+	else
+		echo "Error: Could not allocate $allocate_numberofrids, only $(($ceil - $floor + 1)) left in rIDAvailablePool" >&2
+		return 1
+	fi
+}
+
+create_local_rid_pool() {
+	numberofrids="$1"
+
+	ridrange=$(allocate_rid_pool "$numberofrids")
+
+	if [ $? -eq 1 ]; then
+		return 1
+	elif [ $? -eq 2 ]; then	## try again
+		ridrange=$(allocate_rid_pool)
+	fi
+
+	if [ -n "$ridrange" ]; then
+		floor="${ridrange%-*}"
+		ldbadd -H /var/lib/samba/private/sam.ldb --relax <<-%EOF
+			dn: CN=RID Set,CN=$hostname,OU=Domain Controllers,$samba4_ldap_base
+			objectClass: rIDSet
+			cn: RID Set
+			showInAdvancedViewOnly: TRUE
+			name: RID Set
+			rIDAllocationPool: $ridrange
+			rIDPreviousAllocationPool: $ridrange
+			rIDUsedPool: 0
+			rIDNextRID: $floor
+			%EOF
+
+		ldbmodify -H /var/lib/samba/private/sam.ldb <<-%EOF
+			dn: CN=$hostname,OU=Domain Controllers,$samba4_ldap_base
+			changetype: modify
+			replace: rIDSetReferences
+			rIDSetReferences: CN=RID Set,CN=$hostname,OU=Domain Controllers,$samba4_ldap_base
+			%EOF
+	fi
+}
 ### --- END helper functions ---
 
 extract_binddn_and_bindpwd_from_args "$@"
@@ -309,6 +398,11 @@ if [ "$samba4_role" = 'DC' ]; then
 				fi
 
 			fi
+		fi
+
+		is_ucr_true samba4/service/drepl
+		if [ $? -eq 1 ]; then
+			create_local_rid_pool 500
 		fi
 
 		## Adding DNS records is currently necessary, probably this can be avoided with samba_dnsupdate
