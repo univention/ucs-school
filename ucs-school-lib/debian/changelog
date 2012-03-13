@@ -1,4 +1,4 @@
-ucs-school-lib (1.0.21-1) unstable; urgency=low
+ucs-school-lib (1.0.26-1) unstable; urgency=low
 
   * new shell function school_ou extracts left most ou from ldap/hostdn
     (for Bug #25991)
