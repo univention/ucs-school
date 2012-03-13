@@ -57,6 +57,8 @@ fi
 
 NAME="Samba 4"
 
+### --- BEGIN helper functions ---
+
 extract_binddn_and_bindpwd_from_args() {
 	## parse binddn and bindpwd from command line arguments into shell variables
 	eval $(echo "$@" | sed -n 's/.*--binddn \(.*\) --bindpwd \(.*\).*/binddn="\1"\nbindpwd="\2"/p')
@@ -136,6 +138,26 @@ remove_port ()
 
 }
 
+create_site() {
+		if [ -z "$dcaccount" ] &&  [ -z "$bindpwd" ]; then
+			echo "Administative credentials are needed to join to existing Samba4 domain. Please run:"
+			printf "\tunivention-run-join-scripts --ask-pass\n"
+			echo "to complete the domain join."
+			exit 1
+		fi
+
+		/usr/share/univention-samba4/scripts/univention-samba4-site-tool.py \
+				-H "ldap://$ldap_master" \
+				-U"$dcaccount"%"$bindpwd" \
+				--site "$1" --createsite \
+				--ignore-exists
+	fi
+}
+
+### --- END helper functions ---
+
+extract_binddn_and_bindpwd_from_args "$@"
+
 univention-config-registry commit /etc/samba/smb.conf		# 03univention-directory-listener.inst might remove include
 
 univention-config-registry set samba/quota/command='None'	# currently unsupported in samba4
@@ -161,6 +183,9 @@ if [ "$JS_LAST_EXECUTED_VERSION" = 0 ]; then
 fi                                                                                                                                                                                                 
 univention-config-registry set samba4/autostart?yes 
 
+SYSVOL_PATH='/var/lib/samba/sysvol'
+/usr/share/univention-samba4/scripts/mount_extfs_with_user_xattr.py
+
 if [ -z "$samba4_role" ]; then
 	case "$server_role" in
 		domaincontroller_*)
@@ -175,29 +200,6 @@ if [ -z "$samba4_role" ]; then
 
 	univention-config-registry set samba4/role="$samba4_role"
 fi
-
-extract_binddn_and_bindpwd_from_args "$@"
-
-## create a site for this system?
-if [ -n "$samba4_join_site" ] && [ "$samba4_role" != "MEMBER" ]; then
-
-	if [ -z "$dcaccount" ] &&  [ -z "$bindpwd" ]; then
-		echo "Administative credentials are needed to join to existing Samba4 domain. Please run:"
-		printf "\tunivention-run-join-scripts --ask-pass\n"
-		echo "to complete the domain join."
-		exit 1
-	fi
-
-	/usr/share/univention-samba4/scripts/univention-samba4-site-tool.py \
-			-H "ldap://$ldap_master" \
-			-U"$dcaccount"%"$bindpwd" \
-			--site "$samba4_join_site" --createsite \
-			--ignore-exists
-fi
-
-
-SYSVOL_PATH='/var/lib/samba/sysvol'
-/usr/share/univention-samba4/scripts/mount_extfs_with_user_xattr.py
 
 
 if [ "$samba4_role" = 'DC' ]; then
@@ -238,6 +240,7 @@ if [ "$samba4_role" = 'DC' ]; then
 			echo "to complete the domain join."
 			exit 1
 		fi
+
 		if [ $JS_LAST_EXECUTED_VERSION -lt 2 ]; then
 			## remove slapd from port 389 on upgrade
 			if [ -n "$slapd_port" ]; then
@@ -266,6 +269,7 @@ if [ "$samba4_role" = 'DC' ]; then
 
 		else
 			## site join
+			create_site "$samba4_join_site"
 
 			is_ucr_true samba4/join/essentialonly
 			rc=$?
@@ -404,9 +408,21 @@ elif [ "$samba4_role" = "RODC" ]; then
 
 		/usr/share/univention-samba4/scripts/setup-dns-in-ucsldap.sh --rodc "$@"
 	else
-		samba-tool domain join "$domainname" "$samba4_role" -U"$dcaccount"%"$bindpwd" --realm="$kerberos_realm" \
-							--machinepass="$(cat /etc/machine.secret)" \
-							--site="$samba4_join_site"
+		# site join
+		create_site "$samba4_join_site"
+
+		is_ucr_true samba4/join/essentialonly
+		rc=$?
+		if [ "$rc" -eq 0 ] || [ -z "$samba4_join_essentialonly" ]; then
+			samba-tool domain join "$domainname" "$samba4_role" -U"$dcaccount"%"$bindpwd" --realm="$kerberos_realm" \
+								--machinepass="$(cat /etc/machine.secret)" \
+								--site="$samba4_join_site"
+		else
+			samba-tool domain join "$domainname" "$samba4_role" -U"$dcaccount"%"$bindpwd" --realm="$kerberos_realm" \
+								--machinepass="$(cat /etc/machine.secret)" \
+								--site="$samba4_join_site" \
+								--domain-critical-only
+		fi
 
 		/usr/share/univention-samba4/scripts/setup-dns-in-ucsldap.sh --rodc --site="$samba4_join_site" "$@"
 	fi
