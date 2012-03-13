@@ -44,16 +44,19 @@ description='Create user-specific netlogon-scripts'
 filter='(|(&(objectClass=posixAccount)(objectClass=organizationalPerson)(!(uid=*$)))(objectClass=posixGroup)(objectClass=univentionShare))'
 atributes=[]
 
-scriptpath = '/var/lib/samba/userlogon/user'
+scriptpath = ""
 desktopFolderName = "Eigene Shares"
 globalLinks = {}
 
 def getScriptPath():
 	global scriptpath
-	lo = connect()
-	result = lo.search('(&(cn=%s)(univentionService=Samba 4))' % listener.configRegistry.get("hostname", "localhost"))
-	if result:
-		scriptpath = "/var/lib/samba/sysvol/%s/scripts/user" % listener.configRegistry.get('kerberos/realm', '').lower()
+	if not scriptpath:
+		lo = connect()
+		result = lo.search('(&(cn=%s)(univentionService=Samba 4))' % listener.configRegistry.get("hostname", "localhost"))
+		if result:
+			scriptpath = "/var/lib/samba/sysvol/%s/scripts/user" % listener.configRegistry.get('kerberos/realm', '').lower()
+		else:
+			scriptpath = "/var/lib/samba/userlogon/user"
 
 def getCommandOutput(command):
 	child = os.popen(command)
