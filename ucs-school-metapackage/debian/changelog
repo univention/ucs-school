@@ -1,3 +1,10 @@
+ucs-school-metapackage (4.0.9-1) unstable; urgency=low
+
+  * update dependencies (Bug #25692)
+  * fix join scripts (Bug #26053)
+
+ -- Janek Walkenhorst <walkenhorst@univention.de>  Tue, 13 Mar 2012 17:04:28 +0100
+
 ucs-school-metapackage (4.0.8-1) unstable; urgency=low
 
   * support univention-samba4 instead of univention-samba (Bug #25772)
