@@ -1,3 +1,9 @@
+ucs-school-info (2.0.1-1) unstable; urgency=low
+
+  * update to UCS 3.0 UDM (Bug #25688)
+
+ -- Janek Walkenhorst <walkenhorst@univention.de>  Wed, 14 Mar 2012 14:21:17 +0100
+
 ucs-school-info (2.0.0-1) unstable; urgency=low
 
   * update to UCS@school 3.0 (Bug #25688)
