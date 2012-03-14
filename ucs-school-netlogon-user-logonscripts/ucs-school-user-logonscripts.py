@@ -49,14 +49,34 @@ desktopFolderName = "Eigene Shares"
 globalLinks = {}
 
 def getScriptPath():
+
 	global scriptpath
-	if not scriptpath:
+
+	if scriptpath:
+		return
+
+	try:
 		lo = connect()
 		result = lo.search('(&(cn=%s)(univentionService=Samba 4))' % listener.configRegistry.get("hostname", "localhost"))
 		if result:
 			scriptpath = "/var/lib/samba/sysvol/%s/scripts/user" % listener.configRegistry.get('kerberos/realm', '').lower()
 		else:
 			scriptpath = "/var/lib/samba/userlogon/user"
+	except:
+		pass
+
+	if scriptpath and not os.path.isdir(scriptpath):
+		listener.setuid(0)
+		try:
+			os.makedirs(scriptpath)
+			os.chown(scriptpath, pwd.getpwnam('listener')[2], 0)
+		finally:
+			listener.unsetuid()
+
+	univention.debug.debug(
+		univention.debug.LISTENER,
+		univention.debug.INFO,
+		"ucsschool-user-logonscripts: scriptpath is %s" % scriptpath)
 
 def getCommandOutput(command):
 	child = os.popen(command)

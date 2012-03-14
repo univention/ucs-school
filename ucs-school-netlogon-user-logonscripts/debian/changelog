@@ -1,3 +1,9 @@
+ucs-school-netlogon-user-logonscripts (7.0.2-5) unstable; urgency=low
+
+  * create netlogin dir in listener module (Bug #25777) 
+
+ -- Felix Botner <botner@univention.de>  Wed, 14 Mar 2012 13:33:05 +0100
+
 ucs-school-netlogon-user-logonscripts (7.0.2-4) unstable; urgency=low
 
   * run join script after samba4 join (Bug #25777) 
