@@ -1,3 +1,13 @@
+ucs-school-umc-groups (0.1.2-1) unstable; urgency=low
+
+  * respect pattern of search form
+  * fixed typo
+  * fixed editing of workgroups in flavor workgroup
+  * clear form fields when adding a workgroup
+  * implement removing; Bug #25701
+
+ -- Andreas Büsching <buesching@univention.de>  Wed, 14 Mar 2012 16:24:03 +0100
+
 ucs-school-umc-groups (0.1.1-1) unstable; urgency=low
 
   * resize widgets in search form; Bug #25701

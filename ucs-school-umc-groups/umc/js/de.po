@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-groups\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2012-03-03 14:42+0100\n"
+"POT-Creation-Date: 2012-03-10 21:26+0100\n"
 "PO-Revision-Date: 2012-03-08 14:42+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -68,7 +68,7 @@ msgstr "Bearbeiten des ausgewählten Objektes"
 msgid "Edit workgroup"
 msgstr "Arbeitsgruppe bearbeiten"
 
-#: umc/js/schoolgroups.js:255
+#: umc/js/schoolgroups.js:257
 msgid "Feature not yet implemented"
 msgstr ""
 
@@ -93,7 +93,7 @@ msgstr "Änderungen speichern"
 msgid "School"
 msgstr "Schule"
 
-#: umc/js/schoolgroups.js:191
+#: umc/js/schoolgroups.js:193
 msgid "Search pattern"
 msgstr "Suchmuster"
 
@@ -101,7 +101,7 @@ msgstr "Suchmuster"
 msgid "Search results"
 msgstr "Suchergebnisse"
 
-#: umc/js/schoolgroups.js:190
+#: umc/js/schoolgroups.js:192
 msgid ""
 "Specifies the substring pattern which is searched for in the displayed name"
 msgstr ""
