@@ -69,10 +69,10 @@ while getopts "$optspec" option; do
 			else
 				val="${!OPTIND}"
 				opt="${OPTARG}"
+				OPTIND=$((OPTIND+1))
 			fi
 			## store the sitename
 			sitename="$val"
-			OPTIND=$((OPTIND+1))
 			;;
 		*)
 			echo "Unknown option --${OPTARG}" >&2
