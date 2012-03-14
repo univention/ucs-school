@@ -284,26 +284,8 @@ if [ "$samba4_role" = 'DC' ]; then
 			create_site "$samba4_join_site"
 
 			is_ucr_true samba4/join/essentialonly
-			rc=$?
-			if [ "$rc" -eq 0 ] || [ -z "$samba4_join_essentialonly" ]; then
+			if [ $? -eq 0 ]; then
 
-				samba-tool domain join "$domainname" "$samba4_role" -U"$dcaccount"%"$bindpwd" --realm="$kerberos_realm" \
-									--machinepass="$(cat /etc/machine.secret)" \
-									--site="$samba4_join_site"
-				if [ $? != 0 ]; then
-					# try again with --server
-					if [ -n "$samba4_dc" ]; then
-						samba-tool domain join "$domainname" "$samba4_role" -U"$dcaccount"%"$bindpwd" --realm="$kerberos_realm" --server "$samba4_dc" \
-											--machinepass="$(cat /etc/machine.secret)" \
-											--site="$samba4_join_site"
-					else
-						samba-tool domain join "$domainname" "$samba4_role" -U"$dcaccount"%"$bindpwd" --realm="$kerberos_realm" --server "$ldap_master" \
-											--machinepass="$(cat /etc/machine.secret)" \
-											--site="$samba4_join_site"
-					fi
-				fi
-
-			elif [ "$rc" -eq 1 ]; then
 				## site join with essential DRS replication only
 
 				samba-tool domain join "$domainname" "$samba4_role" -U"$dcaccount"%"$bindpwd" --realm="$kerberos_realm" \
@@ -321,6 +303,24 @@ if [ "$samba4_role" = 'DC' ]; then
 										--machinepass="$(cat /etc/machine.secret)" \
 										--site="$samba4_join_site" \
 										--domain-critical-only
+				fi
+
+			else
+
+				samba-tool domain join "$domainname" "$samba4_role" -U"$dcaccount"%"$bindpwd" --realm="$kerberos_realm" \
+									--machinepass="$(cat /etc/machine.secret)" \
+									--site="$samba4_join_site"
+				if [ $? != 0 ]; then
+					# try again with --server
+					if [ -n "$samba4_dc" ]; then
+						samba-tool domain join "$domainname" "$samba4_role" -U"$dcaccount"%"$bindpwd" --realm="$kerberos_realm" --server "$samba4_dc" \
+											--machinepass="$(cat /etc/machine.secret)" \
+											--site="$samba4_join_site"
+					else
+						samba-tool domain join "$domainname" "$samba4_role" -U"$dcaccount"%"$bindpwd" --realm="$kerberos_realm" --server "$ldap_master" \
+											--machinepass="$(cat /etc/machine.secret)" \
+											--site="$samba4_join_site"
+					fi
 				fi
 
 			fi
@@ -429,16 +429,15 @@ elif [ "$samba4_role" = "RODC" ]; then
 		create_site "$samba4_join_site"
 
 		is_ucr_true samba4/join/essentialonly
-		rc=$?
-		if [ "$rc" -eq 0 ] || [ -z "$samba4_join_essentialonly" ]; then
-			samba-tool domain join "$domainname" "$samba4_role" -U"$dcaccount"%"$bindpwd" --realm="$kerberos_realm" \
-								--machinepass="$(cat /etc/machine.secret)" \
-								--site="$samba4_join_site"
-		else
+		if [ $? -eq 0 ]; then
 			samba-tool domain join "$domainname" "$samba4_role" -U"$dcaccount"%"$bindpwd" --realm="$kerberos_realm" \
 								--machinepass="$(cat /etc/machine.secret)" \
 								--site="$samba4_join_site" \
 								--domain-critical-only
+		else
+			samba-tool domain join "$domainname" "$samba4_role" -U"$dcaccount"%"$bindpwd" --realm="$kerberos_realm" \
+								--machinepass="$(cat /etc/machine.secret)" \
+								--site="$samba4_join_site"
 		fi
 
 		/usr/share/univention-samba4/scripts/setup-dns-in-ucsldap.sh --rodc --site="$samba4_join_site" "$@"

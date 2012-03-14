@@ -1,3 +1,9 @@
+univention-samba4 (1.0.130-2) unstable; urgency=low
+
+  * fix samba4/join/essentialonly ucs_is_true logic (Bug #25772)
+
+ -- Arvid Requate <requate@univention.de>  Wed, 14 Mar 2012 15:44:02 +0100
+
 univention-samba4 (1.0.130-1) unstable; urgency=low
 
   * fix broken join retry code (Bug #25772)
