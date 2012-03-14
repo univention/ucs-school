@@ -14,6 +14,7 @@ Package: ucs-school-umc-printermoderation
 Architecture: all
 Depends: ${misc:Depends},
  univention-management-console-server,
+ univention-printserver-pdf,
  poppler-utils
 Description: UCS@school UMC module for moderating print
  This package contains a UMC module for moderating print jobs of pupils
