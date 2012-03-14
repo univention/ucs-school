@@ -1,3 +1,10 @@
+ucs-school-lib (1.0.27-1) unstable; urgency=low
+
+  * LDAP_Filter.forGroups: The current school is used as the prefix for
+    the group name; Bug #25954
+
+ -- Andreas Büsching <buesching@univention.de>  Wed, 14 Mar 2012 15:31:07 +0100
+
 ucs-school-lib (1.0.26-2) unstable; urgency=low
 
   * removed bashism from base.sh (Bug #25991) 

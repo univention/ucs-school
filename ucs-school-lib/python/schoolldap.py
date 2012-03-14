@@ -435,8 +435,8 @@ class LDAP_Filter:
 		return LDAP_Filter.forAll( pattern, ['lastname', 'username', 'firstname'] )
 
 	@staticmethod
-	def forGroups( pattern ):
-		return LDAP_Filter.forAll( pattern, ['name', 'description'] )
+	def forGroups( pattern, school ):
+		return LDAP_Filter.forAll( pattern, ['name', 'description'], prefixes = { 'name' : '%s-' % school } )
 
 	@staticmethod
 	def forComputers( pattern ):
@@ -444,12 +444,11 @@ class LDAP_Filter:
 
 	regWhiteSpaces = re.compile(r'\s+')
 	@staticmethod
-	def forAll( pattern, subMatch = [], fullMatch = []):
+	def forAll( pattern, subMatch = [], fullMatch = [], prefixes = {} ):
 		expressions = []
 		for iword in LDAP_Filter.regWhiteSpaces.split( pattern or '' ):
 			# evaluate the subexpression (search word over different attributes)
 			subexpr = []
-
 			# all expressions for a full string match
 			if iword:
 				subexpr += [ '(%s=%s)' % ( jattr, iword ) for jattr in fullMatch ]
@@ -459,7 +458,7 @@ class LDAP_Filter:
 				iword = '*'
 			elif iword.find('*') < 0:
 				iword = '*%s*' % iword
-			subexpr += [ '(%s=%s)' % ( jattr, iword ) for jattr in subMatch ]
+			subexpr += [ '(%s=%s%s)' % ( jattr, prefixes.get( jattr, '' ), iword ) for jattr in subMatch ]
 
 			# append to list of all search expressions
 			expressions.append('(|%s)' % ''.join(subexpr))
