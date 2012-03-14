@@ -1,9 +1,15 @@
+ucs-school-netlogon-user-logonscripts (7.0.2-2) unstable; urgency=low
+
+  * fixed join script permission (Bug #25777)
+
+ -- Felix Botner <botner@univention.de>  Wed, 14 Mar 2012 09:10:45 +0100
+
 ucs-school-netlogon-user-logonscripts (7.0.2-1) unstable; urgency=low
 
   * fixed join script
-  * search only onces for scriptpath in listener (Bug #25777 
+  * search only onces for scriptpath in listener (Bug #25777)
 
- -- Felix Botner <botner@univention.de>  Tue, 13 Mar 2012 10:50:34 +0100
+ -- Felix Botner <botner@univention.de>  Wed, 14 Mar 2012 09:10:43 +0100
 
 ucs-school-netlogon-user-logonscripts (7.0.1-1) unstable; urgency=low
 
