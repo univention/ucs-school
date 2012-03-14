@@ -1,3 +1,9 @@
+ucs-school-ldap-acls-master (7.0.2-3) unstable; urgency=low
+
+  * fixed typo in LDAP ACL (Bug #25690)
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Wed, 14 Mar 2012 17:13:23 +0100
+
 ucs-school-ldap-acls-master (7.0.2-2) unstable; urgency=low
 
   * allow replication of Virtual Machine Manager container (Bug #25690)

@@ -69,7 +69,7 @@ access to dn.regex="^univentionVirtualMachineUUID=([^,]+),cn=Information,cn=Virt
 	by dn.regex="^[^,]+,cn=memberserver,cn=computers,@%@ldap/base@%@$$" write
 	by * read break
 
-access to dn="^cn=Information,cn=Virtual Machine Manager,@%@ldap/base@%@" attrs=children,entry
+access to dn="cn=Information,cn=Virtual Machine Manager,@%@ldap/base@%@" attrs=children,entry
 	by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
 	by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
 	by group/univentionGroup/uniqueMember="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
