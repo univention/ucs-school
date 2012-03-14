@@ -1,3 +1,9 @@
+ucs-school-netlogon (1.0.1-3) unstable; urgency=low
+
+  * run join script after samba4 join (Bug #25777) 
+
+ -- Felix Botner <botner@univention.de>  Wed, 14 Mar 2012 12:08:57 +0100
+
 ucs-school-netlogon (1.0.1-2) unstable; urgency=low
 
   * added postinst to run join script (Bug #25777) 

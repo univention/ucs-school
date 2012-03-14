@@ -34,6 +34,6 @@
 
 . /usr/share/univention-lib/all.sh
 
-call_joinscript 60ucs-school-netlogon.inst
+call_joinscript 99ucs-school-netlogon.inst
 
 exit 0
