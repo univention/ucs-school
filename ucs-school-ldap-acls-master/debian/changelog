@@ -1,6 +1,7 @@
 ucs-school-ldap-acls-master (7.0.2-1) unstable; urgency=low
 
   * allow replication of Virtual Machine Manager container (Bug #25690)
+  * allow DC slaves and member servers to replicate the OU domain controllers (Bug #25690)
 
  -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Wed, 14 Mar 2012 13:30:40 +0100
 

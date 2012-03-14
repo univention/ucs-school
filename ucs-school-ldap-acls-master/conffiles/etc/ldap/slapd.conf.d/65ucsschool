@@ -190,6 +190,14 @@ access to dn.regex="^.+,cn=@$@STAFF@$@,cn=users,ou=[^,]+,@$@DISTRICT@$@@%@ldap/b
 	by group/univentionGroup/uniqueMember="cn=Member-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" none
 	by * none break
 
+# domaincontroller slaves and memberservers may replicate the OU "domain controllers"
+access to dn.subtree="ou=domain controllers,@%@ldap/base@%@"
+   by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
+   by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
+   by group/univentionGroup/uniqueMember="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
+   by group/univentionGroup/uniqueMember="cn=Member-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
+   by * read break
+
 # Memberserver duerfen bestimmte Attribute lesen
 access to dn.regex="^(.+,)?ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" attrs=userPassword,krb5Key,krb5KDCFlags,sambaNTPassword,sambaLMPassword,shadowLastChange,sambaPwdLastSet,pwhistory,krb5KeyVersionNumber,univentionWindowsReinstall,sambaPwdCanChange,sambaPwdMustChange
 	by group/univentionGroup/uniqueMember="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
