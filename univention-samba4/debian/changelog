@@ -1,3 +1,10 @@
+univention-samba4 (1.0.130-5) unstable; urgency=low
+
+  * Create MicrosoftDNS container in case essentialonly join
+    (Bug #25772)
+
+ -- Stefan Gohmann <gohmann@univention.de>  Wed, 14 Mar 2012 17:04:41 +0100
+
 univention-samba4 (1.0.130-4) unstable; urgency=low
 
   * fix option parsing in setup-dns-in-ucsldap (Bug #25772)

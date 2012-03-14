@@ -305,6 +305,14 @@ if [ "$samba4_role" = 'DC' ]; then
 										--domain-critical-only
 				fi
 
+				# create MicrosoftDNS container
+				ldbadd -H /var/lib/samba/private/sam.ldb --relax <<-%EOT
+					dn: CN=MicrosoftDNS,CN=System,$samba4_ldap_base
+					objectClass: top
+					objectClass: container
+					cn: MicrosoftDNS
+					%EOT
+
 			else
 
 				samba-tool domain join "$domainname" "$samba4_role" -U"$dcaccount"%"$bindpwd" --realm="$kerberos_realm" \
