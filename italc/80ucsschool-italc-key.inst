@@ -41,7 +41,7 @@ PUBLIC_KEY='/etc/italc/keys/public/teacher/key'
 if [ ! -f "$PRIVATE_KEY" -o ! -f "$PUBLIC_KEY" ]
 then
 	echo "italc teacher key pair is missing... creating new key pair..."
-	/usr/bin/ica -role teacher -createkeypair
+	/usr/bin/imc -role teacher -createkeypair
 fi
 
 TARGET='/var/lib/samba/netlogon/italc/italc-key.pub'

@@ -27,7 +27,7 @@ Description: iTALC Master Application
 
 Package: italc-client
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, libitalc (=${binary:Version}), shell-univention-lib
+Depends: ${shlibs:Depends}, ${misc:Depends}, libitalc (=${binary:Version}), shell-univention-lib, italc-management-console
 Description: iTALC Client Application
  iTALC makes it possible, to access and influence the pupils 
  activities just from the computer of the teacher. With the 

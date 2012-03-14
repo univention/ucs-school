@@ -1,3 +1,10 @@
+italc (1:2.0.2-1) unstable; urgency=low
+
+  * use imc to create key pair (Bug #20261)
+  * depend italc-client on italc-management-console
+
+ -- Janek Walkenhorst <walkenhorst@univention.de>  Wed, 14 Mar 2012 15:03:34 +0100
+
 italc (1:2.0.1-4) unstable; urgency=low
 
   * change order of build and ucslint run (Bug #25689)
