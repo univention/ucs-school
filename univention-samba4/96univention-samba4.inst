@@ -136,7 +136,7 @@ create_site() {
 create_local_rid_pool() {
 	numberofrids="$1"
 
-	floor=1100
+	floor=2100
 	ceil="$(($floor + $numberofrids - 1))"
 
 	if [ "$ceil" -ge 5000 ]; then
@@ -328,7 +328,7 @@ if [ "$samba4_role" = 'DC' ]; then
 
 		is_ucr_true samba4/service/drepl
 		if [ $? -eq 1 ]; then
-			create_local_rid_pool 3000
+			create_local_rid_pool 2000
 		fi
 
 		## Adding DNS records is currently necessary, probably this can be avoided with samba_dnsupdate
