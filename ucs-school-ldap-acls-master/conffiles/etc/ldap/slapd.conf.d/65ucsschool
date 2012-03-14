@@ -59,6 +59,33 @@ aclset += """
 access to dn="cn=Subschema"
 	by * read
 
+# Slave controllers and memberservers require write access to virtual machine manager objects
+access to dn.regex="^univentionVirtualMachineUUID=([^,]+),cn=Information,cn=Virtual Machine Manager,@%@ldap/base@%@" filter="(objectClass=univentionVirtualMachine)"
+	by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
+	by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
+	by group/univentionGroup/uniqueMember="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
+	by group/univentionGroup/uniqueMember="cn=Member-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
+	by dn.regex="^[^,]+,cn=dc,cn=computers,@%@ldap/base@%@$$" write
+	by dn.regex="^[^,]+,cn=memberserver,cn=computers,@%@ldap/base@%@$$" write
+	by * read break
+
+access to dn.regex="^cn=Information,cn=Virtual Machine Manager,@%@ldap/base@%@" attrs=children,entry
+	by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
+	by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
+	by group/univentionGroup/uniqueMember="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
+	by group/univentionGroup/uniqueMember="cn=Member-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
+	by dn.regex="^[^,]+,cn=dc,cn=computers,@%@ldap/base@%@$$" write
+	by dn.regex="^[^,]+,cn=memberserver,cn=computers,@%@ldap/base@%@$$" write
+	by * read break
+
+# Slave controller and memberservers may replicate the Virtual Machine Manager container
+access to dn.subtree="cn=Virtual Machine Manager,@%@ldap/base@%@"
+   by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
+   by group/univentionGroup/uniqueMember="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
+   by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
+   by group/univentionGroup/uniqueMember="cn=Member-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
+   by * none break
+
 
 access to dn.regex="^@%@ldap/base@%@$$"
 	by dn.regex="^uid=([^,]+),cn=(@$@TEACHERS@$@|@$@TEACHERS-STAFF@$@|@$@STAFF@$@|@$@ADMINS@$@),cn=users,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" read
