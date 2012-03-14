@@ -1,3 +1,9 @@
+ucs-school-netlogon (1.0.1-2) unstable; urgency=low
+
+  * added postinst to run join script (Bug #25777) 
+
+ -- Felix Botner <botner@univention.de>  Wed, 14 Mar 2012 10:56:34 +0100
+
 ucs-school-netlogon (1.0.1-1) unstable; urgency=low
 
   * moved ucsschool/userlogon/... ucr configuration to join script (Bug #25777)
