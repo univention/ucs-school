@@ -1,3 +1,9 @@
+ucs-school-netlogon-user-logonscripts (7.0.2-4) unstable; urgency=low
+
+  * run join script after samba4 join (Bug #25777) 
+
+ -- Felix Botner <botner@univention.de>  Wed, 14 Mar 2012 12:10:42 +0100
+
 ucs-school-netlogon-user-logonscripts (7.0.2-3) unstable; urgency=low
 
   * moved ucsschool/userlogon/... ucr configuration to join script (Bug #25777)  

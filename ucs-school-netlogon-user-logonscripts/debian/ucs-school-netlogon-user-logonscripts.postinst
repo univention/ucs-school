@@ -44,7 +44,7 @@ mkdir -p /var/lib/samba/userlogon/user
 chown listener /var/lib/samba/userlogon/user
 
 # samba 4
-call_joinscript 80ucs-school-netlogon-user-logonscripts.inst
+call_joinscript 99ucs-school-netlogon-user-logonscripts.inst
 
 # restart listener only if listener was running before
 /etc/init.d/univention-directory-listener crestart
