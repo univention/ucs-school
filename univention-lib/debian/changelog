@@ -1,3 +1,9 @@
+univention-lib (1.0.47-1) unstable; urgency=low
+
+  * adapations of atjobs.py; Bug #25707
+
+ -- Alexander Kläser <klaeser@univention.de>  Wed, 14 Mar 2012 15:52:44 +0100
+
 univention-lib (1.0.46-1) unstable; urgency=low
 
   * add atjobs.py; Bug #25707
