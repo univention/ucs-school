@@ -292,17 +292,19 @@ if [ "$samba4_role" = 'DC' ]; then
 									--machinepass="$(cat /etc/machine.secret)" \
 									--site="$samba4_join_site" \
 									--domain-critical-only
-				# try again with --server
-				if [ -n "$samba4_dc" ]; then
-					samba-tool domain join "$domainname" "$samba4_role" -U"$dcaccount"%"$bindpwd" --realm="$kerberos_realm" --server "$samba4_dc" \
-										--machinepass="$(cat /etc/machine.secret)" \
-										--site="$samba4_join_site" \
-										--domain-critical-only
-				else
-					samba-tool domain join "$domainname" "$samba4_role" -U"$dcaccount"%"$bindpwd" --realm="$kerberos_realm" --server "$ldap_master" \
-										--machinepass="$(cat /etc/machine.secret)" \
-										--site="$samba4_join_site" \
-										--domain-critical-only
+				if [ $? != 0 ]; then
+					# try again with --server
+					if [ -n "$samba4_dc" ]; then
+						samba-tool domain join "$domainname" "$samba4_role" -U"$dcaccount"%"$bindpwd" --realm="$kerberos_realm" --server "$samba4_dc" \
+											--machinepass="$(cat /etc/machine.secret)" \
+											--site="$samba4_join_site" \
+											--domain-critical-only
+					else
+						samba-tool domain join "$domainname" "$samba4_role" -U"$dcaccount"%"$bindpwd" --realm="$kerberos_realm" --server "$ldap_master" \
+											--machinepass="$(cat /etc/machine.secret)" \
+											--site="$samba4_join_site" \
+											--domain-critical-only
+					fi
 				fi
 
 				# create MicrosoftDNS container
