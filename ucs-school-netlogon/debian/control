@@ -7,7 +7,7 @@ Standards-Version: 3.8.2
 
 Package: ucs-school-netlogon
 Architecture: all
-Depends: ${misc:Depends},
+Depends: ${misc:Depends}, shell-univention-lib
 Description: UCS@school: netlogon template
  This package provides a script to generate a 
  windows netlogon script.

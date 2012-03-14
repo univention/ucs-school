@@ -1,3 +1,10 @@
+ucs-school-netlogon (1.0.1-1) unstable; urgency=low
+
+  * moved ucsschool/userlogon/... ucr configuration to join script (Bug #25777)
+  * ucs-school-netlogon.py was fixed so that it now can handle unjoined systems
+
+ -- Felix Botner <botner@univention.de>  Wed, 14 Mar 2012 10:41:21 +0100
+
 ucs-school-netlogon (1.0.1-0) unstable; urgency=low
 
   * added wscript opts (Bug #14882) 

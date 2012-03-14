@@ -1,7 +1,6 @@
-#!/bin/sh
+#!/bin/bash
 #
-# UCS@school netlogon
-#  postinst file
+# Univention UCS@school netlogon join script
 #
 # Copyright 2012 Univention GmbH
 #
@@ -30,7 +29,10 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-#DEBHELPER#
+VERSION="1"
+
+. /usr/share/univention-join/joinscripthelper.lib
+joinscript_init
 
 univention-config-registry set \
 	ucsschool/netlogon/windowStyle?1 \
@@ -39,4 +41,4 @@ univention-config-registry set \
 	ucsschool/netlogon/vbs/interpreter?"wscript" \
 	ucsschool/netlogon/vbs/options="//B //Nologo"
 
-exit 0
+joinscript_save_current_version

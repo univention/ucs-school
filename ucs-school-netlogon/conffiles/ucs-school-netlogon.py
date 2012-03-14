@@ -93,8 +93,13 @@ def handler(configRegistry, changes):
 
 	# check samba3 samba4
 	netlogonDir = "/var/lib/samba/netlogon"
-	lo = univention.uldap.getMachineConnection(ldap_master = False)
-	result = lo.search('(&(cn=%s)(univentionService=Samba 4))' % configRegistry.get("hostname", "localhost"))
+	result = ""
+	try:
+		lo = univention.uldap.getMachineConnection(ldap_master = False)
+		result = lo.search('(&(cn=%s)(univentionService=Samba 4))' % configRegistry.get("hostname", "localhost"))
+	except:
+		print >> sys.stderr, "error: ldap lookup failed (maybe not joined)"
+		sys.exit(1)
 	if result:
 		netlogonDir = "/var/lib/samba/sysvol/%s/scripts" % configRegistry.get('kerberos/realm', '').lower()
 	if not os.path.isdir(netlogonDir):
