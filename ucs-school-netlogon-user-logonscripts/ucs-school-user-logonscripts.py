@@ -44,10 +44,11 @@ description='Create user-specific netlogon-scripts'
 filter='(|(&(objectClass=posixAccount)(objectClass=organizationalPerson)(!(uid=*$)))(objectClass=posixGroup)(objectClass=univentionShare))'
 atributes=[]
 
-scriptpath = ""
+scriptpath = []
 desktopFolderName = "Eigene Shares"
 globalLinks = {}
 
+# create netlogon scripts for samba3 and samba4
 def getScriptPath():
 
 	global scriptpath
@@ -55,28 +56,17 @@ def getScriptPath():
 	if scriptpath:
 		return
 
-	try:
-		lo = connect()
-		result = lo.search('(&(cn=%s)(univentionService=Samba 4))' % listener.configRegistry.get("hostname", "localhost"))
-		if result:
-			scriptpath = "/var/lib/samba/sysvol/%s/scripts/user" % listener.configRegistry.get('kerberos/realm', '').lower()
-		else:
-			scriptpath = "/var/lib/samba/userlogon/user"
-	except:
-		pass
+	scriptpath.append("/var/lib/samba/userlogon/user")
+	scriptpath.append("/var/lib/samba/sysvol/%s/scripts/user" % listener.configRegistry.get('kerberos/realm', '').lower())
 
-	if scriptpath and not os.path.isdir(scriptpath):
-		listener.setuid(0)
-		try:
-			os.makedirs(scriptpath)
-			os.chown(scriptpath, pwd.getpwnam('listener')[2], 0)
-		finally:
-			listener.unsetuid()
-
-	univention.debug.debug(
-		univention.debug.LISTENER,
-		univention.debug.INFO,
-		"ucsschool-user-logonscripts: scriptpath is %s" % scriptpath)
+	for path in scriptpath:
+		if not os.path.isdir(path):
+			listener.setuid(0)
+			try:
+				os.makedirs(path)
+				os.chown(path, pwd.getpwnam('listener')[2], 0)
+			finally:
+				listener.unsetuid()
 
 def getCommandOutput(command):
 	child = os.popen(command)
@@ -328,9 +318,10 @@ def writeWindowsLinkSkripts(uid, links, mappings):
 
 	global scriptpath
 
-	fp = open("%s/%s.vbs" % (scriptpath, uid) ,'w')
-	fp.write(generateWindowsLinkScript(desktopFolderName, links, mappings).replace('\n','\r\n'))
-	fp.close()
+	for path in scriptpath:
+		fp = open("%s/%s.vbs" % (path, uid) ,'w')
+		fp.write(generateWindowsLinkScript(desktopFolderName, links, mappings).replace('\n','\r\n'))
+		fp.close()
 
 def getConnection():
 	connect_count = 0
@@ -493,8 +484,9 @@ def userchange(dn, new, old):
 			writeMacLinkScripts(new['uid'][0], new['homeDirectory'][0], links)
 
 	elif old and not new:
-		if os.path.exists("%s/%s" % (scriptpath, old['uid'][0])):
-			os.remove("%s/%s" % (scriptpath, old['uid'][0]))
+		for path in scriptpath:
+			if os.path.exists("%s/%s.vbs" % (path, old['uid'][0])):
+				os.remove("%s/%s.vbs" % (path, old['uid'][0]))
 
 
 def handler(dn, new, old):
@@ -522,9 +514,10 @@ def clean():
 
 	listener.setuid(0)
 	try:
-		if os.path.exists(scriptpath):
-			for f in os.listdir(scriptpath):
-				os.unlink(os.path.join(scriptpath, f))
+		for path in scriptpath:
+			if os.path.exists(path):
+				for f in os.listdir(path):
+					os.unlink(os.path.join(path, f))
 	finally:
 		listener.unsetuid()
 
