@@ -43,7 +43,8 @@ univention-config-registry set \
 	connector/s4/mapping/sid_to_s4?yes \
 	connector/s4/allow/secondary?true \
 	samba4/rpc/endpoint/drsuapi?false \
-	samba4/service/drepl?false
+	samba4/service/drepl?false \
+	samba4/join/essentialonly=yes
 
 call_joinscript 62ucs-school-slave.inst
 
