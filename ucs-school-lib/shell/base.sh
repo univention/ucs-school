@@ -41,7 +41,7 @@ school_ou() {
 	set -- "$ldap_hostdn"
 	for rdn in $@; do
 		key=$(echo "${rdn%=*}" | tr a-z A-Z)
-		if [ "$key" == "OU" ]; then
+		if [ "$key" = "OU" ]; then
 			echo "${rdn#*=}"
 			break
 		fi
