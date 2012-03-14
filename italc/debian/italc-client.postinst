@@ -35,7 +35,7 @@
 
 case "$1" in
     configure)
-        call_joinscript 80ucsschool-italc-key.inst
+        call_joinscript 99ucsschool-italc-key.inst
         ;;
     abort-upgrade|abort-remove|abort-deconfigure)
         ;;

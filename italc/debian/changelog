@@ -1,3 +1,9 @@
+italc (1:2.0.3-1) unstable; urgency=low
+
+  * move joinscript to later (after samba) (99) (Bug #20261)
+
+ -- Janek Walkenhorst <walkenhorst@univention.de>  Wed, 14 Mar 2012 17:31:31 +0100
+
 italc (1:2.0.2-1) unstable; urgency=low
 
   * use imc to create key pair (Bug #20261)
