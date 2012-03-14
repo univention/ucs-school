@@ -42,4 +42,11 @@ if [ -n "$myrealm" ]; then
 	chown listener "/var/lib/samba/sysvol/$myrealm/scripts/user"
 fi
 
+univention-config-registry set \
+    ucsschool/userlogon/commonshares?"Marktplatz" \
+    ucsschool/userlogon/commonshares/server/Marktplatz?"$hostname" \
+    ucsschool/userlogon/commonshares/letter/Marktplatz?"M" \
+    ucsschool/userlogon/classshareletter?"K" \
+    ucsschool/netlogon/script/20?'user\%USERNAME%.vbs'
+
 joinscript_save_current_version

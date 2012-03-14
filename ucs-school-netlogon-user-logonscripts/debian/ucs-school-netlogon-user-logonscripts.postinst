@@ -37,11 +37,6 @@
 eval "$(ucr shell)"
 
 univention-config-registry set \
-	ucsschool/userlogon/commonshares?"Marktplatz" \
-	ucsschool/userlogon/commonshares/server/Marktplatz?"$hostname" \
-	ucsschool/userlogon/commonshares/letter/Marktplatz?"M" \
-	ucsschool/userlogon/classshareletter?"K" \
-	ucsschool/netlogon/script/20?'user\%USERNAME%.vbs' \
 	samba/homedirletter?I
 
 # samba 3

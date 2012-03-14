@@ -1,3 +1,9 @@
+ucs-school-netlogon-user-logonscripts (7.0.2-3) unstable; urgency=low
+
+  * moved ucsschool/userlogon/... ucr configuration to join script (Bug #25777)  
+
+ -- Felix Botner <botner@univention.de>  Wed, 14 Mar 2012 10:29:00 +0100
+
 ucs-school-netlogon-user-logonscripts (7.0.2-2) unstable; urgency=low
 
   * fixed join script permission (Bug #25777)
