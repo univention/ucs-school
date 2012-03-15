@@ -94,15 +94,16 @@ class Instance( SchoolBaseModule ):
 		except udm_exceptions.permissionDenied, e:
 			MODULE.process( '_reset_passwords: dn=%s' % ur.dn )
 			MODULE.process( '_reset_passwords: exception=%s' % str( e.__class__ ) )
-			return _( 'Failed to reset password (permission denied)' )
+			return _( 'permission denied' )
 		except udm_exceptions.base, e:
 			MODULE.process( '_reset_passwords: dn=%s' % ur.dn )
 			MODULE.process( '_reset_passwords: exception=%s' % str( e.__class__ ) )
-			return _( 'Failed to reset password (exception: %s)' ) % str( e.__class__ )
+			MODULE.process( '_reset_passwords: exception=%s' % str( e.message ) )
+			return '%s %s' % ( str( e.message ), str( e ) )
 		except Exception, e:
 			MODULE.process( '_reset_passwords: dn=%s' % ur.dn )
 			MODULE.process( '_reset_passwords: exception=%s' % str( e.__class__ ) )
-			return _( 'Failed to reset password (unknown error: %s)' ) % str( e )
+			return _( 'Unknown error: %s)' ) % str( e )
 
 	@LDAP_Connection( USER_READ, USER_WRITE )
 	def password_reset( self, request, ldap_user_read = None, ldap_user_write = None, ldap_position = None, search_base = None ):

@@ -65,18 +65,13 @@ dojo.declare("umc.modules.schoolusers", [ umc.widgets.Module, umc.i18n.Mixin ], 
 		this._progressInfo.destroyRecursive();
 	},
 
-	postMixInProperties: function() {
-		this.inherited(arguments);
-
-		this.standbyOpacity = 1;
-	},
-
 	buildRendering: function() {
 		this.inherited(arguments);
 
-		// start the standby animation in order prevent any interaction before the
-		// form values are loaded
-		this.standby(true);
+		// activate standby mode
+		this.standbyOpacity = 1;
+		this.standby( true );
+
 
 		// render the page containing search form and grid
 		this.renderSearchPage();
@@ -158,6 +153,7 @@ dojo.declare("umc.modules.schoolusers", [ umc.widgets.Module, umc.i18n.Mixin ], 
 			label: this._( 'School' ),
 			autoHide: true,
 			size: 'TwoThirds',
+			umcpCommand: dojo.hitch( this, 'umcpCommand' ),
 			dynamicValues: 'schoolusers/schools'
 		}, {
 			type: 'ComboBox',
@@ -168,6 +164,7 @@ dojo.declare("umc.modules.schoolusers", [ umc.widgets.Module, umc.i18n.Mixin ], 
 				{ 'id' : 'None', 'label' : this._( 'All classes and workgroups' ) }
 			],
 			dynamicValues: 'schoolusers/groups',
+			umcpCommand: dojo.hitch( this, 'umcpCommand' ),
 			depends: 'school'
 		}, {
 			type: 'TextBox',
@@ -194,12 +191,13 @@ dojo.declare("umc.modules.schoolusers", [ umc.widgets.Module, umc.i18n.Mixin ], 
 				// call the grid's filter function
 				// (could be also done via dojo.connect() and dojo.disconnect() )
 				this._grid.filter(values);
-			})
-		});
-
-		// turn off the standby animation as soon as all form values have been loaded
-		this.connect(this._searchForm, 'onValuesInitialized', function() {
-			this.standby(false);
+			}),
+			onValuesInitialized: dojo.hitch( this, function() {
+				// deactivate standby mode
+				this.standby( false );
+				// transparent standby mode
+				this.standbyOpacity = 0.75;
+			 } )
 		});
 
 		// add search form to the title pane
@@ -229,11 +227,16 @@ dojo.declare("umc.modules.schoolusers", [ umc.widgets.Module, umc.i18n.Mixin ], 
 			this.standby( false );
 			if ( errors.length ) {
 				var message = this._( 'Failed to reset the password for the following users:' ) + '<br><ul>';
+				var _content = new umc.widgets.ContainerWidget( {
+					scrollable: true,
+					style: 'max-height: 500px'
+				} );
 				dojo.forEach( errors, function( item ) {
-					message += '<li>' + item.name + ' (' + item.message + ')</li>';
+					message += '<li>' + item.name + '<br>' + item.message + '</li>';
 				} );
 				message += '</ul>';
-				umc.dialog.alert( message );
+				_content.addChild( new umc.widgets.Text( { content: message } ) );
+				umc.dialog.alert( _content );
 			}
 		} );
 
@@ -248,7 +251,7 @@ dojo.declare("umc.modules.schoolusers", [ umc.widgets.Module, umc.i18n.Mixin ], 
 			dojo.forEach( items, function( item, i ) {
 				deferred = deferred.then( dojo.hitch( this, function() {
 					this._progressInfo.update( i, this._( 'User: ' ) + item.name );
-					return umc.tools.umcpCommand( 'schoolusers/password/reset', {
+					return this.umcpCommand( 'schoolusers/password/reset', {
 						userDN: item.id,
 						newPassword: password,
 						nextLogin: nextLogin
@@ -285,15 +288,20 @@ dojo.declare("umc.modules.schoolusers", [ umc.widgets.Module, umc.i18n.Mixin ], 
 				name: 'submit',
 				label: this._( 'Reset' ),
 				style: 'float: right;',
-				callback: function() {
+				callback: dojo.hitch( this, function() {
 					var passwordWidget = form.getWidget( 'newPassword' );
 					var nextLoginWidget = form.getWidget( 'changeOnNextLogin' );
 
 					var password = passwordWidget.get( 'value' );
 					var nextLogin = nextLoginWidget.get( 'value' );
+					passwordWidget._maskValidSubsetError = false;
+					if ( ! passwordWidget.validate() ) {
+						passwordWidget.focus();
+						return;
+					}
 					_cleanup();
 					_set_passwords( password, nextLogin );
-				}
+				} )
 			}, {
 				name: 'cancel',
 				label: this._('Cancel'),
