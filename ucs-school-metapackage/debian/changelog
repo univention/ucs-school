@@ -1,3 +1,10 @@
+ucs-school-metapackage (4.0.11-1) unstable; urgency=low
+
+  * S4 connector on DC slave should use the local LDAP server
+    (Bug #25990)
+
+ -- Stefan Gohmann <gohmann@univention.de>  Thu, 15 Mar 2012 08:33:37 +0100
+
 ucs-school-metapackage (4.0.10-1) unstable; urgency=low
 
   * set samba4/join/essentialonly in ucs-school-slave (Bug #25772)
