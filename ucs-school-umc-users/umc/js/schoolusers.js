@@ -289,16 +289,16 @@ dojo.declare("umc.modules.schoolusers", [ umc.widgets.Module, umc.i18n.Mixin ], 
 				label: this._( 'Reset' ),
 				style: 'float: right;',
 				callback: dojo.hitch( this, function() {
-					var passwordWidget = form.getWidget( 'newPassword' );
 					var nextLoginWidget = form.getWidget( 'changeOnNextLogin' );
+					var passwordWidget = form.getWidget( 'newPassword' );
 
-					var password = passwordWidget.get( 'value' );
-					var nextLogin = nextLoginWidget.get( 'value' );
-					passwordWidget._maskValidSubsetError = false;
-					if ( ! passwordWidget.validate() ) {
+					if ( ! form.validate() ) {
 						passwordWidget.focus();
 						return;
 					}
+
+					var password = passwordWidget.get( 'value' );
+					var nextLogin = nextLoginWidget.get( 'value' );
 					_cleanup();
 					_set_passwords( password, nextLogin );
 				} )

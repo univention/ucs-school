@@ -1,3 +1,10 @@
+ucs-school-umc-users (0.1.9-1) unstable; urgency=low
+
+  * update german translation
+  * fix displaying error message in case of an invalid value; Bug #25954
+
+ -- Andreas Büsching <buesching@univention.de>  Thu, 15 Mar 2012 15:59:17 +0100
+
 ucs-school-umc-users (0.1.8-1) unstable; urgency=low
 
   * fixed errors in permission handling

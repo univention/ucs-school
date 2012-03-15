@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
 "POT-Creation-Date: 2012-03-11 03:38+0100\n"
-"PO-Revision-Date: 2012-03-15 09:08+0100\n"
+"PO-Revision-Date: 2012-03-15 11:18+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
@@ -23,20 +23,9 @@ msgstr ""
 
 #: umc/python/schoolusers/__init__.py:106
 #, python-format
-msgid "Unknown error: %s)"
-msgstr ""
+msgid "Unknown error: %s"
+msgstr "Unbekannter Fehler: %s"
 
 #: umc/python/schoolusers/__init__.py:97
 msgid "permission denied"
-msgstr ""
-
-#~ msgid "Failed to reset password (%s: %s)"
-#~ msgstr "Das Zurücksetzen des Passworts ist fehlgeschlagen (%s: %s)"
-
-#~ msgid "Failed to reset password (permission denied)"
-#~ msgstr ""
-#~ "Das Zurücksetzen des Passworts ist fehlgeschlagen (Zugriff verweigert)."
-
-#~ msgid "Failed to reset password (unknown error: %s)"
-#~ msgstr ""
-#~ "Das Zurücksetzen des Passworts ist fehlgeschlagen (Unbekannter Fehler: %s)"
+msgstr "Zugriff verweigert"

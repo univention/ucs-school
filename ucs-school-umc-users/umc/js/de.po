@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-users\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2012-03-11 03:24+0100\n"
+"POT-Creation-Date: 2012-03-11 05:37+0100\n"
 "PO-Revision-Date: 2012-03-01 18:15+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -12,19 +12,19 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: umc/js/schoolusers.js:163
+#: umc/js/schoolusers.js:164
 msgid "All classes and workgroups"
 msgstr "Alle Klassen und Arbeitsgruppen"
 
-#: umc/js/schoolusers.js:295
+#: umc/js/schoolusers.js:307
 msgid "Cancel"
 msgstr "Abbrechen"
 
-#: umc/js/schoolusers.js:161
+#: umc/js/schoolusers.js:162
 msgid "Class or workgroup"
 msgstr "Klasse oder Arbeitsgruppe"
 
-#: umc/js/schoolusers.js:268
+#: umc/js/schoolusers.js:275
 msgid ""
 "Clicking the <i>Reset</i> button will set the password for all {0} selected "
 "students to the given password. For security reasons the students should be "
@@ -35,20 +35,20 @@ msgstr ""
 "sollten die Schüler zur Änderung des Passworts bei der nächsten Anmeldung "
 "aufgefordert werden."
 
-#: umc/js/schoolusers.js:227
+#: umc/js/schoolusers.js:229
 msgid "Failed to reset the password for the following users:"
 msgstr ""
 "Das Zurücksetzen des Passworts ist für die folgenden Benutzer fehlgeschlagen"
 
-#: umc/js/schoolusers.js:224
+#: umc/js/schoolusers.js:226
 msgid "Finished"
 msgstr "Fertiggestellt"
 
-#: umc/js/schoolusers.js:114 umc/js/schoolusers.js:173
+#: umc/js/schoolusers.js:114 umc/js/schoolusers.js:175
 msgid "Name"
 msgstr "Name"
 
-#: umc/js/schoolusers.js:278
+#: umc/js/schoolusers.js:285
 msgid "New password"
 msgstr "Neues Passwort"
 
@@ -56,7 +56,7 @@ msgstr "Neues Passwort"
 msgid "Password expiration date"
 msgstr "Passwortablaufdatum"
 
-#: umc/js/schoolusers.js:282
+#: umc/js/schoolusers.js:289
 msgid "Reset"
 msgstr "Zurücksetzen"
 
@@ -64,7 +64,7 @@ msgstr "Zurücksetzen"
 msgid "Reset password"
 msgstr "Passwort zurücksetzen"
 
-#: umc/js/schoolusers.js:302
+#: umc/js/schoolusers.js:314
 msgid "Reset passwords"
 msgstr "Passwörter zurücksetzen"
 
@@ -80,7 +80,7 @@ msgstr "Schule"
 msgid "Search results"
 msgstr "Suchergebnisse"
 
-#: umc/js/schoolusers.js:160
+#: umc/js/schoolusers.js:161
 msgid "Select a class or workgroup."
 msgstr "Auswahl einer Klasse oder Arbeitsgruppe."
 
@@ -88,11 +88,11 @@ msgstr "Auswahl einer Klasse oder Arbeitsgruppe."
 msgid "Select the school."
 msgstr "Auswahl der Schule."
 
-#: umc/js/schoolusers.js:240
+#: umc/js/schoolusers.js:247
 msgid "Setting passwords"
 msgstr "Passwort setzen"
 
-#: umc/js/schoolusers.js:172
+#: umc/js/schoolusers.js:174
 msgid ""
 "Specifies the substring pattern which is searched for in the first name, "
 "surname and username"
@@ -100,10 +100,10 @@ msgstr ""
 "Definiert die Zeichenkette, die im Vorname, Nachname und Benutzernamen "
 "gesucht wird"
 
-#: umc/js/schoolusers.js:246
+#: umc/js/schoolusers.js:253
 msgid "User: "
 msgstr "Benutzer: "
 
-#: umc/js/schoolusers.js:273
+#: umc/js/schoolusers.js:280
 msgid "user has to change password on next login"
 msgstr "Benutzer muss das Passwort bei der nächsten Anmeldung ändern"

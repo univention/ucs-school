@@ -103,7 +103,7 @@ class Instance( SchoolBaseModule ):
 		except Exception, e:
 			MODULE.process( '_reset_passwords: dn=%s' % ur.dn )
 			MODULE.process( '_reset_passwords: exception=%s' % str( e.__class__ ) )
-			return _( 'Unknown error: %s)' ) % str( e )
+			return _( 'Unknown error: %s' ) % str( e )
 
 	@LDAP_Connection( USER_READ, USER_WRITE )
 	def password_reset( self, request, ldap_user_read = None, ldap_user_write = None, ldap_position = None, search_base = None ):
