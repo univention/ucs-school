@@ -280,7 +280,7 @@ dojo.declare("umc.modules.schoolusers", [ umc.widgets.Module, umc.i18n.Mixin ], 
 				label: this._( 'user has to change password on next login' )
 			}, {
 				name: 'newPassword',
-				type: 'PasswordBox',
+				type: 'TextBox',
 				required: true,
 				label: this._( 'New password' )
 			} ],

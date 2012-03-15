@@ -1,3 +1,9 @@
+ucs-school-umc-users (0.1.10-1) unstable; urgency=low
+
+  * use TextBox for the new password; Bug #25954
+
+ -- Andreas Büsching <buesching@univention.de>  Thu, 15 Mar 2012 16:13:06 +0100
+
 ucs-school-umc-users (0.1.9-1) unstable; urgency=low
 
   * update german translation
