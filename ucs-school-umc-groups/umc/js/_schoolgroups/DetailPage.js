@@ -119,7 +119,8 @@ dojo.declare("umc.modules._schoolgroups.DetailPage", [ umc.widgets.Page, umc.wid
 			type: 'TextBox',
 			name: 'name',
 			label: this.moduleFlavor == 'class' ? this._( 'Class' ) : this._( 'Workgroup' ),
-			disabled: this.moduleFlavor != 'workgroup-admin'
+			disabled: this.moduleFlavor != 'workgroup-admin',
+			required: true
 		}, {
 			type: 'TextBox',
 			name: 'description',
@@ -194,6 +195,13 @@ dojo.declare("umc.modules._schoolgroups.DetailPage", [ umc.widgets.Page, umc.wid
 
 	_save: function( values ) {
 		var deferred = null;
+		var nameWidget = this._form.getWidget( 'name' );
+		if ( ! nameWidget.get( 'value' ) ) {
+			nameWidget.setValid( false, this._( 'The group name is required' ) );
+			return;
+		} else {
+			nameWidget.setValid( null );
+		}
 		if ( values.$dn$ ) {
 			deferred = this.moduleStore.put( values );
 		} else {
@@ -208,6 +216,8 @@ dojo.declare("umc.modules._schoolgroups.DetailPage", [ umc.widgets.Page, umc.wid
 		// during loading show the standby animation
 		this.standby(true);
 
+		// var nameWidget = this._form.getWidget( 'name' );
+		// nameWidget.setValid( null );
 		// load the object into the form... the load method returns a
 		// dojo.Deferred object in order to handel asynchronity
 		this._form.load(id).then(dojo.hitch(this, function() {

@@ -70,7 +70,6 @@ dojo.declare("umc.modules.schoolgroups", [ umc.widgets.Module, umc.i18n.Mixin ],
 		// Set the opacity for the standby animation to 100% in order to mask
 		// GUI changes when the module is opened. Call this.standby(true|false)
 		// to enabled/disable the animation.
-		this.standbyOpacity = 1;
 	},
 
 	buildRendering: function() {
@@ -79,6 +78,10 @@ dojo.declare("umc.modules.schoolgroups", [ umc.widgets.Module, umc.i18n.Mixin ],
 
 		// it is important to call the parent's postMixInProperties() method
 		this.inherited(arguments);
+
+		// activate standby mode
+		this.standbyOpacity = 1;
+		this.standby( true );
 
 		// render the page containing search form and grid
 		this.renderSearchPage();
@@ -209,7 +212,13 @@ dojo.declare("umc.modules.schoolgroups", [ umc.widgets.Module, umc.i18n.Mixin ],
 				// call the grid's filter function
 				// (could be also done via dojo.connect() and dojo.disconnect() )
 				this._grid.filter(values);
-			})
+			}),
+			onValuesInitialized: dojo.hitch( this, function() {
+				// deactivate standby mode
+				this.standby( false );
+				// transparent standby mode
+				this.standbyOpacity = 0.75;
+			 } )
 		});
 
 		// add search form to the title pane
@@ -241,6 +250,8 @@ dojo.declare("umc.modules.schoolgroups", [ umc.widgets.Module, umc.i18n.Mixin ],
 
 	_addObject: function() {
 		this._detailPage._form.clearFormValues();
+
+		this._detailPage.set( 'headerText', this._( 'Add workgroup' ) );
 		this.selectChild( this._detailPage );
 	},
 
@@ -251,6 +262,11 @@ dojo.declare("umc.modules.schoolgroups", [ umc.widgets.Module, umc.i18n.Mixin ],
 		}
 
 		this.selectChild(this._detailPage);
+		if ( this.moduleFlavor == 'class' ) {
+			this._detailPage.set( 'headerText', this._( 'Edit class' ) );
+		} else {
+			this._detailPage.set( 'headerText', this._( 'Edit workgroup' ) );
+		}
 		this._detailPage.load(ids[0]);
 	},
 
@@ -262,7 +278,7 @@ dojo.declare("umc.modules.schoolgroups", [ umc.widgets.Module, umc.i18n.Mixin ],
 				umc.dialog.alert( this._( 'The workgroup has been deleted successfully' ) );
 			} else {
 				umc.dialog.alert( dojo.replace( this._( 'The workgroup could not be deleted ({message})' ), response ) );
-			};
+			}
 		} ) );
 	}
 });
