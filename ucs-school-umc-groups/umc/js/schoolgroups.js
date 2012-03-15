@@ -60,18 +60,6 @@ dojo.declare("umc.modules.schoolgroups", [ umc.widgets.Module, umc.i18n.Mixin ],
 	// internal reference to the detail page for editing an object
 	_detailPage: null,
 
-	postMixInProperties: function() {
-		// is called after all inherited properties/methods have been mixed
-		// into the object (originates from dijit._Widget)
-
-		// it is important to call the parent's postMixInProperties() method
-		this.inherited(arguments);
-
-		// Set the opacity for the standby animation to 100% in order to mask
-		// GUI changes when the module is opened. Call this.standby(true|false)
-		// to enabled/disable the animation.
-	},
-
 	buildRendering: function() {
 		// is called after all DOM nodes have been setup
 		// (originates from dijit._Widget)

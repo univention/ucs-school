@@ -86,7 +86,7 @@ class Instance( SchoolBaseModule ):
 
 		groupresult = udm_modules.lookup( 'groups/group', None, ldap_user_read, scope = 'one', base = base, filter = LDAP_Filter.forGroups( request.options.get( 'pattern', '' ), search_base.school ) )
 
-		self.finished( request.id, map( lambda grp: { '$dn$' : grp.dn, 'name' : grp[ 'name' ].replace( '%s-' % search_base.school, '' ), 'description' : grp[ 'description' ] }, groupresult ) )
+		self.finished( request.id, map( lambda grp: { '$dn$' : grp.dn, 'name' : grp[ 'name' ].replace( '%s-' % search_base.school, '', 1 ), 'description' : grp[ 'description' ] }, groupresult ) )
 
 	@LDAP_Connection()
 	def get( self, request, search_base = None, ldap_user_read = None, ldap_position = None ):
@@ -105,7 +105,7 @@ class Instance( SchoolBaseModule ):
 		grp.open()
 		result = {}
 		result[ '$dn$' ] = grp.dn
-		result[ 'name' ] = grp[ 'name' ].replace( '%s-' % search_base.school, '' )
+		result[ 'name' ] = grp[ 'name' ].replace( '%s-' % search_base.school, '', 1 )
 		result[ 'description' ] = grp[ 'description' ]
 
 		if request.flavor == 'class':

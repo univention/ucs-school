@@ -196,17 +196,18 @@ dojo.declare("umc.modules._schoolgroups.DetailPage", [ umc.widgets.Page, umc.wid
 	_save: function( values ) {
 		var deferred = null;
 		var nameWidget = this._form.getWidget( 'name' );
-		if ( ! nameWidget.get( 'value' ) ) {
-			nameWidget.setValid( false, this._( 'The group name is required' ) );
+
+		if ( ! this._form.validate() ) {
+			nameWidget.focus();
 			return;
-		} else {
-			nameWidget.setValid( null );
 		}
+
 		if ( values.$dn$ ) {
 			deferred = this.moduleStore.put( values );
 		} else {
 			deferred = this.moduleStore.add( values );
 		}
+
 		deferred.then( dojo.hitch( this, function() {
 			this.onClose();
 		} ) );
