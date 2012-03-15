@@ -83,12 +83,12 @@ class Instance( SchoolBaseModule ):
 		  'school'
 		"""
 		MODULE.info( 'schoolrooms.query: options: %s' % str( request.options ) )
-		pattern = request.options.get('name', '')
-		ldapFilter = LDAP_Filter.forGroups(pattern)
+		pattern = request.options.get('pattern', '')
+		ldapFilter = LDAP_Filter.forGroups(pattern, search_base.school)
 
 		objs = udm_modules.lookup( 'groups/group', None, ldap_user_read, scope = 'one', base = search_base.rooms, filter = ldapFilter)
 		result = [ {
-			'name': i['name'],
+			'name': i['name'].replace('%s-' % search_base.school, '', 1),
 			'description': i.oldinfo.get('description',''),
 			'$dn$': i.dn
 		} for i in objs ]

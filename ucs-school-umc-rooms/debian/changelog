@@ -1,5 +1,11 @@
+ucs-school-umc-rooms (0.1.1-1) unstable; urgency=low
+
+  * Fix query function (Bug #26360)
+
+ -- Jascha Geerds <geerds@univention.de>  Thu, 15 Mar 2012 14:45:56 +0100
+
 ucs-school-umc-rooms (0.1.0-1) unstable; urgency=low
 
-  * Initial release (Bug #XXXXXX)
+  * Initial release (Bug #26360)
 
  -- Alexander Kläser <klaeser@univention.de>  Wed, 08 Feb 2012 16:05:29 +0100
