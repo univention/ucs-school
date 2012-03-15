@@ -699,13 +699,14 @@ def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None, ShareFileServer=None
 			print "need to create server: %s"%object.dn
 
 		# create dhcp-service if not exsistant
-		objects = univention.admin.modules.lookup(dhcp_service_module, co, lo, scope='sub', superordinate=superordinate, base=baseDN,
-												  filter=univention.admin.filter.expression('cn', schoolNr.lower ()))
+		objects = univention.admin.modules.lookup(
+			dhcp_service_module, co, lo, scope='sub', superordinate=superordinate,
+			base=baseDN, filter=univention.admin.filter.expression('cn', schoolNr.lower()))
 		service_exists=0
 		if objects:
-			service = "cn=%s,cn=dhcp,%s"%(schoolNr.lower (), getDN (schoolNr))
+			service = "cn=%s,cn=dhcp,%s" % (schoolNr, getDN(schoolNr))
 			for object in objects:
-				if object.dn == service:
+				if object.dn.lower() == service.lower():
 					service_exists=1
 					dhcp_service_object=object
 					break
@@ -731,7 +732,7 @@ def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None, ShareFileServer=None
 			obj = univention.admin.objects.get(dhcp_server_module, co, lo, position='', dn=objects[0])
 			obj.open()
 			dhcpServerContainer = ','.join(objects[0].split(',')[1:])
-			if obj.dn != newDHCPServerDN:
+			if obj.dn.lower() != newDHCPServerDN.lower():
 				attr_server = obj["server"]
 				print "need to remove dhcp server: %s" % obj.dn
 				try:
@@ -874,7 +875,7 @@ def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None, ShareFileServer=None
 			pl = lo.get( containerdn, ['univentionPolicyReference'] )
 			modlist=[]
 			for poldn in pollist:
-				if not poldn in pl.get('univentionPolicyReference',[]):
+				if not poldn.lower() in map(lambda x: x.lower(), pl.get('univentionPolicyReference',[])):
 					modlist.append(('univentionPolicyReference','',poldn))
 					print 'need to attach policy: %s' % poldn
 			lo.modify(containerdn,modlist)
