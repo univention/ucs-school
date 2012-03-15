@@ -98,7 +98,7 @@ dojo.declare("umc.modules._schoolrooms.DetailPage", [ umc.widgets.Page, umc.widg
 			type: 'TextBox',
 			name: 'name',
 			label: this._('Name'),
-			disabled: true
+			required: true
 		}, {
 			type: 'TextBox',
 			name: 'description',
@@ -162,7 +162,23 @@ dojo.declare("umc.modules._schoolrooms.DetailPage", [ umc.widgets.Page, umc.widg
 	},
 
 	_save: function(values) {
-		umc.dialog.alert(this._('Feature not implemented yet!'));
+		var deferred = null;
+		var nameWidget = this._form.getWidget('name');
+
+		if (! this._form.validate()){
+			nameWidget.focus();
+			return;
+		}
+
+		if (values.$dn$) {
+			deferred = this.moduleStore.put(values);
+		} else {
+			deferred = this.moduleStore.add(values);
+		}
+
+		deferred.then(dojo.hitch(this, function() {
+			this.onClose();
+		}));
 	},
 
 	load: function(id) {

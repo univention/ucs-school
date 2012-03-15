@@ -40,7 +40,7 @@ from univention.management.console.protocol.definitions import *
 
 import univention.admin.modules as udm_modules
 
-from ucsschool.lib.schoolldap import LDAP_Connection, LDAP_ConnectionError, set_credentials, SchoolSearchBase, SchoolBaseModule, LDAP_Filter, Display
+from ucsschool.lib.schoolldap import LDAP_Connection, LDAP_ConnectionError, set_credentials, SchoolSearchBase, SchoolBaseModule, LDAP_Filter, Display, USER_READ, USER_WRITE
 
 _ = Translation( 'ucs-school-umc-rooms' ).translate
 
@@ -79,7 +79,7 @@ class Instance( SchoolBaseModule ):
 	def query( self, request, search_base = None, ldap_user_read = None, ldap_position = None ):
 		"""
 		requests.options = {}
-		  'name' -- search pattern for name (default: '')
+		  'name' -- search pattern for name or description (default: '')
 		  'school'
 		"""
 		MODULE.info( 'schoolrooms.query: options: %s' % str( request.options ) )
@@ -105,6 +105,30 @@ class Instance( SchoolBaseModule ):
 		return: [ { 'id' : <unique identifier>, 'name' : <display name>, 'color' : <name of favorite color> }, ... ]
 		"""
 		MODULE.info( 'schoolrooms.get: options: %s' % str( request.options ) )
-		#MODULE.info( 'schoolrooms.get: results: %s' % str( result ) )
+
 		self.finished( request.id, {} )
 
+	@LDAP_Connection(USER_READ, USER_WRITE)
+	def add(self, request, search_base=None, ldap_user_write=None, ldap_user_read=None, ldap_position=None):
+		"""Adds a new room
+
+		requests.options = [ { $dn$ : ..., }, ... ]
+
+		return: True|<error message>
+		"""
+		MODULE.info('schoolrooms.add: object: %s' % str(request.options[0]))
+		if not request.options:
+			raise UMC_CommandError('Invalid arguments')
+
+		room = request.options[0].get('object', {})
+		ldap_position.setDn(search_base.rooms)
+		new_room = udm_modules.get('groups/group').object(None, ldap_user_write, ldap_position)
+		new_room.open()
+
+		new_room['name'] = '%s-%s' % (search_base.school, room['name'])
+		new_room['description'] = room['description']
+		new_room['users'] = room['computers']
+
+		new_room.create()
+
+		self.finished(request.id, True)

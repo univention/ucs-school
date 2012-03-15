@@ -240,7 +240,11 @@ dojo.declare("umc.modules.schoolrooms", [ umc.widgets.Module, umc.i18n.Mixin ], 
 	},
 
 	_addObject: function() {
-		umc.dialog.alert(this._('Feature not yet implemented'));
+		this._detailPage._form.clearFormValues();
+		this._detailPage._form.getWidget('name').set('disabled', false);
+
+		this._detailPage.set( 'headerText', this._( 'Add room' ) );
+		this.selectChild( this._detailPage );
 	},
 
 	_editObject: function(ids, items) {
@@ -250,6 +254,7 @@ dojo.declare("umc.modules.schoolrooms", [ umc.widgets.Module, umc.i18n.Mixin ], 
 		}
 
 		this.selectChild(this._detailPage);
+		this._detailPage._form.getWidget('name').set('disabled', true);
 		this._detailPage.load(ids[0]);
 	},
 

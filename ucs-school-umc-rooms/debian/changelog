@@ -1,3 +1,11 @@
+ucs-school-umc-rooms (0.1.2-1) unstable; urgency=low
+
+  * Fix function to add new rooms
+  * Fix doc of the query function
+  (Bug #26360)
+
+ -- Jascha Geerds <geerds@univention.de>  Thu, 15 Mar 2012 15:22:54 +0100
+
 ucs-school-umc-rooms (0.1.1-1) unstable; urgency=low
 
   * Fix query function (Bug #26360)
