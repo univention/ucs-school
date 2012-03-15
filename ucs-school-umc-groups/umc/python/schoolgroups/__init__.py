@@ -196,32 +196,6 @@ class Instance( SchoolBaseModule ):
 		self.finished( request.id, True )
 
 	@LDAP_Connection( USER_READ, USER_WRITE )
-	def add( self, request, search_base = None, ldap_user_write = None, ldap_user_read = None, ldap_position = None ):
-		"""Returns the objects for the given IDs
-
-		requests.options = [ { $dn$ : ..., }, ... ]
-
-		return: True|<error message>
-		"""
-		if not request.options:
-			raise UMC_CommandError( 'Invalid arguments' )
-
-		if request.flavor != 'workgroup-admin':
-			raise UMC_CommandError( 'not supported' )
-		group = request.options[ 0 ].get( 'object', {} )
-		ldap_position.setDn( search_base.workgroups )
-		grp = udm_modules.get( 'groups/group' ).object( None, ldap_user_write, ldap_position )
-		grp.open()
-
-		grp[ 'name' ] = '%s-' % search_base.school + group[ 'name' ]
-		grp[ 'description' ] = group[ 'description' ]
-		grp[ 'users' ] = group[ 'members' ]
-
-		grp.create()
-
-		self.finished( request.id, True )
-
-	@LDAP_Connection( USER_READ, USER_WRITE )
 	def remove( self, request, search_base = None, ldap_user_write = None, ldap_user_read = None, ldap_position = None ):
 		"""Deletes a workgroup
 
