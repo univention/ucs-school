@@ -1,3 +1,10 @@
+univention-management-console-frontend (1.0.305-1) unstable; urgency=low
+
+  * add methods validate and getInvalidWidgets to umc.widgets.Form to
+    check for invalid values; Bug #25954
+
+ -- Andreas Büsching <buesching@univention.de>  Thu, 15 Mar 2012 16:19:08 +0100
+
 univention-management-console-frontend (1.0.304-1) unstable; urgency=low
 
   * add default min-width for ProgressInfo widget; Bug #26273
