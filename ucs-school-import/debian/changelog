@@ -1,3 +1,9 @@
+ucs-school-import (8.0.41-3) unstable; urgency=low
+
+  * exit(1) if import_user outfile exists (Bug #15180) 
+
+ -- Felix Botner <botner@univention.de>  Thu, 15 Mar 2012 14:50:47 +0100
+
 ucs-school-import (8.0.41-2) unstable; urgency=low
 
   * verify_ou case insensitive (Bug #20081)

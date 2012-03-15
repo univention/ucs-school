@@ -1442,8 +1442,8 @@ def import_user():
 		infile = args[0]
 	else:
 		parser.print_help()
-		print "must have one Argument for infile"
-		sys.exit()
+		print "ERROR: must have one argument for infile"
+		sys.exit(1)
 
 	print "infile is: " + infile
 	inf = open(infile,'r')
@@ -1452,9 +1452,8 @@ def import_user():
 	OUT = None
 	if options.outfile:
 		if os.path.isfile(options.outfile):
-			parser.print_help()
-			print "outfile exists, will not overwrite existing file"
-			sys.exit()
+			print "ERROR: outfile exists, will not overwrite existing file"
+			sys.exit(1)
 		print "outfile is: " + options.outfile 
 		OUT = open(options.outfile, "w")
 
