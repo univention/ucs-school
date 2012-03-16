@@ -1,3 +1,9 @@
+ucs-school-lib (1.0.28-1) unstable; urgency=low
+
+  * Display.user(): make sure that the firstname is non-empty; Bug #25707
+
+ -- Alexander Kläser <klaeser@univention.de>  Fri, 16 Mar 2012 15:32:30 +0100
+
 ucs-school-lib (1.0.27-1) unstable; urgency=low
 
   * LDAP_Filter.forGroups: The current school is used as the prefix for
@@ -7,7 +13,7 @@ ucs-school-lib (1.0.27-1) unstable; urgency=low
 
 ucs-school-lib (1.0.26-2) unstable; urgency=low
 
-  * removed bashism from base.sh (Bug #25991) 
+  * removed bashism from base.sh (Bug #25991)
 
  -- Felix Botner <botner@univention.de>  Wed, 14 Mar 2012 11:53:28 +0100
 
