@@ -241,6 +241,7 @@ dojo.declare("umc.modules.schoolrooms", [ umc.widgets.Module, umc.i18n.Mixin ], 
 
 	_addObject: function() {
 		this._detailPage._form.clearFormValues();
+		this._detailPage._form.set('_loadedID', '');
 		this._detailPage._form.getWidget('name').set('disabled', false);
 
 		this._detailPage.set( 'headerText', this._( 'Add room' ) );

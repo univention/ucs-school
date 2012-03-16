@@ -39,6 +39,7 @@ from univention.management.console.log import MODULE
 from univention.management.console.protocol.definitions import *
 
 import univention.admin.modules as udm_modules
+import univention.admin.objects as udm_objects
 
 from ucsschool.lib.schoolldap import LDAP_Connection, LDAP_ConnectionError, set_credentials, SchoolSearchBase, SchoolBaseModule, LDAP_Filter, Display, USER_READ, USER_WRITE
 
@@ -97,16 +98,28 @@ class Instance( SchoolBaseModule ):
 		MODULE.info( 'schoolrooms.query: results: %s' % str( result ) )
 		self.finished( request.id, result )
 
-	def get( self, request ):
+	@LDAP_Connection()
+	def get(self, request, search_base=None, ldap_user_read=None, ldap_position=None):
 		"""Returns the objects for the given IDs
 
 		requests.options = [ <ID>, ... ]
 
 		return: [ { 'id' : <unique identifier>, 'name' : <display name>, 'color' : <name of favorite color> }, ... ]
 		"""
-		MODULE.info( 'schoolrooms.get: options: %s' % str( request.options ) )
+		MODULE.info('schoolrooms.get: options: %s' % str(request.options))
 
-		self.finished( request.id, {} )
+		# open the specified room
+		group_module = udm_modules.get('groups/group')
+		room_obj = group_module.object(None, ldap_user_read, None, request.options[0])
+		room_obj.open()
+
+		result = {}
+		result['$dn$'] = room_obj.dn
+		result['name'] = room_obj['name'].replace('%s-' % search_base.school, '', 1)
+		result['description'] = room_obj['description']
+		result['computers'] = room_obj['hosts']
+
+		self.finished(request.id, [result,])
 
 	@LDAP_Connection(USER_READ, USER_WRITE)
 	def add(self, request, search_base=None, ldap_user_write=None, ldap_user_read=None, ldap_position=None):
@@ -120,15 +133,39 @@ class Instance( SchoolBaseModule ):
 		if not request.options:
 			raise UMC_CommandError('Invalid arguments')
 
-		room = request.options[0].get('object', {})
+		group_props = request.options[0].get('object', {})
 		ldap_position.setDn(search_base.rooms)
-		new_room = udm_modules.get('groups/group').object(None, ldap_user_write, ldap_position)
-		new_room.open()
+		group_obj = udm_modules.get('groups/group').object(None, ldap_user_write, ldap_position)
+		group_obj.open()
 
-		new_room['name'] = '%s-%s' % (search_base.school, room['name'])
-		new_room['description'] = room['description']
-		new_room['users'] = room['computers']
+		group_obj['name'] = '%s-%s' % (search_base.school, group_props['name'])
+		group_obj['description'] = group_props['description']
+		group_obj['hosts'] = group_props['computers']
 
-		new_room.create()
+		group_obj.create()
+
+		self.finished(request.id, True)
+
+	@LDAP_Connection(USER_READ, USER_WRITE)
+	def put(self, request, search_base=None, ldap_user_write=None, ldap_user_read=None, ldap_position=None):
+		"""Modify an existing room
+
+		requests.options = [ { object : ..., options : ... }, ... ]
+
+		return: True|<error message>
+		"""
+		if not request.options:
+			raise UMC_CommandError('Invalid arguments')
+
+		group_props = request.options[0].get('object', {})
+
+		group_obj = udm_objects.get(udm_modules.get('groups/group'), None, ldap_user_write, ldap_position, group_props['$dn$'])
+		if not group_obj:
+			raise UMC_OptionTypeError('unknown group object')
+
+		group_obj.open()
+		group_obj['description'] = group_props['description']
+		group_obj['hosts'] = group_props['computers']
+		group_obj.modify()
 
 		self.finished(request.id, True)
