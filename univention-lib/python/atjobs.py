@@ -42,6 +42,7 @@ import re
 
 # internal formatting strings and regexps
 _regWhiteSpace = re.compile(r'\s+')
+_regJobNr = re.compile(r'job\s+(\d+)')
 _dateTimeFormatRead = '%a %b %d %H:%M:%S %Y'
 _dateTimeFormatWrite = '%Y-%m-%d %H:%M'
 _timeFormatWrite = '%H:%M'
@@ -63,18 +64,16 @@ def add(cmd, execTime = None):
 	p = subprocess.Popen(atCmd, stdout = subprocess.PIPE, stdin = subprocess.PIPE, stderr = subprocess.PIPE)
 
 	# send the job to stdin
-	p.stdin.write(cmd)
-	p.stdin.close()
-
-	# read the return value
-	out = p.stdout.readline()
-	p.stdout.close()
+	out = p.communicate(cmd)
 
 	# parse output and return job
-	return _parseJob(out)
+	matches = _regJobNr.findall('\n'.join(out))
+	if matches:
+		return load(int(matches[0]))
+	return None
 
 def list():
-	'''Returns a list of all registered jobs.'''
+	'''Returns a list of all registered jobs as instances of AtJob.'''
 	p = subprocess.Popen('/usr/bin/atq', stdout = subprocess.PIPE, stderr = subprocess.PIPE)
 	jobs = []
 	for line in p.stdout:
@@ -84,7 +83,8 @@ def list():
 	return jobs
 
 def load(nr):
-	'''Load a job given a particular ID. Returns None of job does not exist.'''
+	'''Load a job given a particular ID. Returns None if job does not exist,
+	otherwise an instance of AtJob is returned.'''
 	result = [ p for p in list() if p.nr == nr ]
 	if len(result):
 		return result[0]
@@ -107,7 +107,7 @@ def _parseJob(string):
 
 class AtJob(object):
 	'''This class is an abstract representation of an at-job. Do not initiate
-	the class directly, put use the methods provided in this module.'''
+	the class directly, but use the methods provided in this module.'''
 
 	#TODO: it would be nice to be able to register meta information within the job file
 
