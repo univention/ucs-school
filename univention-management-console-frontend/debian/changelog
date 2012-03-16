@@ -1,3 +1,11 @@
+univention-management-console-frontend (1.0.308-1) unstable; urgency=low
+
+  * Form: on save, distinguish between put() and add(); Bug #26542
+  * TimeBox: added a new time widget; Bug #25707
+  * DateBox: for setting values, allow Date objects directly; Bug #25707
+
+ -- Alexander Kläser <klaeser@univention.de>  Fri, 16 Mar 2012 17:57:16 +0100
+
 univention-management-console-frontend (1.0.307-1) unstable; urgency=low
 
   * Form: Fix last commit (Bug #26539)

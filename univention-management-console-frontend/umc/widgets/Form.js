@@ -429,10 +429,18 @@ dojo.declare("umc.widgets.Form", [
 
 		// sending the data to the server
 		var values = this.gatherFormValues();
-		var deferred = this.moduleStore.put(values).then(dojo.hitch(this, function() {
+		var deferred = null;
+		if (this._loadedID === null || this._loadedID === undefined || this._loadedID === '') {
+			deferred = this.moduleStore.add(values);
+		}
+		else {
+			deferred = this.moduleStore.put(values);
+		}
+		deferred = deferred.then(dojo.hitch(this, function(data) {
 			// fire event
 			this.onSaved(true);
-		}), dojo.hitch(this, function() {
+			return data;
+		}), dojo.hitch(this, function(error) {
 			// fire event also in error case
 			this.onSaved(false);
 		}));
