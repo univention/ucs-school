@@ -9,6 +9,7 @@
 	<command name="schoolrooms/query" function="query"></command>
 	<command name="schoolrooms/add" function="add"></command>
 	<command name="schoolrooms/put" function="put"></command>
+	<command name="schoolrooms/remove" function="remove"></command>
 	<command name="schoolrooms/schools" function="schools"></command>
 	<command name="schoolrooms/get" function="get"></command>
 	<command name="schoolrooms/computers" function="computers"></command>

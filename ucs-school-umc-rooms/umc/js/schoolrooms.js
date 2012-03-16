@@ -135,7 +135,7 @@ dojo.declare("umc.modules.schoolrooms", [ umc.widgets.Module, umc.i18n.Mixin ], 
 			label: this._('Delete'),
 			description: this._('Deleting the selected objects.'),
 			isStandardAction: true,
-			isMultiAction: true,
+			isMultiAction: false,
 			iconClass: 'umcIconDelete',
 			callback: dojo.hitch(this, '_deleteObjects')
 		}];
@@ -241,7 +241,6 @@ dojo.declare("umc.modules.schoolrooms", [ umc.widgets.Module, umc.i18n.Mixin ], 
 
 	_addObject: function() {
 		this._detailPage._form.clearFormValues();
-		this._detailPage._form.set('_loadedID', '');
 		this._detailPage._form.getWidget('name').set('disabled', false);
 
 		this._detailPage.set( 'headerText', this._( 'Add room' ) );
@@ -260,7 +259,15 @@ dojo.declare("umc.modules.schoolrooms", [ umc.widgets.Module, umc.i18n.Mixin ], 
 	},
 
 	_deleteObjects: function(ids, items) {
-		umc.dialog.alert(this._('Feature not yet implemented'));
+		this.standby(true);
+		this.moduleStore.remove(ids).then(dojo.hitch(this, function(response) {
+			this.standby(false);
+			if (response.success === true) {
+				umc.dialog.alert(this._('The room has been deleted successfully'));
+			} else {
+				umc.dialog.alert(dojo.replace(this._('The room could not be deleted ({message})'), response));
+			}
+		}));
 	}
 });
 

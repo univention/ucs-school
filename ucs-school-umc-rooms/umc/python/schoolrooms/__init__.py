@@ -169,3 +169,25 @@ class Instance( SchoolBaseModule ):
 		group_obj.modify()
 
 		self.finished(request.id, True)
+
+	@LDAP_Connection(USER_READ, USER_WRITE)
+	def remove(self, request, search_base=None, ldap_user_write=None, ldap_user_read=None, ldap_position=None):
+		"""Deletes a room
+
+		requests.options = [ <LDAP DN>, ... ]
+
+		return: True|<error message>
+		"""
+		MODULE.info('schoolrooms.remove: object: %s' % str(request.options))
+		if not request.options:
+			raise UMC_CommandError('Invalid arguments')
+
+		room_dn = request.options[0].get('object', {})
+		room_obj = udm_modules.get('groups/group').object(None, ldap_user_write, ldap_position, room_dn[0])
+
+		try:
+			room_obj.remove()
+		except Exception as e:
+			self.finished(request.id, [{'success' : False, 'message' : str(e)}])
+
+		self.finished(request.id, [{'success' : True}])
