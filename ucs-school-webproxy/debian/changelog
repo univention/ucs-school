@@ -1,3 +1,9 @@
+ucs-school-webproxy (8.0.7-1) unstable; urgency=low
+
+  * removed UCR ignore filter for listener module (Bug #15085)
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 16 Mar 2012 14:42:09 +0100
+
 ucs-school-webproxy (8.0.6-1) unstable; urgency=low
 
   * added dependency to ucs-school-umc-internetrules (Bug #25803) 

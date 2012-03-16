@@ -41,7 +41,7 @@ description='Map pupil group lists to UCR'
 filter="(objectClass=univentionGroup)"
 attributes=['memberUid']
 
-dnPattern=re.compile('cn=schueler,cn=groups,ou=[^,]+,dc=', re.I)
+dnPattern=re.compile(',cn=schueler,cn=groups,ou=[^,]+,(ou=[^,]+,)?dc=', re.I)
 keyPattern='proxy/filter/usergroup/%s'
 
 def initialize():
@@ -51,21 +51,12 @@ def handler(dn, new, old):
 	univention.debug.debug(univention.debug.LISTENER, univention.debug.ERROR, 'pupilgroups: dn: %s' % dn)
 	configRegistry = univention.config_registry.ConfigRegistry()
 	configRegistry.load()
-	ignore_users = set([ x.strip() for x in re.split('[, ]+', configRegistry.get('proxy/filter/ignore/users','')) if x.strip() ])
-	protected_groups = set([ x.strip() for x in re.split('[, ]+', configRegistry.get('proxy/filter/protected/groups','')) if x.strip() ])
-	univention.debug.debug(univention.debug.LISTENER, univention.debug.INFO, 'pupilgroups: ignore_users=%s' % str(ignore_users))
-	univention.debug.debug(univention.debug.LISTENER, univention.debug.INFO, 'pupilgroups: ignore_users=%s' % str(protected_groups))
 	listener.setuid(0)
 	try:
 		if dnPattern.search(dn):
-			if new and new.has_key('memberUid'):
-				grp=new['cn'][0].replace(' ','_')
-				key=keyPattern % grp
-				# remove ignore_users from list of members
-				result_members = set(new['memberUid'])
-				if not grp in protected_groups:
-					result_members -= ignore_users
-				keyval = '%s=%s' % (key, ','.join(result_members))
+			if new and new.get('memberUid'):
+				key=keyPattern % new['cn'][0].replace(' ','_')
+				keyval = '%s=%s' % (key, ','.join(new.get('memberUid',[])))
 				univention.debug.debug(univention.debug.LISTENER, univention.debug.INFO, 'pupilgroups: %s' % keyval)
 				univention.config_registry.handler_set( [ keyval.encode() ] )
 			elif old:	# old lost its last memberUid OR old was removed
