@@ -1,3 +1,9 @@
+univention-management-console-frontend (1.0.307-1) unstable; urgency=low
+
+  * Form: Fix last commit (Bug #26539)
+
+ -- Jascha Geerds <geerds@univention.de>  Fri, 16 Mar 2012 17:26:19 +0100
+
 univention-management-console-frontend (1.0.306-1) unstable; urgency=low
 
   * Form: Also clear _loadedID on clearFormValues (Bug #26539)

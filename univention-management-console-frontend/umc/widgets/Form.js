@@ -332,7 +332,7 @@ dojo.declare("umc.widgets.Form", [
 			}
 		}, this);
 		if (this._loadedID) {
-			this.set('_loadedID', '');
+			this.set('_loadedID', null);
 		}
 	},
 
