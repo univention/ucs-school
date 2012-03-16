@@ -117,7 +117,7 @@ dojo.declare("umc.modules.distribution", [ umc.widgets.Module, umc.i18n.Mixin ],
 			iconClass: 'umcIconAdd',
 			isContextAction: false,
 			isStandardAction: true,
-			callback: dojo.hitch(this, '_dummy')
+			callback: dojo.hitch(this, '_newObject')
 		}, {
 			name: 'edit',
 			label: this._('Edit'),
@@ -139,13 +139,13 @@ dojo.declare("umc.modules.distribution", [ umc.widgets.Module, umc.i18n.Mixin ],
 			isMultiAction: false,
 			callback: dojo.hitch(this, '_dummy')
 		}, {
-			name: 'close',
-			label: this._('Close'),
-			description: this._('Close the selected material projects'),
+			name: 'remove',
+			label: this._('Remove'),
+			description: this._('Removes the project from the internal database'),
 			isStandardAction: true,
-			isMultiAction: true,
+			isMultiAction: false,
 			iconClass: 'umcIconDelete',
-			callback: dojo.hitch(this, '_dummy')
+			callback: dojo.hitch(this, '_delete')
 		}];
 
 		// define the grid columns
@@ -154,17 +154,23 @@ dojo.declare("umc.modules.distribution", [ umc.widgets.Module, umc.i18n.Mixin ],
 			label: this._('Description'),
 			width: 'auto'
 		}, {
-			name: 'owner',
+			name: 'sender',
 			label: this._('Owner'),
 			width: '175px'
 		}, {
-			name: 'nusers',
+			name: 'recipients',
 			label: this._('#Users'),
-			width: 'adjust'
+			width: 'adjust',
+			formatter: function(recipients) {
+				return recipients.length;
+			}
 		}, {
-			name: 'nfiles',
+			name: 'files',
 			label: this._('#Files'),
-			width: 'adjust'
+			width: 'adjust',
+			formatter: function(files) {
+				return files.length;
+			}
 		}];
 
 		// generate the data grid
@@ -179,7 +185,7 @@ dojo.declare("umc.modules.distribution", [ umc.widgets.Module, umc.i18n.Mixin ],
 			// as this.moduleStore (see also umc.store.getModuleStore())
 			moduleStore: this.moduleStore,
 			// initial query
-			query: { }
+			query: { pattern: '' }
 		});
 
 		// add the grid to the title pane
@@ -263,6 +269,31 @@ dojo.declare("umc.modules.distribution", [ umc.widgets.Module, umc.i18n.Mixin ],
 
 		this.selectChild(this._detailPage);
 		this._detailPage.load(ids[0]);
+	},
+
+	_delete: function(ids, items) {
+		if (ids.length != 1) {
+			// should not happen
+			return;
+		}
+
+		umc.dialog.confirm(this._('Please confirm to remove the project: %s', items[0].name), [{
+			label: this._('Cancel'),
+			name: 'cancel',
+			'default': true
+		}, {
+			label: this._('Remove project'),
+			name: 'remove'
+		}]).then(dojo.hitch(this, function(response) {
+			if (response === 'remove') {
+				this.moduleStore.remove(ids[0]);
+			}
+		}));
+	},
+
+	_newObject: function() {
+		this.selectChild(this._detailPage);
+		this._detailPage.newObject();
 	}
 });
 

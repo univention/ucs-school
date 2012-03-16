@@ -76,7 +76,10 @@ dojo.declare("umc.modules._distribution.DetailPage", [ umc.widgets.Page, umc.wid
 		}, {
 			name: 'cancel',
 			label: this._('Back to overview'),
-			callback: dojo.hitch(this, 'onClose')
+			callback: dojo.hitch(this, function() {
+				this.onClose();
+				this._resetForm();
+			})
 		}];
 	},
 
@@ -101,10 +104,20 @@ dojo.declare("umc.modules._distribution.DetailPage", [ umc.widgets.Page, umc.wid
 			description: this._('The description of the teaching material project')
 		}, {
 			type: 'TextBox',
-			name: 'owner',
-			label: this._('Owner'),
-			description: this._('Person that created the teaching material project'),
-			disabled: true
+			name: 'name',
+			label: this._('Directory name'),
+			description: this._('The name of the project directory as it will be displayed in the file system.'),
+			depends: 'description',
+			dynamicValue: dojo.hitch(this, function(values) {
+				var me = this._form.getWidget('name');
+				if (me.get('disabled')) {
+					// widget is disabled, do not change the value
+					return me.get('value');
+				}
+
+				// we only need to avoid '/' for the filename
+				return values.description.replace('/', '_');
+			})
 		}, {
 			type: 'MultiSelect',
 			name: 'files',
@@ -112,7 +125,7 @@ dojo.declare("umc.modules._distribution.DetailPage", [ umc.widgets.Page, umc.wid
 			description: this._('Files that have been added to this teaching material project')
 		}, {
 			type: 'MultiObjectSelect',
-			name: 'members',
+			name: 'recipients',
 			label: this._('Pupils'),
 			description: this._('List of pupils that are marked to receive the teaching materials'),
 			queryWidgets: [{
@@ -126,10 +139,10 @@ dojo.declare("umc.modules._distribution.DetailPage", [ umc.widgets.Page, umc.wid
 				name: 'group',
 				label: this._('User group / class'),
 				depends: 'school',
-				staticValues: [ 
+				staticValues: [
 					{ id: 'None', label: this._('All pupils') }
 				],
-				dynamicValues: 'distribution/classes',
+				dynamicValues: 'distribution/classes'
 			}, {
 				type: 'TextBox',
 				name: 'pattern',
@@ -150,19 +163,73 @@ dojo.declare("umc.modules._distribution.DetailPage", [ umc.widgets.Page, umc.wid
 				return tmp;
 			},
 			autoSearch: false
+		}, {
+			type: 'ComboBox',
+			name: 'distributeType',
+			label: this._('Distribution of project files'),
+			description: this._('Specifies whether the project data is distributed automatically or manually.'),
+			value: 'manual',
+			staticValues: [{
+				id: 'manual',
+				label: this._('Manual distribution')
+			}, {
+				id: 'automatic',
+				label: this._('Automatic distribution')
+			}]
+		}, {
+			type: 'DateBox',
+			name: 'distributeDate',
+			label: this._('Distribution date'),
+			description: this._('Date at which the project files will be distributed automatically.'),
+			visible: false
+		}, {
+			type: 'TimeBox',
+			name: 'distributeTime',
+			label: this._('Distribution time'),
+			description: this._('Time at which the project files will be distributed automatically.'),
+			visible: false
+		}, {
+			type: 'ComboBox',
+			name: 'collectType',
+			label: this._('Collection of project files'),
+			description: this._('Specifies whether the project data is collected automatically or manually.'),
+			value: 'manual',
+			staticValues: [{
+				id: 'manual',
+				label: this._('Manual collection')
+			}, {
+				id: 'automatic',
+				label: this._('Automatic collection')
+			}]
+		}, {
+			type: 'DateBox',
+			name: 'collectDate',
+			label: this._('Collection date'),
+			description: this._('Date at which the project files will be collected automatically.')
+		}, {
+			type: 'TimeBox',
+			name: 'collectTime',
+			label: this._('Collection time'),
+			description: this._('Time at which the project files will be collected automatically.')
 		}];
 
 		// specify the layout... additional dicts are used to group form elements
 		// together into title panes
 		var layout = [{
 			label: this._('General'),
-			layout: [ 'name', 'description', 'owner' ]
+			layout: [ 'description', 'name' ]
+		}, {
+			label: this._('Distribution and collection of project files'),
+			layout: [ 
+				'distributeType', [ 'distributeDate', 'distributeTime' ],
+				'collectType', [ 'collectDate', 'collectTime' ]
+			]
+		}, {
+			label: this._('Members'),
+			layout: [ 'recipients' ]
 		}, {
 			label: this._('Files'),
 			layout: [ 'files' ]
-		}, {
-			label: this._('Members'),
-			layout: [ 'members' ]
 		}];
 
 		// create the form
@@ -179,15 +246,56 @@ dojo.declare("umc.modules._distribution.DetailPage", [ umc.widgets.Page, umc.wid
 
 		// hook to onSubmit event of the form
 		this.connect(this._form, 'onSubmit', '_save');
+
+		// manage visible/hidden elements
+		this.connect(this._form.getWidget('distributeType'), 'onChange', function(value) {
+			this._form.getWidget('distributeDate').set('visible', value != 'manual');
+			this._form.getWidget('distributeTime').set('visible', value != 'manual');
+		});
+		this.connect(this._form.getWidget('collectType'), 'onChange', function(value) {
+			this._form.getWidget('collectDate').set('visible', value != 'manual');
+			this._form.getWidget('collectTime').set('visible', value != 'manual');
+		});
+	},
+
+	_resetForm: function() {
+		this._form.clearFormValues();
+
+		// initiate the time/date specific form widgets
+		var d = new Date();
+		this._form.setValues({
+			distributeType: 'manual',
+			distributeDate: d,
+			distributeTime: d,
+			collectType: 'manual',
+			collectDate: d,
+			collectTime: d
+		});
 	},
 
 	_save: function(values) {
-		umc.dialog.alert(this._('Feature not implemented yet!'));
+		this.standby(true);
+		this._form.save().then(dojo.hitch(this, function(result) {
+			this.standby(false);
+			if (result && !result.success) {
+				// display error message
+				umc.dialog.alert(result.details);
+				return;
+			}
+			this.onClose();
+			return;
+		}), dojo.hitch(this, function(error) {
+			// server error
+			this.standby(false);
+		}));
 	},
 
 	load: function(id) {
 		// during loading show the standby animation
 		this.standby(true);
+
+		// the project directory name cannot be modified
+		this._form.getWidget('name').set('disabled', true);
 
 		// load the object into the form... the load method returns a
 		// dojo.Deferred object in order to handel asynchronity
@@ -201,8 +309,13 @@ dojo.declare("umc.modules._distribution.DetailPage", [ umc.widgets.Page, umc.wid
 		}));
 	},
 
+	newObject: function() {
+		this._form.getWidget('name').set('disabled', false);
+		this._resetForm();
+	},
+
 	onClose: function(dn, objectType) {
-		// event stub 
+		// event stub
 	}
 });
 

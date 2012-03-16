@@ -1,3 +1,9 @@
+ucs-school-umc-distribution (0.0.5-1) unstable; urgency=low
+
+  * first prototype; Bug #25707
+
+ -- Alexander Kläser <klaeser@univention.de>  Fri, 16 Mar 2012 18:07:07 +0100
+
 ucs-school-umc-distribution (0.0.4-1) unstable; urgency=low
 
   * added support for reading and writing project files; Bug #25707

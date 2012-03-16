@@ -4,7 +4,7 @@
 # Univention Management Console
 #  module: Distribution Module
 #
-# Copyright 2007-2010 Univention GmbH
+# Copyright 2007-2012 Univention GmbH
 #
 # http://www.univention.de/
 #
@@ -35,11 +35,20 @@ from univention.management.console.config import ucr
 
 from univention.lib.i18n import Translation
 from univention.management.console.log import MODULE
+import univention.lib.atjobs as atjobs
 
-import notifier
-import notifier.popen
+#import notifier
+#import notifier.popen
 
-import os, re, fnmatch, pickle, shutil, tempfile, time
+import os
+import shutil
+import json
+
+import time
+
+import unicodedata
+import string
+import re
 
 _ = Translation( 'ucs-school-umc-distribution' ).translate
 
@@ -51,37 +60,18 @@ _ = Translation( 'ucs-school-umc-distribution' ).translate
 # deadline = umc.String( _( 'Deadline (e.g. 03/24/2008 08:05)' ), required = False, regex = _('^[ ]*(10|11|12|0\d)/(30|31|[012]\d)/20\d\d (20|21|22|23|[01]\d):[0-5]\d[ ]*$') )
 # fileupload = umc.FileUploader( _( 'Upload Files' ), required = True )
 
-DISTRIBUTION_DATA_PATH = '/var/lib/ucs-school-umc-distribution'
 DISTRIBUTION_CMD = '/usr/lib/ucs-school-umc-distribution/umc-distribution'
+DISTRIBUTION_DATA_PATH = ucr.get('ucsschool/datadistribution/cache', '/var/lib/ucs-school-umc-distribution')
+POSTFIX_DATADIR_SENDER = ucr.get('ucsschool/datadistribution/datadir/sender', 'Unterrichtsmaterial')
+POSTFIX_DATADIR_RECIPIENT = ucr.get('ucsschool/datadistribution/datadir/recipient', 'Unterrichtsmaterial')
 
+class _Dict(object):
+	'''Custom dict-like class. The initial set of keyword arguments is stored
+	in an internal dict. Entries of this intial set can be accessed directly
+	on the object (myDict.myentry = ...).'''
 
-class Project(object):
-	def __init__(self, props = {}):
-		# init empty project dict
-		object.__setattr__(self, '_dict', {
-			'name': None,
-			'description': None,
-			'cachedir': None,
-			'files': [],
-			'filesnew': [],
-			'filesremove': [],
-			'starttime': None,
-			'deadline': None,
-			'atjob': None,
-			'collectFiles': True,
-			'keepProject': False,
-			'sender': {},
-			'sender_uid': None,
-			'recipients': [],
-			'recipients_dn': [],
-		})
-
-		if props:
-			# copy entries from the given dict over to the project properties
-			_dict = self._dict
-			for k in _dict.iterkeys():
-				if k in props:
-					_dict[k] = props[k]
+	def __init__(self, **initDict):
+		object.__setattr__(self, '_dict', initDict)
 
 	# overwrite __setattr__ such that, e.g., project.cachedir can be called directly
 	def __setattr__(self, key, value):
@@ -99,48 +89,323 @@ class Project(object):
 			return _dict[key]
 		return object.__getattribute__(self, key)
 
+	def update(self, props):
+		'''Update internal dict with the dict given as parameter.'''
+		# copy entries from the given dict over to the project properties
+		_dict = self.dict
+		for k, v in props.iteritems():
+			if k in _dict:
+				_dict[k] = v
+
+	@property
+	def dict(self):
+		'''The internal dict.'''
+		return self._dict
+
+class _DictEncoder(json.JSONEncoder):
+	'''A custom JSONEncoder class that can encode _Dict objects.'''
+	def default(self, obj):
+		if isinstance(obj, _Dict):
+			return obj.dict
+		return json.JSONEncoder.default(self, obj)
+
+def jsonEncode(val):
+	'''Encode to JSON using the custom _Dict encoder.'''
+	return _DictEncoder(indent = 2).encode(val)
+
+def jsonDecode(val):
+	'''Decode a JSON string and replace dict types with _Dict.'''
+	return json.loads(val, object_hook = lambda x: _Dict(**x))
+
+class User(_Dict):
+	def __init__(self, *args, **_props):
+		# init empty project dict
+		_Dict.__init__(self,
+			unixhome = '',
+			username = '',
+			uidNumber = '',
+			gidNumber = '',
+			firstname = '',
+			lastname = '',
+			dn = ''
+		)
+
+		# update specified entries
+		if len(args):
+			self.update(args[0])
+		else:
+			self.update(_props)
+
+	# shortcut :)
+	@property
+	def homedir(self):
+		return self.unixhome
+
+class Project(_Dict):
+	def __init__(self, *args, **_props):
+		# init empty project dict
+		_Dict.__init__(self,
+			name = None,
+			description = None,
+#			cachedir = None,
+			files = [],
+			starttime = None,  # seconds
+			deadline = None,  # seconds
+			atJobNumDistribute = None,  # int
+			atJobNumCollect = None,  # int
+#			collectFiles = True,
+#			keepProject = False,
+			sender = None,  # User
+#			sender_uid = None,
+			recipients = [],  # [User, ...]
+#			recipients_dn = [],
+		)
+
+		# update specified entries
+		if len(args):
+			self.update(args[0])
+		else:
+			self.update(_props)
+
 	@property
 	def projectfile(self):
 		'''The absolute project path to the project file.'''
 		return os.path.join( DISTRIBUTION_DATA_PATH, self.name )
 
+	@property
+	def cachedir(self):
+		'''The absolute path of the project cache directory.'''
+		return os.path.join( DISTRIBUTION_DATA_PATH, '%s.data' % self.name )
+
+	@property
+	def sender_projectdir(self):
+		'''The absolute path of the project directory in the senders home.'''
+		if self.sender and self.sender.homedir:
+			return os.path.join( self.sender.homedir, POSTFIX_DATADIR_SENDER, self.name )
+		return None
+
+	@property
+	def atJobDistribute(self):
+		return atjobs.load(self.atJobNumDistribute)
+
+	@property
+	def atJobCollect(self):
+		return atjobs.load(self.atJobNumCollect)
+
+	def user_projectdir(self, user):
+		'''Return the absolute path of the project dir for the specified user.'''
+		return os.path.join( user.homedir, POSTFIX_DATADIR_RECIPIENT, self.name )
+
+	@property
+	def isDistributed(self):
+		'''True if files have already been distributed.'''
+		# distributed files can still be found in the internal property 'files',
+		# however, upon distribution they are removed from the cache directory;
+		# thus, if one of the specified files does not exist, the project has
+		# already been distributed
+		files = [ ifn for ifn in self.files if os.path.exists(os.path.join(self.cachedir, ifn)) ]
+		return len(files) == len(self.files)
+
 	def validate(self):
-		'''Validate the project data. In case of any errors with the data, 
+		'''Validate the project data. In case of any errors with the data,
 		a ValueError with a proper error message is raised.'''
-		if not (isinstance(self.name, str) and self.name):
+		if not (isinstance(self.name, basestring) and self.name):
 			raise ValueError(_('The given project directory name must be non-empty.'))
-		if not (isinstance(self.description, str) and self.description):
+		if self.name.find('/') >= 0:
+			raise ValueError(_('The specified project directory may not contain the character "/"'))
+		if not (isinstance(self.description, basestring) and self.description):
 			raise ValueError(_('The given project description must be non-empty.'))
-		if not (isinstance(self.files, list) and self.files):
+		if not (isinstance(self.files, list)): # and self.files):
 			raise ValueError(_('At least one file must be specified.'))
-		if not (isinstance(self.recipients_dn, list) and self.recipients_dn):
+		if not (isinstance(self.recipients, list)): # and self.recipients):
 			raise ValueError(_('At least one recipient must be specified.'))
-		#TODO: check whether uploaded files exist?
+		if not self.sender or not self.sender.username or not self.sender.homedir:
+			raise ValueError(_('A valid project owner needs to be specified.'))
+		#TODO: the following checks are necessary to make sure that the project name
+		#      has not been used so far:
+		# sender_projectdir -> does not exist yet?
+		# recipients projectdir -> does not exist yet?
+		# date in the future?
+
+	def isNameInUse(self):
+		'''Verifies whether the given project name is already in use.'''
+		# check for a project with given name
+		if os.path.exists(self.projectfile):
+			return True
+
+		# check whether a project directory with the given name exists in the
+		# recipients' home directories
+		l = [ iuser for iuser in self.recipients if os.path.exists(self.user_projectdir(iuser)) ]
+		return len(l) > 0
 
 	def save(self):
-		'''Save project data to disk. In case of any errors, an IOError is raised.'''
+		'''Save project data to disk and create job. In case of any errors, an IOError is raised.'''
 		try:
-			fd_project = open(self.projectfile, 'w')
-			pickle.dump(self._dict, fd_project)
-			fd_project.close()
+			# update at-jobs
+			self._unregister_at_jobs()
+			self._register_at_jobs()
+
+			# save the project file
+			fd = open(self.projectfile, 'w')
+			fd.write(jsonEncode(self))
+			fd.close()
 		except IOError, e:
 			raise IOError(_('Could not save project file: %s (%s)') % (self.projectfile, str(e)))
 
-#	def isDistributed(self):
-#		'''Indicates whether a project has already been distributed.'''
-#		return not os.path.exists( self.cachedir )
+	def _createDirs(self):
+		'''Create cache directory and project directory in the sender's home.'''
+		# create project cache directory
+		MODULE.info( 'creating project cache dir: %s' % self.cachedir )
+		_create_dir( self.cachedir, owner=0, group=0 )
 
-	def purge():
+		# make sure that the sender homedir exists
+		if self.sender and self.sender.homedir and not os.path.exists( self.sender.homedir ):
+			MODULE.warn( 'recreate homedir: uidNumber=%s  gidNumber=%s' % (self.sender.uidNumber, self.sender.gidNumber) )
+			_create_dir( self.sender.homedir, owner=self.sender.uidNumber, group=self.sender.gidNumber )
+
+		# create sender project directory
+		if self.sender_projectdir:
+			MODULE.info( 'creating project dir in sender\'s home: %s' % self.sender_projectdir )
+			_create_dir( self.sender_projectdir, homedir = self.sender.homedir, owner = self.sender.uidNumber, group = self.sender.gidNumber )
+		else:
+			MODULE.error( 'ERROR: Sender information is not specified, cannot create project dir in the sender\'s home!' )
+
+	def _register_at_jobs(self):
+		'''Registers at-jobs for distributing and collecting files. Files are distributed
+		directly of no start time is explicitely specified.'''
+
+		# register the starting job
+		# if no start time is given, project will be distributed immediately
+		# make sure that the startime, if given, lies in the future
+		if not self.starttime or self.starttime > time.time():
+			MODULE.info( 'register at-jobs: starttime = %s' % time.ctime( self.starttime ) )
+			cmd = '%s --distribute %s' % (DISTRIBUTION_CMD, self.projectfile)
+			print 'register at-jobs: starttime = %s  cmd = %s' % (time.ctime( self.starttime ), cmd) 
+			atJob = atjobs.add(cmd, self.starttime)
+			if atJob and self.starttime:
+				self.atJobNumDistribute = atJob.nr
+			if not atJob:
+				MODULE.warn( 'registration of at-job failed' )
+				print 'registration of at-job failed'
+
+		# register the collecting job, only if a deadline is given
+		if self.deadline and self.deadline > time.time():
+			MODULE.info( 'register at-jobs: deadline = %s' % time.ctime( self.deadline ) )
+			print 'register at-jobs: deadline = %s' % time.ctime( self.deadline ) 
+			cmd = '%s --collect %s' % (DISTRIBUTION_CMD, self.projectfile)
+			atJob = atjobs.add(cmd, self.deadline)
+			if atJob:
+				self.atJobNumCollect = atJob.nr
+			else:
+				MODULE.warn( 'registration of at-job failed' )
+				print 'registration of at-job failed' 
+
+	def _unregister_at_jobs(self):
+		# remove at-jobs
+		for inr in [ self.atJobNumDistribute, self.atJobNumCollect ]:
+			ijob = atjobs.load(inr)
+			if ijob:
+				ijob.rm()
+
+	def distribute( self, usersFailed = None):
+		'''Distribute the project data to all registrated receivers.'''
+
+		usersFailed = usersFailed or []
+
+		# determine which files shall be distributed
+		# note: already distributed files will be removed from the cache directory,
+		#       yet they are still kept in the internal list of files
+		files = [ ifn for ifn in self.files if os.path.exists(os.path.join(self.cachedir, ifn)) ]
+
+		if not files:
+			# no files to distribute
+			MODULE.info('No new files to distribute in project: %s' % self.name)
+			return
+
+		# make sure all necessary directories exist
+		self._createDirs()
+
+		# iterate over all recipients
+		MODULE.info('Distributing project "%s" with files: %s' % (self.name, ", ".join(files)))
+		for user in self.recipients:
+			# create user project directory
+			MODULE.info( 'recipient: uid=%s' % user.username )
+			_create_dir( self.user_projectdir(user), homedir = user.homedir, owner = user.uidNumber, group = usergidNumber )
+
+			# copy files from cache to recipient
+			for fn in files:
+				src = str( os.path.join( self.cachedir, fn ) )
+				target = str( os.path.join( self.user_projectdir(user), fn ) )
+				try:
+					shutil.copyfile( src, target )
+				except Exception, e:
+					MODULE.error( 'failed to copy "%s" to "%s": %s' % (src, target, str(e)))
+					usersFailed.append(user.username)
+				try:
+					os.chown( target, int(user.uidNumber), int(user.gidNumber) )
+				except Exception, e:
+					MODULE.error( 'failed to chown "%s": %s' % (target, str(e)))
+					usersFailed.append(user.username)
+
+		# remove cached files
+		for fn in files:
+			try:
+				src = str(os.path.join(self.cachedir, fn))
+				os.remove(src)
+			except Exception as e:
+				MODULE.error( 'failed to remove file: %s [%s]' % (src, e) )
+
+		return len(usersFailed) == 0
+
+	def collect(self, dirsFailed = None):
+		dirsFailed = dirsFailed or []
+
+		# make sure all necessary directories exist
+		self._createDirs()
+
+		# collect data from all recipients
+		for recipient in self.recipients:
+			# guess a proper directory name (in case with " versionX" suffix)
+			dirVersion = 1
+			targetdir = os.path.join( self.sender_projectdir, recipient.username )
+			while os.path.exists(targetdir):
+				dirVersion += 1
+				targetdir = os.path.join( self.sender_projectdir, '%s version%d' % (recipient.username, dirVersion) )
+
+			# copy entire directory of the recipient
+			srcdir = os.path.join( self.user_projectdir(recipient) )
+			try:
+				# copy dir
+				shutil.copytree( srcdir, targetdir )
+
+				# fix permission
+				for root, dirs, files in os.walk(targetdir):
+					for momo in dirs + files:
+						os.chown(os.path.join(root, momo), int(self.sender.uidNumber), int(self.sender.gidNumber))
+
+			except (OSError, ValueError) as ex:
+				MODULE.warn('Copy failed: "%s" ->  "%s"' % (srcdir, targetdir))
+				dirsFailed.append(srcdir)
+
+		return len(dirsFailed) == 0
+
+	def purge(self):
+		'''Remove project's cache directory, project file, and at job registrations.'''
 		if not self.projectfile or not os.path.exists( self.projectfile ):
 			MODULE.error('cannot remove empty or non existing projectfile: %s' % self.projectfile)
 			return
 
+		self._unregister_at_jobs()
+
+		# remove cachedir
 		MODULE.info('trying to purge projectfile [%s] and cachedir [%s]' % (self.projectfile, self.cachedir))
 		if self.cachedir and os.path.exists( self.cachedir ):
 			try:
 				shutil.rmtree( self.cachedir )
 			except Exception, e:
 				MODULE.error('failed to cleanup cache directory: %s [%s]' % (self.cachedir, str(e)))
+
+		# remove projectfile
 		try:
 			os.remove( self.projectfile )
 		except Exception, e:
@@ -149,18 +414,22 @@ class Project(object):
 	@staticmethod
 	def load(projectfile):
 		'''Load the given project file and create a new Project instance.'''
-		project = Project()
+		project = None
 		try:
-			fd_project = open(os.path.join(DISTRIBUTION_DATA_PATH, projectfile), 'r' )
-			tmpDict = pickle.load(fd_project)
-			fd_project.close()
-			if tmpDict:
-				_dict = project._dict
-				for k in _dict.iterkeys():
-					if tmpDict.has_key(k):
-						_dict[k] = tmpDict[k]
-		except IOError, e:
-			MODULE.error('Could not open project file: %s [%s]', projectfile, str(e))
+			# load project dictionary from JSON file
+			fd = open(os.path.join(DISTRIBUTION_DATA_PATH, projectfile), 'r' )
+			tmpDict = jsonDecode(''.join(fd.readlines()))
+			project = Project(tmpDict.dict)
+			fd.close()
+
+			# convert _Dict instances to User
+			project.sender = User(project.sender.dict)
+			project.recipients = [ User(i.dict) for i in project.recipients ]
+		except IOError as e:
+			MODULE.error('Could not open project file: %s [%s]' % (projectfile, str(e)))
+			return None
+		except ValueError as e:
+			MODULE.error('Could not parse project file: %s [%s]' % (projectfile, str(e)))
 			return None
 
 		# make sure the filename matches the property 'name'
@@ -199,33 +468,44 @@ def initPaths():
 	except:
 		MODULE.error( 'error occured while fixing permissions of %s' % DISTRIBUTION_DATA_PATH )
 
+def _create_dir( targetdir, homedir=None, permissions=0700, owner=0, group=0 ):
+	# does target dir already exist?
+	try:
+		# parse strings
+		owner = int(owner)
+		group = int(group)
+
+		if not os.path.exists( targetdir ):
+			# create targetdir
+			os.makedirs( targetdir, permissions )
+
+			# if homedir is not set, then only chown target dir
+			if homedir:
+				tmpdir = homedir
+				targetdir = '/%s' % targetdir.strip('/')
+				if len(targetdir[ len(homedir) : ].strip('/')) > 0:
+					for dirpart in targetdir[ len(homedir) : ].strip('/').split('/'):
+						tmpdir = os.path.join( tmpdir, dirpart )
+						os.chown( tmpdir, owner, group )
+				os.chown( homedir, owner, group )
+
+		# chown target dir
+		if os.path.exists( targetdir ):
+			os.chown( targetdir, owner, group )
+		else:
+			MODULE.error( '%s does not exist - creation failed' % (targetdir) )
+			return False
+	except Exception, e:
+		MODULE.error( 'failed to create/chown "%s": %s' % (targetdir, str(e)))
+		return False
+
+	# operation successful
+	return True
+
 
 ########## OLD CODE ##############
 #class handler( umch.simpleHandler, _revamp.Web  ):
 #
-#### NOT NEEDED? ###
-#	def _create_dir( self, targetdir, homedir=None, permissions=0700, owner=0, group=0 ):
-#		# does target dir already exist?
-#		if not os.path.exists( targetdir ):
-#			# create targetdir
-#			os.makedirs( targetdir, permissions )
-#
-#			# if homedir is not set, then only chown target dir
-#			if homedir:
-#				tmpdir = homedir
-#				targetdir = '/%s' % targetdir.strip('/')
-#				if len(targetdir[ len(homedir) : ].strip('/')) > 0:
-#					for dirpart in targetdir[ len(homedir) : ].strip('/').split('/'):
-#						tmpdir = os.path.join( tmpdir, dirpart )
-#						os.chown( tmpdir, owner, group )
-#				os.chown( homedir, owner, group )
-#
-#		# chown target dir
-#		if os.path.exists( targetdir ):
-#			os.chown( targetdir, owner, group )
-#		else:
-#			debugmsg( ud.ADMIN, ud.ERROR, '%s does not exist - creation failed' % (targetdir) )
-
 ##################################################
 #
 #
