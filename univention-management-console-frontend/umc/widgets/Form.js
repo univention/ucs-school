@@ -331,6 +331,9 @@ dojo.declare("umc.widgets.Form", [
 				iwidget.set('value', 0);
 			}
 		}, this);
+		if (this._loadedID) {
+			this.set('_loadedID', '');
+		}
 	},
 
 	setFormValues: function(values) {
