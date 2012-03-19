@@ -244,6 +244,7 @@ dojo.declare("umc.modules.schoolrooms", [ umc.widgets.Module, umc.i18n.Mixin ], 
 		this._detailPage._form.getWidget('name').set('disabled', false);
 
 		this._detailPage.set( 'headerText', this._( 'Add room' ) );
+		this._detailPage.set('helpText', this._('Create room and assign computers'));
 		this.selectChild( this._detailPage );
 	},
 
@@ -254,6 +255,8 @@ dojo.declare("umc.modules.schoolrooms", [ umc.widgets.Module, umc.i18n.Mixin ], 
 		}
 
 		this.selectChild(this._detailPage);
+		this._detailPage.set( 'headerText', this._( 'Edit room' ) );
+		this._detailPage.set('helpText', this._('Edit room and assign computers'));
 		this._detailPage._form.getWidget('name').set('disabled', true);
 		this._detailPage.load(ids[0]);
 	},

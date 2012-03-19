@@ -63,8 +63,8 @@ dojo.declare("umc.modules._schoolrooms.DetailPage", [ umc.widgets.Page, umc.widg
 		this.standbyOpacity = 1;
 
 		// set the page header
-		this.headerText = this._('Object properties');
-		this.helpText = this._('This page demonstrates how object properties can be viewed for editing.');
+		this.headerText = this._('');
+		this.helpText = this._('');
 
 		// configure buttons for the footer of the detail page
 		this.footerButtons = [{

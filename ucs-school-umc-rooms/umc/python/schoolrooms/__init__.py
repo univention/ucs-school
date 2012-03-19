@@ -46,15 +46,6 @@ from ucsschool.lib.schoolldap import LDAP_Connection, LDAP_ConnectionError, set_
 _ = Translation( 'ucs-school-umc-rooms' ).translate
 
 class Instance( SchoolBaseModule ):
-	def __init__( self ):
-		# initiate list of internal variables
-		SchoolBaseModule.__init__(self)
-		# ... custom code
-
-	def init(self):
-		SchoolBaseModule.init(self)
-		# ... custom code
-
 	@LDAP_Connection()
 	def computers( self, request, search_base = None, ldap_user_read = None, ldap_position = None ):
 		"""
@@ -63,7 +54,7 @@ class Instance( SchoolBaseModule ):
 		  'school'
 		"""
 		MODULE.info( 'schoolrooms.query: options: %s' % str( request.options ) )
-		pattern = request.options.get('name', '')
+		pattern = request.options.get('pattern', '')
 		ldapFilter = LDAP_Filter.forComputers(pattern)
 
 		objs = udm_modules.lookup( 'computers/computer', None, ldap_user_read, scope = 'one', base = search_base.computers, filter = ldapFilter)
@@ -154,6 +145,7 @@ class Instance( SchoolBaseModule ):
 
 		return: True|<error message>
 		"""
+		MODULE.info('schoolrooms.put: object: %s' % str(request.options[0]))
 		if not request.options:
 			raise UMC_CommandError('Invalid arguments')
 
@@ -191,3 +183,4 @@ class Instance( SchoolBaseModule ):
 			self.finished(request.id, [{'success' : False, 'message' : str(e)}])
 
 		self.finished(request.id, [{'success' : True}])
+
