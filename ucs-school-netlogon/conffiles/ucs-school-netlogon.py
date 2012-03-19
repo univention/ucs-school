@@ -118,30 +118,40 @@ def handler(configRegistry, changes):
 	if not netlogonScript:
 		sys.exit(0)
 	netlogon = os.path.join(netlogonDir, netlogonScript)
+	if os.path.isfile(netlogon):
+		os.remove(netlogon)
 
 	# get ucr vars and save script in scripts
+	#   ucsschool/netlogon/<Paketname>/script=demo.cmd
+	#   ucsschool/netlogon/<Paketname>/script/priority=10 - optional
 	scripts = {}
-	prefix = "ucsschool/netlogon/script/"
+	prefix = "ucsschool/netlogon/"
 	for key in configRegistry.keys():
 		if key and key.startswith(prefix):
-			script = configRegistry[key]
-			number = key.replace(prefix, "")
-			scripts[number] = script
+			tmp = key.split("/")
+			if len(tmp) > 3 and tmp[3] == "script":
+				if len(tmp) > 4 and tmp[4] == "priority":
+					continue
+				script = configRegistry[key]
+				priority = configRegistry.get(key + "/priority", sys.maxint)
+				if not scripts.get(priority):
+					scripts[priority] = []
+				scripts[priority].append(script)
+
 	windowStyle = configRegistry.get("ucsschool/netlogon/windowStyle", "1")
 	checkReturn = configRegistry.is_true("ucsschool/netlogon/checkReturn", True)
 	vbsInt = configRegistry.get("ucsschool/netlogon/vbs/interpreter", "cscript")
 	vbsOpts = configRegistry.get("ucsschool/netlogon/vbs/options", "")
 
 	fn = False
-	for key in sorted(scripts.keys()):
-		script = scripts[key]
-
-		if script.endswith(".cmd") or script.endswith(".bat"):
-			fn = printHeader(fn, netlogon)
-			runCmd(script, fn, windowStyle, checkReturn)
-		elif script.endswith(".vbs"):
-			fn = printHeader(fn, netlogon)
-			runVbs(script, fn, windowStyle, checkReturn, vbsInt, vbsOpts)
-		else:
-			# hmm, do nothing 
-			pass	
+	for key in sorted(scripts.keys(), key=int):
+		for script in scripts[key]:
+			if script.endswith(".cmd") or script.endswith(".bat"):
+				fn = printHeader(fn, netlogon)
+				runCmd(script, fn, windowStyle, checkReturn)
+			elif script.endswith(".vbs"):
+				fn = printHeader(fn, netlogon)
+				runVbs(script, fn, windowStyle, checkReturn, vbsInt, vbsOpts)
+			else:
+				# hmm, do nothing 
+				pass	
