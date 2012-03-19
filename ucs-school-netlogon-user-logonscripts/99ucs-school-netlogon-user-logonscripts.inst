@@ -34,6 +34,7 @@ VERSION="1"
 . /usr/share/univention-join/joinscripthelper.lib
 joinscript_init
 
+eval "$(univention-config-registry shell)"
 
 # samba 4 netlogon share
 myrealm=$(echo $kerberos_realm |  awk '{print tolower($0)}')

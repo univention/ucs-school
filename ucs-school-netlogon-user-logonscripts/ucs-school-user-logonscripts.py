@@ -115,7 +115,7 @@ def getGlobalLinks():
 	univention.debug.debug(univention.debug.LISTENER, univention.debug.INFO, "ucsschool-user-logonscripts: got global links %s" % globalLinks)
 
 
-def generateMacScript(uid, linkgoal):
+def generateMacScript(uid, name, host):
 	return '''#!/bin/sh # generated script for accessing a samba share
 /usr/bin/osascript <<EOF
 tell application "Finder"
@@ -123,7 +123,7 @@ tell application "Finder"
  activate
 end tell
 EOF
-''' % (uid, linkgoal[0], linkgoal[1])
+''' % (uid, host, name)
 
 def writeMacLinkScripts(uid, homepath, links):
 	listener.setuid(0)
@@ -156,10 +156,10 @@ def writeMacLinkScripts(uid, homepath, links):
 					univention.debug.debug(univention.debug.LISTENER, univention.debug.ERROR, "ucsschool-user-logonscripts: failed to remove %s" % file)
 					raise
 
-			for linkname, linkgoal in links:
-				macscriptpath = os.path.join(homepath, "Desktop", desktopFolderName, "%s.app" % linkname)
+			for name in links:
+				macscriptpath = os.path.join(homepath, "Desktop", desktopFolderName, "%s.app" % name)
 				fp = open(macscriptpath ,'w')
-				fp.write(generateMacScript(uid, linkgoal).replace('\n','\r\n'))
+				fp.write(generateMacScript(uid, name, links[name]).replace('\n','\r\n'))
 				fp.close()
 				os.chmod(macscriptpath, 0500)
 				os.chown(macscriptpath, uidnumber, gidnumber)
@@ -258,49 +258,28 @@ Function MapDrive(Drive,Share)
  err.clear
  End if
  end function
+
 ''' % desktopfolder
 
-	for linkname, linkgoal in links:
-		#\' oLink.Arguments = ""
-		#\' oLink.Description = "MyProgram"
-		#\' oLink.HotKey = "ALT+CTRL+F"
-		#\' oLink.IconLocation = "C:\\Program Files\\MyApp\\MyProgram.EXE, 2"
-		#\' oLink.WindowStyle = "1"
-		#\' oLink.WorkingDirectory = "C:\\Program Files\\MyApp"
-
-		linkskript = '''
-Set oWS = WScript.CreateObject("WScript.Shell")
-
-sLinkFile = FolderPath + "\\%s.LNK"
-
-Set oLink = oWS.CreateShortcut(sLinkFile)
-
-oLink.TargetPath = "%s"
-oLink.Save
-''' % (linkname,"\\\\%s\\%s" % (linkgoal[0], linkgoal[1]))
-		skript = skript + linkskript
+	# create shortcuts to shares
+	for linkName in links:
+		skript += 'Set oWS = WScript.CreateObject("WScript.Shell")\n'
+		skript += 'sLinkFile = FolderPath + "\\%s.LNK"\n' % linkName
+		skript += 'Set oLink = oWS.CreateShortcut(sLinkFile)\n'
+		skript += 'oLink.TargetPath = "\\\\%s\\%s"\n' % (links[linkName], linkName)
+		skript += 'oLink.Save\n\n'
 
 	lettersinuse = {}
-
 	for key in mappings.keys():
-		if mappings[key].has_key('letter'):
-			if lettersinuse.has_key (mappings[key]['letter']):
-				univention.debug.debug(univention.debug.LISTENER, univention.debug.WARN, \
-						'ucsschool-user-logonscripts: the assigned letter "%s" for share "%s" is already in use by share "%s"' % \
-						(mappings[key]['letter'], mappings[key]['server'], lettersinuse[mappings[key]['letter']]))
+		if mappings[key].get('letter'):
+			if lettersinuse.get(mappings[key]['letter']):
+				msg  = name + ": " + "the assigned letter "
+				msg += "%s for share %s " % (mappings[key]['letter'], mappings[key]['server'])
+				msg += "is already in use by share %s" % lettersinuse[mappings[key]['letter']]
+				univention.debug.debug(univention.debug.LISTENER, univention.debug.WARN, msg)
 			else:
 				skript = skript + 'MapDrive "%s:","\\\\%s\\%s"\n' % (mappings[key]['letter'],mappings[key]['server'], key)
 				lettersinuse[mappings[key]['letter']] = mappings[key]['server']
-
-	for key in globalLinks.keys():
-		if globalLinks[key].has_key('letter'):
-			if lettersinuse.has_key (globalLinks[key]['letter']):
-				univention.debug.debug(univention.debug.LISTENER, univention.debug.WARN, \
-						'ucsschool-user-logonscripts: the assigned letter "%s" for share "%s" is already in use by share "%s"' % \
-						(globalLinks[key]['letter'], globalLinks[key]['server'], lettersinuse[globalLinks[key]['letter']]))
-			else:
-				skript = skript + 'MapDrive "%s:","\\\\%s\\%s"\n' % (globalLinks[key]['letter'],globalLinks[key]['server'], key)
-				lettersinuse[globalLinks[key]['letter']] = globalLinks[key]['server']
 
 	homePath = ""
 	if listener.baseConfig.has_key('samba/homedirletter') and listener.baseConfig['samba/homedirletter']:
@@ -310,6 +289,7 @@ oLink.Save
 		homePath = listener.baseConfig['ucsschool/userlogon/mysharespath']
 
 	if homePath:
+		skript = skript + '\n'
 		skript = skript + 'SetMyShares "%s"\n' % homePath
 
 	return skript
@@ -418,8 +398,6 @@ def userchange(dn, new, old):
 
 		# Gruppen suchen mit uniqueMember=dn
 		# shares suchen mit GID wie Gruppe
-
-
 		univention.debug.debug(univention.debug.LISTENER, univention.debug.INFO, 'ucsschool-user-logonscripts: handle user %s' % dn)
 		try:
 			res_groups = l.search(scope="sub", filter='(&(objectClass=posixGroup)(uniqueMember=%s))' % dn, attr=['gidNumber'])
@@ -437,12 +415,25 @@ def userchange(dn, new, old):
 
 		mappings = {}
 		classre = re.compile ('^cn=([^,]*),cn=klassen,cn=shares,ou=([^,]*),%s$' % ldapbase)
-		links = []
+		links = {}
+		validservers = listener.baseConfig.get('ucsschool/userlogon/shares/validservers', listener.baseConfig.get('hostname') ).split(',')
+
+		# get global links
+		for name in globalLinks.keys():
+			if globalLinks[name].get("server"):
+				links[name] = globalLinks[name]["server"]
+				if globalLinks[name].get("letter"):
+					mappings[name] = {'server': globalLinks[name]["server"], 'letter': globalLinks[name]["letter"]}
+
 		for ID in membershipIDs:
 			try:
-				res_shares = l.search(scope="sub", filter='(&(objectClass=univentionShareSamba)(univentionShareGid=%s))' % ID, attr=['cn','univentionShareHost','univentionShareSambaName'])
+				res_shares = l.search(
+					scope="sub",
+					filter='(&(objectClass=univentionShareSamba)(univentionShareGid=%s))' % ID,
+					attr=['cn','univentionShareHost','univentionShareSambaName'])
 			except:
-				univention.debug.debug(univention.debug.LISTENER, univention.debug.WARN, 'ucsschool-user-logonscripts: LDAP-search failed for shares with gid %s' % (ID))
+				univention.debug.debug(univention.debug.LISTENER, univention.debug.WARN,
+					'ucsschool-user-logonscripts: LDAP-search failed for shares with gid %s' % (ID))
 				res_shares=[]
 
 			for share in res_shares:
@@ -451,36 +442,30 @@ def userchange(dn, new, old):
 				if share[1].has_key('univentionShareSambaName'):
 					linkname = share[1]['univentionShareSambaName'][0]
 
+				# ignore link if already in global links
+				if links.get(linkname):
+					continue
+
 				# hostname is either an IP or an FQDN
 				hostname = share[1]['univentionShareHost'][0]
 				if hostname[0] not in range(10) and hostname.find(".") > 0: # no IP-Address:
 					hostname = hostname[:hostname.find(".")]
 
-				#linkgoal = "\\%s\%s" % (hostname, linkname)
-				linkgoal = (hostname, linkname)
-
-				validservers = listener.baseConfig.get('ucsschool/userlogon/shares/validservers', listener.baseConfig.get('hostname') ).split(',')
+				# save link and mapping
 				if hostname in validservers or '*' in validservers:
-					univention.debug.debug(univention.debug.LISTENER, univention.debug.INFO, 'ucsschool-user-logonscripts: add link %s to %s' % (linkname,linkgoal))
-					links.append((linkname,linkgoal))
-					# create mapping for classroom share
+					links[linkname] = hostname
 					classmatches = classre.match (share[0])
 					if classmatches and len (classmatches.groups ()) == 2:
-						if listener.baseConfig.has_key('ucsschool/userlogon/classshareletter'):
+						if listener.baseConfig.get('ucsschool/userlogon/classshareletter'):
 							letter = listener.baseConfig['ucsschool/userlogon/classshareletter'].replace(':','')
 						else:
 							letter = 'K'
 						mappings[linkname] = {'server': hostname, 'letter': letter}
 
-		# get global links
-		for key in globalLinks.keys():
-			linkname = key
-			linkgoal = (globalLinks[key]['server'], key)
-			if not (linkname,linkgoal) in links:
-				links.append((linkname,linkgoal))
+		univention.debug.debug(univention.debug.LISTENER, univention.debug.INFO, "ucsschool-user-logonscripts: links %s" % links)
 
 		writeWindowsLinkSkripts(new['uid'][0], links, mappings)
-		if listener.baseConfig.has_key('ucsschool/userlogon/mac') and listener.baseConfig['ucsschool/userlogon/mac'].lower() in ['yes','true']:
+		if listener.baseConfig.is_true("ucsschool/userlogon/mac"):
 			writeMacLinkScripts(new['uid'][0], new['homeDirectory'][0], links)
 
 	elif old and not new:
