@@ -1,3 +1,9 @@
+ucs-school-lib (1.0.29-1) unstable; urgency=low
+
+  * extended school LDAP module; Bug #25707
+
+ -- Alexander Kläser <klaeser@univention.de>  Mon, 19 Mar 2012 18:03:12 +0100
+
 ucs-school-lib (1.0.28-1) unstable; urgency=low
 
   * Display.user(): make sure that the firstname is non-empty; Bug #25707

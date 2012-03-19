@@ -269,6 +269,7 @@ class SchoolSearchBase(object):
 		self._containerAdmins = ucr.get('ucsschool/ldap/default/container/admins', 'admins')
 		self._containerStudents = ucr.get('ucsschool/ldap/default/container/pupils', 'schueler')
 		self._containerStaff = ucr.get('ucsschool/ldap/default/container/staff', 'mitarbeiter')
+		self._containerTeachersAndStaff = ucr.get('ucsschool/ldap/default/container/teachers-and-staff', 'lehrer und mitarbeiter')
 		self._containerTeachers = ucr.get('ucsschool/ldap/default/container/teachers', 'lehrer')
 		self._containerClass = ucr.get('ucsschool/ldap/default/container/class', 'klassen')
 		self._containerRooms = ucr.get('ucsschool/ldap/default/container/rooms', 'raeume')
@@ -298,12 +299,28 @@ class SchoolSearchBase(object):
 		return "cn=%s,cn=%s,cn=groups,%s" % (self._containerClass, self._containerStudents, self.schoolDN)
 
 	@property
+	def rooms(self):
+		return "cn=%s,cn=groups,%s" % (self._containerRooms, self.schoolDN)
+
+	@property
 	def students(self):
 		return "cn=%s,cn=users,%s" % (self._containerStudents, self.schoolDN)
 
 	@property
 	def teachers(self):
 		return "cn=%s,cn=users,%s" % (self._containerTeachers, self.schoolDN)
+
+	@property
+	def teachersAndStaff(self):
+		return "cn=%s,cn=users,%s" % (self._containerTeachersAndStaff, self.schoolDN)
+
+	@property
+	def staff(self):
+		return "cn=%s,cn=users,%s" % (self._containerStaff, self.schoolDN)
+
+	@property
+	def admins(self):
+		return "cn=%s,cn=users,%s" % (self._containerAdmins, self.schoolDN)
 
 	@property
 	def classShares(self):
@@ -318,12 +335,31 @@ class SchoolSearchBase(object):
 		return "cn=printers,%s" % self.schoolDN
 
 	@property
-	def rooms(self):
-		return "cn=%s,cn=groups,%s" % (self._containerRooms, self.schoolDN)
-
-	@property
 	def computers(self):
 		return "cn=computers,%s" % self.schoolDN
+
+	def isStudent(self, userDN):
+		return userDN.endswith(self.students)
+
+	def isTeacher(self, userDN):
+		return userDN.endswith(self.teachers) or userDN.endswith(self.teachersAndStaff) or userDN.endswith(self.admins)
+
+	def isStaff(self, userDN):
+		return userDN.endswith(self.staff) or userDN.endswith(self.teachersAndStaff)
+
+	def isAdim(self, userDN):
+		return userDN.endswith(self.admins)
+
+	def isWorkgroup(self, groupDN):
+		# a workgroup cannot lie in a sub directory
+		cnPart = groupDN[:-len(self.workgroups)-1]
+		return cnPart.find(',') < 0
+
+	def isClass(self, groupDN):
+		return groupDN.endswith(self.classes)
+
+	def isRoom(self, groupDN):
+		return groupDN.endswith(self.rooms)
 
 
 class SchoolBaseModule( Base ):
@@ -382,17 +418,16 @@ class SchoolBaseModule( Base ):
 	def rooms( self, request, ldap_user_read = None, ldap_position = None, search_base = None ):
 		"""Returns a list of all available school"""
 		self.required_options( request, 'school' )
-		MODULE.info('### rooms: school=%s base=%s' % (search_base.school, search_base.rooms))
 		self.finished( request.id, self._groups( ldap_user_read, search_base.school, search_base.rooms ) )
 
 	def _users( self, ldap_connection, search_base, group = None, user_type = None, pattern = '' ):
 		"""Returns a list of all users given 'pattern', 'school' (search base) and 'group'"""
 		# get the correct base
-		base = search_base.users
+		bases = [ search_base.users ]
 		if user_type and user_type.lower() in ('teacher', 'teachers'):
-			base = search_base.teachers
+			bases = [ search_base.teachers, search_base.teachersAndStaff, search_base.admins ]
 		elif user_type and user_type.lower() in ('student', 'students'):
-			base = search_base.students
+			bases = [ search_base.students ]
 
 		# open the group
 		groupObj = None
@@ -408,18 +443,20 @@ class SchoolBaseModule( Base ):
 			# in this case, it is more efficient to get all users from the group directly
 			userModule = udm_modules.get('users/user')
 			userresult = []
-			for idn in filter( lambda u: u.endswith( base ), groupObj['users'] ):
-				userObj = userModule.object(None, ldap_connection, None, idn)
-				userObj.open()
-				if userObj:
-					userresult.append(userObj)
+			for ibase in bases:
+				for idn in filter( lambda u: u.endswith( ibase ), groupObj['users'] ):
+					userObj = userModule.object(None, ldap_connection, None, idn)
+					userObj.open()
+					if userObj:
+						userresult.append(userObj)
 		else:
 			# get the LDAP filter
 			ldapFilter = LDAP_Filter.forUsers( pattern )
 
 			# search for all users
-			userresult = udm_modules.lookup( 'users/user', None, ldap_connection, 
-					scope = 'sub', base = base, filter = ldapFilter)
+			for ibase in bases:
+				userresult.extend(udm_modules.lookup( 'users/user', None, ldap_connection,
+						scope = 'sub', base = ibase, filter = ldapFilter))
 
 			if groupObj:
 				# filter users to be members of the specified group
