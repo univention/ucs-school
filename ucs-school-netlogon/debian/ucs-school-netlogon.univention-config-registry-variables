@@ -1,6 +1,12 @@
-[ucsschool/netlogon/script/.*]
-Description[de]=Definiert Skripte (*.vbs, *.cmd, *.bat) die das netlogon Script ausführen soll (z.B., ucsschool/netlogon/script/40=mylogon.cmd)
-Description[en]=Defines scripts (*.vbs, *.cmd, *.bat) which will be executed by the logon script (e.g., ucsschool/netlogon/script/40=mylogon.cmd)
+[ucsschool/netlogon/.*/script]
+Description[de]=Definiert Skripte (*.vbs, *.cmd, *.bat) die das netlogon Script ausführen soll (z.B., ucsschool/netlogon/<package>/script=mylogon.cmd)
+Description[en]=Defines scripts (*.vbs, *.cmd, *.bat) which will be executed by the logon script (e.g., ucsschool/netlogon/<package>/script=mylogon.cmd)
+Type=str
+Categories=ucsschool-netlogon
+
+[ucsschool/netlogon/.*/script/priority]
+Description[de]=Definiert Ausführungsreihenfolge der netlogon Scripte (z.B., ucsschool/netlogon/<package>/script/priority=10)
+Description[en]=Defines the execution order of the netlogon scripts (e.g., ucsschool/netlogon/<package>/script/priority=10)
 Type=str
 Categories=ucsschool-netlogon
 
