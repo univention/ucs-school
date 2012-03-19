@@ -1,0 +1,29 @@
+diff -Naur italc-2.0.0.orig//lib/include/ItalcCoreConnection.h italc-2.0.0/lib/include/ItalcCoreConnection.h
+--- italc-2.0.0.orig//lib/include/ItalcCoreConnection.h	2011-08-03 23:18:00.000000000 +0200
++++ italc-2.0.0/lib/include/ItalcCoreConnection.h	2012-03-19 15:50:00.000000000 +0100
+@@ -106,6 +106,9 @@
+ 
+ 	void reportSlaveStateFlags();
+ 
++signals:
++	void receivedUserInfo( const QString &, const QString & );
++	void receivedSlaveStateFlags( const int );
+ 
+ private slots:
+ 	void initNewClient( rfbClient *client );
+diff -Naur italc-2.0.0.orig//lib/src/ItalcCoreConnection.cpp italc-2.0.0/lib/src/ItalcCoreConnection.cpp
+--- italc-2.0.0.orig//lib/src/ItalcCoreConnection.cpp	2011-08-03 23:18:00.000000000 +0200
++++ italc-2.0.0/lib/src/ItalcCoreConnection.cpp	2012-03-19 15:51:29.000000000 +0100
+@@ -132,10 +132,12 @@
+ 		{
+ 			m_user = m.arg( "username" );
+ 			m_userHomeDir = m.arg( "homedir" );
++			emit receivedUserInfo( m_user, m_userHomeDir );
+ 		}
+ 		else if( m.cmd() == ItalcCore::ReportSlaveStateFlags )
+ 		{
+ 			m_slaveStateFlags = m.arg( "slavestateflags" ).toInt();
++			emit receivedSlaveStateFlags( m_slaveStateFlags );
+ 		}
+ 		// TODO: plugin hook
+ 		else

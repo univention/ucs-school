@@ -38,6 +38,7 @@ override_dh_build:
 
 override_dh_clean:
 	tar xvfj italc-2.0.0.tar.bz2 --strip-components=1
+	patch -p1 -i signals-for-recd-data.patch
 	dh_clean
 
 override_dh_install:                                                                                                                                                                                            

@@ -1,3 +1,10 @@
+italc (1:2.0.4-1) unstable; urgency=low
+
+  * add two QT signals that are emitted when new user information or state
+    flags are received; Bug #25702
+
+ -- Andreas Büsching <buesching@univention.de>  Mon, 19 Mar 2012 15:59:27 +0100
+
 italc (1:2.0.3-1) unstable; urgency=low
 
   * move joinscript to later (after samba) (99) (Bug #20261)
