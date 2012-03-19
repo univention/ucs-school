@@ -79,7 +79,7 @@ namespace ItalcCore {
 } ;
 
 
-class ItalcCoreConnection {
+class ItalcCoreConnection : QObject {
 
 %TypeHeaderCode
 #include <libitalc/ItalcCoreConnection.h>
@@ -130,6 +130,9 @@ public:
 
 	void reportSlaveStateFlags();
 
+signals:
+	void receivedUserInfo( const QString &, const QString & );
+	void receivedSlaveStateFlags( const int );
 
 private:
 	ItalcCoreConnection( const ItalcCoreConnection& );

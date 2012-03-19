@@ -1,3 +1,9 @@
+ucs-school-italc (6.0.1-1) unstable; urgency=low
+
+  * add signals to ItalCoreConnection class; Bug #25702
+
+ -- Andreas Büsching <buesching@univention.de>  Mon, 19 Mar 2012 16:04:21 +0100
+
 ucs-school-italc (6.0.0-0) unstable; urgency=low
 
   * bumped package version for UCS@school 3.0
