@@ -44,6 +44,12 @@ dojo.declare("umc.modules._distribution.DetailPage", [ umc.widgets.Page, umc.wid
 	// reference to the module's store object
 	moduleStore: null,
 
+	// reference to umcpCommand with the correct flavor
+	umcpCommand: null,
+
+	// currently active flavor of the module
+	moduleFlavor: '',
+
 	// use i18n information from umc.modules.distribution
 	i18nClass: 'umc.modules.distribution',
 
@@ -133,6 +139,7 @@ dojo.declare("umc.modules._distribution.DetailPage", [ umc.widgets.Page, umc.wid
 				name: 'school',
 				label: this._('School'),
 				dynamicValues: 'distribution/schools',
+				umcpCommand: this.umcpCommand,
 				autoHide: true
 			}, {
 				type: 'ComboBox',
@@ -142,14 +149,15 @@ dojo.declare("umc.modules._distribution.DetailPage", [ umc.widgets.Page, umc.wid
 				staticValues: [
 					{ id: 'None', label: this._('All pupils') }
 				],
-				dynamicValues: 'distribution/classes'
+				dynamicValues: 'distribution/classes',
+				umcpCommand: this.umcpCommand
 			}, {
 				type: 'TextBox',
 				name: 'pattern',
 				label: this._('Search name')
 			}],
 			queryCommand: dojo.hitch(this, function(options) {
-				return umc.tools.umcpCommand('distribution/users', options).then(function(data) {
+				return this.umcpCommand('distribution/users', options).then(function(data) {
 					return data.result;
 				});
 			}),

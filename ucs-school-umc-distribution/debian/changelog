@@ -1,3 +1,11 @@
+ucs-school-umc-distribution (0.0.6-1) unstable; urgency=low
+
+  * added flavors, adapted join script
+  * added adoption functionality
+  Bug #25707
+
+ -- Alexander Kläser <klaeser@univention.de>  Mon, 19 Mar 2012 18:04:35 +0100
+
 ucs-school-umc-distribution (0.0.5-1) unstable; urgency=low
 
   * first prototype; Bug #25707

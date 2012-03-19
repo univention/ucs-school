@@ -128,7 +128,7 @@ dojo.declare("umc.modules.distribution", [ umc.widgets.Module, umc.i18n.Mixin ],
 			callback: dojo.hitch(this, '_editObject')
 		}, {
 			name: 'distribute',
-			label: dojo.hitch(this, function(item) { 
+			label: dojo.hitch(this, function(item) {
 				if (!item) {
 					return this._('Distribution');
 				}
@@ -138,6 +138,21 @@ dojo.declare("umc.modules.distribution", [ umc.widgets.Module, umc.i18n.Mixin ],
 			isStandardAction: true,
 			isMultiAction: false,
 			callback: dojo.hitch(this, '_dummy')
+		}, {
+			name: 'adobt',
+			label: dojo.hitch(this, function(item) {
+				if (!item) {
+					return this._('Adoption');
+				}
+				return this._('adopt');
+			}),
+			canExecute: function(item) {
+				return item.sender != umc.tools.status('username');
+			},
+			description: this._('Transfer the ownership of the selected project to your account.'),
+			isStandardAction: true,
+			isMultiAction: false,
+			callback: dojo.hitch(this, '_adopt')
 		}, {
 			name: 'remove',
 			label: this._('Remove'),
@@ -160,17 +175,11 @@ dojo.declare("umc.modules.distribution", [ umc.widgets.Module, umc.i18n.Mixin ],
 		}, {
 			name: 'recipients',
 			label: this._('#Users'),
-			width: 'adjust',
-			formatter: function(recipients) {
-				return recipients.length;
-			}
+			width: 'adjust'
 		}, {
 			name: 'files',
 			label: this._('#Files'),
-			width: 'adjust',
-			formatter: function(files) {
-				return files.length;
-			}
+			width: 'adjust'
 		}];
 
 		// generate the data grid
@@ -244,7 +253,9 @@ dojo.declare("umc.modules.distribution", [ umc.widgets.Module, umc.i18n.Mixin ],
 
 		// create a DetailPage instance
 		this._detailPage = new umc.modules._distribution.DetailPage({
-			moduleStore: this.moduleStore
+			moduleStore: this.moduleStore,
+			moduleFlavor: this.moduleFlavor,
+			umcpCommand: dojo.hitch(this, 'umcpCommand')
 		});
 		this.addChild(this._detailPage);
 
@@ -267,13 +278,53 @@ dojo.declare("umc.modules.distribution", [ umc.widgets.Module, umc.i18n.Mixin ],
 			return;
 		}
 
+		if (this.moduleFlavor == 'teacher' && items[0].sender != umc.tools.status('username')) {
+			// a teacher may only edit his own project
+			umc.dialog.alert(this._('Only the owner of a project is able to edit its details. If necessary, you are able to transfer the ownership of a project to your account by executing the action "adopt".'));
+			return;
+		}
+
+		// everything fine, we may edit the project
 		this.selectChild(this._detailPage);
 		this._detailPage.load(ids[0]);
+	},
+
+	_adopt: function(ids, items) {
+		if (ids.length != 1) {
+			// should not happen
+			return;
+		}
+
+		umc.dialog.confirm(this._('Please confirm to transfer the ownership of the project "%s" to your account.', items[0].description), [{
+			label: this._('Cancel'),
+			name: 'cancel',
+			'default': true
+		}, {
+			label: this._('Adopt project'),
+			name: 'adopt'
+		}]).then(dojo.hitch(this, function(response) {
+			if (response === 'adopt') {
+				this.standby(true);
+				this.umcpCommand('distribution/adopt', ids).then(dojo.hitch(this, function() {
+					this.moduleStore.onChange();
+					this.standby(false);
+				}), dojo.hitch(this, function() {
+					this.moduleStore.onChange();
+					this.standby(false);
+				}));
+			}
+		}));
 	},
 
 	_delete: function(ids, items) {
 		if (ids.length != 1) {
 			// should not happen
+			return;
+		}
+
+		if (this.moduleFlavor == 'teacher' && items[0].sender != umc.tools.status('username')) {
+			// a teacher may only remove his own project
+			umc.dialog.alert(this._('Only the owner of a project is able to remove it.'));
 			return;
 		}
 

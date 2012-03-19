@@ -41,9 +41,20 @@ joinscript_init
 
 umc_init
 
-umc_operation_create "distribution-all" "Teaching material" "" "distribution/*"
-ucs_school_policies_create "distribution-admin"
-ucs_school_policies_append "distribution-all" "distribution-admin"
+# operation sets for admins (they can delete and see any project) and teachers
+# (the can delete and see only their own projects)
+umc_operation_create "distribution-all" "Material distribution (admins)" "" "distribution/*"
+umc_operation_create "distribution-teacher" "Material distribution (teachers)" "teacher" "distribution/*"
+
+# create empty UMC access policies
+ucs_school_policies_create
+
+# default policies for all operations (for admins)
+umc_policy_append "default-umc-all" "distribution-all"
+# policy for school admins
+umc_policy_append "ucsschool-umc-admins-default" "distribution-all"
+# policy for teachers
+umc_policy_append "ucsschool-umc-teachers-default" "distribution-teacher"
 
 joinscript_save_current_version
 

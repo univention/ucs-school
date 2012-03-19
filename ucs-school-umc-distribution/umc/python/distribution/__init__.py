@@ -34,7 +34,7 @@
 from univention.management.console.config import ucr
 
 from univention.lib.i18n import Translation
-from univention.management.console.modules import UMC_OptionTypeError, Base
+from univention.management.console.modules import UMC_OptionTypeError, UMC_CommandError, Base
 from univention.management.console.log import MODULE
 from univention.management.console.protocol.definitions import *
 
@@ -69,49 +69,66 @@ class Instance( SchoolBaseModule ):
 		result = [ {
 			'id': i.dn,
 			'label': Display.user(i)
-		} for i in self._users( ldap_connection, search_base, group = group, user_type = 'pupil', pattern = request.options.get('pattern') ) ]
+		} for i in self._users( ldap_user_read, search_base, group = group, user_type = 'pupil', pattern = request.options.get('pattern') ) ]
 		self.finished( request.id, result )
 
 	def query( self, request ):
 		MODULE.info( 'distribution.query: options: %s' % str( request.options ) )
 		pattern = request.options.get('pattern', '').lower()
-		result = [ i.dict for i in util.Project.list() if i.name.lower().find(pattern) >= 0 or i.description.lower().find(pattern) >= 0 ]
-		for i in result:
-			i['sender'] = i['sender'].username
-			i['recipients'] = [ j.username for j in i['recipients'] ]
+		filter = request.options.get('filter', 'private').lower()
+		result = [ dict(
+				# only show necessary information
+				description = i.description,
+				name = i.name,
+				sender = i.sender.username,
+				recipients = len(i.recipients),
+				files = len(i.files),
+				isDistributed = i.isDistributed
+			) for i in util.Project.list()
+			# match the pattern
+			if (i.name.lower().find(pattern) >= 0 or i.description.lower().find(pattern) >= 0)
+			# match also the category
+			and (filter == 'all' or i.sender.dn == self._user_dn)
+		]
 		MODULE.info( 'distribution.query: results: %s' % str( result ) )
 		self.finished( request.id, result )
+
+	@LDAP_Connection()
+	def _get_sender( self, request, ldap_user_read = None, ldap_position = None, search_base = None ):
+		'''Return a User instance of the currently logged in user.'''
+		sender = None
+		try:
+			# open UDM object
+			userModule = udm_modules.get('users/user')
+			obj = userModule.object(None, ldap_user_read, None, self._user_dn)
+			obj.open()
+
+			# create a new User object
+			sender = util.User(obj.info)
+			sender.dn = obj.dn
+		except udm_exceptions.noObject as e:
+			self.finished(request.id, None, _('Failed to load user information: %s') % e, False)
+			MODULE.error('Could not find user DN: %s' % self._user_dn)
+		except Exception as e:
+			self.finished(request.id, None, str(e), False)
+			MODULE.error('Could not open user DN: %s (%s)' % (self._user_dn, e))
+
+		return sender
 
 	@LDAP_Connection()
 	def _save( self, request, doUpdate = True, ldap_user_read = None, ldap_position = None, search_base = None ):
 		# make sure that we got a list
 		if not isinstance(request.options, (tuple, list)):
-			raise UMC_OptionTypeError( 'unknown group object' )
+			raise UMC_OptionTypeError( 'Expected list of strings, but got: %s' % str(ids) )
 
-		userModule = udm_modules.get('users/user')
-		sender = None
-		if not doUpdate:
-			# for a new project, try to open the UDM user object of the current user
-			try:
-				# open UDM object
-				obj = userModule.object(None, ldap_user_read, None, self._user_dn)
-				obj.open()
-
-				# create a new User object
-				sender = util.User(obj.info)
-				sender.dn = obj.dn
-			except udm_exceptions.noObject as e:
-				self.finished(request.id, None, _('Failed to load user information: %s') % e, False)
-				MODULE.error('Could not find user DN: %s' % self._user_dn)
-				return
-			except Exception as e:
-				self.finished(request.id, None, str(e), False)
-				MODULE.error('Could not open user DN: %s (%s)' % (self._user_dn, e))
-				return
+		# try to open the UDM user object of the current user
+		sender = self._get_sender(request)
+		if not sender:
+			return
 
 		# try to create all specified projects
 		result = []
-
+		userModule = udm_modules.get('users/user')
 		for ientry in request.options:
 			iprops = ientry.get('object', {})
 			try:
@@ -132,6 +149,10 @@ class Instance( SchoolBaseModule ):
 				else:
 					# create a new project
 					project = util.Project(iprops)
+
+				# make sure that the project owner himself is modifying the project
+				if doUpdate and project.sender.dn != self._user_dn:
+					raise IOError(_('The project can only be modified by the owner himself'))
 
 				# handle time settings for distribution/collection of project files
 				for jsuffix, jprop, jname in (('distribute', 'starttime', _('Project distribution')), ('collect', 'deadline', _('Project collection'))):
@@ -251,7 +272,8 @@ class Instance( SchoolBaseModule ):
 		MODULE.info( 'distribution.add: options: %s' % str( request.options ) )
 		self._save(request, False)
 
-	def get( self, request ):
+	@LDAP_Connection()
+	def get( self, request, search_base = None, ldap_user_read = None, ldap_position = None ):
 		"""Returns the objects for the given IDs
 
 		requests.options = [ <ID>, ... ]
@@ -259,6 +281,7 @@ class Instance( SchoolBaseModule ):
 		return: [ { ... }, ... ]
 		"""
 		MODULE.info( 'distribution.get: options: %s' % str( request.options ) )
+		MODULE.info( '### reques.flavor: %s' % str( request.flavor ) )
 
 		# try to load all given projects
 		ids = request.options
@@ -270,6 +293,11 @@ class Instance( SchoolBaseModule ):
 				if not iproject:
 					result.append(None)
 					continue
+
+				# make sure that only the project owner himself (or an admin) is able
+				# to see the content of a project
+				if request.flavor == 'teacher' and iproject.sender.dn != self._user_dn:
+					raise UMC_CommandError(_('Project details are only visible to the project owner himself or an administrator.'))
 
 				# prepare date and time properties for distribution/collection of project files
 				props = iproject.dict
@@ -298,8 +326,43 @@ class Instance( SchoolBaseModule ):
 		else:
 			MODULE.warn( 'distribution.get: wrong parameter, expected list of strings, but got: %s' % str( ids ) )
 			raise UMC_OptionTypeError( 'Expected list of strings, but got: %s' % str(ids) )
+
+		# return the results
 		MODULE.info( 'distribution.get: results: %s' % str( result ) )
 		self.finished( request.id, result )
+
+	def adopt( self, request ):
+		# make sure that we got a list
+		if not isinstance(request.options, (tuple, list)):
+			raise UMC_OptionTypeError( 'Expected list of strings, but got: %s' % str(ids) )
+
+		# try to open the UDM user object of the current user
+		sender = self._get_sender(request)
+		if not sender:
+			return
+
+		# update the sender information of the selected projects
+		ids = request.options
+		result = []
+		for iid in ids:
+			try:
+				# make sure that project could be loaded
+				iproject = util.Project.load(iid)
+				if not iproject:
+					raise IOError( _('Project "%s" could not be loaded') % iid )
+
+				# project was loaded successfully
+				iproject.sender = sender
+				iproject.save()
+			except (ValueError, IOError) as e:
+				result.append(dict(
+					name = iid,
+					success = False,
+					details = str(e)
+				))
+
+		# return the results
+		self.finished(request.id, result)
 
 	def remove( self, request ):
 		"""Removes the specified projects
@@ -309,18 +372,24 @@ class Instance( SchoolBaseModule ):
 		"""
 		MODULE.info( 'distribution.remove: options: %s' % str( request.options ) )
 
-		# try to load all given projects
 		ids = request.options
-		result = []
-		if isinstance( ids, ( list, tuple ) ):
-			# list of all project properties (dicts) or None if project is not valid
-			for iproject in [ util.Project.load(ientry.get('object')) for ientry in ids ]:
-				# make sure that project could be loaded
-				if iproject:
-					iproject.purge()
-		else:
+		if not isinstance( ids, ( list, tuple ) ):
 			MODULE.warn( 'distribution.remove: wrong parameter, expected list of strings, but got: %s' % str( ids ) )
 			raise UMC_OptionTypeError( 'Expected list of strings, but got: %s' % str(ids) )
 
-		self.finished( request.id, result )
+		# list of all project properties (dicts) or None if project is not valid
+		for iproject in [ util.Project.load(ientry.get('object')) for ientry in ids ]:
+			# make sure that project could be loaded
+			if not iproject:
+				continue
+
+			# make sure that only the project owner himself (or an admin) is able
+			# to see the content of a project
+			if request.flavor == 'teacher' and iproject.sender.dn != self._user_dn:
+				raise UMC_CommandError(_('Only the owner himself or an administrator may delete a project.'))
+
+			# purge the project
+			iproject.purge()
+
+		self.finished( request.id, None )
 

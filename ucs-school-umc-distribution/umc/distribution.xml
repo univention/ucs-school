@@ -3,6 +3,14 @@
 	<module id="distribution" icon="distribution" version="1.0">
 	<name>Distribute materials</name>
 	<description>Create, distribute, and collect teaching materials</description>
+	<flavor icon="distribution" id="teacher">
+	  <name>Distribute materials</name>
+	  <description>Create, distribute, and collect teaching materials</description>
+	</flavor>
+	<flavor icon="distribution" id="admin" overwrites="teacher">
+	  <name>Distribute materials</name>
+	  <description>Create, distribute, and collect teaching materials</description>
+	</flavor>
 	<categories>
 		<category name="ucs-school-class"/>
 	</categories>
@@ -11,6 +19,7 @@
 	<command name="distribution/put" function="put"></command>
 	<command name="distribution/add" function="add"></command>
 	<command name="distribution/remove" function="remove"></command>
+	<command name="distribution/adopt" function="adopt"></command>
 	<command name="distribution/schools" function="schools"></command>
 	<command name="distribution/classes" function="classes"></command>
 	<command name="distribution/users" function="users"></command>
