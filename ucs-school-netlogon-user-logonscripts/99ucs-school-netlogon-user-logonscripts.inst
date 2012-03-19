@@ -48,6 +48,6 @@ univention-config-registry set \
     ucsschool/userlogon/commonshares/server/Marktplatz?"$hostname" \
     ucsschool/userlogon/commonshares/letter/Marktplatz?"M" \
     ucsschool/userlogon/classshareletter?"K" \
-    ucsschool/netlogon/script/20?'user\%USERNAME%.vbs'
+    ucsschool/netlogon/ucs-school-netlogon-user-logonscripts/script?'user\%USERNAME%.vbs'
 
 joinscript_save_current_version

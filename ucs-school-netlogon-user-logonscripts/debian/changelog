@@ -1,3 +1,9 @@
+ucs-school-netlogon-user-logonscripts (7.0.2-8) unstable; urgency=low
+
+  * fixed netlogon ucr registration (Bug #26517) 
+
+ -- Felix Botner <botner@univention.de>  Mon, 19 Mar 2012 18:14:22 +0100
+
 ucs-school-netlogon-user-logonscripts (7.0.2-7) unstable; urgency=low
 
   * listener module changes, postinst fix (Bug #25777) 
