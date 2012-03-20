@@ -60,16 +60,22 @@ class Instance( SchoolBaseModule ):
 
 	@LDAP_Connection()
 	def users( self, request, search_base = None, ldap_user_read = None, ldap_position = None ):
-		# parse group parameter
-		group = request.options.get('group')
-		if not group or group == 'None':
-			group = None
+		# parse parameter
+		group = None
+		user_type = None
+		param = request.options.get('group')
+		if not param or param == '$pupils$':
+			user_type = 'pupils'
+		elif param == '$teachers$':
+			user_type = 'teachers'
+		else:
+			group = param
 
 		# get list of all users matching the given pattern
 		result = [ {
 			'id': i.dn,
 			'label': Display.user(i)
-		} for i in self._users( ldap_user_read, search_base, group = group, user_type = 'pupil', pattern = request.options.get('pattern') ) ]
+		} for i in self._users( ldap_user_read, search_base, group = group, user_type = user_type, pattern = request.options.get('pattern') ) ]
 		self.finished( request.id, result )
 
 	def query( self, request ):
@@ -178,6 +184,8 @@ class Instance( SchoolBaseModule ):
 				if 'recipients' in iprops:
 					# lookup the users in LDAP and save them to the project
 					users = []
+					MODULE.info('### iprops: %s' % iprops)
+					MODULE.info('### recipients: %s' % iprops['recipients'])
 					for idn in iprops.get('recipients', []):
 						try:
 							# try to load the UDM user object given its DN
@@ -185,14 +193,15 @@ class Instance( SchoolBaseModule ):
 							iobj.open()
 
 							# create a new User object, it will only remember its relevant information
-							iuser = util.User(i.info)
-							iuser.dn = i.dn
+							iuser = util.User(iobj.info)
+							iuser.dn = iobj.dn
 							users.append(iuser)
 						except udm_exceptions.noObject as e:
 							MODULE.error('Could not find user DN: %s' % idn)
 						except Exception as e:
 							MODULE.error('Could not open user DN: %s (%s)' % (idn, e))
 					project.recipients = users
+					MODULE.info('recipients: %s' % users)
 
 				if not doUpdate:
 					# set the sender (i.e., owner) of the project
@@ -281,7 +290,6 @@ class Instance( SchoolBaseModule ):
 		return: [ { ... }, ... ]
 		"""
 		MODULE.info( 'distribution.get: options: %s' % str( request.options ) )
-		MODULE.info( '### reques.flavor: %s' % str( request.flavor ) )
 
 		# try to load all given projects
 		ids = request.options
@@ -317,7 +325,11 @@ class Instance( SchoolBaseModule ):
 
 				# adjust sender / recipients properties
 				props['sender'] = props['sender'].username
-				props['recipients'] = [ j.username for j in props['recipients'] ]
+				props['recipients'] = [ dict(
+						id=j.dn,
+						label=Display.user(j.dict)
+					) for j in props['recipients']
+				]
 
 				# append final dict to result list
 				MODULE.info('final project dict: %s' % props)

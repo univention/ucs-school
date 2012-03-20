@@ -147,7 +147,8 @@ dojo.declare("umc.modules._distribution.DetailPage", [ umc.widgets.Page, umc.wid
 				label: this._('User group / class'),
 				depends: 'school',
 				staticValues: [
-					{ id: 'None', label: this._('All pupils') }
+					{ id: '$pupils$', label: this._('All pupils') },
+					{ id: '$teachers$', label: this._('All teachers') }
 				],
 				dynamicValues: 'distribution/classes',
 				umcpCommand: this.umcpCommand
@@ -162,11 +163,8 @@ dojo.declare("umc.modules._distribution.DetailPage", [ umc.widgets.Page, umc.wid
 				});
 			}),
 			formatter: function(dnList) {
-				var tmp = dojo.map(dnList, function(idn) {
-					return {
-						id: idn,
-						label: umc.tools.explodeDn(idn, true).shift() || ''
-					};
+				var tmp = dojo.map(dnList, function(i) {
+					return i;
 				});
 				return tmp;
 			},
