@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-computerroom\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2012-02-15 00:49+0100\n"
+"POT-Creation-Date: 2012-03-11 11:14+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -12,118 +12,142 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: umc/js/computerroom.js:254
+#: umc/js/computerroom.js:270
 msgid "1st lesson"
 msgstr ""
 
-#: umc/js/computerroom.js:255
+#: umc/js/computerroom.js:271
 msgid "2nd lesson"
 msgstr ""
 
-#: umc/js/computerroom.js:256
+#: umc/js/computerroom.js:272
 msgid "3rd lesson"
 msgstr ""
 
-#: umc/js/computerroom.js:257
+#: umc/js/computerroom.js:273
 msgid "4th lesson"
 msgstr ""
 
-#: umc/js/computerroom.js:258
+#: umc/js/computerroom.js:274
 msgid "6th lesson"
 msgstr ""
 
-#: umc/js/computerroom.js:246
+#: umc/js/computerroom.js:251
 msgid "Active shares"
 msgstr ""
 
-#: umc/js/computerroom.js:241
+#: umc/js/computerroom.js:245
 msgid "Active web access profile"
 msgstr ""
 
-#: umc/js/computerroom.js:228
+#: umc/js/computerroom.js:358
+msgid "Cancel"
+msgstr ""
+
+#: umc/js/computerroom.js:344 umc/js/computerroom.js:372
+msgid "Change room"
+msgstr ""
+
+#: umc/js/computerroom.js:329
 msgid "Choose the school"
 msgstr ""
 
-#: umc/js/computerroom.js:193
-msgid "Description"
-msgstr ""
-
-#: umc/js/computerroom.js:298
+#: umc/js/computerroom.js:313
 msgid "Feature not yet implemented"
 msgstr ""
 
-#: umc/js/computerroom.js:142
+#: umc/js/computerroom.js:262
+msgid "Free printing"
+msgstr ""
+
+#: umc/js/computerroom.js:164
 msgid "Lock"
 msgstr ""
 
-#: umc/js/computerroom.js:173
+#: umc/js/computerroom.js:195
 msgid "Lock input devices"
 msgstr ""
 
-#: umc/js/computerroom.js:149
+#: umc/js/computerroom.js:171
 msgid "Logout user"
 msgstr ""
 
-#: umc/js/computerroom.js:189
+#: umc/js/computerroom.js:261
+msgid "Moderated printing"
+msgstr ""
+
+#: umc/js/computerroom.js:211
 msgid "Name"
 msgstr ""
 
-#: umc/js/computerroom.js:251
+#: umc/js/computerroom.js:100
+msgid "No room selected"
+msgstr ""
+
+#: umc/js/computerroom.js:257
+msgid "Print mode"
+msgstr ""
+
+#: umc/js/computerroom.js:260
+msgid "Printing deactivated"
+msgstr ""
+
+#: umc/js/computerroom.js:267
 msgid "Reservation until end of"
 msgstr ""
 
-#: umc/js/computerroom.js:167
+#: umc/js/computerroom.js:189
 msgid "Restart computer"
 msgstr ""
 
-#: umc/js/computerroom.js:97
-msgid "Room overview"
+#: umc/js/computerroom.js:122
+msgid "Room administration"
 msgstr ""
 
-#: umc/js/computerroom.js:229
+#: umc/js/computerroom.js:330
 msgid "School"
 msgstr ""
 
-#: umc/js/computerroom.js:137
+#: umc/js/computerroom.js:159
 msgid "Screen"
 msgstr ""
 
-#: umc/js/computerroom.js:120
+#: umc/js/computerroom.js:142
 msgid "Screenshot"
 msgstr ""
 
-#: umc/js/computerroom.js:106
-msgid "Search results"
-msgstr ""
-
-#: umc/js/computerroom.js:235
+#: umc/js/computerroom.js:99 umc/js/computerroom.js:336
 msgid "Selected room"
 msgstr ""
 
-#: umc/js/computerroom.js:122
+#: umc/js/computerroom.js:144
 msgid "Show"
 msgstr ""
 
-#: umc/js/computerroom.js:155
+#: umc/js/computerroom.js:177
 msgid "Shutdown computer"
 msgstr ""
 
-#: umc/js/computerroom.js:179
+#: umc/js/computerroom.js:201
 msgid "Start presentation"
 msgstr ""
 
-#: umc/js/computerroom.js:161
+#: umc/js/computerroom.js:183
 msgid "Switch on computer"
 msgstr ""
 
-#: umc/js/computerroom.js:140
+#: umc/js/computerroom.js:162
 msgid "Unlock"
 msgstr ""
 
-#: umc/js/computerroom.js:197
+#: umc/js/computerroom.js:215
 msgid "User"
 msgstr ""
 
-#: umc/js/computerroom.js:129
+#: umc/js/computerroom.js:151
 msgid "View"
+msgstr ""
+
+#: umc/js/computerroom.js:101
+msgid "change room"
 msgstr ""

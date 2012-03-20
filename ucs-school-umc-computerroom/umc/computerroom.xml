@@ -10,5 +10,6 @@
 	<command name="computerroom/schools" function="schools"></command>
 	<command name="computerroom/rooms" function="rooms"></command>
 	<command name="computerroom/get" function="get"></command>
+	<command name="computerroom/update" function="update"></command>
 	</module>
 </umc>

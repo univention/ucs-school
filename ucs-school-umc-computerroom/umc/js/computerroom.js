@@ -26,11 +26,14 @@
  * /usr/share/common-licenses/AGPL-3; if not, see
  * <http://www.gnu.org/licenses/>.
  */
-/*global console dojo dojox dijit umc */
+/*global window console dojo dojox dijit umc */
 
 dojo.provide("umc.modules.computerroom");
 
 dojo.require("dijit.Dialog");
+dojo.require("dojo.data.ItemFileWriteStore");
+dojo.require("dojo.store.DataStore");
+dojo.require("dojo.store.Memory");
 dojo.require("umc.dialog");
 dojo.require("umc.i18n");
 dojo.require("umc.tools");
@@ -67,6 +70,11 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 	_titlePane: null,
 
 	_metaInfo: null,
+
+	_dataStore: null,
+	_objStore: null,
+
+	_updateTimer: null,
 
 	postMixInProperties: function() {
 		// is called after all inherited properties/methods have been mixed
@@ -145,6 +153,9 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 			}),
 			isStandardAction: true,
 			isMultiAction: false,
+			canExecute: function( item ) {
+				return item.connection == 'connected';
+			},
 			callback: dojo.hitch(this, '_dummy')
 		}, {
 			name: 'view',
@@ -153,48 +164,66 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 			isMultiAction: false,
 			callback: dojo.hitch(this, '_dummy')
 		}, {
-			name: 'lockScreen',
+			name: 'ScreenLock',
 			label: dojo.hitch(this, function(item) {
-				if (!item) {
-					return this._('Screen');
+				if ( !item ) { // column title
+					return this._( 'Screen' );
 				}
-				if (item.locked) {
+				if (item.ScreenLock[0] == true) {
 					return this._('Unlock');
 				}
 				return this._('Lock');
 			}),
 			isStandardAction: true,
 			isMultiAction: false,
+			canExecute: function( item ) {
+				return item.connection == 'connected';
+			},
 			callback: dojo.hitch(this, '_dummy')
 		}, {
 			name: 'logout',
 			label: this._('Logout user'),
 			isStandardAction: false,
 			isMultiAction: false,
+			canExecute: function( item ) {
+				return item.connection == 'connected' && item.user;
+			},
 			callback: dojo.hitch(this, '_dummy')
 		}, {
 			name: 'computerShutdown',
 			label: this._('Shutdown computer'),
 			isStandardAction: false,
 			isMultiAction: false,
+			canExecute: function( item ) {
+				return item.connection == 'connected';
+			},
 			callback: dojo.hitch(this, '_dummy')
 		}, {
 			name: 'computerStart',
 			label: this._('Switch on computer'),
 			isStandardAction: false,
 			isMultiAction: false,
+			canExecute: function( item ) {
+				return item.connection == 'error';
+			},
 			callback: dojo.hitch(this, '_dummy')
 		}, {
 			name: 'computerRestart',
 			label: this._('Restart computer'),
 			isStandardAction: false,
 			isMultiAction: false,
+			canExecute: function( item ) {
+				return item.connection == 'connected';
+			},
 			callback: dojo.hitch(this, '_dummy')
 		}, {
 			name: 'lockInput',
 			label: this._('Lock input devices'),
 			isStandardAction: false,
 			isMultiAction: false,
+			canExecute: function( item ) {
+				return item.connection == 'connected' && item.user;
+			},
 			callback: dojo.hitch(this, '_dummy')
 		}, {
 			name: 'presentation',
@@ -202,6 +231,9 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 			isStandardAction: false,
 			isContextAction: false,
 			isMultiAction: false,
+			canExecute: function( item ) {
+				return item.connection == 'connected' && item.user;
+			},
 			callback: dojo.hitch(this, '_dummy')
 		}];
 
@@ -209,11 +241,11 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 		var columns = [{
 			name: 'name',
 			label: this._('Name'),
-			width: '40%'
+			// width: '30%'
 		}, {
 			name: 'user',
 			label: this._('User'),
-			width: '60%'
+			// width: '30%'
 		}];
 
 		// generate the data grid
@@ -224,12 +256,9 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 			actions: actions,
 			// defines which data fields are displayed in the grids columns
 			columns: columns,
-			// a generic UMCP module store object is automatically provided
-			// as this.moduleStore (see also umc.store.getModuleStore())
-			moduleStore: this.moduleStore
-			// initial query
-			//query: { pattern: '' }
-		});
+			moduleStore: new dojo.store.Memory()
+		} );
+
 
 		// add the grid to the title pane
 		this._titlePane.addChild(this._grid);
@@ -303,6 +332,15 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 		// we need to call page's startup method manually as all widgets have
 		// been added to the page container object
 		this._searchPage.startup();
+		this._dataStore = new dojo.data.ItemFileWriteStore( { data : {
+			identifier : 'id',
+			label: 'name',
+			items: []
+		} } );
+		this._objStore = new dojo.store.DataStore( { store : this._dataStore } );
+		this._grid.moduleStore = this._objStore;
+		this._grid._dataStore = this._dataStore;
+		this._grid._grid.setStore( this._dataStore );
 	},
 
 	postCreate: function() {
@@ -345,7 +383,7 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 			style: 'float:right',
 			callback: dojo.hitch(this, function(vals) {
 				// reload the grid
-				this._grid.filter(vals);
+				this.queryRoom( vals.school, vals.room );
 
 				// update the header text containing the room
 				this._updateHeader(vals.room);
@@ -360,7 +398,7 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 		}];
 
 		// generate the search form
-		var form = new umc.widgets.Form({
+		form = new umc.widgets.Form({
 			// property that defines the widget's position in a dijit.layout.BorderContainer
 			widgets: widgets,
 			layout: [ [ 'school', 'room' ] ],
@@ -375,6 +413,30 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 			style: 'max-width: 400px;'
 		});
 		dialog.show();
+	},
+
+	queryRoom: function( school, room ) {
+		this.umcpCommand( 'computerroom/query', {
+			school: school,
+			room: room
+		} ).then( dojo.hitch( this, function( response ) {
+			dojo.forEach( response.result, function( item ) {
+				this._objStore.put( item );
+			}, this );
+			if ( this._updateTimer ) {
+				window.clearTimeout( this.updateTimer );
+			}
+			this._updateTimer = window.setTimeout( dojo.hitch( this, '_updateRoom' ), 2000 );
+		} ) );
+	},
+
+	_updateRoom: function() {
+		this.umcpCommand( 'computerroom/update' ).then( dojo.hitch( this, function( response ) {
+			dojo.forEach( response.result, function( item ) {
+				this._objStore.put( item );
+			}, this );
+			this._updateTimer = window.setTimeout( dojo.hitch( this, '_updateRoom' ), 2000 );
+		} ) );
 	}
 });
 

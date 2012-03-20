@@ -36,6 +36,7 @@ import os
 import sys
 import notifier
 import optparse
+import time
 
 script_dir = os.path.abspath( os.path.dirname( inspect.getfile(inspect.currentframe() ) ) )
 sys.path.insert( 0, os.path.join( script_dir, 'umc/python/computerroom' ) )
@@ -45,19 +46,17 @@ import ucsschool.lib.schoolldap as usl
 
 import univention.config_registry as ucr
 
-def show_state():
-	FORMAT = '%(name)-15s %(description)-15s %(user)-20s %(ScreenLock)-14s %(InputLock)-13s %(MessageBox)-8s %(DemoServer)-8s %(DemoClient)-8s %(Flags)5s'
-	# clear screen and set position to HOME
-	print '\033[2J\033[H'
-	# print '##################'
-	print FORMAT % { 'name' : 'Name', 'description' : 'Description', 'user' : 'User', 'ScreenLock' : 'Screen locked', 'InputLock' : 'Input locked', 'MessageBox' : 'Message', 'DemoServer' : 'Server', 'DemoClient' : 'Client', 'Flags' : 'Flags' }
-	print 120*'-'
-	for name, comp in m.items():
-		info = { 'name' : name, 'description' : comp.description or '<none>', 'user' : comp.user.current is None and '<unknown>' or comp.user.current }
-		info.update( comp.states )
-		info[ 'Flags' ] = comp.flags.current is None and '<not set>' or comp.flags.current
-		print FORMAT % info
-	return True
+italcManager = None
+
+def start_demo( server, start, fullscreen ):
+	if start:
+		print 'starting demo'
+		italcManager.startDemo( server, fullscreen )
+	else:
+		print 'stopping demo'
+		italcManager.stopDemo( server )
+	time.sleep( 3 )
+	sys.exit( 0 )
 
 if __name__ == '__main__':
 	config = ucr.ConfigRegistry()
@@ -68,17 +67,25 @@ if __name__ == '__main__':
 	parser = optparse.OptionParser()
 	parser.add_option( '-s', '--school', dest = 'school', default = '711' )
 	parser.add_option( '-r', '--room', dest = 'room', default = 'room01' )
+	parser.add_option( '-S', '--stop', dest = 'start', action = 'store_false', default = True )
+	parser.add_option( '-F', '--fullscreen', dest = 'fullscreen', action = 'store_true', default = False )
 	parser.add_option( '-u', '--username', dest = 'username', default = 'Administrator' )
 	parser.add_option( '-p', '--password', dest = 'password', default = 'univention' )
 	options, args = parser.parse_args()
 
+	if not args:
+		parser.error( 'server missing' )
+
 	usl.set_credentials( 'uid=%s,cn=users,%s' % ( options.username, config.get( 'ldap/base' ) ), options.password )
 
-	m = italc2.ITALC_Manager()
-	m.school = options.school
-	m.room = options.room
+	italcManager = italc2.ITALC_Manager()
+	italcManager.school = options.school
+	italcManager.room = options.room
 
-	show_state()
-	notifier.timer_add( 1000, show_state )
+	server = args[ 0 ]
+	if server not in italcManager:
+		parser.error( 'unknown system' )
+
+	italcManager.signal_connect( 'initialized', notifier.Callback( start_demo, server, options.start, options.fullscreen ) )
 
 	notifier.loop()

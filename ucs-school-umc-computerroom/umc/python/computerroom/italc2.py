@@ -31,6 +31,11 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+import copy
+import sys
+import tempfile
+import threading
+
 from univention.management.console.config import ucr
 
 from univention.lib.i18n import Translation
@@ -41,20 +46,26 @@ import univention.admin.objects as udm_objects
 
 from ucsschool.lib.schoolldap import LDAP_Connection, LDAP_ConnectionError, set_credentials, SchoolSearchBase, SchoolBaseModule, LDAP_Filter, Display
 
-import italc
 import notifier
 import notifier.signals
 
+from PyQt4.QtCore import QObject, pyqtSlot, SIGNAL, Qt
+from PyQt4.QtGui import QImageWriter
+# app = QApplication( sys.argv )
+
+import italc
+
 _ = Translation( 'ucs-school-umc-computerroom' ).translate
 
+ITALC_DEMO_PORT = int( ucr.get( 'ucsschool/umc/computerroom/demo/port', 11400 ) )
 ITALC_VNC_PORT = int( ucr.get( 'ucsschool/umc/computerroom/vnc/port', 11100 ) )
 ITALC_VNC_UPDATE = int( ucr.get( 'ucsschool/umc/computerroom/vnc/update', 10 ) )
 ITALC_CORE_UPDATE = int( ucr.get( 'ucsschool/umc/computerroom/core/update', 5 ) )
 
 italc.ItalcCore.init()
 
-italc.ItalcCore.config.setLogLevel( italc.Logger.LogLevelCritical )
-italc.ItalcCore.config.setLogToStdErr( False )
+italc.ItalcCore.config.setLogLevel( italc.Logger.LogLevelDebug )
+italc.ItalcCore.config.setLogToStdErr( True )
 italc.ItalcCore.config.setLogFileDirectory( '/var/log/univention/' )
 italc.Logger( 'ucs-school-umc-computerroom' )
 
@@ -64,9 +75,75 @@ italc.ItalcCore.initAuthentication( italc.AuthenticationCredentials.PrivateKey )
 class ITALC_Error( Exception ):
 	pass
 
-class ITALC_Computer( notifier.signals.Provider ):
+
+class LockableAttribute( object ):
+	def __init__( self, locking = True ):
+		self._lock = locking and threading.Lock() or None
+		self._old = None
+		self._current = None
+		MODULE.warn( '__init__: %s != %s' % ( self._old, self._current ) )
+
+	def lock( self ):
+		if self._lock is None: return
+		if not self._lock.acquire( 1000 ):
+			raise ITALC_Error( 'Could not lock attribute' )
+
+	def unlock( self ):
+		if self._lock is None: return
+		self._lock.release()
+
+	@property
+	def current( self ):
+		self.lock()
+		tmp = copy.copy( self._current )
+		MODULE.warn( 'current: %s != %s' % ( self._old, self._current ) )
+		self.unlock()
+		return tmp
+
+	@property
+	def old( self ):
+		self.lock()
+		tmp = copy.copy( self._old )
+		self.unlock()
+		return tmp
+
+	@property
+	def isInitialized( self ):
+		self.lock()
+		ret = self._current is not None
+		self.unlock()
+		return ret
+
+	@property
+	def hasChanged( self ):
+		self.lock()
+		MODULE.warn( 'hasChanged: %s != %s' % ( self._old, self._current ) )
+		diff = self._old != self._current
+		self._old = self._current
+		self.unlock()
+		return diff
+
+	def set( self, value ):
+		self.lock()
+		if value != self._current:
+			self._old = copy.copy( self._current )
+			self._current = copy.copy( value )
+		MODULE.warn( 'set: %s != %s' % ( self._old, self._current ) )
+		self.unlock()
+
+class ITALC_Computer( notifier.signals.Provider, QObject ):
+	CONNECTION_STATES = {
+		italc.ItalcVncConnection.Disconnected : 'disconnected',
+		italc.ItalcVncConnection.Connected : 'connected',
+		italc.ItalcVncConnection.ConnectionFailed : 'error',
+		italc.ItalcVncConnection.AuthenticationFailed : 'error',
+		italc.ItalcVncConnection.HostUnreachable : 'error'
+		}
+
 	def __init__( self, ldap_dn = None ):
+		QObject.__init__( self )
 		notifier.signals.Provider.__init__( self )
+
 		self.signal_new( 'connected' )
 		self._vnc = None
 		self._core = None
@@ -75,6 +152,10 @@ class ITALC_Computer( notifier.signals.Provider ):
 		self._timer = None
 		self.readLDAP()
 		self.open()
+		self._username = LockableAttribute()
+		self._homedir = LockableAttribute()
+		self._flags = LockableAttribute()
+		self._allowedClients = []
 
 	@LDAP_Connection()
 	def readLDAP( self, ldap_user_read = None, ldap_position = None, search_base = None ):
@@ -90,13 +171,11 @@ class ITALC_Computer( notifier.signals.Provider ):
 		self._computer.open()
 
 	def open( self ):
-		if not 'ip' in self._computer.info:
-			raise ITALC_Error( 'Unknown IP address' )
 		self._vnc = italc.ItalcVncConnection()
-		self._vnc.setHost( self._computer.info[ 'ip' ][ 0 ] )
+		self._vnc.setHost( self.ipAddress )
 		self._vnc.setPort( ITALC_VNC_PORT )
 		self._vnc.setQuality( italc.ItalcVncConnection.ThumbnailQuality )
-		self._vnc.setFramebufferUpdateInterval( 200 )
+		self._vnc.setFramebufferUpdateInterval( ITALC_VNC_UPDATE )
 		self._vnc.start()
 		notifier.timer_add( 100, self._when_connected )
 
@@ -104,23 +183,36 @@ class ITALC_Computer( notifier.signals.Provider ):
 		if not self._vnc.isConnected():
 			return True
 		self._core = italc.ItalcCoreConnection( self._vnc )
-		self.signal_emit( 'connected', self._computer.info.get( 'name' ) )
+		self.signal_emit( 'connected', self.name )
+		self._core.receivedUserInfo.connect( self._userInfo, Qt.DirectConnection )
+		self._core.receivedSlaveStateFlags.connect( self._slaveStateFlags, Qt.DirectConnection )
+		print self._core
 		self.start()
+		return False
+
+	@pyqtSlot( str, str )
+	def _userInfo( self, username, homedir ):
+		self._username.set( username )
+		self._homedir.set( homedir )
+		if self.user.current:
+			self._core.reportSlaveStateFlags()
+
+	@pyqtSlot( int )
+	def _slaveStateFlags( self, flags ):
+		self._flags.set( flags )
 
 	def close( self ):
-		print 'CRUNCHY: stop'
+		pass
 		# self._vnc.stop()
 
 	def update( self ):
 		self._core.sendGetUserInformationRequest()
-		if self._core.user():
-			self._core.reportSlaveStateFlags()
 		return True
 
 	def start( self ):
 		self.stop()
 		self.update()
-		self._timer = notifier.timer_add( ITALC_CORE_UPDATE * 1000, self.update )
+		self._timer = notifier.timer_add( 500, self.update )
 
 	def stop( self ):
 		if self._timer is not None:
@@ -132,26 +224,93 @@ class ITALC_Computer( notifier.signals.Provider ):
 		return self._computer.info.get( 'name', None )
 
 	@property
+	def ipAddress( self ):
+		if not 'ip' in self._computer.info or not self._computer.info[ 'ip' ]:
+			raise ITALC_Error( 'Unknown IP address' )
+		return self._computer.info[ 'ip' ][ 0 ]
+
+	@property
 	def user( self ):
-		return self._core and self._core.user() or ''
+		return self._username
 
 	@property
 	def description( self ):
 		return self._computer.info.get( 'description', None )
 
 	@property
+	def screenLock( self ):
+		if not self._core or self._core.slaveStateFlags() == 0:
+			return None
+		return self._core.isScreenLockRunning()
+
+	@property
+	def inputLock( self ):
+		if not self._core or self._core.slaveStateFlags() == 0:
+			return None
+		return self._core.isInputLockRunning()
+
+	@property
+	def demoServer( self ):
+		if not self._core or self._core.slaveStateFlags() == 0:
+			return None
+		return self._core.isDemoServerRunning()
+
+	@property
+	def demoClient( self ):
+		if not self._core or self._core.slaveStateFlags() == 0:
+			return None
+		return self._core.isDemoClientRunning()
+
+	@property
+	def messageBox( self ):
+		if not self._core or self._core.slaveStateFlags() == 0:
+			return None
+		return self._core.isMessageBoxRunning()
+
+	@property
+	def flags( self ):
+		return self._flags
+
+	@property
 	def states( self ):
 		return {
-			'ScreenLock' : self._core and self._core.isScreenLockRunning() or None,
-			'InputLock' :  self._core and self._core.isInputLockRunning() or None,
-			'DemoServer' :  self._core and self._core.isDemoServerRunning() or None,
-			'DemoClient' :  self._core and self._core.isDemoClientRunning() or None,
-			'MessageBox' :  self._core and self._core.isMessageBoxRunning() or None,
+			'ScreenLock' : self.screenLock,
+			'InputLock' :  self.inputLock,
+			'DemoServer' :  self.demoServer,
+			'DemoClient' :  self.demoClient,
+			'MessageBox' :  self.messageBox,
 			}
 
 	@property
+	def connectionState( self ):
+		return ITALC_Computer.CONNECTION_STATES[ self._vnc.state() ]
+
+	@property
 	def connected( self ):
-		return self._vnc.isConnected()
+		return self._core and self._vnc.isConnected()
+
+	@property
+	def hostUnreachable( self ):
+		return self._vnc and self._vnc.state() == italc.ItalcVncConnection.HostUnreachable
+
+	@property
+	def connectFailed( self ):
+		return self._vnc and self._vnc.state() == italc.ItalcVncConnection.ConnectionFailed
+
+	@property
+	def screenshot( self ):
+		image = self._vnc.image()
+		if not image.byteCount():
+			return None
+		tmpfile = tempfile.NamedTemporaryFile( delete = False )
+		tmpfile.close()
+		writer = QImageWriter( tmpfile.name, 'PNG' )
+		writer.write( image )
+		return tmpfile
+
+	@property
+	def screenshotQImage( self ):
+		return self._vnc.image()
 
 	def lockScreen( self, value ):
 		if value:
@@ -168,6 +327,37 @@ class ITALC_Computer( notifier.signals.Provider ):
 	def message( self, text ):
 		self._core.displayTextMessage( text )
 
+	def denyClients( self ):
+		for client in self._allowedClients[ : ]:
+			self._core.demoServerUnallowHost( client.ipAddress )
+			self._allowedClients.remove( client )
+
+	def allowClients( self, clients ):
+		self.denyClients()
+		for client in clients:
+			self._core.demoServerAllowHost( client.ipAddress )
+			self._allowedClients.append( client )
+
+	def startDemoServer( self, allowed_clients = [] ):
+		if not self.connected:
+			raise ITALC_Error( 'not connected' )
+		self._core.stopDemoServer()
+		self._core.startDemoServer( ITALC_VNC_PORT, ITALC_DEMO_PORT )
+		self.allowClients( allowed_clients )
+
+	def stopDemoServer( self ):
+		self.denyClients()
+		self._core.stopDemoServer()
+
+	def startDemoClient( self, server, fullscreen = True ):
+		self._core.stopDemo()
+		self._core.unlockScreen()
+		self._core.unlockInput()
+		self._core.startDemo( server.ipAddress, ITALC_DEMO_PORT, fullscreen )
+
+	def stopDemoClient( self ):
+		self._core.stopDemo()
+
 class ITALC_Manager( dict, notifier.signals.Provider ):
 	def __init__( self ):
 		dict.__init__( self )
@@ -175,6 +365,8 @@ class ITALC_Manager( dict, notifier.signals.Provider ):
 		self.signal_new( 'initialized' )
 		self._room = None
 		self._school = None
+		self._demoServer = None
+		self._initialized = False
 
 	# def __del__( self ):
 	# 	self._clear()
@@ -194,8 +386,12 @@ class ITALC_Manager( dict, notifier.signals.Provider ):
 
 	@school.setter
 	def school( self, value ):
-		self._school = value
 		self._clear()
+		self._school = value
+
+	@property
+	def initialized( self ):
+		return self._initialized
 
 	def _clear( self ):
 		if self._room:
@@ -204,12 +400,15 @@ class ITALC_Manager( dict, notifier.signals.Provider ):
 					computer.stop()
 			self.clear()
 			self._room = None
+			self._initialized = False
 
 	def _connected( self, computer ):
 		for comp in self.values():
-			if not comp.connected:
+			if not comp.connected and not comp.hostUnreachable and not comp.connectFailed:
 				break
+			print comp.name, 'connected (or fatal error)'
 		else:
+			self._initialized = True
 			self.signal_emit( 'initialized' )
 
 	@LDAP_Connection()
@@ -217,12 +416,16 @@ class ITALC_Manager( dict, notifier.signals.Provider ):
 		grp_module = udm_modules.get( 'groups/group' )
 		if not grp_module:
 			raise ITALC_Error( 'Unknown computer room' )
-		groupresult = udm_modules.lookup( grp_module, None, ldap_user_read, filter = 'cn=%s-%s' % ( search_base.school, room ),scope = 'one', base = search_base.rooms )
+		if room.startswith( 'cn=' ):
+			groupresult = [ udm_objects.get( grp_module, None, ldap_user_read, ldap_position, room ) ]
+		else:
+			groupresult = udm_modules.lookup( grp_module, None, ldap_user_read, filter = 'cn=%s-%s' % ( search_base.school, room ),scope = 'one', base = search_base.rooms )
 		if len( groupresult ) != 1:
 			raise ITALC_Error( 'Did not find exactly 1 group for the room (count: %d)' % len( groupresult ) )
 
 		roomgrp = groupresult[ 0 ]
 		roomgrp.open()
+		self._room = roomgrp[ 'name' ].lstrip( '%s-' % search_base.school )
 		computers = filter( lambda host: host.endswith( search_base.computers ), roomgrp[ 'hosts' ] )
 		if not computers:
 			raise ITALC_Error( 'There are no computers in the selected room.' )
@@ -232,3 +435,26 @@ class ITALC_Manager( dict, notifier.signals.Provider ):
 			comp.signal_connect( 'connected', self._connected )
 			self.__setitem__( comp.name, comp )
 
+	def startDemo( self, demo_server, fullscreen = True ):
+		server = self.get( demo_server )
+		if server is None:
+			raise AttributeError( 'unknown system %s' % demo_server )
+
+		# start demo server
+		clients = filter( lambda comp: comp.name != demo_server, self.values() )
+		server.startDemoServer( clients )
+		for client in clients:
+			client.startDemoClient( server, fullscreen )
+		self._demoServer = server
+
+	def stopDemo( self, demo_server = None ):
+		if demo_server is None and self._demoServer is None:
+			raise ITALC_Error( 'Unknown demoserver' )
+		elif demo_server is None:
+			demo_server = self._demoServer
+		elif isinstance( demo_server, basestring ):
+			demo_server = self[ demo_server ]
+
+		demo_server.stopDemoServer()
+		for client in filter( lambda comp: comp.name != demo_server, self.values() ):
+			client.stopDemoClient()

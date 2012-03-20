@@ -34,25 +34,21 @@
 from univention.management.console.config import ucr
 
 from univention.lib.i18n import Translation
-from univention.management.console.modules import UMC_OptionTypeError, Base
+from univention.management.console.modules import UMC_OptionTypeError, UMC_CommandError, Base
 from univention.management.console.log import MODULE
-from univention.management.console.protocol.definitions import *
 
 import univention.admin.modules as udm_modules
 
 from ucsschool.lib.schoolldap import LDAP_Connection, LDAP_ConnectionError, set_credentials, SchoolSearchBase, SchoolBaseModule, LDAP_Filter, Display
 
+from italc2 import ITALC_Manager
+
 _ = Translation( 'ucs-school-umc-computerroom' ).translate
 
 class Instance( SchoolBaseModule ):
 	def __init__( self ):
-		# initiate list of internal variables
-		SchoolBaseModule.__init__(self)
-		# ... custom code
-
-	def init(self):
-		SchoolBaseModule.init(self)
-		# ... custom code
+		SchoolBaseModule.__init__( self )
+		self._italc = ITALC_Manager()
 
 	@LDAP_Connection()
 	def query( self, request, search_base = None, ldap_user_read = None, ldap_position = None ):
@@ -64,30 +60,62 @@ class Instance( SchoolBaseModule ):
 
 		return: [ { '$dn$' : <LDAP DN>, 'name': '...', 'description': '...' }, ... ]
 		"""
-		self.required_options( request, 'room' )
+		self.required_options( request, 'school', 'room' )
 		MODULE.info( 'computerroom.query: options: %s' % str( request.options ) )
 
-		# open the specified room
-		groupModule = udm_modules.get('groups/group')
-		roomObj = groupModule.object(None, ldap_user_read, None, request.options.get('room'))
-		roomObj.open()
+		modified = False
+		if self._italc.school != request.options[ 'school' ]:
+			self._italc.school = request.options[ 'school' ]
+			modified = True
+		if self._italc.room != request.options[ 'room' ]:
+			self._italc.room = request.options[ 'room' ]
+			modified = True
 
-		# query its computers
-		computers = []
-		computerModule = udm_modules.get('computers/computer')
-		for idn in roomObj['hosts']:
-			computerObj = computerModule.object(None, ldap_user_read, None, idn)
-			computerObj.open()
-			if computerObj:
-				computers.append(computerObj)
+		def _initialized():
+			MODULE.info( 'room is initialized' )
+			try:
+				result = []
+				for computer in self._italc.values():
+					item = { 'id' : computer.name,
+							 'name' : computer.name,
+							 'user' : computer.user.current,
+							 'connection' : computer.connectionState,
+							 'description' : computer.description }
+					item.update( computer.states )
+					result.append( item )
 
-		# translate the format
-		result = [ {
-			'name': i['name'],
-			'description': i.oldinfo.get('description',''),
-			'$dn$': i.dn,
-		} for i in computers ]
-		result = sorted( result, cmp = lambda x, y: cmp( x.lower(), y.lower() ), key = lambda x: x[ 'name' ] )
+					MODULE.info( 'computerroom.query: result: %s' % str( result ) )
+				self.finished( request.id, result )
+			except Exception, e:
+				MODULE.error( 'query failed: %s' % str( e ) )
+			self._italc.signal_disconnect( 'initialized', _initialized )
+
+		if modified:
+			MODULE.info( 'School and/or room has been modified ... waiting for completion of initialization' )
+			self._italc.signal_connect( 'initialized', _initialized )
+		else:
+			_initialized()
+
+	def update( self, request ):
+		"""Returns an update for the computers in the selected room
+
+		requests.options = [ <ID>, ... ]
+
+		return: [ { 'id' : <unique identifier>, 'states' : <display name>, 'color' : <name of favorite color> }, ... ]
+		"""
+		MODULE.warn( 'Current school: %s, current room: %s' % ( str( self._italc.school ), str( self._italc.room ) ) )
+
+		if not self._italc.school or not self._italc.room:
+			raise UMC_CommandError( 'no room selected' )
+
+		result = []
+		for computer in self._italc.values():
+			item = dict( id = computer.name, connection = computer.connectionState )
+			if computer.flags.hasChanged:
+				item.update( computer.states )
+			if computer.user.hasChanged:
+				item[ 'user' ] = str( computer.user.current )
+			result.append( item )
 
 		MODULE.info( 'computerroom.query: result: %s' % str( result ) )
 		self.finished( request.id, result )
