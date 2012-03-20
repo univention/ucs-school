@@ -1,3 +1,10 @@
+univention-squid (5.0.9-2) unstable; urgency=low
+
+  * fixed debugging in ntlm authentication module
+  * added copyright (Bug #25771) 
+
+ -- Felix Botner <botner@univention.de>  Tue, 20 Mar 2012 10:37:21 +0100
+
 univention-squid (5.0.9-1) unstable; urgency=low
 
   * fixed squid.conf template (Bug #25771) 

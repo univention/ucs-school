@@ -4,6 +4,8 @@
 # Univention openldap ntlm squid authenticator
 #
 # Copyright 2012 Univention GmbH
+# Copyright 2002 Yee Man Chan
+# Copyright 2001 Dmitry A. Rozmanov 
 #
 # http://www.univention.de/
 #
@@ -35,6 +37,7 @@
 #   * http://davenport.sourceforge.net/ntlm.html
 #   * http://squid.sourceforge.net/ntlm/squid_helper_protocol.html
 #   * http://www.innovation.ch/personal/ronald/ntlm.html
+#   * http://www.koders.com/python/fidEE921E55A2EC9CF12BE39BFAA74346769EE6F2FF.aspx
 
 import sys
 import time
@@ -46,6 +49,7 @@ import hashlib
 import string
 import Crypto.Cipher.DES
 import optparse
+import os
 
 import univention.uldap
 import univention.config_registry
@@ -136,6 +140,7 @@ def debug(msg):
 
 	if options.debug:
 		fh = open(options.debugFile, "a")
+		os.chmod(options.debugFile, 0600)
 		fh.write("%s - %s\n" % (time.time(), msg))
 		fh.close()
 
@@ -281,15 +286,18 @@ def getNtHash(user):
 	# check "cache"
 	cacheHit = users.get(user)
 	if cacheHit:
-		debug("  found cache entry for %s" % user)
-		debug("  time: %s" % time.time())
-		debug("  cache time: %s" % cacheHit[1])
-		debug("  cache lifetime: %s" % options.cacheLifeTime)
+		if options.debug:
+			debug("  found cache entry for %s" % user)
+			debug("  time: %s" % time.time())
+			debug("  cache time: %s" % cacheHit[1])
+			debug("  cache lifetime: %s" % options.cacheLifeTime)
 		if time.time() - cacheHit[1] < options.cacheLifeTime:
-			debug("  cache entry for %s valid" % user)
+			if options.debug:
+				debug("  cache entry for %s valid" % user)
 			return cacheHit[0]
 		else:
-			debug("  cache entry for %s invalid -> new ldapsearch" % user)
+			if options.debug:
+				debug("  cache entry for %s invalid -> new ldapsearch" % user)
 
 	# search for ntHash of user
 	ntHash = ""
@@ -297,11 +305,13 @@ def getNtHash(user):
 	attr = ["sambaNTPassword"]
 	ldap = univention.uldap.getMachineConnection(ldap_master=False, secret_file = "/etc/squid3.secret")
 	result = ldap.search(base=cr["ldap/base"], filter=ldapFilter, attr=attr)
-	debug("  ldapsearch for sambaNTPassword of user %s" % user)
+	if options.debug:
+		debug("  ldapsearch for sambaNTPassword of user %s" % user)
 	if len(result) == 1:
 		tmp = result[0][1].get("sambaNTPassword", [""])[0]
 		if tmp:
-			debug("  found sambaNTPassword in ldap for user %s" % user)
+			if options.debug:
+				debug("  found sambaNTPassword in ldap for user %s" % user)
 			ntHash = tmp
 			users[user] = [ntHash, time.time()]
 
@@ -309,32 +319,33 @@ def getNtHash(user):
 
 def verifyNtlmTypeThree(data, challenge):
 
-	debug("NTLM Type 3 Message: ")
+	if options.debug:
+		debug("NTLM Type 3 Message: ")
 
-	global users
-
+	# parse ntlm 3 message
 	try:
 		username, domain, host, lmResp, ntResp, flags = parseNtlmTypeThree(data)
 	except Exception, e:
 		return "NA could not parse ntlmTypeThree: %s" % e
 
+	# get nt hash
 	ntHash = getNtHash(username)
 	if not ntHash:
 		return "NA no ntHash found"
 	else:
 		ntHash = ntHash.decode("hex") + '\x00'*5
 
-
-	# not authenticated
-	retval = "NA end of verifyNtlmTypeThree() and still not authenticated"
-
-	debug("  server challenge " + challenge.encode("hex"))
-	debug("  user: " + username)
-	debug("  domain: " + domain)
-	debug("  host: " + host)
-	debug("  flags:")
-	for i in dumpNegotiateFlags(flags):
-		debug("    %s" % i)
+	# debug
+	if options.debug:
+		debug("  server challenge " + challenge.encode("hex"))
+		debug("  user: " + username)
+		debug("  domain: " + domain)
+		debug("  host: " + host)
+		debug("  flags:")
+		for i in dumpNegotiateFlags(flags):
+			debug("    %s" % i)
+		debug("  ntHash: " + ntHash.encode("hex"))
+		debug("  nt response: " + ntResp.encode("hex"))
 
 	# test domain if specified
 	if options.domain:
@@ -342,37 +353,32 @@ def verifyNtlmTypeThree(data, challenge):
 			return "BH wrong domain"
 
 	myResp = ""
+	mode = "NTLM"
 	# indicates that the NTLM2/NTLMv2 signing and sealing scheme should be used
 	if flags & NTLM_NegotiateExtendedSecurity:
 
 		# NTLM2
 		if len(ntResp) == 24:
-			debug("  NTLM2:")
-			debug("    nt response: " + ntResp.encode("hex"))
 			myResp = verifyNtlm2(ntHash, challenge, lmResp[0:8])
-			debug("    my response: " + myResp.encode("hex"))
+			mode = "NTLM2"
 		# NTLMv2
 		else:
-			debug("  NTLMv2:")
-			debug("    nt response: " + ntResp.encode("hex"))
 			myResp = verifyNtlmV2(ntResp, challenge, username, domain, ntHash)
-			debug("    my response: " + myResp.encode("hex"))
+			mode = "NTLMv2"
 	else:
 		# NTLM
-		debug("  NTLM:")
-		debug("    nt response: " + ntResp.encode("hex"))
 		myResp = verifyNtlm(ntHash, challenge)
-		debug("    my response: " + myResp.encode("hex"))
+
+	if options.debug:
+		debug("  mode: " + mode)
+		debug("  my response: " + myResp.encode("hex"))
 
 	# return username if respones are equal
 	if ntResp == myResp:
-		retval = "AF %s" % username
-	#else:
-	#	# invalidate passwort cache if not authenticated
-	#	if users.get(username):
-	#		del users[username]
+		return "AF %s" % username
 	
-	return retval
+	# not authenticated
+	return "NA end of verifyNtlmTypeThree() and still not authenticated"
 
 def parseNtlmTypeTwo(msg):
 
@@ -405,18 +411,21 @@ def createNtlmTypeTwo():
 	ms += struct.pack("<l", 0)
 	tt = "TT " + base64.encodestring(ms)
 
-	debug("NTLM Type 2 Message:")
-	debug("  challenge: " + challenge.encode("hex"))
-	debug("  flags:")
-	for i in dumpNegotiateFlags(NTLM_TYPE2_FLAGS):
-		debug("    %s" % i)
+	if options.debug:
+		debug("NTLM Type 2 Message:")
+		debug("  challenge: " + challenge.encode("hex"))
+		debug("  flags:")
+		for i in dumpNegotiateFlags(NTLM_TYPE2_FLAGS):
+			debug("    %s" % i)
 	
 	return tt, challenge
 
 # YR TlRMTVNTUAABAAAAB7IIogUABQAsAAAABAAEACgAAAAFASgKAAAAD1RFU1RTUVVJRJ==
 def ntlmTypeOne(data):
 
-	debug("NTLM Type 1 Message: ")
+	if options.debug:
+		debug("NTLM Type 1 Message: ")
+
 	data = data.replace("YR ", "", 1)
 	signature = ""
 	type = ""
@@ -427,11 +436,12 @@ def ntlmTypeOne(data):
 		signature = data[0:8]
 		type = struct.unpack("<I", data[8:12])[0]
 		flags = struct.unpack("<I", data[12:16])[0]
-		debug("  signature: " + signature)
-		debug("  type: %s" % type)
-		debug("  flags:")
-		for i in dumpNegotiateFlags(flags):
-			debug("    %s" % i)
+		if options.debug:
+			debug("  signature: " + signature)
+			debug("  type: %s" % type)
+			debug("  flags:")
+			for i in dumpNegotiateFlags(flags):
+				debug("    %s" % i)
 	except:
 		pass
 
@@ -500,8 +510,9 @@ if __name__ == '__main__':
 		data = sys.stdin.readline()
 		data = data.strip()
 		answer = "BH internal error"
-	
-		debug("from squid -> " + data)
+
+		if options.debug:
+			debug("from squid -> " + data)
 	
 		if data:
 			if data.startswith("YR ") and ntlmTypeOne(data):
@@ -517,7 +528,8 @@ if __name__ == '__main__':
 		else:
 			answer = "ERR"
 	
-		debug("to squid <- " + answer)
+		if options.debug:
+			debug("to squid <- " + answer)
 		sys.stdout.write(answer + "\n")
 		sys.stdout.flush()
 
