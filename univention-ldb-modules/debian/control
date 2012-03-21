@@ -2,7 +2,8 @@ Source: univention-ldb-modules
 Section: devel
 Priority: optional
 Maintainer: Univention GmbH <packages@univention.de>
-Build-Depends: libldb-dev,
+Build-Depends: debhelper,
+	libldb-dev,
 	libunivention-config-dev,
 	libunivention-policy-dev,
 	ldb-tools
