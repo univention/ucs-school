@@ -1,3 +1,9 @@
+univention-ldb-modules (0.0.1-8) unstable; urgency=low
+
+  * remove irritating copy+paste log message (Bug #26569).
+
+ -- Arvid Requate <requate@univention.de>  Wed, 21 Mar 2012 21:16:17 +0100
+
 univention-ldb-modules (0.0.1-7) unstable; urgency=low
 
   * use ldb_module_get_name (Bug #26569).

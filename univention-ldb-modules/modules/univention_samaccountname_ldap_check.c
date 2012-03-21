@@ -120,7 +120,6 @@ static int univention_samaccountname_ldap_check(struct ldb_module *module, struc
 	int rv = LDAP_SUCCESS;
 	int ret = LDB_SUCCESS;
 	ldb = ldb_module_get_ctx(module);
-	ldb_debug(ldb, LDB_DEBUG_TRACE, ("%s: ldb_add\n"), ldb_module_get_name(module));
 
 	attribute = ldb_msg_find_element(req->op.add.message, "sAMAccountName");
 	if (attribute) {
