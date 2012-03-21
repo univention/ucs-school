@@ -1,0 +1,26 @@
+Source: univention-ldb-modules
+Section: devel
+Priority: optional
+Maintainer: Univention GmbH <packages@univention.de>
+Build-Depends: libldb-dev,
+	libunivention-config-dev,
+	libunivention-policy-dev,
+	ldb-tools
+Standards-Version: 3.9.1
+X-Python-Version: 2.6
+
+Package: libunivention-ldb-modules
+Architecture: any
+Section: libs
+Depends: ${misc:Depends},
+	${shlibs:Depends},
+	libldb1,
+	libunivention-config0,
+	libunivention-policy0
+Description: Univention LDB modules
+ This package provides UCS specific LDB modules
+ .
+ It is part of Univention Corporate Server (UCS), an
+ integrated, directory driven solution for managing
+ corporate environments. For more information about UCS,
+ refer to: http://www.univention.de/
