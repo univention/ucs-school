@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<umc version="2.0">
+	<module id="schoolwizards" icon="schoolwizards" version="1.0">
+		<name>School wizards</name>
+		<description>Various wizards for UCS@school</description>
+		<categories>
+			<category name="ucs-school-admin"/>
+		</categories>
+		<flavor icon="schoolwizards-user" id="class">
+			<name>Wizard - User</name>
+			<description>Create a new user</description>
+		</flavor>
+		<flavor icon="schoolwizards-class" id="class">
+			<name>Wizard - Class</name>
+			<description>Create a new class</description>
+		</flavor>
+		<flavor icon="schoolwizards-computer" id="class">
+			<name>Wizard - Computer</name>
+			<description>Create a new computer</description>
+		</flavor>
+		<flavor icon="schoolwizards-school" id="class">
+			<name>Wizard - School</name>
+			<description>Create a new school</description>
+		</flavor>
+	</module>
+</umc>
