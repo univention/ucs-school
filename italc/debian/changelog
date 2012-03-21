@@ -1,3 +1,10 @@
+italc (1:2.0.5-1) unstable; urgency=low
+
+  * add new Qt signal stateChanged to get notified when the state of the
+    VNC connection changes; Bug #25702
+
+ -- Andreas Büsching <buesching@univention.de>  Wed, 21 Mar 2012 09:07:46 +0100
+
 italc (1:2.0.4-1) unstable; urgency=low
 
   * add two QT signals that are emitted when new user information or state
