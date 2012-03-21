@@ -1,3 +1,10 @@
+ucs-school-import (8.0.42-1) unstable; urgency=low
+
+  * simplify serverprofile setting (Bug #25776)
+  * align sambahome behavior to serverprofile (Bug #25867)
+
+ -- Janek Walkenhorst <walkenhorst@univention.de>  Wed, 21 Mar 2012 16:21:12 +0100
+
 ucs-school-import (8.0.41-4) unstable; urgency=low
 
   * set ucsschool/import/set/netlogon/script/path in postinst (Bug #26521)

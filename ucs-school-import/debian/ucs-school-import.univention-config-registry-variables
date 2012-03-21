@@ -89,8 +89,8 @@ Type=str
 Categories=ucsschool-base
 
 [ucsschool/import/set/serverprofile/path]
-Description[de]=Soll beim _Anlegen_ von Benutzern der Pfad für serverseitige Profile im LDAP gesetzt werden? (no|yes|ldap) (Standard: ldap)
-Description[en]=Should the path for server-side profiles be set in LDAP on user _creation_? (no|yes|ldap) (default: ldap)
+Description[de]=Pfad für serverseitige Profile der beim _Anlegen_ von Benutzern gesetzt werden soll. Wenn nicht gesetzt, wird im LDAP nach Computern mit dem Dienst "Windows Profile Server" gesucht
+Description[en]=Path for server-side profiles to be set on user _creation_. If unset, the LDAP will be searched for computers with the service "Windows Profile Server"
 Type=str
 Categories=ucsschool-base
 
@@ -101,8 +101,8 @@ Type=str
 Categories=ucsschool-base
 
 [ucsschool/import/set/sambahome]
-Description[de]=Windows-Heimatverzeichnis das beim _Anlegen_ von Benutzern gesetzt werden soll. Unset um es nicht zu setzen.
-Description[en]=Windows home path to set for each user on _creation_. Unset to not set any.
+Description[de]=Windows-Heimatverzeichnis das beim _Anlegen_ von Benutzern gesetzt werden soll. Wenn nicht gesetzt, wird im LDAP nach Computern mit dem Dienst "Windows Homer Server" gesucht
+Description[en]=Windows home path to set for each user on _creation_. If unset, the LDAP will be searched for computer with the service "Windows Home Server"
 Type=str
 Categories=ucsschool-base
 

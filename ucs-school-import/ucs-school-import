@@ -112,11 +112,9 @@ grp_policy_teachers = configRegistry.get('ucsschool/ldap/default/policy/umc/teac
 grp_policy_admins	= configRegistry.get('ucsschool/ldap/default/policy/umc/admins', 'cn=ucsschool-umc-admins-default,cn=UMC,cn=policies,%s' % baseDN)
 grp_policy_staff	= configRegistry.get('ucsschool/ldap/default/policy/umc/staff', 'cn=ucsschool-umc-staff-default,cn=UMC,cn=policies,%s' % baseDN)
 
-UCRV_serverprofile_option = configRegistry.get('ucsschool/import/set/serverprofile/path', 'ldap').strip().lower()
-if UCRV_serverprofile_option not in ('yes', 'no', 'ldap', ):
-	UCRV_serverprofile_option = 'ldap'
+UCRV_serverprofile_option = configRegistry.get('ucsschool/import/set/serverprofile/path', None)
 UCRV_netlogon_script_path = configRegistry.get('ucsschool/import/set/netlogon/script/path')
-UCRV_sambahome = configRegistry.get('ucsschool/import/set/sambahome')
+UCRV_sambahome = configRegistry.get('ucsschool/import/set/sambahome', None)
 UCRV_homedrive = configRegistry.get('ucsschool/import/set/homedrive')
 
 role_pupil   = 'pupil'
@@ -1309,27 +1307,39 @@ def create_passwd(dn):
 
 	return passwd
 
+def findComputerNameWithService(service, ou):
+	computers = univention.admin.modules.lookup(computer_module, co, lo, scope='sub', base=ou, filter=univention.admin.filter.expression('univentionService', service))
+	for computer in computers:
+		return computer['name']
+	return None
+
 def calculateProfilePath(ou):
+	if UCRV_serverprofile_option is not None:
+		return UCRV_serverprofile_option
 	if ou in calculateProfilePath.results:
 		return calculateProfilePath.results[ou]
-	if UCRV_serverprofile_option == 'ldap':
-		for service in ('Windows Profile Server', 'Samba 4', ):
-			computers = univention.admin.modules.lookup(computer_module, co, lo, scope='sub', base=ou, filter=univention.admin.filter.expression('univentionService', service))
-			for computer in computers:
-				calculateProfilePath.results[ou] = calculateProfilePath.string % (computer['name'], )
-				break
-			else:
-				continue
-			break
-		else:
-			calculateProfilePath.results[ou] = None
-	elif UCRV_serverprofile_option == 'yes':
-		calculateProfilePath.results[ou] = calculateProfilePath.string % '%LOGONSERVER%'
-	elif UCRV_serverprofile_option == 'no':
-		calculateProfilePath.results[ou] = None
+	computer = findComputerNameWithService('Windows Profile Server', ou)
+	if computer is not None:
+		calculateProfilePath.results[ou] = calculateProfilePath.string % ('\\\\%s' % (computer, ), )
+	else:
+		calculateProfilePath.results[ou] = calculateProfilePath.string % ('%LOGONSERVER%', )
 	return calculateProfilePath.results[ou]
 calculateProfilePath.results = {}
-calculateProfilePath.string = '\\\\%s\\%%USERNAME%%\\windows-profiles\\default'
+calculateProfilePath.string = '%s\\%%USERNAME%%\\windows-profiles\\default'
+
+def tryFindWindowsHomeServer(ou):
+	if UCRV_sambahome is not None:
+		return UCRV_sambahome
+	if ou in tryFindWindowsHomeServer.results:
+		return tryFindWindowsHomeServer.results[ou]
+	computer = findComputerNameWithService('Windows Home Server', ou)
+	if computer is not None:
+		tryFindWindowsHomeServer.results[ou] = tryFindWindowsHomeServer.string % ('\\\\%s' % (computer, ), )
+	else:
+		tryFindWindowsHomeServer.results[ou] = tryFindWindowsHomeServer.string % ('%LOGONSERVER%', )
+	return tryFindWindowsHomeServer.results[ou]
+tryFindWindowsHomeServer.results = {}
+tryFindWindowsHomeServer.string = "%s\\%%U"
 
 def create_user(person, baseDN, module, password, OUTFILE, line):
 	success = True
@@ -1398,8 +1408,7 @@ def create_user(person, baseDN, module, password, OUTFILE, line):
 
 	if UCRV_netlogon_script_path:
 		object["scriptpath"] = UCRV_netlogon_script_path
-	if UCRV_sambahome:
-		object["sambahome"] = UCRV_sambahome
+	object["sambahome"] = tryFindWindowsHomeServer(getDN(person.sNr, basedn=baseDN))
 	if UCRV_homedrive:
 		object["homedrive"] = UCRV_homedrive
 	profilePath = calculateProfilePath(getDN(person.sNr, basedn=baseDN))
