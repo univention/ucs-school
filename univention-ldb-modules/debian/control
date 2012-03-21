@@ -3,11 +3,13 @@ Section: devel
 Priority: optional
 Maintainer: Univention GmbH <packages@univention.de>
 Build-Depends: debhelper,
+	python,
 	libldb-dev,
 	libunivention-config-dev,
 	libunivention-policy-dev,
 	ldb-tools
 Standards-Version: 3.9.1
+X-Python-Version: 2.6
 
 Package: libunivention-ldb-modules
 Architecture: any
