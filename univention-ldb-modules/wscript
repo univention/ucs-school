@@ -31,6 +31,7 @@ def configure(conf):
 
     conf.CHECK_LIB('ldb')
     conf.CHECK_HEADERS('ldb.h')
+    conf.CHECK_LIB('talloc')
     conf.CHECK_HEADERS('talloc.h')
     conf.CHECK_HEADERS('tevent.h')
     conf.CHECK_LIB('ldap')

@@ -238,8 +238,9 @@ static int univention_samaccountname_ldap_check_init_context(struct ldb_module *
 	if (ret != LDB_SUCCESS) {
 		ldb = ldb_module_get_ctx(module);
 		ldb_debug(ldb, LDB_DEBUG_WARNING,
-			"server_sort:"
-			"Unable to register control with rootdse!");
+			"%s: "
+			"Unable to register control with rootdse!",
+			ldb_module_get_ops(module)->name);
 	}
 
 	return ldb_next_init(module);
