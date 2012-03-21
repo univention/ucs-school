@@ -140,7 +140,7 @@ private:
 };
 
 
-class ItalcVncConnection {
+class ItalcVncConnection : QObject {
 
 %TypeHeaderCode
 #include <libitalc/ItalcVncConnection.h>
@@ -191,6 +191,9 @@ public:
 	void rescaleScreen();
 
 	void setFramebufferUpdateInterval( int interval );
+
+signals:
+	void stateChanged( const States );
 
 private:
 	ItalcVncConnection( const ItalcVncConnection& );

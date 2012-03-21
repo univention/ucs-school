@@ -1,3 +1,9 @@
+ucs-school-italc (6.0.2-1) unstable; urgency=low
+
+  * add signal stateChanged to ItalcVncConnection; Bug #25702
+
+ -- Andreas Büsching <buesching@univention.de>  Wed, 21 Mar 2012 09:12:10 +0100
+
 ucs-school-italc (6.0.1-1) unstable; urgency=low
 
   * add signals to ItalCoreConnection class; Bug #25702
