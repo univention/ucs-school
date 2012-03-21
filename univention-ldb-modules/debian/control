@@ -5,6 +5,8 @@ Maintainer: Univention GmbH <packages@univention.de>
 Build-Depends: debhelper,
 	python,
 	libldb-dev,
+	libtalloc-dev,
+	libtevent-dev,
 	libunivention-config-dev,
 	libunivention-policy-dev,
 	ldb-tools
