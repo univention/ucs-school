@@ -193,7 +193,7 @@ public:
 	void setFramebufferUpdateInterval( int interval );
 
 signals:
-	void stateChanged( const States );
+	void stateChanged( const int );
 
 private:
 	ItalcVncConnection( const ItalcVncConnection& );

@@ -1,3 +1,9 @@
+ucs-school-italc (6.0.3-1) unstable; urgency=low
+
+  * stateChanged: change attribute type from enum States to int; Bug #25702
+
+ -- Andreas Büsching <buesching@univention.de>  Wed, 21 Mar 2012 10:45:11 +0100
+
 ucs-school-italc (6.0.2-1) unstable; urgency=low
 
   * add signal stateChanged to ItalcVncConnection; Bug #25702
