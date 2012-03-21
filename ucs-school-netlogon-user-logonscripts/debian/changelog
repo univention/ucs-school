@@ -1,3 +1,9 @@
+ucs-school-netlogon-user-logonscripts (7.0.3-1) unstable; urgency=low
+
+  * changed description of ucsschool/userlogon/commonshares (Bug #26527)
+
+ -- Felix Botner <botner@univention.de>  Wed, 21 Mar 2012 16:50:52 +0100
+
 ucs-school-netlogon-user-logonscripts (7.0.2-8) unstable; urgency=low
 
   * fixed netlogon ucr registration (Bug #26517) 

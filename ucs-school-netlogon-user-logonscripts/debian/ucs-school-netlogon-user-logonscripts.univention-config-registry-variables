@@ -1,6 +1,6 @@
-[ucsschool/userlogon/commonshares/.*]
-Description[de]=Komma separierte Liste von Netzwerkfreigaben, die für alle Benutzer eingebunden werden
-Description[en]=Comma-separated list of network shares that are included for all users
+[ucsschool/userlogon/commonshares]
+Description[de]=Komma separierte Liste von Netzwerkfreigaben, die für alle Benutzer eingebunden werden (nach Änderungen muss das Listener Modul ucs-school-user-logonscript neu initialisiert werden: univention-directory-listener-ctrl resync ucs-school-user-logonscript)
+Description[en]=Comma-separated list of network shares that are included for all users (after changes the listener module must be reinitialized: univention-directory-listener-ctrl resync ucs-school-user-logonscript)
 Type=str
 Categories=ucsschool-netlogon
 
