@@ -120,7 +120,7 @@ static int univention_samaccountname_ldap_check(struct ldb_module *module, struc
 	int rv = LDAP_SUCCESS;
 	int ret = LDB_SUCCESS;
 	ldb = ldb_module_get_ctx(module);
-	ldb_debug(ldb, LDB_DEBUG_TRACE, ("%s: ldb_add\n"), ldb_module_get_ops(module)->name);
+	ldb_debug(ldb, LDB_DEBUG_TRACE, ("%s: ldb_add\n"), ldb_module_get_name(module));
 
 	attribute = ldb_msg_find_element(req->op.add.message, "sAMAccountName");
 	if (attribute) {
@@ -158,14 +158,14 @@ static int univention_samaccountname_ldap_check(struct ldb_module *module, struc
 		char * attrs[] = { "dn", NULL };
 		rv = ldap_search_ext_s(lp->ld, lp->base, LDAP_SCOPE_SUBTREE, ldap_filter, attrs, 0,  NULL /*serverctrls*/, NULL /*clientctrls*/, NULL /*timeout*/, 0 /*sizelimit*/, &res);
 		if ( rv != LDAP_SUCCESS ) {
-			ldb_debug(ldb, LDB_DEBUG_ERROR, ("%s: ldb_add: LDAP error: %s\n"), ldb_module_get_ops(module)->name, ldap_err2string(rv));
+			ldb_debug(ldb, LDB_DEBUG_ERROR, ("%s: ldb_add: LDAP error: %s\n"), ldb_module_get_name(module), ldap_err2string(rv));
 			ret = LDB_ERR_UNAVAILABLE;
 		} else {
 			if ( ldap_count_entries(lp->ld, res ) != 0 ) {
-				ldb_debug(ldb, LDB_DEBUG_ERROR, ("%s: ldb_add: account %s exists on host %s\n"), ldb_module_get_ops(module)->name, (const char *)attribute->values[0].data, lp->host);
+				ldb_debug(ldb, LDB_DEBUG_ERROR, ("%s: ldb_add: account %s exists on host %s\n"), ldb_module_get_name(module), (const char *)attribute->values[0].data, lp->host);
 				ret = LDB_ERR_ENTRY_ALREADY_EXISTS;
 			} else {
-				ldb_debug(ldb, LDB_DEBUG_TRACE, ("%s: ldb_add: account %s ok\n"), ldb_module_get_ops(module)->name, (const char *)attribute->values[0].data);
+				ldb_debug(ldb, LDB_DEBUG_TRACE, ("%s: ldb_add: account %s ok\n"), ldb_module_get_name(module), (const char *)attribute->values[0].data);
 			}
 		}
 
@@ -202,12 +202,12 @@ static int univention_samaccountname_ldap_check_add(struct ldb_module *module, s
 	if (control != NULL) {
 		/* found go on */
 		// ldb = ldb_module_get_ctx(module);
-		// ldb_debug(ldb, LDB_DEBUG_TRACE, ("%s: permissive ldb_add\n"), ldb_module_get_ops(module)->name);
+		// ldb_debug(ldb, LDB_DEBUG_TRACE, ("%s: permissive ldb_add\n"), ldb_module_get_name(module));
 		return ldb_next_request(module, req);
 	}
 
 	ldb = ldb_module_get_ctx(module);
-	ldb_debug(ldb, LDB_DEBUG_TRACE, ("%s: ldb_add\n"), ldb_module_get_ops(module)->name);
+	ldb_debug(ldb, LDB_DEBUG_TRACE, ("%s: ldb_add\n"), ldb_module_get_name(module));
 	return univention_samaccountname_ldap_check(module, req);
 }
 
@@ -221,12 +221,12 @@ static int univention_samaccountname_ldap_check_modify(struct ldb_module *module
 	if (control != NULL) {
 		/* found go on */
 		// ldb = ldb_module_get_ctx(module);
-		// ldb_debug(ldb, LDB_DEBUG_TRACE, ("%s: permissive ldb_modify\n"), ldb_module_get_ops(module)->name);
+		// ldb_debug(ldb, LDB_DEBUG_TRACE, ("%s: permissive ldb_modify\n"), ldb_module_get_name(module));
 		return ldb_next_request(module, req);
 	}
 
 	ldb = ldb_module_get_ctx(module);
-	ldb_debug(ldb, LDB_DEBUG_TRACE, ("%s: ldb_modify\n"), ldb_module_get_ops(module)->name);
+	ldb_debug(ldb, LDB_DEBUG_TRACE, ("%s: ldb_modify\n"), ldb_module_get_name(module));
 	return univention_samaccountname_ldap_check(module, req);
 }
 
@@ -240,7 +240,7 @@ static int univention_samaccountname_ldap_check_init_context(struct ldb_module *
 		ldb_debug(ldb, LDB_DEBUG_WARNING,
 			"%s: "
 			"Unable to register control with rootdse!",
-			ldb_module_get_ops(module)->name);
+			ldb_module_get_name(module));
 	}
 
 	return ldb_next_init(module);
