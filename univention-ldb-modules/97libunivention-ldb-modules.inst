@@ -51,8 +51,8 @@ if [ $JS_LAST_EXECUTED_VERSION -le 0 ]; then
 		## TODO: Remove test phase switch iff univention-s4-connector passes a control to bypass the LDB module
 		is_ucr_true "samba4/ldb/sam/module/test"
 		if [ $? -ne 0 ]; then
-			echo -n " == skipping joinscript, set samba4/ldb/sam/module/test=yes for testing  == "
-			exit 0
+			echo " == skipping joinscript, set samba4/ldb/sam/module/test=yes for testing  == "
+			exit 1
 		fi
 
 		## check the samba4/ldb/sam/module/prepend list

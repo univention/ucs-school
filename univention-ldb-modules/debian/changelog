@@ -1,3 +1,10 @@
+univention-ldb-modules (0.0.1-16) unstable; urgency=low
+
+  * make joinscript fail if samba4/ldb/sam/module/test!=yes
+    (Bug #26569).
+
+ -- Arvid Requate <requate@univention.de>  Thu, 22 Mar 2012 17:45:23 +0100
+
 univention-ldb-modules (0.0.1-15) unstable; urgency=low
 
   * add some build-/dependencies (Bug #26569).
