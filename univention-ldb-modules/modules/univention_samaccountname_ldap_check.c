@@ -1,7 +1,6 @@
 /* 
  * Samba LDB module univention_samaccountname_ldap_check
- *	sample LDB Module for checking samaccountname adds against
- *	external LDAP
+ *	LDB Module for checking samaccountname adds against external LDAP
  *
  * Copyright 2011-2012 Univention GmbH
  *
@@ -59,7 +58,6 @@
 #include "ldap.h"
 #include <univention/config.h>
 #include <univention/ldap.h>
-// #include <univention/debug.h>
 
 univention_ldap_parameters_t	*lp;
 
@@ -124,7 +122,7 @@ static int univention_samaccountname_ldap_check(struct ldb_module *module, struc
 	attribute = ldb_msg_find_element(req->op.add.message, "sAMAccountName");
 	if (attribute) {
 
-		// maybe better use module->private_data ?
+		// TODO: maybe better allocate this in context_init and use module->private_data ?
 		lp = talloc_zero(module, univention_ldap_parameters_t);
 
 		lp->host=univention_config_get_string("ldap/master");
@@ -232,14 +230,18 @@ static int univention_samaccountname_ldap_check_modify(struct ldb_module *module
 static int univention_samaccountname_ldap_check_init_context(struct ldb_module *module)
 {
 	struct ldb_context *ldb;
+
 	int ret;
 	ret = ldb_mod_register_control(module, LDB_CONTROL_PERMISSIVE_MODIFY_OID);
 	if (ret != LDB_SUCCESS) {
 		ldb = ldb_module_get_ctx(module);
-		ldb_debug(ldb, LDB_DEBUG_WARNING,
+		ldb_debug(ldb, LDB_DEBUG_TRACE,
 			"%s: "
-			"Unable to register control with rootdse!",
-			ldb_module_get_name(module));
+			"Unable to register LDB_CONTROL_PERMISSIVE_MODIFY_NAME control with rootdse.\n"
+			"Errormessage: %s\n"
+			"This seems to be ok, continuing..",
+			ldb_module_get_name(module),
+			ldb_errstring(ldb));
 	}
 
 	return ldb_next_init(module);
