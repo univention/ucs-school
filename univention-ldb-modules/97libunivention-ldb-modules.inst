@@ -36,23 +36,39 @@ joinscript_init
 
 . /usr/share/univention-lib/all.sh
 
+eval "$(univention-config-registry shell)"
+
 NAME="Univention LDB Modules"
 
 sam_ldb=/var/lib/samba/private/sam.ldb
 
 if [ $JS_LAST_EXECUTED_VERSION -le 0 ]; then
-	## backup LDB file
-	tempfile="$(mktemp)"
-	cp "$sam_ldb" "$tempfile"
 
-	/usr/share/univention-samba4/scripts/register_ldb_module.py -H "$sam_ldb" --ignore-exists --prepend univention_samaccountname_ldap_check
+	## check if any of the relevant options are set
+	variables="$(univention-config-registry search --brief "^samba4/ldb/sam/module/")"
+	if [ -n "$variables" ]; then
+		## check the samba4/ldb/sam/module/prepend list
+		if [ -n "$samba4_ldb_sam_module_prepend" ]; then
+			for module in $samba4_ldb_sam_module_prepend; do
+				register_opts="$register_opts --prepend $module"
+			done
+		fi
 
-	## check if ldb file is ok
-	if ldbsearch -H "$sam_ldb" -b '@MODULES' -s base  > /dev/null; then
-		rm "$tempfile"
-	else
-		echo "Restoring original sam.ldb"
-		mv "$tempfile" "$sam_ldb"
+		if [ -n "$register_opts" ]; then
+			## backup LDB file
+			tempfile="$(mktemp)"
+			cp "$sam_ldb" "$tempfile"
+
+			/usr/share/univention-samba4/scripts/register_ldb_module.py -H "$sam_ldb" --ignore-exists $register_opts
+
+			## check if ldb file is ok
+			if ldbsearch -H "$sam_ldb" -b '@MODULES' -s base  > /dev/null; then
+				rm "$tempfile"
+			else
+				echo "Restoring original sam.ldb"
+				mv "$tempfile" "$sam_ldb"
+			fi
+		fi
 	fi
 fi
 
