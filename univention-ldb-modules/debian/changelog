@@ -1,3 +1,10 @@
+univention-ldb-modules (0.0.1-14) unstable; urgency=low
+
+  * add temporary samba4/ldb/sam/module/test check to avoid problems
+    with univention-s4-connector during test phase (Bug #26569).
+
+ -- Arvid Requate <requate@univention.de>  Thu, 22 Mar 2012 17:31:13 +0100
+
 univention-ldb-modules (0.0.1-13) unstable; urgency=low
 
   * add univention-install-config-registry (Bug #26569).
