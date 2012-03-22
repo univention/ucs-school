@@ -44,7 +44,8 @@ if [ $JS_LAST_EXECUTED_VERSION -lt 1 ]; then
 		connector/ldap/binddn?"$ldap_hostdn" \
 		connector/ldap/server?"$hostname.$domainname" \
 		connector/s4/allow/secondary?'true' \
-		connector/s4/mapping/dns/syncmode?'write'
+		connector/s4/mapping/dns/syncmode?'write' \
+		samba4/ldb/sam/module/prepend="univention_samaccountname_ldap_check"
 
 	if [ "$server_role" = "domaincontroller_slave" ]; then
 		site=$(school_ou)
