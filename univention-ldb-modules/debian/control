@@ -20,7 +20,8 @@ Depends: ${misc:Depends},
 	${shlibs:Depends},
 	libldb1,
 	libunivention-config0,
-	libunivention-policy0
+	libunivention-policy0,
+	univention-samba4
 Description: Univention LDB modules
  This package provides UCS specific LDB modules
  .
