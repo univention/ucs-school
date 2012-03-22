@@ -67,6 +67,9 @@ override_dh_auto_install:
 	dh_clean -k
 	dh_installdirs
 	$(MAKE) install DESTDIR=$(DESTDIR)
+	## put the following to files into dh_install sourcedir
+	install register_ldb_module.py $(DESTDIR)
+	install 97libunivention-ldb-modules.inst $(DESTDIR)
 	dh_install --fail-missing --list-missing --sourcedir=$(DESTDIR)
 
 override_dh_auto_clean:
