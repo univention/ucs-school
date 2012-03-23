@@ -189,7 +189,6 @@ dojo.declare("umc.widgets.Wizard", [ dijit.layout.StackContainer, umc.widgets.St
 	_next: function(/*String*/ currentPage) {
 		// update visibilty of buttons and show next page
 		dojo.when(this.next(currentPage), dojo.hitch(this, function(nextPage) {
-			this._updateButtons(nextPage);
 			if (!nextPage) {
 				throw new Error('ERROR: received invalid page name [' + dojo.toJson(nextPage) + '] for Wizard.next(' + dojo.toJson(currentPage) + ')');
 			}

@@ -1,3 +1,9 @@
+univention-management-console-frontend (1.0.310-1) unstable; urgency=low
+
+  * Wizard: fix last commit (Bug #26603)
+
+ -- Jascha Geerds <geerds@univention.de>  Fri, 23 Mar 2012 16:02:08 +0100
+
 univention-management-console-frontend (1.0.309-1) unstable; urgency=low
 
   * Wizard: next/previous functions now accept deferred objects
