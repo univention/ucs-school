@@ -56,13 +56,13 @@ def loadInfo():
 		elif key.startswith('proxy/filter/groupdefault/'):
 			group = key[len('proxy/filter/groupdefault/'):]
 			rule = configRegistry[key]
-			priority = None
+			priority = 0
 			try:
-				priority = int(configRegistry.get('proxy/setting/%s/priority' % (rule, ), ''))
+				priority = int(configRegistry.get('proxy/filter/setting/%s/priority' % (rule, ), ''))
 			except ValueError:
 				pass
-			wlanEnabled = configRegistry.is_true('proxy/setting/%s/wlan' % (rule, ))
-			if wlanEnabled is not None and priority is not None:
+			wlanEnabled = configRegistry.is_true('proxy/filter/setting/%s/wlan' % (rule, ))
+			if wlanEnabled is not None:
 				groupInfo[group] = (priority, wlanEnabled, )
 
 def getNTPasswordHash(username, stationId):

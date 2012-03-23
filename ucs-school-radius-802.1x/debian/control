@@ -5,7 +5,7 @@ Maintainer: Univention GmbH <packages@univention.de>
 Build-Depends: debhelper, univention-config-dev, ucslint
 
 Package: ucs-school-radius-802.1x
-Architecture: all
+Architecture: any
 Conflicts: univention-kernel-image-2.6, univention-kernel-image
 Depends: univention-config-registry, freeradius, freeradius-ldap, freeradius-utils, univention-ssl
 Description: freeradius 802.1X integration package for Univention Corporate Server

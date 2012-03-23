@@ -1,7 +1,7 @@
 #!/usr/bin/make -f
 #
 # UCS@school RADIUS 802.1X
-#  rules file for the debian package
+#  makefile
 #
 # Copyright (C) 2011-2012 Univention GmbH
 #
@@ -31,21 +31,12 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-override_dh_auto_install:
-	dh_auto_install
-	univention-install-config-registry
+build: usr/bin/ucs-school-ntlm-auth-suidwrapper
 
-override_dh_fixperms:
-	dh_fixperms
-	chmod u+s debian/ucs-school-radius-802.1x/usr/bin/ucs-school-ntlm-auth-suidwrapper
+usr/bin/ucs-school-ntlm-auth-suidwrapper: ucs-school-ntlm-auth-suidwrapper.c
+	cc ucs-school-ntlm-auth-suidwrapper.c -o usr/bin/ucs-school-ntlm-auth-suidwrapper
 
-override_dh_auto_clean:
-	dh_auto_clean
-	rm -f debian/ucs-school-radius-802.1x.conffiles
+clean:
+	rm -f usr/bin/ucs-school-ntlm-auth-suidwrapper
 
-override_dh_auto_test:
-	dh_auto_test
-	ucslint
-
-%:
-	dh $@
+.PHONY: clean build
