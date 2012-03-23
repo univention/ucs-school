@@ -1,3 +1,10 @@
+univention-management-console-frontend (1.0.309-1) unstable; urgency=low
+
+  * Wizard: next/previous functions now accept deferred objects
+    as return value (Bug #26603)
+
+ -- Jascha Geerds <geerds@univention.de>  Fri, 23 Mar 2012 15:29:20 +0100
+
 univention-management-console-frontend (1.0.308-1) unstable; urgency=low
 
   * Form: on save, distinguish between put() and add(); Bug #26542
