@@ -20,7 +20,7 @@ Depends: ${misc:Depends},
  shell-ucs-school,
  python-univention-directory-manager
 Replaces: ucs-school-umc-proxysettings
-Breaks: ucs-school-umc-proxysettings (<= 6.0.3)
+Breaks: ucs-school-umc-proxysettings (<< 7.0.0)
 Description: UMC module to administrate internet rules
  This package contains two UMC modules for administrating
  internet rules and for associating them with groups.
