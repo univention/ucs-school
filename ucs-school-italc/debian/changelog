@@ -1,3 +1,9 @@
+ucs-school-italc (6.0.4-1) unstable; urgency=low
+
+  * add enum for slave state flags; Bug #25702
+
+ -- Andreas Büsching <buesching@univention.de>  Mon, 26 Mar 2012 14:33:02 +0200
+
 ucs-school-italc (6.0.3-1) unstable; urgency=low
 
   * stateChanged: change attribute type from enum States to int; Bug #25702
