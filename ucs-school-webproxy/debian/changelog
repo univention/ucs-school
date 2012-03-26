@@ -1,3 +1,9 @@
+ucs-school-webproxy (8.0.9-1) unstable; urgency=low
+
+  * changed loglevel to PROCESS (Bug #15085)
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Mon, 26 Mar 2012 16:26:31 +0200
+
 ucs-school-webproxy (8.0.8-1) unstable; urgency=low
 
   * unset old proxy/ip_auth vars in preinst (Bug #25803) 

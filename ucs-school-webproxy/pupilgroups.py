@@ -48,7 +48,7 @@ def initialize():
 	pass
 
 def handler(dn, new, old):
-	univention.debug.debug(univention.debug.LISTENER, univention.debug.ERROR, 'pupilgroups: dn: %s' % dn)
+	univention.debug.debug(univention.debug.LISTENER, univention.debug.PROCESS, 'pupilgroups: dn: %s' % dn)
 	configRegistry = univention.config_registry.ConfigRegistry()
 	configRegistry.load()
 	listener.setuid(0)
