@@ -1,3 +1,9 @@
+ucs-school-umc-rooms (8.0.0-1) unstable; urgency=low
+
+  * fixed version; added conflict to old roomadmin package (Bug #26393)
+
+ -- Felix Botner <botner@univention.de>  Mon, 26 Mar 2012 11:14:08 +0200
+
 ucs-school-umc-rooms (0.1.7-1) unstable; urgency=low
 
   * remove conflict to old roomadmin package (Bug #26393) 
