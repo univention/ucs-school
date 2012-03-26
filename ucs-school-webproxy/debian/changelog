@@ -1,3 +1,9 @@
+ucs-school-webproxy (8.0.8-1) unstable; urgency=low
+
+  * unset old proxy/ip_auth vars in preinst (Bug #25803) 
+
+ -- Felix Botner <botner@univention.de>  Mon, 26 Mar 2012 14:54:34 +0200
+
 ucs-school-webproxy (8.0.7-1) unstable; urgency=low
 
   * removed UCR ignore filter for listener module (Bug #15085)
