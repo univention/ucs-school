@@ -13,6 +13,7 @@ XS-Python-Version: 2.6
 Package: ucs-school-umc-users
 Architecture: all
 Replaces: ucs-school-umc-schooladmin
+Breaks: ucs-school-umc-schooladmin (<< 8.0.0)
 Depends: ${misc:Depends},
  univention-management-console,
  univention-config-registry,
