@@ -1,3 +1,10 @@
+univention-squid (5.0.10-1) unstable; urgency=low
+
+  * allow local networks if squid/allow/localnet is true
+  * fixed description of ucr vars (Bug #25700)
+
+ -- Felix Botner <botner@univention.de>  Mon, 26 Mar 2012 16:47:53 +0200
+
 univention-squid (5.0.9-2) unstable; urgency=low
 
   * fixed debugging in ntlm authentication module

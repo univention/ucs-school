@@ -40,6 +40,12 @@ Description[en]=User groups that are allowed to access squid
 Type=str
 Categories=service-webproxy
 
+[squid/allow/localnet]
+Description[de]=Gibt an, ob von den lokalen Netzwerken aus Squid zugegriffen werden darf (Default: no)
+Description[en]=Specifies whether or not access to Squid is allowed from local networks (default: no)
+Type=str
+Categories=service-webproxy
+
 [squid/allowfrom]
 Description[de]=Zusätzliche Netzwerke, von denen auf squid zugegriffen werden darf
 Description[en]=Additional networks squid allows access from
@@ -59,7 +65,7 @@ Type=str
 Categories=service-webproxy
 
 [squid/parent/options]
-Description[de]=Optionen für Verbindung mir dem übergeordneten Proxys (Default: default)
+Description[de]=Optionen für Verbindung mit dem übergeordneten Proxy (Default: default)
 Description[en]=Options for the parent proxy connection (default: default)
 Type=str
 Categories=service-webproxy
