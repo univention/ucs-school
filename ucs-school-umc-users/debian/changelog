@@ -1,3 +1,9 @@
+ucs-school-umc-users (0.1.11-1) unstable; urgency=low
+
+  * added transitional package for update (Bug #26393) 
+
+ -- Felix Botner <botner@univention.de>  Mon, 26 Mar 2012 10:47:01 +0200
+
 ucs-school-umc-users (0.1.10-1) unstable; urgency=low
 
   * use TextBox for the new password; Bug #25954

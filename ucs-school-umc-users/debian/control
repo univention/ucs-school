@@ -12,6 +12,7 @@ XS-Python-Version: 2.6
 
 Package: ucs-school-umc-users
 Architecture: all
+Replaces: ucs-school-umc-schooladmin
 Depends: ${misc:Depends},
  univention-management-console,
  univention-config-registry,
@@ -22,6 +23,19 @@ Depends: ${misc:Depends},
 Description: UMC modules to reset account passwords
  This package contains two UMC modules for resetting
  passwods of teacher and student accounts.
+ .
+ It is part of Univention Corporate Server (UCS), an
+ integrated, directory driven solution for managing
+ corporate environments. For more information about UCS,
+ refer to: http://www.univention.de/
+
+Package: ucs-school-umc-schooladmin
+Depends: ucs-school-umc-users, ucs-school-umc-groups, ${misc:Depends}
+Architecture: all
+Description: transitional dummy package
+ Package to ease upgrading from ucs-school-umc-schooladmin to
+ ucs-school-umc-users and -groups. This package can be purged at anytime
+ once the ucs-school-umc-internetrules package has been installed.
  .
  It is part of Univention Corporate Server (UCS), an
  integrated, directory driven solution for managing
