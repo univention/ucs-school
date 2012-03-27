@@ -59,8 +59,6 @@
 #include <univention/config.h>
 #include <univention/ldap.h>
 
-univention_ldap_parameters_t	*lp;
-
 static char* read_pwd_from_file(char *filename)
 {
 	FILE *fp;
@@ -108,22 +106,29 @@ int do_connection(struct ldb_context *ldb, univention_ldap_parameters_t *lp)
 }
 
 
+static int free_univention_ldap_parameters(univention_ldap_parameters_t *lp) {
+	if ( lp->ld != NULL ) {
+		ldap_unbind_ext(lp->ld, NULL, NULL);
+	}
+	free(lp->host);
+	free(lp->base);
+	free(lp->binddn);
+	free(lp->bindpw);
+	return 0;
+}
+	
+static int get_univention_ldap_connection(struct ldb_module *module, univention_ldap_parameters_t *lp) {
 
-static int univention_samaccountname_ldap_check(struct ldb_module *module, struct ldb_request *req)
-{
-	struct ldb_message_element *attribute;
 	struct ldb_context *ldb;
-	char *ldap_filter;
-	LDAPMessage *res = NULL;
-	int rv = LDAP_SUCCESS;
-	int ret = LDB_SUCCESS;
 	ldb = ldb_module_get_ctx(module);
 
-	attribute = ldb_msg_find_element(req->op.add.message, "sAMAccountName");
-	if (attribute) {
+	if (lp == NULL) {
 
-		// TODO: maybe better allocate this in context_init and use module->private_data ?
 		lp = talloc_zero(module, univention_ldap_parameters_t);
+
+		if (lp == NULL) {
+			return LDB_ERR_OTHER;
+		}
 
 		lp->host=univention_config_get_string("ldap/master");
 		lp->base=univention_config_get_string("ldap/base");
@@ -134,19 +139,38 @@ static int univention_samaccountname_ldap_check(struct ldb_module *module, struc
 		free(port);
 		lp->start_tls=2;
 		lp->authmethod = LDAP_AUTH_SIMPLE;
-		if (do_connection(ldb, lp) != 0) {
-			ldb_debug(ldb, LDB_DEBUG_ERROR, ("cannot connect to ldap server %s\n"), lp->host);
-			if ( lp->ld != NULL ) {
-				ldap_unbind_ext(lp->ld, NULL, NULL);
-				lp->ld = NULL;
-			}
-			free(lp->host);
-			free(lp->base);
-			free(lp->binddn);
-			free(lp->bindpw);
-			talloc_free(lp);
 
-			return LDB_ERR_UNAVAILABLE;
+		talloc_set_destructor(lp, free_univention_ldap_parameters);
+		ldb_module_set_private(module, lp);
+	}
+
+	if (lp->ld == NULL && do_connection(ldb, lp) != 0) {
+		ldb_debug(ldb, LDB_DEBUG_ERROR, ("cannot connect to ldap server %s\n"), lp->host);
+		lp->ld = NULL;
+		return LDB_ERR_UNAVAILABLE;
+	}
+	return LDB_SUCCESS;
+}
+
+static int univention_samaccountname_ldap_check(struct ldb_module *module, struct ldb_request *req)
+{
+	struct ldb_message_element *attribute;
+	struct ldb_context *ldb;
+	char *ldap_filter;
+	LDAPMessage *res = NULL;
+	int rv = LDAP_SUCCESS;
+	int ret = LDB_SUCCESS;
+	univention_ldap_parameters_t	*lp;
+	ldb = ldb_module_get_ctx(module);
+
+	attribute = ldb_msg_find_element(req->op.add.message, "sAMAccountName");
+	if (attribute) {
+
+		lp = ldb_module_get_private(module);
+
+		ret = get_univention_ldap_connection(module, lp);
+		if ( ret != LDB_SUCCESS ) {
+			return ret;
 		}
 
 		int ldap_filter_length = 6 + attribute->values[0].length + 1;
@@ -168,17 +192,6 @@ static int univention_samaccountname_ldap_check(struct ldb_module *module, struc
 
 		if ( res != NULL ) {
 			ldap_msgfree( res );
-		}
-		if ( lp != NULL ) {
-			if ( lp->ld != NULL ) {
-				ldap_unbind_ext(lp->ld, NULL, NULL);
-				lp->ld = NULL;
-			}
-			free(lp->host);
-			free(lp->base);
-			free(lp->binddn);
-			free(lp->bindpw);
-			talloc_free(lp);
 		}
 	}
 

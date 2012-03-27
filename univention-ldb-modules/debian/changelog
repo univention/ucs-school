@@ -1,3 +1,9 @@
+univention-ldb-modules (0.0.1-17) unstable; urgency=low
+
+  * improved connection and talloc handling (Bug #26569).
+
+ -- Arvid Requate <requate@univention.de>  Tue, 27 Mar 2012 12:31:47 +0200
+
 univention-ldb-modules (0.0.1-16) unstable; urgency=low
 
   * make joinscript fail if samba4/ldb/sam/module/test!=yes
