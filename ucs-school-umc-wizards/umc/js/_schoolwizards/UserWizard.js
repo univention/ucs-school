@@ -33,12 +33,10 @@ dojo.provide("umc.modules._schoolwizards.UserWizard");
 
 dojo.require("umc.dialog");
 dojo.require("umc.i18n");
-dojo.require("umc.widgets.Wizard");
 
-dojo.declare("umc.modules._schoolwizards.UserWizard", [ umc.widgets.Wizard, umc.i18n.Mixin ], {
+dojo.require("umc.modules._schoolwizards.Wizard");
 
-	// use i18n information from umc.modules.schoolwizards
-	i18nClass: 'umc.modules.schoolwizards',
+dojo.declare("umc.modules._schoolwizards.UserWizard", [ umc.modules._schoolwizards.Wizard, umc.i18n.Mixin ], {
 
 	constructor: function() {
 		this.pages = [{
@@ -92,7 +90,7 @@ dojo.declare("umc.modules._schoolwizards.UserWizard", [ umc.widgets.Wizard, umc.
 			}, {
 				type: 'TextBox',
 				name: 'mailPrimaryAddress',
-				label: this._('E-Mail'),
+				label: this._('E-Mail')
 			}, {
 				type: 'TextBox',
 				name: 'class',
@@ -151,16 +149,5 @@ dojo.declare("umc.modules._schoolwizards.UserWizard", [ umc.widgets.Wizard, umc.
 				return false;
 			})
 		);
-	},
-
-	_validateForm: function() {
-		var form = this.selectedChildWidget.get('_form');
-		if (! form.validate()) {
-			var widgets = form.getInvalidWidgets();
-			form.getWidget(widgets[0]).focus()
-			return false
-		} else {
-			return true;
-		}
 	}
 });

@@ -1,3 +1,11 @@
+ucs-school-umc-wizards (1.0.2-1) unstable; urgency=low
+
+  * Fix typo
+  * Add a abstract wizard class
+  (Bug #26344)
+
+ -- Jascha Geerds <geerds@univention.de>  Thu, 29 Mar 2012 14:51:58 +0200
+
 ucs-school-umc-wizards (1.0.1-1) unstable; urgency=low
 
   * Add user wizard
