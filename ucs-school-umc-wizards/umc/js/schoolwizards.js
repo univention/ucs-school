@@ -34,9 +34,39 @@ dojo.provide("umc.modules.schoolwizards");
 dojo.require("umc.i18n");
 dojo.require("umc.widgets.Module");
 
+dojo.require("umc.modules._schoolwizards.UserWizard");
+dojo.require("umc.modules._schoolwizards.ClassWizard");
+dojo.require("umc.modules._schoolwizards.ComputerWizard");
+dojo.require("umc.modules._schoolwizards.SchoolWizard");
+
 dojo.declare("umc.modules.schoolwizards", [ umc.widgets.Module, umc.i18n.Mixin ], {
+
+	// internal reference to our wizard
+	_wizard: null,
 
 	buildRendering: function() {
 		this.inherited(arguments);
-    }
+		this._wizard = this._getWizard(this.moduleFlavor);
+		if (this._wizard) {
+			this.addChild(this._wizard);
+
+			this.connect(this._wizard, 'onFinished', function() {
+				dojo.publish('/umc/tabs/close', [this]);
+			});
+			this.connect(this._wizard, 'onCancel', function() {
+				dojo.publish('/umc/tabs/close', [this]);
+			});
+		}
+	},
+
+	_getWizard: function(moduleFlavor) {
+		var path = umc.modules._schoolwizards;
+		switch (moduleFlavor) {
+			case 'schoolwizards/users': return new path.UserWizard({});
+			case 'schoolwizards/classes': return new path.ClassWizard({});
+			case 'schoolwizards/computers': return new path.ComputerWizard({});
+			case 'schoolwizards/schools': return new path.SchoolWizard({});
+			default: return null;
+		}
+	}
 });

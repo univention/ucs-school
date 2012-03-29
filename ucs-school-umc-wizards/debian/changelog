@@ -1,5 +1,13 @@
+ucs-school-umc-wizards (1.0.1-1) unstable; urgency=low
+
+  * Add user wizard
+  * Add icons
+  (Bug #26344)
+
+ -- Jascha Geerds <geerds@univention.de>  Thu, 29 Mar 2012 14:17:27 +0200
+
 ucs-school-umc-wizards (1.0.0-1) unstable; urgency=low
 
-  * WIP: Initial release (Bug #26344)
+  * Initial release (Bug #26344)
 
  -- Jascha Geerds <geerds@univention.de>  Tue, 20 Mar 2012 11:05:30 +0100

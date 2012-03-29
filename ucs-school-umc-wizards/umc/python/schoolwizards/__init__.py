@@ -33,6 +33,60 @@
 
 from univention.lib.i18n import Translation
 from univention.management.console.log import MODULE
+from univention.management.console.modules import UMC_OptionMissing, UMC_CommandError, UMC_OptionTypeError
 from univention.management.console.protocol.definitions import *
+import univention.admin.modules as udm_modules
+
+from ucsschool.lib.schoolldap import SchoolBaseModule, LDAP_Connection, LDAP_Filter, USER_READ
+
+from SchoolImport import *
 
 _ = Translation('ucs-school-umc-wizards').translate
+
+class Instance(SchoolBaseModule, SchoolImport):
+	"""Base class for the schoolwizards UMC module.
+	"""
+	def required_values(self, request, *keys):
+		missing = filter(lambda key: '' == request.options[key], keys)
+		if missing:
+			raise ValueError(_('Missing value for the following properties: %s')
+			                 % ','.join(missing))
+
+	def create_user(self, request):
+		"""Create a new user.
+		"""
+		MODULE.info('schoolwizards/users/create: options: %s' % str(request.options))
+
+		try:
+			# Validate request options
+			keys = ['username', 'lastname', 'firstname', 'school', 'class', 'type']
+			self.required_options(request, *keys)
+			self.required_values(request, *keys)
+
+			isTeacher = False
+			isStaff = False
+			if request.options['type'] not in ['student', 'teacher', 'staff', 'staffAndTeacher']:
+				raise ValueError(_('Invalid value for  \'type\' property'))
+			if request.options['type'] == 'teacher':
+				isTeacher = True
+			elif request.options['type'] == 'staff':
+				isStaff = True
+			elif request.options['type'] == 'staffAndTeacher':
+				isStaff = True
+				isTeacher = True
+
+			# Create the user
+			self.import_user(request.options['username'],
+			                 request.options['lastname'],
+			                 request.options['firstname'],
+			                 request.options['school'],
+			                 request.options['class'],
+			                 request.options.get('mailPrimaryAddress', ''),
+			                 isTeacher,
+			                 isStaff)
+		except (ValueError, IOError, OSError), err:
+			MODULE.info(str(err))
+			result = {'successs': False, 'message': str(err)}
+			self.finished(request.id, result)
+		else:
+			self.finished(request.id, None, _('User successfully created'))
