@@ -39,17 +39,18 @@ from univention.management.console.log import MODULE
 from univention.management.console.modules import UMC_CommandError
 import univention.admin.modules as udm_modules
 
-from ucsschool.lib.schoolldap import LDAP_Connection, LDAP_Filter
+from ucsschool.lib.schoolldap import SchoolSearchBase, LDAP_Connection, LDAP_Filter
 
 _ = Translation('ucs-school-umc-wizards').translate
 
-class SchoolImport(object):
+class SchoolImport(SchoolSearchBase):
 	"""Wrapper for the ucs-school-import script
 	"""
 	_SCRIPT_PATH = '/usr/share/ucs-school-import/scripts'
 	USER_SCRIPT = '%s/import_user' % _SCRIPT_PATH
+	SCHOOL_SCRIPT = '%s/create_ou' % _SCRIPT_PATH
 
-	def _run_script(self, script, entry):
+	def _run_script(self, script, entry, run_with_string_argument=False):
 		"""Executes the script with given entry
 		"""
 		# Replace `True` with 1 and `False` with 0
@@ -57,18 +58,27 @@ class SchoolImport(object):
 		# Separate columns by tabs
 		entry = '\t'.join(['%s' % column for column in entry])
 
-		try:
-			tmpfile = tempfile.NamedTemporaryFile()
-			tmpfile.write(entry)
-			tmpfile.flush()
-			return_code = subprocess.call([script, tmpfile.name])
-		except IOError, err:
-			MODULE.info(str(err))
-			raise UMC_CommandError(_('Execution of command failed'))
+		if run_with_string_argument:
+			try:
+				return_code = subprocess.call([script, entry])
+			except IOError, err:
+				MODULE.info(str(err))
+				raise UMC_CommandError(_('Execution of command failed'))
+			else:
+				return return_code
 		else:
-			return return_code
-		finally:
-			tmpfile.close()
+			try:
+				tmpfile = tempfile.NamedTemporaryFile()
+				tmpfile.write(entry)
+				tmpfile.flush()
+				return_code = subprocess.call([script, tmpfile.name])
+			except IOError, err:
+				MODULE.info(str(err))
+				raise UMC_CommandError(_('Execution of command failed'))
+			else:
+				return return_code
+			finally:
+				tmpfile.close()
 
 	@LDAP_Connection()
 	def _username_used(self, username, search_base=None,
@@ -86,12 +96,15 @@ class SchoolImport(object):
 		                                    scope = 'sub', filter = ldap_filter)
 		return bool(address_exists)
 
+	@LDAP_Connection()
+	def _school_name_used(self, name, search_base=None,
+	                      ldap_user_read=None, ldap_position=None):
+		return bool(name in search_base.availableSchools)
+
 	def import_user(self, username, lastname, firstname, school, class_,
 	                mailPrimaryAddress, teacher, staff):
 		"""Imports a new user
 		"""
-		MODULE.info('#### user: %s' % str(username))
-
 		if self._username_used(username):
 			raise ValueError(_('Username is already in use'))
 		if mailPrimaryAddress:
@@ -104,3 +117,13 @@ class SchoolImport(object):
 		return_code = self._run_script(SchoolImport.USER_SCRIPT, entry)
 		if return_code:
 			raise OSError(_('Could not create user'))
+
+	def create_ou(self, name):
+		"""Creates a new school
+		"""
+		if self._school_name_used(name):
+			raise ValueError(_('School name is already in use'))
+
+		return_code = self._run_script(SchoolImport.SCHOOL_SCRIPT, [name, ], True)
+		if return_code:
+			raise OSError(_('Could not create school'))

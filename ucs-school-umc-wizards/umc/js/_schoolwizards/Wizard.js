@@ -39,6 +39,14 @@ dojo.declare("umc.modules._schoolwizards.Wizard", [ umc.widgets.Wizard, umc.i18n
 	// use i18n information from umc.modules.schoolwizards
 	i18nClass: 'umc.modules.schoolwizards',
 
+	hasPrevious: function(/*String*/ pageName) {
+		return pageName === 'finish' ? false : this.inherited(arguments);
+	},
+
+	canCancel: function(/*String*/ pageName) {
+		return pageName === 'finish' ? false : true;
+	},
+
 	_validateForm: function() {
 		var form = this.selectedChildWidget.get('_form');
 		if (! form.validate()) {

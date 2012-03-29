@@ -26,5 +26,7 @@
 		</command>
 		<command name="schoolwizards/users/create" function="create_user">
 		</command>
+		<command name="schoolwizards/schools/create" function="create_school">
+		</command>
 	</module>
 </umc>

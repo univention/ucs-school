@@ -55,8 +55,6 @@ class Instance(SchoolBaseModule, SchoolImport):
 	def create_user(self, request):
 		"""Create a new user.
 		"""
-		MODULE.info('schoolwizards/users/create: options: %s' % str(request.options))
-
 		try:
 			# Validate request options
 			keys = ['username', 'lastname', 'firstname', 'school', 'class', 'type']
@@ -90,3 +88,21 @@ class Instance(SchoolBaseModule, SchoolImport):
 			self.finished(request.id, result)
 		else:
 			self.finished(request.id, None, _('User successfully created'))
+
+	def create_school(self, request):
+		"""Create a new school.
+		"""
+		try:
+			# Validate request options
+			self.required_options(request, 'name')
+			self.required_values(request, 'name')
+
+			# Create the school
+			self.create_ou(request.options['name'])
+		except (ValueError, IOError, OSError), err:
+			MODULE.info(str(err))
+			result = {'message': str(err)}
+			self.finished(request.id, result)
+		else:
+			self.finished(request.id, None, _('School successfully created'))
+
