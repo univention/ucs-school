@@ -37,18 +37,16 @@ import subprocess
 from univention.lib.i18n import Translation
 from univention.management.console.log import MODULE
 from univention.management.console.modules import UMC_CommandError
-import univention.admin.modules as udm_modules
-
-from ucsschool.lib.schoolldap import SchoolSearchBase, LDAP_Connection, LDAP_Filter
 
 _ = Translation('ucs-school-umc-wizards').translate
 
-class SchoolImport(SchoolSearchBase):
+class SchoolImport():
 	"""Wrapper for the ucs-school-import script
 	"""
 	_SCRIPT_PATH = '/usr/share/ucs-school-import/scripts'
 	USER_SCRIPT = '%s/import_user' % _SCRIPT_PATH
 	SCHOOL_SCRIPT = '%s/create_ou' % _SCRIPT_PATH
+	CLASS_SCRIPT = '%s/import_group' % _SCRIPT_PATH
 
 	def _run_script(self, script, entry, run_with_string_argument=False):
 		"""Executes the script with given entry
@@ -80,37 +78,10 @@ class SchoolImport(SchoolSearchBase):
 			finally:
 				tmpfile.close()
 
-	@LDAP_Connection()
-	def _username_used(self, username, search_base=None,
-	                   ldap_user_read=None, ldap_position=None):
-		ldap_filter = LDAP_Filter.forAll(username, ['username'])
-		user_exists = udm_modules.lookup('users/user', None, ldap_user_read,
-		                                 scope = 'sub', filter = ldap_filter)
-		return bool(user_exists)
-
-	@LDAP_Connection()
-	def _mail_address_used(self, address, search_base=None,
-	                       ldap_user_read=None, ldap_position=None):
-		ldap_filter = LDAP_Filter.forAll(address, ['mailPrimaryAddress'])
-		address_exists = udm_modules.lookup('users/user', None, ldap_user_read,
-		                                    scope = 'sub', filter = ldap_filter)
-		return bool(address_exists)
-
-	@LDAP_Connection()
-	def _school_name_used(self, name, search_base=None,
-	                      ldap_user_read=None, ldap_position=None):
-		return bool(name in search_base.availableSchools)
-
 	def import_user(self, username, lastname, firstname, school, class_,
 	                mailPrimaryAddress, teacher, staff):
 		"""Imports a new user
 		"""
-		if self._username_used(username):
-			raise ValueError(_('Username is already in use'))
-		if mailPrimaryAddress:
-			if self._mail_address_used(mailPrimaryAddress):
-				raise ValueError(_('Mail address is already in use'))
-
 		entry = ['A', username, lastname, firstname, school, class_, '',
 		         mailPrimaryAddress, teacher, True, staff, ]
 
@@ -121,9 +92,16 @@ class SchoolImport(SchoolSearchBase):
 	def create_ou(self, name):
 		"""Creates a new school
 		"""
-		if self._school_name_used(name):
-			raise ValueError(_('School name is already in use'))
-
 		return_code = self._run_script(SchoolImport.SCHOOL_SCRIPT, [name, ], True)
 		if return_code:
 			raise OSError(_('Could not create school'))
+
+	def import_class(self, school, name, description):
+		"""Creates a new class
+		"""
+		name = '%s-%s' % (school, name)
+		entry = ['A', school, name, description, ]
+
+		return_code = self._run_script(SchoolImport.CLASS_SCRIPT, entry)
+		if return_code:
+			raise OSError(_('Could not create class'))

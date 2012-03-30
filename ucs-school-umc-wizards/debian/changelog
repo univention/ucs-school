@@ -1,3 +1,11 @@
+ucs-school-umc-wizards (1.0.5-1) unstable; urgency=low
+
+  * Add class wizard
+  * Refactoring
+  (Bug #26344)
+
+ -- Jascha Geerds <geerds@univention.de>  Fri, 30 Mar 2012 10:26:44 +0200
+
 ucs-school-umc-wizards (1.0.4-1) unstable; urgency=low
 
   * Fix request result for users/create (Bug #26344)

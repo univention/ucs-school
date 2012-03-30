@@ -29,18 +29,17 @@
 
 /*global console MyError dojo dojox dijit umc */
 
-dojo.provide("umc.modules._schoolwizards.UserWizard");
+dojo.provide("umc.modules._schoolwizards.ClassWizard");
 
-dojo.require("umc.dialog");
 dojo.require("umc.i18n");
 
 dojo.require("umc.modules._schoolwizards.Wizard");
 
-dojo.declare("umc.modules._schoolwizards.UserWizard", [ umc.modules._schoolwizards.Wizard, umc.i18n.Mixin ], {
+dojo.declare("umc.modules._schoolwizards.ClassWizard", [ umc.modules._schoolwizards.Wizard, umc.i18n.Mixin ], {
 
 	constructor: function() {
 		this.pages = [{
-			name: 'general',
+			name: 'class',
 			headerText: this._('General information'),
 			helpText: this._('Here\'s a simple helpText'),
 			widgets: [{
@@ -50,57 +49,17 @@ dojo.declare("umc.modules._schoolwizards.UserWizard", [ umc.modules._schoolwizar
 				dynamicValues: 'schoolwizards/schools',
 				autoHide: true
 			}, {
-				type: 'ComboBox',
-				name: 'type',
-				label: this._('Type'),
-				staticValues: [{
-					id: 'student',
-					label: this._('Student')
-				}, {
-					id: 'teacher',
-					label: this._('Teacher')
-				}, {
-					id: 'staff',
-					label: this._('Staff')
-				}, {
-					id: 'teachersAndStaff',
-					label: this._('Teachers and staff')
-				}]
+				type: 'TextBox',
+				name: 'name',
+				label: this._('Name'),
+				required: true
+			}, {
+				type: 'TextBox',
+				name: 'description',
+				label: this._('Description')
 			}],
-			layout: [['school'], ['type']]
-		}, {
-			name: 'user',
-			headerText: this._('User information'),
-			helpText: this._('Here\'s a simple helpText'),
-			widgets: [{
-				type: 'TextBox',
-				name: 'username',
-				label: this._('Username'),
-				required: true
-			}, {
-				type: 'TextBox',
-				name: 'firstname',
-				label: this._('Firstname'),
-				required: true
-			}, {
-				type: 'TextBox',
-				name: 'lastname',
-				label: this._('Lastname'),
-				required: true
-			}, {
-				type: 'TextBox',
-				name: 'mailPrimaryAddress',
-				label: this._('E-Mail')
-			}, {
-				type: 'TextBox',
-				name: 'class',
-				label: this._('Class'),
-				required: true
-			}],
-			layout: [['username'],
-			         ['firstname', 'lastname'],
-			         ['mailPrimaryAddress'],
-			         ['class']]
+			layout: [['school'],
+			         ['name', 'description']]
 		}, {
 			name: 'finish',
 			headerText: this._('Finished'),
@@ -110,9 +69,9 @@ dojo.declare("umc.modules._schoolwizards.UserWizard", [ umc.modules._schoolwizar
 
 	next: function(/*String*/ currentPage) {
 		var nextPage = this.inherited(arguments);
-		if (currentPage === 'user') {
+		if (currentPage === 'class') {
 			if (this._validateForm()) {
-				return this._createUser().then(dojo.hitch(this, function(result) {
+				return this._createClass().then(dojo.hitch(this, function(result) {
 					return result ? nextPage : currentPage;
 				}));
 			} else {
@@ -122,10 +81,10 @@ dojo.declare("umc.modules._schoolwizards.UserWizard", [ umc.modules._schoolwizar
 		return nextPage;
 	},
 
-	_createUser: function() {
+	_createClass: function() {
 		this.standby(true);
 		var values = this.getValues();
-		return umc.tools.umcpCommand('schoolwizards/users/create', values).then(
+		return umc.tools.umcpCommand('schoolwizards/classes/create', values).then(
 			dojo.hitch(this, function(response) {
 				this.standby(false);
 				if (response.result) {
