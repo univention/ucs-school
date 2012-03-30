@@ -1,3 +1,9 @@
+ucs-school-umc-wizards (1.0.6-1) unstable; urgency=low
+
+  * Add computer wizard (Bug #26344)
+
+ -- Jascha Geerds <geerds@univention.de>  Fri, 30 Mar 2012 15:50:15 +0200
+
 ucs-school-umc-wizards (1.0.5-1) unstable; urgency=low
 
   * Add class wizard

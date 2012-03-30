@@ -81,6 +81,22 @@ class Instance(SchoolBaseModule, SchoolImport):
 		                                  filter = ldap_filter, base = search_base.classes)
 		return bool(class_exists)
 
+	@LDAP_Connection()
+	def _computer_name_used(self, name, search_base=None,
+	                       ldap_user_read=None, ldap_position=None):
+		ldap_filter = LDAP_Filter.forAll(name, ['name'])
+		computer_exists = udm_modules.lookup('computers/computer', None, ldap_user_read,
+		                                     scope = 'sub', filter = ldap_filter)
+		return bool(computer_exists)
+
+	@LDAP_Connection()
+	def _mac_address_used(self, address, search_base=None,
+	                      ldap_user_read=None, ldap_position=None):
+		ldap_filter = LDAP_Filter.forAll(address, ['mac'])
+		address_exists = udm_modules.lookup('computers/computer', None, ldap_user_read,
+		                                    scope = 'sub', filter = ldap_filter)
+		return bool(address_exists)
+
 	def create_user(self, request):
 		"""Create a new user.
 		"""
@@ -168,3 +184,41 @@ class Instance(SchoolBaseModule, SchoolImport):
 			self.finished(request.id, result)
 		else:
 			self.finished(request.id, None, _('Class successfully created'))
+
+	def create_computer(self, request):
+		"""Create a new computer.
+		"""
+		try:
+			# Validate request options
+			self.required_options(request, 'type', 'name', 'mac', 'school', 'ipAddress')
+			self.required_values(request, 'type', 'name', 'mac', 'school', 'ipAddress')
+
+			# TODO: validate subnetmask/ip-/mac-address
+			if not self._school_name_used(request.options['school']):
+				raise ValueError(_('Unknown school'))
+
+			if self._computer_name_used(request.options['name']):
+				raise ValueError(_('Computer name is already in use'))
+
+			if self._mac_address_used(request.options['mac']):
+				raise ValueError(_('MAC address is already in use'))
+
+			allowed_types = ['macos', 'managedclient', 'windows', 'thinclient',
+			                 'memberserver', 'mobileclient', 'ipmanagedclient']
+			if request.options['type'] not in allowed_types:
+				raise ValueError(_('Invalid value for  \'type\' property'))
+
+			# Create the computer
+			self.import_computer(request.options['type'],
+			                     request.options['name'],
+			                     request.options['mac'],
+			                     request.options['school'],
+			                     request.options['ipAddress'],
+			                     request.options.get('subnetMask', ''),
+			                     request.options.get('inventoryNumber', ''))
+		except (ValueError, IOError, OSError), err:
+			MODULE.info(str(err))
+			result = {'message': str(err)}
+			self.finished(request.id, result)
+		else:
+			self.finished(request.id, None, _('Computer successfully created'))

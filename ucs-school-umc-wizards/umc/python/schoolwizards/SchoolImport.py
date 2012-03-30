@@ -47,6 +47,7 @@ class SchoolImport():
 	USER_SCRIPT = '%s/import_user' % _SCRIPT_PATH
 	SCHOOL_SCRIPT = '%s/create_ou' % _SCRIPT_PATH
 	CLASS_SCRIPT = '%s/import_group' % _SCRIPT_PATH
+	COMPUTER_SCRIPT = '%s/import_computer' % _SCRIPT_PATH
 
 	def _run_script(self, script, entry, run_with_string_argument=False):
 		"""Executes the script with given entry
@@ -105,3 +106,18 @@ class SchoolImport():
 		return_code = self._run_script(SchoolImport.CLASS_SCRIPT, entry)
 		if return_code:
 			raise OSError(_('Could not create class'))
+
+	def import_computer(self, type_, name, mac, school, ip_address, subnet_mask, inventory_number):
+		"""Imports a new computer
+		"""
+		if subnet_mask:
+			address = '%s/%s' % (ip_address, subnet_mask)
+		else:
+			address = ip_address
+
+		entry = [type_, name, mac, school, address, inventory_number, ]
+
+		return_code = self._run_script(SchoolImport.COMPUTER_SCRIPT, entry)
+		if return_code:
+			raise OSError(_('Could not create computer'))
+
