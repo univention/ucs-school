@@ -128,7 +128,7 @@ dojo.declare("umc.modules._schoolwizards.UserWizard", [ umc.modules._schoolwizar
 		return umc.tools.umcpCommand('schoolwizards/users/create', values).then(
 			dojo.hitch(this, function(response) {
 				this.standby(false);
-				if (! response.result.success) {
+				if (response.result) {
 					umc.dialog.alert(response.result.message);
 					return false;
 				} else {

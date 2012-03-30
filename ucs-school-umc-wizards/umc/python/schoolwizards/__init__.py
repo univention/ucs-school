@@ -84,7 +84,7 @@ class Instance(SchoolBaseModule, SchoolImport):
 			                 isStaff)
 		except (ValueError, IOError, OSError), err:
 			MODULE.info(str(err))
-			result = {'successs': False, 'message': str(err)}
+			result = {'message': str(err)}
 			self.finished(request.id, result)
 		else:
 			self.finished(request.id, None, _('User successfully created'))
@@ -105,4 +105,3 @@ class Instance(SchoolBaseModule, SchoolImport):
 			self.finished(request.id, result)
 		else:
 			self.finished(request.id, None, _('School successfully created'))
-

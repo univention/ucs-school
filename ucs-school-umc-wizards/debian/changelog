@@ -1,3 +1,9 @@
+ucs-school-umc-wizards (1.0.4-1) unstable; urgency=low
+
+  * Fix request result for users/create (Bug #26344)
+
+ -- Jascha Geerds <geerds@univention.de>  Thu, 29 Mar 2012 17:49:47 +0200
+
 ucs-school-umc-wizards (1.0.3-1) unstable; urgency=low
 
   * Add school wizard
