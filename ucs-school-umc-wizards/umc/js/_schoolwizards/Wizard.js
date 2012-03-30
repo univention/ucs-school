@@ -39,12 +39,28 @@ dojo.declare("umc.modules._schoolwizards.Wizard", [ umc.widgets.Wizard, umc.i18n
 	// use i18n information from umc.modules.schoolwizards
 	i18nClass: 'umc.modules.schoolwizards',
 
+	createObjectCommand: null,
+
 	hasPrevious: function(/*String*/ pageName) {
 		return pageName === 'finish' ? false : this.inherited(arguments);
 	},
 
 	canCancel: function(/*String*/ pageName) {
 		return pageName === 'finish' ? false : true;
+	},
+
+	next: function(/*String*/ currentPage) {
+		var nextPage = this.inherited(arguments);
+		if (this._getPageIndex(currentPage) === (this.pages.length -2 )) {
+			if (this._validateForm()) {
+				return this._createObject().then(dojo.hitch(this, function(result) {
+					return result ? nextPage : currentPage;
+				}));
+			} else {
+				return currentPage;
+			}
+		}
+		return nextPage;
 	},
 
 	_validateForm: function() {
@@ -56,5 +72,25 @@ dojo.declare("umc.modules._schoolwizards.Wizard", [ umc.widgets.Wizard, umc.i18n
 		} else {
 			return true;
 		}
+	},
+
+	_createObject: function() {
+		this.standby(true);
+		var values = this.getValues();
+		return umc.tools.umcpCommand(this.createObjectCommand , values).then(
+			dojo.hitch(this, function(response) {
+				this.standby(false);
+				if (response.result) {
+					umc.dialog.alert(response.result.message);
+					return false;
+				} else {
+					return true;
+				}
+			}),
+			dojo.hitch(this, function(result) {
+				this.standby(false);
+				return false;
+			})
+		);
 	}
 });

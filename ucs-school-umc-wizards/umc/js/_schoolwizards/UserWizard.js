@@ -38,6 +38,8 @@ dojo.require("umc.modules._schoolwizards.Wizard");
 
 dojo.declare("umc.modules._schoolwizards.UserWizard", [ umc.modules._schoolwizards.Wizard, umc.i18n.Mixin ], {
 
+	createObjectCommand: 'schoolwizards/users/create',
+
 	constructor: function() {
 		this.pages = [{
 			name: 'general',
@@ -106,39 +108,5 @@ dojo.declare("umc.modules._schoolwizards.UserWizard", [ umc.modules._schoolwizar
 			headerText: this._('Finished'),
 			helpText: this._('Here\'s a simple helpText')
 		}];
-	},
-
-	next: function(/*String*/ currentPage) {
-		var nextPage = this.inherited(arguments);
-		if (currentPage === 'user') {
-			if (this._validateForm()) {
-				return this._createUser().then(dojo.hitch(this, function(result) {
-					return result ? nextPage : currentPage;
-				}));
-			} else {
-				return currentPage;
-			}
-		}
-		return nextPage;
-	},
-
-	_createUser: function() {
-		this.standby(true);
-		var values = this.getValues();
-		return umc.tools.umcpCommand('schoolwizards/users/create', values).then(
-			dojo.hitch(this, function(response) {
-				this.standby(false);
-				if (response.result) {
-					umc.dialog.alert(response.result.message);
-					return false;
-				} else {
-					return true;
-				}
-			}),
-			dojo.hitch(this, function(result) {
-				this.standby(false);
-				return false;
-			})
-		);
 	}
 });

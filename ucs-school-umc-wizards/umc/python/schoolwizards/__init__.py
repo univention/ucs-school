@@ -175,7 +175,7 @@ class Instance(SchoolBaseModule, SchoolImport):
 				raise ValueError(_('Class name is already in use'))
 
 			# Create the school
-			self.import_class(request.options['school'],
+			self.import_group(request.options['school'],
 			                  request.options['name'],
 			                  request.options.get('description', ''))
 		except (ValueError, IOError, OSError), err:

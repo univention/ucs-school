@@ -31,11 +31,14 @@
 
 dojo.provide("umc.modules._schoolwizards.ClassWizard");
 
+dojo.require("umc.dialog");
 dojo.require("umc.i18n");
 
 dojo.require("umc.modules._schoolwizards.Wizard");
 
 dojo.declare("umc.modules._schoolwizards.ClassWizard", [ umc.modules._schoolwizards.Wizard, umc.i18n.Mixin ], {
+
+	createObjectCommand: 'schoolwizards/classes/create',
 
 	constructor: function() {
 		this.pages = [{
@@ -65,39 +68,5 @@ dojo.declare("umc.modules._schoolwizards.ClassWizard", [ umc.modules._schoolwiza
 			headerText: this._('Finished'),
 			helpText: this._('Here\'s a simple helpText')
 		}];
-	},
-
-	next: function(/*String*/ currentPage) {
-		var nextPage = this.inherited(arguments);
-		if (currentPage === 'class') {
-			if (this._validateForm()) {
-				return this._createClass().then(dojo.hitch(this, function(result) {
-					return result ? nextPage : currentPage;
-				}));
-			} else {
-				return currentPage;
-			}
-		}
-		return nextPage;
-	},
-
-	_createClass: function() {
-		this.standby(true);
-		var values = this.getValues();
-		return umc.tools.umcpCommand('schoolwizards/classes/create', values).then(
-			dojo.hitch(this, function(response) {
-				this.standby(false);
-				if (response.result) {
-					umc.dialog.alert(response.result.message);
-					return false;
-				} else {
-					return true;
-				}
-			}),
-			dojo.hitch(this, function(result) {
-				this.standby(false);
-				return false;
-			})
-		);
 	}
 });

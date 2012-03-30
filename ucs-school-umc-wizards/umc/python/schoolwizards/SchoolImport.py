@@ -46,7 +46,7 @@ class SchoolImport():
 	_SCRIPT_PATH = '/usr/share/ucs-school-import/scripts'
 	USER_SCRIPT = '%s/import_user' % _SCRIPT_PATH
 	SCHOOL_SCRIPT = '%s/create_ou' % _SCRIPT_PATH
-	CLASS_SCRIPT = '%s/import_group' % _SCRIPT_PATH
+	GROUP_SCRIPT = '%s/import_group' % _SCRIPT_PATH
 	COMPUTER_SCRIPT = '%s/import_computer' % _SCRIPT_PATH
 
 	def _run_script(self, script, entry, run_with_string_argument=False):
@@ -80,11 +80,11 @@ class SchoolImport():
 				tmpfile.close()
 
 	def import_user(self, username, lastname, firstname, school, class_,
-	                mailPrimaryAddress, teacher, staff):
+	                mail_primary_address, teacher, staff):
 		"""Imports a new user
 		"""
 		entry = ['A', username, lastname, firstname, school, class_, '',
-		         mailPrimaryAddress, teacher, True, staff, ]
+		         mail_primary_address, teacher, True, staff, ]
 
 		return_code = self._run_script(SchoolImport.USER_SCRIPT, entry)
 		if return_code:
@@ -97,13 +97,13 @@ class SchoolImport():
 		if return_code:
 			raise OSError(_('Could not create school'))
 
-	def import_class(self, school, name, description):
+	def import_group(self, school, name, description):
 		"""Creates a new class
 		"""
 		name = '%s-%s' % (school, name)
 		entry = ['A', school, name, description, ]
 
-		return_code = self._run_script(SchoolImport.CLASS_SCRIPT, entry)
+		return_code = self._run_script(SchoolImport.GROUP_SCRIPT, entry)
 		if return_code:
 			raise OSError(_('Could not create class'))
 
