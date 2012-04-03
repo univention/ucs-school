@@ -1,3 +1,11 @@
+univention-management-console-frontend (1.0.311-1) unstable; urgency=low
+
+  * Grid: optional a field name assoziated with an action may be defined; Bug #26612
+  * add CSS style class for a loading animation; Bug #26698
+  * Grid: add event functions onShowDescription and onHideDescription to action columns; Bug #26699
+
+ -- Andreas Büsching <buesching@univention.de>  Tue, 03 Apr 2012 09:46:35 +0200
+
 univention-management-console-frontend (1.0.310-1) unstable; urgency=low
 
   * Wizard: fix last commit (Bug #26603)
