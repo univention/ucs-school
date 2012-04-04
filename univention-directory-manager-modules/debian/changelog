@@ -1,4 +1,4 @@
-univention-directory-manager-modules (7.0.230-1) unstable; urgency=low
+univention-directory-manager-modules (7.0.231-1) unstable; urgency=low
 
   * computer modules: passing LDAP attributes to base constructor; Bug #26453
 
