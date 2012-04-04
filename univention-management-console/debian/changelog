@@ -1,3 +1,11 @@
+univention-management-console (4.0.224-1) unstable; urgency=low
+
+  * minor fixes
+  * UMC module: add option to choose another notifier implementation
+  * XML module definition: add attribute to define notifier; Bug #26704
+
+ -- Andreas Büsching <buesching@univention.de>  Wed, 04 Apr 2012 21:06:48 +0200
+
 univention-management-console (4.0.223-1) unstable; urgency=low
 
   * just read overwrites from allowed flavors; Bug #26380
