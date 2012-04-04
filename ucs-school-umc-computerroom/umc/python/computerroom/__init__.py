@@ -31,11 +31,15 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+import os
+from random import Random
+
 from univention.management.console.config import ucr
 
 from univention.lib.i18n import Translation
 from univention.management.console.modules import UMC_OptionTypeError, UMC_CommandError, Base
 from univention.management.console.log import MODULE
+from univention.management.console.protocol import MIMETYPE_PNG, MIMETYPE_JPEG, Response
 
 import univention.admin.modules as udm_modules
 
@@ -43,12 +47,16 @@ from ucsschool.lib.schoolldap import LDAP_Connection, LDAP_ConnectionError, set_
 
 from italc2 import ITALC_Manager
 
+import notifier
+
 _ = Translation( 'ucs-school-umc-computerroom' ).translate
 
 class Instance( SchoolBaseModule ):
-	def __init__( self ):
-		SchoolBaseModule.__init__( self )
-		self._italc = ITALC_Manager()
+	def init( self ):
+		SchoolBaseModule.init( self )
+		self._italc = ITALC_Manager( self._username, self._password )
+		self._random = Random()
+		self._random.seed()
 
 	@LDAP_Connection()
 	def query( self, request, search_base = None, ldap_user_read = None, ldap_position = None ):
@@ -63,80 +71,136 @@ class Instance( SchoolBaseModule ):
 		self.required_options( request, 'school', 'room' )
 		MODULE.info( 'computerroom.query: options: %s' % str( request.options ) )
 
-		modified = False
 		if self._italc.school != request.options[ 'school' ]:
 			self._italc.school = request.options[ 'school' ]
-			modified = True
 		if self._italc.room != request.options[ 'room' ]:
 			self._italc.room = request.options[ 'room' ]
-			modified = True
 
-		def _initialized():
-			MODULE.info( 'room is initialized' )
-			try:
-				result = []
-				for computer in self._italc.values():
-					item = { 'id' : computer.name,
-							 'name' : computer.name,
-							 'user' : computer.user.current,
-							 'connection' : computer.connectionState,
-							 'description' : computer.description }
-					item.update( computer.states )
-					result.append( item )
+		try:
+			result = []
+			for computer in self._italc.values():
+				item = { 'id' : computer.name,
+						 'name' : computer.name,
+						 'user' : computer.user.current,
+						 'connection' : computer.state.current,
+						 'description' : computer.description }
+				item.update( computer.flagsDict )
+				result.append( item )
 
-					MODULE.info( 'computerroom.query: result: %s' % str( result ) )
-				self.finished( request.id, result )
-			except Exception, e:
-				MODULE.error( 'query failed: %s' % str( e ) )
+				MODULE.info( 'computerroom.query: result: %s' % str( result ) )
+			self.finished( request.id, result )
+		except Exception, e:
+			MODULE.error( 'query failed: %s' % str( e ) )
 			self._italc.signal_disconnect( 'initialized', _initialized )
-
-		if modified:
-			MODULE.info( 'School and/or room has been modified ... waiting for completion of initialization' )
-			self._italc.signal_connect( 'initialized', _initialized )
-		else:
-			_initialized()
+			self.finished( request.id, str( e ), success = False )
 
 	def update( self, request ):
-		"""Returns an update for the computers in the selected room
+		"""Returns an update for the computers in the selected
+		room. Just attributes that have changed since the last call will
+		be included in the result
 
 		requests.options = [ <ID>, ... ]
 
 		return: [ { 'id' : <unique identifier>, 'states' : <display name>, 'color' : <name of favorite color> }, ... ]
 		"""
-		MODULE.warn( 'Current school: %s, current room: %s' % ( str( self._italc.school ), str( self._italc.room ) ) )
+		MODULE.warn( 'Update: start' )
+		MODULE.warn( 'Update: Current school: %s, current room: %s' % ( str( self._italc.school ), str( self._italc.room ) ) )
 
 		if not self._italc.school or not self._italc.room:
 			raise UMC_CommandError( 'no room selected' )
 
 		result = []
 		for computer in self._italc.values():
-			item = dict( id = computer.name, connection = computer.connectionState )
+			item = dict( id = computer.name )
+			modified = False
+			if computer.state.hasChanged:
+				item[ 'connection' ] = str( computer.state.current )
+				modified = True
 			if computer.flags.hasChanged:
-				item.update( computer.states )
+				item.update( computer.flagsDict )
+				modified = True
 			if computer.user.hasChanged:
 				item[ 'user' ] = str( computer.user.current )
-			result.append( item )
+				modified = True
+			if modified:
+				result.append( item )
 
-		MODULE.info( 'computerroom.query: result: %s' % str( result ) )
+		MODULE.info( 'Update: result: %s' % str( result ) )
 		self.finished( request.id, result )
 
-	def get( self, request ):
+	def lock( self, request ):
 		"""Returns the objects for the given IDs
 
-		requests.options = [ <ID>, ... ]
+		requests.options = { 'computer' : <computer name>, 'device' : (screen|input), 'lock' : <boolean or string> }
 
-		return: [ { 'id' : <unique identifier>, 'name' : <display name>, 'color' : <name of favorite color> }, ... ]
+		return: { 'success' : True|False, [ 'details' : <message> ] }
 		"""
-		self.finished( request.id, {} )
-		#MODULE.info( 'computerroom.get: options: %s' % str( request.options ) )
-		#ids = request.options
-		#result = []
-		#if isinstance( ids, ( list, tuple ) ):
-		#	ids = set(ids)
-		#	result = filter(lambda x: x['id'] in ids, Instance.entries)
-		#else:
-		#	MODULE.warn( 'computerroom.get: wrong parameter, expected list of strings, but got: %s' % str( ids ) )
-		#	raise UMC_OptionTypeError( 'Expected list of strings, but got: %s' % str(ids) )
-		#MODULE.info( 'computerroom.get: results: %s' % str( result ) )
-		#self.finished( request.id, result )
+		self.required_options( request, 'computer', 'device', 'lock' )
+		success = False
+		message = ''
+		device = request.options[ 'device' ]
+		if not device in ( 'screen', 'input' ):
+			raise UMC_OptionTypeError( 'unknown device %s' % device )
+
+		computer = self._italc.get( request.options[ 'computer' ], None )
+		if computer is None:
+			raise UMC_CommandError( 'Unknown computer %s' % request.options[ 'computer' ] )
+
+		def _answer( new_value, computer, request, message ):
+			MODULE.warn( 'Got signal with value %s' % new_value )
+			success = new_value == request.options[ 'lock' ]
+			computer.signal_disconnect( '%s-lock' % device, _answer )
+			self.finished( request.id, { 'success' : success, 'details' : not success and message or '' } )
+
+		MODULE.warn( 'Connecting to signal %s' % '%s-lock' % device )
+		# computer.signal_connect( '%s-lock' % device, notifier.Callback( _answer, computer, request, message ) )
+
+		MODULE.warn( 'Locking device %s' % device )
+		if device == 'screen':
+			computer.lockScreen( request.options[ 'lock' ] )
+		else:
+			computer.lockInput( request.options[ 'lock' ] )
+		self.finished( request.id, { 'success' : True, 'details' : '' } )
+
+	def screenshot( self, request ):
+		"""Returns a JPEG image containing a screenshot of the given
+		computer. The computer must be in the current room
+
+		requests.options = { 'computer' : <computer name>[, 'size' : (thumbnail|...)] }
+
+		return (MIME-type image/jpeg): screenshot
+		"""
+		self.required_options( request, 'computer' )
+		computer = self._italc.get( request.options[ 'computer' ], None )
+		if not computer:
+			raise UMC_CommandError( 'Unknown computer' )
+
+		response = Response( mime_type = MIMETYPE_JPEG )
+		response.id = request.id
+		response.command = 'COMMAND'
+		tmpfile = computer.screenshot
+		response.body = open( tmpfile.name ).read()
+		os.unlink( tmpfile.name )
+		self.finished( request.id, response )
+
+	def demo_start( self, request ):
+		"""Starts a demo
+
+		requests.options = { 'server' : <computer> }
+
+		return: [True|False)
+		"""
+		self.required_options( request, 'server' )
+		self._italc.startDemo( request.options[ 'server' ], True )
+		self.finished( request.id, True )
+
+	def demo_stop( self, request ):
+		"""Stops a demo
+
+		requests.options = none
+
+		return: [True|False)
+		"""
+		self._italc.stopDemo()
+		self.finished( request.id, True )
 

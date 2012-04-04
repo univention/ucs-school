@@ -48,10 +48,10 @@ from ucsschool.lib.schoolldap import LDAP_Connection, LDAP_ConnectionError, set_
 
 import notifier
 import notifier.signals
+import notifier.threads
 
-from PyQt4.QtCore import QObject, pyqtSlot, SIGNAL, Qt
+from PyQt4.QtCore import QObject, pyqtSlot, SIGNAL, Qt, QCoreApplication
 from PyQt4.QtGui import QImageWriter
-# app = QApplication( sys.argv )
 
 import italc
 
@@ -59,8 +59,8 @@ _ = Translation( 'ucs-school-umc-computerroom' ).translate
 
 ITALC_DEMO_PORT = int( ucr.get( 'ucsschool/umc/computerroom/demo/port', 11400 ) )
 ITALC_VNC_PORT = int( ucr.get( 'ucsschool/umc/computerroom/vnc/port', 11100 ) )
-ITALC_VNC_UPDATE = int( ucr.get( 'ucsschool/umc/computerroom/vnc/update', 10 ) )
-ITALC_CORE_UPDATE = int( ucr.get( 'ucsschool/umc/computerroom/core/update', 5 ) )
+ITALC_VNC_UPDATE = int( ucr.get( 'ucsschool/umc/computerroom/vnc/update', 0.5 ) )
+ITALC_CORE_UPDATE = int( ucr.get( 'ucsschool/umc/computerroom/core/update', 2 ) )
 
 italc.ItalcCore.init()
 
@@ -68,6 +68,7 @@ italc.ItalcCore.config.setLogLevel( italc.Logger.LogLevelDebug )
 italc.ItalcCore.config.setLogToStdErr( True )
 italc.ItalcCore.config.setLogFileDirectory( '/var/log/univention/' )
 italc.Logger( 'ucs-school-umc-computerroom' )
+italc.ItalcCore.config.setLogonAuthenticationEnabled( False )
 
 italc.ItalcCore.setRole( italc.ItalcCore.RoleTeacher )
 italc.ItalcCore.initAuthentication( italc.AuthenticationCredentials.PrivateKey )
@@ -77,11 +78,11 @@ class ITALC_Error( Exception ):
 
 
 class LockableAttribute( object ):
-	def __init__( self, locking = True ):
+	def __init__( self, initial_value = None, locking = True ):
 		self._lock = locking and threading.Lock() or None
-		self._old = None
-		self._current = None
-		MODULE.warn( '__init__: %s != %s' % ( self._old, self._current ) )
+		MODULE.warn( 'Locking object: %s' % self._lock )
+		self._old = initial_value
+		self._current = copy.copy( initial_value )
 
 	def lock( self ):
 		if self._lock is None: return
@@ -96,7 +97,6 @@ class LockableAttribute( object ):
 	def current( self ):
 		self.lock()
 		tmp = copy.copy( self._current )
-		MODULE.warn( 'current: %s != %s' % ( self._old, self._current ) )
 		self.unlock()
 		return tmp
 
@@ -117,18 +117,24 @@ class LockableAttribute( object ):
 	@property
 	def hasChanged( self ):
 		self.lock()
-		MODULE.warn( 'hasChanged: %s != %s' % ( self._old, self._current ) )
+		MODULE.info( 'hasChanged: %s != %s' % ( self._old, self._current ) )
 		diff = self._old != self._current
-		self._old = self._current
+		self._old = copy.copy( self._current )
 		self.unlock()
 		return diff
+
+	def reset( self, inital_value = None ):
+		self.lock()
+		self._old = copy.copy( inital_value )
+		self._current = copy.copy( inital_value )
+		self.unlock()
 
 	def set( self, value ):
 		self.lock()
 		if value != self._current:
 			self._old = copy.copy( self._current )
 			self._current = copy.copy( value )
-		MODULE.warn( 'set: %s != %s' % ( self._old, self._current ) )
+			MODULE.info( 'set: %s != %s' % ( self._old, self._current ) )
 		self.unlock()
 
 class ITALC_Computer( notifier.signals.Provider, QObject ):
@@ -142,27 +148,36 @@ class ITALC_Computer( notifier.signals.Provider, QObject ):
 
 	def __init__( self, ldap_dn = None ):
 		QObject.__init__( self )
+		# notifier.threads.Enhanced.__init__( self, None, None )
 		notifier.signals.Provider.__init__( self )
 
 		self.signal_new( 'connected' )
+		self.signal_new( 'screen-lock' )
+		self.signal_new( 'input-lock' )
+		self.signal_new( 'access-dialog' )
+		self.signal_new( 'demo-client' )
+		self.signal_new( 'demo-server' )
+		self.signal_new( 'message-box' )
+		self.signal_new( 'system-tray-icon' )
 		self._vnc = None
 		self._core = None
 		self._dn = ldap_dn
 		self._computer = None
 		self._timer = None
-		self.readLDAP()
-		self.open()
 		self._username = LockableAttribute()
 		self._homedir = LockableAttribute()
 		self._flags = LockableAttribute()
+		self._state = LockableAttribute( initial_value = 'disconnected' )
 		self._allowedClients = []
+		self.readLDAP()
+		self.open()
 
 	@LDAP_Connection()
 	def readLDAP( self, ldap_user_read = None, ldap_position = None, search_base = None ):
 		attrs = ldap_user_read.lo.get( self._dn )
 		modules = udm_modules.identify( self._dn, attrs, module_base = 'computers/' )
 		if len( modules ) != 1:
-			MODULE.warn( 'LDAP object %s could not identified (found %d modules)' % ( self._dn, len( modules ) ) )
+			MODULE.warn( 'LDAP object %s could not be identified (found %d modules)' % ( self._dn, len( modules ) ) )
 			raise ITALC_Error( 'Unknown computer type' )
 		self._computer = udm_objects.get( modules[ 0 ], None, ldap_user_read, ldap_position, self._dn, attributes = attrs )
 		if not self._computer:
@@ -171,48 +186,70 @@ class ITALC_Computer( notifier.signals.Provider, QObject ):
 		self._computer.open()
 
 	def open( self ):
+		MODULE.warn( 'Opening VNC connection' )
 		self._vnc = italc.ItalcVncConnection()
 		self._vnc.setHost( self.ipAddress )
 		self._vnc.setPort( ITALC_VNC_PORT )
 		self._vnc.setQuality( italc.ItalcVncConnection.ThumbnailQuality )
-		self._vnc.setFramebufferUpdateInterval( ITALC_VNC_UPDATE )
+		self._vnc.setFramebufferUpdateInterval( 1000 * ITALC_VNC_UPDATE )
 		self._vnc.start()
-		notifier.timer_add( 100, self._when_connected )
+		self._vnc.stateChanged.connect( self._stateChanged ) #, Qt.DirectConnection )
 
-	def _when_connected( self ):
-		if not self._vnc.isConnected():
-			return True
-		self._core = italc.ItalcCoreConnection( self._vnc )
-		self.signal_emit( 'connected', self.name )
-		self._core.receivedUserInfo.connect( self._userInfo, Qt.DirectConnection )
-		self._core.receivedSlaveStateFlags.connect( self._slaveStateFlags, Qt.DirectConnection )
-		print self._core
-		self.start()
-		return False
+	@pyqtSlot( int )
+	def _stateChanged( self, state ):
+		self._state.set( ITALC_Computer.CONNECTION_STATES[ state ] )
+
+		MODULE.warn( '%s: current state: %s' % ( str( self.name ), str( self._state.current ) ) )
+		if not self._core and self._state.current == 'connected' and self._state.old == 'disconnected':
+			self._core = italc.ItalcCoreConnection( self._vnc )
+			self._core.receivedUserInfo.connect( self._userInfo )
+			self._core.receivedSlaveStateFlags.connect( self._slaveStateFlags )
+			self.signal_emit( 'connected', self )
+			self.start()
+
 
 	@pyqtSlot( str, str )
 	def _userInfo( self, username, homedir ):
 		self._username.set( username )
 		self._homedir.set( homedir )
-		if self.user.current:
+		if self._username.current:
 			self._core.reportSlaveStateFlags()
+
+	def _emit_flag( self, diff, flag, signal ):
+		if diff & flag:
+			self.signal_emit( signal, bool( self._flags.current & flag ) )
 
 	@pyqtSlot( int )
 	def _slaveStateFlags( self, flags ):
 		self._flags.set( flags )
+		if self._flags.old is None:
+			diff = self._flags.current
+		else:
+			# which flags have changed: old xor current
+			diff = self._flags.old ^ self._flags.current
+		self._emit_flag( diff, italc.ItalcCore.ScreenLockRunning, 'screen-lock' )
+		self._emit_flag( diff, italc.ItalcCore.InputLockRunning, 'input-lock' )
+		self._emit_flag( diff, italc.ItalcCore.AccessDialogRunning, 'access-dialog' )
+		self._emit_flag( diff, italc.ItalcCore.DemoClientRunning, 'demo-client' )
+		self._emit_flag( diff, italc.ItalcCore.DemoServerRunning, 'demo-server' )
+		self._emit_flag( diff, italc.ItalcCore.MessageBoxRunning, 'message-box' )
+		self._emit_flag( diff, italc.ItalcCore.SystemTrayIconRunning, 'system-tray-icon' )
 
 	def close( self ):
 		pass
 		# self._vnc.stop()
 
 	def update( self ):
+		if self._state.current != 'connected':
+			MODULE.info( 'currently not connected' )
+			return True
 		self._core.sendGetUserInformationRequest()
 		return True
 
 	def start( self ):
 		self.stop()
 		self.update()
-		self._timer = notifier.timer_add( 500, self.update )
+		self._timer = notifier.timer_add( ITALC_CORE_UPDATE * 1000, self.update )
 
 	def stop( self ):
 		if self._timer is not None:
@@ -272,7 +309,7 @@ class ITALC_Computer( notifier.signals.Provider, QObject ):
 		return self._flags
 
 	@property
-	def states( self ):
+	def flagsDict( self ):
 		return {
 			'ScreenLock' : self.screenLock,
 			'InputLock' :  self.inputLock,
@@ -282,8 +319,11 @@ class ITALC_Computer( notifier.signals.Provider, QObject ):
 			}
 
 	@property
-	def connectionState( self ):
-		return ITALC_Computer.CONNECTION_STATES[ self._vnc.state() ]
+	def state( self ):
+		'''Returns a LockableAttribute containing an abstracted
+		connection state. Possible values: conntected, disconnected,
+		error'''
+		return self._state
 
 	@property
 	def connected( self ):
@@ -304,7 +344,7 @@ class ITALC_Computer( notifier.signals.Provider, QObject ):
 			return None
 		tmpfile = tempfile.NamedTemporaryFile( delete = False )
 		tmpfile.close()
-		writer = QImageWriter( tmpfile.name, 'PNG' )
+		writer = QImageWriter( tmpfile.name, 'JPG' )
 		writer.write( image )
 		return tmpfile
 
@@ -359,7 +399,7 @@ class ITALC_Computer( notifier.signals.Provider, QObject ):
 		self._core.stopDemo()
 
 class ITALC_Manager( dict, notifier.signals.Provider ):
-	def __init__( self ):
+	def __init__( self, username, password ):
 		dict.__init__( self )
 		notifier.signals.Provider.__init__( self )
 		self.signal_new( 'initialized' )
@@ -367,9 +407,8 @@ class ITALC_Manager( dict, notifier.signals.Provider ):
 		self._school = None
 		self._demoServer = None
 		self._initialized = False
-
-	# def __del__( self ):
-	# 	self._clear()
+		italc.ItalcCore.authenticationCredentials.setLogonUsername( username )
+		italc.ItalcCore.authenticationCredentials.setLogonPassword( password )
 
 	@property
 	def room( self ):
@@ -396,17 +435,17 @@ class ITALC_Manager( dict, notifier.signals.Provider ):
 	def _clear( self ):
 		if self._room:
 			for name, computer in self.items():
-				if computer._core.isConnected():
+				if computer.connected:
 					computer.stop()
 			self.clear()
 			self._room = None
 			self._initialized = False
 
 	def _connected( self, computer ):
+		MODULE.info( 'New computer is connected ' + computer.name )
 		for comp in self.values():
 			if not comp.connected and not comp.hostUnreachable and not comp.connectFailed:
 				break
-			print comp.name, 'connected (or fatal error)'
 		else:
 			self._initialized = True
 			self.signal_emit( 'initialized' )
@@ -431,20 +470,30 @@ class ITALC_Manager( dict, notifier.signals.Provider ):
 			raise ITALC_Error( 'There are no computers in the selected room.' )
 
 		for dn in computers:
-			comp = ITALC_Computer( dn )
+			try:
+				comp = ITALC_Computer( dn )
+			except ITALC_Error, e:
+				MODULE.warn( 'Computer could not be added: %s' % str( e ) )
 			comp.signal_connect( 'connected', self._connected )
 			self.__setitem__( comp.name, comp )
 
-	def startDemo( self, demo_server, fullscreen = True ):
+	@LDAP_Connection()
+	def startDemo( self, demo_server, fullscreen = True, ldap_user_read = None, ldap_position = None, search_base = None ):
 		server = self.get( demo_server )
 		if server is None:
 			raise AttributeError( 'unknown system %s' % demo_server )
 
 		# start demo server
-		clients = filter( lambda comp: comp.name != demo_server, self.values() )
+		MODULE.info( 'Demo server is %s' % demo_server )
+		clients = filter( lambda comp: comp.name != demo_server and comp.connected, self.values() )
+		MODULE.info( 'Demo clients: %s' % ', '.join( map( lambda x: x.name, clients ) ) )
+		teachers = map( lambda x: x.name, filter( lambda comp: not comp.user.current or str( comp.user.current ).endswith( search_base.teachers ), self.values() ) )
 		server.startDemoServer( clients )
 		for client in clients:
-			client.startDemoClient( server, fullscreen )
+			if client.name in teachers:
+				client.startDemoClient( server, False )
+			else:
+				client.startDemoClient( server, fullscreen )
 		self._demoServer = server
 
 	def stopDemo( self, demo_server = None ):

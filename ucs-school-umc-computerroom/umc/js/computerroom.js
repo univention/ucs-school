@@ -34,6 +34,8 @@ dojo.require("dijit.Dialog");
 dojo.require("dojo.data.ItemFileWriteStore");
 dojo.require("dojo.store.DataStore");
 dojo.require("dojo.store.Memory");
+dojo.require("dojox.math");
+
 dojo.require("umc.dialog");
 dojo.require("umc.i18n");
 dojo.require("umc.tools");
@@ -43,6 +45,9 @@ dojo.require("umc.widgets.Grid");
 dojo.require("umc.widgets.Module");
 dojo.require("umc.widgets.Page");
 dojo.require("umc.widgets.Form");
+dojo.require("umc.widgets.ContainerWidget");
+
+dojo.require("umc.modules._computerroom.ScreenshotView");
 
 dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ], {
 	// summary:
@@ -66,6 +71,10 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 	// internal reference to the form for the active profile settings
 	_profileForm: null,
 
+	// widget to stop presentation
+	_presentationWidget: null,
+	_presentationText: '',
+
 	// internal reference to the expanding title pane
 	_titlePane: null,
 
@@ -75,6 +84,15 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 	_objStore: null,
 
 	_updateTimer: null,
+
+	_screenshotView: null,
+
+	uninitialize: function() {
+		this.inherited( arguments );
+		if ( this._updateTimer !== null ) {
+			window.clearTimeout( this._updateTimer );
+		}
+	},
 
 	postMixInProperties: function() {
 		// is called after all inherited properties/methods have been mixed
@@ -86,7 +104,7 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 		// Set the opacity for the standby animation to 100% in order to mask
 		// GUI changes when the module is opened. Call this.standby(true|false)
 		// to enabled/disable the animation.
-		this.standbyOpacity = 1;
+		// this.standbyOpacity = 1;
 	},
 
 	buildRendering: function() {
@@ -98,6 +116,27 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 
 		// render the page containing search form and grid
 		this.renderSearchPage();
+
+		this._screenshotView = new umc.modules._computerroom.ScreenshotView();
+		this.addChild( this._screenshotView );
+		dojo.connect( this._screenshotView, 'onClose', this, 'closeScreenView' );
+
+		this._presentationWidget = new umc.widgets.ContainerWidget( {
+			style: 'max-width: 450px;'
+		} );
+		this._presentationText = new umc.widgets.Text( {
+			content: this._( 'Currently a presentation is running.' )
+		} );
+		this._presentationWidget.addChild( this._presentationText );
+		this._presentationWidget.addChild( new umc.widgets.Button( {
+			label: this._( 'End presentation' ),
+			onClick: dojo.hitch( this, '_endPresentation' ),
+			style: 'float: right;'
+		} ) );
+	},
+
+	closeScreenView: function() {
+		this.selectChild( this._searchPage );
 	},
 
 	_updateHeader: function(room) {
@@ -145,6 +184,7 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 		// define grid actions
 		var actions = [{
 			name: 'screenshot',
+			field: 'screenshot',
 			label: dojo.hitch(this, function(item) {
 				if (!item) {
 					return this._('Screenshot');
@@ -152,41 +192,70 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 				return this._('Show');
 			}),
 			isStandardAction: true,
-			isMultiAction: false,
-			canExecute: function( item ) {
-				return item.connection == 'connected';
+			isMultiAction: true,
+			description: function( item ) {
+				return dojo.replace( '<div style="display: table-cell; vertical-align: middle; width: 240px;height: 200px;"><img id="screenshotTooltip-{0}" src="" style="width: 230px; display: block; margin-left: auto; margin-right: auto;"/></div>', item.id );
 			},
-			callback: dojo.hitch(this, '_dummy')
-		}, {
-			name: 'view',
-			label: this._('View'),
-			isStandardAction: true,
-			isMultiAction: false,
-			callback: dojo.hitch(this, '_dummy')
+			onShowDescription: function( target, item ) {
+				var image = dojo.byId( 'screenshotTooltip-' + item.id[ 0 ] );
+				image.src = '/umcp/command/computerroom/screenshot?computer=' + item.id[ 0 ] + '&random=' + Math.random();
+			},
+			canExecute: function( item ) {
+				return item.connection[ 0 ] == 'connected';
+			},
+			callback: dojo.hitch(this, function( ids, items ) {
+				this.selectChild( this._screenshotView );
+				this._screenshotView.load( dojo.map( items, function( item ) {
+					return { 
+						computer: item.id[ 0 ],
+						username: item.user[ 0 ]
+					};
+				} ) );
+			} )
 		}, {
 			name: 'ScreenLock',
+			field: 'ScreenLock',
 			label: dojo.hitch(this, function(item) {
 				if ( !item ) { // column title
 					return this._( 'Screen' );
 				}
-				if (item.ScreenLock[0] == true) {
+				if ( item.ScreenLock[0] === true ) {
 					return this._('Unlock');
+				} else if ( item.ScreenLock[0] === false ) {
+					return this._('Lock');
+				} else {
+					return '';
 				}
-				return this._('Lock');
 			}),
+			iconClass: dojo.hitch( this, function( item ) {
+				if ( !item ) {
+					return null;
+				}
+				if ( item.ScreenLock[ 0 ] === null ) {
+					return 'umcIconLoading';
+				}
+				return null;
+			} ),
 			isStandardAction: true,
 			isMultiAction: false,
 			canExecute: function( item ) {
-				return item.connection == 'connected';
+				return item.connection[ 0 ] == 'connected';
 			},
-			callback: dojo.hitch(this, '_dummy')
+			callback: dojo.hitch(this, function( ids, items ) {
+				var comp = items[ 0 ];
+				this.umcpCommand( 'computerroom/lock', { 
+					computer: comp.id[ 0 ],
+					device : 'screen',
+					lock: comp.ScreenLock[ 0 ] !== true } );
+				this._objStore.put( { id: comp.id[ 0 ], ScreenLock: null } );
+			} )
 		}, {
 			name: 'logout',
 			label: this._('Logout user'),
 			isStandardAction: false,
 			isMultiAction: false,
 			canExecute: function( item ) {
-				return item.connection == 'connected' && item.user;
+				return item.connection[ 0 ] == 'connected' && item.user[ 0 ];
 			},
 			callback: dojo.hitch(this, '_dummy')
 		}, {
@@ -195,7 +264,7 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 			isStandardAction: false,
 			isMultiAction: false,
 			canExecute: function( item ) {
-				return item.connection == 'connected';
+				return item.connection[ 0 ] == 'connected';
 			},
 			callback: dojo.hitch(this, '_dummy')
 		}, {
@@ -204,7 +273,7 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 			isStandardAction: false,
 			isMultiAction: false,
 			canExecute: function( item ) {
-				return item.connection == 'error';
+				return item.connection[ 0 ] == 'error';
 			},
 			callback: dojo.hitch(this, '_dummy')
 		}, {
@@ -213,7 +282,7 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 			isStandardAction: false,
 			isMultiAction: false,
 			canExecute: function( item ) {
-				return item.connection == 'connected';
+				return item.connection[ 0 ] == 'connected';
 			},
 			callback: dojo.hitch(this, '_dummy')
 		}, {
@@ -222,30 +291,28 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 			isStandardAction: false,
 			isMultiAction: false,
 			canExecute: function( item ) {
-				return item.connection == 'connected' && item.user;
+				return item.connection[ 0 ] == 'connected' && item.user[ 0 ];
 			},
 			callback: dojo.hitch(this, '_dummy')
 		}, {
 			name: 'presentation',
 			label: this._('Start presentation'),
 			isStandardAction: false,
-			isContextAction: false,
+			isContextAction: true,
 			isMultiAction: false,
 			canExecute: function( item ) {
-				return item.connection == 'connected' && item.user;
+				return item.connection[ 0 ] == 'connected' && item.user[ 0 ];
 			},
-			callback: dojo.hitch(this, '_dummy')
+			callback: dojo.hitch( this, '_startPresentation' )
 		}];
 
 		// define the grid columns
 		var columns = [{
 			name: 'name',
-			label: this._('Name'),
-			// width: '30%'
+			label: this._('Name')
 		}, {
 			name: 'user',
-			label: this._('User'),
-			// width: '30%'
+			label: this._('User')
 		}];
 
 		// generate the data grid
@@ -337,10 +404,21 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 			label: 'name',
 			items: []
 		} } );
-		this._objStore = new dojo.store.DataStore( { store : this._dataStore } );
+		this._objStore = new dojo.store.DataStore( { store : this._dataStore, idProperty: 'id' } );
 		this._grid.moduleStore = this._objStore;
 		this._grid._dataStore = this._dataStore;
 		this._grid._grid.setStore( this._dataStore );
+	},
+
+	_startPresentation: function( ids, items ) {
+		this.umcpCommand( 'computerroom/demo/start', { server: items[ 0 ].id[ 0 ] } );
+		this._presentationText.set( 'content', dojo.replace( this._( 'Currently a presentation is running. The computer of {0} is shown to all others. Click the following button to end the presentation' ), items[ 0 ].user ) );
+		this.standby( true, this._presentationWidget );
+	},
+
+	_endPresentation: function() {
+		this.umcpCommand( 'computerroom/demo/stop', {} );
+		this.standby( false );
 	},
 
 	postCreate: function() {
@@ -422,9 +500,11 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 		} ).then( dojo.hitch( this, function( response ) {
 			dojo.forEach( response.result, function( item ) {
 				this._objStore.put( item );
+				var idx = this._grid.getItemIndex( item.id );
+				this._grid._grid.rowSelectCell.setDisabled( idx, item.connection != 'connected' );
 			}, this );
 			if ( this._updateTimer ) {
-				window.clearTimeout( this.updateTimer );
+				window.clearTimeout( this._updateTimer );
 			}
 			this._updateTimer = window.setTimeout( dojo.hitch( this, '_updateRoom' ), 2000 );
 		} ) );
@@ -432,8 +512,14 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 
 	_updateRoom: function() {
 		this.umcpCommand( 'computerroom/update' ).then( dojo.hitch( this, function( response ) {
+			this._grid.clearDisabledItems( false );
 			dojo.forEach( response.result, function( item ) {
+				// this._objStore.put( dojo.mixin( item, { screenshot: dojox.math.gaussian() } ) );
 				this._objStore.put( item );
+				if ( item.connection !== undefined ) {
+					var idx = this._grid.getItemIndex( item.id );
+					this._grid._grid.rowSelectCell.setDisabled( idx, item.connection != 'connected' );
+				}
 			}, this );
 			this._updateTimer = window.setTimeout( dojo.hitch( this, '_updateRoom' ), 2000 );
 		} ) );

@@ -34,6 +34,7 @@
 import inspect
 import os
 import sys
+import PyQt4.Qt as qt
 import notifier
 import optparse
 
@@ -44,17 +45,20 @@ import italc2
 import ucsschool.lib.schoolldap as usl
 
 import univention.config_registry as ucr
+from univention.management.console.log import log_init, log_set_level
 
-def show_state():
-	FORMAT = '%(name)-15s %(description)-15s %(user)-20s %(ScreenLock)-14s %(InputLock)-13s %(MessageBox)-8s %(DemoServer)-8s %(DemoClient)-8s %(Flags)5s'
+def show_state( options ):
+	FORMAT = '%(name)-15s %(user)-25s %(ScreenLock)-14s %(InputLock)-13s %(MessageBox)-8s %(DemoServer)-8s %(DemoClient)-8s %(Flags)5s'
 	# clear screen and set position to HOME
-	print '\033[2J\033[H'
-	# print '##################'
+	if not options.logmode:
+		print '\033[2J\033[H'
+	else:
+		print '##################'
 	print FORMAT % { 'name' : 'Name', 'description' : 'Description', 'user' : 'User', 'ScreenLock' : 'Screen locked', 'InputLock' : 'Input locked', 'MessageBox' : 'Message', 'DemoServer' : 'Server', 'DemoClient' : 'Client', 'Flags' : 'Flags' }
 	print 120*'-'
 	for name, comp in m.items():
 		info = { 'name' : name, 'description' : comp.description or '<none>', 'user' : comp.user.current is None and '<unknown>' or comp.user.current }
-		info.update( comp.states )
+		info.update( comp.flagsDict )
 		info[ 'Flags' ] = comp.flags.current is None and '<not set>' or comp.flags.current
 		print FORMAT % info
 	return True
@@ -63,22 +67,36 @@ if __name__ == '__main__':
 	config = ucr.ConfigRegistry()
 	config.load()
 
-	notifier.init()
+	qApp = qt.QCoreApplication( sys.argv )
+	notifier.init( notifier.QT )
 
 	parser = optparse.OptionParser()
 	parser.add_option( '-s', '--school', dest = 'school', default = '711' )
 	parser.add_option( '-r', '--room', dest = 'room', default = 'room01' )
+	parser.add_option( '-l', '--log-mode', dest = 'logmode', default = False, action = 'store_true' )
+	parser.add_option( '-o', '--log-only', dest = 'logonly', default = False, action = 'store_true' )
+	parser.add_option( '-d', '--debug', dest = 'debug', default = 1 )
 	parser.add_option( '-u', '--username', dest = 'username', default = 'Administrator' )
 	parser.add_option( '-p', '--password', dest = 'password', default = 'univention' )
 	options, args = parser.parse_args()
 
+	if options.logmode:
+		log_init( '/dev/stderr' )
+		log_set_level( int( options.debug ) )
+	else:
+		log_init( 'italc2-monitor' )
+		log_set_level( int( options.debug ) )
+
 	usl.set_credentials( 'uid=%s,cn=users,%s' % ( options.username, config.get( 'ldap/base' ) ), options.password )
 
-	m = italc2.ITALC_Manager()
+	m = italc2.ITALC_Manager( options.username, options.password )
 	m.school = options.school
 	m.room = options.room
 
-	show_state()
-	notifier.timer_add( 1000, show_state )
+	if not options.logmode and not options.logonly:
+		show_state( options )
+		print 'starting timer'
+		timer = notifier.timer_add( 2000, notifier.Callback( show_state, options ) )
 
 	notifier.loop()
+

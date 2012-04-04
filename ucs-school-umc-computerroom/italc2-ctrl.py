@@ -49,20 +49,25 @@ italcManager = None
 
 count = 5
 
-def wait4state( computer, state, value ):
-	def _tick():
-		global italcManager, count
-		if not value: # ugly hack
-			count -= 1
-			if not count:
-				sys.exit( 0 )
-			return True
-		if italcManager[ computer ].states[ state ] == value:
-			del italcManager
-			print 'EXIT'
-			sys.exit( 0 )
-		return True
-	notifier.timer_add( 200, _tick )
+def wait4state( computer, signal, value ):
+	def _sig_handler( new_value, expected_value ):
+		print 'GOT SIGNAL', signal, new_value
+		sys.exit( 0 )
+		return False
+	computer.signal_connect( signal, notifier.Callback( _sig_handler, value ) )
+	# def _tick():
+	# 	global italcManager, count
+	# 	if not value: # ugly hack
+	# 		count -= 1
+	# 		if not count:
+	# 			sys.exit( 0 )
+	# 		return True
+	# 	if italcManager[ computer ].flagsDict[ state ] == value:
+	# 		del italcManager
+	# 		print 'EXIT'
+	# 		sys.exit( 0 )
+	# 	return True
+	# notifier.timer_add( 200, _tick )
 
 def when_connected( computer, options ):
 	print 'SIGNAL connected'
@@ -74,21 +79,22 @@ def when_connected( computer, options ):
 
 	print 'connected'
 
+	computer = italcManager[ options.computer ]
 	if options.action:
-		func = getattr( italcManager[ options.computer ]._core, options.action )
+		func = getattr( computer._core, options.action )
 		func( *args )
 	elif options.screen_lock is not None:
 		print 'screen', options.screen_lock and 'locked' or 'unlocked'
-		italcManager[ options.computer ].lockScreen( options.screen_lock )
-		wait4state( options.computer, 'ScreenLock', options.screen_lock )
+		computer.lockScreen( options.screen_lock )
+		wait4state( computer, 'screen-lock', options.screen_lock )
 	elif options.input_lock is not None:
 		print 'input', options.screen_lock and 'locked' or 'unlocked'
-		italcManager[ options.computer ].lockInput( options.input_lock )
-		wait4state( options.computer, 'InputLock', options.input_lock )
+		computer.lockInput( options.input_lock )
+		wait4state( computer, 'input-lock', options.input_lock )
 	elif options.message is not None:
 		print 'display message', options.message
-		italcManager[ options.computer ].message( options.message )
-		wait4state( options.computer, 'MessageBox', True )
+		computer.message( options.message )
+		wait4state( computer, 'MessageBox', True )
 	else:
 		print >>sys.stderr, 'Unknown action'
 		sys.exit( 1 )
@@ -117,7 +123,7 @@ if __name__ == '__main__':
 
 	usl.set_credentials( 'uid=%s,cn=users,%s' % ( options.username, config.get( 'ldap/base' ) ), options.password )
 
-	italcManager = italc2.ITALC_Manager()
+	italcManager = italc2.ITALC_Manager( options.username, options.password )
 	italcManager.school = options.school
 	italcManager.room = options.room
 

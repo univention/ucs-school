@@ -1,3 +1,11 @@
+ucs-school-umc-computerroom (0.1.6-1) unstable; urgency=low
+
+  * implementation of an iTALC 2 connector for UMC
+  * first set of features: determine user logged on, states, lock/unlock
+    screen, screenshots, presentation mode; Bug #25702
+
+ -- Andreas Büsching <buesching@univention.de>  Wed, 04 Apr 2012 21:03:19 +0200
+
 ucs-school-umc-computerroom (0.1.5-1) unstable; urgency=low
 
   * added conflict to old roomadmin package (Bug #26393) 
