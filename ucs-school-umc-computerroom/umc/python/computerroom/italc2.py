@@ -472,10 +472,10 @@ class ITALC_Manager( dict, notifier.signals.Provider ):
 		for dn in computers:
 			try:
 				comp = ITALC_Computer( dn )
+				comp.signal_connect( 'connected', self._connected )
+				self.__setitem__( comp.name, comp )
 			except ITALC_Error, e:
 				MODULE.warn( 'Computer could not be added: %s' % str( e ) )
-			comp.signal_connect( 'connected', self._connected )
-			self.__setitem__( comp.name, comp )
 
 	@LDAP_Connection()
 	def startDemo( self, demo_server, fullscreen = True, ldap_user_read = None, ldap_position = None, search_base = None ):

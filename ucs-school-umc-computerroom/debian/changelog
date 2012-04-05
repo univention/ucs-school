@@ -1,3 +1,10 @@
+ucs-school-umc-computerroom (0.1.7-1) unstable; urgency=low
+
+  * ignore computers without IP address
+  * add python-italc to dependencies; Bug #25702
+
+ -- Andreas Büsching <buesching@univention.de>  Thu, 05 Apr 2012 09:13:58 +0200
+
 ucs-school-umc-computerroom (0.1.6-1) unstable; urgency=low
 
   * implementation of an iTALC 2 connector for UMC

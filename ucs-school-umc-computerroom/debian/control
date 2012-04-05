@@ -21,7 +21,8 @@ Depends: ${misc:Depends},
  python-ucs-school,
  shell-ucs-school,
  python-univention-directory-manager,
- italc-master
+ italc-master,
+ python-italc
 Description: UMC module to control computers in a room
  This packages provides a Univention Management Console module that allows to
  fully control computers in a room for school lessons.
