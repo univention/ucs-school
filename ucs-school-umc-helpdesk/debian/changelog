@@ -1,3 +1,10 @@
+ucs-school-umc-helpdesk (6.0.7-1) unstable; urgency=low
+
+  * when the recipient is not set the UMC module is closed after the error
+    message has been confirmed; Bug #25706
+
+ -- Andreas Büsching <buesching@univention.de>  Thu, 05 Apr 2012 09:48:02 +0200
+
 ucs-school-umc-helpdesk (6.0.6-1) unstable; urgency=low
 
   * adapt UDM module to new API; Bug #25706
