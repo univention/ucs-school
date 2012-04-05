@@ -108,7 +108,7 @@ mapping.register('category', 'univentionUMCHelpdeskCategory')
 class object(univention.admin.handlers.simpleLdap):
 	module=module
 
-	def __init__(self, co, lo, position, dn='', superordinate=None, arg=None):
+	def __init__(self, co, lo, position, dn='', superordinate=None, attributes = [] ):
 		global mapping
 		global property_descriptions
 
@@ -120,7 +120,7 @@ class object(univention.admin.handlers.simpleLdap):
 		self.mapping=mapping
 		self.descriptions=property_descriptions
 
-		super(object, self).__init__(co, lo, position, dn, superordinate)
+		super(object, self).__init__(co, lo, position, dn, superordinate, attributes)
 
 	def exists(self):
 		return self._exists
