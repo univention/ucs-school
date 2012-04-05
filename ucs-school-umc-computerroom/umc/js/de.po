@@ -3,8 +3,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-computerroom\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2012-04-04 20:53+0200\n"
-"PO-Revision-Date: 2012-04-04 20:57+0200\n"
+"POT-Creation-Date: 2012-04-05 15:56+0200\n"
+"PO-Revision-Date: 2012-04-05 17:08+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
@@ -12,43 +12,43 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: umc/js/computerroom.js:366
+#: umc/js/computerroom.js:382
 msgid "1st lesson"
 msgstr ""
 
-#: umc/js/computerroom.js:367
+#: umc/js/computerroom.js:383
 msgid "2nd lesson"
 msgstr ""
 
-#: umc/js/computerroom.js:368
+#: umc/js/computerroom.js:384
 msgid "3rd lesson"
 msgstr ""
 
-#: umc/js/computerroom.js:369
+#: umc/js/computerroom.js:385
 msgid "4th lesson"
 msgstr ""
 
-#: umc/js/computerroom.js:370
+#: umc/js/computerroom.js:386
 msgid "6th lesson"
 msgstr ""
 
-#: umc/js/computerroom.js:347
+#: umc/js/computerroom.js:363
 msgid "Active shares"
 msgstr "Aktive Freigaben"
 
-#: umc/js/computerroom.js:341
+#: umc/js/computerroom.js:357
 msgid "Active web access profile"
 msgstr "Akive Internetregeln"
 
-#: umc/js/computerroom.js:474
+#: umc/js/computerroom.js:503
 msgid "Cancel"
 msgstr "Abbrechen"
 
-#: umc/js/computerroom.js:460 umc/js/computerroom.js:488
+#: umc/js/computerroom.js:489 umc/js/computerroom.js:517
 msgid "Change room"
-msgstr "Raum ändern"
+msgstr "Raum wechseln"
 
-#: umc/js/computerroom.js:445
+#: umc/js/computerroom.js:474
 msgid "Choose the school"
 msgstr "Auswahl der Schule"
 
@@ -56,21 +56,24 @@ msgstr "Auswahl der Schule"
 msgid "Currently a presentation is running."
 msgstr "Momentan läuft eine Präsentation"
 
-#: umc/js/computerroom.js:415
+#: umc/js/computerroom.js:431 umc/js/computerroom.js:438
 msgid ""
-"Currently a presentation is running. The computer of {0} is shown to all "
-"others. Click the following button to end the presentation"
-msgstr "Momentan läuft eine Präsentation. Der Computer von {0} wird allen anderen gezeigt. Durch einen Klick auf die folgende Schaltfläche wird die Präsentation beendet."
+"Currently a presentation is running. The computer of {0} ({1}) is shown to "
+"all others. Click the following button to end the presentation"
+msgstr ""
+"Momentan läuft eine Präsentation. Der Computer von {0} ({1}) wird allen "
+"anderen gezeigt. Durch einen Klick auf die folgende Schaltfläche wird die "
+"Präsentation beendet."
 
 #: umc/js/computerroom.js:132
 msgid "End presentation"
 msgstr "Präsentation beenden"
 
-#: umc/js/computerroom.js:429
+#: umc/js/computerroom.js:458
 msgid "Feature not yet implemented"
 msgstr ""
 
-#: umc/js/computerroom.js:358
+#: umc/js/computerroom.js:374
 msgid "Free printing"
 msgstr "Drucken möglich"
 
@@ -86,7 +89,7 @@ msgstr "Eingabegeräte sperren"
 msgid "Logout user"
 msgstr "Benutzer abmelden"
 
-#: umc/js/computerroom.js:357
+#: umc/js/computerroom.js:373
 msgid "Moderated printing"
 msgstr "Moderiertes Drucken"
 
@@ -98,15 +101,15 @@ msgstr "Name"
 msgid "No room selected"
 msgstr "Kein Raum ausgewählt"
 
-#: umc/js/computerroom.js:353
+#: umc/js/computerroom.js:369
 msgid "Print mode"
 msgstr "Druckmodus"
 
-#: umc/js/computerroom.js:356
+#: umc/js/computerroom.js:372
 msgid "Printing deactivated"
 msgstr "Drucken deaktiviert"
 
-#: umc/js/computerroom.js:363
+#: umc/js/computerroom.js:379
 msgid "Reservation until end of"
 msgstr "Reserverierung bis zum Ende von"
 
@@ -118,7 +121,7 @@ msgstr "Computer neustarten"
 msgid "Room administration"
 msgstr "Raum verwalten"
 
-#: umc/js/computerroom.js:446
+#: umc/js/computerroom.js:475
 msgid "School"
 msgstr "Schule"
 
@@ -134,7 +137,7 @@ msgstr "Bildschirmphoto"
 msgid "Screenshots of computers"
 msgstr "Bildschirmphotos der Computer"
 
-#: umc/js/computerroom.js:146 umc/js/computerroom.js:452
+#: umc/js/computerroom.js:146 umc/js/computerroom.js:481
 msgid "Selected room"
 msgstr "Ausgewählter Raum"
 
@@ -154,17 +157,36 @@ msgstr "Präsentation starten"
 msgid "Switch on computer"
 msgstr "Computer einschalten"
 
+#: umc/js/computerroom.js:450
+msgid ""
+"The presentation is running. The computer of {0} ({1}) is shown to all "
+"others. Click the following button to end the presentation"
+msgstr ""
+"Momentan läuft eine Präsentation. Der Computer von {0} ({1}) wird allen "
+"anderen gezeigt. Durch einen Klick auf die folgende Schaltfläche wird die "
+"Präsentation beendet."
+
+#: umc/js/computerroom.js:449
+msgid "The presentation is shutting down ..."
+msgstr "Die Präsentation wird beendet ..."
+
+#: umc/js/computerroom.js:440
+msgid "The presentation is starting ..."
+msgstr "Die Präsentation wird gestartet ..."
+
 #: umc/js/_computerroom/ScreenshotView.js:221
 msgid ""
 "This page shows screenshots of selected computers that will be updated every "
 "few seconds."
-msgstr "Diese Seite zeigt Bildschirmphotos der ausgewählten Computer die alle paar Sekunden aktualisiert werden."
+msgstr ""
+"Diese Seite zeigt Bildschirmphotos der ausgewählten Computer die alle paar "
+"Sekunden aktualisiert werden."
 
 #: umc/js/computerroom.js:223
 msgid "Unlock"
 msgstr "Entsperren"
 
-#: umc/js/computerroom.js:315
+#: umc/js/computerroom.js:331
 msgid "User"
 msgstr "Benutzer"
 
@@ -174,7 +196,7 @@ msgstr "Zurück zur Übersicht"
 
 #: umc/js/computerroom.js:148
 msgid "change room"
-msgstr "Raum ändern"
+msgstr "Raum wechseln"
 
 #: umc/js/_computerroom/ScreenshotView.js:106
 msgid "{username} at {computer}"

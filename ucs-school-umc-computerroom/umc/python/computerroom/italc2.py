@@ -32,6 +32,7 @@
 # <http://www.gnu.org/licenses/>.
 
 import copy
+import re
 import sys
 import tempfile
 import threading
@@ -76,6 +77,32 @@ italc.ItalcCore.initAuthentication( italc.AuthenticationCredentials.PrivateKey )
 class ITALC_Error( Exception ):
 	pass
 
+
+class UserMap( dict ):
+	USER_REGEX = re.compile( r'(?P<username>[^(]*)( \((?P<realname>[^)]*)\))?$' )
+
+	def __init__( self ):
+		dict.__init__( self )
+		self._users = udm_modules.get( 'users/user' )
+
+	def __getitem__( self, user ):
+		if not user in self:
+			self._read_user( user )
+
+		return dict.__getitem__( self, user )
+
+	@LDAP_Connection()
+	def _read_user( self, user, ldap_user_read = None, ldap_position = None, search_base = None ):
+		match = UserMap.USER_REGEX.match( user )
+		if not match:
+			raise AttributeError( 'invalid key "%s"' % user )
+		username = match.groupdict()[ 'username' ]
+		result = udm_modules.lookup( self._users, None, ldap_user_read, filter = 'uid=%s' % username, scope = 'sub', base = search_base.users )
+		if not result:
+			MODULE.info( 'Unknown user "%s"' % username )
+			dict.__setitem__( self, user, '' )
+		else:
+			dict.__setitem__( self, user, result[ 0 ].dn )
 
 class LockableAttribute( object ):
 	def __init__( self, initial_value = None, locking = True ):
@@ -403,9 +430,9 @@ class ITALC_Manager( dict, notifier.signals.Provider ):
 		dict.__init__( self )
 		notifier.signals.Provider.__init__( self )
 		self.signal_new( 'initialized' )
+		self._usermap = UserMap()
 		self._room = None
 		self._school = None
-		self._demoServer = None
 		self._initialized = False
 		italc.ItalcCore.authenticationCredentials.setLogonUsername( username )
 		italc.ItalcCore.authenticationCredentials.setLogonPassword( password )
@@ -477,8 +504,25 @@ class ITALC_Manager( dict, notifier.signals.Provider ):
 			except ITALC_Error, e:
 				MODULE.warn( 'Computer could not be added: %s' % str( e ) )
 
+	@property
+	def isDemoActive( self ):
+		return filter( lambda comp: comp.demoServer or comp.demoClient, self.values() ) > 0
+
+	@property
+	def demoServer( self ):
+		for comp in self.values():
+			if comp.demoServer:
+				return comp
+		return None
+
+	@property
+	def demoClients( self ):
+		return filter( lambda comp: comp.demoClient, self.values() )
+
 	@LDAP_Connection()
 	def startDemo( self, demo_server, fullscreen = True, ldap_user_read = None, ldap_position = None, search_base = None ):
+		if self.isDemoActive:
+			self.stopDemo()
 		server = self.get( demo_server )
 		if server is None:
 			raise AttributeError( 'unknown system %s' % demo_server )
@@ -487,23 +531,23 @@ class ITALC_Manager( dict, notifier.signals.Provider ):
 		MODULE.info( 'Demo server is %s' % demo_server )
 		clients = filter( lambda comp: comp.name != demo_server and comp.connected, self.values() )
 		MODULE.info( 'Demo clients: %s' % ', '.join( map( lambda x: x.name, clients ) ) )
-		teachers = map( lambda x: x.name, filter( lambda comp: not comp.user.current or str( comp.user.current ).endswith( search_base.teachers ), self.values() ) )
+		MODULE.info( 'Demo LDAP base teachers: %s' % search_base.teachers )
+		MODULE.info( 'Demo client users: %s' % ', '.join( map( lambda x: str( x.user.current ), clients ) ) )
+		try:
+			teachers = map( lambda x: x.name, filter( lambda comp: not comp.user.current or self._usermap[ str( comp.user.current ) ].endswith( search_base.teachers ), clients ) )
+		except AttributeError, e:
+			MODULE.error( 'Could not determine the list of teachers: %s' % str( e ) )
+			return False
+		MODULE.info( 'Demo clients (teachers): %s' % ', '.join( teachers ) )
 		server.startDemoServer( clients )
 		for client in clients:
 			if client.name in teachers:
 				client.startDemoClient( server, False )
 			else:
 				client.startDemoClient( server, fullscreen )
-		self._demoServer = server
 
-	def stopDemo( self, demo_server = None ):
-		if demo_server is None and self._demoServer is None:
-			raise ITALC_Error( 'Unknown demoserver' )
-		elif demo_server is None:
-			demo_server = self._demoServer
-		elif isinstance( demo_server, basestring ):
-			demo_server = self[ demo_server ]
-
-		demo_server.stopDemoServer()
-		for client in filter( lambda comp: comp.name != demo_server, self.values() ):
+	def stopDemo( self ):
+		if self.demoServer is not None:
+			self.demoServer.stopDemoServer()
+		for client in self.demoClients:
 			client.stopDemoClient()

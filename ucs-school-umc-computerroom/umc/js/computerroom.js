@@ -87,6 +87,8 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 
 	_screenshotView: null,
 
+	_activeDemoSystems: 0,
+
 	uninitialize: function() {
 		this.inherited( arguments );
 		if ( this._updateTimer !== null ) {
@@ -309,7 +311,23 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 		// define the grid columns
 		var columns = [{
 			name: 'name',
-			label: this._('Name')
+			label: this._('Name'),
+			formatter: dojo.hitch( this, function( value, rowIndex ) {
+				var item = this._grid._grid.getItem( rowIndex );
+				var icon = 'demo-offline';
+
+				if ( item.DemoServer[ 0 ] === true ) {
+					icon = 'demo-server';
+				} else if ( item.DemoClient[ 0 ] === true ) {
+					icon = 'demo-client';
+				}
+				result = dojo.replace( '<img src="images/icons/16x16/computerroom-{icon}.png" height="16" width="16" style="float:left; margin-right: 5px" /> {value}', {
+					icon: icon,
+					value: value
+				} );
+
+				return result;
+			} )
 		}, {
 			name: 'user',
 			label: this._('User')
@@ -412,13 +430,31 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 
 	_startPresentation: function( ids, items ) {
 		this.umcpCommand( 'computerroom/demo/start', { server: items[ 0 ].id[ 0 ] } );
-		this._presentationText.set( 'content', dojo.replace( this._( 'Currently a presentation is running. The computer of {0} is shown to all others. Click the following button to end the presentation' ), items[ 0 ].user ) );
+		// this._presentationText.set( 'content', dojo.replace( this._( 'Currently a presentation is running. The computer of {0} ({1}) is shown to all others. Click the following button to end the presentation' ), [ items[ 0 ].user[ 0 ], items[ 0 ].name[ 0 ] ] ) );
+		// this.standby( true, this._presentationWidget );
+	},
+
+	_activePresentation: function( server, user, systems ) {
+		if ( this._standbyWidget.isVisible() ) {
+			if ( server && user ) {
+				this._presentationText.set( 'content', dojo.replace( this._( 'Currently a presentation is running. The computer of {0} ({1}) is shown to all others. Click the following button to end the presentation' ), [ user, server ] ) );
+			} else {
+				if ( this._activeDemoSystems < systems ) {
+					this.standby( true, this._( 'The presentation is starting ...' ) );
+				} else if ( this._activeDemoSystems > systems ) {
+					this.standby( true, this._( 'The presentation is shutting down ...' ) );
+				}
+				this._activeDemoSystems = systems;
+			}
+			return;
+		}
 		this.standby( true, this._presentationWidget );
 	},
 
 	_endPresentation: function() {
 		this.umcpCommand( 'computerroom/demo/stop', {} );
-		this.standby( false );
+		this.standby( true, this._( 'The presentation is shutting down ...' ) );
+		// this._presentationText.set( 'content', dojo.replace( this._( 'The presentation is running. The computer of {0} ({1}) is shown to all others. Click the following button to end the presentation' ), [ items[ 0 ].user[ 0 ], items[ 0 ].name[ 0 ] ] ) );
 	},
 
 	postCreate: function() {
@@ -512,16 +548,38 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 
 	_updateRoom: function() {
 		this.umcpCommand( 'computerroom/update' ).then( dojo.hitch( this, function( response ) {
+			var demo = null, demo_server = null, demo_user = null, demo_systems = 0;
+
 			this._grid.clearDisabledItems( false );
 			dojo.forEach( response.result, function( item ) {
-				// this._objStore.put( dojo.mixin( item, { screenshot: dojox.math.gaussian() } ) );
 				this._objStore.put( item );
 				if ( item.connection !== undefined ) {
 					var idx = this._grid.getItemIndex( item.id );
 					this._grid._grid.rowSelectCell.setDisabled( idx, item.connection != 'connected' );
 				}
 			}, this );
+
 			this._updateTimer = window.setTimeout( dojo.hitch( this, '_updateRoom' ), 2000 );
+
+			this._dataStore.fetch( {
+				query: '',
+				onItem: dojo.hitch( this, function( item ) {
+					if ( item.DemoServer[ 0 ] === true ) {
+						demo = true;
+						demo_server = item.id[ 0 ];
+						demo_user = item.user[ 0 ];
+						demo_systems += 1;
+					} else if ( item.DemoClient[ 0 ] === true ) {
+						demo = true;
+						demo_systems += 1;
+					}
+				} )
+			} );
+			if ( demo === true ) {
+				this._activePresentation( demo_server, demo_user, demo_systems );
+			} else if ( this._standbyWidget.isVisible() ) {
+				this.standby( false );
+			}
 		} ) );
 	}
 });
