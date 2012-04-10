@@ -1,3 +1,10 @@
+univention-management-console-frontend (1.0.312-1) unstable; urgency=low
+
+  * Wizard: Fix a bug when defining new pages which only contain buttons
+    (Bug #26747)
+
+ -- Jascha Geerds <geerds@univention.de>  Tue, 10 Apr 2012 14:02:56 +0200
+
 univention-management-console-frontend (1.0.311-1) unstable; urgency=low
 
   * Grid: optional a field name assoziated with an action may be defined; Bug #26612
