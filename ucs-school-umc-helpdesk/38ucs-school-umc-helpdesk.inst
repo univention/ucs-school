@@ -47,7 +47,7 @@ udm container/cn create $@ --ignore_exists --position cn=UMC,cn=univention,$ldap
 
 # create HELPDESK settings
 # Update to UCS 3.0, move old helpdesk category object
-if univention-ldapsearch -x -s base -b "cn=helpdesk-default,cn=config,cn=console,cn=univention,$ldap_base" &>/dev/null; then
+if univention-ldapsearch -x -s base -b "cn=helpdesk-default,cn=config,cn=console,cn=univention,$ldap_base" >/dev/null; then
 	udm settings/console_helpdesk move $@ --dn "cn=helpdesk-default,cn=config,cn=console,cn=univention,$ldap_base" \
 		--position "cn=config,cn=UMC,cn=univention,$ldap_base"
 else

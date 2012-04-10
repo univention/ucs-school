@@ -77,7 +77,8 @@ dojo.declare("umc.modules.helpdesk", [ umc.widgets.Module, umc.i18n.Mixin ], {
 				this.standby( false );
 			} else {
 				umc.dialog.alert( this._( 'The helpdesk module is not configured properly. The recipient email address is not set.' ) )
-				dojo.connect( umc.dialog._alertDialog, 'onConfirm', dojo.hitch( this, function() {
+				var hdl = dojo.connect( umc.dialog._alertDialog, 'onConfirm', dojo.hitch( this, function() {
+					dojo.disconnect( hdl );
 					dojo.publish('/umc/tabs/close', [ this ] );
 				} ) );
 			}
