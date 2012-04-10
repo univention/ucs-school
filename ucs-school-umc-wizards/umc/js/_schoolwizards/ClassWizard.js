@@ -63,10 +63,17 @@ dojo.declare("umc.modules._schoolwizards.ClassWizard", [ umc.modules._schoolwiza
 			}],
 			layout: [['school'],
 			         ['name', 'description']]
-		}, {
-			name: 'finish',
-			headerText: this._('Finished'),
-			helpText: this._('Here\'s a simple helpText')
 		}];
+	},
+
+	postMixInProperties: function() {
+		this.finishHelpText = this._('Here\'s a simple helpText');
+		this.finishButtonLabel = this._('Click here to create another class');
+	},
+
+	restart: function() {
+		this.getWidget('class', 'name').reset();
+		this.getWidget('class', 'description').reset();
+		this.inherited(arguments);
 	}
 });

@@ -97,7 +97,8 @@ dojo.declare("umc.modules._schoolwizards.ComputerWizard", [ umc.modules._schoolw
 			}, {
 				type: 'TextBox',
 				name: 'subnetMask',
-				label: this._('Subnetmask')
+				label: this._('Subnetmask'),
+				value: '255.255.255.0'
 			}, {
 				type: 'TextBox',
 				name: 'mac',
@@ -112,10 +113,18 @@ dojo.declare("umc.modules._schoolwizards.ComputerWizard", [ umc.modules._schoolw
 			         ['ipAddress', 'subnetMask'],
 			         ['mac'],
 			         ['inventoryNumber']]
-		}, {
-			name: 'finish',
-			headerText: this._('Finished'),
-			helpText: this._('Here\'s a simple helpText')
 		}];
+	},
+
+	postMixInProperties: function() {
+		this.finishHelpText = this._('Here\'s a simple helpText');
+		this.finishButtonLabel = this._('Click here to create another computer');
+	},
+
+	restart: function() {
+		umc.tools.forIn(this.getPage('computer')._form._widgets, function(iname, iwidget) {
+			iwidget.reset();
+		});
+		this.inherited(arguments);
 	}
 });

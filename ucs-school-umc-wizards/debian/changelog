@@ -1,3 +1,11 @@
+ucs-school-umc-wizards (1.0.8-1) unstable; urgency=low
+
+  * Add a button to restart the wizard
+  * Computers: Set a default subnet mask
+  (Bug #26344)
+
+ -- Jascha Geerds <geerds@univention.de>  Tue, 10 Apr 2012 11:46:03 +0200
+
 ucs-school-umc-wizards (1.0.7-1) unstable; urgency=low
 
   * Refactoring (Bug #26344)

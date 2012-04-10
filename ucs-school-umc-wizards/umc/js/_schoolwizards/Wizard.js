@@ -41,6 +41,24 @@ dojo.declare("umc.modules._schoolwizards.Wizard", [ umc.widgets.Wizard, umc.i18n
 
 	createObjectCommand: null,
 
+	finishHelpText: null,
+	finishButtonLabel: null,
+
+	buildRendering: function() {
+		this.pages.push({
+			name: 'finish',
+			headerText: this._('Finished'),
+			helpText: this.finishHelpText,
+			buttons: [{
+				name: 'createAnother',
+				label: this.finishButtonLabel,
+				onClick: dojo.hitch(this, 'restart')
+			}],
+			layout: [['createAnother']]
+		});
+		this.inherited(arguments);
+	},
+
 	hasPrevious: function(/*String*/ pageName) {
 		return pageName === 'finish' ? false : this.inherited(arguments);
 	},
@@ -92,5 +110,12 @@ dojo.declare("umc.modules._schoolwizards.Wizard", [ umc.widgets.Wizard, umc.i18n
 				return false;
 			})
 		);
+	},
+
+	restart: function() {
+		// Select the first page
+		var firstPageName = this.pages[0].name;
+		this._updateButtons(firstPageName);
+		this.selectChild(this._pages[firstPageName]);
 	}
 });

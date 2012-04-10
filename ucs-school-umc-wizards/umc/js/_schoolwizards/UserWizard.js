@@ -103,10 +103,20 @@ dojo.declare("umc.modules._schoolwizards.UserWizard", [ umc.modules._schoolwizar
 			         ['firstname', 'lastname'],
 			         ['mailPrimaryAddress'],
 			         ['class']]
-		}, {
-			name: 'finish',
-			headerText: this._('Finished'),
-			helpText: this._('Here\'s a simple helpText')
 		}];
+	},
+
+	postMixInProperties: function() {
+		this.finishHelpText = this._('Here\'s a simple helpText');
+		this.finishButtonLabel = this._('Click here to create another user');
+	},
+
+	restart: function() {
+		umc.tools.forIn(this.getPage('user')._form._widgets, function(iname, iwidget) {
+			if (iname !== 'class') {
+				iwidget.reset();
+			}
+		});
+		this.inherited(arguments);
 	}
 });
