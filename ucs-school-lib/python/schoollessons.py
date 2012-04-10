@@ -1,0 +1,144 @@
+#!/usr/bin/python2.6
+# -*- coding: utf-8 -*-
+#
+# UCS@school python lib
+#
+# Copyright 2012 Univention GmbH
+#
+# http://www.univention.de/
+#
+# All rights reserved.
+#
+# The source code of this program is made available
+# under the terms of the GNU Affero General Public License version 3
+# (GNU AGPL V3) as published by the Free Software Foundation.
+#
+# Binary versions of this program provided by Univention to you as
+# well as other copyrighted, protected or trademarked materials like
+# Logos, graphics, fonts, specific documentations and configurations,
+# cryptographic keys etc. are subject to a license agreement between
+# you and Univention and not subject to the GNU AGPL V3.
+#
+# In the case you use this program under the terms of the GNU AGPL V3,
+# the program is provided in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public
+# License with the Debian GNU/Linux or Univention distribution in file
+# /usr/share/common-licenses/AGPL-3; if not, see
+# <http://www.gnu.org/licenses/>.
+
+import univention.debug as ud
+import univention.config_registry
+
+from univention.management.console.config import ucr
+from univention.management.console.log import MODULE
+from univention.management.console.modules import Base
+
+import ConfigParser
+import datetime
+import fcntl
+import os
+import re
+import shutil
+
+LESSONS_FILE = '/var/lib/ucs-school-lib/lessons.ini'
+LESSONS_BACKUP = '/var/lib/ucs-school-lib/lessons.bak'
+
+class Lesson( object ):
+	TIME_REGEX = re.compile( r'^([01][0-9]|2[0-3]|[0-9]):([0-5][0-9])' )
+	def __init__( self, name, begin, end ):
+		self._name = name
+		self._begin = self._parse_time( begin )
+		self._end = self._parse_time( end )
+		if self._end <= self._begin:
+			raise AttributeError( 'end time before or equal to start time' )
+
+	def _parse_time( self, string ):
+		if not isinstance( string, basestring ):
+			raise TypeError( 'string expected' )
+		m = Lesson.TIME_REGEX.match( string )
+		if not m:
+			raise AttributeError( 'invalid time format: %s' % string )
+		return datetime.time( *map( int, m.groups() ) )
+
+	@property
+	def name( self ):
+		return self._name
+
+	@property
+	def begin( self ):
+		return self._begin
+
+	@property
+	def end( self ):
+		return self._end
+
+	def __cmp__( self, other ):
+		if other.end < self.begin:
+			return 1
+		if other.begin > self.end:
+			return -1
+		return 0
+
+	def intersect( self, lesson ):
+		return self.__cmp__( lesson ) == 0
+
+	def __str__( self ):
+		return '%s: %s - %s' % ( self._name, self._begin, self._end )
+
+class SchoolLessons( ConfigParser.ConfigParser ):
+	def __init__( self, filename = LESSONS_FILE ):
+		ConfigParser.ConfigParser.__init__( self )
+		self._lessons = []
+		self.read( filename )
+		self.init()
+
+	def init( self ):
+		for sec in self.sections():
+			try:
+				l = Lesson( sec, self.get( sec, 'begin' ), self.get( sec, 'end' ) )
+				self.append( l )
+			except ( AttributeError, TypeError ), e:
+				MODULE.warn( 'Lesson %s could not be added: %s' % ( sec, str( e ) ) )
+
+	def append( self, lesson ):
+		# ensure there is no intersection between the lessons
+		for item in self._lessons:
+			if lesson.intersect( item ):
+				raise AttributeError( 'lesson intersects with existing one' )
+
+		self._lessons.append( lesson )
+
+	def remove( self, lesson ):
+		if isinstance( lesson, Lesson ):
+			lesson = lesson.name
+
+		self.remove_section( lesson )
+
+	def add( self, lesson, begin = None, end = None ):
+		if isinstance( lesson, basestring ):
+			lesson = Lesson( lesson, begin, end )
+		self._lessons.append( lesson )
+
+	def save( self ):
+		# remove all sections
+		for sec in self.sections():
+			self.reemove_section( sec )
+
+		for lesson in self.lessons:
+			self.add_section( lesson.name )
+			self.set( lesson.name, 'begin', str( lesson.begin ) )
+			self.set( lesson.name, 'end', str( lesson.end ) )
+
+		fd = os.open( LESSONS_FILE, os.O_WRONLY | os.EXLOCK )
+		shutil.copyfile( LESSONS_FILE, LESSONS_BACKUP )
+		self.write( fd )
+		fd.close()
+
+	@property
+	def lessons( self ):
+		self._lessons.sort()
+		return self._lessons

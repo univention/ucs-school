@@ -1,1 +1,2 @@
 python/*.py usr/share/pyshared/ucsschool/lib/
+lessons.ini var/lib/ucs-school-lib/

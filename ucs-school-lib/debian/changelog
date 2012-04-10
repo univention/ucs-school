@@ -1,3 +1,9 @@
+ucs-school-lib (1.0.30-1) unstable; urgency=low
+
+  * add module to python library for maintaining the lessons; Bug #26748
+
+ -- Andreas Büsching <buesching@univention.de>  Tue, 10 Apr 2012 14:39:01 +0200
+
 ucs-school-lib (1.0.29-1) unstable; urgency=low
 
   * extended school LDAP module; Bug #25707
@@ -76,7 +82,6 @@ ucs-school-lib (1.0.20-1) unstable; urgency=low
 
  -- Andreas Büsching <buesching@univention.de>  Thu, 23 Feb 2012 17:10:20 +0100
 
->>>>>>> .r31373
 ucs-school-lib (1.0.19-1) unstable; urgency=low
 
   * corrected automatically chosen search base; Bug #25702
