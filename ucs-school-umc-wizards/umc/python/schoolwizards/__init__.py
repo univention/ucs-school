@@ -35,9 +35,11 @@ from univention.lib.i18n import Translation
 from univention.management.console.log import MODULE
 from univention.management.console.modules import UMC_OptionMissing, UMC_CommandError, UMC_OptionTypeError
 from univention.management.console.protocol.definitions import *
+from univention.admin.uexceptions import valueError
 import univention.admin.modules as udm_modules
+import univention.admin.syntax as udm_syntax
 
-from ucsschool.lib.schoolldap import SchoolBaseModule, LDAP_Connection, LDAP_Filter
+from ucsschool.lib.schoolldap import SchoolBaseModule, LDAP_Connection, LDAP_Filter, _init_search_base
 
 from SchoolImport import *
 
@@ -52,52 +54,42 @@ class Instance(SchoolBaseModule, SchoolImport):
 			raise ValueError(_('Missing value for the following properties: %s')
 			                 % ','.join(missing))
 
-	@LDAP_Connection()
-	def _username_used(self, username, search_base=None,
-	                   ldap_user_read=None, ldap_position=None):
+	def _username_used(self, username, ldap_user_read):
 		ldap_filter = LDAP_Filter.forAll(username, ['username'])
 		user_exists = udm_modules.lookup('users/user', None, ldap_user_read,
 		                                 scope = 'sub', filter = ldap_filter)
 		return bool(user_exists)
 
-	@LDAP_Connection()
-	def _mail_address_used(self, address, search_base=None,
-	                       ldap_user_read=None, ldap_position=None):
+	def _mail_address_used(self, address, ldap_user_read):
 		ldap_filter = LDAP_Filter.forAll(address, ['mailPrimaryAddress'])
 		address_exists = udm_modules.lookup('users/user', None, ldap_user_read,
 		                                    scope = 'sub', filter = ldap_filter)
 		return bool(address_exists)
 
-	@LDAP_Connection()
-	def _school_name_used(self, name, search_base=None,
-	                      ldap_user_read=None, ldap_position=None):
+	def _school_name_used(self, name, ldap_user_read, search_base):
 		return bool(name in search_base.availableSchools)
 
-	@LDAP_Connection()
-	def _class_name_used(self, school, name, search_base=None,
-	                     ldap_user_read=None, ldap_position=None):
+	def _class_name_used(self, school, name, ldap_user_read, search_base):
 		ldap_filter = LDAP_Filter.forAll(name, ['name'], prefixes = { 'name' : '%s-' % school })
 		class_exists = udm_modules.lookup('groups/group', None, ldap_user_read, scope = 'one',
 		                                  filter = ldap_filter, base = search_base.classes)
 		return bool(class_exists)
 
-	@LDAP_Connection()
-	def _computer_name_used(self, name, search_base=None,
-	                       ldap_user_read=None, ldap_position=None):
+	def _computer_name_used(self, name, ldap_user_read):
 		ldap_filter = LDAP_Filter.forAll(name, ['name'])
 		computer_exists = udm_modules.lookup('computers/computer', None, ldap_user_read,
 		                                     scope = 'sub', filter = ldap_filter)
 		return bool(computer_exists)
 
-	@LDAP_Connection()
-	def _mac_address_used(self, address, search_base=None,
-	                      ldap_user_read=None, ldap_position=None):
+	def _mac_address_used(self, address, ldap_user_read):
 		ldap_filter = LDAP_Filter.forAll(address, ['mac'])
 		address_exists = udm_modules.lookup('computers/computer', None, ldap_user_read,
 		                                    scope = 'sub', filter = ldap_filter)
 		return bool(address_exists)
 
-	def create_user(self, request):
+	@LDAP_Connection()
+	def create_user(self, request, search_base=None,
+	                ldap_user_read=None, ldap_position=None):
 		"""Create a new user.
 		"""
 		try:
@@ -106,10 +98,10 @@ class Instance(SchoolBaseModule, SchoolImport):
 			self.required_options(request, *keys)
 			self.required_values(request, *keys)
 
-			if self._username_used(request.options['username']):
+			if self._username_used(request.options['username'], ldap_user_read):
 				raise ValueError(_('Username is already in use'))
 			if request.options.get('mailPrimaryAddress', ''):
-				if self._mail_address_used(request.options['mailPrimaryAddress']):
+				if self._mail_address_used(request.options['mailPrimaryAddress'], ldap_user_read):
 					raise ValueError(_('Mail address is already in use'))
 
 			isTeacher = False
@@ -140,7 +132,9 @@ class Instance(SchoolBaseModule, SchoolImport):
 		else:
 			self.finished(request.id, None, _('User successfully created'))
 
-	def create_school(self, request):
+	@LDAP_Connection()
+	def create_school(self, request, search_base=None,
+	                  ldap_user_read=None, ldap_position=None):
 		"""Create a new school.
 		"""
 		try:
@@ -148,11 +142,12 @@ class Instance(SchoolBaseModule, SchoolImport):
 			self.required_options(request, 'name')
 			self.required_values(request, 'name')
 
-			if self._school_name_used(request.options['name']):
+			if self._school_name_used(request.options['name'], ldap_user_read, search_base):
 				raise ValueError(_('School name is already in use'))
 
 			# Create the school
 			self.create_ou(request.options['name'])
+			_init_search_base(ldap_user_read, force = True)
 		except (ValueError, IOError, OSError), err:
 			MODULE.info(str(err))
 			result = {'message': str(err)}
@@ -160,7 +155,9 @@ class Instance(SchoolBaseModule, SchoolImport):
 		else:
 			self.finished(request.id, None, _('School successfully created'))
 
-	def create_class(self, request):
+	@LDAP_Connection()
+	def create_class(self, request, search_base=None,
+	                 ldap_user_read=None, ldap_position=None):
 		"""Create a new class.
 		"""
 		try:
@@ -168,10 +165,11 @@ class Instance(SchoolBaseModule, SchoolImport):
 			self.required_options(request, 'school', 'name')
 			self.required_values(request, 'school', 'name')
 
-			if not self._school_name_used(request.options['school']):
+			if not self._school_name_used(request.options['school'], ldap_user_read, search_base):
 				raise ValueError(_('Unknown school'))
 
-			if self._class_name_used(request.options['school'], request.options['name']):
+			if self._class_name_used(request.options['school'], request.options['name'],
+			                         ldap_user_read, search_base):
 				raise ValueError(_('Class name is already in use'))
 
 			# Create the school
@@ -185,7 +183,9 @@ class Instance(SchoolBaseModule, SchoolImport):
 		else:
 			self.finished(request.id, None, _('Class successfully created'))
 
-	def create_computer(self, request):
+	@LDAP_Connection()
+	def create_computer(self, request, search_base=None,
+	                    ldap_user_read=None, ldap_position=None):
 		"""Create a new computer.
 		"""
 		try:
@@ -193,15 +193,20 @@ class Instance(SchoolBaseModule, SchoolImport):
 			self.required_options(request, 'type', 'name', 'mac', 'school', 'ipAddress')
 			self.required_values(request, 'type', 'name', 'mac', 'school', 'ipAddress')
 
-			# TODO: validate subnetmask/ip-/mac-address
-			if not self._school_name_used(request.options['school']):
+			if not self._school_name_used(request.options['school'], ldap_user_read, search_base):
 				raise ValueError(_('Unknown school'))
 
-			if self._computer_name_used(request.options['name']):
+			name = udm_syntax.hostName.parse(request.options['name'])
+			if self._computer_name_used(name, ldap_user_read):
 				raise ValueError(_('Computer name is already in use'))
 
-			if self._mac_address_used(request.options['mac']):
+			mac = udm_syntax.MAC_Address.parse(request.options['mac'])
+			if self._mac_address_used(mac, ldap_user_read):
 				raise ValueError(_('MAC address is already in use'))
+			ip_address = udm_syntax.ipv4Address.parse(request.options['ipAddress'])
+			subnet_mask = request.options.get('subnetMask', '')
+			if subnet_mask:
+				subnet_mask = udm_syntax.netmask.parse(request.options.get('subnetMask', ''))
 
 			allowed_types = ['macos', 'managedclient', 'windows', 'thinclient',
 			                 'memberserver', 'mobileclient', 'ipmanagedclient']
@@ -210,13 +215,13 @@ class Instance(SchoolBaseModule, SchoolImport):
 
 			# Create the computer
 			self.import_computer(request.options['type'],
-			                     request.options['name'],
-			                     request.options['mac'],
+			                     name,
+			                     mac,
 			                     request.options['school'],
-			                     request.options['ipAddress'],
-			                     request.options.get('subnetMask', ''),
+			                     ip_address,
+			                     subnet_mask,
 			                     request.options.get('inventoryNumber', ''))
-		except (ValueError, IOError, OSError), err:
+		except (ValueError, IOError, OSError, valueError), err:
 			MODULE.info(str(err))
 			result = {'message': str(err)}
 			self.finished(request.id, result)
