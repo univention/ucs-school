@@ -1,3 +1,9 @@
+univention-management-console (4.0.225-1) unstable; urgency=low
+
+  * added destroy method that is invoked upon module exit; Bug #26373
+
+ -- Alexander Kläser <klaeser@univention.de>  Wed, 11 Apr 2012 12:57:32 +0200
+
 univention-management-console (4.0.224-1) unstable; urgency=low
 
   * minor fixes
