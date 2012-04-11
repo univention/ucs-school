@@ -1,3 +1,13 @@
+univention-management-console-frontend (1.0.313-1) unstable; urgency=low
+
+  * added new MultiUploader widget
+  * Uploader: extensions for canUpload-callback and additional events
+  * ProgressInfo: removed uninitialize method
+  * StandbyMixin: adjusted behaviour with widgets, added clean up method
+  Bug #26373
+
+ -- Alexander Kläser <klaeser@univention.de>  Wed, 11 Apr 2012 12:51:46 +0200
+
 univention-management-console-frontend (1.0.312-1) unstable; urgency=low
 
   * Wizard: Fix a bug when defining new pages which only contain buttons

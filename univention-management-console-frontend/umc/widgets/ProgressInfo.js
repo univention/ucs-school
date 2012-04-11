@@ -47,11 +47,6 @@ dojo.declare("umc.widgets.ProgressInfo", umc.widgets.ContainerWidget, {
 
 	current: 0,
 
-	uninitialize: function() {
-		this.inherited(arguments);
-		this.destroyRecursive();
-	},
-
 	buildRendering: function() {
 		this.inherited(arguments);
 
