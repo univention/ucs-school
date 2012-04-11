@@ -209,10 +209,10 @@ def LDAP_Connection( *connection_types ):
 		return wraps( func )( wrapper_func )
 	return inner_wrapper
 
-def _init_search_base(ldap_connection):
+def _init_search_base(ldap_connection, force=False):
 	global _search_base
 
-	if _search_base:
+	if _search_base and not force:
 		# search base has already been initiated... we are done
 		return
 
