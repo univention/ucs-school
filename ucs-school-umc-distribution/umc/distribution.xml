@@ -23,5 +23,7 @@
 	<command name="distribution/schools" function="schools"></command>
 	<command name="distribution/classes" function="classes"></command>
 	<command name="distribution/users" function="users"></command>
+	<command name="distribution/checkfiles" function="checkfiles"></command>
+	<command name="distribution/upload" function="upload"></command>
 	</module>
 </umc>

@@ -125,10 +125,15 @@ dojo.declare("umc.modules._distribution.DetailPage", [ umc.widgets.Page, umc.wid
 				return values.description.replace('/', '_');
 			})
 		}, {
-			type: 'MultiSelect',
+			type: 'MultiUploader',
 			name: 'files',
+			command: 'distribution/upload',
+			showClearButton: false,
 			label: this._('Files'),
-			description: this._('Files that have been added to this teaching material project')
+			description: this._('Files that have been added to this teaching material project'),
+			maxSize: 200 * 1024 * 1024,
+			canUpload: dojo.hitch(this, '_checkFilenameUpload'),
+			canRemove: dojo.hitch(this, '_checkFilenamesRemove')
 		}, {
 			type: 'MultiObjectSelect',
 			name: 'recipients',
@@ -226,7 +231,7 @@ dojo.declare("umc.modules._distribution.DetailPage", [ umc.widgets.Page, umc.wid
 			layout: [ 'description', 'name' ]
 		}, {
 			label: this._('Distribution and collection of project files'),
-			layout: [ 
+			layout: [
 				'distributeType', [ 'distributeDate', 'distributeTime' ],
 				'collectType', [ 'collectDate', 'collectTime' ]
 			]
@@ -262,6 +267,78 @@ dojo.declare("umc.modules._distribution.DetailPage", [ umc.widgets.Page, umc.wid
 			this._form.getWidget('collectDate').set('visible', value != 'manual');
 			this._form.getWidget('collectTime').set('visible', value != 'manual');
 		});
+	},
+
+	_checkFilenamesRemove: function(filenames) {
+		var nameWidget = this._form.getWidget('name');
+		var isNewProject = !nameWidget.get('disabled');
+		return this.umcpCommand('distribution/checkfiles', {
+			project: isNewProject ? null : nameWidget.get('value'),
+			filenames: filenames
+		}).then(dojo.hitch(this, function(response) {
+			// do allow removal if any file has already been distributed
+			var results = response.result;
+			var distributedFiles = [];
+			dojo.forEach(results, function(i) {
+				if (i.distributed) {
+					distributedFiles.unshift(i.filename);
+				}
+			});
+			if (distributedFiles.length > 0) {
+				umc.dialog.alert(this._('The following files cannot be uploaded as they have already been distributed: %s', '<ul><li>' + distributedFiles.join('</li><li>') + '</li></ul>'));
+				return false;
+			}
+
+			// everything OK :)
+			return true;
+		}));
+	},
+
+	_checkFilenameUpload: function(fileInfo) {
+		var nameWidget = this._form.getWidget('name');
+		var isNewProject = !nameWidget.get('disabled');
+		return this.umcpCommand('distribution/checkfiles', {
+			project: isNewProject ? null : nameWidget.get('value'),
+			filenames: [ fileInfo.name ]
+		}).then(dojo.hitch(this, function(response) {
+			var result = response.result[0];
+			if (result.distributed) {
+				// do not allow the upload of an already distributed file
+				umc.dialog.alert(this._('The file "%s" cannot be uploaded as it has already been distributed.', fileInfo.name));
+				return false;
+			}
+
+			if (result.projectDuplicate) {
+				// the file exists in the project, but has not been distributed yet
+				return umc.dialog.confirm(this._('The file "%s" has already been assigned to the project, please confirm to overwrite it.', fileInfo.name), [{
+					name: 'cancel',
+					label: this._('Cancel upload')
+				}, {
+					name: 'overwrite',
+					label: this._('Overwrite file'),
+					'default': true
+				}]).then(function(response) {
+					return response == 'overwrite';
+				});
+			}
+
+			if (result.sessionDuplicate) {
+				// a file with the same name has already been uploaded during this session
+				return umc.dialog.confirm(this._('The file "%s" has already been uploaded, please confirm to overwrite it.', fileInfo.name), [{
+					name: 'cancel',
+					label: this._('Cancel upload')
+				}, {
+					name: 'overwrite',
+					label: this._('Overwrite file'),
+					'default': true
+				}]).then(function(response) {
+					return response == 'overwrite';
+				});
+			}
+
+			// everything OK :)
+			return true;
+		}));
 	},
 
 	_resetForm: function() {

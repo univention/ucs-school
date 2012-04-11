@@ -249,14 +249,20 @@ class Project(_Dict):
 			fd = open(self.projectfile, 'w')
 			fd.write(jsonEncode(self))
 			fd.close()
+
+			# create cache directory
+			self._createCacheDir()
 		except IOError, e:
 			raise IOError(_('Could not save project file: %s (%s)') % (self.projectfile, str(e)))
 
-	def _createDirs(self):
-		'''Create cache directory and project directory in the sender's home.'''
+	def _createCacheDir(self):
+		'''Create cache directory.'''
 		# create project cache directory
 		MODULE.info( 'creating project cache dir: %s' % self.cachedir )
 		_create_dir( self.cachedir, owner=0, group=0 )
+
+	def _createProjectDir(self):
+		'''Create project directory in the sender's home.'''
 
 		# make sure that the sender homedir exists
 		if self.sender and self.sender.homedir and not os.path.exists( self.sender.homedir ):
@@ -323,7 +329,7 @@ class Project(_Dict):
 			return
 
 		# make sure all necessary directories exist
-		self._createDirs()
+		self._createProjectDir()
 
 		# iterate over all recipients
 		MODULE.info('Distributing project "%s" with files: %s' % (self.name, ", ".join(files)))
@@ -361,7 +367,7 @@ class Project(_Dict):
 		dirsFailed = dirsFailed or []
 
 		# make sure all necessary directories exist
-		self._createDirs()
+		self._createProjectDir()
 
 		# collect data from all recipients
 		for recipient in self.recipients:

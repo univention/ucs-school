@@ -46,17 +46,91 @@ import time
 from ucsschool.lib.schoolldap import LDAP_Connection, LDAP_ConnectionError, set_credentials, SchoolSearchBase, SchoolBaseModule, LDAP_Filter, Display
 
 import util
+import tempfile
+import shutil
 
 _ = Translation( 'ucs-school-umc-distribution' ).translate
 
 class Instance( SchoolBaseModule ):
 	def __init__( self ):
 		SchoolBaseModule.__init__(self)
+		self._tmpDir = None
 
 	def init(self):
 		SchoolBaseModule.init(self)
 		# initiate paths for data distribution
 		util.initPaths()
+
+	def destroy(self):
+		self._cleanTmpDir()
+
+	def _cleanTmpDir(self):
+		# clean up the temporary upload directory
+		if self._tmpDir:
+			MODULE.info('Clean up temporary directory: %s' % self._tmpDir)
+			shutil.rmtree(self._tmpDir, ignore_errors=True)
+			self._tmpDir = None
+
+	def upload(self, request):
+		# make sure that we got a list
+		if not isinstance(request.options, (tuple, list)):
+			raise UMC_OptionTypeError( 'Expected list of strings, but got: %s' % str(ids) )
+		file = request.options[0]
+		if not ('tmpfile' in file and 'filename' in file):
+			raise UMC_OptionTypeError( 'Invalid upload data, got: %s' % str(file) )
+
+		# create a temporary upload directory, if it does not already exist
+		if not self._tmpDir:
+			self._tmpDir = tempfile.mkdtemp(prefix='ucsschool-distribution-upload-')
+			MODULE.info('Created temporary directory: %s' % self._tmpDir)
+
+		# we got an uploaded file with the following properties:
+		#   name, filename, tmpfile
+		destPath = os.path.join(self._tmpDir, file['filename'])
+		MODULE.info('Received file "%s", saving it to "%s"' % (file['tmpfile'], destPath))
+		shutil.move(file['tmpfile'], destPath)
+
+		# done
+		self.finished( request.id, None )
+
+	def checkfiles(self, request):
+		'''Checks whether the given filename has already been uploaded:
+
+		request.options: { 'filenames': [ '...', ... ], project: '...' }
+
+		returns: {
+			'filename': '...',
+			'sessionDuplicate': True|False,
+			'projectDuplicate': True|False,
+			'distributed': True|False
+		}
+		'''
+
+		if not 'filenames' in request.options or not 'project' in request.options:
+			raise UMC_OptionTypeError( 'Expected dict with entries "filenames" and "project", but got: %s' % request.options )
+		if not isinstance(request.options.get('filenames'), (tuple, list)):
+			raise UMC_OptionTypeError( 'The entry "filenames" is expected to be an array, but got: %s' % request.options.get('filenames') )
+
+		# load project
+		project = util.Project.load(request.options.get('project'))
+
+		result = []
+		for ifile in request.options.get('filenames'):
+			# check whether file has already been upload in this session
+			iresult = dict(sessionDuplicate = False, projectDuplicate = False, distributed = False)
+			iresult['filename'] = ifile
+			iresult['sessionDuplicate'] = self._tmpDir != None and os.path.exists(os.path.join(self._tmpDir, ifile))
+
+			# check whether the file exists in the specified project and whether
+			# it has already been distributed
+			if project:
+				iresult['projectDuplicate'] = ifile in project.files
+				iresult['distributed'] = ifile in project.files and not os.path.exists(os.path.join(project.cachedir, ifile))
+
+			result.append(iresult)
+
+		# done :)
+		self.finished( request.id, result )
 
 	@LDAP_Connection()
 	def users( self, request, search_base = None, ldap_user_read = None, ldap_position = None ):
@@ -144,13 +218,15 @@ class Instance( SchoolBaseModule ):
 
 				# load the project or create a new one
 				project = None
+				orgProject = None
 				if doUpdate:
 					# try to load the given project
-					project = util.Project.load(iprops.get('name', ''))
-					if not project:
+					orgProject = util.Project.load(iprops.get('name', ''))
+					if not orgProject:
 						raise ValueError(_('The specified project does not exist: %s') % iprops['name'])
 
-					# update project values
+					# create a new project with the updated values
+					project = util.Project(orgProject.dict)
 					project.update(iprops)
 				else:
 					# create a new project
@@ -184,8 +260,6 @@ class Instance( SchoolBaseModule ):
 				if 'recipients' in iprops:
 					# lookup the users in LDAP and save them to the project
 					users = []
-					MODULE.info('### iprops: %s' % iprops)
-					MODULE.info('### recipients: %s' % iprops['recipients'])
 					for idn in iprops.get('recipients', []):
 						try:
 							# try to load the UDM user object given its DN
@@ -219,12 +293,31 @@ class Instance( SchoolBaseModule ):
 				# try to save project to disk
 				project.save()
 
+				# move new files into project directory
+				if self._tmpDir:
+					for ifile in project.files:
+						isrc = os.path.join(self._tmpDir, ifile)
+						itarget = os.path.join(project.cachedir, ifile)
+						if os.path.exists(isrc):
+							# mv file to cachedir
+							shutil.move( isrc, itarget )
+							os.chown( itarget, 0, 0 )
+
+				# remove files that have been marked for removal
+				if doUpdate:
+					for ifile in set(orgProject.files) - set(project.files):
+						itarget = os.path.join(project.cachedir, ifile)
+						try:
+							os.remove(itarget)
+						except OSError as e:
+							pass
+
 				# everything ok
 				result.append(dict(
 					name = iprops.get('name'),
 					success = True
 				))
-			except (ValueError, IOError) as e:
+			except (ValueError, IOError, OSError) as e:
 				# data not valid... create error info
 				result.append(dict(
 					name = iprops.get('name'),
@@ -232,33 +325,20 @@ class Instance( SchoolBaseModule ):
 					details = str(e)
 				))
 
+				if not doUpdate:
+					# remove eventually created project file and cache dir
+					for ipath in (project.projectfile, project.cachedir):
+						try:
+							shutil.rmtree(ipath)
+						except (IOError, OSError) as e:
+							pass
+
+		if len(result) and reduce(lambda x, y: x and y, [ i['success'] for i in result ]):
+			# clean temporary upload directory if everything went well
+			self._cleanTmpDir()
+
 		# return the results
 		self.finished(request.id, result)
-
-#TODO: move files into cache directory
-#			# move files to sender directory and to project cache directory
-#			debugmsg( ud.ADMIN, ud.INFO, 'copy files to sender directory and cache directory' )
-#			filelist = project['files']
-#			project['files'] = []
-#			for fileitem in filelist:
-#				# copy to sender directory
-#				target = str( os.path.join( project['sender']['projectdir'], fileitem['filename'] ) )
-#				debugmsg( ud.ADMIN, ud.INFO, 'coping %s to %s' % ( fileitem['tmpfname'], target ) )
-#				try:
-#					shutil.copy( fileitem['tmpfname'], target )
-#					os.chown( target, int(sender_obj['uidNumber']), int(sender_obj['gidNumber']) )
-#				except Exception, e:
-#					debugmsg( ud.ADMIN, ud.ERROR, 'failed to copy/chown "%s" to "%s": %s' % (fileitem['tmpfname'], target, str(e)))
-#
-#				# move to cache directory
-#				target = str( os.path.join( project_data_dir, fileitem['filename'] ) )
-#				debugmsg( ud.ADMIN, ud.INFO, 'moving %s to %s' % ( fileitem['tmpfname'], target ) )
-#				try:
-#					shutil.move( fileitem['tmpfname'], target )
-#					os.chown( target, 0, 0 )
-#				except Exception, e:
-#					debugmsg( ud.ADMIN, ud.ERROR, 'failed to copy/chown "%s" to "%s": %s' % (fileitem['tmpfname'], target, str(e)))
-#				project['files'].append( fileitem['filename'] )
 
 #TODO: distribute if no starttime is given
 #			if not project['starttime']:
