@@ -250,10 +250,9 @@ static int univention_samaccountname_ldap_check_init_context(struct ldb_module *
 		ldb = ldb_module_get_ctx(module);
 		ldb_debug(ldb, LDB_DEBUG_TRACE,
 			"%s: "
-			"Unable to register %s control with rootdse.\n"
+			"Unable to register LDB_CONTROL_BYPASS_SAMACCOUNTNAME_LDAP_CHECK_NAME control with rootdse.\n"
 			"Errormessage: %s\n"
 			"This seems to be ok, continuing..",
-			LDB_CONTROL_BYPASS_SAMACCOUNTNAME_LDAP_CHECK_NAME,
 			ldb_module_get_name(module),
 			ldb_errstring(ldb));
 	}

@@ -1,3 +1,9 @@
+univention-ldb-modules (0.0.1-21) unstable; urgency=low
+
+  * fix segfault due to invalid debug message parameter (Bug #26569)
+
+ -- Arvid Requate <requate@univention.de>  Thu, 12 Apr 2012 19:02:11 +0200
+
 univention-ldb-modules (0.0.1-20) unstable; urgency=low
 
   * test script should also use bypass_samaccountname_ldap_check
