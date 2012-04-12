@@ -1,3 +1,9 @@
+univention-ldb-modules (0.0.1-22) unstable; urgency=low
+
+  * revert last change, segfault fixed differently (Bug #26569)
+
+ -- Arvid Requate <requate@univention.de>  Fri, 13 Apr 2012 00:06:46 +0200
+
 univention-ldb-modules (0.0.1-21) unstable; urgency=low
 
   * fix segfault due to invalid debug message parameter (Bug #26569)
