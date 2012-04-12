@@ -25,5 +25,7 @@
 	<command name="distribution/users" function="users"></command>
 	<command name="distribution/checkfiles" function="checkfiles"></command>
 	<command name="distribution/upload" function="upload"></command>
+	<command name="distribution/distribute" function="distribute"></command>
+	<command name="distribution/collect" function="collect"></command>
 	</module>
 </umc>

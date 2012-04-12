@@ -132,14 +132,14 @@ dojo.declare("umc.modules.distribution", [ umc.widgets.Module, umc.i18n.Mixin ],
 				if (!item) {
 					return this._('Distribution');
 				}
-				return !item.distributed ? this._('distribute') : this._('collect');
+				return !item.isDistributed ? this._('distribute') : this._('collect');
 			}),
 			description: this._('Distribute project files to pupils'),
 			isStandardAction: true,
 			isMultiAction: false,
-			callback: dojo.hitch(this, '_dummy')
+			callback: dojo.hitch(this, '_distribute')
 		}, {
-			name: 'adobt',
+			name: 'adopt',
 			label: dojo.hitch(this, function(item) {
 				if (!item) {
 					return this._('Adoption');
@@ -268,8 +268,60 @@ dojo.declare("umc.modules.distribution", [ umc.widgets.Module, umc.i18n.Mixin ],
 		});
 	},
 
-	_dummy: function() {
-		umc.dialog.alert(this._('Feature not yet implemented'));
+	_distribute: function(ids, items) {
+		if (ids.length != 1) {
+			// should not happen
+			return;
+		}
+
+		if (!items[0].recipients) {
+			// no recipients have been added to project, abort
+			umc.dialog.alert(this._('Error: No recipients have been assign to the project!'));
+			return;
+		}
+
+		if (!items[0].files) {
+			// no files have been added to project, abort
+			umc.dialog.alert(this._('Error: No files have been assign to the project!'));
+			return;
+		}
+
+		var msg = items[0].isDistributed ?
+			this._('Please confirm to collect the project: %s', items[0].name) :
+			this._('Please confirm to distribute the project: %s', items[0].name);
+		umc.dialog.confirm(msg, [{
+			label: this._('Cancel'),
+			name: 'cancel'
+		}, {
+			label: items[0].isDistributed ? this._('Collect project') : this._('Distribute project'),
+			name: 'doit',
+			'default': true
+		}]).then(dojo.hitch(this, function(response) {
+			if (response === 'doit') {
+				this.standby(true);
+
+				// collect or distribute the project, according to its current state
+				var cmd = items[0].isDistributed ? 'distribution/collect' : 'distribution/distribute';
+				this.umcpCommand(cmd, ids).then(dojo.hitch(this, function(response) {
+					this.standby(false);
+
+					// prompt any errors to the user
+					if (dojo.isArray(response.result) && response.result.length > 0) {
+						var res = response.result[0];
+						if (!res.success) {
+							umc.dialog.alert(this._('The following error occurred: %s', res.details));
+						}
+					}
+
+					// update the grid if a project has been distributed
+					if (!items[0].isDistributed) {
+						this.moduleStore.onChange();
+					}
+				}), dojo.hitch(this, function() {
+					this.standby(false);
+				}));
+			}
+		}));
 	},
 
 	_editObject: function(ids, items) {
@@ -305,9 +357,17 @@ dojo.declare("umc.modules.distribution", [ umc.widgets.Module, umc.i18n.Mixin ],
 		}]).then(dojo.hitch(this, function(response) {
 			if (response === 'adopt') {
 				this.standby(true);
-				this.umcpCommand('distribution/adopt', ids).then(dojo.hitch(this, function() {
+				this.umcpCommand('distribution/adopt', ids).then(dojo.hitch(this, function(response) {
 					this.moduleStore.onChange();
 					this.standby(false);
+
+					// prompt any errors to the user
+					if (dojo.isArray(response.result) && response.result.length > 0) {
+						var res = response.result[0];
+						if (!res.success) {
+							umc.dialog.alert(this._('The following error occurred: %s', res.details));
+						}
+					}
 				}), dojo.hitch(this, function() {
 					this.moduleStore.onChange();
 					this.standby(false);

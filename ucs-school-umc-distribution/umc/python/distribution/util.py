@@ -204,7 +204,7 @@ class Project(_Dict):
 		# thus, if one of the specified files does not exist, the project has
 		# already been distributed
 		files = [ ifn for ifn in self.files if os.path.exists(os.path.join(self.cachedir, ifn)) ]
-		return len(files) == len(self.files)
+		return len(files) != len(self.files)
 
 	def validate(self):
 		'''Validate the project data. In case of any errors with the data,
@@ -333,10 +333,10 @@ class Project(_Dict):
 
 		# iterate over all recipients
 		MODULE.info('Distributing project "%s" with files: %s' % (self.name, ", ".join(files)))
-		for user in self.recipients:
+		for user in self.recipients + [ self.sender ]:
 			# create user project directory
 			MODULE.info( 'recipient: uid=%s' % user.username )
-			_create_dir( self.user_projectdir(user), homedir = user.homedir, owner = user.uidNumber, group = usergidNumber )
+			_create_dir( self.user_projectdir(user), homedir = user.homedir, owner = user.uidNumber, group = user.gidNumber )
 
 			# copy files from cache to recipient
 			for fn in files:
@@ -346,18 +346,21 @@ class Project(_Dict):
 					shutil.copyfile( src, target )
 				except Exception, e:
 					MODULE.error( 'failed to copy "%s" to "%s": %s' % (src, target, str(e)))
-					usersFailed.append(user.username)
+					usersFailed.append(user)
 				try:
 					os.chown( target, int(user.uidNumber), int(user.gidNumber) )
 				except Exception, e:
 					MODULE.error( 'failed to chown "%s": %s' % (target, str(e)))
-					usersFailed.append(user.username)
+					usersFailed.append(user)
 
 		# remove cached files
 		for fn in files:
 			try:
 				src = str(os.path.join(self.cachedir, fn))
-				os.remove(src)
+				if os.path.exists(src):
+					os.remove(src)
+				else:
+					MODULE.info( 'file has already been distributed: %s [%s]' % (src, e) )
 			except Exception as e:
 				MODULE.error( 'failed to remove file: %s [%s]' % (src, e) )
 
@@ -377,6 +380,7 @@ class Project(_Dict):
 			while os.path.exists(targetdir):
 				dirVersion += 1
 				targetdir = os.path.join( self.sender_projectdir, '%s version%d' % (recipient.username, dirVersion) )
+			MODULE.info('collecting data from "%s" to: %s' % (recipient.username, targetdir))
 
 			# copy entire directory of the recipient
 			srcdir = os.path.join( self.user_projectdir(recipient) )
@@ -385,6 +389,7 @@ class Project(_Dict):
 				shutil.copytree( srcdir, targetdir )
 
 				# fix permission
+				os.chown(targetdir, int(self.sender.uidNumber), int(self.sender.gidNumber))
 				for root, dirs, files in os.walk(targetdir):
 					for momo in dirs + files:
 						os.chown(os.path.join(root, momo), int(self.sender.uidNumber), int(self.sender.gidNumber))

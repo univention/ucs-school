@@ -189,10 +189,11 @@ class Instance( SchoolBaseModule ):
 		except udm_exceptions.noObject as e:
 			self.finished(request.id, None, _('Failed to load user information: %s') % e, False)
 			MODULE.error('Could not find user DN: %s' % self._user_dn)
+			raise UMC_CommandError( _('Could not authenticate user "%s"!') % self._user_dn )
 		except Exception as e:
 			self.finished(request.id, None, str(e), False)
 			MODULE.error('Could not open user DN: %s (%s)' % (self._user_dn, e))
-
+			raise UMC_CommandError( _('Could not authenticate user "%s"!') % self._user_dn )
 		return sender
 
 	@LDAP_Connection()
@@ -203,8 +204,6 @@ class Instance( SchoolBaseModule ):
 
 		# try to open the UDM user object of the current user
 		sender = self._get_sender(request)
-		if not sender:
-			return
 
 		# try to create all specified projects
 		result = []
@@ -423,6 +422,95 @@ class Instance( SchoolBaseModule ):
 		MODULE.info( 'distribution.get: results: %s' % str( result ) )
 		self.finished( request.id, result )
 
+	def distribute( self, request ):
+		MODULE.info( 'distribution.distribute: options: %s' % str( request.options ) )
+
+		# make sure that we got a list
+		if not isinstance(request.options, (tuple, list)):
+			raise UMC_OptionTypeError( 'Expected list of strings, but got: %s' % str(ids) )
+
+		# update the sender information of the selected projects
+		ids = request.options
+		result = []
+		for iid in ids:
+			MODULE.info( 'Distribute project: %s' % iid )
+			try:
+				# make sure that project could be loaded
+				iproject = util.Project.load(iid)
+				if not iproject:
+					raise IOError( _('Project "%s" could not be loaded') % iid )
+
+				# make sure that only the project owner himself (or an admin) is able
+				# to distribute a project
+				if request.flavor == 'teacher' and iproject.sender.dn != self._user_dn:
+					raise ValueError(_('Only the owner himself or an administrator may distribute a project.'))
+
+				# project was loaded successfully... try to distribute it
+				usersFailed = []
+				iproject.distribute(usersFailed)
+
+				# raise an error in case distribution failed for some users
+				if usersFailed:
+					MODULE.info('Failed processing the following users: %s' % usersFailed)
+					usersStr = ', '.join([ Display.user(i) for i in usersFailed ])
+					raise IOError(_('The project could not distributed to the following users: %s') % usersStr)
+
+			except (ValueError, IOError) as e:
+				result.append(dict(
+					name = iid,
+					success = False,
+					details = str(e)
+				))
+
+		# return the results
+		self.finished(request.id, result)
+		MODULE.info( 'distribution.distribute: results: %s' % str( result ) )
+
+	def collect( self, request ):
+		MODULE.info( 'distribution.collect: options: %s' % str( request.options ) )
+
+		# make sure that we got a list
+		if not isinstance(request.options, (tuple, list)):
+			raise UMC_OptionTypeError( 'Expected list of strings, but got: %s' % str(ids) )
+
+		# try to open the UDM user object of the current user
+		sender = self._get_sender(request)
+
+		# update the sender information of the selected projects
+		ids = request.options
+		result = []
+		for iid in ids:
+			MODULE.info( 'Collect project: %s' % iid )
+			try:
+				# make sure that project could be loaded
+				iproject = util.Project.load(iid)
+				if not iproject:
+					raise IOError( _('Project "%s" could not be loaded') % iid )
+
+				# replace the projects sender with the current logged in user
+				iproject.sender = sender
+
+				# project was loaded successfully... try to distribute it
+				dirsFailed = []
+				iproject.collect(dirsFailed)
+
+				# raise an error in case distribution failed for some users
+				if dirsFailed:
+					dirsStr = ', '.join(dirsFailed)
+					MODULE.info('Failed collecting the following dirs: %s' % dirsFailed)
+					raise IOError(_('The following user directories could not been collected: %s') % dirsFailed)
+
+			except (ValueError, IOError) as e:
+				result.append(dict(
+					name = iid,
+					success = False,
+					details = str(e)
+				))
+
+		# return the results
+		self.finished(request.id, result)
+		MODULE.info( 'distribution.collect: results: %s' % str( result ) )
+
 	def adopt( self, request ):
 		# make sure that we got a list
 		if not isinstance(request.options, (tuple, list)):
@@ -430,8 +518,6 @@ class Instance( SchoolBaseModule ):
 
 		# try to open the UDM user object of the current user
 		sender = self._get_sender(request)
-		if not sender:
-			return
 
 		# update the sender information of the selected projects
 		ids = request.options
