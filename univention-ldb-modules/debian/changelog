@@ -1,3 +1,12 @@
+univention-ldb-modules (0.0.1-18) unstable; urgency=low
+
+  * Use LDB control 'bypass_samaccountname_ldap_check' instead of
+    'permissive_modify' (Bug #26769).
+  * restart univention-s4-connector in the joinscript if the LDB module
+    'univention_samaccountname_ldap_check' gets activated.
+
+ -- Arvid Requate <requate@univention.de>  Thu, 12 Apr 2012 18:21:09 +0200
+
 univention-ldb-modules (0.0.1-17) unstable; urgency=low
 
   * improved connection and talloc handling (Bug #26569).

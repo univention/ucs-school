@@ -206,13 +206,13 @@ static int univention_samaccountname_ldap_check_add(struct ldb_module *module, s
 {
 	struct ldb_context *ldb;
 
-	/* check if there's a permissive control */
+	/* check if there's a bypass_samaccountname_ldap_check control */
 	struct ldb_control *control;
-	control = ldb_request_get_control(req, LDB_CONTROL_PERMISSIVE_MODIFY_OID);
+	control = ldb_request_get_control(req, LDB_CONTROL_BYPASS_SAMACCOUNTNAME_LDAP_CHECK_OID);
 	if (control != NULL) {
 		/* found go on */
 		// ldb = ldb_module_get_ctx(module);
-		// ldb_debug(ldb, LDB_DEBUG_TRACE, ("%s: permissive ldb_add\n"), ldb_module_get_name(module));
+		// ldb_debug(ldb, LDB_DEBUG_TRACE, ("%s: plain ldb_add\n"), ldb_module_get_name(module));
 		return ldb_next_request(module, req);
 	}
 
@@ -225,13 +225,13 @@ static int univention_samaccountname_ldap_check_modify(struct ldb_module *module
 {
 	struct ldb_context *ldb;
 
-	/* check if there's a permissive control */
+	/* check if there's a bypass_samaccountname_ldap_check control */
 	struct ldb_control *control;
-	control = ldb_request_get_control(req, LDB_CONTROL_PERMISSIVE_MODIFY_OID);
+	control = ldb_request_get_control(req, LDB_CONTROL_BYPASS_SAMACCOUNTNAME_LDAP_CHECK_OID);
 	if (control != NULL) {
 		/* found go on */
 		// ldb = ldb_module_get_ctx(module);
-		// ldb_debug(ldb, LDB_DEBUG_TRACE, ("%s: permissive ldb_modify\n"), ldb_module_get_name(module));
+		// ldb_debug(ldb, LDB_DEBUG_TRACE, ("%s: plain ldb_modify\n"), ldb_module_get_name(module));
 		return ldb_next_request(module, req);
 	}
 
@@ -245,14 +245,15 @@ static int univention_samaccountname_ldap_check_init_context(struct ldb_module *
 	struct ldb_context *ldb;
 
 	int ret;
-	ret = ldb_mod_register_control(module, LDB_CONTROL_PERMISSIVE_MODIFY_OID);
+	ret = ldb_mod_register_control(module, LDB_CONTROL_BYPASS_SAMACCOUNTNAME_LDAP_CHECK_OID);
 	if (ret != LDB_SUCCESS) {
 		ldb = ldb_module_get_ctx(module);
 		ldb_debug(ldb, LDB_DEBUG_TRACE,
 			"%s: "
-			"Unable to register LDB_CONTROL_PERMISSIVE_MODIFY_NAME control with rootdse.\n"
+			"Unable to register %s control with rootdse.\n"
 			"Errormessage: %s\n"
 			"This seems to be ok, continuing..",
+			LDB_CONTROL_BYPASS_SAMACCOUNTNAME_LDAP_CHECK_NAME,
 			ldb_module_get_name(module),
 			ldb_errstring(ldb));
 	}
