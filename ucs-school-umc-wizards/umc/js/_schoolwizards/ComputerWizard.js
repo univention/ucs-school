@@ -55,25 +55,9 @@ dojo.declare("umc.modules._schoolwizards.ComputerWizard", [ umc.modules._schoolw
 				type: 'ComboBox',
 				name: 'type',
 				label: this._('Type'),
-				// TODO: which types?
 				staticValues: [{
 					id: 'ipmanagedclient',
 					label: this._('ipmanagedclient')
-				}, {
-					id: 'macos',
-					label: this._('macos')
-				}, {
-					id: 'managedclient',
-					label: this._('managedclient')
-				}, {
-					id: 'memberserver',
-					label: this._('memberserver')
-				}, {
-					id: 'mobileclient',
-					label: this._('mobileclient')
-				}, {
-					id: 'thinclient',
-					label: this._('thinclient')
 				}, {
 					id: 'windows',
 					label: this._('windows')
@@ -117,8 +101,8 @@ dojo.declare("umc.modules._schoolwizards.ComputerWizard", [ umc.modules._schoolw
 	},
 
 	postMixInProperties: function() {
-		this.finishHelpText = this._('Here\'s a simple helpText');
 		this.finishButtonLabel = this._('Click here to create another computer');
+		this.finishTextLabel = this._('The computer has been successfully created.');
 	},
 
 	restart: function() {

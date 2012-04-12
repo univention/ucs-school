@@ -43,18 +43,25 @@ dojo.declare("umc.modules._schoolwizards.Wizard", [ umc.widgets.Wizard, umc.i18n
 
 	finishHelpText: null,
 	finishButtonLabel: null,
+	finishTextLabel: null,
 
 	buildRendering: function() {
 		this.pages.push({
 			name: 'finish',
 			headerText: this._('Finished'),
 			helpText: this.finishHelpText,
+			widgets: [{
+				name: 'resultMessage',
+				type: 'Text',
+				content: '<p>' + this.finishTextLabel + '</p>'
+			}],
 			buttons: [{
 				name: 'createAnother',
 				label: this.finishButtonLabel,
 				onClick: dojo.hitch(this, 'restart')
 			}],
-			layout: [['createAnother']]
+			layout: [['resultMessage'],
+			         ['createAnother']]
 		});
 		this.inherited(arguments);
 	},

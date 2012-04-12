@@ -56,8 +56,8 @@ dojo.declare("umc.modules._schoolwizards.SchoolWizard", [ umc.modules._schoolwiz
 	},
 
 	postMixInProperties: function() {
-		this.finishHelpText = this._('Here\'s a simple helpText');
 		this.finishButtonLabel = this._('Click here to create another school');
+		this.finishTextLabel = this._('The school has been successfully created.');
 	},
 
 	restart: function() {

@@ -13,31 +13,31 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 msgid "Create a new class"
-msgstr ""
+msgstr "Erstelle eine neue Klasse"
 
 msgid "Create a new computer"
-msgstr ""
+msgstr "Erstelle einen neuen Computer"
 
 msgid "Create a new school"
-msgstr ""
+msgstr "Erstelle eine neue Schule"
 
 msgid "Create a new user"
-msgstr ""
+msgstr "Erstelle einen neuen Benutzer"
 
 msgid "School wizards"
-msgstr ""
+msgstr "Schulwizards"
 
 msgid "Various wizards for UCS@school"
-msgstr ""
+msgstr "Verschiedene Wizards für UCS@school"
 
 msgid "Wizard - Class"
-msgstr ""
+msgstr "Wizard - Klasse"
 
 msgid "Wizard - Computer"
-msgstr ""
+msgstr "Wizard - Computer"
 
 msgid "Wizard - School"
-msgstr ""
+msgstr "Wizard - Schule"
 
 msgid "Wizard - User"
-msgstr ""
+msgstr "Wizard - Benutzer"

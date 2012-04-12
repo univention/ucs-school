@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-wizards\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2012-03-15 18:27+0100\n"
+"POT-Creation-Date: 2012-03-20 22:24+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -12,79 +12,143 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: umc/js/schoolwizards.js:169
+#: umc/js/_schoolwizards/UserWizard.js:99
+msgid "Class"
+msgstr "Klasse"
+
+#: umc/js/_schoolwizards/ClassWizard.js:70
+msgid "Click here to create another class"
+msgstr "Hier klicken um eine weitere Klasse zu erstellen"
+
+#: umc/js/_schoolwizards/ComputerWizard.js:104
+msgid "Click here to create another computer"
+msgstr "Hier klicken um einen weiteren Computer zu erstellen"
+
+#: umc/js/_schoolwizards/SchoolWizard.js:59
+msgid "Click here to create another school"
+msgstr "Hier klicken um eine weitere Schule zu erstellen"
+
+#: umc/js/_schoolwizards/UserWizard.js:110
+msgid "Click here to create another user"
+msgstr "Hier klicken um einen weiteren Benutzer zu erstellen"
+
+#: umc/js/_schoolwizards/ComputerWizard.js:69
 msgid "Computer information"
-msgstr ""
+msgstr "Computer Information"
 
-#: umc/js/schoolwizards.js:130
+#: umc/js/_schoolwizards/ClassWizard.js:62
 msgid "Description"
-msgstr ""
+msgstr "Beschreibung"
 
-#: umc/js/schoolwizards.js:98
+#: umc/js/_schoolwizards/UserWizard.js:95
 msgid "E-Mail"
-msgstr ""
+msgstr "E-Mail"
 
-#: umc/js/schoolwizards.js:90
+#: umc/js/_schoolwizards/Wizard.js:51
+msgid "Finished"
+msgstr "Fertig"
+
+#: umc/js/_schoolwizards/UserWizard.js:85
 msgid "Firstname"
-msgstr ""
+msgstr "Vorname"
 
-#: umc/js/schoolwizards.js:58 umc/js/schoolwizards.js:115
-#: umc/js/schoolwizards.js:146 umc/js/schoolwizards.js:208
+#: umc/js/_schoolwizards/SchoolWizard.js:46
+#: umc/js/_schoolwizards/UserWizard.js:46
+#: umc/js/_schoolwizards/ComputerWizard.js:46
+#: umc/js/_schoolwizards/ClassWizard.js:46
 msgid "General information"
-msgstr ""
+msgstr "Allgemeine Informationen"
 
-#: umc/js/schoolwizards.js:59 umc/js/schoolwizards.js:82
-#: umc/js/schoolwizards.js:116 umc/js/schoolwizards.js:147
-#: umc/js/schoolwizards.js:170 umc/js/schoolwizards.js:209
+#: umc/js/_schoolwizards/SchoolWizard.js:47
+#: umc/js/_schoolwizards/UserWizard.js:47
+#: umc/js/_schoolwizards/UserWizard.js:76
+#: umc/js/_schoolwizards/ComputerWizard.js:47
+#: umc/js/_schoolwizards/ComputerWizard.js:70
+#: umc/js/_schoolwizards/ClassWizard.js:47
 msgid "Here's a simple helpText"
 msgstr ""
 
-#: umc/js/schoolwizards.js:178
+#: umc/js/_schoolwizards/ComputerWizard.js:79
 msgid "IP-Address"
-msgstr ""
+msgstr "IP-Adresse"
 
-#: umc/js/schoolwizards.js:190
-msgid "Inventory"
-msgstr ""
+#: umc/js/_schoolwizards/ComputerWizard.js:94
+msgid "Inventory number"
+msgstr "Inventarnummer"
 
-#: umc/js/schoolwizards.js:94
+#: umc/js/_schoolwizards/UserWizard.js:90
 msgid "Lastname"
-msgstr ""
+msgstr "Nachname"
 
-#: umc/js/schoolwizards.js:186
+#: umc/js/_schoolwizards/ComputerWizard.js:89
 msgid "MAC-Address"
-msgstr ""
+msgstr "MAC-Adresse"
 
-#: umc/js/schoolwizards.js:126 umc/js/schoolwizards.js:174
-#: umc/js/schoolwizards.js:213
+#: umc/js/_schoolwizards/SchoolWizard.js:51
+#: umc/js/_schoolwizards/ComputerWizard.js:74
+#: umc/js/_schoolwizards/ClassWizard.js:57
 msgid "Name"
-msgstr ""
+msgstr "Name"
 
-#: umc/js/schoolwizards.js:63 umc/js/schoolwizards.js:120
-#: umc/js/schoolwizards.js:151
+#: umc/js/_schoolwizards/UserWizard.js:51
+#: umc/js/_schoolwizards/ComputerWizard.js:51
+#: umc/js/_schoolwizards/ClassWizard.js:51
 msgid "School"
-msgstr ""
+msgstr "Schule"
 
-#: umc/js/schoolwizards.js:72 umc/js/schoolwizards.js:160
+#: umc/js/_schoolwizards/UserWizard.js:66
+msgid "Staff"
+msgstr "Mitarbeiter"
+
+#: umc/js/_schoolwizards/UserWizard.js:60
 msgid "Student"
-msgstr ""
+msgstr "Schüler"
 
-#: umc/js/schoolwizards.js:182
+#: umc/js/_schoolwizards/ComputerWizard.js:84
 msgid "Subnetmask"
-msgstr ""
+msgstr "Subnetzmaske"
 
-#: umc/js/schoolwizards.js:75 umc/js/schoolwizards.js:163
+#: umc/js/_schoolwizards/UserWizard.js:63
 msgid "Teacher"
-msgstr ""
+msgstr "Lehrer"
 
-#: umc/js/schoolwizards.js:69 umc/js/schoolwizards.js:157
+#: umc/js/_schoolwizards/UserWizard.js:69
+msgid "Teachers and staff"
+msgstr "Lehrer und Mitarbeiter"
+
+#: umc/js/_schoolwizards/ClassWizard.js:71
+msgid "The class has been successfully created."
+msgstr "Die Klasse wurde erfolgreich erstellt."
+
+#: umc/js/_schoolwizards/ComputerWizard.js:105
+msgid "The computer has been successfully created."
+msgstr "Der Computer wurde erfolgreich erstellt."
+
+#: umc/js/_schoolwizards/SchoolWizard.js:60
+msgid "The school has been successfully created."
+msgstr "Die Schule wurde erfolgreich erstellt."
+
+#: umc/js/_schoolwizards/UserWizard.js:111
+msgid "The user has been successfully created."
+msgstr "Der Benutzer wurde erfolgreich erstellt."
+
+#: umc/js/_schoolwizards/UserWizard.js:57
+#: umc/js/_schoolwizards/ComputerWizard.js:57
 msgid "Type"
-msgstr ""
+msgstr "Typ"
 
-#: umc/js/schoolwizards.js:81
+#: umc/js/_schoolwizards/UserWizard.js:75
 msgid "User information"
+msgstr "Benutzer Information"
+
+#: umc/js/_schoolwizards/UserWizard.js:80
+msgid "Username"
+msgstr "Benutzername"
+
+#: umc/js/_schoolwizards/ComputerWizard.js:60
+msgid "ipmanagedclient"
 msgstr ""
 
-#: umc/js/schoolwizards.js:86
-msgid "Username"
+#: umc/js/_schoolwizards/ComputerWizard.js:63
+msgid "windows"
 msgstr ""

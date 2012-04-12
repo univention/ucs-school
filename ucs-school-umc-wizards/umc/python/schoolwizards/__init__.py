@@ -208,9 +208,7 @@ class Instance(SchoolBaseModule, SchoolImport):
 			if subnet_mask:
 				subnet_mask = udm_syntax.netmask.parse(request.options.get('subnetMask', ''))
 
-			allowed_types = ['macos', 'managedclient', 'windows', 'thinclient',
-			                 'memberserver', 'mobileclient', 'ipmanagedclient']
-			if request.options['type'] not in allowed_types:
+			if request.options['type'] not in ['ipmanagedclient', 'windows']:
 				raise ValueError(_('Invalid value for  \'type\' property'))
 
 			# Create the computer

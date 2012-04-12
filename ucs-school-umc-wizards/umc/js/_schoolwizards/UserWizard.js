@@ -107,8 +107,8 @@ dojo.declare("umc.modules._schoolwizards.UserWizard", [ umc.modules._schoolwizar
 	},
 
 	postMixInProperties: function() {
-		this.finishHelpText = this._('Here\'s a simple helpText');
 		this.finishButtonLabel = this._('Click here to create another user');
+		this.finishTextLabel = this._('The user has been successfully created.');
 	},
 
 	restart: function() {
