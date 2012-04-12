@@ -44,7 +44,7 @@ dojo.declare("umc.modules._schoolwizards.ClassWizard", [ umc.modules._schoolwiza
 		this.pages = [{
 			name: 'class',
 			headerText: this._('General information'),
-			helpText: this._('Here\'s a simple helpText'),
+			helpText: this._('This module creates a new class on the system.'),
 			widgets: [{
 				type: 'ComboBox',
 				name: 'school',

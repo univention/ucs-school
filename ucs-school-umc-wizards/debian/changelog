@@ -1,3 +1,11 @@
+ucs-school-umc-wizards (1.0.12-1) unstable; urgency=low
+
+  * Add module help texts
+  * Update po-files
+  (Bug #26344)
+
+ -- Jascha Geerds <geerds@univention.de>  Thu, 12 Apr 2012 15:39:33 +0200
+
 ucs-school-umc-wizards (1.0.11-1) unstable; urgency=low
 
   * Change selectable computer types

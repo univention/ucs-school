@@ -44,7 +44,7 @@ dojo.declare("umc.modules._schoolwizards.ComputerWizard", [ umc.modules._schoolw
 		this.pages = [{
 			name: 'general',
 			headerText: this._('General information'),
-			helpText: this._('Here\'s a simple helpText'),
+			helpText: this._('This module creates a new computer on the system.'),
 			widgets: [{
 				type: 'ComboBox',
 				name: 'school',
@@ -57,17 +57,17 @@ dojo.declare("umc.modules._schoolwizards.ComputerWizard", [ umc.modules._schoolw
 				label: this._('Type'),
 				staticValues: [{
 					id: 'ipmanagedclient',
-					label: this._('ipmanagedclient')
+					label: this._('IP-Managed-Client')
 				}, {
 					id: 'windows',
-					label: this._('windows')
+					label: this._('Windows')
 				}]
 			}],
 			layout: [['school'], ['type']]
 		}, {
 			name: 'computer',
 			headerText: this._('Computer information'),
-			helpText: this._('Here\'s a simple helpText'),
+			helpText: this._('Enter the computer\'s details'),
 			widgets: [{
 				type: 'TextBox',
 				name: 'name',

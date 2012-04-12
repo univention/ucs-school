@@ -44,7 +44,7 @@ dojo.declare("umc.modules._schoolwizards.UserWizard", [ umc.modules._schoolwizar
 		this.pages = [{
 			name: 'general',
 			headerText: this._('General information'),
-			helpText: this._('Here\'s a simple helpText'),
+			helpText: this._('This module creates a new user on the system.'),
 			widgets: [{
 				type: 'ComboBox',
 				name: 'school',
@@ -73,7 +73,7 @@ dojo.declare("umc.modules._schoolwizards.UserWizard", [ umc.modules._schoolwizar
 		}, {
 			name: 'user',
 			headerText: this._('User information'),
-			helpText: this._('Here\'s a simple helpText'),
+			helpText: this._('Enter the user\'s details'),
 			widgets: [{
 				type: 'TextBox',
 				name: 'username',
