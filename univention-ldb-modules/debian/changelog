@@ -1,3 +1,10 @@
+univention-ldb-modules (0.0.1-20) unstable; urgency=low
+
+  * test script should also use bypass_samaccountname_ldap_check
+    (Bug #26569)
+
+ -- Arvid Requate <requate@univention.de>  Thu, 12 Apr 2012 18:59:16 +0200
+
 univention-ldb-modules (0.0.1-19) unstable; urgency=low
 
   * build-depend on recent libldb-dev (Bug #26569)

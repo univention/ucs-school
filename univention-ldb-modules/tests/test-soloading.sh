@@ -27,7 +27,7 @@ EOF
 
 testaccount=Administrator
 
-cat <<EOF | $VALGRIND ldbadd --controls="permissive_modify:0" --trace || exit 1
+cat <<EOF | $VALGRIND ldbadd --controls="bypass_samaccountname_ldap_check:0" --trace || exit 1
 dn: dc=bar
 dc: bar
 sAMAccountName: $testaccount
