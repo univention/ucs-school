@@ -44,6 +44,7 @@ from univention.management.console.protocol import MIMETYPE_PNG, MIMETYPE_JPEG, 
 import univention.admin.modules as udm_modules
 
 from ucsschool.lib.schoolldap import LDAP_Connection, LDAP_ConnectionError, set_credentials, SchoolSearchBase, SchoolBaseModule, LDAP_Filter, Display
+from ucsschool.lib.schoollessons import SchoolLessons
 
 from italc2 import ITALC_Manager
 
@@ -57,6 +58,10 @@ class Instance( SchoolBaseModule ):
 		self._italc = ITALC_Manager( self._username, self._password )
 		self._random = Random()
 		self._random.seed()
+		self._lessons = SchoolLessons()
+
+	def lessons( self, request ):
+		self.finished( request.id, map( lambda x: x.name, self._lessons.lessons ) )
 
 	@LDAP_Connection()
 	def query( self, request, search_base = None, ldap_user_read = None, ldap_position = None ):
@@ -82,8 +87,11 @@ class Instance( SchoolBaseModule ):
 				item = { 'id' : computer.name,
 						 'name' : computer.name,
 						 'user' : computer.user.current,
+						 'teacher' : computer.isTeacher,
 						 'connection' : computer.state.current,
-						 'description' : computer.description }
+						 'description' : computer.description,
+						 'ip' : computer.ipAddress,
+						 'mac' : computer.macAddress }
 				item.update( computer.flagsDict )
 				result.append( item )
 
@@ -91,7 +99,6 @@ class Instance( SchoolBaseModule ):
 			self.finished( request.id, result )
 		except Exception, e:
 			MODULE.error( 'query failed: %s' % str( e ) )
-			self._italc.signal_disconnect( 'initialized', _initialized )
 			self.finished( request.id, str( e ), success = False )
 
 	def update( self, request ):
@@ -122,6 +129,9 @@ class Instance( SchoolBaseModule ):
 			if computer.user.hasChanged:
 				item[ 'user' ] = str( computer.user.current )
 				modified = True
+			if computer.teacher.hasChanged:
+				item[ 'teacher' ] = computer.teacher.current
+				modified = True
 			if modified:
 				result.append( item )
 
@@ -145,15 +155,6 @@ class Instance( SchoolBaseModule ):
 		computer = self._italc.get( request.options[ 'computer' ], None )
 		if computer is None:
 			raise UMC_CommandError( 'Unknown computer %s' % request.options[ 'computer' ] )
-
-		def _answer( new_value, computer, request, message ):
-			MODULE.warn( 'Got signal with value %s' % new_value )
-			success = new_value == request.options[ 'lock' ]
-			computer.signal_disconnect( '%s-lock' % device, _answer )
-			self.finished( request.id, { 'success' : success, 'details' : not success and message or '' } )
-
-		MODULE.warn( 'Connecting to signal %s' % '%s-lock' % device )
-		# computer.signal_connect( '%s-lock' % device, notifier.Callback( _answer, computer, request, message ) )
 
 		MODULE.warn( 'Locking device %s' % device )
 		if device == 'screen':
@@ -202,5 +203,48 @@ class Instance( SchoolBaseModule ):
 		return: [True|False)
 		"""
 		self._italc.stopDemo()
+		self.finished( request.id, True )
+
+	def computer_state( self, request ):
+		"""Stops, starts or restarts a computer
+
+		requests.options = { 'computer' : <computer', 'state' : (poweroff|poweron|restart) }
+
+		return: [True|False)
+		"""
+		self.required_options( request, 'computer', 'state' )
+
+		state = request.options[ 'state' ]
+		if not state in ( 'poweroff', 'poweron', 'restart' ):
+			raise UMC_OptionTypeError( 'unkown state %s' % state )
+
+		computer = self._italc.get( request.options[ 'computer' ], None )
+		if not computer:
+			raise UMC_CommandError( 'Unknown computer' )
+
+		if state == 'poweroff':
+			computer.powerOff()
+		elif state == 'poweron':
+			computer.powerOn()
+		elif state == 'restart':
+			computer.restart()
+
+		self.finished( request.id, True )
+
+	def user_logout( self, request ):
+		"""Log out the user at the given computer
+
+		requests.options = { 'computer' : <computer' }
+
+		return: [True|False)
+		"""
+		self.required_options( request, 'computer' )
+
+		computer = self._italc.get( request.options[ 'computer' ], None )
+		if not computer:
+			raise UMC_CommandError( 'Unknown computer' )
+
+		computer.logOut()
+
 		self.finished( request.id, True )
 

@@ -7,6 +7,7 @@
 		<category name="ucs-school-class"/>
 	</categories>
 	<command name="computerroom/query" function="query"></command>
+	<command name="computerroom/lessons" function="lessons"></command>
 	<command name="computerroom/schools" function="schools"></command>
 	<command name="computerroom/rooms" function="rooms"></command>
 	<command name="computerroom/lock" function="lock"></command>
@@ -14,5 +15,7 @@
 	<command name="computerroom/screenshot" function="screenshot"></command>
 	<command name="computerroom/demo/start" function="demo_start"></command>
 	<command name="computerroom/demo/stop" function="demo_stop"></command>
+	<command name="computerroom/computer/state" function="computer_state"></command>
+	<command name="computerroom/user/logout" function="user_logout"></command>
 	</module>
 </umc>

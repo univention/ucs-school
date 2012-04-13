@@ -80,10 +80,7 @@ class ITALC_Error( Exception ):
 
 class UserMap( dict ):
 	USER_REGEX = re.compile( r'(?P<username>[^(]*)( \((?P<realname>[^)]*)\))?$' )
-
-	def __init__( self ):
-		dict.__init__( self )
-		self._users = udm_modules.get( 'users/user' )
+	UDM_USERS = udm_modules.get( 'users/user' )
 
 	def __getitem__( self, user ):
 		if not user in self:
@@ -97,12 +94,14 @@ class UserMap( dict ):
 		if not match:
 			raise AttributeError( 'invalid key "%s"' % user )
 		username = match.groupdict()[ 'username' ]
-		result = udm_modules.lookup( self._users, None, ldap_user_read, filter = 'uid=%s' % username, scope = 'sub', base = search_base.users )
+		result = udm_modules.lookup( UserMap.UDM_USERS, None, ldap_user_read, filter = 'uid=%s' % username, scope = 'sub', base = search_base.users )
 		if not result:
 			MODULE.info( 'Unknown user "%s"' % username )
 			dict.__setitem__( self, user, '' )
 		else:
 			dict.__setitem__( self, user, result[ 0 ].dn )
+
+_usermap = UserMap()
 
 class LockableAttribute( object ):
 	def __init__( self, initial_value = None, locking = True ):
@@ -144,7 +143,6 @@ class LockableAttribute( object ):
 	@property
 	def hasChanged( self ):
 		self.lock()
-		MODULE.info( 'hasChanged: %s != %s' % ( self._old, self._current ) )
 		diff = self._old != self._current
 		self._old = copy.copy( self._current )
 		self.unlock()
@@ -161,7 +159,6 @@ class LockableAttribute( object ):
 		if value != self._current:
 			self._old = copy.copy( self._current )
 			self._current = copy.copy( value )
-			MODULE.info( 'set: %s != %s' % ( self._old, self._current ) )
 		self.unlock()
 
 class ITALC_Computer( notifier.signals.Provider, QObject ):
@@ -170,7 +167,7 @@ class ITALC_Computer( notifier.signals.Provider, QObject ):
 		italc.ItalcVncConnection.Connected : 'connected',
 		italc.ItalcVncConnection.ConnectionFailed : 'error',
 		italc.ItalcVncConnection.AuthenticationFailed : 'error',
-		italc.ItalcVncConnection.HostUnreachable : 'error'
+		italc.ItalcVncConnection.HostUnreachable : 'offline'
 		}
 
 	def __init__( self, ldap_dn = None ):
@@ -195,6 +192,7 @@ class ITALC_Computer( notifier.signals.Provider, QObject ):
 		self._homedir = LockableAttribute()
 		self._flags = LockableAttribute()
 		self._state = LockableAttribute( initial_value = 'disconnected' )
+		self._teacher = LockableAttribute( initial_value = False )
 		self._allowedClients = []
 		self.readLDAP()
 		self.open()
@@ -213,14 +211,14 @@ class ITALC_Computer( notifier.signals.Provider, QObject ):
 		self._computer.open()
 
 	def open( self ):
-		MODULE.warn( 'Opening VNC connection' )
+		MODULE.info( 'Opening VNC connection' )
 		self._vnc = italc.ItalcVncConnection()
 		self._vnc.setHost( self.ipAddress )
 		self._vnc.setPort( ITALC_VNC_PORT )
 		self._vnc.setQuality( italc.ItalcVncConnection.ThumbnailQuality )
 		self._vnc.setFramebufferUpdateInterval( 1000 * ITALC_VNC_UPDATE )
 		self._vnc.start()
-		self._vnc.stateChanged.connect( self._stateChanged ) #, Qt.DirectConnection )
+		self._vnc.stateChanged.connect( self._stateChanged )
 
 	@pyqtSlot( int )
 	def _stateChanged( self, state ):
@@ -239,6 +237,7 @@ class ITALC_Computer( notifier.signals.Provider, QObject ):
 	def _userInfo( self, username, homedir ):
 		self._username.set( username )
 		self._homedir.set( homedir )
+		self._teacher.set( self.isTeacher )
 		if self._username.current:
 			self._core.reportSlaveStateFlags()
 
@@ -283,6 +282,7 @@ class ITALC_Computer( notifier.signals.Provider, QObject ):
 			notifier.timer_remove( self._timer )
 			self._timer = None
 
+	# UDM properties
 	@property
 	def name( self ):
 		return self._computer.info.get( 'name', None )
@@ -293,6 +293,24 @@ class ITALC_Computer( notifier.signals.Provider, QObject ):
 			raise ITALC_Error( 'Unknown IP address' )
 		return self._computer.info[ 'ip' ][ 0 ]
 
+	@property
+	def macAddress( self ):
+		return self._computer.info.get( 'mac', ( None, ) )[ 0 ]
+
+	@property
+	@LDAP_Connection()
+	def isTeacher( self, ldap_user_read = None, ldap_position = None, search_base = None ):
+		global _usermap
+		try:
+			return _usermap[ str( self.user.current ) ].endswith( search_base.teachers )
+		except AttributeError:
+			return False
+
+	@property
+	def teacher( self ):
+		return self._teacher
+
+	# iTalc properties
 	@property
 	def user( self ):
 		return self._username
@@ -356,14 +374,7 @@ class ITALC_Computer( notifier.signals.Provider, QObject ):
 	def connected( self ):
 		return self._core and self._vnc.isConnected()
 
-	@property
-	def hostUnreachable( self ):
-		return self._vnc and self._vnc.state() == italc.ItalcVncConnection.HostUnreachable
-
-	@property
-	def connectFailed( self ):
-		return self._vnc and self._vnc.state() == italc.ItalcVncConnection.ConnectionFailed
-
+	# iTalc: screenshots
 	@property
 	def screenshot( self ):
 		image = self._vnc.image()
@@ -379,21 +390,26 @@ class ITALC_Computer( notifier.signals.Provider, QObject ):
 	def screenshotQImage( self ):
 		return self._vnc.image()
 
+	# iTalc: screen locking
 	def lockScreen( self, value ):
 		if value:
 			self._core.lockScreen()
 		else:
 			self._core.unlockScreen()
 
+	# iTalc: input device locking
 	def lockInput( self, value ):
 		if value:
 			self._core.lockInput()
 		else:
 			self._core.unlockInput()
 
+	# iTalc: message box
 	def message( self, text ):
 		self._core.displayTextMessage( text )
 
+
+	# iTalc: Demo
 	def denyClients( self ):
 		for client in self._allowedClients[ : ]:
 			self._core.demoServerUnallowHost( client.ipAddress )
@@ -425,15 +441,35 @@ class ITALC_Computer( notifier.signals.Provider, QObject ):
 	def stopDemoClient( self ):
 		self._core.stopDemo()
 
+	# iTalc: computer control
+	def powerOff( self ):
+		if self._core:
+			self._core.powerDownComputer()
+
+	def powerOn( self ):
+		# do not use the italc trick
+		# if self._core and self.macAddress:
+		# 	self._core.powerOnComputer( self.macAddress )
+
+		if self.macAddress:
+			subprocess.Popen( [ '/usr/bin/wakeonlan', self.macAddress ] )
+
+	def restart( self ):
+		if self._core:
+			self._core.restartComputer()
+
+	# iTalc: user functions
+	def logOut( self ):
+		if self._core:
+			self._core.logoutUser()
+
+
 class ITALC_Manager( dict, notifier.signals.Provider ):
 	def __init__( self, username, password ):
 		dict.__init__( self )
 		notifier.signals.Provider.__init__( self )
-		self.signal_new( 'initialized' )
-		self._usermap = UserMap()
 		self._room = None
 		self._school = None
-		self._initialized = False
 		italc.ItalcCore.authenticationCredentials.setLogonUsername( username )
 		italc.ItalcCore.authenticationCredentials.setLogonPassword( password )
 
@@ -455,10 +491,6 @@ class ITALC_Manager( dict, notifier.signals.Provider ):
 		self._clear()
 		self._school = value
 
-	@property
-	def initialized( self ):
-		return self._initialized
-
 	def _clear( self ):
 		if self._room:
 			for name, computer in self.items():
@@ -466,16 +498,6 @@ class ITALC_Manager( dict, notifier.signals.Provider ):
 					computer.stop()
 			self.clear()
 			self._room = None
-			self._initialized = False
-
-	def _connected( self, computer ):
-		MODULE.info( 'New computer is connected ' + computer.name )
-		for comp in self.values():
-			if not comp.connected and not comp.hostUnreachable and not comp.connectFailed:
-				break
-		else:
-			self._initialized = True
-			self.signal_emit( 'initialized' )
 
 	@LDAP_Connection()
 	def _set( self, room, ldap_user_read = None, ldap_position = None, search_base = None ):
@@ -499,7 +521,6 @@ class ITALC_Manager( dict, notifier.signals.Provider ):
 		for dn in computers:
 			try:
 				comp = ITALC_Computer( dn )
-				comp.signal_connect( 'connected', self._connected )
 				self.__setitem__( comp.name, comp )
 			except ITALC_Error, e:
 				MODULE.warn( 'Computer could not be added: %s' % str( e ) )
@@ -521,6 +542,8 @@ class ITALC_Manager( dict, notifier.signals.Provider ):
 
 	@LDAP_Connection()
 	def startDemo( self, demo_server, fullscreen = True, ldap_user_read = None, ldap_position = None, search_base = None ):
+		global _usermap
+
 		if self.isDemoActive:
 			self.stopDemo()
 		server = self.get( demo_server )
@@ -534,7 +557,7 @@ class ITALC_Manager( dict, notifier.signals.Provider ):
 		MODULE.info( 'Demo LDAP base teachers: %s' % search_base.teachers )
 		MODULE.info( 'Demo client users: %s' % ', '.join( map( lambda x: str( x.user.current ), clients ) ) )
 		try:
-			teachers = map( lambda x: x.name, filter( lambda comp: not comp.user.current or self._usermap[ str( comp.user.current ) ].endswith( search_base.teachers ), clients ) )
+			teachers = map( lambda x: x.name, filter( lambda comp: not comp.user.current or _usermap[ str( comp.user.current ) ].endswith( search_base.teachers ), clients ) )
 		except AttributeError, e:
 			MODULE.error( 'Could not determine the list of teachers: %s' % str( e ) )
 			return False

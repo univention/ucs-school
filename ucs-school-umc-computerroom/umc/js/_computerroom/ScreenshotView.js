@@ -136,6 +136,11 @@ dojo.declare( "umc.modules._computerroom.Item", [ dijit.layout.ContentPane, diji
 	// tiemr to update the iamges
 	_timer: null,
 
+	_currentURI: null,
+
+	// default size (width) of the image
+	defaultWidth: 250,
+
 	uninitialize: function() {
 		this.inherited( arguments );
 		if ( this._timer !== null ) {
@@ -143,37 +148,43 @@ dojo.declare( "umc.modules._computerroom.Item", [ dijit.layout.ContentPane, diji
 		}
 	},
 
-	postMixInProperties: function() {
-		this.inherited( arguments );
-	},
-
 	_createURI: function() {
 		this.random = Math.random();
 		return dojo.replace( this._pattern, this );
 	},
 
-	mouseOver: function() {
-		this.inherited( arguments );
-		this._resizeImage( 'visible' );
-	},
-
-	mouseOut: function() {
-		this.inherited( arguments );
-		this._resizeImage( 'hidden' );
-	},
-
-	_resizeImage: function( size ) {
-		var span = dojo.byId( dojo.replace( 'span-{computer}', this ) );
-		span.style.visibiliy = size;
-	},
-
-	_updateImage: function() {
+	_updateImage: function( size ) {
 		var img = dojo.byId( dojo.replace( 'img-{computer}', this ) );
 		var em = dojo.byId( dojo.replace( 'em-{computer}', this ) );
-		em.innerHTML = this.username
-		img.width = 250;
-		img.src = this._createURI();
+		var tooltip = dojo.byId( dojo.replace( 'screenshotTooltip-{computer}', this ) );
 
+		if ( size === undefined ) {
+			size = this.defaultSize;
+		} else {
+			this.defaultSize = size;
+		}
+
+		if ( this.domNode ) {
+			if ( size !== undefined ) {
+				// this.style.width = dojo.replace( '{0}px', [ size ] );
+				// this.style.height = dojo.replace( '{0}px', [ size + 20 ] );
+				dojo.contentBox( this.domNode, { w: size, h:size } );
+				// this.resize( { w: size + 20, h: Math.round( ( size + 20 ) * 0.85 ) } );
+				// item.style.width = dojo.replace( '{0}px', [ size ] );
+				// item.style.height = dojo.replace( '{0}px', [ Math.round( size * 0.85 ) ] );
+			}
+		}
+		if ( em ) {
+			em.innerHTML = this.username;
+		}
+		if ( img ) {
+			// if ( size !== undefined ) {
+			// 	img.style.width = dojo.replace( '{0}px', [ size ] );
+			// }
+			var new_uri = this._createURI();
+			img.src = new_uri;
+			this._currentURI = new_uri;
+		}
 		this._timer = window.setTimeout( dojo.hitch( this, '_updateImage' ), 5000 );
 	},
 
@@ -181,7 +192,14 @@ dojo.declare( "umc.modules._computerroom.Item", [ dijit.layout.ContentPane, diji
 		this.inherited( arguments );
 
 		dojo.mixin( this, {
-			content: dojo.replace( '<em style="font-style: normal; font-size: 80%; padding: 4px; border: 1px solid #000; color: #000; background: #fff; display: block;position: absolute; top: 14px; left: 0px;" id="em-{computer}"></em><img style="width: 250px;" id="img-{computer}"></img>', { computer: this.computer } )
+			// style: dojo.replace( 'width: {width}px; height: {height}px;', {
+			// 	width: this.defaultSize,
+			// 	height: Math.round( this.defaultSize * 0.85 )
+			// } ),
+			content: dojo.replace( '<em style="font-style: normal; font-size: 80%; padding: 4px; border: 1px solid #000; color: #000; background: #fff; display: block;position: absolute; top: 14px; left: 0px;" id="em-{computer}"></em><img style="width: 100%;" id="img-{computer}"></img>', {
+				computer: this.computer,
+				width: this.defaultSize
+			} )
 		} );
 		this.startup();
 
@@ -190,7 +208,7 @@ dojo.declare( "umc.modules._computerroom.Item", [ dijit.layout.ContentPane, diji
 			connectId: [ this.domNode ],
 			onShow: dojo.hitch( this, function() {
 				var image = dojo.byId( 'screenshotTooltip-' + this.computer );
-				image.src = this._createURI();
+				image.src = this._currentURI ? this._currentURI: this._createURI();
 			} )
 		});
 
@@ -212,6 +230,8 @@ dojo.declare("umc.modules._computerroom.ScreenshotView", [ umc.widgets.Page, umc
 	i18nClass: 'umc.modules.computerroom',
 
 	_container: null,
+
+	_cbxSize: null,
 
 	postMixInProperties: function() {
 		this.inherited(arguments);
@@ -241,6 +261,32 @@ dojo.declare("umc.modules._computerroom.ScreenshotView", [ umc.widgets.Page, umc
 			} )
 		} ) );
 		this.addChild( footer );
+
+		var header = new umc.widgets.ContainerWidget( {
+			'class': 'umcPageHeader',
+			region: 'top'
+		} );
+		this._cbxSize = new umc.widgets.ComboBox( {
+			name: this._( 'Size' ),
+			style: 'float: left',
+			staticValues: [
+				{ id: 200, label: this._( 'tiny' ) },
+				{ id: 250, label: this._( 'small' ) },
+				{ id: 350, label: this._( 'normal' ) },
+				{ id: 500, label: this._( 'large' ) }
+			],
+			value: 250,
+			onChange: dojo.hitch( this, function( newValue ) {
+				if ( this._container.hasChildren() ) {
+					dojo.forEach( this._container.getChildren(), dojo.hitch( this, function( child ) {
+						child._updateImage( newValue );
+					} ) );
+				}
+			} )
+		} );
+		header.addChild( this._cbxSize );
+		this.addChild( header );
+
 		this._container = new umc.widgets.ContainerWidget({
 				scrollable: true
 		});
@@ -252,6 +298,7 @@ dojo.declare("umc.modules._computerroom.ScreenshotView", [ umc.widgets.Page, umc
 		if ( this._container.hasChildren() ) {
 			dojo.forEach( this._container.getChildren(), dojo.hitch( this, function( child ) {
 				this._container.removeChild( child );
+				child.destroyRecursive();
 			} ) );
 		}
 	},
@@ -261,7 +308,9 @@ dojo.declare("umc.modules._computerroom.ScreenshotView", [ umc.widgets.Page, umc
 		this.standby(true);
 		this._cleanup();
 		dojo.forEach( ids, dojo.hitch( this, function( item ) {
-			var computer = new umc.modules._computerroom.Item( item );
+			var computer = new umc.modules._computerroom.Item( dojo.mixin( item, {
+				defaultSize: this._cbxSize.get( 'value' )
+			} ) );
 			this._container.addChild( computer );
 		} ) );
 		this.startup();
