@@ -50,10 +50,14 @@ chmod 0700 /usr/lib/cups/backend/cups-pdf
 
 # reload listener
 if [ "$1" = "configure" ]; then
-        if test -f /etc/init.d/univention-directory-listener
-                then
-                /etc/init.d/univention-directory-listener crestart
-        fi
+	if test -f /etc/init.d/univention-directory-listener; then
+		/etc/init.d/univention-directory-listener crestart
+	fi
+
+	univention-config-registry set \
+		umc/module/printermoderation/cleanup/enabled?no \
+		umc/module/printermoderation/cleanup/interval"?* * 1 * *" \
+		umc/module/printermoderation/cleanup/keep?30
 fi
 
 #DEBHELPER#
