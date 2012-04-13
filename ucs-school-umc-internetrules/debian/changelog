@@ -1,3 +1,9 @@
+ucs-school-umc-internetrules (7.0.1-1) unstable; urgency=low
+
+  * added new icons; Bug #25704
+
+ -- Alexander Kläser <klaeser@univention.de>  Fri, 13 Apr 2012 17:03:37 +0200
+
 ucs-school-umc-internetrules (7.0.0-1) unstable; urgency=low
 
   * fixed control/breaks and version (Bug #26393)
