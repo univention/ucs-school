@@ -69,8 +69,8 @@ dojo.declare("umc.modules._distribution.DetailPage", [ umc.widgets.Page, umc.wid
 		this.standbyOpacity = 1;
 
 		// set the page header
-		this.headerText = this._('Object properties');
-		this.helpText = this._('This page demonstrates how object properties can be viewed for editing.');
+		this.headerText = this._('Project properties');
+		this.helpText = this._('This page allows to modify properties of an existing or new distribution project.');
 
 		// configure buttons for the footer of the detail page
 		this.footerButtons = [{

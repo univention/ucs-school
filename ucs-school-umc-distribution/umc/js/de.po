@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-distribution\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2012-02-06 16:24+0100\n"
+"POT-Creation-Date: 2012-04-13 18:18+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -12,155 +12,359 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: umc/js/distribution.js:170
+#: umc/js/distribution.js:181
 msgid "#Files"
-msgstr ""
+msgstr "#Dateien"
 
-#: umc/js/distribution.js:166
+#: umc/js/distribution.js:177
 msgid "#Users"
-msgstr ""
+msgstr "#Benutzer"
 
 #: umc/js/distribution.js:115
-msgid "Add object"
-msgstr ""
+msgid "Add project"
+msgstr "Projekt hinzufügen"
 
-#: umc/js/_distribution/DetailPage.js:137
+#: umc/js/distribution.js:355
+msgid "Adopt project"
+msgstr "Projekt übernehmen"
+
+#: umc/js/distribution.js:145
+msgid "Adoption"
+msgstr "Übernahme"
+
+#: umc/js/distribution.js:215
+msgid "All projects"
+msgstr "Alle Projekte"
+
+#: umc/js/_distribution/DetailPage.js:155
 msgid "All pupils"
-msgstr ""
+msgstr "Alle Schüler"
 
-#: umc/js/_distribution/DetailPage.js:78
+#: umc/js/_distribution/DetailPage.js:156
+msgid "All teachers"
+msgstr "Alle Lehrer"
+
+#: umc/js/_distribution/DetailPage.js:213
+msgid "Automatic collection"
+msgstr "Automatisches Einsammeln"
+
+#: umc/js/_distribution/DetailPage.js:188
+msgid "Automatic distribution"
+msgstr "Automatisches Austeilen"
+
+#: umc/js/_distribution/DetailPage.js:84
+msgid "Back to overview"
+msgstr "Zurück zur Übersicht"
+
+#: umc/js/distribution.js:293 umc/js/distribution.js:351
+#: umc/js/distribution.js:392
 msgid "Cancel"
-msgstr ""
+msgstr "Abbrechen"
 
-#: umc/js/distribution.js:143
-msgid "Close"
-msgstr ""
+#: umc/js/_distribution/DetailPage.js:315
+#: umc/js/_distribution/DetailPage.js:329
+msgid "Cancel upload"
+msgstr "Dateitransfer abbrechen"
 
-#: umc/js/distribution.js:144
-msgid "Close the selected material projects"
-msgstr ""
+#: umc/js/distribution.js:296
+msgid "Collect project"
+msgstr "Projekt einsammeln"
+
+#: umc/js/_distribution/DetailPage.js:218
+msgid "Collection date"
+msgstr "Einsammeldatum"
+
+#: umc/js/_distribution/DetailPage.js:205
+msgid "Collection of project files"
+msgstr "Einsammeln der Projektdateien"
+
+#: umc/js/_distribution/DetailPage.js:223
+msgid "Collection time"
+msgstr "Einsammelzeit"
 
 #: umc/js/distribution.js:116
-msgid "Create a new object"
-msgstr ""
+msgid "Create a new distribution project"
+msgstr "Neues Verteilungsprojekt erstellen"
 
-#: umc/js/distribution.js:158 umc/js/_distribution/DetailPage.js:106
+#: umc/js/_distribution/DetailPage.js:219
+msgid "Date at which the project files will be collected automatically."
+msgstr "Datum, an dem die Projektdateien automatisch eingesammelt werden."
+
+#: umc/js/_distribution/DetailPage.js:194
+msgid "Date at which the project files will be distributed automatically."
+msgstr "Datum, an dem die Projektdateien automatisch verteilt werden."
+
+#: umc/js/distribution.js:169 umc/js/_distribution/DetailPage.js:109
 msgid "Description"
-msgstr ""
+msgstr "Beschreibung"
+
+#: umc/js/_distribution/DetailPage.js:114
+msgid "Directory name"
+msgstr "Verzeichnisname"
+
+#: umc/js/distribution.js:296
+msgid "Distribute project"
+msgstr "Projekt verteilen"
 
 #: umc/js/distribution.js:137
 msgid "Distribute project files to pupils"
-msgstr ""
+msgstr "Projektdateien an Schüler verteilen"
 
 #: umc/js/distribution.js:133
 msgid "Distribution"
-msgstr ""
+msgstr "Verteilen"
+
+#: umc/js/_distribution/DetailPage.js:233
+msgid "Distribution and collection of project files"
+msgstr "Verteilen und Einsammeln der Projektdateien"
+
+#: umc/js/_distribution/DetailPage.js:193
+msgid "Distribution date"
+msgstr "Verteilungsdatum"
+
+#: umc/js/_distribution/DetailPage.js:180
+msgid "Distribution of project files"
+msgstr "Verteilen der Projektdateien"
+
+#: umc/js/_distribution/DetailPage.js:199
+msgid "Distribution time"
+msgstr "Verteilungszeit"
 
 #: umc/js/distribution.js:123
 msgid "Edit"
-msgstr ""
+msgstr "Bearbeiten"
 
 #: umc/js/distribution.js:124
-msgid "Edit the selected object"
-msgstr ""
+msgid "Edit the selected distribution project"
+msgstr "Das ausgewählte Verteilungsprojekt bearbeiten"
 
-#: umc/js/_distribution/DetailPage.js:192
-msgid "Feature not implemented yet!"
-msgstr ""
+#: umc/js/distribution.js:285
+msgid "Error: No files have been assign to the project!"
+msgstr "Fehler: Keine Datei wurden dem Projekt hinzugefügt!"
 
-#: umc/js/distribution.js:251
-msgid "Feature not yet implemented"
-msgstr ""
+#: umc/js/distribution.js:279
+msgid "Error: No recipients have been assign to the project!"
+msgstr "Fehler: Kein Empfänger wurde für das Projekt ausgewählt!"
 
-#: umc/js/_distribution/DetailPage.js:116
-#: umc/js/_distribution/DetailPage.js:169
+#: umc/js/_distribution/DetailPage.js:132
+#: umc/js/_distribution/DetailPage.js:242
 msgid "Files"
-msgstr ""
+msgstr "Dateien"
 
-#: umc/js/_distribution/DetailPage.js:117
+#: umc/js/_distribution/DetailPage.js:133
 msgid "Files that have been added to this teaching material project"
-msgstr ""
+msgstr "Dateien, die mit Materialverteilungsprojekt verknüpft sind"
 
-#: umc/js/_distribution/DetailPage.js:166
+#: umc/js/_distribution/DetailPage.js:230
 msgid "General"
-msgstr ""
+msgstr "Allgemein"
 
-#: umc/js/_distribution/DetailPage.js:123
+#: umc/js/_distribution/DetailPage.js:141
 msgid "List of pupils that are marked to receive the teaching materials"
-msgstr ""
+msgstr "Liste der Schüler, die die Projektmaterialien empfangen werden"
 
-#: umc/js/_distribution/DetailPage.js:172
+#: umc/js/_distribution/DetailPage.js:210
+msgid "Manual collection"
+msgstr "Manuelles Einsammeln"
+
+#: umc/js/_distribution/DetailPage.js:185
+msgid "Manual distribution"
+msgstr "Manuelles Verteilen"
+
+#: umc/js/_distribution/DetailPage.js:239
 msgid "Members"
-msgstr ""
+msgstr "Mitglieder"
 
-#: umc/js/_distribution/DetailPage.js:100
-msgid "Name"
-msgstr ""
+#: umc/js/distribution.js:214
+msgid "Only own projects"
+msgstr "Nur eigene Projekte"
 
-#: umc/js/_distribution/DetailPage.js:66
-msgid "Object properties"
+#: umc/js/distribution.js:335
+msgid ""
+"Only the owner of a project is able to edit its details. If necessary, you "
+"are able to transfer the ownership of a project to your account by executing "
+"the action \"adopt\"."
 msgstr ""
+"Nur der Eigentümer eines Projektes kann seine Eigenschaften sehen und "
+"bearbeiten. Wenn notwendig, ist es möglich das Eigentumsrecht und somit das "
+"Projekt zu übernehmen. Dies ist durch Ausführen der Aktion \"übernehmen\" "
+"möglich."
 
-#: umc/js/distribution.js:162 umc/js/_distribution/DetailPage.js:111
+#: umc/js/distribution.js:387
+msgid "Only the owner of a project is able to remove it."
+msgstr "Nur der Eigentümer eines Projektes kann es entfernen."
+
+#: umc/js/_distribution/DetailPage.js:318
+#: umc/js/_distribution/DetailPage.js:332
+msgid "Overwrite file"
+msgstr "Datei überschreiben"
+
+#: umc/js/distribution.js:173
 msgid "Owner"
-msgstr ""
+msgstr "Eigentümer"
 
-#: umc/js/_distribution/DetailPage.js:112
-msgid "Person that created the teaching material project"
+#: umc/js/distribution.js:290
+#, python-format
+msgid "Please confirm to collect the project: %s"
 msgstr ""
+"Bitte bestätigen Sie, um Dateien des ausgewählten Projektes einzusammeln: %s"
 
-#: umc/js/distribution.js:154
-msgid "Project Name"
+#: umc/js/distribution.js:291
+#, python-format
+msgid "Please confirm to distribute the project: %s"
 msgstr ""
+"Bitte bestätigen Sie, um Dateien des ausgewählten Projektes zu verteilen: %s"
 
-#: umc/js/_distribution/DetailPage.js:122
-msgid "Pupils"
+#: umc/js/distribution.js:391
+#, python-format
+msgid "Please confirm to remove the project: %s"
+msgstr "Bitte bestätigen Sie, um das Projekt zu entfernen: %s"
+
+#: umc/js/distribution.js:350
+#, python-format
+msgid ""
+"Please confirm to transfer the ownership of the project \"%s\" to your "
+"account."
 msgstr ""
+"Bitte bestätigen sie, um das Eigentumsrecht des Projektes \"%s\" auf Ihren "
+"Account zu übertragen."
 
 #: umc/js/_distribution/DetailPage.js:72
+msgid "Project properties"
+msgstr "Projekteigenschaften"
+
+#: umc/js/_distribution/DetailPage.js:140
+msgid "Pupils"
+msgstr "Schüler"
+
+#: umc/js/distribution.js:158
+msgid "Remove"
+msgstr "Löschen"
+
+#: umc/js/distribution.js:396
+msgid "Remove project"
+msgstr "Projekt löschen"
+
+#: umc/js/distribution.js:159
+msgid "Removes the project from the internal database"
+msgstr "Löscht das Projekt aus der internen Datenbank"
+
+#: umc/js/_distribution/DetailPage.js:78
 msgid "Save"
-msgstr ""
+msgstr "Speichern"
 
-#: umc/js/_distribution/DetailPage.js:127
+#: umc/js/_distribution/DetailPage.js:145
 msgid "School"
-msgstr ""
+msgstr "Schule"
 
-#: umc/js/_distribution/DetailPage.js:144
+#: umc/js/_distribution/DetailPage.js:163
 msgid "Search name"
-msgstr ""
+msgstr "Suchname"
 
-#: umc/js/distribution.js:202
+#: umc/js/distribution.js:221
 msgid "Search pattern"
-msgstr ""
+msgstr "Suchbegriff"
 
 #: umc/js/distribution.js:103
 msgid "Search results"
-msgstr ""
+msgstr "Suchergebnisse"
 
-#: umc/js/distribution.js:201
+#: umc/js/distribution.js:220
 msgid "Specifies the substring pattern which is searched for in the projects"
 msgstr ""
+"Gibt die Zeichenkette an, nach der in den Projektbeschreibungen gesucht wird"
 
-#: umc/js/_distribution/DetailPage.js:107
+#: umc/js/_distribution/DetailPage.js:206
+msgid ""
+"Specifies whether the project data is collected automatically or manually."
+msgstr "Gibt an, ob das Projekte automatisch oder manuell eingesammelt wird."
+
+#: umc/js/_distribution/DetailPage.js:181
+msgid ""
+"Specifies whether the project data is distributed automatically or manually."
+msgstr "Gibt an, ob das Projekte automatisch oder manuell verteilt wird."
+
+#: umc/js/_distribution/DetailPage.js:110
 msgid "The description of the teaching material project"
-msgstr ""
+msgstr "Die Beschreibung des Materialverteilungsprojekts"
 
-#: umc/js/_distribution/DetailPage.js:101
-msgid "The name of the teaching material project"
+#: umc/js/_distribution/DetailPage.js:307
+#, python-format
+msgid "The file \"%s\" cannot be uploaded as it has already been distributed."
 msgstr ""
+"Die Datei \"%s\" kann nicht übertragen werden, da sie bereits verteilt wurde"
 
-#: umc/js/_distribution/DetailPage.js:67
-msgid "This page demonstrates how object properties can be viewed for editing."
+#: umc/js/_distribution/DetailPage.js:313
+#, python-format
+msgid ""
+"The file \"%s\" has already been assigned to the project, please confirm to "
+"overwrite it."
 msgstr ""
+"Die Datei \"%s\" wurde bereits dem Projekt hinzugefügt. Bitte bestätigen "
+"Sie, um die vorhandene Datei zu überschreiben."
 
-#: umc/js/_distribution/DetailPage.js:134
+#: umc/js/_distribution/DetailPage.js:327
+#, python-format
+msgid ""
+"The file \"%s\" has already been uploaded, please confirm to overwrite it."
+msgstr ""
+"Die Datei \"%s\" wurde bereits während der Sitzung hochgeladen. Bitte "
+"bestätigen Sie, um die vorhandene Datei zu überschreiben."
+
+#: umc/js/distribution.js:312 umc/js/distribution.js:368
+#, python-format
+msgid "The following error occurred: %s"
+msgstr "Der folgende Fehler trat auf: %s"
+
+#: umc/js/_distribution/DetailPage.js:288
+#, python-format
+msgid ""
+"The following files cannot be uploaded as they have already been "
+"distributed: %s"
+msgstr ""
+"Die folgenden Dateien können nicht übertragen werden, da sie bereits "
+"verteilt wurden."
+
+#: umc/js/_distribution/DetailPage.js:115
+msgid ""
+"The name of the project directory as it will be displayed in the file system."
+msgstr ""
+"Der Name des Projektverzeichnis wie es im Dateisystem dargestellt wird."
+
+#: umc/js/_distribution/DetailPage.js:73
+msgid ""
+"This page allows to modify properties of an existing or new distribution "
+"project."
+msgstr "Diese Seite ermöglicht es, Eigenschaften eines bestehenden oder neuen Materialverteilungsprojekts zu bearbeiten."
+
+#: umc/js/_distribution/DetailPage.js:224
+msgid "Time at which the project files will be collected automatically."
+msgstr "Zeit, zu der die Projektdateien automatisch eingesammelt werden."
+
+#: umc/js/_distribution/DetailPage.js:200
+msgid "Time at which the project files will be distributed automatically."
+msgstr "Zeit, zu der die Projektdateien automatisch verteilt werden."
+
+#: umc/js/distribution.js:152
+msgid "Transfer the ownership of the selected project to your account."
+msgstr "Übertragen des Eigentumsrechts des ausgewählten Projektes auf Ihren Account."
+
+#: umc/js/_distribution/DetailPage.js:152
 msgid "User group / class"
-msgstr ""
+msgstr "Benutzergruppen / Klassen"
+
+#: umc/js/distribution.js:147
+msgid "adopt"
+msgstr "übernehmen"
 
 #: umc/js/distribution.js:135
 msgid "collect"
-msgstr ""
+msgstr "einsammeln"
 
 #: umc/js/distribution.js:135
 msgid "distribute"
-msgstr ""
+msgstr "verteilen"
+
+#~ msgid ""
+#~ "This page demonstrates how object properties can be viewed for editing."
+#~ msgstr "Diese "
