@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-distribution\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2012-04-16 16:29+0200\n"
+"POT-Creation-Date: 2012-04-16 18:10+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: umc/python/distribution/util.py:225
+#: umc/python/distribution/util.py:231
 msgid "A valid project owner needs to be specified."
 msgstr "Für ein gültiges Projekt muss ein Besitzer definiert sein."
 
@@ -22,7 +22,7 @@ msgstr "Für ein gültiges Projekt muss ein Besitzer definiert sein."
 msgid "Could not authenticate user \"%s\"!"
 msgstr "Der Benutzer konnte nicht authentifizieren werden: \"%s\"!"
 
-#: umc/python/distribution/util.py:258
+#: umc/python/distribution/util.py:264
 #, python-format
 msgid "Could not save project file: %s (%s)"
 msgstr "Das Projekt konnte nicht gespeichert werden: %s (%s)"
@@ -77,11 +77,11 @@ msgid "The following user directories could not been collected: %s"
 msgstr ""
 "Die folgenden Benutzer-Verzeichnisse konnten nicht eingesammelt werden: %s"
 
-#: umc/python/distribution/util.py:219
+#: umc/python/distribution/util.py:225
 msgid "The given project description must be non-empty."
 msgstr "Die angegebene Projektbeschreibung darf nicht leer sein."
 
-#: umc/python/distribution/util.py:213
+#: umc/python/distribution/util.py:210
 msgid "The given project directory name must be non-empty."
 msgstr "Das angegebene Projektverzeichnis darf nicht leer sein."
 
@@ -96,10 +96,25 @@ msgid "The project could not distributed to the following users: %s"
 msgstr ""
 "Das Projekt konnte nicht an die folgenden Benutzer ausgeteilt werden: %s"
 
-#: umc/python/distribution/util.py:215
-msgid "The specified project directory may not contain the character \"/\"."
+#: umc/python/distribution/util.py:223
+msgid "The specified project directory may at most be 254 characters long."
 msgstr ""
-"Das angegebene Projektverzeichnis darf nicht das Zeichen \"/\" enthalten."
+"Das angegebene Projektverzeichnis darf maximal 254 Zeichen lang sein"
+
+#: umc/python/distribution/util.py:215
+msgid "The specified project directory may not contain the character \"%s\"."
+msgstr ""
+"Das angegebene Projektverzeichnis darf nicht das Zeichen \"%s\" enthalten."
+
+#: umc/python/distribution/util.py:221
+msgid "The specified project directory may not end with a space."
+msgstr ""
+"Das angegebene Projektverzeichnis darf nicht mit einem Leerzeichen beginnen oder enden."
+
+#: umc/python/distribution/util.py:219
+msgid "The specified project directory may not start nor end with a \".\"."
+msgstr ""
+"Das angegebene Projektverzeichnis darf nicht mit einem \".\" beginnen oder enden."
 
 #: umc/python/distribution/util.py:217
 msgid ""
