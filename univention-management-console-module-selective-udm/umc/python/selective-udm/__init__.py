@@ -75,7 +75,7 @@ class Instance(umcm.Base):
 		if len(server_dn) != 1:
 			message = 'Failed to create windows computer\nDid not find the Server DN'
 			MODULE.warn(message)
-			self.finished(request.id, {'success': False}, message)
+			self.finished(request.id, {}, message, success=False)
 			return
 		server_dn = server_dn[0]
 			
@@ -89,7 +89,7 @@ class Instance(umcm.Base):
 		if not idx:
 			messages = 'Failed to create windows computer\nDid not find the ou in the Server DN'
 			MODULE.warn(message)
-			self.finished(request.id, {'success': False}, message)
+			self.finished(request.id, {}, message, success=False)
 			return
 		position = 'cn=computers,%s' % string.join(server_dn_list[idx:], ',')
 
@@ -121,8 +121,8 @@ class Instance(umcm.Base):
 		except Exception, err:
 			message = 'Failed to create windows computer\n%s' % traceback.format_exc()
 			MODULE.warn(message)
-			self.finished(request.id, {'success': False}, message)
+			self.finished(request.id, {}, message, success=False)
 		else:
-			self.finished(request.id, {'success': True})
+			self.finished(request.id, {}, success=True)
 
 
