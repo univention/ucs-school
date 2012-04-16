@@ -1,0 +1,5 @@
+univention-management-console-module-selective-udm (1.0.0-1) unstable; urgency=low
+
+  * Initial release (Bug #26509)
+
+ -- Stefan Gohmann <gohmann@univention.de>  Mon, 16 Apr 2012 16:12:31 +0200
