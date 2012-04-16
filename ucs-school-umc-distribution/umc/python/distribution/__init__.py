@@ -190,7 +190,7 @@ class Instance( SchoolBaseModule ):
 			self.finished(request.id, None, _('Failed to load user information: %s') % e, False)
 			MODULE.error('Could not find user DN: %s' % self._user_dn)
 			raise UMC_CommandError( _('Could not authenticate user "%s"!') % self._user_dn )
-		except Exception as e:
+		except LDAP_ConnectionError as e:
 			self.finished(request.id, None, str(e), False)
 			MODULE.error('Could not open user DN: %s (%s)' % (self._user_dn, e))
 			raise UMC_CommandError( _('Could not authenticate user "%s"!') % self._user_dn )
@@ -271,7 +271,7 @@ class Instance( SchoolBaseModule ):
 							users.append(iuser)
 						except udm_exceptions.noObject as e:
 							MODULE.error('Could not find user DN: %s' % idn)
-						except Exception as e:
+						except LDAP_ConnectionError as e:
 							MODULE.error('Could not open user DN: %s (%s)' % (idn, e))
 					project.recipients = users
 					MODULE.info('recipients: %s' % users)
@@ -311,6 +311,17 @@ class Instance( SchoolBaseModule ):
 						except OSError as e:
 							pass
 
+				# re-distribute the project in case it has already been distributed
+				if doUpdate and project.isDistributed:
+					usersFailed = []
+					project.distribute(usersFailed)
+
+					if usersFailed:
+						# not all files could be distributed
+						MODULE.info('Failed processing the following users: %s' % usersFailed)
+						usersStr = ', '.join([ Display.user(i) for i in usersFailed ])
+						raise IOError(_('The project could not distributed to the following users: %s') % usersStr)
+
 				# everything ok
 				result.append(dict(
 					name = iprops.get('name'),
@@ -318,6 +329,7 @@ class Instance( SchoolBaseModule ):
 				))
 			except (ValueError, IOError, OSError) as e:
 				# data not valid... create error info
+				MODULE.info('data for project "%s" is not valid: %s' % (iprops.get('name'), e))
 				result.append(dict(
 					name = iprops.get('name'),
 					success = False,
@@ -327,7 +339,11 @@ class Instance( SchoolBaseModule ):
 				if not doUpdate:
 					# remove eventually created project file and cache dir
 					for ipath in (project.projectfile, project.cachedir):
+						if os.path.basename(ipath) not in os.listdir(util.DISTRIBUTION_DATA_PATH):
+							# no file / directory has been created yet
+							continue
 						try:
+							MODULE.info('cleaning up... removing: %s' % ipath)
 							shutil.rmtree(ipath)
 						except (IOError, OSError) as e:
 							pass
@@ -338,11 +354,6 @@ class Instance( SchoolBaseModule ):
 
 		# return the results
 		self.finished(request.id, result)
-
-#TODO: distribute if no starttime is given
-#			if not project['starttime']:
-#				debugmsg( ud.ADMIN, ud.INFO, 'no starttime set - distributing data now')
-#				distributeData( project )
 
 	def put( self, request ):
 		"""Modify an existing project, expects:

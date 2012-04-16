@@ -107,13 +107,15 @@ dojo.declare("umc.modules._distribution.DetailPage", [ umc.widgets.Page, umc.wid
 			type: 'TextBox',
 			name: 'description',
 			label: this._('Description'),
-			description: this._('The description of the teaching material project')
+			description: this._('The description of the teaching material project'),
+			required: true
 		}, {
 			type: 'TextBox',
 			name: 'name',
 			label: this._('Directory name'),
 			description: this._('The name of the project directory as it will be displayed in the file system.'),
 			depends: 'description',
+			required: true,
 			dynamicValue: dojo.hitch(this, function(values) {
 				var me = this._form.getWidget('name');
 				if (me.get('disabled')) {
@@ -285,7 +287,7 @@ dojo.declare("umc.modules._distribution.DetailPage", [ umc.widgets.Page, umc.wid
 				}
 			});
 			if (distributedFiles.length > 0) {
-				umc.dialog.alert(this._('The following files cannot be uploaded as they have already been distributed: %s', '<ul><li>' + distributedFiles.join('</li><li>') + '</li></ul>'));
+				umc.dialog.alert(this._('The following files cannot be removed as they have already been distributed: %s', '<ul><li>' + distributedFiles.join('</li><li>') + '</li></ul>'));
 				return false;
 			}
 
@@ -343,6 +345,8 @@ dojo.declare("umc.modules._distribution.DetailPage", [ umc.widgets.Page, umc.wid
 
 	_resetForm: function() {
 		this._form.clearFormValues();
+		this._form.getWidget('description').reset();
+		this._form.getWidget('name').reset();
 
 		// initiate the time/date specific form widgets
 		var d = new Date();
@@ -357,6 +361,14 @@ dojo.declare("umc.modules._distribution.DetailPage", [ umc.widgets.Page, umc.wid
 	},
 
 	_save: function(values) {
+		// make sure that all widgets are valid
+		var invalidWidgets = this._form.getInvalidWidgets();
+		if (invalidWidgets.length) {
+			// focus to the first invalid widget
+			this._form.getWidget(invalidWidgets[0]).focus();
+			return false;
+		}
+
 		this.standby(true);
 		this._form.save().then(dojo.hitch(this, function(result) {
 			this.standby(false);

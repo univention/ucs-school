@@ -13,7 +13,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 msgid "Create, distribute, and collect teaching materials"
-msgstr ""
+msgstr "Erstellen, Verteilen und Einsammeln von Unterrichtsmaterialien"
 
-msgid "Teaching material"
-msgstr ""
+msgid "Distribute materials"
+msgstr "Materialien verteilen"

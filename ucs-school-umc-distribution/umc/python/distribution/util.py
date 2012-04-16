@@ -212,13 +212,15 @@ class Project(_Dict):
 		if not (isinstance(self.name, basestring) and self.name):
 			raise ValueError(_('The given project directory name must be non-empty.'))
 		if self.name.find('/') >= 0:
-			raise ValueError(_('The specified project directory may not contain the character "/"'))
+			raise ValueError(_('The specified project directory may not contain the character "/".'))
+		if self.name in ('..', '.') >= 0:
+			raise ValueError(_('The specified project directory must be different from "." and "..".'))
 		if not (isinstance(self.description, basestring) and self.description):
 			raise ValueError(_('The given project description must be non-empty.'))
-		if not (isinstance(self.files, list)): # and self.files):
-			raise ValueError(_('At least one file must be specified.'))
-		if not (isinstance(self.recipients, list)): # and self.recipients):
-			raise ValueError(_('At least one recipient must be specified.'))
+		#if not (isinstance(self.files, list)): # and self.files):
+		#	raise ValueError(_('At least one file must be specified.'))
+		#if not (isinstance(self.recipients, list)): # and self.recipients):
+		#	raise ValueError(_('At least one recipient must be specified.'))
 		if not self.sender or not self.sender.username or not self.sender.homedir:
 			raise ValueError(_('A valid project owner needs to be specified.'))
 		#TODO: the following checks are necessary to make sure that the project name
@@ -277,15 +279,13 @@ class Project(_Dict):
 			MODULE.error( 'ERROR: Sender information is not specified, cannot create project dir in the sender\'s home!' )
 
 	def _register_at_jobs(self):
-		'''Registers at-jobs for distributing and collecting files. Files are distributed
-		directly of no start time is explicitely specified.'''
+		'''Registers at-jobs for distributing and collecting files.'''
 
 		# register the starting job
-		# if no start time is given, project will be distributed immediately
 		# make sure that the startime, if given, lies in the future
-		if not self.starttime or self.starttime > time.time():
+		if self.starttime or self.starttime > time.time():
 			MODULE.info( 'register at-jobs: starttime = %s' % time.ctime( self.starttime ) )
-			cmd = '%s --distribute %s' % (DISTRIBUTION_CMD, self.projectfile)
+			cmd = """'%s' --distribute '%s'""" % (DISTRIBUTION_CMD, self.projectfile)
 			print 'register at-jobs: starttime = %s  cmd = %s' % (time.ctime( self.starttime ), cmd) 
 			atJob = atjobs.add(cmd, self.starttime)
 			if atJob and self.starttime:
@@ -298,7 +298,7 @@ class Project(_Dict):
 		if self.deadline and self.deadline > time.time():
 			MODULE.info( 'register at-jobs: deadline = %s' % time.ctime( self.deadline ) )
 			print 'register at-jobs: deadline = %s' % time.ctime( self.deadline ) 
-			cmd = '%s --collect %s' % (DISTRIBUTION_CMD, self.projectfile)
+			cmd = """'%s' --collect '%s'""" % (DISTRIBUTION_CMD, self.projectfile)
 			atJob = atjobs.add(cmd, self.deadline)
 			if atJob:
 				self.atJobNumCollect = atJob.nr
@@ -316,7 +316,8 @@ class Project(_Dict):
 	def distribute( self, usersFailed = None):
 		'''Distribute the project data to all registrated receivers.'''
 
-		usersFailed = usersFailed or []
+		if not isinstance(usersFailed, list):
+			usersFailed = []
 
 		# determine which files shall be distributed
 		# note: already distributed files will be removed from the cache directory,
@@ -344,12 +345,12 @@ class Project(_Dict):
 				target = str( os.path.join( self.user_projectdir(user), fn ) )
 				try:
 					shutil.copyfile( src, target )
-				except Exception, e:
+				except (OSError, IOError) as e:
 					MODULE.error( 'failed to copy "%s" to "%s": %s' % (src, target, str(e)))
 					usersFailed.append(user)
 				try:
 					os.chown( target, int(user.uidNumber), int(user.gidNumber) )
-				except Exception, e:
+				except (OSError, IOError) as e:
 					MODULE.error( 'failed to chown "%s": %s' % (target, str(e)))
 					usersFailed.append(user)
 
@@ -361,13 +362,14 @@ class Project(_Dict):
 					os.remove(src)
 				else:
 					MODULE.info( 'file has already been distributed: %s [%s]' % (src, e) )
-			except Exception as e:
+			except (OSError, IOError) as e:
 				MODULE.error( 'failed to remove file: %s [%s]' % (src, e) )
 
 		return len(usersFailed) == 0
 
 	def collect(self, dirsFailed = None):
-		dirsFailed = dirsFailed or []
+		if not isinstance(dirsFailed, list):
+			dirsFailed = []
 
 		# make sure all necessary directories exist
 		self._createProjectDir()
@@ -394,7 +396,7 @@ class Project(_Dict):
 					for momo in dirs + files:
 						os.chown(os.path.join(root, momo), int(self.sender.uidNumber), int(self.sender.gidNumber))
 
-			except (OSError, ValueError) as ex:
+			except (OSError, IOError, ValueError) as ex:
 				MODULE.warn('Copy failed: "%s" ->  "%s"' % (srcdir, targetdir))
 				dirsFailed.append(srcdir)
 
@@ -413,13 +415,13 @@ class Project(_Dict):
 		if self.cachedir and os.path.exists( self.cachedir ):
 			try:
 				shutil.rmtree( self.cachedir )
-			except Exception, e:
+			except (OSError, IOError) as e:
 				MODULE.error('failed to cleanup cache directory: %s [%s]' % (self.cachedir, str(e)))
 
 		# remove projectfile
 		try:
 			os.remove( self.projectfile )
-		except Exception, e:
+		except (OSError, IOError) as e:
 			MODULE.error('cannot remove projectfile: %s [%s]' % (projectfile, str(e)))
 
 	@staticmethod
@@ -436,11 +438,8 @@ class Project(_Dict):
 			# convert _Dict instances to User
 			project.sender = User(project.sender.dict)
 			project.recipients = [ User(i.dict) for i in project.recipients ]
-		except IOError as e:
+		except (IOError, ValueError, AttributeError) as e:
 			MODULE.error('Could not open project file: %s [%s]' % (projectfile, str(e)))
-			return None
-		except ValueError as e:
-			MODULE.error('Could not parse project file: %s [%s]' % (projectfile, str(e)))
 			return None
 
 		# make sure the filename matches the property 'name'
@@ -506,7 +505,7 @@ def _create_dir( targetdir, homedir=None, permissions=0700, owner=0, group=0 ):
 		else:
 			MODULE.error( '%s does not exist - creation failed' % (targetdir) )
 			return False
-	except Exception, e:
+	except (OSError, IOError) as e:
 		MODULE.error( 'failed to create/chown "%s": %s' % (targetdir, str(e)))
 		return False
 
