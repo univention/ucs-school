@@ -1,3 +1,18 @@
+ucs-school-umc-distribution (0.0.14-1) unstable; urgency=low
+
+  * disallow several special characters to avoid problems with Windows, Mac,
+    and Unix systems; Bug #25707
+
+ -- Alexander Kläser <klaeser@univention.de>  Mon, 16 Apr 2012 18:07:39 +0200
+
+ucs-school-umc-distribution (0.0.13-1) unstable; urgency=low
+
+  * fixed quoting of directory name
+  * removed legacy code
+  Bug #25707
+
+ -- Alexander Kläser <klaeser@univention.de>  Mon, 16 Apr 2012 17:13:46 +0200
+
 ucs-school-umc-distribution (0.0.12-1) unstable; urgency=low
 
   * fixed fuzzy translations; Bug #25707

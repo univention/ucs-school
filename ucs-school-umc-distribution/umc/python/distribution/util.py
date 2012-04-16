@@ -46,6 +46,8 @@ import json
 
 import time
 
+from pipes import quote
+
 import unicodedata
 import string
 import re
@@ -147,18 +149,13 @@ class Project(_Dict):
 		_Dict.__init__(self,
 			name = None,
 			description = None,
-#			cachedir = None,
 			files = [],
 			starttime = None,  # seconds
 			deadline = None,  # seconds
 			atJobNumDistribute = None,  # int
 			atJobNumCollect = None,  # int
-#			collectFiles = True,
-#			keepProject = False,
 			sender = None,  # User
-#			sender_uid = None,
 			recipients = [],  # [User, ...]
-#			recipients_dn = [],
 		)
 
 		# update specified entries
@@ -211,10 +208,19 @@ class Project(_Dict):
 		a ValueError with a proper error message is raised.'''
 		if not (isinstance(self.name, basestring) and self.name):
 			raise ValueError(_('The given project directory name must be non-empty.'))
-		if self.name.find('/') >= 0:
-			raise ValueError(_('The specified project directory may not contain the character "/".'))
+		# disallow certain characters to avoid problems in Windows/Mac/Unix systems:
+		# http://en.wikipedia.org/wiki/Filename#Reserved_characters_and_words
+		for ichar in ('/', '\\', '?', '%', '*', ':', '|', '"', '<', '>', '$', "'"):
+			if self.name.find(ichar) >= 0:
+				raise ValueError(_('The specified project directory may not contain the character "%s".') % ichar)
 		if self.name in ('..', '.') >= 0:
 			raise ValueError(_('The specified project directory must be different from "." and "..".'))
+		if self.name.startswith('.') or self.name.endswith('.'):
+			raise ValueError(_('The specified project directory may not start nor end with a ".".'))
+		if self.name.endswith(' ') or self.name.startswith(' '):
+			raise ValueError(_('The specified project directory may not end with a space.'))
+		if len(self.name) >= 255:
+			raise ValueError(_('The specified project directory may at most be 254 characters long.'))
 		if not (isinstance(self.description, basestring) and self.description):
 			raise ValueError(_('The given project description must be non-empty.'))
 		#if not (isinstance(self.files, list)): # and self.files):
@@ -285,7 +291,7 @@ class Project(_Dict):
 		# make sure that the startime, if given, lies in the future
 		if self.starttime or self.starttime > time.time():
 			MODULE.info( 'register at-jobs: starttime = %s' % time.ctime( self.starttime ) )
-			cmd = """'%s' --distribute '%s'""" % (DISTRIBUTION_CMD, self.projectfile)
+			cmd = """'%s' --distribute %s""" % (DISTRIBUTION_CMD, quote(self.projectfile))
 			print 'register at-jobs: starttime = %s  cmd = %s' % (time.ctime( self.starttime ), cmd) 
 			atJob = atjobs.add(cmd, self.starttime)
 			if atJob and self.starttime:
@@ -298,7 +304,7 @@ class Project(_Dict):
 		if self.deadline and self.deadline > time.time():
 			MODULE.info( 'register at-jobs: deadline = %s' % time.ctime( self.deadline ) )
 			print 'register at-jobs: deadline = %s' % time.ctime( self.deadline ) 
-			cmd = """'%s' --collect '%s'""" % (DISTRIBUTION_CMD, self.projectfile)
+			cmd = """'%s' --collect %s""" % (DISTRIBUTION_CMD, quote(self.projectfile))
 			atJob = atjobs.add(cmd, self.deadline)
 			if atJob:
 				self.atJobNumCollect = atJob.nr
@@ -513,212 +519,3 @@ def _create_dir( targetdir, homedir=None, permissions=0700, owner=0, group=0 ):
 	return True
 
 
-########## OLD CODE ##############
-#class handler( umch.simpleHandler, _revamp.Web  ):
-#
-##################################################
-#
-#
-#	def distribution_project_distribute( self, umcobject ):
-#		debugmsg( ud.ADMIN, ud.INFO, 'distribution_distribute: incomplete=%s options=%s' % ( umcobject.incomplete, umcobject.options ) )
-#		self.ldap_anon.checkConnection(username = self._username, bindpw = self._password)
-#
-#		try:
-#			msg = []
-#			cmdexitcode = None
-#
-#			groupdn = umcobject.options.get('groupdn')
-#			userfilter = ''
-#
-#			self.ldap_anon.switch_ou( umcobject.options.get('ou', self.ldap_anon.availableOU[0]) )
-#			grouplist = self._generate_grouplist( sorted_list = True )
-#
-#			if not groupdn and grouplist:
-#				groupdn = grouplist[0]['dn']
-#
-#			groupresult = univention.admin.modules.lookup( self.ldap_anon.groupmodule, self.ldap_anon.co, self.ldap_anon.lo,
-#														   scope = 'sub', superordinate = None, base = groupdn, filter = '')
-#			if groupresult and groupresult[0]:
-#				grp = groupresult[0]
-#				grp.open()
-#				debugmsg( ud.ADMIN, ud.INFO, 'group members=%s' % grp['users'] )
-#				for user in grp['users']:
-#					userfilter += '(%s)' % user.split(',', 1)[0]
-#				if userfilter:
-#					userfilter = '(|%s)' % userfilter
-#				debugmsg( ud.ADMIN, ud.INFO, 'userfilter = %s' % userfilter )
-#
-##			if umcobject.options.get('update','0') == '1' and umcobject.options.get('complete','0') == '1':
-##				fn_project = os.path.join( DISTRIBUTION_DATA_PATH, umcobject.options.get('projectname','') )
-##				if os.path.exists( fn_project ):
-##					project = getProject(fn_project)
-##				else:
-##					umcobject.options['complete'] = '0'
-##					msg.append( _('projectname "%(projectname)s" is already in use!') % { 'projectname': project['name'] } )
-##					debugmsg( ud.ADMIN, ud.WARN, 'project name "%s" already in use' % project['name'])
-##			else:
-##				project = getProject ()
-##				project['name'] = umcobject.options.get('projectname','')
-##				project['description'] = umcobject.options.get('description','')
-#
-#			# test if files have been uploaded
-#			if not umcobject.options.get('fileupload',[]) and umcobject.options.get('complete','0') == '1':
-#				umcobject.options['complete'] = '0'
-#				msg.append( _('No files have been uploaded!') )
-#				debugmsg( ud.ADMIN, ud.WARN, 'no files have been uploaded')
-#
-##			# test if projectname is already in use
-##			fn_project = os.path.join( DISTRIBUTION_DATA_PATH, project['name'] )
-##			if os.path.exists( fn_project )	and umcobject.options.get('complete','0') == '1':
-##				umcobject.options['complete'] = '0'
-##				msg.append( _('projectname "%(projectname)s" is already in use!') % { 'projectname': project['name'] } )
-##				debugmsg( ud.ADMIN, ud.WARN, 'project name "%s" already in use' % project['name'])
-#
-#			if umcobject.options.get('complete','0') == '1':
-#				debugmsg( ud.ADMIN, ud.INFO, 'project "%s" is complete' % project['name'])
-#
-#				deadline_str = umcobject.options.get('deadline', '')
-#				if deadline_str:
-#					deadline_struct = time.strptime( deadline_str.strip(), _('%m/%d/%Y %H:%M') )
-#					deadline_time = time.mktime( deadline_struct )
-#					if deadline_time > time.time()+120:
-#						project['deadline'] = deadline_time
-#				files = []
-#				for fileitem in umcobject.options.get('fileupload',[]):
-#					files.append( [ fileitem['filename'], fileitem['tmpfname'] ] )
-#
-#				project['sender_uid'] = self._username
-#				project['recipients_dn'] = umcobject.options.get('userdnlist', [])
-#				project['files'] = umcobject.options.get('fileupload',[])
-#
-#				# save user info
-#				saveProject(fn_project, project)
-#
-#				debugmsg( ud.ADMIN, ud.INFO, 'project "%s" has been saved' % project['name'])
-#
-#				cmdexitcode = 'success'
-#			else:
-#				project['sender']['obj'] = self._get_user( self._username )
-#
-#			cmddata = { 'availableOU': self.ldap_anon.availableOU,
-#						'grouplist': grouplist,
-#						'userfilter': userfilter,
-#						'msg': msg,
-#						'cmdexitcode': cmdexitcode,
-#						'project': project,
-#						}
-#
-#			if cmddata['cmdexitcode'] == 'success':
-#				cmd = '%s --init --force %s' % (DISTRIBUTION_CMD, os.path.join(DISTRIBUTION_DATA_PATH, project['name']))
-#				debugmsg( ud.ADMIN, ud.INFO, 'calling "%s"' % cmd )
-#				proc = notifier.popen.RunIt( cmd, stderr = True )
-#				cb = notifier.Callback( self._distribution_project_distribute_return, umcobject, cmddata )
-#				proc.signal_connect( 'finished', cb )
-#				proc.start()
-#			else:
-#				self.finished( umcobject.id(), cmddata )
-#		except Exception, e:
-#			debugmsg( ud.ADMIN, ud.ERROR, 'EXCEPTION2: %s' % str(e))
-#
-######
-#
-#	def _distribution_project_distribute_return( self, pid, status, stdout, stderr, umcobject, cmddata ):
-#		if status != 0:
-#			debugmsg( ud.ADMIN, ud.ERROR, 'distribution_project_distribute_return: umc-distribute command returned exitcode %s' % status )
-#			debugmsg( ud.ADMIN, ud.ERROR, 'distribution_project_distribute_return: umc-distribute command returned (stdout):\n %s' % stdout )
-#			debugmsg( ud.ADMIN, ud.ERROR, 'distribution_project_distribute_return: umc-distribute command returned (stderr):\n %s' % stderr )
-#			cmddata['msg'].append( _('Error occurred while distributing files (status=%s)') % status )
-#			cmddata['cmdexitcode'] = 'failure'
-#
-#		self.finished( umcobject.id(), cmddata )
-#
-###################################################
-#
-#	def distribution_project_show( self, umcobject ):
-#		debugmsg( ud.ADMIN, ud.INFO, 'distribution_collect: incomplete=%s options=%s' % ( umcobject.incomplete, umcobject.options ) )
-#		self.ldap_anon.checkConnection(username = self._username, bindpw = self._password)
-#
-#		project = None
-#		report = ''
-#
-#		projectname = umcobject.options.get('projectname', None)
-#		if not projectname:
-#			debugmsg( ud.ADMIN, ud.ERROR, 'no projectname given' )
-#			report = _('no projectname given')
-#		else:
-#			if not os.path.isfile( os.path.join(DISTRIBUTION_DATA_PATH, projectname) ):
-#				debugmsg( ud.ADMIN, ud.ERROR, 'project "%(projectname)s": file %(fn)s does not exist' % { 'projectname': projectname, 'fn': os.path.join(DISTRIBUTION_DATA_PATH, projectname)  } )
-#				report = _('project "%(projectname)s": file %(fn)s does not exist' ) % { 'projectname': projectname, 'fn': os.path.join(DISTRIBUTION_DATA_PATH, projectname)  }
-#			else:
-#				project = getProject(os.path.join(DISTRIBUTION_DATA_PATH, projectname))
-#
-#		self.finished( umcobject.id(), { 'availableOU': self.ldap_anon.availableOU,
-#										 'project': project,
-#										 }, report = report, success = (len(report) == 0) )
-#
-#
-###################################################
-#
-#	def distribution_project_collect( self, umcobject ):
-#		debugmsg( ud.ADMIN, ud.INFO, 'distribution_collect: incomplete=%s options=%s' % ( umcobject.incomplete, umcobject.options ) )
-#		self.ldap_anon.checkConnection(username = self._username, bindpw = self._password)
-#
-#		project = None
-#		report = ''
-#
-#		projectname = umcobject.options.get('projectname', None)
-#		if not projectname:
-#			debugmsg( ud.ADMIN, ud.ERROR, 'no projectname given' )
-#			report = _('no projectname given')
-#		else:
-#			fn_project = os.path.join(DISTRIBUTION_DATA_PATH, projectname)
-#			if not os.path.isfile( fn_project ):
-#				debugmsg( ud.ADMIN, ud.ERROR, 'project "%(projectname)s": file %(fn)s does not exist' % ( projectname, fn_project ) )
-#				report = _('project "%(projectname)s": file %(fn)s does not exist' ) % { 'projectname': projectname, 'fn': fn_project  }
-#			else:
-#				project = getProject(fn_project)
-#
-#		if report:
-#			self.finished( umcobject.id(), { 'availableOU': self.ldap_anon.availableOU,
-#											 'project': project,
-#											 }, report = report, success = False )
-#		else:
-#			cmddata = { 'msg': [],
-#						'cmdexitcode': 'success',
-#						'project': project }
-#
-#			cmd = '%s --collect --force %s\n' % (DISTRIBUTION_CMD, os.path.join(DISTRIBUTION_DATA_PATH, fn_project))
-#			debugmsg( ud.ADMIN, ud.ERROR, 'distribution_project_collect_return: cmd = "%s"' % cmd )
-#			proc = notifier.popen.RunIt( cmd, stderr = True )
-#			cb = notifier.Callback( self._distribution_project_collect_return, umcobject, cmddata )
-#			proc.signal_connect( 'finished', cb )
-#			proc.start()
-#
-#	def _distribution_project_collect_return( self, pid, status, stdout, stderr, umcobject, cmddata ):
-#		if status != 0:
-#			debugmsg( ud.ADMIN, ud.ERROR, 'distribution_project_collect_return: cmd umc-distribution-collect returned exitcode %s' % status )
-#			debugmsg( ud.ADMIN, ud.ERROR, 'distribution_project_collect_return: cmd umc-distribution-collect returned (stdout):\n %s' % '\n'.join(stdout) )
-#			debugmsg( ud.ADMIN, ud.ERROR, 'distribution_project_collect_return: cmd umc-distribution-collect returned (stderr):\n %s' % '\n'.join(stderr) )
-#			cmddata['msg'].append( _('An error occurred while collecting data (exitcode: %s)') % str(status) )
-#			cmddata['cmdexitcode'] = 'failure'
-#		cmddata['msg'].extend( stdout )
-#
-#		if cmddata['project']['atjob'] == None:
-#			self.finished( umcobject.id(), cmddata )
-#		else:
-#			cmd = '/usr/bin/atrm %s' % cmddata['project']['atjob']
-#			debugmsg( ud.ADMIN, ud.ERROR, 'distribution_project_collect_return: cmd = "%s"' % cmd )
-#			proc = notifier.popen.RunIt( cmd, stderr = True )
-#			cb = notifier.Callback( self._distribution_project_collect_return2, umcobject, cmddata )
-#			proc.signal_connect( 'finished', cb )
-#			proc.start()
-#
-#	def _distribution_project_collect_return2( self, pid, status, stdout, stderr, umcobject, cmddata ):
-#		if status != 0:
-#			debugmsg( ud.ADMIN, ud.ERROR, 'distribution_project_collect_return2: cmd atrm returned exitcode %s' % status )
-#			debugmsg( ud.ADMIN, ud.ERROR, 'distribution_project_collect_return2: cmd atrm returned (stdout):\n %s' % '\n'.join(stdout) )
-#			debugmsg( ud.ADMIN, ud.ERROR, 'distribution_project_collect_return2: cmd atrm returned (stderr):\n %s' % '\n'.join(stderr) )
-#			cmddata['msg'].append( _('An error occurred while removing automatic deadline (exitcode: %s)') % str(status) )
-#			cmddata['cmdexitcode'] = 'failure'
-#
-#		self.finished( umcobject.id(), cmddata )
