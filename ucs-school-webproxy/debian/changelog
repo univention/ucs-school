@@ -1,3 +1,9 @@
+ucs-school-webproxy (8.0.10-1) unstable; urgency=low
+
+  * added readme file for filter rules; Bug #26382
+
+ -- Alexander Kläser <klaeser@univention.de>  Tue, 17 Apr 2012 12:52:02 +0200
+
 ucs-school-webproxy (8.0.9-1) unstable; urgency=low
 
   * changed loglevel to PROCESS (Bug #15085)
@@ -6,7 +12,7 @@ ucs-school-webproxy (8.0.9-1) unstable; urgency=low
 
 ucs-school-webproxy (8.0.8-1) unstable; urgency=low
 
-  * unset old proxy/ip_auth vars in preinst (Bug #25803) 
+  * unset old proxy/ip_auth vars in preinst (Bug #25803)
 
  -- Felix Botner <botner@univention.de>  Mon, 26 Mar 2012 14:54:34 +0200
 
@@ -18,7 +24,7 @@ ucs-school-webproxy (8.0.7-1) unstable; urgency=low
 
 ucs-school-webproxy (8.0.6-1) unstable; urgency=low
 
-  * added dependency to ucs-school-umc-internetrules (Bug #25803) 
+  * added dependency to ucs-school-umc-internetrules (Bug #25803)
 
  -- Felix Botner <botner@univention.de>  Mon, 12 Mar 2012 15:00:49 +0100
 
@@ -55,7 +61,7 @@ ucs-school-webproxy (8.0.2-1) unstable; urgency=low
 
 ucs-school-webproxy (8.0.1-1) unstable; urgency=low
 
-  * added dependency to univention-squid in 3.0-1 (Bug #25700) 
+  * added dependency to univention-squid in 3.0-1 (Bug #25700)
 
  -- Felix Botner <botner@univention.de>  Fri, 03 Feb 2012 09:31:55 +0100
 
