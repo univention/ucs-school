@@ -40,7 +40,7 @@ Depends: univention-directory-manager-tools (>> 4.0.29-1),
  ucs-school-netlogon,
  shell-univention-lib,
  shell-ucs-school,
- libunivention-ldb-modules
+ univention-samba | libunivention-ldb-modules
 Recommends:
  ucs-school-umc-computerroom,
  ucs-school-umc-distribution,
