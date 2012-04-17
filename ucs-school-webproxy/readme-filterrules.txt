@@ -60,10 +60,14 @@ proxy/filter/setting-user
   -> wie proxy/filter/setting, definiert temporäre Regel für einen Benutzer (darüber kann bspw. ein Lehrer seine eigenen Regeln bestimmen)
 
 proxy/filter/room/<roomName>/ip
-  -> definiert alle IPs, die zu dem Raum <roomName> gehören
+  -> definiert alle IPs, die zu dem Raum <roomName> gehören; Leerzeichen-separierte Liste
 
 proxy/filter/room/<roomName>/rule=<ruleName>
   -> setzt die Regel <ruleName> (temporäre Regeln aus proxy/filter/setting-user) für den Raum <roomName>
+
+Beispiele:
+  proxy/filter/room/A122/ip=123.123.123.123 34.34.93.47
+  proxy/filter/room/A122/rule=d.krause
 
 
 ==== Sonstige Variablen ====
