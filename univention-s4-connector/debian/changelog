@@ -1,3 +1,11 @@
+univention-s4-connector (6.0.121-2) unstable; urgency=low
+
+  * Added binddn and bindpwd parameter to the S4 connector join tools.
+    This prevents errors during the join if a DC slave is the first
+    Samba DC (Bug #26505, Bug #26203)
+
+ -- Stefan Gohmann <gohmann@univention.de>  Tue, 17 Apr 2012 07:34:00 +0200
+
 univention-s4-connector (6.0.120-2) unstable; urgency=low
 
   * Merged errata46: http://errata.univention.de/errata46.html
