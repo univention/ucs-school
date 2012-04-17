@@ -1,0 +1,5 @@
+@%@UCRWARNING=# @%@
+
+# How should Samba (smbd) run? Possible values are "daemons"
+#	or "inetd".
+RUN_MODE="daemons"

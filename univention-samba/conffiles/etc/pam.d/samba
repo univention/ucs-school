@@ -1,0 +1,7 @@
+@%@UCRWARNING=# @%@
+
+@include common-account
+@include common-auth
+@include common-session
+@include common-password
+
