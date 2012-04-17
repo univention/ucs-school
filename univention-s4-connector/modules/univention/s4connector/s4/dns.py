@@ -734,7 +734,7 @@ def ucs_zone_create(s4connector, object, dns_type):
 
 		
 
-def ucs_zone_delete(s4connector, objecti, dns_type):
+def ucs_zone_delete(s4connector, object, dns_type):
 	_d=ud.function('ucs_zone_delete')
 
 	zoneName, relativeDomainName=__split_s4_dn(object['dn'])
@@ -872,6 +872,10 @@ def con2ucs (s4connector, key, object):
 	if not dns_type:
 		# unknown object -> ignore
 		ud.debug(ud.LDAP, ud.INFO, 'dns con2ucs: Ignore unkown dns object: %s' % object['dn'])
+		return True
+
+	if object['dn'].find('\\0ACNF:') > 0:
+		ud.debug(ud.LDAP, ud.PROCESS, 'Ignore conflicted dns object: %s' % object['dn'])
 		return True
 
 	ud.debug(ud.LDAP, ud.INFO, 'dns con2ucs: Object (%s) is from type %s' % (object['dn'], dns_type))
