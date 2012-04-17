@@ -1,3 +1,9 @@
+ucs-school-metapackage (4.0.17-1) unstable; urgency=low
+
+  * Restart samba after setting the add machine script (Bug #26799)
+
+ -- Stefan Gohmann <gohmann@univention.de>  Tue, 17 Apr 2012 15:51:35 +0200
+
 ucs-school-metapackage (4.0.16-1) unstable; urgency=low
 
   * ldb-modules should only be installed if samba3 is not (Bug #26569)
