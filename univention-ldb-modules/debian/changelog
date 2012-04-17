@@ -1,3 +1,13 @@
+univention-ldb-modules (0.0.2-1) unstable; urgency=low
+
+  * replace ldap check by umc-command create_windows_computer
+  * deny creation of user and group objects
+  * remove modify handler
+  * don't register module init handler
+  * remove check for samba4/ldb/sam/module/test (Bug #26569)
+
+ -- Arvid Requate <requate@univention.de>  Tue, 17 Apr 2012 13:44:54 +0200
+
 univention-ldb-modules (0.0.1-22) unstable; urgency=low
 
   * revert last change, segfault fixed differently (Bug #26569)

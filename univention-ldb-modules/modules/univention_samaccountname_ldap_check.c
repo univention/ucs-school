@@ -55,9 +55,12 @@
 */
 
 #include "ldb_module.h"
-#include "ldap.h"
 #include <univention/config.h>
-#include <univention/ldap.h>
+#include <stdbool.h>
+#include "base64.h"
+#include <unistd.h>
+#include <string.h>
+#include <sys/wait.h>
 
 static char* read_pwd_from_file(char *filename)
 {
@@ -77,140 +80,19 @@ static char* read_pwd_from_file(char *filename)
 	return strdup(line);
 }
 
-int do_connection(struct ldb_context *ldb, univention_ldap_parameters_t *lp)
-{
-	LDAPMessage *res;
-	struct  timeval timeout;
-	int rc;
-
-	timeout.tv_sec=10;
-	timeout.tv_usec=0;
-
-	if ( univention_ldap_open(lp) != 0 ) {
-		return 1;
-	}
-
-	/* check if we are connected to an OpenLDAP
-	if ( (rc = ldap_search_ext_s(lp->ld, lp->base, LDAP_SCOPE_BASE, "objectClass=univentionBase", NULL, 0, NULL, NULL, &timeout, 0, &res) ) != LDAP_SUCCESS ) {
-		if ( rc == LDAP_NO_SUCH_OBJECT ) {
-			ldb_debug(ldb, LDB_DEBUG_ERROR, ("Failed to find \"(objectClass=univentionBase)\" on LDAP server %s:%d"), lp->host, lp->port);
-		} else {
-			ldb_debug(ldb, LDB_DEBUG_ERROR, ("Failed to search for \"(objectClass=univentionBase)\" on LDAP server %s:%d with message %s"), lp->host, lp->port, ldap_err2string(rc));
-		}
-		return 1;
-	}
-	ldap_msgfree( res );
-	*/
-
-	return 0;
-}
-
-
-static int free_univention_ldap_parameters(univention_ldap_parameters_t *lp) {
-	if ( lp->ld != NULL ) {
-		ldap_unbind_ext(lp->ld, NULL, NULL);
-	}
-	free(lp->host);
-	free(lp->base);
-	free(lp->binddn);
-	free(lp->bindpw);
-	return 0;
-}
-	
-static int get_univention_ldap_connection(struct ldb_module *module, univention_ldap_parameters_t *lp) {
-
-	struct ldb_context *ldb;
-	ldb = ldb_module_get_ctx(module);
-
-	if (lp == NULL) {
-
-		lp = talloc_zero(module, univention_ldap_parameters_t);
-
-		if (lp == NULL) {
-			return LDB_ERR_OTHER;
-		}
-
-		lp->host=univention_config_get_string("ldap/master");
-		lp->base=univention_config_get_string("ldap/base");
-		lp->binddn=univention_config_get_string("ldap/hostdn");
-		lp->bindpw=read_pwd_from_file("/etc/machine.secret");
-		char *port = univention_config_get_string("ldap/master/port");
-		lp->port=atoi(port);
-		free(port);
-		lp->start_tls=2;
-		lp->authmethod = LDAP_AUTH_SIMPLE;
-
-		talloc_set_destructor(lp, free_univention_ldap_parameters);
-		ldb_module_set_private(module, lp);
-	}
-
-	if (lp->ld == NULL && do_connection(ldb, lp) != 0) {
-		ldb_debug(ldb, LDB_DEBUG_ERROR, ("cannot connect to ldap server %s\n"), lp->host);
-		lp->ld = NULL;
-		return LDB_ERR_UNAVAILABLE;
-	}
-	return LDB_SUCCESS;
-}
-
-static int univention_samaccountname_ldap_check(struct ldb_module *module, struct ldb_request *req)
-{
-	struct ldb_message_element *attribute;
-	struct ldb_context *ldb;
-	char *ldap_filter;
-	LDAPMessage *res = NULL;
-	int rv = LDAP_SUCCESS;
-	int ret = LDB_SUCCESS;
-	univention_ldap_parameters_t	*lp;
-	ldb = ldb_module_get_ctx(module);
-
-	attribute = ldb_msg_find_element(req->op.add.message, "sAMAccountName");
-	if (attribute) {
-
-		lp = ldb_module_get_private(module);
-
-		ret = get_univention_ldap_connection(module, lp);
-		if ( ret != LDB_SUCCESS ) {
-			return ret;
-		}
-
-		int ldap_filter_length = 6 + attribute->values[0].length + 1;
-		ldap_filter = malloc(ldap_filter_length);
-		snprintf( ldap_filter, ldap_filter_length, "(uid=%s)", attribute->values[0].data);
-		char * attrs[] = { "dn", NULL };
-		rv = ldap_search_ext_s(lp->ld, lp->base, LDAP_SCOPE_SUBTREE, ldap_filter, attrs, 0,  NULL /*serverctrls*/, NULL /*clientctrls*/, NULL /*timeout*/, 0 /*sizelimit*/, &res);
-		if ( rv != LDAP_SUCCESS ) {
-			ldb_debug(ldb, LDB_DEBUG_ERROR, ("%s: ldb_add: LDAP error: %s\n"), ldb_module_get_name(module), ldap_err2string(rv));
-			ret = LDB_ERR_UNAVAILABLE;
-		} else {
-			if ( ldap_count_entries(lp->ld, res ) != 0 ) {
-				ldb_debug(ldb, LDB_DEBUG_ERROR, ("%s: ldb_add: account %s exists on host %s\n"), ldb_module_get_name(module), (const char *)attribute->values[0].data, lp->host);
-				ret = LDB_ERR_ENTRY_ALREADY_EXISTS;
-			} else {
-				ldb_debug(ldb, LDB_DEBUG_TRACE, ("%s: ldb_add: account %s ok\n"), ldb_module_get_name(module), (const char *)attribute->values[0].data);
-			}
-		}
-
-		if ( res != NULL ) {
-			ldap_msgfree( res );
-		}
-	}
-
-	if ( ret == LDB_SUCCESS ) {
-		ret = ldb_next_request(module, req);
-	}
-
-	return ret;
-}
-
 static int univention_samaccountname_ldap_check_add(struct ldb_module *module, struct ldb_request *req)
 {
 	struct ldb_context *ldb;
+	struct ldb_message_element *attribute;
+	bool is_computer = false;
+	bool is_group = false;
+	bool is_user = false;
+	int i;
 
 	/* check if there's a bypass_samaccountname_ldap_check control */
 	struct ldb_control *control;
 	control = ldb_request_get_control(req, LDB_CONTROL_BYPASS_SAMACCOUNTNAME_LDAP_CHECK_OID);
 	if (control != NULL) {
-		/* found go on */
 		// ldb = ldb_module_get_ctx(module);
 		// ldb_debug(ldb, LDB_DEBUG_TRACE, ("%s: plain ldb_add\n"), ldb_module_get_name(module));
 		return ldb_next_request(module, req);
@@ -218,26 +100,90 @@ static int univention_samaccountname_ldap_check_add(struct ldb_module *module, s
 
 	ldb = ldb_module_get_ctx(module);
 	ldb_debug(ldb, LDB_DEBUG_TRACE, ("%s: ldb_add\n"), ldb_module_get_name(module));
-	return univention_samaccountname_ldap_check(module, req);
-}
+	
+	attribute = ldb_msg_find_element(req->op.add.message, "objectClass");
+	for (i=0; i<attribute->num_values; i++) {
+		if ( !(strcasecmp(attribute->values[i].data, "computer")) ) {
+			is_computer = true;
+		}
+		if ( !(strcasecmp(attribute->values[i].data, "group")) ) {
+			is_group = true;
+		}
+		if ( !(strcasecmp(attribute->values[i].data, "user")) ) {
+			is_user = true;
+		}
+	}
+			
+	if ( is_computer ) {
+		attribute = ldb_msg_find_element(req->op.add.message, "sAMAccountName");
+		if( attribute == NULL ) {
+			// we can't handle this
+			return ldb_next_request(module, req);
+		}
+			
+		char *new_computer_name = malloc(attribute->values[0].length);
+		memcpy(new_computer_name, attribute->values[0].data, attribute->values[0].length - 1);
+		new_computer_name[attribute->values[0].length] = 0;
 
-static int univention_samaccountname_ldap_check_modify(struct ldb_module *module, struct ldb_request *req)
-{
-	struct ldb_context *ldb;
+		attribute = ldb_msg_find_element(req->op.add.message, "unicodePwd");
+		if( attribute == NULL ) {
+			// we can't handle this
+			ldb_debug(ldb, LDB_DEBUG_ERROR, ("%s: ldb_add of computer object without unicodePwd\n"), ldb_module_get_name(module));
+			return LDB_ERR_UNWILLING_TO_PERFORM;
+		}
 
-	/* check if there's a bypass_samaccountname_ldap_check control */
-	struct ldb_control *control;
-	control = ldb_request_get_control(req, LDB_CONTROL_BYPASS_SAMACCOUNTNAME_LDAP_CHECK_OID);
-	if (control != NULL) {
-		/* found go on */
-		// ldb = ldb_module_get_ctx(module);
-		// ldb_debug(ldb, LDB_DEBUG_TRACE, ("%s: plain ldb_modify\n"), ldb_module_get_name(module));
-		return ldb_next_request(module, req);
+		char *unicodePwd_base64;
+		size_t unicodePwd_base64_strlen = BASE64_ENCODE_LEN(attribute->values[0].length);
+		unicodePwd_base64 = malloc(unicodePwd_base64_strlen + 1);
+		base64_encode(*attribute->values[0].data, attribute->values[0].length, unicodePwd_base64, unicodePwd_base64_strlen + 1);
+		char *opt_unicodePwd = malloc(11 + unicodePwd_base64_strlen + 1);
+		sprintf(opt_unicodePwd, "unicodePwd=%s", unicodePwd_base64);
+		opt_unicodePwd[11 + unicodePwd_base64_strlen] = 0;
+		free(unicodePwd_base64);
+
+		char *ldap_master = univention_config_get_string("ldap/master");
+		char *machine_pass = read_pwd_from_file("/etc/machine.secret");
+		char *my_hostname = univention_config_get_string("hostname");
+
+		char *opt_name = malloc(5 + strlen(new_computer_name) + 1);
+		sprintf(opt_name, "name=%s", new_computer_name);
+		opt_name[5 + strlen(new_computer_name)] = 0;
+		free(new_computer_name);
+
+		int status;
+		int pid=fork();
+		if ( pid < 0 ) {
+
+			ldb_debug(ldb, LDB_DEBUG_ERROR, ("%s: fork failed\n"), ldb_module_get_name(module));
+			return LDB_ERR_UNWILLING_TO_PERFORM;
+
+		} else if ( pid == 0 ) {
+
+			execlp("/usr/sbin/umc-command", "/usr/sbin/umc-command", "-s", ldap_master, "-P", machine_pass, "-U", my_hostname, "selectiveudm/create_windows_computer", "-o", opt_name, "-o", opt_unicodePwd, NULL);
+
+			ldb_debug(ldb, LDB_DEBUG_ERROR, ("%s: exec of /usr/sbin/umc-command failed\n"), ldb_module_get_name(module));
+			_exit(1);
+		} else {
+			wait(&status);
+			printf("child returned status %d\n", status);
+		}
+
+		free(ldap_master);
+		free(machine_pass);
+		free(my_hostname);
+		free(opt_name);
+		free(opt_unicodePwd);
+
+		if ( status != 0 ) {
+			return LDB_ERR_ENTRY_ALREADY_EXISTS;
+		}
+
+	} else if ( is_user || is_group ) {
+		ldb_debug(ldb, LDB_DEBUG_ERROR, ("%s: ldb_add of user and group object is disabled\n"), ldb_module_get_name(module));
+		return LDB_ERR_UNWILLING_TO_PERFORM;
 	}
 
-	ldb = ldb_module_get_ctx(module);
-	ldb_debug(ldb, LDB_DEBUG_TRACE, ("%s: ldb_modify\n"), ldb_module_get_name(module));
-	return univention_samaccountname_ldap_check(module, req);
+	return ldb_next_request(module, req);
 }
 
 static int univention_samaccountname_ldap_check_init_context(struct ldb_module *module)
@@ -264,8 +210,7 @@ static int univention_samaccountname_ldap_check_init_context(struct ldb_module *
 static struct ldb_module_ops ldb_univention_samaccountname_ldap_check_module_ops = {
 	.name	= "univention_samaccountname_ldap_check",
 	.add	= univention_samaccountname_ldap_check_add,
-	.modify	= univention_samaccountname_ldap_check_modify,
-	.init_context	= univention_samaccountname_ldap_check_init_context,
+	// .init_context	= univention_samaccountname_ldap_check_init_context,
 };
 
 int ldb_univention_samaccountname_ldap_check_init(const char *version)

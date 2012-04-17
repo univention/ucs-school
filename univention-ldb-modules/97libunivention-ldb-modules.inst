@@ -48,13 +48,6 @@ if [ $JS_LAST_EXECUTED_VERSION -le 0 ]; then
 	variables="$(univention-config-registry search --brief "^samba4/ldb/sam/module/")"
 	if [ -n "$variables" ]; then
 
-		## TODO: Remove test phase switch iff univention-s4-connector passes a control to bypass the LDB module
-		is_ucr_true "samba4/ldb/sam/module/test"
-		if [ $? -ne 0 ]; then
-			echo " == skipping joinscript, set samba4/ldb/sam/module/test=yes for testing  == "
-			exit 1
-		fi
-
 		## check the samba4/ldb/sam/module/prepend list
 		if [ -n "$samba4_ldb_sam_module_prepend" ]; then
 			for module in $samba4_ldb_sam_module_prepend; do
