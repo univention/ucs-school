@@ -47,6 +47,8 @@ if [ $JS_LAST_EXECUTED_VERSION -lt 1 ]; then
 		connector/s4/mapping/dns/syncmode?'write' \
 		samba4/ldb/sam/module/prepend="univention_samaccountname_ldap_check"
 
+	univention-config-registry set samba/script/addmachine="/usr/sbin/umc-command -s \"$ldap_master\" -y /etc/machine.secret -U \"$(hostname)\$\" selectiveudm/create_windows_computer -o name=\"%u\""
+
 	if [ "$server_role" = "domaincontroller_slave" ]; then
 		site=$(school_ou)
 		if [ -n "$site" ]; then
