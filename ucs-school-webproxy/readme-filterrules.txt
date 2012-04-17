@@ -22,9 +22,9 @@ proxy/filter/setting/<ruleName>/filtertype={whitelist-block,blacklist-pass,white
       Zugriff wird erlaubt
     wenn nicht
       ist Domain/URL auf blacklist?
-  	  Zugriff wird verweigert
+  	    Zugriff wird verweigert
       wenn nicht
-  	  Zugriff wird erlaubt
+  	    Zugriff wird erlaubt
 
 proxy/filter/setting/<ruleName>/{url,domain}/{blacklisted,whitelisted}/{1..99}
   -> definiert die Einträge der black-/whitelists von URLs/Domains
