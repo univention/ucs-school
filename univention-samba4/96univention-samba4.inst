@@ -133,37 +133,6 @@ create_site() {
 			--ignore-exists
 }
 
-create_local_rid_pool() {
-	numberofrids="$1"
-
-	floor=2100
-	ceil="$(($floor + $numberofrids - 1))"
-
-	if [ "$ceil" -ge 5000 ]; then
-		echo "ERROR: RID value must stay below minimum UDM-allocated rid (5002)"
-		ceil=4999
-	fi
-
-	ridrange="$floor-$ceil"
-	ldbadd -H /var/lib/samba/private/sam.ldb --relax <<-%EOF
-		dn: CN=RID Set,CN=$hostname,OU=Domain Controllers,$samba4_ldap_base
-		objectClass: rIDSet
-		cn: RID Set
-		showInAdvancedViewOnly: TRUE
-		name: RID Set
-		rIDAllocationPool: $ridrange
-		rIDPreviousAllocationPool: $ridrange
-		rIDUsedPool: 0
-		rIDNextRID: $floor
-		%EOF
-
-	ldbmodify -H /var/lib/samba/private/sam.ldb <<-%EOF
-		dn: CN=$hostname,OU=Domain Controllers,$samba4_ldap_base
-		changetype: modify
-		replace: rIDSetReferences
-		rIDSetReferences: CN=RID Set,CN=$hostname,OU=Domain Controllers,$samba4_ldap_base
-		%EOF
-}
 ### --- END helper functions ---
 
 extract_binddn_and_bindpwd_from_args "$@"
@@ -283,37 +252,17 @@ if [ "$samba4_role" = 'DC' ]; then
 			## site join
 			create_site "$samba4_join_site"
 
-			is_ucr_true samba4/join/essentialonly
+			is_ucr_true samba4/provision/secondary
 			if [ $? -eq 0 ]; then
 
-				## site join with essential DRS replication only
+				## site provision
 
-				samba-tool domain join "$domainname" "$samba4_role" -U"$dcaccount"%"$bindpwd" --realm="$kerberos_realm" \
-									--machinepass="$(cat /etc/machine.secret)" \
-									--site="$samba4_join_site" \
-									--domain-critical-only
-				if [ $? != 0 ]; then
-					# try again with --server
-					if [ -n "$samba4_dc" ]; then
-						samba-tool domain join "$domainname" "$samba4_role" -U"$dcaccount"%"$bindpwd" --realm="$kerberos_realm" --server "$samba4_dc" \
-											--machinepass="$(cat /etc/machine.secret)" \
-											--site="$samba4_join_site" \
-											--domain-critical-only
-					else
-						samba-tool domain join "$domainname" "$samba4_role" -U"$dcaccount"%"$bindpwd" --realm="$kerberos_realm" --server "$ldap_master" \
-											--machinepass="$(cat /etc/machine.secret)" \
-											--site="$samba4_join_site" \
-											--domain-critical-only
-					fi
+				if [ $JS_LAST_EXECUTED_VERSION -lt 1 ]; then
+					## special case: provision another instance of Samba 4
+					## this is similar to univention-samba-slave-pdc
+					/usr/share/univention-samba4/scripts/setup-s4.sh "$@" --sitename "$samba4_join_site"
+
 				fi
-
-				# create MicrosoftDNS container
-				ldbadd -H /var/lib/samba/private/sam.ldb --relax <<-%EOT
-					dn: CN=MicrosoftDNS,CN=System,$samba4_ldap_base
-					objectClass: top
-					objectClass: container
-					cn: MicrosoftDNS
-					%EOT
 
 			else
 
@@ -334,11 +283,6 @@ if [ "$samba4_role" = 'DC' ]; then
 				fi
 
 			fi
-		fi
-
-		is_ucr_true samba4/service/drepl
-		if [ $? -eq 1 ]; then
-			create_local_rid_pool 2000
 		fi
 
 		## Adding DNS records is currently necessary, probably this can be avoided with samba_dnsupdate

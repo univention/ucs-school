@@ -1,3 +1,11 @@
+univention-samba4 (1.0.131-1) unstable; urgency=low
+
+  * New UCR variable samba4/provision/secondary allowing initialization
+    of secondary Samba4 DCs with provision instead of samba domain join.
+    This setup is similar to univention-samba-slave-pdc. (Bug #26504)
+
+ -- Arvid Requate <requate@univention.de>  Tue, 17 Apr 2012 17:22:43 +0200
+
 univention-samba4 (1.0.130-7) unstable; urgency=low
 
   * Use samba4/join/site variable in 98univention-samba4-dns.inst

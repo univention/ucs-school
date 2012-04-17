@@ -327,3 +327,9 @@ Description[de]=Wählt den Samba 4 Standort für den Domänenbeitritt
 Description[en]=Selects Samba 4 site for domain join
 Type=str
 Categories=service-samba
+
+[samba4/provision/secondary]
+Description[de]=Falls vor dem initialen Join von univention-samba4 aktiviert, werden auch sekundäre Samba 4 DCs per Provision installiert statt per Samba domain join. Diese Variable sollte nicht manuell angepasst werden.
+Description[en]=If enabled before the initial join of univention-samba4, secondary Samba 4 DCs will also be initialized with provision instead of performing a regular Samba domain join. This variable should not be modified manually.
+Type=str
+Categories=service-samba
