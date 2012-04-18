@@ -100,17 +100,17 @@ if [ $JS_LAST_EXECUTED_VERSION -le 1 ]; then
 
 		if [ "$s4connectorservicedcs" = "$hostname" ]; then
 
-			/usr/share/univention-samba4/scripts/setup-dns-in-ucsldap.sh --dc --gc --pdc "$site" "$@"
+			/usr/share/univention-samba4/scripts/setup-dns-in-ucsldap.sh "$@" --dc --gc --pdc "$site"
 
 		else
 
-			/usr/share/univention-samba4/scripts/setup-dns-in-ucsldap.sh --dc "$site" "$@"
+			/usr/share/univention-samba4/scripts/setup-dns-in-ucsldap.sh "$@" --dc "$site"
 
 		fi
 
 	elif [ "$samba4_role" = "RODC" ]; then
 
-		/usr/share/univention-samba4/scripts/setup-dns-in-ucsldap.sh --rodc "$site" "$@"
+		/usr/share/univention-samba4/scripts/setup-dns-in-ucsldap.sh "$@" --rodc "$site"
 
 	fi
 
