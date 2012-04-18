@@ -1,3 +1,9 @@
+univention-samba (6.0.28-2) unstable; urgency=low
+
+  * addmachine.sh: Exit when showing the help (Bug #26799)
+
+ -- Stefan Gohmann <gohmann@univention.de>  Wed, 18 Apr 2012 07:47:11 +0200
+
 univention-samba (6.0.27-3) unstable; urgency=low
 
   * Added missing file addmachine.sh (Bug #26799)
