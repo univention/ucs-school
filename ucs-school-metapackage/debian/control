@@ -29,8 +29,9 @@ Package: ucs-school-slave
 Architecture: all
 Depends: univention-directory-manager-tools (>> 4.0.29-1),
  ucs-school-webproxy,
- univention-samba | univention-samba4,
+ univention-samba (>> 6.0.27) | univention-samba4,
  univention-samba-slave-pdc | univention-s4-connector,
+ univention-samba (>> 6.0.27) | libunivention-ldb-modules
  ucs-school-netlogon-user-logonscripts,
  ucs-school-old-homedirs,
  ucs-school-old-sharedirs,
@@ -40,7 +41,6 @@ Depends: univention-directory-manager-tools (>> 4.0.29-1),
  ucs-school-netlogon,
  shell-univention-lib,
  shell-ucs-school,
- univention-samba | libunivention-ldb-modules
 Recommends:
  ucs-school-umc-computerroom,
  ucs-school-umc-distribution,

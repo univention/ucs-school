@@ -1,3 +1,9 @@
+ucs-school-metapackage (4.0.18-1) unstable; urgency=low
+
+  * Use the new addmachine script (Bug #26799)
+
+ -- Stefan Gohmann <gohmann@univention.de>  Wed, 18 Apr 2012 07:02:02 +0200
+
 ucs-school-metapackage (4.0.17-1) unstable; urgency=low
 
   * Restart samba after setting the add machine script (Bug #26799)
