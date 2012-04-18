@@ -1,3 +1,10 @@
+univention-ldb-modules (0.0.2-3) unstable; urgency=low
+
+  * supply proper samaccountnames to umc-command
+  * add -dbg package (Bug #26069)
+
+ -- Arvid Requate <requate@univention.de>  Wed, 18 Apr 2012 16:56:50 +0200
+
 univention-ldb-modules (0.0.2-2) unstable; urgency=low
 
   * add IBM and ISC copyright notes for base64 code (Bug #26069)

@@ -121,9 +121,9 @@ static int univention_samaccountname_ldap_check_add(struct ldb_module *module, s
 			return ldb_next_request(module, req);
 		}
 			
-		char *new_computer_name = malloc(attribute->values[0].length);
-		memcpy(new_computer_name, attribute->values[0].data, attribute->values[0].length - 1);
-		new_computer_name[attribute->values[0].length] = 0;
+		char *opt_name = malloc(5 + attribute->values[0].length + 1);
+		sprintf(opt_name, "name=%s", attribute->values[0].data);
+		opt_name[5 + attribute->values[0].length] = 0;
 
 		attribute = ldb_msg_find_element(req->op.add.message, "unicodePwd");
 		if( attribute == NULL ) {
@@ -135,7 +135,7 @@ static int univention_samaccountname_ldap_check_add(struct ldb_module *module, s
 		char *unicodePwd_base64;
 		size_t unicodePwd_base64_strlen = BASE64_ENCODE_LEN(attribute->values[0].length);
 		unicodePwd_base64 = malloc(unicodePwd_base64_strlen + 1);
-		base64_encode(*attribute->values[0].data, attribute->values[0].length, unicodePwd_base64, unicodePwd_base64_strlen + 1);
+		base64_encode(attribute->values[0].data, attribute->values[0].length, unicodePwd_base64, unicodePwd_base64_strlen + 1);
 		char *opt_unicodePwd = malloc(11 + unicodePwd_base64_strlen + 1);
 		sprintf(opt_unicodePwd, "unicodePwd=%s", unicodePwd_base64);
 		opt_unicodePwd[11 + unicodePwd_base64_strlen] = 0;
@@ -143,12 +143,12 @@ static int univention_samaccountname_ldap_check_add(struct ldb_module *module, s
 
 		char *ldap_master = univention_config_get_string("ldap/master");
 		char *machine_pass = read_pwd_from_file("/etc/machine.secret");
-		char *my_hostname = univention_config_get_string("hostname");
 
-		char *opt_name = malloc(5 + strlen(new_computer_name) + 1);
-		sprintf(opt_name, "name=%s", new_computer_name);
-		opt_name[5 + strlen(new_computer_name)] = 0;
-		free(new_computer_name);
+		char *my_hostname = univention_config_get_string("hostname");
+		char *opt_my_samaccoutname = malloc(strlen(my_hostname) + 2);
+		sprintf(opt_my_samaccoutname, "%s$", my_hostname);
+		opt_my_samaccoutname[strlen(my_hostname)+1] = 0;
+		free(my_hostname);
 
 		int status;
 		int pid=fork();
@@ -159,7 +159,7 @@ static int univention_samaccountname_ldap_check_add(struct ldb_module *module, s
 
 		} else if ( pid == 0 ) {
 
-			execlp("/usr/sbin/umc-command", "/usr/sbin/umc-command", "-s", ldap_master, "-P", machine_pass, "-U", my_hostname, "selectiveudm/create_windows_computer", "-o", opt_name, "-o", opt_unicodePwd, NULL);
+			execlp("/usr/sbin/umc-command", "/usr/sbin/umc-command", "-s", ldap_master, "-P", machine_pass, "-U", opt_my_samaccoutname, "selectiveudm/create_windows_computer", "-o", opt_name, "-o", opt_unicodePwd, NULL);
 
 			ldb_debug(ldb, LDB_DEBUG_ERROR, ("%s: exec of /usr/sbin/umc-command failed\n"), ldb_module_get_name(module));
 			_exit(1);
@@ -170,7 +170,7 @@ static int univention_samaccountname_ldap_check_add(struct ldb_module *module, s
 
 		free(ldap_master);
 		free(machine_pass);
-		free(my_hostname);
+		free(opt_my_samaccoutname);
 		free(opt_name);
 		free(opt_unicodePwd);
 
