@@ -46,6 +46,7 @@ import os
 import copy
 import locale
 import ldap
+import base64
 import univention.config_registry
 import univention.admin.config
 import univention.admin.modules
@@ -53,7 +54,6 @@ import univention.admin.objects
 import univention.admin.uldap
 import univention.admin.handlers.users.user
 import univention.admin.handlers.computers.windows
-import univention.s4connector.s4.password
 
 univention.admin.modules.update()
 
@@ -100,24 +100,22 @@ class Instance(umcm.Base):
 			# Create the computer account
 			computer = univention.admin.handlers.computers.windows.object(co, lo, position=con_position, superordinate=None)
 			computer.open()
-			computer['name'] = request.options.get('name')
+			name = request.options.get('name')
+			if name[-1] == '$':
+				# Samba 3 calls the name in this way
+				name = name[:-1]
+				computer.options=['posix']
+			computer['name'] = name
+			# Get password hashes
+			unicodePwd = request.options.get('unicodePwd')
+			if unicodePwd:
+				# the password is base64 encoded
+				unicodePwd = base64.decodestring(unicodePwd)
+				unicodePwd = unicodePwd.decode('utf-16le')
+				computer['password'] = unicodePwd
 			computer['description'] = request.options.get('description')
 			computer_dn = computer.create()
 
-			# Get password hashes
-			unicodePwd = request.options.get('unicodePwd')
-			supplementalCredentials = request.options.get('supplementalCredentials')
-			ml = []
-			# Set the NT hash
-			if unicodePwd:
-				ml.append(('sambaNTPassword', [], [unicodePwd]))
-			# Set the kerberos keys
-			if supplementalCredentials:
-				krb5Keys = univention.s4connector.s4.password.calculate_krb5key(unicodePwd, supplementalCredentials)
-				ml.append(('krb5Key', [], krb5Keys))
-			if ml:
-				lo.modify(computer_dn, ml)
-				
 		except Exception, err:
 			message = 'Failed to create windows computer\n%s' % traceback.format_exc()
 			MODULE.warn(message)

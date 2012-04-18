@@ -1,3 +1,10 @@
+univention-management-console-module-selective-udm (1.0.2-1) unstable; urgency=low
+
+  * Support Samba 3 (Bug #26509)
+  * Convert the cleartext password from base64 and UTF-16le (Bug #26509)
+
+ -- Stefan Gohmann <gohmann@univention.de>  Wed, 18 Apr 2012 07:44:45 +0200
+
 univention-management-console-module-selective-udm (1.0.1-1) unstable; urgency=low
 
   * Fixed return value (Bug #26509)
