@@ -3,6 +3,7 @@ Section: univention
 Priority: optional
 Maintainer: Univention GmbH <packages@univention.de>
 Build-Depends: debhelper (>= 7.0.50~),
+ ucs-school-umc-common,
  ucslint,
  python-support,
  univention-management-console-dev,
@@ -14,8 +15,8 @@ Package: ucs-school-umc-wizards
 Architecture: all
 Depends: univention-management-console-server,
  univention-directory-manager-tools (>> 7.0.147)
-Description: TODO
- This package contains the UMC module for the VNC client
+Description: UCS@school UMC module contains various wizards
+ This package contains a UMC module with various wizards
  .
  It is part of Univention Corporate Server (UCS), an
  integrated, directory driven solution for managing

@@ -1,3 +1,12 @@
+ucs-school-umc-wizards (1.0.13-1) unstable; urgency=low
+
+  * Fix package description
+  * Add a dependency to ucs-school-umc-common
+  * Rename module names
+  (Bug #26344)
+
+ -- Jascha Geerds <geerds@univention.de>  Wed, 18 Apr 2012 16:27:35 +0200
+
 ucs-school-umc-wizards (1.0.12-1) unstable; urgency=low
 
   * Add module help texts

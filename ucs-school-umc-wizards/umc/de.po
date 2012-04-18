@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-wizards\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: Thu, 15 Mar 2012 18:27:20 +0100\n"
+"POT-Creation-Date: Wed, 21 Mar 2012 11:59:22 +0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Univention GmbH <packages@univention.de>\n"
 "Language-Team: Univention GmbH <packages@univention.de>\n"
@@ -11,6 +11,18 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+
+msgid "Add class"
+msgstr "Klasse hinzufügen"
+
+msgid "Add computer"
+msgstr "Computer hinzufügen"
+
+msgid "Add school"
+msgstr "Schule hinzufügen"
+
+msgid "Add user"
+msgstr "Benutzer hinzufügen"
 
 msgid "Create a new class"
 msgstr "Erstelle eine neue Klasse"
@@ -29,15 +41,3 @@ msgstr "Schulwizards"
 
 msgid "Various wizards for UCS@school"
 msgstr "Verschiedene Wizards für UCS@school"
-
-msgid "Wizard - Class"
-msgstr "Wizard - Klasse"
-
-msgid "Wizard - Computer"
-msgstr "Wizard - Computer"
-
-msgid "Wizard - School"
-msgstr "Wizard - Schule"
-
-msgid "Wizard - User"
-msgstr "Wizard - Benutzer"

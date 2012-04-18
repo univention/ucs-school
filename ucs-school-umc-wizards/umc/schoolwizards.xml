@@ -7,19 +7,19 @@
 			<category name="ucs-school-admin"/>
 		</categories>
 		<flavor icon="schoolwizards-user" id="schoolwizards/users">
-			<name>Wizard - User</name>
+			<name>Add user</name>
 			<description>Create a new user</description>
 		</flavor>
 		<flavor icon="schoolwizards-class" id="schoolwizards/classes">
-			<name>Wizard - Class</name>
+			<name>Add class</name>
 			<description>Create a new class</description>
 		</flavor>
 		<flavor icon="schoolwizards-computer" id="schoolwizards/computers">
-			<name>Wizard - Computer</name>
+			<name>Add computer</name>
 			<description>Create a new computer</description>
 		</flavor>
 		<flavor icon="schoolwizards-school" id="schoolwizards/schools">
-			<name>Wizard - School</name>
+			<name>Add school</name>
 			<description>Create a new school</description>
 		</flavor>
 		<command name="schoolwizards/schools" function="schools">
