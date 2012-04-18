@@ -1,3 +1,9 @@
+ucs-school-metapackage (4.0.20-1) unstable; urgency=low
+
+  * Install the UMC module selective-udm on master servers (Bug #26799)
+
+ -- Stefan Gohmann <gohmann@univention.de>  Wed, 18 Apr 2012 07:21:21 +0200
+
 ucs-school-metapackage (4.0.19-1) unstable; urgency=low
 
   * Depend on a newer UMC (Bug #26799)
