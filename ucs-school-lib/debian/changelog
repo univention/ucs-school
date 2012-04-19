@@ -1,3 +1,9 @@
+ucs-school-lib (1.0.32-1) unstable; urgency=low
+
+  * added module for handling internet filter rules; Bug #25704 and #26351
+
+ -- Alexander Kläser <klaeser@univention.de>  Thu, 19 Apr 2012 14:35:21 +0200
+
 ucs-school-lib (1.0.31-1) unstable; urgency=low
 
   * Python: _init_search_base can now be forced (for Bug #26344)
