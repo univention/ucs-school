@@ -1,3 +1,10 @@
+ucs-school-metapackage (4.0.21-1) unstable; urgency=low
+
+  * Set samba4/provision/secondary=yes in ucs-school-slave.postinst
+    (Bug #26504)
+
+ -- Arvid Requate <requate@univention.de>  Thu, 19 Apr 2012 11:53:36 +0200
+
 ucs-school-metapackage (4.0.20-1) unstable; urgency=low
 
   * Install the UMC module selective-udm on master servers (Bug #26799)

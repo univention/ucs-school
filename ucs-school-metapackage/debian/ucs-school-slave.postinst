@@ -44,7 +44,7 @@ univention-config-registry set \
 	connector/s4/allow/secondary?true \
 	samba4/rpc/endpoint/drsuapi?false \
 	samba4/service/drepl?false \
-	samba4/join/essentialonly=yes \
+	samba4/provision/secondary=yes \
 	listener/shares/rename?yes
 
 /etc/init.d/univention-directory-listener crestart
