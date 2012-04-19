@@ -1,3 +1,10 @@
+ucs-school-lib (1.0.33-1) unstable; urgency=low
+
+  * adapted filter rules module, added methods remove() and findUCRVariables();
+    Bug #26351
+
+ -- Alexander Kläser <klaeser@univention.de>  Thu, 19 Apr 2012 16:02:41 +0200
+
 ucs-school-lib (1.0.32-2) unstable; urgency=low
 
   * version bump; Bug #26351
