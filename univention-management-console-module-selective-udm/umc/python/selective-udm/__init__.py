@@ -87,7 +87,7 @@ class Instance(umcm.Base):
 				idx=i
 				break
 		if not idx:
-			messages = 'Failed to create windows computer\nDid not find the ou in the Server DN'
+			message = 'Failed to create windows computer\nDid not find the ou in the Server DN'
 			MODULE.warn(message)
 			self.finished(request.id, {}, message, success=False)
 			return
@@ -104,15 +104,26 @@ class Instance(umcm.Base):
 			if name[-1] == '$':
 				# Samba 3 calls the name in this way
 				name = name[:-1]
+
+			# In Samba 3 the samba attributes must be set by Samba itself
+			samba3_mode = request.options.get('samba3_mode')
+			if samba3_mode and samba3_mode.lower() in ['true', 'yes']:
 				computer.options=['posix']
+
 			computer['name'] = name
-			# Get password hashes
-			unicodePwd = request.options.get('unicodePwd')
-			if unicodePwd:
-				# the password is base64 encoded
-				unicodePwd = base64.decodestring(unicodePwd)
-				unicodePwd = unicodePwd.decode('utf-16le')
-				computer['password'] = unicodePwd
+			
+			password = request.options.get('password')
+			if password:
+				decode_password = request.options.get('decode_password')
+				if decode_password and decode_password.lower() in ['true', 'yes']:
+					# the password is base64 encoded
+					password = base64.decodestring(password)
+					# decode from utf-16le
+					password = password.decode('utf-16le')
+					# and remove the quotes
+					password = password.strip('"')
+				computer['password'] = password
+
 			computer['description'] = request.options.get('description')
 			computer_dn = computer.create()
 

@@ -1,3 +1,10 @@
+univention-management-console-module-selective-udm (1.0.3-1) unstable; urgency=low
+
+  * Added two new options (decode_password and samba3_mode) to handle
+    the password and the options (Bug #26509)
+
+ -- Stefan Gohmann <gohmann@univention.de>  Thu, 19 Apr 2012 07:19:31 +0200
+
 univention-management-console-module-selective-udm (1.0.2-1) unstable; urgency=low
 
   * Support Samba 3 (Bug #26509)

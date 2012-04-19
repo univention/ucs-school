@@ -9,8 +9,9 @@
 	<command name="selectiveudm/create_windows_computer" function="create_windows_computer">
 		<attribute name="name" syntax="String"/>
 		<attribute name="description" syntax="String"/>
-		<attribute name="unicodePwd" syntax="String"/>
-		<attribute name="supplementalCredentials" syntax="String"/>
+		<attribute name="password" syntax="String"/>
+		<attribute name="decode_password" syntax="Boolean"/>
+		<attribute name="samba3_mode" syntax="Boolean"/>
 	</command>
   </module>
 </umc>
