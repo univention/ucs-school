@@ -16,6 +16,9 @@
 	</flavor>
 	<command name="internetrules/query" function="query"></command>
 	<command name="internetrules/get" function="get"></command>
+	<command name="internetrules/put" function="put"></command>
+	<command name="internetrules/add" function="add"></command>
+	<command name="internetrules/remove" function="remove"></command>
 	<command name="internetrules/groups/query" function="groups_query"></command>
 	<command name="internetrules/schools" function="schools"></command>
 	</module>

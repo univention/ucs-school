@@ -55,7 +55,7 @@ dojo.declare("umc.modules._internetrules.AdminPage", [ umc.widgets.Page, umc.i18
 	postMixInProperties: function() {
 		this.inherited(arguments);
 		this.headerText = this._('Administration of internet rules');
-		this.moduleStore = umc.store.getModuleStore('id', 'internetrules');
+		this.moduleStore = umc.store.getModuleStore('name', 'internetrules');
 	},
 
 	buildRendering: function() {
