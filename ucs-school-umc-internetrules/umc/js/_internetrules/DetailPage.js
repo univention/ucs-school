@@ -95,17 +95,19 @@ dojo.declare("umc.modules._internetrules.DetailPage", [ umc.widgets.Page, umc.wi
 			type: 'ComboBox',
 			name: 'type',
 			label: this._('Rule type'),
+			description: this._('A <i>whitelist</i> defines the list of domains that can be browsed to, the access to all other domains will be blocked. A <i>blacklist</i> allows access to all existing domains, only the access to the specified list of domains will be denied.'),
 			staticValues: [{
-				id: 'blacklist',
-				label: this._('Block list')
-			}, {
 				id: 'whitelist',
-				label: this._('Access list')
+				label: this._('Whitelist')
+			}, {
+				id: 'blacklist',
+				label: this._('Blacklist')
 			}]
 		}, {
 			type: 'ComboBox',
 			name: 'priority',
 			label: this._('Priority'),
+			description: this._('The priority allows to define an order in which a set of rules will be applied. A rule with a higher priority will overwrite rules with lower priorities.'),
 			value: '5',
 			staticValues: [
 				{ id: '0', label: this._('0 (low)') },
@@ -121,6 +123,7 @@ dojo.declare("umc.modules._internetrules.DetailPage", [ umc.widgets.Page, umc.wi
 		}, {
 			type: 'MultiInput',
 			name: 'domains',
+			description: this._('A list of internet domains, such as wikipedia.org, youtube.com. It is recommended to specify only the last part of a domain, i.e., wikipedia.org instead of www.wikipedia.org.'),
 			subtypes: [{
 				type: 'TextBox'
 			}],
@@ -158,12 +161,26 @@ dojo.declare("umc.modules._internetrules.DetailPage", [ umc.widgets.Page, umc.wi
 	},
 
 	_save: function(values) {
-		umc.dialog.alert(this._('Feature not implemented yet!'));
+		this.standby(true);
+		this._form.save().then(dojo.hitch(this, function(result) {
+			this.standby(false);
+			if (result && !result.success) {
+				// display error message
+				umc.dialog.alert(result.details);
+				return;
+			}
+			this.onClose();
+			return;
+		}), dojo.hitch(this, function(error) {
+			// server error
+			this.standby(false);
+		}));
 	},
 
 	load: function(id) {
 		// during loading show the standby animation
 		this.standby(true);
+		this._loadedRuleName = id;
 
 		// load the object into the form... the load method returns a
 		// dojo.Deferred object in order to handel asynchronity
@@ -175,6 +192,22 @@ dojo.declare("umc.modules._internetrules.DetailPage", [ umc.widgets.Page, umc.wi
 			// error messages will be displayed automatically
 			this.standby(false);
 		}));
+
+		// set focus
+		this._form.getWidget('name').focus();
+	},
+
+	reset: function() {
+		// clear form values and set defaults
+		this._form.clearFormValues();
+		this._form.setFormValues({
+			priority: '5',
+			type: 'whitelist'
+		});
+		this._loadedRuleName = null;
+
+		// set focus
+		this._form.getWidget('name').focus();
 	},
 
 	onClose: function() {

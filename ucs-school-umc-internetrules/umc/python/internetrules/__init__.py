@@ -112,8 +112,45 @@ class Instance( SchoolBaseModule ):
 		MODULE.info( 'internetrules.get: results: %s' % str( result ) )
 		self.finished( request.id, result )
 
+	def remove( self, request ):
+		"""Removes the specified rules
+		requests.options = [ { "object": <ruleName> }, ... ]
+		"""
+		MODULE.info( 'internetrules.remove: options: %s' % str( request.options ) )
+		names = request.options
+		result = []
+		if isinstance( names, ( list, tuple ) ):
+			# fetch all rules with the given names
+			for ientry in names:
+				iname = ientry.get('object')
+				success = False
+				if iname:
+					success = rules.remove(iname)
+				result.append(dict(name = iname, success = success))
+		else:
+			MODULE.warn( 'internetrules.get: wrong parameter, expected list of strings, but got: %s' % str( ids ) )
+			raise UMC_OptionTypeError( 'Expected list of strings, but got: %s' % str(ids) )
+
+		MODULE.info( 'internetrules.remove: results: %s' % str( result ) )
+		self.finished( request.id, result )
+
 	@staticmethod
-	def _parseRule(iprops):
+	def _parseRule(iprops, forceAllProperties=False):
+		# validate types
+		for ikey, itype in (('name', str), ('type', str), ('priority', (int, str)), ('wlan', bool), ('domains', list)):
+			if not ikey in iprops:
+				if forceAllProperties:
+					# raise exception as the key is not present
+					raise ValueError(_('The key "%s" has not been specified: %s') % (ikey, iprops))
+				continue
+			if not isinstance(iprops[ikey], itype):
+				typeStr = ''
+				if isinstance(itype, tuple):
+					typeStr = ', '.join([ i.__name__ for i in itype])
+				else:
+					typeStr = i.__name__
+				raise ValueError(_('The key "%s" needs to be of type: %s') % (ikey, typeStr))
+
 		# validate name
 		if 'name' in iprops and not univention.config_registry.validateKey(iprops['name']):
 			raise ValueError(_('Invalid rule name "%s". The name needs to be a string, the following special characters are not allowed: %s') % (iprops.get('name'), '!, ", §, $, %, &, (, ), [, ], {, }, =, ?, `, +, #, \', ",", ;, <, >, \\'))
@@ -161,7 +198,7 @@ class Instance( SchoolBaseModule ):
 			'object': {
 				'name': <str>,
 				'type': 'whitelist' | 'blacklist',
-				'priority': <int>,
+				'priority': <int> | <str>,
 				'wlan': <bool>,
 				'domains': [<str>, ...],
 			}
@@ -182,15 +219,9 @@ class Instance( SchoolBaseModule ):
 				if irule:
 					raise ValueError(_('A rule with the same name does already exist: %s') % iprops.get('name',''))
 
-				# make sure that all keys exist
-				for ikey, itype in (('name', str), ('type', str), ('priority', int), ('wlan', bool), ('domains', list)):
-					if not ikey in iprops:
-						raise ValueError(_('The key "%s" has not been specified: %s') % (ikey, iprops))
-					if not isinstance(iprops[ikey], itype):
-						raise ValueError(_('The key "%s" needs to be of type: %s') % (ikey, itype.__name__))
 
 				# parse the properties
-				parsedProps = self._parseRule(iprops)
+				parsedProps = self._parseRule(iprops, True)
 
 				# create a new rule from the user input
 				newRule = rules.Rule(
@@ -247,7 +278,10 @@ class Instance( SchoolBaseModule ):
 			try:
 				# get properties and options from entry
 				iprops = ientry.get('object', {})
-				iname = ientry.get('options', {}).get('name')
+				iname = None
+				ioptions = ientry.get('options')
+				if ioptions:
+					iname = ioptions.get('name')
 				if not iname:
 					raise ValueError(_('No "name" attribute has been specified in the options.'))
 

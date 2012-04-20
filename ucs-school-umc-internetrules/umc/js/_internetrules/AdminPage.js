@@ -79,7 +79,7 @@ dojo.declare("umc.modules._internetrules.AdminPage", [ umc.widgets.Page, umc.i18
 			iconClass: 'umcIconAdd',
 			isContextAction: false,
 			isStandardAction: true,
-			callback: dojo.hitch(this, '_dummy')
+			callback: dojo.hitch(this, '_add')
 		}, {
 			name: 'edit',
 			label: this._('Edit'),
@@ -87,7 +87,7 @@ dojo.declare("umc.modules._internetrules.AdminPage", [ umc.widgets.Page, umc.i18
 			iconClass: 'umcIconEdit',
 			isStandardAction: true,
 			isMultiAction: false,
-			callback: dojo.hitch(this, '_editRule')
+			callback: dojo.hitch(this, '_edit')
 		}, {
 			name: 'delete',
 			label: this._('Delete'),
@@ -95,22 +95,38 @@ dojo.declare("umc.modules._internetrules.AdminPage", [ umc.widgets.Page, umc.i18
 			isStandardAction: true,
 			isMultiAction: true,
 			iconClass: 'umcIconDelete',
-			callback: dojo.hitch(this, '_dummy')
+			callback: dojo.hitch(this, '_remove')
 		}];
 
 		// define the grid columns
 		var columns = [{
 			name: 'name',
 			label: this._('Name'),
-			width: '25%'
+			width: 'auto'
 		}, {
 			name: 'type',
 			label: this._('Type'),
-			width: '25%'
+			width: '100px',
+			formatter: dojo.hitch(this, function(type) {
+				if (type == 'whitelist') {
+					return this._('whitelist');
+				}
+				else if (type == 'blacklist') {
+					return this._('blacklist');
+				}
+				return this._('Unknown');
+			})
 		}, {
-			name: 'groups',
-			label: this._('Associated groups'),
-			width: '50%'
+			name: 'wlan',
+			label: this._('Wifi'),
+			width: '100px',
+			formatter: dojo.hitch(this, function(wlan) {
+				return wlan ? this._('enabled') : this._('disabled');
+			})
+		}, {
+			name: 'priority',
+			label: this._('Priority'),
+			width: 'adjust'
 		}];
 
 		// generate the data grid
@@ -149,11 +165,7 @@ dojo.declare("umc.modules._internetrules.AdminPage", [ umc.widgets.Page, umc.i18
 		titlePane.addChild(this._searchForm);
 	},
 
-	_dummy: function() {
-		umc.dialog.alert(this._('Feature not yet implemented'));
-	},
-
-	_editRule: function(ids, items) {
+	_edit: function(ids, items) {
 		if (ids.length != 1) {
 			// should not happen
 			return;
@@ -161,6 +173,58 @@ dojo.declare("umc.modules._internetrules.AdminPage", [ umc.widgets.Page, umc.i18
 
 		// send event in order to load the particular rule
 		this.onOpenDetailPage(ids[0]);
+	},
+
+	_add: function() {
+		// send event in order to load an empty page
+		this.onOpenDetailPage();
+	},
+
+	_remove: function(ids, items) {
+		if (ids.length < 1) {
+			// should not happen
+			return;
+		}
+
+		// get a string of all rule names and the correct confirmation message
+		var rulesStr = dojo.map(items, function(iitem) {
+			return iitem.name;
+		}).join('</li><li>');
+		rulesStr = '<ul style="max-height:200px; overflow:auto;"><li>' + rulesStr + '</li></ul>';
+		var confirmMsg = items.length > 1 ?
+				this._('Please confirm to remove the following %d filter rules: %s', items.length, rulesStr)
+				: this._('Please confirm to remove the following filter rule: %s', rulesStr);
+
+		// ask for confirmation
+		umc.dialog.confirm(confirmMsg, [{
+			label: this._('Cancel'),
+			name: 'cancel',
+			'default': true
+		}, {
+			label: items.length > 1 ? this._('Remove rules') : this._('Remove rule'),
+			name: 'remove'
+		}]).then(dojo.hitch(this, function(response) {
+			if (response === 'remove') {
+				// ok, remove all rules, one by one using a transaction
+				var transaction = this.moduleStore.transaction();
+				dojo.forEach(ids, function(iid) {
+					this.moduleStore.remove(iid);
+				}, this);
+				transaction.commit().then(dojo.hitch(this, function(result) {
+					var failedRules = dojo.filter(result, function(iresult) {
+						return !iresult.success;
+					});
+					if (failedRules.length) {
+						// something went wrong... display the rules for which the removal failed
+						var rulesStr = dojo.map(failedRules, function(iresult) {
+							return iresult.name;
+						}).join('</li><li>');
+						rulesStr = '<ul style="max-height:200px; overflow:auto;"><li>' + rulesStr + '</li></ul>';
+						umc.dialog.alert(this._('Removal of the following rules failed:%s', rulesStr));
+					}
+				}));
+			}
+		}));
 	},
 
 	onOpenDetailPage: function(id) {

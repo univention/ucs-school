@@ -69,7 +69,14 @@ dojo.declare("umc.modules.internetrules", umc.widgets.Module, {
 			// via the corresponding events
 			this.connect(this._adminPage, 'onOpenDetailPage', function(id) {
 				this.selectChild(this._detailPage);
-				this._detailPage.load(id);
+				if (undefined === id) {
+					// a new rule is being added
+					this._detailPage.reset(id);
+				}
+				else {
+					// an existing rule is being opened
+					this._detailPage.load(id);
+				}
 			});
 			this.connect(this._detailPage, 'onClose', function(id) {
 				this.selectChild(this._adminPage);

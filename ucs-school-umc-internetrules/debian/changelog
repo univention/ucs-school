@@ -1,3 +1,11 @@
+ucs-school-umc-internetrules (7.0.3-1) unstable; urgency=low
+
+  * added support for saving, removal, editing of rules
+  * completed descriptions
+  Bug #25704
+
+ -- Alexander Kläser <klaeser@univention.de>  Fri, 20 Apr 2012 18:15:15 +0200
+
 ucs-school-umc-internetrules (7.0.2-1) unstable; urgency=low
 
   * replaced dummy data with data from UCR variables; Bug #25704
