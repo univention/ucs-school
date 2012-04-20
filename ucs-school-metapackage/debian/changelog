@@ -1,3 +1,10 @@
+ucs-school-metapackage (4.0.22-1) unstable; urgency=low
+
+  * Added dns-$hostname to the ignore list on a UCS@school DC slave
+    (Bug #26841)
+
+ -- Stefan Gohmann <gohmann@univention.de>  Fri, 20 Apr 2012 23:31:20 +0200
+
 ucs-school-metapackage (4.0.21-1) unstable; urgency=low
 
   * Set samba4/provision/secondary=yes in ucs-school-slave.postinst

@@ -67,6 +67,14 @@ if [ $JS_LAST_EXECUTED_VERSION -lt 2 ]; then
 	test -x /etc/init.d/samba && /etc/init.d/samba restart
 fi
 
+# Added dns-$hostname to the ignore list
+if [ -z "$connector_s4_mapping_user_ignorelist" ]; then
+	ucr set connector/s4/mapping/user/ignorelist?"root,pcpatch,ucs-s4sync,dns-$hostname"
+else
+	echo $connector_s4_mapping_user_ignorelist | egrep -q "(,dns-$hostname,|^dns-$hostname,|,dns-$hostname$)" || \
+			ucr set connector/s4/mapping/user/ignorelist="$connector_s4_mapping_user_ignorelist,dns-$hostname"
+fi
+
 ucs_addServiceToLocalhost 'UCS@school' "$@"
 
 joinscript_save_current_version
