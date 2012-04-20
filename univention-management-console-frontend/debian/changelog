@@ -1,3 +1,10 @@
+univention-management-console-frontend (1.0.314-1) unstable; urgency=low
+
+  * added original ID property to options dict when calling put() via save();
+    Bug #26542
+
+ -- Alexander Kläser <klaeser@univention.de>  Fri, 20 Apr 2012 16:18:38 +0200
+
 univention-management-console-frontend (1.0.313-1) unstable; urgency=low
 
   * added new MultiUploader widget

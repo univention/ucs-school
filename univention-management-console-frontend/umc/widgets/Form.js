@@ -434,7 +434,14 @@ dojo.declare("umc.widgets.Form", [
 			deferred = this.moduleStore.add(values);
 		}
 		else {
-			deferred = this.moduleStore.put(values);
+			// prepare an options dict containing the original id of the object
+			// (in case the object id is being changed)
+			var options = {};
+			var idProperty = dojo.getObject('moduleStore.idProperty', false, this);
+			if (idProperty) {
+				options[idProperty] = this._loadedID;
+			}
+			deferred = this.moduleStore.put(values, options);
 		}
 		deferred = deferred.then(dojo.hitch(this, function(data) {
 			// fire event
