@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-internetrules\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2012-04-23 17:52+0200\n"
+"POT-Creation-Date: 2012-04-23 18:34+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -12,49 +12,57 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: umc/python/internetrules/__init__.py:220
+#: umc/python/internetrules/__init__.py:364
+msgid "-- default settings --"
+msgstr ""
+
+#: umc/python/internetrules/__init__.py:221
 #, python-format
 msgid "A rule with the same name does already exist: %s"
 msgstr "Eine Regel mit dem gleichen Namen existiert bereits: %s"
 
-#: umc/python/internetrules/__init__.py:160
+#: umc/python/internetrules/__init__.py:161
 #, python-format
 msgid "Filter type is unknown: %s"
 msgstr "Der Regeltyp ist unbekannt: %s"
 
-#: umc/python/internetrules/__init__.py:174
+#: umc/python/internetrules/__init__.py:175
 msgid "Invalid domain "
 msgstr "Ungültige Domäne "
 
-#: umc/python/internetrules/__init__.py:156
+#: umc/python/internetrules/__init__.py:157
 #, python-format
 msgid ""
 "Invalid rule name \"%s\". The name needs to be a string, the following "
 "special characters are not allowed: %s"
-msgstr "Ungültiger Regelname \"%s\". Der Name muss eine Zeichenkette sein, die folgenden Sonderzeichen sind dabei nicht erlaubt: %s"
+msgstr ""
+"Ungültiger Regelname \"%s\". Der Name muss eine Zeichenkette sein, die "
+"folgenden Sonderzeichen sind dabei nicht erlaubt: %s"
 
-#: umc/python/internetrules/__init__.py:286
+#: umc/python/internetrules/__init__.py:287
 msgid "No \"name\" attribute has been specified in the options."
 msgstr "Kein Attribut \"name\" wurde in den Optionen angegeben."
 
-#: umc/python/internetrules/__init__.py:144
+#: umc/python/internetrules/__init__.py:145
 #, python-format
 msgid "The key \"%s\" has not been specified: %s"
 msgstr "Der Schlüssel \"%s\" wurde nicht angegeben: %s"
 
-#: umc/python/internetrules/__init__.py:152
+#: umc/python/internetrules/__init__.py:153
 #, python-format
 msgid "The key \"%s\" needs to be of type: %s"
 msgstr "Der Schlüssel \"%s\" muss vom folgenden Typ sein: %s"
 
-#: umc/python/internetrules/__init__.py:291
+#: umc/python/internetrules/__init__.py:292
 #, python-format
 msgid "The rule does not exist and cannot be modified: %s"
 msgstr "Die Regel existiert nicht und kann nicht verändert werden: %s"
 
-#: umc/python/internetrules/__init__.py:185
+#: umc/python/internetrules/__init__.py:186
 #, python-format
 msgid ""
 "The specified domain \"%s\" is not valid. Please specify a valid domain "
 "name, such as \"wikipedia.org\", \"facebook.com\""
-msgstr "Die angegeben Domäne \"%s\" ist nicht gültig. Bitt geben Sie einen gültigen Domänennamen an, wie z.B. \"wikipedia.org\", \"facebook.com\""
+msgstr ""
+"Die angegeben Domäne \"%s\" ist nicht gültig. Bitt geben Sie einen gültigen "
+"Domänennamen an, wie z.B. \"wikipedia.org\", \"facebook.com\""

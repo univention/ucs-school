@@ -1,3 +1,9 @@
+ucs-school-umc-internetrules (7.0.5-1) unstable; urgency=low
+
+  * fixed fuzzy translations; Bug #25704
+
+ -- Alexander Kläser <klaeser@univention.de>  Mon, 23 Apr 2012 18:35:29 +0200
+
 ucs-school-umc-internetrules (7.0.4-1) unstable; urgency=low
 
   * fixed assign internet page, added translations; Bug #25704
