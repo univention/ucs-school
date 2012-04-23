@@ -36,7 +36,7 @@ queue of at-jobs. Use the methods list() and load() to get a list of all
 registered jobs or to load a specific job given an ID, respectively. The module
 uses time stamps in seconds for scheduling jobs.'''
 
-import time
+import datetime
 import subprocess
 import re
 
@@ -50,14 +50,20 @@ _dateFormatWrite = '%Y-%m-%d'
 
 
 def add(cmd, execTime = None):
-	'''Add a new command to the job queue given a time (in seconds) at which the
-	job will be executed.'''
+	'''Add a new command to the job queue given a time (in seconds since
+	the epoch or as a datetime object) at which the job will be
+	executed.'''
+
+	if isinstance( execTime, ( int, float ) ):
+		start = datetime.datetime.fromtimestamp( execTime )
+	else:
+		start = execTime
 
 	# launch the at job directly
 	atCmd = ['/usr/bin/at']
-	if execTime:
-		jobTime = time.strftime(_timeFormatWrite, time.localtime(execTime))
-		jobDate = time.strftime(_dateFormatWrite, time.localtime(execTime))
+	if start:
+		jobTime = start.strftime( _timeFormatWrite )
+		jobDate = start.strftime( _dateFormatWrite )
 		atCmd.extend([jobTime, jobDate])
 	else:
 		atCmd.append('now')
@@ -95,7 +101,7 @@ def _parseJob(string):
 	try:
 		# parse string
 		tmp = _regWhiteSpace.split(string)
-		execTime = time.mktime(time.strptime(' '.join(tmp[1:6]), _dateTimeFormatRead))
+		execTime = datetime.datetime.strptime( ' '.join( tmp[ 1 : 6 ] ), _dateTimeFormatRead )
 		isRunning = tmp[6] == '='
 		owner = tmp[7]
 		nr = int(tmp[0])
@@ -115,11 +121,16 @@ class AtJob(object):
 	def __init__(self, nr, owner, execTime, isRunning):
 		self.nr = nr
 		self.owner = owner
+		if isinstance( execTime, ( int, float ) ):
+			self.execTime = datetime.datetime.fromtimestamp( execTime )
+		else:
+			self.execTime = execTime
+
 		self.execTime = execTime
 		self.isRunning = isRunning
 
 	def __str__(self):
-		t = time.strftime(_dateTimeFormatWrite, time.localtime(self.execTime))
+		t = self.execTime.strftime( _dateTimeFormatWrite )
 		if self.isRunning:
 			t = 'running'
 		return 'Job #%d (%s)' % (self.nr, t)
