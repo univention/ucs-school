@@ -40,6 +40,7 @@ from univention.management.console.log import MODULE
 from univention.management.console.protocol.definitions import *
 
 import univention.admin.modules as udm_modules
+import univention.admin.objects as udm_objects
 
 from ucsschool.lib.schoolldap import LDAP_Connection, LDAP_ConnectionError, set_credentials, SchoolSearchBase, SchoolBaseModule, LDAP_Filter, Display
 
@@ -350,15 +351,65 @@ class Instance( SchoolBaseModule ):
 
 		# LDAP search for groups
 		base = search_base.classes
-		ldapFilter = LDAP_Filter.forGroups(request.options.get('pattern', ''))
+		ldapFilter = LDAP_Filter.forGroups(request.options.get('pattern', ''), search_base.school)
 		groupresult = udm_modules.lookup( 'groups/group', None, ldap_user_read, scope = 'sub', base = base, filter = ldapFilter)
-		grouplist = [ { 
-			'name': i['name'],
+
+		# try to load all group rules
+		allRules = rules.getGroupRuleName([ i['name'] for i in groupresult ])
+
+		# prepare final list of dicts
+		result = [ {
+			'name': i['name'].replace('%s-' % search_base.school, '', 1),
 			'$dn$': i.dn,
-			'rule': 'default'
+			'rule': allRules.get(i['name'], 'default') or _('-- default settings --')
 		} for i in groupresult ]
-		result = sorted( grouplist, cmp = lambda x, y: cmp( x.lower(), y.lower() ), key = lambda x: x[ 'name' ] )
+		result.sort( cmp = lambda x, y: cmp( x.lower(), y.lower() ), key = lambda x: x[ 'name' ] )
 
 		MODULE.info( 'internetrules.groups_query: result: %s' % str( result ) )
 		self.finished( request.id, result )
+
+	@LDAP_Connection()
+	def groups_assign( self, request, search_base = None, ldap_user_read = None, ldap_position = None ):
+		"""Assigns default rules to groups:
+		request.options = [ { 'group': <groupDN>, 'rule': <ruleName> }, ... ]
+		"""
+		MODULE.info( 'internetrules.groups_assign: options: %s' % str( request.options ) )
+
+		# make sure that we got a list
+		if not isinstance(request.options, (tuple, list)):
+			raise UMC_OptionTypeError( 'Expected list of dicts, but got: %s' % str(ids) )
+
+		# try to load all group rules
+		newRules = {}
+		rmRules = []
+		for ientry in request.options:
+			# make sure we got a dict
+			if not isinstance(ientry, dict):
+				raise UMC_OptionTypeError( 'Expected list of dicts, but got: %s' % str(ids) )
+
+			# make sure the group exists
+			igrp = udm_objects.get( udm_modules.get( 'groups/group' ), None, ldap_user_read, ldap_position, ientry.get('group') )
+			if not igrp:
+				raise UMC_OptionTypeError( 'unknown group object' )
+			igrp.open()
+
+			# check the rule name
+			irule = ientry.get('rule')
+			if irule == '$default$':
+				# remove the rule
+				rmRules.append(igrp['name'])
+			else:
+				# make sure the rule name is valid
+				self._parseRule(dict(name=irule))
+
+				# add new rule
+				newRules[igrp['name']] = irule
+
+		# assign default filter rules to groups
+		rules.setGroupRuleName(newRules)
+		rules.unsetGroupRuleName(rmRules)
+
+		MODULE.info( 'internetrules.groups_assign: finished' )
+		self.finished( request.id, True )
+
 

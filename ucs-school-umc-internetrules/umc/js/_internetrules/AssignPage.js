@@ -38,6 +38,10 @@ dojo.require("umc.widgets.ExpandingTitlePane");
 dojo.require("umc.widgets.Grid");
 dojo.require("umc.widgets.Page");
 dojo.require("umc.widgets.SearchForm");
+dojo.require("umc.widgets.StandbyMixin");
+
+// create helper class: combination of Form and StandbyMixin
+dojo.declare("umc.modules._internetrules.StandbyForm", [ umc.widgets.Form, umc.widgets.StandbyMixin ], {});
 
 dojo.declare("umc.modules._internetrules.AssignPage", [ umc.widgets.Page, umc.i18n.Mixin ], {
 	// summary:
@@ -136,6 +140,11 @@ dojo.declare("umc.modules._internetrules.AssignPage", [ umc.widgets.Page, umc.i1
 	},
 
 	_assignRule: function(ids, items) {
+		if (!ids.length) {
+			// ignore an empty set of items
+			return;
+		}
+
 		// define a cleanup function
 		var dialog = null, form = null;
 		var _cleanup = function() {
@@ -144,25 +153,40 @@ dojo.declare("umc.modules._internetrules.AssignPage", [ umc.widgets.Page, umc.i1
 			form.destroyRecursive();
 		};
 
-		// add remaining elements of the search form
+		// prepare displayed list of groups
+		var message = '';
 		var groups = dojo.map(items, function(iitem) {
 			return iitem.name;
-		}).join(', ');
-		var message = this._('Please choose an internet rule that is assigned to the following groups: %s', [ groups ]);
+		});
+		if (ids.length > 1) {
+			// show groups as a list ul-list
+			message = '<ul style="max-height:250px; overflow: auto;"><li>' + groups.join('</li><li>') + '</li></ul>';
+			message = '<p>' + this._('The chosen internet rule will be assigned to the following groups:') + '</p>' + message;
+		}
+		else {
+			// only one group
+			message = '<p>' + this._('The chosen internet rule will be assigned to the following group: %s', groups[0]) + '</p>';
+		}
+
+		// define the formular
 		var widgets = [{
 			type: 'Text',
 			name: 'message',
-			content: '<p>' + message + '</p>'
+			content: message
 		}, {
 			type: 'ComboBox',
 			name: 'rule',
 			description: this._('Choose the internet rule'),
 			label: this._('Internet rule'),
+			staticValues: [{
+				id: '$default$',
+				label: this._('-- default settings --')
+			}],
 			dynamicValues: function() {
 				// query rules mapped to id-label dicts
 				return umc.tools.umcpCommand('internetrules/query').then(function(response) {
 					return dojo.map(response.result, function(iitem) {
-						return { id: iitem.id, label: iitem.name };
+						return iitem.name;
 					});
 				});
 			}
@@ -170,27 +194,41 @@ dojo.declare("umc.modules._internetrules.AssignPage", [ umc.widgets.Page, umc.i1
 
 		// define buttons and callbacks
 		var buttons = [{
+			name: 'cancel',
+			label: this._('Cancel'),
+			callback: _cleanup
+		}, {
 			name: 'submit',
 			label: this._('Assign rule'),
 			style: 'float:right',
 			callback: dojo.hitch(this, function(vals) {
-				// reload the grid
-				this._grid.filter({ pattern: this._searchForm.getWidget('pattern').get('value') });
+				// prepare parameters
+				form.standby(true);
+				var rule = form.getWidget('rule').get('value');
+				var assignedRules = dojo.map(ids, function(iid) {
+					return {
+						group: iid,
+						rule: rule
+					};
+				});
 
-				// destroy the dialog
-				_cleanup();
+				// send UMCP command
+				umc.tools.umcpCommand('internetrules/groups/assign', assignedRules).then(dojo.hitch(this, function() {
+					// cleanup
+					this.moduleStore.onChange();
+					_cleanup();
+				}), function() {
+					// some error occurred
+					_cleanup();
+				});
 			})
-		}, {
-			name: 'cancel',
-			label: this._('Cancel'),
-			callback: _cleanup
 		}];
 
 		// generate the search form
-		form = new umc.widgets.Form({
+		form = new umc.modules._internetrules.StandbyForm({
 			// property that defines the widget's position in a dijit.layout.BorderContainer
 			widgets: widgets,
-			layout: [ 'message', 'rule' ],
+			layout: [ 'rule', 'message' ],
 			buttons: buttons
 		});
 

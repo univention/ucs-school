@@ -20,6 +20,7 @@
 	<command name="internetrules/add" function="add"></command>
 	<command name="internetrules/remove" function="remove"></command>
 	<command name="internetrules/groups/query" function="groups_query"></command>
+	<command name="internetrules/groups/assign" function="groups_assign"></command>
 	<command name="internetrules/schools" function="schools"></command>
 	</module>
 </umc>

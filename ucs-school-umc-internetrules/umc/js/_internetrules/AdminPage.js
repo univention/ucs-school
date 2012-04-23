@@ -191,9 +191,7 @@ dojo.declare("umc.modules._internetrules.AdminPage", [ umc.widgets.Page, umc.i18
 			return iitem.name;
 		}).join('</li><li>');
 		rulesStr = '<ul style="max-height:200px; overflow:auto;"><li>' + rulesStr + '</li></ul>';
-		var confirmMsg = items.length > 1 ?
-				this._('Please confirm to remove the following %d filter rules: %s', items.length, rulesStr)
-				: this._('Please confirm to remove the following filter rule: %s', rulesStr);
+		var confirmMsg = items.length > 1 ? this._('Please confirm to remove the following %d filter rules: %s', items.length, rulesStr) : this._('Please confirm to remove the following filter rule: %s', rulesStr);
 
 		// ask for confirmation
 		umc.dialog.confirm(confirmMsg, [{
