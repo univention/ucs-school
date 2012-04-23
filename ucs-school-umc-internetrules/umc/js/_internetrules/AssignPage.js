@@ -75,7 +75,7 @@ dojo.declare("umc.modules._internetrules.AssignPage", [ umc.widgets.Page, umc.i1
 		var actions = [{
 			name: 'assign',
 			label: this._('Assign rule'),
-			description: this._('Assigne internet rules to selected groups'),
+			description: this._('Assign internet rules to selected groups'),
 			isStandardAction: true,
 			isMultiAction: true,
 			callback: dojo.hitch(this, '_assignRule')

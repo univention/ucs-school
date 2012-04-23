@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-internetrules\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: \n"
+"POT-Creation-Date: 2012-04-23 18:16+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -12,3 +12,250 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
+#: umc/js/_internetrules/DetailPage.js:113
+msgid "0 (low)"
+msgstr "0 (niedrig)"
+
+#: umc/js/_internetrules/DetailPage.js:117
+msgid "10 (high)"
+msgstr "10 (hoch)"
+
+#: umc/js/_internetrules/DetailPage.js:115
+msgid "5 (average)"
+msgstr "5 (mittel)"
+
+#: umc/js/_internetrules/DetailPage.js:98
+msgid ""
+"A <i>whitelist</i> defines the list of domains that can be browsed to, the "
+"access to all other domains will be blocked. A <i>blacklist</i> allows "
+"access to all existing domains, only the access to the specified list of "
+"domains will be denied."
+msgstr ""
+"Eine <i>Freigabeliste</i> definiert einen Saty an Internetdomänen, die "
+"betrachtet werden können; dabei wird der Zugang zu allen anderen Domänen "
+"unterbunden. Eine <i>Sperrlist</i> erlaubt den Zugang zu jeglichen Domänen, "
+"allerdings werden die angegebenen Domänen blockiert."
+
+#: umc/js/_internetrules/DetailPage.js:126
+msgid ""
+"A list of internet domains, such as wikipedia.org, youtube.com. It is "
+"recommended to specify only the last part of a domain, i.e., wikipedia.org "
+"instead of www.wikipedia.org."
+msgstr ""
+"Eine Liste von Internetdomänen, wie z.B. wikipedia.org, youtube.com. Es wird "
+"empfohlen, nur den letzten Teil einer Domäne anzugeben, bspw. wikipedia.org "
+"anstelle von www.wikipedia.org."
+
+#: umc/js/_internetrules/AdminPage.js:77
+msgid "Add rule"
+msgstr "Regel hinzufügen"
+
+#: umc/js/_internetrules/AdminPage.js:57
+msgid "Administration of internet rules"
+msgstr "Verwalten der Internetregeln"
+
+#: umc/js/_internetrules/DetailPage.js:142
+msgid "Advanced properties"
+msgstr "Erweiterte Einstellungen"
+
+#: umc/js/_internetrules/AssignPage.js:199
+msgid "Assign internet rules"
+msgstr "Internetregeln zuweisen"
+
+#: umc/js/_internetrules/AssignPage.js:78
+msgid "Assign internet rules to selected groups"
+msgstr "Regeln den ausgewählten Gruppen zuweisen"
+
+#: umc/js/_internetrules/AssignPage.js:77
+#: umc/js/_internetrules/AssignPage.js:174
+msgid "Assign rule"
+msgstr "Regeln zuweisen"
+
+#: umc/js/_internetrules/AssignPage.js:57
+msgid "Assignment of internet rules"
+msgstr "Zuweisung der Internetregeln"
+
+#: umc/js/_internetrules/AssignPage.js:91
+msgid "Associated rule"
+msgstr "Verknüpfte Regel"
+
+#: umc/js/_internetrules/DetailPage.js:75
+msgid "Back to overview"
+msgstr "Zurück zur Übersicht"
+
+#: umc/js/_internetrules/DetailPage.js:104
+msgid "Blacklist"
+msgstr "Sperrliste"
+
+#: umc/js/_internetrules/AssignPage.js:185
+#: umc/js/_internetrules/AdminPage.js:200
+msgid "Cancel"
+msgstr "Abrechen"
+
+#: umc/js/_internetrules/AssignPage.js:159
+msgid "Choose the internet rule"
+msgstr "Internetregel auswählen"
+
+#: umc/js/_internetrules/AdminPage.js:78
+msgid "Create a new rule"
+msgstr "Erstellen einer neuen Regel"
+
+#: umc/js/_internetrules/AdminPage.js:93
+msgid "Delete"
+msgstr "Löschen"
+
+#: umc/js/_internetrules/AdminPage.js:94
+msgid "Delete the selected rules."
+msgstr "Löschen der markierten Regeln"
+
+#: umc/js/_internetrules/AdminPage.js:85
+msgid "Edit"
+msgstr "Bearbeiten"
+
+#: umc/js/_internetrules/DetailPage.js:64
+msgid "Edit internet rule"
+msgstr "Internetregel bearbeiten"
+
+#: umc/js/_internetrules/AdminPage.js:86
+msgid "Edit the selected rule"
+msgstr "Bearbeiten der ausgewählten Regel"
+
+#: umc/js/_internetrules/AssignPage.js:87
+msgid "Group name"
+msgstr "Gruppenname"
+
+#: umc/js/_internetrules/AssignPage.js:160
+msgid "Internet rule"
+msgstr "Internetregel"
+
+#: umc/js/_internetrules/DetailPage.js:92
+#: umc/js/_internetrules/AdminPage.js:104
+msgid "Name"
+msgstr "Name"
+
+#: umc/js/_internetrules/AssignPage.js:151
+#, python-format
+msgid ""
+"Please choose an internet rule that is assigned to the following groups: %s"
+msgstr ""
+"Bitte wählen Sie eine Internetregel aus, die den folgenden Gruppen "
+"zugewiesen wird: %s"
+
+#: umc/js/_internetrules/AdminPage.js:195
+#, python-format
+msgid "Please confirm to remove the following %d filter rules: %s"
+msgstr "Bitte bestätigen, um die folgenden %d Internetregel zu löschen: %s"
+
+#: umc/js/_internetrules/AdminPage.js:196
+#, python-format
+msgid "Please confirm to remove the following filter rule: %s"
+msgstr "Bitte bestätigen, um die folgende Internetregel zu löschen: %s"
+
+#: umc/js/_internetrules/DetailPage.js:109
+#: umc/js/_internetrules/AdminPage.js:128
+msgid "Priority"
+msgstr "Priorität"
+
+#: umc/js/_internetrules/AdminPage.js:223
+#, python-format
+msgid "Removal of the following rules failed:%s"
+msgstr "Das Entfernen der folgenden Regel schlug fehl: %s"
+
+#: umc/js/_internetrules/AdminPage.js:204
+msgid "Remove rule"
+msgstr "Regel entfernen"
+
+#: umc/js/_internetrules/AdminPage.js:204
+msgid "Remove rules"
+msgstr "Regeln entfernen"
+
+#: umc/js/_internetrules/DetailPage.js:136
+msgid "Rule properties"
+msgstr "Regeleigenschaften"
+
+#: umc/js/_internetrules/DetailPage.js:97
+msgid "Rule type"
+msgstr "Regeltyp"
+
+#: umc/js/_internetrules/DetailPage.js:69
+msgid "Save"
+msgstr "Speichern"
+
+#: umc/js/_internetrules/AssignPage.js:116
+msgid "School"
+msgstr "Schule"
+
+#: umc/js/_internetrules/AssignPage.js:122
+#: umc/js/_internetrules/AdminPage.js:152
+msgid "Search pattern"
+msgstr "Suchbegriff"
+
+#: umc/js/_internetrules/AssignPage.js:66
+#: umc/js/_internetrules/AdminPage.js:66
+msgid "Search results"
+msgstr "Suchergebnisse"
+
+#: umc/js/_internetrules/AssignPage.js:121
+#: umc/js/_internetrules/AdminPage.js:151
+msgid ""
+"Specifies the substring pattern which is searched for in the rules' name and "
+"groups"
+msgstr "Zeichenkette, nach der im Regel- und Gruppennamen gesucht wird"
+
+#: umc/js/_internetrules/DetailPage.js:93
+msgid "The name of the rule"
+msgstr "Name der Regel"
+
+#: umc/js/_internetrules/DetailPage.js:110
+msgid ""
+"The priority allows to define an order in which a set of rules will be "
+"applied. A rule with a higher priority will overwrite rules with lower "
+"priorities."
+msgstr ""
+"Die Priorität ermöglicht es die Reihenfolge zu definieren, in der die "
+"Internetregeln angewandt werden. Eine Regel mit höherer Priorität "
+"überschreibt dabei die Einstellungen der Regeln mit niedriger Priorität."
+
+#: umc/js/_internetrules/AdminPage.js:108
+msgid "Type"
+msgstr "Typ"
+
+#: umc/js/_internetrules/AdminPage.js:117
+msgid "Unknown"
+msgstr "Unbekannt"
+
+#: umc/js/_internetrules/DetailPage.js:122
+msgid "WLAN authentification enabled"
+msgstr "WLAN-Authentifizierung aktiviert"
+
+#: umc/js/_internetrules/DetailPage.js:139
+msgid "Web domain list"
+msgstr "Internet-Domänenliste"
+
+#: umc/js/_internetrules/DetailPage.js:130
+msgid "Web domains (e.g., wikipedia.org, facebook.com)"
+msgstr "Internet-Domänen (z.B., wikipedia.org, facebook.com)"
+
+#: umc/js/_internetrules/DetailPage.js:101
+msgid "Whitelist"
+msgstr "Freigabeliste"
+
+#: umc/js/_internetrules/AdminPage.js:121
+msgid "Wifi"
+msgstr "WLAN"
+
+#: umc/js/_internetrules/AdminPage.js:115
+msgid "blacklist"
+msgstr "Sperrliste"
+
+#: umc/js/_internetrules/AdminPage.js:124
+msgid "disabled"
+msgstr "deaktiviert"
+
+#: umc/js/_internetrules/AdminPage.js:124
+msgid "enabled"
+msgstr "aktiviert"
+
+#: umc/js/_internetrules/AdminPage.js:112
+msgid "whitelist"
+msgstr "Freigabeliste"
