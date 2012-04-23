@@ -270,4 +270,39 @@ def list(filterName=None, userRule=False):
 
 	return rules.values()
 
+def getGroupRuleName(groupNames):
+	'''Return the name of the filter rule for the specified group name. 
+	Usage:
+		getGroupRuleName([<groupName>, ...]) -> { <groupName>:<ruleName>, ... }
+	or
+		getGroupRuleName(<groupName) -> <ruleName>'''
+	ucr.load()
+	if not isinstance(groupNames, type([])):
+		return ucr.get('proxy/filter/groupdefault/%s' % groupNames)
+	return dict([ (iname, ucr.get('proxy/filter/groupdefault/%s' % iname)) for iname in groupNames ])
 
+def unsetGroupRuleName(groupNames):
+	'''Unset the default rule for the given group name.
+	Usage:
+		setGroupRuleName(<groupName>)
+	or
+		setGroupRuleName([<groupName>, ... ])'''
+	vars = []
+	if not isinstance(groupNames, type([])):
+		vars.append('proxy/filter/groupdefault/%s' % groupNames)
+	else:
+		vars = [ 'proxy/filter/groupdefault/%s' % iname for iname in groupNames ]
+	univention.config_registry.handler_unset(vars)
+
+def setGroupRuleName(*args):
+	'''Set the default rule for the given group name.
+	Usage:
+		setGroupRuleName(<groupName>, <ruleName>)
+	or
+		setGroupRuleName({ <groupName>: <ruleName>, ... })'''
+	vars = []
+	if len(args) > 1:
+		vars = [ 'proxy/filter/groupdefault/%s=%s' % (args[0], args[1]) ]
+	else:
+		vars = [ 'proxy/filter/groupdefault/%s=%s' % (iname, irule) for iname, irule in args[0].iteritems() ]
+	univention.config_registry.handler_set(vars)

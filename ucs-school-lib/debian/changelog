@@ -1,3 +1,9 @@
+ucs-school-lib (1.0.35-1) unstable; urgency=low
+
+  * added functions to access default rules for groups; Bug #25704
+
+ -- Alexander Kläser <klaeser@univention.de>  Mon, 23 Apr 2012 18:22:19 +0200
+
 ucs-school-lib (1.0.34-1) unstable; urgency=low
 
   * fixed error in findUCRVariables(); Bug #26351
