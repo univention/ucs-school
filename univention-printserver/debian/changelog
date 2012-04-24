@@ -1,4 +1,4 @@
-univention-printserver (5.0.27-1) unstable; urgency=low
+univention-printserver (5.0.26-100) unstable; urgency=low
 
   * Add a cronjob which deletes old print jobs
   * Fix indentation in *-pdf.postinst
