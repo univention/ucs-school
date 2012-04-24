@@ -1,6 +1,6 @@
 ucs-school-umc-internetrules (7.0.6-1) unstable; urgency=low
 
-  * added translations; Bug #25704
+  * fixed translations; Bug #25704
 
  -- Alexander Kläser <klaeser@univention.de>  Tue, 24 Apr 2012 11:23:34 +0200
 

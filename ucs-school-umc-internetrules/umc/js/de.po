@@ -35,7 +35,7 @@ msgid ""
 "access to all existing domains, only the access to the specified list of "
 "domains will be denied."
 msgstr ""
-"Eine <i>Freigabeliste</i> definiert einen Saty an Internetdomänen, die "
+"Eine <i>Freigabeliste</i> definiert einen Satz an Internetdomänen, die "
 "betrachtet werden können; dabei wird der Zugang zu allen anderen Domänen "
 "unterbunden. Eine <i>Sperrlist</i> erlaubt den Zugang zu jeglichen Domänen, "
 "allerdings werden die angegebenen Domänen blockiert."
@@ -195,8 +195,8 @@ msgstr "Suchergebnisse"
 #: umc/js/_internetrules/AdminPage.js:151
 msgid ""
 "Specifies the substring pattern which is searched for in the rules' name and "
-"groups"
-msgstr "Zeichenkette, nach der im Regel- und Gruppennamen gesucht wird"
+"its domain list"
+msgstr "Zeichenkette, nach der im Regelnamen und der Domänenliste gesucht wird"
 
 #: umc/js/_internetrules/AssignPage.js:168
 #, python-format

@@ -49,6 +49,9 @@ dojo.declare("umc.modules._internetrules.AdminPage", [ umc.widgets.Page, umc.i18
 	// internal reference to the grid
 	_grid: null,
 
+	// use i18n information from umc.modules.internetrules
+	i18nClass: 'umc.modules.internetrules',
+
 	// reference to the module store used
 	moduleStore: null,
 
@@ -148,7 +151,7 @@ dojo.declare("umc.modules._internetrules.AdminPage", [ umc.widgets.Page, umc.i18
 		var widgets = [{
 			type: 'TextBox',
 			name: 'pattern',
-			description: this._('Specifies the substring pattern which is searched for in the rules\' name and groups'),
+			description: this._('Specifies the substring pattern which is searched for in the rules\' name and its domain list'),
 			label: this._('Search pattern')
 		}];
 

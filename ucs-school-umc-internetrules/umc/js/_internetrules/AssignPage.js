@@ -53,6 +53,9 @@ dojo.declare("umc.modules._internetrules.AssignPage", [ umc.widgets.Page, umc.i1
 	// internal reference to the grid
 	_grid: null,
 
+	// use i18n information from umc.modules.internetrules
+	i18nClass: 'umc.modules.internetrules',
+
 	// reference to the module store used
 	moduleStore: null,
 
