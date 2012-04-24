@@ -1,3 +1,9 @@
+ucs-school-umc-common (1.0.2-1) unstable; urgency=low
+
+  * adjust order of categories; Bug #26349
+
+ -- Alexander Kläser <klaeser@univention.de>  Tue, 24 Apr 2012 17:38:50 +0200
+
 ucs-school-umc-common (1.0.1-4) unstable; urgency=low
 
   * removed empty Depends line in debian/control; Bug #25701
