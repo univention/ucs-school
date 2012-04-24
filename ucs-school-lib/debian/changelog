@@ -1,3 +1,9 @@
+ucs-school-lib (1.0.35-2) unstable; urgency=low
+
+  * added Standards-Version and XS-Python-Version to debian/control; Bug #25704
+
+ -- Alexander Kläser <klaeser@univention.de>  Tue, 24 Apr 2012 11:08:54 +0200
+
 ucs-school-lib (1.0.35-1) unstable; urgency=low
 
   * added functions to access default rules for groups; Bug #25704
