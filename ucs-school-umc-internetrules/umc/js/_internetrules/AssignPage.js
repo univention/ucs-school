@@ -125,7 +125,7 @@ dojo.declare("umc.modules._internetrules.AssignPage", [ umc.widgets.Page, umc.i1
 		}, {
 			type: 'TextBox',
 			name: 'pattern',
-			description: this._('Specifies the substring pattern which is searched for in the rules\' name and groups'),
+			description: this._('Specifies the substring pattern which is searched for in the group properties'),
 			label: this._('Search pattern')
 		}];
 
