@@ -1,5 +1,0 @@
-usr/sbin
-usr/share/ucs-school-scheduler
-var/run
-usr/share/pyshared/univention/reservation/scheduler/listener
-usr/share/pyshared/univention/reservation/scheduler/notifier

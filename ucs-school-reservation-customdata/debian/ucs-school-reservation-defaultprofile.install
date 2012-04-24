@@ -1,4 +1,0 @@
-sql/defaultprofile.py usr/share/ucs-school-reservation-database/
-customdata/default_resprofiles.csv usr/share/ucs-school-reservation-customdata/
-customdata/default_profoptrel.csv usr/share/ucs-school-reservation-customdata/
-customdata/default_ressettings.csv usr/share/ucs-school-reservation-customdata/

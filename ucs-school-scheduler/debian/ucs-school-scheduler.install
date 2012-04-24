@@ -1,8 +1,0 @@
-ucs-school-scheduler usr/sbin/
-modules/univention/reservation/scheduler/main.py usr/share/pyshared/univention/reservation/scheduler/
-modules/univention/reservation/scheduler/__init__.py usr/share/pyshared/univention/reservation/scheduler/
-modules/univention/reservation/scheduler/listener/__init__.py usr/share/pyshared/univention/reservation/scheduler/listener/
-modules/univention/reservation/scheduler/listener/start.py usr/share/pyshared/univention/reservation/scheduler/listener/
-modules/univention/reservation/scheduler/listener/stop.py usr/share/pyshared/univention/reservation/scheduler/listener/
-modules/univention/reservation/scheduler/notifier/__init__.py usr/share/pyshared/univention/reservation/scheduler/notifier/
-modules/univention/reservation/scheduler/notifier/polldb.py usr/share/pyshared/univention/reservation/scheduler/notifier/

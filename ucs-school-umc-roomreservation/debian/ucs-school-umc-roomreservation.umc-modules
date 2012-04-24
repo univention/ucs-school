@@ -1,6 +1,0 @@
-Module: roomreservation
-Python: umc/python
-Definition: umc/roomreservation.xml
-Category: umc/categories/roomreservation.xml
-Javascript: umc/js
-Icons: umc/icons
