@@ -1,3 +1,11 @@
+univention-management-console (4.0.227-1) unstable; urgency=low
+
+  * add property "priority" to module entries; Bug #26349
+  * allow missing name/description entries
+  * umc-client: enable output for "get modules/list"
+
+ -- Alexander Kläser <klaeser@univention.de>  Tue, 24 Apr 2012 16:02:03 +0200
+
 univention-management-console (4.0.226-1) unstable; urgency=low
 
   * Added option -y to read password from file for univention-
