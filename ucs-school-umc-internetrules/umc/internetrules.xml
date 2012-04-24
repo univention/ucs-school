@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <umc version="2.0">
 	<module id="internetrules" icon="internetrules" version="1.0">
-	<name>Define internet rules</name>
-	<description>Defines and manages internet rules</description>
+	<name>Internetrules</name>
+	<description>Administrated and assign internetrules</description>
 	<categories>
 		<category name="ucs-school-admin"/>
 	</categories>

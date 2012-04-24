@@ -14,7 +14,7 @@ msgstr ""
 
 #: umc/python/internetrules/__init__.py:364
 msgid "-- default settings --"
-msgstr ""
+msgstr "-- Voreinstellungen --"
 
 #: umc/python/internetrules/__init__.py:221
 #, python-format
