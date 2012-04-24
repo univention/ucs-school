@@ -95,11 +95,21 @@ dojo.declare("umc.modules._distribution.DetailPage", [ umc.widgets.Page, umc.wid
 
 		// it is important to call the parent's postMixInProperties() method
 		this.inherited(arguments);
+		this.standby(true);
 
-		this.renderDetailPage();
+		// query max upload size via UCR
+		umc.tools.ucr('umc/server/upload/max').then(dojo.hitch(this, function(result) {
+			this.standby(false);
+			var maxSize = result['umc/server/upload/max'] || 10240
+			this.renderDetailPage(maxSize);
+		}), dojo.hitch(this, function() {
+			// some error occurred :/ ... take a default value
+			this.standby(false);
+			this.renderDetailPage(10240);
+		}));
 	},
 
-	renderDetailPage: function() {
+	renderDetailPage: function(maxUploadSize) {
 		// render the form containing all detail information that may be edited
 
 		// specify all widgets
@@ -133,7 +143,7 @@ dojo.declare("umc.modules._distribution.DetailPage", [ umc.widgets.Page, umc.wid
 			showClearButton: false,
 			label: this._('Files'),
 			description: this._('Files that have been added to this teaching material project'),
-			maxSize: 200 * 1024 * 1024,
+			maxSize: maxUploadSize * 1024, // conversion from kbyte to byte
 			canUpload: dojo.hitch(this, '_checkFilenameUpload'),
 			canRemove: dojo.hitch(this, '_checkFilenamesRemove')
 		}, {

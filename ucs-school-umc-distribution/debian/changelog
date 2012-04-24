@@ -1,3 +1,9 @@
+ucs-school-umc-distribution (0.0.15-1) unstable; urgency=low
+
+  * set the frontend max upload size to umc/server/upload/max; Bug #25707
+
+ -- Alexander Kläser <klaeser@univention.de>  Tue, 24 Apr 2012 13:05:00 +0200
+
 ucs-school-umc-distribution (0.0.14-1) unstable; urgency=low
 
   * disallow several special characters to avoid problems with Windows, Mac,
