@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <umc version="2.0">
-  <categories domain="ucs-school-common" priority="11">
+  <categories domain="ucs-school-common" priority="10">
     <category id="ucs-school-admin">
       <name>UCS@school administration</name>
     </category>
-    <category id="ucs-school-class" priority="10">
+    <category id="ucs-school-class" priority="11">
       <name>UCS@school class</name>
     </category>
   </categories>
