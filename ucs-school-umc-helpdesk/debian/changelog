@@ -1,3 +1,9 @@
+ucs-school-umc-helpdesk (6.0.9-1) unstable; urgency=low
+
+  * adjusted module order; Bug #26349
+
+ -- Alexander Kläser <klaeser@univention.de>  Wed, 25 Apr 2012 11:10:23 +0200
+
 ucs-school-umc-helpdesk (6.0.8-1) unstable; urgency=low
 
   * fixed bug introduced with 6.0.7-1: disconnect from onConfirm event; Bug #25706
