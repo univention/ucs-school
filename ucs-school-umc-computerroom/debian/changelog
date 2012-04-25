@@ -1,3 +1,9 @@
+ucs-school-umc-computerroom (0.1.10-1) unstable; urgency=low
+
+  * adjusted module order; Bug #26349
+
+ -- Alexander Kläser <klaeser@univention.de>  Wed, 25 Apr 2012 11:11:14 +0200
+
 ucs-school-umc-computerroom (0.1.9-1) unstable; urgency=low
 
   * added new icons; Bug #25702

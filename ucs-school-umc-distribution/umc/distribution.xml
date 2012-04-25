@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <umc version="2.0">
 	<module id="distribution" icon="distribution" version="1.0">
-	<name>Distribute materials</name>
-	<description>Create, distribute, and collect teaching materials</description>
-	<flavor icon="distribution" id="teacher">
+	<flavor icon="distribution" id="teacher" priority="10">
 	  <name>Distribute materials</name>
 	  <description>Create, distribute, and collect teaching materials</description>
 	</flavor>
-	<flavor icon="distribution" id="admin" overwrites="teacher">
+	<flavor icon="distribution" id="admin" overwrites="teacher" priority="10">
 	  <name>Distribute materials</name>
 	  <description>Create, distribute, and collect teaching materials</description>
 	</flavor>

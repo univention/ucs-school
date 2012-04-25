@@ -1,12 +1,18 @@
+ucs-school-umc-groups (0.1.8-1) unstable; urgency=low
+
+  * adjusted module order; Bug #26349
+
+ -- Alexander Kläser <klaeser@univention.de>  Wed, 25 Apr 2012 11:12:12 +0200
+
 ucs-school-umc-groups (0.1.7-1) unstable; urgency=low
 
-  * added breaks to old schooladmin package (Bug #26393) 
+  * added breaks to old schooladmin package (Bug #26393)
 
  -- Felix Botner <botner@univention.de>  Mon, 26 Mar 2012 11:21:11 +0200
 
 ucs-school-umc-groups (0.1.6-1) unstable; urgency=low
 
-  * added replace to old schooladmin package (Bug #26393) 
+  * added replace to old schooladmin package (Bug #26393)
 
  -- Felix Botner <botner@univention.de>  Mon, 26 Mar 2012 10:48:26 +0200
 

@@ -1,16 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <umc version="2.0">
 	<module id="internetrules" icon="internetrules" version="1.0">
-	<name>Internetrules</name>
-	<description>Administrated and assign internetrules</description>
 	<categories>
 		<category name="ucs-school-admin"/>
 	</categories>
-	<flavor icon="internetrules-admin" id="admin">
+	<flavor icon="internetrules-admin" id="admin" priority="10">
 	  <name>Define internet rules</name>
 	  <description>Define and manage internet rules</description>
 	</flavor>
-	<flavor icon="internetrules-assign" id="assign">
+	<flavor icon="internetrules-assign" id="assign" priority="11">
 	  <name>Assign internet rules</name>
 	  <description>Assign internet rules to classes and workgroups</description>
 	</flavor>
