@@ -195,23 +195,25 @@ def createTemporaryConfig(fn_temp_config, configRegistry, DIR_TEMP):
 		f.write('		 redirect %s\n' % default_redirect)
 		f.write('	 }\n\n')
 
+	RULES = {
+		'whitelist-blacklist-pass':
+			'whitelist-%(username)s !blacklist-%(username)s all\n',
+		'whitelist-block':
+			'whitelist-%(username)s none\n',
+		'blacklist-pass':
+			'!blacklist-%(username)s all\n',
+		}
 	for (username, room, ) in roomRule.items():
-		if username not in roomRules:
+		if username in roomRules:
+			filtertype = configRegistry.get('proxy/filter/setting-user/%s/filtertype' % (username, ), 'whitelist-blacklist-pass')
+			username += '-user'
+		elif username in proxy_settinglist:
+			filtertype = configRegistry.get('proxy/filter/setting/%s/filtertype' % (username, ), 'whitelist-blacklist-pass')
+		else:
 			continue
-		filtertype = configRegistry.get('proxy/filter/setting-user/%s/filtertype' % (username, ), 'whitelist-blacklist-pass')
-		if filtertype == 'whitelist-blacklist-pass':
+		if filtertype in RULES:
 			f.write('	room-%s {\n' % (room, ))
-			f.write('		pass whitelist-%s-user !blacklist-%s-user all\n' % (username, username, ))
-			f.write('		redirect %s\n' % default_redirect)
-			f.write('	}\n')
-		elif filtertype == 'whitelist-block':
-			f.write('	room-%s {\n' % (room, ))
-			f.write('		pass whitelist-%s-user none\n' % (username, ))
-			f.write('		redirect %s\n' % default_redirect)
-			f.write('	}\n')
-		elif filtertype == 'blacklist-pass':
-			f.write('	room-%s {\n' % (room, ))
-			f.write('		pass !blacklist-%s-user all\n' % (username, ))
+			f.write('		pass %s\n' % (RULES[filtertype] % {'username': username, }))
 			f.write('		redirect %s\n' % default_redirect)
 			f.write('	}\n')
 

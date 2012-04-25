@@ -1,3 +1,9 @@
+ucs-school-webproxy (8.0.11-1) unstable; urgency=low
+
+  * allow IP based filterung to reference normal rules (Bug #26382)
+
+ -- Janek Walkenhorst <walkenhorst@univention.de>  Wed, 25 Apr 2012 16:10:39 +0200
+
 ucs-school-webproxy (8.0.10-1) unstable; urgency=low
 
   * added readme file for filter rules; Bug #26382
