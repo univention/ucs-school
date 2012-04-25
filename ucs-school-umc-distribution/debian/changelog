@@ -1,3 +1,9 @@
+ucs-school-umc-distribution (0.0.17-1) unstable; urgency=low
+
+  * adjusted exception handling; Bug #26793
+
+ -- Alexander Kläser <klaeser@univention.de>  Wed, 25 Apr 2012 12:33:01 +0200
+
 ucs-school-umc-distribution (0.0.16-1) unstable; urgency=low
 
   * adjusted module order; Bug #26349

@@ -40,6 +40,7 @@ from univention.management.console.protocol.definitions import *
 
 import univention.admin.modules as udm_modules
 import univention.admin.objects as udm_objects
+import univention.admin.uexceptions as udm_exceptions
 
 from ucsschool.lib.schoolldap import LDAP_Connection, LDAP_ConnectionError, set_credentials, SchoolSearchBase, SchoolBaseModule, LDAP_Filter, Display, USER_READ, USER_WRITE
 
@@ -179,7 +180,7 @@ class Instance( SchoolBaseModule ):
 
 		try:
 			room_obj.remove()
-		except Exception as e:
+		except udm_exceptions.base as e:
 			self.finished(request.id, [{'success' : False, 'message' : str(e)}])
 
 		self.finished(request.id, [{'success' : True}])

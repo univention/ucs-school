@@ -186,13 +186,9 @@ class Instance( SchoolBaseModule ):
 			# create a new User object
 			sender = util.User(obj.info)
 			sender.dn = obj.dn
-		except udm_exceptions.noObject as e:
+		except udm_exceptions.base as e:
 			self.finished(request.id, None, _('Failed to load user information: %s') % e, False)
 			MODULE.error('Could not find user DN: %s' % self._user_dn)
-			raise UMC_CommandError( _('Could not authenticate user "%s"!') % self._user_dn )
-		except LDAP_ConnectionError as e:
-			self.finished(request.id, None, str(e), False)
-			MODULE.error('Could not open user DN: %s (%s)' % (self._user_dn, e))
 			raise UMC_CommandError( _('Could not authenticate user "%s"!') % self._user_dn )
 		return sender
 
