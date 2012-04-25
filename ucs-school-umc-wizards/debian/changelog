@@ -1,3 +1,9 @@
+ucs-school-umc-wizards (1.0.14-1) unstable; urgency=low
+
+  * adjusted module order; Bug #26349
+
+ -- Alexander Kläser <klaeser@univention.de>  Wed, 25 Apr 2012 11:09:09 +0200
+
 ucs-school-umc-wizards (1.0.13-1) unstable; urgency=low
 
   * Fix package description
