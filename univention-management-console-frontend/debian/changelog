@@ -1,3 +1,9 @@
+univention-management-console-frontend (1.0.316-1) unstable; urgency=low
+
+  * adjusted sorting order for modules/categories; Bug #26349
+
+ -- Alexander Kläser <klaeser@univention.de>  Wed, 25 Apr 2012 11:03:44 +0200
+
 univention-management-console-frontend (1.0.315-1) unstable; urgency=low
 
   * added sorting of modules/categories according to their priority; Bug #26349
