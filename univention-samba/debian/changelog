@@ -1,3 +1,10 @@
+univention-samba (6.0.31-1) unstable; urgency=low
+
+  * add support for restricting access to printers and shares by IP
+    address; Bug #26865
+
+ -- Andreas Büsching <buesching@univention.de>  Wed, 25 Apr 2012 10:14:50 +0200
+
 univention-samba (6.0.30-2) unstable; urgency=low
 
   * addmachine.sh: Added option for samba3 mode (Bug #26799)
