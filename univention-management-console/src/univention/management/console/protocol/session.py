@@ -263,7 +263,7 @@ class Processor( signals.Provider ):
 
 			categories = []
 			for catID, category in categoryManager.items():
-				categories.append( { 'id' : catID, 'name' : self.i18n._( category.name, category.domain ).format( **_ucr_dict ) } )
+				categories.append( { 'id' : catID, 'name' : self.i18n._( category.name, category.domain ).format( **_ucr_dict ), 'priority' : category.priority } )
 
 			res.body[ 'categories' ] = categories
 			CORE.info( 'Modules: %s' % modules )

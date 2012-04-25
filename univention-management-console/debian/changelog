@@ -1,3 +1,9 @@
+univention-management-console (4.0.228-1) unstable; urgency=low
+
+  * add property "priority" to category entries; Bug #26349
+
+ -- Alexander Kläser <klaeser@univention.de>  Tue, 24 Apr 2012 16:20:47 +0200
+
 univention-management-console (4.0.227-1) unstable; urgency=low
 
   * add property "priority" to module entries; Bug #26349
