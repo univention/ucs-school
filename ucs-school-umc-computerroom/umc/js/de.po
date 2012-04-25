@@ -3,8 +3,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-computerroom\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2012-04-12 11:58+0200\n"
-"PO-Revision-Date: 2012-04-12 16:44+0200\n"
+"POT-Creation-Date: 2012-04-13 19:47+0200\n"
+"PO-Revision-Date: 2012-04-23 14:33+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
@@ -12,159 +12,171 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: umc/js/computerroom.js:416
+#: umc/js/_computerroom/Settings.js:64
+msgid "Access control and Internet settings"
+msgstr "Zugriffskontrolle und Internet-Regeln"
+
+#: umc/js/_computerroom/Settings.js:74
+msgid "Access to home directory"
+msgstr "Zugriff auf das Heimatverzeichnis"
+
+#: umc/js/_computerroom/Settings.js:79
+msgid "Access to the class share"
+msgstr "Zugriff auf die Klassenfreigabe"
+
+#: umc/js/_computerroom/Settings.js:84
+msgid "Access to the marketplace"
+msgstr "Zugriff auf den Marktplatz"
+
+#: umc/js/computerroom.js:130
+msgid "Actions"
+msgstr "Aktionen"
+
+#: umc/js/computerroom.js:454
 msgid "Active shares"
 msgstr "Aktive Freigaben"
 
-#: umc/js/computerroom.js:410
+#: umc/js/computerroom.js:448 umc/js/_computerroom/Settings.js:69
 msgid "Active web access profile"
 msgstr "Akive Internetregeln"
 
-#: umc/js/computerroom.js:613
+#: umc/js/computerroom.js:659
 msgid "Cancel"
 msgstr "Abbrechen"
 
-#: umc/js/computerroom.js:591
+#: umc/js/computerroom.js:636
 msgid "Choose the computer room to monitor"
 msgstr "Wähle den zu beaufsichtigenden Computerraum"
 
-#: umc/js/computerroom.js:583
+#: umc/js/computerroom.js:628
 msgid "Choose the school"
 msgstr "Auswahl der Schule"
 
-#: umc/js/computerroom.js:427
+#: umc/js/computerroom.js:465 umc/js/_computerroom/Settings.js:93
 msgid "Free printing"
 msgstr "Drucken möglich"
 
-#: umc/js/computerroom.js:368
+#: umc/js/computerroom.js:386
 msgid "IP address"
 msgstr "IP-Adresse"
 
-#: umc/js/computerroom.js:495
-msgid "Lock"
-msgstr "Sperren"
-
-#: umc/js/computerroom.js:220
+#: umc/js/computerroom.js:230
 msgid "Lock input devices"
 msgstr "Eingabegeräte sperren"
 
-#: umc/js/computerroom.js:152
+#: umc/js/computerroom.js:162
 msgid "Logout user"
 msgstr "Benutzer abmelden"
 
-#: umc/js/computerroom.js:370
+#: umc/js/computerroom.js:388
 msgid "MAC address"
 msgstr "MAC-Adresse"
 
-#: umc/js/computerroom.js:426
+#: umc/js/computerroom.js:464 umc/js/_computerroom/Settings.js:92
 msgid "Moderated printing"
 msgstr "Moderiertes Drucken"
 
-#: umc/js/computerroom.js:349
+#: umc/js/computerroom.js:367
 msgid "Monitoring is activated"
 msgstr "Beaufsichtigung ist aktiviert"
 
-#: umc/js/computerroom.js:341
+#: umc/js/computerroom.js:359
 msgid "Name"
 msgstr "Name"
 
-#: umc/js/computerroom.js:294
+#: umc/js/computerroom.js:312
 msgid "No room selected"
 msgstr "Kein Raum ausgewählt"
 
-#: umc/js/computerroom.js:258
+#: umc/js/computerroom.js:272
 msgid "Presentation"
 msgstr "Präsentation"
 
-#: umc/js/computerroom.js:422
+#: umc/js/computerroom.js:460 umc/js/_computerroom/Settings.js:89
 msgid "Print mode"
 msgstr "Druckmodus"
 
-#: umc/js/computerroom.js:425
+#: umc/js/computerroom.js:463 umc/js/_computerroom/Settings.js:91
 msgid "Printing deactivated"
 msgstr "Drucken deaktiviert"
 
-#: umc/js/computerroom.js:262
+#: umc/js/computerroom.js:276
 msgid "Reinitialize monitoring"
-msgstr ""
+msgstr "Beaufsichtigung reinitialisieren"
 
-#: umc/js/computerroom.js:432
+#: umc/js/computerroom.js:470 umc/js/_computerroom/Settings.js:98
 msgid "Reservation until end of"
 msgstr "Reserverierung bis zum Ende von"
 
-#: umc/js/computerroom.js:197
+#: umc/js/computerroom.js:207
 msgid "Restart computer"
 msgstr "Computer neustarten"
 
-#: umc/js/computerroom.js:322
+#: umc/js/computerroom.js:340
 msgid "Room administration"
 msgstr "Raum verwalten"
 
-#: umc/js/computerroom.js:584
+#: umc/js/computerroom.js:629
 msgid "School"
 msgstr "Schule"
 
-#: umc/js/computerroom.js:489
-msgid "Screen"
-msgstr "Bildschirm"
-
-#: umc/js/computerroom.js:125
-msgid "Screenshot"
-msgstr "Screenshot"
-
-#: umc/js/_computerroom/ScreenshotView.js:220
+#: umc/js/_computerroom/ScreenshotView.js:233
 msgid "Screenshots of computers"
 msgstr "Bildschirmphotos der Computer"
 
-#: umc/js/computerroom.js:627
+#: umc/js/computerroom.js:673
 msgid "Select computer room"
 msgstr "Computerraum auswählen"
 
-#: umc/js/computerroom.js:599
+#: umc/js/computerroom.js:644
 msgid "Select room"
 msgstr "Raum auswählen"
 
-#: umc/js/computerroom.js:299
+#: umc/js/computerroom.js:317
 msgid "Selected room"
 msgstr "Ausgewählter Raum"
 
-#: umc/js/computerroom.js:127
-msgid "Show"
-msgstr "Anzeigen"
+#: umc/js/_computerroom/Settings.js:105
+msgid "Set"
+msgstr "Setzen"
 
-#: umc/js/computerroom.js:165
+#: umc/js/computerroom.js:175
 msgid "Shutdown computer"
 msgstr "Computer herrunterfahren"
 
-#: umc/js/computerroom.js:249
+#: umc/js/_computerroom/ScreenshotView.js:263
+msgid "Size"
+msgstr "Größe"
+
+#: umc/js/computerroom.js:263
 msgid "Start presentation"
 msgstr "Präsentation starten"
 
-#: umc/js/computerroom.js:366
+#: umc/js/computerroom.js:384
 msgid "Status"
 msgstr "Status"
 
-#: umc/js/computerroom.js:181
+#: umc/js/computerroom.js:191
 msgid "Switch on computer"
 msgstr "Computer einschalten"
 
-#: umc/js/computerroom.js:345
+#: umc/js/computerroom.js:363
 msgid "The computer is not running"
 msgstr "Der Computer läuft aktuell nicht"
 
-#: umc/js/computerroom.js:358
+#: umc/js/computerroom.js:376
 msgid "The computer is participating in a  presentation currently"
 msgstr "Der Computer nimmt momentan an einer Präsentation teil"
 
-#: umc/js/computerroom.js:355
+#: umc/js/computerroom.js:373
 msgid "The computer is showing a presentation currently"
 msgstr "Der Computer zeigt momentan eine Präsentation"
 
-#: umc/js/computerroom.js:351
+#: umc/js/computerroom.js:369
 msgid "The monitoring mode has failed"
 msgstr "Die Beaufsichtigung ist fehlgeschlagen"
 
-#: umc/js/computerroom.js:258
+#: umc/js/computerroom.js:272
 msgid ""
 "The presentation is starting. This may take a few moments. When the "
 "presentation server is started a columns presentation is shown that contains "
@@ -174,7 +186,7 @@ msgstr ""
 "Präsentationsserver gestartet ist wird eine Spalte Präsentation angezeigt, "
 "die eine Schaltfläche 'Beenden' enthält um die Präsentation zu stoppen."
 
-#: umc/js/_computerroom/ScreenshotView.js:221
+#: umc/js/_computerroom/ScreenshotView.js:234
 msgid ""
 "This page shows screenshots of selected computers that will be updated every "
 "few seconds."
@@ -182,41 +194,77 @@ msgstr ""
 "Diese Seite zeigt Bildschirmphotos der ausgewählten Computer die alle paar "
 "Sekunden aktualisiert werden."
 
-#: umc/js/computerroom.js:493
-msgid "Unlock"
-msgstr "Entsperren"
-
-#: umc/js/computerroom.js:218
+#: umc/js/computerroom.js:228
 msgid "Unlock input devices"
 msgstr "Eingabegeräte entsperren"
 
-#: umc/js/computerroom.js:384
+#: umc/js/computerroom.js:402
 msgid "User"
 msgstr "Benutzer"
 
-#: umc/js/_computerroom/ScreenshotView.js:236
+#: umc/js/_computerroom/ScreenshotView.js:249
 msgid "back to overview"
 msgstr "Zurück zur Übersicht"
 
-#: umc/js/computerroom.js:590
+#: umc/js/_computerroom/Settings.js:112
+msgid "cancel"
+msgstr "Abbrechen"
+
+#: umc/js/computerroom.js:635
 msgid "computer room"
 msgstr "Computerraum"
 
-#: umc/js/computerroom.js:547
+#: umc/js/_computerroom/ScreenshotView.js:269
+msgid "large"
+msgstr "groß"
+
+#: umc/js/computerroom.js:540
+msgid "lock"
+msgstr "sperren"
+
+#: umc/js/_computerroom/ScreenshotView.js:268
+msgid "normal"
+msgstr "normal"
+
+#: umc/js/computerroom.js:592
 msgid "presentation"
 msgstr "Präsentation"
 
-#: umc/js/computerroom.js:301
+#: umc/js/computerroom.js:319
 msgid "select room"
 msgstr "Raum auswählen"
 
-#: umc/js/computerroom.js:549
+#: umc/js/_computerroom/ScreenshotView.js:267
+msgid "small"
+msgstr "klein"
+
+#: umc/js/computerroom.js:594
 msgid "stop"
 msgstr "Beenden"
 
-#: umc/js/computerroom.js:529
+#: umc/js/computerroom.js:574
 msgid "stop presentation"
 msgstr "Präsentation beenden"
+
+#: umc/js/_computerroom/ScreenshotView.js:266
+msgid "tiny"
+msgstr "winzig"
+
+#: umc/js/computerroom.js:534 umc/js/computerroom.js:538
+msgid "unlock"
+msgstr "entsperren"
+
+#: umc/js/computerroom.js:132 umc/js/computerroom.js:135
+msgid "watch"
+msgstr "beobachten"
+
+#: umc/js/computerroom.js:416
+msgid "{0} computers are in this room"
+msgstr "{0} Computer befinden sich im Raum"
+
+#: umc/js/computerroom.js:430
+msgid "{0} powered off/misconfigured"
+msgstr "{0} ausgeschaltet/nicht konfiguriert"
 
 #: umc/js/_computerroom/ScreenshotView.js:106
 msgid "{username} at {computer}"

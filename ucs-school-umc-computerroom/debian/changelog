@@ -1,3 +1,16 @@
+ucs-school-umc-computerroom (0.1.11-1) unstable; urgency=low
+
+  * add commands to retrieve lessons and internet rules
+  * updated translation
+  * renamed some actions
+  * add configuration dialog (work in progress)
+  * some minor fixes
+  * enhanced in monitoring mode
+  * add support for seleting size of displayed screenshots
+  * style fixes; Bug #25702
+
+ -- Andreas Büsching <buesching@univention.de>  Wed, 25 Apr 2012 11:29:03 +0200
+
 ucs-school-umc-computerroom (0.1.10-1) unstable; urgency=low
 
   * adjusted module order; Bug #26349

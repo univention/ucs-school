@@ -8,10 +8,13 @@
 	</categories>
 	<command name="computerroom/query" function="query"></command>
 	<command name="computerroom/lessons" function="lessons"></command>
+	<command name="computerroom/internetrules" function="internetrules"></command>
 	<command name="computerroom/schools" function="schools"></command>
 	<command name="computerroom/rooms" function="rooms"></command>
 	<command name="computerroom/lock" function="lock"></command>
 	<command name="computerroom/update" function="update"></command>
+	<command name="computerroom/settings/get" function="settings_get"></command>
+	<command name="computerroom/settings/set" function="settings_set"></command>
 	<command name="computerroom/screenshot" function="screenshot"></command>
 	<command name="computerroom/demo/start" function="demo_start"></command>
 	<command name="computerroom/demo/stop" function="demo_stop"></command>

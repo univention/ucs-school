@@ -48,6 +48,7 @@ dojo.require("umc.widgets.Form");
 dojo.require("umc.widgets.ContainerWidget");
 
 dojo.require("umc.modules._computerroom.ScreenshotView");
+dojo.require("umc.modules._computerroom.Settings");
 
 dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ], {
 	// summary:
@@ -86,6 +87,7 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 	_updateTimer: null,
 
 	_screenshotView: null,
+	_settingsDialog: null,
 
 	_demo: null,
 
@@ -116,15 +118,21 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 			user: null
 		};
 
+		var header = true;
 		// define grid actions
 		this._actions = [ {
 			name: 'screenshot',
 			field: 'screenshot',
 			label: dojo.hitch(this, function(item) {
 				if (!item) {
-					return this._('Screenshot');
+					header = !header;
+					if ( header ) {
+						return this._( 'Actions' );
+					} else {
+						return this._( 'watch' );
+					}
 				}
-				return this._('Show');
+				return this._( 'watch' );
 			}),
 			isStandardAction: true,
 			isMultiAction: true,
@@ -140,7 +148,9 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 			},
 			callback: dojo.hitch(this, function( ids, items ) {
 				this.selectChild( this._screenshotView );
-				this._screenshotView.load( dojo.map( items, function( item ) {
+				this._screenshotView.load( dojo.map( dojo.filter( items, function( item ) {
+					return item.connection[ 0 ] == 'connected';
+				} ), function( item ) {
 					return { 
 						computer: item.id[ 0 ],
 						username: item.user[ 0 ]
@@ -238,7 +248,11 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 			},
 			callback: dojo.hitch(this, function( ids, items ) {
 				var comp = items[ 0 ];
-				this.umcpCommand( 'computerroom/lock', { 
+				// unclear status -> cancel operation
+				if ( comp.InputLock[ 0 ] === null ) {
+					return;
+				}
+				this.umcpCommand( 'computerroom/lock', {
 					computer: comp.id[ 0 ],
 					device : 'input',
 					lock: comp.InputLock[ 0 ] !== true } );
@@ -280,6 +294,10 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 		this._screenshotView = new umc.modules._computerroom.ScreenshotView();
 		this.addChild( this._screenshotView );
 		dojo.connect( this._screenshotView, 'onClose', this, 'closeScreenView' );
+
+		this._settingsDialog = new umc.modules._computerroom.SettingsDialog( {
+			umcpCommand: dojo.hitch( this.umcpCommand )
+		} );
 	},
 
 	closeScreenView: function() {
@@ -288,10 +306,10 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 
 	_updateHeader: function( room ) {
 		if ( room ) {
-			room = umc.tools.explodeDn( room, true )[ 0 ]
-			room = room.replace( /^[^-]+-/, '' );
+			room = umc.tools.explodeDn( room, true )[ 0 ];
+			room = room.replace( /^[^\-]+-/, '' );
 		} else {
-			room = this._('No room selected')
+			room = this._('No room selected');
 		}
 		var label = dojo.replace('{roomLabel}: {room} ' +
 				'(<a href="javascript:void(0)" ' +
@@ -392,7 +410,27 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 			actions: this._actionList(),
 			// defines which data fields are displayed in the grids columns
 			columns: columns,
-			moduleStore: new dojo.store.Memory()
+			moduleStore: new dojo.store.Memory(),
+			footerFormatter: dojo.hitch( this, function( nItems, nItemsTotal ) {
+				var failed = 0;
+				var msg = dojo.replace( this._( '{0} computers are in this room' ), [ nItemsTotal ] );
+
+				if ( ! this._dataStore ) {
+					return '';
+				}
+				this._dataStore.fetch( {
+					query: '',
+					onItem: dojo.hitch( this, function( item ) {
+						if ( item.connection[ 0 ] != 'connected' ) {
+							failed += 1;
+						}
+					} )
+				} );
+				if ( failed ) {
+					msg += ' ('+ dojo.replace( this._( '{0} powered off/misconfigured' ), [ failed ] ) + ')';
+				}
+				return msg;
+			} )
 		} );
 
 
@@ -404,57 +442,64 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 		//
 
 		// add remaining elements of the search form
-		var widgets = [{
-			type: 'ComboBox',
-			name: 'webProfile',
-			label: this._('Active web access profile'),
-			size: 'TwoThirds',
-			staticValues: [ 'Wikipedia', 'Facebook' ]
-		}, {
-			type: 'ComboBox',
-			name: 'sharesProfile',
-			label: this._('Active shares'),
-			size: 'TwoThirds',
-			staticValues: [ 'All shares', 'Only class shares', 'no shares' ]
-		}, {
-			type: 'ComboBox',
-			name: 'printer',
-			label: this._('Print mode'),
-			size: 'TwoThirds',
-			staticValues: [
-				this._('Printing deactivated'),
-				this._('Moderated printing'),
-				this._('Free printing')
-			]
-		}, {
-			type: 'ComboBox',
-			name: 'period',
-			label: this._('Reservation until end of'),
-			size: 'TwoThirds',
-			dynamicValues: 'computerroom/lessons'
-		}];
+		// var widgets = [{
+		// 	type: 'ComboBox',
+		// 	name: 'webProfile',
+		// 	label: this._('Active web access profile'),
+		// 	size: 'TwoThirds',
+		// 	staticValues: [ 'Wikipedia', 'Facebook' ]
+		// }, {
+		// 	type: 'ComboBox',
+		// 	name: 'sharesProfile',
+		// 	label: this._('Active shares'),
+		// 	size: 'TwoThirds',
+		// 	staticValues: [ 'All shares', 'Only class shares', 'no shares' ]
+		// }, {
+		// 	type: 'ComboBox',
+		// 	name: 'printer',
+		// 	label: this._('Print mode'),
+		// 	size: 'TwoThirds',
+		// 	staticValues: [
+		// 		this._('Printing deactivated'),
+		// 		this._('Moderated printing'),
+		// 		this._('Free printing')
+		// 	]
+		// }, {
+		// 	type: 'ComboBox',
+		// 	name: 'period',
+		// 	label: this._('Reservation until end of'),
+		// 	size: 'TwoThirds',
+		// 	dynamicValues: 'computerroom/lessons'
+		// }];
 
-		var buttons = [{
-			name: 'submit',
-			style: 'display:none;'
-		}];
+		// var buttons = [{
+		// 	name: 'submit',
+		// 	style: 'display:none;'
+		// }];
 
-		var layout = [
-			[ 'webProfile', 'sharesProfile', 'printer', 'period', 'submit' ]
-		];
+		// var layout = [
+		// 	[ 'webProfile', 'sharesProfile', 'printer', 'period', 'submit' ]
+		// ];
 
-		// generate the search form
-		this._profileForm = new umc.widgets.Form({
-			// property that defines the widget's position in a dijit.layout.BorderContainer
+		// // generate the search form
+		// this._profileForm = new umc.widgets.Form({
+		// 	// property that defines the widget's position in a dijit.layout.BorderContainer
+		// 	region: 'top',
+		// 	widgets: widgets,
+		// 	layout: layout,
+		// 	buttons: buttons
+		// });
+
+		// // add search form to the title pane
+		// this._titlePane.addChild(this._profileForm);
+
+		this._titlePane.addChild( umc.widgets.Button( {
 			region: 'top',
-			widgets: widgets,
-			layout: layout,
-			buttons: buttons
-		});
-
-		// add search form to the title pane
-		this._titlePane.addChild(this._profileForm);
-
+			label: 'Settings',
+			onClick: dojo.hitch( this, function() {
+				this._settingsDialog.show();
+			} )
+		} ) );
 		//
 		// conclusion
 		//
@@ -486,13 +531,13 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 				field: 'ScreenLock',
 				label: dojo.hitch(this, function(item) {
 					if ( !item ) { // column title
-						return this._( 'Screen' );
+						return '<span style="height: 0px; font-weight: normal; color: rgba(0,0,0,0);">' + this._( 'unlock' ) + '</span>';
 					}
 					if ( !item.teacher || item.teacher[ 0 ] === false ) {
 						if ( item.ScreenLock[0] === true ) {
-							return this._('Unlock');
+							return this._('unlock');
 						} else if ( item.ScreenLock[0] === false ) {
-							return this._('Lock');
+							return this._('lock');
 						}
 					} 
 					return '';
@@ -601,9 +646,10 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 			callback: dojo.hitch(this, function(vals) {
 				// reload the grid
 				this.queryRoom( vals.school, vals.room );
-
+				this._settingsDialog.update( vals.school, vals.room );
 				// update the header text containing the room
 				this._updateHeader(vals.room);
+				this._grid._updateFooterContent();
 
 				// destroy the dialog
 				_cleanup();
@@ -663,6 +709,10 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 			dojo.forEach( response.result, function( item ) {
 				this._objStore.put( item );
 			}, this );
+
+			if ( response.result.length ) {
+				this._grid._updateFooterContent();
+			}
 
 			this._updateTimer = window.setTimeout( dojo.hitch( this, '_updateRoom' ), 2000 );
 

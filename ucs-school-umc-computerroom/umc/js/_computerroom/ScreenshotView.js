@@ -166,36 +166,27 @@ dojo.declare( "umc.modules._computerroom.Item", [ dijit.layout.ContentPane, diji
 
 		if ( this.domNode ) {
 			if ( size !== undefined ) {
-				// this.style.width = dojo.replace( '{0}px', [ size ] );
-				// this.style.height = dojo.replace( '{0}px', [ size + 20 ] );
-				dojo.contentBox( this.domNode, { w: size, h:size } );
-				// this.resize( { w: size + 20, h: Math.round( ( size + 20 ) * 0.85 ) } );
-				// item.style.width = dojo.replace( '{0}px', [ size ] );
-				// item.style.height = dojo.replace( '{0}px', [ Math.round( size * 0.85 ) ] );
+				dojo.contentBox( this.domNode, { w: size, h:size * 0.9 } );
 			}
 		}
 		if ( em ) {
 			em.innerHTML = this.username;
 		}
 		if ( img ) {
-			// if ( size !== undefined ) {
-			// 	img.style.width = dojo.replace( '{0}px', [ size ] );
-			// }
 			var new_uri = this._createURI();
 			img.src = new_uri;
 			this._currentURI = new_uri;
 		}
-		this._timer = window.setTimeout( dojo.hitch( this, '_updateImage' ), 5000 );
+		if ( this._timer ) {
+			window.clearTimeout( this._timer );
+		}
+		this._timer = window.setTimeout( dojo.hitch( this, function() { this._updateImage() } ), 5000 );
 	},
 
 	buildRendering: function() {
 		this.inherited( arguments );
 
 		dojo.mixin( this, {
-			// style: dojo.replace( 'width: {width}px; height: {height}px;', {
-			// 	width: this.defaultSize,
-			// 	height: Math.round( this.defaultSize * 0.85 )
-			// } ),
 			content: dojo.replace( '<em style="font-style: normal; font-size: 80%; padding: 4px; border: 1px solid #000; color: #000; background: #fff; display: block;position: absolute; top: 14px; left: 0px;" id="em-{computer}"></em><img style="width: 100%;" id="img-{computer}"></img>', {
 				computer: this.computer,
 				width: this.defaultSize
@@ -208,14 +199,16 @@ dojo.declare( "umc.modules._computerroom.Item", [ dijit.layout.ContentPane, diji
 			connectId: [ this.domNode ],
 			onShow: dojo.hitch( this, function() {
 				var image = dojo.byId( 'screenshotTooltip-' + this.computer );
-				image.src = this._currentURI ? this._currentURI: this._createURI();
+				if ( image ) {
+					image.src = this._currentURI ? this._currentURI: this._createURI();
+				}
 			} )
 		});
 
 		// destroy the tooltip when the widget is destroyed
 		tooltip.connect( this, 'destroy', 'destroy' );
 
-		this._timer = window.setTimeout( dojo.hitch( this, '_updateImage' ), 500 );
+		this._timer = window.setTimeout( dojo.hitch( this, function() { this._updateImage() } ), 500 );
 	}
 } );
 
@@ -277,6 +270,7 @@ dojo.declare("umc.modules._computerroom.ScreenshotView", [ umc.widgets.Page, umc
 			],
 			value: 250,
 			onChange: dojo.hitch( this, function( newValue ) {
+				console.log( 'ComboBox.onChange: ' + newValue );
 				if ( this._container.hasChildren() ) {
 					dojo.forEach( this._container.getChildren(), dojo.hitch( this, function( child ) {
 						child._updateImage( newValue );

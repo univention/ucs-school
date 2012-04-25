@@ -45,6 +45,7 @@ import univention.admin.modules as udm_modules
 
 from ucsschool.lib.schoolldap import LDAP_Connection, LDAP_ConnectionError, set_credentials, SchoolSearchBase, SchoolBaseModule, LDAP_Filter, Display
 from ucsschool.lib.schoollessons import SchoolLessons
+import ucsschool.lib.internetrules as internetrules
 
 from italc2 import ITALC_Manager
 
@@ -61,7 +62,20 @@ class Instance( SchoolBaseModule ):
 		self._lessons = SchoolLessons()
 
 	def lessons( self, request ):
-		self.finished( request.id, map( lambda x: x.name, self._lessons.lessons ) )
+		"""Returns a list of school lessons. Lessons in the past are filtered out"""
+		current = self._lessons.current
+		if current is None:
+			current = self._lessons.previous
+
+		if current:
+			lessons = filter( lambda x: x == current, self._lessons.lessons )
+		else:
+			lessons = self._lessons.lessons
+		self.finished( request.id, map( lambda x: x.name, lessons ) )
+
+	def internetrules( self, request ):
+		"""Returns a list of available internet rules"""
+		self.finished( request.id, map( lambda x: x.name, internetrules.list() ) )
 
 	@LDAP_Connection()
 	def query( self, request, search_base = None, ldap_user_read = None, ldap_position = None ):
@@ -81,25 +95,25 @@ class Instance( SchoolBaseModule ):
 		if self._italc.room != request.options[ 'room' ]:
 			self._italc.room = request.options[ 'room' ]
 
-		try:
-			result = []
-			for computer in self._italc.values():
-				item = { 'id' : computer.name,
-						 'name' : computer.name,
-						 'user' : computer.user.current,
-						 'teacher' : computer.isTeacher,
-						 'connection' : computer.state.current,
-						 'description' : computer.description,
-						 'ip' : computer.ipAddress,
-						 'mac' : computer.macAddress }
-				item.update( computer.flagsDict )
-				result.append( item )
+		# try:
+		result = []
+		for computer in self._italc.values():
+			item = { 'id' : computer.name,
+					 'name' : computer.name,
+					 'user' : computer.user.current,
+					 'teacher' : computer.isTeacher,
+					 'connection' : computer.state.current,
+					 'description' : computer.description,
+					 'ip' : computer.ipAddress,
+					 'mac' : computer.macAddress }
+			item.update( computer.flagsDict )
+			result.append( item )
 
-				MODULE.info( 'computerroom.query: result: %s' % str( result ) )
-			self.finished( request.id, result )
-		except Exception, e:
-			MODULE.error( 'query failed: %s' % str( e ) )
-			self.finished( request.id, str( e ), success = False )
+			MODULE.info( 'computerroom.query: result: %s' % str( result ) )
+		self.finished( request.id, result )
+		# except Exception, e:
+		# 	MODULE.error( 'query failed: %s' % str( e ) )
+		# 	self.finished( request.id, str( e ), success = False )
 
 	def update( self, request ):
 		"""Returns an update for the computers in the selected
@@ -183,6 +197,24 @@ class Instance( SchoolBaseModule ):
 		response.body = open( tmpfile.name ).read()
 		os.unlink( tmpfile.name )
 		self.finished( request.id, response )
+
+	def settings_get( self, request ):
+		"""return the current settings for a room
+
+		requests.options = { 'server' : <computer> }
+
+		return: [True|False)
+		"""
+		self.finished( request.id, {} )
+
+	def settings_set( self, request ):
+		"""Defines settings for a room
+
+		requests.options = { 'server' : <computer> }
+
+		return: [True|False)
+		"""
+		self.finished( request.id, {} )
 
 	def demo_start( self, request ):
 		"""Starts a demo
