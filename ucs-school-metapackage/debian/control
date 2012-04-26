@@ -15,6 +15,8 @@ Depends: univention-ldap-server (>> 4.0.6-1),
  ucs-school-info,
  univention-management-console-module-selective-udm,
  shell-univention-lib
+Recommends:
+ ucs-school-umc-wizards
 Description: UCS@School meta package for UCS DC Master System (multi DC mode)
  This meta package installs all required packages for UCS@School on
  a UCS domaincontroller master. The domaincontroller master will be 
