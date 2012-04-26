@@ -1,3 +1,9 @@
+univention-management-console (4.0.230-1) unstable; urgency=low
+
+  * merged in changes from revision 32418; Bug #26349
+
+ -- Alexander Kläser <klaeser@univention.de>  Thu, 26 Apr 2012 11:24:14 +0200
+
 univention-management-console (4.0.229-2) unstable; urgency=low
 
   * version bump; Bug #26349

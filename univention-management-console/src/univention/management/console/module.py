@@ -118,11 +118,6 @@ class Module( JSON_Object ):
 			command.fromJSON( cmd )
 			self.commands.append( command )
 
-def _getText( result ):
-	if result != None:
-		return result.text
-	return None
-
 class XML_Definition( ET.ElementTree ):
 	'''container for the interface description of a module'''
 	def __init__( self, root = None, filename = None ):
@@ -130,11 +125,11 @@ class XML_Definition( ET.ElementTree ):
 
 	@property
 	def name( self ):
-		return _getText(self.find( 'module/name' ))
+		return self.findtext( 'module/name' )
 
 	@property
 	def description( self ):
-		return _getText(self.find( 'module/description' ))
+		return self.findtext( 'module/description' )
 
 	@property
 	def id( self ):
@@ -162,8 +157,8 @@ class XML_Definition( ET.ElementTree ):
 		for elem in self.findall( 'module/flavor' ):
 			flavor = Flavor( elem.get( 'id' ), elem.get( 'icon' ) )
 			flavor.overwrites = elem.get( 'overwrites', '' ).split( ',' )
-			flavor.name = _getText(elem.find( 'name' ))
-			flavor.description = _getText(elem.find( 'description' ))
+			flavor.name = elem.findtext( 'name' )
+			flavor.description = elem.findtext( 'description' )
 			try:
 				flavor.priority = float(elem.get('priority', -1))
 			except ValueError:
