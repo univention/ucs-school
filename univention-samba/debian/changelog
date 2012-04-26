@@ -1,3 +1,9 @@
+univention-samba (6.0.32-2) unstable; urgency=low
+
+  * ensure that python-support is called before UCR install; Bug #26865
+
+ -- Andreas Büsching <buesching@univention.de>  Thu, 26 Apr 2012 15:43:46 +0200
+
 univention-samba (6.0.32-1) unstable; urgency=low
 
   * samba-local-config.py: always create the configuration file even if
