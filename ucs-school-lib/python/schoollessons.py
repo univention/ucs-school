@@ -142,3 +142,37 @@ class SchoolLessons( ConfigParser.ConfigParser ):
 	def lessons( self ):
 		self._lessons.sort()
 		return self._lessons
+
+	@property
+	def current( self ):
+		now = datetime.datetime.now().time()
+
+		# currently active lesson
+		for lesson in self.lessons:
+			if now >= lesson.begin and now <= lesson.end:
+				return lesson
+
+		return None
+
+	@property
+	def next( self ):
+		now = datetime.datetime.now().time()
+
+		# currently active lesson
+		for lesson in self.lessons:
+			if now < lesson.begin:
+				return lesson
+
+		return None
+
+	@property
+	def previous( self ):
+		now = datetime.datetime.now().time()
+
+		self._lessons.sort( reverse = True )
+		# currently active lesson
+		for lesson in self._lessons:
+			if now > lesson.end:
+				return lesson
+
+		return None

@@ -1,3 +1,10 @@
+ucs-school-lib (1.0.37-1) unstable; urgency=low
+
+  * school lessons: add property to get the current, next and previous
+    lesson according to current time; Bug #26748
+
+ -- Andreas Büsching <buesching@univention.de>  Thu, 26 Apr 2012 13:54:45 +0200
+
 ucs-school-lib (1.0.36-2) unstable; urgency=low
 
   * fixed dependencies; Bug #25707

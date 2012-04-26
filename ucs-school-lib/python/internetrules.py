@@ -238,7 +238,7 @@ def list(filterName=None, userRule=False):
 		elif iproperty == 'priority':
 			try:
 				irule.priority = int(v)
-			except ValueError as e:
+			except ValueErrory, e:
 				irule.priority = 5
 				MODULE.error('Could not parse priority "%s" for rule "%s", using default value "5".' % (v, irule))
 		elif iproperty == 'wlan':
@@ -248,7 +248,7 @@ def list(filterName=None, userRule=False):
 			idx = -1
 			try:
 				idx = int(imatch.group('index'))
-			except ValueError as e:
+			except ValueError, e:
 				pass
 
 			# get list type (blacklisted or whitelisted)
