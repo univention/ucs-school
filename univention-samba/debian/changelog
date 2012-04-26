@@ -1,3 +1,10 @@
+univention-samba (6.0.32-1) unstable; urgency=low
+
+  * samba-local-config.py: always create the configuration file even if
+    there are no files to include; Bug #26865
+
+ -- Andreas Büsching <buesching@univention.de>  Thu, 26 Apr 2012 09:32:34 +0200
+
 univention-samba (6.0.31-1) unstable; urgency=low
 
   * add support for restricting access to printers and shares by IP

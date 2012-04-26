@@ -395,10 +395,9 @@ class ShareConfiguration( object ):
 						fd.write( '\n' )
 
 
-		# all include statements go to this file
-		if len( includes ):
-			with file( ShareConfiguration.INCLUDE_CONF, 'w' ) as f:
-				f.write( '\n'.join( includes ) + '\n' )
+		# all include statements go to this file (create file een if there is no include
+		with file( ShareConfiguration.INCLUDE_CONF, 'w' ) as f:
+			f.write( '\n'.join( includes ) + '\n' )
 
 	@property
 	def options( self ):
