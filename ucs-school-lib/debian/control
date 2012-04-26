@@ -12,7 +12,11 @@ XS-Python-Version: 2.6
 
 Package: python-ucs-school
 Architecture: all
-Depends: ${misc:Depends}, ${python:Depends}
+Depends: ${misc:Depends},
+ ${python:Depends},
+ univention-management-console,
+ univention-config-registry,
+ python-univention-directory-manager
 Provides: ${python:Provides}
 Description: UCS@school - common Python modules
  This package contains Python modules used by various

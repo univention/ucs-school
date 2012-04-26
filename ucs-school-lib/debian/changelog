@@ -1,3 +1,9 @@
+ucs-school-lib (1.0.36-2) unstable; urgency=low
+
+  * fixed dependencies; Bug #25707
+
+ -- Alexander Kläser <klaeser@univention.de>  Thu, 26 Apr 2012 12:40:09 +0200
+
 ucs-school-lib (1.0.36-1) unstable; urgency=low
 
   * Python: don't raise an error if no school was found (for Bug #26344)
