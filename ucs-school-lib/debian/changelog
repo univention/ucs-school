@@ -1,3 +1,9 @@
+ucs-school-lib (1.0.36-1) unstable; urgency=low
+
+  * Python: don't raise an error if no school was found (for Bug #26344)
+
+ -- Jascha Geerds <geerds@univention.de>  Thu, 26 Apr 2012 09:44:41 +0200
+
 ucs-school-lib (1.0.35-2) unstable; urgency=low
 
   * added Standards-Version and XS-Python-Version to debian/control; Bug #25704

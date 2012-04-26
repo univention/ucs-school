@@ -248,7 +248,6 @@ def _init_search_base(ldap_connection, force=False):
 		if not len(availableSchools):
 			MODULE.warn('LDAP_Connection: ERROR, COULD NOT FIND ANY OU!!!')
 			_search_base = SchoolSearchBase([''])
-			raise EnvironmentError('Could not find any valid ou!')
 		else:
 			MODULE.info( 'LDAP_Connection: availableSchools=%s' % availableSchools )
 			_search_base = SchoolSearchBase(availableSchools)
