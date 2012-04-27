@@ -13,8 +13,16 @@ XS-Python-Version: all
 
 Package: ucs-school-umc-wizards
 Architecture: all
-Depends: univention-management-console-server,
- univention-directory-manager-tools (>> 7.0.147)
+Depends: ${misc:Depends},
+ univention-management-console,
+ univention-management-console-server,
+ univention-config-registry,
+ univention-directory-manager-tools (>> 7.0.147),
+ python-univention-directory-manager,
+ ucs-school-umc-common,
+ python-ucs-school,
+ shell-ucs-school
+
 Description: UCS@school UMC module contains various wizards
  This package contains a UMC module with various wizards
  .
