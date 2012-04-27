@@ -1,3 +1,10 @@
+univention-directory-manager-modules (7.0.232-2) unstable; urgency=low
+
+  * Added a new attribute to disable an UDM property in UDM/UMC
+    (Bug #26923)
+
+ -- Stefan Gohmann <gohmann@univention.de>  Fri, 27 Apr 2012 06:56:58 +0200
+
 univention-directory-manager-modules (7.0.231-1) unstable; urgency=low
 
   * computer modules: passing LDAP attributes to base constructor; Bug #26453
