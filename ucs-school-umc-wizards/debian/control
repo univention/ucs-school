@@ -22,7 +22,6 @@ Depends: ${misc:Depends},
  ucs-school-umc-common,
  python-ucs-school,
  shell-ucs-school
-
 Description: UCS@school UMC module contains various wizards
  This package contains a UMC module with various wizards
  .

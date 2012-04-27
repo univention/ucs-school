@@ -1,3 +1,9 @@
+ucs-school-umc-wizards (1.0.14-3) unstable; urgency=low
+
+  * fixed last commit; Bug #26344
+
+ -- Jascha Geerds <geerds@univention.de>  Fri, 27 Apr 2012 14:48:36 +0200
+
 ucs-school-umc-wizards (1.0.14-2) unstable; urgency=low
 
   * added some dependencies; Bug #26344
