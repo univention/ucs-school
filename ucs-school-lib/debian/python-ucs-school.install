@@ -1,2 +1,3 @@
 python/*.py usr/share/pyshared/ucsschool/lib/
+python/*.mo usr/share/locale/de/LC_MESSAGES/
 lessons.ini var/lib/ucs-school-lib/

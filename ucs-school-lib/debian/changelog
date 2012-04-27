@@ -1,3 +1,9 @@
+ucs-school-lib (1.0.38-1) unstable; urgency=low
+
+  * Python: return an user-friendly message if no school exist; Bug #26871
+
+ -- Jascha Geerds <geerds@univention.de>  Fri, 27 Apr 2012 13:30:57 +0200
+
 ucs-school-lib (1.0.37-1) unstable; urgency=low
 
   * school lessons: add property to get the current, next and previous

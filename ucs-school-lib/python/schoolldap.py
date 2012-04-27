@@ -44,6 +44,8 @@ import univention.admin.syntax as udm_syntax
 import univention.admin.uexceptions as udm_errors
 from univention.management.console.protocol.message import Message
 
+from univention.lib.i18n import Translation
+
 from ldap import LDAPError
 
 from functools import wraps
@@ -52,6 +54,7 @@ import re
 from univention.management.console.config import ucr
 from univention.management.console.log import MODULE
 from univention.management.console.modules import Base
+from univention.management.console.protocol.definitions import *
 
 # load UDM modules
 udm_modules.update()
@@ -59,6 +62,8 @@ udm_modules.update()
 # current user
 _user_dn = None
 _password = None
+
+_ = Translation('python-ucs-school').translate
 
 def set_credentials( dn, passwd ):
 	global _user_dn, _password
@@ -386,7 +391,11 @@ class SchoolBaseModule( Base ):
 	@LDAP_Connection()
 	def schools( self, request, ldap_user_read = None, ldap_position = None, search_base = None ):
 		"""Returns a list of all available school"""
-		self.finished( request.id, search_base.availableSchools )
+		msg = ''
+		if not search_base.availableSchools[0]:
+			request.status = MODULE_ERR
+			msg = _('Could not find any school. You have to create a school before continuing. Use the \'Add school\' UMC module to create one.')
+		self.finished(request.id, search_base.availableSchools, msg)
 
 	def _groups( self, ldap_connection, school, ldap_base ):
 		"""Returns a list of all groups of the given school"""
