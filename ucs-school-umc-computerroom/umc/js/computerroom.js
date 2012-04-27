@@ -80,6 +80,8 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 	_titlePane: null,
 
 	_metaInfo: null,
+	_profileInfo: null,
+	_validTo: null,
 
 	_dataStore: null,
 	_objStore: null,
@@ -288,16 +290,16 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 		// it is important to call the parent's postMixInProperties() method
 		this.inherited(arguments);
 
+		this._settingsDialog = new umc.modules._computerroom.SettingsDialog( {
+			umcpCommand: dojo.hitch( this.umcpCommand )
+		} );
+
 		// render the page containing search form and grid
 		this.renderSearchPage();
 
 		this._screenshotView = new umc.modules._computerroom.ScreenshotView();
 		this.addChild( this._screenshotView );
 		dojo.connect( this._screenshotView, 'onClose', this, 'closeScreenView' );
-
-		this._settingsDialog = new umc.modules._computerroom.SettingsDialog( {
-			umcpCommand: dojo.hitch( this.umcpCommand )
-		} );
 	},
 
 	closeScreenView: function() {
@@ -437,69 +439,33 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 		// add the grid to the title pane
 		this._titlePane.addChild(this._grid);
 
-		//
-		// profile form
-		//
-
-		// add remaining elements of the search form
-		// var widgets = [{
-		// 	type: 'ComboBox',
-		// 	name: 'webProfile',
-		// 	label: this._('Active web access profile'),
-		// 	size: 'TwoThirds',
-		// 	staticValues: [ 'Wikipedia', 'Facebook' ]
-		// }, {
-		// 	type: 'ComboBox',
-		// 	name: 'sharesProfile',
-		// 	label: this._('Active shares'),
-		// 	size: 'TwoThirds',
-		// 	staticValues: [ 'All shares', 'Only class shares', 'no shares' ]
-		// }, {
-		// 	type: 'ComboBox',
-		// 	name: 'printer',
-		// 	label: this._('Print mode'),
-		// 	size: 'TwoThirds',
-		// 	staticValues: [
-		// 		this._('Printing deactivated'),
-		// 		this._('Moderated printing'),
-		// 		this._('Free printing')
-		// 	]
-		// }, {
-		// 	type: 'ComboBox',
-		// 	name: 'period',
-		// 	label: this._('Reservation until end of'),
-		// 	size: 'TwoThirds',
-		// 	dynamicValues: 'computerroom/lessons'
-		// }];
-
-		// var buttons = [{
-		// 	name: 'submit',
-		// 	style: 'display:none;'
-		// }];
-
-		// var layout = [
-		// 	[ 'webProfile', 'sharesProfile', 'printer', 'period', 'submit' ]
-		// ];
-
-		// // generate the search form
-		// this._profileForm = new umc.widgets.Form({
-		// 	// property that defines the widget's position in a dijit.layout.BorderContainer
-		// 	region: 'top',
-		// 	widgets: widgets,
-		// 	layout: layout,
-		// 	buttons: buttons
-		// });
 
 		// // add search form to the title pane
 		// this._titlePane.addChild(this._profileForm);
 
-		this._titlePane.addChild( umc.widgets.Button( {
-			region: 'top',
-			label: 'Settings',
-			onClick: dojo.hitch( this, function() {
-				this._settingsDialog.show();
-			} )
-		} ) );
+		var _container = new umc.widgets.ContainerWidget( { region: 'top' } );
+		var label = dojo.replace( '{lblSettings} (<a href="javascript:void(0)" ' +
+								  'onclick=\'dijit.byId("{id}").show()\'>{changeLabel}</a>)', {
+									  lblSettings: this._( 'Personal settings are active' ),
+									  changeLabel: this._( 'change' ),
+									  id: this._settingsDialog.id
+								  } );
+		var labelValidTo = dojo.replace( '<b>{lblTime}</b>: {time}', {
+									  lblTime: this._( 'valid to' ),
+									  time: '10:15'
+		} );
+		this._profileInfo = new umc.widgets.Text( {
+			content: label,
+			style: 'padding-bottom: 10px; padding-bottom; 10px; float: left;'
+		} );
+		this._validTo = new umc.widgets.Text( {
+			content: labelValidTo,
+			style: 'padding-bottom: 10px; padding-bottom; 10px; float: right;'
+		} );
+
+		_container.addChild( this._profileInfo );
+		_container.addChild( this._validTo );
+		this._titlePane.addChild( _container );
 		//
 		// conclusion
 		//
@@ -646,7 +612,6 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 			callback: dojo.hitch(this, function(vals) {
 				// reload the grid
 				this.queryRoom( vals.school, vals.room );
-				this._settingsDialog.update( vals.school, vals.room );
 				// update the header text containing the room
 				this._updateHeader(vals.room);
 				this._grid._updateFooterContent();
@@ -690,10 +655,9 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 			school: school,
 			room: room
 		} ).then( dojo.hitch( this, function( response ) {
+			this._settingsDialog.update();
 			dojo.forEach( response.result, function( item ) {
 				this._objStore.put( item );
-				// var idx = this._grid.getItemIndex( item.id );
-				// this._grid._grid.rowSelectCell.setDisabled( idx, item.connection != 'connected' );
 			}, this );
 			if ( this._updateTimer ) {
 				window.clearTimeout( this._updateTimer );

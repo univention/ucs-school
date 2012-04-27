@@ -44,6 +44,7 @@ from univention.management.console.log import MODULE
 
 import univention.admin.modules as udm_modules
 import univention.admin.objects as udm_objects
+import univention.admin.uldap as udm_uldap
 
 from ucsschool.lib.schoolldap import LDAP_Connection, LDAP_ConnectionError, set_credentials, SchoolSearchBase, SchoolBaseModule, LDAP_Filter, Display
 
@@ -77,6 +78,12 @@ italc.ItalcCore.initAuthentication( italc.AuthenticationCredentials.PrivateKey )
 class ITALC_Error( Exception ):
 	pass
 
+class UserInfo( object ):
+	def __init__( self, ldap_dn, school_class = None, workgroups = [] ):
+		self.dn = ldap_dn
+		self.school_class = school_class
+		self.workgroups = workgroups
+		self.isTeacher = False
 
 class UserMap( dict ):
 	USER_REGEX = re.compile( r'(?P<username>[^(]*)( \((?P<realname>[^)]*)\))?$' )
@@ -99,7 +106,14 @@ class UserMap( dict ):
 			MODULE.info( 'Unknown user "%s"' % username )
 			dict.__setitem__( self, user, '' )
 		else:
-			dict.__setitem__( self, user, result[ 0 ].dn )
+			userobj = UserInfo( result[ 0 ].dn )
+			for grp in user[ 'groups' ]:
+				if grp.endswith( search_base.workgroups ):
+					userobj.workgroups.append( udm_uldap.explodeDn( grp, True )[ 0 ] )
+				elif grp.endswith( search_base.classes ):
+					userobj.school_class = udm_uldap.explodeDn( grp, True )[ 0 ]
+			userobj.isTeacher = userobj.dn.endswith( search_base.teachers )
+			dict.__setitem__( self, user, userobj )
 
 _usermap = UserMap()
 
@@ -302,7 +316,7 @@ class ITALC_Computer( notifier.signals.Provider, QObject ):
 	def isTeacher( self, ldap_user_read = None, ldap_position = None, search_base = None ):
 		global _usermap
 		try:
-			return _usermap[ str( self.user.current ) ].endswith( search_base.teachers )
+			return _usermap[ str( self.user.current ) ].isTeacher
 		except AttributeError:
 			return False
 
@@ -491,6 +505,13 @@ class ITALC_Manager( dict, notifier.signals.Provider ):
 		self._clear()
 		self._school = value
 
+	@property
+	def ipAddresses( self, students_only = True ):
+		if students_only:
+			return map( lambda x: x.ipAddress, filter( lambda x: not x.isTeacher, self.values() ) )
+
+		return map( lambda x: x.ipAddress, self.values() )
+
 	def _clear( self ):
 		if self._room:
 			for name, computer in self.items():
@@ -557,7 +578,7 @@ class ITALC_Manager( dict, notifier.signals.Provider ):
 		MODULE.info( 'Demo LDAP base teachers: %s' % search_base.teachers )
 		MODULE.info( 'Demo client users: %s' % ', '.join( map( lambda x: str( x.user.current ), clients ) ) )
 		try:
-			teachers = map( lambda x: x.name, filter( lambda comp: not comp.user.current or _usermap[ str( comp.user.current ) ].endswith( search_base.teachers ), clients ) )
+			teachers = map( lambda x: x.name, filter( lambda comp: not comp.user.current or _usermap[ str( comp.user.current ) ].isTeacher, clients ) )
 		except AttributeError, e:
 			MODULE.error( 'Could not determine the list of teachers: %s' % str( e ) )
 			return False

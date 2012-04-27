@@ -68,7 +68,7 @@ class Instance( SchoolBaseModule ):
 			current = self._lessons.previous
 
 		if current:
-			lessons = filter( lambda x: x == current, self._lessons.lessons )
+			lessons = filter( lambda x: x.begin >= current.begin, self._lessons.lessons )
 		else:
 			lessons = self._lessons.lessons
 		self.finished( request.id, map( lambda x: x.name, lessons ) )
@@ -95,7 +95,6 @@ class Instance( SchoolBaseModule ):
 		if self._italc.room != request.options[ 'room' ]:
 			self._italc.room = request.options[ 'room' ]
 
-		# try:
 		result = []
 		for computer in self._italc.values():
 			item = { 'id' : computer.name,
@@ -111,9 +110,6 @@ class Instance( SchoolBaseModule ):
 
 			MODULE.info( 'computerroom.query: result: %s' % str( result ) )
 		self.finished( request.id, result )
-		# except Exception, e:
-		# 	MODULE.error( 'query failed: %s' % str( e ) )
-		# 	self.finished( request.id, str( e ), success = False )
 
 	def update( self, request ):
 		"""Returns an update for the computers in the selected
@@ -205,7 +201,22 @@ class Instance( SchoolBaseModule ):
 
 		return: [True|False)
 		"""
-		self.finished( request.id, {} )
+		if not self._italc.school or not self._italc.room:
+			raise UMC_CommandError( 'no room selected' )
+
+		homesDeny = ucr.get( 'samba/share/homes/hosts/rooms', '' ).split( ',' )
+		otherDeny = ucr.get( 'samba/othershares/hosts/rooms', '' ).split( ',' )
+		shareMode = 'all'
+		if self._italc.room in otherDeny:
+			if self._italc.room in homesDeny:
+				shareMode = 'none'
+			elif not self._italc.room in homesDeny:
+				shareMode = 'home'
+		self.finished( request.id, {
+			'internetRule' : ucr.get( 'proxy/filter/room/%s/rule' % self._italc.room, 'none' ),
+			'shareMode' : shareMode,
+			'printMode' : ucr.get( 'samba/printmode/room/%s' % self._italc.room, 'default' ),
+			} )
 
 	def settings_set( self, request ):
 		"""Defines settings for a room
@@ -214,6 +225,11 @@ class Instance( SchoolBaseModule ):
 
 		return: [True|False)
 		"""
+		if not self._italc.school or not self._italc.room:
+			raise UMC_CommandError( 'no room selected' )
+		self.required_options( request, 'printMode', 'internetRule', 'homesDeny', 'marketplaceDeny', 'otherDeny' )
+
+
 		self.finished( request.id, {} )
 
 	def demo_start( self, request ):
