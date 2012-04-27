@@ -1,3 +1,9 @@
+ucs-school-metapackage (4.0.23-1) unstable; urgency=low
+
+  * Depend on the new LDAP server version (Bug #26923)
+
+ -- Stefan Gohmann <gohmann@univention.de>  Fri, 27 Apr 2012 07:22:38 +0200
+
 ucs-school-metapackage (4.0.22-2) unstable; urgency=low
 
   * Added ucs-school-module-wizards as recommended for ucs-school-master;
