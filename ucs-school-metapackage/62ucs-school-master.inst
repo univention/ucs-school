@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh 
 #
 # UCS@School
 #  join script
@@ -34,7 +34,24 @@ VERSION=1
 . /usr/share/univention-join/joinscripthelper.lib
 joinscript_init
 
+eval "$(ucr shell)"
 . /usr/share/univention-lib/all.sh
+
+# Added dns-$hostname to the ignore list
+if [ -z "$connector_s4_mapping_user_ignorelist" ]; then
+	ucr set connector/s4/mapping/user/ignorelist?"root,pcpatch,ucs-s4sync,dns-$hostname"
+else
+	echo $connector_s4_mapping_user_ignorelist | egrep -q "(,dns-$hostname,|^dns-$hostname,|,dns-$hostname$)" || \
+			ucr set connector/s4/mapping/user/ignorelist="$connector_s4_mapping_user_ignorelist,dns-$hostname"
+fi
+
+if [ $JS_LAST_EXECUTED_VERSION -lt 1 ]; then
+	# Remove the dns-$hostname user from LDAP
+	if [ -x /etc/init.d/univention-s4-connector ]; then
+		/etc/init.d/univention-s4-connector crestart
+		udm users/user remove "$@" --dn "uid=dns-$hostname,cn=users,$ldap_base"
+	fi
+fi
 
 ucs_addServiceToLocalhost 'UCS@school' "$@"
 

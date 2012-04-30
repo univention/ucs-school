@@ -1,3 +1,10 @@
+ucs-school-metapackage (4.0.25-1) unstable; urgency=low
+
+  * Added dns-$hostname to the ignorelist on an UCS@school Master too
+    (Bug #26522)
+
+ -- Stefan Gohmann <gohmann@univention.de>  Mon, 30 Apr 2012 16:24:47 +0200
+
 ucs-school-metapackage (4.0.24-1) unstable; urgency=low
 
   * Added domain controllers group to the ignore list (Bug #26522)
