@@ -1,3 +1,9 @@
+univention-lib (1.0.51-1) unstable; urgency=low
+
+  * add function reschedule to change time of execution for a job; Bug #25707
+
+ -- Andreas Büsching <buesching@univention.de>  Mon, 30 Apr 2012 14:03:35 +0200
+
 univention-lib (1.0.50-1) unstable; urgency=low
 
   * atjobs: add support for optional comments to store data assoziated
