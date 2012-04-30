@@ -1,3 +1,10 @@
+ucs-school-ldap-acls-master (7.0.3-1) unstable; urgency=low
+
+  * The DC slaves need for the MS GPO synchronisation write access to
+    cn=policies,cn=system (Bug #26926)
+
+ -- Stefan Gohmann <gohmann@univention.de>  Mon, 30 Apr 2012 11:07:40 +0200
+
 ucs-school-ldap-acls-master (7.0.2-3) unstable; urgency=low
 
   * fixed typo in LDAP ACL (Bug #25690)
