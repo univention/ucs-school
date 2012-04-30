@@ -75,6 +75,14 @@ else
 			ucr set connector/s4/mapping/user/ignorelist="$connector_s4_mapping_user_ignorelist,dns-$hostname"
 fi
 
+# Added Domain Controllers group to the ignore list
+if [ -z "$connector_s4_mapping_group_ignorelist" ]; then
+	ucr set connector/s4/mapping/group/ignorelist?"Windows Hosts,Authenticated Users,World Authority,Everyone,Null Authority,Nobody,Domain Controllers"
+else
+	echo $connector_s4_mapping_group_ignorelist | egrep -q "(,Domain Controllers,|^Domain Controllers,|,Domain Controllers$)" || \
+			ucr set connector/s4/mapping/group/ignorelist="$connector_s4_mapping_group_ignorelist,Domain Controllers"
+fi
+
 ucs_addServiceToLocalhost 'UCS@school' "$@"
 
 joinscript_save_current_version
