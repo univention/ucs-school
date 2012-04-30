@@ -1,3 +1,9 @@
+univention-samba4 (1.0.138-1) unstable; urgency=low
+
+  * Set RID pool on selective replicated slave to 2100 (Bug #26504)
+
+ -- Stefan Gohmann <gohmann@univention.de>  Mon, 30 Apr 2012 10:12:43 +0200
+
 univention-samba4 (1.0.137-1) unstable; urgency=low
 
   * fix passing of script arguments in a setup without sites(Bug #26504)

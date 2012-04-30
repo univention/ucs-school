@@ -266,6 +266,19 @@ if [ "$samba4_role" = 'DC' ]; then
 					## this is similar to univention-samba-slave-pdc
 					/usr/share/univention-samba4/scripts/setup-s4.sh "$@" --sitename "$samba4_join_site"
 
+					# Don't use the default RID pool
+					ldbmodify -H /var/lib/samba/private/sam.ldb <<-%EOF
+dn: CN=RID Set,CN=$hostname,OU=Domain Controllers,$samba4_ldap_base
+changetype: modify
+replace: rIDAllocationPool
+rIDAllocationPool: 2100-2599
+-
+replace: rIDPreviousAllocationPool
+rIDPreviousAllocationPool: 2100-2599
+-
+replace: rIDNextRID
+rIDNextRID: 2101
+%EOF
 				fi
 
 			else
