@@ -91,6 +91,12 @@ access to dn.regex="^@%@ldap/base@%@$$"
 	by dn.regex="^uid=([^,]+),cn=(@$@TEACHERS@$@|@$@TEACHERS-STAFF@$@|@$@STAFF@$@|@$@ADMINS@$@),cn=users,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" read
 	by * none break
 
+# DC Slaves need write access to the members of the group Domain Computers
+access to dn.exact="cn=Domain Computers,cn=groups,@%@ldap/base@%@" attrs="uniqueMember,memberUid"
+    by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
+    by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
+    by * none break
+
 # Slave-Controller und Memberserver duerfen globale Container computers, shares, dns, dhcp, kerberos und policies sowie Benutzer lesen
 access to dn.regex="(^(.+,)?cn=(groups|dns|dhcp|policies|computers|kerberos|shares),|^(uid=[^,]+,|)cn=users,|^)@%@ldap/base@%@$$"
 	by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
