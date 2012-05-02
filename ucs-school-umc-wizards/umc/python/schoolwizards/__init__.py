@@ -94,7 +94,7 @@ class Instance(SchoolBaseModule, SchoolImport):
 		"""
 		try:
 			# Validate request options
-			keys = ['username', 'lastname', 'firstname', 'school', 'class', 'type']
+			keys = ['username', 'lastname', 'firstname', 'school', 'type']
 			self.required_options(request, *keys)
 			self.required_values(request, *keys)
 
@@ -106,7 +106,12 @@ class Instance(SchoolBaseModule, SchoolImport):
 
 			isTeacher = False
 			isStaff = False
-			if request.options['type'] not in ['student', 'teacher', 'staff', 'teachersAndStaff']:
+			if request.options['type'] in ['student', 'teacher', 'staff', 'teachersAndStaff']:
+				# The class name is only required if the user is a student
+				if request.options['type'] == 'student':
+					self.required_options(request, 'class')
+					self.required_values(request, 'class')
+			else:
 				raise ValueError(_('Invalid value for  \'type\' property'))
 			if request.options['type'] == 'teacher':
 				isTeacher = True
@@ -121,7 +126,7 @@ class Instance(SchoolBaseModule, SchoolImport):
 			                 request.options['lastname'],
 			                 request.options['firstname'],
 			                 request.options['school'],
-			                 request.options['class'],
+			                 request.options.get('class', ''),
 			                 request.options.get('mailPrimaryAddress', ''),
 			                 isTeacher,
 			                 isStaff)
@@ -146,7 +151,7 @@ class Instance(SchoolBaseModule, SchoolImport):
 				raise ValueError(_('School name is already in use'))
 
 			# Create the school
-			self.create_ou(request.options['name'])
+			self.create_ou(request.options['name'], request.options.get('schooldc', ''))
 			_init_search_base(ldap_user_read, force = True)
 		except (ValueError, IOError, OSError), err:
 			MODULE.info(str(err))

@@ -100,15 +100,17 @@ dojo.declare("umc.modules._schoolwizards.ComputerWizard", [ umc.modules._schoolw
 		}];
 	},
 
-	postMixInProperties: function() {
-		this.finishButtonLabel = this._('Click here to create another computer');
-		this.finishTextLabel = this._('The computer has been successfully created.');
-	},
-
 	restart: function() {
 		umc.tools.forIn(this.getPage('computer')._form._widgets, function(iname, iwidget) {
 			iwidget.reset();
 		});
 		this.inherited(arguments);
+	},
+
+	addNote: function() {
+		var name = this.getWidget('computer', 'name').get('value');
+		var message = this._('The computer "%s" has been successfully created. Now another computer can be created or this wizard can be cancelled.', name);
+		this.getPage('computer').clearNotes();
+		this.getPage('computer').addNote(message);
 	}
 });

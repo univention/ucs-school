@@ -54,18 +54,19 @@ class SchoolImport():
 		"""
 		# Replace `True` with 1 and `False` with 0
 		entry = [{True: 1, False: 0, } .get(x, x) for x in entry]
-		# Separate columns by tabs
-		entry = '\t'.join(['%s' % column for column in entry])
 
 		if run_with_string_argument:
+			entry.insert(0, script)
 			try:
-				return_code = subprocess.call([script, entry])
+				return_code = subprocess.call(entry)
 			except IOError, err:
 				MODULE.info(str(err))
 				raise UMC_CommandError(_('Execution of command failed'))
 			else:
 				return return_code
 		else:
+			# Separate columns by tabs
+			entry = '\t'.join(['%s' % column for column in entry])
 			try:
 				tmpfile = tempfile.NamedTemporaryFile()
 				tmpfile.write(entry)
@@ -90,10 +91,10 @@ class SchoolImport():
 		if return_code:
 			raise OSError(_('Could not create user'))
 
-	def create_ou(self, name):
+	def create_ou(self, name, school_dc):
 		"""Creates a new school
 		"""
-		return_code = self._run_script(SchoolImport.SCHOOL_SCRIPT, [name, ], True)
+		return_code = self._run_script(SchoolImport.SCHOOL_SCRIPT, [name, school_dc, ], True)
 		if return_code:
 			raise OSError(_('Could not create school'))
 

@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-wizards\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2012-03-21 01:02+0100\n"
+"POT-Creation-Date: 2012-04-28 12:16+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -15,22 +15,6 @@ msgstr ""
 #: umc/js/_schoolwizards/UserWizard.js:99
 msgid "Class"
 msgstr "Klasse"
-
-#: umc/js/_schoolwizards/ClassWizard.js:70
-msgid "Click here to create another class"
-msgstr "Hier klicken um eine weitere Klasse zu erstellen"
-
-#: umc/js/_schoolwizards/ComputerWizard.js:104
-msgid "Click here to create another computer"
-msgstr "Hier klicken um einen weiteren Computer zu erstellen"
-
-#: umc/js/_schoolwizards/SchoolWizard.js:59
-msgid "Click here to create another school"
-msgstr "Hier klicken um eine weitere Schule zu erstellen"
-
-#: umc/js/_schoolwizards/UserWizard.js:110
-msgid "Click here to create another user"
-msgstr "Hier klicken um einen weiteren Benutzer zu erstellen"
 
 #: umc/js/_schoolwizards/ComputerWizard.js:69
 msgid "Computer information"
@@ -51,10 +35,6 @@ msgstr "Eingabe der Computer-Details"
 #: umc/js/_schoolwizards/UserWizard.js:76
 msgid "Enter the user's details"
 msgstr "Eingabe der Benutzer-Details"
-
-#: umc/js/_schoolwizards/Wizard.js:51
-msgid "Finished"
-msgstr "Fertig"
 
 #: umc/js/_schoolwizards/UserWizard.js:85
 msgid "Firstname"
@@ -99,6 +79,10 @@ msgstr "Name"
 msgid "School"
 msgstr "Schule"
 
+#: umc/js/_schoolwizards/SchoolWizard.js:56
+msgid "School DC"
+msgstr "Schul-DC"
+
 #: umc/js/_schoolwizards/UserWizard.js:66
 msgid "Staff"
 msgstr "Mitarbeiter"
@@ -119,21 +103,41 @@ msgstr "Lehrer"
 msgid "Teachers and staff"
 msgstr "Lehrer und Mitarbeiter"
 
-#: umc/js/_schoolwizards/ClassWizard.js:71
-msgid "The class has been successfully created."
-msgstr "Die Klasse wurde erfolgreich erstellt."
+#: umc/js/_schoolwizards/ClassWizard.js:77
+#, python-format
+msgid ""
+"The class \"%s\" has been successfully created. Now another class can be "
+"created or this wizard can be cancelled."
+msgstr ""
+"Die Klasse \"%s\" wurde erfolgreich erstellt. Es kann nun eine weitere
+"Klasse erstellt oder der Wizard beendet werden."
 
-#: umc/js/_schoolwizards/ComputerWizard.js:105
-msgid "The computer has been successfully created."
-msgstr "Der Computer wurde erfolgreich erstellt."
+#: umc/js/_schoolwizards/ComputerWizard.js:112
+#, python-format
+msgid ""
+"The computer \"%s\" has been successfully created. Now another computer can "
+"be created or this wizard can be cancelled."
+msgstr ""
+"Der Computer \"%s\" wurde erfolgreich erstellt. Es kann nun ein weiterer
+"Computer erstellt oder der Wizard beendet werden."
 
-#: umc/js/_schoolwizards/SchoolWizard.js:60
-msgid "The school has been successfully created."
-msgstr "Die Schule wurde erfolgreich erstellt."
+#: umc/js/_schoolwizards/SchoolWizard.js:70
+#, python-format
+msgid ""
+"The school \"%s\" has been successfully created. Now another school can be "
+"created or this wizard can be cancelled."
+msgstr ""
+"Die Schule \"%s\" wurde erfolgreich erstellt. Es kann nun eine weitere
+"Schule erstellt oder der Wizard beendet werden."
 
-#: umc/js/_schoolwizards/UserWizard.js:111
-msgid "The user has been successfully created."
-msgstr "Der Benutzer wurde erfolgreich erstellt."
+#: umc/js/_schoolwizards/UserWizard.js:120
+#, python-format
+msgid ""
+"The user \"%s\" has been successfully created. Now another user can be "
+"created or this wizard can be cancelled."
+msgstr ""
+"Der Benutzer \"%s\" wurde erfolgreich erstellt. Es kann nun ein weiterer
+"Benutzer erstellt oder der Wizard beendet werden."
 
 #: umc/js/_schoolwizards/ClassWizard.js:47
 msgid "This module creates a new class on the system."

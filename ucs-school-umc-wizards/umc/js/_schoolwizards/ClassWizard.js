@@ -66,14 +66,16 @@ dojo.declare("umc.modules._schoolwizards.ClassWizard", [ umc.modules._schoolwiza
 		}];
 	},
 
-	postMixInProperties: function() {
-		this.finishButtonLabel = this._('Click here to create another class');
-		this.finishTextLabel = this._('The class has been successfully created.');
-	},
-
 	restart: function() {
 		this.getWidget('class', 'name').reset();
 		this.getWidget('class', 'description').reset();
 		this.inherited(arguments);
+	},
+
+	addNote: function() {
+		var name = this.getWidget('class', 'name').get('value');
+		var message = this._('The class "%s" has been successfully created. Now another class can be created or this wizard can be cancelled.', name);
+		this.getPage('class').clearNotes();
+		this.getPage('class').addNote(message);
 	}
 });

@@ -41,45 +41,21 @@ dojo.declare("umc.modules._schoolwizards.Wizard", [ umc.widgets.Wizard, umc.i18n
 
 	createObjectCommand: null,
 
-	finishHelpText: null,
-	finishButtonLabel: null,
-	finishTextLabel: null,
-
-	buildRendering: function() {
-		this.pages.push({
-			name: 'finish',
-			headerText: this._('Finished'),
-			helpText: this.finishHelpText,
-			widgets: [{
-				name: 'resultMessage',
-				type: 'Text',
-				content: '<p>' + this.finishTextLabel + '</p>'
-			}],
-			buttons: [{
-				name: 'createAnother',
-				label: this.finishButtonLabel,
-				onClick: dojo.hitch(this, 'restart')
-			}],
-			layout: [['resultMessage'],
-			         ['createAnother']]
-		});
-		this.inherited(arguments);
-	},
-
-	hasPrevious: function(/*String*/ pageName) {
-		return pageName === 'finish' ? false : this.inherited(arguments);
-	},
-
-	canCancel: function(/*String*/ pageName) {
-		return pageName === 'finish' ? false : true;
+	hasNext: function() {
+		return true;
 	},
 
 	next: function(/*String*/ currentPage) {
 		var nextPage = this.inherited(arguments);
-		if (this._getPageIndex(currentPage) === (this.pages.length -2 )) {
+		this.updateWidgets(currentPage);
+		if (this._getPageIndex(currentPage) === (this.pages.length - 1 )) {
 			if (this._validateForm()) {
 				return this._createObject().then(dojo.hitch(this, function(result) {
-					return result ? nextPage : currentPage;
+					if (result) {
+						this.addNote();
+						this.restart();
+					}
+					return currentPage;
 				}));
 			} else {
 				return currentPage;
@@ -124,5 +100,8 @@ dojo.declare("umc.modules._schoolwizards.Wizard", [ umc.widgets.Wizard, umc.i18n
 		var firstPageName = this.pages[0].name;
 		this._updateButtons(firstPageName);
 		this.selectChild(this._pages[firstPageName]);
+	},
+
+	updateWidgets: function(/*String*/ currentPage) {
 	}
 });

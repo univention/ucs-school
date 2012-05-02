@@ -106,11 +106,6 @@ dojo.declare("umc.modules._schoolwizards.UserWizard", [ umc.modules._schoolwizar
 		}];
 	},
 
-	postMixInProperties: function() {
-		this.finishButtonLabel = this._('Click here to create another user');
-		this.finishTextLabel = this._('The user has been successfully created.');
-	},
-
 	restart: function() {
 		umc.tools.forIn(this.getPage('user')._form._widgets, function(iname, iwidget) {
 			if (iname !== 'class') {
@@ -118,5 +113,28 @@ dojo.declare("umc.modules._schoolwizards.UserWizard", [ umc.modules._schoolwizar
 			}
 		});
 		this.inherited(arguments);
+	},
+
+	addNote: function() {
+		var name = this.getWidget('user', 'username').get('value');
+		var message = this._('The user "%s" has been successfully created. Now another user can be created or this wizard can be cancelled.', name);
+		this.getPage('user').clearNotes();
+		this.getPage('user').addNote(message);
+	},
+
+	updateWidgets: function(/*String*/ currentPage) {
+		if (currentPage === 'general') {
+			var selectedType = this.getWidget('general', 'type').get('value');
+			var types = ['teacher', 'staff', 'teachersAndStaff'];
+			var widget = this.getWidget('user', 'class');
+			if (types.indexOf(selectedType) >= 0) {
+				widget.reset();
+				widget.set('required', false);
+				widget.hide();
+			} else {
+				widget.set('required', true);
+				widget.show();
+			}
+		}
 	}
 });

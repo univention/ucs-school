@@ -1,3 +1,13 @@
+ucs-school-umc-wizards (1.0.15-1) unstable; urgency=low
+
+  * Remove last wizard page
+  * Add a missing option for the school wizard
+  * Hide the class field when creating a teacher/staff
+  * Update po-files
+  (Bug #26344)
+
+ -- Jascha Geerds <geerds@univention.de>  Mon, 30 Apr 2012 16:48:57 +0200
+
 ucs-school-umc-wizards (1.0.14-3) unstable; urgency=low
 
   * fixed last commit; Bug #26344

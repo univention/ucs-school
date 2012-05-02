@@ -50,18 +50,25 @@ dojo.declare("umc.modules._schoolwizards.SchoolWizard", [ umc.modules._schoolwiz
 				name: 'name',
 				label: this._('Name'),
 				required: true
+			}, {
+				type: 'TextBox',
+				name: 'schooldc',
+				label: this._('School DC'),
 			}],
-			layout: [['name']]
+			layout: [['name'],
+			         ['schooldc']]
 		}];
-	},
-
-	postMixInProperties: function() {
-		this.finishButtonLabel = this._('Click here to create another school');
-		this.finishTextLabel = this._('The school has been successfully created.');
 	},
 
 	restart: function() {
 		this.getWidget('school', 'name').reset();
 		this.inherited(arguments);
+	},
+
+	addNote: function() {
+		var name = this.getWidget('school', 'name').get('value');
+		var message = this._('The school "%s" has been successfully created. Now another school can be created or this wizard can be cancelled.', name);
+		this.getPage('school').clearNotes();
+		this.getPage('school').addNote(message);
 	}
 });
