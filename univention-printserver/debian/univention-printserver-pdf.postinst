@@ -55,9 +55,9 @@ if [ "$1" = "configure" ]; then
 	fi
 
 	univention-config-registry set \
-		umc/module/printermoderation/cleanup/enabled?no \
-		umc/module/printermoderation/cleanup/interval"?* * 1 * *" \
-		umc/module/printermoderation/cleanup/keep?30
+		cups/cups-pdf/cleanup/enabled?no \
+		cups/cups-pdf/cleanup/interval"?* * 1 * *" \
+		cups/cups-pdf/cleanup/keep?30
 fi
 
 #DEBHELPER#

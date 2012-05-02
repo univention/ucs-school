@@ -1,3 +1,11 @@
+univention-printserver (5.0.26-101) unstable; urgency=low
+
+  * Fix the UCR variables in *-pdf.postinst
+  * Fix a typo in the cronjob file
+  (Bug #26361)
+
+ -- Jascha Geerds <geerds@univention.de>  Wed, 02 May 2012 14:07:39 +0200
+
 univention-printserver (5.0.26-100) unstable; urgency=low
 
   * Add a cronjob which deletes old print jobs
