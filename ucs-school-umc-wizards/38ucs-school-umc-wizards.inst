@@ -35,13 +35,18 @@ VERSION=2
 
 . /usr/share/univention-join/joinscripthelper.lib
 . /usr/share/univention-lib/umc.sh
+. /usr/share/ucs-school-lib/umc.sh
 
 joinscript_init
 
 umc_init
-umc_operation_create "schoolwizards-all" "School wizards - All operations" "" "schoolwizards/*"
-umc_policy_append "default-umc-all" "schoolwizards-all"
-# TODO: define other operations
+umc_operation_create "schoolwizards-all" "School wizards" "" "schoolwizards/*"
+ucs_school_policies_create
+
+# the module is only visible for admins
+for ipol in ucsschool-umc-admins-default default-umc-all; do
+	umc_policy_append "$ipol" "schoolwizards-all"
+done
 
 joinscript_save_current_version
 

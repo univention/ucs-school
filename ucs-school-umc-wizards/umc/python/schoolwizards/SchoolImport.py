@@ -84,6 +84,7 @@ class SchoolImport():
 	                mail_primary_address, teacher, staff):
 		"""Imports a new user
 		"""
+		class_ = '%s-%s' % (school, class_)
 		entry = ['A', username, lastname, firstname, school, class_, '',
 		         mail_primary_address, teacher, True, staff, ]
 
