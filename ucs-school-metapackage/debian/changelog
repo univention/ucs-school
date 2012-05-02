@@ -1,3 +1,10 @@
+ucs-school-metapackage (4.0.26-1) unstable; urgency=low
+
+  * Activate samba4 drsuapi endpoint again, necessary for dlz_bind9
+    (Bug #26504)
+
+ -- Arvid Requate <requate@univention.de>  Wed, 02 May 2012 19:15:59 +0200
+
 ucs-school-metapackage (4.0.25-1) unstable; urgency=low
 
   * Added dns-$hostname to the ignorelist on an UCS@school Master too
