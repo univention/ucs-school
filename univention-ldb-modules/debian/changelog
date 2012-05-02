@@ -1,3 +1,10 @@
+univention-ldb-modules (0.0.3-1) unstable; urgency=low
+
+  * Enable handling of SIG_CHLD to determine umc-command return status
+  * Allow missing unicodePwd (Bug #26569)
+
+ -- Arvid Requate <requate@univention.de>  Wed, 02 May 2012 17:02:14 +0200
+
 univention-ldb-modules (0.0.2-3) unstable; urgency=low
 
   * supply proper samaccountnames to umc-command

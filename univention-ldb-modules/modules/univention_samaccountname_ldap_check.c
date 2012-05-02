@@ -59,6 +59,7 @@
 #include <stdbool.h>
 #include "base64.h"
 #include <unistd.h>
+#include <errno.h>
 #include <string.h>
 #include <sys/wait.h>
 
@@ -125,21 +126,20 @@ static int univention_samaccountname_ldap_check_add(struct ldb_module *module, s
 		sprintf(opt_name, "name=%s", attribute->values[0].data);
 		opt_name[5 + attribute->values[0].length] = 0;
 
+		char *opt_unicodePwd = NULL;
 		attribute = ldb_msg_find_element(req->op.add.message, "unicodePwd");
-		if( attribute == NULL ) {
-			// we can't handle this
-			ldb_debug(ldb, LDB_DEBUG_ERROR, ("%s: ldb_add of computer object without unicodePwd\n"), ldb_module_get_name(module));
-			return LDB_ERR_UNWILLING_TO_PERFORM;
+		if( attribute != NULL ) {
+			char *unicodePwd_base64;
+			size_t unicodePwd_base64_strlen = BASE64_ENCODE_LEN(attribute->values[0].length);
+			unicodePwd_base64 = malloc(unicodePwd_base64_strlen + 1);
+			base64_encode(attribute->values[0].data, attribute->values[0].length, unicodePwd_base64, unicodePwd_base64_strlen + 1);
+			opt_unicodePwd = malloc(9 + unicodePwd_base64_strlen + 1);
+			sprintf(opt_unicodePwd, "password=%s", unicodePwd_base64);
+			opt_unicodePwd[9 + unicodePwd_base64_strlen] = 0;
+			free(unicodePwd_base64);
+		} else {
+			ldb_debug(ldb, LDB_DEBUG_WARNING, ("%s: new computer object without initial unicodePwd\n"), ldb_module_get_name(module));
 		}
-
-		char *unicodePwd_base64;
-		size_t unicodePwd_base64_strlen = BASE64_ENCODE_LEN(attribute->values[0].length);
-		unicodePwd_base64 = malloc(unicodePwd_base64_strlen + 1);
-		base64_encode(attribute->values[0].data, attribute->values[0].length, unicodePwd_base64, unicodePwd_base64_strlen + 1);
-		char *opt_unicodePwd = malloc(11 + unicodePwd_base64_strlen + 1);
-		sprintf(opt_unicodePwd, "unicodePwd=%s", unicodePwd_base64);
-		opt_unicodePwd[11 + unicodePwd_base64_strlen] = 0;
-		free(unicodePwd_base64);
 
 		char *ldap_master = univention_config_get_string("ldap/master");
 		char *machine_pass = read_pwd_from_file("/etc/machine.secret");
@@ -150,6 +150,10 @@ static int univention_samaccountname_ldap_check_add(struct ldb_module *module, s
 		opt_my_samaccoutname[strlen(my_hostname)+1] = 0;
 		free(my_hostname);
 
+		int errno_wait;
+		sighandler_t sh;
+		sh = signal(SIGCHLD, SIG_DFL);
+
 		int status;
 		int pid=fork();
 		if ( pid < 0 ) {
@@ -159,22 +163,35 @@ static int univention_samaccountname_ldap_check_add(struct ldb_module *module, s
 
 		} else if ( pid == 0 ) {
 
-			execlp("/usr/sbin/umc-command", "/usr/sbin/umc-command", "-s", ldap_master, "-P", machine_pass, "-U", opt_my_samaccoutname, "selectiveudm/create_windows_computer", "-o", opt_name, "-o", opt_unicodePwd, NULL);
+			if (opt_unicodePwd != NULL) {
+				execlp("/usr/sbin/umc-command", "/usr/sbin/umc-command", "-s", ldap_master, "-P", machine_pass, "-U", opt_my_samaccoutname, "selectiveudm/create_windows_computer", "-o", opt_name, "-o", opt_unicodePwd, "-o", "decode_password=yes", NULL);
+			} else {
+				execlp("/usr/sbin/umc-command", "/usr/sbin/umc-command", "-s", ldap_master, "-P", machine_pass, "-U", opt_my_samaccoutname, "selectiveudm/create_windows_computer", "-o", opt_name, NULL);
+			}
 
 			ldb_debug(ldb, LDB_DEBUG_ERROR, ("%s: exec of /usr/sbin/umc-command failed\n"), ldb_module_get_name(module));
 			_exit(1);
 		} else {
-			wait(&status);
-			printf("child returned status %d\n", status);
+			if ( waitpid(pid, &status, 0) == -1 ) {
+				errno_wait = errno;
+			}
+			signal(SIGCHLD, sh);
 		}
 
 		free(ldap_master);
 		free(machine_pass);
 		free(opt_my_samaccoutname);
 		free(opt_name);
-		free(opt_unicodePwd);
+		if (opt_unicodePwd != NULL) {
+			free(opt_unicodePwd);
+		}
 
-		if ( status != 0 ) {
+		if( ! WIFEXITED(status) ) {
+			
+			ldb_debug(ldb, LDB_DEBUG_ERROR, "%s: Cannot determine return status of umc-command: %s (%d)\n", ldb_module_get_name(module), strerror(errno_wait), errno_wait);
+			return LDB_ERR_UNWILLING_TO_PERFORM;
+		} else if( WEXITSTATUS(status) ) {
+			ldb_debug(ldb, LDB_DEBUG_ERROR, "%s: LDB_ERR_ENTRY_ALREADY_EXISTS\n", ldb_module_get_name(module));
 			return LDB_ERR_ENTRY_ALREADY_EXISTS;
 		}
 
