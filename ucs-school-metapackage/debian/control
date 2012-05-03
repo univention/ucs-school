@@ -53,6 +53,7 @@ Recommends:
  ucs-school-umc-internetrules,
  ucs-school-umc-lessontimes,
  ucs-school-umc-printermoderation,
+ ucs-school-umc-users,
  ucs-school-umc-rooms,
  ucs-school-umc-wizards,
 Description: UCS@School meta package for UCS DC Slave System
@@ -91,6 +92,7 @@ Recommends:
  ucs-school-umc-internetrules,
  ucs-school-umc-lessontimes,
  ucs-school-umc-printermoderation,
+ ucs-school-umc-users,
  ucs-school-umc-rooms,
  ucs-school-umc-wizards,
 Description: UCS@School meta package for UCS DC Master System (single master mode)

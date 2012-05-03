@@ -1,3 +1,9 @@
+ucs-school-metapackage (4.0.26-2) unstable; urgency=low
+
+  * added ucs-school-umc-users to dependencies; Bug #26970
+
+ -- Alexander Kläser <klaeser@univention.de>  Thu, 03 May 2012 10:16:31 +0200
+
 ucs-school-metapackage (4.0.26-1) unstable; urgency=low
 
   * Activate samba4 drsuapi endpoint again, necessary for dlz_bind9
