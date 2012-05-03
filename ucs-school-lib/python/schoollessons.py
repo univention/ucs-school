@@ -126,7 +126,7 @@ class SchoolLessons( ConfigParser.ConfigParser ):
 	def save( self ):
 		# remove all sections
 		for sec in self.sections():
-			self.reemove_section( sec )
+			self.remove_section( sec )
 
 		for lesson in self.lessons:
 			self.add_section( lesson.name )
