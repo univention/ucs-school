@@ -1,3 +1,9 @@
+ucs-school-webproxy (8.0.12-1) unstable; urgency=low
+
+  * allow arbitrary rule names (Bug #26974)
+
+ -- Janek Walkenhorst <walkenhorst@univention.de>  Thu, 03 May 2012 12:49:13 +0200
+
 ucs-school-webproxy (8.0.11-1) unstable; urgency=low
 
   * allow IP based filterung to reference normal rules (Bug #26382)

@@ -73,6 +73,17 @@ def move_file(fnsrc, fndst):
 			logerror('cannot move %s to %s: Exception %s' % (fnsrc, fndst, e))
 			raise
 
+def quote(string):
+	'Replace every unsafe byte with hex value'
+	newstring = ''
+	for byte in string:
+		if byte in quote.safeBytes:
+			newstring += byte
+		else:
+			newstring += '-' + byte.encode('hex')
+	return newstring
+quote.safeBytes = set('abcdefghijklmnopqrstuvwxyz012345679ABCDEFGHIJKLMNOPQRSTUVWXYZ')
+
 def preinst(configRegistry, changes):
 	pass
 
@@ -129,7 +140,7 @@ def createTemporaryConfig(fn_temp_config, configRegistry, DIR_TEMP):
 			if room[0].isdigit():
 				room = 'univention-%s' % room
 			roomlist.append(room)
-			f.write('src %s {\n' % room )
+			f.write('src %s {\n' % quote(room) )
 			ipaddrs = configRegistry[key].split(' ')
 			for ipaddr in ipaddrs:
 				f.write('	 ip %s\n' % ipaddr)
@@ -138,10 +149,10 @@ def createTemporaryConfig(fn_temp_config, configRegistry, DIR_TEMP):
 			usergroupname=key.rsplit('/', 1)[1]
 			if 'proxy/filter/groupdefault/%s' % (usergroupname, ) in configRegistry: # groupdefault is set for usergroupname
 				usergrouplist.append(usergroupname)
-				f.write('src usergroup-%s {\n' % usergroupname )
-				f.write('	 userlist usergroup-%s\n' % usergroupname )
+				f.write('src usergroup-%s {\n' % quote(usergroupname) )
+				f.write('	 userlist usergroup-%s\n' % quote(usergroupname) )
 				f.write('}\n\n')
-				touchfnlist.append( 'usergroup-%s' % usergroupname )
+				touchfnlist.append( 'usergroup-%s' % quote(usergroupname) )
 		if key.startswith('proxy/filter/room/'):
 			parts = key.split('/')
 			if len(parts) == 5:
@@ -156,7 +167,7 @@ def createTemporaryConfig(fn_temp_config, configRegistry, DIR_TEMP):
 			roomRules.append(key.split('/')[3])
 
 	for (room, IPs, ) in roomIPs.items():
-		f.write('src room-%s {\n' % (room, ))
+		f.write('src room-%s {\n' % (quote(room), ))
 		for IP in IPs:
 			f.write('	ip	%s\n' % (IP, ))
 		f.write('}\n')
@@ -174,23 +185,23 @@ def createTemporaryConfig(fn_temp_config, configRegistry, DIR_TEMP):
 	touchfnlist.extend( ['whitelisted-domain', 'whitelisted-url'] )
 
 	for proxy_setting in proxy_settinglist + [username + '-user' for username in roomRule]:
-		f.write('dest blacklist-%s {\n' % proxy_setting)
-		f.write('	 domainlist blacklisted-domain-%s\n' % proxy_setting)
-		f.write('	 urllist	blacklisted-url-%s\n' % proxy_setting)
+		f.write('dest blacklist-%s {\n' % quote(proxy_setting))
+		f.write('	 domainlist blacklisted-domain-%s\n' % quote(proxy_setting))
+		f.write('	 urllist	blacklisted-url-%s\n' % quote(proxy_setting))
 		f.write('}\n\n')
-		f.write('dest whitelist-%s {\n' % proxy_setting)
-		f.write('	 domainlist whitelisted-domain-%s\n' % proxy_setting)
-		f.write('	 urllist	whitelisted-url-%s\n' % proxy_setting)
+		f.write('dest whitelist-%s {\n' % quote(proxy_setting))
+		f.write('	 domainlist whitelisted-domain-%s\n' % quote(proxy_setting))
+		f.write('	 urllist	whitelisted-url-%s\n' % quote(proxy_setting))
 		f.write('}\n\n')
-		touchfnlist.extend( ['blacklisted-domain-%s' % proxy_setting,
-							 'blacklisted-url-%s' % proxy_setting,
-							 'whitelisted-domain-%s' % proxy_setting,
-							 'whitelisted-url-%s' % proxy_setting,
+		touchfnlist.extend( ['blacklisted-domain-%s' % quote(proxy_setting),
+							 'blacklisted-url-%s' % quote(proxy_setting),
+							 'whitelisted-domain-%s' % quote(proxy_setting),
+							 'whitelisted-url-%s' % quote(proxy_setting),
 							 ] )
 
 	f.write('acl {\n')
 	for room in roomlist:
-		f.write('	 %s {\n' % room)
+		f.write('	 %s {\n' % quote(room))
 		f.write('		 pass none\n')
 		f.write('		 redirect %s\n' % default_redirect)
 		f.write('	 }\n\n')
@@ -206,13 +217,14 @@ def createTemporaryConfig(fn_temp_config, configRegistry, DIR_TEMP):
 	for (username, room, ) in roomRule.items():
 		if username in roomRules:
 			filtertype = configRegistry.get('proxy/filter/setting-user/%s/filtertype' % (username, ), 'whitelist-blacklist-pass')
-			username += '-user'
+			username = quote(username) + '-user'
 		elif username in proxy_settinglist:
 			filtertype = configRegistry.get('proxy/filter/setting/%s/filtertype' % (username, ), 'whitelist-blacklist-pass')
+			username = quote(username)
 		else:
 			continue
 		if filtertype in RULES:
-			f.write('	room-%s {\n' % (room, ))
+			f.write('	room-%s {\n' % (quote(room), ))
 			f.write('		pass %s\n' % (RULES[filtertype] % {'username': username, }))
 			f.write('		redirect %s\n' % default_redirect)
 			f.write('	}\n')
@@ -232,18 +244,18 @@ def createTemporaryConfig(fn_temp_config, configRegistry, DIR_TEMP):
 	for (priority, usergroupname, proxy_setting, ) in reversed(sorted(usergroupSetting)):
 		filtertype = configRegistry.get('proxy/filter/setting/%s/filtertype' % proxy_setting, 'whitelist-blacklist-pass')
 		if filtertype == 'whitelist-blacklist-pass':
-			f.write('	 usergroup-%s {\n' % usergroupname)
-			f.write('		 pass whitelist-%s !blacklist-%s all\n' % (proxy_setting, proxy_setting) )
+			f.write('	 usergroup-%s {\n' % quote(usergroupname))
+			f.write('		 pass whitelist-%s !blacklist-%s all\n' % (quote(proxy_setting), quote(proxy_setting)) )
 			f.write('		 redirect %s\n' % default_redirect)
 			f.write('	 }\n\n')
 		elif filtertype == 'whitelist-block':
-			f.write('	 usergroup-%s {\n' % usergroupname)
-			f.write('		 pass whitelist-%s none\n' % proxy_setting )
+			f.write('	 usergroup-%s {\n' % quote(usergroupname))
+			f.write('		 pass whitelist-%s none\n' % quote(proxy_setting) )
 			f.write('		 redirect %s\n' % default_redirect)
 			f.write('	 }\n\n')
 		elif filtertype == 'blacklist-pass':
-			f.write('	 usergroup-%s {\n' % usergroupname)
-			f.write('		 pass !blacklist-%s all\n' % proxy_setting )
+			f.write('	 usergroup-%s {\n' % quote(usergroupname))
+			f.write('		 pass !blacklist-%s all\n' % quote(proxy_setting) )
 			f.write('		 redirect %s\n' % default_redirect)
 			f.write('	 }\n\n')
 
@@ -270,7 +282,7 @@ def writeSettinglist(configRegistry, DIR_TEMP):
 	for (userpart, proxy_setting, ) in proxy_settinglist:
 		for filtertype in [ 'domain', 'url' ]:
 			for itemtype in [ 'blacklisted', 'whitelisted' ]:
-				filename='%s-%s-%s%s' % (itemtype, filtertype, proxy_setting, userpart)
+				filename='%s-%s-%s%s' % (itemtype, filtertype, quote(proxy_setting), userpart)
 				dbfn = '%s/%s' % (DIR_TEMP, filename)
 				f = open(dbfn, "w")
 				for key in configRegistry:
@@ -314,7 +326,7 @@ def writeUsergroupMemberLists(configRegistry, DIR_TEMP):
 	for key in configRegistry:
 		if key.startswith('proxy/filter/usergroup/'):
 			usergroupname=key.rsplit('/', 1)[1]
-			filename='usergroup-%s' % usergroupname
+			filename='usergroup-%s' % quote(usergroupname)
 			dbfn = '%s/%s' % (DIR_TEMP, filename)
 			f = open(dbfn, "w")
 			for memberUid in configRegistry[key].split(','):
