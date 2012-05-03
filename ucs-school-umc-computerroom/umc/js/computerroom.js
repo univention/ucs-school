@@ -40,6 +40,7 @@ dojo.require("umc.dialog");
 dojo.require("umc.i18n");
 dojo.require("umc.tools");
 dojo.require("umc.widgets.ExpandingTitlePane");
+dojo.require("umc.widgets.StandbyMixin");
 dojo.require("umc.widgets.TitlePane");
 dojo.require("umc.widgets.Grid");
 dojo.require("umc.widgets.Module");
@@ -49,6 +50,10 @@ dojo.require("umc.widgets.ContainerWidget");
 
 dojo.require("umc.modules._computerroom.ScreenshotView");
 dojo.require("umc.modules._computerroom.Settings");
+
+// declare a Form with Standby functionality
+dojo.declare("umc.modules._computerroom.StandbyForm", [ umc.widgets.Form, umc.widgets.StandbyMixin ], {});
+
 
 dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ], {
 	// summary:
@@ -587,11 +592,77 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 			form.destroyRecursive();
 		};
 
+		// helper function to get the current room
+		var _getRoom = function(roomDN) {
+			var room = null;
+			dojo.forEach(form.getWidget('room').getAllItems(), function(iroom) {
+				if (iroom.id == roomDN) {
+					room = iroom;
+					return false;
+				}
+			});
+			return room;
+		};
+
+		// define the callback function
+		var _callback = dojo.hitch(this, function(vals) {
+			// default to a resolved deferred object
+			var deferred = new dojo.Deferred();
+			deferred.resolve();
+
+			// show confirmation dialog if room is already locked
+			var room = _getRoom(vals.room);
+			if (room.locked) {
+				deferred = 	umc.dialog.confirm(this._('This computer room is currently in use by %s. You can take control over the room, however, the current teacher will be prompted a notification and its session will be closed.', room.user), [{
+					name: 'cancel',
+					label: this._('Cancel'),
+					'default': true
+				}, {
+					name: 'takeover',
+					label: this._('Take over')
+				}]).then(function(response) {
+					if (response != 'takeover') {
+						// cancel deferred chain
+						throw false;
+					}
+				});
+			}
+
+			deferred = deferred.then(function () {
+				// try to acquire the session
+				form.standby(true);
+				return umc.tools.umcpCommand('computerroom/room/acquire', {
+					room: vals.room
+				})
+			}).then(dojo.hitch(this, function(response) {
+				if (!response.result) {
+					// we could not acquire the room
+					umc.dialog.alert(this._('Failed to open a new session for the room.'));
+					form.standby(false);
+					return;
+				}
+
+				// reload the grid
+				this.queryRoom( vals.school, vals.room );
+
+				// update the header text containing the room
+				this._updateHeader(vals.room);
+				this._grid._updateFooterContent();
+
+				// destroy the dialog
+				_cleanup();
+			}), function() {
+				// catch error that has been thrown to cancel chain
+				form.standby(false);
+			});
+		});
+
 		// add remaining elements of the search form
 		var widgets = [{
 			type: 'ComboBox',
 			name: 'school',
 			description: this._('Choose the school'),
+			size: 'One',
 			label: this._('School'),
 			dynamicValues: 'computerroom/schools',
 			autoHide: true
@@ -600,8 +671,22 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 			name: 'room',
 			label: this._( 'computer room' ),
 			description: this._( 'Choose the computer room to monitor' ),
+			size: 'One',
 			depends: 'school',
-			dynamicValues: 'computerroom/rooms'
+			dynamicValues: 'computerroom/rooms',
+			onChange: dojo.hitch(this, function(roomDN) {
+				// display a warning in case the room is already taken
+				var msg = '';
+				var room = _getRoom(roomDN);
+				if (room && room.locked) {
+					msg = '<p>' + this._('<b>Note:</b> This computer room is currently in use by %s.', room.user) + '</p>';
+				}
+				form.getWidget('message').set('content', msg);
+			})
+		}, {
+			type: 'Text',
+			name: 'message',
+			'class': 'umcSize-One'
 		}];
 
 		// define buttons and callbacks
@@ -609,16 +694,7 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 			name: 'submit',
 			label: this._('Select room'),
 			style: 'float:right',
-			callback: dojo.hitch(this, function(vals) {
-				// reload the grid
-				this.queryRoom( vals.school, vals.room );
-				// update the header text containing the room
-				this._updateHeader(vals.room);
-				this._grid._updateFooterContent();
-
-				// destroy the dialog
-				_cleanup();
-			})
+			callback: _callback
 		}, {
 			name: 'cancel',
 			label: this._('Cancel'),
@@ -626,11 +702,17 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 		}];
 
 		// generate the search form
-		form = new umc.widgets.Form({
+		form = new umc.modules._computerroom.StandbyForm({
 			// property that defines the widget's position in a dijit.layout.BorderContainer
 			widgets: widgets,
-			layout: [ [ 'school', 'room' ] ],
+			layout: [ 'school', 'room', 'message' ],
 			buttons: buttons
+		});
+
+		// stop standby animation when values are loaded
+		var signal = dojo.connect(form, 'onValuesInitialized', function() {
+			dojo.disconnect(signal);
+			form.standby(false);
 		});
 
 		// show the dialog
@@ -641,6 +723,7 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 			style: 'max-width: 400px;'
 		});
 		dialog.show();
+		form.standby(true);
 	},
 
 	queryRoom: function( school, room ) {
@@ -670,16 +753,30 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 		this.umcpCommand( 'computerroom/update' ).then( dojo.hitch( this, function( response ) {
 			var demo = false, demo_server = null, demo_user = null, demo_systems = 0;
 
-			dojo.forEach( response.result, function( item ) {
+			if (response.result.locked) {
+				// somebody stole our session...
+				// break the update loop, prompt a message and ask for choosing a new room
+				umc.dialog.confirm(this._('Control over the computer room has been taken by "%s", your session has been closed. In case this behaviour was not intended, please contact the other user. You can regain control over the computer room, by choosing it from the list of rooms again.', response.result.user), [{
+					name: 'ok',
+					label: this._('Ok'),
+					'default': true
+				}]).then(dojo.hitch(this, function() {
+					this.changeRoom();
+				}));
+				return;
+			}
+
+			dojo.forEach( response.result.computers, function( item ) {
 				this._objStore.put( item );
 			}, this );
 
-			if ( response.result.length ) {
+			if ( response.result.computers.length ) {
 				this._grid._updateFooterContent();
 			}
 
 			this._updateTimer = window.setTimeout( dojo.hitch( this, '_updateRoom' ), 2000 );
 
+			// update the grid actions
 			this._dataStore.fetch( {
 				query: '',
 				onItem: dojo.hitch( this, function( item ) {
@@ -703,6 +800,7 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 				user: demo_user,
 				systems: demo_systems
 			};
+
 		} ) );
 	}
 });

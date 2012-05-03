@@ -20,5 +20,6 @@
 	<command name="computerroom/demo/stop" function="demo_stop"></command>
 	<command name="computerroom/computer/state" function="computer_state"></command>
 	<command name="computerroom/user/logout" function="user_logout"></command>
+	<command name="computerroom/room/acquire" function="room_acquire"></command>
 	</module>
 </umc>

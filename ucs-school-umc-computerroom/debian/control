@@ -17,6 +17,7 @@ Breaks: ucs-school-umc-roomadmin (<< 8.0.0)
 Depends: ${misc:Depends},
  univention-management-console,
  univention-config-registry,
+ python-univention-lib,
  ucs-school-umc-common,
  python-ucs-school,
  shell-ucs-school,

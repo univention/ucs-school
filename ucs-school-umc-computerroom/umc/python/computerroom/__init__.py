@@ -33,6 +33,8 @@
 
 import datetime
 import os
+import json
+import fcntl
 from random import Random
 
 from univention.management.console.config import ucr
@@ -46,6 +48,9 @@ from univention.management.console.log import MODULE
 from univention.management.console.protocol import MIMETYPE_PNG, MIMETYPE_JPEG, Response
 
 import univention.admin.modules as udm_modules
+import univention.admin.uexceptions as udm_exceptions
+
+from univention.uldap import explodeDn
 
 from ucsschool.lib.schoolldap import LDAP_Connection, LDAP_ConnectionError, set_credentials, SchoolSearchBase, SchoolBaseModule, LDAP_Filter, Display
 from ucsschool.lib.schoollessons import SchoolLessons
@@ -56,6 +61,55 @@ from italc2 import ITALC_Manager
 import notifier
 
 _ = Translation( 'ucs-school-umc-computerroom' ).translate
+
+ROOMDIR = '/var/cache/ucs-school-umc-computerroom'
+
+def _getRoomFile(roomDN):
+	dnParts = explodeDn(roomDN, True)
+	if not dnParts:
+		MODULE.warn('Could not split room DN: %s' % roomDN)
+		raise UMC_CommandError( _('Invalid room DN: %s') % roomDN )
+	return os.path.join(ROOMDIR, dnParts[0])
+
+def _getRoomOwner(roomDN):
+	'''Read the room lock file and return the saved user DN. If it does not exist, return None.'''
+	roomFile = _getRoomFile(roomDN)
+	result = None
+	if os.path.exists(roomFile):
+		try:
+			f = open(roomFile)
+			result = f.readline().strip()
+			f.close()
+		except (OSError, IOError) as e:
+			MODULE.warn( 'Failed to acquire room lock file: %s' % roomFile )
+	return result
+
+def _setRoomOwner(roomDN, userDN):
+	'''Set the owner for a room and lock the room.'''
+	MODULE.info( 'Updating owner for room "%s": %s' % (roomDN, userDN) )
+	fd = None
+	try:
+		# write user DN in the room file
+		fd = open(_getRoomFile(roomDN), 'w')
+		fcntl.lockf(fd, fcntl.LOCK_EX)
+		fd.write(userDN)
+	except (OSError, IOError) as e:
+		MODULE.warn( 'Failed to write file: %s' % _getRoomFile(roomDN) )
+	finally:
+		# make sure that the file is unlocked
+		if fd:
+			fcntl.lockf(fd, fcntl.LOCK_UN)
+			fd.close()
+
+def _freeRoom(roomDN):
+	'''Read the room lock file and return the saved user DN. If it does not exist, return None.'''
+	roomFile = _getRoomFile(roomDN)
+	result = None
+	if os.path.exists(roomFile):
+		try:
+			os.unlink(roomFile)
+		except (OSError, IOError) as e:
+			MODULE.warn( 'Failed to remove room lock file: %s' % roomFile )
 
 class Instance( SchoolBaseModule ):
 	ATJOB_KEY = 'UMC-computerroom'
@@ -82,6 +136,54 @@ class Instance( SchoolBaseModule ):
 	def internetrules( self, request ):
 		"""Returns a list of available internet rules"""
 		self.finished( request.id, map( lambda x: x.name, internetrules.list() ) )
+
+	def room_acquire( self, request ):
+		"""Acquires the specified computerroom:
+		requests.options = { 'room': <roomDN> }
+		"""
+		self.required_options( request, 'room' )
+		roomDN = request.options.get('room')
+		_setRoomOwner(roomDN, self._user_dn)
+		success = _getRoomOwner(roomDN) == self._user_dn
+		self.finished( request.id, success )
+
+	@LDAP_Connection()
+	def rooms( self, request, ldap_user_read = None, ldap_position = None, search_base = None ):
+		"""Returns a list of all available rooms"""
+		self.required_options( request, 'school' )
+		rooms = []
+		userModule = udm_modules.get('users/user')
+		for iroom in self._groups( ldap_user_read, search_base.school, search_base.rooms ):
+			# add room status information
+			userDN = _getRoomOwner(iroom['id'])
+			if userDN:
+				# the room is currently locked by another user
+				iroom['locked'] = True
+				try:
+					# open the corresponding UDM object to get a displayable user name
+					userObj = userModule.object(None, ldap_user_read, None, userDN)
+					userObj.open()
+					iroom['user'] = Display.user(userObj)
+				except udm_exceptions.base as e:
+					# something went wrong, save the user DN
+					iroom['user'] = userDN
+					MODULE.warn( 'Cannot open LDAP information for user "%s": %s' % (userDN, e) )
+			else:
+				# the room is not locked :)
+				iroom['locked'] = False
+			rooms.append(iroom)
+
+		self.finished( request.id, rooms )
+
+	def _checkRoomAccess( self ):
+		if not self._italc.room:
+			# no room has been selected so far
+			return
+
+		# make sure that we run the current room session
+		userDN = _getRoomOwner(self._italc.room)
+		if userDN and userDN != self._user_dn:
+			raise UMC_CommandError( _('A different user is already running a computerroom session.') )
 
 	@LDAP_Connection()
 	def query( self, request, search_base = None, ldap_user_read = None, ldap_position = None ):
@@ -117,7 +219,8 @@ class Instance( SchoolBaseModule ):
 		MODULE.info( 'computerroom.query: result: %s' % str( result ) )
 		self.finished( request.id, result )
 
-	def update( self, request ):
+	@LDAP_Connection()
+	def update( self, request, search_base = None, ldap_user_read = None, ldap_position = None ):
 		"""Returns an update for the computers in the selected
 		room. Just attributes that have changed since the last call will
 		be included in the result
@@ -132,7 +235,7 @@ class Instance( SchoolBaseModule ):
 		if not self._italc.school or not self._italc.room:
 			raise UMC_CommandError( 'no room selected' )
 
-		result = []
+		computers = []
 		for computer in self._italc.values():
 			item = dict( id = computer.name )
 			modified = False
@@ -149,7 +252,25 @@ class Instance( SchoolBaseModule ):
 				item[ 'teacher' ] = computer.teacher.current
 				modified = True
 			if modified:
-				result.append( item )
+				computers.append( item )
+		result = { 'computers' : computers }
+
+		userDN = _getRoomOwner(self._italc.room)
+		result['locked'] = False
+		result['user'] = self._user_dn
+		if userDN and userDN != self._user_dn:
+			# somebody else acquired the room, the room is locked
+			result['locked'] = True
+			try:
+				# open the corresponding UDM object to get a displayable user name
+				userModule = udm_modules.get('users/user')
+				userObj = userModule.object(None, ldap_user_read, None, userDN)
+				userObj.open()
+				result['user'] = Display.user(userObj)
+			except udm_exceptions.base as e:
+				# could not oben the LDAP object, show the DN
+				result['user'] = userDN
+				MODULE.warn( 'Cannot open LDAP information for user "%s": %s' % (userDN, e) )
 
 		MODULE.info( 'Update: result: %s' % str( result ) )
 		self.finished( request.id, result )
@@ -161,6 +282,9 @@ class Instance( SchoolBaseModule ):
 
 		return: { 'success' : True|False, [ 'details' : <message> ] }
 		"""
+		# block access to session from other users
+		self._checkRoomAccess()
+
 		self.required_options( request, 'computer', 'device', 'lock' )
 		success = False
 		message = ''
@@ -187,6 +311,9 @@ class Instance( SchoolBaseModule ):
 
 		return (MIME-type image/jpeg): screenshot
 		"""
+		# block access to session from other users
+		self._checkRoomAccess()
+
 		self.required_options( request, 'computer' )
 		computer = self._italc.get( request.options[ 'computer' ], None )
 		if not computer:
@@ -235,6 +362,9 @@ class Instance( SchoolBaseModule ):
 
 		return: [True|False)
 		"""
+		# block access to session from other users
+		self._checkRoomAccess()
+
 		self.required_options( request, 'printMode', 'internetRule', 'shareMode', 'period' )
 		if not self._italc.school or not self._italc.room:
 			raise UMC_CommandError( 'no room selected' )
@@ -350,6 +480,9 @@ class Instance( SchoolBaseModule ):
 
 		return: [True|False)
 		"""
+		# block access to session from other users
+		self._checkRoomAccess()
+
 		self.required_options( request, 'server' )
 		self._italc.startDemo( request.options[ 'server' ], True )
 		self.finished( request.id, True )
@@ -361,6 +494,9 @@ class Instance( SchoolBaseModule ):
 
 		return: [True|False)
 		"""
+		# block access to session from other users
+		self._checkRoomAccess()
+
 		self._italc.stopDemo()
 		self.finished( request.id, True )
 
@@ -371,6 +507,9 @@ class Instance( SchoolBaseModule ):
 
 		return: [True|False)
 		"""
+		# block access to session from other users
+		self._checkRoomAccess()
+
 		self.required_options( request, 'computer', 'state' )
 
 		state = request.options[ 'state' ]
@@ -397,6 +536,9 @@ class Instance( SchoolBaseModule ):
 
 		return: [True|False)
 		"""
+		# block access to session from other users
+		self._checkRoomAccess()
+
 		self.required_options( request, 'computer' )
 
 		computer = self._italc.get( request.options[ 'computer' ], None )
