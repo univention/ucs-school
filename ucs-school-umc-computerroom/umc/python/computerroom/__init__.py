@@ -31,12 +31,16 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+import datetime
 import os
 from random import Random
 
 from univention.management.console.config import ucr
 
+from univention.config_registry import handler_set, handler_unset
 from univention.lib.i18n import Translation
+import univention.lib.atjobs as atjobs
+
 from univention.management.console.modules import UMC_OptionTypeError, UMC_CommandError, Base
 from univention.management.console.log import MODULE
 from univention.management.console.protocol import MIMETYPE_PNG, MIMETYPE_JPEG, Response
@@ -54,6 +58,8 @@ import notifier
 _ = Translation( 'ucs-school-umc-computerroom' ).translate
 
 class Instance( SchoolBaseModule ):
+	ATJOB_KEY = 'UMC-computerroom'
+
 	def init( self ):
 		SchoolBaseModule.init( self )
 		self._italc = ITALC_Manager( self._username, self._password )
@@ -108,7 +114,7 @@ class Instance( SchoolBaseModule ):
 			item.update( computer.flagsDict )
 			result.append( item )
 
-			MODULE.info( 'computerroom.query: result: %s' % str( result ) )
+		MODULE.info( 'computerroom.query: result: %s' % str( result ) )
 		self.finished( request.id, result )
 
 	def update( self, request ):
@@ -204,16 +210,20 @@ class Instance( SchoolBaseModule ):
 		if not self._italc.school or not self._italc.room:
 			raise UMC_CommandError( 'no room selected' )
 
-		homesDeny = ucr.get( 'samba/share/homes/hosts/rooms', '' ).split( ',' )
-		otherDeny = ucr.get( 'samba/othershares/hosts/rooms', '' ).split( ',' )
-		shareMode = 'all'
-		if self._italc.room in otherDeny:
-			if self._italc.room in homesDeny:
-				shareMode = 'none'
-			elif not self._italc.room in homesDeny:
-				shareMode = 'home'
+		rule = ucr.get( 'proxy/filter/room/%s/rule' % self._italc.room, 'none' )
+		if rule == self._username:
+			rule = 'custom'
+		shareMode = ucr.get( 'samba/sharemode/room/%s' % self._italc.room, 'all' )
+		# load custom rule:
+		key_prefix = 'proxy/filter/setting-user/%s/domain/whitelisted/' % self._username
+		custom_rules = []
+		for key in ucr:
+			if key.startswith( key_prefix ):
+				custom_rules.append( ucr[ key ] )
+
 		self.finished( request.id, {
-			'internetRule' : ucr.get( 'proxy/filter/room/%s/rule' % self._italc.room, 'none' ),
+			'internetRule' : rule,
+			'customRule' : '\n'.join( custom_rules ),
 			'shareMode' : shareMode,
 			'printMode' : ucr.get( 'samba/printmode/room/%s' % self._italc.room, 'default' ),
 			} )
@@ -225,12 +235,113 @@ class Instance( SchoolBaseModule ):
 
 		return: [True|False)
 		"""
+		self.required_options( request, 'printMode', 'internetRule', 'shareMode', 'period' )
 		if not self._italc.school or not self._italc.room:
 			raise UMC_CommandError( 'no room selected' )
-		self.required_options( request, 'printMode', 'internetRule', 'homesDeny', 'marketplaceDeny', 'otherDeny' )
 
+		# find AT jobs for the room and execute it to remove current settings
+		jobs = atjobs.list( extended = True )
+		for job in jobs:
+			if Instance.ATJOB_KEY in job.comments and job.comments[ Instance.ATJOB_KEY ] == self._italc.room:
+				atjobs.reschedule( job.nr, None ) # start now
+				break
 
-		self.finished( request.id, {} )
+		## collect new settings
+		vset = {}
+		vappend = {}
+		vunset = []
+		vunset_now = []
+		vextract = []
+		hosts = self._italc.ipAddresses( students_only = True )
+
+		# print mode
+		if request.options[ 'printMode' ] in ( 'none', 'all' ):
+			vextract.append( 'samba/printmode/hosts/%s' % request.options[ 'printMode' ] )
+			vappend[ vextract[ -1 ] ] = hosts
+			vunset.append( 'samba/printmode/room/%s' % self._italc.room )
+			vset[ vunset[ -1 ] ] = request.options[ 'printMode' ]
+		else:
+			vunset_now.append( 'samba/printmode/room/%s' % self._italc.room )
+
+		# share mode
+		if request.options[ 'shareMode' ] in ( 'none', 'home' ):
+			vunset.append( 'samba/sharemode/room/%s' % self._italc.room )
+			vset[ vunset[ -1 ] ] = request.options[ 'shareMode' ]
+			if request.options[ 'shareMode' ] == 'home':
+				vextract.append( 'samba/othershares/hosts/deny' )
+				vappend[ vextract[ -1 ] ] = hosts
+			if request.options[ 'shareMode' ] == 'none':
+				vextract.append( 'samba/homes/hosts/deny' )
+				vappend[ vextract[ -1 ] ] = hosts
+		else:
+			vunset_now.append( 'samba/sharemode/room/%s' % self._italc.room )
+
+		# internet rule
+		if request.options[ 'internetRule' ] != 'none':
+			vextract.append( 'proxy/filter/room/%s/ip' % self._italc.room )
+			vappend[ vextract[ -1 ] ] = hosts
+			if request.options[ 'internetRule' ] == 'custom' and 'customRule' in request.options:
+				# remove old rules
+				i = 1
+				while True:
+					var = 'proxy/filter/setting-user/%s/domain/whitelisted/%d' % ( self._username, i )
+					if ucr.has_key( var ):
+						vunset_now.append( var )
+						i += 1
+					else:
+						break
+				vunset.append( 'proxy/filter/room/%s/rule' % self._italc.room )
+				vset[ vunset[ -1 ] ] = self._username
+				vset[ 'proxy/filter/setting-user/%s/filtertype' % self._username ] = 'whitelist-block'
+				i = 1
+				for domain in request.options.get( 'customRule' ).split( '\n' ):
+					if not domain:
+						continue
+					vset[ 'proxy/filter/setting-user/%s/domain/whitelisted/%d' % ( self._username, i ) ] = domain
+					i += 1
+			else:
+				vunset.append( 'proxy/filter/room/%s/rule' % self._italc.room )
+				vset[ vunset[ -1 ] ] = request.options[ 'internetRule' ]
+
+		## write configuration
+		# append values
+		ucr.load()
+		for key, value in vappend.items():
+			if ucr.has_key( key ):
+				old = set( ucr[ key ].split( ' ' ) )
+			else:
+				old = set()
+			new = set( value )
+			vset[ key ] = ' '.join( old.union( new ) )
+		# set values
+		ucr_vars = sorted( map( lambda x: '%s=%s' % x, vset.items() ) )
+		MODULE.info( 'Writing room rules: %s' % '\n'.join( ucr_vars ) )
+		handler_set( ucr_vars )
+		handler_unset( vunset_now )
+
+		# create at job to remove settings
+		unset_vars = map( lambda x: '-r "%s"' % x, vunset )
+		MODULE.info( 'Will remove: %s' % ' '.join( unset_vars ) )
+		extract_vars = map( lambda x: '-e "%s"' % x, vextract )
+		MODULE.info( 'Will extract: %s' % ' '.join( extract_vars ) )
+
+		cmd = '/usr/share/ucs-school-umc-computerroom/ucs-school-deactivate-rules %s %s %s' % ( ' '.join( unset_vars ), ' '.join( extract_vars ), ' '.join( hosts ) )
+		MODULE.info( 'at job command is: %s' % cmd )
+		endtime = None
+		for lesson in self._lessons.lessons:
+			if lesson.name == request.options[ 'period' ]:
+				endtime = lesson.end
+				break
+		if endtime is None:
+			raise UMC_CommandError( 'unknown school lesson' )
+
+		starttime = datetime.datetime.now()
+		MODULE.info( 'Now: %s' % starttime )
+		MODULE.info( 'Endtime: %s' % endtime )
+		starttime = starttime.replace( hour = endtime.hour, minute = endtime.minute )
+		MODULE.info( 'Remove settings at %s' % starttime )
+		atjobs.add( cmd, starttime, { Instance.ATJOB_KEY: self._italc.room } )
+		self.finished( request.id, True )
 
 	def demo_start( self, request ):
 		"""Starts a demo

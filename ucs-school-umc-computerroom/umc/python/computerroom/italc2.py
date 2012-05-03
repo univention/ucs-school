@@ -96,24 +96,24 @@ class UserMap( dict ):
 		return dict.__getitem__( self, user )
 
 	@LDAP_Connection()
-	def _read_user( self, user, ldap_user_read = None, ldap_position = None, search_base = None ):
-		match = UserMap.USER_REGEX.match( user )
+	def _read_user( self, userstr, ldap_user_read = None, ldap_position = None, search_base = None ):
+		match = UserMap.USER_REGEX.match( userstr )
 		if not match:
-			raise AttributeError( 'invalid key "%s"' % user )
+			raise AttributeError( 'invalid key "%s"' % userstr )
 		username = match.groupdict()[ 'username' ]
 		result = udm_modules.lookup( UserMap.UDM_USERS, None, ldap_user_read, filter = 'uid=%s' % username, scope = 'sub', base = search_base.users )
 		if not result:
 			MODULE.info( 'Unknown user "%s"' % username )
-			dict.__setitem__( self, user, '' )
+			dict.__setitem__( self, userstr, '' )
 		else:
 			userobj = UserInfo( result[ 0 ].dn )
-			for grp in user[ 'groups' ]:
+			for grp in result[ 0 ][ 'groups' ]:
 				if grp.endswith( search_base.workgroups ):
 					userobj.workgroups.append( udm_uldap.explodeDn( grp, True )[ 0 ] )
 				elif grp.endswith( search_base.classes ):
 					userobj.school_class = udm_uldap.explodeDn( grp, True )[ 0 ]
 			userobj.isTeacher = userobj.dn.endswith( search_base.teachers )
-			dict.__setitem__( self, user, userobj )
+			dict.__setitem__( self, userstr, userobj )
 
 _usermap = UserMap()
 
@@ -238,7 +238,6 @@ class ITALC_Computer( notifier.signals.Provider, QObject ):
 	def _stateChanged( self, state ):
 		self._state.set( ITALC_Computer.CONNECTION_STATES[ state ] )
 
-		MODULE.warn( '%s: current state: %s' % ( str( self.name ), str( self._state.current ) ) )
 		if not self._core and self._state.current == 'connected' and self._state.old == 'disconnected':
 			self._core = italc.ItalcCoreConnection( self._vnc )
 			self._core.receivedUserInfo.connect( self._userInfo )
@@ -316,7 +315,7 @@ class ITALC_Computer( notifier.signals.Provider, QObject ):
 	def isTeacher( self, ldap_user_read = None, ldap_position = None, search_base = None ):
 		global _usermap
 		try:
-			return _usermap[ str( self.user.current ) ].isTeacher
+			return _usermap[ str( self._username.current ) ].isTeacher
 		except AttributeError:
 			return False
 
@@ -505,7 +504,6 @@ class ITALC_Manager( dict, notifier.signals.Provider ):
 		self._clear()
 		self._school = value
 
-	@property
 	def ipAddresses( self, students_only = True ):
 		if students_only:
 			return map( lambda x: x.ipAddress, filter( lambda x: not x.isTeacher, self.values() ) )
@@ -525,6 +523,8 @@ class ITALC_Manager( dict, notifier.signals.Provider ):
 		grp_module = udm_modules.get( 'groups/group' )
 		if not grp_module:
 			raise ITALC_Error( 'Unknown computer room' )
+		# create search base for current school
+		search_base = SchoolSearchBase( search_base.availableSchools, self._school )
 		if room.startswith( 'cn=' ):
 			groupresult = [ udm_objects.get( grp_module, None, ldap_user_read, ldap_position, room ) ]
 		else:

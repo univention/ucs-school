@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: ucs-school-umc-computerroom\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
 "POT-Creation-Date: 2012-04-27 15:38+0200\n"
-"PO-Revision-Date: 2012-04-27 15:39+0200\n"
+"PO-Revision-Date: 2012-05-03 09:05+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
@@ -22,7 +22,7 @@ msgstr "Aktionen"
 
 #: umc/js/_computerroom/Settings.js:69
 msgid "Active web access profile"
-msgstr "Akive Internetregeln"
+msgstr "Aktive Internetregeln"
 
 #: umc/js/computerroom.js:638
 msgid "Cancel"
