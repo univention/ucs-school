@@ -50,11 +50,15 @@ if __name__ == '__main__':
 
 	# extract values
 	for variable in options.extract:
-		if ucr.has_key( variable ):
+		if ucr.has_key( variable ) and ucr[ variable ]:
 			old = set( ucr[ variable ].split( ' ' ) )
 		else:
 			old = set()
-		vset[ variable ] = ' '.join( old.difference( hosts ) )
+		new = old.difference( hosts )
+		if new:
+			vset[ variable ] = ' '.join( new )
+		else:
+			options.remove.append( variable )
 
 	handler_set( map( lambda x: '%s=%s' % x, vset.items() ) )
 

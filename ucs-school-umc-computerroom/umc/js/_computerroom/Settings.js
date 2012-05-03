@@ -153,6 +153,10 @@ dojo.declare("umc.modules._computerroom.SettingsDialog", [ dijit.Dialog, umc.wid
 		} ) );
 	},
 
+	personalActive: function() {
+		return this._form.getWidget( 'internetRule' ).get( 'value' ) != 'none' || this._form.getWidget( 'shareMode' ).get( 'value' ) != 'all' || this._form.getWidget( 'printMode' ).get( 'value' ) != 'default'
+	},
+
 	onClose: function() {
 		// event stub
 	}

@@ -1,3 +1,10 @@
+ucs-school-umc-computerroom (0.1.14-1) unstable; urgency=low
+
+  * further improvements to settings dialog and backend; Bug #25702
+  * add information how long the settings are valid
+
+ -- Andreas Büsching <buesching@univention.de>  Thu, 03 May 2012 22:51:50 +0200
+
 ucs-school-umc-computerroom (0.1.13-1) unstable; urgency=low
 
   * restrict access to an active session to only one user; Bug #26354

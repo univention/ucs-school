@@ -456,8 +456,8 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 									  id: this._settingsDialog.id
 								  } );
 		var labelValidTo = dojo.replace( '<b>{lblTime}</b>: {time}', {
-									  lblTime: this._( 'valid to' ),
-									  time: '10:15'
+									  lblTime: this._( 'valid for' ),
+									  time: '-'
 		} );
 		this._profileInfo = new umc.widgets.Text( {
 			content: label,
@@ -774,6 +774,14 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 				this._grid._updateFooterContent();
 			}
 
+			if ( response.result.settingEndsIn ) {
+				var labelValidTo = dojo.replace( '<b>{lblTime}</b>: {time} minutes', {
+					lblTime: this._( 'valid for' ),
+					time: response.result.settingEndsIn
+				} );
+
+				this._validTo.set( 'content', labelValidTo );
+			}
 			this._updateTimer = window.setTimeout( dojo.hitch( this, '_updateRoom' ), 2000 );
 
 			// update the grid actions

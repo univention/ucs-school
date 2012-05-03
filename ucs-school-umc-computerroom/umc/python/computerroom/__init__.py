@@ -33,9 +33,11 @@
 
 import datetime
 import os
-import json
+import shlex
+import subprocess
 import fcntl
 from random import Random
+import subprocess
 
 from univention.management.console.config import ucr
 
@@ -120,6 +122,7 @@ class Instance( SchoolBaseModule ):
 		self._random = Random()
 		self._random.seed()
 		self._lessons = SchoolLessons()
+		self._ruleEndAt = None
 
 	def lessons( self, request ):
 		"""Returns a list of school lessons. Lessons in the past are filtered out"""
@@ -229,8 +232,6 @@ class Instance( SchoolBaseModule ):
 
 		return: [ { 'id' : <unique identifier>, 'states' : <display name>, 'color' : <name of favorite color> }, ... ]
 		"""
-		MODULE.warn( 'Update: start' )
-		MODULE.warn( 'Update: Current school: %s, current room: %s' % ( str( self._italc.school ), str( self._italc.room ) ) )
 
 		if not self._italc.school or not self._italc.room:
 			raise UMC_CommandError( 'no room selected' )
@@ -271,6 +272,14 @@ class Instance( SchoolBaseModule ):
 				# could not oben the LDAP object, show the DN
 				result['user'] = userDN
 				MODULE.warn( 'Cannot open LDAP information for user "%s": %s' % (userDN, e) )
+
+		# settings info
+		if self._ruleEndAt is not None:
+			now = datetime.datetime.now()
+			end = datetime.datetime.now()
+			end = end.replace( hour = self._ruleEndAt.hour, minute = self._ruleEndAt.minute )
+			diff = end - now
+			result[ 'settingEndsIn' ] = diff.seconds / 60
 
 		MODULE.info( 'Update: result: %s' % str( result ) )
 		self.finished( request.id, result )
@@ -373,7 +382,9 @@ class Instance( SchoolBaseModule ):
 		jobs = atjobs.list( extended = True )
 		for job in jobs:
 			if Instance.ATJOB_KEY in job.comments and job.comments[ Instance.ATJOB_KEY ] == self._italc.room:
-				atjobs.reschedule( job.nr, None ) # start now
+				job.rm()
+				subprocess.call( shlex.split( job.command ) )
+				# atjobs.reschedule( job.nr, None ) # start now
 				break
 
 		## collect new settings
@@ -432,22 +443,36 @@ class Instance( SchoolBaseModule ):
 			else:
 				vunset.append( 'proxy/filter/room/%s/rule' % self._italc.room )
 				vset[ vunset[ -1 ] ] = request.options[ 'internetRule' ]
-
+		else:
+			vunset_now.append( 'proxy/filter/room/%s/ip' % self._italc.room )
+			vunset_now.append( 'proxy/filter/room/%s/rule' % self._italc.room )
 		## write configuration
+		# remove old values
+		handler_unset( vunset_now )
+
 		# append values
 		ucr.load()
+		MODULE.info( 'Merging UCR variables' )
 		for key, value in vappend.items():
-			if ucr.has_key( key ):
+			if ucr.has_key( key ) and ucr[ key ]:
 				old = set( ucr[ key ].split( ' ' ) )
+				MODULE.info( 'Old value: %s' % old )
 			else:
 				old = set()
+				MODULE.info( 'Old value empty' )
 			new = set( value )
-			vset[ key ] = ' '.join( old.union( new ) )
+			MODULE.info( 'New value: %s' % new )
+			new = old.union( new )
+			MODULE.info( 'Merged value of %s: %s' % ( key, new ) )
+			if not new:
+				MODULE.info( 'Unset variable %s' % key )
+				vunset.append( key )
+			else:
+				vset[ key ] = ' '.join( new )
 		# set values
 		ucr_vars = sorted( map( lambda x: '%s=%s' % x, vset.items() ) )
 		MODULE.info( 'Writing room rules: %s' % '\n'.join( ucr_vars ) )
 		handler_set( ucr_vars )
-		handler_unset( vunset_now )
 
 		# create at job to remove settings
 		unset_vars = map( lambda x: '-r "%s"' % x, vunset )
@@ -471,6 +496,7 @@ class Instance( SchoolBaseModule ):
 		starttime = starttime.replace( hour = endtime.hour, minute = endtime.minute )
 		MODULE.info( 'Remove settings at %s' % starttime )
 		atjobs.add( cmd, starttime, { Instance.ATJOB_KEY: self._italc.room } )
+		self._ruleEndAt = starttime
 		self.finished( request.id, True )
 
 	def demo_start( self, request ):
