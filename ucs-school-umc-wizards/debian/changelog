@@ -1,3 +1,9 @@
+ucs-school-umc-wizards (1.0.17-1) unstable; urgency=low
+
+  * The user wizard now accepts passwords (Bug #26959)
+
+ -- Jascha Geerds <geerds@univention.de>  Fri, 04 May 2012 16:22:07 +0200
+
 ucs-school-umc-wizards (1.0.16-1) unstable; urgency=low
 
   * Add a class name prefix for the user wizard

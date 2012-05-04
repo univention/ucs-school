@@ -76,11 +76,6 @@ dojo.declare("umc.modules._schoolwizards.UserWizard", [ umc.modules._schoolwizar
 			helpText: this._('Enter the user\'s details'),
 			widgets: [{
 				type: 'TextBox',
-				name: 'username',
-				label: this._('Username'),
-				required: true
-			}, {
-				type: 'TextBox',
 				name: 'firstname',
 				label: this._('Firstname'),
 				required: true
@@ -91,18 +86,28 @@ dojo.declare("umc.modules._schoolwizards.UserWizard", [ umc.modules._schoolwizar
 				required: true
 			}, {
 				type: 'TextBox',
-				name: 'mailPrimaryAddress',
-				label: this._('E-Mail')
+				name: 'username',
+				label: this._('Username'),
+				required: true
 			}, {
 				type: 'TextBox',
 				name: 'class',
 				label: this._('Class'),
 				required: true
+			}, {
+				type: 'TextBox',
+				name: 'mailPrimaryAddress',
+				label: this._('E-Mail')
+			}, {
+				type: 'TextBox',
+				name: 'password',
+				label: this._('Password')
 			}],
-			layout: [['username'],
-			         ['firstname', 'lastname'],
+			layout: [['firstname', 'lastname'],
+			         ['username'],
+			         ['class'],
 			         ['mailPrimaryAddress'],
-			         ['class']]
+			         ['password']]
 		}];
 	},
 

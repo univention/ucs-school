@@ -81,12 +81,12 @@ class SchoolImport():
 				tmpfile.close()
 
 	def import_user(self, username, lastname, firstname, school, class_,
-	                mail_primary_address, teacher, staff):
+	                mail_primary_address, teacher, staff, password):
 		"""Imports a new user
 		"""
 		class_ = '%s-%s' % (school, class_)
 		entry = ['A', username, lastname, firstname, school, class_, '',
-		         mail_primary_address, teacher, True, staff, ]
+		         mail_primary_address, teacher, True, staff, password, ]
 
 		return_code = self._run_script(SchoolImport.USER_SCRIPT, entry)
 		if return_code:

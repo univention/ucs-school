@@ -129,7 +129,8 @@ class Instance(SchoolBaseModule, SchoolImport):
 			                 request.options.get('class', ''),
 			                 request.options.get('mailPrimaryAddress', ''),
 			                 isTeacher,
-			                 isStaff)
+			                 isStaff,
+			                 request.options.get('password', ''))
 		except (ValueError, IOError, OSError), err:
 			MODULE.info(str(err))
 			result = {'message': str(err)}
