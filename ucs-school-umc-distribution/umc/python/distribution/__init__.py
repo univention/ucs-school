@@ -138,8 +138,8 @@ class Instance( SchoolBaseModule ):
 		group = None
 		user_type = None
 		param = request.options.get('group')
-		if not param or param == '$pupils$':
-			user_type = 'pupils'
+		if not param or param == '$students$':
+			user_type = 'students'
 		elif param == '$teachers$':
 			user_type = 'teachers'
 		else:

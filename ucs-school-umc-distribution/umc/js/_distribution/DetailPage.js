@@ -149,8 +149,8 @@ dojo.declare("umc.modules._distribution.DetailPage", [ umc.widgets.Page, umc.wid
 		}, {
 			type: 'MultiObjectSelect',
 			name: 'recipients',
-			label: this._('Pupils'),
-			description: this._('List of pupils that are marked to receive the teaching materials'),
+			label: this._('Members'),
+			description: this._('List of users that are marked to receive the teaching materials'),
 			queryWidgets: [{
 				type: 'ComboBox',
 				name: 'school',
@@ -164,7 +164,7 @@ dojo.declare("umc.modules._distribution.DetailPage", [ umc.widgets.Page, umc.wid
 				label: this._('User group / class'),
 				depends: 'school',
 				staticValues: [
-					{ id: '$pupils$', label: this._('All pupils') },
+					{ id: '$students$', label: this._('All students') },
 					{ id: '$teachers$', label: this._('All teachers') }
 				],
 				dynamicValues: 'distribution/classes',

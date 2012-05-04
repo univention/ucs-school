@@ -134,7 +134,7 @@ dojo.declare("umc.modules.distribution", [ umc.widgets.Module, umc.i18n.Mixin ],
 				}
 				return !item.isDistributed ? this._('distribute') : this._('collect');
 			}),
-			description: this._('Distribute project files to pupils'),
+			description: this._('Distribute/collect project files to/from users'),
 			isStandardAction: true,
 			isMultiAction: false,
 			callback: dojo.hitch(this, '_distribute')

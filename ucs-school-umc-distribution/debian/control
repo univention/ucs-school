@@ -19,9 +19,9 @@ Depends: ${misc:Depends},
  ucs-school-umc-common,
  python-ucs-school,
  shell-ucs-school
-Description: UMC module to distribute/collect teaching material to/from pupils home directories
+Description: UMC module to distribute/collect teaching material to/from student home directories
  This package provides a Univention Management Console module to distribute
- teaching material into pupils home directory and to collect their results.
+ teaching material into student home directory and to collect their results.
  .
  It is part of Univention Corporate Server (UCS), an
  integrated, directory driven solution for managing
