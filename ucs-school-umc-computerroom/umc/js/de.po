@@ -52,7 +52,7 @@ msgid ""
 "been closed. In case this behaviour was not intended, please contact the "
 "other user. You can regain control over the computer room, by choosing it "
 "from the list of rooms again."
-msgstr ""
+msgstr "Die Kontrolle des Raumes wurde übernommen durch \"%s\", Ihre Sitzung wurde daher geschlossen. Sollte dieses Verhalten nicht beabsichtigt gewesen sein, setzen Sie sich bitte mit dem anderen Benutzer in Verbindung. Sie können die Kontrolle des Raumes wieder übernehmen durch seine Auswahl in der Liste aller Räume."
 
 #: umc/js/_computerroom/Settings.js:96
 msgid "Default setting"
@@ -64,7 +64,7 @@ msgstr "Definiert Einschränkungen für den Zugriff auf Freigaben"
 
 #: umc/js/computerroom.js:630
 msgid "Failed to open a new session for the room."
-msgstr ""
+msgstr "Eine neue Sitzung für den Raum konnte nicht geöffnet werden."
 
 #: umc/js/_computerroom/Settings.js:98
 msgid "Free printing"
@@ -108,7 +108,7 @@ msgstr "Keine"
 
 #: umc/js/computerroom.js:751
 msgid "Ok"
-msgstr ""
+msgstr "Ok"
 
 #: umc/js/computerroom.js:779
 msgid "Personal settings are active"
@@ -188,7 +188,7 @@ msgstr "Computer einschalten"
 
 #: umc/js/computerroom.js:612
 msgid "Take over"
-msgstr ""
+msgstr "Übernehmen"
 
 #: umc/js/computerroom.js:370
 msgid "The computer is not running"
@@ -222,7 +222,7 @@ msgid ""
 "This computer room is currently in use by %s. You can take control over the "
 "room, however, the current teacher will be prompted a notification and its "
 "session will be closed."
-msgstr ""
+msgstr "Dieser Computerraum wird derzeit verwendet von %s. Sie können die Kontrolle des Raums übernehmen, dazu wird dem momentanen Lehrer ein Hinweis angezeigt und seine Sitzung geschlossen."
 
 #: umc/js/_computerroom/ScreenshotView.js:234
 msgid ""

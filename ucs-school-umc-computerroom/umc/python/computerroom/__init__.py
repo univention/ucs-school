@@ -160,7 +160,7 @@ class Instance( SchoolBaseModule ):
 		for iroom in self._groups( ldap_user_read, search_base.school, search_base.rooms ):
 			# add room status information
 			userDN = _getRoomOwner(iroom['id'])
-			if userDN:
+			if userDN and userDN != self._user_dn:
 				# the room is currently locked by another user
 				iroom['locked'] = True
 				try:

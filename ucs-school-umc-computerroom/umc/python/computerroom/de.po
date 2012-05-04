@@ -14,9 +14,9 @@ msgstr ""
 
 #: umc/python/computerroom/__init__.py:189
 msgid "A different user is already running a computerroom session."
-msgstr ""
+msgstr "Ein anderer Benutzer hat bereits eine offene Computerraumsitzung."
 
 #: umc/python/computerroom/__init__.py:73
 #, python-format
 msgid "Invalid room DN: %s"
-msgstr ""
+msgstr "Ungültige Raum-DN: %s"
