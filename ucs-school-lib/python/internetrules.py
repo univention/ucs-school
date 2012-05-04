@@ -119,7 +119,7 @@ class Rule(object):
 			# this is a user rule which has a different prefix
 			prefix = 'proxy/filter/setting-user/%s' % self.name
 		if not orgRule or orgRule.type != self.type:
-			vars.append('%s/filtertype=%s' % (prefix, _listTypesInv[self.type]))
+			vars.append('%s/filtertype=%s' % (prefix, _filterTypesInv[self.type]))
 		if not orgRule or orgRule.priority != self.priority:
 			vars.append('%s/priority=%s' % (prefix, self.priority))
 		if not orgRule or orgRule.wlan != self.wlan:

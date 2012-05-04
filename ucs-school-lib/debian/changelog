@@ -1,3 +1,9 @@
+ucs-school-lib (1.0.41-1) unstable; urgency=low
+
+  * fixed rule type when saving rules; Bug #25704
+
+ -- Alexander Kläser <klaeser@univention.de>  Fri, 04 May 2012 15:02:55 +0200
+
 ucs-school-lib (1.0.40-1) unstable; urgency=low
 
   * Python: Fix some schoollessons bugs (Bug #26748)
