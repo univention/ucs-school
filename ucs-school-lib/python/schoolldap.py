@@ -434,7 +434,7 @@ class SchoolBaseModule( Base ):
 		bases = [ search_base.users ]
 		if user_type and user_type.lower() in ('teacher', 'teachers'):
 			bases = [ search_base.teachers, search_base.teachersAndStaff, search_base.admins ]
-		elif user_type and user_type.lower() in ('student', 'students'):
+		elif user_type and user_type.lower() in ('student', 'students', 'pupil', 'pupils'):
 			bases = [ search_base.students ]
 
 		# open the group
