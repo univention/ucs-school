@@ -184,19 +184,19 @@ def createTemporaryConfig(fn_temp_config, configRegistry, DIR_TEMP):
 	f.write('}\n\n')
 	touchfnlist.extend( ['whitelisted-domain', 'whitelisted-url'] )
 
-	for proxy_setting in proxy_settinglist + [username + '-user' for username in roomRule]:
-		f.write('dest blacklist-%s {\n' % quote(proxy_setting))
-		f.write('	 domainlist blacklisted-domain-%s\n' % quote(proxy_setting))
-		f.write('	 urllist	blacklisted-url-%s\n' % quote(proxy_setting))
+	for proxy_setting in map(quote, proxy_settinglist) + [quote(username) + '-user' for username in roomRule]:
+		f.write('dest blacklist-%s {\n' % proxy_setting)
+		f.write('	 domainlist blacklisted-domain-%s\n' % proxy_setting)
+		f.write('	 urllist	blacklisted-url-%s\n' % proxy_setting)
 		f.write('}\n\n')
-		f.write('dest whitelist-%s {\n' % quote(proxy_setting))
-		f.write('	 domainlist whitelisted-domain-%s\n' % quote(proxy_setting))
-		f.write('	 urllist	whitelisted-url-%s\n' % quote(proxy_setting))
+		f.write('dest whitelist-%s {\n' % proxy_setting)
+		f.write('	 domainlist whitelisted-domain-%s\n' % proxy_setting)
+		f.write('	 urllist	whitelisted-url-%s\n' % proxy_setting)
 		f.write('}\n\n')
-		touchfnlist.extend( ['blacklisted-domain-%s' % quote(proxy_setting),
-							 'blacklisted-url-%s' % quote(proxy_setting),
-							 'whitelisted-domain-%s' % quote(proxy_setting),
-							 'whitelisted-url-%s' % quote(proxy_setting),
+		touchfnlist.extend( ['blacklisted-domain-%s' % proxy_setting,
+							 'blacklisted-url-%s' % proxy_setting,
+							 'whitelisted-domain-%s' % proxy_setting,
+							 'whitelisted-url-%s' % proxy_setting,
 							 ] )
 
 	f.write('acl {\n')
