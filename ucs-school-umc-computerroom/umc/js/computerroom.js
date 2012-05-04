@@ -724,6 +724,9 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 			this._currentSchool = school;
 			this._currentRoom = room;
 		}
+		if ( this._updateTimer ) {
+			window.clearTimeout( this._updateTimer );
+		}
 		this.umcpCommand( 'computerroom/query', {
 			school: school,
 			room: room
@@ -732,10 +735,7 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 			dojo.forEach( response.result, function( item ) {
 				this._objStore.put( item );
 			}, this );
-			if ( this._updateTimer ) {
-				window.clearTimeout( this._updateTimer );
-			}
-			this._updateTimer = window.setTimeout( dojo.hitch( this, '_updateRoom' ), 2000 );
+			this._updateTimer = window.setTimeout( dojo.hitch( this, '_updateRoom', {} ), 2000 );
 		} ) );
 	},
 
@@ -787,7 +787,7 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 										  id: this._settingsDialog.id
 									  } );
 			this._profileInfo.set( 'content', label )
-			this._updateTimer = window.setTimeout( dojo.hitch( this, '_updateRoom' ), 2000 );
+			this._updateTimer = window.setTimeout( dojo.hitch( this, '_updateRoom', {} ), 2000 );
 
 			// update the grid actions
 			this._dataStore.fetch( {
