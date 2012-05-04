@@ -34,64 +34,33 @@ dojo.require("umc.dialog");
 dojo.require("umc.i18n");
 dojo.require("umc.tools");
 dojo.require("umc.widgets.ExpandingTitlePane");
+dojo.require("umc.widgets.Form");
 dojo.require("umc.widgets.Module");
 dojo.require("umc.widgets.Page");
-dojo.require("umc.widgets.Form");
 
 dojo.declare("umc.modules.lessontimes", [ umc.widgets.Module, umc.i18n.Mixin ], {
-	// summary:
-	//		Template module to ease the UMC module development.
-	// description:
-	//		This module is a template module in order to aid the development of
-	//		new modules for Univention Management Console.
-
 	postMixInProperties: function() {
-		// is called after all inherited properties/methods have been mixed
-		// into the object (originates from dijit._Widget)
-
-		// it is important to call the parent's postMixInProperties() method
 		this.inherited(arguments);
-
-		// Set the opacity for the standby animation to 100% in order to mask
-		// GUI changes when the module is opened. Call this.standby(true|false)
-		// to enabled/disable the animation.
 		this.standbyOpacity = 1;
 	},
 
 	buildRendering: function() {
-		// is called after all DOM nodes have been setup
-		// (originates from dijit._Widget)
-
-		// it is important to call the parent's buildRendering() method
 		this.inherited(arguments);
-
-		// start the standby animation in order prevent any interaction before the
-		// form values are loaded
 		this.standby(true);
 
-		// render the page containing search form and grid
-		this.umcpCommand( 'lessontimes/configuration' ).then( dojo.hitch( this, function( response ) {
-			if ( response.result.sender ) {
-				this.renderPage( response.result );
-				this.standby( false );
-			} else {
-				umc.dialog.alert( this._( 'The lessontimes module is not configured properly' ) );
-			}
-		} ) );
+		this.umcpCommand('lessontimes/get').then(dojo.hitch(this, function(response) {
+			this.renderPage(response.result);
+			this.standby(false);
+		}));
 	},
 
-	renderPage: function( defaultValues ) {
+	renderPage: function(values) {
 		// umc.widgets.ExpandingTitlePane is an extension of dijit.layout.BorderContainer
-		var titlePane = new umc.widgets.ExpandingTitlePane( {
-			title: this._( 'Lesson times' )
-		} );
+		var titlePane = new umc.widgets.ExpandingTitlePane({
+			title: this._('Lesson times')
+		});
 
-		//
-		// form
-		//
-
-		// add remaining elements of the search form
-		var widgets = [ {
+		var widgets = [{
 			type: 'MultiInput',
 			name: 'lessons',
 			label: this._(''),
@@ -108,23 +77,12 @@ dojo.declare("umc.modules.lessontimes", [ umc.widgets.Module, umc.i18n.Mixin ], 
 				label: this._('End time'),
 				size: 'OneThird'
 			}],
-			value: [
-				['1. Stunde', '08:00', '08:45'],
-				['2. Stunde', '08:50', '09:35'],
-				['3. Stunde', '09:50', '10:35'],
-				['4. Stunde', '10:40', '11:25'],
-				['5. Stunde', '11:40', '12:25'],
-				['6. Stunde', '12:30', '13:15']
-			]
-		} ];
+			value: values
+		}];
 
-		// the layout is an 2D array that defines the organization of the form elements...
-		// here we arrange the form elements in one row and add the 'submit' button
-		var layout = [ 'lessons' ];
+		var layout = ['lessons'];
 
-		// generate the form
 		this._form = new umc.widgets.Form({
-			// property that defines the widget's position in a dijit.layout.BorderContainer
 			region: 'top',
 			widgets: widgets,
 			layout: layout,
@@ -132,46 +90,35 @@ dojo.declare("umc.modules.lessontimes", [ umc.widgets.Module, umc.i18n.Mixin ], 
 		});
 
 		// turn off the standby animation as soon as all form values have been loaded
-		this.connect( this._form, 'onValuesInitialized', function() {
-			this.standby( false );
+		this.connect(this._form, 'onValuesInitialized', function() {
+			this.standby(false);
 		});
 
-		// add form to the title pane
 		titlePane.addChild(this._form);
 
-		// submit changes
-		var buttons = [ {
+		var buttons = [{
             name: 'submit',
-            label: this._( 'Send' ),
+            label: this._('Submit'),
             'default': true,
-            callback: dojo.hitch( this, function() {
+            callback: dojo.hitch(this, function() {
 				var values = this._form.gatherFormValues();
-				if ( values.message ) {
-					this.onSubmit( this._form.gatherFormValues() );
-				} else {
-					umc.dialog.alert( 'A message is missing!' );
-				}
-            } )
+	            this.onSubmit(values);
+            })
         }, {
             name: 'close',
             label: this._('Close'),
             callback: dojo.hitch(this, function() {
-				var values = this._form.gatherFormValues();
-				if ( values.message ) {
-					umc.dialog.confirm( this._( 'Should the UMC module be closed? All unsaved modification will be lost.' ), [ {
-						label: this._( 'Close' ),
-						callback: dojo.hitch( this, function() {
-							dojo.publish('/umc/tabs/close', [ this ] );
-						} )
-					}, {
-						label: this._( 'Cancel' ),
-						'default': true
-					} ] );
-				} else {
-					dojo.publish('/umc/tabs/close', [ this ] );
-				}
-            } )
-        } ];
+	            umc.dialog.confirm(this._('Should the UMC module be closed? All unsaved modification will be lost.'), [{
+		            label: this._('Close'),
+		            callback: dojo.hitch(this, function() {
+			            dojo.publish('/umc/tabs/close', [this]);
+		            })
+	            }, {
+		            label: this._('Cancel'),
+		            'default': true
+	            }]);
+            })
+        }];
 
 		this._page = new umc.widgets.Page({
 			headerText: this.description,
@@ -180,20 +127,12 @@ dojo.declare("umc.modules.lessontimes", [ umc.widgets.Module, umc.i18n.Mixin ], 
 		});
 
 		this.addChild(this._page);
-		this._page.addChild( titlePane );
+		this._page.addChild(titlePane);
 	},
 
-	onSubmit: function( values ) {
-		this.umcpCommand( 'lessontimes/send', values ).then( dojo.hitch( this, function ( response ) {
-			if ( response.result ) {
-				umc.dialog.alert( this._( 'The message has been sent' ) );
-				this._form._widgets.message.set( 'value', '' );
-			} else {
-				umc.dialog.alert( this._( 'The message could not be send: ' ) + response.message );
-			}
-		} ) );
+	onSubmit: function(values) {
+		this.umcpCommand('lessontimes/set', values).then(dojo.hitch(this, function (response) {
+			console.log('onSubmit', values);
+		}));
 	}
 });
-
-
-

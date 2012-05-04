@@ -7,9 +7,9 @@
 	  <category name="ucs-school-admin"/>
 	</categories>
 
-	<command name="lessontimes/configuration" function="configuration">
+	<command name="lessontimes/get" function="get">
 	</command>
-	<command name="lessontimes/send" function="send">
+	<command name="lessontimes/set" function="set">
 	</command>
   </module>
 </umc>
