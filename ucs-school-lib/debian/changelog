@@ -1,3 +1,13 @@
+ucs-school-lib (1.0.40-1) unstable; urgency=low
+
+  * Python: Fix some schoollessons bugs (Bug #26748)
+    - Verify the type of the lesson name
+    - Prevent duplicate lesson names
+    - Fix the remove function
+    - Merge add/append functions
+
+ -- Jascha Geerds <geerds@univention.de>  Thu, 03 May 2012 14:38:45 +0200
+
 ucs-school-lib (1.0.39-1) unstable; urgency=low
 
   * Python: Fix a typo (for Bug #26748)

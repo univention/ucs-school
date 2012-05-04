@@ -50,11 +50,16 @@ LESSONS_BACKUP = '/var/lib/ucs-school-lib/lessons.bak'
 class Lesson( object ):
 	TIME_REGEX = re.compile( r'^([01][0-9]|2[0-3]|[0-9]):([0-5][0-9])' )
 	def __init__( self, name, begin, end ):
-		self._name = name
+		self._name = self._check_name(name)
 		self._begin = self._parse_time( begin )
 		self._end = self._parse_time( end )
 		if self._end <= self._begin:
 			raise AttributeError( 'end time before or equal to start time' )
+
+	def _check_name(self, string):
+		if not isinstance(string, basestring):
+			raise TypeError('string expected')
+		return string
 
 	def _parse_time( self, string ):
 		if not isinstance( string, basestring ):
@@ -100,27 +105,25 @@ class SchoolLessons( ConfigParser.ConfigParser ):
 		for sec in self.sections():
 			try:
 				l = Lesson( sec, self.get( sec, 'begin' ), self.get( sec, 'end' ) )
-				self.append( l )
+				self.add(l)
 			except ( AttributeError, TypeError ), e:
 				MODULE.warn( 'Lesson %s could not be added: %s' % ( sec, str( e ) ) )
-
-	def append( self, lesson ):
-		# ensure there is no intersection between the lessons
-		for item in self._lessons:
-			if lesson.intersect( item ):
-				raise AttributeError( 'lesson intersects with existing one' )
-
-		self._lessons.append( lesson )
 
 	def remove( self, lesson ):
 		if isinstance( lesson, Lesson ):
 			lesson = lesson.name
 
-		self.remove_section( lesson )
+		self._lessons[:] = [l for l in self._lessons if l.name != lesson]
 
 	def add( self, lesson, begin = None, end = None ):
 		if isinstance( lesson, basestring ):
 			lesson = Lesson( lesson, begin, end )
+
+		# ensure there is no intersection between the lessons
+		for item in self._lessons:
+			if lesson.intersect(item) or lesson.name == item.name:
+				raise AttributeError('lesson intersects with existing one')
+
 		self._lessons.append( lesson )
 
 	def save( self ):
