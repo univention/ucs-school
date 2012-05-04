@@ -38,6 +38,7 @@ import subprocess
 import fcntl
 from random import Random
 import subprocess
+import urlparse
 
 from univention.management.console.config import ucr
 
@@ -275,14 +276,20 @@ class Instance( SchoolBaseModule ):
 
 		# settings info
 		if self._ruleEndAt is not None:
-			now = datetime.datetime.now()
-			end = datetime.datetime.now()
-			end = end.replace( hour = self._ruleEndAt.hour, minute = self._ruleEndAt.minute )
-			diff = end - now
-			result[ 'settingEndsIn' ] = diff.seconds / 60
+			diff = self._positiveTimeDiff()
+			if diff is not None:
+				result[ 'settingEndsIn' ] = diff.seconds / 60
 
 		MODULE.info( 'Update: result: %s' % str( result ) )
 		self.finished( request.id, result )
+
+	def _positiveTimeDiff( self ):
+		now = datetime.datetime.now()
+		end = datetime.datetime.now()
+		end = end.replace( hour = self._ruleEndAt.hour, minute = self._ruleEndAt.minute )
+		if now > end:
+			return None
+		return end - now
 
 	def lock( self, request ):
 		"""Returns the objects for the given IDs
@@ -357,11 +364,37 @@ class Instance( SchoolBaseModule ):
 			if key.startswith( key_prefix ):
 				custom_rules.append( ucr[ key ] )
 
+		printMode = ucr.get( 'samba/printmode/room/%s' % self._italc.room, 'default' )
+		# find AT jobs for the room and execute it to remove current settings
+		jobs = atjobs.list( extended = True )
+		for job in jobs:
+			if Instance.ATJOB_KEY in job.comments and job.comments[ Instance.ATJOB_KEY ] == self._italc.room:
+				if job.execTime >= datetime.datetime.now():
+					self._ruleEndAt = job.execTime
+				break
+		else:
+			self._ruleEndAt = None
+
+		if rule == 'none' and shareMode == 'all' and printMode == 'default':
+			self._ruleEndAt = None
+
+		# find lesson:
+		period = self._lessons.current
+		if period is None:
+			period = self._lessons.previous
+		if self._ruleEndAt:
+			time = self._ruleEndAt.time()
+			for lesson in self._lessons.lessons:
+				if time == lesson.begin:
+					period = lesson
+					break
+
 		self.finished( request.id, {
 			'internetRule' : rule,
 			'customRule' : '\n'.join( custom_rules ),
 			'shareMode' : shareMode,
-			'printMode' : ucr.get( 'samba/printmode/room/%s' % self._italc.room, 'default' ),
+			'printMode' : printMode,
+			'period' : period.name
 			} )
 
 	def settings_set( self, request ):
@@ -384,8 +417,14 @@ class Instance( SchoolBaseModule ):
 			if Instance.ATJOB_KEY in job.comments and job.comments[ Instance.ATJOB_KEY ] == self._italc.room:
 				job.rm()
 				subprocess.call( shlex.split( job.command ) )
-				# atjobs.reschedule( job.nr, None ) # start now
 				break
+
+		# do we need to setup a new at job with custom settings?
+		MODULE.info( 'CRUNCHY: %s' % request.options )
+		if request.options[ 'internetRule' ] == 'none' and request.options[ 'shareMode' ] == 'all' and request.options[ 'printMode' ] == 'default':
+			self._ruleEndAt = None
+			self.finished( request.id, True )
+			return
 
 		## collect new settings
 		vset = {}
@@ -438,8 +477,10 @@ class Instance( SchoolBaseModule ):
 				for domain in request.options.get( 'customRule' ).split( '\n' ):
 					if not domain:
 						continue
-					vset[ 'proxy/filter/setting-user/%s/domain/whitelisted/%d' % ( self._username, i ) ] = domain
-					i += 1
+					parsed = urlparse.urlsplit( domain )
+					if parsed.netloc:
+						vset[ 'proxy/filter/setting-user/%s/domain/whitelisted/%d' % ( self._username, i ) ] = parsed.netloc
+						i += 1
 			else:
 				vunset.append( 'proxy/filter/room/%s/rule' % self._italc.room )
 				vset[ vunset[ -1 ] ] = request.options[ 'internetRule' ]

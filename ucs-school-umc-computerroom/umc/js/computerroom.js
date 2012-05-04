@@ -449,22 +449,12 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 		// this._titlePane.addChild(this._profileForm);
 
 		var _container = new umc.widgets.ContainerWidget( { region: 'top' } );
-		var label = dojo.replace( '{lblSettings} (<a href="javascript:void(0)" ' +
-								  'onclick=\'dijit.byId("{id}").show()\'>{changeLabel}</a>)', {
-									  lblSettings: this._( 'Personal settings are active' ),
-									  changeLabel: this._( 'change' ),
-									  id: this._settingsDialog.id
-								  } );
-		var labelValidTo = dojo.replace( '<b>{lblTime}</b>: {time}', {
-									  lblTime: this._( 'valid for' ),
-									  time: '-'
-		} );
 		this._profileInfo = new umc.widgets.Text( {
-			content: label,
+			content: '&nbsp;',
 			style: 'padding-bottom: 10px; padding-bottom; 10px; float: left;'
 		} );
 		this._validTo = new umc.widgets.Text( {
-			content: labelValidTo,
+			content: '&nbsp;',
 			style: 'padding-bottom: 10px; padding-bottom; 10px; float: right;'
 		} );
 
@@ -775,13 +765,28 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 			}
 
 			if ( response.result.settingEndsIn ) {
-				var labelValidTo = dojo.replace( '<b>{lblTime}</b>: {time} minutes', {
-					lblTime: this._( 'valid for' ),
+				var labelValidTo = dojo.replace( this._( 'valid for {time} minutes' ), {
 					time: response.result.settingEndsIn
 				} );
-
+				if ( response.result.settingEndsIn <= 5 ) {
+					labelValidTo = '<span style="color: red">' + labelValidTo + '</span>';
+				}
 				this._validTo.set( 'content', labelValidTo );
+			} else {
+				this._validTo.set( 'content', '&nbsp;' );
 			}
+
+			var text = this._( 'No personal settings for printing, share and internet access defined' );
+			if ( this._settingsDialog.personalActive() ) {
+				text = this._( 'Personal settings are active' );
+			}
+			var label = dojo.replace( '{lblSettings} (<a href="javascript:void(0)" ' +
+									  'onclick=\'dijit.byId("{id}").show()\'>{changeLabel}</a>)', {
+										  lblSettings: text,
+										  changeLabel: this._( 'change' ),
+										  id: this._settingsDialog.id
+									  } );
+			this._profileInfo.set( 'content', label )
 			this._updateTimer = window.setTimeout( dojo.hitch( this, '_updateRoom' ), 2000 );
 
 			// update the grid actions
