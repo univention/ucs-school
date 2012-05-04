@@ -218,6 +218,12 @@ class ucsschool_person_modify:
 		self.isTeacher = parseBoolstring (parsed, 8)
 		self.isActive  = parseBoolstring (parsed, 9, default='1')
 		self.isStaff   = parseBoolstring (parsed, 10)
+
+		if len(parsed) > 11:
+			self.password = parsed[11]
+		else:
+			self.password = None
+
 		self.problem_hints = ""
 
 		if generate_logins:
@@ -1491,7 +1497,10 @@ def import_user():
 
 		persons = [main_person]
 		persons.extend(main_person.getOtherPersons())
-		passwd = create_passwd(persons[0].getDN())
+		if main_person.password:
+			passwd = main_person.password
+		else:
+			passwd = create_passwd(persons[0].getDN())
 
 		# invoke pre hooks
 		hooks.pre( 'user', main_person.modtype, line = line )

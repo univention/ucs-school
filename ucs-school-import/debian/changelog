@@ -1,3 +1,10 @@
+ucs-school-import (8.0.44-1) unstable; urgency=low
+
+  * The function import_user now accepts passwords from the import
+    file (Bug #26959)
+
+ -- Jascha Geerds <geerds@univention.de>  Fri, 04 May 2012 15:00:48 +0200
+
 ucs-school-import (8.0.43-1) unstable; urgency=low
 
   * append username to sambahome (replaces %U) (Bug #25867)
