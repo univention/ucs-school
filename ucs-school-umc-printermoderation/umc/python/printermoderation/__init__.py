@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # Univention Management Console module:
-#   Moderating print jobs of pupils
+#   Moderating print jobs of students
 #
 # Copyright 2012 Univention GmbH
 #
@@ -110,7 +110,7 @@ class Instance( SchoolBaseModule ):
 		requests.options = {}
 		  'school' -- school OU (optional)
 		  'class' -- if not  set to 'all' the print jobs of the given class are listed only
-		  'pattern' -- search pattern that must match the name or username of the pupils
+		  'pattern' -- search pattern that must match the name or username of the students
 
 		return: [ { 'id' : <unique identifier>, 'name' : <display name>, 'color' : <name of favorite color> }, ... ]
 		"""
@@ -120,14 +120,14 @@ class Instance( SchoolBaseModule ):
 		klass = request.options.get( 'class' )
 		if klass in ( None, 'None' ):
 			klass = None
-		pupils = self._users( ldap_user_read, search_base, group = klass, user_type = 'pupil', pattern = request.options.get( 'pattern', '' ) )
+		students = self._users( ldap_user_read, search_base, group = klass, user_type = 'student', pattern = request.options.get( 'pattern', '' ) )
 
 		printjoblist = []
 
-		for pupil in pupils:
-			user_path = os.path.join( CUPSPDF_DIR, pupil.info['username'], CUPSPDF_USERSUBDIR, '*.pdf' )
+		for student in students:
+			user_path = os.path.join( CUPSPDF_DIR, student.info['username'], CUPSPDF_USERSUBDIR, '*.pdf' )
 			for document in filter( lambda filename: os.path.isfile( filename ), glob.glob( user_path ) ):
-				printjoblist.append( Printjob( pupil, document ).json() )
+				printjoblist.append( Printjob( student, document ).json() )
 
 		self.finished( request.id, printjoblist )
 

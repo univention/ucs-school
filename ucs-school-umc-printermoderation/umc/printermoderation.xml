@@ -2,7 +2,7 @@
 <umc version="2.0">
 	<module id="printermoderation" icon="printermoderation" version="1.0" priority="5">
 	<name>Moderating printers</name>
-	<description>Moderating print jobs of pupils</description>
+	<description>Moderating print jobs of students</description>
 	<categories>
 		<category name="ucs-school-class"/>
 	</categories>

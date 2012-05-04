@@ -47,7 +47,7 @@ dojo.declare("umc.modules.printermoderation", [ umc.widgets.Module, umc.i18n.Mix
 	// summary:
 	//		Print job moderation
 	// description:
-	//		This module helps to control the print jobs of the pupils.
+	//		This module helps to control the print jobs of the students.
 
 	// the property field that acts as unique identifier for the object
 	idProperty: 'id',
