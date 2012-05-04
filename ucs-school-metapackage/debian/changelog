@@ -1,3 +1,10 @@
+ucs-school-metapackage (4.0.26-3) unstable; urgency=low
+
+  * removed dependency to wizard module from slave package, added modules to
+    master package; Bug #26970
+
+ -- Alexander Kläser <klaeser@univention.de>  Fri, 04 May 2012 11:57:45 +0200
+
 ucs-school-metapackage (4.0.26-2) unstable; urgency=low
 
   * added ucs-school-umc-users to dependencies; Bug #26970
