@@ -56,11 +56,11 @@ dojo.declare("umc.modules._schoolwizards.ComputerWizard", [ umc.modules._schoolw
 				name: 'type',
 				label: this._('Type'),
 				staticValues: [{
-					id: 'ipmanagedclient',
-					label: this._('IP-Managed-Client')
-				}, {
 					id: 'windows',
-					label: this._('Windows')
+					label: this._('Windows system')
+				}, {
+					id: 'ipmanagedclient',
+					label: this._('Device with IP address')
 				}]
 			}],
 			layout: [['school'], ['type']]

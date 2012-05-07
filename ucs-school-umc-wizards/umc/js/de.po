@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-wizards\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2012-04-28 12:16+0200\n"
+"POT-Creation-Date: 2012-05-07 12:12+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: umc/js/_schoolwizards/UserWizard.js:99
+#: umc/js/_schoolwizards/UserWizard.js:95
 msgid "Class"
 msgstr "Klasse"
 
@@ -24,7 +24,11 @@ msgstr "Computer Information"
 msgid "Description"
 msgstr "Beschreibung"
 
-#: umc/js/_schoolwizards/UserWizard.js:95
+#: umc/js/_schoolwizards/ComputerWizard.js:63
+msgid "Device with IP address"
+msgstr "Gerät mit IP-Adresse"
+
+#: umc/js/_schoolwizards/UserWizard.js:100
 msgid "E-Mail"
 msgstr "E-Mail"
 
@@ -36,14 +40,14 @@ msgstr "Eingabe der Computer-Details"
 msgid "Enter the user's details"
 msgstr "Eingabe der Benutzer-Details"
 
-#: umc/js/_schoolwizards/UserWizard.js:85
+#: umc/js/_schoolwizards/UserWizard.js:80
 msgid "Firstname"
 msgstr "Vorname"
 
 #: umc/js/_schoolwizards/SchoolWizard.js:46
-#: umc/js/_schoolwizards/UserWizard.js:46
 #: umc/js/_schoolwizards/ComputerWizard.js:46
 #: umc/js/_schoolwizards/ClassWizard.js:46
+#: umc/js/_schoolwizards/UserWizard.js:46
 msgid "General information"
 msgstr "Allgemeine Informationen"
 
@@ -51,15 +55,11 @@ msgstr "Allgemeine Informationen"
 msgid "IP-Address"
 msgstr "IP-Adresse"
 
-#: umc/js/_schoolwizards/ComputerWizard.js:60
-msgid "IP-Managed-Client"
-msgstr "IP-Managed-Client"
-
 #: umc/js/_schoolwizards/ComputerWizard.js:94
 msgid "Inventory number"
 msgstr "Inventarnummer"
 
-#: umc/js/_schoolwizards/UserWizard.js:90
+#: umc/js/_schoolwizards/UserWizard.js:85
 msgid "Lastname"
 msgstr "Nachname"
 
@@ -73,9 +73,13 @@ msgstr "MAC-Adresse"
 msgid "Name"
 msgstr "Name"
 
-#: umc/js/_schoolwizards/UserWizard.js:51
+#: umc/js/_schoolwizards/UserWizard.js:104
+msgid "Password"
+msgstr "Passwort"
+
 #: umc/js/_schoolwizards/ComputerWizard.js:51
 #: umc/js/_schoolwizards/ClassWizard.js:51
+#: umc/js/_schoolwizards/UserWizard.js:51
 msgid "School"
 msgstr "Schule"
 
@@ -109,7 +113,7 @@ msgid ""
 "The class \"%s\" has been successfully created. Now another class can be "
 "created or this wizard can be cancelled."
 msgstr ""
-"Die Klasse \"%s\" wurde erfolgreich erstellt. Es kann nun eine weitere
+"Die Klasse \"%s\" wurde erfolgreich erstellt. Es kann nun eine weitere "
 "Klasse erstellt oder der Wizard beendet werden."
 
 #: umc/js/_schoolwizards/ComputerWizard.js:112
@@ -118,7 +122,7 @@ msgid ""
 "The computer \"%s\" has been successfully created. Now another computer can "
 "be created or this wizard can be cancelled."
 msgstr ""
-"Der Computer \"%s\" wurde erfolgreich erstellt. Es kann nun ein weiterer
+"Der Computer \"%s\" wurde erfolgreich erstellt. Es kann nun ein weiterer "
 "Computer erstellt oder der Wizard beendet werden."
 
 #: umc/js/_schoolwizards/SchoolWizard.js:70
@@ -127,16 +131,16 @@ msgid ""
 "The school \"%s\" has been successfully created. Now another school can be "
 "created or this wizard can be cancelled."
 msgstr ""
-"Die Schule \"%s\" wurde erfolgreich erstellt. Es kann nun eine weitere
+"Die Schule \"%s\" wurde erfolgreich erstellt. Es kann nun eine weitere "
 "Schule erstellt oder der Wizard beendet werden."
 
-#: umc/js/_schoolwizards/UserWizard.js:120
+#: umc/js/_schoolwizards/UserWizard.js:125
 #, python-format
 msgid ""
 "The user \"%s\" has been successfully created. Now another user can be "
 "created or this wizard can be cancelled."
 msgstr ""
-"Der Benutzer \"%s\" wurde erfolgreich erstellt. Es kann nun ein weiterer
+"Der Benutzer \"%s\" wurde erfolgreich erstellt. Es kann nun ein weiterer "
 "Benutzer erstellt oder der Wizard beendet werden."
 
 #: umc/js/_schoolwizards/ClassWizard.js:47
@@ -155,8 +159,8 @@ msgstr "Dieses Modul erstellt eine neue Schule auf dem System."
 msgid "This module creates a new user on the system."
 msgstr "Dieses Modul erstellt einen neuen Computer auf dem System."
 
-#: umc/js/_schoolwizards/UserWizard.js:57
 #: umc/js/_schoolwizards/ComputerWizard.js:57
+#: umc/js/_schoolwizards/UserWizard.js:57
 msgid "Type"
 msgstr "Typ"
 
@@ -164,10 +168,13 @@ msgstr "Typ"
 msgid "User information"
 msgstr "Benutzer Information"
 
-#: umc/js/_schoolwizards/UserWizard.js:80
+#: umc/js/_schoolwizards/UserWizard.js:90
 msgid "Username"
 msgstr "Benutzername"
 
-#: umc/js/_schoolwizards/ComputerWizard.js:63
-msgid "Windows"
-msgstr "Windows"
+#: umc/js/_schoolwizards/ComputerWizard.js:60
+msgid "Windows system"
+msgstr "Windows-System"
+
+#~ msgid "IP-Managed-Client"
+#~ msgstr "IP-Managed-Client"
