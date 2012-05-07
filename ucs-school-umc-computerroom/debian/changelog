@@ -1,3 +1,13 @@
+ucs-school-umc-computerroom (0.1.18-1) unstable; urgency=low
+
+  * updated german translation
+  * staff and admins are handled like teachers
+  * the end time for the settings can now be defined by a timebox widget
+  * minor fixes (javascript warnings)
+  * changed module description and add a helptext; Bug #25702
+
+ -- Andreas Büsching <buesching@univention.de>  Mon, 07 May 2012 12:43:27 +0200
+
 ucs-school-umc-computerroom (0.1.17-1) unstable; urgency=low
 
   * when changing the room the old update timer has not been deactivated

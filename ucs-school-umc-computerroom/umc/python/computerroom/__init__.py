@@ -378,10 +378,17 @@ class Instance( SchoolBaseModule ):
 		if rule == 'none' and shareMode == 'all' and printMode == 'default':
 			self._ruleEndAt = None
 
-		# find lesson:
+		# find end of lesson
 		period = self._lessons.current
 		if period is None:
-			period = self._lessons.previous
+			if self._lessons.next: # between two lessons
+				period = self._lessons.next.end
+			else: # school is out ... 1 hour should be good (FIXME: configurable?)
+				period = datetime.datetime.now() + datetime.teimdelta( hours = 1 )
+				period = period.time()
+		else:
+			period = period.end
+
 		if self._ruleEndAt:
 			time = self._ruleEndAt.time()
 			for lesson in self._lessons.lessons:
@@ -394,7 +401,7 @@ class Instance( SchoolBaseModule ):
 			'customRule' : '\n'.join( custom_rules ),
 			'shareMode' : shareMode,
 			'printMode' : printMode,
-			'period' : period.name
+			'period' : str( period )
 			} )
 
 	def settings_set( self, request ):
@@ -523,13 +530,11 @@ class Instance( SchoolBaseModule ):
 
 		cmd = '/usr/share/ucs-school-umc-computerroom/ucs-school-deactivate-rules %s %s %s' % ( ' '.join( unset_vars ), ' '.join( extract_vars ), ' '.join( hosts ) )
 		MODULE.info( 'at job command is: %s' % cmd )
-		endtime = None
-		for lesson in self._lessons.lessons:
-			if lesson.name == request.options[ 'period' ]:
-				endtime = lesson.end
-				break
-		if endtime is None:
-			raise UMC_CommandError( 'unknown school lesson' )
+		try:
+			endtime = datetime.datetime.strptime( request.options[ 'period' ], '%H:%M' )
+			endtime = endtime.time()
+		except ValueError, e:
+			raise UMC_CommandError( 'Failed to read end time: %s' % str( e ) )
 
 		starttime = datetime.datetime.now()
 		MODULE.info( 'Now: %s' % starttime )

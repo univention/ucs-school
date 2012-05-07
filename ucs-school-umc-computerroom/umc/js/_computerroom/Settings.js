@@ -37,6 +37,7 @@ dojo.require("umc.widgets.Button");
 dojo.require("umc.widgets.Form");
 dojo.require("umc.widgets.Page");
 dojo.require("umc.widgets.Text");
+dojo.require("umc.widgets.TimeBox");
 dojo.require("umc.widgets.StandbyMixin");
 dojo.require("umc.widgets.ContainerWidget");
 dojo.require("dijit.layout.ContentPane");
@@ -66,9 +67,10 @@ dojo.declare("umc.modules._computerroom.SettingsDialog", [ dijit.Dialog, umc.wid
 		var widgets = [ {
 			type: 'ComboBox',
 			name: 'internetRule',
-			label: this._('Active web access profile'),
+			label: this._('Web access profile'),
+			sizeClass: 'One',
 			dynamicValues: 'computerroom/internetrules',
-			staticValues: [ { id: 'none', label: this._( 'None' ) },
+			staticValues: [ { id: 'none', label: this._( 'Default' ) },
 							{ id: 'custom', label: this._( 'personal rules' ) } ],
 			onChange: dojo.hitch( this, function( value ) {
 				this._form.getWidget( 'customRule' ).set( 'disabled', value != 'custom' );
@@ -77,32 +79,40 @@ dojo.declare("umc.modules._computerroom.SettingsDialog", [ dijit.Dialog, umc.wid
 			type: 'TextArea',
 			name: 'customRule',
 			label: this._('Allowed web servers'),
+			sizeClass: 'One',
+			description: this._( '<p>In this text box you can list web sites that are allowed to be used by the students. Each line should contain one web site. Example: </p><p style="font-family: monospace">univention.com</br>wikipedia.org</br></p>' ),
+			validate: dojo.hitch( this, function() {
+				return !( this._form.getWidget( 'internetRule' ).get( 'value' ) == 'custom' && ! this._form.getWidget( 'customRule' ).get( 'value' ) );
+			} ),
+			onFocus: dojo.hitch( this, function() {
+				dijit.hideTooltip( this._form.getWidget( 'customRule' ).domNode );
+			} ),
 			disabled: true
 		}, {
 			type: 'ComboBox',
 			name: 'shareMode',
+			sizeClass: 'One',
 			label: this._('share access'),
 			description: this._( 'Defines restriction for the share access' ),
 			staticValues: [
 				{ id : 'none', label: this._( 'no access' ) },
 				{ id: 'home', label : this._('home directory only') },
-				{ id: 'all', label : this._('no restrictions' ) }
+				{ id: 'all', label : this._('Default' ) }
 			]
 		}, {
 			type: 'ComboBox',
 			name: 'printMode',
+			sizeClass: 'One',
 			label: this._('Print mode'),
 			staticValues: [
-				{ id : 'default', label: this._( 'Default setting' ) },
+				{ id : 'default', label: this._( 'Default' ) },
 				{ id: 'none', label : this._('Printing deactivated') },
 				{ id: 'all', label : this._('Free printing' ) }
 			]
 		}, {
-			type: 'ComboBox',
+			type: 'TimeBox',
 			name: 'period',
-			label: this._('Reservation until end of'),
-			size: 'TwoThirds',
-			dynamicValues: 'computerroom/lessons'
+			label: this._('Valid to')
 		}];
 
 		var buttons = [ {
@@ -110,13 +120,19 @@ dojo.declare("umc.modules._computerroom.SettingsDialog", [ dijit.Dialog, umc.wid
 			label: this._( 'Set' ),
 			style: 'float: right',
 			onClick: dojo.hitch( this, function() {
+				var customRule = this._form.getWidget( 'customRule' );
+				if ( ! customRule.validate() ) {
+					dijit.showTooltip( this._( '<b>At least one web site is required!</b>' ) + '<br/>' + customRule.description, customRule.domNode );
+					return;
+				}
+				dijit.hideTooltip( this._form.getWidget( 'customRule' ).domNode );
 				this.hide();
 				this.umcpCommand( 'computerroom/settings/set', {
 					internetRule: this._form.getWidget( 'internetRule' ).get( 'value' ),
 					customRule: this._form.getWidget( 'customRule' ).get( 'value' ),
 					printMode: this._form.getWidget( 'printMode' ).get( 'value' ),
 					shareMode: this._form.getWidget( 'shareMode' ).get( 'value' ),
-					period: this._form.getWidget( 'period' ).get( 'value' ),
+					period: this._form.getWidget( 'period' ).get( 'value' )
 				} ).then( dojo.hitch( this, function( response ) {
 					console.log( response );
 				} ) );
@@ -125,6 +141,7 @@ dojo.declare("umc.modules._computerroom.SettingsDialog", [ dijit.Dialog, umc.wid
 			name: 'cancel',
 			label: this._( 'cancel' ),
 			onClick: dojo.hitch( this, function() {
+				dijit.hideTooltip( this._form.getWidget( 'customRule' ).domNode );
 				this.hide();
 				this.onClose();
 			} )
@@ -149,12 +166,12 @@ dojo.declare("umc.modules._computerroom.SettingsDialog", [ dijit.Dialog, umc.wid
 		this.umcpCommand( 'computerroom/settings/get', {} ).then( dojo.hitch( this, function( response ) {
 			umc.tools.forIn( response.result, function( key, value ) {
 				this._form.getWidget( key ).set( 'value', value );
-			}, this )
+			}, this );
 		} ) );
 	},
 
 	personalActive: function() {
-		return this._form.getWidget( 'internetRule' ).get( 'value' ) != 'none' || this._form.getWidget( 'shareMode' ).get( 'value' ) != 'all' || this._form.getWidget( 'printMode' ).get( 'value' ) != 'default'
+		return this._form.getWidget( 'internetRule' ).get( 'value' ) != 'none' || this._form.getWidget( 'shareMode' ).get( 'value' ) != 'all' || this._form.getWidget( 'printMode' ).get( 'value' ) != 'default';
 	},
 
 	onClose: function() {

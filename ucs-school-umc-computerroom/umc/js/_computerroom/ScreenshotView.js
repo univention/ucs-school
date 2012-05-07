@@ -180,7 +180,7 @@ dojo.declare( "umc.modules._computerroom.Item", [ dijit.layout.ContentPane, diji
 		if ( this._timer ) {
 			window.clearTimeout( this._timer );
 		}
-		this._timer = window.setTimeout( dojo.hitch( this, function() { this._updateImage() } ), 5000 );
+		this._timer = window.setTimeout( dojo.hitch( this, function() { this._updateImage(); } ), 5000 );
 	},
 
 	buildRendering: function() {
@@ -208,7 +208,7 @@ dojo.declare( "umc.modules._computerroom.Item", [ dijit.layout.ContentPane, diji
 		// destroy the tooltip when the widget is destroyed
 		tooltip.connect( this, 'destroy', 'destroy' );
 
-		this._timer = window.setTimeout( dojo.hitch( this, function() { this._updateImage() } ), 500 );
+		this._timer = window.setTimeout( dojo.hitch( this, function() { this._updateImage(); } ), 500 );
 	}
 } );
 

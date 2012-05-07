@@ -84,7 +84,6 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 	// internal reference to the expanding title pane
 	_titlePane: null,
 
-	_metaInfo: null,
 	_profileInfo: null,
 	_validTo: null,
 
@@ -321,12 +320,12 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 		var label = dojo.replace('{roomLabel}: {room} ' +
 				'(<a href="javascript:void(0)" ' +
 				'onclick=\'dijit.byId("{id}").changeRoom()\'>{changeLabel}</a>)', {
-			roomLabel: this._('Selected room'),
+			roomLabel: this._('Room'),
 			room: room,
 			changeLabel: this._('select room'),
 			id: this.id
 		});
-		this._metaInfo.set('content', label);
+		this._titlePane.set( 'title', label );
 	},
 
 	renderSearchPage: function(containers, superordinates) {
@@ -335,7 +334,7 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 		// render the search page
 		this._searchPage = new umc.widgets.Page({
 			headerText: this.description,
-			helpText: ''
+			helpText: this._( "Here you can watch the student's computers, locking the computers, show presentations, control the internet access and define the available printers and shares." )
 		});
 
 		// umc.widgets.Module is also a StackContainer instance that can hold
@@ -348,11 +347,6 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 		});
 		this._searchPage.addChild(this._titlePane);
 
-		this._metaInfo = new umc.widgets.Text({
-			region: 'top',
-			style: 'padding-bottom: 10px;'
-		});
-		this._searchPage.addChild(this._metaInfo);
 		this._updateHeader();
 
 		//
@@ -623,7 +617,7 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 				form.standby(true);
 				return umc.tools.umcpCommand('computerroom/room/acquire', {
 					room: vals.room
-				})
+				});
 			}).then(dojo.hitch(this, function(response) {
 				if (!response.result) {
 					// we could not acquire the room
@@ -773,7 +767,10 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 				}
 				this._validTo.set( 'content', labelValidTo );
 			} else {
-				this._validTo.set( 'content', '&nbsp;' );
+				if ( this._validTo.get( 'content' ) != '&nbsp;' ) {
+					this._validTo.set( 'content', '&nbsp;' );
+					this._settingsDialog.update();
+				}
 			}
 
 			var text = this._( 'No personal settings for printing, share and internet access defined' );
@@ -786,7 +783,7 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 										  changeLabel: this._( 'change' ),
 										  id: this._settingsDialog.id
 									  } );
-			this._profileInfo.set( 'content', label )
+			this._profileInfo.set( 'content', label );
 			this._updateTimer = window.setTimeout( dojo.hitch( this, '_updateRoom', {} ), 2000 );
 
 			// update the grid actions

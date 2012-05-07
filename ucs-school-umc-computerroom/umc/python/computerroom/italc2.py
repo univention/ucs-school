@@ -112,7 +112,7 @@ class UserMap( dict ):
 					userobj.workgroups.append( udm_uldap.explodeDn( grp, True )[ 0 ] )
 				elif grp.endswith( search_base.classes ):
 					userobj.school_class = udm_uldap.explodeDn( grp, True )[ 0 ]
-			userobj.isTeacher = userobj.dn.endswith( search_base.teachers )
+			userobj.isTeacher = userobj.dn.endswith( search_base.teachers ) or userobj.dn.endswith( search_base.teachersAndStaff ) or userobj.dn.endswith( search_base.admins )
 			dict.__setitem__( self, userstr, userobj )
 
 _usermap = UserMap()
