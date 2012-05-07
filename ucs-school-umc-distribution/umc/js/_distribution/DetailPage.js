@@ -240,7 +240,7 @@ dojo.declare("umc.modules._distribution.DetailPage", [ umc.widgets.Page, umc.wid
 		// together into title panes
 		var layout = [{
 			label: this._('General'),
-			layout: [ 'description', 'name' ]
+			layout: [ [ 'description', 'name' ] ]
 		}, {
 			label: this._('Distribution and collection of project files'),
 			layout: [
