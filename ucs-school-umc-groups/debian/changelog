@@ -1,3 +1,9 @@
+ucs-school-umc-groups (0.1.10-1) unstable; urgency=low
+
+  * fixed logic for determining teachers; Bug #26551
+
+ -- Alexander Kläser <klaeser@univention.de>  Mon, 07 May 2012 18:27:07 +0200
+
 ucs-school-umc-groups (0.1.9-1) unstable; urgency=low
 
   * replaced "except Exception"; Bug #26793

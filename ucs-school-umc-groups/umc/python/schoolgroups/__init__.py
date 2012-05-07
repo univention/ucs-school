@@ -111,11 +111,11 @@ class Instance( SchoolBaseModule ):
 
 		if request.flavor == 'class':
 			# members are teachers
-			memberDNs = [ usr for usr in grp[ 'users' ] if usr.endswith( search_base.teachers ) ]
+			memberDNs = [ usr for usr in grp[ 'users' ] if search_base.isTeacher(usr) ]
 		elif request.flavor == 'workgroup-admin':
 			memberDNs = grp[ 'users' ]
 		else:
-			memberDNs = [ usr for usr in grp[ 'users' ] if usr.endswith( search_base.students ) ]
+			memberDNs = [ usr for usr in grp[ 'users' ] if search_base.isStudent(usr) ]
 
 		# read members:
 		user_mod = udm_modules.get( 'users/user' )
@@ -130,14 +130,9 @@ class Instance( SchoolBaseModule ):
 
 		self.finished( request.id, [ result, ] )
 
-	def _remove_users_by_base( self, members, base ):
-		"""Removes the LDAP objects from the given list of LDAP-DN that match teachers"""
-		students = []
-		for user in members:
-			if user.endswith( base ):
-				continue
-			students.append( user )
-		return students
+	def _remove_users_by_check( self, members, checkUser ):
+		"""Retain the LDAP objects from the given list of LDAP-DN that match the supplied function"""
+		return [ iuser for iuser in members if checkUser(iuser) ]
 
 	@LDAP_Connection( USER_READ, USER_WRITE )
 	def put( self, request, search_base = None, ldap_user_write = None, ldap_user_read = None, ldap_position = None ):
@@ -157,16 +152,22 @@ class Instance( SchoolBaseModule ):
 
 		grp.open()
 		grp[ 'description' ] = group[ 'description' ]
+		MODULE.info('Modifying group "%s" with members: %s' % (grp.dn, grp['users']))
+		MODULE.info('New members: %s' % group['members'])
 		if request.flavor == 'class':
-			grp[ 'users' ] = self._remove_users_by_base( grp[ 'users' ], search_base.teachers ) + group[ 'members' ]
+			# class -> update only the group's teachers (keep all non teachers)
+			grp[ 'users' ] = self._remove_users_by_check( grp[ 'users' ], lambda x: not search_base.isTeacher(x) ) + self._remove_users_by_check( group[ 'members' ], search_base.isTeacher )
 		elif request.flavor == 'workgroup-admin':
+			# workgroup (admin view) -> update teachers and students
 			grp[ 'users' ] = group[ 'members' ]
 		elif request.flavor == 'workgroup':
-			if [ dn for dn in grp[ 'users' ] if dn.endswith( search_base.teachers ) ]:
+			# workgroup (teacher view) -> update only the group's students
+			if [ dn for dn in grp[ 'users' ] if search_base.isTeacher(dn) ]:
 				raise UMC_CommandError( 'Adding teachers is not allowed' )
-			grp[ 'users' ] = self._remove_users_by_base( grp[ 'users' ], search_base.students ) + group[ 'members' ]
+			grp[ 'users' ] = self._remove_users_by_check( grp[ 'users' ], lambda x: not search_base.isStudent(x) ) + self._remove_users_by_check( group[ 'members' ], search_base.isStudent )
 
 		grp.modify()
+		MODULE.info('Modified, group has now members: %s' % grp['users'])
 
 		self.finished( request.id, True )
 
