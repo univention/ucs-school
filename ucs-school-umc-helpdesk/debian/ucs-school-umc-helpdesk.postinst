@@ -3,7 +3,7 @@
 # UCS@School
 #  postinst script
 #
-# Copyright 2008-2010 Univention GmbH
+# Copyright 2008-2012 Univention GmbH
 #
 # http://www.univention.de/
 #
@@ -30,15 +30,16 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+. /usr/share/univention-lib/all.sh
+
+echo "kill all running univention-cli-server"
+stop_udm_cli_server
+
 #DEBHELPER#
 
 eval $(univention-config-registry shell)
 
 if [ "$server_role" = "domaincontroller_master" ] || [ "$server_role" = "domaincontroller_backup" ]; then
-
-	echo "kill all running univention-cli-server"
-	pkill -f '/usr/bin/python.*univention-directory-manager-tools.*univention-cli-server' || true
-
 	/usr/lib/univention-install/38ucs-school-umc-helpdesk.inst || true
 fi
 
