@@ -384,7 +384,7 @@ class Instance( SchoolBaseModule ):
 			if self._lessons.next: # between two lessons
 				period = self._lessons.next.end
 			else: # school is out ... 1 hour should be good (FIXME: configurable?)
-				period = datetime.datetime.now() + datetime.teimdelta( hours = 1 )
+				period = datetime.datetime.now() + datetime.timedelta( hours = 1 )
 				period = period.time()
 		else:
 			period = period.end
