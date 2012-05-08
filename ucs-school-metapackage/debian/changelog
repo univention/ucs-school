@@ -1,3 +1,10 @@
+ucs-school-metapackage (4.0.27-1) unstable; urgency=low
+
+  * Make the sysvol share read only on a DC slave (Bug #26522)
+  * Change the default from Samba 3 to Samba 4 (Bug #27026)
+
+ -- Stefan Gohmann <gohmann@univention.de>  Tue, 08 May 2012 15:04:36 +0200
+
 ucs-school-metapackage (4.0.26-3) unstable; urgency=low
 
   * removed dependency to wizard module from slave package, added modules to
