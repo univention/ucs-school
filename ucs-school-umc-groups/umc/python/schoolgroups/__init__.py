@@ -106,7 +106,8 @@ class Instance( SchoolBaseModule ):
 		grp.open()
 		result = {}
 		result[ '$dn$' ] = grp.dn
-		result[ 'name' ] = grp[ 'name' ].replace( '%s-' % search_base.school, '', 1 )
+		result[ 'school' ] = grp.dn[ grp.dn.find( '=' ) + 1 : grp.dn.find( '-' ) ]
+		result[ 'name' ] = grp[ 'name' ].replace( '%s-' % result[ 'school' ], '', 1 )
 		result[ 'description' ] = grp[ 'description' ]
 
 		if request.flavor == 'class':
@@ -160,6 +161,7 @@ class Instance( SchoolBaseModule ):
 		elif request.flavor == 'workgroup-admin':
 			# workgroup (admin view) -> update teachers and students
 			grp[ 'users' ] = group[ 'members' ]
+			grp[ 'name' ] = '%(school)s-%(name)s' % group
 		elif request.flavor == 'workgroup':
 			# workgroup (teacher view) -> update only the group's students
 			if [ dn for dn in grp[ 'users' ] if search_base.isTeacher(dn) ]:
@@ -185,11 +187,12 @@ class Instance( SchoolBaseModule ):
 		if request.flavor != 'workgroup-admin':
 			raise UMC_CommandError( 'not supported' )
 		group = request.options[ 0 ].get( 'object', {} )
+		search_base = SchoolSearchBase( search_base.availableSchools, group[ 'school' ] )
 		ldap_position.setDn( search_base.workgroups )
 		grp = udm_modules.get( 'groups/group' ).object( None, ldap_user_write, ldap_position )
 		grp.open()
 
-		grp[ 'name' ] = '%s-' % search_base.school + group[ 'name' ]
+		grp[ 'name' ] = '%(school)s-%(name)s' % group
 		grp[ 'description' ] = group[ 'description' ]
 		grp[ 'users' ] = group[ 'members' ]
 

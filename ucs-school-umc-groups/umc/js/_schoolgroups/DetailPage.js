@@ -103,19 +103,24 @@ dojo.declare("umc.modules._schoolgroups.DetailPage", [ umc.widgets.Page, umc.wid
 
 	renderDetailPage: function() {
 		// render the form containing all detail information that may be edited
+		// specify all widgets
 		var groups = [];
-		if ( this.moduleFlavor == 'workgroup-admin' ) {
+		if ( this.flavor == 'workgroup-admin' ) {
 			groups.push( { id: 'None', label: this._('All users') } );
 		}
-		if ( this.moduleFlavor == 'class' || this.moduleFlavor == 'workgroup-admin' ) {
+		if ( this.flavor == 'class' || this.flavor == 'workgroup-admin' ) {
 			groups.push( { id: 'teacher', label: this._('All teachers') } );
 		}
-		if ( this.moduleFlavor == 'workgroup' || this.moduleFlavor == 'workgroup-admin' ) {
+		if ( this.flavor == 'workgroup' || this.flavor == 'workgroup-admin' ) {
 			groups.push( { id: 'student', label: this._('All students') } );
 		}
 
-		// specify all widgets
 		var widgets = [{
+			type: 'ComboBox',
+			name: 'school',
+			label: this._( 'School' ),
+			staticValues: []
+		}, {
 			type: 'TextBox',
 			name: 'name',
 			label: this.moduleFlavor == 'class' ? this._( 'Class' ) : this._( 'Workgroup' ),
@@ -135,7 +140,7 @@ dojo.declare("umc.modules._schoolgroups.DetailPage", [ umc.widgets.Page, umc.wid
 			queryWidgets: [ {
 				type: 'ComboBox',
 				name: 'school',
-				label: this._('School'),
+				label: this._( 'School' ),
 				dynamicValues: 'schoolgroups/schools',
 				umcpCommand: this.umcpCommand,
 				autoHide: true
@@ -170,9 +175,9 @@ dojo.declare("umc.modules._schoolgroups.DetailPage", [ umc.widgets.Page, umc.wid
 
 		// specify the layout... additional dicts are used to group form elements
 		// together into title panes
-		var layout = [{
+		var layout = [ {
 			label: this._('Properties'),
-			layout: [ 'name', 'description' ]
+			layout: [ 'school', 'name', 'description' ]
 		}, {
 			label: this._('Members'),
 			layout: [ 'members' ]
@@ -188,6 +193,10 @@ dojo.declare("umc.modules._schoolgroups.DetailPage", [ umc.widgets.Page, umc.wid
 		// add form to page... the page extends a BorderContainer, by default
 		// an element gets added to the center region
 		this.addChild(this._form);
+
+		dojo.connect( this._form.getWidget( 'members' ), 'onShowDialog', dojo.hitch( this, function( dialog ) {
+			dialog._form.getWidget( 'school' ).setInitialValue( this._form.getWidget( 'school' ).get( 'value' ), true );
+		} ) );
 
 		// hook to onSubmit event of the form
 		this.connect(this._form, 'onSubmit', '_save');
@@ -211,6 +220,20 @@ dojo.declare("umc.modules._schoolgroups.DetailPage", [ umc.widgets.Page, umc.wid
 		deferred.then( dojo.hitch( this, function() {
 			this.onClose();
 		} ) );
+	},
+
+	disableSchool: function( disable ) {
+		this._form.getWidget( 'school' ).set( 'disabled', disable );
+	},
+
+	_setSchoolAttr: function( school ) {
+		this._form.getWidget( 'school' ).set( 'value', school );
+	},
+
+	_setSchoolsAttr: function( schools ) {
+		var school = this._form.getWidget( 'school' );
+		school.set( 'staticValues', schools );
+		school.set( 'visible', schools.length > 1 );
 	},
 
 	load: function(id) {
