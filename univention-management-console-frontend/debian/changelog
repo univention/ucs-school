@@ -1,3 +1,9 @@
+univention-management-console-frontend (1.0.318-1) unstable; urgency=low
+
+  * MultiObjectSelect: add the two events onCreateDialog and onShowDialog; Bug #27024
+
+ -- Andreas Büsching <buesching@univention.de>  Tue, 08 May 2012 11:15:41 +0200
+
 univention-management-console-frontend (1.0.317-1) unstable; urgency=low
 
   * fixed issues with unstable sorting for module/category order in chrome;
