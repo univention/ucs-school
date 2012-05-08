@@ -61,12 +61,24 @@ dojo.declare("umc.modules.schoolwizards", [ umc.widgets.Module, umc.i18n.Mixin ]
 
 	_getWizard: function(moduleFlavor) {
 		var path = umc.modules._schoolwizards;
+		var Wizard = null;
 		switch (moduleFlavor) {
-			case 'schoolwizards/users': return new path.UserWizard({});
-			case 'schoolwizards/classes': return new path.ClassWizard({});
-			case 'schoolwizards/computers': return new path.ComputerWizard({});
-			case 'schoolwizards/schools': return new path.SchoolWizard({});
+			case 'schoolwizards/users':
+				Wizard = path.UserWizard;
+				break;
+			case 'schoolwizards/classes':
+				Wizard = path.ClassWizard;
+				break;
+			case 'schoolwizards/computers':
+				Wizard = path.ComputerWizard;
+				break;
+			case 'schoolwizards/schools':
+				Wizard = path.SchoolWizard;
+				break;
 			default: return null;
 		}
+		return new Wizard({
+			description: this.description
+		});
 	}
 });

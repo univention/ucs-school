@@ -41,6 +41,9 @@ dojo.declare("umc.modules._schoolwizards.Wizard", [ umc.widgets.Wizard, umc.i18n
 
 	createObjectCommand: null,
 
+	// set via the module
+	description: null,
+
 	hasNext: function() {
 		return true;
 	},

@@ -43,8 +43,8 @@ dojo.declare("umc.modules._schoolwizards.ComputerWizard", [ umc.modules._schoolw
 	constructor: function() {
 		this.pages = [{
 			name: 'general',
-			headerText: this._('General information'),
-			helpText: this._('This module creates a new computer on the system.'),
+			headerText: this.description,
+			helpText: this._('Specify the computer type.'),
 			widgets: [{
 				type: 'ComboBox',
 				name: 'school',
@@ -66,8 +66,8 @@ dojo.declare("umc.modules._schoolwizards.ComputerWizard", [ umc.modules._schoolw
 			layout: [['school'], ['type']]
 		}, {
 			name: 'computer',
-			headerText: this._('Computer information'),
-			helpText: this._('Enter the computer\'s details'),
+			headerText: this.description,
+			helpText: this._('Enter details to create a new computer.'),
 			widgets: [{
 				type: 'TextBox',
 				name: 'name',
@@ -76,17 +76,17 @@ dojo.declare("umc.modules._schoolwizards.ComputerWizard", [ umc.modules._schoolw
 			}, {
 				type: 'TextBox',
 				name: 'ipAddress',
-				label: this._('IP-Address'),
+				label: this._('IP address'),
 				required: true
 			}, {
 				type: 'TextBox',
 				name: 'subnetMask',
-				label: this._('Subnetmask'),
+				label: this._('Subnet mask'),
 				value: '255.255.255.0'
 			}, {
 				type: 'TextBox',
 				name: 'mac',
-				label: this._('MAC-Address'),
+				label: this._('MAC address'),
 				required: true
 			}, {
 				type: 'TextBox',
@@ -109,7 +109,7 @@ dojo.declare("umc.modules._schoolwizards.ComputerWizard", [ umc.modules._schoolw
 
 	addNote: function() {
 		var name = this.getWidget('computer', 'name').get('value');
-		var message = this._('The computer "%s" has been successfully created. Now another computer can be created or this wizard can be cancelled.', name);
+		var message = this._('Computer "%s" has been successfully created. Continue to create another computer or press "Cancel" to close this wizard.', name);
 		this.getPage('computer').clearNotes();
 		this.getPage('computer').addNote(message);
 	}

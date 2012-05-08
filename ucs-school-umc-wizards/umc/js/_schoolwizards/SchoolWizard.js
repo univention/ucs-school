@@ -43,8 +43,8 @@ dojo.declare("umc.modules._schoolwizards.SchoolWizard", [ umc.modules._schoolwiz
 	constructor: function() {
 		this.pages = [{
 			name: 'school',
-			headerText: this._('General information'),
-			helpText: this._('This module creates a new school on the system.'),
+			headerText: this.description,
+			helpText: this._('Enter details to create all necessary structures for a new school.'),
 			widgets: [{
 				type: 'TextBox',
 				name: 'name',
@@ -67,7 +67,7 @@ dojo.declare("umc.modules._schoolwizards.SchoolWizard", [ umc.modules._schoolwiz
 
 	addNote: function() {
 		var name = this.getWidget('school', 'name').get('value');
-		var message = this._('The school "%s" has been successfully created. Now another school can be created or this wizard can be cancelled.', name);
+		var message = this._('School "%s" has been successfully created. Continue to create another school or press "Cancel" to close this wizard.', name);
 		this.getPage('school').clearNotes();
 		this.getPage('school').addNote(message);
 	}

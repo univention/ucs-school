@@ -43,8 +43,8 @@ dojo.declare("umc.modules._schoolwizards.UserWizard", [ umc.modules._schoolwizar
 	constructor: function() {
 		this.pages = [{
 			name: 'general',
-			headerText: this._('General information'),
-			helpText: this._('This module creates a new user on the system.'),
+			headerText: this.description,
+			helpText: this._('Specify the type of user to be created.'),
 			widgets: [{
 				type: 'ComboBox',
 				name: 'school',
@@ -72,8 +72,8 @@ dojo.declare("umc.modules._schoolwizards.UserWizard", [ umc.modules._schoolwizar
 			layout: [['school'], ['type']]
 		}, {
 			name: 'user',
-			headerText: this._('User information'),
-			helpText: this._('Enter the user\'s details'),
+			headerText: this.description,
+			helpText: this._('Enter details to create a new user'),
 			widgets: [{
 				type: 'TextBox',
 				name: 'firstname',
@@ -122,7 +122,7 @@ dojo.declare("umc.modules._schoolwizards.UserWizard", [ umc.modules._schoolwizar
 
 	addNote: function() {
 		var name = this.getWidget('user', 'username').get('value');
-		var message = this._('The user "%s" has been successfully created. Now another user can be created or this wizard can be cancelled.', name);
+		var message = this._('User "%s" has been successfully created. Continue to create another user or press "Cancel" to close this wizard.', name);
 		this.getPage('user').clearNotes();
 		this.getPage('user').addNote(message);
 	},

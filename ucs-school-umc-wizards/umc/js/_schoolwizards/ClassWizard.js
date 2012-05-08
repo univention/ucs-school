@@ -43,8 +43,8 @@ dojo.declare("umc.modules._schoolwizards.ClassWizard", [ umc.modules._schoolwiza
 	constructor: function() {
 		this.pages = [{
 			name: 'class',
-			headerText: this._('General information'),
-			helpText: this._('This module creates a new class on the system.'),
+			headerText: this.description,
+			helpText: this._('Enter details to create a new class.'),
 			widgets: [{
 				type: 'ComboBox',
 				name: 'school',
@@ -74,7 +74,7 @@ dojo.declare("umc.modules._schoolwizards.ClassWizard", [ umc.modules._schoolwiza
 
 	addNote: function() {
 		var name = this.getWidget('class', 'name').get('value');
-		var message = this._('The class "%s" has been successfully created. Now another class can be created or this wizard can be cancelled.', name);
+		var message = this._('Class "%s" has been successfully created. Continue to create another class or press "Cancel" to close this wizard.', name);
 		this.getPage('class').clearNotes();
 		this.getPage('class').addNote(message);
 	}
