@@ -3,8 +3,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-rooms\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2012-03-14 23:00+0100\n"
-"PO-Revision-Date: \n"
+"POT-Creation-Date: 2012-05-08 04:14+0200\n"
+"PO-Revision-Date: 2012-05-08 15:53+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
@@ -12,11 +12,11 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: umc/js/schoolrooms.js:119 umc/js/schoolrooms.js:246
+#: umc/js/schoolrooms.js:119 umc/js/schoolrooms.js:251
 msgid "Add room"
 msgstr "Raum hinzufügen"
 
-#: umc/js/_schoolrooms/DetailPage.js:78
+#: umc/js/schoolrooms.js:273 umc/js/_schoolrooms/DetailPage.js:78
 msgid "Cancel"
 msgstr "Abbrechen"
 
@@ -24,11 +24,11 @@ msgstr "Abbrechen"
 msgid "Choose the school"
 msgstr "Schule auswählen"
 
-#: umc/js/_schoolrooms/DetailPage.js:145
+#: umc/js/_schoolrooms/DetailPage.js:150
 msgid "Computers"
 msgstr "Computer"
 
-#: umc/js/_schoolrooms/DetailPage.js:110
+#: umc/js/_schoolrooms/DetailPage.js:115
 msgid "Computers in the room"
 msgstr "Computer in dem Raum"
 
@@ -36,11 +36,11 @@ msgstr "Computer in dem Raum"
 msgid "Create a new room"
 msgstr "Erstelle einen neuen Raum"
 
-#: umc/js/schoolrooms.js:247
+#: umc/js/schoolrooms.js:252
 msgid "Create room and assign computers"
 msgstr "Raum erstellen und Computer zuweisen"
 
-#: umc/js/schoolrooms.js:135
+#: umc/js/schoolrooms.js:135 umc/js/schoolrooms.js:276
 msgid "Delete"
 msgstr "Löschen"
 
@@ -48,7 +48,7 @@ msgstr "Löschen"
 msgid "Deleting the selected objects."
 msgstr "Löschen der ausgewählten Objekte"
 
-#: umc/js/schoolrooms.js:150 umc/js/_schoolrooms/DetailPage.js:105
+#: umc/js/schoolrooms.js:150 umc/js/_schoolrooms/DetailPage.js:110
 msgid "Description"
 msgstr "Beschreibung"
 
@@ -56,11 +56,11 @@ msgstr "Beschreibung"
 msgid "Edit"
 msgstr "Bearbeiten"
 
-#: umc/js/schoolrooms.js:258
+#: umc/js/schoolrooms.js:264
 msgid "Edit room"
 msgstr "Raum bearbeiten"
 
-#: umc/js/schoolrooms.js:259
+#: umc/js/schoolrooms.js:265
 msgid "Edit room and assign computers"
 msgstr "Raum bearbeiten und Computer zuweisen"
 
@@ -68,11 +68,11 @@ msgstr "Raum bearbeiten und Computer zuweisen"
 msgid "Edit the selected object"
 msgstr "Bearbeiten des ausgewählten Raums"
 
-#: umc/js/schoolrooms.js:146 umc/js/_schoolrooms/DetailPage.js:100
+#: umc/js/schoolrooms.js:146 umc/js/_schoolrooms/DetailPage.js:105
 msgid "Name"
 msgstr "Name"
 
-#: umc/js/_schoolrooms/DetailPage.js:142
+#: umc/js/_schoolrooms/DetailPage.js:147
 msgid "Properties"
 msgstr "Eigenschaft"
 
@@ -80,11 +80,12 @@ msgstr "Eigenschaft"
 msgid "Save"
 msgstr "Speichern"
 
-#: umc/js/schoolrooms.js:182 umc/js/_schoolrooms/DetailPage.js:114
+#: umc/js/schoolrooms.js:182 umc/js/_schoolrooms/DetailPage.js:100
+#: umc/js/_schoolrooms/DetailPage.js:119
 msgid "School"
 msgstr "Schule"
 
-#: umc/js/schoolrooms.js:189 umc/js/_schoolrooms/DetailPage.js:120
+#: umc/js/schoolrooms.js:192 umc/js/_schoolrooms/DetailPage.js:125
 msgid "Search pattern"
 msgstr "Suchmuster"
 
@@ -92,20 +93,24 @@ msgstr "Suchmuster"
 msgid "Search results"
 msgstr "Suchergebnisse"
 
-#: umc/js/schoolrooms.js:188
+#: umc/js/schoolrooms.js:270
+msgid "Should the room {name} be deleted?"
+msgstr "Soll der Raum {name} gelöscht werden?"
+
+#: umc/js/schoolrooms.js:191
 msgid ""
 "Specifies the substring pattern which is searched for in the displayed name"
 msgstr ""
 "Legt die Zeichenketten die in dem angezeigten Namen gesucht werden soll fest "
 
-#: umc/js/schoolrooms.js:271
+#: umc/js/schoolrooms.js:287
 msgid "The room could not be deleted ({message})"
 msgstr "Der Raum konnte nicht gelöscht werden ({message})"
 
-#: umc/js/schoolrooms.js:269
+#: umc/js/schoolrooms.js:285
 msgid "The room has been deleted successfully"
 msgstr "Der Raum wurde erfolgreich gelöscht"
 
-#: umc/js/_schoolrooms/DetailPage.js:106
+#: umc/js/_schoolrooms/DetailPage.js:111
 msgid "Verbose description of the current group"
 msgstr "Ausführliche Beschreibung der Gruppe"

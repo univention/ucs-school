@@ -95,6 +95,11 @@ dojo.declare("umc.modules._schoolrooms.DetailPage", [ umc.widgets.Page, umc.widg
 
 		// specify all widgets
 		var widgets = [{
+			type: 'ComboBox',
+			name: 'school',
+			label: this._( 'School' ),
+			staticValues: []
+		}, {
 			type: 'TextBox',
 			name: 'name',
 			label: this._('Name'),
@@ -140,7 +145,7 @@ dojo.declare("umc.modules._schoolrooms.DetailPage", [ umc.widgets.Page, umc.widg
 		// together into title panes
 		var layout = [{
 			label: this._('Properties'),
-			layout: [ 'name', 'description' ]
+			layout: [ 'school', 'name', 'description' ]
 		}, {
 			label: this._('Computers'),
 			layout: [ 'computers' ]
@@ -156,6 +161,10 @@ dojo.declare("umc.modules._schoolrooms.DetailPage", [ umc.widgets.Page, umc.widg
 		// add form to page... the page extends a BorderContainer, by default
 		// an element gets added to the center region
 		this.addChild(this._form);
+
+        dojo.connect( this._form.getWidget( 'computers' ), 'onShowDialog', dojo.hitch( this, function( dialog ) {
+            dialog._form.getWidget( 'school' ).setInitialValue( this._form.getWidget( 'school' ).get( 'value' ), true );
+        } ) );
 
 		// hook to onSubmit event of the form
 		this.connect(this._form, 'onSubmit', '_save');
@@ -199,7 +208,23 @@ dojo.declare("umc.modules._schoolrooms.DetailPage", [ umc.widgets.Page, umc.widg
 
 	onClose: function(dn, objectType) {
 		// event stub 
-	}
+	},
+
+	disable: function( field, disable ) {
+		this._form.getWidget( field ).set( 'disabled', disable );
+	},
+
+	_setSchoolAttr: function( school ) {
+		this._form.getWidget( 'school' ).set( 'value', school );
+	},
+
+	_setSchoolsAttr: function( schools ) {
+		var school = this._form.getWidget( 'school' );
+		school.set( 'staticValues', schools );
+		school.set( 'visible', schools.length > 1 );
+	},
+
+
 });
 
 

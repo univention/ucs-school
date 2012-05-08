@@ -181,6 +181,9 @@ dojo.declare("umc.modules.schoolrooms", [ umc.widgets.Module, umc.i18n.Mixin ], 
 			description: this._('Choose the school'),
 			label: this._('School'),
 			dynamicValues: 'schoolrooms/schools',
+            onDynamicValuesLoaded: dojo.hitch( this, function( result ) {
+                this._detailPage.set( 'schools', result );
+            } ),
 			autoHide: true
 		}, {
 			type: 'TextBox',
@@ -211,6 +214,7 @@ dojo.declare("umc.modules.schoolrooms", [ umc.widgets.Module, umc.i18n.Mixin ], 
 		// turn off the standby animation as soon as all form values have been loaded
 		this.connect(this._searchForm, 'onValuesInitialized', function() {
 			this.standby(false);
+			this._grid.filter( this._searchForm.gatherFormValues() );
 		});
 
 		// add search form to the title pane
@@ -241,7 +245,8 @@ dojo.declare("umc.modules.schoolrooms", [ umc.widgets.Module, umc.i18n.Mixin ], 
 
 	_addObject: function() {
 		this._detailPage._form.clearFormValues();
-		this._detailPage._form.getWidget('name').set('disabled', false);
+        this._detailPage.set( 'school', this._searchForm.getWidget( 'school' ).get( 'value' ) );
+        this._detailPage.disable( 'school', false );
 
 		this._detailPage.set( 'headerText', this._( 'Add room' ) );
 		this._detailPage.set('helpText', this._('Create room and assign computers'));
@@ -255,22 +260,35 @@ dojo.declare("umc.modules.schoolrooms", [ umc.widgets.Module, umc.i18n.Mixin ], 
 		}
 
 		this.selectChild(this._detailPage);
+        this._detailPage.disable( 'school', true );
 		this._detailPage.set( 'headerText', this._( 'Edit room' ) );
 		this._detailPage.set('helpText', this._('Edit room and assign computers'));
-		this._detailPage._form.getWidget('name').set('disabled', true);
 		this._detailPage.load(ids[0]);
 	},
 
 	_deleteObjects: function(ids, items) {
-		this.standby(true);
-		this.moduleStore.remove(ids).then(dojo.hitch(this, function(response) {
-			this.standby(false);
-			if (response.success === true) {
-				umc.dialog.alert(this._('The room has been deleted successfully'));
-			} else {
-				umc.dialog.alert(dojo.replace(this._('The room could not be deleted ({message})'), response));
+		umc.dialog.confirm( dojo.replace( this._( 'Should the room {name} be deleted?' ), items[ 0 ] ), [ {
+			name: 'cancel',
+			'default' : true,
+			label: this._( 'Cancel' )
+		}, {
+			name: 'delete',
+			label: this._( 'Delete' )
+		} ] ).then( dojo.hitch( this, function( action ) {
+			if ( action != 'delete' ) {
+				return;
 			}
-		}));
+			this.standby(true);
+			this.moduleStore.remove(ids).then(dojo.hitch(this, function(response) {
+				this.standby(false);
+				if (response.success === true) {
+					umc.dialog.alert(this._('The room has been deleted successfully'));
+				} else {
+					umc.dialog.alert(dojo.replace(this._('The room could not be deleted ({message})'), response));
+				}
+			}));
+
+		} ) );
 	}
 });
 

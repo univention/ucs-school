@@ -107,7 +107,8 @@ class Instance( SchoolBaseModule ):
 
 		result = {}
 		result['$dn$'] = room_obj.dn
-		result['name'] = room_obj['name'].replace('%s-' % search_base.school, '', 1)
+		result[ 'school' ] = room_obj.dn[ room_obj.dn.find( '=' ) + 1 : room_obj.dn.find( '-' ) ]
+		result['name'] = room_obj['name'].replace( '%s-' % result[ 'school' ], '', 1 )
 		result['description'] = room_obj['description']
 		result['computers'] = room_obj['hosts']
 
@@ -126,11 +127,12 @@ class Instance( SchoolBaseModule ):
 			raise UMC_CommandError('Invalid arguments')
 
 		group_props = request.options[0].get('object', {})
+		search_base = SchoolSearchBase( search_base.availableSchools, group_props[ 'school' ] )
 		ldap_position.setDn(search_base.rooms)
 		group_obj = udm_modules.get('groups/group').object(None, ldap_user_write, ldap_position)
 		group_obj.open()
 
-		group_obj['name'] = '%s-%s' % (search_base.school, group_props['name'])
+		group_obj['name'] = '%(school)s-%(name)s' % group_props
 		group_obj['description'] = group_props['description']
 		group_obj['hosts'] = group_props['computers']
 
@@ -157,6 +159,7 @@ class Instance( SchoolBaseModule ):
 			raise UMC_OptionTypeError('unknown group object')
 
 		group_obj.open()
+		group_obj[ 'name' ] = '%(school)s-%(name)s' % group_props
 		group_obj['description'] = group_props['description']
 		group_obj['hosts'] = group_props['computers']
 		group_obj.modify()
