@@ -5,16 +5,16 @@
 		<category name="ucs-school-admin"/>
 	</categories>
 	<flavor icon="schoolgroups-class" id="class" priority="21">
-	  <name>Assigning class teachers</name>
-	  <description>Assoziate teachers with classes</description>
+	  <name>Assign class teachers</name>
+	  <description>Associate teachers with classes</description>
 	</flavor>
 	<flavor icon="schoolgroups-workgroup" id="workgroup" priority="20">
-	  <name>Editing workgroups</name>
+	  <name>Edit workgroups</name>
 	  <description>Edit members of workgroups</description>
 	</flavor>
 	<flavor icon="schoolgroups-workgroup" id="workgroup-admin" overwrites="workgroup"  priority="20">
-	  <name>Administrating workgroups</name>
-	  <description>Administrate workgroups</description>
+	  <name>Administrate workgroups</name>
+	  <description>Add and modify workgroups</description>
 	</flavor>
 	<command name="schoolgroups/query" function="query"></command>
 	<command name="schoolgroups/get" function="get"></command>
