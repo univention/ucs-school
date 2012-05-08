@@ -1,3 +1,10 @@
+univention-samba4 (1.0.138-2) unstable; urgency=low
+
+  * Added new UCR variable samba/share/sysvol/readonly to configure
+    sysvol share read only (Bug #26522)
+
+ -- Stefan Gohmann <gohmann@univention.de>  Tue, 08 May 2012 13:45:10 +0200
+
 univention-samba4 (1.0.138-1) unstable; urgency=low
 
   * Set RID pool on selective replicated slave to 2100 (Bug #26504)
