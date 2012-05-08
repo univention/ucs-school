@@ -147,29 +147,33 @@ class Instance( SchoolBaseModule ):
 			raise UMC_CommandError( 'Invalid arguments' )
 
 		group = request.options[ 0 ].get( 'object', {} )
-		grp = udm_objects.get( udm_modules.get( 'groups/group' ), None, ldap_user_write, ldap_position, group[ '$dn$' ] )
-		if not grp:
-			raise UMC_OptionTypeError( 'unknown group object' )
+		try:
+			grp = udm_objects.get( udm_modules.get( 'groups/group' ), None, ldap_user_write, ldap_position, group[ '$dn$' ] )
+			if not grp:
+				raise UMC_OptionTypeError( 'unknown group object' )
 
-		grp.open()
-		grp[ 'description' ] = group[ 'description' ]
-		MODULE.info('Modifying group "%s" with members: %s' % (grp.dn, grp['users']))
-		MODULE.info('New members: %s' % group['members'])
-		if request.flavor == 'class':
-			# class -> update only the group's teachers (keep all non teachers)
-			grp[ 'users' ] = self._remove_users_by_check( grp[ 'users' ], lambda x: not search_base.isTeacher(x) ) + self._remove_users_by_check( group[ 'members' ], search_base.isTeacher )
-		elif request.flavor == 'workgroup-admin':
-			# workgroup (admin view) -> update teachers and students
-			grp[ 'users' ] = group[ 'members' ]
-			grp[ 'name' ] = '%(school)s-%(name)s' % group
-		elif request.flavor == 'workgroup':
-			# workgroup (teacher view) -> update only the group's students
-			if [ dn for dn in grp[ 'users' ] if search_base.isTeacher(dn) ]:
-				raise UMC_CommandError( 'Adding teachers is not allowed' )
-			grp[ 'users' ] = self._remove_users_by_check( grp[ 'users' ], lambda x: not search_base.isStudent(x) ) + self._remove_users_by_check( group[ 'members' ], search_base.isStudent )
+			grp.open()
+			grp[ 'description' ] = group[ 'description' ]
+			MODULE.info('Modifying group "%s" with members: %s' % (grp.dn, grp['users']))
+			MODULE.info('New members: %s' % group['members'])
+			if request.flavor == 'class':
+				# class -> update only the group's teachers (keep all non teachers)
+				grp[ 'users' ] = self._remove_users_by_check( grp[ 'users' ], lambda x: not search_base.isTeacher(x) ) + self._remove_users_by_check( group[ 'members' ], search_base.isTeacher )
+			elif request.flavor == 'workgroup-admin':
+				# workgroup (admin view) -> update teachers and students
+				grp[ 'users' ] = group[ 'members' ]
+				grp[ 'name' ] = '%(school)s-%(name)s' % group
+			elif request.flavor == 'workgroup':
+				# workgroup (teacher view) -> update only the group's students
+				if [ dn for dn in grp[ 'users' ] if search_base.isTeacher(dn) ]:
+					raise UMC_CommandError( 'Adding teachers is not allowed' )
+				grp[ 'users' ] = self._remove_users_by_check( grp[ 'users' ], lambda x: not search_base.isStudent(x) ) + self._remove_users_by_check( group[ 'members' ], search_base.isStudent )
 
-		grp.modify()
-		MODULE.info('Modified, group has now members: %s' % grp['users'])
+			grp.modify()
+			MODULE.info('Modified, group has now members: %s' % grp['users'])
+		except udm_exceptions.base, e:
+			MODULE.process('An error occurred while modifying "%s": %s' % (group['$dn$'], e.message))
+			raise UMC_CommandError( _('Failed to modify group (%s).') % e.message )
 
 		self.finished( request.id, True )
 
@@ -189,14 +193,18 @@ class Instance( SchoolBaseModule ):
 		group = request.options[ 0 ].get( 'object', {} )
 		search_base = SchoolSearchBase( search_base.availableSchools, group[ 'school' ] )
 		ldap_position.setDn( search_base.workgroups )
-		grp = udm_modules.get( 'groups/group' ).object( None, ldap_user_write, ldap_position )
-		grp.open()
+		try:
+			grp = udm_modules.get( 'groups/group' ).object( None, ldap_user_write, ldap_position )
+			grp.open()
 
-		grp[ 'name' ] = '%(school)s-%(name)s' % group
-		grp[ 'description' ] = group[ 'description' ]
-		grp[ 'users' ] = group[ 'members' ]
+			grp[ 'name' ] = '%(school)s-%(name)s' % group
+			grp[ 'description' ] = group[ 'description' ]
+			grp[ 'users' ] = group[ 'members' ]
 
-		grp.create()
+			grp.create()
+		except udm_exceptions.base, e:
+			MODULE.process('An error occurred while creating the group "%s": %s' % (group['name'], e.message))
+			raise UMC_CommandError( _('Failed to create group (%s).') % e.message )
 
 		self.finished( request.id, True )
 
