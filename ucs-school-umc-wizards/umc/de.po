@@ -25,16 +25,16 @@ msgid "Add user"
 msgstr "Benutzer hinzufügen"
 
 msgid "Create a new class"
-msgstr "Erstelle eine neue Klasse"
+msgstr "Erstellen einer neuen Klasse"
 
 msgid "Create a new computer"
-msgstr "Erstelle einen neuen Computer"
+msgstr "Erstellen eines neuen Computers"
 
 msgid "Create a new school"
-msgstr "Erstelle eine neue Schule"
+msgstr "Erstellen einer neuen Schule"
 
 msgid "Create a new user"
-msgstr "Erstelle einen neuen Benutzer"
+msgstr "Erstellen eines neuen Benutzers"
 
 #~ msgid "School wizards"
 #~ msgstr "Schulwizards"
