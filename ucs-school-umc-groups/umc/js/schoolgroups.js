@@ -154,9 +154,7 @@ dojo.declare("umc.modules.schoolgroups", [ umc.widgets.Module, umc.i18n.Mixin ],
 			columns: columns,
 			// a generic UMCP module store object is automatically provided
 			// as this.moduleStore (see also umc.store.getModuleStore())
-			moduleStore: this.moduleStore,
-			// initial query
-			query: { name: '' }
+			moduleStore: this.moduleStore
 		});
 
 		// add the grid to the title pane
@@ -209,6 +207,7 @@ dojo.declare("umc.modules.schoolgroups", [ umc.widgets.Module, umc.i18n.Mixin ],
 				this.standby( false );
 				// transparent standby mode
 				this.standbyOpacity = 0.75;
+				this._grid.filter( this._searchForm.gatherFormValues() );
 			 } )
 		});
 
@@ -265,14 +264,23 @@ dojo.declare("umc.modules.schoolgroups", [ umc.widgets.Module, umc.i18n.Mixin ],
 	},
 
 	_deleteObjects: function(ids, items) {
-		this.standby( true );
-		this.moduleStore.remove( ids ).then( dojo.hitch( this, function( response ) {
-			this.standby( false );
-			if ( response.success === true ) {
-				umc.dialog.alert( this._( 'The workgroup has been deleted successfully' ) );
-			} else {
-				umc.dialog.alert( dojo.replace( this._( 'The workgroup could not be deleted ({message})' ), response ) );
-			}
+		umc.dialog.confirm( dojo.replace( this._( 'Should the workgroup {name} be deleted?' ), items[ 0 ] ), [ {
+			name: 'cancel',
+			'default' : true,
+			label: this._( 'Cancel' )
+		}, {
+			name: 'delete',
+			label: this._( 'Delete' )
+		} ] ).then( dojo.hitch( this, function( action ) {
+			this.standby( true );
+			this.moduleStore.remove( ids ).then( dojo.hitch( this, function( response ) {
+				this.standby( false );
+				if ( response.success === true ) {
+					umc.dialog.alert( this._( 'The workgroup has been deleted successfully' ) );
+				} else {
+					umc.dialog.alert( dojo.replace( this._( 'The workgroup could not be deleted ({message})' ), response ) );
+				}
+			} ) );
 		} ) );
 	}
 });

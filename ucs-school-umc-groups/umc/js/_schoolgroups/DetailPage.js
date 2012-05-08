@@ -105,13 +105,13 @@ dojo.declare("umc.modules._schoolgroups.DetailPage", [ umc.widgets.Page, umc.wid
 		// render the form containing all detail information that may be edited
 		// specify all widgets
 		var groups = [];
-		if ( this.flavor == 'workgroup-admin' ) {
+		if ( this.moduleFlavor == 'workgroup-admin' ) {
 			groups.push( { id: 'None', label: this._('All users') } );
 		}
-		if ( this.flavor == 'class' || this.flavor == 'workgroup-admin' ) {
+		if ( this.moduleFlavor == 'class' || this.moduleFlavor == 'workgroup-admin' ) {
 			groups.push( { id: 'teacher', label: this._('All teachers') } );
 		}
-		if ( this.flavor == 'workgroup' || this.flavor == 'workgroup-admin' ) {
+		if ( this.moduleFlavor == 'workgroup' || this.moduleFlavor == 'workgroup-admin' ) {
 			groups.push( { id: 'student', label: this._('All students') } );
 		}
 

@@ -1,3 +1,11 @@
+ucs-school-umc-groups (0.1.13-1) unstable; urgency=low
+
+  * deleting needs to be confirmed now
+  * add auto search
+  * fixed typo; Bug #26552
+
+ -- Andreas Büsching <buesching@univention.de>  Tue, 08 May 2012 14:01:03 +0200
+
 ucs-school-umc-groups (0.1.12-1) unstable; urgency=low
 
   * fix handling for servers with more than one school; Bug #26552
