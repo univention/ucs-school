@@ -59,7 +59,7 @@ from ucsschool.lib.schoolldap import LDAP_Connection, LDAP_ConnectionError, set_
 from ucsschool.lib.schoollessons import SchoolLessons
 import ucsschool.lib.internetrules as internetrules
 
-from italc2 import ITALC_Manager
+from italc2 import ITALC_Manager, ITALC_Error
 
 import notifier
 
@@ -145,11 +145,27 @@ class Instance( SchoolBaseModule ):
 		"""Acquires the specified computerroom:
 		requests.options = { 'room': <roomDN> }
 		"""
-		self.required_options( request, 'room' )
+		self.required_options( request, 'school', 'room' )
+
 		roomDN = request.options.get('room')
+
+		success = True
+		message = 'OK'
+		# set room and school
+		if self._italc.school != request.options[ 'school' ]:
+			self._italc.school = request.options[ 'school' ]
+		if self._italc.room != request.options[ 'room' ]:
+			try:
+				self._italc.room = request.options[ 'room' ]
+			except ITALC_Error, e:
+				success = False
+				message = 'EMPTY_ROOM'
+
 		_setRoomOwner(roomDN, self._user_dn)
-		success = _getRoomOwner(roomDN) == self._user_dn
-		self.finished( request.id, success )
+		if not _getRoomOwner(roomDN) == self._user_dn:
+			success = False
+			message = 'ALREADY_LOCKED'
+		self.finished( request.id, { 'success' : success, 'message' : message } )
 
 	@LDAP_Connection()
 	def rooms( self, request, ldap_user_read = None, ldap_position = None, search_base = None ):
@@ -482,11 +498,16 @@ class Instance( SchoolBaseModule ):
 				vset[ 'proxy/filter/setting-user/%s/filtertype' % self._username ] = 'whitelist-block'
 				i = 1
 				for domain in request.options.get( 'customRule' ).split( '\n' ):
+					MODULE.info( 'Setting whitelist antry for domain %s' % domain )
 					if not domain:
 						continue
 					parsed = urlparse.urlsplit( domain )
+					MODULE.info( 'Setting whitelist antry for domain %s' % str( parsed ) )
 					if parsed.netloc:
 						vset[ 'proxy/filter/setting-user/%s/domain/whitelisted/%d' % ( self._username, i ) ] = parsed.netloc
+						i += 1
+					elif parsed.path:
+						vset[ 'proxy/filter/setting-user/%s/domain/whitelisted/%d' % ( self._username, i ) ] = parsed.path
 						i += 1
 			else:
 				vunset.append( 'proxy/filter/room/%s/rule' % self._italc.room )
@@ -543,6 +564,37 @@ class Instance( SchoolBaseModule ):
 		MODULE.info( 'Remove settings at %s' % starttime )
 		atjobs.add( cmd, starttime, { Instance.ATJOB_KEY: self._italc.room } )
 		self._ruleEndAt = starttime
+		self.finished( request.id, True )
+
+	def settings_reschedule( self, request ):
+		"""Defines settings for a room
+
+		requests.options = { 'server' : <computer> }
+
+		return: [True|False)
+		"""
+		# block access to session from other users
+		self._checkRoomAccess()
+
+		self.required_options( request, 'period' )
+
+		if not self._italc.school or not self._italc.room:
+			raise UMC_CommandError( 'no room selected' )
+
+		# find AT jobs for the room and execute it to remove current settings
+		jobs = atjobs.list( extended = True )
+		for job in jobs:
+			if Instance.ATJOB_KEY in job.comments and job.comments[ Instance.ATJOB_KEY ] == self._italc.room:
+				current = job.execTime
+				try:
+					time = datetime.datetime.strptime(  request.options[ 'period' ], '%H:%M' ).time()
+					current = current.replace( hour = time.hour, minute = time.minute )
+					atjobs.reschedule( job.nr, current )
+					MODULE.info( 'Reschedule at job %s for %s' % ( job.nr, current ) )
+					self._ruleEndAt = current
+				except ValueError, e:
+					raise UMC_CommandError( 'Failed to read end time: %s' % str( e ) )
+				break
 		self.finished( request.id, True )
 
 	def demo_start( self, request ):

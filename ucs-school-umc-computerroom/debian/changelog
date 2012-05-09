@@ -1,5 +1,14 @@
 ucs-school-umc-computerroom (0.1.21-1) unstable; urgency=low
 
+  * fix permissions for script ucs-school-deactivate-rules
+  * add error message when there no computers in the selected room
+  * add dialog to reschedule the personal settings
+  * update german translation; Bug #25702
+
+ -- Andreas Büsching <buesching@univention.de>  Wed, 09 May 2012 16:12:52 +0200
+
+ucs-school-umc-computerroom (0.1.21-1) unstable; urgency=low
+
   * adapted module description; Bug #26371
 
  -- Alexander Kläser <klaeser@univention.de>  Wed, 09 May 2012 12:23:27 +0200

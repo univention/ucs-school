@@ -15,6 +15,7 @@
 	<command name="computerroom/update" function="update"></command>
 	<command name="computerroom/settings/get" function="settings_get"></command>
 	<command name="computerroom/settings/set" function="settings_set"></command>
+	<command name="computerroom/settings/reschedule" function="settings_reschedule"></command>
 	<command name="computerroom/screenshot" function="screenshot"></command>
 	<command name="computerroom/demo/start" function="demo_start"></command>
 	<command name="computerroom/demo/stop" function="demo_stop"></command>

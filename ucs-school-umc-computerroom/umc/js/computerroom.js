@@ -50,6 +50,7 @@ dojo.require("umc.widgets.ContainerWidget");
 
 dojo.require("umc.modules._computerroom.ScreenshotView");
 dojo.require("umc.modules._computerroom.Settings");
+dojo.require("umc.modules._computerroom.Reschedule");
 
 // declare a Form with Standby functionality
 dojo.declare("umc.modules._computerroom.StandbyForm", [ umc.widgets.Form, umc.widgets.StandbyMixin ], {});
@@ -198,7 +199,7 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 			isStandardAction: false,
 			isMultiAction: false,
 			canExecute: function( item ) {
-				return item.connection[ 0 ] == 'offline' && item.mac[ 0 ] !== null;
+				return ( item.connection[ 0 ] == 'error' || item.connection[ 0 ] == 'offline' ) && item.mac[ 0 ] !== null;
 			},
 			callback: dojo.hitch(this, function( ids, items ) {
 				var comp = items[ 0 ];
@@ -294,10 +295,19 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 		// it is important to call the parent's postMixInProperties() method
 		this.inherited(arguments);
 
+		this._rescheduleDialog = new umc.modules._computerroom.RescheduleDialog( {
+			umcpCommand: dojo.hitch( this.umcpCommand )
+		} );
 		this._settingsDialog = new umc.modules._computerroom.SettingsDialog( {
 			umcpCommand: dojo.hitch( this.umcpCommand )
 		} );
 
+		dojo.connect( this._rescheduleDialog, 'onPeriodChanged', dojo.hitch( this._settingsDialog, function( value ) {
+			this._form.getWidget( 'period' ).set( 'value', value ) ;
+		} ) );
+		dojo.connect( this._settingsDialog, 'onPeriodChanged', dojo.hitch( this._rescheduleDialog, function( value ) {
+			this._form.getWidget( 'period' ).set( 'value', value ) ;
+		} ) );
 		// render the page containing search form and grid
 		this.renderSearchPage();
 
@@ -444,7 +454,7 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 
 		var _container = new umc.widgets.ContainerWidget( { region: 'top' } );
 		this._profileInfo = new umc.widgets.Text( {
-			content: '&nbsp;',
+			content: '<i>' + this._( 'Determining active settings for the room ...' ) + '</i>',
 			style: 'padding-bottom: 10px; padding-bottom; 10px; float: left;'
 		} );
 		this._validTo = new umc.widgets.Text( {
@@ -616,16 +626,22 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 				// try to acquire the session
 				form.standby(true);
 				return umc.tools.umcpCommand('computerroom/room/acquire', {
+					school: vals.school,
 					room: vals.room
 				});
 			}).then(dojo.hitch(this, function(response) {
-				if (!response.result) {
+				if ( response.result.success === false ) {
 					// we could not acquire the room
-					umc.dialog.alert(this._('Failed to open a new session for the room.'));
+					if ( response.result.message == 'ALREADY_LOCKED' ) {
+						umc.dialog.alert(this._('Failed to open a new session for the room.'));
+					} else if ( response.result.message == 'EMPTY_ROOM' ) {
+						umc.dialog.alert( this._( 'The room is empty or the computers are not configured correctly. Please select another room.' ) );
+					}
 					form.standby(false);
 					return;
 				}
 
+				form.standby(false);
 				// reload the grid
 				this.queryRoom( vals.school, vals.room );
 
@@ -750,6 +766,7 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 				return;
 			}
 
+			this._profileInfo.set( 'content', '<i>' + this._( 'Determining active settings for the room ...' ) + '</i>' );
 			dojo.forEach( response.result.computers, function( item ) {
 				this._objStore.put( item );
 			}, this );
@@ -759,12 +776,16 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 			}
 
 			if ( response.result.settingEndsIn ) {
-				var labelValidTo = dojo.replace( this._( 'valid for {time} minutes' ), {
-					time: response.result.settingEndsIn
-				} );
+				var style = '';
+
 				if ( response.result.settingEndsIn <= 5 ) {
-					labelValidTo = '<span style="color: red">' + labelValidTo + '</span>';
+					style = 'style="color: red"';
 				}
+				var labelValidTo = this._( 'valid for' ) + dojo.replace( ' <a href="javascript:void(0)" {style} onclick=\'dijit.byId("{id}").show()\'>' + this._( '{time} minutes' ) + '</a>', {
+					time: response.result.settingEndsIn,
+					id: this._rescheduleDialog.id,
+					style: style
+				} );
 				this._validTo.set( 'content', labelValidTo );
 			} else {
 				if ( this._validTo.get( 'content' ) != '&nbsp;' ) {

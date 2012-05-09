@@ -33,6 +33,7 @@
 
 import copy
 import re
+import subprocess
 import sys
 import tempfile
 import threading
@@ -98,7 +99,7 @@ class UserMap( dict ):
 	@LDAP_Connection()
 	def _read_user( self, userstr, ldap_user_read = None, ldap_position = None, search_base = None ):
 		match = UserMap.USER_REGEX.match( userstr )
-		if not match:
+		if not match or not userstr:
 			raise AttributeError( 'invalid key "%s"' % userstr )
 		username = match.groupdict()[ 'username' ]
 		result = udm_modules.lookup( UserMap.UDM_USERS, None, ldap_user_read, filter = 'uid=%s' % username, scope = 'sub', base = search_base.users )
@@ -180,7 +181,7 @@ class ITALC_Computer( notifier.signals.Provider, QObject ):
 		italc.ItalcVncConnection.Disconnected : 'disconnected',
 		italc.ItalcVncConnection.Connected : 'connected',
 		italc.ItalcVncConnection.ConnectionFailed : 'error',
-		italc.ItalcVncConnection.AuthenticationFailed : 'error',
+		italc.ItalcVncConnection.AuthenticationFailed : 'autherror',
 		italc.ItalcVncConnection.HostUnreachable : 'offline'
 		}
 

@@ -70,7 +70,7 @@ dojo.declare("umc.modules._computerroom.SettingsDialog", [ dijit.Dialog, umc.wid
 			label: this._('Web access profile'),
 			sizeClass: 'One',
 			dynamicValues: 'computerroom/internetrules',
-			staticValues: [ { id: 'none', label: this._( 'Default' ) },
+			staticValues: [ { id: 'none', label: this._( 'Default (global settings)' ) },
 							{ id: 'custom', label: this._( 'personal rules' ) } ],
 			onChange: dojo.hitch( this, function( value ) {
 				this._form.getWidget( 'customRule' ).set( 'disabled', value != 'custom' );
@@ -97,7 +97,7 @@ dojo.declare("umc.modules._computerroom.SettingsDialog", [ dijit.Dialog, umc.wid
 			staticValues: [
 				{ id : 'none', label: this._( 'no access' ) },
 				{ id: 'home', label : this._('home directory only') },
-				{ id: 'all', label : this._('Default' ) }
+				{ id: 'all', label : this._('Default (no restrictions)' ) }
 			]
 		}, {
 			type: 'ComboBox',
@@ -105,7 +105,7 @@ dojo.declare("umc.modules._computerroom.SettingsDialog", [ dijit.Dialog, umc.wid
 			sizeClass: 'One',
 			label: this._('Print mode'),
 			staticValues: [
-				{ id : 'default', label: this._( 'Default' ) },
+				{ id : 'default', label: this._( 'Default (global settings)' ) },
 				{ id: 'none', label : this._('Printing deactivated') },
 				{ id: 'all', label : this._('Free printing' ) }
 			]
@@ -134,8 +134,18 @@ dojo.declare("umc.modules._computerroom.SettingsDialog", [ dijit.Dialog, umc.wid
 					shareMode: this._form.getWidget( 'shareMode' ).get( 'value' ),
 					period: this._form.getWidget( 'period' ).get( 'value' )
 				} ).then( dojo.hitch( this, function( response ) {
-					console.log( response );
+					this.onPeriodChanged( this._form.getWidget( 'period' ).get( 'value' ) );
+					// this.rescheduleDialog.set( 'period', this._form.getWidget( 'period' ).get( 'value' ) );
 				} ) );
+			} )
+		} , {
+			name: 'reset_to_default',
+			label: this._( 'reset' ),
+			style: 'float: right',
+			onClick: dojo.hitch( this, function() {
+				this._form.getWidget( 'internetRule' ).set( 'value', 'none' );
+				this._form.getWidget( 'printMode' ).set( 'value', 'default' );
+				this._form.getWidget( 'shareMode' ).set( 'value', 'all' );
 			} )
 		} , {
 			name: 'cancel',
@@ -147,15 +157,11 @@ dojo.declare("umc.modules._computerroom.SettingsDialog", [ dijit.Dialog, umc.wid
 			} )
 		} ];
 
-		var layout = [
-			'internetRule', 'customRule', 'shareMode', 'printMode', 'period'
-		];
-
 		// generate the search form
 		this._form = new umc.widgets.Form({
 			// property that defines the widget's position in a dijit.layout.BorderContainer
 			widgets: widgets,
-			layout: layout,
+			layout: [ 'internetRule', 'customRule', 'shareMode', 'printMode', 'period' ],
 			buttons: buttons
 		});
 
@@ -167,6 +173,8 @@ dojo.declare("umc.modules._computerroom.SettingsDialog", [ dijit.Dialog, umc.wid
 			umc.tools.forIn( response.result, function( key, value ) {
 				this._form.getWidget( key ).set( 'value', value );
 			}, this );
+			this.onPeriodChanged( this._form.getWidget( 'period' ).get( 'value' ) );
+			// this.rescheduleDialog.set( 'period', this._form.getWidget( 'period' ).get( 'value' ) );
 		} ) );
 	},
 
@@ -175,6 +183,10 @@ dojo.declare("umc.modules._computerroom.SettingsDialog", [ dijit.Dialog, umc.wid
 	},
 
 	onClose: function() {
+		// event stub
+	},
+
+	onPeriodChanged: function() {
 		// event stub
 	}
 });
