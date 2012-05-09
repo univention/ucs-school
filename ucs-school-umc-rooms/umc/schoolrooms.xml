@@ -2,7 +2,7 @@
 <umc version="2.0">
 	<module id="schoolrooms" icon="schoolrooms" version="1.0" priority="30">
 	<name>Room management</name>
-	<description>Manage room and their associated computers</description>
+	<description>Manage rooms and their associated computers</description>
 	<categories>
 		<category name="ucs-school-admin"/>
 	</categories>
