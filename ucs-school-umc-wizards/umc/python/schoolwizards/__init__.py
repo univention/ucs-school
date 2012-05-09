@@ -56,6 +56,12 @@ class Instance(SchoolBaseModule, SchoolImport):
 			raise ValueError(_('Missing value for the following properties: %s')
 			                 % ','.join(missing))
 
+	def _remove_whitespaces(self, request):
+		for key, value in request.options.iteritems():
+			if type(value) is str:
+				request.options[key] = value.strip()
+		return request
+
 	def _username_used(self, username, ldap_user_read):
 		ldap_filter = LDAP_Filter.forAll(username, ['username'])
 		user_exists = udm_modules.lookup('users/user', None, ldap_user_read,
@@ -100,39 +106,47 @@ class Instance(SchoolBaseModule, SchoolImport):
 			self.required_options(request, *keys)
 			self.required_values(request, *keys)
 
-			if self._username_used(request.options['username'], ldap_user_read):
+			request = self._remove_whitespaces(request)
+
+			username = udm_syntax.UserName.parse(request.options['username'])
+			lastname = request.options['lastname']
+			firstname = request.options['firstname']
+			school = udm_syntax.GroupName.parse(request.options['school'])
+			mail_primary_address = request.options.get('mailPrimaryAddress', '')
+			class_ = request.options.get('class', '')
+			password = request.options.get('password', '')
+			type_ = request.options['type']
+
+			if self._username_used(username, ldap_user_read):
 				raise ValueError(_('Username is already in use'))
-			if request.options.get('mailPrimaryAddress', ''):
-				if self._mail_address_used(request.options['mailPrimaryAddress'], ldap_user_read):
+			if mail_primary_address:
+				if self._mail_address_used(udm_syntax.UserMailAddress.parse(mail_primary_address),
+				                           ldap_user_read):
 					raise ValueError(_('Mail address is already in use'))
 
-			isTeacher = False
-			isStaff = False
-			if request.options['type'] in ['student', 'teacher', 'staff', 'teachersAndStaff']:
+			is_teacher = False
+			is_staff = False
+			if type_ in ['student', 'teacher', 'staff', 'teachersAndStaff']:
 				# The class name is only required if the user is a student
-				if request.options['type'] == 'student':
+				if type_ == 'student':
 					self.required_options(request, 'class')
 					self.required_values(request, 'class')
 			else:
 				raise ValueError(_('Invalid value for  \'type\' property'))
-			if request.options['type'] == 'teacher':
-				isTeacher = True
-			elif request.options['type'] == 'staff':
-				isStaff = True
-			elif request.options['type'] == 'teachersAndStaff':
-				isStaff = True
-				isTeacher = True
+			if type_ == 'teacher':
+				is_teacher = True
+			elif type_ == 'staff':
+				is_staff = True
+			elif type_ == 'teachersAndStaff':
+				is_staff = True
+				is_teacher = True
 
 			# Create the user
-			self.import_user(request.options['username'],
-			                 request.options['lastname'],
-			                 request.options['firstname'],
-			                 request.options['school'],
-			                 request.options.get('class', ''),
-			                 request.options.get('mailPrimaryAddress', ''),
-			                 isTeacher,
-			                 isStaff,
-			                 request.options.get('password', ''))
+			self.import_user(username, lastname, firstname, school, class_,
+			                 mail_primary_address, is_teacher, is_staff, password)
+
+			if not self._username_used(username, ldap_user_read):
+				raise OSError(_('The user could not be created'))
 		except (ValueError, IOError, OSError), err:
 			MODULE.info(str(err))
 			result = {'message': str(err)}
@@ -145,19 +159,19 @@ class Instance(SchoolBaseModule, SchoolImport):
 	                  ldap_user_read=None, ldap_position=None):
 		"""Create a new school.
 		"""
-		regex = re.compile('^\w+$')
 		try:
 			# Validate request options
 			self.required_options(request, 'name', 'schooldc')
 			self.required_values(request, 'name', 'schooldc')
 
-			name = request.options['name'].strip()
-			schooldc = request.options['schooldc'].strip()
+			request = self._remove_whitespaces(request)
 
-			invalid = filter(lambda attr: not regex.match(attr), [name, schooldc])
-			if invalid:
-				raise ValueError(_('The following values are invalid: %s')
-				                 % ','.join(invalid))
+			name = udm_syntax.GroupName.parse(request.options['name'])
+			schooldc = request.options['schooldc']
+
+			regex = re.compile('^\w+$')
+			if not regex.match(schooldc):
+				raise ValueError(_('Invalid school server name'))
 			if self._school_name_used(name, ldap_user_read, search_base):
 				raise ValueError(_('School name is already in use'))
 
@@ -181,17 +195,22 @@ class Instance(SchoolBaseModule, SchoolImport):
 			self.required_options(request, 'school', 'name')
 			self.required_values(request, 'school', 'name')
 
-			if not self._school_name_used(request.options['school'], ldap_user_read, search_base):
-				raise ValueError(_('Unknown school'))
+			request = self._remove_whitespaces(request)
 
-			if self._class_name_used(request.options['school'], request.options['name'],
-			                         ldap_user_read, search_base):
+			school = udm_syntax.GroupName.parse(request.options['school'])
+			name = udm_syntax.GroupName.parse(request.options['name'])
+			description = request.options.get('description', '')
+
+			if not self._school_name_used(school, ldap_user_read, search_base):
+				raise ValueError(_('Unknown school'))
+			if self._class_name_used(school, name, ldap_user_read, search_base):
 				raise ValueError(_('Class name is already in use'))
 
 			# Create the school
-			self.import_group(request.options['school'],
-			                  request.options['name'],
-			                  request.options.get('description', ''))
+			self.import_group(school, name, description)
+
+			if not self._class_name_used(school, name, ldap_user_read, search_base):
+				raise OSError(_('The class could not be created'))
 		except (ValueError, IOError, OSError), err:
 			MODULE.info(str(err))
 			result = {'message': str(err)}
@@ -209,32 +228,33 @@ class Instance(SchoolBaseModule, SchoolImport):
 			self.required_options(request, 'type', 'name', 'mac', 'school', 'ipAddress')
 			self.required_values(request, 'type', 'name', 'mac', 'school', 'ipAddress')
 
-			if not self._school_name_used(request.options['school'], ldap_user_read, search_base):
-				raise ValueError(_('Unknown school'))
+			request = self._remove_whitespaces(request)
 
+			type_ = request.options['type']
 			name = udm_syntax.hostName.parse(request.options['name'])
-			if self._computer_name_used(name, ldap_user_read):
-				raise ValueError(_('Computer name is already in use'))
-
 			mac = udm_syntax.MAC_Address.parse(request.options['mac'])
-			if self._mac_address_used(mac, ldap_user_read):
-				raise ValueError(_('MAC address is already in use'))
+			school = request.options['school']
 			ip_address = udm_syntax.ipv4Address.parse(request.options['ipAddress'])
 			subnet_mask = request.options.get('subnetMask', '')
-			if subnet_mask:
-				subnet_mask = udm_syntax.netmask.parse(request.options.get('subnetMask', ''))
+			inventory_number = request.options.get('inventoryNumber', '')
 
-			if request.options['type'] not in ['ipmanagedclient', 'windows']:
+			if not self._school_name_used(school, ldap_user_read, search_base):
+				raise ValueError(_('Unknown school'))
+			if self._computer_name_used(name, ldap_user_read):
+				raise ValueError(_('Computer name is already in use'))
+			if self._mac_address_used(mac, ldap_user_read):
+				raise ValueError(_('MAC address is already in use'))
+			if subnet_mask:
+				subnet_mask = udm_syntax.netmask.parse(subnet_mask)
+			if type_ not in ['ipmanagedclient', 'windows']:
 				raise ValueError(_('Invalid value for  \'type\' property'))
 
 			# Create the computer
-			self.import_computer(request.options['type'],
-			                     name,
-			                     mac,
-			                     request.options['school'],
-			                     ip_address,
-			                     subnet_mask,
-			                     request.options.get('inventoryNumber', ''))
+			self.import_computer(type_, name, mac, school, ip_address,
+			                     subnet_mask, inventory_number)
+
+			if not self._computer_name_used(name, ldap_user_read):
+				raise OSError(_('The computer could not be created'))
 		except (ValueError, IOError, OSError, valueError), err:
 			MODULE.info(str(err))
 			result = {'message': str(err)}

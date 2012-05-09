@@ -1,3 +1,11 @@
+ucs-school-umc-wizards (1.0.22-1) unstable; urgency=low
+
+  * Validate all request options
+  * Strip whitespace characters
+  (Bug #26344)
+
+ -- Jascha Geerds <geerds@univention.de>  Wed, 09 May 2012 16:42:15 +0200
+
 ucs-school-umc-wizards (1.0.21-1) unstable; urgency=low
 
   * SchoolWizard: Adjusted module texts

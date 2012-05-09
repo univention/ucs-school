@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-wizards\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2012-05-04 11:03+0200\n"
+"POT-Creation-Date: 2012-05-04 14:58+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -12,19 +12,19 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: umc/python/schoolwizards/__init__.py:189
+#: umc/python/schoolwizards/__init__.py:210
 msgid "Class name is already in use"
 msgstr "Klassenname wird bereits benutzt"
 
-#: umc/python/schoolwizards/__init__.py:200
+#: umc/python/schoolwizards/__init__.py:222
 msgid "Class successfully created"
 msgstr "Klasse erfolgreich erstellt"
 
-#: umc/python/schoolwizards/__init__.py:217
+#: umc/python/schoolwizards/__init__.py:247
 msgid "Computer name is already in use"
 msgstr "Computername wird bereits benutzt"
 
-#: umc/python/schoolwizards/__init__.py:243
+#: umc/python/schoolwizards/__init__.py:266
 msgid "Computer successfully created"
 msgstr "Computer erfolgreich erstellt"
 
@@ -49,16 +49,20 @@ msgstr "Der Benutzer konnte nicht erstellt werden"
 msgid "Execution of command failed"
 msgstr "Die Ausführungs des Kommandos schlug fehl"
 
-#: umc/python/schoolwizards/__init__.py:117
-#: umc/python/schoolwizards/__init__.py:228
+#: umc/python/schoolwizards/__init__.py:174
+msgid "Invalid school server name"
+msgstr "Ungültiger Schulserver name"
+
+#: umc/python/schoolwizards/__init__.py:135
+#: umc/python/schoolwizards/__init__.py:253
 msgid "Invalid value for  'type' property"
 msgstr "Ungültiger Wert für 'Typ'-Eigenschaft"
 
-#: umc/python/schoolwizards/__init__.py:221
+#: umc/python/schoolwizards/__init__.py:249
 msgid "MAC address is already in use"
 msgstr "MAC-Adresse wird bereits benutzt"
 
-#: umc/python/schoolwizards/__init__.py:107
+#: umc/python/schoolwizards/__init__.py:125
 msgid "Mail address is already in use"
 msgstr "Mail-Adresse wird bereits benutzt"
 
@@ -67,31 +71,45 @@ msgstr "Mail-Adresse wird bereits benutzt"
 msgid "Missing value for the following properties: %s"
 msgstr "Fehlender Wert für die folgenden Eigenschaften: %s"
 
-#: umc/python/schoolwizards/__init__.py:162
+#: umc/python/schoolwizards/__init__.py:176
 msgid "School name is already in use"
 msgstr "Schulname wird bereits benutzt"
 
-#: umc/python/schoolwizards/__init__.py:172
+#: umc/python/schoolwizards/__init__.py:189
 msgid "School successfully created"
 msgstr "Schule wurde erfolgreich erstellt"
 
-#: umc/python/schoolwizards/__init__.py:159
-#, python-format
-msgid "The following values are invalid: %s"
-msgstr "Die folgenden Werte sind ungültig: %s"
+#: umc/python/schoolwizards/__init__.py:216
+msgid "The class could not be created"
+msgstr "Die Klasse konnte nicht erstellt werden"
 
-#: umc/python/schoolwizards/__init__.py:185
-#: umc/python/schoolwizards/__init__.py:213
+#: umc/python/schoolwizards/__init__.py:260
+msgid "The computer could not be created"
+msgstr "Der Computer konnte nicht erstellt werden"
+
+#: umc/python/schoolwizards/__init__.py:183
+msgid "The school could not be created"
+msgstr "Die Schule konnte nicht erstellt werden"
+
+#: umc/python/schoolwizards/__init__.py:149
+msgid "The user could not be created"
+msgstr "Der Benutzer konnte nicht erstellt werden"
+
+#: umc/python/schoolwizards/__init__.py:208
+#: umc/python/schoolwizards/__init__.py:245
 msgid "Unknown school"
 msgstr "Unbekannte Schule"
 
-#: umc/python/schoolwizards/__init__.py:141
+#: umc/python/schoolwizards/__init__.py:155
 msgid "User successfully created"
 msgstr "Benutzer wurde erfolgreich erstellt"
 
-#: umc/python/schoolwizards/__init__.py:104
+#: umc/python/schoolwizards/__init__.py:121
 msgid "Username is already in use"
 msgstr "Benutzername wird bereits benutzt"
 
 #~ msgid "Invalid value for the following properties: %s"
 #~ msgstr "Ungültiger Wert für die folgenden Eigenschaften: %s"
+
+#~ msgid "The following values are invalid: %s"
+#~ msgstr "Die folgenden Werte sind ungültig: %s"
