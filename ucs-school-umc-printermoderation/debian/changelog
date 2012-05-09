@@ -1,3 +1,10 @@
+ucs-school-umc-printermoderation (7.0.9-1) unstable; urgency=low
+
+  * create a standard PDF printer in the join script, increased join script
+    version; Bug #27039
+
+ -- Alexander Kläser <klaeser@univention.de>  Wed, 09 May 2012 11:38:33 +0200
+
 ucs-school-umc-printermoderation (7.0.8-1) unstable; urgency=low
 
   * cleanup; Bug #25705

@@ -31,11 +31,13 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-VERSION=1
+VERSION=3
 
 . /usr/share/univention-join/joinscripthelper.lib
 . /usr/share/univention-lib/umc.sh
 . /usr/share/ucs-school-lib/umc.sh
+
+eval "$(ucr shell)"
 
 joinscript_init
 
@@ -45,6 +47,19 @@ ucs_school_policies_create
 ucs_school_policies_append "printermoderation-all"
 
 joinscript_save_current_version
+
+# create default PDF printer
+position="cn=printers,$ldap_base"
+if [ "$server_role" = "domaincontroller_slave" ] ; then
+	position="cn=printers,ou=${ldap_hostdn#*,ou=}"
+fi
+udm shares/printer create "$@" --ignore_exists \
+	--position "$position" \
+	--set name="PDFDrucker" \
+	--set spoolHost="$hostname.$domainname" \
+	--set uri="cups-pdf:/" \
+	--set description="Moderierter PDF-Drucker" \
+	--set model="None"
 
 exit 0
 
