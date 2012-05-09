@@ -40,7 +40,6 @@ dojo.require("umc.dialog");
 dojo.require("umc.i18n");
 dojo.require("umc.tools");
 dojo.require("umc.widgets.ExpandingTitlePane");
-dojo.require("umc.widgets.StandbyMixin");
 dojo.require("umc.widgets.TitlePane");
 dojo.require("umc.widgets.Grid");
 dojo.require("umc.widgets.Module");
@@ -51,10 +50,6 @@ dojo.require("umc.widgets.ContainerWidget");
 dojo.require("umc.modules._computerroom.ScreenshotView");
 dojo.require("umc.modules._computerroom.Settings");
 dojo.require("umc.modules._computerroom.Reschedule");
-
-// declare a Form with Standby functionality
-dojo.declare("umc.modules._computerroom.StandbyForm", [ umc.widgets.Form, umc.widgets.StandbyMixin ], {});
-
 
 dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ], {
 	// summary:
@@ -579,7 +574,7 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 
 	changeRoom: function() {
 		// define a cleanup function
-		var dialog = null, form = null;
+		var dialog = null, form = null, okButton = null;
 		var _cleanup = function() {
 			dialog.hide();
 			dialog.destroyRecursive();
@@ -624,12 +619,13 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 
 			deferred = deferred.then(function () {
 				// try to acquire the session
-				form.standby(true);
+				okButton.set('disabled', true);
 				return umc.tools.umcpCommand('computerroom/room/acquire', {
 					school: vals.school,
 					room: vals.room
 				});
 			}).then(dojo.hitch(this, function(response) {
+				okButton.set('disabled', false);
 				if ( response.result.success === false ) {
 					// we could not acquire the room
 					if ( response.result.message == 'ALREADY_LOCKED' ) {
@@ -637,11 +633,9 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 					} else if ( response.result.message == 'EMPTY_ROOM' ) {
 						umc.dialog.alert( this._( 'The room is empty or the computers are not configured correctly. Please select another room.' ) );
 					}
-					form.standby(false);
 					return;
 				}
 
-				form.standby(false);
 				// reload the grid
 				this.queryRoom( vals.school, vals.room );
 
@@ -653,7 +647,7 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 				_cleanup();
 			}), function() {
 				// catch error that has been thrown to cancel chain
-				form.standby(false);
+				okButton.set('disabled', false);
 			});
 		});
 
@@ -702,17 +696,18 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 		}];
 
 		// generate the search form
-		form = new umc.modules._computerroom.StandbyForm({
+		form = new umc.widgets.Form({
 			// property that defines the widget's position in a dijit.layout.BorderContainer
 			widgets: widgets,
 			layout: [ 'school', 'room', 'message' ],
 			buttons: buttons
 		});
+		okButton = form.getButton('submit');
 
-		// stop standby animation when values are loaded
+		// enable button when values are loaded
 		var signal = dojo.connect(form, 'onValuesInitialized', function() {
 			dojo.disconnect(signal);
-			form.standby(false);
+			okButton.set('disabled', false);
 		});
 
 		// show the dialog
@@ -723,7 +718,7 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 			style: 'max-width: 400px;'
 		});
 		dialog.show();
-		form.standby(true);
+		okButton.set('disabled', true);
 	},
 
 	queryRoom: function( school, room ) {
