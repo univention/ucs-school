@@ -146,7 +146,7 @@ msgstr ""
 
 #: umc/js/_schoolgroups/DetailPage.js:77
 msgid "This page allows to specify teachers who are associated with the class"
-msgstr "Diese erlaubt das Definieren der lerher, die zu dieser Klasse gehören"
+msgstr "Diese erlaubt das Definieren der Lehrer, die zu dieser Klasse gehören"
 
 #: umc/js/_schoolgroups/DetailPage.js:150
 msgid "User group or class"
