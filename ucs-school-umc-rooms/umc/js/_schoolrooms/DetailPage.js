@@ -38,9 +38,6 @@ dojo.require("umc.widgets.Page");
 dojo.require("umc.widgets.StandbyMixin");
 
 dojo.declare("umc.modules._schoolrooms.DetailPage", [ umc.widgets.Page, umc.widgets.StandbyMixin, umc.i18n.Mixin ], {
-	// summary:
-	//		This class represents the detail view of our dummy module.
-
 	// reference to the module's store object
 	moduleStore: null,
 

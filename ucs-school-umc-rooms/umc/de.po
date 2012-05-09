@@ -13,7 +13,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 msgid "Manage rooms and their associated computers"
-msgstr "Compuerräume und zugehörige Computer verwalten"
+msgstr "Computerräume und zugehörige Computer verwalten"
 
 msgid "Room management"
 msgstr "Computerräume verwalten"
