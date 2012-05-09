@@ -2,7 +2,7 @@
 <umc version="2.0">
 	<module id="computerroom" icon="computerroom" version="1.0" notifier="qt" priority="15">
 	<name>Computer room</name>
-	<description>Watching a computerroom</description>
+	<description>Control students' computers during a lesson</description>
 	<categories>
 		<category name="ucs-school-class"/>
 	</categories>
