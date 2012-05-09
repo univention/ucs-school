@@ -1,3 +1,9 @@
+ucs-school-umc-lessontimes (0.1.4-1) unstable; urgency=low
+
+  * adjusted module description; Bug #26748
+
+ -- Jascha Geerds <geerds@univention.de>  Wed, 09 May 2012 12:40:46 +0200
+
 ucs-school-umc-lessontimes (0.1.3-1) unstable; urgency=low
 
   * First working version (Bug #26748)
