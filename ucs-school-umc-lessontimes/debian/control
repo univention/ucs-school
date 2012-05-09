@@ -19,8 +19,8 @@ Depends: ${misc:Depends},
  python-ucs-school,
  shell-ucs-school,
  python-univention-directory-manager
-Description: UMC dummy module
- This package contains a UMC dummy module.
+Description: UMC module to configure the lesson times
+ This package contains a UCS@school UMC module to configure default lesson times
  .
  It is part of Univention Corporate Server (UCS), an
  integrated, directory driven solution for managing

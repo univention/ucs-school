@@ -13,7 +13,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 msgid "Configure default lessons times"
-msgstr "Konfiguriere die standard Unterrichtsstunden"
+msgstr "Konfiguriere die Unterrichtszeiten"
 
 msgid "Lesson times"
-msgstr "Unterrichtsstunden"
+msgstr "Unterrichtszeiten"
