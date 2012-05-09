@@ -31,6 +31,8 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+import re
+
 from univention.lib.i18n import Translation
 from univention.management.console.log import MODULE
 from univention.management.console.modules import UMC_OptionMissing, UMC_CommandError, UMC_OptionTypeError
@@ -143,16 +145,24 @@ class Instance(SchoolBaseModule, SchoolImport):
 	                  ldap_user_read=None, ldap_position=None):
 		"""Create a new school.
 		"""
+		regex = re.compile('^\w+$')
 		try:
 			# Validate request options
-			self.required_options(request, 'name')
-			self.required_values(request, 'name')
+			self.required_options(request, 'name', 'schooldc')
+			self.required_values(request, 'name', 'schooldc')
 
-			if self._school_name_used(request.options['name'], ldap_user_read, search_base):
+			name = request.options['name'].strip()
+			schooldc = request.options['schooldc'].strip()
+
+			invalid = filter(lambda attr: not regex.match(attr), [name, schooldc])
+			if invalid:
+				raise ValueError(_('The following values are invalid: %s')
+				                 % ','.join(invalid))
+			if self._school_name_used(name, ldap_user_read, search_base):
 				raise ValueError(_('School name is already in use'))
 
 			# Create the school
-			self.create_ou(request.options['name'], request.options.get('schooldc', ''))
+			self.create_ou(name, schooldc)
 			_init_search_base(ldap_user_read, force = True)
 		except (ValueError, IOError, OSError), err:
 			MODULE.info(str(err))

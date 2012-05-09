@@ -48,12 +48,14 @@ dojo.declare("umc.modules._schoolwizards.SchoolWizard", [ umc.modules._schoolwiz
 			widgets: [{
 				type: 'TextBox',
 				name: 'name',
-				label: this._('Name'),
+				label: this._('Name of the school'),
 				required: true
 			}, {
 				type: 'TextBox',
 				name: 'schooldc',
-				label: this._('School DC'),
+				label: this._('Computer name of the school server'),
+				regExp: '^\\w+$',
+				required: true
 			}],
 			layout: [['name'],
 			         ['schooldc']]

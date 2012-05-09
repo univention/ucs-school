@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-wizards\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2012-05-08 18:39+0200\n"
+"POT-Creation-Date: 2012-05-04 10:19+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -34,6 +34,10 @@ msgstr ""
 "Computer \"%s\" wurde erfolgreich erstellt. Es kann nun ein weiterer "
 "Computer erstellt oder der Wizard beendet über die Schaltfläche \"Abbrechen"
 "\" beendet werden."
+
+#: umc/js/_schoolwizards/SchoolWizard.js:56
+msgid "Computer name of the school server"
+msgstr "Rechnername des Schulservers"
 
 #: umc/js/_schoolwizards/ClassWizard.js:62
 msgid "Description"
@@ -85,21 +89,24 @@ msgstr "MAC-Adresse"
 
 #: umc/js/_schoolwizards/ComputerWizard.js:74
 #: umc/js/_schoolwizards/ClassWizard.js:57
-#: umc/js/_schoolwizards/SchoolWizard.js:51
 msgid "Name"
 msgstr "Name"
+
+#: umc/js/_schoolwizards/SchoolWizard.js:51
+msgid "Name of the school"
+msgstr "Name der Schule"
 
 #: umc/js/_schoolwizards/UserWizard.js:104
 msgid "Password"
 msgstr "Passwort"
 
+#: umc/js/_schoolwizards/UserWizard.js:51
 #: umc/js/_schoolwizards/ComputerWizard.js:51
 #: umc/js/_schoolwizards/ClassWizard.js:51
-#: umc/js/_schoolwizards/UserWizard.js:51
 msgid "School"
 msgstr "Schule"
 
-#: umc/js/_schoolwizards/SchoolWizard.js:70
+#: umc/js/_schoolwizards/SchoolWizard.js:72
 #, python-format
 msgid ""
 "School \"%s\" has been successfully created. Continue to create another "
@@ -107,10 +114,6 @@ msgid ""
 msgstr ""
 "Schule \"%s\" wurde erfolgreich erstellt. Es kann nun eine weitere Schule "
 "erstellt oder der Wizard über die Schaltfläche \"Abbrechen\" beendet werden."
-
-#: umc/js/_schoolwizards/SchoolWizard.js:56
-msgid "School DC"
-msgstr "Schul-DC"
 
 #: umc/js/_schoolwizards/ComputerWizard.js:47
 msgid "Specify the computer type."
@@ -140,8 +143,8 @@ msgstr "Lehrer"
 msgid "Teachers and staff"
 msgstr "Lehrer und Mitarbeiter"
 
-#: umc/js/_schoolwizards/ComputerWizard.js:57
 #: umc/js/_schoolwizards/UserWizard.js:57
+#: umc/js/_schoolwizards/ComputerWizard.js:57
 msgid "Type"
 msgstr "Typ"
 
@@ -177,6 +180,9 @@ msgstr "Windows-System"
 
 #~ msgid "IP-Managed-Client"
 #~ msgstr "IP-Managed-Client"
+
+#~ msgid "School DC"
+#~ msgstr "Schul-DC"
 
 #~ msgid "This module creates a new class on the system."
 #~ msgstr "Dieses Modul erstellt eine neue Klasse auf dem System."
