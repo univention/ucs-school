@@ -57,7 +57,7 @@ udm shares/printer create "$@" --ignore_exists \
 	--position "$position" \
 	--set name="PDFDrucker" \
 	--set spoolHost="$hostname.$domainname" \
-	--set uri="cups-pdf:/" \
+	--set uri="cups-pdf:/ ." \
 	--set description="Moderierter PDF-Drucker" \
 	--set model="None"
 
