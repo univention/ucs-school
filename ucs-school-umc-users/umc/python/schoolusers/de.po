@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2012-03-11 03:38+0100\n"
+"POT-Creation-Date: 2012-05-09 12:24+0200\n"
 "PO-Revision-Date: 2012-03-15 11:18+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,16 +16,14 @@ msgstr ""
 "Content-Transfer-Encoding: ENCODING\n"
 "Generated-By: pygettext.py 1.5\n"
 
-#: umc/python/schoolusers/__init__.py:116
+#: umc/python/schoolusers/__init__.py:112
 msgid "No passwords changed, need a new password."
 msgstr ""
 "Das Passwort wurden nicht geändert, da kein neues Passwort angegeben wurde."
 
-#: umc/python/schoolusers/__init__.py:106
-#, python-format
-msgid "Unknown error: %s"
-msgstr "Unbekannter Fehler: %s"
-
 #: umc/python/schoolusers/__init__.py:97
 msgid "permission denied"
 msgstr "Zugriff verweigert"
+
+#~ msgid "Unknown error: %s"
+#~ msgstr "Unbekannter Fehler: %s"

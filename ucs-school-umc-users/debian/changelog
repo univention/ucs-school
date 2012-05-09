@@ -1,3 +1,9 @@
+ucs-school-umc-users (8.0.4-1) unstable; urgency=low
+
+  * adjusted module descriptions; Bug #26371
+
+ -- Alexander Kläser <klaeser@univention.de>  Wed, 09 May 2012 12:25:56 +0200
+
 ucs-school-umc-users (8.0.3-1) unstable; urgency=low
 
   * replace "Pupils" with "Students" in join script; Bug #25954

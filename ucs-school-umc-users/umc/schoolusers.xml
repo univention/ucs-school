@@ -3,11 +3,11 @@
 	<module id="schoolusers" icon="schoolusers" version="1.0">
 	<flavor icon="schoolusers-student" id="student" priority="41">
 	  <name>Passwords (students)</name>
-	  <description>Resetting passwords of student accounts</description>
+	  <description>Reset passwords of student accounts</description>
 	</flavor>
 	<flavor icon="schoolusers-teacher" id="teacher" priority="40">
 	  <name>Passwords (teachers)</name>
-	  <description>Resetting passwords of teacher accounts</description>
+	  <description>Reset passwords of teacher accounts</description>
 	</flavor>
 	<categories>
 		<category name="ucs-school-admin"/>
