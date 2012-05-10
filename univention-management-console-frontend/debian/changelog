@@ -1,3 +1,10 @@
+univention-management-console-frontend (1.0.319-1) unstable; urgency=low
+
+  * add option multiActionsAlwaysActive to Grid: allows to keep multi
+    actions enabled if no item is selected; Bug #26353
+
+ -- Andreas Büsching <buesching@univention.de>  Thu, 10 May 2012 11:12:39 +0200
+
 univention-management-console-frontend (1.0.318-1) unstable; urgency=low
 
   * MultiObjectSelect: add the two events onCreateDialog and onShowDialog; Bug #27024
