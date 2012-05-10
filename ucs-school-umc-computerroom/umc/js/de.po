@@ -3,8 +3,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-computerroom\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2012-05-09 16:07+0200\n"
-"PO-Revision-Date: 2012-05-09 16:08+0200\n"
+"POT-Creation-Date: 2012-05-09 22:06+0200\n"
+"PO-Revision-Date: 2012-05-10 09:54+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
@@ -256,7 +256,9 @@ msgstr ""
 msgid ""
 "The room is empty or the computers are not configured correctly. Please "
 "select another room."
-msgstr "Der Raum ist leer oder die Computer sind nicht korrekt eingerichtet. Bitte wählen Sie einen anderen Raum."
+msgstr ""
+"Der Raum ist leer oder die Computer sind nicht korrekt eingerichtet. Bitte "
+"wählen Sie einen anderen Raum."
 
 #: umc/js/computerroom.js:610
 #, python-format
@@ -271,11 +273,9 @@ msgstr ""
 
 #: umc/js/_computerroom/ScreenshotView.js:234
 msgid ""
-"This page shows screenshots of selected computers that will be updated every "
-"few seconds."
-msgstr ""
-"Diese Seite zeigt Bildschirmphotos der ausgewählten Computer die alle paar "
-"Sekunden aktualisiert werden."
+"This page shows screenshots of selected computers that will be updated "
+"continuously."
+msgstr "Diese Seite zeigt Bildschirmphotos der ausgewählten Computer die fortlaufend aktualisiert werden."
 
 #: umc/js/computerroom.js:235
 msgid "Unlock input devices"

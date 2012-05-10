@@ -149,6 +149,9 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 				return item.connection[ 0 ] == 'connected';
 			},
 			callback: dojo.hitch(this, function( ids, items ) {
+				if ( items.length === 0 ) {
+					items = this._grid.getAllItems();
+				}
 				this.selectChild( this._screenshotView );
 				this._screenshotView.load( dojo.map( dojo.filter( items, function( item ) {
 					return item.connection[ 0 ] == 'connected';
@@ -412,9 +415,9 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 		this._grid = new umc.widgets.Grid({
 			// property that defines the widget's position in a dijit.layout.BorderContainer,
 			// 'center' is its default value, so no need to specify it here explicitely
+			multiActionsAlwaysActive: true,
 			// region: 'center',
 			actions: this._actionList(),
-			// defines which data fields are displayed in the grids columns
 			columns: columns,
 			moduleStore: new dojo.store.Memory(),
 			footerFormatter: dojo.hitch( this, function( nItems, nItemsTotal ) {

@@ -231,7 +231,7 @@ dojo.declare("umc.modules._computerroom.ScreenshotView", [ umc.widgets.Page, umc
 
 		// set the page header
 		this.headerText = this._( 'Screenshots of computers' );
-		this.helpText = this._( 'This page shows screenshots of selected computers that will be updated every few seconds.' );
+		this.helpText = this._( 'This page shows screenshots of selected computers that will be updated continuously.' );
 
 	},
 

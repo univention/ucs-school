@@ -1,3 +1,10 @@
+ucs-school-umc-computerroom (0.1.23-1) unstable; urgency=low
+
+  * update german translation
+  * multi-action watch showns all computers if no computer is selected; Bug #26353
+
+ -- Andreas Büsching <buesching@univention.de>  Thu, 10 May 2012 12:05:39 +0200
+
 ucs-school-umc-computerroom (0.1.22-1) unstable; urgency=low
 
   * replace standby animation for room selection with a disabled button;
