@@ -149,7 +149,7 @@ class Instance( SchoolBaseModule ):
 				if isinstance(itype, tuple):
 					typeStr = ', '.join([ i.__name__ for i in itype])
 				else:
-					typeStr = i.__name__
+					typeStr = itype.__name__
 				raise ValueError(_('The key "%s" needs to be of type: %s') % (ikey, typeStr))
 
 		# validate name

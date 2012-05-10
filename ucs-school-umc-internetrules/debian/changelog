@@ -1,3 +1,9 @@
+ucs-school-umc-internetrules (7.0.9-1) unstable; urgency=low
+
+  * fixed reference error; Bug #25704
+
+ -- Alexander Kläser <klaeser@univention.de>  Thu, 10 May 2012 14:50:18 +0200
+
 ucs-school-umc-internetrules (7.0.8-1) unstable; urgency=low
 
   * adjusted module order; Bug #26349
