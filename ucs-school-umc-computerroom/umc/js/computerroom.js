@@ -282,7 +282,7 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 			isStandardAction: false,
 			isContextAction: true,
 			isMultiAction: false,
-			callback: dojo.hitch( this, function() { this.queryRoom(); } )
+			callback: dojo.hitch( this, function() { this.queryRoom( true ); } )
 		} ];
 	},
 
@@ -374,8 +374,10 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 				if ( item.connection[ 0 ] == 'connected' ) {
 					icon = 'demo-offline';
 					label = this._( 'Monitoring is activated' );
+				} else if ( item.connection[ 0 ] == 'autherror' ) {
+					label = this._( 'The monitoring mode has failed. It seems that the monitoring service is not configured properly.' );
 				} else if ( item.connection[ 0 ] == 'error' ) {
-					label = this._( 'The monitoring mode has failed' );
+					label = this._( 'The monitoring mode has failed. Maybe the service is not installed or the Firewall is active.' );
 				}
 				if ( item.DemoServer[ 0 ] === true ) {
 					icon = 'demo-server';
@@ -638,9 +640,11 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 					}
 					return;
 				}
+				this._currentRoom = vals.room;
+				this._currentSchool = vals.school;
 
 				// reload the grid
-				this.queryRoom( vals.school, vals.room );
+				this.queryRoom();
 
 				// update the header text containing the room
 				this._updateHeader(vals.room);
@@ -724,20 +728,12 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 		okButton.set('disabled', true);
 	},
 
-	queryRoom: function( school, room ) {
-		if ( school === undefined && room === undefined ) {
-			school = this._currentSchool;
-			room = this._currentRoom;
-		} else {
-			this._currentSchool = school;
-			this._currentRoom = room;
-		}
+	queryRoom: function( reload ) {
 		if ( this._updateTimer ) {
 			window.clearTimeout( this._updateTimer );
 		}
 		this.umcpCommand( 'computerroom/query', {
-			school: school,
-			room: room
+			reload: reload !== undefined ? reload: false
 		} ).then( dojo.hitch( this, function( response ) {
 			this._settingsDialog.update();
 			dojo.forEach( response.result, function( item ) {

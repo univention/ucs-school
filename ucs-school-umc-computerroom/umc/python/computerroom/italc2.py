@@ -244,7 +244,7 @@ class ITALC_Computer( notifier.signals.Provider, QObject ):
 	def _stateChanged( self, state ):
 		self._state.set( ITALC_Computer.CONNECTION_STATES[ state ] )
 
-		if not self._core and self._state.current == 'connected' and self._state.old == 'disconnected':
+		if not self._core and self._state.current == 'connected' and self._state.old != 'connected':
 			self._core = italc.ItalcCoreConnection( self._vnc )
 			self._core.receivedUserInfo.connect( self._userInfo )
 			self._core.receivedSlaveStateFlags.connect( self._slaveStateFlags )
@@ -259,8 +259,8 @@ class ITALC_Computer( notifier.signals.Provider, QObject ):
 
 	@pyqtSlot( str, str )
 	def _userInfo( self, username, homedir ):
-		self._username.set( username )
-		self._homedir.set( homedir )
+		self._username.set( str( username ) )
+		self._homedir.set( str( homedir ) )
 		self._teacher.set( self.isTeacher )
 		if self._username.current:
 			self._core.reportSlaveStateFlags()

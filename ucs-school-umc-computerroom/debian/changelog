@@ -1,3 +1,12 @@
+ucs-school-umc-computerroom (0.1.26-1) unstable; urgency=low
+
+  * fix re-init of iTALC connections
+  * reset all information when the iTALC connection is lost
+  * update german translations
+  * enhance status message for the iTALC connection; Bug #22744
+
+ -- Andreas Büsching <buesching@univention.de>  Thu, 10 May 2012 16:14:12 +0200
+
 ucs-school-umc-computerroom (0.1.25-1) unstable; urgency=low
 
   * fixed detection of teacher accounts on systems with several schools; Bug #25702

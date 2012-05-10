@@ -219,6 +219,9 @@ class Instance( SchoolBaseModule ):
 		if not self._italc.school or not self._italc.room:
 			raise UMC_CommandError( 'no room selected' )
 
+		if request.options.get( 'reload', False ):
+			self._italc.room = self._italc.room # believe me that makes sense :)
+
 		result = []
 		for computer in self._italc.values():
 			item = { 'id' : computer.name,
@@ -439,7 +442,6 @@ class Instance( SchoolBaseModule ):
 				break
 
 		# do we need to setup a new at job with custom settings?
-		MODULE.info( 'CRUNCHY: %s' % request.options )
 		if request.options[ 'internetRule' ] == 'none' and request.options[ 'shareMode' ] == 'all' and request.options[ 'printMode' ] == 'default':
 			self._ruleEndAt = None
 			self.finished( request.id, True )
