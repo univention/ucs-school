@@ -49,6 +49,7 @@ Depends: univention-directory-manager-tools (>> 4.0.29-1),
  shell-univention-lib,
  shell-ucs-school,
 Recommends:
+ ucs-school-branding,
  ucs-school-umc-computerroom,
  ucs-school-umc-distribution,
  ucs-school-umc-groups,
@@ -87,6 +88,7 @@ Depends: univention-ldap-server (>> 8.0.77-2),
  shell-univention-lib,
  ucs-school-netlogon
 Recommends:
+ ucs-school-branding,
  ucs-school-umc-computerroom,
  ucs-school-umc-distribution,
  ucs-school-umc-groups,

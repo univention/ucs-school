@@ -1,3 +1,9 @@
+ucs-school-metapackage (4.0.27-2) unstable; urgency=low
+
+  * adapted dependencies to include ucs-school-branding; Bug #27031
+
+ -- Alexander Kläser <klaeser@univention.de>  Thu, 10 May 2012 16:59:42 +0200
+
 ucs-school-metapackage (4.0.27-1) unstable; urgency=low
 
   * Make the sysvol share read only on a DC slave (Bug #26522)
