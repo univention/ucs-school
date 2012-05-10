@@ -1,3 +1,9 @@
+ucs-school-netlogon-user-logonscripts (7.0.4-1) unstable; urgency=low
+
+  * improve performance of listener script (Bug #26533)
+
+ -- Janek Walkenhorst <walkenhorst@univention.de>  Thu, 10 May 2012 18:07:14 +0200
+
 ucs-school-netlogon-user-logonscripts (7.0.3-1) unstable; urgency=low
 
   * changed description of ucsschool/userlogon/commonshares (Bug #26527)
