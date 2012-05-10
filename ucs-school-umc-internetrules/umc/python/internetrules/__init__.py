@@ -138,7 +138,7 @@ class Instance( SchoolBaseModule ):
 	@staticmethod
 	def _parseRule(iprops, forceAllProperties=False):
 		# validate types
-		for ikey, itype in (('name', str), ('type', str), ('priority', (int, str)), ('wlan', bool), ('domains', list)):
+		for ikey, itype in (('name', basestring), ('type', basestring), ('priority', (int, basestring)), ('wlan', bool), ('domains', list)):
 			if not ikey in iprops:
 				if forceAllProperties:
 					# raise exception as the key is not present
@@ -171,7 +171,7 @@ class Instance( SchoolBaseModule ):
 							return False
 					return True
 
-				if not isinstance(idomain, str) or not _validValueChar():
+				if not isinstance(idomain, basestring) or not _validValueChar():
 					raise ValueError(_('Invalid domain '))
 
 				# parse domain
