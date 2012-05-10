@@ -211,8 +211,7 @@ msgstr ""
 #: umc/js/_internetrules/AssignPage.js:167
 msgid "The chosen internet rule will be assigned to the following groups:"
 msgstr ""
-"Die ausgewählte Internetregel wird den folgenden Gruppen zugewiesen werden: "
-"%s"
+"Die ausgewählte Internetregel wird den folgenden Gruppen zugewiesen werden:"
 
 #: umc/js/_internetrules/DetailPage.js:93
 msgid "The name of the rule"
