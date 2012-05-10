@@ -173,6 +173,7 @@ class Instance( SchoolBaseModule ):
 		self.required_options( request, 'school' )
 		rooms = []
 		userModule = udm_modules.get('users/user')
+		# create search base for current school
 		for iroom in self._groups( ldap_user_read, search_base.school, search_base.rooms ):
 			# add room status information
 			userDN = _getRoomOwner(iroom['id'])

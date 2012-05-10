@@ -102,6 +102,11 @@ class UserMap( dict ):
 		if not match or not userstr:
 			raise AttributeError( 'invalid key "%s"' % userstr )
 		username = match.groupdict()[ 'username' ]
+		if not username:
+			raise AttributeError( 'username missing: %s' % userstr )
+		# create search base for current school
+		search_base = SchoolSearchBase( search_base.availableSchools, ITALC_Manager.SCHOOL )
+
 		result = udm_modules.lookup( UserMap.UDM_USERS, None, ldap_user_read, filter = 'uid=%s' % username, scope = 'sub', base = search_base.users )
 		if not result:
 			MODULE.info( 'Unknown user "%s"' % username )
@@ -317,8 +322,7 @@ class ITALC_Computer( notifier.signals.Provider, QObject ):
 		return self._computer.info.get( 'mac', ( None, ) )[ 0 ]
 
 	@property
-	@LDAP_Connection()
-	def isTeacher( self, ldap_user_read = None, ldap_position = None, search_base = None ):
+	def isTeacher( self ):
 		global _usermap
 		try:
 			return _usermap[ str( self._username.current ) ].isTeacher
@@ -484,17 +488,18 @@ class ITALC_Computer( notifier.signals.Provider, QObject ):
 
 
 class ITALC_Manager( dict, notifier.signals.Provider ):
+	SCHOOL = None
+	ROOM = None
+
 	def __init__( self, username, password ):
 		dict.__init__( self )
 		notifier.signals.Provider.__init__( self )
-		self._room = None
-		self._school = None
 		italc.ItalcCore.authenticationCredentials.setLogonUsername( username )
 		italc.ItalcCore.authenticationCredentials.setLogonPassword( password )
 
 	@property
 	def room( self ):
-		return self._room
+		return ITALC_Manager.ROOM
 
 	@room.setter
 	def room( self, value ):
@@ -503,12 +508,12 @@ class ITALC_Manager( dict, notifier.signals.Provider ):
 
 	@property
 	def school( self ):
-		return self._school
+		return ITALC_Manager.SCHOOL
 
 	@school.setter
 	def school( self, value ):
 		self._clear()
-		self._school = value
+		ITALC_Manager.SCHOOL = value
 
 	def ipAddresses( self, students_only = True ):
 		if students_only:
@@ -517,12 +522,12 @@ class ITALC_Manager( dict, notifier.signals.Provider ):
 		return map( lambda x: x.ipAddress, self.values() )
 
 	def _clear( self ):
-		if self._room:
+		if ITALC_Manager.ROOM:
 			for name, computer in self.items():
 				if computer.connected:
 					computer.stop()
 			self.clear()
-			self._room = None
+			ITALC_Manager.ROOM = None
 
 	@LDAP_Connection()
 	def _set( self, room, ldap_user_read = None, ldap_position = None, search_base = None ):
@@ -530,7 +535,8 @@ class ITALC_Manager( dict, notifier.signals.Provider ):
 		if not grp_module:
 			raise ITALC_Error( 'Unknown computer room' )
 		# create search base for current school
-		search_base = SchoolSearchBase( search_base.availableSchools, self._school )
+		search_base = SchoolSearchBase( search_base.availableSchools, ITALC_Manager.SCHOOL )
+
 		if room.startswith( 'cn=' ):
 			groupresult = [ udm_objects.get( grp_module, None, ldap_user_read, ldap_position, room ) ]
 		else:
@@ -540,7 +546,7 @@ class ITALC_Manager( dict, notifier.signals.Provider ):
 
 		roomgrp = groupresult[ 0 ]
 		roomgrp.open()
-		self._room = roomgrp[ 'name' ].lstrip( '%s-' % search_base.school )
+		ITALC_Manager.ROOM = roomgrp[ 'name' ].lstrip( '%s-' % search_base.school )
 		computers = filter( lambda host: host.endswith( search_base.computers ), roomgrp[ 'hosts' ] )
 		if not computers:
 			raise ITALC_Error( 'There are no computers in the selected room.' )
@@ -570,6 +576,9 @@ class ITALC_Manager( dict, notifier.signals.Provider ):
 	@LDAP_Connection()
 	def startDemo( self, demo_server, fullscreen = True, ldap_user_read = None, ldap_position = None, search_base = None ):
 		global _usermap
+
+		# create search base for current school
+		search_base = SchoolSearchBase( search_base.availableSchools, ITALC_Manager.SCHOOL )
 
 		if self.isDemoActive:
 			self.stopDemo()

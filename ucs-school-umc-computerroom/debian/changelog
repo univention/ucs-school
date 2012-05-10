@@ -1,3 +1,9 @@
+ucs-school-umc-computerroom (0.1.25-1) unstable; urgency=low
+
+  * fixed detection of teacher accounts on systems with several schools; Bug #25702
+
+ -- Andreas Büsching <buesching@univention.de>  Thu, 10 May 2012 15:05:02 +0200
+
 ucs-school-umc-computerroom (0.1.24-1) unstable; urgency=low
 
   * fixed activation of presentation mode if users at some computers could
