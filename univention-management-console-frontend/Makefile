@@ -37,7 +37,7 @@ version:=$(shell dpkg-parsechangelog | sed -ne 's/^Version: //p')
 buildDir:=$(CURDIR)/build
 tmpDir:=$(buildDir)/_tmp$(timestamp)
 
-.PHONY: build build-dev build-common install clean jslint
+.PHONY: build build-dev build-common install clean jslint i18n
 
 build: build-common
 	@# create a temp directory
@@ -115,7 +115,7 @@ build-common: i18n
 	done
 
 i18n:
-	/usr/bin/dh-umc-translate -p univention-management-console-frontend -o umc $(jsFiles)
+	/usr/bin/dh-umc-translate -p univention-management-console-frontend -l en -l de -o umc $(jsFiles)
 
 install: build
 	@# copy all files from the build directory .. exclude file of the tmp directory
