@@ -207,7 +207,7 @@ class Instance( SchoolBaseModule ):
 
 	@LDAP_Connection()
 	def query( self, request, search_base = None, ldap_user_read = None, ldap_position = None ):
-		"""Searches for entries:
+		"""Searches for entries. This is not allowed if the room could not be acquired.
 
 		requests.options = {}
 		  'school'
@@ -215,13 +215,8 @@ class Instance( SchoolBaseModule ):
 
 		return: [ { '$dn$' : <LDAP DN>, 'name': '...', 'description': '...' }, ... ]
 		"""
-		self.required_options( request, 'school', 'room' )
-		MODULE.info( 'computerroom.query: options: %s' % str( request.options ) )
-
-		if self._italc.school != request.options[ 'school' ]:
-			self._italc.school = request.options[ 'school' ]
-		if self._italc.room != request.options[ 'room' ]:
-			self._italc.room = request.options[ 'room' ]
+		if not self._italc.school or not self._italc.room:
+			raise UMC_CommandError( 'no room selected' )
 
 		result = []
 		for computer in self._italc.values():

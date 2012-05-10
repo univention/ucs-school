@@ -1,3 +1,11 @@
+ucs-school-umc-computerroom (0.1.24-1) unstable; urgency=low
+
+  * fixed activation of presentation mode if users at some computers could
+    not be determined; Bug #25702
+  * ensure that a room must be acquired before a query can be done; Bug #27069
+
+ -- Andreas Büsching <buesching@univention.de>  Thu, 10 May 2012 12:30:12 +0200
+
 ucs-school-umc-computerroom (0.1.23-1) unstable; urgency=low
 
   * update german translation

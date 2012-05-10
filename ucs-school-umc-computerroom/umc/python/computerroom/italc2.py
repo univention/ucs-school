@@ -105,7 +105,7 @@ class UserMap( dict ):
 		result = udm_modules.lookup( UserMap.UDM_USERS, None, ldap_user_read, filter = 'uid=%s' % username, scope = 'sub', base = search_base.users )
 		if not result:
 			MODULE.info( 'Unknown user "%s"' % username )
-			dict.__setitem__( self, userstr, '' )
+			dict.__setitem__( self, userstr, UserInfo( '' ) )
 		else:
 			userobj = UserInfo( result[ 0 ].dn )
 			for grp in result[ 0 ][ 'groups' ]:
@@ -245,7 +245,12 @@ class ITALC_Computer( notifier.signals.Provider, QObject ):
 			self._core.receivedSlaveStateFlags.connect( self._slaveStateFlags )
 			self.signal_emit( 'connected', self )
 			self.start()
-
+		# lost connection ...
+		elif self._state.current != 'connected' and self._state.old == 'connected':
+			self._username.reset()
+			self._homedir.reset()
+			self._flags.reset()
+			self._teacher.reset( False )
 
 	@pyqtSlot( str, str )
 	def _userInfo( self, username, homedir ):
