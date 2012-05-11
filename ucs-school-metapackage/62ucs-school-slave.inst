@@ -68,21 +68,23 @@ if [ $JS_LAST_EXECUTED_VERSION -lt 2 ]; then
 	test -x /etc/init.d/samba && /etc/init.d/samba restart
 fi
 
-# Added dns-$hostname to the ignore list
-if [ -z "$connector_s4_mapping_user_ignorelist" ]; then
-	ucr set connector/s4/mapping/user/ignorelist?"root,pcpatch,ucs-s4sync,dns-$hostname"
-else
-	echo $connector_s4_mapping_user_ignorelist | egrep -q "(,dns-$hostname,|^dns-$hostname,|,dns-$hostname$)" || \
-			ucr set connector/s4/mapping/user/ignorelist="$connector_s4_mapping_user_ignorelist,dns-$hostname"
-fi
+ignore_user ()
+{
+	# Add $1 to the ignore list
+	user="$1"
+	eval "$(ucr shell connector/s4/mapping/user/ignorelist)"
 
-# Added Domain Controllers group to the ignore list
-if [ -z "$connector_s4_mapping_group_ignorelist" ]; then
-	ucr set connector/s4/mapping/group/ignorelist?"Windows Hosts,Authenticated Users,World Authority,Everyone,Null Authority,Nobody,Domain Controllers"
-else
-	echo $connector_s4_mapping_group_ignorelist | egrep -q "(,Domain Controllers,|^Domain Controllers,|,Domain Controllers$)" || \
-			ucr set connector/s4/mapping/group/ignorelist="$connector_s4_mapping_group_ignorelist,Domain Controllers"
-fi
+	if [ -z "$connector_s4_mapping_user_ignorelist" ]; then
+		ucr set connector/s4/mapping/user/ignorelist?"root,pcpatch,ucs-s4sync,${user}"
+	else
+		echo $connector_s4_mapping_user_ignorelist | egrep -q "(,${user},|^${user},|,${user}$)" || \
+				ucr set connector/s4/mapping/user/ignorelist="$connector_s4_mapping_user_ignorelist,${user}"
+	fi
+}
+
+ignore_user "dns-$hostname"
+ignore_user "krbtgt"
+ignore_user "Guest"
 
 ucs_addServiceToLocalhost 'UCS@school' "$@"
 
