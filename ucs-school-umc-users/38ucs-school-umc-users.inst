@@ -35,6 +35,7 @@ VERSION=1
 
 . /usr/share/univention-join/joinscripthelper.lib
 . /usr/share/univention-lib/umc.sh
+. /usr/share/ucs-school-lib/umc.sh
 
 joinscript_init
 
