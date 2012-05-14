@@ -173,10 +173,6 @@ dojo.declare("umc.modules.distribution", [ umc.widgets.Module, umc.i18n.Mixin ],
 			label: this._('Owner'),
 			width: '175px'
 		}, {
-			name: 'recipients',
-			label: this._('#Users'),
-			width: 'adjust'
-		}, {
 			name: 'files',
 			label: this._('#Files'),
 			width: 'adjust'

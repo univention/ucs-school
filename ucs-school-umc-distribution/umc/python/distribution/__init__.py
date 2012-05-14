@@ -133,23 +133,14 @@ class Instance( SchoolBaseModule ):
 		self.finished( request.id, result )
 
 	@LDAP_Connection()
-	def users( self, request, search_base = None, ldap_user_read = None, ldap_position = None ):
+	def groups( self, request, search_base = None, ldap_user_read = None, ldap_position = None ):
 		# parse parameter
 		group = None
-		user_type = None
-		param = request.options.get('group')
-		if not param or param == '$students$':
-			user_type = 'students'
-		elif param == '$teachers$':
-			user_type = 'teachers'
-		else:
-			group = param
 
 		# get list of all users matching the given pattern
-		result = [ {
-			'id': i.dn,
-			'label': Display.user(i)
-		} for i in self._users( ldap_user_read, search_base, group = group, user_type = user_type, pattern = request.options.get('pattern') ) ]
+		groupresult = udm_modules.lookup( 'groups/group', None, ldap_user_read, scope = 'sub', base = 'cn=groups,%s' % search_base.schoolDN, filter = LDAP_Filter.forGroups( request.options.get( 'pattern', '' ), search_base.school ) )
+
+		result = map( lambda grp: { 'id' : grp.dn, 'label' : grp[ 'name' ].replace( '%s-' % search_base.school, '' ) }, filter( lambda grp: len( grp[ 'users' ] ) > 0, groupresult ) )
 		self.finished( request.id, result )
 
 	def query( self, request ):
@@ -204,6 +195,7 @@ class Instance( SchoolBaseModule ):
 		# try to create all specified projects
 		result = []
 		userModule = udm_modules.get('users/user')
+		groupModule = udm_modules.get('groups/group')
 		for ientry in request.options:
 			iprops = ientry.get('object', {})
 			try:
@@ -258,13 +250,32 @@ class Instance( SchoolBaseModule ):
 					for idn in iprops.get('recipients', []):
 						try:
 							# try to load the UDM user object given its DN
-							iobj = userModule.object(None, ldap_user_read, None, idn)
+							attrs = ldap_user_read.get( idn )
+							obj_types = udm_modules.objectType( None, ldap_user_read, idn, attr = attrs )
+							if not obj_types:
+								MODULE.warn( 'Ignoring the recipient %s' % idn )
+								continue
+							udmModule = udm_modules.get( obj_types[ 0 ] )
+							iobj = udmModule.object( None, ldap_user_read, None, idn, attributes = attrs )
 							iobj.open()
 
-							# create a new User object, it will only remember its relevant information
-							iuser = util.User(iobj.info)
-							iuser.dn = iobj.dn
-							users.append(iuser)
+							if obj_types[ 0 ] == 'users/user':
+								# create a new User object, it will only remember its relevant information
+								iuser = util.User(iobj.info)
+								iuser.dn = iobj.dn
+								users.append(iuser)
+							elif obj_types[ 0 ] == 'groups/group':
+								igroup = util.Group( iobj.info )
+								igroup.name = igroup.name[ igroup.name.find( '-' ) + 1 : ]
+								igroup.dn = iobj.dn
+								userModul = udm_modules.get( 'users/user' )
+								for userdn in iobj[ 'users' ]:
+									iuserobj = userModul.object( None, ldap_user_read, None, userdn )
+									iuserobj.open()
+									iuser = util.User( iuserobj.info )
+									iuser.dn = iuserobj.dn
+									igroup.members.append( iuser )
+								users.append( igroup )
 						except udm_exceptions.noObject as e:
 							MODULE.error('Could not find user DN: %s' % idn)
 						except LDAP_ConnectionError as e:
@@ -411,11 +422,13 @@ class Instance( SchoolBaseModule ):
 
 				# adjust sender / recipients properties
 				props['sender'] = props['sender'].username
-				props['recipients'] = [ dict(
-						id=j.dn,
-						label=Display.user(j.dict)
-					) for j in props['recipients']
-				]
+				recipients = []
+				for recip in props['recipients']:
+					recipients.append( {
+						'id' : recip.dn,
+						'label' : recip.type == util.TYPE_USER and Display.user( recip.dict ) or recip.name
+						} )
+				props['recipients'] = recipients
 
 				# append final dict to result list
 				MODULE.info('final project dict: %s' % props)

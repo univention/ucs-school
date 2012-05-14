@@ -67,13 +67,18 @@ DISTRIBUTION_DATA_PATH = ucr.get('ucsschool/datadistribution/cache', '/var/lib/u
 POSTFIX_DATADIR_SENDER = ucr.get('ucsschool/datadistribution/datadir/sender', 'Unterrichtsmaterial')
 POSTFIX_DATADIR_RECIPIENT = ucr.get('ucsschool/datadistribution/datadir/recipient', 'Unterrichtsmaterial')
 
+TYPE_USER = 'USER'
+TYPE_GROUP = 'GROUP'
+TYPE_PROJECT = 'PROJECT'
+
 class _Dict(object):
 	'''Custom dict-like class. The initial set of keyword arguments is stored
 	in an internal dict. Entries of this intial set can be accessed directly
 	on the object (myDict.myentry = ...).'''
 
-	def __init__(self, **initDict):
+	def __init__(self, type, **initDict):
 		object.__setattr__(self, '_dict', initDict)
+		self.dict[ '__type__' ] = type
 
 	# overwrite __setattr__ such that, e.g., project.cachedir can be called directly
 	def __setattr__(self, key, value):
@@ -104,6 +109,10 @@ class _Dict(object):
 		'''The internal dict.'''
 		return self._dict
 
+	@property
+	def type( self ):
+		return self.__type__
+
 class _DictEncoder(json.JSONEncoder):
 	'''A custom JSONEncoder class that can encode _Dict objects.'''
 	def default(self, obj):
@@ -117,12 +126,22 @@ def jsonEncode(val):
 
 def jsonDecode(val):
 	'''Decode a JSON string and replace dict types with _Dict.'''
-	return json.loads(val, object_hook = lambda x: _Dict(**x))
+	def _dict_type( x ):
+		if x[ '__type__' ] == TYPE_USER:
+			return User( **x )
+		elif x[ '__type__' ] == TYPE_GROUP:
+			return Group( **x )
+		elif x[ '__type__' ] == TYPE_PROJECT:
+			return Project( **x )
+		else:
+			return _Dict( **x )
+
+	return json.loads(val, object_hook = _dict_type )
 
 class User(_Dict):
 	def __init__(self, *args, **_props):
 		# init empty project dict
-		_Dict.__init__(self,
+		_Dict.__init__( self, TYPE_USER,
 			unixhome = '',
 			username = '',
 			uidNumber = '',
@@ -143,10 +162,23 @@ class User(_Dict):
 	def homedir(self):
 		return self.unixhome
 
+class Group( _Dict ):
+	def __init__( self, *args, **_props ):
+		_Dict.__init__( self, TYPE_GROUP,
+						dn = '',
+						name = '',
+						members = []
+						)
+		# update specified entries
+		if len(args):
+			self.update(args[0])
+		else:
+			self.update(_props)
+
 class Project(_Dict):
 	def __init__(self, *args, **_props):
 		# init empty project dict
-		_Dict.__init__(self,
+		_Dict.__init__(self, TYPE_PROJECT, 
 			name = None,
 			description = None,
 			files = [],
@@ -155,7 +187,7 @@ class Project(_Dict):
 			atJobNumDistribute = None,  # int
 			atJobNumCollect = None,  # int
 			sender = None,  # User
-			recipients = [],  # [User, ...]
+			recipients = [],  # [ (User|Group) , ...]
 		)
 
 		# update specified entries
@@ -243,8 +275,9 @@ class Project(_Dict):
 
 		# check whether a project directory with the given name exists in the
 		# recipients' home directories
-		l = [ iuser for iuser in self.recipients if os.path.exists(self.user_projectdir(iuser)) ]
-		return len(l) > 0
+		l = [ iuser for iuser in self.getRecipients() if os.path.exists( self.user_projectdir( iuser ) ) ]
+
+		return len( l ) > 0
 
 	def save(self):
 		'''Save project data to disk and create job. In case of any errors, an IOError is raised.'''
@@ -270,7 +303,7 @@ class Project(_Dict):
 		_create_dir( self.cachedir, owner=0, group=0 )
 
 	def _createProjectDir(self):
-		'''Create project directory in the sender's home.'''
+		'''Create project directory in the senders home.'''
 
 		# make sure that the sender homedir exists
 		if self.sender and self.sender.homedir and not os.path.exists( self.sender.homedir ):
@@ -319,6 +352,16 @@ class Project(_Dict):
 			if ijob:
 				ijob.rm()
 
+	def getRecipients( self ):
+		users = []
+		for item in self.recipients:
+			if item.type == TYPE_USER:
+				users.append( item )
+			elif item.type == TYPE_GROUP:
+				users.extend( item.members )
+
+		return users
+
 	def distribute( self, usersFailed = None):
 		'''Distribute the project data to all registrated receivers.'''
 
@@ -340,7 +383,7 @@ class Project(_Dict):
 
 		# iterate over all recipients
 		MODULE.info('Distributing project "%s" with files: %s' % (self.name, ", ".join(files)))
-		for user in self.recipients + [ self.sender ]:
+		for user in self.getRecipients() + [ self.sender ]:
 			# create user project directory
 			MODULE.info( 'recipient: uid=%s' % user.username )
 			_create_dir( self.user_projectdir(user), homedir = user.homedir, owner = user.uidNumber, group = user.gidNumber )
@@ -381,7 +424,7 @@ class Project(_Dict):
 		self._createProjectDir()
 
 		# collect data from all recipients
-		for recipient in self.recipients:
+		for recipient in self.getRecipients():
 			# guess a proper directory name (in case with " versionX" suffix)
 			dirVersion = 1
 			targetdir = os.path.join( self.sender_projectdir, recipient.username )
@@ -409,7 +452,7 @@ class Project(_Dict):
 		return len(dirsFailed) == 0
 
 	def purge(self):
-		'''Remove project's cache directory, project file, and at job registrations.'''
+		"""Remove project's cache directory, project file, and at job registrations."""
 		if not self.projectfile or not os.path.exists( self.projectfile ):
 			MODULE.error('cannot remove empty or non existing projectfile: %s' % self.projectfile)
 			return
@@ -437,13 +480,13 @@ class Project(_Dict):
 		try:
 			# load project dictionary from JSON file
 			fd = open(os.path.join(DISTRIBUTION_DATA_PATH, projectfile), 'r' )
-			tmpDict = jsonDecode(''.join(fd.readlines()))
-			project = Project(tmpDict.dict)
+			project = jsonDecode(''.join(fd.readlines()))
+			# project = Project(tmpDict.dict)
 			fd.close()
 
 			# convert _Dict instances to User
 			project.sender = User(project.sender.dict)
-			project.recipients = [ User(i.dict) for i in project.recipients ]
+			# project.recipients = [ User(i.dict) for i in project.recipients ]
 		except (IOError, ValueError, AttributeError) as e:
 			MODULE.error('Could not open project file: %s [%s]' % (projectfile, str(e)))
 			return None
@@ -519,3 +562,13 @@ def _create_dir( targetdir, homedir=None, permissions=0700, owner=0, group=0 ):
 	return True
 
 
+if __name__ == '__main__':
+	g = Group()
+	g.dn = 'bla'
+	g.members.append( User() )
+	g.members.append( User() )
+	g.members.append( User() )
+	j = jsonEncode( g )
+	print j
+	d = jsonDecode( j )
+	print jsonEncode( d )

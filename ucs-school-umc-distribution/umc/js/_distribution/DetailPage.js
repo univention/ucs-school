@@ -150,7 +150,7 @@ dojo.declare("umc.modules._distribution.DetailPage", [ umc.widgets.Page, umc.wid
 			type: 'MultiObjectSelect',
 			name: 'recipients',
 			label: this._('Members'),
-			description: this._('List of users that are marked to receive the teaching materials'),
+			description: this._('List of groups that are marked to receive the teaching materials'),
 			queryWidgets: [{
 				type: 'ComboBox',
 				name: 'school',
@@ -159,23 +159,12 @@ dojo.declare("umc.modules._distribution.DetailPage", [ umc.widgets.Page, umc.wid
 				umcpCommand: this.umcpCommand,
 				autoHide: true
 			}, {
-				type: 'ComboBox',
-				name: 'group',
-				label: this._('User group / class'),
-				depends: 'school',
-				staticValues: [
-					{ id: '$students$', label: this._('All students') },
-					{ id: '$teachers$', label: this._('All teachers') }
-				],
-				dynamicValues: 'distribution/classes',
-				umcpCommand: this.umcpCommand
-			}, {
 				type: 'TextBox',
 				name: 'pattern',
 				label: this._('Search name')
 			}],
 			queryCommand: dojo.hitch(this, function(options) {
-				return this.umcpCommand('distribution/users', options).then(function(data) {
+				return this.umcpCommand('distribution/groups', options).then(function(data) {
 					return data.result;
 				});
 			}),
