@@ -1338,16 +1338,22 @@ def tryFindWindowsHomeServer(ou):
 		return UCRV_sambahome
 	if ou in tryFindWindowsHomeServer.results:
 		return tryFindWindowsHomeServer.results[ou]
-	computer = findComputerNameWithService('Windows Home Server', ou)
-	if computer is not None:
-		tryFindWindowsHomeServer.results[ou] = '\\\\%s' % (computer, )
+	for service in ('Windows Home Server',
+	                'Samba 4',
+	                'Samba',
+	                ):
+		computer = findComputerNameWithService(service, ou)
+		if computer is not None:
+			tryFindWindowsHomeServer.results[ou] = '\\\\%s' % (computer, )
+			break
 	else:
-		tryFindWindowsHomeServer.results[ou] = '%LOGONSERVER%'
+		tryFindWindowsHomeServer.results[ou] = None
 	return tryFindWindowsHomeServer.results[ou]
 tryFindWindowsHomeServer.results = {}
 
 def calculateSambahomePath(ou, username):
-	return "%s\\%s" % (tryFindWindowsHomeServer(ou), username, )
+	if tryFindWindowsHomeServer(ou) is not None:
+		return "%s\\%s" % (tryFindWindowsHomeServer(ou), username, )
 
 def create_user(person, baseDN, module, password, OUTFILE, line):
 	success = True
@@ -1416,7 +1422,8 @@ def create_user(person, baseDN, module, password, OUTFILE, line):
 
 	if UCRV_netlogon_script_path:
 		object["scriptpath"] = UCRV_netlogon_script_path
-	object["sambahome"] = calculateSambahomePath(getDN(person.sNr, basedn=baseDN), object["username"])
+	if calculateSambahomePath(getDN(person.sNr, basedn=baseDN), object["username"]) is not None:
+		object["sambahome"] = calculateSambahomePath(getDN(person.sNr, basedn=baseDN), object["username"])
 	if UCRV_homedrive:
 		object["homedrive"] = UCRV_homedrive
 	profilePath = calculateProfilePath(getDN(person.sNr, basedn=baseDN))

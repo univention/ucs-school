@@ -59,6 +59,7 @@ if [ "$1" = "configure" -a -z "$2" ] ; then
 	univention-config-registry set \
 		"ucsschool/import/set/homedrive?$(univention-config-registry get samba/homedirletter):" \
 		ucsschool/import/generate/policy/dhcp/dns/clearou?"true"
+	univention-config-registry set 'ucsschool/import/set/homedrive?I'
 fi
 univention-config-registry set \
 	"ucsschool/import/generate/policy/dhcp/searchbase?${use_dhcpsearchbase}" \

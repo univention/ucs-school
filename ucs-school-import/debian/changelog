@@ -1,3 +1,9 @@
+ucs-school-import (8.0.45-1) unstable; urgency=low
+
+  * search for Samba 4 and Samba for samba home setting (Bug #25867)
+
+ -- Janek Walkenhorst <walkenhorst@univention.de>  Mon, 14 May 2012 17:53:07 +0200
+
 ucs-school-import (8.0.44-1) unstable; urgency=low
 
   * The function import_user now accepts passwords from the import
