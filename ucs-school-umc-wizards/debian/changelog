@@ -1,3 +1,11 @@
+ucs-school-umc-wizards (1.0.23-1) unstable; urgency=low
+
+  * Hide the school server on singlemaster installations
+  * Refactoring
+  (Bug #26344)
+
+ -- Jascha Geerds <geerds@univention.de>  Tue, 15 May 2012 15:35:13 +0200
+
 ucs-school-umc-wizards (1.0.22-1) unstable; urgency=low
 
   * Validate all request options

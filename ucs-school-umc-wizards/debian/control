@@ -21,7 +21,8 @@ Depends: ${misc:Depends},
  python-univention-directory-manager,
  ucs-school-umc-common,
  python-ucs-school,
- shell-ucs-school
+ shell-ucs-school,
+ python-apt
 Description: UCS@school UMC module contains various wizards
  This package contains a UMC module with various wizards
  .

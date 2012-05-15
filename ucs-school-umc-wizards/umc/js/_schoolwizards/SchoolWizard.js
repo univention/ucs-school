@@ -62,6 +62,27 @@ dojo.declare("umc.modules._schoolwizards.SchoolWizard", [ umc.modules._schoolwiz
 		}];
 	},
 
+	postMixInProperties: function() {
+		this.inherited(arguments);
+		this.standbyOpacity = 1;
+	},
+
+	buildRendering: function() {
+		this.inherited(arguments);
+		this.standby(true);
+
+		umc.tools.umcpCommand('schoolwizards/schools/singlemaster').then(dojo.hitch(this, function(response) {
+			if (response.result) {
+				var widget = this.getWidget('school', 'schooldc');
+				widget.hide();
+				widget.set('required', false);
+			}
+			this.standby(false);
+		}), dojo.hitch(this, function() {
+			this.standby(false);
+		}));
+	},
+
 	restart: function() {
 		this.getWidget('school', 'name').reset();
 		this.inherited(arguments);

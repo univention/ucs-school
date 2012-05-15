@@ -31,6 +31,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+import apt
 import re
 
 from univention.lib.i18n import Translation
@@ -55,12 +56,6 @@ class Instance(SchoolBaseModule, SchoolImport):
 		if missing:
 			raise ValueError(_('Missing value for the following properties: %s')
 			                 % ','.join(missing))
-
-	def _remove_whitespaces(self, request):
-		for key, value in request.options.iteritems():
-			if type(value) is str:
-				request.options[key] = value.strip()
-		return request
 
 	def _username_used(self, username, ldap_user_read):
 		ldap_filter = LDAP_Filter.forAll(username, ['username'])
@@ -106,7 +101,7 @@ class Instance(SchoolBaseModule, SchoolImport):
 			self.required_options(request, *keys)
 			self.required_values(request, *keys)
 
-			request = self._remove_whitespaces(request)
+			request = remove_whitespaces(request)
 
 			username = udm_syntax.UserName.parse(request.options['username'])
 			lastname = request.options['lastname']
@@ -161,17 +156,21 @@ class Instance(SchoolBaseModule, SchoolImport):
 		"""
 		try:
 			# Validate request options
-			self.required_options(request, 'name', 'schooldc')
-			self.required_values(request, 'name', 'schooldc')
+			options = ['name']
+			if not self._is_singlemaster():
+				options.append('schooldc')
+			self.required_options(request, *options)
+			self.required_values(request, *options)
 
-			request = self._remove_whitespaces(request)
+			request = remove_whitespaces(request)
 
 			name = udm_syntax.GroupName.parse(request.options['name'])
-			schooldc = request.options['schooldc']
+			schooldc = request.options.get('schooldc', '')
 
-			regex = re.compile('^\w+$')
-			if not regex.match(schooldc):
-				raise ValueError(_('Invalid school server name'))
+			if not self._is_singlemaster():
+				regex = re.compile('^\w+$')
+				if not regex.match(schooldc):
+					raise ValueError(_('Invalid school server name'))
 			if self._school_name_used(name, ldap_user_read, search_base):
 				raise ValueError(_('School name is already in use'))
 
@@ -195,7 +194,7 @@ class Instance(SchoolBaseModule, SchoolImport):
 			self.required_options(request, 'school', 'name')
 			self.required_values(request, 'school', 'name')
 
-			request = self._remove_whitespaces(request)
+			request = remove_whitespaces(request)
 
 			school = udm_syntax.GroupName.parse(request.options['school'])
 			name = udm_syntax.GroupName.parse(request.options['name'])
@@ -228,7 +227,7 @@ class Instance(SchoolBaseModule, SchoolImport):
 			self.required_options(request, 'type', 'name', 'mac', 'school', 'ipAddress')
 			self.required_values(request, 'type', 'name', 'mac', 'school', 'ipAddress')
 
-			request = self._remove_whitespaces(request)
+			request = remove_whitespaces(request)
 
 			type_ = request.options['type']
 			name = udm_syntax.hostName.parse(request.options['name'])
@@ -261,3 +260,25 @@ class Instance(SchoolBaseModule, SchoolImport):
 			self.finished(request.id, result)
 		else:
 			self.finished(request.id, None, _('Computer successfully created'))
+
+	def _is_singlemaster(self):
+		PKG_NAME = 'ucs-school-singlemaster'
+		cache = apt.Cache()
+
+		is_installed = False
+		if PKG_NAME in cache:
+			pkg = cache[PKG_NAME]
+			is_installed = pkg.is_installed
+
+		return is_installed
+
+	def is_singlemaster(self, request):
+		self.finished(request.id, self._is_singlemaster())
+
+
+def remove_whitespaces(request):
+	for key, value in request.options.iteritems():
+		if isinstance(value, basestring):
+			request.options[key] = value.strip()
+	return request
+

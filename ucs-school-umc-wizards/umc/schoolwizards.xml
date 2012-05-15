@@ -26,6 +26,8 @@
 		</command>
 		<command name="schoolwizards/schools/create" function="create_school">
 		</command>
+		<command name="schoolwizards/schools/singlemaster" function="is_singlemaster">
+		</command>
 		<command name="schoolwizards/classes/create" function="create_class">
 		</command>
 		<command name="schoolwizards/computers/create" function="create_computer">
