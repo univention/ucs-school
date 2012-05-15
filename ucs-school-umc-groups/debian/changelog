@@ -1,3 +1,9 @@
+ucs-school-umc-groups (0.1.16-1) unstable; urgency=low
+
+  * Avoid UMC requests if no school is available (Bug #27062)
+
+ -- Jascha Geerds <geerds@univention.de>  Tue, 15 May 2012 16:56:14 +0200
+
 ucs-school-umc-groups (0.1.15-1) unstable; urgency=low
 
   * fixed typos; Bug #26371

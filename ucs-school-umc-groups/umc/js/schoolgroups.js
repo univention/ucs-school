@@ -200,14 +200,19 @@ dojo.declare("umc.modules.schoolgroups", [ umc.widgets.Module, umc.i18n.Mixin ],
 			onSearch: dojo.hitch(this, function(values) {
 				// call the grid's filter function
 				// (could be also done via dojo.connect() and dojo.disconnect() )
-				this._grid.filter(values);
+				if (values.school) {
+					this._grid.filter(values);
+				}
 			}),
 			onValuesInitialized: dojo.hitch( this, function() {
 				// deactivate standby mode
 				this.standby( false );
 				// transparent standby mode
 				this.standbyOpacity = 0.75;
-				this._grid.filter( this._searchForm.gatherFormValues() );
+				var values = this._searchForm.gatherFormValues();
+				if (values.school) {
+					this._grid.filter(values);
+				}
 			 } )
 		});
 
