@@ -892,7 +892,7 @@ def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None, ShareFileServer=None
 		if not configRegistry.get('dhcpd/ldap/base'):
 	 		univention.config_registry.handler_set(['dhcpd/ldap/base=cn=dhcp,ou=%s,%s' % (ouname, configRegistry.get('ldap/base'))])
 		if not configRegistry.get('ucsschool/defaultschoolname'):
-	 		univention.config_registry.handler_set(['ucsschool/defaultschoolname=%ss' % (ouname)])
+	 		univention.config_registry.handler_set(['ucsschool/defaultschoolname=%s' % (ouname)])
 
 	# invoke post hooks
 	if created:

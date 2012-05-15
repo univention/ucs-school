@@ -1,3 +1,9 @@
+ucs-school-import (8.0.46-2) unstable; urgency=low
+
+  * Fixed typo in last commit (Bug #26962)
+
+ -- Stefan Gohmann <gohmann@univention.de>  Tue, 15 May 2012 22:29:33 +0200
+
 ucs-school-import (8.0.46-1) unstable; urgency=low
 
   * In a single school environment the default DHCP container will be
