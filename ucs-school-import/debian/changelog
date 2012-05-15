@@ -1,3 +1,11 @@
+ucs-school-import (8.0.46-1) unstable; urgency=low
+
+  * In a single school environment the default DHCP container will be
+    set to the new DHCP container in the OU and the UCR variable
+    ucsschool/defaultschoolname will be set to the new OU (Bug #26962)
+
+ -- Stefan Gohmann <gohmann@univention.de>  Tue, 15 May 2012 21:33:44 +0200
+
 ucs-school-import (8.0.45-1) unstable; urgency=low
 
   * search for Samba 4 and Samba for samba home setting (Bug #25867)

@@ -884,6 +884,16 @@ def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None, ShareFileServer=None
 					print 'need to attach policy: %s' % poldn
 			lo.modify(containerdn,modlist)
 
+
+	# In a single school environment the default DHCP container must
+	# be set to the DHCP container in the school ou. Otherwise newly
+	# imported computers have the DHCP objects in the wrong DHCP container
+	if not configRegistry.get('ucsschool/defaultschoolname') and configRegistry.is_true('ucsschool/singlemaster', False):
+		if not configRegistry.get('dhcpd/ldap/base'):
+	 		univention.config_registry.handler_set(['dhcpd/ldap/base=cn=dhcp,ou=%s,%s' % (ouname, configRegistry.get('ldap/base'))])
+		if not configRegistry.get('ucsschool/defaultschoolname'):
+	 		univention.config_registry.handler_set(['ucsschool/defaultschoolname=%ss' % (ouname)])
+
 	# invoke post hooks
 	if created:
 		# for OUs the temporary file contains the LDAP DN
@@ -2901,6 +2911,11 @@ elif sys.argv[0].endswith("create_ou"):
 		if dcName and not re.match('^[a-zA-Z](([a-zA-Z0-9-_]*)([a-zA-Z0-9]$))?$', dcName):
 			print 'ERROR: invalid domaincontroller name given'
 			sys.exit(1)
+
+		# In a single school environment the default school DC is the master
+		if not dcName and not configRegistry.get('ucsschool/defaultschoolname') and configRegistry.is_true('ucsschool/singlemaster', False):
+			dcName = configRegistry.get('hostname')
+
 		verify_school_ou(ouname, co, lo, baseDN, dcName=dcName, ShareFileServer=options.ShareFileServer)
 		sys.exit(0)
 	parser.print_help()
