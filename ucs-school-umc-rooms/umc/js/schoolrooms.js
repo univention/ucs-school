@@ -207,14 +207,19 @@ dojo.declare("umc.modules.schoolrooms", [ umc.widgets.Module, umc.i18n.Mixin ], 
 			onSearch: dojo.hitch(this, function(values) {
 				// call the grid's filter function
 				// (could be also done via dojo.connect() and dojo.disconnect() )
-				this._grid.filter(values);
+				if (values.school) {
+					this._grid.filter(values);
+				}
 			})
 		});
 
 		// turn off the standby animation as soon as all form values have been loaded
 		this.connect(this._searchForm, 'onValuesInitialized', function() {
 			this.standby(false);
-			this._grid.filter( this._searchForm.gatherFormValues() );
+			var values = this._searchForm.gatherFormValues();
+			if (values.school) {
+				this._grid.filter(values);
+			}
 		});
 
 		// add search form to the title pane
