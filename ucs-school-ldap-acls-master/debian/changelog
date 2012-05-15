@@ -1,3 +1,10 @@
+ucs-school-ldap-acls-master (7.0.5-1) unstable; urgency=low
+
+  * Give school admins the permission to modify the group memberships of
+    classes (Bug #26997)
+
+ -- Stefan Gohmann <gohmann@univention.de>  Tue, 15 May 2012 11:54:05 +0200
+
 ucs-school-ldap-acls-master (7.0.4-1) unstable; urgency=low
 
   * Give DC Slaves write access to the members of the group Domain
