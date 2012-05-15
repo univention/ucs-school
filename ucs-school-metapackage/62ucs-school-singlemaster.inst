@@ -36,6 +36,8 @@ joinscript_init
 
 . /usr/share/univention-lib/all.sh
 
+ucr set ucsschool/singlemaster?true
+
 ucs_addServiceToLocalhost 'UCS@school' "$@"
 
 joinscript_save_current_version
