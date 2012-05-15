@@ -1,3 +1,9 @@
+univention-samba (6.0.32-3) unstable; urgency=low
+
+  * Create the samba share even if a VFS object was given (Bug #26975)
+
+ -- Stefan Gohmann <gohmann@univention.de>  Tue, 15 May 2012 08:16:59 +0200
+
 univention-samba (6.0.32-2) unstable; urgency=low
 
   * ensure that python-support is called before UCR install; Bug #26865
