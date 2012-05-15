@@ -99,7 +99,7 @@ dojo.declare("umc.modules._schoolwizards.UserWizard", [ umc.modules._schoolwizar
 				name: 'mailPrimaryAddress',
 				label: this._('E-Mail')
 			}, {
-				type: 'TextBox',
+				type: 'PasswordInputBox',
 				name: 'password',
 				label: this._('Password')
 			}],
@@ -113,7 +113,9 @@ dojo.declare("umc.modules._schoolwizards.UserWizard", [ umc.modules._schoolwizar
 
 	restart: function() {
 		umc.tools.forIn(this.getPage('user')._form._widgets, function(iname, iwidget) {
-			if (iname !== 'class') {
+			if (iname === 'password') {
+				iwidget._setValueAttr(null);
+			} else if (iname !== 'class') {
 				iwidget.reset();
 			}
 		});
