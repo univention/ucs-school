@@ -65,6 +65,10 @@ case "$1" in
 			/etc/init.d/squid3 restart
 		fi
 
+		univention-config-registry set \
+			'proxy/filter/setting/Kein Internet/filtertype?whitelist-block' \
+			'proxy/filter/setting/Unbeschränkt/filtertype?blacklist-pass'
+
 		;;
 
     abort-upgrade|abort-remove|abort-deconfigure)

@@ -1,3 +1,9 @@
+ucs-school-webproxy (8.0.14-1) unstable; urgency=low
+
+  * add simple default rules (Bug #26868)
+
+ -- Janek Walkenhorst <walkenhorst@univention.de>  Tue, 15 May 2012 11:47:35 +0200
+
 ucs-school-webproxy (8.0.13-1) unstable; urgency=low
 
   * allow arbitrary rule names (Bug #26974)
