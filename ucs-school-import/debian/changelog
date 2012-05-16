@@ -1,3 +1,9 @@
+ucs-school-import (8.0.47-1) unstable; urgency=low
+
+  * Remove old ipaddr.pyo file (Bug #27130)
+
+ -- Stefan Gohmann <gohmann@univention.de>  Wed, 16 May 2012 06:17:05 +0200
+
 ucs-school-import (8.0.46-2) unstable; urgency=low
 
   * Fixed typo in last commit (Bug #26962)

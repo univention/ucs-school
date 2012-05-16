@@ -68,6 +68,14 @@ univention-config-registry set \
 	"ucsschool/import/generate/share/marktplatz/permissions?0777" \
 	"ucsschool/import/generate/share/marktplatz/group?Domain Users"
 
+# Remove old ipaddr pyo file:
+#   https://forge.univention.org/bugzilla/show_bug.cgi?id=27130
+if [ "$1" = "configure" ] && dpkg --compare-versions "$2" lt-nl 8.0.47-1; then
+	if [ -e /usr/share/ucs-school-import/scripts/ipaddr.pyo ]; then
+		rm -f /usr/share/ucs-school-import/scripts/ipaddr.pyo
+	fi
+fi
+
 if [ "$server_role" = "domaincontroller_master" ] || [ "$server_role" = "domaincontroller_backup" ]; then
 	/usr/lib/univention-install/35ucs-school-import.inst || true
 fi
