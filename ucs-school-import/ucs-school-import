@@ -890,9 +890,9 @@ def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None, ShareFileServer=None
 	# imported computers have the DHCP objects in the wrong DHCP container
 	if not configRegistry.get('ucsschool/defaultschoolname') and configRegistry.is_true('ucsschool/singlemaster', False):
 		if not configRegistry.get('dhcpd/ldap/base'):
-	 		univention.config_registry.handler_set(['dhcpd/ldap/base=cn=dhcp,ou=%s,%s' % (ouname, configRegistry.get('ldap/base'))])
+	 		univention.config_registry.handler_set(['dhcpd/ldap/base=cn=dhcp,ou=%s' % (getDN (schoolNr))])
 		if not configRegistry.get('ucsschool/defaultschoolname'):
-	 		univention.config_registry.handler_set(['ucsschool/defaultschoolname=%s' % (ouname)])
+	 		univention.config_registry.handler_set(['ucsschool/defaultschoolname=%s' % (schoolNr)])
 
 	# invoke post hooks
 	if created:
