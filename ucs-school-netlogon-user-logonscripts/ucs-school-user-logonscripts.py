@@ -56,7 +56,7 @@ def getScriptPath():
 	if scriptpath:
 		return
 
-	scriptpath.append("/var/lib/samba/userlogon/user")
+	scriptpath.append("/var/lib/samba/netlogon/user")
 	scriptpath.append("/var/lib/samba/sysvol/%s/scripts/user" % listener.configRegistry.get('kerberos/realm', '').lower())
 
 	for path in scriptpath:

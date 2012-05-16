@@ -39,9 +39,20 @@ eval "$(ucr shell)"
 univention-config-registry set \
 	samba/homedirletter?I
 
+# save netlogon/user dir and cp old userlogon scripts
+# https://forge.univention.org/bugzilla/show_bug.cgi?id=27134
+if [ "$1" = "configure" ] && dpkg --compare-versions "$2" lt-nl 7.0.5; then
+	if [ -d /var/lib/samba/netlogon/user ]; then
+		mv /var/lib/samba/netlogon/user /var/lib/samba/netlogon/user.$(date +%s)
+	fi
+	if [ -d /var/lib/samba/userlogon/user ]; then
+		cp -rf /var/lib/samba/userlogon/user /var/lib/samba/netlogon/
+	fi	
+fi
+
 # samba 3
-mkdir -p /var/lib/samba/userlogon/user
-chown listener /var/lib/samba/userlogon/user
+mkdir -p /var/lib/samba/netlogon/user
+chown -R listener /var/lib/samba/netlogon/user
 
 # samba 4
 call_joinscript 99ucs-school-netlogon-user-logonscripts.inst

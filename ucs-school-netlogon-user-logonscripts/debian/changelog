@@ -1,3 +1,9 @@
+ucs-school-netlogon-user-logonscripts (7.0.5-1) unstable; urgency=low
+
+  * new dir for user logon scripts (Bug #27134)
+
+ -- Felix Botner <botner@univention.de>  Wed, 16 May 2012 11:46:33 +0200
+
 ucs-school-netlogon-user-logonscripts (7.0.4-1) unstable; urgency=low
 
   * improve performance of listener script (Bug #26533)
