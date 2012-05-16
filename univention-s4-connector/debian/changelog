@@ -1,4 +1,4 @@
-univention-s4-connector (6.0.129-1) unstable; urgency=low
+univention-s4-connector (6.0.128-16) unstable; urgency=low
 
   * sync_ucs_to_s4: avoid removing unicodePwd if there is neither NT hash
     nor timestamp in UDM (Bug #26569)
