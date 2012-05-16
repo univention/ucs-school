@@ -50,12 +50,12 @@ if [ $JS_LAST_EXECUTED_VERSION -lt 1 ]; then
 		samba/share/sysvol/readonly?no
 
 	# set the IP addresses to the forward zone
-	ipv4=get_default_ipv4_address
+	ipv4="$(get_default_ipv4_address)"
 	if [ -n "$ipv4" ]; then
 		ucr set "connector/s4/mapping/dns/forward_zone/$domainname/static/ipv4?$ipv4"
 	fi
 
-	ipv6=get_default_ipv6_address
+	ipv6="$(get_default_ipv6_address)"
 	if [ -n "$ipv6" ]; then
 		ucr set "connector/s4/mapping/dns/forward_zone/$domainname/static/ipv6?$ipv6"
 	fi

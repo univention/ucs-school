@@ -1,3 +1,9 @@
+ucs-school-metapackage (4.0.31-2) unstable; urgency=low
+
+  * Fixed call from last commit (Bug #26895)
+
+ -- Stefan Gohmann <gohmann@univention.de>  Wed, 16 May 2012 22:32:54 +0200
+
 ucs-school-metapackage (4.0.31-1) unstable; urgency=low
 
   * Overwrite the IP addresses for the DNS forward zone with the local IP
