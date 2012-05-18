@@ -41,18 +41,15 @@ override_dh_auto_build:
 	dh-umc-module-build
 	dh_auto_build
 
-override_dh_auto_install:
-	dh-umc-module-install
-	dh_auto_install
-
-	# install admin modules
-	make PACKAGE=${PACKAGE_NAME} install-admin-modules
-	make PACKAGE=${PACKAGE_NAME} LANGUAGE='de' install-locales-admin 
-
-	# install join script
-	install -m 0755 38ucs-school-umc-helpdesk.inst ${D}/usr/lib/univention-install/
-
-	# install schema extension into separate package
-	install -m 644 umc-helpdesk.schema ${DM}/usr/share/univention-ldap/schema
-
+binary:
+	dh binary --until dh_pysupport
 	univention-install-config-registry
+	dh-umc-module-install
+	dh binary --after dh_pysupport
+
+override_dh_auto_install:
+	make PACKAGE=${PACKAGE_NAME} install-admin-modules
+	make PACKAGE=${PACKAGE_NAME} LANGUAGE='de' install-locales-admin
+	install -m 0755 38ucs-school-umc-helpdesk.inst ${D}/usr/lib/univention-install/
+	install -m 644 umc-helpdesk.schema ${DM}/usr/share/univention-ldap/schema
+	dh_auto_install
