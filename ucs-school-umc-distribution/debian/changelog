@@ -1,3 +1,11 @@
+ucs-school-umc-distribution (0.0.22-1) unstable; urgency=low
+
+  * adapt to changes from atjobs module, use datetime instead of time
+  * make sure that a project can only be collected after distributing it
+  Bug #25707
+
+ -- Alexander Kläser <klaeser@univention.de>  Fri, 18 May 2012 11:11:13 +0200
+
 ucs-school-umc-distribution (0.0.21-1) unstable; urgency=low
 
   * use groups for recipients instead of users; Bug #27006

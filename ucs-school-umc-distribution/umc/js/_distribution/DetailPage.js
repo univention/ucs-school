@@ -387,6 +387,7 @@ dojo.declare("umc.modules._distribution.DetailPage", [ umc.widgets.Page, umc.wid
 	load: function(id) {
 		// during loading show the standby animation
 		this.standby(true);
+		this._resetForm();
 
 		// the project directory name cannot be modified
 		this._form.getWidget('name').set('disabled', true);

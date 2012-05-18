@@ -44,7 +44,7 @@ import os
 import shutil
 import json
 
-import time
+from datetime import datetime, timedelta
 
 from pipes import quote
 
@@ -77,23 +77,42 @@ class _Dict(object):
 	on the object (myDict.myentry = ...).'''
 
 	def __init__(self, type, **initDict):
+		initDict[ '__type__' ] = type
 		object.__setattr__(self, '_dict', initDict)
-		self.dict[ '__type__' ] = type
 
 	# overwrite __setattr__ such that, e.g., project.cachedir can be called directly
 	def __setattr__(self, key, value):
 		_dict = object.__getattribute__(self, '_dict')
-		if key in _dict:
+
+		# check whether the class has the specified attribute
+		hasAttr = True
+		try:
+			object.__getattribute__(self, key)
+		except AttributeError:
+			hasAttr = False
+
+		if not hasAttr and key in _dict:
 			# if the key is in the internal dict, update its value
 			_dict[key] = value
-		object.__setattr__(self, key, value)
+		else:
+			# default
+			object.__setattr__(self, key, value)
 
 	# overwrite __getattribute__ such that, e.g., project.cachedir can be called directly
 	def __getattribute__(self, key):
 		_dict = object.__getattribute__(self, '_dict')
-		if key in _dict:
+
+		# check whether the class has the specified attribute
+		hasAttr = True
+		try:
+			object.__getattribute__(self, key)
+		except AttributeError:
+			hasAttr = False
+
+		if not hasAttr and key in _dict:
 			# if the key is in the internal dict, return its value
 			return _dict[key]
+		# default
 		return object.__getattribute__(self, key)
 
 	def update(self, props):
@@ -182,8 +201,8 @@ class Project(_Dict):
 			name = None,
 			description = None,
 			files = [],
-			starttime = None,  # seconds
-			deadline = None,  # seconds
+			starttime = None,  # str
+			deadline = None,  # str
 			atJobNumDistribute = None,  # int
 			atJobNumCollect = None,  # int
 			sender = None,  # User
@@ -235,6 +254,48 @@ class Project(_Dict):
 		files = [ ifn for ifn in self.files if os.path.exists(os.path.join(self.cachedir, ifn)) ]
 		return len(files) != len(self.files)
 
+	def _convStr2Time(self, key):
+		'''Converts the string value of the specified key in the internal dict
+		to a datetime instance.'''
+		_dict = object.__getattribute__(self, '_dict')
+		try:
+			return datetime.strptime(_dict.get(key), '%Y-%m-%d %H:%M')
+		except (ValueError, TypeError):
+			pass
+		return None
+
+	def _convTime2String(self, key, time):
+		'''Converts the time value of the specified key to string and saves it to
+		the internal dict. Parameter time may an instance of string or datetime.'''
+		_dict = object.__getattribute__(self, '_dict')
+		if time == None:
+			# unset value
+			_dict[key] = None
+		elif isinstance(time, basestring):
+			# a string a saved directly to the internal dict
+			_dict[key] = time
+		elif isinstance(time, datetime):
+			# a datetime instance is converted to string
+			_dict[key] = datetime.strftime(time, '%Y-%m-%d %H:%M')
+		else:
+			raise ValueError('property "%s" needs to be of type str or datetime' % key)
+
+	@property
+	def starttime(self):
+		return self._convStr2Time('starttime')
+
+	@starttime.setter
+	def starttime(self, time):
+		self._convTime2String('starttime', time)
+
+	@property
+	def deadline(self):
+		return self._convStr2Time('deadline')
+
+	@deadline.setter
+	def deadline(self, time):
+		self._convTime2String('deadline', time)
+
 	def validate(self):
 		'''Validate the project data. In case of any errors with the data,
 		a ValueError with a proper error message is raised.'''
@@ -281,10 +342,17 @@ class Project(_Dict):
 
 	def save(self):
 		'''Save project data to disk and create job. In case of any errors, an IOError is raised.'''
+		backupFile = '.%s.bak' % self.projectfile
 		try:
 			# update at-jobs
 			self._unregister_at_jobs()
 			self._register_at_jobs()
+
+			# try to save backup of old file
+			try:
+				os.rename(self.projectfile, backupFile)
+			except (OSError, IOError) as e:
+				pass
 
 			# save the project file
 			fd = open(self.projectfile, 'w')
@@ -293,8 +361,21 @@ class Project(_Dict):
 
 			# create cache directory
 			self._createCacheDir()
-		except IOError, e:
+		except (OSError, IOError) as e:
+			# try to restore backup copy
+			try:
+				os.rename(backupFile, self.projectfile)
+			except (OSError, IOError) as e:
+				pass
+
+			# raise a new IOError
 			raise IOError(_('Could not save project file: %s (%s)') % (self.projectfile, str(e)))
+
+		# try to remove backup file
+		try:
+			os.remove(backupFile)
+		except (OSError, IOError) as e:
+			pass
 
 	def _createCacheDir(self):
 		'''Create cache directory.'''
@@ -322,10 +403,10 @@ class Project(_Dict):
 
 		# register the starting job
 		# make sure that the startime, if given, lies in the future
-		if self.starttime or self.starttime > time.time():
-			MODULE.info( 'register at-jobs: starttime = %s' % time.ctime( self.starttime ) )
+		if self.starttime and self.starttime > datetime.now():
+			MODULE.info( 'register at-jobs: starttime = %s' % self.starttime )
 			cmd = """'%s' --distribute %s""" % (DISTRIBUTION_CMD, quote(self.projectfile))
-			print 'register at-jobs: starttime = %s  cmd = %s' % (time.ctime( self.starttime ), cmd) 
+			print 'register at-jobs: starttime = %s  cmd = %s' % (self.starttime, cmd)
 			atJob = atjobs.add(cmd, self.starttime)
 			if atJob and self.starttime:
 				self.atJobNumDistribute = atJob.nr
@@ -334,9 +415,9 @@ class Project(_Dict):
 				print 'registration of at-job failed'
 
 		# register the collecting job, only if a deadline is given
-		if self.deadline and self.deadline > time.time():
-			MODULE.info( 'register at-jobs: deadline = %s' % time.ctime( self.deadline ) )
-			print 'register at-jobs: deadline = %s' % time.ctime( self.deadline ) 
+		if self.deadline and self.deadline > datetime.now():
+			MODULE.info( 'register at-jobs: deadline = %s' % self.deadline )
+			print 'register at-jobs: deadline = %s' % self.deadline
 			cmd = """'%s' --collect %s""" % (DISTRIBUTION_CMD, quote(self.projectfile))
 			atJob = atjobs.add(cmd, self.deadline)
 			if atJob:
@@ -485,7 +566,11 @@ class Project(_Dict):
 			fd.close()
 
 			# convert _Dict instances to User
-			project.sender = User(project.sender.dict)
+			if project.sender:
+				project.sender = User(project.sender.dict)
+			else:
+				project.sender = User()
+
 			# project.recipients = [ User(i.dict) for i in project.recipients ]
 		except (IOError, ValueError, AttributeError) as e:
 			MODULE.error('Could not open project file: %s [%s]' % (projectfile, str(e)))

@@ -41,7 +41,7 @@ from univention.management.console.protocol.definitions import *
 import univention.admin.modules as udm_modules
 import univention.admin.uexceptions as udm_exceptions
 import os
-import time
+from datetime import datetime, timedelta
 
 from ucsschool.lib.schoolldap import LDAP_Connection, LDAP_ConnectionError, set_credentials, SchoolSearchBase, SchoolBaseModule, LDAP_Filter, Display
 
@@ -232,17 +232,22 @@ class Instance( SchoolBaseModule ):
 							try:
 								# try to parse the given time parameters
 								strtime = '%s %s' % (iprops['%sDate' % jsuffix], iprops['%sTime' % jsuffix])
-								jtime = time.mktime(time.strptime(strtime, '%Y-%m-%d %H:%M'))
-								project.dict[jprop] = jtime
+								jdate = datetime.strptime(strtime, '%Y-%m-%d %H:%M')
+								setattr(project, jprop, jdate)
 							except ValueError as e:
-								raise ValueError(_('Could not set time for: %s') % jname)
+								raise ValueError(_('Could not set date for: %s') % jname)
 
 							# make sure the execution time lies sufficiently (5min) in the future
-							if time.time() + 60 * 5 > project.dict[jprop]:
+							if getattr(project, jprop) - datetime.now() < timedelta(minutes=5):
 								raise ValueError(_('The specified time needs to lie in the future for: %s') % jname)
 						else:
 							# manual distribution/collection
-							project.dict[jprop] = None
+							setattr(project, jprop, None)
+
+				if project.starttime and project.deadline:
+					# make sure distributing happens before collecting
+					if project.deadline - project.starttime < timedelta(minutes=10):
+						raise ValueError(_('Distributing the data needs to happen sufficiently long enough before collecting them'))
 
 				if 'recipients' in iprops:
 					# lookup the users in LDAP and save them to the project
@@ -415,10 +420,10 @@ class Instance( SchoolBaseModule ):
 						continue
 
 					# job is registered -> prepare date and time fields
+					MODULE.info('job nr #%d scheduled for %s -> automatic execution' % (jjob.nr, jjob.execTime))
 					props['%sType' % jsuffix] = 'automatic'
-					props['%sDate' % jsuffix] = time.strftime('%Y-%m-%d', time.localtime(jjob.execTime))
-					props['%sTime' % jsuffix] = time.strftime('%H:%M', time.localtime(jjob.execTime))
-					MODULE.info('job nr #%d scheduled for %s %s -> automatic execution' % (jjob.nr, props['%sDate' % jsuffix], props['%sTime' % jsuffix]))
+					props['%sDate' % jsuffix] = datetime.strftime(jjob.execTime, '%Y-%m-%d')
+					props['%sTime' % jsuffix] = datetime.strftime(jjob.execTime, '%H:%M')
 
 				# adjust sender / recipients properties
 				props['sender'] = props['sender'].username
