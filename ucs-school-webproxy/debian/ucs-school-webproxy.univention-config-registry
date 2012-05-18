@@ -4,3 +4,7 @@ Variables: proxy/filter/.*
 Variables: windows/domain
 Variables: hostname
 Variables: domainname
+
+type: file
+File: var/www/proxy.pac
+Variables: squid/httpport

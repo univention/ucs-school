@@ -65,6 +65,9 @@ case "$1" in
 			/etc/init.d/squid3 restart
 		fi
 
+		a2ensite wpad-config
+		invoke-rc.d apache2 reload
+
 		univention-config-registry set \
 			'proxy/filter/setting/Kein Internet/filtertype?whitelist-block' \
 			'proxy/filter/setting/Unbeschränkt/filtertype?blacklist-pass'
