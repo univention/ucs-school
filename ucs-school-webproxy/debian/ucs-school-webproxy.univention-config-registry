@@ -5,6 +5,6 @@ Variables: windows/domain
 Variables: hostname
 Variables: domainname
 
-type: file
+Type: file
 File: var/www/proxy.pac
 Variables: squid/httpport
