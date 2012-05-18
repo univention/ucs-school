@@ -1,3 +1,9 @@
+ucs-school-umc-distribution (0.0.23-1) unstable; urgency=low
+
+  * fixed translations; Bug #25707
+
+ -- Alexander Kläser <klaeser@univention.de>  Fri, 18 May 2012 11:27:10 +0200
+
 ucs-school-umc-distribution (0.0.22-1) unstable; urgency=low
 
   * adapt to changes from atjobs module, use datetime instead of time
