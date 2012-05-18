@@ -1,3 +1,9 @@
+ucs-school-umc-groups (0.1.17-1) unstable; urgency=low
+
+  * renamed UMC module; Bug #25701
+
+ -- Andreas Büsching <buesching@univention.de>  Fri, 18 May 2012 11:33:51 +0200
+
 ucs-school-umc-groups (0.1.16-1) unstable; urgency=low
 
   * Avoid UMC requests if no school is available (Bug #27062)

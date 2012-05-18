@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-groups\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2012-05-08 04:16+0200\n"
+"POT-Creation-Date: 2012-05-16 11:33+0200\n"
 "PO-Revision-Date: 2012-05-08 15:54+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: umc/js/schoolgroups.js:118 umc/js/schoolgroups.js:244
+#: umc/js/schoolgroups.js:118 umc/js/schoolgroups.js:249
 msgid "Add workgroup"
 msgstr "Arbeitsgruppe hinzufügen"
 
@@ -32,7 +32,7 @@ msgstr "Alle Benutzer"
 msgid "Back to overview"
 msgstr "Zurück zur Übersicht"
 
-#: umc/js/schoolgroups.js:270
+#: umc/js/schoolgroups.js:275
 msgid "Cancel"
 msgstr "Abbrechen"
 
@@ -44,7 +44,7 @@ msgstr "Klasse"
 msgid "Create a new workgroup"
 msgstr "Erstellen einer neuen Arbeitsgruppe"
 
-#: umc/js/schoolgroups.js:127 umc/js/schoolgroups.js:273
+#: umc/js/schoolgroups.js:127 umc/js/schoolgroups.js:278
 msgid "Delete"
 msgstr "Löschen"
 
@@ -60,7 +60,7 @@ msgstr "Beschreibung"
 msgid "Edit"
 msgstr "Bearbeiten"
 
-#: umc/js/schoolgroups.js:258 umc/js/_schoolgroups/DetailPage.js:75
+#: umc/js/schoolgroups.js:263 umc/js/_schoolgroups/DetailPage.js:75
 msgid "Edit class"
 msgstr "Klasse bearbeiten"
 
@@ -68,7 +68,7 @@ msgstr "Klasse bearbeiten"
 msgid "Edit the selected object"
 msgstr "Bearbeiten des ausgewählten Objektes"
 
-#: umc/js/schoolgroups.js:260 umc/js/_schoolgroups/DetailPage.js:75
+#: umc/js/schoolgroups.js:265 umc/js/_schoolgroups/DetailPage.js:75
 msgid "Edit workgroup"
 msgstr "Arbeitsgruppe bearbeiten"
 
@@ -102,7 +102,7 @@ msgstr "Suchmuster"
 msgid "Search results"
 msgstr "Suchergebnisse"
 
-#: umc/js/schoolgroups.js:267
+#: umc/js/schoolgroups.js:272
 msgid "Should the workgroup {name} be deleted?"
 msgstr "Soll die Arbeitsgruppe {name} gelöscht werden?"
 
@@ -128,11 +128,11 @@ msgstr "Lehrer und Schüler, die zu der aktuellen Arbeitsgruppe gehören"
 msgid "Teachers of the specified class"
 msgstr "Lehrer der angegebenen Klasse"
 
-#: umc/js/schoolgroups.js:281
+#: umc/js/schoolgroups.js:286
 msgid "The workgroup could not be deleted ({message})"
 msgstr "Die Arbeitsgruppe konnte nicht gelöscht werden ({message})"
 
-#: umc/js/schoolgroups.js:279
+#: umc/js/schoolgroups.js:284
 msgid "The workgroup has been deleted successfully"
 msgstr "Die Arbeitsgruppe wurde erfolgreich gelöscht"
 

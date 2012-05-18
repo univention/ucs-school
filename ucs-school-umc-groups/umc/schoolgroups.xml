@@ -5,7 +5,7 @@
 		<category name="ucs-school-admin"/>
 	</categories>
 	<flavor icon="schoolgroups-class" id="class" priority="21">
-	  <name>Assign class teachers</name>
+	  <name>Assign teachers to classes</name>
 	  <description>Associate teachers with classes</description>
 	</flavor>
 	<flavor icon="schoolgroups-workgroup" id="workgroup" priority="20">
