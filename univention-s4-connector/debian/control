@@ -35,7 +35,7 @@ Depends: ${misc:Depends},
  python-univention-lib (>= 1.0.25-1),
  samba4-clients,
  univention-samba4,
- univention-directory-manager-tools,
+ univention-directory-manager-tools (>>7.0.232-4),
  univention-heimdal-common,
  univention-ldap-server (>> 8.0.77-3)
 Recommends: sqlite3
