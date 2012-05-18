@@ -113,7 +113,7 @@ grp_policy_admins	= configRegistry.get('ucsschool/ldap/default/policy/umc/admins
 grp_policy_staff	= configRegistry.get('ucsschool/ldap/default/policy/umc/staff', 'cn=ucsschool-umc-staff-default,cn=UMC,cn=policies,%s' % baseDN)
 
 UCRV_serverprofile_option = configRegistry.get('ucsschool/import/set/serverprofile/path', None)
-UCRV_netlogon_script_path = configRegistry.get('ucsschool/import/set/netlogon/script/path')
+UCRV_netlogon_script_path = configRegistry.get('ucsschool/import/set/netlogon/script/path', None)
 UCRV_sambahome = configRegistry.get('ucsschool/import/set/sambahome', None)
 UCRV_homedrive = configRegistry.get('ucsschool/import/set/homedrive')
 
@@ -1431,8 +1431,10 @@ def create_user(person, baseDN, module, password, OUTFILE, line):
 	else:
 		object["disabled"]="all"
 
-	if UCRV_netlogon_script_path:
+	if UCRV_netlogon_script_path is not None:
 		object["scriptpath"] = UCRV_netlogon_script_path
+	else:
+		object["scriptpath"] = 'user/%s.vbs' % (object["username"], )
 	if calculateSambahomePath(getDN(person.sNr, basedn=baseDN), object["username"]) is not None:
 		object["sambahome"] = calculateSambahomePath(getDN(person.sNr, basedn=baseDN), object["username"])
 	if UCRV_homedrive:

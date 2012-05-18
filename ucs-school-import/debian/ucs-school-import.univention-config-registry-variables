@@ -95,8 +95,8 @@ Type=str
 Categories=ucsschool-base
 
 [ucsschool/import/set/netlogon/script/path]
-Description[de]=Der Pfad zum Netlogon-Skript der beim _Anlegen_ von Benutzern gesetzt werden soll. Unset um ihn nicht zu setzen.
-Description[en]=Path to netlogon script to set for each user on _creation_. Unset to not set any.
+Description[de]=Der Pfad zum Netlogon-Skript der beim _Anlegen_ von Benutzern gesetzt werden soll. Wenn nicht gesetzt wird "user/<Benutzer>.vbs" gesetzt.
+Description[en]=Path to netlogon script to set for each user on _creation_. If unset "user/<User>.vbs" will be set.
 Type=str
 Categories=ucsschool-base
 

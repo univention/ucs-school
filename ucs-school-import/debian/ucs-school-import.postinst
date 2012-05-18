@@ -45,7 +45,6 @@ univention-config-registry set \
 	ucsschool/ldap/default/groupprefix/staff?"mitarbeiter-" \
 	ucsschool/ldap/default/dcs?"edukativ verwaltung" \
 	ucsschool/ldap/noneducational/create/objects?"true" \
-	ucsschool/import/set/netlogon/script/path?ucs-school-logon.vbs \
 	ucsschool/update/user/role?yes
 
 eval "$(univention-config-registry shell)"
