@@ -8,3 +8,5 @@ Variables: domainname
 Type: file
 File: var/www/proxy.pac
 Variables: squid/httpport
+Variables: hostname
+Variables: domainname

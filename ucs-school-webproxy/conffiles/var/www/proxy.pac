@@ -6,7 +6,7 @@ function FindProxyForURL(url, host) {
 '''
 
 print func_template % {
-	'host' : "%s.%s" % ( configRegistry.get( 'hostnanme' ), configRegistry.get( 'domainname' ) ),
+	'host' : "%s.%s" % ( configRegistry.get( 'hostname' ), configRegistry.get( 'domainname' ) ),
 	'port' : configRegistry.get( 'squid/httpport', '3128' )
 	}
 @!@
