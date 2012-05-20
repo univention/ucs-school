@@ -1,3 +1,9 @@
+univention-s4-connector (6.0.128-22) unstable; urgency=low
+
+  * Determine the primary group by the gidNumber (Bug #27158)
+
+ -- Stefan Gohmann <gohmann@univention.de>  Sun, 20 May 2012 21:20:09 +0200
+
 univention-s4-connector (6.0.128-21) unstable; urgency=low
 
   * Depend on a newer UDM modules version (Bug #26926)
