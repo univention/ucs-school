@@ -1,3 +1,9 @@
+ucs-school-lib (1.0.43-1) unstable; urgency=low
+
+  * Python: Fix the save function (Bug #26748)
+
+ -- Jascha Geerds <geerds@univention.de>  Mon, 21 May 2012 09:45:55 +0200
+
 ucs-school-lib (1.0.42-1) unstable; urgency=low
 
   * allow keyword "pupil(s)" in _users(); Bug #26551

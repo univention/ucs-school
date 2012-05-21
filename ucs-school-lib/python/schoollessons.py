@@ -32,6 +32,7 @@
 
 import univention.debug as ud
 import univention.config_registry
+import univention.lib.locking as locking
 
 from univention.management.console.config import ucr
 from univention.management.console.log import MODULE
@@ -136,15 +137,17 @@ class SchoolLessons( ConfigParser.ConfigParser ):
 			self.set( lesson.name, 'begin', str( lesson.begin ) )
 			self.set( lesson.name, 'end', str( lesson.end ) )
 
-		fd = os.open( LESSONS_FILE, os.O_WRONLY | os.EXLOCK )
-		shutil.copyfile( LESSONS_FILE, LESSONS_BACKUP )
-		self.write( fd )
+		lock = locking.get_lock('ucs-school-lib-schoollessons')
+		fd = open(LESSONS_FILE, 'w')
+		shutil.copyfile(LESSONS_FILE, LESSONS_BACKUP)
+		self.write(fd)
 		fd.close()
+		locking.release_lock(lock)
 
 	@property
 	def lessons( self ):
 		self._lessons.sort()
-		return self._lessons
+		return list(self._lessons)
 
 	@property
 	def current( self ):
