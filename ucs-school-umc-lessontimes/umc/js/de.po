@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-lessontimes\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2012-05-05 16:08+0200\n"
+"POT-Creation-Date: 2012-05-05 18:28+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -34,7 +34,9 @@ msgstr "Unterrichtszeiten"
 
 #: umc/js/lessontimes.js:113
 msgid "Should the UMC module be closed? All unsaved modification will be lost."
-msgstr "Soll das UMC module geschlossen werden? Alle ungesicherten Änderungen werden verloren gehen."
+msgstr ""
+"Soll das UMC module geschlossen werden? Alle ungesicherten Änderungen werden "
+"verloren gehen."
 
 #: umc/js/lessontimes.js:74
 msgid "Start time"
@@ -43,3 +45,13 @@ msgstr "Beginn"
 #: umc/js/lessontimes.js:103
 msgid "Submit"
 msgstr "Speichern"
+
+#: umc/js/lessontimes.js:127
+msgid ""
+"The lesson times are used internally for the default session duration by the "
+"computer room module. It is advisable to set the end time of a lesson to a "
+"time immediately before the beginning of the following lesson."
+msgstr ""
+"Die Unterrichtszeiten werden intern für die Voreinstellung der Sitzungsdauer "
+"des Computerraum Moduls genutzt. Es wird angeraten das Ende der Schulstunden "
+"inkl. der Pausen bis kurz vor Beginn der nächsten Schulstunde anzugeben."

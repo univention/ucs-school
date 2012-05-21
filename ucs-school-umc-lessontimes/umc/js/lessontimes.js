@@ -124,7 +124,7 @@ dojo.declare("umc.modules.lessontimes", [ umc.widgets.Module, umc.i18n.Mixin ], 
 
 		this._page = new umc.widgets.Page({
 			headerText: this.description,
-			helpText: '',
+			helpText: this._('The lesson times are used internally for the default session duration by the computer room module. It is advisable to set the end time of a lesson to a time immediately before the beginning of the following lesson.'),
 			footerButtons: buttons
 		});
 
