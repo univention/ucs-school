@@ -1,3 +1,11 @@
+univention-samba4 (1.0.138-6) unstable; urgency=low
+
+  * generalize site option handling in provision and join (Bug #26504)
+  * revert sambadomain creation change introduced in version 1.0.138-3
+  * remove legacy samba4/join/essentialonly support from RODC join
+
+ -- Arvid Requate <requate@univention.de>  Mon, 21 May 2012 12:55:25 +0200
+
 univention-samba4 (1.0.138-5) unstable; urgency=low
 
   * Create the samba share even if a VFS object was given (Bug #27121)
