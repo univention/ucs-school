@@ -148,6 +148,12 @@ if [ -z "$S3_DCS" ] || [ -z "$DOMAIN_SID" ]; then
 	if [ -z "$DOMAIN_SID" ]; then
 		# No SID for this windows/domain has been generated
 		DOMAIN_SID="$(univention-newsid)"
+		univention-directory-manager container/cn create "$@" --ignore_exists \
+										--set name=samba
+		univention-directory-manager settings/sambadomain create "$@" --ignore_exists \
+										--position "cn=samba,$ldap_base" \
+										--set name="$windows_domain" \
+										--set SID="$DOMAIN_SID"
 	fi
 
 	if [ -z "$sitename" ]; then

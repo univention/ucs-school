@@ -1,3 +1,9 @@
+univention-samba4 (1.0.138-3) unstable; urgency=low
+
+  * Create sambadomain object if missing during provision (Bug #26504)
+
+ -- Arvid Requate <requate@univention.de>  Mon, 21 May 2012 11:13:42 +0200
+
 univention-samba4 (1.0.138-2) unstable; urgency=low
 
   * Added new UCR variable samba/share/sysvol/readonly to configure
