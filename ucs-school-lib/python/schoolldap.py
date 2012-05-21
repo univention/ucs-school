@@ -295,6 +295,10 @@ class SchoolSearchBase(object):
 		return "cn=users,%s" % self.schoolDN
 
 	@property
+	def groups(self):
+		return "cn=groups,%s" % self.schoolDN
+
+	@property
 	def workgroups(self):
 		return "cn=%s,cn=groups,%s" % (self._containerStudents, self.schoolDN)
 

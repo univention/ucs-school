@@ -1,3 +1,9 @@
+ucs-school-lib (1.0.44-1) unstable; urgency=low
+
+  * added poperty "groups" to SchoolSearchBase; Bug #25704
+
+ -- Alexander Kläser <klaeser@univention.de>  Mon, 21 May 2012 14:36:30 +0200
+
 ucs-school-lib (1.0.43-1) unstable; urgency=low
 
   * Python: Fix the save function (Bug #26748)
