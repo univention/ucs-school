@@ -127,11 +127,6 @@ access to dn.regex="^cn=([^,]+),cn=@$@PUPILS@$@,cn=groups,ou=([^,]+),@$@DISTRICT
 	by dn.regex="^uid=([^,]+),cn=(@$@TEACHERS@$@|@$@TEACHERS-STAFF@$@|@$@STAFF@$@|@$@ADMINS@$@),cn=users,ou=$2,@$@DISTRICT@$@@%@ldap/base@%@$$" write
 	by * none break
 
-# OU-Admins are allowed to modify group classes
-access to dn.regex="^cn=([^,]+),cn=klassen,cn=@$@PUPILS@$@,cn=groups,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" attrs=uniqueMember,memberUid
-	by dn.regex="^uid=([^,]+),cn=@$@ADMINS@$@,cn=users,ou=$2,@$@DISTRICT@$@@%@ldap/base@%@$$" write
-	by * none break
-
 # Lehrer und ouadmins duerfen Raum-Gruppen anlegen und bearbeiten
 access to dn.regex="^cn=raeume,cn=groups,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" attrs=children,entry
 	by dn.regex="^uid=([^,]+),cn=(@$@TEACHERS@$@|@$@TEACHERS-STAFF@$@|@$@STAFF@$@|@$@ADMINS@$@),cn=users,ou=$1,@$@DISTRICT@$@@%@ldap/base@%@$$" write

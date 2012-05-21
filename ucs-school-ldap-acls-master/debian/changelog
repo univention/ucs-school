@@ -1,3 +1,10 @@
+ucs-school-ldap-acls-master (7.0.6-1) unstable; urgency=low
+
+  * Undo: Give school admins the permission to modify the group
+    memberships of classes (Bug #26997)
+
+ -- Stefan Gohmann <gohmann@univention.de>  Mon, 21 May 2012 17:05:51 +0200
+
 ucs-school-ldap-acls-master (7.0.5-1) unstable; urgency=low
 
   * Give school admins the permission to modify the group memberships of
