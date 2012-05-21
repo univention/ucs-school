@@ -1,6 +1,6 @@
 univention-samba4 (1.0.138-9) unstable; urgency=low
 
-  * fix bash shell synax warning (Bug #26504)
+  * fix bash shell syntax warning (Bug #26504)
 
  -- Arvid Requate <requate@univention.de>  Mon, 21 May 2012 16:47:03 +0200
 
