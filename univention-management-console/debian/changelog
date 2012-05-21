@@ -1,3 +1,9 @@
+univention-management-console (4.0.231-2) unstable; urgency=low
+
+  * Depend on python-notifier >= 0.9.5-1 (Bug #26702)
+
+ -- Stefan Gohmann <gohmann@univention.de>  Mon, 21 May 2012 16:49:52 +0200
+
 univention-management-console (4.0.231-1) unstable; urgency=low
 
   * added support for multiple languages in dh-umc-translate; Bug #27031
