@@ -252,6 +252,16 @@ if [ "$samba4_role" = 'DC' ]; then
 				## special case: provision another instance of Samba 4
 				## this is similar to univention-samba-slave-pdc
 				/usr/share/univention-samba4/scripts/setup-s4.sh "$@" "${SITE_OPTION[@]}"
+				rc="$?"
+				if [ "$rc" != 0 ]; then
+					exit "$rc"
+				fi
+
+				## Adding DNS records is currently necessary, probably this can be avoided with samba_dnsupdate
+				## see https://wiki.samba.org/index.php/Samba4/HOWTO/Join_a_domain_as_a_DC#A_note_on_DNS_updates
+				/usr/share/univention-samba4/scripts/setup-dns-in-ucsldap.sh "$@" --dc "${SITE_OPTION[@]}"
+
+				operatingSystem_attribute replace
 
 				# Don't use the default RID pool
 				ldbmodify -H /var/lib/samba/private/sam.ldb <<-%EOF
@@ -284,13 +294,13 @@ rIDNextRID: 2101
 				fi
 			fi
 
+			## Adding DNS records is currently necessary, probably this can be avoided with samba_dnsupdate
+			## see https://wiki.samba.org/index.php/Samba4/HOWTO/Join_a_domain_as_a_DC#A_note_on_DNS_updates
+			/usr/share/univention-samba4/scripts/setup-dns-in-ucsldap.sh "$@" --dc "${SITE_OPTION[@]}"
+
+			operatingSystem_attribute add
+
 		fi
-
-		## Adding DNS records is currently necessary, probably this can be avoided with samba_dnsupdate
-		## see https://wiki.samba.org/index.php/Samba4/HOWTO/Join_a_domain_as_a_DC#A_note_on_DNS_updates
-		/usr/share/univention-samba4/scripts/setup-dns-in-ucsldap.sh "$@" --dc "${SITE_OPTION[@]}"
-
-		operatingSystem_attribute add
 
 		## determine default sysvol parent for this host from univentionService="S4 Connector"
 		if [ -z "$samba4_sysvol_sync_host" ]; then

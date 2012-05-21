@@ -1,3 +1,9 @@
+univention-samba4 (1.0.138-11) unstable; urgency=low
+
+  * replace operatingSystem_attribute in secondary provision (Bug #26504)
+
+ -- Arvid Requate <requate@univention.de>  Mon, 21 May 2012 19:07:11 +0200
+
 univention-samba4 (1.0.138-10) unstable; urgency=low
 
   * set samba4/ldap/base once before site creation (Bug #26504) 
