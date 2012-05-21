@@ -33,6 +33,7 @@
 from univention.management.console.log import MODULE
 
 from univention.lib.i18n import Translation
+from univention.lib.locking import *
 
 from ucsschool.lib.schoolldap import SchoolBaseModule
 from ucsschool.lib.schoollessons import SchoolLessons
@@ -60,7 +61,8 @@ class Instance(SchoolBaseModule):
 
 		# add the new lessons
 		for lesson in request.options.get('lessons', []):
-			self._lessons.add(*lesson)
+			if lesson[0]:
+				self._lessons.add(*lesson)
 		self._lessons.save()
 
-		self.finished(request.id, None)
+		self.finished(request.id, None, _('Lesson times were successfully set'))

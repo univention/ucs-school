@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-lessontimes\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: \n"
+"POT-Creation-Date: 2012-05-05 16:08+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -12,3 +12,34 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
+#: umc/js/lessontimes.js:119
+msgid "Cancel"
+msgstr "Abbrechen"
+
+#: umc/js/lessontimes.js:111 umc/js/lessontimes.js:114
+msgid "Close"
+msgstr "Beenden"
+
+#: umc/js/lessontimes.js:70
+msgid "Description"
+msgstr "Beschreibung"
+
+#: umc/js/lessontimes.js:79
+msgid "End time"
+msgstr "Ende"
+
+#: umc/js/lessontimes.js:60
+msgid "Lesson times"
+msgstr "Unterrichtszeiten"
+
+#: umc/js/lessontimes.js:113
+msgid "Should the UMC module be closed? All unsaved modification will be lost."
+msgstr "Soll das UMC module geschlossen werden? Alle ungesicherten Änderungen werden verloren gehen."
+
+#: umc/js/lessontimes.js:74
+msgid "Start time"
+msgstr "Beginn"
+
+#: umc/js/lessontimes.js:103
+msgid "Submit"
+msgstr "Speichern"

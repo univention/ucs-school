@@ -66,14 +66,16 @@ dojo.declare("umc.modules.lessontimes", [ umc.widgets.Module, umc.i18n.Mixin ], 
 			label: this._(''),
 			subtypes: [{
 				type: 'TextBox',
+				name: 'description',
 				label: this._('Description')
 			}, {
-				type: 'TextBox',
+				type: 'TimeBox',
+				name: 'begin',
 				label: this._('Start time'),
 				size: 'OneThird'
 			}, {
-				type: 'TextBox',
-				name: 'subject',
+				type: 'TimeBox',
+				name: 'end',
 				label: this._('End time'),
 				size: 'OneThird'
 			}],
@@ -132,7 +134,6 @@ dojo.declare("umc.modules.lessontimes", [ umc.widgets.Module, umc.i18n.Mixin ], 
 
 	onSubmit: function(values) {
 		this.umcpCommand('lessontimes/set', values).then(dojo.hitch(this, function (response) {
-			console.log('onSubmit', values);
 		}));
 	}
 });
