@@ -1,3 +1,9 @@
+univention-samba4 (1.0.138-7) unstable; urgency=low
+
+  * rename --sitename option to --site in setup-s4.sh (Bug #26504)
+
+ -- Arvid Requate <requate@univention.de>  Mon, 21 May 2012 14:22:39 +0200
+
 univention-samba4 (1.0.138-6) unstable; urgency=low
 
   * generalize site option handling in provision and join (Bug #26504)

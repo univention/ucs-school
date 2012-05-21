@@ -57,9 +57,18 @@ while getopts  "h-:W:" option; do
 				bindpwd="${!OPTIND}"
 				OPTIND=$((OPTIND+1))
 				;;
-			sitename)
-				sitename="${!OPTIND}"
-				OPTIND=$((OPTIND+1))
+			site|site=*)
+				## allow "--site=foo" and "--site foo"
+				val=${OPTARG#*=}
+				if [ "$val" != "$OPTARG" ]; then
+					opt=${OPTARG%=$val}
+				else
+					val="${!OPTIND}"
+					opt="${OPTARG}"
+					OPTIND=$((OPTIND+1))
+				fi
+				## store the sitename
+				sitename="$val"
 				;;
 			help)
 				usage
