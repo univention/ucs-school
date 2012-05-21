@@ -468,11 +468,10 @@ class Instance( SchoolBaseModule ):
 		if request.options[ 'shareMode' ] in ( 'none', 'home' ):
 			vunset.append( 'samba/sharemode/room/%s' % self._italc.room )
 			vset[ vunset[ -1 ] ] = request.options[ 'shareMode' ]
-			if request.options[ 'shareMode' ] == 'home':
-				vextract.append( 'samba/othershares/hosts/deny' )
-				vappend[ vextract[ -1 ] ] = hosts
+			vextract.append( 'samba/othershares/hosts/deny' )
+			vappend[ vextract[ -1 ] ] = hosts
 			if request.options[ 'shareMode' ] == 'none':
-				vextract.append( 'samba/homes/hosts/deny' )
+				vextract.append( 'samba/share/homes/hosts/deny' )
 				vappend[ vextract[ -1 ] ] = hosts
 		else:
 			vunset_now.append( 'samba/sharemode/room/%s' % self._italc.room )
