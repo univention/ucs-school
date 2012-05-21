@@ -7,14 +7,16 @@ Standards-Version: 3.8.2
 
 Package: ucs-school-master
 Architecture: all
-Depends: univention-ldap-server (>> 8.0.77-2),
- univention-directory-manager-tools (>> 4.0.29-1),
+Depends: univention-ldap-server (>= 8.0.77-4),
+ univention-directory-manager-tools (>= 7.0.234-1),
  ucs-school-import,
  ucs-school-ldap-acls-master,
  ucs-school-umc-helpdesk-schema,
  ucs-school-info,
+ python-univention (>= 6.0.21-1),
  univention-management-console-module-selective-udm,
- shell-univention-lib
+ univention-management-console (>= 4.0.231-1),
+ shell-univention-lib (>= 1.0.51-3)
 Recommends:
  ucs-school-umc-groups,
  ucs-school-umc-users,
@@ -33,8 +35,8 @@ Description: UCS@School meta package for UCS DC Master System (multi DC mode)
 
 Package: ucs-school-slave
 Architecture: all
-Depends: univention-directory-manager-tools (>> 4.0.29-1),
- univention-ldap-server (>> 8.0.77-2),
+Depends: univention-ldap-server (>= 8.0.77-4),
+ univention-directory-manager-tools (>= 7.0.234-1),
  ucs-school-webproxy,
  univention-samba4 | univention-samba (>= 6.0.27-1),
  univention-s4-connector | univention-samba-slave-pdc,
@@ -43,11 +45,11 @@ Depends: univention-directory-manager-tools (>> 4.0.29-1),
  ucs-school-old-homedirs,
  ucs-school-old-sharedirs,
  ucs-school-info,
- univention-management-console (>= 4.0.226-1),
- python-univention (>> 5.0.7-10),
+ univention-management-console (>= 4.0.231-1),
+ python-univention (>= 6.0.21-1),
  ucs-school-netlogon,
- shell-univention-lib,
  shell-ucs-school,
+ shell-univention-lib (>= 1.0.51-3)
 Recommends:
  ucs-school-branding,
  ucs-school-umc-computerroom,
@@ -71,8 +73,8 @@ Description: UCS@School meta package for UCS DC Slave System
 
 Package: ucs-school-singlemaster
 Architecture: all
-Depends: univention-ldap-server (>> 8.0.77-2),
- univention-directory-manager-tools (>> 4.0.29-1),
+Depends: univention-ldap-server (>= 8.0.77-4),
+ univention-directory-manager-tools (>= 7.0.234-1),
  ucs-school-import,
  ucs-school-ldap-acls-master,
  ucs-school-webproxy,
@@ -82,10 +84,10 @@ Depends: univention-ldap-server (>> 8.0.77-2),
  ucs-school-info,
  univention-samba4 | univention-samba,
  univention-s4-connector | univention-samba,
- univention-management-console (>= 3.0.63-1),
+ univention-management-console (>= 4.0.231-1),
  univention-management-console-module-selective-udm,
- python-univention (>> 5.0.7-10),
- shell-univention-lib,
+ python-univention (>= 6.0.21-1),
+ shell-univention-lib (>= 1.0.51-3),
  ucs-school-netlogon
 Recommends:
  ucs-school-branding,
