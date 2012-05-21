@@ -180,6 +180,10 @@ if [ -z "$samba4_role" ]; then
 	univention-config-registry set samba4/role="$samba4_role"
 fi
 
+## the code in /usr/share/pyshared/samba/provision.py derives the 'domaindn' from the realm, save it for later use
+samba4_ldap_base="DC=$(echo "$kerberos_realm" | sed 's/\./,DC=/g')"
+univention-config-registry set samba4/ldap/base="$samba4_ldap_base"
+
 if [ -n "$samba4_join_site" ]; then
 	if [ "$samba4_role" = 'DC' ] ||  [ "$samba4_role" = 'RODC' ]; then
 		create_site "$samba4_join_site"
@@ -190,10 +194,7 @@ fi
 
 if [ "$samba4_role" = 'DC' ]; then
 
-	## the code in /usr/share/pyshared/samba/provision.py derives the 'domaindn' from the realm, save it for later use
-	samba4_ldap_base="DC=$(echo "$kerberos_realm" | sed 's/\./,DC=/g')"
-	univention-config-registry set samba4/ldap/base="$samba4_ldap_base" \
-							server/password/change=no
+	univention-config-registry set server/password/change=no
 
 	## check if we there already is a **domaincontroller** providing the service "Samba 4"
 	samba4servicedcs=$(ldapsearch -x -ZZ -LLL -D "$ldap_hostdn" -y /etc/machine.secret "(&(univentionService=${NAME})(objectClass=univentionDomainController))" cn | sed -n 's/^cn: \(.*\)/\1/p')	## currently there is no u-d-m module computers/dc
@@ -357,10 +358,7 @@ elif [ "$samba4_role" = "RODC" ]; then
 		exit 1
 	fi
 
-	## the code in /usr/share/pyshared/samba/provision.py derives the 'domaindn' from the realm, save it for later use
-	samba4_ldap_base="DC=$(echo "$kerberos_realm" | sed 's/\./,DC=/g')"
-	univention-config-registry set samba4/ldap/base="$samba4_ldap_base" \
-							server/password/change=no
+	univention-config-registry set server/password/change=no
 
 	/etc/init.d/samba4 stop
 
