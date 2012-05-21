@@ -22,11 +22,11 @@ msgstr " "
 
 #: umc/app.js:335
 msgid "umcOverviewHeader"
-msgstr "UCS@school Verwaltungskonsole für Lehrer"
+msgstr "UCS@school Management Console"
 
 #: umc/app.js:337
 msgid "umcOverviewHelpText"
-msgstr ""
+msgstr "UCS@school Management Console ist eine flexible Webanwendung zur Vorbereitung und Durchführung des computergestützten Unterrichts. Darüber hinaus bietet sie Administratoren umfangreiche Funktionen für die Domänenadministration und die Konfiguration des Schulnetzwerkes sowie dieses Servers."
 
 #: umc/app.js:334
 msgid "umcOverviewTabTitle"
