@@ -1,3 +1,9 @@
+ucs-school-umc-internetrules (7.0.12-1) unstable; urgency=low
+
+  * show all groups (except rooms) for filter rule assignment; Bug #25704
+
+ -- Alexander Kläser <klaeser@univention.de>  Mon, 21 May 2012 14:37:27 +0200
+
 ucs-school-umc-internetrules (7.0.11-1) unstable; urgency=low
 
   * fixed type checking for basestring instead of str; Bug #25704

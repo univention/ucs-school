@@ -350,8 +350,8 @@ class Instance( SchoolBaseModule ):
 		MODULE.info( 'internetrules.groups_query: options: %s' % str( request.options ) )
 
 		# LDAP search for groups
-		base = search_base.classes
-		ldapFilter = LDAP_Filter.forGroups(request.options.get('pattern', ''), search_base.school)
+		base = search_base.groups
+		ldapFilter = LDAP_Filter.forAll(request.options.get('pattern', ''), ['name', 'description'])
 		groupresult = udm_modules.lookup( 'groups/group', None, ldap_user_read, scope = 'sub', base = base, filter = ldapFilter)
 
 		# try to load all group rules
@@ -359,10 +359,10 @@ class Instance( SchoolBaseModule ):
 
 		# prepare final list of dicts
 		result = [ {
-			'name': i['name'].replace('%s-' % search_base.school, '', 1),
+			'name': i['name'].replace('%s-' % search_base.school, '', 1).replace('-%s' % search_base.school, '', 1),
 			'$dn$': i.dn,
 			'rule': allRules.get(i['name'], 'default') or _('-- default settings --')
-		} for i in groupresult ]
+		} for i in groupresult if not search_base.isRoom(i.dn) ]
 		result.sort( cmp = lambda x, y: cmp( x.lower(), y.lower() ), key = lambda x: x[ 'name' ] )
 
 		MODULE.info( 'internetrules.groups_query: result: %s' % str( result ) )
