@@ -830,6 +830,15 @@ def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None, ShareFileServer=None
 	if not schoolNr in verified_ous:
 		verified_ous.append(schoolNr)
 
+	# In a single school environment the default DHCP container must
+	# be set to the DHCP container in the school ou. Otherwise newly
+	# imported computers have the DHCP objects in the wrong DHCP container
+	if not configRegistry.get('ucsschool/defaultschoolname') and configRegistry.is_true('ucsschool/singlemaster', False):
+		if not configRegistry.get('dhcpd/ldap/base'):
+			univention.config_registry.handler_set(['dhcpd/ldap/base=cn=dhcp,%s' % (getDN (schoolNr))])
+		if not configRegistry.get('ucsschool/defaultschoolname'):
+			univention.config_registry.handler_set(['ucsschool/defaultschoolname=%s' % (schoolNr)])
+
 	# if requested, then create dhcp_dns policy that clears univentionDhcpDomainNameServers at OU level
 	# to prevent problems with "wrong" DHCP DNS policy connected to ldap base
 	if configRegistry.is_true('ucsschool/import/generate/policy/dhcp/dns/clearou', False):
@@ -885,15 +894,6 @@ def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None, ShareFileServer=None
 					print 'need to attach policy: %s' % poldn
 			lo.modify(containerdn,modlist)
 
-
-	# In a single school environment the default DHCP container must
-	# be set to the DHCP container in the school ou. Otherwise newly
-	# imported computers have the DHCP objects in the wrong DHCP container
-	if not configRegistry.get('ucsschool/defaultschoolname') and configRegistry.is_true('ucsschool/singlemaster', False):
-		if not configRegistry.get('dhcpd/ldap/base'):
-	 		univention.config_registry.handler_set(['dhcpd/ldap/base=cn=dhcp,ou=%s' % (getDN (schoolNr))])
-		if not configRegistry.get('ucsschool/defaultschoolname'):
-	 		univention.config_registry.handler_set(['ucsschool/defaultschoolname=%s' % (schoolNr)])
 
 	# invoke post hooks
 	if created:
