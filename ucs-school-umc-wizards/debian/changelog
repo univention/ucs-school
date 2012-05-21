@@ -1,3 +1,9 @@
+ucs-school-umc-wizards (1.0.25-1) unstable; urgency=low
+
+  * the wizard modules are now only visible to domain admins; Bug #27207
+
+ -- Alexander Kläser <klaeser@univention.de>  Mon, 21 May 2012 17:52:09 +0200
+
 ucs-school-umc-wizards (1.0.24-1) unstable; urgency=low
 
   * UserWizard: Hide the password (Bug #26959)

@@ -43,10 +43,8 @@ umc_init
 umc_operation_create "schoolwizards-all" "School wizards" "" "schoolwizards/*"
 ucs_school_policies_create
 
-# the module is only visible for admins
-for ipol in ucsschool-umc-admins-default default-umc-all; do
-	umc_policy_append "$ipol" "schoolwizards-all"
-done
+# the module is only visible for domain admins
+umc_policy_append default-umc-all "schoolwizards-all"
 
 joinscript_save_current_version
 
