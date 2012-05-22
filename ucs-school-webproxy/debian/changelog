@@ -1,3 +1,9 @@
+ucs-school-webproxy (8.0.17-1) unstable; urgency=low
+
+  * update quote to handle unicode objects (Bug #26974)
+
+ -- Janek Walkenhorst <walkenhorst@univention.de>  Tue, 22 May 2012 15:02:25 +0200
+
 ucs-school-webproxy (8.0.16-1) unstable; urgency=low
 
   * add missing UCR template registration; Bug #26931

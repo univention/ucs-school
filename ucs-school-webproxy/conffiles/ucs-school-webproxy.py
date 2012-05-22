@@ -75,6 +75,8 @@ def move_file(fnsrc, fndst):
 
 def quote(string):
 	'Replace every unsafe byte with hex value'
+	if type(string) is unicode:
+		string = string.encode('utf-8')
 	newstring = ''
 	for byte in string:
 		if byte in quote.safeBytes:
