@@ -1,3 +1,9 @@
+ucs-school-import (8.0.51-2) unstable; urgency=low
+
+  * import homedrive letter on update and installation (Bug #25867)
+
+ -- Janek Walkenhorst <walkenhorst@univention.de>  Tue, 22 May 2012 11:48:20 +0200
+
 ucs-school-import (8.0.51-1) unstable; urgency=low
 
   * Fixed settings for a single school environment (Bug #26962)

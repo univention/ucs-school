@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # UCS@School
 #  postinst script for the debian package
@@ -56,10 +56,15 @@ if [ "$1" = "configure" -a -z "$2" ] ; then
 	use_marktplatz="yes"
 	use_dhcpsearchbase="yes"
 	univention-config-registry set ucsschool/import/generate/policy/dhcp/dns/clearou?"true"
+fi
+if [ "$1" = "configure" ]
+then
 	letter="$(univention-config-registry get samba/homedirletter)"
 	if [ -z "$letter" ]
 	then
-		letter='I'
+		letter='I:'
+	else
+		letter="${letter:0:1}:"
 	fi
 	univention-config-registry set "ucsschool/import/set/homedrive?$letter"
 fi
