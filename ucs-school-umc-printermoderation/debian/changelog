@@ -1,3 +1,9 @@
+ucs-school-umc-printermoderation (7.0.12-2) unstable; urgency=low
+
+  * add dependency to shell-ucs-school; Bug #25705
+
+ -- Andreas Büsching <buesching@univention.de>  Tue, 22 May 2012 16:28:38 +0200
+
 ucs-school-umc-printermoderation (7.0.12-1) unstable; urgency=low
 
   * changed index for join script to execute after univention-printserver join

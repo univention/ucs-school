@@ -15,7 +15,8 @@ Architecture: all
 Depends: ${misc:Depends},
  univention-management-console-server,
  univention-printserver-pdf,
- poppler-utils
+ poppler-utils,
+ shell-ucs-school
 Description: UCS@school UMC module for moderating print
  This package contains a UMC module for moderating print jobs of students
  .
