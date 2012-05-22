@@ -1,3 +1,9 @@
+ucs-school-lib (1.0.47-1) unstable; urgency=low
+
+  * fixed query for machine read and write connection; Bug #25701
+
+ -- Alexander Kläser <klaeser@univention.de>  Tue, 22 May 2012 17:16:37 +0200
+
 ucs-school-lib (1.0.46-1) unstable; urgency=low
 
   * cleanup and renamed property name to username; Bug #26392

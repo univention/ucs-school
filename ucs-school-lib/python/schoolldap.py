@@ -128,9 +128,9 @@ def get_ldap_connections( connection_types, force = False ):
 		elif conn == USER_WRITE:
 			lo = open_ldap_connection( _user_dn, _password, write_server )
 		elif conn == MACHINE_READ:
-			lo = univention.uldap.getMachineConnections( ldap_master = False )
+			lo, pos = udm_uldap.getMachineConnection( ldap_master = False )
 		elif conn == MACHINE_WRITE:
-			lo = univention.uldap.getMachineConnections( ldap_master = True )
+			lo, pos = udm_uldap.getMachineConnection( ldap_master = True )
 
 		connections[ conn ] = lo
 		_ldap_connections[ conn ] = lo
