@@ -44,7 +44,7 @@ import univention.admin.modules as udm_modules
 import univention.admin.objects as udm_objects
 import univention.admin.uexceptions as udm_exceptions
 
-from ucsschool.lib.schoolldap import LDAP_Connection, LDAP_ConnectionError, set_credentials, SchoolSearchBase, SchoolBaseModule, LDAP_Filter, Display, USER_READ, USER_WRITE
+from ucsschool.lib.schoolldap import LDAP_Connection, LDAP_ConnectionError, set_credentials, SchoolSearchBase, SchoolBaseModule, LDAP_Filter, Display, USER_READ, USER_WRITE, MACHINE_WRITE
 
 _ = Translation( 'ucs-school-umc-groups' ).translate
 
@@ -135,8 +135,8 @@ class Instance( SchoolBaseModule ):
 		"""Retain the LDAP objects from the given list of LDAP-DN that match the supplied function"""
 		return [ iuser for iuser in members if checkUser(iuser) ]
 
-	@LDAP_Connection( USER_READ, USER_WRITE )
-	def put( self, request, search_base = None, ldap_user_write = None, ldap_user_read = None, ldap_position = None ):
+	@LDAP_Connection( USER_READ, MACHINE_WRITE )
+	def put( self, request, search_base = None, ldap_machine_write = None, ldap_user_read = None, ldap_position = None ):
 		"""Returns the objects for the given IDs
 
 		requests.options = [ { object : ..., options : ... }, ... ]
@@ -148,12 +148,11 @@ class Instance( SchoolBaseModule ):
 
 		group = request.options[ 0 ].get( 'object', {} )
 		try:
-			grp = udm_objects.get( udm_modules.get( 'groups/group' ), None, ldap_user_write, ldap_position, group[ '$dn$' ] )
+			grp = udm_objects.get( udm_modules.get( 'groups/group' ), None, ldap_machine_write, ldap_position, group[ '$dn$' ] )
 			if not grp:
 				raise UMC_OptionTypeError( 'unknown group object' )
 
 			grp.open()
-			grp[ 'description' ] = group[ 'description' ]
 			MODULE.info('Modifying group "%s" with members: %s' % (grp.dn, grp['users']))
 			MODULE.info('New members: %s' % group['members'])
 			if request.flavor == 'class':
@@ -163,6 +162,7 @@ class Instance( SchoolBaseModule ):
 				# workgroup (admin view) -> update teachers and students
 				grp[ 'users' ] = group[ 'members' ]
 				grp[ 'name' ] = '%(school)s-%(name)s' % group
+				grp[ 'description' ] = group[ 'description' ]
 			elif request.flavor == 'workgroup':
 				# workgroup (teacher view) -> update only the group's students
 				if [ dn for dn in grp[ 'users' ] if search_base.isTeacher(dn) ]:

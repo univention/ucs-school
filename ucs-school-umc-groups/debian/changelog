@@ -1,3 +1,9 @@
+ucs-school-umc-groups (0.1.18-1) unstable; urgency=low
+
+  * use the machine account to modify groups; Bug #25701
+
+ -- Alexander Kläser <klaeser@univention.de>  Tue, 22 May 2012 16:35:42 +0200
+
 ucs-school-umc-groups (0.1.17-1) unstable; urgency=low
 
   * renamed UMC module; Bug #25701
