@@ -43,7 +43,6 @@ import sys
 # defaults
 ucr	= ConfigRegistry()
 
-
 # global hashes
 include = set()
 shares = {}
@@ -89,7 +88,7 @@ class Restrictions( dict ):
 	def valid_users( self ):
 		return self[ Restrictions.VALID_USERS ]
 
-	@invalid_users.setter
+	@valid_users.setter
 	def valid_users( self, value ):
 		self._add( Restrictions.VALID_USERS, value )
 
@@ -97,7 +96,7 @@ class Restrictions( dict ):
 	def hosts_deny( self ):
 		return self[ Restrictions.HOSTS_DENY ]
 
-	@invalid_users.setter
+	@hosts_deny.setter
 	def hosts_deny( self, value ):
 		self._add( Restrictions.HOSTS_DENY, value )
 
@@ -105,7 +104,7 @@ class Restrictions( dict ):
 	def hosts_allow( self ):
 		return self[ Restrictions.HOSTS_ALLOW ]
 
-	@invalid_users.setter
+	@hosts_allow.setter
 	def hosts_allow( self, value ):
 		self._add( Restrictions.HOSTS_ALLOW, value )
 
@@ -174,6 +173,7 @@ class ShareConfiguration( object ):
 			if cfg.has_option( share.name, Restrictions.INVALID_USERS ):
 				share.invalid_users = shlex.split( cfg.get( share.name, Restrictions.INVALID_USERS ) )
 			if cfg.has_option( share.name, Restrictions.HOSTS_DENY ):
+				print cfg.get( share.name, Restrictions.HOSTS_DENY )
 				share.hosts_deny = shlex.split( cfg.get( share.name, Restrictions.HOSTS_DENY ) )
 
 			self._shares[ share.name ] = share
@@ -291,7 +291,7 @@ class ShareConfiguration( object ):
 		for share in self._shares.values():
 			if share.name in ( 'marktplatz', 'homes' ):
 				continue
-			share.hosts_deny = value
+			share.hosts_deny = shlex.split( value )
 			share.ucr = True
 
 	# set global options to -> globals
@@ -387,9 +387,7 @@ class ShareConfiguration( object ):
 					fd.write( 'printable = yes\n' )
 
 				for option in ( 'valid_users', 'invalid_users', 'hosts_deny', 'hosts_allow' ):
-					if option in prt:
-						if prt[ option ] is None:
-							continue
+					if option in prt and prt[ option ] is not None:
 						fd.write( '%s = ' % option )
 						fd.write( ' '.join( getattr( prt, option ) ) )
 						fd.write( '\n' )
