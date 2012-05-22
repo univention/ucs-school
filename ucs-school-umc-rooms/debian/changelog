@@ -1,3 +1,9 @@
+ucs-school-umc-rooms (8.0.9-1) unstable; urgency=low
+
+  * Fix typo (Bug #26360)
+
+ -- Jascha Geerds <geerds@univention.de>  Tue, 22 May 2012 11:48:23 +0200
+
 ucs-school-umc-rooms (8.0.8-1) unstable; urgency=low
 
   * Avoid UMC requests if no school is available (Bug #27062)

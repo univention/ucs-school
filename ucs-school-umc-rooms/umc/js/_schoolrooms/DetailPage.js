@@ -114,7 +114,7 @@ dojo.declare("umc.modules._schoolrooms.DetailPage", [ umc.widgets.Page, umc.widg
 				type: 'ComboBox',
 				name: 'school',
 				label: this._('School'),
-				dynamicValues: 'schoolgroups/schools',
+				dynamicValues: 'schoolrooms/schools',
 				autoHide: true
 			}, {
 				type: 'TextBox',
