@@ -1433,8 +1433,6 @@ def create_user(person, baseDN, module, password, OUTFILE, line):
 
 	if UCRV_netlogon_script_path is not None:
 		object["scriptpath"] = UCRV_netlogon_script_path
-	else:
-		object["scriptpath"] = 'user/%s.vbs' % (object["username"], )
 	if calculateSambahomePath(getDN(person.sNr, basedn=baseDN), object["username"]) is not None:
 		object["sambahome"] = calculateSambahomePath(getDN(person.sNr, basedn=baseDN), object["username"])
 	if UCRV_homedrive:

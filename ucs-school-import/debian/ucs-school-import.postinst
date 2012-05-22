@@ -67,6 +67,7 @@ then
 		letter="${letter:0:1}:"
 	fi
 	univention-config-registry set "ucsschool/import/set/homedrive?$letter"
+	univention-config-registry set 'ucsschool/import/set/netlogon/script/path?ucs-school-logon.vbs'
 fi
 univention-config-registry set \
 	"ucsschool/import/generate/policy/dhcp/searchbase?${use_dhcpsearchbase}" \
