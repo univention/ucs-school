@@ -54,8 +54,8 @@ class SMB_Process( dict ):
 		self._services = []
 
 	@property
-	def name( self ):
-		return self[ 'name' ]
+	def username( self ):
+		return self[ 'username' ]
 
 	@property
 	def pid( self ):
@@ -64,10 +64,6 @@ class SMB_Process( dict ):
 	@property
 	def machine( self ):
 		return self[ 'machine' ]
-
-	@property
-	def connectedAt( self ):
-		return self[ 'connectedAt' ]
 
 	@property
 	def lockedFiles( self ):
