@@ -120,7 +120,6 @@ def get_ldap_connections( connection_types, force = False ):
 	write_server = ucr.get( 'ldap/master' )
 
 	for conn in connection_types:
-		MODULE.info( 'connection type: %s' % conn )
 		if _ldap_connections.get( conn ) and not force:
 			connections[ conn ] = _ldap_connections[ conn ]
 			continue
