@@ -34,6 +34,7 @@
 import datetime
 import os
 import shlex
+import signal
 import subprocess
 import fcntl
 from random import Random
@@ -57,22 +58,26 @@ from univention.uldap import explodeDn
 
 from ucsschool.lib.schoolldap import LDAP_Connection, LDAP_ConnectionError, set_credentials, SchoolSearchBase, SchoolBaseModule, LDAP_Filter, Display
 from ucsschool.lib.schoollessons import SchoolLessons
+from ucsschool.lib.smbstatus import SMB_Status
 import ucsschool.lib.internetrules as internetrules
 
 from italc2 import ITALC_Manager, ITALC_Error
 
 import notifier
+from notifier.nf_qt import _exit
 
 _ = Translation( 'ucs-school-umc-computerroom' ).translate
 
 ROOMDIR = '/var/cache/ucs-school-umc-computerroom'
 
 def _getRoomFile(roomDN):
-	dnParts = explodeDn(roomDN, True)
-	if not dnParts:
-		MODULE.warn('Could not split room DN: %s' % roomDN)
-		raise UMC_CommandError( _('Invalid room DN: %s') % roomDN )
-	return os.path.join(ROOMDIR, dnParts[0])
+	if roomDN.startswith( 'cn=' ):
+		dnParts = explodeDn(roomDN, True)
+		if not dnParts:
+			MODULE.warn('Could not split room DN: %s' % roomDN)
+			raise UMC_CommandError( _('Invalid room DN: %s') % roomDN )
+		return os.path.join(ROOMDIR, dnParts[0])
+	return os.path.join( ROOMDIR, roomDN )
 
 def _getRoomOwner(roomDN):
 	'''Read the room lock file and return the saved user DN. If it does not exist, return None.'''
@@ -104,11 +109,12 @@ def _setRoomOwner(roomDN, userDN):
 			fcntl.lockf(fd, fcntl.LOCK_UN)
 			fd.close()
 
-def _freeRoom(roomDN):
-	'''Read the room lock file and return the saved user DN. If it does not exist, return None.'''
+def _freeRoom(roomDN, userDN):
+	'''Remove the lock file if the room is locked by the given user'''
 	roomFile = _getRoomFile(roomDN)
 	result = None
-	if os.path.exists(roomFile):
+	MODULE.warn( 'lockDN: %s, userDN: %s' % ( _getRoomOwner( roomDN ), userDN ) )
+	if _getRoomOwner( roomDN ) == userDN:
 		try:
 			os.unlink(roomFile)
 		except (OSError, IOError) as e:
@@ -124,6 +130,14 @@ class Instance( SchoolBaseModule ):
 		self._random.seed()
 		self._lessons = SchoolLessons()
 		self._ruleEndAt = None
+
+	def destroy( self ):
+		'''Remove lock file when UMC module exists'''
+		MODULE.info( 'Cleaning up' )
+		if self._italc.room:
+			MODULE.info( 'Removing lock file for room %s (%s)' % ( self._italc.room, self._italc.roomDN ) )	
+			_freeRoom( self._italc.roomDN, self._user_dn )
+		_exit( 0 )
 
 	def lessons( self, request ):
 		"""Returns a list of school lessons. Lessons in the past are filtered out"""
@@ -161,10 +175,11 @@ class Instance( SchoolBaseModule ):
 				success = False
 				message = 'EMPTY_ROOM'
 
-		_setRoomOwner(roomDN, self._user_dn)
-		if not _getRoomOwner(roomDN) == self._user_dn:
-			success = False
-			message = 'ALREADY_LOCKED'
+		if success:
+			_setRoomOwner(roomDN, self._user_dn)
+			if not _getRoomOwner(roomDN) == self._user_dn:
+				success = False
+				message = 'ALREADY_LOCKED'
 		self.finished( request.id, { 'success' : success, 'message' : message } )
 
 	@LDAP_Connection()
@@ -470,6 +485,8 @@ class Instance( SchoolBaseModule ):
 			vset[ vunset[ -1 ] ] = request.options[ 'shareMode' ]
 			vextract.append( 'samba/othershares/hosts/deny' )
 			vappend[ vextract[ -1 ] ] = hosts
+			vextract.append( 'samba/share/Marktplatz/hosts/deny' )
+			vappend[ vextract[ -1 ] ] = hosts
 			if request.options[ 'shareMode' ] == 'none':
 				vextract.append( 'samba/share/homes/hosts/deny' )
 				vappend[ vextract[ -1 ] ] = hosts
@@ -561,6 +578,16 @@ class Instance( SchoolBaseModule ):
 		MODULE.info( 'Remove settings at %s' % starttime )
 		atjobs.add( cmd, starttime, { Instance.ATJOB_KEY: self._italc.room } )
 		self._ruleEndAt = starttime
+
+		# reset SMB connections
+		smbstatus = SMB_Status()
+		italc_users = self._italc.users
+		MODULE.info( 'iTALC users: %s' % ', '.join( italc_users ) )
+		for process in smbstatus:
+			MODULE.info( 'SMB process: %s' % str( process ) )
+			if process.username in italc_users:
+				MODULE.info( 'Kill SMB process %s' % process.pid )
+				os.kill( int( process.pid ), signal.SIGTERM )
 		self.finished( request.id, True )
 
 	def settings_reschedule( self, request ):

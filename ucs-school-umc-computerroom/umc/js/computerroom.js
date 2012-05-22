@@ -197,7 +197,7 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 			isStandardAction: false,
 			isMultiAction: false,
 			canExecute: function( item ) {
-				return ( item.connection[ 0 ] == 'error' || item.connection[ 0 ] == 'offline' ) && item.mac[ 0 ] !== null;
+				return ( item.connection[ 0 ] == 'error' || item.connection[ 0 ] == 'autherror' || item.connection[ 0 ] == 'offline' ) && item.mac[ 0 ];
 			},
 			callback: dojo.hitch(this, function( ids, items ) {
 				var comp = items[ 0 ];

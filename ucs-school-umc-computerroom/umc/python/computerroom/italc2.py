@@ -53,7 +53,7 @@ import notifier
 import notifier.signals
 import notifier.threads
 
-from PyQt4.QtCore import QObject, pyqtSlot, SIGNAL, Qt, QCoreApplication
+from PyQt4.QtCore import QObject, pyqtSlot
 from PyQt4.QtGui import QImageWriter
 
 import italc
@@ -80,11 +80,12 @@ class ITALC_Error( Exception ):
 	pass
 
 class UserInfo( object ):
-	def __init__( self, ldap_dn, school_class = None, workgroups = [] ):
+	def __init__( self, ldap_dn, username, school_class = None, workgroups = [] ):
 		self.dn = ldap_dn
 		self.school_class = school_class
 		self.workgroups = workgroups
 		self.isTeacher = False
+		self.username = username
 
 class UserMap( dict ):
 	USER_REGEX = re.compile( r'(?P<username>[^(]*)( \((?P<realname>[^)]*)\))?$' )
@@ -110,9 +111,9 @@ class UserMap( dict ):
 		result = udm_modules.lookup( UserMap.UDM_USERS, None, ldap_user_read, filter = 'uid=%s' % username, scope = 'sub', base = search_base.users )
 		if not result:
 			MODULE.info( 'Unknown user "%s"' % username )
-			dict.__setitem__( self, userstr, UserInfo( '' ) )
+			dict.__setitem__( self, userstr, UserInfo( '', '' ) )
 		else:
-			userobj = UserInfo( result[ 0 ].dn )
+			userobj = UserInfo( result[ 0 ].dn, username )
 			for grp in result[ 0 ][ 'groups' ]:
 				if grp.endswith( search_base.workgroups ):
 					userobj.workgroups.append( udm_uldap.explodeDn( grp, True )[ 0 ] )
@@ -490,6 +491,7 @@ class ITALC_Computer( notifier.signals.Provider, QObject ):
 class ITALC_Manager( dict, notifier.signals.Provider ):
 	SCHOOL = None
 	ROOM = None
+	ROOM_DN = None
 
 	def __init__( self, username, password ):
 		dict.__init__( self )
@@ -507,6 +509,10 @@ class ITALC_Manager( dict, notifier.signals.Provider ):
 		self._set( value )
 
 	@property
+	def roomDN( self ):
+		return ITALC_Manager.ROOM_DN
+
+	@property
 	def school( self ):
 		return ITALC_Manager.SCHOOL
 
@@ -514,6 +520,10 @@ class ITALC_Manager( dict, notifier.signals.Provider ):
 	def school( self, value ):
 		self._clear()
 		ITALC_Manager.SCHOOL = value
+
+	@property
+	def users( self ):
+		return map( lambda x: _usermap[ x.user.current ].username, filter( lambda comp: comp.user.current and comp.connected, self.values() ) )
 
 	def ipAddresses( self, students_only = True ):
 		if students_only:
@@ -528,6 +538,7 @@ class ITALC_Manager( dict, notifier.signals.Provider ):
 					computer.stop()
 			self.clear()
 			ITALC_Manager.ROOM = None
+			ITALC_Manager.ROOM_DN = None
 
 	@LDAP_Connection()
 	def _set( self, room, ldap_user_read = None, ldap_position = None, search_base = None ):
@@ -547,6 +558,7 @@ class ITALC_Manager( dict, notifier.signals.Provider ):
 		roomgrp = groupresult[ 0 ]
 		roomgrp.open()
 		ITALC_Manager.ROOM = roomgrp[ 'name' ].lstrip( '%s-' % search_base.school )
+		ITALC_Manager.ROOM_DN = roomgrp.dn
 		computers = filter( lambda host: host.endswith( search_base.computers ), roomgrp[ 'hosts' ] )
 		if not computers:
 			raise ITALC_Error( 'There are no computers in the selected room.' )

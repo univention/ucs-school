@@ -1,3 +1,12 @@
+ucs-school-umc-computerroom (0.1.28-1) unstable; urgency=low
+
+  * remove lock when UMC module process dies
+  * do not lock empty rooms; Bug #26352
+  * enable command 'computer start' of MAC address is set; Bug #25702
+  * terminate open SMB connection when setting now share restrictions
+
+ -- Andreas Büsching <buesching@univention.de>  Tue, 22 May 2012 16:11:53 +0200
+
 ucs-school-umc-computerroom (0.1.27-1) unstable; urgency=low
 
   * fixed typo in UCR variable; Bug #26392
