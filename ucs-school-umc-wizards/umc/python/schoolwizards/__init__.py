@@ -115,7 +115,7 @@ class Instance(SchoolBaseModule, SchoolImport):
 			if self._username_used(username, ldap_user_read):
 				raise ValueError(_('Username is already in use'))
 			if mail_primary_address:
-				if self._mail_address_used(udm_syntax.UserMailAddress.parse(mail_primary_address),
+				if self._mail_address_used(udm_syntax.emailAddressTemplate.parse(mail_primary_address),
 				                           ldap_user_read):
 					raise ValueError(_('Mail address is already in use'))
 
@@ -142,7 +142,7 @@ class Instance(SchoolBaseModule, SchoolImport):
 
 			if not self._username_used(username, ldap_user_read):
 				raise OSError(_('The user could not be created'))
-		except (ValueError, IOError, OSError), err:
+		except (ValueError, IOError, OSError, valueError), err:
 			MODULE.info(str(err))
 			result = {'message': str(err)}
 			self.finished(request.id, result)

@@ -85,6 +85,7 @@ dojo.declare("umc.modules._schoolwizards.SchoolWizard", [ umc.modules._schoolwiz
 
 	restart: function() {
 		this.getWidget('school', 'name').reset();
+		this.getWidget('school', 'schooldc').reset();
 		this.inherited(arguments);
 	},
 

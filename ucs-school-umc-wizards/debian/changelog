@@ -1,3 +1,10 @@
+ucs-school-umc-wizards (1.0.26-1) unstable; urgency=low
+
+  * UserWizard: Fix mail address validation (Bug #26344)
+  * SchoolWizard: Clear school server text box (Bug #26344)
+
+ -- Jascha Geerds <geerds@univention.de>  Tue, 22 May 2012 10:34:06 +0200
+
 ucs-school-umc-wizards (1.0.25-1) unstable; urgency=low
 
   * the wizard modules are now only visible to domain admins; Bug #27207
