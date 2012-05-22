@@ -19,7 +19,7 @@ msgid "Administrate workgroups"
 msgstr "Arbeitsgruppen verwalten"
 
 msgid "Assign teachers to classes"
-msgstr "Klassen Lehrer zuordnen"
+msgstr "Lehrer Klassen zuordnen"
 
 msgid "Associate teachers with classes"
 msgstr "Lehrer den Klassen zuordnen"
