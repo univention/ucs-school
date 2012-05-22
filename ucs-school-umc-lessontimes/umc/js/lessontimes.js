@@ -56,7 +56,7 @@ dojo.declare("umc.modules.lessontimes", [ umc.widgets.Module, umc.i18n.Mixin ], 
 
 	renderPage: function(values) {
 		// umc.widgets.ExpandingTitlePane is an extension of dijit.layout.BorderContainer
-		var titlePane = new umc.widgets.ExpandingTitlePane({
+		var titlePane = new umc.widgets.TitlePane({
 			title: this._('Lesson times')
 		});
 
