@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-distribution\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2012-05-18 11:24+0200\n"
+"POT-Creation-Date: 2012-05-23 15:21+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -27,6 +27,7 @@ msgid "Could not save project file: %s (%s)"
 msgstr "Das Projekt konnte nicht gespeichert werden: %s (%s)"
 
 #: umc/python/distribution/__init__.py:238
+#, python-format
 msgid "Could not set date for: %s"
 msgstr "Die Zeit konnte nicht gesetzt werden: %s"
 
@@ -34,7 +35,9 @@ msgstr "Die Zeit konnte nicht gesetzt werden: %s"
 msgid ""
 "Distributing the data needs to happen sufficiently long enough before "
 "collecting them"
-msgstr "Die Verteilung der Daten muss ausreichend lange vor ihrem Einsammeln geschehen"
+msgstr ""
+"Die Verteilung der Daten muss ausreichend lange vor ihrem Einsammeln "
+"geschehen"
 
 #: umc/python/distribution/__init__.py:181
 #, python-format

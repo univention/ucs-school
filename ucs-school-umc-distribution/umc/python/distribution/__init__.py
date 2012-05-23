@@ -270,13 +270,28 @@ class Instance( SchoolBaseModule ):
 								iuser.dn = iobj.dn
 								users.append(iuser)
 							elif obj_types[ 0 ] == 'groups/group':
+								# open group object
 								igroup = util.Group( iobj.info )
 								igroup.name = igroup.name[ igroup.name.find( '-' ) + 1 : ]
 								igroup.dn = iobj.dn
+
+								# initiate a new search base using the ou in the group
+								schoolDN = iobj.dn[iobj.dn.find('ou='):]
+								school = ldap_user_read.explodeDn(schoolDN, 1)[0],
+								_search_base = SchoolSearchBase(school, school, schoolDN)
+
 								userModul = udm_modules.get( 'users/user' )
 								for userdn in iobj[ 'users' ]:
+									# only remember students
+									if not _search_base.isStudent(userdn):
+										MODULE.info('Ignoring non-student: %s' % userdn)
+										continue
+
+									# open the user
 									iuserobj = userModul.object( None, ldap_user_read, None, userdn )
 									iuserobj.open()
+
+									# save user information, only its relevant information will be kept
 									iuser = util.User( iuserobj.info )
 									iuser.dn = iuserobj.dn
 									igroup.members.append( iuser )

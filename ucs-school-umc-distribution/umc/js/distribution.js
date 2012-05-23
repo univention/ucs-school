@@ -173,6 +173,13 @@ dojo.declare("umc.modules.distribution", [ umc.widgets.Module, umc.i18n.Mixin ],
 			label: this._('Owner'),
 			width: '175px'
 		}, {
+			name: 'isDistributed',
+			label: this._('Status'),
+			width: '80px',
+			formatter: dojo.hitch(this, function(isDistributed) {
+				return isDistributed ? this._('distributed') : '';
+			})
+		}, {
 			name: 'files',
 			label: this._('#Files'),
 			width: 'adjust'

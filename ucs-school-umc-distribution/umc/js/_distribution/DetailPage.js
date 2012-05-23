@@ -75,7 +75,7 @@ dojo.declare("umc.modules._distribution.DetailPage", [ umc.widgets.Page, umc.wid
 		// configure buttons for the footer of the detail page
 		this.footerButtons = [{
 			name: 'submit',
-			label: this._('Save'),
+			label: this._('Save changes'),
 			callback: dojo.hitch(this, function() {
 				this._save(this._form.gatherFormValues());
 			})
@@ -149,7 +149,8 @@ dojo.declare("umc.modules._distribution.DetailPage", [ umc.widgets.Page, umc.wid
 		}, {
 			type: 'MultiObjectSelect',
 			name: 'recipients',
-			label: this._('Members'),
+			dialogTitle: this._('Assign classes/workgroups'),
+			label: this._('Assigned classes/workgroups'),
 			description: this._('List of groups that are marked to receive the teaching materials'),
 			queryWidgets: [{
 				type: 'ComboBox',
@@ -174,7 +175,7 @@ dojo.declare("umc.modules._distribution.DetailPage", [ umc.widgets.Page, umc.wid
 				});
 				return tmp;
 			},
-			autoSearch: false
+			autoSearch: true
 		}, {
 			type: 'ComboBox',
 			name: 'distributeType',
@@ -389,6 +390,8 @@ dojo.declare("umc.modules._distribution.DetailPage", [ umc.widgets.Page, umc.wid
 		this.standby(true);
 		this._resetForm();
 
+		this._footerButtons.submit.set('label', this._('Save changes'));
+
 		// the project directory name cannot be modified
 		this._form.getWidget('name').set('disabled', true);
 
@@ -407,6 +410,7 @@ dojo.declare("umc.modules._distribution.DetailPage", [ umc.widgets.Page, umc.wid
 	newObject: function() {
 		this._form.getWidget('name').set('disabled', false);
 		this._resetForm();
+		this._footerButtons.submit.set('label', this._('Create project'));
 	},
 
 	onClose: function(dn, objectType) {
