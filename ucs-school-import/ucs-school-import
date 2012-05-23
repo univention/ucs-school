@@ -719,7 +719,7 @@ def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None, ShareFileServer=None
 			object=dhcp_service_module.object(co, lo, position=position, superordinate=superordinate)
 			object.open()
 			object["service"]=schoolNr.lower ()
-			object[ 'option' ] = [ [ 'wpad', 'http://%s.%s/proxy.pac' % ( dccn, domainname ) ] ]
+			object[ 'option' ] = [ 'wpad "http://%s.%s/proxy.pac"' % ( dccn, domainname ) ]
 			try:
 				create_object(object)
 			except:

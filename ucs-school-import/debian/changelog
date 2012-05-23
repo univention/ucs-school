@@ -1,3 +1,9 @@
+ucs-school-import (8.0.53-1) unstable; urgency=low
+
+  * DHCP option is of type string now; Bug #26931
+
+ -- Andreas Büsching <buesching@univention.de>  Wed, 23 May 2012 11:51:57 +0200
+
 ucs-school-import (8.0.52-1) unstable; urgency=low
 
   * correct default for netlogon script path (Bug #25776)
