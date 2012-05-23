@@ -386,7 +386,7 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 					return item.connection[ 0 ] == 'connected' && item.user[ 0 ];
 				},
 				callback: dojo.hitch(this, function( item ) {
-					var src = '/umcp/command/computerroom/ultravnc?computer=' + item;
+					var src = '/umcp/command/computerroom/vnc?computer=' + item;
 					window.open(window.location.origin + src);
 				})
 			});
