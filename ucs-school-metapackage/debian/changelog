@@ -1,3 +1,9 @@
+ucs-school-metapackage (4.0.34-1) unstable; urgency=low
+
+  * Depend on newer Samba 4 version (Bug #27201)
+
+ -- Stefan Gohmann <gohmann@univention.de>  Wed, 23 May 2012 15:51:29 +0200
+
 ucs-school-metapackage (4.0.33-1) unstable; urgency=low
 
   * Added some version dependencies (Bug #27201)
