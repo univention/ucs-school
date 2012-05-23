@@ -1,3 +1,9 @@
+ucs-school-umc-helpdesk (6.0.9-4) unstable; urgency=low
+
+  * fixed registration of python modules for pysupport; Bug #25706
+
+ -- Andreas Büsching <buesching@univention.de>  Wed, 23 May 2012 13:21:47 +0200
+
 ucs-school-umc-helpdesk (6.0.9-3) unstable; urgency=low
 
   * ensure that the join script is called after the pysupport debhelper; Bug #25706
