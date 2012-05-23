@@ -70,8 +70,10 @@ case "$1" in
 
 		univention-config-registry set \
 			'proxy/filter/setting/Kein Internet/filtertype?whitelist-block' \
-			'proxy/filter/setting/Unbeschränkt/filtertype?blacklist-pass'
+			'proxy/filter/setting/Unbeschränkt/filtertype?blacklist-pass' \
+			'dhcpd/options/wpad/252=text'
 
+		invoke-rc.d univention-dhcp restart || true
 		;;
 
     abort-upgrade|abort-remove|abort-deconfigure)
