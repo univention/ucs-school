@@ -79,7 +79,7 @@ dojo.declare("umc.modules._schoolwizards.UserWizard", [ umc.modules._schoolwizar
 				label: this._('Create a new class'),
 				callback: dojo.hitch(this, function() {
 					umc.app.openModule('schoolwizards', 'schoolwizards/classes');
-				}),
+				})
 			}],
 			widgets: [{
 				type: 'TextBox',
@@ -150,14 +150,17 @@ dojo.declare("umc.modules._schoolwizards.UserWizard", [ umc.modules._schoolwizar
 		if (currentPage === 'general') {
 			var selectedType = this.getWidget('general', 'type').get('value');
 			var types = ['teacher', 'staff', 'teachersAndStaff'];
-			var widget = this.getWidget('user', 'class');
+			var classBox = this.getWidget('user', 'class');
+			var newClassButton = this.getPage('user')._form.getButton('newClass');
 			if (types.indexOf(selectedType) >= 0) {
-				widget.reset();
-				widget.set('required', false);
-				widget.hide();
+				classBox.reset();
+				classBox.set('required', false);
+				classBox.hide();
+				newClassButton.hide();
 			} else {
-				widget.set('required', true);
-				widget.show();
+				classBox.set('required', true);
+				classBox.show();
+				newClassButton.show();
 			}
 			// update classes
 			this.reloadClasses();
