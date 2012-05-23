@@ -100,13 +100,11 @@ def check_source_dir(prefixlist, dir):
 		return ret
 
 	# check allowed prefix
-	if not prefixlist:
-		return "ucsschool/listener/oldsharedir/prefixes is not set"
 	for prefix in prefixlist:
 		if dir.startswith(prefix):
 			return ""
 
-	return "%s is not matched by value in ucsschool/listener/oldsharedir/prefixes" % dir
+	return "%s does not match any value in ucsschool/listener/oldsharedir/prefixes" % dir
 
 # make sure that we are dealing with a known filesystem
 def check_filesystem(dir):

@@ -1,3 +1,9 @@
+ucs-school-old-sharedirs (7.0.5-1) unstable; urgency=low
+
+  * fixed listener module (Bug #25694) 
+
+ -- Felix Botner <botner@univention.de>  Wed, 23 May 2012 14:56:37 +0200
+
 ucs-school-old-sharedirs (7.0.4-1) unstable; urgency=low
 
   * fixed listener module (Bug #20820)
