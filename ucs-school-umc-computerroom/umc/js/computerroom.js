@@ -98,6 +98,8 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 	_currentSchool: null,
 	_currentRoom: null,
 
+	_vncEnabled: false,
+
 	uninitialize: function() {
 		this.inherited( arguments );
 		if ( this._updateTimer !== null ) {
@@ -290,7 +292,7 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 		// is called after all DOM nodes have been setup
 		// (originates from dijit._Widget)
 
-		// it is important to call the parent's postMixInProperties() method
+		// it is important to call the parent's buildRendering() method
 		this.inherited(arguments);
 
 		this._rescheduleDialog = new umc.modules._computerroom.RescheduleDialog( {
@@ -306,12 +308,18 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 		dojo.connect( this._settingsDialog, 'onPeriodChanged', dojo.hitch( this._rescheduleDialog, function( value ) {
 			this._form.getWidget( 'period' ).set( 'value', value ) ;
 		} ) );
-		// render the page containing search form and grid
-		this.renderSearchPage();
 
-		this._screenshotView = new umc.modules._computerroom.ScreenshotView();
-		this.addChild( this._screenshotView );
-		dojo.connect( this._screenshotView, 'onClose', this, 'closeScreenView' );
+		// get UCR Variable for enabled VNC
+		umc.tools.ucr('ucsschool/umc/computerroom/ultravnc/enabled').then(dojo.hitch(this, function(result) {
+			this.standby(false);
+			this._vncEnabled = umc.tools.isTrue(result['ucsschool/umc/computerroom/ultravnc/enabled']);
+
+			// render the page containing search form and grid
+			this.renderSearchPage();
+			this.renderScreenshotPage();
+		}), dojo.hitch(this, function() {
+			this.standby(false);
+		}));
 	},
 
 	closeScreenView: function() {
@@ -334,6 +342,12 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 			id: this.id
 		});
 		this._titlePane.set( 'title', label );
+	},
+
+	renderScreenshotPage: function() {
+		this._screenshotView = new umc.modules._computerroom.ScreenshotView();
+		this.addChild( this._screenshotView );
+		dojo.connect( this._screenshotView, 'onClose', this, 'closeScreenView' );
 	},
 
 	renderSearchPage: function(containers, superordinates) {
@@ -361,6 +375,22 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 		// data grid
 		//
 
+		// add VNC button to actionlist
+		if (this._vncEnabled) {
+			this._actions.push({
+				name: 'viewVNC',
+				label: this._('View VNC'),
+				isStandardAction: false,
+				isMultiAction: false,
+				canExecute: function( item ) {
+					return item.connection[ 0 ] == 'connected' && item.user[ 0 ];
+				},
+				callback: dojo.hitch(this, function( item ) {
+					var src = '/umcp/command/computerroom/ultravnc?computer=' + item;
+					window.open(window.location.origin + src);
+				})
+			});
+		}
 
 		// define the grid columns
 		var columns = [{

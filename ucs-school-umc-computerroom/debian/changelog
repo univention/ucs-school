@@ -1,3 +1,9 @@
+ucs-school-umc-computerroom (0.1.29-1) unstable; urgency=low
+
+  * added VNC action; Bug #27237
+
+ -- Florian Best <best@univention.de>  Wed, 23 May 2012 14:35:22 +0200
+
 ucs-school-umc-computerroom (0.1.28-1) unstable; urgency=low
 
   * remove lock when UMC module process dies

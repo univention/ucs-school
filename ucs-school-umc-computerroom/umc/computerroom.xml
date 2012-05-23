@@ -17,6 +17,7 @@
 	<command name="computerroom/settings/set" function="settings_set"></command>
 	<command name="computerroom/settings/reschedule" function="settings_reschedule"></command>
 	<command name="computerroom/screenshot" function="screenshot"></command>
+	<command name="computerroom/vnc" function="vnc"></command>
 	<command name="computerroom/demo/start" function="demo_start"></command>
 	<command name="computerroom/demo/stop" function="demo_stop"></command>
 	<command name="computerroom/computer/state" function="computer_state"></command>

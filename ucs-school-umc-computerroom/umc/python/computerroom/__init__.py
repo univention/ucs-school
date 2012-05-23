@@ -373,6 +373,45 @@ class Instance( SchoolBaseModule ):
 		os.unlink( tmpfile.name )
 		self.finished( request.id, response )
 
+	def vnc( self, request ):
+		"""
+		Returns a ultraVNC file for the given computer. The computer must be in the current room
+
+		requests.options = { 'computer' : <computer name> }
+
+		return  (MIME-type application/x-vnc): vnc
+		"""
+		# block access to session from other users
+		self._checkRoomAccess()
+
+		# check whether VNC is enabled
+		if ucr.is_false('ucsschool/umc/computerroom/ultravnc/enabled', True):
+			self.finished( request.id, 'VNC is disabled' )
+
+		# Check if computer exists
+		self.required_options( request, 'computer' )
+		computer = self._italc.get( request.options[ 'computer' ], None )
+		if not computer:
+			raise UMC_CommandError( 'Unknown computer' )
+
+		try:
+			template = open('/usr/share/ucs-school-umc-computerroom/ultravnc.vnc')
+			content = template.read()
+		except:
+			raise UMC_CommandError( 'VNC template file does not exists' )
+
+		port = ucr.get('csschool/umc/computerroom/ultravnc/port', '5900')
+		hostname = computer.ipAddress
+
+		# Insert Hostname and Port
+		content = content.replace('@%@HOSTNAME@%@', hostname).replace('@%@PORT@%@', port)
+
+		response = Response( mime_type = 'application/x-vnc' )
+		response.id = request.id
+		response.command = 'COMMAND'
+		response.body = content
+		self.finished( request.id, response )
+
 	def settings_get( self, request ):
 		"""return the current settings for a room
 

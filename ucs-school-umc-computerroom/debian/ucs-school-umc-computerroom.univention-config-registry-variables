@@ -1,0 +1,11 @@
+[ucsschool/umc/computerroom/ultravnc/port]
+Description[de]=UMC-Computerraum-Administration: verwendeter UltraVNC-Port der Windows-Clients (Default: 5900)
+Description[en]=
+Type=str
+Categories=management-umc
+
+[ucsschool/umc/computerroom/ultravnc/enabled]
+Description[de]=UMC-Computerraum-Administration: auf "yes" setzen, um UltraVNC-Shortcut zu aktivieren (Default: true)
+Description[en]=UMC room admin module: set "yes" to activate UltraVNC shortcut (default: 5900)
+Type=str
+Categories=management-umc
