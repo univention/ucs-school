@@ -74,6 +74,13 @@ dojo.declare("umc.modules._schoolwizards.UserWizard", [ umc.modules._schoolwizar
 			name: 'user',
 			headerText: this.description,
 			helpText: this._('Enter details to create a new user'),
+			buttons: [{
+				name: 'newClass',
+				label: this._('Create a new class'),
+				callback: dojo.hitch(this, function() {
+					umc.app.openModule('schoolwizards', 'schoolwizards/classes');
+				}),
+			}],
 			widgets: [{
 				type: 'TextBox',
 				name: 'firstname',
@@ -90,10 +97,9 @@ dojo.declare("umc.modules._schoolwizards.UserWizard", [ umc.modules._schoolwizar
 				label: this._('Username'),
 				required: true
 			}, {
-				type: 'TextBox',
+				type: 'ComboBox',
 				name: 'class',
-				label: this._('Class'),
-				required: true
+				label: this._('Class')
 			}, {
 				type: 'TextBox',
 				name: 'mailPrimaryAddress',
@@ -105,10 +111,21 @@ dojo.declare("umc.modules._schoolwizards.UserWizard", [ umc.modules._schoolwizar
 			}],
 			layout: [['firstname', 'lastname'],
 			         ['username'],
-			         ['class'],
+			         ['class', 'newClass'],
 			         ['mailPrimaryAddress'],
 			         ['password']]
 		}];
+	},
+
+	buildRendering: function() {
+		this.inherited(arguments);
+		var tabContainer = umc.app._tabContainer;
+		this.connect(tabContainer, 'selectChild', function(evt) {
+			var selectedTab = tabContainer.selectedChildWidget;
+			if (selectedTab.moduleID === 'schoolwizards' && selectedTab.moduleFlavor === 'schoolwizards/users') {
+				this.reloadClasses();
+			}
+		});
 	},
 
 	restart: function() {
@@ -142,6 +159,20 @@ dojo.declare("umc.modules._schoolwizards.UserWizard", [ umc.modules._schoolwizar
 				widget.set('required', true);
 				widget.show();
 			}
+			// update classes
+			this.reloadClasses();
 		}
+	},
+
+	reloadClasses: function() {
+		var schoolName = this.getWidget('general', 'school').get('value');
+		umc.tools.umcpCommand('schoolwizards/classes', {'school': schoolName}).then(
+			dojo.hitch(this, function(response) {
+				var classes = dojo.map(response.result, function(item) {
+					return item.label;
+				});
+				this.getWidget('user', 'class').set('staticValues', classes);
+			})
+		);
 	}
 });

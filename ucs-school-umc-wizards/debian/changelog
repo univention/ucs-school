@@ -1,3 +1,9 @@
+ucs-school-umc-wizards (1.0.27-1) unstable; urgency=low
+
+  * UserWizard: Use a ComboBox for the class selection (Bug #26344)
+
+ -- Jascha Geerds <geerds@univention.de>  Tue, 22 May 2012 16:05:04 +0200
+
 ucs-school-umc-wizards (1.0.26-1) unstable; urgency=low
 
   * UserWizard: Fix mail address validation (Bug #26344)

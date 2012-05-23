@@ -22,6 +22,8 @@
 		</flavor>
 		<command name="schoolwizards/schools" function="schools">
 		</command>
+		<command name="schoolwizards/classes" function="classes">
+		</command>
 		<command name="schoolwizards/users/create" function="create_user">
 		</command>
 		<command name="schoolwizards/schools/create" function="create_school">

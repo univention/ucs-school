@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-wizards\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2012-05-04 10:19+0200\n"
+"POT-Creation-Date: 2012-05-23 08:41+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -39,6 +39,10 @@ msgstr ""
 msgid "Computer name of the school server"
 msgstr "Rechnername des Schulservers"
 
+#: umc/js/_schoolwizards/UserWizard.js:99
+msgid "Create a new class"
+msgstr "Neue Klasse erstellen"
+
 #: umc/js/_schoolwizards/ClassWizard.js:62
 msgid "Description"
 msgstr "Beschreibung"
@@ -47,7 +51,7 @@ msgstr "Beschreibung"
 msgid "Device with IP address"
 msgstr "Gerät mit IP-Adresse"
 
-#: umc/js/_schoolwizards/UserWizard.js:100
+#: umc/js/_schoolwizards/UserWizard.js:103
 msgid "E-Mail"
 msgstr "E-Mail"
 
@@ -96,7 +100,7 @@ msgstr "Name"
 msgid "Name of the school"
 msgstr "Name der Schule"
 
-#: umc/js/_schoolwizards/UserWizard.js:104
+#: umc/js/_schoolwizards/UserWizard.js:107
 msgid "Password"
 msgstr "Passwort"
 
@@ -106,7 +110,7 @@ msgstr "Passwort"
 msgid "School"
 msgstr "Schule"
 
-#: umc/js/_schoolwizards/SchoolWizard.js:72
+#: umc/js/_schoolwizards/SchoolWizard.js:94
 #, python-format
 msgid ""
 "School \"%s\" has been successfully created. Continue to create another "
@@ -148,7 +152,7 @@ msgstr "Lehrer und Mitarbeiter"
 msgid "Type"
 msgstr "Typ"
 
-#: umc/js/_schoolwizards/UserWizard.js:125
+#: umc/js/_schoolwizards/UserWizard.js:131
 #, python-format
 msgid ""
 "User \"%s\" has been successfully created. Continue to create another user "
