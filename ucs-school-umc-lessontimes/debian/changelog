@@ -1,3 +1,9 @@
+ucs-school-umc-lessontimes (0.1.9-1) unstable; urgency=low
+
+  * Fix the TitlePane (Bug #26748)
+
+ -- Jascha Geerds <geerds@univention.de>  Wed, 23 May 2012 15:04:23 +0200
+
 ucs-school-umc-lessontimes (0.1.8-1) unstable; urgency=low
 
   * Use normal title pane (Bug #26748)

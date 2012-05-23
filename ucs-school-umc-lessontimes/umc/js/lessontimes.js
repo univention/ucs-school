@@ -33,10 +33,11 @@ dojo.provide("umc.modules.lessontimes");
 dojo.require("umc.dialog");
 dojo.require("umc.i18n");
 dojo.require("umc.tools");
-dojo.require("umc.widgets.ExpandingTitlePane");
+dojo.require("umc.widgets.ContainerWidget");
 dojo.require("umc.widgets.Form");
 dojo.require("umc.widgets.Module");
 dojo.require("umc.widgets.Page");
+dojo.require("umc.widgets.TitlePane");
 
 dojo.declare("umc.modules.lessontimes", [ umc.widgets.Module, umc.i18n.Mixin ], {
 	postMixInProperties: function() {
@@ -55,11 +56,6 @@ dojo.declare("umc.modules.lessontimes", [ umc.widgets.Module, umc.i18n.Mixin ], 
 	},
 
 	renderPage: function(values) {
-		// umc.widgets.ExpandingTitlePane is an extension of dijit.layout.BorderContainer
-		var titlePane = new umc.widgets.TitlePane({
-			title: this._('Lesson times')
-		});
-
 		var widgets = [{
 			type: 'MultiInput',
 			name: 'lessons',
@@ -82,21 +78,21 @@ dojo.declare("umc.modules.lessontimes", [ umc.widgets.Module, umc.i18n.Mixin ], 
 			value: values
 		}];
 
-		var layout = ['lessons'];
+		var layout = [{
+			title: this._('Lesson times'),
+			layout: ['lessons']
+		}]
 
 		this._form = new umc.widgets.Form({
 			region: 'top',
 			widgets: widgets,
 			layout: layout,
-			scrollable: true
 		});
 
 		// turn off the standby animation as soon as all form values have been loaded
 		this.connect(this._form, 'onValuesInitialized', function() {
 			this.standby(false);
 		});
-
-		titlePane.addChild(this._form);
 
 		var buttons = [{
             name: 'submit',
@@ -127,9 +123,18 @@ dojo.declare("umc.modules.lessontimes", [ umc.widgets.Module, umc.i18n.Mixin ], 
 			helpText: this._('The lesson times are used internally for the default session duration by the computer room module. It is advisable to set the end time of a lesson to a time immediately before the beginning of the following lesson.'),
 			footerButtons: buttons
 		});
-
 		this.addChild(this._page);
-		this._page.addChild(titlePane);
+
+		var container = new umc.widgets.ContainerWidget({
+			scrollable: true
+		});
+		this._page.addChild(container)
+
+		// var titlePane = new umc.widgets.TitlePane({
+		// 	title: this._('Lesson times'),
+		// 	content: this._form
+		// });
+		container.addChild(this._form);
 	},
 
 	onSubmit: function(values) {
