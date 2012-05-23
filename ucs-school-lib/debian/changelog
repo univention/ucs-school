@@ -1,3 +1,9 @@
+ucs-school-lib (1.0.48-1) unstable; urgency=low
+
+  * enhanced smbstatus parser; Bug #26392
+
+ -- Andreas Büsching <buesching@univention.de>  Wed, 23 May 2012 11:19:07 +0200
+
 ucs-school-lib (1.0.47-1) unstable; urgency=low
 
   * fixed query for machine read and write connection; Bug #25701

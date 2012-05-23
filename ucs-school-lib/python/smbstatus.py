@@ -35,7 +35,7 @@ import re
 import subprocess
 
 REGEX_LOCKED_FILES = re.compile( r'(?P<pid>[0-9]+)\s+(?P<uid>[0-9]+)\s+(?P<denyMode>[A-Z_]+)\s+(?P<access>[0-9x]+)\s+(?P<rw>[A-Z]+)\s+(?P<oplock>[A-Z_+]+)\s+(?P<sharePath>\S+)\s+(?P<filename>\S+)\s+(?P<time>.*)$' )
-REGEX_USERS = re.compile( r'(?P<pid>[0-9]+)\s+(?P<username>\S+)\s+(?P<group>.+\S)\s+(?P<machine>[0-9].*)$' )
+REGEX_USERS = re.compile( r'(?P<pid>[0-9]+)\s+(?P<username>\S+)\s+(?P<group>.+\S)\s+(?P<machine>\S+)\s+\((?P<ipAddress>[0-9a-fA-F.:]+)\)$' )
 REGEX_SERVICES = re.compile( r'(?P<service>\S+)\s+(?P<pid>[0-9]+)\s+(?P<machine>\S+)\s+(?P<connectedAt>.*)$' )
 
 class SMB_LockedFile( dict ):
@@ -82,23 +82,27 @@ class SMB_Process( dict ):
 			dict.update( self, dictionary )
 
 	def __str__( self ):
-		title = 'Process %(pid)s: User: %(username)s' % self
+		title = 'Process %(pid)s: User: %(username)s (group: %(group)s)' % self
 		files = '  locked files: %s' % ', '.join( map( str, self.lockedFiles ) )
 		services = '  services: %s' % ', '.join( self.services )
 		return '\n'.join( ( title, files, services ) )
 
 class SMB_Status( list ):
-	def __init__( self ):
+	def __init__( self, testdata = None ):
 		list.__init__( self )
-		self.parse()
+		self.parse( testdata )
 
-	def parse( self ):
+	def parse( self, testdata = None ):
 		while self:
 			self.pop()
-		smbstatus = subprocess.Popen( [ '/usr/bin/smbstatus' ], shell = False, stdout = subprocess.PIPE )
+		if testdata is None:
+			smbstatus = subprocess.Popen( [ '/usr/bin/smbstatus' ], shell = False, stdout = subprocess.PIPE )
+			data = smbstats.stdout.readlines()
+		else:
+			data = testdata
 		regexps = [ REGEX_USERS, REGEX_SERVICES, REGEX_LOCKED_FILES ]
 		regex = None
-		for line in smbstatus.stdout.readlines():
+		for line in data:
 			if line.startswith( '-----' ):
 				regex = regexps.pop( 0 )
 			if not line.strip() or regex is None:
@@ -106,6 +110,8 @@ class SMB_Status( list ):
 			match = regex.match( line )
 			if match is None:
 				continue
+			print 'line:', line
+			print match.groupdict()
 			serv = SMB_Process( match.groupdict() )
 			self.update( serv )
 
@@ -118,7 +124,26 @@ class SMB_Status( list ):
 			self.append( service )
 
 if __name__ == '__main__':
-	status = SMB_Status()
+	TESTDATA = '''
+Samba version 4.0.0alpha18-UNKNOWN
+PID     Username      Group         Machine                        
+-------------------------------------------------------------------
+23741     anton6        Domain Users schule  10.200.28.26 (10.200.28.26)
+23558     lehrer1       Domain Users schule  client22     (10.200.28.22)
+
+Service      pid     machine       Connected at
+-------------------------------------------------------
+Marktplatz   23558   client22      Wed May 23 10:48:10 2012
+sysvol       23558   client22      Wed May 23 10:48:19 2012
+Marktplatz   23741   10.200.28.26  Wed May 23 10:48:35 2012
+
+Locked files:
+Pid          Uid        DenyMode   Access      R/W        Oplock           SharePath   Name   Time
+--------------------------------------------------------------------------------------------------
+23741        2016       DENY_NONE  0x100081    RDONLY     NONE             /home/groups/Marktplatz   .   Wed May 23 10:48:35 2012
+'''
+	# status = SMB_Status()
+	status = SMB_Status( testdata = TESTDATA.split( '\n' ) )
 	for process in map( str, status ):
 		print process
 		print
