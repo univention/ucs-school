@@ -1,3 +1,10 @@
+univention-management-console-frontend (1.0.321-1) unstable; urgency=low
+
+  * MultiObjectSelect: the title of the popup dialog can be parametrized;
+    Bug #27259
+
+ -- Alexander Kläser <klaeser@univention.de>  Wed, 23 May 2012 14:32:55 +0200
+
 univention-management-console-frontend (1.0.320-1) unstable; urgency=low
 
   * extended translation framework to allow for overwriting standard messages
