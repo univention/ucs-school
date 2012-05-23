@@ -1,3 +1,9 @@
+ucs-school-webproxy (8.0.19-1) unstable; urgency=low
+
+  * make the DHCP server authoritative; Bug #26931
+
+ -- Andreas Büsching <buesching@univention.de>  Wed, 23 May 2012 17:19:36 +0200
+
 ucs-school-webproxy (8.0.18-1) unstable; urgency=low
 
   * register wpad DHCP option and restart DHCP server; Bug #26931
