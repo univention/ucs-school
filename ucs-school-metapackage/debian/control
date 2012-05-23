@@ -8,6 +8,7 @@ Standards-Version: 3.8.2
 Package: ucs-school-master
 Architecture: all
 Depends: univention-ldap-server (>= 8.0.77-4),
+ univention-ldap-acl-master (>= 8.0.77-4),
  univention-directory-manager-tools (>= 7.0.234-1),
  ucs-school-import,
  ucs-school-ldap-acls-master,
@@ -39,6 +40,7 @@ Description: UCS@School meta package for UCS DC Master System (multi DC mode)
 Package: ucs-school-slave
 Architecture: all
 Depends: univention-ldap-server (>= 8.0.77-4),
+ univention-ldap-acl-slave (>= 8.0.77-4),
  univention-directory-manager-tools (>= 7.0.234-1),
  ucs-school-webproxy,
  univention-samba4 (>= 1.0.138-11) | univention-samba (>= 6.0.27-1),
@@ -80,6 +82,7 @@ Description: UCS@School meta package for UCS DC Slave System
 Package: ucs-school-singlemaster
 Architecture: all
 Depends: univention-ldap-server (>= 8.0.77-4),
+ univention-ldap-acl-master (>= 8.0.77-4),
  univention-directory-manager-tools (>= 7.0.234-1),
  ucs-school-import,
  ucs-school-ldap-acls-master,

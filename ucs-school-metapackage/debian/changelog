@@ -1,3 +1,9 @@
+ucs-school-metapackage (4.0.35-1) unstable; urgency=low
+
+  * Depend on newer LDAP ACL packages (Bug #27201)
+
+ -- Stefan Gohmann <gohmann@univention.de>  Wed, 23 May 2012 16:52:07 +0200
+
 ucs-school-metapackage (4.0.34-1) unstable; urgency=low
 
   * Depend on newer Samba 4 version (Bug #27201)
