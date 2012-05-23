@@ -1,3 +1,10 @@
+ucs-school-umc-distribution (7.0.26-1) unstable; urgency=low
+
+  * replace invalid characters for automatically generated directory names;
+    Bug #25707
+
+ -- Alexander Kläser <klaeser@univention.de>  Wed, 23 May 2012 17:52:09 +0200
+
 ucs-school-umc-distribution (7.0.25-1) unstable; urgency=low
 
   * added custom title for adding class/workgroups popup dialog

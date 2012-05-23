@@ -133,8 +133,14 @@ dojo.declare("umc.modules._distribution.DetailPage", [ umc.widgets.Page, umc.wid
 					return me.get('value');
 				}
 
-				// we only need to avoid '/' for the filename
-				return values.description.replace('/', '_');
+				// avoid certain characters for the filename
+				var desc = values.description;
+				dojo.forEach(['/', '\\', '?', '%', '*', ':', '|', '"', '<', '>', '$', "'"], function(ichar) {
+					desc = desc.replace(ichar, '_');
+				});
+
+				// limit the filename length
+				return desc.slice(0, 255);
 			})
 		}, {
 			type: 'MultiUploader',
