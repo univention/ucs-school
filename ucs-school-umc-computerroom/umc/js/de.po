@@ -407,6 +407,9 @@ msgstr "{time} Minuten"
 msgid "{username} at {computer}"
 msgstr "{username} an {computer}"
 
+msgid "View VNC"
+msgstr "per VNC ansehen"
+
 #~ msgid "Default"
 #~ msgstr "Standard"
 
