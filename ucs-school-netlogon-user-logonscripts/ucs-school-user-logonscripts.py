@@ -395,7 +395,8 @@ def userchange(dn, new, old):
 					# get groups we are member of:
 					membershipIDs.add(new['gidNumber'][0])
 			except:
-				univention.debug.debug(univention.debug.LISTENER, univention.debug.WARN, 'ucsschool-user-logonscripts: LDAP-search failed for user %s' % (dn))
+				univention.debug.debug(univention.debug.LISTENER, univention.debug.INFO, 'ucsschool-user-logonscripts: LDAP-search failed for user %s' % (dn))
+				return
 		else:
 			membershipIDs.add(new['gidNumber'][0])
 
@@ -404,13 +405,6 @@ def userchange(dn, new, old):
 			    new.get('gidNumber') == old.get('gidNumber') and \
 			    new.get('homeDirectory') == old.get('homeDirectory'):
 			return # skip unused attributes
-
-		try:
-			univention.debug.debug(univention.debug.LISTENER, univention.debug.INFO, 'ucsschool-user-logonscripts:  got uid %s' % new['uid'][0])
-		except:
-			univention.debug.debug(univention.debug.LISTENER, univention.debug.ERROR, 'ucsschool-user-logonscripts: failed to get uid')
-			return
-
 
 		# Gruppen suchen mit uniqueMember=dn
 		# shares suchen mit GID wie Gruppe
