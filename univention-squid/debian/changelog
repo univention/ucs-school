@@ -1,3 +1,11 @@
+univention-squid (5.0.11-2) unstable; urgency=low
+
+  * Continue 98univention-squid-samba4.inst if the memberserver
+    is not in a Samba 4 domain
+  * Fix fail/retry case in 98univention-squid-samba4.inst (Bug #26508)
+
+ -- Arvid Requate <requate@univention.de>  Thu, 24 May 2012 11:49:53 +0200
+
 univention-squid (5.0.11-1) unstable; urgency=low
 
   * create kerberos service account in UDM also for Samba4 DCs

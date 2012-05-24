@@ -117,25 +117,14 @@ if ! [ -f "$keytab_path" ]; then
 	else
 		### in this case we are not a Samba4-DC
 
-		## create service keytab manually
-		if ! [ -d "$samba_private_dir" ]; then
-			mkdir -p "$samba_private_dir"
-		fi
-
-		/usr/lib/univention-heimdal/univention-create-keytab --keytab="$keytab_path" \
-			--principal="host/$service_accountname.$domainname" \
-			--alias="$spn_instance/$hostname.$domainname" \
-			--alias="$service_accountname" \
-			--kvno=1 --password="$password"
-
-		chown proxy "$keytab_path"
-
 		## look for S4 Connector hosts to add the servicePrincipalName to the directory object
 		s4connectorservicehosts="$(univention-directory-manager computers/computer list "$@" --filter "(univentionService=S4 Connector)" | sed -ne 's|^DN: cn=\([^,]*\).*|\1|p')"
 
+		## Hmm, seems like we are not in a UCS 3 Samba 4 domain
 		if [ -z "$s4connectorservicehosts" ]; then
-			echo "ERROR: No S4 Connector Service found in UDM"
-			exit 1
+			echo "INFO: No S4 Connector Service found in UDM"
+			echo "INFO: Cannot register a servicePrincipalName"
+			exit 0
 		fi
 
 		## using ldap-tools here
@@ -201,6 +190,19 @@ if ! [ -f "$keytab_path" ]; then
 		add: servicePrincipalName
 		servicePrincipalName: $spn_instance/$(hostname -f)
 		%EOF
+
+		## OK, everything fine up to this point so now create service keytab manually
+		if ! [ -d "$samba_private_dir" ]; then
+			mkdir -p "$samba_private_dir"
+		fi
+
+		/usr/lib/univention-heimdal/univention-create-keytab --keytab="$keytab_path" \
+			--principal="host/$service_accountname.$domainname" \
+			--alias="$spn_instance/$hostname.$domainname" \
+			--alias="$service_accountname" \
+			--kvno=1 --password="$password"
+
+		chown proxy "$keytab_path"
 
 	fi
 fi
