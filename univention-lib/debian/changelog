@@ -1,3 +1,9 @@
+univention-lib (1.0.53-1) unstable; urgency=low
+
+  * stop_udm_cli_server: use kill binary and not shell builtin; Bug #27275
+
+ -- Andreas Büsching <buesching@univention.de>  Thu, 24 May 2012 11:43:44 +0200
+
 univention-lib (1.0.52-1) unstable; urgency=low
 
   * fixed locale problems when calling atq; Bug #27255
