@@ -1,3 +1,11 @@
+univention-squid (5.0.11-4) unstable; urgency=low
+
+  * create the service principal account only in Samba4 domains (Bug #26508)
+  * run Joinscript also if service principal keytab file already exists
+  * check if keytab was created on Samba4 DCs, otherwise create it manually
+
+ -- Arvid Requate <requate@univention.de>  Thu, 24 May 2012 12:55:43 +0200
+
 univention-squid (5.0.11-3) unstable; urgency=low
 
   * add ignore-exists to udm call (Bug #26508)
