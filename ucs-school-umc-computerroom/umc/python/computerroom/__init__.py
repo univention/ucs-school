@@ -217,7 +217,7 @@ class Instance( SchoolBaseModule ):
 			return
 
 		# make sure that we run the current room session
-		userDN = _getRoomOwner(self._italc.room)
+		userDN = _getRoomOwner(self._italc.roomDN)
 		if userDN and userDN != self._user_dn:
 			raise UMC_CommandError( _('A different user is already running a computerroom session.') )
 
@@ -287,7 +287,7 @@ class Instance( SchoolBaseModule ):
 				computers.append( item )
 		result = { 'computers' : computers }
 
-		userDN = _getRoomOwner(self._italc.room)
+		userDN = _getRoomOwner(self._italc.roomDN)
 		result['locked'] = False
 		result['user'] = self._user_dn
 		if userDN and userDN != self._user_dn:

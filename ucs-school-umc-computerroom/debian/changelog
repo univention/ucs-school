@@ -1,3 +1,9 @@
+ucs-school-umc-computerroom (0.1.31-1) unstable; urgency=low
+
+  * make sure that room DN is passed over to room helper functions; Bug #26354
+
+ -- Alexander Kläser <klaeser@univention.de>  Thu, 24 May 2012 17:46:03 +0200
+
 ucs-school-umc-computerroom (0.1.30-1) unstable; urgency=low
 
   * modified some messages; Bug #26352
