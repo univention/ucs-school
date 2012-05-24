@@ -1,3 +1,9 @@
+univention-lib (1.0.52-1) unstable; urgency=low
+
+  * fixed locale problems when calling atq; Bug #27255
+
+ -- Alexander Kläser <klaeser@univention.de>  Thu, 24 May 2012 11:16:18 +0200
+
 univention-lib (1.0.51-3) unstable; urgency=low
 
   * Fixed typo in get_default_addresses (Bug #27155)
