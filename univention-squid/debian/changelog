@@ -1,3 +1,9 @@
+univention-squid (5.0.11-5) unstable; urgency=low
+
+  * fix syntax typo (Bug #26508)
+
+ -- Arvid Requate <requate@univention.de>  Thu, 24 May 2012 17:00:41 +0200
+
 univention-squid (5.0.11-4) unstable; urgency=low
 
   * create the service principal account only in Samba4 domains (Bug #26508)

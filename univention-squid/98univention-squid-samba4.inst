@@ -71,7 +71,7 @@ password=$(makepasswd)
 ## create service_accountname via udm, but servicePrincipalName is missing
 univention-directory-manager users/user create "$@" \
 	--position "cn=users,$ldap_base" \
-	--ignore-exists \
+	--ignore_exists \
 	--set username="$service_accountname" \
 	--set lastname="Service" \
 	--set password="$password" \
@@ -94,7 +94,7 @@ if [ "$cn" = "$hostname" ]; then
 		msDS-KeyVersionNumber: 1
 		privateKeytab: $keytab_filename
 		%EOF
-	else
+	fi
 
 	if ! [ -f "$keytab_path" ]; then
 		echo "WARNING: samba4 did not create a keytab for samAccountName=$service_accountname"
