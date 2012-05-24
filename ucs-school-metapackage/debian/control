@@ -20,7 +20,8 @@ Depends: univention-ldap-server (>= 8.0.77-4),
  univention-management-console-frontend (>= 1.0.320-1),
  univention-management-console-web-server (>= 1.0.320-1),
  python-univention-lib (>= 1.0.51-3),
- shell-univention-lib (>= 1.0.51-3)
+ shell-univention-lib (>= 1.0.51-3),
+ univention-samba4-sysvol-sync
 Recommends:
  ucs-school-umc-groups,
  ucs-school-umc-users,
