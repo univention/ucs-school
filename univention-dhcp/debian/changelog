@@ -1,3 +1,9 @@
+univention-dhcp (6.0.11-1) unstable; urgency=low
+
+  * fixed typo in UCR template; Bug #26931
+
+ -- Andreas Büsching <buesching@univention.de>  Thu, 24 May 2012 09:03:25 +0200
+
 univention-dhcp (6.0.10-1) unstable; urgency=low
 
   * add UCR variable dhcpd/authoritative; Bug #26931
