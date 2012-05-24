@@ -1,3 +1,9 @@
+ucs-school-lib (1.0.50-1) unstable; urgency=low
+
+  * add further error handling code to smbstatus parser; Bug #26392
+
+ -- Andreas Büsching <buesching@univention.de>  Thu, 24 May 2012 15:57:34 +0200
+
 ucs-school-lib (1.0.49-1) unstable; urgency=low
 
   * fixed typo; Bug #26392

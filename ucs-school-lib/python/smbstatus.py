@@ -34,6 +34,8 @@
 import re
 import subprocess
 
+import univention.debug as ud
+
 REGEX_LOCKED_FILES = re.compile( r'(?P<pid>[0-9]+)\s+(?P<uid>[0-9]+)\s+(?P<denyMode>[A-Z_]+)\s+(?P<access>[0-9x]+)\s+(?P<rw>[A-Z]+)\s+(?P<oplock>[A-Z_+]+)\s+(?P<sharePath>\S+)\s+(?P<filename>\S+)\s+(?P<time>.*)$' )
 REGEX_USERS = re.compile( r'(?P<pid>[0-9]+)\s+(?P<username>\S+)\s+(?P<group>.+\S)\s+(?P<machine>\S+)\s+\((?P<ipAddress>[0-9a-fA-F.:]+)\)$' )
 REGEX_SERVICES = re.compile( r'(?P<service>\S+)\s+(?P<pid>[0-9]+)\s+(?P<machine>\S+)\s+(?P<connectedAt>.*)$' )
@@ -46,6 +48,12 @@ class SMB_LockedFile( dict ):
 	@property
 	def sharePath( self ):
 		return self[ 'sharePath' ]
+
+	def __str__( self ):
+		if self.filename == '.':
+			return self.sharePath
+
+		return self.filename
 
 class SMB_Process( dict ):
 	def __init__( self, args ):
@@ -110,10 +118,14 @@ class SMB_Status( list ):
 			match = regex.match( line )
 			if match is None:
 				continue
-			print 'line:', line
-			print match.groupdict()
 			serv = SMB_Process( match.groupdict() )
 			self.update( serv )
+
+		for process in self[:]:
+			if not 'username' in process:
+				ud.debug( ud.PARSER, ud.ERROR, 'Invalid SMB process definition' )
+				ud.debug( ud.PARSER, ud.INFO, '%s' % ''.join( data ) )
+				self.remove( process )
 
 	def update( self, service ):
 		for item in self:
@@ -124,6 +136,8 @@ class SMB_Status( list ):
 			self.append( service )
 
 if __name__ == '__main__':
+	ud.init( '/var/log/univention/smbstatus.log', 0 , 0 )
+	ud.set_level( ud.PARSER, 4 )
 	TESTDATA = '''
 Samba version 4.0.0alpha18-UNKNOWN
 PID     Username      Group         Machine                        
@@ -142,8 +156,8 @@ Pid          Uid        DenyMode   Access      R/W        Oplock           Share
 --------------------------------------------------------------------------------------------------
 23741        2016       DENY_NONE  0x100081    RDONLY     NONE             /home/groups/Marktplatz   .   Wed May 23 10:48:35 2012
 '''
-	# status = SMB_Status()
-	status = SMB_Status( testdata = TESTDATA.split( '\n' ) )
+	status = SMB_Status()
+	# status = SMB_Status( testdata = TESTDATA.split( '\n' ) )
 	for process in map( str, status ):
 		print process
 		print
