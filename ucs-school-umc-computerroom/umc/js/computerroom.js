@@ -484,7 +484,7 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 
 		var _container = new umc.widgets.ContainerWidget( { region: 'top' } );
 		this._profileInfo = new umc.widgets.Text( {
-			content: '<i>' + this._( 'Determining active settings for the room ...' ) + '</i>',
+			content: '<i>' + this._( 'Determining active settings for the computer room ...' ) + '</i>',
 			style: 'padding-bottom: 10px; padding-bottom; 10px; float: left;'
 		} );
 		this._validTo = new umc.widgets.Text( {
@@ -790,7 +790,7 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 				return;
 			}
 
-			this._profileInfo.set( 'content', '<i>' + this._( 'Determining active settings for the room ...' ) + '</i>' );
+			this._profileInfo.set( 'content', '<i>' + this._( 'Determining active settings for the computer room ...' ) + '</i>' );
 			dojo.forEach( response.result.computers, function( item ) {
 				this._objStore.put( item );
 			}, this );
@@ -818,9 +818,9 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 				}
 			}
 
-			var text = this._( 'No personal settings for printing, share and internet access defined' );
+			var text = this._( 'No user specific settings are defined for the computer room' );
 			if ( this._settingsDialog.personalActive() ) {
-				text = this._( 'Personal settings are active' );
+				text = this._( 'User specific settings for the computer room are active' );
 			}
 			var label = dojo.replace( '{lblSettings} (<a href="javascript:void(0)" ' +
 									  'onclick=\'dijit.byId("{id}").show()\'>{changeLabel}</a>)', {

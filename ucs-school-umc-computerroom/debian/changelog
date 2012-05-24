@@ -1,3 +1,9 @@
+ucs-school-umc-computerroom (0.1.30-1) unstable; urgency=low
+
+  * modified some messages; Bug #26352
+
+ -- Andreas Büsching <buesching@univention.de>  Thu, 24 May 2012 14:37:14 +0200
+
 ucs-school-umc-computerroom (0.1.29-1) unstable; urgency=low
 
   * added VNC action; Bug #27237

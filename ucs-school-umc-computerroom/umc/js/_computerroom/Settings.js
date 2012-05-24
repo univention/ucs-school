@@ -62,8 +62,9 @@ dojo.declare("umc.modules._computerroom.SettingsDialog", [ dijit.Dialog, umc.wid
 	buildRendering: function() {
 		this.inherited( arguments );
 		// add remaining elements of the search form
-		this.set( 'title', this._( 'Access control and Internet settings' ) );
+		this.set( 'title', this._( 'Personal settings for the computer room' ) );
 
+		var myRules = this._( 'Personal internet rules' );
 		var widgets = [ {
 			type: 'ComboBox',
 			name: 'internetRule',
@@ -71,14 +72,16 @@ dojo.declare("umc.modules._computerroom.SettingsDialog", [ dijit.Dialog, umc.wid
 			sizeClass: 'One',
 			dynamicValues: 'computerroom/internetrules',
 			staticValues: [ { id: 'none', label: this._( 'Default (global settings)' ) },
-							{ id: 'custom', label: this._( 'personal rules' ) } ],
+							{ id: 'custom', label: myRules } ],
 			onChange: dojo.hitch( this, function( value ) {
 				this._form.getWidget( 'customRule' ).set( 'disabled', value != 'custom' );
 			} )
 		}, {
 			type: 'TextArea',
 			name: 'customRule',
-			label: this._('Allowed web servers'),
+			label: dojo.replace( this._( 'List of allowed web sites for "{myRules}"' ), {
+				myRules: myRules
+			} ),
 			sizeClass: 'One',
 			description: this._( '<p>In this text box you can list web sites that are allowed to be used by the students. Each line should contain one web site. Example: </p><p style="font-family: monospace">univention.com</br>wikipedia.org</br></p>' ),
 			validate: dojo.hitch( this, function() {
