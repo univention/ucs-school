@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-distribution\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2012-05-23 15:21+0200\n"
+"POT-Creation-Date: 2012-05-24 17:05+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -44,20 +44,20 @@ msgstr ""
 msgid "Failed to load user information: %s"
 msgstr "Das Laden der Benutzerinformationen schlug fehl: %s"
 
-#: umc/python/distribution/__init__.py:592
+#: umc/python/distribution/__init__.py:617
 msgid "Only the owner himself or an administrator may delete a project."
 msgstr ""
 "Nur der Eigentümer selbst oder ein Administrator können ein Projekt löschen."
 
-#: umc/python/distribution/__init__.py:471
+#: umc/python/distribution/__init__.py:486
 msgid "Only the owner himself or an administrator may distribute a project."
 msgstr ""
 "Nur der Eigentümer selbst oder ein Administrator können ein Projekt "
 "austeilen."
 
-#: umc/python/distribution/__init__.py:466
-#: umc/python/distribution/__init__.py:513
-#: umc/python/distribution/__init__.py:555
+#: umc/python/distribution/__init__.py:481
+#: umc/python/distribution/__init__.py:533
+#: umc/python/distribution/__init__.py:580
 #, python-format
 msgid "Project \"%s\" could not be loaded"
 msgstr "Das Projekt \"%s\" konnte nicht geladen werden"
@@ -66,7 +66,7 @@ msgstr "Das Projekt \"%s\" konnte nicht geladen werden"
 msgid "Project collection"
 msgstr "Projekteinsammlung"
 
-#: umc/python/distribution/__init__.py:410
+#: umc/python/distribution/__init__.py:425
 msgid ""
 "Project details are only visible to the project owner himself or an "
 "administrator."
@@ -78,7 +78,7 @@ msgstr ""
 msgid "Project distribution"
 msgstr "Projektverteilung"
 
-#: umc/python/distribution/__init__.py:526
+#: umc/python/distribution/__init__.py:546
 #, python-format
 msgid "The following user directories could not been collected: %s"
 msgstr ""
@@ -96,8 +96,8 @@ msgstr "Das angegebene Projektverzeichnis darf nicht leer sein."
 msgid "The project can only be modified by the owner himself"
 msgstr "Ein Projekt kann nur durch den Eigentümer selbst bearbeitet werden"
 
-#: umc/python/distribution/__init__.py:335
-#: umc/python/distribution/__init__.py:481
+#: umc/python/distribution/__init__.py:350
+#: umc/python/distribution/__init__.py:496
 #, python-format
 msgid "The project could not distributed to the following users: %s"
 msgstr ""
@@ -131,7 +131,7 @@ msgid ""
 msgstr ""
 "Das angegebene Projektverzeichnis muss verschieden sein von \".\" and \"..\"."
 
-#: umc/python/distribution/__init__.py:302
+#: umc/python/distribution/__init__.py:317
 #, python-format
 msgid ""
 "The specified project directory name \"%s\" is already in use by a different "

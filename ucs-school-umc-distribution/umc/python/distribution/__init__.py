@@ -495,6 +495,11 @@ class Instance( SchoolBaseModule ):
 					usersStr = ', '.join([ Display.user(i) for i in usersFailed ])
 					raise IOError(_('The project could not distributed to the following users: %s') % usersStr)
 
+				# save result
+				result.append(dict(
+					name = iid,
+					success = True
+				))
 			except (ValueError, IOError) as e:
 				result.append(dict(
 					name = iid,
@@ -540,6 +545,11 @@ class Instance( SchoolBaseModule ):
 					MODULE.info('Failed collecting the following dirs: %s' % dirsFailed)
 					raise IOError(_('The following user directories could not been collected: %s') % dirsFailed)
 
+				# save result
+				result.append(dict(
+					name = iid,
+					success = True
+				))
 			except (ValueError, IOError) as e:
 				result.append(dict(
 					name = iid,

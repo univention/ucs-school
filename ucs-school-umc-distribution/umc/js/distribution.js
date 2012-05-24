@@ -314,6 +314,14 @@ dojo.declare("umc.modules.distribution", [ umc.widgets.Module, umc.i18n.Mixin ],
 						if (!res.success) {
 							umc.dialog.alert(this._('The following error occurred: %s', res.details));
 						}
+						else {
+							if (items[0].isDistributed) {
+								umc.dialog.notify(this._('The project files have been collected successfully.'));
+							}
+							else {
+								umc.dialog.notify(this._('The project files have been distributed successfully.'));
+							}
+						}
 					}
 
 					// update the grid if a project has been distributed
