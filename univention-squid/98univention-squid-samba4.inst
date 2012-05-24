@@ -64,6 +64,7 @@ if ! [ -f "$keytab_path" ]; then
 	## create service_accountname via udm, but servicePrincipalName is missing
 	univention-directory-manager users/user create "$@" \
 		--position "cn=users,$ldap_base" \
+		--ignore-exists \
 		--set username="$service_accountname" \
 		--set lastname="Service" \
 		--set password="$password" \
@@ -115,7 +116,7 @@ if ! [ -f "$keytab_path" ]; then
 		%EOF
 
 	else
-		### in this case we are not a Samba4-DC
+		### in this case we are not a Samba4-DC, i.e. we are Samba3
 
 		## look for S4 Connector hosts to add the servicePrincipalName to the directory object
 		s4connectorservicehosts="$(univention-directory-manager computers/computer list "$@" --filter "(univentionService=S4 Connector)" | sed -ne 's|^DN: cn=\([^,]*\).*|\1|p')"
