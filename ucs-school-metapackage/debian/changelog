@@ -1,3 +1,9 @@
+ucs-school-metapackage (4.0.36-1) unstable; urgency=low
+
+  * Set ldap/master as sysvol sync host (Bug #26522)
+
+ -- Stefan Gohmann <gohmann@univention.de>  Thu, 24 May 2012 07:06:22 +0200
+
 ucs-school-metapackage (4.0.35-1) unstable; urgency=low
 
   * Depend on newer LDAP ACL packages (Bug #27201)

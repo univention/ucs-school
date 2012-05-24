@@ -39,6 +39,7 @@ eval "$(ucr shell)"
 . /usr/share/univention-lib/all.sh
 
 if [ $JS_LAST_EXECUTED_VERSION -lt 1 ]; then
+	master_hostname="$(echo $ldap_master | cut -d '.' -f 1)"
 	univention-config-registry set \
 		connector/ldap/bindpw?"/etc/machine.secret" \
 		connector/ldap/binddn?"$ldap_hostdn" \
@@ -47,7 +48,8 @@ if [ $JS_LAST_EXECUTED_VERSION -lt 1 ]; then
 		connector/s4/mapping/dns/syncmode?'write' \
 		samba4/ldb/sam/module/prepend="univention_samaccountname_ldap_check" \
 		samba/script/addmachine='/usr/share/univention-samba/addmachine.sh "%u"' \
-		samba/share/sysvol/readonly?no
+		samba/share/sysvol/readonly?no \
+		samba4/sysvol/sync/host?"$master_hostname" # Don't use the FQDN, Bug #27247
 
 	# set the IP addresses to the forward zone
 	ipv4="$(get_default_ipv4_address)"
