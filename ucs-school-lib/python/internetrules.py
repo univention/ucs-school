@@ -55,7 +55,7 @@ _listTypesInv = dict([ (_i[1], _i[0]) for _i in _listTypes.iteritems() ])
 
 class Rule(object):
 
-	def __init__(self, name, type=WHITELIST, priority=5, wlan=False, domains=[], userRule=False):
+	def __init__(self, name, type=WHITELIST, priority=0, wlan=False, domains=[], userRule=False):
 		self.name = name
 		self.type = type
 		self.priority = priority
