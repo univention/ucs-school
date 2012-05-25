@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2012-04-26 17:53+0200\n"
+"POT-Creation-Date: 2012-05-25 16:24+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -10,10 +10,14 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: python/schoolldap.py:397
+#: python/schoolldap.py:400
 msgid ""
 "Could not find any school. You have to create a school before continuing. "
 "Use the 'Add school' UMC module to create one."
 msgstr ""
 "Es konnte keine Schule gefunden werden. Um Fortzufahren, muss zuerst eine "
 "Schule erstellt werden, dazu kann 'Schule hinzufügen' verwendet werden."
+
+#: python/schoollessons.py:61
+msgid "Overlapping lessons are not allowed"
+msgstr "Schulstunden welche sich überschneiden sind nicht erlaubt"

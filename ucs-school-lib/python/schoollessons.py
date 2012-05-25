@@ -37,6 +37,7 @@ import univention.lib.locking as locking
 from univention.management.console.config import ucr
 from univention.management.console.log import MODULE
 from univention.management.console.modules import Base
+from univention.lib.i18n import Translation
 
 import ConfigParser
 import datetime
@@ -48,6 +49,8 @@ import shutil
 LESSONS_FILE = '/var/lib/ucs-school-lib/lessons.ini'
 LESSONS_BACKUP = '/var/lib/ucs-school-lib/lessons.bak'
 
+_ = Translation('python-ucs-school').translate
+
 class Lesson( object ):
 	TIME_REGEX = re.compile( r'^([01][0-9]|2[0-3]|[0-9]):([0-5][0-9])' )
 	def __init__( self, name, begin, end ):
@@ -55,7 +58,7 @@ class Lesson( object ):
 		self._begin = self._parse_time( begin )
 		self._end = self._parse_time( end )
 		if self._end <= self._begin:
-			raise AttributeError( 'end time before or equal to start time' )
+			raise AttributeError(_('Overlapping lessons are not allowed'))
 
 	def _check_name(self, string):
 		if not isinstance(string, basestring):
