@@ -60,13 +60,13 @@ def getScriptPath():
 	scriptpath.append("/var/lib/samba/sysvol/%s/scripts/user" % listener.configRegistry.get('kerberos/realm', '').lower())
 
 	for path in scriptpath:
-		if not os.path.isdir(path):
-			listener.setuid(0)
-			try:
+		listener.setuid(0)
+		try:
+			if not os.path.isdir(path):
 				os.makedirs(path)
-				os.chown(path, pwd.getpwnam('listener')[2], 0)
-			finally:
-				listener.unsetuid()
+			os.chown(path, pwd.getpwnam('listener')[2], 0)
+		finally:
+			listener.unsetuid()
 
 def getCommandOutput(command):
 	child = os.popen(command)

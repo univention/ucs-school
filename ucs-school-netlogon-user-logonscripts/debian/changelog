@@ -1,3 +1,9 @@
+ucs-school-netlogon-user-logonscripts (7.0.7-1) unstable; urgency=low
+
+  * create and set permissions for user netlogon dir (Bug #27285)
+
+ -- Felix Botner <botner@univention.de>  Fri, 25 May 2012 09:38:37 +0200
+
 ucs-school-netlogon-user-logonscripts (7.0.6-1) unstable; urgency=low
 
   * less debug messages (Bug #25777) 
