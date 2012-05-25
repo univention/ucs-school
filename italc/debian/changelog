@@ -1,3 +1,9 @@
+italc (1:2.0.7-1) unstable; urgency=low
+
+  * fix italc key copy for Samba3 (Bug #20261)
+
+ -- Janek Walkenhorst <walkenhorst@univention.de>  Fri, 25 May 2012 16:50:16 +0200
+
 italc (1:2.0.6-1) unstable; urgency=low
 
   * stateChanged: change attribute type from enum States to int; Bug #25702
