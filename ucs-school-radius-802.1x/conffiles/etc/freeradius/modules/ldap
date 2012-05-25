@@ -32,6 +32,7 @@ ldap {
 	#  Note that this needs to match the name in the LDAP
 	#  server certificate, if you're using ldaps.
 	server = "@%@ldap/server/name@%@"
+	port = "@%@ldap/server/port@%@"
 	identity = "@%@ldap/hostdn@%@"
 @!@
 credfile=open('/etc/machine.secret', 'r')
