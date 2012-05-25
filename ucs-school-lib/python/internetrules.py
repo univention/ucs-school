@@ -107,9 +107,6 @@ class Rule(object):
 		no changes will be done.'''
 		# load original rule
 		orgRule = load(self.name)
-		if orgRule:
-			# for comparing domains, make sure that we look at
-			orgRule.type = self.type
 
 		# prepare for saving filter properties
 		vars = []
