@@ -97,8 +97,8 @@ class Instance( SchoolBaseModule ):
 		names = request.options
 		result = []
 		if isinstance( names, ( list, tuple ) ):
-			# fetch all rules with the given names
-			names = set(names)
+			# fetch all rules with the given names (we need to make sure that "name" is UTF8)
+			names = set(iname.encode('utf8') for iname in names)
 			result = [ dict(
 				name=irule.name,
 				type=_filterTypesInv[irule.type],
@@ -300,8 +300,11 @@ class Instance( SchoolBaseModule ):
 					irule.name = iprops['name']
 
 				if 'type' in iprops:
-					# set rule type
+					# set rule type, move all domains from the previous type
+					oldDomains = irule.domains
+					irule.domains = []
 					irule.type = _filterTypes[iprops['type']]
+					irule.domains = oldDomains
 
 				if 'priority' in iprops:
 					# set priority

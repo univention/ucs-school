@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-internetrules\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2012-04-24 12:34+0200\n"
+"POT-Creation-Date: 2012-05-25 14:25+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -62,22 +62,22 @@ msgstr "Verwalten der Internetregeln"
 msgid "Advanced properties"
 msgstr "Erweiterte Einstellungen"
 
-#: umc/js/_internetrules/AssignPage.js:240
-msgid "Assign internet rules"
-msgstr "Internetregeln zuweisen"
-
 #: umc/js/_internetrules/AssignPage.js:85
-msgid "Assign internet rules to selected groups"
-msgstr "Regeln den ausgewählten Gruppen zuweisen"
+msgid "Assign an internet rule to the selected groups"
+msgstr "Eine Regel den ausgewählten Gruppen zuweisen"
+
+#: umc/js/_internetrules/AssignPage.js:240
+msgid "Assign internet rule"
+msgstr "Internetregel zuweisen"
 
 #: umc/js/_internetrules/AssignPage.js:84
 #: umc/js/_internetrules/AssignPage.js:205
 msgid "Assign rule"
-msgstr "Regeln zuweisen"
+msgstr "Regel zuweisen"
 
 #: umc/js/_internetrules/AssignPage.js:64
 msgid "Assignment of internet rules"
-msgstr "Zuweisung der Internetregeln"
+msgstr "Zuweisung von Internetregeln"
 
 #: umc/js/_internetrules/AssignPage.js:98
 msgid "Associated rule"

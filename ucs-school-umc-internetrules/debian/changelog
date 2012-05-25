@@ -1,3 +1,9 @@
+ucs-school-umc-internetrules (7.0.14-1) unstable; urgency=low
+
+  * fixed translations; Bug #25704
+
+ -- Alexander Kläser <klaeser@univention.de>  Fri, 25 May 2012 14:26:31 +0200
+
 ucs-school-umc-internetrules (7.0.13-1) unstable; urgency=low
 
   * updated copyright
