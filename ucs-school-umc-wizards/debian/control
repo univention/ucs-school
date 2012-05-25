@@ -23,8 +23,10 @@ Depends: ${misc:Depends},
  python-ucs-school,
  shell-ucs-school,
  python-apt
-Description: UCS@school UMC module contains various wizards
- This package contains a UMC module with various wizards
+Description: UCS@school UMC wizard modules
+ This package contains UMC modules for UCS@school that provide various wizard
+ functionalities for adding users (students, teachers, staff members), classes,
+ schools, and computers.
  .
  It is part of Univention Corporate Server (UCS), an
  integrated, directory driven solution for managing
