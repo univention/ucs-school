@@ -1,3 +1,9 @@
+ucs-school-webproxy (8.0.21-1) unstable; urgency=low
+
+  * fix usergroup UCRV for spaces in group name (Bug #26974)
+
+ -- Janek Walkenhorst <walkenhorst@univention.de>  Fri, 25 May 2012 16:30:35 +0200
+
 ucs-school-webproxy (8.0.20-1) unstable; urgency=low
 
   * check all school groups in listener Bug #27288 

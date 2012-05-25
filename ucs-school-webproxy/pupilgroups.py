@@ -55,12 +55,12 @@ def handler(dn, new, old):
 	try:
 		if dnPattern.search(dn):
 			if new and new.get('memberUid'):
-				key=keyPattern % new['cn'][0].replace(' ','_')
+				key = keyPattern % new['cn'][0]
 				keyval = '%s=%s' % (key, ','.join(new.get('memberUid',[])))
 				univention.debug.debug(univention.debug.LISTENER, univention.debug.INFO, 'pupilgroups: %s' % keyval)
 				univention.config_registry.handler_set( [ keyval.encode() ] )
 			elif old:	# old lost its last memberUid OR old was removed
-				key = keyPattern % old['cn'][0].replace(' ','_')
+				key = keyPattern % old['cn'][0]
 				univention.debug.debug(univention.debug.LISTENER, univention.debug.INFO, 'pupilgroups: %s' % key)
 				univention.config_registry.handler_unset( [ key.encode() ] )
 	finally:
