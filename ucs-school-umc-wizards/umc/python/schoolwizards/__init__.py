@@ -273,7 +273,7 @@ class Instance(SchoolBaseModule, SchoolImport):
 		return is_installed
 
 	def is_singlemaster(self, request):
-		self.finished(request.id, self._is_singlemaster())
+		self.finished(request.id, {'isSinglemaster': self._is_singlemaster()})
 
 
 def remove_whitespaces(request):

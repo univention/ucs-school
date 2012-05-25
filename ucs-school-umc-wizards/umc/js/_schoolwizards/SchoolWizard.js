@@ -72,7 +72,7 @@ dojo.declare("umc.modules._schoolwizards.SchoolWizard", [ umc.modules._schoolwiz
 		this.standby(true);
 
 		umc.tools.umcpCommand('schoolwizards/schools/singlemaster').then(dojo.hitch(this, function(response) {
-			if (response.result) {
+			if (response.result.isSinglemaster) {
 				var widget = this.getWidget('school', 'schooldc');
 				widget.hide();
 				widget.set('required', false);
