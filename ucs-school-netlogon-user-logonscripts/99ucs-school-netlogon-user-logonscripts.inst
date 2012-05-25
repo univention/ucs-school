@@ -40,7 +40,6 @@ eval "$(univention-config-registry shell)"
 myrealm=$(echo $kerberos_realm |  awk '{print tolower($0)}')
 if [ -n "$myrealm" ]; then
 	mkdir -p "/var/lib/samba/sysvol/$myrealm/scripts/user"
-	chown listener "/var/lib/samba/sysvol/$myrealm/scripts/user"
 fi
 
 univention-config-registry set \

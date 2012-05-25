@@ -60,13 +60,12 @@ def getScriptPath():
 	scriptpath.append("/var/lib/samba/sysvol/%s/scripts/user" % listener.configRegistry.get('kerberos/realm', '').lower())
 
 	for path in scriptpath:
-		listener.setuid(0)
-		try:
-			if not os.path.isdir(path):
+		if not os.path.isdir(path):
+			listener.setuid(0)
+			try:
 				os.makedirs(path)
-			os.chown(path, pwd.getpwnam('listener')[2], 0)
-		finally:
-			listener.unsetuid()
+			finally:
+				listener.unsetuid()
 
 def getCommandOutput(command):
 	child = os.popen(command)
@@ -299,9 +298,14 @@ def writeWindowsLinkSkripts(uid, links, mappings):
 	global scriptpath
 
 	for path in scriptpath:
-		fp = open("%s/%s.vbs" % (path, uid) ,'w')
-		fp.write(generateWindowsLinkScript(desktopFolderName, links, mappings).replace('\n','\r\n'))
-		fp.close()
+		script = generateWindowsLinkScript(desktopFolderName, links, mappings).replace('\n','\r\n')
+		listener.setuid(0)
+		try:
+			fp = open("%s/%s.vbs" % (path, uid) ,'w')
+			fp.write(script)
+			fp.close()
+		finally:
+			listener.unsetuid()
 
 def getConnection():
 	if getConnection.connection is not None:

@@ -1,3 +1,9 @@
+ucs-school-netlogon-user-logonscripts (7.0.8-1) unstable; urgency=low
+
+  * create logon scripts as root (Bug #27285) 
+
+ -- Felix Botner <botner@univention.de>  Fri, 25 May 2012 10:10:19 +0200
+
 ucs-school-netlogon-user-logonscripts (7.0.7-1) unstable; urgency=low
 
   * create and set permissions for user netlogon dir (Bug #27285)
