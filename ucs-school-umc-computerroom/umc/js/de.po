@@ -59,8 +59,8 @@ msgstr ""
 "Die Kontrolle des Raumes wurde übernommen durch \"%s\", Ihre Sitzung wurde "
 "daher geschlossen. Sollte dieses Verhalten nicht beabsichtigt gewesen sein, "
 "setzen Sie sich bitte mit dem anderen Benutzer in Verbindung. Sie können die "
-"Kontrolle des Raumes wieder übernehmen durch seine Auswahl in der Liste "
-"aller Räume."
+"Kontrolle des Raumes wieder übernehmen, indem Sie ihn in der Liste aller "
+"Räume erneut auswählen."
 
 #: umc/js/_computerroom/Settings.js:74 umc/js/_computerroom/Settings.js:111
 msgid "Default (global settings)"

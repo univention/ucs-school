@@ -1,3 +1,9 @@
+ucs-school-umc-computerroom (0.1.32-1) unstable; urgency=low
+
+  * changed caption; Bug #26354
+
+ -- Alexander Kläser <klaeser@univention.de>  Fri, 25 May 2012 11:21:05 +0200
+
 ucs-school-umc-computerroom (0.1.31-1) unstable; urgency=low
 
   * make sure that room DN is passed over to room helper functions; Bug #26354
