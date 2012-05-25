@@ -79,7 +79,7 @@ dojo.declare("umc.modules.lessontimes", [ umc.widgets.Module, umc.i18n.Mixin ], 
 		}];
 
 		var layout = [{
-			title: this._('Lesson times'),
+			label: this._('Lesson times'),
 			layout: ['lessons']
 		}];
 
