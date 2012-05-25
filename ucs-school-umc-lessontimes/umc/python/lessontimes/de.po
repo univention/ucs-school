@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-lessontimes\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2012-05-05 17:26+0200\n"
+"POT-Creation-Date: 2012-03-12 17:58+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -12,6 +12,10 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: umc/python/lessontimes/__init__.py:68
+#: umc/python/lessontimes/__init__.py:69
+msgid "A description for a lesson is missing"
+msgstr "Es fehlt die Beschreibung für eine Unterrichtszeit"
+
+#: umc/python/lessontimes/__init__.py:78
 msgid "Lesson times were successfully set"
 msgstr "Unterrichtszeiten wurden erfolgreich übernommen"

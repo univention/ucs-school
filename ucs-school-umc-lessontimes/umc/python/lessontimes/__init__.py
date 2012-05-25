@@ -59,10 +59,20 @@ class Instance(SchoolBaseModule):
 		for lesson in self._lessons.lessons:
 			self._lessons.remove(lesson)
 
-		# add the new lessons
-		for lesson in request.options.get('lessons', []):
-			if lesson[0]:
-				self._lessons.add(*lesson)
-		self._lessons.save()
-
-		self.finished(request.id, None, _('Lesson times were successfully set'))
+		try:
+			# add the new lessons
+			for lesson in request.options.get('lessons', []):
+				(description, begin, end, ) = lesson
+				if begin == end == '00:00' and not description:
+					continue
+				elif not description:
+					raise ValueError(_('A description for a lesson is missing'))
+				else:
+					self._lessons.add(description, begin, end)
+			self._lessons.save()
+		except (ValueError, AttributeError), err:
+			MODULE.info(str(err))
+			result = {'message': str(err)}
+			self.finished(request.id, result)
+		else:
+			self.finished(request.id, None, _('Lesson times were successfully set'))

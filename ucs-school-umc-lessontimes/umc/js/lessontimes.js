@@ -81,12 +81,12 @@ dojo.declare("umc.modules.lessontimes", [ umc.widgets.Module, umc.i18n.Mixin ], 
 		var layout = [{
 			title: this._('Lesson times'),
 			layout: ['lessons']
-		}]
+		}];
 
 		this._form = new umc.widgets.Form({
 			region: 'top',
 			widgets: widgets,
-			layout: layout,
+			layout: layout
 		});
 
 		// turn off the standby animation as soon as all form values have been loaded
@@ -128,17 +128,17 @@ dojo.declare("umc.modules.lessontimes", [ umc.widgets.Module, umc.i18n.Mixin ], 
 		var container = new umc.widgets.ContainerWidget({
 			scrollable: true
 		});
-		this._page.addChild(container)
+		this._page.addChild(container);
 
-		// var titlePane = new umc.widgets.TitlePane({
-		// 	title: this._('Lesson times'),
-		// 	content: this._form
-		// });
 		container.addChild(this._form);
 	},
 
 	onSubmit: function(values) {
-		this.umcpCommand('lessontimes/set', values).then(dojo.hitch(this, function (response) {
+		this.umcpCommand('lessontimes/set', values).then(
+			dojo.hitch(this, function (response) {
+				if (response.result.message) {
+					umc.dialog.alert(response.result.message);
+				}
 		}));
 	}
 });

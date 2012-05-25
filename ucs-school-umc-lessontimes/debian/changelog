@@ -1,3 +1,12 @@
+ucs-school-umc-lessontimes (0.1.10-1) unstable; urgency=low
+
+  * Show error messages in a user friendly way
+  * Update po-files
+  * Fix some typos
+  (Bug #26748)
+
+ -- Jascha Geerds <geerds@univention.de>  Fri, 25 May 2012 13:50:38 +0200
+
 ucs-school-umc-lessontimes (0.1.9-1) unstable; urgency=low
 
   * Fix the TitlePane (Bug #26748)
