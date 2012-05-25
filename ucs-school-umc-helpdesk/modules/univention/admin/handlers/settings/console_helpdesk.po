@@ -30,46 +30,46 @@ msgid ""
 msgstr ""
 "Project-Id-Version: univention-management-console-helpdesk 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-05-10 13:36+0200\n"
-"PO-Revision-Date: 2007-05-10 13:39+0200\n"
-"Last-Translator: Sönke Schwardt <schwardt@univention.de>\n"
+"POT-Creation-Date: 2012-05-25 14:07+0200\n"
+"PO-Revision-Date: 2012-05-25 14:09+0200\n"
+"Last-Translator: SÃ¶nke Schwardt <schwardt@univention.de>\n"
 "Language-Team: German <DE@li.org>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=ISO-8859-1\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: console_helpdesk.py:49
+#: console_helpdesk.py:51
 msgid "Settings: Console Helpdesk"
 msgstr "Einstellungen: UMC Helpdesk"
 
-#: console_helpdesk.py:50
+#: console_helpdesk.py:52
 msgid "Settings for Univention Console Helpdesk Module"
-msgstr "Einstellungen für UMC-Helpdesk-Modul"
+msgstr "Einstellungen fÃ¼r UMC-Helpdesk-Modul"
 
-#: console_helpdesk.py:59
+#: console_helpdesk.py:61
 msgid "Name"
 msgstr "Name"
 
-#: console_helpdesk.py:60
+#: console_helpdesk.py:62
 msgid "Name of Console-Helpdesk-Settings-Object"
-msgstr "Name des Objekts für UMC-Helpdesk-Einstellungen"
+msgstr "Name des Objekts fÃ¼r UMC-Helpdesk-Einstellungen"
 
-#: console_helpdesk.py:69 console_helpdesk.py:70
+#: console_helpdesk.py:71 console_helpdesk.py:72
 msgid "Description"
 msgstr "Beschreibung"
 
-#: console_helpdesk.py:80
+#: console_helpdesk.py:82
 msgid "Category"
 msgstr "Kategorie"
 
-#: console_helpdesk.py:81
+#: console_helpdesk.py:83
 msgid "Helpdesk Category"
 msgstr "UMC-Helpdesk-Kategorie"
 
-#: console_helpdesk.py:93
+#: console_helpdesk.py:95
 msgid "General"
 msgstr "Allgemein"
 
-#: console_helpdesk.py:93
+#: console_helpdesk.py:95
 msgid "Basic Values"
 msgstr "Allgemeine Einstellungen"

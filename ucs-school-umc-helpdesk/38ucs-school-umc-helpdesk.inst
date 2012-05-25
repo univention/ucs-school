@@ -43,15 +43,15 @@ umc_init
 umc_operation_create "helpdesk-all" "Helpdesk" "" "helpdesk/*"
 
 # create container for UMC config objects
-udm container/cn create $@ --ignore_exists --position cn=UMC,cn=univention,$ldap_base --set name=config
+udm container/cn create "$@" --ignore_exists --position cn=UMC,cn=univention,$ldap_base --set name=config
 
 # create HELPDESK settings
 # Update to UCS 3.0, move old helpdesk category object
 if univention-ldapsearch -x -s base -b "cn=helpdesk-default,cn=config,cn=console,cn=univention,$ldap_base" >/dev/null; then
-	udm settings/console_helpdesk move $@ --dn "cn=helpdesk-default,cn=config,cn=console,cn=univention,$ldap_base" \
+	udm settings/console_helpdesk move "$@" --dn "cn=helpdesk-default,cn=config,cn=console,cn=univention,$ldap_base" \
 		--position "cn=config,cn=UMC,cn=univention,$ldap_base"
 else
-	udm settings/console_helpdesk create $@ --ignore_exists \
+	udm settings/console_helpdesk create "$@" --ignore_exists \
 		--position "cn=config,cn=UMC,cn=univention,$ldap_base" \
 		--set name="helpdesk-default" \
 		--set description="Helpdesk Einstellungen" \

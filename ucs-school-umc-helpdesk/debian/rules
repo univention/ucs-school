@@ -37,6 +37,9 @@ DM=$(CURDIR)/debian/${PACKAGE_NAME}-schema
 %:
 	dh $@
 
+override_dh_auto_test:
+	ucslint
+
 override_dh_auto_build:
 	dh-umc-module-build
 	dh_auto_build
@@ -53,6 +56,3 @@ binary:
 	@rm debian/ucs-school-umc-helpdesk/usr/share/python-support/ucs-school-umc-helpdesk.public
 	dh_pysupport --noscripts
 	dh binary --after dh_pysupport
-
-# override_dh_auto_install:
-# 	dh_auto_install
