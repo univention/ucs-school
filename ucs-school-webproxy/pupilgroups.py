@@ -41,7 +41,7 @@ description='Map pupil group lists to UCR'
 filter="(objectClass=univentionGroup)"
 attributes=['memberUid']
 
-dnPattern=re.compile(',cn=schueler,cn=groups,ou=[^,]+,(ou=[^,]+,)?dc=', re.I)
+dnPattern=re.compile(',cn=groups,ou=[^,]+,(ou=[^,]+,)?dc=', re.I)
 keyPattern='proxy/filter/usergroup/%s'
 
 def initialize():

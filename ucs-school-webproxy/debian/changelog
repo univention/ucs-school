@@ -1,3 +1,9 @@
+ucs-school-webproxy (8.0.20-1) unstable; urgency=low
+
+  * check all school groups in listener Bug #27288 
+
+ -- Felix Botner <botner@univention.de>  Fri, 25 May 2012 16:01:24 +0200
+
 ucs-school-webproxy (8.0.19-1) unstable; urgency=low
 
   * make the DHCP server authoritative; Bug #26931
