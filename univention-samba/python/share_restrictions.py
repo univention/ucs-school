@@ -173,7 +173,6 @@ class ShareConfiguration( object ):
 			if cfg.has_option( share.name, Restrictions.INVALID_USERS ):
 				share.invalid_users = shlex.split( cfg.get( share.name, Restrictions.INVALID_USERS ) )
 			if cfg.has_option( share.name, Restrictions.HOSTS_DENY ):
-				print cfg.get( share.name, Restrictions.HOSTS_DENY )
 				share.hosts_deny = shlex.split( cfg.get( share.name, Restrictions.HOSTS_DENY ) )
 
 			self._shares[ share.name ] = share
@@ -196,11 +195,6 @@ class ShareConfiguration( object ):
 		# samba
 		if not os.path.exists( ShareConfiguration.PRINTERS_UDM_DIR ):
 			return
-
-		reg_smb = re.compile('\s*\[([^\]]+)\]')
-		reg_smb_cups = re.compile('\s*printer name =(.*)')
-		reg_invalid = re.compile('\s*invalid users =(.*)')
-		reg_valid = re.compile('\s*valid users =(.*)')
 
 		for filename in os.listdir( ShareConfiguration.PRINTERS_UDM_DIR ):
 			cfg = ConfigParser()
@@ -229,7 +223,6 @@ class ShareConfiguration( object ):
 				prt.valid_users = shlex.split( cfg.get( prt_name, Restrictions.VALID_USERS ) )
 			if cfg.has_option( prt_name, Restrictions.HOSTS_DENY ):
 				prt.hosts_deny = shlex.split( cfg.get( prt_name, Restrictions.HOSTS_DENY ) )
-
 
 	def _set_invalids( self, value, share, group ):
 		if share and group and value.lower() in ( 'true', 'yes', '1' ):
@@ -342,6 +335,8 @@ class ShareConfiguration( object ):
 	def write( self ):
 		includes = set()
 
+		self.delete()
+
 		# write conf file with global options
 		if len( globals ):
 			with file( ShareConfiguration.GLOBAL_CONF, 'w' ) as fd:
@@ -378,7 +373,7 @@ class ShareConfiguration( object ):
 
 			with file( filename, 'w' ) as fd:
 				if not prt.smbname:
-					fd.write( '[%s]\n' % prt.smbname )
+					fd.write( '[%s]\n' % prt.name )
 				else:
 					fd.write( '[%s]\n' % prt.smbname )
 					fd.write( 'printer name = %s\n' % prt.name )
@@ -386,20 +381,16 @@ class ShareConfiguration( object ):
 					fd.write( 'guest ok = yes\n' )
 					fd.write( 'printable = yes\n' )
 
-				for option in ( 'valid_users', 'invalid_users', 'hosts_deny', 'hosts_allow' ):
+				for option in ( Restrictions.VALID_USERS, Restrictions.INVALID_USERS, Restrictions.HOSTS_DENY, Restrictions.HOSTS_ALLOW ):
 					if option in prt and prt[ option ] is not None:
 						fd.write( '%s = ' % option )
-						fd.write( ' '.join( getattr( prt, option ) ) )
+						fd.write( ' '.join( prt[ option ] ) )
 						fd.write( '\n' )
 
 
 		# all include statements go to this file (create file een if there is no include
 		with file( ShareConfiguration.INCLUDE_CONF, 'w' ) as f:
 			f.write( '\n'.join( includes ) + '\n' )
-
-	@property
-	def options( self ):
-		return self._options
 
 	@property
 	def globals( self ):
@@ -412,3 +403,11 @@ class ShareConfiguration( object ):
 	@property
 	def printers( self ):
 		return self._printers
+
+if __name__ == '__main__':
+	cfg = ShareConfiguration()
+	cfg.read()
+	print cfg.globals
+	print cfg.shares
+	print cfg.printers
+	cfg.write()

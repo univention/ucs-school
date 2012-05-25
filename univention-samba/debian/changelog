@@ -1,3 +1,10 @@
+univention-samba (6.0.34-1) unstable; urgency=low
+
+  * share reistrictions: fixed writing of printer configuration, cleanup,
+    add test progamm; Bug #26392
+
+ -- Andreas Büsching <buesching@univention.de>  Fri, 25 May 2012 18:40:54 +0200
+
 univention-samba (6.0.33-2) unstable; urgency=low
 
   * samba scripts: Fixed typo (Bug #26815)
