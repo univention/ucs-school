@@ -1,3 +1,9 @@
+univention-dhcp (6.0.12-1) unstable; urgency=low
+
+  * updated copyright
+
+ -- Florian Best <best@univention.de>  Fri, 25 May 2012 10:48:56 +0200
+
 univention-dhcp (6.0.11-1) unstable; urgency=low
 
   * fixed typo in UCR template; Bug #26931

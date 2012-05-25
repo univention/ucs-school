@@ -1,3 +1,9 @@
+univention-ldap (8.0.78-1) unstable; urgency=low
+
+  * updated copyright
+
+ -- Florian Best <best@univention.de>  Fri, 25 May 2012 10:48:56 +0200
+
 univention-ldap (8.0.77-6) unstable; urgency=low
 
   * Added displayName and msGPOUserExtensionNames to GPOs (Bug #26522)
