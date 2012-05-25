@@ -379,15 +379,14 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 		if (this._vncEnabled) {
 			this._actions.push({
 				name: 'viewVNC',
-				label: this._('View VNC'),
+				label: this._('VNC-Access'),
 				isStandardAction: false,
 				isMultiAction: false,
 				canExecute: function( item ) {
 					return item.connection[ 0 ] == 'connected' && item.user[ 0 ];
 				},
 				callback: dojo.hitch(this, function( item ) {
-					var src = '/umcp/command/computerroom/vnc?computer=' + item;
-					window.open(window.location.origin + src);
+					window.open('/umcp/command/computerroom/vnc?computer=' + item);
 				})
 			});
 		}

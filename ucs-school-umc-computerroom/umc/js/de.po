@@ -311,8 +311,8 @@ msgid "Validity of personal settings"
 msgstr "Gültigkeit der persönlichen Einstellungen"
 
 #: umc/js/computerroom.js:382
-msgid "View VNC"
-msgstr "per VNC ansehen"
+msgid "VNC-Access"
+msgstr "VNC-Zugriff"
 
 #: umc/js/_computerroom/Settings.js:71
 msgid "Web access profile"

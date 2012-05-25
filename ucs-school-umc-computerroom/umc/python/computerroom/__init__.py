@@ -400,7 +400,7 @@ class Instance( SchoolBaseModule ):
 		except:
 			raise UMC_CommandError( 'VNC template file does not exists' )
 
-		port = ucr.get('csschool/umc/computerroom/ultravnc/port', '5900')
+		port = ucr.get('ucsschool/umc/computerroom/vnc/port', '11100')
 		hostname = computer.ipAddress
 
 		# Insert Hostname and Port
