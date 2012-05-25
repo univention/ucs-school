@@ -1,3 +1,9 @@
+ucs-school-lib (1.0.55-1) unstable; urgency=low
+
+  * Update po-files again (Bug #26748)
+
+ -- Jascha Geerds <geerds@univention.de>  Fri, 25 May 2012 16:40:49 +0200
+
 ucs-school-lib (1.0.54-1) unstable; urgency=low
 
   * Update po-files (Bug #26748)

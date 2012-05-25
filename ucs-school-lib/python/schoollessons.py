@@ -126,7 +126,7 @@ class SchoolLessons( ConfigParser.ConfigParser ):
 		# ensure there is no intersection between the lessons
 		for item in self._lessons:
 			if lesson.intersect(item) or lesson.name == item.name:
-				raise AttributeError('lesson intersects with existing one')
+				raise AttributeError(_('Overlapping lessons are not allowed'))
 
 		self._lessons.append( lesson )
 
