@@ -1,6 +1,12 @@
+univention-ldb-modules (0.0.4-2) unstable; urgency=low
+
+  * updated copyright (Bug #26882)
+
+ -- Florian Best <best@univention.de>  Tue, 29 May 2012 08:39:56 +0200
+
 univention-ldb-modules (0.0.4-1) unstable; urgency=low
 
-  * updated copyright
+  * updated copyright (Bug #26882)
 
  -- Florian Best <best@univention.de>  Fri, 25 May 2012 10:48:56 +0200
 

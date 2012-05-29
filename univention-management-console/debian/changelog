@@ -1,6 +1,6 @@
-univention-management-console (4.0.233-1) unstable; urgency=low
+univention-management-console (4.0.233-2) unstable; urgency=low
 
-  * updated copyright
+  * updated copyright (Bug #26882)
 
  -- Florian Best <best@univention.de>  Fri, 25 May 2012 10:48:56 +0200
 

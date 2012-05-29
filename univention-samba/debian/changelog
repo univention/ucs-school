@@ -1,3 +1,9 @@
+univention-samba (6.0.34-2) unstable; urgency=low
+
+  * updated copyright (Bug #26882)
+
+ -- Florian Best <best@univention.de>  Tue, 29 May 2012 08:33:56 +0200
+
 univention-samba (6.0.34-1) unstable; urgency=low
 
   * share reistrictions: fixed writing of printer configuration, cleanup,
