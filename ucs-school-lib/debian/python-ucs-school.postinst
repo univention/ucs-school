@@ -35,4 +35,8 @@
 # ignore the ou=Domain Controllers by default
 ucr set "ucsschool/ldap/ignore/ous?Domain Controllers"
 
+if [ ! -e /var/lib/ucs-school-lib/lessons.ini ]; then
+	cp /usr/share/ucs-school-lib/lessons.ini /var/lib/ucs-school-lib/
+fi
+
 exit 0
