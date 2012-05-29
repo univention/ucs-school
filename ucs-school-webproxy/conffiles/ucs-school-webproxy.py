@@ -131,30 +131,10 @@ def createTemporaryConfig(fn_temp_config, configRegistry, DIR_TEMP):
 			proxy_settinglist.add(match.group(1))
 	proxy_settinglist = list(proxy_settinglist)
 
-	roomlist = []
-	usergrouplist = []
 	roomIPs = {} # { 'theBigRoom': ['127.0.0.1', '127.4.5.7'] }
 	roomRule = {} # { 'kmiyagi': 'theBigRoom' }
 	roomRules = [] # [ 'kmiyagi' ]
 	for key in keylist:
-		if key.startswith('proxy/filter/hostgroup/blacklisted/'):
-			room = key[ len('proxy/filter/hostgroup/blacklisted/') : ]
-			if room[0].isdigit():
-				room = 'univention-%s' % room
-			roomlist.append(room)
-			f.write('src %s {\n' % quote(room) )
-			ipaddrs = configRegistry[key].split(' ')
-			for ipaddr in ipaddrs:
-				f.write('	 ip %s\n' % ipaddr)
-			f.write('}\n\n')
-		if key.startswith('proxy/filter/usergroup/'):
-			usergroupname=key.rsplit('/', 1)[1]
-			if 'proxy/filter/groupdefault/%s' % (usergroupname, ) in configRegistry: # groupdefault is set for usergroupname
-				usergrouplist.append(usergroupname)
-				f.write('src usergroup-%s {\n' % quote(usergroupname) )
-				f.write('	 userlist usergroup-%s\n' % quote(usergroupname) )
-				f.write('}\n\n')
-				touchfnlist.append( 'usergroup-%s' % quote(usergroupname) )
 		if key.startswith('proxy/filter/room/'):
 			parts = key.split('/')
 			if len(parts) == 5:
@@ -174,6 +154,27 @@ def createTemporaryConfig(fn_temp_config, configRegistry, DIR_TEMP):
 			f.write('	ip	%s\n' % (IP, ))
 		f.write('}\n')
 
+	roomlist = []
+	usergrouplist = []
+	for key in keylist:
+		if key.startswith('proxy/filter/hostgroup/blacklisted/'):
+			room = key[ len('proxy/filter/hostgroup/blacklisted/') : ]
+			if room[0].isdigit():
+				room = 'univention-%s' % room
+			roomlist.append(room)
+			f.write('src %s {\n' % quote(room) )
+			ipaddrs = configRegistry[key].split(' ')
+			for ipaddr in ipaddrs:
+				f.write('	 ip %s\n' % ipaddr)
+			f.write('}\n\n')
+		if key.startswith('proxy/filter/usergroup/'):
+			usergroupname=key.rsplit('/', 1)[1]
+			if 'proxy/filter/groupdefault/%s' % (usergroupname, ) in configRegistry: # groupdefault is set for usergroupname
+				usergrouplist.append(usergroupname)
+				f.write('src usergroup-%s {\n' % quote(usergroupname) )
+				f.write('	 userlist usergroup-%s\n' % quote(usergroupname) )
+				f.write('}\n\n')
+				touchfnlist.append( 'usergroup-%s' % quote(usergroupname) )
 	f.write('dest blacklist {\n')
 	f.write('	 domainlist blacklisted-domain\n')
 	f.write('	 urllist	blacklisted-url\n')

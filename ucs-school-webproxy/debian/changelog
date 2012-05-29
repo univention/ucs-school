@@ -1,3 +1,9 @@
+ucs-school-webproxy (8.0.22-1) unstable; urgency=low
+
+  * move room-source definition before normal source definitions (Bug #26382)
+
+ -- Janek Walkenhorst <walkenhorst@univention.de>  Tue, 29 May 2012 15:46:44 +0200
+
 ucs-school-webproxy (8.0.21-1) unstable; urgency=low
 
   * fix usergroup UCRV for spaces in group name (Bug #26974)
