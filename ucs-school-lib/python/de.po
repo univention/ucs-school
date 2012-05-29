@@ -20,4 +20,4 @@ msgstr ""
 
 #: python/schoollessons.py:61 python/schoollessons.py:129
 msgid "Overlapping lessons are not allowed"
-msgstr "Schulstunden welche sich überschneiden sind nicht erlaubt"
+msgstr "Überlappende Schulstunden sind nicht erlaubt"

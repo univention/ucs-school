@@ -1,3 +1,9 @@
+ucs-school-lib (1.0.56-1) unstable; urgency=low
+
+  * Update po-files (Bug #26748)
+
+ -- Jascha Geerds <geerds@univention.de>  Tue, 29 May 2012 14:25:27 +0200
+
 ucs-school-lib (1.0.55-3) unstable; urgency=low
 
   * Create the directory /var/lib/ucs-school-lib during install (Bug #26748)
