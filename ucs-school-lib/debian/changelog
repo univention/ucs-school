@@ -1,3 +1,9 @@
+ucs-school-lib (1.0.55-3) unstable; urgency=low
+
+  * Create the directory /var/lib/ucs-school-lib during install (Bug #26748)
+
+ -- Jascha Geerds <geerds@univention.de>  Tue, 29 May 2012 13:40:02 +0200
+
 ucs-school-lib (1.0.55-2) unstable; urgency=low
 
   * Don't overwrite lesson times during install (Bug #26748)
