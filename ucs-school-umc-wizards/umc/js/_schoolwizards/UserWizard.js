@@ -141,7 +141,7 @@ dojo.declare("umc.modules._schoolwizards.UserWizard", [ umc.modules._schoolwizar
 			var types = ['teacher', 'staff', 'teachersAndStaff'];
 			var classBox = this.getWidget('user', 'class');
 			var newClassButton = this.getPage('user')._form.getButton('newClass');
-			if (types.indexOf(selectedType) >= 0) {
+			if (dojo.indexOf(types, selectedType) >= 0) {
 				classBox.reset();
 				classBox.set('required', false);
 				classBox.hide();

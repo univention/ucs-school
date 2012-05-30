@@ -1,3 +1,9 @@
+ucs-school-umc-wizards (1.0.32-1) unstable; urgency=low
+
+  * replaced Array.indexOf with dojo.indexOf; Bug #27358
+
+ -- Alexander Kläser <klaeser@univention.de>  Wed, 30 May 2012 17:50:23 +0200
+
 ucs-school-umc-wizards (1.0.31-1) unstable; urgency=low
 
   * added license check; Bug #27339
