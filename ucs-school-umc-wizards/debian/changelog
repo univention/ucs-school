@@ -1,3 +1,9 @@
+ucs-school-umc-wizards (1.0.30-3) unstable; urgency=low
+
+  * Build for Python 2.6 only (Bug #27324)
+
+ -- Stefan Gohmann <gohmann@univention.de>  Wed, 30 May 2012 08:08:03 +0200
+
 ucs-school-umc-wizards (1.0.30-2) unstable; urgency=low
 
   * fixed package description; Bug #26344
