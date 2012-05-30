@@ -1,3 +1,9 @@
+ucs-school-import (8.0.53-2) unstable; urgency=low
+
+  * Depend on univention-ldap-server package (Bug #27325)
+
+ -- Stefan Gohmann <gohmann@univention.de>  Wed, 30 May 2012 12:29:14 +0200
+
 ucs-school-import (8.0.53-1) unstable; urgency=low
 
   * DHCP option is of type string now; Bug #26931
