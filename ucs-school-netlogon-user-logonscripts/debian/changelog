@@ -1,3 +1,9 @@
+ucs-school-netlogon-user-logonscripts (7.0.9-1) unstable; urgency=low
+
+  * fixed preinst (Bug #27134) 
+
+ -- Felix Botner <botner@univention.de>  Wed, 30 May 2012 14:59:12 +0200
+
 ucs-school-netlogon-user-logonscripts (7.0.8-1) unstable; urgency=low
 
   * create logon scripts as root (Bug #27285) 
