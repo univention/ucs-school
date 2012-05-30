@@ -34,7 +34,7 @@
 
 # save netlogon/user dir and cp old userlogon scripts
 # https://forge.univention.org/bugzilla/show_bug.cgi?id=27134
-if [ "$1" = "install" -a -n "$2" ] && dpkg --compare-versions "$2" lt 7.0.5; then
+if [ "$1" = "upgrade" -a -n "$2" ] && dpkg --compare-versions "$2" lt 7.0.5; then
 	if [ -d /var/lib/samba/netlogon/user ]; then
 		mv /var/lib/samba/netlogon/user /var/lib/samba/netlogon/user.$(date +%s)
 	fi
