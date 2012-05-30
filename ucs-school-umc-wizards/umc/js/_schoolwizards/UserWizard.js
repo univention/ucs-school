@@ -78,7 +78,7 @@ dojo.declare("umc.modules._schoolwizards.UserWizard", [ umc.modules._schoolwizar
 				name: 'newClass',
 				label: this._('Create a new class'),
 				callback: dojo.hitch(this, function() {
-					umc.app.openModule('schoolwizards', 'schoolwizards/classes');
+					dojo.publish('/umc/modules/open', ['schoolwizards', 'schoolwizards/classes']);
 				})
 			}],
 			widgets: [{
@@ -115,17 +115,6 @@ dojo.declare("umc.modules._schoolwizards.UserWizard", [ umc.modules._schoolwizar
 			         ['mailPrimaryAddress'],
 			         ['password']]
 		}];
-	},
-
-	buildRendering: function() {
-		this.inherited(arguments);
-		var tabContainer = umc.app._tabContainer;
-		this.connect(tabContainer, 'selectChild', function(evt) {
-			var selectedTab = tabContainer.selectedChildWidget;
-			if (selectedTab.moduleID === 'schoolwizards' && selectedTab.moduleFlavor === 'schoolwizards/users') {
-				this.reloadClasses();
-			}
-		});
 	},
 
 	restart: function() {
@@ -167,15 +156,21 @@ dojo.declare("umc.modules._schoolwizards.UserWizard", [ umc.modules._schoolwizar
 		}
 	},
 
+	onShow: function() {
+		this.reloadClasses();
+	},
+
 	reloadClasses: function() {
 		var schoolName = this.getWidget('general', 'school').get('value');
-		umc.tools.umcpCommand('schoolwizards/classes', {'school': schoolName}).then(
-			dojo.hitch(this, function(response) {
-				var classes = dojo.map(response.result, function(item) {
-					return item.label;
-				});
-				this.getWidget('user', 'class').set('staticValues', classes);
-			})
-		);
+		if (schoolName) {
+			umc.tools.umcpCommand('schoolwizards/classes', {'school': schoolName}).then(
+				dojo.hitch(this, function(response) {
+					var classes = dojo.map(response.result, function(item) {
+						return item.label;
+					});
+					this.getWidget('user', 'class').set('staticValues', classes);
+				})
+			);
+		}
 	}
 });

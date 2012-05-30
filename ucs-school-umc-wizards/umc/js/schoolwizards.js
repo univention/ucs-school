@@ -57,6 +57,13 @@ dojo.declare("umc.modules.schoolwizards", [ umc.widgets.Module, umc.i18n.Mixin ]
 				dojo.publish('/umc/tabs/close', [this]);
 			});
 		}
+
+		if ('onShow' in this._wizard) {
+			// send a reload command to wizard
+			this.connect(this, 'onShow', function(evt) {
+				this._wizard.onShow();
+			});
+		}
 	},
 
 	_getWizard: function(moduleFlavor) {

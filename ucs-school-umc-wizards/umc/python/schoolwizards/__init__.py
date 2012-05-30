@@ -42,7 +42,7 @@ from univention.admin.uexceptions import valueError
 import univention.admin.modules as udm_modules
 import univention.admin.syntax as udm_syntax
 
-from ucsschool.lib.schoolldap import SchoolBaseModule, LDAP_Connection, LDAP_Filter, _init_search_base
+from ucsschool.lib.schoolldap import SchoolBaseModule, LDAP_Connection, LDAP_Filter, _init_search_base, check_license, LicenseError
 
 from SchoolImport import *
 
@@ -90,11 +90,22 @@ class Instance(SchoolBaseModule, SchoolImport):
 		                                    scope = 'sub', filter = ldap_filter)
 		return bool(address_exists)
 
+	def _check_license(self, request):
+		try:
+			check_license()
+			return True
+		except (LicenseError), e:
+			MODULE.warn('License error: %s' % e)
+			self.finished(request.id, dict(message=str(e)))
+			return False
+
 	@LDAP_Connection()
 	def create_user(self, request, search_base=None,
 	                ldap_user_read=None, ldap_position=None):
 		"""Create a new user.
 		"""
+		if not self._check_license(request):
+			return
 		try:
 			# Validate request options
 			keys = ['username', 'lastname', 'firstname', 'school', 'type']
@@ -154,6 +165,8 @@ class Instance(SchoolBaseModule, SchoolImport):
 	                  ldap_user_read=None, ldap_position=None):
 		"""Create a new school.
 		"""
+		if not self._check_license(request):
+			return
 		try:
 			# Validate request options
 			options = ['name']
@@ -189,6 +202,8 @@ class Instance(SchoolBaseModule, SchoolImport):
 	                 ldap_user_read=None, ldap_position=None):
 		"""Create a new class.
 		"""
+		if not self._check_license(request):
+			return
 		try:
 			# Validate request options
 			self.required_options(request, 'school', 'name')
@@ -222,6 +237,8 @@ class Instance(SchoolBaseModule, SchoolImport):
 	                    ldap_user_read=None, ldap_position=None):
 		"""Create a new computer.
 		"""
+		if not self._check_license(request):
+			return
 		try:
 			# Validate request options
 			self.required_options(request, 'type', 'name', 'mac', 'school', 'ipAddress')
