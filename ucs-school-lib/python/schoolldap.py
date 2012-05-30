@@ -65,6 +65,13 @@ _password = None
 
 _ = Translation('python-ucs-school').translate
 
+try:
+	import univention.admin.license
+	GPLversion=False
+except:
+	GPLversion=True
+
+
 def set_credentials( dn, passwd ):
 	global _user_dn, _password
 
@@ -88,7 +95,6 @@ def set_credentials( dn, passwd ):
 # decorator for LDAP connections
 _ldap_connections = {}
 _search_base = None
-_licenseCheck = 0
 
 USER_READ = 'ldap_user_read'
 USER_WRITE = 'ldap_user_write'
@@ -212,6 +218,60 @@ def LDAP_Connection( *connection_types ):
 
 		return wraps( func )( wrapper_func )
 	return inner_wrapper
+
+class LicenseError( Exception ):
+	pass
+
+@LDAP_Connection(MACHINE_READ, MACHINE_WRITE)
+def check_license(ldap_machine_read = None, ldap_machine_write = None, ldap_position = None, search_base = None ):
+	"""Checks the license cases and throws exceptions accordingly. The logic is copied from the UDM UMC module."""
+	global GPLversion
+	ldap_connection = ldap_machine_write
+
+	# license check (see also univention.admin.uldap.access.bind())
+	_licenseCheck = 0
+	if not GPLversion:
+		_licenseCheck = univention.admin.license.init_select(ldap_connection, 'admin')
+
+	# in case of errors, raise an exception with user friendly message
+	try:
+		if GPLversion:
+			return  # don't raise exception here
+			#raise udm_errors.licenseGPLversion
+		ldap_connection._validateLicense()  # throws more exceptions in case the license could not be found
+		if _licenseCheck == 1:
+			raise udm_errors.licenseClients
+		elif _licenseCheck == 2:
+			raise udm_errors.licenseAccounts
+		elif _licenseCheck == 3:
+			raise udm_errors.licenseDesktops
+		elif _licenseCheck == 4:
+			raise udm_errors.licenseGroupware
+		#elif _licenseCheck == 5:
+		#   # Free for personal use edition
+		#   raise udm_errors.freeForPersonalUse
+	except udm_errors.licenseNotFound:
+		raise LicenseError(_('License not found. During this session add and modify are disabled.'))
+	except udm_errors.licenseAccounts:
+		raise LicenseError(_('You have too many user accounts for your license. During this session add and modify are disabled.'))
+	except udm_errors.licenseClients:
+		raise LicenseError(_('You have too many client accounts for your license. During this session add and modify are disabled.'))
+	except udm_errors.licenseDesktops:
+		raise LicenseError(_('You have too many desktop accounts for your license. During this session add and modify are disabled.'))
+	except udm_errors.licenseGroupware:
+		raise LicenseError(_('You have too many groupware accounts for your license. During this session add and modify are disabled.'))
+	except udm_errors.licenseExpired:
+		raise LicenseError(_('Your license is expired. During this session add and modify are disabled.'))
+	except udm_errors.licenseWrongBaseDn:
+		raise LicenseError(_('Your license is not valid for your LDAP-Base. During this session add and modify are disabled.'))
+	except udm_errors.licenseInvalid:
+		raise LicenseError(_('Your license is not valid. During this session add and modify are disabled.'))
+	except udm_errors.licenseDisableModify:
+		raise LicenseError(_('Your license does not allow modifications. During this session add and modify are disabled.'))
+	except udm_errors.freeForPersonalUse:
+		raise LicenseError(_('You are currently using the "Free for personal use" edition of Univention Corporate Server.'))
+	except udm_errors.licenseGPLversion:
+		raise LicenseError(_('Your license status could not be validated. Thus, you are not eligible to support and maintenance. If you have bought a license, please contact Univention or your Univention partner.'))
 
 def _init_search_base(ldap_connection, force=False):
 	global _search_base

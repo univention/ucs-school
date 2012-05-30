@@ -1,3 +1,9 @@
+ucs-school-lib (1.0.57-1) unstable; urgency=low
+
+  * added check_license() function; Bug #27339
+
+ -- Alexander Kläser <klaeser@univention.de>  Wed, 30 May 2012 15:38:59 +0200
+
 ucs-school-lib (1.0.56-1) unstable; urgency=low
 
   * Update po-files (Bug #26748)
