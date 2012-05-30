@@ -1,3 +1,9 @@
+ucs-school-radius-802.1x (1.0.4-1) unstable; urgency=low
+
+  * add default value for ldap port (Bug #25062)
+
+ -- Janek Walkenhorst <walkenhorst@univention.de>  Wed, 30 May 2012 11:32:51 +0200
+
 ucs-school-radius-802.1x (1.0.3-1) unstable; urgency=low
 
   * support different LDAP port (Bug #24062)

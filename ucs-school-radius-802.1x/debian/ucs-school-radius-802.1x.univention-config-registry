@@ -37,6 +37,7 @@ User: root
 Group: freerad
 Mode: 640
 Variables: ldap/server/name
+Variables: ldap/server/port
 Variables: ldap/base
 Variables: freeradius/conf/starttls
 Variables: freeradius/conf/auth-type/mschap
