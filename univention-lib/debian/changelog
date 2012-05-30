@@ -1,3 +1,10 @@
+univention-lib (1.0.53-4) unstable; urgency=low
+
+  * Don't use try/except/finally which is new in Python 2.5
+    (http://docs.python.org/whatsnew/2.5.html#pep-341). (Bug #27324)
+
+ -- Stefan Gohmann <gohmann@univention.de>  Wed, 30 May 2012 09:19:56 +0200
+
 univention-lib (1.0.53-3) unstable; urgency=low
 
   * Build again for all python versions because this will break the
