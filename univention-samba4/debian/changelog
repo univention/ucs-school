@@ -1,3 +1,10 @@
+univention-samba4 (1.0.138-18) unstable; urgency=low
+
+  * Create default and default.V2 also during package upgrade
+    (Bug #27372)
+
+ -- Stefan Gohmann <gohmann@univention.de>  Thu, 31 May 2012 06:55:22 +0200
+
 univention-samba4 (1.0.138-17) unstable; urgency=low
 
   * Create default and default.V2 directories in windows-profiles
