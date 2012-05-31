@@ -1,6 +1,8 @@
 ucs-school-umc-distribution (7.0.29-1) unstable; urgency=low
 
-  * fixed typos; Bug #27399
+  * fixed wrong variable references
+  * added flavor to upload
+  Bug #27399
 
  -- Alexander Kläser <klaeser@univention.de>  Thu, 31 May 2012 19:35:11 +0200
 

@@ -146,6 +146,9 @@ dojo.declare("umc.modules._distribution.DetailPage", [ umc.widgets.Page, umc.wid
 			type: 'MultiUploader',
 			name: 'files',
 			command: 'distribution/upload',
+			dynamicOptions: {
+				flavor: this.moduleFlavor
+			},
 			showClearButton: false,
 			label: this._('Files'),
 			description: this._('Files that have been added to this teaching material project'),
