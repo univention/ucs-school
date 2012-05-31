@@ -46,7 +46,7 @@ if [ -z "$2" ]; then
 	mkdir -p /home/groups
 
 	mkdir -p /etc/univention/skel/windows-profiles
-	for dname in Win95 WinNT Win2k WinXP Win2K3 Vista Vista.V2 ; do
+	for dname in Win95 WinNT Win2k WinXP Win2K3 Vista Vista.V2 default default.V2; do
 		mkdir -p /etc/univention/skel/windows-profiles/$dname
 	done
 fi

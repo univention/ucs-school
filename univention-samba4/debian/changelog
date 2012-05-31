@@ -1,3 +1,10 @@
+univention-samba4 (1.0.138-17) unstable; urgency=low
+
+  * Create default and default.V2 directories in windows-profiles
+    (Bug #27372)
+
+ -- Stefan Gohmann <gohmann@univention.de>  Thu, 31 May 2012 06:43:21 +0200
+
 univention-samba4 (1.0.138-16) unstable; urgency=low
 
   * Install pam module again (Bug #27250)
