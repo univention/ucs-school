@@ -1,3 +1,9 @@
+univention-samba (6.0.34-6) unstable; urgency=low
+
+  * Remove conflict to univention-samba4-sysvol-sync (Bug #27327)
+
+ -- Stefan Gohmann <gohmann@univention.de>  Thu, 31 May 2012 09:45:22 +0200
+
 univention-samba (6.0.34-5) unstable; urgency=low
 
   * Create default and default.V2 also during package upgrade

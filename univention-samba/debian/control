@@ -29,8 +29,7 @@ Conflicts: samba4,
  samba-dsdb-modules,
  samba4-common-bin,
  samba4-clients,
- winbind4,
- univention-samba4-sysvol-sync
+ winbind4
 Description: UCS - Samba domain controller
  This package contains the configuration for the Samba
  domain controller. It provides authentication, file and
