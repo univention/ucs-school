@@ -491,7 +491,7 @@ class Project(_Dict):
 				if os.path.exists(src):
 					os.remove(src)
 				else:
-					MODULE.info( 'file has already been distributed: %s [%s]' % (src, e) )
+					MODULE.info( 'file has already been distributed: %s' % src )
 			except (OSError, IOError) as e:
 				MODULE.error( 'failed to remove file: %s [%s]' % (src, e) )
 

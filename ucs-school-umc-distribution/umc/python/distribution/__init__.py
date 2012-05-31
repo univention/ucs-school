@@ -74,7 +74,7 @@ class Instance( SchoolBaseModule ):
 	def upload(self, request):
 		# make sure that we got a list
 		if not isinstance(request.options, (tuple, list)):
-			raise UMC_OptionTypeError( 'Expected list of strings, but got: %s' % str(ids) )
+			raise UMC_OptionTypeError( 'Expected list of dicts, but got: %s' % str(request.options) )
 		file = request.options[0]
 		if not ('tmpfile' in file and 'filename' in file):
 			raise UMC_OptionTypeError( 'Invalid upload data, got: %s' % str(file) )
