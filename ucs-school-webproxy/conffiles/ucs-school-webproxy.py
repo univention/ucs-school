@@ -155,7 +155,7 @@ def createTemporaryConfig(fn_temp_config, configRegistry, DIR_TEMP):
 		f.write('}\n')
 
 	roomlist = []
-	usergrouplist = []
+	usergroupSetting = [] # [ (priority, usergroupname, proxy_setting, ) ] # for sorting by priority
 	for key in keylist:
 		if key.startswith('proxy/filter/hostgroup/blacklisted/'):
 			room = key[ len('proxy/filter/hostgroup/blacklisted/') : ]
@@ -167,14 +167,25 @@ def createTemporaryConfig(fn_temp_config, configRegistry, DIR_TEMP):
 			for ipaddr in ipaddrs:
 				f.write('	 ip %s\n' % ipaddr)
 			f.write('}\n\n')
+		# usergroup
 		if key.startswith('proxy/filter/usergroup/'):
 			usergroupname=key.rsplit('/', 1)[1]
-			if 'proxy/filter/groupdefault/%s' % (usergroupname, ) in configRegistry: # groupdefault is set for usergroupname
-				usergrouplist.append(usergroupname)
-				f.write('src usergroup-%s {\n' % quote(usergroupname) )
-				f.write('	 userlist usergroup-%s\n' % quote(usergroupname) )
-				f.write('}\n\n')
-				touchfnlist.append( 'usergroup-%s' % quote(usergroupname) )
+			default = configRegistry.get('proxy/filter/groupdefault/%s' % usergroupname)
+			if default and default in proxy_settinglist:
+				priority = configRegistry.get('proxy/filter/setting/%s/priority' % default)
+				if priority and priority.isdigit():
+					priority = int(priority)
+				else:
+					priority = 0
+				usergroupSetting.append((priority, usergroupname, default))
+
+	# src usergroup
+	for (priority, usergroupname, proxy_setting) in reversed(sorted(usergroupSetting)):
+		f.write('src usergroup-%s {\n' % quote(usergroupname) )
+		f.write('        userlist usergroup-%s\n' % quote(usergroupname) )
+		f.write('}\n\n')
+		touchfnlist.append( 'usergroup-%s' % quote(usergroupname) )
+
 	f.write('dest blacklist {\n')
 	f.write('	 domainlist blacklisted-domain\n')
 	f.write('	 urllist	blacklisted-url\n')
@@ -232,18 +243,7 @@ def createTemporaryConfig(fn_temp_config, configRegistry, DIR_TEMP):
 			f.write('		redirect %s\n' % default_redirect)
 			f.write('	}\n')
 
-	usergroupSetting = [] # [ (priority, usergroupname, proxy_setting, ) ] # for sorting by priority
-	for usergroupname in usergrouplist:
-		proxy_setting_key_for_group='proxy/filter/groupdefault/%s' % usergroupname
-		if configRegistry[proxy_setting_key_for_group] in proxy_settinglist:
-			proxy_setting=configRegistry[proxy_setting_key_for_group]
-			priority = configRegistry.get('proxy/filter/setting/%s/priority' % (proxy_setting, ), '0')
-			if priority.isdigit():
-				priority = int(priority)
-			else:
-				priority = 0
-			usergroupSetting.append((priority, usergroupname, proxy_setting, ))
-
+	# acl usergroup
 	for (priority, usergroupname, proxy_setting, ) in reversed(sorted(usergroupSetting)):
 		filtertype = configRegistry.get('proxy/filter/setting/%s/filtertype' % proxy_setting, 'whitelist-blacklist-pass')
 		if filtertype == 'whitelist-blacklist-pass':

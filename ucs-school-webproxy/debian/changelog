@@ -1,3 +1,9 @@
+ucs-school-webproxy (8.0.23-1) unstable; urgency=low
+
+  * respect priority for usergroup src entries (Bug #27360) 
+
+ -- Felix Botner <botner@univention.de>  Wed, 06 Jun 2012 11:08:23 +0200
+
 ucs-school-webproxy (8.0.22-1) unstable; urgency=low
 
   * move room-source definition before normal source definitions (Bug #26382)
