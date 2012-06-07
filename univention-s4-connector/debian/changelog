@@ -1,3 +1,11 @@
+univention-s4-connector (6.0.128-28) unstable; urgency=low
+
+  * First UCS@School errata for this package
+  * Fix univention-s4-position-sync traceback due to connector/s4/ldap/bindpw
+    (Bug #27482)
+
+ -- Arvid Requate <requate@univention.de>  Thu, 07 Jun 2012 14:32:59 +0200
+
 univention-s4-connector (6.0.128-27) unstable; urgency=low
 
   * updated copyright (Bug #26882)
