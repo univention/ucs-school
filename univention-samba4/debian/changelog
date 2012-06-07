@@ -1,3 +1,16 @@
+univention-samba4 (1.0.138-20) unstable; urgency=low
+
+  * Fix fetching the machine secret for search (Bug #27480)
+
+ -- Arvid Requate <requate@univention.de>  Thu, 07 Jun 2012 14:29:40 +0200
+
+univention-samba4 (1.0.138-19) unstable; urgency=low
+
+  * First UCS@School errata for this package
+  * Avoid LDAP redirects for ldapmodify (Bug #27494)
+
+ -- Arvid Requate <requate@univention.de>  Thu, 07 Jun 2012 14:28:44 +0200
+
 univention-samba4 (1.0.138-18) unstable; urgency=low
 
   * Create default and default.V2 also during package upgrade
