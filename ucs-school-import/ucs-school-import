@@ -802,31 +802,6 @@ def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None, ShareFileServer=None
 			except:
 				pass
 
-		# create userlogon-share if not existant
-		objects = univention.admin.modules.lookup(share_module, co, lo, \
-				scope='sub', superordinate=superordinate, \
-				base='cn=shares,%s' % ( getDN(schoolNr)), \
-				filter=univention.admin.filter.expression('cn','userlogon'))
-#		if objects:
-#			share = "cn=userlogon,cn=shares,%s" % (getDN(schoolNr), )
-#			for object in objects:
-#				if object.dn == share:
-#					share_exists=1
-#					break
-		if not objects:
-			position.setDn("cn=shares,%s" % (getDN(schoolNr), ))
-			object=share_module.object(co, lo, position=position)
-			object.open()
-			object.options=['samba']
-			object["name"]="userlogon"
-			object["host"]=dccn
-			object['path']='/var/lib/samba/userlogon'
-			try:
-				create_object(object)
-			except:
-				pass
-			print "need to create share: %s"%object.dn
-
 	if not schoolNr in verified_ous:
 		verified_ous.append(schoolNr)
 
