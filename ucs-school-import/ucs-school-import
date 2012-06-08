@@ -2203,13 +2203,10 @@ def import_computer():
 			if check_computer(module,name,schoolNr):
 				print "computer %s already exists (school %s)"%(name,schoolNr)
 				success = False
+			elif check_macAddress(MAC):
+				print 'mac %s for computer %s already used (school %s)' % (MAC, name, schoolNr, )
+				success = False
 			else:
-				mac_used=check_macAddress(MAC)
-				if mac_used:
-					old_mac=MAC
-					MAC=generate_new_mac(schoolNr, str(ip.network))
-					print 'mac %s already used, set mac to %s (resolve manually)'%(old_mac,MAC)
-
 				print "generate computer %s (school %s)"%(name,schoolNr)
 
 				success = create_network(schoolNr, ip)
