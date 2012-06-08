@@ -1326,7 +1326,7 @@ def tryFindWindowsHomeServer(ou):
 		return tryFindWindowsHomeServer.results[ou]
 	for service in ('Windows Home Server',
 	                'Samba 4',
-	                'Samba',
+	                'Samba 3',
 	                ):
 		computer = findComputerNameWithService(service, ou)
 		if computer is not None:

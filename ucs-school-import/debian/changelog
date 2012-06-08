@@ -1,3 +1,9 @@
+ucs-school-import (8.0.56-1) unstable; urgency=low
+
+  * search for "Samba 3" service instead of nonexistent "Samba" service (Bug #27366)
+
+ -- Janek Walkenhorst <walkenhorst@univention.de>  Fri, 08 Jun 2012 15:16:04 +0200
+
 ucs-school-import (8.0.55-1) unstable; urgency=low
 
   * remove obsolete "userlogon" share (Bug #15705)
