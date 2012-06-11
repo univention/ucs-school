@@ -201,7 +201,8 @@ if [ "$samba4_role" = 'DC' ]; then
 
 	/etc/init.d/samba4 stop
 
-	if [ -z "$samba4servicedcs" ]; then	## we are the first domainctontroller to provide this service
+	is_ucr_true samba4/provision/primary
+	if [ $? -eq 0 ] || [ -z "$samba4servicedcs" ]; then	## we are the first domainctontroller to provide this service
 
 		if [ $JS_LAST_EXECUTED_VERSION -lt 1 ]; then
 			## Provision Samba4
