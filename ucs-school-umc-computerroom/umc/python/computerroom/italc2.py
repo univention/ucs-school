@@ -557,7 +557,8 @@ class ITALC_Manager( dict, notifier.signals.Provider ):
 
 		roomgrp = groupresult[ 0 ]
 		roomgrp.open()
-		ITALC_Manager.ROOM = roomgrp[ 'name' ].lstrip( '%s-' % search_base.school )
+		school_prefix = '%s-' % search_base.school
+		ITALC_Manager.ROOM = roomgrp[ 'name' ].lstrip()[ len( school_prefix ) : ]
 		ITALC_Manager.ROOM_DN = roomgrp.dn
 		computers = filter( lambda host: host.endswith( search_base.computers ), roomgrp[ 'hosts' ] )
 		if not computers:

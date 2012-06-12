@@ -1,3 +1,9 @@
+ucs-school-umc-computerroom (0.1.34-1) unstable; urgency=low
+
+  * fixed extraction of computer room name from LDAP DN; Bug #27342
+
+ -- Andreas Büsching <buesching@univention.de>  Tue, 12 Jun 2012 10:49:25 +0200
+
 ucs-school-umc-computerroom (0.1.33-1) unstable; urgency=low
 
   * fixed VNC UCR-Variable; Bug #27237
