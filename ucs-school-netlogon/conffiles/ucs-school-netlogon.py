@@ -36,31 +36,26 @@ import os
 
 logging = '>> %TEMP%\%USERNAME%-ucs-school-netlogon.log 2>&1'
 
-def printHeader(fn, netlogon):
+def printHeader(fn):
 
-	if not fn:
-		fn = open(netlogon, 'w')
-		print >> fn, 'Set objShell = WScript.CreateObject("WScript.Shell")'
-		print >> fn, 'Set objFSO = CreateObject("Scripting.FileSystemObject")'
-		print >> fn
-		print >> fn, 'temp = objShell.ExpandEnvironmentStrings("%TEMP%")'
-		print >> fn, 'username = objShell.ExpandEnvironmentStrings("%USERNAME%")'
-		print >> fn, 'logfile = objFSO.BuildPath(temp, username & "-ucs-school-netlogon.log")'
-		print >> fn, 'baseName = objFSO.GetParentFolderName(Wscript.ScriptFullName)'
-		print >> fn
-		print >> fn, 'set fh = objFSO.CreateTextFile(logfile, True)'
-		print >> fn, 'fh.Close'
-		print >> fn
-		print >> fn, 'sub printToLog(logfile, message)'
-		print >> fn, '    set fh = objFSO.OpenTextFile(logfile, 8, True)'
-		print >> fn, '    fh.WriteLine("")'
-		print >> fn, '    fh.WriteLine(message)'
-		print >> fn, '    fh.Close'
-		print >> fn, 'end sub'
-		print >> fn
-
-	return fn
-
+	print >> fn, 'Set objShell = WScript.CreateObject("WScript.Shell")'
+	print >> fn, 'Set objFSO = CreateObject("Scripting.FileSystemObject")'
+	print >> fn
+	print >> fn, 'temp = objShell.ExpandEnvironmentStrings("%TEMP%")'
+	print >> fn, 'username = objShell.ExpandEnvironmentStrings("%USERNAME%")'
+	print >> fn, 'logfile = objFSO.BuildPath(temp, username & "-ucs-school-netlogon.log")'
+	print >> fn, 'baseName = objFSO.GetParentFolderName(Wscript.ScriptFullName)'
+	print >> fn
+	print >> fn, 'set fh = objFSO.CreateTextFile(logfile, True)'
+	print >> fn, 'fh.Close'
+	print >> fn
+	print >> fn, 'sub printToLog(logfile, message)'
+	print >> fn, '    set fh = objFSO.OpenTextFile(logfile, 8, True)'
+	print >> fn, '    fh.WriteLine("")'
+	print >> fn, '    fh.WriteLine(message)'
+	print >> fn, '    fh.Close'
+	print >> fn, 'end sub'
+	print >> fn
 
 def runCmd(script, fn, windowStyle, checkReturn):
 
@@ -91,35 +86,30 @@ def runVbs(script, fn, windowStyle, checkReturn, vbsInt, vbsOpts):
 
 def handler(configRegistry, changes):
 
-	# check samba3 samba4
-	netlogonDir = "/var/lib/samba/netlogon"
-	result = ""
-	try:
-		lo = univention.uldap.getMachineConnection(ldap_master = False)
-		result = lo.search('(&(cn=%s)(univentionService=Samba 4))' % configRegistry.get("hostname", "localhost"))
-	except:
-		print >> sys.stderr, "error: ldap lookup failed (maybe not joined)"
-		sys.exit(1)
-	if result:
-		netlogonDir = "/var/lib/samba/sysvol/%s/scripts" % configRegistry.get('kerberos/realm', '').lower()
-	if not os.path.isdir(netlogonDir):
-		print >> sys.stderr, "error: %s is not a valid directory" % netlogonDir
-		sys.exit(1)
+	# samba3 samba4
+	netlogonDirs = [
+		"/var/lib/samba/netlogon",
+		"/var/lib/samba/sysvol/%s/scripts" % configRegistry.get("kerberos/realm").lower()
+	]
 
 	# delete old ucsschool/import/set/netlogon/script/path
 	old = changes.get("ucsschool/import/set/netlogon/script/path", "")
 	if old and len(old) > 0 and old[0]:
-		old = os.path.join(netlogonDir, old[0])
-		if os.path.isfile(old):
-			os.remove(old)
+		for netlogonDir in netlogonDirs:
+			oldScript = os.path.join(netlogonDir, old[0])
+			if os.path.isfile(oldScript):
+				os.remove(oldScript)
 
 	# netlogon script name
 	netlogonScript = configRegistry.get("ucsschool/import/set/netlogon/script/path", "")
 	if not netlogonScript:
 		sys.exit(0)
-	netlogon = os.path.join(netlogonDir, netlogonScript)
-	if os.path.isfile(netlogon):
-		os.remove(netlogon)
+
+	# remove netlogon script
+	for netlogonDir in netlogonDirs:
+		netlogon = os.path.join(netlogonDir, netlogonScript)
+		if os.path.isfile(netlogon):
+			os.remove(netlogon)
 
 	# get ucr vars and save script in scripts
 	#   ucsschool/netlogon/<Paketname>/script=demo.cmd
@@ -138,20 +128,26 @@ def handler(configRegistry, changes):
 					scripts[priority] = []
 				scripts[priority].append(script)
 
+	# get config
 	windowStyle = configRegistry.get("ucsschool/netlogon/windowStyle", "1")
 	checkReturn = configRegistry.is_true("ucsschool/netlogon/checkReturn", True)
 	vbsInt = configRegistry.get("ucsschool/netlogon/vbs/interpreter", "cscript")
 	vbsOpts = configRegistry.get("ucsschool/netlogon/vbs/options", "")
 
-	fn = False
-	for key in sorted(scripts.keys(), key=int):
-		for script in scripts[key]:
-			if script.endswith(".cmd") or script.endswith(".bat"):
-				fn = printHeader(fn, netlogon)
-				runCmd(script, fn, windowStyle, checkReturn)
-			elif script.endswith(".vbs"):
-				fn = printHeader(fn, netlogon)
-				runVbs(script, fn, windowStyle, checkReturn, vbsInt, vbsOpts)
-			else:
-				# hmm, do nothing 
-				pass	
+	# nothing to write
+	if not scripts:
+		return
+
+	# write logon script(s)
+	for netlogonDir in netlogonDirs:
+		fn = open(os.path.join(netlogonDir, netlogonScript), 'w')
+		printHeader(fn)
+		for key in sorted(scripts.keys(), key=int):
+			for script in scripts[key]:
+				if script.endswith(".cmd") or script.endswith(".bat"):
+					runCmd(script, fn, windowStyle, checkReturn)
+				elif script.endswith(".vbs"):
+					runVbs(script, fn, windowStyle, checkReturn, vbsInt, vbsOpts)
+				else:
+					# hmm, do nothing 
+					pass	

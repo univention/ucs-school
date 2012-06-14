@@ -1,3 +1,10 @@
+ucs-school-netlogon (1.0.2-1) unstable; urgency=low
+
+  * create samba3 and samba4 netlogon dir (Bug #27520)
+  * save netlogon script in samba3 and samba4 netlogon dir 
+
+ -- Felix Botner <botner@univention.de>  Thu, 14 Jun 2012 09:52:50 +0200
+
 ucs-school-netlogon (1.0.1-5) unstable; urgency=low
 
   * changed ucr var description (Bug #26517) 
