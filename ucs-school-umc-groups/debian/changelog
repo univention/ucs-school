@@ -1,3 +1,9 @@
+ucs-school-umc-groups (0.1.21-1) unstable; urgency=low
+
+  * Show classes without the school prefix too (Bug #27511)
+
+ -- Jascha Geerds <geerds@univention.de>  Fri, 15 Jun 2012 12:45:28 +0200
+
 ucs-school-umc-groups (0.1.20-1) unstable; urgency=low
 
   * updated copyright

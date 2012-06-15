@@ -85,7 +85,8 @@ class Instance( SchoolBaseModule ):
 			# only show workgroups
 			base = search_base.workgroups
 
-		groupresult = udm_modules.lookup( 'groups/group', None, ldap_user_read, scope = 'one', base = base, filter = LDAP_Filter.forGroups( request.options.get( 'pattern', '' ), search_base.school ) )
+		ldapFilter = LDAP_Filter.forAll(request.options.get('pattern', ''), ['name', 'description'])
+		groupresult = udm_modules.lookup( 'groups/group', None, ldap_user_read, scope = 'one', base = base, filter = ldapFilter)
 
 		self.finished( request.id, map( lambda grp: { '$dn$' : grp.dn, 'name' : grp[ 'name' ].replace( '%s-' % search_base.school, '', 1 ), 'description' : grp[ 'description' ] }, groupresult ) )
 
