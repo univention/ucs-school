@@ -1,3 +1,9 @@
+ucs-school-umc-groups (0.1.22-1) unstable; urgency=low
+
+  * Teachers are now able to modify an existing workgroup (Bug #27387)
+
+ -- Jascha Geerds <geerds@univention.de>  Fri, 15 Jun 2012 15:26:18 +0200
+
 ucs-school-umc-groups (0.1.21-1) unstable; urgency=low
 
   * Show classes without the school prefix too (Bug #27511)

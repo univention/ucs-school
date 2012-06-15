@@ -166,7 +166,8 @@ class Instance( SchoolBaseModule ):
 				grp[ 'description' ] = group[ 'description' ]
 			elif request.flavor == 'workgroup':
 				# workgroup (teacher view) -> update only the group's students
-				if [ dn for dn in grp[ 'users' ] if search_base.isTeacher(dn) ]:
+				user_diff = set(group['members']) - set(grp['users'])
+				if [ dn for dn in user_diff if search_base.isTeacher(dn) ]:
 					raise UMC_CommandError( 'Adding teachers is not allowed' )
 				grp[ 'users' ] = self._remove_users_by_check( grp[ 'users' ], lambda x: not search_base.isStudent(x) ) + self._remove_users_by_check( group[ 'members' ], search_base.isStudent )
 
