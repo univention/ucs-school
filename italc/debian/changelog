@@ -1,3 +1,9 @@
+italc (1:2.0.8-1) unstable; urgency=low
+
+  * create directory for the sysvol share if it does not exist; Bug #27519
+
+ -- Andreas Büsching <buesching@univention.de>  Tue, 19 Jun 2012 13:43:18 +0200
+
 italc (1:2.0.7-1) unstable; urgency=low
 
   * fix italc key copy for Samba3 (Bug #20261)

@@ -53,12 +53,12 @@ fi
 
 REALM="$(univention-config-registry get kerberos/realm | tr '[:upper:]' '[:lower:]')"
 TARGET="/var/lib/samba/sysvol/$REALM/scripts/italc-key.pub"
-if [ -d "$(dirname "$TARGET")" ]
+if [ ! -d "$(dirname "$TARGET")" ]
 then
-	cp -fa "$PUBLIC_KEY" "$TARGET"
+	mkdir -p "$(dirname "$TARGET")"
 fi
 
-
+cp -fa "$PUBLIC_KEY" "$TARGET"
 
 joinscript_save_current_version
 exit 0
