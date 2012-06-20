@@ -1,3 +1,9 @@
+ucs-school-branding (1.0.2-1) unstable; urgency=low
+
+  * added ucs@school documentation links on help page (Bug #27420)
+
+ -- Florian Best <best@univention.de>  Wed, 20 Jun 2012 15:13:26 +0200
+
 ucs-school-branding (1.0.1-1) unstable; urgency=low
 
   * adapted overview description; Bug #27031
