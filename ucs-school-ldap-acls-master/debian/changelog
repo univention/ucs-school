@@ -1,3 +1,9 @@
+ucs-school-ldap-acls-master (7.0.7-1) unstable; urgency=low
+
+  * redistribute cn=Virtual Machine Manager,* (Bug #27626)
+
+ -- Felix Botner <botner@univention.de>  Thu, 21 Jun 2012 10:33:43 +0200
+
 ucs-school-ldap-acls-master (7.0.6-1) unstable; urgency=low
 
   * Undo: Give school admins the permission to modify the group
