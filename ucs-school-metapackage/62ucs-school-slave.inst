@@ -94,7 +94,11 @@ if [ $JS_LAST_EXECUTED_VERSION -lt 3 ]; then
 			connector/s4/mapping/dns/srv_record/_kerberos._udp.$domainname/location?"100 0 88 $hostname.$domainname." \
 			connector/s4/mapping/dns/srv_record/_kerberos._tcp.dc._msdcs.$domainname/location?"100 0 88 $hostname.$domainname." \
 			connector/s4/mapping/dns/srv_record/_kpasswd._tcp.$domainname/location?"100 0 464 $hostname.$domainname." \
-			connector/s4/mapping/dns/srv_record/_kpasswd._udp.$domainname/location?"100 0 464 $hostname.$domainname."
+			connector/s4/mapping/dns/srv_record/_kpasswd._udp.$domainname/location?"100 0 464 $hostname.$domainname." \
+			connector/s4/mapping/dns/srv_record/_kerberos._tcp.default-first-site-name._sites.dc._msdcs.$domainname/location?"100 0 88 $hostname.$domainname." \
+			connector/s4/mapping/dns/srv_record/_kerberos._tcp.default-first-site-name._sites.$domainname/location?"100 0 88 $hostname.$domainname." \
+			connector/s4/mapping/dns/srv_record/_ldap._tcp.default-first-site-name._sites.dc._msdcs.$domainname/location?"100 0 389 $hostname.$domainname." \
+			connector/s4/mapping/dns/srv_record/_ldap._tcp.default-first-site-name._sites.$domainname/location?"100 0 389 $hostname.$domainname."
 
 	# Remove old values from kerberos SRV records
 	if ! is_ucr_true dns/register/srv_records/kerberos; then

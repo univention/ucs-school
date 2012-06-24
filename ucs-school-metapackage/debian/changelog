@@ -1,3 +1,9 @@
+ucs-school-metapackage (4.0.38-1ubuntu1) quantal; urgency=low
+
+  * Overwrite default-first-site-name SRV records as well (Bug #27395)
+
+ -- Stefan Gohmann <gohmann@univention.de>  Sun, 24 Jun 2012 13:18:48 +0200
+
 ucs-school-metapackage (4.0.38-1) unstable; urgency=low
 
   * Overwrite SRV records on a school DC (Bug #27395)
