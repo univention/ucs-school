@@ -44,7 +44,25 @@ univention-config-registry set \
 	connector/s4/allow/secondary?true \
 	samba4/service/drepl?false \
 	samba4/provision/secondary=yes \
-	listener/shares/rename?yes
+	listener/shares/rename?yes \
+	dns/register/srv_records/kerberos?false \
+	dns/register/srv_records/ldap?false \
+	samba4/join/dnsupdate?true
+
+if [ "$1" = "configure" -a -n "$2" ] && dpkg --compare-versions "$2" lt 4.0.37-1.68 ; then
+	eval "$(ucr shell)"
+
+	if [ -n "$domainname" ]; then
+		ucr set connector/s4/mapping/dns/srv_record/_ldap._tcp.$domainname/location?"100 0 389 $hostname.$domainname." \
+				connector/s4/mapping/dns/srv_record/_ldap._tcp.pdc._msdcs.$domainname/location?"100 0 389 $hostname.$domainname." \
+				connector/s4/mapping/dns/srv_record/_ldap._tcp.dc._msdcs.$domainname/location?"100 0 389 $hostname.$domainname." \
+				connector/s4/mapping/dns/srv_record/_kerberos._tcp.$domainname/location?"100 0 88 $hostname.$domainname." \
+				connector/s4/mapping/dns/srv_record/_kerberos._udp.$domainname/location?"100 0 88 $hostname.$domainname." \
+				connector/s4/mapping/dns/srv_record/_kerberos._tcp.dc._msdcs.$domainname/location?"100 0 88 $hostname.$domainname." \
+				connector/s4/mapping/dns/srv_record/_kpasswd._tcp.$domainname/location?"100 0 464 $hostname.$domainname." \
+				connector/s4/mapping/dns/srv_record/_kpasswd._udp.$domainname/location?"100 0 464 $hostname.$domainname."
+	fi
+fi
 
 /etc/init.d/univention-directory-listener crestart
 

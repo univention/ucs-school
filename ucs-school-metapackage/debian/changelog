@@ -1,3 +1,9 @@
+ucs-school-metapackage (4.0.38-1) unstable; urgency=low
+
+  * Overwrite SRV records on a school DC (Bug #27395)
+
+ -- Stefan Gohmann <gohmann@univention.de>  Thu, 21 Jun 2012 11:27:48 +0200
+
 ucs-school-metapackage (4.0.37-1) unstable; urgency=low
 
   * Install univention-samba4-sysvol-sync on Master (Bug #26522)

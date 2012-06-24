@@ -30,7 +30,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-VERSION=2
+VERSION=3
 . /usr/share/univention-join/joinscripthelper.lib
 joinscript_init
 
@@ -79,6 +79,40 @@ if [ $JS_LAST_EXECUTED_VERSION -lt 2 ]; then
 	univention-config-registry set samba/script/addmachine='/usr/share/univention-samba/addmachine.sh "%u"'
 
 	test -x /etc/init.d/samba && /etc/init.d/samba restart
+fi
+
+if [ $JS_LAST_EXECUTED_VERSION -lt 3 ]; then
+	# In UCS@school a DC slave should not register himself to the DNS
+	# SRV records.
+	univention-config-registry set	dns/register/srv_records/kerberos?false \
+									dns/register/srv_records/ldap?false
+	
+	ucr set connector/s4/mapping/dns/srv_record/_ldap._tcp.$domainname/location?"100 0 389 $hostname.$domainname." \
+			connector/s4/mapping/dns/srv_record/_ldap._tcp.pdc._msdcs.$domainname/location?"100 0 389 $hostname.$domainname." \
+			connector/s4/mapping/dns/srv_record/_ldap._tcp.dc._msdcs.$domainname/location?"100 0 389 $hostname.$domainname." \
+			connector/s4/mapping/dns/srv_record/_kerberos._tcp.$domainname/location?"100 0 88 $hostname.$domainname." \
+			connector/s4/mapping/dns/srv_record/_kerberos._udp.$domainname/location?"100 0 88 $hostname.$domainname." \
+			connector/s4/mapping/dns/srv_record/_kerberos._tcp.dc._msdcs.$domainname/location?"100 0 88 $hostname.$domainname." \
+			connector/s4/mapping/dns/srv_record/_kpasswd._tcp.$domainname/location?"100 0 464 $hostname.$domainname." \
+			connector/s4/mapping/dns/srv_record/_kpasswd._udp.$domainname/location?"100 0 464 $hostname.$domainname."
+
+	# Remove old values from kerberos SRV records
+	if ! is_ucr_true dns/register/srv_records/kerberos; then
+		/usr/share/univention-directory-manager-tools/univention-dnsedit "$@" --ignore-exists $domainname remove srv kerberos tcp 0 100 88 "$hostname.$domainname."
+		/usr/share/univention-directory-manager-tools/univention-dnsedit "$@" --ignore-exists $domainname remove srv kerberos udp 0 100 88 "$hostname.$domainname."
+		/usr/share/univention-directory-manager-tools/univention-dnsedit "$@" --ignore-exists "$domainname" remove srv kerberos "tcp.dc._msdcs" 0 100 88 "$hostname.$domainname."
+		/usr/share/univention-directory-manager-tools/univention-dnsedit "$@" --ignore-exists "$domainname" remove srv kpasswd "tcp" 0 100 464 "$hostname.$domainname."
+		/usr/share/univention-directory-manager-tools/univention-dnsedit "$@" --ignore-exists "$domainname" remove srv kpasswd "udp" 0 100 464 "$hostname.$domainname."
+	fi
+
+	# Remove old values from ldap SRV records
+	if ! is_ucr_true dns/register/srv_records/ldap; then
+		/usr/share/univention-directory-manager-tools/univention-dnsedit "$@" --ignore-exists "$domainname" remove srv ldap tcp 0 100 7389 "$hostname.$domainname."
+		/usr/share/univention-directory-manager-tools/univention-dnsedit "$@" --ignore-exists "$domainname" remove srv ldap tcp 0 100 389 "$hostname.$domainname."
+		/usr/share/univention-directory-manager-tools/univention-dnsedit "$@" --ignore-exists "$domainname" remove srv ldap "tcp.pdc._msdcs" 0 100 389 "$hostname.$domainname."
+		/usr/share/univention-directory-manager-tools/univention-dnsedit "$@" --ignore-exists "$domainname" remove srv ldap "tcp.dc._msdcs" 0 100 389 "$hostname.$domainname."
+	fi
+
 fi
 
 ignore_user ()
