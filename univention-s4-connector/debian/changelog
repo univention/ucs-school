@@ -1,3 +1,9 @@
+univention-s4-connector (6.0.128-31) unstable; urgency=low
+
+  * Allow 'ignore' for SRV record mapping (Bug #27395)
+
+ -- Stefan Gohmann <gohmann@univention.de>  Mon, 25 Jun 2012 06:28:51 +0200
+
 univention-s4-connector (6.0.128-30) unstable; urgency=low
 
   * Added UCR variables to overwrite the DNS SRV records by UCR
