@@ -1,3 +1,9 @@
+ucs-school-metapackage (4.0.38-4) unstable; urgency=low
+
+  * Set samba4/join/dnsupdate on ucsschool master to true (Bug #27395)
+
+ -- Stefan Gohmann <gohmann@univention.de>  Mon, 25 Jun 2012 17:25:53 +0200
+
 ucs-school-metapackage (4.0.38-3) unstable; urgency=low
 
   * Ignore SRV records on ucsschool master systems (Bug #27395)
