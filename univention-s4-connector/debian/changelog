@@ -1,3 +1,10 @@
+univention-s4-connector (6.0.128-33) unstable; urgency=low
+
+  * Set connector/s4/autostart to no if another connector is running
+    this domain (Bug #26197)
+
+ -- Stefan Gohmann <gohmann@univention.de>  Mon, 25 Jun 2012 17:31:16 +0200
+
 univention-s4-connector (6.0.128-32) unstable; urgency=low
 
   * Check if ucr_locations exists (Bug #27395)
