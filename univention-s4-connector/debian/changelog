@@ -1,3 +1,9 @@
+univention-s4-connector (6.0.128-32) unstable; urgency=low
+
+  * Check if ucr_locations exists (Bug #27395)
+
+ -- Stefan Gohmann <gohmann@univention.de>  Mon, 25 Jun 2012 07:21:39 +0200
+
 univention-s4-connector (6.0.128-31) unstable; urgency=low
 
   * Allow 'ignore' for SRV record mapping (Bug #27395)
