@@ -1,4 +1,10 @@
-ucs-school-metapackage (4.0.38-1ubuntu1) quantal; urgency=low
+ucs-school-metapackage (4.0.38-3) unstable; urgency=low
+
+  * Ignore SRV records on ucsschool master systems (Bug #27395)
+
+ -- Stefan Gohmann <gohmann@univention.de>  Mon, 25 Jun 2012 09:02:15 +0200
+
+ucs-school-metapackage (4.0.38-2) unstable; urgency=low
 
   * Overwrite default-first-site-name SRV records as well (Bug #27395)
 

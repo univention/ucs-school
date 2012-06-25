@@ -56,15 +56,20 @@ if [ "$1" = "configure" -a -n "$2" ] && dpkg --compare-versions "$2" lt 4.0.37-1
 		ucr set connector/s4/mapping/dns/srv_record/_ldap._tcp.$domainname/location?"100 0 389 $hostname.$domainname." \
 				connector/s4/mapping/dns/srv_record/_ldap._tcp.pdc._msdcs.$domainname/location?"100 0 389 $hostname.$domainname." \
 				connector/s4/mapping/dns/srv_record/_ldap._tcp.dc._msdcs.$domainname/location?"100 0 389 $hostname.$domainname." \
+				connector/s4/mapping/dns/srv_record/_ldap._tcp.gc._msdcs.$domainname/location?"100 0 3268 $hostname.$domainname." \
+				connector/s4/mapping/dns/srv_record/__gc._tcp.$domainname/location?"100 0 3268 $hostname.$domainname." \
 				connector/s4/mapping/dns/srv_record/_kerberos._tcp.$domainname/location?"100 0 88 $hostname.$domainname." \
 				connector/s4/mapping/dns/srv_record/_kerberos._udp.$domainname/location?"100 0 88 $hostname.$domainname." \
+				connector/s4/mapping/dns/srv_record/_kerberos-adm._tcp.$domainname/location?"100 0 88 $hostname.$domainname." \
 				connector/s4/mapping/dns/srv_record/_kerberos._tcp.dc._msdcs.$domainname/location?"100 0 88 $hostname.$domainname." \
 				connector/s4/mapping/dns/srv_record/_kpasswd._tcp.$domainname/location?"100 0 464 $hostname.$domainname." \
 				connector/s4/mapping/dns/srv_record/_kpasswd._udp.$domainname/location?"100 0 464 $hostname.$domainname." \
 				connector/s4/mapping/dns/srv_record/_kerberos._tcp.default-first-site-name._sites.dc._msdcs.$domainname/location?"100 0 88 $hostname.$domainname." \
 				connector/s4/mapping/dns/srv_record/_kerberos._tcp.default-first-site-name._sites.$domainname/location?"100 0 88 $hostname.$domainname." \
+				connector/s4/mapping/dns/srv_record/_ldap._tcp.default-first-site-name._sites.gc._msdcs.$domainname/location?"100 0 3268 $hostname.$domainname." \
 				connector/s4/mapping/dns/srv_record/_ldap._tcp.default-first-site-name._sites.dc._msdcs.$domainname/location?"100 0 389 $hostname.$domainname." \
-				connector/s4/mapping/dns/srv_record/_ldap._tcp.default-first-site-name._sites.$domainname/location?"100 0 389 $hostname.$domainname."
+				connector/s4/mapping/dns/srv_record/_ldap._tcp.default-first-site-name._sites.$domainname/location?"100 0 389 $hostname.$domainname." \
+				connector/s4/mapping/dns/srv_record/_gc._tcp.default-first-site-name._sites.$domainname/location?"100 0 3268 $hostname.$domainname."
 	fi
 fi
 

@@ -38,6 +38,30 @@ univention-config-registry set \
 	connector/s4/mapping/sid_to_s4?yes \
 	listener/shares/rename?yes
 
+if [ "$1" = "configure" -a -n "$2" ] && dpkg --compare-versions "$2" lt 4.0.37-1.68 ; then
+	eval "$(ucr shell)"
+
+	if [ -n "$domainname" ]; then
+		ucr set connector/s4/mapping/dns/srv_record/_ldap._tcp.$domainname/location?"ignore" \
+				connector/s4/mapping/dns/srv_record/_ldap._tcp.pdc._msdcs.$domainname/location?"ignore" \
+				connector/s4/mapping/dns/srv_record/_ldap._tcp.dc._msdcs.$domainname/location?"ignore" \
+				connector/s4/mapping/dns/srv_record/_ldap._tcp.gc._msdcs.$domainname/location?"ignore" \
+				connector/s4/mapping/dns/srv_record/__gc._tcp.$domainname/location?"ignore" \
+				connector/s4/mapping/dns/srv_record/_kerberos._tcp.$domainname/location?"ignore" \
+				connector/s4/mapping/dns/srv_record/_kerberos._udp.$domainname/location?"ignore" \
+				connector/s4/mapping/dns/srv_record/_kerberos-adm._tcp.$domainname/location?"ignore" \
+				connector/s4/mapping/dns/srv_record/_kerberos._tcp.dc._msdcs.$domainname/location?"ignore" \
+				connector/s4/mapping/dns/srv_record/_kpasswd._tcp.$domainname/location?"ignore" \
+				connector/s4/mapping/dns/srv_record/_kpasswd._udp.$domainname/location?"ignore" \
+				connector/s4/mapping/dns/srv_record/_kerberos._tcp.default-first-site-name._sites.dc._msdcs.$domainname/location?"ignore" \
+				connector/s4/mapping/dns/srv_record/_kerberos._tcp.default-first-site-name._sites.$domainname/location?"ignore" \
+				connector/s4/mapping/dns/srv_record/_ldap._tcp.default-first-site-name._sites.gc._msdcs.$domainname/location?"ignore" \
+				connector/s4/mapping/dns/srv_record/_ldap._tcp.default-first-site-name._sites.dc._msdcs.$domainname/location?"ignore" \
+				connector/s4/mapping/dns/srv_record/_ldap._tcp.default-first-site-name._sites.$domainname/location?"ignore" \
+				connector/s4/mapping/dns/srv_record/_gc._tcp.default-first-site-name._sites.$domainname/location?"ignore"
+	fi
+fi
+
 /etc/init.d/univention-directory-listener crestart
 
 call_joinscript 62ucs-school-master.inst
