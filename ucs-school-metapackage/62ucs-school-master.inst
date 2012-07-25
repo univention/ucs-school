@@ -45,6 +45,16 @@ else
 			ucr set connector/s4/mapping/user/ignorelist="$connector_s4_mapping_user_ignorelist,dns-$hostname"
 fi
 
+# Added some local groups to the ignore list
+if [ -z "$connector_s4_mapping_group_ignorelist" ]; then
+	ucr set connector/s4/mapping/group/ignorelist?"Windows Hosts,Authenticated Users,World Authority,Everyone,Null Authority,Nobody,Replicators,Printer-Admins,System Operators"
+else
+	for g in Replicators Printer-Admins "System Operators"; do
+		ucr get connector/s4/mapping/group/ignorelist | egrep -q "(,${g},|^${g},|,${g}$)" || \
+				ucr set connector/s4/mapping/group/ignorelist="$(ucr get connector/s4/mapping/group/ignorelist),$g"
+	done
+fi
+
 if [ $JS_LAST_EXECUTED_VERSION -lt 1 ]; then
 	# Remove the dns-$hostname user from LDAP
 	if [ -x /etc/init.d/univention-s4-connector ]; then

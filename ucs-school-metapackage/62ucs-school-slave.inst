@@ -142,6 +142,16 @@ ignore_user "dns-$hostname"
 ignore_user "krbtgt"
 ignore_user "Guest"
 
+# Added some local groups to the ignore list
+if [ -z "$connector_s4_mapping_group_ignorelist" ]; then
+	ucr set connector/s4/mapping/group/ignorelist?"Windows Hosts,Authenticated Users,World Authority,Everyone,Null Authority,Nobody,Replicators,Printer-Admins,System Operators"
+else
+	for g in Replicators Printer-Admins "System Operators"; do
+		ucr get connector/s4/mapping/group/ignorelist | egrep -q "(,${g},|^${g},|,${g}$)" || \
+				ucr set connector/s4/mapping/group/ignorelist="$(ucr get connector/s4/mapping/group/ignorelist),$g"
+	done
+fi
+
 ucs_addServiceToLocalhost 'UCS@school' "$@"
 
 joinscript_save_current_version
