@@ -86,6 +86,13 @@ access to dn.subtree="cn=Virtual Machine Manager,@%@ldap/base@%@"
    by group/univentionGroup/uniqueMember="cn=Member-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
    by * read break
 
+# Slave controller and memberservers may replicate the mail container
+access to dn.subtree="cn=mail,@%@ldap/base@%@"
+   by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
+   by group/univentionGroup/uniqueMember="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
+   by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
+   by group/univentionGroup/uniqueMember="cn=Member-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
+   by * read break
 
 access to dn.regex="^@%@ldap/base@%@$$"
 	by dn.regex="^uid=([^,]+),cn=(@$@TEACHERS@$@|@$@TEACHERS-STAFF@$@|@$@STAFF@$@|@$@ADMINS@$@),cn=users,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" read

@@ -1,3 +1,9 @@
+ucs-school-ldap-acls-master (7.0.8-1) unstable; urgency=low
+
+  * redistribute cn=mail,* (Bug #27933) 
+
+ -- Felix Botner <botner@univention.de>  Wed, 25 Jul 2012 16:22:57 +0200
+
 ucs-school-ldap-acls-master (7.0.7-1) unstable; urgency=low
 
   * redistribute cn=Virtual Machine Manager,* (Bug #27626)

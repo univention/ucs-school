@@ -46,7 +46,7 @@ fi
 if [ "$server_role" = "domaincontroller_master" -o "$server_role" = "domaincontroller_backup" ]; then
 	if [ "$1" = configure -a -n "$2" ] && dpkg --compare-versions "$2" lt 7.0.6-1.39; then
 
-		echo "... spread cn=Virtual Machine Manager,* to UCS@school slave systems"
+		echo "... spread cn=Virtual Machine Manager,* and cn=mail,* to UCS@school slave systems"
 		python -c '
 import univention.uldap
 import univention.config_registry
@@ -58,6 +58,7 @@ try:
 except Exception, e:
 	print "failed to get ldap connection: %s" % e
 results = lo.search(base="cn=Virtual Machine Manager,%s" % cr.get("ldap/base"), attr=["cn"])
+results += lo.search(base="cn=mail,%s" % cr.get("ldap/base"), attr=["cn"])
 for result in results:
 	dn = result[0]
 	cn = result[1].get("cn", [""])[0]
