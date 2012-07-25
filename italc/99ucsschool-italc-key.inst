@@ -34,31 +34,28 @@ VERSION="3"
 . /usr/share/univention-join/joinscripthelper.lib
 joinscript_init
 
-
-
+# create keys
 PRIVATE_KEY='/etc/italc/keys/private/teacher/key'
 PUBLIC_KEY='/etc/italc/keys/public/teacher/key'
-if [ ! -f "$PRIVATE_KEY" -o ! -f "$PUBLIC_KEY" ]
-then
+if [ ! -f "$PRIVATE_KEY" -o ! -f "$PUBLIC_KEY" ]; then
 	echo "italc teacher key pair is missing... creating new key pair..."
 	/usr/bin/imc -role teacher -createkeypair
 fi
 
-TARGET='/var/lib/samba/netlogon/italc/italc-key.pub'
-if [ -d /var/lib/samba/netlogon ]
-then
-	mkdir -p "$(dirname "$TARGET")"
-	cp -fa "$PUBLIC_KEY" "$TARGET"
-fi
-
+# copy key to samba3 and samba4 netlogon share
 REALM="$(univention-config-registry get kerberos/realm | tr '[:upper:]' '[:lower:]')"
-TARGET="/var/lib/samba/sysvol/$REALM/scripts/italc-key.pub"
-if [ ! -d "$(dirname "$TARGET")" ]
-then
-	mkdir -p "$(dirname "$TARGET")"
-fi
-
-cp -fa "$PUBLIC_KEY" "$TARGET"
+SAMBA4="/var/lib/samba/sysvol/$REALM/scripts"
+SAMBA3="/var/lib/samba/netlogon/italc"
+for i in "$SAMBA3" "$SAMBA4"; do
+	if [ ! -d "$i" ]; then
+		mkdir -p "$i"
+	fi
+	cp -fa "$PUBLIC_KEY" "$i/italc-key.pub"
+	if [ ! -e "$i/italc-key.pub.key.txt" ]; then
+		ln -s "italc-key.pub" "$i/italc-key.pub.key.txt"
+	fi
+done
 
 joinscript_save_current_version
+
 exit 0
