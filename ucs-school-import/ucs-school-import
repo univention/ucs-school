@@ -47,6 +47,9 @@ sepchar='\t'
 # wipe the following trailing and leading characters from group names
 wipe_char_group='-'
 
+# dict of existing mail domains
+mailDomains = {}
+
 import codecs
 import copy
 import ipaddr
@@ -116,6 +119,7 @@ UCRV_serverprofile_option = configRegistry.get('ucsschool/import/set/serverprofi
 UCRV_netlogon_script_path = configRegistry.get('ucsschool/import/set/netlogon/script/path', None)
 UCRV_sambahome = configRegistry.get('ucsschool/import/set/sambahome', None)
 UCRV_homedrive = configRegistry.get('ucsschool/import/set/homedrive')
+UCRV_create_mail_domain = configRegistry.is_true("ucsschool/import/generate/mail/domain")
 
 role_pupil   = 'pupil'
 role_teacher = 'teacher'
@@ -1194,6 +1198,27 @@ def delete_user(person, module, co, lo):
 
 	return success
 
+def verifyMailDomain(email):
+
+	global mailDomains
+
+	if not UCRV_create_mail_domain:
+		return
+
+	if not "@" in email:
+		return
+
+	domain = email.rsplit("@",1)[-1]
+	print mailDomains
+	if not mailDomains.get(domain):
+		print "need to create mail domain %s " % domain
+		pos = univention.admin.uldap.position("cn=domain,cn=mail,%s" % baseDN)
+		obj = maildomain_module.object(co, lo, position=pos)
+		obj["name"] = domain
+		create_object(obj)
+		mailDomains[domain] = 1
+	return
+
 def modify_user(person, module, co, lo):
 	default_groups = person.default_groups()
 	object=univention.admin.objects.get(module, co, lo, position='', dn=person.getDN())
@@ -1206,6 +1231,7 @@ def modify_user(person, module, co, lo):
 	object["e-mail"]=person.mail
 	if object.has_key('mailPrimaryAddress'):
 		object['mailPrimaryAddress']=person.mail
+		verifyMailDomain(person.mail)
 	if person.isActive == "1":
 		object["disabled"]="none"
 	else:
@@ -1401,6 +1427,7 @@ def create_user(person, baseDN, module, password, OUTFILE, line):
 	object["e-mail"]=person.mail
 	if object.has_key('mailPrimaryAddress'):
 		object['mailPrimaryAddress']=person.mail
+		verifyMailDomain(person.mail)
 	if person.isActive == "1":
 		object["disabled"]="none"
 	else:
@@ -2809,6 +2836,7 @@ policy_dhcp_routing_module = univention.admin.modules.get("policies/dhcp_routing
 policy_dhcp_netbios_module = univention.admin.modules.get("policies/dhcp_netbios")
 policy_dhcp_dns_module     = univention.admin.modules.get("policies/dhcp_dns")
 setting_module             = univention.admin.modules.get("settings/default")
+maildomain_module          = univention.admin.modules.get("mail/domain")
 
 for m in (
 		user_module,
@@ -2828,8 +2856,15 @@ for m in (
 		policy_dhcp_netbios_module,
 		policy_dhcp_dns_module,
 		setting_module,
+		maildomain_module,
 		):
 	univention.admin.modules.init (lo, position, m)
+
+# get mail domains
+for result in lo.search(base=baseDN, filter="(objectClass=univentionMailDomainname)"):
+	cn = result[1].get("cn", [""])[0]
+	if cn:
+		mailDomains[cn] = 1
 
 # get default group
 default_group = "cn=Domain Users,cn=groups,%s"%baseDN # fallback
