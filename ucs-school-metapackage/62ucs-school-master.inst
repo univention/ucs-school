@@ -67,7 +67,7 @@ if [ $JS_LAST_EXECUTED_VERSION -lt 1 ]; then
 				connector/s4/mapping/dns/srv_record/_ldap._tcp.pdc._msdcs.$domainname/location?"ignore" \
 				connector/s4/mapping/dns/srv_record/_ldap._tcp.dc._msdcs.$domainname/location?"ignore" \
 				connector/s4/mapping/dns/srv_record/_ldap._tcp.gc._msdcs.$domainname/location?"ignore" \
-				connector/s4/mapping/dns/srv_record/__gc._tcp.$domainname/location?"ignore" \
+				connector/s4/mapping/dns/srv_record/_gc._tcp.$domainname/location?"ignore" \
 				connector/s4/mapping/dns/srv_record/_kerberos._tcp.$domainname/location?"ignore" \
 				connector/s4/mapping/dns/srv_record/_kerberos._udp.$domainname/location?"ignore" \
 				connector/s4/mapping/dns/srv_record/_kerberos-adm._tcp.$domainname/location?"ignore" \

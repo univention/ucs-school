@@ -1,3 +1,9 @@
+ucs-school-metapackage (4.0.38-6) unstable; urgency=low
+
+  * fix typo __gc._tcp (Bug #27395)
+
+ -- Arvid Requate <requate@univention.de>  Mon, 30 Jul 2012 17:30:03 +0200
+
 ucs-school-metapackage (4.0.38-5) unstable; urgency=low
 
   * Also ignore some local groups (Bug #27395)
