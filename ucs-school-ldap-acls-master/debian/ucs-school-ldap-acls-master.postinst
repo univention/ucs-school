@@ -51,20 +51,24 @@ if [ "$server_role" = "domaincontroller_master" -o "$server_role" = "domaincontr
 import univention.uldap
 import univention.config_registry
 import ldap
+import sys
+
 cr = univention.config_registry.ConfigRegistry()
 cr.load()
 try:
 	lo = univention.uldap.getAdminConnection()
 except Exception, e:
 	print "failed to get ldap connection: %s" % e
-results = lo.search(base="cn=Virtual Machine Manager,%s" % cr.get("ldap/base"), attr=["cn"])
-results += lo.search(base="cn=mail,%s" % cr.get("ldap/base"), attr=["cn"])
+	sys.exit(1)
+
+results  = lo.search(base="cn=Virtual Machine Manager,%s" % cr.get("ldap/base"), attr=[""])
+results += lo.search(base="cn=mail,%s" % cr.get("ldap/base"), attr=[""])
+
 for result in results:
 	dn = result[0]
-	cn = result[1].get("cn", [""])[0]
-	if dn and cn:
+	if dn:
 		try:
-			lo.modify(dn, [("cn", cn, cn)])
+			lo.rename(dn, dn)
 		except ldap.NOT_ALLOWED_ON_NONLEAF, e:
 			pass
 		except Exception, e:

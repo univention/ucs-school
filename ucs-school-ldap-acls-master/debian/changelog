@@ -1,3 +1,9 @@
+ucs-school-ldap-acls-master (7.0.9-1) unstable; urgency=low
+
+  * fixed postinst (rename objects for redistribute) (Bug #27933) 
+
+ -- Felix Botner <botner@univention.de>  Tue, 31 Jul 2012 11:57:32 +0200
+
 ucs-school-ldap-acls-master (7.0.8-1) unstable; urgency=low
 
   * redistribute cn=mail,* (Bug #27933) 
