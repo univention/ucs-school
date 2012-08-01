@@ -2911,7 +2911,7 @@ elif sys.argv[0].endswith("create_ou"):
 			dcName = args[1]
 
 		# hostname based upon RFC 952: <let>[*[<let-or-digit-or-hyphen>]<let-or-digit>]
-		if not re.match('^[a-zA-Z0-9](([a-zA-Z0-9-_]*)([a-zA-Z0-9]$))?$', ouname):
+		if not re.match('^[a-zA-Z0-9](([a-zA-Z0-9_]*)([a-zA-Z0-9]$))?$', ouname):
 			print 'ERROR: invalid ou name given'
 			sys.exit(1)
 

@@ -1,3 +1,9 @@
+ucs-school-import (8.0.58-1) unstable; urgency=low
+
+  * Avoid hyphens in the school name (Bug #27991)
+
+ -- Jascha Geerds <geerds@univention.de>  Wed, 01 Aug 2012 15:38:38 +0200
+
 ucs-school-import (8.0.57-1) unstable; urgency=low
 
   * added verifyMailDomain in create/modify_user (Bug #27892)  
