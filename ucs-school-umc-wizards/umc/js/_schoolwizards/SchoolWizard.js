@@ -49,6 +49,7 @@ dojo.declare("umc.modules._schoolwizards.SchoolWizard", [ umc.modules._schoolwiz
 				type: 'TextBox',
 				name: 'name',
 				label: this._('Name of the school'),
+				regExp: '^[a-zA-Z0-9](([a-zA-Z0-9_]*)([a-zA-Z0-9]$))?$',
 				required: true
 			}, {
 				type: 'TextBox',

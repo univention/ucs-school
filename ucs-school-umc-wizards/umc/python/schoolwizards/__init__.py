@@ -99,6 +99,11 @@ class Instance(SchoolBaseModule, SchoolImport):
 			self.finished(request.id, dict(message=str(e)))
 			return False
 
+	def _check_school_name(self, name):
+		regex = re.compile('^[a-zA-Z0-9](([a-zA-Z0-9_]*)([a-zA-Z0-9]$))?$')
+		if not regex.match(name):
+			raise ValueError(_('Invalid school name'))
+
 	@LDAP_Connection()
 	def create_user(self, request, search_base=None,
 	                ldap_user_read=None, ldap_position=None):
@@ -178,7 +183,7 @@ class Instance(SchoolBaseModule, SchoolImport):
 			request = remove_whitespaces(request)
 
 			name = udm_syntax.GroupName.parse(request.options['name'])
-			schooldc = request.options.get('schooldc', '')
+			schooldc = self._check_school_name(request.options.get('schooldc', ''))
 
 			if not self._is_singlemaster():
 				regex = re.compile('^\w+$')
