@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-wizards\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2012-05-04 14:58+0200\n"
+"POT-Creation-Date: 2012-08-01 22:11+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -12,19 +12,19 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: umc/python/schoolwizards/__init__.py:210
+#: umc/python/schoolwizards/__init__.py:226
 msgid "Class name is already in use"
 msgstr "Klassenname wird bereits benutzt"
 
-#: umc/python/schoolwizards/__init__.py:222
+#: umc/python/schoolwizards/__init__.py:238
 msgid "Class successfully created"
 msgstr "Klasse erfolgreich erstellt"
 
-#: umc/python/schoolwizards/__init__.py:247
+#: umc/python/schoolwizards/__init__.py:265
 msgid "Computer name is already in use"
 msgstr "Computername wird bereits benutzt"
 
-#: umc/python/schoolwizards/__init__.py:266
+#: umc/python/schoolwizards/__init__.py:284
 msgid "Computer successfully created"
 msgstr "Computer erfolgreich erstellt"
 
@@ -49,62 +49,62 @@ msgstr "Der Benutzer konnte nicht erstellt werden"
 msgid "Execution of command failed"
 msgstr "Die Ausführungs des Kommandos schlug fehl"
 
-#: umc/python/schoolwizards/__init__.py:174
+#: umc/python/schoolwizards/__init__.py:105
+msgid "Invalid school name"
+msgstr "Ungültiger Schulname"
+
+#: umc/python/schoolwizards/__init__.py:191
 msgid "Invalid school server name"
 msgstr "Ungültiger Schulserver name"
 
-#: umc/python/schoolwizards/__init__.py:135
-#: umc/python/schoolwizards/__init__.py:253
+#: umc/python/schoolwizards/__init__.py:146
+#: umc/python/schoolwizards/__init__.py:271
 msgid "Invalid value for  'type' property"
 msgstr "Ungültiger Wert für 'Typ'-Eigenschaft"
 
-#: umc/python/schoolwizards/__init__.py:249
+#: umc/python/schoolwizards/__init__.py:267
 msgid "MAC address is already in use"
 msgstr "MAC-Adresse wird bereits benutzt"
 
-#: umc/python/schoolwizards/__init__.py:125
+#: umc/python/schoolwizards/__init__.py:136
 msgid "Mail address is already in use"
 msgstr "Mail-Adresse wird bereits benutzt"
 
-#: umc/python/schoolwizards/__init__.py:56
+#: umc/python/schoolwizards/__init__.py:57
 #, python-format
 msgid "Missing value for the following properties: %s"
 msgstr "Fehlender Wert für die folgenden Eigenschaften: %s"
 
-#: umc/python/schoolwizards/__init__.py:176
+#: umc/python/schoolwizards/__init__.py:193
 msgid "School name is already in use"
 msgstr "Schulname wird bereits benutzt"
 
-#: umc/python/schoolwizards/__init__.py:189
+#: umc/python/schoolwizards/__init__.py:203
 msgid "School successfully created"
 msgstr "Schule wurde erfolgreich erstellt"
 
-#: umc/python/schoolwizards/__init__.py:216
+#: umc/python/schoolwizards/__init__.py:232
 msgid "The class could not be created"
 msgstr "Die Klasse konnte nicht erstellt werden"
 
-#: umc/python/schoolwizards/__init__.py:260
+#: umc/python/schoolwizards/__init__.py:278
 msgid "The computer could not be created"
 msgstr "Der Computer konnte nicht erstellt werden"
 
-#: umc/python/schoolwizards/__init__.py:183
-msgid "The school could not be created"
-msgstr "Die Schule konnte nicht erstellt werden"
-
-#: umc/python/schoolwizards/__init__.py:149
+#: umc/python/schoolwizards/__init__.py:160
 msgid "The user could not be created"
 msgstr "Der Benutzer konnte nicht erstellt werden"
 
-#: umc/python/schoolwizards/__init__.py:208
-#: umc/python/schoolwizards/__init__.py:245
+#: umc/python/schoolwizards/__init__.py:224
+#: umc/python/schoolwizards/__init__.py:263
 msgid "Unknown school"
 msgstr "Unbekannte Schule"
 
-#: umc/python/schoolwizards/__init__.py:155
+#: umc/python/schoolwizards/__init__.py:166
 msgid "User successfully created"
 msgstr "Benutzer wurde erfolgreich erstellt"
 
-#: umc/python/schoolwizards/__init__.py:121
+#: umc/python/schoolwizards/__init__.py:132
 msgid "Username is already in use"
 msgstr "Benutzername wird bereits benutzt"
 
@@ -113,3 +113,6 @@ msgstr "Benutzername wird bereits benutzt"
 
 #~ msgid "The following values are invalid: %s"
 #~ msgstr "Die folgenden Werte sind ungültig: %s"
+
+#~ msgid "The school could not be created"
+#~ msgstr "Die Schule konnte nicht erstellt werden"
