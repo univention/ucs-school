@@ -152,7 +152,8 @@ dojo.declare("umc.modules._schoolrooms.DetailPage", [ umc.widgets.Page, umc.widg
 		this._form = new umc.widgets.Form({
 			widgets: widgets,
 			layout: layout,
-			moduleStore: this.moduleStore
+			moduleStore: this.moduleStore,
+			scrollable: true
 		});
 
 		// add form to page... the page extends a BorderContainer, by default
