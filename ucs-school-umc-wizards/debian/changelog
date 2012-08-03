@@ -1,7 +1,9 @@
 ucs-school-umc-wizards (1.0.33-1) unstable; urgency=low
 
   * Avoid hyphens in the school name. Use regex syntax from the import
-    script (Bug #27991)
+    script
+  * Improve logging functionality
+    (Bug #27991)
 
  -- Jascha Geerds <geerds@univention.de>  Wed, 01 Aug 2012 15:04:44 +0200
 

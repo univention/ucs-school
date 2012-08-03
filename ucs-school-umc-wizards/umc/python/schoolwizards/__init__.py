@@ -183,7 +183,8 @@ class Instance(SchoolBaseModule, SchoolImport):
 			request = remove_whitespaces(request)
 
 			name = udm_syntax.GroupName.parse(request.options['name'])
-			schooldc = self._check_school_name(request.options.get('schooldc', ''))
+			self._check_school_name(name)
+			schooldc = request.options.get('schooldc', '')
 
 			if not self._is_singlemaster():
 				regex = re.compile('^\w+$')

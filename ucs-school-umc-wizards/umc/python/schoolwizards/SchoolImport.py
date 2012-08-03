@@ -58,12 +58,15 @@ class SchoolImport():
 		if run_with_string_argument:
 			entry.insert(0, script)
 			try:
-				return_code = subprocess.call(entry)
-			except IOError, err:
-				MODULE.info(str(err))
+				process = subprocess.Popen(entry, stdout=subprocess.PIPE)
+				stdout, stderr = process.communicate()
+				if stdout and process.returncode > 0:
+					MODULE.warn(stdout)
+			except (OSError, ValueError) as err:
+				MODULE.warn(str(err))
 				raise UMC_CommandError(_('Execution of command failed'))
 			else:
-				return return_code
+				return process.returncode
 		else:
 			# Separate columns by tabs
 			entry = '\t'.join(['%s' % column for column in entry])
@@ -71,12 +74,15 @@ class SchoolImport():
 				tmpfile = tempfile.NamedTemporaryFile()
 				tmpfile.write(entry)
 				tmpfile.flush()
-				return_code = subprocess.call([script, tmpfile.name])
-			except IOError, err:
-				MODULE.info(str(err))
+				process = subprocess.Popen([script, tmpfile.name], subprocess.PIPE)
+				stdout, stderr = process.communicate()
+				if stdout and process.returncode > 0:
+					MODULE.warn(stdout)
+			except (OSError, ValueError) as err:
+				MODULE.warn(str(err))
 				raise UMC_CommandError(_('Execution of command failed'))
 			else:
-				return return_code
+				return process.returncode
 			finally:
 				tmpfile.close()
 
