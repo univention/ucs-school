@@ -132,9 +132,7 @@ dojo.declare("umc.modules.schoolusers", [ umc.widgets.Module, umc.i18n.Mixin ], 
 		this._grid = new umc.widgets.Grid({
 			actions: actions,
 			columns: columns,
-			moduleStore: this.moduleStore,
-			// initial query
-			query: { 'class': 'None', pattern: '' }
+			moduleStore: this.moduleStore
 		});
 
 		// add the grid to the title pane
@@ -146,6 +144,7 @@ dojo.declare("umc.modules.schoolusers", [ umc.widgets.Module, umc.i18n.Mixin ], 
 		//
 
 		// add remaining elements of the search form
+		var deferred = new dojo.Deferred();
 		var widgets = [{
 			type: 'ComboBox',
 			name: 'school',
@@ -165,7 +164,10 @@ dojo.declare("umc.modules.schoolusers", [ umc.widgets.Module, umc.i18n.Mixin ], 
 			],
 			dynamicValues: 'schoolusers/groups',
 			umcpCommand: dojo.hitch( this, 'umcpCommand' ),
-			depends: 'school'
+			depends: 'school',
+			onValuesLoaded: function() {
+				deferred.resolve();
+			}
 		}, {
 			type: 'TextBox',
 			name: 'pattern',
@@ -197,7 +199,7 @@ dojo.declare("umc.modules.schoolusers", [ umc.widgets.Module, umc.i18n.Mixin ], 
 				this.standby( false );
 				// transparent standby mode
 				this.standbyOpacity = 0.75;
-			 } )
+			} )
 		});
 
 		// add search form to the title pane
@@ -209,6 +211,17 @@ dojo.declare("umc.modules.schoolusers", [ umc.widgets.Module, umc.i18n.Mixin ], 
 		} );
 
 		this._searchPage.startup();
+
+		umc.tools.ucr(['directory/manager/web/modules/users/user/search/autosearch', 'directory/manager/web/modules/autosearch']).then(dojo.hitch(this, function(ucr) {
+			var autoSearch = ucr['directory/manager/web/modules/users/user/search/autosearch'] || 
+				ucr['directory/manager/web/modules/autosearch'];
+			if (umc.tools.isTrue(autoSearch)) {
+				deferred.then(dojo.hitch(this, function() {
+					this._grid.filter(this._searchForm.gatherFormValues());
+				}));
+			}
+		}));
+		schoolusers = this;
 	},
 
 	_resetPasswords: function( ids, items ) {

@@ -1,3 +1,9 @@
+ucs-school-umc-users (8.0.6-1) unstable; urgency=low
+
+  * Respect autosearch (set for users/user or globally): Bug #28200
+
+ -- Dirk Wiesenthal <wiesenthal@univention.de>  Wed, 15 Aug 2012 16:28:14 +0200
+
 ucs-school-umc-users (8.0.5-1) unstable; urgency=low
 
   * Include ucs-school-lib/umc.sh in 38ucs-school-umc-users.inst,
