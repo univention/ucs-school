@@ -42,7 +42,8 @@ univention-config-registry set \
     ucsschool/userlogon/commonshares/server/Marktplatz?"$hostname" \
     ucsschool/userlogon/commonshares/letter/Marktplatz?"M" \
     ucsschool/userlogon/classshareletter?"K" \
-    ucsschool/netlogon/ucs-school-netlogon-user-logonscripts/script?'user\%USERNAME%.vbs'
+    ucsschool/netlogon/ucs-school-netlogon-user-logonscripts/script?'user\%USERNAME%.vbs' \
+	ucsschool/userlogon/myshares/enabled?no
 
 # samba 3
 mkdir -p /var/lib/samba/netlogon/user

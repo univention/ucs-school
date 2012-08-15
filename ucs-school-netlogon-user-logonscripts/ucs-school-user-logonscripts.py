@@ -292,7 +292,7 @@ Function MapDrive(Drive,Share)
 	if listener.baseConfig.has_key('ucsschool/userlogon/mysharespath') and listener.baseConfig['ucsschool/userlogon/mysharespath']:
 		homePath = listener.baseConfig['ucsschool/userlogon/mysharespath']
 
-	if homePath:
+	if homePath and listener.baseConfig.is_true('ucsschool/userlogon/myshares/enabled',False):
 		skript = skript + '\n'
 		skript = skript + 'SetMyShares "%s"\n' % homePath
 

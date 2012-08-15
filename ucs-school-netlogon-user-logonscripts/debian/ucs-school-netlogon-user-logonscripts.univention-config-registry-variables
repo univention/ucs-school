@@ -16,6 +16,12 @@ Description[en]=Defines the drive letter of the network share
 Type=str
 Categories=ucsschool-netlogon
 
+[ucsschool/userlogon/myshares/enabled]
+Description[de]=Pfad für das persönliche Verzeichnis setzen? (Standard: no)
+Description[en]=Set path to the personal sirectory? (default: no)
+Type=bool
+Categories=ucsschool-netlogon
+
 [ucsschool/userlogon/mysharespath]
 Description[de]=Pfad für das persönliche Verzeichnis (default: $(ucr get samba/homedirletter):\Eigene Dateien)
 Description[en]=Path to the personal sirectory (default: $(ucr get samba/homedirletter):\Eigene Dateien)
