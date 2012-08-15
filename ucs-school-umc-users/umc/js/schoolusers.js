@@ -221,7 +221,6 @@ dojo.declare("umc.modules.schoolusers", [ umc.widgets.Module, umc.i18n.Mixin ], 
 				}));
 			}
 		}));
-		schoolusers = this;
 	},
 
 	_resetPasswords: function( ids, items ) {
