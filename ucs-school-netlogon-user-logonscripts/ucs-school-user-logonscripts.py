@@ -64,6 +64,11 @@ def getScriptPath():
 			listener.setuid(0)
 			try:
 				os.makedirs(path)
+			except OSError, ex:
+				# errno 17 == file exists
+				# ==> ignore error if "path" exists and is a directory
+				if not(ex.errno == 17 and os.path.isdir(path)):
+					raise ex
 			finally:
 				listener.unsetuid()
 
