@@ -1,3 +1,11 @@
+ucs-school-netlogon-user-logonscripts (7.0.10-1) unstable; urgency=low
+
+  * ignore exception if target is a directory and does already
+    exist; otherwise raise exception (Bug #28121)
+  * deactivate update of MyShares by default (Bug #28214)
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Tue, 14 Aug 2012 18:09:31 +0200
+
 ucs-school-netlogon-user-logonscripts (7.0.9-2) unstable; urgency=low
 
   * fixed preinst (Bug #27134) 
