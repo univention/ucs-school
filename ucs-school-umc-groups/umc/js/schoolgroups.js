@@ -277,6 +277,10 @@ dojo.declare("umc.modules.schoolgroups", [ umc.widgets.Module, umc.i18n.Mixin ],
 			name: 'delete',
 			label: this._( 'Delete' )
 		} ] ).then( dojo.hitch( this, function( action ) {
+			if (action != 'delete') {
+				// action canceled
+				return;
+			}
 			this.standby( true );
 			this.moduleStore.remove( ids ).then( dojo.hitch( this, function( response ) {
 				this.standby( false );
