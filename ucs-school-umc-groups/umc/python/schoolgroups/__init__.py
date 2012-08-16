@@ -32,6 +32,7 @@
 # <http://www.gnu.org/licenses/>.
 
 import copy
+import traceback
 
 from univention.lib.i18n import Translation
 
@@ -43,10 +44,49 @@ from univention.management.console.protocol.definitions import *
 import univention.admin.modules as udm_modules
 import univention.admin.objects as udm_objects
 import univention.admin.uexceptions as udm_exceptions
+import univention.admin.uldap as udm_uldap
 
 from ucsschool.lib.schoolldap import LDAP_Connection, LDAP_ConnectionError, set_credentials, SchoolSearchBase, SchoolBaseModule, LDAP_Filter, Display, USER_READ, USER_WRITE, MACHINE_WRITE
 
 _ = Translation( 'ucs-school-umc-groups' ).translate
+
+##### BEGIN: copy and paste from ucs-school-import #####
+district_enabled = ucr.is_true('ucsschool/ldap/district/enable')
+
+def extract_district (schoolNr):
+	try:
+		return schoolNr[:2]
+	except IndexError:
+		# TODO: add more debug output
+		MODULE.error('ERROR: Unable to extract district from school number: %s' % schoolNr +
+				'\n\tIf you do not use the district model deactivate UCR variable ucsschool/ldap/district/enable')
+
+def getDN (schoolNr, base='school', basedn=ucr.get('ldap/base')):
+	"""
+	@param	base Values are either school, district or base
+	@return	According to the base a specific part of dn is returned.
+			Let's suppose the following school dn:
+			ou=SCHOOL,ou=DISTRICT,dc=BASE,dc=DN
+
+			The following is returned
+			'base'		-> dc=BASE,dc=DN
+			'district'	-> ou=DISTRICT,dc=BASE,dc=DN
+			'school'	-> ou=SCHOOL,ou=DISTRICT,dc=BASE,dc=DN
+	"""
+	dn = '%(school)s%(district)s%(basedn)s'
+	values = {'school':'ou=%s,'%schoolNr, 'district':'', 'basedn':basedn}
+	if district_enabled:
+		district = extract_district (schoolNr)
+		if not district:
+			raise RuntimeError("ERROR: Unable to continue without district number. School number: %s" % schoolNr)
+		values['district'] = 'ou=%s,' % district
+	if base == 'district':
+		values['school'] = ''
+	elif base == 'base':
+		values['district'] = ''
+		values['school'] = ''
+	return dn % values
+##### END: copied part #####
 
 class Instance( SchoolBaseModule ):
 	@LDAP_Connection()
@@ -162,8 +202,9 @@ class Instance( SchoolBaseModule ):
 			elif request.flavor == 'workgroup-admin':
 				# workgroup (admin view) -> update teachers and students
 				grp[ 'users' ] = group[ 'members' ]
-				grp[ 'name' ] = '%(school)s-%(name)s' % group
 				grp[ 'description' ] = group[ 'description' ]
+				# do not allow groups to renamed in order to avoid conflicts with shares
+				#grp[ 'name' ] = '%(school)s-%(name)s' % group
 			elif request.flavor == 'workgroup':
 				# workgroup (teacher view) -> update only the group's students
 				user_diff = set(group['members']) - set(grp['users'])
@@ -178,6 +219,106 @@ class Instance( SchoolBaseModule ):
 			raise UMC_CommandError( _('Failed to modify group (%s).') % e.message )
 
 		self.finished( request.id, True )
+
+	def _remove_group_share( self, groupName, ldap_connection, search_base):
+		# check whether a share with the same name already exists
+		results = udm_modules.lookup('shares/share', None, ldap_connection,
+				scope = 'sub', base = search_base.schoolDN,
+				filter = 'cn=%s' % groupName)
+		for ishare in results:
+			try:
+				MODULE.info('Removing share: %s' % ishare.dn)
+				ishare.open()
+				ishare.remove()
+			except udm_exceptions.base, e:
+				MODULE.error('Failed to remove share: %s' % e)
+		if not results:
+			MODULE.info('No share could be associated with the group "%s", searchBase=%s' % (groupName, search_base.schoolDN))
+
+	def _add_group_share( self, groupName, groupDN, ldap_connection, search_base ):
+		shareDN = 'cn=%s,%s' % (groupName, search_base.shares)
+
+		# check whether a share with the same name already exists
+		results = udm_modules.lookup('share/share', None, ldap_connection,
+				scope = 'sub', base = search_base.schoolDN,
+				filter = 'cn=%s' % groupName)
+		if results:
+			MODULE.info('share for workgroup "%s" already exists: %s' % (groupName, results[0].dn))
+			return
+
+		# share does not exists -> create a new one
+		MODULE.info('creating new share for workgroup "%s": %s' % (groupName, shareDN))
+
+		# get gid form corresponding group
+		gid = 0
+		groupModule = udm_modules.get('groups/group')
+		groupObj = groupModule.object(None, ldap_connection, None, groupDN)
+		groupObj.open()
+		gid = groupObj['gidNumber']
+		MODULE.info('using gid=%s' % gid)
+
+		# get default fileserver
+		# if UCR variable is set, use that value instead of building the serverFQDN manually
+		serverFQDN = ucr.get('ucsschool/ldap/groups/fileserver', "%s.%s" % (ucr.get('hostname', ''), ucr.get('domainname', '')))
+
+		##### BEGIN: copied (with minor adaptations) from ucs-school-import #####
+		# get alternative server (defined at ou object if a dc slave is responsible for more than one ou)
+		lo = ldap_connection
+		domainname = ucr.get('domainname')
+		ou_attr_LDAPAccessWrite = lo.get(search_base.schoolDN,['univentionLDAPAccessWrite'])
+		alternativeServer_dn = None
+		if len(ou_attr_LDAPAccessWrite) > 0:
+			alternativeServer_dn = ou_attr_LDAPAccessWrite["univentionLDAPAccessWrite"][0]
+			if len(ou_attr_LDAPAccessWrite) > 1:
+				MODULE.warn("WARNING: more than one corresponding univentionLDAPAccessWrite found at ou=%s" % search_base.school)
+
+		# build fqdn of alternative server and set serverFQDN
+		if alternativeServer_dn:
+			alternativeServer_attr = lo.get(alternativeServer_dn,['uid'])
+			if len(alternativeServer_attr) > 0:
+				alternativeServer_uid = alternativeServer_attr['uid'][0]
+				alternativeServer_uid = alternativeServer_uid.replace('$','')
+				if len(alternativeServer_uid) > 0:
+					serverFQDN = "%s.%s" % (alternativeServer_uid, domainname)
+
+		# fetch serverFQDN from OU
+		result = lo.get(getDN (search_base.school, basedn=ucr.get('ldap/base')), ['ucsschoolClassShareFileServer'])
+		if result:
+			serverDomainName = lo.get(result['ucsschoolClassShareFileServer'][0], ['associatedDomain'])
+			if serverDomainName:
+				serverDomainName = serverDomainName['associatedDomain'][0]
+			else:
+				serverDomainName = domainname
+			result = lo.get(result['ucsschoolClassShareFileServer'][0], ['cn'])
+			if result:
+				serverFQDN = "%s.%s" % (result['cn'][0], serverDomainName)
+		##### END: copied part #####
+
+		shareModule = udm_modules.get('shares/share')
+		position = udm_uldap.position(ucr.get('ldap/base'))
+		position.setDn(search_base.shares)
+		shareObj = shareModule.object(None, ldap_connection, position)
+		shareObj.open()
+		shareObj["name"] = "%s" % groupName
+		shareObj["host"] = serverFQDN
+		shareObj["path"] = "/home/groups/%s" % groupName
+		shareObj["writeable"] = "1"
+		shareObj["sambaWriteable"] = "1"
+		shareObj["sambaBrowseable"] = "1"
+		shareObj["sambaForceGroup"] = "+%s" % groupName
+		shareObj["sambaCreateMode"] = "0770"
+		shareObj["sambaDirectoryMode"] = "0770"
+		shareObj["owner"] = "0"
+		shareObj["group"] = gid
+		shareObj["directorymode"] = "0770"
+
+		try:
+			dn=shareObj.create()
+		except udm_exceptions.objectExists:
+			MODULE.warn('Tried to create share, but share already exists: %s' % shareDN)
+		except udm_exceptions.base, e:
+			strTraceback = traceback.format_exc()
+			MODULE.error('Failed to create share: %s\nTRACEBACK:%s' % (shareDN, strTraceback))
 
 	@LDAP_Connection( USER_READ, USER_WRITE )
 	def add( self, request, search_base = None, ldap_user_write = None, ldap_user_read = None, ldap_position = None ):
@@ -196,6 +337,7 @@ class Instance( SchoolBaseModule ):
 		search_base = SchoolSearchBase( search_base.availableSchools, group[ 'school' ] )
 		ldap_position.setDn( search_base.workgroups )
 		try:
+			# create group
 			grp = udm_modules.get( 'groups/group' ).object( None, ldap_user_write, ldap_position )
 			grp.open()
 
@@ -203,7 +345,10 @@ class Instance( SchoolBaseModule ):
 			grp[ 'description' ] = group[ 'description' ]
 			grp[ 'users' ] = group[ 'members' ]
 
-			grp.create()
+			dn = grp.create()
+
+			# create corresponding share object
+			self._add_group_share(grp['name'], dn, ldap_user_write, search_base)
 		except udm_exceptions.base, e:
 			MODULE.process('An error occurred while creating the group "%s": %s' % (group['name'], e.message))
 			raise UMC_CommandError( _('Failed to create group (%s).') % e.message )
@@ -227,7 +372,12 @@ class Instance( SchoolBaseModule ):
 		grp = udm_modules.get( 'groups/group' ).object( None, ldap_user_write, ldap_position, group[ 0 ] )
 
 		try:
+			# remove group share
+			self._remove_group_share(grp['name'], ldap_user_write, search_base)
+
+			# remove group
 			grp.remove()
+
 		except udm_exceptions.base as e:
 			MODULE.error('Could not remove group "%s": %s' % (grp.dn, e))
 			self.finished( request.id, [ { 'success' : False, 'message' : str( e ) } ] )

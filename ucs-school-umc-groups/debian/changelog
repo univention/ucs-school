@@ -1,3 +1,10 @@
+ucs-school-umc-groups (0.1.25-1) unstable; urgency=low
+
+  * automatically create and remove share associated with workgroups;
+    Bug #28211
+
+ -- Alexander Kläser <klaeser@univention.de>  Thu, 16 Aug 2012 18:10:52 +0200
+
 ucs-school-umc-groups (0.1.24-1) unstable; urgency=low
 
   * fixed dialog to allow canceling the delete action; Bug #28213

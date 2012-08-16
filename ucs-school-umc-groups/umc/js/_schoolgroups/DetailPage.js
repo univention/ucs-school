@@ -81,9 +81,7 @@ dojo.declare("umc.modules._schoolgroups.DetailPage", [ umc.widgets.Page, umc.wid
 		this.footerButtons = [{
 			name: 'submit',
 			label: this._('Save changes'),
-			callback: dojo.hitch(this, function() {
-				this._save(this._form.gatherFormValues());
-			})
+			callback: dojo.hitch(this, '_save')
 		}, {
 			name: 'back',
 			label: this._('Back to overview'),
@@ -203,7 +201,8 @@ dojo.declare("umc.modules._schoolgroups.DetailPage", [ umc.widgets.Page, umc.wid
 		this.connect(this._form, 'onSubmit', '_save');
 	},
 
-	_save: function( values ) {
+	_save: function() {
+		var values = this._form.gatherFormValues();
 		var deferred = null;
 		var nameWidget = this._form.getWidget( 'name' );
 
@@ -223,8 +222,9 @@ dojo.declare("umc.modules._schoolgroups.DetailPage", [ umc.widgets.Page, umc.wid
 		} ) );
 	},
 
-	disableSchool: function( disable ) {
+	disableFields: function( disable ) {
 		this._form.getWidget( 'school' ).set( 'disabled', disable );
+		this._form.getWidget( 'name' ).set( 'disabled', disable );
 	},
 
 	_setSchoolAttr: function( school ) {

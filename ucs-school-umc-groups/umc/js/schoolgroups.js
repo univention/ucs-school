@@ -248,7 +248,7 @@ dojo.declare("umc.modules.schoolgroups", [ umc.widgets.Module, umc.i18n.Mixin ],
 
 		this._detailPage.set( 'headerText', this._( 'Add workgroup' ) );
 		this._detailPage.set( 'school', this._searchForm.getWidget( 'school' ).get( 'value' ) );
-		this._detailPage.disableSchool( false );
+		this._detailPage.disableFields( false );
 		this.selectChild( this._detailPage );
 	},
 
@@ -258,7 +258,7 @@ dojo.declare("umc.modules.schoolgroups", [ umc.widgets.Module, umc.i18n.Mixin ],
 			return;
 		}
 
-		this._detailPage.disableSchool( true );
+		this._detailPage.disableFields( true );
 		if ( this.moduleFlavor == 'class' ) {
 			this._detailPage.set( 'headerText', this._( 'Edit class' ) );
 		} else {
