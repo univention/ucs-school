@@ -1,3 +1,9 @@
+ucs-school-umc-groups (0.1.27-1) unstable; urgency=low
+
+  * added missing translations; Bug #28211
+
+ -- Alexander Kläser <klaeser@univention.de>  Fri, 17 Aug 2012 10:42:37 +0200
+
 ucs-school-umc-groups (0.1.26-1) unstable; urgency=low
 
   * corrected the search base when deleting a group; Bug #28211

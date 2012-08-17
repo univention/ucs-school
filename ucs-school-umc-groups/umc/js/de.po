@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-groups\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2012-05-16 11:33+0200\n"
+"POT-Creation-Date: 2012-08-17 10:36+0200\n"
 "PO-Revision-Date: 2012-05-08 15:54+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,19 +16,19 @@ msgstr ""
 msgid "Add workgroup"
 msgstr "Arbeitsgruppe hinzufügen"
 
-#: umc/js/_schoolgroups/DetailPage.js:115
+#: umc/js/_schoolgroups/DetailPage.js:113
 msgid "All students"
 msgstr "Alle Schüler"
 
-#: umc/js/_schoolgroups/DetailPage.js:112
+#: umc/js/_schoolgroups/DetailPage.js:110
 msgid "All teachers"
 msgstr "Alle Lehrer"
 
-#: umc/js/_schoolgroups/DetailPage.js:109
+#: umc/js/_schoolgroups/DetailPage.js:107
 msgid "All users"
 msgstr "Alle Benutzer"
 
-#: umc/js/_schoolgroups/DetailPage.js:89
+#: umc/js/_schoolgroups/DetailPage.js:87
 msgid "Back to overview"
 msgstr "Zurück zur Übersicht"
 
@@ -36,7 +36,7 @@ msgstr "Zurück zur Übersicht"
 msgid "Cancel"
 msgstr "Abbrechen"
 
-#: umc/js/_schoolgroups/DetailPage.js:126
+#: umc/js/_schoolgroups/DetailPage.js:124
 msgid "Class"
 msgstr "Klasse"
 
@@ -52,7 +52,7 @@ msgstr "Löschen"
 msgid "Deleting the selected objects."
 msgstr "Löschen der ausgewählten Objekte"
 
-#: umc/js/schoolgroups.js:143 umc/js/_schoolgroups/DetailPage.js:132
+#: umc/js/schoolgroups.js:143 umc/js/_schoolgroups/DetailPage.js:130
 msgid "Description"
 msgstr "Beschreibung"
 
@@ -72,16 +72,16 @@ msgstr "Bearbeiten des ausgewählten Objektes"
 msgid "Edit workgroup"
 msgstr "Arbeitsgruppe bearbeiten"
 
-#: umc/js/_schoolgroups/DetailPage.js:138
-#: umc/js/_schoolgroups/DetailPage.js:182
+#: umc/js/_schoolgroups/DetailPage.js:136
+#: umc/js/_schoolgroups/DetailPage.js:180
 msgid "Members"
 msgstr "Mitglieder"
 
-#: umc/js/schoolgroups.js:139 umc/js/_schoolgroups/DetailPage.js:158
+#: umc/js/schoolgroups.js:139 umc/js/_schoolgroups/DetailPage.js:156
 msgid "Name"
 msgstr "Name"
 
-#: umc/js/_schoolgroups/DetailPage.js:179
+#: umc/js/_schoolgroups/DetailPage.js:177
 msgid "Properties"
 msgstr "Eigenschaft"
 
@@ -89,8 +89,8 @@ msgstr "Eigenschaft"
 msgid "Save changes"
 msgstr "Änderungen speichern"
 
-#: umc/js/schoolgroups.js:173 umc/js/_schoolgroups/DetailPage.js:121
-#: umc/js/_schoolgroups/DetailPage.js:143
+#: umc/js/schoolgroups.js:173 umc/js/_schoolgroups/DetailPage.js:119
+#: umc/js/_schoolgroups/DetailPage.js:141
 msgid "School"
 msgstr "Schule"
 
@@ -112,27 +112,27 @@ msgid ""
 msgstr ""
 "Legt die Zeichenketten die in dem angezeigten Namen gesucht werden soll fest "
 
-#: umc/js/_schoolgroups/DetailPage.js:138
+#: umc/js/_schoolgroups/DetailPage.js:136
 msgid "Students"
 msgstr "Schüler"
 
-#: umc/js/_schoolgroups/DetailPage.js:138
+#: umc/js/_schoolgroups/DetailPage.js:136
 msgid "Teachers"
 msgstr "Lehrer"
 
-#: umc/js/_schoolgroups/DetailPage.js:139
+#: umc/js/_schoolgroups/DetailPage.js:137
 msgid "Teachers and students that belong to the current workgroup"
 msgstr "Lehrer und Schüler, die zu der aktuellen Arbeitsgruppe gehören"
 
-#: umc/js/_schoolgroups/DetailPage.js:139
+#: umc/js/_schoolgroups/DetailPage.js:137
 msgid "Teachers of the specified class"
 msgstr "Lehrer der angegebenen Klasse"
 
-#: umc/js/schoolgroups.js:286
+#: umc/js/schoolgroups.js:290
 msgid "The workgroup could not be deleted ({message})"
 msgstr "Die Arbeitsgruppe konnte nicht gelöscht werden ({message})"
 
-#: umc/js/schoolgroups.js:284
+#: umc/js/schoolgroups.js:288
 msgid "The workgroup has been deleted successfully"
 msgstr "Die Arbeitsgruppe wurde erfolgreich gelöscht"
 
@@ -148,14 +148,14 @@ msgstr ""
 msgid "This page allows to specify teachers who are associated with the class"
 msgstr "Diese erlaubt das Definieren der Lehrer, die zu dieser Klasse gehören"
 
-#: umc/js/_schoolgroups/DetailPage.js:150
+#: umc/js/_schoolgroups/DetailPage.js:148
 msgid "User group or class"
 msgstr "Benutzergruppe oder Klasse"
 
-#: umc/js/_schoolgroups/DetailPage.js:133
+#: umc/js/_schoolgroups/DetailPage.js:131
 msgid "Verbose description of the group"
 msgstr "Ausführliche Beschreibung der Gruppe"
 
-#: umc/js/_schoolgroups/DetailPage.js:126
+#: umc/js/_schoolgroups/DetailPage.js:124
 msgid "Workgroup"
 msgstr "Arbeitsgruppe"
