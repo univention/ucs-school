@@ -1,3 +1,9 @@
+ucs-school-umc-groups (0.1.26-1) unstable; urgency=low
+
+  * corrected the search base when deleting a group; Bug #28211
+
+ -- Alexander Kläser <klaeser@univention.de>  Fri, 17 Aug 2012 09:57:48 +0200
+
 ucs-school-umc-groups (0.1.25-1) unstable; urgency=low
 
   * automatically create and remove share associated with workgroups;

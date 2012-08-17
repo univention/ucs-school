@@ -50,7 +50,7 @@ from ucsschool.lib.schoolldap import LDAP_Connection, LDAP_ConnectionError, set_
 
 _ = Translation( 'ucs-school-umc-groups' ).translate
 
-##### BEGIN: copy and paste from ucs-school-import #####
+##### BEGIN: copied (with minor adaptations) from ucs-school-import #####
 district_enabled = ucr.is_true('ucsschool/ldap/district/enable')
 
 def extract_district (schoolNr):
@@ -222,8 +222,9 @@ class Instance( SchoolBaseModule ):
 
 	def _remove_group_share( self, groupName, ldap_connection, search_base):
 		# check whether a share with the same name already exists
+		MODULE.info('Seek for shares within: %s' % search_base.shares)
 		results = udm_modules.lookup('shares/share', None, ldap_connection,
-				scope = 'sub', base = search_base.schoolDN,
+				scope = 'sub', base = search_base.shares,
 				filter = 'cn=%s' % groupName)
 		for ishare in results:
 			try:
@@ -368,8 +369,19 @@ class Instance( SchoolBaseModule ):
 
 		if request.flavor != 'workgroup-admin':
 			raise UMC_CommandError( 'not supported' )
+
+		# load group object
 		group = request.options[ 0 ].get( 'object', {} )
 		grp = udm_modules.get( 'groups/group' ).object( None, ldap_user_write, ldap_position, group[ 0 ] )
+
+		# get the SchoolSearchBase based on the DN of the group to be deleted
+		if grp.dn.find('ou=') < 0:
+			raise UMC_CommandError( 'Group must within the scope of a school OU: %s' % grp.dn )
+		schoolDN = grp.dn[grp.dn.find('ou='):]
+		school = ldap_user_write.explodeDn( schoolDN, 1 )[0]
+		MODULE.info('schoolDN=%s school=%s availableSchools=%s' % (schoolDN, school, search_base.availableSchools))
+		search_base = SchoolSearchBase( search_base.availableSchools, school )
+		MODULE.info('Search base is: %s' % search_base.schoolDN)
 
 		try:
 			# remove group share
@@ -383,3 +395,4 @@ class Instance( SchoolBaseModule ):
 			self.finished( request.id, [ { 'success' : False, 'message' : str( e ) } ] )
 
 		self.finished( request.id, [ { 'success' : True } ] )
+
