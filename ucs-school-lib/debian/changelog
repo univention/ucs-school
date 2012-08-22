@@ -1,3 +1,10 @@
+ucs-school-lib (1.0.58-1) unstable; urgency=low
+
+  * not existing ldap bases will be ignored when searching for users;
+    Bug #28218
+
+ -- Florian Best <best@univention.de>  Wed, 22 Aug 2012 11:23:57 +0200
+
 ucs-school-lib (1.0.57-1) unstable; urgency=low
 
   * added check_license() function; Bug #27339
