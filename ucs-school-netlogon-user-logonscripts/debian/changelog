@@ -1,3 +1,9 @@
+ucs-school-netlogon-user-logonscripts (7.0.10-3) unstable; urgency=low
+
+  * fixed typo in UCR variable description (Bug #28214)
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Wed, 22 Aug 2012 14:50:13 +0200
+
 ucs-school-netlogon-user-logonscripts (7.0.10-2) unstable; urgency=low
 
   * fixed and refactured last changes for Bug #28121
