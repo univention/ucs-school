@@ -526,8 +526,12 @@ class SchoolBaseModule( Base ):
 
 			# search for all users
 			for ibase in bases:
-				userresult.extend(udm_modules.lookup( 'users/user', None, ldap_connection,
-						scope = 'sub', base = ibase, filter = ldapFilter))
+				try:
+					userresult.extend(udm_modules.lookup( 'users/user', None, ldap_connection,
+							scope = 'sub', base = ibase, filter = ldapFilter))
+				except udm_errors.noObject:
+					# the ldap base does not exists
+					pass
 
 			if groupObj:
 				# filter users to be members of the specified group
