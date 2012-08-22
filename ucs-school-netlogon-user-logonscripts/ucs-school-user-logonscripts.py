@@ -60,15 +60,10 @@ def getScriptPath():
 	scriptpath.append("/var/lib/samba/sysvol/%s/scripts/user" % listener.configRegistry.get('kerberos/realm', '').lower())
 
 	for path in scriptpath:
-		if not os.path.isdir(path):
 			listener.setuid(0)
 			try:
-				os.makedirs(path)
-			except OSError, ex:
-				# errno 17 == file exists
-				# ==> ignore error if "path" exists and is a directory
-				if not(ex.errno == 17 and os.path.isdir(path)):
-					raise ex
+				if not os.path.isdir(path):
+					os.makedirs(path)
 			finally:
 				listener.unsetuid()
 

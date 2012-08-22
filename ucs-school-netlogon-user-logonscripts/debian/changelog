@@ -1,3 +1,9 @@
+ucs-school-netlogon-user-logonscripts (7.0.10-2) unstable; urgency=low
+
+  * fixed and refactured last changes for Bug #28121
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Wed, 22 Aug 2012 14:27:30 +0200
+
 ucs-school-netlogon-user-logonscripts (7.0.10-1) unstable; urgency=low
 
   * ignore exception if target is a directory and does already
