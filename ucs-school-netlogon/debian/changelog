@@ -1,3 +1,9 @@
+ucs-school-netlogon (1.0.2-2) unstable; urgency=low
+
+  * check existens of netlogon dirs (Bug #28307) 
+
+ -- Felix Botner <botner@univention.de>  Mon, 27 Aug 2012 09:41:33 +0200
+
 ucs-school-netlogon (1.0.2-1) unstable; urgency=low
 
   * create samba3 and samba4 netlogon dir (Bug #27520)

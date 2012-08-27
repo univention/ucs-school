@@ -86,6 +86,9 @@ def runVbs(script, fn, windowStyle, checkReturn, vbsInt, vbsOpts):
 
 def handler(configRegistry, changes):
 
+	if not configRegistry.get("kerberos/realm"):
+		return
+
 	# samba3 samba4
 	netlogonDirs = [
 		"/var/lib/samba/netlogon",
@@ -98,18 +101,24 @@ def handler(configRegistry, changes):
 		for netlogonDir in netlogonDirs:
 			oldScript = os.path.join(netlogonDir, old[0])
 			if os.path.isfile(oldScript):
-				os.remove(oldScript)
+				try:
+					os.remove(oldScript)
+				except:
+					pass
 
 	# netlogon script name
 	netlogonScript = configRegistry.get("ucsschool/import/set/netlogon/script/path", "")
 	if not netlogonScript:
-		sys.exit(0)
+		return
 
 	# remove netlogon script
 	for netlogonDir in netlogonDirs:
 		netlogon = os.path.join(netlogonDir, netlogonScript)
 		if os.path.isfile(netlogon):
-			os.remove(netlogon)
+			try:
+				os.remove(netlogon)
+			except:
+				pass
 
 	# get ucr vars and save script in scripts
 	#   ucsschool/netlogon/<Paketname>/script=demo.cmd
@@ -140,14 +149,15 @@ def handler(configRegistry, changes):
 
 	# write logon script(s)
 	for netlogonDir in netlogonDirs:
-		fn = open(os.path.join(netlogonDir, netlogonScript), 'w')
-		printHeader(fn)
-		for key in sorted(scripts.keys(), key=int):
-			for script in scripts[key]:
-				if script.endswith(".cmd") or script.endswith(".bat"):
-					runCmd(script, fn, windowStyle, checkReturn)
-				elif script.endswith(".vbs"):
-					runVbs(script, fn, windowStyle, checkReturn, vbsInt, vbsOpts)
-				else:
-					# hmm, do nothing 
-					pass	
+		if os.path.isdir(netlogonDir):
+			fn = open(os.path.join(netlogonDir, netlogonScript), 'w')
+			printHeader(fn)
+			for key in sorted(scripts.keys(), key=int):
+				for script in scripts[key]:
+					if script.endswith(".cmd") or script.endswith(".bat"):
+						runCmd(script, fn, windowStyle, checkReturn)
+					elif script.endswith(".vbs"):
+						runVbs(script, fn, windowStyle, checkReturn, vbsInt, vbsOpts)
+					else:
+						# hmm, do nothing 
+						pass	
