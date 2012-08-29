@@ -1,3 +1,9 @@
+ucs-school-metapackage (4.0.38-7) unstable; urgency=low
+
+  * recommend on ucs-school-webproxy (Bug #28325)
+
+ -- Felix Botner <botner@univention.de>  Wed, 29 Aug 2012 15:10:36 +0200
+
 ucs-school-metapackage (4.0.38-6) unstable; urgency=low
 
   * fix typo __gc._tcp (Bug #27395)
