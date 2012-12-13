@@ -1,5 +1,0 @@
-[samba4/ldb/sam/module/*]
-Description[de]=LDB Module die mit sam.ldb registriert werden sollen
-Description[en]=LDB Modules to register with sam.ldb
-Type=str
-Categories=samba4

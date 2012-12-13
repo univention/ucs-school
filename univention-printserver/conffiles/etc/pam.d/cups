@@ -1,5 +1,0 @@
-@%@BCWARNING=# @%@
-
-@include common-account
-@include common-auth
-
