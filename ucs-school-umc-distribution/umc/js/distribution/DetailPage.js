@@ -26,18 +26,27 @@
  * /usr/share/common-licenses/AGPL-3; if not, see
  * <http://www.gnu.org/licenses/>.
  */
-/*global console MyError dojo dojox dijit umc */
+/*global define*/
 
-dojo.provide("umc.modules._distribution.DetailPage");
+define([
+	"dojo/_base/declare",
+	"dojo/_base/lang",
+	"dojo/_base/array",
+	"umc/dialog",
+	"umc/tools",
+	"umc/widgets/Page",
+	"umc/widgets/Form",
+	"umc/widgets/TextBox",
+	"umc/widgets/ComboBox",
+	"umc/widgets/MultiUploader",
+	"umc/widgets/MultiObjectSelect",
+	"umc/widgets/DateBox",
+	"umc/widgets/TimeBox",
+	"umc/widgets/StandbyMixin",
+	"umc/i18n!/umc/modules/distribution"
+], function(declare, lang, array, dialog, tools, Page, Form, TextBox, ComboBox, MultiUploader, MultiObjectSelect, DateBox, TimeBox, StandbyMixin, _) {
 
-dojo.require("umc.dialog");
-dojo.require("umc.i18n");
-dojo.require("umc.tools");
-dojo.require("umc.widgets.Form");
-dojo.require("umc.widgets.Page");
-dojo.require("umc.widgets.StandbyMixin");
-
-dojo.declare("umc.modules._distribution.DetailPage", [ umc.widgets.Page, umc.widgets.StandbyMixin, umc.i18n.Mixin ], {
+return declare("umc.modules.distribution.DetailPage", [ Page, StandbyMixin ], {
 	// summary:
 	//		This class represents the detail view of our dummy module.
 
@@ -49,9 +58,6 @@ dojo.declare("umc.modules._distribution.DetailPage", [ umc.widgets.Page, umc.wid
 
 	// currently active flavor of the module
 	moduleFlavor: '',
-
-	// use i18n information from umc.modules.distribution
-	i18nClass: 'umc.modules.distribution',
 
 	// internal reference to the formular containing all form widgets of an UDM object
 	_form: null,
@@ -69,20 +75,20 @@ dojo.declare("umc.modules._distribution.DetailPage", [ umc.widgets.Page, umc.wid
 		this.standbyOpacity = 1;
 
 		// set the page header
-		this.headerText = this._('Project properties');
-		this.helpText = this._('This page allows to modify properties of an existing or new distribution project.');
+		this.headerText = _('Project properties');
+		this.helpText = _('This page allows to modify properties of an existing or new distribution project.');
 
 		// configure buttons for the footer of the detail page
 		this.footerButtons = [{
 			name: 'submit',
-			label: this._('Save changes'),
-			callback: dojo.hitch(this, function() {
-				this._save(this._form.gatherFormValues());
+			label: _('Save changes'),
+			callback: lang.hitch(this, function() {
+				this._save(this._form.get('value'));
 			})
 		}, {
 			name: 'cancel',
-			label: this._('Back to overview'),
-			callback: dojo.hitch(this, function() {
+			label: _('Back to overview'),
+			callback: lang.hitch(this, function() {
 				this.onClose();
 				this._resetForm();
 			})
@@ -98,11 +104,11 @@ dojo.declare("umc.modules._distribution.DetailPage", [ umc.widgets.Page, umc.wid
 		this.standby(true);
 
 		// query max upload size via UCR
-		umc.tools.ucr('umc/server/upload/max').then(dojo.hitch(this, function(result) {
+		tools.ucr('umc/server/upload/max').then(lang.hitch(this, function(result) {
 			this.standby(false);
-			var maxSize = result['umc/server/upload/max'] || 10240
+			var maxSize = result['umc/server/upload/max'] || 10240;
 			this.renderDetailPage(maxSize);
-		}), dojo.hitch(this, function() {
+		}), lang.hitch(this, function() {
 			// some error occurred :/ ... take a default value
 			this.standby(false);
 			this.renderDetailPage(10240);
@@ -114,19 +120,19 @@ dojo.declare("umc.modules._distribution.DetailPage", [ umc.widgets.Page, umc.wid
 
 		// specify all widgets
 		var widgets = [{
-			type: 'TextBox',
+			type: TextBox,
 			name: 'description',
-			label: this._('Description'),
-			description: this._('The description of the teaching material project'),
+			label: _('Description'),
+			description: _('The description of the teaching material project'),
 			required: true
 		}, {
-			type: 'TextBox',
+			type: TextBox,
 			name: 'name',
-			label: this._('Directory name'),
-			description: this._('The name of the project directory as it will be displayed in the file system.'),
+			label: _('Directory name'),
+			description: _('The name of the project directory as it will be displayed in the file system.'),
 			depends: 'description',
 			required: true,
-			dynamicValue: dojo.hitch(this, function(values) {
+			dynamicValue: lang.hitch(this, function(values) {
 				var me = this._form.getWidget('name');
 				if (me.get('disabled')) {
 					// widget is disabled, do not change the value
@@ -135,7 +141,7 @@ dojo.declare("umc.modules._distribution.DetailPage", [ umc.widgets.Page, umc.wid
 
 				// avoid certain characters for the filename
 				var desc = values.description;
-				dojo.forEach(['/', '\\', '?', '%', '*', ':', '|', '"', '<', '>', '$', "'"], function(ichar) {
+				array.forEach(['/', '\\', '?', '%', '*', ':', '|', '"', '<', '>', '$', "'"], function(ichar) {
 					desc = desc.replace(ichar, '_');
 				});
 
@@ -143,119 +149,119 @@ dojo.declare("umc.modules._distribution.DetailPage", [ umc.widgets.Page, umc.wid
 				return desc.slice(0, 255);
 			})
 		}, {
-			type: 'MultiUploader',
+			type: MultiUploader,
 			name: 'files',
 			command: 'distribution/upload',
 			dynamicOptions: {
 				flavor: this.moduleFlavor
 			},
 			showClearButton: false,
-			label: this._('Files'),
-			description: this._('Files that have been added to this teaching material project'),
+			label: _('Files'),
+			description: _('Files that have been added to this teaching material project'),
 			maxSize: maxUploadSize * 1024, // conversion from kbyte to byte
-			canUpload: dojo.hitch(this, '_checkFilenameUpload'),
-			canRemove: dojo.hitch(this, '_checkFilenamesRemove')
+			canUpload: lang.hitch(this, '_checkFilenameUpload'),
+			canRemove: lang.hitch(this, '_checkFilenamesRemove')
 		}, {
-			type: 'MultiObjectSelect',
+			type: MultiObjectSelect,
 			name: 'recipients',
-			dialogTitle: this._('Assign classes/workgroups'),
-			label: this._('Assigned classes/workgroups'),
-			description: this._('List of groups that are marked to receive the teaching materials'),
+			dialogTitle: _('Assign classes/workgroups'),
+			label: _('Assigned classes/workgroups'),
+			description: _('List of groups that are marked to receive the teaching materials'),
 			queryWidgets: [{
-				type: 'ComboBox',
+				type: ComboBox,
 				name: 'school',
-				label: this._('School'),
+				label: _('School'),
 				dynamicValues: 'distribution/schools',
 				umcpCommand: this.umcpCommand,
 				autoHide: true
 			}, {
-				type: 'TextBox',
+				type: TextBox,
 				name: 'pattern',
-				label: this._('Search name')
+				label: _('Search name')
 			}],
-			queryCommand: dojo.hitch(this, function(options) {
+			queryCommand: lang.hitch(this, function(options) {
 				return this.umcpCommand('distribution/groups', options).then(function(data) {
 					return data.result;
 				});
 			}),
 			formatter: function(dnList) {
-				var tmp = dojo.map(dnList, function(i) {
+				var tmp = array.map(dnList, function(i) {
 					return i;
 				});
 				return tmp;
 			},
 			autoSearch: true
 		}, {
-			type: 'ComboBox',
+			type: ComboBox,
 			name: 'distributeType',
-			label: this._('Distribution of project files'),
-			description: this._('Specifies whether the project data is distributed automatically or manually.'),
+			label: _('Distribution of project files'),
+			description: _('Specifies whether the project data is distributed automatically or manually.'),
 			value: 'manual',
 			staticValues: [{
 				id: 'manual',
-				label: this._('Manual distribution')
+				label: _('Manual distribution')
 			}, {
 				id: 'automatic',
-				label: this._('Automatic distribution')
+				label: _('Automatic distribution')
 			}]
 		}, {
-			type: 'DateBox',
+			type: DateBox,
 			name: 'distributeDate',
-			label: this._('Distribution date'),
-			description: this._('Date at which the project files will be distributed automatically.'),
+			label: _('Distribution date'),
+			description: _('Date at which the project files will be distributed automatically.'),
 			visible: false
 		}, {
-			type: 'TimeBox',
+			type: TimeBox,
 			name: 'distributeTime',
-			label: this._('Distribution time'),
-			description: this._('Time at which the project files will be distributed automatically.'),
+			label: _('Distribution time'),
+			description: _('Time at which the project files will be distributed automatically.'),
 			visible: false
 		}, {
-			type: 'ComboBox',
+			type: ComboBox,
 			name: 'collectType',
-			label: this._('Collection of project files'),
-			description: this._('Specifies whether the project data is collected automatically or manually.'),
+			label: _('Collection of project files'),
+			description: _('Specifies whether the project data is collected automatically or manually.'),
 			value: 'manual',
 			staticValues: [{
 				id: 'manual',
-				label: this._('Manual collection')
+				label: _('Manual collection')
 			}, {
 				id: 'automatic',
-				label: this._('Automatic collection')
+				label: _('Automatic collection')
 			}]
 		}, {
-			type: 'DateBox',
+			type: DateBox,
 			name: 'collectDate',
-			label: this._('Collection date'),
-			description: this._('Date at which the project files will be collected automatically.')
+			label: _('Collection date'),
+			description: _('Date at which the project files will be collected automatically.')
 		}, {
-			type: 'TimeBox',
+			type: TimeBox,
 			name: 'collectTime',
-			label: this._('Collection time'),
-			description: this._('Time at which the project files will be collected automatically.')
+			label: _('Collection time'),
+			description: _('Time at which the project files will be collected automatically.')
 		}];
 
 		// specify the layout... additional dicts are used to group form elements
 		// together into title panes
 		var layout = [{
-			label: this._('General'),
+			label: _('General'),
 			layout: [ [ 'description', 'name' ] ]
 		}, {
-			label: this._('Distribution and collection of project files'),
+			label: _('Distribution and collection of project files'),
 			layout: [
 				'distributeType', [ 'distributeDate', 'distributeTime' ],
 				'collectType', [ 'collectDate', 'collectTime' ]
 			]
 		}, {
-			label: this._('Members'),
+			label: _('Members'),
 			layout: [ 'recipients' ]
 		}, {
-			label: this._('Files'),
+			label: _('Files'),
 			layout: [ 'files' ]
 		}];
 
 		// create the form
-		this._form = new umc.widgets.Form({
+		this._form = new Form({
 			widgets: widgets,
 			layout: layout,
 			moduleStore: this.moduleStore,
@@ -267,17 +273,17 @@ dojo.declare("umc.modules._distribution.DetailPage", [ umc.widgets.Page, umc.wid
 		this.addChild(this._form);
 
 		// hook to onSubmit event of the form
-		this.connect(this._form, 'onSubmit', '_save');
+		this._form.on('submit', lang.hitch(this, '_save'));
 
 		// manage visible/hidden elements
-		this.connect(this._form.getWidget('distributeType'), 'onChange', function(value) {
+		this._form.getWidget('distributeType').watch('value', lang.hitch(this, function(name, old, value) {
 			this._form.getWidget('distributeDate').set('visible', value != 'manual');
 			this._form.getWidget('distributeTime').set('visible', value != 'manual');
-		});
-		this.connect(this._form.getWidget('collectType'), 'onChange', function(value) {
+		}));
+		this._form.getWidget('collectType').watch('value', lang.hitch(this, function(name, old, value) {
 			this._form.getWidget('collectDate').set('visible', value != 'manual');
 			this._form.getWidget('collectTime').set('visible', value != 'manual');
-		});
+		}));
 	},
 
 	_checkFilenamesRemove: function(filenames) {
@@ -286,17 +292,17 @@ dojo.declare("umc.modules._distribution.DetailPage", [ umc.widgets.Page, umc.wid
 		return this.umcpCommand('distribution/checkfiles', {
 			project: isNewProject ? null : nameWidget.get('value'),
 			filenames: filenames
-		}).then(dojo.hitch(this, function(response) {
+		}).then(lang.hitch(this, function(response) {
 			// do allow removal if any file has already been distributed
 			var results = response.result;
 			var distributedFiles = [];
-			dojo.forEach(results, function(i) {
+			array.forEach(results, function(i) {
 				if (i.distributed) {
 					distributedFiles.unshift(i.filename);
 				}
 			});
 			if (distributedFiles.length > 0) {
-				umc.dialog.alert(this._('The following files cannot be removed as they have already been distributed: %s', '<ul><li>' + distributedFiles.join('</li><li>') + '</li></ul>'));
+				dialog.alert(_('The following files cannot be removed as they have already been distributed: %s', '<ul><li>' + distributedFiles.join('</li><li>') + '</li></ul>'));
 				return false;
 			}
 
@@ -311,22 +317,22 @@ dojo.declare("umc.modules._distribution.DetailPage", [ umc.widgets.Page, umc.wid
 		return this.umcpCommand('distribution/checkfiles', {
 			project: isNewProject ? null : nameWidget.get('value'),
 			filenames: [ fileInfo.name ]
-		}).then(dojo.hitch(this, function(response) {
+		}).then(lang.hitch(this, function(response) {
 			var result = response.result[0];
 			if (result.distributed) {
 				// do not allow the upload of an already distributed file
-				umc.dialog.alert(this._('The file "%s" cannot be uploaded as it has already been distributed.', fileInfo.name));
+				dialog.alert(_('The file "%s" cannot be uploaded as it has already been distributed.', fileInfo.name));
 				return false;
 			}
 
 			if (result.projectDuplicate) {
 				// the file exists in the project, but has not been distributed yet
-				return umc.dialog.confirm(this._('The file "%s" has already been assigned to the project, please confirm to overwrite it.', fileInfo.name), [{
+				return dialog.confirm(_('The file "%s" has already been assigned to the project, please confirm to overwrite it.', fileInfo.name), [{
 					name: 'cancel',
-					label: this._('Cancel upload')
+					label: _('Cancel upload')
 				}, {
 					name: 'overwrite',
-					label: this._('Overwrite file'),
+					label: _('Overwrite file'),
 					'default': true
 				}]).then(function(response) {
 					return response == 'overwrite';
@@ -335,12 +341,12 @@ dojo.declare("umc.modules._distribution.DetailPage", [ umc.widgets.Page, umc.wid
 
 			if (result.sessionDuplicate) {
 				// a file with the same name has already been uploaded during this session
-				return umc.dialog.confirm(this._('The file "%s" has already been uploaded, please confirm to overwrite it.', fileInfo.name), [{
+				return dialog.confirm(_('The file "%s" has already been uploaded, please confirm to overwrite it.', fileInfo.name), [{
 					name: 'cancel',
-					label: this._('Cancel upload')
+					label: _('Cancel upload')
 				}, {
 					name: 'overwrite',
-					label: this._('Overwrite file'),
+					label: _('Overwrite file'),
 					'default': true
 				}]).then(function(response) {
 					return response == 'overwrite';
@@ -379,16 +385,16 @@ dojo.declare("umc.modules._distribution.DetailPage", [ umc.widgets.Page, umc.wid
 		}
 
 		this.standby(true);
-		this._form.save().then(dojo.hitch(this, function(result) {
+		this._form.save().then(lang.hitch(this, function(result) {
 			this.standby(false);
 			if (result && !result.success) {
 				// display error message
-				umc.dialog.alert(result.details);
+				dialog.alert(result.details);
 				return;
 			}
 			this.onClose();
 			return;
-		}), dojo.hitch(this, function(error) {
+		}), lang.hitch(this, function(error) {
 			// server error
 			this.standby(false);
 		}));
@@ -399,17 +405,17 @@ dojo.declare("umc.modules._distribution.DetailPage", [ umc.widgets.Page, umc.wid
 		this.standby(true);
 		this._resetForm();
 
-		this._footerButtons.submit.set('label', this._('Save changes'));
+		this._footerButtons.submit.set('label', _('Save changes'));
 
 		// the project directory name cannot be modified
 		this._form.getWidget('name').set('disabled', true);
 
 		// load the object into the form... the load method returns a
-		// dojo.Deferred object in order to handel asynchronity
-		this._form.load(id).then(dojo.hitch(this, function() {
+		// Deferred object in order to handel asynchronity
+		this._form.load(id).then(lang.hitch(this, function() {
 			// done, switch of the standby animation
 			this.standby(false);
-		}), dojo.hitch(this, function() {
+		}), lang.hitch(this, function() {
 			// error handler: switch of the standby animation
 			// error messages will be displayed automatically
 			this.standby(false);
@@ -419,7 +425,7 @@ dojo.declare("umc.modules._distribution.DetailPage", [ umc.widgets.Page, umc.wid
 	newObject: function() {
 		this._form.getWidget('name').set('disabled', false);
 		this._resetForm();
-		this._footerButtons.submit.set('label', this._('Create project'));
+		this._footerButtons.submit.set('label', _('Create project'));
 	},
 
 	onClose: function(dn, objectType) {
@@ -427,5 +433,4 @@ dojo.declare("umc.modules._distribution.DetailPage", [ umc.widgets.Page, umc.wid
 	}
 });
 
-
-
+});
