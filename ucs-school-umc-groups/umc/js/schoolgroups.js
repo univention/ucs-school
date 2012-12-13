@@ -26,22 +26,24 @@
  * /usr/share/common-licenses/AGPL-3; if not, see
  * <http://www.gnu.org/licenses/>.
  */
-/*global console dojo dojox dijit umc */
+/*global define*/
 
-dojo.provide("umc.modules.schoolgroups");
+define([
+	"dojo/_base/declare",
+	"dojo/_base/lang",
+	"umc/dialog",
+	"umc/widgets/Module",
+	"umc/widgets/ExpandingTitlePane",
+	"umc/widgets/Grid",
+	"umc/widgets/Page",
+	"umc/widgets/TextBox",
+	"umc/widgets/ComboBox",
+	"umc/widgets/SearchForm",
+	"umc.modules.schoolgroups.DetailPage",
+	"umc/i18n!/umc/modules/schoolusers"
+], function(declare, lang, dialog, Module, ExpandingTitlePane, Grid, Page, TextBox, ComboBox, SearchForm, DetailPage, _) {
 
-dojo.require("umc.dialog");
-dojo.require("umc.i18n");
-dojo.require("umc.tools");
-dojo.require("umc.widgets.ExpandingTitlePane");
-dojo.require("umc.widgets.Grid");
-dojo.require("umc.widgets.Module");
-dojo.require("umc.widgets.Page");
-dojo.require("umc.widgets.SearchForm");
-
-dojo.require("umc.modules._schoolgroups.DetailPage");
-
-dojo.declare("umc.modules.schoolgroups", [ umc.widgets.Module, umc.i18n.Mixin ], {
+return declare("umc.modules.schoolgroups", [ Module ], {
 	// summary:
 	//		Template module to ease the UMC module development.
 	// description:
@@ -80,7 +82,7 @@ dojo.declare("umc.modules.schoolgroups", [ umc.widgets.Module, umc.i18n.Mixin ],
 
 		// setup search page and its main widgets
 		// for the styling, we need a title pane surrounding search form and grid
-		this._searchPage = new umc.widgets.Page({
+		this._searchPage = new Page({
 			headerText: this.description,
 			helpText: ''
 		});
@@ -90,8 +92,8 @@ dojo.declare("umc.modules.schoolgroups", [ umc.widgets.Module, umc.i18n.Mixin ],
 		this.addChild(this._searchPage);
 
 		// umc.widgets.ExpandingTitlePane is an extension of dijit.layout.BorderContainer
-		var titlePane = new umc.widgets.ExpandingTitlePane({
-			title: this._('Search results')
+		var titlePane = new ExpandingTitlePane({
+			title: _('Search results')
 		});
 		this._searchPage.addChild(titlePane);
 
@@ -103,49 +105,49 @@ dojo.declare("umc.modules.schoolgroups", [ umc.widgets.Module, umc.i18n.Mixin ],
 		// define grid actions
 		var actions = [ {
 			name: 'edit',
-			label: this._('Edit'),
-			description: this._('Edit the selected object'),
+			label: _('Edit'),
+			description: _('Edit the selected object'),
 			iconClass: 'umcIconEdit',
 			isStandardAction: true,
 			isMultiAction: false,
-			callback: dojo.hitch(this, '_editObject')
+			callback: lang.hitch(this, '_editObject')
 		} ];
 
 		// just workgroups can be deleted or added
 		if ( this.moduleFlavor == 'workgroup-admin' ) {
 			actions.push( {
 				name: 'add',
-				label: this._('Add workgroup'),
-				description: this._('Create a new workgroup'),
+				label: _('Add workgroup'),
+				description: _('Create a new workgroup'),
 				iconClass: 'umcIconAdd',
 				isContextAction: false,
 				isStandardAction: true,
-				callback: dojo.hitch(this, '_addObject')
+				callback: lang.hitch(this, '_addObject')
 			} );
 			actions.push( {
 				name: 'delete',
-				label: this._('Delete'),
-				description: this._('Deleting the selected objects.'),
+				label: _('Delete'),
+				description: _('Deleting the selected objects.'),
 				isStandardAction: true,
 				isMultiAction: false,
 				iconClass: 'umcIconDelete',
-				callback: dojo.hitch(this, '_deleteObjects')
+				callback: lang.hitch(this, '_deleteObjects')
 			} );
 		}
 
 		// define the grid columns
 		var columns = [{
 			name: 'name',
-			label: this._( 'Name' ),
+			label: _( 'Name' ),
 			width: '20%'
 		}, {
 			name: 'description',
-			label: this._('Description'),
+			label: _('Description'),
 			width: 'auto'
 		}];
 
 		// generate the data grid
-		this._grid = new umc.widgets.Grid({
+		this._grid = new Grid({
 			// property that defines the widget's position in a dijit.layout.BorderContainer,
 			// 'center' is its default value, so no need to specify it here explicitely
 			// region: 'center',
@@ -153,7 +155,7 @@ dojo.declare("umc.modules.schoolgroups", [ umc.widgets.Module, umc.i18n.Mixin ],
 			// defines which data fields are displayed in the grids columns
 			columns: columns,
 			// a generic UMCP module store object is automatically provided
-			// as this.moduleStore (see also umc.store.getModuleStore())
+			// as this.moduleStore (see also store.getModuleStore())
 			moduleStore: this.moduleStore
 		});
 
@@ -167,22 +169,22 @@ dojo.declare("umc.modules.schoolgroups", [ umc.widgets.Module, umc.i18n.Mixin ],
 
 		// add remaining elements of the search form
 		var widgets = [{
-			type: 'ComboBox',
+			type: ComboBox,
 			name: 'school',
 			dynamicValues: 'schoolgroups/schools',
-			label: this._('School'),
+			label: _('School'),
 			size: 'TwoThirds',
-			umcpCommand: dojo.hitch( this, 'umcpCommand' ),
-			onDynamicValuesLoaded: dojo.hitch( this, function( result ) {
+			umcpCommand: lang.hitch( this, 'umcpCommand' ),
+			onDynamicValuesLoaded: lang.hitch( this, function( result ) {
 				this._detailPage.set( 'schools', result );
 			} ),
 			autoHide: true
 		}, {
-			type: 'TextBox',
+			type: TextBox,
 			name: 'pattern',
 			size: 'TwoThirds',
-			description: this._('Specifies the substring pattern which is searched for in the displayed name'),
-			label: this._('Search pattern')
+			description: _('Specifies the substring pattern which is searched for in the displayed name'),
+			label: _('Search pattern')
 		}];
 
 		// the layout is an 2D array that defines the organization of the form elements...
@@ -192,24 +194,23 @@ dojo.declare("umc.modules.schoolgroups", [ umc.widgets.Module, umc.i18n.Mixin ],
 		];
 
 		// generate the search form
-		this._searchForm = new umc.widgets.SearchForm({
+		this._searchForm = new SearchForm({
 			// property that defines the widget's position in a dijit.layout.BorderContainer
 			region: 'top',
 			widgets: widgets,
 			layout: layout,
-			onSearch: dojo.hitch(this, function(values) {
+			onSearch: lang.hitch(this, function(values) {
 				// call the grid's filter function
-				// (could be also done via dojo.connect() and dojo.disconnect() )
 				if (values.school) {
 					this._grid.filter(values);
 				}
 			}),
-			onValuesInitialized: dojo.hitch( this, function() {
+			onValuesInitialized: lang.hitch( this, function() {
 				// deactivate standby mode
 				this.standby( false );
 				// transparent standby mode
 				this.standbyOpacity = 0.75;
-				var values = this._searchForm.gatherFormValues();
+				var values = this._searchForm.get('value');
 				if (values.school) {
 					this._grid.filter(values);
 				}
@@ -228,7 +229,7 @@ dojo.declare("umc.modules.schoolgroups", [ umc.widgets.Module, umc.i18n.Mixin ],
 		this._searchPage.startup();
 
 		// create a DetailPage instance
-		this._detailPage = new umc.modules._schoolgroups.DetailPage({
+		this._detailPage = new DetailPage({
 			moduleStore: this.moduleStore,
 			moduleFlavor: this.moduleFlavor
 		});
@@ -236,17 +237,15 @@ dojo.declare("umc.modules.schoolgroups", [ umc.widgets.Module, umc.i18n.Mixin ],
 
 		// connect to the onClose event of the detail page... we need to manage
 		// visibility of sub pages here
-		// ... this.connect() will destroy signal handlers upon widget
-		// destruction automatically
-		this.connect(this._detailPage, 'onClose', function() {
+		this._detailPage.on('close', lang.hitch(this, function() {
 			this.selectChild(this._searchPage);
-		});
+		}));
 	},
 
 	_addObject: function() {
 		this._detailPage._form.clearFormValues();
 
-		this._detailPage.set( 'headerText', this._( 'Add workgroup' ) );
+		this._detailPage.set( 'headerText', _( 'Add workgroup' ) );
 		this._detailPage.set( 'school', this._searchForm.getWidget( 'school' ).get( 'value' ) );
 		this._detailPage.disableFields( false );
 		this.selectChild( this._detailPage );
@@ -259,40 +258,39 @@ dojo.declare("umc.modules.schoolgroups", [ umc.widgets.Module, umc.i18n.Mixin ],
 		}
 
 		this._detailPage.disableFields( true );
-		if ( this.moduleFlavor == 'class' ) {
-			this._detailPage.set( 'headerText', this._( 'Edit class' ) );
+		if ( this.moduleFlavor === 'class' ) {
+			this._detailPage.set( 'headerText', _( 'Edit class' ) );
 		} else {
-			this._detailPage.set( 'headerText', this._( 'Edit workgroup' ) );
+			this._detailPage.set( 'headerText', _( 'Edit workgroup' ) );
 		}
 		this.selectChild(this._detailPage);
 		this._detailPage.load(ids[0]);
 	},
 
 	_deleteObjects: function(ids, items) {
-		umc.dialog.confirm( dojo.replace( this._( 'Should the workgroup {name} be deleted?' ), items[ 0 ] ), [ {
+		dialog.confirm( lang.replace( _( 'Should the workgroup {name} be deleted?' ), items[ 0 ] ), [ {
 			name: 'cancel',
 			'default' : true,
-			label: this._( 'Cancel' )
+			label: _( 'Cancel' )
 		}, {
 			name: 'delete',
-			label: this._( 'Delete' )
-		} ] ).then( dojo.hitch( this, function( action ) {
+			label: _( 'Delete' )
+		} ] ).then( lang.hitch( this, function( action ) {
 			if (action != 'delete') {
 				// action canceled
 				return;
 			}
 			this.standby( true );
-			this.moduleStore.remove( ids ).then( dojo.hitch( this, function( response ) {
+			this.moduleStore.remove( ids ).then( lang.hitch( this, function( response ) {
 				this.standby( false );
 				if ( response.success === true ) {
-					umc.dialog.alert( this._( 'The workgroup has been deleted successfully' ) );
+					dialog.alert( _( 'The workgroup has been deleted successfully' ) );
 				} else {
-					umc.dialog.alert( dojo.replace( this._( 'The workgroup could not be deleted ({message})' ), response ) );
+					dialog.alert( lang.replace( _( 'The workgroup could not be deleted ({message})' ), response ) );
 				}
 			} ) );
 		} ) );
 	}
 });
 
-
-
+});

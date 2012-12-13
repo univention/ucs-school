@@ -26,18 +26,21 @@
  * /usr/share/common-licenses/AGPL-3; if not, see
  * <http://www.gnu.org/licenses/>.
  */
-/*global console MyError dojo dojox dijit umc */
+/*global define*/
 
-dojo.provide("umc.modules._schoolgroups.DetailPage");
+define([
+	"dojo/_base/declare",
+	"dojo/_base/lang",
+	"umc/widgets/Page",
+	"umc/widgets/Form",
+	"umc/widgets/StandbyMixin",
+	"umc/widgets/TextBox",
+	"umc/widgets/ComboBox",
+	"umc/widgets/MultiObjectSelect",
+	"umc/i18n!/umc/modules/schoolusers"
+], function(declare, lang, Page, Form, StandbyMixin, TextBox, ComboBox, MultiObjectSelect, _) {
 
-dojo.require("umc.dialog");
-dojo.require("umc.i18n");
-dojo.require("umc.tools");
-dojo.require("umc.widgets.Form");
-dojo.require("umc.widgets.Page");
-dojo.require("umc.widgets.StandbyMixin");
-
-dojo.declare("umc.modules._schoolgroups.DetailPage", [ umc.widgets.Page, umc.widgets.StandbyMixin, umc.i18n.Mixin ], {
+return declare("umc.modules.schoolgroups.DetailPage", [ Page, StandbyMixin ], {
 	// summary:
 	//		This class represents the detail view of our dummy module.
 
@@ -49,9 +52,6 @@ dojo.declare("umc.modules._schoolgroups.DetailPage", [ umc.widgets.Page, umc.wid
 
 	// internal reference to the flavored umcpCommand function
 	umcpCommand: null,
-
-	// use i18n information from umc.modules.schoolgroups
-	i18nClass: 'umc.modules.schoolgroups',
 
 	// internal reference to the formular containing all form widgets of an UDM object
 	_form: null,
@@ -72,20 +72,20 @@ dojo.declare("umc.modules._schoolgroups.DetailPage", [ umc.widgets.Page, umc.wid
 		this.standbyOpacity = 1;
 
 		// set the page header
-		this.headerText = this.moduleFlavor == 'class' ? this._( 'Edit class' ) : this._( 'Edit workgroup' );
+		this.headerText = this.moduleFlavor == 'class' ? _( 'Edit class' ) : _( 'Edit workgroup' );
 		this.helpText = this.moduleFlavor == 'class' ? 
-			this._('This page allows to specify teachers who are associated with the class') :
-			this._('This page allows to edit workgroup settings and to administrate which teachers/students belong to the group.');
+			_('This page allows to specify teachers who are associated with the class') :
+			_('This page allows to edit workgroup settings and to administrate which teachers/students belong to the group.');
 
 		// configure buttons for the footer of the detail page
 		this.footerButtons = [{
 			name: 'submit',
-			label: this._('Save changes'),
-			callback: dojo.hitch(this, '_save')
+			label: _('Save changes'),
+			callback: lang.hitch(this, '_save')
 		}, {
 			name: 'back',
-			label: this._('Back to overview'),
-			callback: dojo.hitch(this, 'onClose')
+			label: _('Back to overview'),
+			callback: lang.hitch(this, 'onClose')
 		}];
 	},
 
@@ -104,63 +104,63 @@ dojo.declare("umc.modules._schoolgroups.DetailPage", [ umc.widgets.Page, umc.wid
 		// specify all widgets
 		var groups = [];
 		if ( this.moduleFlavor == 'workgroup-admin' ) {
-			groups.push( { id: 'None', label: this._('All users') } );
+			groups.push( { id: 'None', label: _('All users') } );
 		}
 		if ( this.moduleFlavor == 'class' || this.moduleFlavor == 'workgroup-admin' ) {
-			groups.push( { id: 'teacher', label: this._('All teachers') } );
+			groups.push( { id: 'teacher', label: _('All teachers') } );
 		}
 		if ( this.moduleFlavor == 'workgroup' || this.moduleFlavor == 'workgroup-admin' ) {
-			groups.push( { id: 'student', label: this._('All students') } );
+			groups.push( { id: 'student', label: _('All students') } );
 		}
 
 		var widgets = [{
-			type: 'ComboBox',
+			type: ComboBox,
 			name: 'school',
-			label: this._( 'School' ),
+			label: _( 'School' ),
 			staticValues: []
 		}, {
-			type: 'TextBox',
+			type: TextBox,
 			name: 'name',
-			label: this.moduleFlavor == 'class' ? this._( 'Class' ) : this._( 'Workgroup' ),
+			label: this.moduleFlavor == 'class' ? _( 'Class' ) : _( 'Workgroup' ),
 			disabled: this.moduleFlavor != 'workgroup-admin',
 			required: true
 		}, {
-			type: 'TextBox',
+			type: TextBox,
 			name: 'description',
-			label: this._('Description'),
-			description: this._('Verbose description of the group'),
+			label: _('Description'),
+			description: _('Verbose description of the group'),
 			disabled: this.moduleFlavor != 'workgroup-admin'
 		}, {
-			type: 'MultiObjectSelect',
+			type: MultiObjectSelect,
 			name: 'members',
-			label: this.moduleFlavor == 'class' ? this._( 'Teachers' ) : this.moduleFlavor == 'workgroup' ? this._( 'Students' ) : this._( 'Members' ),
-			description: this.moduleFlavor == 'class' ? this._('Teachers of the specified class') : this._('Teachers and students that belong to the current workgroup'),
+			label: this.moduleFlavor == 'class' ? _( 'Teachers' ) : this.moduleFlavor == 'workgroup' ? _( 'Students' ) : _( 'Members' ),
+			description: this.moduleFlavor == 'class' ? _('Teachers of the specified class') : _('Teachers and students that belong to the current workgroup'),
 			queryWidgets: [ {
-				type: 'ComboBox',
+				type: ComboBox,
 				name: 'school',
-				label: this._( 'School' ),
+				label: _( 'School' ),
 				dynamicValues: 'schoolgroups/schools',
 				umcpCommand: this.umcpCommand,
 				autoHide: true
 			}, {
-				type: 'ComboBox',
+				type: ComboBox,
 				name: 'group',
-				label: this._('User group or class'),
+				label: _('User group or class'),
 				depends: 'school',
 				staticValues: groups,
 				dynamicValues: 'schoolgroups/classes',
 				umcpCommand: this.umcpCommand
 			}, {
-				type: 'TextBox',
+				type: TextBox,
 				name: 'pattern',
-				label: this._('Name')
+				label: _('Name')
 			}],
-			queryCommand: dojo.hitch(this, function(options) {
+			queryCommand: lang.hitch(this, function(options) {
 				return this.umcpCommand('schoolgroups/users', options).then(function(data) {
 					return data.result;
 				});
 			}),
-			queryOptions: dojo.hitch( this, function() {
+			queryOptions: lang.hitch( this, function() {
 				if ( this.moduleFlavor == 'class' ) {
 					return { group: 'teacher' };
 				} else if ( this.moduleFlavor == 'workgroup' ) {
@@ -174,15 +174,15 @@ dojo.declare("umc.modules._schoolgroups.DetailPage", [ umc.widgets.Page, umc.wid
 		// specify the layout... additional dicts are used to group form elements
 		// together into title panes
 		var layout = [ {
-			label: this._('Properties'),
+			label: _('Properties'),
 			layout: [ 'school', 'name', 'description' ]
 		}, {
-			label: this._('Members'),
+			label: _('Members'),
 			layout: [ 'members' ]
 		}];
 
 		// create the form
-		this._form = new umc.widgets.Form({
+		this._form = new Form({
 			widgets: widgets,
 			layout: layout,
 			moduleStore: this.moduleStore,
@@ -193,16 +193,16 @@ dojo.declare("umc.modules._schoolgroups.DetailPage", [ umc.widgets.Page, umc.wid
 		// an element gets added to the center region
 		this.addChild(this._form);
 
-		dojo.connect( this._form.getWidget( 'members' ), 'onShowDialog', dojo.hitch( this, function( dialog ) {
-			dialog._form.getWidget( 'school' ).setInitialValue( this._form.getWidget( 'school' ).get( 'value' ), true );
+		this._form.getWidget('members').on('ShowDialog', lang.hitch( this, function( _dialog ) {
+			_dialog._form.getWidget( 'school' ).setInitialValue( this._form.getWidget( 'school' ).get( 'value' ), true );
 		} ) );
 
 		// hook to onSubmit event of the form
-		this.connect(this._form, 'onSubmit', '_save');
+		this._form.on('submit', lang.hitch(this, '_save'));
 	},
 
 	_save: function() {
-		var values = this._form.gatherFormValues();
+		var values = this._form.get('value');
 		var deferred = null;
 		var nameWidget = this._form.getWidget( 'name' );
 
@@ -217,7 +217,7 @@ dojo.declare("umc.modules._schoolgroups.DetailPage", [ umc.widgets.Page, umc.wid
 			deferred = this.moduleStore.add( values );
 		}
 
-		deferred.then( dojo.hitch( this, function() {
+		deferred.then( lang.hitch( this, function() {
 			this.onClose();
 		} ) );
 	},
@@ -244,11 +244,11 @@ dojo.declare("umc.modules._schoolgroups.DetailPage", [ umc.widgets.Page, umc.wid
 		// var nameWidget = this._form.getWidget( 'name' );
 		// nameWidget.setValid( null );
 		// load the object into the form... the load method returns a
-		// dojo.Deferred object in order to handel asynchronity
-		this._form.load(id).then(dojo.hitch(this, function() {
+		// Deferred object in order to handel asynchronity
+		this._form.load(id).then(lang.hitch(this, function() {
 			// done, switch of the standby animation
 			this.standby(false);
-		}), dojo.hitch(this, function() {
+		}), lang.hitch(this, function() {
 			// error handler: switch of the standby animation
 			// error messages will be displayed automatically
 			this.standby(false);
@@ -260,5 +260,4 @@ dojo.declare("umc.modules._schoolgroups.DetailPage", [ umc.widgets.Page, umc.wid
 	}
 });
 
-
-
+});
