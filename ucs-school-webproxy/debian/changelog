@@ -1,3 +1,9 @@
+ucs-school-webproxy (9.0.0-1) unstable; urgency=low
+
+  * Version bump (Bug #29814)
+
+ -- Jascha Geerds <geerds@univention.de>  Thu, 13 Dec 2012 15:57:49 +0100
+
 ucs-school-webproxy (8.0.23-1) unstable; urgency=low
 
   * respect priority for usergroup src entries (Bug #27360) 

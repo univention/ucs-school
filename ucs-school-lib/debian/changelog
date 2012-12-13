@@ -1,3 +1,9 @@
+ucs-school-lib (2.0.0-1) unstable; urgency=low
+
+  * Version bump (Bug #29814)
+
+ -- Jascha Geerds <geerds@univention.de>  Thu, 13 Dec 2012 15:48:13 +0100
+
 ucs-school-lib (1.0.58-1) unstable; urgency=low
 
   * not existing ldap bases will be ignored when searching for users;

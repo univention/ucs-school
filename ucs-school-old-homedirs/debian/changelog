@@ -1,3 +1,9 @@
+ucs-school-old-homedirs (8.0.0-1) unstable; urgency=low
+
+  * Version bump (Bug #29814)
+
+ -- Jascha Geerds <geerds@univention.de>  Thu, 13 Dec 2012 15:53:07 +0100
+
 ucs-school-old-homedirs (7.0.3-1) unstable; urgency=low
 
   * fixed listener module (Bug #25693)

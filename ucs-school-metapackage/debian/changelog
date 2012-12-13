@@ -1,3 +1,9 @@
+ucs-school-metapackage (5.0.0-1) unstable; urgency=low
+
+  * Version bump (Bug #29814)
+
+ -- Jascha Geerds <geerds@univention.de>  Thu, 13 Dec 2012 15:49:04 +0100
+
 ucs-school-metapackage (4.0.38-7) unstable; urgency=low
 
   * recommend on ucs-school-webproxy (Bug #28325)
