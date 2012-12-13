@@ -26,23 +26,25 @@
  * /usr/share/common-licenses/AGPL-3; if not, see
  * <http://www.gnu.org/licenses/>.
  */
-/*global console MyError dojo dojox dijit umc */
+/*global define*/
 
-dojo.provide("umc.modules._schoolrooms.DetailPage");
+define([
+	"dojo/_base/declare",
+	"dojo/_base/lang",
+	"dojo/_base/array",
+	"umc/tools",
+	"umc/widgets/Page",
+	"umc/widgets/Form",
+	"umc/widgets/TextBox",
+	"umc/widgets/ComboBox",
+	"umc/widgets/MultiObjectSelect",
+	"umc/widgets/StandbyMixin",
+	"umc/i18n!/umc/modules/schoolrooms"
+], function(declare, lang, array, tools, Page, Form, TextBox, ComboBox, MultiObjectSelect, StandbyMixin, _) {
 
-dojo.require("umc.dialog");
-dojo.require("umc.i18n");
-dojo.require("umc.tools");
-dojo.require("umc.widgets.Form");
-dojo.require("umc.widgets.Page");
-dojo.require("umc.widgets.StandbyMixin");
-
-dojo.declare("umc.modules._schoolrooms.DetailPage", [ umc.widgets.Page, umc.widgets.StandbyMixin, umc.i18n.Mixin ], {
+return declare("umc.modules.schoolrooms.DetailPage", [ Page, StandbyMixin ], {
 	// reference to the module's store object
 	moduleStore: null,
-
-	// use i18n information from umc.modules.schoolrooms
-	i18nClass: 'umc.modules.schoolrooms',
 
 	// internal reference to the formular containing all form widgets of an UDM object
 	_form: null,
@@ -60,20 +62,20 @@ dojo.declare("umc.modules._schoolrooms.DetailPage", [ umc.widgets.Page, umc.widg
 		this.standbyOpacity = 1;
 
 		// set the page header
-		this.headerText = this._('');
-		this.helpText = this._('');
+		this.headerText = _('');
+		this.helpText = _('');
 
 		// configure buttons for the footer of the detail page
 		this.footerButtons = [{
 			name: 'submit',
-			label: this._('Save'),
-			callback: dojo.hitch(this, function() {
-				this._save(this._form.gatherFormValues());
+			label: _('Save'),
+			callback: lang.hitch(this, function() {
+				this._save(this._form.get('value'));
 			})
 		}, {
 			name: 'cancel',
-			label: this._('Cancel'),
-			callback: dojo.hitch(this, 'onClose')
+			label: _('Cancel'),
+			callback: lang.hitch(this, 'onClose')
 		}];
 	},
 
@@ -92,45 +94,45 @@ dojo.declare("umc.modules._schoolrooms.DetailPage", [ umc.widgets.Page, umc.widg
 
 		// specify all widgets
 		var widgets = [{
-			type: 'ComboBox',
+			type: ComboBox,
 			name: 'school',
-			label: this._( 'School' ),
+			label: _( 'School' ),
 			staticValues: []
 		}, {
-			type: 'TextBox',
+			type: TextBox,
 			name: 'name',
-			label: this._('Name'),
+			label: _('Name'),
 			required: true
 		}, {
-			type: 'TextBox',
+			type: TextBox,
 			name: 'description',
-			label: this._('Description'),
-			description: this._('Verbose description of the current group')
+			label: _('Description'),
+			description: _('Verbose description of the current group')
 		}, {
-			type: 'MultiObjectSelect',
+			type: MultiObjectSelect,
 			name: 'computers',
-			label: this._('Computers in the room'),
+			label: _('Computers in the room'),
 			queryWidgets: [{
-				type: 'ComboBox',
+				type: ComboBox,
 				name: 'school',
-				label: this._('School'),
+				label: _('School'),
 				dynamicValues: 'schoolrooms/schools',
 				autoHide: true
 			}, {
-				type: 'TextBox',
+				type: TextBox,
 				name: 'pattern',
-				label: this._('Search pattern')
+				label: _('Search pattern')
 			}],
-			queryCommand: dojo.hitch(this, function(options) {
-				return umc.tools.umcpCommand('schoolrooms/computers', options).then(function(data) {
+			queryCommand: lang.hitch(this, function(options) {
+				return tools.umcpCommand('schoolrooms/computers', options).then(function(data) {
 					return data.result;
 				});
 			}),
 			formatter: function(dnList) {
-				var tmp = dojo.map(dnList, function(idn) {
+				var tmp = array.map(dnList, function(idn) {
 					return {
 						id: idn,
-						label: umc.tools.explodeDn(idn, true).shift() || ''
+						label: tools.explodeDn(idn, true).shift() || ''
 					};
 				});
 				return tmp;
@@ -141,15 +143,15 @@ dojo.declare("umc.modules._schoolrooms.DetailPage", [ umc.widgets.Page, umc.widg
 		// specify the layout... additional dicts are used to group form elements
 		// together into title panes
 		var layout = [{
-			label: this._('Properties'),
+			label: _('Properties'),
 			layout: [ 'school', 'name', 'description' ]
 		}, {
-			label: this._('Computers'),
+			label: _('Computers'),
 			layout: [ 'computers' ]
 		}];
 
 		// create the form
-		this._form = new umc.widgets.Form({
+		this._form = new Form({
 			widgets: widgets,
 			layout: layout,
 			moduleStore: this.moduleStore,
@@ -160,12 +162,12 @@ dojo.declare("umc.modules._schoolrooms.DetailPage", [ umc.widgets.Page, umc.widg
 		// an element gets added to the center region
 		this.addChild(this._form);
 
-        dojo.connect( this._form.getWidget( 'computers' ), 'onShowDialog', dojo.hitch( this, function( dialog ) {
-            dialog._form.getWidget( 'school' ).setInitialValue( this._form.getWidget( 'school' ).get( 'value' ), true );
+        this._form.getWidget( 'computers' ).on('ShowDialog', lang.hitch( this, function( _dialog ) {
+            _dialog._form.getWidget( 'school' ).setInitialValue( this._form.getWidget( 'school' ).get( 'value' ), true );
         } ) );
 
 		// hook to onSubmit event of the form
-		this.connect(this._form, 'onSubmit', '_save');
+		this._form.on('submit', lang.hitch(this, '_save'));
 	},
 
 	_save: function(values) {
@@ -183,7 +185,7 @@ dojo.declare("umc.modules._schoolrooms.DetailPage", [ umc.widgets.Page, umc.widg
 			deferred = this.moduleStore.add(values);
 		}
 
-		deferred.then(dojo.hitch(this, function() {
+		deferred.then(lang.hitch(this, function() {
 			this.onClose();
 		}));
 	},
@@ -193,11 +195,11 @@ dojo.declare("umc.modules._schoolrooms.DetailPage", [ umc.widgets.Page, umc.widg
 		this.standby(true);
 
 		// load the object into the form... the load method returns a
-		// dojo.Deferred object in order to handel asynchronity
-		this._form.load(id).then(dojo.hitch(this, function() {
+		// /*REQUIRE:"dojo/Deferred"*/ Deferred object in order to handel asynchronity
+		this._form.load(id).then(lang.hitch(this, function() {
 			// done, switch of the standby animation
 			this.standby(false);
-		}), dojo.hitch(this, function() {
+		}), lang.hitch(this, function() {
 			// error handler: switch of the standby animation
 			// error messages will be displayed automatically
 			this.standby(false);
@@ -220,10 +222,8 @@ dojo.declare("umc.modules._schoolrooms.DetailPage", [ umc.widgets.Page, umc.widg
 		var school = this._form.getWidget( 'school' );
 		school.set( 'staticValues', schools );
 		school.set( 'visible', schools.length > 1 );
-	},
-
+	}
 
 });
 
-
-
+});
