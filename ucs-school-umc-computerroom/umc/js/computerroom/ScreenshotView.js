@@ -26,25 +26,29 @@
  * /usr/share/common-licenses/AGPL-3; if not, see
  * <http://www.gnu.org/licenses/>.
  */
-/*global console MyError dojo dojox dijit umc window Image */
+/*global define console window*/
 
-dojo.provide("umc.modules._computerroom.ScreenshotView");
-
-dojo.require("umc.dialog");
-dojo.require("umc.i18n");
-dojo.require("umc.tools");
-dojo.require("umc.widgets.Button");
-dojo.require("umc.widgets.Form");
-dojo.require("umc.widgets.Page");
-dojo.require("umc.widgets.StandbyMixin");
-dojo.require("umc.widgets.ContainerWidget");
-dojo.require("dijit.layout.ContentPane");
-dojo.require("dijit.TitlePane");
+define([
+	"dojo/_base/declare",
+	"dojo/_base/lang",
+	"dojo/_base/array",
+	"dojo/aspect",
+	"dojo/dom",
+	"dojo/dom-geometry",
+	"dijit/layout/ContentPane",
+	"dijit/_Contained",
+//	"dijit/TitlePane",
+	"umc/widgets/ComboBox",
+	"umc/widgets/ContainerWidget",
+	"umc/widgets/Button",
+	"umc/widgets/Page",
+	"umc/widgets/StandbyMixin",
+	"umc/widgets/Tooltip",
+	"umc/i18n!/umc/modules/computerroom"
+], function(declare, lang, array, aspect, dom, geometry, ContentPane, _Contained, /*TitlePane,*/ ComboBox, ContainerWidget, Button, Page, StandbyMixin, Tooltip, _) {
 
 // README: This is an alternative view
-// dojo.declare( "umc.modules._computerroom.Item", [ dijit.TitlePane, dijit._Contained, umc.i18n.Mixin ], {
-// 	// use i18n information from umc.modules.schoolgroups
-// 	i18nClass: 'umc.modules.computerroom',
+// var Item = declare( "umc.modules.computerroom.Item", [ TitlePane, _Contained ], {
 
 // 	// the computer to show
 // 	computer: '',
@@ -77,14 +81,14 @@ dojo.require("dijit.TitlePane");
 
 // 	_createURI: function() {
 // 		this.random = Math.random();
-// 		return dojo.replace( this._pattern, this );
+// 		return lang.replace( this._pattern, this );
 // 	},
 
 // 	_updateImage: function() {
-// 		var img = dojo.byId( dojo.replace( 'screenshot-{computer}', this ) );
+// 		var img = dom.byId( lang.replace( 'screenshot-{computer}', this ) );
 // 		if ( !img ) {
 // 			img = new Image( 500 );
-// 			img.id = dojo.replace( 'screenshot-{computer}', this );
+// 			img.id = lang.replace( 'screenshot-{computer}', this );
 // 			img.src = this._createURI();
 // 			try {
 // 				this.set( 'content', img );
@@ -95,15 +99,15 @@ dojo.require("dijit.TitlePane");
 // 			img.src = this._createURI();
 // 		}
 
-// 		this._timer = window.setTimeout( dojo.hitch( this, '_updateImage' ), 5000 );
+// 		this._timer = window.setTimeout( lang.hitch( this, '_updateImage' ), 5000 );
 // 		return img;
 // 	},
 
 // 	buildRendering: function() {
 // 		this.inherited( arguments );
 
-// 		dojo.mixin( this, {
-// 			title: dojo.replace( this._( '{username} at {computer}' ), this ),
+// 		lang.mixin( this, {
+// 			title: lang.replace( _( '{username} at {computer}' ), this ),
 // 			description: this.username,
 // 			open: true,
 // 			content: this._updateImage()
@@ -112,9 +116,7 @@ dojo.require("dijit.TitlePane");
 // 	}
 // } );
 
-dojo.declare( "umc.modules._computerroom.Item", [ dijit.layout.ContentPane, dijit._Contained, umc.i18n.Mixin ], {
-	// use i18n information from umc.modules.schoolgroups
-	i18nClass: 'umc.modules.computerroom',
+var Item = declare( "umc.modules.computerroom.Item", [ ContentPane, _Contained ], {
 
 	// the computer to show
 	computer: '',
@@ -150,13 +152,13 @@ dojo.declare( "umc.modules._computerroom.Item", [ dijit.layout.ContentPane, diji
 
 	_createURI: function() {
 		this.random = Math.random();
-		return dojo.replace( this._pattern, this );
+		return lang.replace( this._pattern, this );
 	},
 
 	_updateImage: function( size ) {
-		var img = dojo.byId( dojo.replace( 'img-{computer}', this ) );
-		var em = dojo.byId( dojo.replace( 'em-{computer}', this ) );
-		var tooltip = dojo.byId( dojo.replace( 'screenshotTooltip-{computer}', this ) );
+		var img = dom.byId( lang.replace( 'img-{computer}', this ) );
+		var em = dom.byId( lang.replace( 'em-{computer}', this ) );
+		var tooltip = dom.byId( lang.replace( 'screenshotTooltip-{computer}', this ) );
 
 		if ( size === undefined ) {
 			size = this.defaultSize;
@@ -166,7 +168,7 @@ dojo.declare( "umc.modules._computerroom.Item", [ dijit.layout.ContentPane, diji
 
 		if ( this.domNode ) {
 			if ( size !== undefined ) {
-				dojo.contentBox( this.domNode, { w: size, h:size * 0.9 } );
+				geometry.setContentSize( this.domNode, { w: size, h:size * 0.9 } );
 			}
 		}
 		if ( em ) {
@@ -180,47 +182,44 @@ dojo.declare( "umc.modules._computerroom.Item", [ dijit.layout.ContentPane, diji
 		if ( this._timer ) {
 			window.clearTimeout( this._timer );
 		}
-		this._timer = window.setTimeout( dojo.hitch( this, function() { this._updateImage(); } ), 5000 );
+		this._timer = window.setTimeout( lang.hitch( this, function() { this._updateImage(); } ), 5000 );
 	},
 
 	buildRendering: function() {
 		this.inherited( arguments );
 
-		dojo.mixin( this, {
-			content: dojo.replace( '<em style="font-style: normal; font-size: 80%; padding: 4px; border: 1px solid #000; color: #000; background: #fff; display: block;position: absolute; top: 14px; left: 0px;" id="em-{computer}"></em><img style="width: 100%;" id="img-{computer}"></img>', {
+		lang.mixin( this, {
+			content: lang.replace( '<em style="font-style: normal; font-size: 80%; padding: 4px; border: 1px solid #000; color: #000; background: #fff; display: block;position: absolute; top: 14px; left: 0px;" id="em-{computer}"></em><img style="width: 100%;" id="img-{computer}"></img>', {
 				computer: this.computer,
 				width: this.defaultSize
 			} )
 		} );
 		this.startup();
 
-		var tooltip = new umc.widgets.Tooltip({
-			label: dojo.replace( '<div style="display: table-cell; vertical-align: middle; width: 440px;height: 400px;"><img id="screenshotTooltip-{0}" src="" style="width: 430px; display: block; margin-left: auto; margin-right: auto;"/></div>', [ this.computer ] ),
+		var tooltip = new Tooltip({
+			label: lang.replace( '<div style="display: table-cell; vertical-align: middle; width: 440px;height: 400px;"><img id="screenshotTooltip-{0}" src="" style="width: 430px; display: block; margin-left: auto; margin-right: auto;"/></div>', [ this.computer ] ),
 			connectId: [ this.domNode ],
-			onShow: dojo.hitch( this, function() {
-				var image = dojo.byId( 'screenshotTooltip-' + this.computer );
+			onShow: lang.hitch( this, function() {
+				var image = dom.byId( 'screenshotTooltip-' + this.computer );
 				if ( image ) {
 					image.src = this._currentURI ? this._currentURI: this._createURI();
 				}
 			} )
 		});
 
-		// destroy the tooltip when the widget is destroyed
-		tooltip.connect( this, 'destroy', 'destroy' );
+		// destroy the tooltip when this widget is destroyed
+		aspect.after(this, 'destroy', function() { tooltip.destroy(); });
 
-		this._timer = window.setTimeout( dojo.hitch( this, function() { this._updateImage(); } ), 500 );
+		this._timer = window.setTimeout( lang.hitch( this, function() { this._updateImage(); } ), 500 );
 	}
 } );
 
-dojo.declare("umc.modules._computerroom.ScreenshotView", [ umc.widgets.Page, umc.widgets.StandbyMixin, umc.i18n.Mixin ], {
+return declare("umc.modules.computerroom.ScreenshotView", [ Page, StandbyMixin ], {
 	// summary:
 	//		This class represents the screenshot view
 
 	// internal reference to the flavored umcpCommand function
 	umcpCommand: null,
-
-	// use i18n information from umc.modules.schoolgroups
-	i18nClass: 'umc.modules.computerroom',
 
 	_container: null,
 
@@ -230,8 +229,8 @@ dojo.declare("umc.modules._computerroom.ScreenshotView", [ umc.widgets.Page, umc
 		this.inherited(arguments);
 
 		// set the page header
-		this.headerText = this._( 'Screenshots of computers' );
-		this.helpText = this._( 'This page shows screenshots of selected computers that will be updated continuously.' );
+		this.headerText = _( 'Screenshots of computers' );
+		this.helpText = _( 'This page shows screenshots of selected computers that will be updated continuously.' );
 
 	},
 
@@ -241,38 +240,38 @@ dojo.declare("umc.modules._computerroom.ScreenshotView", [ umc.widgets.Page, umc
 
 		this.inherited(arguments);
 
-		var footer = new umc.widgets.ContainerWidget( {
+		var footer = new ContainerWidget( {
 			'class': 'umcPageFooter',
 			region: 'bottom'
 		} );
-		footer.addChild( new umc.widgets.Button( {
-			label: this._( 'back to overview' ),
+		footer.addChild( new Button( {
+			label: _( 'back to overview' ),
 			style: 'float: left',
-			onClick: dojo.hitch( this, function() {
+			onClick: lang.hitch( this, function() {
 				this._cleanup();
 				this.onClose();
 			} )
 		} ) );
 		this.addChild( footer );
 
-		var header = new umc.widgets.ContainerWidget( {
+		var header = new ContainerWidget( {
 			'class': 'umcPageHeader',
 			region: 'top'
 		} );
-		this._cbxSize = new umc.widgets.ComboBox( {
-			name: this._( 'Size' ),
+		this._cbxSize = new ComboBox( {
+			name: _( 'Size' ),
 			style: 'float: left',
 			staticValues: [
-				{ id: 200, label: this._( 'tiny' ) },
-				{ id: 250, label: this._( 'small' ) },
-				{ id: 350, label: this._( 'normal' ) },
-				{ id: 500, label: this._( 'large' ) }
+				{ id: 200, label: _( 'tiny' ) },
+				{ id: 250, label: _( 'small' ) },
+				{ id: 350, label: _( 'normal' ) },
+				{ id: 500, label: _( 'large' ) }
 			],
 			value: 250,
-			onChange: dojo.hitch( this, function( newValue ) {
+			onChange: lang.hitch( this, function( newValue ) {
 				console.log( 'ComboBox.onChange: ' + newValue );
 				if ( this._container.hasChildren() ) {
-					dojo.forEach( this._container.getChildren(), dojo.hitch( this, function( child ) {
+					array.forEach( this._container.getChildren(), lang.hitch( this, function( child ) {
 						child._updateImage( newValue );
 					} ) );
 				}
@@ -281,7 +280,7 @@ dojo.declare("umc.modules._computerroom.ScreenshotView", [ umc.widgets.Page, umc
 		header.addChild( this._cbxSize );
 		this.addChild( header );
 
-		this._container = new umc.widgets.ContainerWidget({
+		this._container = new ContainerWidget({
 				scrollable: true
 		});
 		this.addChild( this._container );
@@ -290,7 +289,7 @@ dojo.declare("umc.modules._computerroom.ScreenshotView", [ umc.widgets.Page, umc
 
 	_cleanup: function() {
 		if ( this._container.hasChildren() ) {
-			dojo.forEach( this._container.getChildren(), dojo.hitch( this, function( child ) {
+			array.forEach( this._container.getChildren(), lang.hitch( this, function( child ) {
 				this._container.removeChild( child );
 				child.destroyRecursive();
 			} ) );
@@ -301,8 +300,8 @@ dojo.declare("umc.modules._computerroom.ScreenshotView", [ umc.widgets.Page, umc
 		// during loading show the standby animation
 		this.standby(true);
 		this._cleanup();
-		dojo.forEach( ids, dojo.hitch( this, function( item ) {
-			var computer = new umc.modules._computerroom.Item( dojo.mixin( item, {
+		array.forEach( ids, lang.hitch( this, function( item ) {
+			var computer = new Item( lang.mixin( item, {
 				defaultSize: this._cbxSize.get( 'value' )
 			} ) );
 			this._container.addChild( computer );
@@ -316,6 +315,4 @@ dojo.declare("umc.modules._computerroom.ScreenshotView", [ umc.widgets.Page, umc
 	}
 });
 
-
-
-
+});

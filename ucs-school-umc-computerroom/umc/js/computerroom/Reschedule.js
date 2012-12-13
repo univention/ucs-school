@@ -26,24 +26,21 @@
  * /usr/share/common-licenses/AGPL-3; if not, see
  * <http://www.gnu.org/licenses/>.
  */
-/*global console MyError dojo dojox dijit umc window Image */
+/*global define console*/
 
-dojo.provide("umc.modules._computerroom.Reschedule");
+define([
+	"dojo/_base/declare",
+	"dojo/_base/lang",
+	"umc/tools",
+	"umc/widgets/Form",
+	"umc/widgets/Text",
+	"umc/widgets/TimeBox",
+	"umc/widgets/StandbyMixin",
+	"dijit/Dialog",
+	"umc/i18n!/umc/modules/computerroom"
+], function(declare, lang, tools, Form, Text, TimeBox, StandbyMixin, Dialog, _) {
 
-dojo.require("umc.dialog");
-dojo.require("umc.i18n");
-dojo.require("umc.tools");
-dojo.require("umc.widgets.Button");
-dojo.require("umc.widgets.Form");
-dojo.require("umc.widgets.Page");
-dojo.require("umc.widgets.Text");
-dojo.require("umc.widgets.TimeBox");
-dojo.require("umc.widgets.StandbyMixin");
-dojo.require("umc.widgets.ContainerWidget");
-dojo.require("dijit.layout.ContentPane");
-dojo.require("dijit.Dialog");
-
-dojo.declare("umc.modules._computerroom.RescheduleDialog", [ dijit.Dialog, umc.widgets.StandbyMixin, umc.i18n.Mixin ], {
+return declare("umc.modules.computerroom.RescheduleDialog", [ Dialog, StandbyMixin ], {
 	// summary:
 	//		This class represents the screenshot view
 
@@ -51,9 +48,6 @@ dojo.declare("umc.modules._computerroom.RescheduleDialog", [ dijit.Dialog, umc.w
 	umcpCommand: null,
 
 	style: 'max-width: 300px',
-
-	// use i18n information from umc.modules.schoolgroups
-	i18nClass: 'umc.modules.computerroom',
 
 	_form: null,
 
@@ -66,26 +60,26 @@ dojo.declare("umc.modules._computerroom.RescheduleDialog", [ dijit.Dialog, umc.w
 	buildRendering: function() {
 		this.inherited( arguments );
 		// add remaining elements of the search form
-		this.set( 'title', this._( 'Validity of personal settings' ) );
+		this.set( 'title', _( 'Validity of personal settings' ) );
 
 		var widgets = [ {
-			type: 'Text',
+			type: Text,
 			name: 'text',
-			label: this._( 'Modify the time to define the new timestamp of validity for the personal settings.' )
+			label: _( 'Modify the time to define the new timestamp of validity for the personal settings.' )
 		}, {
-			type: 'TimeBox',
+			type: TimeBox,
 			name: 'period',
-			label: this._('Valid to')
+			label: _('Valid to')
 		}];
 
 		var buttons = [ {
 			name: 'submit',
-			label: this._( 'Set' ),
+			label: _( 'Set' ),
 			style: 'float: right',
-			onClick: dojo.hitch( this, function() {
+			onClick: lang.hitch( this, function() {
 				this.umcpCommand( 'computerroom/settings/reschedule', {
 					period: this._form.getWidget( 'period' ).get( 'value' )
-				} ).then( dojo.hitch( this, function( response ) {
+				} ).then( lang.hitch( this, function( response ) {
 					console.log( response );
 					this.onPeriodChanged( this._form.getWidget( 'period' ).get( 'value' ) );
 					this.hide();
@@ -93,15 +87,15 @@ dojo.declare("umc.modules._computerroom.RescheduleDialog", [ dijit.Dialog, umc.w
 			} )
 		} , {
 			name: 'cancel',
-			label: this._( 'cancel' ),
-			onClick: dojo.hitch( this, function() {
+			label: _( 'cancel' ),
+			onClick: lang.hitch( this, function() {
 				this.hide();
 				this.onClose();
 			} )
 		} ];
 
 		// generate the search form
-		this._form = new umc.widgets.Form({
+		this._form = new Form({
 			// property that defines the widget's position in a dijit.layout.BorderContainer
 			widgets: widgets,
 			layout: [ 'text', 'period' ],
@@ -112,8 +106,8 @@ dojo.declare("umc.modules._computerroom.RescheduleDialog", [ dijit.Dialog, umc.w
 	},
 
 	update: function( school, room ) {
-		this.umcpCommand( 'computerroom/settings/get', {} ).then( dojo.hitch( this, function( response ) {
-			umc.tools.forIn( response.result, function( key, value ) {
+		this.umcpCommand( 'computerroom/settings/get', {} ).then( lang.hitch( this, function( response ) {
+			tools.forIn( response.result, function( key, value ) {
 				this._form.getWidget( key ).set( 'value', value );
 			}, this );
 		} ) );
@@ -127,7 +121,4 @@ dojo.declare("umc.modules._computerroom.RescheduleDialog", [ dijit.Dialog, umc.w
 		// event stub
 	}
 });
-
-
-
-
+});

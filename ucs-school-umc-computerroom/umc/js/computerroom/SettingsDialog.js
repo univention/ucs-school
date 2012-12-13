@@ -26,32 +26,29 @@
  * /usr/share/common-licenses/AGPL-3; if not, see
  * <http://www.gnu.org/licenses/>.
  */
-/*global console MyError dojo dojox dijit umc window Image */
+/*global define*/
 
-dojo.provide("umc.modules._computerroom.Settings");
+define([
+	"dojo/_base/declare",
+	"dojo/_base/lang",
+	"dojo/_base/array",
+	"dijit/Dialog",
+	"umc/dialog",
+	"umc/tools",
+	"umc/widgets/Form",
+	"umc/widgets/ComboBox",
+	"umc/widgets/TimeBox",
+	"umc/widgets/TextArea",
+	"umc/widgets/StandbyMixin",
+	"umc/i18n!/umc/modules/computerroom"
+], function(declare, lang, array, Dialog, dialog, tools, Form, ComboBox, TimeBox, TextArea, StandbyMixin, _) {
 
-dojo.require("umc.dialog");
-dojo.require("umc.i18n");
-dojo.require("umc.tools");
-dojo.require("umc.widgets.Button");
-dojo.require("umc.widgets.Form");
-dojo.require("umc.widgets.Page");
-dojo.require("umc.widgets.Text");
-dojo.require("umc.widgets.TimeBox");
-dojo.require("umc.widgets.StandbyMixin");
-dojo.require("umc.widgets.ContainerWidget");
-dojo.require("dijit.layout.ContentPane");
-dojo.require("dijit.Dialog");
-
-dojo.declare("umc.modules._computerroom.SettingsDialog", [ dijit.Dialog, umc.widgets.StandbyMixin, umc.i18n.Mixin ], {
+return declare("umc.modules.computerroom.SettingsDialog", [ Dialog, StandbyMixin ], {
 	// summary:
 	//		This class represents the screenshot view
 
 	// internal reference to the flavored umcpCommand function
 	umcpCommand: null,
-
-	// use i18n information from umc.modules.schoolgroups
-	i18nClass: 'umc.modules.computerroom',
 
 	_form: null,
 
@@ -62,73 +59,73 @@ dojo.declare("umc.modules._computerroom.SettingsDialog", [ dijit.Dialog, umc.wid
 	buildRendering: function() {
 		this.inherited( arguments );
 		// add remaining elements of the search form
-		this.set( 'title', this._( 'Personal settings for the computer room' ) );
+		this.set( 'title', _( 'Personal settings for the computer room' ) );
 
-		var myRules = this._( 'Personal internet rules' );
+		var myRules = _( 'Personal internet rules' );
 		var widgets = [ {
-			type: 'ComboBox',
+			type: ComboBox,
 			name: 'internetRule',
-			label: this._('Web access profile'),
+			label: _('Web access profile'),
 			sizeClass: 'One',
 			dynamicValues: 'computerroom/internetrules',
-			staticValues: [ { id: 'none', label: this._( 'Default (global settings)' ) },
+			staticValues: [ { id: 'none', label: _( 'Default (global settings)' ) },
 							{ id: 'custom', label: myRules } ],
-			onChange: dojo.hitch( this, function( value ) {
+			onChange: lang.hitch( this, function( value ) {
 				this._form.getWidget( 'customRule' ).set( 'disabled', value != 'custom' );
 			} )
 		}, {
-			type: 'TextArea',
+			type: TextArea,
 			name: 'customRule',
-			label: dojo.replace( this._( 'List of allowed web sites for "{myRules}"' ), {
+			label: lang.replace( _( 'List of allowed web sites for "{myRules}"' ), {
 				myRules: myRules
 			} ),
 			sizeClass: 'One',
-			description: this._( '<p>In this text box you can list web sites that are allowed to be used by the students. Each line should contain one web site. Example: </p><p style="font-family: monospace">univention.com</br>wikipedia.org</br></p>' ),
-			validate: dojo.hitch( this, function() {
+			description: _( '<p>In this text box you can list web sites that are allowed to be used by the students. Each line should contain one web site. Example: </p><p style="font-family: monospace">univention.com</br>wikipedia.org</br></p>' ),
+			validate: lang.hitch( this, function() {
 				return !( this._form.getWidget( 'internetRule' ).get( 'value' ) == 'custom' && ! this._form.getWidget( 'customRule' ).get( 'value' ) );
 			} ),
-			onFocus: dojo.hitch( this, function() {
-				dijit.hideTooltip( this._form.getWidget( 'customRule' ).domNode );
+			onFocus: lang.hitch( this, function() {
+				dijit.hideTooltip( this._form.getWidget( 'customRule' ).domNode ); // FIXME
 			} ),
 			disabled: true
 		}, {
-			type: 'ComboBox',
+			type: ComboBox,
 			name: 'shareMode',
 			sizeClass: 'One',
-			label: this._('share access'),
-			description: this._( 'Defines restriction for the share access' ),
+			label: _('share access'),
+			description: _( 'Defines restriction for the share access' ),
 			staticValues: [
-				{ id : 'none', label: this._( 'no access' ) },
-				{ id: 'home', label : this._('home directory only') },
-				{ id: 'all', label : this._('Default (no restrictions)' ) }
+				{ id : 'none', label: _( 'no access' ) },
+				{ id: 'home', label : _('home directory only') },
+				{ id: 'all', label : _('Default (no restrictions)' ) }
 			]
 		}, {
-			type: 'ComboBox',
+			type: ComboBox,
 			name: 'printMode',
 			sizeClass: 'One',
-			label: this._('Print mode'),
+			label: _('Print mode'),
 			staticValues: [
-				{ id : 'default', label: this._( 'Default (global settings)' ) },
-				{ id: 'none', label : this._('Printing deactivated') },
-				{ id: 'all', label : this._('Free printing' ) }
+				{ id : 'default', label: _( 'Default (global settings)' ) },
+				{ id: 'none', label : _('Printing deactivated') },
+				{ id: 'all', label : _('Free printing' ) }
 			]
 		}, {
-			type: 'TimeBox',
+			type: TimeBox,
 			name: 'period',
-			label: this._('Valid to')
+			label: _('Valid to')
 		}];
 
 		var buttons = [ {
 			name: 'submit',
-			label: this._( 'Set' ),
+			label: _( 'Set' ),
 			style: 'float: right',
-			onClick: dojo.hitch( this, function() {
+			onClick: lang.hitch( this, function() {
 				var customRule = this._form.getWidget( 'customRule' );
 				if ( ! customRule.validate() ) {
-					dijit.showTooltip( this._( '<b>At least one web site is required!</b>' ) + '<br/>' + customRule.description, customRule.domNode );
+					dijit.showTooltip( _( '<b>At least one web site is required!</b>' ) + '<br/>' + customRule.description, customRule.domNode ); // FIXME
 					return;
 				}
-				dijit.hideTooltip( this._form.getWidget( 'customRule' ).domNode );
+				dijit.hideTooltip( this._form.getWidget( 'customRule' ).domNode ); // FIXME
 				this.hide();
 				this.umcpCommand( 'computerroom/settings/set', {
 					internetRule: this._form.getWidget( 'internetRule' ).get( 'value' ),
@@ -136,24 +133,24 @@ dojo.declare("umc.modules._computerroom.SettingsDialog", [ dijit.Dialog, umc.wid
 					printMode: this._form.getWidget( 'printMode' ).get( 'value' ),
 					shareMode: this._form.getWidget( 'shareMode' ).get( 'value' ),
 					period: this._form.getWidget( 'period' ).get( 'value' )
-				} ).then( dojo.hitch( this, function( response ) {
+				} ).then( lang.hitch( this, function( response ) {
 					this.onPeriodChanged( this._form.getWidget( 'period' ).get( 'value' ) );
 					// this.rescheduleDialog.set( 'period', this._form.getWidget( 'period' ).get( 'value' ) );
 				} ) );
 			} )
 		} , {
 			name: 'reset_to_default',
-			label: this._( 'reset' ),
+			label: _( 'reset' ),
 			style: 'float: right',
-			onClick: dojo.hitch( this, function() {
+			onClick: lang.hitch( this, function() {
 				this._form.getWidget( 'internetRule' ).set( 'value', 'none' );
 				this._form.getWidget( 'printMode' ).set( 'value', 'default' );
 				this._form.getWidget( 'shareMode' ).set( 'value', 'all' );
 			} )
 		} , {
 			name: 'cancel',
-			label: this._( 'cancel' ),
-			onClick: dojo.hitch( this, function() {
+			label: _( 'cancel' ),
+			onClick: lang.hitch( this, function() {
 				dijit.hideTooltip( this._form.getWidget( 'customRule' ).domNode );
 				this.hide();
 				this.onClose();
@@ -161,7 +158,7 @@ dojo.declare("umc.modules._computerroom.SettingsDialog", [ dijit.Dialog, umc.wid
 		} ];
 
 		// generate the search form
-		this._form = new umc.widgets.Form({
+		this._form = new Form({
 			// property that defines the widget's position in a dijit.layout.BorderContainer
 			widgets: widgets,
 			layout: [ 'internetRule', 'customRule', 'shareMode', 'printMode', 'period' ],
@@ -172,8 +169,8 @@ dojo.declare("umc.modules._computerroom.SettingsDialog", [ dijit.Dialog, umc.wid
 	},
 
 	update: function( school, room ) {
-		this.umcpCommand( 'computerroom/settings/get', {} ).then( dojo.hitch( this, function( response ) {
-			umc.tools.forIn( response.result, function( key, value ) {
+		this.umcpCommand( 'computerroom/settings/get', {} ).then( lang.hitch( this, function( response ) {
+			tools.forIn( response.result, function( key, value ) {
 				this._form.getWidget( key ).set( 'value', value );
 			}, this );
 			this.onPeriodChanged( this._form.getWidget( 'period' ).get( 'value' ) );
@@ -194,6 +191,4 @@ dojo.declare("umc.modules._computerroom.SettingsDialog", [ dijit.Dialog, umc.wid
 	}
 });
 
-
-
-
+});

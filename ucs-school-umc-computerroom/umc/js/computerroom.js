@@ -26,32 +26,36 @@
  * /usr/share/common-licenses/AGPL-3; if not, see
  * <http://www.gnu.org/licenses/>.
  */
-/*global window console dojo dojox dijit umc */
+/*global define window*/
 
-dojo.provide("umc.modules.computerroom");
-
-dojo.require("dijit.Dialog");
-dojo.require("dojo.data.ItemFileWriteStore");
-dojo.require("dojo.store.DataStore");
-dojo.require("dojo.store.Memory");
-dojo.require("dojox.math");
-
-dojo.require("umc.dialog");
-dojo.require("umc.i18n");
-dojo.require("umc.tools");
-dojo.require("umc.widgets.ExpandingTitlePane");
-dojo.require("umc.widgets.TitlePane");
-dojo.require("umc.widgets.Grid");
-dojo.require("umc.widgets.Module");
-dojo.require("umc.widgets.Page");
-dojo.require("umc.widgets.Form");
-dojo.require("umc.widgets.ContainerWidget");
-
-dojo.require("umc.modules._computerroom.ScreenshotView");
-dojo.require("umc.modules._computerroom.Settings");
-dojo.require("umc.modules._computerroom.Reschedule");
-
-dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ], {
+define([
+	"dojo/_base/declare",
+	"dojo/_base/lang",
+	"dojo/_base/array",
+	"dojo/aspect",
+	"dojo/dom",
+	"dojo/Deferred",
+	"dijit/Dialog",
+	"dojo/data/ItemFileWriteStore",
+	"dojo/store/DataStore",
+	"dojo/store/Memory",
+	"umc/dialog",
+	"umc/tools",
+	"umc/widgets/ExpandingTitlePane",
+	"umc/widgets/Grid",
+	"umc/widgets/Module",
+	"umc/widgets/Page",
+	"umc/widgets/Form",
+	"umc/widgets/ContainerWidget",
+	"umc/widgets/Text",
+	"umc/widgets/ComboBox",
+	"umc/widgets/Tooltip",
+	"umc/modules/computerroom/ScreenshotView",
+	"umc/modules/computerroom/RescheduleDialog",
+	"umc/modules/computerroom/SettingsDialog",
+	"umc/i18n!/umc/modules/computerroom"
+], function(declare, lang, array, aspect, dom, Deferred, Dialog, ItemFileWriteStore, DataStore, Memory, dialog, tools, ExpandingTitlePane, Grid, Module, Page, Form, ContainerWidget, Text, ComboBox, Tooltip, ScreenshotView, RescheduleDialog, SettingsDialog, _) {
+return declare("umc.modules.computerroom", [ Module ], {
 	// summary:
 	//		Template module to ease the UMC module development.
 	// description:
@@ -127,35 +131,35 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 		this._actions = [ {
 			name: 'screenshot',
 			field: 'screenshot',
-			label: dojo.hitch(this, function(item) {
+			label: lang.hitch(this, function(item) {
 				if (!item) {
 					header = !header;
 					if ( header ) {
-						return this._( 'Actions' );
+						return _( 'Actions' );
 					} else {
-						return this._( 'watch' );
+						return _( 'watch' );
 					}
 				}
-				return this._( 'watch' );
+				return _( 'watch' );
 			}),
 			isStandardAction: true,
 			isMultiAction: true,
 			description: function( item ) {
-				return dojo.replace( '<div style="display: table-cell; vertical-align: middle; width: 240px;height: 200px;"><img id="screenshotTooltip-{0}" src="" style="width: 230px; display: block; margin-left: auto; margin-right: auto;"/></div>', item.id );
+				return lang.replace( '<div style="display: table-cell; vertical-align: middle; width: 240px;height: 200px;"><img id="screenshotTooltip-{0}" src="" style="width: 230px; display: block; margin-left: auto; margin-right: auto;"/></div>', item.id );
 			},
 			onShowDescription: function( target, item ) {
-				var image = dojo.byId( 'screenshotTooltip-' + item.id[ 0 ] );
+				var image = dom.byId( 'screenshotTooltip-' + item.id[ 0 ] );
 				image.src = '/umcp/command/computerroom/screenshot?computer=' + item.id[ 0 ] + '&random=' + Math.random();
 			},
 			canExecute: function( item ) {
 				return item.connection[ 0 ] == 'connected';
 			},
-			callback: dojo.hitch(this, function( ids, items ) {
+			callback: lang.hitch(this, function( ids, items ) {
 				if ( items.length === 0 ) {
 					items = this._grid.getAllItems();
 				}
 				this.selectChild( this._screenshotView );
-				this._screenshotView.load( dojo.map( dojo.filter( items, function( item ) {
+				this._screenshotView.load(array.map(array.filter( items, function( item ) {
 					return item.connection[ 0 ] == 'connected';
 				} ), function( item ) {
 					return { 
@@ -166,26 +170,26 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 			} )
 		}, {
 			name: 'logout',
-			label: this._('Logout user'),
+			label: _('Logout user'),
 			isStandardAction: false,
 			isMultiAction: false,
 			canExecute: function( item ) {
 				return item.connection[ 0 ] == 'connected' && item.user[ 0 ];
 			},
-			callback: dojo.hitch(this, function( ids, items ) {
+			callback: lang.hitch(this, function( ids, items ) {
 				var comp = items[ 0 ];
 				this.umcpCommand( 'computerroom/user/logout', { computer: comp.id[ 0 ] } );
 			} )
 		}, {
 			name: 'computerShutdown',
 			field: 'connection',
-			label: this._('Shutdown computer'),
+			label: _('Shutdown computer'),
 			isStandardAction: false,
 			isMultiAction: false,
 			canExecute: function( item ) {
 				return item.connection[ 0 ] == 'connected';
 			},
-			callback: dojo.hitch(this, function( ids, items ) {
+			callback: lang.hitch(this, function( ids, items ) {
 				var comp = items[ 0 ];
 				this.umcpCommand( 'computerroom/computer/state', { 
 					computer: comp.id[ 0 ],
@@ -195,13 +199,13 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 		}, {
 			name: 'computerStart',
 			field: 'connection',
-			label: this._('Switch on computer'),
+			label: _('Switch on computer'),
 			isStandardAction: false,
 			isMultiAction: false,
 			canExecute: function( item ) {
 				return ( item.connection[ 0 ] == 'error' || item.connection[ 0 ] == 'autherror' || item.connection[ 0 ] == 'offline' ) && item.mac[ 0 ];
 			},
-			callback: dojo.hitch(this, function( ids, items ) {
+			callback: lang.hitch(this, function( ids, items ) {
 				var comp = items[ 0 ];
 				this.umcpCommand( 'computerroom/computer/state', { 
 					computer: comp.id[ 0 ],
@@ -211,13 +215,13 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 		}, {
 			name: 'computerRestart',
 			field: 'connection',
-			label: this._('Restart computer'),
+			label: _('Restart computer'),
 			isStandardAction: false,
 			isMultiAction: false,
 			canExecute: function( item ) {
 				return item.connection[ 0 ] == 'connected';
 			},
-			callback: dojo.hitch(this, function( ids, items ) {
+			callback: lang.hitch(this, function( ids, items ) {
 				var comp = items[ 0 ];
 				this.umcpCommand( 'computerroom/computer/state', { 
 					computer: comp.id[ 0 ],
@@ -226,20 +230,20 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 			} )
 		}, {
 			name: 'lockInput',
-			label: dojo.hitch( this, function( item ) {
+			label: lang.hitch( this, function( item ) {
 				if ( !item ) {
 					return '';
 				}
 				if ( item.InputLock ) {
 					if ( item.InputLock[ 0 ] === true ) {
-						return this._('Unlock input devices');
+						return _('Unlock input devices');
 					} else if ( item.InputLock[ 0 ] === false ) {
-						return this._('Lock input devices');
+						return _('Lock input devices');
 					}
 				}
 				return '';
 			} ),
-			iconClass: dojo.hitch( this, function( item ) {
+			iconClass: lang.hitch( this, function( item ) {
 				if ( !item ) {
 					return null;
 				}
@@ -253,7 +257,7 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 			canExecute: function( item ) {
 				return item.connection[ 0 ] == 'connected' && item.user && item.user[ 0 ] && item.InputLock;
 			},
-			callback: dojo.hitch(this, function( ids, items ) {
+			callback: lang.hitch(this, function( ids, items ) {
 				var comp = items[ 0 ];
 				// unclear status -> cancel operation
 				if ( comp.InputLock[ 0 ] === null ) {
@@ -267,24 +271,24 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 			} )
 		}, {
 			name: 'demoStart',
-			label: this._('Start presentation'),
+			label: _('Start presentation'),
 			isStandardAction: false,
 			isContextAction: true,
 			isMultiAction: false,
 			canExecute: function( item ) {
 				return item.connection[ 0 ] == 'connected' && item.user[ 0 ] && item.DemoServer[ 0 ] !== true;
 			},
-			callback: dojo.hitch( this, function( ids, items ) {
+			callback: lang.hitch( this, function( ids, items ) {
 				this.umcpCommand( 'computerroom/demo/start', { server: items[ 0 ].id[ 0 ] } );
-				umc.dialog.alert( this._( "The presentation is starting. This may take a few moments. When the presentation server is started a columns presentation is shown that contains a button 'stop' to end the presentation." ), this._( 'Presentation' ) );
+				dialog.alert( _( "The presentation is starting. This may take a few moments. When the presentation server is started a columns presentation is shown that contains a button 'stop' to end the presentation." ), _( 'Presentation' ) );
 			} )
 		}, {
 			name: 'reconnect',
-			label: this._( 'Reinitialize monitoring' ),
+			label: _( 'Reinitialize monitoring' ),
 			isStandardAction: false,
 			isContextAction: true,
 			isMultiAction: false,
-			callback: dojo.hitch( this, function() { this.queryRoom( true ); } )
+			callback: lang.hitch( this, function() { this.queryRoom( true ); } )
 		} ];
 	},
 
@@ -295,29 +299,29 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 		// it is important to call the parent's buildRendering() method
 		this.inherited(arguments);
 
-		this._rescheduleDialog = new umc.modules._computerroom.RescheduleDialog( {
-			umcpCommand: dojo.hitch( this.umcpCommand )
+		this._rescheduleDialog = new RescheduleDialog( {
+			umcpCommand: lang.hitch( this.umcpCommand )
 		} );
-		this._settingsDialog = new umc.modules._computerroom.SettingsDialog( {
-			umcpCommand: dojo.hitch( this.umcpCommand )
+		this._settingsDialog = new SettingsDialog( {
+			umcpCommand: lang.hitch( this.umcpCommand )
 		} );
 
-		dojo.connect( this._rescheduleDialog, 'onPeriodChanged', dojo.hitch( this._settingsDialog, function( value ) {
+		this._rescheduleDialog.on('PeriodChanged', lang.hitch( this._settingsDialog, function( value ) {
 			this._form.getWidget( 'period' ).set( 'value', value ) ;
 		} ) );
-		dojo.connect( this._settingsDialog, 'onPeriodChanged', dojo.hitch( this._rescheduleDialog, function( value ) {
+		this._settingsDialog.on('PeriodChanged', lang.hitch( this._rescheduleDialog, function( value ) {
 			this._form.getWidget( 'period' ).set( 'value', value ) ;
 		} ) );
 
 		// get UCR Variable for enabled VNC
-		umc.tools.ucr('ucsschool/umc/computerroom/ultravnc/enabled').then(dojo.hitch(this, function(result) {
+		tools.ucr('ucsschool/umc/computerroom/ultravnc/enabled').then(lang.hitch(this, function(result) {
 			this.standby(false);
-			this._vncEnabled = umc.tools.isTrue(result['ucsschool/umc/computerroom/ultravnc/enabled']);
+			this._vncEnabled = tools.isTrue(result['ucsschool/umc/computerroom/ultravnc/enabled']);
 
 			// render the page containing search form and grid
 			this.renderSearchPage();
 			this.renderScreenshotPage();
-		}), dojo.hitch(this, function() {
+		}), lang.hitch(this, function() {
 			this.standby(false);
 		}));
 	},
@@ -328,44 +332,44 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 
 	_updateHeader: function( room ) {
 		if ( room ) {
-			room = umc.tools.explodeDn( room, true )[ 0 ];
+			room = tools.explodeDn( room, true )[ 0 ];
 			room = room.replace( /^[^\-]+-/, '' );
 		} else {
-			room = this._('No room selected');
+			room = _('No room selected');
 		}
-		var label = dojo.replace('{roomLabel}: {room} ' +
+		var label = lang.replace('{roomLabel}: {room} ' +
 				'(<a href="javascript:void(0)" ' +
 				'onclick=\'dijit.byId("{id}").changeRoom()\'>{changeLabel}</a>)', {
-			roomLabel: this._('Room'),
+			roomLabel: _('Room'),
 			room: room,
-			changeLabel: this._('select room'),
+			changeLabel: _('select room'),
 			id: this.id
 		});
 		this._titlePane.set( 'title', label );
 	},
 
 	renderScreenshotPage: function() {
-		this._screenshotView = new umc.modules._computerroom.ScreenshotView();
+		this._screenshotView = new ScreenshotView();
 		this.addChild( this._screenshotView );
-		dojo.connect( this._screenshotView, 'onClose', this, 'closeScreenView' );
+		this._screenshotView.on('close', lang.hitch(this, 'closeScreenView'));
 	},
 
 	renderSearchPage: function(containers, superordinates) {
 		// render all GUI elements for the search formular and the grid
 
 		// render the search page
-		this._searchPage = new umc.widgets.Page({
+		this._searchPage = new Page({
 			headerText: this.description,
-			helpText: this._( "Here you can watch the student's computers, locking the computers, show presentations, control the internet access and define the available printers and shares." )
+			helpText: _( "Here you can watch the student's computers, locking the computers, show presentations, control the internet access and define the available printers and shares." )
 		});
 
 		// umc.widgets.Module is also a StackContainer instance that can hold
 		// different pages (see also umc.widgets.TabbedModule)
 		this.addChild(this._searchPage);
 
-		// umc.widgets.ExpandingTitlePane is an extension of dijit.layout.BorderContainer
-		this._titlePane = new umc.widgets.ExpandingTitlePane({
-			title: this._('Room administration')
+		// ExpandingTitlePane is an extension of dijit.layout.BorderContainer
+		this._titlePane = new ExpandingTitlePane({
+			title: _('Room administration')
 		});
 		this._searchPage.addChild(this._titlePane);
 
@@ -379,13 +383,13 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 		if (this._vncEnabled) {
 			this._actions.push({
 				name: 'viewVNC',
-				label: this._('VNC-Access'),
+				label: _('VNC-Access'),
 				isStandardAction: false,
 				isMultiAction: false,
 				canExecute: function( item ) {
 					return item.connection[ 0 ] == 'connected' && item.user[ 0 ];
 				},
-				callback: dojo.hitch(this, function( item ) {
+				callback: lang.hitch(this, function( item ) {
 					window.open('/umcp/command/computerroom/vnc?computer=' + item);
 				})
 			});
@@ -394,80 +398,80 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 		// define the grid columns
 		var columns = [{
 			name: 'name',
-			label: this._('Name'),
-			formatter: dojo.hitch( this, function( value, rowIndex ) {
+			label: _('Name'),
+			formatter: lang.hitch( this, function( value, rowIndex ) {
 				var item = this._grid._grid.getItem( rowIndex );
 				var icon = 'offline';
-				var label = this._( 'The computer is not running' );
+				var label = _( 'The computer is not running' );
 
 				if ( item.connection[ 0 ] == 'connected' ) {
 					icon = 'demo-offline';
-					label = this._( 'Monitoring is activated' );
+					label = _( 'Monitoring is activated' );
 				} else if ( item.connection[ 0 ] == 'autherror' ) {
-					label = this._( 'The monitoring mode has failed. It seems that the monitoring service is not configured properly.' );
+					label = _( 'The monitoring mode has failed. It seems that the monitoring service is not configured properly.' );
 				} else if ( item.connection[ 0 ] == 'error' ) {
-					label = this._( 'The monitoring mode has failed. Maybe the service is not installed or the Firewall is active.' );
+					label = _( 'The monitoring mode has failed. Maybe the service is not installed or the Firewall is active.' );
 				}
 				if ( item.DemoServer[ 0 ] === true ) {
 					icon = 'demo-server';
-					label = this._( 'The computer is showing a presentation currently' );
+					label = _( 'The computer is showing a presentation currently' );
 				} else if ( item.DemoClient[ 0 ] === true ) {
 					icon = 'demo-client';
-					label = this._( 'The computer is participating in a  presentation currently' );
+					label = _( 'The computer is participating in a  presentation currently' );
 				}
-				var widget = umc.widgets.Text( {} );
-				widget.set( 'content', dojo.replace( '<img src="images/icons/16x16/computerroom-{icon}.png" height="16" width="16" style="float:left; margin-right: 5px" /> {value}', {
+				var widget = new Text({});
+				widget.set( 'content', lang.replace( '<img src="images/icons/16x16/computerroom-{icon}.png" height="16" width="16" style="float:left; margin-right: 5px" /> {value}', {
 					icon: icon,
 					value: value
 				} ) );
-				label = dojo.replace( '<table><tr><td><b>{lblStatus}</b></td><td>{status}</td></tr><tr><td><b>{lblIP}</b></td><td>{ip}</td></tr><tr><td><b>{lblMAC}</b></td><td>{mac}</td></tr></table>', {
-					lblStatus: this._( 'Status' ),
+				label = lang.replace( '<table><tr><td><b>{lblStatus}</b></td><td>{status}</td></tr><tr><td><b>{lblIP}</b></td><td>{ip}</td></tr><tr><td><b>{lblMAC}</b></td><td>{mac}</td></tr></table>', {
+					lblStatus: _( 'Status' ),
 					status: label,
-					lblIP: this._( 'IP address' ),
+					lblIP: _( 'IP address' ),
 					ip: item.ip[ 0 ],
-					lblMAC: this._( 'MAC address' ),
+					lblMAC: _( 'MAC address' ),
 					mac: item.mac ? item.mac[ 0 ] : ''
 				} );
-				var tooltip = new umc.widgets.Tooltip( {
+				var tooltip = new Tooltip({
 					label: label,
 					connectId: [ widget.domNode ]
 				});
 				// destroy the tooltip when the widget is destroyed
-				tooltip.connect( widget, 'destroy', 'destroy' );
+				aspect.after(widget, 'destroy', function() { tooltip.destroy(); });
 
 				return widget;
 			} )
 		}, {
 			name: 'user',
-			label: this._('User')
+			label: _('User')
 		}];
 
 		// generate the data grid
-		this._grid = new umc.widgets.Grid({
+		this._grid = new Grid({
 			// property that defines the widget's position in a dijit.layout.BorderContainer,
 			// 'center' is its default value, so no need to specify it here explicitely
 			multiActionsAlwaysActive: true,
 			// region: 'center',
 			actions: this._actionList(),
 			columns: columns,
-			moduleStore: new dojo.store.Memory(),
-			footerFormatter: dojo.hitch( this, function( nItems, nItemsTotal ) {
+			moduleStore: new Memory(),
+			footerFormatter: lang.hitch( this, function( nItems, nItemsTotal ) {
 				var failed = 0;
-				var msg = dojo.replace( this._( '{0} computers are in this room' ), [ nItemsTotal ] );
+				var msg = lang.replace( _( '{0} computers are in this room' ), [ nItemsTotal ] );
 
 				if ( ! this._dataStore ) {
 					return '';
 				}
 				this._dataStore.fetch( {
 					query: '',
-					onItem: dojo.hitch( this, function( item ) {
+					onItem: lang.hitch( this, function( item ) {
 						if ( item.connection[ 0 ] != 'connected' ) {
 							failed += 1;
 						}
 					} )
 				} );
 				if ( failed ) {
-					msg += ' ('+ dojo.replace( this._( '{0} powered off/misconfigured' ), [ failed ] ) + ')';
+					msg += ' ('+ lang.replace( _( '{0} powered off/misconfigured' ), [ failed ] ) + ')';
 				}
 				return msg;
 			} )
@@ -481,12 +485,12 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 		// // add search form to the title pane
 		// this._titlePane.addChild(this._profileForm);
 
-		var _container = new umc.widgets.ContainerWidget( { region: 'top' } );
-		this._profileInfo = new umc.widgets.Text( {
-			content: '<i>' + this._( 'Determining active settings for the computer room ...' ) + '</i>',
+		var _container = new ContainerWidget( { region: 'top' } );
+		this._profileInfo = new Text( {
+			content: '<i>' + _( 'Determining active settings for the computer room ...' ) + '</i>',
 			style: 'padding-bottom: 10px; padding-bottom; 10px; float: left;'
 		} );
-		this._validTo = new umc.widgets.Text( {
+		this._validTo = new Text( {
 			content: '&nbsp;',
 			style: 'padding-bottom: 10px; padding-bottom; 10px; float: right;'
 		} );
@@ -501,12 +505,12 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 		// we need to call page's startup method manually as all widgets have
 		// been added to the page container object
 		this._searchPage.startup();
-		this._dataStore = new dojo.data.ItemFileWriteStore( { data : {
+		this._dataStore = new ItemFileWriteStore( { data : {
 			identifier : 'id',
 			label: 'name',
 			items: []
 		} } );
-		this._objStore = new dojo.store.DataStore( { store : this._dataStore, idProperty: 'id' } );
+		this._objStore = new DataStore( { store : this._dataStore, idProperty: 'id' } );
 		this._grid.moduleStore = this._objStore;
 		this._grid._dataStore = this._dataStore;
 		this._grid._grid.setStore( this._dataStore );
@@ -518,25 +522,25 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 			demo = this._demo.running;
 		}
 
-		actions = dojo.clone( this._actions );
+		actions = lang.clone( this._actions );
 		if ( demo === false ) {
 			actions.push( {
 				name: 'ScreenLock',
 				field: 'ScreenLock',
-				label: dojo.hitch(this, function(item) {
+				label: lang.hitch(this, function(item) {
 					if ( !item ) { // column title
-						return '<span style="height: 0px; font-weight: normal; color: rgba(0,0,0,0);">' + this._( 'unlock' ) + '</span>';
+						return '<span style="height: 0px; font-weight: normal; color: rgba(0,0,0,0);">' + _( 'unlock' ) + '</span>';
 					}
 					if ( !item.teacher || item.teacher[ 0 ] === false ) {
 						if ( item.ScreenLock[0] === true ) {
-							return this._('unlock');
+							return _('unlock');
 						} else if ( item.ScreenLock[0] === false ) {
-							return this._('lock');
+							return _('lock');
 						}
 					} 
 					return '';
 				}),
-				iconClass: dojo.hitch( this, function( item ) {
+				iconClass: lang.hitch( this, function( item ) {
 					if ( !item ) {
 						return null;
 					}
@@ -550,7 +554,7 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 				canExecute: function( item ) {
 					return item.connection[ 0 ] == 'connected' && item.user && item.user[ 0 ] && ( !item.teacher || item.teacher[ 0 ] === false );
 				},
-				callback: dojo.hitch(this, function( ids, items ) {
+				callback: lang.hitch(this, function( ids, items ) {
 					var comp = items[ 0 ];
 					this.umcpCommand( 'computerroom/lock', { 
 						computer: comp.id[ 0 ],
@@ -561,11 +565,11 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 			} );
 			actions.push( {
 				name: 'demoClientStop',
-				label: dojo.hitch( this, function( item ) {
+				label: lang.hitch( this, function( item ) {
 					if ( !item || item.DemoServer[ 0 ] === true ) {
 						return '';
 					} else {
-						return this._( 'stop presentation' );
+						return _( 'stop presentation' );
 					}
 				} ),
 				isStandardAction: false,
@@ -574,18 +578,18 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 				canExecute: function( item ) {
 					return item.connection[ 0 ] == 'connected' && item.DemoClient && item.DemoClient[ 0 ] === true;
 				},
-				callback: dojo.hitch( this, function() {
+				callback: lang.hitch( this, function() {
 					this.umcpCommand( 'computerroom/demo/stop', {} );
 				} )
 			} );
 		} else {
 			actions.push( {
 				name: 'demoStop',
-				label: dojo.hitch( this, function( item ) {
+				label: lang.hitch( this, function( item ) {
 					if ( !item ) {
-						return this._( 'presentation' );
+						return _( 'presentation' );
 					} else {
-						return this._( 'stop' );
+						return _( 'stop' );
 					}
 				} ),
 				isStandardAction: true,
@@ -593,7 +597,7 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 				canExecute: function( item ) {
 					return item.connection[ 0 ] == 'connected' && item.DemoServer && item.DemoServer[ 0 ] === true;
 				},
-				callback: dojo.hitch( this, function() {
+				callback: lang.hitch( this, function() {
 					this.umcpCommand( 'computerroom/demo/stop', {} );
 				} )
 			} );
@@ -608,41 +612,42 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 
 	changeRoom: function() {
 		// define a cleanup function
-		var dialog = null, form = null, okButton = null;
+		var _dialog = null, form = null, okButton = null;
 		var _cleanup = function() {
-			dialog.hide();
-			dialog.destroyRecursive();
+			_dialog.hide();
+			_dialog.destroyRecursive();
 			form.destroyRecursive();
 		};
 
 		// helper function to get the current room
 		var _getRoom = function(roomDN) {
 			var room = null;
-			dojo.forEach(form.getWidget('room').getAllItems(), function(iroom) {
+			array.some(form.getWidget('room').getAllItems(), function(iroom) {
 				if (iroom.id == roomDN) {
 					room = iroom;
-					return false;
+					return true;
 				}
+				return false;
 			});
 			return room;
 		};
 
 		// define the callback function
-		var _callback = dojo.hitch(this, function(vals) {
+		var _callback = lang.hitch(this, function(vals) {
 			// default to a resolved deferred object
-			var deferred = new dojo.Deferred();
+			var deferred = new Deferred();
 			deferred.resolve();
 
 			// show confirmation dialog if room is already locked
 			var room = _getRoom(vals.room);
 			if (room.locked) {
-				deferred = 	umc.dialog.confirm(this._('This computer room is currently in use by %s. You can take control over the room, however, the current teacher will be prompted a notification and its session will be closed.', room.user), [{
+				deferred = dialog.confirm(_('This computer room is currently in use by %s. You can take control over the room, however, the current teacher will be prompted a notification and its session will be closed.', room.user), [{
 					name: 'cancel',
-					label: this._('Cancel'),
+					label: _('Cancel'),
 					'default': true
 				}, {
 					name: 'takeover',
-					label: this._('Take over')
+					label: _('Take over')
 				}]).then(function(response) {
 					if (response != 'takeover') {
 						// cancel deferred chain
@@ -654,18 +659,18 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 			deferred = deferred.then(function () {
 				// try to acquire the session
 				okButton.set('disabled', true);
-				return umc.tools.umcpCommand('computerroom/room/acquire', {
+				return tools.umcpCommand('computerroom/room/acquire', {
 					school: vals.school,
 					room: vals.room
 				});
-			}).then(dojo.hitch(this, function(response) {
+			}).then(lang.hitch(this, function(response) {
 				okButton.set('disabled', false);
 				if ( response.result.success === false ) {
 					// we could not acquire the room
 					if ( response.result.message == 'ALREADY_LOCKED' ) {
-						umc.dialog.alert(this._('Failed to open a new session for the room.'));
+						dialog.alert(_('Failed to open a new session for the room.'));
 					} else if ( response.result.message == 'EMPTY_ROOM' ) {
-						umc.dialog.alert( this._( 'The room is empty or the computers are not configured correctly. Please select another room.' ) );
+						dialog.alert( _( 'The room is empty or the computers are not configured correctly. Please select another room.' ) );
 					}
 					return;
 				}
@@ -689,32 +694,32 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 
 		// add remaining elements of the search form
 		var widgets = [{
-			type: 'ComboBox',
+			type: ComboBox,
 			name: 'school',
-			description: this._('Choose the school'),
+			description: _('Choose the school'),
 			size: 'One',
-			label: this._('School'),
+			label: _('School'),
 			dynamicValues: 'computerroom/schools',
 			autoHide: true
 		}, {
-			type: 'ComboBox',
+			type: ComboBox,
 			name: 'room',
-			label: this._( 'computer room' ),
-			description: this._( 'Choose the computer room to monitor' ),
+			label: _( 'computer room' ),
+			description: _( 'Choose the computer room to monitor' ),
 			size: 'One',
 			depends: 'school',
 			dynamicValues: 'computerroom/rooms',
-			onChange: dojo.hitch(this, function(roomDN) {
+			onChange: lang.hitch(this, function(roomDN) {
 				// display a warning in case the room is already taken
 				var msg = '';
 				var room = _getRoom(roomDN);
 				if (room && room.locked) {
-					msg = '<p>' + this._('<b>Note:</b> This computer room is currently in use by %s.', room.user) + '</p>';
+					msg = '<p>' + _('<b>Note:</b> This computer room is currently in use by %s.', room.user) + '</p>';
 				}
 				form.getWidget('message').set('content', msg);
 			})
 		}, {
-			type: 'Text',
+			type: Text,
 			name: 'message',
 			'class': 'umcSize-One'
 		}];
@@ -722,17 +727,17 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 		// define buttons and callbacks
 		var buttons = [{
 			name: 'submit',
-			label: this._('Select room'),
+			label: _('Select room'),
 			style: 'float:right',
 			callback: _callback
 		}, {
 			name: 'cancel',
-			label: this._('Cancel'),
+			label: _('Cancel'),
 			callback: _cleanup
 		}];
 
 		// generate the search form
-		form = new umc.widgets.Form({
+		form = new Form({
 			// property that defines the widget's position in a dijit.layout.BorderContainer
 			widgets: widgets,
 			layout: [ 'school', 'room', 'message' ],
@@ -741,19 +746,20 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 		okButton = form.getButton('submit');
 
 		// enable button when values are loaded
-		var signal = dojo.connect(form, 'onValuesInitialized', function() {
-			dojo.disconnect(signal);
+		var signal = null;
+		signal = form.on('ValuesInitialized', function() {
+			signal.remove();
 			okButton.set('disabled', false);
 		});
 
 		// show the dialog
-		dialog = new dijit.Dialog({
-			title: this._('Select computer room'),
+		_dialog = new Dialog({
+			title: _('Select computer room'),
 			content: form,
 			'class' : 'umcPopup',
 			style: 'max-width: 400px;'
 		});
-		dialog.show();
+		_dialog.show();
 		okButton.set('disabled', true);
 	},
 
@@ -763,34 +769,34 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 		}
 		this.umcpCommand( 'computerroom/query', {
 			reload: reload !== undefined ? reload: false
-		} ).then( dojo.hitch( this, function( response ) {
+		} ).then( lang.hitch( this, function( response ) {
 			this._settingsDialog.update();
-			dojo.forEach( response.result, function( item ) {
+			array.forEach( response.result, function( item ) {
 				this._objStore.put( item );
 			}, this );
-			this._updateTimer = window.setTimeout( dojo.hitch( this, '_updateRoom', {} ), 2000 );
+			this._updateTimer = window.setTimeout( lang.hitch( this, '_updateRoom', {} ), 2000 );
 		} ) );
 	},
 
 	_updateRoom: function() {
-		this.umcpCommand( 'computerroom/update' ).then( dojo.hitch( this, function( response ) {
+		this.umcpCommand( 'computerroom/update' ).then( lang.hitch( this, function( response ) {
 			var demo = false, demo_server = null, demo_user = null, demo_systems = 0;
 
 			if (response.result.locked) {
 				// somebody stole our session...
 				// break the update loop, prompt a message and ask for choosing a new room
-				umc.dialog.confirm(this._('Control over the computer room has been taken by "%s", your session has been closed. In case this behaviour was not intended, please contact the other user. You can regain control over the computer room, by choosing it from the list of rooms again.', response.result.user), [{
+				dialog.confirm(_('Control over the computer room has been taken by "%s", your session has been closed. In case this behaviour was not intended, please contact the other user. You can regain control over the computer room, by choosing it from the list of rooms again.', response.result.user), [{
 					name: 'ok',
-					label: this._('Ok'),
+					label: _('Ok'),
 					'default': true
-				}]).then(dojo.hitch(this, function() {
+				}]).then(lang.hitch(this, function() {
 					this.changeRoom();
 				}));
 				return;
 			}
 
-			this._profileInfo.set( 'content', '<i>' + this._( 'Determining active settings for the computer room ...' ) + '</i>' );
-			dojo.forEach( response.result.computers, function( item ) {
+			this._profileInfo.set( 'content', '<i>' + _( 'Determining active settings for the computer room ...' ) + '</i>' );
+			array.forEach( response.result.computers, function( item ) {
 				this._objStore.put( item );
 			}, this );
 
@@ -804,7 +810,7 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 				if ( response.result.settingEndsIn <= 5 ) {
 					style = 'style="color: red"';
 				}
-				var labelValidTo = this._( 'valid for' ) + dojo.replace( ' <a href="javascript:void(0)" {style} onclick=\'dijit.byId("{id}").show()\'>' + this._( '{time} minutes' ) + '</a>', {
+				var labelValidTo = _( 'valid for' ) + lang.replace( ' <a href="javascript:void(0)" {style} onclick=\'dijit.byId("{id}").show()\'>' + _( '{time} minutes' ) + '</a>', {
 					time: response.result.settingEndsIn,
 					id: this._rescheduleDialog.id,
 					style: style
@@ -817,23 +823,23 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 				}
 			}
 
-			var text = this._( 'No user specific settings are defined for the computer room' );
+			var text = _( 'No user specific settings are defined for the computer room' );
 			if ( this._settingsDialog.personalActive() ) {
-				text = this._( 'User specific settings for the computer room are active' );
+				text = _( 'User specific settings for the computer room are active' );
 			}
-			var label = dojo.replace( '{lblSettings} (<a href="javascript:void(0)" ' +
+			var label = lang.replace( '{lblSettings} (<a href="javascript:void(0)" ' +
 									  'onclick=\'dijit.byId("{id}").show()\'>{changeLabel}</a>)', {
 										  lblSettings: text,
-										  changeLabel: this._( 'change' ),
+										  changeLabel: _( 'change' ),
 										  id: this._settingsDialog.id
 									  } );
 			this._profileInfo.set( 'content', label );
-			this._updateTimer = window.setTimeout( dojo.hitch( this, '_updateRoom', {} ), 2000 );
+			this._updateTimer = window.setTimeout( lang.hitch( this, '_updateRoom', {} ), 2000 );
 
 			// update the grid actions
 			this._dataStore.fetch( {
 				query: '',
-				onItem: dojo.hitch( this, function( item ) {
+				onItem: lang.hitch( this, function( item ) {
 					if ( item.DemoServer[ 0 ] === true ) {
 						demo = true;
 						demo_server = item.id[ 0 ];
@@ -859,5 +865,4 @@ dojo.declare("umc.modules.computerroom", [ umc.widgets.Module, umc.i18n.Mixin ],
 	}
 });
 
-
-
+});
