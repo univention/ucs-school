@@ -26,20 +26,23 @@
  * /usr/share/common-licenses/AGPL-3; if not, see
  * <http://www.gnu.org/licenses/>.
  */
-/*global console dojo dojox dijit umc */
+/*global define*/
 
-dojo.provide("umc.modules._internetrules.AdminPage");
+define([
+	"dojo/_base/declare",
+	"dojo/_base/lang",
+	"dojo/_base/array",
+	"umc/dialog",
+	"umc/store",
+	"umc/widgets/Page",
+	"umc/widgets/ExpandingTitlePane",
+	"umc/widgets/Grid",
+	"umc/widgets/TextBox",
+	"umc/widgets/SearchForm",
+	"umc/i18n!/umc/modules/internetrules"
+], function(declare, lang, array, dialog, store, Page, ExpandingTitlePane, Grid, TextBox, SearchForm, _) {
 
-dojo.require("umc.dialog");
-dojo.require("umc.i18n");
-dojo.require("umc.store");
-dojo.require("umc.tools");
-dojo.require("umc.widgets.ExpandingTitlePane");
-dojo.require("umc.widgets.Grid");
-dojo.require("umc.widgets.Page");
-dojo.require("umc.widgets.SearchForm");
-
-dojo.declare("umc.modules._internetrules.AdminPage", [ umc.widgets.Page, umc.i18n.Mixin ], {
+return declare("umc.modules.internetrules.AdminPage", [ Page ], {
 	// summary:
 	//		Template module to ease the UMC module development.
 	// description:
@@ -49,24 +52,21 @@ dojo.declare("umc.modules._internetrules.AdminPage", [ umc.widgets.Page, umc.i18
 	// internal reference to the grid
 	_grid: null,
 
-	// use i18n information from umc.modules.internetrules
-	i18nClass: 'umc.modules.internetrules',
-
 	// reference to the module store used
 	moduleStore: null,
 
 	postMixInProperties: function() {
 		this.inherited(arguments);
-		this.headerText = this._('Administration of internet rules');
-		this.moduleStore = umc.store.getModuleStore('name', 'internetrules');
+		this.headerText = _('Administration of internet rules');
+		this.moduleStore = store('name', 'internetrules');
 	},
 
 	buildRendering: function() {
 		this.inherited(arguments);
 
 		// umc.widgets.ExpandingTitlePane is an extension of dijit.layout.BorderContainer
-		var titlePane = new umc.widgets.ExpandingTitlePane({
-			title: this._('Search results')
+		var titlePane = new ExpandingTitlePane({
+			title: _('Search results')
 		});
 		this.addChild(titlePane);
 
@@ -77,63 +77,63 @@ dojo.declare("umc.modules._internetrules.AdminPage", [ umc.widgets.Page, umc.i18
 		// define grid actions
 		var actions = [{
 			name: 'add',
-			label: this._('Add rule'),
-			description: this._('Create a new rule'),
+			label: _('Add rule'),
+			description: _('Create a new rule'),
 			iconClass: 'umcIconAdd',
 			isContextAction: false,
 			isStandardAction: true,
-			callback: dojo.hitch(this, '_add')
+			callback: lang.hitch(this, '_add')
 		}, {
 			name: 'edit',
-			label: this._('Edit'),
-			description: this._('Edit the selected rule'),
+			label: _('Edit'),
+			description: _('Edit the selected rule'),
 			iconClass: 'umcIconEdit',
 			isStandardAction: true,
 			isMultiAction: false,
-			callback: dojo.hitch(this, '_edit')
+			callback: lang.hitch(this, '_edit')
 		}, {
 			name: 'delete',
-			label: this._('Delete'),
-			description: this._('Delete the selected rules.'),
+			label: _('Delete'),
+			description: _('Delete the selected rules.'),
 			isStandardAction: true,
 			isMultiAction: true,
 			iconClass: 'umcIconDelete',
-			callback: dojo.hitch(this, '_remove')
+			callback: lang.hitch(this, '_remove')
 		}];
 
 		// define the grid columns
 		var columns = [{
 			name: 'name',
-			label: this._('Name'),
+			label: _('Name'),
 			width: 'auto'
 		}, {
 			name: 'type',
-			label: this._('Type'),
+			label: _('Type'),
 			width: '100px',
-			formatter: dojo.hitch(this, function(type) {
+			formatter: lang.hitch(this, function(type) {
 				if (type == 'whitelist') {
-					return this._('whitelist');
+					return _('whitelist');
 				}
 				else if (type == 'blacklist') {
-					return this._('blacklist');
+					return _('blacklist');
 				}
-				return this._('Unknown');
+				return _('Unknown');
 			})
 		}, {
 			name: 'wlan',
-			label: this._('Wifi'),
+			label: _('Wifi'),
 			width: '100px',
-			formatter: dojo.hitch(this, function(wlan) {
-				return wlan ? this._('enabled') : this._('disabled');
+			formatter: lang.hitch(this, function(wlan) {
+				return wlan ? _('enabled') : _('disabled');
 			})
 		}, {
 			name: 'priority',
-			label: this._('Priority'),
+			label: _('Priority'),
 			width: 'adjust'
 		}];
 
 		// generate the data grid
-		this._grid = new umc.widgets.Grid({
+		this._grid = new Grid({
 			actions: actions,
 			columns: columns,
 			moduleStore: this.moduleStore,
@@ -149,17 +149,17 @@ dojo.declare("umc.modules._internetrules.AdminPage", [ umc.widgets.Page, umc.i18
 		//
 
 		var widgets = [{
-			type: 'TextBox',
+			type: TextBox,
 			name: 'pattern',
-			description: this._('Specifies the substring pattern which is searched for in the rules\' name and its domain list'),
-			label: this._('Search pattern')
+			description: _('Specifies the substring pattern which is searched for in the rules\' name and its domain list'),
+			label: _('Search pattern')
 		}];
 
-		this._searchForm = new umc.widgets.SearchForm({
+		this._searchForm = new SearchForm({
 			region: 'top',
 			widgets: widgets,
 			layout: [ [ 'pattern', 'submit' ] ],
-			onSearch: dojo.hitch(this, function(values) {
+			onSearch: lang.hitch(this, function(values) {
 				this._grid.filter(values);
 			})
 		});
@@ -190,38 +190,38 @@ dojo.declare("umc.modules._internetrules.AdminPage", [ umc.widgets.Page, umc.i18
 		}
 
 		// get a string of all rule names and the correct confirmation message
-		var rulesStr = dojo.map(items, function(iitem) {
+		var rulesStr = array.map(items, function(iitem) {
 			return iitem.name;
 		}).join('</li><li>');
 		rulesStr = '<ul style="max-height:200px; overflow:auto;"><li>' + rulesStr + '</li></ul>';
-		var confirmMsg = items.length > 1 ? this._('Please confirm to remove the following %d filter rules: %s', items.length, rulesStr) : this._('Please confirm to remove the following filter rule: %s', rulesStr);
+		var confirmMsg = items.length > 1 ? _('Please confirm to remove the following %d filter rules: %s', items.length, rulesStr) : _('Please confirm to remove the following filter rule: %s', rulesStr);
 
 		// ask for confirmation
-		umc.dialog.confirm(confirmMsg, [{
-			label: this._('Cancel'),
+		dialog.confirm(confirmMsg, [{
+			label: _('Cancel'),
 			name: 'cancel',
 			'default': true
 		}, {
-			label: items.length > 1 ? this._('Remove rules') : this._('Remove rule'),
+			label: items.length > 1 ? _('Remove rules') : _('Remove rule'),
 			name: 'remove'
-		}]).then(dojo.hitch(this, function(response) {
+		}]).then(lang.hitch(this, function(response) {
 			if (response === 'remove') {
 				// ok, remove all rules, one by one using a transaction
 				var transaction = this.moduleStore.transaction();
-				dojo.forEach(ids, function(iid) {
+				array.forEach(ids, function(iid) {
 					this.moduleStore.remove(iid);
 				}, this);
-				transaction.commit().then(dojo.hitch(this, function(result) {
-					var failedRules = dojo.filter(result, function(iresult) {
+				transaction.commit().then(lang.hitch(this, function(result) {
+					var failedRules = array.filter(result, function(iresult) {
 						return !iresult.success;
 					});
 					if (failedRules.length) {
 						// something went wrong... display the rules for which the removal failed
-						var rulesStr = dojo.map(failedRules, function(iresult) {
+						var rulesStr = array.map(failedRules, function(iresult) {
 							return iresult.name;
 						}).join('</li><li>');
 						rulesStr = '<ul style="max-height:200px; overflow:auto;"><li>' + rulesStr + '</li></ul>';
-						umc.dialog.alert(this._('Removal of the following rules failed:%s', rulesStr));
+						dialog.alert(_('Removal of the following rules failed:%s', rulesStr));
 					}
 				}));
 			}
@@ -233,5 +233,4 @@ dojo.declare("umc.modules._internetrules.AdminPage", [ umc.widgets.Page, umc.i18
 	}
 });
 
-
-
+});

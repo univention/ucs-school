@@ -26,18 +26,19 @@
  * /usr/share/common-licenses/AGPL-3; if not, see
  * <http://www.gnu.org/licenses/>.
  */
-/*global console dojo dojox dijit umc */
+/*global define*/
 
-dojo.provide("umc.modules.internetrules");
+define([
+	"dojo/_base/declare",
+	"dojo/_base/lang",
+	"umc/widgets/Module",
+	"umc/modules/internetrules/AssignPage",
+	"umc/modules/internetrules/AdminPage",
+	"umc/modules/internetrules/DetailPage",
+	"umc/i18n!/umc/modules/internetrules"
+], function(declare, lang, Module, AssignPage, AdminPage, DetailPage, _) {
 
-dojo.require("umc.tools");
-dojo.require("umc.widgets.Module");
-
-dojo.require("umc.modules._internetrules.AssignPage");
-dojo.require("umc.modules._internetrules.AdminPage");
-dojo.require("umc.modules._internetrules.DetailPage");
-
-dojo.declare("umc.modules.internetrules", umc.widgets.Module, {
+return declare("umc.modules.internetrules", [ Module ], {
 	// summary:
 	//		Template module to ease the UMC module development.
 	// description:
@@ -55,19 +56,19 @@ dojo.declare("umc.modules.internetrules", umc.widgets.Module, {
 		// render the correct pages corresponding to the given flavor
 		if (this.moduleFlavor == 'assign') {
 			// flavor for assigning rules to groups
-			this._assignPage = new umc.modules._internetrules.AssignPage({});
+			this._assignPage = new AssignPage({});
 			this.addChild(this._assignPage);
 		}
 		else {
 			// flavor for managing internet rules
-			this._adminPage = new umc.modules._internetrules.AdminPage({});
+			this._adminPage = new AdminPage({});
 			this.addChild(this._adminPage);
-			this._detailPage = new umc.modules._internetrules.DetailPage({});
+			this._detailPage = new DetailPage({});
 			this.addChild(this._detailPage);
 
 			// the module needs to handle the visibilities of different pages
 			// via the corresponding events
-			this.connect(this._adminPage, 'onOpenDetailPage', function(id) {
+			this._adminPage.on('OpenDetailPage', lang.hitch(this, function(id) {
 				this.selectChild(this._detailPage);
 				if (undefined === id) {
 					// a new rule is being added
@@ -77,13 +78,12 @@ dojo.declare("umc.modules.internetrules", umc.widgets.Module, {
 					// an existing rule is being opened
 					this._detailPage.load(id);
 				}
-			});
-			this.connect(this._detailPage, 'onClose', function(id) {
+			}));
+			this._detailPage.on('close', lang.hitch(this, function(id) {
 				this.selectChild(this._adminPage);
-			});
+			}));
 		}
 	}
 });
 
-
-
+});
