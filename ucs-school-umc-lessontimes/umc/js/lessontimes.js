@@ -26,20 +26,24 @@
  * /usr/share/common-licenses/AGPL-3; if not, see
  * <http://www.gnu.org/licenses/>.
  */
-/*global console dojo dojox dijit umc */
+/*global define*/
 
-dojo.provide("umc.modules.lessontimes");
+define([
+	"dojo/_base/declare",
+	"dojo/_base/lang",
+	"dojo/topic",
+	"umc/dialog",
+	"umc/widgets/ContainerWidget",
+	"umc/widgets/Form",
+	"umc/widgets/Module",
+	"umc/widgets/Page",
+	"umc/widgets/MultiInput",
+	"umc/widgets/TextBox",
+	"umc/widgets/TimeBox",
+	"umc/i18n!umc/modules/lessontimes"
+], function(declare, lang, topic, dialog, ContainerWidget, Form, Module, Page, MultiInput, TextBox, TimeBox, _) {
 
-dojo.require("umc.dialog");
-dojo.require("umc.i18n");
-dojo.require("umc.tools");
-dojo.require("umc.widgets.ContainerWidget");
-dojo.require("umc.widgets.Form");
-dojo.require("umc.widgets.Module");
-dojo.require("umc.widgets.Page");
-dojo.require("umc.widgets.TitlePane");
-
-dojo.declare("umc.modules.lessontimes", [ umc.widgets.Module, umc.i18n.Mixin ], {
+return declare("umc.modules.lessontimes", [ Module ], {
 	postMixInProperties: function() {
 		this.inherited(arguments);
 		this.standbyOpacity = 1;
@@ -49,7 +53,7 @@ dojo.declare("umc.modules.lessontimes", [ umc.widgets.Module, umc.i18n.Mixin ], 
 		this.inherited(arguments);
 		this.standby(true);
 
-		this.umcpCommand('lessontimes/get').then(dojo.hitch(this, function(response) {
+		this.umcpCommand('lessontimes/get').then(lang.hitch(this, function(response) {
 			this.renderPage(response.result);
 			this.standby(false);
 		}));
@@ -57,75 +61,75 @@ dojo.declare("umc.modules.lessontimes", [ umc.widgets.Module, umc.i18n.Mixin ], 
 
 	renderPage: function(values) {
 		var widgets = [{
-			type: 'MultiInput',
+			type: MultiInput,
 			name: 'lessons',
-			label: this._(''),
+			label: _(''),
 			subtypes: [{
-				type: 'TextBox',
+				type: TextBox,
 				name: 'description',
-				label: this._('Description')
+				label: _('Description')
 			}, {
-				type: 'TimeBox',
+				type: TimeBox,
 				name: 'begin',
-				label: this._('Start time'),
+				label: _('Start time'),
 				size: 'OneThird'
 			}, {
-				type: 'TimeBox',
+				type: TimeBox,
 				name: 'end',
-				label: this._('End time'),
+				label: _('End time'),
 				size: 'OneThird'
 			}],
 			value: values
 		}];
 
 		var layout = [{
-			label: this._('Lesson times'),
+			label: _('Lesson times'),
 			layout: ['lessons']
 		}];
 
-		this._form = new umc.widgets.Form({
+		this._form = new Form({
 			region: 'top',
 			widgets: widgets,
 			layout: layout
 		});
 
 		// turn off the standby animation as soon as all form values have been loaded
-		this.connect(this._form, 'onValuesInitialized', function() {
+		this._form.on('ValuesInitialized', lang.hitch(this, function() {
 			this.standby(false);
-		});
+		}));
 
 		var buttons = [{
-            name: 'submit',
-            label: this._('Submit'),
-            'default': true,
-            callback: dojo.hitch(this, function() {
-				var values = this._form.gatherFormValues();
-	            this.onSubmit(values);
-            })
-        }, {
-            name: 'close',
-            label: this._('Close'),
-            callback: dojo.hitch(this, function() {
-	            umc.dialog.confirm(this._('Should the UMC module be closed? All unsaved modification will be lost.'), [{
-		            label: this._('Close'),
-		            callback: dojo.hitch(this, function() {
-			            dojo.publish('/umc/tabs/close', [this]);
-		            })
-	            }, {
-		            label: this._('Cancel'),
-		            'default': true
-	            }]);
-            })
-        }];
+			name: 'submit',
+			label: _('Submit'),
+			'default': true,
+			callback: lang.hitch(this, function() {
+				var values = this._form.get('value');
+				this.onSubmit(values);
+			})
+		}, {
+			name: 'close',
+			label: _('Close'),
+			callback: lang.hitch(this, function() {
+				dialog.confirm(_('Should the UMC module be closed? All unsaved modification will be lost.'), [{
+					label: _('Close'),
+					callback: lang.hitch(this, function() {
+						topic.publish('/umc/tabs/close', this);
+					})
+				}, {
+					label: _('Cancel'),
+					'default': true
+				}]);
+			})
+		}];
 
-		this._page = new umc.widgets.Page({
+		this._page = new Page({
 			headerText: this.description,
-			helpText: this._('The lesson times are used internally for the default session duration by the computer room module. It is advisable to set the end time of a lesson to a time immediately before the beginning of the following lesson.'),
+			helpText: _('The lesson times are used internally for the default session duration by the computer room module. It is advisable to set the end time of a lesson to a time immediately before the beginning of the following lesson.'),
 			footerButtons: buttons
 		});
 		this.addChild(this._page);
 
-		var container = new umc.widgets.ContainerWidget({
+		var container = new ContainerWidget({
 			scrollable: true
 		});
 		this._page.addChild(container);
@@ -135,10 +139,12 @@ dojo.declare("umc.modules.lessontimes", [ umc.widgets.Module, umc.i18n.Mixin ], 
 
 	onSubmit: function(values) {
 		this.umcpCommand('lessontimes/set', values).then(
-			dojo.hitch(this, function (response) {
+			lang.hitch(this, function (response) {
 				if (response.result.message) {
-					umc.dialog.alert(response.result.message);
+					dialog.alert(response.result.message);
 				}
 		}));
 	}
+});
+
 });
