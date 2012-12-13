@@ -26,21 +26,33 @@
  * /usr/share/common-licenses/AGPL-3; if not, see
  * <http://www.gnu.org/licenses/>.
  */
-/*global console dojo dojox dijit umc */
+/*global define*/
 
-dojo.provide("umc.modules.schoolusers");
+define([
+	"dojo/_base/declare",
+	"dojo/_base/lang",
+	"dojo/_base/array",
+	"dojo/date/locale",
+	"dojo/Deferred",
+	"dijit/Dialog",
+	"umc/dialog",
+	"umc/tools",
+	"umc/widgets/Module",
+	"umc/widgets/ExpandingTitlePane",
+	"umc/widgets/Grid",
+	"umc/widgets/Page",
+	"umc/widgets/Form",
+	"umc/widgets/TextBox",
+	"umc/widgets/ComboBox",
+	"umc/widgets/CheckBox",
+	"umc/widgets/Text",
+	"umc/widgets/ContainerWidget",
+	"umc/widgets/ProgressInfo",
+	"umc/widgets/SearchForm",
+	"umc/i18n!/umc/modules/schoolusers"
+], function(declare, lang, array, locale, Deferred, Dialog, dialog, tools, Module, ExpandingTitlePane, Grid, Page, Form, TextBox, ComboBox, CheckBox, Text, ContainerWidget, ProgressInfo, SearchForm, _) {
 
-dojo.require("umc.dialog");
-dojo.require("umc.i18n");
-dojo.require("umc.tools");
-dojo.require("umc.widgets.ExpandingTitlePane");
-dojo.require("umc.widgets.Grid");
-dojo.require("umc.widgets.Module");
-dojo.require("umc.widgets.Page");
-dojo.require("umc.widgets.ProgressInfo");
-dojo.require("umc.widgets.SearchForm");
-
-dojo.declare("umc.modules.schoolusers", [ umc.widgets.Module, umc.i18n.Mixin ], {
+return declare("umc.modules.schoolusers", [ Module ], {
 	// summary:
 	//		Template module to ease the UMC module development.
 	// description:
@@ -80,7 +92,7 @@ dojo.declare("umc.modules.schoolusers", [ umc.widgets.Module, umc.i18n.Mixin ], 
 	renderSearchPage: function(containers, superordinates) {
 		// render all GUI elements for the search formular and the grid
 
-		this._searchPage = new umc.widgets.Page({
+		this._searchPage = new Page({
 			headerText: this.description,
 			helpText: ''
 		});
@@ -88,8 +100,8 @@ dojo.declare("umc.modules.schoolusers", [ umc.widgets.Module, umc.i18n.Mixin ], 
 		this.addChild(this._searchPage);
 
 		// umc.widgets.ExpandingTitlePane is an extension of dijit.layout.BorderContainer
-		var titlePane = new umc.widgets.ExpandingTitlePane({
-			title: this._('Search results')
+		var titlePane = new ExpandingTitlePane({
+			title: _('Search results')
 		});
 		this._searchPage.addChild(titlePane);
 
@@ -101,27 +113,27 @@ dojo.declare("umc.modules.schoolusers", [ umc.widgets.Module, umc.i18n.Mixin ], 
 		// define grid actions
 		var actions = [ {
 			name: 'reset',
-			label: this._( 'Reset password' ),
-			description: this._( 'Resets password of user.' ),
+			label: _( 'Reset password' ),
+			description: _( 'Resets password of user.' ),
 			isStandardAction: true,
 			isMultiAction: true,
-			callback: dojo.hitch( this, '_resetPasswords' )
+			callback: lang.hitch( this, '_resetPasswords' )
 		}];
 
 		// define the grid columns
 		var columns = [{
 			name: 'name',
-			label: this._('Name'),
+			label: _('Name'),
 			width: '60%'
 		}, {
 			name: 'passwordexpiry',
-			label: this._('Password expiration date'),
+			label: _('Password expiration date'),
 			width: '40%',
 			'formatter': function( key ) {
 				if ( key ) {
-					var date = dojo.date.locale.parse( key, { datePattern : 'yyyy-MM-dd', selector: 'date' } );
+					var date = locale.parse( key, { datePattern : 'yyyy-MM-dd', selector: 'date' } );
 					if ( date ) {
-						return dojo.date.locale.format( date, { selector: 'date' } );
+						return locale.format( date, { selector: 'date' } );
 					}
 				}
 				return '-';
@@ -129,7 +141,7 @@ dojo.declare("umc.modules.schoolusers", [ umc.widgets.Module, umc.i18n.Mixin ], 
 		}];
 
 		// generate the data grid
-		this._grid = new umc.widgets.Grid({
+		this._grid = new Grid({
 			actions: actions,
 			columns: columns,
 			moduleStore: this.moduleStore
@@ -144,37 +156,37 @@ dojo.declare("umc.modules.schoolusers", [ umc.widgets.Module, umc.i18n.Mixin ], 
 		//
 
 		// add remaining elements of the search form
-		var deferred = new dojo.Deferred();
+		var deferred = new Deferred();
 		var widgets = [{
-			type: 'ComboBox',
+			type: ComboBox,
 			name: 'school',
-			description: this._('Select the school.'),
-			label: this._( 'School' ),
+			description: _('Select the school.'),
+			label: _( 'School' ),
 			autoHide: true,
 			size: 'TwoThirds',
-			umcpCommand: dojo.hitch( this, 'umcpCommand' ),
+			umcpCommand: lang.hitch( this, 'umcpCommand' ),
 			dynamicValues: 'schoolusers/schools'
 		}, {
-			type: 'ComboBox',
+			type: ComboBox,
 			name: 'class',
-			description: this._('Select a class or workgroup.'),
-			label: this._( 'Class or workgroup' ),
+			description: _('Select a class or workgroup.'),
+			label: _( 'Class or workgroup' ),
 			staticValues: [
-				{ 'id' : 'None', 'label' : this._( 'All classes and workgroups' ) }
+				{ 'id' : 'None', 'label' : _( 'All classes and workgroups' ) }
 			],
 			dynamicValues: 'schoolusers/groups',
-			umcpCommand: dojo.hitch( this, 'umcpCommand' ),
+			umcpCommand: lang.hitch( this, 'umcpCommand' ),
 			depends: 'school',
 			onValuesLoaded: function() {
 				deferred.resolve();
 			}
 		}, {
-			type: 'TextBox',
+			type: TextBox,
 			name: 'pattern',
 			size: 'TwoThirds',
 			value: '',
-			description: this._('Specifies the substring pattern which is searched for in the first name, surname and username'),
-			label: this._('Name')
+			description: _('Specifies the substring pattern which is searched for in the first name, surname and username'),
+			label: _('Name')
 		}];
 
 		// the layout is an 2D array that defines the organization of the form elements...
@@ -184,17 +196,16 @@ dojo.declare("umc.modules.schoolusers", [ umc.widgets.Module, umc.i18n.Mixin ], 
 		];
 
 		// generate the search form
-		this._searchForm = new umc.widgets.SearchForm({
+		this._searchForm = new SearchForm({
 			// property that defines the widget's position in a dijit.layout.BorderContainer
 			region: 'top',
 			widgets: widgets,
 			layout: layout,
-			onSearch: dojo.hitch(this, function(values) {
+			onSearch: lang.hitch(this, function(values) {
 				// call the grid's filter function
-				// (could be also done via dojo.connect() and dojo.disconnect() )
 				this._grid.filter(values);
 			}),
-			onValuesInitialized: dojo.hitch( this, function() {
+			onValuesInitialized: lang.hitch( this, function() {
 				// deactivate standby mode
 				this.standby( false );
 				// transparent standby mode
@@ -206,69 +217,69 @@ dojo.declare("umc.modules.schoolusers", [ umc.widgets.Module, umc.i18n.Mixin ], 
 		titlePane.addChild(this._searchForm);
 
 		// setup a progress bar with some info text
-		this._progressInfo = new umc.widgets.ProgressInfo( {
+		this._progressInfo = new ProgressInfo( {
 			style: 'min-width: 400px'
 		} );
 
 		this._searchPage.startup();
 
-		umc.tools.ucr(['directory/manager/web/modules/users/user/search/autosearch', 'directory/manager/web/modules/autosearch']).then(dojo.hitch(this, function(ucr) {
+		tools.ucr(['directory/manager/web/modules/users/user/search/autosearch', 'directory/manager/web/modules/autosearch']).then(lang.hitch(this, function(ucr) {
 			var autoSearch = ucr['directory/manager/web/modules/users/user/search/autosearch'] || 
 				ucr['directory/manager/web/modules/autosearch'];
-			if (umc.tools.isTrue(autoSearch)) {
-				deferred.then(dojo.hitch(this, function() {
-					this._grid.filter(this._searchForm.gatherFormValues());
+			if (tools.isTrue(autoSearch)) {
+				deferred.then(lang.hitch(this, function() {
+					this._grid.filter(this._searchForm.get('value'));
 				}));
 			}
 		}));
 	},
 
 	_resetPasswords: function( ids, items ) {
-		var dialog = null, form = null;
+		var _dialog = null, form = null;
 
 		var _cleanup = function() {
-			dialog.hide();
-			dialog.destroyRecursive();
+			_dialog.hide();
+			_dialog.destroyRecursive();
 			form.destroyRecursive();
 		};
 
 		var errors = [];
-		var finished_func = dojo.hitch( this, function() {
+		var finished_func = lang.hitch( this, function() {
 			this.moduleStore.onChange();
-			this._progressInfo.update( ids.length, this._( 'Finished' ) );
+			this._progressInfo.update( ids.length, _( 'Finished' ) );
 			this.standby( false );
 			if ( errors.length ) {
-				var message = this._( 'Failed to reset the password for the following users:' ) + '<br><ul>';
-				var _content = new umc.widgets.ContainerWidget( {
+				var message = _( 'Failed to reset the password for the following users:' ) + '<br><ul>';
+				var _content = new ContainerWidget( {
 					scrollable: true,
 					style: 'max-height: 500px'
 				} );
-				dojo.forEach( errors, function( item ) {
+				array.forEach( errors, function( item ) {
 					message += '<li>' + item.name + '<br>' + item.message + '</li>';
 				} );
 				message += '</ul>';
-				_content.addChild( new umc.widgets.Text( { content: message } ) );
-				umc.dialog.alert( _content );
+				_content.addChild( new Text( { content: message } ) );
+				dialog.alert( _content );
 			}
 		} );
 
-		var _set_passwords = dojo.hitch( this, function( password, nextLogin ) {
-			var deferred = new dojo.Deferred();
+		var _set_passwords = lang.hitch( this, function( password, nextLogin ) {
+			var deferred = new Deferred();
 
 			this._progressInfo.set( 'maximum', ids.length );
-			this._progressInfo.updateTitle( this._( 'Setting passwords' ) );
+			this._progressInfo.updateTitle( _( 'Setting passwords' ) );
 			deferred.resolve();
 			this.standby( true, this._progressInfo );
 
-			dojo.forEach( items, function( item, i ) {
-				deferred = deferred.then( dojo.hitch( this, function() {
-					this._progressInfo.update( i, this._( 'User: ' ) + item.name );
+			array.forEach( items, function( item, i ) {
+				deferred = deferred.then( lang.hitch( this, function() {
+					this._progressInfo.update( i, _( 'User: ' ) + item.name );
 					return this.umcpCommand( 'schoolusers/password/reset', {
 						userDN: item.id,
 						newPassword: password,
 						nextLogin: nextLogin
 					} ).then( function( response ) {
-						if ( dojo.isString( response.result ) ) {
+						if ( typeof  response.result  == "string" ) {
 							errors.push( { name: item.name, message: response.result } );
 						}
 					} );
@@ -279,28 +290,28 @@ dojo.declare("umc.modules.schoolusers", [ umc.widgets.Module, umc.i18n.Mixin ], 
 			deferred = deferred.then( finished_func, finished_func );
 		} );
 
-		form = new umc.widgets.Form({
+		form = new Form({
 			style: 'max-width: 500px;',
 			widgets: [ {
-				type: 'Text',
+				type: Text,
 				name: 'info',
-				content: '<p>' + dojo.replace( this._( 'Clicking the <i>Reset</i> button will set the password for all {0} selected students to the given password. For security reasons the students should be forced to change the passwort on the next login.' ), [ items.length ] ) + '</p>'
+				content: '<p>' + lang.replace( _( 'Clicking the <i>Reset</i> button will set the password for all {0} selected students to the given password. For security reasons the students should be forced to change the passwort on the next login.' ), [ items.length ] ) + '</p>'
 			},{
-				type: 'CheckBox',
+				type: CheckBox,
 				name: 'changeOnNextLogin',
 				value: true,
-				label: this._( 'user has to change password on next login' )
+				label: _( 'user has to change password on next login' )
 			}, {
 				name: 'newPassword',
-				type: 'TextBox',
+				type: TextBox,
 				required: true,
-				label: this._( 'New password' )
+				label: _( 'New password' )
 			} ],
 			buttons: [ {
 				name: 'submit',
-				label: this._( 'Reset' ),
+				label: _( 'Reset' ),
 				style: 'float: right;',
-				callback: dojo.hitch( this, function() {
+				callback: lang.hitch( this, function() {
 					var nextLoginWidget = form.getWidget( 'changeOnNextLogin' );
 					var passwordWidget = form.getWidget( 'newPassword' );
 
@@ -316,20 +327,19 @@ dojo.declare("umc.modules.schoolusers", [ umc.widgets.Module, umc.i18n.Mixin ], 
 				} )
 			}, {
 				name: 'cancel',
-				label: this._('Cancel'),
+				label: _('Cancel'),
 				callback: _cleanup
 			}],
 			layout: [ 'info', 'changeOnNextLogin', 'newPassword' ]
 		});
 
-		dialog = new dijit.Dialog( {
-			title: this._( 'Reset passwords' ),
+		_dialog = new Dialog( {
+			title: _( 'Reset passwords' ),
 			content: form,
 			'class': 'umcPopup'
 		} );
-		dialog.show();
+		_dialog.show();
 	}
 });
 
-
-
+});
