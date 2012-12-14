@@ -39,7 +39,7 @@ define([
 	"umc/widgets/TextBox",
 	"umc/widgets/ComboBox",
 	"umc/widgets/SearchForm",
-	"umc.modules.schoolgroups.DetailPage",
+	"umc/modules/schoolgroups/DetailPage",
 	"umc/i18n!/umc/modules/schoolusers"
 ], function(declare, lang, dialog, Module, ExpandingTitlePane, Grid, Page, TextBox, ComboBox, SearchForm, DetailPage, _) {
 
