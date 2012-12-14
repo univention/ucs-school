@@ -64,10 +64,7 @@ define([
 				layout: [['name'],
 			         	 ['schooldc']]
 			}];
-		},
 
-		postMixInProperties: function() {
-			this.inherited(arguments);
 			this.standbyOpacity = 1;
 		},
 
