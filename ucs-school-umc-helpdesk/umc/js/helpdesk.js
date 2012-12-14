@@ -29,13 +29,12 @@
 /*global define*/
 
 define([
-	"dojo/_base/array",
 	"dojo/_base/declare",
+	"dojo/_base/array",
 	"dojo/_base/lang",
 	"dojo/on",
 	"dojo/topic",
 	"umc/dialog",
-	"umc/i18n!umc/modules/helpdesk",
 	"umc/tools",
 	"umc/widgets/ComboBox",
 	"umc/widgets/ExpandingTitlePane",
@@ -45,10 +44,11 @@ define([
 	"umc/widgets/Page",
 	"umc/widgets/SearchForm",
 	"umc/widgets/TextArea",
-	"umc/widgets/TextBox"
-], function(array, declare, lang, on, topic, dialog, _, tools, ComboBox,
+	"umc/widgets/TextBox",
+	"umc/i18n!umc/modules/helpdesk"
+], function(declare, array, lang, on, topic, dialog, tools, ComboBox,
             ExpandingTitlePane, Form, Grid, Module, Page, SearchForm, TextArea,
-            TextBox) {
+            TextBox, _) {
 	return declare("umc.modules.helpdesk", [ Module ], {
 		// summary:
 		//		Template module to ease the UMC module development.
@@ -149,7 +149,7 @@ define([
 			});
 
 			// turn off the standby animation as soon as all form values have been loaded
-			this.own(on(this._form, 'valuesInitialized', function() {
+			this._form.on('valuesInitialized', lang.hitch(this, function() {
 				this.standby(false);
 			}));
 
@@ -162,9 +162,9 @@ define([
 				label: _('Send'),
 				'default': true,
 				callback: lang.hitch(this, function() {
-					var values = this._form.gatherFormValues();
+					var values = this._form.get('value');
 					if (values.message) {
-						this.onSubmit(this._form.gatherFormValues());
+						this.onSubmit(this._form.get('value'));
 					} else {
 						dialog.alert(_('The required message is missing. Therefore, no report has been sent to the helpdesk team.'));
 					}
@@ -173,19 +173,19 @@ define([
 				name: 'close',
 				label: _('Close'),
 				callback: lang.hitch(this, function() {
-					var values = this._form.gatherFormValues();
+					var values = this._form.get('value');
 					if (values.message) {
 						dialog.confirm(_('Should the UMC module be closed? All unsaved modification will be lost.'), [{
 							label: _('Close'),
 							callback: lang.hitch(this, function() {
-								topic.publish('/umc/tabs/close', [ this ] );
+								topic.publish('/umc/tabs/close', this);
 							})
 						}, {
 							label: _('Cancel'),
 							'default': true
 						}]);
 					} else {
-						topic.publish('/umc/tabs/close', [ this ] );
+						topic.publish('/umc/tabs/close', this);
 					}
 				})
 			}];
@@ -202,7 +202,7 @@ define([
 
 		onSubmit: function(values) {
 			this.umcpCommand('helpdesk/send', values).then(
-				lang.hitch(this, function (response) {
+				lang.hitch(this, function(response) {
 					if (response.result) {
 						dialog.alert(_('The report has been sent to the helpdesk team'));
 						this._form._widgets.message.set('value', '');
