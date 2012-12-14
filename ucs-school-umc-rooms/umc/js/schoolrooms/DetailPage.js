@@ -42,188 +42,188 @@ define([
 	"umc/i18n!/umc/modules/schoolrooms"
 ], function(declare, lang, array, tools, Page, Form, TextBox, ComboBox, MultiObjectSelect, StandbyMixin, _) {
 
-return declare("umc.modules.schoolrooms.DetailPage", [ Page, StandbyMixin ], {
-	// reference to the module's store object
-	moduleStore: null,
+	return declare("umc.modules.schoolrooms.DetailPage", [ Page, StandbyMixin ], {
+		// reference to the module's store object
+		moduleStore: null,
 
-	// internal reference to the formular containing all form widgets of an UDM object
-	_form: null,
+		// internal reference to the formular containing all form widgets of an UDM object
+		_form: null,
 
-	postMixInProperties: function() {
-		// is called after all inherited properties/methods have been mixed
-		// into the object (originates from dijit._Widget)
+		postMixInProperties: function() {
+			// is called after all inherited properties/methods have been mixed
+			// into the object (originates from dijit._Widget)
 
-		// it is important to call the parent's postMixInProperties() method
-		this.inherited(arguments);
+			// it is important to call the parent's postMixInProperties() method
+			this.inherited(arguments);
 
-		// Set the opacity for the standby animation to 100% in order to mask
-		// GUI changes when the module is opened. Call this.standby(true|false)
-		// to enabled/disable the animation.
-		this.standbyOpacity = 1;
+			// Set the opacity for the standby animation to 100% in order to mask
+			// GUI changes when the module is opened. Call this.standby(true|false)
+			// to enabled/disable the animation.
+			this.standbyOpacity = 1;
 
-		// set the page header
-		this.headerText = _('');
-		this.helpText = _('');
+			// set the page header
+			this.headerText = _('');
+			this.helpText = _('');
 
-		// configure buttons for the footer of the detail page
-		this.footerButtons = [{
-			name: 'submit',
-			label: _('Save'),
-			callback: lang.hitch(this, function() {
-				this._save(this._form.get('value'));
-			})
-		}, {
-			name: 'cancel',
-			label: _('Cancel'),
-			callback: lang.hitch(this, 'onClose')
-		}];
-	},
+			// configure buttons for the footer of the detail page
+			this.footerButtons = [{
+				name: 'submit',
+				label: _('Save'),
+				callback: lang.hitch(this, function() {
+					this._save(this._form.get('value'));
+				})
+			}, {
+				name: 'cancel',
+				label: _('Cancel'),
+				callback: lang.hitch(this, 'onClose')
+			}];
+		},
 
-	buildRendering: function() {
-		// is called after all DOM nodes have been setup
-		// (originates from dijit._Widget)
+		buildRendering: function() {
+			// is called after all DOM nodes have been setup
+			// (originates from dijit._Widget)
 
-		// it is important to call the parent's postMixInProperties() method
-		this.inherited(arguments);
+			// it is important to call the parent's postMixInProperties() method
+			this.inherited(arguments);
 
-		this.renderDetailPage();
-	},
+			this.renderDetailPage();
+		},
 
-	renderDetailPage: function() {
-		// render the form containing all detail information that may be edited
+		renderDetailPage: function() {
+			// render the form containing all detail information that may be edited
 
-		// specify all widgets
-		var widgets = [{
-			type: ComboBox,
-			name: 'school',
-			label: _( 'School' ),
-			staticValues: []
-		}, {
-			type: TextBox,
-			name: 'name',
-			label: _('Name'),
-			required: true
-		}, {
-			type: TextBox,
-			name: 'description',
-			label: _('Description'),
-			description: _('Verbose description of the current group')
-		}, {
-			type: MultiObjectSelect,
-			name: 'computers',
-			label: _('Computers in the room'),
-			queryWidgets: [{
+			// specify all widgets
+			var widgets = [{
 				type: ComboBox,
 				name: 'school',
-				label: _('School'),
-				dynamicValues: 'schoolrooms/schools',
-				autoHide: true
+				label: _( 'School' ),
+				staticValues: []
 			}, {
 				type: TextBox,
-				name: 'pattern',
-				label: _('Search pattern')
-			}],
-			queryCommand: lang.hitch(this, function(options) {
-				return tools.umcpCommand('schoolrooms/computers', options).then(function(data) {
-					return data.result;
-				});
-			}),
-			formatter: function(dnList) {
-				var tmp = array.map(dnList, function(idn) {
-					return {
-						id: idn,
-						label: tools.explodeDn(idn, true).shift() || ''
-					};
-				});
-				return tmp;
-			},
-			autoSearch: false
-		}];
+				name: 'name',
+				label: _('Name'),
+				required: true
+			}, {
+				type: TextBox,
+				name: 'description',
+				label: _('Description'),
+				description: _('Verbose description of the current group')
+			}, {
+				type: MultiObjectSelect,
+				name: 'computers',
+				label: _('Computers in the room'),
+				queryWidgets: [{
+					type: ComboBox,
+					name: 'school',
+					label: _('School'),
+					dynamicValues: 'schoolrooms/schools',
+					autoHide: true
+				}, {
+					type: TextBox,
+					name: 'pattern',
+					label: _('Search pattern')
+				}],
+				queryCommand: lang.hitch(this, function(options) {
+					return tools.umcpCommand('schoolrooms/computers', options).then(function(data) {
+						return data.result;
+					});
+				}),
+				formatter: function(dnList) {
+					var tmp = array.map(dnList, function(idn) {
+						return {
+							id: idn,
+							label: tools.explodeDn(idn, true).shift() || ''
+						};
+					});
+					return tmp;
+				},
+				autoSearch: false
+			}];
 
-		// specify the layout... additional dicts are used to group form elements
-		// together into title panes
-		var layout = [{
-			label: _('Properties'),
-			layout: [ 'school', 'name', 'description' ]
-		}, {
-			label: _('Computers'),
-			layout: [ 'computers' ]
-		}];
+			// specify the layout... additional dicts are used to group form elements
+			// together into title panes
+			var layout = [{
+				label: _('Properties'),
+				layout: [ 'school', 'name', 'description' ]
+			}, {
+				label: _('Computers'),
+				layout: [ 'computers' ]
+			}];
 
-		// create the form
-		this._form = new Form({
-			widgets: widgets,
-			layout: layout,
-			moduleStore: this.moduleStore,
-			scrollable: true
-		});
+			// create the form
+			this._form = new Form({
+				widgets: widgets,
+				layout: layout,
+				moduleStore: this.moduleStore,
+				scrollable: true
+			});
 
-		// add form to page... the page extends a BorderContainer, by default
-		// an element gets added to the center region
-		this.addChild(this._form);
+			// add form to page... the page extends a BorderContainer, by default
+			// an element gets added to the center region
+			this.addChild(this._form);
 
-        this._form.getWidget( 'computers' ).on('ShowDialog', lang.hitch( this, function( _dialog ) {
-            _dialog._form.getWidget( 'school' ).setInitialValue( this._form.getWidget( 'school' ).get( 'value' ), true );
-        } ) );
+        	this._form.getWidget( 'computers' ).on('ShowDialog', lang.hitch( this, function( _dialog ) {
+            	_dialog._form.getWidget( 'school' ).setInitialValue( this._form.getWidget( 'school' ).get( 'value' ), true );
+        	} ) );
 
-		// hook to onSubmit event of the form
-		this._form.on('submit', lang.hitch(this, '_save'));
-	},
+			// hook to onSubmit event of the form
+			this._form.on('submit', lang.hitch(this, '_save'));
+		},
 
-	_save: function(values) {
-		var deferred = null;
-		var nameWidget = this._form.getWidget('name');
+		_save: function(values) {
+			var deferred = null;
+			var nameWidget = this._form.getWidget('name');
 
-		if (! this._form.validate()){
-			nameWidget.focus();
-			return;
+			if (! this._form.validate()){
+				nameWidget.focus();
+				return;
+			}
+
+			if (values.$dn$) {
+				deferred = this.moduleStore.put(values);
+			} else {
+				deferred = this.moduleStore.add(values);
+			}
+
+			deferred.then(lang.hitch(this, function() {
+				this.onClose();
+			}));
+		},
+
+		load: function(id) {
+			// during loading show the standby animation
+			this.standby(true);
+
+			// load the object into the form... the load method returns a
+			// Deferred object in order to handel asynchronity
+			this._form.load(id).then(lang.hitch(this, function() {
+				// done, switch of the standby animation
+				this.standby(false);
+			}), lang.hitch(this, function() {
+				// error handler: switch of the standby animation
+				// error messages will be displayed automatically
+				this.standby(false);
+			}));
+		},
+
+		onClose: function(dn, objectType) {
+			// event stub 
+		},
+
+		disable: function( field, disable ) {
+			this._form.getWidget( field ).set( 'disabled', disable );
+		},
+
+		_setSchoolAttr: function( school ) {
+			this._form.getWidget( 'school' ).set( 'value', school );
+		},
+
+		_setSchoolsAttr: function( schools ) {
+			var school = this._form.getWidget( 'school' );
+			school.set( 'staticValues', schools );
+			school.set( 'visible', schools.length > 1 );
 		}
 
-		if (values.$dn$) {
-			deferred = this.moduleStore.put(values);
-		} else {
-			deferred = this.moduleStore.add(values);
-		}
-
-		deferred.then(lang.hitch(this, function() {
-			this.onClose();
-		}));
-	},
-
-	load: function(id) {
-		// during loading show the standby animation
-		this.standby(true);
-
-		// load the object into the form... the load method returns a
-		// Deferred object in order to handel asynchronity
-		this._form.load(id).then(lang.hitch(this, function() {
-			// done, switch of the standby animation
-			this.standby(false);
-		}), lang.hitch(this, function() {
-			// error handler: switch of the standby animation
-			// error messages will be displayed automatically
-			this.standby(false);
-		}));
-	},
-
-	onClose: function(dn, objectType) {
-		// event stub 
-	},
-
-	disable: function( field, disable ) {
-		this._form.getWidget( field ).set( 'disabled', disable );
-	},
-
-	_setSchoolAttr: function( school ) {
-		this._form.getWidget( 'school' ).set( 'value', school );
-	},
-
-	_setSchoolsAttr: function( schools ) {
-		var school = this._form.getWidget( 'school' );
-		school.set( 'staticValues', schools );
-		school.set( 'visible', schools.length > 1 );
-	}
-
-});
+	});
 
 });

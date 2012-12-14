@@ -38,76 +38,76 @@ define([
 	"umc/i18n!/umc/modules/schoolwizards"
 ], function(declare, lang, tools, dialog, Wizard, _) {
 
-return declare("umc.modules.schoolwizards.Wizard", [ Wizard ], {
+	return declare("umc.modules.schoolwizards.Wizard", [ Wizard ], {
 
-	createObjectCommand: null,
+		createObjectCommand: null,
 
-	// set via the module
-	description: null,
+		// set via the module
+		description: null,
 
-	hasNext: function() {
-		return true;
-	},
-
-	next: function(/*String*/ currentPage) {
-		var nextPage = this.inherited(arguments);
-		this.updateWidgets(currentPage);
-		if (this._getPageIndex(currentPage) === (this.pages.length - 1 )) {
-			if (this._validateForm()) {
-				return this._createObject().then(lang.hitch(this, function(result) {
-					if (result) {
-						this.addNote();
-						this.restart();
-					}
-					return currentPage;
-				}));
-			} else {
-				return currentPage;
-			}
-		}
-		return nextPage;
-	},
-
-	_validateForm: function() {
-		var form = this.selectedChildWidget.get('_form');
-		if (! form.validate()) {
-			var widgets = form.getInvalidWidgets();
-			form.getWidget(widgets[0]).focus();
-			return false;
-		} else {
+		hasNext: function() {
 			return true;
-		}
-	},
+		},
 
-	_createObject: function() {
-		this.standby(true);
-		var values = this.getValues();
-		return tools.umcpCommand(this.createObjectCommand , values).then(
-			lang.hitch(this, function(response) {
-				this.standby(false);
-				if (response.result) {
-					dialog.alert(response.result.message);
-					return false;
+		next: function(/*String*/ currentPage) {
+			var nextPage = this.inherited(arguments);
+			this.updateWidgets(currentPage);
+			if (this._getPageIndex(currentPage) === (this.pages.length - 1 )) {
+				if (this._validateForm()) {
+					return this._createObject().then(lang.hitch(this, function(result) {
+						if (result) {
+							this.addNote();
+							this.restart();
+						}
+						return currentPage;
+					}));
 				} else {
-					return true;
+					return currentPage;
 				}
-			}),
-			lang.hitch(this, function(result) {
-				this.standby(false);
+			}
+			return nextPage;
+		},
+
+		_validateForm: function() {
+			var form = this.selectedChildWidget.get('_form');
+			if (! form.validate()) {
+				var widgets = form.getInvalidWidgets();
+				form.getWidget(widgets[0]).focus();
 				return false;
-			})
-		);
-	},
+			} else {
+				return true;
+			}
+		},
 
-	restart: function() {
-		// Select the first page
-		var firstPageName = this.pages[0].name;
-		this._updateButtons(firstPageName);
-		this.selectChild(this._pages[firstPageName]);
-	},
+		_createObject: function() {
+			this.standby(true);
+			var values = this.getValues();
+			return tools.umcpCommand(this.createObjectCommand , values).then(
+				lang.hitch(this, function(response) {
+					this.standby(false);
+					if (response.result) {
+						dialog.alert(response.result.message);
+						return false;
+					} else {
+						return true;
+					}
+				}),
+				lang.hitch(this, function(result) {
+					this.standby(false);
+					return false;
+				})
+			);
+		},
 
-	updateWidgets: function(/*String*/ currentPage) {
-	}
-});
+		restart: function() {
+			// Select the first page
+			var firstPageName = this.pages[0].name;
+			this._updateButtons(firstPageName);
+			this.selectChild(this._pages[firstPageName]);
+		},
+
+		updateWidgets: function(/*String*/ currentPage) {
+		}
+	});
 
 });

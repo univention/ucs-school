@@ -1,3 +1,9 @@
+ucs-school-umc-rooms (9.0.1-2) unstable; urgency=low
+
+  * fix indentation; Bug #29776
+
+ -- Florian Best <best@univention.de>  Fri, 14 Dec 2012 11:50:52 +0100
+
 ucs-school-umc-rooms (9.0.1-1) unstable; urgency=low
 
   * rename _schoolrooms into schoolrooms; Bug #29791

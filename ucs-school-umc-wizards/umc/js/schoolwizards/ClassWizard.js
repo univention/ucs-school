@@ -37,48 +37,48 @@ define([
 	"umc/i18n!/umc/modules/schoolwizards"
 ], function(declare, TextBox, ComboBox, Wizard, _) {
 
-return declare("umc.modules.schoolwizards.ClassWizard", [ Wizard ], {
+	return declare("umc.modules.schoolwizards.ClassWizard", [ Wizard ], {
 
-	createObjectCommand: 'schoolwizards/classes/create',
+		createObjectCommand: 'schoolwizards/classes/create',
 
-	constructor: function() {
-		this.pages = [{
-			name: 'class',
-			headerText: this.description,
-			helpText: _('Enter details to create a new class.'),
-			widgets: [{
-				type: ComboBox,
-				name: 'school',
-				label: _('School'),
-				dynamicValues: 'schoolwizards/schools',
-				autoHide: true
-			}, {
-				type: TextBox,
-				name: 'name',
-				label: _('Name'),
-				required: true
-			}, {
-				type: TextBox,
-				name: 'description',
-				label: _('Description')
-			}],
-			layout: [['school'],
-			         ['name', 'description']]
-		}];
-	},
+		constructor: function() {
+			this.pages = [{
+				name: 'class',
+				headerText: this.description,
+				helpText: _('Enter details to create a new class.'),
+				widgets: [{
+					type: ComboBox,
+					name: 'school',
+					label: _('School'),
+					dynamicValues: 'schoolwizards/schools',
+					autoHide: true
+				}, {
+					type: TextBox,
+					name: 'name',
+					label: _('Name'),
+					required: true
+				}, {
+					type: TextBox,
+					name: 'description',
+					label: _('Description')
+				}],
+				layout: [['school'],
+			         	 ['name', 'description']]
+			}];
+		},
 
-	restart: function() {
-		this.getWidget('class', 'name').reset();
-		this.getWidget('class', 'description').reset();
-		this.inherited(arguments);
-	},
+		restart: function() {
+			this.getWidget('class', 'name').reset();
+			this.getWidget('class', 'description').reset();
+			this.inherited(arguments);
+		},
 
-	addNote: function() {
-		var name = this.getWidget('class', 'name').get('value');
-		var message = _('Class "%s" has been successfully created. Continue to create another class or press "Cancel" to close this wizard.', name);
-		this.getPage('class').clearNotes();
-		this.getPage('class').addNote(message);
-	}
-});
+		addNote: function() {
+			var name = this.getWidget('class', 'name').get('value');
+			var message = _('Class "%s" has been successfully created. Continue to create another class or press "Cancel" to close this wizard.', name);
+			this.getPage('class').clearNotes();
+			this.getPage('class').addNote(message);
+		}
+	});
 
 });

@@ -38,66 +38,66 @@ define([
 	"umc/i18n!/umc/modules/schoolwizards"
 ], function(declare, lang, tools, TextBox, Wizard, _) {
 
-return declare("umc.modules.schoolwizards.SchoolWizard", [ Wizard ], {
+	return declare("umc.modules.schoolwizards.SchoolWizard", [ Wizard ], {
 
-	createObjectCommand: 'schoolwizards/schools/create',
+		createObjectCommand: 'schoolwizards/schools/create',
 
-	constructor: function() {
-		this.pages = [{
-			name: 'school',
-			headerText: this.description,
-			helpText: _('Enter details to create all necessary structures for a new school.'),
-			widgets: [{
-				type: TextBox,
-				name: 'name',
-				label: _('Name of the school'),
-				regExp: '^[a-zA-Z0-9](([a-zA-Z0-9_]*)([a-zA-Z0-9]$))?$',
-				required: true
-			}, {
-				type: TextBox,
-				name: 'schooldc',
-				label: _('Computer name of the school server'),
-				regExp: '^\\w+$',
-				required: true
-			}],
-			layout: [['name'],
-			         ['schooldc']]
-		}];
-	},
+		constructor: function() {
+			this.pages = [{
+				name: 'school',
+				headerText: this.description,
+				helpText: _('Enter details to create all necessary structures for a new school.'),
+				widgets: [{
+					type: TextBox,
+					name: 'name',
+					label: _('Name of the school'),
+					regExp: '^[a-zA-Z0-9](([a-zA-Z0-9_]*)([a-zA-Z0-9]$))?$',
+					required: true
+				}, {
+					type: TextBox,
+					name: 'schooldc',
+					label: _('Computer name of the school server'),
+					regExp: '^\\w+$',
+					required: true
+				}],
+				layout: [['name'],
+			         	 ['schooldc']]
+			}];
+		},
 
-	postMixInProperties: function() {
-		this.inherited(arguments);
-		this.standbyOpacity = 1;
-	},
+		postMixInProperties: function() {
+			this.inherited(arguments);
+			this.standbyOpacity = 1;
+		},
 
-	buildRendering: function() {
-		this.inherited(arguments);
-		this.standby(true);
+		buildRendering: function() {
+			this.inherited(arguments);
+			this.standby(true);
 
-		tools.umcpCommand('schoolwizards/schools/singlemaster').then(lang.hitch(this, function(response) {
-			if (response.result.isSinglemaster) {
-				var widget = this.getWidget('school', 'schooldc');
-				widget.hide();
-				widget.set('required', false);
-			}
-			this.standby(false);
-		}), lang.hitch(this, function() {
-			this.standby(false);
-		}));
-	},
+			tools.umcpCommand('schoolwizards/schools/singlemaster').then(lang.hitch(this, function(response) {
+				if (response.result.isSinglemaster) {
+					var widget = this.getWidget('school', 'schooldc');
+					widget.hide();
+					widget.set('required', false);
+				}
+				this.standby(false);
+			}), lang.hitch(this, function() {
+				this.standby(false);
+			}));
+		},
 
-	restart: function() {
-		this.getWidget('school', 'name').reset();
-		this.getWidget('school', 'schooldc').reset();
-		this.inherited(arguments);
-	},
+		restart: function() {
+			this.getWidget('school', 'name').reset();
+			this.getWidget('school', 'schooldc').reset();
+			this.inherited(arguments);
+		},
 
-	addNote: function() {
-		var name = this.getWidget('school', 'name').get('value');
-		var message = _('School "%s" has been successfully created. Continue to create another school or press "Cancel" to close this wizard.', name);
-		this.getPage('school').clearNotes();
-		this.getPage('school').addNote(message);
-	}
-});
+		addNote: function() {
+			var name = this.getWidget('school', 'name').get('value');
+			var message = _('School "%s" has been successfully created. Continue to create another school or press "Cancel" to close this wizard.', name);
+			this.getPage('school').clearNotes();
+			this.getPage('school').addNote(message);
+		}
+	});
 
 });

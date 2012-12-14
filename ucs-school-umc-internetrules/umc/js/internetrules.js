@@ -38,52 +38,52 @@ define([
 	"umc/i18n!/umc/modules/internetrules"
 ], function(declare, lang, Module, AssignPage, AdminPage, DetailPage, _) {
 
-return declare("umc.modules.internetrules", [ Module ], {
-	// summary:
-	//		Template module to ease the UMC module development.
-	// description:
-	//		This module is a template module in order to aid the development of
-	//		new modules for Univention Management Console.
+	return declare("umc.modules.internetrules", [ Module ], {
+		// summary:
+		//		Template module to ease the UMC module development.
+		// description:
+		//		This module is a template module in order to aid the development of
+		//		new modules for Univention Management Console.
 
-	// internal reference to the pages
-	_assignPage: null,
-	_detailPage: null,
-	_adminPage: null,
+		// internal reference to the pages
+		_assignPage: null,
+		_detailPage: null,
+		_adminPage: null,
 
-	buildRendering: function() {
-		this.inherited(arguments);
+		buildRendering: function() {
+			this.inherited(arguments);
 
-		// render the correct pages corresponding to the given flavor
-		if (this.moduleFlavor == 'assign') {
-			// flavor for assigning rules to groups
-			this._assignPage = new AssignPage({});
-			this.addChild(this._assignPage);
+			// render the correct pages corresponding to the given flavor
+			if (this.moduleFlavor == 'assign') {
+				// flavor for assigning rules to groups
+				this._assignPage = new AssignPage({});
+				this.addChild(this._assignPage);
+			}
+			else {
+				// flavor for managing internet rules
+				this._adminPage = new AdminPage({});
+				this.addChild(this._adminPage);
+				this._detailPage = new DetailPage({});
+				this.addChild(this._detailPage);
+
+				// the module needs to handle the visibilities of different pages
+				// via the corresponding events
+				this._adminPage.on('OpenDetailPage', lang.hitch(this, function(id) {
+					this.selectChild(this._detailPage);
+					if (undefined === id) {
+						// a new rule is being added
+						this._detailPage.reset(id);
+					}
+					else {
+						// an existing rule is being opened
+						this._detailPage.load(id);
+					}
+				}));
+				this._detailPage.on('close', lang.hitch(this, function(id) {
+					this.selectChild(this._adminPage);
+				}));
+			}
 		}
-		else {
-			// flavor for managing internet rules
-			this._adminPage = new AdminPage({});
-			this.addChild(this._adminPage);
-			this._detailPage = new DetailPage({});
-			this.addChild(this._detailPage);
-
-			// the module needs to handle the visibilities of different pages
-			// via the corresponding events
-			this._adminPage.on('OpenDetailPage', lang.hitch(this, function(id) {
-				this.selectChild(this._detailPage);
-				if (undefined === id) {
-					// a new rule is being added
-					this._detailPage.reset(id);
-				}
-				else {
-					// an existing rule is being opened
-					this._detailPage.load(id);
-				}
-			}));
-			this._detailPage.on('close', lang.hitch(this, function(id) {
-				this.selectChild(this._adminPage);
-			}));
-		}
-	}
-});
+	});
 
 });

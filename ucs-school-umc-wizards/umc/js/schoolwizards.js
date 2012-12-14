@@ -41,54 +41,54 @@ define([
 	"umc/i18n!/umc/modules/schoolwizards"
 ], function(declare, lang, topic, Module, UserWizard, ClassWizard, ComputerWizard, SchoolWizard, _) {
 
-return declare("umc.modules.schoolwizards", [ Module ], {
+	return declare("umc.modules.schoolwizards", [ Module ], {
 
-	// internal reference to our wizard
-	_wizard: null,
+		// internal reference to our wizard
+		_wizard: null,
 
-	buildRendering: function() {
-		this.inherited(arguments);
-		this._wizard = this._getWizard(this.moduleFlavor);
-		if (this._wizard) {
-			this.addChild(this._wizard);
+		buildRendering: function() {
+			this.inherited(arguments);
+			this._wizard = this._getWizard(this.moduleFlavor);
+			if (this._wizard) {
+				this.addChild(this._wizard);
 
-			this._wizard.on('finished', lang.hitch(this, function() {
-				topic.publish('/umc/tabs/close', this);
-			}));
-			this._wizard.on('cancel', lang.hitch(this, function() {
-				topic.publish('/umc/tabs/close', this);
-			}));
+				this._wizard.on('finished', lang.hitch(this, function() {
+					topic.publish('/umc/tabs/close', this);
+				}));
+				this._wizard.on('cancel', lang.hitch(this, function() {
+					topic.publish('/umc/tabs/close', this);
+				}));
+			}
+
+			if ('onShow' in this._wizard) {
+				// send a reload command to wizard
+				this.on('show', lang.hitch(this, function(evt) {
+					this._wizard.onShow();
+				}));
+			}
+		},
+
+		_getWizard: function(moduleFlavor) {
+			var Wizard = null;
+			switch (moduleFlavor) {
+				case 'schoolwizards/users':
+					Wizard = UserWizard;
+					break;
+				case 'schoolwizards/classes':
+					Wizard = ClassWizard;
+					break;
+				case 'schoolwizards/computers':
+					Wizard = ComputerWizard;
+					break;
+				case 'schoolwizards/schools':
+					Wizard = SchoolWizard;
+					break;
+				default: return null;
+			}
+			return new Wizard({
+				description: this.description
+			});
 		}
-
-		if ('onShow' in this._wizard) {
-			// send a reload command to wizard
-			this.on('show', lang.hitch(this, function(evt) {
-				this._wizard.onShow();
-			}));
-		}
-	},
-
-	_getWizard: function(moduleFlavor) {
-		var Wizard = null;
-		switch (moduleFlavor) {
-			case 'schoolwizards/users':
-				Wizard = UserWizard;
-				break;
-			case 'schoolwizards/classes':
-				Wizard = ClassWizard;
-				break;
-			case 'schoolwizards/computers':
-				Wizard = ComputerWizard;
-				break;
-			case 'schoolwizards/schools':
-				Wizard = SchoolWizard;
-				break;
-			default: return null;
-		}
-		return new Wizard({
-			description: this.description
-		});
-	}
-});
+	});
 
 });

@@ -1,3 +1,9 @@
+ucs-school-umc-groups (1.0.1-2) unstable; urgency=low
+
+  * fix indentation; Bug #29776
+
+ -- Florian Best <best@univention.de>  Fri, 14 Dec 2012 11:50:34 +0100
+
 ucs-school-umc-groups (1.0.1-1) unstable; urgency=low
 
   * fixed modulepath; Bug #29786

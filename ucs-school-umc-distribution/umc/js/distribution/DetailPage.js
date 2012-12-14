@@ -46,391 +46,391 @@ define([
 	"umc/i18n!/umc/modules/distribution"
 ], function(declare, lang, array, dialog, tools, Page, Form, TextBox, ComboBox, MultiUploader, MultiObjectSelect, DateBox, TimeBox, StandbyMixin, _) {
 
-return declare("umc.modules.distribution.DetailPage", [ Page, StandbyMixin ], {
-	// summary:
-	//		This class represents the detail view of our dummy module.
+	return declare("umc.modules.distribution.DetailPage", [ Page, StandbyMixin ], {
+		// summary:
+		//		This class represents the detail view of our dummy module.
 
-	// reference to the module's store object
-	moduleStore: null,
+		// reference to the module's store object
+		moduleStore: null,
 
-	// reference to umcpCommand with the correct flavor
-	umcpCommand: null,
+		// reference to umcpCommand with the correct flavor
+		umcpCommand: null,
 
-	// currently active flavor of the module
-	moduleFlavor: '',
+		// currently active flavor of the module
+		moduleFlavor: '',
 
-	// internal reference to the formular containing all form widgets of an UDM object
-	_form: null,
+		// internal reference to the formular containing all form widgets of an UDM object
+		_form: null,
 
-	postMixInProperties: function() {
-		// is called after all inherited properties/methods have been mixed
-		// into the object (originates from dijit._Widget)
+		postMixInProperties: function() {
+			// is called after all inherited properties/methods have been mixed
+			// into the object (originates from dijit._Widget)
 
-		// it is important to call the parent's postMixInProperties() method
-		this.inherited(arguments);
+			// it is important to call the parent's postMixInProperties() method
+			this.inherited(arguments);
 
-		// Set the opacity for the standby animation to 100% in order to mask
-		// GUI changes when the module is opened. Call this.standby(true|false)
-		// to enabled/disable the animation.
-		this.standbyOpacity = 1;
+			// Set the opacity for the standby animation to 100% in order to mask
+			// GUI changes when the module is opened. Call this.standby(true|false)
+			// to enabled/disable the animation.
+			this.standbyOpacity = 1;
 
-		// set the page header
-		this.headerText = _('Project properties');
-		this.helpText = _('This page allows to modify properties of an existing or new distribution project.');
+			// set the page header
+			this.headerText = _('Project properties');
+			this.helpText = _('This page allows to modify properties of an existing or new distribution project.');
 
-		// configure buttons for the footer of the detail page
-		this.footerButtons = [{
-			name: 'submit',
-			label: _('Save changes'),
-			callback: lang.hitch(this, function() {
-				this._save(this._form.get('value'));
-			})
-		}, {
-			name: 'cancel',
-			label: _('Back to overview'),
-			callback: lang.hitch(this, function() {
-				this.onClose();
-				this._resetForm();
-			})
-		}];
-	},
+			// configure buttons for the footer of the detail page
+			this.footerButtons = [{
+				name: 'submit',
+				label: _('Save changes'),
+				callback: lang.hitch(this, function() {
+					this._save(this._form.get('value'));
+				})
+			}, {
+				name: 'cancel',
+				label: _('Back to overview'),
+				callback: lang.hitch(this, function() {
+					this.onClose();
+					this._resetForm();
+				})
+			}];
+		},
 
-	buildRendering: function() {
-		// is called after all DOM nodes have been setup
-		// (originates from dijit._Widget)
+		buildRendering: function() {
+			// is called after all DOM nodes have been setup
+			// (originates from dijit._Widget)
 
-		// it is important to call the parent's postMixInProperties() method
-		this.inherited(arguments);
-		this.standby(true);
+			// it is important to call the parent's postMixInProperties() method
+			this.inherited(arguments);
+			this.standby(true);
 
-		// query max upload size via UCR
-		tools.ucr('umc/server/upload/max').then(lang.hitch(this, function(result) {
-			this.standby(false);
-			var maxSize = result['umc/server/upload/max'] || 10240;
-			this.renderDetailPage(maxSize);
-		}), lang.hitch(this, function() {
-			// some error occurred :/ ... take a default value
-			this.standby(false);
-			this.renderDetailPage(10240);
-		}));
-	},
+			// query max upload size via UCR
+			tools.ucr('umc/server/upload/max').then(lang.hitch(this, function(result) {
+				this.standby(false);
+				var maxSize = result['umc/server/upload/max'] || 10240;
+				this.renderDetailPage(maxSize);
+			}), lang.hitch(this, function() {
+				// some error occurred :/ ... take a default value
+				this.standby(false);
+				this.renderDetailPage(10240);
+			}));
+		},
 
-	renderDetailPage: function(maxUploadSize) {
-		// render the form containing all detail information that may be edited
+		renderDetailPage: function(maxUploadSize) {
+			// render the form containing all detail information that may be edited
 
-		// specify all widgets
-		var widgets = [{
-			type: TextBox,
-			name: 'description',
-			label: _('Description'),
-			description: _('The description of the teaching material project'),
-			required: true
-		}, {
-			type: TextBox,
-			name: 'name',
-			label: _('Directory name'),
-			description: _('The name of the project directory as it will be displayed in the file system.'),
-			depends: 'description',
-			required: true,
-			dynamicValue: lang.hitch(this, function(values) {
-				var me = this._form.getWidget('name');
-				if (me.get('disabled')) {
-					// widget is disabled, do not change the value
-					return me.get('value');
-				}
-
-				// avoid certain characters for the filename
-				var desc = values.description;
-				array.forEach(['/', '\\', '?', '%', '*', ':', '|', '"', '<', '>', '$', "'"], function(ichar) {
-					desc = desc.replace(ichar, '_');
-				});
-
-				// limit the filename length
-				return desc.slice(0, 255);
-			})
-		}, {
-			type: MultiUploader,
-			name: 'files',
-			command: 'distribution/upload',
-			dynamicOptions: {
-				flavor: this.moduleFlavor
-			},
-			showClearButton: false,
-			label: _('Files'),
-			description: _('Files that have been added to this teaching material project'),
-			maxSize: maxUploadSize * 1024, // conversion from kbyte to byte
-			canUpload: lang.hitch(this, '_checkFilenameUpload'),
-			canRemove: lang.hitch(this, '_checkFilenamesRemove')
-		}, {
-			type: MultiObjectSelect,
-			name: 'recipients',
-			dialogTitle: _('Assign classes/workgroups'),
-			label: _('Assigned classes/workgroups'),
-			description: _('List of groups that are marked to receive the teaching materials'),
-			queryWidgets: [{
-				type: ComboBox,
-				name: 'school',
-				label: _('School'),
-				dynamicValues: 'distribution/schools',
-				umcpCommand: this.umcpCommand,
-				autoHide: true
+			// specify all widgets
+			var widgets = [{
+				type: TextBox,
+				name: 'description',
+				label: _('Description'),
+				description: _('The description of the teaching material project'),
+				required: true
 			}, {
 				type: TextBox,
-				name: 'pattern',
-				label: _('Search name')
-			}],
-			queryCommand: lang.hitch(this, function(options) {
-				return this.umcpCommand('distribution/groups', options).then(function(data) {
-					return data.result;
-				});
-			}),
-			formatter: function(dnList) {
-				var tmp = array.map(dnList, function(i) {
-					return i;
-				});
-				return tmp;
-			},
-			autoSearch: true
-		}, {
-			type: ComboBox,
-			name: 'distributeType',
-			label: _('Distribution of project files'),
-			description: _('Specifies whether the project data is distributed automatically or manually.'),
-			value: 'manual',
-			staticValues: [{
-				id: 'manual',
-				label: _('Manual distribution')
+				name: 'name',
+				label: _('Directory name'),
+				description: _('The name of the project directory as it will be displayed in the file system.'),
+				depends: 'description',
+				required: true,
+				dynamicValue: lang.hitch(this, function(values) {
+					var me = this._form.getWidget('name');
+					if (me.get('disabled')) {
+						// widget is disabled, do not change the value
+						return me.get('value');
+					}
+
+					// avoid certain characters for the filename
+					var desc = values.description;
+					array.forEach(['/', '\\', '?', '%', '*', ':', '|', '"', '<', '>', '$', "'"], function(ichar) {
+						desc = desc.replace(ichar, '_');
+					});
+
+					// limit the filename length
+					return desc.slice(0, 255);
+				})
 			}, {
-				id: 'automatic',
-				label: _('Automatic distribution')
-			}]
-		}, {
-			type: DateBox,
-			name: 'distributeDate',
-			label: _('Distribution date'),
-			description: _('Date at which the project files will be distributed automatically.'),
-			visible: false
-		}, {
-			type: TimeBox,
-			name: 'distributeTime',
-			label: _('Distribution time'),
-			description: _('Time at which the project files will be distributed automatically.'),
-			visible: false
-		}, {
-			type: ComboBox,
-			name: 'collectType',
-			label: _('Collection of project files'),
-			description: _('Specifies whether the project data is collected automatically or manually.'),
-			value: 'manual',
-			staticValues: [{
-				id: 'manual',
-				label: _('Manual collection')
+				type: MultiUploader,
+				name: 'files',
+				command: 'distribution/upload',
+				dynamicOptions: {
+					flavor: this.moduleFlavor
+				},
+				showClearButton: false,
+				label: _('Files'),
+				description: _('Files that have been added to this teaching material project'),
+				maxSize: maxUploadSize * 1024, // conversion from kbyte to byte
+				canUpload: lang.hitch(this, '_checkFilenameUpload'),
+				canRemove: lang.hitch(this, '_checkFilenamesRemove')
 			}, {
-				id: 'automatic',
-				label: _('Automatic collection')
-			}]
-		}, {
-			type: DateBox,
-			name: 'collectDate',
-			label: _('Collection date'),
-			description: _('Date at which the project files will be collected automatically.')
-		}, {
-			type: TimeBox,
-			name: 'collectTime',
-			label: _('Collection time'),
-			description: _('Time at which the project files will be collected automatically.')
-		}];
+				type: MultiObjectSelect,
+				name: 'recipients',
+				dialogTitle: _('Assign classes/workgroups'),
+				label: _('Assigned classes/workgroups'),
+				description: _('List of groups that are marked to receive the teaching materials'),
+				queryWidgets: [{
+					type: ComboBox,
+					name: 'school',
+					label: _('School'),
+					dynamicValues: 'distribution/schools',
+					umcpCommand: this.umcpCommand,
+					autoHide: true
+				}, {
+					type: TextBox,
+					name: 'pattern',
+					label: _('Search name')
+				}],
+				queryCommand: lang.hitch(this, function(options) {
+					return this.umcpCommand('distribution/groups', options).then(function(data) {
+						return data.result;
+					});
+				}),
+				formatter: function(dnList) {
+					var tmp = array.map(dnList, function(i) {
+						return i;
+					});
+					return tmp;
+				},
+				autoSearch: true
+			}, {
+				type: ComboBox,
+				name: 'distributeType',
+				label: _('Distribution of project files'),
+				description: _('Specifies whether the project data is distributed automatically or manually.'),
+				value: 'manual',
+				staticValues: [{
+					id: 'manual',
+					label: _('Manual distribution')
+				}, {
+					id: 'automatic',
+					label: _('Automatic distribution')
+				}]
+			}, {
+				type: DateBox,
+				name: 'distributeDate',
+				label: _('Distribution date'),
+				description: _('Date at which the project files will be distributed automatically.'),
+				visible: false
+			}, {
+				type: TimeBox,
+				name: 'distributeTime',
+				label: _('Distribution time'),
+				description: _('Time at which the project files will be distributed automatically.'),
+				visible: false
+			}, {
+				type: ComboBox,
+				name: 'collectType',
+				label: _('Collection of project files'),
+				description: _('Specifies whether the project data is collected automatically or manually.'),
+				value: 'manual',
+				staticValues: [{
+					id: 'manual',
+					label: _('Manual collection')
+				}, {
+					id: 'automatic',
+					label: _('Automatic collection')
+				}]
+			}, {
+				type: DateBox,
+				name: 'collectDate',
+				label: _('Collection date'),
+				description: _('Date at which the project files will be collected automatically.')
+			}, {
+				type: TimeBox,
+				name: 'collectTime',
+				label: _('Collection time'),
+				description: _('Time at which the project files will be collected automatically.')
+			}];
 
-		// specify the layout... additional dicts are used to group form elements
-		// together into title panes
-		var layout = [{
-			label: _('General'),
-			layout: [ [ 'description', 'name' ] ]
-		}, {
-			label: _('Distribution and collection of project files'),
-			layout: [
-				'distributeType', [ 'distributeDate', 'distributeTime' ],
-				'collectType', [ 'collectDate', 'collectTime' ]
-			]
-		}, {
-			label: _('Members'),
-			layout: [ 'recipients' ]
-		}, {
-			label: _('Files'),
-			layout: [ 'files' ]
-		}];
+			// specify the layout... additional dicts are used to group form elements
+			// together into title panes
+			var layout = [{
+				label: _('General'),
+				layout: [ [ 'description', 'name' ] ]
+			}, {
+				label: _('Distribution and collection of project files'),
+				layout: [
+					'distributeType', [ 'distributeDate', 'distributeTime' ],
+					'collectType', [ 'collectDate', 'collectTime' ]
+				]
+			}, {
+				label: _('Members'),
+				layout: [ 'recipients' ]
+			}, {
+				label: _('Files'),
+				layout: [ 'files' ]
+			}];
 
-		// create the form
-		this._form = new Form({
-			widgets: widgets,
-			layout: layout,
-			moduleStore: this.moduleStore,
-			scrollable: true
-		});
-
-		// add form to page... the page extends a BorderContainer, by default
-		// an element gets added to the center region
-		this.addChild(this._form);
-
-		// hook to onSubmit event of the form
-		this._form.on('submit', lang.hitch(this, '_save'));
-
-		// manage visible/hidden elements
-		this.own(this._form.getWidget('distributeType').watch('value', lang.hitch(this, function(name, old, value) {
-			this._form.getWidget('distributeDate').set('visible', value != 'manual');
-			this._form.getWidget('distributeTime').set('visible', value != 'manual');
-		})));
-		this.own(this._form.getWidget('collectType').watch('value', lang.hitch(this, function(name, old, value) {
-			this._form.getWidget('collectDate').set('visible', value != 'manual');
-			this._form.getWidget('collectTime').set('visible', value != 'manual');
-		})));
-	},
-
-	_checkFilenamesRemove: function(filenames) {
-		var nameWidget = this._form.getWidget('name');
-		var isNewProject = !nameWidget.get('disabled');
-		return this.umcpCommand('distribution/checkfiles', {
-			project: isNewProject ? null : nameWidget.get('value'),
-			filenames: filenames
-		}).then(lang.hitch(this, function(response) {
-			// do allow removal if any file has already been distributed
-			var results = response.result;
-			var distributedFiles = [];
-			array.forEach(results, function(i) {
-				if (i.distributed) {
-					distributedFiles.unshift(i.filename);
-				}
+			// create the form
+			this._form = new Form({
+				widgets: widgets,
+				layout: layout,
+				moduleStore: this.moduleStore,
+				scrollable: true
 			});
-			if (distributedFiles.length > 0) {
-				dialog.alert(_('The following files cannot be removed as they have already been distributed: %s', '<ul><li>' + distributedFiles.join('</li><li>') + '</li></ul>'));
+
+			// add form to page... the page extends a BorderContainer, by default
+			// an element gets added to the center region
+			this.addChild(this._form);
+
+			// hook to onSubmit event of the form
+			this._form.on('submit', lang.hitch(this, '_save'));
+
+			// manage visible/hidden elements
+			this.own(this._form.getWidget('distributeType').watch('value', lang.hitch(this, function(name, old, value) {
+				this._form.getWidget('distributeDate').set('visible', value != 'manual');
+				this._form.getWidget('distributeTime').set('visible', value != 'manual');
+			})));
+			this.own(this._form.getWidget('collectType').watch('value', lang.hitch(this, function(name, old, value) {
+				this._form.getWidget('collectDate').set('visible', value != 'manual');
+				this._form.getWidget('collectTime').set('visible', value != 'manual');
+			})));
+		},
+
+		_checkFilenamesRemove: function(filenames) {
+			var nameWidget = this._form.getWidget('name');
+			var isNewProject = !nameWidget.get('disabled');
+			return this.umcpCommand('distribution/checkfiles', {
+				project: isNewProject ? null : nameWidget.get('value'),
+				filenames: filenames
+			}).then(lang.hitch(this, function(response) {
+				// do allow removal if any file has already been distributed
+				var results = response.result;
+				var distributedFiles = [];
+				array.forEach(results, function(i) {
+					if (i.distributed) {
+						distributedFiles.unshift(i.filename);
+					}
+				});
+				if (distributedFiles.length > 0) {
+					dialog.alert(_('The following files cannot be removed as they have already been distributed: %s', '<ul><li>' + distributedFiles.join('</li><li>') + '</li></ul>'));
+					return false;
+				}
+
+				// everything OK :)
+				return true;
+			}));
+		},
+
+		_checkFilenameUpload: function(fileInfo) {
+			var nameWidget = this._form.getWidget('name');
+			var isNewProject = !nameWidget.get('disabled');
+			return this.umcpCommand('distribution/checkfiles', {
+				project: isNewProject ? null : nameWidget.get('value'),
+				filenames: [ fileInfo.name ]
+			}).then(lang.hitch(this, function(response) {
+				var result = response.result[0];
+				if (result.distributed) {
+					// do not allow the upload of an already distributed file
+					dialog.alert(_('The file "%s" cannot be uploaded as it has already been distributed.', fileInfo.name));
+					return false;
+				}
+
+				if (result.projectDuplicate) {
+					// the file exists in the project, but has not been distributed yet
+					return dialog.confirm(_('The file "%s" has already been assigned to the project, please confirm to overwrite it.', fileInfo.name), [{
+						name: 'cancel',
+						label: _('Cancel upload')
+					}, {
+						name: 'overwrite',
+						label: _('Overwrite file'),
+						'default': true
+					}]).then(function(response) {
+						return response == 'overwrite';
+					});
+				}
+
+				if (result.sessionDuplicate) {
+					// a file with the same name has already been uploaded during this session
+					return dialog.confirm(_('The file "%s" has already been uploaded, please confirm to overwrite it.', fileInfo.name), [{
+						name: 'cancel',
+						label: _('Cancel upload')
+					}, {
+						name: 'overwrite',
+						label: _('Overwrite file'),
+						'default': true
+					}]).then(function(response) {
+						return response == 'overwrite';
+					});
+				}
+
+				// everything OK :)
+				return true;
+			}));
+		},
+
+		_resetForm: function() {
+			this._form.clearFormValues();
+			this._form.getWidget('description').reset();
+			this._form.getWidget('name').reset();
+
+			// initiate the time/date specific form widgets
+			var d = new Date();
+			this._form.setValues({
+				distributeType: 'manual',
+				distributeDate: d,
+				distributeTime: d,
+				collectType: 'manual',
+				collectDate: d,
+				collectTime: d
+			});
+		},
+
+		_save: function(values) {
+			// make sure that all widgets are valid
+			var invalidWidgets = this._form.getInvalidWidgets();
+			if (invalidWidgets.length) {
+				// focus to the first invalid widget
+				this._form.getWidget(invalidWidgets[0]).focus();
 				return false;
 			}
 
-			// everything OK :)
-			return true;
-		}));
-	},
-
-	_checkFilenameUpload: function(fileInfo) {
-		var nameWidget = this._form.getWidget('name');
-		var isNewProject = !nameWidget.get('disabled');
-		return this.umcpCommand('distribution/checkfiles', {
-			project: isNewProject ? null : nameWidget.get('value'),
-			filenames: [ fileInfo.name ]
-		}).then(lang.hitch(this, function(response) {
-			var result = response.result[0];
-			if (result.distributed) {
-				// do not allow the upload of an already distributed file
-				dialog.alert(_('The file "%s" cannot be uploaded as it has already been distributed.', fileInfo.name));
-				return false;
-			}
-
-			if (result.projectDuplicate) {
-				// the file exists in the project, but has not been distributed yet
-				return dialog.confirm(_('The file "%s" has already been assigned to the project, please confirm to overwrite it.', fileInfo.name), [{
-					name: 'cancel',
-					label: _('Cancel upload')
-				}, {
-					name: 'overwrite',
-					label: _('Overwrite file'),
-					'default': true
-				}]).then(function(response) {
-					return response == 'overwrite';
-				});
-			}
-
-			if (result.sessionDuplicate) {
-				// a file with the same name has already been uploaded during this session
-				return dialog.confirm(_('The file "%s" has already been uploaded, please confirm to overwrite it.', fileInfo.name), [{
-					name: 'cancel',
-					label: _('Cancel upload')
-				}, {
-					name: 'overwrite',
-					label: _('Overwrite file'),
-					'default': true
-				}]).then(function(response) {
-					return response == 'overwrite';
-				});
-			}
-
-			// everything OK :)
-			return true;
-		}));
-	},
-
-	_resetForm: function() {
-		this._form.clearFormValues();
-		this._form.getWidget('description').reset();
-		this._form.getWidget('name').reset();
-
-		// initiate the time/date specific form widgets
-		var d = new Date();
-		this._form.setValues({
-			distributeType: 'manual',
-			distributeDate: d,
-			distributeTime: d,
-			collectType: 'manual',
-			collectDate: d,
-			collectTime: d
-		});
-	},
-
-	_save: function(values) {
-		// make sure that all widgets are valid
-		var invalidWidgets = this._form.getInvalidWidgets();
-		if (invalidWidgets.length) {
-			// focus to the first invalid widget
-			this._form.getWidget(invalidWidgets[0]).focus();
-			return false;
-		}
-
-		this.standby(true);
-		this._form.save().then(lang.hitch(this, function(result) {
-			this.standby(false);
-			if (result && !result.success) {
-				// display error message
-				dialog.alert(result.details);
+			this.standby(true);
+			this._form.save().then(lang.hitch(this, function(result) {
+				this.standby(false);
+				if (result && !result.success) {
+					// display error message
+					dialog.alert(result.details);
+					return;
+				}
+				this.onClose();
 				return;
-			}
-			this.onClose();
-			return;
-		}), lang.hitch(this, function(error) {
-			// server error
-			this.standby(false);
-		}));
-	},
+			}), lang.hitch(this, function(error) {
+				// server error
+				this.standby(false);
+			}));
+		},
 
-	load: function(id) {
-		// during loading show the standby animation
-		this.standby(true);
-		this._resetForm();
+		load: function(id) {
+			// during loading show the standby animation
+			this.standby(true);
+			this._resetForm();
 
-		this._footerButtons.submit.set('label', _('Save changes'));
+			this._footerButtons.submit.set('label', _('Save changes'));
 
-		// the project directory name cannot be modified
-		this._form.getWidget('name').set('disabled', true);
+			// the project directory name cannot be modified
+			this._form.getWidget('name').set('disabled', true);
 
-		// load the object into the form... the load method returns a
-		// Deferred object in order to handel asynchronity
-		this._form.load(id).then(lang.hitch(this, function() {
-			// done, switch of the standby animation
-			this.standby(false);
-		}), lang.hitch(this, function() {
-			// error handler: switch of the standby animation
-			// error messages will be displayed automatically
-			this.standby(false);
-		}));
-	},
+			// load the object into the form... the load method returns a
+			// Deferred object in order to handel asynchronity
+			this._form.load(id).then(lang.hitch(this, function() {
+				// done, switch of the standby animation
+				this.standby(false);
+			}), lang.hitch(this, function() {
+				// error handler: switch of the standby animation
+				// error messages will be displayed automatically
+				this.standby(false);
+			}));
+		},
 
-	newObject: function() {
-		this._form.getWidget('name').set('disabled', false);
-		this._resetForm();
-		this._footerButtons.submit.set('label', _('Create project'));
-	},
+		newObject: function() {
+			this._form.getWidget('name').set('disabled', false);
+			this._resetForm();
+			this._footerButtons.submit.set('label', _('Create project'));
+		},
 
-	onClose: function(dn, objectType) {
-		// event stub
-	}
-});
+		onClose: function(dn, objectType) {
+			// event stub
+		}
+	});
 
 });

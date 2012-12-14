@@ -40,85 +40,85 @@ define([
 	"umc/i18n!/umc/modules/computerroom"
 ], function(declare, lang, tools, Form, Text, TimeBox, StandbyMixin, Dialog, _) {
 
-return declare("umc.modules.computerroom.RescheduleDialog", [ Dialog, StandbyMixin ], {
-	// summary:
-	//		This class represents the screenshot view
+	return declare("umc.modules.computerroom.RescheduleDialog", [ Dialog, StandbyMixin ], {
+		// summary:
+		//		This class represents the screenshot view
 
-	// internal reference to the flavored umcpCommand function
-	umcpCommand: null,
+		// internal reference to the flavored umcpCommand function
+		umcpCommand: null,
 
-	style: 'max-width: 300px',
+		style: 'max-width: 300px',
 
-	_form: null,
+		_form: null,
 
-	rescheduleDialog: null,
+		rescheduleDialog: null,
 
-	postMixInProperties: function() {
-		this.inherited(arguments);
-	},
+		postMixInProperties: function() {
+			this.inherited(arguments);
+		},
 
-	buildRendering: function() {
-		this.inherited( arguments );
-		// add remaining elements of the search form
-		this.set( 'title', _( 'Validity of personal settings' ) );
+		buildRendering: function() {
+			this.inherited( arguments );
+			// add remaining elements of the search form
+			this.set( 'title', _( 'Validity of personal settings' ) );
 
-		var widgets = [ {
-			type: Text,
-			name: 'text',
-			label: _( 'Modify the time to define the new timestamp of validity for the personal settings.' )
-		}, {
-			type: TimeBox,
-			name: 'period',
-			label: _('Valid to')
-		}];
+			var widgets = [ {
+				type: Text,
+				name: 'text',
+				label: _( 'Modify the time to define the new timestamp of validity for the personal settings.' )
+			}, {
+				type: TimeBox,
+				name: 'period',
+				label: _('Valid to')
+			}];
 
-		var buttons = [ {
-			name: 'submit',
-			label: _( 'Set' ),
-			style: 'float: right',
-			onClick: lang.hitch( this, function() {
-				this.umcpCommand( 'computerroom/settings/reschedule', {
-					period: this._form.getWidget( 'period' ).get( 'value' )
-				} ).then( lang.hitch( this, function( response ) {
-					console.log( response );
-					this.onPeriodChanged( this._form.getWidget( 'period' ).get( 'value' ) );
+			var buttons = [ {
+				name: 'submit',
+				label: _( 'Set' ),
+				style: 'float: right',
+				onClick: lang.hitch( this, function() {
+					this.umcpCommand( 'computerroom/settings/reschedule', {
+						period: this._form.getWidget( 'period' ).get( 'value' )
+					} ).then( lang.hitch( this, function( response ) {
+						console.log( response );
+						this.onPeriodChanged( this._form.getWidget( 'period' ).get( 'value' ) );
+						this.hide();
+					} ) );
+				} )
+			} , {
+				name: 'cancel',
+				label: _( 'cancel' ),
+				onClick: lang.hitch( this, function() {
 					this.hide();
-				} ) );
-			} )
-		} , {
-			name: 'cancel',
-			label: _( 'cancel' ),
-			onClick: lang.hitch( this, function() {
-				this.hide();
-				this.onClose();
-			} )
-		} ];
+					this.onClose();
+				} )
+			} ];
 
-		// generate the search form
-		this._form = new Form({
-			// property that defines the widget's position in a dijit.layout.BorderContainer
-			widgets: widgets,
-			layout: [ 'text', 'period' ],
-			buttons: buttons
-		});
+			// generate the search form
+			this._form = new Form({
+				// property that defines the widget's position in a dijit.layout.BorderContainer
+				widgets: widgets,
+				layout: [ 'text', 'period' ],
+				buttons: buttons
+			});
 
-		this.set( 'content', this._form );
-	},
+			this.set( 'content', this._form );
+		},
 
-	update: function( school, room ) {
-		this.umcpCommand( 'computerroom/settings/get', {} ).then( lang.hitch( this, function( response ) {
-			tools.forIn( response.result, function( key, value ) {
-				this._form.getWidget( key ).set( 'value', value );
-			}, this );
-		} ) );
-	},
+		update: function( school, room ) {
+			this.umcpCommand( 'computerroom/settings/get', {} ).then( lang.hitch( this, function( response ) {
+				tools.forIn( response.result, function( key, value ) {
+					this._form.getWidget( key ).set( 'value', value );
+				}, this );
+			} ) );
+		},
 
-	onClose: function() {
-		// event stub
-	},
+		onClose: function() {
+			// event stub
+		},
 
-	onPeriodChanged: function() {
-		// event stub
-	}
-});
+		onPeriodChanged: function() {
+			// event stub
+		}
+	});
 });
