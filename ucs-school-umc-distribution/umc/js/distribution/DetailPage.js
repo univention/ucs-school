@@ -276,14 +276,14 @@ return declare("umc.modules.distribution.DetailPage", [ Page, StandbyMixin ], {
 		this._form.on('submit', lang.hitch(this, '_save'));
 
 		// manage visible/hidden elements
-		this._form.getWidget('distributeType').watch('value', lang.hitch(this, function(name, old, value) {
+		this.own(this._form.getWidget('distributeType').watch('value', lang.hitch(this, function(name, old, value) {
 			this._form.getWidget('distributeDate').set('visible', value != 'manual');
 			this._form.getWidget('distributeTime').set('visible', value != 'manual');
-		}));
-		this._form.getWidget('collectType').watch('value', lang.hitch(this, function(name, old, value) {
+		})));
+		this.own(this._form.getWidget('collectType').watch('value', lang.hitch(this, function(name, old, value) {
 			this._form.getWidget('collectDate').set('visible', value != 'manual');
 			this._form.getWidget('collectTime').set('visible', value != 'manual');
-		}));
+		})));
 	},
 
 	_checkFilenamesRemove: function(filenames) {

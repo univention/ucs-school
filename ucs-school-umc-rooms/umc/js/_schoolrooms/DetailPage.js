@@ -195,7 +195,7 @@ return declare("umc.modules.schoolrooms.DetailPage", [ Page, StandbyMixin ], {
 		this.standby(true);
 
 		// load the object into the form... the load method returns a
-		// /*REQUIRE:"dojo/Deferred"*/ Deferred object in order to handel asynchronity
+		// Deferred object in order to handel asynchronity
 		this._form.load(id).then(lang.hitch(this, function() {
 			// done, switch of the standby animation
 			this.standby(false);

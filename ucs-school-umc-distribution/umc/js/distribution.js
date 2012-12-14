@@ -241,7 +241,6 @@ return declare("umc.modules.distribution", [ Module ], {
 			layout: layout,
 			onSearch: lang.hitch(this, function(values) {
 				// call the grid's filter function
-				// (could be also done via /*REQUIRE:"dojo/on"*/ /*TODO*/ on() and dojo.disconnect() )
 				this._grid.filter(values);
 			})
 		});
