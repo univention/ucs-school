@@ -42,7 +42,8 @@ define([
 
 		createObjectCommand: 'schoolwizards/computers/create',
 
-		constructor: function() {
+		postMixInProperties: function() {
+			this.inherited(arguments);
 			this.pages = [{
 				name: 'general',
 				headerText: this.description,
