@@ -27,16 +27,18 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-/*global console MyError dojo dojox dijit umc */
+/*global define*/
 
-dojo.provide("umc.modules._schoolwizards.SchoolWizard");
+define([
+	"dojo/_base/declare",
+	"dojo/_base/lang",
+	"umc/tools",
+	"umc/widgets/TextBox",
+	"umc/modules/schoolwizards/Wizard",
+	"umc/i18n!/umc/modules/schoolwizards"
+], function(declare, lang, tools, TextBox, Wizard, _) {
 
-dojo.require("umc.dialog");
-dojo.require("umc.i18n");
-
-dojo.require("umc.modules._schoolwizards.Wizard");
-
-dojo.declare("umc.modules._schoolwizards.SchoolWizard", [ umc.modules._schoolwizards.Wizard, umc.i18n.Mixin ], {
+return declare("umc.modules.schoolwizards.SchoolWizard", [ Wizard ], {
 
 	createObjectCommand: 'schoolwizards/schools/create',
 
@@ -44,17 +46,17 @@ dojo.declare("umc.modules._schoolwizards.SchoolWizard", [ umc.modules._schoolwiz
 		this.pages = [{
 			name: 'school',
 			headerText: this.description,
-			helpText: this._('Enter details to create all necessary structures for a new school.'),
+			helpText: _('Enter details to create all necessary structures for a new school.'),
 			widgets: [{
-				type: 'TextBox',
+				type: TextBox,
 				name: 'name',
-				label: this._('Name of the school'),
+				label: _('Name of the school'),
 				regExp: '^[a-zA-Z0-9](([a-zA-Z0-9_]*)([a-zA-Z0-9]$))?$',
 				required: true
 			}, {
-				type: 'TextBox',
+				type: TextBox,
 				name: 'schooldc',
-				label: this._('Computer name of the school server'),
+				label: _('Computer name of the school server'),
 				regExp: '^\\w+$',
 				required: true
 			}],
@@ -72,14 +74,14 @@ dojo.declare("umc.modules._schoolwizards.SchoolWizard", [ umc.modules._schoolwiz
 		this.inherited(arguments);
 		this.standby(true);
 
-		umc.tools.umcpCommand('schoolwizards/schools/singlemaster').then(dojo.hitch(this, function(response) {
+		tools.umcpCommand('schoolwizards/schools/singlemaster').then(lang.hitch(this, function(response) {
 			if (response.result.isSinglemaster) {
 				var widget = this.getWidget('school', 'schooldc');
 				widget.hide();
 				widget.set('required', false);
 			}
 			this.standby(false);
-		}), dojo.hitch(this, function() {
+		}), lang.hitch(this, function() {
 			this.standby(false);
 		}));
 	},
@@ -92,8 +94,10 @@ dojo.declare("umc.modules._schoolwizards.SchoolWizard", [ umc.modules._schoolwiz
 
 	addNote: function() {
 		var name = this.getWidget('school', 'name').get('value');
-		var message = this._('School "%s" has been successfully created. Continue to create another school or press "Cancel" to close this wizard.', name);
+		var message = _('School "%s" has been successfully created. Continue to create another school or press "Cancel" to close this wizard.', name);
 		this.getPage('school').clearNotes();
 		this.getPage('school').addNote(message);
 	}
+});
+
 });

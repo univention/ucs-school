@@ -27,17 +27,18 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-/*global console MyError dojo dojox dijit umc */
+/*global define*/
 
-dojo.provide("umc.modules._schoolwizards.Wizard");
+define([
+	"dojo/_base/declare",
+	"dojo/_base/lang",
+	"umc/tools",
+	"umc/dialog",
+	"umc/widgets/Wizard",
+	"umc/i18n!/umc/modules/schoolwizards"
+], function(declare, lang, tools, dialog, Wizard, _) {
 
-dojo.require("umc.i18n");
-dojo.require("umc.widgets.Wizard");
-
-dojo.declare("umc.modules._schoolwizards.Wizard", [ umc.widgets.Wizard, umc.i18n.Mixin ], {
-
-	// use i18n information from umc.modules.schoolwizards
-	i18nClass: 'umc.modules.schoolwizards',
+return declare("umc.modules.schoolwizards.Wizard", [ Wizard ], {
 
 	createObjectCommand: null,
 
@@ -53,7 +54,7 @@ dojo.declare("umc.modules._schoolwizards.Wizard", [ umc.widgets.Wizard, umc.i18n
 		this.updateWidgets(currentPage);
 		if (this._getPageIndex(currentPage) === (this.pages.length - 1 )) {
 			if (this._validateForm()) {
-				return this._createObject().then(dojo.hitch(this, function(result) {
+				return this._createObject().then(lang.hitch(this, function(result) {
 					if (result) {
 						this.addNote();
 						this.restart();
@@ -81,17 +82,17 @@ dojo.declare("umc.modules._schoolwizards.Wizard", [ umc.widgets.Wizard, umc.i18n
 	_createObject: function() {
 		this.standby(true);
 		var values = this.getValues();
-		return umc.tools.umcpCommand(this.createObjectCommand , values).then(
-			dojo.hitch(this, function(response) {
+		return tools.umcpCommand(this.createObjectCommand , values).then(
+			lang.hitch(this, function(response) {
 				this.standby(false);
 				if (response.result) {
-					umc.dialog.alert(response.result.message);
+					dialog.alert(response.result.message);
 					return false;
 				} else {
 					return true;
 				}
 			}),
-			dojo.hitch(this, function(result) {
+			lang.hitch(this, function(result) {
 				this.standby(false);
 				return false;
 			})
@@ -107,4 +108,6 @@ dojo.declare("umc.modules._schoolwizards.Wizard", [ umc.widgets.Wizard, umc.i18n
 
 	updateWidgets: function(/*String*/ currentPage) {
 	}
+});
+
 });

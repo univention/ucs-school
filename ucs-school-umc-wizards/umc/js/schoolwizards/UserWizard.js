@@ -27,16 +27,22 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-/*global console MyError dojo dojox dijit umc */
+/*global define*/
 
-dojo.provide("umc.modules._schoolwizards.UserWizard");
+define([
+	"dojo/_base/declare",
+	"dojo/_base/lang",
+	"dojo/_base/array",
+	"dojo/topic",
+	"umc/tools",
+	"umc/widgets/TextBox",
+	"umc/widgets/ComboBox",
+	"umc/widgets/PasswordInputBox",
+	"umc/modules/schoolwizards/Wizard",
+	"umc/i18n!/umc/modules/schoolwizards"
+], function(declare, lang, array, topic, tools, TextBox, ComboBox, PasswordInputBox, Wizard, _) {
 
-dojo.require("umc.dialog");
-dojo.require("umc.i18n");
-
-dojo.require("umc.modules._schoolwizards.Wizard");
-
-dojo.declare("umc.modules._schoolwizards.UserWizard", [ umc.modules._schoolwizards.Wizard, umc.i18n.Mixin ], {
+return declare("umc.modules.schoolwizards.UserWizard", [ Wizard ], {
 
 	createObjectCommand: 'schoolwizards/users/create',
 
@@ -44,70 +50,70 @@ dojo.declare("umc.modules._schoolwizards.UserWizard", [ umc.modules._schoolwizar
 		this.pages = [{
 			name: 'general',
 			headerText: this.description,
-			helpText: this._('Specify the type of user to be created.'),
+			helpText: _('Specify the type of user to be created.'),
 			widgets: [{
-				type: 'ComboBox',
+				type: ComboBox,
 				name: 'school',
-				label: this._('School'),
+				label: _('School'),
 				dynamicValues: 'schoolwizards/schools',
 				autoHide: true
 			}, {
-				type: 'ComboBox',
+				type: ComboBox,
 				name: 'type',
-				label: this._('Type'),
+				label: _('Type'),
 				staticValues: [{
 					id: 'student',
-					label: this._('Student')
+					label: _('Student')
 				}, {
 					id: 'teacher',
-					label: this._('Teacher')
+					label: _('Teacher')
 				}, {
 					id: 'staff',
-					label: this._('Staff')
+					label: _('Staff')
 				}, {
 					id: 'teachersAndStaff',
-					label: this._('Teachers and staff')
+					label: _('Teachers and staff')
 				}]
 			}],
 			layout: [['school'], ['type']]
 		}, {
 			name: 'user',
 			headerText: this.description,
-			helpText: this._('Enter details to create a new user'),
+			helpText: _('Enter details to create a new user'),
 			buttons: [{
 				name: 'newClass',
-				label: this._('Create a new class'),
-				callback: dojo.hitch(this, function() {
-					dojo.publish('/umc/modules/open', ['schoolwizards', 'schoolwizards/classes']);
+				label: _('Create a new class'),
+				callback: lang.hitch(this, function() {
+					topic.publish('/umc/modules/open', 'schoolwizards', 'schoolwizards/classes');
 				})
 			}],
 			widgets: [{
-				type: 'TextBox',
+				type: TextBox,
 				name: 'firstname',
-				label: this._('Firstname'),
+				label: _('Firstname'),
 				required: true
 			}, {
-				type: 'TextBox',
+				type: TextBox,
 				name: 'lastname',
-				label: this._('Lastname'),
+				label: _('Lastname'),
 				required: true
 			}, {
-				type: 'TextBox',
+				type: TextBox,
 				name: 'username',
-				label: this._('Username'),
+				label: _('Username'),
 				required: true
 			}, {
-				type: 'ComboBox',
+				type: ComboBox,
 				name: 'class',
-				label: this._('Class')
+				label: _('Class')
 			}, {
-				type: 'TextBox',
+				type: TextBox,
 				name: 'mailPrimaryAddress',
-				label: this._('E-Mail')
+				label: _('E-Mail')
 			}, {
-				type: 'PasswordInputBox',
+				type: PasswordInputBox,
 				name: 'password',
-				label: this._('Password')
+				label: _('Password')
 			}],
 			layout: [['firstname', 'lastname'],
 			         ['username'],
@@ -118,7 +124,7 @@ dojo.declare("umc.modules._schoolwizards.UserWizard", [ umc.modules._schoolwizar
 	},
 
 	restart: function() {
-		umc.tools.forIn(this.getPage('user')._form._widgets, function(iname, iwidget) {
+		tools.forIn(this.getPage('user')._form._widgets, function(iname, iwidget) {
 			if (iname === 'password') {
 				iwidget._setValueAttr(null);
 			} else if (iname !== 'class') {
@@ -130,7 +136,7 @@ dojo.declare("umc.modules._schoolwizards.UserWizard", [ umc.modules._schoolwizar
 
 	addNote: function() {
 		var name = this.getWidget('user', 'username').get('value');
-		var message = this._('User "%s" has been successfully created. Continue to create another user or press "Cancel" to close this wizard.', name);
+		var message = _('User "%s" has been successfully created. Continue to create another user or press "Cancel" to close this wizard.', name);
 		this.getPage('user').clearNotes();
 		this.getPage('user').addNote(message);
 	},
@@ -141,7 +147,7 @@ dojo.declare("umc.modules._schoolwizards.UserWizard", [ umc.modules._schoolwizar
 			var types = ['teacher', 'staff', 'teachersAndStaff'];
 			var classBox = this.getWidget('user', 'class');
 			var newClassButton = this.getPage('user')._form.getButton('newClass');
-			if (dojo.indexOf(types, selectedType) >= 0) {
+			if (array.indexOf(types, selectedType) >= 0) {
 				classBox.reset();
 				classBox.set('required', false);
 				classBox.hide();
@@ -163,9 +169,9 @@ dojo.declare("umc.modules._schoolwizards.UserWizard", [ umc.modules._schoolwizar
 	reloadClasses: function() {
 		var schoolName = this.getWidget('general', 'school').get('value');
 		if (schoolName) {
-			umc.tools.umcpCommand('schoolwizards/classes', {'school': schoolName}).then(
-				dojo.hitch(this, function(response) {
-					var classes = dojo.map(response.result, function(item) {
+			tools.umcpCommand('schoolwizards/classes', {'school': schoolName}).then(
+				lang.hitch(this, function(response) {
+					var classes = array.map(response.result, function(item) {
 						return item.label;
 					});
 					this.getWidget('user', 'class').set('staticValues', classes);
@@ -173,4 +179,6 @@ dojo.declare("umc.modules._schoolwizards.UserWizard", [ umc.modules._schoolwizar
 			);
 		}
 	}
+});
+
 });

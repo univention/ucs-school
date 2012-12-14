@@ -27,19 +27,21 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-/*global console MyError dojo dojox dijit umc */
+/*global define*/
 
-dojo.provide("umc.modules.schoolwizards");
+define([
+	"dojo/_base/declare",
+	"dojo/_base/lang",
+	"dojo/topic",
+	"umc/widgets/Module",
+	"umc/modules/schoolwizards/UserWizard",
+	"umc/modules/schoolwizards/ClassWizard",
+	"umc/modules/schoolwizards/ComputerWizard",
+	"umc/modules/schoolwizards/SchoolWizard",
+	"umc/i18n!/umc/modules/schoolwizards"
+], function(declare, lang, topic, Module, UserWizard, ClassWizard, ComputerWizard, SchoolWizard, _) {
 
-dojo.require("umc.i18n");
-dojo.require("umc.widgets.Module");
-
-dojo.require("umc.modules._schoolwizards.UserWizard");
-dojo.require("umc.modules._schoolwizards.ClassWizard");
-dojo.require("umc.modules._schoolwizards.ComputerWizard");
-dojo.require("umc.modules._schoolwizards.SchoolWizard");
-
-dojo.declare("umc.modules.schoolwizards", [ umc.widgets.Module, umc.i18n.Mixin ], {
+return declare("umc.modules.schoolwizards", [ Module ], {
 
 	// internal reference to our wizard
 	_wizard: null,
@@ -50,37 +52,36 @@ dojo.declare("umc.modules.schoolwizards", [ umc.widgets.Module, umc.i18n.Mixin ]
 		if (this._wizard) {
 			this.addChild(this._wizard);
 
-			this.connect(this._wizard, 'onFinished', function() {
-				dojo.publish('/umc/tabs/close', [this]);
-			});
-			this.connect(this._wizard, 'onCancel', function() {
-				dojo.publish('/umc/tabs/close', [this]);
-			});
+			this._wizard.on('finished', lang.hitch(this, function() {
+				topic.publish('/umc/tabs/close', this);
+			}));
+			this._wizard.on('cancel', lang.hitch(this, function() {
+				topic.publish('/umc/tabs/close', this);
+			}));
 		}
 
 		if ('onShow' in this._wizard) {
 			// send a reload command to wizard
-			this.connect(this, 'onShow', function(evt) {
+			this.on('show', lang.hitch(this, function(evt) {
 				this._wizard.onShow();
-			});
+			}));
 		}
 	},
 
 	_getWizard: function(moduleFlavor) {
-		var path = umc.modules._schoolwizards;
 		var Wizard = null;
 		switch (moduleFlavor) {
 			case 'schoolwizards/users':
-				Wizard = path.UserWizard;
+				Wizard = UserWizard;
 				break;
 			case 'schoolwizards/classes':
-				Wizard = path.ClassWizard;
+				Wizard = ClassWizard;
 				break;
 			case 'schoolwizards/computers':
-				Wizard = path.ComputerWizard;
+				Wizard = ComputerWizard;
 				break;
 			case 'schoolwizards/schools':
-				Wizard = path.SchoolWizard;
+				Wizard = SchoolWizard;
 				break;
 			default: return null;
 		}
@@ -88,4 +89,6 @@ dojo.declare("umc.modules.schoolwizards", [ umc.widgets.Module, umc.i18n.Mixin ]
 			description: this.description
 		});
 	}
+});
+
 });

@@ -27,16 +27,17 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-/*global console MyError dojo dojox dijit umc */
+/*global define*/
 
-dojo.provide("umc.modules._schoolwizards.ClassWizard");
+define([
+	"dojo/_base/declare",
+	"umc/widgets/TextBox",
+	"umc/widgets/ComboBox",
+	"umc/modules/schoolwizards/Wizard",
+	"umc/i18n!/umc/modules/schoolwizards"
+], function(declare, TextBox, ComboBox, Wizard, _) {
 
-dojo.require("umc.dialog");
-dojo.require("umc.i18n");
-
-dojo.require("umc.modules._schoolwizards.Wizard");
-
-dojo.declare("umc.modules._schoolwizards.ClassWizard", [ umc.modules._schoolwizards.Wizard, umc.i18n.Mixin ], {
+return declare("umc.modules.schoolwizards.ClassWizard", [ Wizard ], {
 
 	createObjectCommand: 'schoolwizards/classes/create',
 
@@ -44,22 +45,22 @@ dojo.declare("umc.modules._schoolwizards.ClassWizard", [ umc.modules._schoolwiza
 		this.pages = [{
 			name: 'class',
 			headerText: this.description,
-			helpText: this._('Enter details to create a new class.'),
+			helpText: _('Enter details to create a new class.'),
 			widgets: [{
-				type: 'ComboBox',
+				type: ComboBox,
 				name: 'school',
-				label: this._('School'),
+				label: _('School'),
 				dynamicValues: 'schoolwizards/schools',
 				autoHide: true
 			}, {
-				type: 'TextBox',
+				type: TextBox,
 				name: 'name',
-				label: this._('Name'),
+				label: _('Name'),
 				required: true
 			}, {
-				type: 'TextBox',
+				type: TextBox,
 				name: 'description',
-				label: this._('Description')
+				label: _('Description')
 			}],
 			layout: [['school'],
 			         ['name', 'description']]
@@ -74,8 +75,10 @@ dojo.declare("umc.modules._schoolwizards.ClassWizard", [ umc.modules._schoolwiza
 
 	addNote: function() {
 		var name = this.getWidget('class', 'name').get('value');
-		var message = this._('Class "%s" has been successfully created. Continue to create another class or press "Cancel" to close this wizard.', name);
+		var message = _('Class "%s" has been successfully created. Continue to create another class or press "Cancel" to close this wizard.', name);
 		this.getPage('class').clearNotes();
 		this.getPage('class').addNote(message);
 	}
+});
+
 });

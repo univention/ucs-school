@@ -27,16 +27,18 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-/*global console MyError dojo dojox dijit umc */
+/*global define*/
 
-dojo.provide("umc.modules._schoolwizards.ComputerWizard");
+define([
+	"dojo/_base/declare",
+	"umc/tools",
+	"umc/widgets/TextBox",
+	"umc/widgets/ComboBox",
+	"umc/modules/schoolwizards/Wizard",
+	"umc/i18n!/umc/modules/schoolwizards"
+], function(declare, tools, TextBox, ComboBox, Wizard, _) {
 
-dojo.require("umc.dialog");
-dojo.require("umc.i18n");
-
-dojo.require("umc.modules._schoolwizards.Wizard");
-
-dojo.declare("umc.modules._schoolwizards.ComputerWizard", [ umc.modules._schoolwizards.Wizard, umc.i18n.Mixin ], {
+return declare("umc.modules.schoolwizards.ComputerWizard", [ Wizard ], {
 
 	createObjectCommand: 'schoolwizards/computers/create',
 
@@ -44,54 +46,54 @@ dojo.declare("umc.modules._schoolwizards.ComputerWizard", [ umc.modules._schoolw
 		this.pages = [{
 			name: 'general',
 			headerText: this.description,
-			helpText: this._('Specify the computer type.'),
+			helpText: _('Specify the computer type.'),
 			widgets: [{
-				type: 'ComboBox',
+				type: ComboBox,
 				name: 'school',
-				label: this._('School'),
+				label: _('School'),
 				dynamicValues: 'schoolwizards/schools',
 				autoHide: true
 			}, {
-				type: 'ComboBox',
+				type: ComboBox,
 				name: 'type',
-				label: this._('Type'),
+				label: _('Type'),
 				staticValues: [{
 					id: 'windows',
-					label: this._('Windows system')
+					label: _('Windows system')
 				}, {
 					id: 'ipmanagedclient',
-					label: this._('Device with IP address')
+					label: _('Device with IP address')
 				}]
 			}],
 			layout: [['school'], ['type']]
 		}, {
 			name: 'computer',
 			headerText: this.description,
-			helpText: this._('Enter details to create a new computer.'),
+			helpText: _('Enter details to create a new computer.'),
 			widgets: [{
-				type: 'TextBox',
+				type: TextBox,
 				name: 'name',
-				label: this._('Name'),
+				label: _('Name'),
 				required: true
 			}, {
-				type: 'TextBox',
+				type: TextBox,
 				name: 'ipAddress',
-				label: this._('IP address'),
+				label: _('IP address'),
 				required: true
 			}, {
-				type: 'TextBox',
+				type: TextBox,
 				name: 'subnetMask',
-				label: this._('Subnet mask'),
+				label: _('Subnet mask'),
 				value: '255.255.255.0'
 			}, {
-				type: 'TextBox',
+				type: TextBox,
 				name: 'mac',
-				label: this._('MAC address'),
+				label: _('MAC address'),
 				required: true
 			}, {
-				type: 'TextBox',
+				type: TextBox,
 				name: 'inventoryNumber',
-				label: this._('Inventory number')
+				label: _('Inventory number')
 			}],
 			layout: [['name'],
 			         ['ipAddress', 'subnetMask'],
@@ -101,7 +103,7 @@ dojo.declare("umc.modules._schoolwizards.ComputerWizard", [ umc.modules._schoolw
 	},
 
 	restart: function() {
-		umc.tools.forIn(this.getPage('computer')._form._widgets, function(iname, iwidget) {
+		tools.forIn(this.getPage('computer')._form._widgets, function(iname, iwidget) {
 			iwidget.reset();
 		});
 		this.inherited(arguments);
@@ -109,8 +111,10 @@ dojo.declare("umc.modules._schoolwizards.ComputerWizard", [ umc.modules._schoolw
 
 	addNote: function() {
 		var name = this.getWidget('computer', 'name').get('value');
-		var message = this._('Computer "%s" has been successfully created. Continue to create another computer or press "Cancel" to close this wizard.', name);
+		var message = _('Computer "%s" has been successfully created. Continue to create another computer or press "Cancel" to close this wizard.', name);
 		this.getPage('computer').clearNotes();
 		this.getPage('computer').addNote(message);
 	}
+});
+
 });
