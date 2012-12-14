@@ -21,7 +21,8 @@ Depends: univention-ldap-server (>= 8.0.77-4),
  univention-management-console-web-server (>= 1.0.320-1),
  python-univention-lib (>= 1.0.51-3),
  shell-univention-lib (>= 1.0.51-3),
- univention-samba4-sysvol-sync
+ univention-samba4-sysvol-sync,
+ univention-config
 Recommends:
  ucs-school-umc-groups,
  ucs-school-umc-users,
@@ -57,7 +58,8 @@ Depends: univention-ldap-server (>= 8.0.77-4),
  ucs-school-netlogon,
  shell-ucs-school,
  python-univention-lib (>= 1.0.51-3),
- shell-univention-lib (>= 1.0.51-3)
+ shell-univention-lib (>= 1.0.51-3),
+ univention-config
 Recommends:
  ucs-school-branding,
  ucs-school-umc-computerroom,
@@ -100,7 +102,8 @@ Depends: univention-ldap-server (>= 8.0.77-4),
  python-univention (>= 6.0.21-1),
  python-univention-lib (>= 1.0.51-3),
  shell-univention-lib (>= 1.0.51-3),
- ucs-school-netlogon
+ ucs-school-netlogon,
+ univention-config
 Recommends:
  ucs-school-branding,
  ucs-school-umc-computerroom,
