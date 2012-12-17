@@ -1,3 +1,9 @@
+univention-ldb-modules (1.0.0-1) unstable; urgency=low
+
+  * real Version Bump (Bug #29840)
+
+ -- Tobias Peters <peters@univention.de>  Mon, 17 Dec 2012 12:38:06 +0100
+
 univention-ldb-modules (0.0.4-2.1) unstable; urgency=low
 
   * Version Bump (Bug #29840)
