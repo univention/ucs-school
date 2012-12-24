@@ -1,3 +1,9 @@
+ucs-school-radius-802.1x (2.0.0-2) unstable; urgency=low
+
+  * Fix dependencies (Bug #29814)
+
+ -- Jascha Geerds <geerds@univention.de>  Mon, 24 Dec 2012 09:05:12 +0100
+
 ucs-school-radius-802.1x (2.0.0-1) unstable; urgency=low
 
   * Version bump (Bug #29814)

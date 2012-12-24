@@ -7,6 +7,11 @@ Build-Depends: debhelper, univention-config-dev, ucslint
 Package: ucs-school-radius-802.1x
 Architecture: any
 Conflicts: univention-kernel-image-2.6, univention-kernel-image
-Depends: univention-config-registry, freeradius, freeradius-ldap, freeradius-utils, univention-ssl
+Depends: univention-config-registry,
+ freeradius,
+ freeradius-ldap,
+ freeradius-utils,
+ univention-ssl,
+ univention-config
 Description: freeradius 802.1X integration package for Univention Corporate Server
  Sets up a freeradius RADIUS server to support 802.1X authenticators

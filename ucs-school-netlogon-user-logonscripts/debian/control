@@ -7,7 +7,13 @@ Standards-Version: 3.8.2
 
 Package: ucs-school-netlogon-user-logonscripts
 Architecture: all
-Depends: univention-config-registry, univention-ldap-client, univention-directory-manager-tools, univention-directory-listener, ucs-school-netlogon, shell-univention-lib
+Depends: univention-config-registry,
+ univention-ldap-client,
+ univention-directory-manager-tools,
+ univention-directory-listener,
+ ucs-school-netlogon,
+ shell-univention-lib,
+ univention-config
 Description: ucs@school userspecific netlogon scripts
  This package provides a listener-module that creates
  specific netlogon scripts for each local user.
