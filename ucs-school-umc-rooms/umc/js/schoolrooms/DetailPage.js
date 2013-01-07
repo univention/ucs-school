@@ -130,10 +130,12 @@ define([
 				}),
 				formatter: function(dnList) {
 					var tmp = array.map(dnList, function(idn) {
-						return {
-							id: idn,
-							label: tools.explodeDn(idn, true).shift() || ''
-						};
+						if (typeof idn === 'string') {
+							return {
+								id: idn,
+								label: tools.explodeDn(idn, true).shift() || ''
+							};
+						} else { return idn; }
 					});
 					return tmp;
 				},
