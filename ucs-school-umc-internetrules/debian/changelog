@@ -1,3 +1,9 @@
+ucs-school-umc-internetrules (8.0.1-1) unstable; urgency=low
+
+  * fix ucr variable names; Bug #29788
+
+ -- Florian Best <best@univention.de>  Mon, 07 Jan 2013 12:37:49 +0100
+
 ucs-school-umc-internetrules (8.0.0-2) unstable; urgency=low
 
   * fix indentation; Bug #29776
