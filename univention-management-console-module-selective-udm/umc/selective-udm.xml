@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<umc version="2.0">
+  <module id="selective-udm" icon="selective-udm" version="1.0">
+	<name>Selective UDM</name>
+	<description>Domain management operations for slaves with a selective replicated directory</description>
+	<categories>
+	  <category name="system"/>
+	</categories>
+	<command name="selectiveudm/create_windows_computer" function="create_windows_computer">
+		<attribute name="name" syntax="String"/>
+		<attribute name="description" syntax="String"/>
+		<attribute name="password" syntax="String"/>
+		<attribute name="decode_password" syntax="Boolean"/>
+		<attribute name="samba3_mode" syntax="Boolean"/>
+	</command>
+  </module>
+</umc>
