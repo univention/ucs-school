@@ -1,3 +1,9 @@
+ucs-school-umc-groups (1.0.2-1) unstable; urgency=low
+
+  * fix i18n property; Bug #29786
+
+ -- Florian Best <best@univention.de>  Mon, 07 Jan 2013 13:06:31 +0100
+
 ucs-school-umc-groups (1.0.1-2) unstable; urgency=low
 
   * fix indentation; Bug #29776
