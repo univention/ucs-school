@@ -1,3 +1,9 @@
+ucs-school-umc-computerroom (1.0.2-1) unstable; urgency=low
+
+  * fix icon path; Bug #29784
+
+ -- Florian Best <best@univention.de>  Mon, 07 Jan 2013 16:11:39 +0100
+
 ucs-school-umc-computerroom (1.0.1-1) unstable; urgency=low
 
   * rename Reschedule.js to RescheduleDialog.js; Bug #29784

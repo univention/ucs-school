@@ -26,7 +26,7 @@
  * /usr/share/common-licenses/AGPL-3; if not, see
  * <http://www.gnu.org/licenses/>.
  */
-/*global define window*/
+/*global define window require*/
 
 define([
 	"dojo/_base/declare",
@@ -423,7 +423,8 @@ define([
 						label = _( 'The computer is participating in a  presentation currently' );
 					}
 					var widget = new Text({});
-					widget.set( 'content', lang.replace( '<img src="images/icons/16x16/computerroom-{icon}.png" height="16" width="16" style="float:left; margin-right: 5px" /> {value}', {
+					widget.set( 'content', lang.replace( '<img src="{path}/16x16/computerroom-{icon}.png" height="16" width="16" style="float:left; margin-right: 5px" /> {value}', {
+						path: require.toUrl('dijit/themes/umc/icons'),
 						icon: icon,
 						value: value
 					} ) );
