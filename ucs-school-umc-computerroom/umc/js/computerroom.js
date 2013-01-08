@@ -458,6 +458,7 @@ define([
 				// region: 'center',
 				actions: this._actionList(),
 				columns: columns,
+				cacheRowWidgets: false,
 				moduleStore: new Memory(),
 				footerFormatter: lang.hitch( this, function( nItems, nItemsTotal ) {
 					var failed = 0;
