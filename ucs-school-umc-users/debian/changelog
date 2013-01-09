@@ -1,3 +1,9 @@
+ucs-school-umc-users (9.0.1-1) unstable; urgency=low
+
+  * remove duplicate exception message; Bug #27940
+
+ -- Florian Best <best@univention.de>  Wed, 09 Jan 2013 11:52:16 +0100
+
 ucs-school-umc-users (9.0.0-2) unstable; urgency=low
 
   * fix indentation; Bug #29776
