@@ -1,3 +1,9 @@
+ucs-school-umc-common (2.0.1-1) unstable; urgency=low
+
+  * increase priority of @school categories; Bug #29776
+
+ -- Florian Best <best@univention.de>  Wed, 09 Jan 2013 11:16:57 +0100
+
 ucs-school-umc-common (2.0.0-1) unstable; urgency=low
 
   * Version bump (Bug #29814)
