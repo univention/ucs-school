@@ -66,6 +66,10 @@ msgstr "Ungültiger Wert für 'Typ'-Eigenschaft"
 msgid "MAC address is already in use"
 msgstr "MAC-Adresse wird bereits benutzt"
 
+#: umc/python/schoolwizards/__init__.py:269
+msgid "IP address is already in use"
+msgstr "IP-Adresse wird bereits benutzt"
+
 #: umc/python/schoolwizards/__init__.py:136
 msgid "Mail address is already in use"
 msgstr "Mail-Adresse wird bereits benutzt"

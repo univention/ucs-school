@@ -90,6 +90,12 @@ class Instance(SchoolBaseModule, SchoolImport):
 		                                    scope = 'sub', filter = ldap_filter)
 		return bool(address_exists)
 
+	def _ip_address_used(self, address, ldap_user_read):
+		ldap_filter = LDAP_Filter.forAll(address, ['ip'])
+		address_exists = udm_modules.lookup('computers/computer', None, ldap_user_read,
+		                                    scope = 'sub', filter = ldap_filter)
+		return bool(address_exists)
+
 	def _check_license(self, request):
 		try:
 			check_license()
@@ -266,6 +272,8 @@ class Instance(SchoolBaseModule, SchoolImport):
 				raise ValueError(_('Computer name is already in use'))
 			if self._mac_address_used(mac, ldap_user_read):
 				raise ValueError(_('MAC address is already in use'))
+			if self._ip_address_used(ip_address, ldap_user_read):
+				raise ValueError(_('IP address is already in use'))
 			if subnet_mask:
 				subnet_mask = udm_syntax.netmask.parse(subnet_mask)
 			if type_ not in ['ipmanagedclient', 'windows']:

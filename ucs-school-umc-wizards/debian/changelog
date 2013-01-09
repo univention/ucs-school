@@ -1,3 +1,9 @@
+ucs-school-umc-wizards (2.0.3-1) unstable; urgency=low
+
+  * show info when ip adress is already used when adding a computer; Bug #27393
+
+ -- Florian Best <best@univention.de>  Wed, 09 Jan 2013 13:41:39 +0100
+
 ucs-school-umc-wizards (2.0.2-2) unstable; urgency=low
 
   * fix postMixinProperties in SchoolWizard; Bug #29793
