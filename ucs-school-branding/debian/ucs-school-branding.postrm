@@ -28,9 +28,11 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-# remove divertion of help.html
-iFile=/usr/share/univention-management-console-frontend/js/umc/help.html
-test -n "$(dpkg-divert --list $iFile)" && dpkg-divert --quiet --rename --remove "$iFile"
+# remove divertion of template.html and all branding.json files
+prefix='/usr/share/univention-management-console-frontend/js/umc'
+for iFile in $prefix/help/template.html $prefix/help/*.json $prefix/i18n/*/branding.json; do
+	test -n "$(dpkg-divert --list $iFile)" && dpkg-divert --quiet --rename --remove "$iFile"
+done
 
 #DEBHELPER#
 

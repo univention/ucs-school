@@ -1,3 +1,10 @@
+ucs-school-branding (2.0.1-1) unstable; urgency=low
+
+  * convert help page template; Bug #27681
+  * add divertion for branding.json files; Bug #28784
+
+ -- Florian Best <best@univention.de>  Wed, 09 Jan 2013 10:44:07 +0100
+
 ucs-school-branding (2.0.0-1) unstable; urgency=low
 
   * Version bump (Bug #29814)

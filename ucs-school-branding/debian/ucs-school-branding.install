@@ -1,1 +1,3 @@
-umc/help.html usr/share/univention-management-console-frontend/js/umc
+umc/help/template.html usr/share/univention-management-console-frontend/js/umc/help
+umc/help/de.json usr/share/univention-management-console-frontend/js/umc/help
+umc/help/en.json usr/share/univention-management-console-frontend/js/umc/help
