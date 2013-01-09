@@ -138,7 +138,7 @@ class Instance( SchoolBaseModule ):
 		group = None
 
 		# get list of all users matching the given pattern
-		groupresult = udm_modules.lookup( 'groups/group', None, ldap_user_read, scope = 'sub', base = 'cn=groups,%s' % search_base.schoolDN, filter = LDAP_Filter.forGroups( request.options.get( 'pattern', '' ), search_base.school ) )
+		groupresult = udm_modules.lookup( 'groups/group', None, ldap_user_read, scope = 'sub', base = search_base.workgroups, filter = LDAP_Filter.forGroups( request.options.get( 'pattern', '' ) ) )
 
 		result = map( lambda grp: { 'id' : grp.dn, 'label' : grp[ 'name' ].replace( '%s-' % search_base.school, '' ) }, filter( lambda grp: len( grp[ 'users' ] ) > 0, groupresult ) )
 		self.finished( request.id, result )
@@ -270,15 +270,15 @@ class Instance( SchoolBaseModule ):
 								iuser.dn = iobj.dn
 								users.append(iuser)
 							elif obj_types[ 0 ] == 'groups/group':
-								# open group object
-								igroup = util.Group( iobj.info )
-								igroup.name = igroup.name[ igroup.name.find( '-' ) + 1 : ]
-								igroup.dn = iobj.dn
-
 								# initiate a new search base using the ou in the group
 								schoolDN = iobj.dn[iobj.dn.find('ou='):]
-								school = ldap_user_read.explodeDn(schoolDN, 1)[0],
+								school = ldap_user_read.explodeDn(schoolDN, 1)[0]
 								_search_base = SchoolSearchBase(school, school, schoolDN)
+
+								# open group object
+								igroup = util.Group( iobj.info )
+								igroup.name = igroup.name.replace('%s-' % _search_base.school, '', 1)
+								igroup.dn = iobj.dn
 
 								userModul = udm_modules.get( 'users/user' )
 								for userdn in iobj[ 'users' ]:

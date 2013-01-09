@@ -172,7 +172,8 @@ define([
 			this._form.on('submit', lang.hitch(this, '_save'));
 		},
 
-		_save: function(values) {
+		_save: function() {
+			var values = this._form.get('value');
 			var deferred = null;
 			var nameWidget = this._form.getWidget('name');
 

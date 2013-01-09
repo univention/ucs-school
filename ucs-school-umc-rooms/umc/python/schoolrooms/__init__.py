@@ -105,10 +105,15 @@ class Instance( SchoolBaseModule ):
 		room_obj = group_module.object(None, ldap_user_read, None, request.options[0])
 		room_obj.open()
 
+		# get the school name
+		schoolDN = room_obj.dn[room_obj.dn.find('ou='):]
+		school = ldap_user_read.explodeDn(schoolDN, 1)[0]
+
+		# prepare the resulting structure
 		result = {}
 		result['$dn$'] = room_obj.dn
-		result[ 'school' ] = room_obj.dn[ room_obj.dn.find( '=' ) + 1 : room_obj.dn.find( '-' ) ]
-		result['name'] = room_obj['name'].replace( '%s-' % result[ 'school' ], '', 1 )
+		result['school'] = school
+		result['name'] = room_obj['name'].replace( '%s-' % school, '', 1 )
 		result['description'] = room_obj['description']
 		result['computers'] = room_obj['hosts']
 
@@ -158,8 +163,14 @@ class Instance( SchoolBaseModule ):
 		if not group_obj:
 			raise UMC_OptionTypeError('unknown group object')
 
+		# apply changes
 		group_obj.open()
-		group_obj[ 'name' ] = '%(school)s-%(name)s' % group_props
+		if group_obj['name'].startswith('%s-' % group_props['school']):
+			# room had previously a school prefix
+			group_obj['name'] = '%(school)s-%(name)s' % group_props
+		else:
+			# room did not have a school prefix
+			group_obj['name'] = '%(name)s' % group_props
 		group_obj['description'] = group_props['description']
 		group_obj['hosts'] = group_props['computers']
 		group_obj.modify()

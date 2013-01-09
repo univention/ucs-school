@@ -1,3 +1,9 @@
+ucs-school-lib (2.0.1-1) unstable; urgency=low
+
+  * apply patch from errata; Bug #29830
+
+ -- Florian Best <best@univention.de>  Wed, 09 Jan 2013 14:26:18 +0100
+
 ucs-school-lib (2.0.0-1) unstable; urgency=low
 
   * Version bump (Bug #29814)

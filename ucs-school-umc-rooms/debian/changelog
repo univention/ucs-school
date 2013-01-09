@@ -1,3 +1,9 @@
+ucs-school-umc-rooms (9.0.3-1) unstable; urgency=low
+
+  * apply patch from errata; Bug #29830
+
+ -- Florian Best <best@univention.de>  Wed, 09 Jan 2013 14:25:22 +0100
+
 ucs-school-umc-rooms (9.0.2-1) unstable; urgency=low
 
   * fix MultiObjectSelect formatter; Bug #29791

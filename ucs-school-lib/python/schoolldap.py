@@ -547,8 +547,9 @@ class LDAP_Filter:
 		return LDAP_Filter.forAll( pattern, ['lastname', 'username', 'firstname'] )
 
 	@staticmethod
-	def forGroups( pattern, school ):
-		return LDAP_Filter.forAll( pattern, ['name', 'description'], prefixes = { 'name' : '%s-' % school } )
+	def forGroups( pattern, school = None ):
+		# school parameter is deprecated
+		return LDAP_Filter.forAll( pattern, ['name', 'description'] )
 
 	@staticmethod
 	def forComputers( pattern ):
