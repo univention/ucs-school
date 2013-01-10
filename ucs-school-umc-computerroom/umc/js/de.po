@@ -203,7 +203,7 @@ msgstr "Setzen"
 
 #: umc/js/computerroom.js:182
 msgid "Shutdown computer"
-msgstr "Computer herrunterfahren"
+msgstr "Computer herunterfahren"
 
 #: umc/js/_computerroom/ScreenshotView.js:263
 msgid "Size"
@@ -343,8 +343,8 @@ msgid "large"
 msgstr "groß"
 
 #: umc/js/computerroom.js:535
-msgid "lock"
-msgstr "sperren"
+msgid "lock screen"
+msgstr "Bildschirm sperren"
 
 #: umc/js/_computerroom/Settings.js:101
 msgid "no access"
@@ -387,8 +387,8 @@ msgid "tiny"
 msgstr "winzig"
 
 #: umc/js/computerroom.js:529 umc/js/computerroom.js:533
-msgid "unlock"
-msgstr "entsperren"
+msgid "unlock screen"
+msgstr "Bildschirm entsperren"
 
 #: umc/js/computerroom.js:808
 msgid "valid for"

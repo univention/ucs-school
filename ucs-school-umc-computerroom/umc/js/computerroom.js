@@ -534,13 +534,13 @@ define([
 					field: 'ScreenLock',
 					label: lang.hitch(this, function(item) {
 						if ( !item ) { // column title
-							return '<span style="height: 0px; font-weight: normal; color: rgba(0,0,0,0);">' + _( 'unlock' ) + '</span>';
+							return '<span style="height: 0px; font-weight: normal; color: rgba(0,0,0,0);">' + _( 'unlock screen' ) + '</span>';
 						}
 						if ( !item.teacher || item.teacher[ 0 ] === false ) {
 							if ( item.ScreenLock[0] === true ) {
-								return _('unlock');
+								return _('unlock screen');
 							} else if ( item.ScreenLock[0] === false ) {
-								return _('lock');
+								return _('lock screen');
 							}
 						} 
 						return '';
