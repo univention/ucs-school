@@ -1,3 +1,9 @@
+ucs-school-lib (2.0.2-1) unstable; urgency=low
+
+  * remove GREYLIST from internetrules; Bug #28684
+
+ -- Florian Best <best@univention.de>  Thu, 10 Jan 2013 15:01:04 +0100
+
 ucs-school-lib (2.0.1-1) unstable; urgency=low
 
   * apply patch from errata; Bug #29830

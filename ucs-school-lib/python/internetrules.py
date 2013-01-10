@@ -40,11 +40,10 @@ import re
 # regular expression to match UCR variables for filter properties
 _regFilterNames = re.compile(r'^proxy/filter/setting(?P<userPrefix>-user)?/(?P<name>[^/]*)/(?P<property>[^/]*)(/(?P<listType>[^/]*)/(?P<index>[^/]*))?$')
 
-WHITELIST, BLACKLIST, GREYLIST = range(3)
+WHITELIST, BLACKLIST = range(2)
 _filterTypes = {
 	'blacklist-pass': BLACKLIST,
 	'whitelist-block': WHITELIST,
-	'whitelist-blacklist-pass': GREYLIST,
 }
 _filterTypesInv = dict([ (_i[1], _i[0]) for _i in _filterTypes.iteritems() ])
 _listTypes = {
