@@ -43,7 +43,7 @@ define([
 	"umc/widgets/DateBox",
 	"umc/widgets/TimeBox",
 	"umc/widgets/StandbyMixin",
-	"umc/i18n!/umc/modules/distribution"
+	"umc/i18n!umc/modules/distribution"
 ], function(declare, lang, array, dialog, tools, Page, Form, TextBox, ComboBox, MultiUploader, MultiObjectSelect, DateBox, TimeBox, StandbyMixin, _) {
 
 	return declare("umc.modules.distribution.DetailPage", [ Page, StandbyMixin ], {

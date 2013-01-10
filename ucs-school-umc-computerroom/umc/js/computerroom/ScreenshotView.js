@@ -44,7 +44,7 @@ define([
 	"umc/widgets/Page",
 	"umc/widgets/StandbyMixin",
 	"umc/widgets/Tooltip",
-	"umc/i18n!/umc/modules/computerroom"
+	"umc/i18n!umc/modules/computerroom"
 ], function(declare, lang, array, aspect, dom, geometry, ContentPane, _Contained,
             /*TitlePane,*/ ComboBox, ContainerWidget, Button, Page, StandbyMixin, Tooltip, _) {
 

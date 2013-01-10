@@ -44,7 +44,7 @@ define([
 	"umc/widgets/ComboBox",
 	"umc/widgets/SearchForm",
 	"umc/widgets/StandbyMixin",
-	"umc/i18n!/umc/modules/internetrules"
+	"umc/i18n!umc/modules/internetrules"
 ], function(declare, lang, array, Dialog, tools, store, Page, Form, ExpandingTitlePane,
             Grid, TextBox, Text, ComboBox, SearchForm, StandbyMixin, _) {
 

@@ -39,7 +39,7 @@ define([
 	"umc/widgets/ComboBox",
 	"umc/widgets/MultiObjectSelect",
 	"umc/widgets/StandbyMixin",
-	"umc/i18n!/umc/modules/schoolrooms"
+	"umc/i18n!umc/modules/schoolrooms"
 ], function(declare, lang, array, tools, Page, Form, TextBox, ComboBox, MultiObjectSelect, StandbyMixin, _) {
 
 	return declare("umc.modules.schoolrooms.DetailPage", [ Page, StandbyMixin ], {

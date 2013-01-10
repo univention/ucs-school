@@ -40,7 +40,7 @@ define([
 	"umc/widgets/ComboBox",
 	"umc/widgets/TextBox",
 	"umc/widgets/StandbyMixin",
-	"umc/i18n!/umc/modules/internetrules"
+	"umc/i18n!umc/modules/internetrules"
 ], function(declare, lang, dialog, store, Page, Form, MultiInput, CheckBox, ComboBox, TextBox, StandbyMixin, _) {
 
 	return declare("umc.modules.internetrules.DetailPage", [ Page, StandbyMixin ], {

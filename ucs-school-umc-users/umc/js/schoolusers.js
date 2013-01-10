@@ -49,7 +49,7 @@ define([
 	"umc/widgets/ContainerWidget",
 	"umc/widgets/ProgressInfo",
 	"umc/widgets/SearchForm",
-	"umc/i18n!/umc/modules/schoolusers"
+	"umc/i18n!umc/modules/schoolusers"
 ], function(declare, lang, array, locale, Deferred, Dialog, dialog, tools, Module, ExpandingTitlePane,
             Grid, Page, Form, TextBox, ComboBox, CheckBox, Text, ContainerWidget, ProgressInfo, SearchForm, _) {
 

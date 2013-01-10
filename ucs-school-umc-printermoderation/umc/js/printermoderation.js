@@ -47,7 +47,7 @@ define([
 	"umc/widgets/Text",
 	"umc/widgets/ComboBox",
 	"umc/widgets/ProgressInfo",
-	"umc/i18n!/umc/modules/printermoderation"
+	"umc/i18n!umc/modules/printermoderation"
 ], function(declare, lang, array, Deferred, Dialog, locale, dialog, tools, ExpandingTitlePane, Grid,
             Module, Page, Form, SearchForm, TextBox, Text, ComboBox, ProgressInfo, _) {
 

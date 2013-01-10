@@ -35,7 +35,7 @@ define([
 	"umc/modules/internetrules/AssignPage",
 	"umc/modules/internetrules/AdminPage",
 	"umc/modules/internetrules/DetailPage",
-	"umc/i18n!/umc/modules/internetrules"
+	"umc/i18n!umc/modules/internetrules"
 ], function(declare, lang, Module, AssignPage, AdminPage, DetailPage, _) {
 
 	return declare("umc.modules.internetrules", [ Module ], {

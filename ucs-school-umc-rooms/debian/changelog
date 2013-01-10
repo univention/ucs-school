@@ -1,3 +1,9 @@
+ucs-school-umc-rooms (9.0.4-1) unstable; urgency=low
+
+  * fix i18n property; Bug #29776
+
+ -- Florian Best <best@univention.de>  Thu, 10 Jan 2013 13:34:05 +0100
+
 ucs-school-umc-rooms (9.0.3-1) unstable; urgency=low
 
   * apply patch from errata; Bug #29830

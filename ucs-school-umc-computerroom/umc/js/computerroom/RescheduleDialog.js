@@ -37,7 +37,7 @@ define([
 	"umc/widgets/TimeBox",
 	"umc/widgets/StandbyMixin",
 	"dijit/Dialog",
-	"umc/i18n!/umc/modules/computerroom"
+	"umc/i18n!umc/modules/computerroom"
 ], function(declare, lang, tools, Form, Text, TimeBox, StandbyMixin, Dialog, _) {
 
 	return declare("umc.modules.computerroom.RescheduleDialog", [ Dialog, StandbyMixin ], {

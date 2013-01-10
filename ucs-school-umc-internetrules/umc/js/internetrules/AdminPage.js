@@ -39,7 +39,7 @@ define([
 	"umc/widgets/Grid",
 	"umc/widgets/TextBox",
 	"umc/widgets/SearchForm",
-	"umc/i18n!/umc/modules/internetrules"
+	"umc/i18n!umc/modules/internetrules"
 ], function(declare, lang, array, dialog, store, Page, ExpandingTitlePane, Grid, TextBox, SearchForm, _) {
 
 	return declare("umc.modules.internetrules.AdminPage", [ Page ], {

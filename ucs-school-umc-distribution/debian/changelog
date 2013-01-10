@@ -1,3 +1,9 @@
+ucs-school-umc-distribution (8.0.3-1) unstable; urgency=low
+
+  * fix i18n property; Bug #29776
+
+ -- Florian Best <best@univention.de>  Thu, 10 Jan 2013 13:32:12 +0100
+
 ucs-school-umc-distribution (8.0.2-1) unstable; urgency=low
 
   * apply patch from errata; Bug #29830

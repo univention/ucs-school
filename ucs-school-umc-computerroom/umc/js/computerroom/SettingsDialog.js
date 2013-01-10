@@ -40,7 +40,7 @@ define([
 	"umc/widgets/TimeBox",
 	"umc/widgets/TextArea",
 	"umc/widgets/StandbyMixin",
-	"umc/i18n!/umc/modules/computerroom"
+	"umc/i18n!umc/modules/computerroom"
 ], function(declare, lang, array, Dialog, dialog, tools, Form, ComboBox, TimeBox, TextArea, StandbyMixin, _) {
 
 	return declare("umc.modules.computerroom.SettingsDialog", [ Dialog, StandbyMixin ], {

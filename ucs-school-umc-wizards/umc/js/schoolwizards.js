@@ -38,7 +38,7 @@ define([
 	"umc/modules/schoolwizards/ClassWizard",
 	"umc/modules/schoolwizards/ComputerWizard",
 	"umc/modules/schoolwizards/SchoolWizard",
-	"umc/i18n!/umc/modules/schoolwizards"
+	"umc/i18n!umc/modules/schoolwizards"
 ], function(declare, lang, topic, Module, UserWizard, ClassWizard, ComputerWizard, SchoolWizard, _) {
 
 	return declare("umc.modules.schoolwizards", [ Module ], {

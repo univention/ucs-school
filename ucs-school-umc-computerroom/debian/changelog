@@ -1,3 +1,9 @@
+ucs-school-umc-computerroom (1.0.5-1) unstable; urgency=low
+
+  * fix i18n property; Bug #29776
+
+ -- Florian Best <best@univention.de>  Thu, 10 Jan 2013 13:34:18 +0100
+
 ucs-school-umc-computerroom (1.0.4-1) unstable; urgency=low
 
   * fixed spelling mistakes; Bug #27246

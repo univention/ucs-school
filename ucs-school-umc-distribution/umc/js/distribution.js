@@ -41,7 +41,7 @@ define([
 	"umc/widgets/TextBox",
 	"umc/widgets/ComboBox",
 	"umc/modules/distribution/DetailPage",
-	"umc/i18n!/umc/modules/distribution"
+	"umc/i18n!umc/modules/distribution"
 ], function(declare, lang, dialog, tools, ExpandingTitlePane, Grid, Module, Page, SearchForm, TextBox, ComboBox, DetailPage, _) {
 
 	return declare("umc.modules.distribution", [ Module ], {

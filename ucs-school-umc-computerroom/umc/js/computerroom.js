@@ -53,7 +53,7 @@ define([
 	"umc/modules/computerroom/ScreenshotView",
 	"umc/modules/computerroom/RescheduleDialog",
 	"umc/modules/computerroom/SettingsDialog",
-	"umc/i18n!/umc/modules/computerroom"
+	"umc/i18n!umc/modules/computerroom"
 ], function(declare, lang, array, aspect, dom, Deferred, Dialog, ItemFileWriteStore, DataStore,
             Memory, dialog, tools, ExpandingTitlePane, Grid, Module, Page, Form, ContainerWidget,
             Text, ComboBox, Tooltip, ScreenshotView, RescheduleDialog, SettingsDialog, _) {

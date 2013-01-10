@@ -35,7 +35,7 @@ define([
 	"umc/tools",
 	"umc/dialog",
 	"umc/widgets/Wizard",
-	"umc/i18n!/umc/modules/schoolwizards"
+	"umc/i18n!umc/modules/schoolwizards"
 ], function(declare, lang, tools, dialog, Wizard, _) {
 
 	return declare("umc.modules.schoolwizards.Wizard", [ Wizard ], {

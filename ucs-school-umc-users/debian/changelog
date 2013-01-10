@@ -1,3 +1,9 @@
+ucs-school-umc-users (9.0.2-1) unstable; urgency=low
+
+  * fix i18n property; Bug #29776
+
+ -- Florian Best <best@univention.de>  Thu, 10 Jan 2013 13:33:49 +0100
+
 ucs-school-umc-users (9.0.1-1) unstable; urgency=low
 
   * remove duplicate exception message; Bug #27940

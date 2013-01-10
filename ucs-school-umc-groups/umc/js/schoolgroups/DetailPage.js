@@ -37,7 +37,7 @@ define([
 	"umc/widgets/TextBox",
 	"umc/widgets/ComboBox",
 	"umc/widgets/MultiObjectSelect",
-	"umc/i18n!/umc/modules/schoolgroups"
+	"umc/i18n!umc/modules/schoolgroups"
 ], function(declare, lang, Page, Form, StandbyMixin, TextBox, ComboBox, MultiObjectSelect, _) {
 
 	return declare("umc.modules.schoolgroups.DetailPage", [ Page, StandbyMixin ], {
