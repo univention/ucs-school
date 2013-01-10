@@ -1,3 +1,10 @@
+ucs-school-webproxy (9.0.1-1) unstable; urgency=low
+
+  * Fix assigning of internet rules which failed when moving configuration
+    files to other partitions; Bug #29891
+
+ -- Florian Best <best@univention.de>  Thu, 10 Jan 2013 12:14:52 +0100
+
 ucs-school-webproxy (9.0.0-2) unstable; urgency=low
 
   * Fix dependencies (Bug #29814)

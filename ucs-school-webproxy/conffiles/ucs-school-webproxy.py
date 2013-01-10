@@ -55,6 +55,7 @@ import re
 import subprocess
 import tempfile
 import time
+import shutil
 
 PATH_LOG = '/var/log/univention/ucs-school-webproxy.log'
 DIR_ETC = '/etc/squid'
@@ -68,7 +69,7 @@ def logerror(msg):
 def move_file(fnsrc, fndst):
 	if os.path.isfile( fnsrc ):
 		try:
-			os.rename( fnsrc, fndst )
+			shutil.move( fnsrc, fndst )
 		except Exception, e:
 			logerror('cannot move %s to %s: Exception %s' % (fnsrc, fndst, e))
 			raise
