@@ -401,6 +401,7 @@ define([
 			// define the grid columns
 			var columns = [{
 				name: 'name',
+				width: '25%',
 				label: _('Name'),
 				formatter: lang.hitch( this, function( value, rowIndex ) {
 					var item = this._grid._grid.getItem( rowIndex );
@@ -447,6 +448,7 @@ define([
 				} )
 			}, {
 				name: 'user',
+				width: '25%',
 				label: _('User')
 			}];
 
