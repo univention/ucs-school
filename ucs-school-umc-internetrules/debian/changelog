@@ -1,3 +1,9 @@
+ucs-school-umc-internetrules (8.0.5-1) unstable; urgency=low
+
+  * fix initial search query on admin page; Bug #27726
+
+ -- Florian Best <best@univention.de>  Fri, 11 Jan 2013 14:39:31 +0100
+
 ucs-school-umc-internetrules (8.0.4-1) unstable; urgency=low
 
   * fix encoding of ucr keys which leads to traceback when assigning

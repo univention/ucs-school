@@ -136,9 +136,7 @@ define([
 			this._grid = new Grid({
 				actions: actions,
 				columns: columns,
-				moduleStore: this.moduleStore,
-				// initial query
-				query: { colors: 'None', name: '' }
+				moduleStore: this.moduleStore
 			});
 
 			// add the grid to the title pane
@@ -163,6 +161,8 @@ define([
 					this._grid.filter(values);
 				})
 			});
+			// initial query
+			this._searchForm.on('valuesInitialized', lang.hitch(this, function() { this._searchForm.submit(); }));
 
 			// add search form to the title pane
 			titlePane.addChild(this._searchForm);
