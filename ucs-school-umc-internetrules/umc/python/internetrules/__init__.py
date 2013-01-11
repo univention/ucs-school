@@ -153,7 +153,7 @@ class Instance( SchoolBaseModule ):
 				raise ValueError(_('The key "%s" needs to be of type: %s') % (ikey, typeStr))
 
 		# validate name
-		if 'name' in iprops and not univention.config_registry.validate_key(iprops['name']):
+		if 'name' in iprops and not univention.config_registry.validate_key(iprops['name'].encode('utf-8')):
 			raise ValueError(_('Invalid rule name "%s". The name needs to be a string, the following special characters are not allowed: %s') % (iprops.get('name'), '!, ", §, $, %, &, (, ), [, ], {, }, =, ?, `, +, #, \', ",", ;, <, >, \\'))
 
 		# validate type

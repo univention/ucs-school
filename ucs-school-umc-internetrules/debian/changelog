@@ -1,3 +1,10 @@
+ucs-school-umc-internetrules (8.0.4-1) unstable; urgency=low
+
+  * fix encoding of ucr keys which leads to traceback when assigning
+  	internetrules; Bug #29948
+
+ -- Florian Best <best@univention.de>  Fri, 11 Jan 2013 10:45:32 +0100
+
 ucs-school-umc-internetrules (8.0.3-1) unstable; urgency=low
 
   * fix initial search query on assign page; Bug #27726
