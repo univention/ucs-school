@@ -109,8 +109,6 @@ var StandbyForm = declare("umc.modules.internetrules.StandbyForm", [ Form, Stand
 				actions: actions,
 				columns: columns,
 				moduleStore: this.moduleStore,
-				// initial query
-				query: { colors: 'None', name: '' },
 				defaultAction: 'assign'
 			});
 
@@ -142,6 +140,8 @@ var StandbyForm = declare("umc.modules.internetrules.StandbyForm", [ Form, Stand
 					this._grid.filter(values);
 				})
 			});
+			// initial query
+			this._searchForm.on('valuesInitialized', lang.hitch(this, function() { this._searchForm.submit(); }));
 
 			// add search form to the title pane
 			titlePane.addChild(this._searchForm);

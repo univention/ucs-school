@@ -1,3 +1,9 @@
+ucs-school-umc-internetrules (8.0.3-1) unstable; urgency=low
+
+  * fix initial search query on assign page; Bug #27726
+
+ -- Florian Best <best@univention.de>  Fri, 11 Jan 2013 09:22:48 +0100
+
 ucs-school-umc-internetrules (8.0.2-1) unstable; urgency=low
 
   * fix i18n property; Bug #29776
