@@ -1348,6 +1348,8 @@ calculateProfilePath.string = '%s\\%%USERNAME%%\\windows-profiles\\default'
 def tryFindWindowsHomeServer(ou):
 	if UCRV_sambahome is not None:
 		return UCRV_sambahome
+	if configRegistry.is_true('ucsschool/singlemaster', False):
+		return configRegistry.get('hostname')
 	if ou in tryFindWindowsHomeServer.results:
 		return tryFindWindowsHomeServer.results[ou]
 	for service in ('Windows Home Server',

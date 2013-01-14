@@ -1,3 +1,10 @@
+ucs-school-import (9.0.1-1) unstable; urgency=low
+
+  * In single server setups the master will be now used as fileserver
+    when building a samba home path during user import (Bug #29521)
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Mon, 14 Jan 2013 15:10:32 +0100
+
 ucs-school-import (9.0.0-2) unstable; urgency=low
 
   * Fix dependencies (Bug #29814)
