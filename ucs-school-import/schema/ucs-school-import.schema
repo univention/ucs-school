@@ -4,10 +4,8 @@
 # univention owns the namespace 10176.
 #
 #
-# Univention UCS@School Import OID Prefix: 1.3.6.1.4.1.10176.9999.2
+# Univention UCS@School Import OID Prefix: 1.3.6.1.4.1.10176.4000.2
 #
-#  1.3.6.1.4.1.10176.9999.2.50    sfb import object
-#  1.3.6.1.4.1.10176.9999.2.50XX  sfb import attributes
 
 attributetype ( 1.3.6.1.4.1.10176.99999.2.5001
         NAME 'univentionAbordnungMasterDn'
@@ -35,7 +33,7 @@ objectclass ( 1.3.6.1.4.1.10176.4000.2.51 NAME 'univentionUcsSchoolUser'
         MAY ( ucsschoolRole ) )
 
 attributetype ( 1.3.6.1.4.1.10176.4000.2.5201 NAME 'ucsschoolClassShareFileServer'
-        DESC 'TODO'
+        DESC 'designated fileserver for class shares'
         EQUALITY distinguishedNameMatch
         SUBSTR caseIgnoreSubstringsMatch
         SYNTAX 1.3.6.1.4.1.1466.115.121.1.12 )
@@ -43,6 +41,6 @@ attributetype ( 1.3.6.1.4.1.10176.4000.2.5201 NAME 'ucsschoolClassShareFileServe
 # SUP organizationalUnit
 
 objectclass ( 1.3.6.1.4.1.10176.4000.2.52 NAME 'ucsschoolOrganizationalUnit'
-        DESC 'TODO'
+        DESC 'auxiliary class for class shares'
         AUXILIARY
         MAY ( ucsschoolClassShareFileServer ) )
