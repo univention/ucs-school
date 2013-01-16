@@ -149,7 +149,7 @@ define([
 				var classBox = this.getWidget('user', 'class');
 				var newClassButton = this.getPage('user')._form.getButton('newClass');
 				if (array.indexOf(types, selectedType) >= 0) {
-					classBox.reset();
+					classBox.set('value', null);
 					classBox.set('required', false);
 					classBox.hide();
 					newClassButton.hide();
@@ -157,9 +157,8 @@ define([
 					classBox.set('required', true);
 					classBox.show();
 					newClassButton.show();
+					this.reloadClasses();
 				}
-				// update classes
-				this.reloadClasses();
 			}
 		},
 

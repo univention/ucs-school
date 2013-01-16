@@ -58,6 +58,7 @@ define([
 						if (result) {
 							this.addNote();
 							this.restart();
+							this.focusFirstWidget(currentPage);
 						}
 						return currentPage;
 					}));
@@ -100,13 +101,18 @@ define([
 		},
 
 		restart: function() {
-			// Select the first page
-			var firstPageName = this.pages[0].name;
-			this._updateButtons(firstPageName);
-			this.selectChild(this._pages[firstPageName]);
 		},
 
 		updateWidgets: function(/*String*/ currentPage) {
+		},
+
+		focusFirstWidget: function(pageName) {
+			// Determine the name of the first widget
+			var layout = this.getPage(pageName)._form.get('layout');
+			while (layout instanceof Array) {
+				layout = layout[0];
+			}
+			this.getWidget(pageName, layout).focus();
 		}
 	});
 
