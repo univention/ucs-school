@@ -1209,7 +1209,6 @@ def verifyMailDomain(email):
 		return
 
 	domain = email.rsplit("@",1)[-1]
-	print mailDomains
 	if not mailDomains.get(domain):
 		print "need to create mail domain %s " % domain
 		pos = univention.admin.uldap.position("cn=domain,cn=mail,%s" % baseDN)
