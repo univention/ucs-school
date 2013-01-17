@@ -365,10 +365,15 @@ class Instance( SchoolBaseModule ):
 		if not computer:
 			raise UMC_CommandError( 'Unknown computer' )
 
+		tmpfile = computer.screenshot
+		if tmpfile is None:
+			# vnc has not (yet) received any screenshots from the computer
+			# dont worry, try again later
+			self.finished( request.id, None )
+			return
 		response = Response( mime_type = MIMETYPE_JPEG )
 		response.id = request.id
 		response.command = 'COMMAND'
-		tmpfile = computer.screenshot
 		response.body = open( tmpfile.name ).read()
 		os.unlink( tmpfile.name )
 		self.finished( request.id, response )
