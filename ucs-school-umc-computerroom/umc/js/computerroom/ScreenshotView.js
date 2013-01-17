@@ -246,7 +246,7 @@ define([
 				region: 'bottom'
 			} );
 			footer.addChild( new Button( {
-				label: _( 'back to overview' ),
+				label: _( 'Back to overview' ),
 				style: 'float: left',
 				onClick: lang.hitch( this, function() {
 					this._cleanup();
@@ -263,10 +263,10 @@ define([
 				name: _( 'Size' ),
 				style: 'float: left',
 				staticValues: [
-					{ id: 200, label: _( 'tiny' ) },
-					{ id: 250, label: _( 'small' ) },
-					{ id: 350, label: _( 'normal' ) },
-					{ id: 500, label: _( 'large' ) }
+					{ id: 200, label: _( 'Tiny' ) },
+					{ id: 250, label: _( 'Small' ) },
+					{ id: 350, label: _( 'Normal' ) },
+					{ id: 500, label: _( 'Large' ) }
 				],
 				value: 250,
 				onChange: lang.hitch( this, function( newValue ) {

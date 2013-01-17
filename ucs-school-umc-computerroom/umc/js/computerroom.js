@@ -140,10 +140,10 @@ define([
 						if ( header ) {
 							return _( 'Actions' );
 						} else {
-							return _( 'watch' );
+							return _( 'Watch' );
 						}
 					}
-					return _( 'watch' );
+					return _( 'Watch' );
 				}),
 				isStandardAction: true,
 				isMultiAction: true,
@@ -345,7 +345,7 @@ define([
 					'onclick=\'dijit.byId("{id}").changeRoom()\'>{changeLabel}</a>)', {
 				roomLabel: _('Room'),
 				room: room,
-				changeLabel: _('select room'),
+				changeLabel: _('Select room'),
 				id: this.id
 			});
 			this._titlePane.set( 'title', label );
@@ -401,7 +401,7 @@ define([
 			// define the grid columns
 			var columns = [{
 				name: 'name',
-				width: '25%',
+				width: '20%',
 				label: _('Name'),
 				formatter: lang.hitch( this, function( value, rowIndex ) {
 					var item = this._grid._grid.getItem( rowIndex );
@@ -448,7 +448,7 @@ define([
 				} )
 			}, {
 				name: 'user',
-				width: '25%',
+				width: '20%',
 				label: _('User')
 			}];
 
@@ -536,13 +536,13 @@ define([
 					field: 'ScreenLock',
 					label: lang.hitch(this, function(item) {
 						if ( !item ) { // column title
-							return '<span style="height: 0px; font-weight: normal; color: rgba(0,0,0,0);">' + _( 'unlock screen' ) + '</span>';
+							return '<span style="height: 0px; font-weight: normal; color: rgba(0,0,0,0);">' + _( 'Unlock screen' ) + '</span>';
 						}
 						if ( !item.teacher || item.teacher[ 0 ] === false ) {
 							if ( item.ScreenLock[0] === true ) {
-								return _('unlock screen');
+								return _('Unlock screen');
 							} else if ( item.ScreenLock[0] === false ) {
-								return _('lock screen');
+								return _('Lock screen');
 							}
 						} 
 						return '';
@@ -576,7 +576,7 @@ define([
 						if ( !item || item.DemoServer[ 0 ] === true ) {
 							return '';
 						} else {
-							return _( 'stop presentation' );
+							return _( 'Stop presentation' );
 						}
 					} ),
 					isStandardAction: false,
@@ -594,9 +594,9 @@ define([
 					name: 'demoStop',
 					label: lang.hitch( this, function( item ) {
 						if ( !item ) {
-							return _( 'presentation' );
+							return _( 'Presentation' );
 						} else {
-							return _( 'stop' );
+							return _( 'Stop' );
 						}
 					} ),
 					isStandardAction: true,
@@ -711,7 +711,7 @@ define([
 			}, {
 				type: ComboBox,
 				name: 'room',
-				label: _( 'computer room' ),
+				label: _( 'Computer room' ),
 				description: _( 'Choose the computer room to monitor' ),
 				size: 'One',
 				depends: 'school',
@@ -817,7 +817,7 @@ define([
 					if ( response.result.settingEndsIn <= 5 ) {
 						style = 'style="color: red"';
 					}
-					var labelValidTo = _( 'valid for' ) + lang.replace( ' <a href="javascript:void(0)" {style} onclick=\'dijit.byId("{id}").show()\'>' + _( '{time} minutes' ) + '</a>', {
+					var labelValidTo = _( 'Valid for' ) + lang.replace( ' <a href="javascript:void(0)" {style} onclick=\'dijit.byId("{id}").show()\'>' + _( '{time} minutes' ) + '</a>', {
 						time: response.result.settingEndsIn,
 						id: this._rescheduleDialog.id,
 						style: style
@@ -837,7 +837,7 @@ define([
 				var label = lang.replace( '{lblSettings} (<a href="javascript:void(0)" ' +
 									  	  'onclick=\'dijit.byId("{id}").show()\'>{changeLabel}</a>)', {
 										  	  lblSettings: text,
-										  	  changeLabel: _( 'change' ),
+										  	  changeLabel: _( 'Change' ),
 										  	  id: this._settingsDialog.id
 									  	  } );
 				this._profileInfo.set( 'content', label );

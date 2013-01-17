@@ -92,11 +92,11 @@ define([
 				type: ComboBox,
 				name: 'shareMode',
 				sizeClass: 'One',
-				label: _('share access'),
+				label: _('Share access'),
 				description: _( 'Defines restriction for the share access' ),
 				staticValues: [
-					{ id : 'none', label: _( 'no access' ) },
-					{ id: 'home', label : _('home directory only') },
+					{ id : 'none', label: _( 'No access' ) },
+					{ id: 'home', label : _('Home directory only') },
 					{ id: 'all', label : _('Default (no restrictions)' ) }
 				]
 			}, {
@@ -140,7 +140,7 @@ define([
 				} )
 			} , {
 				name: 'reset_to_default',
-				label: _( 'reset' ),
+				label: _( 'Reset' ),
 				style: 'float: right',
 				onClick: lang.hitch( this, function() {
 					this._form.getWidget( 'internetRule' ).set( 'value', 'none' );
@@ -149,7 +149,7 @@ define([
 				} )
 			} , {
 				name: 'cancel',
-				label: _( 'cancel' ),
+				label: _( 'Cancel' ),
 				onClick: lang.hitch( this, function() {
 					dijit.hideTooltip( this._form.getWidget( 'customRule' ).domNode );
 					this.hide();

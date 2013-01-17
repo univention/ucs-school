@@ -87,7 +87,7 @@ define([
 				} )
 			} , {
 				name: 'cancel',
-				label: _( 'cancel' ),
+				label: _( 'Cancel' ),
 				onClick: lang.hitch( this, function() {
 					this.hide();
 					this.onClose();

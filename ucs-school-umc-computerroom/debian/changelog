@@ -1,3 +1,9 @@
+ucs-school-umc-computerroom (1.0.10-1) unstable; urgency=low
+
+  * Fix spelling mistakes (Bug #27246)
+
+ -- Jascha Geerds <geerds@univention.de>  Thu, 17 Jan 2013 16:32:46 +0100
+
 ucs-school-umc-computerroom (1.0.9-1) unstable; urgency=low
 
   * Check if VNC has received screenshots. Return none if not (Bug #28674)
