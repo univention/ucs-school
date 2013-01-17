@@ -171,7 +171,7 @@ msgstr "Beaufsichtigung reinitialisieren"
 
 #: umc/js/computerroom.js:214
 msgid "Restart computer"
-msgstr "Computer neustarten"
+msgstr "Computer neu starten"
 
 #: umc/js/computerroom.js:339
 msgid "Room"

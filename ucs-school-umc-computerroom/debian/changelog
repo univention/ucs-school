@@ -1,3 +1,9 @@
+ucs-school-umc-computerroom (1.0.8-1) unstable; urgency=low
+
+  * Fix translation (Bug #27246)
+
+ -- Jascha Geerds <geerds@univention.de>  Thu, 17 Jan 2013 12:15:48 +0100
+
 ucs-school-umc-computerroom (1.0.7-1) unstable; urgency=low
 
   * updated translation; Bug #29784
