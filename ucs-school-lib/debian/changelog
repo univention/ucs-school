@@ -1,3 +1,9 @@
+ucs-school-lib (2.0.3-1) unstable; urgency=low
+
+  * enforce an update of the list of available ous; Bug #30046
+
+ -- Alexander Kläser <klaeser@univention.de>  Fri, 18 Jan 2013 14:30:58 +0100
+
 ucs-school-lib (2.0.2-1) unstable; urgency=low
 
   * remove GREYLIST from internetrules; Bug #28684

@@ -455,6 +455,7 @@ class SchoolBaseModule( Base ):
 	def schools( self, request, ldap_user_read = None, ldap_position = None, search_base = None ):
 		"""Returns a list of all available school"""
 		msg = ''
+		_init_search_base(ldap_user_read, force = True)
 		if not search_base.availableSchools[0]:
 			request.status = MODULE_ERR
 			msg = _('Could not find any school. You have to create a school before continuing. Use the \'Add school\' UMC module to create one.')
