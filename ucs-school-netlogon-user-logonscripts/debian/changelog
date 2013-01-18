@@ -1,3 +1,10 @@
+ucs-school-netlogon-user-logonscripts (8.0.2-1) unstable; urgency=low
+
+  * renamed listener module file to match module's internal name 
+    (Bug #28452)
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 18 Jan 2013 13:41:19 +0100
+
 ucs-school-netlogon-user-logonscripts (8.0.1-1) unstable; urgency=low
 
   * added UCR variables for configuring output directory for netlogon
