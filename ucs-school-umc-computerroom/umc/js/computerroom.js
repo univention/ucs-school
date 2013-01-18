@@ -105,6 +105,8 @@ define([
 		_currentSchool: null,
 		_currentRoom: null,
 
+		_nUpdateFailures: 0,
+
 		_vncEnabled: false,
 
 		uninitialize: function() {
@@ -616,6 +618,36 @@ define([
 		postCreate: function() {
 			this.changeRoom();
 		},
+		
+		_acquireRoom: function(school, room, promptAlert) {
+			promptAlert = promptAlert === undefined || promptAlert;  // default value == true
+			return tools.umcpCommand('computerroom/room/acquire', {
+				school: school,
+				room: room
+			}).then(lang.hitch(this, function(response) {
+				if ( response.result.success === false ) {
+					// we could not acquire the room
+					if (promptAlert) {
+						// prompt a message if wanted
+						if ( response.result.message == 'ALREADY_LOCKED' ) {
+							dialog.alert(this._('Failed to open a new session for the room.'));
+						} else if ( response.result.message == 'EMPTY_ROOM' ) {
+							dialog.alert( this._( 'The room is empty or the computers are not configured correctly. Please select another room.' ) );
+						}
+					}
+					throw new Error('Could not acquire room');
+				}
+				this._currentRoom = room;
+				this._currentSchool = school;
+
+				// reload the grid
+				this.queryRoom();
+
+				// update the header text containing the room
+				this._updateHeader(room);
+				this._grid._updateFooterContent();
+			}));
+		},
 
 		changeRoom: function() {
 			// define a cleanup function
@@ -663,37 +695,15 @@ define([
 					});
 				}
 
-				deferred = deferred.then(function () {
+				deferred = deferred.then(lang.hitch(this, function () {
 					// try to acquire the session
 					okButton.set('disabled', true);
-					return tools.umcpCommand('computerroom/room/acquire', {
-						school: vals.school,
-						room: vals.room
-					});
-				}).then(lang.hitch(this, function(response) {
-					okButton.set('disabled', false);
-					if ( response.result.success === false ) {
-						// we could not acquire the room
-						if ( response.result.message == 'ALREADY_LOCKED' ) {
-							dialog.alert(_('Failed to open a new session for the room.'));
-						} else if ( response.result.message == 'EMPTY_ROOM' ) {
-							dialog.alert( _( 'The room is empty or the computers are not configured correctly. Please select another room.' ) );
-						}
-						return;
-					}
-					this._currentRoom = vals.room;
-					this._currentSchool = vals.school;
-
-					// reload the grid
-					this.queryRoom();
-
-					// update the header text containing the room
-					this._updateHeader(vals.room);
-					this._grid._updateFooterContent();
-
+					return this._acquireRoom(vals.school, vals.room);
+				})).then(function() {
 					// destroy the dialog
+					okButton.set('disabled', false);
 					_cleanup();
-				}), function() {
+				}, function() {
 					// catch error that has been thrown to cancel chain
 					okButton.set('disabled', false);
 				});
@@ -786,8 +796,10 @@ define([
 		},
 
 		_updateRoom: function() {
-			this.umcpCommand( 'computerroom/update' ).then( lang.hitch( this, function( response ) {
+			this.umcpCommand( 'computerroom/update', {}, false ).then( lang.hitch( this, function( response ) {
 				var demo = false, demo_server = null, demo_user = null, demo_systems = 0;
+
+				this._nUpdateFailures = 0; // update was successful
 
 				if (response.result.locked) {
 					// somebody stole our session...
@@ -868,6 +880,26 @@ define([
 					systems: demo_systems
 				};
 
+			} ), dojo.hitch(this, function(err) {
+				// error case, update went wrong, try to reinitiate the computer room (see Bug #27202)
+				console.warn('WARN: the command "computerroom/update" failed:', err);
+				this._nUpdateFailures++;
+				if (this._nUpdateFailures < 5 && this._currentSchool && this._currentRoom) {
+					// try several times to reconnect and then give up
+					this._acquireRoom(this._currentSchool, this._currentRoom, false).then(function() {
+						// success :) .... nothing needs to be done as _acquireRoom() takes care of anything
+					}, dojo.hitch(this, function() {
+						// failure :( ... try again after some idle time
+						this._updateTimer = window.setTimeout( dojo.hitch( this, '_updateRoom', {} ), 1000 * this._nUpdateFailures );
+					}));
+				} else {
+					// fall back, automatic reinitialization failed, show initial dialog to choose a room
+					this._nUpdateFailures = 0;
+					this._currentSchool = null;
+					this._currentRoom = null;
+					this.changeRoom();
+					umc.dialog.alert(this._('Lost the connection to the computer room. Please try to reopen the computer room.'));
+				}
 			} ) );
 		}
 	});

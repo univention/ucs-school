@@ -1,3 +1,9 @@
+ucs-school-umc-computerroom (2.0.1-1) unstable; urgency=low
+
+  * Retry connecting to computer room 5 times if failing (Bug #27202)
+
+ -- Dirk Wiesenthal <wiesenthal@univention.de>  Fri, 18 Jan 2013 16:11:42 +0100
+
 ucs-school-umc-computerroom (2.0.0-1) unstable; urgency=low
 
   * Version bump (Bug #27246)

@@ -38,7 +38,6 @@ import signal
 import subprocess
 import fcntl
 from random import Random
-import subprocess
 import urlparse
 
 from univention.management.console.config import ucr
@@ -47,23 +46,22 @@ from univention.config_registry import handler_set, handler_unset
 from univention.lib.i18n import Translation
 import univention.lib.atjobs as atjobs
 
-from univention.management.console.modules import UMC_OptionTypeError, UMC_CommandError, Base
+from univention.management.console.modules import UMC_OptionTypeError, UMC_CommandError
 from univention.management.console.log import MODULE
-from univention.management.console.protocol import MIMETYPE_PNG, MIMETYPE_JPEG, Response
+from univention.management.console.protocol import MIMETYPE_JPEG, Response
 
 import univention.admin.modules as udm_modules
 import univention.admin.uexceptions as udm_exceptions
 
 from univention.uldap import explodeDn
 
-from ucsschool.lib.schoolldap import LDAP_Connection, LDAP_ConnectionError, set_credentials, SchoolSearchBase, SchoolBaseModule, LDAP_Filter, Display
+from ucsschool.lib.schoolldap import LDAP_Connection, SchoolBaseModule, Display
 from ucsschool.lib.schoollessons import SchoolLessons
 from ucsschool.lib.smbstatus import SMB_Status
 import ucsschool.lib.internetrules as internetrules
 
 from italc2 import ITALC_Manager, ITALC_Error
 
-import notifier
 from notifier.nf_qt import _exit
 
 _ = Translation( 'ucs-school-umc-computerroom' ).translate
@@ -88,7 +86,7 @@ def _getRoomOwner(roomDN):
 			f = open(roomFile)
 			result = f.readline().strip()
 			f.close()
-		except (OSError, IOError) as e:
+		except (OSError, IOError):
 			MODULE.warn( 'Failed to acquire room lock file: %s' % roomFile )
 	return result
 
@@ -101,7 +99,7 @@ def _setRoomOwner(roomDN, userDN):
 		fd = open(_getRoomFile(roomDN), 'w')
 		fcntl.lockf(fd, fcntl.LOCK_EX)
 		fd.write(userDN)
-	except (OSError, IOError) as e:
+	except (OSError, IOError):
 		MODULE.warn( 'Failed to write file: %s' % _getRoomFile(roomDN) )
 	finally:
 		# make sure that the file is unlocked
@@ -112,12 +110,11 @@ def _setRoomOwner(roomDN, userDN):
 def _freeRoom(roomDN, userDN):
 	'''Remove the lock file if the room is locked by the given user'''
 	roomFile = _getRoomFile(roomDN)
-	result = None
 	MODULE.warn( 'lockDN: %s, userDN: %s' % ( _getRoomOwner( roomDN ), userDN ) )
 	if _getRoomOwner( roomDN ) == userDN:
 		try:
 			os.unlink(roomFile)
-		except (OSError, IOError) as e:
+		except (OSError, IOError):
 			MODULE.warn( 'Failed to remove room lock file: %s' % roomFile )
 
 class Instance( SchoolBaseModule ):
@@ -171,7 +168,7 @@ class Instance( SchoolBaseModule ):
 		if self._italc.room != request.options[ 'room' ]:
 			try:
 				self._italc.room = request.options[ 'room' ]
-			except ITALC_Error, e:
+			except ITALC_Error:
 				success = False
 				message = 'EMPTY_ROOM'
 
@@ -332,8 +329,6 @@ class Instance( SchoolBaseModule ):
 		self._checkRoomAccess()
 
 		self.required_options( request, 'computer', 'device', 'lock' )
-		success = False
-		message = ''
 		device = request.options[ 'device' ]
 		if not device in ( 'screen', 'input' ):
 			raise UMC_OptionTypeError( 'unknown device %s' % device )
