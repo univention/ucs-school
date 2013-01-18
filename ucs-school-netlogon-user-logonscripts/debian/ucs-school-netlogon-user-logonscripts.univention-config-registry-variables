@@ -1,5 +1,5 @@
 [ucsschool/userlogon/commonshares]
-Description[de]=Komma separierte Liste von Netzwerkfreigaben, die für alle Benutzer eingebunden werden (nach Änderungen muss das Listener Modul ucs-school-user-logonscript neu initialisiert werden: univention-directory-listener-ctrl resync ucs-school-user-logonscript)
+Description[de]=Komma separierte Liste von Netzwerkfreigaben, die für alle Benutzer eingebunden werden (nach Änderungen muss das Listener-Modul ucs-school-user-logonscript neu initialisiert werden: univention-directory-listener-ctrl resync ucs-school-user-logonscript)
 Description[en]=Comma-separated list of network shares that are included for all users (after changes the listener module must be reinitialized: univention-directory-listener-ctrl resync ucs-school-user-logonscript)
 Type=str
 Categories=ucsschool-netlogon
@@ -13,6 +13,12 @@ Categories=ucsschool-netlogon
 [ucsschool/userlogon/commonshares/letter/.*]
 Description[de]=Definiert den Laufwerksbuchstaben der Netzwerkfreigabe
 Description[en]=Defines the drive letter of the network share
+Type=str
+Categories=ucsschool-netlogon
+
+[ucsschool/userlogon/netlogon/path]
+Description[de]=Definiert das Verzeichnis, in dem die Netlogon-Skripte durch das Listener-Modul ucs-school-user-logonscript erstellt werden (Standard: nicht gesetzt)
+Description[de]=Defines the directory in which the netlogon scripts will be created by the listener module ucs-school-user-logonscript (default: not defined)
 Type=str
 Categories=ucsschool-netlogon
 

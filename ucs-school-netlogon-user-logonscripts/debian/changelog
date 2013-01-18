@@ -1,3 +1,10 @@
+ucs-school-netlogon-user-logonscripts (8.0.1-1) unstable; urgency=low
+
+  * added UCR variables for configuring output directory for netlogon
+    scripts (Bug #28205)
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Wed, 16 Jan 2013 17:12:56 +0100
+
 ucs-school-netlogon-user-logonscripts (8.0.0-2) unstable; urgency=low
 
   * Fix dependencies (Bug #29814)

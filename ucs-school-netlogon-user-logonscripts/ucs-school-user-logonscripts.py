@@ -56,8 +56,15 @@ def getScriptPath():
 	if scriptpath:
 		return
 
-	scriptpath.append("/var/lib/samba/netlogon/user")
-	scriptpath.append("/var/lib/samba/sysvol/%s/scripts/user" % listener.configRegistry.get('kerberos/realm', '').lower())
+	ucsschool_netlogon_path = listener.configRegistry.get('ucsschool/userlogon/netlogon/path', '').strip().rstrip('/')
+	samba_netlogon_path = listener.configRegistry.get('samba/share/netlogon/path', '').strip().rstrip('/')
+	if ucsschool_netlogon_path:
+		scriptpath.append(ucsschool_netlogon_path)
+	elif samba_netlogon_path:
+		scriptpath.append(samba_netlogon_path)
+	else:
+		scriptpath.append("/var/lib/samba/netlogon/user")
+		scriptpath.append("/var/lib/samba/sysvol/%s/scripts/user" % listener.configRegistry.get('kerberos/realm', '').lower())
 
 	for path in scriptpath:
 			listener.setuid(0)
