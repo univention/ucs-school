@@ -35,7 +35,7 @@ from univention.management.console.config import ucr
 import univention.config_registry
 
 from univention.lib.i18n import Translation
-from univention.management.console.modules import UMC_OptionTypeError, Base
+from univention.management.console.modules import UMC_OptionTypeError, UMC_CommandError, Base
 from univention.management.console.log import MODULE
 from univention.management.console.protocol.definitions import *
 
@@ -402,8 +402,11 @@ class Instance( SchoolBaseModule ):
 				# remove the rule
 				rmRules.append(igrp['name'])
 			else:
-				# make sure the rule name is valid
-				self._parseRule(dict(name=irule))
+				try:
+					# make sure the rule name is valid
+					self._parseRule(dict(name=irule))
+				except ValueError as e:
+					raise UMC_CommandError(str(e))
 
 				# add new rule
 				newRules[igrp['name']] = irule

@@ -1,3 +1,9 @@
+ucs-school-umc-internetrules (8.0.6-1) unstable; urgency=low
+
+  * catch ValueError when assigning rules to group with invalid names; Bug #29948
+
+ -- Florian Best <best@univention.de>  Mon, 21 Jan 2013 10:50:51 +0100
+
 ucs-school-umc-internetrules (8.0.5-1) unstable; urgency=low
 
   * fix initial search query on admin page; Bug #27726
