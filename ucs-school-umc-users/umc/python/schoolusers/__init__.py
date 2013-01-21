@@ -48,6 +48,15 @@ import notifier.popen
 
 _ = Translation( 'ucs-school-umc-schoolusers' ).translate
 
+## FIXME: remove in UCS@school 3.2, replace by str(e): Bug #27940, 30089, 30088
+def get_exception_msg(e):
+	msg = getattr(e, 'message', '')
+	if e.args:
+		if e.args[0] != msg or len(e.args) != 1:
+			for arg in e.args:
+				msg += ' %s' % (arg)
+	return msg
+
 class Instance( SchoolBaseModule ):
 	@LDAP_Connection()
 	def query( self, request, ldap_user_read = None, ldap_position = None, search_base = None ):
@@ -99,7 +108,7 @@ class Instance( SchoolBaseModule ):
 			MODULE.process( '_reset_passwords: dn=%s' % ur.dn )
 			MODULE.process( '_reset_passwords: exception=%s' % str( e.__class__ ) )
 			MODULE.process( '_reset_passwords: exception=%s' % str( e.message ) )
-			return '%s' % (e.message or '\n'.join(e))
+			return '%s' % (get_exception_msg(e))
 
 	@LDAP_Connection( USER_READ, USER_WRITE )
 	def password_reset( self, request, ldap_user_read = None, ldap_user_write = None, ldap_position = None, search_base = None ):
