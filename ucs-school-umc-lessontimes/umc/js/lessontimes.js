@@ -67,6 +67,7 @@ define([
 				subtypes: [{
 					type: TextBox,
 					name: 'description',
+					size: 'TwoThirds', // resize the description a little bit because of Bug #29789, this can be removed in UCS 3.1-1
 					label: _('Description')
 				}, {
 					type: TimeBox,

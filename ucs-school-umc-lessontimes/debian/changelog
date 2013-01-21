@@ -1,3 +1,9 @@
+ucs-school-umc-lessontimes (1.0.1-1) unstable; urgency=low
+
+  * resize description textbox a little bit; Bug #29789
+
+ -- Florian Best <best@univention.de>  Mon, 21 Jan 2013 15:56:57 +0100
+
 ucs-school-umc-lessontimes (1.0.0-2) unstable; urgency=low
 
   * fix indentation; Bug #29776
