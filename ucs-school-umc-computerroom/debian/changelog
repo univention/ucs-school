@@ -1,3 +1,9 @@
+ucs-school-umc-computerroom (2.0.3-1) unstable; urgency=low
+
+  * fixed two little typos; Bug #27246
+
+ -- Florian Best <best@univention.de>  Tue, 22 Jan 2013 16:16:46 +0100
+
 ucs-school-umc-computerroom (2.0.2-1) unstable; urgency=low
 
   * Update reconnection code to Dojo 1.8 (Bug #27202)

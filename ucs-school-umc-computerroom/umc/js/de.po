@@ -113,7 +113,7 @@ msgstr ""
 
 #: umc/js/computerroom/SettingsDialog.js:99
 msgid "Home directory only"
-msgstr "Auschließlich das Heimatverzeichnis"
+msgstr "Ausschließlich das Heimatverzeichnis"
 
 #: umc/js/computerroom.js:437
 msgid "IP address"
@@ -323,7 +323,7 @@ msgid ""
 "presentation server is started a columns presentation is shown that contains "
 "a button 'stop' to end the presentation."
 msgstr ""
-"Die Präsentation wird startet. Dies kann einen Moment dauern. Wenn der "
+"Die Präsentation wird gestartet. Dies kann einen Moment dauern. Wenn der "
 "Präsentationsserver gestartet ist wird eine Spalte Präsentation angezeigt, "
 "die eine Schaltfläche 'Beenden' enthält um die Präsentation zu stoppen."
 
