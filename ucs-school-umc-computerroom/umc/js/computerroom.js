@@ -630,9 +630,9 @@ define([
 					if (promptAlert) {
 						// prompt a message if wanted
 						if ( response.result.message == 'ALREADY_LOCKED' ) {
-							dialog.alert(this._('Failed to open a new session for the room.'));
+							dialog.alert(_('Failed to open a new session for the room.'));
 						} else if ( response.result.message == 'EMPTY_ROOM' ) {
-							dialog.alert( this._( 'The room is empty or the computers are not configured correctly. Please select another room.' ) );
+							dialog.alert( _( 'The room is empty or the computers are not configured correctly. Please select another room.' ) );
 						}
 					}
 					throw new Error('Could not acquire room');
@@ -880,7 +880,7 @@ define([
 					systems: demo_systems
 				};
 
-			} ), dojo.hitch(this, function(err) {
+			} ), lang.hitch(this, function(err) {
 				// error case, update went wrong, try to reinitiate the computer room (see Bug #27202)
 				console.warn('WARN: the command "computerroom/update" failed:', err);
 				this._nUpdateFailures++;
@@ -888,9 +888,9 @@ define([
 					// try several times to reconnect and then give up
 					this._acquireRoom(this._currentSchool, this._currentRoom, false).then(function() {
 						// success :) .... nothing needs to be done as _acquireRoom() takes care of anything
-					}, dojo.hitch(this, function() {
+					}, lang.hitch(this, function() {
 						// failure :( ... try again after some idle time
-						this._updateTimer = window.setTimeout( dojo.hitch( this, '_updateRoom', {} ), 1000 * this._nUpdateFailures );
+						this._updateTimer = window.setTimeout( lang.hitch( this, '_updateRoom', {} ), 1000 * this._nUpdateFailures );
 					}));
 				} else {
 					// fall back, automatic reinitialization failed, show initial dialog to choose a room
@@ -898,7 +898,7 @@ define([
 					this._currentSchool = null;
 					this._currentRoom = null;
 					this.changeRoom();
-					umc.dialog.alert(this._('Lost the connection to the computer room. Please try to reopen the computer room.'));
+					dialog.alert(_('Lost the connection to the computer room. Please try to reopen the computer room.'));
 				}
 			} ) );
 		}

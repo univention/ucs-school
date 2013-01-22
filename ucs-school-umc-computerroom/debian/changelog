@@ -1,3 +1,9 @@
+ucs-school-umc-computerroom (2.0.2-1) unstable; urgency=low
+
+  * Update reconnection code to Dojo 1.8 (Bug #27202)
+
+ -- Dirk Wiesenthal <wiesenthal@univention.de>  Tue, 22 Jan 2013 10:26:05 +0100
+
 ucs-school-umc-computerroom (2.0.1-1) unstable; urgency=low
 
   * Retry connecting to computer room 5 times if failing (Bug #27202)
