@@ -1,0 +1,74 @@
+#!/bin/bash
+#
+# Univention Samba4 Slave PDC helper
+#  join script
+#
+# Copyright 2013 Univention GmbH
+#
+# http://www.univention.de/
+#
+# All rights reserved.
+#
+# The source code of this program is made available
+# under the terms of the GNU Affero General Public License version 3
+# (GNU AGPL V3) as published by the Free Software Foundation.
+#
+# Binary versions of this program provided by Univention to you as
+# well as other copyrighted, protected or trademarked materials like
+# Logos, graphics, fonts, specific documentations and configurations,
+# cryptographic keys etc. are subject to a license agreement between
+# you and Univention and not subject to the GNU AGPL V3.
+#
+# In the case you use this program under the terms of the GNU AGPL V3,
+# the program is provided in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public
+# License with the Debian GNU/Linux or Univention distribution in file
+# /usr/share/common-licenses/AGPL-3; if not, see
+# <http://www.gnu.org/licenses/>.
+
+VERSION=1
+. /usr/share/univention-join/joinscripthelper.lib
+joinscript_init
+
+. /usr/share/univention-lib/all.sh
+. /usr/share/univention-samba4/lib/all.sh
+
+eval "$(univention-config-registry shell)"
+
+# This join script is a Workaround for Bug #30105: 
+# Create dns-<hostname> before univention_samaccountname_ldap_check
+# is registered by 97libunivention-ldb-modules.inst.
+# This code was copied from UCS 3.1-0 98univention-samba4-dns.inst
+
+# samba4 allowed on this system?
+if is_ucr_true samba4/disabled; then
+	echo "WARNING: samba4 on this system is not allowed."
+	echo "         The samba4 join stops here. To rerun the"
+	echo "         join script, use "
+	echo "         -> univention-run-join-scripts"
+	exit 0
+fi
+
+## Check if Samba 4 setup is done
+LDB_URI="tdb:///var/lib/samba/private/sam.ldb"
+domaindn="DC=${kerberos_realm//./,DC=}"	# that's what /usr/share/pyshared/samba/provision.py uses
+if ! ldbsearch -H "$LDB_URI" -b $domaindn -s base dn 2>/dev/null| grep -qi ^"dn: $domaindn"; then
+	echo "Samba4 backend database not available yet, exiting joinscript 98univention-samba4-dns."
+	exit 1
+fi
+
+if [ "$samba4_role" != "RODC" ]; then
+	univention_samba4_wait_for_rid_set	## Replication of local RID Pool required for SAM account creation
+	/usr/share/univention-samba4/scripts/create_spn_account.sh \
+		--samaccountname "dns-$hostname" \
+		--serviceprincipalname "DNS/$hostname.$domainname" \
+		--privatekeytab dns.keytab
+fi
+
+joinscript_save_current_version
+
+exit 0

@@ -1,3 +1,11 @@
+univention-ldb-modules (1.0.1-1) unstable; urgency=low
+
+  * Add 96univention-samba4-slavepdc.inst as workaround for Bug #30105:
+    Create dns-<hostname> before univention_samaccountname_ldap_check
+    is registered by 97libunivention-ldb-modules.inst.
+
+ -- Arvid Requate <requate@univention.de>  Tue, 22 Jan 2013 17:23:28 +0100
+
 univention-ldb-modules (1.0.0-1) unstable; urgency=low
 
   * real Version Bump (Bug #29840)
