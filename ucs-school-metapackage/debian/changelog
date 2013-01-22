@@ -1,3 +1,12 @@
+ucs-school-metapackage (5.0.1-1) unstable; urgency=low
+
+  * Set dns/register/srv_records/gc, dns/register/srv_records/pdc and
+    samba4/dns/domain/register to false on a school slave. This prevents
+    the SRV register for GC and PDC records and the A record register at
+    the forward zone (Bug #28754)
+
+ -- Stefan Gohmann <gohmann@univention.de>  Tue, 22 Jan 2013 08:48:37 +0100
+
 ucs-school-metapackage (5.0.0-2) unstable; urgency=low
 
   * Fix dependencies (Bug #29814)

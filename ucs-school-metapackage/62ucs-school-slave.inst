@@ -85,7 +85,10 @@ if [ $JS_LAST_EXECUTED_VERSION -lt 3 ]; then
 	# In UCS@school a DC slave should not register himself to the DNS
 	# SRV records.
 	univention-config-registry set	dns/register/srv_records/kerberos?false \
-									dns/register/srv_records/ldap?false
+									dns/register/srv_records/ldap?false \
+									dns/register/srv_records/gc?false \
+									dns/register/srv_records/pdc?false \
+									samba4/dns/domain/register?false
 	
 	ucr set connector/s4/mapping/dns/srv_record/_ldap._tcp.$domainname/location?"100 0 389 $hostname.$domainname." \
 			connector/s4/mapping/dns/srv_record/_ldap._tcp.pdc._msdcs.$domainname/location?"100 0 389 $hostname.$domainname." \
@@ -122,6 +125,15 @@ if [ $JS_LAST_EXECUTED_VERSION -lt 3 ]; then
 		/usr/share/univention-directory-manager-tools/univention-dnsedit "$@" --ignore-exists "$domainname" remove srv ldap "tcp.dc._msdcs" 0 100 389 "$hostname.$domainname."
 	fi
 
+fi
+
+if [ $JS_LAST_EXECUTED_VERSION -lt 4 ]; then
+	# In UCS@school a DC slave should not register himself to the DNS SRV records.
+	univention-config-registry set	dns/register/srv_records/kerberos?false \
+									dns/register/srv_records/ldap?false \
+									dns/register/srv_records/gc?false \
+									dns/register/srv_records/pdc?false \
+									samba4/dns/domain/register?false
 fi
 
 ignore_user ()
