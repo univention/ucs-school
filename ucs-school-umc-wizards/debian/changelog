@@ -1,3 +1,9 @@
+ucs-school-umc-wizards (2.0.6-1) unstable; urgency=low
+
+  * UserWizard: Check if PasswordInputBox is valid; Bug #30091
+
+ -- Jascha Geerds <geerds@univention.de>  Tue, 22 Jan 2013 17:02:42 +0100
+
 ucs-school-umc-wizards (2.0.5-1) unstable; urgency=low
 
   * Teachers are no longer added to a class automatically

@@ -114,7 +114,20 @@ define([
 				}, {
 					type: PasswordInputBox,
 					name: 'password',
-					label: _('Password')
+					label: _('Password'),
+					focus: lang.hitch(this, function() {
+						// just a workaround for Bug #30110
+						var widget = this.getWidget('user', 'password');
+						if (! widget._firstWidget.get('value')) {
+							widget._firstWidget.focus();
+						} else {
+							widget._secondWidget.focus();
+						}
+					}),
+					validate: lang.hitch(this, function() {
+						// ...and another one for Bug #30109
+						return this.getWidget('user', 'password').isValid();
+					})
 				}],
 				layout: [['firstname', 'lastname'],
 			         	 ['username'],
