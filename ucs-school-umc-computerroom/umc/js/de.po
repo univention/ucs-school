@@ -25,11 +25,11 @@ msgstr "<b>Hinweis:</b> Der Computerraum wird momentan verwendet von %s."
 msgid ""
 "<p>In this text box you can list web sites that are allowed to be used by "
 "the students. Each line should contain one web site. Example: </p><p style="
-"\"font-family: monospace\">univention.com</br>wikipedia.org</br></p>"
+"\"font-family: monospace\">univention.com<br/>wikipedia.org<br/></p>"
 msgstr ""
-"<p>In diesem Textfeld können die Webseiten eingetragen, die von den Schülern "
+"<p>In diesem Textfeld können die Webseiten eingetragen werden, die von den Schülern "
 "besucht werden dürfen. Pro Zeile ist eine Webseite einzutragen. Beispiel: </"
-"p><p style=\"font-family: monospace\">univention.de</br>wikipedia.org</br></"
+"p><p style=\"font-family: monospace\">univention.de<br/>wikipedia.org<br/></"
 "p>"
 
 #: umc/js/computerroom.js:143
@@ -103,7 +103,7 @@ msgstr "Drucken möglich"
 
 #: umc/js/computerroom.js:368
 msgid ""
-"Here you can watch the student's computers, locking the computers, show "
+"Here you can watch the students computers, lock the computers, show "
 "presentations, control the internet access and define the available printers "
 "and shares."
 msgstr ""
@@ -275,7 +275,7 @@ msgstr "Status"
 
 #: umc/js/computerroom.js:601
 msgid "Stop"
-msgstr "Stop"
+msgstr "Stopp"
 
 #: umc/js/computerroom.js:581
 msgid "Stop presentation"
@@ -294,11 +294,11 @@ msgid "The computer is not running"
 msgstr "Der Computer läuft aktuell nicht"
 
 #: umc/js/computerroom.js:426
-msgid "The computer is participating in a  presentation currently"
+msgid "The computer is currently participating in a presentation"
 msgstr "Der Computer nimmt momentan an einer Präsentation teil"
 
 #: umc/js/computerroom.js:423
-msgid "The computer is showing a presentation currently"
+msgid "The computer is currently showing a presentation"
 msgstr "Der Computer zeigt momentan eine Präsentation"
 
 #: umc/js/computerroom.js:417
@@ -320,7 +320,7 @@ msgstr ""
 #: umc/js/computerroom.js:288
 msgid ""
 "The presentation is starting. This may take a few moments. When the "
-"presentation server is started a columns presentation is shown that contains "
+"presentation server is started a column presentation is shown that contains "
 "a button 'stop' to end the presentation."
 msgstr ""
 "Die Präsentation wird gestartet. Dies kann einen Moment dauern. Wenn der "

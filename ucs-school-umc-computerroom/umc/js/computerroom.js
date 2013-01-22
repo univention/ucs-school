@@ -285,7 +285,7 @@ define([
 				},
 				callback: lang.hitch( this, function( ids, items ) {
 					this.umcpCommand( 'computerroom/demo/start', { server: items[ 0 ].id[ 0 ] } );
-					dialog.alert( _( "The presentation is starting. This may take a few moments. When the presentation server is started a columns presentation is shown that contains a button 'stop' to end the presentation." ), _( 'Presentation' ) );
+					dialog.alert( _( "The presentation is starting. This may take a few moments. When the presentation server is started a column presentation is shown that contains a button 'stop' to end the presentation." ), _( 'Presentation' ) );
 				} )
 			}, {
 				name: 'reconnect',
@@ -365,7 +365,7 @@ define([
 			// render the search page
 			this._searchPage = new Page({
 				headerText: this.description,
-				helpText: _( "Here you can watch the student's computers, locking the computers, show presentations, control the internet access and define the available printers and shares." )
+				helpText: _( "Here you can watch the students computers, lock the computers, show presentations, control the internet access and define the available printers and shares." )
 			});
 
 			// umc.widgets.Module is also a StackContainer instance that can hold
@@ -420,10 +420,10 @@ define([
 					}
 					if ( item.DemoServer[ 0 ] === true ) {
 						icon = 'demo-server';
-						label = _( 'The computer is showing a presentation currently' );
+						label = _( 'The computer is currently showing a presentation' );
 					} else if ( item.DemoClient[ 0 ] === true ) {
 						icon = 'demo-client';
-						label = _( 'The computer is participating in a  presentation currently' );
+						label = _( 'The computer is currently participating in a presentation' );
 					}
 					var widget = new Text({});
 					widget.set( 'content', lang.replace( '<img src="{path}/16x16/computerroom-{icon}.png" height="16" width="16" style="float:left; margin-right: 5px" /> {value}', {
