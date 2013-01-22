@@ -454,11 +454,18 @@ class SchoolBaseModule( Base ):
 	@LDAP_Connection()
 	def schools( self, request, ldap_user_read = None, ldap_position = None, search_base = None ):
 		"""Returns a list of all available school"""
-		msg = ''
+		# enforce an update of the list of available schools
+		global _search_base
 		_init_search_base(ldap_user_read, force = True)
+		search_base = _search_base  # copy updated, global SchoolSearchBase instance to local reference
+
+		# make sure that at least one school OU
+		msg = ''
 		if not search_base.availableSchools[0]:
 			request.status = MODULE_ERR
 			msg = _('Could not find any school. You have to create a school before continuing. Use the \'Add school\' UMC module to create one.')
+
+		# return list of school OUs
 		self.finished(request.id, search_base.availableSchools, msg)
 
 	def _groups( self, ldap_connection, school, ldap_base ):
