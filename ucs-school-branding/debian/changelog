@@ -1,3 +1,9 @@
+ucs-school-branding (2.0.3-1) unstable; urgency=low
+
+  * rename diversion suffix to .ucs instead of .ucsschool; Bug #28784
+
+ -- Florian Best <best@univention.de>  Tue, 22 Jan 2013 11:27:24 +0100
+
 ucs-school-branding (2.0.2-1) unstable; urgency=low
 
   * fix for diversions when removing package; Bug #28784
