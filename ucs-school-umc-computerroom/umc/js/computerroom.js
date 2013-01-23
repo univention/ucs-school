@@ -285,7 +285,7 @@ define([
 				},
 				callback: lang.hitch( this, function( ids, items ) {
 					this.umcpCommand( 'computerroom/demo/start', { server: items[ 0 ].id[ 0 ] } );
-					dialog.alert( _( "The presentation is starting. This may take a few moments. When the presentation server is started a column presentation is shown that contains a button 'stop' to end the presentation." ), _( 'Presentation' ) );
+					dialog.alert( _( "The presentation is starting. This may take a few moments. When the presentation server is started a column presentation is shown that contains a button 'Stop' to end the presentation." ), _( 'Presentation' ) );
 				} )
 			}, {
 				name: 'reconnect',

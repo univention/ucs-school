@@ -275,7 +275,7 @@ msgstr "Status"
 
 #: umc/js/computerroom.js:601
 msgid "Stop"
-msgstr "Stopp"
+msgstr "Beenden"
 
 #: umc/js/computerroom.js:581
 msgid "Stop presentation"
@@ -321,7 +321,7 @@ msgstr ""
 msgid ""
 "The presentation is starting. This may take a few moments. When the "
 "presentation server is started a column presentation is shown that contains "
-"a button 'stop' to end the presentation."
+"a button 'Stop' to end the presentation."
 msgstr ""
 "Die Präsentation wird gestartet. Dies kann einen Moment dauern. Wenn der "
 "Präsentationsserver gestartet ist wird eine Spalte Präsentation angezeigt, "
