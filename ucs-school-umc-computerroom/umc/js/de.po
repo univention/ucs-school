@@ -103,7 +103,7 @@ msgstr "Drucken möglich"
 
 #: umc/js/computerroom.js:368
 msgid ""
-"Here you can watch the students computers, lock the computers, show "
+"Here you can watch the students' computers, lock the computers, show "
 "presentations, control the internet access and define the available printers "
 "and shares."
 msgstr ""

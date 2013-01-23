@@ -365,7 +365,7 @@ define([
 			// render the search page
 			this._searchPage = new Page({
 				headerText: this.description,
-				helpText: _( "Here you can watch the students computers, lock the computers, show presentations, control the internet access and define the available printers and shares." )
+				helpText: _( "Here you can watch the students' computers, lock the computers, show presentations, control the internet access and define the available printers and shares." )
 			});
 
 			// umc.widgets.Module is also a StackContainer instance that can hold
