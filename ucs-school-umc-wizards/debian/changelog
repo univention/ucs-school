@@ -1,3 +1,10 @@
+ucs-school-umc-wizards (2.0.8-1) unstable; urgency=low
+
+  * When creating a user object without a class, this no longer creates a new
+    class with a "corrupt" name (Bug #27954)
+
+ -- Jascha Geerds <geerds@univention.de>  Wed, 23 Jan 2013 13:56:50 +0100
+
 ucs-school-umc-wizards (2.0.7-1) unstable; urgency=low
 
   * update Copyright; Bug #30123
