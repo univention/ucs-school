@@ -1,9 +1,9 @@
-#!/bin/sh
+#!/bin/bash
 #
-# UCS@School
-#  postinst script
+# Univention Samba4 Slave PDC helper
+#  join script
 #
-# Copyright 2006-2012 Univention GmbH
+# Copyright 2013 Univention GmbH
 #
 # http://www.univention.de/
 #
@@ -30,26 +30,17 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-#DEBHELPER#
+VERSION=1
+. /usr/share/univention-join/joinscripthelper.lib
+joinscript_init
 
 . /usr/share/univention-lib/all.sh
+. /usr/share/univention-samba4/lib/all.sh
 
-case "$1" in
-	configure)
-		:
-		;;
-	abort-upgrade|abort-remove|abort-deconfigure)
-		:
-		;;
-	*)
-		echo "postinst called with unknown argument \`$1'" >&2
-		exit 1
-		;;
-esac
+eval "$(univention-config-registry shell)"
 
-call_joinscript 96univention-samba4-slavepdc.inst
-call_joinscript 97libunivention-ldb-modules.inst
-call_joinscript 98univention-samba4-dns-slavepdc.inst
+samba_dnsupdate || die
+
+joinscript_save_current_version
 
 exit 0
-

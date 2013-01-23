@@ -3,3 +3,4 @@ usr/lib/ldb/modules/ldb/univention_ldb_log.so
 register_ldb_module.py usr/share/univention-samba4/scripts
 97libunivention-ldb-modules.inst usr/lib/univention-install
 96univention-samba4-slavepdc.inst usr/lib/univention-install
+98univention-samba4-dns-slavepdc.inst usr/lib/univention-install
