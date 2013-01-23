@@ -1,3 +1,10 @@
+ucs-school-metapackage (5.0.2-1) unstable; urgency=low
+
+  * Overriding the SRV records on a UCS@school master has been removed
+    (Bug #28754)
+
+ -- Stefan Gohmann <gohmann@univention.de>  Wed, 23 Jan 2013 10:36:30 +0100
+
 ucs-school-metapackage (5.0.1-1) unstable; urgency=low
 
   * Set dns/register/srv_records/gc, dns/register/srv_records/pdc and
