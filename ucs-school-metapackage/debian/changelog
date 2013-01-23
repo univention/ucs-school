@@ -1,3 +1,9 @@
+ucs-school-metapackage (5.0.3-1) unstable; urgency=low
+
+  * update Copyright; Bug #30123
+
+ -- Florian Best <best@univention.de>  Wed, 23 Jan 2013 13:43:37 +0100
+
 ucs-school-metapackage (5.0.2-1) unstable; urgency=low
 
   * Overriding the SRV records on a UCS@school master has been removed

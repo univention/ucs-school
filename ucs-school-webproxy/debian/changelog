@@ -1,3 +1,9 @@
+ucs-school-webproxy (9.0.2-1) unstable; urgency=low
+
+  * update Copyright; Bug #30123
+
+ -- Florian Best <best@univention.de>  Wed, 23 Jan 2013 13:38:12 +0100
+
 ucs-school-webproxy (9.0.1-1) unstable; urgency=low
 
   * Fix assigning of internet rules which failed when moving configuration

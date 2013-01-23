@@ -1,3 +1,9 @@
+ucs-school-umc-computerroom (2.0.5-1) unstable; urgency=low
+
+  * update Copyright; Bug #30123
+
+ -- Florian Best <best@univention.de>  Wed, 23 Jan 2013 13:38:09 +0100
+
 ucs-school-umc-computerroom (2.0.4-1) unstable; urgency=low
 
   * fix more typos; Bug #27246

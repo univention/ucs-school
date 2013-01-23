@@ -1,3 +1,9 @@
+ucs-school-umc-printermoderation (8.0.2-1) unstable; urgency=low
+
+  * update Copyright; Bug #30123
+
+ -- Florian Best <best@univention.de>  Wed, 23 Jan 2013 13:38:11 +0100
+
 ucs-school-umc-printermoderation (8.0.1-1) unstable; urgency=low
 
   * fix i18n property; Bug #29776

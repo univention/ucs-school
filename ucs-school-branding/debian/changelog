@@ -1,3 +1,9 @@
+ucs-school-branding (2.0.4-1) unstable; urgency=low
+
+  * update Copyright; Bug #30123
+
+ -- Florian Best <best@univention.de>  Wed, 23 Jan 2013 13:38:03 +0100
+
 ucs-school-branding (2.0.3-1) unstable; urgency=low
 
   * rename diversion suffix to .ucs instead of .ucsschool; Bug #28784

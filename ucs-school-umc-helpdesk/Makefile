@@ -2,7 +2,7 @@
 #
 # UCS@School
 #
-# Copyright 2008-2012 Univention GmbH
+# Copyright 2008-2013 Univention GmbH
 #
 # http://www.univention.de/
 #

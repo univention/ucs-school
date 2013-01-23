@@ -1,3 +1,9 @@
+ucs-school-old-homedirs (8.0.1-1) unstable; urgency=low
+
+  * update Copyright; Bug #30123
+
+ -- Florian Best <best@univention.de>  Wed, 23 Jan 2013 13:38:07 +0100
+
 ucs-school-old-homedirs (8.0.0-1) unstable; urgency=low
 
   * Version bump (Bug #29814)

@@ -1,3 +1,9 @@
+ucs-school-lib (2.0.5-1) unstable; urgency=low
+
+  * update Copyright; Bug #30123
+
+ -- Florian Best <best@univention.de>  Wed, 23 Jan 2013 13:43:38 +0100
+
 ucs-school-lib (2.0.4-1) unstable; urgency=low
 
   * fixed caching problems for list of available ous; Bug #30046

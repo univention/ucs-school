@@ -1,3 +1,9 @@
+univention-ldb-modules (1.0.3-1) unstable; urgency=low
+
+  * update Copyright; Bug #30123
+
+ -- Florian Best <best@univention.de>  Wed, 23 Jan 2013 13:43:37 +0100
+
 univention-ldb-modules (1.0.2-2) unstable; urgency=low
 
   * Install the new joinscript (Bug #28754)

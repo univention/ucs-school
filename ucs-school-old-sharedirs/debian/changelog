@@ -1,3 +1,9 @@
+ucs-school-old-sharedirs (8.0.1-1) unstable; urgency=low
+
+  * update Copyright; Bug #30123
+
+ -- Florian Best <best@univention.de>  Wed, 23 Jan 2013 13:38:07 +0100
+
 ucs-school-old-sharedirs (8.0.0-2) unstable; urgency=low
 
   * Fix dependencies (Bug #29814)

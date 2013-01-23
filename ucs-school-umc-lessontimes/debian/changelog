@@ -1,3 +1,9 @@
+ucs-school-umc-lessontimes (1.0.2-1) unstable; urgency=low
+
+  * update Copyright; Bug #30123
+
+ -- Florian Best <best@univention.de>  Wed, 23 Jan 2013 13:38:10 +0100
+
 ucs-school-umc-lessontimes (1.0.1-1) unstable; urgency=low
 
   * resize description textbox a little bit; Bug #29789

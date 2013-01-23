@@ -1,3 +1,9 @@
+italc (2:2.0.10-1) unstable; urgency=low
+
+  * update Copyright; Bug #30123
+
+ -- Florian Best <best@univention.de>  Wed, 23 Jan 2013 13:38:03 +0100
+
 italc (2:2.0.9-2) unstable; urgency=low
 
   * Version bump (Bug #29829)

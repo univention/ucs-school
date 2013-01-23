@@ -1,3 +1,9 @@
+ucs-school-netlogon-user-logonscripts (8.0.3-1) unstable; urgency=low
+
+  * update Copyright; Bug #30123
+
+ -- Florian Best <best@univention.de>  Wed, 23 Jan 2013 13:38:06 +0100
+
 ucs-school-netlogon-user-logonscripts (8.0.2-1) unstable; urgency=low
 
   * renamed listener module file to match module's internal name 

@@ -1,3 +1,9 @@
+ucs-school-umc-internetrules (8.0.7-1) unstable; urgency=low
+
+  * update Copyright; Bug #30123
+
+ -- Florian Best <best@univention.de>  Wed, 23 Jan 2013 13:38:10 +0100
+
 ucs-school-umc-internetrules (8.0.6-1) unstable; urgency=low
 
   * catch ValueError when assigning rules to group with invalid names; Bug #29948
