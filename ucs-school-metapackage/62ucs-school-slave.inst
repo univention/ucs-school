@@ -90,23 +90,23 @@ if [ $JS_LAST_EXECUTED_VERSION -lt 3 ]; then
 									dns/register/srv_records/pdc?false \
 									samba4/dns/domain/register?false
 	
-	ucr set connector/s4/mapping/dns/srv_record/_ldap._tcp.$domainname/location?"100 0 389 $hostname.$domainname." \
-			connector/s4/mapping/dns/srv_record/_ldap._tcp.pdc._msdcs.$domainname/location?"100 0 389 $hostname.$domainname." \
-			connector/s4/mapping/dns/srv_record/_ldap._tcp.dc._msdcs.$domainname/location?"100 0 389 $hostname.$domainname." \
-			connector/s4/mapping/dns/srv_record/_ldap._tcp.gc._msdcs.$domainname/location?"100 0 3268 $hostname.$domainname." \
-			connector/s4/mapping/dns/srv_record/_gc._tcp.$domainname/location?"100 0 3268 $hostname.$domainname." \
-			connector/s4/mapping/dns/srv_record/_kerberos._tcp.$domainname/location?"100 0 88 $hostname.$domainname." \
-			connector/s4/mapping/dns/srv_record/_kerberos._udp.$domainname/location?"100 0 88 $hostname.$domainname." \
-			connector/s4/mapping/dns/srv_record/_kerberos-adm._tcp.$domainname/location?"100 0 88 $hostname.$domainname." \
-			connector/s4/mapping/dns/srv_record/_kerberos._tcp.dc._msdcs.$domainname/location?"100 0 88 $hostname.$domainname." \
-			connector/s4/mapping/dns/srv_record/_kpasswd._tcp.$domainname/location?"100 0 464 $hostname.$domainname." \
-			connector/s4/mapping/dns/srv_record/_kpasswd._udp.$domainname/location?"100 0 464 $hostname.$domainname." \
-			connector/s4/mapping/dns/srv_record/_kerberos._tcp.default-first-site-name._sites.dc._msdcs.$domainname/location?"100 0 88 $hostname.$domainname." \
-			connector/s4/mapping/dns/srv_record/_kerberos._tcp.default-first-site-name._sites.$domainname/location?"100 0 88 $hostname.$domainname." \
-			connector/s4/mapping/dns/srv_record/_ldap._tcp.default-first-site-name._sites.gc._msdcs.$domainname/location?"100 0 3268 $hostname.$domainname." \
-			connector/s4/mapping/dns/srv_record/_ldap._tcp.default-first-site-name._sites.dc._msdcs.$domainname/location?"100 0 389 $hostname.$domainname." \
-			connector/s4/mapping/dns/srv_record/_ldap._tcp.default-first-site-name._sites.$domainname/location?"100 0 389 $hostname.$domainname." \
-			connector/s4/mapping/dns/srv_record/_gc._tcp.default-first-site-name._sites.$domainname/location?"100 0 3268 $hostname.$domainname."
+	ucr set connector/s4/mapping/dns/srv_record/_ldap._tcp.$domainname/location?"0 100 389 $hostname.$domainname." \
+			connector/s4/mapping/dns/srv_record/_ldap._tcp.pdc._msdcs.$domainname/location?"0 100 389 $hostname.$domainname." \
+			connector/s4/mapping/dns/srv_record/_ldap._tcp.dc._msdcs.$domainname/location?"0 100 389 $hostname.$domainname." \
+			connector/s4/mapping/dns/srv_record/_ldap._tcp.gc._msdcs.$domainname/location?"0 100 3268 $hostname.$domainname." \
+			connector/s4/mapping/dns/srv_record/_gc._tcp.$domainname/location?"0 100 3268 $hostname.$domainname." \
+			connector/s4/mapping/dns/srv_record/_kerberos._tcp.$domainname/location?"0 100 88 $hostname.$domainname." \
+			connector/s4/mapping/dns/srv_record/_kerberos._udp.$domainname/location?"0 100 88 $hostname.$domainname." \
+			connector/s4/mapping/dns/srv_record/_kerberos-adm._tcp.$domainname/location?"0 100 88 $hostname.$domainname." \
+			connector/s4/mapping/dns/srv_record/_kerberos._tcp.dc._msdcs.$domainname/location?"0 100 88 $hostname.$domainname." \
+			connector/s4/mapping/dns/srv_record/_kpasswd._tcp.$domainname/location?"0 100 464 $hostname.$domainname." \
+			connector/s4/mapping/dns/srv_record/_kpasswd._udp.$domainname/location?"0 100 464 $hostname.$domainname." \
+			connector/s4/mapping/dns/srv_record/_kerberos._tcp.default-first-site-name._sites.dc._msdcs.$domainname/location?"0 100 88 $hostname.$domainname." \
+			connector/s4/mapping/dns/srv_record/_kerberos._tcp.default-first-site-name._sites.$domainname/location?"0 100 88 $hostname.$domainname." \
+			connector/s4/mapping/dns/srv_record/_ldap._tcp.default-first-site-name._sites.gc._msdcs.$domainname/location?"0 100 3268 $hostname.$domainname." \
+			connector/s4/mapping/dns/srv_record/_ldap._tcp.default-first-site-name._sites.dc._msdcs.$domainname/location?"0 100 389 $hostname.$domainname." \
+			connector/s4/mapping/dns/srv_record/_ldap._tcp.default-first-site-name._sites.$domainname/location?"0 100 389 $hostname.$domainname." \
+			connector/s4/mapping/dns/srv_record/_gc._tcp.default-first-site-name._sites.$domainname/location?"0 100 3268 $hostname.$domainname."
 
 	# Remove old values from kerberos SRV records
 	if ! is_ucr_true dns/register/srv_records/kerberos; then

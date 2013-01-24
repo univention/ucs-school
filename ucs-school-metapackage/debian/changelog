@@ -1,3 +1,9 @@
+ucs-school-metapackage (5.0.4-1) unstable; urgency=low
+
+  * fix permuted priority and weight in SRV record overrides (Bug #30166)
+
+ -- Arvid Requate <requate@univention.de>  Thu, 24 Jan 2013 14:47:52 +0100
+
 ucs-school-metapackage (5.0.3-1) unstable; urgency=low
 
   * update Copyright; Bug #30123
