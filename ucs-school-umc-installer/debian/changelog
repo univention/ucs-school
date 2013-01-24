@@ -1,0 +1,5 @@
+ucs-school-umc-installer (0.1.0-1) unstable; urgency=low
+
+  * Initial release (Bug #30162)
+
+ -- Alexander Kläser <klaeser@univention.de>  Thu, 24 Jan 2013 13:35:02 +0100

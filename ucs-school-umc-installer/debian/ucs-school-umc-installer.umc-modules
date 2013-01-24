@@ -1,0 +1,6 @@
+Module: schoolinstaller
+Python: umc/python
+Definition: umc/schoolinstaller.xml
+Category: umc/categories/schoolinstaller.xml
+Javascript: umc/js
+Icons: umc/icons
