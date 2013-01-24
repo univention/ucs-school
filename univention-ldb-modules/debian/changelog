@@ -1,3 +1,9 @@
+univention-ldb-modules (1.0.4-3) unstable; urgency=low
+
+  * yet again, also in rules (Bug #30105)
+
+ -- Arvid Requate <requate@univention.de>  Thu, 24 Jan 2013 20:03:51 +0100
+
 univention-ldb-modules (1.0.4-2) unstable; urgency=low
 
   * adjust install file to renamed joinscripts (Bug #30105)
