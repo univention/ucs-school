@@ -38,77 +38,123 @@ define([
 	"umc/widgets/PasswordBox",
 	"umc/widgets/Module",
 	"umc/widgets/Wizard",
+	"umc/widgets/StandbyMixin",
 	"umc/i18n!umc/modules/schoolinstaller"
-], function(declare, lang, tools, dialog, ComboBox, TextBox, PasswordBox, Module, Wizard, _) {
-	var Installer = declare("umc.modules.schoolinstaller.Installer", Wizard, {
-		pages: [{
-			name: 'setup',
-			headerText: _('UCS@school - server setup'),
-			helpText: _('This wizard guides you step by step through the installation of UCS@school in your domain...'),
-			widgets: [{
-				type: ComboBox,
+], function(declare, lang, tools, dialog, ComboBox, TextBox, PasswordBox, Module, Wizard, StandbyMixin, _) {
+	var Installer = declare("umc.modules.schoolinstaller.Installer", [ Wizard, StandbyMixin ], {
+		_initialDeferred: null,
+		_serverRole: null,
+
+		postMixInProperties: function() {
+
+			this.pages = [{
 				name: 'setup',
-				label: _('Domain setup'),
-				staticValues: [
-					{ id: 'singleserver', label: _('Single server setup') },
-					{ id: 'multiserver', label: _('Multi server setup') }
-				]
-			}]
-		}, {
-			name: 'credentials',
-			headerText: _('UCS@school - Domain credentials (only Slave)'),
-			helpText: _('In order to setup this system as UCS@school DC slave, please enter the domain credentials of a domain account with administrator privilgeges.'),
-			widgets: [{
-				type: TextBox,
-				name: 'username',
-				label: _('Domain username')
+				headerText: _('UCS@school - server setup'),
+				helpText: _('This wizard guides you step by step through the installation of UCS@school in your domain...'),
+				widgets: [{
+					type: ComboBox,
+					name: 'setup',
+					label: _('Domain setup'),
+					staticValues: [
+						{ id: 'singleserver', label: _('Single server setup') },
+						{ id: 'multiserver', label: _('Multi server setup') }
+					]
+				}]
 			}, {
-				type: PasswordBox,
-				name: 'password',
-				label: _('Domain password')
+				name: 'credentials',
+				headerText: _('UCS@school - Domain credentials (only Slave)'),
+				helpText: _('In order to setup this system as UCS@school DC slave, please enter the domain credentials of a domain account with administrator privilgeges.'),
+				widgets: [{
+					type: TextBox,
+					name: 'username',
+					label: _('Domain username')
+				}, {
+					type: PasswordBox,
+					name: 'password',
+					label: _('Domain password')
+				}, {
+					type: TextBox,
+					name: 'master',
+					label: _('Domain DC master system (e.g., schoolmaster.example.com)')
+				}]
 			}, {
-				type: TextBox,
-				name: 'Domain DC master system (e.g., schoolmaster.example.com)',
-				label: _('Domain username')
-			}]
-		}, {
-			name: 'samba',
-			headerText: _('UCS@school - Samba setup'),
-			helpText: _('For Windows domain services, UCS@school needs the installation of the Samba software component. Please choose which Samba version you would like to install.'),
-			widgets: [{
-				type: ComboBox,
 				name: 'samba',
-				label: _('Samba setup'),
-				staticValues: [
-					{ id: 'samba4', label: _('Samba4') },
-					{ id: 'samba', label: _('Samba3') }
-				]
-			}]
-		}, {
-			name: 'school',
-			headerText: _('UCS@school - school OU setup'),
-			helpText: _('Please enter the name of the first school OU... (explain what a school OU is for and how the structure is).'),
-			widgets: [{
-				type: TextBox,
-				name: 'schoolOU',
-				label: _('School OU name')
-			}]
-		}, {
-			name: 'error',
-			headerText: _('UCS@school - installation failed'),
-			helpText: _('The installation of UCS@school failed.')
-		}, {
-			name: 'done',
-			headerText: _('UCS@school - installation successful'),
-			helpText: _('The installation of UCS@school has been finised successfully.')
-		}]
+				headerText: _('UCS@school - Samba setup'),
+				helpText: _('For Windows domain services, UCS@school needs the installation of the Samba software component. Please choose which Samba version you would like to install.'),
+				widgets: [{
+					type: ComboBox,
+					name: 'samba',
+					label: _('Samba setup'),
+					staticValues: [
+						{ id: 'samba4', label: _('Samba4') },
+						{ id: 'samba', label: _('Samba3') }
+					]
+				}]
+			}, {
+				name: 'school',
+				headerText: _('UCS@school - school OU setup'),
+				helpText: _('Please enter the name of the first school OU... (explain what a school OU is for and how the structure is).'),
+				widgets: [{
+					type: TextBox,
+					name: 'schoolOU',
+					label: _('School OU name')
+				}]
+			}, {
+				name: 'error',
+				headerText: _('UCS@school - installation failed'),
+				helpText: _('The installation of UCS@school failed.')
+			}, {
+				name: 'done',
+				headerText: _('UCS@school - installation successful'),
+				helpText: _('The installation of UCS@school has been finised successfully.')
+			}];
+
+			this.inherited(arguments);
+		},
+
+		buildRendering: function() {
+			this.inherited(arguments);
+
+			// query initial information
+			this._initialDeferred = tools.ucr(['server/role']).then(lang.hitch(this, function(results) {
+				this._serverRole = results['server/role'];
+				this.standby(false);
+			}));
+
+			// initial standby animation
+			this.standby(true);
+		},
+
+		next: function(pageName) {
+			return this._initialDeferred.then(lang.hitch(this, function() {
+				// block invalid server roles
+				if (this._serverRole != 'domaincontroller_master' && this._serverRole != 'domaincontroller_slave' && this._serverRole != 'domaincontroller_backup') {
+					dialog.alert(_('UCS@school can only be installed on the system roles DC master, DC backup, or DC slave.'));
+					return 'setup';
+				}
+
+				// initial request
+				return 'setup';
+			}));
+		}
 	});
 
 	return declare("umc.modules.schoolinstaller", [ Module ], {
+		// internal reference to the installer
+		_installer: null,
+
 		buildRendering: function() {
 			this.inherited(arguments);
-			this.installer = new Installer({});
-			this.addChild(this.installer);
+
+			this._installer = new Installer({});
+			this.addChild(this._installer);
+
+			this._installer.on('finished', lang.hitch(this, function() {
+				topic.publish('/umc/tabs/close', this);
+			}));
+			this._installer.on('cancel', lang.hitch(this, function() {
+				topic.publish('/umc/tabs/close', this);
+			}));
 		}
 	});
 });
