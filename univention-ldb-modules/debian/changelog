@@ -1,3 +1,9 @@
+univention-ldb-modules (1.0.4-2) unstable; urgency=low
+
+  * adjust install file to renamed joinscripts (Bug #30105)
+
+ -- Arvid Requate <requate@univention.de>  Thu, 24 Jan 2013 20:01:46 +0100
+
 univention-ldb-modules (1.0.4-1) unstable; urgency=low
 
   * Make joinscript order invariant to LC_COLLATE (Bug #30105)
