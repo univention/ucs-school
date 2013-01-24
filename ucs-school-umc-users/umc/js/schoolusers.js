@@ -291,12 +291,15 @@ define([
 				deferred = deferred.then( finished_func, finished_func );
 			} );
 
+			var userType = (this.moduleFlavor === 'student' ?
+			                _('students') :
+			                _('teachers'));
 			form = new Form({
 				style: 'max-width: 500px;',
 				widgets: [ {
 					type: Text,
 					name: 'info',
-					content: '<p>' + lang.replace( _( 'Clicking the <i>Reset</i> button will set the password for all {0} selected students to the given password. For security reasons the students should be forced to change the passwort on the next login.' ), [ items.length ] ) + '</p>'
+					content: '<p>' + lang.replace( _( 'Clicking the <i>Reset</i> button will set the password for all {0} selected {1} to the given password. For security reasons the {2} should be forced to change the password on the next login.' ), [ items.length, userType, userType ] ) + '</p>'
 				},{
 					type: CheckBox,
 					name: 'changeOnNextLogin',

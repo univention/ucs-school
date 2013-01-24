@@ -1,3 +1,9 @@
+ucs-school-umc-users (9.0.5-1) unstable; urgency=low
+
+  * Fix typo in a dialog message (Bug #30134)
+
+ -- Jascha Geerds <geerds@univention.de>  Thu, 24 Jan 2013 09:20:03 +0100
+
 ucs-school-umc-users (9.0.4-1) unstable; urgency=low
 
   * update Copyright; Bug #30123

@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-users\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2012-03-11 05:37+0100\n"
+"POT-Creation-Date: 2013-01-19 11:00+0100\n"
 "PO-Revision-Date: 2012-03-01 18:15+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -12,87 +12,87 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: umc/js/schoolusers.js:164
+#: umc/js/schoolusers.js:176
 msgid "All classes and workgroups"
 msgstr "Alle Klassen und Arbeitsgruppen"
 
-#: umc/js/schoolusers.js:307
+#: umc/js/schoolusers.js:332
 msgid "Cancel"
 msgstr "Abbrechen"
 
-#: umc/js/schoolusers.js:162
+#: umc/js/schoolusers.js:174
 msgid "Class or workgroup"
 msgstr "Klasse oder Arbeitsgruppe"
 
-#: umc/js/schoolusers.js:275
+#: umc/js/schoolusers.js:300
 msgid ""
 "Clicking the <i>Reset</i> button will set the password for all {0} selected "
-"students to the given password. For security reasons the students should be "
-"forced to change the passwort on the next login."
+"{1} to the given password. For security reasons the {2} should be forced to "
+"change the password on the next login."
 msgstr ""
 "Durch Klicken auf die <i>Zurücksetzen</i>-Schaltfläche wird das Passwort der "
-"{0} ausgewählten Schüler auf das angegebene gesetzt. Aus Sicherheitsgründen "
-"sollten die Schüler zur Änderung des Passworts bei der nächsten Anmeldung "
+"{0} ausgewählten {1} auf das angegebene gesetzt. Aus Sicherheitsgründen "
+"sollten die {2} zur Änderung des Passworts bei der nächsten Anmeldung "
 "aufgefordert werden."
 
-#: umc/js/schoolusers.js:229
+#: umc/js/schoolusers.js:253
 msgid "Failed to reset the password for the following users:"
 msgstr ""
 "Das Zurücksetzen des Passworts ist für die folgenden Benutzer fehlgeschlagen"
 
-#: umc/js/schoolusers.js:226
+#: umc/js/schoolusers.js:250
 msgid "Finished"
 msgstr "Fertiggestellt"
 
-#: umc/js/schoolusers.js:114 umc/js/schoolusers.js:175
+#: umc/js/schoolusers.js:127 umc/js/schoolusers.js:190
 msgid "Name"
 msgstr "Name"
 
-#: umc/js/schoolusers.js:285
+#: umc/js/schoolusers.js:310
 msgid "New password"
 msgstr "Neues Passwort"
 
-#: umc/js/schoolusers.js:118
+#: umc/js/schoolusers.js:131
 msgid "Password expiration date"
 msgstr "Passwortablaufdatum"
 
-#: umc/js/schoolusers.js:289
+#: umc/js/schoolusers.js:314
 msgid "Reset"
 msgstr "Zurücksetzen"
 
-#: umc/js/schoolusers.js:104
+#: umc/js/schoolusers.js:117
 msgid "Reset password"
 msgstr "Passwort zurücksetzen"
 
-#: umc/js/schoolusers.js:314
+#: umc/js/schoolusers.js:339
 msgid "Reset passwords"
 msgstr "Passwörter zurücksetzen"
 
-#: umc/js/schoolusers.js:105
+#: umc/js/schoolusers.js:118
 msgid "Resets password of user."
 msgstr "Setzt Passwörter von Benutzern zurück"
 
-#: umc/js/schoolusers.js:153
+#: umc/js/schoolusers.js:165
 msgid "School"
 msgstr "Schule"
 
-#: umc/js/schoolusers.js:92
+#: umc/js/schoolusers.js:105
 msgid "Search results"
 msgstr "Suchergebnisse"
 
-#: umc/js/schoolusers.js:161
+#: umc/js/schoolusers.js:173
 msgid "Select a class or workgroup."
 msgstr "Auswahl einer Klasse oder Arbeitsgruppe."
 
-#: umc/js/schoolusers.js:152
+#: umc/js/schoolusers.js:164
 msgid "Select the school."
 msgstr "Auswahl der Schule."
 
-#: umc/js/schoolusers.js:247
+#: umc/js/schoolusers.js:271
 msgid "Setting passwords"
 msgstr "Passwort setzen"
 
-#: umc/js/schoolusers.js:174
+#: umc/js/schoolusers.js:189
 msgid ""
 "Specifies the substring pattern which is searched for in the first name, "
 "surname and username"
@@ -100,10 +100,18 @@ msgstr ""
 "Definiert die Zeichenkette, die im Vorname, Nachname und Benutzernamen "
 "gesucht wird"
 
-#: umc/js/schoolusers.js:253
+#: umc/js/schoolusers.js:277
 msgid "User: "
 msgstr "Benutzer: "
 
-#: umc/js/schoolusers.js:280
+#: umc/js/schoolusers.js:294
+msgid "students"
+msgstr "Schüler"
+
+#: umc/js/schoolusers.js:294
+msgid "teachers"
+msgstr "Lehrer"
+
+#: umc/js/schoolusers.js:305
 msgid "user has to change password on next login"
 msgstr "Benutzer muss das Passwort bei der nächsten Anmeldung ändern"
