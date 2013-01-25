@@ -172,6 +172,8 @@ define([
 				this.standby(false);
 			}));
 
+			this._pages.school._footerButtons.next.set('label', _('install'));
+
 			// initial standby animation
 			this.standby(true);
 		},
@@ -180,12 +182,12 @@ define([
 			var next = this.inherited(arguments);
 			return this._initialDeferred.then(lang.hitch(this, function() {
 				// block invalid server roles
-				if (this._serverRole != 'domaincontroller_master' && this._serverRole != 'domaincontroller_slave' && this._serverRole != 'domaincontroller_backup') {
+				if (!_validRole(this._serverRole)) {
 					dialog.alert(_('UCS@school can only be installed on the system roles DC master, DC backup, or DC slave.'));
 					return 'setup';
 				}
 
-				// display the credentials page only on DC slave
+				// show credentials page only on DC Slave
 				if (next === 'credentials' && this._serverRole != 'domaincontroller_slave') {
 					next = 'samba';
 				}
@@ -193,15 +195,30 @@ define([
 				// call the corresponding update method of the next page
 				var updateFunc = this['_update_' + next + '_page'];
 				if (updateFunc) {
-					updateFunc();
+					return updateFunc(next);
 				}
 
 				return next;
 			}));
 		},
 
-		_update_setup_page: function() {
+		hasNext: function(pageName) {
+			return pageName !== 'error' && pageName !== 'done';
+		},
+
+		previous: function(pageName) {
+			var previous = this.inherited(arguments);
+
+			// show credentials page only on DC Slave
+			if (previous === 'credentials' && this._serverRole != 'domaincontroller_slave') {
+				previous = 'setup';
+			}
+			return previous;
+		},
+
+		_update_setup_page: function(nextPage) {
 			console.log('### update setup page');
+			return nextPage;
 		}
 	});
 
