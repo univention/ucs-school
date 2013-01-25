@@ -26,7 +26,7 @@
  * /usr/share/common-licenses/AGPL-3; if not, see
  * <http://www.gnu.org/licenses/>.
  */
-/*global define*/
+/*global define console*/
 
 define([
 	"dojo/_base/declare",
@@ -36,12 +36,19 @@ define([
 	"umc/dialog",
 	"umc/widgets/ComboBox",
 	"umc/widgets/TextBox",
+	"umc/widgets/Text",
 	"umc/widgets/PasswordBox",
 	"umc/widgets/Module",
 	"umc/widgets/Wizard",
 	"umc/widgets/StandbyMixin",
 	"umc/i18n!umc/modules/schoolinstaller"
-], function(declare, lang, topic, tools, dialog, ComboBox, TextBox, PasswordBox, Module, Wizard, StandbyMixin, _) {
+], function(declare, lang, topic, tools, dialog, ComboBox, TextBox, Text, PasswordBox, Module, Wizard, StandbyMixin, _) {
+
+	// helper function: only DC master, DC backup, and DC slave are valid system roles for this module
+	var _validRole = function(role) {
+		return role == 'domaincontroller_master' || role == 'domaincontroller_backup' || role == 'domaincontroller_slave';
+	};
+
 	var Installer = declare("umc.modules.schoolinstaller.Installer", [ Wizard, StandbyMixin ], {
 		_initialDeferred: null,
 		_serverRole: null,
@@ -57,10 +64,49 @@ define([
 					type: ComboBox,
 					name: 'setup',
 					label: _('Domain setup'),
-					staticValues: [
-						{ id: 'singleserver', label: _('Single server setup') },
-						{ id: 'multiserver', label: _('Multi server setup') }
-					]
+					autoHide: true,
+					dynamicValues: lang.hitch(this, function() {
+						// we can only return the setup after an intial deferred
+						return this._initialDeferred.then(lang.hitch(this, function() {
+							var values = [];
+
+							// make sure we have a valid system role
+							if (!_validRole(this._serverRole)) {
+								return values;
+							}
+
+							// single server setup is only allowed on DC master + DC backup
+							if (this._serverRole != 'domaincontroller_slave') {
+								values.push({ id: 'singleserver', label: _('Single server setup') });
+							}
+
+							// multi sever setup is allowed on all valid roles
+							values.push({ id: 'multiserver', label: _('Multi server setup') });
+
+							return values;
+						}));
+					}),
+					onChange: lang.hitch(this, function(newVal, widgets) {
+						var texts = {
+							multiserver: _('<p>In the multi server setup, the DC master system is configured as central instance hosting the complete set of LDAP data. Each school is configured to have its own DC slave system that selectively replicates the school\'s own LDAP OU structure. In that way, different schools do not have access to data from other schools, they only see their own data.</p>'),
+							singleserver: _('<p>In the single server setup, the DC master system is configured as standalone UCS@school server instance. All school related data and thus all school OU structures are hosted and accessed on the DC master itself.</p>')
+						};
+
+						// update the help text according to the value chosen...
+						var text = texts[newVal];
+
+						if (this._serverRole == 'domaincontroller_slave') {
+							// adaptations for text of a multi server setup on DC slaves
+							text = _('<p>The local server role is DC slave, for which only a multi server setup can be configred.</p>') + text;
+						}
+
+						// update widget
+						widgets.infoText.set('content', text);
+					})
+				}, {
+					type: Text,
+					name: 'infoText',
+					content: ''
 				}]
 			}, {
 				name: 'credentials',
@@ -120,7 +166,7 @@ define([
 			// query initial information
 			this._initialDeferred = tools.umcpCommand('schoolinstaller/query').then(lang.hitch(this, function(data) {
 				this._serverRole = data.result['server/role'];
-				this._joined = data.result['joined'];
+				this._joined = data.result.joined;
 				this.standby(false);
 			}), lang.hitch(this, function() {
 				this.standby(false);
@@ -139,16 +185,23 @@ define([
 					return 'setup';
 				}
 
-//				// initial request
-//				return 'setup';
-
 				// display the credentials page only on DC slave
 				if (next === 'credentials' && this._serverRole != 'domaincontroller_slave') {
 					next = 'samba';
 				}
 
+				// call the corresponding update method of the next page
+				var updateFunc = this['_update_' + next + '_page'];
+				if (updateFunc) {
+					updateFunc();
+				}
+
 				return next;
 			}));
+		},
+
+		_update_setup_page: function() {
+			console.log('### update setup page');
 		}
 	});
 
