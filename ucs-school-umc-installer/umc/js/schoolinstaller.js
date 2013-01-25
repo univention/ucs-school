@@ -237,6 +237,7 @@ define([
 					var updateFunc = lang.hitch(this, '_update_' + next + '_page');
 					updateFunc();
 				}
+
 				return next;
 			}));
 		},
@@ -251,6 +252,9 @@ define([
 			// show credentials page only on DC Slave
 			if (previous === 'credentials' && this._serverRole != 'domaincontroller_slave') {
 				previous = 'setup';
+			}
+			else if (previous === 'error') {
+				previous = 'school';
 			}
 			return previous;
 		},
