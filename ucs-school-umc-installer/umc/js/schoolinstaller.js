@@ -155,9 +155,14 @@ define([
 			}, {
 				name: 'error',
 				headerText: _('UCS@school - installation failed'),
-				helpText: _('The installation of UCS@school failed.')
+				helpText: _('The installation of UCS@school failed.'),
+				widgets: [{
+					type: Text,
+					name: 'info',
+					content: ''
+				}]
 			}, {
-				name: 'done',
+				name: 'success',
 				headerText: _('UCS@school - installation successful'),
 				helpText: _('The installation of UCS@school has been finised successfully.')
 			}];
@@ -201,49 +206,73 @@ define([
 				}
 
 				// show credentials page only on DC Slave
-				if (next === 'credentials' && this._serverRole != 'domaincontroller_slave') {
+				if (next == 'credentials' && this._serverRole != 'domaincontroller_slave') {
 					next = 'samba';
 				}
 
 				// only display samba page for a single master setup or on a
 				// slave and only if samba is not already installed
-				if (next == 'samba' && !this._samba && (this.getWidget('setup', 'setup').get('value') == 'singleserver' || this._serverRole == 'domaincontroller_slave')) {
+				if (next == 'samba' && (this._samba || (this.getWidget('setup', 'setup').get('value') == 'multiserver' && this._serverRole != 'domaincontroller_slave'))) {
 					return 'school';
 				}
 
-				// install
+				// installation
 				if (pageName === 'school') {
+					// start standby animation
+					this.standby(true);
+
+					// request installation
 					var deferred = new Deferred();
-					this.standby(true, this._progressBar);
-					this._progressBar.auto('schoolinstaller/progress', {}, lang.hitch(this, function() { 
-						var errors = this._progressBar.getErrors();
-						if (errors.error || errors.critical) {
-							deferred.cancel();
-						} else {
-							deferred.resolve();
-						}
-					}));
-					return deferred.then(lang.hitch(this, function() {
+					tools.umcpCommand('schoolinstaller/install', this.getValues()).then(lang.hitch(this, function(result) {
 						this.standby(false);
-						return 'done';
-					}), lang.hitch(this, function() {
+
+						// show the progress bar
+						this.standby(true, this._progressBar);
+						this._progressBar.auto('schoolinstaller/progress', {}, lang.hitch(this, function() {
+							var errors = this._progressBar.getErrors();
+							if (errors.error || errors.critical) {
+								// TODO: display errors
+								// this.getWidget('error', 'info').set('content', '...');
+								deferred.resolve('error');
+							} else {
+								deferred.resolve('success');
+							}
+						}));
+					}), lang.hitch(this, function(error) {
 						this.standby(false);
-						return 'error';
+						// TODO: display error
+						// this.getWidget('error', 'info').set('content', '...');
+						deferred.resolve('error');
 					}));
+
+					// stop standby animation when finished
+					deferred.then(lang.hitch(this, function() {
+						this.standby(false);
+					}));
+
+					return deferred;
 				}
 
 				// call the corresponding update method of the next page
-				if (this['_update_' + next + '_page']) {
+				/*if (this['_update_' + next + '_page']) {
 					var updateFunc = lang.hitch(this, '_update_' + next + '_page');
 					updateFunc();
-				}
+				}*/
 
 				return next;
 			}));
 		},
 
+		canCancel: function(pageName) {
+			return pageName != 'error' && pageName != 'success';
+		},
+
 		hasNext: function(pageName) {
-			return pageName !== 'error' && pageName !== 'done';
+			return pageName != 'error' && pageName != 'success';
+		},
+
+		hasPrevious: function(pageName) {
+			return this.inherited(arguments) && pageName != 'error' && pageName != 'success';
 		},
 
 		previous: function(pageName) {
@@ -257,10 +286,6 @@ define([
 				previous = 'school';
 			}
 			return previous;
-		},
-
-		_update_setup_page: function(nextPage) {
-			console.log('### update setup page');
 		}
 	});
 

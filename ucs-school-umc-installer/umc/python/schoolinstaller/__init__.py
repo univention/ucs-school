@@ -114,21 +114,22 @@ class Instance(Base):
 
 		return {'dn': dn, 'master': master}
 
-	@sanitize(username=StringSanitizer(required=True, use_asterisks=False), password=StringSanitizer(required=True), master=HostSanitizer(required=True, regex_pattern=fqdn_pattern), allow_other_keys=False)
-	@simple_response
-	def samba(self, username, password, master):
-		"""Returns 'samba3' if the Samba3 is installed on the master system, else 'samab4'"""
-		try:
-			lo = get_ldap_connection(master, username, password)
-		except:
-			pass # TODO
-
-		# search for samba4 service object
-		if lo.search(filter='(&(objectClass=univentionServiceObject)(name=Samba 3))'):
-			return 'samba3'
-		elif lo.search(filter='(&(objectClass=univentionServiceObject)(name=Samba 4))'):
-			return 'samba4'
-		return 'samba4' # fallback, no samba installed
+### currently not used
+#	@sanitize(username=StringSanitizer(required=True, use_asterisks=False), password=StringSanitizer(required=True), master=HostSanitizer(required=True, regex_pattern=fqdn_pattern), allow_other_keys=False)
+#	@simple_response
+#	def samba(self, username, password, master):
+#		"""Returns 'samba3' if the Samba3 is installed on the master system, else 'samab4'"""
+#		try:
+#			lo = get_ldap_connection(master, username, password)
+#		except:
+#			pass # TODO
+#
+#		# search for samba4 service object
+#		if lo.search(filter='(&(objectClass=univentionServiceObject)(name=Samba 3))'):
+#			return 'samba3'
+#		elif lo.search(filter='(&(objectClass=univentionServiceObject)(name=Samba 4))'):
+#			return 'samba4'
+#		return 'samba4' # fallback, no samba installed
 
 	@simple_response
 	def progress(self):
