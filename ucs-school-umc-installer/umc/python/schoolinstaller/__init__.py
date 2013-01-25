@@ -35,6 +35,10 @@ import subprocess
 import socket
 import paramiko
 import ldap.filter
+import apt
+
+import univention.admin.modules as udm_modules
+import univention.admin.uldap as udm_uldap
 
 from univention.lib import escape_value
 from univention.management.console.modules import Base
@@ -65,6 +69,20 @@ def get_ldap_connection(host, binddn, bindpw):
 	return univention.uldap.access(host, port=int(ucr.get('ldap/master/port', '7389')), binddn=binddn, bindpw=bindpw)
 
 class Instance(Base):
+	@property
+	def sambaVersion(self):
+		'''Returns 3 or 4 for Samba4 or Samba3 installation, respectively, and returns None otherwise.'''
+		cache = apt.Cache()
+		try:
+			if cache['univention-samba4'].is_installed:
+				return 4
+			if cache['univention-samba'].is_installed:
+				return 3
+		except KeyError as e:
+			# package not known
+			pass
+
+		return None
 
 	@simple_response
 	def query(self, **kwargs):
@@ -73,9 +91,10 @@ class Instance(Base):
 
 		return {
 			'server/role': ucr.get('server/role'),
-			'joined': os.path.exists('/var/univention-join/joined') }
+			'joined': os.path.exists('/var/univention-join/joined'),
+			'samba': self.sambaVersion,
+		}
 
-	
 	@sanitize(username=StringSanitizer(required=True, use_asterisks=False), password=StringSanitizer(required=True), master=HostSanitizer(required=True, regex_pattern=hostname_pattern), allow_other_keys=False)
 	@simple_response
 	def credentials(self, username, password, master):

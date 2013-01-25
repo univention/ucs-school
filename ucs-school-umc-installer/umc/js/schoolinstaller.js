@@ -53,6 +53,7 @@ define([
 		_initialDeferred: null,
 		_serverRole: null,
 		_joined: null,
+		_samba: null,
 
 		postMixInProperties: function() {
 
@@ -134,8 +135,8 @@ define([
 					name: 'samba',
 					label: _('Samba setup'),
 					staticValues: [
-						{ id: 'samba4', label: _('Samba4') },
-						{ id: 'samba', label: _('Samba3') }
+						{ id: 4, label: _('Samba4') },
+						{ id: 3, label: _('Samba3') }
 					]
 				}]
 			}, {
@@ -167,6 +168,12 @@ define([
 			this._initialDeferred = tools.umcpCommand('schoolinstaller/query').then(lang.hitch(this, function(data) {
 				this._serverRole = data.result['server/role'];
 				this._joined = data.result.joined;
+				this._samba = data.result.samba;
+
+				if (this._samba) {
+					this.getWidget('samba', 'samba').set('value', this._samba);
+				}
+
 				this.standby(false);
 			}), lang.hitch(this, function() {
 				this.standby(false);
@@ -182,7 +189,7 @@ define([
 			var next = this.inherited(arguments);
 			return this._initialDeferred.then(lang.hitch(this, function() {
 				// block invalid server roles
-				if (!_validRole(this._serverRole)) {
+				if (this._serverRole && !_validRole(this._serverRole)) {
 					dialog.alert(_('UCS@school can only be installed on the system roles DC master, DC backup, or DC slave.'));
 					return 'setup';
 				}
@@ -192,11 +199,17 @@ define([
 					next = 'samba';
 				}
 
-				// call the corresponding update method of the next page
+				// only display samba page for a single master setup or on a
+				// slave and only if samba is not already installed
+				if (next == 'samba' && !this._samba && (this.getWidget('setup', 'setup').get('value') == 'singleserver' || this._serverRole == 'domaincontroller_slave')) {
+					return 'school';
+				}
+
+				/*// call the corresponding update method of the next page
 				var updateFunc = this['_update_' + next + '_page'];
 				if (updateFunc) {
 					return updateFunc(next);
-				}
+				}*/
 
 				return next;
 			}));
