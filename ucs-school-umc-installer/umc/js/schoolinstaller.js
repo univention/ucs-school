@@ -31,6 +31,7 @@
 define([
 	"dojo/_base/declare",
 	"dojo/_base/lang",
+	"dojo/topic",
 	"umc/tools",
 	"umc/dialog",
 	"umc/widgets/ComboBox",
@@ -40,10 +41,11 @@ define([
 	"umc/widgets/Wizard",
 	"umc/widgets/StandbyMixin",
 	"umc/i18n!umc/modules/schoolinstaller"
-], function(declare, lang, tools, dialog, ComboBox, TextBox, PasswordBox, Module, Wizard, StandbyMixin, _) {
+], function(declare, lang, topic, tools, dialog, ComboBox, TextBox, PasswordBox, Module, Wizard, StandbyMixin, _) {
 	var Installer = declare("umc.modules.schoolinstaller.Installer", [ Wizard, StandbyMixin ], {
 		_initialDeferred: null,
 		_serverRole: null,
+		_joined: null,
 
 		postMixInProperties: function() {
 
@@ -116,8 +118,11 @@ define([
 			this.inherited(arguments);
 
 			// query initial information
-			this._initialDeferred = tools.ucr(['server/role']).then(lang.hitch(this, function(results) {
+			this._initialDeferred = tools.umcpCommand('schoolinstaller/query').then(lang.hitch(this, function(results) {
 				this._serverRole = results['server/role'];
+				this._joined = results['joined'];
+				this.standby(false);
+			}), lang.hitch(this, function() {
 				this.standby(false);
 			}));
 
@@ -126,6 +131,7 @@ define([
 		},
 
 		next: function(pageName) {
+			var next = this.inherited(pageName);
 			return this._initialDeferred.then(lang.hitch(this, function() {
 				// block invalid server roles
 				if (this._serverRole != 'domaincontroller_master' && this._serverRole != 'domaincontroller_slave' && this._serverRole != 'domaincontroller_backup') {
@@ -135,6 +141,13 @@ define([
 
 				// initial request
 				return 'setup';
+
+				// display the credentials page only on DC slave
+				if (next === 'credentials' && this._serverRole != 'domaincontroller_slave') {
+					next = 'samba';
+				}
+
+				return next;
 			}));
 		}
 	});

@@ -30,74 +30,57 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-import notifier
-import smtplib
+import os.path
+import subprocess
+import socket
 
 from univention.management.console.modules import Base
 from univention.management.console.log import MODULE
 from univention.management.console.config import ucr
+from univention.management.console.modules.decorators import simple_response, sanitize
+from univention.management.console.modules.sanitizers import StringSanitizer, Sanitizer
 
 from univention.lib.i18n import Translation
 
 _ = Translation( 'ucs-school-umc-installer' ).translate
 
-class Instance( Base ):
-	def init( self ):
-		# this initialization method is called when the
-		# module process is started and the configuration from the
-		# UMC server is completed
-		pass
+class HostSanitizer(StringSanitizer):
+	def _sanitize(self, value, name, further_args):
+		value = super(HostSanitizer, self)._sanitize(value, name, further_args)
+		try:
+			master = socket.gethostbyname(master)
+		except socket.gaierror:
+			# invalid FQDN
+			self.raise_validation_error(_('The entered FQDN is not a valid value'))
+		else:
+			return master
 
-	def configuration( self, request ):
+class Instance(Base):
+
+	@simple_response
+	def query(self, **kwargs):
 		"""Returns a directionary of initial values for the form."""
-		self.finished( request.id, {
-			'sender' : self._username + '@example.com',
-			'subject' : 'Test mail from ucs-school-umc-installer',
-			'recipient' : 'test@example.com' } )
+		ucr.load()
 
+		return {
+			'server/role': ucr.get('server/role'),
+			'joined': os.path.exists('/var/univention-join/joined') }
 
-	def send( self, request ):
-		def _send_thread( sender, recipient, subject, message ):
-			MODULE.info( 'sending mail: thread running' )
+	
+	@sanitize(username=StringSanitizer(required=True), password=StringSanitizer(required=True), master=HostSanitizer(required=True))
+	@simple_response
+	def samba(self, username, password, master):
+		"""On DC Slaves we need to find out which samba version it is installed """
+		import paramiko
+		ssh = paramiko.SSHClient()
+		try:
+			ssh.connect(master, username=username, password=password)
+		except:
+			pass
 
-			msg = u'From: ' + sender + u'\r\n'
-			msg += u'To: ' + recipient + u'\r\n'
-			msg += u'Subject: %s\r\n' % subject
-			msg += u'\r\n'
-			msg += message + u'\r\n'
-			msg += u'\r\n'
+		stdin, stdout, stderr = ssh.exec_command('/usr/sbin/udm users/user list --filter uid="%s" --logfile /dev/null | sed -ne "s|^DN: ||p"' % '$DCACCOUNT')
 
-			msg = msg.encode('latin1')
+		return stdout
 
-			server = smtplib.SMTP('localhost')
-			server.set_debuglevel(0)
-			server.sendmail(sender, recipient, msg)
-			server.quit()
-
-		def _send_return( thread, result, request ):
-			import traceback
-
-			if not isinstance( result, BaseException ):
-				MODULE.info( 'sending mail: completed successfully' )
-				self.finished( request.id, True )
-			else:
-				msg = '%s\n%s: %s\n' % ( ''.join( traceback.format_tb( thread.exc_info[ 2 ] ) ), thread.exc_info[ 0 ].__name__, str( thread.exc_info[ 1 ] ) )
-				MODULE.process( 'sending mail:An internal error occurred: %s' % msg )
-				self.finished( request.id, False, msg, False )
-
-
-		keys = [ 'sender', 'recipient', 'subject', 'message' ]
-		self.required_options( request, *keys )
-		for key in keys:
-			if request.options[ key ]:
-				MODULE.info( 'send ' + key + '=' + request.options[ key ].replace('%','_') )
-
-		func = notifier.Callback( _send_thread,
-								  request.options[ 'sender' ],
-								  request.options[ 'recipient' ],
-								  request.options[ 'subject' ],
-								  request.options[ 'message' ] )
-		MODULE.info( 'sending mail: starting thread' )
-		cb = notifier.Callback( _send_return, request )
-		thread = notifier.threads.Simple( 'mailing', func, cb )
-		thread.run()
+	def install(self, request):
+		self.finished( request.id, True)
