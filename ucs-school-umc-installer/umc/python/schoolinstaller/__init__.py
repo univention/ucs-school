@@ -42,21 +42,27 @@ from univention.management.console.log import MODULE
 from univention.management.console.config import ucr
 from univention.management.console.modules.decorators import simple_response, sanitize
 from univention.management.console.modules.sanitizers import StringSanitizer, Sanitizer
+import univention.uldap
 
 from univention.lib.i18n import Translation
 
 _ = Translation( 'ucs-school-umc-installer' ).translate
+ucr.load()
+
+fqdn_pattern = '^[a-z]([a-z0-9-]*[a-z0-9])*\.([a-z0-9]([a-z0-9-]*[a-z0-9])*[.])*[a-z0-9]([a-z0-9-]*[a-z0-9])*$'
+hostname_pattern = '^[a-z]([a-z0-9-]*[a-z0-9])*(\.([a-z0-9]([a-z0-9-]*[a-z0-9])*[.])*[a-z0-9]([a-z0-9-]*[a-z0-9])*)?$'
 
 class HostSanitizer(StringSanitizer):
 	def _sanitize(self, value, name, further_args):
 		value = super(HostSanitizer, self)._sanitize(value, name, further_args)
 		try:
-			master = socket.gethostbyname(master)
+			return socket.getfqdn(master)
 		except socket.gaierror:
 			# invalid FQDN
 			self.raise_validation_error(_('The entered FQDN is not a valid value'))
-		else:
-			return master
+
+def get_ldap_connection(host, binddn, bindpw):
+	return univention.uldap.access(host, port=int(ucr.get('ldap/master/port', '7389')), binddn=binddn, bindpw=bindpw)
 
 class Instance(Base):
 
@@ -70,14 +76,15 @@ class Instance(Base):
 			'joined': os.path.exists('/var/univention-join/joined') }
 
 	
-	@sanitize(username=StringSanitizer(required=True, use_asterisks=False), password=StringSanitizer(required=True), master=HostSanitizer(required=True), allow_other_keys=False)
+	@sanitize(username=StringSanitizer(required=True, use_asterisks=False), password=StringSanitizer(required=True), master=HostSanitizer(required=True, regex_pattern=hostname_pattern), allow_other_keys=False)
 	@simple_response
 	def credentials(self, username, password, master):
+		"""Returns the usernames DN and masters FQDN"""
 		ssh = paramiko.SSHClient()
 		try:
 			ssh.connect(master, username=username, password=password)
 		except:
-			pass
+			raise UMC_CommandError('invalid credentails')
 
 		# try to get the DN of the user account
 		username = ldap.filter.escape_filter_chars(username)
@@ -85,6 +92,24 @@ class Instance(Base):
 
 		if not dn.strip():
 			dn = None
+
+		return {'dn': dn, 'master': master}
+
+	@sanitize(username=StringSanitizer(required=True, use_asterisks=False), password=StringSanitizer(required=True), master=HostSanitizer(required=True, regex_pattern=fqdn_pattern), allow_other_keys=False)
+	@simple_response
+	def samba(self, username, password, master):
+		"""Returns 'samba3' if the Samba3 is installed on the master system, else 'samab4'"""
+		try:
+			lo = get_ldap_connection(master, username, password)
+		except:
+			pass # TODO
+
+		# search for samba4 service object
+		if lo.search(filter='(&(objectClass=univentionServiceObject)(name=Samba 3))'):
+			return 'samba3'
+		elif lo.search(filter='(&(objectClass=univentionServiceObject)(name=Samba 4))'):
+			return 'samba4'
+		return 'samba4' # fallback, no samba installed
 
 	def install(self, request):
 		self.finished( request.id, True)

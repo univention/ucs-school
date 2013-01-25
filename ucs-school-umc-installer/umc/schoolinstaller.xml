@@ -10,5 +10,6 @@
 	<command name="schoolinstaller/query" function="query"/>
 	<command name="schoolinstaller/install" function="install"/>
 	<command name="schoolinstaller/credentials" function="credentials"/>
+	<command name="schoolinstaller/samba" function="samba"/>
   </module>
 </umc>
