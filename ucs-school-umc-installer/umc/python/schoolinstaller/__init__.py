@@ -130,5 +130,9 @@ class Instance(Base):
 			return 'samba4'
 		return 'samba4' # fallback, no samba installed
 
+	@simple_response
+	def progress(self):
+		return {'finished': True}
+
 	def install(self, request):
 		self.finished( request.id, True)

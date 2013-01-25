@@ -32,6 +32,7 @@ define([
 	"dojo/_base/declare",
 	"dojo/_base/lang",
 	"dojo/topic",
+	"dojo/Deferred",
 	"umc/tools",
 	"umc/dialog",
 	"umc/widgets/ComboBox",
@@ -40,9 +41,10 @@ define([
 	"umc/widgets/PasswordBox",
 	"umc/widgets/Module",
 	"umc/widgets/Wizard",
+	"umc/widgets/ProgressBar",
 	"umc/widgets/StandbyMixin",
 	"umc/i18n!umc/modules/schoolinstaller"
-], function(declare, lang, topic, tools, dialog, ComboBox, TextBox, Text, PasswordBox, Module, Wizard, StandbyMixin, _) {
+], function(declare, lang, topic, Deferred, tools, dialog, ComboBox, TextBox, Text, PasswordBox, Module, Wizard, ProgressBar, StandbyMixin, _) {
 
 	// helper function: only DC master, DC backup, and DC slave are valid system roles for this module
 	var _validRole = function(role) {
@@ -54,6 +56,8 @@ define([
 		_serverRole: null,
 		_joined: null,
 		_samba: null,
+
+		_progressBar: null,
 
 		postMixInProperties: function() {
 
@@ -179,6 +183,8 @@ define([
 				this.standby(false);
 			}));
 
+			this._progressBar = new ProgressBar();
+
 			this._pages.school._footerButtons.next.set('label', _('install'));
 
 			// initial standby animation
@@ -205,12 +211,32 @@ define([
 					return 'school';
 				}
 
-				/*// call the corresponding update method of the next page
-				var updateFunc = this['_update_' + next + '_page'];
-				if (updateFunc) {
-					return updateFunc(next);
-				}*/
+				// install
+				if (pageName === 'school') {
+					var deferred = new Deferred();
+					this.standby(true, this._progressBar);
+					this._progressBar.auto('schoolinstaller/progress', {}, lang.hitch(this, function() { 
+						var errors = this._progressBar.getErrors();
+						if (errors.error || errors.critical) {
+							deferred.cancel();
+						} else {
+							deferred.resolve();
+						}
+					}));
+					return deferred.then(lang.hitch(this, function() {
+						this.standby(false);
+						return 'done';
+					}), lang.hitch(this, function() {
+						this.standby(false);
+						return 'error';
+					}));
+				}
 
+				// call the corresponding update method of the next page
+				if (this['_update_' + next + '_page']) {
+					var updateFunc = lang.hitch(this, '_update_' + next + '_page');
+					updateFunc();
+				}
 				return next;
 			}));
 		},
@@ -231,7 +257,6 @@ define([
 
 		_update_setup_page: function(nextPage) {
 			console.log('### update setup page');
-			return nextPage;
 		}
 	});
 
