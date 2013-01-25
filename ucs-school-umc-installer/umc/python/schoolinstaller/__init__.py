@@ -36,12 +36,13 @@ import socket
 import paramiko
 import ldap.filter
 import apt
+import re
 
 import univention.admin.modules as udm_modules
 import univention.admin.uldap as udm_uldap
 
 from univention.lib import escape_value
-from univention.management.console.modules import Base
+from univention.management.console.modules import Base, UMC_Error
 from univention.management.console.log import MODULE
 from univention.management.console.config import ucr
 from univention.management.console.modules.decorators import simple_response, sanitize
@@ -53,7 +54,7 @@ from univention.lib.i18n import Translation
 _ = Translation( 'ucs-school-umc-installer' ).translate
 ucr.load()
 
-fqdn_pattern = '^[a-z]([a-z0-9-]*[a-z0-9])*\.([a-z0-9]([a-z0-9-]*[a-z0-9])*[.])*[a-z0-9]([a-z0-9-]*[a-z0-9])*$'
+fqdn_pattern     = '^[a-z]([a-z0-9-]*[a-z0-9])*\.([a-z0-9]([a-z0-9-]*[a-z0-9])*[.])*[a-z0-9]([a-z0-9-]*[a-z0-9])*$'
 hostname_pattern = '^[a-z]([a-z0-9-]*[a-z0-9])*(\.([a-z0-9]([a-z0-9-]*[a-z0-9])*[.])*[a-z0-9]([a-z0-9-]*[a-z0-9])*)?$'
 
 class HostSanitizer(StringSanitizer):
@@ -84,6 +85,50 @@ class Instance(Base):
 
 		return None
 
+	@property
+	def ucsSchoolVersion(self):
+		'''Returns 'singlemaster', 'multiserver', or None'''
+		cache = apt.Cache()
+		try:
+			if cache['ucs-school-singlemaster'].is_installed:
+				return 'singlemaster'
+			if cache['ucs-school-slave'].is_installed or cache['ucs-school-master'].is_installed:
+				return 'multiserver'
+		except KeyError as e:
+			# package not known
+			pass
+
+		return None
+
+	def getRemoteUcsSchoolVersion(self, username, password, master):
+		'''Verify that the correct UCS@school version (singlemaster, multiserver) is
+		installed on the master system.'''
+		ssh = paramiko.SSHClient()
+		ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+		ssh.load_system_host_keys()
+		try:
+			ssh.connect(master, username=username, password=password)
+		except SSHException as e:
+			raise ValueError(_('Cannot connect to DC master system.'))
+
+		# check the installed packages on the master system
+		regStatusInstalled = re.compile(r'^Status\s*:.*installed.*')
+		installedPackages = []
+		for ipackage in ('ucs-school-singlemaster', 'ucs-school-slave', 'ucs-school-master'):
+			# get 'dpkg --status' output
+			stdin, stdout, stderr = ssh.exec_command("/usr/bin/dpkg --status %s" % ipackage)
+
+			# match: "Status: install ok installed"
+			# TODO: double check regular expression
+			res = [ i for i in stdout if regStatusInstalled.match(i) ]
+			if res:
+				installedPackages.append(ipackage)
+
+		if 'ucs-school-singlemaster' in installedPackages:
+			return 'singlemaster'
+		if 'ucs-school-slave' in installedPackages or 'ucs-school-master' in installedPackages:
+			return 'multiserver'
+
 	@simple_response
 	def query(self, **kwargs):
 		"""Returns a dictionary of initial values for the form."""
@@ -93,17 +138,18 @@ class Instance(Base):
 			'server/role': ucr.get('server/role'),
 			'joined': os.path.exists('/var/univention-join/joined'),
 			'samba': self.sambaVersion,
+			'ucsschool': self.ucsSchoolVersion,
 		}
 
-	@sanitize(username=StringSanitizer(required=True, use_asterisks=False), password=StringSanitizer(required=True), master=HostSanitizer(required=True, regex_pattern=hostname_pattern), allow_other_keys=False)
-	@simple_response
-	def credentials(self, username, password, master):
+	def getDN(self, username, password, master):
 		"""Returns the usernames DN and masters FQDN"""
 		ssh = paramiko.SSHClient()
+		ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+		ssh.load_system_host_keys()
 		try:
 			ssh.connect(master, username=username, password=password)
-		except:
-			raise UMC_CommandError('invalid credentails')
+		except SSHException as e:
+			raise ValueError(_('Cannot connect to DC master system.'))
 
 		# try to get the DN of the user account
 		username = ldap.filter.escape_filter_chars(username)
@@ -112,7 +158,7 @@ class Instance(Base):
 		if not dn.strip():
 			dn = None
 
-		return {'dn': dn, 'master': master}
+		return dn
 
 ### currently not used
 #	@sanitize(username=StringSanitizer(required=True, use_asterisks=False), password=StringSanitizer(required=True), master=HostSanitizer(required=True, regex_pattern=fqdn_pattern), allow_other_keys=False)
@@ -135,5 +181,30 @@ class Instance(Base):
 	def progress(self):
 		return {'finished': True}
 
-	def install(self, request):
-		self.finished( request.id, True)
+	@sanitize(
+		username=StringSanitizer(required=True),
+		password=StringSanitizer(required=True),
+		master=HostSanitizer(required=True, regex_pattern=hostname_pattern),
+		samba=StringSanitizer(required=True),
+		schoolOU=StringSanitizer(required=True),
+		setup=StringSanitizer(required=True),
+		allow_other_keys=False)
+	@simple_response
+	def install(self, username, password, master, samba, schoolOU, setup):
+		try:
+			if ucr.get('server/role') == 'domaincontroller_slave':
+				# check for a compatible setup on the DC master
+				schoolVersion = self.getRemoteUcsSchoolVersion(username, password, master)
+				if not schoolVersion:
+					return { 'error': _('Please install UCS@school on the DC master system. Cannot proceed installation on this system.'), success: False }
+				if schoolVersion != 'multiserver':
+					if 'multiserver' == setup:
+						return { 'error': _('The UCS@school DC master system is not configured as a multi server setup. Cannot proceed installation on this system.'), 'success': False }
+		except ValueError as e:
+			# could not connect to master server, propagate error
+			return { 'error': str(e), 'success': False }
+
+		# everything ok
+		return { 'success': True }
+
+

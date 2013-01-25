@@ -1,3 +1,10 @@
+ucs-school-umc-installer (0.1.3-1) unstable; urgency=low
+
+  * WIP: added check for remotely corret packages, enable installation on
+    slave, more usability etc.; Bug #30162
+
+ -- Alexander Kläser <klaeser@univention.de>  Fri, 25 Jan 2013 19:59:10 +0100
+
 ucs-school-umc-installer (0.1.2-1) unstable; urgency=low
 
   * improved integration of success/failure handling; Bug #30162

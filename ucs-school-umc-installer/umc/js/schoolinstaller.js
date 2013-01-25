@@ -82,7 +82,7 @@ define([
 
 							// single server setup is only allowed on DC master + DC backup
 							if (this._serverRole != 'domaincontroller_slave') {
-								values.push({ id: 'singleserver', label: _('Single server setup') });
+								values.push({ id: 'singlemaster', label: _('Single server setup') });
 							}
 
 							// multi sever setup is allowed on all valid roles
@@ -94,7 +94,7 @@ define([
 					onChange: lang.hitch(this, function(newVal, widgets) {
 						var texts = {
 							multiserver: _('<p>In the multi server setup, the DC master system is configured as central instance hosting the complete set of LDAP data. Each school is configured to have its own DC slave system that selectively replicates the school\'s own LDAP OU structure. In that way, different schools do not have access to data from other schools, they only see their own data.</p>'),
-							singleserver: _('<p>In the single server setup, the DC master system is configured as standalone UCS@school server instance. All school related data and thus all school OU structures are hosted and accessed on the DC master itself.</p>')
+							singlemaster: _('<p>In the single server setup, the DC master system is configured as standalone UCS@school server instance. All school related data and thus all school OU structures are hosted and accessed on the DC master itself.</p>')
 						};
 
 						// update the help text according to the value chosen...
@@ -119,14 +119,17 @@ define([
 				helpText: _('In order to setup this system as UCS@school DC slave, please enter the domain credentials of a domain account with administrator privilgeges.'),
 				widgets: [{
 					type: TextBox,
+					required: true,
 					name: 'username',
 					label: _('Domain username')
 				}, {
 					type: PasswordBox,
+					required: true,
 					name: 'password',
 					label: _('Domain password')
 				}, {
 					type: TextBox,
+					required: true,
 					name: 'master',
 					label: _('Domain DC master system (e.g., schoolmaster.example.com)')
 				}]
@@ -149,6 +152,7 @@ define([
 				helpText: _('Please enter the name of the first school OU... (explain what a school OU is for and how the structure is).'),
 				widgets: [{
 					type: TextBox,
+					required: true,
 					name: 'schoolOU',
 					label: _('School OU name')
 				}]
@@ -165,6 +169,10 @@ define([
 				name: 'success',
 				headerText: _('UCS@school - installation successful'),
 				helpText: _('The installation of UCS@school has been finised successfully.')
+			}, {
+				name: 'alreadyInstalled',
+				headerText: _('UCS@school installation wizard'),
+				helpText: _('UCS@school has already been configured on this system.')
 			}];
 
 			this.inherited(arguments);
@@ -178,6 +186,7 @@ define([
 				this._serverRole = data.result['server/role'];
 				this._joined = data.result.joined;
 				this._samba = data.result.samba;
+				this._ucsschool = data.result.ucsschool;
 
 				if (this._samba) {
 					this.getWidget('samba', 'samba').set('value', this._samba);
@@ -196,6 +205,17 @@ define([
 			this.standby(true);
 		},
 
+		_installationFinished: function() {
+			var errors = this._progressBar.getErrors();
+			if (errors.error || errors.critical) {
+				// TODO: display errors
+				// this.getWidget('error', 'info').set('content', '...');
+				deferred.resolve('error');
+			} else {
+				deferred.resolve('success');
+			}
+		},
+
 		next: function(pageName) {
 			var next = this.inherited(arguments);
 			return this._initialDeferred.then(lang.hitch(this, function() {
@@ -203,6 +223,16 @@ define([
 				if (this._serverRole && !_validRole(this._serverRole)) {
 					dialog.alert(_('UCS@school can only be installed on the system roles DC master, DC backup, or DC slave.'));
 					return 'setup';
+				}
+
+				// check whether UCS@school has already been installed on the system
+				if (this._ucsschool) {
+					return 'alreadyInstalled';
+				}
+
+				// make sure that all form elements are filled out correctly
+				if (pageName && !this.getPage(pageName)._form.validate()) {
+					return pageName;
 				}
 
 				// show credentials page only on DC Slave
@@ -213,7 +243,7 @@ define([
 				// only display samba page for a single master setup or on a
 				// slave and only if samba is not already installed
 				if (next == 'samba' && (this._samba || (this.getWidget('setup', 'setup').get('value') == 'multiserver' && this._serverRole != 'domaincontroller_slave'))) {
-					return 'school';
+					next = 'school';
 				}
 
 				// installation
@@ -226,22 +256,26 @@ define([
 					tools.umcpCommand('schoolinstaller/install', this.getValues()).then(lang.hitch(this, function(result) {
 						this.standby(false);
 
+						if (!result.result.success) {
+							this.getWidget('error', 'info').set('content', result.result.error);
+							deferred.resolve('error');
+							return;
+						}
+
 						// show the progress bar
+						this._progressBar.reset(_('Starting the configuration process...' ));
 						this.standby(true, this._progressBar);
-						this._progressBar.auto('schoolinstaller/progress', {}, lang.hitch(this, function() {
-							var errors = this._progressBar.getErrors();
-							if (errors.error || errors.critical) {
-								// TODO: display errors
-								// this.getWidget('error', 'info').set('content', '...');
-								deferred.resolve('error');
-							} else {
-								deferred.resolve('success');
-							}
-						}));
+						this._progressBar.auto(
+							'schoolinstaller/progress',
+							{},
+							lang.hitch(this, '_installationFinished'),
+							null,
+							true
+						);
 					}), lang.hitch(this, function(error) {
+						// an unexpected error occurred
 						this.standby(false);
-						// TODO: display error
-						// this.getWidget('error', 'info').set('content', '...');
+						this.getWidget('error', 'info').set('content', _('An unexpected error occurred.'));
 						deferred.resolve('error');
 					}));
 
@@ -264,15 +298,15 @@ define([
 		},
 
 		canCancel: function(pageName) {
-			return pageName != 'error' && pageName != 'success';
+			return pageName != 'error' && pageName != 'success' && pageName != 'alreadyInstalled';
 		},
 
 		hasNext: function(pageName) {
-			return pageName != 'error' && pageName != 'success';
+			return pageName != 'error' && pageName != 'success' && pageName != 'alreadyInstalled';
 		},
 
 		hasPrevious: function(pageName) {
-			return this.inherited(arguments) && pageName != 'error' && pageName != 'success';
+			return this.inherited(arguments) && pageName != 'error' && pageName != 'success' && pageName != 'alreadyInstalled';
 		},
 
 		previous: function(pageName) {
