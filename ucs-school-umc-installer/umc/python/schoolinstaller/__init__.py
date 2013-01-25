@@ -33,7 +33,10 @@
 import os.path
 import subprocess
 import socket
+import paramiko
+import ldap.filter
 
+from univention.lib import escape_value
 from univention.management.console.modules import Base
 from univention.management.console.log import MODULE
 from univention.management.console.config import ucr
@@ -59,7 +62,7 @@ class Instance(Base):
 
 	@simple_response
 	def query(self, **kwargs):
-		"""Returns a directionary of initial values for the form."""
+		"""Returns a dictionary of initial values for the form."""
 		ucr.load()
 
 		return {
@@ -67,20 +70,21 @@ class Instance(Base):
 			'joined': os.path.exists('/var/univention-join/joined') }
 
 	
-	@sanitize(username=StringSanitizer(required=True), password=StringSanitizer(required=True), master=HostSanitizer(required=True))
+	@sanitize(username=StringSanitizer(required=True, use_asterisks=False), password=StringSanitizer(required=True), master=HostSanitizer(required=True), allow_other_keys=False)
 	@simple_response
-	def samba(self, username, password, master):
-		"""On DC Slaves we need to find out which samba version it is installed """
-		import paramiko
+	def credentials(self, username, password, master):
 		ssh = paramiko.SSHClient()
 		try:
 			ssh.connect(master, username=username, password=password)
 		except:
 			pass
 
-		stdin, stdout, stderr = ssh.exec_command('/usr/sbin/udm users/user list --filter uid="%s" --logfile /dev/null | sed -ne "s|^DN: ||p"' % '$DCACCOUNT')
+		# try to get the DN of the user account
+		username = ldap.filter.escape_filter_chars(username)
+		stdin, dn, stderr = ssh.exec_command("/usr/sbin/udm users/user list --filter uid='%s' --logfile /dev/null | sed -ne 's|^DN: ||p'" % escape_value(username))
 
-		return stdout
+		if not dn.strip():
+			dn = None
 
 	def install(self, request):
 		self.finished( request.id, True)

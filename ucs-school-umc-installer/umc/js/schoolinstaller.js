@@ -118,9 +118,9 @@ define([
 			this.inherited(arguments);
 
 			// query initial information
-			this._initialDeferred = tools.umcpCommand('schoolinstaller/query').then(lang.hitch(this, function(results) {
-				this._serverRole = results['server/role'];
-				this._joined = results['joined'];
+			this._initialDeferred = tools.umcpCommand('schoolinstaller/query').then(lang.hitch(this, function(data) {
+				this._serverRole = data.result['server/role'];
+				this._joined = data.result['joined'];
 				this.standby(false);
 			}), lang.hitch(this, function() {
 				this.standby(false);
@@ -131,7 +131,7 @@ define([
 		},
 
 		next: function(pageName) {
-			var next = this.inherited(pageName);
+			var next = this.inherited(arguments);
 			return this._initialDeferred.then(lang.hitch(this, function() {
 				// block invalid server roles
 				if (this._serverRole != 'domaincontroller_master' && this._serverRole != 'domaincontroller_slave' && this._serverRole != 'domaincontroller_backup') {
@@ -139,8 +139,8 @@ define([
 					return 'setup';
 				}
 
-				// initial request
-				return 'setup';
+//				// initial request
+//				return 'setup';
 
 				// display the credentials page only on DC slave
 				if (next === 'credentials' && this._serverRole != 'domaincontroller_slave') {

@@ -7,9 +7,8 @@
 	  <category name="ucs-school-admin"/>
 	</categories>
 
-	<command name="schoolinstaller/query" function="query">
-	</command>
-	<command name="schoolinstaller/install" function="install">
-	</command>
+	<command name="schoolinstaller/query" function="query"/>
+	<command name="schoolinstaller/install" function="install"/>
+	<command name="schoolinstaller/credentials" function="credentials"/>
   </module>
 </umc>
