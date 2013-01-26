@@ -1345,29 +1345,29 @@ def calculateProfilePath(ou):
 calculateProfilePath.results = {}
 calculateProfilePath.string = '%s\\%%USERNAME%%\\windows-profiles\\default'
 
-def tryFindWindowsHomeServer(ou):
+def tryFindHomeShareFileServer(ouDn):
+	# if defined then use UCR value
 	if UCRV_sambahome is not None:
 		return UCRV_sambahome
+	# in single server environments the master is always the fileserver
 	if configRegistry.is_true('ucsschool/singlemaster', False):
-		return configRegistry.get('hostname')
-	if ou in tryFindWindowsHomeServer.results:
-		return tryFindWindowsHomeServer.results[ou]
-	for service in ('Windows Home Server',
-	                'Samba 4',
-	                'Samba 3',
-	                ):
-		computer = findComputerNameWithService(service, ou)
-		if computer is not None:
-			tryFindWindowsHomeServer.results[ou] = '\\\\%s' % (computer, )
-			break
-	else:
-		tryFindWindowsHomeServer.results[ou] = None
-	return tryFindWindowsHomeServer.results[ou]
-tryFindWindowsHomeServer.results = {}
+		return '\\\\%s' % configRegistry.get('hostname')
+	# if there's a cached result then use it
+	if ouDn in tryFindHomeShareFileServer.results:
+		return tryFindHomeShareFileServer.results[ouDn]
+	# get windows home server from OU object
+	oulist = univention.admin.modules.lookup(ou_module, co, lo, base=ouDn, scope='base')
+	for ou in oulist:
+		if ou['ucsschoolHomeShareFileServer']:
+			serverlist = univention.admin.modules.lookup(computer_module, co, lo, base=ou['ucsschoolHomeShareFileServer'], scope='base')
+			for server in serverlist:
+				tryFindHomeShareFileServer.results[ouDn] = '\\\\%s' % server['name']
+	return tryFindHomeShareFileServer.results.get(ouDn)
+tryFindHomeShareFileServer.results = {}
 
-def calculateSambahomePath(ou, username):
-	if tryFindWindowsHomeServer(ou) is not None:
-		return "%s\\%s" % (tryFindWindowsHomeServer(ou), username, )
+def calculateSambahomePath(ouDn, username):
+	if tryFindHomeShareFileServer(ouDn) is not None:
+		return "%s\\%s" % (tryFindHomeShareFileServer(ouDn), username, )
 
 def create_user(person, baseDN, module, password, OUTFILE, line):
 	success = True
