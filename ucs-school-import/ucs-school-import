@@ -1377,7 +1377,7 @@ def create_user(person, baseDN, module, password, OUTFILE, line):
 			loginname = person.login
 			i = 1
 			while(check_user(person, baseDN, user_module)):
-				print "WARING: User already exists: %s"%person.getDN()
+				print "WARNING: User already exists: %s"%person.getDN()
 				person.problem_hints +="WARNING: Username already exists: %s" % person.getDN()+" appended counted number\n"
 				person.login = loginname+str(i)
 				print "INFO: Trying with new username: ", person.login
