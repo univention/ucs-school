@@ -30,32 +30,38 @@
 # <http://www.gnu.org/licenses/>.
 #
 
-OU=$1
-DNOLD=$2
-DNNEW=$3
+OU="$1"
+DNOLD="$2"
+DNNEW="$3"
 
 if [ -z "$OU" -o -z "$DNOLD" -o -z "$DNNEW" ] ; then
-  echo "at least one dn is missing"
-  echo "$0 <ou> <olddn> <newdn>"
-  exit 1
+	echo "This tool changes all responsible fileservers of share objects within given"
+	echo "OU to a new fileserver if the given old fileserver matches. The same is done"
+	echo "with printservers of all matching printer share object within given OU."
+	echo "$0 <ou> <olddn> <newdn>"
+	echo
+	echo "<ou>      name of OU to look for file shares/printer shares"
+	echo "<olddn>   DN of old server object"
+	echo "<newdn>   DN of new server object"
+	exit 1
 fi
 
-eval `univention-config-registry shell`
+eval "$(univention-config-registry shell)"
 
-FQDNOLD="$(ldapsearch -LLL -x -b "$DNOLD" uid | grep ^uid | sed -re 's|uid: ||' -e 's|\$$||').$domainname"
-FQDNNEW="$(ldapsearch -LLL -x -b "$DNNEW" uid | grep ^uid | sed -re 's|uid: ||' -e 's|\$$||').$domainname"
+FQDNOLD="$(univention-ldapsearch -LLL -x -b "$DNOLD" uid | grep ^uid | sed -re 's|uid: ||' -e 's|\$$||').$domainname"
+FQDNNEW="$(univention-ldapsearch -LLL -x -b "$DNNEW" uid | grep ^uid | sed -re 's|uid: ||' -e 's|\$$||').$domainname"
 
 echo "OU: $OU"
 echo "old server fqdn: $FQDNOLD"
 echo "new server fqdn: $FQDNNEW"
 echo ""
 echo "changing file shares"
-ldapsearch -LLL -b "ou=$OU,$ldap_base" -x "(&(objectClass=univentionShare)(univentionShareHost=$FQDNOLD))" dn | grep ^dn | sed -re 's|^dn: ||' | while read dn; do
+univention-ldapsearch -LLL -b "ou=$OU,$ldap_base" -x "(&(objectClass=univentionShare)(univentionShareHost=$FQDNOLD))" dn | grep ^dn | sed -re 's|^dn: ||' | while read dn; do
 	univention-directory-manager shares/share modify --dn "$dn" --set host="$FQDNNEW"
 done
 
 echo ""
 echo "changing printer shares"
-ldapsearch -LLL -b "ou=$OU,$ldap_base" -x "(&(objectClass=univentionPrinter)(univentionPrinterSpoolHost=$FQDNOLD))" dn | grep ^dn | sed -re 's|^dn: ||' | while read dn; do
+univention-ldapsearch -LLL -b "ou=$OU,$ldap_base" -x "(&(objectClass=univentionPrinter)(univentionPrinterSpoolHost=$FQDNOLD))" dn | grep ^dn | sed -re 's|^dn: ||' | while read dn; do
 	univention-directory-manager shares/printer modify --dn "$dn" --set spoolHost="$FQDNNEW"
 done
