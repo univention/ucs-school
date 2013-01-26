@@ -2902,9 +2902,9 @@ elif sys.argv[0].endswith("create_ou"):
 	usage += '             used as the default for the domaincontroller name)'
 	parser = optparse.OptionParser(usage=usage)
 	parser.add_option(
-		'--sharefileserver', action='store', type='string', 
-		dest='ShareFileServer', default=None, 
-		help="name of the class shares fileserver in this OU")
+		'--sharefileserver', action='store', type='string',
+		dest='ShareFileServer', default=None,
+		help="hostname of the fileserver within given OU that is used for class shares and user home shares")
 
 	(options, args, ) = parser.parse_args()
 	if len(args) > 0:
