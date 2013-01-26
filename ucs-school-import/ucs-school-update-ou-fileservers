@@ -1,0 +1,176 @@
+#!/usr/bin/python2.6
+# -*- coding: utf-8 -*-
+#
+# Univention UCS@School
+"""
+This script tries to determine the best fileserver for user shares and
+class shares for each organizational unit and writes the determined
+servers to the OU object.
+"""
+# Copyright 2007-2013 Univention GmbH
+#
+# http://www.univention.de/
+#
+# All rights reserved.
+#
+# The source code of this program is made available
+# under the terms of the GNU Affero General Public License version 3
+# (GNU AGPL V3) as published by the Free Software Foundation.
+#
+# Binary versions of this program provided by Univention to you as
+# well as other copyrighted, protected or trademarked materials like
+# Logos, graphics, fonts, specific documentations and configurations,
+# cryptographic keys etc. are subject to a license agreement between
+# you and Univention and not subject to the GNU AGPL V3.
+#
+# In the case you use this program under the terms of the GNU AGPL V3,
+# the program is provided in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public
+# License with the Debian GNU/Linux or Univention distribution in file
+# /usr/share/common-licenses/AGPL-3; if not, see
+# <http://www.gnu.org/licenses/>.
+
+import sys
+import optparse
+import univention.config_registry
+import univention.admin.uldap
+import univention.admin.modules
+import univention.admin.objects
+import univention.admin.config
+
+ucr = univention.config_registry.ConfigRegistry()
+ucr.load()
+
+
+def findComputerNameWithService(computer_module, co, lo, service, ouDn):
+	computers = univention.admin.modules.lookup(computer_module, co, lo, scope='sub', base=ouDn, filter=univention.admin.filter.expression('univentionService', service))
+	for computer in computers:
+		return computer.dn
+	return None
+
+def main():
+	usage  = '''%prog [--dry-run] [--ou <ou_name>] --auto-detect
+
+%prog updates the (specified) OU objects and sets the file servers for
+class shares and home shares. These servers are read from the import scripts
+during creation of new classes or users.
+'''
+
+	parser = optparse.OptionParser(usage=usage)
+	parser.add_option('--dry-run', action='store_true', dest='dryrun', default=False,
+						help='do not change any object but print changes instead to stdout')
+	parser.add_option('--auto-detect', action='store_true', dest='autodetect', default=False,
+						help='this option tries to detect the file servers automatically')
+	parser.add_option('--ou', action='store', dest='ou', default=None,
+						help='name of ou that shall be updated/modified')
+	(options, args, ) = parser.parse_args()
+
+	if not options.autodetect:
+		print >>sys.stderr, 'This tool only supports --auto-detect at the moment.'
+		sys.exit(1)
+
+	if options.dryrun:
+		print 'DRY-RUN: no change will be written to LDAP'
+
+	baseDN = ucr['ldap/base']
+
+	co = univention.admin.config.config()
+	lo, position = univention.admin.uldap.getAdminConnection()
+
+	univention.admin.modules.update()
+	computer_module = univention.admin.modules.get("computers/computer")
+	dcmaster_module = univention.admin.modules.get("computers/domaincontroller_master")
+	ou_module = univention.admin.modules.get("container/ou")
+	cn_module = univention.admin.modules.get("container/cn")
+	for module in ( computer_module, dcmaster_module, ou_module, cn_module ):
+		univention.admin.modules.init (lo, position, module)
+
+	is_singlemaster = ucr.is_true('ucsschool/singlemaster', False)
+	master_dn = None
+	host_list = univention.admin.modules.lookup(dcmaster_module, co, lo, scope='sub', base=baseDN)
+	for hostobj in host_list:
+		master_dn = hostobj.dn
+	if not master_dn:
+		print >>sys.stderr, "Cannot determine DN of domaincontroller_master - stopping here"
+		sys.exit(1)
+
+	# get list of OU UDM objects
+	ou_list = []
+	ou_filter = None
+	if options.ou:
+		# user has specified a specific OU on command line - add appropriate LDAP filter
+		ou_filter = univention.admin.filter.expression('ou', options.ou)
+	ou_obj_list = univention.admin.modules.lookup(ou_module, co, lo, scope='sub', base=baseDN, filter=ou_filter)
+	for ou_obj in ou_obj_list:
+		# FIXME: lame check: if OU contains a computer container then it is a UCS@school OU
+		if univention.admin.modules.lookup(cn_module, co, lo, scope='one', base=ou_obj.dn, filter='cn=computers'):
+			# only remember OU DNs if it contains a cn=computers subcontainer
+			ou_list.append(ou_obj.dn)
+
+	# iterate over all found OUs
+	for ou_dn in ou_list:
+		modlist = []
+		homeshareserver = None
+		classshareserver = None
+
+		ou_attrs = lo.get(ou_dn)
+		if 'ucsschoolOrganizationalUnit' not in ou_attrs['objectClass']:
+			modlist.append( ('objectClass', '', 'ucsschoolOrganizationalUnit') )
+
+		if is_singlemaster:
+			# in single server environments the DC master is always the correct fileserver for shares
+			homeshareserver = master_dn
+			classshareserver = master_dn
+		else:
+			# otherwise try to find a suitable server object in OU with one of the following services -
+			# the first match wins
+			for servicename in ('Windows Home Server',
+								'Samba 4',
+								'Samba 3',
+								):
+				serverDn = findComputerNameWithService(computer_module, co, lo, servicename, ou_dn)
+				if serverDn is not None:
+					if options.dryrun:
+						print 'Found server providing service %s: %s' % (servicename, serverDn,)
+					homeshareserver = serverDn
+					classshareserver = serverDn
+					break
+
+		if not classshareserver:
+			print 'OU: %s' % ou_dn
+			print >>sys.stderr, 'ERROR: cannot determine fileserver for class shares'
+			print >>sys.stderr, 'ERROR: cannot determine fileserver for user home shares'
+			continue
+
+		print 'OU: %s' % ou_dn
+		if not ou_attrs.get('ucsschoolClassShareFileServer', [''])[0]:
+			modlist.append(('ucsschoolClassShareFileServer', ou_attrs.get('ucsschoolClassShareFileServer',[''])[0], classshareserver))
+			print '    ==> ucsschoolClassShareFileServer = %s' % classshareserver
+		else:
+			print '    ==> ucsschoolClassShareFileServer has already been set'
+
+		if not ou_attrs.get('ucsschoolHomeShareFileServer', [''])[0]:
+			modlist.append(('ucsschoolHomeShareFileServer', ou_attrs.get('ucsschoolHomeShareFileServer',[''])[0], homeshareserver))
+			print '    ==> ucsschoolHomeShareFileServer = %s' % homeshareserver
+		else:
+			print '    ==> ucsschoolHomeShareFileServer has already been set'
+
+		if modlist:
+			if options.dryrun:
+				print 'DRY-RUN: skipping LDAP modification'
+			else:
+				try:
+					lo.modify(ou_dn, modlist)
+				except Exception:
+					import traceback
+					print 'ERROR: changing object %s failed!' % (ou_dn,)
+					print 'ERROR: modlist = %r' % (modlist,)
+					print 'ERROR: exception = %s' % (traceback.format_exc(),)
+
+
+if __name__ == '__main__':
+	main()
