@@ -108,7 +108,7 @@ get_username_teacher() {
 	ACCOUNTNAME="${usernamepart}$i"
 }
 
-eval $(/usr/sbin/ucr shell)
+eval "$(/usr/sbin/ucr shell)"
 
 # create pupils
 for fn in $FIRSTNAMES ; do
