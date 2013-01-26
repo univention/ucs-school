@@ -1,3 +1,11 @@
+ucs-school-import (9.0.5-1) unstable; urgency=low
+
+  * added additional LDAP attribute ucsschoolHomeShareFileServer (Bug #28549)
+  * added handling of ucsschoolHomeShareFileServer in create_ou and
+    import_user (Bug #27549)
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 25 Jan 2013 12:16:07 +0100
+
 ucs-school-import (9.0.4-1) unstable; urgency=low
 
   * update Copyright; Bug #30123
