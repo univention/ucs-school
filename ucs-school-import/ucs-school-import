@@ -582,9 +582,10 @@ def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None, ShareFileServer=None
 			# use found dn
 			ShareFileServer = objects[0]
 
-		r = lo.modify(dn, [ ('objectClass','','ucsschoolOrganizationalUnit'),
-				('ucsschoolClassShareFileServer','',ShareFileServer)
-				] )
+		r = lo.modify(dn, [ ('objectClass', '', 'ucsschoolOrganizationalUnit'),
+							('ucsschoolClassShareFileServer', '', ShareFileServer), # set file server for class shares
+							('ucsschoolHomeShareFileServer', '', ShareFileServer)   # set file server for home shares
+							] )
 	else:
 		if ShareFileServer is not None:
 			print "WARNING: sharefileserver ignored because OU already exists!"
