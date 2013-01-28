@@ -47,11 +47,6 @@ define([
 	"umc/i18n!umc/modules/schoolinstaller"
 ], function(declare, lang, array, topic, Deferred, tools, dialog, ComboBox, TextBox, Text, PasswordBox, Module, Wizard, ProgressBar, StandbyMixin, _) {
 
-	// helper function: only DC master, DC backup, and DC slave are valid system roles for this module
-	var _validRole = function(role) {
-		return role == 'domaincontroller_master' || role == 'domaincontroller_backup' || role == 'domaincontroller_slave';
-	};
-
 	var Installer = declare("umc.modules.schoolinstaller.Installer", [ Wizard, StandbyMixin ], {
 		_initialDeferred: null,
 
@@ -59,7 +54,6 @@ define([
 		_serverRole: null,
 		_joined: null,
 		_samba: null,
-		_guessedMaster: null,
 
 		_progressBar: null,
 
@@ -80,7 +74,7 @@ define([
 							var values = [];
 
 							// make sure we have a valid system role
-							if (!_validRole(this._serverRole)) {
+							if (!this._validServerRole()) {
 								return values;
 							}
 
@@ -106,7 +100,7 @@ define([
 
 						if (this._serverRole == 'domaincontroller_slave') {
 							// adaptations for text of a multi server setup on DC slaves
-							text = _('<p>The local server role is DC slave, for which only a multi server setup can be configred.</p>') + text;
+							text = _('<p>The local server role is DC slave, for which only a multi server setup can be configured.</p>') + text;
 						}
 
 						// update widget
@@ -209,6 +203,7 @@ define([
 
 			// initiate a progress bar widget
 			this._progressBar = new ProgressBar();
+			this.own(this._progressBar);
 
 			// change labels of default footer buttons
 			this._pages.school._footerButtons.next.set('label', _('Install'));
@@ -224,17 +219,17 @@ define([
 
 			// query initial information
 			this._initialDeferred = tools.umcpCommand('schoolinstaller/query').then(lang.hitch(this, function(data) {
-				this._serverRole = data.result['server/role'];
+				this._serverRole = data.result.server_role;
 				this._joined = data.result.joined;
 				this._samba = data.result.samba;
 				this._ucsschool = data.result.ucsschool;
-				this._guessedMaster = data.result.guessedMaster;
+				guessedMaster = data.result.guessed_master;
 
 				// update some widgets with the intial results
 				if (this._samba) {
 					this.getWidget('samba', 'samba').set('value', this._samba);
 				}
-				this.getWidget('credentials', 'master').set('value', this._guessedMaster);
+				this.getWidget('credentials', 'master').set('value', guessedMaster);
 
 				// switch off standby animation
 				this.standby(false);
@@ -279,7 +274,7 @@ define([
 
 			return this._initialDeferred.then(lang.hitch(this, function() {
 				// block invalid server roles
-				if (this._serverRole && !_validRole(this._serverRole)) {
+				if (!this._validServerRole()) {
 					dialog.alert(_('UCS@school can only be installed on the system roles DC master, DC backup, or DC slave.'));
 					return 'setup';
 				}
@@ -381,16 +376,22 @@ define([
 
 		previous: function(pageName) {
 			var previous = this.inherited(arguments);
+			// FIXME: dont go back to samba if samba is installed
 
 			// show credentials page only on DC Slave
 			if (previous === 'credentials' && this._serverRole != 'domaincontroller_slave') {
 				previous = 'setup';
-			}
-			else if (previous === 'error') {
+			} else if (previous === 'error') {
 				previous = 'school';
 			}
 			return previous;
+		},
+
+		// only DC master, DC backup, and DC slave are valid system roles for this module
+		_validServerRole: function() {
+			return this._serverRole == 'domaincontroller_master' || this._serverRole == 'domaincontroller_backup' || this._serverRole == 'domaincontroller_slave';
 		}
+
 	});
 
 	return declare("umc.modules.schoolinstaller", [ Module ], {

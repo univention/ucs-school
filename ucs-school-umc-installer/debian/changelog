@@ -1,3 +1,9 @@
+ucs-school-umc-installer (0.1.9-1) unstable; urgency=low
+
+  * Use package manager; Bug #30162
+
+ -- Dirk Wiesenthal <wiesenthal@univention.de>  Mon, 28 Jan 2013 20:06:34 +0100
+
 ucs-school-umc-installer (0.1.8-1) unstable; urgency=low
 
   * WIP: added installation routines; Bug #30162
