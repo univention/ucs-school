@@ -190,9 +190,9 @@ class Instance(Base):
 	@simple_response
 	def progress(self):
 		self._foo += 1
-		if self._foo % 2 == 0:
-			self._errors.append('ERROR OCCURRED (step=%s)' % self._foo)
-		finished = self._foo < 6
+		#if self._foo % 2 == 0:
+		#	self._errors.append('ERROR OCCURRED (step=%s)' % self._foo)
+		finished = self._foo >= 6
 		steps = self._foo / 6.0 * 100
 		return {
 			'errors': self._errors,

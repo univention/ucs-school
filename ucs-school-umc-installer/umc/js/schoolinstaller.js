@@ -31,6 +31,7 @@
 define([
 	"dojo/_base/declare",
 	"dojo/_base/lang",
+	"dojo/_base/array",
 	"dojo/topic",
 	"dojo/Deferred",
 	"umc/tools",
@@ -44,7 +45,7 @@ define([
 	"umc/widgets/ProgressBar",
 	"umc/widgets/StandbyMixin",
 	"umc/i18n!umc/modules/schoolinstaller"
-], function(declare, lang, topic, Deferred, tools, dialog, ComboBox, TextBox, Text, PasswordBox, Module, Wizard, ProgressBar, StandbyMixin, _) {
+], function(declare, lang, array, topic, Deferred, tools, dialog, ComboBox, TextBox, Text, PasswordBox, Module, Wizard, ProgressBar, StandbyMixin, _) {
 
 	// helper function: only DC master, DC backup, and DC slave are valid system roles for this module
 	var _validRole = function(role) {
@@ -171,7 +172,7 @@ define([
 			}, {
 				name: 'success',
 				headerText: _('UCS@school - installation successful'),
-				helpText: _('The installation of UCS@school has been finised successfully.'),
+				helpText: _('The installation of UCS@school has been finished successfully.'),
 				widgets: [{
 					type: Text,
 					name: 'info',
@@ -229,7 +230,7 @@ define([
 		_installationFinished: function(deferred) {
 			// get all error information and decide which next page to display
 			var info = this._progressBar.getErrors();
-			var nextPage = info.critical ? 'error' : 'succes';
+			var nextPage = info.errors.length ? 'error' : 'success';
 
 			if (info.errors.length == 1) {
 				// one error can be displayed as text
@@ -237,10 +238,11 @@ define([
 			}
 			else if (info.errors.length > 1) {
 				// display multiple errors as unordered list
-				var html = lang.map(info.errors, function(txt) {
-					return lang.replace('<li>{0}</li>\n', [txt]);
+				var html = '<ul>';
+				array.forEach(info.errors, function(txt) {
+					html += lang.replace('<li>{0}</li>\n', [txt]);
 				});
-				html = '<ul>' + html + '</ul>';
+				html += '</ul>';
 				this.getWidget(nextPage, 'info').set('content', html);
 			}
 
@@ -319,7 +321,8 @@ define([
 							'schoolinstaller/progress',
 							{},
 							lang.hitch(this, '_installationFinished', deferred),
-							null,
+							undefined,
+							undefined,
 							true
 						);
 					}), lang.hitch(this, function(error) {
