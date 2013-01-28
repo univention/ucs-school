@@ -197,9 +197,12 @@ define([
 				this.standby(false);
 			}));
 
+			// initiate a progress bar widget
 			this._progressBar = new ProgressBar();
 
-			this._pages.school._footerButtons.next.set('label', _('install'));
+			// change labels of default footer buttons
+			this._pages.school._footerButtons.next.set('label', _('Install'));
+			this._pages.error._footerButtons.next.set('label', _('Retry'));
 
 			// initial standby animation
 			this.standby(true);
@@ -233,6 +236,11 @@ define([
 				// make sure that all form elements are filled out correctly
 				if (pageName && !this.getPage(pageName)._form.validate()) {
 					return pageName;
+				}
+
+				// retry when an error occurred
+				if (pageName == 'error') {
+					next = 'credentials';
 				}
 
 				// show credentials page only on DC Slave
@@ -298,11 +306,11 @@ define([
 		},
 
 		canCancel: function(pageName) {
-			return pageName != 'error' && pageName != 'success' && pageName != 'alreadyInstalled';
+			return pageName != 'success' && pageName != 'alreadyInstalled';
 		},
 
 		hasNext: function(pageName) {
-			return pageName != 'error' && pageName != 'success' && pageName != 'alreadyInstalled';
+			return pageName != 'success' && pageName != 'alreadyInstalled';
 		},
 
 		hasPrevious: function(pageName) {

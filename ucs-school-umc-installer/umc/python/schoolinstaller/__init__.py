@@ -61,7 +61,7 @@ class HostSanitizer(StringSanitizer):
 	def _sanitize(self, value, name, further_args):
 		value = super(HostSanitizer, self)._sanitize(value, name, further_args)
 		try:
-			return socket.getfqdn(master)
+			return socket.getfqdn(value)
 		except socket.gaierror:
 			# invalid FQDN
 			self.raise_validation_error(_('The entered FQDN is not a valid value'))
@@ -106,10 +106,7 @@ class Instance(Base):
 		ssh = paramiko.SSHClient()
 		ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 		ssh.load_system_host_keys()
-		try:
-			ssh.connect(master, username=username, password=password)
-		except SSHException as e:
-			raise ValueError(_('Cannot connect to DC master system.'))
+		ssh.connect(master, username=username, password=password)
 
 		# check the installed packages on the master system
 		regStatusInstalled = re.compile(r'^Status\s*:.*installed.*')
@@ -141,24 +138,22 @@ class Instance(Base):
 			'ucsschool': self.ucsSchoolVersion,
 		}
 
-	def getDN(self, username, password, master):
-		"""Returns the usernames DN and masters FQDN"""
-		ssh = paramiko.SSHClient()
-		ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-		ssh.load_system_host_keys()
-		try:
-			ssh.connect(master, username=username, password=password)
-		except SSHException as e:
-			raise ValueError(_('Cannot connect to DC master system.'))
-
-		# try to get the DN of the user account
-		username = ldap.filter.escape_filter_chars(username)
-		stdin, dn, stderr = ssh.exec_command("/usr/sbin/udm users/user list --filter uid='%s' --logfile /dev/null | sed -ne 's|^DN: ||p'" % escape_value(username))
-
-		if not dn.strip():
-			dn = None
-
-		return dn
+### currently not used
+#	def getDN(self, username, password, master):
+#		"""Returns the usernames DN and masters FQDN"""
+#		ssh = paramiko.SSHClient()
+#		ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+#		ssh.load_system_host_keys()
+#		ssh.connect(master, username=username, password=password)
+#
+#		# try to get the DN of the user account
+#		username = ldap.filter.escape_filter_chars(username)
+#		stdin, dn, stderr = ssh.exec_command("/usr/sbin/udm users/user list --filter uid='%s' --logfile /dev/null | sed -ne 's|^DN: ||p'" % escape_value(username))
+#
+#		if not dn.strip():
+#			dn = None
+#
+#		return dn
 
 ### currently not used
 #	@sanitize(username=StringSanitizer(required=True, use_asterisks=False), password=StringSanitizer(required=True), master=HostSanitizer(required=True, regex_pattern=fqdn_pattern), allow_other_keys=False)
@@ -187,8 +182,8 @@ class Instance(Base):
 		master=HostSanitizer(required=True, regex_pattern=hostname_pattern),
 		samba=StringSanitizer(required=True),
 		schoolOU=StringSanitizer(required=True),
-		setup=StringSanitizer(required=True),
-		allow_other_keys=False)
+		setup=StringSanitizer(required=True)
+	)
 	@simple_response
 	def install(self, username, password, master, samba, schoolOU, setup):
 		try:
@@ -196,13 +191,17 @@ class Instance(Base):
 				# check for a compatible setup on the DC master
 				schoolVersion = self.getRemoteUcsSchoolVersion(username, password, master)
 				if not schoolVersion:
-					return { 'error': _('Please install UCS@school on the DC master system. Cannot proceed installation on this system.'), success: False }
+					return { 'error': _('Please install UCS@school on the DC master system. Cannot proceed installation on this system.'), 'success': False }
 				if schoolVersion != 'multiserver':
 					if 'multiserver' == setup:
 						return { 'error': _('The UCS@school DC master system is not configured as a multi server setup. Cannot proceed installation on this system.'), 'success': False }
 		except ValueError as e:
 			# could not connect to master server, propagate error
-			return { 'error': str(e), 'success': False }
+			return { 'success': False, 'error': str(e) }
+		except socket.gaierror  as e:
+			return { 'success': False, 'error': _('Cannot connect to the DC master system %s. Please make sure that the system is reachable. If not this could due to wrong DNS nameserver settings.') % master }
+		except paramiko.SSHException as e:
+			return { 'success': False, 'error': _('Cannot connect to the DC master system %s. It seems that the specified domain credentials are not valid.') % master }
 
 		# everything ok
 		return { 'success': True }
