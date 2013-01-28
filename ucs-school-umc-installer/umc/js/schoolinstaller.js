@@ -171,7 +171,12 @@ define([
 			}, {
 				name: 'success',
 				headerText: _('UCS@school - installation successful'),
-				helpText: _('The installation of UCS@school has been finised successfully.')
+				helpText: _('The installation of UCS@school has been finised successfully.'),
+				widgets: [{
+					type: Text,
+					name: 'info',
+					content: ''
+				}]
 			}, {
 				name: 'alreadyInstalled',
 				headerText: _('UCS@school installation wizard'),
@@ -183,6 +188,21 @@ define([
 
 		buildRendering: function() {
 			this.inherited(arguments);
+
+			// initiate a progress bar widget
+			this._progressBar = new ProgressBar();
+
+			// change labels of default footer buttons
+			this._pages.school._footerButtons.next.set('label', _('Install'));
+			this._pages.error._footerButtons.next.set('label', _('Retry'));
+
+			// initial query for server details
+			this._initialQuery();
+		},
+
+		_initialQuery: function() {
+			// initial standby animation
+			this.standby(true);
 
 			// query initial information
 			this._initialDeferred = tools.umcpCommand('schoolinstaller/query').then(lang.hitch(this, function(data) {
@@ -204,31 +224,30 @@ define([
 				// switch off standby animation
 				this.standby(false);
 			}));
-
-			// initiate a progress bar widget
-			this._progressBar = new ProgressBar();
-
-			// change labels of default footer buttons
-			this._pages.school._footerButtons.next.set('label', _('Install'));
-			this._pages.error._footerButtons.next.set('label', _('Retry'));
-
-			// initial standby animation
-			this.standby(true);
 		},
 
-		_installationFinished: function() {
+		_installationFinished: function(deferred) {
 			var errors = this._progressBar.getErrors();
 			if (errors.error || errors.critical) {
 				// TODO: display errors
+				//var nerr = 0;
+				//errors.error && nerr += errors.error.length;
+				//var html = '<li>
 				// this.getWidget('error', 'info').set('content', '...');
-				deferred.resolve('error');
+				deferred && deferred.resolve('error');
 			} else {
-				deferred.resolve('success');
+				deferred && deferred.resolve('success');
 			}
 		},
 
 		next: function(pageName) {
 			var next = this.inherited(arguments);
+
+			// if we retry from the error page, resend the intial query
+			if (pageName == 'error') {
+				this._initialQuery();
+			}
+
 			return this._initialDeferred.then(lang.hitch(this, function() {
 				// block invalid server roles
 				if (this._serverRole && !_validRole(this._serverRole)) {
@@ -266,10 +285,15 @@ define([
 				if (pageName === 'school') {
 					// start standby animation
 					this.standby(true);
+					var values = this.getValues();
+
+					// clear entered password and make sure that no error is indicated
+					this.getWidget('credentials', 'password').set('value', '');
+					this.getWidget('credentials', 'password').set('state', 'Incomplete');
 
 					// request installation
 					var deferred = new Deferred();
-					tools.umcpCommand('schoolinstaller/install', this.getValues()).then(lang.hitch(this, function(result) {
+					tools.umcpCommand('schoolinstaller/install', values).then(lang.hitch(this, function(result) {
 						this.standby(false);
 
 						if (!result.result.success) {
@@ -284,7 +308,7 @@ define([
 						this._progressBar.auto(
 							'schoolinstaller/progress',
 							{},
-							lang.hitch(this, '_installationFinished'),
+							lang.hitch(this, '_installationFinished', deferred),
 							null,
 							true
 						);

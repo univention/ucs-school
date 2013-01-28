@@ -71,6 +71,10 @@ def get_ldap_connection(host, binddn, bindpw):
 	return univention.uldap.access(host, port=int(ucr.get('ldap/master/port', '7389')), binddn=binddn, bindpw=bindpw)
 
 class Instance(Base):
+	def init(self):
+		self._foo = 0
+		self._errors = []
+
 	@property
 	def sambaVersion(self):
 		'''Returns 3 or 4 for Samba4 or Samba3 installation, respectively, and returns None otherwise.'''
@@ -104,6 +108,7 @@ class Instance(Base):
 	def getRemoteUcsSchoolVersion(self, username, password, master):
 		'''Verify that the correct UCS@school version (singlemaster, multiserver) is
 		installed on the master system.'''
+		MODULE.info('building up ssh connection to %s as user %s' % (master, username))
 		ssh = paramiko.SSHClient()
 		ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 		ssh.load_system_host_keys()
@@ -184,7 +189,18 @@ class Instance(Base):
 
 	@simple_response
 	def progress(self):
-		return {'finished': True}
+		self._foo += 1
+		if self._foo % 2 == 0:
+			self._errors.append('ERROR OCCURRED (step=%s)' % self._foo)
+		finished = self._foo < 6
+		steps = self._foo / 6.0 * 100
+		return {
+			'errors': self._errors,
+			'steps' : steps,
+			'component': 'Installing packages',
+			'info': 'step %s' % self._foo,
+			'finished': finished
+		}
 
 	@sanitize(
 		username=StringSanitizer(required=True),
@@ -196,6 +212,7 @@ class Instance(Base):
 	)
 	@simple_response
 	def install(self, username, password, master, samba, schoolOU, setup):
+		MODULE.process('performing UCS@school installation')
 		try:
 			if ucr.get('server/role') == 'domaincontroller_slave':
 				# check for a compatible setup on the DC master
@@ -205,12 +222,11 @@ class Instance(Base):
 				if schoolVersion != 'multiserver':
 					if 'multiserver' == setup:
 						return { 'error': _('The UCS@school DC master system is not configured as a multi server setup. Cannot proceed installation on this system.'), 'success': False }
-		except ValueError as e:
-			# could not connect to master server, propagate error
-			return { 'success': False, 'error': str(e) }
-		except socket.gaierror  as e:
+		except socket.gaierror as e:
+			MODULE.info('Could not connect to master system %s: %s' % (master, e))
 			return { 'success': False, 'error': _('Cannot connect to the DC master system %s. Please make sure that the system is reachable. If not this could due to wrong DNS nameserver settings.') % master }
 		except paramiko.SSHException as e:
+			MODULE.info('Could not connect to master system %s: %s' % (master, e))
 			return { 'success': False, 'error': _('Cannot connect to the DC master system %s. It seems that the specified domain credentials are not valid.') % master }
 
 		# everything ok
