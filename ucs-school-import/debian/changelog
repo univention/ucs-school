@@ -1,6 +1,12 @@
+ucs-school-import (9.0.5-2) unstable; urgency=low
+
+  * call ucs-school-update-ou-fileservers in postinst (Bug #27549)
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Mon, 28 Jan 2013 13:35:43 +0100
+
 ucs-school-import (9.0.5-1) unstable; urgency=low
 
-  * added additional LDAP attribute ucsschoolHomeShareFileServer (Bug #28549)
+  * added additional LDAP attribute ucsschoolHomeShareFileServer (Bug #27549)
   * added handling of ucsschoolHomeShareFileServer in create_ou and
     import_user (Bug #27549)
 

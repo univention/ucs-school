@@ -89,4 +89,15 @@ if [ "$server_role" = "domaincontroller_master" ] || [ "$server_role" = "domainc
 	/usr/lib/univention-install/35ucs-school-import.inst || true
 fi
 
+# Bug #27549: no longer required after update to UCS@school 3.1
+if [ "$1" = "configure" ] && dpkg --compare-versions "$2" lt-nl 9.0.5; then
+	if [ "$server_role" = "domaincontroller_master" ] ; then
+		if [ ! "$update31_ucsschool_ou_fileserver_update" = "no" ] ; then
+			echo "Updating file server settings at all UCS@school OU objects..."
+			/usr/share/ucs-school-import/scripts/ucs-school-update-ou-fileservers --auto-detect
+			echo "Finished updating file server settings at all UCS@school OU objects."
+		fi
+	fi
+fi
+
 exit 0
