@@ -37,6 +37,7 @@ import paramiko
 import ldap.filter
 import apt
 import re
+import dns.resolver
 
 import univention.admin.modules as udm_modules
 import univention.admin.uldap as udm_uldap
@@ -126,6 +127,14 @@ class Instance(Base):
 		if 'ucs-school-slave' in installedPackages or 'ucs-school-master' in installedPackages:
 			return 'multiserver'
 
+	@property
+	def masterDNSLookup(self):
+		# DNS lookup for the DC master entry
+		result = dns.resolver.query('_domaincontroller_master._tcp', 'SRV')
+		if result:
+			return result[0].target.canonicalize().split(1)[0].to_text()
+		return ''
+
 	@simple_response
 	def query(self, **kwargs):
 		"""Returns a dictionary of initial values for the form."""
@@ -136,6 +145,7 @@ class Instance(Base):
 			'joined': os.path.exists('/var/univention-join/joined'),
 			'samba': self.sambaVersion,
 			'ucsschool': self.ucsSchoolVersion,
+			'guessedMaster': self.masterDNSLookup,
 		}
 
 ### currently not used

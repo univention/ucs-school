@@ -53,9 +53,12 @@ define([
 
 	var Installer = declare("umc.modules.schoolinstaller.Installer", [ Wizard, StandbyMixin ], {
 		_initialDeferred: null,
+
+		// entries returned from the initial request
 		_serverRole: null,
 		_joined: null,
 		_samba: null,
+		_guessedMaster: null,
 
 		_progressBar: null,
 
@@ -187,13 +190,18 @@ define([
 				this._joined = data.result.joined;
 				this._samba = data.result.samba;
 				this._ucsschool = data.result.ucsschool;
+				this._guessedMaster = data.result.guessedMaster;
 
+				// update some widgets with the intial results
 				if (this._samba) {
 					this.getWidget('samba', 'samba').set('value', this._samba);
 				}
+				this.getWidget('credentials', 'master').set('value', this._guessedMaster);
 
+				// switch off standby animation
 				this.standby(false);
 			}), lang.hitch(this, function() {
+				// switch off standby animation
 				this.standby(false);
 			}));
 
