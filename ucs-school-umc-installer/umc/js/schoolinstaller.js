@@ -227,16 +227,26 @@ define([
 		},
 
 		_installationFinished: function(deferred) {
-			var errors = this._progressBar.getErrors();
-			if (errors.error || errors.critical) {
-				// TODO: display errors
-				//var nerr = 0;
-				//errors.error && nerr += errors.error.length;
-				//var html = '<li>
-				// this.getWidget('error', 'info').set('content', '...');
-				deferred && deferred.resolve('error');
-			} else {
-				deferred && deferred.resolve('success');
+			// get all error information and decide which next page to display
+			var info = this._progressBar.getErrors();
+			var nextPage = info.critical ? 'error' : 'succes';
+
+			if (info.errors.length == 1) {
+				// one error can be displayed as text
+				this.getWidget(nextPage, 'info').set('content', info.errors[0]);
+			}
+			else if (info.errors.length > 1) {
+				// display multiple errors as unordered list
+				var html = lang.map(info.errors, function(txt) {
+					return lang.replace('<li>{0}</li>\n', [txt]);
+				});
+				html = '<ul>' + html + '</ul>';
+				this.getWidget(nextPage, 'info').set('content', html);
+			}
+
+			if (deferred) {
+				// finish the deferred object to indicate the next page
+				deferred.resolve(nextPage);
 			}
 		},
 
