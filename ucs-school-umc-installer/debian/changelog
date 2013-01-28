@@ -1,3 +1,9 @@
+ucs-school-umc-installer (0.1.8-1) unstable; urgency=low
+
+  * WIP: added installation routines; Bug #30162
+
+ -- Alexander Kläser <klaeser@univention.de>  Mon, 28 Jan 2013 17:49:58 +0100
+
 ucs-school-umc-installer (0.1.7-1) unstable; urgency=low
 
   * extended samba page, added reg exp for OU name; Bug #30162

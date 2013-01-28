@@ -30,6 +30,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+import threading
 import os.path
 import subprocess
 import socket
@@ -38,6 +39,8 @@ import ldap.filter
 import apt
 import re
 import dns.resolver
+import notifier
+import notifier.threads
 
 import univention.admin.modules as udm_modules
 import univention.admin.uldap as udm_uldap
@@ -57,6 +60,7 @@ ucr.load()
 
 fqdn_pattern     = '^[a-z]([a-z0-9-]*[a-z0-9])*\.([a-z0-9]([a-z0-9-]*[a-z0-9])*[.])*[a-z0-9]([a-z0-9-]*[a-z0-9])*$'
 hostname_pattern = '^[a-z]([a-z0-9-]*[a-z0-9])*(\.([a-z0-9]([a-z0-9-]*[a-z0-9])*[.])*[a-z0-9]([a-z0-9-]*[a-z0-9])*)?$'
+ou_pattern       = '^(([a-zA-Z0-9_]*)([a-zA-Z0-9]))?$'
 
 class HostSanitizer(StringSanitizer):
 	def _sanitize(self, value, name, further_args):
@@ -70,10 +74,37 @@ class HostSanitizer(StringSanitizer):
 def get_ldap_connection(host, binddn, bindpw):
 	return univention.uldap.access(host, port=int(ucr.get('ldap/master/port', '7389')), binddn=binddn, bindpw=bindpw)
 
+CREATE_OU_EXEC = '/usr/share/ucs-school-import/scripts/create_ou'
+def create_ou(master, ou, slave):
+	"""create a OU
+	"""
+	try:
+		cmd = ' '.join([CREATE_OU_EXEC, master, ou, slave])
+		MODULE.process('executing on %s: %s' % (master, cmd))
+
+		# build up SSH connection
+		ssh = paramiko.SSHClient()
+		ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+		ssh.load_system_host_keys()
+		ssh.connect(master, username=username, password=password)
+
+		# execute command and process output
+		stdin, stdout, stderr = ssh.exec_command("/usr/bin/dpkg --status %s" % ipackage)
+		stdout = [ i.strip() for i in stdout ]
+		stderr = [ i.strip() for i in stdout ]
+		MODULE.info('stdout: %s' % '\n'.join(stdout))
+		if stderr:
+			MODULE.warn('ERROR: %s' % '\n'.join(stderr))
+	except (OSError, ValueError) as err:
+		MODULE.warn('ERROR: %s' % err)
+
+
 class Instance(Base):
 	def init(self):
-		self._foo = 0
+		self._finishedLock = threading.Lock()
 		self._errors = []
+		# TODO: remove the following line
+		self._foo = 0
 
 	@property
 	def sambaVersion(self):
@@ -207,29 +238,53 @@ class Instance(Base):
 		password=StringSanitizer(required=True),
 		master=HostSanitizer(required=True, regex_pattern=hostname_pattern),
 		samba=StringSanitizer(required=True),
-		schoolOU=StringSanitizer(required=True),
+		schoolOU=StringSanitizer(required=True, regex_pattern=ou_pattern),
 		setup=StringSanitizer(required=True)
 	)
-	@simple_response
-	def install(self, username, password, master, samba, schoolOU, setup):
+	def install(self, request):
+		# get all arguments
+		username = request.options.get('username')
+		password = request.options.get('password')
+		master = request.options.get('master')
+		samba = request.options.get('samba')
+		schoolOU = request.options.get('schoolOU')
+		setup = request.options.get('setup')
+
+
+		# ensure that the setup is ok
 		MODULE.process('performing UCS@school installation')
+		error = None
 		try:
 			if ucr.get('server/role') == 'domaincontroller_slave':
 				# check for a compatible setup on the DC master
 				schoolVersion = self.getRemoteUcsSchoolVersion(username, password, master)
 				if not schoolVersion:
-					return { 'error': _('Please install UCS@school on the DC master system. Cannot proceed installation on this system.'), 'success': False }
+					error = { 'error': _('Please install UCS@school on the DC master system. Cannot proceed installation on this system.'), 'success': False }
 				if schoolVersion != 'multiserver':
 					if 'multiserver' == setup:
-						return { 'error': _('The UCS@school DC master system is not configured as a multi server setup. Cannot proceed installation on this system.'), 'success': False }
+						error = { 'error': _('The UCS@school DC master system is not configured as a multi server setup. Cannot proceed installation on this system.'), 'success': False }
 		except socket.gaierror as e:
 			MODULE.info('Could not connect to master system %s: %s' % (master, e))
-			return { 'success': False, 'error': _('Cannot connect to the DC master system %s. Please make sure that the system is reachable. If not this could due to wrong DNS nameserver settings.') % master }
+			error = { 'success': False, 'error': _('Cannot connect to the DC master system %s. Please make sure that the system is reachable. If not this could due to wrong DNS nameserver settings.') % master }
 		except paramiko.SSHException as e:
 			MODULE.info('Could not connect to master system %s: %s' % (master, e))
-			return { 'success': False, 'error': _('Cannot connect to the DC master system %s. It seems that the specified domain credentials are not valid.') % master }
+			error = { 'success': False, 'error': _('Cannot connect to the DC master system %s. It seems that the specified domain credentials are not valid.') % master }
+
+		if error:
+			# something went wrong
+			self.finished(request.id, error)
+
+		self.finished(request.id, { 'success': True })
 
 		# everything ok
-		return { 'success': True }
+		def _thread(request, obj):
+			# acquire the lock until the scripts have been executed
+			self._finishedResult = False
+			obj._finishedLock.acquire()
+			try:
+				create_ou(master, schoolOU, ucr.get('hostname'))
+			finally:
+				obj._finishedLock.release()
+
 
 
