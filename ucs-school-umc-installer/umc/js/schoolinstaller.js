@@ -146,9 +146,25 @@ define([
 					name: 'samba',
 					label: _('Samba setup'),
 					staticValues: [
-						{ id: 4, label: _('Samba4') },
-						{ id: 3, label: _('Samba3') }
-					]
+						{ id: 4, label: _('Active Directory-compatible domaincontroller (Samba 4)') },
+						{ id: 3, label: _('NT-compatible domaincontroller (Samba 3)') }
+					],
+					onChange: lang.hitch(this, function(newVal, widgets) {
+						var texts = {
+							'samba4': _('More details to Samba 4...'),
+							'samba3': _('More details to Samba 3...')
+						};
+
+						// update the help text according to the value chosen...
+						var text = texts['samba' + newVal];
+
+						// update widget
+						widgets.infoText.set('content', text);
+					})
+				}, {
+					type: Text,
+					name: 'infoText',
+					content: ''
 				}]
 			}, {
 				name: 'school',
@@ -158,7 +174,8 @@ define([
 					type: TextBox,
 					required: true,
 					name: 'schoolOU',
-					label: _('School OU name')
+					label: _('School OU name'),
+					regExp: '^[a-zA-Z0-9](([a-zA-Z0-9_]*)([a-zA-Z0-9]$))?$'
 				}]
 			}, {
 				name: 'error',
