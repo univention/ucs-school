@@ -37,6 +37,8 @@ import socket
 import re
 import tempfile
 import glob
+import subprocess
+import traceback
 
 # related third party
 import notifier
@@ -63,6 +65,9 @@ ucr.load()
 fqdn_pattern     = '^[a-z]([a-z0-9-]*[a-z0-9])*\.([a-z0-9]([a-z0-9-]*[a-z0-9])*[.])*[a-z0-9]([a-z0-9-]*[a-z0-9])*$'
 hostname_pattern = '^[a-z]([a-z0-9-]*[a-z0-9])*(\.([a-z0-9]([a-z0-9-]*[a-z0-9])*[.])*[a-z0-9]([a-z0-9-]*[a-z0-9])*)?$'
 ou_pattern       = '^(([a-zA-Z0-9_]*)([a-zA-Z0-9]))?$'
+
+CMD_ENABLE_EXEC = ['/usr/share/univention-updater/enable-apache2-umc', '--no-restart']
+CMD_DISABLE_EXEC = '/usr/share/univention-updater/disable-apache2-umc'
 
 #class SetupSanitizer(StringSanitizer):
 #	def _sanitize(self, value, name, further_args):
@@ -98,10 +103,11 @@ def create_ou(master, ou, slave, username, password):
 	success = True
 	with tempfile.NamedTemporaryFile() as passwordFile:
 		# write password to temporary file
-		passwordFile.write('%s\n' % password)
+		passwordFile.write('%s' % password)
+		passwordFile.flush()
 
 		# remote UMC call
-		process = subprocess.Popen(['/usr/sbin/umc-command', '-U', username, '-y', passwordFile.name, '-s', master, 'schoolwizard/schools/create', '-o' ,'name=%s' % ou, '-o', 'schooldc=%s' % slave ], shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+		process = subprocess.Popen(['/usr/sbin/umc-command', '-U', username, '-y', passwordFile.name, '-s', master, 'schoolwizards/schools/create', '-o' ,'name=%s' % ou, '-o', 'schooldc=%s' % slave ], shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 		res = process.communicate()
 
 		# check for errors
@@ -139,54 +145,62 @@ def system_join(username, password, info_handler = _dummyFunc, error_handler = _
 	nJoinScripts = len(glob.glob('/usr/lib/univention-install/*.inst'))
 	stepsPerScript = 100.0 / nJoinScripts
 
-	with tempfile.NamedTemporaryFile() as passwordFile:
-		passwordFile.write('%s\n' % password)
+	MODULE.info('disabling UCM and apache server restart')
+	subprocess.call(CMD_DISABLE_EXEC)
 
-		# regular expressions for output parsing
-		regError = re.compile('^\* Message:\s*(?P<message>.*)\s*$')
-		regJoinScript = re.compile('Configure\s+(?P<script>.*)\.inst.*$')
-		regInfo = re.compile('^(?P<message>.*)\s*done\s*$', re.IGNORECASE)
+	try:
+		with tempfile.NamedTemporaryFile() as passwordFile:
+			passwordFile.write('%s' % password)
+			passwordFile.flush()
 
-		# call to univention-join
-		process = subprocess.Popen(['/usr/share/univention-join/univention-join', '-dcaccount', username, '-dcpwd', passwordFile.name], shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-		while True:
-			# get the next line
-			line = process.stdout.readline()
-			if not line:
-				# no more text from stdout
-				break
+			# regular expressions for output parsing
+			regError = re.compile('^\* Message:\s*(?P<message>.*)\s*$')
+			regJoinScript = re.compile('Configure\s+(?P<script>.*)\.inst.*$')
+			regInfo = re.compile('^(?P<message>.*)\s*:?\s*\x1b.*$')
 
-			# parse output... first check for errors
-			m = regError.match(line)
-			if m:
-				error_handler(m.groupdict.get('message'))
-				continue
+			# call to univention-join
+			process = subprocess.Popen(['/usr/share/univention-join/univention-join', '-dcaccount', username, '-dcpwd', passwordFile.name], shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+			while True:
+				# get the next line
+				line = process.stdout.readline()
+				if not line:
+					# no more text from stdout
+					break
 
-			# check for currently called join script
-			m = regJoinScript.match(line)
-			if m:
-				info_handler(_('Executing join script %s') % m.groupdict.get('script'))
-				step_handler(stepsPerScript)
-				continue
+				# parse output... first check for errors
+				m = regError.match(line)
+				if m:
+					error_handler(_('Software packages have been installed, however, the system join could not be completed: %s. More details can be found in the log file /var/log/univention/join.log. Please retry the join process via the UMC module "Domain join" after resolving any conflicting issues.') % m.groupdict().get('message'))
+					continue
 
-			# check for other information
-			m = regInfo.match(line)
-			if m:
-				info_handler(m.groupdict.get('message'))
-				continue
+				# check for currently called join script
+				m = regJoinScript.match(line)
+				if m:
+					info_handler(_('Executing join script %s') % m.groupdict().get('script'))
+					step_handler(stepsPerScript)
+					continue
 
-		# get all remaining output
-		stdout, stderr = process.communicate()
-		if stderr:
-			# write stderr into the log file
-			MODULE.warn('stderr from univention-join: %s' % stderr)
+				# check for other information
+				m = regInfo.match(line)
+				if m:
+					info_handler(m.groupdict().get('message'))
+					continue
 
-		# check for errors
-		if process.returncode != 0:
-			# error case
-			MODULE.warn('Could not create OU on %s as %s: %s%s' % (master, username, res[1], res[0]))
-			success = False
+			# get all remaining output
+			stdout, stderr = process.communicate()
+			if stderr:
+				# write stderr into the log file
+				MODULE.warn('stderr from univention-join: %s' % stderr)
 
+			# check for errors
+			if process.returncode != 0:
+				# error case
+				MODULE.warn('Could not perform system join: %s%s' % (stdout, stderr))
+				success = False
+	finally:
+		# make sure that UMC servers and apache can be restarted again
+		MODULE.info('enabling UCM and apache server restart')
+		subprocess.call(CMD_ENABLE_EXEC)
 
 class Progress(object):
 	def __init__(self, max_steps=100):
@@ -203,7 +217,7 @@ class Progress(object):
 	def poll(self):
 		return dict(
 			finished=self.finished,
-			steps=float(self.steps) / self.max_steps,
+			steps=100 * float(self.steps) / self.max_steps,
 			component=self.component,
 			info=self.info,
 			errors=self.errors,
@@ -238,6 +252,7 @@ class Instance(Base):
 			lock=False,
 			always_noninteractive=True,
 		)
+		self.package_manager.set_max_steps(100.0)
 
 	def get_samba_version(self):
 		'''Returns 3 or 4 for Samba4 or Samba3 installation, respectively, and returns None otherwise.'''
@@ -387,10 +402,14 @@ class Instance(Base):
 
 		# see which packages we need to install
 		installPackages = []
+		sambaVersionInstalled = self.get_samba_version()
 		if serverRole in ('domaincontroller_master', 'domaincontroller_backup'):
 			if setup == 'singlemaster':
 				installPackages.append('ucs-school-singlemaster')
-				if samba == '3':
+				if sambaVersionInstalled:
+					# do not install samba a second time
+					pass
+				elif samba == '3':
 					installPackages.append('univention-samba')
 				else:  # -> samba4
 					installPackages.extend(['univention-samba4', 'univention-s4-connector'])
@@ -400,7 +419,10 @@ class Instance(Base):
 				error = _('Invalid UCS@school configuration.')
 		elif serverRole == 'domaincontroller_slave':
 			installPackages.append('ucs-school-slave')
-			if samba == '3':
+			if sambaVersionInstalled:
+				# do not install samba a second time
+				pass
+			elif samba == '3':
 				installPackages.extend(['univention-samba', 'univention-samba-slave-pdc'])
 			else:  # -> samba4
 				installPackages.extend(['univention-samba4', 'univention-s4-connector'])
@@ -441,7 +463,7 @@ class Instance(Base):
 
 				# create the school OU
 				MODULE.info('Starting creation of LDAP school OU structure...')
-				progress_state.component = _('Creation of LDAP school structore')
+				progress_state.component = _('Creation of LDAP school structure')
 				progress_state.info = ''
 				if create_ou(master, schoolOU, ucr.get('hostname'), username, password):
 					MODULE.info('created school OU')
@@ -460,18 +482,21 @@ class Instance(Base):
 						error_handler=self.progress_state.error_handler,
 					)
 				else:
-					progress_state.error(_('The UCS@school software packages have been installed, however, a school OU could not be created and consequently a re-join of the system has not been performed. Please create a new school OU structure using the UMC module "Add school" on the master and perform a domain join on this machine via the UMC module "Domain join".' ))
+					progress_state.error_handler(_('The UCS@school software packages have been installed, however, a school OU could not be created and consequently a re-join of the system has not been performed. Please create a new school OU structure using the UMC module "Add school" on the master and perform a domain join on this machine via the UMC module "Domain join".' ))
 
 			def _finished(thread, result):
 				MODULE.info('Finished installation')
 				progress_state.info = _('finished...')
-				progress_state.finished()
+				progress_state.finish()
 				if isinstance(result, BaseException):
-					MODULE.warn('Exception during installation: %s' % result)
+					msg = '%s\n%s: %s\n' % ( ''.join( traceback.format_tb( thread.exc_info[ 2 ] ) ), thread.exc_info[ 0 ].__name__, str( thread.exc_info[ 1 ] ) )
+					MODULE.warn('Exception during installation: %s' % msg)
 
 			# launch thread
 			thread = notifier.threads.Simple('ucsschool-install',
-				notifier.Callback(_thread, self, installPackages), _finished)
+				notifier.Callback(_thread, self, installPackages),
+				notifier.Callback(_finished)
+			)
 			thread.run()
 
 		# finish the request

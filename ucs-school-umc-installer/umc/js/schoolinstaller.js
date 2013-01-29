@@ -44,8 +44,9 @@ define([
 	"umc/widgets/Wizard",
 	"umc/widgets/ProgressBar",
 	"umc/widgets/StandbyMixin",
+	"umc/modules/lib/server",
 	"umc/i18n!umc/modules/schoolinstaller"
-], function(declare, lang, array, topic, Deferred, tools, dialog, ComboBox, TextBox, Text, PasswordBox, Module, Wizard, ProgressBar, StandbyMixin, _) {
+], function(declare, lang, array, topic, Deferred, tools, dialog, ComboBox, TextBox, Text, PasswordBox, Module, Wizard, ProgressBar, StandbyMixin, Lib_Server, _) {
 
 	var Installer = declare("umc.modules.schoolinstaller.Installer", [ Wizard, StandbyMixin ], {
 		_initialDeferred: null,
@@ -54,6 +55,7 @@ define([
 		_serverRole: null,
 		_joined: null,
 		_samba: null,
+		_requestRestart: false,
 
 		_progressBar: null,
 
@@ -185,11 +187,12 @@ define([
 				}]
 			}, {
 				name: 'error',
-				headerText: _('UCS@school - installation failed'),
-				helpText: _('The installation of UCS@school failed. The following information will give you some more details on which problems occurred during the installation process.'),
+				headerText: _('UCS@school - an error ocurred'),
+				helpText: _('An error occurred during the installation of UCS@school. The following information will give you some more details on which problems occurred during the installation process.'),
 				widgets: [{
 					type: Text,
 					name: 'info',
+					style: 'font-style:italic;',
 					content: ''
 				}]
 			}, {
@@ -235,7 +238,7 @@ define([
 				this._joined = data.result.joined;
 				this._samba = data.result.samba;
 				this._ucsschool = data.result.ucsschool;
-				guessedMaster = data.result.guessed_master;
+				var guessedMaster = data.result.guessed_master;
 
 				// update some widgets with the intial results
 				if (this._samba) {
@@ -269,6 +272,10 @@ define([
 				html += '</ul>';
 				this.getWidget(nextPage, 'info').set('content', html);
 			}
+			else {
+				// no errors... we need a UMC server restart
+				this._requestRestart = true;
+			}
 
 			if (deferred) {
 				// finish the deferred object to indicate the next page
@@ -278,6 +285,11 @@ define([
 
 		next: function(pageName) {
 			var next = this.inherited(arguments);
+
+			if (!pageName) {
+				// enforce an button update in the beginning to avoid all buttons being visible
+				this._updateButtons('setup');
+			}
 
 			// if we retry from the error page, resend the intial query
 			if (pageName == 'error') {
@@ -423,7 +435,17 @@ define([
 			this.addChild(this._installer);
 
 			this._installer.on('finished', lang.hitch(this, function() {
-				topic.publish('/umc/tabs/close', this);
+				if (this._installer._requestRestart) {
+					// prompt an information for UMC restart
+					var msg = _('For all changes to take effect, a restart of the UMC server components is necessary after the domain join.');
+					Lib_Server.askRestart(msg).then(
+						function() { /* nothing to do */ },
+						lang.hitch(this, function() {
+							// user canceled -> change the current view
+							topic.publish('/umc/tabs/close', this);
+						}
+					));
+				}
 			}));
 			this._installer.on('cancel', lang.hitch(this, function() {
 				topic.publish('/umc/tabs/close', this);
