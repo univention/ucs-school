@@ -463,6 +463,7 @@ class Instance(Base):
 					progress_state.error(_('The UCS@school software packages have been installed, however, a school OU could not be created and consequently a re-join of the system has not been performed. Please create a new school OU structure using the UMC module "Add school" on the master and perform a domain join on this machine via the UMC module "Domain join".' ))
 
 			def _finished(thread, result):
+				MODULE.info('Finished installation')
 				progress_state.info = _('finished...')
 				progress_state.finished()
 				if isinstance(result, BaseException):
