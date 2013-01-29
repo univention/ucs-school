@@ -140,8 +140,8 @@ define([
 					name: 'samba',
 					label: _('Samba setup'),
 					staticValues: [
-						{ id: 4, label: _('Active Directory-compatible domaincontroller (Samba 4)') },
-						{ id: 3, label: _('NT-compatible domaincontroller (Samba 3)') }
+						{ id: '4', label: _('Active Directory-compatible domaincontroller (Samba 4)') },
+						{ id: '3', label: _('NT-compatible domaincontroller (Samba 3)') }
 					],
 					onChange: lang.hitch(this, function(newVal, widgets) {
 						var texts = {
@@ -174,7 +174,7 @@ define([
 			}, {
 				name: 'error',
 				headerText: _('UCS@school - installation failed'),
-				helpText: _('The installation of UCS@school failed.'),
+				helpText: _('The installation of UCS@school failed. The following information will give you some more details on which problems occurred during the installation process.'),
 				widgets: [{
 					type: Text,
 					name: 'info',

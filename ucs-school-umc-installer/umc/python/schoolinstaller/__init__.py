@@ -35,6 +35,8 @@ import threading
 import os.path
 import socket
 import re
+import tempfile
+import glob
 
 # related third party
 import notifier
@@ -50,7 +52,7 @@ from univention.management.console.modules import Base
 from univention.management.console.log import MODULE
 from univention.management.console.config import ucr
 from univention.management.console.modules.decorators import simple_response, sanitize
-from univention.management.console.modules.sanitizers import StringSanitizer, MappingSanitizer
+from univention.management.console.modules.sanitizers import StringSanitizer, MappingSanitizer, ChoicesSanitizer
 import univention.uldap
 
 from univention.lib.i18n import Translation
@@ -62,21 +64,21 @@ fqdn_pattern     = '^[a-z]([a-z0-9-]*[a-z0-9])*\.([a-z0-9]([a-z0-9-]*[a-z0-9])*[
 hostname_pattern = '^[a-z]([a-z0-9-]*[a-z0-9])*(\.([a-z0-9]([a-z0-9-]*[a-z0-9])*[.])*[a-z0-9]([a-z0-9-]*[a-z0-9])*)?$'
 ou_pattern       = '^(([a-zA-Z0-9_]*)([a-zA-Z0-9]))?$'
 
-class SetupSanitizer(StringSanitizer):
-	def _sanitize(self, value, name, further_args):
-		ucr.load()
-		server_role = ucr.get('server/role')
-		if value == 'singlemaster':
-			if server_role == 'domaincontroller_master' or server_role == 'domaincontroller_backup':
-				return 'ucs-school-singlemaster'
-			self.raise_validation_error(_('Single master setup not allowed on server role "%s"') % server_role)
-		if value == 'multiserver':
-			if server_role == 'domaincontroller_master' or server_role == 'domaincontroller_backup':
-				return 'ucs-school-master'
-			elif server_role == 'domaincontroller_slave':
-				return 'ucs-school-slave'
-			self.raise_validation_error(_('Multiserver setup not allowed on server role "%s"') % server_role)
-		self.raise_validation_error(_('Value "%s" not allowed') % value)
+#class SetupSanitizer(StringSanitizer):
+#	def _sanitize(self, value, name, further_args):
+#		ucr.load()
+#		server_role = ucr.get('server/role')
+#		if value == 'singlemaster':
+#			if server_role == 'domaincontroller_master' or server_role == 'domaincontroller_backup':
+#				return 'ucs-school-singlemaster'
+#			self.raise_validation_error(_('Single master setup not allowed on server role "%s"') % server_role)
+#		if value == 'multiserver':
+#			if server_role == 'domaincontroller_master' or server_role == 'domaincontroller_backup':
+#				return 'ucs-school-master'
+#			elif server_role == 'domaincontroller_slave':
+#				return 'ucs-school-slave'
+#			self.raise_validation_error(_('Multiserver setup not allowed on server role "%s"') % server_role)
+#		self.raise_validation_error(_('Value "%s" not allowed') % value)
 
 class HostSanitizer(StringSanitizer):
 	def _sanitize(self, value, name, further_args):
@@ -90,44 +92,152 @@ class HostSanitizer(StringSanitizer):
 def get_ldap_connection(host, binddn, bindpw):
 	return univention.uldap.access(host, port=int(ucr.get('ldap/master/port', '7389')), binddn=binddn, bindpw=bindpw)
 
-CREATE_OU_EXEC = '/usr/share/ucs-school-import/scripts/create_ou'
 def create_ou(master, ou, slave, username, password):
 	"""create a OU
 	"""
-	try:
-		cmd = ' '.join([CREATE_OU_EXEC, master, ou, slave])
-		MODULE.process('executing on %s: %s' % (master, cmd))
+	success = True
+	with tempfile.NamedTemporaryFile() as passwordFile:
+		# write password to temporary file
+		passwordFile.write('%s\n' % password)
 
-		# build up SSH connection
-		ssh = paramiko.SSHClient()
-		ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-		ssh.load_system_host_keys()
-		ssh.connect(master, username=username, password=password)
+		# remote UMC call
+		process = subprocess.Popen(['/usr/sbin/umc-command', '-U', username, '-y', passwordFile.name, '-s', master, 'schoolwizard/schools/create', '-o' ,'name=%s' % ou, '-o', 'schooldc=%s' % slave ], shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+		res = process.communicate()
 
-		# execute command and process output
-		stdin, stdout, stderr = ssh.exec_command(cmd)
-		stdout = [ i.strip() for i in stdout ]
-		stderr = [ i.strip() for i in stdout ]
-		MODULE.info('stdout: %s' % '\n'.join(stdout))
+		# check for errors
+		if process.returncode != 0:
+			# error case
+			MODULE.warn('Could not create OU on %s as %s: %s%s' % (master, username, res[1], res[0]))
+			success = False
+
+	return success
+
+	#CREATE_OU_EXEC = '/usr/share/ucs-school-import/scripts/create_ou'
+	#cmd = ' '.join([CREATE_OU_EXEC, master, ou, slave])
+	#MODULE.process('executing on %s: %s' % (master, cmd))
+
+	## build up SSH connection
+	#ssh = paramiko.SSHClient()
+	#ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+	#ssh.load_system_host_keys()
+	#ssh.connect(master, username=username, password=password)
+
+	## execute command and process output
+	#stdin, stdout, stderr = ssh.exec_command(cmd)
+	#stdout = [ i.strip() for i in stdout ]
+	#stderr = [ i.strip() for i in stdout ]
+	#MODULE.info('stdout: %s' % '\n'.join(stdout))
+	#if stderr:
+	#	MODULE.warn('ERROR: %s' % '\n'.join(stderr))
+
+# dummy function that does nothing
+def _dummyFunc(*args):
+	pass
+
+def system_join(username, password, info_handler = _dummyFunc, error_handler = _dummyFunc, step_handler = _dummyFunc):
+	# get the number of join scripts
+	nJoinScripts = len(glob.glob('/usr/lib/univention-install/*.inst'))
+	stepsPerScript = 100.0 / nJoinScripts
+
+	with tempfile.NamedTemporaryFile() as passwordFile:
+		passwordFile.write('%s\n' % password)
+
+		# regular expressions for output parsing
+		regError = re.compile('^\* Message:\s*(?P<message>.*)\s*$')
+		regJoinScript = re.compile('Configure\s+(?P<script>.*)\.inst.*$')
+		regInfo = re.compile('^(?P<message>.*)\s*done\s*$', re.IGNORECASE)
+
+		# call to univention-join
+		process = subprocess.Popen(['/usr/share/univention-join/univention-join', '-dcaccount', username, '-dcpwd', passwordFile.name], shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+		while True:
+			# get the next line
+			line = process.stdout.readline()
+			if not line:
+				# no more text from stdout
+				break
+
+			# parse output... first check for errors
+			m = regError.match(line)
+			if m:
+				error_handler(m.groupdict.get('message'))
+				continue
+
+			# check for currently called join script
+			m = regJoinScript.match(line)
+			if m:
+				info_handler(_('Executing join script %s') % m.groupdict.get('script'))
+				step_handler(stepsPerScript)
+				continue
+
+			# check for other information
+			m = regInfo.match(line)
+			if m:
+				info_handler(m.groupdict.get('message'))
+				continue
+
+		# get all remaining output
+		stdout, stderr = process.communicate()
 		if stderr:
-			MODULE.warn('ERROR: %s' % '\n'.join(stderr))
-	except (OSError, ValueError) as err:
-		MODULE.warn('ERROR: %s' % err)
+			# write stderr into the log file
+			MODULE.warn('stderr from univention-join: %s' % stderr)
 
+		# check for errors
+		if process.returncode != 0:
+			# error case
+			MODULE.warn('Could not create OU on %s as %s: %s%s' % (master, username, res[1], res[0]))
+			success = False
+
+
+class Progress(object):
+	def __init__(self, max_steps=100):
+		self.reset(max_steps)
+
+	def reset(self, max_steps=100):
+		self.max_steps = max_steps
+		self.finished = False
+		self.steps = 0
+		self.component = _('Initializing')
+		self.info = ''
+		self.errors = []
+
+	def poll(self):
+		return dict(
+			finished=self.finished,
+			steps=float(self.steps) / self.max_steps,
+			component=self.component,
+			info=self.info,
+			errors=self.errors,
+		)
+
+	def finish(self):
+		self.finished = True
+
+	def info_handler(self, info):
+		MODULE.process(info)
+		self.info = info
+
+	def error_handler(self, err):
+		MODULE.warn(err)
+		self.errors.append(err)
+
+	def step_handler(self, steps):
+		self.steps = steps
+
+	def add_steps(self, steps = 1):
+		self.steps += steps
 
 class Instance(Base):
 	def init(self):
 		self._finishedLock = threading.Lock()
 		self._errors = []
+		self.progress_state = Progress()
 		self.package_manager = PackageManager(
-			info_handler=MODULE.process,
-			step_handler=None,
-			error_handler=MODULE.warn,
+			info_handler=self.progress_state.info_handler,
+			step_handler=self.progress_state.step_handler,
+			error_handler=self.progress_state.error_handler,
 			lock=False,
 			always_noninteractive=True,
 		)
-		# TODO: remove the following line
-		self._foo = 0
 
 	def get_samba_version(self):
 		'''Returns 3 or 4 for Samba4 or Samba3 installation, respectively, and returns None otherwise.'''
@@ -228,18 +338,15 @@ class Instance(Base):
 
 	@simple_response
 	def progress(self):
-		timeout = 5
-		return self.package_manager.poll(timeout)
+		return self.progress_state.poll()
 
 	@sanitize(
 		username=StringSanitizer(required=True),
 		password=StringSanitizer(required=True),
 		master=HostSanitizer(required=True, regex_pattern=hostname_pattern),
-		samba=MappingSanitizer({
-			'4': 'univention-samba4',
-			'3': 'univention-samba'}, required=True),
+		samba=ChoicesSanitizer(['3', '4']),
 		schoolOU=StringSanitizer(required=True, regex_pattern=ou_pattern),
-		setup=SetupSanitizer(required=True),
+		setup=ChoicesSanitizer(['multiserver', 'singlemaster']),
 	)
 	def install(self, request):
 		# get all arguments
@@ -249,12 +356,15 @@ class Instance(Base):
 		samba = request.options.get('samba')
 		schoolOU = request.options.get('schoolOU')
 		setup = request.options.get('setup')
+		serverRole = ucr.get('server/role')
 
 		# ensure that the setup is ok
 		MODULE.process('performing UCS@school installation')
 		error = None
 		try:
-			if ucr.get('server/role') == 'domaincontroller_slave':
+			if not (serverRole == 'domaincontroller_master' or serverRole == 'domaincontroller_backup' or serverRole == 'domaincontroller_slave'):
+				error = _('Invalid server role! UCS@school can only be installed on the system roles DC master, DC backup, or DC slave.')
+			elif serverRole == 'domaincontroller_slave':
 				# check for a compatible setup on the DC master
 				schoolVersion = self.get_remote_ucs_school_version(username, password, master)
 				if not schoolVersion:
@@ -267,30 +377,106 @@ class Instance(Base):
 		except paramiko.SSHException as e:
 			MODULE.warn('Could not connect to master system %s: %s' % (master, e))
 			error = _('Cannot connect to the DC master system %s. It seems that the specified domain credentials are not valid.') % master
-		else:
+
+		if not error:
+			# everything ok, try to acquire the lock for the package installation
 			lock_aquired = self.package_manager.lock(raise_on_fail=False)
 			if not lock_aquired:
 				MODULE.warn('Could not aquire lock for package manager')
 				error = _('Cannot get lock for installation process. Another Package Manager seems to block the operation.')
 
-		result = {'success' : error is None, 'error' : error}
+		# see which packages we need to install
+		installPackages = []
+		if serverRole == 'domaincontroller_master' or 'domaincontroller_backup':
+			if setup == 'singlemaster':
+				installPackages.append('ucs-school-singlemaster')
+				if samba == '3':
+					installPackages.append('univention-samba')
+				else:  # -> samba4
+					installPackages.extend(['univention-samba4', 'univention-s4-connector'])
+			elif setup == 'multiserver':
+				installPackages.append('ucs-school-master')
+			else:
+				error = _('Invalid UCS@school configuration.')
+		if serverRole == 'domaincontroller_slave':
+			installPackages.append('ucs-school-slave')
+			if samba == '3':
+				installPackages.extend(['univention-samba', 'univention-samba-slave-pdc'])
+			else:  # -> samba4
+				installPackages.extend(['univention-samba4', 'univention-s4-connector'])
+		else:
+			error = _('Invalid UCS@school configuration.')
+		MODULE.info('Packages to be installed: %s' % ', '.join(installPackages))
 
+		# start installation if configuration is ok
+		if error:
+			MODULE.error('Error installing UCS@school: %s' % error)
+		else:
+			# reset the current installation progress
+			#FIXME: correct percentage + maximum steps
+			progress_state = self.progress_state
+			progress_state.reset(210)
+			progress_state.component = _('Installation of UCS@school packages')
+			#FIXME: correct to make a reset here?
+			self.package_manager.reset_status()
+
+			def _thread(_self, packages):
+				# perform installation
+				success = True
+				MODULE.process('Starting package installation')
+				with _self.package_manager.locked(reset_status=True, set_finished=True):
+					MODULE.info('### 1')
+					with _self.package_manager.no_umc_restart(exclude_apache=True):
+						MODULE.info('### 2')
+						success = _self.package_manager.install(*packages)
+
+				MODULE.info('Result of package installation: success=%s' % success)
+
+				# on a DC master, we are done
+				if serverRole != 'domaincontroller_slave':
+					return success
+
+				# check for errors
+				#FIXME: correct check for success?
+				if not success:
+					return success
+
+				# create the school OU
+				MODULE.info('Starting creation of LDAP school OU structure...')
+				progress_state.component = _('Creation of LDAP school structore')
+				progress_state.info = ''
+				if create_ou(master, schoolOU, ucr.get('hostname'), username, password):
+					MODULE.info('created school OU')
+
+					# system join
+					progress_state.add_steps(10)
+					progress_state.component = _('Domain join')
+					progress_state.info = _('Preparing domain join...')
+
+					# create a new system join instance
+					MODULE.process('Starting system join...')
+					success = system_join(
+						username, password,
+						info_handler=self.progress_state.info_handler,
+						step_handler=self.progress_state.add_steps,
+						error_handler=self.progress_state.error_handler,
+					)
+				else:
+					progress_state.error(_('The UCS@school software packages have been installed, however, a school OU could not be created and consequently a re-join of the system has not been performed. Please create a new school OU structure using the UMC module "Add school" on the master and perform a domain join on this machine via the UMC module "Domain join".' ))
+
+			def _finished(thread, result):
+				progress_state.info = _('finished...')
+				progress_state.finished()
+				if isinstance(result, BaseException):
+					MODULE.warn('Exception during installation: %s' % result)
+
+			# launch thread
+			thread = notifier.threads.Simple('ucsschool-install',
+				notifier.Callback(_thread, self, installPackages), _finished)
+			thread.run()
+
+		# finish the request
+		result = {'success' : error is None, 'error' : error}
 		self.finished(request.id, result)
 
-		if error:
-			# something went wrong
-			return
-
-		# everything ok
-		def _thread(module, setup, samba):
-			with module.package_manager.locked(reset_status=True, set_finished=True):
-				with module.package_manager.no_umc_restart(exclude_apache=True):
-					return module.package_manager.install(setup, samba)
-			#create_ou(master, schoolOU, 'slave??', username, password)
-		def _finished(thread, result):
-			if isinstance(result, BaseException):
-				MODULE.warn('Exception during installation of %r or create OU %s: %s' % ([setup, samba], schoolOU, str(result)))
-		thread = notifier.threads.Simple('ucsschool-install',
-			notifier.Callback(_thread, self, setup, samba), _finished)
-		thread.run()
 

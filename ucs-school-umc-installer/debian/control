@@ -16,6 +16,7 @@ Depends: ${misc:Depends},
  univention-management-console-server,
  python-paramiko,
  python-dnspython,
+ python-notifier,
  devscripts
 Description: This installation wizard guides the installation of UCS@school in the domain
  This installation wizard guides the installation of UCS@school in the domain

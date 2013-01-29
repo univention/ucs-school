@@ -1,3 +1,9 @@
+ucs-school-umc-installer (0.1.10-1) unstable; urgency=low
+
+  * WIP: added system join, OU creation, progress handling; Bug #30162
+
+ -- Alexander Kläser <klaeser@univention.de>  Tue, 29 Jan 2013 16:26:51 +0100
+
 ucs-school-umc-installer (0.1.9-1) unstable; urgency=low
 
   * Use package manager; Bug #30162
