@@ -1348,7 +1348,7 @@ calculateProfilePath.string = '%s\\%%USERNAME%%\\windows-profiles\\default'
 def tryFindHomeShareFileServer(ouDn):
 	# if defined then use UCR value
 	if UCRV_sambahome is not None:
-		return UCRV_sambahome
+		return '\\\\%s' % UCRV_sambahome.strip('\\')
 	# in single server environments the master is always the fileserver
 	if configRegistry.is_true('ucsschool/singlemaster', False):
 		return '\\\\%s' % configRegistry.get('hostname')
