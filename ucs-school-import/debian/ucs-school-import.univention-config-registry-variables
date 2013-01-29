@@ -101,8 +101,8 @@ Type=str
 Categories=ucsschool-base
 
 [ucsschool/import/set/sambahome]
-Description[de]=Windows-Heimatverzeichnis das beim _Anlegen_ von Benutzern gesetzt werden soll. Wenn nicht gesetzt, wird im LDAP nach Computern mit dem Dienst "Windows Homer Server" gesucht
-Description[en]=Windows home path to set for each user on _creation_. If unset, the LDAP will be searched for computer with the service "Windows Home Server"
+Description[de]=Windows-Heimatverzeichnis das beim _Anlegen_ von Benutzern gesetzt werden soll. Wenn nicht gesetzt, wird auf Single-Master-Systemen der Master oder sonst der am zuständigen OU-Objekt angegebene Dateiserver verwendet (Beispiel: \\servername\pfad ; Standard: nicht gesetzt)
+Description[en]=Windows home path to set for each user on _creation_. If unset, the master will be used as file server in single-master environments. Otherwise the file server specified at corresponding OU object will be used (Example: \\servername\path ; Default: not defined)
 Type=str
 Categories=ucsschool-base
 
