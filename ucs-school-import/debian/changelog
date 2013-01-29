@@ -1,3 +1,11 @@
+ucs-school-import (9.0.6-1) unstable; urgency=low
+
+  * check given sharefileserver names in create_ou for validity 
+    (Bug #27549)
+  * fixed description of ucsschool/import/set/sambahome (Bug #27549)
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Tue, 29 Jan 2013 11:15:13 +0100
+
 ucs-school-import (9.0.5-2) unstable; urgency=low
 
   * call ucs-school-update-ou-fileservers in postinst (Bug #27549)
