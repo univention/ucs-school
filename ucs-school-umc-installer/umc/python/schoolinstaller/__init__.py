@@ -387,7 +387,7 @@ class Instance(Base):
 
 		# see which packages we need to install
 		installPackages = []
-		if serverRole == 'domaincontroller_master' or 'domaincontroller_backup':
+		if serverRole in ('domaincontroller_master', 'domaincontroller_backup'):
 			if setup == 'singlemaster':
 				installPackages.append('ucs-school-singlemaster')
 				if samba == '3':
@@ -398,7 +398,7 @@ class Instance(Base):
 				installPackages.append('ucs-school-master')
 			else:
 				error = _('Invalid UCS@school configuration.')
-		if serverRole == 'domaincontroller_slave':
+		elif serverRole == 'domaincontroller_slave':
 			installPackages.append('ucs-school-slave')
 			if samba == '3':
 				installPackages.extend(['univention-samba', 'univention-samba-slave-pdc'])
@@ -425,9 +425,7 @@ class Instance(Base):
 				success = True
 				MODULE.process('Starting package installation')
 				with _self.package_manager.locked(reset_status=True, set_finished=True):
-					MODULE.info('### 1')
 					with _self.package_manager.no_umc_restart(exclude_apache=True):
-						MODULE.info('### 2')
 						success = _self.package_manager.install(*packages)
 
 				MODULE.info('Result of package installation: success=%s' % success)
