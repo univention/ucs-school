@@ -573,11 +573,11 @@ def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None, ShareFileServer=None
 		if len(objects) != 1:
 			# no object found
 			if ShareFileServer == 'dc%s-01' % schoolNr.lower() or (dcName and ShareFileServer == dcName):
-				pass # ignore warning - dc object will be created later
+				# ignore warning - dc object will be created later
+				ShareFileServer = "cn=%s,cn=dc,cn=server,cn=computers,%s" % (ShareFileServer, getDN(schoolNr))
 			else:
-				print 'WARNING: sharefileserver "%s" not found! using "%s" as sharefileserver' % (ShareFileServer, finalDCname)
-				ShareFileServer = finalDCname
-			ShareFileServer = "cn=%s,cn=dc,cn=server,cn=computers,%s"%(ShareFileServer, getDN(schoolNr))
+				print 'WARNING: sharefileserver "%s" not found! Using "%s" as sharefileserver' % (ShareFileServer, configRegistry.get('hostname'))
+				ShareFileServer = configRegistry.get('ldap/hostdn')
 		else:
 			# use found dn
 			ShareFileServer = objects[0]
@@ -2921,6 +2921,16 @@ elif sys.argv[0].endswith("create_ou"):
 		if dcName and not re.match('^[a-zA-Z](([a-zA-Z0-9-_]*)([a-zA-Z0-9]$))?$', dcName):
 			print 'ERROR: invalid domaincontroller name given'
 			sys.exit(1)
+
+		if not options.ShareFileServer is None:
+			# hostname based upon RFC 952: <let>[*[<let-or-digit-or-hyphen>]<let-or-digit>]
+			if options.ShareFileServer and not re.match('^[a-zA-Z](([a-zA-Z0-9-_]*)([a-zA-Z0-9]$))?$', options.ShareFileServer):
+				print 'ERROR: invalid share server name given: "%s"' % options.ShareFileServer
+				sys.exit(1)
+			objects = lo.searchDn(filter='(&(objectClass=univentionHost)(cn=%s))' % options.ShareFileServer, base=baseDN)
+			if not objects:
+				print 'ERROR: cannot find share server object with given name "%s"' % options.ShareFileServer
+				sys.exit(1)
 
 		# In a single school environment the default school DC is the master
 		if not dcName and not configRegistry.get('ucsschool/defaultschoolname') and configRegistry.is_true('ucsschool/singlemaster', False):
