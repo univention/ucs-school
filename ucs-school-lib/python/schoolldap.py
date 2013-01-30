@@ -405,6 +405,22 @@ class SchoolSearchBase(object):
 	def computers(self):
 		return "cn=computers,%s" % self.schoolDN
 
+	@property
+	def educationalDCGroup(self):
+		return "cn=OU%s-DC-Edukativnetz,cn=ucsschool,cn=groups,%s" % (self.school, ucr.get('ldap/base'))
+
+	@property
+	def educationalMemberGroup(self):
+		return "cn=OU%s-Member-Edukativnetz,cn=ucsschool,cn=groups,%s" % (self.school, ucr.get('ldap/base'))
+
+	@property
+	def administrativeDCGroup(self):
+		return "cn=OU%s-DC-Verwaltungsnetz,cn=ucsschool,cn=groups,%s" % (self.school, ucr.get('ldap/base'))
+
+	@property
+	def administrativeMemberGroup(self):
+		return "cn=OU%s-Member-Verwaltungsnetz,cn=ucsschool,cn=groups,%s" % (self.school, ucr.get('ldap/base'))
+
 	def isStudent(self, userDN):
 		return userDN.endswith(self.students)
 
