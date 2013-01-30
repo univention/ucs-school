@@ -1,3 +1,10 @@
+ucs-school-metapackage (5.0.5-1) unstable; urgency=low
+
+  * set samba4/ignore/mixsetup?yes as default for new Slave PDC
+    installations (Bug #30212)
+
+ -- Arvid Requate <requate@univention.de>  Wed, 30 Jan 2013 15:45:10 +0100
+
 ucs-school-metapackage (5.0.4-1) unstable; urgency=low
 
   * fix permuted priority and weight in SRV record overrides (Bug #30166)
