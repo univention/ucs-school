@@ -1,3 +1,9 @@
+ucs-school-umc-installer (0.1.13-2) unstable; urgency=low
+
+  * added postinst script; Bug #30162
+
+ -- Alexander Kläser <klaeser@univention.de>  Wed, 30 Jan 2013 14:57:32 +0100
+
 ucs-school-umc-installer (0.1.13-1) unstable; urgency=low
 
   * updated icons, added ou_exists() function, refactorization; Bug #30162
