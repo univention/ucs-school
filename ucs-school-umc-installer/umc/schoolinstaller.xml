@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <umc version="2.0">
   <module id="schoolinstaller" icon="schoolinstaller" version="1.0">
-	<name>UCS@school installer</name>
-	<description>This installation wizard guides the installation of UCS@school in the domain</description>
+	<name>UCS@school configuration wizard</name>
+	<description>This configuration wizard guides the basic configuration of UCS@school in the domain</description>
 	<categories>
 	  <category name="ucs-school-admin"/>
 	</categories>

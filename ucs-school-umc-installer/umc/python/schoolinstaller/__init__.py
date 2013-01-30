@@ -39,6 +39,7 @@ import tempfile
 import glob
 import subprocess
 import traceback
+import ast
 
 # related third party
 import notifier
@@ -94,12 +95,76 @@ class HostSanitizer(StringSanitizer):
 			# invalid FQDN
 			self.raise_validation_error(_('The entered FQDN is not a valid value'))
 
-def get_ldap_connection(host, binddn, bindpw):
-	return univention.uldap.access(host, port=int(ucr.get('ldap/master/port', '7389')), binddn=binddn, bindpw=bindpw)
+### currently not used
+#def get_ldap_connection(host, binddn, bindpw):
+#	return univention.uldap.access(host, port=int(ucr.get('ldap/master/port', '7389')), binddn=binddn, bindpw=bindpw)
+
+def get_remote_ucs_school_version(username, password, master):
+	'''Verify that the correct UCS@school version (singlemaster, multiserver) is
+	installed on the master system.'''
+	MODULE.info('building up ssh connection to %s as user %s' % (master, username))
+	ssh = paramiko.SSHClient()
+	ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+	ssh.load_system_host_keys()
+	ssh.connect(master, username=username, password=password)
+
+	# check the installed packages on the master system
+	regStatusInstalled = re.compile(r'^Status\s*:.*installed.*')
+	installedPackages = []
+	for ipackage in ('ucs-school-singlemaster', 'ucs-school-slave', 'ucs-school-master'):
+		# get 'dpkg --status' output
+		stdin, stdout, stderr = ssh.exec_command("/usr/bin/dpkg --status %s" % ipackage)
+
+		# match: "Status: install ok installed"
+		# TODO: double check regular expression
+		res = [ i for i in stdout if regStatusInstalled.match(i) ]
+		if res:
+			installedPackages.append(ipackage)
+
+	if 'ucs-school-singlemaster' in installedPackages:
+		return 'singlemaster'
+	if 'ucs-school-slave' in installedPackages or 'ucs-school-master' in installedPackages:
+		return 'multiserver'
+
+def get_master_dns_lookup():
+	# DNS lookup for the DC master entry
+	result = dns.resolver.query('_domaincontroller_master._tcp', 'SRV')
+	if result:
+		return result[0].target.canonicalize().split(1)[0].to_text()
+	return ''
+
+def ou_exists(ou, username, password, master = None):
+	"""Indicates whether a specified OU already exists or not."""
+	with tempfile.NamedTemporaryFile() as passwordFile:
+		passwordFile.write('%s' % password)
+		passwordFile.flush()
+		credentials = [ '-U', username, '-y', passwordFile.name ]
+		if ucr.get('system/role') == 'domaincontroller_slave':
+			# on a slave, we need to access the master
+			credentials.extend(['-s', master])
+
+		# UMC call
+		cmd = ['/usr/sbin/umc-command'] + credentials + ['-f', 'container/ou', 'udm/query', '-o', 'objectProperty=None']
+		process = subprocess.Popen(cmd, shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+		stdout, stderr = process.communicate()
+
+		# parse output
+		regResult = re.compile(r'.*^\s*RESULT\s*:\s*(?P<result>.*)', re.MULTILINE | re.DOTALL)
+		match = regResult.match(stdout)
+
+		# check for errors
+		if process.returncode != 0 or not match:
+			# error case... should not happen
+			MODULE.error('Failed to launch UMC query:\n%s%s' % (stderr, stdout))
+			raise RuntimeError(_('Cannot query LDAP information.'))
+
+		# parse the result and filter out entries that match the specifed OU
+		result = ast.literal_eval(match.groupdict().get('result'))
+		result = [ ientry for ientry in res if ientry.get('$dn$') == 'ou=%s,%s' % (ou, ucr.get('ldap/base')) ]
+		return bool(result)
 
 def create_ou(master, ou, slave, username, password):
-	"""create a OU
-	"""
+	"""Create a school OU."""
 	success = True
 	with tempfile.NamedTemporaryFile() as passwordFile:
 		# write password to temporary file
@@ -108,12 +173,12 @@ def create_ou(master, ou, slave, username, password):
 
 		# remote UMC call
 		process = subprocess.Popen(['/usr/sbin/umc-command', '-U', username, '-y', passwordFile.name, '-s', master, 'schoolwizards/schools/create', '-o' ,'name=%s' % ou, '-o', 'schooldc=%s' % slave ], shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-		res = process.communicate()
+		stdout, stderr = process.communicate()
 
 		# check for errors
 		if process.returncode != 0:
 			# error case
-			MODULE.warn('Could not create OU on %s as %s: %s%s' % (master, username, res[1], res[0]))
+			MODULE.warn('Could not create OU on %s as %s: %s%s' % (master, username, stderr, stdout))
 			success = False
 
 	return success
@@ -270,40 +335,6 @@ class Instance(Base):
 			return 'multiserver'
 		return None
 
-	def get_remote_ucs_school_version(self, username, password, master):
-		'''Verify that the correct UCS@school version (singlemaster, multiserver) is
-		installed on the master system.'''
-		MODULE.info('building up ssh connection to %s as user %s' % (master, username))
-		ssh = paramiko.SSHClient()
-		ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-		ssh.load_system_host_keys()
-		ssh.connect(master, username=username, password=password)
-
-		# check the installed packages on the master system
-		regStatusInstalled = re.compile(r'^Status\s*:.*installed.*')
-		installedPackages = []
-		for ipackage in ('ucs-school-singlemaster', 'ucs-school-slave', 'ucs-school-master'):
-			# get 'dpkg --status' output
-			stdin, stdout, stderr = ssh.exec_command("/usr/bin/dpkg --status %s" % ipackage)
-
-			# match: "Status: install ok installed"
-			# TODO: double check regular expression
-			res = [ i for i in stdout if regStatusInstalled.match(i) ]
-			if res:
-				installedPackages.append(ipackage)
-
-		if 'ucs-school-singlemaster' in installedPackages:
-			return 'singlemaster'
-		if 'ucs-school-slave' in installedPackages or 'ucs-school-master' in installedPackages:
-			return 'multiserver'
-
-	def get_master_dns_lookup(self):
-		# DNS lookup for the DC master entry
-		result = dns.resolver.query('_domaincontroller_master._tcp', 'SRV')
-		if result:
-			return result[0].target.canonicalize().split(1)[0].to_text()
-		return ''
-
 	@simple_response
 	def query(self, **kwargs):
 		"""Returns a dictionary of initial values for the form."""
@@ -314,7 +345,7 @@ class Instance(Base):
 			'joined': os.path.exists('/var/univention-join/joined'),
 			'samba': self.get_samba_version(),
 			'ucsschool': self.get_ucs_school_version(),
-			'guessed_master': self.get_master_dns_lookup(),
+			'guessed_master': get_master_dns_lookup(),
 		}
 
 ### currently not used
@@ -381,7 +412,7 @@ class Instance(Base):
 				error = _('Invalid server role! UCS@school can only be installed on the system roles DC master, DC backup, or DC slave.')
 			elif serverRole == 'domaincontroller_slave':
 				# check for a compatible setup on the DC master
-				schoolVersion = self.get_remote_ucs_school_version(username, password, master)
+				schoolVersion = get_remote_ucs_school_version(username, password, master)
 				if not schoolVersion:
 					error = _('Please install UCS@school on the DC master system. Cannot proceed installation on this system.')
 				if schoolVersion != 'multiserver':
