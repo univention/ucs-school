@@ -6,8 +6,7 @@ Build-Depends: debhelper (>= 7.0.50~),
  python-support,
  univention-management-console-dev,
  python-all,
- ucslint,
- ucs-school-umc-common
+ ucslint
 Standards-Version: 3.8.2
 XS-Python-Version: 2.6
 
@@ -19,7 +18,8 @@ Depends: ${misc:Depends},
  python-dnspython,
  python-notifier,
  univention-updater,
- univention-management-console-module-lib
+ univention-management-console-module-lib,
+ ucs-school-umc-common
 Description: This installation wizard guides the installation of UCS@school in the domain
  This installation wizard guides the installation of UCS@school in the domain
  .

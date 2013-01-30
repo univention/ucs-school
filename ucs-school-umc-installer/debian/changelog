@@ -1,3 +1,9 @@
+ucs-school-umc-installer (0.1.12-3) unstable; urgency=low
+
+  * fixed dependencies; Bug #30162
+
+ -- Alexander Kläser <klaeser@univention.de>  Wed, 30 Jan 2013 10:21:54 +0100
+
 ucs-school-umc-installer (0.1.12-2) unstable; urgency=low
 
   * fixed python version; Bug #30162
