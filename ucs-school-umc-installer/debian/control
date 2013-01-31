@@ -18,8 +18,10 @@ Depends: ${misc:Depends},
  python-dnspython,
  python-notifier,
  univention-updater,
+ python-univention-directory-manager,
  univention-management-console-module-lib,
- ucs-school-umc-common
+ ucs-school-umc-common,
+ python-ucs-school
 Description: This installation wizard guides the installation of UCS@school in the domain
  This installation wizard guides the installation of UCS@school in the domain
  .

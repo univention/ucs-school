@@ -33,6 +33,7 @@
 # standard library
 import threading
 import os.path
+import os
 import socket
 import re
 import tempfile
@@ -40,6 +41,8 @@ import glob
 import subprocess
 import traceback
 import ast
+import urllib
+import filecmp
 
 # related third party
 import notifier
@@ -56,6 +59,9 @@ from univention.management.console.config import ucr
 from univention.management.console.modules.decorators import simple_response, sanitize
 from univention.management.console.modules.sanitizers import StringSanitizer, MappingSanitizer, ChoicesSanitizer
 import univention.uldap
+import univention.admin.modules as udm_modules
+import univention.admin.uldap as udm_uldap
+from ucsschool.lib.schoolldap import SchoolSearchBase
 
 from univention.lib.i18n import Translation
 
@@ -64,10 +70,12 @@ ucr.load()
 
 RE_FQDN     = re.compile('^[a-z]([a-z0-9-]*[a-z0-9])*\.([a-z0-9]([a-z0-9-]*[a-z0-9])*[.])*[a-z0-9]([a-z0-9-]*[a-z0-9])*$')
 RE_HOSTNAME = re.compile('^[a-z]([a-z0-9-]*[a-z0-9])*(\.([a-z0-9]([a-z0-9-]*[a-z0-9])*[.])*[a-z0-9]([a-z0-9-]*[a-z0-9])*)?$')
-RE_OU       = re.compile('^(([a-zA-Z0-9_]*)([a-zA-Z0-9]))?$')
+RE_OU       = re.compile('^[a-zA-Z0-9](([a-zA-Z0-9_]*)([a-zA-Z0-9]$))?$')
 
 CMD_ENABLE_EXEC = ['/usr/share/univention-updater/enable-apache2-umc', '--no-restart']
 CMD_DISABLE_EXEC = '/usr/share/univention-updater/disable-apache2-umc'
+
+CERTIFICATE_PATH = '/etc/univention/ssl/ucsCA/CAcert.pem'
 
 #class SetupSanitizer(StringSanitizer):
 #	def _sanitize(self, value, name, further_args):
@@ -132,70 +140,122 @@ def get_master_dns_lookup():
 		return result[0].target.canonicalize().split(1)[0].to_text()
 	return ''
 
-def ou_exists(ou, username, password, master = None):
-	"""Indicates whether a specified OU already exists or not."""
+#def ou_exists(ou, username, password, master = None):
+#	"""Indicates whether a specified OU already exists or not."""
+#	with tempfile.NamedTemporaryFile() as passwordFile:
+#		passwordFile.write('%s' % password)
+#		passwordFile.flush()
+#		credentials = [ '-U', username, '-y', passwordFile.name ]
+#		if ucr.get('system/role') == 'domaincontroller_slave':
+#			# on a slave, we need to access the master
+#			credentials.extend(['-s', master])
+#
+#		# UMC call
+#		cmd = ['/usr/sbin/umc-command'] + credentials + ['-f', 'container/ou', 'udm/query', '-o', 'objectProperty=None']
+#		process = subprocess.Popen(cmd, shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+#		stdout, stderr = process.communicate()
+#
+#		# parse output
+#		match = regUMCResult.match(stdout)
+#
+#		# check for errors
+#		if process.returncode != 0 or not match:
+#			# error case... should not happen
+#			MODULE.error('Failed to launch UMC query:\n%s%s' % (stderr, stdout))
+#			raise RuntimeError(_('Cannot query LDAP information.'))
+#
+#		# parse the result and filter out entries that match the specifed OU
+#		result = ast.literal_eval(match.groupdict().get('result'))
+#		result = [ ientry for ientry in res if ientry.get('$dn$') == 'ou=%s,%s' % (ou, ucr.get('ldap/base')) ]
+#		return bool(result)
+
+regUMCResult = re.compile(r'.*^\s*RESULT\s*:\s*(?P<result>.*)', re.MULTILINE | re.DOTALL)
+
+def umc(username, password, master, options = [], requestType='command'):
 	with tempfile.NamedTemporaryFile() as passwordFile:
+		# write password to temp file
 		passwordFile.write('%s' % password)
 		passwordFile.flush()
-		credentials = [ '-U', username, '-y', passwordFile.name ]
-		if ucr.get('system/role') == 'domaincontroller_slave':
-			# on a slave, we need to access the master
-			credentials.extend(['-s', master])
 
 		# UMC call
-		cmd = ['/usr/sbin/umc-command'] + credentials + ['-f', 'container/ou', 'udm/query', '-o', 'objectProperty=None']
+		cmd = ['/usr/sbin/umc-%s' % requestType, '-U', username, '-y', passwordFile.name, '-s', master]
+		cmd += options
 		process = subprocess.Popen(cmd, shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 		stdout, stderr = process.communicate()
 
 		# parse output
-		regResult = re.compile(r'.*^\s*RESULT\s*:\s*(?P<result>.*)', re.MULTILINE | re.DOTALL)
-		match = regResult.match(stdout)
+		match = regUMCResult.match(stdout)
 
 		# check for errors
 		if process.returncode != 0 or not match:
 			# error case... should not happen
-			MODULE.error('Failed to launch UMC query:\n%s%s' % (stderr, stdout))
-			raise RuntimeError(_('Cannot query LDAP information.'))
+			MODULE.error('Failed to launch UMC query: %s\n%s%s' % (cmd, stderr, stdout))
+			raise RuntimeError(_('Cannot connect to UMC server %s.') % master)
 
-		# parse the result and filter out entries that match the specifed OU
-		result = ast.literal_eval(match.groupdict().get('result'))
-		result = [ ientry for ientry in result if ientry.get('$dn$') == 'ou=%s,%s' % (ou, ucr.get('ldap/base')) ]
-		return bool(result)
+		# parse the result and filter for exact matches (UMC search for '*pattern*')
+		return ast.literal_eval(match.groupdict().get('result'))
+
+def get_user_dn(username, password, master):
+	"""Get the LDAP DN for the given username."""
+	result = umc(username, password, master, ['-f', 'users/user', 'udm/query', '-o', 'objectProperty=username', '-o', 'objectPropertyValue=%s' % username ])
+	result = [ ientry for ientry in result if ientry.get('username') == username ]
+	if not result:
+		return None
+	return result[0].get('$dn$')
 
 def create_ou(master, ou, slave, username, password):
-	"""Create a school OU."""
-	success = True
-	with tempfile.NamedTemporaryFile() as passwordFile:
-		# write password to temporary file
-		passwordFile.write('%s' % password)
-		passwordFile.flush()
+	"""Create a school OU via the UMC interface."""
+	try:
+		umc(username, password, master, ['schoolwizards/schools/create', '-o' ,'name=%s' % ou, '-o', 'schooldc=%s' % slave ])
+	except RuntimeError as err:
+		return False
+	return True
 
-		# remote UMC call
-		process = subprocess.Popen(['/usr/sbin/umc-command', '-U', username, '-y', passwordFile.name, '-s', master, 'schoolwizards/schools/create', '-o' ,'name=%s' % ou, '-o', 'schooldc=%s' % slave ], shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-		stdout, stderr = process.communicate()
+def get_ucr_master(username, password, master, *ucrVariables):
+	'''Read the LDAP base from the master system via UMC.'''
+	options = ['ucr', '-l']
+	for ivar in ucrVariables:
+		options += ['-o', ivar]
+	return umc(username, password, master, options, 'get')
 
-		# check for errors
-		if process.returncode != 0:
-			# error case
-			MODULE.warn('Could not create OU on %s as %s: %s%s' % (master, username, stderr, stdout))
-			success = False
+def retrieveRootCertifcate(master):
+	'''On a slave system, download the root certificate from the specified master
+	and install it on the system. In this way it can be ensured that secure
+	connections can be performed even though the system has not been joined yet.'''
+	if ucr.get('server/role') == 'domaincontroller_slave':
+		# make sure the directory exists
+		if not os.path.exists(os.path.dirname(CERTIFICATE_PATH)):
+			os.makedirs(os.path.dirname(CERTIFICATE_PATH))
+		try:
+			# download the certificate from the DC master
+			certURI = 'http://%s/ucs-root-ca.crt' % master
+			certOrigFile = None
+			with tempfile.NamedTemporaryFile() as certDownloadedFile:
+				urllib.urlretrieve('http://%s/ucs-root-ca.crt' % master, certDownloadedFile.name)
 
-	return success
+				if not filecmp.cmp(CERTIFICATE_PATH, certDownloadedFile.name):
+					# we need to update the certificate file...
+					# save the original file first and make sure we do not override any existing file
+					count = 1
+					certOrigFile = CERTIFICATE_PATH + '.orig'
+					while os.path.exists(certOrigFile):
+						count += 1
+						certOrigFile = CERTIFICATE_PATH + '.orig%s' % count
+					os.rename(CERTIFICATE_PATH, certOrigFile)
 
-	#CREATE_OU_EXEC = '/usr/share/ucs-school-import/scripts/create_ou'
-	#cmd = ' '.join([CREATE_OU_EXEC, master, ou, slave])
-	#MODULE.process('executing on %s: %s' % (master, cmd))
-
-	## build up SSH connection
-	#ssh = get_ssh_connection(username, password, master)
-
-	## execute command and process output
-	#stdin, stdout, stderr = ssh.exec_command(cmd)
-	#stdout = [ i.strip() for i in stdout ]
-	#stderr = [ i.strip() for i in stdout ]
-	#MODULE.info('stdout: %s' % '\n'.join(stdout))
-	#if stderr:
-	#	MODULE.warn('ERROR: %s' % '\n'.join(stderr))
+					# place the downloaded certificate at the original position
+					os.rename(certDownloadedFile, CERTIFICATE_PATH)
+					os.chmod(CERTIFICATE_PATH, 0o644)
+		except (IOError, OSError) as err:
+			# print warning and ignore error
+			MODULE.warn('Could not download root certificate [%s], error ignored: %s' % (certURI, err))
+			if certOrigFile and os.path.exists(certOrigFile):
+				# try to restore the original certificate file
+				try:
+					MOUDLE.info('Restoring original root certificate.')
+					os.rename(certOrigFile, CERTIFICATE_PATH)
+				except (IOError, OSError) as err:
+					MOUDLE.warn('Could not restore original root certificate: %s' % err)
 
 # dummy function that does nothing
 def _dummyFunc(*args):
@@ -217,7 +277,7 @@ def system_join(username, password, info_handler = _dummyFunc, error_handler = _
 			# regular expressions for output parsing
 			regError = re.compile('^\* Message:\s*(?P<message>.*)\s*$')
 			regJoinScript = re.compile('Configure\s+(?P<script>.*)\.inst.*$')
-			regInfo = re.compile('^(?P<message>.*)\s*:?\s*\x1b.*$')
+			regInfo = re.compile('^(?P<message>.*?)\s*:?\s*\x1b.*$')
 
 			# call to univention-join
 			process = subprocess.Popen(['/usr/share/univention-join/univention-join', '-dcaccount', username, '-dcpwd', passwordFile.name], shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -366,32 +426,80 @@ class Instance(Base):
 		setup = request.options.get('setup')
 		serverRole = ucr.get('server/role')
 
+		def _error(msg):
+			# finish the request with an error
+			result = {'success' : False, 'error' : msg}
+			self.finished(request.id, result)
+
 		# ensure that the setup is ok
 		MODULE.process('performing UCS@school installation')
-		error = None
 		try:
 			if not (serverRole == 'domaincontroller_master' or serverRole == 'domaincontroller_backup' or serverRole == 'domaincontroller_slave'):
-				error = _('Invalid server role! UCS@school can only be installed on the system roles DC master, DC backup, or DC slave.')
+				_error(_('Invalid server role! UCS@school can only be installed on the system roles DC master, DC backup, or DC slave.'))
+				return
 			elif serverRole == 'domaincontroller_slave':
 				# check for a compatible setup on the DC master
 				schoolVersion = get_remote_ucs_school_version(username, password, master)
 				if not schoolVersion:
-					error = _('Please install UCS@school on the DC master system. Cannot proceed installation on this system.')
+					_error(_('Please install UCS@school on the DC master system. Cannot proceed installation on this system.'))
+					return
 				if schoolVersion != 'multiserver':
-					error = _('The UCS@school DC master system is not configured as a multi server setup. Cannot proceed installation on this system.')
+					_error(_('The UCS@school DC master system is not configured as a multi server setup. Cannot proceed installation on this system.'))
+					return
 		except socket.gaierror as e:
 			MODULE.warn('Could not connect to master system %s: %s' % (master, e))
-			error = _('Cannot connect to the DC master system %s. Please make sure that the system is reachable. If not this could due to wrong DNS nameserver settings.') % master
+			_error(_('Cannot connect to the DC master system %s. Please make sure that the system is reachable. If not this could due to wrong DNS nameserver settings.') % master)
+			return
 		except paramiko.SSHException as e:
 			MODULE.warn('Could not connect to master system %s: %s' % (master, e))
-			error = _('Cannot connect to the DC master system %s. It seems that the specified domain credentials are not valid.') % master
+			_error(_('Cannot connect to the DC master system %s. It seems that the specified domain credentials are not valid.') % master)
+			return
 
-		if not error:
-			# everything ok, try to acquire the lock for the package installation
-			lock_aquired = self.package_manager.lock(raise_on_fail=False)
-			if not lock_aquired:
-				MODULE.warn('Could not aquire lock for package manager')
-				error = _('Cannot get lock for installation process. Another Package Manager seems to block the operation.')
+		# on slave systems, download the certificate from the master in order
+		# to be able to build up secure connections
+		retrieveRootCertifcate(master)
+
+		# try to query the LDAP base of the master
+		try:
+			ucrMaster = get_ucr_master(username, password, master, 'ldap/base', 'ldap/master/port')
+		except RuntimeError as err:
+			MODULE.warn('Could not query the LDAP base of the mater system %s.' % master)
+			_error(str(err))
+			return
+
+		if serverRole == 'domaincontroller_slave':
+			# make sure that it is safe to join into the specified school OU
+			try:
+				# get the userDN from the master
+				userDN = get_user_dn(username, password, master)
+				lo = univention.uldap.access(host=master, base=ucrMaster.get('ldap/base'), port=int(ucrMaster.get('ldap/master/port', '7389')), binddn=userDN, bindpw=password)
+
+				# check whether we may create and join into the OU
+				result = udm_modules.lookup('container/ou', None, lo, base=ucrMaster.get('ldap/base'), scope='sub', filter='name=%s' % schoolOU)
+				if result:
+					# OU already exists... find all joined slave systems in the ou
+					searchBase = SchoolSearchBase([schoolOU], ldapBase=ucrMaster.get('ldap/base'))
+					slaves = udm_modules.lookup('computers/domaincontroller_slave', None, lo, base=searchBase.computers, scope='sub', filter='service=LDAP')
+
+					# make sure that no joined DC slave is the main DC for this school
+					for islave in slaves:
+						islave.open()
+						if searchBase.educationalDCGroup in islave['groups'] and ucr.get('hostname') != islave['name']:
+							# school OU already has a joined main DC
+							_error(_('The OU "%s" is already in use and has been assigned to a different DC slave system. Please choose a different name for the associated school OU.'))
+							return
+
+			except univention.uldap.ldap.LDAPError as err:
+				MODULE.warn('Could not build up LDAP connection to %s: %s' % (master, err))
+				_error(_('Cannot build up an LDAP connection to master system %s.') % master)
+				return
+
+		# everything ok, try to acquire the lock for the package installation
+		lock_aquired = self.package_manager.lock(raise_on_fail=False)
+		if not lock_aquired:
+			MODULE.warn('Could not aquire lock for package manager')
+			_error(_('Cannot get lock for installation process. Another Package Manager seems to block the operation.'))
+			return
 
 		# see which packages we need to install
 		installPackages = []
@@ -409,7 +517,8 @@ class Instance(Base):
 			elif setup == 'multiserver':
 				installPackages.append('ucs-school-master')
 			else:
-				error = _('Invalid UCS@school configuration.')
+				_error(_('Invalid UCS@school configuration.'))
+				return
 		elif serverRole == 'domaincontroller_slave':
 			installPackages.append('ucs-school-slave')
 			if sambaVersionInstalled:
@@ -420,80 +529,75 @@ class Instance(Base):
 			else:  # -> samba4
 				installPackages.extend(['univention-samba4', 'univention-s4-connector'])
 		else:
-			error = _('Invalid UCS@school configuration.')
+			_error(_('Invalid UCS@school configuration.'))
+			return
 		MODULE.info('Packages to be installed: %s' % ', '.join(installPackages))
 
-		# start installation if configuration is ok
-		if error:
-			MODULE.error('Error installing UCS@school: %s' % error)
-		else:
-			# reset the current installation progress
-			#FIXME: correct percentage + maximum steps
-			progress_state = self.progress_state
-			progress_state.reset(210)
-			progress_state.component = _('Installation of UCS@school packages')
-			#FIXME: correct to make a reset here?
-			self.package_manager.reset_status()
+		# reset the current installation progress
+		steps = 210  # installation == 100, create_ou == 10, system_join == 100
+		if serverRole != 'domaincontroller_slave':
+			steps = 110
+		progress_state = self.progress_state
+		progress_state.reset(210)
+		progress_state.component = _('Installation of UCS@school packages')
+		self.package_manager.reset_status()
 
-			def _thread(_self, packages):
-				# perform installation
-				success = True
-				MODULE.process('Starting package installation')
-				with _self.package_manager.locked(reset_status=True, set_finished=True):
-					with _self.package_manager.no_umc_restart(exclude_apache=True):
-						success = _self.package_manager.install(*packages)
+		def _thread(_self, packages):
+			# perform installation
+			success = True
+			MODULE.process('Starting package installation')
+			with _self.package_manager.locked(reset_status=True, set_finished=True):
+				with _self.package_manager.no_umc_restart(exclude_apache=True):
+					success = _self.package_manager.install(*packages)
 
-				MODULE.info('Result of package installation: success=%s' % success)
+			MODULE.info('Result of package installation: success=%s' % success)
 
-				# on a DC master, we are done
-				if serverRole != 'domaincontroller_slave':
-					return success
+			# on a DC master, we are done
+			if serverRole != 'domaincontroller_slave':
+				return success
 
-				# check for errors
-				#FIXME: correct check for success?
-				if not success:
-					return success
+			# check for errors
+			if not success:
+				return success
 
-				# create the school OU
-				MODULE.info('Starting creation of LDAP school OU structure...')
-				progress_state.component = _('Creation of LDAP school structure')
-				progress_state.info = ''
-				if create_ou(master, schoolOU, ucr.get('hostname'), username, password):
-					MODULE.info('created school OU')
+			# create the school OU
+			MODULE.info('Starting creation of LDAP school OU structure...')
+			progress_state.component = _('Creation of LDAP school structure')
+			progress_state.info = ''
+			if create_ou(master, schoolOU, ucr.get('hostname'), username, password):
+				MODULE.info('created school OU')
 
-					# system join
-					progress_state.add_steps(10)
-					progress_state.component = _('Domain join')
-					progress_state.info = _('Preparing domain join...')
+				# system join
+				progress_state.add_steps(10)
+				progress_state.component = _('Domain join')
+				progress_state.info = _('Preparing domain join...')
 
-					# create a new system join instance
-					MODULE.process('Starting system join...')
-					success = system_join(
-						username, password,
-						info_handler=self.progress_state.info_handler,
-						step_handler=self.progress_state.add_steps,
-						error_handler=self.progress_state.error_handler,
-					)
-				else:
-					progress_state.error_handler(_('The UCS@school software packages have been installed, however, a school OU could not be created and consequently a re-join of the system has not been performed. Please create a new school OU structure using the UMC module "Add school" on the master and perform a domain join on this machine via the UMC module "Domain join".' ))
+				# create a new system join instance
+				MODULE.process('Starting system join...')
+				success = system_join(
+					username, password,
+					info_handler=self.progress_state.info_handler,
+					step_handler=self.progress_state.add_steps,
+					error_handler=self.progress_state.error_handler,
+				)
+			else:
+				progress_state.error_handler(_('The UCS@school software packages have been installed, however, a school OU could not be created and consequently a re-join of the system has not been performed. Please create a new school OU structure using the UMC module "Add school" on the master and perform a domain join on this machine via the UMC module "Domain join".' ))
 
-			def _finished(thread, result):
-				MODULE.info('Finished installation')
-				progress_state.info = _('finished...')
-				progress_state.finish()
-				if isinstance(result, BaseException):
-					msg = '%s\n%s: %s\n' % ( ''.join( traceback.format_tb( thread.exc_info[ 2 ] ) ), thread.exc_info[ 0 ].__name__, str( thread.exc_info[ 1 ] ) )
-					MODULE.warn('Exception during installation: %s' % msg)
+		def _finished(thread, result):
+			MODULE.info('Finished installation')
+			progress_state.info = _('finished...')
+			progress_state.finish()
+			if isinstance(result, BaseException):
+				msg = '%s\n%s: %s\n' % ( ''.join( traceback.format_tb( thread.exc_info[ 2 ] ) ), thread.exc_info[ 0 ].__name__, str( thread.exc_info[ 1 ] ) )
+				MODULE.warn('Exception during installation: %s' % msg)
 
-			# launch thread
-			thread = notifier.threads.Simple('ucsschool-install',
-				notifier.Callback(_thread, self, installPackages),
-				notifier.Callback(_finished)
-			)
-			thread.run()
+		# launch thread
+		thread = notifier.threads.Simple('ucsschool-install',
+			notifier.Callback(_thread, self, installPackages),
+			notifier.Callback(_finished)
+		)
+		thread.run()
 
-		# finish the request
-		result = {'success' : error is None, 'error' : error}
-		self.finished(request.id, result)
-
+		# finish request
+		self.finished(request.id, { 'success': True })
 
