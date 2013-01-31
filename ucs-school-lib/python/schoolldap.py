@@ -322,11 +322,16 @@ class SchoolSearchBase(object):
 	The class is inteded for read access only, instead of switching the a
 	search base, a new instance can simply be created.
 	"""
-	def __init__( self, availableSchools, school = None, dn = None ):
+	def __init__( self, availableSchools, school = None, dn = None, ldapBase = None ):
+		if ldapBase:
+			self._ldapBase = ldapBase
+		else:
+			self._ldapBase = ucr.get('ldap/base')
+
 		self._availableSchools = availableSchools
 		self._school = school or availableSchools[0]
 		# FIXME: search for OU to get correct dn
-		self._schoolDN = dn or 'ou=%s,%s' % (self.school, ucr.get( 'ldap/base' ) )
+		self._schoolDN = dn or 'ou=%s,%s' % (self.school, self._ldapBase )
 
 		# prefixes
 		self._containerAdmins = ucr.get('ucsschool/ldap/default/container/admins', 'admins')
@@ -407,19 +412,19 @@ class SchoolSearchBase(object):
 
 	@property
 	def educationalDCGroup(self):
-		return "cn=OU%s-DC-Edukativnetz,cn=ucsschool,cn=groups,%s" % (self.school, self.schoolDN)
+		return "cn=OU%s-DC-Edukativnetz,cn=ucsschool,cn=groups,%s" % (self.school, self._ldapBase)
 
 	@property
 	def educationalMemberGroup(self):
-		return "cn=OU%s-Member-Edukativnetz,cn=ucsschool,cn=groups,%s" % (self.school, self.schoolDN
+		return "cn=OU%s-Member-Edukativnetz,cn=ucsschool,cn=groups,%s" % (self.school, self._ldapBase)
 
 	@property
 	def administrativeDCGroup(self):
-		return "cn=OU%s-DC-Verwaltungsnetz,cn=ucsschool,cn=groups,%s" % (self.school, self.schoolDN)
+		return "cn=OU%s-DC-Verwaltungsnetz,cn=ucsschool,cn=groups,%s" % (self.school, self._ldapBase)
 
 	@property
 	def administrativeMemberGroup(self):
-		return "cn=OU%s-Member-Verwaltungsnetz,cn=ucsschool,cn=groups,%s" % (self.school, self.schoolDN)
+		return "cn=OU%s-Member-Verwaltungsnetz,cn=ucsschool,cn=groups,%s" % (self.school, self._ldapBase)
 
 	def isStudent(self, userDN):
 		return userDN.endswith(self.students)
