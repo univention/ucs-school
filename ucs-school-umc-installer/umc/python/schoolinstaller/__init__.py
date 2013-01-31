@@ -45,7 +45,6 @@ import ast
 import notifier
 import notifier.threads
 import dns.resolver
-#import ldap.filter
 import paramiko
 
 # univention
@@ -63,9 +62,9 @@ from univention.lib.i18n import Translation
 _ = Translation( 'ucs-school-umc-installer' ).translate
 ucr.load()
 
-fqdn_pattern     = '^[a-z]([a-z0-9-]*[a-z0-9])*\.([a-z0-9]([a-z0-9-]*[a-z0-9])*[.])*[a-z0-9]([a-z0-9-]*[a-z0-9])*$'
-hostname_pattern = '^[a-z]([a-z0-9-]*[a-z0-9])*(\.([a-z0-9]([a-z0-9-]*[a-z0-9])*[.])*[a-z0-9]([a-z0-9-]*[a-z0-9])*)?$'
-ou_pattern       = '^(([a-zA-Z0-9_]*)([a-zA-Z0-9]))?$'
+RE_FQDN     = re.compile('^[a-z]([a-z0-9-]*[a-z0-9])*\.([a-z0-9]([a-z0-9-]*[a-z0-9])*[.])*[a-z0-9]([a-z0-9-]*[a-z0-9])*$')
+RE_HOSTNAME = re.compile('^[a-z]([a-z0-9-]*[a-z0-9])*(\.([a-z0-9]([a-z0-9-]*[a-z0-9])*[.])*[a-z0-9]([a-z0-9-]*[a-z0-9])*)?$')
+RE_OU       = re.compile('^(([a-zA-Z0-9_]*)([a-zA-Z0-9]))?$')
 
 CMD_ENABLE_EXEC = ['/usr/share/univention-updater/enable-apache2-umc', '--no-restart']
 CMD_DISABLE_EXEC = '/usr/share/univention-updater/disable-apache2-umc'
@@ -95,18 +94,18 @@ class HostSanitizer(StringSanitizer):
 			# invalid FQDN
 			self.raise_validation_error(_('The entered FQDN is not a valid value'))
 
-### currently not used
-#def get_ldap_connection(host, binddn, bindpw):
-#	return univention.uldap.access(host, port=int(ucr.get('ldap/master/port', '7389')), binddn=binddn, bindpw=bindpw)
+def get_ssh_connection(username, password, host):
+	ssh = paramiko.SSHClient()
+	ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+	ssh.load_system_host_keys()
+	ssh.connect(host, username=username, password=password)
+	return ssh
 
 def get_remote_ucs_school_version(username, password, master):
 	'''Verify that the correct UCS@school version (singlemaster, multiserver) is
 	installed on the master system.'''
 	MODULE.info('building up ssh connection to %s as user %s' % (master, username))
-	ssh = paramiko.SSHClient()
-	ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-	ssh.load_system_host_keys()
-	ssh.connect(master, username=username, password=password)
+	ssh = get_ssh_connection(username, password, master)
 
 	# check the installed packages on the master system
 	regStatusInstalled = re.compile(r'^Status\s*:.*installed.*')
@@ -160,7 +159,7 @@ def ou_exists(ou, username, password, master = None):
 
 		# parse the result and filter out entries that match the specifed OU
 		result = ast.literal_eval(match.groupdict().get('result'))
-		result = [ ientry for ientry in res if ientry.get('$dn$') == 'ou=%s,%s' % (ou, ucr.get('ldap/base')) ]
+		result = [ ientry for ientry in result if ientry.get('$dn$') == 'ou=%s,%s' % (ou, ucr.get('ldap/base')) ]
 		return bool(result)
 
 def create_ou(master, ou, slave, username, password):
@@ -188,10 +187,7 @@ def create_ou(master, ou, slave, username, password):
 	#MODULE.process('executing on %s: %s' % (master, cmd))
 
 	## build up SSH connection
-	#ssh = paramiko.SSHClient()
-	#ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-	#ssh.load_system_host_keys()
-	#ssh.connect(master, username=username, password=password)
+	#ssh = get_ssh_connection(username, password, master)
 
 	## execute command and process output
 	#stdin, stdout, stderr = ssh.exec_command(cmd)
@@ -348,40 +344,6 @@ class Instance(Base):
 			'guessed_master': get_master_dns_lookup(),
 		}
 
-### currently not used
-#	def getDN(self, username, password, master):
-#		"""Returns the usernames DN and masters FQDN"""
-#		ssh = paramiko.SSHClient()
-#		ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-#		ssh.load_system_host_keys()
-#		ssh.connect(master, username=username, password=password)
-#
-#		# try to get the DN of the user account
-#		username = ldap.filter.escape_filter_chars(username)
-#		stdin, dn, stderr = ssh.exec_command("/usr/sbin/udm users/user list --filter uid='%s' --logfile /dev/null | sed -ne 's|^DN: ||p'" % escape_value(username))
-#
-#		if not dn.strip():
-#			dn = None
-#
-#		return dn
-
-### currently not used
-#	@sanitize(username=StringSanitizer(required=True, use_asterisks=False), password=StringSanitizer(required=True), master=HostSanitizer(required=True, regex_pattern=fqdn_pattern), allow_other_keys=False)
-#	@simple_response
-#	def samba(self, username, password, master):
-#		"""Returns 'samba3' if the Samba3 is installed on the master system, else 'samab4'"""
-#		try:
-#			lo = get_ldap_connection(master, username, password)
-#		except:
-#			pass # TODO
-#
-#		# search for samba4 service object
-#		if lo.search(filter='(&(objectClass=univentionServiceObject)(name=Samba 3))'):
-#			return 'samba3'
-#		elif lo.search(filter='(&(objectClass=univentionServiceObject)(name=Samba 4))'):
-#			return 'samba4'
-#		return 'samba4' # fallback, no samba installed
-
 	@simple_response
 	def progress(self):
 		return self.progress_state.poll()
@@ -389,9 +351,9 @@ class Instance(Base):
 	@sanitize(
 		username=StringSanitizer(required=True),
 		password=StringSanitizer(required=True),
-		master=HostSanitizer(required=True, regex_pattern=hostname_pattern),
+		master=HostSanitizer(required=True, regex_pattern=RE_HOSTNAME),
 		samba=ChoicesSanitizer(['3', '4']),
-		schoolOU=StringSanitizer(required=True, regex_pattern=ou_pattern),
+		schoolOU=StringSanitizer(required=True, regex_pattern=RE_OU),
 		setup=ChoicesSanitizer(['multiserver', 'singlemaster']),
 	)
 	def install(self, request):

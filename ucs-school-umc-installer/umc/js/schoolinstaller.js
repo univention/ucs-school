@@ -330,7 +330,7 @@ define([
 				}
 
 				// installation
-				if (pageName === 'school') {
+				if (pageName == 'school') {
 					// start standby animation
 					this.standby(true);
 					var values = this.getValues();
@@ -406,14 +406,20 @@ define([
 
 		previous: function(pageName) {
 			var previous = this.inherited(arguments);
-			// FIXME: dont go back to samba if samba is installed
+
+			// only display samba page for a single master setup or on a
+			// slave and only if samba is not already installed
+			if (previous == 'samba' && (this._samba || (this.getWidget('setup', 'setup').get('value') == 'multiserver' && this._serverRole != 'domaincontroller_slave'))) {
+				previous = 'credentials';
+			}
 
 			// show credentials page only on DC Slave
-			if (previous === 'credentials' && this._serverRole != 'domaincontroller_slave') {
+			if (previous == 'credentials' && this._serverRole != 'domaincontroller_slave') {
 				previous = 'setup';
-			} else if (previous === 'error') {
+			} else if (previous == 'error') {
 				previous = 'school';
 			}
+
 			return previous;
 		},
 

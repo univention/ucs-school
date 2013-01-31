@@ -1,3 +1,10 @@
+ucs-school-umc-installer (0.1.14-1) unstable; urgency=low
+
+  * fix typo in ou_exists(), fix displaying of samba page when
+  	selecting previous page; Bug #30162
+
+ -- Florian Best <best@univention.de>  Thu, 31 Jan 2013 12:06:39 +0100
+
 ucs-school-umc-installer (0.1.13-2) unstable; urgency=low
 
   * added postinst script; Bug #30162
