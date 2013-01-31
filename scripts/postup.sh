@@ -34,10 +34,15 @@ export DEBIAN_FRONTEND=noninteractive
 exec 3>>"$UPDATER_LOG"
 eval "$(univention-config-registry shell)" >&3 2>&3
 
-echo "Running ucsschool 3.1 preup.sh script" >&3
+echo "Running ucsschool 3.1 postup.sh script" >&3
 date >&3
 
-echo "ucsschool 3.1 preup.sh script finished" >&3
+# automatically configure app center during update
+if [ "$UPDATE_STATE" = "post" -a "$UPDATE_NEXT_VERSION" = "3.1-0" ]; then
+	univention-add-app ucsschool ucs-school-installer
+fi
+
+echo "ucsschool 3.1 postup.sh script finished" >&3
 date >&3
 
 exit 0
