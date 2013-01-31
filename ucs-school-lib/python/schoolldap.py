@@ -407,19 +407,19 @@ class SchoolSearchBase(object):
 
 	@property
 	def educationalDCGroup(self):
-		return "cn=OU%s-DC-Edukativnetz,cn=ucsschool,cn=groups,%s" % (self.school, ucr.get('ldap/base'))
+		return "cn=OU%s-DC-Edukativnetz,cn=ucsschool,cn=groups,%s" % (self.school, self.schoolDN)
 
 	@property
 	def educationalMemberGroup(self):
-		return "cn=OU%s-Member-Edukativnetz,cn=ucsschool,cn=groups,%s" % (self.school, ucr.get('ldap/base'))
+		return "cn=OU%s-Member-Edukativnetz,cn=ucsschool,cn=groups,%s" % (self.school, self.schoolDN
 
 	@property
 	def administrativeDCGroup(self):
-		return "cn=OU%s-DC-Verwaltungsnetz,cn=ucsschool,cn=groups,%s" % (self.school, ucr.get('ldap/base'))
+		return "cn=OU%s-DC-Verwaltungsnetz,cn=ucsschool,cn=groups,%s" % (self.school, self.schoolDN)
 
 	@property
 	def administrativeMemberGroup(self):
-		return "cn=OU%s-Member-Verwaltungsnetz,cn=ucsschool,cn=groups,%s" % (self.school, ucr.get('ldap/base'))
+		return "cn=OU%s-Member-Verwaltungsnetz,cn=ucsschool,cn=groups,%s" % (self.school, self.schoolDN)
 
 	def isStudent(self, userDN):
 		return userDN.endswith(self.students)
