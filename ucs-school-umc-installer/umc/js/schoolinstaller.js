@@ -34,6 +34,7 @@ define([
 	"dojo/_base/array",
 	"dojo/topic",
 	"dojo/Deferred",
+	"dojo/when",
 	"umc/tools",
 	"umc/dialog",
 	"umc/widgets/ComboBox",
@@ -46,7 +47,7 @@ define([
 	"umc/widgets/StandbyMixin",
 	"umc/modules/lib/server",
 	"umc/i18n!umc/modules/schoolinstaller"
-], function(declare, lang, array, topic, Deferred, tools, dialog, ComboBox, TextBox, Text, PasswordBox, Module, Wizard, ProgressBar, StandbyMixin, Lib_Server, _) {
+], function(declare, lang, array, topic, Deferred, when, tools, dialog, ComboBox, TextBox, Text, PasswordBox, Module, Wizard, ProgressBar, StandbyMixin, Lib_Server, _) {
 
 	var Installer = declare("umc.modules.schoolinstaller.Installer", [ Wizard, StandbyMixin ], {
 		_initialDeferred: null,
@@ -222,7 +223,7 @@ define([
 			this.own(this._progressBar);
 
 			// change labels of default footer buttons
-			this._pages.school._footerButtons.next.set('label', _('Install'));
+//			this._pages.school._footerButtons.next.set('label', _('Install'));
 			this._pages.error._footerButtons.next.set('label', _('Retry'));
 
 			// initial query for server details
@@ -331,9 +332,8 @@ define([
 				}
 
 				// installation
-				if (pageName == 'school') {
+				if (pageName == 'school' || (next == 'school' && this.getWidget('setup', 'setup').get('value') == 'multiserver' && this._serverRole != 'domaincontroller_master')) {
 					// start standby animation
-					this.standby(true);
 					var values = this.getValues();
 
 					// clear entered password and make sure that no error is indicated
@@ -341,47 +341,56 @@ define([
 					this.getWidget('credentials', 'password').set('state', 'Incomplete');
 
 					// request installation
-					var deferred = new Deferred();
-					tools.umcpCommand('schoolinstaller/install', values).then(lang.hitch(this, function(result) {
-						this.standby(false);
-
-						if (!result.result.success) {
-							this.getWidget('error', 'info').set('content', result.result.error);
-							deferred.resolve('error');
-							return;
+					next = dialog.confirm(_('Please confirm to start the installation process.'), [{
+						name: 'yes',
+						label: _('Yes'),
+						'default': true
+					}, {
+						name: 'no',
+						label: _('No')
+					}]).then(lang.hitch(this, function(install) {
+						if (install == 'no') {
+							return pageName;
 						}
+						this.standby(true);
+						return tools.umcpCommand('schoolinstaller/install', values).then(lang.hitch(this, function(result) {
+							if (!result.result.success) {
+								this.getWidget('error', 'info').set('content', result.result.error);
+								return 'error';
+							}
 
-						// show the progress bar
-						this._progressBar.reset(_('Starting the configuration process...' ));
-						this.standby(true, this._progressBar);
-						this._progressBar.auto(
-							'schoolinstaller/progress',
-							{},
-							lang.hitch(this, '_installationFinished', deferred),
-							undefined,
-							undefined,
-							true
-						);
-					}), lang.hitch(this, function(error) {
-						// an unexpected error occurred
-						this.standby(false);
-						this.getWidget('error', 'info').set('content', _('An unexpected error occurred.'));
-						deferred.resolve('error');
+							// show the progress bar
+							this._progressBar.reset(_('Starting the configuration process...' ));
+							this.standby(true, this._progressBar);
+							var deferred = new Deferred();
+							this._progressBar.auto(
+								'schoolinstaller/progress',
+								{},
+								lang.hitch(this, '_installationFinished', deferred),
+								undefined,
+								undefined,
+								true
+							);
+							return deferred;
+						}), lang.hitch(this, function(error) {
+							// an unexpected error occurred
+							this.getWidget('error', 'info').set('content', _('An unexpected error occurred.'));
+							return 'error';
+						}));
 					}));
 
-					// stop standby animation when finished
-					deferred.then(lang.hitch(this, function() {
+					next.then(lang.hitch(this, function() {
 						this.standby(false);
 					}));
-
-					return deferred;
 				}
 
-				// call the corresponding update method of the next page
-				if (this['_update_' + next + '_page']) {
-					var updateFunc = lang.hitch(this, '_update_' + next + '_page');
-					updateFunc();
-				}
+				when(next, lang.hitch(this, function(next) {
+					// call the corresponding update method of the next page
+					if (this['_update_' + next + '_page']) {
+						var updateFunc = lang.hitch(this, '_update_' + next + '_page');
+						updateFunc();
+					}
+				}));
 
 				return next;
 			}));

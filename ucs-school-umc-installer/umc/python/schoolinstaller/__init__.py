@@ -413,7 +413,7 @@ class Instance(Base):
 		password=StringSanitizer(required=True),
 		master=HostSanitizer(required=True, regex_pattern=RE_HOSTNAME),
 		samba=ChoicesSanitizer(['3', '4']),
-		schoolOU=StringSanitizer(required=True, regex_pattern=RE_OU),
+		schoolOU=StringSanitizer(required=True),
 		setup=ChoicesSanitizer(['multiserver', 'singlemaster']),
 	)
 	def install(self, request):
@@ -430,6 +430,10 @@ class Instance(Base):
 			# finish the request with an error
 			result = {'success' : False, 'error' : msg}
 			self.finished(request.id, result)
+
+		if setup == 'multiserver' and serverRole != 'domaincontroller_master' and not RE_OU.match(schoolOU):
+			_error(_('The specified school OU is not valid.'))
+			return
 
 		# ensure that the setup is ok
 		MODULE.process('performing UCS@school installation')
