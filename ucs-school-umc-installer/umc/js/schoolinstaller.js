@@ -122,6 +122,7 @@ define([
 					type: TextBox,
 					required: true,
 					name: 'username',
+					value: 'Administrator',
 					label: _('Domain username')
 				}, {
 					type: PasswordBox,
@@ -392,6 +393,14 @@ define([
 			this.getWidget('school', 'infoTextSlave').set('visible', this._serverRole == 'domaincontroller_slave');
 		},
 
+		_update_success_page: function() {
+			if (this._requestRestart) {
+				// prompt an information for UMC restart
+				var msg = _('For all changes to take effect, a restart of the UMC server components is necessary after the domain join.');
+				Lib_Server.askRestart(msg);
+			}
+		},
+
 		canCancel: function(pageName) {
 			return pageName != 'success' && pageName != 'alreadyInstalled';
 		},
@@ -441,17 +450,7 @@ define([
 			this.addChild(this._installer);
 
 			this._installer.on('finished', lang.hitch(this, function() {
-				if (this._installer._requestRestart) {
-					// prompt an information for UMC restart
-					var msg = _('For all changes to take effect, a restart of the UMC server components is necessary after the domain join.');
-					Lib_Server.askRestart(msg).then(
-						function() { /* nothing to do */ },
-						lang.hitch(this, function() {
-							// user canceled -> change the current view
-							topic.publish('/umc/tabs/close', this);
-						}
-					));
-				}
+				topic.publish('/umc/tabs/close', this);
 			}));
 			this._installer.on('cancel', lang.hitch(this, function() {
 				topic.publish('/umc/tabs/close', this);

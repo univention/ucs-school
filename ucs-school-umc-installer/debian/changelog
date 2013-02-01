@@ -1,3 +1,12 @@
+ucs-school-umc-installer (0.1.16-1) unstable; urgency=low
+
+  * prefill value "Administrator" as domain username
+  * fix trigger of closing page when clicking on finished after installation
+  * show the dialog for restarting UMC server components immediately when
+  	the user enters the "success" page; Bug #30162
+
+ -- Florian Best <best@univention.de>  Fri, 01 Feb 2013 09:06:14 +0100
+
 ucs-school-umc-installer (0.1.15-1) unstable; urgency=low
 
   * refactoring, check for existing school OU; use master root certificate;
