@@ -362,6 +362,7 @@ define([
 
 							// show the progress bar
 							this._progressBar.reset(_('Starting the configuration process...' ));
+							this.standby(false);
 							this.standby(true, this._progressBar);
 							var deferred = new Deferred();
 							this._progressBar.auto(

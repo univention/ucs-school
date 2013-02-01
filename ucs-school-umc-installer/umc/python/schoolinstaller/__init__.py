@@ -429,6 +429,12 @@ class Instance(Base):
 		setup = request.options.get('setup')
 		serverRole = ucr.get('server/role')
 
+		if serverRole != 'domaincontroller_slave':
+			# use the credentials of the currently authenticated user on a master/backup system
+			username = self._user_dn
+			password = self._password
+			master = '%s.%s' % (ucr.get('hostname'), ucr.get('domainname'))
+
 		def _error(msg):
 			# finish the request with an error
 			result = {'success' : False, 'error' : msg}
@@ -545,7 +551,7 @@ class Instance(Base):
 		if serverRole != 'domaincontroller_slave':
 			steps = 110
 		progress_state = self.progress_state
-		progress_state.reset(210)
+		progress_state.reset(steps)
 		progress_state.component = _('Installation of UCS@school packages')
 		self.package_manager.reset_status()
 
@@ -556,12 +562,7 @@ class Instance(Base):
 			with _self.package_manager.locked(reset_status=True, set_finished=True):
 				with _self.package_manager.no_umc_restart(exclude_apache=True):
 					success = _self.package_manager.install(*packages)
-
 			MODULE.info('Result of package installation: success=%s' % success)
-
-			# on a DC master, we are done
-			if serverRole != 'domaincontroller_slave':
-				return success
 
 			# check for errors
 			if not success:
@@ -571,15 +572,19 @@ class Instance(Base):
 			MODULE.info('Starting creation of LDAP school OU structure...')
 			progress_state.component = _('Creation of LDAP school structure')
 			progress_state.info = ''
-			if create_ou(master, schoolOU, ucr.get('hostname'), username, password):
+			success = create_ou(master, schoolOU, ucr.get('hostname'), username, password)
+			progress_state.add_steps(10)
+			if success:
 				MODULE.info('created school OU')
+			else:
+				MODULE.error('Could not create school OU')
+				progress_state.error_handler(_('The UCS@school software packages have been installed, however, a school OU could not be created and consequently a re-join of the system has not been performed. Please create a new school OU structure using the UMC module "Add school" on the master and perform a domain join on this machine via the UMC module "Domain join".' ))
+				return success
 
-				# system join
-				progress_state.add_steps(10)
+			if serverRole == 'domaincontroller_slave':
+				# system join on a slave system
 				progress_state.component = _('Domain join')
 				progress_state.info = _('Preparing domain join...')
-
-				# create a new system join instance
 				MODULE.process('Starting system join...')
 				success = system_join(
 					username, password,
@@ -587,8 +592,8 @@ class Instance(Base):
 					step_handler=self.progress_state.add_steps,
 					error_handler=self.progress_state.error_handler,
 				)
-			else:
-				progress_state.error_handler(_('The UCS@school software packages have been installed, however, a school OU could not be created and consequently a re-join of the system has not been performed. Please create a new school OU structure using the UMC module "Add school" on the master and perform a domain join on this machine via the UMC module "Domain join".' ))
+
+			return success
 
 		def _finished(thread, result):
 			MODULE.info('Finished installation')

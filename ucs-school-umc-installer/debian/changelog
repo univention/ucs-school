@@ -1,3 +1,9 @@
+ucs-school-umc-installer (0.1.20-1) unstable; urgency=low
+
+  * fixed installation problems on DC master; Bug #30162
+
+ -- Alexander Kläser <klaeser@univention.de>  Fri, 01 Feb 2013 13:41:10 +0100
+
 ucs-school-umc-installer (0.1.19-1) unstable; urgency=low
 
   * fix typos; Bug #30162
