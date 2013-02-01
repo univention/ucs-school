@@ -135,7 +135,7 @@ def get_remote_ucs_school_version(username, password, master):
 
 def get_master_dns_lookup():
 	# DNS lookup for the DC master entry
-	try:		
+	try:
 		query = '_domaincontroller_master._tcp.%s.' % ucr.get('domainname')
 		result = dns.resolver.query(query, 'SRV')
 		if result:
@@ -207,7 +207,21 @@ def get_user_dn(username, password, master):
 		return None
 	return result[0].get('$dn$')
 
-def create_ou(master, ou, slave, username, password):
+def create_ou_local(ou):
+	'''Calls create_ou locally as user root (only on master).'''
+	# call create_ou
+	cmd = ['/usr/share/ucs-school-import/scripts/create_ou', ou]
+	process = subprocess.Popen(cmd, shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+	stdout, stderr = process.communicate()
+
+	# check for errors
+	if process.returncode != 0 or not match:
+		# error case... should not happen
+		MODULE.error('Failed to execute create_ou: %s\n%s%s' % (cmd, stderr, stdout))
+		return False
+	return True
+
+def create_ou_remote(master, ou, slave, username, password):
 	"""Create a school OU via the UMC interface."""
 	try:
 		umc(username, password, master, ['schoolwizards/schools/create', '-o' ,'name=%s' % ou, '-o', 'schooldc=%s' % slave ])
@@ -563,9 +577,11 @@ class Instance(Base):
 		MODULE.info('Packages to be installed: %s' % ', '.join(installPackages))
 
 		# reset the current installation progress
-		steps = 210  # installation == 100, create_ou == 10, system_join == 100
-		if serverRole != 'domaincontroller_slave':
-			steps = 110
+		steps = 100  # installation -> 100
+		if serverRole != 'domaincontroller_backup':
+			steps += 10  # create_ou -> 10
+		if serverRole == 'domaincontroller_slave':
+			steps += 100  # system_join -> 100 steps
 		progress_state = self.progress_state
 		progress_state.reset(steps)
 		progress_state.component = _('Installation of UCS@school packages')
@@ -585,19 +601,26 @@ class Instance(Base):
 				restoreOrigCertificate(certOrigFile)
 				return success
 
-			# create the school OU
-			MODULE.info('Starting creation of LDAP school OU structure...')
-			progress_state.component = _('Creation of LDAP school structure')
-			progress_state.info = ''
-			success = create_ou(master, schoolOU, ucr.get('hostname'), username, password)
-			progress_state.add_steps(10)
-			if success:
-				MODULE.info('created school OU')
-			else:
-				MODULE.error('Could not create school OU')
-				progress_state.error_handler(_('The UCS@school software packages have been installed, however, a school OU could not be created and consequently a re-join of the system has not been performed. Please create a new school OU structure using the UMC module "Add school" on the master and perform a domain join on this machine via the UMC module "Domain join".' ))
-				restoreOrigCertificate(certOrigFile)
-				return success
+			if serverRole != 'domaincontroller_backup':
+				# create the school OU (not on backup!)
+				MODULE.info('Starting creation of LDAP school OU structure...')
+				progress_state.component = _('Creation of LDAP school structure')
+				progress_state.info = ''
+				if serverRole != 'domaincontroller_slave':
+					# create ou remotely on the slave
+					success = create_ou_remote(master, schoolOU, ucr.get('hostname'), username, password)
+				if serverRole != 'domaincontroller_master':
+					# create ou locally on the master
+					success = create_ou_local(schoolOU)
+
+				progress_state.add_steps(10)
+				if success:
+					MODULE.info('created school OU')
+				else:
+					MODULE.error('Could not create school OU')
+					progress_state.error_handler(_('The UCS@school software packages have been installed, however, a school OU could not be created and consequently a re-join of the system has not been performed. Please create a new school OU structure using the UMC module "Add school" on the master and perform a domain join on this machine via the UMC module "Domain join".' ))
+					restoreOrigCertificate(certOrigFile)
+					return success
 
 			if serverRole == 'domaincontroller_slave':
 				# system join on a slave system

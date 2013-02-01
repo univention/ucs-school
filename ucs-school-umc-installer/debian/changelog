@@ -1,3 +1,10 @@
+ucs-school-umc-installer (0.1.25-1) unstable; urgency=low
+
+  * improved handling on backup; Bug #30162
+  * call create_ou locally on master; Bug #30162
+
+ -- Alexander Kläser <klaeser@univention.de>  Fri, 01 Feb 2013 17:33:53 +0100
+
 ucs-school-umc-installer (0.1.24-1) unstable; urgency=low
 
   * improved handling on unjoined slave; Bug #30162
