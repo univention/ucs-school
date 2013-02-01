@@ -39,7 +39,10 @@ date >&3
 
 # automatically configure app center during update
 if [ "$UPDATE_STATE" = "post" -a "$UPDATE_NEXT_VERSION" = "3.1-0" ]; then
-	univention-add-app ucsschool ucs-school-umc-installer
+	univention-add-app ucsschool
+	ucr set repository/online/component/ucsschool/version="3.0,3.1"
+	univention-install  -y --force-yes ucs-school-umc-installer
+	ucr set repository/online/component/ucsschool/version=current
 fi
 
 echo "ucsschool 3.1 postup.sh script finished" >&3
