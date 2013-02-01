@@ -407,7 +407,7 @@ define([
 		_update_success_page: function() {
 			if (this._requestRestart) {
 				// prompt an information for UMC restart
-				var msg = _('For all changes to take effect, a restart of the UMC server components is necessary after the domain join.');
+				var msg = _('In order to complete the installation of UCS@school, a restart of the UMC server components is necessary.');
 				Lib_Server.askRestart(msg);
 			}
 		},

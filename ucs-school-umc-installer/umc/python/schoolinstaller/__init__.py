@@ -431,7 +431,7 @@ class Instance(Base):
 
 		if serverRole != 'domaincontroller_slave':
 			# use the credentials of the currently authenticated user on a master/backup system
-			username = self._user_dn
+			username = self._username
 			password = self._password
 			master = '%s.%s' % (ucr.get('hostname'), ucr.get('domainname'))
 
