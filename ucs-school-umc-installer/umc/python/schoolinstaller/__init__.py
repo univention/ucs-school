@@ -116,7 +116,7 @@ def get_remote_ucs_school_version(username, password, master):
 	ssh = get_ssh_connection(username, password, master)
 
 	# check the installed packages on the master system
-	regStatusInstalled = re.compile(r'^Status\s*:.*installed.*')
+	regStatusInstalled = re.compile(r'^Status:.*\sinstalled$')
 	installedPackages = []
 	for ipackage in ('ucs-school-singlemaster', 'ucs-school-slave', 'ucs-school-master'):
 		# get 'dpkg --status' output

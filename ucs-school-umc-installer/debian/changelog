@@ -1,3 +1,9 @@
+ucs-school-umc-installer (0.1.23-1) unstable; urgency=low
+
+  * fix regex; Bug #30162
+
+ -- Florian Best <best@univention.de>  Fri, 01 Feb 2013 15:05:05 +0100
+
 ucs-school-umc-installer (0.1.22-1) unstable; urgency=low
 
   * update texts for DC slave and samba; Bug #30162
