@@ -104,7 +104,8 @@ define([
 
 						if (this._serverRole == 'domaincontroller_slave') {
 							// adaptations for text of a multi server setup on domaincontroller slaves
-							text = _('<p>The local server role is domaincontroller slave, for which only a multi server setup can be configured.</p>') + text;
+							//text = _('<p>The local server role is domaincontroller slave, for which only a multi server setup can be configured.</p>') + text;
+							text = '';
 						}
 
 						// update widget
@@ -151,8 +152,8 @@ define([
 					],
 					onChange: lang.hitch(this, function(newVal, widgets) {
 						var texts = {
-							'samba4': _('Samba 4 provides full Active Directory (AD) functionality. A Sama 4 server can act as AD Domain Controller for Windows systems.'),
-							'samba3': _('Samba 3 can only provide Domain Controller functionality for a Windows NT network domain. A Samba 3 system cannot provide Domain Controller functionality for an Active Directory (AD) domain, however, it can be member of an AD domain.')
+							'samba4': _('Samba 4 is the next generation of the Samba suite. The most important innovation of Samba 4 is the support of domain, directory and authentication services which are compatible with Microsoft Active Directory. This means that Active Directory-compatible Windows domains can be constructed with Samba 4. These also allow the use of the tools provided by Microsoft for the management of users or group policies (GPOs) for example. Samba4 is the recommended version to use.'),
+							'samba3': _('Samba 3 implements domain services based on the domain technology of Microsoft Windows NT. Samba 3 is the current, stable and tried-and-tested main release series of the Samba project and has been integrated in UCS for many years.')
 						};
 
 						// update the help text according to the value chosen...
@@ -244,6 +245,9 @@ define([
 				var guessedMaster = data.result.guessed_master;
 
 				// update some widgets with the intial results
+				if (this._serverRole == 'domaincontroller_slave') {
+					this._pages.setup.set('helpText', _('This wizard guides you step by step through the installation of an UCS@school domaincontroller slave. Before continuing please make sure that an UCS@school domaincontroller master has already been set up for a multi server scenario.'));
+				}
 				if (this._samba) {
 					this.getWidget('samba', 'samba').set('value', this._samba);
 				}
