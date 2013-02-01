@@ -16,6 +16,14 @@ access to dn="cn=univention,@%@ldap/base@%@"
    by group/univentionGroup/uniqueMember="cn=Member-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
    by * none break
 
+# Slave-Controller may replicate license container
+access to dn.subtree="cn=license,cn=univention,@%@ldap/base@%@"
+   by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
+   by group/univentionGroup/uniqueMember="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
+   by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
+   by group/univentionGroup/uniqueMember="cn=Member-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
+   by * none break
+
 # Slave-Controller duerfen custom attributes-Container und dessen Inhalt replizieren
 access to dn.subtree="cn=custom attributes,cn=univention,@%@ldap/base@%@"
    by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read

@@ -1,3 +1,10 @@
+ucs-school-ldap-acls-master (8.0.2-1) unstable; urgency=low
+
+  * add read ACL for license container for UCS@school domaincontroller
+    slaves and memberservers (Bug #30229)
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 01 Feb 2013 10:14:17 +0100
+
 ucs-school-ldap-acls-master (8.0.1-1) unstable; urgency=low
 
   * update Copyright; Bug #30123
