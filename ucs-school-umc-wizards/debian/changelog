@@ -1,3 +1,9 @@
+ucs-school-umc-wizards (2.0.9-1) unstable; urgency=low
+
+  * allow '-' in the name of a school DC; Bug #30232
+
+ -- Alexander Kläser <klaeser@univention.de>  Fri, 01 Feb 2013 19:06:24 +0100
+
 ucs-school-umc-wizards (2.0.8-1) unstable; urgency=low
 
   * When creating a user object without a class, this no longer creates a new

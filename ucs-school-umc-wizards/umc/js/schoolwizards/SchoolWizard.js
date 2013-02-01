@@ -58,7 +58,7 @@ define([
 					type: TextBox,
 					name: 'schooldc',
 					label: _('Computer name of the school server'),
-					regExp: '^\\w+$',
+					regExp: '^\\w+(\\w|-)*$',
 					required: true
 				}],
 				layout: [['name'],
