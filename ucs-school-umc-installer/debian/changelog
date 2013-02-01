@@ -1,3 +1,9 @@
+ucs-school-umc-installer (0.1.19-1) unstable; urgency=low
+
+  * fix typos; Bug #30162
+
+ -- Florian Best <best@univention.de>  Fri, 01 Feb 2013 12:46:01 +0100
+
 ucs-school-umc-installer (0.1.18-1) unstable; urgency=low
 
   * fixed installation logic for master; Bug #30162

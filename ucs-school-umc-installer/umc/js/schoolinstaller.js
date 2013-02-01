@@ -65,11 +65,11 @@ define([
 			this.pages = [{
 				name: 'setup',
 				headerText: _('UCS@school - server setup'),
-				helpText: _('<p>This wizard guides you step by step through the installation of UCS@school in your domain.</p><p>For the installation of UCS@school, there exist different installation scenarios: a singlemaster and a multisever scenario. Each scenario has implications for the following installation steps. Please choose one of the scenarios, further information will be displayed below.</p>'),
+				helpText: _('<p>This wizard guides you step by step through the installation of UCS@school in your domain.</p><p>For the installation of UCS@school, there exist two different installation scenarios: a single master and a multi server scenario. The selection of a scenario has implications for the following installation steps. Further information for the selected scenario will be displayed below.</p>'),
 				widgets: [{
 					type: ComboBox,
 					name: 'setup',
-					label: _('Domain setup'),
+					label: _('Please choose an installation scenario:'),
 					autoHide: true,
 					sortDynamicValues: false,
 					dynamicValues: lang.hitch(this, function() {
@@ -87,7 +87,7 @@ define([
 								values.push({ id: 'singlemaster', label: _('Single server scenario') });
 							}
 
-							// multi sever setup is allowed on all valid roles
+							// multi server setup is allowed on all valid roles
 							values.push({ id: 'multiserver', label: _('Multi server scenario') });
 
 							return values;
@@ -95,16 +95,16 @@ define([
 					}),
 					onChange: lang.hitch(this, function(newVal, widgets) {
 						var texts = {
-							multiserver: _('<p>In the multi server scenario, the DC master system is configured as central instance hosting the complete set of LDAP data. Each school is configured to have its own DC slave system that selectively replicates the school\'s own LDAP OU structure. In that way, different schools do not have access to data from other schools, they only see their own data. Teaching related UMC modules are accessibly directly on the DC slave. The DC master does not provide UMC modules for teachers. After configuring a master system, one or more slave systems must be configured and joined into the UCS@school domain.</p>'),
-							singlemaster: _('<p>In the single server scenario, the DC master system is configured as standalone UCS@school server instance. All school related data and thus all school OU structures are hosted and accessed on the DC master itself. Teaching related UMC modules are provided directly on the master itself. Note that this can lead to performance problems in larger environments.</p>')
+							multiserver: _('<p>In the multi server scenario, the domaincontroller master system is configured as central instance hosting the complete set of LDAP data. Each school is configured to have its own domaincontroller slave system that selectively replicates the school\'s own LDAP OU structure. In that way, different schools do not have access to data from other schools, they only see their own data. Teaching related UMC modules are only accessibly on the domaincontroller slave. The domaincontroller master does not provide UMC modules for teachers. After configuring a master system, one or more slave systems must be configured and joined into the UCS@school domain.</p>'),
+							singlemaster: _('<p>In the single server scenario, the domaincontroller master system is configured as standalone UCS@school server instance. All school related data and thus all school OU structures are hosted and accessed on the domaincontroller master itself. Teaching related UMC modules are provided directly on the master itself. Note that this setup can lead to performance problems in larger environments.</p>')
 						};
 
 						// update the help text according to the value chosen...
 						var text = texts[newVal] || '';
 
 						if (this._serverRole == 'domaincontroller_slave') {
-							// adaptations for text of a multi server setup on DC slaves
-							text = _('<p>The local server role is DC slave, for which only a multi server setup can be configured.</p>') + text;
+							// adaptations for text of a multi server setup on domaincontroller slaves
+							text = _('<p>The local server role is domaincontroller slave, for which only a multi server setup can be configured.</p>') + text;
 						}
 
 						// update widget
@@ -117,8 +117,8 @@ define([
 				}]
 			}, {
 				name: 'credentials',
-				headerText: _('UCS@school - Domain credentials (only Slave)'),
-				helpText: _('In order to setup this system as UCS@school DC slave, please enter the domain credentials of a domain account with administrator privilgeges.'),
+				headerText: _('UCS@school - domain credentials'),
+				helpText: _('In order to setup this system as UCS@school domaincontroller slave, please enter the domain credentials of a domain account with join privileges.'),
 				widgets: [{
 					type: TextBox,
 					required: true,
@@ -134,16 +134,16 @@ define([
 					type: TextBox,
 					required: true,
 					name: 'master',
-					label: _('Domain DC master system (e.g., schoolmaster.example.com)')
+					label: _('Fully qualified domain name of domaincontroller master (e.g. schoolmaster.example.com)')
 				}]
 			}, {
 				name: 'samba',
-				headerText: _('UCS@school - Samba setup'),
-				helpText: _('For Windows domain services, UCS@school needs the installation of the Samba software component. Please choose which Samba version you would like to install.'),
+				headerText: _('UCS@school - samba setup'),
+				helpText: _('For providing Windows domain services, UCS@school requires the installation of the Samba software component. The Samba component is available in two different versions: Samba 3 and Samba 4. It is recommended to use domain-wide the same Samba version.'),
 				widgets: [{
 					type: ComboBox,
 					name: 'samba',
-					label: _('Samba setup'),
+					label: _('Please choose which Samba version you would like to install:'),
 					size: 'OneAndAHalf',
 					staticValues: [
 						{ id: '4', label: _('Active Directory-compatible domaincontroller (Samba 4)') },
@@ -169,7 +169,7 @@ define([
 			}, {
 				name: 'school',
 				headerText: _('UCS@school - school OU setup'),
-				helpText: _('In UCS@school, each school is organized in its proper LDAP organizational unit (so-called OU). All school related information (students, classes, computers, rooms, groups etc.) is organized below such a OU. Please enter the name of a school OU that will be created during the installation process.'),
+				helpText: _('In UCS@school, each school is organized in its proper LDAP organizational unit (so-called OU). All school related information (students, classes, computers, rooms, groups etc.) is organized below such an OU. Please enter the name of a school OU that will be created during the installation process.'),
 				widgets: [{
 					type: TextBox,
 					required: true,
@@ -180,7 +180,7 @@ define([
 					// this information will only be shown to slave systems
 					type: Text,
 					name: 'infoTextSlave',
-					content: '<p>' + _('Note that each DC slave system is directly associated with its proper school OU. A DC slave has only access to the data below its own school OU, not to data from other schools.') + '</p>'
+					content: '<p>' + _('Note that each domaincontroller slave system is directly associated with its proper school OU. A domaincontroller slave has only access to the data below its own school OU, not to data from other schools.') + '</p>'
 				}, {
 					// this information will only be shown to master systems in the singlemaster setup
 					type: Text,
@@ -225,6 +225,7 @@ define([
 			// change labels of default footer buttons
 //			this._pages.school._footerButtons.next.set('label', _('Install'));
 			this._pages.error._footerButtons.next.set('label', _('Retry'));
+			this._pages.alreadyInstalled._footerButtons.finish.set('label', _('Close'));
 
 			// initial query for server details
 			this._initialQuery();
@@ -301,7 +302,7 @@ define([
 			return this._initialDeferred.then(lang.hitch(this, function() {
 				// block invalid server roles
 				if (!this._validServerRole()) {
-					dialog.alert(_('UCS@school can only be installed on the system roles DC master, DC backup, or DC slave.'));
+					dialog.alert(_('UCS@school can only be installed on the system roles domaincontroller master, domaincontroller backup, or domaincontroller slave.'));
 					return 'setup';
 				}
 
@@ -320,7 +321,7 @@ define([
 					next = 'credentials';
 				}
 
-				// show credentials page only on DC Slave
+				// show credentials page only on domaincontroller Slave
 				if (next == 'credentials' && this._serverRole != 'domaincontroller_slave') {
 					next = 'samba';
 				}
@@ -332,7 +333,7 @@ define([
 				}
 
 				// installation
-				if (pageName == 'school' || (next == 'school' && this.getWidget('setup', 'setup').get('value') == 'multiserver' && this._serverRole != 'domaincontroller_master')) {
+				if (pageName == 'school' || (next == 'school' && this.getWidget('setup', 'setup').get('value') == 'multiserver' && this._serverRole == 'domaincontroller_master')) {
 					// start standby animation
 					var values = this.getValues();
 
@@ -342,14 +343,14 @@ define([
 
 					// request installation
 					next = dialog.confirm(_('Please confirm to start the installation process.'), [{
-						name: 'yes',
-						label: _('Yes'),
-						'default': true
+						name: 'install',
+						label: _('Install')
 					}, {
-						name: 'no',
-						label: _('No')
+						name: 'cancel',
+						label: _('Cancel'),
+						'default': true
 					}]).then(lang.hitch(this, function(install) {
-						if (install == 'no') {
+						if (install == 'cancel') {
 							return pageName;
 						}
 						this.standby(true);
