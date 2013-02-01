@@ -1,3 +1,9 @@
+ucs-school-umc-installer (0.1.26-1) unstable; urgency=low
+
+  * improved handling on backup; Bug #30162
+
+ -- Alexander Kläser <klaeser@univention.de>  Fri, 01 Feb 2013 18:57:54 +0100
+
 ucs-school-umc-installer (0.1.25-1) unstable; urgency=low
 
   * improved handling on backup; Bug #30162

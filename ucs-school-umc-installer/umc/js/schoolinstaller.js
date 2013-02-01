@@ -322,7 +322,7 @@ define([
 
 				// retry when an error occurred
 				if (pageName == 'error') {
-					next = 'credentials';
+					next = 'setup';
 				}
 
 				// show credentials page only on domaincontroller Slave
@@ -336,8 +336,18 @@ define([
 					next = 'school';
 				}
 
+				// no schoolOU page on a DC master w/multiserver setup and a DC backup in general
+				if (next == 'school' && ((this.getWidget('setup', 'setup').get('value') == 'multiserver' && this._serverRole == 'domaincontroller_master') || this._serverRole == 'domaincontroller_backup')) {
+					next = 'install';
+				}
+
+				// after the schoolOU page, the installation begins
+				if (pageName == 'school') {
+					next = 'install';
+				}
+
 				// installation
-				if (pageName == 'school' || (next == 'school' && this.getWidget('setup', 'setup').get('value') == 'multiserver' && this._serverRole == 'domaincontroller_master')) {
+				if (next == 'install') {
 					// start standby animation
 					var values = this.getValues();
 

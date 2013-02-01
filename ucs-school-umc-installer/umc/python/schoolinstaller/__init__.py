@@ -127,6 +127,7 @@ def get_remote_ucs_school_version(username, password, master):
 		res = [ i for i in stdout if regStatusInstalled.match(i) ]
 		if res:
 			installedPackages.append(ipackage)
+		MODULE.info('package %s installed on the system? %s' % (ipackage, bool(res)))
 
 	if 'ucs-school-singlemaster' in installedPackages:
 		return 'singlemaster'
@@ -460,6 +461,8 @@ class Instance(Base):
 			username = self._username
 			password = self._password
 			master = '%s.%s' % (ucr.get('hostname'), ucr.get('domainname'))
+		if serverRole == 'domaincontroller_backup':
+			master = ucr.get('ldap/master')
 
 		certOrigFile = None
 		def _error(msg):
@@ -480,14 +483,17 @@ class Instance(Base):
 			if not (serverRole == 'domaincontroller_master' or serverRole == 'domaincontroller_backup' or serverRole == 'domaincontroller_slave'):
 				_error(_('Invalid server role! UCS@school can only be installed on the system roles domaincontroller master, domaincontroller backup, or domaincontroller slave.'))
 				return
-			elif serverRole == 'domaincontroller_slave':
+			elif serverRole == 'domaincontroller_slave' or 'domaincontroller_backup':
 				# check for a compatible setup on the DC master
 				schoolVersion = get_remote_ucs_school_version(username, password, master)
 				if not schoolVersion:
 					_error(_('Please install UCS@school on the domaincontroller master system. Cannot proceed installation on this system.'))
 					return
-				if schoolVersion != 'multiserver':
+				if serverRole == 'domaincontroller_slave' and schoolVersion != 'multiserver':
 					_error(_('The UCS@school domaincontroller master system is not configured as a multi server setup. Cannot proceed installation on this system.'))
+					return
+				if serverRole == 'domaincontroller_backup' and schoolVersion != setup:
+					_error(_('The UCS@school domaincontroller master needs to be configured similarly to this backup system. Please choose the correct setup scenario for this system.'))
 					return
 		except socket.gaierror as e:
 			MODULE.warn('Could not connect to master system %s: %s' % (master, e))
