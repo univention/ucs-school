@@ -222,40 +222,43 @@ def retrieveRootCertifcate(master):
 	'''On a slave system, download the root certificate from the specified master
 	and install it on the system. In this way it can be ensured that secure
 	connections can be performed even though the system has not been joined yet.'''
-	if ucr.get('server/role') == 'domaincontroller_slave':
-		# make sure the directory exists
-		if not os.path.exists(os.path.dirname(CERTIFICATE_PATH)):
-			os.makedirs(os.path.dirname(CERTIFICATE_PATH))
-		try:
-			# download the certificate from the DC master
-			certURI = 'http://%s/ucs-root-ca.crt' % master
-			certOrigFile = None
-			with tempfile.NamedTemporaryFile() as certDownloadedFile:
-				urllib.urlretrieve('http://%s/ucs-root-ca.crt' % master, certDownloadedFile.name)
+	if ucr.get('server/role') != 'domaincontroller_slave':
+		# only do this on a slave system
+		return
 
-				if not filecmp.cmp(CERTIFICATE_PATH, certDownloadedFile.name):
-					# we need to update the certificate file...
-					# save the original file first and make sure we do not override any existing file
-					count = 1
-					certOrigFile = CERTIFICATE_PATH + '.orig'
-					while os.path.exists(certOrigFile):
-						count += 1
-						certOrigFile = CERTIFICATE_PATH + '.orig%s' % count
-					os.rename(CERTIFICATE_PATH, certOrigFile)
+	# make sure the directory exists
+	if not os.path.exists(os.path.dirname(CERTIFICATE_PATH)):
+		os.makedirs(os.path.dirname(CERTIFICATE_PATH))
+	try:
+		# download the certificate from the DC master
+		certURI = 'http://%s/ucs-root-ca.crt' % master
+		certOrigFile = None
+		with tempfile.NamedTemporaryFile() as certDownloadedFile:
+			urllib.urlretrieve('http://%s/ucs-root-ca.crt' % master, certDownloadedFile.name)
 
-					# place the downloaded certificate at the original position
-					os.rename(certDownloadedFile, CERTIFICATE_PATH)
-					os.chmod(CERTIFICATE_PATH, 0o644)
-		except (IOError, OSError) as err:
-			# print warning and ignore error
-			MODULE.warn('Could not download root certificate [%s], error ignored: %s' % (certURI, err))
-			if certOrigFile and os.path.exists(certOrigFile):
-				# try to restore the original certificate file
-				try:
-					MOUDLE.info('Restoring original root certificate.')
-					os.rename(certOrigFile, CERTIFICATE_PATH)
-				except (IOError, OSError) as err:
-					MOUDLE.warn('Could not restore original root certificate: %s' % err)
+			if not filecmp.cmp(CERTIFICATE_PATH, certDownloadedFile.name):
+				# we need to update the certificate file...
+				# save the original file first and make sure we do not override any existing file
+				count = 1
+				certOrigFile = CERTIFICATE_PATH + '.orig'
+				while os.path.exists(certOrigFile):
+					count += 1
+					certOrigFile = CERTIFICATE_PATH + '.orig%s' % count
+				os.rename(CERTIFICATE_PATH, certOrigFile)
+
+				# place the downloaded certificate at the original position
+				os.rename(certDownloadedFile, CERTIFICATE_PATH)
+				os.chmod(CERTIFICATE_PATH, 0o644)
+	except (IOError, OSError) as err:
+		# print warning and ignore error
+		MODULE.warn('Could not download root certificate [%s], error ignored: %s' % (certURI, err))
+		if certOrigFile and os.path.exists(certOrigFile):
+			# try to restore the original certificate file
+			try:
+				MOUDLE.info('Restoring original root certificate.')
+				os.rename(certOrigFile, CERTIFICATE_PATH)
+			except (IOError, OSError) as err:
+				MOUDLE.warn('Could not restore original root certificate: %s' % err)
 
 # dummy function that does nothing
 def _dummyFunc(*args):
@@ -459,19 +462,19 @@ class Instance(Base):
 			_error(_('Cannot connect to the DC master system %s. It seems that the specified domain credentials are not valid.') % master)
 			return
 
-		# on slave systems, download the certificate from the master in order
-		# to be able to build up secure connections
-		retrieveRootCertifcate(master)
-
-		# try to query the LDAP base of the master
-		try:
-			ucrMaster = get_ucr_master(username, password, master, 'ldap/base', 'ldap/master/port')
-		except RuntimeError as err:
-			MODULE.warn('Could not query the LDAP base of the mater system %s.' % master)
-			_error(str(err))
-			return
-
 		if serverRole == 'domaincontroller_slave':
+			# on slave systems, download the certificate from the master in order
+			# to be able to build up secure connections
+			retrieveRootCertifcate(master)
+
+			# try to query the LDAP base of the master
+			try:
+				ucrMaster = get_ucr_master(username, password, master, 'ldap/base', 'ldap/master/port')
+			except RuntimeError as err:
+				MODULE.warn('Could not query the LDAP base of the mater system %s.' % master)
+				_error(str(err))
+				return
+
 			# make sure that it is safe to join into the specified school OU
 			try:
 				# get the userDN from the master

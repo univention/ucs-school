@@ -1,3 +1,9 @@
+ucs-school-umc-installer (0.1.18-1) unstable; urgency=low
+
+  * fixed installation logic for master; Bug #30162
+
+ -- Alexander Kläser <klaeser@univention.de>  Fri, 01 Feb 2013 11:53:31 +0100
+
 ucs-school-umc-installer (0.1.17-1) unstable; urgency=low
 
   * prompt a confirmation dialog prior to installation
