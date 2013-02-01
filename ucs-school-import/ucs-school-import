@@ -2793,6 +2793,80 @@ def rename_class():
 
 	return
 
+
+def move_domaincontroller_to_ou(co, lo, baseDN, options):
+	"""
+	Move specified domaincontroller (options.dcname) to specified OU (options.ou).
+	"""
+	slaves = univention.admin.modules.lookup(server_module, co, lo, scope='sub', base=baseDN, filter=univention.admin.filter.expression('cn', options.dcname))
+	if not slaves:
+		print 'ERROR: cannot find domaincontroller slave with hostname "%s"' % options.dcname
+		sys.exit(1)
+	if len(slaves) > 1:
+		print 'ERROR: found more than one domaincontroller slave with hostname "%s"' % options.dcname
+		sys.exit(1)
+
+	oulist = univention.admin.modules.lookup(ou_module, co, lo, scope='sub', base=baseDN, filter=univention.admin.filter.expression('ou', options.ou))
+	if not oulist:
+		print 'ERROR: the given ou "%s" does not exist' % options.ou
+		sys.exit(1)
+	if len(oulist) > 1:
+		print 'ERROR: found more than one ou "%s" in LDAP' % options.ou
+		sys.exit(1)
+
+	slave = slaves[0]
+	ouDn = oulist[0].dn
+
+	group_filter = univention.admin.filter.conjunction('&', [
+			univention.admin.filter.expression('cn', 'OU%s-DC-Edukativnetz' % options.ou),
+			univention.admin.filter.expression('uniqueMember', slave.dn),
+			])
+	groups = univention.admin.modules.lookup(group_module, co, lo, scope='sub', base=baseDN, filter=group_filter)
+	if not groups:
+		print 'ERROR: cannot move domaincontroller slave with hostname "%s" to OU "%s"' % (options.dcname, options.ou)
+		print 'ERROR: The system has no LDAP access to the OU'
+		sys.exit(1)
+
+
+	if slave.dn.endswith(',%s' % ouDn):
+		print 'domaincontroller slave "%s" is already located below ou "%s" - stopping here' % (options.dcname, options.ou)
+		sys.exit(0)
+
+	REis_in_ou = re.compile('^.+,ou=[^,]+,%s$' % baseDN)
+	if REis_in_ou.match(slave.dn) and not options.force:
+		print 'ERROR: domaincontroller slave "%s" is located in another OU' % (options.dcname)
+		print 'ERROR: DN of domaincontroller slave: %s' % slave.dn
+		print 'ERROR: use --force to override'
+		sys.exit(1)
+
+	cnDn = 'cn=dc,cn=server,cn=computers,%s' % (getDN(options.ou),)
+	containers = univention.admin.modules.lookup(cn_module, co, lo, scope='base', base=cnDn)
+	if not containers:
+		print 'ERROR: cannot move domaincontroller slave object - target container does not exist: %s' % cnDn
+		sys.exit(1)
+
+	oldDn = slave.dn
+	newDn = 'cn=%s,cn=dc,cn=server,cn=computers,%s' % (options.dcname, getDN(options.ou))
+	slave.open()
+	print 'Moving %s to %s ...' % (oldDn, newDn)
+	slave.move(newDn, ignore_license=1)
+
+	oulist = univention.admin.modules.lookup(ou_module, co, lo, scope='sub', base=baseDN)
+	for ou in oulist:
+		ou.open()
+		changed = False
+		for property in ('ucsschoolClassShareFileServer', 'ucsschoolHomeShareFileServer'):
+			if oldDn in ou[property]:
+				ou[property] = newDn
+				changed = True
+		if changed:
+			print 'Updating %s ...' % ou.dn
+			ou.modify()
+
+	print 'Move complete'
+	print 'HINT: the domaincontroller slave has to be rejoined into the domain!'
+
+
 #------------------------------------------------------------------------------------------#
 # MAIN                                                                                     #
 #------------------------------------------------------------------------------------------#
@@ -2940,6 +3014,40 @@ elif sys.argv[0].endswith("create_ou"):
 		sys.exit(0)
 	parser.print_help()
 	sys.exit(1)
+
+elif sys.argv[0].endswith("move_domaincontroller_to_ou"):
+	usage = '''%prog --dcname <dcname> --ou <ou>
+
+%prog moves domaincontroller slave objects that are not located
+within an OU LDAP subtree to the given OU.'''
+
+	parser = optparse.OptionParser(usage=usage)
+	parser.add_option('--dcname', action='store', dest='dcname', default=None, help='hostname of the domaincontroller slave object that shall be moved')
+	parser.add_option('--ou', action='store', dest='ou', default=None, help='target OU where the domaincontroller slave object is moved to')
+	parser.add_option('--force', action='store_true', dest='force', default=False, help='force move of domaincontroller slave object if located in other OU')
+	(options, args, ) = parser.parse_args()
+
+	if not options.dcname or not options.ou:
+		print 'ERROR: no domaincontroller hostname or ou specified'
+		print
+		parser.print_help()
+		sys.exit(1)
+
+	# hostname based upon RFC 952: <let>[*[<let-or-digit-or-hyphen>]<let-or-digit>]
+	if not re.match('^[a-zA-Z0-9](([a-zA-Z0-9_]*)([a-zA-Z0-9]$))?$', options.ou):
+		print 'ERROR: invalid ou name given'
+		print
+		parser.print_help()
+		sys.exit(1)
+
+	# hostname based upon RFC 952: <let>[*[<let-or-digit-or-hyphen>]<let-or-digit>]
+	if not re.match('^[a-zA-Z](([a-zA-Z0-9-_]*)([a-zA-Z0-9]$))?$', options.dcname):
+		print 'ERROR: invalid domaincontroller name given'
+		print
+		parser.print_help()
+		sys.exit(1)
+
+	move_domaincontroller_to_ou(co, lo, baseDN, options)
 
 elif sys.argv[0].endswith("activate_groupmembers"):
 	activate_groupmembers()

@@ -1,3 +1,9 @@
+ucs-school-import (9.0.7-1) unstable; urgency=low
+
+  * added move_domaincontroller_to_ou script (Bug #27242)
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 01 Feb 2013 16:05:17 +0100
+
 ucs-school-import (9.0.6-2) unstable; urgency=low
 
   * fixed handling of ucsschool/import/set/sambahome (Bug #27549)
