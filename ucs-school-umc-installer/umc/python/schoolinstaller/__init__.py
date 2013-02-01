@@ -135,9 +135,13 @@ def get_remote_ucs_school_version(username, password, master):
 
 def get_master_dns_lookup():
 	# DNS lookup for the DC master entry
-	result = dns.resolver.query('_domaincontroller_master._tcp', 'SRV')
-	if result:
-		return result[0].target.canonicalize().split(1)[0].to_text()
+	try:		
+		query = '_domaincontroller_master._tcp.%s.' % ucr.get('domainname')
+		result = dns.resolver.query(query, 'SRV')
+		if result:
+			return result[0].target.canonicalize().split(1)[0].to_text()
+	except dns.resolver.NXDOMAIN as err:
+		MODULE.error('Error to perform a DNS query for service record: %s' % query)
 	return ''
 
 #def ou_exists(ou, username, password, master = None):
@@ -218,10 +222,21 @@ def get_ucr_master(username, password, master, *ucrVariables):
 		options += ['-o', ivar]
 	return umc(username, password, master, options, 'get')
 
-def retrieveRootCertifcate(master):
+def restoreOrigCertificate(certOrigFile):
+	# try to restore the original certificate file
+	if certOrigFile and os.path.exists(certOrigFile):
+		try:
+			MODULE.info('Restoring original root certificate.')
+			os.rename(certOrigFile, CERTIFICATE_PATH)
+		except (IOError, OSError) as err:
+			MOUDLE.warn('Could not restore original root certificate: %s' % err)
+		certOrigFile = None
+
+def retrieveRootCertificate(master):
 	'''On a slave system, download the root certificate from the specified master
 	and install it on the system. In this way it can be ensured that secure
-	connections can be performed even though the system has not been joined yet.'''
+	connections can be performed even though the system has not been joined yet.
+	Returns the renamed original file if it has been renamed. Otherwise None is returned.'''
 	if ucr.get('server/role') != 'domaincontroller_slave':
 		# only do this on a slave system
 		return
@@ -233,32 +248,29 @@ def retrieveRootCertifcate(master):
 		# download the certificate from the DC master
 		certURI = 'http://%s/ucs-root-ca.crt' % master
 		certOrigFile = None
-		with tempfile.NamedTemporaryFile() as certDownloadedFile:
-			urllib.urlretrieve('http://%s/ucs-root-ca.crt' % master, certDownloadedFile.name)
+		MODULE.info('Downloading root certificate from: %s' % master)
+		certDownloadedFile, headers = urllib.urlretrieve('http://%s/ucs-root-ca.crt' % master)
 
-			if not filecmp.cmp(CERTIFICATE_PATH, certDownloadedFile.name):
-				# we need to update the certificate file...
-				# save the original file first and make sure we do not override any existing file
-				count = 1
-				certOrigFile = CERTIFICATE_PATH + '.orig'
-				while os.path.exists(certOrigFile):
-					count += 1
-					certOrigFile = CERTIFICATE_PATH + '.orig%s' % count
-				os.rename(CERTIFICATE_PATH, certOrigFile)
+		if not filecmp.cmp(CERTIFICATE_PATH, certDownloadedFile):
+			# we need to update the certificate file...
+			# save the original file first and make sure we do not override any existing file
+			count = 1
+			certOrigFile = CERTIFICATE_PATH + '.orig'
+			while os.path.exists(certOrigFile):
+				count += 1
+				certOrigFile = CERTIFICATE_PATH + '.orig%s' % count
+			os.rename(CERTIFICATE_PATH, certOrigFile)
+			MODULE.info('Backing up old root certificate as: %s' % certOrigFile)
 
-				# place the downloaded certificate at the original position
-				os.rename(certDownloadedFile, CERTIFICATE_PATH)
-				os.chmod(CERTIFICATE_PATH, 0o644)
+			# place the downloaded certificate at the original position
+			os.rename(certDownloadedFile, CERTIFICATE_PATH)
+			os.chmod(CERTIFICATE_PATH, 0o644)
 	except (IOError, OSError) as err:
 		# print warning and ignore error
 		MODULE.warn('Could not download root certificate [%s], error ignored: %s' % (certURI, err))
-		if certOrigFile and os.path.exists(certOrigFile):
-			# try to restore the original certificate file
-			try:
-				MOUDLE.info('Restoring original root certificate.')
-				os.rename(certOrigFile, CERTIFICATE_PATH)
-			except (IOError, OSError) as err:
-				MOUDLE.warn('Could not restore original root certificate: %s' % err)
+		restoreOrigCertificate(certOrigFile)
+
+	return certOrigFile
 
 # dummy function that does nothing
 def _dummyFunc(*args):
@@ -435,7 +447,11 @@ class Instance(Base):
 			password = self._password
 			master = '%s.%s' % (ucr.get('hostname'), ucr.get('domainname'))
 
+		certOrigFile = None
 		def _error(msg):
+			# restore the original certificate... this is done at any error before the system join
+			restoreOrigCertificate(certOrigFile)
+
 			# finish the request with an error
 			result = {'success' : False, 'error' : msg}
 			self.finished(request.id, result)
@@ -461,7 +477,7 @@ class Instance(Base):
 					return
 		except socket.gaierror as e:
 			MODULE.warn('Could not connect to master system %s: %s' % (master, e))
-			_error(_('Cannot connect to the domaincontroller master system %s. Please make sure that the system is reachable. If not this could due to wrong DNS nameserver settings.') % master)
+			_error(_('Cannot connect to the domaincontroller master system %s. Please make sure that the system is reachable. If not this could be due to wrong DNS nameserver settings.') % master)
 			return
 		except paramiko.SSHException as e:
 			MODULE.warn('Could not connect to master system %s: %s' % (master, e))
@@ -471,7 +487,7 @@ class Instance(Base):
 		if serverRole == 'domaincontroller_slave':
 			# on slave systems, download the certificate from the master in order
 			# to be able to build up secure connections
-			retrieveRootCertifcate(master)
+			certOrigFile = retrieveRootCertificate(master)
 
 			# try to query the LDAP base of the master
 			try:
@@ -499,7 +515,7 @@ class Instance(Base):
 						islave.open()
 						if searchBase.educationalDCGroup in islave['groups'] and ucr.get('hostname') != islave['name']:
 							# school OU already has a joined main DC
-							_error(_('The OU "%s" is already in use and has been assigned to a different domaincontroller slave system. Please choose a different name for the associated school OU.'))
+							_error(_('The OU "%s" is already in use and has been assigned to a different domaincontroller slave system. Please choose a different name for the associated school OU.') % schoolOU)
 							return
 
 			except univention.uldap.ldap.LDAPError as err:
@@ -566,6 +582,7 @@ class Instance(Base):
 
 			# check for errors
 			if not success:
+				restoreOrigCertificate(certOrigFile)
 				return success
 
 			# create the school OU
@@ -579,6 +596,7 @@ class Instance(Base):
 			else:
 				MODULE.error('Could not create school OU')
 				progress_state.error_handler(_('The UCS@school software packages have been installed, however, a school OU could not be created and consequently a re-join of the system has not been performed. Please create a new school OU structure using the UMC module "Add school" on the master and perform a domain join on this machine via the UMC module "Domain join".' ))
+				restoreOrigCertificate(certOrigFile)
 				return success
 
 			if serverRole == 'domaincontroller_slave':
@@ -602,6 +620,7 @@ class Instance(Base):
 			if isinstance(result, BaseException):
 				msg = '%s\n%s: %s\n' % ( ''.join( traceback.format_tb( thread.exc_info[ 2 ] ) ), thread.exc_info[ 0 ].__name__, str( thread.exc_info[ 1 ] ) )
 				MODULE.warn('Exception during installation: %s' % msg)
+				progress_state.error_handler(_('An unexpected error occurred during installation: %s') % result)
 
 		# launch thread
 		thread = notifier.threads.Simple('ucsschool-install',

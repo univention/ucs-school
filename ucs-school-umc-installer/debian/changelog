@@ -1,3 +1,9 @@
+ucs-school-umc-installer (0.1.24-1) unstable; urgency=low
+
+  * improved handling on unjoined slave; Bug #30162
+
+ -- Alexander Kläser <klaeser@univention.de>  Fri, 01 Feb 2013 17:04:18 +0100
+
 ucs-school-umc-installer (0.1.23-1) unstable; urgency=low
 
   * fix regex; Bug #30162
