@@ -1,3 +1,10 @@
+ucs-school-metapackage (5.0.6-1) unstable; urgency=low
+
+  * A new join script in 'ucs-school-slave' checks if the host is stored in a
+    valid school OU (Bug #26834)
+
+ -- Jascha Geerds <geerds@univention.de>  Fri, 01 Feb 2013 16:56:11 +0100
+
 ucs-school-metapackage (5.0.5-1) unstable; urgency=low
 
   * set samba4/ignore/mixsetup?yes as default for new Slave PDC
