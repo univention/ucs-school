@@ -611,7 +611,7 @@ class Instance(Base):
 
 		# reset the current installation progress
 		steps = 100  # installation -> 100
-		if serverRole != 'domaincontroller_backup' and not (serverRole = 'domaincontroller_master' and setup == 'multiserver'):
+		if serverRole != 'domaincontroller_backup' and not (serverRole == 'domaincontroller_master' and setup == 'multiserver'):
 			steps += 10  # create_ou -> 10
 		if serverRole != 'domaincontroller_master':
 			steps += 100  # system_join -> 100 steps
