@@ -181,7 +181,7 @@ define([
 					// this information will only be shown to slave systems
 					type: Text,
 					name: 'infoTextSlave',
-					content: '<p>' + _('Note that each domaincontroller slave system is directly associated with its proper school OU. A domaincontroller slave has only access to the data below its own school OU, not to data from other schools.') + '</p>'
+					content: '<p>' + _('Note that each domaincontroller slave system is directly associated with a school OU. A domaincontroller slave has only access to the data below its own school OU, not to data from other schools.') + '</p>'
 				}, {
 					// this information will only be shown to master systems in the singlemaster setup
 					type: Text,
@@ -209,7 +209,7 @@ define([
 				}]
 			}, {
 				name: 'alreadyInstalled',
-				headerText: _('UCS@school installation wizard'),
+				headerText: _('UCS@school configuration wizard'),
 				helpText: _('UCS@school has already been configured on this system.')
 			}];
 

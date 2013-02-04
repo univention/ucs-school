@@ -378,7 +378,7 @@ def system_join(username, password, info_handler = _dummyFunc, error_handler = _
 				success = False
 			elif failedJoinScripts:
 				MODULE.warn('The following join scripts could not be executed: %s' % failedJoinScripts)
-				error_handler(_('Software packages have been installed sucessfully, however, several join scripts could not bee executed. More details can be found in the log file /var/log/univention/join.log. Please retry to execute the join scripts via the UMC module "Domain join" after resolving any conflicting issues.'))
+				error_handler(_('Software packages have been installed sucessfully, however, some join scripts could not be executed. More details can be found in the log file /var/log/univention/join.log. Please retry to execute the join scripts via the UMC module "Domain join" after resolving any conflicting issues.'))
 				success = False
 	finally:
 		# make sure that UMC servers and apache can be restarted again
@@ -666,7 +666,7 @@ class Instance(Base):
 				# make sure that the slave is correctly moved below its OU
 				if not move_slave_into_ou(master, username, password, schoolOU, ucr.get('hostname')):
 					# error case
-					_error(_('Validating the LDAP school OU structure failed. It seems that the current slave object has already been assigned to a different school or that the specified school OU name is already in use.'))
+					_error(_('Validating the LDAP school OU structure failed. It seems that the current slave system has already been assigned to a different school or that the specified school OU name is already in use.'))
 					return False
 
 			if serverRole != 'domaincontroller_master':
