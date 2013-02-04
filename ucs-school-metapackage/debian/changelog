@@ -1,3 +1,10 @@
+ucs-school-metapackage (5.0.9-1) unstable; urgency=low
+
+  * Set windows/wins-support as a workaround for univention-samba.postinst
+    (Bug #30267)
+
+ -- Arvid Requate <requate@univention.de>  Mon, 04 Feb 2013 17:26:29 +0100
+
 ucs-school-metapackage (5.0.8-1) unstable; urgency=low
 
   * Rename 02ucs-school-slave-check-ou.inst to 00ucs-school* (Bug #26834)
