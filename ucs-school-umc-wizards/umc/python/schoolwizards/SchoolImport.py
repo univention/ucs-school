@@ -59,7 +59,7 @@ class SchoolImport():
 		if run_with_string_argument:
 			entry.insert(0, script)
 			try:
-				MODULE.info('Executing command: %s' % ' '.join(entry))
+				MODULE.process('Executing command: %s' % ' '.join(entry))
 				process = subprocess.Popen(entry, stdout=subprocess.PIPE)
 				stdout, stderr = process.communicate()
 				if stdout and process.returncode > 0:
@@ -76,11 +76,12 @@ class SchoolImport():
 				tmpfile = tempfile.NamedTemporaryFile()
 				tmpfile.write(entry)
 				tmpfile.flush()
+				MODULE.process('Executing command: %s' % script)
 				process = subprocess.Popen([script, tmpfile.name], stdout=subprocess.PIPE)
 				stdout, stderr = process.communicate()
 				if stdout:
 					info = '\n'.join([line for line in stdout.splitlines() if not line.startswith('Processing line ')])
-					MODULE.info(info)
+					MODULE.process(info)
 			except (OSError, ValueError) as err:
 				MODULE.warn(str(err))
 				raise UMC_CommandError(_('Execution of command failed'))

@@ -1,3 +1,9 @@
+ucs-school-umc-wizards (2.0.12-1) unstable; urgency=low
+
+  * changed log level for script output; Bug #30162
+
+ -- Alexander Kläser <klaeser@univention.de>  Mon, 04 Feb 2013 15:58:17 +0100
+
 ucs-school-umc-wizards (2.0.11-1) unstable; urgency=low
 
   * fixed typo; Bug #30162
