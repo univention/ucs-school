@@ -473,17 +473,18 @@ class Instance(Base):
 			result = {'success' : False, 'error' : msg}
 			self.finished(request.id, result)
 
-		if setup == 'multiserver' and serverRole == 'domaincontroller_master' and not RE_OU.match(schoolOU):
+		# check for valid school OU
+		if ((setup == 'singlemaster' and serverRole == 'domaincontroller_master') or serverRole == 'domaincontroller_slave' ) and not RE_OU.match(schoolOU):
 			_error(_('The specified school OU is not valid.'))
 			return
 
 		# ensure that the setup is ok
 		MODULE.process('performing UCS@school installation')
 		try:
-			if not (serverRole == 'domaincontroller_master' or serverRole == 'domaincontroller_backup' or serverRole == 'domaincontroller_slave'):
+			if serverRole not in ('domaincontroller_master', 'domaincontroller_backup', 'domaincontroller_slave'):
 				_error(_('Invalid server role! UCS@school can only be installed on the system roles domaincontroller master, domaincontroller backup, or domaincontroller slave.'))
 				return
-			elif serverRole == 'domaincontroller_slave' or 'domaincontroller_backup':
+			elif serverRole != 'domaincontroller_master':
 				# check for a compatible setup on the DC master
 				schoolVersion = get_remote_ucs_school_version(username, password, master)
 				if not schoolVersion:
@@ -607,8 +608,8 @@ class Instance(Base):
 				restoreOrigCertificate(certOrigFile)
 				return success
 
-			if serverRole != 'domaincontroller_backup':
-				# create the school OU (not on backup!)
+			if serverRole != 'domaincontroller_backup' and not (serverRole = 'domaincontroller_master' and setup == 'multiserver'):
+				# create the school OU (not on backup and not on master w/multiserver setup)
 				MODULE.info('Starting creation of LDAP school OU structure...')
 				progress_state.component = _('Creation of LDAP school structure')
 				progress_state.info = ''
