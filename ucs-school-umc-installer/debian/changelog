@@ -1,3 +1,10 @@
+ucs-school-umc-installer (0.1.29-1) unstable; urgency=low
+
+  * integrated moving the slave into its correct school OU; Bug #30162
+  * integrated executing join scripts on DC backups; Bug #30162
+
+ -- Alexander Kläser <klaeser@univention.de>  Mon, 04 Feb 2013 12:15:26 +0100
+
 ucs-school-umc-installer (0.1.28-1) unstable; urgency=low
 
   * fixed errors in server role handling; Bug #30162

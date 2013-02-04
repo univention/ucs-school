@@ -109,6 +109,15 @@ def get_ssh_connection(username, password, host):
 	ssh.connect(host, username=username, password=password)
 	return ssh
 
+def move_slave_into_ou(master, username, password, slave, ou):
+	'''Make sure that the slave object exists in the right OU.'''
+	MODULE.info('Trying to move the slave entry in the right OU structure...''')
+	result = umc(username, password, master, ['schoolwizards/schools/move_dc', '-o', 'schooldc=%s' % slave , '-o', 'schoolou=%s' % ou ])
+	if not result.get('success'):
+		MODULE.warn('Could not successfully move the slave DC into its correct OU structure:\n%s' % result.get('message'))
+		return False
+	return True
+
 def get_remote_ucs_school_version(username, password, master):
 	'''Verify that the correct UCS@school version (singlemaster, multiserver) is
 	installed on the master system.'''
@@ -222,7 +231,7 @@ def create_ou_local(ou):
 		return False
 	return True
 
-def create_ou_remote(master, ou, slave, username, password):
+def create_ou_remote(master, username, password, ou, slave):
 	"""Create a school OU via the UMC interface."""
 	try:
 		umc(username, password, master, ['schoolwizards/schools/create', '-o' ,'name=%s' % ou, '-o', 'schooldc=%s' % slave ])
@@ -292,11 +301,22 @@ def _dummyFunc(*args):
 	pass
 
 def system_join(username, password, info_handler = _dummyFunc, error_handler = _dummyFunc, step_handler = _dummyFunc):
+	# make sure we got the correct server role
+	serverRole = ucr.get('server/role')
+	assert serverRole in ('domaincontroller_slave', 'domaincontroller_backup')
+
 	# get the number of join scripts
 	nJoinScripts = len(glob.glob('/usr/lib/univention-install/*.inst'))
 	stepsPerScript = 100.0 / nJoinScripts
 
-	MODULE.info('disabling UCM and apache server restart')
+	if serverRole == 'domaincontroller_backup':
+		# on a backup, we only need to run the join scripts... check how many we have
+		regScriptNotExecuted = re.compile('.*is not configured.*', re.IGNORECASE)
+		process = subprocess.Popen(['/usr/share/univention-join', '-dcaccount', username, '-dcpwd', passwordFile.name], shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+		stdout, stderr = process.communicate()
+		nJoinScripts = len([i for i in stdout.splitlines if regScriptNotExecuted.match(i)])
+
+	MODULE.info('disabling UMC and apache server restart')
 	subprocess.call(CMD_DISABLE_EXEC)
 
 	try:
@@ -306,11 +326,18 @@ def system_join(username, password, info_handler = _dummyFunc, error_handler = _
 
 			# regular expressions for output parsing
 			regError = re.compile('^\* Message:\s*(?P<message>.*)\s*$')
-			regJoinScript = re.compile('Configure\s+(?P<script>.*)\.inst.*$')
+			regJoinScript = re.compile('(Configure|Running)\s+(?P<script>.*)\.inst.*$')
 			regInfo = re.compile('^(?P<message>.*?)\s*:?\s*\x1b.*$')
 
 			# call to univention-join
-			process = subprocess.Popen(['/usr/share/univention-join/univention-join', '-dcaccount', username, '-dcpwd', passwordFile.name], shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+			process = None
+			if serverRole == 'domaincontroller_slave':
+				# DC slave -> complete re-join
+				process = subprocess.Popen(['/usr/sbin/univention-join', '-dcaccount', username, '-dcpwd', passwordFile.name], shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+			else:
+				# DC backup -> only run join scripts
+				process = subprocess.Popen(['/usr/sbin/univention-run-join-scripts', '-dcaccount', username, '-dcpwd', passwordFile.name], shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
 			while True:
 				# get the next line
 				line = process.stdout.readline()
@@ -350,7 +377,7 @@ def system_join(username, password, info_handler = _dummyFunc, error_handler = _
 				success = False
 	finally:
 		# make sure that UMC servers and apache can be restarted again
-		MODULE.info('enabling UCM and apache server restart')
+		MODULE.info('enabling UMC and apache server restart')
 		subprocess.call(CMD_ENABLE_EXEC)
 
 class Progress(object):
@@ -478,14 +505,14 @@ class Instance(Base):
 			_error(_('The specified school OU is not valid.'))
 			return
 
-		# ensure that the setup is ok
-		MODULE.process('performing UCS@school installation')
-		try:
-			if serverRole not in ('domaincontroller_master', 'domaincontroller_backup', 'domaincontroller_slave'):
-				_error(_('Invalid server role! UCS@school can only be installed on the system roles domaincontroller master, domaincontroller backup, or domaincontroller slave.'))
-				return
-			elif serverRole != 'domaincontroller_master':
-				# check for a compatible setup on the DC master
+		# check for valid server role
+		if serverRole not in ('domaincontroller_master', 'domaincontroller_backup', 'domaincontroller_slave'):
+			_error(_('Invalid server role! UCS@school can only be installed on the system roles domaincontroller master, domaincontroller backup, or domaincontroller slave.'))
+			return
+
+		if serverRole != 'domaincontroller_master':
+			# check for a compatible setup on the DC master
+			try:
 				schoolVersion = get_remote_ucs_school_version(username, password, master)
 				if not schoolVersion:
 					_error(_('Please install UCS@school on the domaincontroller master system. Cannot proceed installation on this system.'))
@@ -496,14 +523,14 @@ class Instance(Base):
 				if serverRole == 'domaincontroller_backup' and schoolVersion != setup:
 					_error(_('The UCS@school domaincontroller master needs to be configured similarly to this backup system. Please choose the correct setup scenario for this system.'))
 					return
-		except socket.gaierror as e:
-			MODULE.warn('Could not connect to master system %s: %s' % (master, e))
-			_error(_('Cannot connect to the domaincontroller master system %s. Please make sure that the system is reachable. If not this could be due to wrong DNS nameserver settings.') % master)
-			return
-		except paramiko.SSHException as e:
-			MODULE.warn('Could not connect to master system %s: %s' % (master, e))
-			_error(_('Cannot connect to the domaincontroller master system %s. It seems that the specified domain credentials are not valid.') % master)
-			return
+			except socket.gaierror as e:
+				MODULE.warn('Could not connect to master system %s: %s' % (master, e))
+				_error(_('Cannot connect to the domaincontroller master system %s. Please make sure that the system is reachable. If not this could be due to wrong DNS nameserver settings.') % master)
+				return
+			except paramiko.SSHException as e:
+				MODULE.warn('Could not connect to master system %s: %s' % (master, e))
+				_error(_('Cannot connect to the domaincontroller master system %s. It seems that the specified domain credentials are not valid.') % master)
+				return
 
 		if serverRole == 'domaincontroller_slave':
 			# on slave systems, download the certificate from the master in order
@@ -538,7 +565,6 @@ class Instance(Base):
 							# school OU already has a joined main DC
 							_error(_('The OU "%s" is already in use and has been assigned to a different domaincontroller slave system. Please choose a different name for the associated school OU.') % schoolOU)
 							return
-
 			except univention.uldap.ldap.LDAPError as err:
 				MODULE.warn('Could not build up LDAP connection to %s: %s' % (master, err))
 				_error(_('Cannot build up an LDAP connection to master system %s.') % master)
@@ -552,9 +578,21 @@ class Instance(Base):
 			return
 
 		# see which packages we need to install
+		MODULE.process('performing UCS@school installation')
 		installPackages = []
 		sambaVersionInstalled = self.get_samba_version()
-		if serverRole in ('domaincontroller_master', 'domaincontroller_backup'):
+		if serverRole == 'domaincontroller_slave':
+			# slave
+			installPackages.append('ucs-school-slave')
+			if sambaVersionInstalled:
+				# do not install samba a second time
+				pass
+			elif samba == '3':
+				installPackages.extend(['univention-samba', 'univention-samba-slave-pdc'])
+			else:  # -> samba4
+				installPackages.extend(['univention-samba4', 'univention-s4-connector'])
+		else:
+			# master or backup
 			if setup == 'singlemaster':
 				installPackages.append('ucs-school-singlemaster')
 				if sambaVersionInstalled:
@@ -569,25 +607,13 @@ class Instance(Base):
 			else:
 				_error(_('Invalid UCS@school configuration.'))
 				return
-		elif serverRole == 'domaincontroller_slave':
-			installPackages.append('ucs-school-slave')
-			if sambaVersionInstalled:
-				# do not install samba a second time
-				pass
-			elif samba == '3':
-				installPackages.extend(['univention-samba', 'univention-samba-slave-pdc'])
-			else:  # -> samba4
-				installPackages.extend(['univention-samba4', 'univention-s4-connector'])
-		else:
-			_error(_('Invalid UCS@school configuration.'))
-			return
 		MODULE.info('Packages to be installed: %s' % ', '.join(installPackages))
 
 		# reset the current installation progress
 		steps = 100  # installation -> 100
-		if serverRole != 'domaincontroller_backup':
+		if serverRole != 'domaincontroller_backup' and not (serverRole = 'domaincontroller_master' and setup == 'multiserver'):
 			steps += 10  # create_ou -> 10
-		if serverRole == 'domaincontroller_slave':
+		if serverRole != 'domaincontroller_master':
 			steps += 100  # system_join -> 100 steps
 		progress_state = self.progress_state
 		progress_state.reset(steps)
@@ -615,7 +641,7 @@ class Instance(Base):
 				progress_state.info = ''
 				if serverRole == 'domaincontroller_slave':
 					# create ou remotely on the slave
-					success = create_ou_remote(master, schoolOU, ucr.get('hostname'), username, password)
+					success = create_ou_remote(master, username, password, schoolOU, ucr.get('hostname'))
 				elif serverRole == 'domaincontroller_master':
 					# create ou locally on the master
 					success = create_ou_local(schoolOU)
@@ -629,11 +655,15 @@ class Instance(Base):
 					restoreOrigCertificate(certOrigFile)
 					return success
 
-			if serverRole == 'domaincontroller_slave':
+			if serverRole != 'domaincontroller_master':
 				# system join on a slave system
 				progress_state.component = _('Domain join')
-				progress_state.info = _('Preparing domain join...')
-				MODULE.process('Starting system join...')
+				if serverRole == 'domaincontroller_slave':
+					progress_state.info = _('Preparing domain join...')
+					MODULE.process('Starting system join...')
+				else:  # -> DC backup
+					progress_state.info = _('Executing join scripts...')
+					MODULE.process('Running join scripts...')
 				success = system_join(
 					username, password,
 					info_handler=self.progress_state.info_handler,
