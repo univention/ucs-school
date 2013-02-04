@@ -48,6 +48,7 @@ class SchoolImport():
 	SCHOOL_SCRIPT = '%s/create_ou' % _SCRIPT_PATH
 	GROUP_SCRIPT = '%s/import_group' % _SCRIPT_PATH
 	COMPUTER_SCRIPT = '%s/import_computer' % _SCRIPT_PATH
+	MOVE_DC_SCRIPT = '%s/move_domaincontroller_to_ou' % _SCRIPT_PATH
 
 	def _run_script(self, script, entry, run_with_string_argument=False):
 		"""Executes the script with given entry
@@ -66,7 +67,7 @@ class SchoolImport():
 				MODULE.warn(str(err))
 				raise UMC_CommandError(_('Execution of command failed'))
 			else:
-				return process.returncode
+				return process.returncode, stdout
 		else:
 			# Separate columns by tabs
 			entry = '\t'.join(['%s' % column for column in entry])
@@ -77,15 +78,16 @@ class SchoolImport():
 				process = subprocess.Popen([script, tmpfile.name], stdout=subprocess.PIPE)
 				stdout, stderr = process.communicate()
 				if stdout:
-					stdout = '\n'.join([line for line in stdout.splitlines() if not line.startswith('Processing line ')])
-					MODULE.info(stdout)
+					info = '\n'.join([line for line in stdout.splitlines() if not line.startswith('Processing line ')])
+					MODULE.info(info)
 			except (OSError, ValueError) as err:
 				MODULE.warn(str(err))
 				raise UMC_CommandError(_('Execution of command failed'))
 			else:
-				return process.returncode
+				return process.returncode, stdout
 			finally:
 				tmpfile.close()
+		return None, None
 
 	def import_user(self, username, lastname, firstname, school, class_,
 	                mail_primary_address, teacher, staff, password):
@@ -96,14 +98,14 @@ class SchoolImport():
 		entry = ['A', username, lastname, firstname, school, class_, '',
 		         mail_primary_address, teacher, True, staff, password, ]
 
-		return_code = self._run_script(SchoolImport.USER_SCRIPT, entry)
+		return_code, stdout = self._run_script(SchoolImport.USER_SCRIPT, entry)
 		if return_code:
 			raise OSError(_('Could not create user'))
 
 	def create_ou(self, name, school_dc):
 		"""Creates a new school
 		"""
-		return_code = self._run_script(SchoolImport.SCHOOL_SCRIPT, [name, school_dc, ], True)
+		return_code, stdout = self._run_script(SchoolImport.SCHOOL_SCRIPT, [name, school_dc, ], True)
 		if return_code:
 			raise OSError(_('Could not create school'))
 
@@ -113,7 +115,7 @@ class SchoolImport():
 		name = '%s-%s' % (school, name)
 		entry = ['A', school, name, description, ]
 
-		return_code = self._run_script(SchoolImport.GROUP_SCRIPT, entry)
+		return_code, stdout = self._run_script(SchoolImport.GROUP_SCRIPT, entry)
 		if return_code:
 			raise OSError(_('Could not create class'))
 
@@ -127,7 +129,7 @@ class SchoolImport():
 
 		entry = [type_, name, mac, school, address, inventory_number, ]
 
-		return_code = self._run_script(SchoolImport.COMPUTER_SCRIPT, entry)
+		return_code, stdout = self._run_script(SchoolImport.COMPUTER_SCRIPT, entry)
 		if return_code:
 			raise OSError(_('Could not create computer'))
 

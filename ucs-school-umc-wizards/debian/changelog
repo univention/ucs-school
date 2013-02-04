@@ -1,3 +1,9 @@
+ucs-school-umc-wizards (2.0.10-1) unstable; urgency=low
+
+  * added command schools/move_dc; Bug #30162
+
+ -- Alexander Kläser <klaeser@univention.de>  Mon, 04 Feb 2013 11:14:36 +0100
+
 ucs-school-umc-wizards (2.0.9-1) unstable; urgency=low
 
   * allow '-' in the name of a school DC; Bug #30232

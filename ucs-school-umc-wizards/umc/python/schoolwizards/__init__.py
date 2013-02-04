@@ -38,6 +38,8 @@ from univention.lib.i18n import Translation
 from univention.management.console.log import MODULE
 from univention.management.console.modules import UMC_OptionMissing, UMC_CommandError, UMC_OptionTypeError
 from univention.management.console.protocol.definitions import *
+from univention.management.console.modules.decorators import simple_response, sanitize
+from univention.management.console.modules.sanitizers import StringSanitizer
 from univention.admin.uexceptions import valueError
 import univention.admin.modules as udm_modules
 import univention.admin.syntax as udm_syntax
@@ -305,6 +307,16 @@ class Instance(SchoolBaseModule, SchoolImport):
 
 	def is_singlemaster(self, request):
 		self.finished(request.id, {'isSinglemaster': self._is_singlemaster()})
+
+	@simple_response
+	@sanitize(
+		schooldc=StringSanitizer(required=True, regex_pattern=re.compile('^\\w+(\\w|-)*$')),
+		schoolou=StringSanitizer(required=True, regex_pattern=re.compile('^\w+$')),
+	)
+	def move_dc(self, schoodc, schoolou):
+		params = ['--dcname', schooldc, '--ou', schoolou ]
+		return_code, stdout = self._run_script(SchoolImport.MOVE_DC_SCRIPT, params, True)
+		return { 'success': return_code == 0, 'message': stdout }
 
 
 def remove_whitespaces(request):
