@@ -1,3 +1,9 @@
+ucs-school-metapackage (5.0.7-1) unstable; urgency=low
+
+  * Write error messages to log file (Bug #26834)
+
+ -- Jascha Geerds <geerds@univention.de>  Mon, 04 Feb 2013 11:54:11 +0100
+
 ucs-school-metapackage (5.0.6-1) unstable; urgency=low
 
   * A new join script in 'ucs-school-slave' checks if the host is stored in a

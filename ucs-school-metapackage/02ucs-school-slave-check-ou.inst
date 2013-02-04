@@ -43,13 +43,12 @@ OU="$(univention-ldapsearch -LLL -h "$ldap_master" -p "$ldap_master_port" "(&(ob
 		sed -ne 's/^dn: //p;T;q' | sed -nre "s/^.+,ou=([^,]+)(,ou=[^,]+)?,$ldap_base\$/\1/p")"
 
 if [ -z "$OU" ]; then
-	# The computer object for this host isn't inside a school OU and therefore
-	# at the wrong place.
+	echo "ERROR: The computer object for this host isn't inside a school OU and therefore at the wrong place."
 	exit 1
 fi
 
 if [ -z  "$(univention-ldapsearch -LLL -h "$ldap_master" -p "$ldap_master_port" "(&(objectclass=univentionGroup)(cn=OU${OU}-DC-Edukativnetz)(uniqueMember=$ldap_hostdn))" dn | sed -ne 's/^dn: //p')" ]; then
-	# This host has no permission for the OU he is stored in.
+	echo "ERROR: This host has no permission for the OU he is stored in."
 	exit 1
 fi
 
