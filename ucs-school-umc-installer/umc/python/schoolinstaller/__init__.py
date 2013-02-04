@@ -194,6 +194,7 @@ def umc(username, password, master, options = [], requestType='command'):
 		# UMC call
 		cmd = ['/usr/sbin/umc-%s' % requestType, '-U', username, '-y', passwordFile.name, '-s', master]
 		cmd += options
+		MODULE.info('Executing: %s' % ' '.join(cmd))
 		process = subprocess.Popen(cmd, shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 		stdout, stderr = process.communicate()
 
@@ -327,12 +328,12 @@ def system_join(username, password, info_handler = _dummyFunc, error_handler = _
 			process = None
 			if serverRole == 'domaincontroller_slave':
 				# DC slave -> complete re-join
-				process = subprocess.Popen(['/usr/sbin/univention-join', '-dcaccount', username, '-dcpwd', passwordFile.name], shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 				MODULE.process('Performing system join...')
+				process = subprocess.Popen(['/usr/sbin/univention-join', '-dcaccount', username, '-dcpwd', passwordFile.name], shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 			else:
 				# DC backup -> only run join scripts
-				process = subprocess.Popen(['/usr/sbin/univention-run-join-scripts', '-dcaccount', username, '-dcpwd', passwordFile.name], shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 				MODULE.process('Executing join scripts ...')
+				process = subprocess.Popen(['/usr/sbin/univention-run-join-scripts', '-dcaccount', username, '-dcpwd', passwordFile.name], shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
 			failedJoinScripts = []
 			while True:
