@@ -59,6 +59,7 @@ class SchoolImport():
 		if run_with_string_argument:
 			entry.insert(0, script)
 			try:
+				MODULE.info('Executing command: %s' % ' '.join(entry))
 				process = subprocess.Popen(entry, stdout=subprocess.PIPE)
 				stdout, stderr = process.communicate()
 				if stdout and process.returncode > 0:

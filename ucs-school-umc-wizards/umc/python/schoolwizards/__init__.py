@@ -308,12 +308,12 @@ class Instance(SchoolBaseModule, SchoolImport):
 	def is_singlemaster(self, request):
 		self.finished(request.id, {'isSinglemaster': self._is_singlemaster()})
 
-	@simple_response
 	@sanitize(
 		schooldc=StringSanitizer(required=True, regex_pattern=re.compile('^\\w+(\\w|-)*$')),
 		schoolou=StringSanitizer(required=True, regex_pattern=re.compile('^\w+$')),
 	)
-	def move_dc(self, schoodc, schoolou):
+	@simple_response
+	def move_dc(self, schooldc, schoolou):
 		params = ['--dcname', schooldc, '--ou', schoolou ]
 		return_code, stdout = self._run_script(SchoolImport.MOVE_DC_SCRIPT, params, True)
 		return { 'success': return_code == 0, 'message': stdout }
