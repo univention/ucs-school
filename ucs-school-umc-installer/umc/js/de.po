@@ -14,30 +14,30 @@ msgstr ""
 
 #: umc/js/schoolinstaller.js:98
 msgid ""
-"<p>In the multi server scenario, the domaincontroller master system is "
+"<p>In the multi server scenario, the master domain controller system is "
 "configured as central instance hosting the complete set of LDAP data. Each "
-"school is configured to have its own domaincontroller slave system that "
+"school is configured to have its own slave domain controller system that "
 "selectively replicates the school's own LDAP OU structure. In that way, "
 "different schools do not have access to data from other schools, they only "
 "see their own data. Teaching related UMC modules are only accessibly on the "
-"domaincontroller slave. The domaincontroller master does not provide UMC "
+"slave domain controller. The master domain controller does not provide UMC "
 "modules for teachers. After configuring a master system, one or more slave "
 "systems must be configured and joined into the UCS@school domain.</p>"
 msgstr "In einer verteilten Umgebung ist der Domänencontroller Master als zentrale Instanz konfiguriert, die den gesamten LDAP-Datensatz vorhält. Jeder Schule ist ein eigener Domänencontroller Slave zugeordnet, der jeweils die schuleigene LDAP-OU-Strukutur selektiv repliziert. Auf diese Weise hat eine Schule keinen Zugriff auf die Daten andere Schulen, da nur die eigenen Daten lokal gesichert werden. Unterrichtsbezogene UMC-Module sind nur vom jeweiligen Domänencontroller Slave zugänglich. Der Domänencontroller Master stellt keine UMC-Module für Lehrer bereit. Nachdem das Master-System konfiguriert wurde, müssen ein oder mehrere Slave-Systeme konfiguriert werden und der Domäne beitreten."
 
 #: umc/js/schoolinstaller.js:99
 msgid ""
-"<p>In the single server scenario, the domaincontroller master system is "
+"<p>In the single server scenario, the master domain controller system is "
 "configured as standalone UCS@school server instance. All school related data "
 "and thus all school OU structures are hosted and accessed on the "
-"domaincontroller master itself. Teaching related UMC modules are provided "
+"master domain controller itself. Teaching related UMC modules are provided "
 "directly on the master itself. Note that this setup can lead to performance "
 "problems in larger environments.</p>"
 msgstr "<p>In einem Single-Server-Szenario ist der Domänencontroller-Master als allein stehende UCS@school-Server-Instanz konfiguriert. Alle schulbezogenen Daten and damit alle Schul-OU-Strukturen werden auf dem Domänencontroller Master selber gespeichert und von dort aus für den Zugriff bereitgestellt. Unterrichtsbezogene UMC-Module sind direkt auf dem Master-System verfügbar. Diese Konfiguration kann in größeren Umgebung zu Performance-Problemen führen.</p>"
 
 #: umc/js/schoolinstaller.js:107
 msgid ""
-"<p>The local server role is domaincontroller slave, for which only a multi "
+"<p>The local server role is slave domain controller, for which only a multi "
 "server setup can be configured.</p>"
 msgstr "<p>Die lokale Serverrolle ist Domänencontroller Slave. Diese Rolle kann nur für eine verteilte Umgebung konfiguriert werden.</p>"
 
@@ -98,7 +98,7 @@ msgstr "In einem Single-Server-Szenario werden alle Schul-OUs von dem Domänenco
 
 #: umc/js/schoolinstaller.js:138
 msgid ""
-"Fully qualified domain name of domaincontroller master (e.g. schoolmaster."
+"Fully qualified domain name of master domain controller (e.g. schoolmaster."
 "example.com)"
 msgstr "Der volständige Domänenname  des Domänencontroller Masters (bspw. schoolmaster.example.com)"
 
@@ -118,7 +118,7 @@ msgstr "Um die Installation von UCS@school abzuschließen, ist ein Neustart der 
 
 #: umc/js/schoolinstaller.js:122
 msgid ""
-"In order to setup this system as UCS@school domaincontroller slave, please "
+"In order to setup this system as UCS@school slave domain controller, please "
 "enter the domain credentials of a domain account with join privileges."
 msgstr "Bitte geben sie die Anmeldedaten eines Domänenkontos mit Join-Rechten an, um diese System als Domänencontroller Slave für UCS@school zu konfigurieren."
 
@@ -136,8 +136,8 @@ msgstr "NT-kompatibler Domänencontroller (Samba 3)"
 
 #: umc/js/schoolinstaller.js:184
 msgid ""
-"Note that each domaincontroller slave system is directly associated with a "
-"school OU. A domaincontroller slave has only access to the data below "
+"Note that each slave domain controller system is directly associated with a "
+"school OU. A slave domain controller has only access to the data below "
 "its own school OU, not to data from other schools."
 msgstr "Ein Domänencontroller Slave ist direkt einer Schul-OU zugeordnet. Der Slave hat nur Zugang zu den Daten unterhalb seiner eigenen Schul-OU, auf Daten anderer Schulen kann nicht zugegriffen werden."
 
@@ -195,8 +195,8 @@ msgstr "Die Installation von UCS@school wurde erfolgreich abgeschlossen."
 #: umc/js/schoolinstaller.js:249
 msgid ""
 "This wizard guides you step by step through the installation of an "
-"UCS@school domaincontroller slave. Before continuing please make sure that "
-"an UCS@school domaincontroller master has already been set up for a multi "
+"UCS@school slave domain controller. Before continuing please make sure that "
+"an UCS@school master domain controller has already been set up for a multi "
 "server scenario."
 msgstr "Dieser Assisten begleitet sie Schritt für Schritt bei der Installation eines UCS@school Domänencontroller Slave. Bitte stellen Sie sicher, dass ein UCS@school Domänencontroller Master bereits für eine verteilte Umgebung eingerichtet wurde."
 
@@ -227,7 +227,7 @@ msgstr "UCS@school - Server-Konfiguration"
 #: umc/js/schoolinstaller.js:309
 msgid ""
 "UCS@school can only be installed on the system roles domaincontroller "
-"master, domaincontroller backup, or domaincontroller slave."
+"master, backup domain controller, or slave domain controller."
 msgstr "UCS@school can nur auf den Serverrollen Domänencontroller Master, Domänencontroller Backup oder Domänencontroller Slave installiert werden."
 
 #: umc/js/schoolinstaller.js:213

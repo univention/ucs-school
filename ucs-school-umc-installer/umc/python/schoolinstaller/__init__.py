@@ -487,6 +487,7 @@ class Instance(Base):
 		schoolOU = request.options.get('schoolOU')
 		setup = request.options.get('setup')
 		serverRole = ucr.get('server/role')
+		joined = os.path.exists('/var/univention-join/joined')
 
 		if serverRole != 'domaincontroller_slave':
 			# use the credentials of the currently authenticated user on a master/backup system
@@ -512,7 +513,7 @@ class Instance(Base):
 
 		# check for valid server role
 		if serverRole not in ('domaincontroller_master', 'domaincontroller_backup', 'domaincontroller_slave'):
-			_error(_('Invalid server role! UCS@school can only be installed on the system roles domaincontroller master, domaincontroller backup, or domaincontroller slave.'))
+			_error(_('Invalid server role! UCS@school can only be installed on the system roles master domain controller, backup domain controller, or slave domain controller.'))
 			return
 
 		if serverRole != 'domaincontroller_master':
@@ -520,21 +521,24 @@ class Instance(Base):
 			try:
 				schoolVersion = get_remote_ucs_school_version(username, password, master)
 				if not schoolVersion:
-					_error(_('Please install UCS@school on the domaincontroller master system. Cannot proceed installation on this system.'))
+					_error(_('Please install UCS@school on the master domain controller system. Cannot proceed installation on this system.'))
 					return
 				if serverRole == 'domaincontroller_slave' and schoolVersion != 'multiserver':
-					_error(_('The UCS@school domaincontroller master system is not configured as a multi server setup. Cannot proceed installation on this system.'))
+					_error(_('The UCS@school master domain controller system is not configured as a multi server setup. Cannot proceed installation on this system.'))
 					return
 				if serverRole == 'domaincontroller_backup' and schoolVersion != setup:
-					_error(_('The UCS@school domaincontroller master needs to be configured similarly to this backup system. Please choose the correct setup scenario for this system.'))
+					_error(_('The UCS@school master domain controller needs to be configured similarly to this backup system. Please choose the correct setup scenario for this system.'))
+					return
+				if serverRole == 'domaincontroller_backup' and not joined:
+					_error(_('In order to install UCS@school on a backup domain controller, the system needs to be joined first.'))
 					return
 			except socket.gaierror as e:
 				MODULE.warn('Could not connect to master system %s: %s' % (master, e))
-				_error(_('Cannot connect to the domaincontroller master system %s. Please make sure that the system is reachable. If not this could be due to wrong DNS nameserver settings.') % master)
+				_error(_('Cannot connect to the master domain controller system %s. Please make sure that the system is reachable. If not this could be due to wrong DNS nameserver settings.') % master)
 				return
 			except paramiko.SSHException as e:
 				MODULE.warn('Could not connect to master system %s: %s' % (master, e))
-				_error(_('Cannot connect to the domaincontroller master system %s. It seems that the specified domain credentials are not valid.') % master)
+				_error(_('Cannot connect to the master domain controller system %s. It seems that the specified domain credentials are not valid.') % master)
 				return
 
 		if serverRole == 'domaincontroller_slave':
@@ -568,7 +572,7 @@ class Instance(Base):
 						islave.open()
 						if searchBase.educationalDCGroup in islave['groups'] and ucr.get('hostname') != islave['name']:
 							# school OU already has a joined main DC
-							_error(_('The OU "%s" is already in use and has been assigned to a different domaincontroller slave system. Please choose a different name for the associated school OU.') % schoolOU)
+							_error(_('The OU "%s" is already in use and has been assigned to a different slave domain controller system. Please choose a different name for the associated school OU.') % schoolOU)
 							return
 			except univention.uldap.ldap.LDAPError as err:
 				MODULE.warn('Could not build up LDAP connection to %s: %s' % (master, err))
