@@ -608,15 +608,15 @@ class Instance(Base):
 				restoreOrigCertificate(certOrigFile)
 				return success
 
-			if serverRole != 'domaincontroller_backup' and not (serverRole = 'domaincontroller_master' and setup == 'multiserver'):
+			if serverRole != 'domaincontroller_backup' and not (serverRole == 'domaincontroller_master' and setup == 'multiserver'):
 				# create the school OU (not on backup and not on master w/multiserver setup)
 				MODULE.info('Starting creation of LDAP school OU structure...')
 				progress_state.component = _('Creation of LDAP school structure')
 				progress_state.info = ''
-				if serverRole != 'domaincontroller_slave':
+				if serverRole == 'domaincontroller_slave':
 					# create ou remotely on the slave
 					success = create_ou_remote(master, schoolOU, ucr.get('hostname'), username, password)
-				if serverRole != 'domaincontroller_master':
+				elif serverRole == 'domaincontroller_master':
 					# create ou locally on the master
 					success = create_ou_local(schoolOU)
 

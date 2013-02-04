@@ -1,3 +1,9 @@
+ucs-school-umc-installer (0.1.28-1) unstable; urgency=low
+
+  * fixed errors in server role handling; Bug #30162
+
+ -- Alexander Kläser <klaeser@univention.de>  Mon, 04 Feb 2013 11:50:30 +0100
+
 ucs-school-umc-installer (0.1.27-1) unstable; urgency=low
 
   * fixed errors in server role handling; Bug #30162
