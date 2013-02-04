@@ -52,7 +52,7 @@ msgid ""
 msgstr "<p>Dieser Assisten begleitet Sie Schritt für Schritt bei der Installation von UCS@school in Ihrer Domäne.</p><p>Es gibt zwei mögliche Installationsszenarien für UCS@school: eine Single-Server-Lösung und eine verteilte Umgebung. Die Auswahl eines der beiden Szenarien hat Auswirkungen auf die nachfolgenden Installationsschritte. Weitere Hinweise für das jeweilige Szenario werden untenstehend angezeigt.</p>"
 
 #: umc/js/schoolinstaller.js:150
-msgid "Active Directory-compatible domaincontroller (Samba 4)"
+msgid "Active Directory-compatible domain controller (Samba 4)"
 msgstr "Active Directory-kompatibler Domänencontroller (Samba 4)"
 
 #: umc/js/schoolinstaller.js:194
@@ -100,7 +100,7 @@ msgstr "In einem Single-Server-Szenario werden alle Schul-OUs von dem Domänenco
 msgid ""
 "Fully qualified domain name of master domain controller (e.g. schoolmaster."
 "example.com)"
-msgstr "Der volständige Domänenname  des Domänencontroller Masters (bspw. schoolmaster.example.com)"
+msgstr "Der volständige Domänenname des Domänencontroller Masters (bspw. schoolmaster.example.com)"
 
 #: umc/js/schoolinstaller.js:173
 msgid ""
@@ -131,7 +131,7 @@ msgid "Multi server scenario"
 msgstr "Verteilte Umgebung"
 
 #: umc/js/schoolinstaller.js:151
-msgid "NT-compatible domaincontroller (Samba 3)"
+msgid "NT-compatible domain controller (Samba 3)"
 msgstr "NT-kompatibler Domänencontroller (Samba 3)"
 
 #: umc/js/schoolinstaller.js:184
@@ -226,8 +226,8 @@ msgstr "UCS@school - Server-Konfiguration"
 
 #: umc/js/schoolinstaller.js:309
 msgid ""
-"UCS@school can only be installed on the system roles domaincontroller "
-"master, backup domain controller, or slave domain controller."
+"UCS@school can only be installed on the system roles master domain controller "
+"backup domain controller, or slave domain controller."
 msgstr "UCS@school can nur auf den Serverrollen Domänencontroller Master, Domänencontroller Backup oder Domänencontroller Slave installiert werden."
 
 #: umc/js/schoolinstaller.js:213

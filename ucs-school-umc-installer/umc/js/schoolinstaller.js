@@ -147,8 +147,8 @@ define([
 					label: _('Please choose which Samba version you would like to install:'),
 					size: 'OneAndAHalf',
 					staticValues: [
-						{ id: '4', label: _('Active Directory-compatible domaincontroller (Samba 4)') },
-						{ id: '3', label: _('NT-compatible domaincontroller (Samba 3)') }
+						{ id: '4', label: _('Active Directory-compatible domain controller (Samba 4)') },
+						{ id: '3', label: _('NT-compatible domain controller (Samba 3)') }
 					],
 					onChange: lang.hitch(this, function(newVal, widgets) {
 						var texts = {
