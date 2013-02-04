@@ -109,7 +109,7 @@ def get_ssh_connection(username, password, host):
 	ssh.connect(host, username=username, password=password)
 	return ssh
 
-def move_slave_into_ou(master, username, password, slave, ou):
+def move_slave_into_ou(master, username, password, ou, slave):
 	'''Make sure that the slave object exists in the right OU.'''
 	MODULE.info('Trying to move the slave entry in the right OU structure...''')
 	result = umc(username, password, master, ['schoolwizards/schools/move_dc', '-o', 'schooldc=%s' % slave , '-o', 'schoolou=%s' % ou ])
@@ -225,7 +225,7 @@ def create_ou_local(ou):
 	stdout, stderr = process.communicate()
 
 	# check for errors
-	if process.returncode != 0 or not match:
+	if process.returncode != 0:
 		# error case... should not happen
 		MODULE.error('Failed to execute create_ou: %s\n%s%s' % (cmd, stderr, stdout))
 		return False
@@ -309,13 +309,7 @@ def system_join(username, password, info_handler = _dummyFunc, error_handler = _
 	nJoinScripts = len(glob.glob('/usr/lib/univention-install/*.inst'))
 	stepsPerScript = 100.0 / nJoinScripts
 
-	if serverRole == 'domaincontroller_backup':
-		# on a backup, we only need to run the join scripts... check how many we have
-		regScriptNotExecuted = re.compile('.*is not configured.*', re.IGNORECASE)
-		process = subprocess.Popen(['/usr/share/univention-join', '-dcaccount', username, '-dcpwd', passwordFile.name], shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-		stdout, stderr = process.communicate()
-		nJoinScripts = len([i for i in stdout.splitlines if regScriptNotExecuted.match(i)])
-
+	# disable UMC/apache restart
 	MODULE.info('disabling UMC and apache server restart')
 	subprocess.call(CMD_DISABLE_EXEC)
 
@@ -334,16 +328,20 @@ def system_join(username, password, info_handler = _dummyFunc, error_handler = _
 			if serverRole == 'domaincontroller_slave':
 				# DC slave -> complete re-join
 				process = subprocess.Popen(['/usr/sbin/univention-join', '-dcaccount', username, '-dcpwd', passwordFile.name], shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+				MODULE.process('Performing system join...')
 			else:
 				# DC backup -> only run join scripts
 				process = subprocess.Popen(['/usr/sbin/univention-run-join-scripts', '-dcaccount', username, '-dcpwd', passwordFile.name], shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+				MODULE.process('Executing join scripts ...')
 
+			failedJoinScripts = []
 			while True:
 				# get the next line
 				line = process.stdout.readline()
 				if not line:
 					# no more text from stdout
 					break
+				MODULE.process(line.strip())
 
 				# parse output... first check for errors
 				m = regError.match(line)
@@ -356,6 +354,8 @@ def system_join(username, password, info_handler = _dummyFunc, error_handler = _
 				if m:
 					info_handler(_('Executing join script %s') % m.groupdict().get('script'))
 					step_handler(stepsPerScript)
+					if 'failed' in line:
+						failedJoinScripts.append(m.groupdict().get('script'))
 					continue
 
 				# check for other information
@@ -374,6 +374,10 @@ def system_join(username, password, info_handler = _dummyFunc, error_handler = _
 			if process.returncode != 0:
 				# error case
 				MODULE.warn('Could not perform system join: %s%s' % (stdout, stderr))
+				success = False
+			elif failedJoinScripts:
+				MODULE.warn('The following join scripts could not be executed: %s' % failedJoinScripts)
+				error_handler(_('Software packages have been installed sucessfully, however, several join scripts could not bee executed. More details can be found in the log file /var/log/univention/join.log. Please retry to execute the join scripts via the UMC module "Domain join" after resolving any conflicting issues.'))
 				success = False
 	finally:
 		# make sure that UMC servers and apache can be restarted again
@@ -613,6 +617,8 @@ class Instance(Base):
 		steps = 100  # installation -> 100
 		if serverRole != 'domaincontroller_backup' and not (serverRole == 'domaincontroller_master' and setup == 'multiserver'):
 			steps += 10  # create_ou -> 10
+		if serverRole == 'domaincontroller_slave':
+			steps += 10  # move_slave_into_ou -> 10
 		if serverRole != 'domaincontroller_master':
 			steps += 100  # system_join -> 100 steps
 		progress_state = self.progress_state
@@ -654,6 +660,13 @@ class Instance(Base):
 					progress_state.error_handler(_('The UCS@school software packages have been installed, however, a school OU could not be created and consequently a re-join of the system has not been performed. Please create a new school OU structure using the UMC module "Add school" on the master and perform a domain join on this machine via the UMC module "Domain join".' ))
 					restoreOrigCertificate(certOrigFile)
 					return success
+
+			if serverRole == 'domaincontroller_slave':
+				# make sure that the slave is correctly moved below its OU
+				if not move_slave_into_ou(master, username, password, schoolOU, ucr.get('hostname')):
+					# error case
+					_error(_('Validating the LDAP school OU structure failed. It seems that the current slave object has already been assigned to a different school or that the specified school OU name is already in use.'))
+					return False
 
 			if serverRole != 'domaincontroller_master':
 				# system join on a slave system
