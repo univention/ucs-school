@@ -1,3 +1,9 @@
+ucs-school-metapackage (5.0.8-1) unstable; urgency=low
+
+  * Rename 02ucs-school-slave-check-ou.inst to 00ucs-school* (Bug #26834)
+
+ -- Jascha Geerds <geerds@univention.de>  Mon, 04 Feb 2013 13:27:01 +0100
+
 ucs-school-metapackage (5.0.7-1) unstable; urgency=low
 
   * Write error messages to log file (Bug #26834)

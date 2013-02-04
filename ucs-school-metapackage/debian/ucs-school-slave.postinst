@@ -82,7 +82,7 @@ fi
 
 /etc/init.d/univention-directory-listener crestart
 
-call_joinscript 02ucs-school-slave-check-ou.inst
+call_joinscript 00ucs-school-slave-check-ou.inst
 call_joinscript 62ucs-school-slave.inst
 
 #DEBHELPER#
