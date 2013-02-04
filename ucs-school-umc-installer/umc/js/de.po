@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-installer\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2013-02-04 14:00+0100\n"
+"POT-Creation-Date: 2013-02-04 17:11+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -23,23 +23,42 @@ msgid ""
 "slave domain controller. The master domain controller does not provide UMC "
 "modules for teachers. After configuring a master system, one or more slave "
 "systems must be configured and joined into the UCS@school domain.</p>"
-msgstr "In einer verteilten Umgebung ist der Domänencontroller Master als zentrale Instanz konfiguriert, die den gesamten LDAP-Datensatz vorhält. Jeder Schule ist ein eigener Domänencontroller Slave zugeordnet, der jeweils die schuleigene LDAP-OU-Strukutur selektiv repliziert. Auf diese Weise hat eine Schule keinen Zugriff auf die Daten andere Schulen, da nur die eigenen Daten lokal gesichert werden. Unterrichtsbezogene UMC-Module sind nur vom jeweiligen Domänencontroller Slave zugänglich. Der Domänencontroller Master stellt keine UMC-Module für Lehrer bereit. Nachdem das Master-System konfiguriert wurde, müssen ein oder mehrere Slave-Systeme konfiguriert werden und der Domäne beitreten."
+msgstr ""
+"In einer verteilten Umgebung ist der Domänencontroller Master als zentrale "
+"Instanz konfiguriert, die den gesamten LDAP-Datensatz vorhält. Jeder Schule "
+"ist ein eigener Domänencontroller Slave zugeordnet, der jeweils die "
+"schuleigene LDAP-OU-Strukutur selektiv repliziert. Auf diese Weise hat eine "
+"Schule keinen Zugriff auf die Daten andere Schulen, da nur die eigenen Daten "
+"lokal gesichert werden. Unterrichtsbezogene UMC-Module sind nur vom "
+"jeweiligen Domänencontroller Slave zugänglich. Der Domänencontroller Master "
+"stellt keine UMC-Module für Lehrer bereit. Nachdem das Master-System "
+"konfiguriert wurde, müssen ein oder mehrere Slave-Systeme konfiguriert "
+"werden und der Domäne beitreten."
 
 #: umc/js/schoolinstaller.js:99
 msgid ""
 "<p>In the single server scenario, the master domain controller system is "
 "configured as standalone UCS@school server instance. All school related data "
-"and thus all school OU structures are hosted and accessed on the "
-"master domain controller itself. Teaching related UMC modules are provided "
-"directly on the master itself. Note that this setup can lead to performance "
-"problems in larger environments.</p>"
-msgstr "<p>In einem Single-Server-Szenario ist der Domänencontroller-Master als allein stehende UCS@school-Server-Instanz konfiguriert. Alle schulbezogenen Daten and damit alle Schul-OU-Strukturen werden auf dem Domänencontroller Master selber gespeichert und von dort aus für den Zugriff bereitgestellt. Unterrichtsbezogene UMC-Module sind direkt auf dem Master-System verfügbar. Diese Konfiguration kann in größeren Umgebung zu Performance-Problemen führen.</p>"
+"and thus all school OU structures are hosted and accessed on the master "
+"domain controller itself. Teaching related UMC modules are provided directly "
+"on the master itself. Note that this setup can lead to performance problems "
+"in larger environments.</p>"
+msgstr ""
+"<p>In einem Single-Server-Szenario ist der Domänencontroller-Master als "
+"allein stehende UCS@school-Server-Instanz konfiguriert. Alle schulbezogenen "
+"Daten and damit alle Schul-OU-Strukturen werden auf dem Domänencontroller "
+"Master selber gespeichert und von dort aus für den Zugriff bereitgestellt. "
+"Unterrichtsbezogene UMC-Module sind direkt auf dem Master-System verfügbar. "
+"Diese Konfiguration kann in größeren Umgebung zu Performance-Problemen "
+"führen.</p>"
 
 #: umc/js/schoolinstaller.js:107
 msgid ""
 "<p>The local server role is slave domain controller, for which only a multi "
 "server setup can be configured.</p>"
-msgstr "<p>Die lokale Serverrolle ist Domänencontroller Slave. Diese Rolle kann nur für eine verteilte Umgebung konfiguriert werden.</p>"
+msgstr ""
+"<p>Die lokale Serverrolle ist Domänencontroller Slave. Diese Rolle kann nur "
+"für eine verteilte Umgebung konfiguriert werden.</p>"
 
 #: umc/js/schoolinstaller.js:68
 msgid ""
@@ -49,24 +68,42 @@ msgid ""
 "server scenario. The selection of a scenario has implications for the "
 "following installation steps. Further information for the selected scenario "
 "will be displayed below.</p>"
-msgstr "<p>Dieser Assisten begleitet Sie Schritt für Schritt bei der Installation von UCS@school in Ihrer Domäne.</p><p>Es gibt zwei mögliche Installationsszenarien für UCS@school: eine Single-Server-Lösung und eine verteilte Umgebung. Die Auswahl eines der beiden Szenarien hat Auswirkungen auf die nachfolgenden Installationsschritte. Weitere Hinweise für das jeweilige Szenario werden untenstehend angezeigt.</p>"
+msgstr ""
+"<p>Dieser Assisten begleitet Sie Schritt für Schritt bei der Installation "
+"von UCS@school in Ihrer Domäne.</p><p>Es gibt zwei mögliche "
+"Installationsszenarien für UCS@school: eine Single-Server-Lösung und eine "
+"verteilte Umgebung. Die Auswahl eines der beiden Szenarien hat Auswirkungen "
+"auf die nachfolgenden Installationsschritte. Weitere Hinweise für das "
+"jeweilige Szenario werden untenstehend angezeigt.</p>"
 
 #: umc/js/schoolinstaller.js:150
 msgid "Active Directory-compatible domain controller (Samba 4)"
 msgstr "Active Directory-kompatibler Domänencontroller (Samba 4)"
+
+#: umc/js/schoolinstaller.js:365
+msgid ""
+"All necessary information for the installation of UCS@school on this system "
+"has been collected. Please confirm now to continue with the installation "
+"process."
+msgstr ""
+"Alle für die Installation von UCS@school auf diesem System notwendigen "
+"Informationen wurden zusammengetragen. Bitte bestätigen Sie jetzt, um mit "
+"dem Installationsprozess zu beginnen."
 
 #: umc/js/schoolinstaller.js:194
 msgid ""
 "An error occurred during the installation of UCS@school. The following "
 "information will give you some more details on which problems occurred "
 "during the installation process."
-msgstr "Ein Fehler trat während der Installation von UCS@school auf. Die folgenden Informationen werden genauere Hinweise zu den aufgetretenen Problem geben."
+msgstr ""
+"Ein Fehler trat während der Installation von UCS@school auf. Die folgenden "
+"Informationen werden genauere Hinweise zu den aufgetretenen Problem geben."
 
-#: umc/js/schoolinstaller.js:393
+#: umc/js/schoolinstaller.js:399
 msgid "An unexpected error occurred."
 msgstr "Ein unerwarteter Fehler trat auf."
 
-#: umc/js/schoolinstaller.js:364
+#: umc/js/schoolinstaller.js:367
 msgid "Cancel"
 msgstr "Abbrechen"
 
@@ -88,19 +125,27 @@ msgid ""
 "of the Samba software component. The Samba component is available in two "
 "different versions: Samba 3 and Samba 4. It is recommended to use domain-"
 "wide the same Samba version."
-msgstr "UCS@school benötigt für die Bereistellung von Windows-Domänendiensten die Installation der Samba-Softwarekomponente. Samba ist verfügbar in zwei unterschiedlichen Versionen: Samba 3 und Samba 4. Es wird empfohlen, domänenweit die gleiche Samba-Version einzusetzen."
+msgstr ""
+"UCS@school benötigt für die Bereistellung von Windows-Domänendiensten die "
+"Installation der Samba-Softwarekomponente. Samba ist verfügbar in zwei "
+"unterschiedlichen Versionen: Samba 3 und Samba 4. Es wird empfohlen, "
+"domänenweit die gleiche Samba-Version einzusetzen."
 
 #: umc/js/schoolinstaller.js:189
 msgid ""
 "For the single server scenario, all school OUs are accessed from the master "
 "system itself."
-msgstr "In einem Single-Server-Szenario werden alle Schul-OUs von dem Domänencontroller Master selber verwaltet."
+msgstr ""
+"In einem Single-Server-Szenario werden alle Schul-OUs von dem "
+"Domänencontroller Master selber verwaltet."
 
 #: umc/js/schoolinstaller.js:138
 msgid ""
 "Fully qualified domain name of master domain controller (e.g. schoolmaster."
 "example.com)"
-msgstr "Der volständige Domänenname des Domänencontroller Masters (bspw. schoolmaster.example.com)"
+msgstr ""
+"Der volständige Domänenname des Domänencontroller Masters (bspw. "
+"schoolmaster.example.com)"
 
 #: umc/js/schoolinstaller.js:173
 msgid ""
@@ -108,21 +153,39 @@ msgid ""
 "unit (so-called OU). All school related information (students, classes, "
 "computers, rooms, groups etc.) is organized below such an OU. Please enter "
 "the name of a school OU that will be created during the installation process."
-msgstr "Für UCS@school wird jede Schule ihrer eigenen LDAP-Organisationeinheit zugeordnet (die sogenannte Organizational Unit oder auch kurz OU). All schulbezogenen Informationen (Schüler, Klassen, Computer, Räume, Gruppen etc.) werden unterhalb dieser OU angelegt und verwaltet. Bitte geben Sie den Namen der Schul-OU ein, die währende des Installationsvorgangs erzeugt werden soll."
+msgstr ""
+"Für UCS@school wird jede Schule ihrer eigenen LDAP-Organisationeinheit "
+"zugeordnet (die sogenannte Organizational Unit oder auch kurz OU). All "
+"schulbezogenen Informationen (Schüler, Klassen, Computer, Räume, Gruppen "
+"etc.) werden unterhalb dieser OU angelegt und verwaltet. Bitte geben Sie den "
+"Namen der Schul-OU ein, die währende des Installationsvorgangs erzeugt "
+"werden soll."
 
-#: umc/js/schoolinstaller.js:424
+#: umc/js/schoolinstaller.js:430
 msgid ""
 "In order to complete the installation of UCS@school, a restart of the UMC "
 "server components is necessary."
-msgstr "Um die Installation von UCS@school abzuschließen, ist ein Neustart der UMC-Server-Komponenten notwendig."
+msgstr ""
+"Um die Installation von UCS@school abzuschließen, ist ein Neustart der UMC-"
+"Server-Komponenten notwendig."
+
+#: umc/js/schoolinstaller.js:315
+msgid ""
+"In order to install UCS@school on a backup domain controller, the system "
+"needs to be joined first."
+msgstr ""
+"Bevor UCS@school auf einem Domänencontroller Backup installiert werden "
+"kann, muss diese System zuerst der Domäne beigetreten sein."
 
 #: umc/js/schoolinstaller.js:122
 msgid ""
 "In order to setup this system as UCS@school slave domain controller, please "
 "enter the domain credentials of a domain account with join privileges."
-msgstr "Bitte geben sie die Anmeldedaten eines Domänenkontos mit Join-Rechten an, um diese System als Domänencontroller Slave für UCS@school zu konfigurieren."
+msgstr ""
+"Bitte geben sie die Anmeldedaten eines Domänenkontos mit Join-Rechten an, um "
+"diese System als Domänencontroller Slave für UCS@school zu konfigurieren."
 
-#: umc/js/schoolinstaller.js:227 umc/js/schoolinstaller.js:361
+#: umc/js/schoolinstaller.js:227 umc/js/schoolinstaller.js:371
 msgid "Install"
 msgstr "Installieren"
 
@@ -137,9 +200,12 @@ msgstr "NT-kompatibler Domänencontroller (Samba 3)"
 #: umc/js/schoolinstaller.js:184
 msgid ""
 "Note that each slave domain controller system is directly associated with a "
-"school OU. A slave domain controller has only access to the data below "
-"its own school OU, not to data from other schools."
-msgstr "Ein Domänencontroller Slave ist direkt einer Schul-OU zugeordnet. Der Slave hat nur Zugang zu den Daten unterhalb seiner eigenen Schul-OU, auf Daten anderer Schulen kann nicht zugegriffen werden."
+"school OU. A slave domain controller has only access to the data below its "
+"own school OU, not to data from other schools."
+msgstr ""
+"Ein Domänencontroller Slave ist direkt einer Schul-OU zugeordnet. Der Slave "
+"hat nur Zugang zu den Daten unterhalb seiner eigenen Schul-OU, auf Daten "
+"anderer Schulen kann nicht zugegriffen werden."
 
 #: umc/js/schoolinstaller.js:72
 msgid "Please choose an installation scenario:"
@@ -148,10 +214,6 @@ msgstr "Bitte wählen Sie ein Installationsszenario aus:"
 #: umc/js/schoolinstaller.js:147
 msgid "Please choose which Samba version you would like to install:"
 msgstr "Bitte wäheln Sie welche Samba version installiert werden soll:"
-
-#: umc/js/schoolinstaller.js:359
-msgid "Please confirm to start the installation process."
-msgstr "Bitte bestätigen sie den Start des Installationsvorganges."
 
 #: umc/js/schoolinstaller.js:228
 msgid "Retry"
@@ -163,7 +225,11 @@ msgid ""
 "Microsoft Windows NT. Samba 3 is the current, stable and tried-and-tested "
 "main release series of the Samba project and has been integrated in UCS for "
 "many years."
-msgstr "Samba 3 implementiert Domänendienste auf Basis der Domänen-Technologie von Microsoft Windows NT. Samba 3 ist die aktuelle stabile und bewährte Haupt-Release-Serie des Samba-Projekts und ist seit vielen Jahren in UCS integriert."
+msgstr ""
+"Samba 3 implementiert Domänendienste auf Basis der Domänen-Technologie von "
+"Microsoft Windows NT. Samba 3 ist die aktuelle stabile und bewährte Haupt-"
+"Release-Serie des Samba-Projekts und ist seit vielen Jahren in UCS "
+"integriert."
 
 #: umc/js/schoolinstaller.js:155
 msgid ""
@@ -174,7 +240,15 @@ msgid ""
 "Samba 4. These also allow the use of the tools provided by Microsoft for the "
 "management of users or group policies (GPOs) for example. Samba4 is the "
 "recommended version to use."
-msgstr "Samba 4 ist die nächste Generation der Samba-Suite. Die wichtigste Neuerung von Samba 4 besteht in der Unterstützung von Domänen-, Verzeichnis- und Authentifizierungsdiensten, die kompatibel zu Microsoft Active Directory sind. Mit Samba 4 lassen sich deswegen Active Directory-kompatible Windows-Domänen aufbauen. Diese ermöglichen auch die Verwendung der von Microsoft bereit gestellten Werkzeuge beispielsweise für die Verwaltung von Benutzern oder Gruppenrichtlinien (GPOs). Samba 4 ist die für UCS@school empfohlene Version."
+msgstr ""
+"Samba 4 ist die nächste Generation der Samba-Suite. Die wichtigste Neuerung "
+"von Samba 4 besteht in der Unterstützung von Domänen-, Verzeichnis- und "
+"Authentifizierungsdiensten, die kompatibel zu Microsoft Active Directory "
+"sind. Mit Samba 4 lassen sich deswegen Active Directory-kompatible Windows-"
+"Domänen aufbauen. Diese ermöglichen auch die Verwendung der von Microsoft "
+"bereit gestellten Werkzeuge beispielsweise für die Verwaltung von Benutzern "
+"oder Gruppenrichtlinien (GPOs). Samba 4 ist die für UCS@school empfohlene "
+"Version."
 
 #: umc/js/schoolinstaller.js:178
 msgid "School OU name"
@@ -184,7 +258,7 @@ msgstr "Schul-OU-Name"
 msgid "Single server scenario"
 msgstr "Single-Server-Szenario"
 
-#: umc/js/schoolinstaller.js:378
+#: umc/js/schoolinstaller.js:384
 msgid "Starting the configuration process..."
 msgstr "Beginne den Konfigurationsprozess..."
 
@@ -198,7 +272,11 @@ msgid ""
 "UCS@school slave domain controller. Before continuing please make sure that "
 "an UCS@school master domain controller has already been set up for a multi "
 "server scenario."
-msgstr "Dieser Assisten begleitet sie Schritt für Schritt bei der Installation eines UCS@school Domänencontroller Slave. Bitte stellen Sie sicher, dass ein UCS@school Domänencontroller Master bereits für eine verteilte Umgebung eingerichtet wurde."
+msgstr ""
+"Dieser Assisten begleitet sie Schritt für Schritt bei der Installation eines "
+"UCS@school Domänencontroller Slave. Bitte stellen Sie sicher, dass ein "
+"UCS@school Domänencontroller Master bereits für eine verteilte Umgebung "
+"eingerichtet wurde."
 
 #: umc/js/schoolinstaller.js:193
 msgid "UCS@school - an error ocurred"
@@ -226,14 +304,19 @@ msgstr "UCS@school - Server-Konfiguration"
 
 #: umc/js/schoolinstaller.js:309
 msgid ""
-"UCS@school can only be installed on the system roles master domain controller "
-"backup domain controller, or slave domain controller."
-msgstr "UCS@school can nur auf den Serverrollen Domänencontroller Master, Domänencontroller Backup oder Domänencontroller Slave installiert werden."
+"UCS@school can only be installed on the system roles master domain "
+"controller, backup domain controller, or slave domain controller."
+msgstr ""
+"UCS@school can nur auf den Serverrollen Domänencontroller Master, "
+"Domänencontroller Backup oder Domänencontroller Slave installiert werden."
+
+#: umc/js/schoolinstaller.js:212
+msgid "UCS@school configuration wizard"
+msgstr "UCS@school Einrichtungsassistent"
 
 #: umc/js/schoolinstaller.js:213
 msgid "UCS@school has already been configured on this system."
 msgstr "UCS@school wurde bereits auf diesem System eingerichtet."
 
-#: umc/js/schoolinstaller.js:212
-msgid "UCS@school configuration wizard"
-msgstr "UCS@school Einrichtungsassistent"
+#~ msgid "Please confirm to start the installation process."
+#~ msgstr "Bitte bestätigen sie den Start des Installationsvorganges."
