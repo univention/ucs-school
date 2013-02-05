@@ -15,7 +15,7 @@ msgstr ""
 #: umc/python/schoolinstaller/__init__.py:701
 #, python-format
 msgid "An unexpected error occurred during installation: %s"
-msgstr "Ein unerwarteter Fehler trat während er Installation auf: %s"
+msgstr "Ein unerwarteter Fehler trat während der Installation auf: %s"
 
 #: umc/python/schoolinstaller/__init__.py:579
 #, python-format
@@ -46,14 +46,14 @@ msgid ""
 msgstr ""
 "Die Verbindung zum Domänencontroller-Master-System %s schlug fehl. Bitte "
 "stellen Sie sicher, dass das System erreichbar ist. Ist dies nicht der Fall, "
-"kann das mit falschen DNS-Einstellungen für den Nameserver zusammen hängen."
+"kann das mit falschen DNS-Einstellungen für den Nameserver zusammenhängen."
 
 #: umc/python/schoolinstaller/__init__.py:586
 msgid ""
 "Cannot get lock for installation process. Another Package Manager seems to "
 "block the operation."
 msgstr ""
-"Das Lock für den Installationsprozess konnte nicht erfragt werden. Eine "
+"Die Sperre für den Installationsprozess konnte nicht angelegt werden. Eine "
 "andere Paket-Manager-Instanz scheint die Ausführung zu blockieren."
 
 #: umc/python/schoolinstaller/__init__.py:651
@@ -67,7 +67,7 @@ msgstr "Domänenbeitritt"
 #: umc/python/schoolinstaller/__init__.py:356
 #, python-format
 msgid "Executing join script %s"
-msgstr "Ausführung des Join-Skriptes "
+msgstr "Ausführung des Join-Skriptes %s"
 
 #: umc/python/schoolinstaller/__init__.py:683
 msgid "Executing join scripts..."
@@ -79,7 +79,7 @@ msgid ""
 "needs to be joined first."
 msgstr ""
 "Bevor UCS@school auf einem Domänencontroller Backup installiert werden "
-"kann, muss diese System zuerst der Domäne beigetreten sein."
+"kann, muss dieses System zuerst der Domäne beigetreten sein."
 
 #: umc/python/schoolinstaller/__init__.py:396
 msgid "Initializing"
@@ -99,7 +99,7 @@ msgid ""
 "master domain controller, backup domain controller, or slave domain "
 "controller."
 msgstr ""
-"Ungültige Systemrolle! UCS@school can nur auf den Systemrollen "
+"Ungültige Systemrolle! UCS@school kann nur auf den Systemrollen "
 "Domänencontroller Master, Domänencontroller Backup sowie Domänencontroller "
 "Slave installiert werden."
 
@@ -167,7 +167,7 @@ msgid ""
 "The UCS@school master domain controller system is not configured as a multi "
 "server setup. Cannot proceed installation on this system."
 msgstr ""
-"Das UCS@school-Domänencontroller-Master-System ist nicht für den Multi-Sever-"
+"Das UCS@school-Domänencontroller-Master-System ist nicht für den Multi-Server-"
 "Einsatz konfiguriert. Die Installation kann nicht fortgesetzt werden."
 
 #: umc/python/schoolinstaller/__init__.py:665
@@ -191,7 +191,7 @@ msgstr "Der eingegebene Domänenname ist ungültig"
 
 #: umc/python/schoolinstaller/__init__.py:511
 msgid "The specified school OU is not valid."
-msgstr "The angegebene Schul-OU ist ungültig."
+msgstr "Die angegebene Schul-OU ist ungültig."
 
 #: umc/python/schoolinstaller/__init__.py:673
 msgid ""

@@ -592,7 +592,6 @@ class Instance(Base):
 		sambaVersionInstalled = self.get_samba_version()
 		if serverRole == 'domaincontroller_slave':
 			# slave
-			installPackages.append('ucs-school-slave')
 			if sambaVersionInstalled:
 				# do not install samba a second time
 				pass
@@ -600,10 +599,10 @@ class Instance(Base):
 				installPackages.extend(['univention-samba', 'univention-samba-slave-pdc'])
 			else:  # -> samba4
 				installPackages.extend(['univention-samba4', 'univention-s4-connector'])
+			installPackages.append('ucs-school-slave')
 		else:
 			# master or backup
 			if setup == 'singlemaster':
-				installPackages.append('ucs-school-singlemaster')
 				if sambaVersionInstalled:
 					# do not install samba a second time
 					pass
@@ -611,6 +610,7 @@ class Instance(Base):
 					installPackages.append('univention-samba')
 				else:  # -> samba4
 					installPackages.extend(['univention-samba4', 'univention-s4-connector'])
+				installPackages.append('ucs-school-singlemaster')
 			elif setup == 'multiserver':
 				installPackages.append('ucs-school-master')
 			else:

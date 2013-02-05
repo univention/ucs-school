@@ -362,7 +362,7 @@ define([
 					this.getWidget('credentials', 'password').set('state', 'Incomplete');
 
 					// request installation
-					next = dialog.confirm(_('All necessary information for the installation of UCS@school on this system has been collected. Please confirm now to continue with the installation process.'), [{
+					next = dialog.confirm('<div style="max-width: 500px">' + _('All necessary information for the installation of UCS@school on this system has been collected. Please confirm now to continue with the installation process.') + '</div>', [{
 						name: 'cancel',
 						label: _('Cancel'),
 						'default': true
