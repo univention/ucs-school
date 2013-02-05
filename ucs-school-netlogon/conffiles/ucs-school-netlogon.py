@@ -164,5 +164,5 @@ def handler(configRegistry, changes):
 						# hmm, do nothing
 						pass
 			fn.close()
-			os.chmod(filename, (stat.S_IRWXU | stat.S_IRGRP | stat.S_IROTH))
+			os.chmod(filename, (stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP | stat.S_IROTH))
 			os.chown(filename, 0, 0)
