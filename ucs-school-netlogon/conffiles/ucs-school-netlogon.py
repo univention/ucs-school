@@ -33,6 +33,7 @@
 import univention.uldap
 import sys
 import os
+import stat
 
 logging = '>> %TEMP%\%USERNAME%-ucs-school-netlogon.log 2>&1'
 
@@ -150,7 +151,8 @@ def handler(configRegistry, changes):
 	# write logon script(s)
 	for netlogonDir in netlogonDirs:
 		if os.path.isdir(netlogonDir):
-			fn = open(os.path.join(netlogonDir, netlogonScript), 'w')
+			filename = os.path.join(netlogonDir, netlogonScript)
+			fn = open(filename, 'w')
 			printHeader(fn)
 			for key in sorted(scripts.keys(), key=int):
 				for script in scripts[key]:
@@ -159,5 +161,8 @@ def handler(configRegistry, changes):
 					elif script.endswith(".vbs"):
 						runVbs(script, fn, windowStyle, checkReturn, vbsInt, vbsOpts)
 					else:
-						# hmm, do nothing 
-						pass	
+						# hmm, do nothing
+						pass
+			fn.close()
+			os.chmod(filename, (stat.S_IRWXU | stat.S_IRGRP | stat.S_IROTH))
+			os.chown(filename, 0, 0)
