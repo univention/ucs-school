@@ -67,6 +67,8 @@ from univention.lib.i18n import Translation
 
 _ = Translation( 'ucs-school-umc-installer' ).translate
 ucr.load()
+# switch back to default umask
+os.umask(0022)
 
 RE_FQDN     = re.compile('^[a-z]([a-z0-9-]*[a-z0-9])*\.([a-z0-9]([a-z0-9-]*[a-z0-9])*[.])*[a-z0-9]([a-z0-9-]*[a-z0-9])*$')
 RE_HOSTNAME = re.compile('^[a-z]([a-z0-9-]*[a-z0-9])*(\.([a-z0-9]([a-z0-9-]*[a-z0-9])*[.])*[a-z0-9]([a-z0-9-]*[a-z0-9])*)?$')

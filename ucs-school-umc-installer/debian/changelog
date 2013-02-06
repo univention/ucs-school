@@ -1,3 +1,9 @@
+ucs-school-umc-installer (0.1.36-1) unstable; urgency=low
+
+  * set umask 0022 in installer module (Bug #30311)
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Wed, 06 Feb 2013 16:56:49 +0100
+
 ucs-school-umc-installer (0.1.35-1) unstable; urgency=low
 
   * fixed typos in translations; Bug #30162
