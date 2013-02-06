@@ -1,3 +1,9 @@
+ucs-school-metapackage (5.0.9-3) unstable; urgency=low
+
+  * set samba3/ignore/mixsetup ist ucs-school-slave.postinst (Bug #)
+ 
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Wed, 06 Feb 2013 12:09:19 +0100
+
 ucs-school-metapackage (5.0.9-2) unstable; urgency=low
 
   * revert last change, too late at this stage (Bug #30267)

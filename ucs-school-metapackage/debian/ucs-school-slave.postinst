@@ -52,7 +52,7 @@ univention-config-registry set \
 if [ "$1" = "configure" ] ; then
 	if [ -z "$2" ] ; then
 		### Defaults for new installations of Slave PDCs
-		univention-config-registry set samba4/ignore/mixsetup?yes	## necessary for migration Samba3 to Samba4.
+		univention-config-registry set samba4/ignore/mixsetup?yes samba3/ignore/mixsetup?yes	## necessary for migration of Samba3 to Samba4
 	else
 		if dpkg --compare-versions "$2" lt 4.0.37-1.68 ; then
 			eval "$(ucr shell)"
