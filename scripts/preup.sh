@@ -37,6 +37,15 @@ eval "$(univention-config-registry shell)" >&3 2>&3
 echo "Running ucsschool 3.1 preup.sh script" >&3
 date >&3
 
+# prevent update on inconsistent system
+if ! dpkg-query -W -f '${Package} ${Status}\n' univention-samba4 2>&3 | grep "ok installed" >&3 ; then
+	if dpkg-query -W -f '${Package} ${Status}\n' python-samba4 libsamdb0 2>&3 | grep "ok installed" >&3 ; then
+		echo "ERROR: inconsistent state: univention-samba4 is not installed but python-samba4/libsamdb0 is."
+		echo "ERROR: continuing update would break update path - stopping update here"
+		exit 1
+	fi
+fi
+
 echo "ucsschool 3.1 preup.sh script finished" >&3
 date >&3
 
