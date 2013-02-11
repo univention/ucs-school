@@ -38,16 +38,27 @@ echo "Running ucsschool 3.1 preup.sh script" >&3
 date >&3
 
 # prevent update on inconsistent system
-if ! dpkg-query -W -f '${Package} ${Status}\n' univention-samba4 2>&3 | grep "ok installed" >&3 ; then
-	if dpkg-query -W -f '${Package} ${Status}\n' python-samba4 libsamdb0 2>&3 | grep "ok installed" >&3 ; then
-		echo "ERROR: inconsistent state: univention-samba4 is not installed but python-samba4/libsamdb0 is."
-		echo "ERROR: continuing update would break update path - stopping update here"
-		exit 1
+if [ "$UPDATE_STATE" = "post" ]; then
+	SAMBA4_PACKAGES="libdcerpc0 libdcerpc-server0 libgensec0 libndr0 libndr-standard0 libregistry0 libsamba-credentials0 libsamba-hostconfig0 libsamba-policy0 libsamba-util0 libsamdb0 libsmbclient-raw0 python-samba4 samba-dsdb-modules"
+
+	echo "Testing for inconsistent package state..." >&3
+	if ! dpkg-query -W -f '${Package} ${Status}\n' univention-samba4 2>&3 | grep "ok installed" >&3 ; then
+		if dpkg-query -W -f '${Package} ${Status}\n' ${SAMBA4_PACKAGES} 2>&3 | grep "ok installed" >&3 ; then
+			echo "Found samba4 packages but univention-samba4 is not installed. Trying to clean up..." >&3
+			dpkg --remove ${SAMBA4_PACKAGES} 2>&3 >&3
+			RET="$?"
+			if [ ! $RET = 0 ] ; then
+				echo "ERROR: exit code of dpkg: $RET" >&3
+				echo "ERROR: inconsistent state: univention-samba4 is not installed but other samba4 packages are."
+				echo "ERROR: continuing update would break update path - stopping update here"
+				exit 1
+			fi
+		fi
 	fi
+	echo "OK" >&3
 fi
 
 echo "ucsschool 3.1 preup.sh script finished" >&3
 date >&3
 
 exit 0
-
