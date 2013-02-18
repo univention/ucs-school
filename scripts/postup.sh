@@ -39,9 +39,9 @@ date >&3
 
 # automatically configure app center during update
 if [ "$UPDATE_STATE" = "post" -a "$UPDATE_NEXT_VERSION" = "3.1-0" ]; then
-	univention-add-app ucsschool_20130207
+	univention-add-app ucsschool_20130218
 	ucr set repository/online/component/ucsschool/version="3.0,3.1"
-	univention-install  -y --force-yes ucs-school-umc-installer
+	univention-install -y --force-yes ucs-school-umc-installer
 	ucr set repository/online/component/ucsschool/version=current
 fi
 
