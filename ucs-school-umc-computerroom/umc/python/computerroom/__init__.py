@@ -591,6 +591,19 @@ class Instance( SchoolBaseModule ):
 				vunset.append( key )
 			else:
 				vset[ key ] = ' '.join( new )
+
+		# Workaround for bug 30450:
+		# if samba/printmode/hosts/none is not set but samba/printmode/hosts/all then all other hosts
+		# are unable to print on samba shares. Solution: set empty value for .../none if no host is on deny list.
+		varname = 'samba/printmode/hosts/none'
+		if not varname in vset:
+			vset[varname] = '""'
+		else:
+			# remove empty items ('""') in list
+			vset[varname] = ' '.join([x for x in vset[varname].split(' ') if not x == '""'])
+		if varname in vunset:
+			del vunset[varname]
+
 		# set values
 		ucr_vars = sorted( map( lambda x: '%s=%s' % x, vset.items() ) )
 		MODULE.info( 'Writing room rules: %s' % '\n'.join( ucr_vars ) )
