@@ -1,3 +1,9 @@
+ucs-school-umc-computerroom (2.0.7-2) unstable; urgency=low
+
+  * fixed "free printing" mode (Bug #30450)
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Wed, 20 Mar 2013 17:28:25 +0100
+
 ucs-school-umc-computerroom (2.0.7-1) unstable; urgency=low
 
   * fix label of stop button; Bug #27246
