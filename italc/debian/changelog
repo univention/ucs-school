@@ -1,3 +1,9 @@
+italc (2:2.0.11-1) unstable; urgency=low
+
+  * added FQDN to key filename (Bug #30301)
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Wed, 20 Mar 2013 17:44:56 +0100
+
 italc (2:2.0.10-1) unstable; urgency=low
 
   * update Copyright; Bug #30123
