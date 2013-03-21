@@ -1,3 +1,9 @@
+ucs-school-import (9.0.8-1) unstable; urgency=low
+
+  * also move dhcp server object to OU (Bug #30435)
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Thu, 21 Mar 2013 15:08:29 +0100
+
 ucs-school-import (9.0.7-1) unstable; urgency=low
 
   * added move_domaincontroller_to_ou script (Bug #27242)
