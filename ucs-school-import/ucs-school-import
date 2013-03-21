@@ -2863,6 +2863,38 @@ def move_domaincontroller_to_ou(co, lo, baseDN, options):
 			print 'Updating %s ...' % ou.dn
 			ou.modify()
 
+
+	removed = False
+	ou_dhcpservice = None
+
+	# find dhcp server object by checking all dhcp service objects
+	dhcpservicelist = univention.admin.modules.lookup(dhcp_service_module, co, lo, scope='sub', base=baseDN)
+	for dhcpservice in dhcpservicelist:
+		# remember dhcpservice of target OU
+		if dhcpservice.dn.endswith(',%s' % ouDn):
+			ou_dhcpservice = dhcpservice
+
+		# find dhcp server
+		serverlist = univention.admin.modules.lookup(dhcp_server_module, co, lo, scope='sub', superordinate=dhcpservice, base=baseDN, filter=univention.admin.filter.expression('cn', options.dcname))
+		if serverlist:
+			if not serverlist[0].dn.endswith(',%s' % ouDn):
+				removed = True
+				print 'Removing %s' % serverlist[0].dn
+				serverlist[0].open()
+				attr_server = serverlist[0]['server']
+				serverlist[0].remove()
+
+	if removed:
+		position = univention.admin.uldap.position('cn=%s,cn=dhcp,%s' % (options.ou, getDN(options.ou)))
+		dhcpserver = dhcp_server_module.object(co, lo, position=position, superordinate=ou_dhcpservice)
+		dhcpserver.open()
+		dhcpserver["server"] = attr_server
+		try:
+			create_object(dhcpserver)
+		except:
+			print "ERROR: Failed to create dhcp server: %s" % (position.getDn(),)
+
+
 	print 'Move complete'
 	print 'HINT: the domaincontroller slave has to be rejoined into the domain!'
 
