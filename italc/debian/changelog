@@ -1,3 +1,11 @@
+italc (2:2.0.12-1) unstable; urgency=low
+
+  * ItalcVncConnection::stop(): recheck thread after stopping it via
+    terminate(); if thread is still running, a SIGSEGV may occur after
+    destructor has been called (Bug #27432)
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Mon, 25 Mar 2013 15:27:26 +0100
+
 italc (2:2.0.11-1) unstable; urgency=low
 
   * added FQDN to key filename (Bug #30301)
