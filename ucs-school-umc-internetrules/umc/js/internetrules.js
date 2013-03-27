@@ -82,6 +82,11 @@ define([
 				this._detailPage.on('close', lang.hitch(this, function(id) {
 					this.selectChild(this._adminPage);
 				}));
+
+				// if the flavor is not 'admin', we open the admin page with the given flavor as id
+				if (this.moduleFlavor != 'admin') {
+					this._adminPage.onOpenDetailPage(this.moduleFlavor);
+				}
 			}
 		}
 	});

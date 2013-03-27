@@ -1,3 +1,10 @@
+ucs-school-umc-internetrules (8.0.8-1) unstable; urgency=low
+
+  * Add script which creates an shortcut to an specific internet rule on
+  	the umc overview page; Bug #30516
+
+ -- Florian Best <best@univention.de>  Wed, 27 Mar 2013 11:06:56 +0100
+
 ucs-school-umc-internetrules (8.0.7-1) unstable; urgency=low
 
   * update Copyright; Bug #30123

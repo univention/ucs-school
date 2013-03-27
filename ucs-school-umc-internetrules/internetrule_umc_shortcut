@@ -1,0 +1,154 @@
+#!/usr/bin/python2.6
+# -*- coding: utf-8 -*-
+#
+# UCS@school
+# internetrule_umc_shortcut
+#
+# Copyright 2012-2013 Univention GmbH
+#
+# http://www.univention.de/
+#
+# All rights reserved.
+#
+# The source code of the software contained in this package
+# as well as the source package itself are made available
+# under the terms of the GNU Affero General Public License version 3
+# (GNU AGPL V3) as published by the Free Software Foundation.
+#
+# Binary versions of this package provided by Univention to you as
+# well as other copyrighted, protected or trademarked materials like
+# Logos, graphics, fonts, specific documentations and configurations,
+# cryptographic keys etc. are subject to a license agreement between
+# you and Univention and not subject to the GNU AGPL V3.
+#
+# In the case you use the software under the terms of the GNU AGPL V3,
+# the program is provided in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public
+# License with the Debian GNU/Linux or Univention distribution in file
+# /usr/share/common-licenses/AGPL-3; if not, see
+# <http://www.gnu.org/licenses/>.
+"""This script adds, removes and lists shortcuts to internetrules on the overviewpage from the UMC"""
+
+import sys
+from glob import glob
+import os
+import os.path
+
+from xml.sax.saxutils import escape, quoteattr
+
+import ucsschool.lib.internetrules
+import univention.management.console.module as umcm
+
+# path and prefix for internetrule filenames
+PREFIX = '/usr/share/univention-management-console/modules/internetrule-'
+
+# get umc XML version and internetrules XML module version
+x = umcm.XML_Definition(None, '/usr/share/univention-management-console/modules/internetrules.xml')
+umc_version = x.find('/').get('version')
+version = x.find( 'module' ).get('version')
+icon = x.find( 'module' ).get('icon')
+
+# get all existing internet rules
+rules = ucsschool.lib.internetrules.list()
+
+def list_shortcuts(options):
+	"""list all existing shortcuts"""
+
+	all_shortcuts = glob('%s*.xml' % PREFIX)
+	prefix_l = len(PREFIX)
+
+	_pretty(' existing internetrules ', [irule.name for irule in rules])
+
+	if not all_shortcuts:
+		_pretty(' existing shortcuts ', ['No shortcuts'])
+	else:
+		_pretty(' existing shortcuts: ', [name[prefix_l:-4] for name in all_shortcuts])
+
+def put_shortcut(shortcut):
+	"""adds or overwrites a shortcut"""
+
+	if not any(irule.name == shortcut.id for irule in rules):
+		print 'invalid rule name: the internetrule does not exists'
+		print 'valid roles are: "%s"' % '", "'.join([irule.name for irule in rules])
+		return
+
+	path = '%s%s.xml' % (PREFIX, shortcut.id)
+
+	if os.path.exists(path):
+		print 'WARN: rule already exists, overwriting it...'
+
+	with open(path, 'w') as fd:
+		fd.write(
+			"""<?xml version="1.0" encoding="UTF-8"?>\n"""
+			"""<umc version=%s>\n"""
+			"""	<module id="internetrules" icon=%s version=%s>\n"""
+			"""		<flavor icon=%s id=%s priority=%s>\n"""
+			"""				<name>%s</name>\n"""
+			"""				<description>%s</description>\n"""
+			"""		</flavor>\n"""
+			"""	</module>\n"""
+			"""</umc>\n"""
+			% (quoteattr(umc_version), quoteattr(icon), quoteattr(version), quoteattr(shortcut.icon), quoteattr(shortcut.id), quoteattr(shortcut.priority), escape(shortcut.name), escape(shortcut.description))
+		)
+
+def remove_shortcut(shortcut):
+	"""removes a shortcut"""
+
+	path = os.path.abspath('%s%s.xml' % (PREFIX, shortcut.id))
+
+	if not os.path.exists(path) or not path.startswith(PREFIX):
+		print 'invalid internet rule: %s' % shortcut.id
+		return
+
+	# remove the XML file for the shortcut
+	try:
+		# TODO: is os.unlink safe to use?
+		os.unlink(path)
+	except OSError as e:
+		print 'Error: %s' % (e)
+
+def _sanitize(path):
+	"""sanitize a path"""
+	return path.replace('.', '').replace('/', '')
+
+def _pretty(title, things):
+	length = max([25, len(title)] + [len(i) for i in things]) + 2
+	print '*' * length
+	print title.center(length, '*')
+	print '*' * length
+	for thing in things:
+		print ('* %s' % thing).decode('utf-8').ljust(length-1) + '*'
+	print '*' * length
+
+if __name__ == '__main__':
+	from optparse import OptionParser
+	parser = OptionParser(usage='%prog "list" | ( ("add" | "remove") internetrule [options] )', description='Adds or removes an shortcut for an internetrule on the UMC overview page')
+	parser.add_option('-n', '--name', dest='name', default=None, help='Another name to display for this rule on the UMC overview')
+	parser.add_option('-i', '--icon', dest='icon', default='internetrules-admin', help='defines an icon for the shortcut')
+	parser.add_option('-d', '--description', dest='description', default='', help='The description for the shortcut')
+	parser.add_option('-p', '--priority', dest='priority', default=12, help='a priority for shortcut, which specifies the position')
+	options, args = parser.parse_args()
+
+	if not args or args[0] != 'list' and len(args) != 2:
+		parser.print_usage()
+		sys.exit(1)
+
+	action = args[0]
+	if action != 'list':
+		options.id = _sanitize(args[1])
+
+		if options.name is None:
+			options.name = options.id
+
+	actions = dict(
+		list=list_shortcuts,
+		add=put_shortcut,
+		remove=remove_shortcut
+	)
+
+	action = actions.get(action, lambda o: parser.print_usage)
+	action(options)
