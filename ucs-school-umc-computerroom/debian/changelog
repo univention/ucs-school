@@ -1,3 +1,12 @@
+ucs-school-umc-computerroom (2.0.9-1) unstable; urgency=low
+
+  * Add 'more'-menu to computerroom grid actions; Bug #30515
+  * always display possible grid actions; Bug #30513
+  * display notification when starting, restarting or shutting down a
+  	computer; Bug #30522
+
+ -- Florian Best <best@univention.de>  Wed, 27 Mar 2013 11:10:34 +0100
+
 ucs-school-umc-computerroom (2.0.8-1) unstable; urgency=low
 
   * fixed "free printing" mode (Bug #30450)
