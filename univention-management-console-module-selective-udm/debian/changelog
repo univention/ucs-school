@@ -1,3 +1,11 @@
+univention-management-console-module-selective-udm (2.0.2-3) unstable; urgency=low
+
+  * selectiveudm/clone_user_account: Add cloned user to groups (Bug #30832)
+  * selectiveudm/clone_user_account: Allow target container to be specified
+  * selectiveudm/clone_user_account: confirm allocated IDs
+
+ -- Arvid Requate <requate@univention.de>  Thu, 28 Mar 2013 18:51:01 +0100
+
 univention-management-console-module-selective-udm (2.0.2-2) unstable; urgency=low
 
   * pass udm credentials (for Bug #30832)
