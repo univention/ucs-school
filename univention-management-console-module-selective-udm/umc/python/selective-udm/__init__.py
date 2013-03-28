@@ -208,6 +208,11 @@ class Instance(umcm.Base):
 					self.finished(request.id, {}, message, success=False)
 					return
 
+		### Optional description
+		new_description = request.options.get('description')
+		if not new_description:
+			new_description = "Exam for user %s" % username
+
 		### Get user_orig attributes
 		module_users_user = univention.admin.modules.get('users/user')
 		univention.admin.modules.init(lo, con_position, module_users_user)
@@ -260,7 +265,6 @@ class Instance(umcm.Base):
 
 
 			## Now create the addlist, fixing up attributes as we go
-			new_description = "Exam user for %s" % user_orig.oldattr['uid']
 			al=[]
 			for (key, value) in user_orig.oldattr.items():
 				if key == 'uid':

@@ -1,3 +1,9 @@
+univention-management-console-module-selective-udm (2.0.2-4) unstable; urgency=low
+
+  * selectiveudm/clone_user_account: Overridable description (Bug #30832)
+
+ -- Arvid Requate <requate@univention.de>  Thu, 28 Mar 2013 19:08:24 +0100
+
 univention-management-console-module-selective-udm (2.0.2-3) unstable; urgency=low
 
   * selectiveudm/clone_user_account: Add cloned user to groups (Bug #30832)
