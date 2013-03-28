@@ -58,8 +58,8 @@ fi
 
 if [ $JS_LAST_EXECUTED_VERSION -le 1 ]; then
 	# append new operation for ucs_3.1-0-ucsschool-R2:
-	udm settings/umc_operationset modify $BIND_ARGS --ignore_exists \
-		--dn cn=selective-udm,cn=operations,cn=UMC,cn=univention,$ldap_base \
+	udm settings/umc_operationset modify "$@" --ignore_exists \
+		--dn "cn=selective-udm,cn=operations,cn=UMC,cn=univention,$ldap_base" \
 		--append operation=selectiveudm/clone_user_account
 fi
 
