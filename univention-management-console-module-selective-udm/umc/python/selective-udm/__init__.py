@@ -135,3 +135,128 @@ class Instance(umcm.Base):
 			self.finished(request.id, {}, success=True)
 
 
+	def clone_user_account(self, request):
+		lo, con_position = univention.admin.uldap.getAdminConnection()
+		co = univention.admin.config.config()
+
+		# Convert the username into a DN. We need the position of the server DN
+		# to get the OU
+		server_dn = lo.searchDn('(&(uid=%s)(objectClass=posixAccount))' % self._username )
+		if len(server_dn) != 1:
+			message = 'Command failed\nDid not find the Server DN'
+			MODULE.warn(message)
+			self.finished(request.id, {}, message, success=False)
+			return
+		server_dn = server_dn[0]
+			
+		# Search for the OU container
+		server_dn_list = ldap.explode_dn(server_dn)
+		idx=None
+		for i in range(1,len(server_dn_list)):
+			if server_dn_list[i].lower().startswith('ou='):
+				idx=i
+				break
+		if not idx:
+			message = 'Command failed\nDid not find the ou in the Server DN'
+			MODULE.warn(message)
+			self.finished(request.id, {}, message, success=False)
+			return
+		clone_user_container = 'cn=users,cn=temp,%s' % string.join(server_dn_list[idx:], ',')
+
+		clonename = request.options.get('clonename')
+		if not clonename:
+			message = 'Command failed\nNo clonename specified'
+			MODULE.warn(message)
+			self.finished(request.id, {}, message, success=False)
+			return
+
+		username = request.options.get('username')
+		if not username:
+			message = 'Command failed\nNo username specified'
+			MODULE.warn(message)
+			self.finished(request.id, {}, message, success=False)
+			return
+
+		# Convert the username into the object DN.
+		user_orig_dn = lo.searchDn('(&(uid=%s)(objectClass=posixAccount))' % username )
+		if len(user_orig_dn) != 1:
+			message = 'Command failed\nDid not find the User DN'
+			MODULE.warn(message)
+			self.finished(request.id, {}, message, success=False)
+			return
+
+		## Get user_orig attributes
+		module_users_user = univention.admin.modules.get('users/user')
+		univention.admin.modules.init(lo, con_position, module_users_user)
+		user_orig = univention.admin.objects.get(module_users_user, co, lo, position=con_position, dn=user_orig_dn[0])
+
+		## Determine new DN
+		user_clone_position = univention.admin.uldap.position(user_orig.lo.base)
+		user_clone_position.setDn(clone_user_container)
+		user_clone_dn = "uid=%s,%s" % (clonename, user_clone_position.getDn())
+
+		## Allocate new uidNumber
+		alloc = []
+		uidNum = univention.admin.allocators.request(lo, con_position, 'uidNumber')
+		alloc.append(('uidNumber', uidNum))
+
+		try: 
+			## Allocate new sambaSID
+			## code copied from users.user.object.__generate_user_sid:
+			if user_orig.s4connector_present:
+				# In this case Samba 4 must create the SID, the s4 connector will sync the
+				# new sambaSID back from Samba 4.
+				userSid='S-1-4-%s' % uidNum
+			else:
+				try:
+					userSid=univention.admin.allocators.requestUserSid(lo, con_position, uidNum)
+				except:
+					pass
+			if not userSid or userSid == 'None':
+				num=uidNum
+				while not userSid or userSid == 'None':
+					num = str(int(num)+1)
+					try:
+						userSid=univention.admin.allocators.requestUserSid(lo, con_position, num)
+					except univention.admin.uexceptions.noLock, e:
+						num = str(int(num)+1)
+				alloc.append(('sid', userSid))
+
+
+			## Create the addlist, fixing up attributes as we go
+			new_description = "Exam user for %s" % user_orig.oldattr['uid']
+			al=[]
+			for (key, value) in user_orig.oldattr.items():
+				if key == 'uid':
+					value = [clonename]
+				elif key == 'homeDirectory':
+					value = ["/home/%s" % clonename]
+				elif key == 'krb5PrincipalName':
+					user_orig_krb5PrincipalName = value[0]
+					value = ["%s%s" % (clonename, user_orig_krb5PrincipalName[user_orig_krb5PrincipalName.find("@"):])]
+				elif key == 'uidNumber':
+					value = [uidNum]
+				elif key == 'sambaSID':
+					value = [userSid]
+				elif key == 'description':
+					value = [new_description]
+					new_description = None	## that's done
+				al.append((key, value))
+
+			if new_description:
+				al.append(('description', [new_description]))
+
+			## And create the clone
+			lo.add(user_clone_dn, al)
+
+		except Exception, err:
+			for i, j in user_orig.alloc:
+				univention.admin.allocators.release(lo, con_position, i, j)
+
+			message = 'ERROR: Command failed\n%s' % traceback.format_exc()
+			MODULE.warn(message)
+			self.finished(request.id, {}, message, success=False)
+			return
+
+		self.finished(request.id, {}, message, success=True)
+		return

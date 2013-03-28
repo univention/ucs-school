@@ -13,5 +13,9 @@
 		<attribute name="decode_password" syntax="Boolean"/>
 		<attribute name="samba3_mode" syntax="Boolean"/>
 	</command>
+	<command name="selectiveudm/clone_user_account" function="clone_user_account">
+		<attribute name="username" syntax="String"/>
+		<attribute name="clonename" syntax="String"/>
+	</command>
   </module>
 </umc>

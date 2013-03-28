@@ -31,7 +31,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-VERSION=1
+VERSION=2
 
 . /usr/share/univention-join/joinscripthelper.lib
 . /usr/share/univention-lib/umc.sh
@@ -54,6 +54,13 @@ umc_policy_append "default-slave-umc" "selective-udm"
 # append policy to server groups
 if [ $JS_LAST_EXECUTED_VERSION = 0 ]; then
 	udm groups/group modify "$@" --dn "cn=DC Slave Hosts,cn=groups,$ldap_base" --policy-reference "cn=default-slave-umc,cn=UMC,cn=policies,$ldap_base"
+fi
+
+if [ $JS_LAST_EXECUTED_VERSION -le 1 ]; then
+	# append new operation for ucs_3.1-0-ucsschool-R2:
+	udm settings/umc_operationset modify $BIND_ARGS --ignore_exists \
+		--dn cn=selective-udm,cn=operations,cn=UMC,cn=univention,$ldap_base \
+		--append operation=selectiveudm/clone_user_account
 fi
 
 joinscript_save_current_version
