@@ -34,13 +34,14 @@ define([
 	"dojo/_base/lang",
 	"dojo/_base/array",
 	"dojo/topic",
+	"umc/app",
 	"umc/tools",
 	"umc/widgets/TextBox",
 	"umc/widgets/ComboBox",
 	"umc/widgets/PasswordInputBox",
 	"umc/modules/schoolwizards/Wizard",
 	"umc/i18n!umc/modules/schoolwizards"
-], function(declare, lang, array, topic, tools, TextBox, ComboBox, PasswordInputBox, Wizard, _) {
+], function(declare, lang, array, topic, app, tools, TextBox, ComboBox, PasswordInputBox, Wizard, _) {
 
 	return declare("umc.modules.schoolwizards.UserWizard", [ Wizard ], {
 
@@ -48,10 +49,17 @@ define([
 
 		postMixInProperties: function() {
 			this.inherited(arguments);
+
+			var udm_link = '';
+			if (app.getModule('udm', 'users/user')) {
+				var link = 'href="javascript:void(0)" onclick="require(\'umc/app\').openModule(\'udm\', \'users/user\')"';
+				udm_link = _('For further administration of users the <a %s>users module</a> can be used.', link) + '<br><br>';
+			}
+
 			this.pages = [{
 				name: 'general',
 				headerText: this.description,
-				helpText: _('Specify the type of user to be created.'),
+				helpText: udm_link + _('Specify the type of user to be created.'),
 				widgets: [{
 					type: ComboBox,
 					name: 'school',

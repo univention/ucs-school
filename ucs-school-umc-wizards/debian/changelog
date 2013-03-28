@@ -1,3 +1,9 @@
+ucs-school-umc-wizards (2.0.13-1) unstable; urgency=low
+
+  * add a link to the users module on the user wizard page; Bug #30826
+
+ -- Florian Best <best@univention.de>  Thu, 28 Mar 2013 14:16:23 +0100
+
 ucs-school-umc-wizards (2.0.12-1) unstable; urgency=low
 
   * changed log level for script output; Bug #30162
