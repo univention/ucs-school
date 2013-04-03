@@ -132,7 +132,7 @@ class Instance( SchoolBaseModule ):
 		'''Remove lock file when UMC module exists'''
 		MODULE.info( 'Cleaning up' )
 		if self._italc.room:
-			MODULE.info( 'Removing lock file for room %s (%s)' % ( self._italc.room, self._italc.roomDN ) )	
+			MODULE.info( 'Removing lock file for room %s (%s)' % ( self._italc.room, self._italc.roomDN ) )
 			_freeRoom( self._italc.roomDN, self._user_dn )
 		_exit( 0 )
 

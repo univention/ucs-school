@@ -1,3 +1,9 @@
+ucs-school-umc-computerroom (2.0.10-1) unstable; urgency=low
+
+  * add missing translations; Bug #30515
+
+ -- Florian Best <best@univention.de>  Wed, 03 Apr 2013 11:42:38 +0200
+
 ucs-school-umc-computerroom (2.0.9-2) unstable; urgency=low
 
   * Add 'more'-menu to computerroom grid actions; Bug #30515
