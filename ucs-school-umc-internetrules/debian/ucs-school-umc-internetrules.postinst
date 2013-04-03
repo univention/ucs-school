@@ -30,8 +30,8 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-#DEBHELPER#
-
 /usr/share/ucs-school-umc-internetrules/internetrule_umc_shortcut add "Kein Internet" --name "Internetverbot" --description "Regel, um Internetzugang zu verbieten" --priority 10
+
+#DEBHELPER#
 
 exit 0
