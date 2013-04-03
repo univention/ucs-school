@@ -62,6 +62,8 @@ define([
 
 		postMixInProperties: function() {
 
+			var link = function(module, flavor) { return 'href="javascript:void(0)" onclick="require(\'umc/app\').openModule(\'' + module + "','" + flavor + "')\""; };
+
 			this.pages = [{
 				name: 'setup',
 				headerText: _('UCS@school - server setup'),
@@ -210,7 +212,16 @@ define([
 			}, {
 				name: 'alreadyInstalled',
 				headerText: _('UCS@school configuration wizard'),
-				helpText: _('UCS@school has already been configured on this system.')
+				helpText: _('UCS@school has already been configured on this system.'),
+				widgets: [{
+					type: Text,
+					name: 'info',
+					content: _('There are several wizard modules that assist the further configuration of UCS@School:') + '<ul>' +
+						'<li>' + _('New school classes can created with the module <a %s>"Add class"</a>.', link('schoolwizards', 'schoolwizards/classes')) + '</li>' +
+						'<li>' + _('Teacher and students can be added to the system with the module <a %s>"Add user"</a>.', link('schoolwizards', 'schoolwizards/users')) + '</li>' +
+						'<li>' + _('Teachers can be assigned to classes with the module <a %s>"Assing teachers to classes"</a>.', link('schoolgroups', 'class')) + '</li>' +
+						'<li>' + _('Workgroups can be created and managed with the module <a %s>"Administrate workgroups"</a>.', link('schoolgroups', 'workgroup-admin')) + '</li></ul>'
+				}]
 			}];
 
 			this.inherited(arguments);

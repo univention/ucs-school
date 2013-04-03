@@ -1,3 +1,9 @@
+ucs-school-umc-installer (0.1.38-1) unstable; urgency=low
+
+  * add additional hints on the installation complete page; Bug #30454
+
+ -- Florian Best <best@univention.de>  Wed, 03 Apr 2013 14:29:47 +0200
+
 ucs-school-umc-installer (0.1.37-1) unstable; urgency=low
 
   * fix some typos in german translation; Bug #30388
