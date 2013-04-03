@@ -1,4 +1,4 @@
-ucs-school-umc-wizards (2.0.13-1) unstable; urgency=low
+ucs-school-umc-wizards (2.0.13-2) unstable; urgency=low
 
   * add a link to the users module on the user wizard page; Bug #30826
 

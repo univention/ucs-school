@@ -1,4 +1,4 @@
-ucs-school-umc-internetrules (8.0.8-1) unstable; urgency=low
+ucs-school-umc-internetrules (8.0.8-2) unstable; urgency=low
 
   * Add script which creates an shortcut to an specific internet rule on
   	the umc overview page; Bug #30516
