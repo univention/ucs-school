@@ -150,8 +150,7 @@ define([
 				canExecute: lang.clone(isConnected),
 				callback: lang.hitch(this, function(ids, items) {
 					if (items.length === 0) {
-						dialog.alert(_('No computers were select. Please select computers.'));
-						return;
+						items = this._grid.getAllItems();
 					}
 					this.selectChild(this._screenshotView);
 					this._screenshotView.load(array.map(array.filter(items, function(item) {
