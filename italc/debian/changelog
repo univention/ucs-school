@@ -1,3 +1,9 @@
+italc (2:2.0.13-1) unstable; urgency=low
+
+  * added ItalcVncConnection::shutdownAndDestroyLater()
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Thu, 04 Apr 2013 17:07:35 +0200
+
 italc (2:2.0.12-1) unstable; urgency=low
 
   * ItalcVncConnection::stop(): recheck thread after stopping it via

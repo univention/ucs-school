@@ -57,6 +57,7 @@ from PyQt4.QtCore import QObject, pyqtSlot
 from PyQt4.QtGui import QImageWriter
 
 import italc
+import sip
 
 _ = Translation( 'ucs-school-umc-computerroom' ).translate
 
@@ -234,12 +235,19 @@ class ITALC_Computer( notifier.signals.Provider, QObject ):
 	def open( self ):
 		MODULE.info( 'Opening VNC connection' )
 		self._vnc = italc.ItalcVncConnection()
+		# transfer responsibility for cleaning self._vnc up from python garbarge collector to C++/QT (Bug #27534)
+		sip.transferto(self._vnc, None)
 		self._vnc.setHost( self.ipAddress )
 		self._vnc.setPort( ITALC_VNC_PORT )
 		self._vnc.setQuality( italc.ItalcVncConnection.ThumbnailQuality )
 		self._vnc.setFramebufferUpdateInterval( 1000 * ITALC_VNC_UPDATE )
 		self._vnc.start()
 		self._vnc.stateChanged.connect( self._stateChanged )
+
+	def __del__(self):
+		if self._vnc:
+			# give a hint to C++/QT that the object is no longer in use and may be destroyed/cleaned up (Bug #27534)
+			self._vnc.shutdownAndDestroyLater()
 
 	@pyqtSlot( int )
 	def _stateChanged( self, state ):

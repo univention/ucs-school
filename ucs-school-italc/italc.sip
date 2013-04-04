@@ -180,6 +180,8 @@ public:
 	ItalcVncConnection( QObject *parent = NULL );
 	virtual ~ItalcVncConnection();
 
+	void shutdownAndDestroyLater();
+
 	const QImage image( int x = 0, int y = 0, int w = 0, int h = 0 );
 	QImage scaledScreen();
 

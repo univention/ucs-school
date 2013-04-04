@@ -1,3 +1,9 @@
+ucs-school-umc-computerroom (2.0.13-1) unstable; urgency=low
+
+  * transfer responsibility for ItalcVncConnection object to C++/QT (Bug #27534)
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Thu, 04 Apr 2013 17:18:29 +0200
+
 ucs-school-umc-computerroom (2.0.12-1) unstable; urgency=low
 
   * revert regression: when no computers where selected for screenshot view
