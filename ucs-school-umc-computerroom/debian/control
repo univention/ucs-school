@@ -24,6 +24,7 @@ Depends: ${misc:Depends},
  python-univention-directory-manager,
  italc-master,
  python-italc,
+ python-psutil,
  wakeonlan
 Description: UMC module to control computers in a room
  This packages provides a Univention Management Console module that allows to

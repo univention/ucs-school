@@ -39,6 +39,7 @@ import subprocess
 import fcntl
 from random import Random
 import urlparse
+import psutil
 
 from univention.management.console.config import ucr
 
@@ -83,11 +84,26 @@ def _getRoomOwner(roomDN):
 	result = None
 	if os.path.exists(roomFile):
 		try:
-			f = open(roomFile)
-			result = f.readline().strip()
-			f.close()
+			with open(roomFile) as f:
+				result = f.readline().strip()
 		except (OSError, IOError):
 			MODULE.warn( 'Failed to acquire room lock file: %s' % roomFile )
+		try:
+			result, pid = result.rsplit(':', 1)
+			pid = int(pid)
+		except (ValueError, OverflowError):
+			# old/invalid format, do nothing
+			pass
+		else:
+			# check if process runs and is UMC ...
+			if not psutil.pid_exists(pid):
+				result = None
+			else:
+				cmdline = psutil.Process(pid).cmdline
+				if 'computerroom' not in cmdline or not any('univention-management-console-module' in l for l in cmdline):
+					# the process is not the computerroom UMC module
+					result = None
+
 	return result
 
 def _setRoomOwner(roomDN, userDN):
@@ -98,7 +114,7 @@ def _setRoomOwner(roomDN, userDN):
 		# write user DN in the room file
 		fd = open(_getRoomFile(roomDN), 'w')
 		fcntl.lockf(fd, fcntl.LOCK_EX)
-		fd.write(userDN)
+		fd.write('%s:%s' % (userDN, os.getpid()))
 	except (OSError, IOError):
 		MODULE.warn( 'Failed to write file: %s' % _getRoomFile(roomDN) )
 	finally:

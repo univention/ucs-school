@@ -133,22 +133,11 @@ define([
 
 			var isConnected = function(item) { return item.connection[0] == 'connected'; };
 
-			var header = true;
 			// define grid actions
 			this._actions = [ {
 				name: 'screenshot',
 				field: 'screenshot',
-				label: lang.hitch(this, function(item) {
-					if (!item) {
-						header = !header;
-						if (header) {
-							return _('Actions');
-						} else {
-							return _('Watch');
-						}
-					}
-					return _('Watch');
-				}),
+				label: _('Watch'),
 				isStandardAction: true,
 				isMultiAction: true,
 				description: function(item) {
