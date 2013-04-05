@@ -28,10 +28,10 @@ Recommends:
  ucs-school-umc-users,
  ucs-school-umc-rooms,
  ucs-school-umc-wizards,
-Description: UCS@School meta package for UCS DC Master System (multi DC mode)
+Description: UCS@School meta package for UCS DC Master System (multi server environment)
  This meta package installs all required packages for UCS@School on
  a UCS domaincontroller master. The domaincontroller master will be 
- setup in multi domaincontroller mode. The package ucs-school-slave
+ setup in multi domaincontroller environment. The package ucs-school-slave
  has to be installed on all domaincontroller slave systems.
  .
  This package is part of Univention Corporate Server (UCS),
@@ -117,10 +117,10 @@ Recommends:
  ucs-school-umc-rooms,
  ucs-school-umc-wizards,
  ucs-school-webproxy,
-Description: UCS@School meta package for UCS DC Master System (single master mode)
+Description: UCS@School meta package for UCS DC Master System (single server environment)
  This meta package installs all required packages for UCS@School on
  a UCS domaincontroller master. The domaincontroller master will be 
- setup in single domaincontroller mode. 
+ setup in single domaincontroller environment. 
  .
  This package is part of Univention Corporate Server (UCS),
  an integrated, directory driven solution for managing

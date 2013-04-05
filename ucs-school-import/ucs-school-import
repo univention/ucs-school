@@ -810,7 +810,7 @@ def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None, ShareFileServer=None
 	if not schoolNr in verified_ous:
 		verified_ous.append(schoolNr)
 
-	# In a single school environment the default DHCP container must
+	# In a single server environment the default DHCP container must
 	# be set to the DHCP container in the school ou. Otherwise newly
 	# imported computers have the DHCP objects in the wrong DHCP container
 	if not configRegistry.get('ucsschool/defaultschoolname') and configRegistry.is_true('ucsschool/singlemaster', False):
@@ -3038,7 +3038,7 @@ elif sys.argv[0].endswith("create_ou"):
 				print 'ERROR: cannot find share server object with given name "%s"' % options.ShareFileServer
 				sys.exit(1)
 
-		# In a single school environment the default school DC is the master
+		# In a single server environment the default school DC is the master
 		if not dcName and not configRegistry.get('ucsschool/defaultschoolname') and configRegistry.is_true('ucsschool/singlemaster', False):
 			dcName = configRegistry.get('hostname')
 

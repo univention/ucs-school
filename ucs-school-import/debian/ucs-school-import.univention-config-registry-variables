@@ -101,8 +101,8 @@ Type=str
 Categories=ucsschool-base
 
 [ucsschool/import/set/sambahome]
-Description[de]=Server für das Windows-Heimatverzeichnis, das beim _Anlegen_ von Benutzern gesetzt werden soll. Wenn nicht gesetzt, wird auf Single-Master-Systemen der Master oder sonst der am zuständigen OU-Objekt angegebene Dateiserver verwendet (Beispiel: "dc123-01" resultiert in dem Heimatverzeichnispfad "\\dc123-01\<username>" ; Standard: nicht gesetzt)
-Description[en]=The given server is used for defining the Windows home path during user creation. If unset, the master will be used as file server in single-master environments. Otherwise the file server specified at corresponding OU object will be used (Example: "dc123-01" results in home path "\\dc123-01\<username>" ; Default: not defined)
+Description[de]=Server für das Windows-Heimatverzeichnis, das beim _Anlegen_ von Benutzern gesetzt werden soll. Wenn nicht gesetzt, wird auf Single-Server-Umgebungen der Master oder sonst der am zuständigen OU-Objekt angegebene Dateiserver verwendet (Beispiel: "dc123-01" resultiert in dem Heimatverzeichnispfad "\\dc123-01\<username>" ; Standard: nicht gesetzt)
+Description[en]=The given server is used for defining the Windows home path during user creation. If unset, the master will be used as file server in single-server environments. Otherwise the file server specified at corresponding OU object will be used (Example: "dc123-01" results in home path "\\dc123-01\<username>" ; Default: not defined)
 Type=str
 Categories=ucsschool-base
 

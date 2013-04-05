@@ -86,13 +86,13 @@ CERTIFICATE_PATH = '/etc/univention/ssl/ucsCA/CAcert.pem'
 #		if value == 'singlemaster':
 #			if server_role == 'domaincontroller_master' or server_role == 'domaincontroller_backup':
 #				return 'ucs-school-singlemaster'
-#			self.raise_validation_error(_('Single master setup not allowed on server role "%s"') % server_role)
+#			self.raise_validation_error(_('Single server environment not allowed on server role "%s"') % server_role)
 #		if value == 'multiserver':
 #			if server_role == 'domaincontroller_master' or server_role == 'domaincontroller_backup':
 #				return 'ucs-school-master'
 #			elif server_role == 'domaincontroller_slave':
 #				return 'ucs-school-slave'
-#			self.raise_validation_error(_('Multiserver setup not allowed on server role "%s"') % server_role)
+#			self.raise_validation_error(_('Multi server environment not allowed on server role "%s"') % server_role)
 #		self.raise_validation_error(_('Value "%s" not allowed') % value)
 
 class HostSanitizer(StringSanitizer):
@@ -121,7 +121,7 @@ def move_slave_into_ou(master, username, password, ou, slave):
 	return True
 
 def get_remote_ucs_school_version(username, password, master):
-	'''Verify that the correct UCS@school version (singlemaster, multiserver) is
+	'''Verify that the correct UCS@school version (single server, multi server) is
 	installed on the master system.'''
 	MODULE.info('building up ssh connection to %s as user %s' % (master, username))
 	ssh = get_ssh_connection(username, password, master)
@@ -519,17 +519,17 @@ class Instance(Base):
 			return
 
 		if serverRole != 'domaincontroller_master':
-			# check for a compatible setup on the DC master
+			# check for a compatible environment on the DC master
 			try:
 				schoolVersion = get_remote_ucs_school_version(username, password, master)
 				if not schoolVersion:
 					_error(_('Please install UCS@school on the master domain controller system. Cannot proceed installation on this system.'))
 					return
 				if serverRole == 'domaincontroller_slave' and schoolVersion != 'multiserver':
-					_error(_('The UCS@school master domain controller system is not configured as a multi server setup. Cannot proceed installation on this system.'))
+					_error(_('The UCS@school master domain controller system is not configured as a multi server environment. Cannot proceed installation on this system.'))
 					return
 				if serverRole == 'domaincontroller_backup' and schoolVersion != setup:
-					_error(_('The UCS@school master domain controller needs to be configured similarly to this backup system. Please choose the correct setup scenario for this system.'))
+					_error(_('The UCS@school master domain controller needs to be configured similarly to this backup system. Please choose the correct server environment for this system.'))
 					return
 				if serverRole == 'domaincontroller_backup' and not joined:
 					_error(_('In order to install UCS@school on a backup domain controller, the system needs to be joined first.'))
@@ -648,7 +648,7 @@ class Instance(Base):
 				return success
 
 			if serverRole != 'domaincontroller_backup' and not (serverRole == 'domaincontroller_master' and setup == 'multiserver'):
-				# create the school OU (not on backup and not on master w/multiserver setup)
+				# create the school OU (not on backup and not on master w/multi server environment)
 				MODULE.info('Starting creation of LDAP school OU structure...')
 				progress_state.component = _('Creation of LDAP school structure')
 				progress_state.info = ''

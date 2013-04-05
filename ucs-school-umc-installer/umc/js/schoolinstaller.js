@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 Univention GmbH
+ * Copyright 2012-2013 Univention GmbH
  *
  * http://www.univention.de/
  *
@@ -67,11 +67,11 @@ define([
 			this.pages = [{
 				name: 'setup',
 				headerText: _('UCS@school - server setup'),
-				helpText: _('<p>This wizard guides you step by step through the installation of UCS@school in your domain.</p><p>For the installation of UCS@school, there exist two different installation scenarios: a single master and a multi server scenario. The selection of a scenario has implications for the following installation steps. Further information for the selected scenario will be displayed below.</p>'),
+				helpText: _('<p>This wizard guides you step by step through the installation of UCS@school in your domain.</p><p>For the installation of UCS@school, there exist two different installation environments: a single server environment and a multi server environment. The selection of an environment has implications for the following installation steps. Further information for the selected environments will be displayed below.</p>'),
 				widgets: [{
 					type: ComboBox,
 					name: 'setup',
-					label: _('Please choose an installation scenario:'),
+					label: _('Please choose an installation environment:'),
 					autoHide: true,
 					sortDynamicValues: false,
 					dynamicValues: lang.hitch(this, function() {
@@ -84,29 +84,29 @@ define([
 								return values;
 							}
 
-							// single server setup is only allowed on DC master + DC backup
+							// single server environment is only allowed on DC master + DC backup
 							if (this._serverRole != 'domaincontroller_slave') {
-								values.push({ id: 'singlemaster', label: _('Single server scenario') });
+								values.push({ id: 'singlemaster', label: _('Single server environment') });
 							}
 
-							// multi server setup is allowed on all valid roles
-							values.push({ id: 'multiserver', label: _('Multi server scenario') });
+							// multi server environment is allowed on all valid roles
+							values.push({ id: 'multiserver', label: _('Multi server environment') });
 
 							return values;
 						}));
 					}),
 					onChange: lang.hitch(this, function(newVal, widgets) {
 						var texts = {
-							multiserver: _('<p>In the multi server scenario, the master domain controller system is configured as central instance hosting the complete set of LDAP data. Each school is configured to have its own slave domain controller system that selectively replicates the school\'s own LDAP OU structure. In that way, different schools do not have access to data from other schools, they only see their own data. Teaching related UMC modules are only accessibly on the slave domain controller. The master domain controller does not provide UMC modules for teachers. After configuring a master system, one or more slave systems must be configured and joined into the UCS@school domain.</p>'),
-							singlemaster: _('<p>In the single server scenario, the master domain controller system is configured as standalone UCS@school server instance. All school related data and thus all school OU structures are hosted and accessed on the master domain controller itself. Teaching related UMC modules are provided directly on the master itself. Note that this setup can lead to performance problems in larger environments.</p>')
+							multiserver: _('<p>In the multi server environment, the master domain controller system is configured as central instance hosting the complete set of LDAP data. Each school is configured to have its own slave domain controller system that selectively replicates the school\'s own LDAP OU structure. In that way, different schools do not have access to data from other schools, they only see their own data. Teaching related UMC modules are only accessibly on the slave domain controller. The master domain controller does not provide UMC modules for teachers. After configuring a master system, one or more slave systems must be configured and joined into the UCS@school domain.</p>'),
+							singlemaster: _('<p>In the single server environment, the master domain controller system is configured as standalone UCS@school server instance. All school related data and thus all school OU structures are hosted and accessed on the master domain controller itself. Teaching related UMC modules are provided directly on the master itself. Note that this setup can lead to performance problems in larger environments.</p>')
 						};
 
 						// update the help text according to the value chosen...
 						var text = texts[newVal] || '';
 
 						if (this._serverRole == 'domaincontroller_slave') {
-							// adaptations for text of a multi server setup on slave domain controllers
-							//text = _('<p>The local server role is slave domain controller, for which only a multi server setup can be configured.</p>') + text;
+							// adaptations for text of a multi server environment on slave domain controllers
+							//text = _('<p>The local server role is slave domain controller, for which only a multi server environment can be configured.</p>') + text;
 							text = '';
 						}
 
@@ -185,10 +185,10 @@ define([
 					name: 'infoTextSlave',
 					content: '<p>' + _('Note that each slave domain controller system is directly associated with a school OU. A slave domain controller has only access to the data below its own school OU, not to data from other schools.') + '</p>'
 				}, {
-					// this information will only be shown to master systems in the singlemaster setup
+					// this information will only be shown to master systems in the single server environment
 					type: Text,
 					name: 'infoTextMaster',
-					content: '<p>' + _('For the single server scenario, all school OUs are accessed from the master system itself.') + '</p>'
+					content: '<p>' + _('For the single server environment, all school OUs are accessed from the master system itself.') + '</p>'
 				}]
 			}, {
 				name: 'error',
@@ -257,7 +257,7 @@ define([
 
 				// update some widgets with the intial results
 				if (this._serverRole == 'domaincontroller_slave') {
-					this._pages.setup.set('helpText', _('This wizard guides you step by step through the installation of an UCS@school slave domain controller. Before continuing please make sure that an UCS@school master domain controller has already been set up for a multi server scenario.'));
+					this._pages.setup.set('helpText', _('This wizard guides you step by step through the installation of an UCS@school slave domain controller. Before continuing please make sure that an UCS@school master domain controller has already been set up for a multi server environment.'));
 				}
 				if (this._samba) {
 					this.getWidget('samba', 'samba').set('value', this._samba);
@@ -347,13 +347,13 @@ define([
 					next = 'samba';
 				}
 
-				// only display samba page for a single master setup or on a
+				// only display samba page for a single server environment or on a
 				// slave and only if samba is not already installed
 				if (next == 'samba' && (this._samba || (this.getWidget('setup', 'setup').get('value') == 'multiserver' && this._serverRole != 'domaincontroller_slave'))) {
 					next = 'school';
 				}
 
-				// no schoolOU page on a DC master w/multiserver setup and a DC backup in general
+				// no schoolOU page on a DC master w/multi server environment and a DC backup in general
 				if (next == 'school' && ((this.getWidget('setup', 'setup').get('value') == 'multiserver' && this._serverRole == 'domaincontroller_master') || this._serverRole == 'domaincontroller_backup')) {
 					next = 'install';
 				}
@@ -458,7 +458,7 @@ define([
 		previous: function(pageName) {
 			var previous = this.inherited(arguments);
 
-			// only display samba page for a single master setup or on a
+			// only display samba page for a single server environment or on a
 			// slave and only if samba is not already installed
 			if (previous == 'samba' && (this._samba || (this.getWidget('setup', 'setup').get('value') == 'multiserver' && this._serverRole != 'domaincontroller_slave'))) {
 				previous = 'credentials';

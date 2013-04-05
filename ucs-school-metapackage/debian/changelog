@@ -1,3 +1,10 @@
+ucs-school-metapackage (5.0.9-4) unstable; urgency=low
+
+  * unify wording of "single server environment" and "multi server
+    environment"; Bug #30268
+
+ -- Florian Best <best@univention.de>  Fri, 05 Apr 2013 12:33:29 +0200
+
 ucs-school-metapackage (5.0.9-3) unstable; urgency=low
 
   * set samba3/ignore/mixsetup ist ucs-school-slave.postinst (Bug #30302)
