@@ -1,3 +1,9 @@
+ucs-school-lib (2.0.9-1) unstable; urgency=low
+
+  * Bug #30831: refactored commonly used method groups
+
+ -- Alexander Kläser <klaeser@univention.de>  Tue, 09 Apr 2013 16:51:07 +0200
+
 ucs-school-lib (2.0.8-1) unstable; urgency=low
 
   * allow arbitrary LDAP base; Bug #30162

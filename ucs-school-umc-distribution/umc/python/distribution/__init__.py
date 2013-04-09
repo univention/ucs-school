@@ -132,17 +132,6 @@ class Instance( SchoolBaseModule ):
 		# done :)
 		self.finished( request.id, result )
 
-	@LDAP_Connection()
-	def groups( self, request, search_base = None, ldap_user_read = None, ldap_position = None ):
-		# parse parameter
-		group = None
-
-		# get list of all users matching the given pattern
-		groupresult = udm_modules.lookup( 'groups/group', None, ldap_user_read, scope = 'sub', base = search_base.workgroups, filter = LDAP_Filter.forGroups( request.options.get( 'pattern', '' ) ) )
-
-		result = map( lambda grp: { 'id' : grp.dn, 'label' : grp[ 'name' ].replace( '%s-' % search_base.school, '' ) }, filter( lambda grp: len( grp[ 'users' ] ) > 0, groupresult ) )
-		self.finished( request.id, result )
-
 	def query( self, request ):
 		MODULE.info( 'distribution.query: options: %s' % str( request.options ) )
 		pattern = request.options.get('pattern', '').lower()

@@ -1,3 +1,9 @@
+ucs-school-umc-distribution (8.0.5-1) unstable; urgency=low
+
+  * Bug #30831: refactored commonly used method groups
+
+ -- Alexander Kläser <klaeser@univention.de>  Tue, 09 Apr 2013 16:52:12 +0200
+
 ucs-school-umc-distribution (8.0.4-1) unstable; urgency=low
 
   * update Copyright; Bug #30123

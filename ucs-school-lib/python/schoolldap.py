@@ -489,36 +489,39 @@ class SchoolBaseModule( Base ):
 		# return list of school OUs
 		self.finished(request.id, search_base.availableSchools, msg)
 
-	def _groups( self, ldap_connection, school, ldap_base ):
+	def _groups( self, ldap_connection, school, ldap_base, pattern = None, scope = 'sub' ):
 		"""Returns a list of all groups of the given school"""
-		groupresult = udm_modules.lookup( 'groups/group', None, ldap_connection, scope = 'one', base = ldap_base )
-		return map( lambda grp: { 'id' : grp.dn, 'label' : grp[ 'name' ].replace( '%s-' % school, '' ) }, groupresult )
+		# get list of all users matching the given pattern
+		ldapFilter = None
+		if pattern:
+			ldapFilter = LDAP_Filter.forGroups(pattern)
+		groupresult = udm_modules.lookup('groups/group', None, ldap_connection, scope = scope, base = ldap_base, filter = ldapFilter)
+		return [ { 'id' : grp.dn, 'label' : grp[ 'name' ].replace( '%s-' % school, '' ) } for grp in groupresult ]
 
 	@LDAP_Connection()
 	def classes( self, request, ldap_user_read = None, ldap_position = None, search_base = None ):
 		"""Returns a list of all classes of the given school"""
 		self.required_options( request, 'school' )
-		self.finished( request.id, self._groups( ldap_user_read, search_base.school, search_base.classes ) )
+		self.finished( request.id, self._groups( ldap_user_read, search_base.school, search_base.classes, request.options.get('pattern') ) )
 
 	@LDAP_Connection()
 	def workgroups( self, request, ldap_user_read = None, ldap_position = None, search_base = None ):
 		"""Returns a list of all working groups of the given school"""
 		self.required_options( request, 'school' )
-		self.finished( request.id, self._groups( ldap_user_read, search_base.school, search_base.workgroups ) )
+		self.finished( request.id, self._groups( ldap_user_read, search_base.school, search_base.workgroups, request.options.get('pattern'), 'one' ) )
 
 	@LDAP_Connection()
 	def groups( self, request, ldap_user_read = None, ldap_position = None, search_base = None ):
 		"""Returns a list of all groups (classes and workgroups) of the given school"""
 		self.required_options( request, 'school' )
-		classes = self._groups( ldap_user_read, search_base.school, search_base.classes )
-		workgroups = self._groups( ldap_user_read, search_base.school, search_base.workgroups )
-		self.finished( request.id, classes + workgroups )
+		self._groups( ldap_user_read, search_base.school, search_base.classes, request.options.get('pattern') )
+		self.finished( request.id, self._groups( ldap_user_read, search_base.school, search_base.classes, request.options.get('pattern') ) )
 
 	@LDAP_Connection()
 	def rooms( self, request, ldap_user_read = None, ldap_position = None, search_base = None ):
 		"""Returns a list of all available school"""
 		self.required_options( request, 'school' )
-		self.finished( request.id, self._groups( ldap_user_read, search_base.school, search_base.rooms ) )
+		self.finished( request.id, self._groups( ldap_user_read, search_base.school, search_base.rooms, request.options.get('pattern') ) )
 
 	def _users( self, ldap_connection, search_base, group = None, user_type = None, pattern = '' ):
 		"""Returns a list of all users given 'pattern', 'school' (search base) and 'group'"""
