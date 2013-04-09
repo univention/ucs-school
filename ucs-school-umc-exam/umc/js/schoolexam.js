@@ -63,8 +63,21 @@ define([
 				name: 'general',
 				headerText: _('Start a new exam'),
 				helpText: _('<p>The UCS@school exam mode allows one to perform an exam in a computer room. During the exam, access to internet as well as to shares can be restricted, the student home directories are not accessible, either.</p><p>Please enter a name for the new exam and select the classes or workgroups that participate in the exam. A directory name is proposed automatically and can be adjusted if wanted.</p>'),
-				layout: [['name', 'directory'], 'recipients'],
 				widgets: [{
+					type: ComboBox,
+					name: 'school',
+					description: _('Choose the school'),
+					label: _('School'),
+					dynamicValues: 'schoolexam/schools',
+					autoHide: true
+				}, {
+					type: ComboBox,
+					name: 'room',
+					label: _('Computer room'),
+					description: _('Choose the computer room in which the exam will take place'),
+					depends: 'school',
+					dynamicValues: 'schoolexam/rooms'
+				}, {
 					name: 'name',
 					type: TextBox,
 					label: _('Exam name'),
@@ -95,7 +108,7 @@ define([
 						type: ComboBox,
 						name: 'school',
 						label: _('School'),
-						dynamicValues: 'distribution/schools',
+						dynamicValues: 'schoolexam/schools',
 						umcpCommand: this.umcpCommand,
 						autoHide: true
 					}, {
@@ -104,8 +117,7 @@ define([
 						label: _('Search name')
 					}],
 					queryCommand: lang.hitch(this, function(options) {
-						return [];
-						return this.umcpCommand('distribution/groups', options).then(function(data) {
+						return this.umcpCommand('schoolexam/groups', options).then(function(data) {
 							return data.result;
 						});
 					}),
@@ -119,7 +131,7 @@ define([
 					type: MultiUploader,
 					name: 'files',
 					// TODO: correct UMCP command name
-					command: 'distribution/upload',
+					command: 'schoolexam/upload',
 					label: _('Files'),
 					description: _('Files that are distributed along with this exam')
 					//canUpload: lang.hitch(this, '_checkFilenameUpload'),
@@ -143,7 +155,7 @@ define([
 					type: ComboBox,
 					name: 'internetRule',
 					label: _('Web access profile'),
-					dynamicValues: 'computerroom/internetrules',
+					dynamicValues: 'schoolexam/internetrules',
 					staticValues: [
 						{ id: 'none', label: _( 'Default (global settings)' ) },
 						{ id: 'custom', label: myRules }

@@ -7,9 +7,10 @@
 	  <category name="ucs-school-class"/>
 	</categories>
 
-	<command name="schoolexam/configuration" function="configuration">
-	</command>
-	<command name="schoolexam/send" function="send">
-	</command>
+	<command name="schoolexam/groups" function="groups"/>
+	<command name="schoolexam/schools" function="schools"/>
+	<command name="schoolexam/upload" function="upload"/>
+	<command name="schoolexam/internetrules" function="internetrules"/>
+	<command name="schoolexam/rooms" function="rooms"/>
   </module>
 </umc>
