@@ -1,3 +1,9 @@
+ucs-school-metapackage (5.0.9-5) unstable; urgency=low
+
+  * Bug #30831: added exam module list of recommended packages
+
+ -- Alexander Kläser <klaeser@univention.de>  Tue, 09 Apr 2013 18:12:33 +0200
+
 ucs-school-metapackage (5.0.9-4) unstable; urgency=low
 
   * unify wording of "single server environment" and "multi server
@@ -8,7 +14,7 @@ ucs-school-metapackage (5.0.9-4) unstable; urgency=low
 ucs-school-metapackage (5.0.9-3) unstable; urgency=low
 
   * set samba3/ignore/mixsetup ist ucs-school-slave.postinst (Bug #30302)
- 
+
  -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Wed, 06 Feb 2013 12:09:19 +0100
 
 ucs-school-metapackage (5.0.9-2) unstable; urgency=low
