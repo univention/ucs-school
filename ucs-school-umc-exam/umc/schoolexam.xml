@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<umc version="2.0">
+  <module id="schoolexam" icon="schoolexam" version="1.0">
+	<name>Start exam</name>
+	<description>Starts a new exam for a specified computer room</description>
+	<categories>
+	  <category name="ucs-school-class"/>
+	</categories>
+
+	<command name="schoolexam/configuration" function="configuration">
+	</command>
+	<command name="schoolexam/send" function="send">
+	</command>
+  </module>
+</umc>
