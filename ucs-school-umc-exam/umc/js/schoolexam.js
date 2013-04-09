@@ -31,19 +31,23 @@
 define([
 	"dojo/_base/declare",
 	"dojo/_base/lang",
+	"dojo/_base/array",
+	"dojo/dom-class",
+	"dojo/dom-style",
 	"dojo/on",
 	"dojo/topic",
 	"umc/dialog",
 	"umc/tools",
-	"umc/widgets/Page",
-	"umc/widgets/Form",
-	"umc/widgets/ExpandingTitlePane",
+	"umc/widgets/Wizard",
 	"umc/widgets/Module",
 	"umc/widgets/TextBox",
 	"umc/widgets/TextArea",
+	"umc/widgets/ComboBox",
+	"umc/widgets/MultiObjectSelect",
+	"umc/widgets/MultiUploader",
 	"umc/i18n!umc/modules/schoolexam"
-], function(declare, lang, on, topic, dialog, tools, Page, Form, ExpandingTitlePane, Module, TextBox, TextArea, _) {
-	return declare("umc.modules.schoolexam", [ Module ], {
+], function(declare, lang, array, domClass, domStyle, on, topic, dialog, tools, Wizard, Module, TextBox, TextArea, ComboBox, MultiObjectSelect, MultiUploader, _) {
+	return declare("umc.modules.schoolexam", [ Module, Wizard ], {
 		// summary:
 		//		Template module to ease the UMC module development.
 		// description:
@@ -51,152 +55,139 @@ define([
 		//		new modules for Univention Management Console.
 
 		postMixInProperties: function() {
-			// is called after all inherited properties/methods have been mixed
-			// into the object (originates from dijit._Widget)
-
-			// it is important to call the parent's postMixInProperties() method
 			this.inherited(arguments);
 
-			// Set the opacity for the standby animation to 100% in order to mask
-			// GUI changes when the module is opened. Call this.standby(true|false)
-			// to enabled/disable the animation.
-			this.standbyOpacity = 1;
+			var myRules = _( 'Personal internet rules' );
+
+			this.pages = [{
+				name: 'general',
+				headerText: _('Start a new exam'),
+				helpText: _('<p>The UCS@school exam mode allows one to perform an exam in a computer room. During the exam, access to internet as well as to shares can be restricted, the student home directories are not accessible, either.</p><p>Please enter a name for the new exam and select the classes or workgroups that participate in the exam. A directory name is proposed automatically and can be adjusted if wanted.</p>'),
+				layout: [['name', 'directory'], 'recipients'],
+				widgets: [{
+					name: 'name',
+					type: TextBox,
+					label: _('Exam name'),
+					description: _('The name of the exam, e.g., "Math exam algrebra 02/2013".')
+				}, {
+					name: 'directory',
+					type: TextBox,
+					label: _('Directory name'),
+					description: _('The name of the project directory as it will be displayed in the file system.'),
+					depends: ['name'],
+					dynamicValue: lang.hitch(this, function(values) {
+						// avoid certain characters for the directory name
+						var name = values.name;
+						array.forEach([/\//g, /\\/g, /\?/g, /%/g, /\*/g, /:/g, /\|/g, /"/g, /</g, />/g, /\$/g, /'/g], function(ichar) {
+							name = name.replace(ichar, '_');
+						});
+
+						// limit the filename length
+						return name.slice(0, 255);
+					})
+				}, {
+					type: MultiObjectSelect,
+					name: 'recipients',
+					dialogTitle: _('Assign classes/workgroups'),
+					label: _('Assigned classes/workgroups'),
+					description: _('List of groups that are marked to receive the teaching materials'),
+					queryWidgets: [{
+						type: ComboBox,
+						name: 'school',
+						label: _('School'),
+						dynamicValues: 'distribution/schools',
+						umcpCommand: this.umcpCommand,
+						autoHide: true
+					}, {
+						type: TextBox,
+						name: 'pattern',
+						label: _('Search name')
+					}],
+					queryCommand: lang.hitch(this, function(options) {
+						return [];
+						return this.umcpCommand('distribution/groups', options).then(function(data) {
+							return data.result;
+						});
+					}),
+					autoSearch: true
+				}]
+			}, {
+				name: 'files',
+				headerText: _('Upload of exam files'),
+				helpText: _('Please select all necessary files for the exam and upload them one by one. These files will be distributed to all participating students. A copy of the original files will be stored in your home directory, as well. During the exam or at the end of it, the corresponding files can be collected from the students. The collected files will be stored in your home directory, as well.'),
+				widgets: [{
+					type: MultiUploader,
+					name: 'files',
+					// TODO: correct UMCP command name
+					command: 'distribution/upload',
+					label: _('Files'),
+					description: _('Files that are distributed along with this exam')
+					//canUpload: lang.hitch(this, '_checkFilenameUpload'),
+					//canRemove: lang.hitch(this, '_checkFilenamesRemove')
+				}]
+			}, {
+				name: 'roomSettings',
+				headerText: _('Computer room settings'),
+				helpText: _('Please select the access restrictions to internet as well as to shares. These settings can also be adjusted during the exam via the room settings in the module <i>Computer room</i>. Note that the student home directories are not accessible during the exam mode.'),
+				widgets: [{
+					type: ComboBox,
+					name: 'shareMode',
+					sizeClass: 'One',
+					label: _('Share access'),
+					description: _( 'Defines restriction for the share access' ),
+					staticValues: [
+						{ id: 'home', label : _('Home directory only') },
+						{ id: 'all', label : _('No restrictions' ) }
+					]
+				}, {
+					type: ComboBox,
+					name: 'internetRule',
+					label: _('Web access profile'),
+					dynamicValues: 'computerroom/internetrules',
+					staticValues: [
+						{ id: 'none', label: _( 'Default (global settings)' ) },
+						{ id: 'custom', label: myRules }
+					],
+					onChange: lang.hitch(this, function(value) {
+						this.getWidget('roomSettings', 'customRule').set( 'disabled', value != 'custom');
+					})
+				}, {
+					type: TextArea,
+					name: 'customRule',
+					label: lang.replace( _( 'List of allowed web sites for "{myRules}"' ), {
+						myRules: myRules
+					} ),
+					sizeClass: 'One',
+					description: _( '<p>In this text box you can list web sites that are allowed to be used by the students. Each line should contain one web site. Example: </p><p style="font-family: monospace">univention.com<br/>wikipedia.org<br/></p>' ),
+					validate: lang.hitch( this, function() {
+						return !( this._form.getWidget( 'internetRule' ).get( 'value' ) == 'custom' && ! this._form.getWidget( 'customRule' ).get( 'value' ) );
+					} ),
+					onFocus: lang.hitch( this, function() {
+						//dijit.hideTooltip( this._form.getWidget( 'customRule' ).domNode ); // FIXME
+					} ),
+					disabled: true
+				}]
+			}];
 		},
 
 		buildRendering: function() {
-			// is called after all DOM nodes have been setup
-			// (originates from dijit._Widget)
-
-			// it is important to call the parent's buildRendering() method
 			this.inherited(arguments);
 
-			// start the standby animation in order prevent any interaction before the
-			// form values are loaded
-			this.standby(true);
 
-			// render the page containing search form and grid
-			this.umcpCommand( 'schoolexam/configuration' ).then( lang.hitch( this, function( response ) {
-				if ( response.result.sender ) {
-					this.renderPage( response.result );
-					this.standby( false );
-				} else {
-					dialog.alert( _( 'The schoolexam module is not configured properly' ) );
-				}
-			} ) );
+			// TODO set maxsize
+			//maxSize: maxUploadSize * 1024, // conversion from kbyte to byte
 		},
 
-		renderPage: function( defaultValues ) {
-			// umc.widgets.ExpandingTitlePane is an extension of dijit.layout.BorderContainer
-			var titlePane = new ExpandingTitlePane( {
-				title: _( 'Sending a message' )
-			} );
+		_updateButtons: function(pageName) {
+			this.inherited(arguments);
 
-			//
-			// form
-			//
-
-			// add remaining elements of the search form
-			var widgets = [ {
-				type: TextBox,
-				name: 'sender',
-				label: _( 'Sender' ),
-				value: defaultValues.sender,
-				editable: false
-			}, {
-				type: TextBox,
-				name: 'recipient',
-				label: _('Recipient'),
-				value: defaultValues.recipient
-			}, {
-				type: TextBox,
-				name: 'subject',
-				label: _('Subject'),
-				value: defaultValues.subject
-			}, {
-				type: TextArea,
-				name: 'message',
-				label: _( 'Message' )
-			} ];
-
-			// the layout is an 2D array that defines the organization of the form elements...
-			// here we arrange the form elements in one row and add the 'submit' button
-			var layout = [
-				'sender',
-				'recipient',
-				'subject',
-				'message'
-			];
-
-			// generate the form
-			this._form = new Form({
-				// property that defines the widget's position in a dijit.layout.BorderContainer
-				region: 'top',
-				widgets: widgets,
-				layout: layout,
-				scrollable: true
-			});
-
-			// turn off the standby animation as soon as all form values have been loaded
-			on.once(this._form, 'valuesInitialized', function() {
-				this.standby( false );
-			});
-
-			// add form to the title pane
-			titlePane.addChild(this._form);
-
-			// submit changes
-			var buttons = [ {
-				name: 'submit',
-				label: _( 'Send' ),
-				'default': true,
-				callback: lang.hitch( this, function() {
-					var values = this._form.get('value');
-					if ( values.message ) {
-						this.onSubmit( this._form.get('value') );
-					} else {
-						dialog.alert( 'A message is missing!' );
-					}
-				} )
-			}, {
-				name: 'close',
-				label: _('Close'),
-				callback: lang.hitch(this, function() {
-					var values = this._form.get('value');
-					if ( values.message ) {
-						dialog.confirm( _( 'Should the UMC module be closed? All unsaved modification will be lost.' ), [ {
-							label: _( 'Close' ),
-							callback: lang.hitch( this, function() {
-								topic.publish('/umc/tabs/close', [ this ] );
-							} )
-						}, {
-							label: _( 'Cancel' ),
-							'default': true
-						} ] );
-					} else {
-						topic.publish('/umc/tabs/close', [ this ] );
-					}
-				} )
-			} ];
-
-			this._page = new Page({
-				headerText: this.description,
-				helpText: '',
-				footerButtons: buttons
-			});
-
-			this.addChild(this._page);
-			this._page.addChild( titlePane );
-		},
-
-		onSubmit: function( values ) {
-			this.umcpCommand( 'schoolexam/send', values ).then( lang.hitch( this, function ( response ) {
-				if ( response.result ) {
-					dialog.alert( _( 'The message has been sent' ) );
-					this._form._widgets.message.set( 'value', '' );
-				} else {
-					dialog.alert( _( 'The message could not be send: ' ) + response.message );
-				}
-			} ) );
+			// the wizard can always be finished
+			var buttons = this._pages[pageName]._footerButtons;
+			domClass.toggle(buttons.finish.domNode, 'dijitHidden', false);
+			if (this.hasNext(pageName)) {
+				// make sure that ther is a little space between the two buttons 'next' and 'finish'
+				domStyle.set(buttons.finish.domNode, { marginLeft: '5px' });
+			}
 		}
 	});
 });
