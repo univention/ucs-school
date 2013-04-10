@@ -141,7 +141,7 @@ define([
 
 					// avoid certain characters for the filename
 					var desc = values.description;
-					array.forEach(['/', '\\', '?', '%', '*', ':', '|', '"', '<', '>', '$', "'"], function(ichar) {
+					array.forEach([/\//g, /\\/g, /\?/g, /%/g, /\*/g, /:/g, /\|/g, /"/g, /</g, />/g, /\$/g, /'/g], function(ichar) {
 						desc = desc.replace(ichar, '_');
 					});
 
