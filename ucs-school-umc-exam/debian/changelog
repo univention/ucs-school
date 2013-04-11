@@ -1,3 +1,9 @@
+ucs-school-umc-exam (0.1.1-2) unstable; urgency=low
+
+  * Document default values for UCR variables (Bug #30832)
+
+ -- Arvid Requate <requate@univention.de>  Thu, 11 Apr 2013 19:17:58 +0200
+
 ucs-school-umc-exam (0.1.1-1) unstable; urgency=low
 
   * New binary package ucs-school-umc-exam-master

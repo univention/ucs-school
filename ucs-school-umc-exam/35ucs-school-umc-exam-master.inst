@@ -40,7 +40,7 @@ VERSION=1
 joinscript_init
 
 univention-config-registry set \
-	ucsschool/ldap/default/groupname/exam?"$(school_ou)-Klassenarbeit"
+	ucsschool/ldap/default/groupname/exam?"OU%(ou)s-Klassenarbeit"
 
 eval "$(ucr shell)"
 
