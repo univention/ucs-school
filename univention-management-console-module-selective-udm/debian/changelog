@@ -1,3 +1,9 @@
+univention-management-console-module-selective-udm (2.0.2-5) unstable; urgency=low
+
+  * selectiveudm/clone_user_account moved to ucs-school-umc-exam (Bug #30832)
+
+ -- Arvid Requate <requate@univention.de>  Thu, 11 Apr 2013 12:37:36 +0200
+
 univention-management-console-module-selective-udm (2.0.2-4) unstable; urgency=low
 
   * selectiveudm/clone_user_account: Overridable description (Bug #30832)
