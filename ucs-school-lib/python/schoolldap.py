@@ -87,8 +87,8 @@ def set_credentials( dn, passwd ):
 			_user_dn = None
 			MODULE.warn( 'Cannot read /etc/machine.secret: %s' % e)
 	else:
-		_user_dn = dn
 		_password = passwd
+		_user_dn = dn
 		MODULE.info( 'Saved LDAP DN for user %s' % _user_dn )
 
 
@@ -100,6 +100,7 @@ USER_READ = 'ldap_user_read'
 USER_WRITE = 'ldap_user_write'
 MACHINE_READ = 'ldap_machine_read'
 MACHINE_WRITE = 'ldap_machine_write'
+ADMIN_WRITE = 'ldap_admin_write'
 
 class LDAP_ConnectionError( Exception ):
 	pass
@@ -137,6 +138,8 @@ def get_ldap_connections( connection_types, force = False ):
 			lo, pos = udm_uldap.getMachineConnection( ldap_master = False )
 		elif conn == MACHINE_WRITE:
 			lo, pos = udm_uldap.getMachineConnection( ldap_master = True )
+		elif conn == ADMIN_WRITE:
+			lo, pos = udm_uldap.getAdminConnection( ldap_master = True )
 
 		connections[ conn ] = lo
 		_ldap_connections[ conn ] = lo

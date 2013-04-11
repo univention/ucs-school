@@ -1,3 +1,9 @@
+ucs-school-lib (2.0.19-1) unstable; urgency=low
+
+  * Add ADMIN_WRITE option to LDAP_Connection decorator (for Bug #30832)
+
+ -- Arvid Requate <requate@univention.de>  Thu, 11 Apr 2013 17:22:53 +0200
+
 ucs-school-lib (2.0.9-1) unstable; urgency=low
 
   * Bug #30831: refactored commonly used method groups
