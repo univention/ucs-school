@@ -1,3 +1,9 @@
+ucs-school-import (9.0.10-1) unstable; urgency=low
+
+  * create exam container and exam group during create_ou (for Bug #30832)
+
+ -- Arvid Requate <requate@univention.de>  Thu, 11 Apr 2013 19:19:51 +0200
+
 ucs-school-import (9.0.9-1) unstable; urgency=low
 
   * unify wording of "single server environment" and "multi server
