@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<umc version="2.0">
+  <module id="schoolexam-master" icon="schoolexam-master" version="1.0" priority="7">
+	<name>Start exam</name>
+	<description>Starts a new exam for a specified computer room</description>
+	<categories>
+	  <category name="ucs-school-class"/>
+	</categories>
+
+	<command name="schoolexam-master/create-exam-user" function="create_exam_user">
+		<attribute name="username" syntax="String" required="1"/>
+		<attribute name="description" syntax="String"/>
+	</command>
+	<command name="schoolexam-master/remove-exam-user" function="remove_exam_user">
+		<attribute name="username" syntax="String" required="1"/>
+	</command>
+	<command name="schoolexam-master/set-computerroom-exammode" function="set_computerroom_exammode">
+		<attribute name="room" syntax="String" required="1"/>
+	</command>
+	<command name="schoolexam-master/unset-computerroom-exammode" function="unset_computerroom_exammode">
+		<attribute name="room" syntax="String" required="1"/>
+	</command>
+  </module>
+</umc>

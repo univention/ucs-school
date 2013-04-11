@@ -1,0 +1,17 @@
+[ucsschool/ldap/default/userprefix/exam]
+Description[de]=Standard-Prefix für Klassenarbeits-Benutzerkonten
+Description[en]=Default prefix for exam user accounts
+Type=str
+Categories=ucsschool-base
+
+[ucsschool/ldap/default/container/exam]
+Description[de]=Standard-Container für Klassenarbeits-Benutzerkonten
+Description[en]=Default container for exam user accounts
+Type=str
+Categories=ucsschool-base
+
+[ucsschool/ldap/default/groupname/exam]
+Description[de]=Standard-Gruppenname für den Klassenarbeitsmodus
+Description[en]=Default group name for the exam mode
+Type=str
+Categories=ucsschool-base

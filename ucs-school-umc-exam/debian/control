@@ -22,3 +22,17 @@ Description: Starts a new exam for a specified computer room
  integrated, directory driven solution for managing
  corporate environments. For more information about UCS,
  refer to: http://www.univention.de/
+
+Package: ucs-school-umc-exam-master
+Architecture: all
+Depends: ${misc:Depends},
+ univention-management-console-server,
+ python-ucs-school,
+ devscripts
+Description: UMC module delivering backend services for ucs-school-umc-exam
+ UMC module delivering backend services for ucs-school-umc-exam
+ .
+ It is part of Univention Corporate Server (UCS), an
+ integrated, directory driven solution for managing
+ corporate environments. For more information about UCS,
+ refer to: http://www.univention.de/

@@ -1,9 +1,9 @@
-#!/usr/bin/make -f
+#!/bin/sh
 #
-# UMC modules for UCS@school exam mode
-#  rules file for the debian package
+# UCS@School UMC module schoolexam-master
+#  postinst script
 #
-# Copyright 2013 Univention GmbH
+# Copyright 2007-2013 Univention GmbH
 #
 # http://www.univention.de/
 #
@@ -30,16 +30,16 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-%:
-	dh $@
+#DEBHELPER#
 
-override_dh_auto_test:
-	ucslint
+eval "$(univention-config-registry shell)"
 
-override_dh_auto_build:
-	dh-umc-module-build
-	dh_auto_build
+univention-config-registry set \
+	ucsschool/ldap/default/container/exam?examusers \
+	ucsschool/ldap/default/userprefix/exam?"exam-"
 
-override_dh_auto_install:
-	dh-umc-module-install
-	dh_auto_install
+if [ "$server_role" = "domaincontroller_master" ] || [ "$server_role" = "domaincontroller_backup" ]; then
+	/usr/lib/univention-install/35ucs-school-umc-exam-master.inst || true
+fi
+
+exit 0
