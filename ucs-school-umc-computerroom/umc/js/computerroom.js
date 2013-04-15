@@ -68,6 +68,13 @@ define([
 		// the property field that acts as unique identifier for the object
 		idProperty: '$dn$',
 
+		// holds the currently active room, can be set initially to directly open
+		// the specified room when starting the module
+		room: null,
+
+		// holds information about the active room
+		roomInfo: null,
+
 		// internal reference to the grid
 		_grid: null,
 
@@ -102,9 +109,6 @@ define([
 
 		_actions: null,
 
-		_currentSchool: null,
-		_currentRoom: null,
-
 		_nUpdateFailures: 0,
 
 		_vncEnabled: false,
@@ -135,6 +139,18 @@ define([
 
 			// define grid actions
 			this._actions = [ {
+				name: 'test',
+				label: 'Klassenarbeit beenden',
+				isContextAction: false
+			}, {
+				name: 'test2',
+				label: 'Neuen Raum auswählen',
+				isContextAction: false
+			}, {
+				name: 'test3',
+				label: 'Einstellungen ändern (gültig noch 34min)',
+				isContextAction: false
+			}, {
 				name: 'screenshot',
 				field: 'screenshot',
 				label: _('Watch'),
@@ -345,14 +361,30 @@ define([
 			this.selectChild(this._searchPage);
 		},
 
-		_updateHeader: function(room) {
-			if (room) {
-				room = tools.explodeDn(room, true)[0];
-				room = room.replace(/^[^\-]+-/, '');
-			} else {
-				room = _('No room selected');
+		_updateHeader: function() {
+			if (!this._searchPage) {
+				return;
 			}
-			var label = lang.replace('{roomLabel}: {room} ' +
+			var roomInfo = this.get('roomInfo');
+			if (!roomInfo) {
+				// no room is selected
+				this._searchPage.set('headerText', _('No room selected'));
+				return;
+			}
+
+			var room = tools.explodeDn(roomInfo.room, true)[0];
+			room = room.replace(/^[^\-]+-/, '');
+			var header = '';
+			if (roomInfo.exam) {
+				// exam mode
+				header = _('Exam mode - %s', roomInfo.examDescription);
+			}
+			else {
+				// normal mode
+				header = _('Computer room: %s', room);
+			}
+			this._searchPage.set('headerText', header);
+			/*var label = lang.replace('{roomLabel}: {room} ' +
 					'(<a href="javascript:void(0)" ' +
 					'onclick=\'dijit.byId("{id}").changeRoom()\'>{changeLabel}</a>)', {
 				roomLabel: _('Room'),
@@ -360,7 +392,12 @@ define([
 				changeLabel: _('Select room'),
 				id: this.id
 			});
-			this._titlePane.set('title', label);
+			this._titlePane.set('title', label);*/
+		},
+
+		_setRoomInfoAttr: function(roomInfo) {
+			this._set('roomInfo', roomInfo);
+			this._updateHeader(roomInfo);
 		},
 
 		renderScreenshotPage: function() {
@@ -469,7 +506,7 @@ define([
 				// property that defines the widget's position in a dijit.layout.BorderContainer,
 				// 'center' is its default value, so no need to specify it here explicitely
 				multiActionsAlwaysActive: true,
-				// region: 'center',
+				region: 'center',
 				actions: this._actionList(),
 				columns: columns,
 				cacheRowWidgets: false,
@@ -496,10 +533,8 @@ define([
 				})
 			});
 
-
 			// add the grid to the title pane
 			this._titlePane.addChild(this._grid);
-
 
 			// // add search form to the title pane
 			// this._titlePane.addChild(this._profileForm);
@@ -516,7 +551,11 @@ define([
 
 			_container.addChild(this._profileInfo);
 			_container.addChild(this._validTo);
+
+			// add a toolbar for buttons above the gdd
+
 			this._titlePane.addChild(_container);
+
 			//
 			// conclusion
 			//
@@ -626,35 +665,50 @@ define([
 		},
 
 		postCreate: function() {
-			this.changeRoom();
+			var room = this.get('room');
+			if (room) {
+				// try to auto load the specified room
+				this.standby(true);
+				this._acquireRoom(room, false).then(lang.hitch(function() {
+					// success :)
+					this.standby(false);
+				}), lang.hitch(this, function() {
+					// failure :( ... show the changeRoom dialog
+					this.standby(false);
+					this.changeRoom();
+				}));
+			}
+			else {
+				// no auto load of a specific room
+				this.changeRoom();
+			}
 		},
 
-		_acquireRoom: function(school, room, promptAlert) {
+		_acquireRoom: function(room, promptAlert) {
 			promptAlert = promptAlert === undefined || promptAlert;  // default value == true
 			return tools.umcpCommand('computerroom/room/acquire', {
-				school: school,
 				room: room
 			}).then(lang.hitch(this, function(response) {
 				if (response.result.success === false) {
 					// we could not acquire the room
 					if (promptAlert) {
 						// prompt a message if wanted
-						if (response.result.message == 'ALREADY_LOCKED') {
-							dialog.alert(_('Failed to open a new session for the room.'));
-						} else if (response.result.message == 'EMPTY_ROOM') {
+						if (response.result.message == 'EMPTY_ROOM') {
 							dialog.alert(_('The room is empty or the computers are not configured correctly. Please select another room.'));
+						}
+						else {
+							dialog.alert(_('Failed to open a new session for the room.'));
 						}
 					}
 					throw new Error('Could not acquire room');
 				}
-				this._currentRoom = room;
-				this._currentSchool = school;
+				this.set('room', room);
+				this.set('roomInfo', response.result.info);
 
 				// reload the grid
 				this.queryRoom();
 
 				// update the header text containing the room
-				this._updateHeader(room);
 				this._grid._updateFooterContent();
 			}));
 		},
@@ -708,7 +762,7 @@ define([
 				deferred = deferred.then(lang.hitch(this, function () {
 					// try to acquire the session
 					okButton.set('disabled', true);
-					return this._acquireRoom(vals.school, vals.room);
+					return this._acquireRoom(vals.room);
 				})).then(function() {
 					// destroy the dialog
 					okButton.set('disabled', false);
@@ -894,19 +948,18 @@ define([
 				// error case, update went wrong, try to reinitiate the computer room (see Bug #27202)
 				console.warn('WARN: the command "computerroom/update" failed:', err);
 				this._nUpdateFailures++;
-				if (this._nUpdateFailures < 5 && this._currentSchool && this._currentRoom) {
+				if (this._nUpdateFailures < 5 && this.get('room')) {
 					// try several times to reconnect and then give up
-					this._acquireRoom(this._currentSchool, this._currentRoom, false).then(function() {
+					this._acquireRoom(this.get('room'), false).then(function() {
 						// success :) .... nothing needs to be done as _acquireRoom() takes care of anything
 					}, lang.hitch(this, function() {
-						// failure :(... try again after some idle time
+						// failure :( ... try again after some idle time
 						this._updateTimer = window.setTimeout(lang.hitch(this, '_updateRoom', {}), 1000 * this._nUpdateFailures);
 					}));
 				} else {
 					// fall back, automatic reinitialization failed, show initial dialog to choose a room
 					this._nUpdateFailures = 0;
-					this._currentSchool = null;
-					this._currentRoom = null;
+					this.set('room', null);
 					this.changeRoom();
 					dialog.alert(_('Lost the connection to the computer room. Please try to reopen the computer room.'));
 				}

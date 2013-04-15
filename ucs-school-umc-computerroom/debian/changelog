@@ -1,3 +1,9 @@
+ucs-school-umc-computerroom (2.0.14-1) unstable; urgency=low
+
+  * Bug #30831: integration of the exam mode in the computer room module
+
+ -- Alexander Kläser <klaeser@univention.de>  Mon, 15 Apr 2013 14:19:53 +0200
+
 ucs-school-umc-computerroom (2.0.13-1) unstable; urgency=low
 
   * transfer responsibility for ItalcVncConnection object to C++/QT (Bug #27534)

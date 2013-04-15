@@ -78,43 +78,72 @@ def _getRoomFile(roomDN):
 		return os.path.join(ROOMDIR, dnParts[0])
 	return os.path.join( ROOMDIR, roomDN )
 
-def _getRoomOwner(roomDN):
-	'''Read the room lock file and return the saved user DN. If it does not exist, return None.'''
+def _isUmcProcess(pid):
+	if not psutil.pid_exists(pid):
+		# process is not running anymore
+		return False
+	else:
+		# process is running
+		cmdline = psutil.Process(pid).cmdline
+		if 'computerroom' not in cmdline or not any('univention-management-console-module' in l for l in cmdline):
+			# the process is not the computerroom UMC module
+			return False
+	return True
+
+def _readRoomInfo(roomDN):
+	'''returns a dict of properties for the current room.'''
 	roomFile = _getRoomFile(roomDN)
 	result = None
+	info = None
 	if os.path.exists(roomFile):
 		try:
 			with open(roomFile) as f:
-				result = f.readline().strip()
-		except (OSError, IOError):
-			MODULE.warn( 'Failed to acquire room lock file: %s' % roomFile )
+				# the room file contains key-value pairs, separated by '='
+				# ... parse the file as dict
+				lines = f.readlines()
+				info = dict([iline.strip().split('=', 1) for iline in lines if '=' in iline])
+		except (OSError, IOError, ValueError) as exc:
+			MODULE.warn( 'Failed to read file %s: %s' % (roomFile, exc) )
+
+	# special handling for the PID
+	if isinstance(info, dict) and 'pid' in info:
 		try:
-			result, pid = result.rsplit(':', 1)
-			pid = int(pid)
+			# translate PID to int and verify that it is a UMC process
+			pid = int(info.pop('pid'))
+			if _isUmcProcess(pid):
+				info['pid'] = pid
+
 		except (ValueError, OverflowError):
-			# old/invalid format, do nothing
+			# invalid format, do nothing
 			pass
+
+	return info
+
+def _updateRoomInfo(roomDN, **kwargs):
+	'''Update infos for a room, i.e., leave unspecified values untouched.'''
+	info = _readRoomInfo(roomDN) or dict()
+	newKwargs = dict()
+	for key in ('user', 'cmd', 'exam', 'examDescription'):
+		if key in kwargs:
+			# set the specified value (can also be None for deleting the attribute)
+			newKwargs[key] = kwargs[key]
 		else:
-			# check if process runs and is UMC ...
-			if not psutil.pid_exists(pid):
-				result = None
-			else:
-				cmdline = psutil.Process(pid).cmdline
-				if 'computerroom' not in cmdline or not any('univention-management-console-module' in l for l in cmdline):
-					# the process is not the computerroom UMC module
-					result = None
+			# leave the original value
+			newKwargs[key] = info.get(key)
+	_writeRoomInfo(roomDN, **newKwargs)
 
-	return result
-
-def _setRoomOwner(roomDN, userDN):
-	'''Set the owner for a room and lock the room.'''
-	MODULE.info( 'Updating owner for room "%s": %s' % (roomDN, userDN) )
+def _writeRoomInfo(roomDN, user=None, cmd=None, exam=None, examDescription=None):
+	'''Set infos for a room and lock the room.'''
+	info = dict(room=roomDN, user=user, cmd=cmd, exam=exam, examDescription=examDescription, pid=os.getpid())
+	MODULE.info( 'Writing info file for room "%s": %s' % (roomDN, info) )
 	fd = None
 	try:
 		# write user DN in the room file
 		fd = open(_getRoomFile(roomDN), 'w')
 		fcntl.lockf(fd, fcntl.LOCK_EX)
-		fd.write('%s:%s' % (userDN, os.getpid()))
+		for key, val in info.iteritems():
+			if val != None:
+				fd.write('%s=%s\n' % (key, val))
 	except (OSError, IOError):
 		MODULE.warn( 'Failed to write file: %s' % _getRoomFile(roomDN) )
 	finally:
@@ -122,6 +151,13 @@ def _setRoomOwner(roomDN, userDN):
 		if fd:
 			fcntl.lockf(fd, fcntl.LOCK_UN)
 			fd.close()
+
+def _getRoomOwner(roomDN):
+	'''Read the room lock file and return the saved user DN. If it does not exist, return None.'''
+	info = _readRoomInfo(roomDN) or dict()
+	if not 'pid' in info :
+		return None
+	return info.get('user')
 
 def _freeRoom(roomDN, userDN):
 	'''Remove the lock file if the room is locked by the given user'''
@@ -168,19 +204,51 @@ class Instance( SchoolBaseModule ):
 		"""Returns a list of available internet rules"""
 		self.finished( request.id, map( lambda x: x.name, internetrules.list() ) )
 
-	def room_acquire( self, request ):
+	@LDAP_Connection()
+	def room_acquire( self, request, ldap_user_read = None, ldap_position = None, search_base = None ):
 		"""Acquires the specified computerroom:
 		requests.options = { 'room': <roomDN> }
 		"""
-		self.required_options( request, 'school', 'room' )
+		self.required_options( request, 'room' )
 
 		roomDN = request.options.get('room')
 
 		success = True
 		message = 'OK'
+
+		def _finished():
+			info = dict()
+			if success:
+				info = _readRoomInfo(roomDN)
+			self.finished(request.id, dict(
+				success=success,
+				message=message,
+				info=dict(
+					exam=info.get('exam'),
+					examDescription=info.get('examDescription'),
+					room=info.get('room'),
+					user=info.get('user'),
+				)
+			))
+
+		# match the corresponding school OU
+		school = None
+		roomParts = explodeDn(roomDN)
+		for ischool in search_base.availableSchools:
+			if ('ou=%s' % ischool) in roomParts:
+				# match
+				school = ischool
+				break
+		else:
+			# no match found
+			MODULE.error('Failed to find corresponding school OU for room "%s" in list of schools (%s)' % (roomDN, search_base.availableSchools))
+			success = False
+			message = 'WRONG_SCHOOL'
+			_finished()
+
 		# set room and school
-		if self._italc.school != request.options[ 'school' ]:
-			self._italc.school = request.options[ 'school' ]
+		if self._italc.school != school:
+			self._italc.school = school
 		if self._italc.room != request.options[ 'room' ]:
 			try:
 				self._italc.room = request.options[ 'room' ]
@@ -188,12 +256,14 @@ class Instance( SchoolBaseModule ):
 				success = False
 				message = 'EMPTY_ROOM'
 
+		# update the room info file
 		if success:
-			_setRoomOwner(roomDN, self._user_dn)
+			_updateRoomInfo(roomDN, user=self._user_dn)
 			if not _getRoomOwner(roomDN) == self._user_dn:
 				success = False
 				message = 'ALREADY_LOCKED'
-		self.finished( request.id, { 'success' : success, 'message' : message } )
+
+		_finished()
 
 	@LDAP_Connection()
 	def rooms( self, request, ldap_user_read = None, ldap_position = None, search_base = None ):
@@ -204,8 +274,9 @@ class Instance( SchoolBaseModule ):
 		# create search base for current school
 		for iroom in self._groups( ldap_user_read, search_base.school, search_base.rooms ):
 			# add room status information
-			userDN = _getRoomOwner(iroom['id'])
-			if userDN and userDN != self._user_dn:
+			roomInfo = _readRoomInfo(iroom['id']) or dict()
+			userDN = roomInfo.get('user')
+			if userDN and userDN != self._user_dn and 'pid' in roomInfo:
 				# the room is currently locked by another user
 				iroom['locked'] = True
 				try:
@@ -220,6 +291,11 @@ class Instance( SchoolBaseModule ):
 			else:
 				# the room is not locked :)
 				iroom['locked'] = False
+
+			# check for exam mode
+			iroom['exam'] = roomInfo.get('exam')
+			iroom['examDescription'] = roomInfo.get('examDescription')
+
 			rooms.append(iroom)
 
 		self.finished( request.id, rooms )
@@ -494,12 +570,17 @@ class Instance( SchoolBaseModule ):
 
 		requests.options = { 'server' : <computer> }
 
-		return: [True|False)
+		return: [True|False]
 		"""
+
 		# block access to session from other users
 		self._checkRoomAccess()
 
-		self.required_options( request, 'printMode', 'internetRule', 'shareMode', 'period' )
+		self.required_options( request, 'printMode', 'internetRule', 'shareMode' )
+		exam = request.options.get('exam')
+		examDescription = request.options.get('examDescription', exam)
+		if not exam:
+			self.required_options(request, 'period')
 		if not self._italc.school or not self._italc.room:
 			raise UMC_CommandError( 'no room selected' )
 
@@ -511,10 +592,31 @@ class Instance( SchoolBaseModule ):
 				subprocess.call( shlex.split( job.command ) )
 				break
 
+		# for the exam mode, remove current settings before setting new ones
+		roomInfo = _readRoomInfo(self._italc.roomDN) or dict()
+		if roomInfo.get('exam') and roomInfo.get('cmd'):
+			MODULE.info('unsetting room settings for exam (%s): %s' % (roomInfo['exam'], roomInfo['cmd']))
+			try:
+				subprocess.call(shlex.split(roomInfo['cmd']))
+			except (OSError, IOError):
+				MODULE.warn('Failed to reinitialize current room settings: %s' %  roomInfo['cmd'])
+
+		# local helper function that writes an exam file
+		cmd = ''
+		def _finished():
+			kwargs = dict()
+			if exam:
+				# a new exam has been indicated
+				kwargs = dict(cmd=cmd, exam=exam, examDescription=examDescription)
+
+			MODULE.info('updating room info/lock file...')
+			_updateRoomInfo(self._italc.roomDN, user=self._user_dn, **kwargs)
+			self.finished( request.id, True )
+
 		# do we need to setup a new at job with custom settings?
 		if request.options[ 'internetRule' ] == 'none' and request.options[ 'shareMode' ] == 'all' and request.options[ 'printMode' ] == 'default':
 			self._ruleEndAt = None
-			self.finished( request.id, True )
+			_finished()
 			return
 
 		## collect new settings
@@ -632,20 +734,23 @@ class Instance( SchoolBaseModule ):
 		MODULE.info( 'Will extract: %s' % ' '.join( extract_vars ) )
 
 		cmd = '/usr/share/ucs-school-umc-computerroom/ucs-school-deactivate-rules %s %s %s' % ( ' '.join( unset_vars ), ' '.join( extract_vars ), ' '.join( hosts ) )
-		MODULE.info( 'at job command is: %s' % cmd )
-		try:
-			endtime = datetime.datetime.strptime( request.options[ 'period' ], '%H:%M' )
-			endtime = endtime.time()
-		except ValueError, e:
-			raise UMC_CommandError( 'Failed to read end time: %s' % str( e ) )
+		MODULE.info( 'command for reinitialization is: %s' % cmd )
 
-		starttime = datetime.datetime.now()
-		MODULE.info( 'Now: %s' % starttime )
-		MODULE.info( 'Endtime: %s' % endtime )
-		starttime = starttime.replace( hour = endtime.hour, minute = endtime.minute )
-		MODULE.info( 'Remove settings at %s' % starttime )
-		atjobs.add( cmd, starttime, { Instance.ATJOB_KEY: self._italc.room } )
-		self._ruleEndAt = starttime
+		if not exam:
+			# AT job for the normal case
+			try:
+				endtime = datetime.datetime.strptime( request.options[ 'period' ], '%H:%M' )
+				endtime = endtime.time()
+			except ValueError, e:
+				raise UMC_CommandError( 'Failed to read end time: %s' % str( e ) )
+
+			starttime = datetime.datetime.now()
+			MODULE.info( 'Now: %s' % starttime )
+			MODULE.info( 'Endtime: %s' % endtime )
+			starttime = starttime.replace( hour = endtime.hour, minute = endtime.minute )
+			MODULE.info( 'Remove settings at %s' % starttime )
+			atjobs.add( cmd, starttime, { Instance.ATJOB_KEY: self._italc.room } )
+			self._ruleEndAt = starttime
 
 		# reset SMB connections
 		smbstatus = SMB_Status()
@@ -656,7 +761,7 @@ class Instance( SchoolBaseModule ):
 			if process.username in italc_users:
 				MODULE.info( 'Kill SMB process %s' % process.pid )
 				os.kill( int( process.pid ), signal.SIGTERM )
-		self.finished( request.id, True )
+		_finished()
 
 	def settings_reschedule( self, request ):
 		"""Defines settings for a room
