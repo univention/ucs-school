@@ -34,10 +34,9 @@ UCS@School UMC module schoolexam-master
  UMC module delivering backend services for ucs-school-umc-exam
 '''
 
-from univention.management.console.modules import Base
-from univention.management.console.log import MODULE
 from univention.management.console.config import ucr
-
+from univention.management.console.log import MODULE
+from univention.management.console.modules import UMC_CommandError, UMC_OptionTypeError
 from ucsschool.lib.schoolldap import LDAP_Connection, LDAP_ConnectionError, SchoolBaseModule
 
 import univention.admin.modules
@@ -52,48 +51,80 @@ class Instance( SchoolBaseModule ):
 	def __init__( self ):
 		SchoolBaseModule.__init__(self)
 
-		self._containerExamUsers = ucr.get('ucsschool/ldap/default/container/exam', 'examusers')
+		self._examUserContainerName = ucr.get('ucsschool/ldap/default/container/exam', 'examusers')
 		self._examUserPrefix = ucr.get('ucsschool/ldap/default/userprefix/exam', 'exam-')
 		self._examGroupname = ucr.get('ucsschool/ldap/default/groupname/exam', 'OU%(ou)s-Klassenarbeit')
 
 		## cache objects
 		self._udm_modules = []
 		self._examGroup = None
+		self._examUserContainerDN = None
 		
 		## Context for @property examGroup
-		self._ldap_admin_write = ldap_admin_write
-		self._ldap_position = ldap_position
-		self._search_base = search_base
+		self._ldap_admin_write = None
+		self._ldap_position = None
+		self._search_base = None
 
 	def init(self):
 		SchoolBaseModule.init(self)
 
 	@property
 	def examGroup(self):
-		'''fetch the unopened examGroup object'''
+		'''fetch the unopened examGroup object, create it if missing'''
 		if not self._examGroup:
-			## replace '%(ou)s' strings in generic _examGroupname
+			## replace '%(ou)s' strings in generic exam_group_name
 			ucr_value_keywords = { 'ou': self._search_base.school }
-			examGroupname = self._examGroupname % ucr_value_keywords
+			exam_group_name = self._examGroupname % ucr_value_keywords
 
-			## Determine examGroupDN
-			examGroupDN = self._ldap_admin_write.searchDn('(&(cn=%s)(objectClass=univentionGroup))' %examGroupname, self._search_base.groups )
-			if len(examGroupDN) != 1:
-				message = 'Command failed\nGroup %s not found' % examGroupname
-				MODULE.warn(message)
-				self.finished(request.id, {}, message, success=False)
-				return None
-
-			## Get the room object
 			if 'groups/group' in self._udm_modules:
 				module_groups_group = self._udm_modules['groups/group']
 			else:
 				module_groups_group = univention.admin.modules.get('groups/group')
 				univention.admin.modules.init(self._ldap_admin_write, self._ldap_position, module_groups_group)
 				self._udm_modules['groups/group'] = module_groups_group
-			self._examGroup = module_groups_group.object(None, self._ldap_admin_write, self._ldap_position, examGroupDN)
+
+			## Determine exam_group_dn
+			ldap_filter = '(&(cn=%s)(objectClass=univentionGroup))' % exam_group_name
+			exam_group_dn = self._ldap_admin_write.searchDn(ldap_filter, self._search_base.groups, unique=1)
+			if len(exam_group_dn) == 1:
+				self._examGroup = module_groups_group.object(None, self._ldap_admin_write, self._ldap_position, exam_group_dn[0])
+			else:
+				default_exam_group_position_dn = "cn=ucsschool,cn=groups,%s" % self._search_base.schoolDN
+				exam_group_dn = "cn=%s,%s" % (exam_group_name, default_exam_group_position_dn)
+				try:
+					self._examGroup = module_groups_group.object(None, self._ldap_admin_write, self._ldap_position, exam_group_dn)
+					self._examGroup['name'] = exam_group_name
+					self._examGroup.create()
+				except univention.admin.uexceptions.ldapError, e:
+					message = 'Failed to create exam group\n%s' % traceback.format_exc()
+					raise UMC_CommandError( message )
 
 		return self._examGroup
+
+	@property
+	def examUserContainerDN(self):
+		'''lookup examUserContainerDN, create it if missing'''
+		if not self._examUserContainerDN:
+			ldap_filter = '(&(objectClass=organizationalRole)(cn=%s))' % self._examUserContainerName
+			exam_user_container_dn = self._ldap_admin_write.searchDn(ldap_filter, self._search_base.schoolDN,  scope='sub', unique=1)
+			if len(exam_user_container_dn) == 1:
+				self._examUserContainerDN = exam_user_container_dn[0]
+			else:
+				default_exam_user_container_position_dn = "%s" % self._search_base.schoolDN
+				exam_user_container_dn = "cn=%s,%s" % (self._examUserContainerName, default_exam_user_container_position_dn)
+				try:
+					module_containers_cn = univention.admin.modules.get('containers/cn')
+					univention.admin.modules.init(self._ldap_admin_write, self._ldap_position, module_containers_cn)
+					exam_user_container = module_containers_cn.object(None, self._ldap_admin_write, self._ldap_position, exam_user_container_dn)
+					exam_user_container['name'] = self._examUserContainerName
+					exam_user_container.create()
+				except univention.admin.uexceptions.ldapError, e:
+					message = 'Failed to create exam container\n%s' % traceback.format_exc()
+					raise UMC_CommandError( message )
+
+				self._examUserContainerDN = exam_user_container_dn
+
+		return self._examUserContainerDN
 
 	@LDAP_Connection(ADMIN_WRITE)
 	def create_exam_user(self, request, ldap_admin_write = None, ldap_position = None, search_base = None):
@@ -107,29 +138,27 @@ class Instance( SchoolBaseModule ):
 		self._ldap_position = ldap_position
 		self._search_base = search_base
 
-		### Origin uid
-		username = request.options.get('username')
-		if not username:
-			message = 'Command failed\nNo username specified'
-			MODULE.warn(message)
-			self.finished(request.id, {}, message, success=False)
-			return
+		### Origin user
+		self.required_options(request, 'userdn')
+		userdn = request.options.get('userdn')
 
-		## Convert the username into the object DN.
-		udm_filter = '(username=%s)' % username
-		objs = univention.admin.modules.lookup( 'users/user', None, ldap_admin_write, filter = udm_filter, scope = 'sub', base = search_base.students, unique=1)
-		if objs:
-			user_orig = objs[0]
+		## Try to open the object
+		if 'users/user' in self._udm_modules:
+			module_users_user = self._udm_modules['users/user']
 		else:
-			message = 'Command failed\nUser %s not found' % username
-			MODULE.warn(message)
-			self.finished(request.id, {}, message, success=False)
-			return
+			module_users_user = univention.admin.modules.get('users/user')
+			univention.admin.modules.init(ldap_admin_write, ldap_position, module_users_user)
+			self._udm_modules['users/user'] = module_users_user
+
+		try:
+			user_orig = module_users_user.object(None, ldap_admin_write, ldap_position, userdn)
+			user_orig.open()
+		except univention.admin.uexceptions.ldapError, e:
+			raise UMC_OptionTypeError( 'Invalid User DN' )
 
 		### uid and DN of exam_user
-		exam_user_uid = "".join( (self._examUserPrefix, username) )
-		exam_user_container = "cn=%s,%s" % (self._containerExamUsers, search_base.schoolDN)
-		exam_user_dn = "uid=%s,%s" % (exam_user_uid, exam_user_container)
+		exam_user_uid = "".join( (self._examUserPrefix, user_orig['username']) )
+		exam_user_dn = "uid=%s,%s" % (exam_user_uid, self.examUserContainerDn)
 
 		### Check if it's blacklisted
 		prohibited_objects = univention.admin.handlers.settings.prohibited_username.lookup(None, ldap_admin_write, '')
@@ -137,9 +166,7 @@ class Instance( SchoolBaseModule ):
 			for i in range(0, len(prohibited_objects)):
 				if exam_user_uid in prohibited_objects[i]['usernames']:
 					message = 'Command failed\nRequested exam user name %s is not allowed according to settings/prohibited_username object %s' % ( exam_user_uid, prohibited_objects[i]['name'])
-					MODULE.warn(message)
-					self.finished(request.id, {}, message, success=False)
-					return
+					raise UMC_CommandError( message )
 
 		### Allocate new uid
 		alloc = []
@@ -185,7 +212,7 @@ class Instance( SchoolBaseModule ):
 			## Determine description attribute for exam_user
 			exam_user_description = request.options.get('description')
 			if not exam_user_description:
-				exam_user_description = "Exam for user %s" % username
+				exam_user_description = "Exam for user %s" % user_orig['username']
 
 			## Now create the addlist, fixing up attributes as we go
 			al = []
@@ -217,9 +244,7 @@ class Instance( SchoolBaseModule ):
 				univention.admin.allocators.release(ldap_admin_write, ldap_position, i, j)
 
 			message = 'ERROR: Command failed\n%s' % traceback.format_exc()
-			MODULE.warn(message)
-			self.finished(request.id, {}, message, success=False)
-			return
+			raise UMC_CommandError( message )
 
 		## Add exam_user to groups
 		if 'groups/group' in self._udm_modules:
@@ -238,11 +263,7 @@ class Instance( SchoolBaseModule ):
 				grpobj.fast_member_add( [ exam_user_dn ], [ exam_user_uid ] )
 
 		## Add exam_user to examGroup
-		examGroup = self.examGroup
-		if examGroup:
-			examGroup.fast_member_add( [ exam_user_dn ], [ exam_user_uid ] )
-		else:
-			return ## self.examGroup called finished in this case, so just return
+		self.examGroup.fast_member_add( [ exam_user_dn ], [ exam_user_uid ] )
 
 		## finally confirm allocated IDs
 		univention.admin.allocators.confirm(ldap_admin_write, ldap_position, 'uid', exam_user_uid)
@@ -259,15 +280,12 @@ class Instance( SchoolBaseModule ):
 		'''Remove an exam account cloned from a given user account.
 		   The exam account is removed from the special exam group.'''
 
-		### get parameters
-		username = request.options.get('username')
-		if not username:
-			message = 'Command failed\nNo username specified'
-			MODULE.warn(message)
-			self.finished(request.id, {}, message, success=False)
-			return
+		### Origin user
+		self.required_options(request, 'userdn')
+		userdn = request.options.get('userdn')
 
 		### uid and DN of exam_user
+		username = univention.admin.uldap.explodeDn(userdn, 1)[0]
 		exam_user_uid = "".join( (self._examUserPrefix, username) )
 
 		udm_filter = '(username=%s)' % exam_user_uid
@@ -278,14 +296,10 @@ class Instance( SchoolBaseModule ):
 				exam_user.remove()
 			except univention.admin.uexceptions.ldapError, e:
 				message = 'Could not remove exam user: %s' % e
-				MODULE.warn(message)
-				self.finished(request.id, {}, message, success=False)
-				return
+				raise UMC_CommandError( message )
 		else:
 			message = 'User not found: %s' % exam_user_uid
-			MODULE.warn(message)
-			self.finished(request.id, {}, message, success=False)
-			return
+			raise UMC_CommandError( message )
 
 		self.finished(request.id, {}, success=True)
 		return
@@ -300,23 +314,22 @@ class Instance( SchoolBaseModule ):
 		self._search_base = search_base
 
 		### get parameters
-		roomname = request.options.get('room')
-		if not roomname:
-			message = 'Command failed\nNo room specified'
-			MODULE.warn(message)
-			self.finished(request.id, {}, message, success=False)
-			return
+		self.required_options(request, 'roomdn')
+		roomdn = request.options.get('roomdn')
 
 		### Try to open the room
-		udm_filter = '(name=%s)' % roomname
-		objs = univention.admin.modules.lookup( 'groups/group', None, ldap_admin_write, filter = udm_filter, scope = 'sub', base = search_base.rooms, unique=1)
-		if objs:
-			room = objs[0]
+		if 'groups/group' in self._udm_modules:
+			module_groups_group = self._udm_modules['groups/group']
 		else:
-			message = 'Room not found: %s' % roomname
-			MODULE.warn(message)
-			self.finished(request.id, {}, message, success=False)
-			return
+			module_groups_group = univention.admin.modules.get('groups/group')
+			univention.admin.modules.init(ldap_admin_write, ldap_position, module_groups_group)
+			self._udm_modules['groups/group'] = module_groups_group
+
+		try:
+			room = module_groups_group.object(None, ldap_admin_write, ldap_position, roomdn)
+			room.open()
+		except univention.admin.uexceptions.ldapError, e:
+			raise UMC_OptionTypeError( 'Invalid Room DN' )
 
 		## Add all host members of room to examGroup
 		examGroup = self.examGroup
@@ -339,31 +352,28 @@ class Instance( SchoolBaseModule ):
 		self._search_base = search_base
 
 		### get parameters
-		roomname = request.options.get('room')
-		if not roomname:
-			message = 'Command failed\nNo room specified'
-			MODULE.warn(message)
-			self.finished(request.id, {}, message, success=False)
-			return
+		self.required_options(request, 'roomdn')
+		roomdn = request.options.get('roomdn')
 
 		### Try to open the room
-		udm_filter = '(name=%s)' % roomname
-		objs = univention.admin.modules.lookup( 'groups/group', None, ldap_admin_write, filter = udm_filter, scope = 'sub', base = search_base.rooms, unique=1)
-		if objs:
-			room = objs[0]
+		if 'groups/group' in self._udm_modules:
+			module_groups_group = self._udm_modules['groups/group']
 		else:
-			message = 'Room not found: %s' % roomname
-			MODULE.warn(message)
-			self.finished(request.id, {}, message, success=False)
-			return
+			module_groups_group = univention.admin.modules.get('groups/group')
+			univention.admin.modules.init(ldap_admin_write, ldap_position, module_groups_group)
+			self._udm_modules['groups/group'] = module_groups_group
+
+		try:
+			room = module_groups_group.object(None, ldap_admin_write, ldap_position, roomdn)
+			room.open()
+		except univention.admin.uexceptions.ldapError, e:
+			raise UMC_OptionTypeError( 'Invalid Room DN' )
 
 		## Remove all host members of room from examGroup
 		examGroup = self.examGroup
 		if examGroup:
 			host_uid_list = [ univention.admin.uldap.explodeDn(uniqueMember, 1)[0] for uniqueMember in room['hosts'] ]
 			examGroup.fast_member_remove( room['hosts'], host_uid_list )	## removes any uniqueMember and member listed if still present
-		else:
-			return ## self.examGroup called finished in this case, so just return
 
 		self.finished(request.id, {}, success=True)
 		return

@@ -8,17 +8,17 @@
 	</categories>
 
 	<command name="schoolexam-master/create-exam-user" function="create_exam_user">
-		<attribute name="username" syntax="String" required="1"/>
+		<attribute name="userdn" syntax="String"/>
 		<attribute name="description" syntax="String"/>
 	</command>
 	<command name="schoolexam-master/remove-exam-user" function="remove_exam_user">
-		<attribute name="username" syntax="String" required="1"/>
+		<attribute name="userdn" syntax="String"/>
 	</command>
 	<command name="schoolexam-master/set-computerroom-exammode" function="set_computerroom_exammode">
-		<attribute name="room" syntax="String" required="1"/>
+		<attribute name="roomdn" syntax="String"/>
 	</command>
 	<command name="schoolexam-master/unset-computerroom-exammode" function="unset_computerroom_exammode">
-		<attribute name="room" syntax="String" required="1"/>
+		<attribute name="roomdn" syntax="String"/>
 	</command>
   </module>
 </umc>
