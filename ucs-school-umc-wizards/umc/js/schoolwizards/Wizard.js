@@ -32,15 +32,15 @@
 define([
 	"dojo/_base/declare",
 	"dojo/_base/lang",
-	"umc/tools",
 	"umc/dialog",
 	"umc/widgets/Wizard",
 	"umc/i18n!umc/modules/schoolwizards"
-], function(declare, lang, tools, dialog, Wizard, _) {
+], function(declare, lang, dialog, Wizard, _) {
 
 	return declare("umc.modules.schoolwizards.Wizard", [ Wizard ], {
 
 		createObjectCommand: null,
+		umcpCommand: null,
 
 		// set via the module
 		description: null,
@@ -83,7 +83,7 @@ define([
 		_createObject: function() {
 			this.standby(true);
 			var values = this.getValues();
-			return tools.umcpCommand(this.createObjectCommand , values).then(
+			return this.umcpCommand(this.createObjectCommand , values).then(
 				lang.hitch(this, function(response) {
 					this.standby(false);
 					if (response.result) {

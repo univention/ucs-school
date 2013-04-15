@@ -20,21 +20,13 @@
 			<name>Add school</name>
 			<description>Create a new school</description>
 		</flavor>
-		<command name="schoolwizards/schools" function="schools">
-		</command>
-		<command name="schoolwizards/classes" function="classes">
-		</command>
-		<command name="schoolwizards/users/create" function="create_user">
-		</command>
-		<command name="schoolwizards/schools/create" function="create_school">
-		</command>
-		<command name="schoolwizards/schools/singlemaster" function="is_singlemaster">
-		</command>
-		<command name="schoolwizards/schools/move_dc" function="move_dc">
-		</command>
-		<command name="schoolwizards/classes/create" function="create_class">
-		</command>
-		<command name="schoolwizards/computers/create" function="create_computer">
-		</command>
+		<command name="schoolwizards/schools" function="schools"/>
+		<command name="schoolwizards/classes" function="classes"/>
+		<command name="schoolwizards/users/create" function="create_user"/>
+		<command name="schoolwizards/schools/create" function="create_school"/>
+		<command name="schoolwizards/schools/singlemaster" function="is_singlemaster"/>
+		<command name="schoolwizards/schools/move_dc" function="move_dc"/>
+		<command name="schoolwizards/classes/create" function="create_class"/>
+		<command name="schoolwizards/computers/create" function="create_computer"/>
 	</module>
 </umc>

@@ -32,11 +32,10 @@
 define([
 	"dojo/_base/declare",
 	"dojo/_base/lang",
-	"umc/tools",
 	"umc/widgets/TextBox",
 	"umc/modules/schoolwizards/Wizard",
 	"umc/i18n!umc/modules/schoolwizards"
-], function(declare, lang, tools, TextBox, Wizard, _) {
+], function(declare, lang, TextBox, Wizard, _) {
 
 	return declare("umc.modules.schoolwizards.SchoolWizard", [ Wizard ], {
 
@@ -72,7 +71,7 @@ define([
 			this.inherited(arguments);
 			this.standby(true);
 
-			tools.umcpCommand('schoolwizards/schools/singlemaster').then(lang.hitch(this, function(response) {
+			this.umcpCommand('schoolwizards/schools/singlemaster').then(lang.hitch(this, function(response) {
 				if (response.result.isSinglemaster) {
 					var widget = this.getWidget('school', 'schooldc');
 					widget.hide();

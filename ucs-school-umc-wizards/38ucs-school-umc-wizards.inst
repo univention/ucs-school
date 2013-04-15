@@ -31,7 +31,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-VERSION=2
+VERSION=3
 
 . /usr/share/univention-join/joinscripthelper.lib
 . /usr/share/univention-lib/umc.sh
@@ -40,11 +40,22 @@ VERSION=2
 joinscript_init
 
 umc_init
-umc_operation_create "schoolwizards-all" "School wizards" "" "schoolwizards/*"
+
+# remove old schoolwizards-all operation set
+if [ $JS_LAST_EXECUTED_VERSION -le 2 ]; then
+	eval "$(ucr shell)"
+	udm settings/umc_operationset remove "$@" --remove_referring --dn "cn=schoolwizards-all,cn=operations,cn=UMC,cn=univention,$ldap_base"
+fi
+
+# create operations sets
+for flavor in users classes schools computers; do 
+	umc_operation_create "schoolwizards-$flavor" "School wizards - $flavor" "schoolwizards/$flavor" "schoolwizards/$flavor/*" "schoolwizards/classes" "schoolwizards/schools"
+done
+
 ucs_school_policies_create
 
 # the module is only visible for domain admins
-umc_policy_append default-umc-all "schoolwizards-all"
+umc_policy_append default-umc-all "schoolwizards-users" "schoolwizards-classes" "schoolwizards-schoolwizards" "schoolwizards-computers"
 
 joinscript_save_current_version
 

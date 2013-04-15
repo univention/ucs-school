@@ -1,3 +1,9 @@
+ucs-school-umc-wizards (2.0.14-1) unstable; urgency=low
+
+  * split operationset to particular flavors; Bug #30484
+
+ -- Florian Best <best@univention.de>  Mon, 15 Apr 2013 14:01:40 +0200
+
 ucs-school-umc-wizards (2.0.13-2) unstable; urgency=low
 
   * add a link to the users module on the user wizard page; Bug #30826

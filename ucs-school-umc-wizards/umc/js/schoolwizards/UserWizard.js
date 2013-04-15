@@ -65,6 +65,7 @@ define([
 					name: 'school',
 					label: _('School'),
 					dynamicValues: 'schoolwizards/schools',
+					umcpCommand: lang.hitch(this, 'umcpCommand'),
 					autoHide: true
 				}, {
 					type: ComboBox,
@@ -190,7 +191,7 @@ define([
 		reloadClasses: function() {
 			var schoolName = this.getWidget('general', 'school').get('value');
 			if (schoolName) {
-				tools.umcpCommand('schoolwizards/classes', {'school': schoolName}).then(
+				this.umcpCommand('schoolwizards/classes', {'school': schoolName}).then(
 					lang.hitch(this, function(response) {
 						var classes = array.map(response.result, function(item) {
 							return item.label;

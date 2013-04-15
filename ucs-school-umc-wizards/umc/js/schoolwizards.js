@@ -86,7 +86,8 @@ define([
 				default: return null;
 			}
 			return new Wizard({
-				description: this.description
+				description: this.description,
+				umcpCommand: lang.hitch(this, 'umcpCommand')
 			});
 		}
 	});

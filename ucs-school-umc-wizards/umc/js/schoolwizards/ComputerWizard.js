@@ -31,12 +31,13 @@
 
 define([
 	"dojo/_base/declare",
+	"dojo/_base/lang",
 	"umc/tools",
 	"umc/widgets/TextBox",
 	"umc/widgets/ComboBox",
 	"umc/modules/schoolwizards/Wizard",
 	"umc/i18n!umc/modules/schoolwizards"
-], function(declare, tools, TextBox, ComboBox, Wizard, _) {
+], function(declare, lang, tools, TextBox, ComboBox, Wizard, _) {
 
 	return declare("umc.modules.schoolwizards.ComputerWizard", [ Wizard ], {
 
@@ -53,6 +54,7 @@ define([
 					name: 'school',
 					label: _('School'),
 					dynamicValues: 'schoolwizards/schools',
+					umcpCommand: lang.hitch(this, 'umcpCommand'),
 					autoHide: true
 				}, {
 					type: ComboBox,
