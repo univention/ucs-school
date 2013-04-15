@@ -100,8 +100,7 @@ class Instance( SchoolBaseModule ):
 		"""Returns a list of available internet rules"""
 		self.finished( request.id, map( lambda x: x.name, internetrules.list() ) )
 
-	@LDAP_Connection()
-	def rooms(self, request, ldap_user_read = None, ldap_position = None, search_base = None):
-		self.finished(request.id, self._groups(ldap_user_read, search_base.school, search_base.rooms))
 
+	def start_exam(self, request):
+		self.finished(request.id, dict(success=True))
 

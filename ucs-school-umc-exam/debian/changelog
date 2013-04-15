@@ -1,3 +1,9 @@
+ucs-school-umc-exam (0.1.2-1) unstable; urgency=low
+
+  * Bug #30831: launch computer room module when finishing the wizard
+
+ -- Alexander Kläser <klaeser@univention.de>  Mon, 15 Apr 2013 14:22:24 +0200
+
 ucs-school-umc-exam (0.1.1-3) unstable; urgency=low
 
   * fix a couple of pylint errors and warnings (Bug #30832)

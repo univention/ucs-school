@@ -35,6 +35,7 @@ define([
 	"dojo/dom-class",
 	"dojo/dom-style",
 	"dojo/on",
+	"dojo/promise/all",
 	"dojo/topic",
 	"umc/dialog",
 	"umc/tools",
@@ -46,7 +47,7 @@ define([
 	"umc/widgets/MultiObjectSelect",
 	"umc/widgets/MultiUploader",
 	"umc/i18n!umc/modules/schoolexam"
-], function(declare, lang, array, domClass, domStyle, on, topic, dialog, tools, Wizard, Module, TextBox, TextArea, ComboBox, MultiObjectSelect, MultiUploader, _) {
+], function(declare, lang, array, domClass, domStyle, on, all, topic, dialog, tools, Wizard, Module, TextBox, TextArea, ComboBox, MultiObjectSelect, MultiUploader, _) {
 	return declare("umc.modules.schoolexam", [ Module, Wizard ], {
 		// summary:
 		//		Template module to ease the UMC module development.
@@ -56,6 +57,8 @@ define([
 
 		postMixInProperties: function() {
 			this.inherited(arguments);
+
+			this.standbyOpacity = 1.0;
 
 			var myRules = _( 'Personal internet rules' );
 
@@ -76,7 +79,7 @@ define([
 					label: _('Computer room'),
 					description: _('Choose the computer room in which the exam will take place'),
 					depends: 'school',
-					dynamicValues: 'schoolexam/rooms'
+					dynamicValues: 'computerroom/rooms'
 				}, {
 					name: 'name',
 					type: TextBox,
@@ -144,7 +147,6 @@ define([
 				widgets: [{
 					type: ComboBox,
 					name: 'shareMode',
-					sizeClass: 'One',
 					label: _('Share access'),
 					description: _( 'Defines restriction for the share access' ),
 					staticValues: [
@@ -169,7 +171,6 @@ define([
 					label: lang.replace( _( 'List of allowed web sites for "{myRules}"' ), {
 						myRules: myRules
 					} ),
-					sizeClass: 'One',
 					description: _( '<p>In this text box you can list web sites that are allowed to be used by the students. Each line should contain one web site. Example: </p><p style="font-family: monospace">univention.com<br/>wikipedia.org<br/></p>' ),
 					validate: lang.hitch( this, function() {
 						return !( this._form.getWidget( 'internetRule' ).get( 'value' ) == 'custom' && ! this._form.getWidget( 'customRule' ).get( 'value' ) );
@@ -185,6 +186,14 @@ define([
 		buildRendering: function() {
 			this.inherited(arguments);
 
+			// standby animation until all form elements are ready
+			this.standby(true);
+			var allFormsReady = array.map(this.pages, lang.hitch(this, function(ipage) {
+				return this._pages[ipage.name]._form.ready();
+			}));
+			all(allFormsReady).then(lang.hitch(this, function() {
+				this.standby(false);
+			}));
 
 			// TODO set maxsize
 			//maxSize: maxUploadSize * 1024, // conversion from kbyte to byte
@@ -200,6 +209,30 @@ define([
 				// make sure that ther is a little space between the two buttons 'next' and 'finish'
 				domStyle.set(buttons.finish.domNode, { marginLeft: '5px' });
 			}
+		},
+
+		onFinished: function(values) {
+			// start the exam
+			tools.umcpCommand('schoolexam/start_exam', {}, false);
+
+			// reserve the computerroom and adjust its settings
+			tools.umcpCommand('computerroom/room/acquire', {
+				school: values.school,
+				room: values.room
+			}).then(function() {
+				return tools.umcpCommand('computerroom/settings/set', {
+					internetRule: values.internetRule,
+					customRule: values.customRule,
+					shareMode: values.shareMode,
+					printMode: 'default',
+					examDescription: values.name,
+					exam: values.directory
+				});
+			}).then(function() {
+				topic.publish('/umc/modules/open', 'computerroom', /*flavor*/ null, {
+					room: values.room
+				});
+			});
 		}
 	});
 });
