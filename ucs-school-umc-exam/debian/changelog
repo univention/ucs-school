@@ -1,3 +1,9 @@
+ucs-school-umc-exam (0.1.5-1) unstable; urgency=low
+
+  * Bug #30832: adjusted UMC ACLs, fixed some errors
+
+ -- Alexander Kläser <klaeser@univention.de>  Tue, 16 Apr 2013 18:00:48 +0200
+
 ucs-school-umc-exam (0.1.4-1) unstable; urgency=low
 
   * Bug #30831: fixed packaging issues, clone users when starting an exam

@@ -37,7 +37,7 @@ UCS@School UMC module schoolexam-master
 from univention.management.console.config import ucr
 from univention.management.console.log import MODULE
 from univention.management.console.modules import UMC_CommandError, UMC_OptionTypeError
-from ucsschool.lib.schoolldap import LDAP_Connection, LDAP_ConnectionError, SchoolBaseModule
+from ucsschool.lib.schoolldap import LDAP_Connection, LDAP_ConnectionError, SchoolBaseModule, ADMIN_WRITE, USER_READ
 
 import univention.admin.modules
 univention.admin.modules.update()
@@ -54,12 +54,12 @@ class Instance( SchoolBaseModule ):
 		self._examUserPrefix = ucr.get('ucsschool/ldap/default/userprefix/exam', 'exam-')
 
 		## cache objects
-		self._udm_modules = []
+		self._udm_modules = dict()
 		self._examGroup = None
 		self._examUserContainerDN = None
 		
 		## Context for @property examGroup
-		self._ldap_admin_write = None
+		self._ldap_user_read = None, ldap_admin_write = None
 		self._ldap_position = None
 		self._search_base = None
 
@@ -115,8 +115,8 @@ class Instance( SchoolBaseModule ):
 
 		return self._examUserContainerDN
 
-	@LDAP_Connection(ADMIN_WRITE)
-	def create_exam_user(self, request, ldap_admin_write = None, ldap_position = None, search_base = None):
+	@LDAP_Connection(USER_READ, ADMIN_WRITE)
+	def create_exam_user(self, request, ldap_user_read = None, ldap_admin_write = None, ldap_position = None, search_base = None):
 		'''Create an exam account cloned from a given user account.
 		   The exam account is added to a special exam group to allow GPOs and other restrictions
 		   to be enforced via the name of this group.
@@ -264,8 +264,8 @@ class Instance( SchoolBaseModule ):
 		self.finished(request.id, {}, success=True)
 		return
 
-	@LDAP_Connection(ADMIN_WRITE)
-	def remove_exam_user(self, request, ldap_admin_write = None, ldap_position = None, search_base = None):
+	@LDAP_Connection(USER_READ, ADMIN_WRITE)
+	def remove_exam_user(self, request, ldap_user_read = None, ldap_admin_write = None, ldap_position = None, search_base = None):
 		'''Remove an exam account cloned from a given user account.
 		   The exam account is removed from the special exam group.'''
 
@@ -293,8 +293,8 @@ class Instance( SchoolBaseModule ):
 		self.finished(request.id, {}, success=True)
 		return
 
-	@LDAP_Connection(ADMIN_WRITE)
-	def set_computerroom_exammode(self, request, ldap_admin_write = None, ldap_position = None, search_base = None):
+	@LDAP_Connection(USER_READ, ADMIN_WRITE)
+	def set_computerroom_exammode(self, request, ldap_user_read = None, ldap_admin_write = None, ldap_position = None, search_base = None):
 		'''Add all member hosts of a given computer room to the special exam group.'''
 
 		## store the ldap related objects for calls to the examGroup property
@@ -331,8 +331,8 @@ class Instance( SchoolBaseModule ):
 		self.finished(request.id, {}, success=True)
 		return
 
-	@LDAP_Connection(ADMIN_WRITE)
-	def unset_computerroom_exammode(self, request, ldap_admin_write = None, ldap_position = None, search_base = None):
+	@LDAP_Connection(USER_READ, ADMIN_WRITE)
+	def unset_computerroom_exammode(self, request, ldap_user_read = None, ldap_admin_write = None, ldap_position = None, search_base = None):
 		'''Remove all member hosts of a given computer room from the special exam group.'''
 
 		## store the ldap related objects for calls to the examGroup property
