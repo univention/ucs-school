@@ -1,3 +1,9 @@
+ucs-school-umc-internetrules (8.0.9-1) unstable; urgency=low
+
+  * revert shortcut changes; Bug #30516
+
+ -- Florian Best <best@univention.de>  Tue, 16 Apr 2013 08:34:52 +0200
+
 ucs-school-umc-internetrules (8.0.8-3) unstable; urgency=low
 
   * fix permissions of shortcut script; Bug #30516
