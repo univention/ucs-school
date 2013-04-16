@@ -68,7 +68,7 @@ class Instance( SchoolBaseModule ):
 
 	@property
 	def examGroup(self):
-		'''fetch the unopened examGroup object, create it if missing'''
+		'''fetch the examGroup object, create it if missing'''
 		if not self._examGroup:
 			if 'groups/group' in self._udm_modules:
 				module_groups_group = self._udm_modules['groups/group']
@@ -82,9 +82,11 @@ class Instance( SchoolBaseModule ):
 				ldap_filter = '(objectClass=univentionGroup)'
 				exam_group_dn = self._ldap_admin_write.searchDn(ldap_filter, self._search_base.examGroup, scope='base')
 				self._examGroup = module_groups_group.object(None, self._ldap_admin_write, self._ldap_position, self._search_base.examGroup)
+				## self._examGroup.create() # currently not necessary
 			except univention.admin.uexceptions.ldapError:
 				try:
 					self._examGroup = module_groups_group.object(None, self._ldap_admin_write, self._ldap_position, self._search_base.examGroup)
+					self._examGroup.open()
 					self._examGroup['name'] = self._search_base._examGroupname
 					self._examGroup.create()
 				except univention.admin.uexceptions.ldapError, e:
@@ -105,6 +107,7 @@ class Instance( SchoolBaseModule ):
 					module_containers_cn = univention.admin.modules.get('containers/cn')
 					univention.admin.modules.init(self._ldap_admin_write, self._ldap_position, module_containers_cn)
 					exam_user_container = module_containers_cn.object(None, self._ldap_admin_write, self._ldap_position, self._search_base.examUsers)
+					exam_user_container.open()
 					exam_user_container['name'] = self._search_base._examUserContainerName
 					exam_user_container.create()
 				except univention.admin.uexceptions.ldapError, e:

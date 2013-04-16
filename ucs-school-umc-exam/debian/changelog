@@ -1,3 +1,9 @@
+ucs-school-umc-exam (0.1.6-1) unstable; urgency=low
+
+  * groups/group objects need to be opened for creation (Bug #30832)
+
+ -- Arvid Requate <requate@univention.de>  Tue, 16 Apr 2013 18:01:44 +0200
+
 ucs-school-umc-exam (0.1.5-1) unstable; urgency=low
 
   * Bug #30832: adjusted UMC ACLs, fixed some errors
