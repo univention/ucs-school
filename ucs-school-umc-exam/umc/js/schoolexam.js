@@ -213,11 +213,13 @@ define([
 
 		onFinished: function(values) {
 			// start the exam
-			tools.umcpCommand('schoolexam/start_exam', {}, false);
+			tools.umcpCommand('schoolexam/startexam', {
+				recipients: values.recipients,
+				room: values.room
+			}, false);
 
 			// reserve the computerroom and adjust its settings
 			tools.umcpCommand('computerroom/room/acquire', {
-				school: values.school,
 				room: values.room
 			}).then(function() {
 				return tools.umcpCommand('computerroom/settings/set', {

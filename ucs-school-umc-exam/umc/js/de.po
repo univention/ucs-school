@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-exam\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2013-04-08 17:33+0200\n"
+"POT-Creation-Date: 2013-04-16 15:59+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -12,50 +12,137 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: umc/js/schoolexam.js:172
-msgid "Cancel"
+#: umc/js/schoolexam.js:174
+msgid ""
+"<p>In this text box you can list web sites that are allowed to be used by "
+"the students. Each line should contain one web site. Example: </p><p style="
+"\"font-family: monospace\">univention.com<br/>wikipedia.org<br/></p>"
 msgstr ""
 
-#: umc/js/schoolexam.js:162 umc/js/schoolexam.js:167
-msgid "Close"
+#: umc/js/schoolexam.js:68
+msgid ""
+"<p>The UCS@school exam mode allows one to perform an exam in a computer "
+"room. During the exam, access to internet as well as to shares can be "
+"restricted, the student home directories are not accessible, either.</"
+"p><p>Please enter a name for the new exam and select the classes or "
+"workgroups that participate in the exam. A directory name is proposed "
+"automatically and can be adjusted if wanted.</p>"
 msgstr ""
 
-#: umc/js/schoolexam.js:118
-msgid "Message"
+#: umc/js/schoolexam.js:107
+msgid "Assign classes/workgroups"
 msgstr ""
 
 #: umc/js/schoolexam.js:108
-msgid "Recipient"
+msgid "Assigned classes/workgroups"
 msgstr ""
 
-#: umc/js/schoolexam.js:150
-msgid "Send"
+#: umc/js/schoolexam.js:80
+msgid "Choose the computer room in which the exam will take place"
 msgstr ""
 
-#: umc/js/schoolexam.js:102
-msgid "Sender"
+#: umc/js/schoolexam.js:72
+msgid "Choose the school"
+msgstr ""
+
+#: umc/js/schoolexam.js:79
+msgid "Computer room"
+msgstr ""
+
+#: umc/js/schoolexam.js:145
+msgid "Computer room settings"
+msgstr ""
+
+#: umc/js/schoolexam.js:162
+msgid "Default (global settings)"
+msgstr ""
+
+#: umc/js/schoolexam.js:151
+msgid "Defines restriction for the share access"
 msgstr ""
 
 #: umc/js/schoolexam.js:91
-msgid "Sending a message"
+msgid "Directory name"
 msgstr ""
 
-#: umc/js/schoolexam.js:166
-msgid "Should the UMC module be closed? All unsaved modification will be lost."
+#: umc/js/schoolexam.js:86
+msgid "Exam name"
 msgstr ""
 
-#: umc/js/schoolexam.js:113
-msgid "Subject"
+#: umc/js/schoolexam.js:138
+msgid "Files"
 msgstr ""
 
-#: umc/js/schoolexam.js:197
-msgid "The message could not be send: "
+#: umc/js/schoolexam.js:139
+msgid "Files that are distributed along with this exam"
 msgstr ""
 
-#: umc/js/schoolexam.js:194
-msgid "The message has been sent"
+#: umc/js/schoolexam.js:153
+msgid "Home directory only"
 msgstr ""
 
-#: umc/js/schoolexam.js:83
-msgid "The schoolexam module is not configured properly"
+#: umc/js/schoolexam.js:171
+msgid "List of allowed web sites for \"{myRules}\""
+msgstr ""
+
+#: umc/js/schoolexam.js:109
+msgid "List of groups that are marked to receive the teaching materials"
+msgstr ""
+
+#: umc/js/schoolexam.js:154
+msgid "No restrictions"
+msgstr ""
+
+#: umc/js/schoolexam.js:63
+msgid "Personal internet rules"
+msgstr ""
+
+#: umc/js/schoolexam.js:132
+msgid ""
+"Please select all necessary files for the exam and upload them one by one. "
+"These files will be distributed to all participating students. A copy of the "
+"original files will be stored in your home directory, as well. During the "
+"exam or at the end of it, the corresponding files can be collected from the "
+"students. The collected files will be stored in your home directory, as well."
+msgstr ""
+
+#: umc/js/schoolexam.js:146
+msgid ""
+"Please select the access restrictions to internet as well as to shares. "
+"These settings can also be adjusted during the exam via the room settings in "
+"the module <i>Computer room</i>. Note that the student home directories are "
+"not accessible during the exam mode."
+msgstr ""
+
+#: umc/js/schoolexam.js:73 umc/js/schoolexam.js:113
+msgid "School"
+msgstr ""
+
+#: umc/js/schoolexam.js:120
+msgid "Search name"
+msgstr ""
+
+#: umc/js/schoolexam.js:150
+msgid "Share access"
+msgstr ""
+
+#: umc/js/schoolexam.js:67
+msgid "Start a new exam"
+msgstr ""
+
+#: umc/js/schoolexam.js:87
+msgid "The name of the exam, e.g., \"Math exam algrebra 02/2013\"."
+msgstr ""
+
+#: umc/js/schoolexam.js:92
+msgid ""
+"The name of the project directory as it will be displayed in the file system."
+msgstr ""
+
+#: umc/js/schoolexam.js:131
+msgid "Upload of exam files"
+msgstr ""
+
+#: umc/js/schoolexam.js:159
+msgid "Web access profile"
 msgstr ""
