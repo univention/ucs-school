@@ -34,10 +34,6 @@
 
 eval "$(univention-config-registry shell)"
 
-univention-config-registry set \
-	ucsschool/ldap/default/container/exam?examusers \
-	ucsschool/ldap/default/userprefix/exam?"exam-"
-
 if [ "$server_role" = "domaincontroller_master" ] || [ "$server_role" = "domaincontroller_backup" ]; then
 	/usr/lib/univention-install/35ucs-school-umc-exam-master.inst || true
 fi

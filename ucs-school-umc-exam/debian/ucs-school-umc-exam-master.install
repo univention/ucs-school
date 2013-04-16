@@ -1,1 +1,2 @@
-35ucs-school-umc-exam-master.inst usr/lib/univention-install/
+35ucs-school-umc-exam-master.inst	usr/lib/univention-install/
+hooks/ou_create_post.d/60schoolexam-master	usr/share/ucs-school-import/hooks/ou_create_post.d

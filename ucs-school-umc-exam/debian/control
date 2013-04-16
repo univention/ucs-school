@@ -28,6 +28,7 @@ Architecture: all
 Depends: ${misc:Depends},
  univention-management-console-server,
  python-ucs-school,
+ ucs-school-import,
  devscripts
 Description: UMC module delivering backend services for ucs-school-umc-exam
  UMC module delivering backend services for ucs-school-umc-exam

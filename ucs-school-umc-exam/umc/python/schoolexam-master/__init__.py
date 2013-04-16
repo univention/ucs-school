@@ -51,9 +51,7 @@ class Instance( SchoolBaseModule ):
 	def __init__( self ):
 		SchoolBaseModule.__init__(self)
 
-		self._examUserContainerName = ucr.get('ucsschool/ldap/default/container/exam', 'examusers')
 		self._examUserPrefix = ucr.get('ucsschool/ldap/default/userprefix/exam', 'exam-')
-		self._examGroupname = ucr.get('ucsschool/ldap/default/groupname/exam', 'OU%(ou)s-Klassenarbeit')
 
 		## cache objects
 		self._udm_modules = []
@@ -72,10 +70,6 @@ class Instance( SchoolBaseModule ):
 	def examGroup(self):
 		'''fetch the unopened examGroup object, create it if missing'''
 		if not self._examGroup:
-			## replace '%(ou)s' strings in generic exam_group_name
-			ucr_value_keywords = { 'ou': self._search_base.school }
-			exam_group_name = self._examGroupname % ucr_value_keywords
-
 			if 'groups/group' in self._udm_modules:
 				module_groups_group = self._udm_modules['groups/group']
 			else:
@@ -84,16 +78,14 @@ class Instance( SchoolBaseModule ):
 				self._udm_modules['groups/group'] = module_groups_group
 
 			## Determine exam_group_dn
-			ldap_filter = '(&(cn=%s)(objectClass=univentionGroup))' % exam_group_name
-			exam_group_dn = self._ldap_admin_write.searchDn(ldap_filter, self._search_base.groups, unique=1)
-			if len(exam_group_dn) == 1:
-				self._examGroup = module_groups_group.object(None, self._ldap_admin_write, self._ldap_position, exam_group_dn[0])
-			else:
-				default_exam_group_position_dn = "cn=ucsschool,cn=groups,%s" % self._search_base.schoolDN
-				exam_group_dn = "cn=%s,%s" % (exam_group_name, default_exam_group_position_dn)
+			try:
+				ldap_filter = '(&(cn=%s)(objectClass=univentionGroup))' % exam_group_name
+				exam_group_dn = self._ldap_admin_write.searchDn(ldap_filter, self._search_base.examGroup, scope='base')
+				self._examGroup = module_groups_group.object(None, self._ldap_admin_write, self._ldap_position, self._search_base.examGroup)
+			except univention.admin.uexceptions.ldapError:
 				try:
-					self._examGroup = module_groups_group.object(None, self._ldap_admin_write, self._ldap_position, exam_group_dn)
-					self._examGroup['name'] = exam_group_name
+					self._examGroup = module_groups_group.object(None, self._ldap_admin_write, self._ldap_position, self._search_base.examGroup)
+					self._examGroup['name'] = self._search_base._examGroupname
 					self._examGroup.create()
 				except univention.admin.uexceptions.ldapError, e:
 					message = 'Failed to create exam group\n%s' % traceback.format_exc()
@@ -105,24 +97,21 @@ class Instance( SchoolBaseModule ):
 	def examUserContainerDN(self):
 		'''lookup examUserContainerDN, create it if missing'''
 		if not self._examUserContainerDN:
-			ldap_filter = '(&(objectClass=organizationalRole)(cn=%s))' % self._examUserContainerName
-			exam_user_container_dn = self._ldap_admin_write.searchDn(ldap_filter, self._search_base.schoolDN,  scope='sub', unique=1)
-			if len(exam_user_container_dn) == 1:
-				self._examUserContainerDN = exam_user_container_dn[0]
-			else:
-				default_exam_user_container_position_dn = "%s" % self._search_base.schoolDN
-				exam_user_container_dn = "cn=%s,%s" % (self._examUserContainerName, default_exam_user_container_position_dn)
+			try:
+				ldap_filter = '(&(objectClass=organizationalRole)(cn=%s))' % self._examUserContainerName
+				exam_user_container_dn = self._ldap_admin_write.searchDn(ldap_filter, self._search_base.examUsers, scope='base')
+			except univention.admin.uexceptions.ldapError:
 				try:
 					module_containers_cn = univention.admin.modules.get('containers/cn')
 					univention.admin.modules.init(self._ldap_admin_write, self._ldap_position, module_containers_cn)
-					exam_user_container = module_containers_cn.object(None, self._ldap_admin_write, self._ldap_position, exam_user_container_dn)
-					exam_user_container['name'] = self._examUserContainerName
+					exam_user_container = module_containers_cn.object(None, self._ldap_admin_write, self._ldap_position, self._search_base.examUsers)
+					exam_user_container['name'] = self._search_base._examUserContainerName
 					exam_user_container.create()
 				except univention.admin.uexceptions.ldapError, e:
 					message = 'Failed to create exam container\n%s' % traceback.format_exc()
 					raise UMC_CommandError( message )
 
-				self._examUserContainerDN = exam_user_container_dn
+			self._examUserContainerDN = self._search_base.examUsers
 
 		return self._examUserContainerDN
 
