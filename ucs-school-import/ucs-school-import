@@ -104,6 +104,7 @@ cn_teachers = configRegistry.get('ucsschool/ldap/default/container/teachers', 'l
 cn_teachers_staff = configRegistry.get('ucsschool/ldap/default/container/teachers-and-staff', 'lehrer und mitarbeiter')
 cn_admins	= configRegistry.get('ucsschool/ldap/default/container/admins', 'admins')
 cn_staff	= configRegistry.get('ucsschool/ldap/default/container/staff', 'mitarbeiter')
+cn_exam	= configRegistry.get('ucsschool/ldap/default/container/exam', 'examusers')
 
 grp_prefix_pupils   = configRegistry.get('ucsschool/ldap/default/groupprefix/pupils', 'schueler-')
 grp_prefix_teachers = configRegistry.get('ucsschool/ldap/default/groupprefix/teachers', 'lehrer-')
@@ -114,6 +115,8 @@ grp_policy_pupils	= configRegistry.get('ucsschool/ldap/default/policy/umc/pupils
 grp_policy_teachers = configRegistry.get('ucsschool/ldap/default/policy/umc/teachers', 'cn=ucsschool-umc-teachers-default,cn=UMC,cn=policies,%s' % baseDN)
 grp_policy_admins	= configRegistry.get('ucsschool/ldap/default/policy/umc/admins', 'cn=ucsschool-umc-admins-default,cn=UMC,cn=policies,%s' % baseDN)
 grp_policy_staff	= configRegistry.get('ucsschool/ldap/default/policy/umc/staff', 'cn=ucsschool-umc-staff-default,cn=UMC,cn=policies,%s' % baseDN)
+
+grp_name_exam	= configRegistry.get('ucsschool/ldap/default/groupname/exam', 'OU%(ou)s-Klassenarbeit')
 
 UCRV_serverprofile_option = configRegistry.get('ucsschool/import/set/serverprofile/path', None)
 UCRV_netlogon_script_path = configRegistry.get('ucsschool/import/set/netlogon/script/path', None)
@@ -130,13 +133,14 @@ generate_logins = configRegistry.get('ucsschool/import/generate/logins', 'no').l
 # IP address prefix len conecerning the netmask
 default_prefixlen = 24
 
-if not (cn_pupils and cn_teachers and cn_teachers_staff and cn_admins and cn_staff):
+if not (cn_pupils and cn_teachers and cn_teachers_staff and cn_admins and cn_staff and cn_exam):
 	print '''ERROR: Unable to proceed: one of the following UCR variables is not set correctly:
 	ucsschool/ldap/default/container/pupils
 	ucsschool/ldap/default/container/teachers
 	ucsschool/ldap/default/container/teachers-and-staff
 	ucsschool/ldap/default/container/staff
 	ucsschool/ldap/default/container/admins
+	ucsschool/ldap/default/container/exam
 '''
 	sys.exit (1)
 
@@ -480,7 +484,7 @@ def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None, ShareFileServer=None
 	print "verify ou for school nr %s"%schoolNr
 	# list of needed sub-containers, the dictionary-key adds the container as default during create in verify_container
 	container={'0printerPath':['cn=printers'],
-			   '1userPath':['cn=users','cn=%s,cn=users' % cn_pupils,'cn=%s,cn=users' % cn_teachers,'cn=%s,cn=users' % cn_admins],
+			   '1userPath':['cn=users','cn=%s,cn=users' % cn_pupils,'cn=%s,cn=users' % cn_teachers,'cn=%s,cn=users' % cn_admins, cn_exam],
 			   '2computerPath':['cn=computers','cn=server,cn=computers','cn=dc,cn=server,cn=computers'],
 			   '3networkPath':['cn=networks'],
 			   '4groupPath':['cn=groups','cn=%s,cn=groups' % cn_pupils,'cn=%s,cn=groups' % cn_teachers,'cn=klassen,cn=%s,cn=groups' % cn_pupils,'cn=raeume,cn=groups'],
@@ -507,6 +511,8 @@ def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None, ShareFileServer=None
 	myline = '%s\t%s' % ( schoolNr, dccn )
 	hooks.pre( 'ou', 'A', line = myline )
 
+	ucr_value_keywords = { 'ou': schoolNr.lower() }
+
 	# verify global dc groups
 	groups_management = [
 		"cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,%s" % baseDN,
@@ -519,7 +525,8 @@ def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None, ShareFileServer=None
 		"cn=OU%s-Member-Verwaltungsnetz,cn=ucsschool,cn=groups,%s" % (schoolNr.lower(), baseDN)]
 	groups_educationOU=[
 		"cn=OU%s-DC-Edukativnetz,cn=ucsschool,cn=groups,%s" % (schoolNr.lower(), baseDN),
-		"cn=OU%s-Member-Edukativnetz,cn=ucsschool,cn=groups,%s" % (schoolNr.lower(), baseDN)]
+		"cn=OU%s-Member-Edukativnetz,cn=ucsschool,cn=groups,%s" % (schoolNr.lower(), baseDN),
+		"cn=%s,cn=ucsschool,cn=groups,%s" % (grp_name_exam % ucr_value_keywords, baseDN)]
 
 	if configRegistry.is_true('ucsschool/ldap/noneducational/create/objects', True):
 		groups = groups_management + groups_education + groups_managementOU + groups_educationOU
