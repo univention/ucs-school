@@ -79,7 +79,7 @@ class Instance( SchoolBaseModule ):
 
 			## Determine exam_group_dn
 			try:
-				ldap_filter = '(&(cn=%s)(objectClass=univentionGroup))' % exam_group_name
+				ldap_filter = '(objectClass=univentionGroup)'
 				exam_group_dn = self._ldap_admin_write.searchDn(ldap_filter, self._search_base.examGroup, scope='base')
 				self._examGroup = module_groups_group.object(None, self._ldap_admin_write, self._ldap_position, self._search_base.examGroup)
 			except univention.admin.uexceptions.ldapError:
@@ -98,7 +98,7 @@ class Instance( SchoolBaseModule ):
 		'''lookup examUserContainerDN, create it if missing'''
 		if not self._examUserContainerDN:
 			try:
-				ldap_filter = '(&(objectClass=organizationalRole)(cn=%s))' % self._examUserContainerName
+				ldap_filter = '(objectClass=organizationalRole)'
 				exam_user_container_dn = self._ldap_admin_write.searchDn(ldap_filter, self._search_base.examUsers, scope='base')
 			except univention.admin.uexceptions.ldapError:
 				try:
