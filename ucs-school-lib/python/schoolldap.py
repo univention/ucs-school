@@ -139,7 +139,7 @@ def get_ldap_connections( connection_types, force = False ):
 		elif conn == MACHINE_WRITE:
 			lo, pos = udm_uldap.getMachineConnection( ldap_master = True )
 		elif conn == ADMIN_WRITE:
-			lo, pos = udm_uldap.getAdminConnection( ldap_master = True )
+			lo, pos = udm_uldap.getAdminConnection()
 
 		connections[ conn ] = lo
 		_ldap_connections[ conn ] = lo

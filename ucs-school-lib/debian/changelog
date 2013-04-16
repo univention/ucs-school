@@ -1,3 +1,9 @@
+ucs-school-lib (2.0.20-1) unstable; urgency=low
+
+  * Bug #30832: removed ldap_master=True from getAdminConnection()
+
+ -- Alexander Kläser <klaeser@univention.de>  Tue, 16 Apr 2013 17:57:16 +0200
+
 ucs-school-lib (2.0.19-1) unstable; urgency=low
 
   * Add ADMIN_WRITE option to LDAP_Connection decorator (for Bug #30832)
