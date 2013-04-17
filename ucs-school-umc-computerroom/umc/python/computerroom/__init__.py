@@ -514,6 +514,7 @@ class Instance( SchoolBaseModule ):
 		if not self._italc.school or not self._italc.room:
 			raise UMC_CommandError( 'no room selected' )
 
+		ucr.load()
 		rule = ucr.get( 'proxy/filter/room/%s/rule' % self._italc.room, 'none' )
 		if rule == self._username:
 			rule = 'custom'
@@ -637,16 +638,13 @@ class Instance( SchoolBaseModule ):
 			vunset_now.append( 'samba/printmode/room/%s' % self._italc.room )
 
 		# share mode
-		if request.options[ 'shareMode' ] in ( 'none', 'home' ):
+		if request.options[ 'shareMode' ] == 'home':
 			vunset.append( 'samba/sharemode/room/%s' % self._italc.room )
 			vset[ vunset[ -1 ] ] = request.options[ 'shareMode' ]
 			vextract.append( 'samba/othershares/hosts/deny' )
 			vappend[ vextract[ -1 ] ] = hosts
 			vextract.append( 'samba/share/Marktplatz/hosts/deny' )
 			vappend[ vextract[ -1 ] ] = hosts
-			if request.options[ 'shareMode' ] == 'none':
-				vextract.append( 'samba/share/homes/hosts/deny' )
-				vappend[ vextract[ -1 ] ] = hosts
 		else:
 			vunset_now.append( 'samba/sharemode/room/%s' % self._italc.room )
 
@@ -669,11 +667,11 @@ class Instance( SchoolBaseModule ):
 				vset[ 'proxy/filter/setting-user/%s/filtertype' % self._username ] = 'whitelist-block'
 				i = 1
 				for domain in request.options.get( 'customRule' ).split( '\n' ):
-					MODULE.info( 'Setting whitelist antry for domain %s' % domain )
+					MODULE.info( 'Setting whitelist entry for domain %s' % domain )
 					if not domain:
 						continue
 					parsed = urlparse.urlsplit( domain )
-					MODULE.info( 'Setting whitelist antry for domain %s' % str( parsed ) )
+					MODULE.info( 'Setting whitelist entry for domain %s' % str( parsed ) )
 					if parsed.netloc:
 						vset[ 'proxy/filter/setting-user/%s/domain/whitelisted/%d' % ( self._username, i ) ] = parsed.netloc
 						i += 1

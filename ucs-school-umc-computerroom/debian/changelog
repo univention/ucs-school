@@ -1,3 +1,10 @@
+ucs-school-umc-computerroom (2.0.17-1) unstable; urgency=low
+
+  * remove "no access" from share restriction list; Bug #31002
+  * fix initial value of settings dialog; Bug #30833
+
+ -- Florian Best <best@univention.de>  Wed, 17 Apr 2013 16:49:06 +0200
+
 ucs-school-umc-computerroom (2.0.16-1) unstable; urgency=low
 
   * adapt module for exam mode; Bug #30833

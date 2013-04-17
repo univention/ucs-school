@@ -139,15 +139,15 @@ define([
 
 			// define actions above grid
 			this._headActions = [{
-				name: 'stop_exam',
+				name: 'stopExam',
 				style: 'float: left;',
 				label: _('stop exam'),
-				callback: lang.hitch(this, 'stop_exam')
+				callback: lang.hitch(this, 'stopExam')
 			}, {
 				name: 'collect',
 				style: 'float: left;',
 				label: _('collect results'),
-				callback: lang.hitch(this, 'collect_results')
+				callback: lang.hitch(this, 'collectResults')
 			}, {
 				name: 'settings',
 				style: 'padding-bottom: 10px; padding-bottom; 10px; float: right;',
@@ -156,7 +156,7 @@ define([
 			}, {
 				name: 'select_room',
 				style: 'padding-bottom: 10px; padding-bottom; 10px; float: right;',
-				label: _('select new room'),
+				label: _('change room'),
 				callback: lang.hitch(this, 'changeRoom')
 			}];
 
@@ -390,7 +390,7 @@ define([
 			this._searchPage.set('headerText', header);
 
 			// update visibility of header buttons
-			this._headButtons.stop_exam.set('visible', roomInfo && roomInfo.exam);
+			this._headButtons.stopExam.set('visible', roomInfo && roomInfo.exam);
 			this._headButtons.collect.set('visible', roomInfo && roomInfo.exam);
 
 			// hide time period input field in settings dialog
@@ -711,8 +711,8 @@ define([
 			}));
 		},
 
-		collect_results: function() {},
-		stop_exam: function() {},
+		collectResults: function() {},
+		stopExam: function() {},
 
 		changeRoom: function() {
 			// define a cleanup function
