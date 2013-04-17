@@ -1,3 +1,10 @@
+ucs-school-import (9.0.10-3) unstable; urgency=low
+
+  * unify wording of "single server environment" and "multi server
+  	environment"; Bug #30268
+
+ -- Florian Best <best@univention.de>  Wed, 17 Apr 2013 11:25:02 +0200
+
 ucs-school-import (9.0.10-2) unstable; urgency=low
 
   * revert last change (for Bug #30832)
