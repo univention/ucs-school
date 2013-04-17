@@ -240,55 +240,7 @@ class Instance( SchoolBaseModule ):
 
 				if 'recipients' in iprops:
 					# lookup the users in LDAP and save them to the project
-					users = []
-					for idn in iprops.get('recipients', []):
-						try:
-							# try to load the UDM user object given its DN
-							attrs = ldap_user_read.get( idn )
-							obj_types = udm_modules.objectType( None, ldap_user_read, idn, attr = attrs )
-							if not obj_types:
-								MODULE.warn( 'Ignoring the recipient %s' % idn )
-								continue
-							udmModule = udm_modules.get( obj_types[ 0 ] )
-							iobj = udmModule.object( None, ldap_user_read, None, idn, attributes = attrs )
-							iobj.open()
-
-							if obj_types[ 0 ] == 'users/user':
-								# create a new User object, it will only remember its relevant information
-								iuser = util.User(iobj.info)
-								iuser.dn = iobj.dn
-								users.append(iuser)
-							elif obj_types[ 0 ] == 'groups/group':
-								# initiate a new search base using the ou in the group
-								schoolDN = iobj.dn[iobj.dn.find('ou='):]
-								school = ldap_user_read.explodeDn(schoolDN, 1)[0]
-								_search_base = SchoolSearchBase(school, school, schoolDN)
-
-								# open group object
-								igroup = util.Group( iobj.info )
-								igroup.name = igroup.name.replace('%s-' % _search_base.school, '', 1)
-								igroup.dn = iobj.dn
-
-								userModul = udm_modules.get( 'users/user' )
-								for userdn in iobj[ 'users' ]:
-									# only remember students
-									if not _search_base.isStudent(userdn):
-										MODULE.info('Ignoring non-student: %s' % userdn)
-										continue
-
-									# open the user
-									iuserobj = userModul.object( None, ldap_user_read, None, userdn )
-									iuserobj.open()
-
-									# save user information, only its relevant information will be kept
-									iuser = util.User( iuserobj.info )
-									iuser.dn = iuserobj.dn
-									igroup.members.append( iuser )
-								users.append( igroup )
-						except udm_exceptions.noObject as e:
-							MODULE.error('Could not find user DN: %s' % idn)
-						except LDAP_ConnectionError as e:
-							MODULE.error('Could not open user DN: %s (%s)' % (idn, e))
+					users = [ientry for ientry in [ util.openRecipients(idn, ldap_user_read, search_base) for idn in iprops.get('recipients', []) ] if ientry ]
 					project.recipients = users
 					MODULE.info('recipients: %s' % users)
 

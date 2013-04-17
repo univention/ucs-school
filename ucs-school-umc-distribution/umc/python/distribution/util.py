@@ -37,6 +37,11 @@ from univention.lib.i18n import Translation
 from univention.management.console.log import MODULE
 import univention.lib.atjobs as atjobs
 
+import univention.admin.modules as udm_modules
+import univention.admin.uexceptions as udm_exceptions
+
+from ucsschool.lib.schoolldap import LDAP_ConnectionError, SchoolSearchBase
+
 #import notifier
 #import notifier.popen
 
@@ -193,6 +198,57 @@ class Group( _Dict ):
 			self.update(args[0])
 		else:
 			self.update(_props)
+
+def openRecipients(entryDN, ldap_connection, search_base):
+	entry = None
+	try:
+		# try to load the UDM user/group object given its DN
+		attrs = ldap_connection.get( entryDN )
+		obj_types = udm_modules.objectType( None, ldap_connection, entryDN, attr = attrs )
+		if not obj_types:
+			MODULE.warn( 'Ignoring the recipient %s' % entryDN )
+			return None
+		udmModule = udm_modules.get( obj_types[ 0 ] )
+		entryObj = udmModule.object( None, ldap_connection, None, entryDN, attributes = attrs )
+		entryObj.open()
+
+		if obj_types[ 0 ] == 'users/user':
+			# create a new User object, it will only remember its relevant information
+			user = User(entryObj.info)
+			user.dn = entryObj.dn
+			return user
+		elif obj_types[ 0 ] == 'groups/group':
+			# initiate a new search base using the ou in the group
+			schoolDN = entryObj.dn[entryObj.dn.find('ou='):]
+			school = ldap_connection.explodeDn(schoolDN, 1)[0]
+			_search_base = SchoolSearchBase(school, school, schoolDN)
+
+			# open group object
+			group = Group( entryObj.info )
+			group.name = group.name.replace('%s-' % _search_base.school, '', 1)
+			group.dn = entryObj.dn
+
+			userModul = udm_modules.get( 'users/user' )
+			for userdn in entryObj[ 'users' ]:
+				# only remember students
+				if not _search_base.isStudent(userdn):
+					MODULE.info('Ignoring non-student: %s' % userdn)
+					continue
+
+				# open the user
+				userobj = userModul.object( None, ldap_connection, None, userdn )
+				userobj.open()
+
+				# save user information, only its relevant information will be kept
+				user = User( userobj.info )
+				user.dn = userobj.dn
+				group.members.append( user )
+			return group
+	except udm_exceptions.noObject as e:
+		MODULE.error('Could not find object DN: %s' % entryDN)
+	except LDAP_ConnectionError as e:
+		MODULE.error('Could not open object DN: %s (%s)' % (entryDN, e))
+	return None
 
 class Project(_Dict):
 	def __init__(self, *args, **_props):
