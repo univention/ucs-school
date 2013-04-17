@@ -1,3 +1,10 @@
+ucs-school-umc-installer (0.1.40-1) unstable; urgency=low
+
+  * unify wording of "single server environment" and "multi server
+    environment"; Bug #30268
+
+ -- Florian Best <best@univention.de>  Wed, 17 Apr 2013 11:39:21 +0200
+
 ucs-school-umc-installer (0.1.39-1) unstable; urgency=low
 
   * unify wording of "single server environment" and "multi server

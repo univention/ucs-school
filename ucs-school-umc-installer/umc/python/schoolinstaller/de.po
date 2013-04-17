@@ -156,7 +156,7 @@ msgstr ""
 #: umc/python/schoolinstaller/__init__.py:532
 msgid ""
 "The UCS@school master domain controller needs to be configured similarly to "
-"this backup system. Please choose the correct server environment for this "
+"this backup system. Please choose the correct environment type for this "
 "system."
 msgstr ""
 "Das UCS@school-Domänencontroller-Master-System muss gleich wie das "
@@ -165,7 +165,7 @@ msgstr ""
 
 #: umc/python/schoolinstaller/__init__.py:529
 msgid ""
-"The UCS@school master domain controller system is not configured as a multi "
+"The master domain controller is not configured for a UCS@school multi "
 "server environment. Cannot proceed installation on this system."
 msgstr ""
 "Das UCS@school-Domänencontroller-Master-System ist nicht für den Multi-"

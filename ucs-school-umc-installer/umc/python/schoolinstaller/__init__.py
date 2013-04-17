@@ -526,10 +526,10 @@ class Instance(Base):
 					_error(_('Please install UCS@school on the master domain controller system. Cannot proceed installation on this system.'))
 					return
 				if serverRole == 'domaincontroller_slave' and schoolVersion != 'multiserver':
-					_error(_('The UCS@school master domain controller system is not configured as a multi server environment. Cannot proceed installation on this system.'))
+					_error(_('The master domain controller is not configured for a UCS@school multi server environment. Cannot proceed installation on this system.'))
 					return
 				if serverRole == 'domaincontroller_backup' and schoolVersion != setup:
-					_error(_('The UCS@school master domain controller needs to be configured similarly to this backup system. Please choose the correct server environment for this system.'))
+					_error(_('The UCS@school master domain controller needs to be configured similarly to this backup system. Please choose the correct environment type for this system.'))
 					return
 				if serverRole == 'domaincontroller_backup' and not joined:
 					_error(_('In order to install UCS@school on a backup domain controller, the system needs to be joined first.'))

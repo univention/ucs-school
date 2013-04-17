@@ -67,11 +67,11 @@ define([
 			this.pages = [{
 				name: 'setup',
 				headerText: _('UCS@school - server setup'),
-				helpText: _('<p>This wizard guides you step by step through the installation of UCS@school in your domain.</p><p>For the installation of UCS@school, there exist two different installation environments: a single server environment and a multi server environment. The selection of an environment has implications for the following installation steps. Further information for the selected environments will be displayed below.</p>'),
+				helpText: _('<p>This wizard guides you step by step through the installation of UCS@school in your domain.</p><p>For the installation of UCS@school, there exist two different environment types: the single server environment and the multi server environment. The selection of an environment type has implications for the following installation steps. Further information for the selected environment type will be displayed below.</p>'),
 				widgets: [{
 					type: ComboBox,
 					name: 'setup',
-					label: _('Please choose an installation environment:'),
+					label: _('Please choose an environment type:'),
 					autoHide: true,
 					sortDynamicValues: false,
 					dynamicValues: lang.hitch(this, function() {
@@ -97,8 +97,8 @@ define([
 					}),
 					onChange: lang.hitch(this, function(newVal, widgets) {
 						var texts = {
-							multiserver: _('<p>In the multi server environment, the master domain controller system is configured as central instance hosting the complete set of LDAP data. Each school is configured to have its own slave domain controller system that selectively replicates the school\'s own LDAP OU structure. In that way, different schools do not have access to data from other schools, they only see their own data. Teaching related UMC modules are only accessibly on the slave domain controller. The master domain controller does not provide UMC modules for teachers. After configuring a master system, one or more slave systems must be configured and joined into the UCS@school domain.</p>'),
-							singlemaster: _('<p>In the single server environment, the master domain controller system is configured as standalone UCS@school server instance. All school related data and thus all school OU structures are hosted and accessed on the master domain controller itself. Teaching related UMC modules are provided directly on the master itself. Note that this setup can lead to performance problems in larger environments.</p>')
+							multiserver: _('<p>In a multi server environment, the master domain controller system is configured as central instance hosting the complete set of LDAP data. Each school is configured to have its own slave domain controller system that selectively replicates the school\'s own LDAP OU structure. In that way, different schools do not have access to data from other schools, they only see their own data. Teaching related UMC modules are only accessibly on the slave domain controller. The master domain controller does not provide UMC modules for teachers. After configuring a master system, one or more slave systems must be configured and joined into the UCS@school domain.</p>'),
+							singlemaster: _('<p>In a single server environment, the master domain controller system is configured as standalone UCS@school server instance. All school related data and thus all school OU structures are hosted and accessed on the master domain controller itself. Teaching related UMC modules are provided directly on the master itself. Note that this setup can lead to performance problems in larger environments.</p>')
 						};
 
 						// update the help text according to the value chosen...

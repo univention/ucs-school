@@ -14,7 +14,7 @@ msgstr ""
 
 #: umc/js/schoolinstaller.js:100
 msgid ""
-"<p>In the multi server environment, the master domain controller system is "
+"<p>In a multi server environment, the master domain controller system is "
 "configured as central instance hosting the complete set of LDAP data. Each "
 "school is configured to have its own slave domain controller system that "
 "selectively replicates the school's own LDAP OU structure. In that way, "
@@ -37,7 +37,7 @@ msgstr ""
 
 #: umc/js/schoolinstaller.js:101
 msgid ""
-"<p>In the single server environment, the master domain controller system is "
+"<p>In a single server environment, the master domain controller system is "
 "configured as standalone UCS@school server instance. All school related data "
 "and thus all school OU structures are hosted and accessed on the master "
 "domain controller itself. Teaching related UMC modules are provided directly "
@@ -64,10 +64,10 @@ msgstr ""
 msgid ""
 "<p>This wizard guides you step by step through the installation of "
 "UCS@school in your domain.</p><p>For the installation of UCS@school, there "
-"exist two different installation environments: a single server environment "
-"and a multi server environment. The selection of an environment has "
+"exist two different environment types: the single server environment "
+"and the multi server environment. The selection of an environment type has "
 "implications for the following installation steps. Further information for "
-"the selected environments will be displayed below.</p>"
+"the selected environment type will be displayed below.</p>"
 msgstr ""
 "<p>Dieser Assistent begleitet Sie Schritt für Schritt bei der Installation "
 "von UCS@school in Ihrer Domäne.</p><p>Es gibt zwei mögliche "
@@ -137,7 +137,7 @@ msgid ""
 "master system itself."
 msgstr ""
 "In einer Single-Server-Umgebung werden alle Schul-OUs von dem "
-"Domänencontroller Master selber verwaltet."
+"Domänencontroller Master selbst verwaltet."
 
 #: umc/js/schoolinstaller.js:140
 msgid ""
@@ -215,8 +215,8 @@ msgstr ""
 "anderer Schulen kann nicht zugegriffen werden."
 
 #: umc/js/schoolinstaller.js:74
-msgid "Please choose an installation environment:"
-msgstr "Bitte wählen Sie ein Installationsumgebung aus:"
+msgid "Please choose an environment type:"
+msgstr "Bitte wählen Sie ein Installationsszenario aus:"
 
 #: umc/js/schoolinstaller.js:149
 msgid "Please choose which Samba version you would like to install:"
