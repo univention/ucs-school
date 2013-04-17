@@ -1,3 +1,10 @@
+ucs-school-metapackage (5.0.9-6) unstable; urgency=low
+
+  * unify wording of "single server environment" and "multi server
+    environment"; Bug #30268
+
+ -- Florian Best <best@univention.de>  Wed, 17 Apr 2013 11:25:48 +0200
+
 ucs-school-metapackage (5.0.9-5) unstable; urgency=low
 
   * Bug #30831: added exam module list of recommended packages
