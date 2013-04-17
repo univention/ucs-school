@@ -43,6 +43,7 @@ define([
 	"umc/tools",
 	"umc/widgets/ExpandingTitlePane",
 	"umc/widgets/Grid",
+	"umc/widgets/Button",
 	"umc/widgets/Module",
 	"umc/widgets/Page",
 	"umc/widgets/Form",
@@ -51,12 +52,11 @@ define([
 	"umc/widgets/ComboBox",
 	"umc/widgets/Tooltip",
 	"umc/modules/computerroom/ScreenshotView",
-	"umc/modules/computerroom/RescheduleDialog",
 	"umc/modules/computerroom/SettingsDialog",
 	"umc/i18n!umc/modules/computerroom"
 ], function(declare, lang, array, aspect, dom, Deferred, Dialog, ItemFileWriteStore, DataStore,
-            Memory, dialog, tools, ExpandingTitlePane, Grid, Module, Page, Form, ContainerWidget,
-            Text, ComboBox, Tooltip, ScreenshotView, RescheduleDialog, SettingsDialog, _) {
+            Memory, dialog, tools, ExpandingTitlePane, Grid, Button, Module, Page, Form,
+            ContainerWidget, Text, ComboBox, Tooltip, ScreenshotView, SettingsDialog, _) {
 
 	return declare("umc.modules.computerroom", [ Module ], {
 		// summary:
@@ -94,9 +94,6 @@ define([
 		// internal reference to the expanding title pane
 		_titlePane: null,
 
-		_profileInfo: null,
-		_validTo: null,
-
 		_dataStore: null,
 		_objStore: null,
 
@@ -112,6 +109,11 @@ define([
 		_nUpdateFailures: 0,
 
 		_vncEnabled: false,
+
+		// buttons above grid
+		_headActions: null,
+		_headButtons: null,
+		_changeSettingsLabel: null,
 
 		uninitialize: function() {
 			this.inherited(arguments);
@@ -135,22 +137,33 @@ define([
 				user: null
 			};
 
+			// define actions above grid
+			this._headActions = [{
+				name: 'stop_exam',
+				style: 'float: left;',
+				label: _('stop exam'),
+				callback: lang.hitch(this, 'stop_exam')
+			}, {
+				name: 'collect',
+				style: 'float: left;',
+				label: _('collect results'),
+				callback: lang.hitch(this, 'collect_results')
+			}, {
+				name: 'settings',
+				style: 'padding-bottom: 10px; padding-bottom; 10px; float: right;',
+				label: _('change settings'),
+				callback: lang.hitch(this, function() { this._settingsDialog.show(); })
+			}, {
+				name: 'select_room',
+				style: 'padding-bottom: 10px; padding-bottom; 10px; float: right;',
+				label: _('select new room'),
+				callback: lang.hitch(this, 'changeRoom')
+			}];
+
 			var isConnected = function(item) { return item.connection[0] == 'connected'; };
 
 			// define grid actions
 			this._actions = [ {
-				name: 'test',
-				label: 'Klassenarbeit beenden',
-				isContextAction: false
-			}, {
-				name: 'test2',
-				label: 'Neuen Raum auswählen',
-				isContextAction: false
-			}, {
-				name: 'test3',
-				label: 'Einstellungen ändern (gültig noch 34min)',
-				isContextAction: false
-			}, {
 				name: 'screenshot',
 				field: 'screenshot',
 				label: _('Watch'),
@@ -295,7 +308,7 @@ define([
 					}
 					this.umcpCommand('computerroom/lock', {
 						computer: comp.id[0],
-						device : 'input',
+						device: 'input',
 						lock: comp.InputLock[0] !== true
 					});
 					this._objStore.put({ id: comp.id[0], InputLock: null});
@@ -330,19 +343,10 @@ define([
 			// it is important to call the parent's buildRendering() method
 			this.inherited(arguments);
 
-			this._rescheduleDialog = new RescheduleDialog({
-				umcpCommand: lang.hitch(this.umcpCommand)
-			});
 			this._settingsDialog = new SettingsDialog({
-				umcpCommand: lang.hitch(this.umcpCommand)
+				exam: false,
+				umcpCommand: lang.hitch(this, 'umcpCommand')
 			});
-
-			this._rescheduleDialog.on('PeriodChanged', lang.hitch(this._settingsDialog, function(value) {
-				this._form.getWidget('period').set('value', value) ;
-			}));
-			this._settingsDialog.on('PeriodChanged', lang.hitch(this._rescheduleDialog, function(value) {
-				this._form.getWidget('period').set('value', value) ;
-			}));
 
 			// get UCR Variable for enabled VNC
 			tools.ucr('ucsschool/umc/computerroom/ultravnc/enabled').then(lang.hitch(this, function(result) {
@@ -384,15 +388,13 @@ define([
 				header = _('Computer room: %s', room);
 			}
 			this._searchPage.set('headerText', header);
-			/*var label = lang.replace('{roomLabel}: {room} ' +
-					'(<a href="javascript:void(0)" ' +
-					'onclick=\'dijit.byId("{id}").changeRoom()\'>{changeLabel}</a>)', {
-				roomLabel: _('Room'),
-				room: room,
-				changeLabel: _('Select room'),
-				id: this.id
-			});
-			this._titlePane.set('title', label);*/
+
+			// update visibility of header buttons
+			this._headButtons.stop_exam.set('visible', roomInfo && roomInfo.exam);
+			this._headButtons.collect.set('visible', roomInfo && roomInfo.exam);
+
+			// hide time period input field in settings dialog
+			this._settingsDialog.set('exam', !!roomInfo.exam);
 		},
 
 		_setRoomInfoAttr: function(roomInfo) {
@@ -539,20 +541,16 @@ define([
 			// // add search form to the title pane
 			// this._titlePane.addChild(this._profileForm);
 
+			// add a toolbar for buttons above the grid
 			var _container = new ContainerWidget({ region: 'top' });
-			this._profileInfo = new Text({
-				content: '<i>' + _('Determining active settings for the computer room ...') + '</i>',
-				style: 'padding-bottom: 10px; padding-bottom; 10px; float: left;'
-			});
-			this._validTo = new Text({
-				content: '&nbsp;',
-				style: 'padding-bottom: 10px; padding-bottom; 10px; float: right;'
-			});
+			this._headButtons = {};
 
-			_container.addChild(this._profileInfo);
-			_container.addChild(this._validTo);
-
-			// add a toolbar for buttons above the gdd
+			array.forEach(this._headActions, lang.hitch(this, function(button) {
+				_container.addChild(this._headButtons[button.name] = new Button(button));
+				if (button.name == 'settings') {
+					this._changeSettingsLabel = button.label;
+				}
+			}));
 
 			this._titlePane.addChild(_container);
 
@@ -564,11 +562,11 @@ define([
 			// been added to the page container object
 			this._searchPage.startup();
 			this._dataStore = new ItemFileWriteStore({data: {
-				identifier : 'id',
+				identifier: 'id',
 				label: 'name',
 				items: []
 			}});
-			this._objStore = new DataStore({ store : this._dataStore, idProperty: 'id' });
+			this._objStore = new DataStore({ store: this._dataStore, idProperty: 'id' });
 			this._grid.moduleStore = this._objStore;
 			this._grid._dataStore = this._dataStore;
 			this._grid._grid.setStore(this._dataStore);
@@ -616,7 +614,7 @@ define([
 						var comp = items[0];
 						this.umcpCommand('computerroom/lock', {
 							computer: comp.id[0],
-							device : 'screen',
+							device: 'screen',
 							lock: comp.ScreenLock[0] !== true });
 						this._objStore.put({ id: comp.id[0], ScreenLock: null });
 					})
@@ -713,6 +711,9 @@ define([
 			}));
 		},
 
+		collect_results: function() {},
+		stop_exam: function() {},
+
 		changeRoom: function() {
 			// define a cleanup function
 			var _dialog = null, form = null, okButton = null;
@@ -794,8 +795,11 @@ define([
 					// display a warning in case the room is already taken
 					var msg = '';
 					var room = _getRoom(roomDN);
-					if (room && room.locked) {
-						msg = '<p>' + _('<b>Note:</b> This computer room is currently in use by %s.', room.user) + '</p>';
+					if (room && room.exam) {
+						// TODO: move under the beyond message as addition?
+						msg += '<p>' + _('<b>Note:</b> This computerroom is currently in use to write the exam "%s".', room.examDescription) + '</p>';
+					} else if (room && room.locked) {
+						msg += '<p>' + _('<b>Note:</b> This computer room is currently in use by %s.', room.user) + '</p>';
 					}
 					form.getWidget('message').set('content', msg);
 				})
@@ -837,7 +841,7 @@ define([
 			_dialog = new Dialog({
 				title: _('Select computer room'),
 				content: form,
-				'class' : 'umcPopup',
+				'class': 'umcPopup',
 				style: 'max-width: 400px;'
 			});
 			_dialog.show();
@@ -878,7 +882,6 @@ define([
 					return;
 				}
 
-				this._profileInfo.set('content', '<i>' + _('Determining active settings for the computer room ...') + '</i>');
 				array.forEach(response.result.computers, function(item) {
 					this._objStore.put(item);
 				}, this);
@@ -888,35 +891,20 @@ define([
 				}
 
 				if (response.result.settingEndsIn) {
-					var style = '';
-
-					if (response.result.settingEndsIn <= 5) {
-						style = 'style="color: red"';
-					}
-					var labelValidTo = _('Valid for') + lang.replace(' <a href="javascript:void(0)" {style} onclick=\'dijit.byId("{id}").show()\'>' + _('{time} minutes') + '</a>', {
+					var labelValidUntil = lang.replace('{label} (' + _('{time} minutes') + ')', {
 						time: response.result.settingEndsIn,
-						id: this._rescheduleDialog.id,
-						style: style
+						label: this._changeSettingsLabel
 					});
-					this._validTo.set('content', labelValidTo);
+					this._headButtons.settings.set('label', labelValidUntil);
+					this._headButtons.settings.set('style', (response.result.settingEndsIn <= 5) ? 'color: red;': '');
 				} else {
-					if (this._validTo.get('content') != '&nbsp;') {
-						this._validTo.set('content', '&nbsp;');
+					if (this._headButtons.settings.get('label') != this._changeSettingsLabel) {
+						this._headButtons.settings.set('label', this._changeSettingsLabel);
 						this._settingsDialog.update();
 					}
+					this._headButtons.settings.set('style', 'color: inherit;'); // FIXME: remove instead of inherit
 				}
 
-				var text = _('No user specific settings are defined for the computer room');
-				if (this._settingsDialog.personalActive()) {
-					text = _('User specific settings for the computer room are active');
-				}
-				var label = lang.replace('{lblSettings} (<a href="javascript:void(0)" ' +
-									  	  'onclick=\'dijit.byId("{id}").show()\'>{changeLabel}</a>)', {
-										  	  lblSettings: text,
-										  	  changeLabel: _('Change'),
-										  	  id: this._settingsDialog.id
-									  	  });
-				this._profileInfo.set('content', label);
 				this._updateTimer = window.setTimeout(lang.hitch(this, '_updateRoom', {}), 2000);
 
 				// update the grid actions

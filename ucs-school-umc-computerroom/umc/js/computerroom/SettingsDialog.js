@@ -31,7 +31,6 @@
 define([
 	"dojo/_base/declare",
 	"dojo/_base/lang",
-	"dojo/_base/array",
 	"dijit/Dialog",
 	"umc/dialog",
 	"umc/tools",
@@ -41,7 +40,7 @@ define([
 	"umc/widgets/TextArea",
 	"umc/widgets/StandbyMixin",
 	"umc/i18n!umc/modules/computerroom"
-], function(declare, lang, array, Dialog, dialog, tools, Form, ComboBox, TimeBox, TextArea, StandbyMixin, _) {
+], function(declare, lang, Dialog, dialog, tools, Form, ComboBox, TimeBox, TextArea, StandbyMixin, _) {
 
 	return declare("umc.modules.computerroom.SettingsDialog", [ Dialog, StandbyMixin ], {
 		// summary:
@@ -49,6 +48,9 @@ define([
 
 		// internal reference to the flavored umcpCommand function
 		umcpCommand: null,
+
+		// indicates that computerroom is opened in exam mode
+		exam: null,
 
 		_form: null,
 
@@ -95,9 +97,9 @@ define([
 				label: _('Share access'),
 				description: _( 'Defines restriction for the share access' ),
 				staticValues: [
-					{ id : 'none', label: _( 'No access' ) },
-					{ id: 'home', label : _('Home directory only') },
-					{ id: 'all', label : _('Default (no restrictions)' ) }
+					{ id: 'none', label: _( 'No access' ) },
+					{ id: 'home', label: _('Home directory only') },
+					{ id: 'all', label: _('Default (no restrictions)' ) }
 				]
 			}, {
 				type: ComboBox,
@@ -105,14 +107,14 @@ define([
 				sizeClass: 'One',
 				label: _('Print mode'),
 				staticValues: [
-					{ id : 'default', label: _( 'Default (global settings)' ) },
-					{ id: 'none', label : _('Printing deactivated') },
-					{ id: 'all', label : _('Free printing' ) }
+					{ id: 'default', label: _( 'Default (global settings)' ) },
+					{ id: 'none', label: _('Printing deactivated') },
+					{ id: 'all', label: _('Free printing' ) }
 				]
 			}, {
 				type: TimeBox,
 				name: 'period',
-				label: _('Valid to')
+				label: _('Valid until')
 			}];
 
 			var buttons = [ {
@@ -161,11 +163,16 @@ define([
 			this._form = new Form({
 				// property that defines the widget's position in a dijit.layout.BorderContainer
 				widgets: widgets,
-				layout: [ 'internetRule', 'customRule', 'shareMode', 'printMode', 'period' ],
+				layout: [ 'period', 'internetRule', 'customRule', 'shareMode', 'printMode' ],
 				buttons: buttons
 			});
 
 			this.set( 'content', this._form );
+
+			// hide time period on exam mode
+			this.watch('exam', lang.hitch(this, function(name, old, value) {
+				this._form.getWidget('period').set('visible', !value);
+			}));
 		},
 
 		update: function( school, room ) {

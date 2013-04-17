@@ -142,7 +142,7 @@ def _writeRoomInfo(roomDN, user=None, cmd=None, exam=None, examDescription=None)
 		fd = open(_getRoomFile(roomDN), 'w')
 		fcntl.lockf(fd, fcntl.LOCK_EX)
 		for key, val in info.iteritems():
-			if val != None:
+			if val is not None:
 				fd.write('%s=%s\n' % (key, val))
 	except (OSError, IOError):
 		MODULE.warn( 'Failed to write file: %s' % _getRoomFile(roomDN) )
@@ -659,7 +659,7 @@ class Instance( SchoolBaseModule ):
 				i = 1
 				while True:
 					var = 'proxy/filter/setting-user/%s/domain/whitelisted/%d' % ( self._username, i )
-					if ucr.has_key( var ):
+					if var in ucr:
 						vunset_now.append( var )
 						i += 1
 					else:
@@ -694,7 +694,7 @@ class Instance( SchoolBaseModule ):
 		ucr.load()
 		MODULE.info( 'Merging UCR variables' )
 		for key, value in vappend.items():
-			if ucr.has_key( key ) and ucr[ key ]:
+			if ucr.get(key):
 				old = set( ucr[ key ].split( ' ' ) )
 				MODULE.info( 'Old value: %s' % old )
 			else:
@@ -762,37 +762,6 @@ class Instance( SchoolBaseModule ):
 				MODULE.info( 'Kill SMB process %s' % process.pid )
 				os.kill( int( process.pid ), signal.SIGTERM )
 		_finished()
-
-	def settings_reschedule( self, request ):
-		"""Defines settings for a room
-
-		requests.options = { 'server' : <computer> }
-
-		return: [True|False)
-		"""
-		# block access to session from other users
-		self._checkRoomAccess()
-
-		self.required_options( request, 'period' )
-
-		if not self._italc.school or not self._italc.room:
-			raise UMC_CommandError( 'no room selected' )
-
-		# find AT jobs for the room and execute it to remove current settings
-		jobs = atjobs.list( extended = True )
-		for job in jobs:
-			if Instance.ATJOB_KEY in job.comments and job.comments[ Instance.ATJOB_KEY ] == self._italc.room:
-				current = job.execTime
-				try:
-					time = datetime.datetime.strptime(  request.options[ 'period' ], '%H:%M' ).time()
-					current = current.replace( hour = time.hour, minute = time.minute )
-					atjobs.reschedule( job.nr, current )
-					MODULE.info( 'Reschedule at job %s for %s' % ( job.nr, current ) )
-					self._ruleEndAt = current
-				except ValueError, e:
-					raise UMC_CommandError( 'Failed to read end time: %s' % str( e ) )
-				break
-		self.finished( request.id, True )
 
 	def demo_start( self, request ):
 		"""Starts a demo
