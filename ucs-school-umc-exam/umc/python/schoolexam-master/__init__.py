@@ -59,13 +59,12 @@ class Instance( SchoolBaseModule ):
 		self._examUserContainerDN = None
 		
 		## Context for @property examGroup
-		self._ldap_user_read = None, ldap_admin_write = None
+		self._ldap_user_read = None
 		self._ldap_position = None
 		self._search_base = None
 
 	def init(self):
 		SchoolBaseModule.init(self)
-
 	@property
 	def examGroup(self):
 		'''fetch the examGroup object, create it if missing'''
@@ -73,7 +72,6 @@ class Instance( SchoolBaseModule ):
 			if 'groups/group' in self._udm_modules:
 				module_groups_group = self._udm_modules['groups/group']
 			else:
-				module_groups_group = univention.admin.modules.get('groups/group')
 				univention.admin.modules.init(self._ldap_admin_write, self._ldap_position, module_groups_group)
 				self._udm_modules['groups/group'] = module_groups_group
 
@@ -83,13 +81,16 @@ class Instance( SchoolBaseModule ):
 				exam_group_dn = self._ldap_admin_write.searchDn(ldap_filter, self._search_base.examGroup, scope='base')
 				self._examGroup = module_groups_group.object(None, self._ldap_admin_write, self._ldap_position, self._search_base.examGroup)
 				## self._examGroup.create() # currently not necessary
-			except univention.admin.uexceptions.ldapError:
+			except univention.admin.uexceptions.noObject:
 				try:
-					self._examGroup = module_groups_group.object(None, self._ldap_admin_write, self._ldap_position, self._search_base.examGroup)
+					position = univention.admin.uldap.position(self._search_base._ldapBase)
+					position.setDn(self._ldap_admin_write.parentDn(self._search_base.examGroup))
+					self._examGroup = module_groups_group.object(None, self._ldap_admin_write, position, self._search_base.examGroup)
 					self._examGroup.open()
-					self._examGroup['name'] = self._search_base._examGroupname
+					self._examGroup['name'] = self._search_base.examGroupName
+					self._examGroup['sambaGroupType'] = self._examGroup.descriptions['sambaGroupType'].base_default[0])
 					self._examGroup.create()
-				except univention.admin.uexceptions.ldapError, e:
+				except univention.admin.uexceptions.base, e:
 					message = 'Failed to create exam group\n%s' % traceback.format_exc()
 					raise UMC_CommandError( message )
 
@@ -102,15 +103,17 @@ class Instance( SchoolBaseModule ):
 			try:
 				ldap_filter = '(objectClass=organizationalRole)'
 				exam_user_container_dn = self._ldap_admin_write.searchDn(ldap_filter, self._search_base.examUsers, scope='base')
-			except univention.admin.uexceptions.ldapError:
+			except univention.admin.uexceptions.noObject:
 				try:
-					module_containers_cn = univention.admin.modules.get('containers/cn')
+					module_containers_cn = univention.admin.modules.get('container/cn')
 					univention.admin.modules.init(self._ldap_admin_write, self._ldap_position, module_containers_cn)
-					exam_user_container = module_containers_cn.object(None, self._ldap_admin_write, self._ldap_position, self._search_base.examUsers)
+					position = univention.admin.uldap.position(self._search_base._ldapBase)
+					position.setDn(self._ldap_admin_write.parentDn(self._search_base.examUsers))
+					exam_user_container = module_containers_cn.object(None, self._ldap_admin_write, position, self._search_base.examUsers)
 					exam_user_container.open()
 					exam_user_container['name'] = self._search_base._examUserContainerName
 					exam_user_container.create()
-				except univention.admin.uexceptions.ldapError, e:
+				except univention.admin.uexceptions.base, e:
 					message = 'Failed to create exam container\n%s' % traceback.format_exc()
 					raise UMC_CommandError( message )
 
@@ -150,7 +153,7 @@ class Instance( SchoolBaseModule ):
 
 		### uid and DN of exam_user
 		exam_user_uid = "".join( (self._examUserPrefix, user_orig['username']) )
-		exam_user_dn = "uid=%s,%s" % (exam_user_uid, self.examUserContainerDn)
+		exam_user_dn = "uid=%s,%s" % (exam_user_uid, self.examUserContainerDN)
 
 		### Check if it's blacklisted
 		prohibited_objects = univention.admin.handlers.settings.prohibited_username.lookup(None, ldap_admin_write, '')
@@ -189,7 +192,8 @@ class Instance( SchoolBaseModule ):
 					try:
 						userSid = univention.admin.allocators.requestUserSid(ldap_admin_write, ldap_position, uidNum)
 					except:
-						pass
+						message = 'Failed to allocate userSid\n%s' % traceback.format_exc()
+						raise UMC_CommandError( message )
 				if not userSid or userSid == 'None':
 					num = uidNum
 					while not userSid or userSid == 'None':
