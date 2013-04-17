@@ -88,7 +88,7 @@ class Instance( SchoolBaseModule ):
 					self._examGroup = module_groups_group.object(None, self._ldap_admin_write, position, self._search_base.examGroup)
 					self._examGroup.open()
 					self._examGroup['name'] = self._search_base.examGroupName
-					self._examGroup['sambaGroupType'] = self._examGroup.descriptions['sambaGroupType'].base_default[0])
+					self._examGroup['sambaGroupType'] = self._examGroup.descriptions['sambaGroupType'].base_default[0]
 					self._examGroup.create()
 				except univention.admin.uexceptions.base, e:
 					message = 'Failed to create exam group\n%s' % traceback.format_exc()

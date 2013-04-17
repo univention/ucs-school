@@ -1,3 +1,9 @@
+ucs-school-umc-exam (0.1.7-1) unstable; urgency=low
+
+  * Bug #30831: fixed replication sync
+
+ -- Alexander Kläser <klaeser@univention.de>  Wed, 17 Apr 2013 18:20:30 +0200
+
 ucs-school-umc-exam (0.1.6-2) unstable; urgency=low
 
   * fix a bunch of bugs in schoolexam-master (Bug #30832)

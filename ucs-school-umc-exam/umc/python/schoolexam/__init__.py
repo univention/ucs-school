@@ -57,6 +57,8 @@ from socket import error as SocketError
 
 from util import UMCConnection
 
+udm_modules.update()
+
 _ = Translation( 'ucs-school-umc-exam' ).translate
 
 class Instance( SchoolBaseModule ):
@@ -153,24 +155,23 @@ class Instance( SchoolBaseModule ):
 					ires = connection.request('schoolexam-master/create-exam-user', dict(
 						userdn=iuser.dn
 					))
-					if ires.get('success'):
-						usersCloned.add(iuser.dn)
+					usersCloned.add(iuser.dn)
 				except (HTTPException, SocketError) as e:
 					MODULE.warn('Could not clone user: %s' % iuser.dn)
 
 			# wait for the replication of all users to be finished
 			userModul = udm_modules.get( 'users/user' )
 			while len(usersCloned) > len(usersReplicated):
-				MODULE.info('waiting for replication to be finished, %d objects missing' % len(usersCloned) - len(usersReplicated))
+				MODULE.info('waiting for replication to be finished, %s objects missing' % (len(usersCloned) - len(usersReplicated)))
 				for idn in usersCloned - usersReplicated:
 					try:
 						# try to open the user
 						iobj = userModul.object( None, ldap_user_read, None, idn )
-
-						# access successful -> object replicated
-						usersReplicated.add(idn)
+						if iobj.exists():
+							MODULE.info('user has been replicated: %s' % idn)
+							usersReplicated.add(idn)
 					except udm_exceptions.noObject as e:
-						# access failed -> object not yet replicated
+						# access failed
 						pass
 					except LDAP_ConnectionError as e:
 						MODULE.error('Could not open object DN: %s (%s)' % (entryDN, e))
