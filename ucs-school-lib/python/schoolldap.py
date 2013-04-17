@@ -344,6 +344,8 @@ class SchoolSearchBase(object):
 		self._containerTeachers = ucr.get('ucsschool/ldap/default/container/teachers', 'lehrer')
 		self._containerClass = ucr.get('ucsschool/ldap/default/container/class', 'klassen')
 		self._containerRooms = ucr.get('ucsschool/ldap/default/container/rooms', 'raeume')
+		self._examUserContainerName = ucr.get('ucsschool/ldap/default/container/exam', 'examusers')
+		self._examGroupname = ucr.get('ucsschool/ldap/default/groupname/exam', 'OU%(ou)s-Klassenarbeit')
 
 	@property
 	def availableSchools(self):
@@ -414,6 +416,10 @@ class SchoolSearchBase(object):
 		return "cn=computers,%s" % self.schoolDN
 
 	@property
+	def examUsers(self):
+		return "cn=%s,%s" % (self._examUserContainerName, self.schoolDN)
+
+	@property
 	def educationalDCGroup(self):
 		return "cn=OU%s-DC-Edukativnetz,cn=ucsschool,cn=groups,%s" % (self.school, self._ldapBase)
 
@@ -428,6 +434,13 @@ class SchoolSearchBase(object):
 	@property
 	def administrativeMemberGroup(self):
 		return "cn=OU%s-Member-Verwaltungsnetz,cn=ucsschool,cn=groups,%s" % (self.school, self._ldapBase)
+
+	@property
+	def examGroup(self):
+		## replace '%(ou)s' strings in generic exam_group_name
+		ucr_value_keywords = { 'ou': self.school }
+		exam_group_name = self._examGroupname % ucr_value_keywords
+		return "cn=%s,cn=ucsschool,cn=groups,%s" % (exam_group_name, self._ldapBase)
 
 	def isStudent(self, userDN):
 		return userDN.endswith(self.students)

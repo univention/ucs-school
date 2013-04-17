@@ -1,3 +1,9 @@
+ucs-school-lib (2.0.21-1) unstable; urgency=low
+
+  * Add examUsers container and examGroup (for Bug #30832)
+
+ -- Arvid Requate <requate@univention.de>  Wed, 17 Apr 2013 11:30:32 +0200
+
 ucs-school-lib (2.0.20-1) unstable; urgency=low
 
   * Bug #30832: removed ldap_master=True from getAdminConnection()

@@ -49,3 +49,29 @@ school_ou() {
 	IFS="$IFS0"
 }
 
+school_dn() {
+	local district_mode
+	if is_ucr_true 'ucsschool/ldap/district/enable'; then
+		district_mode='true'
+	else
+		district_mode='false'
+	fi
+
+	eval "$(/usr/sbin/univention-config-registry shell \
+				ldap/hostdn)"
+
+	IFS0="$IFS"
+	IFS=','
+	skipped_rdns=''
+	set -- "${ldap_hostdn%",$ldap_hostdn"}"
+	for rdn in $@; do
+		key=$(echo "${rdn%=*}" | tr a-z A-Z)
+		if [ "$key" = "OU" ]; then
+			IFS="$IFS0"
+			echo ${ldap_hostdn#${skipped_rdns}}
+			break
+		fi
+		skipped_rdns="${rdn},${skipped_rdns}"
+	done
+}
+
