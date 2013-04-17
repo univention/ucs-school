@@ -28,6 +28,7 @@ Recommends:
  ucs-school-umc-users,
  ucs-school-umc-rooms,
  ucs-school-umc-wizards,
+ ucs-school-umc-exam-master,
 Description: UCS@School meta package for UCS DC Master System (multi server environment)
  This meta package installs all required packages for UCS@School on
  a UCS domaincontroller master. The domaincontroller master will be 
@@ -110,6 +111,7 @@ Recommends:
  ucs-school-umc-computerroom,
  ucs-school-umc-distribution,
  ucs-school-umc-exam,
+ ucs-school-umc-exam-master,
  ucs-school-umc-groups,
  ucs-school-umc-helpdesk,
  ucs-school-umc-internetrules,

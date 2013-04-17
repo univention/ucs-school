@@ -1,3 +1,9 @@
+ucs-school-metapackage (5.0.9-7) unstable; urgency=low
+
+  * Bug #30832: added exam-master module to recommendations
+
+ -- Alexander Kläser <klaeser@univention.de>  Wed, 17 Apr 2013 17:03:40 +0200
+
 ucs-school-metapackage (5.0.9-6) unstable; urgency=low
 
   * unify wording of "single server environment" and "multi server
