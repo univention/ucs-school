@@ -1,3 +1,9 @@
+ucs-school-umc-computerroom (2.0.18-1) unstable; urgency=low
+
+  * remove rest of reschedule dialog; Bug #30833
+
+ -- Florian Best <best@univention.de>  Thu, 18 Apr 2013 08:32:40 +0200
+
 ucs-school-umc-computerroom (2.0.17-1) unstable; urgency=low
 
   * remove "no access" from share restriction list; Bug #31002

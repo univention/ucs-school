@@ -26,13 +26,12 @@
  * /usr/share/common-licenses/AGPL-3; if not, see
  * <http://www.gnu.org/licenses/>.
  */
-/*global define*/
+/*global define dijit*/
 
 define([
 	"dojo/_base/declare",
 	"dojo/_base/lang",
 	"dijit/Dialog",
-	"umc/dialog",
 	"umc/tools",
 	"umc/widgets/Form",
 	"umc/widgets/ComboBox",
@@ -40,7 +39,7 @@ define([
 	"umc/widgets/TextArea",
 	"umc/widgets/StandbyMixin",
 	"umc/i18n!umc/modules/computerroom"
-], function(declare, lang, Dialog, dialog, tools, Form, ComboBox, TimeBox, TextArea, StandbyMixin, _) {
+], function(declare, lang, Dialog, tools, Form, ComboBox, TimeBox, TextArea, StandbyMixin, _) {
 
 	return declare("umc.modules.computerroom.SettingsDialog", [ Dialog, StandbyMixin ], {
 		// summary:
@@ -134,10 +133,7 @@ define([
 						printMode: this._form.getWidget( 'printMode' ).get( 'value' ),
 						shareMode: this._form.getWidget( 'shareMode' ).get( 'value' ),
 						period: this._form.getWidget( 'period' ).get( 'value' )
-					} ).then( lang.hitch( this, function( response ) {
-						this.onPeriodChanged( this._form.getWidget( 'period' ).get( 'value' ) );
-						// this.rescheduleDialog.set( 'period', this._form.getWidget( 'period' ).get( 'value' ) );
-					} ) );
+					});
 				} )
 			} , {
 				name: 'reset_to_default',
@@ -174,19 +170,17 @@ define([
 			}));
 		},
 
-		update: function( school, room ) {
-			this.umcpCommand( 'computerroom/settings/get', {} ).then( lang.hitch( this, function( response ) {
-				tools.forIn( response.result, function( key, value ) {
-					var widget = this._form.getWidget( key );
+		update: function(school, room) {
+			this.umcpCommand('computerroom/settings/get', {}).then(lang.hitch(this, function(response) {
+				tools.forIn(response.result, function(key, value) {
+					var widget = this._form.getWidget(key);
 					if (widget.setInitialValue) {
 						widget.setInitialValue(value);
 					} else {
 						widget.set('value', value);
 					}
-				}, this );
-				this.onPeriodChanged( this._form.getWidget( 'period' ).get( 'value' ) );
-				// this.rescheduleDialog.set( 'period', this._form.getWidget( 'period' ).get( 'value' ) );
-			} ) );
+				}, this);
+			}));
 		},
 
 		personalActive: function() {
@@ -195,11 +189,8 @@ define([
 
 		onClose: function() {
 			// event stub
-		},
-
-		onPeriodChanged: function() {
-			// event stub
 		}
+
 	});
 
 });

@@ -141,11 +141,13 @@ define([
 			this._headActions = [{
 				name: 'stopExam',
 				style: 'float: left;',
+				visible: false,
 				label: _('stop exam'),
 				callback: lang.hitch(this, 'stopExam')
 			}, {
 				name: 'collect',
 				style: 'float: left;',
+				visible: false,
 				label: _('collect results'),
 				callback: lang.hitch(this, 'collectResults')
 			}, {
