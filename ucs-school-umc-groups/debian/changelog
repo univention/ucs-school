@@ -1,3 +1,9 @@
+ucs-school-umc-groups (1.0.5-1) unstable; urgency=low
+
+  * allow teachers to create workgroups; Bug #30527
+
+ -- Florian Best <best@univention.de>  Thu, 18 Apr 2013 14:55:40 +0200
+
 ucs-school-umc-groups (1.0.4-1) unstable; urgency=low
 
   * update Copyright; Bug #30123

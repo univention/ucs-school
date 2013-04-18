@@ -31,7 +31,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-VERSION=1
+VERSION=2
 
 . /usr/share/univention-join/joinscripthelper.lib
 . /usr/share/univention-lib/umc.sh
@@ -55,7 +55,7 @@ umc_policy_append "default-umc-all" "schoolgroups-all"
 # policy for school admins (not allowed to teachers)
 umc_policy_append "ucsschool-umc-admins-default" "schoolgroups-workgroup-admin" "schoolgroups-class"
 # policy for teachers
-umc_policy_append "ucsschool-umc-teachers-default" "schoolgroups-workgroup"
+umc_policy_append "ucsschool-umc-teachers-default" "schoolgroups-workgroup" "schoolgroups-workgroup-admin"
 
 joinscript_save_current_version
 
