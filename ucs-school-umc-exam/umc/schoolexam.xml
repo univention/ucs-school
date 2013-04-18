@@ -12,5 +12,6 @@
 	<command name="schoolexam/upload" function="upload"/>
 	<command name="schoolexam/internetrules" function="internetrules"/>
 	<command name="schoolexam/startexam" function="start_exam"/>
+	<command name="schoolexam/progress" function="progress"/>
   </module>
 </umc>

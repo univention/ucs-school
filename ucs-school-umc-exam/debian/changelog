@@ -1,3 +1,9 @@
+ucs-school-umc-exam (0.1.8-1) unstable; urgency=low
+
+  * Bug #30831: added progress information
+
+ -- Alexander Kläser <klaeser@univention.de>  Thu, 18 Apr 2013 18:11:24 +0200
+
 ucs-school-umc-exam (0.1.7-1) unstable; urgency=low
 
   * Bug #30831: fixed replication sync

@@ -61,10 +61,49 @@ udm_modules.update()
 
 _ = Translation( 'ucs-school-umc-exam' ).translate
 
+class Progress(object):
+	def __init__(self, max_steps=100):
+		self.reset(max_steps)
+
+	def reset(self, max_steps=100):
+		self._max_steps = max_steps
+		self._finished = False
+		self._steps = 0
+		self._component = _('Initializing')
+		self._info = ''
+		self._errors = []
+
+	def poll(self):
+		return dict(
+			finished=self._finished,
+			steps=100 * float(self._steps) / self._max_steps,
+			component=self._component,
+			info=self._info,
+			errors=self._errors,
+		)
+
+	def finish(self):
+		self._finished = True
+
+	def component(self, component):
+		self._component = component
+
+	def info(self, info):
+		MODULE.process('%s - %s' % (self._component, info))
+		self._info = info
+
+	def error(self, err):
+		MODULE.warn('%s - %s' % (self._component, err))
+		self._errors.append(err)
+
+	def add_steps(self, steps = 1):
+		self._steps += steps
+
 class Instance( SchoolBaseModule ):
 	def __init__( self ):
 		SchoolBaseModule.__init__(self)
 		self._tmpDir = None
+		self.progress_state = Progress()
 
 	def init(self):
 		SchoolBaseModule.init(self)
@@ -111,9 +150,23 @@ class Instance( SchoolBaseModule ):
 		"""Returns a list of available internet rules"""
 		self.finished( request.id, map( lambda x: x.name, internetrules.list() ) )
 
+	@simple_response
+	def progress(self):
+		return self.progress_state.poll()
+
 	@LDAP_Connection()
 	def start_exam(self, request, ldap_user_read = None, ldap_position = None, search_base = None):
 		self.required_options(request, 'recipients', 'room')
+
+		# reset the current progress state
+		# steps:
+		#   5 -> for preparing exam room
+		#   25 -> for cloning users
+		#   25 -> for each replicated users + copy of the profile directory
+		#   25 -> distribution of exam files
+		progress_state = self.progress_state
+		progress_state.reset(80)
+
 		def _thread():
 			# perform all actions inside a thread...
 			# open a new connection to the master UMC
@@ -142,15 +195,19 @@ class Instance( SchoolBaseModule ):
 					users.extend(irecipient.members)
 
 			# mark the computer room for exam mode
+			progress_state.component(_('Preparing the computer room for exam mode...'))
 			ires = connection.request('schoolexam-master/set-computerroom-exammode', dict(
 				roomdn=request.options.get('room')
 			))
+			progress_state.add_steps(5)
 
 			# start to clone users
+			progress_state.component(_('Cloning users'))
+			percentPerUser = 25.0 / len(users)
 			usersCloned = set()
 			usersReplicated = set()
 			for iuser in users:
-				MODULE.info('trigger cloning user %s' % iuser.dn)
+				progress_state.info('%s, %s (%s)' % (iuser.lastname, iuser.firstname, iuser.username))
 				try:
 					ires = connection.request('schoolexam-master/create-exam-user', dict(
 						userdn=iuser.dn
@@ -159,8 +216,12 @@ class Instance( SchoolBaseModule ):
 				except (HTTPException, SocketError) as e:
 					MODULE.warn('Could not clone user: %s' % iuser.dn)
 
+				# indicate the the user has been processed
+				progress_state.add_steps(percentPerUser)
+
 			# wait for the replication of all users to be finished
 			userModul = udm_modules.get( 'users/user' )
+			progress_state.component(_('Preparing home directories'))
 			while len(usersCloned) > len(usersReplicated):
 				MODULE.info('waiting for replication to be finished, %s objects missing' % (len(usersCloned) - len(usersReplicated)))
 				for idn in usersCloned - usersReplicated:
@@ -169,7 +230,12 @@ class Instance( SchoolBaseModule ):
 						iobj = userModul.object( None, ldap_user_read, None, idn )
 						if iobj.exists():
 							MODULE.info('user has been replicated: %s' % idn)
+
+							### TODO: COPY PROFILE DIR
+
 							usersReplicated.add(idn)
+							progress_state.info('%s, %s (%s)' % (iuser.lastname, iuser.firstname, iuser.username))
+							progress_state.add_steps(percentPerUser)
 					except udm_exceptions.noObject as e:
 						# access failed
 						pass
@@ -179,13 +245,24 @@ class Instance( SchoolBaseModule ):
 				# wait a second
 				time.sleep(1)
 
+			# distribute exam files
+			progress_state.component(_('Distributing exam files'))
+			progress_state.info('')
+			time.sleep(2)
+			progress_state.add_steps(25)
+
 		def _finished(thread, result):
+			# mark the progress state as finished
+			progress_state.info(_('finished...'))
+			progress_state.finish()
+
 			# finish the request at the end in order to force the module to keep
 			# running until all actions have been completed
 			if isinstance(result, BaseException):
 				msg = '%s\n%s: %s\n' % ( ''.join( traceback.format_tb( thread.exc_info[ 2 ] ) ), thread.exc_info[ 0 ].__name__, str( thread.exc_info[ 1 ] ) )
 				MODULE.error('Exception during start_exam: %s' % msg)
 				self.finished(request.id, dict(success=True))
+				progress_state.error_handler(_('An unexpected error occurred during installation: %s') % result)
 			else:
 				self.finished(request.id, dict(success=False))
 

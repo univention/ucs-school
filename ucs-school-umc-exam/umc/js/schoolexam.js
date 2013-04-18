@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 Univention GmbH
+ * Copyright 2012-2013 Univention GmbH
  *
  * http://www.univention.de/
  *
@@ -37,23 +37,26 @@ define([
 	"dojo/on",
 	"dojo/promise/all",
 	"dojo/topic",
+	"dojo/Deferred",
 	"umc/dialog",
 	"umc/tools",
 	"umc/widgets/Wizard",
 	"umc/widgets/Module",
 	"umc/widgets/TextBox",
+	"umc/widgets/Text",
 	"umc/widgets/TextArea",
 	"umc/widgets/ComboBox",
 	"umc/widgets/MultiObjectSelect",
 	"umc/widgets/MultiUploader",
+	"umc/widgets/StandbyMixin",
+	"umc/widgets/ProgressBar",
 	"umc/i18n!umc/modules/schoolexam"
-], function(declare, lang, array, domClass, domStyle, on, all, topic, dialog, tools, Wizard, Module, TextBox, TextArea, ComboBox, MultiObjectSelect, MultiUploader, _) {
-	return declare("umc.modules.schoolexam", [ Module, Wizard ], {
-		// summary:
-		//		Template module to ease the UMC module development.
-		// description:
-		//		This module is a template module in order to aid the development of
-		//		new modules for Univention Management Console.
+], function(declare, lang, array, domClass, domStyle, on, all, topic, Deferred, dialog, tools, Wizard, Module, TextBox, Text, TextArea, ComboBox, MultiObjectSelect, MultiUploader, StandbyMixin, ProgressBar, _) {
+
+	var ExamWizard = declare("umc.modules.schoolexam.ExamWizard", [ Wizard, StandbyMixin ], {
+		umcpCommand: null,
+
+		_progressBar: null,
 
 		postMixInProperties: function() {
 			this.inherited(arguments);
@@ -180,11 +183,34 @@ define([
 					} ),
 					disabled: true
 				}]
+			}, {
+				name: 'success',
+				headerText: _('Exam succesfully prepared'),
+				helpText: _('The preparation of the exam was successful. In order to proceed, press the "finish" button. The selected computer room will then be opened automatically.'),
+				widgets: [{
+					type: Text,
+					name: 'info',
+					content: ''
+				}]
+			}, {
+				name: 'error',
+				headerText: _('An error ocurred'),
+				helpText: _('An error occurred during the preparation of the exam. The following information will show more details about the exact error.'),
+				widgets: [{
+					type: Text,
+					name: 'info',
+					style: 'font-style:italic;',
+					content: ''
+				}]
 			}];
 		},
 
 		buildRendering: function() {
 			this.inherited(arguments);
+
+			// initiate a progress bar widget
+			this._progressBar = new ProgressBar();
+			this.own(this._progressBar);
 
 			// standby animation until all form elements are ready
 			this.standby(true);
@@ -195,6 +221,13 @@ define([
 				this.standby(false);
 			}));
 
+			// adjust the label of the 'finish' button + redirect the callback
+			array.forEach(['general', 'files', 'roomSettings'], lang.hitch(this, function(ipage) {
+				var ibutton = this.getPage(ipage)._footerButtons.finish;
+				ibutton.set('label', _('Start exam'));
+				ibutton.callback = lang.hitch(this, '_startExam');
+			}));
+
 			// TODO set maxsize
 			//maxSize: maxUploadSize * 1024, // conversion from kbyte to byte
 		},
@@ -202,7 +235,7 @@ define([
 		_updateButtons: function(pageName) {
 			this.inherited(arguments);
 
-			// the wizard can always be finished
+			// make the 'finish' buttons visible to create an exam already earlier
 			var buttons = this._pages[pageName]._footerButtons;
 			domClass.toggle(buttons.finish.domNode, 'dijitHidden', false);
 			if (this.hasNext(pageName)) {
@@ -211,15 +244,50 @@ define([
 			}
 		},
 
-		onFinished: function(values) {
+		hasPrevious: function(pageName) {
+			return pageName != 'error' && pageName != 'success' && pageName != 'general';
+		},
+
+		hasNext: function(pageName) {
+			return pageName != 'roomSettings' && pageName != 'success';
+		},
+
+		next: function(pageName) {
+			var next = this.inherited(arguments);
+			if (pageName == 'error') {
+				next = 'general';
+			}
+			return next;
+		},
+
+		canCancel: function(pageName) {
+			return pageName != 'success';
+		},
+
+		_startExam: function() {
 			// start the exam
+			var values = this.getValues();
 			tools.umcpCommand('schoolexam/startexam', {
 				recipients: values.recipients,
 				room: values.room
 			}, false);
 
+			// initiate the progress bar
+			this._progressBar.reset(_('Starting the configuration process...' ));
+			this.standby(false);
+			this.standby(true, this._progressBar);
+			var preparationDeferred = new Deferred();
+			this._progressBar.auto(
+				'schoolexam/progress',
+				{},
+				lang.hitch(this, '_preparationFinished', preparationDeferred),
+				undefined,
+				undefined,
+				true
+			);
+
 			// reserve the computerroom and adjust its settings
-			tools.umcpCommand('computerroom/room/acquire', {
+			var computerRoomDeferred = tools.umcpCommand('computerroom/room/acquire', {
 				room: values.room
 			}).then(function() {
 				return tools.umcpCommand('computerroom/settings/set', {
@@ -230,11 +298,70 @@ define([
 					examDescription: values.name,
 					exam: values.directory
 				});
-			}).then(function() {
-				topic.publish('/umc/modules/open', 'computerroom', /*flavor*/ null, {
-					room: values.room
-				});
 			});
+
+			all([preparationDeferred, computerRoomDeferred]).then(lang.hitch(this, function() {
+				// open the computerroom and close the exam wizard
+				this.standby(false);
+				this.selectChild(this._pages.success);
+			}), lang.hitch(this, function() {
+				// error case
+				this.standby(false);
+				this.selectChild(this._pages.error);
+			}));
+		},
+
+		_preparationFinished: function(deferred) {
+			// get all error information and decide which next page to display
+			deferred = deferred || new Deferred();
+			var info = this._progressBar.getErrors();
+			if (info.errors.length == 1) {
+				// one error can be displayed as text
+				this.getWidget('error', 'info').set('content', info.errors[0]);
+				deferred.reject();
+			}
+			else if (info.errors.length > 1) {
+				// display multiple errors as unordered list
+				var html = '<ul>';
+				array.forEach(info.errors, function(txt) {
+					html += lang.replace('<li>{0}</li>\n', [txt]);
+				});
+				html += '</ul>';
+				this.getWidget(nextPage, 'info').set('content', html);
+				deferred.reject();
+			}
+			else {
+				// no errors... we need a UMC server restart
+				deferred.resolve();
+			}
+		},
+
+		onFinished: function(values) {
+			// open the computer room
+			topic.publish('/umc/modules/open', 'computerroom', /*flavor*/ null, {
+				room: values.room
+			});
+		}
+	});
+
+	return declare("umc.modules.schoolexam", [ Module ], {
+		// internal reference to the installer
+		_examWizard: null,
+
+		buildRendering: function() {
+			this.inherited(arguments);
+
+			this._examWizard = new ExamWizard({
+				umcpCommand: this.umcpCommand
+			});
+			this.addChild(this._examWizard);
+
+			this._examWizard.on('finished', lang.hitch(this, function() {
+				topic.publish('/umc/tabs/close', this);
+			}));
+			this._examWizard.on('cancel', lang.hitch(this, function() {
+				topic.publish('/umc/tabs/close', this);
+			}));
 		}
 	});
 });
