@@ -149,7 +149,7 @@ class Instance( SchoolBaseModule ):
 			user_orig = module_users_user.object(None, ldap_admin_write, ldap_position, userdn)
 			user_orig.open()
 		except univention.admin.uexceptions.ldapError, e:
-			raise UMC_OptionTypeError( 'Invalid User DN' )
+			raise UMC_OptionTypeError( _('Invalid User (%s)') % userdn )
 
 		### uid and DN of exam_user
 		exam_user_uid = "".join( (self._examUserPrefix, user_orig['username']) )
@@ -160,7 +160,7 @@ class Instance( SchoolBaseModule ):
 		if prohibited_objects and len(prohibited_objects) > 0:
 			for i in range(0, len(prohibited_objects)):
 				if exam_user_uid in prohibited_objects[i]['usernames']:
-					message = 'Command failed\nRequested exam user name %s is not allowed according to settings/prohibited_username object %s' % ( exam_user_uid, prohibited_objects[i]['name'])
+					message = _('Requested exam user name %s is not allowed according to settings/prohibited_username object %s') % ( exam_user_uid, prohibited_objects[i]['name'])
 					raise UMC_CommandError( message )
 
 		### Allocate new uid
@@ -170,12 +170,19 @@ class Instance( SchoolBaseModule ):
 			alloc.append(('uid', uid))
 		except univention.admin.uexceptions.noLock, e:
 			univention.admin.allocators.release(ldap_admin_write, ldap_position, 'uid', exam_user_uid)
-			raise univention.admin.uexceptions.uidAlreadyUsed, ': %s' % exam_user_uid
+			MODULE.warn('The exam account does already exist for: %s' % exam_user_uid)
+			self.finished(request.id, dict(
+				success=True,
+				userdn=userdn,
+				examuserdn=exam_user_dn,
+			), success=True)
+			return
+
 
 		### Ok, we have a valid target uid, so start cloning the user
 		## deepcopy(user_orig) soes not help much, as we cannot use users.user.object.create()
 		## because it currently cannot be convinced to preserve the password. So we do it manually:
-		try: 
+		try:
 			## Allocate new uidNumber
 			if 'posix' in user_orig.options:
 				uidNum = univention.admin.allocators.request(ldap_admin_write, ldap_position, 'uidNumber')
@@ -268,8 +275,11 @@ class Instance( SchoolBaseModule ):
 		if 'posix' in user_orig.options:
 			univention.admin.allocators.confirm(ldap_admin_write, ldap_position, 'uidNumber', uidNum)
 
-		self.finished(request.id, {}, success=True)
-		return
+		self.finished(request.id, dict(
+			success=True,
+			userdn=userdn,
+			examuserdn=exam_user_dn,
+		), success=True)
 
 	@LDAP_Connection(USER_READ, ADMIN_WRITE)
 	def remove_exam_user(self, request, ldap_user_read = None, ldap_admin_write = None, ldap_position = None, search_base = None):

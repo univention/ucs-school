@@ -37,6 +37,44 @@ from simplejson import loads, dumps
 # univention
 from univention.management.console.log import MODULE
 
+class Progress(object):
+	def __init__(self, max_steps=100):
+		self.reset(max_steps)
+
+	def reset(self, max_steps=100):
+		self._max_steps = max_steps
+		self._finished = False
+		self._steps = 0
+		self._component = ''
+		self._info = ''
+		self._errors = []
+
+	def poll(self):
+		return dict(
+			finished=self._finished,
+			steps=100 * float(self._steps) / self._max_steps,
+			component=self._component,
+			info=self._info,
+			errors=self._errors,
+		)
+
+	def finish(self):
+		self._finished = True
+
+	def component(self, component):
+		self._component = component
+
+	def info(self, info):
+		MODULE.process('%s - %s' % (self._component, info))
+		self._info = info
+
+	def error(self, err):
+		MODULE.warn('%s - %s' % (self._component, err))
+		self._errors.append(err)
+
+	def add_steps(self, steps = 1):
+		self._steps += steps
+
 ### mostly copied from app_center/util.py -> should be refactored, see Bug #31059
 class UMCConnection(object):
 	def __init__(self, host, username=None, password=None):

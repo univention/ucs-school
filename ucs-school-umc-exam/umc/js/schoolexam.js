@@ -70,15 +70,16 @@ define([
 				headerText: _('Start a new exam'),
 				helpText: _('<p>The UCS@school exam mode allows one to perform an exam in a computer room. During the exam, access to internet as well as to shares can be restricted, the student home directories are not accessible, either.</p><p>Please enter a name for the new exam and select the classes or workgroups that participate in the exam. A directory name is proposed automatically and can be adjusted if wanted.</p>'),
 				widgets: [{
-					type: ComboBox,
 					name: 'school',
+					type: ComboBox,
 					description: _('Choose the school'),
 					label: _('School'),
 					dynamicValues: 'schoolexam/schools',
 					autoHide: true
 				}, {
-					type: ComboBox,
 					name: 'room',
+					type: ComboBox,
+					required: true,
 					label: _('Computer room'),
 					description: _('Choose the computer room in which the exam will take place'),
 					depends: 'school',
@@ -86,11 +87,13 @@ define([
 				}, {
 					name: 'name',
 					type: TextBox,
+					required: true,
 					label: _('Exam name'),
 					description: _('The name of the exam, e.g., "Math exam algrebra 02/2013".')
 				}, {
 					name: 'directory',
 					type: TextBox,
+					required: true,
 					label: _('Directory name'),
 					description: _('The name of the project directory as it will be displayed in the file system.'),
 					depends: ['name'],
@@ -186,7 +189,7 @@ define([
 			}, {
 				name: 'success',
 				headerText: _('Exam succesfully prepared'),
-				helpText: _('The preparation of the exam was successful. In order to proceed, press the "finish" button. The selected computer room will then be opened automatically.'),
+				helpText: _('The preparation of the exam was successful. In order to proceed, press the "Open computer room" button. The selected computer room will then be opened automatically.'),
 				widgets: [{
 					type: Text,
 					name: 'info',
@@ -195,7 +198,7 @@ define([
 			}, {
 				name: 'error',
 				headerText: _('An error ocurred'),
-				helpText: _('An error occurred during the preparation of the exam. The following information will show more details about the exact error.'),
+				helpText: _('An error occurred during the preparation of the exam. The following information will show more details about the exact error. Please retry to start the exam.'),
 				widgets: [{
 					type: Text,
 					name: 'info',
@@ -228,6 +231,10 @@ define([
 				ibutton.callback = lang.hitch(this, '_startExam');
 			}));
 
+			// adjust the label of the 'finish' button on the 'success' page
+			var button = this.getPage('success')._footerButtons.finish;
+			button.set('label', _('Open computer room'));
+
 			// TODO set maxsize
 			//maxSize: maxUploadSize * 1024, // conversion from kbyte to byte
 		},
@@ -236,6 +243,10 @@ define([
 			this.inherited(arguments);
 
 			// make the 'finish' buttons visible to create an exam already earlier
+			// on the first pages
+			if (pageName != 'general' && pageName != 'files' && pageName != 'roomSettings') {
+				return;
+			}
 			var buttons = this._pages[pageName]._footerButtons;
 			domClass.toggle(buttons.finish.domNode, 'dijitHidden', false);
 			if (this.hasNext(pageName)) {
@@ -265,12 +276,12 @@ define([
 		},
 
 		_startExam: function() {
-			// start the exam
+			// validate the current values
 			var values = this.getValues();
-			tools.umcpCommand('schoolexam/startexam', {
-				recipients: values.recipients,
-				room: values.room
-			}, false);
+			//TODO: ...
+
+			// start the exam
+			tools.umcpCommand('schoolexam/startexam', values, false);
 
 			// initiate the progress bar
 			this._progressBar.reset(_('Starting the configuration process...' ));
@@ -303,10 +314,12 @@ define([
 			all([preparationDeferred, computerRoomDeferred]).then(lang.hitch(this, function() {
 				// open the computerroom and close the exam wizard
 				this.standby(false);
+				this._updateButtons('success');
 				this.selectChild(this._pages.success);
 			}), lang.hitch(this, function() {
 				// error case
 				this.standby(false);
+				this._updateButtons('error');
 				this.selectChild(this._pages.error);
 			}));
 		},
