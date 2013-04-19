@@ -230,8 +230,8 @@ def openRecipients(entryDN, ldap_connection, search_base):
 
 			userModul = udm_modules.get( 'users/user' )
 			for userdn in entryObj[ 'users' ]:
-				# only remember students
-				if not _search_base.isStudent(userdn):
+				# only remember students and exam users
+				if _search_base.isTeacher(userdn) or _search_base.isAdim(userdn) or _search_base.isStaff(userdn):
 					MODULE.info('Ignoring non-student: %s' % userdn)
 					continue
 
