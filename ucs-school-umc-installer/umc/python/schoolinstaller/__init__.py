@@ -306,7 +306,7 @@ def _dummyFunc(*args):
 def system_join(username, password, info_handler = _dummyFunc, error_handler = _dummyFunc, step_handler = _dummyFunc):
 	# make sure we got the correct server role
 	serverRole = ucr.get('server/role')
-	assert serverRole in ('domaincontroller_slave', 'domaincontroller_backup')
+	assert serverRole in ('domaincontroller_slave', 'domaincontroller_backup', 'domaincontroller_master')
 
 	# get the number of join scripts
 	nJoinScripts = len(glob.glob('/usr/lib/univention-install/*.inst'))
@@ -333,7 +333,7 @@ def system_join(username, password, info_handler = _dummyFunc, error_handler = _
 				MODULE.process('Performing system join...')
 				process = subprocess.Popen(['/usr/sbin/univention-join', '-dcaccount', username, '-dcpwd', passwordFile.name], shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 			else:
-				# DC backup -> only run join scripts
+				# DC backup/master -> only run join scripts
 				MODULE.process('Executing join scripts ...')
 				process = subprocess.Popen(['/usr/sbin/univention-run-join-scripts', '-dcaccount', username, '-dcpwd', passwordFile.name], shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
@@ -626,8 +626,8 @@ class Instance(Base):
 			steps += 10  # create_ou -> 10
 		if serverRole == 'domaincontroller_slave':
 			steps += 10  # move_slave_into_ou -> 10
-		if serverRole != 'domaincontroller_master':
-			steps += 100  # system_join -> 100 steps
+		steps += 100  # system_join -> 100 steps
+
 		progress_state = self.progress_state
 		progress_state.reset(steps)
 		progress_state.component = _('Installation of UCS@school packages')
@@ -675,21 +675,20 @@ class Instance(Base):
 					_error(_('Validating the LDAP school OU structure failed. It seems that the current slave system has already been assigned to a different school or that the specified school OU name is already in use.'))
 					return False
 
-			if serverRole != 'domaincontroller_master':
-				# system join on a slave system
-				progress_state.component = _('Domain join')
-				if serverRole == 'domaincontroller_slave':
-					progress_state.info = _('Preparing domain join...')
-					MODULE.process('Starting system join...')
-				else:  # -> DC backup
-					progress_state.info = _('Executing join scripts...')
-					MODULE.process('Running join scripts...')
-				success = system_join(
-					username, password,
-					info_handler=self.progress_state.info_handler,
-					step_handler=self.progress_state.add_steps,
-					error_handler=self.progress_state.error_handler,
-				)
+			# system join on a slave system
+			progress_state.component = _('Domain join')
+			if serverRole == 'domaincontroller_slave':
+				progress_state.info = _('Preparing domain join...')
+				MODULE.process('Starting system join...')
+			else:  # run join scripts on DC backup/master
+				progress_state.info = _('Executing join scripts...')
+				MODULE.process('Running join scripts...')
+			success = system_join(
+				username, password,
+				info_handler=self.progress_state.info_handler,
+				step_handler=self.progress_state.add_steps,
+				error_handler=self.progress_state.error_handler,
+			)
 
 			return success
 
