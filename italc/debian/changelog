@@ -1,3 +1,13 @@
+italc (2:2.0.10-3) unstable; urgency=low
+
+  * backported patches from UCS@school 3.1 R2 (Bug #31036)
+    - added ItalcVncConnection::shutdownAndDestroyLater()
+    - ItalcVncConnection::stop(): recheck thread after stopping it via
+      terminate(); if thread is still running, a SIGSEGV may occur after
+      destructor has been called (Bug #27432) 
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 19 Apr 2013 16:03:38 +0200
+
 italc (2:2.0.10-2) unstable; urgency=low
 
   * added FQDN to key filename (Bug #30301)
