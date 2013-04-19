@@ -1,3 +1,10 @@
+ucs-school-ldap-acls-master (8.0.3-1) unstable; urgency=low
+
+  * give teachers and teachers-staff permission to create and modify
+  	workgroups; Bug #30527
+
+ -- Florian Best <best@univention.de>  Fri, 19 Apr 2013 12:20:16 +0200
+
 ucs-school-ldap-acls-master (8.0.2-1) unstable; urgency=low
 
   * add read ACL for license container for UCS@school domaincontroller
