@@ -22,5 +22,7 @@
 	<command name="computerroom/computer/state" function="computer_state"/>
 	<command name="computerroom/user/logout" function="user_logout"/>
 	<command name="computerroom/room/acquire" function="room_acquire"/>
+	<command name="computerroom/exam/collect" function="exam_collect"/>
+	<command name="computerroom/exam/finish" function="exam_finish"/>
 	</module>
 </umc>

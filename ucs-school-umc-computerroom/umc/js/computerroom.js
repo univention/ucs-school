@@ -39,6 +39,8 @@ define([
 	"dojo/data/ItemFileWriteStore",
 	"dojo/store/DataStore",
 	"dojo/store/Memory",
+	"dijit/ProgressBar",
+	"dijit/Dialog",
 	"umc/dialog",
 	"umc/tools",
 	"umc/widgets/ExpandingTitlePane",
@@ -55,7 +57,7 @@ define([
 	"umc/modules/computerroom/SettingsDialog",
 	"umc/i18n!umc/modules/computerroom"
 ], function(declare, lang, array, aspect, dom, Deferred, Dialog, ItemFileWriteStore, DataStore,
-            Memory, dialog, tools, ExpandingTitlePane, Grid, Button, Module, Page, Form,
+            Memory, ProgressBar, Dialog, dialog, tools, ExpandingTitlePane, Grid, Button, Module, Page, Form,
             ContainerWidget, Text, ComboBox, Tooltip, ScreenshotView, SettingsDialog, _) {
 
 	return declare("umc.modules.computerroom", [ Module ], {
@@ -139,26 +141,26 @@ define([
 
 			// define actions above grid
 			this._headActions = [{
-				name: 'stopExam',
+				name: 'finishExam',
 				style: 'float: left;',
 				visible: false,
-				label: _('stop exam'),
-				callback: lang.hitch(this, 'stopExam')
+				label: _('Stop exam'),
+				callback: lang.hitch(this, '_finishExam')
 			}, {
 				name: 'collect',
 				style: 'float: left;',
 				visible: false,
-				label: _('collect results'),
-				callback: lang.hitch(this, 'collectResults')
+				label: _('Collect results'),
+				callback: lang.hitch(this, '_collectExam')
 			}, {
 				name: 'settings',
 				style: 'padding-bottom: 10px; padding-bottom; 10px; float: right;',
-				label: _('change settings'),
+				label: _('Change settings'),
 				callback: lang.hitch(this, function() { this._settingsDialog.show(); })
 			}, {
 				name: 'select_room',
 				style: 'padding-bottom: 10px; padding-bottom; 10px; float: right;',
-				label: _('change room'),
+				label: _('Change room'),
 				callback: lang.hitch(this, 'changeRoom')
 			}];
 
@@ -392,7 +394,7 @@ define([
 			this._searchPage.set('headerText', header);
 
 			// update visibility of header buttons
-			this._headButtons.stopExam.set('visible', roomInfo && roomInfo.exam);
+			this._headButtons.finishExam.set('visible', roomInfo && roomInfo.exam);
 			this._headButtons.collect.set('visible', roomInfo && roomInfo.exam);
 
 			// hide time period input field in settings dialog
@@ -713,8 +715,53 @@ define([
 			}));
 		},
 
-		collectResults: function() {},
-		stopExam: function() {},
+		_collectExam: function() {
+			var info = this.get('roomInfo') || {};
+			deferred = this.umcpCommand('computerroom/exam/collect', {});
+			this._wait(_('Please wait while all exam documents are being collected.'), _('Collecting exam documents'), deferred);
+			deferred.then(function() {
+				dialog.alert(_('All related exam documents have been collected successfully from the students\' home directories.'));
+			});
+		},
+
+		_finishExam: function() {
+			var info = this.get('roomInfo') || {};
+			deferred = this.umcpCommand('computerroom/exam/finish', {});
+			this._wait(_('Please wait while the exam is finished and all relevant documents are being collected.'), _('Finishing exam'), deferred);
+			deferred.then(lang.hitch(this, function() {
+				dialog.alert(_('The exam has been successfully finished. All related exam documents have been collected from the students\' home directories.'));
+				delete info.exam;
+				delete info.examDescription;
+				this.set('roomInfo', info)
+			}));
+		},
+
+		_wait: function(message, title, deferred) {
+			// create container with ProgressBar
+			var container = new ContainerWidget({});
+			container.addChild(new Text({
+				content: message
+			}));
+			container.addChild(new ProgressBar({
+				indeterminate: true
+			}));
+
+			// show the progressbar in a dialog
+			var _dialog = new Dialog({
+				title: title,
+				content: container.domNode
+			});
+			_dialog.show();
+
+			// close the dialog on success or error
+			deferred.then(function() {
+				container.destroyRecursive();
+				_dialog.destroyRecursive();
+			}, function() {
+				container.destroyRecursive();
+				_dialog.destroyRecursive();
+			});
+		},
 
 		changeRoom: function() {
 			// define a cleanup function

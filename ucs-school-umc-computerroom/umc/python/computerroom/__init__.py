@@ -61,6 +61,8 @@ from ucsschool.lib.schoollessons import SchoolLessons
 from ucsschool.lib.smbstatus import SMB_Status
 import ucsschool.lib.internetrules as internetrules
 
+from univention.management.console.modules.schoolexam.util import distribution
+
 from italc2 import ITALC_Manager, ITALC_Error
 
 from notifier.nf_qt import _exit
@@ -184,8 +186,11 @@ class Instance( SchoolBaseModule ):
 		'''Remove lock file when UMC module exists'''
 		MODULE.info( 'Cleaning up' )
 		if self._italc.room:
-			MODULE.info( 'Removing lock file for room %s (%s)' % ( self._italc.room, self._italc.roomDN ) )
-			_freeRoom( self._italc.roomDN, self._user_dn )
+			# do not remove lock file during exam mode
+			info = _readRoomInfo(self._italc.room) or dict()
+			if not info.get('exam'):
+				MODULE.info( 'Removing lock file for room %s (%s)' % ( self._italc.room, self._italc.roomDN ) )
+				_freeRoom( self._italc.roomDN, self._user_dn )
 		_exit( 0 )
 
 	def lessons( self, request ):
@@ -836,4 +841,54 @@ class Instance( SchoolBaseModule ):
 		computer.logOut()
 
 		self.finished( request.id, True )
+
+	def exam_collect(self, request):
+		# block access to session from other users
+		self._checkRoomAccess()
+
+		# verify that an exam is being writte
+		info = _readRoomInfo(self._italc.roomDN)
+		if not info.get('exam'):
+			raise UMC_CommandError(_('No exam is currently being written.'))
+
+		# try to open project file
+		project = distribution.Project.load(info.get('exam'))
+		if not project:
+			raise UMC_CommandError(_('No files have been distributed'))
+
+		# collect files
+		project.collect()
+
+		self.finished(request.id, True)
+
+	def exam_finish(self, request):
+		# block access to session from other users
+		self._checkRoomAccess()
+
+		# verify that an exam is being writte
+		info = _readRoomInfo(self._italc.roomDN)
+		if not info.get('exam'):
+			raise UMC_CommandError(_('No exam is currently being written.'))
+
+		# try to open project file
+		project = distribution.Project.load(info.get('exam'))
+		if not project:
+			raise UMC_CommandError(_('No files have been distributed'))
+
+		# collect files
+		project.collect()
+
+		# unset exam settings
+		roomInfo = _readRoomInfo(self._italc.roomDN) or dict()
+		if roomInfo.get('exam') and roomInfo.get('cmd'):
+			MODULE.info('unsetting room settings for exam (%s): %s' % (roomInfo['exam'], roomInfo['cmd']))
+			try:
+				subprocess.call(shlex.split(roomInfo['cmd']))
+			except (OSError, IOError):
+				MODULE.warn('Failed to reinitialize current room settings: %s' %  roomInfo['cmd'])
+
+		# update room to normal mode
+		_updateRoomInfo(self._italc.roomDN, exam=None, examDescription=None, cmd=None)
+
+		self.finished(request.id, True)
 
