@@ -36,6 +36,14 @@ from simplejson import loads, dumps
 
 # univention
 from univention.management.console.log import MODULE
+from univention.management.console.config import ucr
+ucr.load()
+
+# distribution utils - adjust paths
+import univention.management.console.modules.distribution.util as distribution
+distribution.DISTRIBUTION_DATA_PATH = ucr.get('ucsschool/exam/cache', '/var/lib/ucs-school-umc-schoolexam')
+distribution.POSTFIX_DATADIR_SENDER = ucr.get('ucsschool/exam/datadir/sender', 'Klassenarbeiten')
+distribution.POSTFIX_DATADIR_RECIPIENT = ucr.get('ucsschool/exam/datadir/recipient', 'Klassenarbeiten')
 
 class Progress(object):
 	def __init__(self, max_steps=100):

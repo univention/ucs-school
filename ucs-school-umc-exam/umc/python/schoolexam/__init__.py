@@ -45,12 +45,6 @@ import ucsschool.lib.internetrules as internetrules
 import univention.admin.modules as udm_modules
 import univention.admin.uexceptions as udm_exceptions
 
-# distribution utils - adjust paths
-import univention.management.console.modules.distribution.util as distribution_util
-distribution_util.DISTRIBUTION_DATA_PATH = ucr.get('ucsschool/exam/cache', '/var/lib/ucs-school-umc-schoolexam')
-distribution_util.POSTFIX_DATADIR_SENDER = ucr.get('ucsschool/exam/datadir/sender', 'Klassenarbeiten')
-distribution_util.POSTFIX_DATADIR_RECIPIENT = ucr.get('ucsschool/exam/datadir/recipient', 'Klassenarbeiten')
-
 import os
 import tempfile
 import shutil
@@ -74,7 +68,7 @@ class Instance( SchoolBaseModule ):
 	def init(self):
 		SchoolBaseModule.init(self)
 		# initiate paths for data distribution
-		distribution_util.initPaths()
+		util.distribution.initPaths()
 
 	def destroy(self):
 		# clean temporary data
@@ -138,14 +132,14 @@ class Instance( SchoolBaseModule ):
 		def _thread():
 			# perform all actions inside a thread...
 			# create a User object for the teacher
-			sender = distribution_util.openRecipients(self._user_dn, ldap_user_read, search_base)
+			sender = util.distribution.openRecipients(self._user_dn, ldap_user_read, search_base)
 			if not sender:
 				MODULE.error('Could not find user DN: %s' % self._user_dn)
 				raise RuntimeError( _('Could not authenticate user "%s"!') % self._user_dn )
 
 			# validate the project data and save project
 			opts = request.options
-			project = distribution_util.Project(dict(
+			project = util.distribution.Project(dict(
 				name=opts.get('directory'),
 				description=opts.get('name'),
 				files=opts.get('files'),
@@ -187,14 +181,17 @@ class Instance( SchoolBaseModule ):
 			progress_state.add_steps(5)
 
 			# read all recipients and fetch all user objects
-			entries = [ientry for ientry in [ distribution_util.openRecipients(idn, ldap_user_read, search_base) for idn in request.options.get('recipients', []) ] if ientry ]
+			entries = [ientry for ientry in [ util.distribution.openRecipients(idn, ldap_user_read, search_base) for idn in request.options.get('recipients', []) ] if ientry ]
 			users = []
 			for ientry in entries:
 				# recipients can in theory be users or groups
-				if isinstance(ientry, distribution_util.User):
+				if isinstance(ientry, util.distribution.User):
 					users.append(ientry)
-				elif isinstance(ientry, distribution_util.Group):
+				elif isinstance(ientry, util.distribution.Group):
 					users.extend(ientry.members)
+
+			# ignore exam users
+			users = [ iuser for iuser in users if not search_base.isExamUser(iuser.dn) ]
 
 			# start to create exam user accounts
 			progress_state.component(_('Preparing exam accounts'))
@@ -224,7 +221,7 @@ class Instance( SchoolBaseModule ):
 				for idn in examUsers - usersReplicated:
 					try:
 						# try to open the user
-						iuser = distribution_util.openRecipients(idn, ldap_user_read, search_base)
+						iuser = util.distribution.openRecipients(idn, ldap_user_read, search_base)
 						if iuser:
 							MODULE.info('user has been replicated: %s' % idn)
 

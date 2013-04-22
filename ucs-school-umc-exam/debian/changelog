@@ -1,3 +1,10 @@
+ucs-school-umc-exam (0.1.10-1) unstable; urgency=low
+
+  * Bug #30831: moved distribution utils into util.py, ignore exam users when
+    cloning users for exam mode
+
+ -- Alexander Kläser <klaeser@univention.de>  Mon, 22 Apr 2013 17:28:36 +0200
+
 ucs-school-umc-exam (0.1.9-1) unstable; urgency=low
 
   * Bug #30831: added distribution of files

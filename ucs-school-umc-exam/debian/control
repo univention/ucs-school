@@ -14,6 +14,7 @@ Package: ucs-school-umc-exam
 Architecture: all
 Depends: ${misc:Depends},
  univention-management-console-server,
+ ucs-school-umc-distribution,
 Description: Starts a new exam for a specified computer room
  Starts a new exam for a specified computer room
  .
