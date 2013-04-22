@@ -457,6 +457,9 @@ class SchoolSearchBase(object):
 	def isAdim(self, userDN):
 		return userDN.endswith(self.admins)
 
+	def isExamUser(self, userDN):
+		return userDN.endswith(self.examUsers)
+
 	def isWorkgroup(self, groupDN):
 		# a workgroup cannot lie in a sub directory
 		cnPart = groupDN[:-len(self.workgroups)-1]

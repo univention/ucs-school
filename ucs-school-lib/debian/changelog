@@ -1,3 +1,9 @@
+ucs-school-lib (2.0.22-1) unstable; urgency=low
+
+  * Bug #30831: added method isExamUser()
+
+ -- Alexander Kläser <klaeser@univention.de>  Mon, 22 Apr 2013 17:26:33 +0200
+
 ucs-school-lib (2.0.21-2) unstable; urgency=low
 
   * add property examGroupName (for Bug #30832)
