@@ -51,7 +51,7 @@ if [ -z "$examusers" ] ; then
 	examusers='examusers'
 fi
 
-udm containers/cn create --ignore_exists \
+udm container/cn create --ignore_exists \
 	--position "ou=${ou}${district},${ldap_base}" \
 	--set name="${examusers}" \
 
