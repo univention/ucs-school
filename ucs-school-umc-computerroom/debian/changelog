@@ -1,3 +1,10 @@
+ucs-school-umc-computerroom (2.0.20-1) unstable; urgency=low
+
+  * Bug #30831: refined actions for collecting/finishing exams, moved backend
+    functionality into schoolexam module
+
+ -- Alexander Kläser <klaeser@univention.de>  Wed, 24 Apr 2013 10:38:02 +0200
+
 ucs-school-umc-computerroom (2.0.19-1) unstable; urgency=low
 
   * Bug #30831: added support for collecting and finishing exams

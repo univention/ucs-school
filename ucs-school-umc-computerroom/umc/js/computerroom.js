@@ -35,7 +35,6 @@ define([
 	"dojo/aspect",
 	"dojo/dom",
 	"dojo/Deferred",
-	"dijit/Dialog",
 	"dojo/data/ItemFileWriteStore",
 	"dojo/store/DataStore",
 	"dojo/store/Memory",
@@ -53,12 +52,13 @@ define([
 	"umc/widgets/Text",
 	"umc/widgets/ComboBox",
 	"umc/widgets/Tooltip",
+	"umc/widgets/ProgressBar",
 	"umc/modules/computerroom/ScreenshotView",
 	"umc/modules/computerroom/SettingsDialog",
 	"umc/i18n!umc/modules/computerroom"
-], function(declare, lang, array, aspect, dom, Deferred, Dialog, ItemFileWriteStore, DataStore,
-            Memory, ProgressBar, Dialog, dialog, tools, ExpandingTitlePane, Grid, Button, Module, Page, Form,
-            ContainerWidget, Text, ComboBox, Tooltip, ScreenshotView, SettingsDialog, _) {
+], function(declare, lang, array, aspect, dom, Deferred, ItemFileWriteStore, DataStore,
+            Memory, DijitProgressBar, Dialog, dialog, tools, ExpandingTitlePane, Grid, Button, Module, Page, Form,
+            ContainerWidget, Text, ComboBox, Tooltip, ProgressBar, ScreenshotView, SettingsDialog, _) {
 
 	return declare("umc.modules.computerroom", [ Module ], {
 		// summary:
@@ -95,6 +95,8 @@ define([
 
 		// internal reference to the expanding title pane
 		_titlePane: null,
+
+		_progressBar: null,
 
 		_dataStore: null,
 		_objStore: null,
@@ -363,6 +365,18 @@ define([
 			}), lang.hitch(this, function() {
 				this.standby(false);
 			}));
+
+			// initiate a progress bar widget
+			this._progressBar = new ProgressBar();
+			this.own(this._progressBar);
+		},
+
+		startup: function() {
+			this.inherited(arguments);
+
+			// call startup for the SettingsDialog... otherwise its form values
+			// cannot be queried
+			this._settingsDialog.startup();
 		},
 
 		closeScreenView: function() {
@@ -398,7 +412,8 @@ define([
 			this._headButtons.collect.set('visible', roomInfo && roomInfo.exam);
 
 			// hide time period input field in settings dialog
-			this._settingsDialog.set('exam', !!roomInfo.exam);
+			this._settingsDialog.set('exam', roomInfo.exam);
+			this._settingsDialog.set('examDescription', roomInfo.examDescription);
 		},
 
 		_setRoomInfoAttr: function(roomInfo) {
@@ -717,50 +732,70 @@ define([
 
 		_collectExam: function() {
 			var info = this.get('roomInfo') || {};
-			deferred = this.umcpCommand('computerroom/exam/collect', {});
-			this._wait(_('Please wait while all exam documents are being collected.'), _('Collecting exam documents'), deferred);
-			deferred.then(function() {
-				dialog.alert(_('All related exam documents have been collected successfully from the students\' home directories.'));
+			var deferred = this.umcpCommand('schoolexam/exam/collect', {
+				exam: info.exam
 			});
+
+			// create container with spinning ProgressBar
+			var container = new ContainerWidget({});
+			container.addChild(new Text({
+				content: _('Please wait while all exam documents are being collected.')
+			}));
+			container.addChild(new DijitProgressBar({
+				indeterminate: true
+			}));
+
+			// start standby animation
+			this.standby(false);
+			this.standby(true, container);
+
+			deferred.then(lang.hitch(this, function() {
+				this.standby(false);
+				container.destroyRecursive();
+				dialog.alert(_('All related exam documents have been collected successfully from the students\' home directories.'));
+			}), lang.hitch(this, function() {
+				this.standby(false);
+				container.destroyRecursive();
+			}));
 		},
 
 		_finishExam: function() {
 			var info = this.get('roomInfo') || {};
-			deferred = this.umcpCommand('computerroom/exam/finish', {});
-			this._wait(_('Please wait while the exam is finished and all relevant documents are being collected.'), _('Finishing exam'), deferred);
+			this.umcpCommand('schoolexam/exam/finish', {
+				exam: info.exam,
+				room: info.room
+			});
+
+			// create a 'real' ProgressBar
+			var deferred = new Deferred();
+			this._progressBar.reset(_('Finishing exam...'));
+			this.standby(true, this._progressBar);
+			this._progressBar.auto(
+				'schoolexam/progress',
+				{},
+				function() {
+					// when progress is finished, resolve the given Deferred object
+					deferred.resolve();
+				}
+			);
+
+			// things to do after finishing the exam
 			deferred.then(lang.hitch(this, function() {
-				dialog.alert(_('The exam has been successfully finished. All related exam documents have been collected from the students\' home directories.'));
-				delete info.exam;
-				delete info.examDescription;
-				this.set('roomInfo', info)
-			}));
-		},
+				// stop standby
+				this.standby(false);
 
-		_wait: function(message, title, deferred) {
-			// create container with ProgressBar
-			var container = new ContainerWidget({});
-			container.addChild(new Text({
-				content: message
-			}));
-			container.addChild(new ProgressBar({
-				indeterminate: true
-			}));
+				// on success, prompt info to user
+				if (this._progressBar.getErrors().errors.length == 0) {
+					dialog.alert(_('The exam has been successfully finished. All related exam documents have been collected from the students\' home directories.'));
+					delete info.exam;
+					delete info.examDescription;
+					this.set('roomInfo', info);
 
-			// show the progressbar in a dialog
-			var _dialog = new Dialog({
-				title: title,
-				content: container.domNode
-			});
-			_dialog.show();
-
-			// close the dialog on success or error
-			deferred.then(function() {
-				container.destroyRecursive();
-				_dialog.destroyRecursive();
-			}, function() {
-				container.destroyRecursive();
-				_dialog.destroyRecursive();
-			});
+					// update room settings for normal mode in the backend
+					// ... load settings first and then save them back
+					this._settingsDialog.update().then(lang.hitch(this._settingsDialog, 'save'));
+				}
+			}));
 		},
 
 		changeRoom: function() {

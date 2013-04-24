@@ -50,6 +50,7 @@ define([
 
 		// indicates that computerroom is opened in exam mode
 		exam: null,
+		examDescription: null,
 
 		_form: null,
 
@@ -127,13 +128,7 @@ define([
 					}
 					dijit.hideTooltip( this._form.getWidget( 'customRule' ).domNode ); // FIXME
 					this.hide();
-					this.umcpCommand( 'computerroom/settings/set', {
-						internetRule: this._form.getWidget( 'internetRule' ).get( 'value' ),
-						customRule: this._form.getWidget( 'customRule' ).get( 'value' ),
-						printMode: this._form.getWidget( 'printMode' ).get( 'value' ),
-						shareMode: this._form.getWidget( 'shareMode' ).get( 'value' ),
-						period: this._form.getWidget( 'period' ).get( 'value' )
-					});
+					this.save();
 				} )
 			} , {
 				name: 'reset_to_default',
@@ -170,8 +165,9 @@ define([
 			}));
 		},
 
-		update: function(school, room) {
-			this.umcpCommand('computerroom/settings/get', {}).then(lang.hitch(this, function(response) {
+		update: function() {
+			// load settings and update form
+			return this.umcpCommand('computerroom/settings/get', {}).then(lang.hitch(this, function(response) {
 				tools.forIn(response.result, function(key, value) {
 					var widget = this._form.getWidget(key);
 					if (widget.setInitialValue) {
@@ -183,8 +179,17 @@ define([
 			}));
 		},
 
+		save: function() {
+			// save settings
+			var values = this._form.get('value');
+			values.exam = this.exam || null;
+			values.examDescription = this.examDescription || null;
+			this.umcpCommand( 'computerroom/settings/set', values);
+		},
+
 		personalActive: function() {
-			return this._form.getWidget( 'internetRule' ).get( 'value' ) != 'none' || this._form.getWidget( 'shareMode' ).get( 'value' ) != 'all' || this._form.getWidget( 'printMode' ).get( 'value' ) != 'default';
+			var values = this._form.get('value');
+			return values.internetRule != 'none' || values.shareMode != 'all' || values.printMode != 'default';
 		},
 
 		onClose: function() {
