@@ -37,7 +37,7 @@ UCS@School UMC module schoolexam-master
 from univention.management.console.config import ucr
 from univention.management.console.log import MODULE
 from univention.management.console.modules import UMC_CommandError, UMC_OptionTypeError
-from ucsschool.lib.schoolldap import LDAP_Connection, LDAP_ConnectionError, SchoolBaseModule, ADMIN_WRITE, USER_READ
+from ucsschool.lib.schoolldap import LDAP_Connection, LDAP_ConnectionError, SchoolSearchBase, SchoolBaseModule, ADMIN_WRITE, USER_READ
 
 import univention.admin.modules
 univention.admin.modules.update()
@@ -128,14 +128,20 @@ class Instance( SchoolBaseModule ):
 		   to be enforced via the name of this group.
 		   The group has to be created earlier, e.g. by create_ou (ucs-school-import).'''
 
+		### Origin user
+		self.required_options(request, 'userdn')
+		userdn = request.options.get('userdn')
+
+		### get search base for OU of given user dn
+		school = SchoolSearchBase.getOU(userdn)
+		if not school:
+			raise UMC_CommandError('User is not below a school OU: %s' % userdn)
+		search_base = SchoolSearchBase(search_base.availableSchools, school)
+
 		## store the ldap related objects for calls to the examGroup property
 		self._ldap_admin_write = ldap_admin_write
 		self._ldap_position = ldap_position
 		self._search_base = search_base
-
-		### Origin user
-		self.required_options(request, 'userdn')
-		userdn = request.options.get('userdn')
 
 		## Try to open the object
 		if 'users/user' in self._udm_modules:
@@ -290,21 +296,29 @@ class Instance( SchoolBaseModule ):
 		self.required_options(request, 'userdn')
 		userdn = request.options.get('userdn')
 
-		### uid and DN of exam_user
-		username = univention.admin.uldap.explodeDn(userdn, 1)[0]
-		exam_user_uid = "".join( (self._examUserPrefix, username) )
+		### get search base for OU of given user dn
+		school = SchoolSearchBase.getOU(userdn)
+		if not school:
+			raise UMC_CommandError('User is not below a school OU: %s' % userdn)
+		search_base = SchoolSearchBase(search_base.availableSchools, school)
 
-		udm_filter = '(username=%s)' % exam_user_uid
-		objs = univention.admin.modules.lookup( 'users/user', None, ldap_admin_write, filter = udm_filter, scope = 'sub', base = search_base.students, unique=1)
-		if objs:
-			exam_user = objs[0]
-			try:
-				exam_user.remove()
-			except univention.admin.uexceptions.ldapError, e:
-				message = 'Could not remove exam user: %s' % e
-				raise UMC_CommandError( message )
+		### uid and DN of exam_user
+		exam_user_uid = univention.admin.uldap.explodeDn(userdn, 1)[0]
+
+		### open the users module
+		if 'users/user' in self._udm_modules:
+			module_users_user = self._udm_modules['users/user']
 		else:
-			message = 'User not found: %s' % exam_user_uid
+			module_users_user = univention.admin.modules.get('users/user')
+			univention.admin.modules.init(ldap_admin_write, ldap_position, module_users_user)
+			self._udm_modules['users/user'] = module_users_user
+
+		### try to remove object
+		try:
+			user_orig = module_users_user.object(None, ldap_admin_write, ldap_position, userdn)
+			user_orig.remove()
+		except univention.admin.uexceptions.ldapError, e:
+			message = 'Could not remove exam user: %s' % e
 			raise UMC_CommandError( message )
 
 		self.finished(request.id, {}, success=True)
@@ -314,14 +328,20 @@ class Instance( SchoolBaseModule ):
 	def set_computerroom_exammode(self, request, ldap_user_read = None, ldap_admin_write = None, ldap_position = None, search_base = None):
 		'''Add all member hosts of a given computer room to the special exam group.'''
 
+		### get parameters
+		self.required_options(request, 'roomdn')
+		roomdn = request.options.get('roomdn')
+
+		### get search base for OU of given room DN
+		school = SchoolSearchBase.getOU(roomdn)
+		if not school:
+			raise UMC_CommandError('Room is not below a school OU: %s' % userdn)
+		search_base = SchoolSearchBase(search_base.availableSchools, school)
+
 		## store the ldap related objects for calls to the examGroup property
 		self._ldap_admin_write = ldap_admin_write
 		self._ldap_position = ldap_position
 		self._search_base = search_base
-
-		### get parameters
-		self.required_options(request, 'roomdn')
-		roomdn = request.options.get('roomdn')
 
 		### Try to open the room
 		if 'groups/group' in self._udm_modules:
@@ -352,14 +372,20 @@ class Instance( SchoolBaseModule ):
 	def unset_computerroom_exammode(self, request, ldap_user_read = None, ldap_admin_write = None, ldap_position = None, search_base = None):
 		'''Remove all member hosts of a given computer room from the special exam group.'''
 
+		### get parameters
+		self.required_options(request, 'roomdn')
+		roomdn = request.options.get('roomdn')
+
+		### get search base for OU of given room DN
+		school = SchoolSearchBase.getOU(roomdn)
+		if not school:
+			raise UMC_CommandError('Room is not below a school OU: %s' % userdn)
+		search_base = SchoolSearchBase(search_base.availableSchools, school)
+
 		## store the ldap related objects for calls to the examGroup property
 		self._ldap_admin_write = ldap_admin_write
 		self._ldap_position = ldap_position
 		self._search_base = search_base
-
-		### get parameters
-		self.required_options(request, 'roomdn')
-		roomdn = request.options.get('roomdn')
 
 		### Try to open the room
 		if 'groups/group' in self._udm_modules:

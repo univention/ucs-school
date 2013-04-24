@@ -33,6 +33,8 @@
 # related third party
 from httplib import HTTPSConnection, HTTPException
 from simplejson import loads, dumps
+from httplib import HTTPException
+from socket import error as SocketError
 
 # univention
 from univention.management.console.log import MODULE
@@ -92,6 +94,25 @@ class UMCConnection(object):
 		}
 		if username is not None:
 			self.auth(username, password)
+
+	### new method that was not in app_center/util.py
+	@staticmethod
+	def get_machine_connection():
+		# open a new connection to the master UMC
+		username = '%s$' % ucr.get('hostname')
+		password = ''
+		try:
+			with open('/etc/machine.secret') as machineFile:
+				password = machineFile.readline().strip()
+		except (OSError, IOError) as e:
+			MODULE.error('Could not read /etc/machine.secret: %s' % e)
+		try:
+			connection = UMCConnection(ucr.get('ldap/master'))
+			connection.auth(username, password)
+			return connection
+		except (HTTPException, SocketError) as e:
+			MODULE.error('Could not connect to UMC on %s: %s' % (ucr.get('ldap/master'), e))
+		return None
 
 	def get_connection(self):
 		# once keep-alive is over, the socket closes

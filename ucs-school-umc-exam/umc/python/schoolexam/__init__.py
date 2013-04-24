@@ -33,6 +33,7 @@
 import notifier
 
 from univention.management.console.modules import Base
+from univention.management.console.modules import UMC_CommandError
 from univention.management.console.log import MODULE
 from univention.management.console.config import ucr
 from univention.management.console.modules.decorators import simple_response, sanitize
@@ -63,7 +64,7 @@ class Instance( SchoolBaseModule ):
 	def __init__( self ):
 		SchoolBaseModule.__init__(self)
 		self._tmpDir = None
-		self.progress_state = Progress()
+		self._progress_state = Progress()
 
 	def init(self):
 		SchoolBaseModule.init(self)
@@ -112,7 +113,7 @@ class Instance( SchoolBaseModule ):
 
 	@simple_response
 	def progress(self):
-		return self.progress_state.poll()
+		return self._progress_state.poll()
 
 	@LDAP_Connection()
 	def start_exam(self, request, ldap_user_read = None, ldap_position = None, search_base = None):
@@ -124,10 +125,16 @@ class Instance( SchoolBaseModule ):
 		#   25 -> for cloning users
 		#   25 -> for each replicated users + copy of the profile directory
 		#   25 -> distribution of exam files
-		progress_state = self.progress_state
-		progress_state.reset(80)
-		progress_state.component(_('Initializing'))
-		project = None
+		progress = self._progress_state
+		progress.reset(80)
+		progress.component(_('Initializing'))
+
+		# create that holds a reference to project, otherwise _thread() cannot
+		# set the project variable in the scope of start_exam:
+		# http://stackoverflow.com/questions/7935966/python-overwriting-variables-in-nested-functions
+		my = type("", (), dict(
+			project=None
+		))()
 
 		def _thread():
 			# perform all actions inside a thread...
@@ -139,46 +146,37 @@ class Instance( SchoolBaseModule ):
 
 			# validate the project data and save project
 			opts = request.options
-			project = util.distribution.Project(dict(
+			my.project = util.distribution.Project(dict(
 				name=opts.get('directory'),
 				description=opts.get('name'),
 				files=opts.get('files'),
 				sender=sender,
 			))
-			project.validate()
-			project.save()
+			my.project.validate()
+			my.project.save()
 
 			# copy files into project directory
 			if self._tmpDir:
-				for ifile in project.files:
+				for ifile in my.project.files:
 					isrc = os.path.join(self._tmpDir, ifile)
-					itarget = os.path.join(project.cachedir, ifile)
+					itarget = os.path.join(my.project.cachedir, ifile)
 					if os.path.exists(isrc):
 						# copy file to cachedir
 						shutil.move( isrc, itarget )
 						os.chown( itarget, 0, 0 )
 
 			# open a new connection to the master UMC
-			ucr.load()
-			username = '%s$' % ucr.get('hostname')
-			password = ''
-			try:
-				with open('/etc/machine.secret') as machineFile:
-					password = machineFile.readline().strip()
-			except (OSError, IOError) as e:
-				MODULE.error('Could not read /etc/machine.secret: %s' % e)
-			try:
-				connection = UMCConnection(ucr.get('ldap/master'))
-				connection.auth(username, password)
-			except (HTTPException, SocketError) as e:
+			connection = UMCConnection.get_machine_connection()
+			if not connection:
 				MODULE.error('Could not connect to UMC on %s: %s' % (ucr.get('ldap/master'), e))
+				raise UMC_CommandError(_('Could not connect to master server %s') % ucr.get('ldap/master'))
 
 			# mark the computer room for exam mode
-			progress_state.component(_('Preparing the computer room for exam mode...'))
-			ires = connection.request('schoolexam-master/set-computerroom-exammode', dict(
+			progress.component(_('Preparing the computer room for exam mode...'))
+			res = connection.request('schoolexam-master/set-computerroom-exammode', dict(
 				roomdn=request.options.get('room')
 			))
-			progress_state.add_steps(5)
+			progress.add_steps(5)
 
 			# read all recipients and fetch all user objects
 			entries = [ientry for ientry in [ util.distribution.openRecipients(idn, ldap_user_read, search_base) for idn in request.options.get('recipients', []) ] if ientry ]
@@ -194,12 +192,12 @@ class Instance( SchoolBaseModule ):
 			users = [ iuser for iuser in users if not search_base.isExamUser(iuser.dn) ]
 
 			# start to create exam user accounts
-			progress_state.component(_('Preparing exam accounts'))
+			progress.component(_('Preparing exam accounts'))
 			percentPerUser = 25.0 / len(users)
 			examUsers = set()
 			usersReplicated = set()
 			for iuser in users:
-				progress_state.info('%s, %s (%s)' % (iuser.lastname, iuser.firstname, iuser.username))
+				progress.info('%s, %s (%s)' % (iuser.lastname, iuser.firstname, iuser.username))
 				try:
 					ires = connection.request('schoolexam-master/create-exam-user', dict(
 						userdn=iuser.dn
@@ -210,11 +208,11 @@ class Instance( SchoolBaseModule ):
 					MODULE.warn('Could not create exam user account for: %s' % iuser.dn)
 
 				# indicate the the user has been processed
-				progress_state.add_steps(percentPerUser)
+				progress.add_steps(percentPerUser)
 
 			# wait for the replication of all users to be finished
 			userModul = udm_modules.get( 'users/user' )
-			progress_state.component(_('Preparing user home directories'))
+			progress.component(_('Preparing user home directories'))
 			recipients = []  # list of User objects for all exam users
 			while len(examUsers) > len(usersReplicated):
 				MODULE.info('waiting for replication to be finished, %s objects missing' % (len(examUsers) - len(usersReplicated)))
@@ -232,8 +230,8 @@ class Instance( SchoolBaseModule ):
 
 							# mark the user as replicated
 							usersReplicated.add(idn)
-							progress_state.info('%s, %s (%s)' % (iuser.lastname, iuser.firstname, iuser.username))
-							progress_state.add_steps(percentPerUser)
+							progress.info('%s, %s (%s)' % (iuser.lastname, iuser.firstname, iuser.username))
+							progress.add_steps(percentPerUser)
 					except udm_exceptions.noObject as e:
 						# access failed
 						pass
@@ -244,19 +242,19 @@ class Instance( SchoolBaseModule ):
 				time.sleep(1)
 
 			# update the final list of recipients
-			project.recipients = recipients
-			project.save()
+			my.project.recipients = recipients
+			my.project.save()
 
 			# distribute exam files
-			progress_state.component(_('Distributing exam files'))
-			progress_state.info('')
-			project.distribute()
-			progress_state.add_steps(25)
+			progress.component(_('Distributing exam files'))
+			progress.info('')
+			my.project.distribute()
+			progress.add_steps(25)
 
 		def _finished(thread, result):
 			# mark the progress state as finished
-			progress_state.info(_('finished...'))
-			progress_state.finish()
+			progress.info(_('finished...'))
+			progress.finish()
 
 			# finish the request at the end in order to force the module to keep
 			# running until all actions have been completed
@@ -264,13 +262,104 @@ class Instance( SchoolBaseModule ):
 				msg = '%s\n%s: %s\n' % ( ''.join( traceback.format_tb( thread.exc_info[ 2 ] ) ), thread.exc_info[ 0 ].__name__, str( thread.exc_info[ 1 ] ) )
 				MODULE.error('Exception during start_exam: %s' % msg)
 				self.finished(request.id, dict(success=False))
-				progress_state.error(_('An unexpected error occurred during installation: %s') % result)
+				progress.error(_('An unexpected error occurred during installation: %s') % result)
 
 				# in case a distribution project has already be written to disk, purge it
-				if project:
-					project.purge()
+				if my.project:
+					my.project.purge()
 			else:
 				self.finished(request.id, dict(success=True))
+
+				# remove uploaded files from cache
+				self._cleanTmpDir()
+
+		thread = notifier.threads.Simple('start_exam', _thread, _finished)
+		thread.run()
+
+	def collect_exam(self, request):
+		self.required_options(request, 'exam')
+
+		# try to open project file
+		project = util.distribution.Project.load(request.options.get('exam'))
+		if not project:
+			raise UMC_CommandError(_('No files have been distributed'))
+
+		# collect files
+		project.collect()
+
+		self.finished(request.id, True)
+
+	def finish_exam(self, request):
+		self.required_options(request, 'exam', 'room')
+
+		# reset the current progress state
+		# steps:
+		#   10 -> collecting exam files
+		#   5 -> for preparing exam room
+		#   25 -> for cloning users
+		progress = self._progress_state
+		progress.reset(40)
+		progress.component(_('Initializing'))
+
+		# try to open project file
+		project = util.distribution.Project.load(request.options.get('exam'))
+
+		def _thread():
+			# make sure we have a valid project
+			if not project:
+				raise UMC_CommandError(_('No files have been distributed'))
+
+			# perform all actions inside a thread...
+			# collect files
+			progress.component(_('Collecting exam files...'))
+			project.collect()
+			progress.add_steps(10)
+
+			# open a new connection to the master UMC
+			connection = UMCConnection.get_machine_connection()
+			if not connection:
+				MODULE.error('Could not connect to UMC on %s: %s' % (ucr.get('ldap/master'), e))
+				raise UMC_CommandError(_('Could not connect to master server %s') % ucr.get('ldap/master'))
+
+			# mark the computer room for exam mode
+			progress.component(_('Configuring the computer room...'))
+			res = connection.request('schoolexam-master/unset-computerroom-exammode', dict(
+				roomdn=request.options.get('room')
+			))
+			progress.add_steps(5)
+
+			# start to create exam user accounts
+			progress.component(_('Preparing exam accounts'))
+			percentPerUser = 25.0 / len(project.recipients)
+			for iuser in project.recipients:
+				progress.info('%s, %s (%s)' % (iuser.lastname, iuser.firstname, iuser.username))
+				try:
+					ires = connection.request('schoolexam-master/remove-exam-user', dict(
+						userdn=iuser.dn
+					))
+					MODULE.info('Exam user has been removed: %s' % iuser.dn)
+				except (HTTPException, SocketError) as e:
+					MODULE.warn('Could not remove exam user account %s: %s' % (iuser.dn, e))
+
+				# indicate the the user has been processed
+				progress.add_steps(percentPerUser)
+
+		def _finished(thread, result):
+			# mark the progress state as finished
+			progress.info(_('finished...'))
+			progress.finish()
+
+			# running until all actions have been completed
+			if isinstance(result, BaseException):
+				msg = '%s\n%s: %s\n' % ( ''.join( traceback.format_tb( thread.exc_info[ 2 ] ) ), thread.exc_info[ 0 ].__name__, str( thread.exc_info[ 1 ] ) )
+				MODULE.error('Exception during exam_finish: %s' % msg)
+				self.finished(request.id, dict(success=False))
+				progress.error(_('An unexpected error occurred during installation: %s') % result)
+			else:
+				self.finished(request.id, dict(success=True))
+
+				# pruge project
+				project.purge()
 
 				# remove uploaded files from cache
 				self._cleanTmpDir()

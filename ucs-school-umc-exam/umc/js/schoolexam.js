@@ -278,10 +278,11 @@ define([
 		_startExam: function() {
 			// validate the current values
 			var values = this.getValues();
-			//TODO: ...
+
+			//TODO: validate user input
 
 			// start the exam
-			tools.umcpCommand('schoolexam/startexam', values, false);
+			tools.umcpCommand('schoolexam/exam/start', values, false);
 
 			// initiate the progress bar
 			this._progressBar.reset(_('Starting the configuration process...' ));
