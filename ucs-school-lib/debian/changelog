@@ -1,3 +1,9 @@
+ucs-school-lib (2.0.23-1) unstable; urgency=low
+
+  * Bug #30831: added method SchoolSearchBase.getOU()
+
+ -- Alexander Kläser <klaeser@univention.de>  Wed, 24 Apr 2013 09:52:06 +0200
+
 ucs-school-lib (2.0.22-1) unstable; urgency=low
 
   * Bug #30831: added method isExamUser()

@@ -347,6 +347,16 @@ class SchoolSearchBase(object):
 		self._examUserContainerName = ucr.get('ucsschool/ldap/default/container/exam', 'examusers')
 		self._examGroupNameTemplate = ucr.get('ucsschool/ldap/default/groupname/exam', 'OU%(ou)s-Klassenarbeit')
 
+	@staticmethod
+	def getOU(dn):
+		'''Return the school OU for a given DN.'''
+		if dn.find('ou=') < 0:
+			# no 'ou=' in the string
+			return None
+		schoolDN = dn[dn.find('ou='):]
+		school = univention.uldap.explodeDn( schoolDN, 1 )[0]
+		return school
+
 	@property
 	def availableSchools(self):
 		return self._availableSchools
