@@ -1,3 +1,10 @@
+ucs-school-lib (2.0.24-1) unstable; urgency=low
+
+  * adjust smbstatus.py to tsocket_address_bsd_ops.string (Bug #31141)
+  * new properties ipaddress, ipv4address and ipv6address
+
+ -- Arvid Requate <requate@univention.de>  Wed, 24 Apr 2013 19:55:41 +0200
+
 ucs-school-lib (2.0.23-1) unstable; urgency=low
 
   * Bug #30831: added method SchoolSearchBase.getOU()

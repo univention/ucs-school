@@ -37,7 +37,7 @@ import subprocess
 import univention.debug as ud
 
 REGEX_LOCKED_FILES = re.compile( r'(?P<pid>[0-9]+)\s+(?P<uid>[0-9]+)\s+(?P<denyMode>[A-Z_]+)\s+(?P<access>[0-9x]+)\s+(?P<rw>[A-Z]+)\s+(?P<oplock>[A-Z_+]+)\s+(?P<sharePath>\S+)\s+(?P<filename>\S+)\s+(?P<time>.*)$' )
-REGEX_USERS = re.compile( r'(?P<pid>[0-9]+)\s+(?P<username>\S+)\s+(?P<group>.+\S)\s+(?P<machine>\S+)\s+\((?P<ipAddress>[0-9a-fA-F.:]+)\)$' )
+REGEX_USERS = re.compile( r'(?P<pid>[0-9]+)\s+(?P<username>\S+)\s+(?P<group>.+\S)\s+(?P<machine>\S+)\s+\(((?P<ipAddress>[0-9a-fA-F.:]+)|ipv4:(?P<ipv4Address>[0-9a-fA-F.:]+)|ipv6:(?P<ipv6Address>[0-9a-fA-F:]+))\)$' )
 REGEX_SERVICES = re.compile( r'(?P<service>\S+)\s+(?P<pid>[0-9]+)\s+(?P<machine>\S+)\s+(?P<connectedAt>.*)$' )
 
 class SMB_LockedFile( dict ):
@@ -80,6 +80,18 @@ class SMB_Process( dict ):
 	@property
 	def services( self ):
 		return self._services
+
+	@property
+	def ipv4address( self ):
+		return self[ 'ipv4Address' ]
+
+	@property
+	def ipv6address( self ):
+		return self[ 'ipv6Address' ]
+
+	@property
+	def ipaddress( self ):
+		return self.get('ipAddress') or self.ipv4address or self.ipv6address
 
 	def update( self, dictionary ):
 		if 'sharePath' in dictionary:
@@ -142,8 +154,9 @@ if __name__ == '__main__':
 Samba version 4.0.0alpha18-UNKNOWN
 PID     Username      Group         Machine                        
 -------------------------------------------------------------------
-23741     anton6        Domain Users schule  10.200.28.26 (10.200.28.26)
-23558     lehrer1       Domain Users schule  client22     (10.200.28.22)
+23740     anton5        Domain Users schule  10.200.28.25 (10.200.28.25:57430)
+23741     anton6        Domain Users schule  10.200.28.26 (ipv4:10.200.28.26:57431)
+23558     lehrer1       Domain Users schule  client22     (ipv6:2001:4dd0:ff00:8c42:ff08:0ac8::221)
 
 Service      pid     machine       Connected at
 -------------------------------------------------------
