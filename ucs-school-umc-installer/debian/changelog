@@ -1,3 +1,9 @@
+ucs-school-umc-installer (0.1.42-1) unstable; urgency=low
+
+  * fix typos; Bug #30454
+
+ -- Florian Best <best@univention.de>  Thu, 25 Apr 2013 15:15:36 +0200
+
 ucs-school-umc-installer (0.1.41-1) unstable; urgency=low
 
   * run join scripts on domaincontroller master after installation; Bug #30820

@@ -272,11 +272,11 @@ msgstr "Beginne den Konfigurationsprozess..."
 #: umc/js/schoolinstaller.js:221
 #, python-format
 msgid ""
-"Teacher and students can be added to the system with the module <a %s>\"Add "
+"Teachers and students can be added to the UCS@school domain with the module <a %s>\"Add "
 "user\"</a>."
 msgstr ""
-"Lehrer und Schüler können mit dem Module <a %s>\"Benutzer hinzufügen\"</a> "
-"zum System hinzugeefügt werden."
+"Lehrer und Schüler können mit dem Modul <a %s>\"Benutzer hinzufügen\"</a> "
+"in der UCS@school-Domäne neu angelegt werden."
 
 #: umc/js/schoolinstaller.js:222
 #, python-format
@@ -284,7 +284,7 @@ msgid ""
 "Teachers can be assigned to classes with the module <a %s>\"Assing teachers "
 "to classes\"</a>."
 msgstr ""
-"Lehrer können mit dem Module <a %s>\"Lehrer Klassen zuordnen\"</a> Klassen "
+"Lehrer können mit dem Modul <a %s>\"Lehrer Klassen zuordnen\"</a> Klassen "
 "zugeordnet werden."
 
 #: umc/js/schoolinstaller.js:206
@@ -293,11 +293,11 @@ msgstr "Die Installation von UCS@school wurde erfolgreich abgeschlossen."
 
 #: umc/js/schoolinstaller.js:219
 msgid ""
-"There are several wizard modules that assist the further configuration of "
-"UCS@School:"
+"There are several modules that assist in further configuring the "
+"UCS@school domain:"
 msgstr ""
-"Es gibt verschiedene Module, die bei der weiteren Konfiguration von "
-"UCS@School behilflich sind:"
+"Es gibt verschiedene Module, die bei der weiteren Konfiguration der "
+"UCS@school-Domäne behilflich sind:"
 
 #: umc/js/schoolinstaller.js:260
 msgid ""
@@ -358,7 +358,7 @@ msgid ""
 "workgroups\"</a>."
 msgstr ""
 "Arbeitsgruppen können mit dem Modul <a %s>\"Arbeitsgruppen verwalten\"</"
-"a>erstellt und verwaltet werden."
+"a> erstellt und verwaltet werden."
 
 #~ msgid "Please confirm to start the installation process."
 #~ msgstr "Bitte bestätigen sie den Start des Installationsvorganges."
