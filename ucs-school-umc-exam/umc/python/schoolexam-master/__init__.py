@@ -91,7 +91,7 @@ class Instance( SchoolBaseModule ):
 					self._examGroup['sambaGroupType'] = self._examGroup.descriptions['sambaGroupType'].base_default[0]
 					self._examGroup.create()
 				except univention.admin.uexceptions.base, e:
-					message = 'Failed to create exam group\n%s' % traceback.format_exc()
+					message = _('Failed to create exam group\n%s') % traceback.format_exc()
 					raise UMC_CommandError( message )
 
 		return self._examGroup
@@ -114,7 +114,7 @@ class Instance( SchoolBaseModule ):
 					exam_user_container['name'] = self._search_base._examUserContainerName
 					exam_user_container.create()
 				except univention.admin.uexceptions.base, e:
-					message = 'Failed to create exam container\n%s' % traceback.format_exc()
+					message = _('Failed to create exam container\n%s') % traceback.format_exc()
 					raise UMC_CommandError( message )
 
 			self._examUserContainerDN = self._search_base.examUsers
@@ -135,7 +135,7 @@ class Instance( SchoolBaseModule ):
 		### get search base for OU of given user dn
 		school = SchoolSearchBase.getOU(userdn)
 		if not school:
-			raise UMC_CommandError('User is not below a school OU: %s' % userdn)
+			raise UMC_CommandError( _('User is not below a school OU: %s') % userdn )
 		search_base = SchoolSearchBase(search_base.availableSchools, school)
 
 		## store the ldap related objects for calls to the examGroup property
@@ -155,7 +155,7 @@ class Instance( SchoolBaseModule ):
 			user_orig = module_users_user.object(None, ldap_admin_write, ldap_position, userdn)
 			user_orig.open()
 		except univention.admin.uexceptions.ldapError, e:
-			raise UMC_OptionTypeError( _('Invalid User (%s)') % userdn )
+			raise UMC_OptionTypeError( _('Invalid username (%s)') % userdn )
 
 		### uid and DN of exam_user
 		exam_user_uid = "".join( (self._examUserPrefix, user_orig['username']) )
@@ -166,7 +166,7 @@ class Instance( SchoolBaseModule ):
 		if prohibited_objects and len(prohibited_objects) > 0:
 			for i in range(0, len(prohibited_objects)):
 				if exam_user_uid in prohibited_objects[i]['usernames']:
-					message = _('Requested exam user name %s is not allowed according to settings/prohibited_username object %s') % ( exam_user_uid, prohibited_objects[i]['name'])
+					message = _('Requested exam username %s is not allowed according to settings/prohibited_username object %s') % ( exam_user_uid, prohibited_objects[i]['name'])
 					raise UMC_CommandError( message )
 
 		### Allocate new uid
@@ -176,7 +176,7 @@ class Instance( SchoolBaseModule ):
 			alloc.append(('uid', uid))
 		except univention.admin.uexceptions.noLock, e:
 			univention.admin.allocators.release(ldap_admin_write, ldap_position, 'uid', exam_user_uid)
-			MODULE.warn('The exam account does already exist for: %s' % exam_user_uid)
+			MODULE.warn( _('The exam account does already exist for: %s') % exam_user_uid )
 			self.finished(request.id, dict(
 				success=True,
 				userdn=userdn,
@@ -205,7 +205,7 @@ class Instance( SchoolBaseModule ):
 					try:
 						userSid = univention.admin.allocators.requestUserSid(ldap_admin_write, ldap_position, uidNum)
 					except:
-						message = 'Failed to allocate userSid\n%s' % traceback.format_exc()
+						message = _('Failed to allocate userSid\n%s') % traceback.format_exc()
 						raise UMC_CommandError( message )
 				if not userSid or userSid == 'None':
 					num = uidNum
@@ -221,7 +221,7 @@ class Instance( SchoolBaseModule ):
 			## Determine description attribute for exam_user
 			exam_user_description = request.options.get('description')
 			if not exam_user_description:
-				exam_user_description = "Exam for user %s" % user_orig['username']
+				exam_user_description = _('Exam for user %s') % user_orig['username']
 
 			## Now create the addlist, fixing up attributes as we go
 			al = []
@@ -252,7 +252,7 @@ class Instance( SchoolBaseModule ):
 			for i, j in alloc:
 				univention.admin.allocators.release(ldap_admin_write, ldap_position, i, j)
 
-			message = 'ERROR: Command failed\n%s' % traceback.format_exc()
+			message = _('ERROR: Creation of exam user account failed\n%s') % traceback.format_exc()
 			raise UMC_CommandError( message )
 
 		## Add exam_user to groups
@@ -299,7 +299,7 @@ class Instance( SchoolBaseModule ):
 		### get search base for OU of given user dn
 		school = SchoolSearchBase.getOU(userdn)
 		if not school:
-			raise UMC_CommandError('User is not below a school OU: %s' % userdn)
+			raise UMC_CommandError( _('User is not below a school OU: %s') % userdn )
 		search_base = SchoolSearchBase(search_base.availableSchools, school)
 
 		### uid and DN of exam_user
@@ -318,7 +318,7 @@ class Instance( SchoolBaseModule ):
 			user_orig = module_users_user.object(None, ldap_admin_write, ldap_position, userdn)
 			user_orig.remove()
 		except univention.admin.uexceptions.ldapError, e:
-			message = 'Could not remove exam user: %s' % e
+			message = _('Could not remove exam user: %s') % e
 			raise UMC_CommandError( message )
 
 		self.finished(request.id, {}, success=True)
@@ -335,7 +335,7 @@ class Instance( SchoolBaseModule ):
 		### get search base for OU of given room DN
 		school = SchoolSearchBase.getOU(roomdn)
 		if not school:
-			raise UMC_CommandError('Room is not below a school OU: %s' % userdn)
+			raise UMC_CommandError( _('Room is not below a school OU: %s') % userdn )
 		search_base = SchoolSearchBase(search_base.availableSchools, school)
 
 		## store the ldap related objects for calls to the examGroup property
@@ -355,7 +355,7 @@ class Instance( SchoolBaseModule ):
 			room = module_groups_group.object(None, ldap_admin_write, ldap_position, roomdn)
 			room.open()
 		except univention.admin.uexceptions.ldapError, e:
-			raise UMC_OptionTypeError( 'Invalid Room DN' )
+			raise UMC_OptionTypeError( _('Invalid Room DN') )
 
 		## Add all host members of room to examGroup
 		examGroup = self.examGroup
@@ -379,7 +379,7 @@ class Instance( SchoolBaseModule ):
 		### get search base for OU of given room DN
 		school = SchoolSearchBase.getOU(roomdn)
 		if not school:
-			raise UMC_CommandError('Room is not below a school OU: %s' % userdn)
+			raise UMC_CommandError( _('Room is not below a school OU: %s') % userdn )
 		search_base = SchoolSearchBase(search_base.availableSchools, school)
 
 		## store the ldap related objects for calls to the examGroup property

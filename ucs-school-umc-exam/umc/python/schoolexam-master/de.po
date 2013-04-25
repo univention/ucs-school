@@ -12,3 +12,80 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
+#: __init__.py:94
+#, python-format
+msgid ""
+"Failed to create exam group\n"
+"%s"
+msgstr "Klassenarbeitsgruppe konnte nicht angelegt werden\n"
+"%s"
+
+#: __init__.py:117
+#, python-format
+msgid ""
+"Failed to create exam container\n"
+"%s"
+msgstr ""
+"Container für Klassenarbeitsbenutzer konnte nicht angelegt werden\n"
+"%s"
+
+#: __init__.py:138 __init__.py:302
+#, python-format
+msgid "User is not below a school OU: %s"
+msgstr "Benutzerkonto liegt nicht unter einer Schul-OU: %s"
+
+#: __init__.py:158
+#, python-format
+msgid "Invalid username (%s)"
+msgstr "Ungültiger Benutzername (%s)"
+
+#: __init__.py:169
+#, python-format
+msgid ""
+"Requested exam username %s is not allowed according to settings/"
+"prohibited_username object %s"
+msgstr ""
+"Gewünschter Klassenarbeitsbenutzername %s ist nicht erlaubt"
+"gemäß des Objekts settings/prohibited_username %s"
+
+#: __init__.py:179
+#, python-format
+msgid "The exam account does already exist for: %s"
+msgstr "Der Klassenarbeitsbenutzername %s existiert schon"
+
+#: __init__.py:208
+#, python-format
+msgid ""
+"Failed to allocate userSid\n"
+"%s"
+msgstr ""
+"Fehler beim reservieren einer userSid\n"
+"%s"
+
+#: __init__.py:224
+#, python-format
+msgid "Exam for user %s"
+msgstr "Klassenarbeit für Benutzer %s"
+
+#: __init__.py:255
+#, python-format
+msgid ""
+"ERROR: Creation of exam user account failed\n"
+"%s"
+msgstr ""
+"FEHLER: Anlegen des Klassenarbeitsbenutzerkontos fehlgeschlagen\n"
+"%s"
+
+#: __init__.py:321
+#, python-format
+msgid "Could not remove exam user: %s"
+msgstr "Klassenarbeitsbenutzerkonto konnte nicht gelöscht werden: %s"
+
+#: __init__.py:338 __init__.py:382
+#, python-format
+msgid "Room is not below a school OU: %s"
+msgstr "Der Raum liegt nicht unter einer Schul-OU: %s"
+
+#: __init__.py:358
+msgid "Invalid Room DN"
+msgstr "Ungültiger Raum-DN"
