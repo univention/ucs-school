@@ -1,3 +1,9 @@
+ucs-school-umc-computerroom (2.0.21-1) unstable; urgency=low
+
+  * fix color of settingEndsIn view; Bug #30833
+
+ -- Florian Best <best@univention.de>  Thu, 25 Apr 2013 12:23:35 +0200
+
 ucs-school-umc-computerroom (2.0.20-1) unstable; urgency=low
 
   * Bug #30831: refined actions for collecting/finishing exams, moved backend

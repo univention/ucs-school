@@ -980,7 +980,7 @@ define([
 						label: this._changeSettingsLabel
 					});
 					this._headButtons.settings.set('label', labelValidUntil);
-					this._headButtons.settings.set('style', (response.result.settingEndsIn <= 5) ? 'color: red;': '');
+					this._headButtons.settings.set('style', (response.result.settingEndsIn <= 5) ? 'color: red;': 'color: inherit;');
 				} else {
 					if (this._headButtons.settings.get('label') != this._changeSettingsLabel) {
 						this._headButtons.settings.set('label', this._changeSettingsLabel);
