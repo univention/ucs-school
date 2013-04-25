@@ -171,7 +171,12 @@ define([
 		update: function( school, room ) {
 			this.umcpCommand( 'computerroom/settings/get', {} ).then( lang.hitch( this, function( response ) {
 				tools.forIn( response.result, function( key, value ) {
-					this._form.getWidget( key ).set( 'value', value );
+					var widget = this._form.getWidget( key );
+					if (widget.setInitialValue) {
+						widget.setInitialValue(value);
+					} else {
+						widget.set('value', value);
+					}
 				}, this );
 				this.onPeriodChanged( this._form.getWidget( 'period' ).get( 'value' ) );
 				// this.rescheduleDialog.set( 'period', this._form.getWidget( 'period' ).get( 'value' ) );

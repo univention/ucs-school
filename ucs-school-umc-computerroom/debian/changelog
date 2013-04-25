@@ -1,3 +1,9 @@
+ucs-school-umc-computerroom (2.0.7-3) unstable; urgency=low
+
+  * fix initial displaying of settings in the SettingsDialog; Bug #91193
+
+ -- Florian Best <best@univention.de>  Thu, 25 Apr 2013 14:30:36 +0200
+
 ucs-school-umc-computerroom (2.0.7-2) unstable; urgency=low
 
   * fixed "free printing" mode (Bug #30450)
