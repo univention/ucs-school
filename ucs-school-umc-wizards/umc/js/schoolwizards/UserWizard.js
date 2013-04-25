@@ -53,7 +53,7 @@ define([
 			var udm_link = '';
 			if (app.getModule('udm', 'users/user')) {
 				var link = 'href="javascript:void(0)" onclick="require(\'umc/app\').openModule(\'udm\', \'users/user\')"';
-				udm_link = _('For further administration of users the <a %s>users module</a> can be used.', link) + '<br><br>';
+				udm_link = _('This assistant provides a simple way to create new UCS@school users. For the advanced administration of users (create, modify, delete) the UMC module <a %s>Users</a> can be used.', link) + '<br><br>';
 			}
 
 			this.pages = [{

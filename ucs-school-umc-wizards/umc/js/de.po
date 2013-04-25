@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-wizards\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2013-03-28 14:11+0100\n"
+"POT-Creation-Date: 2013-04-25 16:10+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -12,11 +12,11 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: umc/js/schoolwizards/UserWizard.js:117
+#: umc/js/schoolwizards/UserWizard.js:118
 msgid "Class"
 msgstr "Klasse"
 
-#: umc/js/schoolwizards/ClassWizard.js:79
+#: umc/js/schoolwizards/ClassWizard.js:81
 #, python-format
 msgid ""
 "Class \"%s\" has been successfully created. Continue to create another class "
@@ -25,7 +25,7 @@ msgstr ""
 "Klasse \"%s\" wurde erfolgreich erstellt. Es kann nun eine weitere Klasse "
 "erstellt oder der Wizard über die Schaltfläche \"Abbrechen\" beendet werden."
 
-#: umc/js/schoolwizards/ComputerWizard.js:115
+#: umc/js/schoolwizards/ComputerWizard.js:117
 #, python-format
 msgid ""
 "Computer \"%s\" has been successfully created. Continue to create another "
@@ -35,88 +35,82 @@ msgstr ""
 "Computer erstellt oder der Wizard beendet über die Schaltfläche \"Abbrechen"
 "\" beendet werden."
 
-#: umc/js/schoolwizards/SchoolWizard.js:60
+#: umc/js/schoolwizards/SchoolWizard.js:59
 msgid "Computer name of the school server"
 msgstr "Rechnername des Schulservers"
 
-#: umc/js/schoolwizards/UserWizard.js:94
+#: umc/js/schoolwizards/UserWizard.js:95
 msgid "Create a new class"
 msgstr "Neue Klasse erstellen"
 
-#: umc/js/schoolwizards/ClassWizard.js:64
+#: umc/js/schoolwizards/ClassWizard.js:66
 msgid "Description"
 msgstr "Beschreibung"
 
-#: umc/js/schoolwizards/ComputerWizard.js:66
+#: umc/js/schoolwizards/ComputerWizard.js:68
 msgid "Device with IP address"
 msgstr "Gerät mit IP-Adresse"
 
-#: umc/js/schoolwizards/UserWizard.js:121
+#: umc/js/schoolwizards/UserWizard.js:122
 msgid "E-Mail"
 msgstr "E-Mail"
 
-#: umc/js/schoolwizards/ClassWizard.js:49
+#: umc/js/schoolwizards/ClassWizard.js:50
 msgid "Enter details to create a new class."
 msgstr "Geben Sie Detailinformationen zum Anlegen einer neuen Klasse an."
 
-#: umc/js/schoolwizards/ComputerWizard.js:73
+#: umc/js/schoolwizards/ComputerWizard.js:75
 msgid "Enter details to create a new computer."
 msgstr "Geben Sie Detailinformationen zum Anlegen eines neuen Computers an."
 
-#: umc/js/schoolwizards/UserWizard.js:91
+#: umc/js/schoolwizards/UserWizard.js:92
 msgid "Enter details to create a new user"
 msgstr "Geben Sie Detailinformationen zum Anlegen eines neuen Benutzers an."
 
-#: umc/js/schoolwizards/SchoolWizard.js:50
+#: umc/js/schoolwizards/SchoolWizard.js:49
 msgid "Enter details to create all necessary structures for a new school."
 msgstr "Geben Sie Detailinformationen zum Anlegen einer neuen Schule an."
 
-#: umc/js/schoolwizards/UserWizard.js:102
+#: umc/js/schoolwizards/UserWizard.js:103
 msgid "Firstname"
 msgstr "Vorname"
 
-#: umc/js/schoolwizards/UserWizard.js:56
-#, python-format
-msgid ""
-"For further administration of users the <a %s>users module</a> can be used."
-msgstr "Für weitere Administration von Benutzern kann das <a %s>Benutzer-Modul</a> verwendet werden."
-
-#: umc/js/schoolwizards/ComputerWizard.js:82
+#: umc/js/schoolwizards/ComputerWizard.js:84
 msgid "IP address"
 msgstr "IP-Adresse"
 
-#: umc/js/schoolwizards/ComputerWizard.js:97
+#: umc/js/schoolwizards/ComputerWizard.js:99
 msgid "Inventory number"
 msgstr "Inventarnummer"
 
-#: umc/js/schoolwizards/UserWizard.js:107
+#: umc/js/schoolwizards/UserWizard.js:108
 msgid "Lastname"
 msgstr "Nachname"
 
-#: umc/js/schoolwizards/ComputerWizard.js:92
+#: umc/js/schoolwizards/ComputerWizard.js:94
 msgid "MAC address"
 msgstr "MAC-Adresse"
 
-#: umc/js/schoolwizards/ClassWizard.js:59
-#: umc/js/schoolwizards/ComputerWizard.js:77
+#: umc/js/schoolwizards/ClassWizard.js:61
+#: umc/js/schoolwizards/ComputerWizard.js:79
 msgid "Name"
 msgstr "Name"
 
-#: umc/js/schoolwizards/SchoolWizard.js:54
+#: umc/js/schoolwizards/SchoolWizard.js:53
 msgid "Name of the school"
 msgstr "Name der Schule"
 
-#: umc/js/schoolwizards/UserWizard.js:125
+#: umc/js/schoolwizards/UserWizard.js:126
 msgid "Password"
 msgstr "Passwort"
 
-#: umc/js/schoolwizards/ClassWizard.js:53
-#: umc/js/schoolwizards/ComputerWizard.js:54
+#: umc/js/schoolwizards/ClassWizard.js:54
+#: umc/js/schoolwizards/ComputerWizard.js:55
 #: umc/js/schoolwizards/UserWizard.js:66
 msgid "School"
 msgstr "Schule"
 
-#: umc/js/schoolwizards/SchoolWizard.js:95
+#: umc/js/schoolwizards/SchoolWizard.js:94
 #, python-format
 msgid ""
 "School \"%s\" has been successfully created. Continue to create another "
@@ -125,7 +119,7 @@ msgstr ""
 "Schule \"%s\" wurde erfolgreich erstellt. Es kann nun eine weitere Schule "
 "erstellt oder der Wizard über die Schaltfläche \"Abbrechen\" beendet werden."
 
-#: umc/js/schoolwizards/ComputerWizard.js:50
+#: umc/js/schoolwizards/ComputerWizard.js:51
 msgid "Specify the computer type."
 msgstr "Geben Sie den Computertyp an."
 
@@ -133,32 +127,44 @@ msgstr "Geben Sie den Computertyp an."
 msgid "Specify the type of user to be created."
 msgstr "Geben Sie den Benutzertyp, der angelegt werden soll, an."
 
-#: umc/js/schoolwizards/UserWizard.js:81
+#: umc/js/schoolwizards/UserWizard.js:82
 msgid "Staff"
 msgstr "Mitarbeiter"
 
-#: umc/js/schoolwizards/UserWizard.js:75
+#: umc/js/schoolwizards/UserWizard.js:76
 msgid "Student"
 msgstr "Schüler"
 
-#: umc/js/schoolwizards/ComputerWizard.js:87
+#: umc/js/schoolwizards/ComputerWizard.js:89
 msgid "Subnet mask"
 msgstr "Subnetzmaske"
 
-#: umc/js/schoolwizards/UserWizard.js:78
+#: umc/js/schoolwizards/UserWizard.js:79
 msgid "Teacher"
 msgstr "Lehrer"
 
-#: umc/js/schoolwizards/UserWizard.js:84
+#: umc/js/schoolwizards/UserWizard.js:85
 msgid "Teachers and staff"
 msgstr "Lehrer und Mitarbeiter"
 
-#: umc/js/schoolwizards/ComputerWizard.js:60
-#: umc/js/schoolwizards/UserWizard.js:72
+#: umc/js/schoolwizards/UserWizard.js:56
+#, python-format
+msgid ""
+"This assistant provides a simple way to create new UCS@school users. For the "
+"advanced administration of users (create, modify, delete) the UMC module <a "
+"%s>Users</a> can be used."
+msgstr ""
+"Dieser Assistent unterstützt beim einfachen Anlegen neuer UCS@school-"
+"Benutzer. Für die weitergehende Administration (Anlegen, Bearbeiten, "
+"Löschen) von Benutzern kann das UMC-Modul <a %s>Benutzer</a> verwendet "
+"werden."
+
+#: umc/js/schoolwizards/ComputerWizard.js:62
+#: umc/js/schoolwizards/UserWizard.js:73
 msgid "Type"
 msgstr "Typ"
 
-#: umc/js/schoolwizards/UserWizard.js:161
+#: umc/js/schoolwizards/UserWizard.js:162
 #, python-format
 msgid ""
 "User \"%s\" has been successfully created. Continue to create another user "
@@ -168,11 +174,11 @@ msgstr ""
 "Benutzer erstellt oder der Wizard über die Schaltfläche \"Abbrechen\" "
 "beendet werden."
 
-#: umc/js/schoolwizards/UserWizard.js:112
+#: umc/js/schoolwizards/UserWizard.js:113
 msgid "Username"
 msgstr "Benutzername"
 
-#: umc/js/schoolwizards/ComputerWizard.js:63
+#: umc/js/schoolwizards/ComputerWizard.js:65
 msgid "Windows system"
 msgstr "Windows-System"
 
