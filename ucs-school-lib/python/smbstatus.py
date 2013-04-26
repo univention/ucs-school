@@ -117,7 +117,7 @@ class SMB_Status( list ):
 			self.pop()
 		if testdata is None:
 			smbstatus = subprocess.Popen( [ '/usr/bin/smbstatus' ], shell = False, stdout = subprocess.PIPE )
-			data = smbstatus.stdout.readlines()
+			data = [ '%s\n' % x for x in smbstatus.communicate()[0].splitlines() ]
 		else:
 			data = testdata
 		regexps = [ REGEX_USERS, REGEX_SERVICES, REGEX_LOCKED_FILES ]

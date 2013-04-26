@@ -1,3 +1,9 @@
+ucs-school-lib (2.0.25-1) unstable; urgency=low
+
+  * use subprocess.communicate() to prevent problems with EINTR (Bug #31173)
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 26 Apr 2013 11:18:31 +0200
+
 ucs-school-lib (2.0.24-1) unstable; urgency=low
 
   * adjust smbstatus.py to tsocket_address_bsd_ops.string (Bug #31141)
