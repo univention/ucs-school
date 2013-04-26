@@ -1,3 +1,10 @@
+ucs-school-lib (2.0.8-2) unstable; urgency=low
+
+  * adjust smbstatus.py to tsocket_address_bsd_ops.string; Bug #31202
+  * new properties ipaddress, ipv4address and ipv6address
+
+ -- Florian Best <best@univention.de>  Fri, 26 Apr 2013 10:04:24 +0200
+
 ucs-school-lib (2.0.8-1) unstable; urgency=low
 
   * allow arbitrary LDAP base; Bug #30162
