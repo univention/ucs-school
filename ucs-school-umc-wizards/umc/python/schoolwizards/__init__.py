@@ -43,6 +43,7 @@ from univention.management.console.modules.sanitizers import StringSanitizer
 from univention.admin.uexceptions import valueError
 import univention.admin.modules as udm_modules
 import univention.admin.syntax as udm_syntax
+from univention.management.console.config import ucr
 
 from ucsschool.lib.schoolldap import SchoolBaseModule, LDAP_Connection, LDAP_Filter, _init_search_base, check_license, LicenseError
 
@@ -194,6 +195,10 @@ class Instance(SchoolBaseModule, SchoolImport):
 			self._check_school_name(name)
 			schooldc = request.options.get('schooldc', '')
 
+			if len(schooldc) > 13:
+				raise ValueError(_("A valid NetBIOS hostname can not be longer than 13 characters."))
+			if (len(schooldc) + len(ucr.get('domainname', ''))) > 63:
+				raise ValueError(_("The length of fully qualified domain name is greater than 63 characters."))
 			if not self._is_singlemaster():
 				regex = re.compile('^\w+$')
 				if not regex.match(schooldc):
