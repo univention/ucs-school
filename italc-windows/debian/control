@@ -1,0 +1,24 @@
+Source: italc-windows
+Section: x11
+Priority: optional
+Maintainer: Univention GmbH <packages@univention.de>
+Build-Depends: debhelper (>= 7.0), ucslint
+Standards-Version: 3.7.3
+Homepage: http://italc.sourceforge.net/home.php
+
+Package: italc-windows
+Architecture: any
+Description: iTALC Windows Binaries
+ iTALC makes it possible, to access and influence the pupils 
+ activities just from the computer of the teacher. With the 
+ help of iTALC, for example the teacher is able to see the 
+ content of the pupils screens on his screen. If a pupil needs 
+ help, the teacher can access the pupils desktop and give support 
+ from his computer. The pupil can watch all activities, the 
+ teacher is doing on his desktop. So the pupil can learn new processes. 
+ For teaching something to all pupils, you can switch into demo-mode 
+ where all screens of the pupils show the teacher-screen. 
+ Furthermore things like locking pupil's screens, killing games, 
+ power on/off clients and much more can be done with iTALC. 
+ .
+ This package contains a ready to use iTALC windows installer binary.
