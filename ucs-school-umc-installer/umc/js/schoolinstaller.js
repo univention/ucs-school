@@ -217,7 +217,7 @@ define([
 					type: Text,
 					name: 'info',
 					content: _('There are several modules that assist in further configuring the UCS@school domain:') + '<ul>' +
-						'<li>' + _('New school classes can created with the module <a %s>"Add class"</a>.', link('schoolwizards', 'schoolwizards/classes')) + '</li>' +
+						'<li>' + _('New school classes can be created with the module <a %s>"Add class"</a>.', link('schoolwizards', 'schoolwizards/classes')) + '</li>' +
 						'<li>' + _('Teachers and students can be added to the UCS@school domain with the module <a %s>"Add user"</a>.', link('schoolwizards', 'schoolwizards/users')) + '</li>' +
 						'<li>' + _('Teachers can be assigned to classes with the module <a %s>"Assing teachers to classes"</a>.', link('schoolgroups', 'class')) + '</li>' +
 						'<li>' + _('Workgroups can be created and managed with the module <a %s>"Administrate workgroups"</a>.', link('schoolgroups', 'workgroup-admin')) + '</li></ul>'
@@ -225,6 +225,8 @@ define([
 			}];
 
 			this.inherited(arguments);
+
+			this.standbyOpacity = 1;
 		},
 
 		buildRendering: function() {

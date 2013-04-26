@@ -199,7 +199,7 @@ msgstr "NT-kompatibler Domänencontroller (Samba 3)"
 
 #: umc/js/schoolinstaller.js:220
 #, python-format
-msgid "New school classes can created with the module <a %s>\"Add class\"</a>."
+msgid "New school classes can be created with the module <a %s>\"Add class\"</a>."
 msgstr ""
 "Neue Schulklassen können mit dem Modul <a %s>\"Klasse hinzufügen\"</a> "
 "erstellt werden."

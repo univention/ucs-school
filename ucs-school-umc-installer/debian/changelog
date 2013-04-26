@@ -1,3 +1,9 @@
+ucs-school-umc-installer (0.1.44-1) unstable; urgency=low
+
+  * fix typo, set standbyOpacity to 100%; Bug #30454
+
+ -- Florian Best <best@univention.de>  Fri, 26 Apr 2013 08:31:32 +0200
+
 ucs-school-umc-installer (0.1.43-2) unstable; urgency=low
 
   * added symlink for join script (Bug #31198)
