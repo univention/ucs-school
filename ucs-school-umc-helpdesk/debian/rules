@@ -37,6 +37,10 @@ DM=$(CURDIR)/debian/${PACKAGE_NAME}-schema
 %:
 	dh $@
 
+override_dh_auto_install:
+	dh_auto_install
+	univention-install-config-registry
+
 override_dh_auto_test:
 	ucslint
 

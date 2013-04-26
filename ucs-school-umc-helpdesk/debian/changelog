@@ -1,3 +1,9 @@
+ucs-school-umc-helpdesk (7.0.4-1) unstable; urgency=low
+
+  * added description for UCR variable (Bug #27351)
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 26 Apr 2013 15:47:15 +0200
+
 ucs-school-umc-helpdesk (7.0.3-1) unstable; urgency=low
 
   * update Copyright; Bug #30123
