@@ -130,3 +130,13 @@ Description: UCS@School meta package for UCS DC Master System (single server env
  an integrated, directory driven solution for managing
  corporate environments. For more information about UCS,
  refer to: http://www.univention.de/
+
+Package: ucs-school-nonedu-slave
+Architecture: all
+Depends: univention-config
+Description: UCS@school meta package for non-educational Slave servers
+ .
+ This package is part of Univention Corporate Server (UCS),
+ an integrated, directory driven solution for managing
+ corporate environments. For more information about UCS,
+ refer to: http://www.univention.de/

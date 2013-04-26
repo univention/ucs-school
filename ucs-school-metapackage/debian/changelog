@@ -1,3 +1,9 @@
+ucs-school-metapackage (5.0.9-8) unstable; urgency=low
+
+  * add ucs-school-nonedu-slave package; Bug #30966
+
+ -- Florian Best <best@univention.de>  Fri, 26 Apr 2013 15:05:19 +0200
+
 ucs-school-metapackage (5.0.9-7) unstable; urgency=low
 
   * Bug #30832: added exam-master module to recommendations
