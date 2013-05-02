@@ -153,6 +153,7 @@ define([
 				onClick: lang.hitch( this, function() {
 					dijit.hideTooltip( this._form.getWidget( 'customRule' ).domNode );
 					this.hide();
+					this.update();
 					this.onClose();
 				} )
 			} ];
@@ -168,8 +169,17 @@ define([
 			this.set( 'content', this._form );
 		},
 
+		show: function() {
+			this.standby(true);
+			this.update().then(
+				lang.hitch(this, 'standby', false),
+				lang.hitch(this, 'standby', false)
+			);
+			this.inherited(arguments);
+		},
+
 		update: function( school, room ) {
-			this.umcpCommand( 'computerroom/settings/get', {} ).then( lang.hitch( this, function( response ) {
+			return this.umcpCommand( 'computerroom/settings/get', {} ).then( lang.hitch( this, function( response ) {
 				tools.forIn( response.result, function( key, value ) {
 					var widget = this._form.getWidget( key );
 					if (widget.setInitialValue) {

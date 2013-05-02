@@ -331,6 +331,14 @@ define([
 			}));
 		},
 
+		startup: function() {
+			this.inherited(arguments);
+
+			// call startup for the SettingsDialog... otherwise its form values
+			// cannot be queried
+			this._settingsDialog.startup();
+		},
+
 		closeScreenView: function() {
 			this.selectChild( this._searchPage );
 		},
