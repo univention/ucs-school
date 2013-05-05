@@ -38,10 +38,6 @@
 #ifdef WIN32
 #undef SOCKET
 #include <winsock2.h>
-/* make sure to use the WSA error codes instead of the POSIX ones defined in errno.h */
-#ifdef EWOULDBLOCK
-#undef EWOULDBLOCK
-#endif
 #define EWOULDBLOCK WSAEWOULDBLOCK
 #define close closesocket
 #define read(sock,buf,len) recv(sock,buf,len,0)

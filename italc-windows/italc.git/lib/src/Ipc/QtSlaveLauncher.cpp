@@ -2,7 +2,7 @@
  * QtSlaveLauncher.cpp - class Ipc::QtSlaveLauncher providing mechanisms for
  *                       launching a slave application via QProcess
  *
- * Copyright (c) 2010-2013 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>
+ * Copyright (c) 2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>
  * Copyright (c) 2010 Univention GmbH
  *
  * This file is part of iTALC - http://italc.sourceforge.net
@@ -33,10 +33,6 @@
 #include "ItalcCore.h"
 #include "ItalcConfiguration.h"
 #include "Logger.h"
-
-#ifdef ITALC_BUILD_WIN32
-#include <windows.h>
-#endif
 
 namespace Ipc
 {
@@ -91,13 +87,6 @@ void QtSlaveLauncher::stop()
 		while( t.elapsed() < 5000 && m_process->state() != QProcess::NotRunning )
 		{
 			QCoreApplication::processEvents();
-#ifdef ITALC_BUILD_WIN32
-			// Silvio 2012-01-07: I don't know why this works and why this "Sleep" helps
-			// but after adding these two lines taskbar returns and screen unlocks almost
-			// instantly (before it took few seconds). Same is true for demo mode.
-			Sleep( 500 );
-			QCoreApplication::processEvents();
-#endif
 		}
 
 		if( m_process->state() != QProcess::NotRunning )

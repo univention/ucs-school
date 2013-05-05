@@ -65,9 +65,11 @@ CXEventLog::CXEventLog(LPCTSTR lpszApp /* = NULL*/,
 	m_hEventLog = NULL;
 	m_pszAppName = NULL;
 
+	BOOL bRet = FALSE;
+
 	// open event log
 	if (lpszApp && (lpszApp[0] != _T('\0')))
-		Init(lpszApp, lpszEventMessageDll);
+		bRet = Init(lpszApp, lpszEventMessageDll);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
