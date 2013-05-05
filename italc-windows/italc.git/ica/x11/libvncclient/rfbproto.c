@@ -26,7 +26,6 @@
 #ifdef __STRICT_ANSI__
 #define _BSD_SOURCE
 #define _POSIX_SOURCE
-#define _XOPEN_SOURCE 600
 #endif
 #ifndef WIN32
 #include <unistd.h>
@@ -36,10 +35,6 @@
 #endif
 #include <errno.h>
 #include <rfb/rfbclient.h>
-#ifdef WIN32
-#undef SOCKET
-#undef socklen_t
-#endif
 #ifdef LIBVNCSERVER_HAVE_LIBZ
 #include <zlib.h>
 #ifdef __CHECKER__
@@ -53,11 +48,14 @@
 #endif
 #include <jpeglib.h>
 #endif
-#include <strings.h>
 #include <stdarg.h>
 #include <time.h>
 
 #ifdef LIBVNCSERVER_WITH_CLIENT_GCRYPT
+#ifdef WIN32
+#undef SOCKET
+#undef socklen_t
+#endif
 #include <gcrypt.h>
 #endif
 
@@ -391,8 +389,8 @@ ConnectToRFBServer(rfbClient* client,const char *hostname, int port)
       return FALSE;
     }
     setbuf(rec->file,NULL);
-
-    if (fread(buffer,1,strlen(magic),rec->file) != strlen(magic) || strncmp(buffer,magic,strlen(magic))) {
+    fread(buffer,1,strlen(magic),rec->file);
+    if (strncmp(buffer,magic,strlen(magic))) {
       rfbClientLog("File %s was not recorded by vncrec.\n",client->serverHost);
       fclose(rec->file);
       return FALSE;
@@ -667,6 +665,7 @@ FreeUserCredential(rfbCredential *cred)
   free(cred);
 }
 
+#ifdef LIBVNCSERVER_WITH_CLIENT_TLS
 static rfbBool
 HandlePlainAuth(rfbClient *client)
 {
@@ -720,6 +719,7 @@ HandlePlainAuth(rfbClient *client)
 
   return TRUE;
 }
+#endif
 
 /* Simple 64bit big integer arithmetic implementation */
 /* (x + y) % m, works even if (x + y) > 64bit */
@@ -1046,7 +1046,9 @@ InitialiseRFBConnection(rfbClient* client)
   rfbProtocolVersionMsg pv;
   int major,minor;
   uint32_t authScheme;
+#ifdef LIBVNCSERVER_WITH_CLIENT_TLS
   uint32_t subAuthScheme;
+#endif
   rfbClientInitMsg ci;
 
   /* if the connection is immediately closed, don't report anything, so
@@ -1080,14 +1082,6 @@ InitialiseRFBConnection(rfbClient* client)
   if (major==3 && (minor==4 || minor==6)) {
       rfbClientLog("UltraVNC server detected, enabling UltraVNC specific messages\n",pv);
       DefaultSupportedMessagesUltraVNC(client);
-  }
-
-  /* UltraVNC Single Click uses minor codes 14 and 16 for the server */
-  if (major==3 && (minor==14 || minor==16)) {
-     minor = minor - 10;
-     client->minor = minor;
-     rfbClientLog("UltraVNC Single Click server detected, enabling UltraVNC specific messages\n",pv);
-     DefaultSupportedMessagesUltraVNC(client);
   }
 
   /* TightVNC uses minor codes 5 for the server */
@@ -1158,6 +1152,10 @@ InitialiseRFBConnection(rfbClient* client)
     break;
 
   case rfbTLS:
+#ifndef LIBVNCSERVER_WITH_CLIENT_TLS
+    rfbClientLog("TLS support was not compiled in\n");
+    return FALSE;
+#else
     if (!HandleAnonTLSAuth(client)) return FALSE;
     /* After the TLS session is established, sub auth types are expected.
      * Note that all following reading/writing are through the TLS session from here.
@@ -1187,10 +1185,15 @@ InitialiseRFBConnection(rfbClient* client)
             (int)subAuthScheme);
         return FALSE;
     }
+#endif
 
     break;
 
   case rfbVeNCrypt:
+#ifndef LIBVNCSERVER_WITH_CLIENT_TLS
+    rfbClientLog("TLS support was not compiled in\n");
+    return FALSE;
+#else
     if (!HandleVeNCryptAuth(client)) return FALSE;
 
     switch (client->subAuthScheme) {
@@ -1216,7 +1219,7 @@ InitialiseRFBConnection(rfbClient* client)
             client->subAuthScheme);
         return FALSE;
     }
-
+#endif
     break;
 
   case rfbSecTypeItalc:

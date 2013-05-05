@@ -3,7 +3,6 @@
  */
 
 /*
- *  Copyright (C) 2011-2012 Christian Beier <dontmind@freeshell.org>
  *  Copyright (C) 2002 RealVNC Ltd.
  *  Copyright (C) 1999 AT&T Laboratories Cambridge.  All Rights Reserved.
  *
@@ -22,11 +21,6 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307,
  *  USA.
  */
-
-#ifdef __STRICT_ANSI__
-#define _BSD_SOURCE
-#define _POSIX_SOURCE
-#endif
 
 #include <rfb/rfb.h>
 
@@ -65,6 +59,20 @@
 #include <tcpd.h>
 #endif
 
+#define connection_close
+#ifndef connection_close
+
+#define NOT_FOUND_STR "HTTP/1.0 404 Not found\r\n\r\n" \
+    "<HEAD><TITLE>File Not Found</TITLE></HEAD>\n" \
+    "<BODY><H1>File Not Found</H1></BODY>\n"
+
+#define INVALID_REQUEST_STR "HTTP/1.0 400 Invalid Request\r\n\r\n" \
+    "<HEAD><TITLE>Invalid Request</TITLE></HEAD>\n" \
+    "<BODY><H1>Invalid request</H1></BODY>\n"
+
+#define OK_STR "HTTP/1.0 200 OK\r\nContent-Type: text/html\r\n\r\n"
+
+#else
 
 #define NOT_FOUND_STR "HTTP/1.0 404 Not found\r\nConnection: close\r\n\r\n" \
     "<HEAD><TITLE>File Not Found</TITLE></HEAD>\n" \
@@ -74,10 +82,9 @@
     "<HEAD><TITLE>Invalid Request</TITLE></HEAD>\n" \
     "<BODY><H1>Invalid request</H1></BODY>\n"
 
-#define OK_STR "HTTP/1.0 200 OK\r\nConnection: close\r\n\r\n"
-#define OK_STR_HTML "HTTP/1.0 200 OK\r\nConnection: close\r\nContent-Type: text/html\r\n\r\n"
+#define OK_STR "HTTP/1.0 200 OK\r\nConnection: close\r\nContent-Type: text/html\r\n\r\n"
 
-
+#endif
 
 static void httpProcessInput(rfbScreenInfoPtr screen);
 static rfbBool compareAndSkip(char **ptr, const char *str);
@@ -108,27 +115,17 @@ rfbHttpInitSockets(rfbScreenInfoPtr rfbScreen)
 	rfbScreen->httpPort = rfbScreen->port-100;
     }
 
+    rfbLog("Listening for HTTP connections on TCP port %d\n", rfbScreen->httpPort);
+
+    rfbLog("  URL http://%s:%d\n",rfbScreen->thisHost,rfbScreen->httpPort);
+
     if ((rfbScreen->httpListenSock =
       rfbListenOnTCPPort(rfbScreen->httpPort, rfbScreen->listenInterface)) < 0) {
 	rfbLogPerror("ListenOnTCPPort");
 	return;
     }
-    rfbLog("Listening for HTTP connections on TCP port %d\n", rfbScreen->httpPort);
-    rfbLog("  URL http://%s:%d\n",rfbScreen->thisHost,rfbScreen->httpPort);
 
-#ifdef LIBVNCSERVER_IPv6
-    if (rfbScreen->http6Port == 0) {
-	rfbScreen->http6Port = rfbScreen->ipv6port-100;
-    }
-
-    if ((rfbScreen->httpListen6Sock
-	 = rfbListenOnTCP6Port(rfbScreen->http6Port, rfbScreen->listen6Interface)) < 0) {
-      /* ListenOnTCP6Port has its own detailed error printout */
-      return;
-    }
-    rfbLog("Listening for HTTP connections on TCP6 port %d\n", rfbScreen->http6Port);
-    rfbLog("  URL http://%s:%d\n",rfbScreen->thisHost,rfbScreen->http6Port);
-#endif
+   /*AddEnabledDevice(httpListenSock);*/
 }
 
 void rfbHttpShutdownSockets(rfbScreenInfoPtr rfbScreen) {
@@ -136,18 +133,6 @@ void rfbHttpShutdownSockets(rfbScreenInfoPtr rfbScreen) {
 	close(rfbScreen->httpSock);
 	FD_CLR(rfbScreen->httpSock,&rfbScreen->allFds);
 	rfbScreen->httpSock=-1;
-    }
-
-    if(rfbScreen->httpListenSock>-1) {
-	close(rfbScreen->httpListenSock);
-	FD_CLR(rfbScreen->httpListenSock,&rfbScreen->allFds);
-	rfbScreen->httpListenSock=-1;
-    }
-
-    if(rfbScreen->httpListen6Sock>-1) {
-	close(rfbScreen->httpListen6Sock);
-	FD_CLR(rfbScreen->httpListen6Sock,&rfbScreen->allFds);
-	rfbScreen->httpListen6Sock=-1;
     }
 }
 
@@ -162,11 +147,7 @@ rfbHttpCheckFds(rfbScreenInfoPtr rfbScreen)
     int nfds;
     fd_set fds;
     struct timeval tv;
-#ifdef LIBVNCSERVER_IPv6
-    struct sockaddr_storage addr;
-#else
     struct sockaddr_in addr;
-#endif
     socklen_t addrlen = sizeof(addr);
 
     if (!rfbScreen->httpDir)
@@ -177,15 +158,12 @@ rfbHttpCheckFds(rfbScreenInfoPtr rfbScreen)
 
     FD_ZERO(&fds);
     FD_SET(rfbScreen->httpListenSock, &fds);
-    if (rfbScreen->httpListen6Sock >= 0) {
-	FD_SET(rfbScreen->httpListen6Sock, &fds);
-    }
     if (rfbScreen->httpSock >= 0) {
 	FD_SET(rfbScreen->httpSock, &fds);
     }
     tv.tv_sec = 0;
     tv.tv_usec = 0;
-    nfds = select(max(rfbScreen->httpListen6Sock, max(rfbScreen->httpSock,rfbScreen->httpListenSock)) + 1, &fds, NULL, NULL, &tv);
+    nfds = select(max(rfbScreen->httpSock,rfbScreen->httpListenSock) + 1, &fds, NULL, NULL, &tv);
     if (nfds == 0) {
 	return;
     }
@@ -202,36 +180,19 @@ rfbHttpCheckFds(rfbScreenInfoPtr rfbScreen)
 	httpProcessInput(rfbScreen);
     }
 
-    if (FD_ISSET(rfbScreen->httpListenSock, &fds) || FD_ISSET(rfbScreen->httpListen6Sock, &fds)) {
+    if (FD_ISSET(rfbScreen->httpListenSock, &fds)) {
 	if (rfbScreen->httpSock >= 0) close(rfbScreen->httpSock);
 
-	if(FD_ISSET(rfbScreen->httpListenSock, &fds)) {
-	    if ((rfbScreen->httpSock = accept(rfbScreen->httpListenSock, (struct sockaddr *)&addr, &addrlen)) < 0) {
-	      rfbLogPerror("httpCheckFds: accept");
-	      return;
-	    }
+	if ((rfbScreen->httpSock = accept(rfbScreen->httpListenSock,
+			       (struct sockaddr *)&addr, &addrlen)) < 0) {
+	    rfbLogPerror("httpCheckFds: accept");
+	    return;
 	}
-	else if(FD_ISSET(rfbScreen->httpListen6Sock, &fds)) {
-	    if ((rfbScreen->httpSock = accept(rfbScreen->httpListen6Sock, (struct sockaddr *)&addr, &addrlen)) < 0) {
-	      rfbLogPerror("httpCheckFds: accept");
-	      return;
-	    }
-	}
-
 #ifdef USE_LIBWRAP
-	char host[1024];
-#ifdef LIBVNCSERVER_IPv6
-	if(getnameinfo((struct sockaddr*)&addr, addrlen, host, sizeof(host), NULL, 0, NI_NUMERICHOST) != 0) {
-	  rfbLogPerror("httpCheckFds: error in getnameinfo");
-	  host[0] = '\0';
-	}
-#else
-	memcpy(host, inet_ntoa(addr.sin_addr), sizeof(host));
-#endif
-	if(!hosts_ctl("vnc",STRING_UNKNOWN, host,
+	if(!hosts_ctl("vnc",STRING_UNKNOWN,inet_ntoa(addr.sin_addr),
 		      STRING_UNKNOWN)) {
 	  rfbLog("Rejected HTTP connection from client %s\n",
-		 host);
+		 inet_ntoa(addr.sin_addr));
 	  close(rfbScreen->httpSock);
 	  rfbScreen->httpSock=-1;
 	  return;
@@ -264,11 +225,7 @@ static rfbClientRec cl;
 static void
 httpProcessInput(rfbScreenInfoPtr rfbScreen)
 {
-#ifdef LIBVNCSERVER_IPv6
-    struct sockaddr_storage addr;
-#else
     struct sockaddr_in addr;
-#endif
     socklen_t addrlen = sizeof(addr);
     char fullFname[512];
     char params[1024];
@@ -389,18 +346,16 @@ httpProcessInput(rfbScreenInfoPtr rfbScreen)
 	return;
     }
 
+    if (strchr(fname+1, '/') != NULL) {
+	rfbErr("httpd: asking for file in other directory\n");
+	rfbWriteExact(&cl, NOT_FOUND_STR, strlen(NOT_FOUND_STR));
+	httpCloseSock(rfbScreen);
+	return;
+    }
 
     getpeername(rfbScreen->httpSock, (struct sockaddr *)&addr, &addrlen);
-#ifdef LIBVNCSERVER_IPv6
-    char host[1024];
-    if(getnameinfo((struct sockaddr*)&addr, addrlen, host, sizeof(host), NULL, 0, NI_NUMERICHOST) != 0) {
-      rfbLogPerror("httpProcessInput: error in getnameinfo");
-    }
-    rfbLog("httpd: get '%s' for %s\n", fname+1, host);
-#else
     rfbLog("httpd: get '%s' for %s\n", fname+1,
 	   inet_ntoa(addr.sin_addr));
-#endif
 
     /* Extract parameters from the URL string if necessary */
 
@@ -437,10 +392,7 @@ httpProcessInput(rfbScreenInfoPtr rfbScreen)
         return;
     }
 
-    if(performSubstitutions) /* is the 'index.vnc' file */
-      rfbWriteExact(&cl, OK_STR_HTML, strlen(OK_STR_HTML));
-    else
-      rfbWriteExact(&cl, OK_STR, strlen(OK_STR));
+    rfbWriteExact(&cl, OK_STR, strlen(OK_STR));
 
     while (1) {
 	int n = fread(buf, 1, BUF_SIZE-1, fd);
@@ -626,8 +578,7 @@ parseParams(const char *request, char *result, int max_bytes)
 
 /*
  * Check if the string consists only of alphanumeric characters, '+'
- * signs, underscores, dots, colons and square brackets.
- * Replace all '+' signs with spaces.
+ * signs, underscores, and dots. Replace all '+' signs with spaces.
  */
 
 static rfbBool
@@ -636,8 +587,7 @@ validateString(char *str)
     char *ptr;
 
     for (ptr = str; *ptr != '\0'; ptr++) {
-	if (!isalnum(*ptr) && *ptr != '_' && *ptr != '.'
-	    && *ptr != ':' && *ptr != '[' && *ptr != ']' ) {
+	if (!isalnum(*ptr) && *ptr != '_' && *ptr != '.') {
 	    if (*ptr == '+') {
 		*ptr = ' ';
 	    } else {

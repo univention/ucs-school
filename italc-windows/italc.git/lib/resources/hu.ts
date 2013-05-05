@@ -5,19 +5,19 @@
     <name>AboutDialog</name>
     <message>
         <source>About iTALC</source>
-        <translation type="unfinished">Az iTALC-ról</translation>
+        <translation>iTALC névjegye</translation>
     </message>
     <message>
         <source>About</source>
-        <translation>Rólunk</translation>
+        <translation>Névjegy</translation>
     </message>
     <message utf8="true">
         <source>iTALC - Intelligent Teaching And Learning with Computers
 
-Copyright © 2004-2011 Tobias Doerffel</source>
-        <translation type="unfinished">iTALC - Intelligent Teaching And Learning with Computers
+Copyright © 2004-2011 Tobias Doerffel / iTALC Solutions</source>
+        <translation>iTALC - Intelligent Teaching And Learning with Computers
 
-Copyright © 2004-2011 Tobias Doerffel</translation>
+Copyright © 2004-2011 Tobias Doerffel / iTALC Solutions</translation>
     </message>
     <message>
         <source>&lt;a href=&quot;http://italc.sourceforge.net&quot;&gt;http://italc.sourceforge.net&lt;/a&gt;</source>
@@ -25,7 +25,7 @@ Copyright © 2004-2011 Tobias Doerffel</translation>
     </message>
     <message>
         <source>Authors</source>
-        <translation type="unfinished">Szerzők</translation>
+        <translation>Készítők</translation>
     </message>
     <message>
         <source>Translation</source>
@@ -35,87 +35,73 @@ Copyright © 2004-2011 Tobias Doerffel</translation>
         <source>Current language not translated yet (or native English).
 
 If you&apos;re interested in translating iTALC into your local or another language or want to improve an existing translation, please contact an iTALC developer!</source>
-        <translation type="unfinished">A magyar fordítást készítették a Novell PSH Kft. munkatársai:
-Maxi Attila, Kovács Lajos és Óvári Ákos
-
-Ha hibát talál a magyar fordításban, kérem mielőbb jelezze a Novell PSH Kft. munkatársai felé: huedudl@npsh.hu e-mail címen.
-
-Amennyiben szeretné lefordítani másik nyelvre, azt jelezze az iTALC fejlesztői felé.</translation>
+        <translation>Magyar fordítás: Bujtás Balázs &lt;bubacoder/at/gmail/dot/com&gt;</translation>
     </message>
     <message>
         <source>License</source>
-        <translation>Licence</translation>
-    </message>
-    <message utf8="true">
-        <source>iTALC - Intelligent Teaching And Learning with Computers
-
-Copyright © 2004-2011 Tobias Doerffel / iTALC Solutions</source>
-        <translation type="unfinished">iTALC - Intelligent Teaching And Learning with Computer
-
-Copyright © 2004-2011 Tobias Doerffel / iTALC Solutions
-</translation>
+        <translation>Licenc</translation>
     </message>
 </context>
 <context>
     <name>AccessDialogSlave</name>
     <message>
-        <source>Never for this session</source>
-        <translation type="unfinished">Ebben a munkamenetben soha</translation>
-    </message>
-    <message>
-        <source>Always for this session</source>
-        <translation type="unfinished">Ebben a munkamenetben mindig</translation>
-    </message>
-    <message>
         <source>Confirm desktop access</source>
-        <translation type="unfinished">Hozzáférés megerősítése a munkaasztalhoz</translation>
+        <translation>Asztal hozzáférés engedélyezése</translation>
     </message>
     <message>
         <source>The user %1 at host %2 wants to access your desktop. Do you want to grant access?</source>
-        <translation type="unfinished">%1 felhasználó a(z) %2 gépről hozzáférést kezdeményezett az Ön munkaasztalához. Engedélyezi?</translation>
+        <translation>%1 felhasználó a(z) %2 számítógépről hozzá akar férni az asztalához. Megadja számára az engedélyt?</translation>
+    </message>
+    <message>
+        <source>Never for this session</source>
+        <translation>Soha sem erre a munkamenetre</translation>
+    </message>
+    <message>
+        <source>Always for this session</source>
+        <translation>Mindig sem erre a munkamenetre</translation>
     </message>
 </context>
 <context>
     <name>ClassroomManager</name>
     <message>
         <source>Classroom-Manager</source>
-        <translation>Osztályterem-Kezelés</translation>
+        <translation>Terem-kezelő</translation>
     </message>
     <message>
         <source>Use this workspace to manage your computers and classrooms in an easy way.</source>
-        <translation>Ezen a munkaasztalon kezelheti a számítógépeket és az osztálytermeket</translation>
+        <translation>Ezen a munkaterületen könnyedén kezelheti számítógépeit és termeit.</translation>
     </message>
     <message>
         <source>This is where computers and classrooms are managed. You can add computers or classrooms by clicking right in this list.</source>
-        <translation>Itt tudja kezelni a számítógépeit és az osztálytermeit. Számítógép vagy osztályterem hozzáadásához kattintson az egér jobb gombjával a listára.</translation>
+        <translation>Itt kezelheti számítógépeit és termeit. A listában jobb gombbal kattintva adhat hozzá számítógépeket és termeket.</translation>
     </message>
     <message>
         <source>Classrooms/computers</source>
-        <translation>Osztálytermek/Számítógépek</translation>
+        <translation>Termek/számítógépek</translation>
     </message>
     <message>
         <source>IP-address</source>
-        <translation>IP-Cím</translation>
+        <translation>IP cím</translation>
     </message>
     <message>
         <source>Usernames</source>
-        <translation>Felhasználók</translation>
+        <translation>Felhasználónevek</translation>
     </message>
     <message>
         <source>Show usernames</source>
-        <translation type="unfinished">Felhasználók megjelenítése</translation>
+        <translation>Felhasználónevek mutatása</translation>
     </message>
     <message>
         <source>Use the context-menu (right mouse-button) to add/remove computers and/or classrooms.</source>
-        <translation type="unfinished">A lenyíló menü segítségével (egér jobb gomb megnyomásával) hozzáadhatja, törölheti a számítógépeket vagy osztálytermeket.</translation>
+        <translation>Használja ezt a környezeti menüt (jobb egérgomb) számítógépek és termek hozzáadására vagy eltávolítására.</translation>
     </message>
     <message>
         <source>Export to text-file</source>
-        <translation type="unfinished">Exportálás fájlba</translation>
+        <translation>Exportálás szövegfájlba</translation>
     </message>
     <message>
         <source>Use this button for exporting this list of computers and usernames into a text-file. You can use this file later for collecting files after an exam has finished. This is sometimes neccessary, because some users might have finished and logged out earlier and so you cannot collect their files at the end of the exam.</source>
-        <translation type="unfinished">A gomb segítségével exportálhatja a számítógépeket és a felhasználókat a szöveges állományba. A vizsga befejeztével egyszerűen begyűjtheti ezeket a fájlokat. Néhány alkalommal szükséges lehet, mert a vizsgával már korábban végzett és kijelentkezett felhasználók már nem érhetőek el a rendszerben.</translation>
+        <translation>Használja ezt a gombot számítógépek és felhasználónevek listájának szövegfájlba exportálásához. A vizsga végeztével használhatja a fájlok begyűjtéséhez. Ez néha szükséges, mert addigra néhány felhasználó már kijelentkezhet, így nem tudja összeszedni fájljaikat a vizsga végeztével.</translation>
     </message>
     <message>
         <source>Hide teacher computers</source>
@@ -123,7 +109,7 @@ Copyright © 2004-2011 Tobias Doerffel / iTALC Solutions
     </message>
     <message>
         <source>Show/hide</source>
-        <translation>Megtekint/Elrejt</translation>
+        <translation>Mutat/elrejt</translation>
     </message>
     <message>
         <source>Edit settings</source>
@@ -135,19 +121,19 @@ Copyright © 2004-2011 Tobias Doerffel / iTALC Solutions
     </message>
     <message>
         <source>Show all computers in classroom</source>
-        <translation>Összes számítógép megtekintése az osztályteremben</translation>
+        <translation>A terem összes számítógépének megjelenítése</translation>
     </message>
     <message>
         <source>Hide all computers in classroom</source>
-        <translation>Összes számítógép elrejtése az osztályteremben</translation>
+        <translation>A terem összes számítógépének elrejtése</translation>
     </message>
     <message>
         <source>Edit name</source>
-        <translation>Név szerkesztése</translation>
+        <translation>Átnevezés</translation>
     </message>
     <message>
         <source>Remove classroom</source>
-        <translation>Osztályterem törlése</translation>
+        <translation>Terem törlése</translation>
     </message>
     <message>
         <source>Add computer</source>
@@ -155,18 +141,17 @@ Copyright © 2004-2011 Tobias Doerffel / iTALC Solutions
     </message>
     <message>
         <source>Add classroom</source>
-        <translation>Osztályterem hozzáadása</translation>
+        <translation>Terem hozzáadása</translation>
     </message>
     <message>
         <source>No configuration-file found</source>
-        <translation>Nem található a konfigurációs fájl</translation>
+        <translation>A konfigurációs fájl nem található</translation>
     </message>
     <message>
         <source>Could not open configuration file %1.
 You will have to add at least one classroom and computers using the classroom-manager which you&apos;ll find inside the program in the sidebar on the left side.</source>
-        <translatorcomment>Legalább egy számítógépterem csoportot definiálnunk kell ahhoz, hogy a számítógép(ek)et megfelelően tudjuk kezelni a bal oldalsávon.</translatorcomment>
-        <translation type="unfinished">Nem nyitható meg a %1 konfigurációs fájl.
-Legalább egy számítógépterem csoportot definiálnunk kell ahhoz, hogy a számítógép(ek)et megfelelően tudjuk kezelni a bal oldalsávon.</translation>
+        <translation>A %1 konfigurációs fájl nem nyitható meg.
+Legalább egy termet és számítógépet fel kell vennie a terem-kezelővel, melyet a program ablakának bal oldalán lévő oldalsávon talál.</translation>
     </message>
     <message>
         <source>Error in configuration-file</source>
@@ -175,26 +160,26 @@ Legalább egy számítógépterem csoportot definiálnunk kell ahhoz, hogy a sz�
     <message>
         <source>Error while parsing configuration-file %1.
 Please edit it. Otherwise you should delete this file and have to add all classrooms and computers again.</source>
-        <translation type="unfinished">Hiba történt a %1 konfigurációs fájl feldogozása közben.
-Kérem módosítsa, máskülönben törlésre kerülhet a fájl és újból létre kell hozni az összes osztályterme(ke)t és számítógépe(ke)t.</translation>
+        <translation>Hiba történt a %1 konfigurációs fájl feldolgozása során.
+Kérem szerkessze. Különben törölnie kell a fájlt és újra fel kell rögzítenie az összes termet és számítógépet.</translation>
     </message>
     <message>
         <source>Error while parsing configuration-file %1.
 Please edit it. Otherwise you should delete this file.</source>
-        <translation type="unfinished">Hiba történt a %1 konfigurációs fájl feldogozása közben.
-Kérem módosítsa, máskülönben törlésre kerülhet a fájl.</translation>
+        <translation>Hiba történt a %1 konfigurációs fájl feldolgozása során.
+Kérem szerkessze vagy törölje a fájlt.</translation>
     </message>
     <message>
         <source>Select output-file</source>
-        <translation>Kimeneti fájl kiválasztása</translation>
+        <translation>Válasszon kimeneti fájlt</translation>
     </message>
     <message>
         <source>Text files (*.txt)</source>
-        <translation>Szöveges fájlok (*.txt)</translation>
+        <translation>Szövegfájlok (*.txt)</translation>
     </message>
     <message>
         <source>Actions for selected</source>
-        <translation type="unfinished">Kiválasztottak műveletei</translation>
+        <translation>Műveletek a kijelölttel</translation>
     </message>
     <message>
         <source>Actions</source>
@@ -202,39 +187,39 @@ Kérem módosítsa, máskülönben törlésre kerülhet a fájl.</translation>
     </message>
     <message>
         <source>Actions for %1</source>
-        <translation type="unfinished">%1 terem műveletei</translation>
+        <translation>Műveletek ezzel: %1</translation>
     </message>
     <message>
         <source>New name for classroom</source>
-        <translation>Új név hozzáadása az osztályteremhez</translation>
+        <translation>A terem új neve</translation>
     </message>
     <message>
         <source>Please enter a new name for classroom &quot;%1&quot;.</source>
-        <translation>Kérem írja be az új osztály terem nevét &quot;%1&quot;.</translation>
+        <translation>Írja be &quot;%1&quot; terem új nevét.</translation>
     </message>
     <message>
         <source>Are you sure want to remove classroom &quot;%1&quot;?
 All computers in it will be removed as well!</source>
-        <translation type="unfinished">Biztos benne, hogy törli a &quot;%1&quot; osztálytermet?
-Az összes számítógép törlésre kerül!</translation>
+        <translation>Ténylet törölni akarja &quot;%1&quot; termet?
+Minden benne lévő gép is törölve lesz!</translation>
     </message>
     <message>
         <source>Missing classroom</source>
-        <translation>Hiányzó osztályterem</translation>
+        <translation>Hiányzó terem</translation>
     </message>
     <message>
         <source>Before adding computers you have to create at least one classroom.
 Do you want to create a new classrom now?</source>
-        <translation type="unfinished">Új számítógép hozzáadása előtt, hozzon létre egy osztálytermet.
-Szeretne létrehozni új osztálytermet?</translation>
+        <translation>Számítógépek hozzáadása előtt létre kell hoznia legalább egy termet.
+Létre kíván most hozni egy új termet?</translation>
     </message>
     <message>
         <source>New classroom</source>
-        <translation>Új osztályterem</translation>
+        <translation>Új terem</translation>
     </message>
     <message>
         <source>Please enter the name of the classroom you want to create.</source>
-        <translation type="unfinished">Kérem írja be az osztályterem nevét, amit létre szeretne hozni.</translation>
+        <translation>Írja be a létrehozandó terem nevét.</translation>
     </message>
 </context>
 <context>
@@ -245,234 +230,235 @@ Szeretne létrehozni új osztálytermet?</translation>
     </message>
     <message>
         <source>No user logged in</source>
-        <translation>Nincsen felhasználó bejelentkezve</translation>
+        <translation>Nincs bejelentkezett felhasználó</translation>
     </message>
     <message>
         <source>Host unreachable</source>
-        <translation>A számítógép nem érhető el</translation>
+        <translation>A számítógép nem elérhető</translation>
     </message>
     <message>
         <source>Demo running</source>
-        <translation type="unfinished">Demó futtatása</translation>
+        <translation>Bemutató fut</translation>
     </message>
     <message>
         <source>Desktop locked</source>
-        <translation type="unfinished">Blokkolt asztal</translation>
+        <translation>Képernyő zárolva</translation>
     </message>
 </context>
 <context>
     <name>ClientAction</name>
     <message>
         <source>Are you sure want logout all users on all visible computers ?</source>
-        <translatorcomment>Biztosan ki szeretné jelentkeztetni az összes felhasználót a kijelölt számítógépekről?</translatorcomment>
-        <translation type="unfinished">Biztosan szeretné,hogy az összes felhasználó kijelentkezzen a számítógépekről?</translation>
+        <translation>Tényleg ki akarja jelentkeztetni a felhasználókat a képernyőn látható számítógéken?</translation>
     </message>
     <message>
         <source>Are you sure want logout all users on all selected computers ?</source>
-        <translatorcomment>Biztosan ki szeretné jelentkeztetni az összes felhasználót a kijelölt számítógépekről?</translatorcomment>
-        <translation type="unfinished">Biztosan szeretné,hogy az összes felhasználó kijelentkezzen a kijelölt számítógépekről?</translation>
+        <translation>Tényleg ki akarja jelentkeztetni a felhasználókat a kijelölt számítógéken?</translation>
     </message>
     <message>
         <source>Logout user</source>
-        <translation type="unfinished">Felhasználói kijelentkezés</translation>
+        <translation>Felhasználó kijelentkeztetése</translation>
     </message>
     <message>
         <source>Are you sure want to reboot all visible computers?</source>
-        <translation type="unfinished">Biztos benne, hogy újra szeretné indítani az összes számítógépet?</translation>
+        <translation>Tényleg újra akarja indítani a képernyőn látható számítógépeket?</translation>
     </message>
     <message>
         <source>Are you sure want to reboot all selected computers?</source>
-        <translation type="unfinished">Biztos benne, hogy újra szeretné indítani az összes kijelölt számítógépet?</translation>
+        <translation>Tényleg újra akarja indítani a kijelölt számítógépeket?</translation>
     </message>
     <message>
         <source>Reboot computers</source>
-        <translation type="unfinished">Számítógépek újraindítása</translation>
+        <translation>Számítógépek újraindítása</translation>
     </message>
     <message>
         <source>Are you sure want to power down all visible computers?</source>
-        <translation type="unfinished">Biztos benne, hogy ki szeretné kapcsolni az összes számítógépet?</translation>
+        <translation>Tényleg ki akarja kapcsolni a képernyőn látható számítógépeket?</translation>
     </message>
     <message>
         <source>Are you sure want to power down all selected computers?</source>
-        <translation type="unfinished">Biztos benne, hogy ki szeretné kapcsolni az összes kijelölt számítógépet?</translation>
+        <translation>Tényleg ki akarja kapcsolni a kijelölt számítógépeket?</translation>
     </message>
 </context>
 <context>
     <name>ClientSettingsDialog</name>
     <message>
-        <source>Invalid MAC-address</source>
-        <translation type="unfinished">Érvénytelen MAC azonosító</translation>
-    </message>
-    <message>
-        <source>You specified an invalid MAC-address. Either leave the field blank or enter a valid MAC-address (use &quot;:&quot; as separator!).</source>
-        <translation type="unfinished">Érvénytelen MAC azonosítót adott meg. Hagyja üresen a mezőt vagy adjon meg egy érvényes MAC azonosítót (használjon &quot;:&quot; az elválasztáshoz!).</translation>
-    </message>
-    <message>
         <source>Client settings</source>
-        <translation type="unfinished">Kliens beállítások</translation>
+        <translation>Kliens beállítások</translation>
     </message>
     <message>
         <source>IP/hostname</source>
-        <translation type="unfinished">IP cím vagy gépnév</translation>
+        <translation>IP/számítógépnév</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;/head&gt;&lt;body style=&quot; white-space: pre-wrap; font-family:Sans Serif; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;enter an IP-address or hostname under which iTALC can reach the client (use &apos;:&apos; for specifying an optional port-number)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished">&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;/head&gt;&lt;body style=&quot; white-space: pre-wrap; font-family:Sans Serif; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;adja meg az IP címet vagy gépnevet, amivel iTALC elérheti a kliens gépeket (használjon &quot;:&quot; - megadhatározhatja a kívánt port számát)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;/head&gt;&lt;body style=&quot; white-space: pre-wrap; font-family:Sans Serif; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;írjon be egy IP címet vagy számítógépnevet, amivel az iTALC eléri a klienst (használjon &apos;:&apos; karaktert az opcionális portszám megadásához)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished">Név</translation>
+        <translation>Név</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;/head&gt;&lt;body style=&quot; white-space: pre-wrap; font-family:Sans Serif; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Optional nickname of the host which is displayed in iTALC.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished">&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;/head&gt;&lt;body style=&quot; white-space: pre-wrap; font-family:Sans Serif; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Adjon meg egy becenevet a géphez, amit szeretne hogy az iTALC-ban megjelenjen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;/head&gt;&lt;body style=&quot; white-space: pre-wrap; font-family:Sans Serif; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Opcionálisan megjelenítendő név.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>MAC address</source>
-        <translation type="unfinished">MAC azonosító</translation>
+        <translation>MAC cím</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;/head&gt;&lt;body style=&quot; white-space: pre-wrap; font-family:Sans Serif; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Hardware/MAC-address of client - only used for powering on client&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished">&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;/head&gt;&lt;body style=&quot; white-space: pre-wrap; font-family:Sans Serif; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Hardver/MAC azonosítója a kliensnek - csak a számítógép bekapcsolásához használatos&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;/head&gt;&lt;body style=&quot; white-space: pre-wrap; font-family:Sans Serif; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;A kliens hardver/MAC címe - csak a kliens bekapcsolásához kell&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Classroom</source>
-        <translation type="unfinished">Osztályterem</translation>
+        <translation>Terem</translation>
     </message>
     <message>
         <source>Type</source>
-        <translation type="unfinished">Típus</translation>
+        <translation>Típus</translation>
     </message>
     <message>
         <source>Student computer</source>
-        <translation type="unfinished">Diák számítógép</translation>
+        <translation>Tanulói számítógép</translation>
     </message>
     <message>
         <source>Teacher computer</source>
-        <translation type="unfinished">Tanári számítógép</translation>
+        <translation>Tanári számítógép</translation>
     </message>
     <message>
         <source>Other/undefined computer</source>
-        <translation type="unfinished">Hozzá nem rendelt számítógép</translation>
+        <translation>Egyéb/nem megadott számítógép</translation>
     </message>
     <message>
         <source>Missing IP address/hostname</source>
-        <translation type="unfinished">Hiányzó IP cím/gépnév</translation>
+        <translation>Hiányzó IP cím/számítógépnév</translation>
     </message>
     <message>
         <source>You didn&apos;t specify an IP address or hostname for the computer!</source>
-        <translation type="unfinished">Még nem adta hozzá az IP címet vagy a gépnevet a számítógéphez!</translation>
+        <translation>Nem adott meg IP címet vagy számítógépnevet!</translation>
+    </message>
+    <message>
+        <source>Invalid MAC-address</source>
+        <translation>Érvénytelen MAC cím</translation>
+    </message>
+    <message>
+        <source>You specified an invalid MAC-address. Either leave the field blank or enter a valid MAC-address (use &quot;:&quot; as separator!).</source>
+        <translation>Érvénytelen MAC címet adott meg. Hagyja üresen a mezőt, vagy írjon be érvényes MAC címet (elválasztónak használjon &quot;:&quot; karaktert).</translation>
     </message>
 </context>
 <context>
     <name>Config</name>
     <message>
         <source>Interval between updates</source>
-        <translation type="unfinished">Képfrissítés gyakorisága</translation>
+        <translation>Frissítések közti idő</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;/head&gt;&lt;body style=&quot; white-space: pre-wrap; font-family:Sans Serif; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Here you can set the interval between updates of clients. Higher values result in lower network-traffic and lower CPU-usage on this computer.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished">&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;/head&gt;&lt;body style=&quot; white-space: pre-wrap; font-family:Sans Serif; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Here you can set the interval between updates of clients. Higher values result in lower network-traffic and lower CPU-usage on this computer.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;/head&gt;&lt;body style=&quot; white-space: pre-wrap; font-family:Sans Serif; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Itt beállíthatja a kliens frissítések közötti időt. Magasabb értékek kisebb hálózati forgalmat és alacsonyabb processzorhasználatot eredményeznek ezen a számítógépen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source> seconds</source>
-        <translation type="unfinished"> másodperc</translation>
+        <translation> másodperc</translation>
     </message>
     <message>
         <source>User interface</source>
-        <translation type="unfinished">Felhasználói felület</translation>
+        <translation>Felhasználói felület</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;/head&gt;&lt;body style=&quot; white-space: pre-wrap; font-family:Sans Serif; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Do not show balloon-tooltips for toolbar-buttons&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;/head&gt;&lt;body style=&quot; white-space: pre-wrap; font-family:Sans Serif; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Ne mutasson buborék-tippeket az eszköztár gombjainál&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;/head&gt;&lt;body style=&quot; white-space: pre-wrap; font-family:Sans Serif; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Check this option if you&apos;re annoyed by the balloon-tooltips appearing when moving mouse-cursor over toolbar-buttons.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;/head&gt;&lt;body style=&quot; white-space: pre-wrap; font-family:Sans Serif; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Engedélyezze ezt a beállítást, ha zavarják a buborék-tippek, melyek az egeret az eszköztár gombjain mozgatva jelennek meg.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>No balloon-tooltips</source>
-        <translation type="unfinished">Felugró üzenetek tiltása</translation>
+        <translation>Buborék-tippek tiltása</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;/head&gt;&lt;body style=&quot; white-space: pre-wrap; font-family:Sans Serif; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Do not show texts on toolbar-buttons&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;/head&gt;&lt;body style=&quot; white-space: pre-wrap; font-family:Sans Serif; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Ne mutasson szöveget az eszköztár gombjainál&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>No texts on toolbar-buttons</source>
-        <translation type="unfinished">Felirat nélküli eszköztár gombok</translation>
+        <translation>Eszköztár-szövegek tiltása</translation>
     </message>
     <message>
         <source>Your role (needs according keys!)</source>
-        <translation type="unfinished">Szerepkörök (kulcsok szerintllítások )</translation>
+        <translation>Szerepköre (megfelelő kulcsok kellenek!)</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Here you can select your role. Only change this if you know what you&apos;re doing. Otherwise you won&apos;t be able to access any clients until you restore your old role.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished">&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+        <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Itt választhatja ki a szerepköröket. Csak akkor változtassa meg, ha biztosan tudja, hogy mit csinál. Az is előfordulhat máskülönben, hogy nem fog tudni hozzáférni a kliens gépekhez, csak akkor ha visszaállítja az eredeti beállításokat.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Itt választhatja ki szerepkörét. Csak akkor változtassa meg, ha tisztában van funkciójával. Különben nem fogja elérni a klienseket, míg vissza nem állítja előző szereplörét.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Teacher</source>
-        <translation type="unfinished">Tanár</translation>
+        <translation>Tanár</translation>
     </message>
     <message>
         <source>Administrator</source>
-        <translation type="unfinished">Adminisztrátor</translation>
+        <translation>Rendszergazda</translation>
     </message>
     <message>
         <source>Supporter</source>
-        <translation type="unfinished">Támogató</translation>
+        <translation>Támogató</translation>
     </message>
     <message>
         <source>Other</source>
-        <translation type="unfinished">Más</translation>
+        <translation>Egyéb</translation>
     </message>
     <message>
         <source>Settings for multi-logon</source>
-        <translation type="unfinished">Tartomány beállításai</translation>
+        <translation>Multi-logon beállítások</translation>
     </message>
     <message>
         <source>Domain</source>
-        <translation type="unfinished">Domain</translation>
+        <translation>Tartomány</translation>
     </message>
     <message>
         <source>Double-click action for client-window</source>
-        <translation type="unfinished">Dupla kattintás a kliens ablakhoz</translation>
+        <translation>Duplakattintási művelet a kliens-ablakon</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Here you can set what should happen if you double-click a client-window.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Itt állíthatja be, mi történjen ha duplán kattint egy kliens ablakára.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Remote control</source>
-        <translation type="unfinished">Távoli hozzáférés</translation>
+        <translation>Távvezérlés</translation>
     </message>
     <message>
         <source>View live in fullscreen</source>
-        <translation type="unfinished">Teljes képernyős élő nézet</translation>
+        <translation>Teljes képernyős élőkép</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;/head&gt;&lt;body style=&quot; white-space: pre-wrap; font-family:Sans Serif; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-style:italic;&quot;&gt;Please note, that some changes won&apos;t take effect until you restart iTALC.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished">&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;/head&gt;&lt;body style=&quot; white-space: pre-wrap; font-family:Sans Serif; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-style:italic;&quot;&gt;Felhívjuk a figyelmét arra, hogy bizonyos változások életbelépéshez újra kell indítani az iTALC szolgáltatást.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;/head&gt;&lt;body style=&quot; white-space: pre-wrap; font-family:Sans Serif; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-style:italic;&quot;&gt;Kérem vegye figyelembe, hogy néhány beállítás csak az iTALC újraindítását követően lép érvénybe.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
 </context>
 <context>
     <name>ConfigWidget</name>
     <message>
         <source>Your iTALC-configuration</source>
-        <translation type="unfinished">iTALC konfiguráció</translation>
+        <translation>Az ön iTALC-konfigurációja</translation>
     </message>
     <message>
         <source>In this workspace you can customize iTALC to fit your needs.</source>
-        <translation type="unfinished">Ezen a munkaterületen szabhatja testre az iTALC-t az Ön igényeinek megfelelően.</translation>
+        <translation>Itt személyre szabhatja az iTALC-ot.</translation>
     </message>
 </context>
 <context>
@@ -486,53 +472,52 @@ p, li { white-space: pre-wrap; }
     <name>DemoClient</name>
     <message>
         <source>iTALC Demo</source>
-        <translation type="unfinished">iTALC Demó</translation>
+        <translation>iTALC bemutató</translation>
     </message>
 </context>
 <context>
     <name>ItalcCoreServer</name>
     <message>
         <source>Authentication error</source>
-        <translation type="unfinished">Bejelentkezési probléma</translation>
+        <translation>Bejelentkezési hiba</translation>
     </message>
     <message>
         <source>Somebody (IP: %1) tried to access this computer but could not authenticate itself successfully!</source>
-        <translatorcomment>Valaki (IP: %1) megpróbálta elérni ezt a számítógéphez, de nem tudta hitelesíteni magát!</translatorcomment>
-        <translation type="unfinished">Valaki (IP: %1) megpróbált hozzáférni ehhez a számítógéphez, de nem tudta megfelelően hitelesíteni magát!</translation>
+        <translation>Valaki a(z) %1 IP címről megpróbált hozzáférni ehhez a számítógéphez, de nem sikerült azonosítania magát!</translation>
     </message>
 </context>
 <context>
     <name>ItalcVncConnection</name>
     <message>
         <source>VNC authentication failed because of too many authentication tries.</source>
-        <translation type="unfinished">Túl sok próbálkozás miatt a VNC bejelentkezések száma hibára futott.</translation>
+        <translation>VNC bejelentkezés sikertelen a túl sok bejelentkezési kísérlet miatt.</translation>
     </message>
     <message>
         <source>VNC authentication failed.</source>
-        <translation type="unfinished">VNC bejelentkezési probléma.</translation>
+        <translation>VNC bejelentkezés sikertelen.</translation>
     </message>
     <message>
         <source>VNC server closed connection.</source>
-        <translation type="unfinished">VNC szerver lezárta a kapcsolatot.</translation>
+        <translation>A VNC kiszolgáló megszakította a kapcsolatot.</translation>
     </message>
 </context>
 <context>
     <name>KeyFileAssistant</name>
     <message>
         <source>iTALC Access Key Assistant</source>
-        <translation type="unfinished">iTALC hozzáférési kulcs Varázsló</translation>
+        <translation>iTALC hozzáférési kulcs segéd</translation>
     </message>
     <message>
         <source>Create/import iTALC access keys</source>
-        <translation type="unfinished">Hozzáférési kulcs Készítése/Importálása</translation>
+        <translation>iTALC hozzáférési kulcsok létrehozása/importálása</translation>
     </message>
     <message>
         <source>This assistant will help you to create or import iTALC access keys.</source>
-        <translation type="unfinished">A Varázsló segítségével létrehozhatunk vagy importálhatunk hozzáférési kulcsokat.</translation>
+        <translation>Ez a segéd segítségére lesz az iTALC hozzáférési kulcsok létrehozásában vagy importálásában.</translation>
     </message>
     <message>
         <source>How does it work?</source>
-        <translation type="unfinished">Hogyan működik ?</translation>
+        <translation>Hogy működik?</translation>
     </message>
     <message>
         <source>iTALC access keys consist of two parts belonging together, a private and a public key part.
@@ -540,67 +525,67 @@ p, li { white-space: pre-wrap; }
 Using the private key part, users on the master computer will be able to access client computers. It is important that only authorized users have read access to the private key file.
 
 The public key part is used on the client computers to verify that any incoming connection request is authorized.</source>
-        <translation type="unfinished">A hozzáférési azonosítás egy kulcspár segítségével valósul meg, ami a privát kulcs és publikus kulcsból áll.
+        <translation>Az iTALC hozzáférési kulcsok két, egybetartozó részből állnak, a személyes és publikus kulcsból.
 
-A privát kulcs a master (tanári) számítógépen azonosítja a kliens gépeket. Nagyon fontos, hogy csak azonosított felhasználóknak legyen joga a privát kulcs olvasásához!
+A kulcspár személyes felének használatával a tanári számítógép felhasználói hozzáférnek a kliens számítógépekhez. Fontos, hogy csak jogosult személyeknek férjenek hozzá a személyes kulcsfájlhoz.
 
-A publikus kulcs a kliens (diák) számítógépein azonosítja a bejövő kérések hitelességét.</translation>
+A nyilvános kulcs a kliens számítógépeken használatos a csatlakozási kérelmek jogosságának ellenőrzésére.</translation>
     </message>
     <message>
         <source>Assistant mode</source>
-        <translation type="unfinished">Varázsló mód</translation>
+        <translation>Segéd mód</translation>
     </message>
     <message>
         <source>Please choose whether to create new access keys or import a public key on a client.</source>
-        <translation type="unfinished">Kérjük válassza ki, hogy létrehozni vagy importálni szeretne egy új hozzáférési kulcsot a kliens(ek) számára.</translation>
+        <translation>Kérem válasszon, hogy új kulcsot szeretne-e létrehozni, vagy egy nyilvános kulcsot szeretne-e importálni a kliensen.</translation>
     </message>
     <message>
         <source>Create new access keys (master computer)</source>
-        <translation type="unfinished">Új hozzáférési kulcsok készítése (tanári számítógép)</translation>
+        <translation>Új hozzáférési kulcs létrehozása (tanári számítógép)</translation>
     </message>
     <message>
         <source>assistantModeButtonGroup</source>
-        <translation type="unfinished">assistantModeButtonGroup</translation>
+        <translation>assistantModeButtonGroup</translation>
     </message>
     <message>
         <source>Import public key (client computer)</source>
-        <translation type="unfinished">Publikus kulcs importálás (kliens számítógép)</translation>
+        <translation>Nyilvános kulcs importálása (kliens számítógép)</translation>
     </message>
     <message>
         <source>Select user role</source>
-        <translation type="unfinished">Szerepkör kiválasztása</translation>
+        <translation>Válassza ki a felhasználói szerepkört</translation>
     </message>
     <message>
         <source>Please select a user role for which to create or import the access keys:</source>
-        <translation type="unfinished">Kérjük válassza ki azt a felhasználót, aki számára létrehonzi vagy importálni szeretné a hozzáférési kulcsot:</translation>
+        <translation>Válassza ki a felhasználói jogkört, melyhez létrehozni vagy importálni szeretné a kulcsokat:</translation>
     </message>
     <message>
         <source>Teacher</source>
-        <translation type="unfinished">Tanár</translation>
+        <translation>Tanár</translation>
     </message>
     <message>
         <source>Administrator</source>
-        <translation type="unfinished">Adminisztrátor</translation>
+        <translation>Rendszergazda</translation>
     </message>
     <message>
         <source>Support team member</source>
-        <translation type="unfinished">Támogatók</translation>
+        <translation>Támogató csapat tagja</translation>
     </message>
     <message>
         <source>Other</source>
-        <translation type="unfinished">Más</translation>
+        <translation>Egyéb</translation>
     </message>
     <message>
         <source>User roles allow using multiple access keys in parallel. For example there can be different teacher access keys for each classroom while the support access keys are the same for the whole school.</source>
-        <translation type="unfinished">A felhasználói szerepkörökhöz rendelt hozzáférési kulcsok lehetővé teszik a párhuzamos hozzáférést. Például: Minden osztályteremhez különböző tanári kulcsok tartozhatnak, de az iskolára nézve elegendő egy támogatói (support) kulcs készítése.</translation>
+        <translation>A felhasználói szerepkörök lehetővé teszik több hozzáférési kulcs egyidejű használatát. Például lehet minden teremhez különböző tanári kulcs, míg a támogatói kulcs ugyanaz lehet az egész iskolában.</translation>
     </message>
     <message>
         <source>Directories</source>
-        <translation type="unfinished">Könyvtárak</translation>
+        <translation>Mappák</translation>
     </message>
     <message>
         <source>Export public key part (master computer)</source>
-        <translation type="unfinished">Publikus kulcspár exportálása (tanári számítógép)</translation>
+        <translation>Nyilvános kulcs exportálása (tanári számítógép)</translation>
     </message>
     <message>
         <source>...</source>
@@ -608,117 +593,117 @@ A publikus kulcs a kliens (diák) számítógépein azonosítja a bejövő kér�
     </message>
     <message>
         <source>Use custom destination directory for access keys</source>
-        <translation type="unfinished">A hozzáférési kulcsok mentése egyéni könyvtárba</translation>
+        <translation>Egyéni célkönyvtár használata a hozzáférési kulcsokhoz</translation>
     </message>
     <message>
         <source>Please specify the location of the public access key to be imported.</source>
-        <translation type="unfinished">Kérem határozza meg a publikus kulcs importálásához az elérési útvonalat.</translation>
+        <translation>Adja meg az importálandó nyilvános kulcs helyét.</translation>
     </message>
     <message>
         <source>Summary</source>
-        <translation type="unfinished">Összefoglalás</translation>
+        <translation>Összegzés</translation>
     </message>
     <message>
         <source>The following actions will be taken:</source>
-        <translation type="unfinished">A következő műveletekre kerül sor:</translation>
+        <translation>A következő műveletek kerülnek végrehajtásra:</translation>
     </message>
     <message utf8="true">
         <source>• Create new access keys</source>
-        <translation type="unfinished">• Új hozzáférési kulcs elkészítése</translation>
+        <translation>• Új hozzáférési kulcsok létrehozása</translation>
     </message>
     <message utf8="true">
         <source>• Import public access key from</source>
-        <translation type="unfinished">• Publikus kulcs importálás</translation>
+        <translation>• Nyilvános hozzáférési kulcs importálása innen:</translation>
     </message>
     <message>
         <source>&lt;unknown&gt;</source>
-        <translation type="unfinished">&lt;unknown&gt;</translation>
+        <translation>&lt;ismeretlen&gt;</translation>
     </message>
     <message utf8="true">
         <source>• Write access key(s) to</source>
-        <translation>• Hozzáférési kulcs(ok) másolása ide:</translation>
+        <translation>• Hozzáférési kulcs(ok) mentése ide:</translation>
     </message>
     <message utf8="true">
         <source>• Export public key to</source>
-        <translation>• Publikus kulcs exportálás ide:</translation>
+        <translation>• Publikus kulcs exportálása ide:</translation>
     </message>
     <message utf8="true">
         <source>• Configure for user role</source>
-        <translation type="unfinished">• Felhasználói szerepkör beállítása:</translation>
+        <translation>• Beállítás felhasználói szerepkörhöz:</translation>
     </message>
     <message>
         <source>Select directory in which to export the public key</source>
-        <translation type="unfinished">Válassza ki azt a könyvtárat, ahonnan exportálni szeretné a publikus kulcsot</translation>
+        <translation>Válasszon mappát a nyilvános kulcs exportálásához:</translation>
     </message>
     <message>
         <source>Key files (*.key.txt)</source>
-        <translation type="unfinished">Kulcs fájlok (*.key.txt)</translation>
+        <translation>Kulcsfájlok (*.key.txt)</translation>
     </message>
     <message>
         <source>Invalid public key</source>
-        <translation type="unfinished">Érvénytelen publikus kulcs</translation>
+        <translation>Événytelen nyilvános kulcs</translation>
     </message>
     <message>
         <source>The selected file does not contain a valid public iTALC access key!</source>
-        <translation type="unfinished">A kiválasztott fájl nem tartalmaz érvényes hozzáférési publikus kulcs adatokat az iTALC-hoz!</translation>
+        <translation>A kiválasztott fájlban nem található érvényes iTALC nyilvános kulcs!</translation>
     </message>
     <message>
         <source>Select destination directory</source>
-        <translation type="unfinished">Cél könyvtár megadása</translation>
+        <translation>Válassza ki a célkönyvtárat</translation>
     </message>
     <message>
         <source>Access key creation</source>
-        <translation type="unfinished">Hozzáférési kulcs készítése</translation>
+        <translation>Hozzáférési kulcs készítés</translation>
     </message>
     <message>
         <source>Could not remove previously existing file %1.</source>
-        <translation type="unfinished">Nem sikerült eltávolítani,a létező fájlt: %1.</translation>
+        <translation>Nem sikerült törölni a már létező %1 fájlt.</translation>
     </message>
     <message>
         <source>Failed exporting public access key from %1 to %2.</source>
-        <translation type="unfinished">Sikertelen volt a publikus kulcs exportálás a %1-ról a %2-re.</translation>
+        <translation>Nem sikerült exportálni a nyilvános kulcsot %1 fájlból %2 fájlba.</translation>
     </message>
     <message>
         <source>Access keys were created and written successfully to %1 and %2.</source>
-        <translation type="unfinished">Sikeresen végrehajtódott a hozzáférési kulcs készítése és írása a %1-be és a %2-be.</translation>
+        <translation>A hozzáférési kulcsok elkészültek és sikeresen el lettek mentve a %1 és %2 könyvtárakba.</translation>
     </message>
     <message>
         <source>An error occured while creating the access keys. You probably are not permitted to write to the selected directories.</source>
-        <translation type="unfinished">A hozzáférési kulcs készítése közben probléma történt. Önnek valószínűleg nincsen írási joga a kiválasztott könyvtárba.</translation>
+        <translation>Hiba történt a hozzáférési kulcsok készítése során. Valószínűleg nincs írási joga a kiválasztott könyvtárakhoz.</translation>
     </message>
     <message>
         <source>Public key import</source>
-        <translation type="unfinished">Publikus kulcs importálása</translation>
+        <translation>Nyilvános kulcs importálása</translation>
     </message>
     <message>
         <source>An error occured while importing the public access key. You probably are not permitted to read the source key or to write the destination file.</source>
-        <translation type="unfinished">A publikus kulcs importálás közben hiba lépett fel. Önnek valószínűleg nincsen olvasási joga a forrás fájlból, vagy írási joga a cél fájlba.</translation>
+        <translation>Hiba történt a nyilvános kulcs importálása során. Valószínűleg nincs olvasási joga a forrás kulcshoz vagy írási joga a cél fájlhoz.</translation>
     </message>
     <message>
         <source>The public key was successfully imported to %1.</source>
-        <translation type="unfinished">A publikus kulcs importálása sikeresen végrehajtódott a %1-ba.</translation>
+        <translation>A nyilvános kulcs sikeresen importálva lett ide: %1.</translation>
     </message>
 </context>
 <context>
     <name>LockWidget</name>
     <message>
         <source>screen lock</source>
-        <translation type="unfinished">Képernyő blokkolása</translation>
+        <translation>képernyőzár</translation>
     </message>
 </context>
 <context>
     <name>LogonGroupEditor</name>
     <message>
         <source>Logon group editor</source>
-        <translation type="unfinished">Bejelentkezési csoport szerkesztő</translation>
+        <translation>Bejelentkezési csoport kezelő</translation>
     </message>
     <message>
         <source>Please add the groups whose members should be allowed to access computers in your iTALC network.</source>
-        <translation type="unfinished">Kérjük a csoportokhoz rendelje hozzá azokat, akiknek engedélyezi az iTALC hálózati a hozzáférést.</translation>
+        <translation>Kérem adja hozzá a csoportokat, melyeknek tagjai hozzáférhetnek a számítógépekhez az ön iTALC hálózatában.</translation>
     </message>
     <message>
         <source>All groups</source>
-        <translation type="unfinished">Minden csoport</translation>
+        <translation>Minden csoport</translation>
     </message>
     <message>
         <source>...</source>
@@ -726,81 +711,93 @@ A publikus kulcs a kliens (diák) számítógépein azonosítja a bejövő kér�
     </message>
     <message>
         <source>Groups with iTALC privileges</source>
-        <translation type="unfinished">Csoportok iTALC jogosultságokkal</translation>
+        <translation>Csoportok iTALC jogokkal</translation>
     </message>
 </context>
 <context>
     <name>MainToolBar</name>
     <message>
         <source>Actions</source>
-        <translation type="unfinished">Műveletek</translation>
+        <translation>Műveletek</translation>
     </message>
 </context>
 <context>
     <name>MainWindow</name>
     <message>
-        <source>General</source>
-        <translation type="unfinished">Általános</translation>
+        <source>MainWindow</source>
+        <translation>MainWindow</translation>
     </message>
     <message>
-        <source>Quit</source>
-        <translation type="unfinished">Kilépés</translation>
+        <source>toolBar</source>
+        <translation>toolBar</translation>
     </message>
     <message>
         <source>iTALC Management Console</source>
-        <translation type="unfinished">iTALC Kezelő Konzol</translation>
+        <translation>iTALC beállítóközpont</translation>
+    </message>
+    <message>
+        <source>General</source>
+        <translation>Általános</translation>
     </message>
     <message>
         <source>iTALC Server</source>
-        <translation type="unfinished">iTALC-Szerver</translation>
+        <translation>iTALC kiszolgáló</translation>
     </message>
     <message>
         <source>Paths</source>
-        <translation type="unfinished">Útvonalak</translation>
+        <translation>Mappák</translation>
     </message>
     <message>
         <source>Authentication</source>
-        <translation type="unfinished">Hitelesítés</translation>
+        <translation>Bejelentkezés</translation>
+    </message>
+    <message>
+        <source>Debugging</source>
+        <translation>Hibakeresés</translation>
     </message>
     <message>
         <source>iTALC Service</source>
-        <translation type="unfinished">iTALC-Szolgáltatás</translation>
+        <translation>iTALC szolgáltatás</translation>
     </message>
     <message>
         <source>Hide tray icon</source>
-        <translation type="unfinished">Tálca icon elrejtése</translation>
+        <translation>Tálca ikon elrejtése</translation>
     </message>
     <message>
         <source>Autostart</source>
-        <translation type="unfinished">Automatikus indítása</translation>
+        <translation>Automatikus indítás</translation>
     </message>
     <message>
         <source>Additional arguments</source>
-        <translation type="unfinished">További paraméterek</translation>
+        <translation>További indítási paraméterek</translation>
     </message>
     <message>
         <source>Start service</source>
-        <translation type="unfinished">Szolgáltatás indítása</translation>
+        <translation>Szolgáltatás indítása</translation>
     </message>
     <message>
         <source>Stop service</source>
-        <translation type="unfinished">Szolgáltatás leállítása</translation>
+        <translation>Szolgáltatás leállítása</translation>
     </message>
     <message>
         <source>State:</source>
-        <translation type="unfinished">Státusz:</translation>
+        <translation>Állapot:</translation>
     </message>
     <message>
         <source>Stopped</source>
-        <translation type="unfinished">Leállítva</translation>
+        <translation>Leállítva</translation>
+    </message>
+    <message>
+        <source>Enable desktop switching for screen lock (experimental)</source>
+        <translation>Asztalváltás engedélyezése képernyőzárhoz (kísérleti)</translation>
     </message>
     <message>
         <source>Logging</source>
-        <translation type="unfinished">Bejelentkezés</translation>
+        <translation>Naplózás</translation>
     </message>
     <message>
         <source>Log file directory</source>
-        <translation type="unfinished">Napló fájlok helye</translation>
+        <translation>Naplófájl könyvtára</translation>
     </message>
     <message>
         <source>...</source>
@@ -808,487 +805,203 @@ A publikus kulcs a kliens (diák) számítógépein azonosítja a bejövő kér�
     </message>
     <message>
         <source>Log level</source>
-        <translation type="unfinished">Naplózási szint</translation>
+        <translation>Naplózási szint</translation>
     </message>
     <message>
         <source>Nothing</source>
-        <translation type="unfinished">Semmi</translation>
+        <translation>Semmi</translation>
     </message>
     <message>
         <source>Only critical messages</source>
-        <translation type="unfinished">Csak a kritikus üzenetek</translation>
+        <translation>Csak kritikus üzenetek</translation>
     </message>
     <message>
         <source>Errors and critical messages</source>
-        <translation type="unfinished">Hiba és kritikus üzenetek</translation>
+        <translation>Hibák és kritikus üzenetek</translation>
     </message>
     <message>
         <source>Warnings and errors</source>
-        <translation type="unfinished">Figyelmeztető és kritikus üzenetek</translation>
+        <translation>Figyelmeztetések és hibák</translation>
     </message>
     <message>
         <source>Information, warnings and errors</source>
-        <translation type="unfinished">Tájékoztató, figyelmeztető és hiba üzenetek</translation>
+        <translation>Információ, figyelmeztetések és hibák</translation>
     </message>
     <message>
         <source>Debug messages and everything else</source>
-        <translation type="unfinished">Az összes hiba üzenet</translation>
+        <translation>Hibakeresési üzenetek és minden más</translation>
     </message>
     <message>
         <source>Limit log file size</source>
-        <translation type="unfinished">Log fájl maximális mérete</translation>
+        <translation>Naplófájl méretének korlátozása</translation>
     </message>
     <message>
         <source>MB</source>
         <translation>MB</translation>
     </message>
     <message>
-        <source>Clear all log files</source>
-        <translation type="unfinished">Napló fájlok ürítése</translation>
-    </message>
-    <message>
-        <source>Desktop capturing</source>
-        <translation type="unfinished">Az asztal rögzítése</translation>
-    </message>
-    <message>
-        <source>Enable capturing of layered (semi-transparent) windows</source>
-        <translatorcomment>A réteg rögzítésének engedélyezése az ablakban (félig átlátszó)</translatorcomment>
-        <translation type="unfinished">Átfedő ablakok rögzítése (félig átlátszó)</translation>
-    </message>
-    <message>
-        <source>Poll full screen</source>
-        <translation type="unfinished">Teljes képernyős követés</translation>
-    </message>
-    <message>
-        <source>Low accuracy (turbo mode)</source>
-        <translation type="unfinished">Alacsony felbontás (turbó mód)</translation>
-    </message>
-    <message>
-        <source>Demo server</source>
-        <translation type="unfinished">Demó szerver</translation>
-    </message>
-    <message>
-        <source>Network</source>
-        <translation type="unfinished">Hálózat</translation>
-    </message>
-    <message>
-        <source>Core server port</source>
-        <translation type="unfinished">Elsődleges szerver port</translation>
-    </message>
-    <message>
-        <source>Demo server port</source>
-        <translation type="unfinished">Demó szerver port</translation>
-    </message>
-    <message>
-        <source>Enable firewall exception</source>
-        <translation type="unfinished">Hozzáadás a tűzfal kivételekhez</translation>
-    </message>
-    <message>
-        <source>Configuration files</source>
-        <translation type="unfinished">Konfigurációs fájlok</translation>
-    </message>
-    <message>
-        <source>Global configuration</source>
-        <translation type="unfinished">Globális beállítások</translation>
-    </message>
-    <message>
-        <source>Personal configuration</source>
-        <translation type="unfinished">Személyes beállítások</translation>
-    </message>
-    <message>
-        <source>Data directories</source>
-        <translation type="unfinished">Adat könyvtárak</translation>
-    </message>
-    <message>
-        <source>Snapshots</source>
-        <translation type="unfinished">Pillanatképek</translation>
-    </message>
-    <message>
-        <source>Authentication methods</source>
-        <translation type="unfinished">Hitelesítési eljárás</translation>
-    </message>
-    <message>
-        <source>Access key management</source>
-        <translation type="unfinished">Hozzáférési kulcs kezelő</translation>
-    </message>
-    <message>
-        <source>Logon settings</source>
-        <translation type="unfinished">Bejelentkezési beállítások</translation>
-    </message>
-    <message>
-        <source>&amp;File</source>
-        <translation type="unfinished">&amp;Fájl</translation>
-    </message>
-    <message>
-        <source>&amp;Help</source>
-        <translation type="unfinished">&amp;Segítség</translation>
-    </message>
-    <message>
-        <source>&amp;Quit</source>
-        <translation type="unfinished">&amp;Kilépés</translation>
-    </message>
-    <message>
-        <source>Ctrl+Q</source>
-        <translation type="unfinished">Ctrl+Q</translation>
-    </message>
-    <message>
-        <source>&amp;Save settings into file</source>
-        <translation type="unfinished">Beállítások &amp;mentése fájlba</translation>
-    </message>
-    <message>
-        <source>Save settings into file</source>
-        <translation type="unfinished">Beállítások mentése fájlba</translation>
-    </message>
-    <message>
-        <source>Ctrl+S</source>
-        <translation type="unfinished">Ctrl+S</translation>
-    </message>
-    <message>
-        <source>L&amp;oad settings from file</source>
-        <translatorcomment>Beállítások be&amp;töltése fájlból</translatorcomment>
-        <translation type="unfinished">Beállítások be&amp;töltése fájlból</translation>
-    </message>
-    <message>
-        <source>Ctrl+O</source>
-        <translation type="unfinished">Ctrl+O</translation>
-    </message>
-    <message>
-        <source>About iTALC</source>
-        <translation type="unfinished">iTALC-ról</translation>
-    </message>
-    <message>
-        <source>About Qt</source>
-        <translation type="unfinished">Qt-ról</translation>
-    </message>
-    <message>
-        <source>MainWindow</source>
-        <translation type="unfinished">Főablak</translation>
-    </message>
-    <message>
-        <source>toolBar</source>
-        <translation type="unfinished">toolBar</translation>
-    </message>
-    <message>
-        <source>iTALC Management Console %1</source>
-        <translation type="unfinished">iTALC Management Konzol %1</translation>
-    </message>
-    <message>
-        <source>Running</source>
-        <translation type="unfinished">Futtatás</translation>
-    </message>
-    <message>
-        <source>Load settings from file</source>
-        <translation type="unfinished">Beállítások betöltése fájlból</translation>
-    </message>
-    <message>
-        <source>XML files (*.xml)</source>
-        <translation type="unfinished">XML-fájlok (*.xml)</translation>
-    </message>
-    <message>
-        <source>Save settings to file</source>
-        <translation type="unfinished">Beállítások mentése fájlba</translation>
-    </message>
-    <message>
-        <source>Unsaved settings</source>
-        <translation type="unfinished">Nem mentett beállítások</translation>
-    </message>
-    <message>
-        <source>There are unsaved settings. Quit anyway?</source>
-        <translation type="unfinished">A beállítások még nincsenek mentve. Biztosan kilép?</translation>
-    </message>
-    <message>
-        <source>Configuration not writable</source>
-        <translation type="unfinished">Nem írhatóak ki a beállítások</translation>
-    </message>
-    <message>
-        <source>The local configuration backend reported that the configuration is not writable! Please run the iTALC Management Console with higher privileges.</source>
-        <translation type="unfinished">A konfigurációs kezelő visszajelzése alapján nem írható a konfiguráció. Kérlek indítsd el adminisztrátorként az iTALC Management Konzolt.</translation>
-    </message>
-    <message>
-        <source>All settings were applied successfully.</source>
-        <translation type="unfinished">Az összes beállítást sikeresen végrehajtottuk.</translation>
-    </message>
-    <message>
-        <source>An error occured while applying settings!</source>
-        <translation type="unfinished">Hiba lépett fel a beállítások érvényre juttatása közben!</translation>
-    </message>
-    <message>
-        <source>iTALC</source>
-        <translation>iTALC</translation>
-    </message>
-    <message>
-        <source>No write access</source>
-        <translation type="unfinished">Nincsen írási engedélye</translation>
-    </message>
-    <message>
-        <source>Could not read/write or create directory %1! For running iTALC, make sure you&apos;re permitted to create or write this directory.</source>
-        <translation type="unfinished">Nem olvasható/írható vagy hozható létre a %1 könyvtár! Győződjön meg róla, hogy engedélyezett-e az iTALC számára létrehozni vagy írni ebben a  könyvtárba.</translation>
-    </message>
-    <message>
-        <source>Classroom</source>
-        <translation type="unfinished">Osztályterem</translation>
-    </message>
-    <message>
-        <source>Switch classroom</source>
-        <translation type="unfinished">Osztályterem választás</translation>
-    </message>
-    <message>
-        <source>Click this button to open a menu where you can choose the active classroom.</source>
-        <translation type="unfinished">A gombra kattintva kiválasztható, hogy melyik legyen az aktív osztályterem.</translation>
-    </message>
-    <message>
-        <source>Click on this button, to switch between classrooms.</source>
-        <translation type="unfinished">Az osztálytermek között váltáshoz kattintson a gombra.</translation>
-    </message>
-    <message>
-        <source>Overview mode</source>
-        <translation type="unfinished">Áttekintési mód</translation>
-    </message>
-    <message>
-        <source>Overview</source>
-        <translation type="unfinished">Áttekintés</translation>
-    </message>
-    <message>
-        <source>This is the default mode in iTALC and allows you to have an overview over all visible computers. Also click on this button for unlocking locked workstations or for leaving demo-mode.</source>
-        <translation type="unfinished">Ezzel az alapbeállítással megtekintheti az elérhető gépek listáját az iTALC-ban. A gombra kattintva feloldhatja a munkaállomások blokkolását vagy kiléphet a demó üzemmódból.</translation>
-    </message>
-    <message>
-        <source>Fullscreen demo</source>
-        <translation type="unfinished">Demó teljes képernyőn</translation>
-    </message>
-    <message>
-        <source>Fullscreen Demo</source>
-        <translation type="unfinished">Demó</translation>
-    </message>
-    <message>
-        <source>Stop Demo</source>
-        <translation type="unfinished">Demó vége</translation>
-    </message>
-    <message>
-        <source>In this mode your screen is being displayed on all shown computers. Furthermore the users aren&apos;t able to do something else as all input devices are locked in this mode.</source>
-        <translation type="unfinished">Ebben az üzemmódban a képernyőjének a teljes tartalma látszódni fog az összes számítógép képernyőjén. Demó közben a felhasználók nem foglalkozhatnak mással, mert a beviteli eszközök (egér, billentyűzet) blokkolásra kerülnek.</translation>
-    </message>
-    <message>
-        <source>Window demo</source>
-        <translation type="unfinished">Demó ablak méretben</translation>
-    </message>
-    <message>
-        <source>Window Demo</source>
-        <translation type="unfinished">Demó ablakban</translation>
-    </message>
-    <message>
-        <source>In this mode your screen being displayed in a window on all shown computers. The users are able to switch to other windows and thus can continue to work.</source>
-        <translation type="unfinished">Ebben az üzemmódban a tanári gép képernyőjének a teljes tartalma látszódni fog az összes számítógép képernyőjén. Demó közben a felhasználók mással is foglalkozhatnak.</translation>
-    </message>
-    <message>
-        <source>Lock/unlock desktops</source>
-        <translation type="unfinished">Képernyő Blokkolása/feloldása</translation>
-    </message>
-    <message>
-        <source>Lock all</source>
-        <translation type="unfinished">Blokkolás</translation>
-    </message>
-    <message>
-        <source>Unlock all</source>
-        <translation type="unfinished">Minden blokkolás feloldása</translation>
-    </message>
-    <message>
-        <source>To have all user&apos;s full attention you can lock their desktops using this button. In this mode all input devices are locked and the screen is black.</source>
-        <translation type="unfinished">Ezzel a gombbal az összes diák gépét blokkolhatja. Ezzel az üzemmóddal az összes bemeneti eszközt blokkolja és a képernyők elsötétülnek.</translation>
-    </message>
-    <message>
-        <source>Send text message</source>
-        <translation type="unfinished">Üzenet küldése</translation>
-    </message>
-    <message>
-        <source>Text message</source>
-        <translation type="unfinished">Szöveges üzenet</translation>
-    </message>
-    <message>
-        <source>Use this button to send a text message to all users e.g. to tell them new tasks etc.</source>
-        <translation type="unfinished">A gomb segítségével üzenet küldhet minden felhasználónak. (például: &quot;Kezdhetitek az új feladatot megoldani&quot;, stb..).</translation>
-    </message>
-    <message>
-        <source>Power on computers</source>
-        <translation type="unfinished">Számítógépek bekapcsolása</translation>
-    </message>
-    <message>
-        <source>Power on</source>
-        <translation type="unfinished">Bekapcsolás</translation>
-    </message>
-    <message>
-        <source>Click this button to power on all visible computers. This way you do not have to turn on each computer by hand.</source>
-        <translation type="unfinished">A számítógépek bekapcsolásához kattintsunk a gombra. Ezzel a lehetőséggel nem kell minden gépet egyesével bekapcsolnunk.</translation>
-    </message>
-    <message>
-        <source>Power down computers</source>
-        <translation type="unfinished">Számítógépek kikapcsolása</translation>
-    </message>
-    <message>
-        <source>Power down</source>
-        <translation type="unfinished">Kikapcsolás</translation>
-    </message>
-    <message>
-        <source>To power down all shown computers (e.g. after the lesson has finished) you can click this button.</source>
-        <translation type="unfinished">Az összes elérhető számítógép kikapcsolásához kattintson a gombra. (az óra végeztével kikapcsolhatja az összes számítógépet).</translation>
-    </message>
-    <message>
-        <source>Support</source>
-        <translation type="unfinished">Támogatás</translation>
-    </message>
-    <message>
-        <source>Direct support</source>
-        <translation type="unfinished">Közvetlen támogatás</translation>
-    </message>
-    <message>
-        <source>If you need to support someone at a certain computer you can click this button and enter the according hostname or IP afterwards.</source>
-        <translation type="unfinished">Ha egy diáknak szüksége van támogatásra, a gombra kattintva a gép nevét vagy az IP címét beírva csatlakozhat és segítséget nyújthat.</translation>
-    </message>
-    <message>
-        <source>Adjust/align</source>
-        <translation type="unfinished">Elrendezés</translation>
-    </message>
-    <message>
-        <source>Adjust windows and their size</source>
-        <translation type="unfinished">Ablak méretének beállítása</translation>
-    </message>
-    <message>
-        <source>When clicking this button the biggest possible size for the client-windows is adjusted. Furthermore all windows are aligned.</source>
-        <translation type="unfinished">A gombra kattintva a lehető legnagyobb méretben tekinthetjük meg a felhasználók asztalát. Továbbá az összes ablakot ehhez igazíthatjuk.</translation>
-    </message>
-    <message>
-        <source>Auto view</source>
-        <translation type="unfinished">Automatikus nézet</translation>
-    </message>
-    <message>
-        <source>Auto re-arrange windows and their size</source>
-        <translation type="unfinished">Az ablakok automatikus újrarendezése és átméretezése</translation>
-    </message>
-    <message>
-        <source>When clicking this button all visible windows are re-arranged and adjusted.</source>
-        <translation type="unfinished">Ide kattintva az elérhető ablakok sorrendét módosíthatjuk vagy rendezhetjük át.</translation>
-    </message>
-    <message>
-        <source>iTALC Master Control</source>
-        <translation type="unfinished">iTALC Tanár kontroll</translation>
-    </message>
-    <message>
-        <source>Remote control</source>
-        <translation type="unfinished">Távoligép kezelés</translation>
-    </message>
-    <message>
-        <source>Could not modify the autostart property for the iTALC Service.</source>
-        <translation type="unfinished">Az iTALC szolgáltatás nem tudta modosítani az &quot;autostart&quot; beállításait.</translation>
-    </message>
-    <message>
-        <source>Could not modify the service arguments for the iTALC Service.</source>
-        <translation type="unfinished">Az iTALC szolgáltatás nem tudta modosítani a szolgáltatás argumentumait.</translation>
-    </message>
-    <message>
-        <source>Could not change the firewall configuration for the iTALC Service.</source>
-        <translation type="unfinished">Az iTALC szolgáltatás nem tudta megváltoztatni a tűzfal konfigurációját.</translation>
-    </message>
-    <message>
-        <source>Debugging</source>
-        <translation type="unfinished">Hibakeresés</translation>
-    </message>
-    <message>
-        <source>Enable desktop switching for screen lock (experimental)</source>
-        <translation type="unfinished">Képernyő blokkolása asztalváltáskor (kísérleti)</translation>
-    </message>
-    <message>
         <source>Log to standard error output</source>
-        <translatorcomment>Hibanapló készítése az elsődleges kimenetre</translatorcomment>
-        <translation type="unfinished">Standard error output-ra történő naplózás</translation>
+        <translation>Naplózás a standard hiba kimenetre</translation>
     </message>
     <message>
         <source>Log to Windows event log</source>
-        <translation type="unfinished">A napló hozzáfűzése a rendszer eseményekbe</translation>
+        <translation>Naplózás a Windows eseménynaplóba</translation>
+    </message>
+    <message>
+        <source>Clear all log files</source>
+        <translation>Minden naplófájl törlése</translation>
+    </message>
+    <message>
+        <source>Desktop capturing</source>
+        <translation>Képernyőmentés</translation>
+    </message>
+    <message>
+        <source>Enable capturing of layered (semi-transparent) windows</source>
+        <translation>Réteges (áttetsző) ablakok mentésének engedélyezése</translation>
+    </message>
+    <message>
+        <source>Poll full screen</source>
+        <translation>Teljes képernyős frissítés</translation>
+    </message>
+    <message>
+        <source>Low accuracy (turbo mode)</source>
+        <translation>Alacsony pontosság (gyors mód)</translation>
+    </message>
+    <message>
+        <source>Demo server</source>
+        <translation>Bemutató kiszolgáló</translation>
     </message>
     <message>
         <source>Backend</source>
-        <translation type="unfinished">Backend</translation>
+        <translation>Backend</translation>
     </message>
     <message>
         <source>VNC reflector</source>
-        <translation type="unfinished">VNC reflektor</translation>
+        <translation>VNC reflector</translation>
     </message>
     <message>
         <source>iTALC 1 demo server</source>
-        <translation type="unfinished">iTALC 1 Demó szerver</translation>
+        <translation>iTALC 1 bemutató kiszolgáló</translation>
     </message>
     <message>
         <source>Multithreading (can be enabled when using the VNC reflector backend)</source>
-        <translation type="unfinished">Többszálú futtatás (ajánlott a VNC reflektor használatánál)</translation>
+        <translation>Többszálúság (VNC reflector backend használata esetén engedélyezhető)</translation>
+    </message>
+    <message>
+        <source>Network</source>
+        <translation>Hálózat</translation>
+    </message>
+    <message>
+        <source>Core server port</source>
+        <translation>Fő kiszolgáló port</translation>
+    </message>
+    <message>
+        <source>Demo server port</source>
+        <translation>Bemutató kiszolgáló port</translation>
+    </message>
+    <message>
+        <source>Enable firewall exception</source>
+        <translation>Tűzfalkivétel engedélyezése</translation>
     </message>
     <message>
         <source>Enable HTTP server which provides a JavaViewer applet</source>
-        <translation type="unfinished">A HTTP szerver futásának engedélyezése a JavaViewer alkalmazáshoz</translation>
+        <translation>JavaViewer appletet biztosító HTTP kiszolgáló engedélyezése</translation>
     </message>
     <message>
         <source>HTTP server port</source>
-        <translation type="unfinished">HTTP-Szerver port</translation>
+        <translation>HTTP kiszolgáló port</translation>
     </message>
     <message>
         <source>Allow connections from localhost only</source>
-        <translation type="unfinished">Kapcsolatok engedélyezése kizárólag a helyi gépről</translation>
+        <translation>Csak a helyi gépről érkező kapcsolatok engedélyezése</translation>
+    </message>
+    <message>
+        <source>Configuration files</source>
+        <translation>Konfigurációs fájlok</translation>
+    </message>
+    <message>
+        <source>Global configuration</source>
+        <translation>Általános beállítások</translation>
+    </message>
+    <message>
+        <source>Personal configuration</source>
+        <translation>Személyes beállítások</translation>
+    </message>
+    <message>
+        <source>Data directories</source>
+        <translation>Adatkönyvtárak</translation>
+    </message>
+    <message>
+        <source>Snapshots</source>
+        <translation>Képernyőképek</translation>
+    </message>
+    <message>
+        <source>Authentication methods</source>
+        <translation>Bejelentkezési módok</translation>
     </message>
     <message>
         <source>Key file authentication</source>
-        <translation type="unfinished">Kulcsos azonosítás</translation>
+        <translation>Kulcsfájlos azonosítás</translation>
     </message>
     <message>
         <source>ACL-based logon authentication</source>
-        <translation type="unfinished">ACL-alapú bejelentkezés</translation>
+        <translation>ACL alapú azonosítás</translation>
+    </message>
+    <message>
+        <source>Access key management</source>
+        <translation>Hozzáférési kulcs kezelés</translation>
     </message>
     <message>
         <source>Public key file base directory</source>
-        <translation type="unfinished">Publikus kulcs könyvtára</translation>
+        <translation>Nyilvános kulcsfájl alapkönyvtára</translation>
     </message>
     <message>
         <source>Private key file base directory</source>
-        <translation type="unfinished">Privát kulcs könyvtára</translation>
+        <translation>Személyes kulcsfájl alapkönyvtára</translation>
     </message>
     <message>
         <source>Launch key file assistant</source>
-        <translation type="unfinished">Hozzáférési kulcs Varázsló</translation>
+        <translation>Kulcsfájl segéd indítása</translation>
+    </message>
+    <message>
+        <source>Logon settings</source>
+        <translation>Bejelentkezési beállítások</translation>
     </message>
     <message>
         <source>Manage permissions</source>
-        <translation type="unfinished">Engedélyek kezelése</translation>
+        <translation>Jogosultságok kezelése</translation>
     </message>
     <message>
         <source>Test</source>
-        <translation type="unfinished">Teszt</translation>
+        <translation>Próba</translation>
     </message>
     <message>
         <source>Access confirmation</source>
-        <translation type="unfinished">Hozzáférés megerősítése</translation>
+        <translation>Hozzáférési jóváhagyás</translation>
     </message>
     <message>
         <source>You can configure iTALC to ask the user for permission to access the desktop when using certain authentication methods.</source>
-        <translatorcomment>Beállíthatja az iTalcot, hogy felhasználói engedélyt kérjen a számítógéphez való hozzáféréshez, amikor bizonyos hitelesítési módszereket alkalmaz.</translatorcomment>
-        <translation type="unfinished">A számítógépek hozzáférésének hitelesítés-módszereinek beállításai.</translation>
+        <translation>Beállíthatja az iTALC-ot, hogy engedélyt kérjen a felhasználóktól, mikor bizonyos azonosítási módokkal hozzá akar férni asztalukhoz.</translation>
     </message>
     <message>
         <source>Logon authentication</source>
-        <translation type="unfinished">Bejelentkezés hitelesítéssel</translation>
+        <translation>Jelszavas (ACL) azonosítás</translation>
     </message>
     <message>
         <source>Allow same user to access desktop without confirmation</source>
-        <translation type="unfinished">Megerősítés nélkül engedélyezzük a hozzáférést ugyan annak a felhasználónak</translation>
+        <translation>Azonos felhasználónál ne kérjen megerősítést</translation>
     </message>
     <message>
         <source>Debugging iTALC</source>
-        <translation type="unfinished">Hibakeresés az iTALC-ban</translation>
+        <translation>iTALC hibakeresés</translation>
     </message>
     <message>
         <source>When encountering bugs or other misbehaviour in iTALC it is important to inform the developers about them, so that the bugs can be fixed in future releases. This page allows you to submit a helpful bug report easily.
 
 If the bug is not reproducible, skip step 1) - 3).</source>
-        <translation type="unfinished">Amennyiben rendellenes működést tapasztal az iTALC használata közben, kérem hogy mielőbb tájékoztassa a fejlesztőket a problémáról. Az útmutató segítségével könnyedén elkészítheti a hibajelentést. A jelentések segítséget nyújtanak a jövőbeni hibák elkerülésében.
+        <translation>Ha hibákba vagy helytelen működésbe ütközik az iTALC használata során, fontos hogy tájékoztassa róla a fejlesztőket, így a következő kiadásokban javítani tudják. Ez az oldal segít a hibajelentés beküldésében.
 
-Ha a hiba nem reprodukálható, akkor hagyja ki a 1) -3) lépéseket.</translation>
+Ha a hiba nem reprodukálható, hagyja ki az 1) - 3) lépéseket.</translation>
     </message>
     <message>
         <source>1)</source>
@@ -1296,7 +1009,7 @@ Ha a hiba nem reprodukálható, akkor hagyja ki a 1) -3) lépéseket.</translati
     </message>
     <message>
         <source>Clear the logfiles in the &quot;General&quot; section.</source>
-        <translation type="unfinished">Törölje a napló fájlokat az &quot;Általános&quot; menüpont alatt.</translation>
+        <translation>Törölje a naplófájlokat az &quot;Általános&quot; résznél.</translation>
     </message>
     <message>
         <source>2)</source>
@@ -1304,7 +1017,7 @@ Ha a hiba nem reprodukálható, akkor hagyja ki a 1) -3) lépéseket.</translati
     </message>
     <message>
         <source>In the &quot;General&quot; section set the log level to &quot;Debug messages and everything else&quot;.</source>
-        <translation type="unfinished">Az &quot;Általános&quot; menüpontban válassza ki a naplózási szintnek: &quot;Az összes hiba üzenet&quot;.</translation>
+        <translation>Az &quot;Általános&quot; résznél állítsa a naplózási szintet a &quot;Hibakeresési üzenetek és minden más&quot; lehetőségre.</translation>
     </message>
     <message>
         <source>3)</source>
@@ -1312,7 +1025,7 @@ Ha a hiba nem reprodukálható, akkor hagyja ki a 1) -3) lépéseket.</translati
     </message>
     <message>
         <source>Repeat the actions leading to the bug or misbehaviour.</source>
-        <translation type="unfinished">Ismételje meg azokat a lépéseket, amik a hibához vagy a rendellenes működséhez vezettek.</translation>
+        <translation>Ismételje meg a hibát vagy helytelen működést okozó tevékenységet.</translation>
     </message>
     <message>
         <source>4)</source>
@@ -1320,11 +1033,11 @@ Ha a hiba nem reprodukálható, akkor hagyja ki a 1) -3) lépéseket.</translati
     </message>
     <message>
         <source>Click the following button and save the file to a known location.</source>
-        <translation type="unfinished">Az alábbi gombra kattintva mentheti el a fájlt.</translation>
+        <translation>Kattintson az alábbi gombra és mentse el a fájlt egy ön által választott helyre.</translation>
     </message>
     <message>
         <source>Generate bug report archive</source>
-        <translation type="unfinished">Hiba jelentés generálása</translation>
+        <translation>Hibajelentés-fájl készítése</translation>
     </message>
     <message>
         <source>5)</source>
@@ -1335,97 +1048,365 @@ Ha a hiba nem reprodukálható, akkor hagyja ki a 1) -3) lépéseket.</translati
 &lt;br/&gt;
 &lt;br/&gt;
 Note: if the bug involves both a master and client computer, attach bug report archives for both computers.</source>
-        <translation type="unfinished">Kérem látogasson el &lt;a href=&quot;http://sourceforge.net/tracker/?group_id=132465&amp;amp;atid=724375&quot;&gt;az iTALC hibajelentő weboldalára&lt;/a&gt;, majd nyisson egy hibajegyet. A 3) lépésben leírtakat hajtsa végre, és a 4) lépésnek megfelelően mentse el az elkészült hibajelentést.&lt;/p&gt;
+        <translation>Látogassa meg az &lt;a href=&quot;http://sourceforge.net/tracker/?group_id=132465&amp;amp;atid=724375&quot;&gt;iTALC hibakövető&lt;/a&gt; oldalát, nyisson új hibajegyet, majd írja le, mit tett a 3-as lépésben és csatolja hozzá a 4-es lépésben elmentett fájlt.&lt;/p&gt;
 &lt;br/&gt;
 &lt;br/&gt;
-Megjegyzés: amennyiben a hiba mind  a master (tanári) és a kliens (diák) számítógépeken is előfordult, akkor csattolja mind a két számítógéphez tartoró hibajelentését.</translation>
+Megjegyzés: ha a hiba a tanári és kliens gépeket is érinti, mindkét számítógépről készítsen és csatoljon hibajelentés-fájlt.</translation>
     </message>
     <message>
-        <source>Restart iTALC Service</source>
-        <translation type="unfinished">iTALC szolgáltatás újraindítása</translation>
+        <source>&amp;File</source>
+        <translation>&amp;Fájl</translation>
     </message>
     <message>
-        <source>All settings were saved successfully. In order to take effect the iTALC service needs to be restarted. Restart it now?</source>
-        <translation type="unfinished">Az összes beállítást sikeren elmentettük. Annak érdekében, hogy a beállítások érvényre jussanak, újra kell indítani az iTALC szolgáltatást. Újraindítja ?</translation>
+        <source>&amp;Help</source>
+        <translation>&amp;Súgó</translation>
     </message>
     <message>
-        <source>Starting iTALC service</source>
-        <translation type="unfinished">iTALC szolgáltatás indítása</translation>
+        <source>&amp;Quit</source>
+        <translation>&amp;Kilépés</translation>
     </message>
     <message>
-        <source>Stopping iTALC service</source>
-        <translation type="unfinished">iTALC szolgáltatás leállítása</translation>
+        <source>Ctrl+Q</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>The iTALC service needs to be stopped temporarily in order to remove the log files. Continue?</source>
-        <translation type="unfinished">Az iTALC szolgáltatást arra az átmeneti időre le kell állítani, amíg a napló fájlt eltávolítjuk. Folytassuk?</translation>
+        <source>&amp;Save settings into file</source>
+        <translation>Beállítások fájlba &amp;mentése</translation>
     </message>
     <message>
-        <source>Log files cleared</source>
-        <translation type="unfinished">A napló fájl törölve</translation>
+        <source>Save settings into file</source>
+        <translation>Beállítások fájlba mentése</translation>
     </message>
     <message>
-        <source>All log files were cleared successfully.</source>
-        <translation type="unfinished">Az napló fájlok ürítése sikeresen megtörtént.</translation>
+        <source>Ctrl+S</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Error</source>
-        <translation type="unfinished">Hiba</translation>
+        <source>L&amp;oad settings from file</source>
+        <translation>Beállítások &amp;betöltése fájlból</translation>
     </message>
     <message>
-        <source>Could not remove all log files.</source>
-        <translation type="unfinished">Nem törölhető az összes napló fájl.</translation>
+        <source>Ctrl+O</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Logon authentication test</source>
-        <translation type="unfinished">Bejelentkezési hitelesítés vizsgálata</translation>
+        <source>About iTALC</source>
+        <translation>iTALC névjegye</translation>
     </message>
     <message>
-        <source>Authentication with provided credentials was successful.</source>
-        <translation type="unfinished">A hozzáférési hitelesítés sikeresen megtörtént.</translation>
+        <source>About Qt</source>
+        <translation>Qt névjegye</translation>
     </message>
     <message>
-        <source>Authentication with provided credentials failed!</source>
-        <translation type="unfinished">A hozzáférési hitelesítés sikertelenül fejeződött be!</translation>
+        <source>iTALC</source>
+        <translation>iTALC</translation>
     </message>
     <message>
-        <source>Save bug report archive</source>
-        <translation type="unfinished">Bug jelentés elmentése</translation>
+        <source>No write access</source>
+        <translation>Nincs írási jog</translation>
     </message>
     <message>
-        <source>iTALC bug report archive (*.ibra.xml)</source>
-        <translation type="unfinished">iTALC bug report archiválás (*.ibra.xml)</translation>
+        <source>Could not read/write or create directory %1! For running iTALC, make sure you&apos;re permitted to create or write this directory.</source>
+        <translation>Nem olvasható/írható/hozható létre a %1 könyvtár! Az iTALC futtatásához ellenőrizze, hogy létrehozhatja, illetve módosíthatja-e ezt a könyvtárat.</translation>
     </message>
     <message>
-        <source>iTALC bug report archive saved</source>
-        <translation type="unfinished">Az iTALC bug jelentések mentése megtörtént</translation>
+        <source>Classroom</source>
+        <translation>Terem</translation>
     </message>
     <message>
-        <source>An iTALC bug report archive has been saved to %1. It includes iTALC log files and information about your operating system. You can attach it to a bug report.</source>
-        <translation type="unfinished">Az iTALC hiba jelentése mentésre került a %1 -ba. A jelentés tartalmazza az iTALC napló fájlt és egyéb információkat az operációs rendszerről. Ezt csatolhatja a hibajelentéshez.</translation>
+        <source>Switch classroom</source>
+        <translation>Terem váltása</translation>
+    </message>
+    <message>
+        <source>Click this button to open a menu where you can choose the active classroom.</source>
+        <translation>Erre a gombra kattintva megnyithatja a terem-választó menüt.</translation>
+    </message>
+    <message>
+        <source>Click on this button, to switch between classrooms.</source>
+        <translation>Kattintson erre a gombra a termek közti váltáshoz.</translation>
+    </message>
+    <message>
+        <source>Overview mode</source>
+        <translation>Áttekintő mód</translation>
+    </message>
+    <message>
+        <source>Overview</source>
+        <translation>Áttekintés</translation>
+    </message>
+    <message>
+        <source>This is the default mode in iTALC and allows you to have an overview over all visible computers. Also click on this button for unlocking locked workstations or for leaving demo-mode.</source>
+        <translation>Ez az iTALC alapértelmezett üzemmódja, segítségével áttekintheti az összes számítógépet. Továbbá ezzel a gombbal feloldhatja a számítógépek zárolását, illetve befejezheti a bemutatót.</translation>
+    </message>
+    <message>
+        <source>Fullscreen demo</source>
+        <translation>Teljesképernyős bemutató</translation>
+    </message>
+    <message>
+        <source>Fullscreen Demo</source>
+        <translation>Bemutató</translation>
+    </message>
+    <message>
+        <source>Stop Demo</source>
+        <translation>Bemutató vége</translation>
+    </message>
+    <message>
+        <source>In this mode your screen is being displayed on all shown computers. Furthermore the users aren&apos;t able to do something else as all input devices are locked in this mode.</source>
+        <translation>Ebben az üzemmódban számítógépének képe megjelenik az összes látható kliensgépen. Eközben a felhasználók nem csinálhatnak mást, billentyűzetük és egerük zárolásra kerül.</translation>
+    </message>
+    <message>
+        <source>Window demo</source>
+        <translation>Ablakos bemutató</translation>
+    </message>
+    <message>
+        <source>Window Demo</source>
+        <translation>Ablakos bemutató</translation>
+    </message>
+    <message>
+        <source>In this mode your screen being displayed in a window on all shown computers. The users are able to switch to other windows and thus can continue to work.</source>
+        <translation>Ebben az üzemmódban számítógépének képe ablakban jelenik meg az összes látható kliensgépen. A felhasználók közben átválthatnak más ablakokra és folytathatják munkájukat.</translation>
+    </message>
+    <message>
+        <source>Lock/unlock desktops</source>
+        <translation>Képernyők zárolása/feloldása</translation>
+    </message>
+    <message>
+        <source>Lock all</source>
+        <translation>Összes lezárása</translation>
+    </message>
+    <message>
+        <source>Unlock all</source>
+        <translation>Összes feloldása</translation>
+    </message>
+    <message>
+        <source>To have all user&apos;s full attention you can lock their desktops using this button. In this mode all input devices are locked and the screen is black.</source>
+        <translation>Hogy minden felhasználó teljes figyelmét élvezhesse, lezárhatja számítógépüket ezzel a gombbal. Így minden beviteli eszközük zárolásra kerül és a képernyő elsötétedik.</translation>
+    </message>
+    <message>
+        <source>Send text message</source>
+        <translation>Üzenet küldése</translation>
+    </message>
+    <message>
+        <source>Text message</source>
+        <translation>Üzenet</translation>
+    </message>
+    <message>
+        <source>Use this button to send a text message to all users e.g. to tell them new tasks etc.</source>
+        <translation>Használja ezt a gombot a felhasználóknak szóló üzenetek küldésére, például új feladatok kiosztására.</translation>
+    </message>
+    <message>
+        <source>Power on computers</source>
+        <translation>Számítógépek bekapcsolása</translation>
+    </message>
+    <message>
+        <source>Power on</source>
+        <translation>Bekapcsolás</translation>
+    </message>
+    <message>
+        <source>Click this button to power on all visible computers. This way you do not have to turn on each computer by hand.</source>
+        <translation>Kattintson erre a gombra az összes látható számítógép bekapcsolásához. Így nem kell minden egyes gépet kézzel bekapcsolnia.</translation>
+    </message>
+    <message>
+        <source>Power down computers</source>
+        <translation>Számítógépek kikapcsolása</translation>
+    </message>
+    <message>
+        <source>Power down</source>
+        <translation>Kikapcsolás</translation>
+    </message>
+    <message>
+        <source>To power down all shown computers (e.g. after the lesson has finished) you can click this button.</source>
+        <translation>Az összes látható számítógép kikapcsolásához (például a tanóra végén) kattintson erre a gombra.</translation>
+    </message>
+    <message>
+        <source>Support</source>
+        <translation>Támogatás</translation>
+    </message>
+    <message>
+        <source>Direct support</source>
+        <translation>Közvetlen támogatás</translation>
+    </message>
+    <message>
+        <source>If you need to support someone at a certain computer you can click this button and enter the according hostname or IP afterwards.</source>
+        <translation>Ha segítséget kell nyújtania valakinek egy számítógépnél, kattintson erre a gomba és írja be az IP címét vagy számítógépnevét.</translation>
+    </message>
+    <message>
+        <source>Adjust/align</source>
+        <translation>Módosít/igazít</translation>
+    </message>
+    <message>
+        <source>Adjust windows and their size</source>
+        <translation>Ablakok és méretük igazítása</translation>
+    </message>
+    <message>
+        <source>When clicking this button the biggest possible size for the client-windows is adjusted. Furthermore all windows are aligned.</source>
+        <translation>Erre a gombra kattintva az összes kliens ablaka a lehető legnagyobb méretre igazítódik. A továbbiakban megnyitott ablakok is elrendezésre kerülnek.</translation>
+    </message>
+    <message>
+        <source>Auto view</source>
+        <translation>Automatikus nézet</translation>
+    </message>
+    <message>
+        <source>Auto re-arrange windows and their size</source>
+        <translation>Ablakok és méretük automatikus igazítása</translation>
+    </message>
+    <message>
+        <source>When clicking this button all visible windows are re-arranged and adjusted.</source>
+        <translation>Erre a gombra kattintva az összes ablak elrendezésre kerül.</translation>
     </message>
     <message>
         <source>Could not contact iTALC service</source>
-        <translation type="unfinished">Az iTALC szolgáltatás kapcsolata megszakadt</translation>
+        <translation>Nem sikerült kapcsolódni az iTALC szolgáltatáshoz</translation>
     </message>
     <message>
         <source>Could not contact the local iTALC service. It is likely that you entered wrong credentials or key files are not set up properly. Try again or contact your administrator for solving this problem using the iTALC Management Console.</source>
-        <translation type="unfinished">Nem létesíthető kapcsolat a helyi iTALC szolgáltatással. Feltehetően rossz hitelesítési adatokkal vagy kulcs azonosítással próbálkozik. Próbálja meg ismét vagy lépjen kapcsolatba a rendszer adminisztrátorral a probléma megoldása érdekében, ehhez használja az iTALC Management Konzolt.</translation>
+        <translation>Nem sikerült kapcsolódni a helyi iTALC szolgáltatáshoz. Valószínűleg helytelen bejelentkezési adatokat adott meg vagy a kulcsfájlok beállítása nem megfelelő. Próbálja újra vagy vegye fel a kapcsolatot rendszergazdájával a probléma iTALC beállítóközpont segítségével történő megoldásához.</translation>
+    </message>
+    <message>
+        <source>iTALC Master Control</source>
+        <translation>iTALC vezérlő</translation>
     </message>
     <message>
         <source>Authentication impossible</source>
-        <translation type="unfinished">Lehetetlen a hitelesítés</translation>
+        <translation>A bejelentkezés nem lehetséges</translation>
     </message>
     <message>
         <source>No authentication key files were found or your current ones are outdated. Please create new key files using the iTALC Management Console. Alternatively set up logon authentication using the iTALC Management Console. Otherwise you won&apos;t be able to access computers using iTALC.</source>
-        <translation type="unfinished">Nem találhatóak vagy már lejártak a hitelességet érvényesítő kulcsok. Kérem hozzon létre új hitelesítő kulcsokat az iTALC Management Konzol segítségével. Az iTALC Management Konzol segítségével választhat más azonosítási eljárások közül. Nem megfelelő azonosítási eljárási esetében az iTALC nem fog megfelelően működni.</translation>
+        <translation>Nem találhatók azonosítási kulcsok, vagy jelenlegi kulcsai már nem érvényesek. Kérem hozzon létre új kulcsfájlokat vagy állítson be jelszavas azonosítást az iTALC beállítóközpont segítségével. Különben nem fogja elérni számítógépeit iTALC-al.</translation>
+    </message>
+    <message>
+        <source>Remote control</source>
+        <translation>Távvezérlés</translation>
+    </message>
+    <message>
+        <source>Quit</source>
+        <translation>Kilépés</translation>
+    </message>
+    <message>
+        <source>iTALC Management Console %1</source>
+        <translation>iTALC beállítóközpont %1</translation>
+    </message>
+    <message>
+        <source>Restart iTALC Service</source>
+        <translation>iTALC szolgáltatás újraindítása</translation>
+    </message>
+    <message>
+        <source>All settings were saved successfully. In order to take effect the iTALC service needs to be restarted. Restart it now?</source>
+        <translation>Minden beállítás sikeresen elmentve. Érvényre juttatásuk érdekében az iTALC szolgáltatást újra kell indítani. Újraindítja most?</translation>
+    </message>
+    <message>
+        <source>Starting iTALC service</source>
+        <translation>iTALC szolgáltatás indítása</translation>
+    </message>
+    <message>
+        <source>Stopping iTALC service</source>
+        <translation>iTALC szolgáltatás leállítása</translation>
+    </message>
+    <message>
+        <source>Running</source>
+        <translation>Fut</translation>
+    </message>
+    <message>
+        <source>The iTALC service needs to be stopped temporarily in order to remove the log files. Continue?</source>
+        <translation>A naplófájlok törléséhez az iTALC szolgáltatást ideiglenesen le kell állítani. Folytatja?</translation>
+    </message>
+    <message>
+        <source>Log files cleared</source>
+        <translation>Naplófájlok törölve</translation>
+    </message>
+    <message>
+        <source>All log files were cleared successfully.</source>
+        <translation>Minden naplófájl sikeresen törölve lett.</translation>
+    </message>
+    <message>
+        <source>Error</source>
+        <translation>Hiba</translation>
+    </message>
+    <message>
+        <source>Could not remove all log files.</source>
+        <translation>Nem sikerült minden naplófájlt törölni.</translation>
+    </message>
+    <message>
+        <source>Load settings from file</source>
+        <translation>Beállítások betöltése fájlból</translation>
+    </message>
+    <message>
+        <source>XML files (*.xml)</source>
+        <translation>XML fájlok (*.xml)</translation>
+    </message>
+    <message>
+        <source>Save settings to file</source>
+        <translation>Beállítások fájlba mentése</translation>
+    </message>
+    <message>
+        <source>Logon authentication test</source>
+        <translation>Bejelentkezés teszt</translation>
+    </message>
+    <message>
+        <source>Authentication with provided credentials was successful.</source>
+        <translation>Sikeresen bejelentkezett a megadott hitelesítési adatokkal.</translation>
+    </message>
+    <message>
+        <source>Authentication with provided credentials failed!</source>
+        <translation>Nem sikerült bejelentkezni a megadott hitelesítési adatokkal.</translation>
+    </message>
+    <message>
+        <source>Save bug report archive</source>
+        <translation>Hibajelentés-fájl mentése</translation>
+    </message>
+    <message>
+        <source>iTALC bug report archive (*.ibra.xml)</source>
+        <translation>iTALC hibajelentés-fájl (*.ibra.xml)</translation>
+    </message>
+    <message>
+        <source>iTALC bug report archive saved</source>
+        <translation>iTALC hibajelentés-fájl elmentve</translation>
+    </message>
+    <message>
+        <source>An iTALC bug report archive has been saved to %1. It includes iTALC log files and information about your operating system. You can attach it to a bug report.</source>
+        <translation>Az iTALC hibajelentés-fájl el lett mentve %1 néven. Tartalmazza az iTALC naplófájlokat és információkat az ön operációs rendszeréről. Kérem csatolja a fájlt a hibjelentéséhez.</translation>
+    </message>
+    <message>
+        <source>Unsaved settings</source>
+        <translation>Nem mentett beállítások</translation>
+    </message>
+    <message>
+        <source>There are unsaved settings. Quit anyway?</source>
+        <translation>Nem mentett beállításai vannak. Mégis kilép?</translation>
+    </message>
+    <message>
+        <source>Configuration not writable</source>
+        <translation>A beállítások nem módosíthatók</translation>
+    </message>
+    <message>
+        <source>The local configuration backend reported that the configuration is not writable! Please run the iTALC Management Console with higher privileges.</source>
+        <translation>A helyi konfigurációs szolgáltatás nem tudja módosítani a beállításokat! Kérem magasabb jogosultságokkal futtassa az iTALC beállítóközpontot.</translation>
+    </message>
+    <message>
+        <source>All settings were applied successfully.</source>
+        <translation>Minden beállítás sikeresen alkalmazva lett.</translation>
+    </message>
+    <message>
+        <source>An error occured while applying settings!</source>
+        <translation>Hiba történt a beállítások alkalmazása során!</translation>
+    </message>
+    <message>
+        <source>Could not modify the autostart property for the iTALC Service.</source>
+        <translation>Nem sikerült módosítani az iTALC szolgáltatás automatikus indítás tulajdonságát.</translation>
+    </message>
+    <message>
+        <source>Could not modify the service arguments for the iTALC Service.</source>
+        <translation>Nem sikerült módosítani az iTALC szolgáltatás paramétereit.</translation>
+    </message>
+    <message>
+        <source>Could not change the firewall configuration for the iTALC Service.</source>
+        <translation>Nem sikerült módosítani az iTALC szolgáltatás tűzfal beállításait.</translation>
     </message>
 </context>
 <context>
     <name>MessageBoxSlave</name>
     <message>
         <source>Message from teacher</source>
-        <translation type="unfinished">Üzenet a tanártól</translation>
+        <translation>Tanári üzenet</translation>
     </message>
 </context>
 <context>
@@ -1435,236 +1416,233 @@ Megjegyzés: amennyiben a hiba mind  a master (tanári) és a kliens (diák) sz�
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt; font-weight:600; font-style:italic;&quot;&gt;Welcome to iTALC!&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished">&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+        <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt; font-weight:600; font-style:italic;&quot;&gt;Üdvözlöm az iTALC-ban!&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt; font-weight:600; font-style:italic;&quot;&gt;Üdvözli az iTALC!&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Here you see the working-bar which contains several buttons. Each button is connected to a workspace. Just take a look at the available workspaces by clicking on the corresponding button.</source>
-        <translatorcomment>Ezen a munkaterületen található vezérlő gombok segítségével végezhetjük el az alapvető adminisztrációs műveleteket. Segítségével tudunk csatlakozni különböző munkaasztalokhoz. Az elérhető munkaterület(ek) megjelölése a megfelelő gombra kattintva választható ki.
-vagy Az elérhető munkaterület(ek) / munkaasztal(ok) kiválasztásához kattintson a megfelelő gombra.</translatorcomment>
-        <translation type="unfinished">A munkafelületen található vezérlő gombok segítségével végezhetjük el az alapvető adminisztrációs műveleteket. Ennek segítségével tudunk csatlakozni más munkaállomásokhoz. Az elérhető munkaterület(ek)et / munkaasztalok(at) a megfelelő gombra kattintva választhatjuk ki.</translation>
+        <translation>Itt láthatja a munkasávot, mely több gombot tartalmaz. Mindegyik gomb egy munkaterülethez kapcsolódik. Nézze meg az elérhető munkaterületeket a megfelelő gombokra kattintva.</translation>
     </message>
     <message>
         <source>Using the classroom-manager you can manage your classrooms and computers. You can also see which users are logged in.</source>
-        <translation type="unfinished">Csak a felügyelő személy kezelheti az osztálytermeket és a számítógépeket. Ezenkívül a bejelentkezett felhasználókat tudja megtekinteni.</translation>
+        <translation>A terem-kezelővel kezelheti a termeket és a számítógépeket. Azt is megnézheti, mely felhasználók vannak bejelentkezve.</translation>
     </message>
     <message>
         <source>The snapshot-workspace is a very useful tool. It let&apos;s you manage the snapshots you made.</source>
-        <translation type="unfinished">A pillanatkészítő egy nagyon hasznos eszköz. Segítségével könnyedén kezelhetjük a különböző munkaasztalokról elkészült képeket.</translation>
+        <translation>A képernyőkép-munkaterület egy hasznos eszköz. Itt kezelheti az ön által készített képernyőképeket.</translation>
     </message>
     <message>
         <source>Of course you can configure iTALC. This is usually done using the configuration-workspace.</source>
-        <translatorcomment>A testreszabáshoz a konfigurációs használjuk.</translatorcomment>
-        <translation type="unfinished">Természetesen az iTALC is testre szabható. A munkaasztalok beállítását a konfigurációs menüből érhetjük el.</translation>
+        <translation>Természetesen személyre is szabhatja az iTALC-ot. Ezt a beállítási munkaterületen teheti meg.</translation>
     </message>
     <message>
         <source>About iTALC</source>
-        <translation type="unfinished">Az iTALC-ról</translation>
+        <translation>iTALC névjegye</translation>
     </message>
 </context>
 <context>
     <name>OverviewWidget</name>
     <message>
         <source>Overview</source>
-        <translation type="unfinished">Áttekintés</translation>
+        <translation>Áttekintés</translation>
     </message>
     <message>
         <source>Some basic information on iTALC and how to use it.</source>
-        <translation type="unfinished">Néhány alapvető információt megtalál az iTALC-ról és arról, hogy, hogyan használjuk.</translation>
+        <translation>Pár alapvető információ az iTALC-ról és használatáról.</translation>
     </message>
 </context>
 <context>
     <name>PasswordDialog</name>
     <message>
+        <source>iTALC Logon</source>
+        <translation>iTALC bejelentkezés</translation>
+    </message>
+    <message>
         <source>Please enter your username and password in order to access iTALC clients.</source>
-        <translation type="unfinished">Kérem írja be a felhasználó nevét és a jelszavát a iTALC kliens indításához.</translation>
+        <translation>Kérem írja be felhasználónevét és jelszavát az iTALC kliensekhez való csatlakozáshoz.</translation>
     </message>
     <message>
         <source>Username</source>
-        <translation type="unfinished">Felhasználó</translation>
+        <translation>Felhasználónév</translation>
     </message>
     <message>
         <source>Password</source>
-        <translation type="unfinished">Jelszó</translation>
-    </message>
-    <message>
-        <source>iTALC Logon</source>
-        <translation type="unfinished">iTALC bejelentkezés</translation>
+        <translation>Jelszó</translation>
     </message>
 </context>
 <context>
     <name>QApplication</name>
     <message>
         <source>Unable to register service &apos;%1&apos;.</source>
-        <translation type="unfinished">Nem sikerült regisztrálni a %1 szolgáltatást.</translation>
+        <translation>Nem sikerült regisztrálni a(z) &apos;%1&apos; szolgáltatást.</translation>
     </message>
     <message>
         <source>The Service Control Manager could not be contacted (do you have the neccessary rights?!) - the service &apos;%1&apos; was not registered.</source>
-        <translation type="unfinished">A Service Control Manager nem tudott kapcsolódni (rendelkezik Ön a megfelelő jogosultságokkal?!) - a &apos;%1&apos; szolgáltatás nem volt regisztrálva.</translation>
+        <translation>Nem sikerült csatlakozni a szolgáltatáskezelőhöz (rendelkezik a szükséges jogosultságokkal?) - a(z) &apos;%1&apos; szolgáltatás regisztrálása nem sikerült.</translation>
     </message>
     <message>
         <source>The service &apos;%1&apos; is already registered.</source>
-        <translation type="unfinished">A %1 szolgáltatás már regisztrálva van.</translation>
+        <translation>A(z) &apos;%1&apos; szolgáltatás már regisztrálva van.</translation>
     </message>
     <message>
         <source>The service &apos;%1&apos; could not be registered.</source>
-        <translation type="unfinished">Nem regisztrálódott a %1 szolgáltatás.</translation>
+        <translation>Nem sikerült regisztrálni a(z) &apos;%1&apos; szolgáltatást.</translation>
     </message>
     <message>
         <source>The service &apos;%1&apos; was successfully registered.</source>
-        <translation type="unfinished">A %1 szolgáltatás sikeresen regisztrálódott.</translation>
+        <translation>A(z) &apos;%1&apos; szolgáltatás sikeresen regisztrálva lett.</translation>
     </message>
     <message>
         <source>The service &apos;%1&apos; could not be stopped.</source>
-        <translation type="unfinished">Nem sikerült leállítani a %1 szolgáltatást.</translation>
+        <translation>A(z) &apos;%1&apos; szolgáltatást nem sikerült leállítani.</translation>
     </message>
     <message>
         <source>The service &apos;%1&apos; has been unregistered.</source>
-        <translation type="unfinished">A %1 szolgáltatás már nincsen regisztrálva.</translation>
+        <translation>A(z) &apos;%1&apos; szolgáltatás sikeresen el lett távolítva.</translation>
     </message>
     <message>
         <source>The service &apos;%1&apos; isn&apos;t registered and therefore can&apos;t be unregistered.</source>
-        <translation type="unfinished">Ez a %1 szolgáltatás nem regisztrált ezért nem lehet törölni.</translation>
+        <translation>A(z) &apos;%1&apos; szolgáltatás nincs regisztrálva, így el sem távolítható.</translation>
     </message>
     <message>
         <source>The service &apos;%1&apos; could not be unregistered.</source>
-        <translation type="unfinished">A %1 szolgáltatást nem lehetett regisztrálni.</translation>
+        <translation>A(z) &apos;%1&apos; szolgáltatást nem sikerült eltávolítani.</translation>
     </message>
     <message>
         <source>The service &apos;%1&apos; could not be found.</source>
-        <translation type="unfinished">Nem található a &apos;%1&apos; szolgáltatás.</translation>
+        <translation>A(z) &apos;%1&apos; szolgáltatás nem található.</translation>
     </message>
     <message>
         <source>The Service Control Manager could not be contacted (do you have the neccessary rights?!) - the service &apos;%1&apos; was not unregistered.</source>
-        <translation type="unfinished">A Service Control Manager nem tudott kapcsolódni (rendelkezik Ön a megfelelő jogosultságokkal?!) - a &apos;%1&apos; szolgáltatás még nem volt regisztrálva.</translation>
+        <translation>Nem sikerült csatlakozni a szolgáltatáskezelőhöz (rendelkezik a szükséges jogosultságokkal?) - a(z) &apos;%1&apos; szolgáltatás eltávolítása nem sikerült.</translation>
     </message>
     <message>
         <source>The Service Control Manager could not be contacted (do you have the neccessary rights?!) - the service &apos;%1&apos; was not stopped.</source>
-        <translation type="unfinished">A Service Control Manager nem tudott kapcsolódni (rendelkezik Ön a megfelelő jogosultságokkal?!) - a &apos;%1&apos; szolgáltatás nem állt meg.</translation>
+        <translation>Nem sikerült csatlakozni a szolgáltatáskezelőhöz (rendelkezik a szükséges jogosultságokkal?) - a(z) &apos;%1&apos; szolgáltatás leállítása nem sikerült.</translation>
     </message>
     <message>
         <source>iTALC Client %1 on %2:%3</source>
-        <translation type="unfinished">Az iTALC kliens %1 elérhető %2:%3</translation>
+        <translation>iTALC kliens %1 a következőn: %2:%3</translation>
     </message>
 </context>
 <context>
     <name>RemoteControlWidget</name>
     <message>
         <source>View live (%1 @ %2)</source>
-        <translation type="unfinished">Elöl nézet (%1 @ %2)</translation>
+        <translation>Élőkép (%1 @ %2)</translation>
     </message>
     <message>
         <source>Remote control (%1 @ %2)</source>
-        <translation type="unfinished">Távoli hozzáférés (%1 @ %2)</translation>
+        <translation>Távvezérlés (%1 @ %2)</translation>
     </message>
     <message>
         <source>unknown user</source>
-        <translation type="unfinished">ismeretlen felhasználó</translation>
+        <translation>ismeretlen felhasználó</translation>
     </message>
 </context>
 <context>
     <name>RemoteControlWidgetToolBar</name>
     <message>
         <source>View only</source>
-        <translation type="unfinished">Csak nézet</translation>
+        <translation>Megtekintés</translation>
     </message>
     <message>
         <source>Remote control</source>
-        <translation type="unfinished">Távoli hozzáférés</translation>
+        <translation>Távvezérlés</translation>
     </message>
     <message>
         <source>Lock student</source>
-        <translation type="unfinished">Diák gép blokkolása</translation>
+        <translation>Diák zárolása</translation>
     </message>
     <message>
         <source>Unlock student</source>
-        <translation type="unfinished">Diák gép feloldása</translation>
+        <translation>Diák zár feloldása</translation>
     </message>
     <message>
         <source>Snapshot</source>
-        <translation type="unfinished">Pillanatkép</translation>
+        <translation>Képernyőkép</translation>
     </message>
     <message>
         <source>Fullscreen</source>
-        <translation type="unfinished">Teljes képernyő</translation>
+        <translation>Teljes képernyő</translation>
     </message>
     <message>
         <source>Window</source>
-        <translation type="unfinished">Ablak</translation>
+        <translation>Ablak</translation>
     </message>
     <message>
         <source>Quit</source>
-        <translation type="unfinished">Kilépés</translation>
+        <translation>Kilépés</translation>
     </message>
     <message>
         <source>Connecting %1</source>
-        <translation type="unfinished">A kapcsolódás folyamatban %1</translation>
+        <translation>Csatlakozás %1 géphez</translation>
     </message>
     <message>
         <source>Connected.</source>
-        <translation type="unfinished">Kapcsolódva.</translation>
+        <translation>Csatlakozva.</translation>
     </message>
 </context>
 <context>
     <name>RemoteLogonDialog</name>
     <message>
         <source>Remote logon</source>
-        <translation type="unfinished">Távoli bejelentkezés</translation>
+        <translation>Távoli bejelentlezés</translation>
     </message>
     <message>
         <source>Use the fields below to enter the username, password and optional the domain name. These information will be used to logon the computer(s).</source>
-        <translation type="unfinished">Töltse ki az alábbi mezőket, adja meg a felhasználói nevét, jelszavát vagy domain név alapú azonosítást is használhatja. Ezeket az információkat fogják használni a számítógép bejelentkezéséhez.</translation>
+        <translation>Írja be az alábbi mezőkbe a felhasználónevet, jelszót és az opcionális domain nevet. Ezek az információk szolgálnak a számítógép(ek)hez való csatlakozásra.</translation>
     </message>
     <message>
         <source>Username</source>
-        <translation type="unfinished">Felhasználó</translation>
+        <translation>Felhasználónév</translation>
     </message>
     <message>
         <source>Password</source>
-        <translation type="unfinished">Jelszó</translation>
+        <translation>Jelszó</translation>
     </message>
     <message>
         <source>Domain</source>
-        <translation type="unfinished">Domain</translation>
+        <translation>Tartomány</translation>
     </message>
 </context>
 <context>
     <name>RunCommandsDialog</name>
     <message>
         <source>Run commands</source>
-        <translation type="unfinished">Parancs futtatása</translation>
+        <translation>Parancsok végrehajtása</translation>
     </message>
     <message>
         <source>Please enter the commands to run on the selected client(s). You can separate multiple commands by line.</source>
-        <translation type="unfinished">Kérem adja meg a parancsokat amiket futtatni szeretne a kijelölt kliens gépeken. Több parancs futtatásához használjon új sorokat.</translation>
+        <translation>Írja be a kiválasztott kiens(ek)en futtatandó utasításokat. Az utasításokat új sorba írva választhatja el.</translation>
     </message>
 </context>
 <context>
     <name>Snapshot</name>
     <message>
         <source>unknown</source>
-        <translation type="unfinished">ismeretlen</translation>
+        <translation>ismeretlen</translation>
     </message>
     <message>
         <source>Could not take a snapshot as directory %1 doesn&apos;t exist and couldn&apos;t be created.</source>
-        <translation type="unfinished">Nem lehet pillanatképet csinálni, mivel a %1 könyvtár még nem létezik, és nem is hozható létre.</translation>
+        <translation>Nem sikerült képernyőképet készíteni, mivel a %1 mappa nem létezik és nem hozható létre.</translation>
     </message>
     <message>
         <source>Snapshot</source>
-        <translation type="unfinished">Pillanatkép</translation>
+        <translation>Képernyőkép</translation>
     </message>
 </context>
 <context>
     <name>SnapshotList</name>
     <message>
         <source>Snapshots</source>
-        <translation type="unfinished">Pillanatkép</translation>
+        <translation>Képernyőképek</translation>
     </message>
     <message>
         <source>Simply manage the snapshots you made using this workspace.</source>
-        <translation type="unfinished">A munkaterület segítségével egyszerűen kezelheti a pillanatképeket.</translation>
+        <translation>Itt kezelheti képernyőképeit.</translation>
     </message>
 </context>
 <context>
@@ -1674,104 +1652,106 @@ vagy Az elérhető munkaterület(ek) / munkaasztal(ok) kiválasztásához kattin
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;All snapshots you made are listed here. You can make snapshots by selecting the according entry in the context-menu of a client-window. These snapshosts can be managed using the buttons below.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translatorcomment>You can make snapshots by selecting the according entry in the context-menu of a client-window. =? Csinálhat pillanatképet a felhasználói felület (képernyő) megfelelő szövegének a kiválasztásával.</translatorcomment>
-        <translation type="unfinished">&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Kilistázhatja az elkészült pillanatképeket. You can make snapshots by selecting the according entry in the context-menu of a client-window. Az alábbi gomb megnyomásával kezelheti  az elkészült pillanatképeket.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Itt látható minden ön által készített képernyőkép. Képernyőképet készíthet a kliens ablak környezeti menüjéből. Ezeket a képeket kezelheti az alábbi gombokkal.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>User:</source>
-        <translation type="unfinished">Felhasználó:</translation>
+        <translation>Felhasználó:</translation>
     </message>
     <message>
         <source>Host:</source>
-        <translation type="unfinished">Gépnév:</translation>
+        <translation>Számítógép:</translation>
     </message>
     <message>
         <source>Date:</source>
-        <translation type="unfinished">Dátum:</translation>
+        <translation>Dátum:</translation>
     </message>
     <message>
         <source>Time:</source>
-        <translation type="unfinished">Idő:</translation>
+        <translation>Idő:</translation>
     </message>
     <message>
         <source>Show</source>
-        <translation type="unfinished">Nézet</translation>
+        <translation>Mutat</translation>
     </message>
     <message>
         <source>Delete</source>
-        <translation type="unfinished">Törlés</translation>
+        <translation>Törlés</translation>
     </message>
 </context>
 <context>
     <name>SupportDialog</name>
     <message>
         <source>Support</source>
-        <translation type="unfinished">Támogatás</translation>
+        <translation>Támogatás</translation>
     </message>
     <message>
         <source>Please enter the IP address or the name of the host to which you want to connect.</source>
-        <translation type="unfinished">Kérem írja be annak a gépnek az IP címét vagy a nevét amihez csatlakozni szeretne.</translation>
+        <translation>Írja be az IP címét vagy nevét annak a gépnek, melyhez csatlakozni kíván.</translation>
     </message>
 </context>
 <context>
     <name>TextMessageDialog</name>
     <message>
         <source>Send text message</source>
-        <translation>Szöveges üzenet küldése</translation>
+        <translation>Üzenet küldése</translation>
     </message>
     <message>
         <source>Use the field below to type your message which will be sent to all selected users.</source>
-        <translation type="unfinished">Kérem írja be az üzenetét a mezőbe, amit elszeretne küldeni a kijelölt felhasználóknak.</translation>
+        <translation>Írja be az alábbi mezőbe üzenetét, mely el lesz küldve minden kiválasztott felhasználónak.</translation>
     </message>
 </context>
 <context>
     <name>VncView</name>
     <message>
         <source>Establishing connection to %1 ...</source>
-        <translation>Kapcsolat létrehozása a %1 ...</translation>
+        <translation>Csatlakozás %1 géphez...</translation>
     </message>
 </context>
 <context>
     <name>clientMenu</name>
     <message>
         <source>Overview</source>
-        <translation type="unfinished">Áttekintés</translation>
+        <translation>Áttekintés</translation>
     </message>
     <message>
         <source>Fullscreen demo</source>
-        <translation type="unfinished">Demó teljes képernyőn</translation>
+        <translation>Teljesképernyős bemutató</translation>
     </message>
     <message>
         <source>Window demo</source>
-        <translation type="unfinished">Demó ablakban</translation>
+        <translation>Ablakos bemutató</translation>
     </message>
     <message>
         <source>Locked display</source>
-        <translation>Képernyő blokkolása</translation>
+        <translation>Képernyő zárolva</translation>
     </message>
     <message>
         <source>View live</source>
-        <translation type="unfinished">Élő nézet</translation>
+        <translation>Élőkép</translation>
     </message>
     <message>
         <source>Remote control</source>
-        <translation type="unfinished">Távoli számítógép átvétele</translation>
+        <translation>Távvezérlés</translation>
     </message>
     <message>
         <source>Let student show demo</source>
-        <translation type="unfinished">Demó indítása ezen a gépen</translation>
+        <translation>Tanulói bemutató</translation>
     </message>
     <message>
         <source>Send text message</source>
-        <translation>Szöveges üzenet küldése</translation>
+        <translation>Üzenet küldés</translation>
     </message>
     <message>
         <source>Logout user</source>
-        <translation>Kijelentkezés</translation>
+        <translation>Felhasználó kijelentkeztetése</translation>
     </message>
     <message>
         <source>Take a snapshot</source>
-        <translation type="unfinished">Pillanatkép készítése</translation>
+        <translation>Képernyőkép készítése</translation>
     </message>
     <message>
         <source>Power on</source>
@@ -1787,7 +1767,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Execute commands</source>
-        <translation type="unfinished">Parancs futtatása</translation>
+        <translation>Parancs végrehajtása</translation>
     </message>
 </context>
 </TS>
