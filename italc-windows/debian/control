@@ -1,5 +1,5 @@
 Source: italc-windows
-Section: x11
+Section: univention
 Priority: optional
 Maintainer: Univention GmbH <packages@univention.de>
 Build-Depends: debhelper (>= 7.0), ucslint
@@ -7,7 +7,7 @@ Standards-Version: 3.7.3
 Homepage: http://italc.sourceforge.net/home.php
 
 Package: italc-windows
-Architecture: any
+Architecture: all
 Description: iTALC Windows Binaries
  iTALC makes it possible, to access and influence the pupils 
  activities just from the computer of the teacher. With the 
