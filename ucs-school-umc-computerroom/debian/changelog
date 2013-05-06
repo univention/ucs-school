@@ -1,3 +1,10 @@
+ucs-school-umc-computerroom (2.0.22-1) unstable; urgency=low
+
+  * Bug #30841: clear internal store before switching to another room
+  * Bug #31258: make sure that the SettingsDialog is up-to-date
+
+ -- Alexander Kläser <klaeser@univention.de>  Mon, 06 May 2013 16:41:10 +0200
+
 ucs-school-umc-computerroom (2.0.21-1) unstable; urgency=low
 
   * fix color of settingEndsIn view; Bug #30833

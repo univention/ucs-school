@@ -145,6 +145,7 @@ define([
 				onClick: lang.hitch( this, function() {
 					dijit.hideTooltip( this._form.getWidget( 'customRule' ).domNode );
 					this.hide();
+					this.update();
 					this.onClose();
 				} )
 			} ];
@@ -163,6 +164,15 @@ define([
 			this.watch('exam', lang.hitch(this, function(name, old, value) {
 				this._form.getWidget('period').set('visible', !value);
 			}));
+		},
+
+		show: function() {
+			this.standby(true);
+			this.update().then(
+				lang.hitch(this, 'standby', false),
+				lang.hitch(this, 'standby', false)
+			);
+			this.inherited(arguments);
 		},
 
 		update: function() {

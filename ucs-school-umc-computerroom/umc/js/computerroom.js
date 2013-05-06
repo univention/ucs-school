@@ -933,9 +933,20 @@ define([
 		},
 
 		queryRoom: function(reload) {
+			// stop update timer
 			if (this._updateTimer) {
 				window.clearTimeout(this._updateTimer);
 			}
+
+			// remove all entries for the computer room
+			var that = this;
+			this._objStore.query().then(function(items) {
+				array.forEach(items, function(iitem) {
+					that._objStore.remove(iitem.id);
+				});
+			});
+
+			// query new list of entries and populate store
 			this.umcpCommand('computerroom/query', {
 				reload: reload !== undefined ? reload: false
 			}).then(lang.hitch(this, function(response) {
