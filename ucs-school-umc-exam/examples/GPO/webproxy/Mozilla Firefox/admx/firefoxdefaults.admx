@@ -1,0 +1,291 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<policyDefinitions revision="1.0" schemaVersion="1.0">
+  <policyNamespaces>
+    <target prefix="firfoxadmdefaults" namespace="FirefoxADMDefaults" />
+    <using prefix="windows" namespace="Microsoft.Policies.Windows" />
+  </policyNamespaces>
+  <supersededAdm fileName="" />
+  <resources minRequiredRevision="1.0" />
+  <categories>
+    <category name="MozillaFirefoxDefaultSettings" displayName="$(string.unknown_0)" />
+  </categories>
+  <policies>
+    <policy name="GeneralSettings" class="User" displayName="$(string.unknown_1)" presentation="$(presentation.GeneralSettings)" key="Software\Policies\Firefox">
+      <parentCategory ref="MozillaFirefoxDefaultSettings" />
+      <supportedOn ref="windows:SUPPORTED_WindowsVista" />
+      <elements>
+        <text id="Homepage" valueName="FirefoxHomepage" required="true" />
+      </elements>
+    </policy>
+    <policy name="UseInternetExplorerSettings" class="User" displayName="$(string.unknown_3)" explainText="$(string.emptystring)" presentation="$(presentation.UseInternetExplorerSettings)" key="Software\Policies\Firefox" valueName="FirefoxUseIESettings">
+      <parentCategory ref="MozillaFirefoxDefaultSettings" />
+      <supportedOn ref="windows:SUPPORTED_WindowsVista" />
+      <enabledValue>
+        <decimal value="1" />
+      </enabledValue>
+      <disabledValue>
+        <decimal value="0" />
+      </disabledValue>
+      <enabledList>
+        <item key="Software\Policies\Firefox" valueName="FirefoxHomepage">
+          <value>
+            <string>Using IE's Settings</string>
+          </value>
+        </item>
+        <item key="Software\Policies\Firefox" valueName="FirefoxAutoProxyURL">
+          <value>
+            <string>Using IE's Settings</string>
+          </value>
+        </item>
+        <item key="Software\Policies\Firefox" valueName="FirefoxManualHTTP">
+          <value>
+            <string>Using IE's Settings</string>
+          </value>
+        </item>
+        <item key="Software\Policies\Firefox" valueName="FirefoxManualHTTPPort">
+          <value>
+            <decimal value="1" />
+          </value>
+        </item>
+        <item key="Software\Policies\Firefox" valueName="FirefoxManualSSL">
+          <value>
+            <string>Using IE's Settings</string>
+          </value>
+        </item>
+        <item key="Software\Policies\Firefox" valueName="FirefoxManualSSLPort">
+          <value>
+            <decimal value="1" />
+          </value>
+        </item>
+        <item key="Software\Policies\Firefox" valueName="FirefoxManualFTP">
+          <value>
+            <string>Using IE's Settings</string>
+          </value>
+        </item>
+        <item key="Software\Policies\Firefox" valueName="FirefoxManualFTPPort">
+          <value>
+            <decimal value="1" />
+          </value>
+        </item>
+        <item key="Software\Policies\Firefox" valueName="FirefoxManualGopher">
+          <value>
+            <string>Using IE's Settings</string>
+          </value>
+        </item>
+        <item key="Software\Policies\Firefox" valueName="FirefoxManualGopherPort">
+          <value>
+            <decimal value="1" />
+          </value>
+        </item>
+        <item key="Software\Policies\Firefox" valueName="FirefoxManualSOCKS">
+          <value>
+            <string>Using IE's Settings</string>
+          </value>
+        </item>
+        <item key="Software\Policies\Firefox" valueName="FirefoxManualSOCKSPort">
+          <value>
+            <decimal value="1" />
+          </value>
+        </item>
+        <item key="Software\Policies\Firefox" valueName="FirefoxProxyExceptions">
+          <value>
+            <string>Using IE's Settings</string>
+          </value>
+        </item>
+      </enabledList>
+    </policy>
+    <policy name="ProxySettings" class="User" displayName="$(string.unknown_12)" explainText="$(string.unknown_13)" presentation="$(presentation.ProxySettings)" key="Software\Policies\Firefox">
+      <parentCategory ref="MozillaFirefoxDefaultSettings" />
+      <supportedOn ref="windows:SUPPORTED_WindowsVista" />
+      <elements>
+        <enum id="ProxySetting" valueName="FirefoxProxy" required="true">
+          <item displayName="$(string.unknown_15)">
+            <value>
+              <decimal value="0" />
+            </value>
+          </item>
+          <item displayName="$(string.unknown_16)">
+            <value>
+              <decimal value="4" />
+            </value>
+          </item>
+          <item displayName="$(string.unknown_17)">
+            <value>
+              <decimal value="1" />
+            </value>
+          </item>
+          <item displayName="$(string.unknown_18)">
+            <value>
+              <decimal value="2" />
+            </value>
+          </item>
+        </enum>
+        <text id="AutomaticProxyConfigurationURL" valueName="FirefoxAutoProxyURL" />
+        <text id="ManualSetting-HTTPProxy" valueName="FirefoxManualHTTP" />
+        <decimal id="HTTPProxyPort" valueName="FirefoxManualHTTPPort" />
+        <text id="ManualSetting-SSLProxy" valueName="FirefoxManualSSL" />
+        <decimal id="SSLProxyPort" valueName="FirefoxManualSSLPort" />
+        <text id="ManualSetting-FTPProxy" valueName="FirefoxManualFTP" />
+        <decimal id="FTPProxyPort" valueName="FirefoxManualFTPPort" />
+        <text id="ManualSetting-GopherProxy" valueName="FirefoxManualGopher" />
+        <decimal id="GopherProxyPort" valueName="FirefoxManualGopherPort" />
+        <text id="ManualSetting-SOCKSHost" valueName="FirefoxManualSOCKS" />
+        <decimal id="SOCKSHostPort" valueName="FirefoxManualSOCKSPort" />
+        <decimal id="SOCKSVersion" valueName="FirefoxManualSOCKSVersion" minValue="4" maxValue="5" />
+        <text id="ManualSetting-ProxyExceptions" valueName="FirefoxProxyExceptions" />
+      </elements>
+    </policy>
+    <policy name="EnableAutomaticImageResizing" class="User" displayName="$(string.unknown_32)" presentation="$(presentation.EnableAutomaticImageResizing)" key="Software\Policies\Firefox" valueName="ImageResize">
+      <parentCategory ref="MozillaFirefoxDefaultSettings" />
+      <supportedOn ref="windows:SUPPORTED_WindowsVista" />
+      <enabledValue>
+        <decimal value="1" />
+      </enabledValue>
+      <disabledValue>
+        <decimal value="0" />
+      </disabledValue>
+    </policy>
+    <policy name="DisableFirefoxDefaultBrowserCheck" class="User" displayName="$(string.unknown_33)" presentation="$(presentation.DisableFirefoxDefaultBrowserCheck)" key="Software\Policies\Firefox" valueName="FirefoxCheckDefault">
+      <parentCategory ref="MozillaFirefoxDefaultSettings" />
+      <supportedOn ref="windows:SUPPORTED_WindowsVista" />
+      <enabledValue>
+        <decimal value="0" />
+      </enabledValue>
+      <disabledValue>
+        <decimal value="1" />
+      </disabledValue>
+    </policy>
+    <policy name="Cache" class="User" displayName="$(string.unknown_34)" presentation="$(presentation.Cache)" key="Software\Policies\Firefox">
+      <parentCategory ref="MozillaFirefoxDefaultSettings" />
+      <supportedOn ref="windows:SUPPORTED_WindowsVista" />
+      <elements>
+        <decimal id="FirefoxMaximumCache" valueName="FirefoxCacheSize" required="true" maxValue="100000" />
+      </elements>
+    </policy>
+    <policy name="CachetoUseLocalSettings" class="User" displayName="$(string.unknown_36)" explainText="$(string.unknown_37)" presentation="$(presentation.CachetoUseLocalSettings)" key="Software\Policies\Firefox" valueName="FirefoxCacheLocal">
+      <parentCategory ref="MozillaFirefoxDefaultSettings" />
+      <supportedOn ref="windows:SUPPORTED_WindowsVista" />
+      <enabledValue>
+        <decimal value="1" />
+      </enabledValue>
+      <disabledValue>
+        <decimal value="0" />
+      </disabledValue>
+    </policy>
+    <policy name="DisableXPIInstalls" class="User" displayName="$(string.unknown_38)" explainText="$(string.unknown_39)" presentation="$(presentation.DisableXPIInstalls)" key="Software\Policies\Firefox" valueName="FirefoxXPIState">
+      <parentCategory ref="MozillaFirefoxDefaultSettings" />
+      <supportedOn ref="windows:SUPPORTED_WindowsVista" />
+      <enabledValue>
+        <decimal value="0" />
+      </enabledValue>
+      <disabledValue>
+        <decimal value="1" />
+      </disabledValue>
+    </policy>
+    <policy name="SetDefaultDownloadLocation" class="User" displayName="$(string.unknown_40)" presentation="$(presentation.SetDefaultDownloadLocation)" key="Software\Policies\Firefox">
+      <parentCategory ref="MozillaFirefoxDefaultSettings" />
+      <supportedOn ref="windows:SUPPORTED_WindowsVista" />
+      <elements>
+        <enum id="DownloadTo" valueName="FirefoxDownloadType" required="true">
+          <item displayName="$(string.unknown_42)">
+            <value>
+              <string>My Documents</string>
+            </value>
+          </item>
+          <item displayName="$(string.unknown_44)">
+            <value>
+              <string>Desktop</string>
+            </value>
+          </item>
+          <item displayName="$(string.unknown_46)">
+            <value>
+              <string>Set</string>
+            </value>
+          </item>
+          <item displayName="$(string.unknown_48)">
+            <value>
+              <string>Home Drive</string>
+            </value>
+          </item>
+        </enum>
+        <text id="ManuallySetDownloadFolder" valueName="FirefoxDownloadLocation" />
+      </elements>
+    </policy>
+    <policy name="Setmandatorybookmarksfile" class="User" displayName="$(string.unknown_51)" explainText="$(string.unknown_52)" presentation="$(presentation.Setmandatorybookmarksfile)" key="Software\Policies\Firefox">
+      <parentCategory ref="MozillaFirefoxDefaultSettings" />
+      <supportedOn ref="windows:SUPPORTED_WindowsVista" />
+      <elements>
+        <text id="Locationofmandatorybookmarkshtmlfile" valueName="FirefoxMandatoryBookmarks" required="true" />
+      </elements>
+    </policy>
+    <policy name="SetHostperm1file-UNUSED-UseWhitelistedsitesinstead" class="User" displayName="$(string.unknown_54)" explainText="$(string.unknown_55)" presentation="$(presentation.SetHostperm1file-UNUSED-UseWhitelistedsitesinstead)" key="Software\Policies\Firefox">
+      <parentCategory ref="MozillaFirefoxDefaultSettings" />
+      <supportedOn ref="windows:SUPPORTED_WindowsVista" />
+      <elements>
+        <text id="LocationofPermissionsfile" valueName="FirefoxPermissionsFile" required="true" />
+      </elements>
+    </policy>
+    <policy name="WhitelistedSitefordownloadandpopups" class="User" displayName="$(string.unknown_57)" explainText="$(string.unknown_58)" presentation="$(presentation.WhitelistedSitefordownloadandpopups)" key="Software\Policies\Firefox">
+      <parentCategory ref="MozillaFirefoxDefaultSettings" />
+      <supportedOn ref="windows:SUPPORTED_WindowsVista" />
+      <elements>
+        <text id="WhitelistforPopups" valueName="FirefoxPopupWhitelist" required="true" />
+        <text id="WhitelistforAllowedInstallsites" valueName="FirefoxInstallWhitelist" required="true" />
+      </elements>
+    </policy>
+    <policy name="EnableTypeAheadFind" class="User" displayName="$(string.unknown_61)" presentation="$(presentation.EnableTypeAheadFind)" key="Software\Policies\Firefox" valueName="FirefoxTypeAheadFindState">
+      <parentCategory ref="MozillaFirefoxDefaultSettings" />
+      <supportedOn ref="windows:SUPPORTED_WindowsVista" />
+      <enabledValue>
+        <decimal value="1" />
+      </enabledValue>
+      <disabledValue>
+        <decimal value="0" />
+      </disabledValue>
+    </policy>
+    <policy name="Accessibilityperuser" class="User" displayName="$(string.unknown_62)" presentation="$(presentation.Accessibilityperuser)" key="Software\Policies\Firefox">
+      <parentCategory ref="MozillaFirefoxDefaultSettings" />
+      <supportedOn ref="windows:SUPPORTED_WindowsVista" />
+      <elements>
+        <enum id="EnableKeyboardbrowsingusingCaret" valueName="FirefoxCaret" required="true">
+          <item displayName="$(string.unknown_64)">
+            <value>
+              <decimal value="1" />
+            </value>
+          </item>
+          <item displayName="$(string.unknown_65)">
+            <value>
+              <decimal value="0" />
+            </value>
+          </item>
+        </enum>
+      </elements>
+    </policy>
+    <policy name="FirefoxCertificates" class="User" displayName="$(string.unknown_66)" presentation="$(presentation.FirefoxCertificates)" key="Software\Policies\Firefox">
+      <parentCategory ref="MozillaFirefoxDefaultSettings" />
+      <supportedOn ref="windows:SUPPORTED_WindowsVista" />
+      <elements>
+        <text id="SetLocationofMasterfolderthatcontainsthe3certificatefiles" valueName="FirefoxCertificateLocation" required="true" />
+        <enum id="Behaviour" valueName="FirefoxMandatoryCertificates" required="true">
+          <item displayName="$(string.unknown_69)">
+            <value>
+              <string>Replace</string>
+            </value>
+          </item>
+          <item displayName="$(string.unknown_71)">
+            <value>
+              <string>Merge</string>
+            </value>
+          </item>
+        </enum>
+      </elements>
+    </policy>
+    <policy name="FirefoxFileAllowedSites" class="User" displayName="$(string.unknown_73)" presentation="$(presentation.FirefoxFileAllowedSites)" key="Software\Policies\Firefox">
+      <parentCategory ref="MozillaFirefoxDefaultSettings" />
+      <supportedOn ref="windows:SUPPORTED_WindowsVista" />
+      <elements>
+        <text id="Setlistofsites" valueName="FirefoxFileSites" required="true" />
+      </elements>
+    </policy>
+  </policies>
+</policyDefinitions>

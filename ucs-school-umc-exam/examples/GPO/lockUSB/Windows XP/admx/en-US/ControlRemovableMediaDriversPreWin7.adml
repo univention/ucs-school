@@ -1,0 +1,40 @@
+<policyDefinitionResources revision="1.0" schemaVersion="1.0">
+  <displayName>
+  </displayName>
+  <description>
+  </description>
+  <resources>
+    <stringTable>
+      <string id="category">Custom Policy Settings</string>
+      <string id="categoryname">Restrict Drives</string>
+      <string id="policynameusb">Disable USB</string>
+      <string id="policynamecd">Disable CD-ROM</string>
+      <string id="policynameflpy">Disable Floppy</string>
+      <string id="policynamels120">Disable High Capacity Floppy</string>
+      <string id="explaintextusb">Disables the computers USB ports by disabling the usbstor.sys driver</string>
+      <string id="explaintextcd">Disables the computers CD-ROM Drive by disabling the cdrom.sys driver</string>
+      <string id="explaintextflpy">Disables the computers Floppy Drive by disabling the flpydisk.sys driver</string>
+      <string id="explaintextls120">Disables the computers High Capacity Floppy Drive by disabling the sfloppy.sys driver</string>
+      <string id="labeltextusb">Disable USB Ports</string>
+      <string id="labeltextcd">Disable CD-ROM Drive</string>
+      <string id="labeltextflpy">Disable Floppy Drive</string>
+      <string id="labeltextls120">Disable High Capacity Floppy Drive</string>
+      <string id="Enabled">Enabled</string>
+      <string id="Disabled">Disabled</string>
+    </stringTable>
+    <presentationTable>
+      <presentation id="policynameusb">
+        <dropdownList refId="labeltextusb" defaultItem="0">Disable USB Ports</dropdownList>
+      </presentation>
+      <presentation id="policynamecd">
+        <dropdownList refId="labeltextcd" defaultItem="0">Disable CD-ROM Drive</dropdownList>
+      </presentation>
+      <presentation id="policynameflpy">
+        <dropdownList refId="labeltextflpy" defaultItem="0">Disable Floppy Drive</dropdownList>
+      </presentation>
+      <presentation id="policynamels120">
+        <dropdownList refId="labeltextls120" defaultItem="0">Disable High Capacity Floppy Drive</dropdownList>
+      </presentation>
+    </presentationTable>
+  </resources>
+</policyDefinitionResources>

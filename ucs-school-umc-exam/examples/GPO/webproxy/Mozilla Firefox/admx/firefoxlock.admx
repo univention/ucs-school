@@ -1,0 +1,1020 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<policyDefinitions revision="1.0" schemaVersion="1.0">
+  <policyNamespaces>
+    <target prefix="firefoxadmlock" namespace="FirefoxADMLock" />
+    <using prefix="windows" namespace="Microsoft.Policies.Windows" />
+  </policyNamespaces>
+  <supersededAdm fileName="" />
+  <resources minRequiredRevision="1.0" />
+  <categories>
+    <category name="MozillaFirefox" displayName="$(string.unknown_0)" />
+    <category name="General" displayName="$(string.unknown_1)">
+      <parentCategory ref="MozillaFirefox" />
+    </category>
+    <category name="Privacy" displayName="$(string.unknown_122)">
+      <parentCategory ref="MozillaFirefox" />
+    </category>
+    <category name="Security" displayName="$(string.unknown_202)">
+      <parentCategory ref="MozillaFirefox" />
+    </category>
+    <category name="Accessibility" displayName="$(string.unknown_272)">
+      <parentCategory ref="MozillaFirefox" />
+    </category>
+    <category name="AddinsandUpdates" displayName="$(string.unknown_277)">
+      <parentCategory ref="MozillaFirefox" />
+    </category>
+  </categories>
+  <policies>
+    <policy name="QueryRegistryToFindFirefoxInstallationLocation" class="Machine" displayName="$(string.unknown_291)" explainText="$(string.InstallLoc_Explain)" presentation="$(presentation.QueryRegistryToFindFirefoxInstallationLocation)" key="Software\Policies\Firefox" valueName="FirefoxUseRegLoc">
+      <parentCategory ref="MozillaFirefox" />
+      <supportedOn ref="windows:SUPPORTED_WindowsVista" />
+      <enabledValue>
+        <string>yes</string>
+      </enabledValue>
+      <disabledValue>
+        <string>no</string>
+      </disabledValue>
+    </policy>
+    <policy name="DisableFirefoxDefaultBrowserCheck" class="Machine" displayName="$(string.unknown_294)" presentation="$(presentation.DisableFirefoxDefaultBrowserCheck)" key="Software\Policies\Firefox">
+      <parentCategory ref="MozillaFirefox" />
+      <supportedOn ref="windows:SUPPORTED_WindowsVista" />
+      <elements>
+        <enum id="PreferenceState" valueName="FirefoxCheckDefaultType" required="true">
+          <item displayName="$(string.unknown_296)">
+            <value>
+              <string>locked</string>
+            </value>
+          </item>
+          <item displayName="$(string.unknown_298)">
+            <value>
+              <string>default</string>
+            </value>
+          </item>
+        </enum>
+        <enum id="DefaultBrowserState" valueName="FirefoxCheckDefault" required="true">
+          <item displayName="$(string.unknown_301)">
+            <value>
+              <decimal value="1" />
+            </value>
+          </item>
+          <item displayName="$(string.unknown_302)">
+            <value>
+              <decimal value="0" />
+            </value>
+          </item>
+        </enum>
+      </elements>
+    </policy>
+    <policy name="Homepage" class="Machine" displayName="$(string.unknown_2)" presentation="$(presentation.Homepage)" key="Software\Policies\Firefox">
+      <parentCategory ref="General" />
+      <supportedOn ref="windows:SUPPORTED_WindowsVista" />
+      <elements>
+        <enum id="PreferenceState" valueName="FirefoxHomepageType" required="true">
+          <item displayName="$(string.unknown_4)">
+            <value>
+              <string>locked</string>
+            </value>
+          </item>
+          <item displayName="$(string.unknown_6)">
+            <value>
+              <string>default</string>
+            </value>
+          </item>
+        </enum>
+        <enum id="WhenFirefoxStarts" valueName="FirefoxHomepagePage" required="true">
+          <item displayName="$(string.unknown_9)">
+            <value>
+              <decimal value="0" />
+            </value>
+          </item>
+          <item displayName="$(string.unknown_10)">
+            <value>
+              <decimal value="1" />
+            </value>
+          </item>
+        </enum>
+        <text id="Homepageifrequired" valueName="FirefoxHomepage" />
+      </elements>
+    </policy>
+    <policy name="ProxySettings" class="Machine" displayName="$(string.unknown_12)" explainText="$(string.Proxy_Explain)" presentation="$(presentation.ProxySettings)" key="Software\Policies\Firefox">
+      <parentCategory ref="General" />
+      <supportedOn ref="windows:SUPPORTED_WindowsVista" />
+      <elements>
+        <enum id="PreferenceState" valueName="FirefoxProxyType" required="true">
+          <item displayName="$(string.unknown_14)">
+            <value>
+              <string>locked</string>
+            </value>
+          </item>
+          <item displayName="$(string.unknown_16)">
+            <value>
+              <string>default</string>
+            </value>
+          </item>
+        </enum>
+        <enum id="ProxySetting" valueName="FirefoxProxy" required="true">
+          <item displayName="$(string.unknown_19)">
+            <value>
+              <decimal value="0" />
+            </value>
+          </item>
+          <item displayName="$(string.unknown_20)">
+            <value>
+              <decimal value="4" />
+            </value>
+          </item>
+          <item displayName="$(string.unknown_21)">
+            <value>
+              <decimal value="1" />
+            </value>
+          </item>
+          <item displayName="$(string.unknown_22)">
+            <value>
+              <decimal value="2" />
+            </value>
+          </item>
+        </enum>
+        <text id="AutomaticProxyConfigurationURL" valueName="FirefoxAutoProxyURL" />
+        <text id="ManualSetting-HTTPProxy" valueName="FirefoxManualHTTP" />
+        <decimal id="HTTPProxyPort" valueName="FirefoxManualHTTPPort" />
+        <text id="ManualSetting-SSLProxy" valueName="FirefoxManualSSL" />
+        <decimal id="SSLProxyPort" valueName="FirefoxManualSSLPort" />
+        <text id="ManualSetting-FTPProxy" valueName="FirefoxManualFTP" />
+        <decimal id="FTPProxyPort" valueName="FirefoxManualFTPPort" />
+        <text id="ManualSetting-GopherProxy" valueName="FirefoxManualGopher" />
+        <decimal id="GopherProxyPort" valueName="FirefoxManualGopherPort" />
+        <text id="ManualSetting-SOCKSHost" valueName="FirefoxManualSOCKS" />
+        <decimal id="SOCKSHostPort" valueName="FirefoxManualSOCKSPort" />
+        <decimal id="SOCKSVersion" valueName="FirefoxManualSOCKSVersion" minValue="4" maxValue="5" />
+        <text id="ManualSetting-ProxyExceptions" valueName="FirefoxProxyExceptions" />
+      </elements>
+    </policy>
+    <policy name="TabBehaviour" class="Machine" displayName="$(string.unknown_36)" presentation="$(presentation.TabBehaviour)" key="Software\Policies\Firefox">
+      <parentCategory ref="General" />
+      <supportedOn ref="windows:SUPPORTED_WindowsVista" />
+      <elements>
+        <enum id="PreferenceState" valueName="FirefoxTabType" required="true">
+          <item displayName="$(string.unknown_38)">
+            <value>
+              <string>locked</string>
+            </value>
+          </item>
+          <item displayName="$(string.unknown_40)">
+            <value>
+              <string>default</string>
+            </value>
+          </item>
+        </enum>
+        <enum id="Newpagesshouldbeopenedin" valueName="FirefoxTabNewPage" required="true">
+          <item displayName="$(string.unknown_43)">
+            <value>
+              <string>Window</string>
+            </value>
+          </item>
+          <item displayName="$(string.unknown_45)">
+            <value>
+              <string>TAB</string>
+            </value>
+          </item>
+        </enum>
+        <enum id="Warnwhenclosingmultipletabs" valueName="FirefoxTabCloseWarn" required="true">
+          <item displayName="$(string.unknown_48)">
+            <value>
+              <string>true</string>
+            </value>
+          </item>
+          <item displayName="$(string.unknown_50)">
+            <value>
+              <string>false</string>
+            </value>
+          </item>
+        </enum>
+        <enum id="WarnwhenopeningmultipletabsmightslowdownFirefox" valueName="FirefoxTabOpenWarn" required="true">
+          <item displayName="$(string.unknown_53)">
+            <value>
+              <string>true</string>
+            </value>
+          </item>
+          <item displayName="$(string.unknown_55)">
+            <value>
+              <string>false</string>
+            </value>
+          </item>
+        </enum>
+        <enum id="Auto-HideTabBar" valueName="FirefoxTabShowBar" required="true">
+          <item displayName="$(string.unknown_58)">
+            <value>
+              <string>true</string>
+            </value>
+          </item>
+          <item displayName="$(string.unknown_60)">
+            <value>
+              <string>false</string>
+            </value>
+          </item>
+        </enum>
+        <enum id="Loadtabsinbackground" valueName="FirefoxTabBackground" required="true">
+          <item displayName="$(string.unknown_63)">
+            <value>
+              <string>true</string>
+            </value>
+          </item>
+          <item displayName="$(string.unknown_65)">
+            <value>
+              <string>false</string>
+            </value>
+          </item>
+        </enum>
+      </elements>
+    </policy>
+    <policy name="EnableAutomaticImageResizing" class="Machine" displayName="$(string.unknown_67)" presentation="$(presentation.EnableAutomaticImageResizing)" key="Software\Policies\Firefox" valueName="ImageResize">
+      <parentCategory ref="General" />
+      <supportedOn ref="windows:SUPPORTED_WindowsVista" />
+      <enabledValue>
+        <decimal value="1" />
+      </enabledValue>
+      <disabledValue>
+        <decimal value="0" />
+      </disabledValue>
+      <elements>
+        <enum id="PreferenceState" valueName="ImageResizeType" required="true">
+          <item displayName="$(string.unknown_69)">
+            <value>
+              <string>locked</string>
+            </value>
+          </item>
+          <item displayName="$(string.unknown_71)">
+            <value>
+              <string>default</string>
+            </value>
+          </item>
+        </enum>
+      </elements>
+    </policy>
+    <policy name="UseDownloadDirectory" class="Machine" displayName="$(string.unknown_73)" explainText="$(string.DownloadDir_Explain)" presentation="$(presentation.UseDownloadDirectory)" key="Software\Policies\Firefox">
+      <parentCategory ref="General" />
+      <supportedOn ref="windows:SUPPORTED_WindowsVista" />
+      <elements>
+        <enum id="PreferenceState" valueName="FirefoxUseDownloadDirType" required="true">
+          <item displayName="$(string.unknown_75)">
+            <value>
+              <string>locked</string>
+            </value>
+          </item>
+          <item displayName="$(string.unknown_77)">
+            <value>
+              <string>default</string>
+            </value>
+          </item>
+        </enum>
+        <enum id="UseDownloadDirectory" valueName="FirefoxUseDownloadDir" required="true">
+          <item displayName="$(string.unknown_80)">
+            <value>
+              <decimal value="1" />
+            </value>
+          </item>
+          <item displayName="$(string.unknown_81)">
+            <value>
+              <decimal value="0" />
+            </value>
+          </item>
+        </enum>
+      </elements>
+    </policy>
+    <policy name="AdvancedOptions" class="Machine" displayName="$(string.unknown_82)" explainText="$(string.Advanced_Explain)" presentation="$(presentation.AdvancedOptions)" key="Software\Policies\Firefox">
+      <parentCategory ref="General" />
+      <supportedOn ref="windows:SUPPORTED_WindowsVista" />
+      <elements>
+        <enum id="PreferenceState" valueName="FirefoxBrowsingType" required="true">
+          <item displayName="$(string.unknown_84)">
+            <value>
+              <string>locked</string>
+            </value>
+          </item>
+          <item displayName="$(string.unknown_86)">
+            <value>
+              <string>default</string>
+            </value>
+          </item>
+        </enum>
+        <enum id="UseAutoScroll" valueName="FirefoxAutoScroll" required="true">
+          <item displayName="$(string.unknown_89)">
+            <value>
+              <string>true</string>
+            </value>
+          </item>
+          <item displayName="$(string.unknown_91)">
+            <value>
+              <string>false</string>
+            </value>
+          </item>
+        </enum>
+        <enum id="UseSmoothScrolling" valueName="FirefoxSmoothScroll" required="true">
+          <item displayName="$(string.unknown_94)">
+            <value>
+              <string>true</string>
+            </value>
+          </item>
+          <item displayName="$(string.unknown_96)">
+            <value>
+              <string>false</string>
+            </value>
+          </item>
+        </enum>
+        <enum id="CheckmyspellingasItype" valueName="FirefoxCheckSpell" required="true">
+          <item displayName="$(string.unknown_99)">
+            <value>
+              <decimal value="1" />
+            </value>
+          </item>
+          <item displayName="$(string.unknown_100)">
+            <value>
+              <decimal value="0" />
+            </value>
+          </item>
+        </enum>
+      </elements>
+    </policy>
+    <policy name="BookmarksLocation" class="Machine" displayName="$(string.unknown_101)" explainText="$(string.Bookmarks_Explain)" presentation="$(presentation.BookmarksLocation)" key="Software\Policies\Firefox">
+      <parentCategory ref="General" />
+      <supportedOn ref="SUPPORTED_WindowsVista" />
+      <elements>
+        <text id="Pleaseputinlocationforbookmarks" valueName="FirefoxBookmarks" required="true" />
+      </elements>
+    </policy>
+    <policy name="EnableTypeAheadFind" class="Machine" displayName="$(string.unknown_103)" presentation="$(presentation.EnableTypeAheadFind)" key="Software\Policies\Firefox">
+      <parentCategory ref="General" />
+      <supportedOn ref="SUPPORTED_WindowsVista" />
+      <elements>
+        <enum id="PreferenceState" valueName="FirefoxIDNStateType" required="true">
+          <item displayName="$(string.unknown_105)">
+            <value>
+              <string>locked</string>
+            </value>
+          </item>
+          <item displayName="$(string.unknown_107)">
+            <value>
+              <string>default</string>
+            </value>
+          </item>
+        </enum>
+        <enum id="TypeAheadFindState" valueName="FirefoxTypeAheadFindState" required="true">
+          <item displayName="$(string.unknown_110)">
+            <value>
+              <decimal value="0" />
+            </value>
+          </item>
+          <item displayName="$(string.unknown_111)">
+            <value>
+              <decimal value="1" />
+            </value>
+          </item>
+        </enum>
+      </elements>
+    </policy>
+    <policy name="Cache" class="Machine" displayName="$(string.unknown_112)" presentation="$(presentation.Cache)" key="Software\Policies\Firefox">
+      <parentCategory ref="General" />
+      <supportedOn ref="SUPPORTED_WindowsVista" />
+      <elements>
+        <enum id="PreferenceState" valueName="FirefoxCacheType" required="true">
+          <item displayName="$(string.unknown_114)">
+            <value>
+              <string>locked</string>
+            </value>
+          </item>
+          <item displayName="$(string.unknown_116)">
+            <value>
+              <string>default</string>
+            </value>
+          </item>
+        </enum>
+        <decimal id="FirefoxMaximumCache" valueName="FirefoxCacheSize" required="true" maxValue="100000" />
+        <enum id="SSLinCache" valueName="FirefoxCacheSSL" required="true">
+          <item displayName="$(string.unknown_120)">
+            <value>
+              <decimal value="1" />
+            </value>
+          </item>
+          <item displayName="$(string.unknown_121)">
+            <value>
+              <decimal value="0" />
+            </value>
+          </item>
+        </enum>
+      </elements>
+    </policy>
+    <policy name="History" class="Machine" displayName="$(string.unknown_123)" presentation="$(presentation.History)" key="Software\Policies\Firefox">
+      <parentCategory ref="Privacy" />
+      <supportedOn ref="SUPPORTED_WindowsVista" />
+      <elements>
+        <enum id="PreferenceState" valueName="FirefoxHistoryType" required="true">
+          <item displayName="$(string.unknown_125)">
+            <value>
+              <string>locked</string>
+            </value>
+          </item>
+          <item displayName="$(string.unknown_127)">
+            <value>
+              <string>default</string>
+            </value>
+          </item>
+        </enum>
+        <decimal id="Remembervisitedpagesforxxdays" valueName="FirefoxHistoryDays" minValue="0" maxValue="999" />
+        <enum id="RememberFormsAndSearchBar" valueName="FirefoxHistoryForms" required="true">
+          <item displayName="$(string.unknown_131)">
+            <value>
+              <string>true</string>
+            </value>
+          </item>
+          <item displayName="$(string.unknown_133)">
+            <value>
+              <string>false</string>
+            </value>
+          </item>
+        </enum>
+        <enum id="RememberDownloads" valueName="FirefoxHistoryDownloads" required="true">
+          <item displayName="$(string.unknown_136)">
+            <value>
+              <decimal value="2" />
+            </value>
+          </item>
+          <item displayName="$(string.unknown_137)">
+            <value>
+              <decimal value="0" />
+            </value>
+          </item>
+        </enum>
+      </elements>
+    </policy>
+    <policy name="DeletePrivateDataPasswords" class="Machine" displayName="$(string.unknown_138)" explainText="$(string.PrivateDataPasswords_Explain)" presentation="$(presentation.DeletePrivateDataPasswords)" key="Software\Policies\Firefox">
+      <parentCategory ref="Privacy" />
+      <supportedOn ref="SUPPORTED_WindowsVista" />
+      <elements>
+        <enum id="PreferenceState" valueName="FirefoxDelPrivDataPasswordsType" required="true">
+          <item displayName="$(string.unknown_140)">
+            <value>
+              <string>locked</string>
+            </value>
+          </item>
+          <item displayName="$(string.unknown_142)">
+            <value>
+              <string>default</string>
+            </value>
+          </item>
+        </enum>
+        <enum id="DeletePrivateDataPasswords" valueName="FirefoxDelPrivDataPasswords" required="true">
+          <item displayName="$(string.unknown_145)">
+            <value>
+              <decimal value="1" />
+            </value>
+          </item>
+          <item displayName="$(string.unknown_146)">
+            <value>
+              <decimal value="0" />
+            </value>
+          </item>
+        </enum>
+      </elements>
+    </policy>
+    <policy name="DeletePrivateDataOfflineWebsites" class="Machine" displayName="$(string.unknown_147)" explainText="$(string.PrivateDataWebsites_Explain)" presentation="$(presentation.DeletePrivateDataOfflineWebsites)" key="Software\Policies\Firefox">
+      <parentCategory ref="Privacy" />
+      <supportedOn ref="SUPPORTED_WindowsVista" />
+      <elements>
+        <enum id="PreferenceState" valueName="FirefoxDelPrivDataOfflineWebsitesType" required="true">
+          <item displayName="$(string.unknown_149)">
+            <value>
+              <string>locked</string>
+            </value>
+          </item>
+          <item displayName="$(string.unknown_151)">
+            <value>
+              <string>default</string>
+            </value>
+          </item>
+        </enum>
+        <enum id="DeletePrivateDataOfflineWebsites" valueName="FirefoxDelPrivDataOfflineWebsites" required="true">
+          <item displayName="$(string.unknown_154)">
+            <value>
+              <decimal value="1" />
+            </value>
+          </item>
+          <item displayName="$(string.unknown_155)">
+            <value>
+              <decimal value="0" />
+            </value>
+          </item>
+        </enum>
+      </elements>
+    </policy>
+    <policy name="DeletePrivateDataCookies" class="Machine" displayName="$(string.unknown_156)" explainText="$(string.PrivateDataCookies_Explain)" presentation="$(presentation.DeletePrivateDataCookies)" key="Software\Policies\Firefox">
+      <parentCategory ref="Privacy" />
+      <supportedOn ref="SUPPORTED_WindowsVista" />
+      <elements>
+        <enum id="PreferenceState" valueName="FirefoxDelPrivDataCookiesType" required="true">
+          <item displayName="$(string.unknown_158)">
+            <value>
+              <string>locked</string>
+            </value>
+          </item>
+          <item displayName="$(string.unknown_160)">
+            <value>
+              <string>default</string>
+            </value>
+          </item>
+        </enum>
+        <enum id="DeletePrivateDataCookies" valueName="FirefoxDelPrivDataCookies" required="true">
+          <item displayName="$(string.unknown_163)">
+            <value>
+              <decimal value="1" />
+            </value>
+          </item>
+          <item displayName="$(string.unknown_164)">
+            <value>
+              <decimal value="0" />
+            </value>
+          </item>
+        </enum>
+      </elements>
+    </policy>
+    <policy name="SaveFormData" class="Machine" displayName="$(string.unknown_165)" explainText="$(string.FormData_Explain)" presentation="$(presentation.SaveFormData)" key="Software\Policies\Firefox">
+      <parentCategory ref="Privacy" />
+      <supportedOn ref="SUPPORTED_WindowsVista" />
+      <elements>
+        <enum id="PreferenceState" valueName="FirefoxSaveFormDataType" required="true">
+          <item displayName="$(string.unknown_167)">
+            <value>
+              <string>locked</string>
+            </value>
+          </item>
+          <item displayName="$(string.unknown_169)">
+            <value>
+              <string>default</string>
+            </value>
+          </item>
+        </enum>
+        <enum id="SaveFormData" valueName="FirefoxSaveFormData" required="true">
+          <item displayName="$(string.unknown_172)">
+            <value>
+              <decimal value="1" />
+            </value>
+          </item>
+          <item displayName="$(string.unknown_173)">
+            <value>
+              <decimal value="0" />
+            </value>
+          </item>
+        </enum>
+      </elements>
+    </policy>
+    <policy name="PrivateData" class="Machine" displayName="$(string.unknown_174)" explainText="$(string.PrivateData_Explain)" presentation="$(presentation.PrivateData)" key="Software\Policies\Firefox">
+      <parentCategory ref="Privacy" />
+      <supportedOn ref="SUPPORTED_WindowsVista" />
+      <elements>
+        <enum id="PreferenceState" valueName="FirefoxDataType" required="true">
+          <item displayName="$(string.unknown_176)">
+            <value>
+              <string>locked</string>
+            </value>
+          </item>
+          <item displayName="$(string.unknown_178)">
+            <value>
+              <string>default</string>
+            </value>
+          </item>
+        </enum>
+        <enum id="AlwaysclearmyprivatedatawhenIcloseFirefox" valueName="FirefoxDataClear" required="true">
+          <item displayName="$(string.unknown_181)">
+            <value>
+              <string>true</string>
+            </value>
+          </item>
+          <item displayName="$(string.unknown_183)">
+            <value>
+              <string>false</string>
+            </value>
+          </item>
+        </enum>
+        <enum id="Askmebeforeclearingprivatedata" valueName="FirefoxDataPrompt" required="true">
+          <item displayName="$(string.unknown_186)">
+            <value>
+              <string>true</string>
+            </value>
+          </item>
+          <item displayName="$(string.unknown_188)">
+            <value>
+              <string>false</string>
+            </value>
+          </item>
+        </enum>
+      </elements>
+    </policy>
+    <policy name="CookieHandling" class="Machine" displayName="$(string.unknown_190)" presentation="$(presentation.CookieHandling)" key="Software\Policies\Firefox">
+      <parentCategory ref="Privacy" />
+      <supportedOn ref="SUPPORTED_WindowsVista" />
+      <elements>
+        <enum id="PreferenceState" valueName="FirefoxCookieBehaviourType" required="true">
+          <item displayName="$(string.unknown_192)">
+            <value>
+              <string>locked</string>
+            </value>
+          </item>
+          <item displayName="$(string.unknown_194)">
+            <value>
+              <string>default</string>
+            </value>
+          </item>
+        </enum>
+        <enum id="HandlingBehaviour" valueName="FirefoxCookieBehaviour" required="true">
+          <item displayName="$(string.unknown_197)">
+            <value>
+              <decimal value="0" />
+            </value>
+          </item>
+          <item displayName="$(string.unknown_198)">
+            <value>
+              <decimal value="1" />
+            </value>
+          </item>
+          <item displayName="$(string.unknown_199)">
+            <value>
+              <decimal value="2" />
+            </value>
+          </item>
+          <item displayName="$(string.unknown_200)">
+            <value>
+              <decimal value="3" />
+            </value>
+          </item>
+        </enum>
+      </elements>
+    </policy>
+    <policy name="DisableFirefoxprefetch" class="Machine" displayName="$(string.unknown_201)" presentation="$(presentation.DisableFirefoxprefetch)" key="Software\Policies\Firefox" valueName="FirefoxPrefetchState">
+      <parentCategory ref="Privacy" />
+      <supportedOn ref="SUPPORTED_WindowsVista" />
+      <enabledValue>
+        <decimal value="0" />
+      </enabledValue>
+      <disabledValue>
+        <decimal value="1" />
+      </disabledValue>
+    </policy>
+    <policy name="PhishingProtection" class="Machine" displayName="$(string.unknown_203)" explainText="$(string.PhishProtect_Explain)" presentation="$(presentation.PhishingProtection)" key="Software\Policies\Firefox" valueName="FirefoxPhishProtect">
+      <parentCategory ref="Security" />
+      <supportedOn ref="SUPPORTED_WindowsVista" />
+      <enabledValue>
+        <decimal value="1" />
+      </enabledValue>
+      <disabledValue>
+        <decimal value="0" />
+      </disabledValue>
+    </policy>
+    <policy name="ReplaceCertificatesforallUserProfiles" class="Machine" displayName="$(string.unknown_204)" explainText="$(string.Certs_Explain)" presentation="$(presentation.ReplaceCertificatesforallUserProfiles)" key="Software\Policies\Firefox">
+      <parentCategory ref="Security" />
+      <supportedOn ref="SUPPORTED_WindowsVista" />
+      <elements>
+        <text id="SetLocationofMasterfolderthatcontainsthe3certificatefiles" valueName="FirefoxCertificateLocation" required="true" />
+        <enum id="Behaviour" valueName="FirefoxMandatoryCertificates" required="true">
+          <item displayName="$(string.unknown_207)">
+            <value>
+              <string>Replace</string>
+            </value>
+          </item>
+          <item displayName="$(string.unknown_209)">
+            <value>
+              <string>Merge</string>
+            </value>
+          </item>
+        </enum>
+      </elements>
+    </policy>
+    <policy name="ShowSSLDomainIcon" class="Machine" displayName="$(string.unknown_211)" explainText="$(string.SSLIcon_Explain)" presentation="$(presentation.ShowSSLDomainIcon)" key="Software\Policies\Firefox">
+      <parentCategory ref="Security" />
+      <supportedOn ref="SUPPORTED_WindowsVista" />
+      <elements>
+        <enum id="PreferenceState" valueName="FirefoxShowSSLDomainIconType" required="true">
+          <item displayName="$(string.unknown_213)">
+            <value>
+              <string>locked</string>
+            </value>
+          </item>
+          <item displayName="$(string.unknown_215)">
+            <value>
+              <string>default</string>
+            </value>
+          </item>
+        </enum>
+        <enum id="ShowSSLDomainIcon" valueName="FirefoxShowSSLDomainIcon" required="true">
+          <item displayName="$(string.unknown_218)">
+            <value>
+              <decimal value="1" />
+            </value>
+          </item>
+          <item displayName="$(string.unknown_219)">
+            <value>
+              <decimal value="0" />
+            </value>
+          </item>
+        </enum>
+      </elements>
+    </policy>
+    <policy name="TrustedNTLMSites" class="Machine" displayName="$(string.unknown_220)" presentation="$(presentation.TrustedNTLMSites)" key="Software\Policies\Firefox">
+      <parentCategory ref="Security" />
+      <supportedOn ref="SUPPORTED_WindowsVista" />
+      <elements>
+        <text id="TrustedSites" valueName="FirefoxTrustedNTLM" />
+      </elements>
+    </policy>
+    <policy name="SitesAllowedIntegratedAuthentication" class="Machine" displayName="$(string.unknown_222)" explainText="$(string.IntAuth_Explain)" presentation="$(presentation.SitesAllowedIntegratedAuthentication)" key="Software\Policies\Firefox">
+      <parentCategory ref="Security" />
+      <supportedOn ref="SUPPORTED_WindowsVista" />
+      <elements>
+        <text id="TrustedSites" valueName="FirefoxTrustedAuth" />
+        <text id="DelegatedToServerAuthorisation" valueName="FirefoxDelegatedAuth" />
+      </elements>
+    </policy>
+    <policy name="DisableSecurityCheckforlocalURLs" class="Machine" displayName="$(string.unknown_225)" explainText="$(string.SecCheckLocal_Explain)" presentation="$(presentation.DisableSecurityCheckforlocalURLs)" key="Software\Policies\Firefox" valueName="FirefoxSecurityCheckLoadUri">
+      <parentCategory ref="Security" />
+      <supportedOn ref="SUPPORTED_WindowsVista" />
+      <enabledValue>
+        <decimal value="1" />
+      </enabledValue>
+      <disabledValue>
+        <decimal value="0" />
+      </disabledValue>
+    </policy>
+    <policy name="DisablePasswordRemembering" class="Machine" displayName="$(string.unknown_226)" presentation="$(presentation.DisablePasswordRemembering)" key="Software\Policies\Firefox" valueName="FirefoxPasswordRememberState">
+      <parentCategory ref="Security" />
+      <supportedOn ref="SUPPORTED_WindowsVista" />
+      <enabledValue>
+        <decimal value="0" />
+      </enabledValue>
+      <disabledValue>
+        <decimal value="1" />
+      </disabledValue>
+    </policy>
+    <policy name="DisableIDNs" class="Machine" displayName="$(string.unknown_227)" presentation="$(presentation.DisableIDNs)" key="Software\Policies\Firefox">
+      <parentCategory ref="Security" />
+      <supportedOn ref="SUPPORTED_WindowsVista" />
+      <elements>
+        <enum id="PreferenceState" valueName="FirefoxIDNStateType" required="true">
+          <item displayName="$(string.unknown_229)">
+            <value>
+              <string>locked</string>
+            </value>
+          </item>
+          <item displayName="$(string.unknown_231)">
+            <value>
+              <string>default</string>
+            </value>
+          </item>
+        </enum>
+        <enum id="IDNState" valueName="FirefoxIDNState" required="true">
+          <item displayName="$(string.unknown_234)">
+            <value>
+              <decimal value="0" />
+            </value>
+          </item>
+          <item displayName="$(string.unknown_235)">
+            <value>
+              <decimal value="1" />
+            </value>
+          </item>
+        </enum>
+      </elements>
+    </policy>
+    <policy name="DisableTLSSSL2AndSSL3" class="Machine" displayName="$(string.unknown_236)" presentation="$(presentation.DisableTLSSSL2AndSSL3)" key="Software\Policies\Firefox" valueName="FirefoxSSLState">
+      <parentCategory ref="Security" />
+      <supportedOn ref="SUPPORTED_WindowsVista" />
+      <enabledValue>
+        <decimal value="0" />
+      </enabledValue>
+      <disabledValue>
+        <decimal value="1" />
+      </disabledValue>
+    </policy>
+    <policy name="Javascript" class="Machine" displayName="$(string.unknown_237)" presentation="$(presentation.Javascript)" key="Software\Policies\Firefox">
+      <parentCategory ref="Security" />
+      <supportedOn ref="SUPPORTED_WindowsVista" />
+      <elements>
+        <enum id="PreferenceState" valueName="FirefoxJavascriptStateType" required="true">
+          <item displayName="$(string.unknown_239)">
+            <value>
+              <string>locked</string>
+            </value>
+          </item>
+          <item displayName="$(string.unknown_241)">
+            <value>
+              <string>default</string>
+            </value>
+          </item>
+        </enum>
+        <enum id="JavascriptState" valueName="FirefoxJavascriptState" required="true">
+          <item displayName="$(string.unknown_244)">
+            <value>
+              <decimal value="1" />
+            </value>
+          </item>
+          <item displayName="$(string.unknown_245)">
+            <value>
+              <decimal value="0" />
+            </value>
+          </item>
+        </enum>
+      </elements>
+    </policy>
+    <policy name="Java" class="Machine" displayName="$(string.unknown_246)" presentation="$(presentation.Java)" key="Software\Policies\Firefox">
+      <parentCategory ref="Security" />
+      <supportedOn ref="SUPPORTED_WindowsVista" />
+      <elements>
+        <enum id="PreferenceState" valueName="FirefoxJavaStateType" required="true">
+          <item displayName="$(string.unknown_248)">
+            <value>
+              <string>locked</string>
+            </value>
+          </item>
+          <item displayName="$(string.unknown_250)">
+            <value>
+              <string>default</string>
+            </value>
+          </item>
+        </enum>
+        <enum id="JavaState" valueName="FirefoxJavaState" required="true">
+          <item displayName="$(string.unknown_253)">
+            <value>
+              <decimal value="1" />
+            </value>
+          </item>
+          <item displayName="$(string.unknown_254)">
+            <value>
+              <decimal value="0" />
+            </value>
+          </item>
+        </enum>
+      </elements>
+    </policy>
+    <policy name="DisableIPv6" class="Machine" displayName="$(string.unknown_255)" presentation="$(presentation.DisableIPv6)" key="Software\Policies\Firefox" valueName="FirefoxDisableIPv6">
+      <parentCategory ref="Security" />
+      <supportedOn ref="SUPPORTED_WindowsVista" />
+      <enabledValue>
+        <decimal value="1" />
+      </enabledValue>
+      <disabledValue>
+        <decimal value="0" />
+      </disabledValue>
+    </policy>
+    <policy name="DisplayWarningMessages" class="Machine" displayName="$(string.unknown_256)" presentation="$(presentation.DisplayWarningMessages)" key="Software\Policies\Firefox">
+      <parentCategory ref="Security" />
+      <supportedOn ref="SUPPORTED_WindowsVista" />
+      <elements>
+        <enum id="Iamabouttoviewanencryptedpage" valueName="FirefoxWarningEnteringSecure" required="true">
+          <item displayName="$(string.unknown_258)">
+            <value>
+              <decimal value="1" />
+            </value>
+          </item>
+          <item displayName="$(string.unknown_259)">
+            <value>
+              <decimal value="0" />
+            </value>
+          </item>
+        </enum>
+        <enum id="Iamabouttoviewapagethatuseslow-gradeencryption" valueName="FirefoxWarningEnteringWeak" required="true">
+          <item displayName="$(string.unknown_261)">
+            <value>
+              <decimal value="1" />
+            </value>
+          </item>
+          <item displayName="$(string.unknown_262)">
+            <value>
+              <decimal value="0" />
+            </value>
+          </item>
+        </enum>
+        <enum id="Ileaveanencryptedpageforonethatisntencrypted" valueName="FirefoxWarningLeavingSecure" required="true">
+          <item displayName="$(string.unknown_264)">
+            <value>
+              <decimal value="1" />
+            </value>
+          </item>
+          <item displayName="$(string.unknown_265)">
+            <value>
+              <decimal value="0" />
+            </value>
+          </item>
+        </enum>
+        <enum id="Isubmitinformationthatsnotencrypted" valueName="FirefoxWarningSubmitInsecure" required="true">
+          <item displayName="$(string.unknown_267)">
+            <value>
+              <decimal value="1" />
+            </value>
+          </item>
+          <item displayName="$(string.unknown_268)">
+            <value>
+              <decimal value="0" />
+            </value>
+          </item>
+        </enum>
+        <enum id="Imabouttoviewanencryptedpagethatcontainssomeunecryptedinformation" valueName="FirefoxWarningViewingMixed" required="true">
+          <item displayName="$(string.unknown_270)">
+            <value>
+              <decimal value="1" />
+            </value>
+          </item>
+          <item displayName="$(string.unknown_271)">
+            <value>
+              <decimal value="0" />
+            </value>
+          </item>
+        </enum>
+      </elements>
+    </policy>
+    <policy name="Accessibility" class="Machine" displayName="$(string.unknown_273)" presentation="$(presentation.Accessibility)" key="Software\Policies\Firefox">
+      <parentCategory ref="Accessibility" />
+      <supportedOn ref="SUPPORTED_WindowsVista" />
+      <elements>
+        <enum id="EnableKeyboardBrowsingUsingCaret" valueName="FirefoxCaret" required="true">
+          <item displayName="$(string.unknown_275)">
+            <value>
+              <decimal value="1" />
+            </value>
+          </item>
+          <item displayName="$(string.unknown_276)">
+            <value>
+              <decimal value="0" />
+            </value>
+          </item>
+        </enum>
+      </elements>
+    </policy>
+    <policy name="SuppressFirefoxUpdatedPageAfterUpdate" class="Machine" displayName="$(string.unknown_278)" explainText="$(string.SuppressFirefoxUpdatePage_Explain)" presentation="$(presentation.SuppressFirefoxUpdatedPageAfterUpdate)" key="Software\Policies\Firefox" valueName="FirefoxSupressUpdatePage">
+      <parentCategory ref="AddinsandUpdates" />
+      <supportedOn ref="SUPPORTED_WindowsVista" />
+      <enabledValue>
+        <decimal value="1" />
+      </enabledValue>
+      <disabledValue>
+        <decimal value="0" />
+      </disabledValue>
+    </policy>
+    <policy name="AllowUpdateofFirefoxSearchEngines" class="Machine" displayName="$(string.unknown_279)" presentation="$(presentation.AllowUpdateofFirefoxSearchEngines)" key="Software\Policies\Firefox" valueName="FirefoxSearchUpdateState">
+      <parentCategory ref="AddinsandUpdates" />
+      <supportedOn ref="SUPPORTED_WindowsVista" />
+      <enabledValue>
+        <decimal value="1" />
+      </enabledValue>
+      <disabledValue>
+        <decimal value="0" />
+      </disabledValue>
+    </policy>
+    <policy name="AllowUpdateandAutoUpdateFirefoxExtensions" class="Machine" displayName="$(string.unknown_280)" presentation="$(presentation.AllowUpdateandAutoUpdateFirefoxExtensions)" key="Software\Policies\Firefox" valueName="FirefoxExtUpdateState">
+      <parentCategory ref="AddinsandUpdates" />
+      <supportedOn ref="SUPPORTED_WindowsVista" />
+      <enabledValue>
+        <decimal value="1" />
+      </enabledValue>
+      <disabledValue>
+        <decimal value="0" />
+      </disabledValue>
+    </policy>
+    <policy name="AllowUpdateandAutoUpdateFirefox" class="Machine" displayName="$(string.unknown_281)" explainText="$(string.Update_Explain)" presentation="$(presentation.AllowUpdateandAutoUpdateFirefox)" key="Software\Policies\Firefox" valueName="FirefoxUpdateState">
+      <parentCategory ref="AddinsandUpdates" />
+      <supportedOn ref="SUPPORTED_WindowsVista" />
+      <enabledValue>
+        <decimal value="1" />
+      </enabledValue>
+      <disabledValue>
+        <decimal value="0" />
+      </disabledValue>
+    </policy>
+    <policy name="ExtensionandThemeInstallation" class="Machine" displayName="$(string.unknown_282)" explainText="$(string.AddinInstall_Explain)" presentation="$(presentation.ExtensionandThemeInstallation)" key="Software\Policies\Firefox">
+      <parentCategory ref="AddinsandUpdates" />
+      <supportedOn ref="SUPPORTED_WindowsVista" />
+      <elements>
+        <enum id="PreferenceState" valueName="FirefoxXPIStateType" required="true">
+          <item displayName="$(string.unknown_284)">
+            <value>
+              <string>locked</string>
+            </value>
+          </item>
+          <item displayName="$(string.unknown_286)">
+            <value>
+              <string>default</string>
+            </value>
+          </item>
+        </enum>
+        <enum id="AllowAddinInstallation" valueName="FirefoxXPIState" required="true">
+          <item displayName="$(string.unknown_289)">
+            <value>
+              <decimal value="1" />
+            </value>
+          </item>
+          <item displayName="$(string.unknown_290)">
+            <value>
+              <decimal value="0" />
+            </value>
+          </item>
+        </enum>
+      </elements>
+    </policy>
+  </policies>
+</policyDefinitions>

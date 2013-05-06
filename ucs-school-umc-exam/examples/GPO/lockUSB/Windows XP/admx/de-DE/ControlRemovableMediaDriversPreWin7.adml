@@ -1,0 +1,40 @@
+<policyDefinitionResources revision="1.0" schemaVersion="1.0">
+  <displayName>
+  </displayName>
+  <description>
+  </description>
+  <resources>
+    <stringTable>
+      <string id="category">Spezielle Einstellungen</string>
+      <string id="categoryname">Treiber Einschränken</string>
+      <string id="policynameusb">USB Sperren</string>
+      <string id="policynamecd">CD-ROM Sperren</string>
+      <string id="policynameflpy">Floppy Sperren</string>
+      <string id="policynamels120">SuperDisk Sperren</string>
+      <string id="explaintextusb">Sperrt die USB-Schnittstellen des Computers durch Deaktivierung des usbstor.sys Treibers</string>
+      <string id="explaintextcd">Sperrt das CD-ROM-Laufwerk des Computers durch Deaktivierung des cdrom.sys Treibers</string>
+      <string id="explaintextflpy">Sperrt das Diskettenlaufwerk des Computers durch Deaktivierung des flpydisk.sys Treibers</string>
+      <string id="explaintextls120">Sperrt SuperDisk-Laufwerk des Computers durch Deaktivierung des sfloppy.sys Treibers</string>
+      <string id="labeltextusb">USB Sperren</string>
+      <string id="labeltextcd">CD-ROM Sperren</string>
+      <string id="labeltextflpy">Floppy Sperren</string>
+      <string id="labeltextls120">SuperDisk Sperren</string>
+      <string id="Enabled">Gesperrt</string>
+      <string id="Disabled">Nicht Gesperrt</string>
+    </stringTable>
+    <presentationTable>
+      <presentation id="policynameusb">
+        <dropdownList refId="labeltextusb" defaultItem="0">USB-Schnittstellen Sperren</dropdownList>
+      </presentation>
+      <presentation id="policynamecd">
+        <dropdownList refId="labeltextcd" defaultItem="0">CD-ROM-Laufwerk Sperren</dropdownList>
+      </presentation>
+      <presentation id="policynameflpy">
+        <dropdownList refId="labeltextflpy" defaultItem="0">Diskettenlaufwerk Sperren</dropdownList>
+      </presentation>
+      <presentation id="policynamels120">
+        <dropdownList refId="labeltextls120" defaultItem="0">SuperDisk-Laufwerk Sperren</dropdownList>
+      </presentation>
+    </presentationTable>
+  </resources>
+</policyDefinitionResources>
