@@ -8,7 +8,7 @@ REPOUSER=""
 REPODIR="/root/mingw-repo"
 BUILDDIR="/root/src/italc"
 CROSSCOMPILER="192.168.0.10:/var/univention/buildsystem2/contrib/iTALC-mingw/*/*.deb"
-SVN_ITALC="svn+ssh://192.168.0.3/var/svn/dev/branches/ucs-3.1/ucs-school-r2/italc-windows"
+SVN_ITALC="192.168.0.3/var/svn/dev/branches/ucs-3.1/ucs-school-r2/italc-windows"
 TIMESERVER="192.168.0.3"
 
 #
@@ -28,6 +28,7 @@ fi
 #
 if [ ! -d "$REPODIR" ] ; then
 	mkdir -p "$REPODIR"
+	echo "Please enter ${REPOUSER}'s password for scp access to the crosscompiler:"
 	scp "${REPOUSER}@${CROSSCOMPILER}" "$REPODIR"
 	cd "$REPODIR"
 	apt-ftparchive packages . > Packages
@@ -47,7 +48,8 @@ apt-get install -y --force-yes git subversion cmake nsis tofrodos mingw32-x-gcc 
 #
 rm -Rf "$BUILDDIR"
 mkdir -p "$(dirname "$BUILDDIR")"
-svn checkout --username "$REPOUSER" "${SVN_ITALC}" "$BUILDDIR"
+echo "Please enter ${REPOUSER}'s password for SVN checkout:"
+svn checkout "svn+ssh://${REPOUSER}@${SVN_ITALC}" "$BUILDDIR"
 
 #
 # build win32 version
