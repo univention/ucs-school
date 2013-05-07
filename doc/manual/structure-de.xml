@@ -1,0 +1,153 @@
+<chapter id="structure">
+	<title>Aufbau einer &ucsUAS;-Umgebung</title>
+	<para>
+		&ucsUCS; (UCS) bietet ein plattformübergreifendes Domänenkonzept mit
+		einem gemeinsamen Vertrauenskontext zwischen Linux- und
+		Windows-Systemen. Innerhalb einer UCS-Domäne ist ein Benutzer mit seinem
+		Benutzernamen und Passwort auf allen Systemen bekannt, und kann für
+		ihn freigeschaltete Dienste nutzen.
+	</para>
+	<para>
+		&ucsUAS; baut auf das flexible Domänenkonzept von UCS auf und integriert
+		einige schulspezifische Erweiterungen.
+	</para>
+
+	<section>
+		<title>&ucsUAS;-Benutzerrollen</title>
+		<para>
+			In einer Standard-UCS-Installation sind alle Benutzerkonten vom selben
+			Typ und unterscheiden sich nur anhand ihrer Gruppenmitgliedschaften.
+			In einer &ucsUAS;-Umgebung ist jeder Benutzer einer <emphasis>Rolle</emphasis>
+			zugeordnet, aus der sich Berechtigungen in der &ucsUAS;-Verwaltung
+			ergeben:
+		</para>
+		<itemizedlist>
+			<listitem>
+				<simpara>
+					<emphasis>Schülern</emphasis> wird in der Standardeinstellung kein Zugriff auf
+					die Administrationsoberflächen gewährt. Sie können sich mit ihren Benutzerkonten
+					nur an Windows-Clients anmelden und die für sie freigegebenen
+					Dateifreigaben und Drucker verwenden.
+				</simpara>
+			</listitem>
+			<listitem>
+				<simpara>
+					<emphasis>Lehrer</emphasis> erhalten gegenüber Schülern zusätzliche
+					Rechte, um z.B. auf UMC-Module zuzugreifen, die das
+					Zurücksetzen von Schülerpasswörtern oder das Auswählen von
+					Internetfiltern ermöglichen. Die einem Lehrer angezeigten Module können
+					individuell definiert werden, Lehrer erhalten in der Regel aber nur Zugriff
+					auf einen Teil der von der &ucsUMC; bereitgestellten Funktionen.
+				</simpara>
+			</listitem>
+			<listitem>
+				<simpara>
+					Vollen Zugriff auf die Administrationsfunktionen von &ucsUAS;
+					erhalten die <emphasis>Schuladministratoren</emphasis>. Sie können z.B. Computer zu
+					Rechnergruppen zusammenfassen, neue Internetfilter definieren oder
+					auch Lehrerpasswörter zurücksetzen.
+				</simpara>
+			</listitem>
+			<listitem>
+				<simpara>
+					Der Benutzertyp <emphasis>Mitarbeiter</emphasis> kommt häufig im Umfeld der
+					Schulverwaltung zum Einsatz. Er besitzt in der Standardeinstellung
+					ähnliche Zugriffsrechte wie ein Schülerkonto, kann jedoch mit
+					zusätzlichen Rechten ausgestattet werden.
+				</simpara>
+			</listitem>
+			<listitem>
+				<simpara>
+					Die <emphasis>System-Administratoren</emphasis> sind Mitarbeiter mit vollem
+					administrativen Zugriff auf die &ucsUAS;-Systeme, also beispielweise
+					ein IT-Dienstleister, der die Schule beim Betrieb der Server
+					unterstützt.
+				</simpara>
+			</listitem>
+		</itemizedlist>
+		<para>
+			Überschneidungen der Benutzertypen Lehrer, Mitarbeiter und
+			Schuladministrator sind möglich. So können z.B. Benutzerkonten
+			erstellt werden, die eine Nutzung des Kontos als Lehrer und
+			Mitarbeiter ermöglichen.
+		</para>
+		<para>
+			Für die Pflege der Benutzerkonten stehen mehrere Möglichkeiten zur
+			Verfügung. Die Bearbeitung von Benutzerkonten kann über die &ucsUMC; erfolgen.
+			Darüber hinaus bringt &ucsUAS; flexible Importskripte mit. Sie lesen
+			Tabulator-getrennte Importdateien ein, die üblicherweise aus
+			vorhandenen Schulverwaltungssystemen extrahiert werden können und so
+			einen automatisierten Abgleich ermöglichen.
+		</para>
+	</section>
+
+	<section>
+		<title>Aufteilung von &ucsUAS;</title>
+		<para>
+			Für den Betrieb von &ucsUAS; an einer einzelnen Schule reicht ein
+			Serversystem aus (dieses wird dann in der UCS-Systemrolle &ucsMaster;
+			installiert).
+		</para>
+		<para>
+			Für Schulträger oder große Schulen mit mehreren Standorten oder mit einer
+			großen Anzahl an Clients, kann die &ucsUAS;-Installation auf mehrere
+			Server verteilt werden. Dabei wird ein &ucsMaster; als der primäre
+			Server zur Datenverwaltung genutzt. Für jeden Schul-Standort wird dann
+			ein &ucsSlave; installiert, nachfolgend als <emphasis>Schulserver</emphasis>
+			bezeichnet.
+		</para>
+		<para>
+		  &ucsUAS; unterstützt derzeit nur einen Schulserver pro Standort. Darüber hinaus können
+		  regulär weitere UCS-Systeme installiert und an den Schul-Standorten betrieben werden. Diese
+		  zusätzlichen UCS-Systeme können jedoch nicht in Verbindung mit UCS@school-Funktionalitäten
+		  (z.B. Klassenshares oder Druckermoderation) eingesetzt werden.
+		</para>
+
+		<section>
+			<title>Replikation der LDAP-Daten auf die Schul-Standorte</title>
+			<para>
+				Ein Schulserver bietet alle an einem Standort verwendeten Dienste an. Die
+				Anfragen an den LDAP-Verzeichnisdienst erfolgen dabei gegen einen
+				lokalen LDAP-Server, der automatisch gegen den &ucsMaster; fortlaufend repliziert
+				und aktualisiert wird. Dies gewährleistet einen reibungslosen Betrieb,
+				auch wenn die Verbindung zwischen Schulserver und dem
+				zentralen &ucsMaster; einmal ausfallen sollte.
+			</para>
+			<para>
+				Aus Sicherheitsgründen speichern die Schulservern nur eine Teilreplikation
+				des LDAP-Verzeichnisses. Nur die für den Schulserver relevanten Teile
+				(z.B. Benutzer und Gruppen der jeweiligen Schule) sowie die globalen
+				Strukturen des LDAP-Verzeichnisses werden auf den Schul-Server
+				übertragen.
+			</para>
+			<para>
+				Zur Unterteilung der im LDAP-Verzeichnisdienst hinterlegten Objekte und
+				Einstellungen wird für jede Schule im LDAP-Verzeichnis eine eigene
+				<emphasis>Organisationseinheit</emphasis> (OU) angelegt. Unterhalb dieser OU
+				werden Container für z.B. Benutzerobjekte, Gruppen, DNS- und
+				DHCP-Einstellungen, usw. angelegt. Diese OUs werden direkt unterhalb
+				der LDAP-Basis angelegt. Der Name einer OU sollte sich auf Buchstaben
+				und Ziffern sowie auf den Bindestrich beschränken, da er z.B. die
+				Grundlage für Gruppen- und Rechnernamen bildet. Häufig kommen hier
+				Schulnummern wie <emphasis>712</emphasis> oder zusammengesetzte Kürzel
+				wie <emphasis>28G01</emphasis> oder <emphasis>gymmitte</emphasis> zum Einsatz.
+			</para>
+		</section>
+	</section>
+
+	<section>
+		<title>Verwaltungsnetz vs. Edukativnetz</title>
+		<para>
+			Die Netze für den edukativen Bereich und für die Schulverwaltung
+			müssen aus organisatorischen oder rechtlichen Gründen in der Regel getrennt
+			werden. In &ucsUAS; kann daher zusätzlich zur Unterteilung in
+			Organisationseinheiten (OU) noch eine Unterteilung der OU in
+			Verwaltungsnetz und Edukativnetz erfolgen.
+		</para>
+		<para>
+			Diese optionale Unterteilung findet auf Ebene der Serversysteme bzw. der
+			Netzwerksegmente statt und sieht vor, dass mindestens ein Schulserver für das
+			edukative Netz und ein Schulserver für das Verwaltungsnetz betrieben wird.
+		</para>
+	</section>
+</chapter>

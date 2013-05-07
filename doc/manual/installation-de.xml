@@ -1,0 +1,229 @@
+<chapter>
+  <title>Installation</title>
+  <para>
+	&ucsUAS; basiert auf &ucsUCS; (UCS). &ucsUAS; wird dabei als
+	Repository-Komponente eingebunden. Die Installation von UCS ist im UCS-Handbuch
+	dokumentiert. Nachfolgend wird nur auf ggf. auftretende Unterschiede zur Grundinstallation
+	von &ucsUCS; sowie die Installation von &ucsUAS; selbst
+	eingegangen.
+  </para>
+  <para>
+	Im folgenden werden zwei Installationsvarianten beschrieben:
+	die Installation als Single-Server-Umgebung und die Installation als
+	Multi-Server-Umgebung mit einem Domänencontroller Master und mindestens einem
+	Schulserver. Single-Server-Umgebungen können auch nachträglich in
+	Multi-Server-Umgebungen umgewandelt werden, indem Schulserver in die
+	Domäne eingebunden werden.
+  </para>
+
+  <section>
+	  <title>Installation einer Single-Server-Umgebung</title>
+	  <section>
+		<title>Installation des DC Master</title>
+		<para>
+		  Bei der UCS-Installation muss die Systemrolle <emphasis>&ucsMaster;</emphasis> ausgewählt werden. Nach der
+		  UCS-Installation kann in &ucsUMC; das Modul <guimenu>App Center</guimenu> geöffnet und dort die
+		  Applikation <emphasis>&ucsUAS;</emphasis> nachinstalliert werden. Nach Abschluss der Installation
+		  wird in &ucsUMC; ein neues Modul angezeigt, mit welchem die wizardgesteuerte Konfiguration von
+		  &ucsUAS; durchgeführt wird:
+		</para>
+		  <itemizedlist>
+			<listitem>
+				<simpara>
+			  Das Konfigurationsmodul fragt auf dem DC Master zunächst nach der Art
+			  der UCS@school-Umgebung, die installiert werden soll. Hier ist das
+			  <emphasis>Single-Server-Umgebung</emphasis> auszuwählen.
+				</simpara>
+			</listitem>
+			<listitem>
+				<simpara>
+			  &ucsUAS; benötigt für die Bereitstellung von Datei- und Drucker-Freigaben den
+			  Samba-Dienst. Sofern auf dem DC Master noch kein Samba-Dienst installiert ist, kann zwischen
+			  <emphasis>Samba 3</emphasis> und <emphasis>Samba 4</emphasis> ausgewählt werden.
+				</simpara>
+			</listitem>
+			<listitem>
+				<simpara>
+			  Die Daten eines Schulservers werden in Organisationseinheiten (OU) gespeichert. Im
+			  letzten Schritt wird nach dem Bezeichner der Schule (OU) gefragt, die vom UMC-Modul im Zuge der
+			  Konfiguration automatisch angelegt wird, z.B. <emphasis>schule719</emphasis> oder
+			  <emphasis>gymnasium_mitte</emphasis>.
+				</simpara>
+			</listitem>
+		  </itemizedlist>
+		<para>
+		  Während der Konfiguration werden benötigte Softwarepakete automatisch mitinstalliert.
+		  Somit sind nach der Konfiguration alle für die Datenpflege und Steuerung von
+		  &ucsUAS; benötigten Pakete auf dem DC Master zugreifbar.
+		  <figure id="install-via-appcenter">
+			<title>Installation von &ucsUAS; über das Univention App Center</title>
+			<graphic scalefit="1" width="97%" align="center" fileref="illustrations/appcenter_ucsschool.png"/>
+		  </figure>
+		</para>
+		<para>
+		  Installation und Konfiguration von &ucsUAS; sollten mit einem Neustart des Systems abgeschlossen werden.
+		  Im Anschluss kann die weitere Konfguration der Schule vorgenommen werden, siehe <xref linkend="setup-school"/>.
+		</para>
+		<!--KOMMENTAR: Die Schul-OU wurde schon angelegt!
+		<para>
+		  Bevor nach dem Neustart weitere Konfigurationen vorgenommen werden können, muss der Name
+		  der Schule eingerichtet werden, siehe <xref linkend="school:schoolcreate"/>.
+		</para>
+		-->
+	  </section>
+	</section>
+
+	<section id="school:installation:master2">
+	  <title>Installation einer Multi-Server-Umgebung</title>
+	  <section>
+		<title>Installation des DC Master</title>
+		<para>
+		  Bei der UCS-Installation muss die Systemrolle <emphasis>&ucsMaster;</emphasis> ausgewählt werden. Nach der
+		  UCS-Installation kann in &ucsUMC; das Modul <guimenu>App Center</guimenu> geöffnet und dort die
+		  Applikation <emphasis>&ucsUAS;</emphasis> nachinstalliert werden. Nach Abschluss der Installation
+		  wird in &ucsUMC; ein neues Modul angezeigt, mit welchem die wizardgesteuerte Konfiguration von
+		  &ucsUAS; durchgeführt wird:
+		</para>
+		  <itemizedlist>
+			<listitem>
+				<simpara>
+			  Das Konfigurationsmodul fragt auf dem DC Master zunächst nach der Art
+			  der UCS@school-Umgebung, die installiert werden soll. Hier ist der Eintrag
+			  <emphasis>Multi-Server-Umgebung</emphasis> auszuwählen.
+				</simpara>
+			</listitem>
+			<listitem>
+				<simpara>
+			  Weitere Konfigurationsoptionen werden in einer Multi-Server-Umgebung auf dem DC Master nicht benötigt.
+				</simpara>
+			</listitem>
+		  </itemizedlist>
+		<para>
+		  Während der Konfiguration werden benötigte Softwarepakete automatisch mitinstalliert.
+		  Somit sind nach der Konfiguration alle für die Datenpflege benötigten Pakete
+		  auf dem DC Master zugreifbar.
+		</para>
+		<para>
+		  Installation und Konfiguration von &ucsUAS; sollten mit einem Neustart des Systems abgeschlossen werden.
+		</para>
+	  </section>
+
+	  <section>
+		<title>Installation eines DC Backup (optional)</title>
+		<para>
+		  Auf Servern mit der Rolle <emphasis>&ucsBackup;</emphasis> (kurz DC Backup) werden alle Domänendaten und
+		  SSL-Sicherheitszertifikate als Nur-Lese-Kopie gespeichert.
+		</para>
+		<para>
+		  Ein DC Backup dient als Fallback-System des DC Master. Sollte dieser ausfallen, kann ein DC Backup
+		  die Rolle des DC Master dauerhaft übernehmen. Der Einsatz eines DC Backup ist optional.
+		</para>
+		<note>
+			<para>
+		  Sofern DC Backup-Systeme in der Domäne vorhanden sind, sollte dort ebenfalls &ucsUAS;
+		  installiert werden, um bei einem dauerhaften Ausfall des DC Masters Probleme (z.B. mit den
+		  LDAP-Schemata) zu vermeiden.
+			</para>
+		</note>
+		<para>
+		  Die Installation von &ucsUAS; auf einem DC Backup erfolgt analog zur in <xref
+		  linkend="school:installation:master2"/> beschriebenen Installation des DC Master.
+		</para>
+	  </section>
+
+	  <section>
+		  <title>Installation eines Schulserver</title>
+		  <para>
+			  An jedem Schul-Standort muss ein Schulserver installiert werden.
+		  </para>
+		  <para>
+			  Bei der UCS-Installation muss die Systemrolle <emphasis>&ucsSlave;</emphasis> (kurz DC
+			  Slave) ausgewählt werden. Nach der UCS-Installation kann in &ucsUMC; das Modul <guimenu>App
+			  Center</guimenu> geöffnet und dort die Applikation <emphasis>&ucsUAS;</emphasis> nachinstalliert
+			  werden. Nach Abschluss der Installation wird in &ucsUMC; ein neues Modul angezeigt, mit welchem
+			  die wizardgesteuerte Konfiguration von &ucsUAS; auf dem DC Slave durchgeführt wird:
+		  </para>
+			  <itemizedlist>
+				<listitem>
+					<simpara>
+				  Das Konfigurationsmodul kann auf einem DC Slave nur dann
+				  erfolgreich durchlaufen werden, wenn die Konfiguration des DC Masters bereits über das dort
+				  installierte Konfigurationsmodul abgeschlossen wurde.
+					</simpara>
+				</listitem>
+				<listitem>
+					<simpara>
+				  Nach der Konfiguration ist es erforderlich, dass der DC Slave erneut der Domäne
+				  beitritt. Im zweiten Schritt werden die für den erneuten Beitritt notwendigen Anmeldedaten
+				  (Benutzername, Passwort) abgefragt. Hier kann der Benutzer <emphasis>Administrator</emphasis> oder
+				  ein Mitglieder der Gruppe <emphasis>Domain Admins</emphasis> angegeben werden. Der vollqualifizierte
+				  Rechnername (FQDN) des DC Masters wird üblicherweise automatisch ermittelt und vorausgefüllt. Sollte
+				  dies nicht möglich sein, muss der vollständige Rechnername inkl. DNS-Domäne angegeben werden,
+				  z.B. master.example.com.
+					</simpara>
+				</listitem>
+				<listitem>
+					<simpara>
+				  &ucsUAS; benötigt für die Bereitstellung von Datei- und Drucker-Freigaben den
+				  Samba-Dienst. Sofern auf dem DC Master noch kein Samba-Dienst installiert ist, kann zwischen
+				  <emphasis>Samba 3</emphasis> und <emphasis>Samba 4</emphasis> ausgewählt werden.
+					</simpara>
+				</listitem>
+				<listitem>
+					<simpara>
+				  Die Daten eines Schulservers werden in Organisationseinheiten (OU) gespeichert. Im
+				  letzten Schritt wird nach dem Bezeichner der Schule (OU) gefragt, die im Zuge der Konfiguration
+				  automatisch für diesen Schulserver angelegt werden soll, z.B. <emphasis>schule719</emphasis> oder
+				  <emphasis>gymnasium_mitte</emphasis>.
+					</simpara>
+				</listitem>
+			  </itemizedlist>
+		  <para>
+			  Während der Konfiguration werden benötigte Softwarepakete automatisch mitinstalliert
+			  und ein erneuter Domänenbeitritt durchgeführt. Somit sind nach der Konfiguration
+			  alle für die Steuerung von &ucsUAS; benötigten Pakete auf dem DC Slave zugreifbar.
+		  </para>
+		  <para>
+			Wurde während der Installation des DC Slaves ein DHCP-Server installiert, verschiebt der
+			&ucsUAS;-Konfigurationsassistent das DHCP-Server-Objekt des DC Slaves (zu finden unter
+			<command>cn=dhcp,<replaceable>LDAPBASIS</replaceable></command>) automatisch in den entsprechenden
+			DHCP-Container der OU
+			(<command>cn=dhcp,ou=<replaceable>OUNAME</replaceable>,<replaceable>LDAPBASIS</replaceable></command>).
+			Dies ist es für die korrekte Funktion des DHCP-Servers notwendig, da jeder Schulserver eine
+			individuelle LDAP-Suchbasis verwendet.
+		  </para>
+		  <para>
+			  Installation und Konfiguration von &ucsUAS; sollten mit einem Neustart des Systems abgeschlossen werden.
+		  </para>
+	  </section>
+	</section>
+
+	<section id="school:installation:domjoin">
+	  <title>Domänenbeitritt eines Schulservers</title>
+	  <para>
+	    Die Einrichtung eines Schulservers ist auch ohne das oben beschriebene UMC-Konfigurationsmodul möglich,
+		bzw. notwendig, wenn während des Konfigrationsprozesses Probleme auftreten sollten.
+		Dazu müssen die in diesem Abschnitt beschriebenen Schritte manuell durchgeführt werden.
+	  </para>
+	  <para>
+		Vor dem Domänenbeitritt des Schulservers muss die Organisationseinheit des Schulservers in der
+		&ucsUMC; des DC Masters angelegt werden (siehe <xref linkend="school:schoolcreate"/>).
+	  </para>
+	  <para>
+		Anschließend muss das System erneut der Domäne beitreten. Dies erfolgt auf der Kommandozeile
+		durch Aufruf des Befehls <command>univention-join</command>.
+	  </para>
+	  <para>
+		Der &ucsMaster; wird im Regelfall durch eine DNS-Abfrage ermittelt. Wenn das nicht möglich
+		sein sollte, kann der Rechnername des DC Master auch durch den Parameter <command>-dcname
+		<replaceable>HOSTNAME</replaceable></command> direkt angegeben werden. Der Rechnername muss dabei als vollqualifizierter Name
+		angegeben werden, also beispielsweise <emphasis>master.schule.de</emphasis>.
+	  </para>
+	  <para>
+		Als Join-Account wird ein Benutzerkonto bezeichnet, das berechtigt ist, Systeme der UCS-Domäne
+		hinzuzufügen. Standardmäßig ist dies der Benutzer <emphasis>Administrator</emphasis> oder ein
+		Mitglied der Gruppe <emphasis>Domain Admins</emphasis>. Der Join-Account kann durch den Parameter
+		<command>-dcaccount <replaceable>ACCOUNTNAME</replaceable></command> an <command>univention-join</command> übergeben werden.
+	  </para>
+	</section>
+</chapter>

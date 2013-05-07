@@ -1,0 +1,670 @@
+<chapter>
+	<title>Konfiguration des Klassenarbeitsmodus</title>
+	<para>
+		Der Klassenarbeitsmodus ermöglicht die gezielte Einschränkung der
+		Möglichkeiten der Computernutzung für Schüler einer Klasse.
+		Über das UMC-Modul für den Klassenarbeitsmodus kann ein Lehrer
+		einen Klassenraum für die exklusive Nutzung durch bestimmte Gruppen
+		auswählen. Für die Dauer des Klassenarbeitsmodus werden die ausgewählten
+		Schüler und Räume in eine speziell benannte Gruppe aufgenommen, für die
+		z.B. über Windows-Gruppenrichtlinien spezifische Einschränkungen für
+		die Benutzung von Windows-Rechnern im gewählten Raum definiert werden können,
+		wie z.B. die Vorgabe eines Proxy-Servers zur Filterung des Internetzugriffs,
+		die Einschränkung den Zugriffs auf USB-Speicher und andere Wechselmedien
+		oder auch die Sperrung bestimmter Programme.
+	</para>
+	<para>
+		Der Klassenarbeitsmodus bietet darüber hinaus auch einen direkten Zugriff
+		auf die Funktionalitäten der Materialverteilung.
+	</para>
+
+	<section>
+		<title>Beispiele für Gruppenrichtlinien</title>
+		<para>
+			Gruppenrichlinien werden von einem Windows System aus mit Hilfe der Gruppenrichtlinienverwaltung (GPMC) angelegt und bearbeitet.
+			Im Folgenden ist die Konfiguration der Gruppenrichtlinien von einem Windows 7 System aus beschrieben auf dem dazu die Gruppenrichtlinienverwaltung (GPMC) aus den Remote System Administration Tools (RSAT) installiert sein muss.
+		</para>
+		<para>
+		Alle Gruppenrichtlinieneinstellungen können je nach Bedarf gesammelt über ein Gruppenrichtlinienobjekt vorgenommen werden oder auf separate Objekte verteilt werden. Um den Bezug zwischen einem ausgewählten Gruppenrichtlinienobjekt und Objekten im Samba-Verzeichnisdienst herzustellen, kann es mit einer Organisationseinheit (OU) verknüpft werden, z.B. der Schul-OU. Einige der hier beispielhaft beschriebenen Gruppenrichtlinieneinstellungen wirken sich nur auf Benutzer- und andere nur auf Computer-Konten aus. Da die Einstellungen eines Gruppenrichtlinienobjekts nur für Objekte ausgewertet werden, die unterhalb des speziellen Verzeichniszweigs liegen, mit dem es verknüpft wurde, ist es wichtig, dass das entsprechende Gruppenrichtlinienobjekt hinreichend hoch in der hierarchischen Objektordnung verknüpft wird.
+		</para>
+		<para>
+			Einige der genannten Gruppenrichtlinien-Einstellungen beziehen sich auf den Bereich der Computerkonfiguration und werden nur beim Systemstart korrekt von den entsprechenden Windows-Komponenten ausgewertet. Für solche Einstellungen ist daher ein Reboot der Windows-Arbeitsplatzsysteme nach Aktivierung des Klassenarbeitsmodus zu empfehlen.
+		</para>
+		<note>
+			Zu diesem Thema ist auch ein Hinweis von Microsoft zu Windows XP Systemen zu beachten: <quote>Jede Version von Windows XP Professional stellt eine Funktion zur Optimierung für schnelles Anmelden zur Verfügung. Computer mit diesen Betriebssystemen warten standardmäßig beim Starten nicht auf den Start des Netzwerks. Nach der Anmeldung werden die Richtlinien im Hintergrund verarbeitet, sobald das Netzwerk zur Verfügung steht. Dies bedeutet, dass der Computer bei der Anmeldung und beim Start weiterhin die älteren Richtlinieneinstellungen verwendet. Daher sind für Einstellungen, die nur beim Start oder bei der Anmeldung angewendet werden können (z. B. Softwareinstallation und Ordnerumleitung), möglicherweise nach dem Ausführen der ersten Änderung am Gruppenrichtlinienobjekt mehrere Anmeldungen durch den Benutzer erforderlich. Diese Richtlinie wird gesteuert durch die Einstellung in <filename>Computerkonfiguration\Administrative Vorlagen\System\Anmeldung\Beim Neustart des Computers und bei der Anmeldung immer 
+auf das Netzwerk warten</filename>. Diese Funktion ist in den Betriebssystemversionen von Windows 2000 oder Windows Server 2003 nicht verfügbar.</quote>
+			<footnote><para><ulink url="http://technet.microsoft.com/de-de/library/cc785665(v=ws.10).aspx"/></para></footnote>
+		</note>
+		<section>
+			<title>Windows-Anmeldung im Prüfungsraum auf Mitglieder der Klassenarbeitsgruppe beschränken</title>
+			<para>
+				Da das im folgenden konfigurierte Gruppenrichtlinienobjekt je nach Verknüpfung im Samba-Verzeichnisdienst die Anmeldung an betroffenen Windows-Arbeitsplatzsystemen einschränkt, ist dringen empfohlen als Erstes die Anwendung der neuen Gruppenrichtlinie auf solche Windows-Arbeitsplatzsysteme einzuschränken, auf die sie sich später im Klassenarbeitsmodus auswirken soll. Dies geschieht am einfachsten über die Anpassung der Sicherheitsfilterung, die im Folgenden beschrieben ist:
+			</para>
+			<section>
+				<title>Anwendungsbereich der GPO auf Klassenarbeitscomputer einschränken</title>
+				<itemizedlist>
+					<listitem>
+						In der Gruppenrichtlinienverwaltung wird ein neues Gruppenrichtlinienobjekt angelegt und/oder eine existierende zur Bearbeitung geöffnet.
+					</listitem>
+					<listitem>
+						Richtlinie <emphasis>Lokal anmelden zulassen</emphasis> öffnen
+					</listitem>
+					<listitem>
+						In der Baumdarstellung der Gruppenrichtlinienverwaltung die Gruppenrichtlinie anklicken,
+					</listitem>
+					<listitem>
+						Auf dem geöffneten Reiter <emphasis>Bereich</emphasis> im Abschnitt <emphasis>Sicherheitsfilterung</emphasis> die Schaltfläche <emphasis>Hinzufügen</emphasis> betätigen,
+					</listitem>
+					<listitem>
+						In das Eingabefeld <emphasis>Geben Sie die zu verwendenden Objektnamen ein</emphasis> den Namen der Klassenarbeitsgruppe, z.B. OUschule1-Klassenarbeit eintragen und den Dialog mit <emphasis>OK</emphasis> schliessen.
+					</listitem>
+					<listitem>
+						Auf dem geöffneten Reiter <emphasis>Bereich</emphasis> im Abschnitt <emphasis>Sicherheitsfilterung</emphasis> die Gruppe <emphasis>Authenticated Users</emphasis> auswählen und die Schaltfläche <emphasis>Entfernen</emphasis> betätigen.
+					</listitem>
+				</itemizedlist>
+			</section>
+			<section>
+				<title>Einschränkung der Windows-Anmeldung auf Klassenarbeitsbenutzerkonten</title>
+				<itemizedlist>
+					<listitem>
+						In der Gruppenrichtlinienverwaltung wird das Gruppenrichtlinienobjekt zur Bearbeitung geöffnet (Kontextmenü des GPO in der Baumdarstellung).
+					</listitem>
+					<listitem>
+						<simpara>
+							Im neu geöffneten Gruppenrichtlinienverwaltungseditor wird der folgende Zweig geöffnet:
+						</simpara>
+						<simpara>
+							<filename>Computerkonfiguration > Richtlinien > Windows-Einstellungen > Sicherheitseinstellungen > Lokale Richtlinien > Zuweisen von Benutzerrechten</filename>
+						</simpara>
+					</listitem>
+					<listitem>
+						Im neu geöffneten Richtlinien-Dialog <emphasis>Eigenschaften von Lokal anmelden zulassen</emphasis> auf dem Reiter <emphasis>Sicherheitsrichtlinie</emphasis> die Option <emphasis>Diese Richtlinieneinstellung definieren</emphasis> aktivieren,
+					</listitem>
+					<listitem>
+						dann die Schaltfläche <emphasis>Benutzer oder Gruppe hinzufügen</emphasis> betätigen,
+					</listitem>
+					<listitem>
+						Im neu geöffneten Dialog die Schaltfläche <emphasis>Durchsuchen</emphasis> betätigen,
+					</listitem>
+					<listitem>
+						In das Eingabefeld <emphasis>Geben Sie die zu verwendenden Objektnamen ein</emphasis> den Namen <emphasis>Administratoren</emphasis> eintragen und den Dialog mit <emphasis>OK</emphasis> schliessen.
+					</listitem>
+					<listitem>
+						Den Dialog <emphasis>Benutzer oder Gruppe hinzufügen</emphasis> ebenfalls mit <emphasis>OK</emphasis> schliessen.
+					</listitem>
+					<listitem>
+						Erneut die Schaltfläche <emphasis>Benutzer oder Gruppe hinzufügen</emphasis> betätigen,
+					</listitem>
+					<listitem>
+						Im neu geöffneten Dialog die Schaltfläche <emphasis>Durchsuchen</emphasis> betätigen,
+					</listitem>
+					<listitem>
+						In das Eingabefeld <emphasis>Geben Sie die zu verwendenden Objektnamen ein</emphasis> den Namen der Klassenarbeitsgruppe, z.B. OUschule1-Klassenarbeit eintragen und den Dialog mit <emphasis>OK</emphasis> schliessen.
+					</listitem>
+					<listitem>
+						Den Dialog <emphasis>Benutzer oder Gruppe hinzufügen</emphasis> ebenfalls mit <emphasis>OK</emphasis> schliessen.
+					</listitem>
+					<listitem>
+						Den Richtlinien-Dialog <emphasis>Eigenschaften von Lokal anmelden zulassen</emphasis> mit <emphasis>OK</emphasis> schliessen.
+					</listitem>
+				</itemizedlist>
+			</section>
+		</section>
+
+
+		<section>
+			<title>Zugriff auf USB-Speicher und Wechselmedien Einschränken</title>
+			<para>
+				Zur Einschränkung des Zugriffs auf USB-Speicher und Wechselmedien sind je nach Windowsversion zwei Fälle zu beachten, einerseits die Einschränkung der Benutzung bereits installierter Gerätetreiber und andererseits die Einschränkung der Installation neuer Gerätetreiber.
+			</para>
+			<para>
+				Während für Windows XP beide Einschränkungen notwendig sind, bietet Windows 7 durch erweiterte Richtlinien vereinfachte und erweiterte Kontrollmöglichkeiten. In Mischumgebungen ist eine Kombination der skizzierten Einstellungen zu empfehlen.
+			</para>
+			<note>
+				Die Liste der hier erwähnten Einstellungen erhebt nicht den Anspruch der Vollständigkeit. Es ist notwendig die Einstellungen entsprechend der lokalen Gegebenheiten zu testen. Insbesondere sollte folgende Microsoft-Dokumentation beachtet werden:
+				<itemizedlist>
+					<listitem>
+						<ulink url="http://technet.microsoft.com/de-de/library/hh125922%28v=ws.10%29.aspx"/>.
+					</listitem>
+				</itemizedlist>
+			</note>
+			<section>
+				<title>Zugriff auf USB-Speicher an Windows XP Einschränken</title>
+				<para>
+					Diese Richtlinie wird über eine Administrative Vorlage (ADMX) definiert, die in Microsoft Knowledgebase Artikel 555324.
+					<footnote><para><ulink url="http://support.microsoft.com/kb/555324"/></para></footnote> beschrieben ist.
+					Erst nach Einbinden der Administrative Vorlage (ADMX) können folgende Einstellungen getroffen werden.
+					Beispiele für ADMX Dateien liegen unter <filename>/usr/share/doc/ucs-school-umc-exam/examples/GPO</filename>.
+				</para>
+				<itemizedlist>
+					<listitem>
+						In der Gruppenrichtlinienverwaltung wird ein neues Gruppenrichtlinienobjekt angelegt und/oder eine existierende zur Bearbeitung geöffnet.
+					</listitem>
+					<listitem>
+						<simpara>
+							Im Gruppenrichtlinienverwaltungseditor wird der folgende Zweig geöffnet:
+						</simpara>
+						<simpara>
+							<filename>Computerkonfiguration > Richtlinien > Administrative Vorlagen > Spezielle Einstellungen > Treiber Einschränken</filename>
+						</simpara>
+					</listitem>
+					<listitem>
+						Richtlinie <emphasis>USB Sperren</emphasis> öffnen, <emphasis>Aktiviert</emphasis> auswählen und mit <emphasis>OK</emphasis> bestätigen.
+					</listitem>
+				</itemizedlist>
+				<note>
+					Hier stehen auch weitere Gerätetypen zur Auswahl, z.B. CD-ROM Laufwerke.
+				</note>
+			</section>
+			<section>
+				<title>Installation neuer Gerätetreiber für USB-Speicher an Windows XP verbieten</title>
+				<para>
+					Diese Richtlinie definiert eingeschränkte Dateisystemberechtigungen gemäss Microsoft Knowledgebase Artikel 823732
+					<footnote><para><ulink url="http://support.microsoft.com/kb/823732"/></para></footnote>.
+				</para>
+				<itemizedlist>
+					<listitem>
+						In der Gruppenrichtlinienverwaltung wird ein neues Gruppenrichtlinienobjekt angelegt und/oder eine existierende zur Bearbeitung geöffnet.
+					</listitem>
+					<listitem>
+						<simpara>
+							Im Gruppenrichtlinienverwaltungseditor wird der folgende Zweig geöffnet:
+						</simpara>
+						<simpara>
+							<filename>Computerkonfiguration > Richtlinien > Windows-Einstellungen > Sicherheitseinstellungen > Dateisystem</filename>
+						</simpara>
+					</listitem>
+					<listitem>
+						Rechtsklick <emphasis>Datei hinzufügen...</emphasis>
+					</listitem>
+					<listitem>
+						Das Verzeichnis <filename>C:\Windows\Inf</filename> ansteuern und dort die Datei <filename>usbstor.inf</filename> auswählen und mit <emphasis>OK</emphasis> bestätigen (ggf. wird die Dateiendung <emphasis>.inf</emphasis> nicht mit angezeigt).
+					</listitem>
+					<listitem>
+						In dem neu geöffneten Dialog <emphasis>Datenbanksicherheit für ...</emphasis>  in der oberen Liste <emphasis>Gruppen- oder Benutzernamen</emphasis> die Schaltfläche <emphasis>Hinzufügen</emphasis> betätigen und den Namen der Klassenarbeitsgruppe hinzufügen,
+					</listitem>
+					<listitem>
+						in der darunter angezeigten Liste <emphasis>Berechtigungen für ...</emphasis> in der Zeile <emphasis>Vollzugriff</emphasis>, Spalte <emphasis>Verweigern</emphasis> ein Häkchen setzen und mit <emphasis>OK</emphasis> bestätigen.
+					</listitem>
+					<listitem>
+						Den Dialog <emphasis>Datenbanksicherheit für ...</emphasis> mit <emphasis>OK</emphasis> schliessen.
+					</listitem>
+					<listitem>
+						Das neue Dialogfenster <emphasis>Windows-Sicherheit</emphasis> mit <emphasis>Ja</emphasis> bestätigen.
+					</listitem>
+					<listitem>
+						Das neue Dialogfenster <emphasis>Objekt hinzufügen</emphasis> mit <emphasis>OK</emphasis> schliessen.
+					</listitem>
+					<listitem>
+						Analog sollten Einstellungen für <filename>%SystemRoot%\inf\usbstor.pnf</filename> und <filename>%SystemRoot%\system32\drivers\usbstor.sys</filename> definiert werden.
+					</listitem>
+				</itemizedlist>
+			</section>
+			<section>
+				<title>Zugriff auf USB-Speicher an Windows 7 Einschränken</title>
+				<itemizedlist>
+					<listitem>
+						In der Gruppenrichtlinienverwaltung wird ein neues Gruppenrichtlinienobjekt angelegt und/oder eine existierende zur Bearbeitung geöffnet.
+					</listitem>
+					<listitem>
+						<simpara>
+							Im Gruppenrichtlinienverwaltungseditor wird der folgende Zweig geöffnet:
+						</simpara>
+						<simpara>
+							<filename>Benutzerkonfiguration > Richtlinien > Administrative Vorlagen > System > Wechselmedienzugriff</filename>
+						</simpara>
+					</listitem>
+					<listitem>
+						Hier kann die Installation von Treibern für bestimmte Geräteklassen, Geräte-IDs oder alle Wechselgeräte eingeschränkt werden.
+					</listitem>
+					<listitem>
+						Die Richtlinie <emphasis>Installation von Geräten verhindern, die nicht in anderen Richtlinien beschrieben sind</emphasis> schaltet die Richtlinienlogik auf Whitelisting um.
+					</listitem>
+					<listitem>
+						Die Richtlinie <emphasis>Administratoren das Ausserkraftsetzen der Richtlinien unter ... erlauben</emphasis> erlaubt Mitgliedern der Administratorengruppe die getroffenen Einschränkungen zu umgehen.
+					</listitem>
+				</itemizedlist>
+				<note>
+					Weitere Informationen zu diesem Thema liefert z.B. <ulink url="http://technet.microsoft.com/de-de/library/cc731387%28v=ws.10%29.aspx"/>.
+				</note>
+			</section>
+			<section>
+				<title>Installation neuer Gerätetreiber für USB-Speicher an Windows 7 Clients verbieten</title>
+				<para>
+					Zusätzliche Einschränkungen zur Installation von Gerätetreibern sind auch unter Windows 7 möglich, die Einstellungsmöglichkeiten bieten eine grössere Kontrolle, setzen aber auch konkrete Erfahrungen mit den im Einzelfall eingesetzten Geräten voraus, daher ist dieser Abschnitt nur als Einstiegshilfe zu verstehen. Die folgende Einstellung würde die zusätzliche Installation jeglicher Treiber für Wechselgeräte deaktivieren. Es kann hier z.B. dann zusätzlich sinnvoll sein, Administratoren von dieser Einschränkung auszunehmen.
+				</para>
+				<itemizedlist>
+					<listitem>
+						In der Gruppenrichtlinienverwaltung wird ein neues Gruppenrichtlinienobjekt angelegt und/oder eine existierende zur Bearbeitung geöffnet.
+					</listitem>
+					<listitem>
+						<simpara>
+							Im Gruppenrichtlinienverwaltungseditor wird der folgende Zweig geöffnet:
+						</simpara>
+						<simpara>
+							<filename>Computerkonfiguration > Richtlinien > Administrative Vorlagen > System > Geräteinstallation > Einschränkungen bei der Geräteinstallation</filename>
+						</simpara>
+					</listitem>
+					<listitem>
+						Richtlinie <emphasis>Installation von Wechselgeräten verhindern</emphasis> öffnen, <emphasis>Aktiviert</emphasis> auswählen und mit <emphasis>OK</emphasis> bestätigen.
+					</listitem>
+				</itemizedlist>
+
+				<note>
+					Weitere Informationen zu diesem Thema liefert z.B. <ulink url="http://technet.microsoft.com/de-de/library/cc731387%28v=ws.10%29.aspx"/>.
+				</note>
+			</section>
+		</section>
+
+		<section>
+			<title>Vorgabe von Proxy-Einstellungen für den Internetzugriff</title>
+			<para>
+				Im folgenden sind Vorgaben für Internet Explorer, Google Chrome und Mozilla Firefox beschrieben. Während Microsoft für den Internet Explorer eigene Administrative Vorlagen zur Erstellung von Gruppenrichtlinien mitliefert, sind für Google Chrome und Mozilla Firefox jeweils eigene Administrative Vorlagen notwendig.
+			</para>
+			<para>
+				Zusätzlich zur Vorgabe einer Proxyeinstellung ist für den Klassenarbeitsmodus eine Sperrung des Benutzer-Zugriffs auf eben diese Einstellungen sinnvoll. Dazu gibt es zwei unterschiedliche Ansätze: Im Fall des Internet Explorers bietet die Administrative Vorlage die Möglichkeit, das entsprechende Einstellungsfenster zu sperren. Im Fall von Google Chrome und Mozilla Firefox werden hingegen die Proxy-Einstellungen per Gruppenrichtlinie für den Arbeitsplatzrechner vorgegeben, statt für den Benutzer, und sind dadurch z.B. für Schüler nicht mehr veränderbar. Für die beiden letztgenannten Browser ist es daher wichtig darauf zu achten, die Einstellungen wo nötig im Zweig Computerkonfiguration des Gruppenrichtlinieneditors zu treffen statt im Zweig Benutzerkonfiguration.
+			</para>
+			<section>
+				<title>Proxy-Vorgabe für den Internet Explorer</title>
+				<itemizedlist>
+					<listitem>
+						<simpara>
+							Im Gruppenrichtlinienverwaltungseditor wird der folgende Zweig geöffnet:
+						</simpara>
+						<simpara>
+							<filename>Benutzerkonfiguration > Richtlinien > Windows-Einstellungen > Internet Explorer-Wartung > Verbindung</filename>
+						</simpara>
+					</listitem>
+					<listitem>
+						Richtlinie <emphasis>Proxyeinstelungen</emphasis> öffnen, <emphasis>Aktiviert</emphasis> auswählen und bestätigen.
+					</listitem>
+					<listitem>
+						Proxyadresse für <emphasis>HTTP</emphasis>, <emphasis>Secure</emphasis> und das entsprechende <emphasis>Port</emphasis> Feld ausfüllen (Wert der &ucsUCRV; <envar>squid/httpport</envar>, Standard 3128)
+					</listitem>
+					<listitem>
+						Ggf. <emphasis>Für alle Adressen denselben Proxyserver verwenden</emphasis> aktivieren.
+					</listitem>
+				</itemizedlist>
+			</section>
+			<section>
+				<title>Sperrung der Proxyeinstellung für den Internet Explorer</title>
+				<itemizedlist>
+					<listitem>
+						<simpara>
+							Im Gruppenrichtlinienverwaltungseditor wird der folgende Zweig geöffnet:
+						</simpara>
+						<simpara>
+							<filename>Computerkonfiguration > Richtlinien > Administrative Vorlagen: Vom zentralen Computer abgerufene Richtliniendefinitionen (ADMX-Dateien) > Windows-Komponenten > Internet Explorer > Internetsystemsteuerung</filename>
+						</simpara>
+					</listitem>
+					<listitem>
+						Richtlinie <emphasis>Verbindungsseite deaktivieren</emphasis> öffnen und  <emphasis>Aktiviert</emphasis> auswählen und bestätigen.
+					</listitem>
+				</itemizedlist>
+			</section>
+			<section>
+				<title>Proxy-Vorgabe für Google Chrome</title>
+				<para>
+					Auf dem Schul-Server sollte das Verzeichnis <filename>/var/lib/samba/sysvol/DomänenNameDerUCS@schoolUmgebung/Policies/PolicyDefinitions/</filename> angelegt werden. Sobald dieses Verzeichnis angelegt ist, bevorzugt das Windows Programm zur Gruppenrichtlinienverwaltung die dort hinterlegten Administrativen Vorlagen im ADMX-Format vor den lokal auf dem Windows 7 System installierten Administrativen Vorlagen. Es ist daher zu empfehlen, nach angelegten des Verzeichnisses einmalig die lokal installierten Administrativen Vorlagen aus dem Verzeichnis <filename>C:\Windows\PolicyDefinitions</filename> in das neue Verzeichnis zu kopieren. Da das Verzeichnis server-seitig unter dem Sysvol liegt, wird es per Voreinstellung auf alle Samba 4 Server der Domäne synchronisiert. Die Administrativen Vorlagen sind an sich keine Gruppenrichtlinien, sie dienen nur zur Erweiterung der Einstellungsmöglichkeiten die das Windows Programm zur Gruppenrichtlinienverwaltung dem Administrator zur Auswahl anbietet. Für neuere Windows-
+Versionen, wie z.B. Windows 8 stellt Microsoft aktualisierte Administrative Vorlagen zum Download zur Verfügung.
+				</para>
+				<para>
+					Die Administrativen Vorlagen für Google Chrome werden durch das Zip-Archiv <filename>policy_templates.zip</filename> des Chromium-Projekts bereitgestellt. Die entprechenden Dateien liegen unter <filename>/usr/share/doc/ucs-school-umc-exam/examples/GPO</filename>.  Der Inhalt des admx-Verzeichnisses sollte in das PolicyDefinitions Verzeichnis auf den Schul-Server kopiert werden, so dass dort die Datei <filename>chrome.admx</filename> liegt. Die <filename>*.adml</filename> Dateien aus den Unterverzeichnissen müssen in gleichnamige Unterverzeichnisse unter dem PolicyDefinitions kopiert werden.
+				</para>
+				<itemizedlist>
+					<listitem>
+						In der Gruppenrichtlinienverwaltung wird ein neues Gruppenrichtlinienobjekt angelegt und/oder eine existierende zur Bearbeitung geöffnet.
+					</listitem>
+					<listitem>
+						<simpara>
+							Im Gruppenrichtlinienverwaltungseditor wird der folgende Zweig geöffnet:
+						</simpara>
+						<simpara>
+							<filename>Computerkonfiguration > Richtlinien > Administrative Vorlagen: Vom zentralen Computer abgerufene Richtliniendefinitionen (ADMX-Dateien) > Google > Google Chrome > Proxy-Server</filename>
+						</simpara>
+					</listitem>
+					<listitem>
+						Richtlinie <emphasis>Auswählen, wie Proxy-Server-Einstellungen angegeben werden</emphasis> öffnen und <emphasis>Aktiviert</emphasis> auswählen,
+					</listitem>
+					<listitem>
+						Im Dropdown <emphasis>System-Proxy-Einstellungen verwenden</emphasis> auswählen und bestätigen.
+					</listitem>
+				</itemizedlist>
+			</section>
+			<section>
+				<title>Proxy-Vorgabe für Mozilla Firefox</title>
+				<para>
+					Auf dem Schul-Server sollte das Verzeichnis <filename>/var/lib/samba/sysvol/DomänenNameDerUCS@schoolUmgebung/Policies/PolicyDefinitions/</filename> angelegt werden. Nähere Informationen sind im Abschnitt zu Google Chrome zu finden.
+				</para>
+				<para>
+					Die Administrativen Vorlagen für Mozilla Firefox werden durch das FirefoxADM-Projekt bereitgestellt. Es ist sinnvoll die dort definierten ADM-Vorlagen in das ADMX-Format umzuwandeln. Beispiele für ADMX Dateien liegen unter <filename>/usr/share/doc/ucs-school-umc-exam/examples/GPO</filename>. Der Inhalt des admx-Verzeichnisses sollte in das PolicyDefinitions Verzeichnis auf den Schul-Server kopiert werden, so dass dort die Datei <filename>firefoxlock.admx</filename> liegt. Die <filename>*.adml</filename> Dateien aus den Unterverzeichnissen müssen in gleichnamige Unterverzeichnisse unter dem PolicyDefinitions kopiert werden.
+				</para>
+				<itemizedlist>
+					<listitem>
+						In der Gruppenrichtlinienverwaltung wird ein neues Gruppenrichtlinienobjekt angelegt und/oder eine existierende zur Bearbeitung geöffnet.
+					</listitem>
+					<listitem>
+						<simpara>
+							Im Gruppenrichtlinienverwaltungseditor wird der folgende Zweig geöffnet:
+						</simpara>
+						<simpara>
+							<filename>Computerkonfiguration > Richtlinien > Administrative Vorlagen: Vom zentralen Computer abgerufene Richtliniendefinitionen (ADMX-Dateien) > Mozilla Firefox > General</filename>
+						</simpara>
+					</listitem>
+					<listitem>
+						Richtlinie <emphasis>Proxy Settings</emphasis> öffnen und <emphasis>Aktiviert</emphasis> auswählen,
+					</listitem>
+					<listitem>
+						Im Dropdown <emphasis>Preference State</emphasis> die Einstellung <emphasis>Locked</emphasis> auswählen,
+					</listitem>
+					<listitem>
+						Im Dropdown <emphasis>Proxy Setting</emphasis> die Einstellung <emphasis>Manual Proxy Configuration</emphasis> auswählen,
+					</listitem>
+					<listitem>
+						Im Feld <emphasis>Proxy Setting</emphasis> die Einstellung <emphasis>Manual Setting - HTTP Proxy</emphasis> eintragen,
+					</listitem>
+					<listitem>
+						Im Feld <emphasis>HTTP Proxy Port</emphasis> den Proxy Port eintragen (Wert der &ucsUCRV; <envar>squid/httpport</envar>, Standard 3128)
+					</listitem>
+					<listitem>
+						Den Dialog mit <emphasis>OK</emphasis> bestätigen.
+					</listitem>
+				</itemizedlist>
+				<para>
+					Da Mozilla Firefox bisher nicht selbständig die über die Administrativen Vorlagen definierten Einstellungen in der Windows-Registry berücksichtigt, ist es notwendig diese Einstellungen über ein Startup- bzw. Shutdown-Skript in Mozilla-Konfigurationsdateien übersetzen zu lassen. Das FirefoxADM-Projekt stellt diese Skripte in Form von zwei vbs-Dateien zur Verfügung. Deren Einbindung ist über die folgenden Schritt möglich.
+				</para>
+				<itemizedlist>
+					<listitem>
+						<simpara>
+							Im Gruppenrichtlinienverwaltungseditor wird der folgende Zweig geöffnet:
+						</simpara>
+						<simpara>
+							<filename>Computerkonfiguration > Windows-Einstellungen > Skripts (Start/Herunterfahren)</filename>
+						</simpara>
+					</listitem>
+					<listitem>
+						Richtlinie <emphasis>Starten</emphasis> öffnen,
+					</listitem>
+					<listitem>
+						Im Dialog <emphasis>Eigenschaften von Starten</emphasis> auf dem Reiter <emphasis>Skripts</emphasis> die Schaltfläche <emphasis>Dateien anzeigen</emphasis> betätigen,
+					</listitem>
+					<listitem>
+						In das vom automatisch geöffneten Windows Explorer angezeigte (leere) Verzeichnis (<filename>Machine\Scripts\Startup</filename> im betreffenden GPO-Verzeichis) die Datei <filename>firefox_startup.vbs</filename> kopieren und das Explorer-Fenster schliessen.
+					</listitem>
+					<listitem>
+						Im Dialog <emphasis>Eigenschaften von Starten</emphasis> die Schaltfläche <emphasis>Hinzufügen</emphasis> betätigen,
+					</listitem>
+					<listitem>
+						Im neu geöffneten Dialog <emphasis>Hinzufügen eines Skripts</emphasis> neben dem Feld <emphasis>Skriptname</emphasis> den Namen <filename>firefox_startup.vbs</filename> eintragen und Dialog mit <emphasis>OK</emphasis> bestätigen.
+					</listitem>
+					<listitem>
+						Im Dialog <emphasis>Eigenschaften von Starten</emphasis> den Dialog mit <emphasis>OK</emphasis> bestätigen.
+					</listitem>
+					<listitem>
+						Richtlinie <emphasis>Herunterfahren</emphasis> öffnen, und dort analog zu dem Vorgehen bei <emphasis>Starten</emphasis> das Skript <filename>firefox_shutdown.vbs</filename> eintragen. Im Detail also:
+					</listitem>
+					<listitem>
+						Im Dialog <emphasis>Eigenschaften von Herunterfahren</emphasis> die Schaltfläche <emphasis>Hinzufügen</emphasis> betätigen,
+					</listitem>
+					<listitem>
+						In das vom automatisch geöffneten Windows Explorer angezeigte (leere) Verzeichnis (<filename>Machine\Scripts\Shutdown</filename> im betreffenden GPO-Verzeichis) die Datei <filename>firefox_shutdown.vbs</filename> kopieren und das Explorer-Fenster schliessen.
+					</listitem>
+					<listitem>
+						Im neu geöffneten Dialog <emphasis>Hinzufügen eines Skripts</emphasis> neben dem Feld <emphasis>Skriptname</emphasis> den Namen <filename>firefox_shutdown.vbs</filename> eintragen und Dialog mit <emphasis>OK</emphasis> bestätigen.
+					</listitem>
+					<listitem>
+						Im Dialog <emphasis>Eigenschaften von Herunterfahren</emphasis> den Dialog mit <emphasis>OK</emphasis> bestätigen.
+					</listitem>
+				</itemizedlist>
+			</section>
+		</section>
+
+
+		<section>
+			<title>Zugriff auf bestimmte Programme einschränken</title>
+			<note>
+				Die Liste der hier erwähnten Einstellungen erhebt nicht den Anspruch der Vollständigkeit. Es ist notwendig die Einstellungen entsprechend der lokalen Gegebenheiten zu testen. Insbesondere sollte folgende Microsoft-Dokumentation beachtet werden:
+				<itemizedlist>
+					<listitem>
+						<ulink url="http://technet.microsoft.com/en-us/library/bb457006.aspx#EGAA"/>.
+					</listitem>
+					<listitem>
+						<ulink url="http://technet.microsoft.com/en-us/library/hh994606.aspx"/>.
+					</listitem>
+				</itemizedlist>
+			</note>
+			<section>
+				<title>Kommandoeingabeaufforderung deaktivieren</title>
+				<itemizedlist>
+					<listitem>
+						In der Gruppenrichtlinienverwaltung wird ein neues Gruppenrichtlinienobjekt angelegt und/oder eine existierende zur Bearbeitung geöffnet.
+					</listitem>
+					<listitem>
+						<simpara>
+							Im Gruppenrichtlinienverwaltungseditor wird der folgende Zweig geöffnet:
+						</simpara>
+						<simpara>
+							<filename>Benutzerkonfiguration > Richtlinien > Administrative Vorlagen > System</filename>
+						</simpara>
+					</listitem>
+					<listitem>
+						Richtlinie <emphasis>Zugriff auf Eingabeaufforderung verhindern</emphasis> öffnen und  <emphasis>Aktiviert</emphasis> auswählen und bestätigen.
+					</listitem>
+				</itemizedlist>
+			</section>
+			<section>
+				<title>Zugriff auf Windows-Registry-Editor deaktivieren</title>
+				<itemizedlist>
+					<listitem>
+						In der Gruppenrichtlinienverwaltung wird ein neues Gruppenrichtlinienobjekt angelegt und/oder eine existierende zur Bearbeitung geöffnet.
+					</listitem>
+					<listitem>
+						<simpara>
+							Im Gruppenrichtlinienverwaltungseditor wird der folgende Zweig geöffnet:
+						</simpara>
+						<simpara>
+							<filename>Benutzerkonfiguration > Richtlinien > Administrative Vorlagen > System</filename>
+						</simpara>
+					</listitem>
+					<listitem>
+						Richtlinie <emphasis>Zugriff auf Programme zum Bearbeiten der Registrierung verhindern</emphasis> öffnen
+					</listitem>
+					<listitem>
+						<emphasis>Aktiviert</emphasis> auswählen und den Dialog mit <emphasis>OK</emphasis> bestätigen.
+					</listitem>
+				</itemizedlist>
+			</section>
+			<section>
+				<title>Konfiguration von Software Restriction Policies (SRP)</title>
+				<para>
+					Aufgrund der Tiefe des Eingriffs der Software Restriction Policies ist zu empfehlen, diese zunächst in einer Testumgebung zu auszuprobieren. Bei der Analyse von Zugriffsfehlern kann die Ereignisanzeige des Windows-Clients helfen
+					<footnote id="Application_Whitelisting_Using_SRP">
+						<para>
+							Weitere sinnvolle Hinweise zur Analyse und Pflege der Software Restriction Policies liefert z.B.
+							<ulink url="http://www.nsa.gov/ia/_files/os/win2k/Application_Whitelisting_Using_SRP.pdf"/>
+						</para>
+					</footnote>.
+				</para>
+				<para>
+					Die Software Restriction Policies greifen auch in die Bearbeitung von Login- und Logoff-Skripten ein. Alle dort verwendeten Programme bzw. Programmpfade sollten auf Ausführbarkeit getestet werden.
+				</para>
+				<note>
+					Die Liste der hier erwähnten Einstellungen erhebt nicht den Anspruch der Vollständigkeit. Es ist notwendig die Einstellungen entsprechend der lokalen Gegebenheiten zu testen. Insbesondere sollte folgende Microsoft-Dokumentation beachtet werden:
+					<itemizedlist>
+						<listitem>
+								<ulink url="http://technet.microsoft.com/en-us/library/bb457006.aspx#EGAA"/>.
+						</listitem>
+						<listitem>
+								<ulink url="http://technet.microsoft.com/en-us/library/hh994606.aspx"/>.
+						</listitem>
+					</itemizedlist>
+				</note>
+				<itemizedlist>
+					<listitem>
+						In der Gruppenrichtlinienverwaltung wird ein neues Gruppenrichtlinienobjekt angelegt und/oder eine existierende zur Bearbeitung geöffnet.
+					</listitem>
+					<listitem>
+						<simpara>
+							Im Gruppenrichtlinienverwaltungseditor wird der folgende Zweig geöffnet:
+						</simpara>
+						<simpara>
+							<filename>Benutzerkonfiguration > Windows-Einstellungen > Sicherheitseinstellungen > Richtlinien für Softwareeinschränkung</filename>
+						</simpara>
+					</listitem>
+					<listitem>
+						Rechtsklick <emphasis>Neu Richtlinien für Softwareeinschränkung erstellen</emphasis>
+					</listitem>
+					<listitem>
+						Im rechten Fensterteil <emphasis>Erzwingen</emphasis> öffnen,
+					</listitem>
+					<listitem>
+						Einstellung <emphasis>Alle Benutzer ausser den lokalen Administratoren</emphasis> auswählen und mit <emphasis>OK</emphasis> bestätigen.
+					</listitem>
+					<listitem>
+						Im rechten Fensterteil <emphasis>Sicherheitsstufen</emphasis> öffnen,
+					</listitem>
+					<listitem>
+						<emphasis>Nicht erlaubt</emphasis> per Doppelklick öffnen,
+					</listitem>
+					<listitem>
+						<emphasis>Als Standard</emphasis> auswählen und mit <emphasis>OK</emphasis> bestätigen.
+					</listitem>
+					<listitem>
+						Im rechten Fensterteil <emphasis>Zusätzliche Regeln</emphasis> öffnen,
+					</listitem>
+					<listitem>
+						Rechtsklick <emphasis>Neue Pfadregel...</emphasis>
+					</listitem>
+					<listitem>
+						In das Eingabefeld <emphasis>Pfad</emphasis> den UNC-Pfad <filename>\\%USERDNSDOMAIN%\SysVol</filename> eingeben, damit Logon- und GPO-Skripte ausgeführt werden können.
+					</listitem>
+					<listitem>
+						<simpara>
+							In der Dropdown-Liste <emphasis>Nicht eingeschränkt</emphasis> auswählen und mit <emphasis>OK</emphasis> bestätigen.
+						</simpara>
+						<simpara>
+							<table>
+								<title>Beispiele für weitere Pfadregeln</title>
+								<tgroup cols="2">
+									<colspec colnum="1" colname="col1" colwidth="2*"/>
+									<colspec colnum="2" colname="col2" colwidth="1*"/>
+									<thead>
+										<row>
+											<entry>Pfad</entry>
+											<entry>Sicherheitsstufe</entry>
+										</row>
+									</thead>
+									<tbody>
+										<row>
+											<entry><filename>\\%USERDNSDOMAIN%\SysVol</filename></entry>
+											<entry>Nicht eingeschränkt</entry>
+										</row>
+										<row>
+											<entry><filename>\\%LogonServer%\SysVol</filename></entry>
+											<entry>Nicht eingeschränkt</entry>
+										</row>
+										<row>
+											<entry><filename>\\%LogonServer%\netlogon</filename></entry>
+											<entry>Nicht eingeschränkt</entry>
+										</row>
+										<row>
+											<entry><filename>\\%COMPUTERNAME%\Templates$\*</filename></entry>
+											<entry>Nicht eingeschränkt</entry>
+										</row>
+										<row>
+											<entry><filename>%UserProfile%\Local Settings\Temp\*.tmp</filename></entry>
+											<entry>Nicht eingeschränkt</entry>
+										</row>
+										<row>
+											<entry><filename>%WinDir%\system32\cscript.exe</filename></entry>
+											<entry>Nicht eingeschränkt</entry>
+										</row>
+										<row>
+											<entry><filename>%WinDir%\system32\wscript.exe</filename></entry>
+											<entry>Nicht eingeschränkt</entry>
+										</row>
+										<row>
+											<entry><filename>%ProgramFiles%</filename></entry>
+											<entry>Nicht eingeschränkt</entry>
+										</row>
+										<row>
+											<entry><filename>%ProgramFiles(x86)%</filename></entry>
+											<entry>Nicht eingeschränkt</entry>
+										</row>
+										<row>
+											<entry><filename>*.lnk</filename></entry>
+											<entry>Nicht eingeschränkt</entry>
+										</row>
+									</tbody>
+								</tgroup>
+							</table>
+						</simpara>
+					</listitem>
+					<listitem>
+						<simpara>
+							Es kann sinnvoll sein zusätzlich Programm-Pfade als <emphasis>Nicht erlaubt</emphasis> einzustufen, z.B.:
+						</simpara>
+						<simpara>
+							<table>
+								<title>Beispiele für weitere Pfadregeln</title>
+								<tgroup cols="2">
+									<colspec colnum="1" colname="col1" colwidth="2*"/>
+									<colspec colnum="2" colname="col2" colwidth="1*"/>
+									<thead>
+										<row>
+											<entry>Pfad</entry>
+											<entry>Sicherheitsstufe</entry>
+										</row>
+									</thead>
+									<tbody>
+										<row>
+											<entry><filename>%UserProfile%\Local Settings\Temp</filename></entry>
+											<entry>Nicht erlaubt</entry>
+										</row>
+										<row>
+											<entry><filename>%SystemRoot%\temp\*</filename></entry>
+											<entry>Nicht erlaubt</entry>
+										</row>
+										<row>
+											<entry><filename>%SystemRoot%\System32\mstsc.exe</filename></entry>
+											<entry>Nicht erlaubt</entry>
+										</row>
+										<row>
+											<entry><filename>%SystemRoot%\System32\dllcache\*</filename></entry>
+											<entry>Nicht erlaubt</entry>
+										</row>
+										<row>
+											<entry><filename>%SystemRoot%\System32\command.com</filename></entry>
+											<entry>Nicht erlaubt</entry>
+										</row>
+										<row>
+											<entry><filename>%SystemRoot%\System32\cmd.exe</filename></entry>
+											<entry>Nicht erlaubt</entry>
+										</row>
+										<row>
+											<entry><filename>%SystemRoot%\repair\*</filename></entry>
+											<entry>Nicht erlaubt</entry>
+										</row>
+										<row>
+											<entry><filename>%SystemDrive%\temp\*</filename></entry>
+											<entry>Nicht erlaubt</entry>
+										</row>
+									</tbody>
+								</tgroup>
+							</table>
+						</simpara>
+					</listitem>
+					<listitem>
+						Es sollte beachtet werden, dass schreibbare Verzeichnisse, auf die der Zugriff nicht per Software Restriction Policy eingeschänkt ist, Benutzern die Möglichkeit geben, Programmdateien dort abzulegen und so die definierten Regeln zu umgehen
+						<footnote id="Application_Whitelisting_Using_SRP2">
+							<para>
+								Weitere sinnvolle Hinweise zur Analyse und Pflege der Software Restriction Policies liefert z.B.
+								<ulink url="http://www.nsa.gov/ia/_files/os/win2k/Application_Whitelisting_Using_SRP.pdf"/>
+							</para>
+						</footnote>.
+					</listitem>
+				</itemizedlist>
+			</section>
+		</section>
+	</section>
+</chapter>

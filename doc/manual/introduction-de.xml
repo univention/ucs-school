@@ -1,0 +1,49 @@
+<chapter id="introduction">
+  <title>Einführung</title>
+  <para>
+	&ucsUAS; ist eine auf &ucsUCS; (UCS) basierende IT-Komplettlösung
+	mit zahlreichen Zusatzkomponenten für Nutzung, Betrieb und Management
+	von Informationstechnologie (IT) in Schulen. &ucsUAS; vereint die
+	Stärken des Enterprise-Betriebssystems UCS im Bereich einfacher und
+	zentraler Verwaltung von IT-Umgebungen mit den Vorteilen klassischer
+	Schulsoftware für den Computereinsatz im Unterricht.
+  </para>
+  <para>
+	UCS ist die ideale Plattform für Schulen und Schulträger, um IT
+	gemeinsam mit den dazu gehörenden Service- und Supportprozessen für
+	eine oder mehrere Schulen zentral und wirtschaftlich
+	bereitzustellen. &ucsUAS; ergänzt UCS um zahlreiche Komponenten für
+	den IT-Betrieb und den IT-gestützten Unterricht in der Schule.
+  </para>
+  <para>
+	Die &ucsUMC; ermöglicht die zentrale, web-basierte Verwaltung aller
+	Domänendaten (z.B. Benutzer, Gruppen, Rechner, DNS/DHCP). Die
+	Speicherung der Daten erfolgt in einem Verzeichnisdienst auf Basis von
+	OpenLDAP. Da viele Schuldaten primär in schulträgerspezifischen Systemen
+	erfasst werden, bringt &ucsUAS; unter anderem eine CSV-Datei-basierte
+	Importschnittstelle für Schülerdaten mit.
+  </para>
+  <para>
+	Um den IT-gestützten Unterricht zu ergänzen, wurde die Benutzeroberfläche der
+	&ucsUMC; an die Anforderungen von Lehrern
+	angepasst. Dies ermöglicht zum Beispiel die Organisation der
+	Unterrichtsvorbereitung und Klassenraumplanung sowie die temporäre Sperrung des
+	Internetzugangs für ausgewählte Computer. Lehrern ist es auch möglich,
+	den Bildschirminhalt eines Schüler-PCs einzusehen, via Netzwerk
+	individuelle Hilfestellungen zu geben oder einen beliebigen Desktop
+	auf alle anderen Computer in der Klasse oder per Beamer zu
+	übertragen. Auch bei im Schulalltag wiederkehrenden Tätigkeiten, wie
+	dem Zurücksetzen von Passwörtern für Schüler-Benutzerkonten, werden
+	Lehrer unterstützt.
+  </para>
+  <!--  Die nachfolgenden Kapitel beschreiben die Implementierung von -->
+  <!--  &ucsUAS; sowohl in kleinen Umgebungen mit einer Schule als auch -->
+  <!--  größeren Umgebungen mit mehreren Schulen. Hierfür werden umfangreiche -->
+  <!--  UCS-Kenntnisse} vorausgesetzt, welche unter anderem für die -->
+  <!--    Installation benötigt werden. Weitere Hinweise zur Administration -->
+  <!--    von UCS-Systemen können dem \ucsHandbuch{} entnommen werden. -->
+  <para>
+	Für die Bedienung der &ucsUAS;-spezifischen Module der &ucsUMC;
+	steht ein zusätzliches Dokument <xref linkend="ucs-school-teacher"/> bereit.
+  </para>
+</chapter>

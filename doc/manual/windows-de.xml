@@ -1,0 +1,153 @@
+<chapter id="school:windows:general">
+  <title>Integration und Verwaltung von Microsoft Windows-Clients</title>
+  <para>
+	Microsoft Windows-Clients werden in &ucsUCS; (UCS) mithilfe von Samba integriert und verwaltet. Die
+	Windows-Clients authentifizieren sich dabei gegen den Samba-Server. Auch Datei- und Druckdienste
+	werden für die Windows-Clients über Samba bereitgestellt. Weitere Hinweise finden sich in
+	<xref linkend="school:windows:samba"/>.
+  </para>
+  <para>
+	Die Netzkonfiguration der Clients kann zentral über in UCS integrierte DNS- und DHCP-Dienste
+	durchgeführt werden. Weitere Hinweise finden sich in <xref
+	linkend="school:schoolcreate:computers:import"/>.
+  </para>
+  <para>
+	Auf den Windows-Clients der Schüler kann die Software <emphasis>iTALC</emphasis> installiert werden. Sie
+	erlaubt es Lehrern, über ein UMC-Modul den Desktop der Schüler einzuschränken und z.B. Bildschirme
+	und Eingabegeräte zu sperren. Außerdem kann ein Übertragungsmodus aktiviert werden, der die
+	Bildschirmausgabe des Desktops des Lehrers auf die Schülerbildschirme überträgt. Die Installation
+	von iTALC wird in <xref linkend="school:windows:italc"/> beschrieben.
+  </para>
+
+  <section id="school:windows:samba">
+	<title>Anmeldedienste mit Samba</title>
+	<para>
+	  In &ucsUCS; 3.x stehen zwei verschiedene Samba-Varianten zur Auswahl:
+	</para>
+	  <itemizedlist>
+		<listitem>
+		  <simpara>
+			<emphasis>Samba 3</emphasis> implementiert Domänendienste auf Basis der Domänen-Technologie von
+			Microsoft Windows NT. Samba 3 ist die aktuelle stabile und bewährte Haupt-Release-Serie des
+			Samba-Projekts und ist seit vielen Jahren in UCS integriert.
+		  </simpara>
+		</listitem>
+		<listitem>
+		  <para>
+			<emphasis>Samba 4</emphasis> ist die nächste Generation der Samba-Suite. Die wichtigste
+			Neuerung von Samba 4 besteht in der Unterstützung von Domänen-, Verzeichnis- und
+			Authentifizierungsdiensten, die kompatibel zu Microsoft Active Directory sind. Mit Samba 4 lassen
+			sich deswegen Active Directory-kompatible Windows-Domänen aufbauen. Diese ermöglichen auch die
+			Verwendung der von Microsoft bereit gestellten Werkzeuge beispielsweise für die Verwaltung von
+			Benutzern oder Gruppenrichtlinien (GPOs). Die aktuell vom Samba-Projekt veröffentlichten Versionen
+			von Samba 4 unterliegen in der Weiterentwicklung noch stärkeren Änderungen als Samba 3. Univention
+			hat die benötigten Komponenten für die Bereitstellung von Active Directory kompatiblen
+			Domänendiensten mit Samba 4 getestet und in enger Zusammenarbeit mit dem Samba-Team in UCS
+			integriert. Parallel dazu wurde für UCS Samba 3 mit Samba 4 integriert. Somit werden auch bei
+			Verwendung der Active Directory kompatiblen Domänendienste die erprobten Datei- und Druckdienste aus
+			Samba 3 verwendet.
+		  </para>
+		  <caution>
+			<para>
+				Bei der Verwendung von Samba 4 in einer Multi-Server-Umgebung ist es zwingend erforderlich, dass alle Windows-Clients ihren jeweiligen Schul-DC als DNS-Server verwenden, um einen fehlerfreien Betrieb zu gewährleisten.
+			</para>
+		  </caution>
+		</listitem>
+	  </itemizedlist>
+	<para>
+	  Bei Neuinstallationen von &ucsUAS; wird standardmäßig Samba 4 empfohlen. Umgebungen, die von
+	  einer Vorversion aktualisiert wurden, können von Samba 3 auf Samba 4 migriert werden. Das dafür
+	  notwendige Vorgehen ist unter der folgenden URI dokumentiert:
+	</para>
+	<para>
+	  <ulink url="http://wiki.univention.de/index.php?title=UCS%40school_Samba_3_to_Samba_4_Migration"/>
+	</para>
+	<para>
+	  Weiterführende Hinweise zur Konfiguration von Samba finden sich im UCS-Handbuch <xref
+	  linkend="ucs-handbuch"/>.
+	</para>
+  </section>
+
+  <section id="school:windows:shares">
+	<title>Server für Dateifreigaben</title>
+	<para>
+	  Beim Anlegen einer neuen Klasse bzw. eines Benutzers wird automatisch eine Klassenfreigabe für
+	  die Klasse bzw. eine Heimatverzeichnisfreigabe für den Benutzer eingerichtet. Der für die
+	  Einrichtung der Freigabe notwendige Dateiserver wird in den meisten Fällen ohne manuellen Eingriff
+	  bestimmt. Dazu wird am Schul-OU-Objekt bei der Registrierung einer Schule automatisch der in der
+	  &ucsUMC; angegebene Schulserver als Dateiserver jeweils für Klassen- und Benutzerfreigaben
+	  hinterlegt.
+	</para>
+	<para>
+	  Die an der Schul-OU hinterlegte Angabe bezieht sich ausschließlich auf neue Klassen- und
+	  Benutzerobjekte und hat keinen Einfluss auf bestehende Objekte im LDAP-Verzeichnis. Durch das
+	  Bearbeiten der entsprechenden Schul-OU im UMC-Modul <emphasis>LDAP-Verzeichnis</emphasis> können die
+	  Standarddateiserver für die geöffnete Schul-OU nachträglich modifiziert werden.
+	</para>
+	<para>
+	  Es ist zu beachten, dass die an der Schul-OU hinterlegten Dateiserver nur in einer
+	  Multi-Server-Umgebung ausgewertet werden. In einer Single-Server-Umgebung wird für beide
+	  Freigabetypen beim Anlegen neuer Objekte immer der &ucsMaster; als Dateiserver konfiguriert.
+	</para>
+  </section>
+
+  <section id="school:windows:italc">
+	<title>iTALC-Installation auf Windows-Clients</title>
+	<para>
+	  Für die Kontrolle und Steuerung der Schüler-PCs integriert &ucsUAS; optional die Software
+	  iTALC. Dieses Kapitel beschreibt die Installation von iTALC auf den Schüler-PCs. Die Administration
+	  durch die Lehrkräfte ist in der &ucsUAS;-Lehrerdokumentation <xref linkend="ucs-school-teacher"/>
+	  beschrieben.
+	</para>
+	<para>
+	  Für die Nutzung der Rechnerüberwachungs- und präsentationsfunktionen in der Computerraumverwaltung
+	  (siehe <xref linkend="ucsschool:moduluebersicht"/>) wird vorausgesetzt, dass auf den
+	  Windows-Clients iTALC installiert wurde.
+	</para>
+	<para>
+	  iTALC ist Open Source-Software und kann unter <ulink url="http://italc.sf.net/"/>
+	  heruntergeladen. Interoperabilitätstests zwischen &ucsUAS; 3.1 und iTALC wurden ausschließlich mit
+	  der iTALC-Version 2.0 unter Windows XP und Windows 7 (32 und 64 Bit) durchgeführt.
+	</para>
+	<para>
+	  <figure>
+		<title>iTALC-Installation: Auswahl der Komponenten</title>
+		<graphic scalefit="1" width="60%" align="center" fileref="illustrations/italc1.png"/>
+	  </figure>
+	</para>
+	<para>
+	  iTALC bringt ein Installationsprogramm mit, das durch alle notwendigen Schritte führt. Während
+	  der Installation sollte nur der <emphasis>iTALC Service</emphasis> installiert und der
+	  <emphasis>iTALC Master</emphasis> abgewählt werden.
+	</para>
+	<para>
+	  <figure>
+		<title>iTALC-Installation: Babylon-Toolbar</title>
+		<graphic scalefit="1" width="60%" align="center" fileref="illustrations/italc2.png"/>
+	  </figure>
+	</para>
+	<para>
+	  Die Babylon-Toolbar ist für die Funktion von &ucsUAS; nicht notwendig und braucht daher nicht
+	  installiert zu werden.
+	</para>
+	<para>
+	  Nach der Installation von iTALC auf dem Windows-Client muss der öffentliche Schlüssel
+	  importiert werden, damit der Schulserver Zugriff auf das installierte iTALC-Backend erhält. Dies
+	  erfolgt durch Aufruf der iTALC Management Console unter <guimenu>Authentifizierung &ar;
+	  Schlüsseldatei-Assistent starten &ar; Öffentlichen Schlüssel importieren (Client-Computer) &ar;
+	  Lehrer</guimenu>. Unter <guimenu>Bitte geben Sie den Ort des öffentlichen Zugriffsschlüssels an, der
+	  importiert werden soll</guimenu> ist der iTALC-Schlüssel des Schulservers anzugeben. Der Schlüssel wird
+	  automatisch auf der SYSVOL-Freigabe des Schulservers unter dem Namen der Schuldomäne unter
+	  <filename>scripts</filename> abgelegt (Kommt Samba 3 zum Einsatz, wird der Schlüssel auf der
+	  Netlogon-Freigabe abgelegt). Die Datei <filename>italc-key.pub</filename> muss in
+	  <filename>italc-key.key.txt</filename> umbenannt und kopiert werden, damit sie von dem Assistenten
+	  eingelesen werden kann.
+	</para>
+	<para>
+	  Außerdem sollte auf den Windows-Clients sichergestellt werden, dass die installierte
+	  System-Firewall so konfiguriert ist, dass Port <emphasis>11100</emphasis> nicht blockiert wird. Dies
+	  ist Voraussetzung für eine funktionierende Umgebung, da iTALC diesen Port für die Kommunikation mit
+	  dem Schulserver bzw. anderen Computern verwendet.
+	</para>
+  </section>
+</chapter>

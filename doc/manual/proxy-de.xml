@@ -1,0 +1,36 @@
+<chapter id="school:proxy">
+  <title>Web-Proxy auf den Schulservern</title>
+  <para>
+	In der Grundeinstellung läuft auf jedem Schulserver (bzw. im Single-Server-Betrieb auf dem
+	&ucsMaster;) ein Proxy-Server auf Basis von Squid in Zusammenspiel mit Squidguard. Der Proxy erlaubt
+	Lehrern in Schulstunden den Zugriff auf einzelne Webseiten zu beschränken oder auch generell
+	bestimmte Webseiten zu sperren. Dies ist in der &ucsUAS;-Lehrerdokumentation <xref
+	linkend="ucs-school-teacher"/> beschrieben.
+  </para>
+  <para>
+	Der Proxyserver muss zwingend auf dem jeweiligen Schulserver betrieben werden.
+  </para>
+  <para>
+	Die Proxykonfiguration wird in der Grundeinstellung durch DHCP verteilt, diese Einstellung wird
+	jedoch nicht von allen Browsern unterstützt. Die Konfiguration kann alternativ über eine
+	Proxy-Autokonfigurationsdatei (PAC-Datei) automatisiert werden. In PAC-Dateien sind die relevanten
+	Konfigurationparameter zusammengestellt. Die PAC-Datei eines Schulservers steht unter der folgenden URL bereit:
+  </para>
+  <para>
+	<uri>http://<replaceable>schulserver.domaene.de</replaceable>/proxy.pac</uri>
+  </para>
+  <para>
+	Im Internet Exlorer 8 wird die PAC-Datei beispielsweise unter <guimenu>Internetoptionen
+	&ar; Reiter Verbindungen &ar; LAN-Einstellungen &ar; Automatisches
+	Konfigurationsskript verwendet</guimenu> zugewiesen.
+  </para>
+  <para>
+	In Firefox 10 kann die PAC-Datei im Menü unter <guimenu>Bearbeiten &ar;
+	Einstellungen &ar; Erweitert &ar; Netzwerk &ar; Verbindungen &ar; Einstellungen &ar; Automatische
+	Proxy-Konfigurations-URL</guimenu> zugewiesen werden.
+  </para>
+  <para>
+	Bei Einsatz von Samba 4 kann die Proxy-Konfiguration alternativ auch über Gruppenrichtlinien
+	zugewiesen werden.
+  </para>
+</chapter>
