@@ -1,3 +1,9 @@
+ucs-school-metapackage (5.0.9-9) unstable; urgency=low
+
+  * add dependency to ucs-school-umc-installer; Bug #30499
+
+ -- Florian Best <best@univention.de>  Tue, 07 May 2013 10:38:41 +0200
+
 ucs-school-metapackage (5.0.9-8) unstable; urgency=low
 
   * add ucs-school-nonedu-slave package; Bug #30966
