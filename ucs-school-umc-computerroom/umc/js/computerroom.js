@@ -414,7 +414,6 @@ define([
 
 			// hide time period input field in settings dialog
 			this._settingsDialog.set('exam', roomInfo.exam);
-			this._settingsDialog.set('examDescription', roomInfo.examDescription);
 		},
 
 		_setRoomInfoAttr: function(roomInfo) {

@@ -50,7 +50,6 @@ define([
 
 		// indicates that computerroom is opened in exam mode
 		exam: null,
-		examDescription: null,
 
 		_form: null,
 
@@ -193,7 +192,6 @@ define([
 			// save settings
 			var values = this._form.get('value');
 			values.exam = this.exam || null;
-			values.examDescription = this.examDescription || null;
 			this.umcpCommand( 'computerroom/settings/set', values);
 		},
 

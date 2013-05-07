@@ -588,11 +588,14 @@ class Instance( SchoolBaseModule ):
 
 		self.required_options( request, 'printMode', 'internetRule', 'shareMode' )
 		exam = request.options.get('exam')
-		examDescription = request.options.get('examDescription', exam)
 		if not exam:
 			self.required_options(request, 'period')
 		if not self._italc.school or not self._italc.room:
 			raise UMC_CommandError( 'no room selected' )
+
+		# if the exam description has not been specified, try to load it from the room info file
+		roomInfo = _readRoomInfo(self._italc.roomDN) or dict()
+		examDescription = request.options.get('examDescription', roomInfo.get('examDescription', exam))
 
 		# find AT jobs for the room and execute it to remove current settings
 		jobs = atjobs.list( extended = True )
@@ -603,7 +606,6 @@ class Instance( SchoolBaseModule ):
 				break
 
 		# for the exam mode, remove current settings before setting new ones
-		roomInfo = _readRoomInfo(self._italc.roomDN) or dict()
 		if roomInfo.get('exam') and roomInfo.get('cmd'):
 			MODULE.info('unsetting room settings for exam (%s): %s' % (roomInfo['exam'], roomInfo['cmd']))
 			try:
