@@ -37,16 +37,16 @@ define([
 	"dojo/dom-geometry",
 	"dijit/layout/ContentPane",
 	"dijit/_Contained",
+	"dijit/Tooltip",
 //	"dijit/TitlePane",
 	"umc/widgets/ComboBox",
 	"umc/widgets/ContainerWidget",
 	"umc/widgets/Button",
 	"umc/widgets/Page",
 	"umc/widgets/StandbyMixin",
-	"umc/widgets/Tooltip",
 	"umc/i18n!umc/modules/computerroom"
-], function(declare, lang, array, aspect, dom, geometry, ContentPane, _Contained,
-            /*TitlePane,*/ ComboBox, ContainerWidget, Button, Page, StandbyMixin, Tooltip, _) {
+], function(declare, lang, array, aspect, dom, geometry, ContentPane, _Contained, Tooltip,
+            /*TitlePane,*/ ComboBox, ContainerWidget, Button, Page, StandbyMixin, _) {
 
 	// README: This is an alternative view
 	// var Item = declare( "umc.modules.computerroom.Item", [ TitlePane, _Contained ], {
@@ -197,7 +197,9 @@ define([
 			} );
 			this.startup();
 
+			// use dijit.Tooltip here to not hide screenshot tooltips if set up in user preferences
 			var tooltip = new Tooltip({
+				'class': 'umcTooltip',
 				label: lang.replace( '<div style="display: table-cell; vertical-align: middle; width: 440px;height: 400px;"><img id="screenshotTooltip-{0}" src="" style="width: 430px; display: block; margin-left: auto; margin-right: auto;"/></div>', [ this.computer ] ),
 				connectId: [ this.domNode ],
 				onShow: lang.hitch( this, function() {

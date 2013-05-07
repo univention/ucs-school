@@ -40,6 +40,7 @@ define([
 	"dojo/store/Memory",
 	"dijit/ProgressBar",
 	"dijit/Dialog",
+	"dijit/Tooltip",
 	"umc/dialog",
 	"umc/tools",
 	"umc/widgets/ExpandingTitlePane",
@@ -51,14 +52,13 @@ define([
 	"umc/widgets/ContainerWidget",
 	"umc/widgets/Text",
 	"umc/widgets/ComboBox",
-	"umc/widgets/Tooltip",
 	"umc/widgets/ProgressBar",
 	"umc/modules/computerroom/ScreenshotView",
 	"umc/modules/computerroom/SettingsDialog",
 	"umc/i18n!umc/modules/computerroom"
 ], function(declare, lang, array, aspect, dom, Deferred, ItemFileWriteStore, DataStore,
-            Memory, DijitProgressBar, Dialog, dialog, tools, ExpandingTitlePane, Grid, Button, Module, Page, Form,
-            ContainerWidget, Text, ComboBox, Tooltip, ProgressBar, ScreenshotView, SettingsDialog, _) {
+            Memory, DijitProgressBar, Dialog, Tooltip, dialog, tools, ExpandingTitlePane, Grid, Button, Module, Page, Form,
+            ContainerWidget, Text, ComboBox, ProgressBar, ScreenshotView, SettingsDialog, _) {
 
 	return declare("umc.modules.computerroom", [ Module ], {
 		// summary:
@@ -175,6 +175,7 @@ define([
 				label: _('Watch'),
 				isStandardAction: true,
 				isMultiAction: true,
+				tooltipClass: Tooltip,
 				description: function(item) {
 					return lang.replace('<div style="display: table-cell; vertical-align: middle; width: 240px;height: 200px;"><img id="screenshotTooltip-{0}" src="" style="width: 230px; display: block; margin-left: auto; margin-right: auto;"/></div>', item.id);
 				},
@@ -508,6 +509,7 @@ define([
 						mac: item.mac ? item.mac[0] : ''
 					});
 					var tooltip = new Tooltip({
+						'class': 'umcTooltip',
 						label: label,
 						connectId: [ widget.domNode ]
 					});
