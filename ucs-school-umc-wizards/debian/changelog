@@ -1,3 +1,9 @@
+ucs-school-umc-wizards (2.0.17-1) unstable; urgency=low
+
+  * fix typo; Bug #30484
+
+ -- Florian Best <best@univention.de>  Tue, 07 May 2013 08:46:06 +0200
+
 ucs-school-umc-wizards (2.0.16-1) unstable; urgency=low
 
   * restrict school DC name to 13 chars; Bug #30225

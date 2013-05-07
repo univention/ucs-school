@@ -31,7 +31,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-VERSION=3
+VERSION=4
 
 . /usr/share/univention-join/joinscripthelper.lib
 . /usr/share/univention-lib/umc.sh
@@ -55,7 +55,7 @@ done
 ucs_school_policies_create
 
 # the module is only visible for domain admins
-umc_policy_append default-umc-all "schoolwizards-users" "schoolwizards-classes" "schoolwizards-schoolwizards" "schoolwizards-computers"
+umc_policy_append default-umc-all "schoolwizards-users" "schoolwizards-classes" "schoolwizards-schools" "schoolwizards-computers"
 
 joinscript_save_current_version
 
