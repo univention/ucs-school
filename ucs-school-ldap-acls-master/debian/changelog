@@ -1,3 +1,9 @@
+ucs-school-ldap-acls-master (8.0.4-1) unstable; urgency=low
+
+  * group ACLs; Bug #30527
+
+ -- Florian Best <best@univention.de>  Tue, 07 May 2013 11:37:54 +0200
+
 ucs-school-ldap-acls-master (8.0.3-1) unstable; urgency=low
 
   * give teachers and teachers-staff permission to create and modify
