@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+	  "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd"[
+
+	  <!ENTITY introduction SYSTEM "introduction-de.xml">
+	  <!ENTITY bibliography SYSTEM "../stylesheets/bibliography-de.xml">
+	  <!ENTITY structure SYSTEM "structure-de.xml">
+	  <!ENTITY installation SYSTEM "installation-de.xml">
+	  <!ENTITY module-overview SYSTEM "module-overview-de.xml">
+	  <!ENTITY setup-school SYSTEM "setup-school-de.xml">
+	  <!ENTITY data-management SYSTEM "data-management-de.xml">
+	  <!ENTITY windows SYSTEM "windows-de.xml">
+	  <!ENTITY proxy SYSTEM "proxy-de.xml">
+	  <!ENTITY radius SYSTEM "radius-de.xml">
+	  <!ENTITY import-hooks SYSTEM "import-hooks-de.xml">
+
+	  <!ENTITY % entities SYSTEM "../stylesheets/macros-de.ent" >
+
+	  %entities;
+	  ]>
+<book lang="de" id="ucsschool-3.1-admin">
+  <bookinfo>
+    <title>
+      UCS@school
+    </title>
+    <subtitle>
+      Handbuch für Administratoren
+    </subtitle>
+    <legalnotice>
+      <literallayout>
+Version 3.1-0
+Stand: 14. Februar 2013
+      </literallayout>
+
+      <literallayout>
+Alle Rechte vorbehalten./ All rights reserved.
+(c) 2002-2013
+Univention GmbH
+Mary-Somerville-Straße 1
+28359 Bremen
+Deutschland
+feedback@univention.de
+      </literallayout>
+
+      <para>
+	Jede aufgeführte Marke und jedes Warenzeichen steht im Eigentum ihrer jeweiligen eingetragenen Rechtsinhaber.
+	Linux ist ein eingetragenes Warenzeichen von Linus Torvalds.
+      </para>
+
+      <para>
+	The mentioned brand names and registered trademarks are owned by the respective legal owners in each case.
+	Linux is a registered trademark of Linus Torvalds.
+      </para>
+    </legalnotice>
+  </bookinfo>
+
+  &introduction;
+  &structure;
+  &installation;
+  &module-overview;
+  &setup-school;
+  &data-management;
+  &windows;
+  &proxy;
+  &radius;
+  &import-hooks;
+  &bibliography;
+
+  <?dbhtml-include href="../stylesheets/piwiki.html"?>
+</book>

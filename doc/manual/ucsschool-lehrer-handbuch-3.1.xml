@@ -1,0 +1,879 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd"[
+
+<!ENTITY % entities SYSTEM "../stylesheets/macros-de.ent" >
+
+%entities;
+]>
+<book lang="de" id="ucsschool-3.1-teacher">
+  <bookinfo>
+    <title>
+      UCS@school
+    </title>
+    <subtitle>
+      Handbuch für Lehrkräfte
+    </subtitle>
+    <legalnotice>
+      <literallayout>
+Version 3.1-0
+Stand: 07. Februar 2013
+      </literallayout>
+
+      <literallayout>
+Alle Rechte vorbehalten./ All rights reserved.
+(c) 2002-2013
+Univention GmbH
+Mary-Somerville-Straße 1
+28359 Bremen
+Deutschland
+feedback@univention.de
+      </literallayout>
+
+      <para>
+		Jede aufgeführte Marke und jedes Warenzeichen steht im Eigentum ihrer jeweiligen eingetragenen Rechtsinhaber.
+		Linux ist ein eingetragenes Warenzeichen von Linus Torvalds.
+      </para>
+
+      <para>
+		The mentioned brand names and registered trademarks are owned by the respective legal owners in each case.
+		Linux is a registered trademark of Linus Torvalds.
+      </para>
+    </legalnotice>
+  </bookinfo>
+
+  <chapter>
+	<title>Einführung</title>
+	  <section>
+		<title>Was ist &ucsUAS;</title>
+		<para>
+		  &ucsUAS; ist eine Komplettlösung für den schulinternen IT-Betrieb und IT-gestützten Unterricht.
+		</para>
+		<para>
+		  Neben den administrativen Verwaltungsschnittstellen gibt es eine Reihe von browserbasierten
+		  Oberflächen, mit denen Lehrkräfte den IT-gestützten Unterricht verwalten können. Sie erlauben
+		  beispielsweise Lehrern, die Passwörter von Schülern neu zu setzen oder den Internetzugang während
+		  einer Schulstunde gezielt zu sperren oder freizugeben.
+		</para>
+		<para>
+		  Die Benutzung der Oberfläche erfordert keine besonderen IT-Kenntnisse und wird in diesem Dokument
+		  beschrieben. Dabei wird neben einer kurzen Beschreibung der jeweiligen Funktion auch ein
+		  Nutzungsbeispiel aufgezeigt und in einer Schritt-für-Schritt-Anleitung die Bedienung erläutert.
+		</para>
+		<para>
+		  In &ucsUAS; werden für Lehrkräfte zwei Zugriffsberechtigungen unterschieden:
+		</para>
+		  <itemizedlist>
+			<listitem>
+			  <simpara>
+				<emphasis>Schuladministratoren</emphasis> verfügen über volle Verwaltungsrechte in
+				Bezug auf den IT-gestützten Unterricht.
+			  </simpara>
+			</listitem>
+			<listitem>
+			  <simpara>
+				<emphasis>Lehrer</emphasis> können nur einen Teil der Verwaltungsfunktionen
+				nutzen. Sie können zum Beispiel die Passwörter von Schülern neu setzen, nicht aber die von anderen
+				Lehrern (dies können nur Schuladministratoren). Ein weiteres Beispiel: Lehrer können einen
+				Internet-Filter aktivieren/deaktivieren, aber nur Schuladministratoren können die Filterregeln
+				anpassen.
+			  </simpara>
+			</listitem>
+		  </itemizedlist>
+		<para>
+		  In jeder Schule gibt es einen Schulserver. Die Daten der Schüler und Lehrer werden auf diesem
+		  Schulserver gespeichert, so dass, egal auf welchem PC man sich anmeldet, immer dieselben Daten
+		  verfügbar sind. Dieses Verzeichnis wird als <emphasis>Heimatverzeichnis</emphasis> bezeichnet. Es wird bei
+		  der Anmeldung an einem PC automatisch eingebunden, so dass die eigenen Dateien nach der Anmeldung
+		  auf jedem beliebigen Schulcomputer sofort zur Verfügung stehen.
+		</para>
+		<para>
+		  Die Heimatverzeichnisse sind benutzerspezifisch. Zusätzlich wird für jede Klasse und für weitere
+		  Benutzergruppen (z.B. eine Informatik-AG) ein eigener Datenbereich angelegt. Diese Daten werden
+		  ähnlich wie das Heimatverzeichnis bei der Anmeldung an einem Schul-PC eingebunden. Zugriff erhalten
+		  nur die Schüler und Lehrer, die der Klasse oder Arbeitsgruppe (AG) zugeordnet sind.
+		</para>
+		<para>
+		  Dieses Dokument richtet sich an Lehrer und Schuladministratoren. Die einzelnen Funktionen sind
+		  dahingehend unterteilt.
+		</para>
+	  </section>
+  </chapter>
+
+  <chapter>
+	<title>&ucsUMC; - Die Verwaltungsoberfläche</title>
+	  <section>
+		<title>Anmeldung</title>
+		<para>
+		  Der IT-gestützte Unterricht wird mit einer Oberfläche verwaltet, der &ucsUMC; (UMC). Diese wird über
+		  einen Web-Browser (z.B. Mozilla Firefox) angezeigt und kann erreicht werden, indem in die
+		  Adresszeile des Web-Browsers eine Adresse in der Form
+		  <uri>https://<replaceable>schulserver.schultraeger.de</replaceable>/umc/</uri> eingetragen wird. Die genaue Adresse wird vom
+		  Schul-Administrator bekannt gegeben. Beim ersten Zugriff muss das Sicherheitszertifikat des Servers
+		  bestätigt werden.
+		</para>
+		<para>
+		  <figure id="ssl-warning">
+			<title>Sicherheitszertikatswarnung in Firefox</title>
+			<graphic scalefit="1" width="80%" align="center" fileref="illustrations/firefox_ssl_certificate.png"/>
+		  </figure>
+		</para>
+		<para>
+		  Einige ältere Web-Browser werden nicht unterstützt, die Oberfläche benötigt mindestens die folgenden
+		  Versionen:
+		</para>
+		  <itemizedlist>
+			<listitem><simpara>Google Chrome ab Version 14</simpara></listitem>
+			<listitem><simpara>Mozilla Firefox ab Version 3.6</simpara></listitem>
+			<listitem><simpara>Microsoft Internet Explorer ab Version 8</simpara></listitem>
+			<listitem><simpara>Apple Safari (auf dem iPad 2)</simpara></listitem>
+		  </itemizedlist>
+		<para>
+		  Wird kein unterstützter Browser vorgefunden, wird eine Warnung ausgegeben und es können
+		  Darstellungsprobleme auftreten.
+		</para>
+		<para>
+		  <figure id="login">
+			<title>Anmeldung an der &ucsUMC;</title>
+			<graphic scalefit="1" width="50%" align="center" fileref="illustrations/login.png"/>
+		  </figure>
+		</para>
+		<para>
+		  Nach Aufruf der URL erscheint die Anmeldemaske, in der <guimenu>Benutzername</guimenu> und
+		  <guimenu>Passwort</guimenu> eingegeben werden müssen.
+		</para>
+		<para>
+		  Die genaue Anzahl der angezeigten Funktionen richtet sich nach der Anzahl der auf dem jeweiligen
+		  Schulserver eingerichteten Dienste. Funktionen, die einem Benutzer aufgrund fehlender Rechte nicht
+		  zur Verfügung stehen, werden dem Benutzer nicht angezeigt. So können die Dialoge der UMC-Module
+		  während der Benutzung von den hier abgebildeten Dialogen abweichen. Die genauen Unterschiede sind
+		  den einzelnen Modulbeschreibungen zu entnehmen. Die einzelnen Kapitel sind nach den Namen der
+		  Menüpunkte benannt.
+		</para>
+		<para>
+		  <figure id="moduluebersicht">
+			<title>Übersichtsseite der Funktionen eines Schuladministrators</title>
+			<graphic scalefit="1" width="100%" align="center" fileref="illustrations/moduluebersicht.png"/>
+		  </figure>
+		</para>
+	  </section>
+  </chapter>
+
+  <chapter>
+	<title>Verwaltungsfunktionen für Lehrer</title>
+	  <section id="lehrerdoku:schuelerpasswort">
+		<title>Passwörter (Schüler)</title>
+		<para>
+		  Dieses Modul erlaubt Lehrern das Zurücksetzen von Schülerpasswörtern. Die bestehenden
+		  Passwörter können aus Sicherheitsgründen nicht ausgelesen werden; wenn Schüler ihr Passwort
+		  vergessen, muss ein neues Passwort vergeben werden. Mit den folgenden Schritten kann ein
+		  Schülerpasswort neu gesetzt werden:
+
+		  <itemizedlist>
+			<listitem>
+			  <simpara>
+				Die Passwort-Funktion kann über <guimenu>Passwörter (Schüler)</guimenu> aufgerufen werden.
+			  </simpara>
+			</listitem>
+			<listitem>
+			  <para>
+				Es erscheint eine Liste aller Schüler der Schule. Die Liste der Schüler kann
+				eingeschränkt werden, indem über das Auswahlfeld <guimenu>Klasse oder Arbeitsgruppe</guimenu> eine
+				Klasse oder AG ausgewählt wird. Es werden dann nur die Schüler dieser Klasse dargestellt.
+			  </para>
+			  <para>
+				<figure id="passwordreset1">
+				  <title>Zurücksetzen von Schülerpasswörtern</title>
+				  <graphic scalefit="1" width="90%" align="center" fileref="illustrations/students_passwords.png"/>
+				</figure>
+			  </para>
+			</listitem>
+			<listitem>
+			  <para>
+				Durch Eingabe von Benutzer-, Vor- und/oder Nachname in das Eingabefeld
+				<guimenu>Name</guimenu> und anschließendem Klick auf <guimenu>Suchen</guimenu> kann auch gezielt
+				nach einem Schüler gesucht werden.
+			  </para>
+			  <para>
+				<figure id="searchingpupils">
+				  <title>Suche nach Schülerkonten</title>
+				  <graphic scalefit="1" width="90%" align="center" fileref="illustrations/students_passwords_selected.png"/>
+				</figure>
+			  </para>
+			</listitem>
+			<listitem>
+			  <simpara>
+				Ein Klick auf <guimenu>Passwort zurücksetzen</guimenu> öffnet einen neuen Dialog.
+			  </simpara>
+			</listitem>
+			<listitem>
+			  <para>
+				Wenn mehr als ein Schülerpasswort zurückgesetzt werden soll, muss der graue
+				Auswahlkasten vor dem Schülernamen markiert werden und der Menüpunkt <guimenu>Passwort
+				zurücksetzen</guimenu> in der unteren Menüleiste verwendet werden.
+			  </para>
+			  <para>
+				<figure id="passwordreset2">
+				  <title>Zurücksetzen eines Schülerpassworts</title>
+				  <graphic scalefit="1" width="60%" align="center" fileref="illustrations/student_password_reset.png"/>
+				</figure>
+			  </para>
+			</listitem>
+			<listitem>
+			  <simpara>
+				In das Feld <guimenu>Neues Passwort</guimenu> wird das neue Passwort für den oder die
+				Schüler eingetragen. Ist der Haken vor dem Feld <guimenu>Benutzer muss das Passwort bei der
+				nächsten Anmeldung ändern</guimenu> aktiviert, ist das dabei vergebene Passwort nur temporär gültig; wenn der
+				Schüler sich mit diesem Zwischenpasswort anmeldet, muss das Passwort direkt geändert werden. Es wird
+				empfohlen, diese Option aus Sicherheitsgründen aktiviert zu lassen. Dadurch ist das neue Passwort,
+				welches der Schüler anschließend setzt, nur ihm bekannt.
+			  </simpara>
+			</listitem>
+			<listitem>
+			  <simpara>
+				Für Passwörter können Mindestanforderungen definiert werden, etwa mindestens acht
+				Zeichen Länge. Wenn das eingegebene Passwort gegen diese Kriterien verstößt, wird ein Hinweis
+				ausgegeben und es muss ein neues Passwort eingegeben werden.
+			  </simpara>
+			</listitem>
+		  </itemizedlist>
+		</para>
+	  </section>
+
+	  <section id="lehrerdoku:computerraum">
+		<title>Computerraum</title>
+		<para>
+		  Diese Funktion erlaubt die Kontrolle der Schüler-PCs und des Internetzugangs während einer
+		  Schulstunde. Der Internetzugang kann gesperrt oder freigegeben werden und es können gezielt
+		  einzelne Internetseiten freigegeben werden.
+		</para>
+		<para>
+		  Wenn eine entsprechende Software (iTALC) auf den Schüler-PCs installiert
+		  ist, besteht auch die Möglichkeit diese PCs zu steuern. So kann beispielsweise der Bildschirm
+		  gesperrt werden, so dass in einer Chemie-Stunde die ungeteilte Aufmerksamkeit auf ein Experiment
+		  gelenkt werden kann.
+		</para>
+		<para>
+		  Außerdem kann der Bildschiminhalt eines PCs auf andere Systeme
+		  übertragen werden. Dies erlaubt es Lehrern, auch ohne einen Beamer Präsentationen durchzuführen.
+		</para>
+		<para>
+		  <figure id="choose-computerroom">
+			<title>Auswahl eines Computerraums</title>
+			<graphic scalefit="1" width="50%" align="center" fileref="illustrations/choose_computerroom.png"/>
+		  </figure>
+		</para>
+		<para>
+		  Nach einem Klick auf <guimenu>Computerraum</guimenu> erscheint eine Auswahlmaske, in der ein
+		  Computerraum ausgewählt werden muss.
+		</para>
+		<para>
+		  Wird ein Computerraum aktuell von einem anderen Lehrer betreut, erscheint ein Hinweis. Ein
+		  Klick auf <guimenu>Übernehmen</guimenu> überträgt den Rechnerraum dann an den gerade angemeldeten
+		  Lehrer, wenn z.B. ein anderer Lehrer die zweite Hälfte einer Doppelstunde betreut.
+		</para>
+		<para>
+		  Es wird nun eine Liste aller PCs in diesem Computerraum
+		  angezeigt. Unter <guimenu>Name</guimenu> ist der Name des PCs aufgeführt. Bewegt man die Maus auf
+		  einen PC wird zusätzlich ein Feld angezeigt, das zwei Adressen anzeigt, mit denen der PC im
+		  Schulnetz identifiziert werden kann. Diese Informationen werden ggf. vom Helpdesk abgefragt, haben
+		  aber für die Computerverwaltung keine weitergehende Bedeutung. Neben jedem PC wird ein Kreis
+		  angezeigt. Ist dieser dunkelgrau, ist auf den PCs die Software iTALC installiert (siehe 
+		  <xref linkend="lehrerdoku:computerraum"/>), ist der Kreis hellgrau, fehlt iTALC oder der Rechner ist
+		  abgeschaltet.
+		</para>
+		<para>
+		  Ist iTALC installiert, wird unter <guimenu>Benutzer</guimenu> der Name des gerade
+		  angemeldeten Schülers/Lehrers angezeigt.
+		</para>
+		<para>
+		  Unter <guimenu>mehr</guimenu> können die Schüler-PCs über
+		  die Option <guimenu>Computer einschalten</guimenu> über das Netzwerk eingeschaltet werden. Die
+		  Computer müssen dafür entsprechend konfiguriert worden sein. Dort findet sich außerdem die Option
+		  <guimenu>Beaufsichtigung reinitialisieren</guimenu>. Diese kann verwendet werden, um erneut zu
+		  prüfen, ob die iTALC-Software auf dem PC erreicht werden kann.
+		</para>
+		<para>
+		  Lehrer können benutzerdefinierte Einstellungen für den
+		  Computerraum vornehmen, die unter <guimenu>ändern</guimenu> angepasst werden können. Hier lassen
+		  sich u.a. Regeln für den Internetzugriff auswählen (siehe <xref
+		  linkend="admindoku:internetregeln"/> oder eine lokale Liste erlaubter Webseiten definieren. Mit den
+		  Optionen <guimenu>Freigabezugriff</guimenu> und <guimenu>Druckmodus</guimenu> kann der Zugriff auf
+		  Freigaben und Drucker unterbunden bzw. erlaubt werden. Die benutzerdefinierten Einschränkungen
+		  werden über das Feld <guimenu>Gültig bis</guimenu> zeitlich eingeschränkt.
+		</para>
+
+	  <section id="lehrerdoku:computerraum:italc">
+		<title>Kontrolle der Schüler-PCs bei Einsatz von iTALC</title>
+		<para>
+		  Die folgenden Möglichkeiten stehen nur zur Verfügung, wenn auf den Schüler-PCs die Software
+		  iTALC installiert ist. Für die Installation der Software kann der Helpdesk angesprochen werden
+		  (siehe <xref linkend="lehrerdoku:helpdesk"/>).
+		</para>
+		<para>
+		  <figure id="computerraum">
+			<title>Beaufsichtigung eines Computerraums</title>
+			<graphic scalefit="1" width="100%" align="center" fileref="illustrations/italc_computerroom.png"/>
+		  </figure>
+		</para>
+		<para>
+		  In der Übersichtsliste der Schüler-PCs steht eine
+		  Reihe von Aktionen zur Verfügung. Bewegt man die Maus über das Feld <guimenu>beobachten</guimenu>
+		  eines Eintrags, erscheint eine verkleinerte Ansicht des aktuellen Schüler-Desktops. Klickt man auf
+		  den Link, besteht auch die Möglichkeit diese Ansicht in größerer Form darzustellen. Die Ansicht des
+		  Schüler-Desktops wird fortlaufend aktualisiert.
+		</para>
+		<para>
+		  Durch Klick auf <guimenu>sperren</guimenu> kann
+		  die Bildschirmanzeige auf dem Schüler-PC deaktiviert werden. Auf dem Schüler-PC wird dann nur ein
+		  grauer Hintergrund mit einem Schloss-Symbol angezeigt (siehe Abbildung <xref
+		  linkend="screenlock"/>). Ein Klick auf <guimenu>entsperren</guimenu> gibt den Schüler-PC wieder
+		  frei.
+		</para>
+		<para>
+		  <figure id="screenlock">
+			<title>Ein gesperrter Bildschirm</title>
+			<graphic scalefit="1" width="40%" align="center" fileref="illustrations/school-italc-lock.png"/>
+		  </figure>
+		</para>
+		<para>
+		  Unter <guimenu>mehr</guimenu> stehen weitere Aktionen zur Verfügung:
+		</para>
+		  <itemizedlist>
+			<listitem>
+			  <simpara>
+				<guimenu>Benutzer abmelden</guimenu> meldet einen Schüler vom Windows-Desktop ab.
+			  </simpara>
+			</listitem>
+			<listitem>
+			  <simpara>
+				<guimenu>Computer herunterfahren</guimenu> und <guimenu>Computer neu starten</guimenu>
+				erlauben das Abschalten, bzw. den Neustart eines Schüler-PCs.
+			  </simpara>
+			</listitem>
+			<listitem>
+			  <simpara>
+				<guimenu>Eingabegeräte sperren</guimenu> deaktiviert Maus und Tastatur auf den
+				Schüler-PCs.
+			  </simpara>
+			</listitem>
+			<listitem>
+			  <simpara>
+				Die Option <guimenu>Präsentation starten</guimenu> wird in <xref
+				linkend="lehrerdoku:computerraum:presentation"/> beschrieben.
+			  </simpara>
+			</listitem>
+		  </itemizedlist>
+	  </section>
+
+	  <section id="lehrerdoku:computerraum:presentation">
+		<title>Durchführung von Bildschirmpräsentationen</title>
+		<para>
+		  Diese Funktion steht ebenfalls nur zur
+		  Verfügung, wenn auf den Schüler-PCs die Software iTALC installiert ist. Sie erlaubt es, den
+		  Bildschirminhalt eines PCs an alle anderen PCs zu übertragen und dort darzustellen. So können
+		  Schüler und Lehrer Präsentationen ohne die Verwendung eines Beamers durchzuführen.
+		</para>
+		<para>
+		  Wird eine Präsentation durchgeführt, wird
+		  auf den PCs des Computerraums, an denen Schüler angemeldet sind, die Präsentation in Vollbild
+		  dargestellt und Tastatur- und Mauseingaben blockiert. Auf PCs, an denen Lehrer angemeldet sind,
+		  erfolgt die Präsentation in einem separaten Fenster und alle Eingaben sind wie gewohnt möglich.
+		</para>
+		<para>
+		  <figure id="praesentation">
+			<title>Start einer Bildschirmpräsentation</title>
+			<graphic scalefit="1" width="80%" align="center" fileref="illustrations/starting_presentation.png"/>
+		  </figure>
+		</para>
+		<para>
+		  Eine Präsentation wird wie folgt gestartet: Unter <guimenu>mehr</guimenu> muss in der Liste
+		  der Rechner die Option <guimenu>Präsentation starten</guimenu> ausgewählt werden. Es erscheint ein
+		  Hinweis, das die Präsentation gestartet wird und nach kurzer Zeit wird die Ausgabe auf die übrigen
+		  PCs übertragen. Ein Klick auf <guimenu>Beenden</guimenu> stoppt die Präsentation. Der Kreis bei dem
+		  sendenden Rechner wird dann in rot und für die empfangenden Rechner in grün dargestellt.
+		</para>
+	  </section>
+	  </section>
+
+
+	  <section id="lehrerdoku:helpdesk">
+		<title>Helpdesk kontaktieren</title>
+		<para>
+		  Mit dem Helpdeskformular besteht
+		  die Möglichkeit mit dem Schul-Support (z.B. Lehrkraft mit Administrationsrechten an der jeweiligen
+		  Schule) in Kontakt zu treten. Damit kann beispielsweise die Einrichtung einer neuen Arbeitsgruppe
+		  angefordert werden oder ein Hardwareproblem mit einem Computer gemeldet werden.
+		</para>
+		<para>
+		  <figure id="helpdesk">
+			<title>Anfrage an den Helpdesk</title>
+			<graphic scalefit="1" width="50%" align="center" fileref="illustrations/contact_helpdesk.png"/>
+		  </figure>
+		</para>
+		<para>
+		  Über das Auswahlfeld <guimenu>Kategorie</guimenu> kann eine Auswahl getroffen, um welche Art
+		  von Anfrage es sich handelt, beispielsweise um eine Anfrage zu einem Hardwareproblem.
+		</para>
+		<para>
+		  Die Nachricht kann als freier Fließtext in das Formular eingegeben werden. Das Formular wird
+		  nach dem Absenden automatisch als E-Mail an den Support gesendet.
+		</para>
+	  </section>
+
+
+	  <section id="lehrerdoku:ags">
+		<title>Arbeitsgruppen bearbeiten</title>
+		<para>
+		  Jeder Schüler ist Mitglied seiner Klasse. Darüberhinaus gibt es die Möglichkeit, Schüler in
+		  klassenübergreifende Arbeitsgruppen (AGs) einzuordnen.
+		</para>
+		<para>
+		  Das Anlegen einer Arbeitsgruppe legt automatisch einen Datenbereich auf dem Schulserver an,
+		  auf den alle Mitglieder der Arbeitsgruppe Zugriff erhalten.
+		</para>
+		<para>
+		  Lehrer können Schüler zu Arbeitsgruppen hinzufügen oder entfernen, aber keine neuen
+		  Arbeitsgruppen anlegen. Dies muss von einem Schuladministrator vorgenommen werden und wird in
+		  <xref linkend="admindoku:ags"/> beschrieben.
+		</para>
+		<para>
+		  Nach einem Klick auf <guimenu>Arbeitsgruppen bearbeiten</guimenu> wird eine Liste aller
+		  Arbeitsgruppen angezeigt.
+		</para>
+		<para>
+		  Über das Eingabefeld <guimenu>Suchmuster</guimenu> können die angezeigten Arbeitsgruppen
+		  eingeschränkt werden. Trägt man hier beispielsweise <emphasis>inf</emphasis> ein, werden nur
+		  Arbeitsgruppen angezeigt, die die Zeichenkette <emphasis>inf</emphasis> enthalten (z.B. die
+		  Informatik-AG).
+		</para>
+		<para>
+		  <figure id="select-workgroup">
+			<title>Auswahl einer Arbeitsgruppe</title>
+			<graphic scalefit="1" width="100%" align="center" fileref="illustrations/workgroup_selected.png"/>
+		  </figure>
+		</para>
+		<para>
+		  Ein Klick auf den Namen der Arbeitsgruppe öffnet ein neues Fenster. Der Name der
+		  <guimenu>Arbeitsgruppe</guimenu> und eine <guimenu>Beschreibung</guimenu> können von Lehrern nicht
+		  bearbeitet werden und sind ausgegraut.
+		</para>
+		<para>
+		  Im Eingabefeld <guimenu>Mitglieder</guimenu> wird eine Liste der Schüler angezeigt, die
+		  Mitglied der Arbeitsgruppe sind. Ein Klick auf <guimenu>Hinzufügen</guimenu> öffnet einen neuen
+		  Dialog.
+		</para>
+		<para>
+		  <figure id="assign-pupils">
+			<title>Zuweisen von Schülern zu einer Arbeitsgruppe</title>
+			<graphic scalefit="1" width="50%" align="center" fileref="illustrations/workgroup_add_students.png"/>
+		  </figure>
+		</para>
+		<para>
+		  Es erscheint eine Liste aller Schüler der Schule. Die Liste der Schüler kann eingeschränkt
+		  werden, indem über den Menüpunkt <guimenu>Benutzergruppe oder Klasse</guimenu> eine Klasse oder AG
+		  ausgewählt wird. Es werden dann nur die Schüler dieser Klasse dargestellt. Durch Eingabe von
+		  Benutzer-, Vor- und/oder Nachname in das Eingabefeld <guimenu>Name</guimenu> und anschließendem
+		  Klick auf <guimenu>Suchen</guimenu> kann auch gezielt nach einem Schüler gesucht werden. Die
+		  Schüler, die zu der Arbeitsgruppe hinzugefügt werden sollen, können durch Aktivieren des
+		  Auswahlkästchens vor dem Schülernamen markiert werden. Ein Klick auf <guimenu>Hinzufügen</guimenu>
+		  fügt die Schüler dann der Arbeitsgruppe hinzu.
+		</para>
+		<para>
+		  Schüler können aus der Arbeitsgruppe entfernt werden, indem die zu entfernenden Schüler
+		  durch Klick auf das Auswahlkästchen vor dem Schüler markiert werden und anschließend auf
+		  <guimenu>Entfernen</guimenu> geklickt wird.
+		</para>
+	  </section>
+
+
+	  <section id="lehrerdoku:druckermod">
+		<title>Drucker moderieren</title>
+		<para>
+		  Mit dieser Funktion können Ausdrucke der Schüler geprüft werden. Die anstehenden
+		  Druckaufträge können vom Lehrer betrachtet und entweder verworfen oder an den Drucker weitergereicht
+		  werden. Dadurch können unnötige oder fehlerhafte Ausdrucke vermieden werden.
+		</para>
+		<para>
+		  <figure id="printer-moderation">
+			<title>Moderation von Druckaufträgen</title>
+			<graphic scalefit="1" width="100%" align="center" fileref="illustrations/print_jobs.png"/>
+		  </figure>
+		</para>
+		<para>
+		  <itemizedlist>
+			<listitem>
+			  <simpara>
+				Die Moderationsfunktion kann über <guimenu>Drucker moderieren</guimenu> aufgerufen
+				werden.
+			  </simpara>
+			</listitem>
+			<listitem>
+			  <simpara>
+				Es erscheint eine Liste mit anstehenden Druckaufträge. Die Liste der Schüler kann
+				eingeschränkt werden, indem über den Menüpunkt <guimenu>Klasse oder Arbeitsgruppe</guimenu> eine
+				Klasse oder AG ausgewählt wird. Es werden dann nur die Schüler dieser Klasse dargestellt.
+			  </simpara>
+			</listitem>
+			<listitem>
+			  <para>
+				Jeder Druckauftrag wird in einer Zeile dargestellt. In der Spalte
+				<guimenu>Druckauftrag</guimenu> wird der Dateiname der ausgedruckten Datei angezeigt, außerdem die
+				Seitenanzahl und das Datum des Druckauftrags.
+
+				<figure id="printer-selection">
+				  <title>Auswahl des Druckers nach Freigabe des Druckauftrags</title>
+				  <graphic scalefit="1" width="80%" align="center" fileref="illustrations/printer_choice.png"/>
+				</figure>
+			  </para>
+			</listitem>
+			<listitem>
+			  <simpara>
+				Mit <guimenu>Betrachten</guimenu> kann der Druckauftrag angezeigt werden. Wenn alles
+				in Ordnung ist, kann der Ausdruck mit <guimenu>Drucken</guimenu> an den tatsächlichen Drucker
+				weitergeleitet werden. In dem folgenden Dialog kann dann ein Drucker ausgewählt werden. Alternativ
+				kann der Druckauftrag mit <guimenu>Löschen</guimenu> entfernt werden.
+			  </simpara>
+			</listitem>
+		  </itemizedlist>
+		</para>
+	  </section>
+
+
+	  <section id="lehrerdoku:material">
+		<title>Materialien verteilen</title>
+		<para>
+		  Diese Funktion vereinfacht das Verteilen und Einsammeln von Unterrichtsmaterial an Klassen
+		  oder Arbeitsgruppen. Optional kann eine Frist festgelegt werden. So ist es möglich, Aufgaben zu
+		  verteilen, die bis zum Ende der Unterrichtsstunde zu bearbeiten sind. Nach Ablauf der Frist werden
+		  die verteilten Materialien dann automatisch wieder eingesammelt und im Heimatverzeichnis des Lehrers
+		  abgelegt.
+		</para>
+		<para>
+		  Die für eine solche Verteilung notwendigen Informationen werden als
+		  <emphasis>Projekt</emphasis> bezeichnet.
+		</para>
+		<para>
+		  Ein mögliches Beispielszenario:
+		</para>
+		<para>
+		  Die Schüler des Mathematikunterrichts sollen bis zur nächste Unterrichtsstunde (ein paar
+		  Tage später) ein Dokument bearbeiten. Dafür erstellt die Lehrkraft ein neues Projekt und lädt das zu
+		  verteilende Dokument in die Materialverteilung hoch. Als Frist wird der Startzeitpunkt der nächsten
+		  Unterrichtsstunde angegeben. Mit dem Erstellen des Projektes wird das Dokument automatisch in die
+		  Heimatverzeichnisse der Schüler verteilt. Die Schüler bearbeiten das Dokument bis zur nächsten
+		  Unterrichtsstunde (z.B. im Unterricht oder in Freistunden). Zum festgelegten Abgabezeitpunkt wird
+		  das Dokument automatisiert eingesammelt. Dazu wird das Dokument aus den Heimatverzeichnissen der
+		  Schüler in das Heimatverzeichnis der Lehrkraft kopiert und steht anschließend der Lehrkraft zur
+		  Durchsicht zur Verfügung.
+		</para>
+
+	  <section>
+		<title>Verwaltung von Projekten</title>
+		<para>
+		  Die Funktion kann über das Modul <guimenu>Materialien verteilen</guimenu> erreicht
+		  werden. Hier findet sich eine Liste aller bestehenden Projekte. Das Anlegen weiterer Projekte ist in
+		  <xref linkend="lehrerdoku:material:addproject"/> beschrieben.
+		</para>
+		<para>
+		  <figure id="verteilungsprojekte">
+			<title>Liste von Materialverteilungsprojekten</title>
+			<graphic scalefit="1" width="100%" align="center" fileref="illustrations/distribution_projects.png"/>
+		  </figure>
+		</para>
+		<para>
+		  Im Hauptmenü ist eine Liste aller Projekte zu sehen. Jedes Projekt ist einem Lehrer
+		  zugeordnet, der unter <guimenu>Eigentümer</guimenu> angezeigt wird. Über die Option
+		  <guimenu>Übernahme</guimenu> kann ein anderer Lehrer das Projekt übernehmen. Bestehende Projekte
+		  können außerdem bearbeitet oder gelöscht werden.
+		</para>
+		<para>
+		  Das <guimenu>einsammeln</guimenu> von Dateien ist in <xref
+		  linkend="lehrerdoku:material:einsammeln"/> beschrieben.
+		</para>
+	  </section>
+
+	  <section id="lehrerdoku:material:addproject">
+		<title>Neues Projekt erstellen</title>
+		<para>
+		  In der unteren Bildzeile findet sich die Option <guimenu>Projekt hinzufügen</guimenu>, mit
+		  der ein neues Projekt registriert werden kann.
+		</para>
+		<para>
+		  <figure id="verteilungsprojekt">
+			<title>Erstellen eines Materialverteilungsprojekts</title>
+			<graphic scalefit="1" width="100%" align="center" fileref="illustrations/distribution_project_creation.png"/>
+		  </figure>
+		</para>
+		<para>
+		  <itemizedlist>
+			<listitem>
+			  <simpara>
+				Als <guimenu>Beschreibung</guimenu> muss ein Projektname eingetragen werden,
+				z.B. <emphasis>Klassenarbeit Mathematik</emphasis>. Der Verzeichnisname legt fest, wo die Daten
+				abgelegt werden.
+			  </simpara>
+			</listitem>
+			<listitem>
+			  <simpara>
+				Das Feld <guimenu>Verteilen der Projektdateien</guimenu> erlaubt die Automatisierung des Verteilens
+				von Projektdaten. In der Grundeinstellung <guimenu>Manuelles Verteilen</guimenu> wird die Verteilung
+				der Projektdateien durch den Lehrer manuell ausgelöst. Durch Auswahl von <guimenu>Automatisches
+				Austeilen</guimenu> kann auch ein fester Zeitpunkt definiert werden, zu dem die Dateien in die
+				Heimatverzeichnisse der Schüler kopiert werden. Dieser Zeitpunkt kann über die Auswahlfelder
+				<guimenu>Verteilungsdatum</guimenu> und <guimenu>Verteilungszeit</guimenu> vorgegeben werden.
+			  </simpara>
+			</listitem>
+			<listitem>
+			  <simpara>
+				Analog zu der automatischen Verteilung können Projektdateien auch im Auswahlfeld
+				<guimenu>Einsammeln der Projektdateien</guimenu> manuell oder automatisch eingesammelt werden.
+			  </simpara>
+			</listitem>
+			<listitem>
+			  <simpara>
+				Unter <guimenu>Mitglieder</guimenu> können mit <guimenu>Hinzufügen</guimenu> einzelne
+				Klassen oder Arbeitsgemeinschaften zugeordnet werden, bzw. mit <guimenu>Entfernen</guimenu> wieder
+				entfernt werden.
+			  </simpara>
+			</listitem>
+			<listitem>
+			  <simpara>
+				Im Untermenü <guimenu>Dateien</guimenu> werden die zu verteilenden Dokumente
+				ausgewählt. Ein Klick auf <guimenu>Hochladen</guimenu> öffnet ein Fenster, mit dem eine Datei
+				ausgewählt werden kann. Mit <guimenu>Entfernen</guimenu> können Dateien wieder abgewählt werden.
+			  </simpara>
+			</listitem>
+			<listitem>
+			  <simpara>
+				Ein Klick auf <guimenu>Projekt erstellen</guimenu> schliesst das Anlegen eines
+				Projekts ab.
+			  </simpara>
+			</listitem>
+		  </itemizedlist>
+		</para>
+	  </section>
+
+
+	  <section id="lehrerdoku:material:einsammeln">
+		<title>Einsammeln der verteilten Dokumente</title>
+		<para>
+		  Die nachfolgende Beschreibung gibt einen Überblick über das manuelle Einsammeln der
+		  Dokumente eines bestehenden Verteilungsprojekts. Es wird durch einen Klick auf
+		  <guimenu>einsammeln</guimenu> in der Liste der Materialverteilungsliste gestartet.
+		</para>
+		<para>
+		  <figure id="verteilungsprojekt-einsammeln">
+			<title>Einsammeln eines Materialverteilungsprojekts</title>
+			<graphic scalefit="1" width="80%" align="center" fileref="illustrations/distribution_collect_project.png"/>
+		  </figure>
+		</para>
+		<para>
+		  Die eingesammelten Dateien werden im Heimatverzeichnis der Lehrkraft abgelegt, die das
+		  Verteilungsprojekt erstellt hat. Dies erfolgt unabhängig davon, welche Lehrkraft das Einsammeln der
+		  Dateien auslöst! Die Dateien befinden sich im Verzeichnis <emphasis>Unterrichtsmaterial</emphasis>
+		  unterhalb des persönlichen Heimatverzeichnisses des Lehrkraft. Für jedes Verteilungsprojekt wird ein
+		  eigenes Verzeichnis angelegt, das den Namen des Verteilungsprojektes trägt. Unterhalb dieses
+		  Verzeichnisses wird für jeden Schüler ein Verzeichnis angelegt, das die eingesammelten Dateien des
+		  Schülers enthält, so dass eine nachträgliche Zuordnung leicht möglich ist.
+		</para>
+	  </section>
+	  </section>
+  </chapter>
+
+  <chapter>
+	<title>Verwaltungsfunktionen für Schuladministratoren</title>
+	  <section id="admindoku:pwlehrer">
+		<title>Passwörter (Lehrer)</title>
+		<para>
+		  Dieses Modul erlaubt Schuladministratoren das Zurücksetzen von Lehrer-Passwörtern. Die
+		  bestehenden Passwörter können aus Sicherheitsgründen nicht ausgelesen werden; wird ein Passwort
+		  vergessen, muss ein neues Passwort vergeben werden.
+		</para>
+		<para>
+		  Die Bedienung erfolgt analog zum in
+		  <xref linkend="lehrerdoku:schuelerpasswort"/> beschriebene Zurücksetzen von Passwörtern für Schüler.
+		</para>
+	  </section>
+
+	  <section id="admindoku:ags">
+		<title>Arbeitsgruppen verwalten</title>
+		<para>
+		  Dieses Modul erlaubt Schuladministratoren neue Arbeitsgruppen anzulegen und diesen neben
+		  Schülern auch Lehrer zuzuweisen.
+		</para>
+		<para>
+		  Die Bedienung der Gruppenverwaltung beim Hinzufügen von Schülern erfolgt analog zu der in
+		  <xref linkend="lehrerdoku:ags"/> beschriebenen Verwaltung. Der einzige Unterschied ist, das
+		  nun auch Lehrerkonten hinzugefügt werden können.
+		</para>
+		<para>
+		  Eine neue Arbeitsgruppe kann über die Option <guimenu>Arbeitsgruppe hinzufügen</guimenu>
+		  eingerichtet werden. Es muss mindestens der Name der <guimenu>Arbeitsgruppe</guimenu> eingegeben
+		  werden; optional kann eine <guimenu>Beschreibung</guimenu> hinterlegt werden.
+		</para>
+		<para>
+		  Eine bestehende Arbeitsgruppe kann durch Klick auf das Minus-Symbol gelöscht werden.
+		</para>
+	  </section>
+
+	  <section id="admindoku:computerraum:anlegen">
+		<title>Computerräume verwalten</title>
+		<para>
+		  Mit der Funktion <guimenu>Computerräume verwalten</guimenu> werden Computer einer Schule
+		  einem Computerraum zugeordnet. Diese Computerräume können von den Lehrern dann zentral verwaltet
+		  werden, etwa indem der Internetzugang freigegeben wird.
+		</para>
+		<para>
+		  <figure id="computerroom-list">
+			<title>Verwaltung von Computerräumen</title>
+			<graphic scalefit="1" width="100%" align="center" fileref="illustrations/computerrooms.png"/>
+		  </figure>
+		</para>
+		<para>
+		  Mit <guimenu>Raum hinzufügen</guimenu> kann ein neuer Computerraum definiert werden. Neben
+		  einem <guimenu>Namen</guimenu> kann auch eine weiterführende <guimenu>Beschreibung</guimenu>
+		  angegeben werden.
+		</para>
+		<para>
+		  Mit der Option <guimenu>Computer in dem Raum</guimenu> können dem Raum Computer zugewiesen
+		  werden. In der Auswahlliste werden nur Rechner angezeigt, die von den technischen Betreuern
+		  registriert sind. Fehlen in der Liste Computer, sollte dies an den Helpdesk gemeldet werden.
+		</para>
+		<para>
+		  <figure id="add-to-computerroom">
+			<title>Zuweisen von Computern zu einem Computerraum</title>
+			<graphic scalefit="1" width="50%" align="center" fileref="illustrations/computerrooms_add_computers.png"/>
+		  </figure>
+		</para>
+		<para>
+		  Bereits angelegte Computerräume können auch nachträglich über das jeweilige Icon bearbeitet
+		  oder gelöscht werden.
+		</para>
+	  </section>
+
+	  <section id="admindoku:unterrichtszeiten">
+		<title>Unterrichtszeiten</title>
+		<para>
+		  Die Funktion <guimenu>Unterrichtszeiten</guimenu> erlaubt es, die Zeiträume der jeweiligen
+		  Schulstunden pro Schule zu definieren. So kann beispielsweise der Internetzugang pro Schulstunde
+		  freigegeben werden.
+		</para>
+		<para>
+		  <figure id="lesson-times">
+			<title>Festlegung der Unterrichtszeiten</title>
+			<graphic scalefit="1" width="80%" align="center" fileref="illustrations/lesson_times.png"/>
+		  </figure>
+		</para>
+		<para>
+		  Es wird empfohlen das Ende der Schulstunden inkl. der Pausen bis kurz vor Beginn der
+		  nächsten Schulstunde anzugeben, da die Unterrichtszeiten als Vorgabe für die raumbezogenen
+		  Einstellungen verwendet werden und damit z.B. der Internetzugang nicht direkt mit der Pausenglocke
+		  deaktiviert wird.
+		</para>
+	  </section>
+
+	  <section id="admindoku:assign-teachers-to-pupils">
+		<title>Lehrer Klassen zuordnen</title>
+		<para>
+		  Für jede Klasse gibt es einen gemeinsamen Datenbereich. Damit Lehrer auf diesen Datenbereich
+		  zugreifen können, müssen sie der Klasse zugewiesen werden.
+		</para>
+		<para>
+		  <figure id="liste-klassen">
+			<title>Liste der Klassen einer Schule</title>
+			<graphic scalefit="1" width="100%" align="center" fileref="illustrations/classes.png"/>
+		  </figure>
+		</para>
+		<para>
+		  Dies erfolgt über die Funktion <guimenu>Lehrer Klassen zuordnen</guimenu>. Es wird eine
+		  Liste von Klassen angezeigt. Ein Klick auf <guimenu>Bearbeiten</guimenu> zeigt eine Auswahlliste, in
+		  der Lehrer hinzugefügt werden können.
+		</para>
+		<para>
+		  <figure id="assign-teacher">
+			<title>Zuweisen von Lehrern zu einer Klasse</title>
+			<graphic scalefit="1" width="50%" align="center" fileref="illustrations/assign_teacher_to_class.png"/>
+		  </figure>
+		</para>
+	  </section>
+
+
+	  <section id="admindoku:internetregeln">
+		<title>Internetregeln definieren</title>
+		<para>
+		  Für die Filterung des Internetzugriffs wird ein sogenannter Proxy eingesetzt. Es
+		  handelt sich dabei um einen Server, der vor jedem Abruf einer Internetseite prüft, ob der Zugriff
+		  auf diese Seite erlaubt ist. Ist das nicht der Fall, wird eine Informationsseite angezeigt.
+		</para>
+		<para>
+		  Wenn Schüler beispielsweise in einer Schulstunde in der Wikipedia recherchieren sollen, kann
+		  eine Regelliste definiert werden, die Zugriffe auf alle anderen Internetseiten unterbindet. Diese
+		  Regelliste kann dann vom Lehrer zugewiesen werden.
+		</para>
+		<para>
+		  Wird die Regel für eine Klasse oder Arbeitsgruppe definiert, betrifft dies auch die in der
+		  Klasse enthaltenen Lehrer. Für Lehrer kann ggf. eine Regel mit höherer Priorität zugewiesen werden
+		  (s.u.).
+		</para>
+		<para>
+		  Mit der Funktion <guimenu>Internetregeln definieren</guimenu> können die
+		  Regeln verwaltet werden.
+		</para>
+		<para>
+		  In der Grundeinstellung sind schon zwei Regeln vordefiniert; <emphasis>Kein
+		  Internet</emphasis> deaktiviert den Internetzugang generell und <emphasis>Unbeschränkt</emphasis>
+		  erlaubt vollständigen Zugriff.
+		</para>
+		<para>
+		  <figure id="internet-rules">
+			<title>Verwaltung von Internetregeln</title>
+			<graphic scalefit="1" width="100%" align="center" fileref="illustrations/internet_rules.png"/>
+		  </figure>
+		</para>
+		<para>
+		  Mit <guimenu>Regel hinzufügen</guimenu> kann eine neue Filterregel definiert werden. Zuerst
+		  ist ein <guimenu>Name</guimenu> einzugeben. Als <guimenu>Regeltyp</guimenu> werden zwei Arten von
+		  Filterregeln unterschieden:
+		</para>
+		  <itemizedlist>
+			<listitem>
+			  <simpara>
+				Bei einer <emphasis>Freigabeliste</emphasis> sind nur vordefinierte Seiten aufrufbar
+				und alle anderen Seiten gesperrt.
+			  </simpara>
+			</listitem>
+			<listitem>
+			  <simpara>
+				Bei einer <emphasis>Sperrliste</emphasis> sind bis auf die gesperrten Seiten alle
+				anderen Seiten aufrufbar.
+			  </simpara>
+			</listitem>
+		  </itemizedlist>
+		<para>
+		  <figure id="wikipedia-whitelist">
+			<title>Anlegen einer Whitelist für Wikipedia</title>
+			<graphic scalefit="1" width="50%" align="center" fileref="illustrations/internet_rules_whitelist.png"/>
+		  </figure>
+		</para>
+		<para>
+		  Unter <guimenu>Internet-Domänen</guimenu> kann eine Liste von Adressen angegeben werden,
+		  z.B. <emphasis>wikipedia.org</emphasis> oder <emphasis>facebook.com</emphasis>. Es wird empfohlen
+		  nur den Domänenanteil einer Adresse anzugeben, also statt www.wikipedia.org nur wikipedia.org.
+		</para>
+		<para>
+		  Ist die Option <guimenu>WLAN-Authentifizierung</guimenu> aktiviert,
+		  wird der Klasse oder Arbeitsgruppe, der die die Regel zugewiesen wird, der Zugriff auf ein
+		  ggf. vorhandenes Wireless LAN erlaubt, um beispielsweise mobilen Geräten wie Laptops den Zugriff auf
+		  das Internet zu erlauben.
+		</para>
+		<para>
+		  Regeln können auch mit <guimenu>Prioritäten</guimenu> versehen
+		  werden. Eine Regel mit höherer Priorität überschreibt dann die unterliegenden Regeln. Dies ist
+		  besonders dann zu beachten, wenn Benutzer in mehreren Gruppen enthalten sind.
+		</para>
+	  </section>
+  </chapter>
+
+  <?dbhtml-include href="../stylesheets/piwiki.html"?>
+</book>
