@@ -33,7 +33,6 @@
 # related third party
 from httplib import HTTPSConnection, HTTPException
 from simplejson import loads, dumps
-from httplib import HTTPException
 from socket import error as SocketError
 
 # univention

@@ -51,6 +51,7 @@ import tempfile
 import shutil
 import time
 import traceback
+import subprocess
 from httplib import HTTPException
 from socket import error as SocketError
 
@@ -59,6 +60,8 @@ from util import UMCConnection, Progress
 udm_modules.update()
 
 _ = Translation( 'ucs-school-umc-exam' ).translate
+
+CREATE_USER_POST_HOOK_DIR = '/usr/share/ucs-school-exam/hooks/create_exam_user_post.d/'
 
 class Instance( SchoolBaseModule ):
 	def __init__( self ):
@@ -223,7 +226,11 @@ class Instance( SchoolBaseModule ):
 						if iuser:
 							MODULE.info('user has been replicated: %s' % idn)
 
-							### TODO: COPY PROFILE DIR
+							# call hook scripts
+							if 0 != subprocess.call(['/bin/run-parts', CREATE_USER_POST_HOOK_DIR, '--arg', iuser.username, '--arg', iuser.dn, '--arg', iuser.homedir]):
+								msg = 'failed to run hook scripts for user %r' % (iuser.username)
+								MODULE.error(msg)
+								raise ValueError(msg)
 
 							# store User object in list of final recipients
 							recipients.append(iuser)

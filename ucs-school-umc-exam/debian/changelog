@@ -1,3 +1,9 @@
+ucs-school-umc-exam (0.1.17-1) unstable; urgency=low
+
+  * add mechanism to hook into exam mode user creation; Bug #31156
+
+ -- Florian Best <best@univention.de>  Wed, 08 May 2013 16:43:18 +0200
+
 ucs-school-umc-exam (0.1.16-1) unstable; urgency=low
 
   * Bug #31158: read max upload size from UCR variable umc/server/upload/max 
