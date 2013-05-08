@@ -89,23 +89,19 @@ define([
 					type: TextBox,
 					required: true,
 					label: _('Exam name'),
-					description: _('The name of the exam, e.g., "Math exam algrebra 02/2013".')
-				}, {
-					name: 'directory',
-					type: TextBox,
-					required: true,
-					label: _('Directory name'),
-					description: _('The name of the project directory as it will be displayed in the file system.'),
-					depends: ['name'],
-					dynamicValue: lang.hitch(this, function(values) {
-						// avoid certain characters for the directory name
-						var name = values.name;
+					description: _('The name of the exam, e.g., "Math exam algrebra 02/2013".'),
+					onChange: lang.hitch(this, function() {
+						// update the directory name and avoid some special characters
+						var name = this.getWidget('general', 'name').get('value');
 						array.forEach([/\//g, /\\/g, /\?/g, /%/g, /\*/g, /:/g, /\|/g, /"/g, /</g, />/g, /\$/g, /'/g], function(ichar) {
 							name = name.replace(ichar, '_');
 						});
 
 						// limit the filename length
-						return name.slice(0, 255);
+						name = name.slice(0, 255);
+
+						// update value
+						this.getWidget('files', 'directory').set('value', name);
 					})
 				}, {
 					type: MultiObjectSelect,
@@ -137,9 +133,14 @@ define([
 				headerText: _('Upload of exam files'),
 				helpText: _('Please select all necessary files for the exam and upload them one by one. These files will be distributed to all participating students. A copy of the original files will be stored in your home directory, as well. During the exam or at the end of it, the corresponding files can be collected from the students. The collected files will be stored in your home directory, as well.'),
 				widgets: [{
+					name: 'directory',
+					type: TextBox,
+					required: true,
+					label: _('Directory name'),
+					description: _('The name of the project directory as it will be displayed in the file system.')
+				}, {
 					type: MultiUploader,
 					name: 'files',
-					// TODO: correct UMCP command name
 					command: 'schoolexam/upload',
 					label: _('Files'),
 					description: _('Files that are distributed along with this exam')
