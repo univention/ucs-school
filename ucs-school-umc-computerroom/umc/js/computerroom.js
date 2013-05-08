@@ -41,6 +41,7 @@ define([
 	"dijit/ProgressBar",
 	"dijit/Dialog",
 	"dijit/Tooltip",
+	"dojox/html/styles",
 	"umc/dialog",
 	"umc/tools",
 	"umc/widgets/ExpandingTitlePane",
@@ -56,9 +57,14 @@ define([
 	"umc/modules/computerroom/ScreenshotView",
 	"umc/modules/computerroom/SettingsDialog",
 	"umc/i18n!umc/modules/computerroom"
-], function(declare, lang, array, aspect, dom, Deferred, ItemFileWriteStore, DataStore,
-            Memory, DijitProgressBar, Dialog, Tooltip, dialog, tools, ExpandingTitlePane, Grid, Button, Module, Page, Form,
+], function(declare, lang, array, aspect, dom, Deferred, ItemFileWriteStore, DataStore, Memory, DijitProgressBar,
+            Dialog, Tooltip, styles, dialog, tools, ExpandingTitlePane, Grid, Button, Module, Page, Form,
             ContainerWidget, Text, ComboBox, ProgressBar, ScreenshotView, SettingsDialog, _) {
+
+	// prepare CSS rules for module
+	var iconPath = require.toUrl('dijit/themes/umc/icons/16x16');
+	styles.insertCssRule('.umcIconCollectFiles', lang.replace('background-image: url({path}/computerroom-icon-collect-files.png); width: 16px; height: 16px;', { path: iconPath }));
+	styles.insertCssRule('.umcIconFinishExam', lang.replace('background-image: url({path}/computerroom-icon-finish-exam.png); width: 16px; height: 16px;', { path: iconPath }));
 
 	return declare("umc.modules.computerroom", [ Module ], {
 		// summary:
@@ -143,17 +149,19 @@ define([
 
 			// define actions above grid
 			this._headActions = [{
-				name: 'finishExam',
-				style: 'float: left;',
-				visible: false,
-				label: _('Stop exam'),
-				callback: lang.hitch(this, '_finishExam')
-			}, {
 				name: 'collect',
+				iconClass: 'umcIconCollectFiles',
 				style: 'float: left;',
 				visible: false,
 				label: _('Collect results'),
 				callback: lang.hitch(this, '_collectExam')
+			}, {
+				name: 'finishExam',
+				iconClass: 'umcIconFinishExam',
+				style: 'float: left;',
+				visible: false,
+				label: _('Finish exam'),
+				callback: lang.hitch(this, '_finishExam')
 			}, {
 				name: 'settings',
 				style: 'padding-bottom: 10px; padding-bottom; 10px; float: right;',
