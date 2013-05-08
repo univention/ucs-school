@@ -100,14 +100,18 @@
 	  beschrieben.
 	</para>
 	<para>
-	  Für die Nutzung der Rechnerüberwachungs- und präsentationsfunktionen in der Computerraumverwaltung
+	  Für die Nutzung der Rechnerüberwachungs- und Präsentationsfunktionen in der Computerraumverwaltung
 	  (siehe <xref linkend="ucsschool:moduluebersicht"/>) wird vorausgesetzt, dass auf den
-	  Windows-Clients iTALC installiert wurde.
+	  Windows-Clients die Software iTALC installiert wurde.
 	</para>
 	<para>
-	  iTALC ist Open Source-Software und kann unter <ulink url="http://italc.sf.net/"/>
-	  heruntergeladen. Interoperabilitätstests zwischen &ucsUAS; 3.1 und iTALC wurden ausschließlich mit
-	  der iTALC-Version 2.0 unter Windows XP und Windows 7 (32 und 64 Bit) durchgeführt.
+	  Seit &ucsUAS; 3.1 R2 sind Windows-Binärpakete für die Open Source-Software iTALC in &ucsUAS;
+	  enthalten.  Die Binärpakete sind direkt über die Samba-Freigabe
+	  <emphasis>iTALC-Installation</emphasis> abruf- und installierbar. Alternativ finden sich die
+	  Installationdateien für 32- und 64bit-Versionen von iTALC auf dem Schulserver im Verzeichnis
+	  <filename>/usr/share/italc-windows/</filename>.  Interoperabilitätstests zwischen &ucsUAS; und iTALC
+	  wurden ausschließlich mit der von &ucsUAS; mitgelieferten iTALC-Version unter Windows XP und Windows
+	  7 (32 und 64 Bit) durchgeführt.
 	</para>
 	<para>
 	  <figure>
@@ -121,27 +125,18 @@
 	  <emphasis>iTALC Master</emphasis> abgewählt werden.
 	</para>
 	<para>
-	  <figure>
-		<title>iTALC-Installation: Babylon-Toolbar</title>
-		<graphic scalefit="1" width="60%" align="center" fileref="illustrations/italc2.png"/>
-	  </figure>
-	</para>
-	<para>
-	  Die Babylon-Toolbar ist für die Funktion von &ucsUAS; nicht notwendig und braucht daher nicht
-	  installiert zu werden.
-	</para>
-	<para>
 	  Nach der Installation von iTALC auf dem Windows-Client muss der öffentliche Schlüssel
 	  importiert werden, damit der Schulserver Zugriff auf das installierte iTALC-Backend erhält. Dies
 	  erfolgt durch Aufruf der iTALC Management Console unter <guimenu>Authentifizierung &ar;
 	  Schlüsseldatei-Assistent starten &ar; Öffentlichen Schlüssel importieren (Client-Computer) &ar;
 	  Lehrer</guimenu>. Unter <guimenu>Bitte geben Sie den Ort des öffentlichen Zugriffsschlüssels an, der
-	  importiert werden soll</guimenu> ist der iTALC-Schlüssel des Schulservers anzugeben. Der Schlüssel wird
-	  automatisch auf der SYSVOL-Freigabe des Schulservers unter dem Namen der Schuldomäne unter
+	  importiert werden soll</guimenu> ist der iTALC-Schlüssel des Schulservers anzugeben. Der Schlüssel
+	  wird automatisch auf der SYSVOL-Freigabe des Schulservers unter dem Namen der Schuldomäne unter
 	  <filename>scripts</filename> abgelegt (Kommt Samba 3 zum Einsatz, wird der Schlüssel auf der
-	  Netlogon-Freigabe abgelegt). Die Datei <filename>italc-key.pub</filename> muss in
-	  <filename>italc-key.key.txt</filename> umbenannt und kopiert werden, damit sie von dem Assistenten
-	  eingelesen werden kann.
+	  Netlogon-Freigabe abgelegt). Der Dateiname der Schlüsseldatei enthält den Namen des Schulservers für
+	  den sie generiert wurde, um Namenskonflikte auf der SYSVOL-Freigabe bei der Verwendung von Samba 4
+	  zu vermeiden.  Damit der iTALC-Assistent die Schlüsseldatei selbständig erkennt, sollte die Datei
+	  <filename>italc-key_<emphasis>SERVERNAME</emphasis>.pub.key.txt</filename> verwendet werden.
 	</para>
 	<para>
 	  Außerdem sollte auf den Windows-Clients sichergestellt werden, dass die installierte
