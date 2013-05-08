@@ -740,70 +740,100 @@ define([
 		},
 
 		_collectExam: function() {
-			var info = this.get('roomInfo') || {};
-			var deferred = this.umcpCommand('schoolexam/exam/collect', {
-				exam: info.exam
-			});
+			dialog.confirm(_('<p>Please confirm to collect students\' exam files.</p><p>This files will be stored in the corresponding exam folder of your home directory. It is possible to collect exam files several times during an exam.</p>'), [{
+				name: 'cancel',
+				label: _('Cancel'),
+				'default': true
+			}, {
+				name: 'collect',
+				label: _('Collect results')
+			}]).then(lang.hitch(this, function(response) {
+				if (response == 'cancel') {
+					// user canceled the dialog
+					return;
+				}
 
-			// create container with spinning ProgressBar
-			var container = new ContainerWidget({});
-			container.addChild(new Text({
-				content: _('Please wait while all exam documents are being collected.')
-			}));
-			container.addChild(new DijitProgressBar({
-				indeterminate: true
-			}));
+				// start collection the files
+				var info = this.get('roomInfo') || {};
+				var deferred = this.umcpCommand('schoolexam/exam/collect', {
+					exam: info.exam
+				});
 
-			// start standby animation
-			this.standby(false);
-			this.standby(true, container);
+				// create container with spinning ProgressBar
+				var container = new ContainerWidget({});
+				container.addChild(new Text({
+					content: _('Please wait while all exam documents are being collected.')
+				}));
+				container.addChild(new DijitProgressBar({
+					indeterminate: true
+				}));
 
-			deferred.then(lang.hitch(this, function() {
+				// start standby animation
 				this.standby(false);
-				container.destroyRecursive();
-				dialog.alert(_('All related exam documents have been collected successfully from the students\' home directories.'));
-			}), lang.hitch(this, function() {
-				this.standby(false);
-				container.destroyRecursive();
+				this.standby(true, container);
+
+				deferred.then(lang.hitch(this, function() {
+					this.standby(false);
+					container.destroyRecursive();
+					dialog.alert(_('All related exam documents have been collected successfully from the students\' home directories.'));
+				}), lang.hitch(this, function() {
+					this.standby(false);
+					container.destroyRecursive();
+				}));
 			}));
 		},
 
 		_finishExam: function() {
-			var info = this.get('roomInfo') || {};
-			this.umcpCommand('schoolexam/exam/finish', {
-				exam: info.exam,
-				room: info.room
-			});
-
-			// create a 'real' ProgressBar
-			var deferred = new Deferred();
-			this._progressBar.reset(_('Finishing exam...'));
-			this.standby(true, this._progressBar);
-			this._progressBar.auto(
-				'schoolexam/progress',
-				{},
-				function() {
-					// when progress is finished, resolve the given Deferred object
-					deferred.resolve();
+			dialog.confirm(_('<p>Please confirm to irrevocably finish the current exam.</p><p>All corresponding exam files will be collected from the students\' home directories and stored in the corresponding exam folder of your home directory.</p>'), [{
+				name: 'cancel',
+				label: _('Cancel'),
+				'default': true
+			}, {
+				name: 'finish',
+				label: _('Finish exam')
+			}]).then(lang.hitch(this, function(response) {
+				if (response == 'cancel') {
+					// user canceled the dialog
+					return;
 				}
-			);
 
-			// things to do after finishing the exam
-			deferred.then(lang.hitch(this, function() {
-				// stop standby
-				this.standby(false);
+				// start finishing the exam
+				var info = this.get('roomInfo') || {};
+				this.umcpCommand('schoolexam/exam/finish', {
+					exam: info.exam,
+					room: info.room
+				});
 
-				// on success, prompt info to user
-				if (this._progressBar.getErrors().errors.length == 0) {
-					dialog.alert(_('The exam has been successfully finished. All related exam documents have been collected from the students\' home directories.'));
-					delete info.exam;
-					delete info.examDescription;
-					this.set('roomInfo', info);
+				// create a 'real' ProgressBar
+				var deferred = new Deferred();
+				this._progressBar.reset(_('Finishing exam...'));
+				this.standby(true, this._progressBar);
+				this._progressBar.auto(
+					'schoolexam/progress',
+					{},
+					function() {
+						// when progress is finished, resolve the given Deferred object
+						deferred.resolve();
+					}
+				);
 
-					// update room settings for normal mode in the backend
-					// ... load settings first and then save them back
-					this._settingsDialog.update().then(lang.hitch(this._settingsDialog, 'save'));
-				}
+				// things to do after finishing the exam
+				deferred.then(lang.hitch(this, function() {
+					// stop standby
+					this.standby(false);
+
+					// on success, prompt info to user
+					if (this._progressBar.getErrors().errors.length == 0) {
+						dialog.alert(_('The exam has been successfully finished. All related exam documents have been collected from the students\' home directories.'));
+						delete info.exam;
+						delete info.examDescription;
+						this.set('roomInfo', info);
+
+						// update room settings for normal mode in the backend
+						// ... load settings first and then save them back
+						this._settingsDialog.update().then(lang.hitch(this._settingsDialog, 'save'));
+					}
+				}));
 			}));
 		},
 
