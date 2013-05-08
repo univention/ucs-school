@@ -134,7 +134,7 @@ access to dn.regex="^cn=raeume,cn=groups,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%
 	by dn.regex="^uid=([^,]+),cn=(@$@TEACHERS@$@|@$@TEACHERS-STAFF@$@|@$@STAFF@$@|@$@ADMINS@$@),cn=users,ou=$1,@$@DISTRICT@$@@%@ldap/base@%@$$" write
 	by * none break
 
-access to dn.regex="^cn=([^,]+),cn=raeume,cn=groups,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$"
+access to dn.regex="^cn=([^,]+),cn=raeume,cn=groups,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" filter="(&(!(|(uidNumber=*)(objectClass=SambaSamAccount)))(objectClass=univentionGroup))"
 	by dn.regex="^uid=([^,]+),cn=(@$@TEACHERS@$@|@$@TEACHERS-STAFF@$@|@$@STAFF@$@|@$@ADMINS@$@),cn=users,ou=$2,@$@DISTRICT@$@@%@ldap/base@%@$$" write
 	by * none break
 
@@ -154,7 +154,7 @@ access to dn.regex="^(cn=@$@TEACHERS@$@,|cn=@$@PUPILS@$@,|)cn=groups,ou=([^,]+),
 	by dn.regex="^uid=([^,]+),cn=(@$@TEACHERS@$@|@$@TEACHERS-STAFF@$@),cn=users,ou=$2,@$@DISTRICT@$@@%@ldap/base@%@$$" write
 	by * none break
 
-access to dn.regex="^cn=([^,]+),(cn=@$@TEACHERS@$@,|cn=@$@PUPILS@$@,|)cn=groups,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" filter="objectClass=univentionGroup"
+access to dn.regex="^cn=([^,]+),(cn=@$@TEACHERS@$@,|cn=@$@PUPILS@$@,|)cn=groups,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" filter="(&(!(|(uidNumber=*)(objectClass=SambaSamAccount)))(objectClass=univentionGroup))"
 	by group/univentionGroup/uniqueMember.expand="cn=@$@GRPADMINS@$@$3,cn=ouadmins,cn=groups,@%@ldap/base@%@" write
 	by dn.regex="^uid=([^,]+),cn=(@$@TEACHERS@$@|@$@TEACHERS-STAFF@$@|@$@STAFF@$@|@$@ADMINS@$@),cn=users,ou=$3,@$@DISTRICT@$@@%@ldap/base@%@$$" write
 	by * none break
@@ -165,14 +165,14 @@ access to dn.regex="^cn=shares,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$"  attr
 	by dn.regex="^uid=([^,]+),cn=(@$@TEACHERS@$@|@$@TEACHERS-STAFF@$@),cn=users,ou=$1,@$@DISTRICT@$@@%@ldap/base@%@$$" write
 	by * none break
 
-access to dn.regex="^cn=([^,]+),cn=shares,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" filter="objectClass=univentionShare"
+access to dn.regex="^cn=([^,]+),cn=shares,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" filter="(&(!(|(uidNumber=*)(objectClass=SambaSamAccount)))(objectClass=univentionShare))"
 	by group/univentionGroup/uniqueMember.expand="cn=@$@GRPADMINS@$@$2,cn=ouadmins,cn=groups,@%@ldap/base@%@" write
 	by dn.regex="^uid=([^,]+),cn=(@$@TEACHERS@$@|@$@TEACHERS-STAFF@$@),cn=users,ou=$2,@$@DISTRICT@$@@%@ldap/base@%@$$" write
 	by * none break
 
 # Mitglieder der lokalen Administratoren muessen einige temporaere Objekte schreiben duerfen
 # da keine regulaeren Ausdruecke auf Gruppenmitgliedschaften moeglich sind wird dies allen Lehrern erlaubt
-access to dn.regex="^cn=([^,]+),cn=(groupName|sid|gid|gidNumber|mac),cn=temporary,cn=univention,@%@ldap/base@%@$$" filter="(&(objectClass=lock)(!(objectClass=posixAccount)))"
+access to dn.regex="^cn=([^,]+),cn=(groupName|sid|gid|gidNumber|mac),cn=temporary,cn=univention,@%@ldap/base@%@$$" filter="(&(objectClass=lock)(!(|(uidNumber=*)(objectClass=SambaSamAccount))))"
 	by dn.regex="^uid=([^,]+),cn=(@$@TEACHERS@$@|@$@TEACHERS-STAFF@$@|@$@STAFF@$@|@$@ADMINS@$@),cn=users,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" write
 	by * none break
 
@@ -189,7 +189,8 @@ access to dn.regex="^cn=([^,]+),cn=computers,ou=([^,]+),@$@DISTRICT@$@@%@ldap/ba
 	by group/univentionGroup/uniqueMember.expand="cn=@$@GRPADMINS@$@$2,cn=ouadmins,cn=groups,@%@ldap/base@%@" write
 	by * none break
 
-access to dn.regex="(^cn=([^,]+),|^)cn=([^,]+),cn=dhcp,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" 
+# FIXME: explicit add allowed attributes
+access to dn.regex="(^cn=([^,]+),|^)cn=([^,]+),cn=dhcp,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" filter="(!(|(uidNumber=*)(objectClass=SambaSamAccount)))"
 	by group/univentionGroup/uniqueMember.expand="cn=@$@GRPADMINS@$@$3,cn=ouadmins,cn=groups,@%@ldap/base@%@" write
 	by * none break
 
@@ -249,7 +250,7 @@ access to dn.regex="^cn=klassen,cn=@$@PUPILS@$@,cn=groups,ou=([^,]+),@$@DISTRICT
 	by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
 	by * none break
 
-access to dn.regex="^cn=([^,]+),cn=klassen,cn=@$@PUPILS@$@,cn=groups,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$"
+access to dn.regex="^cn=([^,]+),cn=klassen,cn=@$@PUPILS@$@,cn=groups,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" filter="(&(!(|(uidNumber=*)(objectClass=SambaSamAccount)))(objectClass=univentionGroup))"
 	by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
 	by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
 	by * none break

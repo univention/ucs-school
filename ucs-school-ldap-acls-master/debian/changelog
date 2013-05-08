@@ -1,3 +1,9 @@
+ucs-school-ldap-acls-master (8.0.5-1) unstable; urgency=low
+
+  * adapt LDAP ACLs to be more restrictive; Bug #31299
+
+ -- Florian Best <best@univention.de>  Tue, 07 May 2013 16:58:03 +0200
+
 ucs-school-ldap-acls-master (8.0.4-1) unstable; urgency=low
 
   * group ACLs; Bug #30527
