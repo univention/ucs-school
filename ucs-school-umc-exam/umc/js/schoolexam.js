@@ -212,16 +212,36 @@ define([
 		buildRendering: function() {
 			this.inherited(arguments);
 
+			this.standby(true);
+			// query max upload size via UCR
+			var ucrDeferred = tools.ucr('umc/server/upload/max').then(function(result) {
+				return result['umc/server/upload/max'] || 10240;
+			}, function() {
+				// take a default value
+				return 10240;
+			}).then(lang.hitch(this, function(maxSize) {
+				// convert the value from MB to KB
+				maxSize *= 1024;
+
+				// update MultiUploader + its current umc/widgets/Uploader instance
+				var uploader = this.getWidget('files', 'files');
+				uploader.set('maxSize', maxSize);
+				if (uploader._uploader) {
+					uploader._uploader.set('maxSize', maxSize);
+				}
+			}));
+
 			// initiate a progress bar widget
 			this._progressBar = new ProgressBar();
 			this.own(this._progressBar);
 
-			// standby animation until all form elements are ready
-			this.standby(true);
-			var allFormsReady = array.map(this.pages, lang.hitch(this, function(ipage) {
+			// standby animation until all form elements ready and the UCR
+			// request has been finished
+			var allReady = array.map(this.pages, lang.hitch(this, function(ipage) {
 				return this._pages[ipage.name]._form.ready();
 			}));
-			all(allFormsReady).then(lang.hitch(this, function() {
+			allReady.push(ucrDeferred);
+			all(allReady).then(lang.hitch(this, function() {
 				this.standby(false);
 			}));
 
@@ -235,9 +255,6 @@ define([
 			// adjust the label of the 'finish' button on the 'success' page
 			var button = this.getPage('success')._footerButtons.finish;
 			button.set('label', _('Open computer room'));
-
-			// TODO set maxsize
-			//maxSize: maxUploadSize * 1024, // conversion from kbyte to byte
 		},
 
 		_updateButtons: function(pageName) {

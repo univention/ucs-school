@@ -1,3 +1,9 @@
+ucs-school-umc-exam (0.1.16-1) unstable; urgency=low
+
+  * Bug #31158: read max upload size from UCR variable umc/server/upload/max 
+
+ -- Alexander Kläser <klaeser@univention.de>  Wed, 08 May 2013 15:54:09 +0200
+
 ucs-school-umc-exam (0.1.15-1) unstable; urgency=low
 
   * Bug #31158: moved 'directory name' on second wizard page
