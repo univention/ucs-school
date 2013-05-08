@@ -114,7 +114,7 @@ def get_ssh_connection(username, password, host):
 def move_slave_into_ou(master, username, password, ou, slave):
 	'''Make sure that the slave object exists in the right OU.'''
 	MODULE.info('Trying to move the slave entry in the right OU structure...''')
-	result = umc(username, password, master, ['schoolwizards/schools/move_dc', '-o', 'schooldc=%s' % slave , '-o', 'schoolou=%s' % ou ])
+	result = umc(username, password, master, ['schoolwizards/schools/move_dc', '-o', 'schooldc=%s' % slave , '-o', 'schoolou=%s' % ou, '-f', 'schoolwizards/schools'])
 	if not result.get('success'):
 		MODULE.warn('Could not successfully move the slave DC into its correct OU structure:\n%s' % result.get('message'))
 		return False
