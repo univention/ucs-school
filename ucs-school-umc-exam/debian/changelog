@@ -1,3 +1,10 @@
+ucs-school-umc-exam (0.1.14-1) unstable; urgency=low
+
+  * Bug #31158: fixed progressbar information, make sure that exam can be
+    finished even though its project file can not be loaded
+
+ -- Alexander Kläser <klaeser@univention.de>  Wed, 08 May 2013 14:36:28 +0200
+
 ucs-school-umc-exam (0.1.13-2) unstable; urgency=low
 
   * Adjust debian/ucs-school-umc-exam.examples format (Bug #30835)

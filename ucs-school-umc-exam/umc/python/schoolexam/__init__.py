@@ -303,16 +303,16 @@ class Instance( SchoolBaseModule ):
 
 		# try to open project file
 		project = util.distribution.Project.load(request.options.get('exam'))
+		if not project:
+			# the project file does not exist... ignore problem
+			MODULE.warn('The project file for exam %s does not exist. Ignoring and finishing exam mode.' % request.options.get('exam'))
 
 		def _thread():
-			# make sure we have a valid project
-			if not project:
-				raise UMC_CommandError(_('No files have been distributed'))
-
 			# perform all actions inside a thread...
 			# collect files
 			progress.component(_('Collecting exam files...'))
-			project.collect()
+			if project:
+				project.collect()
 			progress.add_steps(10)
 
 			# open a new connection to the master UMC
@@ -321,28 +321,29 @@ class Instance( SchoolBaseModule ):
 				MODULE.error('Could not connect to UMC on %s: %s' % (ucr.get('ldap/master'), e))
 				raise UMC_CommandError(_('Could not connect to master server %s') % ucr.get('ldap/master'))
 
-			# mark the computer room for exam mode
+			# unset exam mode for the given computer room
 			progress.component(_('Configuring the computer room...'))
 			res = connection.request('schoolexam-master/unset-computerroom-exammode', dict(
 				roomdn=request.options.get('room')
 			))
 			progress.add_steps(5)
 
-			# start to create exam user accounts
-			progress.component(_('Preparing exam accounts'))
-			percentPerUser = 25.0 / len(project.recipients)
-			for iuser in project.recipients:
-				progress.info('%s, %s (%s)' % (iuser.lastname, iuser.firstname, iuser.username))
-				try:
-					ires = connection.request('schoolexam-master/remove-exam-user', dict(
-						userdn=iuser.dn
-					))
-					MODULE.info('Exam user has been removed: %s' % iuser.dn)
-				except (HTTPException, SocketError) as e:
-					MODULE.warn('Could not remove exam user account %s: %s' % (iuser.dn, e))
+			# delete exam users accounts
+			if project:
+				progress.component(_('Removing exam accounts'))
+				percentPerUser = 25.0 / len(project.recipients)
+				for iuser in project.recipients:
+					progress.info('%s, %s (%s)' % (iuser.lastname, iuser.firstname, iuser.username))
+					try:
+						ires = connection.request('schoolexam-master/remove-exam-user', dict(
+							userdn=iuser.dn
+						))
+						MODULE.info('Exam user has been removed: %s' % iuser.dn)
+					except (HTTPException, SocketError) as e:
+						MODULE.warn('Could not remove exam user account %s: %s' % (iuser.dn, e))
 
-				# indicate the the user has been processed
-				progress.add_steps(percentPerUser)
+					# indicate the the user has been processed
+					progress.add_steps(percentPerUser)
 
 		def _finished(thread, result):
 			# mark the progress state as finished
@@ -358,8 +359,9 @@ class Instance( SchoolBaseModule ):
 			else:
 				self.finished(request.id, dict(success=True))
 
-				# pruge project
-				project.purge()
+				if project:
+					# pruge project
+					project.purge()
 
 				# remove uploaded files from cache
 				self._cleanTmpDir()
