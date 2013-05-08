@@ -1,0 +1,5 @@
+[ucsschool/exam/windows_profile_path]
+Description[de]=
+Description[en]=Specifies the windows profile path for exam users
+Type=str
+Categories=ucsschool-exam

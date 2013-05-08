@@ -1,3 +1,9 @@
+ucs-school-umc-exam (0.1.18-1) unstable; urgency=low
+
+  * [WIP]: add hook script to copy windows profile dir; Bug #31156
+
+ -- Florian Best <best@univention.de>  Wed, 08 May 2013 17:04:30 +0200
+
 ucs-school-umc-exam (0.1.17-1) unstable; urgency=low
 
   * add mechanism to hook into exam mode user creation; Bug #31156
