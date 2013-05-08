@@ -237,7 +237,7 @@ def create_ou_local(ou):
 def create_ou_remote(master, username, password, ou, slave):
 	"""Create a school OU via the UMC interface."""
 	try:
-		umc(username, password, master, ['schoolwizards/schools/create', '-o' ,'name=%s' % ou, '-o', 'schooldc=%s' % slave ])
+		umc(username, password, master, ['schoolwizards/schools/create', '-o' ,'name=%s' % ou, '-o', 'schooldc=%s' % slave, '-f', 'schoolwizards/schools'])
 	except RuntimeError as err:
 		return False
 	return True
