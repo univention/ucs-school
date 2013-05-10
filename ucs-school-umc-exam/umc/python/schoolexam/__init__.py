@@ -147,8 +147,13 @@ class Instance( SchoolBaseModule ):
 				MODULE.error('Could not find user DN: %s' % self._user_dn)
 				raise RuntimeError( _('Could not authenticate user "%s"!') % self._user_dn )
 
-			# validate the project data and save project
+			# make sure that a project with the same name does not exist
 			opts = request.options
+			project = util.distribution.Project.load(opts.get('directory'))
+			if project:
+				raise UMC_CommandError(_('An exam with the name "%s" already exists. Please choose a different name for the exam.') % opts.get('directory'))
+
+			# validate the project data and save project
 			my.project = util.distribution.Project(dict(
 				name=opts.get('directory'),
 				description=opts.get('name'),
@@ -196,7 +201,7 @@ class Instance( SchoolBaseModule ):
 
 			# start to create exam user accounts
 			progress.component(_('Preparing exam accounts'))
-			percentPerUser = 25.0 / len(users)
+			percentPerUser = 25.0 / (1 + len(users))
 			examUsers = set()
 			usersReplicated = set()
 			for iuser in users:
@@ -212,6 +217,8 @@ class Instance( SchoolBaseModule ):
 
 				# indicate the the user has been processed
 				progress.add_steps(percentPerUser)
+
+			progress.add_steps(percentPerUser)
 
 			# wait for the replication of all users to be finished
 			userModul = udm_modules.get( 'users/user' )
@@ -338,7 +345,7 @@ class Instance( SchoolBaseModule ):
 			# delete exam users accounts
 			if project:
 				progress.component(_('Removing exam accounts'))
-				percentPerUser = 25.0 / len(project.recipients)
+				percentPerUser = 25.0 / (1 + len(project.recipients))
 				for iuser in project.recipients:
 					progress.info('%s, %s (%s)' % (iuser.lastname, iuser.firstname, iuser.username))
 					try:
@@ -351,6 +358,8 @@ class Instance( SchoolBaseModule ):
 
 					# indicate the the user has been processed
 					progress.add_steps(percentPerUser)
+
+				progress.add_steps(percentPerUser)
 
 		def _finished(thread, result):
 			# mark the progress state as finished

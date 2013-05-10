@@ -52,6 +52,15 @@ define([
 	"umc/widgets/ProgressBar",
 	"umc/i18n!umc/modules/schoolexam"
 ], function(declare, lang, array, domClass, domStyle, on, all, topic, Deferred, dialog, tools, Wizard, Module, TextBox, Text, TextArea, ComboBox, MultiObjectSelect, MultiUploader, StandbyMixin, ProgressBar, _) {
+	// helper function that sanitizes a given filename
+	var sanitizeFilename = function(name) {
+		array.forEach([/\//g, /\\/g, /\?/g, /%/g, /\*/g, /:/g, /\|/g, /"/g, /</g, />/g, /\$/g, /'/g], function(ichar) {
+			name = name.replace(ichar, '_');
+		});
+
+		// limit the filename length
+		return name.slice(0, 255);
+	}
 
 	var ExamWizard = declare("umc.modules.schoolexam.ExamWizard", [ Wizard, StandbyMixin ], {
 		umcpCommand: null,
@@ -91,21 +100,14 @@ define([
 					label: _('Exam name'),
 					description: _('The name of the exam, e.g., "Math exam algrebra 02/2013".'),
 					onChange: lang.hitch(this, function() {
-						// update the directory name and avoid some special characters
-						var name = this.getWidget('general', 'name').get('value');
-						array.forEach([/\//g, /\\/g, /\?/g, /%/g, /\*/g, /:/g, /\|/g, /"/g, /</g, />/g, /\$/g, /'/g], function(ichar) {
-							name = name.replace(ichar, '_');
-						});
-
-						// limit the filename length
-						name = name.slice(0, 255);
-
-						// update value
+						// update the directory name
+						var name = sanitizeFilename(this.getWidget('general', 'name').get('value'));
 						this.getWidget('files', 'directory').set('value', name);
 					})
 				}, {
 					type: MultiObjectSelect,
 					name: 'recipients',
+					required: true,
 					dialogTitle: _('Assign classes/workgroups'),
 					label: _('Assigned classes/workgroups'),
 					description: _('List of groups that are marked to receive the teaching materials'),
@@ -137,7 +139,10 @@ define([
 					type: TextBox,
 					required: true,
 					label: _('Directory name'),
-					description: _('The name of the project directory as it will be displayed in the file system.')
+					description: _('The name of the project directory as it will be displayed in the file system. The following special characters are not allowed: "/", "\\", "?", "%", "*", ":", "|", """, "<", ">", "$", "\'".'),
+					validator: function(value) {
+						return value == sanitizeFilename(value) && value.length > 0;
+					}
 				}, {
 					type: MultiUploader,
 					name: 'files',
@@ -180,7 +185,7 @@ define([
 					} ),
 					description: _( '<p>In this text box you can list web sites that are allowed to be used by the students. Each line should contain one web site. Example: </p><p style="font-family: monospace">univention.com<br/>wikipedia.org<br/></p>' ),
 					validate: lang.hitch( this, function() {
-						return !( this._form.getWidget( 'internetRule' ).get( 'value' ) == 'custom' && ! this._form.getWidget( 'customRule' ).get( 'value' ) );
+						return !( this.getWidget( 'roomSettings', 'internetRule' ).get( 'value' ) == 'custom' && ! this.getWidget( 'roomSettings', 'customRule' ).get( 'value' ) );
 					} ),
 					onFocus: lang.hitch( this, function() {
 						//dijit.hideTooltip( this._form.getWidget( 'customRule' ).domNode ); // FIXME
@@ -323,13 +328,56 @@ define([
 			return pageName != 'success';
 		},
 
+		_gotoPage: function(pageName) {
+			if (!this._pages[pageName]) {
+				// ignore invalid pages
+				return;
+			}
+			this._updateButtons(pageName);
+			this.selectChild(this._pages[pageName]);
+		},
+
+		_validate: function() {
+			// recipients
+			var values = this.getValues();
+			var nextPage = null;
+			if (!values.recipients.length) {
+				dialog.alert(_('No recipients have been selected for the exam.'));
+				nextPage = 'general';
+			}
+
+			// validate the page forms
+			array.forEach(['general', 'files', 'roomSettings'], function(ipage) {
+				var iform = this._pages[ipage]._form;
+				if (!iform.validate() && !nextPage) {
+					nextPage = ipage;
+					var jform = iform;
+					dialog.confirm(_('Please validate and correct your input data.'), [{
+						name: 'ok',
+						label: _('OK'),
+						'default': true
+					}]).then(lang.hitch(this, function() {
+						if (jform.getInvalidWidgets().length) {
+							// focus the first invalid widget
+							window.setTimeout(function() {
+								jform.getWidget(jform.getInvalidWidgets()[0]).focus();
+							}, 500);
+						}
+					}));
+				}
+			}, this);
+			this._gotoPage(nextPage);
+			return nextPage == null;
+		},
+
 		_startExam: function() {
 			// validate the current values
-			var values = this.getValues();
-
-			//TODO: validate user input
+			if (!this._validate()) {
+				return;
+			}
 
 			// start the exam
+			var values = this.getValues();
 			tools.umcpCommand('schoolexam/exam/start', values, false);
 
 			// initiate the progress bar
@@ -363,13 +411,11 @@ define([
 			all([preparationDeferred, computerRoomDeferred]).then(lang.hitch(this, function() {
 				// open the computerroom and close the exam wizard
 				this.standby(false);
-				this._updateButtons('success');
-				this.selectChild(this._pages.success);
+				this._gotoPage('success');
 			}), lang.hitch(this, function() {
 				// error case
 				this.standby(false);
-				this._updateButtons('error');
-				this.selectChild(this._pages.error);
+				this._gotoPage('error');
 			}));
 		},
 
