@@ -1,3 +1,9 @@
+ucs-school-umc-computerroom (2.0.27-2) unstable; urgency=low
+
+  * Bug #30866: fixed dependency to italc-windows
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 10 May 2013 10:39:11 +0200
+
 ucs-school-umc-computerroom (2.0.27-1) unstable; urgency=low
 
   * Bug #30866: added dependency to italc-windows
