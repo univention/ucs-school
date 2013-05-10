@@ -212,14 +212,8 @@ define([
 		buildRendering: function() {
 			this.inherited(arguments);
 
-			this.standby(true);
-			// query max upload size via UCR
-			var ucrDeferred = tools.ucr('umc/server/upload/max').then(function(result) {
-				return result['umc/server/upload/max'] || 10240;
-			}, function() {
-				// take a default value
-				return 10240;
-			}).then(lang.hitch(this, function(maxSize) {
+			// helper function for setting the maxupload size
+			var setMaxSize = lang.hitch(this, function(maxSize) {
 				// convert the value from MB to KB
 				maxSize *= 1024;
 
@@ -229,7 +223,43 @@ define([
 				if (uploader._uploader) {
 					uploader._uploader.set('maxSize', maxSize);
 				}
-			}));
+			});
+
+			// helper function for setting preselected values
+			var setValue = lang.hitch(this, function(page, widget, value) {
+				if (value) {
+					this.getWidget(page, widget).setInitialValue(value);
+				}
+			});
+
+			this.standby(true);
+			// query max upload size via UCR
+			var ucrDeferred = tools.ucr([
+				'umc/server/upload/max',
+				'ucsschool/exam/default/room',
+				'ucsschool/exam/default/shares',
+				'ucsschool/exam/default/internet'
+			]).then(lang.hitch(this, function(result) {
+				setMaxSize(result['umc/server/upload/max'] || 10240);
+				setValue('roomSettings', 'shareMode', result['ucsschool/exam/default/shares']);
+				setValue('roomSettings', 'internetRule', result['ucsschool/exam/default/internet']);
+
+				// for the room, we need to match the given value against all available room DNs
+				var roomWidget = this.getWidget('general', 'room');
+				var roomName = result['ucsschool/exam/default/room'];
+				roomWidget.ready().then(function() {
+					var roomDN = null;
+					array.forEach(roomWidget.getAllItems(), function(iitem) {
+						if (iitem.id.indexOf('cn=' + roomName) == 0) {
+							// we found the correct DN
+							roomWidget.setInitialValue(iitem.id);
+						}
+					});
+				});
+			}), function() {
+				// take a default value for maxSize
+				setMaxSize(10240);
+			});
 
 			// initiate a progress bar widget
 			this._progressBar = new ProgressBar();

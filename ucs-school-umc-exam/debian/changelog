@@ -1,3 +1,9 @@
+ucs-school-umc-exam (0.1.19-1) unstable; urgency=low
+
+  * Bug #31158: added UCR variables for preselection in exam wizard
+
+ -- Alexander Kläser <klaeser@univention.de>  Fri, 10 May 2013 14:04:39 +0200
+
 ucs-school-umc-exam (0.1.18-1) unstable; urgency=low
 
   * [WIP]: add hook script to copy windows profile dir; Bug #31156

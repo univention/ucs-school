@@ -1,5 +1,23 @@
 [ucsschool/exam/windows_profile_path]
-Description[de]=
-Description[en]=Specifies the windows profile path for exam users
+Description[de]=Definiert den Windows-Profilpfad für Benutzerkonten des Klassenarbeitsmodus.
+Description[en]=Specifies the windows profile path for exam users.
+Type=str
+Categories=ucsschool-exam
+
+[ucsschool/exam/default/room]
+Description[en]=Specifies the preselected room for a new exam. The value is given as the LDAP name of the room, i.e., including the school OU prefix (e.g., "myschool-PC Room").
+Description[de]=Definiert den vorausgewählten Raum für eine neue Klassenarbeit. Der Eintrag beinhaltet den LDAP-Namen des Raumes, d.h. inklusive des Schul-OU-Präfxies (z.B. "meineschule-PC Raum").
+Type=str
+Categories=ucsschool-exam
+
+[ucsschool/exam/default/shares]
+Description[en]=Specifies the preselected share mode for a new exam. Possible values are "all" for access to all shares without restriction and "home" for restricted access only to the (exam user) home directory.
+Description[de]=Definiert den vorausgewählten Freigabezugriff für eine neue Klassenarbeit. Mögliche Werte sind "all" für Zugriff auf alle Freigaben ohne Einschränkungen sowie "home" für eingeschränkten Zugriff auf lediglich das Heimatverzeichnis des (Klassenarbeit-) Benutzerkonto.
+Type=str
+Categories=ucsschool-exam
+
+[ucsschool/exam/default/internet]
+Description[en]=Specifies the preselected internet rule for a new exam. Possible values are names of internet rules as they are specified in the UMC module "Define internet rules".
+Description[de]=Definiert die vorausgewählte Internetregel für eine neue Klassenarbeit. Mögliche Werte umfassen die Namen aller Internetregeln wie sie im UMC module "Internetregeln definieren" angezeigt werden.
 Type=str
 Categories=ucsschool-exam
