@@ -1,7 +1,11 @@
 ucs-school-import (9.0.11-1) unstable; urgency=low
 
   * if the OU control groups contain at least one member and no specific
-    slave name has been given, no default slave object will be created (Bug #21126)
+    slave name has been given, no default slave object will be created
+    (Bug #21126)
+  * create_ou now uses always $hostname as file server for class/home
+    shares if ucsschool/singlemaster=yes is set and no specific slave name
+    has been given as second argument (Bug #30285, Bug #27521)
 
  -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Mon, 13 May 2013 16:36:15 +0200
 

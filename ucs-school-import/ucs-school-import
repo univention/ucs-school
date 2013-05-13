@@ -562,6 +562,8 @@ def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None, ShareFileServer=None
 	if created:
 		# get name of new dc
 		finalDCname = 'dc%s-01' % schoolNr.lower ()
+		if configRegistry.is_true('ucsschool/singlemaster', False):
+			finalDCname = configRegistry.get('hostname')
 		if dcName:
 			finalDCname = dcName
 
@@ -618,7 +620,11 @@ def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None, ShareFileServer=None
 		if dcName:
 			dccn = dcName
 		else:
-			dccn = 'dc%s-01' % schoolNr.lower ()
+			if configRegistry.is_true('ucsschool/singlemaster', False):
+				dccn = configRegistry.get('hostname')
+			else:
+				dccn = 'dc%s-01' % schoolNr.lower ()
+
 		dcgroups = ["cn=OU%s-DC-Edukativnetz,cn=ucsschool,cn=groups,%s" % (schoolNr.lower (), baseDN),
 					"cn=DC-Edukativnetz,cn=ucsschool,cn=groups,%s" % (baseDN, )]
 
@@ -628,7 +634,10 @@ def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None, ShareFileServer=None
 			if dcName:
 				dccn = '%sv' % dcName
 			else:
-				dccn = 'dc%sv-01' % schoolNr.lower () # this is the name convention, a trailing v for Verwaltungsnetz DCs
+				if configRegistry.is_true('ucsschool/singlemaster', False):
+					dccn = configRegistry.get('hostname')
+				else:
+					dccn = 'dc%sv-01' % schoolNr.lower () # this is the naming convention, a trailing v for Verwaltungsnetz DCs
 			dcgroups = ["cn=OU%s-DC-Verwaltungsnetz,cn=ucsschool,cn=groups,%s" % (schoolNr.lower (), baseDN),
 					"cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,%s" % (baseDN, )]
 
@@ -641,7 +650,7 @@ def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None, ShareFileServer=None
 		#   * is computer a dc master or dc backup ==> do not add computer to any groups
 		#   * is computer a dc slave ==> add computer to groups specified by dcgroups
 		#   * is computer no dc ==> return error and exit
-		# 
+		#
 
 		# create server if not existent
 		server_exists = (len(objects) > 0) # cannot create another server with this id
@@ -715,7 +724,7 @@ def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None, ShareFileServer=None
 				pass
 			print "need to create server: %s"%object.dn
 
-		# create dhcp-service if not exsistant
+		# create dhcp-service if not existant
 		objects = univention.admin.modules.lookup(
 			dhcp_service_module, co, lo, scope='sub', superordinate=superordinate,
 			base=baseDN, filter=univention.admin.filter.expression('cn', schoolNr.lower()))

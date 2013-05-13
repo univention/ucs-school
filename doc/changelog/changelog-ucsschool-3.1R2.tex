@@ -6,9 +6,15 @@
 \item The wording of ,,single server environment'' and ,,multi server environment'' have been unified (\ucsBug{30268}).
 \end{itemize}
 
-% \section{Import scripts}
-% \begin{itemize}
-% \end{itemize}
+\section{Import scripts}
+\begin{itemize}
+\item If \ucsCommand{create\_ou} is called and the given OU already exists in LDAP directory and at least one
+  domaincontroller is responsible for that OU (domaincontroller is member of one of the OU's access groups:
+  OU...-DC-Edukativnetz), the default domaincontroller object will not be created anymore automatically. This
+  is only the case if no servername has been passed to \ucsCommand{create\_ou} (\ucsBug{21126}).
+\item The script \ucsCommand{create\_ou} now configures always the domaincontroller master as file server for
+      class/home shares in single server environments (\ucsBug{30285}).
+\end{itemize}
  
 \section{iTALC}
 \begin{itemize}
