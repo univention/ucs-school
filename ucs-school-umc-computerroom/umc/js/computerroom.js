@@ -172,6 +172,12 @@ define([
 				style: 'padding-bottom: 10px; padding-bottom; 10px; float: right;',
 				label: _('Change room'),
 				callback: lang.hitch(this, 'changeRoom')
+			}, {
+				name: 'stop_presentation',
+				style: 'padding-bottom: 10px; padding-bottom; 10px; float: right;',
+				label: _('Stop presentation'),
+				visible: false,
+				callback: lang.hitch(this, '_stopPresentation')
 			}];
 
 			var isConnected = function(item) { return item.connection[0] == 'connected'; };
@@ -258,11 +264,17 @@ define([
 						dialog.alert(_('No computers were select. Please select computers.'));
 						return;
 					}
-					array.forEach(items, lang.hitch(this, function(comp) {
-						this.umcpCommand('computerroom/computer/state', {
-							computer: comp.id[0],
-							state: 'poweron'
-						});
+					array.forEach(items, lang.hitch(this, function(comp, i) {
+						if (comp.connection && comp.connection[0] === 'connected') {
+							return; // computer is already turned on
+						}
+						// wait 300ms between every wake up to not cause an power breakdown
+						window.setTimeout(lang.hitch(this, function() {
+							this.umcpCommand('computerroom/computer/state', {
+								computer: comp.id[0],
+								state: 'poweron'
+							});
+						}), 300*i);
 					}));
 					dialog.notify(_('The selected computers are booting up.'));
 				})
@@ -289,8 +301,8 @@ define([
 			}, {
 				name: 'lockInput',
 				label: lang.hitch(this, function(item) {
-					if (!item) {
-						return '';
+					if (!item) { // column title
+						return _('(Un)lock input devices');
 					}
 					if (item.InputLock) {
 						if (item.InputLock[0] === true) {
@@ -311,22 +323,56 @@ define([
 					return null;
 				}),
 				isStandardAction: false,
-				isMultiAction: false,
-				canExecute: function(item) {
-					return item.connection[0] == 'connected' && item.user && item.user[0] && (!item.teacher || item.teacher[0] === false) && item.InputLock;
-				},
+				isMultiAction: true,
+				canExecute: lang.hitch(this, function(item) {
+					return !this._demo.running && item.connection[0] == 'connected' && item.user && item.user[0] && (!item.teacher || item.teacher[0] === false) && item.InputLock;
+				}),
 				callback: lang.hitch(this, function(ids, items) {
-					var comp = items[0];
-					// unclear status -> cancel operation
-					if (comp.InputLock[0] === null) {
-						return;
-					}
-					this.umcpCommand('computerroom/lock', {
-						computer: comp.id[0],
-						device: 'input',
-						lock: comp.InputLock[0] !== true
+					var cb = lang.hitch(this, function(lock) {
+						array.forEach(items, lang.hitch(this, function(comp) {
+							if (comp.connection[0] != 'connected' || // not connected
+								!comp.user || !comp.user[0] || // no user logged on
+								(comp.teacher && comp.teacher[0] === true) || // teacher logged in
+								comp.InputLock[0] === null || // unclear status
+								comp.InputLock[0] === lock // already locked/unlocked
+							) {
+								// ignore them
+								return;
+							}
+							this.umcpCommand('computerroom/lock', {
+								computer: comp.id[0],
+								device: 'input',
+								lock: lock
+							});
+							this._objStore.put({ id: comp.id[0], InputLock: null });
+						}));
 					});
-					this._objStore.put({ id: comp.id[0], InputLock: null});
+
+					// determine the action
+					var l_locked = array.filter(items, function(item) { return item.InputLock[0] === true; }).length;
+					var l_unlocked = array.filter(items, function(item) { return item.InputLock[0] === false; }).length;
+					if (l_locked && l_unlocked) {
+						// ask what to do
+						dialog.confirm(_('Which action should be applied on the selected computers?'), [{
+							label: _('Lock'),
+							name: 'lock',
+							callback: function() { cb(true); }
+						}, {
+							label: _('Unlock'),
+							name: 'unlock',
+							callback: function() { cb(false); }
+						}, {
+							label: _('Cancel'),
+							name: 'cancel',
+							'default': true
+						}]);
+					} else if (l_locked) {
+						cb(false);
+					} else if (l_unlocked) {
+						cb(true);
+					} else {
+						// no computers can be modified, do nothing
+					}
 				})
 			}, {
 				name: 'demoStart',
@@ -348,6 +394,83 @@ define([
 				isContextAction: true,
 				isMultiAction: false,
 				callback: lang.hitch(this, function() { this.queryRoom(true); })
+			}, {
+				name: 'ScreenLock',
+				field: 'ScreenLock',
+				label: lang.hitch(this, function(item) {
+					if (!item) { // column title
+						return _('Screen lock');
+					}
+					if (!item.teacher || item.teacher[0] === false) {
+						if (item.ScreenLock[0] === true) {
+							return _('Unlock screen');
+						} else if (item.ScreenLock[0] === false) {
+							return _('Lock screen');
+						}
+					}
+					return _('Lock screen');
+				}),
+				iconClass: lang.hitch(this, function(item) {
+					if (!item) {
+						return null;
+					}
+					if (item.ScreenLock[0] === null) {
+						return 'umcIconLoading';
+					}
+					return null;
+				}),
+				isStandardAction: true,
+				isMultiAction: true,
+				canExecute: lang.hitch(this, function(item) {
+					return !this._demo.running && item.connection[0] == 'connected' && item.user && item.user[0] && (!item.teacher || item.teacher[0] === false);
+				}),
+				callback: lang.hitch(this, function(ids, items) {
+					var cb = lang.hitch(this, function(lock) {
+						array.forEach(items, lang.hitch(this, function(comp) {
+							if (comp.connection[0] != 'connected' || // not connected
+								!comp.user || !comp.user[0] || // no user logged on
+								(comp.teacher && comp.teacher[0] === true) || // teacher logged in
+								comp.ScreenLock[0] === null || // unclear status
+								comp.ScreenLock[0] === lock // already locked/unlocked
+							) {
+								// ignore them
+								return;
+							}
+							this.umcpCommand('computerroom/lock', {
+								computer: comp.id[0],
+								device: 'screen',
+								lock: lock
+							});
+							this._objStore.put({ id: comp.id[0], ScreenLock: null });
+						}));
+					});
+
+					// determine the action
+					var l_locked = array.filter(items, function(item) { return item.ScreenLock[0] === true; }).length;
+					var l_unlocked = array.filter(items, function(item) { return item.ScreenLock[0] === false; }).length;
+					if (l_locked && l_unlocked) {
+						// ask what to do
+						dialog.confirm(_('Which action should be applied on the selected computers?'), [{
+							label: _('Lock'),
+							name: 'lock',
+							callback: function() { cb(true); }
+						}, {
+							label: _('Unlock'),
+							name: 'unlock',
+							callback: function() { cb(false); }
+						}, {
+							label: _('Cancel'),
+							name: 'cancel',
+							'default': true
+						}]);
+					} else if (l_locked) {
+						cb(false);
+					} else if (l_unlocked) {
+						cb(true);
+					} else {
+						// no computers can be modified, do nothing
+					}
+				})
 			}];
 		},
 
@@ -537,7 +660,7 @@ define([
 				// 'center' is its default value, so no need to specify it here explicitely
 				multiActionsAlwaysActive: true,
 				region: 'center',
-				actions: this._actionList(),
+				actions: lang.clone(this._actions),
 				columns: columns,
 				cacheRowWidgets: false,
 				moduleStore: new Memory(),
@@ -600,96 +723,6 @@ define([
 			this._grid._grid.setStore(this._dataStore);
 		},
 
-		_actionList: function(demo) {
-			var actions = null;
-			if (demo === undefined) {
-				demo = this._demo.running;
-			}
-
-			actions = lang.clone(this._actions);
-			if (demo === false) {
-				actions.push({
-					name: 'ScreenLock',
-					field: 'ScreenLock',
-					label: lang.hitch(this, function(item) {
-						if (!item) { // column title
-							return '<span style="height: 0px; font-weight: normal; color: rgba(0,0,0,0);">' + _('Unlock screen') + '</span>';
-						}
-						if (!item.teacher || item.teacher[0] === false) {
-							if (item.ScreenLock[0] === true) {
-								return _('Unlock screen');
-							} else if (item.ScreenLock[0] === false) {
-								return _('Lock screen');
-							}
-						}
-						return _('Lock screen');
-					}),
-					iconClass: lang.hitch(this, function(item) {
-						if (!item) {
-							return null;
-						}
-						if (item.ScreenLock[0] === null) {
-							return 'umcIconLoading';
-						}
-						return null;
-					}),
-					isStandardAction: true,
-					isMultiAction: false,
-					canExecute: function(item) {
-						return item.connection[0] == 'connected' && item.user && item.user[0] && (!item.teacher || item.teacher[0] === false);
-					},
-					callback: lang.hitch(this, function(ids, items) {
-						var comp = items[0];
-						this.umcpCommand('computerroom/lock', {
-							computer: comp.id[0],
-							device: 'screen',
-							lock: comp.ScreenLock[0] !== true });
-						this._objStore.put({ id: comp.id[0], ScreenLock: null });
-					})
-				});
-				actions.push({
-					name: 'demoClientStop',
-					label: lang.hitch(this, function(item) {
-						if (!item || item.DemoServer[0] === true) {
-							return '';
-						} else {
-							return _('Stop presentation');
-						}
-					}),
-					isStandardAction: false,
-					isMultiAction: false,
-					isContextAction: true,
-					canExecute: function(item) {
-						return item.connection[0] == 'connected' && item.DemoClient && item.DemoClient[0] === true;
-					},
-					callback: lang.hitch(this, function() {
-						this.umcpCommand('computerroom/demo/stop', {});
-					})
-				});
-			} else {
-				actions.push({
-					name: 'demoStop',
-					label: lang.hitch(this, function(item) {
-						if (!item) {
-							return _('Presentation');
-						} else {
-							return _('Stop');
-						}
-					}),
-					isStandardAction: true,
-					isMultiAction: false,
-					canExecute: function(item) {
-						return item.connection[0] == 'connected' && item.DemoServer && item.DemoServer[0] === true;
-					},
-					callback: lang.hitch(this, function() {
-						this.umcpCommand('computerroom/demo/stop', {});
-					})
-				});
-			}
-
-			return actions;
-		},
-
 		postCreate: function() {
 			var room = this.get('room');
 			if (room) {
@@ -740,7 +773,7 @@ define([
 		},
 
 		_collectExam: function() {
-			dialog.confirm(_('<p>Please confirm to collect students\' exam files.</p><p>This files will be stored in the corresponding exam folder of your home directory. It is possible to collect exam files several times during an exam.</p>'), [{
+			dialog.confirm(_("<p>Please confirm to collect students' exam files.</p><p>This files will be stored in the corresponding exam folder of your home directory. It is possible to collect exam files several times during an exam.</p>"), [{
 				name: 'cancel',
 				label: _('Cancel'),
 				'default': true
@@ -775,7 +808,7 @@ define([
 				deferred.then(lang.hitch(this, function() {
 					this.standby(false);
 					container.destroyRecursive();
-					dialog.alert(_('All related exam documents have been collected successfully from the students\' home directories.'));
+					dialog.alert(_("All related exam documents have been collected successfully from the students' home directories."));
 				}), lang.hitch(this, function() {
 					this.standby(false);
 					container.destroyRecursive();
@@ -784,7 +817,7 @@ define([
 		},
 
 		_finishExam: function() {
-			dialog.confirm(_('<p>Please confirm to irrevocably finish the current exam.</p><p>All corresponding exam files will be collected from the students\' home directories and stored in the corresponding exam folder of your home directory.</p>'), [{
+			dialog.confirm(_("<p>Please confirm to irrevocably finish the current exam.</p><p>All corresponding exam files will be collected from the students' home directories and stored in the corresponding exam folder of your home directory.</p>"), [{
 				name: 'cancel',
 				label: _('Cancel'),
 				'default': true
@@ -823,8 +856,8 @@ define([
 					this.standby(false);
 
 					// on success, prompt info to user
-					if (this._progressBar.getErrors().errors.length == 0) {
-						dialog.alert(_('The exam has been successfully finished. All related exam documents have been collected from the students\' home directories.'));
+					if (this._progressBar.getErrors().errors.length === 0) {
+						dialog.alert(_("The exam has been successfully finished. All related exam documents have been collected from the students' home directories."));
 						delete info.exam;
 						delete info.examDescription;
 						this.set('roomInfo', info);
@@ -835,6 +868,10 @@ define([
 					}
 				}));
 			}));
+		},
+
+		_stopPresentation: function() {
+			this.umcpCommand('computerroom/demo/stop', {});
 		},
 
 		changeRoom: function() {
@@ -991,7 +1028,7 @@ define([
 
 			// query new list of entries and populate store
 			this.umcpCommand('computerroom/query', {
-				reload: reload !== undefined ? reload: false
+				reload: reload !== undefined ? reload : false
 			}).then(lang.hitch(this, function(response) {
 				this._settingsDialog.update();
 				array.forEach(response.result, function(item) {
@@ -1040,7 +1077,7 @@ define([
 						this._headButtons.settings.set('label', this._changeSettingsLabel);
 						this._settingsDialog.update();
 					}
-					this._headButtons.settings.set('style', 'color: inherit;'); // FIXME: remove instead of inherit
+					this._headButtons.settings.set('style', 'color: inherit;');
 				}
 
 				this._updateTimer = window.setTimeout(lang.hitch(this, '_updateRoom', {}), 2000);
@@ -1060,15 +1097,24 @@ define([
 						}
 					})
 				});
-				if (this._demo.running != demo || this._demo.server != demo_server) {
-					this._grid.set('actions', this._actionList(demo && demo_server !== null), true);
-				}
+
+				var changed = (this._demo.running != demo || this._demo.server != demo_server);
 				this._demo = {
 					running: demo,
 					server: demo_server,
 					user: demo_user,
 					systems: demo_systems
 				};
+
+				if (changed) {
+					this._grid.set('actions', lang.clone(this._actions), true);
+
+					// show or hide the "stop presentation" button
+					if (this._headButtons !== null) {
+						this._headButtons.stop_presentation.set('visible', demo);
+					}
+
+				}
 
 			}), lang.hitch(this, function(err) {
 				// error case, update went wrong, try to reinitiate the computer room (see Bug #27202)
