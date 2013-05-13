@@ -919,8 +919,12 @@ define([
 					var msg = '';
 					var room = _getRoom(roomDN);
 					if (room && room.exam) {
-						// TODO: move under the beyond message as addition?
-						msg += '<p>' + _('<b>Note:</b> This computerroom is currently in use to write the exam "%s".', room.examDescription) + '</p>';
+						if (room.locked) {
+							msg += '<p>' + _('<b>Note:</b> In this computerroom the exam "%s" is currently being executed by user %s.', room.examDescription, room.user) + '</p>';
+						}
+						else {
+							msg += '<p>' + _('<b>Note:</b> In this computerroom the exam "%s" is currently being written.', room.examDescription) + '</p>';
+						}
 					} else if (room && room.locked) {
 						msg += '<p>' + _('<b>Note:</b> This computer room is currently in use by %s.', room.user) + '</p>';
 					}

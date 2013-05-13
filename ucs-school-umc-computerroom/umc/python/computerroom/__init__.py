@@ -285,7 +285,7 @@ class Instance( SchoolBaseModule ):
 			# add room status information
 			roomInfo = _readRoomInfo(iroom['id']) or dict()
 			userDN = roomInfo.get('user')
-			if userDN and userDN != self._user_dn and 'pid' in roomInfo:
+			if userDN and userDN != self._user_dn and ('pid' in roomInfo or 'exam' in roomInfo):
 				# the room is currently locked by another user
 				iroom['locked'] = True
 				try:
