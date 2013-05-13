@@ -1,3 +1,10 @@
+ucs-school-import (9.0.11-1) unstable; urgency=low
+
+  * if the OU control groups contain at least one member and no specific
+    slave name has been given, no default slave object will be created (Bug #21126)
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Mon, 13 May 2013 16:36:15 +0200
+
 ucs-school-import (9.0.10-3) unstable; urgency=low
 
   * unify wording of "single server environment" and "multi server

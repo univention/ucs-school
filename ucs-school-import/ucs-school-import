@@ -67,6 +67,7 @@ import traceback
 import univention.debug
 univention.debug.init('/var/log/univention/admin-cmd.log', 1, 0)
 
+import ldap
 import univention.admin.uldap
 import univention.admin.modules
 import univention.admin.objects
@@ -646,6 +647,21 @@ def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None, ShareFileServer=None
 		server_exists=0
 		is_master_or_backup = False
 		is_slave = False
+
+		if not server_exists and not dcName:
+			try:
+				if dc == 'verwaltung':
+					grpdn = 'cn=OU%s-DC-Verwaltungsnetz,cn=ucsschool,cn=groups,%s' % (schoolNr.lower (), baseDN)
+				else:
+					grpdn = 'cn=OU%s-DC-Edukativnetz,cn=ucsschool,cn=groups,%s' % (schoolNr.lower (), baseDN)
+				hostlist = lo.get(grpdn, ['uniqueMember']).get('uniqueMember',[])
+			except ldap.NO_SUCH_OBJECT:
+				hostlist = []
+			except Exception, e:
+				print 'ERROR: cannot read %s: %s' % (grpdn, e)
+
+			if hostlist:
+				continue # if at least one DC has control over this OU then jump to next 'school_dcs' item
 		correct_server_exists=0
 		if objects:
 			server_exists = 1 # can't create another server with this id
