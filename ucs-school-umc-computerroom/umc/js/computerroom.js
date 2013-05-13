@@ -328,6 +328,10 @@ define([
 					return !this._demo.running && item.connection[0] == 'connected' && item.user && item.user[0] && (!item.teacher || item.teacher[0] === false) && item.InputLock;
 				}),
 				callback: lang.hitch(this, function(ids, items) {
+					if (items.length === 0) {
+						dialog.alert(_('No computers were select. Please select computers.'));
+						return;
+					}
 					var cb = lang.hitch(this, function(lock) {
 						array.forEach(items, lang.hitch(this, function(comp) {
 							if (comp.connection[0] != 'connected' || // not connected
@@ -346,6 +350,7 @@ define([
 							});
 							this._objStore.put({ id: comp.id[0], InputLock: null });
 						}));
+						dialog.notify(_('The selected computers get locked.'));
 					});
 
 					// determine the action
@@ -353,7 +358,7 @@ define([
 					var l_unlocked = array.filter(items, function(item) { return item.InputLock[0] === false; }).length;
 					if (l_locked && l_unlocked) {
 						// ask what to do
-						dialog.confirm(_('Which action should be applied on the selected computers?'), [{
+						dialog.confirm(_('There are differences in the lock status of the selected computers.') + '<br/>' + _('Which action should be applied on the selected computers?'), [{
 							label: _('Lock'),
 							name: 'lock',
 							callback: function() { cb(true); }
@@ -372,6 +377,7 @@ define([
 						cb(true);
 					} else {
 						// no computers can be modified, do nothing
+						return;
 					}
 				})
 			}, {
@@ -425,6 +431,10 @@ define([
 					return !this._demo.running && item.connection[0] == 'connected' && item.user && item.user[0] && (!item.teacher || item.teacher[0] === false);
 				}),
 				callback: lang.hitch(this, function(ids, items) {
+					if (items.length === 0) {
+						dialog.alert(_('No computers were select. Please select computers.'));
+						return;
+					}
 					var cb = lang.hitch(this, function(lock) {
 						array.forEach(items, lang.hitch(this, function(comp) {
 							if (comp.connection[0] != 'connected' || // not connected
@@ -443,6 +453,7 @@ define([
 							});
 							this._objStore.put({ id: comp.id[0], ScreenLock: null });
 						}));
+						dialog.notify(_('The selected computers get locked.'));
 					});
 
 					// determine the action
@@ -450,7 +461,7 @@ define([
 					var l_unlocked = array.filter(items, function(item) { return item.ScreenLock[0] === false; }).length;
 					if (l_locked && l_unlocked) {
 						// ask what to do
-						dialog.confirm(_('Which action should be applied on the selected computers?'), [{
+						dialog.confirm(_('There are differences in the lock status of the selected computers.') + '<br/>' + _('Which action should be applied on the selected computers?'), [{
 							label: _('Lock'),
 							name: 'lock',
 							callback: function() { cb(true); }
@@ -469,6 +480,7 @@ define([
 						cb(true);
 					} else {
 						// no computers can be modified, do nothing
+						return;
 					}
 				})
 			}];
@@ -872,6 +884,7 @@ define([
 
 		_stopPresentation: function() {
 			this.umcpCommand('computerroom/demo/stop', {});
+			dialog.notify(_('The presentation will stop now.'));
 		},
 
 		changeRoom: function() {
