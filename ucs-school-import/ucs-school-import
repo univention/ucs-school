@@ -1055,10 +1055,10 @@ def verify_group_share(schoolNr, classNr, co, lo, superordinate, base):
 		group_dn="cn=%s,cn=klassen,cn=%s,cn=groups,%s"%(classNr, cn_pupils, getDN (schoolNr, basedn=base))
 		gids=lo.get(group_dn,['gidNumber'])
 		gid = 0
-		if len(gids) > 1:
+		if len(gids) > 1: # TODO FIXME This doesn't look correct to me - gids is a dict and not a list!
 			print "WARNING: more than one corresponding gid found"
 			gid=gids["gidNumber"][0]
-		elif len(gids) < 1:
+		elif len(gids) < 1: # TODO FIXME This doesn't look correct to me - gids is a dict and not a list!
 			print "WARNING: no corresponding gid found"
 		else:
 			gid=gids["gidNumber"][0]
@@ -1073,7 +1073,7 @@ def verify_group_share(schoolNr, classNr, co, lo, superordinate, base):
 		alternativeServer_dn = None
 		if len(ou_attr_LDAPAccessWrite) > 0:
 			alternativeServer_dn = ou_attr_LDAPAccessWrite["univentionLDAPAccessWrite"][0]
-			if len(ou_attr_LDAPAccessWrite) > 1:
+			if len(ou_attr_LDAPAccessWrite) > 1: # TODO FIXME This doesn't look correct to me - ou_attr_LDAPAccessWrite is a dict and not a list!
 				print "WARNING: more than one corresponding univentionLDAPAccessWrite found at ou=%s" % schoolNr
 
 		# build fqdn of alternative server and set serverfqdn
