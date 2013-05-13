@@ -38,6 +38,7 @@ define([
 	"dojo/promise/all",
 	"dojo/topic",
 	"dojo/Deferred",
+	"dojo/when",
 	"umc/dialog",
 	"umc/tools",
 	"umc/widgets/Wizard",
@@ -51,7 +52,7 @@ define([
 	"umc/widgets/StandbyMixin",
 	"umc/widgets/ProgressBar",
 	"umc/i18n!umc/modules/schoolexam"
-], function(declare, lang, array, domClass, domStyle, on, all, topic, Deferred, dialog, tools, Wizard, Module, TextBox, Text, TextArea, ComboBox, MultiObjectSelect, MultiUploader, StandbyMixin, ProgressBar, _) {
+], function(declare, lang, array, domClass, domStyle, on, all, topic, Deferred, when, dialog, tools, Wizard, Module, TextBox, Text, TextArea, ComboBox, MultiObjectSelect, MultiUploader, StandbyMixin, ProgressBar, _) {
 	// helper function that sanitizes a given filename
 	var sanitizeFilename = function(name) {
 		array.forEach([/\//g, /\\/g, /\?/g, /%/g, /\*/g, /:/g, /\|/g, /"/g, /</g, />/g, /\$/g, /'/g], function(ichar) {
@@ -66,6 +67,38 @@ define([
 		umcpCommand: null,
 
 		_progressBar: null,
+
+		// helper function to get the currently selected room entry
+		_getCurrentRoom: function() {
+			// find correct room entry
+			var room = null;
+			var widget = this.getWidget('general', 'room');
+			var value = widget.get('value');
+			array.some(widget.getAllItems(), function(iitem) {
+				if (iitem.id == value) {
+					room = iitem;
+					return true;  // break loop
+				}
+			});
+			return room;
+		},
+
+		// helper function that returns the correct message for an locked room
+		_getRoomMessage: function(room) {
+			// display notification if necessary
+			var msg = '';
+			if (room && room.exam) {
+				if (room.locked) {
+					msg = _('In this computerroom the exam "%s" is currently being executed by %s.', room.examDescription, room.user);
+				}
+				else {
+					msg = _('In this computerroom the exam "%s" is currently being written.', room.examDescription);
+				}
+			} else if (room && room.locked) {
+				msg =  _('This computer room is currently in use by %s.', room.user);
+			}
+			return msg;
+		},
 
 		postMixInProperties: function() {
 			this.inherited(arguments);
@@ -92,7 +125,32 @@ define([
 					label: _('Computer room'),
 					description: _('Choose the computer room in which the exam will take place'),
 					depends: 'school',
-					dynamicValues: 'computerroom/rooms'
+					dynamicValues: 'computerroom/rooms',
+					onChange: lang.hitch(this, function(value) {
+						if (!value) {
+							return;
+						}
+
+						// update the info widget to warn if a room is already in use
+						var msg = this._getRoomMessage(this._getCurrentRoom())
+						if (msg) {
+							msg = lang.replace('<p><b>{note}:</b> {msg}</p>', {
+								note: _('Note'),
+								msg: this._getRoomMessage(this._getCurrentRoom())
+							});
+						}
+
+						// update content + visibilty of the widget
+						var infoWidget = this.getWidget('general', 'info')
+						infoWidget.set('content', msg || '');
+						infoWidget.set('visible', Boolean(msg))
+					})
+				}, {
+					name: 'info',
+					type: Text,
+					content: '',
+					'class': 'umcSize-OneAndAHalf umcText',
+					style: 'padding-bottom: 0.75em',
 				}, {
 					name: 'name',
 					type: TextBox,
@@ -366,56 +424,85 @@ define([
 					}));
 				}
 			}, this);
+
+			var room = this._getCurrentRoom();
+			if (!nextPage && room) {
+				if (room.exam) {
+					// block room if an exam is being written
+					dialog.alert(_('The room %s cannot be chosen as the exam "%s" is currently being conducted. Please make sure that the exam is finished via the module "Computer room" before a new exam can be started again.', room.label, room.examDescription));
+					nextPage = 'general';
+				}
+				else if (room.locked) {
+					// room is in use -> ask user to confirm the choice
+					return dialog.confirm(_('This computer room is currently in use by %s. You can take control over the room, however, the current teacher will be prompted a notification and its session will be closed.', room.user), [{
+						name: 'cancel',
+						label: _('Cancel'),
+						'default': true
+					}, {
+						name: 'takeover',
+						label: _('Take over')
+					}]).then(lang.hitch(this, function(response) {
+						if (response != 'takeover') {
+							this._gotoPage('general');
+							return false;
+						}
+						return true;
+					}));
+				}
+			}
+
 			this._gotoPage(nextPage);
 			return nextPage == null;
 		},
 
 		_startExam: function() {
-			// validate the current values
-			if (!this._validate()) {
-				return;
-			}
+			when(this._validate(), lang.hitch(this, function(valid) {
+				// validate the current values
+				if (!valid) {
+					return;
+				}
 
-			// start the exam
-			var values = this.getValues();
-			tools.umcpCommand('schoolexam/exam/start', values, false);
+				// start the exam
+				var values = this.getValues();
+				tools.umcpCommand('schoolexam/exam/start', values, false);
 
-			// initiate the progress bar
-			this._progressBar.reset(_('Starting the configuration process...' ));
-			this.standby(false);
-			this.standby(true, this._progressBar);
-			var preparationDeferred = new Deferred();
-			this._progressBar.auto(
-				'schoolexam/progress',
-				{},
-				lang.hitch(this, '_preparationFinished', preparationDeferred),
-				undefined,
-				undefined,
-				true
-			);
+				// initiate the progress bar
+				this._progressBar.reset(_('Starting the configuration process...' ));
+				this.standby(false);
+				this.standby(true, this._progressBar);
+				var preparationDeferred = new Deferred();
+				this._progressBar.auto(
+					'schoolexam/progress',
+					{},
+					lang.hitch(this, '_preparationFinished', preparationDeferred),
+					undefined,
+					undefined,
+					true
+				);
 
-			// reserve the computerroom and adjust its settings
-			var computerRoomDeferred = tools.umcpCommand('computerroom/room/acquire', {
-				room: values.room
-			}).then(function() {
-				return tools.umcpCommand('computerroom/settings/set', {
-					internetRule: values.internetRule,
-					customRule: values.customRule,
-					shareMode: values.shareMode,
-					printMode: 'default',
-					examDescription: values.name,
-					exam: values.directory
+				// reserve the computerroom and adjust its settings
+				var computerRoomDeferred = tools.umcpCommand('computerroom/room/acquire', {
+					room: values.room
+				}).then(function() {
+					return tools.umcpCommand('computerroom/settings/set', {
+						internetRule: values.internetRule,
+						customRule: values.customRule,
+						shareMode: values.shareMode,
+						printMode: 'default',
+						examDescription: values.name,
+						exam: values.directory
+					});
 				});
-			});
 
-			all([preparationDeferred, computerRoomDeferred]).then(lang.hitch(this, function() {
-				// open the computerroom and close the exam wizard
-				this.standby(false);
-				this._gotoPage('success');
-			}), lang.hitch(this, function() {
-				// error case
-				this.standby(false);
-				this._gotoPage('error');
+				all([preparationDeferred, computerRoomDeferred]).then(lang.hitch(this, function() {
+					// open the computerroom and close the exam wizard
+					this.standby(false);
+					this._gotoPage('success');
+				}), lang.hitch(this, function() {
+					// error case
+					this.standby(false);
+					this._gotoPage('error');
+				}));
 			}));
 		},
 
