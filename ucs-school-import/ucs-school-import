@@ -644,7 +644,7 @@ def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None, ShareFileServer=None
 		# 
 
 		# create server if not existent
-		server_exists=0
+		server_exists = (len(objects) > 0) # cannot create another server with this id
 		is_master_or_backup = False
 		is_slave = False
 
@@ -662,14 +662,6 @@ def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None, ShareFileServer=None
 
 			if hostlist:
 				continue # if at least one DC has control over this OU then jump to next 'school_dcs' item
-		correct_server_exists=0
-		if objects:
-			server_exists = 1 # can't create another server with this id
-			correct_server = "cn=%s,cn=dc,cn=server,cn=computers,%s"%(dccn, getDN (schoolNr))
-			for object in objects:
-				if object.dn == correct_server:
-					correct_server_exists=1
-					break
 
 		if server_exists:
 			# check if existing system is a DC master or DC backup
