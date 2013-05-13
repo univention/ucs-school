@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-computerroom\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2013-05-08 06:00-0400\n"
+"POT-Creation-Date: 2013-05-13 09:09-0400\n"
 "PO-Revision-Date: 2012-05-24 14:32+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,18 +16,21 @@ msgstr ""
 msgid "<b>At least one web site is required!</b>"
 msgstr "<b>Mindestens eine Webseite muss angegeben werden!</b>"
 
-#: umc/js/computerroom.js:925
+#: umc/js/computerroom.js:923
+msgid ""
+"<b>Note:</b> In this computerroom the exam \"%s\" is currently being "
+"conducted by %s."
+msgstr "<b>Hinweis:</b> In diesem Computerraum wird momentan die Klassenarbeit \"%s\" von %s durchgeführt."
+
+#: umc/js/computerroom.js:926
+msgid ""
+"<b>Note:</b> In this computerroom the exam \"%s\" is currently being written."
+msgstr "<b>Hinweis:</b> In diesem Computerraum wird momentan die Klassenarbeit %s geschrieben."
+
+#: umc/js/computerroom.js:929
 #, python-format
 msgid "<b>Note:</b> This computer room is currently in use by %s."
 msgstr "<b>Hinweis:</b> Der Computerraum wird momentan verwendet von %s."
-
-#: umc/js/computerroom.js:923
-#, python-format
-msgid ""
-"<b>Note:</b> This computerroom is currently in use to write the exam \"%s\"."
-msgstr ""
-"<b>Hinweis:</b> Der Computerraum wird momentan verwendet, um die "
-"Klassenarbeit \"%s\" zu schreiben."
 
 #: umc/js/computerroom/SettingsDialog.js:84
 msgid ""
@@ -46,10 +49,10 @@ msgid ""
 "stored in the corresponding exam folder of your home directory. It is "
 "possible to collect exam files several times during an exam.</p>"
 msgstr ""
-"<p>Bitte bestätigen Sie das Einsammeln der Klassenarbeitsdokumente.</p><p>Die "
-"Dokumente werden in dem zugehörigen Klassenarbeitsverzeichnis unterhalb "
-"Ihres Heimatverzeichnisses abgelegt. Es ist möglich die Dokumente während "
-"einer Klassenarbeit mehrmals einzusammeln.</p>"
+"<p>Bitte bestätigen Sie das Einsammeln der Klassenarbeitsdokumente.</"
+"p><p>Die Dokumente werden in dem zugehörigen Klassenarbeitsverzeichnis "
+"unterhalb Ihres Heimatverzeichnisses abgelegt. Es ist möglich die Dokumente "
+"während einer Klassenarbeit mehrmals einzusammeln.</p>"
 
 #: umc/js/computerroom.js:787
 msgid ""
@@ -76,7 +79,7 @@ msgid "Back to overview"
 msgstr "Zurück zur Übersicht"
 
 #: umc/js/computerroom.js:745 umc/js/computerroom.js:789
-#: umc/js/computerroom.js:873 umc/js/computerroom.js:943
+#: umc/js/computerroom.js:873 umc/js/computerroom.js:947
 #: umc/js/computerroom/SettingsDialog.js:143
 msgid "Cancel"
 msgstr "Abbrechen"
@@ -110,7 +113,7 @@ msgstr "Computerraum"
 msgid "Computer room: %s"
 msgstr "Computerraum: %s"
 
-#: umc/js/computerroom.js:1009
+#: umc/js/computerroom.js:1013
 #, python-format
 msgid ""
 "Control over the computer room has been taken by \"%s\", your session has "
@@ -196,7 +199,7 @@ msgstr "Bildschirm sperren"
 msgid "Logout user"
 msgstr "Benutzer abmelden"
 
-#: umc/js/computerroom.js:1086
+#: umc/js/computerroom.js:1090
 msgid ""
 "Lost the connection to the computer room. Please try to reopen the computer "
 "room."
@@ -229,7 +232,7 @@ msgstr "Kein Raum ausgewählt"
 msgid "Normal"
 msgstr "Normal"
 
-#: umc/js/computerroom.js:1011
+#: umc/js/computerroom.js:1015
 msgid "Ok"
 msgstr "Ok"
 
@@ -281,11 +284,11 @@ msgstr "Schule"
 msgid "Screenshots of computers"
 msgstr "Bildschirmfotos der Computer"
 
-#: umc/js/computerroom.js:965
+#: umc/js/computerroom.js:969
 msgid "Select computer room"
 msgstr "Computerraum auswählen"
 
-#: umc/js/computerroom.js:938
+#: umc/js/computerroom.js:942
 msgid "Select room"
 msgstr "Raum auswählen"
 
@@ -462,13 +465,20 @@ msgstr "{0} Computer befinden sich im Raum"
 msgid "{0} powered off/misconfigured"
 msgstr "{0} ausgeschaltet/nicht konfiguriert"
 
-#: umc/js/computerroom.js:1028
+#: umc/js/computerroom.js:1032
 msgid "{time} minutes"
 msgstr "{time} Minuten"
 
 #: umc/js/computerroom/ScreenshotView.js:111
 msgid "{username} at {computer}"
 msgstr "{username} an {computer}"
+
+#~ msgid ""
+#~ "<b>Note:</b> This computerroom is currently in use to write the exam \"%s"
+#~ "\"."
+#~ msgstr ""
+#~ "<b>Hinweis:</b> Der Computerraum wird momentan verwendet, um die "
+#~ "Klassenarbeit \"%s\" zu schreiben."
 
 #~ msgid "Stop exam"
 #~ msgstr "Klassenarbeit beenden"

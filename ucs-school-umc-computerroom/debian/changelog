@@ -1,3 +1,9 @@
+ucs-school-umc-computerroom (2.0.29-1) unstable; urgency=low
+
+  * Bug #31158: fixed fuzzy entries
+
+ -- Alexander Kläser <klaeser@univention.de>  Mon, 13 May 2013 15:13:10 +0200
+
 ucs-school-umc-computerroom (2.0.28-1) unstable; urgency=low
 
   * Bug #31158: adjusted notification for rooms in which an exam is active
