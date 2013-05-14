@@ -168,7 +168,7 @@ define([
 					required: true,
 					dialogTitle: _('Assign classes/workgroups'),
 					label: _('Assigned classes/workgroups'),
-					description: _('List of groups that are marked to receive the teaching materials'),
+					description: _('List of groups that are marked to receive the exam materials'),
 					queryWidgets: [{
 						type: ComboBox,
 						name: 'school',

@@ -13,7 +13,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 msgid "Start exam"
-msgstr ""
+msgstr "Klassenarbeit starten"
 
 msgid "Starts a new exam for a specified computer room"
-msgstr ""
+msgstr "Richtet eine neue Klassenarbeit für einen ausgewählten Computerraum ein."

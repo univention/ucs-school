@@ -177,7 +177,7 @@ class Instance( SchoolBaseModule ):
 			connection = UMCConnection.get_machine_connection()
 			if not connection:
 				MODULE.error('Could not connect to UMC on %s: %s' % (ucr.get('ldap/master'), e))
-				raise UMC_CommandError(_('Could not connect to master server %s') % ucr.get('ldap/master'))
+				raise UMC_CommandError(_('Could not connect to master server %s.') % ucr.get('ldap/master'))
 
 			# mark the computer room for exam mode
 			progress.component(_('Preparing the computer room for exam mode...'))
@@ -276,7 +276,7 @@ class Instance( SchoolBaseModule ):
 				msg = '%s\n%s: %s\n' % ( ''.join( traceback.format_tb( thread.exc_info[ 2 ] ) ), thread.exc_info[ 0 ].__name__, str( thread.exc_info[ 1 ] ) )
 				MODULE.error('Exception during start_exam: %s' % msg)
 				self.finished(request.id, dict(success=False))
-				progress.error(_('An unexpected error occurred during installation: %s') % result)
+				progress.error(_('An unexpected error occurred during the preparation: %s') % result)
 
 				# in case a distribution project has already be written to disk, purge it
 				if my.project:
@@ -371,7 +371,7 @@ class Instance( SchoolBaseModule ):
 				msg = '%s\n%s: %s\n' % ( ''.join( traceback.format_tb( thread.exc_info[ 2 ] ) ), thread.exc_info[ 0 ].__name__, str( thread.exc_info[ 1 ] ) )
 				MODULE.error('Exception during exam_finish: %s' % msg)
 				self.finished(request.id, dict(success=False))
-				progress.error(_('An unexpected error occurred during installation: %s') % result)
+				progress.error(_('An unexpected error occurred during the preparation: %s') % result)
 			else:
 				self.finished(request.id, dict(success=True))
 
