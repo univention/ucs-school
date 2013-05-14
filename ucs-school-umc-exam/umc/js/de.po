@@ -49,7 +49,7 @@ msgid "Assigned classes/workgroups"
 msgstr "Zugewiesene Klassen/Arbeitsgruppen"
 
 #: umc/js/schoolexam.js:439
-msgid "Cancel",
+msgid "Cancel"
 msgstr "Abbrechen"
 
 #: umc/js/schoolexam.js:126

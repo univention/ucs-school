@@ -40,8 +40,7 @@ msgid "Could not authenticate user \"%s\"!"
 msgstr "Der Benutzer \"%s\" konnte nicht authentifiziert werden!"
 
 #: umc/python/schoolexam/__init__.py:336
-#, fuzzy, python-format
-msgid "Could not connect to master server %s"
+msgid "Could not connect to master server %s."
 msgstr "Die Verbindung zum Master-Server %s konnte nicht aufgebaut werden."
 
 #: umc/python/schoolexam/__init__.py:180

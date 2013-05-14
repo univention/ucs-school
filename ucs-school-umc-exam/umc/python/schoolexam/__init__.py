@@ -333,7 +333,7 @@ class Instance( SchoolBaseModule ):
 			connection = UMCConnection.get_machine_connection()
 			if not connection:
 				MODULE.error('Could not connect to UMC on %s: %s' % (ucr.get('ldap/master'), e))
-				raise UMC_CommandError(_('Could not connect to master server %s') % ucr.get('ldap/master'))
+				raise UMC_CommandError(_('Could not connect to master server %s.') % ucr.get('ldap/master'))
 
 			# unset exam mode for the given computer room
 			progress.component(_('Configuring the computer room...'))

@@ -1,3 +1,9 @@
+ucs-school-umc-exam (0.1.23-1) unstable; urgency=low
+
+  * Bug #31158: fixed missing translations + syntax errors
+
+ -- Alexander Kläser <klaeser@univention.de>  Tue, 14 May 2013 10:47:35 +0200
+
 ucs-school-umc-exam (0.1.22-1) unstable; urgency=low
 
   * Bug #31158: added translations
