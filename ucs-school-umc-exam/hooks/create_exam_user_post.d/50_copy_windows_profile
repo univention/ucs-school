@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# 50_copy_windows_profile.sh
+# 50_copy_windows_profile
 #    copies the windows profile(s) to the user directory
 #
 # Copyright 2013 Univention GmbH
@@ -36,14 +36,15 @@ homedir="$3"
 
 profile_path="$(ucr get "ucsschool/exam/windows_profile_path")"
 
-if [ -n  "$profile_path" ]; then
+if [ -n "$profile_path" ]; then
+	# create home directory for the user
 	umask 0066
 	mkdir -p "$homedir"
-	grp=$(getent passwd "$username" |  cut -d ':' -f 4)
-	chown "$username":"$grp" "$homedir"
-	#HOME="$homedir" univention-skel || exit 1
-	# TODO: rsync?
-	cp -rf "$profile_path" "$homedir/windows_profiles" # FIXME
+	grp="$(getent passwd "$username" |  cut -d ':' -f 4)"
+
+	# copy windows profiles
+	rsync -r --delete "$profile_path" "$homedir/windows_profiles"
+	chown -R "$username":"$grp" "$homedir"
 fi
 
 exit 0
