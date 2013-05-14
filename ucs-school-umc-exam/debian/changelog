@@ -1,3 +1,9 @@
+ucs-school-umc-exam (0.1.25-1) unstable; urgency=low
+
+  * Bug #31156: adapt permissions of copied windows profile path
+
+ -- Florian Best <best@univention.de>  Tue, 14 May 2013 12:14:53 +0200
+
 ucs-school-umc-exam (0.1.24-1) unstable; urgency=low
 
   * Bug #31156: add hook script to copy windows profile dir

@@ -38,13 +38,14 @@ profile_path="$(ucr get "ucsschool/exam/windows_profile_path")"
 
 if [ -n "$profile_path" ]; then
 	# create home directory for the user
-	umask 0066
+	umask 0077
 	mkdir -p "$homedir"
 	grp="$(getent passwd "$username" |  cut -d ':' -f 4)"
 
 	# copy windows profiles
 	rsync -r --delete "$profile_path" "$homedir/windows_profiles"
-	chown -R "$username":"$grp" "$homedir"
+	chown "$username":"$grp" "$homedir"
+	chown -R "$username":"$grp" "$homedir/windows_profiles"
 fi
 
 exit 0

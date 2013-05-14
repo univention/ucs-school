@@ -1,6 +1,6 @@
 [ucsschool/exam/windows_profile_path]
-Description[de]=Definiert den Windows-Profilpfad für Benutzerkonten des Klassenarbeitsmodus.
-Description[en]=Specifies the windows profile path for exam users.
+Description[de]=Definiert den Quellpfad der Windows-Profile für Benutzerkonten des Klassenarbeitsmodus.
+Description[en]=Specifies the source path of windows profiles for exam users.
 Type=str
 Categories=ucsschool-exam
 
