@@ -25,6 +25,7 @@ Description: UCS@School: Importing objects like users and computers
 
 Package: ucs-school-import-schema
 Depends: python-univention-directory-manager-cli (>= 4.0.19-1),
+ shell-univention-lib (>> 2.0.17-1.125),
  univention-ldap-server ( >= 8.0.77-7 )
 Replaces: sfb-import-schema
 Conflicts: sfb-import-schema

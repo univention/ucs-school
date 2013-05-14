@@ -34,10 +34,14 @@
 
 eval "$(ucr shell)"
 
+. /usr/share/univention-lib/all.sh
+
 # run join script
 if [ "$server_role" = "domaincontroller_master" ] || [ "$server_role" = "domaincontroller_backup" ]; then
         /usr/lib/univention-install/82univention-ucs-school-import-custom-attributes.inst || true
         /etc/init.d/slapd crestart
 fi
+
+ucs_registerLDAPSchema /usr/share/univention-ldap/schema/ucs-school-import.schema
 
 exit 0
