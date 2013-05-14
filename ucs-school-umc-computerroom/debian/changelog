@@ -1,3 +1,9 @@
+ucs-school-umc-computerroom (2.0.32-1) unstable; urgency=low
+
+  * adapt wording; Bug #31136; Bug #31335
+
+ -- Florian Best <best@univention.de>  Tue, 14 May 2013 10:22:45 +0200
+
 ucs-school-umc-computerroom (2.0.31-1) unstable; urgency=low
 
   * adapt wording; Bug #31136; Bug #31335

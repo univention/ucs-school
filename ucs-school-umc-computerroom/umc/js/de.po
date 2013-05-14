@@ -426,13 +426,17 @@ msgstr "Die ausgewählten Computer fahren herunter."
 msgid "The selected computers get locked."
 msgstr "Die ausgewählten Computer werden gesperrt."
 
+#: umc/js/computerroom.js:353 umc/js/computerroom.js:456
+msgid "The selected computers get unlocked."
+msgstr "Die ausgewählten Computer werden entsperrt."
+
 #: umc/js/computerroom.js:231
 msgid "The selected users are logging off."
 msgstr "Die ausgewählten Benutzer werden ausgeloggt."
 
 #: umc/js/computerroom.js:361 umc/js/computerroom.js:464
 msgid "There are differences in the lock status of the selected computers."
-msgstr "Es gibt unterschiede im Sperrstatus der ausgewählten Computer."
+msgstr "Es gibt Unterschiede im Sperrstatus der ausgewählten Computer."
 
 #: umc/js/computerroom.js:921
 #, python-format

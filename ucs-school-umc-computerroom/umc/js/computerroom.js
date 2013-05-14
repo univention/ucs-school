@@ -350,7 +350,7 @@ define([
 							});
 							this._objStore.put({ id: comp.id[0], InputLock: null });
 						}));
-						dialog.notify(_('The selected computers get locked.'));
+						dialog.notify(lock ? _('The selected computers get locked.') : _('The selected computers get unlocked.'));
 					});
 
 					// determine the action
@@ -453,7 +453,7 @@ define([
 							});
 							this._objStore.put({ id: comp.id[0], ScreenLock: null });
 						}));
-						dialog.notify(_('The selected computers get locked.'));
+						dialog.notify(lock ? _('The selected computers get locked.') : _('The selected computers get unlocked.'));
 					});
 
 					// determine the action
