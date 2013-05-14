@@ -33,6 +33,7 @@
 #DEBHELPER#
 
 eval "$(univention-config-registry shell)"
+. /usr/share/univention-lib/all.sh
 
 if test -x /etc/init.d/slapd
     then
@@ -44,5 +45,7 @@ if test -x /etc/init.d/slapd
 	grep -q crestart /etc/init.d/slapd && /etc/init.d/slapd crestart || true
     fi
 fi
+
+ucs_registerLDAPSchema /usr/share/univention-ldap/schema/umc-helpdesk.schema
 
 exit 0
