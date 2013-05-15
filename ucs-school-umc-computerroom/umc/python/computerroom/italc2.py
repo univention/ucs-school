@@ -37,6 +37,7 @@ import subprocess
 import sys
 import tempfile
 import threading
+import time
 
 from univention.management.console.config import ucr
 
@@ -63,8 +64,9 @@ _ = Translation( 'ucs-school-umc-computerroom' ).translate
 
 ITALC_DEMO_PORT = int( ucr.get( 'ucsschool/umc/computerroom/demo/port', 11400 ) )
 ITALC_VNC_PORT = int( ucr.get( 'ucsschool/umc/computerroom/vnc/port', 11100 ) )
-ITALC_VNC_UPDATE = int( ucr.get( 'ucsschool/umc/computerroom/vnc/update', 0.5 ) )
-ITALC_CORE_UPDATE = int( ucr.get( 'ucsschool/umc/computerroom/core/update', 2 ) )
+ITALC_VNC_UPDATE = float( ucr.get( 'ucsschool/umc/computerroom/vnc/update', 1 ) )
+ITALC_CORE_UPDATE = max(1, int( ucr.get( 'ucsschool/umc/computerroom/core/update', 1 )))
+ITALC_CORE_TIMEOUT = max(1, int( ucr.get( 'ucsschool/umc/computerroom/core/timeout', 10 )))
 
 italc.ItalcCore.init()
 
@@ -210,6 +212,7 @@ class ITALC_Computer( notifier.signals.Provider, QObject ):
 		self._dn = ldap_dn
 		self._computer = None
 		self._timer = None
+		self._resetUserInfoTimeout()
 		self._username = LockableAttribute()
 		self._homedir = LockableAttribute()
 		self._flags = LockableAttribute()
@@ -240,7 +243,7 @@ class ITALC_Computer( notifier.signals.Provider, QObject ):
 		self._vnc.setHost( self.ipAddress )
 		self._vnc.setPort( ITALC_VNC_PORT )
 		self._vnc.setQuality( italc.ItalcVncConnection.ThumbnailQuality )
-		self._vnc.setFramebufferUpdateInterval( 1000 * ITALC_VNC_UPDATE )
+		self._vnc.setFramebufferUpdateInterval( int(1000 * ITALC_VNC_UPDATE) )
 		self._vnc.start()
 		self._vnc.stateChanged.connect( self._stateChanged )
 
@@ -266,8 +269,12 @@ class ITALC_Computer( notifier.signals.Provider, QObject ):
 			self._flags.reset()
 			self._teacher.reset( False )
 
+	def _resetUserInfoTimeout(self, guardtime=ITALC_CORE_TIMEOUT):
+		self._usernameLastUpdate = time.time() + guardtime
+
 	@pyqtSlot( str, str )
 	def _userInfo( self, username, homedir ):
+		self._resetUserInfoTimeout(0)
 		self._username.set( str( username ) )
 		self._homedir.set( str( homedir ) )
 		self._teacher.set( self.isTeacher )
@@ -300,13 +307,26 @@ class ITALC_Computer( notifier.signals.Provider, QObject ):
 
 	def update( self ):
 		if self._state.current != 'connected':
-			MODULE.info( 'currently not connected' )
+			MODULE.info( '%s is currently not connected' % self.ipAddress )
 			return True
+
+		if self._usernameLastUpdate + ITALC_CORE_TIMEOUT < time.time():
+			MODULE.process('connection to %s is dead for %.2fs - reconnecting' % (self.ipAddress, (time.time()-self._usernameLastUpdate)))
+			self._vnc.reset(self.ipAddress)
+			self._resetUserInfoTimeout()
+			self._username.reset()
+			self._homedir.reset()
+			self._flags.reset()
+			return True
+		elif self._usernameLastUpdate + max(ITALC_CORE_TIMEOUT/2,1) < time.time():
+			MODULE.process( 'connection to %s seems to be dead for %.2fs' % (self.ipAddress, (time.time()-self._usernameLastUpdate)))
+
 		self._core.sendGetUserInformationRequest()
 		return True
 
 	def start( self ):
 		self.stop()
+		self._resetUserInfoTimeout()
 		self.update()
 		self._timer = notifier.timer_add( ITALC_CORE_UPDATE * 1000, self.update )
 

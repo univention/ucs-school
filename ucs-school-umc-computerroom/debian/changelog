@@ -1,3 +1,10 @@
+ucs-school-umc-computerroom (2.0.33-1) unstable; urgency=low
+
+  * reestablish a new iTALC connection if connection seems to be dead for
+    at least 10 seconds (Bug #30329)
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Wed, 15 May 2013 18:15:05 +0200
+
 ucs-school-umc-computerroom (2.0.32-1) unstable; urgency=low
 
   * adapt wording; Bug #31136; Bug #31335
