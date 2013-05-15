@@ -1,7 +1,7 @@
 #!/bin/sh
 #
 # UCS@School
-#  postinst script for the debian package
+#  preinst script for the debian package
 #
 # Copyright 2008-2013 Univention GmbH
 #
@@ -32,23 +32,9 @@
 
 #DEBHELPER#
 
-eval "$(ucr shell)"
-
-. /usr/share/univention-lib/all.sh
-
 # remove old LDAP schema files
 # this can be removed after ucsschool-R2
 dpkg-maintscript-helper rm_conffile /etc/univention/templates/files/etc/ldap/slapd.conf.d/11univention-ucs-school-import-custom-schema -- "$@"
 dpkg-maintscript-helper rm_conffile /etc/ldap/slapd.conf.d/11univention-ucs-school-import-custom-schema -- "$@"
-ucr update
-ucr commit /etc/ldap/slapd.conf
-
-# run join script
-if [ "$server_role" = "domaincontroller_master" ] || [ "$server_role" = "domaincontroller_backup" ]; then
-        /usr/lib/univention-install/82univention-ucs-school-import-custom-attributes.inst || true
-        /etc/init.d/slapd crestart
-fi
-
-ucs_registerLDAPSchema /usr/share/univention-ldap/schema/ucs-school-import.schema
 
 exit 0
