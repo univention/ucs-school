@@ -1,7 +1,7 @@
 #!/bin/sh
 #
 # Univention Management Console Helpdesk Schema
-#  postinst script for the debian package
+#  postrm script for the debian package
 #
 # Copyright 2013 Univention GmbH
 #
@@ -36,23 +36,5 @@
 # this can be removed after ucsschool-R2
 dpkg-maintscript-helper rm_conffile /etc/univention/templates/files/etc/ldap/slapd.conf.d/11umc-helpdesk_schema -- "$@"
 dpkg-maintscript-helper rm_conffile /etc/ldap/slapd.conf.d/11umc-helpdesk_schema -- "$@"
-ucr update
-ucr commit /etc/ldap/slapd.conf
-
-eval "$(univention-config-registry shell)"
-. /usr/share/univention-lib/all.sh
-
-if test -x /etc/init.d/slapd
-    then
-    # always start on master, slapd may be down by schema-conflicts which are cleared by a new slapd.conf-template
-    if [ "$server_role" = "domaincontroller_master" ]
-	then
-	/etc/init.d/slapd restart
-    else
-	grep -q crestart /etc/init.d/slapd && /etc/init.d/slapd crestart || true
-    fi
-fi
-
-ucs_registerLDAPSchema /usr/share/univention-ldap/schema/umc-helpdesk.schema
 
 exit 0

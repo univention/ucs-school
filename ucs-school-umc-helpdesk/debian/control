@@ -34,7 +34,8 @@ Description: Univention Directory Manager module to administrate helpdesk catego
 Package: ucs-school-umc-helpdesk-schema
 Architecture: all
 Depends: univention-ldap-server ( >= 8.0.77-7 ),
- shell-univention-lib (>> 2.0.17-1.125)
+ shell-univention-lib (>> 2.0.17-1.125),
+ univention-config
 Description: LDAP Schema for univention-management-console-helpdesk
  This package contains an LDAP Schema extension for the
  Univention Management Console Helpdesk module.
