@@ -1,3 +1,9 @@
+ucs-school-umc-exam (0.1.26-1) unstable; urgency=low
+
+  * add end time to exam; Bug #31164
+
+ -- Florian Best <best@univention.de>  Wed, 15 May 2013 11:59:02 +0200
+
 ucs-school-umc-exam (0.1.25-1) unstable; urgency=low
 
   * Bug #31156: adapt permissions of copied windows profile path

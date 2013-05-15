@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-exam\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2013-05-14 03:22-0400\n"
+"POT-Creation-Date: 2013-05-15 00:22+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -12,14 +12,18 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: umc/js/schoolexam.js:244
+#: umc/js/schoolexam.js:251
 msgid ""
 "<p>In this text box you can list web sites that are allowed to be used by "
 "the students. Each line should contain one web site. Example: </p><p style="
 "\"font-family: monospace\">univention.com<br/>wikipedia.org<br/></p>"
-msgstr "<p>In diesem Eingabefeld können die Webseiten angegeben werden, die von Schülern verwendet werden dürfen. Jede Zeile sollte dabei eine Webseite enthalten, bspw.: </p><p style=\"font-family: monospace\">univention.com<br/>wikipedia.org<br/></p>"
+msgstr ""
+"<p>In diesem Eingabefeld können die Webseiten angegeben werden, die von "
+"Schülern verwendet werden dürfen. Jede Zeile sollte dabei eine Webseite "
+"enthalten, bspw.: </p><p style=\"font-family: monospace\">univention.com<br/"
+">wikipedia.org<br/></p>"
 
-#: umc/js/schoolexam.js:113
+#: umc/js/schoolexam.js:115
 msgid ""
 "<p>The UCS@school exam mode allows one to perform an exam in a computer "
 "room. During the exam, access to internet as well as to shares can be "
@@ -27,202 +31,247 @@ msgid ""
 "p><p>Please enter a name for the new exam and select the classes or "
 "workgroups that participate in the exam. A directory name is proposed "
 "automatically and can be adjusted if wanted.</p>"
-msgstr "<p>Der UCS@school-Klassenarbeitsmodus ermöglicht es eine Klassenarbeit in einem Computerraum zu schreiben. Für den Zeitraum der Klassenarbeit kann der Zugang zum Internet sowie zu Freigaben eingeschränkt werden. Es wird sichergestellt, dass der Zugriff auf die Heimatverzeichnisse für die Schüler nicht möglich ist.</p><p>Bitte geben Sie den Namen der neuen Klassenarbeit an und wählen Sie die Klassen oder Arbeitsgruppen, die an der Klassenarbeit teilnehmen. Ein entsprechender Verzeichnisname wird automatisch vorgeschlagen und kann angepasst werden.</p>"
+msgstr ""
+"<p>Der UCS@school-Klassenarbeitsmodus ermöglicht es eine Klassenarbeit in "
+"einem Computerraum zu schreiben. Für den Zeitraum der Klassenarbeit kann der "
+"Zugang zum Internet sowie zu Freigaben eingeschränkt werden. Es wird "
+"sichergestellt, dass der Zugriff auf die Heimatverzeichnisse für die Schüler "
+"nicht möglich ist.</p><p>Bitte geben Sie den Namen der neuen Klassenarbeit "
+"an und wählen Sie die Klassen oder Arbeitsgruppen, die an der Klassenarbeit "
+"teilnehmen. Ein entsprechender Verzeichnisname wird automatisch "
+"vorgeschlagen und kann angepasst werden.</p>"
 
-#: umc/js/schoolexam.js:265
+#: umc/js/schoolexam.js:272
 msgid ""
 "An error occurred during the preparation of the exam. The following "
 "information will show more details about the exact error. Please retry to "
 "start the exam."
-msgstr "Ein Fehler trat während der Vorbereitung der Klassenarbeit auf. Die folgenden Informationen geben mehr Details über die genaue Art des Fehlers. Bitte versuchen Sie, die Klassenarbeit erneut zu starten."
+msgstr ""
+"Ein Fehler trat während der Vorbereitung der Klassenarbeit auf. Die "
+"folgenden Informationen geben mehr Details über die genaue Art des Fehlers. "
+"Bitte versuchen Sie, die Klassenarbeit erneut zu starten."
 
-#: umc/js/schoolexam.js:264
+#: umc/js/schoolexam.js:271
 msgid "An error ocurred"
 msgstr "Ein Fehler trat auf."
 
-#: umc/js/schoolexam.js:169
+#: umc/js/schoolexam.js:176
 msgid "Assign classes/workgroups"
 msgstr "Zuweisen von Klassen/Arbeitsgruppen"
 
-#: umc/js/schoolexam.js:170
+#: umc/js/schoolexam.js:177
 msgid "Assigned classes/workgroups"
 msgstr "Zugewiesene Klassen/Arbeitsgruppen"
 
-#: umc/js/schoolexam.js:439
+#: umc/js/schoolexam.js:446
 msgid "Cancel"
 msgstr "Abbrechen"
 
-#: umc/js/schoolexam.js:126
+#: umc/js/schoolexam.js:128
 msgid "Choose the computer room in which the exam will take place"
 msgstr "Auswahl des Computerraumes, in dem die Klassenarbeit statt finden wird"
 
-#: umc/js/schoolexam.js:117
+#: umc/js/schoolexam.js:119
 msgid "Choose the school"
 msgstr "Auswahl der Schule"
 
-#: umc/js/schoolexam.js:125
+#: umc/js/schoolexam.js:127
 msgid "Computer room"
 msgstr "Computerraum"
 
-#: umc/js/schoolexam.js:215
+#: umc/js/schoolexam.js:222
 msgid "Computer room settings"
 msgstr "Einstellungen des Computerraums"
 
-#: umc/js/schoolexam.js:232
+#: umc/js/schoolexam.js:239
 msgid "Default (global settings)"
 msgstr "Standard (globale Einstellungen)"
 
-#: umc/js/schoolexam.js:221
+#: umc/js/schoolexam.js:228
 msgid "Defines restriction for the share access"
 msgstr "Definiert Einschränkungen für den Zugriff auf Freigaben"
 
-#: umc/js/schoolexam.js:199
+#: umc/js/schoolexam.js:206
 msgid "Directory name"
 msgstr "Verzeichnisname"
 
-#: umc/js/schoolexam.js:158
+#: umc/js/schoolexam.js:170
+msgid "End time"
+msgstr "Endzeit"
+
+#: umc/js/schoolexam.js:160
 msgid "Exam name"
 msgstr "Name der Klassenarbeit"
 
-#: umc/js/schoolexam.js:255
+#: umc/js/schoolexam.js:262
 msgid "Exam succesfully prepared"
 msgstr "Erfolgreiches Anlegen der Klassenarbeit"
 
-#: umc/js/schoolexam.js:208
+#: umc/js/schoolexam.js:215
 msgid "Files"
 msgstr "Dateien"
 
-#: umc/js/schoolexam.js:209
+#: umc/js/schoolexam.js:216
 msgid "Files that are distributed along with this exam"
 msgstr "Diese Dateien werden für die Klassenarbeit an die Schüler verteilt"
 
-#: umc/js/schoolexam.js:223
+#: umc/js/schoolexam.js:230
 msgid "Home directory only"
 msgstr "Ausschließlich das Heimatverzeichnis"
 
-#: umc/js/schoolexam.js:92
+#: umc/js/schoolexam.js:94
 #, python-format
 msgid "In this computerroom the exam \"%s\" is currently being executed by %s."
-msgstr "In diesem Computerraum wird derzeit die Klassenarbeit \"%s\" von %s durchgeführt."
+msgstr ""
+"In diesem Computerraum wird derzeit die Klassenarbeit \"%s\" von %s "
+"durchgeführt."
 
-#: umc/js/schoolexam.js:95
+#: umc/js/schoolexam.js:97
 #, python-format
 msgid "In this computerroom the exam \"%s\" is currently being written."
-msgstr "In diesem Computerraum wird derzeit die Klassenarbeit \"%s\" durchgeführt."
+msgstr ""
+"In diesem Computerraum wird derzeit die Klassenarbeit \"%s\" durchgeführt."
 
-#: umc/js/schoolexam.js:241
+#: umc/js/schoolexam.js:248
 msgid "List of allowed web sites for \"{myRules}\""
 msgstr "Liste erlaubter Webseiten für \"{myRules}\""
 
-#: umc/js/schoolexam.js:171
+#: umc/js/schoolexam.js:178
 msgid "List of groups that are marked to receive the exam materials"
-msgstr "Die für die Verteilung der Klassenarbeitsmaterialien markierten Gruppen"
+msgstr ""
+"Die für die Verteilung der Klassenarbeitsmaterialien markierten Gruppen"
 
-#: umc/js/schoolexam.js:403
+#: umc/js/schoolexam.js:410
 msgid "No recipients have been selected for the exam."
 msgstr "Für die Klassenarbeit wurden keine Empfänger ausgewählt."
 
-#: umc/js/schoolexam.js:224
+#: umc/js/schoolexam.js:231
 msgid "No restrictions"
 msgstr "Keine Einschränkungen"
 
-#: umc/js/schoolexam.js:138
+#: umc/js/schoolexam.js:140
 msgid "Note"
 msgstr "Hinweis"
 
-#: umc/js/schoolexam.js:415
+#: umc/js/schoolexam.js:422
 msgid "OK"
 msgstr "OK"
 
-#: umc/js/schoolexam.js:350
+#: umc/js/schoolexam.js:357
 msgid "Open computer room"
 msgstr "Computerraum öffnen"
 
-#: umc/js/schoolexam.js:108
+#: umc/js/schoolexam.js:110
 msgid "Personal internet rules"
 msgstr "Eigene Internetregeln"
 
-#: umc/js/schoolexam.js:194
+#: umc/js/schoolexam.js:201
 msgid ""
 "Please select all necessary files for the exam and upload them one by one. "
 "These files will be distributed to all participating students. A copy of the "
 "original files will be stored in your home directory, as well. During the "
 "exam or at the end of it, the corresponding files can be collected from the "
 "students. The collected files will be stored in your home directory, as well."
-msgstr "Bitte wählen Sie alle notwendigen Dateien für die Klassenarbeit aus und laden Sie sie nacheinander in das Modul. Diese Dateien werden an alle teilnehmenden Schüler ausgeteilt. Eine Kopie der Originaldateien wird in Ihrem Heimatverzeichnis ebenfalls abgelegt. Während der Klassenarbeit, bzw. zu ihrem Ende, können die entsprechenden Dateien der Schüler eingesammelt werden. Diese so eingesammelten Dateien werden an der gleichen Stelle Ihres Heimatverzeichnisses gespeichert."
+msgstr ""
+"Bitte wählen Sie alle notwendigen Dateien für die Klassenarbeit aus und "
+"laden Sie sie nacheinander in das Modul. Diese Dateien werden an alle "
+"teilnehmenden Schüler ausgeteilt. Eine Kopie der Originaldateien wird in "
+"Ihrem Heimatverzeichnis ebenfalls abgelegt. Während der Klassenarbeit, bzw. "
+"zu ihrem Ende, können die entsprechenden Dateien der Schüler eingesammelt "
+"werden. Diese so eingesammelten Dateien werden an der gleichen Stelle Ihres "
+"Heimatverzeichnisses gespeichert."
 
-#: umc/js/schoolexam.js:216
+#: umc/js/schoolexam.js:223
 msgid ""
 "Please select the access restrictions to internet as well as to shares. "
 "These settings can also be adjusted during the exam via the room settings in "
 "the module <i>Computer room</i>. Note that the student home directories are "
 "not accessible during the exam mode."
-msgstr "Bitte wählen Sie die Einschränkungen für den Zugang zum Internet und zu Freigaben. Diese Einstellungen können während der Klassenarbeit jederzeit über die Raumeinstellungen des Moduls <i>Computerraum</i> geändert werden. Schüler können für den Zeitraum der Klassenarbeit auf ihre Heimatverzeichnisse nicht zugreifen."
+msgstr ""
+"Bitte wählen Sie die Einschränkungen für den Zugang zum Internet und zu "
+"Freigaben. Diese Einstellungen können während der Klassenarbeit jederzeit "
+"über die Raumeinstellungen des Moduls <i>Computerraum</i> geändert werden. "
+"Schüler können für den Zeitraum der Klassenarbeit auf ihre "
+"Heimatverzeichnisse nicht zugreifen."
 
-#: umc/js/schoolexam.js:413
+#: umc/js/schoolexam.js:420
 msgid "Please validate and correct your input data."
 msgstr "Bitte überprüfen und korrigieren Sie Ihre Eingabedaten."
 
-#: umc/js/schoolexam.js:118 umc/js/schoolexam.js:175
+#: umc/js/schoolexam.js:120 umc/js/schoolexam.js:182
 msgid "School"
 msgstr "Schule"
 
-#: umc/js/schoolexam.js:182
+#: umc/js/schoolexam.js:189
 msgid "Search name"
 msgstr "Suchname"
 
-#: umc/js/schoolexam.js:220
+#: umc/js/schoolexam.js:227
 msgid "Share access"
 msgstr "Freigabezugriff"
 
-#: umc/js/schoolexam.js:112
+#: umc/js/schoolexam.js:114
 msgid "Start a new exam"
 msgstr "Eine neue Klassenarbeit starten"
 
-#: umc/js/schoolexam.js:344
+#: umc/js/schoolexam.js:351
 msgid "Start exam"
 msgstr "Klassenarbeit starten"
 
-#: umc/js/schoolexam.js:470
+#: umc/js/schoolexam.js:477
 msgid "Starting the configuration process..."
 msgstr "Beginn des Konfigurationsprozesses..."
 
-#: umc/js/schoolexam.js:443
+#: umc/js/schoolexam.js:450
 msgid "Take over"
 msgstr "Übernehmen"
 
-#: umc/js/schoolexam.js:159
+#: umc/js/schoolexam.js:161
 msgid "The name of the exam, e.g., \"Math exam algrebra 02/2013\"."
 msgstr "Der name der Klassenarbeit, bspw. \"Mathematik-Klausur 02-2013\"."
 
-#: umc/js/schoolexam.js:200
+#: umc/js/schoolexam.js:207
 msgid ""
 "The name of the project directory as it will be displayed in the file "
 "system. The following special characters are not allowed: \"/\", \"\\\", \"?"
 "\", \"%\", \"*\", \":\", \"|\", \"\"\", \"<\", \">\", \"$\", \"'\"."
-msgstr "Der Name des Projektverzeichnisses wie es im Dateisystem dargestellt wird. The folgenden Sonderzeichen sind dazu nicht erlaubt: \"/\", \"\\\", \"?\", \"%\", \"*\", \":\", \"|\", \"\"\", \"<\", \">\", \"$\", \"'\"."
+msgstr ""
+"Der Name des Projektverzeichnisses wie es im Dateisystem dargestellt wird. "
+"The folgenden Sonderzeichen sind dazu nicht erlaubt: \"/\", \"\\\", \"?\", "
+"\"%\", \"*\", \":\", \"|\", \"\"\", \"<\", \">\", \"$\", \"'\"."
 
-#: umc/js/schoolexam.js:256
+#: umc/js/schoolexam.js:263
 msgid ""
 "The preparation of the exam was successful. In order to proceed, press the "
 "\"Open computer room\" button. The selected computer room will then be "
 "opened automatically."
-msgstr "Die Einrichtung der Klassenarbeit war erfolgreich. Bitte drücken Sie die Schaltflöche \"Computerraum öffnen\" um fort zu fahren. Der ausgewählte Raum wird dann automatisch geöffnet werden."
+msgstr ""
+"Die Einrichtung der Klassenarbeit war erfolgreich. Bitte drücken Sie die "
+"Schaltflöche \"Computerraum öffnen\" um fort zu fahren. Der ausgewählte Raum "
+"wird dann automatisch geöffnet werden."
 
-#: umc/js/schoolexam.js:432
+#: umc/js/schoolexam.js:439
 #, python-format
 msgid ""
 "The room %s cannot be chosen as the exam \"%s\" is currently being "
 "conducted. Please make sure that the exam is finished via the module "
 "\"Computer room\" before a new exam can be started again."
-msgstr "Die Raum %s kann nicht ausgewählt werden, da in ihm bereits die Klassenarbeit \"%s\" durchgeführt wird. Bitte stellen Sie sicher, dass die Klassenarbeit zunächst über das Modul \"Computerraum\" beendet wird bevor eine neue Klassenarbeit gestartet wird."
+msgstr ""
+"Die Raum %s kann nicht ausgewählt werden, da in ihm bereits die "
+"Klassenarbeit \"%s\" durchgeführt wird. Bitte stellen Sie sicher, dass die "
+"Klassenarbeit zunächst über das Modul \"Computerraum\" beendet wird bevor "
+"eine neue Klassenarbeit gestartet wird."
 
-#: umc/js/schoolexam.js:98
+#: umc/js/schoolexam.js:171
+msgid "The time when the exam ends"
+msgstr "Der Endzeitpunkt der Klassenarbeit"
+
+#: umc/js/schoolexam.js:100
 #, python-format
 msgid "This computer room is currently in use by %s."
 msgstr "Dieser Computerraum wird derzeit verwendet von %s."
 
-#: umc/js/schoolexam.js:437
+#: umc/js/schoolexam.js:444
 #, python-format
 msgid ""
 "This computer room is currently in use by %s. You can take control over the "
@@ -233,10 +282,10 @@ msgstr ""
 "des Raums übernehmen, dazu wird dem momentanen Lehrer ein Hinweis angezeigt "
 "und seine Sitzung geschlossen."
 
-#: umc/js/schoolexam.js:193
+#: umc/js/schoolexam.js:200
 msgid "Upload of exam files"
 msgstr "Hochladen von Klassenarbeitsdateien"
 
-#: umc/js/schoolexam.js:229
+#: umc/js/schoolexam.js:236
 msgid "Web access profile"
 msgstr "Internetregeln"

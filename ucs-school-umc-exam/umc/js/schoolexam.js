@@ -47,12 +47,14 @@ define([
 	"umc/widgets/Text",
 	"umc/widgets/TextArea",
 	"umc/widgets/ComboBox",
+	"umc/widgets/TimeBox",
 	"umc/widgets/MultiObjectSelect",
 	"umc/widgets/MultiUploader",
 	"umc/widgets/StandbyMixin",
 	"umc/widgets/ProgressBar",
 	"umc/i18n!umc/modules/schoolexam"
-], function(declare, lang, array, domClass, domStyle, on, all, topic, Deferred, when, dialog, tools, Wizard, Module, TextBox, Text, TextArea, ComboBox, MultiObjectSelect, MultiUploader, StandbyMixin, ProgressBar, _) {
+], function(declare, lang, array, domClass, domStyle, on, all, topic, Deferred, when, dialog, tools, Wizard, Module,
+			TextBox, Text, TextArea, ComboBox, TimeBox, MultiObjectSelect, MultiUploader, StandbyMixin, ProgressBar, _) {
 	// helper function that sanitizes a given filename
 	var sanitizeFilename = function(name) {
 		array.forEach([/\//g, /\\/g, /\?/g, /%/g, /\*/g, /:/g, /\|/g, /"/g, /</g, />/g, /\$/g, /'/g], function(ichar) {
@@ -61,7 +63,7 @@ define([
 
 		// limit the filename length
 		return name.slice(0, 255);
-	}
+	};
 
 	var ExamWizard = declare("umc.modules.schoolexam.ExamWizard", [ Wizard, StandbyMixin ], {
 		umcpCommand: null,
@@ -106,6 +108,7 @@ define([
 			this.standbyOpacity = 1.0;
 
 			var myRules = _( 'Personal internet rules' );
+			var d;
 
 			this.pages = [{
 				name: 'general',
@@ -132,7 +135,7 @@ define([
 						}
 
 						// update the info widget to warn if a room is already in use
-						var msg = this._getRoomMessage(this._getCurrentRoom())
+						var msg = this._getRoomMessage(this._getCurrentRoom());
 						if (msg) {
 							msg = lang.replace('<p><b>{note}:</b> {msg}</p>', {
 								note: _('Note'),
@@ -141,16 +144,16 @@ define([
 						}
 
 						// update content + visibilty of the widget
-						var infoWidget = this.getWidget('general', 'info')
+						var infoWidget = this.getWidget('general', 'info');
 						infoWidget.set('content', msg || '');
-						infoWidget.set('visible', Boolean(msg))
+						infoWidget.set('visible', Boolean(msg));
 					})
 				}, {
 					name: 'info',
 					type: Text,
 					content: '',
 					'class': 'umcSize-OneAndAHalf umcText',
-					style: 'padding-bottom: 0.75em',
+					style: 'padding-bottom: 0.75em'
 				}, {
 					name: 'name',
 					type: TextBox,
@@ -162,6 +165,12 @@ define([
 						var name = sanitizeFilename(this.getWidget('general', 'name').get('value'));
 						this.getWidget('files', 'directory').set('value', name);
 					})
+				}, {
+					name: 'examEndTime',
+					type: TimeBox,
+					label: _('End time'),
+					value: (d=new Date()) && d.setMinutes(d.getMinutes()+45) && d,
+					description: _('The time when the exam ends')
 				}, {
 					type: MultiObjectSelect,
 					name: 'recipients',
@@ -313,7 +322,7 @@ define([
 				roomWidget.ready().then(function() {
 					var roomDN = null;
 					array.forEach(roomWidget.getAllItems(), function(iitem) {
-						if (iitem.id.indexOf('cn=' + roomName) == 0) {
+						if (iitem.id.indexOf('cn=' + roomName) === 0) {
 							// we found the correct DN
 							roomWidget.setInitialValue(iitem.id);
 						}
@@ -452,7 +461,7 @@ define([
 			}
 
 			this._gotoPage(nextPage);
-			return nextPage == null;
+			return nextPage === null;
 		},
 
 		_startExam: function() {
@@ -490,7 +499,8 @@ define([
 						shareMode: values.shareMode,
 						printMode: 'default',
 						examDescription: values.name,
-						exam: values.directory
+						exam: values.directory,
+						examEndTime: values.examEndTime
 					});
 				});
 
