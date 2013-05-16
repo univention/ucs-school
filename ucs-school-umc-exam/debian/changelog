@@ -1,3 +1,9 @@
+ucs-school-umc-exam (0.1.27-1) unstable; urgency=low
+
+  * add end time to exam; Bug #31164
+
+ -- Florian Best <best@univention.de>  Thu, 16 May 2013 10:39:31 +0200
+
 ucs-school-umc-exam (0.1.26-1) unstable; urgency=low
 
   * add end time to exam; Bug #31164

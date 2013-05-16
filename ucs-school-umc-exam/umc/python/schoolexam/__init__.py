@@ -42,6 +42,7 @@ from univention.lib.i18n import Translation
 
 from ucsschool.lib.schoolldap import LDAP_Connection, LDAP_ConnectionError, set_credentials, SchoolSearchBase, SchoolBaseModule, LDAP_Filter, Display
 import ucsschool.lib.internetrules as internetrules
+from ucsschool.lib.schoollessons import SchoolLessons
 
 import univention.admin.modules as udm_modules
 import univention.admin.uexceptions as udm_exceptions
@@ -52,6 +53,7 @@ import shutil
 import time
 import traceback
 import subprocess
+import datetime
 from httplib import HTTPException
 from socket import error as SocketError
 
@@ -68,6 +70,7 @@ class Instance( SchoolBaseModule ):
 		SchoolBaseModule.__init__(self)
 		self._tmpDir = None
 		self._progress_state = Progress()
+		self._lessons = SchoolLessons()
 
 	def init(self):
 		SchoolBaseModule.init(self)
@@ -113,6 +116,13 @@ class Instance( SchoolBaseModule ):
 		### copied from computerroom module
 		"""Returns a list of available internet rules"""
 		self.finished( request.id, map( lambda x: x.name, internetrules.list() ) )
+
+	@simple_response
+	def lesson_end(self):
+		current = self._lessons.current
+		if current is not None:
+			return current.end.strftime('%H:%M')
+		return (datetime.datetime.now() + datetime.timedelta(minutes=45)).strftime('%H:%M')
 
 	@simple_response
 	def progress(self):

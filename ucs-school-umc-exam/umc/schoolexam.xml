@@ -15,5 +15,6 @@
 	<command name="schoolexam/exam/finish" function="finish_exam"/>
 	<command name="schoolexam/exam/collect" function="collect_exam"/>
 	<command name="schoolexam/progress" function="progress"/>
+	<command name="schoolexam/lesson_end" function="lesson_end"/>
   </module>
 </umc>

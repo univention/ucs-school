@@ -26,7 +26,7 @@
  * /usr/share/common-licenses/AGPL-3; if not, see
  * <http://www.gnu.org/licenses/>.
  */
-/*global define*/
+/*global define window*/
 
 define([
 	"dojo/_base/declare",
@@ -108,7 +108,6 @@ define([
 			this.standbyOpacity = 1.0;
 
 			var myRules = _( 'Personal internet rules' );
-			var d;
 
 			this.pages = [{
 				name: 'general',
@@ -169,7 +168,6 @@ define([
 					name: 'examEndTime',
 					type: TimeBox,
 					label: _('End time'),
-					value: (d=new Date()) && d.setMinutes(d.getMinutes()+45) && d,
 					description: _('The time when the exam ends')
 				}, {
 					type: MultiObjectSelect,
@@ -333,6 +331,12 @@ define([
 				setMaxSize(10240);
 			});
 
+			// get value for lesson end time
+			var endTimeDeferred = this.umcpCommand('schoolexam/lesson_end');
+			endTimeDeferred.then(lang.hitch(this, function(data) {
+				this.getWidget('examEndTime').set('value', data.result);
+			}));
+
 			// initiate a progress bar widget
 			this._progressBar = new ProgressBar();
 			this.own(this._progressBar);
@@ -343,6 +347,7 @@ define([
 				return this._pages[ipage.name]._form.ready();
 			}));
 			allReady.push(ucrDeferred);
+			allReady.push(endTimeDeferred);
 			all(allReady).then(lang.hitch(this, function() {
 				this.standby(false);
 			}));
@@ -532,7 +537,7 @@ define([
 					html += lang.replace('<li>{0}</li>\n', [txt]);
 				});
 				html += '</ul>';
-				this.getWidget(nextPage, 'info').set('content', html);
+				this.getWidget('error', 'info').set('content', html);
 				deferred.reject();
 			}
 			else {
