@@ -21,3 +21,17 @@ Description[en]=Specifies the preselected internet rule for a new exam. Possible
 Description[de]=Definiert die vorausgewählte Internetregel für eine neue Klassenarbeit. Mögliche Werte umfassen die Namen aller Internetregeln wie sie im UMC module "Internetregeln definieren" angezeigt werden.
 Type=str
 Categories=ucsschool-exam
+
+[ucsschool/exam/delay/min]
+Description[en]=The exam module needs to determine an up-to-date state of all computers in the selected computer room. This variable specifies the minimum time (in seconds) for which the exam module is waiting (defaults to 30).
+Description[de]=Das Klassenarbeitsmodul ermittelt einen aktuellen Status aller Computer des ausgewählten Computerraums. Diese Variable definiert den minimale Zeitraum (in Sekunden), den das Klassenarbeitsmodul wartet (Standardwert ist 30).
+
+[ucsschool/exam/delay/max]
+Description[en]=The exam module needs to determine an up-to-date state of all computers in the selected computer room. This variable specifies the maximum time (in seconds) for which the exam module is waiting (defaults to 120).
+Description[de]=Das Klassenarbeitsmodul ermittelt einen aktuellen Status aller Computer des ausgewählten Computerraums. Diese Variable definiert den maximalen Zeitraum (in Sekunden), den das Klassenarbeitsmodul wartet (Standardwert ist 120).
+
+[ucsschool/exam/delay/offset]
+Description[en]=The exam module needs to determine an up-to-date state of all computers in the selected computer room. This variables specifies the time period (in seconds) for which the exam module is waiting given that no status changes are observed (defaults to 20).
+Description[de]=Das Klassenarbeitsmodul ermittelt einen aktuellen Status aller Computer des ausgewählten Computerraums. Diese Variable definiert den Zeitraum (in Sekunden), den das Klassenarbeitsmodul wartet, wenn keine Statusänderungen beobachtet werden (Standardwert ist 20).
+
+

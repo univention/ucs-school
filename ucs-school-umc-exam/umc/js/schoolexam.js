@@ -41,6 +41,7 @@ define([
 	"dojo/when",
 	"umc/dialog",
 	"umc/tools",
+	"umc/modules/schoolexam/RebootGrid",
 	"umc/widgets/Wizard",
 	"umc/widgets/Module",
 	"umc/widgets/TextBox",
@@ -53,7 +54,7 @@ define([
 	"umc/widgets/StandbyMixin",
 	"umc/widgets/ProgressBar",
 	"umc/i18n!umc/modules/schoolexam"
-], function(declare, lang, array, domClass, domStyle, on, all, topic, Deferred, when, dialog, tools, Wizard, Module,
+], function(declare, lang, array, domClass, domStyle, on, all, topic, Deferred, when, dialog, tools, RebootGrid, Wizard, Module,
 			TextBox, Text, TextArea, ComboBox, TimeBox, MultiObjectSelect, MultiUploader, StandbyMixin, ProgressBar, _) {
 	// helper function that sanitizes a given filename
 	var sanitizeFilename = function(name) {
@@ -113,6 +114,13 @@ define([
 				name: 'general',
 				headerText: _('Start a new exam'),
 				helpText: _('<p>The UCS@school exam mode allows one to perform an exam in a computer room. During the exam, access to internet as well as to shares can be restricted, the student home directories are not accessible, either.</p><p>Please enter a name for the new exam and select the classes or workgroups that participate in the exam. A directory name is proposed automatically and can be adjusted if wanted.</p>'),
+				layout: [
+					'school',
+					['room', 'info'],
+					'name',
+					'examEndTime',
+					'recipients'
+				],
 				widgets: [{
 					name: 'school',
 					type: ComboBox,
@@ -136,7 +144,7 @@ define([
 						// update the info widget to warn if a room is already in use
 						var msg = this._getRoomMessage(this._getCurrentRoom());
 						if (msg) {
-							msg = lang.replace('<p><b>{note}:</b> {msg}</p>', {
+							msg = lang.replace('<b>{note}:</b> {msg}', {
 								note: _('Note'),
 								msg: this._getRoomMessage(this._getCurrentRoom())
 							});
@@ -150,9 +158,10 @@ define([
 				}, {
 					name: 'info',
 					type: Text,
+					label: '&nbsp;',
 					content: '',
-					'class': 'umcSize-OneAndAHalf umcText',
-					style: 'padding-bottom: 0.75em'
+					'class': 'umcSize-One umcText',
+					style: 'padding-left: 0.4em;'
 				}, {
 					name: 'name',
 					type: TextBox,
@@ -258,15 +267,6 @@ define([
 					disabled: true
 				}]
 			}, {
-				name: 'success',
-				headerText: _('Exam succesfully prepared'),
-				helpText: _('The preparation of the exam was successful. In order to proceed, press the "Open computer room" button. The selected computer room will then be opened automatically.'),
-				widgets: [{
-					type: Text,
-					name: 'info',
-					content: ''
-				}]
-			}, {
 				name: 'error',
 				headerText: _('An error ocurred'),
 				helpText: _('An error occurred during the preparation of the exam. The following information will show more details about the exact error. Please retry to start the exam.'),
@@ -276,6 +276,23 @@ define([
 					style: 'font-style:italic;',
 					content: ''
 				}]
+			}, {
+				name: 'success',
+				headerText: _('Exam succesfully prepared'),
+				helpText: _('<p>The preparation of the exam was successful.<p><p>As next step, it is necessary to make sure that all student computers in the computer room are rebooted if they are running. Only through a restart, exam specific configurations for the computers themselves are activated.</p>')
+			}, {
+				name: 'reboot',
+				headerText: 'Reboot student computers',
+				helpText: _('<p>To assist in rebooting student computers, all running computers in the room are determined automatically below. This may take 30 seconds to 2 minutes. Once connections to the computers are established, they can be restarted by pressing the button </i>Restart computers</i>.</p><p>It is possible to skip this process by pressing the button <i>Next</i>.</p>'),
+				widgets: [{
+					name: 'grid',
+					type: RebootGrid,
+					umcpCommand: this.umcpCommand
+				}]
+			}, {
+				name: 'finished',
+				headerText: _('Preparation finished'),
+				helpText: _('The preparation of the exam has been finished successfully. Press the button "Open computer room" to finish this wizard and open selected computer room directly.')
 			}];
 		},
 
@@ -308,11 +325,20 @@ define([
 				'umc/server/upload/max',
 				'ucsschool/exam/default/room',
 				'ucsschool/exam/default/shares',
-				'ucsschool/exam/default/internet'
+				'ucsschool/exam/default/internet',
+				'ucsschool/exam/delay/min',
+				'ucsschool/exam/delay/max',
+				'ucsschool/exam/delay/offset'
 			]).then(lang.hitch(this, function(result) {
 				setMaxSize(result['umc/server/upload/max'] || 10240);
 				setValue('roomSettings', 'shareMode', result['ucsschool/exam/default/shares']);
 				setValue('roomSettings', 'internetRule', result['ucsschool/exam/default/internet']);
+
+				// save delay values for the grid
+				var grid = this.getWidget('reboot', 'grid');
+				grid.set('minUpdateDelay', result['ucsschool/exam/delay/min'] || 30);
+				grid.set('maxUpdateDelay', result['ucsschool/exam/delay/max'] || 120);
+				grid.set('offsetUpdateDelay', result['ucsschool/exam/delay/offset'] || 20);
 
 				// for the room, we need to match the given value against all available room DNs
 				var roomWidget = this.getWidget('general', 'room');
@@ -344,7 +370,11 @@ define([
 			// standby animation until all form elements ready and the UCR
 			// request has been finished
 			var allReady = array.map(this.pages, lang.hitch(this, function(ipage) {
-				return this._pages[ipage.name]._form.ready();
+				var page = this._pages[ipage.name];
+				if (page._form) {
+					return page._form.ready();
+				}
+				return null;
 			}));
 			allReady.push(ucrDeferred);
 			allReady.push(endTimeDeferred);
@@ -359,17 +389,46 @@ define([
 				ibutton.callback = lang.hitch(this, '_startExam');
 			}));
 
-			// adjust the label of the 'finish' button on the 'success' page
-			var button = this.getPage('success')._footerButtons.finish;
+			// adjust the behaviour of the finish button on the reboot page
+			var button = this.getPage('reboot')._footerButtons.finish;
+			button.set('label', _('Reboot computers'));
+			button.set('disabled', true);
+			button.callback = lang.hitch(this, '_reboot');
+
+			// adjust the label of the 'finish' button on the 'finished' page
+			button = this.getPage('finished')._footerButtons.finish;
 			button.set('label', _('Open computer room'));
+		},
+
+		postCreate: function() {
+			this.inherited(arguments);
+
+			// hook when success page is shown
+			this.getPage('reboot').on('show', lang.hitch(this, function() {
+				// find computers that need to be restarted
+				var grid = this.getWidget('reboot', 'grid');
+				var values = this.getValues();
+				grid.monitorRoom(values.room);
+				
+				// call the grid's resize method (decoupled via setTimeout)
+				window.setTimeout(lang.hitch(this, function() {
+					grid.resize();
+				}, 0));
+			}));
+
+			// hook when monitoring of the computers has been finished
+			var button = this.getPage('reboot')._footerButtons.finish;
+			var grid = this.getWidget('reboot', 'grid');
+			grid.on('monitoringDone', lang.hitch(this, function() {
+				button.set('disabled', false);
+			}));
 		},
 
 		_updateButtons: function(pageName) {
 			this.inherited(arguments);
 
-			// make the 'finish' buttons visible to create an exam already earlier
-			// on the first pages
-			if (pageName != 'general' && pageName != 'files' && pageName != 'roomSettings') {
+			// make the 'finish' buttons visible on specific pages only
+			if (array.indexOf(['general', 'files', 'roomSettings', 'reboot'], pageName) < 0) {
 				return;
 			}
 			var buttons = this._pages[pageName]._footerButtons;
@@ -381,11 +440,11 @@ define([
 		},
 
 		hasPrevious: function(pageName) {
-			return pageName != 'error' && pageName != 'success' && pageName != 'general';
+			return array.indexOf(['error', 'success', 'general', 'reboot'], pageName) < 0;
 		},
 
 		hasNext: function(pageName) {
-			return pageName != 'roomSettings' && pageName != 'success';
+			return array.indexOf(['roomSettings', 'finished'], pageName) < 0;
 		},
 
 		next: function(pageName) {
@@ -397,7 +456,7 @@ define([
 		},
 
 		canCancel: function(pageName) {
-			return pageName != 'success';
+			return array.indexOf(['success', 'reboot', 'finished'], pageName) < 0;
 		},
 
 		_gotoPage: function(pageName) {
@@ -544,6 +603,26 @@ define([
 				// no errors... we need a UMC server restart
 				deferred.resolve();
 			}
+		},
+
+		_reboot: function() {
+			// show a progress bar for rebooting the computers
+			var progressBar = new ProgressBar();
+			progressBar.reset(_('Rebooting computers'));
+			this.own(progressBar);
+			this.standby(true, progressBar);
+			this.getWidget('reboot', 'grid').reboot().then(lang.hitch(this, function() {
+				// reboot done
+				this.standby(false);
+				this._gotoPage('finished');
+			}), lang.hitch(this, function() {
+				// some error happened, probably an exception due to programming error
+				this.standby(false);
+				this._gotoPage('finished');
+			}), function(percentage, computer) {
+				progressBar.setInfo(null, computer, percentage);
+			});
+			
 		},
 
 		onFinished: function(values) {

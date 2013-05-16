@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-exam\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2013-05-14 04:41-0400\n"
+"POT-Creation-Date: 2013-05-16 08:48-0400\n"
 "PO-Revision-Date: \n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: umc/python/schoolexam/__init__.py:154
+#: umc/python/schoolexam/__init__.py:164
 #, python-format
 msgid ""
 "An exam with the name \"%s\" already exists. Please choose a different name "
@@ -21,58 +21,57 @@ msgstr ""
 "Eine Klassenarbeit unter dem Namen \"%s\" existiert bereits. Bitte wählen "
 "Sie einen anderen Namen."
 
-#: umc/python/schoolexam/__init__.py:279 umc/python/schoolexam/__init__.py:374
+#: umc/python/schoolexam/__init__.py:289 umc/python/schoolexam/__init__.py:384
 #, python-format
 msgid "An unexpected error occurred during the preparation: %s"
 msgstr "Ein unerwarteter Fehler trat währende der Vorbereitung auf: %s"
 
-#: umc/python/schoolexam/__init__.py:327
+#: umc/python/schoolexam/__init__.py:337
 msgid "Collecting exam files..."
 msgstr "Einsammeln der Klassenarbeitsdateien..."
 
-#: umc/python/schoolexam/__init__.py:339
+#: umc/python/schoolexam/__init__.py:349
 msgid "Configuring the computer room..."
 msgstr "Einrichtung des Computerraumes..."
 
-#: umc/python/schoolexam/__init__.py:148
+#: umc/python/schoolexam/__init__.py:158
 #, python-format
 msgid "Could not authenticate user \"%s\"!"
 msgstr "Der Benutzer \"%s\" konnte nicht authentifiziert werden!"
 
-#: umc/python/schoolexam/__init__.py:336
-#: umc/python/schoolexam/__init__.py:180
+#: umc/python/schoolexam/__init__.py:190 umc/python/schoolexam/__init__.py:346
 #, python-format
 msgid "Could not connect to master server %s."
 msgstr "Die Verbindung zum Master-Server %s konnte nicht aufgebaut werden."
 
-#: umc/python/schoolexam/__init__.py:263
+#: umc/python/schoolexam/__init__.py:273
 msgid "Distributing exam files"
 msgstr "Verteilung der Klassenarbeitsdateien"
 
-#: umc/python/schoolexam/__init__.py:133 umc/python/schoolexam/__init__.py:316
+#: umc/python/schoolexam/__init__.py:143 umc/python/schoolexam/__init__.py:326
 msgid "Initializing"
 msgstr "Einrichtung"
 
-#: umc/python/schoolexam/__init__.py:299
+#: umc/python/schoolexam/__init__.py:309
 msgid "No files have been distributed"
 msgstr "Keine Dateien wurden verteilt"
 
-#: umc/python/schoolexam/__init__.py:203
+#: umc/python/schoolexam/__init__.py:213
 msgid "Preparing exam accounts"
 msgstr "Vorbereitung der Klassenarbeitskonten"
 
-#: umc/python/schoolexam/__init__.py:183
+#: umc/python/schoolexam/__init__.py:193
 msgid "Preparing the computer room for exam mode..."
 msgstr "Einrichtung des Computerraumes für den Klassenarbeitsmodus..."
 
-#: umc/python/schoolexam/__init__.py:225
+#: umc/python/schoolexam/__init__.py:235
 msgid "Preparing user home directories"
 msgstr "Einrichten der Heimatverzeichnisse"
 
-#: umc/python/schoolexam/__init__.py:347
+#: umc/python/schoolexam/__init__.py:357
 msgid "Removing exam accounts"
 msgstr "Entfernen der Klassenarbeitskonten"
 
-#: umc/python/schoolexam/__init__.py:270 umc/python/schoolexam/__init__.py:366
+#: umc/python/schoolexam/__init__.py:280 umc/python/schoolexam/__init__.py:376
 msgid "finished..."
 msgstr "beendet..."
