@@ -128,7 +128,7 @@ def _updateRoomInfo(roomDN, **kwargs):
 	'''Update infos for a room, i.e., leave unspecified values untouched.'''
 	info = _readRoomInfo(roomDN) or dict()
 	newKwargs = dict()
-	for key in ('user', 'cmd', 'exam', 'examDescription'):
+	for key in ('user', 'cmd', 'exam', 'examDescription', 'examEndTime'):
 		if key in kwargs:
 			# set the specified value (can also be None for deleting the attribute)
 			newKwargs[key] = kwargs[key]
@@ -137,9 +137,9 @@ def _updateRoomInfo(roomDN, **kwargs):
 			newKwargs[key] = info.get(key)
 	_writeRoomInfo(roomDN, **newKwargs)
 
-def _writeRoomInfo(roomDN, user=None, cmd=None, exam=None, examDescription=None):
+def _writeRoomInfo(roomDN, user=None, cmd=None, exam=None, examDescription=None, examEndTime=None):
 	'''Set infos for a room and lock the room.'''
-	info = dict(room=roomDN, user=user, cmd=cmd, exam=exam, examDescription=examDescription, pid=os.getpid())
+	info = dict(room=roomDN, user=user, cmd=cmd, exam=exam, examDescription=examDescription, examEndTime=examEndTime, pid=os.getpid())
 	MODULE.info( 'Writing info file for room "%s": %s' % (roomDN, info) )
 	fd = None
 	try:
@@ -235,6 +235,7 @@ class Instance( SchoolBaseModule ):
 				info=dict(
 					exam=info.get('exam'),
 					examDescription=info.get('examDescription'),
+					examEndTime=info.get('examEndTime'),
 					room=info.get('room'),
 					user=info.get('user'),
 				)
@@ -304,6 +305,7 @@ class Instance( SchoolBaseModule ):
 			# check for exam mode
 			iroom['exam'] = roomInfo.get('exam')
 			iroom['examDescription'] = roomInfo.get('examDescription')
+			iroom['examEndTime'] = roomInfo.get('examEndTime')
 
 			rooms.append(iroom)
 
@@ -596,6 +598,7 @@ class Instance( SchoolBaseModule ):
 		# if the exam description has not been specified, try to load it from the room info file
 		roomInfo = _readRoomInfo(self._italc.roomDN) or dict()
 		examDescription = request.options.get('examDescription', roomInfo.get('examDescription', exam))
+		examEndTime = request.options.get('examEndTime', roomInfo.get('examEndTime'))
 
 		# find AT jobs for the room and execute it to remove current settings
 		jobs = atjobs.list( extended = True )
@@ -616,10 +619,10 @@ class Instance( SchoolBaseModule ):
 		# local helper function that writes an exam file
 		cmd = ''
 		def _finished():
-			kwargs = dict(cmd=None, exam=None, examDescription=None)
+			kwargs = dict(cmd=None, exam=None, examDescription=None, examEndTime=None)
 			if exam:
 				# a new exam has been indicated
-				kwargs = dict(cmd=cmd, exam=exam, examDescription=examDescription)
+				kwargs = dict(cmd=cmd, exam=exam, examDescription=examDescription, examEndTime=examEndTime)
 
 			MODULE.info('updating room info/lock file...')
 			_updateRoomInfo(self._italc.roomDN, user=self._user_dn, **kwargs)

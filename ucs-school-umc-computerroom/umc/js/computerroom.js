@@ -108,6 +108,7 @@ define([
 		_objStore: null,
 
 		_updateTimer: null,
+		_examEndTimer: null,
 
 		_screenshotView: null,
 		_settingsDialog: null,
@@ -129,6 +130,10 @@ define([
 			this.inherited(arguments);
 			if (this._updateTimer !== null) {
 				window.clearTimeout(this._updateTimer);
+			}
+			if (this._examEndTimer !== null) {
+				window.clearTimeout(this._examEndTimer);
+				this._examEndTimer = null;
 			}
 		},
 
@@ -162,6 +167,11 @@ define([
 				visible: false,
 				label: _('Finish exam'),
 				callback: lang.hitch(this, '_finishExam')
+			}, {
+				name: 'examEndTime',
+				style: 'float: left;',
+				visible: false,
+				label: ''
 			}, {
 				name: 'settings',
 				style: 'padding-bottom: 10px; padding-bottom; 10px; float: right;',
@@ -554,6 +564,7 @@ define([
 			// update visibility of header buttons
 			this._headButtons.finishExam.set('visible', roomInfo && roomInfo.exam);
 			this._headButtons.collect.set('visible', roomInfo && roomInfo.exam);
+			this._headButtons.examEndTime.set('visible', roomInfo && roomInfo.exam);
 
 			// hide time period input field in settings dialog
 			this._settingsDialog.set('exam', roomInfo.exam);
@@ -781,7 +792,41 @@ define([
 
 				// update the header text containing the room
 				this._grid._updateFooterContent();
+
+				// examEndTimer dialog
+				if (response.result.info.examEndTime) {
+					var endTime = response.result.info.examEndTime.split(':');
+					var now = new Date();
+					var delta = new Date(now.getFullYear(), now.getMonth(), now.getDate(), endTime[0], endTime[1], 0, 0) - now;
+					if (delta > 0) {
+						this._examEndTimer = window.setTimeout(lang.hitch(this, '_showExamFinishedDialog'), delta);
+					} else {
+						this._showExamFinishedDialog();
+					}
+				}
 			}));
+		},
+
+		_showExamFinishedDialog: function() {
+			dialog.confirm(_('The allowed time for this examination has been reached. The exam can now be extended or collected. Should be reminded again in 5 minutes?'), [{
+				name: 'remember',
+				label: _('Remind again'),
+				'default': true,
+				callback: lang.hitch(this, function() {
+					this._examEndTimer = window.setTimeout(lang.hitch(this, '_showExamFinishedDialog'), 5*60*1000);
+				})
+			}, {
+				name: 'finish_exam',
+				label: _('Finish exam'),
+				callback: lang.hitch(this, '_finishExam')
+			}, {
+				name: 'dont_remember',
+				label: _("Don't remind anymore"),
+				callback: lang.hitch(this, function() {
+					window.clearTimeout(this._examEndTimer);
+					this._examEndTimer = null;
+				})
+			}], _('Remind'));
 		},
 
 		_collectExam: function() {
@@ -796,6 +841,11 @@ define([
 				if (response == 'cancel') {
 					// user canceled the dialog
 					return;
+				}
+
+				// stop the timer
+				if (this._examEndTimer) {
+					window.clearTimeout(this._examEndTimer);
 				}
 
 				// start collection the files
@@ -840,6 +890,11 @@ define([
 				if (response == 'cancel') {
 					// user canceled the dialog
 					return;
+				}
+
+				// stop the timer
+				if (this._examEndTimer) {
+					window.clearTimeout(this._examEndTimer);
 				}
 
 				// start finishing the exam
@@ -1030,6 +1085,10 @@ define([
 			if (this._updateTimer) {
 				window.clearTimeout(this._updateTimer);
 			}
+			if (this._examEndTimer) {
+				window.clearTimeout(this._examEndTimer);
+				this._examEndTimer = null;
+			}
 
 			// remove all entries for the computer room
 			var that = this;
@@ -1091,6 +1150,19 @@ define([
 						this._settingsDialog.update();
 					}
 					this._headButtons.settings.set('style', 'color: inherit;');
+				}
+
+				var endTime = this.get('roomInfo').examEndTime;
+				if (endTime) {
+					endTime = endTime.split(':');
+					var now = new Date();
+					var delta = new Date(now.getFullYear(), now.getMonth(), now.getDate(), endTime[0], endTime[1], 0, 0) - now;
+					this._headButtons.examEndTime.set('style', (delta < 5*1000*60) ? 'color: red;' : 'color: inherit;');
+					if (delta > 0) {
+						this._headButtons.examEndTime.set('label', _('%s Minutes left', String(1+(delta / 1000 / 60)).split('.')[0]));
+					} else {
+						this._headButtons.examEndTime.set('label', _('Time is up'));
+					}
 				}
 
 				this._updateTimer = window.setTimeout(lang.hitch(this, '_updateRoom', {}), 2000);

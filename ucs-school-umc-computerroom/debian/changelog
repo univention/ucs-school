@@ -1,3 +1,10 @@
+ucs-school-umc-computerroom (2.0.34-1) unstable; urgency=low
+
+  * Bug #31164: implement end time of exam, add notification when exam has
+  	ended
+
+ -- Florian Best <best@univention.de>  Thu, 16 May 2013 09:23:58 +0200
+
 ucs-school-umc-computerroom (2.0.33-1) unstable; urgency=low
 
   * reestablish a new iTALC connection if connection seems to be dead for
