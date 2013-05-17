@@ -133,11 +133,7 @@ define([
 				name: 'reset_to_default',
 				label: _( 'Reset' ),
 				style: 'float: right',
-				onClick: lang.hitch( this, function() {
-					this._form.getWidget( 'internetRule' ).set( 'value', 'none' );
-					this._form.getWidget( 'printMode' ).set( 'value', 'default' );
-					this._form.getWidget( 'shareMode' ).set( 'value', 'all' );
-				} )
+				onClick: lang.hitch( this, 'reset' )
 			} , {
 				name: 'cancel',
 				label: _( 'Cancel' ),
@@ -186,6 +182,12 @@ define([
 					}
 				}, this);
 			}));
+		},
+
+		reset: function() {
+			this._form.getWidget( 'internetRule' ).set( 'value', 'none' );
+			this._form.getWidget( 'printMode' ).set( 'value', 'default' );
+			this._form.getWidget( 'shareMode' ).set( 'value', 'all' );
 		},
 
 		save: function() {

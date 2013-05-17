@@ -930,9 +930,9 @@ define([
 						delete info.examDescription;
 						this.set('roomInfo', info);
 
-						// update room settings for normal mode in the backend
-						// ... load settings first and then save them back
-						this._settingsDialog.update().then(lang.hitch(this._settingsDialog, 'save'));
+						// reset room settings
+						this._settingsDialog.reset();
+						this._settingsDialog.save();
 					}
 				}));
 			}));

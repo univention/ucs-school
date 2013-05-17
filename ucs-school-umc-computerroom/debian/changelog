@@ -1,3 +1,9 @@
+ucs-school-umc-computerroom (2.0.36-1) unstable; urgency=low
+
+  * Bug #31158: after finishing an exam, reset room settings to their default
+
+ -- Alexander Kläser <klaeser@univention.de>  Fri, 17 May 2013 10:44:32 +0200
+
 ucs-school-umc-computerroom (2.0.35-1) unstable; urgency=low
 
   * Bug #31164: examEndTime Button -> Text
