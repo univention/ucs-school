@@ -26,7 +26,7 @@
  * /usr/share/common-licenses/AGPL-3; if not, see
  * <http://www.gnu.org/licenses/>.
  */
-/*global define window*/
+/*global require define window*/
 
 define([
 	"dojo/_base/declare",
@@ -41,16 +41,6 @@ define([
 	"umc/widgets/Text",
 	"umc/i18n!umc/modules/schoolexam"
 ], function(declare, lang, array, Deferred, ItemFileWriteStore, DataStore, Memory, tools, Grid, Text, _) {
-	// helper function that sanitizes a given filename
-	var sanitizeFilename = function(name) {
-		array.forEach([/\//g, /\\/g, /\?/g, /%/g, /\*/g, /:/g, /\|/g, /"/g, /</g, />/g, /\$/g, /'/g], function(ichar) {
-			name = name.replace(ichar, '_');
-		});
-
-		// limit the filename length
-		return name.slice(0, 255);
-	};
-
 	return declare("umc.modules.schoolexam.RebootGrid", [ Grid ], {
 		minUpdateDelay: 20,
 		maxUpdateDelay: 120,
@@ -61,7 +51,7 @@ define([
 		_firstUpdate: 0,
 		_updateTimer: null,
 
-		// state that indicates 
+		// flag that indicates when the monitoring has already been executed
 		_monitoringDone: false,
 
 		style: 'height: 250px; width: 100%;',
