@@ -168,10 +168,10 @@ define([
 				label: _('Finish exam'),
 				callback: lang.hitch(this, '_finishExam')
 			}, {
+				type: Text,
 				name: 'examEndTime',
 				style: 'float: left;',
-				visible: false,
-				label: ''
+				visible: false
 			}, {
 				name: 'settings',
 				style: 'padding-bottom: 10px; padding-bottom; 10px; float: right;',
@@ -720,7 +720,8 @@ define([
 			this._headButtons = {};
 
 			array.forEach(this._headActions, lang.hitch(this, function(button) {
-				_container.addChild(this._headButtons[button.name] = new Button(button));
+				var cls = button.type || Button;
+				_container.addChild(this._headButtons[button.name] = new cls(button));
 				if (button.name == 'settings') {
 					this._changeSettingsLabel = button.label;
 				}
@@ -1159,9 +1160,9 @@ define([
 					var delta = new Date(now.getFullYear(), now.getMonth(), now.getDate(), endTime[0], endTime[1], 0, 0) - now;
 					this._headButtons.examEndTime.set('style', (delta < 5*1000*60) ? 'color: red;' : 'color: inherit;');
 					if (delta > 0) {
-						this._headButtons.examEndTime.set('label', _('%s Minutes left', String(1+(delta / 1000 / 60)).split('.')[0]));
+						this._headButtons.examEndTime.set('content', _('%s Minutes left', String(1+(delta / 1000 / 60)).split('.')[0]));
 					} else {
-						this._headButtons.examEndTime.set('label', _('Time is up'));
+						this._headButtons.examEndTime.set('content', _('Time is up'));
 					}
 				}
 

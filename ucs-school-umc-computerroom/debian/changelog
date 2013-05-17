@@ -1,3 +1,9 @@
+ucs-school-umc-computerroom (2.0.35-1) unstable; urgency=low
+
+  * Bug #31164: examEndTime Button -> Text
+
+ -- Florian Best <best@univention.de>  Fri, 17 May 2013 10:41:39 +0200
+
 ucs-school-umc-computerroom (2.0.34-1) unstable; urgency=low
 
   * Bug #31164: implement end time of exam, add notification when exam has
