@@ -564,7 +564,10 @@ define([
 			// update visibility of header buttons
 			this._headButtons.finishExam.set('visible', roomInfo && roomInfo.exam);
 			this._headButtons.collect.set('visible', roomInfo && roomInfo.exam);
-			this._headButtons.examEndTime.set('visible', roomInfo && roomInfo.exam);
+			this._headButtons.examEndTime.set('visible', roomInfo && roomInfo.exam); // FIXME: Text widget does not support visible
+			if (!roomInfo || !roomInfo.exam) {
+				this._headButtons.examEndTime.set('content', '');
+			}
 
 			// hide time period input field in settings dialog
 			this._settingsDialog.set('exam', roomInfo.exam);
