@@ -236,8 +236,12 @@ def openRecipients(entryDN, ldap_connection, search_base):
 					continue
 
 				# open the user
-				userobj = userModul.object( None, ldap_connection, None, userdn )
-				userobj.open()
+				try:
+					userobj = userModul.object( None, ldap_connection, None, userdn )
+					userobj.open()
+				except udm_exceptions.base as e:
+					MODULE.warn('Could not open user object %s ... ignoring:\n%s' % (userdn, e))
+					continue
 
 				# save user information, only its relevant information will be kept
 				user = User( userobj.info )

@@ -1,3 +1,9 @@
+ucs-school-umc-distribution (8.0.9-1) unstable; urgency=low
+
+  * Bug #31158: make sure that not existing user objects are ignored
+
+ -- Alexander Kläser <klaeser@univention.de>  Fri, 17 May 2013 12:54:30 +0200
+
 ucs-school-umc-distribution (8.0.8-1) unstable; urgency=low
 
   * Bug #30831: fixed detection of non-students to allow exam users
