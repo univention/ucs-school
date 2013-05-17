@@ -1,3 +1,11 @@
+ucs-school-umc-exam (0.1.33-1) unstable; urgency=low
+
+  * Bug #31158: make sure that the first LDAP operation is executed outside
+    the thread to circumvent tracebacks due to an LDAP timeout; adjusted help
+    texts do layout changes
+
+ -- Alexander Kläser <klaeser@univention.de>  Fri, 17 May 2013 15:50:07 +0200
+
 ucs-school-umc-exam (0.1.32-1) unstable; urgency=low
 
   * Bug #31163: cleaned up the RebootGrid

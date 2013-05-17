@@ -113,7 +113,7 @@ define([
 			this.pages = [{
 				name: 'general',
 				headerText: _('Start a new exam'),
-				helpText: _('<p>The UCS@school exam mode allows one to perform an exam in a computer room. During the exam, access to internet as well as to shares can be restricted, the student home directories are not accessible, either.</p><p>Please enter a name for the new exam and select the classes or workgroups that participate in the exam. A directory name is proposed automatically and can be adjusted if wanted.</p>'),
+				helpText: _('<p>The UCS@school exam mode allows one to perform an exam in a computer room. During the exam, access to internet as well as to shares can be restricted, the student home directories are not accessible, either.</p><p>Please enter a name for the new exam, specify its end time, and select the classes or workgroups that participate in the exam.</p>'),
 				layout: [
 					'school',
 					['room', 'info'],
@@ -207,7 +207,7 @@ define([
 			}, {
 				name: 'files',
 				headerText: _('Upload of exam files'),
-				helpText: _('Please select all necessary files for the exam and upload them one by one. These files will be distributed to all participating students. A copy of the original files will be stored in your home directory, as well. During the exam or at the end of it, the corresponding files can be collected from the students. The collected files will be stored in your home directory, as well.'),
+				helpText: _('<p>Please select a suiting directory name for the exam and upload all necessary files one by one.</p><p>These files will be distributed to all participating students. A copy of the original files will be stored in your home directory, as well. During the exam or at the end of it, the corresponding files can be collected from the students. The collected files will be stored in your home directory, as well.</p>'),
 				widgets: [{
 					name: 'directory',
 					type: TextBox,

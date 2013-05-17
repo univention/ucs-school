@@ -149,10 +149,12 @@ class Instance( SchoolBaseModule ):
 			project=None
 		))()
 
+		# create a User object for the teacher
+		# perform this LDAP operation outside the thread, to avoid tracebacks
+		# in case of an LDAP timeout
+		sender = util.distribution.openRecipients(self._user_dn, ldap_user_read, search_base)
+
 		def _thread():
-			# perform all actions inside a thread...
-			# create a User object for the teacher
-			sender = util.distribution.openRecipients(self._user_dn, ldap_user_read, search_base)
 			if not sender:
 				MODULE.error('Could not find user DN: %s' % self._user_dn)
 				raise RuntimeError( _('Could not authenticate user "%s"!') % self._user_dn )
