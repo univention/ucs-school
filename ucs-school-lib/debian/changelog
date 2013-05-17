@@ -1,3 +1,9 @@
+ucs-school-lib (3.0.2-0) unstable; urgency=low
+
+  * Bug #30251: fixed traceback when no school OUs exist
+
+ -- Alexander Kläser <klaeser@univention.de>  Fri, 17 May 2013 21:08:28 +0200
+
 ucs-school-lib (3.0.1-0) unstable; urgency=low
 
   * Bug #30251: adjustments to enable the district mode

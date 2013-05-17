@@ -348,7 +348,9 @@ class SchoolSearchBase(object):
 			self._ldapBase = ucr.get('ldap/base')
 
 		self._availableSchools = availableSchools
-		self._school = school or availableSchools.keys()[0]
+		self._school = school
+		if not self._school and len(availableSchools):
+			self._school = availableSchools.keys()[0]
 
 		if dn:
 			# school DN is given
