@@ -279,11 +279,16 @@ define([
 			}, {
 				name: 'success',
 				headerText: _('Exam succesfully prepared'),
-				helpText: _('<p>The preparation of the exam was successful.<p><p>As next step, it is necessary to make sure that all student computers in the computer room are rebooted if they are running. Only through a restart, exam specific configurations for the computers themselves are activated.</p>')
+				helpText: _('<p>The preparation of the exam was successful. A summary of the exam properties is displayed below.<p><p>As next step, it is necessary to reboot computers in the room.</p>'),
+				widgets: [{
+					type: Text,
+					name: 'info',
+					content: ''
+				}]
 			}, {
 				name: 'reboot',
 				headerText: 'Reboot student computers',
-				helpText: _('<p>To assist in rebooting student computers, all running computers in the room are determined automatically below. This may take 30 seconds to 2 minutes. Once connections to the computers are established, they can be restarted by pressing the button </i>Restart computers</i>.</p><p>It is possible to skip this process by pressing the button <i>Next</i>.</p>'),
+				helpText: _('<p>It is necessary to make sure that all student computers in the computer room are rebooted if they are running. Only through a restart, exam specific configurations for the computers themselves are activated. To assist in rebooting student computers, all running computers in the room are determined automatically below. This may take 30 seconds to 2 minutes. Once connections to the computers are established, they can be restarted by pressing the button </i>Restart computers</i>.</p><p>It is possible to skip this process by pressing the button <i>Next</i>.</p>'),
 				widgets: [{
 					name: 'grid',
 					type: RebootGrid,
@@ -403,7 +408,7 @@ define([
 		postCreate: function() {
 			this.inherited(arguments);
 
-			// hook when success page is shown
+			// hook when reboot page is shown
 			this.getPage('reboot').on('show', lang.hitch(this, function() {
 				// find computers that need to be restarted
 				var grid = this.getWidget('reboot', 'grid');
@@ -414,6 +419,48 @@ define([
 				window.setTimeout(lang.hitch(this, function() {
 					grid.resize();
 				}, 0));
+			}));
+
+			// hook when success page is shown
+			this.getPage('success').on('show', lang.hitch(this, function() {
+				var values = this.getValues();
+				var html = '<table style="border-spacing:7px; border:none;">';
+				array.forEach(['name', 'room', 'examEndTime', 'recipients', 'directory', 'files', 'shareMode', 'internetRule'], lang.hitch(this, function(ikey) {
+					var widget = this.getWidget(ikey);
+					var value = values[ikey];
+
+					// convert all values to arrays (makes handling easier)
+					if (!(value instanceof Array)) {
+						value = [value];
+					}
+
+					// for ComboBoxes/MultiObjectSelect -> get the label of the chosen value 
+					var newValue = value;
+					if (widget.getAllItems) {
+						newValue = [];
+						newValue = array.map(value, function(ival) {
+							var jval = ival;
+							array.some(widget.getAllItems(), function(iitem) {
+								if (iitem.id == ival) {
+									// found correct match -> break loop
+									jval = iitem.label;
+									return true;
+								}
+							});
+							return jval;
+						});
+					}
+
+					// update HTML table for summary
+					html += lang.replace('<tr><td style="border:none; width:160px;"><b>{label}:</b></td><td style="border:none;">{value}</td></tr>',{
+						label: widget.get('label'),
+						value: newValue.join(', ')
+					});
+				}));
+				html += '</table>';
+
+				// view table
+				this.getWidget('success', 'info').set('content', html);
 			}));
 
 			// hook when monitoring of the computers has been finished
