@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-exam\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2013-05-17 18:00+0200\n"
+"POT-Creation-Date: 2013-05-17 18:45+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -34,17 +34,16 @@ msgid ""
 "pressing the button </i>Restart computers</i>.</p><p>It is possible to skip "
 "this process by pressing the button <i>Next</i>.</p>"
 msgstr ""
-"<p>Es ist notwendig sicherzustellen, dass alle Schülerrechner in dem Computerraum "
-"neu gestartet werden, insofern sie eingeschaltet sind. Nur"
-"durch einen Neustart kann sichergestellt werden, dass spezifische "
-"Rechnereinstellungen für die Klassenarbeit aktiviert werden. "
-"Um den Neustart der Schülerrechner zu vereinfachen werden in der "
-"untenstehenden Liste alle laufenden Rechner des Raumes automatisch erkannt. "
-"Dieser Vorgang kann zwischen 30 Sekunden und 2 Minuten in Anspruch nehmen. "
-"Sobald Verbindungen zu den Rechnern aufgebaut sind, können sie neu gestartet "
-"werden durch Drücken der Schaltfläche <i>Computer neustarten</i>.</p><p>Es "
-"ist möglich diesen Vorgang durch Drücken der Schaltfläche <i>Weiter</i> zu "
-"umgehen.</p>"
+"<p>Es ist notwendig sicherzustellen, dass alle Schülerrechner in dem "
+"Computerraum neu gestartet werden, insofern sie eingeschaltet sind. Nurdurch "
+"einen Neustart kann sichergestellt werden, dass spezifische "
+"Rechnereinstellungen für die Klassenarbeit aktiviert werden. Um den Neustart "
+"der Schülerrechner zu vereinfachen werden in der untenstehenden Liste alle "
+"laufenden Rechner des Raumes automatisch erkannt. Dieser Vorgang kann "
+"zwischen 30 Sekunden und 2 Minuten in Anspruch nehmen. Sobald Verbindungen "
+"zu den Rechnern aufgebaut sind, können sie neu gestartet werden durch "
+"Drücken der Schaltfläche <i>Computer neustarten</i>.</p><p>Es ist möglich "
+"diesen Vorgang durch Drücken der Schaltfläche <i>Weiter</i> zu umgehen.</p>"
 
 #: umc/js/schoolexam.js:210
 msgid ""
@@ -83,10 +82,10 @@ msgstr ""
 
 #: umc/js/schoolexam.js:282
 msgid ""
-"<p>The preparation of the exam was successful. Below a summary of the "
-"configuration can be found.<p><p>As next step, it is necessary to reboot "
+"<p>The preparation of the exam was successful. A summary of the exam "
+"properties is displayed below.<p><p>As next step, it is necessary to reboot "
 "computers in the room.</p>"
-msgstr ""
+msgstr "<p>Die Vorbereitung der Klassenarbeit war erfolgreich. Eine Zusammenfassung aller Einstellungen wird unten stehend angezeigt.</p><p>Als nächster Schritt ist es notwendig die Rechner des Raumes neu zu starten.</p>"
 
 #: umc/js/schoolexam.js:272
 msgid ""
@@ -129,6 +128,14 @@ msgstr "Computerraum"
 #: umc/js/schoolexam.js:231
 msgid "Computer room settings"
 msgstr "Einstellungen des Computerraums"
+
+#: umc/js/schoolexam/RebootGrid.js:83
+msgid "Connected"
+msgstr "Verbunden"
+
+#: umc/js/schoolexam/RebootGrid.js:81
+msgid "Connection"
+msgstr "Verbindung"
 
 #: umc/js/schoolexam.js:248
 msgid "Default (global settings)"
@@ -199,6 +206,10 @@ msgstr "Für die Klassenarbeit wurden keine Empfänger ausgewählt."
 #: umc/js/schoolexam.js:240
 msgid "No restrictions"
 msgstr "Keine Einschränkungen"
+
+#: umc/js/schoolexam/RebootGrid.js:83
+msgid "Not connected"
+msgstr "Nicht verbunden"
 
 #: umc/js/schoolexam.js:148
 msgid "Note"
@@ -333,7 +344,7 @@ msgstr ""
 msgid "Upload of exam files"
 msgstr "Hochladen von Klassenarbeitsdateien"
 
-#: umc/js/schoolexam/RebootGrid.js:81
+#: umc/js/schoolexam/RebootGrid.js:87
 msgid "User"
 msgstr "Benutzer"
 

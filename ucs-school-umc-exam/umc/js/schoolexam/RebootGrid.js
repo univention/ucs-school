@@ -77,6 +77,12 @@ define([
 					return widget;
 				})
 			}, {
+				name: 'connection',
+				label: _('Connection'),
+				formatter: function(value) {
+					return (value == 'connected') ? _('Connected') : _('Not connected')
+				}
+			}, {
 				name: 'user',
 				label: _('User')
 			}];
