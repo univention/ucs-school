@@ -244,8 +244,8 @@ class Instance( SchoolBaseModule ):
 		# match the corresponding school OU
 		school = None
 		roomParts = explodeDn(roomDN)
-		for ischool in search_base.availableSchools:
-			if ('ou=%s' % ischool) in roomParts:
+		for ischool, ischoolDN in search_base.availableSchools.iteritems():
+			if ischoolDN in roomParts:
 				# match
 				school = ischool
 				break

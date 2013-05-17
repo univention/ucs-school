@@ -290,31 +290,47 @@ def _init_search_base(ldap_connection, force=False):
 		# (note that there can be schools with a DN such as ou=25g18,ou=25,dc=...)
 		schoolDN = ldap_connection.binddn[ldap_connection.binddn.find('ou='):] 
 		school = ldap_connection.explodeDn( schoolDN, 1 )[0],
-		_search_base = SchoolSearchBase(school, school, schoolDN)
+		_search_base = SchoolSearchBase(dict(((school, schoolDN),)), school, schoolDN)
 		MODULE.info('LDAP_Connection: setting schoolDN: %s' % _search_base.schoolDN)
 	else:
 		MODULE.warn( 'LDAP_Connection: unable to identify ou of this account - showing all OUs!' )
 		#_ouswitchenabled = True
 		oulist = ucr.get('ucsschool/local/oulist')
-		availableSchools = []
+		availableSchools = {}
 		if oulist:
 			# OU list override via UCR variable (it can be necessary to adjust the list of
 			# visible schools on specific systems manually)
-			availableSchools = [ x.strip() for x in oulist.split(',') ]
+			# TODO: this is not compatible with district mode
+			availableSchools = dict([
+				(x.strip(), 'ou=%s,%s' % (x.strip(), ucr.get('ldap/base')))
+				for x in oulist.split(',')
+			])
 			MODULE.info( 'LDAP_Connection: availableSchools overridden by UCR variable ucsschool/local/oulist')
 		else:
 			# get a list of available OUs via UDM module container/ou
-			ouresult = udm_modules.lookup( 
+			ouresult = udm_modules.lookup(
+				'container/ou', None, ldap_connection,
+				scope = 'sub', superordinate = None,
+				filter = 'objectClass=ucsschoolOrganizationalUnit',
+				base = ucr.get( 'ldap/base' )
+			)
+			if not ouresult:
+				# fallback in case the corresponding objectClass is not set properly
+				ouresult = udm_modules.lookup(
 					'container/ou', None, ldap_connection,
 					scope = 'one', superordinate = None,
-					base = ucr.get( 'ldap/base' ) )
+					base = ucr.get( 'ldap/base' )
+				)
 			ignore_ous = ucr.get( 'ucsschool/ldap/ignore/ous', 'Domain Controllers' ).split( ',' )
-			availableSchools = [ ou['name'] for ou in ouresult if not ou[ 'name' ] in ignore_ous ]
+			availableSchools = dict([
+				(ou['name'], ou.dn)
+				for ou in ouresult if not ou['name'] in ignore_ous
+			])
 
 		# use the first available OU as default search base
 		if not len(availableSchools):
 			MODULE.warn('LDAP_Connection: ERROR, COULD NOT FIND ANY OU!!!')
-			_search_base = SchoolSearchBase([''])
+			_search_base = SchoolSearchBase({})
 		else:
 			MODULE.info( 'LDAP_Connection: availableSchools=%s' % availableSchools )
 			_search_base = SchoolSearchBase(availableSchools)
@@ -325,16 +341,26 @@ class SchoolSearchBase(object):
 	The class is inteded for read access only, instead of switching the a
 	search base, a new instance can simply be created.
 	"""
-	def __init__( self, availableSchools, school = None, dn = None, ldapBase = None ):
+	def __init__( self, availableSchools, school = None, dn = None, ldapBase = None,  ):
 		if ldapBase:
 			self._ldapBase = ldapBase
 		else:
 			self._ldapBase = ucr.get('ldap/base')
 
 		self._availableSchools = availableSchools
-		self._school = school or availableSchools[0]
-		# FIXME: search for OU to get correct dn
-		self._schoolDN = dn or 'ou=%s,%s' % (self.school, self._ldapBase )
+		self._school = school or availableSchools.keys()[0]
+
+		if dn:
+			# school DN is given
+			self._schoolDN = dn
+		else:
+			# school DN is not given, try to guess it from the dict of all schools
+			if self.school in availableSchools:
+				self._schoolDN = availableSchools[self.school]
+			else:
+				# should not happen... use a poor man's fallback
+				MODULE.error('Could not find corresponding school DN for schoolOU "%s"!' % self.school)
+				self._schoolDN = 'ou=%s,%s' % (self.school, self._ldapBase )
 
 		# prefixes
 		self._containerAdmins = ucr.get('ucsschool/ldap/default/container/admins', 'admins')
@@ -514,12 +540,12 @@ class SchoolBaseModule( Base ):
 
 		# make sure that at least one school OU
 		msg = ''
-		if not search_base.availableSchools[0]:
+		if not len(search_base.availableSchools):
 			request.status = MODULE_ERR
 			msg = _('Could not find any school. You have to create a school before continuing. Use the \'Add school\' UMC module to create one.')
 
 		# return list of school OUs
-		self.finished(request.id, search_base.availableSchools, msg)
+		self.finished(request.id, search_base.availableSchools.keys(), msg)
 
 	def _groups( self, ldap_connection, school, ldap_base, pattern = None, scope = 'sub' ):
 		"""Returns a list of all groups of the given school"""

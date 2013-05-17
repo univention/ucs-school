@@ -1,3 +1,9 @@
+ucs-school-lib (3.0.1-0) unstable; urgency=low
+
+  * Bug #30251: adjustments to enable the district mode
+
+ -- Alexander Kläser <klaeser@univention.de>  Fri, 17 May 2013 19:52:20 +0200
+
 ucs-school-lib (3.0.0-0) unstable; urgency=low
 
   * bumped version for UCS@school 3.1 R2
