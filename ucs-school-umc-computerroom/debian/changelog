@@ -1,4 +1,4 @@
-ucs-school-umc-computerroom (2.0.37-1) unstable; urgency=low
+ucs-school-umc-computerroom (2.0.37-2) unstable; urgency=low
 
   * Bug #31164: fix visibility of examEndButton
 

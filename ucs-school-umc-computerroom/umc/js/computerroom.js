@@ -931,6 +931,7 @@ define([
 						dialog.alert(_("The exam has been successfully finished. All related exam documents have been collected from the students' home directories."));
 						delete info.exam;
 						delete info.examDescription;
+						delete info.examEndTime;
 						this.set('roomInfo', info);
 
 						// reset room settings
