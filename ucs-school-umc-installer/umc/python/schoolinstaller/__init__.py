@@ -566,7 +566,7 @@ class Instance(Base):
 				result = udm_modules.lookup('container/ou', None, lo, base=ucrMaster.get('ldap/base'), scope='sub', filter='name=%s' % schoolOU)
 				if result:
 					# OU already exists... find all joined slave systems in the ou
-					searchBase = SchoolSearchBase([schoolOU], ldapBase=ucrMaster.get('ldap/base'))
+					searchBase = SchoolSearchBase(dict(((schoolOU, result[0].dn),)), ldapBase=ucrMaster.get('ldap/base'))
 					slaves = udm_modules.lookup('computers/domaincontroller_slave', None, lo, base=searchBase.computers, scope='sub', filter='service=LDAP')
 
 					# make sure that no joined DC slave is the main DC for this school
