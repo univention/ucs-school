@@ -354,15 +354,26 @@ class Instance( SchoolBaseModule ):
 
 			# delete exam users accounts
 			if project:
+				# get a list of user accounts in parallel exams
+				parallelUsers = dict([
+					(iuser.username, iproject.description)
+					for iproject in util.distribution.Project.list()
+					if iproject.name != project.name
+					for iuser in iproject.recipients
+				])
+
 				progress.component(_('Removing exam accounts'))
 				percentPerUser = 25.0 / (1 + len(project.recipients))
 				for iuser in project.recipients:
 					progress.info('%s, %s (%s)' % (iuser.lastname, iuser.firstname, iuser.username))
 					try:
-						ires = connection.request('schoolexam-master/remove-exam-user', dict(
-							userdn=iuser.dn
-						))
-						MODULE.info('Exam user has been removed: %s' % iuser.dn)
+						if iuser.username not in parallelUsers:
+							ires = connection.request('schoolexam-master/remove-exam-user', dict(
+								userdn=iuser.dn
+							))
+							MODULE.info('Exam user has been removed: %s' % iuser.dn)
+						else:
+							MODULE.process('Cannot remove the user account %s as it is registered for the running exam "%s", as well' % (iuser.dn, parallelUsers[iuser.username]))
 					except (HTTPException, SocketError) as e:
 						MODULE.warn('Could not remove exam user account %s: %s' % (iuser.dn, e))
 
