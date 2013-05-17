@@ -1,3 +1,9 @@
+ucs-school-umc-exam (1.0.0-0) unstable; urgency=low
+
+  * bumped version for UCS@school 3.1 R2
+
+ -- Sönke Schwardt <schwardt@univention.de>  Fri, 17 May 2013 15:13:21 +0200
+
 ucs-school-umc-exam (0.1.33-1) unstable; urgency=low
 
   * Bug #31158: make sure that the first LDAP operation is executed outside

@@ -1,3 +1,9 @@
+univention-management-console-module-selective-udm (3.0.0-0) unstable; urgency=low
+
+  * bumped version for UCS@school 3.1 R2
+
+ -- Sönke Schwardt <schwardt@univention.de>  Fri, 17 May 2013 15:13:21 +0200
+
 univention-management-console-module-selective-udm (2.0.2-5) unstable; urgency=low
 
   * selectiveudm/clone_user_account moved to ucs-school-umc-exam (Bug #30832)

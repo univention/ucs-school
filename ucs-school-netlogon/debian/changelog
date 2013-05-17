@@ -1,3 +1,9 @@
+ucs-school-netlogon (3.0.0-0) unstable; urgency=low
+
+  * bumped version for UCS@school 3.1 R2
+
+ -- Sönke Schwardt <schwardt@univention.de>  Fri, 17 May 2013 15:13:21 +0200
+
 ucs-school-netlogon (2.0.2-1) unstable; urgency=low
 
   * fixed permissions for ucs-school-logon.vbs (Bug #30284)

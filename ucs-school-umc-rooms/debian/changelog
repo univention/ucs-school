@@ -1,3 +1,9 @@
+ucs-school-umc-rooms (10.0.0-0) unstable; urgency=low
+
+  * bumped version for UCS@school 3.1 R2
+
+ -- Sönke Schwardt <schwardt@univention.de>  Fri, 17 May 2013 15:13:21 +0200
+
 ucs-school-umc-rooms (9.0.5-1) unstable; urgency=low
 
   * update Copyright; Bug #30123
