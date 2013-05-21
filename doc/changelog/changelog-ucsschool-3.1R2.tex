@@ -14,6 +14,9 @@
   is only the case if no servername has been passed to \ucsCommand{create\_ou} (\ucsBug{21126}).
 \item The script \ucsCommand{create\_ou} now configures always the domaincontroller master as file server for
       class/home shares in single server environments (\ucsBug{30285}).
+\item In single server environments the import script \ucsCommand{create\_ou} now chooses automatically the
+      domaincontroller master as default domaincontroller for the given OU and does not create additional
+      domaincontroller objects (\ucsBug{27521}).
 \end{itemize}
  
 \section{iTALC}
