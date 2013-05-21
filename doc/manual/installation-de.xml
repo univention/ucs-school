@@ -196,6 +196,27 @@
 			  Installation und Konfiguration von &ucsUAS; sollten mit einem Neustart des Systems abgeschlossen werden.
 		  </para>
 	  </section>
+
+	  <section>
+		<title>Installation eines Verwaltungsservers</title>
+		<para>
+		  Bei einem &ucsUAS;-Verwaltungsserver handelt es sich genau wie beim Schulserver um ein
+		  UCS-System mit der Systemrolle <emphasis>&ucsSlave;</emphasis>. Das System ist wie ein
+		  Standard-UCS-DC Slave zu installieren. Nach Abschluss der regulären UCS-Installation müssen die alle
+		  verfügbaren UCS-Errata eingespielt und das &ucsUAS;-Paket
+		  <emphasis>ucs-school-nonedu-slave</command> installiert werden. Die kann auf der Kommandozeile über
+		  die beiden folgenden Befehle erfolgen:
+		  <programlisting>
+univention-upgrade
+univention-add-app --latest ucsschool ucs-school-nonedu-slave
+		  </programlisting>
+		</para>
+		<para>
+		  Bei der Installation des Systems ist zu beachten, dass für den Verwaltungsserver ein
+		  eigenes IP-Subnetz verwendet wird, um Konflikte mit dem Schulserver (DC Slave des Edukativnetzes) zu
+		  vermeiden.
+		</para>
+	  </section>
 	</section>
 
 	<section id="school:installation:domjoin">
