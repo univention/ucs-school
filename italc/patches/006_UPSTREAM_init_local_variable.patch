@@ -1,0 +1,22 @@
+commit 4e1d5d51b4e1f2d331c6e22b545ec66eeb88b7d9
+Author: Tobias Doerffel <tobias.doerffel@gmail.com>
+Date:   Wed May 8 00:17:54 2013 +0200
+
+    ItalcCore/ItalcVncConnection: initialize local variable
+    
+    Even though the logic for evaluating argc is not used/working anymore,
+    properly initialize argc to 0.
+
+diff --git a/lib/src/ItalcVncConnection.cpp b/lib/src/ItalcVncConnection.cpp
+index d722194..0e08f80 100644
+--- italc-2.0.0.ORIG/lib/src/ItalcVncConnection.cpp
++++ italc-2.0.0/lib/src/ItalcVncConnection.cpp
+@@ -552,7 +552,7 @@ void ItalcVncConnection::doConnection()
+ 
+ 		emit newClient( m_cl );
+ 
+-		int argc;
++		int argc = 0;
+ 		if( rfbInitClient( m_cl, &argc, NULL ) )
+ 		{
+ 			emit connected();
