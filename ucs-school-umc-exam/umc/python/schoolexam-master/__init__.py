@@ -225,7 +225,7 @@ class Instance( SchoolBaseModule ):
 
 			## Now create the addlist, fixing up attributes as we go
 			al = []
-			al.append(('univentionObjectFlag', ['temporary']))
+			foundUniventionObjectFlag = False
 			for (key, value) in user_orig.oldattr.items():
 				if key == 'uid':
 					value = [exam_user_uid]
@@ -241,7 +241,14 @@ class Instance( SchoolBaseModule ):
 				elif key == 'description':
 					value = [exam_user_description]
 					exam_user_description = None	## that's done
+				elif key == 'univentionObjectFlag':
+					foundUniventionObjectFlag = True
+					if not 'temporary' in value:
+						value += ['temporary']
 				al.append((key, value))
+
+			if not foundUniventionObjectFlag:
+				al.append(('univentionObjectFlag', ['temporary']))
 
 			if exam_user_description:
 				al.append(('description', [exam_user_description]))
