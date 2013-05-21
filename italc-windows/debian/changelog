@@ -1,3 +1,9 @@
+italc-windows (1.0.1-2) unstable; urgency=low
+
+  * readded binaries due to SVN mime-type problems (Bug #30329)
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Tue, 21 May 2013 16:37:34 +0200
+
 italc-windows (1.0.1-1) unstable; urgency=low
 
   * integrated patches from upstream (Bug #30329)
