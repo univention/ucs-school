@@ -204,7 +204,7 @@
 		  UCS-System mit der Systemrolle <emphasis>&ucsSlave;</emphasis>. Das System ist wie ein
 		  Standard-UCS-DC Slave zu installieren. Nach Abschluss der regulären UCS-Installation müssen die alle
 		  verfügbaren UCS-Errata eingespielt und das &ucsUAS;-Paket
-		  <emphasis>ucs-school-nonedu-slave</command> installiert werden. Die kann auf der Kommandozeile über
+		  <emphasis>ucs-school-nonedu-slave</emphasis> installiert werden. Die kann auf der Kommandozeile über
 		  die beiden folgenden Befehle erfolgen:
 		  <programlisting>
 univention-upgrade
