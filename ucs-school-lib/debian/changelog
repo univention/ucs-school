@@ -1,3 +1,9 @@
+ucs-school-lib (3.0.3-1) unstable; urgency=low
+
+  * Bug #30251: revert
+
+ -- Florian Best <best@univention.de>  Tue, 21 May 2013 11:54:50 +0200
+
 ucs-school-lib (3.0.2-0) unstable; urgency=low
 
   * Bug #30251: fixed traceback when no school OUs exist
