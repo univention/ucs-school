@@ -99,7 +99,7 @@
 		<para>
 		  &ucsUAS; unterstützt derzeit nur einen Schulserver pro Standort. Darüber hinaus können
 		  regulär weitere UCS-Systeme installiert und an den Schul-Standorten betrieben werden. Diese
-		  zusätzlichen UCS-Systeme können jedoch nicht in Verbindung mit UCS@school-Funktionalitäten
+		  zusätzlichen UCS-Systeme können jedoch nicht in Verbindung mit &ucsUAS;-Funktionalitäten
 		  (z.B. Klassenshares oder Druckermoderation) eingesetzt werden.
 		</para>
 

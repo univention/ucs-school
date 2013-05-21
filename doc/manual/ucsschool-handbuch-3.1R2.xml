@@ -22,7 +22,7 @@
 <book lang="de" id="ucsschool-3.1-r2-admin">
   <bookinfo>
     <title>
-      UCS@school
+      &ucsUAS;
     </title>
     <subtitle>
       Handbuch für Administratoren
@@ -30,7 +30,7 @@
     <legalnotice>
       <literallayout>
 Version 3.1-0 R2
-Stand: 16. April 2013
+Stand: 04. Juni 2013
       </literallayout>
 
       <literallayout>

@@ -31,7 +31,7 @@
 			<listitem>
 				<simpara>
 			  Das Konfigurationsmodul fragt auf dem DC Master zunächst nach der Art
-			  der UCS@school-Umgebung, die installiert werden soll. Hier ist das
+			  der &ucsUAS;-Umgebung, die installiert werden soll. Hier ist das
 			  <emphasis>Single-Server-Umgebung</emphasis> auszuwählen.
 				</simpara>
 			</listitem>
@@ -88,7 +88,7 @@
 			<listitem>
 				<simpara>
 			  Das Konfigurationsmodul fragt auf dem DC Master zunächst nach der Art
-			  der UCS@school-Umgebung, die installiert werden soll. Hier ist der Eintrag
+			  der &ucsUAS;-Umgebung, die installiert werden soll. Hier ist der Eintrag
 			  <emphasis>Multi-Server-Umgebung</emphasis> auszuwählen.
 				</simpara>
 			</listitem>

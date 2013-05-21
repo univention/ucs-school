@@ -11,7 +11,7 @@
 		<para>
 			Eine Schule, die mit &ucsUAS; verwaltet werden soll, muss in
 			der &ucsUMC; auf dem &ucsMaster; registriert werden. Dort muss in
-			der Modulgruppe <emphasis>UCS@school Administration</emphasis> das
+			der Modulgruppe <emphasis>&ucsUAS; Administration</emphasis> das
 			Modul <guimenu>Schule hinzufügen</guimenu> aufgerufen werden.
 		</para>
 		<para>
@@ -63,7 +63,7 @@
 		<title>Anlegen eines einzelnen PCs</title>
 		<para>
 			Ein einzelner Schul-PC kann in der &ucsUMC; auf dem &ucsMaster;
-			registriert werden. Dort muss in der Modulgruppe <emphasis>UCS@school
+			registriert werden. Dort muss in der Modulgruppe <emphasis>&ucsUAS;
 			Administration</emphasis> das Modul <guimenu>Computer hinzufügen</guimenu>
 			aufgerufen werden. Existiert mehr als eine Schule, ist die entsprechende Schule
 			auszuwählen. Es stehen zwei Arten von Rechnern zur
@@ -340,7 +340,7 @@ ipmanagedclient	 printer28g01-01  10:00:ee:ff:cc:04	 28G01	10.0.5.250
 	<section id="school:setup:shares">
 		<title>Anlegen von Freigaben</title>
 		<para>
-			Die meisten Freigaben in einer UCS@school-Umgebung werden automatisch
+			Die meisten Freigaben in einer &ucsUAS;-Umgebung werden automatisch
 			erstellt; jede Klasse oder Arbeitsgemeinschaft verfügt über eine
 			gemeinsame Freigabe. Weiterhin existiert mit
 			der <emphasis>Marktplatz</emphasis>-Freigabe je Schule eine schulweite Freigabe. Das Erstellen der Marktplatzfreigabe beim
@@ -349,7 +349,7 @@ ipmanagedclient	 printer28g01-01  10:00:ee:ff:cc:04	 28G01	10.0.5.250
 		</para>
 		<para>
 			Diese Freigaben müssen zwingend auf dem Schulserver bereitgestellt
-			werden, um die von UCS@school bereitgestellten Funktionen nutzen zu können.
+			werden, um die von &ucsUAS; bereitgestellten Funktionen nutzen zu können.
 		</para>
 		<para>
 			Weitere Freigaben werden, wie in einer Standard-UCS-Installation, über
