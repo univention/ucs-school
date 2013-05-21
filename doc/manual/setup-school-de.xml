@@ -135,8 +135,8 @@
 						<entry>28G01</entry>
 					</row>
 					<row>
-						<entry>IP-Adresse (/ Netzmaske)</entry>
-						<entry>IP-Adresse des Rechnerobjektes und optional die passende Netzmaske</entry>
+						<entry>IP-Adresse (/ Netzmaske) oder IP-Subnetz</entry>
+						<entry>IP-Adresse des Rechnerobjektes und optional die passende Netzmaske; alternativ das Ziel-IP-Subnetz</entry>
 						<entry>---</entry>
 						<entry>10.0.5.45/255.255.255.0</entry>
 					</row>
@@ -164,7 +164,7 @@
 		<para>
 			Wird im Feld <emphasis>IP-Adresse (/ Netzmaske)</emphasis> nur ein Subnetz angegeben
 			(z.B. 10.0.5.0), wird dem Computerobjekt automatisch die nächste freie
-			IP-Adresse aus diesem Subnetz zugewiesen.
+			IP-Adresse aus diesem IP-Subnetz zugewiesen.
 		</para>
 		<para>
 			Beispiel für eine Importdatei:
