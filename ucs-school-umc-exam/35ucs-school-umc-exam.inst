@@ -48,9 +48,9 @@ ucs_school_policies_create
 # default policies for all operations (for admins)
 umc_policy_append "default-umc-all" "schoolexam-all"
 # policy for school admins
-umc_policy_append "ucsschool-umc-admins-default" "distribution-all"
+umc_policy_append "ucsschool-umc-admins-default" "schoolexam-all"
 # policy for teachers
-umc_policy_append "ucsschool-umc-teachers-default" "distribution-teacher"
+umc_policy_append "ucsschool-umc-teachers-default" "schoolexam-all"
 
 joinscript_save_current_version
 
