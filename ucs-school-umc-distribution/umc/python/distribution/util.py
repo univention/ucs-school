@@ -204,6 +204,9 @@ def openRecipients(entryDN, ldap_connection, search_base):
 	try:
 		# try to load the UDM user/group object given its DN
 		attrs = ldap_connection.get( entryDN )
+		if not attrs:
+			MODULE.process( 'Object does not exist: %s' % entryDN )
+			return None
 		obj_types = udm_modules.objectType( None, ldap_connection, entryDN, attr = attrs )
 		if not obj_types:
 			MODULE.warn( 'Ignoring the recipient %s' % entryDN )

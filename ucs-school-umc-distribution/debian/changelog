@@ -1,3 +1,9 @@
+ucs-school-umc-distribution (9.0.1-1) unstable; urgency=low
+
+  * openRecipients(): quit earlier if user object does not exist (Bug #31158)
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Wed, 22 May 2013 17:40:05 +0200
+
 ucs-school-umc-distribution (9.0.0-0) unstable; urgency=low
 
   * bumped version for UCS@school 3.1 R2
