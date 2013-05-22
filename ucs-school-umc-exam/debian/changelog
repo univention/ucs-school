@@ -2,6 +2,7 @@ ucs-school-umc-exam (1.0.4-1) unstable; urgency=low
 
   * update local nss group cache after exam user replication is complete
     (Bug #31229)
+  * wait up to 5 minutes for replication otherweise abort
 
  -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Wed, 22 May 2013 13:28:48 +0200
 

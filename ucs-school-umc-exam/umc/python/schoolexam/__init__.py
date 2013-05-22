@@ -236,8 +236,10 @@ class Instance( SchoolBaseModule ):
 			userModul = udm_modules.get( 'users/user' )
 			progress.component(_('Preparing user home directories'))
 			recipients = []  # list of User objects for all exam users
-			while len(examUsers) > len(usersReplicated):
-				MODULE.info('waiting for replication to be finished, %s objects missing' % (len(examUsers) - len(usersReplicated)))
+			openAttempts = 300 # wait max. 5 minutes for replication
+			while (len(examUsers) > len(usersReplicated)) and (openAttempts > 0):
+				openAttempts -= 1
+				MODULE.info('waiting for replication to be finished, %s user objects missing' % (len(examUsers) - len(usersReplicated)))
 				for idn in examUsers - usersReplicated:
 					try:
 						# try to open the user
@@ -266,6 +268,12 @@ class Instance( SchoolBaseModule ):
 
 				# wait a second
 				time.sleep(1)
+
+			if openAttempts <= 0:
+				MODULE.error('replication timeout - %s user objects missing: %r ' % ((len(examUsers) - len(usersReplicated)), (examUsers - usersReplicated)))
+				msg = _('Replication timeout: could not create all exam users')
+				MODULE.error(msg)
+				raise UMC_CommandError(msg)
 
 			# update the final list of recipients
 			my.project.recipients = recipients
