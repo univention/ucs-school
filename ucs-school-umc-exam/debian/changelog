@@ -1,3 +1,9 @@
+ucs-school-umc-exam (1.0.4-2) unstable; urgency=low
+
+  * added dependency to univention-ldap-config (Bug #31381)
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Wed, 22 May 2013 17:03:37 +0200
+
 ucs-school-umc-exam (1.0.4-1) unstable; urgency=low
 
   * update local nss group cache after exam user replication is complete

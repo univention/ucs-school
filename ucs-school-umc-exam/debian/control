@@ -29,6 +29,7 @@ Depends: ${misc:Depends},
  univention-management-console-server,
  python-ucs-school,
  ucs-school-import,
+ univention-ldap-config (>= 9.0.27-3),
 Description: UMC module delivering backend services for ucs-school-umc-exam
  UMC module delivering backend services for ucs-school-umc-exam
  .
