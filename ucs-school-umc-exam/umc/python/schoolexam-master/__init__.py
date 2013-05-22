@@ -205,8 +205,7 @@ class Instance( SchoolBaseModule ):
 					try:
 						userSid = univention.admin.allocators.requestUserSid(ldap_admin_write, ldap_position, uidNum)
 					except:
-						message = _('Failed to allocate userSid\n%s') % traceback.format_exc()
-						raise UMC_CommandError( message )
+						pass
 				if not userSid or userSid == 'None':
 					num = uidNum
 					while not userSid or userSid == 'None':
