@@ -197,6 +197,7 @@ class Instance( SchoolBaseModule ):
 			## Allocate new sambaSID
 			if 'samba' in user_orig.options:
 				## code copied from users.user.object.__generate_user_sid:
+				userSid = None
 				if user_orig.s4connector_present:
 					# In this case Samba 4 must create the SID, the s4 connector will sync the
 					# new sambaSID back from Samba 4.

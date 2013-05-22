@@ -1,3 +1,9 @@
+ucs-school-umc-exam (1.0.5-1) unstable; urgency=low
+
+  * initialize userSid to None (Bug #31389)
+
+ -- Arvid Requate <requate@univention.de>  Wed, 22 May 2013 17:33:42 +0200
+
 ucs-school-umc-exam (1.0.4-2) unstable; urgency=low
 
   * added dependency to univention-ldap-config (Bug #31381)
