@@ -35,12 +35,22 @@ VERSION=1
 
 . /usr/share/univention-join/joinscripthelper.lib
 . /usr/share/univention-lib/umc.sh
+. /usr/share/ucs-school-lib/umc.sh
 
 joinscript_init
 
 umc_init
 umc_operation_create "schoolexam-all" "Start exam" "" "schoolexam/*"
+
+# create empty UMC access policies
+ucs_school_policies_create
+
+# default policies for all operations (for admins)
 umc_policy_append "default-umc-all" "schoolexam-all"
+# policy for school admins
+umc_policy_append "ucsschool-umc-admins-default" "distribution-all"
+# policy for teachers
+umc_policy_append "ucsschool-umc-teachers-default" "distribution-teacher"
 
 joinscript_save_current_version
 
