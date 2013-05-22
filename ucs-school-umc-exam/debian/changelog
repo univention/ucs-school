@@ -1,3 +1,10 @@
+ucs-school-umc-exam (1.0.4-1) unstable; urgency=low
+
+  * update local nss group cache after exam user replication is complete
+    (Bug #31229)
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Wed, 22 May 2013 13:28:48 +0200
+
 ucs-school-umc-exam (1.0.3-1) unstable; urgency=low
 
   * retry if default sid alloc algorithm fails (Bug #31389)

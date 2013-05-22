@@ -271,6 +271,17 @@ class Instance( SchoolBaseModule ):
 			my.project.recipients = recipients
 			my.project.save()
 
+			# update local NSS group cache
+			if ucr.is_true('nss/group/cachefile', True):
+				cmd = ['/usr/lib/univention-pam/ldap-group-to-file.py']
+				if ucr.is_true('nss/group/cachefile/check_member', False):
+					cmd.append('--check_member')
+				MODULE.info('Updating local nss group cache...')
+				if subprocess.call(cmd):
+					MODULE.error('Updating local nss group cache failed: %s' % ' '.join(cmd))
+				else:
+					MODULE.info('Update of local nss group cache finished successfully.')
+
 			# distribute exam files
 			progress.component(_('Distributing exam files'))
 			progress.info('')
