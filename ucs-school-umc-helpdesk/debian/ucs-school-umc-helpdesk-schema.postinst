@@ -32,12 +32,15 @@
 
 #DEBHELPER#
 
-# remove old LDAP schema files
-# this can be removed after ucsschool-R2
-dpkg-maintscript-helper rm_conffile /etc/univention/templates/files/etc/ldap/slapd.conf.d/11umc-helpdesk_schema -- "$@"
-dpkg-maintscript-helper rm_conffile /etc/ldap/slapd.conf.d/11umc-helpdesk_schema -- "$@"
-ucr update
-ucr commit /etc/ldap/slapd.conf
+if [ "$1" = configure ] && dpkg --compare-versions "$2" lt-nl 8.0.0-0 ; then
+	# Bug #30499: remove old LDAP schema include templates during update from version <= 8.0.0-0 to current version
+	# but NOT on initial installation
+	# This block can be removed after ucsschool 3.1R2
+	remove_ucr_info_file ucs-school-umc-helpdesk-schema.info
+	remove_ucr_template /etc/ldap/slapd.conf.d/11univention-ucs-school-import-custom-schema
+	dpkg-maintscript-helper rm_conffile /etc/univention/templates/info/ucs-school-umc-helpdesk-schema.info -- "$@"
+	dpkg-maintscript-helper rm_conffile /etc/univention/templates/files/etc/ldap/slapd.conf.d/11umc-helpdesk_schema -- "$@"
+fi
 
 eval "$(univention-config-registry shell)"
 . /usr/share/univention-lib/all.sh
