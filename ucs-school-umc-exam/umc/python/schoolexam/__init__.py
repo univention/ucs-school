@@ -389,6 +389,10 @@ class Instance( SchoolBaseModule ):
 					progress.info('%s, %s (%s)' % (iuser.lastname, iuser.firstname, iuser.username))
 					try:
 						if iuser.username not in parallelUsers:
+							# remove first the home directory
+							shutil.rmtree(iuser.unixhome, ignore_errors=True)
+
+							# remove LDAP user entry
 							ires = connection.request('schoolexam-master/remove-exam-user', dict(
 								userdn=iuser.dn
 							))

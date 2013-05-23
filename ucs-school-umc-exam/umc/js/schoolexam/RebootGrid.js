@@ -67,7 +67,7 @@ define([
 					var icon = 'offline';
 					if (item.connection[0] == 'connected') {
 						icon = 'demo-offline';
-					} 
+					}
 					var widget = new Text({});
 					widget.set('content', lang.replace('<img src="{path}/16x16/computerroom-{icon}.png" height="16" width="16" style="float:left; margin-right: 5px" /> {value}', {
 						path: require.toUrl('dijit/themes/umc/icons'),
@@ -87,13 +87,13 @@ define([
 				label: _('User')
 			}];
 		},
-		
+
 		monitorRoom: function(room) {
 			// monitoring is only one time possible
 			if (this._monitoringDone) {
 				return;
 			}
-			
+
 			// save room
 			this.set('room', room);
 
@@ -102,7 +102,11 @@ define([
 				room: room
 			}).then(lang.hitch(this, function() {
 				this.umcpCommand('computerroom/query').then(lang.hitch(this, function(response) {
-					this._initGridData(response.result);
+					// filter out teacher computers
+					var computers = array.filter(response.result, function(iitem) {
+						return !iitem.teacher;
+					});
+					this._initGridData(computers);
 					this._lastUpdate = new Date();
 					this._firstUpdate = new Date();
 					this.standby(true);
