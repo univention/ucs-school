@@ -175,14 +175,14 @@ msgstr "Ausschließlich das Heimatverzeichnis"
 
 #: umc/js/schoolexam.js:95
 #, python-format
-msgid "In this computerroom the exam \"%s\" is currently being executed by %s."
+msgid "In this computer room the exam \"%s\" is currently being executed by %s."
 msgstr ""
 "In diesem Computerraum wird derzeit die Klassenarbeit \"%s\" von %s "
 "durchgeführt."
 
 #: umc/js/schoolexam.js:98
 #, python-format
-msgid "In this computerroom the exam \"%s\" is currently being written."
+msgid "In this computer room the exam \"%s\" is currently being written."
 msgstr ""
 "In diesem Computerraum wird derzeit die Klassenarbeit \"%s\" durchgeführt."
 

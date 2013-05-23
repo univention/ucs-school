@@ -1,3 +1,9 @@
+ucs-school-umc-exam (1.0.9-1) unstable; urgency=low
+
+  * Bug #31158: fixed typos
+
+ -- Alexander Kläser <klaeser@univention.de>  Thu, 23 May 2013 18:38:57 +0200
+
 ucs-school-umc-exam (1.0.8-1) unstable; urgency=low
 
   * Bug #31158: remove exam user home, filter out teacher computers for reboot

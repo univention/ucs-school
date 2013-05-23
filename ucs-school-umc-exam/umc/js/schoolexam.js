@@ -92,10 +92,10 @@ define([
 			var msg = '';
 			if (room && room.exam) {
 				if (room.locked) {
-					msg = _('In this computerroom the exam "%s" is currently being executed by %s.', room.examDescription, room.user);
+					msg = _('In this computer room the exam "%s" is currently being executed by %s.', room.examDescription, room.user);
 				}
 				else {
-					msg = _('In this computerroom the exam "%s" is currently being written.', room.examDescription);
+					msg = _('In this computer room the exam "%s" is currently being written.', room.examDescription);
 				}
 			} else if (room && room.locked) {
 				msg =  _('This computer room is currently in use by %s.', room.user);
