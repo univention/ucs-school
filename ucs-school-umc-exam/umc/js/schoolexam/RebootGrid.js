@@ -203,10 +203,10 @@ define([
 					// query for the given item (teacher computers have been filtered out!)
 					this.moduleStore.query({
 						id: item.id
-					}).forEach(function(currentItem) {
+					}).forEach(lang.hitch(this, function(currentItem) {
 						// found the item -> update it with new information
 						this.moduleStore.put(lang.mixin({}, currentItem, item));
-					});
+					}));
 
 					// update _lastUpdate if the connection has changed
 					if ('connection' in item) {
