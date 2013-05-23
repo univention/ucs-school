@@ -1,3 +1,9 @@
+ucs-school-umc-installer (1.0.3-1) unstable; urgency=low
+
+  * removed ucs-school-umc-preview-installer (Bug #31194)
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Thu, 23 May 2013 12:25:10 +0200
+
 ucs-school-umc-installer (1.0.2-1) unstable; urgency=low
 
   * Bug #30251: revert
