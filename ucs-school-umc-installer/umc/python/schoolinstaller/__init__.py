@@ -672,7 +672,8 @@ class Instance(Base):
 				# make sure that the slave is correctly moved below its OU
 				if not move_slave_into_ou(master, username, password, schoolOU, ucr.get('hostname')):
 					# error case
-					_error(_('Validating the LDAP school OU structure failed. It seems that the current slave system has already been assigned to a different school or that the specified school OU name is already in use.'))
+					progress_state.error_handler(_('Validating the LDAP school OU structure failed. It seems that the current slave system has already been assigned to a different school or that the specified school OU name is already in use.'))
+					restoreOrigCertificate(certOrigFile)
 					return False
 
 			# system join on a slave system
