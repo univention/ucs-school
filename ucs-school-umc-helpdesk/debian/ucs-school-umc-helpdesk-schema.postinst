@@ -32,6 +32,9 @@
 
 #DEBHELPER#
 
+eval "$(univention-config-registry shell)"
+. /usr/share/univention-lib/all.sh
+
 if [ "$1" = configure ] && dpkg --compare-versions "$2" lt-nl 8.0.0-0 ; then
 	# Bug #30499: remove old LDAP schema include templates during update from version <= 8.0.0-0 to current version
 	# but NOT on initial installation
@@ -42,8 +45,6 @@ if [ "$1" = configure ] && dpkg --compare-versions "$2" lt-nl 8.0.0-0 ; then
 	dpkg-maintscript-helper rm_conffile /etc/univention/templates/files/etc/ldap/slapd.conf.d/11umc-helpdesk_schema -- "$@"
 fi
 
-eval "$(univention-config-registry shell)"
-. /usr/share/univention-lib/all.sh
 
 if test -x /etc/init.d/slapd
     then
