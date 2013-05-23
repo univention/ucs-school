@@ -1,3 +1,9 @@
+ucs-school-umc-installer (1.0.2-2) unstable; urgency=low
+
+  * Bug #30251: version bump
+
+ -- Alexander Kläser <klaeser@univention.de>  Thu, 23 May 2013 12:33:41 +0200
+
 ucs-school-umc-installer (1.0.3-1) unstable; urgency=low
 
   * removed ucs-school-umc-preview-installer (Bug #31194)
@@ -14,7 +20,7 @@ ucs-school-umc-installer (1.0.1-0) unstable; urgency=low
 
   * Bug #30251: adjustments to enable the district mode
 
- -- Alexander Kläser <alex@alexbook>  Fri, 17 May 2013 21:41:43 +0200
+ -- Alexander Kläser <klaeser@univention.de>  Fri, 17 May 2013 21:41:43 +0200
 
 ucs-school-umc-installer (1.0.0-0) unstable; urgency=low
 
