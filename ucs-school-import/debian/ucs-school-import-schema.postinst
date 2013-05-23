@@ -40,8 +40,8 @@ if [ "$1" = configure ] && dpkg --compare-versions "$2" lt-nl 10.0.0-0 ; then
 	# Bug #30499: remove old LDAP schema include templates during update from version <= 10.0.0-0 to current version
 	# but NOT on initial installation
 	# This block can be removed after ucsschool 3.1R2
-	remove_ucr_template /etc/ldap/slapd.conf.d/11univention-ucs-school-import-custom-schema
 	remove_ucr_info_file ucs-school-import-schema.info
+	remove_ucr_template /etc/ldap/slapd.conf.d/11univention-ucs-school-import-custom-schema
 	dpkg-maintscript-helper rm_conffile /etc/univention/templates/info/ucs-school-import-custom-schema.info -- "$@"
 	dpkg-maintscript-helper rm_conffile /etc/univention/templates/files/etc/ldap/slapd.conf.d/11univention-ucs-school-import-custom-schema -- "$@"
 fi

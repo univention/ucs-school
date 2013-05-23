@@ -1,3 +1,9 @@
+ucs-school-import (10.0.0-2) unstable; urgency=low
+
+  * Bug #30499: remove UCR subtemplate for LDAP schema integration
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Thu, 23 May 2013 16:32:25 +0200
+
 ucs-school-import (10.0.0-1) unstable; urgency=low
 
   * Bug #30499: remove UCR subtemplate for LDAP schema integration
