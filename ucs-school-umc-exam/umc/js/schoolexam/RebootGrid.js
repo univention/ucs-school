@@ -102,11 +102,7 @@ define([
 				room: room
 			}).then(lang.hitch(this, function() {
 				this.umcpCommand('computerroom/query').then(lang.hitch(this, function(response) {
-					// filter out teacher computers
-					var computers = array.filter(response.result, function(iitem) {
-						return !iitem.teacher;
-					});
-					this._initGridData(computers);
+					this._initGridData(response.result);
 					this._lastUpdate = new Date();
 					this._firstUpdate = new Date();
 					this.standby(true);
@@ -125,7 +121,8 @@ define([
 			// get all connected computers
 			var computers = [];
 			this.moduleStore.query().forEach(function(iitem) {
-				if (iitem.connection == 'connected') {
+				// only take connected computers and computers where no teacher is logged in
+				if (iitem.connection == 'connected' && !iitem.teacher) {
 					computers.push(iitem);
 				}
 			});
@@ -203,8 +200,13 @@ define([
 
 				// update store with information about the computers
 				array.forEach(result.computers, function(item) {
-					var currentItem = this.moduleStore.get(item.id) || {};
-					this.moduleStore.put(lang.mixin(currentItem, item));
+					// query for the given item (teacher computers have been filtered out!)
+					this.moduleStore.query({
+						id: item.id
+					}).forEach(function(currentItem) {
+						// found the item -> update it with new information
+						this.moduleStore.put(lang.mixin({}, currentItem, item));
+					});
 
 					// update _lastUpdate if the connection has changed
 					if ('connection' in item) {
