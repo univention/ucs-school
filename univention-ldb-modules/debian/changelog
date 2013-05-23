@@ -1,3 +1,10 @@
+univention-ldb-modules (1.0.5-1) unstable; urgency=low
+
+  * make the sysvol readable for the group "Enterprise Domain Controllers"
+    (Bug #31438)
+
+ -- Arvid Requate <requate@univention.de>  Thu, 23 May 2013 23:28:22 +0200
+
 univention-ldb-modules (1.0.4-3) unstable; urgency=low
 
   * yet again, also in rules (Bug #30105)
