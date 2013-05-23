@@ -28,7 +28,7 @@ msgstr "<b>Mindestens eine Webseite muss angegeben werden!</b>"
 #: umc/js/computerroom.js:1026
 #, python-format
 msgid ""
-"<b>Note:</b> In this computerroom the exam \"%s\" is currently being "
+"<b>Note:</b> In this computer room the exam \"%s\" is currently being "
 "conducted by %s."
 msgstr ""
 "<b>Hinweis:</b> In diesem Computerraum wird momentan die Klassenarbeit \"%s"
@@ -37,7 +37,7 @@ msgstr ""
 #: umc/js/computerroom.js:1029
 #, python-format
 msgid ""
-"<b>Note:</b> In this computerroom the exam \"%s\" is currently being written."
+"<b>Note:</b> In this computer room the exam \"%s\" is currently being written."
 msgstr ""
 "<b>Hinweis:</b> In diesem Computerraum wird momentan die Klassenarbeit %s "
 "geschrieben."

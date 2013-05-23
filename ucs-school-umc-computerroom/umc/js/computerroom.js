@@ -1030,10 +1030,10 @@ define([
 					var room = _getRoom(roomDN);
 					if (room && room.exam) {
 						if (room.locked) {
-							msg += '<p>' + _('<b>Note:</b> In this computerroom the exam "%s" is currently being conducted by %s.', room.examDescription, room.user) + '</p>';
+							msg += '<p>' + _('<b>Note:</b> In this computer room the exam "%s" is currently being conducted by %s.', room.examDescription, room.user) + '</p>';
 						}
 						else {
-							msg += '<p>' + _('<b>Note:</b> In this computerroom the exam "%s" is currently being written.', room.examDescription) + '</p>';
+							msg += '<p>' + _('<b>Note:</b> In this computer room the exam "%s" is currently being written.', room.examDescription) + '</p>';
 						}
 					} else if (room && room.locked) {
 						msg += '<p>' + _('<b>Note:</b> This computer room is currently in use by %s.', room.user) + '</p>';
