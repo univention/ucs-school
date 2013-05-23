@@ -47,7 +47,8 @@ univention-config-registry set \
 	listener/shares/rename?yes \
 	dns/register/srv_records/kerberos?false \
 	dns/register/srv_records/ldap?false \
-	samba4/join/dnsupdate?true
+	samba4/join/dnsupdate?true \
+	samba4/sysvol/sync/setfacl/AU?false
 
 if [ "$1" = "configure" ] ; then
 	if [ -z "$2" ] ; then

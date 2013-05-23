@@ -1,3 +1,9 @@
+ucs-school-metapackage (6.0.1-1) unstable; urgency=low
+
+  * Set samba4/sysvol/sync/setfacl/AU=false (Bug #31272)
+
+ -- Arvid Requate <requate@univention.de>  Thu, 23 May 2013 23:19:16 +0200
+
 ucs-school-metapackage (6.0.0-2) unstable; urgency=low
 
   * Bug #31194: removed ucs-school-umc-installer
