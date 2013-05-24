@@ -1,3 +1,9 @@
+ucs-school-umc-computerroom (3.0.4-1) unstable; urgency=low
+
+  * Bug #31158: removed icons due to license issues
+
+ -- Alexander Kläser <klaeser@univention.de>  Fri, 24 May 2013 17:52:28 +0200
+
 ucs-school-umc-computerroom (3.0.3-1) unstable; urgency=low
 
   * Bug #31158: fixed typo

@@ -62,9 +62,9 @@ define([
             ContainerWidget, Text, ComboBox, ProgressBar, ScreenshotView, SettingsDialog, _) {
 
 	// prepare CSS rules for module
-	var iconPath = require.toUrl('dijit/themes/umc/icons/16x16');
-	styles.insertCssRule('.umcIconCollectFiles', lang.replace('background-image: url({path}/computerroom-icon-collect-files.png); width: 16px; height: 16px;', { path: iconPath }));
-	styles.insertCssRule('.umcIconFinishExam', lang.replace('background-image: url({path}/computerroom-icon-finish-exam.png); width: 16px; height: 16px;', { path: iconPath }));
+	//var iconPath = require.toUrl('dijit/themes/umc/icons/16x16');
+	//styles.insertCssRule('.umcIconCollectFiles', lang.replace('background-image: url({path}/computerroom-icon-collect-files.png); width: 16px; height: 16px;', { path: iconPath }));
+	//styles.insertCssRule('.umcIconFinishExam', lang.replace('background-image: url({path}/computerroom-icon-finish-exam.png); width: 16px; height: 16px;', { path: iconPath }));
 
 	return declare("umc.modules.computerroom", [ Module ], {
 		// summary:
@@ -155,14 +155,14 @@ define([
 			// define actions above grid
 			this._headActions = [{
 				name: 'collect',
-				iconClass: 'umcIconCollectFiles',
+				//iconClass: 'umcIconCollectFiles',
 				style: 'float: left;',
 				visible: false,
 				label: _('Collect results'),
 				callback: lang.hitch(this, '_collectExam')
 			}, {
 				name: 'finishExam',
-				iconClass: 'umcIconFinishExam',
+				//iconClass: 'umcIconFinishExam',
 				style: 'float: left;',
 				visible: false,
 				label: _('Finish exam'),
@@ -170,7 +170,8 @@ define([
 			}, {
 				type: Text,
 				name: 'examEndTime',
-				style: 'float: left;',
+				style: 'float:left; padding-top:2px',
+				'class': 'dijitButtonText',
 				visible: false
 			}, {
 				name: 'settings',
