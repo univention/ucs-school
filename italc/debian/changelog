@@ -1,3 +1,9 @@
+italc (2:2.0.16-1) unstable; urgency=low
+
+  * fixed patch order / try to fix deadlock (Bug #27534)
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 24 May 2013 17:41:09 +0200
+
 italc (2:2.0.15-2) unstable; urgency=low
 
   * added italc-dbg package (Bug #27534)

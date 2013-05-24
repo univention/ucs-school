@@ -41,9 +41,7 @@ override_dh_strip:
 
 override_dh_clean:
 	tar xvfj italc-2.0.0.tar.bz2 --strip-components=1
-	patch -p1 -i patches/001_qt-signals.patch
-	patch -p1 -i patches/002_thread-wait-for-termination.patch
-	patch -p1 -i patches/003_added-safe-shutdown-function.patch
+	for i in patches/*.patch ; do patch -p1 -i $i ; done
 	dh_clean
 
 override_dh_install:                                                                                                                                                                                            
