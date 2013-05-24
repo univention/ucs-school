@@ -44,6 +44,7 @@ define([
 	"dojox/html/styles",
 	"umc/dialog",
 	"umc/tools",
+	"umc/app",
 	"umc/widgets/ExpandingTitlePane",
 	"umc/widgets/Grid",
 	"umc/widgets/Button",
@@ -58,13 +59,46 @@ define([
 	"umc/modules/computerroom/SettingsDialog",
 	"umc/i18n!umc/modules/computerroom"
 ], function(declare, lang, array, aspect, dom, Deferred, ItemFileWriteStore, DataStore, Memory, DijitProgressBar,
-            Dialog, Tooltip, styles, dialog, tools, ExpandingTitlePane, Grid, Button, Module, Page, Form,
+            Dialog, Tooltip, styles, dialog, tools, app, ExpandingTitlePane, Grid, Button, Module, Page, Form,
             ContainerWidget, Text, ComboBox, ProgressBar, ScreenshotView, SettingsDialog, _) {
 
 	// prepare CSS rules for module
 	//var iconPath = require.toUrl('dijit/themes/umc/icons/16x16');
 	//styles.insertCssRule('.umcIconCollectFiles', lang.replace('background-image: url({path}/computerroom-icon-collect-files.png); width: 16px; height: 16px;', { path: iconPath }));
 	//styles.insertCssRule('.umcIconFinishExam', lang.replace('background-image: url({path}/computerroom-icon-finish-exam.png); width: 16px; height: 16px;', { path: iconPath }));
+
+	// make sure that the computerroom can only be opened once
+	// TODO: This workaround should be undone with Bug #31442
+	aspect.before(app, 'openModule', function(module, flavor, props) {
+		if (typeof(module) == 'string') {
+			module = this.getModule(module, flavor);
+		}
+
+		if (module.id != 'computerroom') {
+			// default behaviour for all modules except computerroom
+			return arguments;
+		}
+
+		// check whether a computerroom module has already been opened
+		computerRoomModules = array.filter(app._tabContainer.getChildren(), function(i) {
+			return i.moduleID == 'computerroom';
+		});
+		if (!computerRoomModules.length) {
+			// a computer room is not open, open it
+			return arguments;
+		}
+
+		// a computer room module is already open
+		if (!props) {
+			// no class properties have been specified -> focus the tab
+			app._tabContainer.selectChild(computerRoomModules[0])
+			return [];
+		}
+
+		// class properties have been specified -> close the current module and open a new one
+		app.closeTab(computerRoomModules[0]);
+		return arguments;
+	});
 
 	return declare("umc.modules.computerroom", [ Module ], {
 		// summary:

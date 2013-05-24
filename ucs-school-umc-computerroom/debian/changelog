@@ -1,3 +1,9 @@
+ucs-school-umc-computerroom (3.0.5-1) unstable; urgency=low
+
+  * Bug #31454: make sure that the computer room module is only opened once
+
+ -- Alexander Kläser <klaeser@univention.de>  Fri, 24 May 2013 17:57:52 +0200
+
 ucs-school-umc-computerroom (3.0.4-1) unstable; urgency=low
 
   * Bug #31158: removed icons due to license issues
