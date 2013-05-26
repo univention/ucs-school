@@ -425,36 +425,17 @@ feedback@univention.de
 	  <section id="lehrerdoku:ags">
 		<title>Arbeitsgruppen verwalten</title>
 		<para>
-		  Dieses Modul erlaubt es, neue Arbeitsgruppen anzulegen und diesen neben
-		  Schülern auch Lehrer zuzuweisen.
+		  Jeder Schüler ist Mitglied seiner Klasse. Darüberhinaus gibt es die Möglichkeit, Schüler
+		  und Lehrer in klassenübergreifende Arbeitsgruppen (AGs) einzuordnen. Dieses Modul erlaubt es, neue
+		  Arbeitsgruppen anzulegen, zu bearbeiten und zu löschen.
 		</para>
 		<para>
-		  Die Bedienung der Gruppenverwaltung beim Hinzufügen von Schülern erfolgt analog zu der in
-		  <xref linkend="lehrerdoku:ags:modify"/> beschriebenen Verwaltung. Der einzige Unterschied ist, dass
-		  nun auch Lehrerkonten hinzugefügt werden können.
+		  Das Anlegen einer Arbeitsgruppe legt automatisch auch einen Datenbereich auf dem Schulserver
+		  (Dateifreigabe) an, auf den alle Mitglieder der Arbeitsgruppe Zugriff erhalten. Der Name der
+		  Dateifreigabe ist identisch mit dem gewählten Namen der Arbeitsgruppe.
 		</para>
 		<para>
-		  Eine neue Arbeitsgruppe kann über die Option <guimenu>Arbeitsgruppe hinzufügen</guimenu>
-		  eingerichtet werden. Es muss mindestens der Name der <guimenu>Arbeitsgruppe</guimenu> eingegeben
-		  werden; optional kann eine <guimenu>Beschreibung</guimenu> hinterlegt werden.
-		</para>
-		<para>
-		  Eine bestehende Arbeitsgruppe kann durch Klick auf das Minus-Symbol gelöscht werden.
-		</para>
-
-
-	  <section id="lehrerdoku:ags:modify">
-		<title>Arbeitsgruppen bearbeiten</title>
-		<para>
-		  Jeder Schüler ist Mitglied seiner Klasse. Darüberhinaus gibt es die Möglichkeit, Schüler in
-		  klassenübergreifende Arbeitsgruppen (AGs) einzuordnen.
-		</para>
-		<para>
-		  Das Anlegen einer Arbeitsgruppe legt automatisch einen Datenbereich auf dem Schulserver an,
-		  auf den alle Mitglieder der Arbeitsgruppe Zugriff erhalten.
-		</para>
-		<para>
-		  Nach einem Klick auf <guimenu>Arbeitsgruppen bearbeiten</guimenu> wird eine Liste aller
+		  Nach einem Klick auf <guimenu>Arbeitsgruppen verwalten</guimenu> wird eine Liste aller
 		  Arbeitsgruppen angezeigt.
 		</para>
 		<para>
@@ -464,18 +445,25 @@ feedback@univention.de
 		  Informatik-AG).
 		</para>
 		<para>
+		  Eine neue Arbeitsgruppe kann über die Option <guimenu>Arbeitsgruppe hinzufügen</guimenu>
+		  eingerichtet werden. Es muss mindestens der Name der <guimenu>Arbeitsgruppe</guimenu> eingegeben
+		  werden; optional kann eine <guimenu>Beschreibung</guimenu> hinterlegt werden.
+		</para>
+		<para>
+		  Eine bestehende Arbeitsgruppe kann durch Klick auf das Minus-Symbol gelöscht werden.
+		</para>
+		<para>
 		  <figure id="select-workgroup">
 			<title>Auswahl einer Arbeitsgruppe</title>
 			<graphic scalefit="1" width="100%" align="center" fileref="illustrations/workgroup_selected.png"/>
 		  </figure>
 		</para>
 		<para>
-		  Ein Klick auf den Namen der Arbeitsgruppe öffnet ein neues Fenster. Der Name der
-		  <guimenu>Arbeitsgruppe</guimenu> und eine <guimenu>Beschreibung</guimenu> können von Lehrern nicht
-		  bearbeitet werden und sind ausgegraut.
+		  Ein Klick auf den Namen der Arbeitsgruppe öffnet ein neues Fenster. Der Name einer bereits bestehenden
+		  <guimenu>Arbeitsgruppe</guimenu> kann nachträglich nicht geändert werden.
 		</para>
 		<para>
-		  Im Eingabefeld <guimenu>Mitglieder</guimenu> wird eine Liste der Schüler angezeigt, die
+		  Im Eingabefeld <guimenu>Mitglieder</guimenu> wird eine Liste der Schüler und Lehrer angezeigt, die
 		  Mitglied der Arbeitsgruppe sind. Ein Klick auf <guimenu>Hinzufügen</guimenu> öffnet einen neuen
 		  Dialog.
 		</para>
@@ -486,21 +474,20 @@ feedback@univention.de
 		  </figure>
 		</para>
 		<para>
-		  Es erscheint eine Liste aller Schüler der Schule. Die Liste der Schüler kann eingeschränkt
+		  Es erscheint eine Liste aller Schüler und Lehrer der Schule. Die Liste der angezeigten Benutzer kann eingeschränkt
 		  werden, indem über den Menüpunkt <guimenu>Benutzergruppe oder Klasse</guimenu> eine Klasse oder AG
-		  ausgewählt wird. Es werden dann nur die Schüler dieser Klasse dargestellt. Durch Eingabe von
+		  ausgewählt wird. Es werden dann nur die Schüler und Lehrer dieser Klasse dargestellt. Durch Eingabe von
 		  Benutzer-, Vor- und/oder Nachname in das Eingabefeld <guimenu>Name</guimenu> und anschließendem
-		  Klick auf <guimenu>Suchen</guimenu> kann auch gezielt nach einem Schüler gesucht werden. Die
-		  Schüler, die zu der Arbeitsgruppe hinzugefügt werden sollen, können durch Aktivieren des
-		  Auswahlkästchens vor dem Schülernamen markiert werden. Ein Klick auf <guimenu>Hinzufügen</guimenu>
-		  fügt die Schüler dann der Arbeitsgruppe hinzu.
+		  Klick auf <guimenu>Suchen</guimenu> kann auch gezielt nach einem Benutzer gesucht werden. Die
+		  Benutzer, die zu der Arbeitsgruppe hinzugefügt werden sollen, können durch Aktivieren des
+		  Auswahlkästchens vor dem Benutzernamen markiert werden. Ein Klick auf <guimenu>Hinzufügen</guimenu>
+		  fügt die Benutzer dann der Arbeitsgruppe hinzu.
 		</para>
 		<para>
-		  Schüler können aus der Arbeitsgruppe entfernt werden, indem die zu entfernenden Schüler
-		  durch Klick auf das Auswahlkästchen vor dem Schüler markiert werden und anschließend auf
-		  <guimenu>Entfernen</guimenu> geklickt wird.
+		  Benutzer können aus der Arbeitsgruppe entfernt werden, indem das Auswahlkästchens vor dem
+		  zu entfernenden Benutzer aktiviert und und anschließend auf <guimenu>Entfernen</guimenu> geklickt
+		  wird.
 		</para>
-	  </section>
 	  </section>
 
 

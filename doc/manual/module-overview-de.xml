@@ -58,25 +58,17 @@
 				<para>
 					Jeder Schüler ist Mitglied seiner Klasse. Darüber hinaus gibt es die
 					Möglichkeit mit dem Modul <emphasis>Arbeitsgruppen verwalten</emphasis> Schüler
-					in klassenübergreifende Arbeitsgruppen einzuordnen.
+					und Lehrer in klassenübergreifende Arbeitsgruppen einzuordnen.
 				</para>
 				<para>
-					Das Anlegen einer Arbeitsgruppe legt automatisch einen Datenbereich
-					auf dem Schulserver an, auf den alle Mitglieder der Arbeitsgruppe
-					Zugriff haben.
+				  Das Anlegen einer Arbeitsgruppe legt automatisch einen Datenbereich auf dem
+				  Schulserver (Dateifreigabe) an, auf den alle Mitglieder der Arbeitsgruppe Zugriff erhalten. Der Name
+				  der Dateifreigabe ist identisch mit dem gewählten Namen der Arbeitsgruppe.
 				</para>
 				<para>
-					Lehrer können Schüler zu Arbeitsgruppen hinzufügen oder entfernen, aber
-					keine neuen Arbeitsgruppen anlegen. Dies muss von einem
-					Schuladministrator vorgenommen werden.
+				  Das Anlegen, Bearbeiten und Löschen von Arbeitsgruppen ist in der
+				  Standardkonfiguration sowohl den Lehrern als auch den Schuladministratoren erlaubt.
 				</para>
-			</listitem>
-			<listitem>
-				<simpara>
-					Das Modul <emphasis>Arbeitsgruppen verwalten</emphasis> erlaubt
-					Schuladministratoren neue Arbeitsgruppen anzulegen und diesen neben
-					Schülern auch Lehrer zuzuweisen.
-				</simpara>
 			</listitem>
 			<listitem>
 				<simpara>
