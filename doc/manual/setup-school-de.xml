@@ -16,7 +16,7 @@
 		</para>
 		<para>
 			Als <guimenu>Name der Schule</guimenu> ist ein Bezeichner für die Schule
-			einzutragen, z.B. <emphasis>schule719</emphasis> oder <emphasis>gymnasium-mitte</emphasis>.
+			einzutragen, z.B. <emphasis>schule340</emphasis> oder <emphasis>gymnasium-mitte</emphasis>.
 			Der <guimenu>Rechnername des Schulservers</guimenu> ist der Name des
 			Schulservers. In einer Single-Server-Umgebung ist die Angabe nicht
 			erforderlich. Nach dem erfolgreichen Anlegen der Schule erscheint eine
@@ -93,7 +93,7 @@
 		  Es ist zu beachten, dass Computernamen domänenweit eindeutig sein müssen. Das heißt ein
 		  Computer <emphasis>windows01</emphasis> kann nicht in mehreren OUs verwendet werden. Um die
 		  Eindeutigkeit zu gewährleisten, wird empfohlen, jedem Computernamen die OU voranzustellen oder zu
-		  integrieren (z.B. <emphasis>712win01</emphasis> für Schule <emphasis>712</emphasis>).
+		  integrieren (z.B. <emphasis>340win01</emphasis> für Schule <emphasis>340</emphasis>).
 		</para>
 		<informaltable>
 			<tgroup cols="4">
@@ -120,7 +120,7 @@
 						<entry>Name</entry>
 						<entry>Zu verwendender Rechnername</entry>
 						<entry>---</entry>
-						<entry>win28g01-01</entry>
+						<entry>wing123m-01</entry>
 					</row>
 					<row>
 						<entry>MAC-Adresse</entry>
@@ -132,7 +132,7 @@
 						<entry>OU</entry>
 						<entry>OU, in der das Rechnerobjekt modifiziert werden soll</entry>
 						<entry>---</entry>
-						<entry>28G01</entry>
+						<entry>g123m</entry>
 					</row>
 					<row>
 						<entry>IP-Adresse (/ Netzmaske) oder IP-Subnetz</entry>
@@ -170,11 +170,11 @@
 			Beispiel für eine Importdatei:
 		</para>
 			<programlisting>
-ipmanagedclient  router28g01-01	  10:00:ee:ff:cc:02	 28G01	10.0.5.1
-windows			 win28g01-01	  10:00:ee:ff:cc:00	 28G01	10.0.5.5
-windows			 win28g01-02	  10:00:ee:ff:cc:01	 28G01	10.0.5.6
-macos			 mac28g01-01	  10:00:ee:ff:cc:03	 28G01	10.0.5.7
-ipmanagedclient	 printer28g01-01  10:00:ee:ff:cc:04	 28G01	10.0.5.250
+ipmanagedclient  routerg123m-01	  10:00:ee:ff:cc:02	 g123m	10.0.5.1
+windows			 wing123m-01	  10:00:ee:ff:cc:00	 g123m	10.0.5.5
+windows			 wing123m-02	  10:00:ee:ff:cc:01	 g123m	10.0.5.6
+macos			 macg123m-01	  10:00:ee:ff:cc:03	 g123m	10.0.5.7
+ipmanagedclient	 printerg123m-01  10:00:ee:ff:cc:04	 g123m	10.0.5.250
 			</programlisting>
 		<para>
 			Die importierten Rechner werden so konfiguriert, dass ihnen die
@@ -219,13 +219,13 @@ ipmanagedclient	 printer28g01-01  10:00:ee:ff:cc:04	 28G01	10.0.5.250
 						<entry>OU</entry>
 						<entry>OU, in der das Druckerobjekt modifiziert werden soll</entry>
 						<entry>---</entry>
-						<entry>28G01</entry>
+						<entry>g123m</entry>
 					</row>
 					<row>
 						<entry>Druckserver</entry>
 						<entry>Name des zu verwendenden Druckservers</entry>
 						<entry>---</entry>
-						<entry>dc28g01-01</entry>
+						<entry>dcg123m-01</entry>
 					</row>
 					<row>
 						<entry>Name</entry>
@@ -286,7 +286,7 @@ ipmanagedclient	 printer28g01-01  10:00:ee:ff:cc:04	 28G01	10.0.5.250
 					<row>
 						<entry>OU</entry>
 						<entry>OU des zu modifizierenden Netzwerks</entry>
-						<entry>28G01</entry>
+						<entry>g123m</entry>
 					</row>
 					<row>
 						<entry>Netzwerk</entry>
@@ -320,8 +320,8 @@ ipmanagedclient	 printer28g01-01  10:00:ee:ff:cc:04	 28G01	10.0.5.250
 			Beispiel für eine Importdatei:
 		</para>
 			<programlisting>
-28G01  10.0.5.0                          10.0.5.1  10.0.5.2  10.0.5.2
-28G01  10.0.6.0/25  10.0.6.5-10.0.6.120  10.0.6.1  10.0.6.2  10.0.6.15
+g123m  10.0.5.0                          10.0.5.1  10.0.5.2  10.0.5.2
+g123m  10.0.6.0/25  10.0.6.5-10.0.6.120  10.0.6.1  10.0.6.2  10.0.6.15
 			</programlisting>
 		<para>
 			Wird für das Feld <emphasis>Netzwerk</emphasis> keine Netzmaske angegeben, so wird

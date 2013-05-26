@@ -51,7 +51,7 @@
 			<row><entry>Benutzername</entry><entry>Der zum Login verwendete Benutzername</entry><entry>---</entry><entry>m.mustermann</entry></row>
 			<row><entry>Nachname</entry><entry>Der Nachname des Benutzers</entry><entry>---</entry><entry>Mustermann</entry></row>
 			<row><entry>Vorname</entry><entry>Der Vorname des Benutzers</entry><entry>---</entry><entry>Michael</entry></row>
-			<row><entry>OU</entry><entry>Die OU, unter der der Benutzer angelegt werden soll</entry><entry>---</entry><entry>28G01</entry></row>
+			<row><entry>OU</entry><entry>Die OU, unter der der Benutzer angelegt werden soll</entry><entry>---</entry><entry>g123m</entry></row>
 			<row><entry>Klasse</entry><entry>Name der Klasse des Benutzers; nur Lehrer können in mehreren Klassen vertreten sein!</entry><entry>---</entry><entry>1A,1B,2A,4C</entry></row>
 			<row><entry>Rechte</entry><entry>derzeit ungenutzt; das Feld sollte leer bleiben, so dass 2 Tabulator-Zeichen aufeinander folgen</entry><entry>---</entry><entry></entry></row>
 			<row><entry>Email-Adresse</entry><entry>Mailadresse des Benutzers</entry><entry>---</entry><entry>m.musterm@beispiel.edu</entry></row>
@@ -64,9 +64,9 @@
 	<para>
 	  Ein Beispiel für eine Importdatei:
 	</para>
-	  <programlisting>A  max         Mustermann  Max     28G01  1A        max@schule.edu   0 1 0
-M  m.musterma  Mustermann  Moritz  28G01  1A,2D,4C  m.m@schule.edu   1 1 0
-D  a.musterfr  Musterfrau  Anke    28G01  2B        a.mfr@schule.edu 1 1 1
+	  <programlisting>A  max         Mustermann  Max     g123m  1A        max@schule.edu   0 1 0
+M  m.musterma  Mustermann  Moritz  g123m  1A,2D,4C  m.m@schule.edu   1 1 0
+D  a.musterfr  Musterfrau  Anke    g123m  2B        a.mfr@schule.edu 1 1 1
 </programlisting>
 	<para>
 	  Über das Feld <emphasis>Aktion</emphasis> kann die Art der Benutzermodifikation gesteuert
@@ -189,13 +189,13 @@ gym123-Igel</programlisting>
 				  <entry>OU</entry>
 				  <entry>OU, in der die Gruppe modifiziert werden soll</entry>
 				  <entry>---</entry>
-				  <entry>28G01</entry>
+				  <entry>g123m</entry>
 			  </row>
 			  <row>
 				  <entry>Gruppenname</entry>
 				  <entry>Der Name der Gruppe</entry>
 				  <entry>---</entry>
-				  <entry>28G01-1A</entry>
+				  <entry>g123m-1A</entry>
 			  </row>
 			  <row>
 				  <entry>(Beschreibung)</entry>
@@ -210,11 +210,11 @@ gym123-Igel</programlisting>
 		Ein Beispiel für eine Importdatei:
 	  </para>
 		<programlisting>
-A     28G01     28G01-1A         Klaaassen 1A
-A     28G01     28G01-LK-Inf     Leistungskurs Informatik
-M     28G01     28G01-1A         Klasse 1A
-D     28G01     28G01-LK-Inf     Leistungskurs Informatik
-D     28G01     28G01-R12        Klasse R12
+A     g123m     g123m-1A         Klaaassen 1A
+A     g123m     g123m-LK-Inf     Leistungskurs Informatik
+M     g123m     g123m-1A         Klasse 1A
+D     g123m     g123m-LK-Inf     Leistungskurs Informatik
+D     g123m     g123m-R12        Klasse R12
 		</programlisting>
 	</section>
 

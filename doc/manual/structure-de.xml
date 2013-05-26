@@ -129,8 +129,8 @@
 				der LDAP-Basis angelegt. Der Name einer OU sollte sich auf Buchstaben
 				und Ziffern sowie auf den Bindestrich beschränken, da er z.B. die
 				Grundlage für Gruppen- und Rechnernamen bildet. Häufig kommen hier
-				Schulnummern wie <emphasis>712</emphasis> oder zusammengesetzte Kürzel
-				wie <emphasis>28G01</emphasis> oder <emphasis>gymmitte</emphasis> zum Einsatz.
+				Schulnummern wie <emphasis>340</emphasis> oder zusammengesetzte Kürzel
+				wie <emphasis>g123m</emphasis> oder <emphasis>gymmitte</emphasis> zum Einsatz.
 			</para>
 		</section>
 	</section>
