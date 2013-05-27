@@ -252,6 +252,13 @@ class ITALC_Computer( notifier.signals.Provider, QObject ):
 			# give a hint to C++/QT that the object is no longer in use and may be destroyed/cleaned up (Bug #27534)
 			self._vnc.shutdownAndDestroyLater()
 
+	def close( self ):
+		if self._vnc:
+			# give a hint to C++/QT that the object is no longer in use and may be destroyed/cleaned up (Bug #27534)
+			self._vnc.shutdownAndDestroyLater()
+		self._vnc = None
+		self._state.set( ITALC_Computer.CONNECTION_STATES[ italc.ItalcVncConnection.Disconnected ] )
+
 	@pyqtSlot( int )
 	def _stateChanged( self, state ):
 		self._state.set( ITALC_Computer.CONNECTION_STATES[ state ] )
@@ -301,10 +308,6 @@ class ITALC_Computer( notifier.signals.Provider, QObject ):
 		self._emit_flag( diff, italc.ItalcCore.MessageBoxRunning, 'message-box' )
 		self._emit_flag( diff, italc.ItalcCore.SystemTrayIconRunning, 'system-tray-icon' )
 
-	def close( self ):
-		pass
-		# self._vnc.stop()
-
 	def update( self ):
 		if self._state.current != 'connected':
 			MODULE.info( '%s is currently not connected' % self.ipAddress )
@@ -312,11 +315,12 @@ class ITALC_Computer( notifier.signals.Provider, QObject ):
 
 		if self._usernameLastUpdate + ITALC_CORE_TIMEOUT < time.time():
 			MODULE.process('connection to %s is dead for %.2fs - reconnecting' % (self.ipAddress, (time.time()-self._usernameLastUpdate)))
-			self._vnc.reset(self.ipAddress)
-			self._resetUserInfoTimeout()
+			self.close()
 			self._username.reset()
 			self._homedir.reset()
 			self._flags.reset()
+			self.open()
+			self._resetUserInfoTimeout()
 			return True
 		elif self._usernameLastUpdate + max(ITALC_CORE_TIMEOUT/2,1) < time.time():
 			MODULE.process( 'connection to %s seems to be dead for %.2fs' % (self.ipAddress, (time.time()-self._usernameLastUpdate)))

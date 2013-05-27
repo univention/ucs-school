@@ -1,3 +1,10 @@
+ucs-school-umc-computerroom (3.0.6-1) unstable; urgency=low
+
+  * drop iTALC connection object after usage (Bug #27534)
+  * updated dependencies to ucs-school-umc-exam (Bug #31441)
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Mon, 27 May 2013 12:20:19 +0200
+
 ucs-school-umc-computerroom (3.0.5-1) unstable; urgency=low
 
   * Bug #31454: make sure that the computer room module is only opened once
