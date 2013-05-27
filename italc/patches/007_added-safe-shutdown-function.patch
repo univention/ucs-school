@@ -5,33 +5,18 @@ freed before all QT threads have stopped. This caused a SIGSEGV (Bug #27534).
 
 Python now transfers the responsibility to QT for shutting down the
 ItalcVncConnection object and freeing its memory. To initiate a shutdown
-from pythons side, the function shutdownAndDestroyLater() has been added
-which tries to stop the internal thread and advises QT to clean the object
-up later on.
+from pythons side, the function stop() has to be called which ends the
+internal thread main loop run(). If run() finishes, it advises QT to clean 
+the object up later on (via deleteLater()).
 
 
---- italc-2.0.0.ORIG/lib/include/ItalcVncConnection.h
-+++ italc-2.0.0/lib/include/ItalcVncConnection.h
-@@ -84,6 +84,8 @@ public:
- 	explicit ItalcVncConnection( QObject *parent = 0 );
- 	virtual ~ItalcVncConnection();
- 
-+	void shutdownAndDestroyLater();
-+
- 	const QImage image( int x = 0, int y = 0, int w = 0, int h = 0 ) const;
- 	void setImage( const QImage &img );
- 	void stop();
 --- italc-2.0.0.ORIG/lib/src/ItalcVncConnection.cpp
 +++ italc-2.0.0/lib/src/ItalcVncConnection.cpp
-@@ -366,6 +366,11 @@ void ItalcVncConnection::checkOutputErrorMessage()
+@@ -523,6 +522,7 @@
+ 	{
+ 		doConnection();
+ 	}
++	deleteLater();
  }
  
  
-+void ItalcVncConnection::shutdownAndDestroyLater()
-+{
-+  stop();
-+  deleteLater();
-+}
- 
- 
- void ItalcVncConnection::stop()
