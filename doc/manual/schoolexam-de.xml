@@ -38,7 +38,7 @@ auf das Netzwerk warten</filename>. Diese Funktion ist in den Betriebssystemvers
 		<section>
 			<title>Windows-Anmeldung im Prüfungsraum auf Mitglieder der Klassenarbeitsgruppe beschränken</title>
 			<para>
-				Da das im folgenden konfigurierte Gruppenrichtlinienobjekt je nach Verknüpfung im Samba-Verzeichnisdienst die Anmeldung an betroffenen Windows-Arbeitsplatzsystemen einschränkt, ist dringen empfohlen als Erstes die Anwendung der neuen Gruppenrichtlinie auf solche Windows-Arbeitsplatzsysteme einzuschränken, auf die sie sich später im Klassenarbeitsmodus auswirken soll. Dies geschieht am einfachsten über die Anpassung der Sicherheitsfilterung, die im Folgenden beschrieben ist:
+				Da das im folgenden konfigurierte Gruppenrichtlinienobjekt je nach Verknüpfung im Samba-Verzeichnisdienst die Anmeldung an betroffenen Windows-Arbeitsplatzsystemen einschränkt, ist dringend empfohlen als Erstes die Anwendung der neuen Gruppenrichtlinie auf solche Windows-Arbeitsplatzsysteme einzuschränken, auf die sie sich später im Klassenarbeitsmodus auswirken soll. Dies geschieht am einfachsten über die Anpassung der Sicherheitsfilterung, die im Folgenden beschrieben ist:
 			</para>
 			<section>
 				<title>Anwendungsbereich der GPO auf Klassenarbeitscomputer einschränken</title>
