@@ -1,3 +1,9 @@
+ucs-school-lib (3.0.5-1) unstable; urgency=low
+
+  * Bug #30831: reverted changes to search for classes
+
+ -- Alexander Kläser <klaeser@univention.de>  Mon, 27 May 2013 18:21:23 +0200
+
 ucs-school-lib (3.0.4-1) unstable; urgency=low
 
   * Bug #30831: adjusted search for groups to incorporate workgroups + classes

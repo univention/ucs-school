@@ -534,7 +534,7 @@ class SchoolBaseModule( Base ):
 	def classes( self, request, ldap_user_read = None, ldap_position = None, search_base = None ):
 		"""Returns a list of all classes of the given school"""
 		self.required_options( request, 'school' )
-		self.finished( request.id, self._groups( ldap_user_read, search_base.school, search_base.workgroups, request.options.get('pattern') ) )
+		self.finished( request.id, self._groups( ldap_user_read, search_base.school, search_base.classes, request.options.get('pattern') ) )
 
 	@LDAP_Connection()
 	def workgroups( self, request, ldap_user_read = None, ldap_position = None, search_base = None ):
