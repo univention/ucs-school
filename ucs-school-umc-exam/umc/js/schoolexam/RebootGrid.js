@@ -80,7 +80,7 @@ define([
 				name: 'connection',
 				label: _('Connection'),
 				formatter: function(value) {
-					return (value == 'connected') ? _('Connected') : _('Not connected')
+					return (value == 'connected') ? _('Reboot necessary') : _('Not connected / powered down')
 				}
 			}, {
 				name: 'user',
@@ -117,7 +117,7 @@ define([
 			this._monitoringDone = true;
 		},
 
-		reboot: function() {
+		getComputersForReboot: function() {
 			// get all connected computers
 			var computers = [];
 			this.moduleStore.query().forEach(function(iitem) {
@@ -126,9 +126,13 @@ define([
 					computers.push(iitem);
 				}
 			});
+			return computers;
+		},
 
+		reboot: function() {
 			// switch the computers on and update the progress of a Deferred
 			// do not reboot all computers at once, use an offset of 300ms
+			var computers = this.getComputersForReboot();
 			var deferred = new Deferred();
 			var percentPerItem = 100.0 / (computers.length + 1);
 			array.forEach(computers, lang.hitch(this, function(iitem, idx) {

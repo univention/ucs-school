@@ -71,6 +71,10 @@ define([
 
 		_progressBar: null,
 
+		_userPrefix: null,
+
+		_grid: null,
+
 		// helper function to get the currently selected room entry
 		_getCurrentRoom: function() {
 			// find correct room entry
@@ -113,7 +117,7 @@ define([
 			this.pages = [{
 				name: 'general',
 				headerText: _('Start a new exam'),
-				helpText: _('<p>The UCS@school exam mode allows one to perform an exam in a computer room. During the exam, access to internet as well as to shares can be restricted, the student home directories are not accessible, either.</p><p>Please enter a name for the new exam, specify its end time, and select the classes or workgroups that participate in the exam.</p>'),
+				helpText: _('<p>The UCS@school exam mode allows one to perform an exam in a computer room. During the exam, access to internet as well as to shares can be restricted, the student home directories are not accessible, either.</p><p>Please enter a name for the new exam, specify its end time, and select classes or workgroups that shall participate in the exam.</p>'),
 				layout: [
 					'school',
 					['room', 'info'],
@@ -184,7 +188,7 @@ define([
 					required: true,
 					dialogTitle: _('Assign classes/workgroups'),
 					label: _('Assigned classes/workgroups'),
-					description: _('List of groups that are marked to receive the exam materials'),
+					description: _('Groups that are participating in the exam'),
 					queryWidgets: [{
 						type: ComboBox,
 						name: 'school',
@@ -207,7 +211,7 @@ define([
 			}, {
 				name: 'files',
 				headerText: _('Upload of exam files'),
-				helpText: _('<p>Please select a suiting directory name for the exam and upload all necessary files one by one.</p><p>These files will be distributed to all participating students. A copy of the original files will be stored in your home directory, as well. During the exam or at the end of it, the corresponding files can be collected from the students. The collected files will be stored in your home directory, as well.</p>'),
+				helpText: _('<p>Please chosse a suiting directory name for the exam and upload all necessary files one by one.</p><p>These files will be distributed to all participating students. A copy of the original files will be stored in your home directory. At any moment during the exam, it is possible to collect the student files. The collected files will be stored in the exam directory of your home directory.</p>'),
 				widgets: [{
 					name: 'directory',
 					type: TextBox,
@@ -229,7 +233,7 @@ define([
 			}, {
 				name: 'roomSettings',
 				headerText: _('Computer room settings'),
-				helpText: _('Please select the access restrictions to internet as well as to shares. These settings can also be adjusted during the exam via the room settings in the module <i>Computer room</i>. Note that the student home directories are not accessible during the exam mode.'),
+				helpText: _('Please select the access restrictions to internet as well as to shares. These settings can also be adjusted during the exam via the room settings in the module <i>Computer room</i>. The participating students are not able to acces the home directories during the exam.'),
 				widgets: [{
 					type: ComboBox,
 					name: 'shareMode',
@@ -279,7 +283,7 @@ define([
 			}, {
 				name: 'success',
 				headerText: _('Exam succesfully prepared'),
-				helpText: _('<p>The preparation of the exam was successful. A summary of the exam properties is displayed below.<p><p>As next step, it is necessary to reboot computers in the room.</p>'),
+				helpText: '...', // will be set dynamically after querying the exam prefix UCR variable
 				widgets: [{
 					type: Text,
 					name: 'info',
@@ -287,13 +291,8 @@ define([
 				}]
 			}, {
 				name: 'reboot',
-				headerText: 'Reboot student computers',
-				helpText: _('<p>It is necessary to make sure that all student computers in the computer room are rebooted if they are running. Only through a restart, exam specific configurations for the computers themselves are activated. To assist in rebooting student computers, all running computers in the room are determined automatically below. This may take 30 seconds to 2 minutes. Once connections to the computers are established, they can be restarted by pressing the button </i>Restart computers</i>.</p><p>It is possible to skip this process by pressing the button <i>Next</i>.</p>'),
-				widgets: [{
-					name: 'grid',
-					type: RebootGrid,
-					umcpCommand: this.umcpCommand
-				}]
+				headerText: _('Reboot student computers'),
+				helpText: _('<p>For the correct functioning of the exam mode, it is important that all student computers in the computer room are rebooted. The listed computers can be automatically rebooted by pressing the button <i>Next</i>.</p><p><b>Attention:</b> No warning will be displayed to currently logged in users! The reboot will be executed immediatley.</p>')
 			}, {
 				name: 'finished',
 				headerText: _('Preparation finished'),
@@ -328,6 +327,7 @@ define([
 			// query max upload size via UCR
 			var ucrDeferred = tools.ucr([
 				'umc/server/upload/max',
+				'ucsschool/ldap/default/userprefix/exam',
 				'ucsschool/exam/default/room',
 				'ucsschool/exam/default/shares',
 				'ucsschool/exam/default/internet',
@@ -335,15 +335,19 @@ define([
 				'ucsschool/exam/delay/max',
 				'ucsschool/exam/delay/offset'
 			]).then(lang.hitch(this, function(result) {
+				// cache the user prefix and update help text
+				this._userPrefix = result['ucsschool/ldap/default/userprefix/exam'] || 'exam-';
+				this.getPage('success').set('helpText', _('<p>The preparation of the exam was successful. A summary of the exam properties is displayed below.<p><p>As next step, it is necessary to reboot computers in the room.</p><p><b>Attention:</b> For the exam, students are required to login with a special user account by adding <i>%(prefix)s</i> to their common username, e.g., <i>%(prefix)sjoe123</i> instead of <i>joe123</i>.</p>', { prefix: this._userPrefix })),
+
+				// max upload size and some form values
 				setMaxSize(result['umc/server/upload/max'] || 10240);
 				setValue('roomSettings', 'shareMode', result['ucsschool/exam/default/shares']);
 				setValue('roomSettings', 'internetRule', result['ucsschool/exam/default/internet']);
 
 				// save delay values for the grid
-				var grid = this.getWidget('reboot', 'grid');
-				grid.set('minUpdateDelay', result['ucsschool/exam/delay/min'] || 30);
-				grid.set('maxUpdateDelay', result['ucsschool/exam/delay/max'] || 120);
-				grid.set('offsetUpdateDelay', result['ucsschool/exam/delay/offset'] || 20);
+				this._grid.set('minUpdateDelay', result['ucsschool/exam/delay/min'] || 30);
+				this._grid.set('maxUpdateDelay', result['ucsschool/exam/delay/max'] || 120);
+				this._grid.set('offsetUpdateDelay', result['ucsschool/exam/delay/offset'] || 20);
 
 				// for the room, we need to match the given value against all available room DNs
 				var roomWidget = this.getWidget('general', 'room');
@@ -361,6 +365,13 @@ define([
 				// take a default value for maxSize
 				setMaxSize(10240);
 			});
+
+			// create the grid for rebooting computers manually
+			var rebootPage = this.getPage('reboot');
+			this._grid = new RebootGrid({
+				umcpCommand: this.umcpCommand
+			});
+			rebootPage.addChild(this._grid);
 
 			// get value for lesson end time
 			var endTimeDeferred = this.umcpCommand('schoolexam/lesson_end');
@@ -390,15 +401,13 @@ define([
 			// adjust the label of the 'finish' button + redirect the callback
 			array.forEach(['general', 'files', 'roomSettings'], lang.hitch(this, function(ipage) {
 				var ibutton = this.getPage(ipage)._footerButtons.finish;
-				ibutton.set('label', _('Start exam'));
+				ibutton.set('label', ipage == 'roomSettings' ? _('Start exam') : _('Quick start'));
 				ibutton.callback = lang.hitch(this, '_startExam');
 			}));
 
-			// adjust the behaviour of the finish button on the reboot page
-			var button = this.getPage('reboot')._footerButtons.finish;
-			button.set('label', _('Reboot computers'));
+			// disable the 'next' button on the reboot page
+			var button = this.getPage('reboot')._footerButtons.next;
 			button.set('disabled', true);
-			button.callback = lang.hitch(this, '_reboot');
 
 			// adjust the label of the 'finish' button on the 'finished' page
 			button = this.getPage('finished')._footerButtons.finish;
@@ -411,13 +420,12 @@ define([
 			// hook when reboot page is shown
 			this.getPage('reboot').on('show', lang.hitch(this, function() {
 				// find computers that need to be restarted
-				var grid = this.getWidget('reboot', 'grid');
 				var values = this.getValues();
-				grid.monitorRoom(values.room);
-				
+				this._grid.monitorRoom(values.room);
+
 				// call the grid's resize method (decoupled via setTimeout)
 				window.setTimeout(lang.hitch(this, function() {
-					grid.resize();
+					this._grid.resize();
 				}, 0));
 			}));
 
@@ -464,9 +472,8 @@ define([
 			}));
 
 			// hook when monitoring of the computers has been finished
-			var button = this.getPage('reboot')._footerButtons.finish;
-			var grid = this.getWidget('reboot', 'grid');
-			grid.on('monitoringDone', lang.hitch(this, function() {
+			var button = this.getPage('reboot')._footerButtons.next;
+			this._grid.on('monitoringDone', lang.hitch(this, function() {
 				button.set('disabled', false);
 			}));
 		},
@@ -475,7 +482,7 @@ define([
 			this.inherited(arguments);
 
 			// make the 'finish' buttons visible on specific pages only
-			if (array.indexOf(['general', 'files', 'roomSettings', 'reboot'], pageName) < 0) {
+			if (array.indexOf(['general', 'files', 'roomSettings'], pageName) < 0) {
 				return;
 			}
 			var buttons = this._pages[pageName]._footerButtons;
@@ -498,6 +505,34 @@ define([
 			var next = this.inherited(arguments);
 			if (pageName == 'error') {
 				next = 'general';
+			}
+			else if (pageName == 'reboot') {
+				// only display a dialog in case there are computers that can be rebooted
+				var connectedComputers = this._grid.getComputersForReboot();
+				if (!connectedComputers.length) {
+					return 'finished';
+				}
+
+				// ask user whether or not computers are rebooted
+				next = dialog.confirm(_('Please confirm to reboot all computers marked as <i>Reboot necessary</i> immediatley.'), [{
+					name: 'cancel',
+					label: _('Cancel'),
+					'default': true
+				}, {
+					name: 'reboot',
+					label: _('Reboot computers')
+				}]).then(lang.hitch(this, function(choice) {
+					if (choice == 'cancel') {
+						// cancel reboot action -> go directly to finish page
+						return 'finished';
+					}
+
+					// reboot computers
+					return this._reboot().then(function() {
+						// rebooting is done -> go to the finish page
+						return 'finished';
+					});
+				}));
 			}
 			return next;
 		},
@@ -658,18 +693,15 @@ define([
 			progressBar.reset(_('Rebooting computers'));
 			this.own(progressBar);
 			this.standby(true, progressBar);
-			this.getWidget('reboot', 'grid').reboot().then(lang.hitch(this, function() {
+			return this._grid.reboot().then(lang.hitch(this, function() {
 				// reboot done
 				this.standby(false);
-				this._gotoPage('finished');
 			}), lang.hitch(this, function() {
 				// some error happened, probably an exception due to programming error
 				this.standby(false);
-				this._gotoPage('finished');
 			}), function(percentage, computer) {
 				progressBar.setInfo(null, computer, percentage);
 			});
-			
 		},
 
 		onFinished: function(values) {
