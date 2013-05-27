@@ -1,22 +1,18 @@
-Thread does not have to be terminated immediately! If stop() is called in class destructor,
-then the memory may be freed before the thread has stopped completely. Sometimes the freed
-memory has been accessed by the thread and caused a SIGSEGV (Bug #27534).
+Do not call terminate() otherwise thread, connection and memory management get out of sync.
+If m_stopped = true is set, the thread main loop will exit soon (hopefully) (Bug #27534).
 
 --- italc-2.0.0/lib/src/ItalcVncConnection.cpp.ORIG	2013-05-27 11:13:45.296508195 +0200
-+++ italc-2.0.0/lib/src/ItalcVncConnection.cpp	2013-05-27 11:18:47.776520970 +0200
-@@ -377,8 +377,15 @@
++++ italc-2.0.0/lib/src/ItalcVncConnection.cpp	2013-05-27 12:45:56.612741801 +0200
+@@ -375,10 +375,9 @@
+ 		m_stopped = true;
+ 		m_updateIntervalSleeper.wakeAll();
  
- 		if( !wait( 1000 ) )
+-		if( !wait( 1000 ) )
++		if( !wait( 500 ) )
  		{
-+			m_stopped = true;
-+			m_updateIntervalSleeper.wakeAll();
- 			qWarning( "ItalcVncConnection::stop(): terminating thread" );
- 			terminate();
-+
-+			if( !wait( 1000 ) )
-+			{
-+				qWarning( "ItalcVncConnection::stop(): thread could not be terminated" );
-+			}
+-			qWarning( "ItalcVncConnection::stop(): terminating thread" );
+-			terminate();
++			qWarning( "ItalcVncConnection::stop(): thread is still running" );
  		}
  	}
  }
