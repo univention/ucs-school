@@ -1,3 +1,9 @@
+italc (2:2.0.18-1) unstable; urgency=low
+
+  * added automatic removal of ItalcVncConnection (Bug #27534)
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Mon, 27 May 2013 15:55:54 +0200
+
 italc (2:2.0.17-1) unstable; urgency=low
 
   * do not wait forever for ItalcVncConnection removal (Bug #27534)
