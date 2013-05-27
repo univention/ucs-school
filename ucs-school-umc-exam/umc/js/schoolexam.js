@@ -617,6 +617,9 @@ define([
 					return;
 				}
 
+				// set default error message
+				this.getWidget('error', 'info').set('content', _('An unexpected error occurred.'));
+
 				// start the exam
 				var values = this.getValues();
 				tools.umcpCommand('schoolexam/exam/start', values, false);
@@ -635,10 +638,13 @@ define([
 					true
 				);
 
-				// reserve the computerroom and adjust its settings
-				var computerRoomDeferred = tools.umcpCommand('computerroom/room/acquire', {
-					room: values.room
-				}).then(function() {
+				preparationDeferred.then(lang.hitch(this, function() {
+					// acquire the computerroom
+					return tools.umcpCommand('computerroom/room/acquire', {
+						room: values.room
+					});
+				})).then(lang.hitch(this, function() {
+					// set room settings
 					return tools.umcpCommand('computerroom/settings/set', {
 						internetRule: values.internetRule,
 						customRule: values.customRule,
@@ -648,14 +654,12 @@ define([
 						exam: values.directory,
 						examEndTime: values.examEndTime
 					});
-				});
-
-				all([preparationDeferred, computerRoomDeferred]).then(lang.hitch(this, function() {
-					// open the computerroom and close the exam wizard
+				})).then(lang.hitch(this, function() {
+					// everything fine open the computerroom and close the exam wizard
 					this.standby(false);
 					this._gotoPage('success');
 				}), lang.hitch(this, function() {
-					// error case
+					// handle any kind of errors
 					this.standby(false);
 					this._gotoPage('error');
 				}));
