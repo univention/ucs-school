@@ -1,6 +1,6 @@
-ucs-school-italc (8.0.0-1) unstable; urgency=low
+ucs-school-italc (8.0.1-1) unstable; urgency=low
 
-  * added ItalcVncConnection::shutdownAndDestroyLater() (Bug #27534)
+  * removed ItalcVncConnection::shutdownAndDestroyLater() (Bug #27534)
 
  -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Mon, 27 May 2013 22:29:04 +0200
 
