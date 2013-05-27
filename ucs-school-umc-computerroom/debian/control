@@ -12,7 +12,8 @@ XS-Python-Version: 2.6
 
 Package: ucs-school-umc-computerroom
 Architecture: all
-Recommends: italc-windows
+Recommends: italc-windows,
+ ucs-school-umc-exam
 Replaces: ucs-school-umc-roomadmin
 Breaks: ucs-school-umc-roomadmin (<< 8.0.0)
 Depends: ${misc:Depends},
@@ -20,7 +21,6 @@ Depends: ${misc:Depends},
  univention-config-registry,
  python-univention-lib,
  ucs-school-umc-common,
- ucs-school-umc-exam,
  python-ucs-school,
  shell-ucs-school,
  python-univention-directory-manager,
