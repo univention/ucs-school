@@ -236,7 +236,7 @@ class ITALC_Computer( notifier.signals.Provider, QObject ):
 		self._computer.open()
 
 	def open( self ):
-		MODULE.info( 'Opening VNC connection' )
+		MODULE.info( 'Opening VNC connection to %s' % (self.ipAddress))
 		self._vnc = italc.ItalcVncConnection()
 		# transfer responsibility for cleaning self._vnc up from python garbarge collector to C++/QT (Bug #27534)
 		sip.transferto(self._vnc, None)
@@ -248,14 +248,16 @@ class ITALC_Computer( notifier.signals.Provider, QObject ):
 		self._vnc.stateChanged.connect( self._stateChanged )
 
 	def __del__(self):
-		if self._vnc:
-			# give a hint to C++/QT that the object is no longer in use and may be destroyed/cleaned up (Bug #27534)
-			self._vnc.shutdownAndDestroyLater()
+		self.close()
 
 	def close( self ):
-		if self._vnc:
-			# give a hint to C++/QT that the object is no longer in use and may be destroyed/cleaned up (Bug #27534)
-			self._vnc.shutdownAndDestroyLater()
+		MODULE.info('Closing VNC connection to %s' % (self.ipAddress))
+		if self._core:
+			# WARNING: destructor of iTalcCoreConnection calls iTalcVncConnection->stop() ; do not call the stop() function again!
+			del self._core
+			self._core = None
+		elif self._vnc:
+			self._vnc.stop()
 		self._vnc = None
 		self._state.set( ITALC_Computer.CONNECTION_STATES[ italc.ItalcVncConnection.Disconnected ] )
 
@@ -319,8 +321,8 @@ class ITALC_Computer( notifier.signals.Provider, QObject ):
 			self._username.reset()
 			self._homedir.reset()
 			self._flags.reset()
-			self.open()
 			self._resetUserInfoTimeout()
+			self.open()
 			return True
 		elif self._usernameLastUpdate + max(ITALC_CORE_TIMEOUT/2,1) < time.time():
 			MODULE.process( 'connection to %s seems to be dead for %.2fs' % (self.ipAddress, (time.time()-self._usernameLastUpdate)))
