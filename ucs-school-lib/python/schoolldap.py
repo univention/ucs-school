@@ -534,7 +534,7 @@ class SchoolBaseModule( Base ):
 	def classes( self, request, ldap_user_read = None, ldap_position = None, search_base = None ):
 		"""Returns a list of all classes of the given school"""
 		self.required_options( request, 'school' )
-		self.finished( request.id, self._groups( ldap_user_read, search_base.school, search_base.classes, request.options.get('pattern') ) )
+		self.finished( request.id, self._groups( ldap_user_read, search_base.school, search_base.workgroups, request.options.get('pattern') ) )
 
 	@LDAP_Connection()
 	def workgroups( self, request, ldap_user_read = None, ldap_position = None, search_base = None ):
@@ -546,8 +546,9 @@ class SchoolBaseModule( Base ):
 	def groups( self, request, ldap_user_read = None, ldap_position = None, search_base = None ):
 		"""Returns a list of all groups (classes and workgroups) of the given school"""
 		self.required_options( request, 'school' )
-		self._groups( ldap_user_read, search_base.school, search_base.classes, request.options.get('pattern') )
-		self.finished( request.id, self._groups( ldap_user_read, search_base.school, search_base.classes, request.options.get('pattern') ) )
+		# use as base the path for 'workgroups', as it incorporates workgroups and classes
+		# when searching with scope 'sub'
+		self.finished( request.id, self._groups( ldap_user_read, search_base.school, search_base.workgroups, request.options.get('pattern') ) )
 
 	@LDAP_Connection()
 	def rooms( self, request, ldap_user_read = None, ldap_position = None, search_base = None ):
