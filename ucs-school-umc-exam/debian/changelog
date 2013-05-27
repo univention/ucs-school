@@ -1,3 +1,9 @@
+ucs-school-umc-exam (1.0.12-2) unstable; urgency=low
+
+  * Bug #31158: fixed UCR registration information
+
+ -- Alexander Kläser <klaeser@univention.de>  Mon, 27 May 2013 19:24:24 +0200
+
 ucs-school-umc-exam (1.0.12-1) unstable; urgency=low
 
   * Bug #31158: fixed order of ucmp commands when initiating a new exam, fixed
