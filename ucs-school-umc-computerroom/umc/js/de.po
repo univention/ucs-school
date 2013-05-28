@@ -19,7 +19,7 @@ msgstr "%s Minuten verbleiben"
 
 #: umc/js/computerroom.js:1160
 msgid "1 minute left"
-msgstr "1 Minute verbleiben"
+msgstr "1 Minute verbleibt"
 
 #: umc/js/computerroom.js:315
 msgid "(Un)lock input devices"
