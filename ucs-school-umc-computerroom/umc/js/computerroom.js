@@ -80,7 +80,7 @@ define([
 		}
 
 		// check whether a computerroom module has already been opened
-		computerRoomModules = array.filter(app._tabContainer.getChildren(), function(i) {
+		var computerRoomModules = array.filter(app._tabContainer.getChildren(), function(i) {
 			return i.moduleID == 'computerroom';
 		});
 		if (!computerRoomModules.length) {
@@ -91,7 +91,7 @@ define([
 		// a computer room module is already open
 		if (!props) {
 			// no class properties have been specified -> focus the tab
-			app._tabContainer.selectChild(computerRoomModules[0])
+			app._tabContainer.selectChild(computerRoomModules[0]);
 			return [];
 		}
 

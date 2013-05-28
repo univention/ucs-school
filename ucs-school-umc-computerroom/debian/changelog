@@ -1,3 +1,9 @@
+ucs-school-umc-computerroom (3.0.10-1) unstable; urgency=low
+
+  * Bug #31454: fix typos
+
+ -- Florian Best <best@univention.de>  Tue, 28 May 2013 14:48:24 +0200
+
 ucs-school-umc-computerroom (3.0.9-1) unstable; urgency=low
 
   * Bug #31164: fix wording typo
