@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-exam-master\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2013-05-27 12:48+0200\n"
+"POT-Creation-Date: 2013-05-28 17:43+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -12,12 +12,12 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: umc/python/schoolexam-master/__init__.py:329
+#: umc/python/schoolexam-master/__init__.py:332
 #, python-format
 msgid "Could not remove exam user: %s"
 msgstr "Klassenarbeitsbenutzerkonto konnte nicht gelöscht werden: %s"
 
-#: umc/python/schoolexam-master/__init__.py:263
+#: umc/python/schoolexam-master/__init__.py:266
 #, python-format
 msgid ""
 "ERROR: Creation of exam user account failed\n"
@@ -49,7 +49,7 @@ msgstr ""
 "Klassenarbeitsgruppe konnte nicht angelegt werden\n"
 "%s"
 
-#: umc/python/schoolexam-master/__init__.py:366
+#: umc/python/schoolexam-master/__init__.py:369
 msgid "Invalid Room DN"
 msgstr "Ungültiger Raum-DN"
 
@@ -67,8 +67,8 @@ msgstr ""
 "Gewünschter Klassenarbeitsbenutzername %s ist nicht erlaubtgemäß des Objekts "
 "settings/prohibited_username %s"
 
-#: umc/python/schoolexam-master/__init__.py:346
-#: umc/python/schoolexam-master/__init__.py:390
+#: umc/python/schoolexam-master/__init__.py:349
+#: umc/python/schoolexam-master/__init__.py:393
 #, python-format
 msgid "Room is not below a school OU: %s"
 msgstr "Der Raum liegt nicht unter einer Schul-OU: %s"
@@ -79,7 +79,7 @@ msgid "The exam account does already exist for: %s"
 msgstr "Der Klassenarbeitsbenutzername %s existiert schon"
 
 #: umc/python/schoolexam-master/__init__.py:138
-#: umc/python/schoolexam-master/__init__.py:310
+#: umc/python/schoolexam-master/__init__.py:313
 #, python-format
 msgid "User is not below a school OU: %s"
 msgstr "Benutzerkonto liegt nicht unter einer Schul-OU: %s"

@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-exam\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2013-05-27 19:12+0200\n"
+"POT-Creation-Date: 2013-05-28 17:43+0200\n"
 "PO-Revision-Date: 2013-05-23 22:19+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -71,6 +71,7 @@ msgstr ""
 "Arbeitsgruppen, die an der Klassenarbeit teilnehmen sollen.</p>"
 
 #: umc/js/schoolexam.js:340
+#, python-format
 msgid ""
 "<p>The preparation of the exam was successful. A summary of the exam "
 "properties is displayed below.<p><p>As next step, it is necessary to reboot "
@@ -231,7 +232,9 @@ msgstr "Eigene Internetregeln"
 msgid ""
 "Please confirm to reboot all computers marked as <i>Reboot necessary</i> "
 "immedialtely."
-msgstr "Bitte bestätigen Sie den umgehenden Neustart aller Rechner, die mit <i>Neustart notwendig</i> markiert sind."
+msgstr ""
+"Bitte bestätigen Sie den umgehenden Neustart aller Rechner, die mit "
+"<i>Neustart notwendig</i> markiert sind."
 
 #: umc/js/schoolexam.js:236
 msgid ""
@@ -270,7 +273,7 @@ msgstr "Neustart notwendig"
 msgid "Reboot student computers"
 msgstr "Schülerrechner neustarten"
 
-#: umc/js/schoolexam.js:697
+#: umc/js/schoolexam.js:681
 msgid "Rebooting computers"
 msgstr "Rechner neustarten"
 

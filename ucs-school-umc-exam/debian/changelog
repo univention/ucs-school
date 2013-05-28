@@ -1,3 +1,9 @@
+ucs-school-umc-exam (1.0.18-1) unstable; urgency=low
+
+  * Bug #31158: adjusted translations
+
+ -- Alexander Kläser <klaeser@univention.de>  Tue, 28 May 2013 17:43:59 +0200
+
 ucs-school-umc-exam (1.0.17-1) unstable; urgency=low
 
   * Bug #31158: moved adjustment of room settings into python module
