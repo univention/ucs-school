@@ -113,7 +113,7 @@ auf das Netzwerk warten</filename>. Diese Funktion ist in den Betriebssystemvers
 
 
 		<section>
-			<title>Zugriff auf USB-Speicher und Wechselmedien Einschränken</title>
+			<title>Zugriff auf USB-Speicher und Wechselmedien einschränken</title>
 			<para>
 				Zur Einschränkung des Zugriffs auf USB-Speicher und Wechselmedien sind je nach Windowsversion zwei Fälle zu beachten, einerseits die Einschränkung der Benutzung bereits installierter Gerätetreiber und andererseits die Einschränkung der Installation neuer Gerätetreiber.
 			</para>
@@ -129,7 +129,7 @@ auf das Netzwerk warten</filename>. Diese Funktion ist in den Betriebssystemvers
 				</itemizedlist>
 			</note>
 			<section>
-				<title>Zugriff auf USB-Speicher an Windows XP Einschränken</title>
+				<title>Zugriff auf USB-Speicher an Windows XP einschränken</title>
 				<para>
 					Diese Richtlinie wird über eine Administrative Vorlage (ADMX) definiert, die in Microsoft Knowledgebase Artikel 555324.
 					<footnote><para><ulink url="http://support.microsoft.com/kb/555324"/></para></footnote> beschrieben ist.
@@ -145,7 +145,7 @@ auf das Netzwerk warten</filename>. Diese Funktion ist in den Betriebssystemvers
 							Im Gruppenrichtlinienverwaltungseditor wird der folgende Zweig geöffnet:
 						</simpara>
 						<simpara>
-							<filename>Computerkonfiguration > Richtlinien > Administrative Vorlagen > Spezielle Einstellungen > Treiber Einschränken</filename>
+							<filename>Computerkonfiguration > Richtlinien > Administrative Vorlagen > Spezielle Einstellungen > Treiber einschränken</filename>
 						</simpara>
 					</listitem>
 					<listitem>
@@ -159,7 +159,7 @@ auf das Netzwerk warten</filename>. Diese Funktion ist in den Betriebssystemvers
 			<section>
 				<title>Installation neuer Gerätetreiber für USB-Speicher an Windows XP verbieten</title>
 				<para>
-					Diese Richtlinie definiert eingeschränkte Dateisystemberechtigungen gemäss Microsoft Knowledgebase Artikel 823732
+					Diese Richtlinie definiert eingeschränkte Dateisystemberechtigungen gemäß Microsoft Knowledgebase Artikel 823732
 					<footnote><para><ulink url="http://support.microsoft.com/kb/823732"/></para></footnote>.
 				</para>
 				<itemizedlist>
@@ -201,7 +201,7 @@ auf das Netzwerk warten</filename>. Diese Funktion ist in den Betriebssystemvers
 				</itemizedlist>
 			</section>
 			<section>
-				<title>Zugriff auf USB-Speicher an Windows 7 Einschränken</title>
+				<title>Zugriff auf USB-Speicher an Windows 7 einschränken</title>
 				<itemizedlist>
 					<listitem>
 						In der Gruppenrichtlinienverwaltung wird ein neues Gruppenrichtlinienobjekt angelegt und/oder eine existierende zur Bearbeitung geöffnet.
@@ -221,7 +221,7 @@ auf das Netzwerk warten</filename>. Diese Funktion ist in den Betriebssystemvers
 						Die Richtlinie <emphasis>Installation von Geräten verhindern, die nicht in anderen Richtlinien beschrieben sind</emphasis> schaltet die Richtlinienlogik auf Whitelisting um.
 					</listitem>
 					<listitem>
-						Die Richtlinie <emphasis>Administratoren das Ausserkraftsetzen der Richtlinien unter ... erlauben</emphasis> erlaubt Mitgliedern der Administratorengruppe die getroffenen Einschränkungen zu umgehen.
+						Die Richtlinie <emphasis>Administratoren das Außerkraftsetzen der Richtlinien unter ... erlauben</emphasis> erlaubt Mitgliedern der Administratorengruppe die getroffenen Einschränkungen zu umgehen.
 					</listitem>
 				</itemizedlist>
 				<note>
@@ -231,7 +231,7 @@ auf das Netzwerk warten</filename>. Diese Funktion ist in den Betriebssystemvers
 			<section>
 				<title>Installation neuer Gerätetreiber für USB-Speicher an Windows 7 Clients verbieten</title>
 				<para>
-					Zusätzliche Einschränkungen zur Installation von Gerätetreibern sind auch unter Windows 7 möglich, die Einstellungsmöglichkeiten bieten eine grössere Kontrolle, setzen aber auch konkrete Erfahrungen mit den im Einzelfall eingesetzten Geräten voraus, daher ist dieser Abschnitt nur als Einstiegshilfe zu verstehen. Die folgende Einstellung würde die zusätzliche Installation jeglicher Treiber für Wechselgeräte deaktivieren. Es kann hier z.B. dann zusätzlich sinnvoll sein, Administratoren von dieser Einschränkung auszunehmen.
+					Zusätzliche Einschränkungen zur Installation von Gerätetreibern sind auch unter Windows 7 möglich, die Einstellungsmöglichkeiten bieten eine größere Kontrolle, setzen aber auch konkrete Erfahrungen mit den im Einzelfall eingesetzten Geräten voraus, daher ist dieser Abschnitt nur als Einstiegshilfe zu verstehen. Die folgende Einstellung würde die zusätzliche Installation jeglicher Treiber für Wechselgeräte deaktivieren. Es kann hier z.B. dann zusätzlich sinnvoll sein, Administratoren von dieser Einschränkung auszunehmen.
 				</para>
 				<itemizedlist>
 					<listitem>
@@ -423,7 +423,7 @@ Versionen, wie z.B. Windows 8 stellt Microsoft aktualisierte Administrative Vorl
 		<section>
 			<title>Zugriff auf bestimmte Programme einschränken</title>
 			<note>
-				Die Liste der hier erwähnten Einstellungen erhebt nicht den Anspruch der Vollständigkeit. Es ist notwendig die Einstellungen entsprechend der lokalen Gegebenheiten zu testen. Insbesondere sollte folgende Microsoft-Dokumentation beachtet werden:
+				Die Liste der hier erwähnten Einstellungen erhebt nicht den Anspruch der Vollständigkeit. Es ist notwendig die Einstellungen entsprechend der lokalen Gegebenheiten zu testen. Insbesondere sollten folgende Microsoft-Dokumentationen beachtet werden:
 				<itemizedlist>
 					<listitem>
 						<ulink url="http://technet.microsoft.com/en-us/library/bb457006.aspx#EGAA"/>.
@@ -518,7 +518,7 @@ Versionen, wie z.B. Windows 8 stellt Microsoft aktualisierte Administrative Vorl
 						Im rechten Fensterteil <emphasis>Erzwingen</emphasis> öffnen,
 					</listitem>
 					<listitem>
-						Einstellung <emphasis>Alle Benutzer ausser den lokalen Administratoren</emphasis> auswählen und mit <emphasis>OK</emphasis> bestätigen.
+						Einstellung <emphasis>Alle Benutzer außer den lokalen Administratoren</emphasis> auswählen und mit <emphasis>OK</emphasis> bestätigen.
 					</listitem>
 					<listitem>
 						Im rechten Fensterteil <emphasis>Sicherheitsstufen</emphasis> öffnen,
