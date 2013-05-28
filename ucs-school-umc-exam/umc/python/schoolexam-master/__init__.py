@@ -231,6 +231,9 @@ class Instance( SchoolBaseModule ):
 					value = [exam_user_uid]
 				elif key == 'homeDirectory':
 					value = ["/home/%s" % exam_user_uid]
+				elif key == 'sambaHomePath':
+					user_orig_sambaHomePath = value[0]
+					value = [user_orig_sambaHomePath.replace(user_orig['username'], exam_user_uid)]
 				elif key == 'krb5PrincipalName':
 					user_orig_krb5PrincipalName = value[0]
 					value = ["%s%s" % (exam_user_uid, user_orig_krb5PrincipalName[user_orig_krb5PrincipalName.find("@"):])]

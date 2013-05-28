@@ -1,3 +1,9 @@
+ucs-school-umc-exam (1.0.16-1) unstable; urgency=low
+
+  * Fix sambaHomePath for exam users (Bug #31537)
+
+ -- Arvid Requate <requate@univention.de>  Tue, 28 May 2013 13:31:52 +0200
+
 ucs-school-umc-exam (1.0.15-1) unstable; urgency=low
 
   * Bug #31156: remove hook script
