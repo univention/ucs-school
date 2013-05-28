@@ -14,8 +14,8 @@ msgstr ""
 
 #: umc/js/computerroom.js:1160
 #, python-format
-msgid "%s Minutes left"
-msgstr "noch %s Minuten"
+msgid "%s minutes left"
+msgstr "%s Minuten verbleiben"
 
 #: umc/js/computerroom.js:315
 msgid "(Un)lock input devices"
@@ -157,7 +157,7 @@ msgid "Defines restriction for the share access"
 msgstr "Definiert Einschränkungen für den Zugriff auf Freigaben"
 
 #: umc/js/computerroom.js:824
-msgid "Don't remind anymore"
+msgid "Do not remind again"
 msgstr "Nicht mehr erinnern"
 
 #: umc/js/computerroom.js:556
@@ -296,7 +296,7 @@ msgstr "Erinnerung"
 
 #: umc/js/computerroom.js:813
 msgid "Remind again"
-msgstr "erneut erinnern"
+msgstr "Erneut erinnern"
 
 #: umc/js/computerroom/SettingsDialog.js:138
 msgid "Reset"

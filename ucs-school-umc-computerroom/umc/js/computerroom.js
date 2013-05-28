@@ -860,7 +860,7 @@ define([
 				callback: lang.hitch(this, '_finishExam')
 			}, {
 				name: 'dont_remember',
-				label: _("Don't remind anymore"),
+				label: _("Do not remind again"),
 				callback: lang.hitch(this, function() {
 					window.clearTimeout(this._examEndTimer);
 					this._examEndTimer = null;
@@ -1199,7 +1199,7 @@ define([
 					var delta = new Date(now.getFullYear(), now.getMonth(), now.getDate(), endTime[0], endTime[1], 0, 0) - now;
 					this._headButtons.examEndTime.set('style', (delta < 5*1000*60) ? 'color: red;' : 'color: inherit;');
 					if (delta > 0) {
-						this._headButtons.examEndTime.set('content', _('%s Minutes left', String(1+(delta / 1000 / 60)).split('.')[0]));
+						this._headButtons.examEndTime.set('content', _('%s minutes left', String(1+(delta / 1000 / 60)).split('.')[0]));
 					} else {
 						this._headButtons.examEndTime.set('content', _('Time is up'));
 					}

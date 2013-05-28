@@ -1,3 +1,9 @@
+ucs-school-umc-computerroom (3.0.8-1) unstable; urgency=low
+
+  * Bug #31164: typos
+
+ -- Alexander Kläser <klaeser@univention.de>  Tue, 28 May 2013 14:26:31 +0200
+
 ucs-school-umc-computerroom (3.0.7-1) unstable; urgency=low
 
   * also refresh ItalcCoreConnection (Bug #27534)
