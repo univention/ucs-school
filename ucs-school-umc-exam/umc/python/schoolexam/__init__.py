@@ -130,16 +130,17 @@ class Instance( SchoolBaseModule ):
 
 	@LDAP_Connection()
 	def start_exam(self, request, ldap_user_read = None, ldap_position = None, search_base = None):
-		self.required_options(request, 'recipients', 'room')
+		self.required_options(request, 'recipients', 'room', 'internetRule', 'shareMode', 'name', 'directory', 'examEndTime')
 
 		# reset the current progress state
 		# steps:
-		#   5 -> for preparing exam room
+		#   5  -> for preparing exam room
 		#   25 -> for cloning users
 		#   25 -> for each replicated users + copy of the profile directory
-		#   25 -> distribution of exam files
+		#   20 -> distribution of exam files
+		#   10  -> setting room properties
 		progress = self._progress_state
-		progress.reset(80)
+		progress.reset(85)
 		progress.component(_('Initializing'))
 
 		# create that holds a reference to project, otherwise _thread() cannot
@@ -269,6 +270,8 @@ class Instance( SchoolBaseModule ):
 				# wait a second
 				time.sleep(1)
 
+			progress.add_steps(percentPerUser)
+
 			if openAttempts <= 0:
 				MODULE.error('replication timeout - %s user objects missing: %r ' % ((len(examUsers) - len(usersReplicated)), (examUsers - usersReplicated)))
 				msg = _('Replication timeout: could not create all exam users')
@@ -294,7 +297,32 @@ class Instance( SchoolBaseModule ):
 			progress.component(_('Distributing exam files'))
 			progress.info('')
 			my.project.distribute()
-			progress.add_steps(25)
+			progress.add_steps(20)
+
+			# prepare room settings via UMCP...
+			#   first step: acquire room
+			#   second step: adjust room settings
+			progress.component(_('Prepare room settings'))
+			userConnection = UMCConnection('localhost', username=self._username, password=self._password)
+			if not userConnection:
+				MODULE.error('Could not connect to UMC on local server: %s' % e)
+				raise UMC_CommandError(_('Could not connect to local UMC server.'))
+			MODULE.info('Acquire room: %(room)s' % opts)
+			userConnection.request('computerroom/room/acquire', dict(
+				room=opts.get('room')
+			))
+			progress.add_steps(5)
+			MODULE.info('Adjust room settings:\n%s' % '\n'.join([ '  %s=%s' % (k, v) for k, v in opts.iteritems() ]))
+			userConnection.request('computerroom/settings/set', dict(
+				internetRule=opts.get('internetRule'),
+				customRule=opts.get('customRule'),
+				shareMode=opts.get('shareMode'),
+				printMode='default',
+				examDescription=opts.get('name'),
+				exam=opts.get('directory'),
+				examEndTime=opts.get('examEndTime'),
+			))
+			progress.add_steps(5)
 
 		def _finished(thread, result):
 			# mark the progress state as finished

@@ -639,22 +639,6 @@ define([
 				);
 
 				preparationDeferred.then(lang.hitch(this, function() {
-					// acquire the computerroom
-					return tools.umcpCommand('computerroom/room/acquire', {
-						room: values.room
-					});
-				})).then(lang.hitch(this, function() {
-					// set room settings
-					return tools.umcpCommand('computerroom/settings/set', {
-						internetRule: values.internetRule,
-						customRule: values.customRule,
-						shareMode: values.shareMode,
-						printMode: 'default',
-						examDescription: values.name,
-						exam: values.directory,
-						examEndTime: values.examEndTime
-					});
-				})).then(lang.hitch(this, function() {
 					// everything fine open the computerroom and close the exam wizard
 					this.standby(false);
 					this._gotoPage('success');
