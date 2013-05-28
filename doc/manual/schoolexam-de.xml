@@ -56,7 +56,7 @@ auf das Netzwerk warten</filename>. Diese Funktion ist in den Betriebssystemvers
 						Auf dem geöffneten Reiter <emphasis>Bereich</emphasis> im Abschnitt <emphasis>Sicherheitsfilterung</emphasis> die Schaltfläche <emphasis>Hinzufügen</emphasis> betätigen,
 					</listitem>
 					<listitem>
-						In das Eingabefeld <emphasis>Geben Sie die zu verwendenden Objektnamen ein</emphasis> den Namen der Klassenarbeitsgruppe, z.B. OUschule1-Klassenarbeit eintragen und den Dialog mit <emphasis>OK</emphasis> schliessen.
+						In das Eingabefeld <emphasis>Geben Sie die zu verwendenden Objektnamen ein</emphasis> den Namen der Klassenarbeitsgruppe, z.B. OUschule1-Klassenarbeit eintragen und den Dialog mit <emphasis>OK</emphasis> schließen.
 					</listitem>
 					<listitem>
 						Auf dem geöffneten Reiter <emphasis>Bereich</emphasis> im Abschnitt <emphasis>Sicherheitsfilterung</emphasis> die Gruppe <emphasis>Authenticated Users</emphasis> auswählen und die Schaltfläche <emphasis>Entfernen</emphasis> betätigen.
@@ -87,10 +87,10 @@ auf das Netzwerk warten</filename>. Diese Funktion ist in den Betriebssystemvers
 						Im neu geöffneten Dialog die Schaltfläche <emphasis>Durchsuchen</emphasis> betätigen,
 					</listitem>
 					<listitem>
-						In das Eingabefeld <emphasis>Geben Sie die zu verwendenden Objektnamen ein</emphasis> den Namen <emphasis>Administratoren</emphasis> eintragen und den Dialog mit <emphasis>OK</emphasis> schliessen.
+						In das Eingabefeld <emphasis>Geben Sie die zu verwendenden Objektnamen ein</emphasis> den Namen <emphasis>Administratoren</emphasis> eintragen und den Dialog mit <emphasis>OK</emphasis> schließen.
 					</listitem>
 					<listitem>
-						Den Dialog <emphasis>Benutzer oder Gruppe hinzufügen</emphasis> ebenfalls mit <emphasis>OK</emphasis> schliessen.
+						Den Dialog <emphasis>Benutzer oder Gruppe hinzufügen</emphasis> ebenfalls mit <emphasis>OK</emphasis> schließen.
 					</listitem>
 					<listitem>
 						Erneut die Schaltfläche <emphasis>Benutzer oder Gruppe hinzufügen</emphasis> betätigen,
@@ -99,13 +99,13 @@ auf das Netzwerk warten</filename>. Diese Funktion ist in den Betriebssystemvers
 						Im neu geöffneten Dialog die Schaltfläche <emphasis>Durchsuchen</emphasis> betätigen,
 					</listitem>
 					<listitem>
-						In das Eingabefeld <emphasis>Geben Sie die zu verwendenden Objektnamen ein</emphasis> den Namen der Klassenarbeitsgruppe, z.B. OUschule1-Klassenarbeit eintragen und den Dialog mit <emphasis>OK</emphasis> schliessen.
+						In das Eingabefeld <emphasis>Geben Sie die zu verwendenden Objektnamen ein</emphasis> den Namen der Klassenarbeitsgruppe, z.B. OUschule1-Klassenarbeit eintragen und den Dialog mit <emphasis>OK</emphasis> schließen.
 					</listitem>
 					<listitem>
-						Den Dialog <emphasis>Benutzer oder Gruppe hinzufügen</emphasis> ebenfalls mit <emphasis>OK</emphasis> schliessen.
+						Den Dialog <emphasis>Benutzer oder Gruppe hinzufügen</emphasis> ebenfalls mit <emphasis>OK</emphasis> schließen.
 					</listitem>
 					<listitem>
-						Den Richtlinien-Dialog <emphasis>Eigenschaften von Lokal anmelden zulassen</emphasis> mit <emphasis>OK</emphasis> schliessen.
+						Den Richtlinien-Dialog <emphasis>Eigenschaften von Lokal anmelden zulassen</emphasis> mit <emphasis>OK</emphasis> schließen.
 					</listitem>
 				</itemizedlist>
 			</section>
@@ -187,13 +187,13 @@ auf das Netzwerk warten</filename>. Diese Funktion ist in den Betriebssystemvers
 						in der darunter angezeigten Liste <emphasis>Berechtigungen für ...</emphasis> in der Zeile <emphasis>Vollzugriff</emphasis>, Spalte <emphasis>Verweigern</emphasis> ein Häkchen setzen und mit <emphasis>OK</emphasis> bestätigen.
 					</listitem>
 					<listitem>
-						Den Dialog <emphasis>Datenbanksicherheit für ...</emphasis> mit <emphasis>OK</emphasis> schliessen.
+						Den Dialog <emphasis>Datenbanksicherheit für ...</emphasis> mit <emphasis>OK</emphasis> schließen.
 					</listitem>
 					<listitem>
 						Das neue Dialogfenster <emphasis>Windows-Sicherheit</emphasis> mit <emphasis>Ja</emphasis> bestätigen.
 					</listitem>
 					<listitem>
-						Das neue Dialogfenster <emphasis>Objekt hinzufügen</emphasis> mit <emphasis>OK</emphasis> schliessen.
+						Das neue Dialogfenster <emphasis>Objekt hinzufügen</emphasis> mit <emphasis>OK</emphasis> schließen.
 					</listitem>
 					<listitem>
 						Analog sollten Einstellungen für <filename>%SystemRoot%\inf\usbstor.pnf</filename> und <filename>%SystemRoot%\system32\drivers\usbstor.sys</filename> definiert werden.
@@ -389,7 +389,7 @@ Versionen, wie z.B. Windows 8 stellt Microsoft aktualisierte Administrative Vorl
 						Im Dialog <emphasis>Eigenschaften von Starten</emphasis> auf dem Reiter <emphasis>Skripts</emphasis> die Schaltfläche <emphasis>Dateien anzeigen</emphasis> betätigen,
 					</listitem>
 					<listitem>
-						In das vom automatisch geöffneten Windows Explorer angezeigte (leere) Verzeichnis (<filename>Machine\Scripts\Startup</filename> im betreffenden GPO-Verzeichis) die Datei <filename>firefox_startup.vbs</filename> kopieren und das Explorer-Fenster schliessen.
+						In das vom automatisch geöffneten Windows Explorer angezeigte (leere) Verzeichnis (<filename>Machine\Scripts\Startup</filename> im betreffenden GPO-Verzeichis) die Datei <filename>firefox_startup.vbs</filename> kopieren und das Explorer-Fenster schließen.
 					</listitem>
 					<listitem>
 						Im Dialog <emphasis>Eigenschaften von Starten</emphasis> die Schaltfläche <emphasis>Hinzufügen</emphasis> betätigen,
@@ -407,7 +407,7 @@ Versionen, wie z.B. Windows 8 stellt Microsoft aktualisierte Administrative Vorl
 						Im Dialog <emphasis>Eigenschaften von Herunterfahren</emphasis> die Schaltfläche <emphasis>Hinzufügen</emphasis> betätigen,
 					</listitem>
 					<listitem>
-						In das vom automatisch geöffneten Windows Explorer angezeigte (leere) Verzeichnis (<filename>Machine\Scripts\Shutdown</filename> im betreffenden GPO-Verzeichis) die Datei <filename>firefox_shutdown.vbs</filename> kopieren und das Explorer-Fenster schliessen.
+						In das vom automatisch geöffneten Windows Explorer angezeigte (leere) Verzeichnis (<filename>Machine\Scripts\Shutdown</filename> im betreffenden GPO-Verzeichis) die Datei <filename>firefox_shutdown.vbs</filename> kopieren und das Explorer-Fenster schließen.
 					</listitem>
 					<listitem>
 						Im neu geöffneten Dialog <emphasis>Hinzufügen eines Skripts</emphasis> neben dem Feld <emphasis>Skriptname</emphasis> den Namen <filename>firefox_shutdown.vbs</filename> eintragen und Dialog mit <emphasis>OK</emphasis> bestätigen.
