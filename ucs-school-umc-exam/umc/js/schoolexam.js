@@ -233,7 +233,7 @@ define([
 			}, {
 				name: 'roomSettings',
 				headerText: _('Computer room settings'),
-				helpText: _('Please select the access restrictions to internet as well as to shares. These settings can also be adjusted during the exam via the room settings in the module <i>Computer room</i>. The participating students are not able to acces the home directories during the exam.'),
+				helpText: _('Please select the access restrictions to internet as well as to shares. These settings can also be adjusted during the exam via the room settings in the module <i>Computer room</i>. The participating students are not able to access the home directories during the exam.'),
 				widgets: [{
 					type: ComboBox,
 					name: 'shareMode',
@@ -292,7 +292,7 @@ define([
 			}, {
 				name: 'reboot',
 				headerText: _('Reboot student computers'),
-				helpText: _('<p>For the correct functioning of the exam mode, it is important that all student computers in the computer room are rebooted. The listed computers can be automatically rebooted by pressing the button <i>Next</i>.</p><p><b>Attention:</b> No warning will be displayed to currently logged in users! The reboot will be executed immediatley.</p>')
+				helpText: _('<p>For the correct functioning of the exam mode, it is important that all student computers in the computer room are rebooted. The listed computers can be automatically rebooted by pressing the button <i>Next</i>.</p><p><b>Attention:</b> No warning will be displayed to currently logged in users! The reboot will be executed immedialtely.</p>')
 			}, {
 				name: 'finished',
 				headerText: _('Preparation finished'),
@@ -514,7 +514,7 @@ define([
 				}
 
 				// ask user whether or not computers are rebooted
-				next = dialog.confirm(_('Please confirm to reboot all computers marked as <i>Reboot necessary</i> immediatley.'), [{
+				next = dialog.confirm(_('Please confirm to reboot all computers marked as <i>Reboot necessary</i> immedialtely.'), [{
 					name: 'cancel',
 					label: _('Cancel'),
 					'default': true
