@@ -43,9 +43,9 @@ if [ -n "$profile_path" ]; then
 	grp="$(getent passwd "$username" |  cut -d ':' -f 4)"
 
 	# copy windows profiles
-	rsync -r --delete "$profile_path" "$homedir/windows_profiles"
+	rsync -r --delete "$profile_path/" "$homedir/windows-profiles"
 	chown "$username":"$grp" "$homedir"
-	chown -R "$username":"$grp" "$homedir/windows_profiles"
+	chown -R "$username":"$grp" "$homedir/windows-profiles"
 fi
 
 exit 0
