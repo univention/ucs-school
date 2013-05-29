@@ -47,9 +47,6 @@ auf das Netzwerk warten</filename>. Diese Funktion ist in den Betriebssystemvers
 						In der Gruppenrichtlinienverwaltung wird ein neues Gruppenrichtlinienobjekt angelegt und/oder eine existierende zur Bearbeitung geöffnet.
 					</listitem>
 					<listitem>
-						Richtlinie <emphasis>Lokal anmelden zulassen</emphasis> öffnen
-					</listitem>
-					<listitem>
 						In der Baumdarstellung der Gruppenrichtlinienverwaltung die Gruppenrichtlinie anklicken,
 					</listitem>
 					<listitem>
@@ -109,6 +106,9 @@ auf das Netzwerk warten</filename>. Diese Funktion ist in den Betriebssystemvers
 					</listitem>
 				</itemizedlist>
 			</section>
+			<para>
+			Damit die Gruppenrichtlinieneinstellungen von Windows-Arbeitsplatzrechnern ausgewertet werden, ist es notwendig, einen Bezug zwischen dem angelegten Gruppenrichtlinienobjekt und den Rechnerobjekten im Samba-Verzeichnisdienst herzustellen. Um dies zu erreichen kann das Gruppenrichtlinienobjekt mit einer Organisationseinheit (OU) verknüpft werden, die den Rechnerobjekten im Verzeichnisbaum übergeordnet ist, in der Regel mit der Schul-OU.
+			</para>
 		</section>
 
 
