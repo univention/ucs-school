@@ -51,9 +51,6 @@ define([
 		_firstUpdate: 0,
 		_updateTimer: null,
 
-		// flag that indicates when the monitoring has already been executed
-		_monitoringDone: false,
-
 		style: 'height: 250px; width: 100%;',
 		cacheRowWidgets: false,
 
@@ -78,10 +75,20 @@ define([
 				})
 			}, {
 				name: 'connection',
-				label: _('Connection'),
-				formatter: function(value) {
-					return (value == 'connected') ? _('Reboot necessary') : _('Not connected / powered down')
-				}
+				label: _('Reboot'),
+				formatter: lang.hitch(this, function(value, rowIndex) {
+					var item = this._grid.getItem(rowIndex);
+					if (item.teacher[0]) {
+						// indicate that a reboot is not necessary for teacher computers
+						return _('No reboot necessary');
+					}
+					if (value == 'connected') {
+						// connected machine
+						return _('Reboot necessary');
+					}
+					// no connection
+					return _('Not connected / powered down');
+				})
 			}, {
 				name: 'user',
 				label: _('User')
@@ -89,11 +96,6 @@ define([
 		},
 
 		monitorRoom: function(room) {
-			// monitoring is only one time possible
-			if (this._monitoringDone) {
-				return;
-			}
-
 			// save room
 			this.set('room', room);
 
@@ -114,7 +116,6 @@ define([
 		onMonitoringDone: function() {
 			// event stub
 			this.standby(false);
-			this._monitoringDone = true;
 		},
 
 		getComputersForReboot: function() {

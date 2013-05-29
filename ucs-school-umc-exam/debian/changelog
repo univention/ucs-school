@@ -1,3 +1,11 @@
+ucs-school-umc-exam (1.0.19-1) unstable; urgency=low
+
+  * Bug #31158: adjust label of teacher computers in grid, enhance labeling of
+    buttons/columns, make sure monitoring is re-evaluated when going on the
+    reboot page again
+
+ -- Alexander Kläser <klaeser@univention.de>  Wed, 29 May 2013 16:07:53 +0200
+
 ucs-school-umc-exam (1.0.18-5) unstable; urgency=low
 
   * adjust UCR variable description (Bug #31566)

@@ -423,6 +423,11 @@ define([
 				var values = this.getValues();
 				this._grid.monitorRoom(values.room);
 
+				// disable the next button and reset its label
+				var button = this.getPage('reboot')._footerButtons.next;
+				button.set('disabled', true);
+				button.set('label', _('Next'));
+
 				// call the grid's resize method (decoupled via setTimeout)
 				window.setTimeout(lang.hitch(this, function() {
 					this._grid.resize();
@@ -474,6 +479,14 @@ define([
 			// hook when monitoring of the computers has been finished
 			var button = this.getPage('reboot')._footerButtons.next;
 			this._grid.on('monitoringDone', lang.hitch(this, function() {
+				// adjust button label and enable it
+				var computers = this._grid.getComputersForReboot();
+				if (computers.length) {
+					button.set('label', _('Reboot computers'));
+				}
+				else {
+					button.set('label', _('Next'));
+				}
 				button.set('disabled', false);
 			}));
 		},
@@ -516,11 +529,11 @@ define([
 				// ask user whether or not computers are rebooted
 				next = dialog.confirm(_('Please confirm to reboot all computers marked as <i>Reboot necessary</i> immedialtely.'), [{
 					name: 'cancel',
-					label: _('Cancel'),
-					'default': true
+					label: _('Continue without reboot')
 				}, {
 					name: 'reboot',
-					label: _('Reboot computers')
+					label: _('Reboot computers'),
+					'default': true
 				}]).then(lang.hitch(this, function(choice) {
 					if (choice == 'cancel') {
 						// cancel reboot action -> go directly to finish page
