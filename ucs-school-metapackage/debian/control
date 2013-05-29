@@ -7,6 +7,7 @@ Standards-Version: 3.8.2
 
 Package: ucs-school-master
 Architecture: all
+Conflicts: ucs-school-singlemaster
 Depends: univention-ldap-server (>= 8.0.77-4),
  univention-ldap-acl-master (>= 8.0.77-4),
  univention-directory-manager-tools (>= 7.0.234-1),
@@ -88,6 +89,7 @@ Description: UCS@School meta package for UCS DC Slave System
 
 Package: ucs-school-singlemaster
 Architecture: all
+Conflicts: ucs-school-master
 Depends: univention-ldap-server (>= 8.0.77-4),
  univention-ldap-acl-master (>= 8.0.77-4),
  univention-directory-manager-tools (>= 7.0.234-1),

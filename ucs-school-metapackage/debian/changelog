@@ -1,3 +1,10 @@
+ucs-school-metapackage (6.0.1-2) unstable; urgency=low
+
+  * added conflicts between ucs-school-master and ucs-school-singlemaster
+    (Bug #30338)
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Wed, 29 May 2013 14:50:53 +0200
+
 ucs-school-metapackage (6.0.1-1) unstable; urgency=low
 
   * Set samba4/sysvol/sync/setfacl/AU=false (Bug #31272)
