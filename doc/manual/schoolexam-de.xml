@@ -215,17 +215,11 @@ auf das Netzwerk warten</filename>. Diese Funktion ist in den Betriebssystemvers
 						</simpara>
 					</listitem>
 					<listitem>
-						Hier kann die Installation von Treibern für bestimmte Geräteklassen, Geräte-IDs oder alle Wechselgeräte eingeschränkt werden.
-					</listitem>
-					<listitem>
-						Die Richtlinie <emphasis>Installation von Geräten verhindern, die nicht in anderen Richtlinien beschrieben sind</emphasis> schaltet die Richtlinienlogik auf Whitelisting um.
-					</listitem>
-					<listitem>
-						Die Richtlinie <emphasis>Administratoren das Außerkraftsetzen der Richtlinien unter ... erlauben</emphasis> erlaubt Mitgliedern der Administratorengruppe die getroffenen Einschränkungen zu umgehen.
+						Z.B. Richtlinie <emphasis>Wechseldatenträger: Lesezugriff verweigern</emphasis> öffnen, <emphasis>Aktiviert</emphasis> auswählen und mit <emphasis>OK</emphasis> bestätigen.
 					</listitem>
 				</itemizedlist>
 				<note>
-					Weitere Informationen zu diesem Thema liefert z.B. <ulink url="http://technet.microsoft.com/de-de/library/cc731387%28v=ws.10%29.aspx"/>.
+					Weitere Informationen zu diesem Thema liefert z.B. <ulink url="http://technet.microsoft.com/de-de/library/cc771759%28v=ws.10%29.aspx"/>.
 				</note>
 			</section>
 			<section>
@@ -246,7 +240,16 @@ auf das Netzwerk warten</filename>. Diese Funktion ist in den Betriebssystemvers
 						</simpara>
 					</listitem>
 					<listitem>
+						Hier kann die Installation von Treibern für bestimmte Geräteklassen, Geräte-IDs oder alle Wechselgeräte eingeschränkt werden.
+					</listitem>
+					<listitem>
 						Richtlinie <emphasis>Installation von Wechselgeräten verhindern</emphasis> öffnen, <emphasis>Aktiviert</emphasis> auswählen und mit <emphasis>OK</emphasis> bestätigen.
+					</listitem>
+					<listitem>
+						Die Richtlinie <emphasis>Administratoren das Außerkraftsetzen der Richtlinien unter ... erlauben</emphasis> erlaubt Mitgliedern der Administratorengruppe die getroffenen Einschränkungen zu umgehen.
+					</listitem>
+					<listitem>
+						Noch stärkere Restriktionen sind möglich, indem man die Ausschlusslogik auf Whitelisting umstellt. Dies kann über die Richtlinie <emphasis>Installation von Geräten verhindern, die nicht in anderen Richtlinien beschrieben sind</emphasis> erreicht werden.
 					</listitem>
 				</itemizedlist>
 
@@ -259,7 +262,7 @@ auf das Netzwerk warten</filename>. Diese Funktion ist in den Betriebssystemvers
 		<section>
 			<title>Vorgabe von Proxy-Einstellungen für den Internetzugriff</title>
 			<para>
-				Im folgenden sind Vorgaben für Internet Explorer, Google Chrome und Mozilla Firefox beschrieben. Während Microsoft für den Internet Explorer eigene Administrative Vorlagen zur Erstellung von Gruppenrichtlinien mitliefert, sind für Google Chrome und Mozilla Firefox jeweils eigene Administrative Vorlagen notwendig.
+				Im Folgenden sind Vorgaben für Internet Explorer, Google Chrome und Mozilla Firefox beschrieben. Während Microsoft selbst Administrative Vorlagen mitliefert, sind für Google Chrome und Mozilla Firefox jeweils eigene Administrative Vorlagen notwendig.
 			</para>
 			<para>
 				Zusätzlich zur Vorgabe einer Proxyeinstellung ist für den Klassenarbeitsmodus eine Sperrung des Benutzer-Zugriffs auf eben diese Einstellungen sinnvoll. Dazu gibt es zwei unterschiedliche Ansätze: Im Fall des Internet Explorers bietet die Administrative Vorlage die Möglichkeit, das entsprechende Einstellungsfenster zu sperren. Im Fall von Google Chrome und Mozilla Firefox werden hingegen die Proxy-Einstellungen per Gruppenrichtlinie für den Arbeitsplatzrechner vorgegeben, statt für den Benutzer, und sind dadurch z.B. für Schüler nicht mehr veränderbar. Für die beiden letztgenannten Browser ist es daher wichtig darauf zu achten, die Einstellungen wo nötig im Zweig Computerkonfiguration des Gruppenrichtlinieneditors zu treffen statt im Zweig Benutzerkonfiguration.
@@ -348,7 +351,7 @@ Versionen, wie z.B. Windows 8 stellt Microsoft aktualisierte Administrative Vorl
 							Im Gruppenrichtlinienverwaltungseditor wird der folgende Zweig geöffnet:
 						</simpara>
 						<simpara>
-							<filename>Computerkonfiguration > Richtlinien > Administrative Vorlagen: Vom zentralen Computer abgerufene Richtliniendefinitionen (ADMX-Dateien) > Mozilla Firefox > General</filename>
+							<filename>Computerkonfiguration > Richtlinien > Administrative Vorlagen: Vom zentralen Computer abgerufene Richtliniendefinitionen (ADMX-Dateien) > Mozilla Firefox Locked Settings > General</filename>
 						</simpara>
 					</listitem>
 					<listitem>
