@@ -11,9 +11,8 @@
 	Im folgenden werden zwei Installationsvarianten beschrieben:
 	die Installation als Single-Server-Umgebung und die Installation als
 	Multi-Server-Umgebung mit einem Domänencontroller Master und mindestens einem
-	Schulserver. Single-Server-Umgebungen können auch nachträglich in
-	Multi-Server-Umgebungen umgewandelt werden, indem Schulserver in die
-	Domäne eingebunden werden.
+	Schulserver. Die nachträgliche Umwandlung einer Single-Server-Umgebung in eine
+	Multi-Server-Umgebung wird unterstützt und in <xref linkend="school:installation:migration-single2multi"/> genauer beschrieben.
   </para>
 
   <section>
@@ -245,6 +244,54 @@ univention-add-app --latest ucsschool ucs-school-nonedu-slave
 		hinzuzufügen. Standardmäßig ist dies der Benutzer <emphasis>Administrator</emphasis> oder ein
 		Mitglied der Gruppe <emphasis>Domain Admins</emphasis>. Der Join-Account kann durch den Parameter
 		<command>-dcaccount <replaceable>ACCOUNTNAME</replaceable></command> an <command>univention-join</command> übergeben werden.
+	  </para>
+	</section>
+
+	<section id="school:installation:migration-single2multi">
+	  <title>Umwandlung einer Single-Server-Umgebung in eine Multi-Server-Umgebung</title>
+	  <para>
+		&ucsUAS;-Umgebungen, die als Single-Server-Umgebung installiert/eingerichtet wurden, können
+		bei Bedarf nachträglich in eine Multi-Server-Umgebung umgewandelt werden. Die Umwandlung ermöglicht
+		die Aufnahme von Schulservern in die Domäne.
+	  </para>
+	  <para>
+		Für die Umwandlung sind einige Befehle auf der Kommandozeile des DC Masters auszuführen, die
+		einen Austausch des &ucsUAS;-Metapakets sowie eine Konfigurationsänderung durchführen (Bitte das Minuszeichen hinter dem zweiten Paketnamen beachten):
+		<programlisting>
+apt-get install ucs-school-master ucs-school-singlemaster-
+ucr unset ucsschool/singlemaster
+		</programlisting>
+	  </para>
+	  <para>
+		Mit der Deinstallation des Pakets <emphasis>ucs-school-singlemaster</emphasis> werden die
+		nachfolgenden &ucsUAS;-spezifischen Pakete (UMC-Module), die normalerweise nicht auf einem DC Master
+		der Multi-Server-Umgebung installiert sind, automatisch zur Löschung vorgesehen. Die eigentliche
+		Löschung findet während des nächsten Updates oder durch den manuellen Aufruf von <command>apt-get
+		autoremove</command> statt.
+		<programlisting>
+ucs-school-branding
+ucs-school-umc-computerroom
+ucs-school-umc-distribution
+ucs-school-umc-exam
+ucs-school-umc-helpdesk
+ucs-school-umc-internetrules
+ucs-school-umc-lessontimes
+ucs-school-umc-printermoderation
+ucs-school-webproxy
+		</programlisting>
+		Um die Löschung einzelner Pakete zu vermeiden, kann der folgende Befehl verwendet werden, bei dem <command>PAKETNAME</command> durch den gewünschten Paketnamen auszutauschen ist:
+		<programlisting>
+apt-get unmarkauto <emphasis> PAKETNAME</emphasis>
+		</programlisting>
+	  </para>
+	  <para>
+		Nachdem die oben genannten Schritte ausgeführt wurden, sollte abschließend der UMC-Server auf dem DC Master neu gestartet werden:
+		<programlisting>
+invoke-rc.d univention-management-console-server restart
+		</programlisting>
+	  </para>
+	  <para>
+		Es ist zu beachten, dass auch nach der abgeschlossenen Umwandlung in eine Multi-Server-Umgebung der auf dem DC Master installierte Samba3- oder Samba4-Dienst bestehen bleibt und wird nicht automatisch deinstalliert.
 	  </para>
 	</section>
 </chapter>
