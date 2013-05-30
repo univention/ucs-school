@@ -34,6 +34,7 @@ UCS@School UMC module schoolexam-master
  UMC module delivering backend services for ucs-school-umc-exam
 '''
 
+import re
 from univention.management.console.config import ucr
 from univention.management.console.log import MODULE
 from univention.management.console.modules import UMC_CommandError, UMC_OptionTypeError
@@ -223,10 +224,23 @@ class Instance( SchoolBaseModule ):
 			if not exam_user_description:
 				exam_user_description = _('Exam for user %s') % user_orig['username']
 
+			def getBlacklistSet(ucrvar):
+				"""
+				>>> set([ x.replace('||','|') for x in re.split('(?<![|])[|](?![|])', '|My|new|Value|with|Pipe||symbol') if x ])
+				set(['with', 'new', 'My', 'Value', 'Pipe|symbol'])
+				"""
+				return set([ x.replace('||','|') for x in re.split('(?<![|])[| ,](?![|])', ucr.get(ucrvar, '')) if x ])
+
+			blacklisted_attributes = getBlacklistSet('ucsschool/exam/user/ldap/blacklist')
+
 			## Now create the addlist, fixing up attributes as we go
 			al = []
 			foundUniventionObjectFlag = False
 			for (key, value) in user_orig.oldattr.items():
+				if key in blacklisted_attributes:
+					continue
+				if value in getBlacklistSet('ucsschool/exam/user/ldap/blacklist/%s' % key):
+					continue
 				if key == 'uid':
 					value = [exam_user_uid]
 				elif key == 'homeDirectory':
@@ -250,10 +264,10 @@ class Instance( SchoolBaseModule ):
 						value += ['temporary']
 				al.append((key, value))
 
-			if not foundUniventionObjectFlag:
+			if not foundUniventionObjectFlag and 'univentionObjectFlag' not in blacklisted_attributes:
 				al.append(('univentionObjectFlag', ['temporary']))
 
-			if exam_user_description:
+			if exam_user_description and 'description' not in blacklisted_attributes:
 				al.append(('description', [exam_user_description]))
 
 			## And create the exam_user
