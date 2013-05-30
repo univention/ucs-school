@@ -229,7 +229,7 @@ class Instance( SchoolBaseModule ):
 				>>> set([ x.replace('||','|') for x in re.split('(?<![|])[|](?![|])', '|My|new|Value|with|Pipe||symbol') if x ])
 				set(['with', 'new', 'My', 'Value', 'Pipe|symbol'])
 				"""
-				return set([ x.replace('||','|') for x in re.split('(?<![|])[| ,](?![|])', ucr.get(ucrvar, '')) if x ])
+				return set([ x.replace('||','|') for x in re.split('(?<![|])[|](?![|])', ucr.get(ucrvar, '')) if x ])
 
 			blacklisted_attributes = getBlacklistSet('ucsschool/exam/user/ldap/blacklist')
 
