@@ -396,7 +396,7 @@ msgstr "Der Computer läuft aktuell nicht"
 
 #: umc/js/computerroom.js:925
 msgid "<p>The exam has been successfully finished. All related exam documents have been collected from the students' home directories.</p><p><b>Note:</b> All computers need to be either switched off or rebooted before they can be used again for regular schooling.</p>"
-msgstr "<p>Die Klassenarbeit wurde erfolgreich beendet. Alle zugehörigen Dokumente wurden aus den Schülerheimatverzeichnissen eingesammelt.</p><p><b>Hinweis:</b> Alle Rechner müssen entweder ausgeschaltet oder neu gestartet werden bevor sie für den regulären Schulbetrieb wieder verwendet werden können.</p>"
+msgstr "<p>Die Klassenarbeit wurde erfolgreich beendet. Alle zugehörigen Dokumente wurden aus den Schülerheimatverzeichnissen eingesammelt.</p><p><b>Hinweis:</b> Alle Rechner müssen entweder ausgeschaltet oder neu gestartet werden bevor sie wieder für den regulären Schulbetrieb verwendet werden können.</p>"
 
 #: umc/js/computerroom.js:639
 msgid ""

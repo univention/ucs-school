@@ -1,3 +1,9 @@
+ucs-school-umc-computerroom (3.0.13-1) unstable; urgency=low
+
+  * Bug #31158: typo
+
+ -- Alexander Kläser <klaeser@univention.de>  Thu, 30 May 2013 14:09:06 +0200
+
 ucs-school-umc-computerroom (3.0.12-1) unstable; urgency=low
 
   * Bug #31158: added note to restart/switch off computers after an exam
