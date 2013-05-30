@@ -1,24 +1,81 @@
 <chapter>
-	<title>Konfiguration des Klassenarbeitsmodus</title>
+	<title>Klassenarbeitsmodus</title>
 	<para>
-		Der Klassenarbeitsmodus ermöglicht die gezielte Einschränkung der
-		Möglichkeiten der Computernutzung für Schüler einer Klasse.
-		Über das UMC-Modul für den Klassenarbeitsmodus kann ein Lehrer
-		einen Klassenraum für die exklusive Nutzung durch bestimmte Gruppen
-		auswählen. Für die Dauer des Klassenarbeitsmodus werden die ausgewählten
-		Schüler und Räume in eine speziell benannte Gruppe aufgenommen, für die
-		z.B. über Windows-Gruppenrichtlinien spezifische Einschränkungen für
-		die Benutzung von Windows-Rechnern im gewählten Raum definiert werden können,
-		wie z.B. die Vorgabe eines Proxy-Servers zur Filterung des Internetzugriffs,
-		die Einschränkung den Zugriffs auf USB-Speicher und andere Wechselmedien
-		oder auch die Sperrung bestimmter Programme.
+		Der Klassenarbeitsmodus ermöglicht die gezielte Einschränkung der Möglichkeiten der Computernutzung für Schüler einer Klasse.
+		Über das UMC-Modul für den Klassenarbeitsmodus kann ein Lehrer einen Klassenraum für die exklusive Nutzung durch bestimmte Gruppen auswählen.
+		Der Klassenarbeitsmodus bietet darüber hinaus auch einen direkten Zugriff auf die Funktionalitäten der Materialverteilung.
+		Hintergründe zur technischen Umsetzung werden in <xref linkend="school:exam:concept"/> und mögliche Konfigurationsschnittstellen in <xref linkend="school:exam:configuration"/> gennant.
 	</para>
 	<para>
-		Der Klassenarbeitsmodus bietet darüber hinaus auch einen direkten Zugriff
-		auf die Funktionalitäten der Materialverteilung.
+		Für die Dauer des Klassenarbeitsmodus werden die ausgewählten Schüler und Räume in eine speziell benannte Gruppe aufgenommen.
+		Dies macht es möglich mit Hilfe von Windows-Gruppenrichtlinien spezifische Einschränkungen für die Benutzung von Windows-Rechnern im gewählten Raum zu definieren,
+		wie z.B. die Vorgabe eines Proxy-Servers zur Filterung des Internetzugriffs, die Einschränkung den Zugriffs auf USB-Speicher und andere Wechselmedien oder auch die Sperrung bestimmter Programme.
+		Einsatzmöglichkeiten für Gruppenrichtlinien werden in <xref linkend="school:exam:gpo"/> beispielhaft beschrieben.
 	</para>
 
-	<section>
+	<section id="school:exam:concept">
+		<title>Technische Hintergründe</title>
+		<para>
+			Eine neue Klassenarbeit kann über das Modul <guimenu>Klassenarbeit starten</guimenu> begonnen werden.
+			Beim Durchlaufen der einzelnen Schritte werden von der Lehrkraft ein Name für die Klassenarbeit und die teilnehmenden Klassen/Arbeitsgruppen ausgewählt.
+			Zusätzlich können für die Arbeit notwendige Dateien hochgeladen sowie Computerraumeinstellungen ausgewählt werden.
+		</para>
+		<para>
+			Damit Schülern nicht die Möglichkeit gegeben wird, auf ihr bisheriges Heimatverzeichnis zuzugreifen, werden zum Zeitpunkt des Einrichtens der Klassenarbeit für die ausgewählten Schülerkonten spezielle Klassenarbeitskonten neu angelegt.
+			Der Loginname für das Klassenarbeitskonto setzt sich aus einem festgelegten Prefix (standardmäßig <emphasis>exam-</emphasis>) und dem normalen Benutzernamen zusammen.
+			Bspw. wird für den Benutzer <emphasis>anton123</emphasis> das Klassenarbeitskonto <emphasis>exam-anton123</emphasis> angelegt, mit dem er sich während der Klassenarbeit anmelden muss.
+			Für das Klassenarbeitskonto wird ein neues Heimatverzeichnis erzeugt, Passwörter und andere Konteneinstellungen werden jedoch aus dem ursprünglichen Benutzerkonto direkt übernommen.
+		</para>
+		<para>
+			Alle Klassenarbeitskonten der Schüler sowie alle Rechner des Computerraumes sind für den Zeitraum der Klassenarbeit Mitglieder der Gruppe <emphasis>OU&lt;OU-Name&gt;-Klassenarbeit</emphasis>.
+			Durch diese Gruppe können spezifische Einschränkungen für Schüler und Rechner mit Hilfe von Windows-Gruppenrichtlinien vorgenommen werden (siehe <xref linkend="school:exam:gpo"/>).
+		</para>
+		<note>
+			<para>
+				Damit die Einstellungen der Gruppenrichtlinien für die Rechner entsprechend greifen, ist es wichtig, dass die Schülerrechner des Computerraumes nach Einrichten einer Klassenarbeit neu gestartet werden.
+				Dieser Vorgang wird durch das Modul <guimenu>Klassenarbeit starten</guimenu> unterstützt, so dass alle eingeschalteten Rechner automatisch neu gestartet werden.
+				Zusätzlich ist es aus dem selbem Grund wichtig, dass nach Beenden einer Klassenarbeit die Schülerrechner entweder ausgeschaltet oder neu gestartet werden, damit die ursprünglichen Einstellungen der Gruppenrichtlinien wieder übernommen werden.
+			</para>
+		</note>
+	</section>
+
+	<section id="school:exam:configuration">
+		<title>Konfiguration</title>
+		<para>
+			Für die Konfiguration des Klassenarbeitsmodus gibt es eine Reihe von &ucsUCRV;n.
+			Diese sind im folgenden gruppiert nach ihrer Funktion aufgelistet.
+		</para>
+		<para>
+			LDAP-Eigenschaften
+			<itemizedlist>
+				<listitem>
+					<envar>ucsschool/ldap/default/userprefix/exam</envar>
+				</listitem>
+				<listitem>
+					<envar>ucsschool/ldap/default/container/exam</envar>
+				</listitem>
+				<listitem>
+					<envar>ucsschool/ldap/default/groupname/exam</envar>
+				</listitem>
+			</itemizedlist>
+		</para>
+		<para>
+			Voreinstellungen für den Klassenarbeitsmodus
+			<itemizedlist>
+				<listitem>
+					<envar>ucsschool/exam/default/room</envar>
+				</listitem>
+				<listitem>
+					<envar>ucsschool/exam/default/shares</envar>
+				</listitem>
+				<listitem>
+					<envar>ucsschool/exam/default/internet</envar>
+				</listitem>
+			</itemizedlist>
+		</para>
+	</section>
+
+	<section id="school:exam:gpo">
 		<title>Beispiele für Gruppenrichtlinien</title>
 		<para>
 			Gruppenrichlinien werden von einem Windows System aus mit Hilfe der Gruppenrichtlinienverwaltung (GPMC) angelegt und bearbeitet.
