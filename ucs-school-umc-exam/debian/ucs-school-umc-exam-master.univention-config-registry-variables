@@ -5,8 +5,8 @@ Type=str
 Categories=ucsschool-base
 
 [ucsschool/ldap/default/container/exam]
-Description[de]=Standard-Container für Klassenarbeits-Benutzerkonten (Vorgabe: 'exam')
-Description[en]=Default container for exam user accounts (default: 'exam')
+Description[de]=Standard-Container für Klassenarbeits-Benutzerkonten (Vorgabe: 'examusers')
+Description[en]=Default container for exam user accounts (default: 'examusers')
 Type=str
 Categories=ucsschool-base
 
