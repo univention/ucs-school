@@ -396,6 +396,111 @@ feedback@univention.de
 	  </section>
 	  </section>
 
+	  <section id="lehrerdoku:klassenarbeit">
+		<title>Klassenarbeitsmodus</title>
+		<para>
+		  Der Klassenarbeitsmodus ermöglicht es, eine Klassenarbeit in einem Computerraum zu schreiben.
+		  Dazu ist es möglich, für die Klassenarbeit notwendige Dateien anzugeben und direkt an die Schüler zu verteilen.
+		  Für den Zeitraum der Klassenarbeit wird sichergestellt, dass der Zugriff auf die Heimatverzeichnisse für die Schüler nicht möglich ist.
+		  Desweiteren kann - wie im Computerraum - der Zugang zum Internet sowie zu Freigaben eingeschränkt werden.
+		</para>
+		<para>
+		  Für die Klassenarbeit wird pro Schüler ein spezielles Klassenarbeitskonto angelegt.
+		  Nur mit diesem speziellen Benutzerkonto kann ein Schüler an der Klassenarbeit teilnehmen.
+		  Der Loginname für das Klassenarbeitskonto setzt sich aus einem festgelegten Prefix (in der Regel <emphasis>exam-</emphasis>) und dem normalen Benutzernamen zusammen.
+		  Somit meldet sich der Benutzer <emphasis>anton123</emphasis> für die Klassenarbeit als <emphasis>exam-anton123</emphasis> an.
+		</para>
+		<para>
+		  Im Folgenden werden die einzelnen Schritte zum Erstellen einer Klassenarbeit kurz beschreiben.
+		</para>
+		<section id="lehrerdoku:klassenarbeit:start">
+		  <title>Einrichten einer Klassenarbeit</title>
+		  <para>
+			Eine neue Klassenarbeit kann über das &ucsUMC; Modul <guimenu>Klassenarbeit starten</guimenu> eingerichtet werden.
+			In drei Schritten werden alle notwendigen Einstellung für die Klassenarbeit festgelegt.
+		  </para>
+		  <orderedlist>
+			<listitem>
+			  <simpara>
+				Alle notwendigen Einstellungen werden in dem ersten Schritt angegeben.
+				Dazu gehören Name der Klassenarbeit sowie der Computerraum in dem die Arbeit geschrieben werden soll.
+				Desweiteren muss ebenfalls alle teilnehmenden Klassen, bzw. Arbeitsgruppen angegeben werden.
+			  </simpara>
+			  <simpara>
+				Als Endzeit wird das Ende der laufenden Stunde vorgeschlagen, sie kann jedoch nach Belieben angepasst werden.
+				Für die Klassenarbeit ist die Endzeit nicht verbindlich, sondern wird lediglich genutzt um über die verbleibende Zeit zu informieren.
+				Bei Ablauf der vorgesehenen Zeit wird ein Erinnerungsdialog eingeblendet.
+				Die Klassenarbeit kann ohne weiteres auch über das vorgesehene Ende weiter geführt werden.
+			  </simpara>
+			</listitem>
+			<listitem>
+			  <simpara>
+				In diesem Schritt werden ein passender Verzeichnisname für die Klassenarbeit ausgewählt und alle notwendigen Dateien nacheinander hochgeladen.
+				Diese Klassenarbeitsdateien werden an alle teilnehmenden Schüler ausgeteilt, eine Kopie der Originaldateien wird im Heimatverzeichnis des Lehrers abgelegt, der die Klassenarbeit erstellt hat.
+				Die Dateien werden im Heimatverzeichnis der Schüler unterhalb des Ordners <emphasis>Klassenarbeiten</emphasis> und dem angegebenen Verzeichnisname abgelegt.
+			  </simpara>
+			  <simpara>
+				Zu jedem Zeitpunkt der laufenden Klassenarbeit können die Dateien aus den Heimatverzeichnissen der Schüler eingesammelt werden.
+				Dabei werden lediglich die Dateien unterhalb des Klassenarbeitsordners berücksichtigt.
+				Die eingesammelten Dateien werden im Klassenarbeitsverzeichnis des Lehrer-Heimatverzeichnisses gespeichert.
+				Durch mehrfaches Einsammeln kann beispielsweise der Arbeitsfortschritt festgehalten werden.
+			  </simpara>
+			</listitem>
+			<listitem>
+			  <simpara>
+				Zuletzt können Einschränkungen für den Zugang zum Internet und zu Freigaben festgelegt werden.
+				Diese Einstellungen können jederzeit während einer laufenden Klassenarbeit über die Raumeinstellungen des Moduls <guimenu>Computerraum</guimenu> angepasst werden.
+				Die einzelnen Einstellungsmöglichkeiten werden auch unter <xref linkend="lehrerdoku:computerraum"/> beschrieben.
+			  </simpara>
+			</listitem>
+		  </orderedlist>
+		  <para>
+			Durch Drücken der Schaltfläche <guimenu>Klassenarbeit starten</guimenu>, bzw. durch vorzeitiges Drücken der Schaltfläche <guimenu>Schnellstart</guimenu>, werden die notwendigen Klassenarbeitskonten für die Schüler angelegt, die Klassenarbeitsdateien verteilt und die Raumeinstellungen gesetzt.
+		  </para>
+		</section>
+		<section id="lehrerdoku:klassenarbeit:neustart">
+		  <title>Neustart der Schülerrechner</title>
+		  <para>
+			Um die Einrichtung der Klassenarbeit abzuschließen ist es wichtig, dass alle Schülerrechner des Computerraums neu gestartet werden.
+			Nur durch einen Neustart der betroffenen Rechner können spezifische Berechtigungen und Rechnerkonfigurationen, die spezifisch für den Klassenarbeitsmodus vorgesehen sind, wirksam werden.
+		  </para>
+		  <para>
+			Das Klassenarbeitsmodul bietet eine Hilfsfunktion an, so dass dieser Vorgang weitgehend automatisierte durchgeführt werden kann.
+			Dabei wird eine Verbindung zu allen eingeschalteten Rechnern aufgebaut.
+			Dieser Vorgang kann zwischen 30 Sekunden und 2 Minuten dauern.
+			Abschließend werden alle eingeschaltete Rechner aufgelistet.
+			Die aufgelisteten Rechner können durch Klick auf die Schaltfläche <guimenu>Rechner Neustarten</guimenu> und durch anschließende Bestätigung automatisch neu gestartet werden.
+		  </para>
+		  <note>
+			<para>
+			  Bitte stellen Sie zusätzlich sicher, dass eingeschaltete Rechner manuell neu gestartet werden, sollten dies nicht automatisch durchgeführt worden sein.
+			</para>
+		  </note>
+		  <caution>
+			<para>
+			  Ein Neustart der Rechner wird sofort ausgeführt!
+			  Es erfolgt dabei keine Warnung bei angemeldeten Benutzern.
+			  Daher können nicht gesicherte Daten verloren gehen.
+			</para>
+		  </caution>
+		</section>
+		<section id="lehrerdoku:klassenarbeit:verwalten">
+		  <title>Verwaltung und Abschluss der Klassenarbeit</title>
+		  <para>
+			Die Klassenarbeit wird durchgeführt und verwaltet über das &ucsUMC; Module <guimenu>Computerraum</guimenu>.
+			Während einer Klassenarbeit wird in dem Modul zusätzlich die verbleibende Zeit für die Klassenarbeit sowie zusätzlich spezifische Aktionen angezeigt.
+			Zwischenergebnisse der Klassenarbeit können über die Schaltfläche <guimenu>Ergebnisse einsammeln</guimenu> eingesammelt werden.
+			Diese Aktion kann beliebig oft durchgeführt werden.
+			Zum Beenden der Klassenarbeit muss die Schaltfläche <guimenu>Klassenarbeit beenden</guimenu> ausgewählt werden.
+		  </para>
+		  <note>
+			<para>
+			  Zum Abschluss der Klassenarbeit müssen alle Rechner entweder ausgeschaltet oder neu gestartet werden bevor sie für den regulären Schulbetrieb wieder verwendet werden können.
+			  Ein Neustart/Ausschalten setzt die für die Klassenarbeit spezifischen Einstellungen an den Rechnern wieder zurück.
+			</para>
+		  </note>
+		</section>
+	  </section>
 
 	  <section id="lehrerdoku:helpdesk">
 		<title>Helpdesk kontaktieren</title>
