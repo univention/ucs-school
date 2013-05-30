@@ -64,9 +64,9 @@
 	<para>
 	  Ein Beispiel für eine Importdatei:
 	</para>
-	  <programlisting>A  max         Mustermann  Max     g123m  1A        max@schule.edu   0 1 0
-M  m.musterma  Mustermann  Moritz  g123m  1A,2D,4C  m.m@schule.edu   1 1 0
-D  a.musterfr  Musterfrau  Anke    g123m  2B        a.mfr@schule.edu 1 1 1
+	  <programlisting>A  max         Mustermann Max    g123m  1A       max@schule.edu   0 1 0
+M  m.musterma  Mustermann Moritz g123m  1A,2D,4C m.m@schule.edu   1 1 0
+D  a.musterfr  Musterfrau Anke   g123m  2B       a.mfr@schule.edu 1 1 1
 </programlisting>
 	<para>
 	  Über das Feld <emphasis>Aktion</emphasis> kann die Art der Benutzermodifikation gesteuert
