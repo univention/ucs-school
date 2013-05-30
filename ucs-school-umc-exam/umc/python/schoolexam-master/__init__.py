@@ -237,10 +237,15 @@ class Instance( SchoolBaseModule ):
 			al = []
 			foundUniventionObjectFlag = False
 			for (key, value) in user_orig.oldattr.items():
+				# ignore blacklisted attributes
 				if key in blacklisted_attributes:
 					continue
-				if value in getBlacklistSet('ucsschool/exam/user/ldap/blacklist/%s' % key):
+				# ignore blacklisted attribute values
+				keyBlacklist = getBlacklistSet('ucsschool/exam/user/ldap/blacklist/%s' % key)
+				value = [ x for x in value if x not in keyBlacklist ]
+				if not value:
 					continue
+				# handle special cases
 				if key == 'uid':
 					value = [exam_user_uid]
 				elif key == 'homeDirectory':

@@ -1,3 +1,9 @@
+ucs-school-umc-exam (1.0.21-1) unstable; urgency=low
+
+  * fixed LDAP attribute blacklist for exam users (Bug #31588)
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 31 May 2013 01:08:32 +0200
+
 ucs-school-umc-exam (1.0.20-3) unstable; urgency=low
 
   * added UCR variable description (Bug #31588)
