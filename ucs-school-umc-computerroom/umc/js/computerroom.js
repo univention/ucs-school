@@ -963,7 +963,7 @@ define([
 
 					// on success, prompt info to user
 					if (this._progressBar.getErrors().errors.length === 0) {
-						dialog.alert(_("The exam has been successfully finished. All related exam documents have been collected from the students' home directories."));
+						dialog.alert(_("<p>The exam has been successfully finished. All related exam documents have been collected from the students' home directories.</p><p><b>Note:</b> All computers need to be either switched off or rebooted before they can be used again for regular schooling.</p>"));
 						delete info.exam;
 						delete info.examDescription;
 						delete info.examEndTime;
