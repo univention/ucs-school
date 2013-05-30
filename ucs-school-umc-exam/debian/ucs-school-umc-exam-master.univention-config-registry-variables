@@ -15,3 +15,15 @@ Description[de]=Standard-Gruppenname für den Klassenarbeitsmodus (in Python str
 Description[en]=Default group name for the exam mode (in Python string syntax, default: "OU\x25(ou)s-Klassenarbeit")
 Type=str
 Categories=ucsschool-base
+
+[ucsschool/exam/user/ldap/blacklist]
+Description[de]=Pipe-separierte (|) Blacklist mit Attributnamen, die nicht für die Prüfungsbenutzer übernommen werden (Vorgabe: 'mailPrimaryAddress|mailAlternativeAddress')
+Description[en]=Pipe-separated (|) blacklist of attribute names, that are stripped from exam users (Default: 'mailPrimaryAddress|mailAlternativeAddress')
+Type=str
+Categories=ucsschool-base
+
+[ucsschool/exam/user/ldap/blacklist/.*]
+Description[de]=Pipe-separierte (|) Liste mit Attributwerten, die aus dem spezifizierten LDAP-Attribut des Prüfungsbenutzers herausgefiltert werden
+Description[en]=Pipe-separated (|) blacklist of attribute values, that are stripped from specified LDAP attribute of exam user
+Type=str
+Categories=ucsschool-base
