@@ -35,240 +35,32 @@
 	</section>
 
 	<section>
-		<title>Import der Benutzerkonten</title>
+		<title>Import von Benutzerkonten</title>
 		<para>
 			Der Import der Schüler-, Lehrer- und Mitarbeiterdaten erfolgt in der
-			Regel zentral für den gesamten Schulträger und ist in
+			Regel an zentraler Stelle durch Schulträger. Der skriptbasierte Import von Benutzerkonten wird in
 			<xref linkend="school:import:general"/> beschrieben.
-		</para>
-	</section>
-
-	<section id="school:schoolcreate:computers">
-		<title>Import der Rechnerkonten für die Windows-PCs</title>
-		<para>
-			Rechner können entweder manuell oder über ein Import-Skript angelegt werden.
-		</para>
-		<para>
-			Die Daten eines Schulservers werden in einer Organisationseinheit (OU) -
-			einem Teilbaum des LDAP-Verzeichnisses - gespeichert. Nur die für
-			einen Schulserver relevanten Daten werden dorthin übertragen.
-		</para>
-		<para>
-			Anschließend treten die Windows-PCs, wie im UCS-Handbuch beschrieben,
-			der Domäne bei.
-		</para>
-	</section>
-
-	<section id="school:schoolcreate:computers:singlepc">
-		<title>Anlegen eines einzelnen PCs</title>
-		<para>
-			Ein einzelner Schul-PC kann in der &ucsUMC; auf dem &ucsMaster;
-			registriert werden. Dort muss in der Modulgruppe <emphasis>&ucsUAS;
-			Administration</emphasis> das Modul <guimenu>Computer hinzufügen</guimenu>
-			aufgerufen werden. Existiert mehr als eine Schule, ist die entsprechende Schule
-			auszuwählen. Es stehen zwei Arten von Rechnern zur
-			Auswahl: <guimenu>Windows-Systeme</guimenu> oder ein <guimenu>Gerät
-			mit IP-Adresse</guimenu> (z.B. ein Netzwerkdrucker mit eigener IP-Adresse).
-		</para>
-		<para>
-			Die Angabe von <guimenu>Name</guimenu>, <guimenu>IP-Adresse</guimenu>
-			und <guimenu>MAC-Adresse</guimenu> ist
-			verpflichtend. Die <guimenu>Subnetzmaske</guimenu> kann in den meisten
-			Fällen auf der Voreinstellung belassen werden. Die MAC-Adresse ist
-			nötig für die Vergabe der IP-Adressen per DHCP.
-		</para>
-	</section>
-
-	<section id="school:schoolcreate:computers:import">
-		<title>Skriptbasierter Import von PCs</title>
-		<para>
-			Der Import mehrerer PCs erfolgt über das
-			Skript <command>/usr/share/ucs-school-import/scripts/import_computer</command>,
-			das auf dem &ucsMaster; als Benutzer <emphasis>root</emphasis> aufgerufen werden muss.
-			Es erwartet den Namen einer CSV-Datei als ersten Parameter, die in
-			folgender Syntax definiert wird. Die einzelnen Felder sind durch ein
-			Tabulatorzeichen zu trennen.
-		</para>
-		<para>
-		  Es ist zu beachten, dass Computernamen domänenweit eindeutig sein müssen. Das heißt ein
-		  Computer <emphasis>windows01</emphasis> kann nicht in mehreren OUs verwendet werden. Um die
-		  Eindeutigkeit zu gewährleisten, wird empfohlen, jedem Computernamen die OU voranzustellen oder zu
-		  integrieren (z.B. <emphasis>340win01</emphasis> für Schule <emphasis>340</emphasis>).
-		</para>
-		<informaltable>
-			<tgroup cols="4">
-				<colspec colnum="1" colname="col1" colwidth="1*"/>
-				<colspec colnum="2" colname="col2" colwidth="1*"/>
-				<colspec colnum="3" colname="col3" colwidth="1*"/>
-				<colspec colnum="4" colname="col4" colwidth="1*"/>
-				<thead>
-					<row>
-						<entry>Feld</entry>
-						<entry>Beschreibung</entry>
-						<entry>Mögliche Werte</entry>
-						<entry>Beispiel</entry>
-					</row>
-				</thead>
-				<tbody>
-					<row>
-						<entry>Rechnertyp</entry>
-						<entry>Typ des Rechnerobjektes</entry>
-						<entry>ipmanagedclient, macos, windows</entry>
-						<entry>windows</entry>
-					</row>
-					<row>
-						<entry>Name</entry>
-						<entry>Zu verwendender Rechnername</entry>
-						<entry>---</entry>
-						<entry>wing123m-01</entry>
-					</row>
-					<row>
-						<entry>MAC-Adresse</entry>
-						<entry>MAC-Adresse (wird für DHCP benötigt)</entry>
-						<entry>---</entry>
-						<entry>00:0c:29:12:23:34</entry>
-					</row>
-					<row>
-						<entry>OU</entry>
-						<entry>OU, in der das Rechnerobjekt modifiziert werden soll</entry>
-						<entry>---</entry>
-						<entry>g123m</entry>
-					</row>
-					<row>
-						<entry>IP-Adresse (/ Netzmaske) oder IP-Subnetz</entry>
-						<entry>IP-Adresse des Rechnerobjektes und optional die passende Netzmaske; alternativ das Ziel-IP-Subnetz</entry>
-						<entry>---</entry>
-						<entry>10.0.5.45/255.255.255.0</entry>
-					</row>
-					<row>
-						<entry>(Inventarnr.)</entry>
-						<entry>Optionale Inventarnummer</entry>
-						<entry>---</entry>
-						<entry>TR47110815-XA-3</entry>
-					</row>
-					<row>
-						<entry>(Zone)</entry>
-						<entry>Optionale Zone</entry>
-						<entry>edukativ, verwaltung</entry>
-						<entry>edukativ</entry>
-					</row>
-				</tbody>
-			</tgroup>
-		</informaltable>
-		<para>
-			Die Subnetzmaske kann sowohl als Prefix (<emphasis>24</emphasis>) als auch in
-			Oktettschreibweise (<emphasis>255.255.255.0</emphasis>) angegeben werden. Die Angabe
-			der Subnetzmaske ist optional. Wird sie weggelassen, wird die
-			Subnetzmaske 255.255.255.0 angenommen.
-		</para>
-		<para>
-			Wird im Feld <emphasis>IP-Adresse (/ Netzmaske)</emphasis> nur ein Subnetz angegeben
-			(z.B. 10.0.5.0), wird dem Computerobjekt automatisch die nächste freie
-			IP-Adresse aus diesem IP-Subnetz zugewiesen.
-		</para>
-		<para>
-			Beispiel für eine Importdatei:
-		</para>
-			<programlisting>
-ipmanagedclient  routerg123m-01   10:00:ee:ff:cc:02  g123m  10.0.5.1
-windows          wing123m-01      10:00:ee:ff:cc:00  g123m  10.0.5.5
-windows          wing123m-02      10:00:ee:ff:cc:01  g123m  10.0.5.6
-macos            macg123m-01      10:00:ee:ff:cc:03  g123m  10.0.5.7
-ipmanagedclient  printerg123m-01  10:00:ee:ff:cc:04  g123m  10.0.5.250
-			</programlisting>
-		<para>
-			Die importierten Rechner werden so konfiguriert, dass ihnen die
-			angegebene IP-Adresse automatisch per DHCP zugeordnet wird (sofern auf
-			dem Schulserver der DHCP-Dienst installiert ist) und der angegebene
-			Rechnername über das Domain Name System (DNS) aufgelöst werden kann.
-		</para>
-	</section>
-
-	<section>
-		<title>Konfiguration von Druckern an der Schule</title>
-		<para>
-			Der Import der Drucker kann skriptbasiert über das
-			Skript <command>/usr/share/ucs-school-import/scripts/import_printer</command> erfolgen,
-			das auf dem &ucsMaster; als Benutzer <emphasis>root</emphasis> aufgerufen werden muss.
-			Es erwartet den Namen einer CSV-Datei als ersten Parameter, die in
-			folgender Syntax definiert wird. Die einzelnen Felder sind durch ein
-			Tabulatorzeichen zu trennen.
-		</para>
-		<informaltable>
-			<tgroup cols="4">
-				<colspec colnum="1" colname="col1" colwidth="1*"/>
-				<colspec colnum="2" colname="col2" colwidth="1*"/>
-				<colspec colnum="3" colname="col3" colwidth="1*"/>
-				<colspec colnum="4" colname="col4" colwidth="1*"/>
-				<thead>
-					<row>
-						<entry>Feld</entry>
-						<entry>Beschreibung</entry>
-						<entry>Mögliche Werte</entry>
-						<entry>Beispiel</entry>
-					</row>
-				</thead>
-				<tbody>
-					<row>
-						<entry>Aktion</entry>
-						<entry>Art der Druckermodifkation</entry>
-						<entry><emphasis>A</emphasis>=Hinzufügen, <emphasis>M</emphasis>=Modifizieren, <emphasis>D</emphasis>=Löschen</entry>
-						<entry>A</entry>
-					</row>
-					<row>
-						<entry>OU</entry>
-						<entry>OU, in der das Druckerobjekt modifiziert werden soll</entry>
-						<entry>---</entry>
-						<entry>g123m</entry>
-					</row>
-					<row>
-						<entry>Druckserver</entry>
-						<entry>Name des zu verwendenden Druckservers</entry>
-						<entry>---</entry>
-						<entry>dcg123m-01</entry>
-					</row>
-					<row>
-						<entry>Name</entry>
-						<entry>Name der Druckerwarteschlange</entry>
-						<entry>---</entry>
-						<entry>laserdrucker</entry>
-					</row>
-					<row>
-						<entry>URI</entry>
-						<entry>URI, unter dem der Drucker erreichbar ist</entry>
-						<entry>---</entry>
-						<entry>lpd://10.0.5.250</entry>
-					</row>
-				</tbody>
-			</tgroup>
-		</informaltable>
-		<para>
-			Die Druckerwarteschlange wird beim Anlegen eines neuen Druckers auf dem im
-			Feld <emphasis>Druckserver</emphasis> angegebenen Druckserver eingerichtet. Das
-			URI-Format unterscheidet sich je nach angebundenem Drucker und ist im
-			Druckdienste-Kapitel des UCS-Handbuchs beschrieben.
-		</para>
-	</section>
-
-	<section id="school:configurehelpdesk">
-		<title>Konfiguration der Helpdesk-Kontaktadresse</title>
-		<para>
-			Über das Helpdesk-Modul können Lehrer per E-Mail Kontakt zum
-			Helpdesk-Team einer Schule aufnehmen. Damit dieses Modul genutzt
-			werden kann, muss auf dem jeweiligen Server die
-			&ucsUCRV; <envar>ucsschool/helpdesk/recipient</envar> auf die E-Mail-Adresse
-			des zuständigen Helpdesk-Teams gesetzt werden.
 		</para>
 	</section>
 
 	<section>
 		<title>Skriptbasierter Import von Netzwerken</title>
 		<para>
-			Netzwerke können über das
-			Skript <command>/usr/share/ucs-school-import/scripts/import_networks</command>
-			importiert werden. Das Skript muss auf dem &ucsMaster; als
-			Benutzer <emphasis>root</emphasis> aufgerufen werden. Das Format der Import-Datei
-			ist wie folgt aufgebaut:
+		  Durch den Import von Netzwerken können IP-Subnetze im LDAP angelegt werden und diverse
+		  Voreinstellungen wie Adressen von Router, DNS-Server etc. für diese Subnetze konfiguriert
+		  werden. Darunter fällt z.B. auch ein Adressbereich aus dem für neuangelegte Systeme automatisch
+		  IP-Adressen vergeben werden können.  
+		</para>
+		<para>
+		  Das Importieren von Subnetzen empfielt sich in größeren &ucsUAS;-Umgebungen. Kleinere
+		  Umgebungen können diesen Schritt häufig überspringen, da fehlende Netzwerke beim Import von
+		  Rechnerkonten automatisch angelegt werden.
+		</para>
+		<para>
+		  Netzwerke können derzeit nur auf der Kommandozeile über das Skript
+		  <command>/usr/share/ucs-school-import/scripts/import_networks</command> importiert werden. Das
+		  Skript muss auf dem &ucsMaster; als Benutzer <emphasis>root</emphasis> aufgerufen werden. Das Format
+		  der Import-Datei ist wie folgt aufgebaut:
 		</para>
 		<informaltable>
 			<tgroup cols="3">
@@ -337,122 +129,295 @@ g123m  10.0.6.0/25  10.0.6.5-10.0.6.120  10.0.6.1  10.0.6.2  10.0.6.15
 		</para>
 	</section>
 
-	<section id="school:setup:shares">
-		<title>Anlegen von Freigaben</title>
+	<section id="school:schoolcreate:computers">
+	  <title>Import von Rechnerkonten für Windows-PCs</title>
+	  <para>
+		Rechnerkonten können entweder einzeln über ein spezielles UMC-Modul oder über ein spezielles
+		Import-Skript als Massenimport angelegt werden. Die Rechnerkonten sollten vor dem Domänenbeitritt
+		von z.B. Windows-PCs angelegt werden, da so sichergestellt wird, dass die für den Betrieb von
+		UCS@school notwendigen Informationen im LDAP-Verzeichnis vorhanden sind und die Objekte an der
+		korrekten Position im LDAP-Verzeichnis abgelegt wurden.
+	  </para>
+	  <para>
+		Nach dem Anlegen der Rechnerkonten können Windows-PCs über den im UCS-Handbuch beschriebenen
+		Weg der Domäne beitreten.
+	  </para>
+	  <section id="school:schoolcreate:computers:singlepc">
+		<title>Anlegen einzelner PCs</title>
 		<para>
-			Die meisten Freigaben in einer &ucsUAS;-Umgebung werden automatisch
-			erstellt; jede Klasse oder Arbeitsgemeinschaft verfügt über eine
-			gemeinsame Freigabe. Weiterhin existiert mit
-			der <emphasis>Marktplatz</emphasis>-Freigabe je Schule eine schulweite Freigabe. Das Erstellen der Marktplatzfreigabe beim
-			Anlegen einer OU kann durch das Setzen der &ucsUCRV; <envar>ucsschool/import/generate/marktplatz</envar> auf den
-			Wert <emphasis>no</emphasis> verhindert werden.
+		  Ein einzelner Schul-PC kann in der &ucsUMC; auf dem &ucsMaster; registriert werden. Dort
+		  muss in der Modulgruppe <emphasis>&ucsUAS; Administration</emphasis> das Modul <guimenu>Computer
+		  hinzufügen</guimenu> aufgerufen werden. Wurde mehr als eine Schule im LDAP-Verzeichnis angelegt, ist
+		  zunächst die gewünschte Schule auszuwählen. Anschließend stehen zwei Rechnertypen zur Auswahl:
+		  <guimenu>Windows-Systeme</guimenu> oder ein <guimenu>Gerät mit IP-Adresse</guimenu> (z.B. ein
+		  Netzwerkdrucker mit eigener IP-Adresse).
 		</para>
 		<para>
-			Diese Freigaben müssen zwingend auf dem Schulserver bereitgestellt
-			werden, um die von &ucsUAS; bereitgestellten Funktionen nutzen zu können.
+		  Die Angabe von <guimenu>Name</guimenu>, <guimenu>IP-Adresse</guimenu> und
+		  <guimenu>MAC-Adresse</guimenu> ist verpflichtend. Die <guimenu>Subnetzmaske</guimenu> kann in den
+		  meisten Fällen auf der Voreinstellung belassen werden. Die MAC-Adresse wird unter anderem für die
+		  Vergabe der IP-Adressen per DHCP verwendet.
+		</para>
+	  </section>
+
+	  <section id="school:schoolcreate:computers:import">
+		<title>Skriptbasierter Import von PCs</title>
+		<para>
+		  Der Import mehrerer PCs erfolgt über das
+		  Skript <command>/usr/share/ucs-school-import/scripts/import_computer</command>,
+		  das auf dem &ucsMaster; als Benutzer <emphasis>root</emphasis> aufgerufen werden muss.
+		  Es erwartet den Namen einer CSV-Datei als ersten Parameter, die in
+		  folgender Syntax definiert wird. Die einzelnen Felder sind durch ein
+		  Tabulatorzeichen zu trennen.
 		</para>
 		<para>
-			Weitere Freigaben werden, wie in einer Standard-UCS-Installation, über
-			das UMC-Modul <guimenu>Freigaben</guimenu> auf dem &ucsMaster;
-			angelegt. Weiterführende Dokumentation findet sich im
-			Freigaben-Kapitel des UCS-Handbuchs <xref linkend="ucs-handbuch"/>.
+		  Es ist zu beachten, dass Computernamen domänenweit eindeutig sein müssen. Das heißt ein
+		  Computer <emphasis>windows01</emphasis> kann nicht in mehreren OUs verwendet werden. Um die
+		  Eindeutigkeit zu gewährleisten, wird empfohlen, jedem Computernamen die OU voranzustellen oder zu
+		  integrieren (z.B. <emphasis>340win01</emphasis> für Schule <emphasis>340</emphasis>).
+		</para>
+		<informaltable>
+		  <tgroup cols="4">
+			<colspec colnum="1" colname="col1" colwidth="1*"/>
+			<colspec colnum="2" colname="col2" colwidth="1*"/>
+			<colspec colnum="3" colname="col3" colwidth="1*"/>
+			<colspec colnum="4" colname="col4" colwidth="1*"/>
+			<thead>
+			  <row>
+				<entry>Feld</entry>
+				<entry>Beschreibung</entry>
+				<entry>Mögliche Werte</entry>
+				<entry>Beispiel</entry>
+			  </row>
+			</thead>
+			<tbody>
+			  <row>
+				<entry>Rechnertyp</entry>
+				<entry>Typ des Rechnerobjektes</entry>
+				<entry>ipmanagedclient, macos, windows</entry>
+				<entry>windows</entry>
+			  </row>
+			  <row>
+				<entry>Name</entry>
+				<entry>Zu verwendender Rechnername</entry>
+				<entry>---</entry>
+				<entry>wing123m-01</entry>
+			  </row>
+			  <row>
+				<entry>MAC-Adresse</entry>
+				<entry>MAC-Adresse (wird für DHCP benötigt)</entry>
+				<entry>---</entry>
+				<entry>00:0c:29:12:23:34</entry>
+			  </row>
+			  <row>
+				<entry>OU</entry>
+				<entry>OU, in der das Rechnerobjekt modifiziert werden soll</entry>
+				<entry>---</entry>
+				<entry>g123m</entry>
+			  </row>
+			  <row>
+				<entry>IP-Adresse (/ Netzmaske) oder IP-Subnetz</entry>
+				<entry>IP-Adresse des Rechnerobjektes und optional die passende Netzmaske; alternativ das Ziel-IP-Subnetz</entry>
+				<entry>---</entry>
+				<entry>10.0.5.45/255.255.255.0</entry>
+			  </row>
+			  <row>
+				<entry>(Inventarnr.)</entry>
+				<entry>Optionale Inventarnummer</entry>
+				<entry>---</entry>
+				<entry>TR47110815-XA-3</entry>
+			  </row>
+			  <row>
+				<entry>(Zone)</entry>
+				<entry>Optionale Zone</entry>
+				<entry>edukativ, verwaltung</entry>
+				<entry>edukativ</entry>
+			  </row>
+			</tbody>
+		  </tgroup>
+		</informaltable>
+		<para>
+		  Die Subnetzmaske kann sowohl als Prefix (<emphasis>24</emphasis>) als auch in
+		  Oktettschreibweise (<emphasis>255.255.255.0</emphasis>) angegeben werden. Die Angabe
+		  der Subnetzmaske ist optional. Wird sie weggelassen, wird die
+		  Subnetzmaske 255.255.255.0 angenommen.
 		</para>
 		<para>
-			Die Freigaben müssen unterhalb der OU der Schule angelegt werden,
-			die Auswahl findet mit der Option <guimenu>Container</guimenu> beim
-			Anlegen einer Freigabe statt. Bei eine OU <emphasis>gym17</emphasis> muss
-			beispielsweise <emphasis>gym17/shares</emphasis> ausgewählt werden.
+		  Wird im Feld <emphasis>IP-Adresse (/ Netzmaske)</emphasis> nur ein Subnetz angegeben
+		  (z.B. 10.0.5.0), wird dem Computerobjekt automatisch die nächste freie
+		  IP-Adresse aus diesem IP-Subnetz zugewiesen.
 		</para>
+		<para>
+		  Beispiel für eine Importdatei:
+		</para>
+		<programlisting>
+ipmanagedclient  routerg123m-01   10:00:ee:ff:cc:02  g123m  10.0.5.1
+windows          wing123m-01      10:00:ee:ff:cc:00  g123m  10.0.5.5
+windows          wing123m-02      10:00:ee:ff:cc:01  g123m  10.0.5.6
+macos            macg123m-01      10:00:ee:ff:cc:03  g123m  10.0.5.7
+ipmanagedclient  printerg123m-01  10:00:ee:ff:cc:04  g123m  10.0.5.250
+		</programlisting>
+		<para>
+		  Die importierten Rechner werden so konfiguriert, dass ihnen die
+		  angegebene IP-Adresse automatisch per DHCP zugeordnet wird (sofern auf
+		  dem Schulserver der DHCP-Dienst installiert ist) und der angegebene
+		  Rechnername über das Domain Name System (DNS) aufgelöst werden kann.
+		</para>
+	  </section>
 	</section>
 
-	<section id="school:setup:schooladmins">
-		<title>Anlegen von Schuladministratoren</title>
-		<para>
-			Benutzerkonten für Schuladministratoren können über das UMC-Modul <guimenu>Benutzer</guimenu>
-			auf dem &ucsMaster; angelegt werden.
-		</para>
-		<para>
-			Die Schuladministratoren  müssen unterhalb der OU der Schule im
-			Container <emphasis>cn=users,cn=admins</emphasis> angelegt werden. Die Auswahl
-			findet mit der Option <guimenu>Container</guimenu> beim Anlegen eines
-			Benutzers statt. Bei einer OU <emphasis>gym17</emphasis> muss
-			beispielsweise <emphasis>gym17/users/admins</emphasis> ausgewählt werden.
-		</para>
-		<para>
-			Der Benutzer muss außerdem im Reiter <guimenu>Gruppen</guimenu> in die
-			Gruppe <emphasis>admins-OU</emphasis>, also z.B. <emphasis>admins-gym17</emphasis>.
-		</para>
-		<para>
-			Wenn der Schuladministrator auch als Lehrer tätig ist, muss der
-			Benutzer außerdem in die Gruppe <emphasis>lehrer-OU</emphasis> aufgenommen, also
-			z.B. <emphasis>lehrer-gym17</emphasis>.
-		</para>
-	</section>
 
-	<section id="school:setup:printers">
+	<section>
+	  <title>Konfiguration von Druckern an der Schule</title>
+	  <para>
+		Der Import der Drucker kann skriptbasiert über das
+		Skript <command>/usr/share/ucs-school-import/scripts/import_printer</command> erfolgen,
+		das auf dem &ucsMaster; als Benutzer <emphasis>root</emphasis> aufgerufen werden muss.
+		Es erwartet den Namen einer CSV-Datei als ersten Parameter, die in
+		folgender Syntax definiert wird. Die einzelnen Felder sind durch ein
+		Tabulatorzeichen zu trennen.
+	  </para>
+	  <informaltable>
+		<tgroup cols="4">
+		  <colspec colnum="1" colname="col1" colwidth="1*"/>
+		  <colspec colnum="2" colname="col2" colwidth="1*"/>
+		  <colspec colnum="3" colname="col3" colwidth="1*"/>
+		  <colspec colnum="4" colname="col4" colwidth="1*"/>
+		  <thead>
+			<row>
+			  <entry>Feld</entry>
+			  <entry>Beschreibung</entry>
+			  <entry>Mögliche Werte</entry>
+			  <entry>Beispiel</entry>
+			</row>
+		  </thead>
+		  <tbody>
+			<row>
+			  <entry>Aktion</entry>
+			  <entry>Art der Druckermodifkation</entry>
+			  <entry><emphasis>A</emphasis>=Hinzufügen, <emphasis>M</emphasis>=Modifizieren, <emphasis>D</emphasis>=Löschen</entry>
+			  <entry>A</entry>
+			</row>
+			<row>
+			  <entry>OU</entry>
+			  <entry>OU, in der das Druckerobjekt modifiziert werden soll</entry>
+			  <entry>---</entry>
+			  <entry>g123m</entry>
+			</row>
+			<row>
+			  <entry>Druckserver</entry>
+			  <entry>Name des zu verwendenden Druckservers</entry>
+			  <entry>---</entry>
+			  <entry>dcg123m-01</entry>
+			</row>
+			<row>
+			  <entry>Name</entry>
+			  <entry>Name der Druckerwarteschlange</entry>
+			  <entry>---</entry>
+			  <entry>laserdrucker</entry>
+			</row>
+			<row>
+			  <entry>URI</entry>
+			  <entry>URI, unter dem der Drucker erreichbar ist</entry>
+			  <entry>---</entry>
+			  <entry>lpd://10.0.5.250</entry>
+			</row>
+		  </tbody>
+		</tgroup>
+	  </informaltable>
+	  <para>
+		Die Druckerwarteschlange wird beim Anlegen eines neuen Druckers auf dem im
+		Feld <emphasis>Druckserver</emphasis> angegebenen Druckserver eingerichtet. Das
+		URI-Format unterscheidet sich je nach angebundenem Drucker und ist im
+		Druckdienste-Kapitel des UCS-Handbuchs beschrieben.
+	  </para>
+
+	  <section id="school:setup:printers">
 		<title>Anlegen eines PDF-Druckers für die Druckermoderation</title>
 		<para>
-			Druckerfreigaben werden, wie in einer Standard-UCS-Installation, über
-			das UMC-Modul <guimenu>Drucker</guimenu> auf dem &ucsMaster;
-			angelegt. Weiterführende Dokumentation findet sich im
-			Druckdienste-Kapitel des UCS-Handbuchs <xref linkend="ucs-handbuch"/>.
+		  Druckerfreigaben werden, wie in einer Standard-UCS-Installation, über
+		  das UMC-Modul <guimenu>Drucker</guimenu> auf dem &ucsMaster;
+		  angelegt. Weiterführende Dokumentation findet sich im
+		  Druckdienste-Kapitel des UCS-Handbuchs <xref linkend="ucs-handbuch"/>.
 		</para>
 		<para>
-			Die Drucker müssen unterhalb der OU der Schule angelegt werden,
-			die Auswahl findet mit der Option <guimenu>Container</guimenu> beim
-			Anlegen eines Drucker statt. Bei der OU <emphasis>gym17</emphasis> muss
-			beispielsweise <emphasis>gym17/printers</emphasis> ausgewählt werden.
+		  Die Drucker müssen unterhalb der OU der Schule angelegt werden,
+		  die Auswahl findet mit der Option <guimenu>Container</guimenu> beim
+		  Anlegen eines Drucker statt. Bei der OU <emphasis>gym17</emphasis> muss
+		  beispielsweise <emphasis>gym17/printers</emphasis> ausgewählt werden.
 		</para>
 		<para>
-			Für die Verwendung der Druckermoderation muss ein PDF-Drucker
-			eingerichtet werden. Dieser muss ebenfalls unterhalb der Schul-OU
-			angelegt werden. Dabei müssen folgende Werte gesetzt werden:
+		  Für die Verwendung der Druckermoderation muss ein PDF-Drucker
+		  eingerichtet werden. Dieser muss ebenfalls unterhalb der Schul-OU
+		  angelegt werden. Dabei müssen folgende Werte gesetzt werden:
 		</para>
 		<itemizedlist>
-			<listitem>
-				<simpara>
-					<guimenu>Server</guimenu> : Name des Schulservers
-				</simpara>
-			</listitem>
-			<listitem>
-				<simpara>
-					<guimenu>Protokoll</guimenu> : <emphasis>cups-pdf:/</emphasis>
-				</simpara>
-			</listitem>
-			<listitem>
-				<simpara>
-					<guimenu>Ziel</guimenu> : leer
-				</simpara>
-			</listitem>
-			<listitem>
-				<simpara>
-					<guimenu>Drucker-Hersteller</guimenu> : <emphasis>PDF</emphasis>
-				</simpara>
-			</listitem>
-			<listitem>
-				<simpara>
-					<guimenu>Drucker-Modell</guimenu> : <emphasis>Generic CUPS-PDF Printer</emphasis>
-				</simpara>
-			</listitem>
+		  <listitem>
+			<simpara>
+			  <guimenu>Server</guimenu> : Name des Schulservers
+			</simpara>
+		  </listitem>
+		  <listitem>
+			<simpara>
+			  <guimenu>Protokoll</guimenu> : <emphasis>cups-pdf:/</emphasis>
+			</simpara>
+		  </listitem>
+		  <listitem>
+			<simpara>
+			  <guimenu>Ziel</guimenu> : leer
+			</simpara>
+		  </listitem>
+		  <listitem>
+			<simpara>
+			  <guimenu>Drucker-Hersteller</guimenu> : <emphasis>PDF</emphasis>
+			</simpara>
+		  </listitem>
+		  <listitem>
+			<simpara>
+			  <guimenu>Drucker-Modell</guimenu> : <emphasis>Generic CUPS-PDF Printer</emphasis>
+			</simpara>
+		  </listitem>
 		</itemizedlist>
+	  </section>
 	</section>
 
-	<section id="school:setup:staff">
-		<title>Anlegen von Mitarbeitern</title>
-		<para>
-			Mitarbeiter werden über das UMC-Modul <guimenu>Benutzer</guimenu>
-			auf dem &ucsMaster; angelegt.
-		</para>
-		<para>
-			Die Mitarbeiterkonten müssen unterhalb der OU der Schule im
-			Container <emphasis>cn=users,cn=mitarbeiter</emphasis> angelegt werden, die Auswahl
-			findet mit der Option <guimenu>Container</guimenu> beim Anlegen eines
-			Benutzers statt. Bei einer OU <emphasis>gym17</emphasis> muss
-			beispielsweise <emphasis>gym17/users/mitarbeiter</emphasis> ausgewählt werden.
-		</para>
-		<para>
-			Der Benutzer muss außerdem im Reiter <guimenu>Gruppen</guimenu> in die
-			Gruppe <emphasis>mitarbeiter-OU</emphasis>, also z.B. <emphasis>mitarbeiter-gym17</emphasis>.
-		</para>
+	<section id="school:setup:shares">
+	  <title>Anlegen von Freigaben</title>
+	  <para>
+		Die meisten Freigaben in einer &ucsUAS;-Umgebung werden automatisch
+		erstellt; jede Klasse oder Arbeitsgemeinschaft verfügt über eine
+		gemeinsame Freigabe. Weiterhin existiert mit
+		der <emphasis>Marktplatz</emphasis>-Freigabe je Schule eine schulweite Freigabe. Das Erstellen der Marktplatzfreigabe beim
+		Anlegen einer OU kann durch das Setzen der &ucsUCRV; <envar>ucsschool/import/generate/marktplatz</envar> auf den
+		Wert <emphasis>no</emphasis> verhindert werden.
+	  </para>
+	  <para>
+		Diese Freigaben müssen zwingend auf dem Schulserver bereitgestellt
+		werden, um die von &ucsUAS; bereitgestellten Funktionen nutzen zu können.
+	  </para>
+	  <para>
+		Weitere Freigaben werden, wie in einer Standard-UCS-Installation, über
+		das UMC-Modul <guimenu>Freigaben</guimenu> auf dem &ucsMaster;
+		angelegt. Weiterführende Dokumentation findet sich im
+		Freigaben-Kapitel des UCS-Handbuchs <xref linkend="ucs-handbuch"/>.
+	  </para>
+	  <para>
+		Die Freigaben müssen unterhalb der OU der Schule angelegt werden.
+		Die Auswahl findet mit der Option <guimenu>Container</guimenu> beim
+		Anlegen einer Freigabe statt. Für die OU <emphasis>gym17</emphasis> muss
+		beispielsweise der Container <emphasis>gym17/shares</emphasis> ausgewählt werden.
+	  </para>
 	</section>
+
+	<section id="school:configurehelpdesk">
+	  <title>Konfiguration der Helpdesk-Kontaktadresse</title>
+	  <para>
+		Über das Helpdesk-Modul können Lehrer per E-Mail Kontakt zum
+		Helpdesk-Team einer Schule aufnehmen. Damit dieses Modul genutzt
+		werden kann, muss auf dem jeweiligen Server die
+		&ucsUCRV; <envar>ucsschool/helpdesk/recipient</envar> auf die E-Mail-Adresse
+		des zuständigen Helpdesk-Teams gesetzt werden.
+	  </para>
+	</section>
+
 </chapter>

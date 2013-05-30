@@ -258,7 +258,7 @@ univention-add-app --latest ucsschool ucs-school-nonedu-slave
 		Für die Umwandlung sind einige Befehle auf der Kommandozeile des DC Masters auszuführen, die
 		einen Austausch des &ucsUAS;-Metapakets sowie eine Konfigurationsänderung durchführen (Bitte das Minuszeichen hinter dem zweiten Paketnamen beachten):
 		<programlisting>
-apt-get install ucs-school-master ucs-school-singlemaster-
+univention-install ucs-school-master ucs-school-singlemaster-
 ucr unset ucsschool/singlemaster
 		</programlisting>
 	  </para>
