@@ -1,7 +1,7 @@
 <chapter>
 	<title>Klassenarbeitsmodus</title>
 	<para>
-		Der Klassenarbeitsmodus ermöglicht die gezielte Einschränkung der Möglichkeiten der Computernutzung für Schüler einer Klasse.
+		Der Klassenarbeitsmodus ermöglicht die gezielte Einschränkung der Computernutzung für Schüler einer Klasse.
 		Über das UMC-Modul für den Klassenarbeitsmodus kann ein Lehrer einen Klassenraum für die exklusive Nutzung durch bestimmte Gruppen auswählen.
 		Der Klassenarbeitsmodus bietet darüber hinaus auch einen direkten Zugriff auf die Funktionalitäten der Materialverteilung.
 		Hintergründe zur technischen Umsetzung werden in <xref linkend="school:exam:concept"/> und mögliche Konfigurationsschnittstellen in <xref linkend="school:exam:configuration"/> gennant.
@@ -33,8 +33,9 @@
 		<note>
 			<para>
 				Damit die Einstellungen der Gruppenrichtlinien für die Rechner entsprechend greifen, ist es wichtig, dass die Schülerrechner des Computerraumes nach Einrichten einer Klassenarbeit neu gestartet werden.
-				Dieser Vorgang wird durch das Modul <guimenu>Klassenarbeit starten</guimenu> unterstützt, so dass alle eingeschalteten Rechner automatisch neu gestartet werden.
-				Zusätzlich ist es aus dem selbem Grund wichtig, dass nach Beenden einer Klassenarbeit die Schülerrechner entweder ausgeschaltet oder neu gestartet werden, damit die ursprünglichen Einstellungen der Gruppenrichtlinien wieder übernommen werden.
+				Dieser Vorgang wird durch das Modul <guimenu>Klassenarbeit starten</guimenu> unterstützt, indem alle eingeschalteten Rechner automatisch neu gestartet werden.
+				Zusätzlich ist es aus dem selben Grund wichtig, dass nach Beenden einer Klassenarbeit die Schülerrechner entweder ausgeschaltet oder neu gestartet werden.
+				Nur so können die ursprünglichen Einstellungen der Gruppenrichtlinien wieder wirksam werden.
 			</para>
 		</note>
 	</section>
@@ -46,7 +47,7 @@
 			Diese werden im folgenden aufgelistet und kurz erläutert.
 		</para>
 		<para>
-			Folgende &ucsUCRV;n können geändert werden um LDAP-Eigenschaften der Klassenarbeitskonten, Gruppen und Container anzupassen:
+			Folgende &ucsUCRV;n können geändert werden um LDAP-Eigenschaften der Klassenarbeitskonten, -gruppen und -container anzupassen:
 			<itemizedlist>
 				<listitem>
 					<envar>ucsschool/ldap/default/userprefix/exam</envar> gibt den Prefix an, der dem ursprünglichen Benutzernamen im Klassenarbeitskonto vorangestellt wird. Er ist standardmäßig auf <emphasis>exam-</emphasis> gesetzt.

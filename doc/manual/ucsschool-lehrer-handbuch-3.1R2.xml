@@ -390,8 +390,9 @@ feedback@univention.de
 		  Eine Präsentation wird wie folgt gestartet: Unter <guimenu>mehr</guimenu> muss in der Liste
 		  der Rechner die Option <guimenu>Präsentation starten</guimenu> ausgewählt werden. Es erscheint ein
 		  Hinweis, das die Präsentation gestartet wird und nach kurzer Zeit wird die Ausgabe auf die übrigen
-		  PCs übertragen. Ein Klick auf <guimenu>Beenden</guimenu> stoppt die Präsentation. Der Kreis bei dem
-		  sendenden Rechner wird dann in rot und für die empfangenden Rechner in grün dargestellt.
+		  PCs übertragen.
+		  Der Kreis des sendenden Rechners wird in rot und für die empfangenden Rechner in grün dargestellt.
+		  Ein Klick auf die Schaltfläche <guimenu>Präsentation beenden</guimenu> stoppt die Präsentation.
 		</para>
 	  </section>
 	  </section>
@@ -417,7 +418,7 @@ feedback@univention.de
 		  <title>Einrichten einer Klassenarbeit</title>
 		  <para>
 			Eine neue Klassenarbeit kann über das &ucsUMC; Modul <guimenu>Klassenarbeit starten</guimenu> eingerichtet werden.
-			In drei Schritten werden alle notwendigen Einstellung für die Klassenarbeit festgelegt.
+			In drei Schritten werden alle Einstellung für die Klassenarbeit festgelegt.
 		  </para>
 		  <orderedlist>
 			<listitem>
@@ -460,6 +461,10 @@ feedback@univention.de
 		</section>
 		<section id="lehrerdoku:klassenarbeit:neustart">
 		  <title>Neustart der Schülerrechner</title>
+		  <figure id="fig:klassenarbeit:neustart">
+			<title>Neustart der Schülerrechner</title>
+			<graphic scalefit="1" width="100%" align="center" fileref="illustrations/exam_reboot.png"/>
+		  </figure>
 		  <para>
 			Um die Einrichtung der Klassenarbeit abzuschließen ist es wichtig, dass alle Schülerrechner des Computerraums neu gestartet werden.
 			Nur durch einen Neustart der betroffenen Rechner können spezifische Berechtigungen und Rechnerkonfigurationen, die spezifisch für den Klassenarbeitsmodus vorgesehen sind, wirksam werden.
@@ -468,7 +473,7 @@ feedback@univention.de
 			Das Klassenarbeitsmodul bietet eine Hilfsfunktion an, so dass dieser Vorgang weitgehend automatisierte durchgeführt werden kann.
 			Dabei wird eine Verbindung zu allen eingeschalteten Rechnern aufgebaut.
 			Dieser Vorgang kann zwischen 30 Sekunden und 2 Minuten dauern.
-			Abschließend werden alle eingeschaltete Rechner aufgelistet.
+			Abschließend werden alle eingeschaltete Rechner aufgelistet, wie in <xref linkend="fig:klassenarbeit:neustart"/> dargestellt.
 			Die aufgelisteten Rechner können durch Klick auf die Schaltfläche <guimenu>Rechner Neustarten</guimenu> und durch anschließende Bestätigung automatisch neu gestartet werden.
 		  </para>
 		  <note>
@@ -486,9 +491,13 @@ feedback@univention.de
 		</section>
 		<section id="lehrerdoku:klassenarbeit:verwalten">
 		  <title>Verwaltung und Abschluss der Klassenarbeit</title>
+		  <figure id="fig:klassenarbeit:computerraum">
+			<title>Verwaltung der Klassenarbeit über das Computerraum-Modul im Klassenarbeitsmodus</title>
+			<graphic scalefit="1" width="100%" align="center" fileref="illustrations/exam_computerroom.png"/>
+		  </figure>
 		  <para>
-			Die Klassenarbeit wird durchgeführt und verwaltet über das &ucsUMC; Module <guimenu>Computerraum</guimenu>.
-			Während einer Klassenarbeit wird in dem Modul zusätzlich die verbleibende Zeit für die Klassenarbeit sowie zusätzlich spezifische Aktionen angezeigt.
+			Die Klassenarbeit wird durchgeführt und verwaltet über das &ucsUMC; Module <guimenu>Computerraum</guimenu> (siehe <xref linkend="fig:klassenarbeit:computerraum"/>).
+			Während einer Klassenarbeit werden in dem Modul zusätzlich die verbleibende Zeit der Klassenarbeit sowie für diesen Modus spezifische Aktionen angezeigt.
 			Zwischenergebnisse der Klassenarbeit können über die Schaltfläche <guimenu>Ergebnisse einsammeln</guimenu> eingesammelt werden.
 			Diese Aktion kann beliebig oft durchgeführt werden.
 			Zum Beenden der Klassenarbeit muss die Schaltfläche <guimenu>Klassenarbeit beenden</guimenu> ausgewählt werden.
