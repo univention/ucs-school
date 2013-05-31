@@ -2,7 +2,7 @@
 	<title>Klassenarbeitsmodus</title>
 	<para>
 		Der Klassenarbeitsmodus ermöglicht die gezielte Einschränkung der Computernutzung für Schüler einer Klasse.
-		Über das UMC-Modul für den Klassenarbeitsmodus kann ein Lehrer einen Klassenraum für die exklusive Nutzung durch bestimmte Gruppen auswählen.
+		Über das UMC-Modul für den Klassenarbeitsmodus kann ein Lehrer einen Klassenraum für die exklusive Nutzung durch bestimmte Gruppen konfigurieren.
 		Der Klassenarbeitsmodus bietet darüber hinaus auch einen direkten Zugriff auf die Funktionalitäten der Materialverteilung.
 		Hintergründe zur technischen Umsetzung werden in <xref linkend="school:exam:concept"/> und mögliche Konfigurationsschnittstellen in <xref linkend="school:exam:configuration"/> gennant.
 	</para>
@@ -32,8 +32,8 @@
 		</para>
 		<note>
 			<para>
-				Damit die Einstellungen der Gruppenrichtlinien für die Rechner entsprechend greifen, ist es wichtig, dass die Schülerrechner des Computerraumes nach Einrichten einer Klassenarbeit neu gestartet werden.
-				Dieser Vorgang wird durch das Modul <guimenu>Klassenarbeit starten</guimenu> unterstützt, indem alle eingeschalteten Rechner automatisch neu gestartet werden.
+				Damit die Einstellungen der Gruppenrichtlinien für die Rechner entsprechend greifen, ist es wichtig, dass die Schülerrechner des Computerraumes nach dem Einrichten einer Klassenarbeit neu gestartet werden.
+				Dieser Vorgang wird durch das UMC-Modul <guimenu>Klassenarbeit starten</guimenu> unterstützt, indem alle eingeschalteten Rechner automatisch neu gestartet werden können.
 				Zusätzlich ist es aus dem selben Grund wichtig, dass nach Beenden einer Klassenarbeit die Schülerrechner entweder ausgeschaltet oder neu gestartet werden.
 				Nur so können die ursprünglichen Einstellungen der Gruppenrichtlinien wieder wirksam werden.
 			</para>
@@ -44,16 +44,16 @@
 		<title>Konfiguration</title>
 		<para>
 			Für die Konfiguration des Klassenarbeitsmodus gibt es eine Reihe von &ucsUCRV;n.
-			Diese werden im folgenden aufgelistet und kurz erläutert.
+			Diese werden im folgenden aufgelistet und kurz erläutert. 
 		</para>
 		<para>
-			Folgende &ucsUCRV;n können geändert werden um LDAP-Eigenschaften der Klassenarbeitskonten, -gruppen und -container anzupassen:
+			Die nachfolgenden &ucsUCRV;n können geändert werden, um LDAP-Eigenschaften der Klassenarbeitskonten, -gruppen und -container anzupassen. Sofern diese Variablen manuell gesetzt werden, ist zu beachten, dass es sich dabei um globale Einstellungen handelt und diese Variablen sowohl auf dem &ucsMaster; als auch auf den Schulservern identische Werte aufweisen müssen.
 			<itemizedlist>
 				<listitem>
 					<envar>ucsschool/ldap/default/userprefix/exam</envar> gibt den Prefix an, der dem ursprünglichen Benutzernamen im Klassenarbeitskonto vorangestellt wird. Er ist standardmäßig auf <emphasis>exam-</emphasis> gesetzt.
 				</listitem>
 				<listitem>
-					<envar>ucsschool/ldap/default/groupname/exam</envar> bezeichnet die Gruppe, der alle Klassenarbeitskonten sowie Klassenarbeitsrechner zugeordnet sind. Über diese Gruppe können spezifische Windows-Gruppenrichtlinien für den Klassenarbeitsmodus gesetzt werden. Der Standardname für diese Gruppe ist <emphasis>OU&lt;OU-Name&gt;-Klassenarbeit</emphasis>.
+					<envar>ucsschool/ldap/default/groupname/exam</envar> bezeichnet die Gruppe, der alle Klassenarbeitskonten sowie Klassenarbeitsrechner zugeordnet sind. Über diese Gruppe können spezifische Windows-Gruppenrichtlinien für den Klassenarbeitsmodus gesetzt werden. Der Standardname für diese Gruppe ist <emphasis>OU%(ou)s-Klassenarbeit</emphasis>, wobei <emphasis>%(ou)s</emphasis> vom System automatisch durch den Namen der OU ausgetauscht wird.
 				</listitem>
 				<listitem>
 					<envar>ucsschool/ldap/default/container/exam</envar> ist der Name des Containers, unterhalb dem die Klassenarbeitskonten gespeichert werden. Standardmäßig ist der Name auf <emphasis>examusers</emphasis> gesetzt. Die LDAP-Position des Containers ist direkt unterhalb der Schul-OU.
@@ -61,16 +61,16 @@
 			</itemizedlist>
 		</para>
 		<para>
-			Für das Einrichten einer Klassenarbeit können zur besseren Benutzbarkeit einige Werte vorausgewählt werden, dazu gehören:
+			Das UMC-Modul zum Einrichten einer Klassenarbeit bietet die Möglichkeit bestimmte Standardwerte zu definieren, um das Starten einer Klassenarbeit zu vereinfachen; dazu gehören:
 			<itemizedlist>
 				<listitem>
-					<envar>ucsschool/exam/default/room</envar> definiert den vorausgewählten Raum für eine neue Klassenarbeit. Der Eintrag beinhaltet den LDAP-Namen des Raumes (inklusive des Schul-OU-Präfxies), also bspw. <emphasis>meineschule-PC Raum</emphasis>. Standardmäßig wird der alphabetisch erste Raum ausgewählt.
+					<envar>ucsschool/exam/default/room</envar> definiert den vorausgewählten Raum für eine neue Klassenarbeit. Der Eintrag beinhaltet den LDAP-Namen des Raumes (inklusive des Schul-OU-Präfxies), also bspw. <emphasis>meineschule-PC Raum</emphasis>. Ist die Variable nicht gesetzt, wird standardmäßig der alphabetisch erste Raum ausgewählt.
 				</listitem>
 				<listitem>
-					<envar>ucsschool/exam/default/shares</envar> gibt den vorausgewählten Freigabezugriff für eine neue Klassenarbeit an. Mögliche Werte sind <emphasis>all</emphasis> für Zugriff auf alle Freigaben ohne Einschränkungen sowie <emphasis>home</emphasis> für eingeschränkten Zugriff auf lediglich das Heimatverzeichnis des (Klassenarbeits-)Benutzerkonto. Standardmäßig ist nur der Zugriff auf das Homeverzeichnis freigegeben.
+					<envar>ucsschool/exam/default/shares</envar> gibt den vorausgewählten Freigabezugriff für eine neue Klassenarbeit an. Mögliche Werte sind <emphasis>all</emphasis> für Zugriff auf alle Freigaben ohne Einschränkungen sowie <emphasis>home</emphasis> für eingeschränkten Zugriff auf lediglich das Heimatverzeichnis des (Klassenarbeits-)Benutzerkonto. Ist die Variable nicht gesetzt, wird standardmäßig nur der Zugriff auf das Homeverzeichnis freigegeben.
 				</listitem>
 				<listitem>
-					<envar>ucsschool/exam/default/internet</envar> Definiert die vorausgewählte Internetregel für eine neue Klassenarbeit. Mögliche Werte umfassen die Namen aller Internetregeln wie sie im UMC module "Internetregeln definieren" angezeigt werden. Normalerweise werden die globalen Standardeinstellungen verwendet.
+					<envar>ucsschool/exam/default/internet</envar> definiert die vorausgewählte Internetregel für eine neue Klassenarbeit. Mögliche Werte umfassen die Namen aller Internetregeln wie sie im UMC-Modul <guimenu>Internetregeln definieren</guimenu> angezeigt werden. Normalerweise werden die globalen Standardeinstellungen verwendet.
 				</listitem>
 			</itemizedlist>
 		</para>
@@ -86,32 +86,54 @@
 		Alle Gruppenrichtlinieneinstellungen können je nach Bedarf gesammelt über ein Gruppenrichtlinienobjekt vorgenommen werden oder auf separate Objekte verteilt werden. Um den Bezug zwischen einem ausgewählten Gruppenrichtlinienobjekt und Objekten im Samba-Verzeichnisdienst herzustellen, kann es mit einer Organisationseinheit (OU) verknüpft werden, z.B. der Schul-OU. Einige der hier beispielhaft beschriebenen Gruppenrichtlinieneinstellungen wirken sich nur auf Benutzer- und andere nur auf Computer-Konten aus. Da die Einstellungen eines Gruppenrichtlinienobjekts nur für Objekte ausgewertet werden, die unterhalb des speziellen Verzeichniszweigs liegen, mit dem es verknüpft wurde, ist es wichtig, dass das entsprechende Gruppenrichtlinienobjekt hinreichend hoch in der hierarchischen Objektordnung verknüpft wird.
 		</para>
 		<para>
-			Einige der genannten Gruppenrichtlinien-Einstellungen beziehen sich auf den Bereich der Computerkonfiguration und werden nur beim Systemstart korrekt von den entsprechenden Windows-Komponenten ausgewertet. Für solche Einstellungen ist daher ein Reboot der Windows-Arbeitsplatzsysteme nach Aktivierung des Klassenarbeitsmodus notwendig.
+			Einige der genannten Gruppenrichtlinien-Einstellungen beziehen sich auf den Bereich der Computerkonfiguration und werden nur beim Systemstart korrekt von den entsprechenden Windows-Komponenten ausgewertet. Für solche Einstellungen ist daher ein Neustart der Windows-Arbeitsplatzsysteme nach Aktivierung des Klassenarbeitsmodus notwendig.
 		</para>
 		<note>
 			Zu diesem Thema ist auch ein Hinweis von Microsoft zu Windows XP Systemen zu beachten: <quote>Jede Version von Windows XP Professional stellt eine Funktion zur Optimierung für schnelles Anmelden zur Verfügung. Computer mit diesen Betriebssystemen warten standardmäßig beim Starten nicht auf den Start des Netzwerks. Nach der Anmeldung werden die Richtlinien im Hintergrund verarbeitet, sobald das Netzwerk zur Verfügung steht. Dies bedeutet, dass der Computer bei der Anmeldung und beim Start weiterhin die älteren Richtlinieneinstellungen verwendet. Daher sind für Einstellungen, die nur beim Start oder bei der Anmeldung angewendet werden können (z. B. Softwareinstallation und Ordnerumleitung), möglicherweise nach dem Ausführen der ersten Änderung am Gruppenrichtlinienobjekt mehrere Anmeldungen durch den Benutzer erforderlich. Diese Richtlinie wird gesteuert durch die Einstellung in <filename>Computerkonfiguration\Administrative Vorlagen\System\Anmeldung\Beim Neustart des Computers und bei der Anmeldung immer 
 auf das Netzwerk warten</filename>. Diese Funktion ist in den Betriebssystemversionen von Windows 2000 oder Windows Server 2003 nicht verfügbar.</quote>
 			<footnote><para><ulink url="http://technet.microsoft.com/de-de/library/cc785665(v=ws.10).aspx"/></para></footnote>
 		</note>
+		<section id="school:exam:gpo:general">
+		  <title>Generelle Hinweise zum Administrativen Vorlagen und Gruppenrichtlinien</title>
+		  <para>
+			Auf dem Schulserver sollte das Verzeichnis
+			<filename>/var/lib/samba/sysvol/<emphasis>DomänenNameDerUCS@schoolUmgebung</emphasis>/Policies/PolicyDefinitions/</filename>
+			angelegt werden. Sobald dieses Verzeichnis angelegt ist, bevorzugt das Windows-Programm zur
+			Gruppenrichtlinienverwaltung die dort hinterlegten Administrativen Vorlagen im ADMX-Format vor den
+			lokal auf dem Windows 7 System installierten Administrativen Vorlagen.
+		  </para>
+		  <para>
+			Da in den nachfolgenden Abschnitten zusätzliche Administrative Vorlagen verwendet
+			werden, die ebenfalls in dem oben genannten Verzeichnis abzulegen sind, wird empfohlen, nach dem
+			Erstellen des Verzeichnisses einmalig die lokal installierten Administrativen Vorlagen aus dem
+			Verzeichnis <filename>C:\Windows\PolicyDefinitions</filename> in das neue Verzeichnis zu
+			kopieren. Da das Verzeichnis serverseitig unterhalb der <filename>SYSVOL</filename>-Freigabe liegt,
+			wird es per Voreinstellung auf alle Samba 4-Server der Domäne synchronisiert. Die Administrativen
+			Vorlagen sind an sich keine Gruppenrichtlinien, sie dienen nur zur Erweiterung der
+			Einstellungsmöglichkeiten die das Windows Programm zur Gruppenrichtlinienverwaltung dem
+			Administrator zur Auswahl anbietet. Für neuere Windows- Versionen, wie z.B. Windows 8 stellt
+			Microsoft aktualisierte Administrative Vorlagen zum Download zur Verfügung.
+		  </para>
+		</section>
 		<section>
 			<title>Windows-Anmeldung im Prüfungsraum auf Mitglieder der Klassenarbeitsgruppe beschränken</title>
 			<para>
-				Da das im folgenden konfigurierte Gruppenrichtlinienobjekt je nach Verknüpfung im Samba-Verzeichnisdienst die Anmeldung an betroffenen Windows-Arbeitsplatzsystemen einschränkt, ist dringend empfohlen als Erstes die Anwendung der neuen Gruppenrichtlinie auf solche Windows-Arbeitsplatzsysteme einzuschränken, auf die sie sich später im Klassenarbeitsmodus auswirken soll. Dies geschieht am einfachsten über die Anpassung der Sicherheitsfilterung, die im Folgenden beschrieben ist:
+				Da das im folgenden konfigurierte Gruppenrichtlinienobjekt je nach Verknüpfung im Samba-Verzeichnisdienst die Anmeldung an betroffenen Windows-Arbeitsplatzsystemen einschränkt, wird dringend empfohlen, als erstes die Anwendung der neuen Gruppenrichtlinie auf solche Windows-Arbeitsplatzsysteme einzuschränken, auf die sie sich später im Klassenarbeitsmodus auswirken soll. Dies geschieht am einfachsten über die Anpassung der Sicherheitsfilterung, die im Folgenden beschrieben ist:
 			</para>
 			<section>
 				<title>Anwendungsbereich der GPO auf Klassenarbeitscomputer einschränken</title>
 				<itemizedlist>
 					<listitem>
-						In der Gruppenrichtlinienverwaltung wird ein neues Gruppenrichtlinienobjekt angelegt und/oder eine existierende zur Bearbeitung geöffnet.
+						In der Gruppenrichtlinienverwaltung ein neues Gruppenrichtlinienobjekt anlegen und/oder ein existierendes Gruppenrichtlinienobjekt zur Bearbeitung öffnen.
 					</listitem>
 					<listitem>
-						In der Baumdarstellung der Gruppenrichtlinienverwaltung die Gruppenrichtlinie anklicken,
+						In der Baumdarstellung der Gruppenrichtlinienverwaltung die Gruppenrichtlinie anklicken.
 					</listitem>
 					<listitem>
-						Auf dem geöffneten Reiter <emphasis>Bereich</emphasis> im Abschnitt <emphasis>Sicherheitsfilterung</emphasis> die Schaltfläche <emphasis>Hinzufügen</emphasis> betätigen,
+						Auf dem geöffneten Reiter <emphasis>Bereich</emphasis> im Abschnitt <emphasis>Sicherheitsfilterung</emphasis> die Schaltfläche <emphasis>Hinzufügen</emphasis> betätigen.
 					</listitem>
 					<listitem>
-						In das Eingabefeld <emphasis>Geben Sie die zu verwendenden Objektnamen ein</emphasis> den Namen der Klassenarbeitsgruppe, z.B. OUschule1-Klassenarbeit eintragen und den Dialog mit <emphasis>OK</emphasis> schließen.
+						In das Eingabefeld <emphasis>Geben Sie die zu verwendenden Objektnamen ein</emphasis> den Namen der Klassenarbeitsgruppe (<filename>OU<emphasis>NameDerOU</emphasis>-Klassenarbeit</filename>, z.B. <emphasis>OUgym17-Klassenarbeit</emphasis>) eintragen und den Dialog mit <emphasis>OK</emphasis> schließen.
 					</listitem>
 					<listitem>
 						Auf dem geöffneten Reiter <emphasis>Bereich</emphasis> im Abschnitt <emphasis>Sicherheitsfilterung</emphasis> die Gruppe <emphasis>Authenticated Users</emphasis> auswählen und die Schaltfläche <emphasis>Entfernen</emphasis> betätigen.
@@ -119,27 +141,27 @@ auf das Netzwerk warten</filename>. Diese Funktion ist in den Betriebssystemvers
 				</itemizedlist>
 			</section>
 			<section>
-				<title>Einschränkung der Windows-Anmeldung auf Klassenarbeitsbenutzerkonten</title>
+				<title>Einschränkung der Windows-Anmeldung auf Klassenarbeitsbenutzerkonten und Lehrer</title>
 				<itemizedlist>
 					<listitem>
-						In der Gruppenrichtlinienverwaltung wird das Gruppenrichtlinienobjekt zur Bearbeitung geöffnet (Kontextmenü des GPO in der Baumdarstellung).
+						In der Gruppenrichtlinienverwaltung das Gruppenrichtlinienobjekt zur Bearbeitung öffnen (Kontextmenü des GPO in der Baumdarstellung).
 					</listitem>
 					<listitem>
 						<simpara>
-							Im neu geöffneten Gruppenrichtlinienverwaltungseditor wird der folgende Zweig geöffnet:
+							Im neu geöffneten Gruppenrichtlinienverwaltungseditor den folgenden Zweig öffnen:
 						</simpara>
 						<simpara>
 							<filename>Computerkonfiguration > Richtlinien > Windows-Einstellungen > Sicherheitseinstellungen > Lokale Richtlinien > Zuweisen von Benutzerrechten</filename>
 						</simpara>
 					</listitem>
 					<listitem>
-						Im neu geöffneten Richtlinien-Dialog <emphasis>Eigenschaften von Lokal anmelden zulassen</emphasis> auf dem Reiter <emphasis>Sicherheitsrichtlinie</emphasis> die Option <emphasis>Diese Richtlinieneinstellung definieren</emphasis> aktivieren,
+						Im neu geöffneten Richtlinien-Dialog <emphasis>Eigenschaften von Lokal anmelden zulassen</emphasis> auf dem Reiter <emphasis>Sicherheitsrichtlinie</emphasis> die Option <emphasis>Diese Richtlinieneinstellung definieren</emphasis> aktivieren.
 					</listitem>
 					<listitem>
-						dann die Schaltfläche <emphasis>Benutzer oder Gruppe hinzufügen</emphasis> betätigen,
+						Dann die Schaltfläche <emphasis>Benutzer oder Gruppe hinzufügen</emphasis> betätigen.
 					</listitem>
 					<listitem>
-						Im neu geöffneten Dialog die Schaltfläche <emphasis>Durchsuchen</emphasis> betätigen,
+						Im neu geöffneten Dialog die Schaltfläche <emphasis>Durchsuchen</emphasis> betätigen.
 					</listitem>
 					<listitem>
 						In das Eingabefeld <emphasis>Geben Sie die zu verwendenden Objektnamen ein</emphasis> den Namen <emphasis>Administratoren</emphasis> eintragen und den Dialog mit <emphasis>OK</emphasis> schließen.
@@ -148,13 +170,25 @@ auf das Netzwerk warten</filename>. Diese Funktion ist in den Betriebssystemvers
 						Den Dialog <emphasis>Benutzer oder Gruppe hinzufügen</emphasis> ebenfalls mit <emphasis>OK</emphasis> schließen.
 					</listitem>
 					<listitem>
-						Erneut die Schaltfläche <emphasis>Benutzer oder Gruppe hinzufügen</emphasis> betätigen,
+						Erneut die Schaltfläche <emphasis>Benutzer oder Gruppe hinzufügen</emphasis> betätigen.
 					</listitem>
 					<listitem>
-						Im neu geöffneten Dialog die Schaltfläche <emphasis>Durchsuchen</emphasis> betätigen,
+						Im neu geöffneten Dialog die Schaltfläche <emphasis>Durchsuchen</emphasis> betätigen.
 					</listitem>
 					<listitem>
-						In das Eingabefeld <emphasis>Geben Sie die zu verwendenden Objektnamen ein</emphasis> den Namen der Klassenarbeitsgruppe, z.B. OUschule1-Klassenarbeit eintragen und den Dialog mit <emphasis>OK</emphasis> schließen.
+						In das Eingabefeld <emphasis>Geben Sie die zu verwendenden Objektnamen ein</emphasis> den Namen der Klassenarbeitsgruppe (<filename>OU<emphasis>NameDerOU</emphasis>-Klassenarbeit</filename>, z.B. <emphasis>OUgym17-Klassenarbeit</emphasis>) eintragen und den Dialog mit <emphasis>OK</emphasis> schließen.
+					</listitem>
+					<listitem>
+						Den Dialog <emphasis>Benutzer oder Gruppe hinzufügen</emphasis> ebenfalls mit <emphasis>OK</emphasis> schließen.
+					</listitem>
+					<listitem>
+						Erneut die Schaltfläche <emphasis>Benutzer oder Gruppe hinzufügen</emphasis> betätigen.
+					</listitem>
+					<listitem>
+						Im neu geöffneten Dialog die Schaltfläche <emphasis>Durchsuchen</emphasis> betätigen.
+					</listitem>
+					<listitem>
+						In das Eingabefeld <emphasis>Geben Sie die zu verwendenden Objektnamen ein</emphasis> den Namen der Lehrergruppe (<filename>lehrer-<emphasis>NameDerOU</emphasis></filename>, z.B. <emphasis>lehrer-gym17</emphasis>) eintragen und den Dialog mit <emphasis>OK</emphasis> schließen.
 					</listitem>
 					<listitem>
 						Den Dialog <emphasis>Benutzer oder Gruppe hinzufügen</emphasis> ebenfalls mit <emphasis>OK</emphasis> schließen.
@@ -173,7 +207,7 @@ auf das Netzwerk warten</filename>. Diese Funktion ist in den Betriebssystemvers
 		<section>
 			<title>Zugriff auf USB-Speicher und Wechselmedien einschränken</title>
 			<para>
-				Zur Einschränkung des Zugriffs auf USB-Speicher und Wechselmedien sind je nach Windowsversion zwei Fälle zu beachten, einerseits die Einschränkung der Benutzung bereits installierter Gerätetreiber und andererseits die Einschränkung der Installation neuer Gerätetreiber.
+				Zur Einschränkung des Zugriffs auf USB-Speicher und Wechselmedien sind je nach Windowsversion zwei Fälle zu beachten: einerseits die Einschränkung der Benutzung bereits installierter Gerätetreiber und andererseits die Einschränkung der Installation neuer Gerätetreiber.
 			</para>
 			<para>
 				Während für Windows XP beide Einschränkungen notwendig sind, bietet Windows 7 durch erweiterte Richtlinien vereinfachte und erweiterte Kontrollmöglichkeiten. In Mischumgebungen ist eine Kombination der skizzierten Einstellungen zu empfehlen.
@@ -192,15 +226,16 @@ auf das Netzwerk warten</filename>. Diese Funktion ist in den Betriebssystemvers
 					Diese Richtlinie wird über eine Administrative Vorlage (ADMX) definiert, die in Microsoft Knowledgebase Artikel 555324.
 					<footnote><para><ulink url="http://support.microsoft.com/kb/555324"/></para></footnote> beschrieben ist.
 					Erst nach Einbinden der Administrative Vorlage (ADMX) können folgende Einstellungen getroffen werden.
-					Beispiele für ADMX Dateien liegen unter <filename>/usr/share/doc/ucs-school-umc-exam/examples/GPO</filename>.
+					Beispiele für ADMX-Dateien liegen unter <filename>/usr/share/doc/ucs-school-umc-exam/examples/GPO</filename>.
+					Zum Einbinden der ADMX-Dateien müssen diese auf die <filename>SYSVOL</filename>-Freigabe kopiert werden (siehe <xref linkend="school:exam:gpo:general"/>).
 				</para>
 				<itemizedlist>
 					<listitem>
-						In der Gruppenrichtlinienverwaltung wird ein neues Gruppenrichtlinienobjekt angelegt und/oder eine existierende zur Bearbeitung geöffnet.
+						In der Gruppenrichtlinienverwaltung ein neues Gruppenrichtlinienobjekt anlegen und/oder ein existierendes Gruppenrichtlinienobjekt zur Bearbeitung öffnen.
 					</listitem>
 					<listitem>
 						<simpara>
-							Im Gruppenrichtlinienverwaltungseditor wird der folgende Zweig geöffnet:
+							Im Gruppenrichtlinienverwaltungseditor den folgenden Zweig öffnen:
 						</simpara>
 						<simpara>
 							<filename>Computerkonfiguration > Richtlinien > Administrative Vorlagen > Spezielle Einstellungen > Treiber einschränken</filename>
@@ -211,7 +246,7 @@ auf das Netzwerk warten</filename>. Diese Funktion ist in den Betriebssystemvers
 					</listitem>
 				</itemizedlist>
 				<note>
-					Hier stehen auch weitere Gerätetypen zur Auswahl, z.B. CD-ROM Laufwerke.
+					Hier stehen auch weitere Gerätetypen zur Auswahl, z.B. CD-ROM-Laufwerke.
 				</note>
 			</section>
 			<section>
@@ -222,18 +257,18 @@ auf das Netzwerk warten</filename>. Diese Funktion ist in den Betriebssystemvers
 				</para>
 				<itemizedlist>
 					<listitem>
-						In der Gruppenrichtlinienverwaltung wird ein neues Gruppenrichtlinienobjekt angelegt und/oder eine existierende zur Bearbeitung geöffnet.
+						In der Gruppenrichtlinienverwaltung ein neues Gruppenrichtlinienobjekt anlegen und/oder ein existierendes Gruppenrichtlinienobjekt zur Bearbeitung öffnen.
 					</listitem>
 					<listitem>
 						<simpara>
-							Im Gruppenrichtlinienverwaltungseditor wird der folgende Zweig geöffnet:
+							Im Gruppenrichtlinienverwaltungseditor den folgenden Zweig öffnen:
 						</simpara>
 						<simpara>
 							<filename>Computerkonfiguration > Richtlinien > Windows-Einstellungen > Sicherheitseinstellungen > Dateisystem</filename>
 						</simpara>
 					</listitem>
 					<listitem>
-						Rechtsklick <emphasis>Datei hinzufügen...</emphasis>
+						Rechtsklick auf <emphasis>Datei hinzufügen...</emphasis>
 					</listitem>
 					<listitem>
 						Das Verzeichnis <filename>C:\Windows\Inf</filename> ansteuern und dort die Datei <filename>usbstor.inf</filename> auswählen und mit <emphasis>OK</emphasis> bestätigen (ggf. wird die Dateiendung <emphasis>.inf</emphasis> nicht mit angezeigt).
@@ -242,7 +277,7 @@ auf das Netzwerk warten</filename>. Diese Funktion ist in den Betriebssystemvers
 						In dem neu geöffneten Dialog <emphasis>Datenbanksicherheit für ...</emphasis>  in der oberen Liste <emphasis>Gruppen- oder Benutzernamen</emphasis> die Schaltfläche <emphasis>Hinzufügen</emphasis> betätigen und den Namen der Klassenarbeitsgruppe hinzufügen,
 					</listitem>
 					<listitem>
-						in der darunter angezeigten Liste <emphasis>Berechtigungen für ...</emphasis> in der Zeile <emphasis>Vollzugriff</emphasis>, Spalte <emphasis>Verweigern</emphasis> ein Häkchen setzen und mit <emphasis>OK</emphasis> bestätigen.
+						In der darunter angezeigten Liste <emphasis>Berechtigungen für ...</emphasis> in der Zeile <emphasis>Vollzugriff</emphasis>, Spalte <emphasis>Verweigern</emphasis> ein Häkchen setzen und mit <emphasis>OK</emphasis> bestätigen.
 					</listitem>
 					<listitem>
 						Den Dialog <emphasis>Datenbanksicherheit für ...</emphasis> mit <emphasis>OK</emphasis> schließen.
@@ -262,11 +297,11 @@ auf das Netzwerk warten</filename>. Diese Funktion ist in den Betriebssystemvers
 				<title>Zugriff auf USB-Speicher an Windows 7 einschränken</title>
 				<itemizedlist>
 					<listitem>
-						In der Gruppenrichtlinienverwaltung wird ein neues Gruppenrichtlinienobjekt angelegt und/oder eine existierende zur Bearbeitung geöffnet.
+						In der Gruppenrichtlinienverwaltung ein neues Gruppenrichtlinienobjekt anlegen und/oder ein existierendes Gruppenrichtlinienobjekt zur Bearbeitung öffnen.
 					</listitem>
 					<listitem>
 						<simpara>
-							Im Gruppenrichtlinienverwaltungseditor wird der folgende Zweig geöffnet:
+							Im Gruppenrichtlinienverwaltungseditor den folgenden Zweig öffnen:
 						</simpara>
 						<simpara>
 							<filename>Benutzerkonfiguration > Richtlinien > Administrative Vorlagen > System > Wechselmedienzugriff</filename>
@@ -283,15 +318,15 @@ auf das Netzwerk warten</filename>. Diese Funktion ist in den Betriebssystemvers
 			<section>
 				<title>Installation neuer Gerätetreiber für USB-Speicher an Windows 7 Clients verbieten</title>
 				<para>
-					Zusätzliche Einschränkungen zur Installation von Gerätetreibern sind auch unter Windows 7 möglich, die Einstellungsmöglichkeiten bieten eine größere Kontrolle, setzen aber auch konkrete Erfahrungen mit den im Einzelfall eingesetzten Geräten voraus, daher ist dieser Abschnitt nur als Einstiegshilfe zu verstehen. Die folgende Einstellung würde die zusätzliche Installation jeglicher Treiber für Wechselgeräte deaktivieren. Es kann hier z.B. dann zusätzlich sinnvoll sein, Administratoren von dieser Einschränkung auszunehmen.
+					Zusätzliche Einschränkungen zur Installation von Gerätetreibern sind auch unter Windows 7 möglich. Die Einstellungsmöglichkeiten bieten eine größere Kontrolle, setzen aber auch konkrete Erfahrungen mit den im Einzelfall eingesetzten Geräten voraus. Daher ist dieser Abschnitt nur als Einstiegshilfe zu verstehen. Die folgende Einstellung würde die zusätzliche Installation jeglicher Treiber für Wechselgeräte deaktivieren. Es kann hier z.B. dann zusätzlich sinnvoll sein, Administratoren von dieser Einschränkung auszunehmen.
 				</para>
 				<itemizedlist>
 					<listitem>
-						In der Gruppenrichtlinienverwaltung wird ein neues Gruppenrichtlinienobjekt angelegt und/oder eine existierende zur Bearbeitung geöffnet.
+						In der Gruppenrichtlinienverwaltung ein neues Gruppenrichtlinienobjekt anlegen und/oder ein existierendes Gruppenrichtlinienobjekt zur Bearbeitung öffnen.
 					</listitem>
 					<listitem>
 						<simpara>
-							Im Gruppenrichtlinienverwaltungseditor wird der folgende Zweig geöffnet:
+							Im Gruppenrichtlinienverwaltungseditor den folgenden Zweig öffnen:
 						</simpara>
 						<simpara>
 							<filename>Computerkonfiguration > Richtlinien > Administrative Vorlagen > System > Geräteinstallation > Einschränkungen bei der Geräteinstallation</filename>
@@ -323,24 +358,24 @@ auf das Netzwerk warten</filename>. Diese Funktion ist in den Betriebssystemvers
 				Im Folgenden sind Vorgaben für Internet Explorer, Google Chrome und Mozilla Firefox beschrieben. Während Microsoft selbst Administrative Vorlagen mitliefert, sind für Google Chrome und Mozilla Firefox jeweils eigene Administrative Vorlagen notwendig.
 			</para>
 			<para>
-				Zusätzlich zur Vorgabe einer Proxyeinstellung ist für den Klassenarbeitsmodus eine Sperrung des Benutzer-Zugriffs auf eben diese Einstellungen sinnvoll. Dazu gibt es zwei unterschiedliche Ansätze: Im Fall des Internet Explorers bietet die Administrative Vorlage die Möglichkeit, das entsprechende Einstellungsfenster zu sperren. Im Fall von Google Chrome und Mozilla Firefox werden hingegen die Proxy-Einstellungen per Gruppenrichtlinie für den Arbeitsplatzrechner vorgegeben, statt für den Benutzer, und sind dadurch z.B. für Schüler nicht mehr veränderbar. Für die beiden letztgenannten Browser ist es daher wichtig darauf zu achten, die Einstellungen wo nötig im Zweig Computerkonfiguration des Gruppenrichtlinieneditors zu treffen statt im Zweig Benutzerkonfiguration.
+				Zusätzlich zur Vorgabe einer Proxyeinstellung ist für den Klassenarbeitsmodus eine Sperrung des Benutzer-Zugriffs auf eben diese Einstellungen sinnvoll. Dazu gibt es zwei unterschiedliche Ansätze: Im Fall des Internet Explorers bietet die Administrative Vorlage die Möglichkeit, das entsprechende Einstellungsfenster zu sperren. Im Fall von Google Chrome und Mozilla Firefox werden hingegen die Proxy-Einstellungen per Gruppenrichtlinie für den Arbeitsplatzrechner vorgegeben, statt für den Benutzer, und sind dadurch z.B. für Schüler nicht mehr veränderbar. Für die beiden letztgenannten Browser ist es daher wichtig darauf zu achten, die Einstellungen, wo nötig, im Zweig <emphasis>Computerkonfiguration</emphasis> des Gruppenrichtlinieneditors statt im Zweig <emphasis>Benutzerkonfiguration</emphasis> zu treffen.
 			</para>
 			<section>
 				<title>Proxy-Vorgabe für den Internet Explorer</title>
 				<itemizedlist>
 					<listitem>
 						<simpara>
-							Im Gruppenrichtlinienverwaltungseditor wird der folgende Zweig geöffnet:
+							Im Gruppenrichtlinienverwaltungseditor den folgenden Zweig öffnen:
 						</simpara>
 						<simpara>
 							<filename>Benutzerkonfiguration > Richtlinien > Windows-Einstellungen > Internet Explorer-Wartung > Verbindung</filename>
 						</simpara>
 					</listitem>
 					<listitem>
-						Richtlinie <emphasis>Proxyeinstelungen</emphasis> öffnen, <emphasis>Aktiviert</emphasis> auswählen und bestätigen.
+						Richtlinie <emphasis>Proxyeinstellungen</emphasis> öffnen, <emphasis>Aktiviert</emphasis> auswählen und bestätigen.
 					</listitem>
 					<listitem>
-						Proxyadresse für <emphasis>HTTP</emphasis>, <emphasis>Secure</emphasis> und das entsprechende <emphasis>Port</emphasis> Feld ausfüllen (Wert der &ucsUCRV; <envar>squid/httpport</envar>, Standard 3128)
+						Proxyadresse für <emphasis>HTTP</emphasis> sowie <emphasis>Secure</emphasis> und das entsprechende <emphasis>Port</emphasis>-Feld ausfüllen (Wert der &ucsUCRV; <envar>squid/httpport</envar>, Standard 3128)
 					</listitem>
 					<listitem>
 						Ggf. <emphasis>Für alle Adressen denselben Proxyserver verwenden</emphasis> aktivieren.
@@ -352,7 +387,7 @@ auf das Netzwerk warten</filename>. Diese Funktion ist in den Betriebssystemvers
 				<itemizedlist>
 					<listitem>
 						<simpara>
-							Im Gruppenrichtlinienverwaltungseditor wird der folgende Zweig geöffnet:
+							Im Gruppenrichtlinienverwaltungseditor den folgenden Zweig öffnen:
 						</simpara>
 						<simpara>
 							<filename>Computerkonfiguration > Richtlinien > Administrative Vorlagen: Vom zentralen Computer abgerufene Richtliniendefinitionen (ADMX-Dateien) > Windows-Komponenten > Internet Explorer > Internetsystemsteuerung</filename>
@@ -366,19 +401,15 @@ auf das Netzwerk warten</filename>. Diese Funktion ist in den Betriebssystemvers
 			<section>
 				<title>Proxy-Vorgabe für Google Chrome</title>
 				<para>
-					Auf dem Schul-Server sollte das Verzeichnis <filename>/var/lib/samba/sysvol/DomänenNameDerUCS@schoolUmgebung/Policies/PolicyDefinitions/</filename> angelegt werden. Sobald dieses Verzeichnis angelegt ist, bevorzugt das Windows Programm zur Gruppenrichtlinienverwaltung die dort hinterlegten Administrativen Vorlagen im ADMX-Format vor den lokal auf dem Windows 7 System installierten Administrativen Vorlagen. Es ist daher zu empfehlen, nach angelegten des Verzeichnisses einmalig die lokal installierten Administrativen Vorlagen aus dem Verzeichnis <filename>C:\Windows\PolicyDefinitions</filename> in das neue Verzeichnis zu kopieren. Da das Verzeichnis server-seitig unter dem Sysvol liegt, wird es per Voreinstellung auf alle Samba 4 Server der Domäne synchronisiert. Die Administrativen Vorlagen sind an sich keine Gruppenrichtlinien, sie dienen nur zur Erweiterung der Einstellungsmöglichkeiten die das Windows Programm zur Gruppenrichtlinienverwaltung dem Administrator zur Auswahl anbietet. Für neuere Windows-
-Versionen, wie z.B. Windows 8 stellt Microsoft aktualisierte Administrative Vorlagen zum Download zur Verfügung.
-				</para>
-				<para>
-					Die Administrativen Vorlagen für Google Chrome werden durch das Zip-Archiv <filename>policy_templates.zip</filename> des Chromium-Projekts bereitgestellt. Die entprechenden Dateien liegen unter <filename>/usr/share/doc/ucs-school-umc-exam/examples/GPO</filename>.  Der Inhalt des admx-Verzeichnisses sollte in das PolicyDefinitions Verzeichnis auf den Schul-Server kopiert werden, so dass dort die Datei <filename>chrome.admx</filename> liegt. Die <filename>*.adml</filename> Dateien aus den Unterverzeichnissen müssen in gleichnamige Unterverzeichnisse unter dem PolicyDefinitions kopiert werden.
+					Die Administrativen Vorlagen für Google Chrome werden durch das Zip-Archiv <filename>policy_templates.zip</filename> des Chromium-Projekts bereitgestellt. Die entprechenden Dateien liegen unter <filename>/usr/share/doc/ucs-school-umc-exam/examples/GPO</filename>.  Der Inhalt des <filename>admx</filename>-Verzeichnisses sollte in das Verzeichnis <filename>PolicyDefinitions</filename> auf den Schulserver kopiert werden, so dass dort die Datei <filename>chrome.admx</filename> liegt. Die <filename>*.adml</filename>-Dateien aus den Unterverzeichnissen müssen in gleichnamige Unterverzeichnisse unter <filename>PolicyDefinitions</filename> kopiert werden.
 				</para>
 				<itemizedlist>
 					<listitem>
-						In der Gruppenrichtlinienverwaltung wird ein neues Gruppenrichtlinienobjekt angelegt und/oder eine existierende zur Bearbeitung geöffnet.
+						In der Gruppenrichtlinienverwaltung ein neues Gruppenrichtlinienobjekt anlegen und/oder ein existierendes Gruppenrichtlinienobjekt zur Bearbeitung öffnen.
 					</listitem>
 					<listitem>
 						<simpara>
-							Im Gruppenrichtlinienverwaltungseditor wird der folgende Zweig geöffnet:
+							Im Gruppenrichtlinienverwaltungseditor den folgenden Zweig öffnen:
 						</simpara>
 						<simpara>
 							<filename>Computerkonfiguration > Richtlinien > Administrative Vorlagen: Vom zentralen Computer abgerufene Richtliniendefinitionen (ADMX-Dateien) > Google > Google Chrome > Proxy-Server</filename>
@@ -395,18 +426,18 @@ Versionen, wie z.B. Windows 8 stellt Microsoft aktualisierte Administrative Vorl
 			<section>
 				<title>Proxy-Vorgabe für Mozilla Firefox</title>
 				<para>
-					Auf dem Schul-Server sollte das Verzeichnis <filename>/var/lib/samba/sysvol/DomänenNameDerUCS@schoolUmgebung/Policies/PolicyDefinitions/</filename> angelegt werden. Nähere Informationen sind im Abschnitt zu Google Chrome zu finden.
+					Auf dem Schulserver sollte das Verzeichnis <filename>/var/lib/samba/sysvol/DomänenNameDerUCS@schoolUmgebung/Policies/PolicyDefinitions/</filename> angelegt werden. Nähere Informationen sind im Abschnitt zu Google Chrome zu finden.
 				</para>
 				<para>
-					Die Administrativen Vorlagen für Mozilla Firefox werden durch das FirefoxADM-Projekt bereitgestellt. Es ist sinnvoll die dort definierten ADM-Vorlagen in das ADMX-Format umzuwandeln. Beispiele für ADMX Dateien liegen unter <filename>/usr/share/doc/ucs-school-umc-exam/examples/GPO</filename>. Der Inhalt des admx-Verzeichnisses sollte in das PolicyDefinitions Verzeichnis auf den Schul-Server kopiert werden, so dass dort die Datei <filename>firefoxlock.admx</filename> liegt. Die <filename>*.adml</filename> Dateien aus den Unterverzeichnissen müssen in gleichnamige Unterverzeichnisse unter dem PolicyDefinitions kopiert werden.
+					Die Administrativen Vorlagen für Mozilla Firefox werden durch das FirefoxADM-Projekt bereitgestellt. Es ist sinnvoll die dort definierten ADM-Vorlagen in das ADMX-Format umzuwandeln. Beispiele für ADMX Dateien liegen unter <filename>/usr/share/doc/ucs-school-umc-exam/examples/GPO</filename>. Der Inhalt des <filename>admx</filename>-Verzeichnisses sollte in das Verzeichnis <filename>PolicyDefinitions</filename>  auf den Schulserver kopiert werden, so dass dort die Datei <filename>firefoxlock.admx</filename> liegt. Die <filename>*.adml</filename>-Dateien aus den Unterverzeichnissen müssen in gleichnamige Unterverzeichnisse unter <filename>PolicyDefinitions</filename> kopiert werden.
 				</para>
 				<itemizedlist>
 					<listitem>
-						In der Gruppenrichtlinienverwaltung wird ein neues Gruppenrichtlinienobjekt angelegt und/oder eine existierende zur Bearbeitung geöffnet.
+						In der Gruppenrichtlinienverwaltung ein neues Gruppenrichtlinienobjekt anlegen und/oder ein existierendes Gruppenrichtlinienobjekt zur Bearbeitung öffnen.
 					</listitem>
 					<listitem>
 						<simpara>
-							Im Gruppenrichtlinienverwaltungseditor wird der folgende Zweig geöffnet:
+							Im Gruppenrichtlinienverwaltungseditor den folgenden Zweig öffnen:
 						</simpara>
 						<simpara>
 							<filename>Computerkonfiguration > Richtlinien > Administrative Vorlagen: Vom zentralen Computer abgerufene Richtliniendefinitionen (ADMX-Dateien) > Mozilla Firefox Locked Settings > General</filename>
@@ -437,7 +468,7 @@ Versionen, wie z.B. Windows 8 stellt Microsoft aktualisierte Administrative Vorl
 				<itemizedlist>
 					<listitem>
 						<simpara>
-							Im Gruppenrichtlinienverwaltungseditor wird der folgende Zweig geöffnet:
+							Im Gruppenrichtlinienverwaltungseditor den folgenden Zweig öffnen:
 						</simpara>
 						<simpara>
 							<filename>Computerkonfiguration > Windows-Einstellungen > Skripts (Start/Herunterfahren)</filename>
@@ -498,11 +529,11 @@ Versionen, wie z.B. Windows 8 stellt Microsoft aktualisierte Administrative Vorl
 				<title>Kommandoeingabeaufforderung deaktivieren</title>
 				<itemizedlist>
 					<listitem>
-						In der Gruppenrichtlinienverwaltung wird ein neues Gruppenrichtlinienobjekt angelegt und/oder eine existierende zur Bearbeitung geöffnet.
+						In der Gruppenrichtlinienverwaltung ein neues Gruppenrichtlinienobjekt anlegen und/oder ein existierendes Gruppenrichtlinienobjekt zur Bearbeitung öffnen.
 					</listitem>
 					<listitem>
 						<simpara>
-							Im Gruppenrichtlinienverwaltungseditor wird der folgende Zweig geöffnet:
+							Im Gruppenrichtlinienverwaltungseditor den folgenden Zweig öffnen:
 						</simpara>
 						<simpara>
 							<filename>Benutzerkonfiguration > Richtlinien > Administrative Vorlagen > System</filename>
@@ -517,11 +548,11 @@ Versionen, wie z.B. Windows 8 stellt Microsoft aktualisierte Administrative Vorl
 				<title>Zugriff auf Windows-Registry-Editor deaktivieren</title>
 				<itemizedlist>
 					<listitem>
-						In der Gruppenrichtlinienverwaltung wird ein neues Gruppenrichtlinienobjekt angelegt und/oder eine existierende zur Bearbeitung geöffnet.
+						In der Gruppenrichtlinienverwaltung ein neues Gruppenrichtlinienobjekt anlegen und/oder ein existierendes Gruppenrichtlinienobjekt zur Bearbeitung öffnen.
 					</listitem>
 					<listitem>
 						<simpara>
-							Im Gruppenrichtlinienverwaltungseditor wird der folgende Zweig geöffnet:
+							Im Gruppenrichtlinienverwaltungseditor den folgenden Zweig öffnen:
 						</simpara>
 						<simpara>
 							<filename>Benutzerkonfiguration > Richtlinien > Administrative Vorlagen > System</filename>
@@ -562,18 +593,18 @@ Versionen, wie z.B. Windows 8 stellt Microsoft aktualisierte Administrative Vorl
 				</note>
 				<itemizedlist>
 					<listitem>
-						In der Gruppenrichtlinienverwaltung wird ein neues Gruppenrichtlinienobjekt angelegt und/oder eine existierende zur Bearbeitung geöffnet.
+						In der Gruppenrichtlinienverwaltung ein neues Gruppenrichtlinienobjekt anlegen und/oder ein existierendes Gruppenrichtlinienobjekt zur Bearbeitung öffnen.
 					</listitem>
 					<listitem>
 						<simpara>
-							Im Gruppenrichtlinienverwaltungseditor wird der folgende Zweig geöffnet:
+							Im Gruppenrichtlinienverwaltungseditor den folgenden Zweig öffnen:
 						</simpara>
 						<simpara>
 							<filename>Benutzerkonfiguration > Windows-Einstellungen > Sicherheitseinstellungen > Richtlinien für Softwareeinschränkung</filename>
 						</simpara>
 					</listitem>
 					<listitem>
-						Rechtsklick <emphasis>Neu Richtlinien für Softwareeinschränkung erstellen</emphasis>
+						Rechtsklick auf <emphasis>Neue Richtlinien für Softwareeinschränkung erstellen</emphasis>
 					</listitem>
 					<listitem>
 						Im rechten Fensterteil <emphasis>Erzwingen</emphasis> öffnen,
@@ -582,19 +613,19 @@ Versionen, wie z.B. Windows 8 stellt Microsoft aktualisierte Administrative Vorl
 						Einstellung <emphasis>Alle Benutzer außer den lokalen Administratoren</emphasis> auswählen und mit <emphasis>OK</emphasis> bestätigen.
 					</listitem>
 					<listitem>
-						Im rechten Fensterteil <emphasis>Sicherheitsstufen</emphasis> öffnen,
+						Im rechten Fensterteil <emphasis>Sicherheitsstufen</emphasis> öffnen.
 					</listitem>
 					<listitem>
-						<emphasis>Nicht erlaubt</emphasis> per Doppelklick öffnen,
+						<emphasis>Nicht erlaubt</emphasis> per Doppelklick öffnen.
 					</listitem>
 					<listitem>
 						<emphasis>Als Standard</emphasis> auswählen und mit <emphasis>OK</emphasis> bestätigen.
 					</listitem>
 					<listitem>
-						Im rechten Fensterteil <emphasis>Zusätzliche Regeln</emphasis> öffnen,
+						Im rechten Fensterteil <emphasis>Zusätzliche Regeln</emphasis> öffnen.
 					</listitem>
 					<listitem>
-						Rechtsklick <emphasis>Neue Pfadregel...</emphasis>
+						Rechtsklick auf <emphasis>Neue Pfadregel...</emphasis>
 					</listitem>
 					<listitem>
 						In das Eingabefeld <emphasis>Pfad</emphasis> den UNC-Pfad <filename>\\%USERDNSDOMAIN%\SysVol</filename> eingeben, damit Logon- und GPO-Skripte ausgeführt werden können.
