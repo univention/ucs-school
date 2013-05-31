@@ -43,33 +43,33 @@
 		<title>Konfiguration</title>
 		<para>
 			Für die Konfiguration des Klassenarbeitsmodus gibt es eine Reihe von &ucsUCRV;n.
-			Diese sind im folgenden gruppiert nach ihrer Funktion aufgelistet.
+			Diese werden im folgenden aufgelistet und kurz erläutert.
 		</para>
 		<para>
-			LDAP-Eigenschaften
+			Folgende &ucsUCRV;n können geändert werden um LDAP-Eigenschaften der Klassenarbeitskonten, Gruppen und Container anzupassen:
 			<itemizedlist>
 				<listitem>
-					<envar>ucsschool/ldap/default/userprefix/exam</envar>
+					<envar>ucsschool/ldap/default/userprefix/exam</envar> gibt den Prefix an, der dem ursprünglichen Benutzernamen im Klassenarbeitskonto vorangestellt wird. Er ist standardmäßig auf <emphasis>exam-</emphasis> gesetzt.
 				</listitem>
 				<listitem>
-					<envar>ucsschool/ldap/default/container/exam</envar>
+					<envar>ucsschool/ldap/default/groupname/exam</envar> bezeichnet die Gruppe, der alle Klassenarbeitskonten sowie Klassenarbeitsrechner zugeordnet sind. Über diese Gruppe können spezifische Windows-Gruppenrichtlinien für den Klassenarbeitsmodus gesetzt werden. Der Standardname für diese Gruppe ist <emphasis>OU&lt;OU-Name&gt;-Klassenarbeit</emphasis>.
 				</listitem>
 				<listitem>
-					<envar>ucsschool/ldap/default/groupname/exam</envar>
+					<envar>ucsschool/ldap/default/container/exam</envar> ist der Name des Containers, unterhalb dem die Klassenarbeitskonten gespeichert werden. Standardmäßig ist der Name auf <emphasis>examusers</emphasis> gesetzt. Die LDAP-Position des Containers ist direkt unterhalb der Schul-OU.
 				</listitem>
 			</itemizedlist>
 		</para>
 		<para>
-			Voreinstellungen für den Klassenarbeitsmodus
+			Für das Einrichten einer Klassenarbeit können zur besseren Benutzbarkeit einige Werte vorausgewählt werden, dazu gehören:
 			<itemizedlist>
 				<listitem>
-					<envar>ucsschool/exam/default/room</envar>
+					<envar>ucsschool/exam/default/room</envar> definiert den vorausgewählten Raum für eine neue Klassenarbeit. Der Eintrag beinhaltet den LDAP-Namen des Raumes (inklusive des Schul-OU-Präfxies), also bspw. <emphasis>meineschule-PC Raum</emphasis>. Standardmäßig wird der alphabetisch erste Raum ausgewählt.
 				</listitem>
 				<listitem>
-					<envar>ucsschool/exam/default/shares</envar>
+					<envar>ucsschool/exam/default/shares</envar> gibt den vorausgewählten Freigabezugriff für eine neue Klassenarbeit an. Mögliche Werte sind <emphasis>all</emphasis> für Zugriff auf alle Freigaben ohne Einschränkungen sowie <emphasis>home</emphasis> für eingeschränkten Zugriff auf lediglich das Heimatverzeichnis des (Klassenarbeits-)Benutzerkonto. Standardmäßig ist nur der Zugriff auf das Homeverzeichnis freigegeben.
 				</listitem>
 				<listitem>
-					<envar>ucsschool/exam/default/internet</envar>
+					<envar>ucsschool/exam/default/internet</envar> Definiert die vorausgewählte Internetregel für eine neue Klassenarbeit. Mögliche Werte umfassen die Namen aller Internetregeln wie sie im UMC module "Internetregeln definieren" angezeigt werden. Normalerweise werden die globalen Standardeinstellungen verwendet.
 				</listitem>
 			</itemizedlist>
 		</para>
@@ -78,7 +78,7 @@
 	<section id="school:exam:gpo">
 		<title>Beispiele für Gruppenrichtlinien</title>
 		<para>
-			Gruppenrichlinien werden von einem Windows System aus mit Hilfe der Gruppenrichtlinienverwaltung (GPMC) angelegt und bearbeitet.
+			Gruppenrichtlinien werden von einem Windows System aus mit Hilfe der Gruppenrichtlinienverwaltung (GPMC) angelegt und bearbeitet.
 			Im Folgenden ist die Konfiguration der Gruppenrichtlinien von einem Windows 7 System aus beschrieben auf dem dazu die Gruppenrichtlinienverwaltung (GPMC) aus den Remote System Administration Tools (RSAT) installiert sein muss.
 		</para>
 		<para>
