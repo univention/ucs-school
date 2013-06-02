@@ -1,10 +1,10 @@
-ucs-school-umc-installer (1.0.3-1) unstable; urgency=low
+ucs-school-umc-installer (1.0.4-1) unstable; urgency=low
 
   * Bug #31128: display errors correctly that occur within the thread function
 
  -- Alexander Kläser <klaeser@univention.de>  Thu, 23 May 2013 13:05:55 +0200
 
-ucs-school-umc-installer (1.0.2-2) unstable; urgency=low
+ucs-school-umc-installer (1.0.3-2) unstable; urgency=low
 
   * Bug #30251: version bump
 
