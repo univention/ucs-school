@@ -201,7 +201,7 @@
 		<para>
 		  Bei einem &ucsUAS;-Verwaltungsserver handelt es sich genau wie beim Schulserver um ein
 		  UCS-System mit der Systemrolle <emphasis>&ucsSlave;</emphasis>. Das System ist wie ein
-		  Standard-UCS-DC Slave zu installieren. Nach Abschluss der regulären UCS-Installation müssen die alle
+		  Standard-UCS-DC Slave zu installieren. Nach Abschluss der regulären UCS-Installation müssen alle
 		  verfügbaren UCS-Errata eingespielt und das &ucsUAS;-Paket
 		  <emphasis>ucs-school-nonedu-slave</emphasis> installiert werden. Die kann auf der Kommandozeile über
 		  die beiden folgenden Befehle erfolgen:
