@@ -13,7 +13,6 @@ XS-Python-Version: 2.6
 
 Package: ucs-school-umc-exam
 Architecture: all
-Conflicts: univention-samba
 Depends: ${misc:Depends},
  univention-management-console-server,
  ucs-school-umc-distribution,

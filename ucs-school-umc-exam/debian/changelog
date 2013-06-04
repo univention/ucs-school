@@ -1,3 +1,9 @@
+ucs-school-umc-exam (1.0.22-1) unstable; urgency=low
+
+  * removed conflict to univention-samba due to update problems (Bug #30365)
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Tue, 04 Jun 2013 15:18:28 +0200
+
 ucs-school-umc-exam (1.0.21-1) unstable; urgency=low
 
   * fixed LDAP attribute blacklist for exam users (Bug #31588)
