@@ -247,9 +247,9 @@ univention-add-app --latest ucsschool ucs-school-nonedu-slave
 	  </para>
 	  <note>
 		Der Name des Schulservers darf nur aus Kleinbuchstaben, Ziffern sowie dem Bindestrich
-		bestehen (a-z, 0-9 und -). Der Name darf nicht mit dem Bindestrich beginnen oder enden und ist auf
-		eine Länge von 13 Zeichen beschränkt. Bei Abweichungen von diesen Vorgaben kann es zu Problemen bei
-		der Verwendung von Windows-Clients kommen.
+		bestehen (a-z, 0-9 und -). Der Name darf nur mit einem Kleinbuchstaben beginnen, mit einem
+		Kleinbuchstaben oder einer Ziffer enden und ist auf eine Länge von 12 Zeichen beschränkt. Bei
+		Abweichungen von diesen Vorgaben kann es zu Problemen bei der Verwendung von Windows-Clients kommen.
 	  </note>
 	</section>
 
