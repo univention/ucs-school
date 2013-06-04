@@ -16,6 +16,23 @@
 	<section id="school:exam:concept">
 		<title>Technische Hintergründe</title>
 		<para>
+		    Zur Verwendung des Klassenarbeitsmodus sind folgende Voraussetzungen zu erfüllen:
+			<itemizedlist>
+			  <listitem>
+				Verwendung einer Samba 4-Domäne (AD-Domäne)
+			  </listitem>
+			  <listitem>
+				Einsatz von Windows XP oder höher auf den Prüfungscomputern
+			  </listitem>
+			  <listitem>
+				Import von Computerkonten und Zuordnung der Computer zu Computerräumen
+			  </listitem>
+			  <listitem>
+				Die Verwendung des UCS@school-HTTP-Proxys durch die Prüfungscomputer zur Filterung des Internetzugriffs.
+			  </listitem>
+			</itemizedlist>
+		</para>
+		<para>
 			Eine neue Klassenarbeit kann über das Modul <guimenu>Klassenarbeit starten</guimenu> begonnen werden.
 			Beim Durchlaufen der einzelnen Schritte werden von der Lehrkraft ein Name für die Klassenarbeit und die teilnehmenden Klassen/Arbeitsgruppen ausgewählt.
 			Zusätzlich können für die Arbeit notwendige Dateien hochgeladen sowie Computerraumeinstellungen ausgewählt werden.
