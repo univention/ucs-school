@@ -245,6 +245,12 @@ univention-add-app --latest ucsschool ucs-school-nonedu-slave
 		Mitglied der Gruppe <emphasis>Domain Admins</emphasis>. Der Join-Account kann durch den Parameter
 		<command>-dcaccount <replaceable>ACCOUNTNAME</replaceable></command> an <command>univention-join</command> übergeben werden.
 	  </para>
+	  <note>
+		Der Name des Schulservers darf nur aus Kleinbuchstaben, Ziffern sowie dem Bindestrich
+		bestehen (a-z, 0-9 und -). Der Name darf nicht mit dem Bindestrich beginnen oder enden und ist auf
+		eine Länge von 13 Zeichen beschränkt. Bei Abweichungen von diesen Vorgaben kann es zu Problemen bei
+		der Verwendung von Windows-Clients kommen.
+	  </note>
 	</section>
 
 	<section id="school:installation:migration-single2multi">
@@ -267,7 +273,8 @@ ucr unset ucsschool/singlemaster
 		nachfolgenden &ucsUAS;-spezifischen Pakete (UMC-Module), die normalerweise nicht auf einem DC Master
 		der Multi-Server-Umgebung installiert sind, automatisch zur Löschung vorgesehen. Die eigentliche
 		Löschung findet während des nächsten Updates oder durch den manuellen Aufruf von <command>apt-get
-		autoremove</command> statt.
+		autoremove</command> statt. Dabei ist zu beachten, dass neben den genannten Paketen ggf. auch
+		ungenutze Paketabhängigkeiten entfernt werden.
 		<programlisting>
 ucs-school-branding
 ucs-school-umc-computerroom

@@ -17,10 +17,9 @@
 		<para>
 			Als <guimenu>Name der Schule</guimenu> ist ein Bezeichner für die Schule
 			einzutragen, z.B. <emphasis>schule340</emphasis> oder <emphasis>gymnasium_mitte</emphasis>.
-			Der <guimenu>Rechnername des Schulservers</guimenu> ist der Name des
-			Schulservers. In einer Single-Server-Umgebung ist die Angabe nicht
-			erforderlich. Nach dem erfolgreichen Anlegen der Schule erscheint eine
-			Statusmeldung.
+			In Single-Server-Umgebungen ist die Angabe eines Schulservernamens nicht erforderlich, während in
+			Multi-Server-Umgebungen der <guimenu>Rechnername des Schulservers</guimenu> angegeben werden muss.
+			Nach dem erfolgreichen Anlegen der Schule erscheint eine Statusmeldung.
 		</para>
 		<para>
 		  Wurde ein Schulserver angegeben, wird dieser automatisch als Dateiserver für Klassen- und
@@ -32,6 +31,14 @@
 			<xref linkend="school:installation:domjoin"/>), bevor Schülerkonten
 			angelegt werden können.
 		</para>
+		<note>
+		  <para>
+			Der Schulname darf nur aus Groß- und Kleinbuchstaben sowie Ziffern und dem Unterstrich bestehen (A-Z, a-z, 0-9 und _) und nicht mit dem Unterstrich beginnen oder enden.
+		  </para>
+		  <para>
+			Der Schulservername darf nur aus Kleinbuchstaben, Ziffern sowie dem Bindestrich bestehen (a-z, 0-9 und -). Der Name darf nicht mit dem Bindestrich beginnen oder enden und ist auf eine Länge von 13 Zeichen beschränkt.
+		  </para>
+		</note>
 	</section>
 
 	<section>
