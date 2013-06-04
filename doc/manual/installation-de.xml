@@ -46,7 +46,7 @@
 			  Die Daten eines Schulservers werden in Organisationseinheiten (OU) gespeichert. Im
 			  letzten Schritt wird nach dem Bezeichner der Schule (OU) gefragt, die vom UMC-Modul im Zuge der
 			  Konfiguration automatisch angelegt wird, z.B. <emphasis>schule340</emphasis> oder
-			  <emphasis>gymnasium-mitte</emphasis>.
+			  <emphasis>gymnasium_mitte</emphasis>.
 				</simpara>
 			</listitem>
 		  </itemizedlist>
@@ -173,7 +173,7 @@
 				  Die Daten eines Schulservers werden in Organisationseinheiten (OU) gespeichert. Im
 				  letzten Schritt wird nach dem Bezeichner der Schule (OU) gefragt, die im Zuge der Konfiguration
 				  automatisch für diesen Schulserver angelegt werden soll, z.B. <emphasis>schule340</emphasis> oder
-				  <emphasis>gymnasium-mitte</emphasis>.
+				  <emphasis>gymnasium_mitte</emphasis>.
 					</simpara>
 				</listitem>
 			  </itemizedlist>

@@ -16,7 +16,7 @@
 		</para>
 		<para>
 			Als <guimenu>Name der Schule</guimenu> ist ein Bezeichner für die Schule
-			einzutragen, z.B. <emphasis>schule340</emphasis> oder <emphasis>gymnasium-mitte</emphasis>.
+			einzutragen, z.B. <emphasis>schule340</emphasis> oder <emphasis>gymnasium_mitte</emphasis>.
 			Der <guimenu>Rechnername des Schulservers</guimenu> ist der Name des
 			Schulservers. In einer Single-Server-Umgebung ist die Angabe nicht
 			erforderlich. Nach dem erfolgreichen Anlegen der Schule erscheint eine
