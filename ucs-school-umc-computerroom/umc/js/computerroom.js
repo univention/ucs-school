@@ -329,16 +329,11 @@ define([
 				isStandardAction: false,
 				isMultiAction: true,
 				canExecute: function(item) {
-					return (item.connection[0] == 'error' || item.connection[0] == 'autherror' || item.connection[0] == 'offline') && item.mac[0] && !isUCC(item);
+					return (item.connection[0] == 'error' || item.connection[0] == 'autherror' || item.connection[0] == 'offline') && item.mac[0];
 				},
 				callback: lang.hitch(this, function(ids, items) {
 					if (items.length === 0) {
 						dialog.alert(_('No computers were selected. Please select computers.'));
-						return;
-					}
-					alert_UCC_unavailable(items);
-					items = filterUCC(items);
-					if (items.length === 0) {
 						return;
 					}
 					array.forEach(items, lang.hitch(this, function(comp, i) {
@@ -407,16 +402,11 @@ define([
 				isStandardAction: false,
 				isMultiAction: true,
 				canExecute: lang.hitch(this, function(item) {
-					return !this._demo.running && item.connection[0] == 'connected' && item.user && item.user[0] && (!item.teacher || item.teacher[0] === false) && item.InputLock && !isUCC(item);
+					return !this._demo.running && item.connection[0] == 'connected' && item.user && item.user[0] && (!item.teacher || item.teacher[0] === false) && item.InputLock;
 				}),
 				callback: lang.hitch(this, function(ids, items) {
 					if (items.length === 0) {
 						dialog.alert(_('No computers were selected. Please select computers.'));
-						return;
-					}
-					alert_UCC_unavailable(items);
-					items = filterUCC(items);
-					if (items.length === 0) {
 						return;
 					}
 					var cb = lang.hitch(this, function(lock) {
@@ -485,13 +475,6 @@ define([
 					dialog.alert(_("The presentation is starting. This may take a few moments. When the presentation server is started a column presentation is shown that contains a button 'Stop' to end the presentation."), _('Presentation'));
 				})
 			}, {
-				name: 'reconnect',
-				label: _('Reinitialize monitoring'),
-				isStandardAction: false,
-				isContextAction: true,
-				isMultiAction: false,
-				callback: lang.hitch(this, function() { this.queryRoom(true); })
-			}, {
 				name: 'ScreenLock',
 				field: 'ScreenLock',
 				label: lang.hitch(this, function(item) {
@@ -519,16 +502,11 @@ define([
 				isStandardAction: true,
 				isMultiAction: true,
 				canExecute: lang.hitch(this, function(item) {
-					return !this._demo.running && item.connection[0] == 'connected' && item.user && item.user[0] && (!item.teacher || item.teacher[0] === false) && !isUCC(item);
+					return !this._demo.running && item.connection[0] == 'connected' && item.user && item.user[0] && (!item.teacher || item.teacher[0] === false);
 				}),
 				callback: lang.hitch(this, function(ids, items) {
 					if (items.length === 0) {
 						dialog.alert(_('No computers were selected. Please select computers.'));
-						return;
-					}
-					alert_UCC_unavailable(items);
-					items = filterUCC(items);
-					if (items.length === 0) {
 						return;
 					}
 					var cb = lang.hitch(this, function(lock) {
@@ -719,22 +697,22 @@ define([
 				formatter: lang.hitch(this, function(value, rowIndex) {
 					var item = this._grid._grid.getItem(rowIndex);
 					var icon = 'offline';
-					var label = _('The computer is not running');
+					var status_ = _('The computer is not running');
 
 					if (item.connection[0] == 'connected') {
 						icon = 'demo-offline';
-						label = _('Monitoring is activated');
+						status_ = _('Monitoring is activated');
 					} else if (item.connection[0] == 'autherror') {
-						label = _('The monitoring mode has failed. It seems that the monitoring service is not configured properly.');
+						status_ = _('The monitoring mode has failed. It seems that the monitoring service is not configured properly.');
 					} else if (item.connection[0] == 'error') {
-						label = _('The monitoring mode has failed. Maybe the service is not installed or the Firewall is active.');
+						status_ = _('The monitoring mode has failed. Maybe the service is not installed or the Firewall is active.');
 					}
 					if (item.DemoServer[0] === true) {
 						icon = 'demo-server';
-						label = _('The computer is currently showing a presentation');
+						status_ = _('The computer is currently showing a presentation');
 					} else if (item.DemoClient[0] === true) {
 						icon = 'demo-client';
-						label = _('The computer is currently participating in a presentation');
+						status_ = _('The computer is currently participating in a presentation');
 					}
 					var widget = new Text({});
 					widget.set('content', lang.replace('<img src="{path}/16x16/computerroom-{icon}.png" height="16" width="16" style="float:left; margin-right: 5px" /> {value}', {
@@ -742,9 +720,24 @@ define([
 						icon: icon,
 						value: value
 					}));
-					label = lang.replace('<table><tr><td><b>{lblStatus}</b></td><td>{status}</td></tr><tr><td><b>{lblIP}</b></td><td>{ip}</td></tr><tr><td><b>{lblMAC}</b></td><td>{mac}</td></tr></table>', {
+
+					var computertype = {
+						'computers/windows': _('Windows'),
+						'computers/ucc': _('Univention Corporate Client') + '<br>' + _('(The computer does not support any iTALC features)'),
+						'computers/ubuntu': _('Ubuntu')
+					}[item.objectType[0]] || _('Unknown');
+
+					var label = '<table>';
+					label += '<tr><td><b>{lblComputerType}</b></td><td>{computertype}</td></tr>';
+					label += '<tr><td><b>{lblStatus}</b></td><td>{status}</td></tr>';
+					label += '<tr><td><b>{lblIP}</b></td><td>{ip}</td></tr>';
+					label += '<tr><td><b>{lblMAC}</b></td><td>{mac}</td></tr></table>';
+					
+					label = lang.replace(label, {
+						lblComputerType: _('Computer type'),
+						computertype: computertype,
 						lblStatus: _('Status'),
-						status: label,
+						status: status_,
 						lblIP: _('IP address'),
 						ip: item.ip[0],
 						lblMAC: _('MAC address'),
