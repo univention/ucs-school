@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-computerroom\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2013-05-08 05:31-0400\n"
+"POT-Creation-Date: 2013-06-20 12:47+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -12,9 +12,13 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: umc/python/computerroom/__init__.py:320
+#: umc/python/computerroom/__init__.py:327
 msgid "A different user is already running a computerroom session."
 msgstr "Ein anderer Benutzer hat bereits eine offene Computerraumsitzung."
+
+#: umc/python/computerroom/__init__.py:180
+msgid "Action unavailable for UCC clients."
+msgstr "Aktion nicht verfügbar für UCC-Klienten."
 
 #: umc/python/computerroom/__init__.py:82
 #, python-format

@@ -35,6 +35,7 @@ define([
 	"dojo/aspect",
 	"dojo/dom",
 	"dojo/Deferred",
+	"dojo/promise/all",
 	"dojo/data/ItemFileWriteStore",
 	"dojo/store/DataStore",
 	"dojo/store/Memory",
@@ -58,7 +59,7 @@ define([
 	"umc/modules/computerroom/ScreenshotView",
 	"umc/modules/computerroom/SettingsDialog",
 	"umc/i18n!umc/modules/computerroom"
-], function(declare, lang, array, aspect, dom, Deferred, ItemFileWriteStore, DataStore, Memory, DijitProgressBar,
+], function(declare, lang, array, aspect, dom, Deferred, all, ItemFileWriteStore, DataStore, Memory, DijitProgressBar,
             Dialog, Tooltip, styles, dialog, tools, app, ExpandingTitlePane, Grid, Button, Module, Page, Form,
             ContainerWidget, Text, ComboBox, ProgressBar, ScreenshotView, SettingsDialog, _) {
 
@@ -99,6 +100,15 @@ define([
 		app.closeTab(computerRoomModules[0]);
 		return arguments;
 	});
+
+	var isUCC = function(item) { return item.objectType[0] === 'computers/ucc'; };
+	var filterUCC = function(items) { return array.filter(items, function(item) { return !isUCC(item); }); };
+	var alert_UCC_unavailable = function(items) {
+		var clients = array.filter(items, lang.clone(isUCC));
+		if (clients.length) {
+			dialog.alert(_('The action is unavailable for UCC computers.<br>The following computers will be omitted: %s', array.map(clients, function(comp) { return comp.id[0]; }).join(', ')));
+		}
+	};
 
 	return declare("umc.modules.computerroom", [ Module ], {
 		// summary:
@@ -236,20 +246,26 @@ define([
 				isMultiAction: true,
 				tooltipClass: Tooltip,
 				description: function(item) {
+					if (isUCC(item)) {
+						return '';
+					}
 					return lang.replace('<div style="display: table-cell; vertical-align: middle; width: 240px;height: 200px;"><img id="screenshotTooltip-{0}" src="" style="width: 230px; display: block; margin-left: auto; margin-right: auto;"/></div>', item.id);
 				},
 				onShowDescription: function(target, item) {
+					if (isUCC(item)) {
+						return;
+					}
 					var image = dom.byId('screenshotTooltip-' + item.id[0]);
 					image.src = '/umcp/command/computerroom/screenshot?computer=' + item.id[0] + '&random=' + Math.random();
 				},
-				canExecute: lang.clone(isConnected),
+				canExecute: function(item) { return isConnected(item) && !isUCC(item); },
 				callback: lang.hitch(this, function(ids, items) {
 					if (items.length === 0) {
 						items = this._grid.getAllItems();
 					}
 					this.selectChild(this._screenshotView);
 					this._screenshotView.load(array.map(array.filter(items, function(item) {
-						return item.connection[0] == 'connected';
+						return item.connection[0] == 'connected' && !isUCC(item);
 					}), function(item) {
 						return {
 							computer: item.id[0],
@@ -263,16 +279,22 @@ define([
 				isStandardAction: false,
 				isMultiAction: true,
 				canExecute: function(item) {
-					return item.connection[0] == 'connected' && item.user[0];
+					return item.connection[0] == 'connected' && item.user[0] && !isUCC(item);
 				},
 				callback: lang.hitch(this, function(ids, items) {
 					if (items.length === 0) {
-						dialog.alert(_('No computers were select. Please select computers.'));
+						dialog.alert(_('No computers were selected. Please select computers.'));
+						return;
+					}
+					alert_UCC_unavailable(items);
+					items = filterUCC(items);
+					if (items.length === 0) {
 						return;
 					}
 					array.forEach(items, lang.hitch(this, function(comp) {
 						this.umcpCommand('computerroom/user/logout', { computer: comp.id[0] });
 					}));
+
 					dialog.notify(_('The selected users are logging off.'));
 				})
 			}, {
@@ -281,10 +303,15 @@ define([
 				label: _('Shutdown computer'),
 				isStandardAction: false,
 				isMultiAction: true,
-				canExecute: lang.clone(isConnected),
+				canExecute: function(item) { return isConnected(item) && !isUCC(item); },
 				callback: lang.hitch(this, function(ids, items) {
 					if (items.length === 0) {
-						dialog.alert(_('No computers were select. Please select computers.'));
+						dialog.alert(_('No computers were selected. Please select computers.'));
+						return;
+					}
+					alert_UCC_unavailable(items);
+					items = filterUCC(items);
+					if (items.length === 0) {
 						return;
 					}
 					array.forEach(items, lang.hitch(this, function(comp) {
@@ -302,11 +329,16 @@ define([
 				isStandardAction: false,
 				isMultiAction: true,
 				canExecute: function(item) {
-					return (item.connection[0] == 'error' || item.connection[0] == 'autherror' || item.connection[0] == 'offline') && item.mac[0];
+					return (item.connection[0] == 'error' || item.connection[0] == 'autherror' || item.connection[0] == 'offline') && item.mac[0] && !isUCC(item);
 				},
 				callback: lang.hitch(this, function(ids, items) {
 					if (items.length === 0) {
-						dialog.alert(_('No computers were select. Please select computers.'));
+						dialog.alert(_('No computers were selected. Please select computers.'));
+						return;
+					}
+					alert_UCC_unavailable(items);
+					items = filterUCC(items);
+					if (items.length === 0) {
 						return;
 					}
 					array.forEach(items, lang.hitch(this, function(comp, i) {
@@ -329,10 +361,15 @@ define([
 				label: _('Restart computer'),
 				isStandardAction: false,
 				isMultiAction: true,
-				canExecute: lang.clone(isConnected),
+				canExecute: function(item) { return isConnected(item) && !isUCC(item); },
 				callback: lang.hitch(this, function(ids, items) {
 					if (items.length === 0) {
-						dialog.alert(_('No computers were select. Please select computers.'));
+						dialog.alert(_('No computers were selected. Please select computers.'));
+						return;
+					}
+					alert_UCC_unavailable(items);
+					items = filterUCC(items);
+					if (items.length === 0) {
 						return;
 					}
 					array.forEach(items, lang.hitch(this, function(comp) {
@@ -370,11 +407,16 @@ define([
 				isStandardAction: false,
 				isMultiAction: true,
 				canExecute: lang.hitch(this, function(item) {
-					return !this._demo.running && item.connection[0] == 'connected' && item.user && item.user[0] && (!item.teacher || item.teacher[0] === false) && item.InputLock;
+					return !this._demo.running && item.connection[0] == 'connected' && item.user && item.user[0] && (!item.teacher || item.teacher[0] === false) && item.InputLock && !isUCC(item);
 				}),
 				callback: lang.hitch(this, function(ids, items) {
 					if (items.length === 0) {
-						dialog.alert(_('No computers were select. Please select computers.'));
+						dialog.alert(_('No computers were selected. Please select computers.'));
+						return;
+					}
+					alert_UCC_unavailable(items);
+					items = filterUCC(items);
+					if (items.length === 0) {
 						return;
 					}
 					var cb = lang.hitch(this, function(lock) {
@@ -432,9 +474,13 @@ define([
 				isContextAction: true,
 				isMultiAction: false,
 				canExecute: function(item) {
-					return item.connection[0] == 'connected' && item.user[0] && item.DemoServer[0] !== true;
+					return item.connection[0] == 'connected' && item.user[0] && item.DemoServer[0] !== true && !isUCC(item);
 				},
 				callback: lang.hitch(this, function(ids, items) {
+					if (isUCC(items[0])) {
+						dialog.alert(_("UCC clients can not serve presentations."));
+						return;
+					}
 					this.umcpCommand('computerroom/demo/start', { server: items[0].id[0] });
 					dialog.alert(_("The presentation is starting. This may take a few moments. When the presentation server is started a column presentation is shown that contains a button 'Stop' to end the presentation."), _('Presentation'));
 				})
@@ -473,11 +519,16 @@ define([
 				isStandardAction: true,
 				isMultiAction: true,
 				canExecute: lang.hitch(this, function(item) {
-					return !this._demo.running && item.connection[0] == 'connected' && item.user && item.user[0] && (!item.teacher || item.teacher[0] === false);
+					return !this._demo.running && item.connection[0] == 'connected' && item.user && item.user[0] && (!item.teacher || item.teacher[0] === false) && !isUCC(item);
 				}),
 				callback: lang.hitch(this, function(ids, items) {
 					if (items.length === 0) {
-						dialog.alert(_('No computers were select. Please select computers.'));
+						dialog.alert(_('No computers were selected. Please select computers.'));
+						return;
+					}
+					alert_UCC_unavailable(items);
+					items = filterUCC(items);
+					if (items.length === 0) {
 						return;
 					}
 					var cb = lang.hitch(this, function(lock) {
@@ -652,7 +703,7 @@ define([
 					isStandardAction: false,
 					isMultiAction: false,
 					canExecute: function(item) {
-						return item.connection[0] == 'connected' && item.user[0];
+						return item.connection[0] == 'connected' && item.user[0] && !isUCC(item);
 					},
 					callback: lang.hitch(this, function(item) {
 						window.open('/umcp/command/computerroom/vnc?computer=' + item);
@@ -929,11 +980,6 @@ define([
 				if (response == 'cancel') {
 					// user canceled the dialog
 					return;
-				}
-
-				// stop the timer
-				if (this._examEndTimer) {
-					window.clearTimeout(this._examEndTimer);
 				}
 
 				// start finishing the exam

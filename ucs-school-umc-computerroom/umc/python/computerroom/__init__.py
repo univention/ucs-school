@@ -174,6 +174,32 @@ def _freeRoom(roomDN, userDN):
 		except (OSError, IOError):
 			MODULE.warn( 'Failed to remove room lock file: %s' % roomFile )
 
+def check_room_access(func):
+	"""Block access to session from other users"""
+	def _decorated(self, request):
+		self._checkRoomAccess()
+		return func(self, request)
+	return _decorated
+
+def get_computer(func):
+	"""Adds the ITALC_Computer instance given in request.options['computer'] as parameter"""
+	def _decorated(self, request):
+		self.required_options(request, 'computer')
+		computer = self._italc.get(request.options[ 'computer' ], None)
+		if not computer:
+			raise UMC_CommandError('Unknown computer')
+		return func(self, request, computer)
+	return _decorated
+
+def prevent_ucc(func):
+	"""Prevent method from being called for UCC clients"""
+	def _decorated(self, request, computer):
+		if computer.objectType == 'computers/ucc':
+			MODULE.warn('Requested unavailable action (%s) for UCC client' % (func.__name__))
+			raise UMC_CommandError(_('Action unavailable for UCC clients.'))
+		return func(self, request, computer)
+	return _decorated
+
 class Instance( SchoolBaseModule ):
 	ATJOB_KEY = 'UMC-computerroom'
 
@@ -346,7 +372,8 @@ class Instance( SchoolBaseModule ):
 					 'connection' : computer.state.current,
 					 'description' : computer.description,
 					 'ip' : computer.ipAddress,
-					 'mac' : computer.macAddress }
+					 'mac' : computer.macAddress,
+					 'objectType': computer.objectType }
 			item.update( computer.flagsDict )
 			result.append( item )
 
@@ -421,24 +448,21 @@ class Instance( SchoolBaseModule ):
 			return None
 		return end - now
 
-	def lock( self, request ):
+	@check_room_access
+	@get_computer
+	@prevent_ucc
+	def lock(self, request, computer):
 		"""Returns the objects for the given IDs
 
 		requests.options = { 'computer' : <computer name>, 'device' : (screen|input), 'lock' : <boolean or string> }
 
 		return: { 'success' : True|False, [ 'details' : <message> ] }
 		"""
-		# block access to session from other users
-		self._checkRoomAccess()
 
-		self.required_options( request, 'computer', 'device', 'lock' )
+		self.required_options(request, 'device', 'lock')
 		device = request.options[ 'device' ]
-		if not device in ( 'screen', 'input' ):
+		if device not in ( 'screen', 'input' ):
 			raise UMC_OptionTypeError( 'unknown device %s' % device )
-
-		computer = self._italc.get( request.options[ 'computer' ], None )
-		if computer is None:
-			raise UMC_CommandError( 'Unknown computer %s' % request.options[ 'computer' ] )
 
 		MODULE.warn( 'Locking device %s' % device )
 		if device == 'screen':
@@ -447,7 +471,10 @@ class Instance( SchoolBaseModule ):
 			computer.lockInput( request.options[ 'lock' ] )
 		self.finished( request.id, { 'success' : True, 'details' : '' } )
 
-	def screenshot( self, request ):
+	@check_room_access
+	@get_computer
+	@prevent_ucc
+	def screenshot(self, request, computer):
 		"""Returns a JPEG image containing a screenshot of the given
 		computer. The computer must be in the current room
 
@@ -455,13 +482,6 @@ class Instance( SchoolBaseModule ):
 
 		return (MIME-type image/jpeg): screenshot
 		"""
-		# block access to session from other users
-		self._checkRoomAccess()
-
-		self.required_options( request, 'computer' )
-		computer = self._italc.get( request.options[ 'computer' ], None )
-		if not computer:
-			raise UMC_CommandError( 'Unknown computer' )
 
 		tmpfile = computer.screenshot
 		if tmpfile is None:
@@ -476,7 +496,9 @@ class Instance( SchoolBaseModule ):
 		os.unlink( tmpfile.name )
 		self.finished( request.id, response )
 
-	def vnc( self, request ):
+	@check_room_access
+	@get_computer
+	def vnc(self, request, computer):
 		"""
 		Returns a ultraVNC file for the given computer. The computer must be in the current room
 
@@ -484,18 +506,10 @@ class Instance( SchoolBaseModule ):
 
 		return  (MIME-type application/x-vnc): vnc
 		"""
-		# block access to session from other users
-		self._checkRoomAccess()
 
 		# check whether VNC is enabled
 		if ucr.is_false('ucsschool/umc/computerroom/ultravnc/enabled', True):
 			self.finished( request.id, 'VNC is disabled' )
-
-		# Check if computer exists
-		self.required_options( request, 'computer' )
-		computer = self._italc.get( request.options[ 'computer' ], None )
-		if not computer:
-			raise UMC_CommandError( 'Unknown computer' )
 
 		try:
 			template = open('/usr/share/ucs-school-umc-computerroom/ultravnc.vnc')
@@ -577,6 +591,7 @@ class Instance( SchoolBaseModule ):
 			'period' : str( period )
 			} )
 
+	@check_room_access
 	def settings_set( self, request ):
 		"""Defines settings for a room
 
@@ -585,8 +600,6 @@ class Instance( SchoolBaseModule ):
 		return: [True|False]
 		"""
 
-		# block access to session from other users
-		self._checkRoomAccess()
 
 		self.required_options( request, 'printMode', 'internetRule', 'shareMode' )
 		exam = request.options.get('exam')
@@ -775,6 +788,7 @@ class Instance( SchoolBaseModule ):
 				os.kill( int( process.pid ), signal.SIGTERM )
 		_finished()
 
+	@check_room_access
 	def demo_start( self, request ):
 		"""Starts a demo
 
@@ -782,13 +796,12 @@ class Instance( SchoolBaseModule ):
 
 		return: [True|False)
 		"""
-		# block access to session from other users
-		self._checkRoomAccess()
 
 		self.required_options( request, 'server' )
 		self._italc.startDemo( request.options[ 'server' ], True )
 		self.finished( request.id, True )
 
+	@check_room_access
 	def demo_stop( self, request ):
 		"""Stops a demo
 
@@ -796,31 +809,26 @@ class Instance( SchoolBaseModule ):
 
 		return: [True|False)
 		"""
-		# block access to session from other users
-		self._checkRoomAccess()
 
 		self._italc.stopDemo()
 		self.finished( request.id, True )
 
-	def computer_state( self, request ):
+	@check_room_access
+	@get_computer
+	@prevent_ucc
+	def computer_state(self, request, computer):
 		"""Stops, starts or restarts a computer
 
 		requests.options = { 'computer' : <computer', 'state' : (poweroff|poweron|restart) }
 
 		return: [True|False)
 		"""
-		# block access to session from other users
-		self._checkRoomAccess()
 
-		self.required_options( request, 'computer', 'state' )
+		self.required_options(request, 'state')
 
 		state = request.options[ 'state' ]
 		if not state in ( 'poweroff', 'poweron', 'restart' ):
 			raise UMC_OptionTypeError( 'unkown state %s' % state )
-
-		computer = self._italc.get( request.options[ 'computer' ], None )
-		if not computer:
-			raise UMC_CommandError( 'Unknown computer' )
 
 		if state == 'poweroff':
 			computer.powerOff()
@@ -831,23 +839,17 @@ class Instance( SchoolBaseModule ):
 
 		self.finished( request.id, True )
 
-	def user_logout( self, request ):
+	@check_room_access
+	@get_computer
+	@prevent_ucc
+	def user_logout(self, request, computer):
 		"""Log out the user at the given computer
 
 		requests.options = { 'computer' : <computer' }
 
 		return: [True|False)
 		"""
-		# block access to session from other users
-		self._checkRoomAccess()
-
-		self.required_options( request, 'computer' )
-
-		computer = self._italc.get( request.options[ 'computer' ], None )
-		if not computer:
-			raise UMC_CommandError( 'Unknown computer' )
 
 		computer.logOut()
 
 		self.finished( request.id, True )
-

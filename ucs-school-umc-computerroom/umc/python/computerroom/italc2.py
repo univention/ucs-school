@@ -222,6 +222,12 @@ class ITALC_Computer( notifier.signals.Provider, QObject ):
 		self.readLDAP()
 		self.open()
 
+		self.objectType = self.get_object_type()
+
+	def get_object_type(self):
+		#return self._computer.lo.get(self._dn)['univentionObjectType'][0]
+		return self._computer.module
+
 	@LDAP_Connection()
 	def readLDAP( self, ldap_user_read = None, ldap_position = None, search_base = None ):
 		attrs = ldap_user_read.lo.get( self._dn )
@@ -635,7 +641,7 @@ class ITALC_Manager( dict, notifier.signals.Provider ):
 
 		# start demo server
 		MODULE.info( 'Demo server is %s' % demo_server )
-		clients = filter( lambda comp: comp.name != demo_server and comp.connected, self.values() )
+		clients = [comp for comp in self.values() if comp.name != demo_server and comp.connected and comp.objectType != 'computers/ucc']
 		MODULE.info( 'Demo clients: %s' % ', '.join( map( lambda x: x.name, clients ) ) )
 		MODULE.info( 'Demo LDAP base teachers: %s' % search_base.teachers )
 		MODULE.info( 'Demo client users: %s' % ', '.join( map( lambda x: str( x.user.current ), clients ) ) )
