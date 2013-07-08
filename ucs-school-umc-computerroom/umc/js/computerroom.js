@@ -723,7 +723,7 @@ define([
 
 					var computertype = {
 						'computers/windows': _('Windows'),
-						'computers/ucc': _('Univention Corporate Client') + '<br>' + _('(The computer does not support any iTALC features)'),
+						'computers/ucc': _('Univention Corporate Client') + '<br>' + _('(The computer does not support all iTALC features)'),
 						'computers/ubuntu': _('Ubuntu')
 					}[item.objectType[0]] || _('Unknown');
 

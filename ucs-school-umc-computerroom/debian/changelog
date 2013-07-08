@@ -1,3 +1,9 @@
+ucs-school-umc-computerroom (3.0.13-3) unstable; urgency=low
+
+  * Bug #31903: fix typo
+
+ -- Florian Best <best@univention.de>  Mon, 08 Jul 2013 14:56:29 +0200
+
 ucs-school-umc-computerroom (3.0.13-2) unstable; urgency=low
 
   * Bug #31903: deactivate functionality for UCC clients
