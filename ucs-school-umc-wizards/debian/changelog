@@ -1,3 +1,9 @@
+ucs-school-umc-wizards (3.0.0-1) unstable; urgency=low
+
+  * Bug #31904: add support to import UCC and Ubuntu clients
+
+ -- Florian Best <best@univention.de>  Mon, 08 Jul 2013 09:45:27 +0200
+
 ucs-school-umc-wizards (3.0.0-0) unstable; urgency=low
 
   * bumped version for UCS@school 3.1 R2

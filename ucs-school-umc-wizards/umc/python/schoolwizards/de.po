@@ -12,6 +12,22 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
+#: umc/js/schoolwizards/ComputerWizard.js:65
+msgid "Windows system"
+msgstr "Windows-System"
+
+#: umc/js/schoolwizards/ComputerWizard.js:68
+msgid "Device with IP address"
+msgstr "Gerät mit IP-Adresse"
+
+#: umc/js/schoolwizards/ComputerWizard.js:68
+msgid "Ubuntu"
+msgstr "Ubuntu"
+
+#: umc/js/schoolwizards/ComputerWizard.js:68
+msgid "Univention Corporate Client"
+msgstr "Univention Corporate Client"
+
 #: umc/python/schoolwizards/__init__.py:199
 msgid "A valid NetBIOS hostname can not be longer than 13 characters."
 msgstr ""

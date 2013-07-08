@@ -60,13 +60,9 @@ define([
 					type: ComboBox,
 					name: 'type',
 					label: _('Type'),
-					staticValues: [{
-						id: 'windows',
-						label: _('Windows system')
-					}, {
-						id: 'ipmanagedclient',
-						label: _('Device with IP address')
-					}]
+					dynamicValues: 'schoolwizards/computers/types',
+					umcpCommand: lang.hitch(this, 'umcpCommand'),
+					sortDynamicValues: false
 				}],
 				layout: [['school'], ['type']]
 			}, {

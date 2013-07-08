@@ -27,6 +27,7 @@
 		<command name="schoolwizards/schools/singlemaster" function="is_singlemaster"/>
 		<command name="schoolwizards/schools/move_dc" function="move_dc"/>
 		<command name="schoolwizards/classes/create" function="create_class"/>
+		<command name="schoolwizards/computers/types" function="computer_types"/>
 		<command name="schoolwizards/computers/create" function="create_computer"/>
 	</module>
 </umc>

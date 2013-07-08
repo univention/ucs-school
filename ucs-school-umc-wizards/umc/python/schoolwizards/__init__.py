@@ -283,7 +283,7 @@ class Instance(SchoolBaseModule, SchoolImport):
 				raise ValueError(_('IP address is already in use'))
 			if subnet_mask:
 				subnet_mask = udm_syntax.netmask.parse(subnet_mask)
-			if type_ not in ['ipmanagedclient', 'windows']:
+			if type_ not in [computer_type_id for computer_type_id, computer_type_label in self._computer_types()]:
 				raise ValueError(_('Invalid value for  \'type\' property'))
 
 			# Create the computer
@@ -323,6 +323,24 @@ class Instance(SchoolBaseModule, SchoolImport):
 		return_code, stdout = self._run_script(SchoolImport.MOVE_DC_SCRIPT, params, True)
 		return { 'success': return_code == 0, 'message': stdout }
 
+	def _computer_types(self):
+		computer_types = [('windows', _('Windows system')), ('ubuntu', _('Ubuntu')), ('ipmanagedclient', _('Device with IP address'))]
+		try:
+			import univention.admin.handlers.computers.ucc
+			ucc_available = True
+		except ImportError:
+			ucc_available = False
+		if ucc_available:
+			computer_types.insert(1, ('ucc', _('Univention Corporate Client')))
+		return computer_types
+
+	@simple_response
+	def computer_types(self):
+		ret = []
+		computer_types = self._computer_types()
+		for computer_type_id, computer_type_label in computer_types:
+			ret.append({'id': computer_type_id, 'label': computer_type_label})
+		return ret
 
 def remove_whitespaces(request):
 	for key, value in request.options.iteritems():
