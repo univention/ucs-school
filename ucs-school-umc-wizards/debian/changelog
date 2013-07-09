@@ -1,3 +1,9 @@
+ucs-school-umc-wizards (3.0.0-2) unstable; urgency=low
+
+  * Bug #31904: remove Ubuntu client
+
+ -- Florian Best <best@univention.de>  Tue, 09 Jul 2013 12:24:50 +0200
+
 ucs-school-umc-wizards (3.0.0-1) unstable; urgency=low
 
   * Bug #31904: add support to import UCC and Ubuntu clients

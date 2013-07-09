@@ -324,7 +324,7 @@ class Instance(SchoolBaseModule, SchoolImport):
 		return { 'success': return_code == 0, 'message': stdout }
 
 	def _computer_types(self):
-		computer_types = [('windows', _('Windows system')), ('ubuntu', _('Ubuntu')), ('ipmanagedclient', _('Device with IP address'))]
+		computer_types = [('windows', _('Windows system')), ('ipmanagedclient', _('Device with IP address'))]
 		try:
 			import univention.admin.handlers.computers.ucc
 			ucc_available = True
