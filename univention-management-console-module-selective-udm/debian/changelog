@@ -1,3 +1,9 @@
+univention-management-console-module-selective-udm (3.0.0-1) unstable; urgency=low
+
+  * Use uinvention.lib.schoolldap to determine school OU (Bug #31443)
+
+ -- Arvid Requate <requate@univention.de>  Tue, 09 Jul 2013 20:40:58 +0200
+
 univention-management-console-module-selective-udm (3.0.0-0) unstable; urgency=low
 
   * bumped version for UCS@school 3.1 R2

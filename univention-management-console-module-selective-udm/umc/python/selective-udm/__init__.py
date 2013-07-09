@@ -62,43 +62,32 @@ univention.admin.syntax.update_choices()
 
 from univention.management.console.log import MODULE
 from univention.management.console.protocol.definitions import *
+from univention.management.console.modules import UMC_CommandError
+from ucsschool.lib.schoolldap import LDAP_Connection, LDAP_ConnectionError, SchoolSearchBase, SchoolBaseModule, ADMIN_WRITE, USER_READ
 
-class Instance(umcm.Base):
+_ = Translation( 'univention-management-console-selective-udm' ).translate
 
-	def create_windows_computer(self, request):
-		lo, con_position = univention.admin.uldap.getAdminConnection()
-		co = univention.admin.config.config()
+class Instance( SchoolBaseModule ):
+	def __init__( self ):
+		SchoolBaseModule.__init__(self)
 
-		# Convert the username into a DN. We need the position of the server DN
-		# to get the OU
-		server_dn = lo.searchDn('(&(uid=%s)(objectClass=posixAccount))' % self._username )
-		if len(server_dn) != 1:
-			message = 'Failed to create windows computer\nDid not find the Server DN'
-			MODULE.warn(message)
-			self.finished(request.id, {}, message, success=False)
-			return
-		server_dn = server_dn[0]
-			
-		# Search for the default computer container in this OU
-		server_dn_list = ldap.explode_dn(server_dn)
-		idx=None
-		for i in range(1,len(server_dn_list)):
-			if server_dn_list[i].lower().startswith('ou='):
-				idx=i
-				break
-		if not idx:
-			message = 'Failed to create windows computer\nDid not find the ou in the Server DN'
-			MODULE.warn(message)
-			self.finished(request.id, {}, message, success=False)
-			return
-		position = 'cn=computers,%s' % string.join(server_dn_list[idx:], ',')
+	def init(self):
+		SchoolBaseModule.init(self)
+
+	@LDAP_Connection(USER_READ, ADMIN_WRITE)
+	def create_windows_computer(self, request, ldap_user_read = None, ldap_admin_write = None, ldap_position = None, search_base = None):
+
+		self.required_options(request, 'name')
+
+		if not search_base.school:
+			raise UMC_CommandError( _('Could not determine schoolOU') )
 
 		try:
-			# Set new positinion
-			con_position.setDn(position)
+			# Set new position
+			ldap_position.setDn(search_base.computers)
 		
 			# Create the computer account
-			computer = univention.admin.handlers.computers.windows.object(co, lo, position=con_position, superordinate=None)
+			computer = univention.admin.handlers.computers.windows.object(None, ldap_admin_write, position=ldap_position, superordinate=None)
 			computer.open()
 			name = request.options.get('name')
 			if name[-1] == '$':

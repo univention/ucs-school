@@ -12,7 +12,8 @@ XS-Python-Version: all
 
 Package: univention-management-console-module-selective-udm
 Architecture: all
-Depends: python-univention-connector-s4
+Depends: python-univention-connector-s4,
+ python-ucs-school
 Recommends: univention-management-console-server,
 Description: UMC module for slaves with a selective replicated LDAP
  This package contains the UMC module which offers domain management
