@@ -90,6 +90,7 @@ Description: UCS@School meta package for UCS DC Slave System
 Package: ucs-school-singlemaster
 Architecture: all
 Conflicts: ucs-school-master
+Pre-Depends: univention-config
 Depends: univention-ldap-server (>= 8.0.77-4),
  univention-ldap-acl-master (>= 8.0.77-4),
  univention-directory-manager-tools (>= 7.0.234-1),
@@ -109,8 +110,7 @@ Depends: univention-ldap-server (>= 8.0.77-4),
  python-univention (>= 6.0.21-1),
  python-univention-lib (>= 1.0.51-3),
  shell-univention-lib (>= 1.0.51-3),
- ucs-school-netlogon,
- univention-config
+ ucs-school-netlogon
 Recommends:
  ucs-school-branding,
  ucs-school-umc-computerroom,
