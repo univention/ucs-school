@@ -1,3 +1,9 @@
+univention-ldb-modules (1.0.5-3) unstable; urgency=low
+
+  * Fix joinscript names run in call_joinscript (Bug #31443)
+
+ -- Arvid Requate <requate@univention.de>  Tue, 09 Jul 2013 15:03:00 +0200
+
 univention-ldb-modules (1.0.5-2) unstable; urgency=low
 
   * Ensure that nameserver2 and nameserver3 are not advertising
