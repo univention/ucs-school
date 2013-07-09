@@ -38,7 +38,9 @@ univention-config-registry set \
 	connector/s4/mapping/sid_to_s4?yes \
 	listener/shares/rename?yes \
 	samba4/join/dnsupdate?true \
-	samba4/sysvol/sync/setfacl/AU?false
+	samba4/sysvol/sync/setfacl/AU?false \
+	samba/script/addmachine?'/usr/share/univention-samba/addmachine.sh "%u"'
+
 
 if [ "$1" = "configure" -a -n "$2" ] && dpkg --compare-versions "$2" lt 5.0.2-1 ; then
 	eval "$(ucr shell)"
