@@ -37,6 +37,20 @@ joinscript_init
 . /usr/share/univention-lib/all.sh
 . /usr/share/univention-samba4/lib/all.sh
 
+JOINSCRIPT_DEPENDENCY="98univention-samba4-dns.inst"
+
+already_executed() {
+	local JOINSCRIPT_DEPENDENCY="$1"
+	local JS_PACKAGE
+	JS_SCRIPT_FULLNAME="/usr/lib/univention-install/${JOINSCRIPT_DEPENDENCY}" joinscript_get_package_name && joinscript_check_any_version_executed
+	return "$?"
+}
+
+if ! already_executed ${JOINSCRIPT_DEPENDENCY}; then
+	echo "skipping $JS_SCRIPT_FULLNAME , as it depends on ${JOINSCRIPT_DEPENDENCY}"
+	exit 1
+fi
+
 eval "$(univention-config-registry shell)"
 
 ## On UCS@school Slave PDCs the S4 Connector filters some SRV records.

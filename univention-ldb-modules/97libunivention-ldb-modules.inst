@@ -61,7 +61,9 @@ if [ $JS_LAST_EXECUTED_VERSION -le 0 ]; then
 			cp "$sam_ldb" "$tempfile"
 
 			## Restart the S4 Connector to check samba4/ldb/sam/module/prepend and use the bypass_samaccountname_ldap_check control
-			invoke-rc.d univention-s4-connector restart
+			if [ -x /etc/init.d/univention-s4-connector ]; then
+				invoke-rc.d univention-s4-connector crestart
+			fi
 
 			## Register the Module
 			/usr/share/univention-samba4/scripts/register_ldb_module.py -H "$sam_ldb" --ignore-exists $register_opts
