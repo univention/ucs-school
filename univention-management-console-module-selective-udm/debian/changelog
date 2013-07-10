@@ -1,3 +1,9 @@
+univention-management-console-module-selective-udm (3.0.0-2) unstable; urgency=low
+
+  * UMC ACL selective-udm needs to be set on DC Backup Hosts (Bug #31443)
+
+ -- Arvid Requate <requate@univention.de>  Wed, 10 Jul 2013 15:17:54 +0200
+
 univention-management-console-module-selective-udm (3.0.0-1) unstable; urgency=low
 
   * Use uinvention.lib.schoolldap to determine school OU (Bug #31443)
