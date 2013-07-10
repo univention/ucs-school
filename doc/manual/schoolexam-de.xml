@@ -114,7 +114,7 @@ auf das Netzwerk warten</filename>. Diese Funktion ist in den Betriebssystemvers
 			<footnote><para><ulink url="http://technet.microsoft.com/de-de/library/cc785665(v=ws.10).aspx"/></para></footnote>
 		</note>
 		<section id="school:exam:gpo:general">
-		  <title>Generelle Hinweise zum Administrativen Vorlagen und Gruppenrichtlinien</title>
+		  <title>Generelle Hinweise zu Gruppenrichtlinien und Administrativen Vorlagen</title>
 		  <para>
 			Auf dem Schulserver sollte das Verzeichnis
 			<filename>/var/lib/samba/sysvol/<emphasis>DomänenNameDerUCS@schoolUmgebung</emphasis>/Policies/PolicyDefinitions/</filename>
