@@ -1,0 +1,103 @@
+% \section{General}
+% \begin{itemize}
+% \end{itemize}
+
+% \section{Import scripts}
+% \begin{itemize}
+% \end{itemize}
+ 
+% \section{iTALC}
+% \begin{itemize}
+% \end{itemize}
+
+\section{Domain services}
+
+\subsection{Samba4}
+\begin{itemize}
+\item In case a Windows client is joined to a UCS@school Single Master with Active Directory / Samba 4 domain functionality and the machine account for the new client was not pre-created by an Administrator via UMC, the new machine account is now created automatically under the Organizational Unit (OU) of the school. In case several schools are hosted, the first one found in OpenLDAP is chosen. The order of the OUs considered can be adjusted manually by the \ucsUCRV{ucsschool/local/oulist} (\ucsBug{31443}). While this works directly for new installations of an UCS@school Single Master, in updated domains it is required to run the following commands once manually on the command line:
+\begin{ucsConsoleInput}
+source /usr/share/univention-lib/umc.sh
+umc\_policy\_append "default-backup-umc" "selective-udm"
+\item During join of an UCS@school Samba 4 Slave PDC the \ucsUCRV{nameserver2} and \ucsCommand{\ucsBCindex{nameserver3}} are now checked if they point to a nameserver that advertises SRV records for Kerberos that are invalid for the UCS@school Samba 4 Slave PDC. The \ucsUCRV{} is automatically unset in this case (\ucsBug{31651}).
+\end{ucsConsoleInput}
+\end{itemize}
+
+% \subsection{OpenLDAP}
+% \begin{itemize}
+% \end{itemize}
+
+% \subsection{LDAP ACL changes}
+% \begin{itemize}
+% \end{itemize}
+ 
+% \subsection{LDAP schema changes}
+% \begin{itemize}
+% \end{itemize}
+
+% \subsection{Listener/Notifier domain replication}
+% \begin{itemize}
+% \end{itemize}
+
+% \subsection{Domain joins of UCS systems}
+% \begin{itemize}
+% \end{itemize}
+
+% \subsection{Services for Windows}
+% \begin{itemize}
+% \end{itemize}
+
+%\subsection{Univention S4 Connector}
+%\begin{itemize}
+%
+%\end{itemize}
+
+% \section{Print services}
+% \begin{itemize}
+% \end{itemize}
+
+%\section{Proxy services}
+%\begin{itemize}
+%
+%\end{itemize}
+
+% \section{RADIUS}
+% \begin{itemize}
+% \end{itemize}
+
+%\section{Univention Directory Manager modules}
+%\begin{itemize}
+%
+%\end{itemize}
+
+% \section{Univention Management Console}
+%
+%\subsection{Univention Management Console server}
+%\begin{itemize}
+%
+%\end{itemize}
+
+%\subsection{Univention Management Console web interface}
+%\begin{itemize}
+%
+%\end{itemize}
+
+% \subsection{Univention Management Console modules}
+% \begin{itemize}
+% \end{itemize}
+
+% \subsubsection{Configuration wizard}
+% \begin{itemize}
+% \end{itemize}
+
+% \subsubsection{Computerroom module}
+% \begin{itemize}
+% \end{itemize}
+
+% \subsubsection{Helpdesk module}
+% \begin{itemize}
+% \end{itemize}
+
+
+% \section{Other changes}
+% \begin{itemize}
+% \end{itemize}
