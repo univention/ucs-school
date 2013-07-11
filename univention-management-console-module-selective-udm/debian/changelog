@@ -1,3 +1,10 @@
+univention-management-console-module-selective-udm (3.0.0-3) unstable; urgency=low
+
+  * Increase joinscript version to run umc_policy_append default-backup-umc
+    also during updates (Bug #31443)
+
+ -- Arvid Requate <requate@univention.de>  Thu, 11 Jul 2013 11:16:35 +0200
+
 univention-management-console-module-selective-udm (3.0.0-2) unstable; urgency=low
 
   * UMC ACL selective-udm needs to be set on DC Backup Hosts (Bug #31443)
