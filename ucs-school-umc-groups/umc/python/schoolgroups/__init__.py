@@ -33,6 +33,7 @@
 
 import copy
 import traceback
+import re
 
 from univention.lib.i18n import Translation
 
@@ -128,7 +129,8 @@ class Instance( SchoolBaseModule ):
 		ldapFilter = LDAP_Filter.forAll(request.options.get('pattern', ''), ['name', 'description'])
 		groupresult = udm_modules.lookup( 'groups/group', None, ldap_user_read, scope = 'one', base = base, filter = ldapFilter)
 
-		self.finished( request.id, map( lambda grp: { '$dn$' : grp.dn, 'name' : grp[ 'name' ].replace( '%s-' % search_base.school, '', 1 ), 'description' : grp[ 'description' ] }, groupresult ) )
+		name_pattern = re.compile('^%s-' % (re.escape(search_base.school)), flags=re.I)
+		self.finished( request.id, map( lambda grp: { '$dn$' : grp.dn, 'name' : name_pattern.sub('', grp['name']), 'description' : grp[ 'description' ] }, groupresult ) )
 
 	@LDAP_Connection()
 	def get( self, request, search_base = None, ldap_user_read = None, ldap_position = None ):
@@ -147,8 +149,9 @@ class Instance( SchoolBaseModule ):
 		grp.open()
 		result = {}
 		result[ '$dn$' ] = grp.dn
-		result[ 'school' ] = grp.dn[ grp.dn.find( '=' ) + 1 : grp.dn.find( '-' ) ]
-		result[ 'name' ] = grp[ 'name' ].replace( '%s-' % result[ 'school' ], '', 1 )
+		result[ 'school' ] = SchoolSearchBase.getOU(grp.dn)
+		name_pattern = re.compile('^%s-' % (re.escape(result['school'])), flags=re.I)
+		result[ 'name' ] = name_pattern.sub('', grp['name'])
 		result[ 'description' ] = grp[ 'description' ]
 
 		if request.flavor == 'class':

@@ -1,3 +1,10 @@
+ucs-school-lib (3.0.6-1) unstable; urgency=low
+
+  * Bug #31663: fix problems for groupnames which contain uppercase
+    letters
+
+ -- Florian Best <best@univention.de>  Thu, 11 Jul 2013 11:18:28 +0200
+
 ucs-school-lib (3.0.5-1) unstable; urgency=low
 
   * Bug #30831: reverted changes to search for classes

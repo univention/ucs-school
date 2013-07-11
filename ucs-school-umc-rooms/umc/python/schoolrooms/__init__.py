@@ -31,6 +31,8 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+import re
+
 from univention.management.console.config import ucr
 
 from univention.lib.i18n import Translation
@@ -80,8 +82,9 @@ class Instance( SchoolBaseModule ):
 		ldapFilter = LDAP_Filter.forGroups(pattern, search_base.school)
 
 		objs = udm_modules.lookup( 'groups/group', None, ldap_user_read, scope = 'one', base = search_base.rooms, filter = ldapFilter)
+		name_pattern = re.compile('^%s-' % (re.escape(search_base.school)), flags=re.I)
 		result = [ {
-			'name': i['name'].replace('%s-' % search_base.school, '', 1),
+			'name': name_pattern.sub('', i['name']),
 			'description': i.oldinfo.get('description',''),
 			'$dn$': i.dn
 		} for i in objs ]
@@ -113,7 +116,8 @@ class Instance( SchoolBaseModule ):
 		result = {}
 		result['$dn$'] = room_obj.dn
 		result['school'] = school
-		result['name'] = room_obj['name'].replace( '%s-' % school, '', 1 )
+		name_pattern = re.compile('^%s-' % (re.escape(search_base.school)), flags=re.I)
+		result['name'] = name_pattern.sub('', room_obj['name'])
 		result['description'] = room_obj['description']
 		result['computers'] = room_obj['hosts']
 

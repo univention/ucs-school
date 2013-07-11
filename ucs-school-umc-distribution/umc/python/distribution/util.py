@@ -227,8 +227,9 @@ def openRecipients(entryDN, ldap_connection, search_base):
 			_search_base = SchoolSearchBase(school, school, schoolDN)
 
 			# open group object
+			name_pattern = re.compile('^%s-' % (re.escape(_search_base.school)), flags=re.I)
 			group = Group( entryObj.info )
-			group.name = group.name.replace('%s-' % _search_base.school, '', 1)
+			group.name = name_pattern.sub('', group.name)
 			group.dn = entryObj.dn
 
 			userModul = udm_modules.get( 'users/user' )

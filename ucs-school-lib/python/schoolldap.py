@@ -528,7 +528,8 @@ class SchoolBaseModule( Base ):
 		if pattern:
 			ldapFilter = LDAP_Filter.forGroups(pattern)
 		groupresult = udm_modules.lookup('groups/group', None, ldap_connection, scope = scope, base = ldap_base, filter = ldapFilter)
-		return [ { 'id' : grp.dn, 'label' : grp[ 'name' ].replace( '%s-' % school, '' ) } for grp in groupresult ]
+		name_pattern = re.compile('^%s-' % (re.escape(school)), flags=re.I)
+		return [ { 'id' : grp.dn, 'label' : name_pattern.sub('', grp['name']) } for grp in groupresult ]
 
 	@LDAP_Connection()
 	def classes( self, request, ldap_user_read = None, ldap_position = None, search_base = None ):
