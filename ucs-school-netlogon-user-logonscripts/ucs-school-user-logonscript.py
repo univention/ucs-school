@@ -308,9 +308,10 @@ def writeWindowsLinkSkripts(uid, links, mappings):
 		script = generateWindowsLinkScript(desktopFolderName, links, mappings).replace('\n','\r\n')
 		listener.setuid(0)
 		try:
-			fp = open("%s/%s.vbs" % (path, uid) ,'w')
-			fp.write(script)
-			fp.close()
+			filepath = "%s/%s.vbs" % (path, uid)
+			with open(filepath, 'w') as fp:
+				fp.write(script)
+			os.chmod(filepath, 0700)
 		finally:
 			listener.unsetuid()
 

@@ -1,3 +1,9 @@
+ucs-school-netlogon-user-logonscripts (9.0.0-1) unstable; urgency=low
+
+  * Bug #31889: write logon scripts with executable flag
+
+ -- Florian Best <best@univention.de>  Thu, 11 Jul 2013 08:41:51 +0200
+
 ucs-school-netlogon-user-logonscripts (9.0.0-0) unstable; urgency=low
 
   * bumped version for UCS@school 3.1 R2
