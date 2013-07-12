@@ -98,7 +98,7 @@ def handler(configRegistry, changes):
 	DIR_TEMP = tempfile.mkdtemp(dir=DIR_DATA)
 
 	fn_config = os.path.join(DIR_ETC, FN_CONFIG)
-	fn_temp_config = os.path.join(DIR_TEMP, FN_CONFIG)
+	(_, fn_temp_config, ) = tempfile.mkstemp(dir=DIR_ETC)
 
 	createTemporaryConfig(fn_temp_config, configRegistry, DIR_TEMP)
 	writeUsergroupMemberLists(configRegistry, DIR_TEMP)
@@ -342,8 +342,8 @@ def finalizeConfig(fn_temp_config, DIR_TEMP, DIR_DATA):
 	# create all db files
 	subprocess.call(('squidGuard', '-c', fn_temp_config, '-C', 'all', ))
 	# fix permissions
-	subprocess.call(('chmod', '-R', 'ug+rw',      DIR_TEMP, ))
-	subprocess.call(('chown', '-R', 'root:proxy', DIR_TEMP, ))
+	subprocess.call(('chmod', '-R', 'ug+rw',      DIR_TEMP, fn_temp_config, ))
+	subprocess.call(('chown', '-R', 'root:proxy', DIR_TEMP, fn_temp_config, ))
 	# fix squidguard config (replace DIR_TEMP with DIR_DATA)
 	content = open( fn_temp_config, "r").read()
 	content = content.replace('\ndbhome %s/\n' % DIR_TEMP, '\ndbhome %s/\n' % DIR_DATA)
