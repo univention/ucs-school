@@ -96,14 +96,18 @@
 			ein &ucsSlave; installiert, nachfolgend als <emphasis>Schulserver</emphasis>
 			bezeichnet.
 		</para>
-		<para>
-		  &ucsUAS; unterstützt derzeit nur einen Schulserver pro Standort. Darüber hinaus können
-		  regulär weitere UCS-Systeme installiert und an den Schul-Standorten betrieben werden. Diese
-		  zusätzlichen UCS-Systeme können jedoch nicht in Verbindung mit &ucsUAS;-Funktionalitäten
-		  (z.B. Klassenshares oder Druckermoderation) eingesetzt werden.
-		</para>
-
-		<section>
+		<caution>
+		  <para>
+			&ucsUAS; unterstützt derzeit nur einen Schulserver pro Standort. Darüber hinaus können
+			regulär weitere UCS-Systeme ohne Samba 4 installiert und an den
+			Schul-Standorten betrieben werden. Diese zusätzlichen UCS-Systeme müssen können jedoch nicht in
+			Verbindung mit &ucsUAS;-Funktionalitäten (z.B. Klassenshares oder Druckermoderation) eingesetzt
+			werden. Zusätzlich müssen die Rechnerobjekte der zusätzlichen UCS-Systeme unterhalb der
+			Organisationseinheit (OU) der Schule angelegt werden (siehe auch
+			<xref linkend="structure:ou:replication"/>).
+		  </para>
+		</caution>
+		<section id="structure:ou:replication">
 			<title>Replikation der LDAP-Daten auf die Schul-Standorte</title>
 			<para>
 				Ein Schulserver bietet alle an einem Standort verwendeten Dienste an. Die
