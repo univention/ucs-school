@@ -99,12 +99,13 @@
 		<caution>
 		  <para>
 			&ucsUAS; unterstützt derzeit nur einen Schulserver pro Standort. Darüber hinaus können
-			regulär weitere UCS-Systeme ohne Samba 4 installiert und an den
-			Schul-Standorten betrieben werden. Diese zusätzlichen UCS-Systeme müssen können jedoch nicht in
-			Verbindung mit &ucsUAS;-Funktionalitäten (z.B. Klassenshares oder Druckermoderation) eingesetzt
-			werden. Zusätzlich müssen die Rechnerobjekte der zusätzlichen UCS-Systeme unterhalb der
-			Organisationseinheit (OU) der Schule angelegt werden (siehe auch
-			<xref linkend="structure:ou:replication"/>).
+			regulär weitere UCS-Systeme ohne Samba 4 installiert und an den Schul-Standorten betrieben
+			werden. Diese zusätzlichen UCS-Systeme können jedoch nicht in Verbindung mit
+			&ucsUAS;-Funktionalitäten eingesetzt werden; z.B. wird das Sperren von Dateifreigaben über die
+			UCS@school-UMC-Module auf den zusätzlichen UCS-Systemen nicht unterstützt. Zusätzlich müssen die
+			Rechnerobjekte der zusätzlichen UCS-Systeme vor dem Domänenbeitritt unterhalb der
+			Organisationseinheit (OU) der Schule angelegt werden (siehe auch <xref
+			linkend="structure:ou:replication"/>).
 		  </para>
 		</caution>
 		<section id="structure:ou:replication">
