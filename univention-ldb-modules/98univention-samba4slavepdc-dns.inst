@@ -55,7 +55,7 @@ eval "$(univention-config-registry shell)"
 
 ## On UCS@school Slave PDCs the S4 Connector filters some SRV records.
 kerberos_tcp_override=$(univention-config-registry get "connector/s4/mapping/dns/srv_record/_kerberos._tcp.$domainname/location")
-if [ -n "$kerberos_tcp_override" ]; then
+if [ -n "$kerberos_tcp_override" ] && [ "$kerberos_tcp_override" != "ignore" ]; then
 	if [ -n "$nameserver1" ]; then
 		if [ -n "$nameserver2" ] && [ "$nameserver2" != get_default_ip_address ]; then
 			if [ -n "$(dig +short @"$nameserver2" "_kerberos._tcp.$domainname" SRV | grep -v "$kerberos_tcp_override")" ]; then
