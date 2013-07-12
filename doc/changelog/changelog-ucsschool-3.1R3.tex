@@ -52,10 +52,11 @@
 % \begin{itemize}
 % \end{itemize}
 
-%\section{Proxy services}
-%\begin{itemize}
-%
-%\end{itemize}
+\section{Proxy services}
+\begin{itemize}
+\item The temporary file for the automatically created \ucsName{squidGuard.conf} is now created in the same directory to prevent problems during inter-device renames (\ucsBug{31397}).
+\item The file permissions of the \ucsName{squidGuard} configuration are now fully specified and therefore not dependent on the umask (\ucsBug{31397}).
+\end{itemize}
 
 % \section{RADIUS}
 % \begin{itemize}
