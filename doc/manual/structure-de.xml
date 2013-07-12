@@ -102,7 +102,7 @@
 			regulär weitere UCS-Systeme ohne Samba 4 installiert und an den Schul-Standorten betrieben
 			werden. Diese zusätzlichen UCS-Systeme können jedoch nicht in Verbindung mit
 			&ucsUAS;-Funktionalitäten eingesetzt werden; z.B. wird das Sperren von Dateifreigaben über die
-			UCS@school-UMC-Module auf den zusätzlichen UCS-Systemen nicht unterstützt. Zusätzlich müssen die
+			&ucsUAS;-UMC-Module auf den zusätzlichen UCS-Systemen nicht unterstützt. Zusätzlich müssen die
 			Rechnerobjekte der zusätzlichen UCS-Systeme vor dem Domänenbeitritt unterhalb der
 			Organisationseinheit (OU) der Schule angelegt werden (siehe auch <xref
 			linkend="structure:ou:replication"/>).
