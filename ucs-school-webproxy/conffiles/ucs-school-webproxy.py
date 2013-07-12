@@ -342,7 +342,7 @@ def finalizeConfig(fn_temp_config, DIR_TEMP, DIR_DATA):
 	# create all db files
 	subprocess.call(('squidGuard', '-c', fn_temp_config, '-C', 'all', ))
 	# fix permissions
-	subprocess.call(('chmod', '-R', 'ug+rw',      DIR_TEMP, fn_temp_config, ))
+	subprocess.call(('chmod', '-R', 'a=,ug+rw',   DIR_TEMP, fn_temp_config, ))
 	subprocess.call(('chown', '-R', 'root:proxy', DIR_TEMP, fn_temp_config, ))
 	# fix squidguard config (replace DIR_TEMP with DIR_DATA)
 	content = open( fn_temp_config, "r").read()
