@@ -83,10 +83,6 @@ domainname=configRegistry['domainname']
 
 emptyLineRe = re.compile(r'^\W*$')
 
-# FIXME: Are e-mail addresses provided?? otherwise it might be useful to
-# configure this via UCR
-#externaldomainname='schule.berlin.de'
-
 district_enabled = False
 if configRegistry['ucsschool/ldap/district/enable'].lower () in ('1', 'yes', 'true'):
 	district_enabled = True
