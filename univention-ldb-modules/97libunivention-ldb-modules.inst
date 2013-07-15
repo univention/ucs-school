@@ -67,13 +67,16 @@ if [ $JS_LAST_EXECUTED_VERSION -le 0 ]; then
 
 			## Register the Module
 			/usr/share/univention-samba4/scripts/register_ldb_module.py -H "$sam_ldb" --ignore-exists $register_opts
-
 			## check if ldb file is ok
 			if ldbsearch -H "$sam_ldb" -b '@MODULES' -s base  > /dev/null; then
 				rm "$tempfile"
 			else
 				echo "Restoring original sam.ldb"
 				mv "$tempfile" "$sam_ldb"
+			fi
+
+			if [ -x /etc/init.d/samba4 ]; then
+				invoke-rc.d samba4 restart
 			fi
 		fi
 	fi
