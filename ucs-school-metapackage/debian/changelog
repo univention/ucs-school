@@ -1,3 +1,9 @@
+ucs-school-metapackage (6.0.2-1) unstable; urgency=low
+
+  * added ucs-school-ucc-integration to list of recommended packages (Bug #30829)
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Mon, 15 Jul 2013 15:55:55 +0200
+
 ucs-school-metapackage (6.0.1-4) unstable; urgency=low
 
   * Pre-Depend on univention-config (Bug #31443)

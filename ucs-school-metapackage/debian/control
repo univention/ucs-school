@@ -66,6 +66,7 @@ Depends: univention-ldap-server (>= 8.0.77-4),
  univention-config
 Recommends:
  ucs-school-branding,
+ ucs-school-ucc-integration,
  ucs-school-umc-computerroom,
  ucs-school-umc-distribution,
  ucs-school-umc-exam,
@@ -113,6 +114,7 @@ Depends: univention-ldap-server (>= 8.0.77-4),
  ucs-school-netlogon
 Recommends:
  ucs-school-branding,
+ ucs-school-ucc-integration,
  ucs-school-umc-computerroom,
  ucs-school-umc-distribution,
  ucs-school-umc-exam,
