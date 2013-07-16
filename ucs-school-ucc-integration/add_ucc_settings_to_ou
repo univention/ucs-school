@@ -34,6 +34,8 @@ if [ -z "$1" -o "$1" = "-h" -o "$1" = "--help" ] ; then
    exit 0
 fi
 
+eval "$(ucr shell)"
+
 if [ "$1" = "--dn" ] ; then
 	oudnlist="$2"
 	shift 2 || exit 2
