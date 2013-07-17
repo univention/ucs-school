@@ -1,3 +1,9 @@
+ucs-school-ucc-integration (1.0.2-1) unstable; urgency=low
+
+  * Bug #31966: set ucc/proxy/server instead of ucc/proxy/autoconfig/url
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Wed, 17 Jul 2013 17:10:14 +0200
+
 ucs-school-ucc-integration (1.0.1-1) unstable; urgency=low
 
   * fixed add_ucc_settings_to_ou (Bug #30829)

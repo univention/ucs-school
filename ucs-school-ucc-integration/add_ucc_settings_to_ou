@@ -56,6 +56,9 @@ if ! is_ucr_true "ucsschool/import/generate/policy/ucc/settings" ; then
 	exit 0
 fi
 
+# set default squid port if unset
+[ -z "$squid_httpport" ] && squid_httpport=3128
+
 # Update all OUs this host is responsible for (all OUs the host can read)
 IFS="
 "
@@ -72,7 +75,7 @@ for oudn in $oudnlist ; do
     univention-directory-manager policies/registry modify "$@" \
      	--dn "cn=ou-default-ucr-policy,cn=policies,${oudn}" \
      	--append "registry=ucc/mount/cifshome/server ${hostname}.${domainname}" \
-     	--append "registry=ucc/proxy/autoconfig/url http://${hostname}.${domainname}/proxy.pac" \
+     	--append "registry=ucc/proxy/server http://${hostname}.${domainname}:${squid_httpport}" \
      	--append "registry=ucc/cups/server ${hostname}.${domainname}" \
      	--append "registry=ucc/italc/key/sambasource \\\\${hostname}\\netlogon" \
      	--append "registry=ucc/italc/key/filename italc-key_${hostname}.pub"
