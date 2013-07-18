@@ -109,8 +109,7 @@ class Instance( SchoolBaseModule ):
 		room_obj.open()
 
 		# get the school name
-		schoolDN = room_obj.dn[room_obj.dn.find('ou='):]
-		school = ldap_user_read.explodeDn(schoolDN, 1)[0]
+		school = SchoolSearchBase.getOU(room_obj.dn)
 
 		# prepare the resulting structure
 		result = {}
@@ -169,7 +168,8 @@ class Instance( SchoolBaseModule ):
 
 		# apply changes
 		group_obj.open()
-		if group_obj['name'].startswith('%s-' % group_props['school']):
+		name_pattern = re.compile('^%s-' % (re.escape(group_props['school'])). re.I)
+		if name_pattern.match(group_obj['name']):
 			# room had previously a school prefix
 			group_obj['name'] = '%(school)s-%(name)s' % group_props
 		else:
