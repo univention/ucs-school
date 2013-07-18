@@ -11,6 +11,8 @@ Package: ucs-school-ucc-integration
 Architecture: all
 Depends: univention-config | ${misc:Depends},
  shell-univention-lib,
+ univention-squid (>=6.0.8-3),
+ univention-squid-kerberos (>= 2.1.0-1),
  shell-ucs-school
 Description: Package containing UCC settings for UCS@school UMC
  This package adds support for UCC systems in UCS@school.

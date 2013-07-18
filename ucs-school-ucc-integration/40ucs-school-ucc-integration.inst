@@ -37,6 +37,16 @@ joinscript_init
 
 eval "$(ucr shell)"
 
+# look for S4 Connector hosts and activate squid negotiate onyl
+# in samba4 environments 
+s4connectorservicehosts="$(univention-directory-manager computers/computer list "$@" --filter "(univentionService=S4 Connector)" | sed -ne 's|^DN: cn=\([^,]*\).*|\1|p')"
+if [ -n "$s4connectorservicehosts" ]; then
+	ucr set squid/krb5auth?true
+	if [ -x /etc/init.d/squid3 ]; then
+		/etc/init.d/squid3 restart || true
+	fi
+fi
+
 if ! is_ucr_true "ucsschool/import/generate/policy/ucc/settings" ; then
 	echo "$(basename $0): creation of an UCR policy for UCC settings has been disabled by ucsschool/import/generate/policy/ucc/settings"
 	joinscript_save_current_version

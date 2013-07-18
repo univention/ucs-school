@@ -1,3 +1,11 @@
+ucs-school-ucc-integration (1.0.3-1) unstable; urgency=low
+
+  * added dependency to univention-squid and
+    univention-squid-kerberos, activate squid negotiate
+    in samba4 environments (Bug #31995) 
+
+ -- Felix Botner <botner@univention.de>  Thu, 18 Jul 2013 16:21:46 +0200
+
 ucs-school-ucc-integration (1.0.2-1) unstable; urgency=low
 
   * Bug #31966: set ucc/proxy/server instead of ucc/proxy/autoconfig/url
