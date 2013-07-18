@@ -1,3 +1,9 @@
+ucs-school-radius-802.1x (2.0.2-1) unstable; urgency=low
+
+  * deny WLAN access for disabled/locked accounts (Bug #31587)
+
+ -- Janek Walkenhorst <walkenhorst@univention.de>  Wed, 17 Jul 2013 17:26:26 +0200
+
 ucs-school-radius-802.1x (2.0.1-3) unstable; urgency=low
 
   * update LDAP credentials upon server password change (Bug #30783)
