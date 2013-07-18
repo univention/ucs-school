@@ -65,10 +65,6 @@ def loadInfo():
 			if wlanEnabled is not None:
 				groupInfo[group] = (priority, wlanEnabled, )
 
-SAMBA_ACCOUNT_FLAG_DISABLED = 'D'
-SAMBA_ACCOUNT_FLAG_LOCKED = 'L'
-DISALLOWED_SAMBA_ACCOUNT_FLAGS = frozenset((SAMBA_ACCOUNT_FLAG_DISABLED, SAMBA_ACCOUNT_FLAG_LOCKED, ))
-
 def getNTPasswordHash(username, stationId):
 	'stationId may be None if it was not supplied to the program'
 	groups = userToGroup.get(username)
@@ -81,11 +77,8 @@ def getNTPasswordHash(username, stationId):
 	if not True in [wlanEnabled for (priority, wlanEnabled, ) in groups if priority == maxPriority]:
 		return None
 	# user is authorized to use the W-LAN, retrieve NT-password-hash from LDAP and return it
-	result = ldapConnection.search(filter=str(univention.admin.filter.expression('uid', username)), attr=['sambaNTPassword', 'sambaAcctFlags'])
+	result = ldapConnection.search(filter=str(univention.admin.filter.expression('uid', username)), attr=['sambaNTPassword'])
 	if not result:
-		return None
-	sambaAccountFlags = frozenset(result[0][1]['sambaAcctFlags'][0])
-	if sambaAccountFlags & DISALLOWED_SAMBA_ACCOUNT_FLAGS:
 		return None
 	return result[0][1]['sambaNTPassword'][0].decode('hex')
 
