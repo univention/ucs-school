@@ -1,3 +1,10 @@
+univention-squid-kerberos (2.1.0-1) unstable; urgency=low
+
+  * removed package dependency to univention-samba4 
+  * joinscript_save_current_version also in a samba3 env (Bug #31995)
+
+ -- Felix Botner <botner@univention.de>  Thu, 18 Jul 2013 15:12:13 +0200
+
 univention-squid-kerberos (2.0.1-2) unstable; urgency=low
 
   * revert last change, bind credentials are only parsed on non-samba4
