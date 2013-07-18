@@ -637,6 +637,13 @@ class Instance(SchoolBaseModule):
 				kwargs = dict(cmd=cmd, exam=exam, examDescription=examDescription, examEndTime=examEndTime)
 
 			MODULE.info('updating room info/lock file...')
+			
+			#reload cups
+			if os.path.exists('/etc/init.d/cups'):
+				MODULE.info('Restarting cups')
+				if subprocess.call(['/etc/init.d/cups', 'reload']) != 0:
+					MODULE.error('Failed to reload cups! Printer settings not applied.')
+			
 			_updateRoomInfo(self._italc.roomDN, user=self._user_dn, **kwargs)
 			self.finished(request.id, True)
 
@@ -657,6 +664,8 @@ class Instance(SchoolBaseModule):
 		# print mode
 		if request.options['printMode'] in ('none', 'all'):
 			vextract.append('samba/printmode/hosts/%s' % request.options['printMode'])
+			vappend[vextract[-1]] = hosts
+			vextract.append('cups/printmode/hosts/%s' % request.options['printMode'])
 			vappend[vextract[-1]] = hosts
 			vunset.append('samba/printmode/room/%s' % self._italc.room)
 			vset[vunset[-1]] = request.options['printMode']

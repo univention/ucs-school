@@ -1,3 +1,11 @@
+ucs-school-umc-computerroom (3.0.13-4) unstable; urgency=low
+
+  * Added support for cups printer restriction (Bug #31902)
+  * Computerroommodule sets UCR variable cups/printmode/hosts
+  * Cups is reloaded after changing the variables and after resetting them
+
+ -- Erik Damrose <damrose@univention.de>  Thu, 18 Jul 2013 10:55:11 +0200
+
 ucs-school-umc-computerroom (3.0.13-3) unstable; urgency=low
 
   * Bug #31903: fix typo

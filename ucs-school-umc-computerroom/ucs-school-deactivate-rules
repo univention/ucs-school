@@ -33,6 +33,8 @@
 
 from univention.config_registry import ConfigRegistry, handler_set, handler_unset
 from optparse import OptionParser
+import os
+import subprocess
 
 if __name__ == '__main__':
 	parser = OptionParser()
@@ -64,3 +66,7 @@ if __name__ == '__main__':
 
 	# remove values
 	handler_unset( options.remove )
+	
+	#reload cups
+	if os.path.exists('/etc/init.d/cups'):
+		subprocess.call(['/etc/init.d/cups', 'reload'])
