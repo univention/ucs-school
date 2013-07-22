@@ -135,7 +135,7 @@ def writeMacLinkScripts(uid, homepath, links):
 	listener.setuid(0)
 	try:
 		if not (os.path.exists(homepath) and not os.path.isdir(homepath)): # may be /dev/null
-			# check existance of home
+			# check existence of home
 			uidnumber = 0
 			gidnumber = 0
 			try:
@@ -311,7 +311,7 @@ def writeWindowsLinkSkripts(uid, links, mappings):
 			filepath = "%s/%s.vbs" % (path, uid)
 			with open(filepath, 'w') as fp:
 				fp.write(script)
-			os.chmod(filepath, 0700)
+			os.chmod(filepath, 0755)
 		finally:
 			listener.unsetuid()
 
