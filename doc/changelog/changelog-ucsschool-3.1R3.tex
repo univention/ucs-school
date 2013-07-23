@@ -2,7 +2,7 @@
 \begin{itemize}
 \item Domaincontroller master (single server environment) and domaincontroller slave (multi server
   environment) will now create automatically a new DHCP DNS policy which will set the IP address of the
-  corresponding school domain controller as DNS server. This will be done on fresh installations and
+  corresponding school domaincontroller as DNS server. This will be done on fresh installations and
   during/after the update by calling the join scripts. To avoid this new default behaviour, set the
   \ucsUCRV{ucsschool/import/generate/policy/dhcp/dns/set\_per\_ou} to \emph{false} before the installation of
   UCS@school or before updating UCS@school (\ucsBug{31930}).
