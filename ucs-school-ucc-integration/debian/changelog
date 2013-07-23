@@ -1,3 +1,9 @@
+ucs-school-ucc-integration (1.0.4-1) unstable; urgency=low
+
+  * Bug #31966: updated add_ucc_settings_to_ou
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Tue, 23 Jul 2013 08:44:47 +0200
+
 ucs-school-ucc-integration (1.0.3-1) unstable; urgency=low
 
   * added dependency to univention-squid and

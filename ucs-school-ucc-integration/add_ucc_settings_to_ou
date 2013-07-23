@@ -75,7 +75,7 @@ for oudn in $oudnlist ; do
     univention-directory-manager policies/registry modify "$@" \
      	--dn "cn=ou-default-ucr-policy,cn=policies,${oudn}" \
      	--append "registry=ucc/mount/cifshome/server ${hostname}.${domainname}" \
-     	--append "registry=ucc/proxy/server http://${hostname}.${domainname}:${squid_httpport}" \
+     	--append "registry=ucc/proxy/http http://${hostname}.${domainname}:${squid_httpport}" \
      	--append "registry=ucc/cups/server ${hostname}.${domainname}" \
      	--append "registry=ucc/italc/key/sambasource \\\\${hostname}\\netlogon" \
      	--append "registry=ucc/italc/key/filename italc-key_${hostname}.pub"
