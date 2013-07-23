@@ -168,7 +168,7 @@ class Instance( SchoolBaseModule ):
 
 		# apply changes
 		group_obj.open()
-		name_pattern = re.compile('^%s-' % (re.escape(group_props['school'])). re.I)
+		name_pattern = re.compile('^%s-' % (re.escape(group_props['school'])), re.I)
 		if name_pattern.match(group_obj['name']):
 			# room had previously a school prefix
 			group_obj['name'] = '%(school)s-%(name)s' % group_props

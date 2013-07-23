@@ -1,3 +1,9 @@
+ucs-school-umc-rooms (10.0.3-1) unstable; urgency=low
+
+  * Bug #31663: fix typo
+
+ -- Florian Best <best@univention.de>  Tue, 23 Jul 2013 13:29:19 +0200
+
 ucs-school-umc-rooms (10.0.2-1) unstable; urgency=low
 
   * Bug #31663: fix problems for groupnames which contain uppercase
