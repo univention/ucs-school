@@ -48,7 +48,8 @@ univention-config-registry set \
 	dns/register/srv_records/kerberos?false \
 	dns/register/srv_records/ldap?false \
 	samba4/join/dnsupdate?true \
-	samba4/sysvol/sync/setfacl/AU?false
+	samba4/sysvol/sync/setfacl/AU?false \
+	ucsschool/import/generate/policy/dhcp/dns/set_per_ou?true
 
 if [ "$1" = "configure" ] ; then
 	if [ -z "$2" ] ; then
