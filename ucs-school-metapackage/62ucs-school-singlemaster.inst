@@ -62,13 +62,13 @@ if is_ucr_true "ucsschool/import/generate/policy/dhcp/dns/set_per_ou" ; then
 		fi
 		# create dhcp dns policy if missing
 		udm policies/dhcp_dns create "$@" --ignore_exists \
-			--position "cn=policy,$oudn" \
+			--position "cn=policies,$oudn" \
 			--set name="dhcp-dns-$ouname" \
 			--set domain_name_servers="$(get_default_ip_address)"
 		# assign dhcp dns policy to dhcp container if missing
 		udm container/cn modify "$@" \
 			--dn "cn=dhcp,$oudn" \
-			--policy-reference "cn=dhcp-dns-${ouname},cn=policy,$oudn" || true
+			--policy-reference "cn=dhcp-dns-${ouname},cn=policies,$oudn" || true
 	done
 fi
 

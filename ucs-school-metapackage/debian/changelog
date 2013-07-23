@@ -1,3 +1,9 @@
+ucs-school-metapackage (6.0.3-2) unstable; urgency=low
+
+  * Bug #31930: fixed typo in postinst scripts
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Tue, 23 Jul 2013 13:52:11 +0200
+
 ucs-school-metapackage (6.0.3-1) unstable; urgency=low
 
   * Bug #31930: create and add DHCP DNS policy at container cn=dhcp that
