@@ -40,10 +40,10 @@ if [ "$1" = "--dn" ] ; then
 	oudnlist="$2"
 	shift 2 || exit 2
 elif [ "$1" = "--name" ] ; then
-	oudnlist="$(univention-ldapsearch "(&(objectClass=ucsschoolOrganizationalUnit)(ou=$2))" | sed -nre 's/^dn: //p' | head -n1)"
+	oudnlist="$(univention-ldapsearch "(&(objectClass=ucsschoolOrganizationalUnit)(ou=$2))" | ldapsearch-wrapper | sed -nre 's/^dn: //p' | head -n1)"
 	shift 2 || exit 2
 elif [ "$1" = "--all" ] ; then
-	oudnlist="$(univention-ldapsearch objectClass=ucsschoolOrganizationalUnit | sed -nre 's/^dn: //p')"
+	oudnlist="$(univention-ldapsearch objectClass=ucsschoolOrganizationalUnit | ldapsearch-wrapper | sed -nre 's/^dn: //p')"
 	shift 1 || exit 2
 else
 	echo 'Please specifiy argument "--dn <ou_dn>" or "--name <ou_name>" or "--all"'
