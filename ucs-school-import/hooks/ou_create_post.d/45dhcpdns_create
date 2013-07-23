@@ -1,0 +1,74 @@
+#!/bin/bash
+#
+# 450dhcpdns_create
+#  Creates a UCR-policy for DHCP DNS settings
+#
+# Depends: ucs-school-import
+#
+# Copyright 2010-2013 Univention GmbH
+#
+# http://www.univention.de/
+#
+# All rights reserved.
+#
+# The source code of this program is made available
+# under the terms of the GNU Affero General Public License version 3
+# (GNU AGPL V3) as published by the Free Software Foundation.
+#
+# Binary versions of this program provided by Univention to you as
+# well as other copyrighted, protected or trademarked materials like
+# Logos, graphics, fonts, specific documentations and configurations,
+# cryptographic keys etc. are subject to a license agreement between
+# you and Univention and not subject to the GNU AGPL V3.
+#
+# In the case you use this program under the terms of the GNU AGPL V3,
+# the program is provided in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public
+# License with the Debian GNU/Linux or Univention distribution in file
+# /usr/share/common-licenses/AGPL-3; if not, see
+# <http://www.gnu.org/licenses/>.
+
+[ $# -ne 2 ] && echo "USAGE: $(basename $0) FILE DN" && exit 1
+
+eval "$(ucr shell)"
+. /usr/share/univention-lib/all.sh
+
+
+if ! is_ucr_true "ucsschool/import/generate/policy/dhcp/dns/set_per_ou" ; then
+	echo "$(basename $0): creation of DHCP DNS policy has been disabled by ucsschool/import/generate/policy/dhcp/dns/set_per_ou"
+	exit 0
+fi
+
+# create dhcp dns policies for all local OUs (Bug #31930)
+IFS="
+"
+ouname="$(awk -F '\t' '{print $1}' "$1" | tr '[:upper:]' '[:lower:]')"
+echo "$(basename $0): modifying OU $ouname ..."
+# determine list of available OUs
+for oudn in $(univention-ldapsearch -xLLL -b "$ldap_base" "(&(objectClass=ucsschoolOrganizationalUnit)(ou=$ouname))" dn | ldapsearch-wrapper | sed -nre 's/^dn: //p') ; do
+	# create dhcp dns policy if missing
+	udm policies/dhcp_dns create --ignore_exists \
+		--position "cn=policies,$oudn" \
+		--set name="dhcp-dns-$ouname"
+
+	# in a single server environment, the master is the DNS server
+	if is_ucr_true "ucsschool/singlemaster" ; then
+		if [ "$server_role" = "domaincontroller_master" ] ; then
+			udm policies/dhcp_dns modify \
+				--dn "cn=dhcp-dns-$ouname,cn=policies,$oudn" \
+				--set domain_name_servers="$(get_default_ip_address)"
+	fi
+
+	# assign dhcp dns policy to dhcp container if missing
+	udm container/cn modify \
+		--dn "cn=dhcp,$oudn" \
+		--policy-reference "cn=dhcp-dns-${ouname},cn=policies,$oudn" || true
+done
+
+echo "$(basename $0): done"
+
+exit 0

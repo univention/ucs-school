@@ -165,29 +165,32 @@ else
 fi
 
 
-# create dhcp dns policies for all local OUs (Bug #31930)
+# modify dhcp dns policies for all local OUs (Bug #31930)
 if is_ucr_true "ucsschool/import/generate/policy/dhcp/dns/set_per_ou" ; then
 	IFS="
 "
 	# determine list of available OUs
-	for oudn in $(univention-ldapsearch -xLLL -s one -b "$ldap_base" 'objectClass=ucsschoolOrganizationalUnit' dn | ldapsearch-wrapper | sed -nre 's/^dn: //p') ; do
+	for oudn in $(univention-ldapsearch -xLLL -b "$ldap_base" 'objectClass=ucsschoolOrganizationalUnit' dn | ldapsearch-wrapper | sed -nre 's/^dn: //p') ; do
 		ouname="$(echo "$oudn" | sed -nre 's/ou=([^,]*),(ou=|dc=).*/\1/p')"
 		if [ -z "$ouname" ] ; then
 			echo "Cannot determine OU name - using fallback 'server'"
 			ouname="server"
 		fi
+
 		# create dhcp dns policy if missing
 		udm policies/dhcp_dns create "$@" --ignore_exists \
 			--position "cn=policies,$oudn" \
 			--set name="dhcp-dns-$ouname" \
-			--set domain_name_servers="$(get_default_ip_address)"
+		# modify dhcp dns policy if missing
+		udm policies/dhcp_dns modify "$@" \
+			--dn "cn=dhcp-dns-${ouname},cn=policies,$oudn" \
+ 			--set domain_name_servers="$(get_default_ip_address)"
 		# assign dhcp dns policy to dhcp container if missing
 		udm container/cn modify "$@" \
 			--dn "cn=dhcp,$oudn" \
-			--policy-reference "cn=dhcp-dns-${ouname},cn=policies,$oudn" || true
+			--policy-reference "cn=dhcp-dns-${ouname},cn=policies,$oudn"
 	done
 fi
-
 
 
 ucs_addServiceToLocalhost 'UCS@school' "$@"

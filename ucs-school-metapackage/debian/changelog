@@ -1,3 +1,9 @@
+ucs-school-metapackage (6.0.5-1) unstable; urgency=low
+
+  * Bug #31930: the slave now tries to modify the existing DHCP DNS policy
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Tue, 23 Jul 2013 16:53:09 +0200
+
 ucs-school-metapackage (6.0.4-1) unstable; urgency=low
 
   * Bug #31930: fixed static basedn in join scripts
