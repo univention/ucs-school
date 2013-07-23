@@ -24,6 +24,8 @@
 \item A new UCR policy will be set by new package \ucsName{ucs-school-ucc-integration} on UCS@school
   servers. The policy sets the \ucsUCRV{ucc/proxy/http} which will be evaluated by the UCC clients and sets
   the HTTP proxy on the UCC systems accordingly (\ucsBug{31966}).
+\item By default, the squid negotiate (kerberos) authentication is activated
+in samba4 environments (\ucsBug{31995}).
 \end{itemize}
 
 % \subsection{OpenLDAP}
@@ -64,6 +66,9 @@
 \begin{itemize}
 \item The temporary file for the automatically created \ucsName{squidGuard.conf} is now created in the same directory to prevent problems during inter-device renames (\ucsBug{31397}).
 \item The file permissions of the \ucsName{squidGuard} configuration are now fully specified and therefore not dependent on the umask (\ucsBug{31397}).
+\item The package \ucsName{univention-squid-kerberos} has been added to the
+UCS@school repository and is installed together with the UCC integration
+package  (\ucsBug{31995}).
 \end{itemize}
 
 \section{RADIUS}
