@@ -1,3 +1,9 @@
+ucs-school-metapackage (6.0.4-1) unstable; urgency=low
+
+  * Bug #31930: fixed static basedn in join scripts
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Tue, 23 Jul 2013 15:45:14 +0200
+
 ucs-school-metapackage (6.0.3-2) unstable; urgency=low
 
   * Bug #31930: fixed typo in postinst scripts
