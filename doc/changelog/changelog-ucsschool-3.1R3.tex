@@ -111,5 +111,6 @@
 \item The \ucsNAme{Add computer} wizard has been adapted to import \ucsName{Univention Corporate Client} computer \ucsBug{31904}.
 \item Various \ucsName{UMC} modules have been adapted to correctly handle group names with differing case sensitivity (\ucsBug{31663}).
 \item The user logonscripts are now created with executable flag.
- It is neccessary to add the executable flag to currently existing scripts (e.g. chmod +x \$scriptpath/*) (\ucsBug{31889}).
+ It is neccessary to add the executable flag to currently existing scripts (e.g. chmod +x \$scriptpath/*).
+ Default scriptpaths are \ucsFile{/var/lib/samba/netlogon/user} and \ucsFile{/var/lib/samba/sysvol/\$REALM/scripts/user} (\ucsBug{31889}).
 \end{itemize}
