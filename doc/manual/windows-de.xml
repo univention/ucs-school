@@ -8,8 +8,7 @@
   </para>
   <para>
 	Die Netzkonfiguration der Clients kann zentral über in UCS integrierte DNS- und DHCP-Dienste
-	durchgeführt werden. Weitere Hinweise finden sich in <xref
-	linkend="school:schoolcreate:computers:import"/>.
+	durchgeführt werden. Weitere Hinweise finden sich in <xref linkend="school:schoolcreate:computers:import"/>.
   </para>
   <para>
 	Auf den Windows-Clients der Schüler kann die Software <emphasis>iTALC</emphasis> installiert werden. Sie
@@ -49,8 +48,21 @@
 		  </para>
 		  <caution>
 			<para>
-				Bei der Verwendung von Samba 4 in einer Multi-Server-Umgebung ist es zwingend erforderlich, dass alle Windows-Clients ihren jeweiligen Schul-DC als DNS-Server verwenden, um einen fehlerfreien Betrieb zu gewährleisten.
+			  Bei der Verwendung von Samba 4 in einer Multi-Server-Umgebung ist es zwingend
+			  erforderlich, dass alle Windows-Clients ihren jeweiligen Schul-DC als DNS-Server verwenden, um einen
+			  fehlerfreien Betrieb zu gewährleisten.
 			</para>
+		  <para>
+			Windows-Clients, die ihre DNS-Einstellungen über DHCP beziehen, erhalten in der
+			Standardeinstellung automatisch die IP-Adresse des Schul-DCs als DNS-Server zugewiesen. Dafür wird
+			beim Joinen eines Schulservers automatisch am unter dem Schul-OU-Objekt liegenden DHCP-Container
+			eine DHCP-DNS-Richtlinie verknüpft. Das automatische Verknüpfen dieser Richtlinie kann über das
+			Setzen einer UCR-Variable auf dem Schulserver (bzw. dem Domänencontroller Master bei
+			Single-Server-Umgebungen) deaktiviert werden:
+			<programlisting>
+ucr set ucsschool/import/generate/policy/dhcp/dns/set_per_ou=false
+			</programlisting>
+		  </para>
 		  </caution>
 		</listitem>
 	  </itemizedlist>
