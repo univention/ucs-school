@@ -135,12 +135,12 @@ auf das Netzwerk warten</filename>. Diese Funktion ist in den Betriebssystemvers
 			Microsoft aktualisierte Administrative Vorlagen zum Download zur Verfügung.
 		  </para>
 		  <para>
-			Grundsätzlich können Gruppenrichtlinien im Samba Verzeichnisdienst mit OU-Containern und der LDAP-Basis verknüpft werden. Im UCS@school Kontext werden jedoch nur Verknüpfungen unterhalb der Schul-OU auch automatisch nach OpenLDAP synchronisiert. Verknüpfungen mit der LDAP-Basis z.B. werden durch OpenLDAP-Zugriffsbeschränkungen blockiert, damit sich eine Anpassung der damit verknüpften Gruppenrichtlinien durch einen Schul-Administrator nicht auch auf alle anderen Schulen auswirkt. Eine solche Änderung wird im S4 Connector auf der Schule als Reject notiert. Wenn tatsächlich gewünscht ist, eine Änderung der Gruppenrichtlinienverknüpfung an der LDAP-Basis und unter OU=Domain Controllers auch nach OpenLDAP und damit an alle Schulen zu synchronisieren, kann auf dem Schul-Slave folgender Befehl mit dem zentralen Administrator-Passwort ausgeführt werden:
+			Grundsätzlich können Gruppenrichtlinien im Samba-Verzeichnisdienst mit Organisationseinheiten (OU) und der LDAP-Basis verknüpft werden. Im &ucsUAS;-Kontext werden jedoch nur Verknüpfungen unterhalb der Schul-OU auch automatisch in das OpenLDAP-Verzeichnis synchronisiert. Verknüpfungen mit der LDAP-Basis werden z.B. durch OpenLDAP-Zugriffsbeschränkungen blockiert, damit sich eine Anpassung der damit verknüpften Gruppenrichtlinien durch einen Schul-Administrator nicht auch auf alle anderen Schulen auswirkt. Eine solche Änderung wird im S4-Connector auf der Schule als Reject notiert. Wenn tatsächlich gewünscht ist, eine Änderung der Gruppenrichtlinienverknüpfung an der LDAP-Basis und unter <emphasis>OU=Domain Controllers</emphasis> auch in das OpenLDAP-Verzeichnis und damit an alle Schulen zu synchronisieren, kann auf dem Schulserver folgender Befehl mit dem zentralen Administrator-Passwort ausgeführt werden:
 			<programlisting>
 eval "$(ucr shell)"
 /usr/share/univention-s4-connector/msgpo.py --write2ucs \
   --binddn "uid=Administrator,cn=users,$ldap_base" --bindpwd &lt;password&gt;</programlisting>
-			Der S4 Connector erkennt dann bei dem nächsten resync eine kurze Zeit später, dass der Reject aufgelöst wurde.
+			Der S4-Connector erkennt eine kurze Zeit später bei dem nächsten Resync, dass der Reject aufgelöst wurde.
 		  </para>
 		</section>
 		<section>
