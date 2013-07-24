@@ -53,13 +53,13 @@
 			  fehlerfreien Betrieb zu gewährleisten.
 			</para>
 		  <para>
-			Windows-Clients, die ihre DNS-Einstellungen über DHCP beziehen, erhalten in der
-			Standardeinstellung automatisch die IP-Adresse des Schul-DCs als DNS-Server zugewiesen. Dazu wird
-			beim Anlegen der Schul-OU bzw. beim Joinen eines Schulservers automatisch am unter dem
-			Schul-OU-Objekt liegenden DHCP-Container eine DHCP-DNS-Richtlinie verknüpft. Das automatische
-			Verknüpfen dieser Richtlinie kann über das Setzen einer UCR-Variable auf Domänencontroller Master
-			und Schulserver deaktiviert werden, welche auf beiden Systemen vor der Installation von &ucsUAS;
-			oder dem Update des Systems gesetzt werden muss:
+			Windows- und UCC-Systeme, die ihre DNS-Einstellungen über DHCP beziehen, erhalten in der
+			Standardeinstellung automatisch die IP-Adresse des Schul-DCs als DNS-Server zugewiesen. Dafür wird
+			beim Joinen eines Schulservers automatisch am unter dem Schul-OU-Objekt liegenden DHCP-Container
+			eine DHCP-DNS-Richtlinie verknüpft. Das automatische Verknüpfen dieser Richtlinie kann über das
+			Setzen einer UCR-Variable auf dem Schulserver (bzw. dem Domänencontroller Master bei
+			Single-Server-Umgebungen) deaktiviert werden. Die folgende Variable muss vor der Installation von
+			&ucsUAS; oder dem Update des Systems gesetzt werden:
 			<programlisting>
 ucr set ucsschool/import/generate/policy/dhcp/dns/set_per_ou=false
 			</programlisting>
