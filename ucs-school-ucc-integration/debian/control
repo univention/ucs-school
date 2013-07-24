@@ -14,7 +14,7 @@ Depends: univention-config | ${misc:Depends},
  univention-squid (>=6.0.8-3),
  univention-squid-kerberos (>= 2.1.0-1),
  univention-printserver (>= 6.0.21-3),
- univention-ucs-school-umc-computerroom (>= 3.0.13-4),
+ ucs-school-umc-computerroom (>= 3.0.13-4),
  shell-ucs-school
 Description: Package containing UCC settings for UCS@school UMC
  This package adds support for UCC systems in UCS@school.

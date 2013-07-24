@@ -1,3 +1,9 @@
+ucs-school-ucc-integration (1.0.4-4) unstable; urgency=low
+
+  * Corrected name of dependency package (Bug #31902)
+
+ -- Erik Damrose <damrose@univention.de>  Wed, 24 Jul 2013 16:38:48 +0200
+
 ucs-school-ucc-integration (1.0.4-3) unstable; urgency=low
 
   * Added version based dependencies to univention-printerserver and
