@@ -53,7 +53,7 @@
 			  fehlerfreien Betrieb zu gewährleisten.
 			</para>
 		  <para>
-			Windows- und UCC-Systeme, die ihre DNS-Einstellungen über DHCP beziehen, erhalten in der
+			Windows-Clients, die ihre DNS-Einstellungen über DHCP beziehen, erhalten in der
 			Standardeinstellung automatisch die IP-Adresse des Schul-DCs als DNS-Server zugewiesen. Dafür wird
 			beim Joinen eines Schulservers automatisch am unter dem Schul-OU-Objekt liegenden DHCP-Container
 			eine DHCP-DNS-Richtlinie verknüpft. Das automatische Verknüpfen dieser Richtlinie kann über das
