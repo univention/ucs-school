@@ -61,12 +61,13 @@ for oudn in $(univention-ldapsearch -xLLL -b "$ldap_base" "(&(objectClass=ucssch
 			udm policies/dhcp_dns modify \
 				--dn "cn=dhcp-dns-$ouname,cn=policies,$oudn" \
 				--set domain_name_servers="$(get_default_ip_address)"
+		fi
 	fi
 
 	# assign dhcp dns policy to dhcp container if missing
 	udm container/cn modify \
 		--dn "cn=dhcp,$oudn" \
-		--policy-reference "cn=dhcp-dns-${ouname},cn=policies,$oudn" || true
+		--policy-reference "cn=dhcp-dns-${ouname},cn=policies,$oudn"
 done
 
 echo "$(basename $0): done"

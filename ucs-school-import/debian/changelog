@@ -1,3 +1,9 @@
+ucs-school-import (10.0.3-1) unstable; urgency=low
+
+  * Bug #31930: fixed typo in ou_create_post.d hook for DHCP DNS policies
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Wed, 24 Jul 2013 11:07:23 +0200
+
 ucs-school-import (10.0.2-1) unstable; urgency=low
 
   * Bug #31930: added ou_create_post.d hook for DHCP DNS policies
