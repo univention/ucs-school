@@ -1,3 +1,10 @@
+ucs-school-ucc-integration (1.0.4-3) unstable; urgency=low
+
+  * Added version based dependencies to univention-printerserver and
+    ucs-school-umc-computerroom (Bug #31902) 
+
+ -- Erik Damrose <damrose@univention.de>  Wed, 24 Jul 2013 16:13:32 +0200
+
 ucs-school-ucc-integration (1.0.4-2) unstable; urgency=low
 
   * Bug #31966: small fixes in add_ucc_settings_to_ou
