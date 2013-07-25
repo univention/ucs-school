@@ -1,3 +1,12 @@
+ucs-school-ucc-integration (1.0.5-1) unstable; urgency=low
+
+  * Bug #31966:
+    - do not call joinscript directly
+    - call add_ucc_settings_to_ou on single server if a new OU is created
+      (via create_ou.post hook)
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Thu, 25 Jul 2013 17:41:46 +0200
+
 ucs-school-ucc-integration (1.0.4-4) unstable; urgency=low
 
   * Corrected name of dependency package (Bug #31902)

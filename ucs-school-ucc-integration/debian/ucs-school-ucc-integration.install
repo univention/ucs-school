@@ -1,1 +1,2 @@
-add_ucc_settings_to_ou  /usr/share/ucs-school-ucc-integration/
+add_ucc_settings_to_ou                                 usr/share/ucs-school-ucc-integration/
+hooks/ou_create_post.d/50update_ucr_policy             usr/share/ucs-school-import/hooks/ou_create_post.d
