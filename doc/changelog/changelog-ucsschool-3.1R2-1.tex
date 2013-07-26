@@ -16,8 +16,10 @@
   slave) and sets ldap/server/name accordingly (\ucsBug{31976}).
 \item To allow automatic mounting of the user's home share on UCC systems, the UCR policy mentioned above will also set the
   \ucsUCRV{ucc/mount/cifshome/server} (\ucsBug{31906}).
-\item By default, the squid negotiate (kerberos) authentication is activated
-      in samba4 environments (\ucsBug{31995}).
+\item During update and installation of \ucsUAS{} the package \ucsName{univention-squid-kerberos} will be
+  installed to provide kerberos authentication. By default, the squid negotiate (kerberos) authentication will
+  not be activated automatically. If UCC is used, this has to be done as manual change by setting the
+  \ucsUCRV{squid/krb5auth=yes} and restarting the service \ucsName{squid3} (\ucsBug{31995}).
 \end{itemize}
 
 % \section{Import scripts}
