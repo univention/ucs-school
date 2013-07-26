@@ -8,7 +8,12 @@
 \begin{itemize}
 \item A new UCR policy will be set by the new package \ucsName{ucs-school-ucc-integration} on UCS@school
   servers. The policy sets the \ucsUCRV{ucc/proxy/http} which will be evaluated by the UCC clients and sets
-  the HTTP proxy on the UCC systems accordingly (\ucsBug{31966}).
+  the HTTP proxy on the UCC systems accordingly. To avoid this new default behaviour, set the
+  \ucsUCRV{ucsschool/import/generate/policy/ucc/settings} to \emph{false} on domaincontroller master
+  and domaincontroller slave systems before the installation of UCS@school or before updating UCS@school
+  (\ucsBug{31966}).
+\item A new join script tries to determine its school server in charge (domaincontroller master or domaincontroller
+  slave) and sets ldap/server/name accordingly (\ucsBug{31976}).
 \item To allow automatic mounting of the user's home share on UCC systems, the UCR policy mentioned above will also set the
   \ucsUCRV{ucc/mount/cifshome/server} (\ucsBug{31906}).
 \item By default, the squid negotiate (kerberos) authentication is activated
