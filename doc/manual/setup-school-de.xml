@@ -204,7 +204,7 @@ g123m  10.0.6.0/25  10.0.6.5-10.0.6.120  10.0.6.1  10.0.6.2  10.0.6.15
 			  <row>
 				<entry>Rechnertyp</entry>
 				<entry>Typ des Rechnerobjektes</entry>
-				<entry>ipmanagedclient, macos, windows</entry>
+				<entry>ipmanagedclient, macos, ucc, windows</entry>
 				<entry>windows</entry>
 			  </row>
 			  <row>
@@ -266,6 +266,7 @@ windows          wing123m-01      10:00:ee:ff:cc:00  g123m  10.0.5.5
 windows          wing123m-02      10:00:ee:ff:cc:01  g123m  10.0.5.6
 macos            macg123m-01      10:00:ee:ff:cc:03  g123m  10.0.5.7
 ipmanagedclient  printerg123m-01  10:00:ee:ff:cc:04  g123m  10.0.5.250
+ucc              uccg123m-01      10:00:ee:ff:cd:e2  g123m  10.0.5.10
 		</programlisting>
 		<para>
 		  Die importierten Rechner werden so konfiguriert, dass ihnen die
