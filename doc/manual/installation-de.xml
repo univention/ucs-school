@@ -292,13 +292,20 @@ apt-get unmarkauto <emphasis> PAKETNAME</emphasis>
 		</programlisting>
 	  </para>
 	  <para>
+		Richtlinien, die (ggf. automatisch von &ucsUAS;) an Container der Schul-OUs verknüpft wurden, sollte auf ihre Einstellungen hin überprüft werden. Dies betrifft unter anderem die DHCP-DNS-Einstellungen sowie die Einstellungen für UCC-Systeme (siehe auch <xref linkend="school:ucc:configuration"/>).
+	  </para>
+	  <para>
 		Nachdem die oben genannten Schritte ausgeführt wurden, sollte abschließend der UMC-Server auf dem DC Master neu gestartet werden:
 		<programlisting>
 invoke-rc.d univention-management-console-server restart
 		</programlisting>
 	  </para>
-	  <para>
-		Es ist zu beachten, dass auch nach der abgeschlossenen Umwandlung in eine Multi-Server-Umgebung der auf dem DC Master installierte Samba3- oder Samba4-Dienst bestehen bleibt und nicht automatisch deinstalliert wird.
-	  </para>
+	  <caution>
+		<para>
+		  Es ist zu beachten, dass auch nach der abgeschlossenen Umwandlung in eine
+		  Multi-Server-Umgebung der auf dem DC Master installierte Samba3- oder Samba4-Dienst bestehen bleibt
+		  und nicht automatisch deinstalliert wird.
+		</para>
+	  </caution>
 	</section>
 </chapter>
