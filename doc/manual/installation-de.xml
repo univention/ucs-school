@@ -117,17 +117,17 @@
 		  Ein DC Backup dient als Fallback-System des DC Master. Sollte dieser ausfallen, kann ein DC Backup
 		  die Rolle des DC Master dauerhaft übernehmen. Der Einsatz eines DC Backup ist optional.
 		</para>
-		<note>
-			<para>
-		  Sofern DC Backup-Systeme in der Domäne vorhanden sind, sollte dort ebenfalls &ucsUAS;
-		  installiert werden, um bei einem dauerhaften Ausfall des DC Masters Probleme (z.B. mit den
-		  LDAP-Schemata) zu vermeiden.
-			</para>
-		</note>
 		<para>
 		  Die Installation von &ucsUAS; auf einem DC Backup erfolgt analog zur in <xref
 		  linkend="school:installation:master2"/> beschriebenen Installation des DC Master.
 		</para>
+		<caution>
+		  <para>
+			Sofern DC Backup-Systeme in der UCS-Domäne vorhanden sind, muss dort ebenfalls &ucsUAS;
+			installiert und konfiguriert werden. Sollte dies nicht der Fall sein, kann es zu
+			Replikationsproblemen auf den Schulservern kommen kommen.
+		  </para>
+		</caution>
 	  </section>
 
 	  <section>
