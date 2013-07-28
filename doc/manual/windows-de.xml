@@ -17,6 +17,11 @@
 	Bildschirmausgabe des Desktops des Lehrers auf die Schülerbildschirme überträgt. Die Installation
 	von iTALC wird in <xref linkend="school:windows:italc"/> beschrieben.
   </para>
+  <para>
+	Aufgrund einiger Limitierungen (u.a. von iTALC) kann auf Windows-Terminalservern nicht der volle
+	Funktionsumfang von &ucsUAS; genutzt werden. Die Verwendung von Terminalserver mit &ucsUAS; wird
+	daher nicht unterstützt.
+  </para>
 
   <section id="school:windows:samba">
 	<title>Anmeldedienste mit Samba</title>
