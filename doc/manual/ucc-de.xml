@@ -2,10 +2,12 @@
   <title>Integration und Verwaltung von Univention Corporate Client-Systemen</title>
   <para>
 	Univention Corporate Client (UCC) ist wie &ucsUAS; eine aus dem Univention App Center heraus
-	installierbare Erweiterung für Univention Corporate Server. Die Erweiterung enthält eine optimierte
-	Desktop-Umgebung auf Basis von Linux, die ein extrem hohes Maß an Anpassung der Desktops an die
-	jeweilige Hardware und den Einsatzzweck zulässt. Die Verwaltung der UCC-Systeme erfolgt über die
-	Univention Management Console.
+	installierbare Erweiterung für Univention Corporate Server. UCC enthält eine optimierte
+	Desktop-Umgebung auf Basis von Linux (Ubuntu), die eine Anpassung des Desktops an die jeweilige
+	Hardware und den Einsatzzweck zulässt. Der Rollout der UCC-Systeme wird über ein imagebasiertes
+	Verfahren durchgeführt. Dabei kann entweder auf offiziell bereitgestellte Images (ThinClient oder
+	Desktop) zurückgegeriffen werden oder es können speziell an die eigene Umgebung angepasste Images
+	erstellt werden. Die Verwaltung der UCC-Systeme erfolgt über die Univention Management Console.
   </para>
   <para>
 	&ucsUAS; bietet die Möglichkeit, UCC-Desktop-Systeme ähnlich wie Windows-Systeme in die
@@ -16,13 +18,13 @@
 	<itemizedlist>
 	  <listitem>
 		<simpara>
-		  Automatisches Einbinden der Benutzer-Heimatverzeichnisse während des Anmeldevorgangs und
+		  Automatisches Einbinden der Heimatverzeichnisse der Benutzer während des Anmeldevorgangs und
 		  der Zugriff auf Klassen- und Arbeitsgruppen-Dateifreigaben über eine Verknüpfung auf dem Desktop
 		</simpara>
 	  </listitem>
 	  <listitem>
 		<simpara>
-		  Automatische Einbindung der CUPS-Druckfreigaben vom Schulserver
+		  Automatische Einbindung der CUPS-Druckerfreigaben vom Schulserver
 		</simpara>
 	  </listitem>
 	  <listitem>
@@ -33,16 +35,15 @@
 	  </listitem>
 	  <listitem>
 		<simpara>
-		  Über UCR-Richtlinien gesteuerte Einrichtung des Proxy-Servers für KDE-Anwendungen und
-		  Firefox inklusive einer transparenten Authentifizierung gegenüber dem HTTP-Proxy (squid)
+		  Über &ucsUCR;-Richtlinien gesteuerte Einrichtung des Proxy-Servers für KDE-Anwendungen und
+		  Firefox inklusive einer transparenten Authentifizierung gegenüber dem HTTP-Proxy (Squid)
 		  des Schulservers
 		</simpara>
 	  </listitem>
 	</itemizedlist>
   </para>
   <para>
-	Um den genannten Funktionsumfang zu gewährleisten, gelten für die Integration von UCC in
-	&ucsUAS; die folgenden Einschränkungen:
+	Für die Integration von UCC in &ucsUAS; gelten die folgenden Einschränkungen:
 	<itemizedlist>
 	  <listitem>
 		<simpara>
@@ -52,8 +53,9 @@
 	  </listitem>
 	  <listitem>
 		<simpara>
-		  Die UCC-Systeme müssen als Desktop-System installiert werden. UCC-ThinClient-Systeme
-		  bzw. UCC-Terminalserver werden in Verbindung mit &ucsUAS; nicht unterstützt.
+		  Die UCC-Systeme müssen mit dem offiziellen Desktop-Image (oder einem äquivalenten,
+		  selbsterstellten Image) installiert werden. UCC-ThinClient-Systeme bzw. UCC-Terminalserver werden in
+		  Verbindung mit &ucsUAS; nicht unterstützt.
 		</simpara>
 	  </listitem>
 	  <listitem>
@@ -65,13 +67,13 @@
 	  <listitem>
 		<simpara>
 		  Die über CUPS eingebundenen Druckerfreigaben unterstützen nicht alle Kombinationen für
-		  Zugriffsberechtigungen. Das Freigeben aller Drucker über das Computerraum-Modul (hat daher keine
+		  Zugriffsberechtigungen. Das Freigeben aller Drucker über das Computerraum-Modul hat daher keine
 		  Auswirkung auf UCC-Systeme.
 		</simpara>
 	  </listitem>
 	  <listitem>
 		<simpara>
-		  Der Klassenarbeitsmodus von &ucsUAS; wird nicht mit UCC-Systemen unterstützt.
+		  Der Klassenarbeitsmodus von &ucsUAS; wird nicht auf UCC-Systemen unterstützt.
 		</simpara>
 	  </listitem>
 	</itemizedlist>
@@ -90,8 +92,8 @@
 	  abweichende Installationsschritte beschrieben.
 	</para>
 	<para>
-	  Die Installation von UCC erfolgt über das Univention App Center, welches über die Univention
-	  Management Console bereitgestellt wird. Die Installation von Univention Corporate Client muss auf
+	  Die Installation von UCC erfolgt über das Univention App Center in der Univention
+	  Management Console. Die Applikation <emphasis>Univention Corporate Client</emphasis> muss auf
 	  dem &ucsUAS;-Schulserver installiert werden. Dies ist in einer Single-Server-Umgebung der
 	  Domänencontroller Master und in einer Multi-Server-Umgebung der Domänencontroller Slave. Die
 	  notwendigen Installationsschritte sind auf beiden UCS-Systemrollen gleich und werden daher im
