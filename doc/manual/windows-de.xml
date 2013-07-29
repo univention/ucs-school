@@ -19,7 +19,7 @@
   </para>
   <para>
 	Aufgrund einiger Limitierungen (u.a. von iTALC) kann auf Windows-Terminalservern nicht der volle
-	Funktionsumfang von &ucsUAS; genutzt werden. Die Verwendung von Terminalserver mit &ucsUAS; wird
+	Funktionsumfang von &ucsUAS; genutzt werden. Die Verwendung von Terminalservern mit &ucsUAS; wird
 	daher nicht unterstützt.
   </para>
 
