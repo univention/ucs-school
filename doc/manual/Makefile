@@ -1,6 +1,7 @@
 #!/usr/bin/make -f
 MAIN := ucsschool-handbuch-3.1 ucsschool-lehrer-handbuch-3.1
 STYLESHEET := ucsschool
+lang := de
 
 COMMON_DIR := ../../../doc-common/docbook
 include $(COMMON_DIR)/Makefile
