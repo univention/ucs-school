@@ -79,7 +79,7 @@
 	</itemizedlist>
   </para>
   <para>
-	Weitere Informationen zu UCC finden sich im UCC-Handbuch <xref linkend="ucc-handbuch"/>.
+	Weitere Informationen zu UCC finden sich im UCC-Handbuch <biblioref linkend="ucc-handbuch"/>.
   </para>
 
   
@@ -87,7 +87,7 @@
 	<title>Installation von UCC</title>
 	<para>
 	  Im Folgenden wird die Installation von Univention Corporate Client (UCC) auf einem
-	  &ucsUAS;-Schulserver beschrieben. Dabei wird die Kenntnis des UCC-Handbuchs <xref
+	  &ucsUAS;-Schulserver beschrieben. Dabei wird die Kenntnis des UCC-Handbuchs <biblioref
 	  linkend="ucc-handbuch"/> vorausgesetzt und neben einer Kurzanleitung für die Installation nur
 	  abweichende Installationsschritte beschrieben.
 	</para>
@@ -151,7 +151,7 @@
 	<para>
 	  Im Folgenden werden die &ucsUAS;-spezifischen Konfigurationseinstellungen beschrieben, die von
 	  regulären UCC-Systemen abweichen. Weitergehende Konfigurationsmöglichkeiten werden im UCC-Handbuch
-	  <xref linkend="ucc-handbuch"/> beschrieben.
+	  <biblioref linkend="ucc-handbuch"/> beschrieben.
 	</para>
 	<para>
 	  Für die korrekte Funktion der UCC-Systeme ist sicherzustellen, dass die UCC-Systeme den
@@ -234,7 +234,7 @@
 	  UCC-Desktop-Systeme installiert und für &ucsUAS; eingerichtet werden. Die nachfolgenden Schritte für
 	  den Rollout wurden auf ein Minimum reduziert und beinhalten abweichende Schritte zum regulären
 	  UCC-Rollout. Hinweise zu Rollout und Konfiguration von UCC-Desktop-Systemen können dem UCC-Handbuch
-	  <xref linkend="ucc-handbuch"/> entnommen werden.
+	  <biblioref linkend="ucc-handbuch"/> entnommen werden.
 	</para>
 	<para>
 	  <itemizedlist>

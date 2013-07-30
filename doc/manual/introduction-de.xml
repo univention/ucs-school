@@ -44,6 +44,6 @@
   <!--    von UCS-Systemen können dem \ucsHandbuch{} entnommen werden. -->
   <para>
 	Für die Bedienung der &ucsUAS;-spezifischen Module der &ucsUMC;
-	steht ein zusätzliches Dokument <xref linkend="ucs-school-teacher"/> bereit.
+	steht ein zusätzliches Dokument <biblioref linkend="ucs-school-teacher"/> bereit.
   </para>
 </chapter>

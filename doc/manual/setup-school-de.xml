@@ -349,7 +349,7 @@ ucc              uccg123m-01      10:00:ee:ff:cd:e2  g123m  10.0.5.10
 		  Druckerfreigaben werden, wie in einer Standard-UCS-Installation, über
 		  das UMC-Modul <guimenu>Drucker</guimenu> auf dem &ucsMaster;
 		  angelegt. Weiterführende Dokumentation findet sich im
-		  Druckdienste-Kapitel des UCS-Handbuchs <xref linkend="ucs-handbuch"/>.
+		  Druckdienste-Kapitel des UCS-Handbuchs <biblioref linkend="ucs-handbuch"/>.
 		</para>
 		<para>
 		  Die Drucker müssen unterhalb der OU der Schule angelegt werden,
@@ -410,7 +410,7 @@ ucc              uccg123m-01      10:00:ee:ff:cd:e2  g123m  10.0.5.10
 		Weitere Freigaben werden, wie in einer Standard-UCS-Installation, über
 		das UMC-Modul <guimenu>Freigaben</guimenu> auf dem &ucsMaster;
 		angelegt. Weiterführende Dokumentation findet sich im
-		Freigaben-Kapitel des UCS-Handbuchs <xref linkend="ucs-handbuch"/>.
+		Freigaben-Kapitel des UCS-Handbuchs <biblioref linkend="ucs-handbuch"/>.
 	  </para>
 	  <para>
 		Die Freigaben müssen unterhalb der OU der Schule angelegt werden.

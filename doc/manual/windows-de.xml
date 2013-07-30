@@ -81,7 +81,7 @@ ucr set ucsschool/import/generate/policy/dhcp/dns/set_per_ou=false
 	  <ulink url="http://wiki.univention.de/index.php?title=UCS%40school_Samba_3_to_Samba_4_Migration"/>
 	</para>
 	<para>
-	  Weiterführende Hinweise zur Konfiguration von Samba finden sich im UCS-Handbuch <xref
+	  Weiterführende Hinweise zur Konfiguration von Samba finden sich im UCS-Handbuch <biblioref
 	  linkend="ucs-handbuch"/>.
 	</para>
   </section>
@@ -150,7 +150,7 @@ invoke-rc.d univention-directory-listener restart
 	<para>
 	  Für die Kontrolle und Steuerung der Schüler-PCs integriert &ucsUAS; optional die Software
 	  iTALC. Dieses Kapitel beschreibt die Installation von iTALC auf den Schüler-PCs. Die Administration
-	  durch die Lehrkräfte ist in der &ucsUAS;-Lehrerdokumentation <xref linkend="ucs-school-teacher"/>
+	  durch die Lehrkräfte ist in der &ucsUAS;-Lehrerdokumentation <biblioref linkend="ucs-school-teacher"/>
 	  beschrieben.
 	</para>
 	<para>
