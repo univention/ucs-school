@@ -10,7 +10,7 @@
 		<para>
 			Im folgenden werden die Module kurz beschrieben. Eine ausführliche
 			Beschreibung der Verwendung der Module findet sich im separaten
-			Handbuch für Lehrer <xref linkend="ucs-school-teacher"/>.
+			Handbuch für Lehrer <biblioref linkend="ucs-school-teacher"/>.
 		</para>
 		<para>
 			Einige Module stehen Lehrern und Schuladministratoren zur Verfügung

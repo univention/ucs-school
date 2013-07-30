@@ -4,7 +4,7 @@
 	In der Grundeinstellung läuft auf jedem Schulserver (bzw. im Single-Server-Betrieb auf dem
 	&ucsMaster;) ein Proxy-Server auf Basis von Squid in Zusammenspiel mit Squidguard. Der Proxy erlaubt
 	Lehrern in Schulstunden den Zugriff auf einzelne Webseiten zu beschränken oder auch generell
-	bestimmte Webseiten zu sperren. Dies ist in der &ucsUAS;-Lehrerdokumentation <xref
+	bestimmte Webseiten zu sperren. Dies ist in der &ucsUAS;-Lehrerdokumentation <biblioref
 	linkend="ucs-school-teacher"/> beschrieben.
   </para>
   <para>
