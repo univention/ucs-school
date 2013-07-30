@@ -3,7 +3,6 @@
 	  "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd"[
 
 	  <!ENTITY introduction SYSTEM "introduction-de.xml">
-	  <!ENTITY bibliography SYSTEM "../stylesheets/bibliography-de.xml">
 	  <!ENTITY structure SYSTEM "structure-de.xml">
 	  <!ENTITY installation SYSTEM "installation-de.xml">
 	  <!ENTITY module-overview SYSTEM "module-overview-de.xml">
@@ -68,7 +67,12 @@ feedback@univention.de
   &import-hooks;
   &schoolexam;
   &ucc-integration;
-  &bibliography;
+
+  <bibliography>
+	<bibliomixed id="ucs-handbuch"/>
+	<bibliomixed id="ucc-handbuch"/>
+	<bibliomixed id="ucs-school-teacher"/>
+  </bibliography>
 
   <?dbhtml-include href="../stylesheets/piwiki.html"?>
 </book>
