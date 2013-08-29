@@ -1,3 +1,10 @@
+ucs-school-lib (3.0.7-1) unstable; urgency=low
+
+  * Bug #32232: fixed traceback in computerroom if module has been opened
+    with ou-specific account (e.g. teacher)
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Thu, 29 Aug 2013 10:46:28 +0200
+
 ucs-school-lib (3.0.6-1) unstable; urgency=low
 
   * Bug #31663: fix problems for groupnames which contain uppercase

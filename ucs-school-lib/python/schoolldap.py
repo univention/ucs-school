@@ -289,8 +289,8 @@ def _init_search_base(ldap_connection, force=False):
 		# restrict the visibility to current school
 		# (note that there can be schools with a DN such as ou=25g18,ou=25,dc=...)
 		schoolDN = ldap_connection.binddn[ldap_connection.binddn.find('ou='):] 
-		school = ldap_connection.explodeDn( schoolDN, 1 )[0],
-		_search_base = SchoolSearchBase(school, school, schoolDN)
+		school = (ldap_connection.explodeDn( schoolDN, 1 )[0], )  # note: school is a tuple with one element
+		_search_base = SchoolSearchBase(school, school[0], schoolDN)
 		MODULE.info('LDAP_Connection: setting schoolDN: %s' % _search_base.schoolDN)
 	else:
 		MODULE.warn( 'LDAP_Connection: unable to identify ou of this account - showing all OUs!' )
