@@ -1,3 +1,9 @@
+univention-ldb-modules (1.0.5-10) unstable; urgency=low
+
+  * Restart S4 on upgrade (Bug #32249)
+
+ -- Stefan Gohmann <gohmann@univention.de>  Wed, 04 Sep 2013 15:20:49 +0200
+
 univention-ldb-modules (1.0.5-9) unstable; urgency=low
 
   * Added libdcerpc-dev as build dependency (Bug #32249)

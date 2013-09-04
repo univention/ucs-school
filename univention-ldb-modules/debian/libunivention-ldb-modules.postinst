@@ -60,6 +60,7 @@ case "$1" in
 					fi
 				fi
 			fi
+			test -x /etc/init.d/samba4 && invoke-rc.d samba4 restart
 		fi
 		;;
 	abort-upgrade|abort-remove|abort-deconfigure)
