@@ -65,7 +65,12 @@ from univention.management.console.protocol.definitions import *
 from univention.management.console.modules import UMC_CommandError
 from ucsschool.lib.schoolldap import LDAP_Connection, LDAP_ConnectionError, SchoolSearchBase, SchoolBaseModule, ADMIN_WRITE, USER_READ
 
+from univention.management.console.config import ucr
+
 _ = Translation( 'univention-management-console-selective-udm' ).translate
+
+class CreationDenied(Exception):
+	pass
 
 class Instance( SchoolBaseModule ):
 	def __init__( self ):
@@ -73,6 +78,27 @@ class Instance( SchoolBaseModule ):
 
 	def init(self):
 		SchoolBaseModule.init(self)
+
+	def _check_usersid_join_permissions(self, lo, usersid):
+
+		allowed_groups = ucr.get('ucsschool/windows/join/groups', 'Domain Admins').split(',')
+
+		result  = lo.search('sambaSID=%s' %usersid, attr=['dn'])
+		if not result:
+			raise CreationDenied('SID %s was not found' % usersid)
+
+		user_dn = result[0][0]
+		MODULE.info("Found user with DN %s" % user_dn)
+
+		result = lo.search('uniqueMember=%s' % user_dn, attr=['cn'])
+		if not result:
+			raise CreationDenied('No group memberships for SID %s found' % usersid)
+
+		for dn,attr in result:
+			if attr.get('cn', [])[0] in allowed_groups:
+				return
+
+		raise CreationDenied('SID %s is not member of one of the following groups: %s. The allowed groups can be modified by setting the UCR variable ucsschool/windows/join/groups.' % (usersid, allowed_groups))
 
 	@LDAP_Connection(USER_READ, ADMIN_WRITE)
 	def create_windows_computer(self, request, ldap_user_read = None, ldap_admin_write = None, ldap_position = None, search_base = None):
@@ -85,7 +111,10 @@ class Instance( SchoolBaseModule ):
 		try:
 			# Set new position
 			ldap_position.setDn(search_base.computers)
-		
+
+			usersid = request.options.get('usersid')
+			self._check_usersid_join_permissions(ldap_user_read, usersid)
+
 			# Create the computer account
 			computer = univention.admin.handlers.computers.windows.object(None, ldap_admin_write, position=ldap_position, superordinate=None)
 			computer.open()
@@ -100,7 +129,7 @@ class Instance( SchoolBaseModule ):
 				computer.options=['posix']
 
 			computer['name'] = name
-			
+
 			password = request.options.get('password')
 			if password:
 				decode_password = request.options.get('decode_password')

@@ -1,3 +1,10 @@
+univention-management-console-module-selective-udm (3.0.0-4) unstable; urgency=low
+
+  * Check if the user is member of Domain Admins. Otherwise a join or
+    computer account creation is denied (Bug #32249)
+
+ -- Stefan Gohmann <gohmann@univention.de>  Wed, 04 Sep 2013 10:36:11 +0200
+
 univention-management-console-module-selective-udm (3.0.0-3) unstable; urgency=low
 
   * Increase joinscript version to run umc_policy_append default-backup-umc

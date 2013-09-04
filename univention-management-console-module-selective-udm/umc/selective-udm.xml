@@ -12,6 +12,7 @@
 		<attribute name="password" syntax="String"/>
 		<attribute name="decode_password" syntax="Boolean"/>
 		<attribute name="samba3_mode" syntax="Boolean"/>
+		<attribute name="usersid" syntax="String"/>
 	</command>
   </module>
 </umc>
