@@ -14,10 +14,15 @@
 % \begin{itemize}
 % \end{itemize}
 
-%% \section{Domain services}
+\section{Domain services}
 
-%% \subsection{Samba4}
-%% \end{itemize}
+\subsection{Samba4}
+\begin{itemize}
+\item During the join of a Windows computer to a school the group memberships are now
+ checked before the computer object is created. If the user is not member of the Domain Admins
+ group, the Windows object is not created and the client can not be joined. The group list can be
+ changed by setting the \ucsUCRV{ucsschool/windows/join/groups} (\ucsBug{32249}).
+\end{itemize}
 
 %% \subsection{DHCP/DNS}
 %% \begin{itemize}
