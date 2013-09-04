@@ -62,6 +62,40 @@
 #include <errno.h>
 #include <string.h>
 #include <sys/wait.h>
+#include <util/data_blob.h>
+#include <core/werror.h>
+
+#include <util/time.h>
+#include <samba/session.h>
+
+// From dom_sid.h in S4
+#define DOM_SID_STR_BUFLEN (15*11+25)
+
+char *sid_to_string(const struct dom_sid *sid)
+{
+	char buf[DOM_SID_STR_BUFLEN];
+	int ofs, i, buflen;
+	uint32_t ia;
+
+	ia = (sid->id_auth[5]) +
+		(sid->id_auth[4] << 8 ) +
+		(sid->id_auth[3] << 16) +
+		(sid->id_auth[2] << 24);
+
+	buflen = sizeof(buf);
+	ofs = snprintf(buf, buflen, "S-%u-%lu",
+			   (unsigned int)sid->sid_rev_num, (unsigned long)ia);
+
+	for (i = 0; i < sid->num_auths; i++) {
+		int s = buflen - ofs;
+		if (s<0)
+			s=0;
+		ofs += snprintf(buf + ofs, s, "-%lu",
+				(unsigned long)sid->sub_auths[i]);
+	}
+
+   return strdup(buf);
+}
 
 static char* read_pwd_from_file(char *filename)
 {
@@ -88,6 +122,7 @@ static int univention_samaccountname_ldap_check_add(struct ldb_module *module, s
 	bool is_computer = false;
 	bool is_group = false;
 	bool is_user = false;
+	char *usersid;
 	int i;
 
 	/* check if there's a bypass_samaccountname_ldap_check control */
@@ -101,6 +136,13 @@ static int univention_samaccountname_ldap_check_add(struct ldb_module *module, s
 
 	ldb = ldb_module_get_ctx(module);
 	ldb_debug(ldb, LDB_DEBUG_TRACE, ("%s: ldb_add\n"), ldb_module_get_name(module));
+
+	struct auth_session_info *session_info = (struct auth_session_info *)ldb_get_opaque(ldb, "sessionInfo");
+	struct security_token *sec_token = (struct security_token *)session_info->security_token;
+	struct dom_sid *d_sid = (struct dom_sid *)sec_token->sids;
+	usersid = sid_to_string(d_sid);
+	ldb_debug(ldb, LDB_DEBUG_TRACE, ("%s: sid: %s\n"), ldb_module_get_name(module), usersid);
+
 	
 	attribute = ldb_msg_find_element(req->op.add.message, "objectClass");
 	for (i=0; i<attribute->num_values; i++) {
@@ -148,6 +190,8 @@ static int univention_samaccountname_ldap_check_add(struct ldb_module *module, s
 		char *opt_my_samaccoutname = malloc(strlen(my_hostname) + 2);
 		sprintf(opt_my_samaccoutname, "%s$", my_hostname);
 		opt_my_samaccoutname[strlen(my_hostname)+1] = 0;
+		char *opt_usersid = malloc(strlen(usersid) + strlen("usersid=") + 1);
+		sprintf(opt_usersid, "usersid=%s", usersid);
 		free(my_hostname);
 
 		int errno_wait;
@@ -164,9 +208,9 @@ static int univention_samaccountname_ldap_check_add(struct ldb_module *module, s
 		} else if ( pid == 0 ) {
 
 			if (opt_unicodePwd != NULL) {
-				execlp("/usr/sbin/umc-command", "/usr/sbin/umc-command", "-s", ldap_master, "-P", machine_pass, "-U", opt_my_samaccoutname, "selectiveudm/create_windows_computer", "-o", opt_name, "-o", opt_unicodePwd, "-o", "decode_password=yes", NULL);
+				execlp("/usr/sbin/umc-command", "/usr/sbin/umc-command", "-s", ldap_master, "-P", machine_pass, "-U", opt_my_samaccoutname, "selectiveudm/create_windows_computer", "-o", opt_name, "-o", opt_unicodePwd, "-o", "decode_password=yes", "-o", opt_usersid, NULL);
 			} else {
-				execlp("/usr/sbin/umc-command", "/usr/sbin/umc-command", "-s", ldap_master, "-P", machine_pass, "-U", opt_my_samaccoutname, "selectiveudm/create_windows_computer", "-o", opt_name, NULL);
+				execlp("/usr/sbin/umc-command", "/usr/sbin/umc-command", "-s", ldap_master, "-P", machine_pass, "-U", opt_my_samaccoutname, "selectiveudm/create_windows_computer", "-o", opt_name, "-o", opt_usersid, NULL);
 			}
 
 			ldb_debug(ldb, LDB_DEBUG_ERROR, ("%s: exec of /usr/sbin/umc-command failed\n"), ldb_module_get_name(module));
@@ -182,6 +226,8 @@ static int univention_samaccountname_ldap_check_add(struct ldb_module *module, s
 		free(machine_pass);
 		free(opt_my_samaccoutname);
 		free(opt_name);
+		free(usersid);
+		free(opt_usersid);
 		if (opt_unicodePwd != NULL) {
 			free(opt_unicodePwd);
 		}
