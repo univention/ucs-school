@@ -32,15 +32,14 @@
 
 import notifier
 
-from univention.management.console.modules import Base
-from univention.management.console.modules import UMC_CommandError
+from univention.management.console.modules import UMC_CommandError, UMC_OptionTypeError
 from univention.management.console.log import MODULE
 from univention.management.console.config import ucr
-from univention.management.console.modules.decorators import simple_response, sanitize
+from univention.management.console.modules.decorators import simple_response, file_upload
 
 from univention.lib.i18n import Translation
 
-from ucsschool.lib.schoolldap import LDAP_Connection, LDAP_ConnectionError, set_credentials, SchoolSearchBase, SchoolBaseModule, LDAP_Filter, Display
+from ucsschool.lib.schoolldap import LDAP_Connection, LDAP_ConnectionError, SchoolBaseModule
 import ucsschool.lib.internetrules as internetrules
 from ucsschool.lib.schoollessons import SchoolLessons
 
@@ -57,6 +56,7 @@ import datetime
 from httplib import HTTPException
 from socket import error as SocketError
 
+import util
 from util import UMCConnection, Progress
 
 udm_modules.update()
@@ -89,6 +89,7 @@ class Instance( SchoolBaseModule ):
 			shutil.rmtree(self._tmpDir, ignore_errors=True)
 			self._tmpDir = None
 
+	@file_upload
 	def upload(self, request):
 		### copied from distribution module
 		# make sure that we got a list
