@@ -87,9 +87,10 @@
 %\begin{itemize}
 %\end{itemize}
 
-% \subsection{Univention Management Console modules}
-% \begin{itemize}
-% \end{itemize}
+\subsection{Univention Management Console modules}
+\begin{itemize}
+\item Limit file uploads to UMC UPLOAD commands (\ucsBug{32176}).
+\end{itemize}
 
 % \subsubsection{Configuration wizard}
 % \begin{itemize}
@@ -99,6 +100,11 @@
 \begin{itemize}
 \item An error within the package \ucsName{python-ucs-school} has been fixed that could lead to a traceback
   within the computerroom administration module if the module has been opened as teacher or school admin (\ucsBug{32232}).
+\end{itemize}
+
+\subsection{Computerroom module}
+\begin{itemize}
+\item Fixed detection whether the user of a connected iTalc client is a teacher if previously a student was logged in (\ucsBug{32035}).
 \end{itemize}
 
 %% \subsection{Wizards}
