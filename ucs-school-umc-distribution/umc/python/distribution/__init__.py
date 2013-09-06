@@ -31,19 +31,17 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-from univention.management.console.config import ucr
-
 from univention.lib.i18n import Translation
-from univention.management.console.modules import UMC_OptionTypeError, UMC_CommandError, Base
+from univention.management.console.modules import UMC_OptionTypeError, UMC_CommandError
+from univention.management.console.modules.decorators import file_upload
 from univention.management.console.log import MODULE
-from univention.management.console.protocol.definitions import *
 
 import univention.admin.modules as udm_modules
 import univention.admin.uexceptions as udm_exceptions
 import os
 from datetime import datetime, timedelta
 
-from ucsschool.lib.schoolldap import LDAP_Connection, LDAP_ConnectionError, set_credentials, SchoolSearchBase, SchoolBaseModule, LDAP_Filter, Display
+from ucsschool.lib.schoolldap import LDAP_Connection, SchoolBaseModule, Display
 
 import util
 import tempfile
@@ -71,6 +69,7 @@ class Instance( SchoolBaseModule ):
 			shutil.rmtree(self._tmpDir, ignore_errors=True)
 			self._tmpDir = None
 
+	@file_upload
 	def upload(self, request):
 		# make sure that we got a list
 		if not isinstance(request.options, (tuple, list)):
