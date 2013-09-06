@@ -1,3 +1,9 @@
+ucs-school-umc-computerroom (3.0.14-1) unstable; urgency=low
+
+  * Bug #32035: make the state change detection more robust
+
+ -- Florian Best <best@univention.de>  Fri, 06 Sep 2013 15:45:26 +0200
+
 ucs-school-umc-computerroom (3.0.13-4) unstable; urgency=low
 
   * Added support for cups printer restriction (Bug #31902)

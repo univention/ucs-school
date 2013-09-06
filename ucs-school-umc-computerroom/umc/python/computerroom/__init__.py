@@ -41,7 +41,6 @@ from random import Random
 import urlparse
 import psutil
 
-from univention.management.console.modules.decorators import simple_response
 from univention.management.console.config import ucr
 ucr.load()
 
@@ -68,7 +67,6 @@ import ucsschool.lib.internetrules as internetrules
 from italc2 import ITALC_Manager, ITALC_Error
 
 from notifier.nf_qt import _exit
-import notifier
 
 _ = Translation('ucs-school-umc-computerroom').translate
 
@@ -98,7 +96,6 @@ def _isUmcProcess(pid):
 def _readRoomInfo(roomDN):
 	'''returns a dict of properties for the current room.'''
 	roomFile = _getRoomFile(roomDN)
-	result = None
 	info = None
 	if os.path.exists(roomFile):
 		try:
@@ -363,19 +360,7 @@ class Instance(SchoolBaseModule):
 		if request.options.get('reload', False):
 			self._italc.room = self._italc.room # believe me that makes sense :)
 
-		result = []
-		for computer in self._italc.values():
-			item = { 'id' : computer.name,
-					 'name' : computer.name,
-					 'user' : computer.user.current,
-					 'teacher' : computer.isTeacher,
-					 'connection' : computer.state.current,
-					 'description' : computer.description,
-					 'ip' : computer.ipAddress,
-					 'mac' : computer.macAddress,
-					 'objectType': computer.objectType }
-			item.update(computer.flagsDict)
-			result.append(item)
+		result = [computer.dict for computer in self._italc.values()]
 
 		MODULE.info('computerroom.query: result: %s' % str(result))
 		self.finished(request.id, result)
@@ -394,24 +379,7 @@ class Instance(SchoolBaseModule):
 		if not self._italc.school or not self._italc.room:
 			raise UMC_CommandError('no room selected')
 
-		computers = []
-		for computer in self._italc.values():
-			item = dict(id = computer.name)
-			modified = False
-			if computer.state.hasChanged:
-				item['connection'] = str(computer.state.current)
-				modified = True
-			if computer.flags.hasChanged:
-				item.update(computer.flagsDict)
-				modified = True
-			if computer.user.hasChanged:
-				item['user'] = str(computer.user.current)
-				modified = True
-			if computer.teacher.hasChanged:
-				item['teacher'] = computer.teacher.current
-				modified = True
-			if modified:
-				computers.append(item)
+		computers = [computer.dict for computer in self._italc.values() if computer.hasChanged]
 		result = { 'computers' : computers }
 
 		userDN = _getRoomOwner(self._italc.roomDN)
@@ -511,9 +479,9 @@ class Instance(SchoolBaseModule):
 			self.finished(request.id, 'VNC is disabled')
 
 		try:
-			template = open('/usr/share/ucs-school-umc-computerroom/ultravnc.vnc')
-			content = template.read()
-		except:
+			with open('/usr/share/ucs-school-umc-computerroom/ultravnc.vnc') as fd:
+				content = fd.read()
+		except (IOError, OSError):
 			raise UMC_CommandError('VNC template file does not exists')
 
 		port = ucr.get('ucsschool/umc/computerroom/vnc/port', '11100')

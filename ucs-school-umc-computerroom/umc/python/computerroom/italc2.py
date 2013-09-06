@@ -347,6 +347,25 @@ class ITALC_Computer( notifier.signals.Provider, QObject ):
 			notifier.timer_remove( self._timer )
 			self._timer = None
 
+	@property
+	def dict(self):
+		item = { 'id' : self.name,
+				 'name' : self.name,
+				 'user' : self.user.current,
+				 'teacher' : self.isTeacher,
+				 'connection' : self.state.current,
+				 'description' : self.description,
+				 'ip' : self.ipAddress,
+				 'mac' : self.macAddress,
+				 'objectType': self.objectType }
+		item.update(self.flagsDict)
+		return item
+
+	@property
+	def hasChanged(self):
+		states = (self.state, self.flags, self.user, self.teacher)
+		return any(state.hasChanged for state in states)
+
 	# UDM properties
 	@property
 	def name( self ):
