@@ -1,3 +1,10 @@
+univention-ldb-modules (2.0.1-2) unstable; urgency=low
+
+  * Build against samba-dev instead of samba4-dev since we use the
+    combined samba package in UCS 3.2 (Bug #31698)
+
+ -- Stefan Gohmann <gohmann@univention.de>  Thu, 26 Sep 2013 07:09:30 +0200
+
 univention-ldb-modules (2.0.1-1) unstable; urgency=low
 
   * Add S4 SlavePDC service to all Samba 4 Slave PDCs. The S4 connctor
