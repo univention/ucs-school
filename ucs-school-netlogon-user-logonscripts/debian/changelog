@@ -1,3 +1,9 @@
+ucs-school-netlogon-user-logonscripts (9.0.2-1) unstable; urgency=low
+
+  * fixed userGids() in listener (Bug #32339)
+
+ -- Felix Botner <botner@univention.de>  Fri, 27 Sep 2013 12:38:40 +0200
+
 ucs-school-netlogon-user-logonscripts (9.0.1-1) unstable; urgency=low
 
   * Bug #31889: change permissions of logon scripts to 0755
