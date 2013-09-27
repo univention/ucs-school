@@ -366,13 +366,18 @@ def sharechange(dn, new, old):
 		group = res[0][1]
 		groupchange(dn, group, None)
 
-def userGids(userdn):
+def userGids(dn):
+
+	l = getConnection()
 	try:
-		res_groups = getConnection().search(scope="sub", filter='(&(objectClass=posixGroup)(uniqueMember=%s))' % userdn, attr=['gidNumber'])
-	except:
-		univention.debug.debug(univention.debug.LISTENER, univention.debug.ERROR, 'ucsschool-user-logonscripts: LDAP-search failed memberships of %s' % (dn))
-		return frozenset()
-	return frozenset([attributes['gidNumber'][0] for (dn, attributes, ) in res_groups])
+		res = l.search(scope="sub", filter="(&(objectClass=posixGroup)(uniqueMember=%s))" % dn, attr=["gidNumber"])
+		return frozenset([attributes['gidNumber'][0] for (dn, attributes, ) in res])
+	except ldap.LDAPError, msg:
+		univention.debug.debug(
+			univention.debug.LISTENER,
+			univention.debug.ERROR,
+			"ucsschool-user-logonscripts: ldap search for %s failed in userGids() (%s)" % (dn, msg))
+	return frozenset()
 
 def gidShares(gid):
 	try:
