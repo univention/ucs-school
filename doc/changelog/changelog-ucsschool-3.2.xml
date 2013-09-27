@@ -32,6 +32,13 @@
 	</section>
 	<section>
 		<title>Services for Windows</title>
+			<itemizedlist>
+				<listitem><simpara>
+					A debug message in the listener module of <package>ucs-school-netlogon-user-logonscripts</package> 
+					has been fixed  (<ulink url="&ucsbug;32339">Bug 32339</ulink>).
+				</simpara></listitem>
+			</itemizedlist>
+
 	</section>
 	<section>
 		<title>Univention S4 Connector</title>
