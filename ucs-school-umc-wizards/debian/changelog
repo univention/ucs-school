@@ -1,7 +1,8 @@
-ucs-school-umc-wizards (3.0.1-1) unstable; urgency=low
+ucs-school-umc-wizards (4.0.0-1) unstable; urgency=low
 
   * Bug #32337: don't create a class with OU prefix if class without OU prefix
   	exists when creating a user
+  * version bump (UCS@school 3.2)
 
  -- Florian Best <best@univention.de>  Tue, 01 Oct 2013 10:32:08 +0200
 
