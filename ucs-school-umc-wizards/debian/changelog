@@ -1,3 +1,10 @@
+ucs-school-umc-wizards (3.0.1-1) unstable; urgency=low
+
+  * Bug #32337: don't create a class with OU prefix if class without OU prefix
+  	exists when creating a user
+
+ -- Florian Best <best@univention.de>  Tue, 01 Oct 2013 10:32:08 +0200
+
 ucs-school-umc-wizards (3.0.0-2) unstable; urgency=low
 
   * Bug #31904: remove Ubuntu client
