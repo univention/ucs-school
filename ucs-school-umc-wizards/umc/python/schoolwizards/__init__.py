@@ -161,6 +161,12 @@ class Instance(SchoolBaseModule, SchoolImport):
 				is_staff = True
 				is_teacher = True
 
+			# Bug #32337: check if the class exists with OU prefix
+			# if it does not exist the class name without OU prefix is used
+			if class_ and self._class_name_used(school, class_, ldap_user_read, search_base):
+				# class exists with OU prefix
+				class_ = '%s-%s' % (school, class_, )
+
 			# Create the user
 			self.import_user(username, lastname, firstname, school, class_,
 			                 mail_primary_address, is_teacher, is_staff, password)

@@ -40,7 +40,7 @@ from univention.management.console.modules import UMC_CommandError
 
 _ = Translation('ucs-school-umc-wizards').translate
 
-class SchoolImport():
+class SchoolImport(object):
 	"""Wrapper for the ucs-school-import script
 	"""
 	_SCRIPT_PATH = '/usr/share/ucs-school-import/scripts'
@@ -95,8 +95,6 @@ class SchoolImport():
 	                mail_primary_address, teacher, staff, password):
 		"""Imports a new user
 		"""
-		if class_:
-			class_ = '%s-%s' % (school, class_, )
 		entry = ['A', username, lastname, firstname, school, class_, '',
 		         mail_primary_address, teacher, True, staff, password, ]
 
