@@ -78,6 +78,15 @@
 			<title>Computerroom module</title>
 		</section>
 		<section>
+			<title>Computerroom administration module</title>
+			<itemizedlist>
+				<listitem><simpara>
+				  An error within the package <package>python-ucs-school</package> has been fixed that could lead to a traceback
+				  within the computerroom administration module if the module has been opened as teacher or school admin (<ulink url="&ucsbug;32337">Bug 32232</ulink>).
+				</simpara></listitem>
+			</itemizedlist>
+		</section>
+		<section>
 			<title>Helpdesk module</title>
 		</section>
 		<section>
