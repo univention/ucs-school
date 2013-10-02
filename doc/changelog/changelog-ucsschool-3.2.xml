@@ -4,6 +4,12 @@
 
 <section>
 	<title>Import scripts</title>
+			<itemizedlist>
+				<listitem><simpara>
+					In single server environments now every OU (instead of just the first) is created with the single server as DC.
+					Additionally the UCRV ucsschool/defaultschoolname is not set anymore (<ulink url="&ucsbug;32095">Bug 32095</ulink>).
+				</simpara></listitem>
+			</itemizedlist>
 </section>
 
 <section>
