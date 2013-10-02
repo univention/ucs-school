@@ -3052,7 +3052,7 @@ elif sys.argv[0].endswith("create_ou"):
 				sys.exit(1)
 
 		# In a single server environment the default school DC is the master
-		if not dcName and not configRegistry.get('ucsschool/defaultschoolname') and configRegistry.is_true('ucsschool/singlemaster', False):
+		if not dcName and configRegistry.is_true('ucsschool/singlemaster', False):
 			dcName = configRegistry.get('hostname')
 
 		verify_school_ou(ouname, co, lo, baseDN, dcName=dcName, ShareFileServer=options.ShareFileServer)
