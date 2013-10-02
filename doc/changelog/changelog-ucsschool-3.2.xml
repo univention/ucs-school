@@ -93,7 +93,7 @@
 			<title>Add User wizard</title>
 			<itemizedlist>
 				<listitem><simpara>
-					Fixed a bug which caused the creation of a new class altough a class without OU prefix exists when creating a new user (<ulink url="&ucsbug;32337">Bug 32337</ulink>).
+					Fixed a bug which caused the creation of a new class although a class with same name but without OU prefix exists when creating a new user (<ulink url="&ucsbug;32337">Bug 32337</ulink>).
 				</simpara></listitem>
 			</itemizedlist>
 		</section>
