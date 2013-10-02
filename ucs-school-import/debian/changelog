@@ -1,3 +1,9 @@
+ucs-school-import (10.0.4-1) unstable; urgency=low
+
+  * remove obsolete ucsschool/defaultschoolname (Bug #32095)
+
+ -- Janek Walkenhorst <walkenhorst@univention.de>  Tue, 01 Oct 2013 16:56:53 +0200
+
 ucs-school-import (10.0.3-1) unstable; urgency=low
 
   * Bug #31930: fixed typo in ou_create_post.d hook for DHCP DNS policies

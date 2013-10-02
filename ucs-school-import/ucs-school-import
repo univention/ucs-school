@@ -826,11 +826,9 @@ def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None, ShareFileServer=None
 	# In a single server environment the default DHCP container must
 	# be set to the DHCP container in the school ou. Otherwise newly
 	# imported computers have the DHCP objects in the wrong DHCP container
-	if not configRegistry.get('ucsschool/defaultschoolname') and configRegistry.is_true('ucsschool/singlemaster', False):
+	if configRegistry.is_true('ucsschool/singlemaster', False):
 		if not configRegistry.get('dhcpd/ldap/base'):
 			univention.config_registry.handler_set(['dhcpd/ldap/base=cn=dhcp,%s' % (getDN (schoolNr))])
-		if not configRegistry.get('ucsschool/defaultschoolname'):
-			univention.config_registry.handler_set(['ucsschool/defaultschoolname=%s' % (schoolNr)])
 
 	# if requested, then create dhcp_dns policy that clears univentionDhcpDomainNameServers at OU level
 	# to prevent problems with "wrong" DHCP DNS policy connected to ldap base
@@ -3052,7 +3050,7 @@ elif sys.argv[0].endswith("create_ou"):
 				sys.exit(1)
 
 		# In a single server environment the default school DC is the master
-		if not dcName and not configRegistry.get('ucsschool/defaultschoolname') and configRegistry.is_true('ucsschool/singlemaster', False):
+		if not dcName and configRegistry.is_true('ucsschool/singlemaster', False):
 			dcName = configRegistry.get('hostname')
 
 		verify_school_ou(ouname, co, lo, baseDN, dcName=dcName, ShareFileServer=options.ShareFileServer)
