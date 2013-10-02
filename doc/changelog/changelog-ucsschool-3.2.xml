@@ -76,6 +76,11 @@
 		</section>
 		<section>
 			<title>Computerroom module</title>
+			<itemizedlist>
+				<listitem><simpara>
+				  Fixed detection whether the user of a connected iTALC client is a teacher. The detection had failed if previously a student was logged in (<ulink url="&ucsbug;32035">Bug 32035</ulink>).
+				</simpara></listitem>
+			</itemizedlist>
 		</section>
 		<section>
 			<title>Computerroom administration module</title>
