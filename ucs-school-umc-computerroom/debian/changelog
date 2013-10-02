@@ -1,3 +1,9 @@
+ucs-school-umc-computerroom (4.0.0-1) unstable; urgency=low
+
+  * Bug #32035: bumped version for UCS@school 3.2
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Wed, 02 Oct 2013 14:13:58 +0200
+
 ucs-school-umc-computerroom (3.0.14-1) unstable; urgency=low
 
   * Bug #32035: make the state change detection more robust
