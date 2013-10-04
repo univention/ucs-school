@@ -229,6 +229,16 @@ univention-add-app --latest ucsschool ucs-school-nonedu-slave
 		Vor dem Domänenbeitritt des Schulservers muss die Organisationseinheit des Schulservers in der
 		&ucsUMC; des DC Masters angelegt werden (siehe <xref linkend="school:schoolcreate"/>).
 	  </para>
+	  <caution>
+		<para>
+		  Wird auf dem Schulserver Samba 4 eingesetzt, ist es notwendig, vor dem erneuten Domänenbeitritt als 
+		  Benutzer root die folgenden zwei Befehle auszuführen, um spätere Probleme mit dem Samba 4-Dienst zu vermeiden:
+		  <programlisting>
+mv /var/lib/samba/private /var/lib/samba/private.BACKUP
+mkdir -p /var/lib/samba/private
+		  </programlisting>
+		</para>
+	  </caution>
 	  <para>
 		Anschließend muss das System erneut der Domäne beitreten. Dies erfolgt auf der Kommandozeile
 		durch Aufruf des Befehls <command>univention-join</command>.
