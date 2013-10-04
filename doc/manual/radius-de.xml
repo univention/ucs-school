@@ -76,8 +76,10 @@ client 192.168.100.101 {
 	<section>
 		<title>Konfiguration der zugreifenden Clients</title>
 		<para>
-			Der zugreifende Client muss das SSL-Zertifikat des Radius-Servers
-			importieren und eine Netzwerkverbindung mit den folgenden Parametern
+			Der zugreifende Client muss das UCS-Wurzelzertifikat importieren.
+			(Es kann z.B. von der Startseite des Domänencontrollermaster unter
+			dem Link "Wurzelzertifikat" bezogen werden.)
+			Dann muss er eine Netzwerkverbindung mit den folgenden Parametern
 			konfigurieren:
 		</para>
 		<itemizedlist>
