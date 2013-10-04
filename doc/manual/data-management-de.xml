@@ -140,6 +140,15 @@ D  a.musterfr Musterfrau  Anke   g123m  2B        a.mfr@schule.edu 1 1 1
 	  verknüpft. Es müssen dann eigene Richtlinien an die Container gebunden
 	  werden.
 	</para>
+	<caution>
+	  <para>
+		Bei der Verwendung von Samba 4 benötigt der S4-Connector einige Zeit, um die Benutzer in die
+		Samba 4-Benutzerdatenbank zu synchronisieren. Je nach Menge der Importdaten und der verwendeten
+		Hardware kann die Synchronisation einige Stunden benötigen. Währenddessen kann es zu Verzögerungen
+		in der Synchronisation von nicht-import-abhängigen Änderungen im LDAP oder Active Directory kommen
+		(z.B. interaktive Änderung von Benutzerpasswörtern).
+	  </para>
+	</caution>
 
 	<section id="school:importusers:windowsattributes">
 	  <title>Windows-spezifische Benutzereinstellungen</title>
