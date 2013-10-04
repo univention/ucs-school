@@ -6,8 +6,10 @@
 	<title>Import scripts</title>
 			<itemizedlist>
 				<listitem><simpara>
-					In single server environments now every OU (instead of just the first) is created with the single server as DC.
-					Additionally the UCRV ucsschool/defaultschoolname is not set anymore (<ulink url="&ucsbug;32095">Bug 32095</ulink>).
+					In single server environments the script <command>create_ou</command> now always uses the domaincontroller
+					master as responsible domaincontroller/fileserver for the new OU. This fixes wrongly assigned fileservers
+					for Marktplatz shares. Existing Marktplatz shares have to be fixed manually.
+					Additionally the &ucsUCRV; <envar>ucsschool/defaultschoolname</envar> is not set anymore (<ulink url="&ucsbug;32095">Bug 32095</ulink>).
 				</simpara></listitem>
 			</itemizedlist>
 </section>
