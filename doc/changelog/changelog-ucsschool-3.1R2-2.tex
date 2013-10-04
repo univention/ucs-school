@@ -8,7 +8,9 @@
 
 \section{Import scripts}
 \begin{itemize}
-\item In single server environments now every OU (instead of just the first) is created with the single server as DC (\ucsBug{32095}).
+\item In single server environments the script \ucsCommand{create\_ou} now always uses the domaincontroller
+  master as responsible domaincontroller/fileserver for the new OU. This fixes wrongly assigned fileservers
+  for Marktplatz shares. Existing Marktplatz shares have to be fixed manually (\ucsBug{32095}).
 \end{itemize}
  
 % \section{iTALC}
