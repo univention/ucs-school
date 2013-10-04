@@ -222,6 +222,11 @@ D  a.musterfr Musterfrau  Anke   g123m  2B        a.mfr@schule.edu 1 1 1
 		Sollte der Schuladministrator auch als Lehrer tätig sein, muss zusätzlich die Gruppe
 		<emphasis>lehrer-OU</emphasis>, also z.B. <emphasis>lehrer-gym17</emphasis>, hinzugefügt werden.
 	  </para>
+	  <para>
+		Abschließend müssen die Angaben für Profilpfad und Heimatverzeichnispfad am Benutzerobjekt
+		gesetzt werden, um das gleiche Verhalten wie bei Schüler- und Lehrerkonten zu erhalten (siehe dazu
+		auch <xref linkend="school:importusers:windowsattributes"/>).
+	  </para>
 	</section>
   </section>
 
