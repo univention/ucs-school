@@ -185,10 +185,10 @@ D  a.musterfr Musterfrau  Anke   g123m  2B        a.mfr@schule.edu 1 1 1
   </section>
 
   <section>
-	<title>Skriptgesteuerter Import von Klassen oder Arbeitsgruppen</title>
+	<title>Skriptgesteuerter Import von Klassen</title>
 	<para>
-	  Klassen und Arbeitsgruppen werden in der Regel durch die entsprechenden
-	  UMC-Module verwaltet (siehe &ucsUAS;-Lehrerhandbuch <biblioref linkend="ucs-school-teacher"/>). Es besteht
+	  Klassen werden in der Regel durch die entsprechenden UMC-Module verwaltet 
+	  (siehe &ucsUAS;-Lehrerhandbuch <biblioref linkend="ucs-school-teacher"/>). Es besteht
 	  jedoch auch die Möglichkeit, Klassen skriptbasiert zu importieren.
 	</para>
 	<para>
