@@ -278,7 +278,7 @@ ucc              uccg123m-01      10:00:ee:ff:cd:e2  g123m  10.0.5.10
 	</section>
 
 
-	<section>
+	<section id="school:setup:printers">
 	  <title>Konfiguration von Druckern an der Schule</title>
 	  <para>
 		Der Import der Drucker kann skriptbasiert über das
@@ -343,7 +343,56 @@ ucc              uccg123m-01      10:00:ee:ff:cd:e2  g123m  10.0.5.10
 		Druckdienste-Kapitel des UCS-Handbuchs beschrieben.
 	  </para>
 
-	  <section id="school:setup:printers">
+	  <section id="school:setup:printmoderation">
+		<title>Einrichtung der Druckmoderation</title>
+		<para>
+		  Um unnötige oder fehlerhafte Druckaufträge zu minimieren, bietet &ucsUAS; den Lehrern die
+		  Möglichkeit, Druckaufträge zu moderieren.  Dafür werden die Druckaufträge zunächst über einen
+		  speziellen PDF-Drucker (Druckerfreigabe <emphasis>PDFDrucker</emphasis>) auf dem
+		  Schüler-/Lehrerrechner gedruckt und anschließend durch den Lehrer im UMC-Modul <emphasis>Drucker
+		  moderieren</emphasis> betrachtet, verworfen oder für den Druck freigegeben.
+		</para>
+		<para>
+		  In &ucsUAS; gibt es vielfältige Möglichkeiten die Druckmoderation zu konfigurieren und
+		  einzusetzen. Nachfolgend wird die Einrichtung eines einzelnen Szenarios beschrieben, welches leicht
+		  an die Bedürfnisse der eigenen Schulumgebung angepasst werden kann. In dem beschriebenen Szenario
+		  wird der Zugriff auf die physikalischen Drucker für alle Schüler gesperrt.
+		</para>
+		<para>
+		  Für die Druckmoderation ist es erforderlich, dass zunächst wie in <xref
+		  linkend="school:setup:printers"/> beschrieben, Druckfreigaben für die zu verwendenden, physikalisch
+		  existierenden Drucker angelegt werden.
+		</para>
+		<para>
+		  An den Druckerfreigabeobjekten (UMC-Modul <emphasis>Drucker</emphasis>) können spezielle
+		  Zugriffsrechte gesetzt werden. Dabei kann der Zugriff für einzelne Benutzer oder ganze Gruppen
+		  erlaubt bzw. gesperrt werden. Um den Schülern den Zugriff auf die physikalischen Drucker zu
+		  verbieten, muss an den Druckerfreigaben für diese Drucker der Zugriff durch Benutzer der
+		  ou-spezifischen Gruppe <emphasis>schueler-OU</emphasis> (z.B. <emphasis>schueler-gsmitte</emphasis>)
+		  verboten werden. Für den PDF-Drucker <emphasis>PDFDrucker</emphasis> sollten keine Einschränkungen
+		  gemacht werden.
+		</para>
+		<para>
+		  Schüler haben damit nur noch die Möglichkeit Druckaufträge an den
+		  <emphasis>PDFDrucker</emphasis> zu senden.  Im UMC-Modul <emphasis>Drucker moderieren</emphasis>
+		  können die Druckaufträge anschließend durch den Lehrer aufgelistet und betrachtet werden. Dafür ist
+		  ein geeignetes Programm zur Anzeige von PDF-Dateien auf den Lehrerrechnern erforderlich. Die
+		  Druckaufträge können dann durch den Lehrer an einen beliebigen physikalischen Drucker der Schule
+		  weitergeleitet oder auch verworfen werden.
+		</para>
+		<para>
+		  Um Ausnahmen von dieser strikte Regelung zu ermöglichen, kann der Lehrer im UMC-Modul
+		  <emphasis>Computerraum</emphasis> über den Punkt <emphasis>Einstellungen ändern</emphasis> den
+		  Druckmodus für einen einzelnen Computerraum beeinflussen. Die oben beschriebenen Einschränkungen für
+		  Schüler werden dabei als <emphasis>Standard (globale Einstellungen)</emphasis> beschrieben. Darüber
+		  hinaus können auch die Druckmodi <emphasis>Drucken deaktiviert</emphasis> und <emphasis>Drucken
+		  möglich</emphasis> ausgewählt werden, die das Drucken von den Rechnern des Computerraums entweder
+		  vollständig untersagen oder - unabhängig der gemachten Voreinstellungen - auf allen physikalischen
+		  Druckern erlauben.
+		</para>
+	  </section>
+
+	  <section id="school:setup:moderated-printer">
 		<title>Anlegen eines PDF-Druckers für die Druckermoderation</title>
 		<para>
 		  Druckerfreigaben werden, wie in einer Standard-UCS-Installation, über
