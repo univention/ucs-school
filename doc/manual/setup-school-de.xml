@@ -358,37 +358,55 @@ ucc              uccg123m-01      10:00:ee:ff:cd:e2  g123m  10.0.5.10
 		  beispielsweise <emphasis>gym17/printers</emphasis> ausgewählt werden.
 		</para>
 		<para>
-		  Für die Verwendung der Druckermoderation muss ein PDF-Drucker
-		  eingerichtet werden. Dieser muss ebenfalls unterhalb der Schul-OU
-		  angelegt werden. Dabei müssen folgende Werte gesetzt werden:
+		  Für die Verwendung der Druckermoderation muss ein PDF-Drucker eingerichtet werden. Dieser
+		  muss ebenfalls unterhalb der Schul-OU angelegt werden. Dies geschieht in der Regel automatisch bei
+		  der Installation von &ucsUAS; bzw. dem Ausführen der Joinskripte.
 		</para>
-		<itemizedlist>
-		  <listitem>
-			<simpara>
-			  <guimenu>Server</guimenu> : Name des Schulservers
-			</simpara>
-		  </listitem>
-		  <listitem>
-			<simpara>
-			  <guimenu>Protokoll</guimenu> : <emphasis>cups-pdf:/</emphasis>
-			</simpara>
-		  </listitem>
-		  <listitem>
-			<simpara>
-			  <guimenu>Ziel</guimenu> : leer
-			</simpara>
-		  </listitem>
-		  <listitem>
-			<simpara>
-			  <guimenu>Drucker-Hersteller</guimenu> : <emphasis>PDF</emphasis>
-			</simpara>
-		  </listitem>
-		  <listitem>
-			<simpara>
-			  <guimenu>Drucker-Modell</guimenu> : <emphasis>Generic CUPS-PDF Printer</emphasis>
-			</simpara>
-		  </listitem>
-		</itemizedlist>
+		<para>
+		  Sollte der PDF-Drucker für eine OU fehlen, gibt es zwei Möglichkeiten dieses für eine OU zu erstellen:
+		  <itemizedlist>
+			<listitem>
+			  <simpara>
+				Auf dem Schulserver kann über das UMC-Modul <emphasis>Domänenbeitritt</emphasis> das Joinskript
+				<emphasis>80ucs-school-umc-printermoderation</emphasis> (erneut) ausgeführt werden.
+			  </simpara>
+			</listitem>
+			<listitem>
+			  <simpara>
+				Alternativ kann das LDAP-Objekt im zuständigen Container für Druckerfreigaben der
+				betreffenden OU (siehe oben) angelegt werden. Dabei müssen folgende Werte am Druckerfreigabe-Objekt
+				gesetzt werden:
+				<itemizedlist>
+				  <listitem>
+					<simpara>
+					  <guimenu>Server</guimenu> : Name des Schulservers
+					</simpara>
+				  </listitem>
+				  <listitem>
+					<simpara>
+					  <guimenu>Protokoll</guimenu> : <emphasis>cups-pdf:/</emphasis>
+					</simpara>
+				  </listitem>
+				  <listitem>
+					<simpara>
+					  <guimenu>Ziel</guimenu> : leer
+					</simpara>
+				  </listitem>
+				  <listitem>
+					<simpara>
+					  <guimenu>Drucker-Hersteller</guimenu> : <emphasis>PDF</emphasis>
+					</simpara>
+				  </listitem>
+				  <listitem>
+					<simpara>
+					  <guimenu>Drucker-Modell</guimenu> : <emphasis>Generic CUPS-PDF Printer</emphasis>
+					</simpara>
+				  </listitem>
+				</itemizedlist>
+			  </simpara>
+			</listitem>
+		  </itemizedlist>
+		</para>
 	  </section>
 	</section>
 
