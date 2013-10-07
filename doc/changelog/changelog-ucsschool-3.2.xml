@@ -79,6 +79,11 @@
 	</section>
 	<section>
 		<title>Univention Management Console modules</title>
+		<itemizedlist>
+			<listitem><simpara>
+			  Fixed the possibility to move any file on the school server through an arbitrary file upload (<ulink url="&ucsbug;32176">Bug 32176</ulink>).
+			</simpara></listitem>
+		</itemizedlist>
 		<section>
 			<title>Configuration wizard</title>
 		</section>
