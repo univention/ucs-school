@@ -154,7 +154,7 @@ D  a.musterfr Musterfrau  Anke   g123m  2B        a.mfr@schule.edu 1 1 1
 	  <title>Windows-spezifische Benutzereinstellungen</title>
 	  <para>
 		Neben den in <xref linkend="school:importusers"/> genannten Attributen für Benutzer werden
-		beim Anlegen eines Benutzers auch automatisch einige windows-spezifische Einstellungen vorgenommen:
+		beim Anlegen eines Benutzers auch automatisch einige Windows-spezifische Einstellungen vorgenommen:
 		<itemizedlist>
 		  <listitem>
 			<simpara> 
@@ -179,15 +179,21 @@ D  a.musterfr Musterfrau  Anke   g123m  2B        a.mfr@schule.edu 1 1 1
 			  Darüber hinaus wird auch automatisch der Pfad zum Heimatverzeichnis des Benutzers
 			  gesetzt. In einer Single-Server-Umgebung wird automatisch der Domaincontroller Master als
 			  Dateiserver eingetragen. In Multi-Server-Umgebungen ist der für die OU zuständige Dateiserver am
-			  OU-Objekt hinterlegt. Der dort definierte Dateiserver wird beim Anlegen eines Benutzers ausgelesen
-			  und der Pfad am Benutzerobjekt entsprechend gesetzt (Beispiel:
-			  <emphasis>\\server3\benutzer123</emphasis>).
+			  OU-Objekt hinterlegt. Um diesen zu ändern, muss in der &ucsUMC; das OU-Objekt geöffnet werden und
+			  auf dem Reiter <emphasis>UCS@school</emphasis> im Auswahlfeld <emphasis>Server für
+			  Windows-Heimatverzeichnisse</emphasis> ein geeigneter Dateiserver ausgewählt werden. Der dort
+			  definierte Dateiserver wird beim Anlegen eines Benutzers ausgelesen und der Pfad am Benutzerobjekt
+			  entsprechend gesetzt (Beispiel: <emphasis>\\server3.example.com\benutzer123</emphasis>).
 			</simpara>
 		  </listitem>
 		</itemizedlist>
-		Die windows-spezifischen Einstellungen werden nur beim Anlegen des Benutzers gesetzt. Ein
-		nachträgliches Modifizieren des Benutzers über die Importskripte hat keinen Einfluss auf diese
-		Einstellungen.
+		<note>
+		  <para>
+			Die Windows-spezifischen Einstellungen werden nur beim Anlegen eines Benutzers
+			gesetzt. Ein nachträgliches Modifizieren des Benutzers über die Importskripte hat keinen Einfluss
+			auf diese Einstellungen.
+		  </para>
+		</note>
 	  </para>
 	</section>
 	
