@@ -407,9 +407,9 @@ ucc              uccg123m-01      10:00:ee:ff:cd:e2  g123m  10.0.5.10
 		  beispielsweise <emphasis>gym17/printers</emphasis> ausgewählt werden.
 		</para>
 		<para>
-		  Für die Verwendung der Druckermoderation muss ein PDF-Drucker eingerichtet werden. Dieser
-		  muss ebenfalls unterhalb der Schul-OU angelegt werden. Dies geschieht in der Regel automatisch bei
-		  der Installation von &ucsUAS; bzw. dem Ausführen der Joinskripte.
+		  Für die Verwendung der Druckermoderation muss ein PDF-Drucker unterhalb der OU der Schule
+		  angelegt werden. Dies geschieht in der Regel automatisch bei der Installation von &ucsUAS; bzw. dem
+		  Ausführen der Joinskripte.
 		</para>
 		<para>
 		  Sollte der PDF-Drucker für eine OU fehlen, gibt es zwei Möglichkeiten dieses für eine OU zu erstellen:
