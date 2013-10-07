@@ -205,7 +205,7 @@ D  a.musterfr Musterfrau  Anke   g123m  2B        a.mfr@schule.edu 1 1 1
 	  </para>
 	  <para>
 		Die Mitarbeiterkonten müssen unterhalb der OU der Schule im
-		Container <emphasis>cn=users,cn=mitarbeiter</emphasis> erstellt werden. Die Auswahl
+		Container <emphasis>cn=mitarbeiter,cn=users</emphasis> erstellt werden. Die Auswahl
 		findet mit der Option <guimenu>Container</guimenu> beim Anlegen eines
 		Benutzers statt. Bei einer OU <emphasis>gym17</emphasis> muss
 		beispielsweise der Container <emphasis>gym17/users/mitarbeiter</emphasis> ausgewählt werden.
@@ -217,14 +217,28 @@ D  a.musterfr Musterfrau  Anke   g123m  2B        a.mfr@schule.edu 1 1 1
 	  </para>
 	</section>
 	<section id="school:importusers:schooladmins">
-	  <title>Manuelles Anlegen von Benutzerkonten für Schuladministratoren</title>
+	  <title>Anlegen von Benutzerkonten für Schuladministratoren</title>
 	  <para>
-		Benutzerkonten für Schuladministratoren können derzeit nur manuell über das UMC-Modul
-		<guimenu>Benutzer</guimenu> auf dem &ucsMaster; angelegt werden.
+		Benutzerkonten von Lehrern können durch eine zusätzliche Gruppenmitgliedschaft zu
+		Schuladministratoren umgewandelt werden. Sie unterliegen dann jedoch der Einschränkung, dass die
+		Benutzerkonten der Lehrer-Schuladministratoren nur auf den edukativen Schulserver und nicht auf den
+		Schulserver des Verwaltungsnetzes repliziert werden.
 	  </para>
 	  <para>
-		Die Schuladministratoren müssen unterhalb der OU der Schule im Container
-		<emphasis>cn=users,cn=admins</emphasis> angelegt werden. Die Auswahl findet mit der Option
+		Die zusätzliche Gruppenmitgliedschaft muss manuell über das UMC-Modul
+		<guimenu>Benutzer</guimenu> auf dem &ucsMaster; hinzugefügt werden. Auf dem Reiter
+		<guimenu>Gruppen</guimenu> muss das Benutzerkonto in die Gruppe <emphasis>admins-OU</emphasis> (bei
+		der OU <emphasis>gym17</emphasis> ist dies die Gruppe <emphasis>admins-gym17</emphasis>) aufgenommen
+		werden.
+	  </para>
+	  <para>
+		Soll das Benutzerkonten des Schuladministrators auch auf den Systemen des Verwaltungsnetzes
+		verfügbar sein, muss manuell ein neues Benutzerkonto über das UMC-Modul <guimenu>Benutzer</guimenu>
+		auf dem &ucsMaster; angelegt werden.
+	  </para>
+	  <para>
+		Die Benutzerkonten der Schuladministratoren müssen unterhalb der OU der Schule im Container
+		<emphasis>cn=admins,cn=users</emphasis> angelegt werden. Die Auswahl findet mit der Option
 		<guimenu>Container</guimenu> beim Anlegen eines Benutzers statt. Bei einer OU
 		<emphasis>gym17</emphasis> muss beispielsweise der Container <emphasis>gym17/users/admins</emphasis>
 		ausgewählt werden.
