@@ -141,7 +141,7 @@
 	</section>
 
 	<section>
-		<title>Verwaltungsnetz vs. Edukativnetz</title>
+		<title>Verwaltungsnetz und Edukativnetz</title>
 		<para>
 			Die Netze für den edukativen Bereich und für die Schulverwaltung
 			müssen aus organisatorischen oder rechtlichen Gründen in der Regel getrennt
@@ -150,9 +150,37 @@
 			Verwaltungsnetz und Edukativnetz erfolgen.
 		</para>
 		<para>
-			Diese optionale Unterteilung findet auf Ebene der Serversysteme bzw. der
-			Netzwerksegmente statt und sieht vor, dass mindestens ein Schulserver für das
-			edukative Netz und ein Schulserver für das Verwaltungsnetz betrieben wird.
+		  Diese optionale Unterteilung findet auf Ebene der Serversysteme bzw. der Netzwerksegmente
+		  statt und sieht vor, dass mindestens ein Schulserver für das edukative Netz und ein Schulserver für
+		  das Verwaltungsnetz betrieben wird. Diese Server verwenden für ihre Client-Systeme (Schülerrechner
+		  bzw. Rechner der Verwaltung) jeweils ein eigenes IP-Subnetz.
 		</para>
+		<para>
+		  Auch bei der Unterteilung in Verwaltungsnetz und Edukativnetz findet eine selektive
+		  Replikation statt, wie sie in <xref linkend="structure:ou:replication" /> beschrieben
+		  wird. Zusätzlich wird jedoch bei der Replikation der Benutzerkonten anhand ihrer Benutzerrolle(n)
+		  unterschieden. Auf den Schulserver des edukativen Netzes werden die Benutzerkonten mit den
+		  Benutzerrollen <emphasis>Schüler</emphasis>, <emphasis>Lehrer</emphasis>,
+		  <emphasis>Schuladministrator</emphasis> und <emphasis>System-Administrator</emphasis>
+		  repliziert. Auf den Schulserver der Verwaltung werden die Benutzerkonten mit den Benutzerrollen
+		  <emphasis>Mitarbeiter</emphasis>, <emphasis>Schuladministrator</emphasis> und
+		  <emphasis>System-Administrator</emphasis> repliziert. Die gemeinsame Verwendung der Benutzerrollen
+		  <emphasis>Lehrer</emphasis> und <emphasis>Mitarbeiter</emphasis> für ein Benutzerkonto ist möglich,
+		  z.B. für Benutzerkonten der Schulleitung, die neben ihrer Verwaltungstätigkeit auch lehrend tätig
+		  sind.
+		</para>
+		<para>
+		  Auf den Schulservern des Verwaltungsnetzes werden keine speziellen Dienste oder UMC-Module
+		  angeboten. Sie dienen den Verwaltungsrechnern hauptsächlich als Anmelde-, Druck- und Dateiserver.
+		  Die Benutzerkonten mit der Benutzerrolle <emphasis>Mitarbeiter</emphasis> haben entsprechend keinen
+		  Zugriff auf die &ucsUAS;-spezifischen UMC-Module des edukativen Netzes.
+		</para>
+		<caution>
+		  <para>
+			Voraussetzung für diese Unterteilung ist eine physikalische Trennung der beiden
+			Netzwerksegmente. D.h. das edukative Netz und das Verwaltungsnetz können nicht gleichzeitig im
+			gleichen Netzwerksegment verwendet werden.
+		  </para>
+		</caution>
 	</section>
 </chapter>
