@@ -76,10 +76,10 @@ client 192.168.100.101 {
 	<section>
 		<title>Konfiguration der zugreifenden Clients</title>
 		<para>
-			Der zugreifende Client muss das UCS-Wurzelzertifikat importieren.
-			(Es kann z.B. von der Startseite des Domänencontrollermaster unter
-			dem Link "Wurzelzertifikat" bezogen werden.)
-			Dann muss er eine Netzwerkverbindung mit den folgenden Parametern
+			Der zugreifende Client muss zunächst das UCS-Wurzelzertifikat importieren.
+			Es kann z.B. von der Startseite des &ucsMaster; unter
+			dem Link "Wurzelzertifikat" bezogen werden.
+			Anschließend muss er eine Netzwerkverbindung mit den folgenden Parametern
 			konfigurieren:
 		</para>
 		<itemizedlist>
