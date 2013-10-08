@@ -98,7 +98,9 @@ client 192.168.100.101 {
 			Die Konfiguration unterscheidet sich je nach Betriebsystem des Clients. Im
 			Univention Wiki findet sich eine exemplarische
 			Schritt-für-Schritt-Anleitung für die Einrichtung unter Windows XP:
-			<ulink url="http://wiki.univention.de/index.php?title=Einrichtung-WLAN-Authentifizierung-WinXP"/>.
+			<ulink url="http://wiki.univention.de/index.php?title=Einrichtung-WLAN-Authentifizierung-WinXP"/>,
+			sowie für die Einrichtung unter Windows 7:
+			<ulink url="http://wiki.univention.de/index.php?title=Einrichtung-WLAN-Authentifizierung-Win7"/>.
 		</para>
 	</section>
 
