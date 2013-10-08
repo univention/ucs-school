@@ -233,8 +233,9 @@ D  a.musterfr Musterfrau  Anke   g123m  2B        a.mfr@schule.edu 1 1 1
 	  </para>
 	  <para>
 		Soll das Benutzerkonten des Schuladministrators auch auf den Systemen des Verwaltungsnetzes
-		verfügbar sein, muss manuell ein neues Benutzerkonto über das UMC-Modul <guimenu>Benutzer</guimenu>
-		auf dem &ucsMaster; angelegt werden.
+		verfügbar sein, so reicht es nicht aus, die Gruppenmitgliedschaft zu ändern. Es muss manuell
+		ein neues Benutzerkonto über das UMC-Modul <guimenu>Benutzer</guimenu> auf dem &ucsMaster;
+		angelegt werden.
 	  </para>
 	  <para>
 		Die Benutzerkonten der Schuladministratoren müssen unterhalb der OU der Schule im Container
