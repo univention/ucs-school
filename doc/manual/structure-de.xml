@@ -140,7 +140,7 @@
 		</section>
 	</section>
 
-	<section>
+	<section id="structure:edunet-vs-adminnet">
 		<title>Verwaltungsnetz und Edukativnetz</title>
 		<para>
 			Die Netze für den edukativen Bereich und für die Schulverwaltung
