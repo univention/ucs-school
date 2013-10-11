@@ -12,8 +12,8 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-msgid "UCS@school administration"
-msgstr "UCS@school Administration"
+msgid "School administration"
+msgstr "Schul-Administration"
 
-msgid "UCS@school class"
-msgstr "UCS@school Unterricht"
+msgid "Education"
+msgstr "Unterricht"

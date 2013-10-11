@@ -2,10 +2,10 @@
 <umc version="2.0">
   <categories domain="ucs-school-common">
     <category id="ucs-school-admin" priority="60">
-      <name>UCS@school administration</name>
+      <name>School administration</name>
     </category>
     <category id="ucs-school-class" priority="61">
-      <name>UCS@school class</name>
+      <name>Education</name>
     </category>
   </categories>
 </umc>
