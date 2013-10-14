@@ -1,3 +1,9 @@
+ucs-school-branding (3.0.1-1) unstable; urgency=low
+
+  * Bug #32040: adapt UMC help page
+
+ -- Florian Best <best@univention.de>  Mon, 14 Oct 2013 08:58:42 +0200
+
 ucs-school-branding (3.0.0-0) unstable; urgency=low
 
   * bumped version for UCS@school 3.1 R2

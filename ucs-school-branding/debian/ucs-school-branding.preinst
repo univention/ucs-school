@@ -30,7 +30,7 @@
 
 # divert template.html and all branding.json files
 prefix='/usr/share/univention-management-console-frontend/js/umc'
-for iFile in $prefix/help/template.html $prefix/help/*.json $prefix/i18n/*/branding.json; do
+for iFile in $prefix/app/help.de.html $prefix/app/help.en.html $prefix/i18n/*/branding.json; do
 	dpkg-divert --package ucs-school-branding --rename --divert "$iFile.ucs" "$iFile" || true
 done
 

@@ -30,7 +30,7 @@
 
 # remove diversions for template.html and all branding.json files
 prefix='/usr/share/univention-management-console-frontend/js/umc'
-for iFile in $prefix/help/template.html $prefix/help/*.json.ucs $prefix/i18n/*/branding.json.ucs; do
+for iFile in $prefix/app/help.*.html.ucs $prefix/i18n/*/branding.json.ucs; do
 	iFile=$(echo $iFile | awk '{ gsub(/\.ucs$/, "", $0); print }') # remove .ucs suffix
 	dpkg-divert --rename --remove "$iFile"
 done
