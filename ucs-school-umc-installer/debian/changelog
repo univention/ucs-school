@@ -1,3 +1,11 @@
+ucs-school-umc-installer (2.0.0-1) unstable; urgency=low
+
+  * Bug #32083: fix dead hyperlinks
+  * Bug #32520: fix typos in python modules
+  * version bump (UCS@school 3.2)
+
+ -- Florian Best <best@univention.de>  Tue, 15 Oct 2013 13:52:48 +0200
+
 ucs-school-umc-installer (1.0.4-1) unstable; urgency=low
 
   * Bug #31128: display errors correctly that occur within the thread function

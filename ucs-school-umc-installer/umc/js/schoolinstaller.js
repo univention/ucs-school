@@ -35,6 +35,7 @@ define([
 	"dojo/topic",
 	"dojo/Deferred",
 	"dojo/when",
+	"umc/app",
 	"umc/tools",
 	"umc/dialog",
 	"umc/widgets/ComboBox",
@@ -47,7 +48,7 @@ define([
 	"umc/widgets/StandbyMixin",
 	"umc/modules/lib/server",
 	"umc/i18n!umc/modules/schoolinstaller"
-], function(declare, lang, array, topic, Deferred, when, tools, dialog, ComboBox, TextBox, Text, PasswordBox, Module, Wizard, ProgressBar, StandbyMixin, Lib_Server, _) {
+], function(declare, lang, array, topic, Deferred, when, app, tools, dialog, ComboBox, TextBox, Text, PasswordBox, Module, Wizard, ProgressBar, StandbyMixin, Lib_Server, _) {
 
 	var Installer = declare("umc.modules.schoolinstaller.Installer", [ Wizard, StandbyMixin ], {
 		_initialDeferred: null,
@@ -61,8 +62,6 @@ define([
 		_progressBar: null,
 
 		postMixInProperties: function() {
-
-			var link = function(module, flavor) { return 'href="javascript:void(0)" onclick="require(\'umc/app\').openModule(\'' + module + "','" + flavor + "')\""; };
 
 			this.pages = [{
 				name: 'setup',
@@ -216,11 +215,31 @@ define([
 				widgets: [{
 					type: Text,
 					name: 'info',
-					content: _('There are several modules that assist in further configuring the UCS@school domain:') + '<ul>' +
-						'<li>' + _('New school classes can be created with the module <a %s>"Add class"</a>.', link('schoolwizards', 'schoolwizards/classes')) + '</li>' +
-						'<li>' + _('Teachers and students can be added to the UCS@school domain with the module <a %s>"Add user"</a>.', link('schoolwizards', 'schoolwizards/users')) + '</li>' +
-						'<li>' + _('Teachers can be assigned to classes with the module <a %s>"Assing teachers to classes"</a>.', link('schoolgroups', 'class')) + '</li>' +
-						'<li>' + _('Workgroups can be created and managed with the module <a %s>"Administrate workgroups"</a>.', link('schoolgroups', 'workgroup-admin')) + '</li></ul>'
+					content: (function() {
+						var classLink = app.linkToModule('schoolwizards', 'schoolwizards/classes');
+						var userLink = app.linkToModule('schoolwizards', 'schoolwizards/users');
+						var groupLink = app.linkToModule('schoolgroups', 'class');
+						var workgroupLink = app.linkToModule('schoolgroups', 'workgroup-admin');
+
+						if (!(classLink || userLink || groupLink || workgroupLink)) {
+							return '';
+						}
+						var content = _('There are several modules that assist in further configuring the UCS@school domain:') + '<ul>';
+						if (classLink) {
+							content += '<li>' + _('New school classes can be created with the %s.', classLink) + '</li>';
+						}
+						if (userLink) {
+							content += '<li>' + _('Teachers and students can be added to the UCS@school domain with the %s.', userLink) + '</li>';
+						}
+						if (groupLink) {
+							content += '<li>' + _('Teachers can be assigned to classes with the %s.', groupLink) + '</li>';
+						}
+						if (workgroupLink) {
+							content += '<li>' + _('Workgroups can be created and managed with the %s.', workgroupLink) + '</li>';
+						}
+						content += '</ul>';
+						return content;
+					})()
 				}]
 			}];
 

@@ -199,9 +199,9 @@ msgstr "NT-kompatibler Domänencontroller (Samba 3)"
 
 #: umc/js/schoolinstaller.js:220
 #, python-format
-msgid "New school classes can be created with the module <a %s>\"Add class\"</a>."
+msgid "New school classes can be created with the %s."
 msgstr ""
-"Neue Schulklassen können mit dem Modul <a %s>\"Klasse hinzufügen\"</a> "
+"Neue Schulklassen können mit dem %s "
 "erstellt werden."
 
 #: umc/js/schoolinstaller.js:186
@@ -272,19 +272,17 @@ msgstr "Beginne den Konfigurationsprozess..."
 #: umc/js/schoolinstaller.js:221
 #, python-format
 msgid ""
-"Teachers and students can be added to the UCS@school domain with the module <a %s>\"Add "
-"user\"</a>."
+"Teachers and students can be added to the UCS@school domain with the %s."
 msgstr ""
-"Lehrer und Schüler können mit dem Modul <a %s>\"Benutzer hinzufügen\"</a> "
+"Lehrer und Schüler können mit dem %s "
 "in der UCS@school-Domäne neu angelegt werden."
 
 #: umc/js/schoolinstaller.js:222
 #, python-format
 msgid ""
-"Teachers can be assigned to classes with the module <a %s>\"Assing teachers "
-"to classes\"</a>."
+"Teachers can be assigned to classes with the %s."
 msgstr ""
-"Lehrer können mit dem Modul <a %s>\"Lehrer Klassen zuordnen\"</a> Klassen "
+"Lehrer können mit dem %s Klassen "
 "zugeordnet werden."
 
 #: umc/js/schoolinstaller.js:206
@@ -354,11 +352,9 @@ msgstr "UCS@school wurde bereits auf diesem System eingerichtet."
 #: umc/js/schoolinstaller.js:223
 #, python-format
 msgid ""
-"Workgroups can be created and managed with the module <a %s>\"Administrate "
-"workgroups\"</a>."
+"Workgroups can be created and managed with the %s."
 msgstr ""
-"Arbeitsgruppen können mit dem Modul <a %s>\"Arbeitsgruppen verwalten\"</"
-"a> erstellt und verwaltet werden."
+"Arbeitsgruppen können mit dem %s erstellt und verwaltet werden."
 
 #~ msgid "Please confirm to start the installation process."
 #~ msgstr "Bitte bestätigen sie den Start des Installationsvorganges."

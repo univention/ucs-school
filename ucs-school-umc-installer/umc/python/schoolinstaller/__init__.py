@@ -57,10 +57,9 @@ from univention.management.console.modules import Base
 from univention.management.console.log import MODULE
 from univention.management.console.config import ucr
 from univention.management.console.modules.decorators import simple_response, sanitize
-from univention.management.console.modules.sanitizers import StringSanitizer, MappingSanitizer, ChoicesSanitizer
+from univention.management.console.modules.sanitizers import StringSanitizer, ChoicesSanitizer
 import univention.uldap
 import univention.admin.modules as udm_modules
-import univention.admin.uldap as udm_uldap
 from ucsschool.lib.schoolldap import SchoolSearchBase
 
 from univention.lib.i18n import Translation
@@ -256,7 +255,7 @@ def restoreOrigCertificate(certOrigFile):
 			MODULE.info('Restoring original root certificate.')
 			os.rename(certOrigFile, CERTIFICATE_PATH)
 		except (IOError, OSError) as err:
-			MOUDLE.warn('Could not restore original root certificate: %s' % err)
+			MODULE.warn('Could not restore original root certificate: %s' % err)
 		certOrigFile = None
 
 def retrieveRootCertificate(master):
@@ -373,6 +372,7 @@ def system_join(username, password, info_handler = _dummyFunc, error_handler = _
 				# write stderr into the log file
 				MODULE.warn('stderr from univention-join: %s' % stderr)
 
+			success = True
 			# check for errors
 			if process.returncode != 0:
 				# error case
@@ -382,6 +382,7 @@ def system_join(username, password, info_handler = _dummyFunc, error_handler = _
 				MODULE.warn('The following join scripts could not be executed: %s' % failedJoinScripts)
 				error_handler(_('Software packages have been installed sucessfully, however, some join scripts could not be executed. More details can be found in the log file /var/log/univention/join.log. Please retry to execute the join scripts via the UMC module "Domain join" after resolving any conflicting issues.'))
 				success = False
+			return success
 	finally:
 		# make sure that UMC servers and apache can be restarted again
 		MODULE.info('enabling UMC and apache server restart')
