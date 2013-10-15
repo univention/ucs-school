@@ -1,3 +1,10 @@
+ucs-school-lib (4.0.0-1) unstable; urgency=low
+
+  * Bug #32520: fix typos in python modules
+  * version bump (UCS@school 3.2)
+
+ -- Florian Best <best@univention.de>  Tue, 15 Oct 2013 14:14:38 +0200
+
 ucs-school-lib (3.0.7-1) unstable; urgency=low
 
   * Bug #32232: fixed traceback in computerroom if module has been opened

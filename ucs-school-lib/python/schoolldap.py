@@ -54,7 +54,7 @@ import re
 from univention.management.console.config import ucr
 from univention.management.console.log import MODULE
 from univention.management.console.modules import Base
-from univention.management.console.protocol.definitions import *
+from univention.management.console.protocol.definitions import MODULE_ERR
 
 # load UDM modules
 udm_modules.update()
