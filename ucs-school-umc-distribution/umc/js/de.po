@@ -107,8 +107,12 @@ msgid "Distribute project"
 msgstr "Projekt verteilen"
 
 #: umc/js/distribution.js:137
-msgid "Distribute/collect project files to/from users"
-msgstr "Projektdateien an/von Schüler verteilen/einsammeln"
+msgid "Distribute project files to users"
+msgstr "Projektdateien an Schüler verteilen"
+
+#: umc/js/distribution.js:137
+msgid "Collect project files from users"
+msgstr "Projektdateien von Schüler einsammeln"
 
 #: umc/js/distribution.js:133
 msgid "Distribution"

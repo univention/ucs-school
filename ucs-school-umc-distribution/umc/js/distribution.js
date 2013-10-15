@@ -87,7 +87,7 @@ define([
 			this.renderSearchPage();
 		},
 
-		renderSearchPage: function(containers, superordinates) {
+		renderSearchPage: function() {
 			// render all GUI elements for the search formular and the grid
 
 			// setup search page and its main widgets
@@ -131,24 +131,27 @@ define([
 				callback: lang.hitch(this, '_editObject')
 			}, {
 				name: 'distribute',
-				label: lang.hitch(this, function(item) {
-					if (!item) {
-						return _('Distribution');
-					}
-					return !item.isDistributed ? _('distribute') : _('collect');
-				}),
-				description: _('Distribute/collect project files to/from users'),
+				label: _('distribute'),
+				description: _('Distribute project files to users'),
 				isStandardAction: true,
 				isMultiAction: false,
+				canExecute: function(item) {
+					return !item.isDistributed;
+				},
+				callback: lang.hitch(this, '_distribute')
+			}, {
+				name: 'collect',
+				label: _('collect'),
+				description: _('Collect project files from users'),
+				isStandardAction: true,
+				isMultiAction: false,
+				canExecute: function(item) {
+					return item.isDistributed;
+				},
 				callback: lang.hitch(this, '_distribute')
 			}, {
 				name: 'adopt',
-				label: lang.hitch(this, function(item) {
-					if (!item) {
-						return _('Adoption');
-					}
-					return _('adopt');
-				}),
+				label: _('adopt'),
 				canExecute: function(item) {
 					return item.sender != tools.status('username');
 				},
