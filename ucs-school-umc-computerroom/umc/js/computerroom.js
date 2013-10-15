@@ -110,6 +110,18 @@ define([
 		}
 	};
 
+	var disabledUCCActions = ['screenshot', 'logout', 'computerShutdown', 'computerRestart', 'demoStart', 'viewVNC'];
+	var checkUCC = function(action, callback) {
+		var _decorated = function(item) {
+			if (isUCC(item) && disabledUCCActions.indexOf(action) !== -1) {
+				return false;
+			}
+			return callback(item);
+		};
+		return _decorated;
+	};
+
+
 	return declare("umc.modules.computerroom", [ Module ], {
 		// summary:
 		//		Template module to ease the UMC module development.
@@ -238,33 +250,18 @@ define([
 			// define grid actions
 			this._actions = [ {
 				name: 'screenshot',
-				field: 'screenshot',
 				label: _('Watch'),
 				isContextAction: false,
-				tooltipClass: Tooltip,
-				description: function(item) {
-					if (isUCC(item)) {
-						return '';
-					}
-					return lang.replace('<div style="display: table-cell; vertical-align: middle; width: 240px;height: 200px;"><img id="screenshotTooltip-{0}" src="" style="width: 230px; display: block; margin-left: auto; margin-right: auto;"/></div>', item.id);
-				},
-				onShowDescription: function(target, item) {
-					if (isUCC(item)) {
-						return;
-					}
-					var image = dom.byId('screenshotTooltip-' + item.id[0]);
-					image.src = '/umcp/command/computerroom/screenshot?computer=' + item.id[0] + '&random=' + Math.random();
-				},
-//				canExecute: function(item) { return isConnected(item) && !isUCC(item); },
+//				canExecute: checkUCC('screenshot', function(item) { return isConnected(item); }),
 				callback: lang.hitch(this, '_screenshot')
 			}, {
 				name: 'logout',
 				label: _('Logout user'),
 				isStandardAction: false,
 				isMultiAction: true,
-				canExecute: function(item) {
-					return item.connection[0] == 'connected' && item.user[0] && !isUCC(item);
-				},
+				canExecute: checkUCC('logout', function(item) {
+					return isConnected(item) && item.user[0];
+				}),
 				callback: lang.hitch(this, '_logout')
 			}, {
 				name: 'computerShutdown',
@@ -272,7 +269,7 @@ define([
 				label: _('Shutdown computer'),
 				isStandardAction: false,
 				isMultiAction: true,
-				canExecute: function(item) { return isConnected(item) && !isUCC(item); },
+				canExecute: checkUCC('computerShutdown', function(item) { return isConnected(item); }),
 				callback: lang.hitch(this, '_computerChangeState', 'poweroff')
 			}, {
 				name: 'computerStart',
@@ -280,9 +277,9 @@ define([
 				label: _('Switch on computer'),
 				isStandardAction: false,
 				isMultiAction: true,
-				canExecute: function(item) {
+				canExecute: checkUCC('computerStart', function(item) {
 					return (item.connection[0] == 'error' || item.connection[0] == 'autherror' || item.connection[0] == 'offline') && item.mac[0];
-				},
+				}),
 				callback: lang.hitch(this, '_computerStart')
 			}, {
 				name: 'computerRestart',
@@ -290,43 +287,25 @@ define([
 				label: _('Restart computer'),
 				isStandardAction: false,
 				isMultiAction: true,
-				canExecute: function(item) { return isConnected(item) && !isUCC(item); },
+				canExecute: checkUCC('computerRestart', function(item) { return isConnected(item); }),
 				callback: lang.hitch(this, '_computerChangeState', 'restart')
 			}, {
 				name: 'lockInput',
 				label: _('Lock input devices'),
-				iconClass: lang.hitch(this, function(item) {
-					if (!item) {
-						return null;
-					}
-					if (!item.InputLock || item.InputLock[0] === null) {
-						return 'umcIconLoading';
-					}
-					return null;
-				}),
 				isStandardAction: false,
 				isMultiAction: true,
-				canExecute: lang.hitch(this, function(item) {
-					return !this._demo.running && item.connection[0] == 'connected' && item.user && item.user[0] && (!item.teacher || item.teacher[0] === false) && item.InputLock;
-				}),
+				canExecute: checkUCC('lockInput', lang.hitch(this, function(item) {
+					return !this._demo.running && isConnected(item) && item.user && item.user[0] && (!item.teacher || item.teacher[0] === false) && item.InputLock;
+				})),
 				callback: lang.hitch(this, '_lockInput', true)
 			}, {
 				name: 'unlockInput',
 				label: _('Unlock input devices'),
-				iconClass: lang.hitch(this, function(item) {
-					if (!item) {
-						return null;
-					}
-					if (!item.InputLock || item.InputLock[0] === null) {
-						return 'umcIconLoading';
-					}
-					return null;
-				}),
 				isStandardAction: false,
 				isMultiAction: true,
-				canExecute: lang.hitch(this, function(item) {
-					return !this._demo.running && item.connection[0] == 'connected' && item.user && item.user[0] && (!item.teacher || item.teacher[0] === false) && item.InputLock;
-				}),
+				canExecute: checkUCC('unlockInput', lang.hitch(this, function(item) {
+					return !this._demo.running && isConnected(item) && item.user && item.user[0] && (!item.teacher || item.teacher[0] === false) && item.InputLock;
+				})),
 				callback: lang.hitch(this, '_lockInput', false)
 			}, {
 				name: 'demoStart',
@@ -334,55 +313,39 @@ define([
 				isStandardAction: false,
 				isContextAction: true,
 				isMultiAction: false,
-				canExecute: function(item) {
-					return item.connection[0] == 'connected' && item.user[0] && item.DemoServer[0] !== true && !isUCC(item);
-				},
+				canExecute: checkUCC('demoStart', function(item) {
+					return isConnected(item) && item.user[0] && item.DemoServer[0] !== true;
+				}),
 				callback: lang.hitch(this, '_demoStart')
 			}, {
 				name: 'ScreenLock',
 				field: 'ScreenLock',
 				label: _('Lock screen'),
-				iconClass: lang.hitch(this, function(item) {
-					if (!item) {
-						return null;
-					}
-					if (item.ScreenLock[0] === null) {
-						return 'umcIconLoading';
-					}
-					return null;
-				}),
 				isStandardAction: true,
 				isMultiAction: true,
-				canExecute: lang.hitch(this, function(item) {
-					return !this._demo.running && item.connection[0] == 'connected' && item.user && item.user[0] && (!item.teacher || item.teacher[0] === false);
-				}),
+				canExecute: checkUCC('ScreenLock', lang.hitch(this, function(item) {
+					return !this._demo.running && isConnected(item) && item.user && item.user[0] && (!item.teacher || item.teacher[0] === false);
+				})),
 				callback: lang.hitch(this, '_lockScreen', true)
 			}, {
 				name: 'ScreenUnLock',
 				field: 'ScreenLock',
 				label: _('Unlock screen'),
-				iconClass: lang.hitch(this, function(item) {
-					if (!item) {
-						return null;
-					}
-					if (item.ScreenLock[0] === null) {
-						return 'umcIconLoading';
-					}
-					return null;
-				}),
 				isStandardAction: true,
 				isMultiAction: true,
-				canExecute: lang.hitch(this, function(item) {
-					return !this._demo.running && item.connection[0] == 'connected' && item.user && item.user[0] && (!item.teacher || item.teacher[0] === false);
-				}),
+				canExecute: checkUCC('ScreenUnLock', lang.hitch(this, function(item) {
+					return !this._demo.running && isConnected(item) && item.user && item.user[0] && (!item.teacher || item.teacher[0] === false);
+				})),
 				callback: lang.hitch(this, '_lockScreen', false)
 			}];
 		},
 
 		// grid actions:
 
-		_screenshot: function() {
-			var items = this._grid.getSelectedItems();
+		_screenshot: function(ids, items) {
+			if (!items.length) {
+				items = this._grid.getSelectedItems();
+			}
 			items = array.filter(items, function(item) { return isConnected(item) && !isUCC(item); });
 			if (items.length === 0) {
 				items = this._grid.getAllItems();
@@ -390,7 +353,7 @@ define([
 			}
 			this.selectChild(this._screenshotView);
 			this._screenshotView.load(array.map(array.filter(items, function(item) {
-				return item.connection[0] == 'connected' && !isUCC(item);
+				return isConnected(item) && !isUCC(item);
 			}), function(item) {
 				return {
 					computer: item.id[0],
@@ -510,15 +473,12 @@ define([
 			});
 
 			// get UCR Variable for enabled VNC
-			tools.ucr('ucsschool/umc/computerroom/ultravnc/enabled').then(lang.hitch(this, function(result) {
-				this.standby(false);
+			this.standbyDuring(tools.ucr('ucsschool/umc/computerroom/ultravnc/enabled')).then(lang.hitch(this, function(result) {
 				this._vncEnabled = tools.isTrue(result['ucsschool/umc/computerroom/ultravnc/enabled']);
 
 				// render the page containing search form and grid
 				this.renderSearchPage();
 				this.renderScreenshotPage();
-			}), lang.hitch(this, function() {
-				this.standby(false);
 			}));
 
 			// initiate a progress bar widget
@@ -565,7 +525,7 @@ define([
 			// update visibility of header buttons
 			this._headButtons.finishExam.set('visible', roomInfo && roomInfo.exam);
 			this._headButtons.collect.set('visible', roomInfo && roomInfo.exam);
-			this._headButtons.examEndTime.set('visible', roomInfo && roomInfo.exam); // FIXME: Text widget does not support visible
+			this._headButtons.examEndTime.set('visible', roomInfo && roomInfo.exam); // FIXME: Text widget does not support visible (Bug #32823)
 			if (!roomInfo || !roomInfo.exam) {
 				this._headButtons.examEndTime.set('content', '');
 			}
@@ -576,7 +536,7 @@ define([
 
 		_setRoomInfoAttr: function(roomInfo) {
 			this._set('roomInfo', roomInfo);
-			this._updateHeader(roomInfo);
+			this._updateHeader();
 		},
 
 		renderScreenshotPage: function() {
@@ -585,7 +545,7 @@ define([
 			this._screenshotView.on('close', lang.hitch(this, 'closeScreenView'));
 		},
 
-		renderSearchPage: function(containers, superordinates) {
+		renderSearchPage: function() {
 			// render all GUI elements for the search formular and the grid
 
 			// render the search page
@@ -617,9 +577,9 @@ define([
 					label: _('VNC-Access'),
 					isStandardAction: false,
 					isMultiAction: false,
-					canExecute: function(item) {
-						return item.connection[0] == 'connected' && item.user[0] && !isUCC(item);
-					},
+					canExecute: checkUCC('viewVNC', function(item) {
+						return isConnected(item) && item.user[0];
+					}),
 					callback: lang.hitch(this, function(item) {
 						window.open('/umcp/command/computerroom/vnc?computer=' + item);
 					})
@@ -629,14 +589,14 @@ define([
 			// define the grid columns
 			var columns = [{
 				name: 'name',
-				width: '20%',
+				width: '35%',
 				label: _('Name'),
 				formatter: lang.hitch(this, function(value, rowIndex) {
 					var item = this._grid._grid.getItem(rowIndex);
 					var icon = 'offline';
 					var status_ = _('The computer is not running');
 
-					if (item.connection[0] == 'connected') {
+					if (isConnected(item)) {
 						icon = 'demo-offline';
 						status_ = _('Monitoring is activated');
 					} else if (item.connection[0] == 'autherror') {
@@ -660,8 +620,7 @@ define([
 
 					var computertype = {
 						'computers/windows': _('Windows'),
-						'computers/ucc': _('Univention Corporate Client') + '<br>' + _('(The computer does not support all iTALC features)'),
-						'computers/ubuntu': _('Ubuntu')
+						'computers/ucc': _('Univention Corporate Client') + '<br>' + _('(The computer does not support all iTALC features)')
 					}[item.objectType[0]] || _('Unknown');
 
 					var label = '<table>';
@@ -685,23 +644,50 @@ define([
 						label: label,
 						connectId: [ widget.domNode ]
 					});
-					// destroy the tooltip when the widget is destroyed
-					aspect.after(widget, 'destroy', function() { tooltip.destroy(); });
+					widget.own(tooltip);
 
 					return widget;
 				})
 			}, {
 				name: 'user',
-				width: '20%',
+				width: '35%',
 				label: _('User')
+			}, {
+				name: 'watch',
+				label: ' ',
+				formatter: lang.hitch(this, function(v, rowIndex) {
+					var item = this._grid._grid.getItem(rowIndex);
+					if (isUCC(item) || !isConnected(item)) {
+						return '';
+					}
+					var id = item.id[0];
+					var label = lang.replace('<div style="display: table-cell; vertical-align: middle; width: 240px;height: 200px;"><img id="screenshotTooltip-{0}" src="" style="width: 230px; display: block; margin-left: auto; margin-right: auto;"/></div>', [id]);
+
+					var widget = new Button({
+						label: _('Watch'),
+						style: 'background: none; border: 0 none;',
+						onClick: lang.hitch(this, function() {
+							this._screenshot([id], [item]);
+						})
+					});
+
+					var tooltip = new Tooltip({
+						'class': 'umcTooltip',
+						label: label,
+						connectId: [ widget.domNode ],
+						onShowDescription: function(target) {
+							var image = dom.byId('screenshotTooltip-' + id);
+							image.src = '/umcp/command/computerroom/screenshot?computer=' + id + '&random=' + Math.random();
+						}
+					});
+					widget.own(tooltip);
+
+					return widget;
+				})
 			}];
 
 			// generate the data grid
 			this._grid = new Grid({
-				// property that defines the widget's position in a dijit.layout.BorderContainer,
-				// 'center' is its default value, so no need to specify it here explicitely
-				multiActionsAlwaysActive: true,
-				region: 'center',
 				actions: lang.clone(this._actions),
 				columns: columns,
 				cacheRowWidgets: false,
@@ -716,7 +702,7 @@ define([
 					this._dataStore.fetch({
 						query: '',
 						onItem: lang.hitch(this, function(item) {
-							if (item.connection[0] != 'connected') {
+							if (!isConnected(item)) {
 								failed += 1;
 							}
 						})
