@@ -1,3 +1,10 @@
+ucs-school-umc-exam (2.0.0-1) unstable; urgency=low
+
+  * Bug #32520: fix typos in python modules
+  * version dump (UCS@school 3.2)
+
+ -- Florian Best <best@univention.de>  Tue, 15 Oct 2013 14:10:18 +0200
+
 ucs-school-umc-exam (1.0.23-1) unstable; urgency=low
 
   * Bug #32176: limit file uploads to UMCP UPLOAD command

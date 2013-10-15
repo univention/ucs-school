@@ -190,7 +190,7 @@ class Instance( SchoolBaseModule ):
 			# open a new connection to the master UMC
 			connection = UMCConnection.get_machine_connection()
 			if not connection:
-				MODULE.error('Could not connect to UMC on %s: %s' % (ucr.get('ldap/master'), e))
+				MODULE.error('Could not connect to UMC on %s' % (ucr.get('ldap/master')))
 				raise UMC_CommandError(_('Could not connect to master server %s.') % ucr.get('ldap/master'))
 
 			# mark the computer room for exam mode
@@ -235,7 +235,6 @@ class Instance( SchoolBaseModule ):
 			progress.add_steps(percentPerUser)
 
 			# wait for the replication of all users to be finished
-			userModul = udm_modules.get( 'users/user' )
 			progress.component(_('Preparing user home directories'))
 			recipients = []  # list of User objects for all exam users
 			openAttempts = 300 # wait max. 5 minutes for replication
@@ -266,7 +265,7 @@ class Instance( SchoolBaseModule ):
 						# access failed
 						pass
 					except LDAP_ConnectionError as e:
-						MODULE.error('Could not open object DN: %s (%s)' % (entryDN, e))
+						MODULE.error('Could not open object DN: %s (%s)' % (idn, e))
 
 				# wait a second
 				time.sleep(1)
@@ -392,7 +391,7 @@ class Instance( SchoolBaseModule ):
 			# open a new connection to the master UMC
 			connection = UMCConnection.get_machine_connection()
 			if not connection:
-				MODULE.error('Could not connect to UMC on %s: %s' % (ucr.get('ldap/master'), e))
+				MODULE.error('Could not connect to UMC on %s' % (ucr.get('ldap/master')))
 				raise UMC_CommandError(_('Could not connect to master server %s.') % ucr.get('ldap/master'))
 
 			# unset exam mode for the given computer room

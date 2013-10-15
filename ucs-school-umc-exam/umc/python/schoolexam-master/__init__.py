@@ -38,7 +38,7 @@ import re
 from univention.management.console.config import ucr
 from univention.management.console.log import MODULE
 from univention.management.console.modules import UMC_CommandError, UMC_OptionTypeError
-from ucsschool.lib.schoolldap import LDAP_Connection, LDAP_ConnectionError, SchoolSearchBase, SchoolBaseModule, ADMIN_WRITE, USER_READ
+from ucsschool.lib.schoolldap import LDAP_Connection, SchoolSearchBase, SchoolBaseModule, ADMIN_WRITE, USER_READ
 
 import univention.admin.modules
 univention.admin.modules.update()
@@ -91,7 +91,7 @@ class Instance( SchoolBaseModule ):
 					self._examGroup['name'] = self._search_base.examGroupName
 					self._examGroup['sambaGroupType'] = self._examGroup.descriptions['sambaGroupType'].base_default[0]
 					self._examGroup.create()
-				except univention.admin.uexceptions.base, e:
+				except univention.admin.uexceptions.base:
 					message = _('Failed to create exam group\n%s') % traceback.format_exc()
 					raise UMC_CommandError( message )
 
@@ -114,7 +114,7 @@ class Instance( SchoolBaseModule ):
 					exam_user_container.open()
 					exam_user_container['name'] = self._search_base._examUserContainerName
 					exam_user_container.create()
-				except univention.admin.uexceptions.base, e:
+				except univention.admin.uexceptions.base:
 					message = _('Failed to create exam container\n%s') % traceback.format_exc()
 					raise UMC_CommandError( message )
 
@@ -155,7 +155,7 @@ class Instance( SchoolBaseModule ):
 		try:
 			user_orig = module_users_user.object(None, ldap_admin_write, ldap_position, userdn)
 			user_orig.open()
-		except univention.admin.uexceptions.ldapError, e:
+		except univention.admin.uexceptions.ldapError:
 			raise UMC_OptionTypeError( _('Invalid username (%s)') % userdn )
 
 		### uid and DN of exam_user
@@ -175,7 +175,7 @@ class Instance( SchoolBaseModule ):
 		try:
 			uid = univention.admin.allocators.request(ldap_admin_write, ldap_position, 'uid', value=exam_user_uid)
 			alloc.append(('uid', uid))
-		except univention.admin.uexceptions.noLock, e:
+		except univention.admin.uexceptions.noLock:
 			univention.admin.allocators.release(ldap_admin_write, ldap_position, 'uid', exam_user_uid)
 			MODULE.warn( _('The exam account does already exist for: %s') % exam_user_uid )
 			self.finished(request.id, dict(
@@ -214,7 +214,7 @@ class Instance( SchoolBaseModule ):
 						num = str(int(num)+1)
 						try:
 							userSid = univention.admin.allocators.requestUserSid(ldap_admin_write, ldap_position, num)
-						except univention.admin.uexceptions.noLock, e:
+						except univention.admin.uexceptions.noLock:
 							num = str(int(num)+1)
 					alloc.append(('sid', userSid))
 
@@ -278,7 +278,9 @@ class Instance( SchoolBaseModule ):
 			## And create the exam_user
 			ldap_admin_write.add(exam_user_dn, al)
 
-		except Exception, err:
+		except (SystemExit, KeyboardInterrupt, SyntaxError):
+			raise
+		except:
 			for i, j in alloc:
 				univention.admin.allocators.release(ldap_admin_write, ldap_position, i, j)
 
@@ -365,7 +367,7 @@ class Instance( SchoolBaseModule ):
 		### get search base for OU of given room DN
 		school = SchoolSearchBase.getOU(roomdn)
 		if not school:
-			raise UMC_CommandError( _('Room is not below a school OU: %s') % userdn )
+			raise UMC_CommandError( _('Room is not below a school OU: %s') % roomdn )
 		search_base = SchoolSearchBase(search_base.availableSchools, school)
 
 		## store the ldap related objects for calls to the examGroup property
@@ -384,7 +386,7 @@ class Instance( SchoolBaseModule ):
 		try:
 			room = module_groups_group.object(None, ldap_admin_write, ldap_position, roomdn)
 			room.open()
-		except univention.admin.uexceptions.ldapError, e:
+		except univention.admin.uexceptions.ldapError:
 			raise UMC_OptionTypeError( _('Invalid Room DN') )
 
 		## Add all host members of room to examGroup
@@ -409,7 +411,7 @@ class Instance( SchoolBaseModule ):
 		### get search base for OU of given room DN
 		school = SchoolSearchBase.getOU(roomdn)
 		if not school:
-			raise UMC_CommandError( _('Room is not below a school OU: %s') % userdn )
+			raise UMC_CommandError( _('Room is not below a school OU: %s') % roomdn )
 		search_base = SchoolSearchBase(search_base.availableSchools, school)
 
 		## store the ldap related objects for calls to the examGroup property
@@ -428,7 +430,7 @@ class Instance( SchoolBaseModule ):
 		try:
 			room = module_groups_group.object(None, ldap_admin_write, ldap_position, roomdn)
 			room.open()
-		except univention.admin.uexceptions.ldapError, e:
+		except univention.admin.uexceptions.ldapError:
 			raise UMC_OptionTypeError( 'Invalid Room DN' )
 
 		## Remove all host members of room from examGroup
