@@ -1,3 +1,9 @@
+ucs-school-umc-distribution (10.0.1-1) unstable; urgency=low
+
+  * Bug #32520: fix typos in python modules
+
+ -- Florian Best <best@univention.de>  Tue, 15 Oct 2013 14:21:57 +0200
+
 ucs-school-umc-distribution (10.0.0-1) unstable; urgency=low
 
   * Bug #32775: adapt grid

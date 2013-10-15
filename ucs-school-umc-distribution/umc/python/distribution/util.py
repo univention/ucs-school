@@ -49,12 +49,10 @@ import os
 import shutil
 import json
 
-from datetime import datetime, timedelta
+from datetime import datetime
 
 from pipes import quote
 
-import unicodedata
-import string
 import re
 
 _ = Translation( 'ucs-school-umc-distribution' ).translate
@@ -200,7 +198,6 @@ class Group( _Dict ):
 			self.update(_props)
 
 def openRecipients(entryDN, ldap_connection, search_base):
-	entry = None
 	try:
 		# try to load the UDM user/group object given its DN
 		attrs = ldap_connection.get( entryDN )
@@ -590,7 +587,7 @@ class Project(_Dict):
 					for momo in dirs + files:
 						os.chown(os.path.join(root, momo), int(self.sender.uidNumber), int(self.sender.gidNumber))
 
-			except (OSError, IOError, ValueError) as ex:
+			except (OSError, IOError, ValueError):
 				MODULE.warn('Copy failed: "%s" ->  "%s"' % (srcdir, targetdir))
 				dirsFailed.append(srcdir)
 
@@ -616,7 +613,7 @@ class Project(_Dict):
 		try:
 			os.remove( self.projectfile )
 		except (OSError, IOError) as e:
-			MODULE.error('cannot remove projectfile: %s [%s]' % (projectfile, str(e)))
+			MODULE.error('cannot remove projectfile: %s [%s]' % (self.projectfile, str(e)))
 
 	@staticmethod
 	def load(projectfile):

@@ -175,15 +175,13 @@ class Instance( SchoolBaseModule ):
 	def _save( self, request, doUpdate = True, ldap_user_read = None, ldap_position = None, search_base = None ):
 		# make sure that we got a list
 		if not isinstance(request.options, (tuple, list)):
-			raise UMC_OptionTypeError( 'Expected list of strings, but got: %s' % str(ids) )
+			raise UMC_OptionTypeError( 'Expected list of strings, but got: %s' % (type(request.options),) )
 
 		# try to open the UDM user object of the current user
 		sender = self._get_sender(request)
 
 		# try to create all specified projects
 		result = []
-		userModule = udm_modules.get('users/user')
-		groupModule = udm_modules.get('groups/group')
 		for ientry in request.options:
 			iprops = ientry.get('object', {})
 			try:
@@ -407,7 +405,7 @@ class Instance( SchoolBaseModule ):
 
 		# make sure that we got a list
 		if not isinstance(request.options, (tuple, list)):
-			raise UMC_OptionTypeError( 'Expected list of strings, but got: %s' % str(ids) )
+			raise UMC_OptionTypeError( 'Expected list of strings, but got: %s' % type(request.options) )
 
 		# update the sender information of the selected projects
 		ids = request.options
@@ -456,7 +454,7 @@ class Instance( SchoolBaseModule ):
 
 		# make sure that we got a list
 		if not isinstance(request.options, (tuple, list)):
-			raise UMC_OptionTypeError( 'Expected list of strings, but got: %s' % str(ids) )
+			raise UMC_OptionTypeError( 'Expected list of strings, but got: %s' % (type(request.options),) )
 
 		# try to open the UDM user object of the current user
 		sender = self._get_sender(request)
@@ -482,8 +480,8 @@ class Instance( SchoolBaseModule ):
 				# raise an error in case distribution failed for some users
 				if dirsFailed:
 					dirsStr = ', '.join(dirsFailed)
-					MODULE.info('Failed collecting the following dirs: %s' % dirsFailed)
-					raise IOError(_('The following user directories could not been collected: %s') % dirsFailed)
+					MODULE.info('Failed collecting the following dirs: %s' % dirsStr)
+					raise IOError(_('The following user directories could not been collected: %s') % dirsStr)
 
 				# save result
 				result.append(dict(
@@ -504,7 +502,7 @@ class Instance( SchoolBaseModule ):
 	def adopt( self, request ):
 		# make sure that we got a list
 		if not isinstance(request.options, (tuple, list)):
-			raise UMC_OptionTypeError( 'Expected list of strings, but got: %s' % str(ids) )
+			raise UMC_OptionTypeError( 'Expected list of strings, but got: %s' % (type(request.options),) )
 
 		# try to open the UDM user object of the current user
 		sender = self._get_sender(request)
