@@ -1,3 +1,9 @@
+univention-ldb-modules (2.0.2-1) unstable; urgency=low
+
+  * Create default S4 groups in slave pdc join script (Bug #32894)
+
+ -- Stefan Gohmann <gohmann@univention.de>  Thu, 17 Oct 2013 23:58:37 +0200
+
 univention-ldb-modules (2.0.1-2) unstable; urgency=low
 
   * Build against samba-dev instead of samba4-dev since we use the

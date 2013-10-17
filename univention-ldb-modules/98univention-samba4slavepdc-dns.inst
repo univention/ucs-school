@@ -73,25 +73,6 @@ fi
 
 samba_dnsupdate || die
 
-## If the group Enterprise Domain Controllers was not created yet,
-## either because there is no S4 Connector on the master or because
-## the central S4 Connector system has not receieved the Errata update
-## for Bug #31437 yet, the first UCS@school Slave Samba4 PDC to update
-## to ucs-school-3.1-R2 (joiscript VERSION=2) needs to do this now:
-if [ $JS_LAST_EXECUTED_VERSION -lt 2 ]; then ## skip this on later updates
-	if ! create_Enterprise_Domain_Controllers "$@"; then
-		## group could not be created
-		if univention-ldapsearch -x sambaSID='S-1-5-9' cn | grep -q '^cn:'; then
-			## ok, the group exists
-			if [ $JS_LAST_EXECUTED_VERSION -eq 1 ]; then ## do this only during an update
-				samba-tool ntacl sysvolreset
-			fi
-		else
-			echo "WARNING: the group 'Enterprise Domain Controllers' was not found with SID S-1-5-9"
-		fi
-	fi
-fi
-
 joinscript_save_current_version
 
 exit 0
