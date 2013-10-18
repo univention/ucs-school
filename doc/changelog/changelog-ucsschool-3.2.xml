@@ -28,6 +28,13 @@
 	</section>
 	<section>
 		<title>LDAP ACL changes</title>
+			<itemizedlist>
+				<listitem><simpara>
+					Since UCS 3.2 some internal groups are located in cn=Builtin. The Slave DCs now have read
+					access to cn=Builtin
+					(<ulink url="&ucsbug;32894">Bug 32894</ulink>).
+				</simpara></listitem>
+			</itemizedlist>
 	</section>
 	<section>
 		<title>LDAP schema changes</title>
@@ -44,6 +51,11 @@
 				<listitem><simpara>
 					A debug message in the listener module of <package>ucs-school-netlogon-user-logonscripts</package> 
 					has been fixed  (<ulink url="&ucsbug;32339">Bug 32339</ulink>).
+				</simpara></listitem>
+
+				<listitem><simpara>
+					The internal Samba 4 groups are now created in the join script 96univention-samba4slavepdc.inst
+					(<ulink url="&ucsbug;32894">Bug 32894</ulink>).
 				</simpara></listitem>
 			</itemizedlist>
 
