@@ -1,3 +1,12 @@
+ucs-school-ldap-acls-master (10.0.0-1) unstable; urgency=low
+
+  * Give DC slaves read access to cn=Builtin (Bug #32894)
+  * Give DC slaves read access to cn=apps, cn=udm:module, cn=ldapacl and
+    cn=ldapschema (Bug #32411)
+  * Bump version for UCS@school 3.2
+
+ -- Stefan Gohmann <gohmann@univention.de>  Fri, 18 Oct 2013 19:09:30 +0200
+
 ucs-school-ldap-acls-master (9.0.0-0) unstable; urgency=low
 
   * bumped version for UCS@school 3.1 R2
