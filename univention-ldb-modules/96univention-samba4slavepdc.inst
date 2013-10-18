@@ -157,7 +157,7 @@ _create_default_s4_groups ()
 		--set sambaRID="516" ||die
 
 	udm groups/group modify "$@" --dn "cn=Domain Controllers,cn=groups,$ldap_base" \
-		--append hosts="cn=master191,cn=dc,cn=computers,$ldap_base"
+		--append hosts="$ldap_hostdn"
 
 	udm groups/group create "$@" --set name="Server Operators" \
 		--ignore_exists \

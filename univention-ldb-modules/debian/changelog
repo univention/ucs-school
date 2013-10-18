@@ -1,3 +1,9 @@
+univention-ldb-modules (2.0.2-2) unstable; urgency=low
+
+  * Fixed typo in group creation (Bug #32894)
+
+ -- Stefan Gohmann <gohmann@univention.de>  Fri, 18 Oct 2013 19:17:47 +0200
+
 univention-ldb-modules (2.0.2-1) unstable; urgency=low
 
   * Create default S4 groups in slave pdc join script (Bug #32894)
