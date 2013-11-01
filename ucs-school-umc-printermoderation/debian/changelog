@@ -1,3 +1,9 @@
+ucs-school-umc-printermoderation (9.0.1-1) unstable; urgency=low
+
+  * fixed typo in german localisation (Bug #30930)
+
+ -- Lukas Walter <walter@univention.de>  Fri, 01 Nov 2013 14:38:01 +0100
+
 ucs-school-umc-printermoderation (9.0.0-0) unstable; urgency=low
 
   * bumped version for UCS@school 3.1 R2

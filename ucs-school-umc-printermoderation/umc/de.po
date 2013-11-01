@@ -13,7 +13,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 msgid "Moderate print jobs of students"
-msgstr "Moderation der Druckeraufträgen von Schülern"
+msgstr "Moderation der Druckeraufträge von Schülern"
 
 msgid "Moderate printers"
 msgstr "Drucker moderieren"
