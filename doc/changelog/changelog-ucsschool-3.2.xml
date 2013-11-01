@@ -98,6 +98,10 @@
 		</itemizedlist>
 		<section>
 			<title>Configuration wizard</title>
+			<listitem><simpara>
+				Only show hyperlinks to modules when the modules are abailable
+				(<ulink url="&ucsbug;32083">Bug 32083</ulink>).
+			</simpara></listitem>
 		</section>
 		<section>
 			<title>Computerroom module</title>
