@@ -99,7 +99,7 @@
 		<section>
 			<title>Configuration wizard</title>
 			<listitem><simpara>
-				Only show hyperlinks to modules when the modules are abailable
+				Only show hyperlinks to modules when the modules are available
 				(<ulink url="&ucsbug;32083">Bug 32083</ulink>).
 			</simpara></listitem>
 		</section>
