@@ -1,0 +1,39 @@
+<chapter id="school:performance:general">
+  <title>Hinweise für große &ucsUAS;-Umgebungen</title>
+  <para>
+	Die Standardkonfiguration von &ucsUCS; und &ucsUAS; ist für Umgebungen mit bis zu 5.000
+	Benutzern optimiert worden. In größeren Umgebungen kann es notwendig werden, Anpassungen an der
+	Standardkonfiguration vorzunehmen. Die meisten Schritte werden bereits im <emphasis>UCS performance
+	guide</emphasis> <biblioref linkend="ucs-performance-guide"/> beschrieben.
+  </para>
+  <para>
+	Darüber hinaus sollten einige Punkte bereits bei der Planung und dem Aufbau einer &ucsUAS;-Umgebung beachtet werden:
+	<itemizedlist>
+	  <listitem>
+		<simpara>
+		  Durch die Verwendung einer Multi-Server-Umgebung und einer geeigneten Unterteilung der
+		  Benutzerkonten auf mehrere Schul-OUs kann die Last der einzelnen Schulserver bei einer großen
+		  Gesamtanzahl an Benutzern erheblich reduziert werden. Zusätzlich wird durch die Unterteilung für die
+		  Nutzer das Bedienen der &ucsUAS;-Systeme erleichtert, da zum Beispiel die Menge der angezeigten
+		  Benutzer, Klassen, Räume usw. auf die jeweilige Schul-OU eingeschränkt wird.
+		</simpara>
+	  </listitem>
+	  <listitem>
+		<simpara>
+		  Gruppen mit einer großen Anzahl an Mitgliedern können negative Auswirkungen auf die
+		  Geschwindigkeit der &ucsUAS;-Systeme haben.  Es sollte daher beim Anlegen von Benutzern vermieden
+		  werden, dass alle Benutzer Mitglied einer bestimmten Gruppe (z.B. "Domain Users") werden.  Die
+		  &ucsUAS;-Importskripte beachten dies bereits und legen pro Schul-OU eine eigene Gruppe
+		  <emphasis>Domain Users OUNAME</emphasis> an, die als primäre Gruppe für die Benutzerkonten verwendet
+		  wird.
+		</simpara>
+		<simpara>
+		  Falls für die Rechteverwaltung eine Zusammenfassung der Benutzer notwendig ist, können
+		  mehrere dieser Gruppen über die <emphasis>Gruppen in Gruppen</emphasis>-Funktionalität
+		  zusammengeführt werden.  Die einzelnen <emphasis>Domain User OUNAME</emphasis>-Gruppen können dann
+		  bei Bedarf z.B. als Mitglied in der Gruppe <emphasis>Domain Users</emphasis> eingetragen werden.
+		</simpara>
+	  </listitem>
+	</itemizedlist>
+  </para>
+</chapter>

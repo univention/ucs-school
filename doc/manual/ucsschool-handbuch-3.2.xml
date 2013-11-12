@@ -14,6 +14,7 @@
 	  <!ENTITY import-hooks SYSTEM "import-hooks-de.xml">
 	  <!ENTITY schoolexam SYSTEM "schoolexam-de.xml">
 	  <!ENTITY ucc-integration SYSTEM "ucc-de.xml">
+	  <!ENTITY performance SYSTEM "performance-de.xml">
 
 	  <!ENTITY % entities SYSTEM "../stylesheets/macros-de.ent" >
 
@@ -29,8 +30,8 @@
     </subtitle>
     <legalnotice>
       <literallayout>
-Version 3.1 R2-1
-Stand: 29. Juli 2013
+Version 3.2
+Stand: 18. November 2013
       </literallayout>
 
       <literallayout>
@@ -67,11 +68,13 @@ feedback@univention.de
   &import-hooks;
   &schoolexam;
   &ucc-integration;
+  &performance;
 
   <bibliography>
 	<bibliomixed id="ucs-handbuch"/>
 	<bibliomixed id="ucc-handbuch"/>
 	<bibliomixed id="ucs-school-teacher"/>
+	<bibliomixed id="ucs-performance-guide"/>
   </bibliography>
 
   <?dbhtml-include href="../stylesheets/piwiki.html"?>
