@@ -99,6 +99,10 @@
 		<section>
 			<title>Configuration wizard</title>
 			<listitem><simpara>
+			    A problem within the configuration wizard has been fixed that caused an installation of samba 4 even though samba 3 has been selected by the user
+				(<ulink url="&ucsbug;33396">Bug 33396</ulink>).
+			</simpara></listitem>
+			<listitem><simpara>
 				Only show hyperlinks to modules when the modules are available
 				(<ulink url="&ucsbug;32083">Bug 32083</ulink>).
 			</simpara></listitem>
