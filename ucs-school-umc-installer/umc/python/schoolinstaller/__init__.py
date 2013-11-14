@@ -595,12 +595,16 @@ class Instance(Base):
 		sambaVersionInstalled = self.get_samba_version()
 		if serverRole == 'domaincontroller_slave':
 			# slave
-			if sambaVersionInstalled:
-				# do not install samba a second time
-				pass
-			elif samba == '3':
+			# Please note that the UCS installer only installs univention-samba. To install UCS@school on a Samba 3 system,
+			# the packages "univention-samba-slave-pdc" AND "ucs-school-slave" have to be installed together or consecutively
+			# in that order. Otherwise ucs-school-slave always installs samba 4.
+			if samba == '3':
 				installPackages.extend(['univention-samba', 'univention-samba-slave-pdc'])
-			else:  # -> samba4
+			elif samba == '4':
+				installPackages.extend(['univention-samba4', 'univention-s4-connector'])
+			elif sambaVersionInstalled == 3:  # safety fallback if samba is unset
+				installPackages.extend(['univention-samba', 'univention-samba-slave-pdc'])
+			elif sambaVersionInstalled == 4:  # safety fallback if samba is unset
 				installPackages.extend(['univention-samba4', 'univention-s4-connector'])
 			installPackages.append('ucs-school-slave')
 		else:

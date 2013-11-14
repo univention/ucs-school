@@ -1,3 +1,9 @@
+ucs-school-umc-installer (2.0.1-1) unstable; urgency=low
+
+  * Bug #33396: also install univention-samba-slave-pdc if samba3 has been selected
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Thu, 14 Nov 2013 18:53:26 +0100
+
 ucs-school-umc-installer (2.0.0-1) unstable; urgency=low
 
   * Bug #32083: fix dead hyperlinks
