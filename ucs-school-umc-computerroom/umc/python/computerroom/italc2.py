@@ -373,13 +373,14 @@ class ITALC_Computer( notifier.signals.Provider, QObject ):
 
 	@property
 	def ipAddress( self ):
-		if not 'ip' in self._computer.info or not self._computer.info[ 'ip' ]:
+		ip = self._computer.info.get('ip')
+		if not ip:
 			raise ITALC_Error( 'Unknown IP address' )
-		return self._computer.info[ 'ip' ][ 0 ]
+		return ip[0]
 
 	@property
 	def macAddress( self ):
-		return self._computer.info.get( 'mac', ( None, ) )[ 0 ]
+		return (self._computer.info.get('mac') or [''])[ 0 ]
 
 	@property
 	def isTeacher( self ):

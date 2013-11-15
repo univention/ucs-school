@@ -653,7 +653,7 @@ define([
 				width: '35%',
 				label: _('User')
 			}, {
-				name: 'watch',
+				name: '_watch',
 				label: ' ',
 				formatter: lang.hitch(this, function(v, rowIndex) {
 					var item = this._grid._grid.getItem(rowIndex);
@@ -665,7 +665,7 @@ define([
 
 					var widget = new Button({
 						label: _('Watch'),
-						style: 'background: none; border: 0 none;',
+						style: 'background: none; border: 0 none; text-shadow: none;',
 						onClick: lang.hitch(this, function() {
 							this._screenshot([id], [item]);
 						})
@@ -675,7 +675,7 @@ define([
 						'class': 'umcTooltip',
 						label: label,
 						connectId: [ widget.domNode ],
-						onShowDescription: function(target) {
+						onShow: function(target) {
 							var image = dom.byId('screenshotTooltip-' + id);
 							image.src = '/umcp/command/computerroom/screenshot?computer=' + id + '&random=' + Math.random();
 						}

@@ -1,3 +1,12 @@
+ucs-school-umc-computerroom (4.0.2-1) unstable; urgency=low
+
+  * Bug #33404: fix to show computers in the grid in Firefox
+  * Bug #33379: fix computerroom query when computer doesn't have a MAC
+  	address asigned
+  * fix displaying of screenshots when hovering the "watch" button
+
+ -- Florian Best <best@univention.de>  Fri, 15 Nov 2013 09:22:22 +0100
+
 ucs-school-umc-computerroom (4.0.1-1) unstable; urgency=low
 
   * Bug #32775: adapt grid
