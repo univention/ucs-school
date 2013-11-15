@@ -283,7 +283,7 @@ ucr unset ucsschool/singlemaster
 	  </para>
 	  <para>
 		Mit der Deinstallation des Pakets <emphasis>ucs-school-singlemaster</emphasis> werden die
-		nachfolgenden &ucsUAS;-spezifischen Pakete (UMC-Module), die normalerweise nicht auf einem DC Master
+		nachfolgenden &ucsUAS;-spezifischen Pakete (z.B. UMC-Module), die normalerweise nicht auf einem DC Master
 		der Multi-Server-Umgebung installiert sind, automatisch zur Löschung vorgesehen. Die eigentliche
 		Löschung findet während des nächsten Updates oder durch den manuellen Aufruf von <command>apt-get
 		autoremove</command> statt. Dabei ist zu beachten, dass neben den genannten Paketen ggf. auch
@@ -297,7 +297,13 @@ ucs-school-umc-helpdesk
 ucs-school-umc-internetrules
 ucs-school-umc-lessontimes
 ucs-school-umc-printermoderation
+ucs-school-netlogon
+ucs-school-netlogon-user-logonscripts
+ucs-school-old-homedirs
+ucs-school-old-sharedirs
+ucs-school-ucc-integration
 ucs-school-webproxy
+univention-squid-kerberos
 		</programlisting>
 		Um die Löschung einzelner Pakete zu vermeiden, kann der folgende Befehl verwendet werden, bei dem <command>PAKETNAME</command> durch den gewünschten Paketnamen auszutauschen ist:
 		<programlisting>
