@@ -1,3 +1,9 @@
+ucs-school-ldap-acls-master (10.0.1-1) unstable; urgency=low
+
+  * Bug #33421: grant write access to cn=apps,cn=univention to school DCs
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 15 Nov 2013 15:12:44 +0100
+
 ucs-school-ldap-acls-master (10.0.0-1) unstable; urgency=low
 
   * Give DC slaves read access to cn=Builtin (Bug #32894)
