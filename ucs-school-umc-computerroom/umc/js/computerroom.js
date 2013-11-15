@@ -148,9 +148,6 @@ define([
 		// internal reference to the detail page for editing an object
 		_detailPage: null,
 
-		// internal reference to the form for the active profile settings
-		_profileForm: null,
-
 		// widget to stop presentation
 		// _presentationWidget: null,
 		// _presentationText: '',
@@ -372,7 +369,7 @@ define([
 				this.umcpCommand('computerroom/user/logout', { computer: comp.id[0] });
 			}));
 
-			dialog.notify(_('The selected users are logging off.'));
+			this.addNotification(_('The selected users are logging off.'));
 		},
 
 		_computerChangeState: function(state, ids, items) {
@@ -393,7 +390,7 @@ define([
 				restart: _('The selected computers are rebooting.')
 			}[state];
 			if (msg) {
-				dialog.notify(msg);
+				this.addNotification(msg);
 			}
 		},
 
@@ -410,7 +407,7 @@ define([
 					});
 				}), 300*i);
 			}));
-			dialog.notify(_('The selected computers are booting up.'));
+			this.addNotification(_('The selected computers are booting up.'));
 		},
 
 		_demoStart: function(ids, items) {
@@ -440,7 +437,7 @@ define([
 				});
 				this._objStore.put({ id: comp.id[0], InputLock: null });
 			}));
-			dialog.notify(lock ? _('The selected computers get locked.') : _('The selected computers get unlocked.'));
+			this.addNotification(lock ? _('The selected computers get locked.') : _('The selected computers get unlocked.'));
 		},
 
 		_lockScreen: function(lock, ids, items) {
@@ -461,7 +458,7 @@ define([
 				});
 				this._objStore.put({ id: comp.id[0], ScreenLock: null });
 			}));
-			dialog.notify(lock ? _('The selected computers get locked.') : _('The selected computers get unlocked.'));
+			this.addNotification(lock ? _('The selected computers get locked.') : _('The selected computers get unlocked.'));
 		},
 
 		buildRendering: function() {
@@ -523,15 +520,25 @@ define([
 			this._searchPage.set('headerText', header);
 
 			// update visibility of header buttons
-			this._headButtons.finishExam.set('visible', roomInfo && roomInfo.exam);
-			this._headButtons.collect.set('visible', roomInfo && roomInfo.exam);
-			this._headButtons.examEndTime.set('visible', roomInfo && roomInfo.exam); // FIXME: Text widget does not support visible (Bug #32823)
+			if (this._headButtons.finishExam.domNode) {
+				this._headButtons.finishExam.set('visible', roomInfo && roomInfo.exam);
+			}
+			if (this._headButtons.collect.domNode) {
+				this._headButtons.collect.set('visible', roomInfo && roomInfo.exam);
+			}
+			if (this._headButtons.examEndTime.domNode) {
+				// FIXME: Text widget does not support visible (Bug #32823)
+				this._headButtons.examEndTime.set('visible', roomInfo && roomInfo.exam);
+			}
 			if (!roomInfo || !roomInfo.exam) {
 				this._headButtons.examEndTime.set('content', '');
 			}
 
 			// hide time period input field in settings dialog
 			this._settingsDialog.set('exam', roomInfo.exam);
+
+			// Bug #33413, remove in future!
+			this._grid.layout();
 		},
 
 		_setRoomInfoAttr: function(roomInfo) {
@@ -717,22 +724,10 @@ define([
 			// add the grid to the title pane
 			this._titlePane.addChild(this._grid);
 
-			// // add search form to the title pane
-			// this._titlePane.addChild(this._profileForm);
-
-			// add a toolbar for buttons above the grid
-			var _container = new ContainerWidget({ style: 'float: right' });
-			this._headButtons = {};
-
-			array.forEach(this._headActions, lang.hitch(this, function(button) {
-				var cls = button.type || Button;
-				_container.addChild(this._headButtons[button.name] = new cls(button));
-				if (button.name == 'settings') {
-					this._changeSettingsLabel = button.label;
-				}
+			this.addHeaderContainer();
+			this._grid.watch('actions', lang.hitch(this, function() {
+				this.addHeaderContainer();
 			}));
-
-			this._grid._header.addChild(_container);
 
 			//
 			// conclusion
@@ -750,6 +745,22 @@ define([
 			this._grid.moduleStore = this._objStore;
 			this._grid._dataStore = this._dataStore;
 			this._grid._grid.setStore(this._dataStore);
+		},
+
+		addHeaderContainer: function() {
+			// add a toolbar for buttons above the grid
+			var _container = new ContainerWidget({ style: 'float: right' });
+			this._headButtons = {};
+
+			array.forEach(this._headActions, lang.hitch(this, function(button) {
+				var cls = button.type || Button;
+				_container.addChild(this._headButtons[button.name] = new cls(button));
+				if (button.name == 'settings') {
+					this._changeSettingsLabel = button.label;
+				}
+			}));
+
+			this._grid._header.addChild(_container);
 		},
 
 		postCreate: function() {
@@ -934,7 +945,7 @@ define([
 
 		_stopPresentation: function() {
 			this.umcpCommand('computerroom/demo/stop', {});
-			dialog.notify(_('The presentation will stop now.'));
+			this.addNotification(_('The presentation will stop now.'));
 		},
 
 		changeRoom: function() {
@@ -1132,19 +1143,22 @@ define([
 					this._grid._updateFooterContent();
 				}
 
+				var settingColorStyle = 'color: inherit;';
 				if (response.result.settingEndsIn) {
 					var labelValidUntil = lang.replace('{label} (' + _('{time} minutes') + ')', {
 						time: response.result.settingEndsIn,
 						label: this._changeSettingsLabel
 					});
 					this._headButtons.settings.set('label', labelValidUntil);
-					this._headButtons.settings.set('style', (response.result.settingEndsIn <= 5) ? 'color: red;': 'color: inherit;');
+					settingColorStyle = (response.result.settingEndsIn <= 5) ? 'color: red;': 'color: inherit;';
 				} else {
 					if (this._headButtons.settings.get('label') != this._changeSettingsLabel) {
 						this._headButtons.settings.set('label', this._changeSettingsLabel);
 						this._settingsDialog.update();
 					}
-					this._headButtons.settings.set('style', 'color: inherit;');
+				}
+				if (this._headButtons.settings.domNode) {
+					this._headButtons.settings.set('style', settingColorStyle);
 				}
 
 				var endTime = this.get('roomInfo').examEndTime;
@@ -1152,7 +1166,10 @@ define([
 					endTime = endTime.split(':');
 					var now = new Date();
 					var delta = new Date(now.getFullYear(), now.getMonth(), now.getDate(), endTime[0], endTime[1], 0, 0) - now;
-					this._headButtons.examEndTime.set('style', (delta < 5*1000*60) ? 'color: red;' : 'color: inherit;');
+					if (this._headButtons.examEndTime.domNode) {
+						this._headButtons.examEndTime.set('style', (delta < 5*1000*60) ? 'color: red;' : 'color: inherit;');
+					}
+
 					var content = _('Time is up');
 					if (delta > 0) {
 						content = (delta <= 60000) ? _('1 minute left') : _('%s minutes left', String(1+(delta / 1000 / 60)).split('.')[0]);
@@ -1187,10 +1204,8 @@ define([
 				};
 
 				if (changed) {
-					this._grid.set('actions', lang.clone(this._actions), true);
-
-					// show or hide the "stop presentation" button
-					if (this._headButtons !== null) {
+					// show or hide the "stop presentation" button if already initialized
+					if (this._headButtons !== null && this._headButtons.stop_presentation && this._headButtons.stop_presentation.domNode) {
 						this._headButtons.stop_presentation.set('visible', demo);
 					}
 
