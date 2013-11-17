@@ -22,6 +22,12 @@
 	<title>Domain services</title>
 	<section>
 		<title>Samba4</title>
+			<itemizedlist>
+				<listitem><simpara>
+					The old Samba 4 database will be removed during the school DC setup
+					(<ulink url="&ucsbug;33398">Bug 33398</ulink>).
+				</simpara></listitem>
+			</itemizedlist>
 	</section>
 	<section>
 		<title>OpenLDAP</title>
