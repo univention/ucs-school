@@ -132,6 +132,9 @@
 				<listitem><simpara>
 				  Fixed detection whether the user of a connected iTALC client is a teacher or a student. The detection had failed if previously a teacher was logged in (<ulink url="&ucsbug;32035">Bug 32035</ulink>).
 				</simpara></listitem>
+				<listitem><simpara>
+				  A javascript error has been fixed that could lead to disappearing buttons within the computerroom module if an iTALC presentation has been started (<ulink url="&ucsbug;33409">Bug 33409</ulink>).
+				</simpara></listitem>
 			</itemizedlist>
 		</section>
 		<section>
