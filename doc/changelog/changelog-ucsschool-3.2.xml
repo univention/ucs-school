@@ -1,6 +1,8 @@
+<!-- 
 <section>
 	<title>General</title>
 </section>
+-->
 
 <section>
 	<title>Import scripts</title>
@@ -8,15 +10,17 @@
 				<listitem><simpara>
 					In single server environments the script <command>create_ou</command> now always uses the domaincontroller
 					master as responsible domaincontroller/fileserver for the new OU. This fixes wrongly assigned fileservers
-					for Marktplatz shares. Existing Marktplatz shares have to be fixed manually.
+					for <emphasis>Marktplatz</emphasis> shares. Existing <emphasis>Marktplatz</emphasis> shares have to be fixed manually.
 					Additionally the &ucsUCRV; <envar>ucsschool/defaultschoolname</envar> is not set anymore (<ulink url="&ucsbug;32095">Bug 32095</ulink>).
 				</simpara></listitem>
 			</itemizedlist>
 </section>
 
+<!--
 <section>
 	<title>iTALC</title>
 </section>
+-->
 
 <section>
 	<title>Domain services</title>
@@ -36,12 +40,12 @@
 		<title>LDAP ACL changes</title>
 			<itemizedlist>
 				<listitem><simpara>
-					Since UCS 3.2 some internal groups are located in cn=Builtin. The Slave DCs now have read
-					access to cn=Builtin
-					(<ulink url="&ucsbug;32894">Bug 32894</ulink>).
+					Since UCS 3.2 some internal groups are located in <emphasis>cn=Builtin</emphasis>. The Slave DCs (school DCs) now have read
+					access to <emphasis>cn=Builtin</emphasis> (<ulink url="&ucsbug;32894">Bug 32894</ulink>).
 				</simpara></listitem>
 			</itemizedlist>
 	</section>
+<!--	
 	<section>
 		<title>LDAP schema changes</title>
 	</section>
@@ -51,6 +55,7 @@
 	<section>
 		<title>Domain joins of UCS systems</title>
 	</section>
+-->
 	<section>
 		<title>Services for Windows</title>
 			<itemizedlist>
@@ -60,17 +65,20 @@
 				</simpara></listitem>
 
 				<listitem><simpara>
-					The internal Samba 4 groups are now created in the join script 96univention-samba4slavepdc.inst
+					The internal Samba 4 groups are now created in the join script <filename>96univention-samba4slavepdc.inst</filename>
 					(<ulink url="&ucsbug;32894">Bug 32894</ulink>).
 				</simpara></listitem>
 			</itemizedlist>
 
 	</section>
+<!--
 	<section>
 		<title>Univention S4 Connector</title>
 	</section>
+-->
 </section>
 
+<!--
 <section>
 	<title>Print services</title>
 </section>
@@ -86,7 +94,9 @@
 <section>
 	<title>Univention Directory Manager modules</title>
 </section>
+-->
 
+<!--
 <section>
 	<title>Univention Management Console</title>
 	<section>
@@ -95,6 +105,7 @@
 	<section>
 		<title>Univention Management Console web interface</title>
 	</section>
+-->
 	<section>
 		<title>Univention Management Console modules</title>
 		<itemizedlist>
@@ -104,14 +115,16 @@
 		</itemizedlist>
 		<section>
 			<title>Configuration wizard</title>
-			<listitem><simpara>
+			<itemizedlist>
+			  <listitem><simpara>
 			    A problem within the configuration wizard has been fixed that caused an installation of samba 4 even though samba 3 has been selected by the user
 				(<ulink url="&ucsbug;33396">Bug 33396</ulink>).
-			</simpara></listitem>
-			<listitem><simpara>
-				Only show hyperlinks to modules when the modules are available
+			  </simpara></listitem>
+			  <listitem><simpara>
+				Hyperlinks to modules are now only shown if the modules are available on the corresponding UCS system
 				(<ulink url="&ucsbug;32083">Bug 32083</ulink>).
-			</simpara></listitem>
+			  </simpara></listitem>
+			</itemizedlist>
 		</section>
 		<section>
 			<title>Computerroom module</title>
@@ -130,9 +143,11 @@
 				</simpara></listitem>
 			</itemizedlist>
 		</section>
+<!--
 		<section>
 			<title>Helpdesk module</title>
 		</section>
+-->
 		<section>
 			<title>Add User wizard</title>
 			<itemizedlist>
@@ -142,8 +157,12 @@
 			</itemizedlist>
 		</section>
 	</section>
+<!--
 </section>
+-->
 
+<!--
 <section>
 	<title>Other changes</title>
 </section>
+-->

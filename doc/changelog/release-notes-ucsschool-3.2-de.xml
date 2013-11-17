@@ -17,7 +17,7 @@
 		<legalnotice>
 			<literallayout>
 Version 3.2
-Stand: 29. Sep 2013
+Stand: 18. Nov 2013
 			</literallayout>
 			<literallayout>
 Alle Rechte vorbehalten./ All rights reserved.
@@ -40,71 +40,64 @@ feedback@univention.de
 	</bookinfo>
 
 	<chapter>
-		<title>Release-Highlights</title>
-			<para>
-				TODO
-			</para>
+	  <title>Empfohlene Update-Reihenfolge für Umgebungen mit mehr als einem UCS-Server / Update von Systemen mit UCS-Komponenten</title>
+	  <para>
+		Für das Update von UCS-Umgebungen mit mehr als einem UCS-System wird
+		die nachfolgende Vorgehensreihenfolge empfohlen und muss beachtet werden:
+	  </para>
+	  <para>
+		Auf dem &ucsMaster; wird die maßgebliche (authoritative) Version des
+		LDAP-Verzeichnis-dienstes vorgehalten, die an alle übrigen LDAP-Server der UCS-Domäne
+		repliziert wird. Da bei Release-Updates Veränderungen an den LDAP-Schemata auftreten
+		können muss der &ucsMaster; bei einem Release-Update immer als erstes System aktualisiert werden.
+	  </para>
+	  <para>
+		Generell ist es empfehlenswert alle UCS-Systeme möglichst in einem Wartungsfenster zu
+		aktualisieren.
+	  </para>
+	  <section>
+		<title>Hinweise zu Umgebungen mit anderer Dritt-Software</title>
+		<para>
+		  Bei der Verwendung von 3rd-Party-Software ist generell <emphasis>vor</emphasis> dem Update
+		  mit dem Hersteller/Vertriebspartner der Software zu klären, ob diese mit der neuen Version
+		  von Univention Corporate Server weiterhin uneingeschränkt einsetzbar ist. 
+		</para>
+		<para>
+		  Die Hersteller/Vertriebspartner von auf Univention Corporate Server basierenden Produkten
+		  sorgen eigenständig für die Veröffentlichung. Updates müssen daher von dort bezogen
+		  werden.
+		</para>
+		<para>
+		  Falls Ihnen von Univention angepasste Paketversionen bereitgestellt wurden, so sollte
+		  geprüft werden, ob durch die Aktualisierung angepasste Pakete überschrieben werden -
+		  vorzugsweise in einer Testumgebung. Sollten Sie hier Probleme feststellen, so wenden Sie
+		  sich bitte an Univention.
+		</para>
+	  </section>
 	</chapter>
 
 	<chapter>
-		<title>Empfohlene Update-Reihenfolge für Umgebungen mit mehr als einem UCS-Server / Update von Systemen mit UCS-Komponenten</title>
-			<para>
-				Für das Update von UCS-Umgebungen mit mehr als einem UCS-System wird
-				die nachfolgende Vorgehensreihenfolge empfohlen und muss beachtet werden:
-			</para>
-			<para>
-				Auf dem &ucsMaster; wird die maßgebliche (authoritative) Version des
-				LDAP-Verzeichnis-dienstes vorgehalten, die an alle übrigen LDAP-Server der UCS-Domäne
-				repliziert wird. Da bei Release-Updates Veränderungen an den LDAP-Schemata auftreten
-				können muss der &ucsMaster; bei einem Release-Update immer als erstes System aktualisiert werden.
-			</para>
-			<para>
-				Generell ist es empfehlenswert alle UCS-Systeme möglichst in einem Wartungsfenster zu
-				aktualisieren.
-			</para>
-		<section>
-			<title>Hinweise zu Umgebungen mit anderer Dritt-Software</title>
-			<para>
-				Bei der Verwendung von 3rd-Party-Software ist generell <emphasis>vor</emphasis> dem Update
-				mit dem Hersteller/Vertriebspartner der Software zu klären, ob diese mit der neuen Version
-				von Univention Corporate Server weiterhin uneingeschränkt einsetzbar ist. 
-			</para>
-			<para>
-				Die Hersteller/Vertriebspartner von auf Univention Corporate Server basierenden Produkten
-				sorgen eigenständig für die Veröffentlichung. Updates müssen daher von dort bezogen
-				werden.
-			</para>
-			<para>
-				Falls Ihnen von Univention angepasste Paketversionen bereitgestellt wurden, so sollte
-				geprüft werden, ob durch die Aktualisierung angepasste Pakete überschrieben werden -
-				vorzugsweise in einer Testumgebung. Sollten Sie hier Probleme feststellen, so wenden Sie
-				sich bitte an Univention.
-			</para>
-		</section>
-	</chapter>
-
-	<chapter>
-		<title>Vorbereitung von Installation und Update</title>
-			<para>
-				Es sollte geprüft werden, ob ausreichend Festplattenplatz verfügbar ist. Eine
-				Standard-Installation benötigt min. 6 GB Speicherplatz. Das Update benötigt je nach Umfang
-				der vorhanden Installation mindestens 1 GB weiteren Speicherplatz zum Herunterladen und
-				Installieren der Pakete.
-			</para>
-			<para>
-				Für das Update sollte eine Anmeldung auf der Console mit dem Benutzer
-				<emphasis>root</emphasis> durchgeführt und das Update dort gestartet werden. Alternativ
-				kann das Update über die &ucsUMC; durchgeführt werden.
-			</para>
-			<para>
-				Eine Remote-Aktualisierung über SSH wird nicht empfohlen, da dies beispielsweise bei
-				Unterbrechung der Netzverbindung zum Abbruch des Update-Vorgangs und zu einer
-				Beeinträchtigung des Systems führen kann. Sollte dennoch eine Aktualisierung über eine
-				Netzverbindung durchgeführt werden, ist sicherzustellen, dass das Update bei Unterbrechung
-				der Netzverbindung trotzdem weiterläuft. Hierfür können beispielsweise die Tools
-				<command>screen</command> oder <command>at</command> eingesetzt werden, die auf allen
-				Systemrollen installiert sind.
-			</para>
+	  <title>Vorbereitung von Installation und Update</title>
+	  <para>
+		Es sollte geprüft werden, ob ausreichend Festplattenplatz verfügbar ist. Eine
+		Standard-Installation benötigt min. 6 GB Speicherplatz. Das Update benötigt je nach Umfang
+		der vorhanden Installation mindestens 1 GB weiteren Speicherplatz zum Herunterladen und
+		Installieren der Pakete.
+	  </para>
+	  <para>
+		Für das Update sollte eine Anmeldung auf der Console mit dem Benutzer
+		<emphasis>root</emphasis> durchgeführt und das Update dort gestartet werden. Alternativ
+		kann das Update über die &ucsUMC; durchgeführt werden.
+	  </para>
+	  <para>
+		Eine Remote-Aktualisierung über SSH wird nicht empfohlen, da dies beispielsweise bei
+		Unterbrechung der Netzverbindung zum Abbruch des Update-Vorgangs und zu einer
+		Beeinträchtigung des Systems führen kann. Sollte dennoch eine Aktualisierung über eine
+		Netzverbindung durchgeführt werden, ist sicherzustellen, dass das Update bei Unterbrechung
+		der Netzverbindung trotzdem weiterläuft. Hierfür können beispielsweise die Tools
+		<command>screen</command> oder <command>at</command> eingesetzt werden, die auf allen
+		Systemrollen installiert sind.
+	  </para>
 	</chapter>
 
 	<chapter>
@@ -143,6 +136,9 @@ feedback@univention.de
 				</listitem>
 				<listitem>
 					<para>Safari (auf dem iPad 2)</para>
+				</listitem>
+				<listitem>
+					<para>Android-Browser (ab Android 4.1)</para>
 				</listitem>
 			</itemizedlist>
 			<para>
@@ -184,22 +180,10 @@ feedback@univention.de
 		</section>
 
 		<section>
-			<title>Deaktivierung der Generierung von LM-Hashes</title>
-			<para>
-				In Samba 3 wurden die Passwörter von Benutzern im LM-Hashverfahren gespeichert.
-				In Umgebungen mit UCS 3.x sind diese Hash-Einträge nicht mehr notwendig.
-			</para>
-			<para>
-				In der Standardeinstellung werden ab UCS 3.0 keine LM-Hashes mehr generiert.
-				Das alte Verhalten kann durch Setzen der &ucsUCR;-Variable <envar>password/samba/lmhash</envar>
-				auf <emphasis>true</emphasis> wieder aktiviert werden.
-			</para>
-		</section>
-
-		<section>
 			<title>Änderungen an LDAP-ACLs</title>
 			<para>
-				TODO
+			  Es wurden zusätzliche LDAP-ACLs für UCS@school hinzugefügt, die eine Replikation von
+			  Containern mit UCS-internen Datenstrukturen auf Schulserver (Domaincontroller Slave) erlauben.
 			</para>
 		</section>
 	</chapter>
