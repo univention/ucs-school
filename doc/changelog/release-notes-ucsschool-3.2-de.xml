@@ -47,7 +47,7 @@ feedback@univention.de
 	  </para>
 	  <para>
 		Auf dem &ucsMaster; wird die maßgebliche (authoritative) Version des
-		LDAP-Verzeichnis-dienstes vorgehalten, die an alle übrigen LDAP-Server der UCS-Domäne
+		LDAP-Verzeichnisdienstes vorgehalten, die an alle übrigen LDAP-Server der UCS-Domäne
 		repliziert wird. Da bei Release-Updates Veränderungen an den LDAP-Schemata auftreten
 		können muss der &ucsMaster; bei einem Release-Update immer als erstes System aktualisiert werden.
 	  </para>
@@ -85,7 +85,7 @@ feedback@univention.de
 		Installieren der Pakete.
 	  </para>
 	  <para>
-		Für das Update sollte eine Anmeldung auf der Console mit dem Benutzer
+		Für das Update sollte eine Anmeldung auf der Konsole mit dem Benutzer
 		<emphasis>root</emphasis> durchgeführt und das Update dort gestartet werden. Alternativ
 		kann das Update über die &ucsUMC; durchgeführt werden.
 	  </para>
@@ -192,7 +192,7 @@ feedback@univention.de
 		<title>Changelog</title>
 		<para>
 			Die Changelogs mit den detaillierten Änderungsinformationen werden nur in Englisch
-			gepflegt. Aufgeführt sind die Änderung seit UCS@school 3.1R2-2:
+			gepflegt. Aufgeführt sind die Änderungen seit UCS@school 3.1R2-2:
 		</para>
 		&changelog;
 	</chapter>

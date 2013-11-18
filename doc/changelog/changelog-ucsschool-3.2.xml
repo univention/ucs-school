@@ -65,7 +65,7 @@
 				</simpara></listitem>
 
 				<listitem><simpara>
-					The internal Samba 4 groups are now created in the join script <filename>96univention-samba4slavepdc.inst</filename>
+					The internal Samba 4 groups are now created by the join script <filename>96univention-samba4slavepdc.inst</filename>
 					(<ulink url="&ucsbug;32894">Bug 32894</ulink>).
 				</simpara></listitem>
 			</itemizedlist>
