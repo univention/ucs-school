@@ -1,3 +1,11 @@
+ucs-school-umc-wizards (4.0.0-2) unstable; urgency=low
+
+  * Bug #33559: Usernames (and other attributes) already used are blocked by
+    the wizard. This test did not search for exact equality but for
+    substrings which is too strict. Fixed that.
+
+ -- Dirk Wiesenthal <wiesenthal@univention.de>  Tue, 03 Dec 2013 13:09:39 +0100
+
 ucs-school-umc-wizards (4.0.0-1) unstable; urgency=low
 
   * Bug #32337: don't create a class with OU prefix if class without OU prefix
