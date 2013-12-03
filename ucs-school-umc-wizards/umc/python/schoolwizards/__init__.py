@@ -61,13 +61,13 @@ class Instance(SchoolBaseModule, SchoolImport):
 			                 % ','.join(missing))
 
 	def _username_used(self, username, ldap_user_read):
-		ldap_filter = LDAP_Filter.forAll(username, ['username'])
+		ldap_filter = LDAP_Filter.forAll(username, fullMatch=['username'])
 		user_exists = udm_modules.lookup('users/user', None, ldap_user_read,
 		                                 scope = 'sub', filter = ldap_filter)
 		return bool(user_exists)
 
 	def _mail_address_used(self, address, ldap_user_read):
-		ldap_filter = LDAP_Filter.forAll(address, ['mailPrimaryAddress'])
+		ldap_filter = LDAP_Filter.forAll(address, fullMatch=['mailPrimaryAddress'])
 		address_exists = udm_modules.lookup('users/user', None, ldap_user_read,
 		                                    scope = 'sub', filter = ldap_filter)
 		return bool(address_exists)
@@ -76,25 +76,25 @@ class Instance(SchoolBaseModule, SchoolImport):
 		return bool(name in search_base.availableSchools)
 
 	def _class_name_used(self, school, name, ldap_user_read, search_base):
-		ldap_filter = LDAP_Filter.forAll(name, ['name'], prefixes = { 'name' : '%s-' % school })
+		ldap_filter = LDAP_Filter.forAll('%s-%s' % (school, name), fullMatch=['name'])
 		class_exists = udm_modules.lookup('groups/group', None, ldap_user_read, scope = 'one',
 		                                  filter = ldap_filter, base = search_base.classes)
 		return bool(class_exists)
 
 	def _computer_name_used(self, name, ldap_user_read):
-		ldap_filter = LDAP_Filter.forAll(name, ['name'])
+		ldap_filter = LDAP_Filter.forAll(name, fullMatch=['name'])
 		computer_exists = udm_modules.lookup('computers/computer', None, ldap_user_read,
 		                                     scope = 'sub', filter = ldap_filter)
 		return bool(computer_exists)
 
 	def _mac_address_used(self, address, ldap_user_read):
-		ldap_filter = LDAP_Filter.forAll(address, ['mac'])
+		ldap_filter = LDAP_Filter.forAll(address, fullMatch=['mac'])
 		address_exists = udm_modules.lookup('computers/computer', None, ldap_user_read,
 		                                    scope = 'sub', filter = ldap_filter)
 		return bool(address_exists)
 
 	def _ip_address_used(self, address, ldap_user_read):
-		ldap_filter = LDAP_Filter.forAll(address, ['ip'])
+		ldap_filter = LDAP_Filter.forAll(address, fullMatch=['ip'])
 		address_exists = udm_modules.lookup('computers/computer', None, ldap_user_read,
 		                                    scope = 'sub', filter = ldap_filter)
 		return bool(address_exists)
