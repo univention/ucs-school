@@ -1,77 +1,55 @@
-ucs-school-umc-computerroom (4.2.4-1) unstable; urgency=low
+ucs-school-umc-computerroom (4.0.3-1) unstable; urgency=low
 
-  * Update UCS@School 3.2 port. Ticket #2013102221003669
+  * Bug #33409: fix displaying of buttons when presentation starts
 
- -- Daniel Orrego <orrego@univention.de>  Mon, 09 Dec 2013 14:11:05 +0100
+ -- Florian Best <best@univention.de>  Fri, 15 Nov 2013 12:11:17 +0100
 
-ucs-school-umc-computerroom (4.1-4.2) unstable; urgency=low
+ucs-school-umc-computerroom (4.0.2-1) unstable; urgency=low
 
-  * UCS@School 3.2 port. Ticket #2013102221003669
-  
- -- Daniel Orrego <orrego@univention.de>  Fri, 06 Dec 2013 15:25:42 +0100
+  * Bug #33404: fix to show computers in the grid in Firefox
+  * Bug #33379: fix computerroom query when computer doesn't have a MAC
+  	address asigned
+  * fix displaying of screenshots when hovering the "watch" button
 
-ucs-school-umc-computerroom (4.0-4.1) unstable; urgency=low
+ -- Florian Best <best@univention.de>  Fri, 15 Nov 2013 09:22:22 +0100
 
-  * Merge from latest dev branch: Ticket #2013102221003669
+ucs-school-umc-computerroom (4.0.1-1) unstable; urgency=low
 
- -- Daniel Orrego <orrego@univention.de>  Wed, 04 Dec 2013 19:53:58 +0100
+  * Bug #32775: adapt grid
 
-ucs-school-umc-computerroom (3.2.0-1) unstable; urgency=low
+ -- Florian Best <best@univention.de>  Tue, 15 Oct 2013 09:54:18 +0200
 
-  * bump version. Ticket #2013102221003669
+ucs-school-umc-computerroom (4.0.0-1) unstable; urgency=low
 
- -- Jan Christoph Ebersbach <ebersbach@univention.de>  Mon, 11 Nov 2013 10:12:34 +0100
+  * Bug #32035: bumped version for UCS@school 3.2
 
-ucs-school-umc-computerroom (3.1.3-5) unstable; urgency=low
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Wed, 02 Oct 2013 14:13:58 +0200
 
-  * fix typo. Ticket #2013050321003348
+ucs-school-umc-computerroom (3.0.14-1) unstable; urgency=low
 
- -- Florian Best <best@univention.de>  Mon, 08 Jul 2013 09:12:01 +0200
+  * Bug #32035: make the state change detection more robust
 
-ucs-school-umc-computerroom (3.1.3-4) unstable; urgency=low
+ -- Florian Best <best@univention.de>  Fri, 06 Sep 2013 15:45:26 +0200
 
-  * add copyright block to postinst. Ticket #2013050321003348
+ucs-school-umc-computerroom (3.0.13-4) unstable; urgency=low
 
- -- Jan Christoph Ebersbach <ebersbach@univention.de>  Sun, 07 Jul 2013 21:48:07 +0200
+  * Added support for cups printer restriction (Bug #31902)
+  * Computerroommodule sets UCR variable cups/printmode/hosts
+  * Cups is reloaded after changing the variables and after resetting them
 
-ucs-school-umc-computerroom (3.1.3-3) unstable; urgency=low
+ -- Erik Damrose <damrose@univention.de>  Thu, 18 Jul 2013 10:55:11 +0200
 
-  * properly create user. Ticket #2013050321003348
+ucs-school-umc-computerroom (3.0.13-3) unstable; urgency=low
 
- -- Jan Christoph Ebersbach <ebersbach@univention.de>  Sun, 07 Jul 2013 21:12:07 +0200
+  * Bug #31903: fix typo
 
-ucs-school-umc-computerroom (3.1.3-2) unstable; urgency=low
+ -- Florian Best <best@univention.de>  Mon, 08 Jul 2013 14:56:29 +0200
 
-  * set opsi ucr variables. Ticket #2013050321003348
-  * create schoolopsiadmin user during join
+ucs-school-umc-computerroom (3.0.13-2) unstable; urgency=low
 
- -- Jan Christoph Ebersbach <ebersbach@univention.de>  Sun, 07 Jul 2013 20:50:49 +0200
+  * Bug #31903: deactivate functionality for UCC clients
 
-ucs-school-umc-computerroom (3.1.3-1) unstable; urgency=low
-
-  * adapt error handling, ucr variable descriptions, translations; 
-    Ticket#: 2013050321003321, Ticket#: 2013050321003348
-
- -- Florian Best <best@univention.de>  Thu, 20 Jun 2013 12:50:47 +0200
-
-ucs-school-umc-computerroom (3.1.2-1) unstable; urgency=low
-
-  * implement OPSI functionality; Ticket#: 2013050321003321
-
- -- Florian Best <best@univention.de>  Wed, 19 Jun 2013 16:56:48 +0200
-
-ucs-school-umc-computerroom (3.1.1-1) unstable; urgency=low
-
-  * integrate UCC client; Ticket#: 2013050321003348
-  * integrate functionality to reset a computer; Ticket#: 2013050321003321
-
- -- Florian Best <best@univention.de>  Tue, 18 Jun 2013 13:37:39 +0200
-
-ucs-school-umc-computerroom (3.1.0-1) unstable; urgency=low
-
-  * Version bump for customer scope (Ticket#: 2013050321003321)
-
- -- Alexander Kläser <klaeser@univention.de>  Mon, 17 Jun 2013 17:22:25 +0200
+ -- Florian Best <best@univention.de>  Mon, 08 Jul 2013 09:30:26 +0200
 
 ucs-school-umc-computerroom (3.0.13-1) unstable; urgency=low
 
@@ -179,7 +157,7 @@ ucs-school-umc-computerroom (2.0.35-1) unstable; urgency=low
 ucs-school-umc-computerroom (2.0.34-1) unstable; urgency=low
 
   * Bug #31164: implement end time of exam, add notification when exam has
-        ended
+  	ended
 
  -- Florian Best <best@univention.de>  Thu, 16 May 2013 09:23:58 +0200
 
@@ -324,7 +302,7 @@ ucs-school-umc-computerroom (2.0.13-1) unstable; urgency=low
 ucs-school-umc-computerroom (2.0.12-1) unstable; urgency=low
 
   * revert regression: when no computers where selected for screenshot view
-        show every; Bug #30515
+  	show every; Bug #30515
 
  -- Florian Best <best@univention.de>  Thu, 04 Apr 2013 10:02:47 +0200
 
@@ -345,7 +323,7 @@ ucs-school-umc-computerroom (2.0.9-2) unstable; urgency=low
   * Add 'more'-menu to computerroom grid actions; Bug #30515
   * always display possible grid actions; Bug #30513
   * display notification when starting, restarting or shutting down a
-        computer; Bug #30522
+  	computer; Bug #30522
 
  -- Florian Best <best@univention.de>  Wed, 27 Mar 2013 11:10:34 +0100
 

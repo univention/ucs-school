@@ -185,10 +185,6 @@ msgstr "Definiert Einschränkungen für den Zugriff auf Freigaben"
 msgid "Do not remind again"
 msgstr "Nicht mehr erinnern"
 
-#: umc/js/computerroom.js:615
-msgid "Error"
-msgstr "Fehler"
-
 #: umc/js/computerroom.js:620
 #, python-format
 msgid "Exam mode - %s"
@@ -327,10 +323,6 @@ msgstr "Erneut erinnern"
 msgid "Reset"
 msgstr "Zurücksetzen"
 
-#: umc/js/computerroom.js:584
-msgid "Reset computer"
-msgstr "Computer zurücksetzen"
-
 #: umc/js/computerroom.js:356
 msgid "Restart computer"
 msgstr "Computer neu starten"
@@ -466,10 +458,6 @@ msgid ""
 msgstr ""
 "Der Raum ist leer oder die Computer sind nicht korrekt eingerichtet. Bitte "
 "wählen Sie einen anderen Raum."
-
-#: umc/js/computerroom.js:619
-msgid "The selected computers are being reset."
-msgstr "Die ausgewählten Computer werden zurückgesetzt."
 
 #: umc/js/computerroom.js:351
 msgid "The selected computers are booting up."

@@ -9,27 +9,3 @@ Description[de]=UMC-Computerraum-Administration: auf "yes" setzen, um UltraVNC-S
 Description[en]=UMC-Computerroom-Administration: set "yes" to activate UltraVNC shortcut (Default: false)
 Type=str
 Categories=management-umc
-
-[opsi/http/server]
-Description[de]=Servername des OPSI-HTTP-Servers (Default: ldap/server/name)
-Description[en]=Servername of the OPSI HTTP server (Default: ldap/server/name)
-Type=str
-Categories=management-umc
-
-[opsi/http/port]
-Description[de]=Port des OPSI-HTTP-Servers (Default: 4447)
-Description[en]=Port of the OPSI HTTP server (Default: 4447)
-Type=int
-Categories=management-umc
-
-[opsi/http/username]
-Description[de]=Benutzername für OPSI-Authentifikation (Default: schoolopsiadmin)
-Description[en]=Username for OPSI authentification (Default: schoolopsiadmin)
-Type=str
-Categories=management-umc
-
-[opsi/http/passwordfile]
-Description[de]=Passworddatei für OPSI-Authentifikation (Default: /etc/schoolopsiadmin.secret)
-Description[en]=Passwordfile for OPSI authentification (Default: /etc/schoolopsiadmin.secret)
-Type=str
-Categories=management-umc

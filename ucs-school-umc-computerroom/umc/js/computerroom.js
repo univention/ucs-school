@@ -35,7 +35,6 @@ define([
 	"dojo/aspect",
 	"dojo/dom",
 	"dojo/Deferred",
-	"dojo/promise/all",
 	"dojo/data/ItemFileWriteStore",
 	"dojo/store/DataStore",
 	"dojo/store/Memory",
@@ -59,7 +58,7 @@ define([
 	"umc/modules/computerroom/ScreenshotView",
 	"umc/modules/computerroom/SettingsDialog",
 	"umc/i18n!umc/modules/computerroom"
-], function(declare, lang, array, aspect, dom, Deferred, all, ItemFileWriteStore, DataStore, Memory, DijitProgressBar,
+], function(declare, lang, array, aspect, dom, Deferred, ItemFileWriteStore, DataStore, Memory, DijitProgressBar,
             Dialog, Tooltip, styles, dialog, tools, app, ExpandingTitlePane, Grid, Button, Module, Page, Form,
             ContainerWidget, Text, ComboBox, ProgressBar, ScreenshotView, SettingsDialog, _) {
 
@@ -122,15 +121,6 @@ define([
 		return _decorated;
 	};
 
-
-	var isUCC = function(item) { return item.objectType[0] === 'computers/ucc'; };
-	var filterUCC = function(items) { return array.filter(items, function(item) { return !isUCC(item); }); };
-	var alert_UCC_unavailable = function(items) {
-		var clients = array.filter(items, lang.clone(isUCC));
-		if (clients.length) {
-			dialog.alert(_('The action is unavailable for UCC computers.<br>The following computers will be omitted: %s', array.map(clients, function(comp) { return comp.id[0]; }).join(', ')));
-		}
-	};
 
 	return declare("umc.modules.computerroom", [ Module ], {
 		// summary:
@@ -700,45 +690,6 @@ define([
 					widget.own(tooltip);
 
 					return widget;
-				})
-			}, {
-				name: 'reset',
-				label: _('Reset computer'),
-				isStandardAction: false,
-				isMultiAction: true,
-				callback: lang.hitch(this, function(ids, items) {
-					if (items.length === 0) {
-						dialog.alert(_('No computers were selected. Please select computers.'));
-						return;
-					}
-
-					all(array.map(items, lang.hitch(this, function(item) {
-						return this.umcpCommand('computerroom/computer/reset', {
-							computer: item.id[0]
-						});
-					}))).then(lang.hitch(this, function(results) {
-						// error handling
-						var errors = {};
-						var error = false;
-						array.forEach(results, lang.hitch(this, function(data, i) {
-							if (!data.result.success) {
-								error = true;
-								if (!errors[data.result.error]) {
-									errors[data.result.error] = [];
-								}
-								errors[data.result.error].push(ids[i]);
-							}
-						}));
-						if (error) {
-							var errorstr = '';
-							tools.forIn(errors, lang.hitch(this, function(error, computers) {
-								errorstr += error + '<br>' + _('The following computers could not be reset: ') + computers.join(', ') + '<br>';
-							}));
-							dialog.alert(errorstr, _('Error'));
-						}
-					}));
-
-					dialog.notify(_('The selected computers are being reset.'));
 				})
 			}];
 
