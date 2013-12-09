@@ -63,9 +63,10 @@ define([
             ContainerWidget, Text, ComboBox, ProgressBar, ScreenshotView, SettingsDialog, _) {
 
 	// prepare CSS rules for module
-	//var iconPath = require.toUrl('dijit/themes/umc/icons/16x16');
-	//styles.insertCssRule('.umcIconCollectFiles', lang.replace('background-image: url({path}/computerroom-icon-collect-files.png); width: 16px; height: 16px;', { path: iconPath }));
-	//styles.insertCssRule('.umcIconFinishExam', lang.replace('background-image: url({path}/computerroom-icon-finish-exam.png); width: 16px; height: 16px;', { path: iconPath }));
+	var iconPath = require.toUrl('dijit/themes/umc/icons/16x16');
+	styles.insertCssRule('.umc .dojoxGridCell .dijitButtonText', 'text-decoration: none;');
+	styles.insertCssRule('.umcIconCollectFiles', lang.replace('background-image: url({path}/computerroom-icon-collect-files.png); width: 16px; height: 16px;', { path: iconPath }));
+	styles.insertCssRule('.umcIconFinishExam', lang.replace('background-image: url({path}/computerroom-icon-finish-exam.png); width: 16px; height: 16px;', { path: iconPath }));
 
 	// make sure that the computerroom can only be opened once
 	// TODO: This workaround should be undone with Bug #31442
@@ -206,7 +207,7 @@ define([
 			};
 
 			// define actions above grid
-			this._headActions = [{
+			this._headActionsTop = [{
 //				type: Text,
 				name: 'examEndTime',
 				'class': 'dijitButtonText',
@@ -218,18 +219,19 @@ define([
 				visible: false
 			}, {
 				name: 'collect',
-				//iconClass: 'umcIconCollectFiles',
+				iconClass: 'umcIconCollectFiles',
 				visible: false,
 				label: _('Collect results'),
 				callback: lang.hitch(this, '_collectExam')
 			}, {
 				name: 'finishExam',
-				//iconClass: 'umcIconFinishExam',
+				iconClass: 'umcIconFinishExam',
 				visible: false,
 				label: _('Finish exam'),
 				style: 'margin-right: 2.5em;',
 				callback: lang.hitch(this, '_finishExam')
-			}, {
+			}];
+			this._headActions = [{
 				name: 'settings',
 				label: _('Change settings'),
 				callback: lang.hitch(this, function() { this._settingsDialog.show(); })
@@ -672,7 +674,7 @@ define([
 
 					var widget = new Button({
 						label: _('Watch'),
-						style: 'background: none; border: 0 none; text-shadow: none;',
+						//style: 'background: none; border: 0 none; text-shadow: none;',
 						onClick: lang.hitch(this, function() {
 							this._screenshot([id], [item]);
 						})
@@ -749,18 +751,24 @@ define([
 
 		addHeaderContainer: function() {
 			// add a toolbar for buttons above the grid
-			var _container = new ContainerWidget({ style: 'float: right' });
+			var _containerRight = new ContainerWidget({ style: 'float: right' });
+			var _containerTop = new ContainerWidget({ style: 'width: 100%; padding-bottom: 5px;' });
 			this._headButtons = {};
 
-			array.forEach(this._headActions, lang.hitch(this, function(button) {
-				var cls = button.type || Button;
-				_container.addChild(this._headButtons[button.name] = new cls(button));
-				if (button.name == 'settings') {
-					this._changeSettingsLabel = button.label;
-				}
-			}));
+			var addButtonTo = lang.hitch(this, function(container) {
+				return lang.hitch(this, function(button) {
+					var cls = button.type || Button;
+					container.addChild(this._headButtons[button.name] = new cls(button));
+					if (button.name == 'settings') {
+						this._changeSettingsLabel = button.label;
+					}
+				});
+			});
+			array.forEach(this._headActions, addButtonTo(_containerRight));
+			array.forEach(this._headActionsTop, addButtonTo(_containerTop));
 
-			this._grid._header.addChild(_container);
+			this._grid._header.addChild(_containerRight);
+			this._grid._header.addChild(_containerTop, 0);
 		},
 
 		postCreate: function() {

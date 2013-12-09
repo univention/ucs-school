@@ -459,7 +459,8 @@ class Instance(SchoolBaseModule):
 		response = Response(mime_type = MIMETYPE_JPEG)
 		response.id = request.id
 		response.command = 'COMMAND'
-		response.body = open(tmpfile.name).read()
+		with open(tmpfile.name, 'rb') as fd:
+			response.body = fd.read()
 		os.unlink(tmpfile.name)
 		self.finished(request.id, response)
 
@@ -479,7 +480,7 @@ class Instance(SchoolBaseModule):
 			self.finished(request.id, 'VNC is disabled')
 
 		try:
-			with open('/usr/share/ucs-school-umc-computerroom/ultravnc.vnc') as fd:
+			with open('/usr/share/ucs-school-umc-computerroom/ultravnc.vnc', 'rb') as fd:
 				content = fd.read()
 		except (IOError, OSError):
 			raise UMC_CommandError('VNC template file does not exists')

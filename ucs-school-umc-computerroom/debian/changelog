@@ -1,3 +1,9 @@
+ucs-school-umc-computerroom (4.0.3-2) unstable; urgency=low
+
+  * Bug #33413: adapt position of exam grid buttons
+
+ -- Florian Best <best@univention.de>  Mon, 09 Dec 2013 16:01:41 +0100
+
 ucs-school-umc-computerroom (4.0.3-1) unstable; urgency=low
 
   * Bug #33409: fix displaying of buttons when presentation starts
