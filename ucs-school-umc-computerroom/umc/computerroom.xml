@@ -22,5 +22,6 @@
 	<command name="computerroom/computer/state" function="computer_state"/>
 	<command name="computerroom/user/logout" function="user_logout"/>
 	<command name="computerroom/room/acquire" function="room_acquire"/>
+	<command name="computerroom/computer/reset" function="reset_computer_state_to_backup"/>
 	</module>
 </umc>

@@ -38,6 +38,10 @@ import sys
 import tempfile
 import threading
 import time
+import httplib
+import base64
+import json
+import socket
 
 from univention.management.console.config import ucr
 
@@ -48,7 +52,9 @@ import univention.admin.modules as udm_modules
 import univention.admin.objects as udm_objects
 import univention.admin.uldap as udm_uldap
 
-from ucsschool.lib.schoolldap import LDAP_Connection, LDAP_ConnectionError, set_credentials, SchoolSearchBase, SchoolBaseModule, LDAP_Filter, Display
+import univention.admin.handlers.computers.ucc
+
+from ucsschool.lib.schoolldap import LDAP_Connection, LDAP_ConnectionError, set_credentials, SchoolSearchBase, SchoolBaseModule, LDAP_Filter, Display, MACHINE_WRITE, USER_READ
 
 import notifier
 import notifier.signals
@@ -227,6 +233,9 @@ class ITALC_Computer( notifier.signals.Provider, QObject ):
 	def get_object_type(self):
 		#return self._computer.lo.get(self._dn)['univentionObjectType'][0]
 		return self._computer.module
+
+		#self.objectType = self._computer.lo.get(self._dn)['univentionObjectType'][0]
+		self.objectType = self._computer.module
 
 	@LDAP_Connection()
 	def readLDAP( self, ldap_user_read = None, ldap_position = None, search_base = None ):
@@ -547,6 +556,64 @@ class ITALC_Computer( notifier.signals.Provider, QObject ):
 		if self._core:
 			self._core.logoutUser()
 
+	# LMZ functions
+	@LDAP_Connection(USER_READ, MACHINE_WRITE)
+	def reset_state_to_backup(self, ldap_user_read = None, ldap_machine_write = None, ldap_position = None, search_base = None ):
+		if self.objectType == 'computers/ucc':
+			univention.admin.modules.init(ldap_machine_write.lo, ldap_position, univention.admin.handlers.computers.ucc)
+			try:
+				# replace the LDAP connection with a writeable connection
+				# this is also required to not run into a LDAP timeout
+				self._computer.lo = ldap_machine_write
+
+				# reset backup state
+				self._computer['ucc-BackupAction'] = 'bakTOorg'
+				self._computer.modify()
+			finally:
+				# reload the UDM computer object
+				self.readLDAP()
+		else:
+			opsi_hostname = ucr.get('opsi/http/server', ucr.get('ldap/server/name', ''))
+			opsi_port = int(ucr.get('opsi/http/port', 4447))
+			opsi_username = ucr.get('opsi/http/username', 'schoolopsiadmin')
+			opsi_passwordfile = ucr.get('opsi/http/passwordfile', '/etc/schoolopsiadmin.secret')
+
+			try:
+				with open(opsi_passwordfile) as fd:
+					opsi_password = fd.read().strip()
+			except (OSError, IOError) as exc:
+				MODULE.error('Failed to read passwordfile %r: %s' % (opsi_passwordfile, exc))
+				raise ValueError(_('The credentials for the OPSI server could not be determined.'))
+
+			computer_fqdn = self._computer.info['fqdn']
+
+			jsondata = json.dumps({
+				"method": "productOnClient_create",
+				"params": ["opsi-local-image-restore", "NetbootProduct", computer_fqdn, None, "setup"],
+				"id": 1
+			})
+
+			credentials = base64.encodestring('%s:%s' % (opsi_username, opsi_password)).rstrip()
+			headers = {
+				"Content-type": "application/json-rpc",
+				"Authorization": 'Basic %s' % (credentials)
+			}
+
+			try:
+				conn = httplib.HTTPSConnection(opsi_hostname, opsi_port)
+				conn.request("POST", "/rpc", jsondata, headers)
+			except (httplib.HTTPException, socket.error), exc:
+				MODULE.error('OPSI: HTTP Error: %s' % (exc))
+				raise ValueError(_('A HTTP error occured while contacting the OPSI server.'))
+
+			response = conn.getresponse()
+			if not (200 <= response.status < 300):
+				if response.status == 401:
+					MODULE.error('OPSI: wrong credentials')
+					raise ValueError(_('The credentials for the OPSI server are incorrect.'))
+				MODULE.error('OPSI: Request failed: %s %s\n###%s\n###' % (response.status, response.reason, response.read()))
+				raise ValueError(_('The computer could not be reset due to an unknown error. Further information are available in the logfiles.') % (computer_fqdn))
+			conn.close()
 
 class ITALC_Manager( dict, notifier.signals.Provider ):
 	SCHOOL = None

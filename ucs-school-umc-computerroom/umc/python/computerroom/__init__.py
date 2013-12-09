@@ -360,7 +360,19 @@ class Instance(SchoolBaseModule):
 		if request.options.get('reload', False):
 			self._italc.room = self._italc.room # believe me that makes sense :)
 
-		result = [computer.dict for computer in self._italc.values()]
+                result = []
+                for computer in self._italc.values():
+                        item = { 'id' : computer.name,
+                                         'name' : computer.name,
+                                         'user' : computer.user.current,
+                                         'teacher' : computer.isTeacher,
+                                         'connection' : computer.state.current,
+                                         'description' : computer.description,
+                                         'ip' : computer.ipAddress,
+                                         'mac' : computer.macAddress,
+                                         'objectType': computer.objectType }
+                        item.update( computer.flagsDict )
+                        result.append( item )
 
 		MODULE.info('computerroom.query: result: %s' % str(result))
 		self.finished(request.id, result)
@@ -431,6 +443,8 @@ class Instance(SchoolBaseModule):
 		if device not in ('screen', 'input'):
 			raise UMC_OptionTypeError('unknown device %s' % device)
 
+		prevent_ucc(computer)
+
 		MODULE.warn('Locking device %s' % device)
 		if device == 'screen':
 			computer.lockScreen(request.options['lock'])
@@ -449,6 +463,8 @@ class Instance(SchoolBaseModule):
 
 		return (MIME-type image/jpeg): screenshot
 		"""
+
+		prevent_ucc(computer)
 
 		tmpfile = computer.screenshot
 		if tmpfile is None:
@@ -810,6 +826,8 @@ class Instance(SchoolBaseModule):
 			prevent = prevent_ucc(lambda self, request, computer: None)
 			prevent(self, request, computer)
 
+		prevent_ucc(computer)
+
 		if state == 'poweroff':
 			computer.powerOff()
 		elif state == 'poweron':
@@ -830,6 +848,31 @@ class Instance(SchoolBaseModule):
 		return: [True|False)
 		"""
 
+                prevent_ucc(computer)
+
 		computer.logOut()
 
 		self.finished(request.id, True)
+
+        def reset_computer_state_to_backup(self, request):
+                """Resets the given computer to a backup profile"""
+                # block access to session from other users
+                self._checkRoomAccess()
+
+                self.required_options( request, 'computer' )
+
+                computer = self._italc.get( request.options[ 'computer' ], None )
+                if not computer:
+                        raise UMC_CommandError( 'Unknown computer' )
+
+                try:
+                        computer.reset_state_to_backup()
+                except ValueError as exc:
+                        success = False
+                        error = str(exc)
+                else:
+                        success = True
+                        error = None
+
+                self.finished( request.id, dict(success=success, error=error) )
+
