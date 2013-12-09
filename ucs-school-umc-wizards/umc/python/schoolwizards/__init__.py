@@ -36,8 +36,6 @@ import re
 
 from univention.lib.i18n import Translation
 from univention.management.console.log import MODULE
-from univention.management.console.modules import UMC_OptionMissing, UMC_CommandError, UMC_OptionTypeError
-from univention.management.console.protocol.definitions import *
 from univention.management.console.modules.decorators import simple_response, sanitize
 from univention.management.console.modules.sanitizers import StringSanitizer
 from univention.admin.uexceptions import valueError
@@ -47,7 +45,7 @@ from univention.management.console.config import ucr
 
 from ucsschool.lib.schoolldap import SchoolBaseModule, LDAP_Connection, LDAP_Filter, _init_search_base, check_license, LicenseError
 
-from SchoolImport import *
+from univention.management.console.modules.schoolwizards.SchoolImport import SchoolImport
 
 _ = Translation('ucs-school-umc-wizards').translate
 
@@ -178,7 +176,7 @@ class Instance(SchoolBaseModule, SchoolImport):
 			result = {'message': str(err)}
 			self.finished(request.id, result)
 		else:
-			self.finished(request.id, None, _('User successfully created'))
+			self.finished(request.id, None)
 
 	@LDAP_Connection()
 	def create_school(self, request, search_base=None,
@@ -220,7 +218,7 @@ class Instance(SchoolBaseModule, SchoolImport):
 			result = {'message': str(err)}
 			self.finished(request.id, result)
 		else:
-			self.finished(request.id, None, _('School successfully created'))
+			self.finished(request.id, None)
 
 	@LDAP_Connection()
 	def create_class(self, request, search_base=None,
@@ -255,7 +253,7 @@ class Instance(SchoolBaseModule, SchoolImport):
 			result = {'message': str(err)}
 			self.finished(request.id, result)
 		else:
-			self.finished(request.id, None, _('Class successfully created'))
+			self.finished(request.id, None)
 
 	@LDAP_Connection()
 	def create_computer(self, request, search_base=None,
@@ -303,7 +301,7 @@ class Instance(SchoolBaseModule, SchoolImport):
 			result = {'message': str(err)}
 			self.finished(request.id, result)
 		else:
-			self.finished(request.id, None, _('Computer successfully created'))
+			self.finished(request.id, None)
 
 	def _is_singlemaster(self):
 		PKG_NAME = 'ucs-school-singlemaster'

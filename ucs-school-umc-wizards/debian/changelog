@@ -1,3 +1,10 @@
+ucs-school-umc-wizards (4.0.0-3) unstable; urgency=low
+
+  * Bug #33375: don't display information about successfully created objects
+  	twice
+
+ -- Florian Best <best@univention.de>  Mon, 09 Dec 2013 09:44:20 +0100
+
 ucs-school-umc-wizards (4.0.0-2) unstable; urgency=low
 
   * Bug #33559: Usernames (and other attributes) already used are blocked by
