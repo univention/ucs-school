@@ -36,6 +36,7 @@ import re
 
 from univention.lib.i18n import Translation
 from univention.management.console.log import MODULE
+from univention.management.console.modules import UMC_CommandError
 from univention.management.console.modules.decorators import simple_response, sanitize
 from univention.management.console.modules.sanitizers import StringSanitizer
 from univention.admin.uexceptions import valueError
@@ -48,6 +49,21 @@ from ucsschool.lib.schoolldap import SchoolBaseModule, LDAP_Connection, LDAP_Fil
 from univention.management.console.modules.schoolwizards.SchoolImport import SchoolImport
 
 _ = Translation('ucs-school-umc-wizards').translate
+
+
+def response(func):
+	def _decorated(self, request, *a, **kw):
+		if not self._check_license(request):
+			return
+		try:
+			ret = func(self, request, *a, **kw)
+		except (ValueError, IOError, OSError, valueError) as err:
+			MODULE.info(str(err))
+			raise UMC_CommandError(str(err))
+		else:
+			self.finished(request.id, ret)
+	return _decorated
+
 
 class Instance(SchoolBaseModule, SchoolImport):
 	"""Base class for the schoolwizards UMC module.
@@ -101,7 +117,7 @@ class Instance(SchoolBaseModule, SchoolImport):
 		try:
 			check_license()
 			return True
-		except (LicenseError), e:
+		except (LicenseError) as e:
 			MODULE.warn('License error: %s' % e)
 			self.finished(request.id, dict(message=str(e)))
 			return False
@@ -112,196 +128,167 @@ class Instance(SchoolBaseModule, SchoolImport):
 			raise ValueError(_('Invalid school name'))
 
 	@LDAP_Connection()
+	@response
 	def create_user(self, request, search_base=None,
 	                ldap_user_read=None, ldap_position=None):
 		"""Create a new user.
 		"""
-		if not self._check_license(request):
-			return
-		try:
-			# Validate request options
-			keys = ['username', 'lastname', 'firstname', 'school', 'type']
-			self.required_options(request, *keys)
-			self.required_values(request, *keys)
+		# Validate request options
+		keys = ['username', 'lastname', 'firstname', 'school', 'type']
+		self.required_options(request, *keys)
+		self.required_values(request, *keys)
 
-			request = remove_whitespaces(request)
+		request = remove_whitespaces(request)
 
-			username = udm_syntax.UserName.parse(request.options['username'])
-			lastname = request.options['lastname']
-			firstname = request.options['firstname']
-			school = udm_syntax.GroupName.parse(request.options['school'])
-			mail_primary_address = request.options.get('mailPrimaryAddress', '')
-			class_ = request.options.get('class', '')
-			password = request.options.get('password', '')
-			type_ = request.options['type']
+		username = udm_syntax.UserName.parse(request.options['username'])
+		lastname = request.options['lastname']
+		firstname = request.options['firstname']
+		school = udm_syntax.GroupName.parse(request.options['school'])
+		mail_primary_address = request.options.get('mailPrimaryAddress', '')
+		class_ = request.options.get('class', '')
+		password = request.options.get('password', '')
+		type_ = request.options['type']
 
-			if self._username_used(username, ldap_user_read):
-				raise ValueError(_('Username is already in use'))
-			if mail_primary_address:
-				if self._mail_address_used(udm_syntax.emailAddressTemplate.parse(mail_primary_address),
-				                           ldap_user_read):
-					raise ValueError(_('Mail address is already in use'))
+		if self._username_used(username, ldap_user_read):
+			raise ValueError(_('Username is already in use'))
+		if mail_primary_address:
+			if self._mail_address_used(udm_syntax.emailAddressTemplate.parse(mail_primary_address),
+				                       ldap_user_read):
+				raise ValueError(_('Mail address is already in use'))
 
-			is_teacher = False
-			is_staff = False
-			if type_ in ['student', 'teacher', 'staff', 'teachersAndStaff']:
-				# The class name is only required if the user is a student
-				if type_ == 'student':
-					self.required_options(request, 'class')
-					self.required_values(request, 'class')
-			else:
-				raise ValueError(_('Invalid value for  \'type\' property'))
-			if type_ == 'teacher':
-				is_teacher = True
-			elif type_ == 'staff':
-				is_staff = True
-			elif type_ == 'teachersAndStaff':
-				is_staff = True
-				is_teacher = True
-
-			# Bug #32337: check if the class exists with OU prefix
-			# if it does not exist the class name without OU prefix is used
-			if class_ and self._class_name_used(school, class_, ldap_user_read, search_base):
-				# class exists with OU prefix
-				class_ = '%s-%s' % (school, class_, )
-
-			# Create the user
-			self.import_user(username, lastname, firstname, school, class_,
-			                 mail_primary_address, is_teacher, is_staff, password)
-
-			if not self._username_used(username, ldap_user_read):
-				raise OSError(_('The user could not be created'))
-		except (ValueError, IOError, OSError, valueError), err:
-			MODULE.info(str(err))
-			result = {'message': str(err)}
-			self.finished(request.id, result)
+		is_teacher = False
+		is_staff = False
+		if type_ in ['student', 'teacher', 'staff', 'teachersAndStaff']:
+			# The class name is only required if the user is a student
+			if type_ == 'student':
+				self.required_options(request, 'class')
+				self.required_values(request, 'class')
 		else:
-			self.finished(request.id, None)
+			raise ValueError(_('Invalid value for  \'type\' property'))
+		if type_ == 'teacher':
+			is_teacher = True
+		elif type_ == 'staff':
+			is_staff = True
+		elif type_ == 'teachersAndStaff':
+			is_staff = True
+			is_teacher = True
+
+		# Bug #32337: check if the class exists with OU prefix
+		# if it does not exist the class name without OU prefix is used
+		if class_ and self._class_name_used(school, class_, ldap_user_read, search_base):
+			# class exists with OU prefix
+			class_ = '%s-%s' % (school, class_, )
+
+		# Create the user
+		self.import_user(username, lastname, firstname, school, class_,
+			             mail_primary_address, is_teacher, is_staff, password)
+
+		if not self._username_used(username, ldap_user_read):
+			raise OSError(_('The user could not be created'))
 
 	@LDAP_Connection()
+	@response
 	def create_school(self, request, search_base=None,
 	                  ldap_user_read=None, ldap_position=None):
 		"""Create a new school.
 		"""
-		if not self._check_license(request):
-			return
-		try:
-			# Validate request options
-			options = ['name']
-			if not self._is_singlemaster():
-				options.append('schooldc')
-			self.required_options(request, *options)
-			self.required_values(request, *options)
+		# Validate request options
+		options = ['name']
+		if not self._is_singlemaster():
+			options.append('schooldc')
+		self.required_options(request, *options)
+		self.required_values(request, *options)
 
-			request = remove_whitespaces(request)
+		request = remove_whitespaces(request)
 
-			name = udm_syntax.GroupName.parse(request.options['name'])
-			self._check_school_name(name)
+		name = udm_syntax.GroupName.parse(request.options['name'])
+		self._check_school_name(name)
+
+		schooldc = ''
+		if not self._is_singlemaster():
 			schooldc = request.options.get('schooldc', '')
 
 			if len(schooldc) > 13:
 				raise ValueError(_("A valid NetBIOS hostname can not be longer than 13 characters."))
 			if (len(schooldc) + len(ucr.get('domainname', ''))) > 63:
 				raise ValueError(_("The length of fully qualified domain name is greater than 63 characters."))
-			if not self._is_singlemaster():
-				regex = re.compile('^\w+$')
-				if not regex.match(schooldc):
-					raise ValueError(_('Invalid school server name'))
-			if self._school_name_used(name, ldap_user_read, search_base):
-				raise ValueError(_('School name is already in use'))
+			# hostname based upon RFC 952: <let>[*[<let-or-digit-or-hyphen>]<let-or-digit>]
+			if not re.match('^[a-zA-Z](([a-zA-Z0-9-_]*)([a-zA-Z0-9]$))?$', schooldc):
+				raise ValueError(_('Invalid school server name'))
 
-			# Create the school
-			self.create_ou(name, schooldc)
-			_init_search_base(ldap_user_read, force = True)
-		except (ValueError, IOError, OSError), err:
-			MODULE.info(str(err))
-			result = {'message': str(err)}
-			self.finished(request.id, result)
-		else:
-			self.finished(request.id, None)
+		if self._school_name_used(name, ldap_user_read, search_base):
+			raise ValueError(_('School name is already in use'))
+
+		# Create the school
+		self.create_ou(name, schooldc)
+		_init_search_base(ldap_user_read, force = True)
 
 	@LDAP_Connection()
+	@response
 	def create_class(self, request, search_base=None,
 	                 ldap_user_read=None, ldap_position=None):
 		"""Create a new class.
 		"""
-		if not self._check_license(request):
-			return
-		try:
-			# Validate request options
-			self.required_options(request, 'school', 'name')
-			self.required_values(request, 'school', 'name')
+		# Validate request options
+		self.required_options(request, 'school', 'name')
+		self.required_values(request, 'school', 'name')
 
-			request = remove_whitespaces(request)
+		request = remove_whitespaces(request)
 
-			school = udm_syntax.GroupName.parse(request.options['school'])
-			name = udm_syntax.GroupName.parse(request.options['name'])
-			description = request.options.get('description', '')
+		school = udm_syntax.GroupName.parse(request.options['school'])
+		name = udm_syntax.GroupName.parse(request.options['name'])
+		description = request.options.get('description', '')
 
-			if not self._school_name_used(school, ldap_user_read, search_base):
-				raise ValueError(_('Unknown school'))
-			if self._class_name_used(school, name, ldap_user_read, search_base):
-				raise ValueError(_('Class name is already in use'))
+		if not self._school_name_used(school, ldap_user_read, search_base):
+			raise ValueError(_('Unknown school'))
+		if self._class_name_used(school, name, ldap_user_read, search_base):
+			raise ValueError(_('Class name is already in use'))
 
-			# Create the school
-			self.import_group(school, name, description)
+		# Create the school
+		self.import_group(school, name, description)
 
-			if not self._class_name_used(school, name, ldap_user_read, search_base):
-				raise OSError(_('The class could not be created'))
-		except (ValueError, IOError, OSError), err:
-			MODULE.info(str(err))
-			result = {'message': str(err)}
-			self.finished(request.id, result)
-		else:
-			self.finished(request.id, None)
+		if not self._class_name_used(school, name, ldap_user_read, search_base):
+			raise OSError(_('The class could not be created'))
 
 	@LDAP_Connection()
+	@response
 	def create_computer(self, request, search_base=None,
 	                    ldap_user_read=None, ldap_position=None):
 		"""Create a new computer.
 		"""
-		if not self._check_license(request):
-			return
-		try:
-			# Validate request options
-			self.required_options(request, 'type', 'name', 'mac', 'school', 'ipAddress')
-			self.required_values(request, 'type', 'name', 'mac', 'school', 'ipAddress')
+		# Validate request options
+		self.required_options(request, 'type', 'name', 'mac', 'school', 'ipAddress')
+		self.required_values(request, 'type', 'name', 'mac', 'school', 'ipAddress')
 
-			request = remove_whitespaces(request)
+		request = remove_whitespaces(request)
 
-			type_ = request.options['type']
-			name = udm_syntax.hostName.parse(request.options['name'])
-			mac = udm_syntax.MAC_Address.parse(request.options['mac'])
-			school = request.options['school']
-			ip_address = udm_syntax.ipv4Address.parse(request.options['ipAddress'])
-			subnet_mask = request.options.get('subnetMask', '')
-			inventory_number = request.options.get('inventoryNumber', '')
+		type_ = request.options['type']
+		name = udm_syntax.hostName.parse(request.options['name'])
+		mac = udm_syntax.MAC_Address.parse(request.options['mac'])
+		school = request.options['school']
+		ip_address = udm_syntax.ipv4Address.parse(request.options['ipAddress'])
+		subnet_mask = request.options.get('subnetMask', '')
+		inventory_number = request.options.get('inventoryNumber', '')
 
-			if not self._school_name_used(school, ldap_user_read, search_base):
-				raise ValueError(_('Unknown school'))
-			if self._computer_name_used(name, ldap_user_read):
-				raise ValueError(_('Computer name is already in use'))
-			if self._mac_address_used(mac, ldap_user_read):
-				raise ValueError(_('MAC address is already in use'))
-			if self._ip_address_used(ip_address, ldap_user_read):
-				raise ValueError(_('IP address is already in use'))
-			if subnet_mask:
-				subnet_mask = udm_syntax.netmask.parse(subnet_mask)
-			if type_ not in [computer_type_id for computer_type_id, computer_type_label in self._computer_types()]:
-				raise ValueError(_('Invalid value for  \'type\' property'))
+		if not self._school_name_used(school, ldap_user_read, search_base):
+			raise ValueError(_('Unknown school'))
+		if self._computer_name_used(name, ldap_user_read):
+			raise ValueError(_('Computer name is already in use'))
+		if self._mac_address_used(mac, ldap_user_read):
+			raise ValueError(_('MAC address is already in use'))
+		if self._ip_address_used(ip_address, ldap_user_read):
+			raise ValueError(_('IP address is already in use'))
+		if subnet_mask:
+			subnet_mask = udm_syntax.netmask.parse(subnet_mask)
+		if type_ not in [computer_type_id for computer_type_id, computer_type_label in self._computer_types()]:
+			raise ValueError(_('Invalid value for  \'type\' property'))
 
-			# Create the computer
-			self.import_computer(type_, name, mac, school, ip_address,
-			                     subnet_mask, inventory_number)
+		# Create the computer
+		self.import_computer(type_, name, mac, school, ip_address,
+			                 subnet_mask, inventory_number)
 
-			if not self._computer_name_used(name, ldap_user_read):
-				raise OSError(_('The computer could not be created'))
-		except (ValueError, IOError, OSError, valueError), err:
-			MODULE.info(str(err))
-			result = {'message': str(err)}
-			self.finished(request.id, result)
-		else:
-			self.finished(request.id, None)
+		if not self._computer_name_used(name, ldap_user_read):
+			raise OSError(_('The computer could not be created'))
 
 	def _is_singlemaster(self):
 		PKG_NAME = 'ucs-school-singlemaster'
@@ -318,8 +305,8 @@ class Instance(SchoolBaseModule, SchoolImport):
 		self.finished(request.id, {'isSinglemaster': self._is_singlemaster()})
 
 	@sanitize(
-		schooldc=StringSanitizer(required=True, regex_pattern=re.compile('^\\w+(\\w|-)*$')),
-		schoolou=StringSanitizer(required=True, regex_pattern=re.compile('^\w+$')),
+		schooldc=StringSanitizer(required=True, regex_pattern=re.compile(r'^[a-zA-Z](([a-zA-Z0-9-_]*)([a-zA-Z0-9]$))?$')),
+		schoolou=StringSanitizer(required=True, regex_pattern=re.compile(r'^[a-zA-Z0-9](([a-zA-Z0-9_]*)([a-zA-Z0-9]$))?$')),
 	)
 	@simple_response
 	def move_dc(self, schooldc, schoolou):

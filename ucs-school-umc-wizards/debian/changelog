@@ -1,3 +1,10 @@
+ucs-school-umc-wizards (4.0.0-4) unstable; urgency=low
+
+  * Bug #33387: fix validation of DC name when creating schools in
+  	multi-server environments (e.g. if the hostname contains hyphens).
+
+ -- Florian Best <best@univention.de>  Mon, 09 Dec 2013 12:31:48 +0100
+
 ucs-school-umc-wizards (4.0.0-3) unstable; urgency=low
 
   * Bug #33375: don't display information about successfully created objects
