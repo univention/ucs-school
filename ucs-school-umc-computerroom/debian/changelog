@@ -1,3 +1,9 @@
+ucs-school-umc-computerroom (4.0.3-3) unstable; urgency=low
+
+  * remove debian/postinst (Bug #33409)
+
+ -- Florian Best <best@univention.de>  Mon, 09 Dec 2013 16:16:47 +0100
+
 ucs-school-umc-computerroom (4.0.3-2) unstable; urgency=low
 
   * Bug #33413: adapt position of exam grid buttons
