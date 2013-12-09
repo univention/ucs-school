@@ -674,7 +674,6 @@ define([
 
 					var widget = new Button({
 						label: _('Watch'),
-						//style: 'background: none; border: 0 none; text-shadow: none;',
 						onClick: lang.hitch(this, function() {
 							this._screenshot([id], [item]);
 						})
