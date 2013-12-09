@@ -65,8 +65,7 @@ define([
 					name: 'description',
 					label: _('Description')
 				}],
-				layout: [['school'],
-			         	 ['name', 'description']]
+				layout: [['school'], ['name', 'description']]
 			}];
 		},
 

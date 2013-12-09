@@ -25,9 +25,9 @@ msgid "Univention Corporate Client"
 msgstr "Univention Corporate Client"
 
 #: umc/python/schoolwizards/__init__.py:199
-msgid "A valid NetBIOS hostname can not be longer than 13 characters."
+msgid "A valid NetBIOS hostname can not be longer than 12 characters."
 msgstr ""
-"Ein gültiger NetBIOS Rechnername darf nicht länger als 13 Zeichen sein."
+"Ein gültiger NetBIOS Rechnername darf nicht länger als 12 Zeichen sein."
 
 #: umc/python/schoolwizards/__init__.py:240
 msgid "Class name is already in use"

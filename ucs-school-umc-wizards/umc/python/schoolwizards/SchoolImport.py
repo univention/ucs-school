@@ -40,7 +40,9 @@ from univention.management.console.modules import UMC_CommandError
 
 _ = Translation('ucs-school-umc-wizards').translate
 
+
 class SchoolImport(object):
+
 	"""Wrapper for the ucs-school-import script
 	"""
 	_SCRIPT_PATH = '/usr/share/ucs-school-import/scripts'
@@ -132,4 +134,3 @@ class SchoolImport(object):
 		return_code, stdout = self._run_script(SchoolImport.COMPUTER_SCRIPT, entry)
 		if return_code:
 			raise OSError(_('Could not create computer'))
-

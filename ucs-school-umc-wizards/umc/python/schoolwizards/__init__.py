@@ -68,6 +68,7 @@ def response(func):
 class Instance(SchoolBaseModule, SchoolImport):
 	"""Base class for the schoolwizards UMC module.
 	"""
+
 	def required_values(self, request, *keys):
 		missing = filter(lambda key: '' == request.options[key], keys)
 		if missing:
@@ -77,13 +78,13 @@ class Instance(SchoolBaseModule, SchoolImport):
 	def _username_used(self, username, ldap_user_read):
 		ldap_filter = LDAP_Filter.forAll(username, fullMatch=['username'])
 		user_exists = udm_modules.lookup('users/user', None, ldap_user_read,
-		                                 scope = 'sub', filter = ldap_filter)
+		                                 scope='sub', filter=ldap_filter)
 		return bool(user_exists)
 
 	def _mail_address_used(self, address, ldap_user_read):
 		ldap_filter = LDAP_Filter.forAll(address, fullMatch=['mailPrimaryAddress'])
 		address_exists = udm_modules.lookup('users/user', None, ldap_user_read,
-		                                    scope = 'sub', filter = ldap_filter)
+		                                    scope='sub', filter=ldap_filter)
 		return bool(address_exists)
 
 	def _school_name_used(self, name, ldap_user_read, search_base):
@@ -91,26 +92,26 @@ class Instance(SchoolBaseModule, SchoolImport):
 
 	def _class_name_used(self, school, name, ldap_user_read, search_base):
 		ldap_filter = LDAP_Filter.forAll('%s-%s' % (school, name), fullMatch=['name'])
-		class_exists = udm_modules.lookup('groups/group', None, ldap_user_read, scope = 'one',
-		                                  filter = ldap_filter, base = search_base.classes)
+		class_exists = udm_modules.lookup('groups/group', None, ldap_user_read, scope='one',
+		                                  filter=ldap_filter, base=search_base.classes)
 		return bool(class_exists)
 
 	def _computer_name_used(self, name, ldap_user_read):
 		ldap_filter = LDAP_Filter.forAll(name, fullMatch=['name'])
 		computer_exists = udm_modules.lookup('computers/computer', None, ldap_user_read,
-		                                     scope = 'sub', filter = ldap_filter)
+		                                     scope='sub', filter=ldap_filter)
 		return bool(computer_exists)
 
 	def _mac_address_used(self, address, ldap_user_read):
 		ldap_filter = LDAP_Filter.forAll(address, fullMatch=['mac'])
 		address_exists = udm_modules.lookup('computers/computer', None, ldap_user_read,
-		                                    scope = 'sub', filter = ldap_filter)
+		                                    scope='sub', filter=ldap_filter)
 		return bool(address_exists)
 
 	def _ip_address_used(self, address, ldap_user_read):
 		ldap_filter = LDAP_Filter.forAll(address, fullMatch=['ip'])
 		address_exists = udm_modules.lookup('computers/computer', None, ldap_user_read,
-		                                    scope = 'sub', filter = ldap_filter)
+		                                    scope='sub', filter=ldap_filter)
 		return bool(address_exists)
 
 	def _check_license(self, request):
@@ -208,9 +209,9 @@ class Instance(SchoolBaseModule, SchoolImport):
 		if not self._is_singlemaster():
 			schooldc = request.options.get('schooldc', '')
 
-			if len(schooldc) > 13:
-				raise ValueError(_("A valid NetBIOS hostname can not be longer than 13 characters."))
-			if (len(schooldc) + len(ucr.get('domainname', ''))) > 63:
+			if len(schooldc) > 12:
+				raise ValueError(_("A valid NetBIOS hostname can not be longer than 12 characters."))
+			if sum([len(schooldc), 1, len(ucr.get('domainname', ''))]) > 63:
 				raise ValueError(_("The length of fully qualified domain name is greater than 63 characters."))
 			# hostname based upon RFC 952: <let>[*[<let-or-digit-or-hyphen>]<let-or-digit>]
 			if not re.match('^[a-zA-Z](([a-zA-Z0-9-_]*)([a-zA-Z0-9]$))?$', schooldc):
@@ -221,7 +222,7 @@ class Instance(SchoolBaseModule, SchoolImport):
 
 		# Create the school
 		self.create_ou(name, schooldc)
-		_init_search_base(ldap_user_read, force = True)
+		_init_search_base(ldap_user_read, force=True)
 
 	@LDAP_Connection()
 	@response
@@ -310,9 +311,9 @@ class Instance(SchoolBaseModule, SchoolImport):
 	)
 	@simple_response
 	def move_dc(self, schooldc, schoolou):
-		params = ['--dcname', schooldc, '--ou', schoolou ]
+		params = ['--dcname', schooldc, '--ou', schoolou]
 		return_code, stdout = self._run_script(SchoolImport.MOVE_DC_SCRIPT, params, True)
-		return { 'success': return_code == 0, 'message': stdout }
+		return {'success': return_code == 0, 'message': stdout}
 
 	def _computer_types(self):
 		computer_types = [('windows', _('Windows system')), ('ipmanagedclient', _('Device with IP address'))]
@@ -333,9 +334,9 @@ class Instance(SchoolBaseModule, SchoolImport):
 			ret.append({'id': computer_type_id, 'label': computer_type_label})
 		return ret
 
+
 def remove_whitespaces(request):
 	for key, value in request.options.iteritems():
 		if isinstance(value, basestring):
 			request.options[key] = value.strip()
 	return request
-
