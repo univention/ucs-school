@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2013 Univention GmbH
+ * Copyright 2012-2014 Univention GmbH
  *
  * http://www.univention.de/
  *
@@ -700,6 +700,7 @@ define([
 				columns: columns,
 				cacheRowWidgets: false,
 				moduleStore: new Memory(),
+				sortIndex: 1,
 				footerFormatter: lang.hitch(this, function(nItems, nItemsTotal) {
 					var failed = 0;
 					var msg = lang.replace(_('{0} computers are in this room'), [nItemsTotal]);

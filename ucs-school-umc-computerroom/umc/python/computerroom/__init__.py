@@ -4,7 +4,7 @@
 # Univention Management Console module:
 #   Control computers of pupils in a room
 #
-# Copyright 2012-2013 Univention GmbH
+# Copyright 2012-2014 Univention GmbH
 #
 # http://www.univention.de/
 #
@@ -361,6 +361,7 @@ class Instance(SchoolBaseModule):
 			self._italc.room = self._italc.room # believe me that makes sense :)
 
 		result = [computer.dict for computer in self._italc.values()]
+		result.sort(key=lambda c: c['id'])
 
 		MODULE.info('computerroom.query: result: %s' % str(result))
 		self.finished(request.id, result)
