@@ -1,3 +1,11 @@
+ucs-school-netlogon (4.0.0-0) unstable; urgency=low
+
+  * Bug #33918: create netlogon scripts with executable permissions for others
+    because samba4 behavior changed.
+  * version bump (UCS@School 3.2)
+
+ -- Florian Best <best@univention.de>  Thu, 16 Jan 2014 12:22:21 +0100
+
 ucs-school-netlogon (3.0.0-0) unstable; urgency=low
 
   * bumped version for UCS@school 3.1 R2
