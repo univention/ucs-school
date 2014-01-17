@@ -32,8 +32,63 @@
 
 #DEBHELPER#
 
-# ignore the ou=Domain Controllers by default
-ucr set "ucsschool/ldap/ignore/ous?Domain Controllers"
+eval "$(ucr shell server/role)"
+
+if dpkg --compare-versions "$2" le 4.0.0-1; then
+	python -c "
+import sys
+
+import univention.config_registry
+import univention.admin.modules as udm_modules
+import univention.admin.uldap as udm_uldap
+udm_modules.update()
+
+lo, pos = udm_uldap.getMachineConnection()
+
+ucr = univention.config_registry.ConfigRegistry()
+ucr.load()
+singlemaster = ucr.is_true('ucsschool/singlemaster', False)
+hostname = ucr.get('hostname')
+
+def get_share_file_server(ou):
+	ouname = ou['name'].lower()
+
+	# get name of new dc
+	ShareFileServer = 'dc%s-01' % ouname
+	if singlemaster:
+		ShareFileServer = hostname
+
+	# looking for DN of fileserver
+	objects = lo.searchDn(filter='(&(objectClass=univentionHost)(cn=%s))' % ShareFileServer, base=ucr['ldap/base'])
+	if not objects:
+		print >> sys.stderr, 'Warning: no ShareServer found'
+		if singlemaster:
+			return ucr.get('ldap/hostdn')
+		return 'cn=%s,cn=dc,cn=server,cn=computers,%s' % (ShareFileServer, ou.dn)
+	else:
+		return objects[0]
+
+ignore_ous = set(ucr.get('ucsschool/ldap/ignore/ous', 'Domain Controllers').split(','))
+ignore_ous.add('Domain Controllers')
+ignore_ous.add('Zarafa Addresslists')
+
+OUs = udm_modules.lookup('container/ou', None, lo, '!(objectClass=ucsschoolOrganizationalUnit)', scope='one', superordinate=None, base=ucr.get('ldap/base'))
+OUs = [ou for ou in OUs if ou['name'] not in ignore_ous]
+
+for ou in OUs:
+	modlist = [('objectClass', '', 'ucsschoolOrganizationalUnit')]
+	share_file_server = get_share_file_server(ou)
+	if share_file_server:
+		modlist.extend([
+			('ucsschoolClassShareFileServer', '', share_file_server),
+			('ucsschoolHomeShareFileServer', '', share_file_server)
+		])
+	lo.modify(ou.dn, modlist, exceptions=True, ignore_license=True)
+" || exit 1
+
+	ucr unset 'ucsschool/ldap/ignore/ous'
+
+fi
 
 if [ ! -e /var/lib/ucs-school-lib/lessons.ini ]; then
 	cp /usr/share/ucs-school-lib/lessons.ini /var/lib/ucs-school-lib/

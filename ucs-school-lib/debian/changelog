@@ -1,3 +1,11 @@
+ucs-school-lib (4.0.1-1) unstable; urgency=low
+
+  * Bug #33681: fix license evaluation
+  * Bug #33600: fix detection of OU's which are schools
+  * update copyright
+
+ -- Florian Best <best@univention.de>  Fri, 17 Jan 2014 09:34:19 +0100
+
 ucs-school-lib (4.0.0-1) unstable; urgency=low
 
   * Bug #32520: fix typos in python modules

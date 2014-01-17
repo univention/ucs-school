@@ -242,7 +242,10 @@ def check_license(ldap_machine_read = None, ldap_machine_write = None, ldap_posi
 			return  # don't raise exception here
 			#raise udm_errors.licenseGPLversion
 		ldap_connection._validateLicense()  # throws more exceptions in case the license could not be found
-		if _licenseCheck == 1:
+		MODULE.info('_validateLicense result=%s' % _licenseCheck)
+		if _licenseCheck == 0:
+			return
+		elif _licenseCheck == 1:
 			raise udm_errors.licenseClients
 		elif _licenseCheck == 2:
 			raise udm_errors.licenseAccounts
@@ -253,16 +256,41 @@ def check_license(ldap_machine_read = None, ldap_machine_write = None, ldap_posi
 		#elif _licenseCheck == 5:
 		#   # Free for personal use edition
 		#   raise udm_errors.freeForPersonalUse
+		# License Version 2:
+		elif _licenseCheck == 6:
+			raise udm_errors.licenseUsers
+		elif _licenseCheck == 7:
+			raise udm_errors.licenseServers
+		elif _licenseCheck == 8:
+			raise udm_errors.licenseManagedClients
+		elif _licenseCheck == 9:
+			raise udm_errors.licenseCorporateClients
+		elif _licenseCheck == 10:
+			raise udm_errors.licenseDVSUsers
+		elif _licenseCheck == 11:
+			raise udm_errors.licenseDVSClients
 	except udm_errors.licenseNotFound:
 		raise LicenseError(_('License not found. During this session add and modify are disabled.'))
-	except udm_errors.licenseAccounts:
+	except udm_errors.licenseAccounts: #UCS license v1
 		raise LicenseError(_('You have too many user accounts for your license. During this session add and modify are disabled.'))
-	except udm_errors.licenseClients:
+	except udm_errors.licenseUsers: #UCS license v2
+		raise LicenseError(_('You have too many user accounts for your license. During this session add and modify are disabled.'))
+	except udm_errors.licenseClients: # UCS license v1
 		raise LicenseError(_('You have too many client accounts for your license. During this session add and modify are disabled.'))
-	except udm_errors.licenseDesktops:
+	except udm_errors.licenseServers: # UCS license v2
+		raise LicenseError(_('You have too many server accounts for your license. During this session add and modify are disabled.'))
+	except udm_errors.licenseManagedClients: # UCS license v2
+		raise LicenseError(_('You have too many managed client accounts for your license. During this session add and modify are disabled.'))
+	except udm_errors.licenseCorporateClients: # UCS license v2
+		raise LicenseError(_('You have too many corporate client accounts for your license. During this session add and modify are disabled.'))
+	except udm_errors.licenseDesktops: # UCS license v1
 		raise LicenseError(_('You have too many desktop accounts for your license. During this session add and modify are disabled.'))
-	except udm_errors.licenseGroupware:
+	except udm_errors.licenseGroupware: # UCS license v1
 		raise LicenseError(_('You have too many groupware accounts for your license. During this session add and modify are disabled.'))
+	except udm_errors.licenseDVSUsers: # UCS license v2
+		raise LicenseError(_('You have too many DVS user accounts for your license. During this session add and modify are disabled.'))
+	except udm_errors.licenseDVSClients: # UCS license v2
+		raise LicenseError(_('You have too many DVS client accounts for your license. During this session add and modify are disabled.'))
 	except udm_errors.licenseExpired:
 		raise LicenseError(_('Your license is expired. During this session add and modify are disabled.'))
 	except udm_errors.licenseWrongBaseDn:
@@ -304,15 +332,15 @@ def _init_search_base(ldap_connection, force=False):
 			MODULE.info( 'LDAP_Connection: availableSchools overridden by UCR variable ucsschool/local/oulist')
 		else:
 			# get a list of available OUs via UDM module container/ou
-			ouresult = udm_modules.lookup( 
-					'container/ou', None, ldap_connection,
-					scope = 'one', superordinate = None,
-					base = ucr.get( 'ldap/base' ) )
-			ignore_ous = ucr.get( 'ucsschool/ldap/ignore/ous', 'Domain Controllers' ).split( ',' )
-			availableSchools = [ ou['name'] for ou in ouresult if not ou[ 'name' ] in ignore_ous ]
+			availableSchools = udm_modules.lookup(
+				'container/ou', None, ldap_connection, 'objectClass=ucsschoolOrganizationalUnit',
+				scope='one', superordinate=None,
+				base=ucr.get('ldap/base')
+			)
+			availableSchools = [ou['name'] for ou in availableSchools]
 
 		# use the first available OU as default search base
-		if not len(availableSchools):
+		if not availableSchools:
 			MODULE.warn('LDAP_Connection: ERROR, COULD NOT FIND ANY OU!!!')
 			_search_base = SchoolSearchBase([''])
 		else:
