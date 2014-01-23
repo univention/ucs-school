@@ -1,3 +1,9 @@
+ucs-school-ldap-acls-master (10.0.1-2) unstable; urgency=medium
+
+  * Grant RW access to CN=WMIPolicy,CN=System for Slave DCs (Bug #33980)
+
+ -- Arvid Requate <requate@univention.de>  Thu, 23 Jan 2014 16:38:34 +0100
+
 ucs-school-ldap-acls-master (10.0.1-1) unstable; urgency=low
 
   * Bug #33421: grant write access to cn=apps,cn=univention to school DCs

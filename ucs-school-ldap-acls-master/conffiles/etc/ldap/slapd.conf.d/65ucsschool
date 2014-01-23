@@ -124,6 +124,12 @@ access to dn.subtree="cn=policies,cn=system,@%@ldap/base@%@" filter="(|(objectCl
     by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
     by * none break
 
+# Slave DCs can read and write policy containers for MS WMI filter objects
+access to dn.subtree="cn=WMIPolicy,cn=system,@%@ldap/base@%@" filter="(|(objectClass=msWMISom)(objectClass=organizationalRole))"
+    by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
+    by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
+    by * none break
+
 # Lehrer, Mitarbeiter und OU-Admins duerfen Schueler-Passwoerter aendern
 access to dn.regex="^uid=([^,]+),cn=@$@PUPILS@$@,cn=users,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" attrs=krb5KeyVersionNumber,krb5KDCFlags,krb5Key,krb5PasswordEnd,sambaAcctFlags,sambaPwdLastSet,sambaLMPassword,sambaNTPassword,shadowLastChange,shadowMax,userPassword,pwhistory,sambaPwdCanChange,sambaPwdMustChange,sambaPasswordHistory,sambaBadPasswordCount
 	by dn.regex="^uid=([^,]+),cn=(@$@TEACHERS@$@|@$@TEACHERS-STAFF@$@|@$@STAFF@$@|@$@ADMINS@$@),cn=users,ou=$2,@$@DISTRICT@$@@%@ldap/base@%@$$" write
