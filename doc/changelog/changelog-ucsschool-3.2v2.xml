@@ -1,0 +1,145 @@
+<!-- 
+<section>
+	<title>General</title>
+</section>
+-->
+
+<!--
+<section>
+	<title>Import scripts</title>
+			<itemizedlist>
+				<listitem><simpara>
+				  FOO
+				</simpara></listitem>
+			</itemizedlist>
+</section>
+-->
+
+<!--
+<section>
+	<title>iTALC</title>
+</section>
+-->
+
+<!--
+<section>
+	<title>Domain services</title>
+	<section>
+		<title>Samba4</title>
+			<itemizedlist>
+				<listitem><simpara>
+				  FOO
+				</simpara></listitem>
+			</itemizedlist>
+	</section>
+	<section>
+		<title>OpenLDAP</title>
+	</section>
+	<section>
+		<title>LDAP ACL changes</title>
+			<itemizedlist>
+				<listitem><simpara>
+				  FOO
+				</simpara></listitem>
+			</itemizedlist>
+	</section>
+
+	<section>
+		<title>LDAP schema changes</title>
+	</section>
+	<section>
+		<title>Listener/Notifier domain replication</title>
+	</section>
+	<section>
+		<title>Domain joins of UCS systems</title>
+	</section>
+
+	<section>
+		<title>Services for Windows</title>
+		<itemizedlist>
+		<listitem><simpara>
+		FOO
+		</simpara></listitem>
+		</itemizedlist>
+	</section>
+
+	<section>
+		<title>Univention S4 Connector</title>
+	</section>
+</section>
+-->
+
+<!--
+<section>
+	<title>Print services</title>
+</section>
+
+<section>
+	<title>Proxy services</title>
+</section>
+
+<section>
+	<title>RADIUS</title>
+</section>
+
+<section>
+	<title>Univention Directory Manager modules</title>
+</section>
+-->
+
+<!--
+<section>
+	<title>Univention Management Console</title>
+	<section>
+		<title>Univention Management Console server</title>
+	</section>
+	<section>
+		<title>Univention Management Console web interface</title>
+	</section>
+-->
+	<section>
+		<title>Univention Management Console modules</title>
+		<itemizedlist>
+			<listitem><simpara>
+			  FOO
+			</simpara></listitem>
+		</itemizedlist>
+		<section>
+			<title>Configuration wizard</title>
+			<itemizedlist>
+			  <listitem><simpara>
+			    FOO	(<ulink url="&ucsbug;12345">Bug 12345</ulink>).
+			  </simpara></listitem>
+			</itemizedlist>
+		</section>
+		<section>
+			<title>Computerroom module</title>
+			<itemizedlist>
+			  <listitem><simpara>
+			    FOO	(<ulink url="&ucsbug;12345">Bug 12345</ulink>).
+			  </simpara></listitem>
+			</itemizedlist>
+		</section>
+<!--
+		<section>
+			<title>Helpdesk module</title>
+		</section>
+-->
+		<section>
+			<title>Add User wizard</title>
+			<itemizedlist>
+			  <listitem><simpara>
+			    FOO	(<ulink url="&ucsbug;12345">Bug 12345</ulink>).
+			  </simpara></listitem>
+			</itemizedlist>
+		</section>
+	</section>
+<!--
+</section>
+-->
+
+<!--
+<section>
+	<title>Other changes</title>
+</section>
+-->
