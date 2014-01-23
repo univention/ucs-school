@@ -1,3 +1,9 @@
+ucs-school-metapackage (6.0.7-2) unstable; urgency=medium
+
+  * Version bump (Bug #33372)
+
+ -- Arvid Requate <requate@univention.de>  Thu, 23 Jan 2014 16:58:08 +0100
+
 ucs-school-metapackage (6.0.7-1) unstable; urgency=medium
 
   * Activate WMI filter synchronization by default (Bug #33372)
