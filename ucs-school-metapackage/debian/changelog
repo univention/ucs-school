@@ -1,3 +1,9 @@
+ucs-school-metapackage (6.0.7-1) unstable; urgency=medium
+
+  * Activate WMI filter synchronization by default (Bug #33372)
+
+ -- Arvid Requate <requate@univention.de>  Thu, 23 Jan 2014 14:40:30 +0100
+
 ucs-school-metapackage (6.0.6-1) unstable; urgency=low
 
   * The old samba 4 data must be removed, otherwise the provision will
