@@ -40,6 +40,7 @@ univention-config-registry set \
 	samba4/join/dnsupdate?true \
 	samba4/sysvol/sync/setfacl/AU?false \
 	samba/script/addmachine?'/usr/share/univention-samba/addmachine.sh "%u"' \
+	connector/s4/mapping/wmifilter?yes \
 	ucsschool/import/generate/policy/dhcp/dns/set_per_ou?true
 
 
