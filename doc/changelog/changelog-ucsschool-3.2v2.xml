@@ -129,7 +129,10 @@
 			<title>Add User wizard</title>
 			<itemizedlist>
 			  <listitem><simpara>
-			    FOO	(<ulink url="&ucsbug;12345">Bug 12345</ulink>).
+					Usernames (and other attributes) already used are blocked by the
+					wizard. This test did not search for exact equality but for
+					substrings which is too strict. Fixed that (<ulink
+						url="&ucsbug;33979">Bug 33979</ulink>).
 			  </simpara></listitem>
 			</itemizedlist>
 		</section>
