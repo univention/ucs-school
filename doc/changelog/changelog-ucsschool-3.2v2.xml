@@ -9,7 +9,7 @@
 	<title>Import scripts</title>
 			<itemizedlist>
 				<listitem><simpara>
-				  FOO
+					FOO
 				</simpara></listitem>
 			</itemizedlist>
 </section>
@@ -28,7 +28,7 @@
 		<title>Samba4</title>
 			<itemizedlist>
 				<listitem><simpara>
-				  FOO
+					FOO
 				</simpara></listitem>
 			</itemizedlist>
 	</section>
@@ -39,7 +39,7 @@
 		<title>LDAP ACL changes</title>
 			<itemizedlist>
 				<listitem><simpara>
-				  FOO
+					FOO
 				</simpara></listitem>
 			</itemizedlist>
 	</section>
@@ -101,23 +101,35 @@
 		<title>Univention Management Console modules</title>
 		<itemizedlist>
 			<listitem><simpara>
-			  FOO
+				The license evaluation has been fixed
+				(<ulink url="&ucsbug;33681">Bug 33681</ulink>).
 			</simpara></listitem>
 		</itemizedlist>
 		<section>
-			<title>Configuration wizard</title>
+			<title>Configuration wizards</title>
 			<itemizedlist>
-			  <listitem><simpara>
-			    FOO	(<ulink url="&ucsbug;12345">Bug 12345</ulink>).
-			  </simpara></listitem>
+				<listitem><simpara>
+					Duplicated notifications have been removed
+					(<ulink url="&ucsbug;33375">Bug 33375</ulink>).
+				</simpara></listitem>
+				<listitem><simpara>
+					Schools with a hyphen in it's name could not be created with the Add School wizard.
+					This has been fixed
+					(<ulink url="&ucsbug;33387">Bug 33387</ulink>).
+				</simpara></listitem>
 			</itemizedlist>
 		</section>
 		<section>
 			<title>Computerroom module</title>
 			<itemizedlist>
-			  <listitem><simpara>
-			    FOO	(<ulink url="&ucsbug;12345">Bug 12345</ulink>).
-			  </simpara></listitem>
+				<listitem><simpara>
+					The arrangements of buttons has been reordered
+					(<ulink url="&ucsbug;33413">Bug 33413</ulink>).
+				</simpara></listitem>
+				<listitem><simpara>
+					The computers are now correctly sorted by name
+					(<ulink url="&ucsbug;33585">Bug 33585</ulink>).
+				</simpara></listitem>
 			</itemizedlist>
 		</section>
 <!--
@@ -128,12 +140,12 @@
 		<section>
 			<title>Add User wizard</title>
 			<itemizedlist>
-			  <listitem><simpara>
+				<listitem><simpara>
 					Usernames (and other attributes) already used are blocked by the
 					wizard. This test did not search for exact equality but for
 					substrings which is too strict. Fixed that (<ulink
 						url="&ucsbug;33979">Bug 33979</ulink>).
-			  </simpara></listitem>
+				</simpara></listitem>
 			</itemizedlist>
 		</section>
 	</section>
