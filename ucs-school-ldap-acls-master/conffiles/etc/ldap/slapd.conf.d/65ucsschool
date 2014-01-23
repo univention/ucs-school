@@ -60,13 +60,13 @@ access to dn="cn=Subschema"
 	by * read
 
 # Slave controllers and memberservers require write access to virtual machine manager objects
-access to dn.regex="^univentionVirtualMachineUUID=([^,]+),cn=Information,cn=Virtual Machine Manager,@%@ldap/base@%@" filter="(objectClass=univentionVirtualMachine)"
+access to dn.regex="^univentionVirtualMachineUUID=([^,]+),cn=Information,cn=Virtual Machine Manager,@%@ldap/base@%@$$" filter="(objectClass=univentionVirtualMachine)"
 	by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
 	by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
 	by group/univentionGroup/uniqueMember="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
 	by group/univentionGroup/uniqueMember="cn=Member-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
-	by dn.regex="^[^,]+,cn=dc,cn=computers,@%@ldap/base@%@$$" write
-	by dn.regex="^[^,]+,cn=memberserver,cn=computers,@%@ldap/base@%@$$" write
+	by dn.onelevel="cn=dc,cn=computers,@%@ldap/base@%@" write
+	by dn.onelevel="cn=memberserver,cn=computers,@%@ldap/base@%@" write
 	by * read break
 
 access to dn="cn=Information,cn=Virtual Machine Manager,@%@ldap/base@%@" attrs=children,entry
@@ -74,8 +74,8 @@ access to dn="cn=Information,cn=Virtual Machine Manager,@%@ldap/base@%@" attrs=c
 	by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
 	by group/univentionGroup/uniqueMember="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
 	by group/univentionGroup/uniqueMember="cn=Member-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
-	by dn.regex="^[^,]+,cn=dc,cn=computers,@%@ldap/base@%@$$" write
-	by dn.regex="^[^,]+,cn=memberserver,cn=computers,@%@ldap/base@%@$$" write
+	by dn.onelevel="cn=dc,cn=computers,@%@ldap/base@%@" write
+	by dn.onelevel="cn=memberserver,cn=computers,@%@ldap/base@%@" write
 	by * read break
 
 # Slave controller and memberservers may replicate the Virtual Machine Manager container
@@ -94,7 +94,7 @@ access to dn.subtree="cn=mail,@%@ldap/base@%@"
    by group/univentionGroup/uniqueMember="cn=Member-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
    by * read break
 
-access to dn.regex="^@%@ldap/base@%@$$"
+access to dn.base="@%@ldap/base@%@"
 	by dn.regex="^uid=([^,]+),cn=(@$@TEACHERS@$@|@$@TEACHERS-STAFF@$@|@$@STAFF@$@|@$@ADMINS@$@),cn=users,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" read
 	by * none break
 
@@ -124,6 +124,12 @@ access to dn.subtree="cn=policies,cn=system,@%@ldap/base@%@" filter="(|(objectCl
     by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
     by * none break
 
+# Slave DCs can read and write policy containers for MS WMI filter objects
+access to dn.subtree="cn=WMIPolicy,cn=system,@%@ldap/base@%@" filter="(|(objectClass=msWMISom)(objectClass=organizationalRole))"
+    by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
+    by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
+    by * none break
+
 # Lehrer, Mitarbeiter und OU-Admins duerfen Schueler-Passwoerter aendern
 access to dn.regex="^uid=([^,]+),cn=@$@PUPILS@$@,cn=users,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" attrs=krb5KeyVersionNumber,krb5KDCFlags,krb5Key,krb5PasswordEnd,sambaAcctFlags,sambaPwdLastSet,sambaLMPassword,sambaNTPassword,shadowLastChange,shadowMax,userPassword,pwhistory,sambaPwdCanChange,sambaPwdMustChange,sambaPasswordHistory,sambaBadPasswordCount
 	by dn.regex="^uid=([^,]+),cn=(@$@TEACHERS@$@|@$@TEACHERS-STAFF@$@|@$@STAFF@$@|@$@ADMINS@$@),cn=users,ou=$2,@$@DISTRICT@$@@%@ldap/base@%@$$" write
@@ -139,7 +145,7 @@ access to dn.regex="^cn=([^,]+),cn=raeume,cn=groups,ou=([^,]+),@$@DISTRICT@$@@%@
 	by * none break
 
 # Rechner duerfen ihr Passwort aendern
-access to dn.regex="cn=.*,cn=server,cn=computers,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" attrs=userPassword,krb5Key,krb5KDCFlags,sambaNTPassword,sambaLMPassword,shadowLastChange,sambaPwdLastSet,pwhistory,krb5KeyVersionNumber,univentionWindowsReinstall,sambaPwdCanChange,sambaPwdMustChange
+access to dn.regex="^cn=.*,cn=server,cn=computers,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" attrs=userPassword,krb5Key,krb5KDCFlags,sambaNTPassword,sambaLMPassword,shadowLastChange,sambaPwdLastSet,pwhistory,krb5KeyVersionNumber,univentionWindowsReinstall,sambaPwdCanChange,sambaPwdMustChange
    by self write
    by * none break
 
