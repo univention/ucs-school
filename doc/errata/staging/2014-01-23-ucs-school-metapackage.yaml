@@ -1,0 +1,10 @@
+product: ucs
+release: "3.2"
+scope: ucs_3.2-0-ucschool-errata
+src: ucs-school-metapackage
+fix: 6.0.7-1.111.201401231452
+note:
+version: [0]
+desc: |
+  This update configures WMI filter synchronization in Samba4 domains.
+bug: [33372]
