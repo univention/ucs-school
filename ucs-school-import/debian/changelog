@@ -1,3 +1,10 @@
+ucs-school-import (10.0.4-2) unstable; urgency=low
+
+  * Bug #33600: Add an option to OU's that specify that the option is a
+  	UCS@school OU
+
+ -- Florian Best <best@univention.de>  Fri, 24 Jan 2014 12:11:43 +0100
+
 ucs-school-import (10.0.4-1) unstable; urgency=low
 
   * remove obsolete ucsschool/defaultschoolname (Bug #32095)
