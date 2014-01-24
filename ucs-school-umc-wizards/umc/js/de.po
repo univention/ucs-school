@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-wizards\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2013-04-25 16:10+0200\n"
+"POT-Creation-Date: 2014-01-24 08:40+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,7 +16,7 @@ msgstr ""
 msgid "Class"
 msgstr "Klasse"
 
-#: umc/js/schoolwizards/ClassWizard.js:81
+#: umc/js/schoolwizards/ClassWizard.js:80
 #, python-format
 msgid ""
 "Class \"%s\" has been successfully created. Continue to create another class "
@@ -25,7 +25,7 @@ msgstr ""
 "Klasse \"%s\" wurde erfolgreich erstellt. Es kann nun eine weitere Klasse "
 "erstellt oder der Wizard über die Schaltfläche \"Abbrechen\" beendet werden."
 
-#: umc/js/schoolwizards/ComputerWizard.js:117
+#: umc/js/schoolwizards/ComputerWizard.js:113
 #, python-format
 msgid ""
 "Computer \"%s\" has been successfully created. Continue to create another "
@@ -47,10 +47,6 @@ msgstr "Neue Klasse erstellen"
 msgid "Description"
 msgstr "Beschreibung"
 
-#: umc/js/schoolwizards/ComputerWizard.js:68
-msgid "Device with IP address"
-msgstr "Gerät mit IP-Adresse"
-
 #: umc/js/schoolwizards/UserWizard.js:122
 msgid "E-Mail"
 msgstr "E-Mail"
@@ -59,7 +55,7 @@ msgstr "E-Mail"
 msgid "Enter details to create a new class."
 msgstr "Geben Sie Detailinformationen zum Anlegen einer neuen Klasse an."
 
-#: umc/js/schoolwizards/ComputerWizard.js:75
+#: umc/js/schoolwizards/ComputerWizard.js:71
 msgid "Enter details to create a new computer."
 msgstr "Geben Sie Detailinformationen zum Anlegen eines neuen Computers an."
 
@@ -75,11 +71,11 @@ msgstr "Geben Sie Detailinformationen zum Anlegen einer neuen Schule an."
 msgid "Firstname"
 msgstr "Vorname"
 
-#: umc/js/schoolwizards/ComputerWizard.js:84
+#: umc/js/schoolwizards/ComputerWizard.js:80
 msgid "IP address"
 msgstr "IP-Adresse"
 
-#: umc/js/schoolwizards/ComputerWizard.js:99
+#: umc/js/schoolwizards/ComputerWizard.js:95
 msgid "Inventory number"
 msgstr "Inventarnummer"
 
@@ -87,12 +83,12 @@ msgstr "Inventarnummer"
 msgid "Lastname"
 msgstr "Nachname"
 
-#: umc/js/schoolwizards/ComputerWizard.js:94
+#: umc/js/schoolwizards/ComputerWizard.js:90
 msgid "MAC address"
 msgstr "MAC-Adresse"
 
+#: umc/js/schoolwizards/ComputerWizard.js:75
 #: umc/js/schoolwizards/ClassWizard.js:61
-#: umc/js/schoolwizards/ComputerWizard.js:79
 msgid "Name"
 msgstr "Name"
 
@@ -104,13 +100,13 @@ msgstr "Name der Schule"
 msgid "Password"
 msgstr "Passwort"
 
-#: umc/js/schoolwizards/ClassWizard.js:54
 #: umc/js/schoolwizards/ComputerWizard.js:55
+#: umc/js/schoolwizards/ClassWizard.js:54
 #: umc/js/schoolwizards/UserWizard.js:66
 msgid "School"
 msgstr "Schule"
 
-#: umc/js/schoolwizards/SchoolWizard.js:94
+#: umc/js/schoolwizards/SchoolWizard.js:96
 #, python-format
 msgid ""
 "School \"%s\" has been successfully created. Continue to create another "
@@ -135,7 +131,7 @@ msgstr "Mitarbeiter"
 msgid "Student"
 msgstr "Schüler"
 
-#: umc/js/schoolwizards/ComputerWizard.js:89
+#: umc/js/schoolwizards/ComputerWizard.js:85
 msgid "Subnet mask"
 msgstr "Subnetzmaske"
 
@@ -146,6 +142,12 @@ msgstr "Lehrer"
 #: umc/js/schoolwizards/UserWizard.js:85
 msgid "Teachers and staff"
 msgstr "Lehrer und Mitarbeiter"
+
+#: umc/js/schoolwizards/SchoolWizard.js:61
+msgid ""
+"The computer name must be a valid NetBIOS hostname. This requires a maximum length "
+"of 12 characters."
+msgstr "Der Rechnername muss ein gültiger NetBIOS-Rechnername sein. Das erfordert eine maximale Länge von 12 Zeichen."
 
 #: umc/js/schoolwizards/UserWizard.js:56
 #, python-format
@@ -177,37 +179,3 @@ msgstr ""
 #: umc/js/schoolwizards/UserWizard.js:113
 msgid "Username"
 msgstr "Benutzername"
-
-#: umc/js/schoolwizards/ComputerWizard.js:65
-msgid "Windows system"
-msgstr "Windows-System"
-
-#~ msgid "Computer information"
-#~ msgstr "Computer Information"
-
-#~ msgid "Enter the computer's details"
-#~ msgstr "Eingabe der Computer-Details"
-
-#~ msgid "Enter the user's details"
-#~ msgstr "Eingabe der Benutzer-Details"
-
-#~ msgid "General information"
-#~ msgstr "Allgemeine Informationen"
-
-#~ msgid "IP-Managed-Client"
-#~ msgstr "IP-Managed-Client"
-
-#~ msgid "School DC"
-#~ msgstr "Schul-DC"
-
-#~ msgid "This module creates a new class on the system."
-#~ msgstr "Dieses Modul erstellt eine neue Klasse auf dem System."
-
-#~ msgid "This module creates a new school on the system."
-#~ msgstr "Dieses Modul erstellt eine neue Schule auf dem System."
-
-#~ msgid "This module creates a new user on the system."
-#~ msgstr "Dieses Modul erstellt einen neuen Computer auf dem System."
-
-#~ msgid "User information"
-#~ msgstr "Benutzer Information"

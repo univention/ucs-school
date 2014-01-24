@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-wizards\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2013-04-26 01:01+0200\n"
+"POT-Creation-Date: 2014-01-24 08:40+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -12,38 +12,18 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: umc/js/schoolwizards/ComputerWizard.js:65
-msgid "Windows system"
-msgstr "Windows-System"
-
-#: umc/js/schoolwizards/ComputerWizard.js:68
-msgid "Device with IP address"
-msgstr "Gerät mit IP-Adresse"
-
-#: umc/js/schoolwizards/ComputerWizard.js:68
-msgid "Univention Corporate Client"
-msgstr "Univention Corporate Client"
-
-#: umc/python/schoolwizards/__init__.py:199
+#: umc/python/schoolwizards/__init__.py:213
 msgid "A valid NetBIOS hostname can not be longer than 12 characters."
 msgstr ""
 "Ein gültiger NetBIOS Rechnername darf nicht länger als 12 Zeichen sein."
 
-#: umc/python/schoolwizards/__init__.py:240
+#: umc/python/schoolwizards/__init__.py:246
 msgid "Class name is already in use"
 msgstr "Klassenname wird bereits benutzt"
 
-#: umc/python/schoolwizards/__init__.py:252
-msgid "Class successfully created"
-msgstr "Klasse erfolgreich erstellt"
-
-#: umc/python/schoolwizards/__init__.py:279
+#: umc/python/schoolwizards/__init__.py:277
 msgid "Computer name is already in use"
 msgstr "Computername wird bereits benutzt"
-
-#: umc/python/schoolwizards/__init__.py:300
-msgid "Computer successfully created"
-msgstr "Computer erfolgreich erstellt"
 
 #: umc/python/schoolwizards/SchoolImport.py:122
 msgid "Could not create class"
@@ -61,84 +41,100 @@ msgstr "Die Schule konnte nicht erstellt werden"
 msgid "Could not create user"
 msgstr "Der Benutzer konnte nicht erstellt werden"
 
-#: umc/python/schoolwizards/SchoolImport.py:69
-#: umc/python/schoolwizards/SchoolImport.py:87
+#: umc/python/schoolwizards/__init__.py:319
+msgid "Device with IP address"
+msgstr "Gerät mit IP-Adresse"
+
+#: umc/python/schoolwizards/SchoolImport.py:71
+#: umc/python/schoolwizards/SchoolImport.py:89
 msgid "Execution of command failed"
 msgstr "Die Ausführungs des Kommandos schlug fehl"
 
-#: umc/python/schoolwizards/__init__.py:283
+#: umc/python/schoolwizards/__init__.py:281
 msgid "IP address is already in use"
 msgstr "IP-Adresse wird bereits benutzt"
 
-#: umc/python/schoolwizards/__init__.py:114
+#: umc/python/schoolwizards/__init__.py:129
 msgid "Invalid school name"
 msgstr "Ungültiger Schulname"
 
-#: umc/python/schoolwizards/__init__.py:205
+#: umc/python/schoolwizards/__init__.py:218
 msgid "Invalid school server name"
 msgstr "Ungültiger Schulserver name"
 
-#: umc/python/schoolwizards/__init__.py:155
-#: umc/python/schoolwizards/__init__.py:287
+#: umc/python/schoolwizards/__init__.py:168
+#: umc/python/schoolwizards/__init__.py:285
 msgid "Invalid value for  'type' property"
 msgstr "Ungültiger Wert für 'Typ'-Eigenschaft"
 
-#: umc/python/schoolwizards/__init__.py:281
+#: umc/python/schoolwizards/__init__.py:279
 msgid "MAC address is already in use"
 msgstr "MAC-Adresse wird bereits benutzt"
 
-#: umc/python/schoolwizards/__init__.py:145
+#: umc/python/schoolwizards/__init__.py:158
 msgid "Mail address is already in use"
 msgstr "Mail-Adresse wird bereits benutzt"
 
-#: umc/python/schoolwizards/__init__.py:60
+#: umc/python/schoolwizards/__init__.py:75
 #, python-format
 msgid "Missing value for the following properties: %s"
 msgstr "Fehlender Wert für die folgenden Eigenschaften: %s"
 
-#: umc/python/schoolwizards/__init__.py:207
+#: umc/python/schoolwizards/__init__.py:221
 msgid "School name is already in use"
 msgstr "Schulname wird bereits benutzt"
 
-#: umc/python/schoolwizards/__init__.py:217
-msgid "School successfully created"
-msgstr "Schule wurde erfolgreich erstellt"
-
-#: umc/python/schoolwizards/__init__.py:246
+#: umc/python/schoolwizards/__init__.py:252
 msgid "The class could not be created"
 msgstr "Die Klasse konnte nicht erstellt werden"
 
-#: umc/python/schoolwizards/__init__.py:294
+#: umc/python/schoolwizards/__init__.py:292
 msgid "The computer could not be created"
 msgstr "Der Computer konnte nicht erstellt werden"
 
-#: umc/python/schoolwizards/__init__.py:201
+#: umc/python/schoolwizards/__init__.py:215
 msgid ""
 "The length of fully qualified domain name is greater than 63 characters."
 msgstr "Die Länge von System- und Domänennamen ist größer als 63 Zeichen."
 
-#: umc/python/schoolwizards/__init__.py:169
+#: umc/python/schoolwizards/__init__.py:188
 msgid "The user could not be created"
 msgstr "Der Benutzer konnte nicht erstellt werden"
 
-#: umc/python/schoolwizards/__init__.py:238
-#: umc/python/schoolwizards/__init__.py:277
+#: umc/python/schoolwizards/__init__.py:326
+msgid "Univention Corporate Client"
+msgstr "Univention Corporate Client"
+
+#: umc/python/schoolwizards/__init__.py:244
+#: umc/python/schoolwizards/__init__.py:275
 msgid "Unknown school"
 msgstr "Unbekannte Schule"
 
-#: umc/python/schoolwizards/__init__.py:175
-msgid "User successfully created"
-msgstr "Benutzer wurde erfolgreich erstellt"
-
-#: umc/python/schoolwizards/__init__.py:141
+#: umc/python/schoolwizards/__init__.py:154
 msgid "Username is already in use"
 msgstr "Benutzername wird bereits benutzt"
 
+#: umc/python/schoolwizards/__init__.py:319
+msgid "Windows system"
+msgstr "Windows-System"
+
+#~ msgid "Class successfully created"
+#~ msgstr "Klasse erfolgreich erstellt"
+
+#~ msgid "Computer successfully created"
+#~ msgstr "Computer erfolgreich erstellt"
+
 #~ msgid "Invalid value for the following properties: %s"
 #~ msgstr "Ungültiger Wert für die folgenden Eigenschaften: %s"
+
+#~ msgid "School successfully created"
+#~ msgstr "Schule wurde erfolgreich erstellt"
 
 #~ msgid "The following values are invalid: %s"
 #~ msgstr "Die folgenden Werte sind ungültig: %s"
 
 #~ msgid "The school could not be created"
 #~ msgstr "Die Schule konnte nicht erstellt werden"
+
+#~ msgid "User successfully created"
+#~ msgstr "Benutzer wurde erfolgreich erstellt"

@@ -1,3 +1,10 @@
+ucs-school-umc-wizards (4.0.0-5) unstable; urgency=low
+
+  * Bug #33387: limit the maximum hostname length of school DC name also in
+  	the frontend
+
+ -- Florian Best <best@univention.de>  Fri, 24 Jan 2014 08:44:21 +0100
+
 ucs-school-umc-wizards (4.0.0-4) unstable; urgency=low
 
   * Bug #33387: fix validation of DC name when creating schools in

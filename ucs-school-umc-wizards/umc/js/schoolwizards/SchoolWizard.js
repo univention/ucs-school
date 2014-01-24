@@ -58,6 +58,8 @@ define([
 					name: 'schooldc',
 					label: _('Computer name of the school server'),
 					regExp: '^\\w+(\\w|-)*$',
+					description: _('The computer name must be a valid NetBIOS hostname. This requires a maximum length of 12 characters.'),
+					maxLength: 12,
 					required: true
 				}],
 				layout: [['name'],
