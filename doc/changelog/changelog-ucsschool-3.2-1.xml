@@ -27,7 +27,7 @@
 		<title>LDAP ACL changes</title>
 		<itemizedlist>
 			<listitem><simpara>
-				A new LDAP ACL was added in the master ACLs to grant Slave DCs (school DCs) access to WMI filter objects (<ulink url="&ucsbug;33983">Bug 33983</ulink>).
+				A new LDAP ACL was added in the master ACLs to grant Slave DCs (school DCs) access to WMI filter objects (<ulink url="&ucsbug;33819">Bug 33819</ulink>).
 			</simpara></listitem>
 		</itemizedlist>
 	</section>
@@ -51,7 +51,7 @@
 		<title>Univention S4 Connector</title>
 		<itemizedlist>
 			<listitem><simpara>
-				Synchronization for WMI filters gets enabled by default (<ulink url="&ucsbug;33984">Bug 33984</ulink>).
+				Synchronization for WMI filters gets enabled by default (<ulink url="&ucsbug;33372">Bug 33372</ulink>).
 			</simpara></listitem>
 		</itemizedlist>
 	</section>
