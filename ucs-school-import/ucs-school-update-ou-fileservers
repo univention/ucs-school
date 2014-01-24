@@ -7,7 +7,7 @@ This script tries to determine the best fileserver for user shares and
 class shares for each organizational unit and writes the determined
 servers to the OU object.
 """
-# Copyright 2007-2013 Univention GmbH
+# Copyright 2007-2014 Univention GmbH
 #
 # http://www.univention.de/
 #
