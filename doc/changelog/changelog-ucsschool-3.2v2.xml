@@ -21,9 +21,10 @@
 </section>
 -->
 
-<!--
+
 <section>
 	<title>Domain services</title>
+<!--
 	<section>
 		<title>Samba4</title>
 			<itemizedlist>
@@ -35,15 +36,16 @@
 	<section>
 		<title>OpenLDAP</title>
 	</section>
+-->
 	<section>
 		<title>LDAP ACL changes</title>
 			<itemizedlist>
 				<listitem><simpara>
-					FOO
+				  A new LDAP ACL was added in the master ACLs to grant Slave DCs (school DCs) access to WMI filter objects (<ulink url="&ucsbug;33819">Bug 33819</ulink>).
 				</simpara></listitem>
 			</itemizedlist>
 	</section>
-
+<!--
 	<section>
 		<title>LDAP schema changes</title>
 	</section>
@@ -62,12 +64,17 @@
 		</simpara></listitem>
 		</itemizedlist>
 	</section>
-
+-->
 	<section>
 		<title>Univention S4 Connector</title>
+		<itemizedlist>
+			<listitem><simpara>
+				Synchronization for WMI filters gets enabled by default (<ulink url="&ucsbug;33372">Bug 33372</ulink>).
+			</simpara></listitem>
+		</itemizedlist>
 	</section>
 </section>
--->
+
 
 <!--
 <section>
