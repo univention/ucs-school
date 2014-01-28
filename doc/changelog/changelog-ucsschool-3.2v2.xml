@@ -39,11 +39,14 @@
 -->
 	<section>
 		<title>LDAP ACL changes</title>
-			<itemizedlist>
-				<listitem><simpara>
-				  A new LDAP ACL was added in the master ACLs to grant Slave DCs (school DCs) access to WMI filter objects (<ulink url="&ucsbug;33819">Bug 33819</ulink>).
-				</simpara></listitem>
-			</itemizedlist>
+		<itemizedlist>
+			<listitem><simpara>
+				The LDAP master ACLs have been extended to grant Slave DCs (school DCs) access to custom UDM hook and UDM syntax extensions (<ulink url="&ucsbug;33819">Bug 33819</ulink>).
+			</simpara></listitem>
+			<listitem><simpara>
+				A new access rule has been added to the LDAP master ACLs to grant Slave DCs (school DCs) access to WMI filter objects (<ulink url="&ucsbug;33980">Bug 33980</ulink>).
+			</simpara></listitem>
+		</itemizedlist>
 	</section>
 <!--
 	<section>
