@@ -1,3 +1,9 @@
+ucs-school-metapackage (6.0.7-3) unstable; urgency=low
+
+  * Add ucs-overview service link 'teacher console' (Bug #33856)
+
+ -- Erik Damrose <damrose@univention.de>  Thu, 30 Jan 2014 13:18:18 +0100
+
 ucs-school-metapackage (6.0.7-2) unstable; urgency=medium
 
   * Version bump (Bug #33372)
