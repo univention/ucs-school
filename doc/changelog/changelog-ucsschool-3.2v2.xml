@@ -1,8 +1,11 @@
-<!-- 
 <section>
 	<title>General</title>
+		<itemizedlist>
+			<listitem><simpara>
+				A link to the 'teacher console' has been added to the ucs-overview service tab (<ulink url="&ucsbug;33856">Bug 33856</ulink>).
+			</simpara></listitem>
+		</itemizedlist>
 </section>
--->
 
 <!--
 <section>
