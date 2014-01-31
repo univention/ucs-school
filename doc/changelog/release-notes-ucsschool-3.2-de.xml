@@ -4,7 +4,7 @@
 
   <!ENTITY % entities SYSTEM "../stylesheets/macros-de.ent" >
   <!ENTITY bibliography SYSTEM "../stylesheets/bibliography-de.xml">
-  <!ENTITY changelog SYSTEM "changelog-ucsschool-3.2.xml">
+  <!ENTITY changelog SYSTEM "changelog-ucsschool-3.2v2.xml">
 
   %entities;
 ]>

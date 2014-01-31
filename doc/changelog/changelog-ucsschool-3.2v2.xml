@@ -4,6 +4,23 @@
 			<listitem><simpara>
 				A link to the 'teacher console' has been added to the ucs-overview service tab (<ulink url="&ucsbug;33856">Bug 33856</ulink>).
 			</simpara></listitem>
+			<listitem><simpara>
+				Due to a change in the default Samba4 behavior for executing files the netlogon scripts will now be created with executable permissions
+				(<ulink url="&ucsbug;33819">Bug 33819</ulink>).
+
+				When problems occur while executing the logon scripts manual interaction is necessary.
+
+				Possible actions are either a resync of the listener module "ucs-school-user-logonscript":
+				<programlisting>
+  					univention-directory-listener-ctrl resync ucs-school-user-logonscript
+				</programlisting>
+
+				or if this takes too long, it is also possible to manually change the modes:
+				<programlisting>
+					cd $NETLOGONDIRECTORY
+chmod a+rx -Rf user/*.vbs
+				</programlisting>
+			</simpara></listitem>
 		</itemizedlist>
 </section>
 
