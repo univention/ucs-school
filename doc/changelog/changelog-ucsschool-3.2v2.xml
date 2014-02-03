@@ -2,15 +2,15 @@
 	<title>General</title>
 		<itemizedlist>
 			<listitem><simpara>
-				A link to the 'teacher console' has been added to the ucs-overview service tab (<ulink url="&ucsbug;33856">Bug 33856</ulink>).
+				A link to the <emphasis>teacher console</emphasis> has been added to the ucs-overview service tab (<ulink url="&ucsbug;33856">Bug 33856</ulink>).
 			</simpara></listitem>
 			<listitem><simpara>
-				Due to a change in the default Samba4 behavior for executing files the netlogon scripts will now be created with executable permissions
-				(<ulink url="&ucsbug;33819">Bug 33819</ulink>).
+				Due to a change in the default Samba4 behavior for executing files the netlogon scripts will now be created with "execute" permissions
+				(<ulink url="&ucsbug;33918">Bug 33918</ulink>).
 
 				When problems occur while executing the logon scripts manual interaction is necessary.
 
-				Possible actions are either a resync of the listener module "ucs-school-user-logonscript":
+				Possible actions are either a resync of the listener module <emphasis>ucs-school-user-logonscript</emphasis>:
 				<programlisting>
   					univention-directory-listener-ctrl resync ucs-school-user-logonscript
 				</programlisting>
@@ -139,11 +139,11 @@ chmod a+rx -Rf user/*.vbs
 			<title>Configuration wizards</title>
 			<itemizedlist>
 				<listitem><simpara>
-					Duplicated notifications have been removed
+					Duplicate notifications have been removed
 					(<ulink url="&ucsbug;33375">Bug 33375</ulink>).
 				</simpara></listitem>
 				<listitem><simpara>
-					Schools with a hyphen in it's name could not be created with the Add School wizard.
+					Schools with a hyphen in its name could not be created with the wizard <emphasis>Add School</emphasis>.
 					This has been fixed
 					(<ulink url="&ucsbug;33387">Bug 33387</ulink>).
 				</simpara></listitem>
@@ -153,11 +153,11 @@ chmod a+rx -Rf user/*.vbs
 			<title>Computerroom module</title>
 			<itemizedlist>
 				<listitem><simpara>
-					The arrangements of buttons has been reordered
+					The alignment of buttons above the host list has been reordered
 					(<ulink url="&ucsbug;33413">Bug 33413</ulink>).
 				</simpara></listitem>
 				<listitem><simpara>
-					The computers are now correctly sorted by name
+					The list of computers is now correctly sorted by name after opening the module
 					(<ulink url="&ucsbug;33585">Bug 33585</ulink>).
 				</simpara></listitem>
 			</itemizedlist>
