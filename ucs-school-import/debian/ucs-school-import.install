@@ -6,3 +6,4 @@ ucs-school-update-ou-fileservers							usr/share/ucs-school-import/scripts
 hooks/ou_create_post.d/40dhcpsearchbase_create              usr/share/ucs-school-import/hooks/ou_create_post.d
 hooks/ou_create_post.d/45dhcpdns_create                     usr/share/ucs-school-import/hooks/ou_create_post.d
 hooks/ou_create_post.d/52marktplatz_create                  usr/share/ucs-school-import/hooks/ou_create_post.d
+modules/univention/admin/hooks.d/*.py                       usr/share/pyshared/univention/admin/hooks.d/

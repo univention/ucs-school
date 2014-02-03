@@ -1,3 +1,9 @@
+ucs-school-import (10.0.4-3) unstable; urgency=low
+
+  * Bug #33600: add hook script
+
+ -- Florian Best <best@univention.de>  Mon, 03 Feb 2014 17:43:09 +0100
+
 ucs-school-import (10.0.4-2) unstable; urgency=low
 
   * Bug #33600: Add an option to OU's that specify that the option is a

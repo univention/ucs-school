@@ -30,7 +30,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-VERSION=5
+VERSION=6
 . /usr/share/univention-join/joinscripthelper.lib
 joinscript_init
 
@@ -50,12 +50,13 @@ if [ $JS_LAST_EXECUTED_VERSION -lt 1 ]; then
 	done
 fi
 
-if [ $JS_LAST_EXECUTED_VERSION -lt 5 ]; then
+if [ $JS_LAST_EXECUTED_VERSION -lt 6 ]; then
 	# append UCSschool-School-OU option to Home/ClassShareServer
 	for dn in "cn=UCSschool-School-HomeShareFileServer,cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
 		"cn=UCSschool-School-ClassShareFileServer,cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base"; do
 		univention-directory-manager settings/extended_attribute modify "$@" \
 			--dn "$dn" \
+			--set hook="schoolOU" \
 			--append options="UCSschool-School-OU"
 		if [ $? != 0 ]; then exit 1; fi
 	done
@@ -78,7 +79,7 @@ univention-directory-manager settings/extended_options create "$@" --ignore_exis
 	--set module=container/ou \
 	--set objectClass=ucsschoolOrganizationalUnit \
 	--set default=0 \
-	--set editable=0 \
+	--set editable=1 \
 	--set shortDescription="UCS@school Organizational Unit" \
 	--set longDescription="Specifies that this Organizational Unit is a UCS@school OU" \
 	--set translationShortDescription='"de_DE" "UCS@school Organisationseinheit"' \
@@ -90,6 +91,7 @@ univention-directory-manager settings/extended_attribute create "$@" --ignore_ex
 	--set name="UCSschool-School-HomeShareFileServer" \
 	--set module=container/ou \
 	--set options="UCSschool-School-OU" \
+	--set hook="schoolOU" \
 	--set tabName="UCS@school" \
 	--set tabPosition=1 \
 	--set groupName="File servers" \
@@ -112,6 +114,7 @@ univention-directory-manager settings/extended_attribute create "$@" --ignore_ex
 	--set name="UCSschool-School-ClassShareFileServer" \
 	--set module=container/ou \
 	--set options="UCSschool-School-OU" \
+	--set hook="schoolOU" \
 	--set tabName="UCS@school" \
 	--set tabPosition=3 \
 	--set groupName="File servers" \
