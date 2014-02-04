@@ -72,17 +72,17 @@
 %
 %\end{itemize}
 
-%% \section{Univention Management Console}
-%% \begin{itemize}
+\section{Univention Management Console}
+%%\begin{itemize}
 %% \end{itemize}
 
 %\subsection{Univention Management Console server}
 %\begin{itemize}
 %\end{itemize}
 
-%\subsection{Univention Management Console web interface}
-%\begin{itemize}
-%\end{itemize}
+%%\subsection{Univention Management Console web interface}
+%%\begin{itemize}
+%%\end{itemize}
 
 %% \subsection{Univention Management Console modules}
 %% \begin{itemize}
@@ -100,10 +100,12 @@
 %% \begin{itemize}
 %% \end{itemize}
 
-%% \subsection{Wizards}
-%% \begin{itemize}
-%% \end{itemize}
-
+\subsection{Wizards}
+\begin{itemize}
+\item Usernames (and other attributes) already used are blocked by the wizard. 
+  This test did not search for exact equality but for substrings which is too strict in most cases.
+  This has been fixed (\ucsBug{33559}).
+\end{itemize}
 
 % \subsubsection{Helpdesk module}
 % \begin{itemize}
