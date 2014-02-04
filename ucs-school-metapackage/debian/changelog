@@ -1,3 +1,10 @@
+ucs-school-metapackage (6.0.7-4) unstable; urgency=low
+
+  * Rename 'teacher console' links to 'UCS@school modules' (Bug #33856)
+  * Move creation of links to postinst
+
+ -- Erik Damrose <damrose@univention.de>  Tue, 04 Feb 2014 14:42:08 +0100
+
 ucs-school-metapackage (6.0.7-3) unstable; urgency=low
 
   * Add ucs-overview service link 'teacher console' (Bug #33856)

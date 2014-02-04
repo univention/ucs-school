@@ -203,14 +203,6 @@ fi
 
 ucs_addServiceToLocalhost 'UCS@school' "$@"
 
-ucr set	ucs/web/overview/entries/service/teacherconsole/icon?"/univention-management-console/js/dijit/themes/umc/icons/50x50/univention-management-console.png" \
-	ucs/web/overview/entries/service/teacherconsole/label?"Teacher console" \
-	ucs/web/overview/entries/service/teacherconsole/label/de?"Lehrerkonsole" \
-	ucs/web/overview/entries/service/teacherconsole/description?"Access the teacher console in the Univention Management Console" \
-	ucs/web/overview/entries/service/teacherconsole/description/de?"Zugriff auf die Lehrerkonsole in der Univention Management Console" \
-	ucs/web/overview/entries/service/teacherconsole/link?"/univention-management-console" \
-	ucs/web/overview/entries/service/teacherconsole/priority?"10"
-
 joinscript_save_current_version
 
 exit 0

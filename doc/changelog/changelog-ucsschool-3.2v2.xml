@@ -2,7 +2,7 @@
 	<title>General</title>
 		<itemizedlist>
 			<listitem><simpara>
-				A link to the <emphasis>teacher console</emphasis> has been added to the ucs-overview service tab (<ulink url="&ucsbug;33856">Bug 33856</ulink>).
+				A link to the <emphasis>UCS@school modules</emphasis> has been added to the ucs-overview service tab (<ulink url="&ucsbug;33856">Bug 33856</ulink>).
 			</simpara></listitem>
 			<listitem><simpara>
 				Due to a change in the default Samba4 behavior for executing files the netlogon scripts will now be created with "execute" permissions
