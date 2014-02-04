@@ -4,24 +4,24 @@
 
   <!ENTITY % entities SYSTEM "../stylesheets/macros-de.ent" >
   <!ENTITY bibliography SYSTEM "../stylesheets/bibliography-de.xml">
-  <!ENTITY changelog SYSTEM "changelog-ucsschool-3.2.xml">
+  <!ENTITY changelog SYSTEM "changelog-ucsschool-3.2v2.xml">
 
   %entities;
 ]>
 
-<book lang="de" id="releasenotes-3.2-de">
+<book lang="de" id="releasenotes-3.2v2-de">
 
 	<bookinfo>
-		<title>UCS@school 3.2 Release Notes</title>
-		<subtitle>Release Notes für die Inbetriebnahme und Aktualisierung von UCS@school 3.2</subtitle>
+		<title>UCS@school 3.2v2 Release Notes</title>
+		<subtitle>Release Notes für die Inbetriebnahme und Aktualisierung von UCS@school 3.2v2</subtitle>
 		<legalnotice>
 			<literallayout>
-Version 3.2
-Stand: 18. Nov 2013
+Version 3.2v2
+Stand: 06. Feb 2014
 			</literallayout>
 			<literallayout>
 Alle Rechte vorbehalten./ All rights reserved.
-(c) 2002-2013
+(c) 2002-2014
 Univention GmbH
 Mary-Somerville-Straße 1
 28359 Bremen
@@ -84,20 +84,6 @@ feedback@univention.de
 		der vorhanden Installation mindestens 1 GB weiteren Speicherplatz zum Herunterladen und
 		Installieren der Pakete.
 	  </para>
-	  <para>
-		Für das Update sollte eine Anmeldung auf der Konsole mit dem Benutzer
-		<emphasis>root</emphasis> durchgeführt und das Update dort gestartet werden. Alternativ
-		kann das Update über die &ucsUMC; durchgeführt werden.
-	  </para>
-	  <para>
-		Eine Remote-Aktualisierung über SSH wird nicht empfohlen, da dies beispielsweise bei
-		Unterbrechung der Netzverbindung zum Abbruch des Update-Vorgangs und zu einer
-		Beeinträchtigung des Systems führen kann. Sollte dennoch eine Aktualisierung über eine
-		Netzverbindung durchgeführt werden, ist sicherzustellen, dass das Update bei Unterbrechung
-		der Netzverbindung trotzdem weiterläuft. Hierfür können beispielsweise die Tools
-		<command>screen</command> oder <command>at</command> eingesetzt werden, die auf allen
-		Systemrollen installiert sind.
-	  </para>
 	</chapter>
 
 	<chapter>
@@ -109,7 +95,7 @@ feedback@univention.de
 			<command>univention-run-join-scripts</command> als Benutzer <emphasis>root</emphasis>.
 		</para>
 		<para>
-			Bei Neuinstallation einer UCS@school 3.2 Domäne mit Samba 4 sollte nach Abschluss 
+			Bei der Neuinstallation einer UCS@school 3.2 Domäne mit Samba 4 sollte nach Abschluss 
 			der Installation einmalig als Benutzer <emphasis>root</emphasis> das Kommando 
 			<command>samba-tool ntacl sysvolreset</command> auf der Kommandozeile ausgeführt werden.
 		</para>
@@ -192,7 +178,7 @@ feedback@univention.de
 		<title>Changelog</title>
 		<para>
 			Die Changelogs mit den detaillierten Änderungsinformationen werden nur in Englisch
-			gepflegt. Aufgeführt sind die Änderungen seit UCS@school 3.1R2-2:
+			gepflegt. Aufgeführt sind die Änderungen seit UCS@school 3.2:
 		</para>
 		&changelog;
 	</chapter>
