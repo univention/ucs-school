@@ -173,7 +173,7 @@ chmod a+rx -Rf user/*.vbs
 				<listitem><simpara>
 					Usernames (and other attributes) already used are blocked by the
 					wizard. This test did not search for exact equality but for
-					substrings which is too strict. Fixed that (<ulink
+					substrings which is too strict in most cases. This has been fixed (<ulink
 						url="&ucsbug;33979">Bug 33979</ulink>).
 				</simpara></listitem>
 			</itemizedlist>
