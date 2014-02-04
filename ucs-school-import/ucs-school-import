@@ -2785,6 +2785,8 @@ def rename_class():
 			path = shareObject['path'].split(os.path.sep)
 			path[-1] = newName
 			shareObject['name'] = newName
+			if shareObject['sambaName'] == oldName:
+				shareObject['sambaName'] = newName
 			shareObject['path'] = os.path.sep.join(path)	
 			try:
 				shareObject.modify()
