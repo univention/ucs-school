@@ -1,8 +1,8 @@
-ucs-school-import (10.0.4-4) unstable; urgency=low
+ucs-school-import (10.0.4-5) unstable; urgency=low
 
-  * rename_class: change sambaName too (Bug #33752)
+  * rename_class: change sambaName and sambaForceGroup too (Bug #33752)
 
- -- Janek Walkenhorst <walkenhorst@univention.de>  Tue, 04 Feb 2014 17:01:33 +0100
+ -- Janek Walkenhorst <walkenhorst@univention.de>  Wed, 05 Feb 2014 15:51:40 +0100
 
 ucs-school-import (10.0.4-3) unstable; urgency=low
 
