@@ -50,18 +50,6 @@ if [ $JS_LAST_EXECUTED_VERSION -lt 1 ]; then
 	done
 fi
 
-if [ $JS_LAST_EXECUTED_VERSION -lt 6 ]; then
-	# append UCSschool-School-OU option to Home/ClassShareServer
-	for dn in "cn=UCSschool-School-HomeShareFileServer,cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
-		"cn=UCSschool-School-ClassShareFileServer,cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base"; do
-		univention-directory-manager settings/extended_attribute modify "$@" \
-			--dn "$dn" \
-			--set hook="schoolOU" \
-			--append options="UCSschool-School-OU"
-		if [ $? != 0 ]; then exit 1; fi
-	done
-fi
-
 univention-directory-manager container/cn      create "$@" --ignore_exists --set name="services" --position "cn=univention,$ldap_base"
 univention-directory-manager settings/service  create "$@" --ignore_exists --set name="Windows Home Server"  --position "cn=services,cn=univention,$ldap_base"
 univention-directory-manager settings/service  create "$@" --ignore_exists --set name="Windows Profile Server"  --position "cn=services,cn=univention,$ldap_base"
@@ -131,6 +119,18 @@ univention-directory-manager settings/extended_attribute create "$@" --ignore_ex
 	--set ldapMapping=ucsschoolClassShareFileServer \
 	--set multivalue=0
 if [ $? != 0 ]; then exit 1; fi
+
+if [ $JS_LAST_EXECUTED_VERSION -lt 6 ]; then
+	# append UCSschool-School-OU option to Home/ClassShareServer
+	for dn in "cn=UCSschool-School-HomeShareFileServer,cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
+		"cn=UCSschool-School-ClassShareFileServer,cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base"; do
+		univention-directory-manager settings/extended_attribute modify "$@" \
+			--dn "$dn" \
+			--set hook="schoolOU" \
+			--append options="UCSschool-School-OU"
+		if [ $? != 0 ]; then exit 1; fi
+	done
+fi
 
 joinscript_save_current_version
 

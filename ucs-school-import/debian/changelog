@@ -1,3 +1,9 @@
+ucs-school-import (10.0.4-6) unstable; urgency=low
+
+  * Bug #33600: make sure that shares exists before modifying them
+
+ -- Florian Best <best@univention.de>  Wed, 05 Feb 2014 16:55:38 +0100
+
 ucs-school-import (10.0.4-5) unstable; urgency=low
 
   * rename_class: change sambaName and sambaForceGroup too (Bug #33752)
