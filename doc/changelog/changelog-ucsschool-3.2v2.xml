@@ -24,7 +24,7 @@ chmod a+rx -Rf user/*.vbs
 			<listitem>
 			  <simpara> 
 				In the past UCS@school considered all organizational unit objects (OU) as school
-				OU. There has been an UCR variable <var>ucsschool/ldap/ignore/ous</var> that could hold a list of
+				OU. There has been an UCR variable <envar>ucsschool/ldap/ignore/ous</envar> that could hold a list of
 				OUs to be ignored. With this version of UCS@school the UCR variable is no longer in use. Instead an
 				UDM option <emphasis>UCS@school Organizational Unit</emphasis> has been added to the
 				<emphasis>[Options]</emphasis> tab. Please check all non-UCS@school OUs if the option has been set
