@@ -24,16 +24,14 @@ chmod a+rx -Rf user/*.vbs
 		</itemizedlist>
 </section>
 
-<!--
 <section>
-	<title>Import scripts</title>
-			<itemizedlist>
-				<listitem><simpara>
-					FOO
-				</simpara></listitem>
-			</itemizedlist>
+  <title>Import scripts</title>
+  <itemizedlist>
+	<listitem><simpara>
+	  The import script <emphasis>rename_class</emphasis> did not rename the class share's samba name and did not update the samba forced group. This has been fixed. Both values will now be updated automatically during class renaming if they still contain the default values. (<ulink url="&ucsbug;33752">Bug 33752</ulink>).
+	</simpara></listitem>
+  </itemizedlist>
 </section>
--->
 
 <!--
 <section>
