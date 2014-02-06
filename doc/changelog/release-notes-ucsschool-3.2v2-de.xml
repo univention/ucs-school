@@ -177,8 +177,10 @@ feedback@univention.de
 	<chapter>
 		<title>Changelog</title>
 		<para>
-			Die Changelogs mit den detaillierten Änderungsinformationen werden nur in Englisch
-			gepflegt. Aufgeführt sind die Änderungen seit UCS@school 3.2:
+		  Die Changelogs mit den detaillierten Änderungsinformationen werden nur in Englisch
+		  gepflegt. Aufgeführt sind die Änderungen zwischen den UCS@school-Versionen 3.2 und 3.2v2. Die
+		  Änderungsinformationen für vorherige Versionssprünge finden sich unter <ulink
+		  url="http://download.univention.de/doc/"/>.
 		</para>
 		&changelog;
 	</chapter>
