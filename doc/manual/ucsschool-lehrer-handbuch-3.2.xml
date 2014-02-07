@@ -184,7 +184,7 @@ feedback@univention.de
 			  <para>
 				<figure id="passwordreset1">
 				  <title>Zurücksetzen von Schülerpasswörtern</title>
-				  <graphic scalefit="1" width="90%" align="center" fileref="illustrations/students_passwords.png"/>
+				  <graphic scalefit="1" width="95%" align="center" fileref="illustrations/students_passwords.png"/>
 				</figure>
 			  </para>
 			</listitem>
@@ -197,7 +197,7 @@ feedback@univention.de
 			  <para>
 				<figure id="searchingpupils">
 				  <title>Suche nach Schülerkonten</title>
-				  <graphic scalefit="1" width="90%" align="center" fileref="illustrations/students_passwords_selected.png"/>
+				  <graphic scalefit="1" width="95%" align="center" fileref="illustrations/students_passwords_selected.png"/>
 				</figure>
 			  </para>
 			</listitem>
@@ -255,7 +255,7 @@ feedback@univention.de
 		<para>
 		  <figure id="choose-computerroom">
 			<title>Auswahl eines Computerraums</title>
-			<graphic scalefit="1" width="50%" align="center" fileref="illustrations/choose_computerroom.png"/>
+			<graphic scalefit="1" width="45%" align="center" fileref="illustrations/choose_computerroom.png"/>
 		  </figure>
 		</para>
 		<para>
@@ -556,7 +556,7 @@ feedback@univention.de
 		<para>
 		  <figure id="helpdesk">
 			<title>Anfrage an den Helpdesk</title>
-			<graphic scalefit="1" width="50%" align="center" fileref="illustrations/contact_helpdesk.png"/>
+			<graphic scalefit="1" width="40%" align="center" fileref="illustrations/contact_helpdesk.png"/>
 		  </figure>
 		</para>
 		<para>
@@ -618,7 +618,7 @@ feedback@univention.de
 		<para>
 		  <figure id="assign-pupils">
 			<title>Zuweisen von Schülern zu einer Arbeitsgruppe</title>
-			<graphic scalefit="1" width="50%" align="center" fileref="illustrations/workgroup_add_students.png"/>
+			<graphic scalefit="1" width="40%" align="center" fileref="illustrations/workgroup_add_students.png"/>
 		  </figure>
 		</para>
 		<para>
@@ -675,7 +675,7 @@ feedback@univention.de
 
 				<figure id="printer-selection">
 				  <title>Auswahl des Druckers nach Freigabe des Druckauftrags</title>
-				  <graphic scalefit="1" width="80%" align="center" fileref="illustrations/printer_choice.png"/>
+				  <graphic scalefit="1" width="60%" align="center" fileref="illustrations/printer_choice.png"/>
 				</figure>
 			  </para>
 			</listitem>
@@ -817,7 +817,7 @@ feedback@univention.de
 		<para>
 		  <figure id="verteilungsprojekt-einsammeln">
 			<title>Einsammeln eines Materialverteilungsprojekts</title>
-			<graphic scalefit="1" width="80%" align="center" fileref="illustrations/distribution_collect_project.png"/>
+			<graphic scalefit="1" width="60%" align="center" fileref="illustrations/distribution_collect_project.png"/>
 		  </figure>
 		</para>
 		<para>
@@ -874,7 +874,7 @@ feedback@univention.de
 		<para>
 		  <figure id="add-to-computerroom">
 			<title>Zuweisen von Computern zu einem Computerraum</title>
-			<graphic scalefit="1" width="50%" align="center" fileref="illustrations/computerrooms_add_computers.png"/>
+			<graphic scalefit="1" width="35%" align="center" fileref="illustrations/computerrooms_add_computers.png"/>
 		  </figure>
 		</para>
 		<para>
@@ -893,7 +893,7 @@ feedback@univention.de
 		<para>
 		  <figure id="lesson-times">
 			<title>Festlegung der Unterrichtszeiten</title>
-			<graphic scalefit="1" width="80%" align="center" fileref="illustrations/lesson_times.png"/>
+			<graphic scalefit="1" width="55%" align="center" fileref="illustrations/lesson_times.png"/>
 		  </figure>
 		</para>
 		<para>
@@ -924,7 +924,7 @@ feedback@univention.de
 		<para>
 		  <figure id="assign-teacher">
 			<title>Zuweisen von Lehrern zu einer Klasse</title>
-			<graphic scalefit="1" width="50%" align="center" fileref="illustrations/assign_teacher_to_class.png"/>
+			<graphic scalefit="1" width="35%" align="center" fileref="illustrations/assign_teacher_to_class.png"/>
 		  </figure>
 		</para>
 	  </section>
