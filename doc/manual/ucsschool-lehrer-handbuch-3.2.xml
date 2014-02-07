@@ -17,12 +17,12 @@
     <legalnotice>
       <literallayout>
 Version 3.2
-Stand: 18. November 2013
+Stand: 10. Februar 2014
       </literallayout>
 
       <literallayout>
 Alle Rechte vorbehalten./ All rights reserved.
-(c) 2002-2013
+(c) 2002-2014
 Univention GmbH
 Mary-Somerville-Straße 1
 28359 Bremen
@@ -124,9 +124,9 @@ feedback@univention.de
 		</para>
 		  <itemizedlist>
 			<listitem><simpara>Google Chrome ab Version 14</simpara></listitem>
-			<listitem><simpara>Mozilla Firefox ab Version 3.6</simpara></listitem>
-			<listitem><simpara>Microsoft Internet Explorer ab Version 8</simpara></listitem>
-			<listitem><simpara>Apple Safari (auf dem iPad 2)</simpara></listitem>
+			<listitem><simpara>Mozilla Firefox ab Version 10</simpara></listitem>
+			<listitem><simpara>Microsoft Internet Explorer ab Version 9</simpara></listitem>
+			<listitem><simpara>Safari (auf dem iPad 2)</simpara></listitem>
 		  </itemizedlist>
 		<para>
 		  Wird kein unterstützter Browser vorgefunden, wird eine Warnung ausgegeben und es können
@@ -202,15 +202,10 @@ feedback@univention.de
 			  </para>
 			</listitem>
 			<listitem>
-			  <simpara>
-				Ein Klick auf <guimenu>Passwort zurücksetzen</guimenu> öffnet einen neuen Dialog.
-			  </simpara>
-			</listitem>
-			<listitem>
 			  <para>
-				Wenn mehr als ein Schülerpasswort zurückgesetzt werden soll, muss der graue
-				Auswahlkasten vor dem Schülernamen markiert werden und der Menüpunkt <guimenu>Passwort
-				zurücksetzen</guimenu> in der unteren Menüleiste verwendet werden.
+				Aus der Liste der angezeigten Schüler sind anschließend ein oder mehrere Schüler
+				durch das Markieren des grauen Auswahlkastens vor dem Schülernamen auszuwählen. Anschließend ist die
+				Schaltfläche <guimenu>Passwort zurücksetzen</guimenu> oberhalb der Schülerliste auszuwählen.
 			  </para>
 			  <para>
 				<figure id="passwordreset2">
@@ -318,17 +313,16 @@ feedback@univention.de
 		</para>
 		<para>
 		  In der Übersichtsliste der Schüler-PCs steht eine
-		  Reihe von Aktionen zur Verfügung. Bewegt man die Maus über das Feld <guimenu>beobachten</guimenu>
+		  Reihe von Aktionen zur Verfügung. Bewegt man die Maus über die Schaltfläche <guimenu>Beobachten</guimenu>
 		  eines Eintrags, erscheint eine verkleinerte Ansicht des aktuellen Schüler-Desktops. Klickt man auf
-		  den Link, besteht auch die Möglichkeit diese Ansicht in größerer Form darzustellen. Die Ansicht des
+		  die Schaltfläche, besteht auch die Möglichkeit diese Ansicht in größerer Form darzustellen. Die Ansicht des
 		  Schüler-Desktops wird fortlaufend aktualisiert.
 		</para>
 		<para>
-		  Durch Klick auf <guimenu>sperren</guimenu> kann
-		  die Bildschirmanzeige auf dem Schüler-PC deaktiviert werden. Auf dem Schüler-PC wird dann nur ein
-		  grauer Hintergrund mit einem Schloss-Symbol angezeigt (siehe Abbildung <xref
-		  linkend="screenlock"/>). Ein Klick auf <guimenu>entsperren</guimenu> gibt den Schüler-PC wieder
-		  frei.
+		  Durch Klick auf <guimenu>Bildschirm sperren</guimenu> kann die Bildschirmanzeige der zuvor
+		  markierten Schüler-PCs deaktiviert werden. Auf den Schüler-PCs wird dann nur ein grauer Hintergrund
+		  mit einem Schloss-Symbol angezeigt (siehe Abbildung <xref linkend="screenlock"/>). Ein Klick auf
+		  <guimenu>Bildschirm entsperren</guimenu> gibt die ausgewählten Schüler-PCs wieder frei.
 		</para>
 		<para>
 		  <figure id="screenlock">
@@ -349,6 +343,13 @@ feedback@univention.de
 			  <simpara>
 				<guimenu>Computer herunterfahren</guimenu> und <guimenu>Computer neu starten</guimenu>
 				erlauben das Abschalten, bzw. den Neustart eines Schüler-PCs.
+			  </simpara>
+			</listitem>
+			<listitem>
+			  <simpara>
+				<guimenu>Computer einschalten</guimenu> ermöglicht das Einschalten von Schüler-PCs
+				über die Weboberfläche. Dieser Menüpunkt funktioniert nur, wenn die Hardware der betreffenden
+				Schüler-PCs dies unterstützt und zuvor vom Administrator entsprechend eingerichtet wurde.
 			  </simpara>
 			</listitem>
 			<listitem>
