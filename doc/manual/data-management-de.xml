@@ -379,6 +379,14 @@ gymmitte-5B		gymmitte-6B</programlisting>
 		  Die Reihenfolge der Unbenennung ist wichtig, da die Umbenennung
 		  sequentiell erfolgt und der Zielname nicht existieren darf.
 		</para>
+		<note>
+		  <para>
+			Beim Umbenennen der Klassen-Freigaben werden auch deren Werte für
+			<guimenu>Samba-Name</guimenu> sowie die <guimenu>erzwungene Gruppe</guimenu> automatisch angepasst,
+			sofern diese noch die Standardwerte des UCS@school-Importskriptes aufweisen. Bei manuellen
+			Änderungen müssen diese Werte nach dem Umbenennen der Klasse nachträglich manuell angepasst werden.
+		  </para>
+		</note>
 	  </listitem>
 	  <listitem>
 		<simpara>Eine aktuelle Liste aller verbleibenden Schülerdaten wird über das
