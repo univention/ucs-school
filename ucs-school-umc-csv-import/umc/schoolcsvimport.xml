@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<umc version="2.0">
+	<module id="schoolcsvimport" icon="school-csv-import" version="1.0">
+		<categories>
+			<category name="ucs-school-admin"/>
+		</categories>
+		<name>CSV import</name>
+		<description>CSV import for UCS@school users</description>
+		<keywords>upload,csv,import</keywords>
+		<command name="schoolcsvimport/schools" function="schools" />
+	</module>
+</umc>
