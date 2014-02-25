@@ -1,0 +1,17 @@
+Source: ucs-test-ucsschool
+Section: tools
+Priority: optional
+Maintainer: Univention GmbH <packages@univention.de>
+Build-Depends: debhelper (>= 8.0.0),
+ python-support
+Standards-Version: 3.6.1
+
+Package: ucs-test-ucsschool
+Architecture: all
+Depends: ucs-test-libs,
+ ucs-test-framework,
+ curl,
+ ${misc:Depends}
+Provides: ucs-test-module
+Description: Additional UCS@school tests for ucs-test
+ This package includes some UCS@school related tests for ucs-test.
