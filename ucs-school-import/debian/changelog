@@ -1,3 +1,9 @@
+ucs-school-import (10.0.5-1) unstable; urgency=low
+
+  * Bug #34209: fixed traceback due to typo in error message
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 28 Feb 2014 15:37:31 +0100
+
 ucs-school-import (10.0.4-6) unstable; urgency=low
 
   * Bug #33600: make sure that shares exists before modifying them

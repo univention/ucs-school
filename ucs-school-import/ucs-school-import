@@ -2778,7 +2778,7 @@ def rename_class():
 				messages.append("Renaming of group %s to %s successfully" % (oldName, newName))
 			except Exception, e:
 				success = False
-				messages.append("Renaming of group %s to %s failed: %s" % (oldname, newName, str(e)))
+				messages.append("Renaming of group %s to %s failed: %s" % (oldName, newName, str(e)))
 
 			# rename share and share path
 			shareObject.open()
@@ -2795,7 +2795,7 @@ def rename_class():
 				messages.append("Renaming of share %s to %s successfully" % (oldName, newName))
 			except Exception, e:
 				success = False
-				messages.append("Renaming of share %s to %s failed: %s" % (oldname, newName, str(e)))
+				messages.append("Renaming of share %s to %s failed: %s" % (oldName, newName, str(e)))
 
 			# group post mod hook
 			if success:
