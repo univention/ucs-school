@@ -3,6 +3,7 @@ ucs-school-import (10.0.6-1) unstable; urgency=low
   * Bug #34173: added attribute displayName to objectclass
     ucsschoolOrganizationalUnit
   * Bug #34173: added option --displayName to import script create_ou
+  * Bug #34173: added extended attribute "displayName" to school OUs
 
  -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 28 Feb 2014 16:00:05 +0100
 
