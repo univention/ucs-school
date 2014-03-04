@@ -49,9 +49,18 @@ define([
 				helpText: _('Enter details to create all necessary structures for a new school.'),
 				widgets: [{
 					type: TextBox,
+					name: 'displayname',
+					label: _('Display name of the school'),
+					description: _('The given value will be shown as school\'s name within UCS@school.'),
+					required: true
+				}, {
+					type: TextBox,
 					name: 'name',
-					label: _('Name of the school'),
+					label: _("LDAP name of the school OU"),
+					description: _('The given value will be used as object name for the new school OU object within the LDAP directory. It may consist of the letters a-z, the digits 0-9 and underscores. Usually it is safe to keep the suggested value.'),
 					regExp: '^[a-zA-Z0-9](([a-zA-Z0-9_]*)([a-zA-Z0-9]$))?$',
+					depends: ['displayname'],
+					dynamicValue: function(values) { return values.displayname.replace(/[^a-zA-Z0-9]/g, ''); },
 					required: true
 				}, {
 					type: TextBox,
@@ -62,7 +71,8 @@ define([
 					maxLength: 12,
 					required: true
 				}],
-				layout: [['name'],
+				layout: [['displayname'],
+			         	 ['name'],
 			         	 ['schooldc']]
 			}];
 
@@ -86,14 +96,15 @@ define([
 		},
 
 		restart: function() {
+			this.getWidget('school', 'displayname').reset();
 			this.getWidget('school', 'name').reset();
 			this.getWidget('school', 'schooldc').reset();
 			this.inherited(arguments);
 		},
 
 		addNote: function() {
-			var name = this.getWidget('school', 'name').get('value');
-			var message = _('School "%s" has been successfully created. Continue to create another school or press "Cancel" to close this wizard.', name);
+			var displayname = this.getWidget('school', 'displayname').get('value');
+			var message = _('The school "%s" has been successfully created. Continue to create another school or press "Cancel" to close this wizard.', displayname);
 			this.getPage('school').clearNotes();
 			this.getPage('school').addNote(message);
 		}

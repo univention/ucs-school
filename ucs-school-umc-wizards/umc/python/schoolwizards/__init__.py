@@ -203,6 +203,7 @@ class Instance(SchoolBaseModule, SchoolImport):
 		request = remove_whitespaces(request)
 
 		name = udm_syntax.GroupName.parse(request.options['name'])
+		display_name = udm_syntax.GroupName.parse(request.options['displayname'])
 		self._check_school_name(name)
 
 		schooldc = ''
@@ -221,7 +222,7 @@ class Instance(SchoolBaseModule, SchoolImport):
 			raise ValueError(_('School name is already in use'))
 
 		# Create the school
-		self.create_ou(name, schooldc)
+		self.create_ou(name, display_name, schooldc)
 		_init_search_base(ldap_user_read, force=True)
 
 	@LDAP_Connection()

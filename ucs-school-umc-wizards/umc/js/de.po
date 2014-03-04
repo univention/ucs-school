@@ -3,8 +3,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-wizards\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2014-01-24 08:40+0100\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"POT-Creation-Date: 2014-03-04 12:33+0100\n"
+"PO-Revision-Date: 2014-03-04 12:33+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
@@ -35,7 +35,7 @@ msgstr ""
 "Computer erstellt oder der Wizard beendet über die Schaltfläche \"Abbrechen"
 "\" beendet werden."
 
-#: umc/js/schoolwizards/SchoolWizard.js:59
+#: umc/js/schoolwizards/SchoolWizard.js:68
 msgid "Computer name of the school server"
 msgstr "Rechnername des Schulservers"
 
@@ -46,6 +46,10 @@ msgstr "Neue Klasse erstellen"
 #: umc/js/schoolwizards/ClassWizard.js:66
 msgid "Description"
 msgstr "Beschreibung"
+
+#: umc/js/schoolwizards/SchoolWizard.js:53
+msgid "Display name of the school"
+msgstr "Anzeigename der Schule"
 
 #: umc/js/schoolwizards/UserWizard.js:122
 msgid "E-Mail"
@@ -79,6 +83,10 @@ msgstr "IP-Adresse"
 msgid "Inventory number"
 msgstr "Inventarnummer"
 
+#: umc/js/schoolwizards/SchoolWizard.js:59
+msgid "LDAP name of the school OU"
+msgstr "LDAP-Name der Schul-OU"
+
 #: umc/js/schoolwizards/UserWizard.js:108
 msgid "Lastname"
 msgstr "Nachname"
@@ -87,33 +95,20 @@ msgstr "Nachname"
 msgid "MAC address"
 msgstr "MAC-Adresse"
 
-#: umc/js/schoolwizards/ComputerWizard.js:75
 #: umc/js/schoolwizards/ClassWizard.js:61
+#: umc/js/schoolwizards/ComputerWizard.js:75
 msgid "Name"
 msgstr "Name"
-
-#: umc/js/schoolwizards/SchoolWizard.js:53
-msgid "Name of the school"
-msgstr "Name der Schule"
 
 #: umc/js/schoolwizards/UserWizard.js:126
 msgid "Password"
 msgstr "Passwort"
 
-#: umc/js/schoolwizards/ComputerWizard.js:55
 #: umc/js/schoolwizards/ClassWizard.js:54
 #: umc/js/schoolwizards/UserWizard.js:66
+#: umc/js/schoolwizards/ComputerWizard.js:55
 msgid "School"
 msgstr "Schule"
-
-#: umc/js/schoolwizards/SchoolWizard.js:96
-#, python-format
-msgid ""
-"School \"%s\" has been successfully created. Continue to create another "
-"school or press \"Cancel\" to close this wizard."
-msgstr ""
-"Schule \"%s\" wurde erfolgreich erstellt. Es kann nun eine weitere Schule "
-"erstellt oder der Wizard über die Schaltfläche \"Abbrechen\" beendet werden."
 
 #: umc/js/schoolwizards/ComputerWizard.js:51
 msgid "Specify the computer type."
@@ -143,11 +138,37 @@ msgstr "Lehrer"
 msgid "Teachers and staff"
 msgstr "Lehrer und Mitarbeiter"
 
-#: umc/js/schoolwizards/SchoolWizard.js:61
+#: umc/js/schoolwizards/SchoolWizard.js:70
 msgid ""
-"The computer name must be a valid NetBIOS hostname. This requires a maximum length "
-"of 12 characters."
-msgstr "Der Rechnername muss ein gültiger NetBIOS-Rechnername sein. Das erfordert eine maximale Länge von 12 Zeichen."
+"The computer name must be a valid NetBIOS hostname. This requires a maximum "
+"length of 12 characters."
+msgstr ""
+"Der Rechnername muss ein gültiger NetBIOS-Rechnername sein. Das erfordert "
+"eine maximale Länge von 12 Zeichen."
+
+#: umc/js/schoolwizards/SchoolWizard.js:54
+msgid "The given value will be shown as school's name within UCS@school."
+msgstr ""
+"Der hier eingegebene Wert wird innerhalb von UCS@school als Name für die "
+"neue Schule angezeigt."
+
+#: umc/js/schoolwizards/SchoolWizard.js:60
+msgid ""
+"The given value will be used as object name for the new school OU object "
+"within the LDAP directory. It may consist of the letters a-z, the digits 0-9 "
+"and underscores. Usually it is safe to keep the suggested value."
+msgstr ""
+"Der hier eingegebene Wert wird als Objektname für die neue Schul-OU im LDAP-"
+"Verzeichnis verwendet. Er darf aus den Buchstaben a-z, den Ziffern 0-9 und "
+"dem Unterstrich bestehen. In der Regel kann der automatisch vorgeschlagene "
+"Wert unverändert übernommen werden."
+
+#: umc/js/schoolwizards/SchoolWizard.js:107
+#, python-format
+msgid ""
+"The school \"%s\" has been successfully created. Continue to create another "
+"school or press \"Cancel\" to close this wizard."
+msgstr "Die Schule \"%s\" wurde erfolgreich erstellt. Es kann nun eine weitere Schule erstellt oder der Wizard über die Schaltfläche \"Abbrechen\" beendet werden."
 
 #: umc/js/schoolwizards/UserWizard.js:56
 #, python-format
@@ -161,8 +182,8 @@ msgstr ""
 "Löschen) von Benutzern kann das UMC-Modul <a %s>Benutzer</a> verwendet "
 "werden."
 
-#: umc/js/schoolwizards/ComputerWizard.js:62
 #: umc/js/schoolwizards/UserWizard.js:73
+#: umc/js/schoolwizards/ComputerWizard.js:62
 msgid "Type"
 msgstr "Typ"
 

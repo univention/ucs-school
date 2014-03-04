@@ -1,3 +1,9 @@
+ucs-school-umc-wizards (4.0.1-1) unstable; urgency=low
+
+  * Bug #34173: extended "create school" wizard by adding display name widget
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Tue, 04 Mar 2014 12:29:12 +0100
+
 ucs-school-umc-wizards (4.0.0-5) unstable; urgency=low
 
   * Bug #33387: limit the maximum hostname length of school DC name also in
