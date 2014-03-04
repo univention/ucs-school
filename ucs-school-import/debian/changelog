@@ -1,3 +1,10 @@
+ucs-school-import (10.0.6-1) unstable; urgency=low
+
+  * Bug #34173: added attribute displayName to objectclass
+    ucsschoolOrganizationalUnit
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 28 Feb 2014 16:00:05 +0100
+
 ucs-school-import (10.0.5-1) unstable; urgency=low
 
   * Bug #34209: fixed traceback due to typo in error message
