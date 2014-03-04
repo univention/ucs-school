@@ -460,7 +460,7 @@ def object_exists(module, co, lo, scope, superordinate, base, filter, dn):
 	
 	return None
 
-def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None, ShareFileServer=None):
+def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None, ShareFileServer=None, displayName=None):
 	global problem_hints
 
 	for verified_ou in verified_ous:
@@ -583,11 +583,15 @@ def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None, ShareFileServer=None
 
 		r = lo.modify(dn, [ ('objectClass', '', 'ucsschoolOrganizationalUnit'),
 							('ucsschoolClassShareFileServer', '', ShareFileServer), # set file server for class shares
-							('ucsschoolHomeShareFileServer', '', ShareFileServer)   # set file server for home shares
+							('ucsschoolHomeShareFileServer', '', ShareFileServer),  # set file server for home shares
+							('displayName', '', displayName),                       # set display name for UCS@school
 							] )
 	else:
 		if ShareFileServer is not None:
 			print "WARNING: sharefileserver ignored because OU already exists!"
+			print "WARNING: please modify school OU via UDM or UMC"
+		if displayName is not None:
+			r = lo.modify(ou_base, [('displayName', lo.get(ou_base, ['displayName']).get('displayName',[]), [displayName])])
 
 	keys=container.keys()
 	keys.sort()
@@ -3026,6 +3030,10 @@ elif sys.argv[0].endswith("create_ou"):
 		'--sharefileserver', action='store', type='string',
 		dest='ShareFileServer', default=None,
 		help="hostname of the fileserver within given OU that is used for class shares and user home shares")
+	parser.add_option(
+		'--displayName', action='store', type='string',
+		dest='displayName', default=None,
+		help='Descriptive name of school OU that is shown within UCS@school modules as school name (e.g. "Gymnasium Mitte")')
 
 	(options, args, ) = parser.parse_args()
 	if len(args) > 0:
@@ -3057,7 +3065,7 @@ elif sys.argv[0].endswith("create_ou"):
 		if not dcName and configRegistry.is_true('ucsschool/singlemaster', False):
 			dcName = configRegistry.get('hostname')
 
-		verify_school_ou(ouname, co, lo, baseDN, dcName=dcName, ShareFileServer=options.ShareFileServer)
+		verify_school_ou(ouname, co, lo, baseDN, dcName=dcName, ShareFileServer=options.ShareFileServer, displayName=options.displayName)
 		sys.exit(0)
 	parser.print_help()
 	sys.exit(1)
