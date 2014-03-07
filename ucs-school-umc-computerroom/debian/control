@@ -18,6 +18,7 @@ Replaces: ucs-school-umc-roomadmin
 Breaks: ucs-school-umc-roomadmin (<< 8.0.0)
 Depends: ${misc:Depends},
  univention-management-console,
+ univention-management-console-web-server (>= 3.0.152-23),
  univention-config-registry,
  python-univention-lib,
  ucs-school-umc-common,
@@ -27,6 +28,7 @@ Depends: ${misc:Depends},
  italc-master,
  python-italc,
  python-psutil,
+ python-ipaddr,
  wakeonlan
 Description: UMC module to control computers in a room
  This packages provides a Univention Management Console module that allows to
