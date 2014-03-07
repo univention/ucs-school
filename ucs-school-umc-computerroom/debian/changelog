@@ -1,3 +1,9 @@
+ucs-school-umc-computerroom (5.0.0-1) unstable; urgency=low
+
+  * Bug #25762: pre select the current room of the logged in teacher
+
+ -- Florian Best <best@univention.de>  Fri, 07 Mar 2014 14:19:27 +0100
+
 ucs-school-umc-computerroom (4.0.4-1) unstable; urgency=low
 
   * Bug #33585: sort computers

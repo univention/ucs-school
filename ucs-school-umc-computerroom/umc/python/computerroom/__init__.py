@@ -40,6 +40,8 @@ import fcntl
 from random import Random
 import urlparse
 import psutil
+from ipaddr import IPAddress
+from ldap.filter import escape_filter_chars
 
 from univention.management.console.config import ucr
 ucr.load()
@@ -48,6 +50,8 @@ from univention.config_registry import handler_set, handler_unset
 from univention.lib.i18n import Translation
 import univention.lib.atjobs as atjobs
 
+from univention.management.console.modules.sanitizers import ListSanitizer, Sanitizer
+from univention.management.console.modules.decorators import sanitize, simple_response
 from univention.management.console.modules import UMC_OptionTypeError, UMC_CommandError
 from univention.management.console.log import MODULE
 from univention.management.console.protocol import MIMETYPE_JPEG, Response
@@ -72,6 +76,7 @@ _ = Translation('ucs-school-umc-computerroom').translate
 
 ROOMDIR = '/var/cache/ucs-school-umc-computerroom'
 
+
 def _getRoomFile(roomDN):
 	if roomDN.startswith('cn='):
 		dnParts = explodeDn(roomDN, True)
@@ -80,6 +85,7 @@ def _getRoomFile(roomDN):
 			raise UMC_CommandError(_('Invalid room DN: %s') % roomDN)
 		return os.path.join(ROOMDIR, dnParts[0])
 	return os.path.join(ROOMDIR, roomDN)
+
 
 def _isUmcProcess(pid):
 	if not psutil.pid_exists(pid):
@@ -92,6 +98,7 @@ def _isUmcProcess(pid):
 			# the process is not the computerroom UMC module
 			return False
 	return True
+
 
 def _readRoomInfo(roomDN):
 	'''returns a dict of properties for the current room.'''
@@ -121,6 +128,7 @@ def _readRoomInfo(roomDN):
 
 	return info
 
+
 def _updateRoomInfo(roomDN, **kwargs):
 	'''Update infos for a room, i.e., leave unspecified values untouched.'''
 	info = _readRoomInfo(roomDN) or dict()
@@ -133,6 +141,7 @@ def _updateRoomInfo(roomDN, **kwargs):
 			# leave the original value
 			newKwargs[key] = info.get(key)
 	_writeRoomInfo(roomDN, **newKwargs)
+
 
 def _writeRoomInfo(roomDN, user=None, cmd=None, exam=None, examDescription=None, examEndTime=None):
 	'''Set infos for a room and lock the room.'''
@@ -154,12 +163,14 @@ def _writeRoomInfo(roomDN, user=None, cmd=None, exam=None, examDescription=None,
 			fcntl.lockf(fd, fcntl.LOCK_UN)
 			fd.close()
 
+
 def _getRoomOwner(roomDN):
 	'''Read the room lock file and return the saved user DN. If it does not exist, return None.'''
 	info = _readRoomInfo(roomDN) or dict()
 	if not 'pid' in info :
 		return None
 	return info.get('user')
+
 
 def _freeRoom(roomDN, userDN):
 	'''Remove the lock file if the room is locked by the given user'''
@@ -171,12 +182,14 @@ def _freeRoom(roomDN, userDN):
 		except (OSError, IOError):
 			MODULE.warn('Failed to remove room lock file: %s' % roomFile)
 
+
 def check_room_access(func):
 	"""Block access to session from other users"""
 	def _decorated(self, request):
 		self._checkRoomAccess()
 		return func(self, request)
 	return _decorated
+
 
 def get_computer(func):
 	"""Adds the ITALC_Computer instance given in request.options['computer'] as parameter"""
@@ -188,6 +201,7 @@ def get_computer(func):
 		return func(self, request, computer)
 	return _decorated
 
+
 def prevent_ucc(func):
 	"""Prevent method from being called for UCC clients"""
 	def _decorated(self, request, computer):
@@ -196,6 +210,15 @@ def prevent_ucc(func):
 			raise UMC_CommandError(_('Action unavailable for UCC clients.'))
 		return func(self, request, computer)
 	return _decorated
+
+
+class IPAddressSanitizer(Sanitizer):
+	def _sanitize(self, value, name, further_fields):
+		try:
+			return IPAddress(value)
+		except ValueError as exc:
+			self.raise_validation_error('%s' % (exc,))
+
 
 class Instance(SchoolBaseModule):
 	ATJOB_KEY = 'UMC-computerroom'
@@ -333,6 +356,35 @@ class Instance(SchoolBaseModule):
 			rooms.append(iroom)
 
 		self.finished(request.id, rooms)
+
+	@sanitize(ipaddress=ListSanitizer(required=True, sanitizer=IPAddressSanitizer(), min_elements=1, max_elements=10))
+	@LDAP_Connection()
+	def guess_room(self, request, ldap_user_read=None, ldap_position=None, search_base=None):
+		ipaddress = request.options['ipaddress']
+		self.finished(request.id, self._guess_room(ipaddress, ldap_user_read, search_base))
+
+	def _guess_room(self, ipaddress, lo, search_base):
+		host_filter = self._get_host_filter(ipaddress)
+		computers = lo.searchDn(host_filter)
+		if computers:
+			room_filter = self._get_room_filter(computers)
+			rooms = lo.searchDn(room_filter)
+
+			for school in search_base.allSchoolBases:
+				for roomdn in rooms:
+					if school.isRoom(roomdn):
+						return dict(
+							room=roomdn,
+							school=school.getOU(roomdn)
+						)
+		return dict(school=None, room=None)
+
+	def _get_room_filter(self, computers):
+		return '(|(%s))' % ')('.join('uniqueMember=%s' % (escape_filter_chars(computer),) for computer in computers)
+
+	def _get_host_filter(self, ipaddresses):
+		records = { 4:'aRecord=%s', 6: 'aAAARecord=%s'}
+		return '(|(%s))' % ')('.join(records[ipaddress.version] % (ipaddress.exploded,) for ipaddress in ipaddresses)
 
 	def _checkRoomAccess(self):
 		if not self._italc.room:
@@ -568,7 +620,6 @@ class Instance(SchoolBaseModule):
 
 		return: [True|False]
 		"""
-
 
 		self.required_options(request, 'printMode', 'internetRule', 'shareMode')
 		exam = request.options.get('exam')

@@ -38,6 +38,7 @@ define([
 	"dojo/data/ItemFileWriteStore",
 	"dojo/store/DataStore",
 	"dojo/store/Memory",
+	"dojo/promise/all",
 	"dijit/ProgressBar",
 	"dijit/Dialog",
 	"dijit/Tooltip",
@@ -58,7 +59,7 @@ define([
 	"umc/modules/computerroom/ScreenshotView",
 	"umc/modules/computerroom/SettingsDialog",
 	"umc/i18n!umc/modules/computerroom"
-], function(declare, lang, array, aspect, dom, Deferred, ItemFileWriteStore, DataStore, Memory, DijitProgressBar,
+], function(declare, lang, array, aspect, dom, Deferred, ItemFileWriteStore, DataStore, Memory, all, DijitProgressBar,
             Dialog, Tooltip, styles, dialog, tools, app, ExpandingTitlePane, Grid, Button, Module, Page, Form,
             ContainerWidget, Text, ComboBox, ProgressBar, ScreenshotView, SettingsDialog, _) {
 
@@ -471,18 +472,41 @@ define([
 				umcpCommand: lang.hitch(this, 'umcpCommand')
 			});
 
-			// get UCR Variable for enabled VNC
-			this.standbyDuring(tools.ucr('ucsschool/umc/computerroom/ultravnc/enabled')).then(lang.hitch(this, function(result) {
-				this._vncEnabled = tools.isTrue(result['ucsschool/umc/computerroom/ultravnc/enabled']);
-
-				// render the page containing search form and grid
-				this.renderSearchPage();
-				this.renderScreenshotPage();
-			}));
+			this.standbyDuring(this._setVncSettings()).then(
+				lang.hitch(this, '_renderPages'),
+				lang.hitch(this, '_renderPages')
+			);
 
 			// initiate a progress bar widget
 			this._progressBar = new ProgressBar();
 			this.own(this._progressBar);
+		},
+
+		_renderPages: function() {
+			// render the page containing search form and grid
+			this.renderSearchPage();
+			this.renderScreenshotPage();
+		},
+
+		_setVncSettings: function() {
+			// get UCR Variable for enabled VNC
+			var getVncSettings = tools.ucr('ucsschool/umc/computerroom/ultravnc/enabled');
+			getVncSettings.then(lang.hitch(this, function(result) {
+				this._vncEnabled = tools.isTrue(result['ucsschool/umc/computerroom/ultravnc/enabled']);
+			}));
+			return getVncSettings;
+		},
+
+		_guessRoomOfTeacher: function() {
+			var getIP = this.umcpCommand('get/ipaddress');
+			var guessRoom = getIP.then(lang.hitch(this, function(ipaddresses) {
+				return this.umcpCommand('computerroom/room/guess', {ipaddress: ipaddresses});
+			}));
+			guessRoom.then(lang.hitch(this, function(response) {
+				this._preSelectedRoom = response.result.room;
+				this._preSelectedSchool = response.result.school;
+			}));
+			return all([getIP, guessRoom]);
 		},
 
 		startup: function() {
@@ -779,8 +803,11 @@ define([
 				this.standbyDuring(this._acquireRoom(room, false)).then(undefined, lang.hitch(this, 'changeRoom'));
 			}
 			else {
-				// no auto load of a specific room
-				this.changeRoom();
+				// no auto load of a specific room, try to guess one
+				this.standbyDuring(this._guessRoomOfTeacher()).then(
+					lang.hitch(this, 'changeRoom'),
+					lang.hitch(this, 'changeRoom')
+				);
 			}
 		},
 
@@ -1024,6 +1051,7 @@ define([
 				size: 'One',
 				label: _('School'),
 				dynamicValues: 'computerroom/schools',
+				value: this._preSelectedSchool,
 				autoHide: true
 			}, {
 				type: ComboBox,
@@ -1033,6 +1061,7 @@ define([
 				size: 'One',
 				depends: 'school',
 				dynamicValues: 'computerroom/rooms',
+				value: this._preSelectedRoom,
 				onChange: lang.hitch(this, function(roomDN) {
 					// display a warning in case the room is already taken
 					var msg = '';
