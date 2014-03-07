@@ -348,9 +348,9 @@ def _init_search_base(ldap_connection, force=False):
 			_search_base = SchoolSearchBase(availableSchools)
 
 class SchoolSearchBase(object):
-	"""This class serves as wrapper for all the different search bases (users,
-	groups, students, teachers etc.). It is initiate with a particular ou.
-	The class is inteded for read access only, instead of switching the a
+	"""This class serves a wrapper for all the different search bases (users,
+	groups, students, teachers etc.). It is initiated with a particular ou.
+	The class is inteded for read access only, instead of switching the
 	search base, a new instance can simply be created.
 	"""
 	def __init__( self, availableSchools, school = None, dn = None, ldapBase = None ):
@@ -388,6 +388,12 @@ class SchoolSearchBase(object):
 	@property
 	def availableSchools(self):
 		return self._availableSchools
+
+	@property
+	def allSchoolBases(self):
+		availableSchools = self.availableSchools
+		for school in availableSchools:
+			yield self.__class__(availableSchools, school, None, self._ldapBase)
 
 	@property
 	def school(self):
@@ -492,7 +498,7 @@ class SchoolSearchBase(object):
 	def isStaff(self, userDN):
 		return userDN.endswith(self.staff) or userDN.endswith(self.teachersAndStaff)
 
-	def isAdim(self, userDN):
+	def isAdmin(self, userDN):
 		return userDN.endswith(self.admins)
 
 	def isExamUser(self, userDN):
