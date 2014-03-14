@@ -152,11 +152,12 @@ class UCSTestSchool(object):
 		print '*** Purging OU %s and related objects: done' % ou_name
 
 
-	def create_ou(self, ou_name=None, name_edudc=None, displayName=None):
+	def create_ou(self, ou_name=None, name_edudc=None, displayName=''):
 		"""
-		Creates a new OU with random or specified name. The function also sets a random display name
-		if no display name has been specified. name_edudc may contain the optional name for an
-		educational dc slave.
+		Creates a new OU with random or specified name. The function may also set a specified
+		displayName. If "displayName" is None, a random displayName will be set. If "displayName"
+		equals to the empty string (''), the displayName won't be set. "name_edudc" may contain
+		the optional name for an educational dc slave.
 
 		Return value: (ou_name, ou_dn)
 			ou_name: name of the created OU
