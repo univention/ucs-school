@@ -1,3 +1,9 @@
+ucs-test-ucsschool (1.0.1-1) precise; urgency=low
+
+  * Bug #34280: added executable flag for test script
+
+ -- Ammar Najjar <anajjar@ENSEN.knut.univention.de>  Fri, 14 Mar 2014 11:46:26 +0100
+
 ucs-test-ucsschool (1.0.0-5) unstable; urgency=low
 
   * Bug #34280: fix default of displayName in create_ou()
