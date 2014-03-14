@@ -69,12 +69,14 @@ class UCSTestSchool(object):
 	def __init__(self):
 		self._cleanup_ou_names = set()
 
+
 	def __enter__(self):
 		return self
 
+
 	def __exit__(self, exc_type, exc_value, traceback):
 		if exc_type:
-			print 'Cleanup after exception: %s %s' % (exc_type, exc_value)
+			print '*** Cleanup after exception: %s %s' % (exc_type, exc_value)
 		self.cleanup()
 
 
@@ -92,9 +94,32 @@ class UCSTestSchool(object):
 
 		msg = None
 		cmd = [utu.UCSTestUDM.PATH_UDM_CLI_CLIENT_WRAPPED, module, 'remove', '--dn', dn]
+		print '*** Calling following command: %r' % cmd
 		retval = subprocess.call(cmd)
 		if retval:
-			msg = 'ERROR: failed to remove UCS@school %s object: %s' % (module, dn)
+			msg = '*** ERROR: failed to remove UCS@school %s object: %s' % (module, dn)
+			print msg
+		return msg
+
+
+	def _set_password(self, userdn, password, raise_exceptions=False):
+		"""
+			Tries to set a password for the given user.
+			Return None on success or error message.
+		"""
+		try:
+			dn = self._lo.searchDn(base=userdn)[0]
+		except (ldap.NO_SUCH_OBJECT, IndexError):
+			if raise_exceptions:
+				raise
+			return 'missing object'
+
+		msg = None
+		cmd = [utu.UCSTestUDM.PATH_UDM_CLI_CLIENT_WRAPPED, 'users/user', 'modify', '--dn', dn, '--set', 'password=%s' % password]
+		print '*** Calling following command: %r' % cmd
+		retval = subprocess.call(cmd)
+		if retval:
+			msg = 'ERROR: failed to set password for UCS@school user %s' % (userdn)
 			print msg
 		return msg
 
@@ -104,6 +129,7 @@ class UCSTestSchool(object):
 		for ou_name in self._cleanup_ou_names:
 
 			self.cleanup_ou(ou_name)
+
 
 	def cleanup_ou(self, ou_name):
 		""" Removes the given school ou and all its corresponding objects like groups """
@@ -157,7 +183,7 @@ class UCSTestSchool(object):
 		if name_edudc:
 			cmd += [name_edudc]
 
-		print 'Calling following command: %r' % cmd
+		print '*** Calling following command: %r' % cmd
 		retval = subprocess.call(cmd)
 		if retval:
 			utils.fail('create_ou failed with exitcode %s' % retval)
@@ -165,11 +191,13 @@ class UCSTestSchool(object):
 		ou_dn = 'ou=%s,%s' % (ou_name, self.LDAP_BASE)
 		return ou_name, ou_dn
 
+
 	def _get_district(self, ou_name):
 		try:
 			return ou_name[:2]
 		except IndexError:
 			raise UCSTestSchool_OU_Name_Too_Short('The OU name "%s" is too short for district mode' % ou_name)
+
 
 	def _get_ou_base_dn(self, ou_name):
 		"""
@@ -183,6 +211,7 @@ class UCSTestSchool(object):
 		if self._ucr.is_true('ucsschool/ldap/district/enable'):
 			values['district'] = 'ou=%s,' % self._get_district(ou_name)
 		return dn % values
+
 
 	def _get_user_container(self, ou_name, is_teacher=False, is_staff=False):
 		"""
@@ -198,10 +227,15 @@ class UCSTestSchool(object):
 
 
 	def create_user(self, ou_name, username=None, firstname=None, lastname=None, classes=None,
-					mailaddress=None, is_teacher=False, is_staff=False, is_active=True):
+					mailaddress=None, is_teacher=False, is_staff=False, is_active=True, password='univention'):
 		"""
 		Create a user in specified OU with given attributes. If attributes are not specified, random
-		values will be used for username, firstname and lastname.
+		values will be used for username, firstname and lastname. If password is not None, the given
+		password will be set for this user.
+
+		Return value: (user_name, user_dn)
+			user_name: name of the created user
+			user_dn:   DN of the created user object
 		"""
 		if not ou_name:
 			raise UCSTestSchool_MissingOU('No OU name specified')
@@ -226,12 +260,16 @@ class UCSTestSchool(object):
 			tmp_file.flush()
 
 			cmd = [self.PATH_CMD_IMPORT_USER, tmp_file.name]
-			print 'Calling following command: %r' % cmd
+			print '*** Calling following command: %r' % cmd
 			retval = subprocess.call(cmd)
 			if retval:
 				utils.fail('create_ou failed with exitcode %s' % retval)
 
 		user_dn = 'uid=%s,%s' % (username, self._get_user_container(ou_name, is_teacher, is_staff))
+
+		if password is not None:
+			self._set_password(user_dn, password)
+
 		return username, user_dn
 
 
@@ -245,6 +283,21 @@ if __name__ == '__main__':
 		print '  ', ou_dn
 		# create user
 		user_name, user_dn = schoolenv.create_user(ou_name)
+		print 'NEW USER'
+		print '  ', user_name
+		print '  ', user_dn
+		# create user
+		user_name, user_dn = schoolenv.create_user(ou_name, is_teacher=True)
+		print 'NEW USER'
+		print '  ', user_name
+		print '  ', user_dn
+		# create user
+		user_name, user_dn = schoolenv.create_user(ou_name, is_staff=True)
+		print 'NEW USER'
+		print '  ', user_name
+		print '  ', user_dn
+		# create user
+		user_name, user_dn = schoolenv.create_user(ou_name, is_teacher=True, is_staff=True)
 		print 'NEW USER'
 		print '  ', user_name
 		print '  ', user_dn
