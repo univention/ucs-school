@@ -7,21 +7,20 @@
 ##   - ucs-school-umc-helpdesk
 
 import univention.testing.ucr as ucr_test
-from univention.config_registry import handler_set, handler_unset
-from univention.lib.umc_connection import UMCConnection
-import sys, os,  subprocess, time
-from ucsschool.lib import LDAP_Connection, LDAP_ConnectionError, set_credentials, SchoolSearchBase, SchoolBaseModule
 import univention.testing.ucsschool as utu 
+from univention.lib.umc_connection import UMCConnection
+from univention.config_registry import handler_set, handler_unset
+import sys, os, time
 
 def main():
-        timeOut = 10
+        timeOut = 10   #  seconds
         message = time.time() * 1000
         message = '%.30f' % message
         category = 'Sonstige'
         passwd = 'univention'
         with utu.UCSTestSchool()  as schoolenv:
                 schoolName, oudn = schoolenv.create_ou(displayName='')
-                userName, userdn = schoolenv.create_user(schoolName, is_teacher=True)
+                userName, userdn = schoolenv.create_user(schoolName, is_teacher=True)   
                 with ucr_test.UCSTestConfigRegistry() as ucr:
                         ucr.load()
                         handler_set(['ucsschool/helpdesk/recipient=root@localhost'])
@@ -29,12 +28,12 @@ def main():
                         connection = UMCConnection(host)
                         connection.auth(userName, passwd)
                         print 'User:', userName , ', Password:', passwd, ', Message:', message
-                        params = {
+                        params = { 
                                 'username': userName,
                                 'school': schoolName,
                                 'category': category,
-                            'message': message,
-                        }
+				'message': message,
+                        }   
                         result = connection.request('helpdesk/send', params)
                         if result:
                                 print 'Message is sent successfully'
@@ -42,10 +41,10 @@ def main():
                                 print 'Message was not sent successfully'
         for i in range(0, timeOut):
                 if message in open('/var/mail/systemmail').read():
-                        returnValue = 0
+                        returnValue = 0 
                         break
                 else:
-                        returnValue = 1
+                        returnValue = 1 
                         continue
                 time.sleep(1)
         return returnValue
