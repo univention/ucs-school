@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-csv-import\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2014-02-25 23:07+0100\n"
+"POT-Creation-Date: 2014-03-19 09:43+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -12,85 +12,96 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: umc/js/schoolcsvimport.js:135
+#: umc/js/schoolcsvimport.js:191
 #, python-format
 msgid "%d error(s) occurred:"
 msgstr "%d Fehler aufgetreten:"
 
-#: umc/js/schoolcsvimport.js:235
+#: umc/js/schoolcsvimport.js:291
 #, python-format
 msgid "%s user(s) will be added"
 msgstr "%s Benutzer hinzufügen"
 
-#: umc/js/schoolcsvimport.js:240
+#: umc/js/schoolcsvimport.js:296
 #, python-format
 msgid "%s user(s) will be deleted"
 msgstr "%s Benutzer löschen"
 
-#: umc/js/schoolcsvimport.js:237
+#: umc/js/schoolcsvimport.js:293
 #, python-format
 msgid "%s user(s) will be modified"
 msgstr "%s Benutzer aktualisieren"
 
-#: umc/js/schoolcsvimport.js:630
+#: umc/js/schoolcsvimport.js:153
+msgid ""
+"A \"header\" helps in the next step after uploading but it is not required."
+msgstr ""
+"Eine \"Kopfzeile\" hilft beim nächsten Schritt nach dem Hochladen, muss aber "
+"nicht existieren."
+
+#: umc/js/schoolcsvimport.js:681
 msgid "Action"
 msgstr "Aktion"
 
-#: umc/js/schoolcsvimport.js:194
+#: umc/js/schoolcsvimport.js:250
 msgid "Automatically identify username"
 msgstr "Benutzernamen automatisch bestimmen"
 
-#: umc/js/schoolcsvimport.js:190
+#: umc/js/schoolcsvimport.js:246
 msgid "Back"
 msgstr "Zurück"
 
-#: umc/js/schoolcsvimport.js:354 umc/js/schoolcsvimport.js:643
+#: umc/js/schoolcsvimport.js:159 umc/js/schoolcsvimport.js:694
 msgid "Birthday"
 msgstr "Geburtstag"
 
-#: umc/js/schoolcsvimport.js:243
+#: umc/js/schoolcsvimport.js:299
 msgid "Cancel"
 msgstr "Abbrechen"
 
-#: umc/js/schoolcsvimport.js:355 umc/js/schoolcsvimport.js:647
+#: umc/js/schoolcsvimport.js:698
 msgid "Class"
 msgstr "Klasse"
 
-#: umc/js/schoolcsvimport.js:246
+#: umc/js/schoolcsvimport.js:302
 msgid "Confirm changes"
 msgstr "Änderungen bestätigen"
 
-#: umc/js/schoolcsvimport.js:489 umc/js/schoolcsvimport.js:579
+#: umc/js/schoolcsvimport.js:568 umc/js/schoolcsvimport.js:658
 msgid "Edit"
 msgstr "Bearbeiten"
 
-#: umc/js/schoolcsvimport.js:490 umc/js/schoolcsvimport.js:578
+#: umc/js/schoolcsvimport.js:569 umc/js/schoolcsvimport.js:657
 msgid "Edit this line"
 msgstr "Diese Zeile bearbeiten"
 
-#: umc/js/schoolcsvimport.js:356 umc/js/schoolcsvimport.js:651
+#: umc/js/schoolcsvimport.js:702
 msgid "Email"
 msgstr "E-Mail"
 
-#: umc/js/schoolcsvimport.js:176 umc/js/schoolcsvimport.js:352
-#: umc/js/schoolcsvimport.js:636
+#: umc/js/schoolcsvimport.js:153
+msgid "Example of a file:"
+msgstr "Beispiel für eine Datei:"
+
+#: umc/js/schoolcsvimport.js:157 umc/js/schoolcsvimport.js:232
+#: umc/js/schoolcsvimport.js:687
 msgid "First name"
 msgstr "Vorname"
 
-#: umc/js/schoolcsvimport.js:123
+#: umc/js/schoolcsvimport.js:179
 msgid "Import finished."
 msgstr "Import abgeschlossen."
 
-#: umc/js/schoolcsvimport.js:176 umc/js/schoolcsvimport.js:353
-#: umc/js/schoolcsvimport.js:639
+#: umc/js/schoolcsvimport.js:158 umc/js/schoolcsvimport.js:232
+#: umc/js/schoolcsvimport.js:690
 msgid "Last name"
 msgstr "Nachname"
 
-#: umc/js/schoolcsvimport.js:655
+#: umc/js/schoolcsvimport.js:706
 msgid "Line"
 msgstr "Zeile"
 
-#: umc/js/schoolcsvimport.js:189
+#: umc/js/schoolcsvimport.js:245
 msgid ""
 "No column was chosen as username. The system can generate a username for new "
 "users resp. try to find the user among the existing users in the database."
@@ -99,11 +110,11 @@ msgstr ""
 "versuchen, für neue Benutzer einen Benutzernamen zu generieren bzw. den "
 "Benutzernamen für existierende Benutzer aus der Datenbank zu ermitteln."
 
-#: umc/js/schoolcsvimport.js:127
+#: umc/js/schoolcsvimport.js:183
 msgid "No errors occurred during import."
 msgstr "Während des Imports sind keine Fehler aufgetreten."
 
-#: umc/js/schoolcsvimport.js:233
+#: umc/js/schoolcsvimport.js:289
 msgid "Please confirm the following changes:"
 msgstr "Bitte bestätigen Sie die folgenden Änderungen:"
 
@@ -115,11 +126,11 @@ msgstr ""
 "Bitte laden Sie die gewünschte CSV-Datei hoch. Die CSV-Datei muss "
 "kommaseparierte Werte enthalten, die in Anführungszeichen eingefasst sind."
 
-#: umc/js/schoolcsvimport.js:476
+#: umc/js/schoolcsvimport.js:555
 msgid "Reset"
 msgstr "Zurücksetzen"
 
-#: umc/js/schoolcsvimport.js:477
+#: umc/js/schoolcsvimport.js:556
 msgid "Restore initial values from the uploaded file"
 msgstr "Die originalen Werte aus der hochgeladenen Datei zurückspielen"
 
@@ -127,7 +138,7 @@ msgstr "Die originalen Werte aus der hochgeladenen Datei zurückspielen"
 msgid "School"
 msgstr "Schule"
 
-#: umc/js/schoolcsvimport.js:705
+#: umc/js/schoolcsvimport.js:756
 msgid "Show only lines with errors"
 msgstr "Nur Zeilen mit Fehlern anzeigen"
 
@@ -147,7 +158,7 @@ msgstr "Lehrer"
 msgid "Teachers and staff"
 msgstr "Lehrer und Mitarbeiter"
 
-#: umc/js/schoolcsvimport.js:119
+#: umc/js/schoolcsvimport.js:175
 msgid ""
 "The CSV file was matched with the existing data. The individual lines show "
 "the user modifications, problems are highlighted in color. The individual "
@@ -160,7 +171,13 @@ msgstr ""
 "Schaltfläche Bearbeiten oder über einen Klick auf den Wert in der Spalte "
 "\"Aktion\" bearbeitet werden."
 
-#: umc/js/schoolcsvimport.js:115
+#: umc/js/schoolcsvimport.js:118
+msgid ""
+"The file provided could not be used as a CSV file. Please check the format."
+msgstr ""
+"Die hochgeladene Datei kann nicht als CSV-Datei benutzt werden. Bitte überprüfen Sie das Format."
+
+#: umc/js/schoolcsvimport.js:171
 msgid ""
 "The first lines of the CSV file are presented. It is necessary for the "
 "import to assign the individual columns concrete data types (first name, "
@@ -174,7 +191,7 @@ msgstr ""
 "und wählen für jede Spalte einen passenden Datentyp aus. Minimal werden Vor- "
 "und Nachname benötigt."
 
-#: umc/js/schoolcsvimport.js:229
+#: umc/js/schoolcsvimport.js:285
 msgid ""
 "There are still unresolved errors in the file. You need to correct the red "
 "lines before continuing."
@@ -192,9 +209,7 @@ msgstr ""
 "UCS@school-Benutzern über CSV-Dateien. Zunächst muss angegeben werden, "
 "welche Benutzerrolle die Benutzer aus der CSV-Datei erhalten sollen."
 
-#: umc/js/schoolcsvimport.js:320 umc/js/schoolcsvimport.js:350
-#: umc/js/schoolcsvimport.js:600 umc/js/schoolcsvimport.js:603
-#: umc/js/schoolcsvimport.js:606 umc/js/schoolcsvimport.js:609
+#: umc/js/schoolcsvimport.js:386
 msgid "Unused"
 msgstr "Unbenutzt"
 
@@ -206,16 +221,16 @@ msgstr "Datei hochladen"
 msgid "User role"
 msgstr "Benutzerrolle"
 
-#: umc/js/schoolcsvimport.js:189 umc/js/schoolcsvimport.js:351
-#: umc/js/schoolcsvimport.js:633
+#: umc/js/schoolcsvimport.js:156 umc/js/schoolcsvimport.js:245
+#: umc/js/schoolcsvimport.js:684
 msgid "Username"
 msgstr "Benutzername"
 
-#: umc/js/schoolcsvimport.js:539
+#: umc/js/schoolcsvimport.js:618
 msgid "Username is not unique"
 msgstr "Benutzername ist nicht eindeutig"
 
-#: umc/js/schoolcsvimport.js:176
+#: umc/js/schoolcsvimport.js:232
 #, python-format
 msgid ""
 "You need to specify at least \"%(firstname)s\" and \"%(lastname)s\" as "
@@ -223,3 +238,19 @@ msgid ""
 msgstr ""
 "Sie müssen mindestens Spalten für \"%(firstname)s\" und \"%(lastname)s\" "
 "angeben. Klicken Sie auf die Titelzeile der Tabelle"
+
+#: umc/js/schoolcsvimport.js:164
+msgid "example_birthday"
+msgstr "15.03.2000"
+
+#: umc/js/schoolcsvimport.js:162
+msgid "example_firstname"
+msgstr "\"Maximilian Moritz\""
+
+#: umc/js/schoolcsvimport.js:163
+msgid "example_lastname"
+msgstr "Mustermann"
+
+#: umc/js/schoolcsvimport.js:161
+msgid "example_username"
+msgstr "max.mustermann"

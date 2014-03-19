@@ -1,5 +1,11 @@
+ucs-school-umc-csv-import (1.0.1-1) unstable; urgency=low
+
+  * Bug #34199: Support uploading CSV file (and parse it) in the backend
+
+ -- Dirk Wiesenthal <wiesenthal@univention.de>  Wed, 19 Mar 2014 11:16:45 +0100
+
 ucs-school-umc-csv-import (1.0.0-1) unstable; urgency=low
 
-  * Initial Upload
+  * Bug #34199: Initial Upload
 
  -- Dirk Wiesenthal <wiesenthal@univention.de>  Tue, 18 Feb 2014 10:02:11 +0100

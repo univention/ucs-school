@@ -105,9 +105,72 @@ define([
 					type: Uploader,
 					name: 'file',
 					label: _('Upload file'),
+					command: 'schoolcsvimport/save',
+					dynamicOptions: lang.hitch(this, 'getUploaderParams'),
+					onUploadStarted: lang.hitch(this, function() {
+						this.standby(true);
+					}),
 					onUploaded: lang.hitch(this, function(result) {
+						this.standby(false);
+						if (typeof result == "string" || !result.success) {
+							// Apache gateway timeout error or
+							// CSV error
+							dialog.alert(_('The file provided could not be used as a CSV file. Please check the format.'));
+							return;
+						}
+						this.fileID = result.file_id;
+						var availableColumns = [];
+						array.forEach(result.available_columns, function(columnDefinition) {
+							tools.forIn(columnDefinition, function(columnName, columnID) {
+								availableColumns.push({name: columnID, label: columnName});
+							});
+						});
+						var givenColumns = result.given_columns;
+						var users = [];
+						array.forEach(result.first_lines, function(csvLine, i) {
+							var user = {};
+							array.forEach(csvLine, function(attr, j) {
+								user[givenColumns[j]] = attr;
+							});
+							users.push(user);
+						});
+						givenColumns = array.map(givenColumns, function(column) {
+							var givenColumn = null;
+							var originalColumn = column;
+							if ((/^unused.*/).test(column)) {
+								// search for "unused" in availableColumns
+								// but preserve "unused2" as name
+								column = 'unused';
+							}
+							array.forEach(availableColumns, function(columnDefinition) {
+								if (columnDefinition.name == column) {
+									givenColumn = lang.clone(columnDefinition);
+									givenColumn.name = originalColumn;
+								}
+							});
+							return givenColumn;
+						});
+						var page = this.getPage('assign');
+						page._grid = this.addGridAssign(page, availableColumns, givenColumns, users);
 						this._next('upload');
 					})
+				}, {
+					type: Text,
+					name: 'csv_help',
+					content: _('A "header" helps in the next step after uploading but it is not required.') + ' ' + _('Example of a file:') + 
+						'<pre>' +
+							lang.replace('{username},{firstname},{lastname},{birthday}', {
+								username: _('Username'),
+								firstname: _('First name'),
+								lastname: _('Last name'),
+								birthday: _('Birthday')}) + '\n' +
+							lang.replace('{example_username},{example_firstname},{example_lastname},{example_birthday}', {
+								example_username: _('example_username'),
+								example_firstname: _('example_firstname'),
+								example_lastname: _('example_lastname'),
+								example_birthday: _('example_birthday')}) + '\n' +
+							'[...]' +
+						'</pre>'
 				}]
 			}, {
 				name: 'assign',
@@ -260,6 +323,9 @@ define([
 			} else {
 				deferred.resolve(nextPage);
 			}
+			if (pageName == 'upload') {
+				return deferred;
+			}
 			// return deferred;
 			return deferred.then(lang.hitch(this, function() {
 				var allProgresses = {
@@ -311,7 +377,14 @@ define([
 			}));
 		},
 
+		getUploaderParams: function() {
+			var school = this.getWidget('general', 'school').get('value');
+			var type = this.getWidget('general', 'type').get('value');
+			return {school: school, type: type};
+		},
+
 		addMenuItem: function(headerMenu, label, name) {
+			var updateGridField = lang.hitch(this, 'updateGridField');
 			headerMenu.addChild(new CheckedMenuItem({
 				label: label,
 				name: name,
@@ -326,34 +399,38 @@ define([
 					}
 					var grid = this._headerCell.grid;
 					var myField = this._headerCell.field;
-					var columnNode;
-					array.forEach(grid.get('structure'), function(struct) {
-						columnNode = grid.getCellByField(struct.field);
-						if (columnNode.field == myField) {
-							columnNode._usedAs = fieldName;
-							columnNode.name = fieldLabel;
-						} else if (columnNode.name == fieldLabel) {
-							delete columnNode._usedAs;
-							columnNode.name = unusedLabel;
-						}
-					});
+					updateGridField(grid, myField, fieldName, fieldLabel, unusedLabel);
 					grid.update();
 				}
 			}));
 		},
 
-		addGridAssign: function(parentWidget, columns, users) {
+		updateGridField: function(grid, myField, fieldName, fieldLabel, unusedLabel) {
+			array.forEach(grid.get('structure'), function(struct) {
+				var columnNode = grid.getCellByField(struct.field);
+				if (columnNode.field == myField) {
+					columnNode._usedAs = fieldName;
+					columnNode.name = fieldLabel;
+				} else if (columnNode.name == fieldLabel) {
+					delete columnNode._usedAs;
+					columnNode.name = unusedLabel;
+				}
+			});
+		},
+
+		addGridAssign: function(parentWidget, availableColumns, givenColumns, users) {
+			array.forEach(givenColumns, lang.hitch(this, function(column) {
+				var attributes = [column.label].concat(array.map(users, function(user) { return user[column.name]; }));
+				column.width = this._getWidth(attributes) + 'px';
+				column.noresize = true;
+			}));
 			var headerMenu = new Menu({
 				leftClickToOpen: true
 			});
 			this.own(headerMenu);
-			this.addMenuItem(headerMenu, _('Unused'), 'unused');
-			this.addMenuItem(headerMenu, _('Username'), 'username');
-			this.addMenuItem(headerMenu, _('First name'), 'firstname');
-			this.addMenuItem(headerMenu, _('Last name'), 'lastname');
-			this.addMenuItem(headerMenu, _('Birthday'), 'birthday');
-			this.addMenuItem(headerMenu, _('Class'), 'class');
-			this.addMenuItem(headerMenu, _('Email'), 'email');
+			array.forEach(availableColumns, lang.hitch(this, function(columnDefinition) {
+				this.addMenuItem(headerMenu, columnDefinition.label, columnDefinition.name);
+			}));
 			var dataStore = new ItemFileWriteStore({data: {
 				label: 'line',
 				items: users
@@ -362,7 +439,7 @@ define([
 			var grid = new Grid({
 				region: 'center',
 				moduleStore: objStore,
-				columns: columns,
+				columns: givenColumns,
 				_updateContextItem: function() {},
 				gridOptions: {
 					selectionMode: 'none',
@@ -376,6 +453,9 @@ define([
 					}
 				}
 			});
+			array.forEach(givenColumns, lang.hitch(this, function(columnDefinition) {
+				this.updateGridField(grid._grid, columnDefinition.name, columnDefinition.name, columnDefinition.label, _('Unused'));
+			}));
 			grid._grid.on('HeaderCellContextMenu', lang.hitch(headerMenu, function(e) {
 				var menuItems = this.getChildren();
 				array.forEach(menuItems, function(menuItem) {
@@ -388,6 +468,8 @@ define([
 				this.doheadercontextmenu(e);
 			}));
 			parentWidget.addChild(grid);
+			grid._grid.update();
+			query('.dojoxGridScrollbox', grid.domNode).style('overflowX', 'auto');
 			return grid;
 		},
 
@@ -422,6 +504,7 @@ define([
 			array.forEach(columns, lang.hitch(this, function(column) {
 				var attributes = [column.label].concat(array.map(users, function(user) { return user[column.name]; }));
 				column.width = this._getWidth(attributes) + 'px';
+				column.noresize = true;
 			}));
 			array.forEach(users, function(user) {
 				user._initialValues = lang.clone(user);
@@ -451,7 +534,10 @@ define([
 							}
 						});
 						var cellNode = query('.dojoxGridCell[idx$=' + cellIndex +']', row.node)[0];
-						style.set(cellNode, {backgroundColor: '#FF0000'}); // red
+						style.set(cellNode, {
+							backgroundColor: '#FF0000', // red
+							color: '#FFFFFF' // white, because of contrast
+						});
 						var tooltip = new Tooltip({
 							label: note,
 							connectId: [cellNode]
@@ -595,37 +681,9 @@ define([
 			this.inherited(arguments);
 			var columns;
 			var users;
-			columns = [{
-				name: 'unused1',
-				label: _('Unused')
-			}, {
-				name: 'unused2',
-				label: _('Unused')
-			}, {
-				name: 'unused3',
-				label: _('Unused')
-			}, {
-				name: 'unused4',
-				label: _('Unused')
-			}];
-			users = [{
-				line: 1,
-				unused1: 'Max',
-				unused2: 'Mustermann',
-				unused3: '02.05.2002',
-				unused4: '5a'
-			}, {
-				line: 2,
-				unused1: 'Susanne',
-				unused2: 'Bauer',
-				unused3: '12.07.2004',
-				unused4: '3b'
-			}];
-			var page = this.getPage('assign');
-			page._grid = this.addGridAssign(page, columns, users);
 
-			page = this.getPage('spreadsheet');
-			columns = [{
+			var page = this.getPage('spreadsheet');
+			var columns = [{
 				name: 'action',
 				label: _('Action')
 			}, {
@@ -654,7 +712,7 @@ define([
 				defaultValue: '',
 				label: _('Line')
 			}];
-			users = [{
+			var users = [{
 				line: 1,
 				action: 'create',
 				username: 'max.mustermann',

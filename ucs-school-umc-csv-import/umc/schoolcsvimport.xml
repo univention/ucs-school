@@ -8,5 +8,6 @@
 		<description>CSV import for UCS@school users</description>
 		<keywords>upload,csv,import</keywords>
 		<command name="schoolcsvimport/schools" function="schools" />
+		<command name="schoolcsvimport/save" function="save_csv" />
 	</module>
 </umc>
