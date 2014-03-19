@@ -1,3 +1,9 @@
+ucs-test-ucsschool (1.0.2-1) unstable; urgency=low
+
+  * Bug #34280: added new functions to ucsschool python test module
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Wed, 19 Mar 2014 08:55:08 +0100
+
 ucs-test-ucsschool (1.0.1-1) precise; urgency=low
 
   * Bug #34280: added executable flag for test script

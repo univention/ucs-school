@@ -193,14 +193,14 @@ class UCSTestSchool(object):
 		return ou_name, ou_dn
 
 
-	def _get_district(self, ou_name):
+	def get_district(self, ou_name):
 		try:
 			return ou_name[:2]
 		except IndexError:
 			raise UCSTestSchool_OU_Name_Too_Short('The OU name "%s" is too short for district mode' % ou_name)
 
 
-	def _get_ou_base_dn(self, ou_name):
+	def get_ou_base_dn(self, ou_name):
 		"""
 		Returns the LDAP DN for the given school OU name (the district mode will be considered).
 		"""
@@ -210,21 +210,35 @@ class UCSTestSchool(object):
 				  'basedn': self.LDAP_BASE,
 				  }
 		if self._ucr.is_true('ucsschool/ldap/district/enable'):
-			values['district'] = 'ou=%s,' % self._get_district(ou_name)
+			values['district'] = 'ou=%s,' % self.get_district(ou_name)
 		return dn % values
 
 
-	def _get_user_container(self, ou_name, is_teacher=False, is_staff=False):
+	def get_user_container(self, ou_name, is_teacher=False, is_staff=False):
 		"""
 		Returns user container for specified user role and ou_name.
 		"""
 		if is_teacher and is_staff:
-			return 'cn=%s,cn=users,%s' % (self.CN_TEACHERS_STAFF, self._get_ou_base_dn(ou_name))
+			return 'cn=%s,cn=users,%s' % (self.CN_TEACHERS_STAFF, self.get_ou_base_dn(ou_name))
 		if is_teacher:
-			return 'cn=%s,cn=users,%s' % (self.CN_TEACHERS, self._get_ou_base_dn(ou_name))
+			return 'cn=%s,cn=users,%s' % (self.CN_TEACHERS, self.get_ou_base_dn(ou_name))
 		if is_staff:
-			return 'cn=%s,cn=users,%s' % (self.CN_STAFF, self._get_ou_base_dn(ou_name))
-		return 'cn=%s,cn=users,%s' % (self.CN_STUDENT, self._get_ou_base_dn(ou_name))
+			return 'cn=%s,cn=users,%s' % (self.CN_STAFF, self.get_ou_base_dn(ou_name))
+		return 'cn=%s,cn=users,%s' % (self.CN_STUDENT, self.get_ou_base_dn(ou_name))
+
+
+	def get_workinggroup_dn(self, ou_name, group_name):
+		"""
+		Return the DN of the specified working group.
+		"""
+		return 'cn=%s-%s,cn=schueler,cn=groups,%s' % (ou_name, group_name, self.get_ou_base_dn(ou_name))
+
+
+	def get_workinggroup_share_dn(self, ou_name, group_name):
+		"""
+		Return the DN of the share object for the specified working group.
+		"""
+		return 'cn=%s-%s,cn=shares,%s' % (ou_name, group_name, self.get_ou_base_dn(ou_name))
 
 
 	def create_user(self, ou_name, username=None, firstname=None, lastname=None, classes=None,
@@ -266,7 +280,7 @@ class UCSTestSchool(object):
 			if retval:
 				utils.fail('create_ou failed with exitcode %s' % retval)
 
-		user_dn = 'uid=%s,%s' % (username, self._get_user_container(ou_name, is_teacher, is_staff))
+		user_dn = 'uid=%s,%s' % (username, self.get_user_container(ou_name, is_teacher, is_staff))
 
 		if password is not None:
 			self._set_password(user_dn, password)
