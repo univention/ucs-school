@@ -514,7 +514,7 @@ define([
 					var hasIssues = false;
 					tools.forIn(this.warnings[0], function(field) {
 						hasIssues = true;
-						row.customStyles += 'background-color: #FFFFE0;'; // lightcoral
+						row.customStyles += 'background-color: #FFFFE0;'; // lightyellow
 						var cellIndex;
 						array.forEach(grid.get('structure'), function(struct, i) {
 							if (struct.field == field) {
