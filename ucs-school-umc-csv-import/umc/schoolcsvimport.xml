@@ -9,5 +9,9 @@
 		<keywords>upload,csv,import</keywords>
 		<command name="schoolcsvimport/schools" function="schools" />
 		<command name="schoolcsvimport/save" function="save_csv" />
+		<command name="schoolcsvimport/show" function="show" />
+		<command name="schoolcsvimport/recheck" function="recheck_users" />
+		<command name="schoolcsvimport/import" function="import_users" />
+		<command name="schoolcsvimport/ping" function="ping" />
 	</module>
 </umc>

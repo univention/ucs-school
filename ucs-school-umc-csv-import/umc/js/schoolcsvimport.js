@@ -35,8 +35,8 @@ define([
 	"dojo/_base/array",
 	"dojo/query",
 	"dojo/topic",
+	"dojo/when",
 	"dojo/Deferred",
-	"dojo/store/Memory",
 	"dojo/store/Observable",
 	"dojo/data/ItemFileWriteStore",
 	"dojo/store/DataStore",
@@ -45,26 +45,26 @@ define([
 	"dojo/dom-attr",
 	"dojo/dom-geometry",
 	"dojo/dom-style",
+	"dojo/date/locale",
 	"dijit/Menu",
 	"dijit/CheckedMenuItem",
-	"dojox/grid/cells",
+	"dojox/timing/_base",
 	"umc/tools",
 	"umc/dialog",
 	"umc/widgets/Text",
 	"umc/widgets/TextBox",
-	"umc/widgets/DateBox",
 	"umc/widgets/Form",
 	"umc/widgets/ProgressBar",
-	"umc/widgets/ExpandingTitlePane",
 	"umc/widgets/ComboBox",
 	"umc/widgets/Uploader",
 	"umc/widgets/CheckBox",
 	"umc/widgets/Wizard",
 	"umc/widgets/Tooltip",
+	"umc/modules/schoolcsvimport/DateBox",
 	"umc/modules/schoolcsvimport/Grid",
 	"umc/widgets/Module",
 	"umc/i18n!umc/modules/schoolcsvimport"
-], function(declare, lang, array, query, topic, Deferred, Memory, Observable, ItemFileWriteStore, DataStore, win, construct, attr, geometry, style, Menu, CheckedMenuItem, dojoxGridCells, tools, dialog, Text, TextBox, DateBox, Form, ProgressBar, ExpandingTitlePane, ComboBox, Uploader, CheckBox, Wizard, Tooltip, Grid, Module, _) {
+], function(declare, lang, array, query, topic, when, Deferred, Observable, ItemFileWriteStore, DataStore, win, construct, attr, geometry, style, dateLocaleModule, Menu, CheckedMenuItem, timing, tools, dialog, Text, TextBox, Form, ProgressBar, ComboBox, Uploader, CheckBox, Wizard, Tooltip, DateBox, Grid, Module, _) {
 	var UploadWizard = declare('umc.modules.schoolcsvimport.Wizard', Wizard, {
 		postMixInProperties: function() {
 			this.inherited(arguments);
@@ -119,15 +119,10 @@ define([
 							return;
 						}
 						this.fileID = result.file_id;
-						var availableColumns = [];
-						array.forEach(result.available_columns, function(columnDefinition) {
-							tools.forIn(columnDefinition, function(columnName, columnID) {
-								availableColumns.push({name: columnID, label: columnName});
-							});
-						});
+						var availableColumns = result.available_columns;
 						var givenColumns = result.given_columns;
 						var users = [];
-						array.forEach(result.first_lines, function(csvLine, i) {
+						array.forEach(result.first_lines, function(csvLine) {
 							var user = {};
 							array.forEach(csvLine, function(attr, j) {
 								user[givenColumns[j]] = attr;
@@ -157,7 +152,7 @@ define([
 				}, {
 					type: Text,
 					name: 'csv_help',
-					content: _('A "header" helps in the next step after uploading but it is not required.') + ' ' + _('Example of a file:') + 
+					content: _('A "header" helps in the next step after uploading but it is not required.') + ' ' + _('Example of a file:') +
 						'<pre>' +
 							lang.replace('{username},{firstname},{lastname},{birthday}', {
 								username: _('Username'),
@@ -192,39 +187,6 @@ define([
 			}];
 		},
 
-		errorsWhileSaving: function(errors) {
-			if (errors.length) {
-				var widget = this.getWidget('finished', 'errors');
-				var errorMessage = _('%d error(s) occurred:', errors.length);
-				errorMessage = errorMessage + '<ul><li>' + errors.join('</li><li>') + '</li></ul>';
-				widget.set('content', errorMessage);
-			}
-		},
-
-		updateProgress: function(progresses, deferred, nextPage, handleErrors) {
-			if (progresses) {
-				var nextProgress = progresses.shift();
-				if (nextProgress) {
-					if (nextProgress.errors && handleErrors) {
-						var nextPageWidget = this.getPage(nextPage);
-						if (nextPageWidget._hadErrors) {
-							delete nextProgress.errors;
-						} else {
-							nextPageWidget._hadErrors = true;
-						}
-					}
-					deferred.progress(nextProgress);
-					if (nextProgress.errors && handleErrors) {
-						setTimeout(function() { deferred.reject(nextPage); }, 1400);
-					} else {
-						setTimeout(lang.hitch(this, function() { this.updateProgress(progresses, deferred, nextPage, handleErrors); }), 700);
-					}
-				} else {
-					deferred.resolve(nextPage);
-				}
-			}
-		},
-
 		next: function(pageName) {
 			var nextPage = this.inherited(arguments);
 			var page = this.getPage(pageName);
@@ -235,19 +197,15 @@ define([
 				var structure = grid.get('structure');
 				var cells = array.map(structure, function(struct) { return grid.getCellByField(struct.field); });
 				var fields = array.map(cells, function(cell) { return cell._usedAs || null; });
-				if (fields.indexOf('firstname') == -1 || fields.indexOf('lastname') == -1) {
+				if (array.indexOf(fields, 'firstname') == -1 || array.indexOf(fields, 'lastname') == -1) {
 					dialog.alert(_('You need to specify at least "%(firstname)s" and "%(lastname)s" as columns. Click on the column header in the table', {firstname: _('First name'), lastname: _('Last name')}));
 					deferred.reject();
 					return deferred;
 				}
 				var auto_username = false;
-				if (fields.indexOf('username') == -1) {
+				if (array.indexOf(fields, 'username') == -1) {
 					auto_username = true;
 				}
-				var args = {
-					fields: fields,
-					auto_username: auto_username
-				};
 				if (auto_username) {
 					dialog.confirm(_('No column was chosen as username. The system can generate a username for new users resp. try to find the user among the existing users in the database.', {username: _('Username')}), [{
 						label: _('Back'),
@@ -270,22 +228,37 @@ define([
 				} else {
 					deferred.resolve(nextPage);
 				}
+				return deferred.then(lang.hitch(this, function(nextPage) {
+					return this.standbyDuring(tools.umcpCommand('schoolcsvimport/show', {file_id: this.fileID, columns: fields}).then(lang.hitch(this, function(data) {
+						var result = data.result;
+						var page = this.getPage('spreadsheet');
+						this.datePattern = result.date_pattern;
+						page._grid = this.addGridSpreadSheet(page, result.columns, result.users);
+						return nextPage;
+					})));
+				}));
 			} else if (pageName == 'spreadsheet') {
 				grid = page._grid;
 				var items = grid.getAllItems();
-				var nAdd = 0, nMod = 0, nDel = 0;
+				var userObjs = [];
+				var nAdd = 0, nMod = 0, nDel = 0, nSkip = 0;
 				var unresolvedErrors = false;
 				array.forEach(items, function(item) {
-					if (item.errorState[0] == 'not-all-good') {
-						unresolvedErrors = true;
-					}
 					var action = item.action[0];
 					if (action == 'create') {
 						nAdd += 1;
 					} else if (action == 'modify') {
 						nMod += 1;
-					} else {
+					} else if (action == 'delete') {
 						nDel += 1;
+					} else {
+						nSkip += 1;
+					}
+					if (action != 'skip') {
+						if (!tools.isEqual(item.errors[0], {})) {
+							unresolvedErrors = true;
+						}
+						userObjs.push(item._toObject[0]());
 					}
 				});
 				if (unresolvedErrors) {
@@ -293,15 +266,17 @@ define([
 					deferred.reject();
 					return deferred;
 				}
-				dialog.confirm(_('Please confirm the following changes:') + 
-					'<ul><li>' + 
-						_('%s user(s) will be added', nAdd) + 
+				dialog.confirm(_('Please confirm the following changes:') +
+					'<ul><li>' +
+						_('%s user(s) will be added', nAdd) +
 					'</li><li>' +
-						_('%s user(s) will be modified', nMod) + 
+						_('%s user(s) will be modified', nMod) +
 					'</li><li>' +
 						(nDel ? '<strong>' : '') +
-						_('%s user(s) will be deleted', nDel) + 
+						_('%s user(s) will be deleted', nDel) +
 						(nDel ? '</strong>' : '') +
+					'</li><li>' +
+						_('%s user(s) will be skipped', nSkip) +
 					'</li></ul>', [{
 					label: _('Cancel'),
 					name: 'cancel'
@@ -310,12 +285,25 @@ define([
 					name: 'continue',
 					'default': true
 				}]).then(
-					function(response) {
+					lang.hitch(this, function(response) {
 						if (response == 'continue') {
-							deferred.resolve(nextPage);
+							var importing = tools.umcpCommand('schoolcsvimport/import', {file_id: this.fileID, user_attrs: userObjs}).then(lang.hitch(this, function(data) {
+								var errors = data.result;
+								if (errors.length) {
+									var widget = this.getWidget('finished', 'errors');
+									var errorMessage = _('%d error(s) occurred:', errors.length);
+									errorMessage = errorMessage + '<ul><li>' + errors.join('</li><li>') + '</li></ul>';
+									widget.set('content', errorMessage);
+								}
+								deferred.resolve(nextPage);
+							}), function() {
+								deferred.reject();
+							});
+							this.standbyDuring(importing);
+						} else {
+							deferred.reject();
 						}
-						deferred.reject();
-					},
+					}),
 					function() {
 						deferred.reject();
 					}
@@ -323,58 +311,7 @@ define([
 			} else {
 				deferred.resolve(nextPage);
 			}
-			if (pageName == 'upload') {
-				return deferred;
-			}
-			// return deferred;
-			return deferred.then(lang.hitch(this, function() {
-				var allProgresses = {
-					upload: [{
-						component: 'Loading users',
-						percentage: 20
-					}, {
-						//errors: ['File needs to be to in the CSV format. Try again'],
-						percentage: 90
-					}],
-					assign: [{
-						component: 'Loading users',
-						percentage: 30
-					}, {
-						percentage: 60
-					}, {
-						percentage: 90
-					}],
-					spreadsheet: [{
-						component: 'Importing users',
-						message: 'Importing max.mustermann',
-						percentage: 50
-					}, {
-						message: 'Importing susanne.bauer',
-						errors: ['susanne.bauer could not be saved: Already exists in another school'],
-						percentage: 100
-					}]
-				};
-				var progresses = allProgresses[pageName];
-				this.progressBar.reset();
-				if (progresses) {
-					var progressDeferred = new Deferred();
-					this.progressBar.feedFromDeferred(progressDeferred);
-					var handleErrors = true;
-					var cb = lang.hitch(this.progressBar, 'stop', function(){}, undefined, true);
-					if (pageName == 'spreadsheet') {
-						handleErrors = false;
-						cb = lang.hitch(this, function() {
-							this.errorsWhileSaving(this.progressBar.getErrors().errors);
-						});
-					}
-					this.updateProgress(progresses, progressDeferred, nextPage, handleErrors);
-					progressDeferred.then(undefined, cb);
-					this.standbyDuring(progressDeferred, this.progressBar);
-					return progressDeferred;
-				} else {
-					return nextPage;
-				}
-			}));
+			return deferred;
 		},
 
 		getUploaderParams: function() {
@@ -423,6 +360,7 @@ define([
 				var attributes = [column.label].concat(array.map(users, function(user) { return user[column.name]; }));
 				column.width = this._getWidth(attributes) + 'px';
 				column.noresize = true;
+				column.defaultValue = '';
 			}));
 			var headerMenu = new Menu({
 				leftClickToOpen: true
@@ -440,6 +378,7 @@ define([
 				region: 'center',
 				moduleStore: objStore,
 				columns: givenColumns,
+				footerFormatter: function() { return ''; },
 				_updateContextItem: function() {},
 				gridOptions: {
 					selectionMode: 'none',
@@ -505,11 +444,32 @@ define([
 				var attributes = [column.label].concat(array.map(users, function(user) { return user[column.name]; }));
 				column.width = this._getWidth(attributes) + 'px';
 				column.noresize = true;
+				column.defaultValue = '';
+				if (column.name == 'action') {
+					column.formatter = function(value) {
+						var actionMap = {
+							'delete' : _('Delete'),
+							'create' : _('New'),
+							'modify' : _('Change'),
+							'skip' : _('Skip')
+						};
+						return actionMap[value];
+					};
+				}
 			}));
 			array.forEach(users, function(user) {
 				user._initialValues = lang.clone(user);
 				user._restore = lang.hitch(user, function() {
 					this._setValues[0](this._initialValues[0]);
+				});
+				user._toObject = lang.hitch(user, function() {
+					var obj = {};
+					tools.forIn(this._initialValues[0], lang.hitch(this, function(k) {
+						if (k in this) {
+							obj[k] = this[k][0];
+						}
+					}));
+					return obj;
 				});
 				user._setValues = lang.hitch(user, function(values) {
 					tools.forIn(values, lang.hitch(this, function(k, v) {
@@ -518,14 +478,56 @@ define([
 				});
 				user._resetError = lang.hitch(user, function() {
 					this.errors = [{}];
+					this.warnings = [{}];
 					this.errorState = ['all-good'];
+					if (this.action[0] == 'skip') {
+						return;
+					}
+					tools.forIn(this._initialValues[0].errors, lang.hitch(this, function(field, notes) {
+						array.forEach(notes, lang.hitch(this, function(note) {
+							this._setError[0](field, note);
+						}));
+					}));
+					tools.forIn(this._initialValues[0].warnings, lang.hitch(this, function(field, notes) {
+						array.forEach(notes, lang.hitch(this, function(note) {
+							this._setWarning[0](field, note);
+						}));
+					}));
+				});
+				user._setWarning = lang.hitch(user, function(field, note) {
+					var warnings = this.warnings[0][field];
+					if (!warnings) {
+						warnings = this.warnings[0][field] = [];
+					}
+					warnings.push(note);
+					this.errorState = ['not-all-good'];
 				});
 				user._setError = lang.hitch(user, function(field, note) {
-					this.errors[0][field] = note;
+					var errors = this.errors[0][field];
+					if (!errors) {
+						errors = this.errors[0][field] = [];
+					}
+					errors.push(note);
 					this.errorState = ['not-all-good'];
 				});
 				user._styleError = lang.hitch(user, function(grid, row) {
-					tools.forIn(this.errors[0], function(field, note) {
+					var hasIssues = false;
+					tools.forIn(this.warnings[0], function(field) {
+						hasIssues = true;
+						row.customStyles += 'background-color: #FFFFE0;'; // lightcoral
+						var cellIndex;
+						array.forEach(grid.get('structure'), function(struct, i) {
+							if (struct.field == field) {
+								cellIndex = i + 1;
+							}
+						});
+						var cellNode = query('.dojoxGridCell[idx$=' + cellIndex +']', row.node)[0];
+						style.set(cellNode, {
+							backgroundColor: '#FFFF00' // yellow
+						});
+					});
+					tools.forIn(this.errors[0], function(field) {
+						hasIssues = true;
 						row.customStyles += 'background-color: #F08080;'; // lightcoral
 						var cellIndex;
 						array.forEach(grid.get('structure'), function(struct, i) {
@@ -538,12 +540,30 @@ define([
 							backgroundColor: '#FF0000', // red
 							color: '#FFFFFF' // white, because of contrast
 						});
+					});
+					if (hasIssues) {
+						var completeErrorMessage = _('The following issues arose while checking this row:');
+						completeErrorMessage += '<ul style="margin-left: -2em;">';
+						array.forEach(grid.get('structure'), lang.hitch(this, function(struct) {
+							var field = struct.field;
+							var label = grid.getCellByField(field).name;
+							var issues = lang.clone(this.errors[0][field] || []);
+							issues = issues.concat(this.warnings[0][field] || []);
+							if (issues.length) {
+								completeErrorMessage += '<li>' + label + '<ul style="margin-left: -2em;">';
+								array.forEach(issues, function(issue) {
+									completeErrorMessage += '<li>' + issue + '</li>';
+								});
+								completeErrorMessage += '</ul></li>';
+							}
+						}));
+						completeErrorMessage += '</ul>';
 						var tooltip = new Tooltip({
-							label: note,
-							connectId: [cellNode]
+							label: completeErrorMessage,
+							connectId: [row.node]
 						});
 						grid.own(tooltip);
-					});
+					}
 				});
 			});
 			var dataStore = new ItemFileWriteStore({
@@ -565,10 +585,20 @@ define([
 					isStandardAction: true,
 					isContextAction: true,
 					callback: lang.hitch(this, function(ids, items) {
+						var itemObjs = [];
 						array.forEach(items, function(item) {
 							item._restore[0]();
+							itemObjs.push(item._toObject[0]());
 						});
-						this.checkThemAll(grid);
+						var recheck = tools.umcpCommand('schoolcsvimport/recheck', {file_id: this.fileID, user_attrs: itemObjs}).then(lang.hitch(this, function(data) {
+							array.forEach(data.result, function(recheckedItem, i) {
+								var item = items[i];
+								item._initialValues[0].warnings = recheckedItem.warnings;
+								item._initialValues[0].errors = recheckedItem.errors;
+							});
+							this.checkThemAll(grid);
+						}));
+						this.standbyDuring(recheck);
 					})
 				}, {
 					name: 'edit',
@@ -607,13 +637,24 @@ define([
 			var items = grid.getAllItems();
 			var usernames = [];
 			var doubles = [];
+			var dateConstraints = {datePattern: this.datePattern, selector: 'date'};
 			array.forEach(items, function(item) {
 				item._resetError[0]();
-				var username = item.username[0];
-				if (doubles.indexOf(username) !== -1) {
+				if (item.action[0] == 'skip') {
 					return;
 				}
-				if (usernames.indexOf(username) !== -1) {
+				var birthday = item.birthday[0];
+				if (birthday) {
+					var parsedDate = dateLocaleModule.parse(birthday, dateConstraints);
+					if (!parsedDate) {
+						item._setError[0]('birthday', _('The birthday does not follow the format for dates. Please change the birthday.'), grid._grid);
+					}
+				}
+				var username = item.username[0];
+				if (array.indexOf(doubles, username) !== -1) {
+					return;
+				}
+				if (array.indexOf(usernames, username) !== -1) {
 					doubles.push(username);
 					return;
 				}
@@ -622,7 +663,7 @@ define([
 			array.forEach(doubles, function(username) {
 				array.forEach(items, function(item) {
 					if (item.username[0] == username) {
-						item._setError[0]('username', _('Username is not unique'), grid._grid);
+						item._setError[0]('username', _('Username occurs multiple times in the file. Please change the usernames so that all are unique.'), grid._grid);
 					}
 				});
 			});
@@ -631,24 +672,23 @@ define([
 
 		openEditDialog: function(item, grid) {
 			var widgets = [];
-			tools.forIn(item._initialValues[0], function(key) {
-				value = item[key][0];
+			array.forEach(grid._grid.get('structure'), lang.hitch(this, function(struct) {
+				var key = struct.field;
+				var value = item[key][0];
 				if (key == 'line') {
 					return;
 				}
 				var type = TextBox;
 				var staticValues = null;
-				var required = ['action', 'firstname', 'lastname', 'username'].indexOf(key) !== -1;
+				var datePattern = null;
+				var required = array.indexOf(['action', 'firstname', 'lastname', 'username'], key) !== -1;
 				if (key == 'birthday') {
 					type = DateBox;
-					var match = value.match('(\\d{2}).(\\d{2}).(\\d{4})');
-					if (match) {
-						value = match.slice(1).reverse().join('-');
-					}
+					datePattern = this.datePattern;
 				}
 				if (key == 'action') {
 					type = ComboBox;
-					staticValues = [{id: 'create', label: 'create'}, {id: 'modify', label: 'modify'}, {id: 'delete', label: 'delete'}];
+					staticValues = [{id: 'create', label: _('New')}, {id: 'modify', label: _('Change')}, {id: 'delete', label: _('Delete')}, {id: 'skip', label: _('Skip')}];
 				}
 				var label = grid._grid.getCellByField(key).name;
 				widgets.push({
@@ -657,110 +697,41 @@ define([
 					label: label,
 					required: required,
 					staticValues: staticValues,
+					datePattern: datePattern,
 					value: value
 				});
-			});
+			}));
 			dialog.confirmForm({
 				title: _('Edit this line'),
 				submit: _('Edit'),
 				widgets: widgets
 			}).then(lang.hitch(this, function(values) {
-				if (values.birthday) {
-					var match = values.birthday.match('(\\d{4})-(\\d{2}).(\\d{2})');
-					if (match) {
-						values.birthday = match.slice(1).reverse().join('.');
-					}
-				}
 				item._setValues[0](values);
-				grid._grid.update();
-				this.checkThemAll(grid);
+				var recheck = null;
+				if (values.action != 'skip') {
+					var itemObj = item._toObject[0]();
+					recheck = tools.umcpCommand('schoolcsvimport/recheck', {file_id: this.fileID, user_attrs: [itemObj]}).then(function(data) {
+						var recheckedItem = data.result[0];
+						item._initialValues[0].warnings = recheckedItem.warnings;
+						item._initialValues[0].errors = recheckedItem.errors;
+					});
+					this.standbyDuring(recheck);
+				}
+				when(recheck).then(lang.hitch(this, function() {
+					this.checkThemAll(grid);
+				}));
 			}));
 		},
 
 		startup: function() {
 			this.inherited(arguments);
-			var columns;
-			var users;
-
 			var page = this.getPage('spreadsheet');
-			var columns = [{
-				name: 'action',
-				label: _('Action')
-			}, {
-				name: 'username',
-				label: _('Username')
-			}, {
-				name: 'firstname',
-				label: _('First name')
-			}, {
-				name: 'lastname',
-				label: _('Last name')
-			}, {
-				defaultValue: '',
-				name: 'birthday',
-				label: _('Birthday')
-			}, {
-				defaultValue: '',
-				name: 'class',
-				label: _('Class')
-			}, {
-				defaultValue: '',
-				name: 'email',
-				label: _('Email')
-			}, {
-				name: 'line',
-				defaultValue: '',
-				label: _('Line')
-			}];
-			var users = [{
-				line: 1,
-				action: 'create',
-				username: 'max.mustermann',
-				firstname: 'Max',
-				lastname: 'Mustermann',
-				birthday: '02.05.2002',
-				'class': '5a'
-			}, {
-				line: 2,
-				action: 'modify',
-				username: 'susanne.bauer',
-				firstname: 'Susanne',
-				lastname: 'Bauer',
-				birthday: '12.07.2004',
-				'class': '3b',
-				email: 'susanne.bauer@grundschule.bremen.de'
-			}, {
-				line: 3,
-				action: 'modify',
-				username: 'thomas.klein',
-				firstname: 'Thomas Stefan',
-				lastname: 'Klein',
-				birthday: '01.02.2002',
-				'class': '5a',
-				email: 'thommy@grundschule.bremen.de'
-			}, {
-				line: 4,
-				action: 'create',
-				username: 'susanne.bauer',
-				firstname: 'Susanne',
-				lastname: 'Bauer',
-				birthday: '09.10.2007',
-				'class': '1c'
-			}, {
-				action: 'delete',
-				username: 'maria.kuhne',
-				firstname: 'Maria Sophie',
-				lastname: 'Kuhne',
-				birthday: '20.12.2001',
-				'class': '6a',
-				email: 'mariechen@grundschule.bremen.de'
-			}];
 			page._form = new Form({
 				region: 'top',
 				widgets: [{
 					type: CheckBox,
 					name: 'show_errors',
-					label: _('Show only lines with errors'),
+					label: _('Show only lines with issues'),
 					onClick: lang.hitch(this, function() {
 						var page = this.getPage('spreadsheet');
 						var checked = page._form.get('value').show_errors;
@@ -773,7 +744,6 @@ define([
 				}]
 			});
 			page.addChild(page._form);
-			page._grid = this.addGridSpreadSheet(page, columns, users);
 		},
 
 		getFooterButtons: function(pageName) {
@@ -794,9 +764,20 @@ define([
 	});
 
 	return declare("umc.modules.schoolcsvimport", [ Module ], {
+		_keepAlive: null,
 		_wizard: null,
 
 		buildRendering: function() {
+			// This module uploads the file once and stores it in "memory"
+			// i.e. the module is quite stateful. So we need to keep it alive
+			// to not forget the files while the user is changing the rows
+			var timeout = 1000 * Math.min(tools.status('sessionTimeout') / 2, 30);
+			this._keepAlive = new timing.Timer(timeout);
+			this._keepAlive.onTick = function() {
+				tools.umcpCommand('schoolcsvimport/ping', {}, false);
+			};
+			this._keepAlive.start();
+
 			var progressBar = new ProgressBar({});
 			this.inherited(arguments);
 			var wizard = new UploadWizard({
@@ -811,6 +792,11 @@ define([
 			wizard.on('cancel', lang.hitch(this, function() {
 				topic.publish('/umc/tabs/close', this);
 			}));
+		},
+
+		destroy: function() {
+			this._keepAlive.stop();
+			this.inherited(arguments);
 		}
 	});
 
