@@ -13,5 +13,6 @@
 		<command name="schoolcsvimport/recheck" function="recheck_users" />
 		<command name="schoolcsvimport/import" function="import_users" />
 		<command name="schoolcsvimport/ping" function="ping" />
+		<command name="schoolcsvimport/progress" function="progress" />
 	</module>
 </umc>

@@ -41,7 +41,8 @@ import locale
 
 from univention.lib.i18n import Translation
 from univention.management.console.log import MODULE
-from univention.management.console.modules.decorators import file_upload, simple_response
+from univention.management.console.modules.decorators import file_upload, simple_response, multi_response
+from univention.management.console.modules.mixins import ProgressMixin
 from univention.config_registry import ConfigRegistry
 import univention.admin.modules as udm_modules
 
@@ -158,6 +159,9 @@ class User(object):
 
 	def commit(self):
 		self._error_msg = None
+		if self.__dict__['class'] == '3b':
+			self._error_msg = 'Class "3b" does not exist (fake error)'
+			return False
 		if self.errors:
 			for error in self.errors:
 				self._error_msg = error[0]
@@ -216,7 +220,7 @@ class Student(User):
 	def get_ldap_base(cls, search_base):
 		return search_base.students
 
-class Instance(SchoolBaseModule):
+class Instance(SchoolBaseModule, ProgressMixin):
 	def init(self):
 		super(Instance, self).init()
 		self.file_map = {}
@@ -275,13 +279,14 @@ class Instance(SchoolBaseModule):
 			result['first_lines'] = first_lines
 			self.finished(request.id, [result])
 
-	@simple_response
-	def show(self, file_id, columns):
+	@simple_response(with_progress=True)
+	def show(self, progress, file_id, columns):
 		result = {}
+		progress.title = _('Checking users from CSV file')
 		file_info = self.file_map[file_id]
 		lo = open_ldap_connection(self._user_dn, self._password, ucr.get('ldap/server/name'))
 		search_base = SchoolSearchBase([], file_info.school)
-		existing_users = udm_modules.lookup('users/user', None, lo, scope='sub', base=file_info.user_klass.get_ldap_base(search_base))
+		existing_udm_users = udm_modules.lookup('users/user', None, lo, scope='sub', base=file_info.user_klass.get_ldap_base(search_base))
 		with open(file_info.filename, 'rb') as f:
 			lines = f.readlines()
 			if file_info.has_header:
@@ -298,15 +303,18 @@ class Instance(SchoolBaseModule):
 			user.validate(lo, file_info.school)
 			users.append(user.to_dict())
 			line_no += 1
+			progress.progress(message=user.username)
 		mentioned_usernames = map(lambda u: u['username'], users)
-		for user in existing_users:
+		progress.title = _('Checking users from database')
+		for user in existing_udm_users:
 			if user['username'] not in mentioned_usernames:
 				user = file_info.user_klass.from_udm_obj(user, lo, action='delete')
 				users.append(user.to_dict())
+				progress.progress(message=user.username)
 		result['users'] = users
-		date_pattern = '{fullYear}-{month}-{day}'
+		date_pattern = 'yyyy.MMM.dd'
 		if locale.getlocale()[0] == 'de':
-			date_pattern = '{day}.{month}.{fullYear}'
+			date_pattern = 'dd.MMM.yyyy'
 		python_date_format = None
 		if 'birthday' in columns:
 			for user in users:
@@ -347,19 +355,28 @@ class Instance(SchoolBaseModule):
 			users.append(user.to_dict())
 		return users
 
-	@simple_response
-	def import_users(self, file_id, user_attrs):
-		file_info = self.file_map[file_id]
+	@multi_response(progress=[_('Processing %d user(s)'), _('%(username)s %(action)s')])
+	def import_users(self, iterator, file_id, attrs):
 		lo = open_ldap_connection(self._user_dn, self._password, ucr.get('ldap/server/name'))
-		errors = []
-		for attrs in user_attrs:
+		file_info = None
+		for file_id, attrs in iterator:
+			if file_info is None:
+				file_info = self.file_map[file_id]
 			user = file_info.user_klass(lo, attrs)
 			user.validate(lo, file_info.school)
-			if not user.commit():
-				errors.append(user.get_error_msg())
+			action = user.action
+			if action == 'create':
+				action = _('created')
+			elif action == 'modify':
+				action = _('modified')
+			if action == 'delete':
+				action = _('deleted')
+			if user.commit():
+				yield {'username' : user.username, 'action' : action, 'success' : True}
+			else:
+				yield {'username' : user.username, 'action' : action, 'success' : False, 'msg' : user.get_error_msg()}
 		os.unlink(file_info.filename)
 		del self.file_map[file_id]
-		return errors
 
 	@simple_response
 	def ping(self):

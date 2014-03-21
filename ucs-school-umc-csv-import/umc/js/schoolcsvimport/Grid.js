@@ -39,18 +39,19 @@ define([
 	"umc/widgets/ContainerWidget",
 	"umc/widgets/Grid"
 ], function(declare, lang, aspect, Menu, BorderContainer, EnhancedGrid, StandbyMixin, ContainerWidget, Grid) {
-	// SAME!
 	var _Grid = declare([EnhancedGrid], {
-		_fetch: function(start, isRender) {
-			// force start=0
-			arguments[0] = 0;
-			this.inherited(arguments);
-		}
+		// this is done in umc/widgets/Grid.
+		// causes problems with Memory()
+		//_fetch: function(start, isRender) {
+		//	// force start=0
+		//	arguments[0] = 0;
+		//	this.inherited(arguments);
+		//}
 	});
 
 	return declare('umc.modules.schoolcsvimport.Grid', [ Grid ], {
 		// FIXME: ugly fork of Grid.
-		// put thie buildRendering into umc.widgets.Grid!!!
+		// put the buildRendering into umc.widgets.Grid!!!
 		// change is lang.mixin() in this._grid = ...
 		buildRendering: function() {
 			BorderContainer.prototype.buildRendering.apply(this, arguments);
@@ -130,12 +131,6 @@ define([
 
 			// make sure that we update the disabled items after sorting etc.
 			this.own(aspect.after(this._grid, '_refresh', lang.hitch(this, '_updateDisabledItems')));
-		},
-
-		// needs overwriting, is fair enough
-		postMixInProperties: function() {
-			this.inherited(arguments);
-			this._dataStore = this.moduleStore.store;
 		}
 	});
 });

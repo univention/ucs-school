@@ -1,3 +1,10 @@
+ucs-school-umc-csv-import (1.0.3-1) unstable; urgency=low
+
+  * Bug #34199: Importing in background task with progress, grid fixes,
+    cleanup
+
+ -- Dirk Wiesenthal <wiesenthal@univention.de>  Fri, 21 Mar 2014 22:12:45 +0100
+
 ucs-school-umc-csv-import (1.0.2-1) unstable; urgency=low
 
   * Bug #34199: Support editing, warnings, skipping, import
