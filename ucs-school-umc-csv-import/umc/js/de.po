@@ -247,7 +247,7 @@ msgid ""
 "that all are unique."
 msgstr ""
 "Benutzername taucht mehrfach in der Datei auf. Bitte ändern Sie die "
-"Benutzernamen so, dass all eindeutig sind."
+"Benutzernamen so, dass alle eindeutig sind."
 
 #: umc/js/schoolcsvimport.js:201
 #, python-format
