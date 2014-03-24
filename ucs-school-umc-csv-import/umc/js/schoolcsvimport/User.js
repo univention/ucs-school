@@ -39,8 +39,7 @@ define([
 	"umc/widgets/Tooltip",
 	"umc/i18n!umc/modules/schoolcsvimport"
 ], function(kernel, lang, array, query, style, tools, Tooltip, _) {
-	var User = function(id, values) {
-		this.id = id;
+	var User = function(values) {
 		this._initialValues = lang.clone(values);
 		this.setValues(values);
 	};
@@ -129,10 +128,12 @@ define([
 					}
 				});
 				var cellNode = query('.dojoxGridCell[idx$=' + cellIndex +']', row.node)[0];
-				style.set(cellNode, {
-					backgroundColor: '#FF0000', // red
-					color: '#FFFFFF' // white, because of contrast
-				});
+				if (cellNode) {
+					style.set(cellNode, {
+						backgroundColor: '#FF0000', // red
+						color: '#FFFFFF' // white, because of contrast
+					});
+				}
 			});
 			if (hasIssues) {
 				var completeErrorMessage = _('The following issues arose while checking this row:');

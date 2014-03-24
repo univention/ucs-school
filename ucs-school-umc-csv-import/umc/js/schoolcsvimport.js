@@ -40,6 +40,7 @@ define([
 	"dojo/store/Memory",
 	"dojo/_base/window",
 	"dojo/dom-construct",
+	"dojo/dom-style",
 	"dojo/dom-attr",
 	"dojo/dom-geometry",
 	"dojo/date/locale",
@@ -61,7 +62,7 @@ define([
 	"umc/widgets/Module",
 	"umc/modules/schoolcsvimport/User",
 	"umc/i18n!umc/modules/schoolcsvimport"
-], function(declare, lang, array, query, topic, when, Deferred, Memory, win, construct, attr, geometry, dateLocaleModule, Menu, CheckedMenuItem, timing, tools, dialog, Text, TextBox, Form, ProgressBar, ComboBox, Uploader, CheckBox, Wizard, DateBox, Grid, Module, User, _) {
+], function(declare, lang, array, query, topic, when, Deferred, Memory, win, construct, style, attr, geometry, dateLocaleModule, Menu, CheckedMenuItem, timing, tools, dialog, Text, TextBox, Form, ProgressBar, ComboBox, Uploader, CheckBox, Wizard, DateBox, Grid, Module, User, _) {
 	var UploadWizard = declare('umc.modules.schoolcsvimport.Wizard', Wizard, {
 		postMixInProperties: function() {
 			this.inherited(arguments);
@@ -93,12 +94,16 @@ define([
 						label: _('Teachers and staff')
 					}]
 				}],
-				layout: [['school'], ['type']]
+				layout: [['school'], ['type'], ['delete_not_mentioned']]
 			}, {
 				name: 'upload',
 				headerText: this.description,
 				helpText: _('Please upload the CSV file. The CSV file has to contain comma separated values, enclosed by double quotes.'),
 				widgets: [{
+					type: CheckBox,
+					name: 'delete_not_mentioned',
+					label: _('Delete those who are not mentioned in the uploaded file (only applies to users of the selected user role)')
+				}, {
 					type: Uploader,
 					name: 'file',
 					label: _('Upload file'),
@@ -232,6 +237,7 @@ define([
 						lang.hitch(this, function(result) {
 							var page = this.getPage('spreadsheet');
 							this.datePattern = result.date_pattern;
+							this.requiredColumns = result.required_columns;
 							page._grid = this.addGridSpreadSheet(page, result.columns, result.users);
 							return nextPage;
 						}));
@@ -325,7 +331,14 @@ define([
 		getUploaderParams: function() {
 			var school = this.getWidget('general', 'school').get('value');
 			var type = this.getWidget('general', 'type').get('value');
-			return {school: school, type: type};
+			var params = {school: school, type: type};
+			var delete_not_mentioned = this.getWidget('upload', 'delete_not_mentioned').get('value');
+			if (delete_not_mentioned) {
+				// only put it here when set. false will go into body and is then
+				// translated to string "false" in python which evaluates to True...
+				params.delete_not_mentioned = delete_not_mentioned;
+			}
+			return params;
 		},
 
 		addMenuItem: function(headerMenu, label, name) {
@@ -381,8 +394,8 @@ define([
 			array.forEach(availableColumns, lang.hitch(this, function(columnDefinition) {
 				this.addMenuItem(headerMenu, columnDefinition.label, columnDefinition.name);
 			}));
-			users = array.map(users, function(user, i) {
-				return new User(i, user);
+			users = array.map(users, function(user) {
+				return new User(user);
 			});
 			var dataStore = new Memory({
 				data: users
@@ -475,8 +488,8 @@ define([
 					};
 				}
 			}));
-			users = array.map(users, function(user, i) {
-				return new User(i, user);
+			users = array.map(users, function(user) {
+				return new User(user);
 			});
 			var dataStore = new Memory({
 				data: users
@@ -586,7 +599,7 @@ define([
 				var type = TextBox;
 				var staticValues = null;
 				var datePattern = null;
-				var required = array.indexOf(['action', 'firstname', 'lastname', 'username'], key) !== -1;
+				var required = array.indexOf(this.requiredColumns, key) !== -1;
 				if (key == 'birthday') {
 					type = DateBox;
 					datePattern = this.datePattern;
@@ -648,6 +661,7 @@ define([
 				}]
 			});
 			page.addChild(page._form);
+			style.set(page._form.getButton('submit').domNode, {display: 'none'});
 		},
 
 		getFooterButtons: function(pageName) {
