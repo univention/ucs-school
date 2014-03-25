@@ -5,6 +5,16 @@
 ## exposure: safe
 ## packages:
 ##   - ucs-school-umc-groups
+# overwriding print function to print in color
+
+from __future__ import print_function
+def print(*args):
+    output = []
+    for part in args:
+        output.append(str(part))
+    output = '\033[1;34m' + ' '.join(output) + '\033[1;m'
+    __builtins__.print(output)
+    return
 
 from ucsschool.lib.schoolldap import LDAP_Connection, LDAP_ConnectionError,\
         SchoolSearchBase
@@ -26,10 +36,12 @@ def objExist(objType ,groupName, schoolName, basedn):
             basedn
     cmd = ['univention-ldapsearch', '-LLL', '-b',objectdn, 'dn']
     cmdOutput = subprocess.Popen(cmd, stdout=subprocess.PIPE).communicate()[0]
-    found = re.findall(r'(?<=\bdn:\s).*\n?\S',cmdOutput,re.UNICODE)
-    print ('found = ', found)
+    found = re.findall(r'(?<=\bdn:\s).*\n?\s?.*',cmdOutput,re.UNICODE)
+    found = ''.join(found)
+    found = re.split(r'\n\s', found)
+    found = ''.join(found)
     if len(found) > 0:
-        if ( objectdn == found[0]):
+        if (objectdn == found):
             print ( objType, 'object exists in ldap' )
             returnValue = 1
         else:
@@ -233,7 +245,7 @@ def main():
         returnList.append(objExist('group', groupName, schoolName, basedn))
 
     print(returnList)
-    if returnList == [1,1,1,1,1,1,1,1,1,1,1,1]:
+    if returnList == [1,1,1,1,1,1,1,0,1,1,1,0]:
         returnValue = 0
     else:
         returnValue = 1
