@@ -168,30 +168,18 @@ def main():
         connection.auth('Administrator' ,'univention')
 
         # 1 creating workgroup
-        if createWorkgroup(connection, groupName, schoolName,\
-                description, memberListdn, None):
-            returnList.append(0)
-        else:
-            returnList.append(1)
+        returnList.append(createWorkgroup(connection, groupName, schoolName,\
+                description, memberListdn, None))
 
         # 2 checking the existance of the created workgroup
-        if objExist('group', groupName, schoolName, basedn):
-            returnList.append(0)
-        else:
-            returnList.append(1)
+        returnList.append(objExist('group', groupName, schoolName, basedn))
 
         # 3 checking if the description for the group is correct
-        if descriptionCorrect(description, groupName, schoolName, basedn):
-            returnList.append(0)
-        else:
-            returnList.append(1)
-
+        returnList.append(descriptionCorrect(description, groupName,\
+                schoolName, basedn))
 
         # 4 checking if the right members are in the created group
-        if memberExist(memberList, groupName, schoolName, basedn):
-            returnList.append(0)
-        else:
-            returnList.append(1)
+        returnList.append(memberExist(memberList, groupName, schoolName, basedn))
 
         # 5 + 6 other way of checking
         queryParam = {
@@ -207,59 +195,45 @@ def main():
             # print (groupObjectForm, requestResult[0]['$dn$'])
             if groupObjectForm ==  requestResult[0]['$dn$']:
                 print('group', groupName, ' exists through schoolgroups/query')
-                returnList.append(0)
-            else:
                 returnList.append(1)
+            else:
+                returnList.append(0)
             if description == requestResult[0]['description']:
                 print('Description matches through schoolgroups/query')
-                returnList.append(0)
-            else:
                 returnList.append(1)
+            else:
+                returnList.append(0)
         except Exception as e:
             print("Exception: '%s' '%s' '%r'" % (str(e), type(e), e))
             returnList.append(1)
 
         # 7 checking if the share object exists
-        if objExist('file share', groupName, schoolName, basedn):
-            returnList.append(0)
-        else:
-            returnList.append(1)
+        returnList.append(objExist('file share', groupName, schoolName, basedn))
 
         # 8 should fail: creating a new working group with the same name
-        if createWorkgroup(connection, groupName, schoolName, \
-                description, memberListdn, None):
-            returnList.append(1)
-        else:
-            returnList.append(0)
+        returnList.append(createWorkgroup(connection, groupName, schoolName, \
+                description, memberListdn, None))
 
         # 9 modify members from the group
         newUid = uts.random_string()
-        if changeUid(connection, memberList[0], newUid, schoolName, basedn, True):
+        if changeUid(connection, memberList[0], newUid,schoolName,basedn,True):
             memberList[0] = newUid
             print('current members are:' , memberList)
-            returnList.append(0)
-        else:
             returnList.append(1)
+        else:
+            returnList.append(0)
 
         # 10 checking if the right members are in the created group
-        if memberExist(memberList, groupName, schoolName, basedn):
-            returnList.append(0)
-        else:
-            returnList.append(1)
+        returnList.append(memberExist(memberList,groupName,schoolName,basedn))
 
         # 11 remove the group
-        if removeGroup(connection,groupName, groupObjectForm, None):
-            returnList.append(0)
-        else:
-            returnList.append(1)
+        returnList.append(removeGroup(connection,groupName,groupObjectForm,None))
 
         # 12 check if the object is removed from ldap
-        if objExist('group', groupName, schoolName, basedn):
-            returnList.append(1)
-        else:
-            returnList.append(0)
+        returnList.append(objExist('group', groupName, schoolName, basedn))
+
     print(returnList)
-    if returnList == [0,0,0,0,0,0,0,0,0,0,0,0]:
+    if returnList == [1,1,1,1,1,1,1,1,1,1,1,1]:
         returnValue = 0
     else:
         returnValue = 1
