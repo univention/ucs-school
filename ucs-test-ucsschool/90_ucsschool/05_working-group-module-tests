@@ -7,15 +7,6 @@
 ##   - ucs-school-umc-groups
 # overwriding print function to print in color
 
-from __future__ import print_function
-def print(*args):
-    output = []
-    for part in args:
-        output.append(str(part))
-    output = '\033[1;34m' + ' '.join(output) + '\033[1;m'
-    __builtins__.print(output)
-    return
-
 from ucsschool.lib.schoolldap import LDAP_Connection, LDAP_ConnectionError,\
         SchoolSearchBase
 from univention.lib.umc_connection import UMCConnection
