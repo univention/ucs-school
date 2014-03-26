@@ -32,17 +32,17 @@ def objExist(ulconnection, groupName, schoolName, basedn):
         if len(found) > 0:
             for i in len(found):
                 if found[i] == sfound[0]:
-                    print('group ', groupName, 'object exist in ldap, BUT\
-                            the file share object does not')
+                    print('group ', groupName, 'object exist in ldap, BUT',\
+                            'the file share object does not')
                 elif found[i] == sfound[1]:
-                    print('group ', groupName, 'file share object exist in\
-                            ldap, BUT the group object does not')
+                    print('group ', groupName, 'file share object exist in',\
+                            'ldap, BUT the group object does not')
                 else:
-                    print('group ', groupName, 'AND its file share object\
-                            DOES NOT exist in ldap')
+                    print('group ', groupName, 'AND its file share object',\
+                            'DOES NOT exist in ldap')
         else:
-            print('group ', groupName, 'AND its file share object DOES NOT\
-                    exist in ldap')
+            print('group ', groupName, 'AND its file share object DOES NOT',\
+                    'exist in ldap')
         returnValue = 0
     return returnValue
 
