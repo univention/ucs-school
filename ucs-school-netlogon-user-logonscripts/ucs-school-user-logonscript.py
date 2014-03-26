@@ -48,12 +48,6 @@ scriptpath = []
 desktopFolderName = "Eigene Shares"
 globalLinks = {}
 
-strTeacher = listener.baseConfig.get('ucsschool/ldap/default/container/teachers', 'lehrer')
-strStaff = listener.baseConfig.get('ucsschool/ldap/default/container/teachers-and-staff', 'lehrer und mitarbeiter')
-ldapbase = listener.baseConfig.get('ldap/base', '')
-umcLink = listener.baseConfig.get('ucsschool/userlogon/umclink/link', 'http://%s.%s/univention-management-console' % (hostname, domainname))
-reTeacher = re.compile(listener.baseConfig.get('ucsschool/userlogon/umclink/re', '^(.*),cn=(%s|%s),cn=users,ou=([^,]+),%s$' % (strTeacher, strStaff, ldapbase)))
-
 # create netlogon scripts for samba3 and samba4
 def getScriptPath():
 
@@ -178,7 +172,7 @@ def writeMacLinkScripts(uid, homepath, links):
 	finally:
 			listener.unsetuid()
 
-def generateWindowsLinkScript(desktopfolder, links, mappings, dn):
+def generateWindowsLinkScript(desktopfolder, links, mappings):
 	# desktopfolder is a strings, links is a list of tupels which contain linkname and linkgoal
 	skript = '''Const DESKTOP = &H10&
 Const FolderName = "%s"
@@ -281,14 +275,6 @@ Function MapDrive(Drive,Share)
 		skript += 'oLink.TargetPath = "\\\\%s\\%s"\n' % (links[linkName], linkName)
 		skript += 'oLink.Save\n\n'
 
-	# create shortcut to umc for teachers
-	if reTeacher.match(dn):
-		skript += 'Set WshShell = CreateObject("WScript.Shell")\n'
-		skript += 'strDesktop = WshShell.SpecialFolders("Desktop")\n'
-		skript += 'Set oUrlLink = WshShell.CreateShortcut(strDesktop+"\Univention Management Console.URL")\n'
-		skript += 'oUrlLink.TargetPath = "%s"\n' % umcLink
-		skript += 'oUrlLink.Save\n\n'
-
 	lettersinuse = {}
 	for key in mappings.keys():
 		if mappings[key].get('letter'):
@@ -314,12 +300,12 @@ Function MapDrive(Drive,Share)
 
 	return skript
 
-def writeWindowsLinkSkripts(uid, links, mappings, dn):
+def writeWindowsLinkSkripts(uid, links, mappings):
 
 	global scriptpath
 
 	for path in scriptpath:
-		script = generateWindowsLinkScript(desktopFolderName, links, mappings, dn).replace('\n','\r\n')
+		script = generateWindowsLinkScript(desktopFolderName, links, mappings).replace('\n','\r\n')
 		listener.setuid(0)
 		try:
 			filepath = "%s/%s.vbs" % (path, uid)
@@ -483,7 +469,7 @@ def userchange(dn, new, old):
 
 		univention.debug.debug(univention.debug.LISTENER, univention.debug.INFO, "ucsschool-user-logonscripts: links %s" % links)
 
-		writeWindowsLinkSkripts(new['uid'][0], links, mappings, dn)
+		writeWindowsLinkSkripts(new['uid'][0], links, mappings)
 		if listener.baseConfig.is_true("ucsschool/userlogon/mac"):
 			writeMacLinkScripts(new['uid'][0], new['homeDirectory'][0], links)
 
