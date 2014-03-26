@@ -1,3 +1,9 @@
+ucs-school-netlogon-user-logonscripts (10.0.1-2) unstable; urgency=low
+
+  * added ucrv descriptions (Bug #22737) 
+
+ -- Felix Botner <botner@univention.de>  Wed, 26 Mar 2014 13:31:05 +0100
+
 ucs-school-netlogon-user-logonscripts (10.0.1-1) unstable; urgency=low
 
   * added umc link for teachers in ucs-school-user-logonscript.py (Bug #22737)

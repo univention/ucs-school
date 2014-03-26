@@ -51,3 +51,15 @@ Description[de]=Falls auf "true" gesetzt, wird ein Mac OS logon Skript erzeugt
 Description[en]=If set to "true" Mac OS logon scripts will be created
 Type=str
 Categories=ucsschool-netlogon
+
+[ucsschool/userlogon/umclink/re]
+Description[de]=Regulärer Ausdruck auf die LDAP-DN der Benutzer. Trifft dieser zu, wird der UMC-Link auf dem Windows Desktop der Benutzer durch das netlogon Skript angelegt (default: nur Lehrer).
+Description[en]=Regular expression on the LDAP-DN of users. If this expression matches, the netlogon Skript creates an UMC-Link on the users windows desktop (default: only teachers).
+Type=str
+Categories=ucsschool-netlogon
+
+[ucsschool/userlogon/umclink/link]
+Description[de]=Ziel für den UMC-Link.
+Description[en]=Destination for the UMC-Link.
+Type=str
+Categories=ucsschool-netlogon
