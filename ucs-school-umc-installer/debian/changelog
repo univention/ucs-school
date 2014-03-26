@@ -1,3 +1,9 @@
+ucs-school-umc-installer (2.0.2-1) unstable; urgency=low
+
+  * Bug #34173: ask user to specify OU display name during configuration
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Wed, 26 Mar 2014 13:28:17 +0100
+
 ucs-school-umc-installer (2.0.1-1) unstable; urgency=low
 
   * Bug #33396: also install univention-samba-slave-pdc if samba3 has been selected

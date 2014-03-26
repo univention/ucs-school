@@ -171,13 +171,22 @@ define([
 			}, {
 				name: 'school',
 				headerText: _('UCS@school - school OU setup'),
-				helpText: _('In UCS@school, each school is organized in its proper LDAP organizational unit (so-called OU). All school related information (students, classes, computers, rooms, groups etc.) is organized below such an OU. Please enter the name of a school OU that will be created during the installation process.'),
+				helpText: _('In UCS@school, each school is organized in its own LDAP organizational unit (so-called OU). All school related information (students, classes, computers, rooms, groups etc.) is organized below such an OU. Please enter the name of a school OU that will be created during the installation process.'),
 				widgets: [{
 					type: TextBox,
-					required: true,
+					name: 'OUdisplayname',
+					label: _('Display name of the school'),
+					description: _('The given value will be shown as school\'s name within UCS@school.'),
+					required: true
+				}, {
+					type: TextBox,
 					name: 'schoolOU',
-					label: _('School OU name'),
-					regExp: '^[a-zA-Z0-9](([a-zA-Z0-9_]*)([a-zA-Z0-9]$))?$'
+					label: _("LDAP name of the school OU"),
+					description: _('The given value will be used as object name for the new school OU object within the LDAP directory. It may consist of the letters a-z, the digits 0-9 and underscores. Usually it is safe to keep the suggested value.'),
+					regExp: '^[a-zA-Z0-9](([a-zA-Z0-9_]*)([a-zA-Z0-9]$))?$',
+					depends: ['OUdisplayname'],
+					dynamicValue: function(values) { return values.OUdisplayname.replace(/[^a-zA-Z0-9]/g, ''); },
+					required: true
 				}, {
 					// this information will only be shown to slave systems
 					type: Text,

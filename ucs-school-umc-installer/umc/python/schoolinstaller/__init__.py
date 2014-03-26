@@ -219,10 +219,10 @@ def get_user_dn(username, password, master):
 		return None
 	return result[0].get('$dn$')
 
-def create_ou_local(ou):
+def create_ou_local(ou, displayName):
 	'''Calls create_ou locally as user root (only on master).'''
 	# call create_ou
-	cmd = ['/usr/share/ucs-school-import/scripts/create_ou', ou]
+	cmd = ['/usr/share/ucs-school-import/scripts/create_ou', '--displayName', displayName, ou]
 	process = subprocess.Popen(cmd, shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 	stdout, stderr = process.communicate()
 
@@ -233,10 +233,10 @@ def create_ou_local(ou):
 		return False
 	return True
 
-def create_ou_remote(master, username, password, ou, slave):
+def create_ou_remote(master, username, password, ou, displayname, slave):
 	"""Create a school OU via the UMC interface."""
 	try:
-		umc(username, password, master, ['schoolwizards/schools/create', '-o' ,'name=%s' % ou, '-o', 'schooldc=%s' % slave, '-f', 'schoolwizards/schools'])
+		umc(username, password, master, ['schoolwizards/schools/create', '-o' ,'name=%s' % ou, '-o', 'displayname=%s' % displayname, '-o', 'schooldc=%s' % slave, '-f', 'schoolwizards/schools'])
 	except RuntimeError as err:
 		return False
 	return True
@@ -487,6 +487,7 @@ class Instance(Base):
 		password = request.options.get('password')
 		master = request.options.get('master')
 		samba = request.options.get('samba')
+		OUdisplayname = request.options.get('OUdisplayname')
 		schoolOU = request.options.get('schoolOU')
 		setup = request.options.get('setup')
 		serverRole = ucr.get('server/role')
@@ -659,10 +660,10 @@ class Instance(Base):
 				progress_state.info = ''
 				if serverRole == 'domaincontroller_slave':
 					# create ou remotely on the slave
-					success = create_ou_remote(master, username, password, schoolOU, ucr.get('hostname'))
+					success = create_ou_remote(master, username, password, schoolOU, OUdisplayname, ucr.get('hostname'))
 				elif serverRole == 'domaincontroller_master':
 					# create ou locally on the master
-					success = create_ou_local(schoolOU)
+					success = create_ou_local(schoolOU, OUdisplayname)
 
 				progress_state.add_steps(10)
 				if success:
