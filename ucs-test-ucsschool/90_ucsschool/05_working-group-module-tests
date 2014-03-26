@@ -8,6 +8,7 @@
 # overwriding print function to print in color
 
 from univention.lib.umc_connection import UMCConnection
+import sys
 import univention.testing.strings as uts
 import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool as utu
