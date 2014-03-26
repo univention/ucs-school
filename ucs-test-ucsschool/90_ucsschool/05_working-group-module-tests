@@ -7,98 +7,73 @@
 ##   - ucs-school-umc-groups
 # overwriding print function to print in color
 
-from ucsschool.lib.schoolldap import LDAP_Connection, LDAP_ConnectionError,\
-        SchoolSearchBase
+from __future__ import print_function
+def print(*args):
+    output = []
+    for part in args:
+        output.append(str(part))
+    output = '\033[1;34m' + ' '.join(output) + '\033[1;m'
+    __builtins__.print(output)
+    return
+
 from univention.lib.umc_connection import UMCConnection
 import sys, os, time, subprocess, re
 import univention.testing.strings as uts
 import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool as utu
+import univention.uldap as uu
 
 # check for group and file share objects existance in ldap
-def objExist(objType ,groupName, schoolName, basedn):
-    if (objType == 'group'):
-        cn = ',cn=schueler,cn=groups,ou='
-    elif (objType == 'file share'):
-        cn = ',cn=shares,ou='
-    else:
-        cn = ',ou='
-    objectdn = 'cn=' + schoolName + '-' + groupName + cn + schoolName + ',' + \
-            basedn
-    cmd = ['univention-ldapsearch', '-LLL', '-b',objectdn, 'dn']
-    cmdOutput = subprocess.Popen(cmd, stdout=subprocess.PIPE).communicate()[0]
-    found = re.findall(r'(?<=\bdn:\s).*\n?\s?.*',cmdOutput,re.UNICODE)
-    found = ''.join(found)
-    found = re.split(r'\n\s', found)
-    found = ''.join(found)
-    if len(found) > 0:
-        if (objectdn == found):
-            print ( objType, 'object exists in ldap' )
-            returnValue = 1
-        else:
-            print ( objType, 'object does not exist in ldap' )
-            returnValue = 0
-    else:
-        returnValue = 0
-    return returnValue
-
-# checking if the description for a group is correct -- regex
-def descriptionCorrect(description, groupName, schoolName, basedn):
-    cn = ',cn=schueler,cn=groups,ou='
-    objectdn = 'cn=' + schoolName + '-' + groupName + cn + schoolName + ',' + \
-            basedn
-    cmd = ['univention-ldapsearch', '-LLL', '-b',objectdn , 'description']
-    cmdOutput = subprocess.Popen(cmd, stdout=subprocess.PIPE).communicate()[0]
-    found = re.findall(r'(?<=\bdescription:\s)\w+\b',cmdOutput,re.UNICODE)
-    if (description == found[0]):
-        print ('description matches')
+def objExist(ulconnection, groupName, schoolName, basedn):
+    groupdn = 'cn=' + schoolName + '-' + groupName + ',cn=schueler,cn=groups,ou='\
+            + schoolName + ',' + basedn
+    sharedn = 'cn=' + schoolName + '-' + groupName + ',cn=shares,ou='\
+            + schoolName + ',' + basedn
+    cn = 'cn=' + schoolName + '-' + groupName
+    found = sorted(ulconnection.searchDn(filter = cn))
+    sfound = sorted([groupdn, sharedn])
+    returnValue = ( found == sfound)
+    if returnValue:
+        print('group ', groupName, 'and its file share object exist in ldap')
         returnValue = 1
     else:
-        print ('description does not match')
+        # Covering all logically possible cases
+        if len(found) > 0:
+            for i in len(found):
+                if found[i] == sfound[0]:
+                    print('group ', groupName, 'object exist in ldap, BUT\
+                            the file share object does not')
+                elif found[i] == sfound[1]:
+                    print('group ', groupName, 'file share object exist in\
+                            ldap, BUT the group object does not')
+                else:
+                    print('group ', groupName, 'AND its file share object\
+                            DOES NOT exist in ldap')
+        else:
+            print('group ', groupName, 'AND its file share object DOES NOT\
+                    exist in ldap')
         returnValue = 0
     return returnValue
 
-# checking if memberList in a created group -- regex
-def memberExist(memberList, groupName, schoolName, basedn):
-    cn = ',cn=schueler,cn=groups,ou='
-    objectdn = 'cn=' + schoolName + '-' + groupName + cn + schoolName + ',' + \
-            basedn
-    cmd = ['univention-ldapsearch', '-LLL', '-b',objectdn , 'memberUid']
-    cmdOutput = subprocess.Popen(cmd, stdout=subprocess.PIPE).communicate()[0]
-    found = sorted(re.findall(r'(?<=\bmemberUid:\s)\w+\b',cmdOutput, \
-            re.UNICODE))
-    memberList = sorted(memberList)
-    if(memberList == found):
-        print ('Members are found in group', groupName)
+# checking group attributes in ldap
+def checkAttr(ulconnection, memberList, groupName,schoolName, basedn,\
+        description=None):
+    returnList = []
+    objectdn = 'cn=' + schoolName + '-' + groupName + ',cn=schueler,cn=groups,ou='\
+            + schoolName + ',' + basedn
+    currentMembers = sorted(ulconnection.getAttr(objectdn, 'memberUid'))
+    returnList.append(sorted(memberList) == currentMembers)
+    currentDescription = ulconnection.getAttr(objectdn, 'description')[0]
+    returnList.append(description == currentDescription)
+    check = (returnList == [1,1])
+    if check:
+        print('Attributes check succeeded for group: ', groupName )
         returnValue = 1
     else:
-        print ('Members not found in group', groupName)
+        print('Attributes check failed for group: ', groupName )
         returnValue = 0
     return returnValue
 
-# changing the uid for a user --udm/put
-def changeUid(connection, oldUid, newUid, schoolName, basedn, is_teacher):
-    if is_teacher:
-        cn = 'lehrer'
-    else:
-        cn = 'schueler'
-    flavor = "users/user"
-    objectdn = 'uid=' + oldUid + ',cn=' + cn + ',cn=users,ou=' + schoolName +\
-            ',' + basedn
-    param = [{"object":{"username":newUid,"CtxBrokenSession":"0000", \
-            "CtxReconnectSession":"0000","$dn$":objectdn}, "options":None}]
-    try:
-        requestResult = connection.request('udm/put', param , flavor)
-        if requestResult:
-            print(oldUid, 'changed to', newUid, 'successfully')
-            returnValue = 1
-        else:
-            print('changeUid faild')
-            returnValue = 0
-    except Exception as e:
-        print("Exception: '%s' '%s' '%r'" % (str(e), type(e), e))
-        returnValue = 0
-    return returnValue
 
 # creating Workgroup
 def createWorkgroup(connection, groupName, schoolName, description, \
@@ -116,23 +91,29 @@ def createWorkgroup(connection, groupName, schoolName, description, \
                 }
             ]
     try:
-        requestResult = connection.request('schoolgroups/add', \
-                        creationParam , flavor)
+        requestResult = connection.request('schoolgroups/add',creationParam ,\
+                flavor)
         if requestResult:
             print('Group', groupName, 'added successfully')
             returnValue = 1
         else:
-            print('Group', groupName, 'fail to be added')
+            print('Group', groupName, 'failed to be added')
             returnValue = 0
     except Exception as e:
-        print("Exception: '%s' '%s' '%r'" % (str(e), type(e), e))
+        ex = 'The groupname is already in use as groupname or as username'
+        if ex in str(e):
+            print(ex)
+        else:
+            print("Exception: '%s' '%s' '%r'" % (str(e), type(e), e))
         returnValue = 0
     return returnValue
 
 # Removing a Workgroup
-def removeGroup(connection, groupName, groupObjectForm, options):
+def removeGroup(connection, groupName, schoolName, basedn, options):
+    groupdn = 'cn=' + schoolName + '-' + groupName + ',cn=schueler,cn=groups,ou='\
+            + schoolName + ',' + basedn
     flavor = 'workgroup-admin'
-    removingParam = [{"object":[groupObjectForm],"options":options}]
+    removingParam = [{"object":[groupdn],"options":options}]
     try:
         requestResult = connection.request('schoolgroups/remove', \
                 removingParam, flavor)
@@ -140,20 +121,103 @@ def removeGroup(connection, groupName, groupObjectForm, options):
             print('Group', groupName, 'removed successfully')
             returnValue = 1
         else:
-            print('Group', groupName, 'fail to be removed')
+            print('Group', groupName, 'failed to be removed')
             returnValue = 0
     except Exception as e:
         print("Exception: '%s' '%s' '%r'" % (str(e), type(e), e))
         returnValue = 0
     return returnValue
 
+# add members to workgroup
+def addMembers(ulconnection, connection, groupName, schoolName, basedn,\
+        description, memberListdn, options) :
+    flavor = 'workgroup-admin'
+    objectdn = 'cn=' + schoolName + '-' + groupName + ',cn=schueler,cn=groups,ou='\
+            + schoolName + ',' + basedn
+    currentMembers = sorted(ulconnection.getAttr(objectdn, 'uniqueMember'))
+    for member in memberListdn:
+        if member not in currentMembers:
+            currentMembers.append(member)
+        else:
+            print('member', member, 'already exist in the group')
+    creationParam = [
+            {
+                'object':{
+                    '$dn$' : objectdn,
+                    'school': schoolName,
+                    'name' : groupName,
+                    'description':description,
+                    'members':currentMembers
+                },
+                'options':options
+                }
+            ]
+    try:
+        requestResult = connection.request('schoolgroups/put', creationParam ,\
+                flavor)
+        if requestResult:
+            print('members', currentMembers, 'added successfully to workgroup',\
+                    groupName)
+            returnValue = 1
+        else:
+            print('members', currentMembers, 'failed to be added to workgroup',\
+                    groupName)
+            returnValue = 0
+    except Exception as e:
+        print("Exception: '%s' '%s' '%r'" % (str(e), type(e), e))
+        returnValue = 0
+    return returnValue
+
+# remove members from a workgroup
+def removeMembers(ulconnection, connection, groupName, schoolName, basedn,\
+        description, memberListdn, options) :
+    flavor = 'workgroup-admin'
+    objectdn = 'cn=' + schoolName + '-' + groupName + ',cn=schueler,cn=groups,ou='\
+            + schoolName + ',' + basedn
+    currentMembers = sorted(ulconnection.getAttr(objectdn, 'uniqueMember'))
+    for member in memberListdn:
+        if member in currentMembers:
+            currentMembers.remove(member)
+        else:
+            print('member', member, 'does not exist in the group')
+    creationParam = [
+            {
+                'object':{
+                    '$dn$' : objectdn,
+                    'school': schoolName,
+                    'name' : groupName,
+                    'description':description,
+                    'members':currentMembers
+                },
+                'options':options
+                }
+            ]
+    try:
+        requestResult = connection.request('schoolgroups/put',creationParam ,\
+                flavor)
+        if requestResult:
+            print('members', currentMembers, 'removed successfully from\
+                    the workgroup', groupName)
+            returnValue = 1
+        else:
+            print('members', currentMembers, 'failed to be removed from\
+                    the workgrou ', groupName)
+            returnValue = 0
+    except Exception as e:
+        print("Exception: '%s' '%s' '%r'" % (str(e), type(e), e))
+        returnValue = 0
+    return returnValue
 
 def main():
+    # initinalizing
     returnList = []
+    emptygroupName = uts.random_string()
     groupName = uts.random_string()
     description = uts.random_string()
+    emptydescription = uts.random_string()
     memberList = []
     memberListdn = []
+    # prepare connection: UMCConnection
     ucr = ucr_test.UCSTestConfigRegistry()
     ucr.load()
     host = ucr.get('hostname')
@@ -170,76 +234,53 @@ def main():
         print('current members are:' , memberList)
         connection.auth('Administrator' ,'univention')
 
-        # 1 creating workgroup
+        # prepare connection: uldap connection
+        ulconnection = uu.getMachineConnection(ldap_master=False)
+
+        # 1 creating empty workgroup
+        returnList.append(createWorkgroup(connection, emptygroupName, schoolName,\
+                emptydescription, [], None))
+
+        # 2 creating none-empty workgroup
         returnList.append(createWorkgroup(connection, groupName, schoolName,\
                 description, memberListdn, None))
 
-        # 2 checking the existance of the created workgroup
-        returnList.append(objExist('group', groupName, schoolName, basedn))
+        # 3 checking the created workgroup and its file share object in ldap
+        returnList.append(objExist(ulconnection, groupName, schoolName, basedn))
 
-        # 3 checking if the description for the group is correct
-        returnList.append(descriptionCorrect(description, groupName,\
-                schoolName, basedn))
+        # 4 checking if the atrriputes for the group is correct in ldap
+        returnList.append(checkAttr(ulconnection, memberList, groupName, \
+                schoolName, basedn, description))
 
-        # 4 checking if the right members are in the created group
-        returnList.append(memberExist(memberList, groupName, schoolName, basedn))
-
-        # 5 + 6 other way of checking
-        queryParam = {
-                'school': schoolName,
-                'pattern': groupName
-                }
-        groupObjectForm = 'cn=' + schoolName + '-' + groupName +\
-                ',cn=schueler,cn=groups,ou=' + schoolName + ',' + basedn
-        flavor = 'workgroup-admin'
-        try:
-            requestResult = connection.request('schoolgroups/query', \
-                    queryParam, flavor)
-            # print (groupObjectForm, requestResult[0]['$dn$'])
-            if groupObjectForm ==  requestResult[0]['$dn$']:
-                print('group', groupName, ' exists through schoolgroups/query')
-                returnList.append(1)
-            else:
-                returnList.append(0)
-            if description == requestResult[0]['description']:
-                print('Description matches through schoolgroups/query')
-                returnList.append(1)
-            else:
-                returnList.append(0)
-        except Exception as e:
-            print("Exception: '%s' '%s' '%r'" % (str(e), type(e), e))
-            returnList.append(1)
-
-        # 7 checking if the share object exists
-        returnList.append(objExist('file share', groupName, schoolName, basedn))
-
-        # 8 should fail: creating a new working group with the same name
+        # 5 should fail: creating a new working group with the same name
         returnList.append(createWorkgroup(connection, groupName, schoolName, \
                 description, memberListdn, None))
 
-        # 9 modify members from the group
-        newUid = uts.random_string()
-        if changeUid(connection, memberList[0], newUid,schoolName,basedn,True):
-            memberList[0] = newUid
-            print('current members are:' , memberList)
-            returnList.append(1)
-        else:
-            returnList.append(0)
+        # 6 add members to group
+        returnList.append(addMembers(ulconnection, connection, emptygroupName,\
+                schoolName, basedn, emptydescription, memberListdn,None))
 
-        # 10 checking if the right members are in the created group
-        returnList.append(memberExist(memberList,groupName,schoolName,basedn))
+        # 7 remove members from a group
+        membersToRemove = [memberListdn[0]]
+        returnList.append(removeMembers(ulconnection, connection, groupName,\
+                schoolName, basedn, description, membersToRemove,None))
 
-        # 11 remove the group
-        returnList.append(removeGroup(connection,groupName,groupObjectForm,None))
+        # 8 checking if the atrriputes for the emptygroup is correct in ldap
+        returnList.append(checkAttr(ulconnection, memberList, emptygroupName, \
+                schoolName, basedn, emptydescription))
 
-        # 12 check if the object is removed from ldap
-        returnList.append(objExist('group', groupName, schoolName, basedn))
+        # 9 checking if the atrriputes for the group is correct in ldap
+        returnList.append(checkAttr(ulconnection, [memberList[1]], groupName,\
+                schoolName, basedn, description))
 
-    print(returnList)
-    if returnList == [1,1,1,1,1,1,1,0,1,1,1,0]:
-        returnValue = 0
-    else:
-        returnValue = 1
+        # 10 remove the group
+        returnList.append(removeGroup(connection,groupName,schoolName,\
+                basedn, None))
+
+        # 11 check if the object is removed from ldap
+        returnList.append(objExist(ulconnection, groupName, schoolName, basedn))
+
+    returnValue = (not returnList == [1,1,1,1,0,1,1,1,1,1,0])
     return returnValue
 
 if __name__ == '__main__':
