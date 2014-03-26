@@ -1,2 +1,3 @@
 ucs-school-user-logonscript.py usr/lib/univention-directory-listener/system/
 99ucs-school-netlogon-user-logonscripts.inst usr/lib/univention-install/
+univention-management-console.ico usr/share/ucs-school-netlogon-user-logonscripts/

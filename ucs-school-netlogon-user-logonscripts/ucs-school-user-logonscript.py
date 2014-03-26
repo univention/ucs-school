@@ -33,7 +33,7 @@ import univention.config_registry
 import univention.debug
 import univention.utf8
 
-import os, pwd, types, ldap, ldap.schema, re, time, copy, codecs, base64
+import os, pwd, types, ldap, ldap.schema, re, time, copy, codecs, base64, shutil
 
 hostname=listener.baseConfig['hostname']
 domainname=listener.baseConfig['domainname']
@@ -77,6 +77,10 @@ def getScriptPath():
 			try:
 				if not os.path.isdir(path):
 					os.makedirs(path)
+
+				# copy the umc icon to the netlogon share, maybe there is a better way? ...
+				if not os.path.isfile(os.path.join(path, "univention-management-console.ico")):
+					shutil.copy("/usr/share/ucs-school-netlogon-user-logonscripts/univention-management-console.ico", path)
 			finally:
 				listener.unsetuid()
 
@@ -284,10 +288,17 @@ Function MapDrive(Drive,Share)
 	# create shortcut to umc for teachers
 	if reTeacher.match(dn):
 		skript += 'Set WshShell = CreateObject("WScript.Shell")\n'
-		skript += 'strDesktop = WshShell.SpecialFolders("Desktop")\n'
-		skript += 'Set oUrlLink = WshShell.CreateShortcut(strDesktop+"\Univention Management Console.URL")\n'
-		skript += 'oUrlLink.TargetPath = "%s"\n' % umcLink
-		skript += 'oUrlLink.Save\n\n'
+		skript += 'Set objFSO = CreateObject("Scripting.FileSystemObject")\n'
+		skript += 'strLinkPath = WshShell.SpecialFolders("Desktop") & "\Univention Management Console.URL"\n'
+		skript += 'If Not objFSO.FileExists(strLinkPath) Then\n'
+		skript += '	Set oUrlLink = WshShell.CreateShortcut(strLinkPath)\n'
+		skript += '	oUrlLink.TargetPath = "%s"\n' % umcLink
+		skript += '	oUrlLink.Save\n'
+		skript += '	set objFile = objFSO.OpenTextFile(strLinkPath, 8, True)\n'
+		skript += '	objFile.WriteLine("IconFile=\\\\%s.%s\\netlogon\\user\\univention-management-console.ico")\n' % (hostname, domainname)
+		skript += '	objFile.WriteLine("IconIndex=0")\n'
+		skript += '	objFile.Close\n\n'
+		skript += 'End If\n'
 
 	lettersinuse = {}
 	for key in mappings.keys():
