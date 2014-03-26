@@ -1,3 +1,11 @@
+ucs-school-umc-csv-import (1.0.5-1) unstable; urgency=low
+
+  * Bug #34199: Improved sniffing, performance, warnings. Guessing username
+    with help of database, added other types than student. More robust
+    modify/create
+
+ -- Dirk Wiesenthal <wiesenthal@univention.de>  Wed, 26 Mar 2014 23:39:41 +0100
+
 ucs-school-umc-csv-import (1.0.4-1) unstable; urgency=low
 
   * Bug #34199: Allow to switch between REPLACE / ADD. Add simple

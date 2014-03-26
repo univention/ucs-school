@@ -93,8 +93,7 @@ define([
 						id: 'teachersAndStaff',
 						label: _('Teachers and staff')
 					}]
-				}],
-				layout: [['school'], ['type'], ['delete_not_mentioned']]
+				}]
 			}, {
 				name: 'upload',
 				headerText: this.description,

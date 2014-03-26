@@ -114,9 +114,11 @@ define([
 					}
 				});
 				var cellNode = query('.dojoxGridCell[idx$=' + cellIndex +']', row.node)[0];
-				style.set(cellNode, {
-					backgroundColor: '#FFFF00' // yellow
-				});
+				if (cellNode) {
+					style.set(cellNode, {
+						backgroundColor: '#FFFF00' // yellow
+					});
+				}
 			});
 			tools.forIn(this.errors, function(field) {
 				hasIssues = true;
