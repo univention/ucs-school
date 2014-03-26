@@ -194,7 +194,7 @@ class Instance(SchoolBaseModule, SchoolImport):
 		"""Create a new school.
 		"""
 		# Validate request options
-		options = ['name']
+		options = ['name', 'displayname']
 		if not self._is_singlemaster():
 			options.append('schooldc')
 		self.required_options(request, *options)
