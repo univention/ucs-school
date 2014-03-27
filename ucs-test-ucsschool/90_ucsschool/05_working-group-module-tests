@@ -28,7 +28,6 @@ def objExist(ulconnection, groupName, schoolName, basedn, expected_group_result,
 
 # checking group attributes in ldap
 def checkAttr(ulconnection, memberList, groupName,schoolName, basedn, description=None):
-    returnList = []
     groupdn = 'cn=%s-%s,cn=schueler,cn=groups,ou=%s,%s' % (schoolName, groupName, schoolName, basedn)
     currentMembers = sorted(ulconnection.getAttr(groupdn, 'memberUid'))
     if sorted(memberList) != currentMembers:
@@ -126,7 +125,6 @@ def removeMembers(ulconnection, connection, groupName, schoolName, basedn,descri
 
 def main():
     # initinalizing
-    returnList = []
     emptygroupName = uts.random_string()
     groupName = uts.random_string()
     description = uts.random_string()
