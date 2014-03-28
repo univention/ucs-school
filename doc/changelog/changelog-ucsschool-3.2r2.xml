@@ -1,0 +1,151 @@
+<section>
+	<title>General</title>
+		<itemizedlist>
+			<listitem><simpara>
+				 &ucsUAS; now supports display names for school OU objects. They are shown within the &ucsUAS; modules. During creation of an school OU the display name has to be entered. The internal LDAP name of the school OU objects is derived from the display name automatically but may be modified manually (<ulink url="&ucsbug;34173">Bug 34173</ulink>).
+			</simpara></listitem>
+		</itemizedlist>
+</section>
+
+<section>
+  <title>Import scripts</title>
+  <itemizedlist>
+	<listitem><simpara>
+	   The import script create_ou now supports the new command line argument --displayname for defining a display name for school OU objects (<ulink url="&ucsbug;34173">Bug 34173</ulink>).
+	</simpara></listitem>
+	<listitem><simpara>
+	   A typo in rename_class has been fixed that could lead to a traceback in certain error conditions (<ulink url="&ucsbug;34209">Bug 34209</ulink>).
+	</simpara></listitem>
+  </itemizedlist>
+</section>
+
+
+<!--
+<section>
+	<title>iTALC</title>
+</section>
+-->
+
+
+<section>
+	<title>Domain services</title>
+<!--
+	<section>
+		<title>Samba4</title>
+			<itemizedlist>
+				<listitem><simpara>
+					FOO
+				</simpara></listitem>
+			</itemizedlist>
+	</section>
+	<section>
+		<title>OpenLDAP</title>
+	</section>
+	<section>
+		<title>LDAP ACL changes</title>
+		<itemizedlist>
+			<listitem><simpara>
+			</simpara></listitem>
+		</itemizedlist>
+	</section>
+-->
+	<section>
+		<title>LDAP schema changes</title>
+		<listitem><simpara>
+		  The LDAP schema for &ucsUAS; has been modified to support the attribute displayName at school OU objects (<ulink url="&ucsbug;34173">Bug 34173</ulink>).
+		</simpara></listitem>
+	</section>
+<!--
+	<section>
+		<title>Listener/Notifier domain replication</title>
+	</section>
+	<section>
+		<title>Domain joins of UCS systems</title>
+	</section>
+
+	<section>
+		<title>Services for Windows</title>
+		<itemizedlist>
+		<listitem><simpara>
+		FOO
+		</simpara></listitem>
+		</itemizedlist>
+	</section>
+	<section>
+		<title>Univention S4 Connector</title>
+		<itemizedlist>
+		</itemizedlist>
+	</section>
+</section>
+-->
+
+
+<!--
+<section>
+	<title>Print services</title>
+</section>
+
+<section>
+	<title>Proxy services</title>
+</section>
+
+<section>
+	<title>RADIUS</title>
+</section>
+
+<section>
+	<title>Univention Directory Manager modules</title>
+</section>
+-->
+
+<!--
+<section>
+	<title>Univention Management Console</title>
+	<section>
+		<title>Univention Management Console server</title>
+	</section>
+	<section>
+		<title>Univention Management Console web interface</title>
+	</section>
+-->
+	<section>
+		<title>Univention Management Console modules</title>
+		<section>
+			<title>Configuration wizards</title>
+			<itemizedlist>
+				<listitem><simpara>
+					The wizard for installing UCS@school does now support the additional attribute <emphasis>displayName</emphasis> (<ulink url="&ucsbug;34173">Bug 34173</ulink>).
+				</simpara></listitem>
+			</itemizedlist>
+		</section>
+		<section>
+			<title>Add OU wizard</title>
+			<itemizedlist>
+				<listitem><simpara>
+					The wizard for creating schools does now support the additional attribute <emphasis>displayName</emphasis> (<ulink url="&ucsbug;34173">Bug 34173</ulink>).
+				</simpara></listitem>
+			</itemizedlist>
+		</section>
+<!--
+		<section>
+			<title>Computerroom module</title>
+			<itemizedlist>
+			</itemizedlist>
+		</section>
+		<section>
+			<title>Helpdesk module</title>
+		</section>
+		<section>
+			<title>Add User wizard</title>
+			<itemizedlist>
+			</itemizedlist>
+		</section>
+	</section>
+</section>
+-->
+
+<!--
+<section>
+	<title>Other changes</title>
+</section>
+-->
