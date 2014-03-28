@@ -1,3 +1,10 @@
+ucs-school-umc-csv-import (1.0.6-1) unstable; urgency=low
+
+  * Bug #34199: Creating shares when creating classes, extract user handling
+    code into its own module, improved birthday handling, added umc icon
+
+ -- Dirk Wiesenthal <wiesenthal@univention.de>  Fri, 28 Mar 2014 13:05:26 +0100
+
 ucs-school-umc-csv-import (1.0.5-1) unstable; urgency=low
 
   * Bug #34199: Improved sniffing, performance, warnings. Guessing username
