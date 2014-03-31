@@ -1,3 +1,10 @@
+ucs-school-umc-csv-import (1.0.7-1) unstable; urgency=low
+
+  * Bug #34199: Refactor code to be usable as a library, added support for
+    email addresses
+
+ -- Dirk Wiesenthal <wiesenthal@univention.de>  Mon, 31 Mar 2014 15:43:18 +0200
+
 ucs-school-umc-csv-import (1.0.6-1) unstable; urgency=low
 
   * Bug #34199: Creating shares when creating classes, extract user handling

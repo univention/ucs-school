@@ -551,9 +551,39 @@ define([
 		},
 
 		checkThemAll: function(grid) {
+			var assertUniqueness = function(users, field, errorMessage, grid) {
+				var column = grid.getCellByField(field);
+				if (!column) {
+					return;
+				}
+				var values = [];
+				var doubles = [];
+				array.forEach(users, function(item) {
+					if (item.action == 'skip') {
+						return;
+					}
+					var value = item[field];
+					if (!value) {
+						return;
+					}
+					if (array.indexOf(doubles, value) !== -1) {
+						return;
+					}
+					if (array.indexOf(values, value) !== -1) {
+						doubles.push(value);
+						return;
+					}
+					values.push(value);
+				});
+				array.forEach(doubles, function(value) {
+					array.forEach(users, function(item) {
+						if (item[field] == value) {
+							item.setError(field, errorMessage, grid);
+						}
+					});
+				});
+			};
 			var items = grid.moduleStore.data;
-			var usernames = [];
-			var doubles = [];
 			var dateConstraints = {datePattern: this.datePattern, selector: 'date'};
 			array.forEach(items, function(item) {
 				item.resetError();
@@ -567,23 +597,15 @@ define([
 						item.setError('birthday', _('The birthday does not follow the format for dates. Please change the birthday.'), grid._grid);
 					}
 				}
-				var username = item.username;
-				if (array.indexOf(doubles, username) !== -1) {
-					return;
-				}
-				if (array.indexOf(usernames, username) !== -1) {
-					doubles.push(username);
-					return;
-				}
-				usernames.push(username);
-			});
-			array.forEach(doubles, function(username) {
-				array.forEach(items, function(item) {
-					if (item.username == username) {
-						item.setError('username', _('Username occurs multiple times in the file. Please change the usernames so that all are unique.'), grid._grid);
+				var email = item.email;
+				if (email) {
+					if (!(/.@./).test(email)) {
+						item.setError('email', _('The email does not follow the format for email adresses. Please change the email.'), grid._grid);
 					}
-				});
+				}
 			});
+			assertUniqueness(items, 'username', _('Username occurs multiple times in the file. Please change the usernames so that all are unique.'), grid._grid);
+			assertUniqueness(items, 'email', _('Email address occurs multiple times in the file. Please change the email adresses so that all are unique.'), grid._grid);
 			grid._grid.update();
 		},
 

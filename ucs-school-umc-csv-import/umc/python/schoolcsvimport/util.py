@@ -59,56 +59,9 @@ def generate_random(length=30):
 	chars = string.ascii_letters + string.digits
 	return ''.join(random.choice(chars) for x in range(length))
 
-class DNHandling(object):
-	cache = {}
-
-	@classmethod
-	def get(cls, school):
-		if school not in cls.cache:
-			cls.cache[school] = cls(school)
-		return cls.cache[school]
-
-	def __init__(self, school):
-		self.search_base = SchoolSearchBase([], school)
-
-	def get_school_dn(self):
-		return self.search_base.schoolDN
-
-	def get_group_container(self):
-		return self.search_base.groups
-
-	def get_classes_container(self):
-		return self.search_base.classes
-
-	def get_students_container(self):
-		return self.search_base.students
-
-	def get_teachers_container(self):
-		return self.search_base.teachers
-
-	def get_staff_container(self):
-		return self.search_base.staff
-
-	def get_teachers_and_staff_container(self):
-		return self.search_base.teachersAndStaff
-
-	def get_group_dn(self, group_name):
-		return 'cn=%s,%s' % (group_name, self.get_group_container())
-
-	def get_class_dn(self, class_name):
-		return 'cn=%s,%s' % (class_name, self.get_classes_container())
-
-	def is_school_class(self, group_dn):
-		parent_dn = ','.join(ldap.explode_dn(group_dn)[1:])
-		return self.get_classes_container() == parent_dn
-
-	def get_shares_container(self):
-		return self.search_base.classShares
-
-	def get_share_dn(self, share_name):
-		return 'cn=%s,%s' % (share_name, self.get_shares_container())
-
 class User(object):
+	_search_base_cache = {}
+
 	columns = ['action', 'username', 'firstname', 'lastname', 'birthday', 'email', 'password', 'line']
 	column_labels = {
 		'username' : (_('Username'), 'Username'),
@@ -211,14 +164,17 @@ class User(object):
 			lastname = self.lastname.split()[-1].lower()
 		return firstname + lastname
 
-	def merge_additional_group_changes(self, lo, changes, group_cache, all_found_classes, without_school_classes=False):
+	def merge_additional_group_changes(self, lo, changes, all_found_classes, without_school_classes=False):
 		if self.action not in ['create', 'modify']:
 			return
 		udm_obj = self.get_udm_object(lo)
+		if not udm_obj:
+			MODULE.error('%s does not have an associated UDM object. This should not happen. Unable to set group memberships here!' % self.username)
+			return
 		udm_obj.open()
 		dn = udm_obj.dn
-		all_groups = self.groups_for_ucs_school(lo, group_cache, all_found_classes, without_school_classes=without_school_classes)
-		my_groups = self.groups_used(lo, group_cache)
+		all_groups = self.groups_for_ucs_school(lo, all_found_classes, without_school_classes=without_school_classes)
+		my_groups = self.groups_used(lo)
 		for group in all_groups:
 			if group in my_groups:
 				continue
@@ -238,7 +194,7 @@ class User(object):
 			MODULE.info('Changes: %r' % group_changes)
 
 			# do not use the group cache. get a fresh instance from database
-			group_obj = cls.get_or_create_group(group_dn, lo, school, {})
+			group_obj = cls.get_or_create_group_udm_object(group_dn, lo, school, fresh=True)
 			group_obj.open()
 			group_users = group_obj['users'][:]
 			MODULE.info('Members already present: %s' % ', '.join(group_users))
@@ -267,6 +223,12 @@ class User(object):
 		# at least 2: Prevent false positives because of someone
 		# called Mr. Line
 		return real_column > 1
+
+	@classmethod
+	def get_search_base(cls, school):
+		if school not in cls._search_base_cache:
+			cls._search_base_cache[school] = SchoolSearchBase([], school)
+		return cls._search_base_cache[school]
 
 	@classmethod
 	def get_columns(cls):
@@ -337,6 +299,13 @@ class User(object):
 		for column in self.get_required_columns():
 			if getattr(self, column) is None:
 				self.add_error(column, _('"%s" is required. Please provide this information.') % self.get_column_label(column))
+		if self.email:
+			try:
+				udm_modules.lookup('users/user', None, lo, scope='sub', base=ucr.get('ldap/base'), filter='&(!(uid=%s))(mailPrimaryAddress=%s)' % (self.username, self.email))[0]
+			except IndexError:
+				pass
+			else:
+				self.add_error('email', _('The email address is already taken by another user. Please change the email address.'))
 		if self.exists(lo):
 			if self.action == 'create':
 				self.add_error('action', _('The user already exists and cannot be created. Please change the username to one that does not yet exist or change the action to be taken.'))
@@ -368,7 +337,7 @@ class User(object):
 		if error_message not in errors:
 			errors.append(error_message)
 
-	def commit(self, lo, group_cache):
+	def commit(self, lo):
 		self.validate(lo)
 		self._error_msg = None
 		if self.errors:
@@ -377,9 +346,9 @@ class User(object):
 			return False
 		try:
 			if self.action == 'create':
-				self.commit_create(lo, group_cache)
+				self.commit_create(lo)
 			elif self.action == 'modify':
-				self.commit_modify(lo, group_cache)
+				self.commit_modify(lo)
 			elif self.action == 'delete':
 				self.commit_delete(lo)
 		except Exception as exc:
@@ -387,53 +356,51 @@ class User(object):
 			self._error_msg = str(exc)
 			return False
 		else:
+			self._udm_obj_searched = False
+			self._udm_obj = None
 			return True
 
-	def get_user_base(self):
-		return self.get_user_base_for_school(self.school)
+	def get_own_container(self):
+		return self.get_container(self.school)
 
 	@classmethod
-	def get_user_base_for_school(cls, school):
-		return None
-
-	@classmethod
-	def get_class_group_base(self, school):
-		return DNHandling.get(school).get_classes_container()
+	def get_container(cls, school):
+		raise NotImplementedError()
 
 	def get_group_dn(self, group_name):
-		return DNHandling.get(self.school).get_group_dn(group_name)
+		return Group.get(group_name, self.school).dn
 
 	def get_class_dn(self, class_name):
-		return DNHandling.get(self.school).get_class_dn(class_name)
+		return SchoolClass.get('%s-%s' % (self.school, class_name), self.school).dn
 
-	def primary_group(self, lo, group_cache):
+	def primary_group_dn(self, lo):
 		dn = self.get_group_dn('Domain Users %s' % self.school)
-		return self.get_or_create_group(dn, lo, self.school, group_cache).dn
+		return self.get_or_create_group_udm_object(dn, lo, self.school).dn
 
-	def commit_create(self, lo, group_cache):
+	def commit_create(self, lo):
 		pos = udm_uldap.position(ucr.get('ldap/base'))
-		pos.setDn(self.get_user_base())
+		pos.setDn(self.get_own_container())
 		udm_obj = udm_modules.get('users/user').object(None, lo, pos)
 		udm_obj.open()
 		udm_obj['username'] = self.username
 		udm_obj['password'] = self.password or generate_random()
-		udm_obj['primaryGroup'] = self.primary_group(lo, group_cache)
-		self._alter_udm_obj(udm_obj, lo, group_cache)
+		udm_obj['primaryGroup'] = self.primary_group_dn(lo)
+		self._alter_udm_obj(udm_obj, lo)
 		udm_obj.create()
 		return udm_obj
 
-	def commit_modify(self, lo, group_cache):
+	def commit_modify(self, lo):
 		udm_obj = self.get_udm_object(lo)
 		udm_obj.open()
-		self._alter_udm_obj(udm_obj, lo, group_cache)
+		self._alter_udm_obj(udm_obj, lo)
 		udm_obj.modify()
 		rdn = lo.explodeDn(udm_obj.dn)[0]
-		dest = '%s,%s' % (rdn, self.get_user_base())
+		dest = '%s,%s' % (rdn, self.get_own_container())
 		if dest != udm_obj.dn:
 			udm_obj.move(dest)
 		return udm_obj
 
-	def _alter_udm_obj(self, udm_obj, lo, group_cache):
+	def _alter_udm_obj(self, udm_obj, lo):
 		udm_obj['firstname'] = self.firstname
 		udm_obj['lastname'] = self.lastname
 		birthday = self.birthday
@@ -441,6 +408,9 @@ class User(object):
 			birthday = self.unformat_date(birthday)
 			udm_obj['birthday'] = birthday
 		if self.email:
+			domain_name = self.email.split('@')[-1]
+			mail_domain = MailDomain.get(domain_name, self.school)
+			mail_domain.create(lo)
 			udm_obj['mailPrimaryAddress'] = self.email
 		# not done here. instead in bulk_group_change() for performance reasons
 		# and to avoid problems with overwriting unrelated groups
@@ -471,7 +441,7 @@ class User(object):
 			try:
 				self._udm_obj = udm_modules.lookup('users/user', None, lo, scope='sub', base=ucr.get('ldap/base'), filter='uid=%s' % self.username)[0]
 			except IndexError:
-				return None
+				self._udm_obj = None
 			self._udm_obj_searched = True
 		return self._udm_obj
 
@@ -481,7 +451,7 @@ class User(object):
 		attrs['warnings'] = self.warnings
 		return attrs
 
-	def groups_for_ucs_school(self, lo, group_cache, all_found_classes, without_school_classes=False):
+	def groups_for_ucs_school(self, lo, all_found_classes, without_school_classes=False):
 		group_dns = []
 		group_dns.append(self.get_group_dn('Domain Users %s' % self.school))
 		group_dns.append(self.get_group_dn('schueler-%s' % self.school))
@@ -493,17 +463,17 @@ class User(object):
 				group_dns.append(school_class_group.dn)
 
 		for group_dn in group_dns:
-			self.get_or_create_group(group_dn, lo, self.school, group_cache)
+			self.get_or_create_group_udm_object(group_dn, lo, self.school)
 
 		return group_dns
 
-	def groups_used(self, lo, group_cache):
+	def groups_used(self, lo):
 		group_dns = []
 		group_dns.append(self.get_group_dn('Domain Users %s' % self.school))
 		group_dns.extend(self.get_specific_groups())
 
 		for group_dn in group_dns:
-			self.get_or_create_group(group_dn, lo, self.school, group_cache)
+			self.get_or_create_group_udm_object(group_dn, lo, self.school)
 
 		return group_dns
 
@@ -523,96 +493,15 @@ class User(object):
 		return cls(lo, school, date_format, attrs)
 
 	@classmethod
-	def get_or_create_group(cls, group_dn, lo, school, group_cache):
-		if group_cache is None:
-			group_cache = {}
-		if group_dn not in group_cache:
-			MODULE.info('getting group %s' % group_dn)
-			if lo is not None:
-				try:
-					group_obj = udm_modules.lookup('groups/group', None, lo, scope='base', base=group_dn)[0]
-				except noObject:
-					MODULE.process('Group "%s" not found. Creating...' % group_dn)
-					group_parts = lo.explodeDn(group_dn)
-					group_name = lo.explodeDn(group_parts[0], 1)[0]
-					group_container = ','.join(group_parts[1:])
-					pos = udm_uldap.position(ucr.get('ldap/base'))
-					pos.setDn(group_container)
-					group_obj = udm_modules.get('groups/group').object(None, lo, pos)
-					group_obj.open()
-					group_obj['name'] = group_name
-					group_obj.create()
-
-					# get it fresh from the database (needed for group_obj._exists ...)
-					group_obj = udm_modules.lookup('groups/group', None, lo, scope='base', base=group_dn)[0]
-
-					dn_handler = DNHandling.get(school)
-					if dn_handler.is_school_class(group_dn):
-						share_container = dn_handler.get_shares_container()
-						share_dn = dn_handler.get_share_dn(group_name)
-						MODULE.process('A share for this group needs to be present: (%s)' % share_dn)
-						try:
-							udm_modules.lookup('shares/share', None, lo, scope='base', base=share_dn)
-						except noObject:
-							gid = group_obj['gidNumber']
-							pos.setDn(share_container)
-							share_obj = udm_modules.get('shares/share').object(None, lo, pos)
-							share_obj.open()
-							share_obj['name'] = group_name
-							share_obj['host'] = cls.get_server_fqdn(school, lo)
-							share_obj['path'] = '/home/groups/klassen/%s' % group_name
-							share_obj['writeable'] = '1'
-							share_obj['sambaWriteable'] = '1'
-							share_obj['sambaBrowseable'] = '1'
-							share_obj['sambaForceGroup'] = '+%s' % group_name
-							share_obj['sambaCreateMode'] = '0770'
-							share_obj['sambaDirectoryMode'] = '0770'
-							share_obj['owner'] = '0'
-							share_obj['group'] = gid
-							share_obj['directorymode'] = '0770'
-							share_obj.create()
-							MODULE.process('Share created on "%s"' % share_obj['host'])
-						else:
-							MODULE.info('Share found. Nothing to do')
-				group_cache[group_dn] = group_obj
-		return group_cache[group_dn]
-
-	@classmethod
-	def get_server_fqdn(cls, school, lo):
-		domainname = ucr.get('domainname')
-		school_dn = DNHandling.get(school).get_school_dn()
-
-		# fetch serverfqdn from OU
-		result = lo.get(school_dn, ['ucsschoolClassShareFileServer'])
-		if result:
-			server_domain_name = lo.get(result['ucsschoolClassShareFileServer'][0], ['associatedDomain'])
-			if server_domain_name:
-				server_domain_name = server_domain_name['associatedDomain'][0]
-			else:
-				server_domain_name = domainname
-			result = lo.get(result['ucsschoolClassShareFileServer'][0], ['cn'])
-			if result:
-				return "%s.%s" % (result['cn'][0], server_domain_name)
-
-		# get alternative server (defined at ou object if a dc slave is responsible for more than one ou)
-		ou_attr_ldap_access_write = lo.get(school_dn, ['univentionLDAPAccessWrite'])
-		alternative_server_dn = None
-		if len(ou_attr_ldap_access_write) > 0:
-			alternative_server_dn = ou_attr_ldap_access_write["univentionLDAPAccessWrite"][0]
-			if len(ou_attr_ldap_access_write) > 1: # TODO FIXME This doesn't look correct to me - ou_attr_ldap_access_write is a dict and not a list!
-				MODULE.warn('more than one corresponding univentionLDAPAccessWrite found at ou=%s' % school)
-
-		# build fqdn of alternative server and set serverfqdn
-		if alternative_server_dn:
-			alternative_server_attr = lo.get(alternative_server_dn,['uid'])
-			if len(alternative_server_attr) > 0:
-				alternative_server_uid = alternative_server_attr['uid'][0]
-				alternative_server_uid = alternative_server_uid.replace('$','')
-				if len(alternative_server_uid) > 0:
-					return "%s.%s" % (alternative_server_uid, domainname)
-
-		# fallback
-		return "dc%s-01.%s"%(school.lower(), domainname)
+	def get_or_create_group_udm_object(cls, group_dn, lo, school, fresh=False):
+		name = lo.explodeDn(group_dn, 1)[0]
+		if Group.is_school_class(school, group_dn):
+			group = SchoolClass.get(name, school)
+		else:
+			group = Group.get(name, school)
+		if fresh:
+			group._udm_obj_searched = False
+		return group.create(lo)
 
 class Student(User):
 	additional_columns = ['school_class']
@@ -624,13 +513,12 @@ class Student(User):
 	@classmethod
 	def from_udm_obj(cls, user_obj, lo, school, date_format, columns=None, **kwargs):
 		school_class = None
-		dn_handler = DNHandling.get(school)
 		MODULE.info('Get school class for %s' % user_obj['username'])
 		if columns is None or 'school_class' in columns:
 			user_obj.open()
 			for group in user_obj['groups']:
 				MODULE.info('Group %s' % group)
-				if dn_handler.is_school_class(group):
+				if Group.is_school_class(school, group):
 					MODULE.info('Is school class!')
 					school_class_name = lo.explodeDn(group, 1)[0]
 					school_class = school_class_name.split('-')[-1]
@@ -640,14 +528,14 @@ class Student(User):
 		return super(Student, cls).from_udm_obj(user_obj, lo, school, date_format, columns, **kwargs)
 
 	@classmethod
-	def get_user_base_for_school(cls, school):
-		return DNHandling.get(school).get_students_container()
+	def get_container(cls, school):
+		return cls.get_search_base(school).students
 
 	def get_specific_groups(self):
 		groups = []
 		groups.append(self.get_group_dn('schueler-%s' % self.school))
 		if self.school_class:
-			groups.append(self.get_class_dn('%s-%s' % (self.school, self.school_class)))
+			groups.append(self.get_class_dn(self.school_class))
 		return groups
 
 class Teacher(User):
@@ -660,33 +548,32 @@ class Teacher(User):
 	@classmethod
 	def from_udm_obj(cls, user_obj, lo, school, date_format, columns=None, **kwargs):
 		school_classes = []
-		dn_handler = DNHandling.get(school)
 		if columns is None or 'school_class' in columns:
 			user_obj.open()
-			for group in user_obj['groups']:
-				if dn_handler.is_school_class(group):
-					school_class_name = lo.explodeDn(group, 1)[0]
+			for group_dn in user_obj['groups']:
+				if Group.is_school_class(school, group_dn):
+					school_class_name = lo.explodeDn(group_dn, 1)[0]
 					school_class = school_class_name.split('-')[-1]
 					school_classes.append(school_class)
 			kwargs['school_class'] = ','.join(school_classes)
 		return super(Teacher, cls).from_udm_obj(user_obj, lo, school, date_format, columns, **kwargs)
 
 	@classmethod
-	def get_user_base_for_school(cls, school):
-		return DNHandling.get(school).get_teachers_container()
+	def get_container(cls, school):
+		return cls.get_search_base(school).teachers
 
 	def get_specific_groups(self):
 		groups = []
 		groups.append(self.get_group_dn('lehrer-%s' % self.school))
 		if self.school_class:
 			for school_class in self.school_class.split(','):
-				groups.append(self.get_class_dn(('%s-%s' % (self.school, school_class))))
+				groups.append(self.get_class_dn(school_class))
 		return groups
 
 class Staff(User):
 	@classmethod
-	def get_user_base_for_school(cls, school):
-		return DNHandling.get(school).get_staff_container()
+	def get_container(cls, school):
+		return cls.get_search_base(school).staff
 
 	def get_specific_groups(self):
 		groups = []
@@ -695,11 +582,205 @@ class Staff(User):
 
 class TeacherAndStaff(Teacher):
 	@classmethod
-	def get_user_base_for_school(cls, school):
-		return DNHandling.get(school).get_teachers_and_staff_container()
+	def get_container(cls, school):
+		return cls.get_search_base(school).teachersAndStaff
 
 	def get_specific_groups(self):
 		groups = super(TeacherAndStaff, self).get_specific_groups()
 		groups.append(self.get_group_dn('mitarbeiter-%s' % self.school))
 		return groups
+
+class UCSSchoolHelperAbstractClass(object):
+	udm_module = None
+	cache = {}
+
+	_search_base_cache = {}
+
+	@classmethod
+	def get(cls, name, school):
+		key = cls.__name__, name, school
+		if key not in cls.cache:
+			MODULE.info('Initializing %r' % (key,))
+			obj = cls(name, school)
+			cls.cache[key] = obj
+		return cls.cache[key]
+
+	def __init__(self, name, school):
+		self._udm_obj_searched = False
+		self._udm_obj = None
+		self.name = name
+		self.school = school
+		self.dn = self.get_dn()
+
+	def create(self, lo):
+		MODULE.process('Creating %s' % self.dn)
+		udm_obj = self.get_udm_object(lo)
+		if udm_obj:
+			MODULE.process('%s already exists!' % self.dn)
+			return udm_obj
+
+		pos = udm_uldap.position(ucr.get('ldap/base'))
+		pos.setDn(self.get_own_container())
+		udm_obj = udm_modules.get(self.udm_module).object(None, lo, pos)
+		udm_obj.open()
+
+		# here is the real logic
+		self.do_create(udm_obj, lo)
+
+		# get it fresh from the database (needed for udm_obj._exists ...)
+		self._udm_obj_searched = False
+		udm_obj = self.get_udm_object(lo)
+		return udm_obj
+
+	def do_create(self, udm_obj, lo):
+		raise NotImplementedError()
+
+	def get_udm_object(self, lo):
+		if self._udm_obj_searched is False:
+			try:
+				self._udm_obj = udm_modules.lookup(self.udm_module, None, lo, scope='base', base=self.dn)[0]
+			except noObject:
+				self._udm_obj = None
+			self._udm_obj_searched = True
+		return self._udm_obj
+
+	def get_dn(self):
+		return 'cn=%s,%s' % (self.name, self.get_own_container())
+
+	def get_own_container(self):
+		return self.get_container(self.school)
+
+	@classmethod
+	def get_container(cls, school):
+		raise NotImplementedError()
+
+	@classmethod
+	def get_search_base(cls, school):
+		if school not in cls._search_base_cache:
+			cls._search_base_cache[school] = SchoolSearchBase([], school)
+		return cls._search_base_cache[school]
+
+class Group(UCSSchoolHelperAbstractClass):
+	udm_module = 'groups/group'
+
+	def __init__(self, name, school, description=None):
+		super(Group, self).__init__(name, school)
+		self.description = description
+
+	def do_create(self, udm_obj, lo):
+		udm_obj['name'] = self.name
+		if self.description:
+			udm_obj['description'] = self.description
+		udm_obj.create()
+
+	@classmethod
+	def get_container(cls, school):
+		return cls.get_search_base(school).groups
+
+	@classmethod
+	def is_school_class(cls, school, group_dn):
+		parent_dn = ','.join(ldap.explode_dn(group_dn)[1:])
+		return SchoolClass.get_container(school) == parent_dn
+
+class SchoolClass(Group):
+	def create(self, lo):
+		udm_obj = super(SchoolClass, self).create(lo)
+
+		# alright everything in place.
+		# but school classes all have their corresponding share!
+		self.create_share(lo)
+		return udm_obj
+
+	def create_share(self, lo):
+		share = ClassShare(self)
+		share.create(lo)
+		return share
+
+	@classmethod
+	def get_all_udm_class_objects(cls, school, lo):
+		school_class_base = cls.get_container(school)
+		return udm_modules.lookup(cls.udm_module, None, lo, scope='sub', base=school_class_base)
+
+	@classmethod
+	def get_container(cls, school):
+		return cls.get_search_base(school).classes
+
+class ClassShare(UCSSchoolHelperAbstractClass):
+	udm_module = 'shares/share'
+
+	def __init__(self, school_class):
+		super(ClassShare, self).__init__(school_class.name, school_class.school)
+		self.school_class = school_class
+
+	@classmethod
+	def get_container(cls, school):
+		return cls.get_search_base(school).classShares
+
+	def do_create(self, udm_obj, lo):
+		gid = self.school_class.get_udm_object(lo)['gidNumber']
+		udm_obj['name'] = self.name
+		udm_obj['host'] = self.get_server_fqdn(lo)
+		udm_obj['path'] = '/home/groups/klassen/%s' % self.name
+		udm_obj['writeable'] = '1'
+		udm_obj['sambaWriteable'] = '1'
+		udm_obj['sambaBrowseable'] = '1'
+		udm_obj['sambaForceGroup'] = '+%s' % self.name
+		udm_obj['sambaCreateMode'] = '0770'
+		udm_obj['sambaDirectoryMode'] = '0770'
+		udm_obj['owner'] = '0'
+		udm_obj['group'] = gid
+		udm_obj['directorymode'] = '0770'
+		udm_obj.create()
+		MODULE.process('Share created on "%s"' % udm_obj['host'])
+
+	def get_server_fqdn(self, lo):
+		domainname = ucr.get('domainname')
+		school_dn = School.get(self.school, self.school).get_dn()
+
+		# fetch serverfqdn from OU
+		result = lo.get(school_dn, ['ucsschoolClassShareFileServer'])
+		if result:
+			server_domain_name = lo.get(result['ucsschoolClassShareFileServer'][0], ['associatedDomain'])
+			if server_domain_name:
+				server_domain_name = server_domain_name['associatedDomain'][0]
+			else:
+				server_domain_name = domainname
+			result = lo.get(result['ucsschoolClassShareFileServer'][0], ['cn'])
+			if result:
+				return '%s.%s' % (result['cn'][0], server_domain_name)
+
+		# get alternative server (defined at ou object if a dc slave is responsible for more than one ou)
+		ou_attr_ldap_access_write = lo.get(school_dn, ['univentionLDAPAccessWrite'])
+		alternative_server_dn = None
+		if len(ou_attr_ldap_access_write) > 0:
+			alternative_server_dn = ou_attr_ldap_access_write['univentionLDAPAccessWrite'][0]
+			if len(ou_attr_ldap_access_write) > 1: # TODO FIXME This doesn't look correct to me - ou_attr_ldap_access_write is a dict and not a list!
+				MODULE.warn('more than one corresponding univentionLDAPAccessWrite found at ou=%s' % self.school)
+
+		# build fqdn of alternative server and set serverfqdn
+		if alternative_server_dn:
+			alternative_server_attr = lo.get(alternative_server_dn,['uid'])
+			if len(alternative_server_attr) > 0:
+				alternative_server_uid = alternative_server_attr['uid'][0]
+				alternative_server_uid = alternative_server_uid.replace('$','')
+				if len(alternative_server_uid) > 0:
+					return '%s.%s' % (alternative_server_uid, domainname)
+
+		# fallback
+		return 'dc%s-01.%s' % (self.school.lower(), domainname)
+
+class MailDomain(UCSSchoolHelperAbstractClass):
+	udm_module = 'mail/domain'
+
+	@classmethod
+	def get_container(cls, school):
+		return 'cn=domain,cn=mail,%s' % ucr.get('ldap/base')
+
+	def do_create(self, udm_obj, lo):
+		udm_obj['name'] = self.name
+		udm_obj.create()
+
+class School(UCSSchoolHelperAbstractClass):
+	def get_dn(self):
+		return self.get_search_base(self.school).schoolDN
 

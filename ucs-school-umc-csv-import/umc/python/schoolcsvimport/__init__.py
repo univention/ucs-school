@@ -46,7 +46,7 @@ import univention.admin.modules as udm_modules
 
 from ucsschool.lib.schoolldap import SchoolBaseModule, open_ldap_connection
 
-from univention.management.console.modules.schoolcsvimport.util import Student, Teacher, Staff, TeacherAndStaff, generate_random
+from univention.management.console.modules.schoolcsvimport.util import Student, Teacher, Staff, TeacherAndStaff, SchoolClass, generate_random
 
 _ = Translation('ucs-school-umc-csv-import').translate
 
@@ -204,7 +204,7 @@ class Instance(SchoolBaseModule, ProgressMixin):
 		if file_info.delete_not_mentioned:
 			mentioned_usernames = map(lambda u: u['username'], users)
 			progress.title = _('Checking users from database')
-			existing_udm_users = udm_modules.lookup('users/user', None, lo, scope='sub', base=file_info.user_klass.get_user_base_for_school(file_info.school))
+			existing_udm_users = udm_modules.lookup('users/user', None, lo, scope='sub', base=file_info.user_klass.get_container(file_info.school))
 			for user in existing_udm_users:
 				if user['username'] not in mentioned_usernames:
 					if 'birthday' in columns:
@@ -236,7 +236,6 @@ class Instance(SchoolBaseModule, ProgressMixin):
 		lo = open_ldap_connection(self._user_dn, self._password, ucr.get('ldap/server/name'))
 		file_info = None
 		group_changes = {}
-		group_cache = {}
 		without_school_classes = True
 		all_found_classes = []
 		for file_id, attrs in iterator:
@@ -244,8 +243,7 @@ class Instance(SchoolBaseModule, ProgressMixin):
 				file_info = self.file_map[file_id]
 				without_school_classes = 'school_class' not in file_info.columns and file_info.user_klass.supports_school_classes
 				if not without_school_classes:
-					school_class_base = file_info.user_klass.get_class_group_base(file_info.school)
-					all_found_classes = udm_modules.lookup('groups/group', None, lo, scope='sub', base=school_class_base)
+					all_found_classes = SchoolClass.get_all_udm_class_objects(file_info.school, lo)
 			user = file_info.user_klass(lo, file_info.school, file_info.date_format, attrs)
 			MODULE.process('Going to %s %s %s' % (user.action, file_info.user_klass.__name__, user.username))
 			action = user.action
@@ -255,11 +253,11 @@ class Instance(SchoolBaseModule, ProgressMixin):
 				action = _('modified')
 			if action == 'delete':
 				action = _('deleted')
-			if user.commit(lo, group_cache):
+			if user.commit(lo):
 				yield {'username' : user.username, 'action' : action, 'success' : True}
 			else:
 				yield {'username' : user.username, 'action' : action, 'success' : False, 'msg' : user.get_error_msg()}
-			user.merge_additional_group_changes(lo, group_changes, group_cache, all_found_classes, without_school_classes=without_school_classes)
+			user.merge_additional_group_changes(lo, group_changes, all_found_classes, without_school_classes=without_school_classes)
 		file_info.user_klass.bulk_group_change(lo, file_info.school, group_changes)
 		os.unlink(file_info.filename)
 		del self.file_map[file_id]
