@@ -55,7 +55,8 @@ def createWorkgroup(connection, groupName, schoolName, description, memberListdn
 			utils.fail('Group', groupName, 'failed to be added')
 	except httplib.HTTPException as e:
 		ex = 'The groupname is already in use as groupname or as username'
-		if doubleNameAllowed and (ex in str(e)):
+		ex_Deu = 'Der Gruppenname wird bereits als Gruppenname oder als Benutzername verwendet'
+		if doubleNameAllowed and (ex or ex_Deu in str(e)):
 			print('Fail : %s' % (ex) )
 		else:
 			print("Exception: '%s' '%s' '%r'" % (str(e), type(e), e))
