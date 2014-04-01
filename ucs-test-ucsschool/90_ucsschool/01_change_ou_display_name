@@ -21,6 +21,9 @@ charset = uts.STR_ALPHANUMDOTDASH + uts.STR_ALPHA.upper() + '()[]/,;:_#"+*@<>~ß
 
 def main():
 	with univention.testing.udm.UCSTestUDM() as udm:
+		print '*** Stopping existing UDM CLI server'
+		udm.stop_cli_server()
+
 		print '*** Creating OU and fail to set random display name by missing option'
 		ou_name = uts.random_name()
 		ou_displayName = uts.random_string(length=random.randint(5, 50), charset=charset)
