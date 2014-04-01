@@ -1,3 +1,12 @@
+ucs-test-ucsschool (1.0.4-1) unstable; urgency=low
+
+  * Bug 34280: rename script file and improve formatting
+  * Bug 34281: add Test password reset for students/teachers
+  * Bug 34373: add Test lessontimes module
+  * Bug 34368: add Working group module tests
+
+ -- Ammar Najjar <anajjar@ENSEN.knut.univention.de>  Tue, 01 Apr 2014 11:48:00 +0200
+
 ucs-test-ucsschool (1.0.3-1) unstable; urgency=low
 
   * Bug #34173: fixed syntax error / restart UDM CLI server
