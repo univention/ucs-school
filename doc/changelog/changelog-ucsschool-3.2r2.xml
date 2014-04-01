@@ -11,10 +11,10 @@
   <title>Import scripts</title>
   <itemizedlist>
 	<listitem><simpara>
-	   The import script create_ou now supports the new command line argument --displayname for defining a display name for school OU objects (<ulink url="&ucsbug;34173">Bug 34173</ulink>).
+	   The import script <emphasis>create_ou</emphasis> now supports the new command line argument <emphasis>--displayname</emphasis> for defining a display name for school OU objects (<ulink url="&ucsbug;34173">Bug 34173</ulink>).
 	</simpara></listitem>
 	<listitem><simpara>
-	   A typo in rename_class has been fixed that could lead to a traceback in certain error conditions (<ulink url="&ucsbug;34209">Bug 34209</ulink>).
+	   A typo in the CLI tool <emphasis>rename_class</emphasis> has been fixed that could lead to a traceback in certain error conditions (<ulink url="&ucsbug;34209">Bug 34209</ulink>).
 	</simpara></listitem>
   </itemizedlist>
 </section>
