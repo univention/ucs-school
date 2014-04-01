@@ -1,4 +1,5 @@
 #!/usr/share/ucs-test/runner python
+# coding=utf-8
 ## desc: ucs-school-lessonstime-module-check
 ## roles: [domaincontroller_master]
 ## tags: [apptest]
@@ -49,12 +50,12 @@ def main():
 		utils.fail('invalid time format is not detected')
 
 	# 3 check overlapping in time
-	if not ('Overlapping lessons are not allowed' in addLesson(connection, "98. Stunde", "00:03", "0:06")['message']):
-		utils.fail('Overlapping lessons is not detected')
+	if not ('Overlapping lessons are not allowed' or 'Überlappende Schulstunden sind nicht erlaubt' in addLesson(connection, "98. Stunde", "00:03", "0:06")['message']):
+		utils.fail('Overlapping lessons is not detected 1')
 
 	# 4 check overlapping in names
-	if not 'Overlapping lessons are not allowed' in addLesson(connection, "99. Stunde", "00:06", "0:08")['message']:
-		utils.fail('Overlapping lessons is not detected')
+	if not ('Overlapping lessons are not allowed' or 'Überlappende Schulstunden sind nicht erlaubt' in addLesson(connection, "99. Stunde", "00:06", "0:08")['message']):
+		utils.fail('Overlapping lessons is not detected 2')
 
 	# 5 removing a lesson
 	delLesson(connection, "99. Stunde", "00:00", "1:00")
