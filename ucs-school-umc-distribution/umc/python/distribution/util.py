@@ -48,6 +48,7 @@ from ucsschool.lib.schoolldap import LDAP_ConnectionError, SchoolSearchBase
 import os
 import shutil
 import json
+import traceback
 
 from datetime import datetime
 
@@ -73,6 +74,11 @@ POSTFIX_DATADIR_RECIPIENT = ucr.get('ucsschool/datadistribution/datadir/recipien
 TYPE_USER = 'USER'
 TYPE_GROUP = 'GROUP'
 TYPE_PROJECT = 'PROJECT'
+
+class DistributionException(Exception):
+	pass
+class InvalidProjectFilename(DistributionException):
+	pass
 
 class _Dict(object):
 	'''Custom dict-like class. The initial set of keyword arguments is stored
@@ -573,23 +579,27 @@ class Project(_Dict):
 			while os.path.exists(targetdir):
 				dirVersion += 1
 				targetdir = os.path.join( self.sender_projectdir, '%s version%d' % (recipient.username, dirVersion) )
-			MODULE.info('collecting data from "%s" to: %s' % (recipient.username, targetdir))
 
 			# copy entire directory of the recipient
 			srcdir = os.path.join( self.user_projectdir(recipient) )
-			try:
-				# copy dir
-				shutil.copytree( srcdir, targetdir )
+			MODULE.info('collecting data for user "%s" from %s to %s' % (recipient.username, srcdir, targetdir))
+			if not os.path.isdir(srcdir):
+				MODULE.info('Source directory does not exist (no files distributed?)')
+			else:
+				try:
+					# copy dir
+					shutil.copytree( srcdir, targetdir )
 
-				# fix permission
-				os.chown(targetdir, int(self.sender.uidNumber), int(self.sender.gidNumber))
-				for root, dirs, files in os.walk(targetdir):
-					for momo in dirs + files:
-						os.chown(os.path.join(root, momo), int(self.sender.uidNumber), int(self.sender.gidNumber))
+					# fix permission
+					os.chown(targetdir, int(self.sender.uidNumber), int(self.sender.gidNumber))
+					for root, dirs, files in os.walk(targetdir):
+						for momo in dirs + files:
+							os.chown(os.path.join(root, momo), int(self.sender.uidNumber), int(self.sender.gidNumber))
 
-			except (OSError, IOError, ValueError):
-				MODULE.warn('Copy failed: "%s" ->  "%s"' % (srcdir, targetdir))
-				dirsFailed.append(srcdir)
+				except (OSError, IOError, ValueError):
+					MODULE.warn('Copy failed: "%s" ->  "%s"' % (srcdir, targetdir))
+					MODULE.info('Traceback:\n%s' % traceback.format_exc())
+					dirsFailed.append(srcdir)
 
 		return len(dirsFailed) == 0
 
@@ -616,13 +626,36 @@ class Project(_Dict):
 			MODULE.error('cannot remove projectfile: %s [%s]' % (self.projectfile, str(e)))
 
 	@staticmethod
+	def sanitize_project_filename(path):
+		'''
+		sanitize project filename - if the file fn_project lies outside DISTRIBUTION_DATA_PATH
+		any user is able to place a json project file and use that for file distribution/collection.
+		'''
+		if not os.path.sep in path:
+			path = os.path.join(DISTRIBUTION_DATA_PATH, path)
+		if not os.path.abspath(path).startswith(DISTRIBUTION_DATA_PATH):
+			MODULE.error('Path %r does not contain prefix %r' % (path, DISTRIBUTION_DATA_PATH))
+			raise InvalidProjectFilename('Path %r does not contain prefix %r' % (path, DISTRIBUTION_DATA_PATH))
+		return os.path.abspath(path)
+
+	@staticmethod
 	def load(projectfile):
 		'''Load the given project file and create a new Project instance.'''
 		project = None
+
+		try:
+			fn_project = Project.sanitize_project_filename(projectfile)
+		except InvalidProjectFilename:
+			return None
+
+		if not os.path.exists(fn_project):
+			MODULE.error('Cannot load project - project file %s does not exist' % fn_project)
+			return None
+
 		try:
 			# load project dictionary from JSON file
-			fd = open(os.path.join(DISTRIBUTION_DATA_PATH, projectfile), 'r' )
-			project = jsonDecode(''.join(fd.readlines()))
+			fd = open(fn_project, 'r')
+			project = jsonDecode(fd.read())
 			# project = Project(tmpDict.dict)
 			fd.close()
 
@@ -634,7 +667,8 @@ class Project(_Dict):
 
 			# project.recipients = [ User(i.dict) for i in project.recipients ]
 		except (IOError, ValueError, AttributeError) as e:
-			MODULE.error('Could not open project file: %s [%s]' % (projectfile, str(e)))
+			MODULE.error('Could not open/read/decode project file: %s [%s]' % (projectfile, e))
+			MODULE.info('TRACEBACK:\n%s' % traceback.format_exc())
 			return None
 
 		# make sure the filename matches the property 'name'

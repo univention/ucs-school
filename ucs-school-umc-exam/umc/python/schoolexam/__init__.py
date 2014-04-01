@@ -163,8 +163,9 @@ class Instance( SchoolBaseModule ):
 
 			# make sure that a project with the same name does not exist
 			opts = request.options
-			project = util.distribution.Project.load(opts.get('directory'))
-			if project:
+			# get absolute path of project file and test for existance
+			fn_test_project = util.distribution.Project.sanitize_project_filename(opts.get('directory'))
+			if os.path.exists(fn_test_project):
 				raise UMC_CommandError(_('An exam with the name "%s" already exists. Please choose a different name for the exam.') % opts.get('directory'))
 
 			# validate the project data and save project

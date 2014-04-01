@@ -1,7 +1,13 @@
+ucs-school-umc-exam (2.0.1-1) unstable; urgency=low
+
+  * Bug #33456: use correct functions to check for project name's uniqueness
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Tue, 01 Apr 2014 21:22:53 +0200
+
 ucs-school-umc-exam (2.0.0-1) unstable; urgency=low
 
   * Bug #32520: fix typos in python modules
-  * version dump (UCS@school 3.2)
+  * version bump (UCS@school 3.2)
 
  -- Florian Best <best@univention.de>  Tue, 15 Oct 2013 14:10:18 +0200
 

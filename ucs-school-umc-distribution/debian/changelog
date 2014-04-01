@@ -1,3 +1,10 @@
+ucs-school-umc-distribution (11.0.1-1) unstable; urgency=low
+
+  * Bug #33456: prevent unneeded error/warning messages in log files
+  * Bug #33456: added security checks for frontend data
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Tue, 01 Apr 2014 21:24:43 +0200
+
 ucs-school-umc-distribution (11.0.0-1) unstable; urgency=low
 
   * Bug #34259: fix typo

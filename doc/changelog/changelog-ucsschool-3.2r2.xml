@@ -126,6 +126,14 @@
 				</simpara></listitem>
 			</itemizedlist>
 		</section>
+		<section>
+			<title>Exam module</title>
+			<itemizedlist>
+			  <listitem><simpara> Some faulty error message in exam module's logfile are now
+			  avoided by additional pre-checks. Additionally new security checks have been added for frontend data
+			  (<ulink url="&ucsbug;33456">Bug 33456</ulink>).  </simpara></listitem>
+			</itemizedlist>
+		</section>
 <!--
 		<section>
 			<title>Computerroom module</title>
