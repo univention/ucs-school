@@ -1,3 +1,9 @@
+ucs-test-ucsschool (1.0.5-1) unstable; urgency=low
+
+  * Bug #34373: add domaincontroller_backup and domaincontroller_slave to roles
+
+ -- Ammar Najjar <anajjar@ENSEN.knut.univention.de>  Tue, 01 Apr 2014 12:21:28 +0200
+
 ucs-test-ucsschool (1.0.4-1) unstable; urgency=low
 
   * Bug 34280: rename script file and improve formatting
