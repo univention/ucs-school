@@ -25,7 +25,7 @@ def setRandomDisplayNameViaCreateOU(ou_name):
 	""" Tries to set an optional display name while creating/updating the given OU """
 	ou_displayName = uts.random_string(length=random.randint(5, 50), charset=charset)
 	# create new ou with display name
-	cmd = ['/usr/share/ucs-school-import/scripts/create_ou', '--displayname', ou_displayName, ou_name]
+	cmd = ['/usr/share/ucs-school-import/scripts/create_ou', '--displayName', ou_displayName, ou_name]
 	print 'Calling following command: %r' % cmd
 	retval = subprocess.call(cmd)
 	if retval:

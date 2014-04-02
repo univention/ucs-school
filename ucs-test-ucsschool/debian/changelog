@@ -1,8 +1,14 @@
+ucs-test-ucsschool (1.0.6-1) unstable; urgency=low
+
+  * Bug #34173: fixed syntax error
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Wed, 02 Apr 2014 08:44:00 +0200
+
 ucs-test-ucsschool (1.0.5-1) unstable; urgency=low
 
   * Bug #34373: add domaincontroller_backup and domaincontroller_slave to roles
 
- -- Ammar Najjar <anajjar@ENSEN.knut.univention.de>  Tue, 01 Apr 2014 12:21:28 +0200
+ -- Ammar Najjar <najjar@univention.de>  Tue, 01 Apr 2014 12:21:28 +0200
 
 ucs-test-ucsschool (1.0.4-1) unstable; urgency=low
 
@@ -11,7 +17,7 @@ ucs-test-ucsschool (1.0.4-1) unstable; urgency=low
   * Bug 34373: add Test lessontimes module
   * Bug 34368: add Working group module tests
 
- -- Ammar Najjar <anajjar@ENSEN.knut.univention.de>  Tue, 01 Apr 2014 11:48:00 +0200
+ -- Ammar Najjar <najjar@univention.de>  Tue, 01 Apr 2014 11:48:00 +0200
 
 ucs-test-ucsschool (1.0.3-1) unstable; urgency=low
 
@@ -29,7 +35,7 @@ ucs-test-ucsschool (1.0.1-1) precise; urgency=low
 
   * Bug #34280: added executable flag for test script
 
- -- Ammar Najjar <anajjar@ENSEN.knut.univention.de>  Fri, 14 Mar 2014 11:46:26 +0100
+ -- Ammar Najjar <najjar@univention.de>  Fri, 14 Mar 2014 11:46:26 +0100
 
 ucs-test-ucsschool (1.0.0-5) unstable; urgency=low
 
