@@ -643,6 +643,10 @@ class Project(_Dict):
 		'''Load the given project file and create a new Project instance.'''
 		project = None
 
+		if not projectfile:
+			MODULE.info('Empty project filename has been passed to Project.load()')
+			return None
+
 		try:
 			fn_project = Project.sanitize_project_filename(projectfile)
 		except InvalidProjectFilename:

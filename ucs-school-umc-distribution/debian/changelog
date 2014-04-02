@@ -1,3 +1,9 @@
+ucs-school-umc-distribution (11.0.2-1) unstable; urgency=low
+
+  * Bug #33456: do not try to load project, if not projectname has been specified
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Wed, 02 Apr 2014 10:19:53 +0200
+
 ucs-school-umc-distribution (11.0.1-1) unstable; urgency=low
 
   * Bug #33456: prevent unneeded error/warning messages in log files

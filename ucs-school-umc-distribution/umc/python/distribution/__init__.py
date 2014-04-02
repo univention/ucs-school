@@ -111,7 +111,9 @@ class Instance( SchoolBaseModule ):
 			raise UMC_OptionTypeError( 'The entry "filenames" is expected to be an array, but got: %s' % request.options.get('filenames') )
 
 		# load project
-		project = util.Project.load(request.options.get('project'))
+		project = None
+		if request.options.get('project'):
+			project = util.Project.load(request.options.get('project'))
 
 		result = []
 		for ifile in request.options.get('filenames'):
