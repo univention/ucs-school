@@ -50,11 +50,13 @@ def main():
 		utils.fail('invalid time format is not detected')
 
 	# 3 check overlapping in time
-	if not ('Overlapping lessons are not allowed' or 'Überlappende Schulstunden sind nicht erlaubt' in addLesson(connection, "98. Stunde", "00:03", "0:06")['message']):
+	tx = 'Overlapping lessons are not allowed'
+	tx2 = 'Überlappende Schulstunden sind nicht erlaubt' 
+	if not (tx or tx2  in addLesson(connection, "98. Stunde", "00:03", "0:06")['message']):
 		utils.fail('Overlapping lessons is not detected 1')
 
 	# 4 check overlapping in names
-	if not ('Overlapping lessons are not allowed' or 'Überlappende Schulstunden sind nicht erlaubt' in addLesson(connection, "99. Stunde", "00:06", "0:08")['message']):
+	if not (tx or tx2 in addLesson(connection, "99. Stunde", "00:06", "0:08")['message']):
 		utils.fail('Overlapping lessons is not detected 2')
 
 	# 5 removing a lesson
