@@ -53,11 +53,11 @@ def main():
 	eng = 'Overlapping lessons are not allowed'
 	deu = 'Überlappende Schulstunden sind nicht erlaubt' 
 	if not (eng or deu  in addLesson(connection, "98. Stunde", "00:03", "0:06")['message']):
-		utils.fail('Overlapping lessons is not detected 1')
+		utils.fail('Overlapping lessons time is not detected')
 
 	# 4 check overlapping in names
 	if not (eng or deu in addLesson(connection, "99. Stunde", "00:06", "0:08")['message']):
-		utils.fail('Overlapping lessons is not detected 2')
+		utils.fail('Overlapping lessons names is not detected')
 
 	# 5 removing a lesson
 	delLesson(connection, "99. Stunde", "00:00", "1:00")
