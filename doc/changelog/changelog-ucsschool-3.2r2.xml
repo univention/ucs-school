@@ -152,8 +152,11 @@
 </section>
 -->
 
-<!--
 <section>
 	<title>Other changes</title>
+	<itemizedlist>
+	  <listitem><simpara>
+		Some internal shell functions within shell-ucs-school have been improved and fixed (<ulink url="&ucsbug;33506">Bug 33506</ulink>).
+	  </simpara></listitem>
+	</itemizedlist>
 </section>
--->

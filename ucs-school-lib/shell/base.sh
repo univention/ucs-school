@@ -1,4 +1,4 @@
-# UCS@School Common Shell Library
+# UCS@school Common Shell Library
 #
 # Copyright 2011-2014 Univention GmbH
 #
@@ -27,51 +27,66 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-
 #
 # determine the school OU from ldap/hostdn
 #
 
 school_ou() {
-	eval "$(/usr/sbin/univention-config-registry shell \
-				ldap/hostdn)"
+	# syntax: school_ou [hostdn]
+	#
+	# Tries to determine the LDAP name of the host's OU.
+	# The OU name is derived from the given host DN. If no DN has been passed to
+	# the function, the hostdn of the system is used as fallback.
+	# PLEASE NOTE: This function works only on domaincontroller_slave systems!
+	#              Other systems will return an empty value!
+	#
+	# example:
+	# $ ucr get ldap/hostdn
+	# cn=myslave,cn=dc,cn=server,cn=computers,ou=gymmitte,dc=example,dc=com
+	# $ school_ou
+	# gymmitte
+	# $ school_ou cn=myslave,cn=dc,cn=server,cn=computers,ou=foobar,dc=example,dc=com
+	# foobar
+	# $ school_ou cn=myslave,cn=dc,cn=server,cn=computers,ou=foo,ou=bar,dc=example,dc=com
+	# foo
 
-	IFS0="$IFS"
-	IFS=','
-	set -- "$ldap_hostdn"
-	for rdn in $@; do
-		key=$(echo "${rdn%=*}" | tr a-z A-Z)
-		if [ "$key" = "OU" ]; then
-			echo "${rdn#*=}"
-			break
-		fi
-	done
-	IFS="$IFS0"
+	local ldap_hostdn
+
+	if [ -n "$1" ] ; then
+		ldap_hostdn="$1"
+	else
+		ldap_hostdn="$(/usr/sbin/univention-config-registry get ldap/hostdn)"
+	fi
+
+	echo "$ldap_hostdn" | sed -nre 's/^.*,[oO][uU]=([^,]+),.*/\1/p'
 }
 
 school_dn() {
-	local district_mode
-	if is_ucr_true 'ucsschool/ldap/district/enable'; then
-		district_mode='true'
+	# syntax: school_dn [hostdn]
+	#
+	# Tries to determine the LDAP DN of the host's OU.
+	# The OU DN is derived from the given host DN. If no DN has been passed to
+	# the function, the hostdn of the system is used as fallback.
+	# PLEASE NOTE: This function works only on domaincontroller_slave systems!
+	#              Other systems will return an empty value!
+	#
+	# example:
+	# $ ucr get ldap/hostdn
+	# cn=myslave,cn=dc,cn=server,cn=computers,ou=gymmitte,dc=example,dc=com
+	# $ school_dn
+	# ou=gymmitte,dc=example,dc=com
+	# $ school_dn cn=myslave,cn=dc,cn=server,cn=computers,ou=foobar,dc=example,dc=com
+	# ou=foobar,dc=example,dc=com
+	# $ school_dn cn=myslave,cn=dc,cn=server,cn=computers,ou=foo,ou=bar,dc=example,dc=com
+	# ou=foo,ou=bar,dc=example,dc=com
+
+	local ldap_hostdn
+
+	if [ -n "$1" ] ; then
+		ldap_hostdn="$1"
 	else
-		district_mode='false'
+		ldap_hostdn="$(/usr/sbin/univention-config-registry get ldap/hostdn)"
 	fi
 
-	eval "$(/usr/sbin/univention-config-registry shell \
-				ldap/hostdn)"
-
-	IFS0="$IFS"
-	IFS=','
-	skipped_rdns=''
-	set -- "${ldap_hostdn%",$ldap_hostdn"}"
-	for rdn in $@; do
-		key=$(echo "${rdn%=*}" | tr a-z A-Z)
-		if [ "$key" = "OU" ]; then
-			IFS="$IFS0"
-			echo ${ldap_hostdn#${skipped_rdns}}
-			break
-		fi
-		skipped_rdns="${rdn},${skipped_rdns}"
-	done
+	echo "$ldap_hostdn" | grep -oiE ',ou=.*$' | cut -b2-
 }
-

@@ -1,3 +1,10 @@
+ucs-school-lib (5.0.1-1) unstable; urgency=low
+
+  * Bug #33506: fixed broken shell function "school_dn"
+  * Bug #33506: simplified shell function "school_ou"
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Thu, 03 Apr 2014 12:18:19 +0200
+
 ucs-school-lib (5.0.0-1) unstable; urgency=low
 
   * Bug #34259: fix typo
