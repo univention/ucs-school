@@ -45,9 +45,9 @@ def main():
 			returnValue = 0
 			break
 		else:
-			continue
-		returnValue = 1
-		time.sleep(1)
+			returnValue = 1
+            time.sleep(1)
+			continue		
 	return returnValue
 
 
