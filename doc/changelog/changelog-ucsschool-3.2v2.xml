@@ -31,6 +31,12 @@ chmod a+rx -Rf user/*.vbs
 				correctly (<ulink url="&ucsbug;33600">Bug 33600</ulink>).
 			  </simpara>
 			</listitem>
+			<listitem>
+				<simpara>
+					The methodname <emphasis>isAdim</emphasis> has been changed into <emphasis>isAdmin</emphasis>
+					in the UCS@school programming library (<ulink url="&ucsbug;34259">Bug 34259</ulink>).
+				</simpara>
+			</listitem>
 		</itemizedlist>
 </section>
 
