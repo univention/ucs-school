@@ -155,8 +155,12 @@
 <section>
 	<title>Other changes</title>
 	<itemizedlist>
-	  <listitem><simpara>
-		Some internal shell functions within shell-ucs-school have been improved and fixed (<ulink url="&ucsbug;33506">Bug 33506</ulink>).
-	  </simpara></listitem>
+		<listitem><simpara>
+			Some internal shell functions within shell-ucs-school have been improved and fixed (<ulink url="&ucsbug;33506">Bug 33506</ulink>).
+		</simpara></listitem>
+		<listitem><simpara>
+			The methodname <emphasis>isAdim</emphasis> has been changed into <emphasis>isAdmin</emphasis>
+			within the UCS@school programming library (<ulink url="&ucsbug;34259">Bug 34259</ulink>).
+		</simpara></listitem>
 	</itemizedlist>
 </section>
