@@ -1,6 +1,6 @@
 #!/usr/share/ucs-test/runner python
 ## desc: ucs-school-printermoderator-module-check
-## roles: [domaincontroller_master, domaincontroller_backup, domaincontroller_slave]
+## roles: [domaincontroller_master, domaincontroller_backup, domaincontroller_slave, memberserver]
 ## tags: [apptest]
 ## exposure: careful
 ## packages:  [ucs-school-umc-printermoderation]
@@ -8,7 +8,10 @@
 from mimetypes import MimeTypes
 from univention.lib.umc_connection import UMCConnection
 from univention.management.console.modules import printermoderation
-import sys, subprocess, tempfile, time
+import subprocess
+import sys
+import tempfile
+import time
 import univention.testing.strings as uts
 import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool as utu
@@ -19,8 +22,8 @@ import univention.testing.utils as utils
 def orderPrint(printer, username, file):
 	cmd = ['lpr', '-P', printer, '-U', username, file]
 	retval = subprocess.call(cmd)
-	# if retval:
-	print retval
+	if retval:
+		utils.fail('Orderprint failure:', retval)
 
 # add / del / modify Printer
 def doPrinter(operation, printer_name, schoolName, spool_host):
@@ -35,40 +38,16 @@ def doPrinter(operation, printer_name, schoolName, spool_host):
 	retval = subprocess.call(cmd)
 	f.close()
 	if retval:
-		print retval
+		utils.fail('Unexpected error while acting on Printer', retval)
 
 # check the existance of the created printer
 def printerExist(connection, printerName, schoolName, basedn):
-	# check with printermoderation/printers (does not work)
-	requestResult = connection.request('printermoderation/printers')
-	print 'request/printermoderation/printers = ', requestResult
-
-	# check with udm (works fine)
-	printerdn = 'cn=%s,cn=printers,ou=%s,%s' % (printerName, schoolName,
-			basedn)
-	flavor = 'shares/print'
-	container = 'cn=printers,ou=%s,%s' % (schoolName, basedn)
-	param = {
-			'container': container,
-			'hidden': False,
-			'objectProperty': 'None',
-			'objectPropertyValue': '',
-			'objectType': flavor
-			}
-	requestResult = connection.request('udm/query', param)
-	print 'request/udm = ', requestResult
-	for dic in requestResult:
-		if printerdn == dic['$dn$']:
-			exist = True
-			print 'printer found'
-	if not exist:
-		utils.fail('Printer created was not found')
+	return connection.request('printermoderation/printers')
 
 # get the current printed jobs
 def queryPrintJobs(connection, printerName, cName, schoolName, pattern, basedn):
 	if cName != 'None':
-		cdn = 'cn=%s-%s,cn=klassen,cn=schueler,cn=groups,ou=%s,%s' % (schoolName,
-			cName, schoolName, basedn)
+		cdn = 'cn=%s,cn=klassen,cn=schueler,cn=groups,ou=%s,%s' % (cName, schoolName, basedn)
 	else:
 		cdn = cName
 	param = {
@@ -76,9 +55,7 @@ def queryPrintJobs(connection, printerName, cName, schoolName, pattern, basedn):
 			'class': cdn,
 			'pattern': pattern
 			}
-	print 'cName= ' , cName, cdn
-	requestResult = connection.request('printermoderation/query', param)
-	return requestResult
+	return connection.request('printermoderation/query', param)
 
 # delete a specific printjob
 def delPrintJob(connection, userName, printJob):
@@ -86,16 +63,16 @@ def delPrintJob(connection, userName, printJob):
 			'username': userName,
 			'printjob': printJob
 			}
-	requestResult = connection.request('printermoderation/delete', param)
-	print 'request/printermoderation/delete = ', requestResult
+	return connection.request('printermoderation/delete', param)
 
 # Check the file type of the printed pdf
 # there is another lib: python-magic but it is not installed by default
 def checkPrintJobs(printJobs):
 	mime = MimeTypes()
 	for job in printJobs:
-		mime_type = mime.guess_type(job)
-		print 'filetype for', job, ' = ', mime_type
+		mime_type, _ = mime.guess_type(job)
+		if not '/pdf' in mime_type:
+			utils.fail('Unexpected file type')
 
 # download print jobs
 def downloadPrintJobs(connection, userName, printJob):
@@ -103,9 +80,14 @@ def downloadPrintJobs(connection, userName, printJob):
 			'username': userName,
 			'printjob': printJob
 			}
-	requestResult = connection.request('printermoderation/download', param)
+	try:
+		requestResult = connection.request('printermoderation/download', param)
+	except Exception as e:
+		ex_en = 'No JSON object could be decoded'
+		if not ex_en in e:
+			utils.fail('Enexpected exception:', e)
 
-# get all print jobs for a specific user
+# get print jobs for a specific user
 def getPrintJobs(alljobs, userName):
 	return ([x['id'] for x in alljobs if x['username']==userName])
 
@@ -129,55 +111,46 @@ def main():
 		ucr.load()
 		host = ucr.get('hostname')
 		basedn = ucr.get('ldap/base')
-		co = UMCConnection(host)
-		co.auth('Administrator' ,'univention')
 		schoolName, oudn = schoolenv.create_ou()
 		tea1, teadn1 = schoolenv.create_user(schoolName, classes='1A', is_teacher=True)
-		tea2, teadn2 = schoolenv.create_user(schoolName, classes='2B', is_teacher=True)
 		stu1, stu1dn = schoolenv.create_user(schoolName, classes='1A')
 		stu2, stu2dn = schoolenv.create_user(schoolName, classes='2B')
 
-		co1 = UMCConnection(host)
-		co1.auth(tea1 ,'univention')
-		co2 = UMCConnection(host)
-		co2.auth(tea2 ,'univention')
+		co = UMCConnection(host)
+		co.auth(tea1 ,'univention')
 
-		# create new printer
+		# add new printer
 		doPrinter('A', newPrinterName, schoolName, host)
-		print printerExist(co, newPrinterName, schoolName, basedn)
 
-		print stu1, stu2
-		# order print job by stu 1
+		# check if the printer exists
+		if printerExist(co, newPrinterName, schoolName, basedn) == []:
+			utils.fail('Printer not found')
+
+		# order print jobs
 		orderPrint(default_printer, stu1, test_file)
 		time.sleep(5)
-		# order print job by stu 2
 		orderPrint(default_printer, stu2, test_file)
+		time.sleep(5)
 
 		# query all orderd print jobs
 		alljobs = queryPrintJobs(co, newPrinterName, 'None', schoolName, "", basedn)
-		print 'alljobs = ', alljobs
+		# query all orderd print jobs from classes 1A
+		alljobs1A = queryPrintJobs(co, newPrinterName, '1A', schoolName, "", basedn)
+		if alljobs1A == alljobs:
+			utils.fail('Unexpected job query result')
 
-		# query all orderd print jobs from classes 1A, 2B
-		alljobs1A = queryPrintJobs(co1, newPrinterName, '1A', schoolName, "", basedn)
-		print 'alljobs1A = ', alljobs1A
-		alljobs2B = queryPrintJobs(co2,  newPrinterName, '2B', schoolName, "", basedn)
-		print 'alljobs2B = ', alljobs2B
-
-		# get stu1 print jobs
+		# get print jobs
 		printJobs1 = getPrintJobs(alljobs, stu1)
-		print 'print1 = ', printJobs1
-		# get stu2 print jobs
 		printJobs2 = getPrintJobs(alljobs, stu2)
-		print 'print 2= ', printJobs2
 
-		# check file type for the printed files
+		# check file type for the printjobs files
 		checkPrintJobs(printJobs1)
 		checkPrintJobs(printJobs2)
 
-		# download print jobs for stu1
+		# download print jobs for stu1 and check the filetype
 		downloadPrintJobs(co, stu1, printJobs1[0])
 
-		# accepting a print job from stu 1
+		# FIX-ME accepting a print job from stu1
 		try:
 			acceptprint(co, stu1, printJobs1[0], newPrinterName)
 		except Exception as e:
