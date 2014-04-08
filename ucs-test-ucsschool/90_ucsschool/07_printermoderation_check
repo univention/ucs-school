@@ -2,7 +2,7 @@
 ## desc: ucs-school-printermoderator-module-check
 ## roles: [domaincontroller_master, domaincontroller_backup, domaincontroller_slave]
 ## tags: [apptest]
-## exposure: safe
+## exposure: careful
 ## packages:  [ucs-school-umc-printermoderation]
 
 from mimetypes import MimeTypes
