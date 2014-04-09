@@ -7,7 +7,6 @@
 
 from mimetypes import MimeTypes
 from univention.lib.umc_connection import UMCConnection
-from univention.management.console.modules import printermoderation
 import subprocess
 import sys
 import tempfile
@@ -23,7 +22,7 @@ def orderPrint(printer, username, file):
 	cmd = ['lpr', '-P', printer, '-U', username, file]
 	retval = subprocess.call(cmd)
 	if retval:
-		utils.fail('Orderprint failure:', retval)
+		utils.fail('Orderprint failure')
 
 # add / del / modify Printer
 def doPrinter(operation, printer_name, schoolName, spool_host):
@@ -38,11 +37,17 @@ def doPrinter(operation, printer_name, schoolName, spool_host):
 	retval = subprocess.call(cmd)
 	f.close()
 	if retval:
-		utils.fail('Unexpected error while acting on Printer', retval)
+		utils.fail('Unexpected error while acting on Printer')
 
 # check the existance of the created printer
-def printerExist(connection, printerName, schoolName, basedn):
-	return connection.request('printermoderation/printers')
+def printerExist(connection, printerName):
+	requestResult = connection.request('printermoderation/printers')
+	for dict in requestResult:
+		if dict['label'] == printerName:
+			return True
+	else:
+		return False
+
 
 # get the current printed jobs
 def queryPrintJobs(connection, printerName, cName, schoolName, pattern, basedn):
@@ -81,7 +86,7 @@ def downloadPrintJobs(connection, userName, printJob):
 			'printjob': printJob
 			}
 	try:
-		requestResult = connection.request('printermoderation/download', param)
+		connection.request('printermoderation/download', param)
 	except Exception as e:
 		ex_en = 'No JSON object could be decoded'
 		if not ex_en in e:
@@ -123,7 +128,7 @@ def main():
 		doPrinter('A', newPrinterName, schoolName, host)
 
 		# check if the printer exists
-		if printerExist(co, newPrinterName, schoolName, basedn) == []:
+		if not printerExist(co, newPrinterName):
 			utils.fail('Printer not found')
 
 		# order print jobs
