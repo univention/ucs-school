@@ -1,0 +1,76 @@
+#!/usr/share/ucs-test/runner python
+## desc: ucs-school-printermoderatoion-find-printer-in-ou-check
+## roles: [domaincontroller_master, domaincontroller_backup, domaincontroller_slave, memberserver]
+## tags: [apptest]
+## exposure: careful
+## packages:  [ucs-school-umc-printermoderation]
+
+from univention.lib.umc_connection import UMCConnection
+import socket
+import subprocess
+import sys
+import tempfile
+import univention.testing.strings as uts
+import univention.testing.ucr as ucr_test
+import univention.testing.ucsschool as utu
+import univention.testing.utils as utils
+
+
+# Order print job for postscript test page
+def orderPrint(printer, username, file):
+	cmd = ['lpr', '-P', printer, '-U', username, file]
+	retval = subprocess.call(cmd)
+	if retval:
+		utils.fail('Orderprint failure')
+
+# add / del / modify Printer
+def doPrinter(operation, printer_name, schoolName, spool_host):
+	localIp = socket.gethostbyname(socket.gethostname())
+	uri = '%s://%s' % ('lpd', localIp)
+	print_server = '%s.%s.%s' % (spool_host, 'univention', 'local')
+	f = tempfile.NamedTemporaryFile(suffix='.csv')
+	line = '%s\t%s\t%s\t%s\t%s\n' % (operation, schoolName, print_server,
+			printer_name, uri)
+	f.write(line)
+	f.flush()
+	cmd = ['/usr/share/ucs-school-import/scripts/import_printer', f.name]
+	retval = subprocess.call(cmd)
+	f.close()
+	if retval:
+		utils.fail('Unexpected error while acting on Printer')
+
+# check the existance of the created printer
+def printerExist(connection, printerName, schoolName):
+	requestResult = connection.request('printermoderation/printers', schoolName)
+	for dict in requestResult:
+		if dict['label'] == printerName:
+			return True
+	else:
+		return False
+
+def main():
+	with utu.UCSTestSchool()  as schoolenv:
+		newPrinterName = uts.random_string()
+		ucr = ucr_test.UCSTestConfigRegistry()
+		ucr.load()
+		host = ucr.get('hostname')
+		co = UMCConnection(host)
+		co.auth('Administrator' ,'univention')
+
+		# create more than one OU
+		schoolName, _ = schoolenv.create_ou()
+		schoolName2, _ = schoolenv.create_ou()
+
+		# add new printer
+		doPrinter('A', newPrinterName, schoolName, host)
+
+		# check if the printer exists in a specific OU
+		for count in range(10):
+			if not printerExist(co, newPrinterName, schoolName):
+				utils.fail('Printer not found in the specified OU')
+
+		# delete the created printer
+		doPrinter('D', newPrinterName, schoolName, host)
+
+if __name__ == '__main__':
+	sys.exit(main())
