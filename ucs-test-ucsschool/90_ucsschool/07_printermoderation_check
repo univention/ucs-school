@@ -7,6 +7,7 @@
 
 from mimetypes import MimeTypes
 from univention.lib.umc_connection import UMCConnection
+import socket
 import subprocess
 import sys
 import tempfile
@@ -15,7 +16,6 @@ import univention.testing.strings as uts
 import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool as utu
 import univention.testing.utils as utils
-
 
 # Order print job for postscript test page
 def orderPrint(printer, username, file):
@@ -26,7 +26,8 @@ def orderPrint(printer, username, file):
 
 # add / del / modify Printer
 def doPrinter(operation, printer_name, schoolName, spool_host):
-	uri = '%s://%s' % ('lpd', '10.200.20.20')
+	localIp = socket.gethostbyname(socket.gethostname())
+	uri = '%s://%s' % ('lpd', localIp)
 	print_server = '%s.%s.%s' % (spool_host, 'univention', 'local')
 	f = tempfile.NamedTemporaryFile(suffix='.csv')
 	line = '%s\t%s\t%s\t%s\t%s\n' % (operation, schoolName, print_server,
