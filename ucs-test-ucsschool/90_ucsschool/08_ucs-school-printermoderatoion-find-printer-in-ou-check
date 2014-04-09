@@ -2,7 +2,7 @@
 ## desc: ucs-school-printermoderatoion-find-printer-in-ou-check
 ## roles: [domaincontroller_master, domaincontroller_backup, domaincontroller_slave, memberserver]
 ## tags: [apptest]
-## exposure: careful
+## exposure: safe
 ## packages:  [ucs-school-umc-printermoderation]
 
 from univention.lib.umc_connection import UMCConnection
@@ -15,13 +15,6 @@ import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool as utu
 import univention.testing.utils as utils
 
-
-# Order print job for postscript test page
-def orderPrint(printer, username, file):
-	cmd = ['lpr', '-P', printer, '-U', username, file]
-	retval = subprocess.call(cmd)
-	if retval:
-		utils.fail('Orderprint failure')
 
 # add / del / modify Printer
 def doPrinter(operation, printer_name, schoolName, spool_host):
