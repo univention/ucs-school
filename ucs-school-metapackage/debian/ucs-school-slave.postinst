@@ -88,6 +88,11 @@ if [ "$1" = "configure" ] ; then
 						connector/s4/mapping/dns/srv_record/_gc._tcp.default-first-site-name._sites.$domainname/location?"100 0 3268 $hostname.$domainname."
 			fi
 		fi
+
+		if dpkg --compare-versions "$2" lt 6.0.7-5 ; then
+			univention-config-registry set \
+				ucsschool/import/roleshare=no
+		fi
 	fi
 fi
 
