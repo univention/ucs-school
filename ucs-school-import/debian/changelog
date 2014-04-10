@@ -1,3 +1,9 @@
+ucs-school-import (10.0.7-1) unstable; urgency=medium
+
+  * Put home directories into subdir according to role (Bug #34335)
+
+ -- Arvid Requate <requate@univention.de>  Thu, 10 Apr 2014 20:33:28 +0200
+
 ucs-school-import (10.0.6-1) unstable; urgency=low
 
   * Bug #34173: added attribute displayName to objectclass

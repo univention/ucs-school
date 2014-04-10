@@ -74,6 +74,8 @@ import univention.admin.objects
 import univention.admin.config
 import univention.config_registry
 import univention.lib.policy_result
+from ucsschool.lib.roles import role_pupil, role_teacher, role_staff
+from ucsschool.lib.roleshares import roleshare_home_prefix
 
 configRegistry=univention.config_registry.ConfigRegistry()
 configRegistry.load()
@@ -117,10 +119,6 @@ UCRV_netlogon_script_path = configRegistry.get('ucsschool/import/set/netlogon/sc
 UCRV_sambahome = configRegistry.get('ucsschool/import/set/sambahome', None)
 UCRV_homedrive = configRegistry.get('ucsschool/import/set/homedrive')
 UCRV_create_mail_domain = configRegistry.is_true("ucsschool/import/generate/mail/domain")
-
-role_pupil   = 'pupil'
-role_teacher = 'teacher'
-role_staff   = 'staff'
 
 generate_logins = configRegistry.get('ucsschool/import/generate/logins', 'no').lower() in ( 'yes', 'true', '1' )
 
@@ -1240,7 +1238,8 @@ def modify_user(person, module, co, lo):
 	object.open()
 	object["username"]=person.login
 	object["primaryGroup"]=default_groups[0]
-	object["unixhome"]="/home/"+person.login
+	subdir = roleshare_home_prefix(person.getRole(), configRegistry)
+	object["unixhome"]="/home/" + os.path.join(subdir, person.login)
 	object["firstname"]=person.name
 	object["lastname"]=person.sname
 	object["e-mail"]=person.mail
@@ -1433,7 +1432,8 @@ def create_user(person, baseDN, module, password, OUTFILE, line):
 	object["primaryGroup"]=groups[0]
 	if len(groups) > 1:
 		object["groups"]=groups[1:]
-	object["unixhome"]="/home/"+person.login
+	subdir = roleshare_home_prefix(person.getRole(), configRegistry)
+	object["unixhome"]="/home/" + os.path.join(subdir, person.login)
 	if object.has_key('mailbox'):
 		object["mailbox"]="/var/spool/%s/"%person.login
 	object["password"]=password
