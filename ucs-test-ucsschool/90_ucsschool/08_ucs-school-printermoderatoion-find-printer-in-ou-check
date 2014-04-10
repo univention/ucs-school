@@ -31,13 +31,14 @@ def doPrinter(operation, printer_name, schoolName, spool_host):
 	f.close()
 	if retval:
 		utils.fail('Unexpected error while acting on Printer')
+	utils.wait_for_replication_and_postrun()
 
 # check the existance of the created printer
 def printerExist(connection, printerName, schoolName):
 	requestResult = connection.request('printermoderation/printers', schoolName)
-	for dict in requestResult:
-		if dict['label'] == printerName:
-			return True
+	printerFound = [dict for dict in requestResult if dict['label'] == printerName]
+	if printerFound:
+		return True
 	else:
 		return False
 
@@ -58,9 +59,8 @@ def main():
 		doPrinter('A', newPrinterName, schoolName, host)
 
 		# check if the printer exists in a specific OU
-		for count in range(10):
-			if not printerExist(co, newPrinterName, schoolName):
-				utils.fail('Printer not found in the specified OU')
+		if not printerExist(co, newPrinterName, schoolName):
+			utils.fail('Printer not found in the specified OU')
 
 		# delete the created printer
 		doPrinter('D', newPrinterName, schoolName, host)
