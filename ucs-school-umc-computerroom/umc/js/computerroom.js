@@ -502,11 +502,27 @@ define([
 			var guessRoom = getIP.then(lang.hitch(this, function(ipaddresses) {
 				return this.umcpCommand('computerroom/room/guess', {ipaddress: ipaddresses});
 			}));
-			guessRoom.then(lang.hitch(this, function(response) {
-				this._preSelectedRoom = response.result.room;
-				this._preSelectedSchool = response.result.school;
+			var resp = guessRoom.then(lang.hitch(this, function(response) {
+				return response.result.room;  // roomdn
 			}));
-			return all([getIP, guessRoom]);
+
+			var roomGuessed = new Deferred();
+			all({
+				foo: getIP,
+				bar: guessRoom,
+				roomdn: resp
+			}).then(function(result) {
+				var roomdn = result.roomdn;
+				if (roomdn) {
+					roomGuessed.resolve(roomdn);
+				} else {
+					roomGuessed.cancel();
+				}
+			}, function() {
+				roomGuessed.cancel();
+			});
+
+			return roomGuessed;
 		},
 
 		startup: function() {
@@ -801,11 +817,12 @@ define([
 				// try to auto load the specified room
 				// show the changeRoom dialog on failure
 				this.standbyDuring(this._acquireRoom(room, false)).then(undefined, lang.hitch(this, 'changeRoom'));
-			}
-			else {
+			} else {
 				// no auto load of a specific room, try to guess one
 				this.standbyDuring(this._guessRoomOfTeacher()).then(
-					lang.hitch(this, 'changeRoom'),
+					lang.hitch(this, function(roomdn) {
+						this.standbyDuring(this._acquireRoom(roomdn, true)).then(undefined, lang.hitch(this, 'changeRoom'));
+					}),
 					lang.hitch(this, 'changeRoom')
 				);
 			}
@@ -1051,7 +1068,6 @@ define([
 				size: 'One',
 				label: _('School'),
 				dynamicValues: 'computerroom/schools',
-				value: this._preSelectedSchool,
 				autoHide: true
 			}, {
 				type: ComboBox,
@@ -1061,7 +1077,6 @@ define([
 				size: 'One',
 				depends: 'school',
 				dynamicValues: 'computerroom/rooms',
-				value: this._preSelectedRoom,
 				onChange: lang.hitch(this, function(roomDN) {
 					// display a warning in case the room is already taken
 					var msg = '';
