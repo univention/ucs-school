@@ -33,10 +33,11 @@ define([
 	"dojo/_base/declare",
 	"dojo/_base/lang",
 	"umc/widgets/TextBox",
+	"umc/widgets/Text",
 	"umc/widgets/HiddenInput",
 	"umc/modules/schoolwizards/Wizard",
 	"umc/i18n!umc/modules/schoolwizards"
-], function(declare, lang, TextBox, HiddenInput, Wizard, _) {
+], function(declare, lang, TextBox, Text, HiddenInput, Wizard, _) {
 
 	return declare("umc.modules.schoolwizards.ClassWizard", [Wizard], {
 
@@ -63,8 +64,12 @@ define([
 					type: TextBox,
 					name: 'description',
 					label: _('Description')
+				}, {
+					type: Text,
+					name: 'udm-link',
+					content: this.get_link_to_udm_module()
 				}],
-				layout: [['name', 'description']]
+				layout: [['name', 'description'], ['udm-link']]
 			};
 		},
 

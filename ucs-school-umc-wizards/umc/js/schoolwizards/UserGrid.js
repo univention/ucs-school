@@ -51,29 +51,25 @@ define([
 
 		getGridColumns: function() {
 			return [{
-				name: 'username',
-				label: _('Username'),
-				description: _('Username of the %s.', this.objectNameSingular)
-			}, {
-				name: 'firstname',
-				label: _('Firstname'),
-				description: _('Firstname of the %s.', this.objectNameSingular)
-			}, {
-				name: 'lastname',
-				label: _('Lastname'),
-				description: _('Lastname of the %s.', this.objectNameSingular)
+				name: 'displayname',
+				label: _('Name'),
+				formatter: lang.hitch(this, function(nothing, id) {
+					var item = this._grid.getRowValues(id);
+					return '' + item.displayname + ' (' + item.username + ')';
+				}),
+				description: _('Name of the %s.', this.objectNameSingular)
 			}, {
 				name: 'type',
-				label: _('Type'),
-				description: _('Type of the %s.', this.objectNameSingular)
+				label: _('Role'),
+				description: _('Role of the %s.', this.objectNameSingular)
 			}, {
 				name: 'class',
 				label: _('Class'),
 				description: _('Class of the %s.', this.objectNameSingular)
-			}, {
-				name: 'mailPrimaryAddress',
-				label: _('E-Mail address'),
-				description: _('E-Mail address of the %s.', this.objectNameSingular)
+//			}, {
+//				name: 'mailPrimaryAddress',
+//				label: _('E-Mail address'),
+//				description: _('E-Mail address of the %s.', this.objectNameSingular)
 			}, {
 				name: 'empty',  // workaround: EnhancedGrid
 				label: '&nbsp;',
@@ -104,9 +100,22 @@ define([
 				name: 'type',
 				label: _('Role'),
 				size: 'TwoThirds',
-				dynamicValues: 'schoolwizards/users/roles',
-				umcpCommand: lang.hitch(this, 'umcpCommand')
-				// FIXME: dynamic options → school
+				staticValues: [{
+					id: 'all',
+					label: _('All')
+				}, {
+					id: 'student',
+					label: _('Student')
+				}, {
+					id: 'teacher',
+					label: _('Teacher')
+				}, {
+					id: 'staff',
+					label: _('Staff')
+				}, {
+					id: 'teachersAndStaff',
+					label: _('Teachers and staff')
+				}]
 			}, {
 				type: TextBox,
 				size: 'TwoThirds',

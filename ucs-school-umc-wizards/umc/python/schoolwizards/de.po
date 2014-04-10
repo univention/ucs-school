@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-wizards\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2014-04-10 13:05+0200\n"
+"POT-Creation-Date: 2014-04-10 17:44+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -42,7 +42,7 @@ msgstr "Die Schule konnte nicht erstellt werden"
 msgid "Could not create user"
 msgstr "Der Benutzer konnte nicht erstellt werden"
 
-#: umc/python/schoolwizards/__init__.py:320
+#: umc/python/schoolwizards/__init__.py:323
 msgid "Device with IP address"
 msgstr "Gerät mit IP-Adresse"
 
@@ -71,6 +71,10 @@ msgstr "Ungültiger Wert für 'Typ'-Eigenschaft"
 #: umc/python/schoolwizards/__init__.py:280
 msgid "MAC address is already in use"
 msgstr "MAC-Adresse wird bereits benutzt"
+
+#: umc/python/schoolwizards/__init__.py:322
+msgid "Mac OS X"
+msgstr ""
 
 #: umc/python/schoolwizards/__init__.py:158
 msgid "Mail address is already in use"
@@ -102,7 +106,7 @@ msgstr "Die Länge von System- und Domänennamen ist größer als 63 Zeichen."
 msgid "The user could not be created"
 msgstr "Der Benutzer konnte nicht erstellt werden"
 
-#: umc/python/schoolwizards/__init__.py:327
+#: umc/python/schoolwizards/__init__.py:331
 msgid "Univention Corporate Client"
 msgstr "Univention Corporate Client"
 
@@ -115,7 +119,7 @@ msgstr "Unbekannte Schule"
 msgid "Username is already in use"
 msgstr "Benutzername wird bereits benutzt"
 
-#: umc/python/schoolwizards/__init__.py:320
+#: umc/python/schoolwizards/__init__.py:321
 msgid "Windows system"
 msgstr "Windows-System"
 

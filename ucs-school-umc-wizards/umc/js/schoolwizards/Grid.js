@@ -209,14 +209,16 @@ define([
 		createObject: function() {
 			this.createWizard({
 				editMode: false,
-				$dn$: null
+				$dn$: null,
+				objectType: null,
 			});
 		},
 
 		editObjects: function(ids, items) {
 			this.createWizard({
 				editMode: true,
-				$dn$: items[0].$dn$
+				$dn$: items[0].$dn$,
+				objectType: items[0].objectType
 			});
 		},
 

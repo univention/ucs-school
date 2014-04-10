@@ -54,19 +54,23 @@ define([
 				widgets: [{
 					type: TextBox,
 					name: 'displayname',
-					label: _('Display name of the school'),
+					label: _('Name of the school'),
 					description: _("The given value will be shown as school's name within UCS@school."),
 					required: true
 				}, {
 					type: TextBox,
 					name: 'name',
-					label: _("LDAP name of the school OU"),
+					label: _("Internal school id"),
 					description: _('The given value will be used as object name for the new school OU object within the LDAP directory. It may consist of the letters a-z, the digits 0-9 and underscores. Usually it is safe to keep the suggested value.'),
 					regExp: '^[a-zA-Z0-9](([a-zA-Z0-9_]*)([a-zA-Z0-9]$))?$',
 					depends: ['displayname'],
-					dynamicValue: function(values) {
+					dynamicValue: lang.hitch(this, function(values) {
+						if (this.editMode) {
+							return values.name;
+						}
 						return values.displayname.replace(/[^a-zA-Z0-9]/g, '');
-					},
+					}),
+					disabled: this.editMode,
 					required: true
 				}, {
 					type: TextBox,
@@ -76,7 +80,7 @@ define([
 					description: _('The computer name must be a valid NetBIOS hostname. This requires a maximum length of 12 characters.'),
 					maxLength: 12,
 					required: true,
-					disabled: this.editMode
+					visible: !this.editMode
 				}, {
 					name: 'samba-shares',
 					type: ComboBox,
@@ -103,7 +107,7 @@ define([
 					label: _('School information'),
 					layout: layout
 				}, {
-					label: _('File servers'),
+					label: _('Advanced settings'),
 					open: false,
 					layout: ['samba-shares', 'class-shares']
 				}];

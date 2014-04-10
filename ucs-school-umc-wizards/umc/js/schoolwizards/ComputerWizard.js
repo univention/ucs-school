@@ -34,11 +34,12 @@ define([
 	"dojo/_base/lang",
 	"umc/tools",
 	"umc/widgets/TextBox",
+	"umc/widgets/Text",
 	"umc/widgets/ComboBox",
 	"umc/widgets/HiddenInput",
 	"umc/modules/schoolwizards/Wizard",
 	"umc/i18n!umc/modules/schoolwizards"
-], function(declare, lang, tools, TextBox, ComboBox, HiddenInput, Wizard, _) {
+], function(declare, lang, tools, TextBox, Text, ComboBox, HiddenInput, Wizard, _) {
 
 	return declare("umc.modules.schoolwizards.ComputerWizard", [Wizard], {
 
@@ -121,12 +122,17 @@ define([
 					type: TextBox,
 					name: 'inventoryNumber',
 					label: _('Inventory number')
+				}, {
+					type: Text,
+					name: 'udm-link',
+					content: this.get_link_to_udm_module()
 				}],
 				layout: [
 					['name'],
 					['ipAddress', 'subnetMask'],
 					['mac'],
-					['inventoryNumber']
+					['inventoryNumber'],
+					['udm-link']
 				]
 			};
 		},

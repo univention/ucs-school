@@ -33,10 +33,11 @@ define([
 	"dojo/_base/declare",
 	"dojo/_base/lang",
 	"umc/dialog",
+	"umc/app",
 	"umc/tools",
 	"umc/widgets/Wizard",
 	"umc/i18n!umc/modules/schoolwizards"
-], function(declare, lang, dialog, tools, Wizard, _) {
+], function(declare, lang, dialog, app, tools, Wizard, _) {
 
 	return declare("umc.modules.schoolwizards.Wizard", [Wizard], {
 
@@ -47,6 +48,7 @@ define([
 		editMode: null,  // flag for edit mode
 		$dn$: null,  // the object we edit
 		school: null,  // the school of that object
+		objectType: null, // the UDM type of that object
 
 		loadingDeferred: null,
 
@@ -55,6 +57,18 @@ define([
 			if (this.editMode) {
 				this.loadingDeferred = this.standbyDuring(this.loadValues());
 			}
+		},
+
+		get_link_to_udm_module: function() {
+			var udm_link = '';
+			if (this.editMode && this.objectType && app.getModule('udm', 'navigation')) {
+				var objectType = this.objectType.replace(/"/g, '\\"');
+				var dn = this.$dn$.replace(/"/g, '\\"');
+
+				var link = 'require("umc/app").openModule("udm", "navigation", {"openObject": {"objectType":"' + objectType + '", "objectDN": "' + dn + '"}})';
+				udm_link = _('<a %s>special settings</a>', 'href="javascript:void(0)" onclick="' + link.replace(/"/g, "'") + '"');
+			}
+			return udm_link;
 		},
 
 		loadValues: function() {

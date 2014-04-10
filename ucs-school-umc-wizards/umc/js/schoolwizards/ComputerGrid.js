@@ -54,11 +54,11 @@ define([
 				name: 'name',
 				label: _('Name')
 			}, {
-				name: 'ipAddress',
-				label: _('IP address')
-			}, {
 				name: 'type',
 				label: _('Type')
+			}, {
+				name: 'ipAddress',
+				label: _('IP address')
 			}, {
 				name: 'mac',
 				label: _('MAC address')
@@ -91,7 +91,15 @@ define([
 					label: _('All')
 				}],
 				dynamicValues: 'schoolwizards/computers/types',
-				umcpCommand: lang.hitch(this, 'umcpCommand'),
+				umcpCommand: lang.hitch(this, function() {
+					return this.umcpCommand.apply(this.umcpCommand, arguments).then(function(response) {
+						response.result.unshift({
+							id: 'all',
+							label: _('All')
+						});
+						return response;
+					});
+				}),
 				sortDynamicValues: false
 			}, {
 				type: TextBox,

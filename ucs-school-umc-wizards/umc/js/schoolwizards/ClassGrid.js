@@ -56,12 +56,6 @@ define([
 			}, {
 				name: 'description',
 				label: _('Description')
-			}, {
-				name: 'teachers',
-				label: _('# of teachers')
-			}, {
-				name: 'students',
-				label: _('# of students')
 			}];
 		},
 
@@ -79,19 +73,6 @@ define([
 				umcpCommand: lang.hitch(this, 'umcpCommand'),
 				autoHide: true
 			}, {
-				type: ComboBox,
-				name: 'type',
-				size: 'TwoThirds',
-				label: _('Type'),
-				staticValues: [{
-					id: 'name',
-					label: _('Name')
-				}, {
-					id: 'description',
-					label: _('Description')
-				}],
-				sortDynamicValues: false
-			}, {
 				type: TextBox,
 				size: 'TwoThirds',
 				name: 'filter',
@@ -100,7 +81,7 @@ define([
 		},
 
 		getSearchLayout: function() {
-			return [['school', 'type', 'filter', 'submit']];
+			return [['school', 'filter', 'submit']];
 		}
 	});
 });

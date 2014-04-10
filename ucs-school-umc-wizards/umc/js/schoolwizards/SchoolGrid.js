@@ -55,11 +55,11 @@ define([
 
 		getGridColumns: function() {
 			return [{
-				name: 'name',
-				label: _('OU Name')
-			}, {
 				name: 'displayname',
-				label: _('Display name')
+				label: _('Name of the school')
+			}, {
+				name: 'name',
+				label: _('Internal school id')
 			}];
 		},
 

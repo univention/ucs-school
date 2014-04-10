@@ -36,12 +36,13 @@ define([
 	"dojo/topic",
 	"umc/tools",
 	"umc/widgets/TextBox",
+	"umc/widgets/Text",
 	"umc/widgets/ComboBox",
 	"umc/widgets/PasswordInputBox",
 	"umc/widgets/HiddenInput",
 	"umc/modules/schoolwizards/Wizard",
 	"umc/i18n!umc/modules/schoolwizards"
-], function(declare, lang, array, topic, tools, TextBox, ComboBox, PasswordInputBox, HiddenInput, Wizard, _) {
+], function(declare, lang, array, topic, tools, TextBox, Text, ComboBox, PasswordInputBox, HiddenInput, Wizard, _) {
 
 	return declare("umc.modules.schoolwizards.UserWizard", [Wizard], {
 
@@ -72,7 +73,7 @@ define([
 			return {
 				name: 'general',
 				headerText: this.description,
-				helpText: this.editMode ? _('Specify the type of user.') : _('Specify the type of user to be created.'),
+				helpText: this.editMode ? _('Specify the role of user.') : _('Specify the role of user to be created.'),
 				widgets: [{
 					name: 'school',
 					label: _('School'),
@@ -152,13 +153,18 @@ define([
 						// ...and another one for Bug #30109
 						return this.getWidget('user', 'password').isValid();
 					})
+				}, {
+					type: Text,
+					name: 'udm-link',
+					content: this.get_link_to_udm_module()
 				}],
 				layout: [
 					['firstname', 'lastname'],
 					['username'],
 					['class', 'newClass'],
 					['mailPrimaryAddress'],
-					['password']
+					['password'],
+					['udm-link']
 				]
 			};
 		},
