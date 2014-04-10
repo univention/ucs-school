@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2013 Univention GmbH
+ * Copyright 2012-2014 Univention GmbH
  *
  * http://www.univention.de/
  *
@@ -34,39 +34,50 @@ define([
 	"dojo/_base/lang",
 	"dojo/_base/array",
 	"dojo/topic",
-	"umc/app",
 	"umc/tools",
 	"umc/widgets/TextBox",
 	"umc/widgets/ComboBox",
 	"umc/widgets/PasswordInputBox",
+	"umc/widgets/HiddenInput",
 	"umc/modules/schoolwizards/Wizard",
 	"umc/i18n!umc/modules/schoolwizards"
-], function(declare, lang, array, topic, app, tools, TextBox, ComboBox, PasswordInputBox, Wizard, _) {
+], function(declare, lang, array, topic, tools, TextBox, ComboBox, PasswordInputBox, HiddenInput, Wizard, _) {
 
-	return declare("umc.modules.schoolwizards.UserWizard", [ Wizard ], {
-
-		createObjectCommand: 'schoolwizards/users/create',
+	return declare("umc.modules.schoolwizards.UserWizard", [Wizard], {
 
 		postMixInProperties: function() {
 			this.inherited(arguments);
+			this.pages = [this.getGeneralPage(), this.getUserPage()];
+		},
 
-			var udm_link = '';
-			if (app.getModule('udm', 'users/user')) {
-				var link = 'href="javascript:void(0)" onclick="require(\'umc/app\').openModule(\'udm\', \'users/user\')"';
-				udm_link = _('This assistant provides a simple way to create new UCS@school users. For the advanced administration of users (create, modify, delete) the UMC module <a %s>Users</a> can be used.', link) + '<br><br>';
+		startup: function() {
+			this.inherited(arguments);
+			if (this.editMode) {
+				this.loadingDeferred.always(lang.hitch(this, function() {
+					// hack to go to the next page
+					this._next(this.next(null));
+				}));
 			}
+		},
 
-			this.pages = [{
+		hasPrevious: function() {
+			if (this.editMode) {
+				// make it impossible to show the general page
+				return false;
+			}
+			return this.inherited(arguments);
+		},
+
+		getGeneralPage: function() {
+			return {
 				name: 'general',
 				headerText: this.description,
-				helpText: udm_link + _('Specify the type of user to be created.'),
+				helpText: this.editMode ? _('Specify the type of user.') : _('Specify the type of user to be created.'),
 				widgets: [{
-					type: ComboBox,
 					name: 'school',
 					label: _('School'),
-					dynamicValues: 'schoolwizards/schools',
-					umcpCommand: lang.hitch(this, 'umcpCommand'),
-					autoHide: true
+					type: HiddenInput,
+					value: this.school
 				}, {
 					type: ComboBox,
 					name: 'type',
@@ -86,10 +97,14 @@ define([
 					}]
 				}],
 				layout: [['school'], ['type']]
-			}, {
+			};
+		},
+
+		getUserPage: function() {
+			return {
 				name: 'user',
 				headerText: this.description,
-				helpText: _('Enter details to create a new user'),
+				helpText: this.editMode ? _('Enter details of the user') : _('Enter details to create a new user'),
 				buttons: [{
 					name: 'newClass',
 					label: _('Create a new class'),
@@ -138,12 +153,14 @@ define([
 						return this.getWidget('user', 'password').isValid();
 					})
 				}],
-				layout: [['firstname', 'lastname'],
-			         	 ['username'],
-			         	 ['class', 'newClass'],
-			         	 ['mailPrimaryAddress'],
-			         	 ['password']]
-			}];
+				layout: [
+					['firstname', 'lastname'],
+					['username'],
+					['class', 'newClass'],
+					['mailPrimaryAddress'],
+					['password']
+				]
+			};
 		},
 
 		restart: function() {
@@ -202,5 +219,4 @@ define([
 			}
 		}
 	});
-
 });

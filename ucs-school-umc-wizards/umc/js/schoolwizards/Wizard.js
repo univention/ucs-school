@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2013 Univention GmbH
+ * Copyright 2012-2014 Univention GmbH
  *
  * http://www.univention.de/
  *
@@ -33,17 +33,44 @@ define([
 	"dojo/_base/declare",
 	"dojo/_base/lang",
 	"umc/dialog",
+	"umc/tools",
 	"umc/widgets/Wizard",
 	"umc/i18n!umc/modules/schoolwizards"
-], function(declare, lang, dialog, Wizard, _) {
+], function(declare, lang, dialog, tools, Wizard, _) {
 
-	return declare("umc.modules.schoolwizards.Wizard", [ Wizard ], {
+	return declare("umc.modules.schoolwizards.Wizard", [Wizard], {
 
-		createObjectCommand: null,
 		umcpCommand: null,
-
-		// set via the module
 		description: null,
+		store: null,
+
+		editMode: null,  // flag for edit mode
+		$dn$: null,  // the object we edit
+		school: null,  // the school of that object
+
+		loadingDeferred: null,
+
+		startup: function() {
+			this.inherited(arguments);
+			if (this.editMode) {
+				this.loadingDeferred = this.standbyDuring(this.loadValues());
+			}
+		},
+
+		loadValues: function() {
+			var load = this.store.get({
+				$dn$: this.$dn$
+			});
+			load.then(lang.hitch(this, function(result) {
+				tools.forIn(result, lang.hitch(this, function(key, value) {
+					var widget = this.getWidget(key);
+					if (widget) {
+						widget.set('value', value);
+					}
+				}));
+			}));
+			return load;
+		},
 
 		hasNext: function() {
 			return true;
@@ -54,14 +81,11 @@ define([
 			this.updateWidgets(currentPage);
 			if (this._getPageIndex(currentPage) === (this.pages.length - 1 )) {
 				if (this._validateForm()) {
-					return this._createObject().then(lang.hitch(this, function(result) {
-						if (result) {
-							this.addNote();
-							this.restart();
-							this.focusFirstWidget(currentPage);
-						}
-						return currentPage;
-					}));
+					if (this.editMode) {
+						return this.finishEditMode(currentPage);
+					} else {
+						return this.finishAddMode(currentPage);
+					}
 				} else {
 					return currentPage;
 				}
@@ -69,35 +93,44 @@ define([
 			return nextPage;
 		},
 
+		finishAddMode: function(currentPage) {
+			return this._createObject().then(lang.hitch(this, function(result) {
+				if (result) {
+					this.addNote();
+					this.restart();
+					this.focusFirstWidget(currentPage);
+				}
+				return currentPage;
+			}));
+		},
+
+		finishEditMode: function(currentPage) {
+			var values = this.getValues();
+			return this.standbyDuring(this.store.put(values)).then(lang.hitch(this, function(response) {
+				this.onFinished();  // close this wizard
+				return currentPage;
+			}));
+		},
+
 		_validateForm: function() {
 			var form = this.selectedChildWidget.get('_form');
-			if (! form.validate()) {
+			if (!form.validate()) {
 				var widgets = form.getInvalidWidgets();
 				form.getWidget(widgets[0]).focus();
 				return false;
-			} else {
-				return true;
 			}
+			return true;
 		},
 
 		_createObject: function() {
-			this.standby(true);
 			var values = this.getValues();
-			return this.umcpCommand(this.createObjectCommand , values).then(
-				lang.hitch(this, function(response) {
-					this.standby(false);
-					if (response.result) {
-						dialog.alert(response.result.message);
-						return false;
-					} else {
-						return true;
-					}
-				}),
-				lang.hitch(this, function(result) {
-					this.standby(false);
+			return this.standbyDuring(this.store.add(values)).then(lang.hitch(this, function(response) {
+				if (response.result) {
+					dialog.alert(response.result.message);
 					return false;
-				})
-			);
+				}
+				return true;
+			}), lang.hitch(this, function(result) { return false; }));
 		},
 
 		restart: function() {
@@ -115,5 +148,4 @@ define([
 			this.getWidget(pageName, layout).focus();
 		}
 	});
-
 });

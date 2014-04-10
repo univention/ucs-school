@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2013 Univention GmbH
+ * Copyright 2012-2014 Univention GmbH
  *
  * http://www.univention.de/
  *
@@ -34,62 +34,38 @@ define([
 	"dojo/_base/lang",
 	"dojo/topic",
 	"umc/widgets/Module",
-	"umc/modules/schoolwizards/UserWizard",
-	"umc/modules/schoolwizards/ClassWizard",
-	"umc/modules/schoolwizards/ComputerWizard",
-	"umc/modules/schoolwizards/SchoolWizard",
+	"umc/modules/schoolwizards/UserGrid",
+	"umc/modules/schoolwizards/ClassGrid",
+	"umc/modules/schoolwizards/ComputerGrid",
+	"umc/modules/schoolwizards/SchoolGrid",
 	"umc/i18n!umc/modules/schoolwizards"
-], function(declare, lang, topic, Module, UserWizard, ClassWizard, ComputerWizard, SchoolWizard, _) {
+], function(declare, lang, topic, Module, UserGrid, ClassGrid, ComputerGrid, SchoolGrid, _) {
+	var grids = {
+		'schoolwizards/users': UserGrid,
+		'schoolwizards/classes': ClassGrid,
+		'schoolwizards/computers': ComputerGrid,
+		'schoolwizards/schools': SchoolGrid
+	};
 
-	return declare("umc.modules.schoolwizards", [ Module ], {
+	return declare("umc.modules.schoolwizards", [Module], {
 
-		// internal reference to our wizard
-		_wizard: null,
+		_grid: null,
 
 		buildRendering: function() {
 			this.inherited(arguments);
-			this._wizard = this._getWizard(this.moduleFlavor);
-			if (this._wizard) {
-				this.addChild(this._wizard);
-
-				this._wizard.on('finished', lang.hitch(this, function() {
-					topic.publish('/umc/tabs/close', this);
-				}));
-				this._wizard.on('cancel', lang.hitch(this, function() {
-					topic.publish('/umc/tabs/close', this);
-				}));
-			}
-
-			if ('onShow' in this._wizard) {
-				// send a reload command to wizard
-				this.on('show', lang.hitch(this, function(evt) {
-					this._wizard.onShow();
-				}));
-			}
+			this._grid = this._getGrid();
+			this.addChild(this._grid);
 		},
 
-		_getWizard: function(moduleFlavor) {
-			var Wizard = null;
-			switch (moduleFlavor) {
-				case 'schoolwizards/users':
-					Wizard = UserWizard;
-					break;
-				case 'schoolwizards/classes':
-					Wizard = ClassWizard;
-					break;
-				case 'schoolwizards/computers':
-					Wizard = ComputerWizard;
-					break;
-				case 'schoolwizards/schools':
-					Wizard = SchoolWizard;
-					break;
-				default: return null;
-			}
-			return new Wizard({
+		_getGrid: function() {
+			var Grid = grids[this.moduleFlavor];
+
+			return new Grid({
 				description: this.description,
-				umcpCommand: lang.hitch(this, 'umcpCommand')
+				umcpCommand: lang.hitch(this, 'umcpCommand'),
+				moduleFlavor: this.moduleFlavor,
+				module: this
 			});
 		}
 	});
-
 });

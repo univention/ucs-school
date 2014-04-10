@@ -1,3 +1,10 @@
+ucs-school-umc-wizards (4.0.2-1) unstable; urgency=low
+
+  * Bug #34337: [WIP] implement mock up for modification and deletion of schools,
+  	users, classes and computers
+
+ -- Florian Best <best@univention.de>  Thu, 10 Apr 2014 13:17:13 +0200
+
 ucs-school-umc-wizards (4.0.1-1) unstable; urgency=low
 
   * Bug #34173: extended "create school" wizard by adding display name widget

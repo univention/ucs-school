@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2013 Univention GmbH
+ * Copyright 2012-2014 Univention GmbH
  *
  * http://www.univention.de/
  *
@@ -33,25 +33,29 @@ define([
 	"dojo/_base/declare",
 	"dojo/_base/lang",
 	"umc/widgets/TextBox",
+	"umc/widgets/ComboBox",
 	"umc/modules/schoolwizards/Wizard",
 	"umc/i18n!umc/modules/schoolwizards"
-], function(declare, lang, TextBox, Wizard, _) {
+], function(declare, lang, TextBox, ComboBox, Wizard, _) {
 
-	return declare("umc.modules.schoolwizards.SchoolWizard", [ Wizard ], {
-
-		createObjectCommand: 'schoolwizards/schools/create',
+	return declare("umc.modules.schoolwizards.SchoolWizard", [Wizard], {
 
 		postMixInProperties: function() {
 			this.inherited(arguments);
-			this.pages = [{
+			this.pages = [this.getSchoolPage()];
+			this.standbyOpacity = 1;
+		},
+
+		getSchoolPage: function() {
+			return {
 				name: 'school',
 				headerText: this.description,
-				helpText: _('Enter details to create all necessary structures for a new school.'),
+//				helpText: this.editMode ? _('Enter school details') : _('Enter details to create all necessary structures for a new school.'),
 				widgets: [{
 					type: TextBox,
 					name: 'displayname',
 					label: _('Display name of the school'),
-					description: _('The given value will be shown as school\'s name within UCS@school.'),
+					description: _("The given value will be shown as school's name within UCS@school."),
 					required: true
 				}, {
 					type: TextBox,
@@ -60,7 +64,9 @@ define([
 					description: _('The given value will be used as object name for the new school OU object within the LDAP directory. It may consist of the letters a-z, the digits 0-9 and underscores. Usually it is safe to keep the suggested value.'),
 					regExp: '^[a-zA-Z0-9](([a-zA-Z0-9_]*)([a-zA-Z0-9]$))?$',
 					depends: ['displayname'],
-					dynamicValue: function(values) { return values.displayname.replace(/[^a-zA-Z0-9]/g, ''); },
+					dynamicValue: function(values) {
+						return values.displayname.replace(/[^a-zA-Z0-9]/g, '');
+					},
 					required: true
 				}, {
 					type: TextBox,
@@ -69,14 +75,40 @@ define([
 					regExp: '^\\w+(\\w|-)*$',
 					description: _('The computer name must be a valid NetBIOS hostname. This requires a maximum length of 12 characters.'),
 					maxLength: 12,
-					required: true
+					required: true,
+					disabled: this.editMode
+				}, {
+					name: 'samba-shares',
+					type: ComboBox,
+					label: _('Server for Windows home directories'),
+					staticValues: []
+				}, {
+					name: 'class-shares',
+					type: ComboBox,
+					label: _('Server for class shares'),
+					staticValues: []
 				}],
-				layout: [['displayname'],
-			         	 ['name'],
-			         	 ['schooldc']]
-			}];
+				layout: this.getSchoolPageLayout()
+			};
+		},
 
-			this.standbyOpacity = 1;
+		getSchoolPageLayout: function() {
+			var layout = [
+				['displayname'],
+				['name'],
+				['schooldc']
+			];
+			if (this.editMode) {
+				return [{
+					label: _('School information'),
+					layout: layout
+				}, {
+					label: _('File servers'),
+					open: false,
+					layout: ['samba-shares', 'class-shares']
+				}];
+			}
+			return layout;
 		},
 
 		buildRendering: function() {
@@ -109,5 +141,4 @@ define([
 			this.getPage('school').addNote(message);
 		}
 	});
-
 });

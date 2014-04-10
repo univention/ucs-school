@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2013 Univention GmbH
+ * Copyright 2012-2014 Univention GmbH
  *
  * http://www.univention.de/
  *
@@ -35,27 +35,51 @@ define([
 	"umc/tools",
 	"umc/widgets/TextBox",
 	"umc/widgets/ComboBox",
+	"umc/widgets/HiddenInput",
 	"umc/modules/schoolwizards/Wizard",
 	"umc/i18n!umc/modules/schoolwizards"
-], function(declare, lang, tools, TextBox, ComboBox, Wizard, _) {
+], function(declare, lang, tools, TextBox, ComboBox, HiddenInput, Wizard, _) {
 
-	return declare("umc.modules.schoolwizards.ComputerWizard", [ Wizard ], {
-
-		createObjectCommand: 'schoolwizards/computers/create',
+	return declare("umc.modules.schoolwizards.ComputerWizard", [Wizard], {
 
 		postMixInProperties: function() {
 			this.inherited(arguments);
-			this.pages = [{
+			this.pages = this.getPages();
+		},
+
+		startup: function() {
+			this.inherited(arguments);
+			if (this.editMode) {
+				this.loadingDeferred.always(lang.hitch(this, function() {
+					// hack to go to the next page
+					this._next(this.next(null));
+				}));
+			}
+		},
+
+		hasPrevious: function() {
+			if (this.editMode) {
+				// make it impossible to show the general page
+				return false;
+			}
+			return this.inherited(arguments);
+		},
+
+		getPages: function() {
+			var general = this.getGeneralPage();
+			var computer = this.getComputerPage();
+			return [general, computer];
+		},
+
+		getGeneralPage: function() {
+			return {
 				name: 'general',
 				headerText: this.description,
 				helpText: _('Specify the computer type.'),
 				widgets: [{
-					type: ComboBox,
 					name: 'school',
-					label: _('School'),
-					dynamicValues: 'schoolwizards/schools',
-					umcpCommand: lang.hitch(this, 'umcpCommand'),
-					autoHide: true
+					type: HiddenInput,
+					value: this.school
 				}, {
 					type: ComboBox,
 					name: 'type',
@@ -65,10 +89,14 @@ define([
 					sortDynamicValues: false
 				}],
 				layout: [['school'], ['type']]
-			}, {
+			};
+		},
+
+		getComputerPage: function() {
+			return {
 				name: 'computer',
 				headerText: this.description,
-				helpText: _('Enter details to create a new computer.'),
+				helpText: this.editMode ? _('Enter details of the computer.') : _('Enter details to create a new computer.'),
 				widgets: [{
 					type: TextBox,
 					name: 'name',
@@ -94,11 +122,13 @@ define([
 					name: 'inventoryNumber',
 					label: _('Inventory number')
 				}],
-				layout: [['name'],
-			         	 ['ipAddress', 'subnetMask'],
-			         	 ['mac'],
-			         	 ['inventoryNumber']]
-			}];
+				layout: [
+					['name'],
+					['ipAddress', 'subnetMask'],
+					['mac'],
+					['inventoryNumber']
+				]
+			};
 		},
 
 		restart: function() {
@@ -115,5 +145,4 @@ define([
 			this.getPage('computer').addNote(message);
 		}
 	});
-
 });

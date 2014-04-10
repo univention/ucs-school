@@ -12,32 +12,26 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-msgid "Add class"
-msgstr "Klasse hinzufügen"
+msgid "School classes"
+msgstr "Schul-Klassen"
 
-msgid "Add computer"
-msgstr "Computer hinzufügen"
+msgid "School computers"
+msgstr "Schul-Computer"
 
-msgid "Add school"
-msgstr "Schule hinzufügen"
+msgid "School users"
+msgstr "Schul-Benutzer"
 
-msgid "Add user"
-msgstr "Benutzer hinzufügen"
+msgid "Schools"
+msgstr "Schulen"
 
-msgid "Create a new class"
-msgstr "Erstellen einer neuen Klasse"
+msgid "Manage school users"
+msgstr "Schul-Benutzer verwalten"
 
-msgid "Create a new computer"
-msgstr "Erstellen eines neuen Computers"
+msgid "Manage school classes"
+msgstr "Schul-Klassen verwalten"
 
-msgid "Create a new school"
-msgstr "Erstellen einer neuen Schule"
+msgid "Manage school computers"
+msgstr "Schul-Computer verwalten"
 
-msgid "Create a new user"
-msgstr "Erstellen eines neuen Benutzers"
-
-#~ msgid "School wizards"
-#~ msgstr "Schulwizards"
-
-#~ msgid "Various wizards for UCS@school"
-#~ msgstr "Verschiedene Wizards für UCS@school"
+msgid "Manage schools"
+msgstr "Schulen verwalten"

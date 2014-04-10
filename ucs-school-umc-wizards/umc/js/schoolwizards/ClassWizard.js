@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2013 Univention GmbH
+ * Copyright 2012-2014 Univention GmbH
  *
  * http://www.univention.de/
  *
@@ -33,28 +33,27 @@ define([
 	"dojo/_base/declare",
 	"dojo/_base/lang",
 	"umc/widgets/TextBox",
-	"umc/widgets/ComboBox",
+	"umc/widgets/HiddenInput",
 	"umc/modules/schoolwizards/Wizard",
 	"umc/i18n!umc/modules/schoolwizards"
-], function(declare, lang, TextBox, ComboBox, Wizard, _) {
+], function(declare, lang, TextBox, HiddenInput, Wizard, _) {
 
-	return declare("umc.modules.schoolwizards.ClassWizard", [ Wizard ], {
-
-		createObjectCommand: 'schoolwizards/classes/create',
+	return declare("umc.modules.schoolwizards.ClassWizard", [Wizard], {
 
 		postMixInProperties: function() {
 			this.inherited(arguments);
-			this.pages = [{
+			this.pages = [this.getClassPage()];
+		},
+
+		getClassPage: function() {
+			return {
 				name: 'class',
 				headerText: this.description,
-				helpText: _('Enter details to create a new class.'),
+				helpText: this.editMode ? _('Enter details of the class.') : _('Enter details to create a new class.'),
 				widgets: [{
-					type: ComboBox,
 					name: 'school',
-					label: _('School'),
-					dynamicValues: 'schoolwizards/schools',
-					umcpCommand: lang.hitch(this, 'umcpCommand'),
-					autoHide: true
+					type: HiddenInput,
+					value: this.school
 				}, {
 					type: TextBox,
 					name: 'name',
@@ -65,8 +64,8 @@ define([
 					name: 'description',
 					label: _('Description')
 				}],
-				layout: [['school'], ['name', 'description']]
-			}];
+				layout: [['name', 'description']]
+			};
 		},
 
 		restart: function() {
@@ -82,5 +81,4 @@ define([
 			this.getPage('class').addNote(message);
 		}
 	});
-
 });
