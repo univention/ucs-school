@@ -210,7 +210,7 @@ define([
 			this.createWizard({
 				editMode: false,
 				$dn$: null,
-				objectType: null,
+				objectType: null
 			});
 		},
 
