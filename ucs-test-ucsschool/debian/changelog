@@ -1,3 +1,17 @@
+ucs-test-ucsschool (1.0.8-1) unstable; urgency=low
+
+  * Bug # 34281 Test password reset for students/teachers, add wait replication
+  * Bug # 34477 add looking for printer in the wrong OU
+  * Bug # 34496 add test printermoderation
+
+ -- Ammar Najjar <najjar@univention.de>  Fri, 11 Apr 2014 12:17:36 +0200
+
+ucs-test-ucsschool (1.0.7-1) unstable; urgency=low
+
+  * Bug #34368: add german version check
+
+ -- Ammar Najjar <najjar@univention.de>  Wed, 02 Apr 2014 10:35:37 +0200
+
 ucs-test-ucsschool (1.0.6-1) unstable; urgency=low
 
   * Bug #34173: fixed syntax error
