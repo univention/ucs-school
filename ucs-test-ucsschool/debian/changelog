@@ -1,3 +1,9 @@
+ucs-test-ucsschool (1.0.10-1) unstable; urgency=low
+
+  * Bug 34496 add executable flag to 07_printermoderation_check
+
+ -- Ammar Najjar <najjar@univention.de>  Fri, 11 Apr 2014 12:58:21 +0200
+
 ucs-test-ucsschool (1.0.9-1) unstable; urgency=low
 
   * Bug 34496 add executable flag to 07_printermoderation_check
