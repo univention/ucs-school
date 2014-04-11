@@ -53,7 +53,7 @@ school_ou() {
 	local ldap_hostdn
 
 	if [ -n "$1" ] ; then
-		ldap_hostdn="$1"
+		ldap_hostdn=",$1" # add leading comma, in case only the DN of the OU is given
 	else
 		ldap_hostdn="$(/usr/sbin/univention-config-registry get ldap/hostdn)"
 	fi
@@ -83,7 +83,7 @@ school_dn() {
 	local ldap_hostdn
 
 	if [ -n "$1" ] ; then
-		ldap_hostdn="$1"
+		ldap_hostdn=",$1" # add leading comma, in case only the DN of the OU is given
 	else
 		ldap_hostdn="$(/usr/sbin/univention-config-registry get ldap/hostdn)"
 	fi

@@ -1,3 +1,9 @@
+ucs-school-lib (5.0.2-1) unstable; urgency=medium
+
+  * Bug #33506: fixed school_ou and school_dn
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 11 Apr 2014 12:25:32 +0200
+
 ucs-school-lib (5.0.1-2) unstable; urgency=medium
 
   * Add roleshares python module and small support modules (Bug #34335)
