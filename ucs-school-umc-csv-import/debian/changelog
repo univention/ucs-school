@@ -1,3 +1,9 @@
+ucs-school-umc-csv-import (1.0.8-1) unstable; urgency=low
+
+  * Bug #34199: Move lib code to ucsschool-lib and import it here
+
+ -- Dirk Wiesenthal <wiesenthal@univention.de>  Fri, 11 Apr 2014 15:44:19 +0200
+
 ucs-school-umc-csv-import (1.0.7-1) unstable; urgency=low
 
   * Bug #34199: Refactor code to be usable as a library, added support for

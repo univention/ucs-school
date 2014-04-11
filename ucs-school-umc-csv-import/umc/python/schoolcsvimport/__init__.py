@@ -45,8 +45,7 @@ from univention.config_registry import ConfigRegistry
 import univention.admin.modules as udm_modules
 
 from ucsschool.lib.schoolldap import SchoolBaseModule, open_ldap_connection
-
-from univention.management.console.modules.schoolcsvimport.util import Student, Teacher, Staff, TeacherAndStaff, SchoolClass, generate_random
+from ucsschool.lib.models import Student, Teacher, Staff, TeacherAndStaff, SchoolClass, generate_random
 
 _ = Translation('ucs-school-umc-csv-import').translate
 
@@ -243,7 +242,7 @@ class Instance(SchoolBaseModule, ProgressMixin):
 				file_info = self.file_map[file_id]
 				without_school_classes = 'school_class' not in file_info.columns and file_info.user_klass.supports_school_classes
 				if not without_school_classes:
-					all_found_classes = SchoolClass.get_all_udm_class_objects(file_info.school, lo)
+					all_found_classes = SchoolClass.get_all(file_info.school, lo)
 			user = file_info.user_klass(lo, file_info.school, file_info.date_format, attrs)
 			MODULE.process('Going to %s %s %s' % (user.action, file_info.user_klass.__name__, user.username))
 			action = user.action
