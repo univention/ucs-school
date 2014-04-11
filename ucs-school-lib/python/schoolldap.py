@@ -311,41 +311,15 @@ def _init_search_base(ldap_connection, force=False):
 		# search base has already been initiated... we are done
 		return
 
-	# initiate the list of available schools and set the default search base
-	if ldap_connection.binddn.find('ou=') > 0:
-		# we got an OU in the user DN -> school teacher or assistent
-		# restrict the visibility to current school
-		# (note that there can be schools with a DN such as ou=25g18,ou=25,dc=...)
-		schoolDN = ldap_connection.binddn[ldap_connection.binddn.find('ou='):] 
-		school = (ldap_connection.explodeDn( schoolDN, 1 )[0], )  # note: school is a tuple with one element
-		_search_base = SchoolSearchBase(school, school[0], schoolDN)
-		MODULE.info('LDAP_Connection: setting schoolDN: %s' % _search_base.schoolDN)
+	from ucsschool.lib.models import School
+	schools = School.get_all(ldap_connection)
+	school_names = map(lambda school: school.name, schools)
+	if not school_names:
+		MODULE.warn('All Schools: ERROR, COULD NOT FIND ANY OU!!!')
+		_search_base = SchoolSearchBase([''])
 	else:
-		MODULE.warn( 'LDAP_Connection: unable to identify ou of this account - showing all OUs!' )
-		#_ouswitchenabled = True
-		oulist = ucr.get('ucsschool/local/oulist')
-		availableSchools = []
-		if oulist:
-			# OU list override via UCR variable (it can be necessary to adjust the list of
-			# visible schools on specific systems manually)
-			availableSchools = [ x.strip() for x in oulist.split(',') ]
-			MODULE.info( 'LDAP_Connection: availableSchools overridden by UCR variable ucsschool/local/oulist')
-		else:
-			# get a list of available OUs via UDM module container/ou
-			availableSchools = udm_modules.lookup(
-				'container/ou', None, ldap_connection, 'objectClass=ucsschoolOrganizationalUnit',
-				scope='one', superordinate=None,
-				base=ucr.get('ldap/base')
-			)
-			availableSchools = [ou['name'] for ou in availableSchools]
-
-		# use the first available OU as default search base
-		if not availableSchools:
-			MODULE.warn('LDAP_Connection: ERROR, COULD NOT FIND ANY OU!!!')
-			_search_base = SchoolSearchBase([''])
-		else:
-			MODULE.info( 'LDAP_Connection: availableSchools=%s' % availableSchools )
-			_search_base = SchoolSearchBase(availableSchools)
+		MODULE.info('All Schools: school_names=%s' % school_names)
+		_search_base = SchoolSearchBase(school_names)
 
 class SchoolSearchBase(object):
 	"""This class serves a wrapper for all the different search bases (users,
@@ -541,19 +515,20 @@ class SchoolBaseModule( Base ):
 	@LDAP_Connection()
 	def schools( self, request, ldap_user_read = None, ldap_position = None, search_base = None ):
 		"""Returns a list of all available school"""
-		# enforce an update of the list of available schools
-		global _search_base
-		_init_search_base(ldap_user_read, force = True)
-		search_base = _search_base  # copy updated, global SchoolSearchBase instance to local reference
+		from ucsschool.lib.models import School
+		ret = []
+		schools = School.get_all(ldap_user_read)
+		for school in schools:
+			ret.append({'id' : school.name, 'label' : school.display_name})
 
 		# make sure that at least one school OU
 		msg = ''
-		if not search_base.availableSchools[0]:
+		if not ret:
 			request.status = MODULE_ERR
 			msg = _('Could not find any school. You have to create a school before continuing. Use the \'Add school\' UMC module to create one.')
 
 		# return list of school OUs
-		self.finished(request.id, search_base.availableSchools, msg)
+		self.finished(request.id, ret, msg)
 
 	def _groups( self, ldap_connection, school, ldap_base, pattern = None, scope = 'sub' ):
 		"""Returns a list of all groups of the given school"""
