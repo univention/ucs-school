@@ -1,0 +1,125 @@
+#!/usr/share/ucs-test/runner python
+## desc: ucs-school-define_internet_rules_check
+## roles: [domaincontroller_master, domaincontroller_backup, domaincontroller_slave, memberserver]
+## tags: [apptest]
+## exposure: careful
+## packages:  [ucs-school-umc-internetrules]
+
+from univention.lib.umc_connection import UMCConnection
+import sys
+import univention.testing.strings as uts
+import univention.testing.ucr as ucr_test
+import univention.testing.utils as utils
+
+# generate number of random domain names
+def fakeDomains(count):
+	domains = []
+	for i in range(count):
+		d = uts.random_string()
+		domains.append('%s.de' % d)
+	return domains
+
+# define an internet rule
+def defineRule(connection, ruleName, ruleType, domainList, wlan, rulePriority):
+	param = [
+			{
+				'object':
+				{
+					'name':ruleName,
+					'type':ruleType,
+					'domains': domainList,
+					'wlan': wlan,
+					'priority': rulePriority
+					}
+				}
+			]
+	if not connection.request('internetrules/add', param)[0]['success']:
+		utils.fail('Unable to define rule')
+
+# get an existing internet rule
+def getRule(connection, ruleName, expectedResult):
+	if bool(connection.request('internetrules/get', [ruleName])) != expectedResult:
+		utils.fail('Internet rule failed to be fetched')
+
+# modify an existing internet rule
+def modifyRule(connection, ruleName, ruleType, domainList, wlan, rulePriority):
+	param = [
+			{
+				'object':
+				{
+					'name':ruleName,
+					'type':ruleType,
+					'domains': domainList,
+					'wlan': wlan,
+					'priority': rulePriority
+					},
+				'options' : { 'name': ruleName }
+				}
+			]
+	if not connection.request('internetrules/put', param)[0]['success']:
+		utils.fail('Unable to modify rule')
+
+# remove an exisiting internet rule
+def removeRule(connection, ruleName):
+	options = [{ 'object': ruleName }]
+	if not connection.request('internetrules/remove', options )[0]['success']:
+		utils.fail('Unable to remove rule')
+
+# Fetch the values from ucr and check if it matches the correct values
+def checkUcr(ucr, ruleName, ruleType, domainList, wlan, rulePriority, expectedResult):
+	ucr.load()
+	# extract related items from ucr
+	exItems =  dict([(key.split('/')[-1], value) for (key, value) in ucr.items() if ruleName  in key])
+	if bool(exItems) != expectedResult:
+		utils.fail('Unexpected registery items fetched')
+	elif expectedResult:
+		curType = exItems['filtertype']
+		curWlan = exItems['wlan']
+		curPriority = exItems['priority']
+		exDomains = dict([(key, value) for (key, value) in exItems.items() if unicode(key).isnumeric()])
+		curDomains = sorted(exDomains.values())
+		if (curType, curPriority, curWlan, curDomains) != (ruleType, rulePriority, wlan, domainList):
+			utils.fail('Values in UCR are not updated')
+
+
+def main():
+	with ucr_test.UCSTestConfigRegistry() as ucr:
+		host = ucr.get('hostname')
+		connection = UMCConnection(host)
+		connection.auth('Administrator' ,'univention')
+
+		# Initial rule values
+		ruleName = uts.random_string()
+		domains = sorted(fakeDomains(4))
+		ruleType = 'whitelist'
+		rulePriority = '6'
+		wlan = False
+
+		# Defining a new Rule
+		defineRule(connection, ruleName, ruleType, domains, wlan, rulePriority)
+		# check from internetrules/get
+		getRule(connection, ruleName, True)
+		# check from ucr
+		checkUcr(ucr, ruleName, ruleType + '-block', domains, str(wlan).lower(), rulePriority, True)
+
+		# Modifying the created Rule
+		ruleType = 'blacklist'
+		rulePriority = '8'
+		wlan = True
+		domains = sorted(fakeDomains(4))
+		modifyRule(connection, ruleName, ruleType, domains, wlan, rulePriority) 
+		# check from internetrules/get
+		getRule(connection,  ruleName, True)
+		# check from ucr
+		checkUcr(ucr, ruleName, ruleType + '-pass', domains, str(wlan).lower(), rulePriority, True)
+
+		# Removing the Rule
+		removeRule(connection, ruleName)
+		# check from internetrules/get
+		getRule(connection, ruleName, False)
+		# check from ucr
+		checkUcr(ucr, ruleName, ruleType, domains, wlan, rulePriority, False)
+
+
+if __name__ == '__main__':
+	sys.exit(main())
