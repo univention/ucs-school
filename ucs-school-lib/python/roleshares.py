@@ -34,7 +34,7 @@
 import sys
 import subprocess
 import univention.config_registry
-from ucsschool.lib.schoolldap import LDAP_Connection, MACHINE_READ
+from ucsschool.lib.schoolldap import LDAP_Connection, MACHINE_READ, LDAP_ConnectionError
 from ucsschool.lib.roles import role_pupil, role_teacher, role_staff
 from ucsschool.lib.i18n import ucs_school_name_i18n
 
@@ -43,9 +43,9 @@ def get_school_ou_list(ldap_machine_read = None, ldap_position = None, search_ba
 	return search_base.availableSchools
 
 def localized_home_prefix(role, ucr):
-	return ucr.get('ucsschool/import/roleshare/prefix/%s' % (role,), ucs_school_name_i18n(role))
+	return ucr.get('ucsschool/import/roleshare/%s' % (role,), ucs_school_name_i18n(role))
 
-def roleshare_home_prefix(roles, ucr=None):
+def roleshare_home_prefix(school_ou, roles, ucr=None):
 	if not ucr:
 		ucr = univention.config_registry.ConfigRegistry()
 		ucr.load()
@@ -53,7 +53,7 @@ def roleshare_home_prefix(roles, ucr=None):
 	if ucr.is_true('ucsschool/import/roleshare', True):
 		for role in (role_pupil, role_teacher, role_staff):
 			if role in roles:
-				return localized_home_prefix(role, ucr)
+				return os.path.join((school_ou, localized_home_prefix(role, ucr)))
 	return ''
 
 def create_roleshare(role, opts, ucr=None):
@@ -61,11 +61,15 @@ def create_roleshare(role, opts, ucr=None):
 		ucr = univention.config_registry.ConfigRegistry()
 		ucr.load()
 		
-	share = localized_home_prefix(role, ucr)
-	directory = '/home/%s' % share
 	ou_list = get_school_ou_list()
-	if ou_list:
-		teacher_groupname = "%s-%s" % (ucs_school_name_i18n(role_teacher), ou_list[0])
+	if not ou_list:
+		raise LDAP_ConnectionError('LDAP_Connection: ERROR, COULD NOT FIND ANY OU!!!')
+
+	school_ou = ou_list[0]
+	share = localized_home_prefix(role, ucr)
+	directory = '/home/%s/%s' % (school_ou, share,)
+	teacher_groupname = "-",join((ucs_school_name_i18n(role_teacher), school_ou))
+
 	fqdn = "%(hostname)s.%(domainname)s" % ucr
 	position = "cn=%(hostname)s.%(domainname)s,cn=shares,%(ldap/base)s" % ucr
 
