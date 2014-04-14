@@ -1238,7 +1238,7 @@ def modify_user(person, module, co, lo):
 	object.open()
 	object["username"]=person.login
 	object["primaryGroup"]=default_groups[0]
-	subdir = roleshare_home_prefix(person.getRole(), configRegistry)
+	subdir = roleshare_home_prefix(person.sNr, person.getRole(), configRegistry)
 	object["unixhome"]="/home/" + os.path.join(subdir, person.login)
 	object["firstname"]=person.name
 	object["lastname"]=person.sname
@@ -1432,7 +1432,7 @@ def create_user(person, baseDN, module, password, OUTFILE, line):
 	object["primaryGroup"]=groups[0]
 	if len(groups) > 1:
 		object["groups"]=groups[1:]
-	subdir = roleshare_home_prefix(person.getRole(), configRegistry)
+	subdir = roleshare_home_prefix(person.sNr, person.getRole(), configRegistry)
 	object["unixhome"]="/home/" + os.path.join(subdir, person.login)
 	if object.has_key('mailbox'):
 		object["mailbox"]="/var/spool/%s/"%person.login
