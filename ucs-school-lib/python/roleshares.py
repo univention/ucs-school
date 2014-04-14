@@ -31,16 +31,25 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+import os
 import sys
 import subprocess
 import univention.config_registry
-from ucsschool.lib.schoolldap import LDAP_Connection, MACHINE_READ, LDAP_ConnectionError
+import univention.admin.uldap as udm_uldap
+from ucsschool.lib.models import School
+from ucsschool.lib.schoolldap import SchoolSearchBase, LDAP_ConnectionError
 from ucsschool.lib.roles import role_pupil, role_teacher, role_staff
 from ucsschool.lib.i18n import ucs_school_name_i18n
 
-@LDAP_Connection(MACHINE_READ)
-def get_school_ou_list(ldap_machine_read = None, ldap_position = None, search_base = None ):
-	return search_base.availableSchools
+def get_hosted_searchbases():
+	ldap_connection, ldap_position = udm_uldap.getMachineConnection( ldap_master = False )
+	schools = School.get_all_hosted(ldap_connection)
+	oulist = map(lambda school: school.name, schools)
+	if not oulist:
+		raise LDAP_ConnectionError('LDAP_Connection: ERROR, COULD NOT FIND ANY OU!!!')
+
+	hosted_searchbases = map(lambda school: SchoolSearchBase(oulist, school), oulist)
+	return hosted_searchbases
 
 def localized_home_prefix(role, ucr):
 	return ucr.get('ucsschool/import/roleshare/%s' % (role,), ucs_school_name_i18n(role))
@@ -61,35 +70,32 @@ def create_roleshare(role, opts, ucr=None):
 		ucr = univention.config_registry.ConfigRegistry()
 		ucr.load()
 		
-	ou_list = get_school_ou_list()
-	if not ou_list:
-		raise LDAP_ConnectionError('LDAP_Connection: ERROR, COULD NOT FIND ANY OU!!!')
-
-	school_ou = ou_list[0]
-	share = localized_home_prefix(role, ucr)
-	directory = '/home/%s/%s' % (school_ou, share,)
-	teacher_groupname = "-",join((ucs_school_name_i18n(role_teacher), school_ou))
-
 	fqdn = "%(hostname)s.%(domainname)s" % ucr
-	position = "cn=%(hostname)s.%(domainname)s,cn=shares,%(ldap/base)s" % ucr
 
-	cmd = ["univention-directory-manager", "shares/share", "create", "--ignore_exists"]
-	if opts.binddn:
-		cmd.extend(["--binddn", opts.binddn])
-	if opts.bindpwd:
-		cmd.extend(["--bindpwd", opts.bindpwd])
+	for searchbase in get_hosted_searchbases():
+		school = searchbase.school
+		position = searchbase.shares
+		share = localized_home_prefix(role, ucr)
+		directory = '/home/%s/%s' % (school, share,)
+		teacher_groupname = "-".join((ucs_school_name_i18n(role_teacher), school))
 
-	cmd.extend(["--position", position])
-	cmd.extend(["--set", "name=%s" % (share,)])
-	cmd.extend(["--set", "path=%s" % (directory,)])
-	cmd.extend(["--set", "host=%s" % (fqdn,)])
-	cmd.extend(["--set", "group=%s" % (teacher_groupname,)])
-	cmd.extend(["--set", "sambaCustomSettings=admin user = %s" % (teacher_groupname,)])
+		cmd = ["univention-directory-manager", "shares/share", "create", "--ignore_exists"]
+		if opts.binddn:
+			cmd.extend(["--binddn", opts.binddn])
+		if opts.bindpwd:
+			cmd.extend(["--bindpwd", opts.bindpwd])
 
-	p1 = subprocess.Popen([cmd], close_fds=True)
-	p1.wait()
-	if p1.returncode:
-		sys.exit(p1.returncode)
+		cmd.extend(["--position", position])
+		cmd.extend(["--set", "name=%s" % (share,)])
+		cmd.extend(["--set", "path=%s" % (directory,)])
+		cmd.extend(["--set", "host=%s" % (fqdn,)])
+		cmd.extend(["--set", "group=%s" % (teacher_groupname,)])
+		cmd.extend(["--set", "sambaCustomSettings=admin user = %s" % (teacher_groupname,)])
+
+		p1 = subprocess.Popen([cmd], close_fds=True)
+		p1.wait()
+		if p1.returncode:
+			sys.exit(p1.returncode)
 
 if __name__ == '__main__':
 	from optparse import OptionParser

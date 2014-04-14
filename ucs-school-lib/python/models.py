@@ -846,6 +846,17 @@ class School(UCSSchoolHelperAbstractClass):
 		return cls(udm_obj['name'], school, udm_obj['displayName'])
 
 	@classmethod
+	def get_from_oulist(cls, lo, oulist):
+		ous = [x.strip() for x in oulist.split(',')]
+		schools = []
+		for ou in ous:
+			MODULE.info('All Schools: Getting OU %s' % ou)
+			school = cls.from_dn(cls(ou).dn, None, lo)
+			MODULE.info('All Schools: Found school: %r' % school)
+			schools.append(school)
+		return schools
+
+	@classmethod
 	def get_all(cls, lo, restrict_to_user=True):
 		if restrict_to_user:
 			if lo.binddn.find('ou=') > 0:
@@ -864,15 +875,30 @@ class School(UCSSchoolHelperAbstractClass):
 					# OU list override via UCR variable (it can be necessary to adjust the list of
 					# visible schools on specific systems manually)
 					MODULE.info('All Schools: Schools overridden by UCR variable ucsschool/local/oulist')
-					ous = [x.strip() for x in oulist.split(',')]
-					schools = []
-					for ou in ous:
-						MODULE.info('All Schools: Getting OU %s' % ou)
-						school = cls.from_dn(cls(ou).dn, None, lo)
-						MODULE.info('All Schools: Found school: %r' % school)
-						schools.append(school)
-					return schools
+					return cls.get_from_oulist(cls, lo, oulist)
 		return super(School, cls).get_all(None, lo)
+
+	@classmethod
+	def get_all_hosted(cls, lo):
+		oulist = ucr.get('ucsschool/local/oulist')
+		if oulist:
+			MODULE.info('All hosted schools: Schools overridden by UCR variable ucsschool/local/oulist')
+			return cls.get_from_oulist(cls, lo, oulist)
+		else:
+			index_ou = lo.binddn.find('ou=')
+			if index_ou > 0:
+				# we got an OU in the bind DN
+				# (note that there can be schools with a DN such as ou=25g18,ou=25,dc=...)
+				# TODO: districtmode
+				# TODO: school DCs hosting multiple OUs
+				school_dn = lo.binddn[index_ou:]
+				MODULE.info('All hosted schools: Found an OU in the LDAP binddn: %s' % school_dn)
+				school = cls.from_dn(school_dn, None, lo)
+				MODULE.info('All hosted schools: Found school: %r' % school)
+				return [school]
+			else:
+				MODULE.warn('All hosted schools: Unable to identify OU of this account - showing all OUs!')
+				return super(School, cls).get_all(None, lo)
 
 	def __repr__(self):
 		return '%s(name=%r, display_name=%r)' % (self.__class__.__name__, self.name, self.display_name)
