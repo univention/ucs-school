@@ -71,7 +71,7 @@ def checkUcr(ucr, ruleName, ruleType, domainList, wlan, rulePriority, expectedRe
 	# extract related items from ucr
 	exItems =  dict([(key.split('/')[-1], value) for (key, value) in ucr.items() if ruleName  in key])
 	if bool(exItems) != expectedResult:
-		utils.fail('Unexpected registery items fetched')
+		utils.fail('Unexpected registery items fetched (expectedResult=%r items=%r)' % (expectedResult, exItems))
 	elif expectedResult:
 		curType = exItems['filtertype']
 		curWlan = exItems['wlan']
@@ -79,7 +79,7 @@ def checkUcr(ucr, ruleName, ruleType, domainList, wlan, rulePriority, expectedRe
 		exDomains = dict([(key, value) for (key, value) in exItems.items() if unicode(key).isnumeric()])
 		curDomains = sorted(exDomains.values())
 		if (curType, curPriority, curWlan, curDomains) != (ruleType, rulePriority, wlan, domainList):
-			utils.fail('Values in UCR are not updated')
+			utils.fail('Values in UCR are not updated for rule (%r)' % (ruleName))
 
 # returns a list of all the existing internet rules via UMCP
 def existingRulesUMCP(connection):
