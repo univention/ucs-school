@@ -51,7 +51,7 @@ def roleshare_home_prefix(school_ou, roles, ucr=None):
 	if ucr.is_true('ucsschool/import/roleshare', True):
 		for role in (role_pupil, role_teacher, role_staff):
 			if role in roles:
-				return os.path.join((school_ou, localized_home_prefix(role, ucr)))
+				return os.path.join(school_ou, localized_home_prefix(role, ucr))
 	return ''
 
 def create_roleshare(role, opts, ucr=None):
@@ -67,6 +67,10 @@ def create_roleshare(role, opts, ucr=None):
 		share = localized_home_prefix(role, ucr)
 		directory = '/home/%s/%s' % (school, share,)
 		teacher_groupname = "-".join((ucs_school_name_i18n(role_teacher), school))
+		try:
+			teacher_gid = grp.getgrnam(teacher_groupname).gr_gid
+		except KeyError as ex:
+			raise	## what else?
 
 		cmd = ["univention-directory-manager", "shares/share", "create", "--ignore_exists"]
 		if opts.binddn:
@@ -78,8 +82,8 @@ def create_roleshare(role, opts, ucr=None):
 		cmd.extend(["--set", "name=%s" % (share,)])
 		cmd.extend(["--set", "path=%s" % (directory,)])
 		cmd.extend(["--set", "host=%s" % (fqdn,)])
-		cmd.extend(["--set", "group=%s" % (teacher_groupname,)])
-		cmd.extend(["--set", "sambaCustomSettings=admin user = %s" % (teacher_groupname,)])
+		cmd.extend(["--set", "group=%s" % (teacher_gid,)])
+		cmd.extend(["--set", "sambaCustomSettings=admin user=@%s" % (teacher_groupname,)])
 
 		p1 = subprocess.Popen([cmd], close_fds=True)
 		p1.wait()

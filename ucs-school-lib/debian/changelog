@@ -1,3 +1,9 @@
+ucs-school-lib (5.0.3-7) unstable; urgency=medium
+
+  * Fixes from initial testing (Bug #34335)
+
+ -- Arvid Requate <requate@univention.de>  Tue, 15 Apr 2014 20:31:04 +0200
+
 ucs-school-lib (5.0.3-6) unstable; urgency=medium
 
   * Move roleshares.get_hosted_searchbases to
