@@ -2,7 +2,7 @@
 ## desc: ucs-school-helpdesk-check
 ## roles: [domaincontroller_master]
 ## tags: [apptest]
-## exposure: safe
+## exposure: dangerous
 ## packages:
 ##    - ucs-school-umc-helpdesk
 
