@@ -2,7 +2,7 @@
 ## desc: ucs-school-assign_internet_rules_check
 ## roles: [domaincontroller_master, domaincontroller_backup, domaincontroller_slave, memberserver]
 ## tags: [apptest]
-## exposure: safe
+## exposure: dangerous
 ## packages:  [ucs-school-umc-internetrules]
 
 from univention.lib.umc_connection import UMCConnection
@@ -36,17 +36,17 @@ def defineRule(connection, ruleName, ruleType, domainList, wlan, rulePriority):
 				}
 			]
 	if not connection.request('internetrules/add', param)[0]['success']:
-		utils.fail('Unable to define rule')
+		utils.fail('Unable to define rule (%r)' % (param))
 
 # get an existing internet rule
 def getRule(connection, ruleName, expectedResult):
 	if bool(connection.request('internetrules/get', [ruleName])) != expectedResult:
-		utils.fail('Internet rule failed to be fetched')
+		utils.fail('Internet rule (%r) failed to be fetched' % (ruleName))
 
 # Generate a list of newly defined random rules
 def randomRules(connection, count):
 	definedRules = []
-	# supported rule priority values
+	# supported rule related values
 	priorities = [1,2,3,4,5,6,7,8,9,10]
 	types = ['whitelist', 'blacklist']
 	wlans = [True, False]
@@ -74,7 +74,7 @@ def randomClasses(connection, schoolName, count):
 				'description': description,
 				}
 		if connection.request('schoolwizards/classes/create', param, flavor) != None:
-			utils.fail('Unable to create class')
+			utils.fail('Unable to create class (%r)' % (param))
 		else:
 			cList.append(cName)
 	return sorted(cList)
@@ -97,16 +97,17 @@ def randomWorkgroups(connection, schoolName, count):
 					}
 				]
 		if not connection.request('schoolgroups/add', param, flavor):
-			utils.fail('Unable to add workgroup')
+			utils.fail('Unable to add workgroup (%r)' % (param))
 		else:
 			wList.append(groupName)
 	return sorted(wList)
 
 # Assign internet rules to workgroups/classes randomly
+# return a list of tuples (groupName, ruleName)
 def assignRules(connection, schoolName, groupList, basedn, ruleList, type):
 	result = []
-	ruleName = random.choice(ruleList)
 	for groupName in groupList:
+		ruleName = random.choice(ruleList)
 		if type == 'workgroup':
 			groupdn = 'cn=%s-%s,cn=schueler,cn=groups,ou=%s,%s' % (schoolName,
 					groupName, schoolName, basedn)
@@ -120,20 +121,30 @@ def assignRules(connection, schoolName, groupList, basedn, ruleList, type):
 					}
 				]
 		if not connection.request('internetrules/groups/assign', param):
-			utils.fail('Unable to assign internetrule to workgroup')
+			utils.fail('Unable to assign internet rule to workgroup (%r)' % (param))
 		else:
 			result.append((groupName, ruleName))
 	return result
 
-# check if the assigned internet rules are correct
+# check if the assigned internet rules are correct UMCP
 def compareRules(connection, schoolName, assignedGroups):
 	for groupName, ruleName in assignedGroups:
 		param = {
 				'school': schoolName,
 				'pattern': groupName
 				}
+		if ruleName == '$default$':
+			ruleName = '-- default settings --'
 		if connection.request('internetrules/groups/query', param)[0]['rule'] != ruleName:
-			utils.fail('Assigned internetrule to workgroup does not match')
+			utils.fail('Assigned internetrule (%r) to workgroup (%r) does not match' % (ruleName, groupName))
+
+# check ucr variables for groups/ classes internet rules
+def checkUcr(ucr, schoolName, assignedGroups):
+	ucr.load()
+	for groupName, ruleName in assignedGroups:
+		groupid = 'proxy/filter/groupdefault/%s-%s' % (schoolName, groupName)
+		if ucr.get(groupid) != ruleName:
+			utils.fail('Ucr variable (%r) is not correctly set' % (groupid))
 
 
 def main():
@@ -154,51 +165,81 @@ def main():
 
 			# Create random workgroups
 			newWorkgroups = randomWorkgroups(connection, schoolName, 2)
+			assignedGroups = [(groupName,None) for groupName in newWorkgroups]
 
-			# assign internetrule to groups
+			# check ucr variables
+			checkUcr(ucr, schoolName, assignedGroups)
+
+			# assign internetrules to groups
 			assignedGroups = assignRules(connection, schoolName, newWorkgroups,
 					basedn, newRules[:4], 'workgroup')
 
-			# check the assigned internet rules
+			# check the assigned internet rules UMCP
 			compareRules(connection, schoolName, assignedGroups)
 
-			# switch internetrule to groups
+			# check ucr variables 
+			checkUcr(ucr, schoolName, assignedGroups)
+
+			# switch internetrules for groups
 			assignedGroups = assignRules(connection, schoolName, newWorkgroups,
 					basedn, newRules[4:], 'workgroup')
 
-			# check the assigned internet rules
+			# check the assigned internet rules UMCP
 			compareRules(connection, schoolName, assignedGroups)
+
+			# check ucr variables
+			checkUcr(ucr, schoolName, assignedGroups)
 
 			# assign default internetrule to groups
 			assignedGroups = assignRules(connection, schoolName, newWorkgroups,
-					basedn, ['-- default settings --'], 'workgroup')
+					basedn, ['$default$'], 'workgroup')
 
-			# check the assigned internet rules
+			# check the assigned internet rules UMCP
 			compareRules(connection, schoolName, assignedGroups)
+
+			assignedGroups = [(groupName,None) for groupName in newWorkgroups]
+
+			# check ucr variables
+			checkUcr(ucr, schoolName, assignedGroups)
 
 			# Create random classes
 			newClasses = randomClasses(connection, schoolName, 2)
+			assignedClasses = [(cName,None) for cName in newClasses]
 
-			# assign internetrule to classes
+			# check ucr variables
+			checkUcr(ucr, schoolName, assignedClasses)
+
+			# assign internetrules to classes
 			assignedClasses = assignRules(connection, schoolName, newClasses,
 					basedn, newRules[:4], 'class')
 
-			# check the assigned internet rules
+			# check the assigned internet rules UMCP
 			compareRules(connection, schoolName, assignedClasses)
 
-			# switch internetrule to classes
+			# check ucr variables
+			checkUcr(ucr, schoolName, assignedClasses)
+
+			# switch internetrules for classes
 			assignedClasses = assignRules(connection, schoolName, newClasses,
 					basedn, newRules[4:], 'class')
 
-			# check the assigned internet rules
+			# check the assigned internet rules UMCP
 			compareRules(connection, schoolName, assignedClasses)
 
-			# assign default internetrule to classes
+			# check ucr variables
+			checkUcr(ucr, schoolName, assignedClasses)
+
+			# assign default internet rules to classes
 			assignedClasses = assignRules(connection, schoolName, newClasses,
-					basedn, ['-- default settings --'], 'class')
+					basedn, ['$default$'], 'class')
 
-			# check the assigned internet rules
+			# check the assigned internet rules UMCP
 			compareRules(connection, schoolName, assignedClasses)
+
+			assignedClasses = [(cName,None) for cName in newClasses]
+
+			# check ucr variables
+			checkUcr(ucr, schoolName, assignedClasses)
 
 
 if __name__ == '__main__':
