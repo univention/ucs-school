@@ -33,6 +33,7 @@
 
 import os
 import sys
+import grp
 import subprocess
 import univention.config_registry
 import univention.admin.uldap as udm_uldap
