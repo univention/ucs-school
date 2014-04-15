@@ -1,3 +1,10 @@
+ucs-school-lib (5.0.3-4) unstable; urgency=medium
+
+  * ucsschool.lib.module.School.get_all_hosted: show all OUs that
+    binddn can read (Bug #34335)
+
+ -- Arvid Requate <requate@univention.de>  Tue, 15 Apr 2014 14:16:06 +0200
+
 ucs-school-lib (5.0.3-3) unstable; urgency=medium
 
   * refactoring in ucsschool.lib.module: new School.get_from_oulist

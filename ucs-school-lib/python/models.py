@@ -885,20 +885,8 @@ class School(UCSSchoolHelperAbstractClass):
 			MODULE.info('All hosted schools: Schools overridden by UCR variable ucsschool/local/oulist')
 			return cls.get_from_oulist(cls, lo, oulist)
 		else:
-			index_ou = lo.binddn.find('ou=')
-			if index_ou > 0:
-				# we got an OU in the bind DN
-				# (note that there can be schools with a DN such as ou=25g18,ou=25,dc=...)
-				# TODO: districtmode
-				# TODO: school DCs hosting multiple OUs
-				school_dn = lo.binddn[index_ou:]
-				MODULE.info('All hosted schools: Found an OU in the LDAP binddn: %s' % school_dn)
-				school = cls.from_dn(school_dn, None, lo)
-				MODULE.info('All hosted schools: Found school: %r' % school)
-				return [school]
-			else:
-				MODULE.warn('All hosted schools: Unable to identify OU of this account - showing all OUs!')
-				return super(School, cls).get_all(None, lo)
+			MODULE.warn('All hosted schools: Unable to identify OU of this account - showing all OUs which DN %s can read.' % lo.binddn)
+			return super(School, cls).get_all(None, lo)
 
 	def __repr__(self):
 		return '%s(name=%r, display_name=%r)' % (self.__class__.__name__, self.name, self.display_name)
