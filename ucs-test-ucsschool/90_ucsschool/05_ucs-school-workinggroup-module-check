@@ -2,7 +2,7 @@
 ## desc: ucs-school-workinggroup-module-check
 ## roles: [domaincontroller_master, domaincontroller_backup, domaincontroller_slave]
 ## tags: [apptest]
-## exposure: safe
+## exposure: dangerous
 ## packages:
 ##    - ucs-school-umc-groups
 
