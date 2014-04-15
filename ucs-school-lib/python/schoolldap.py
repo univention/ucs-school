@@ -225,6 +225,16 @@ def LDAP_Connection( *connection_types ):
 class LicenseError( Exception ):
 	pass
 
+@LDAP_Connection(MACHINE_READ)
+def get_all_local_searchbases(ldap_machine_read=None, ldap_position=None, search_base=None):
+	schools = School.get_all(ldap_machine_read)
+	oulist = map(lambda school: school.name, schools)
+	if not oulist:
+		raise LDAP_ConnectionError('LDAP_Connection: ERROR, COULD NOT FIND ANY OU!!!')
+
+	accessible_searchbases = map(lambda school: SchoolSearchBase(oulist, school), oulist)
+	return accessible_searchbases
+
 @LDAP_Connection(MACHINE_READ, MACHINE_WRITE)
 def check_license(ldap_machine_read = None, ldap_machine_write = None, ldap_position = None, search_base = None ):
 	"""Checks the license cases and throws exceptions accordingly. The logic is copied from the UDM UMC module."""

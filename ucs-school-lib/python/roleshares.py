@@ -36,20 +36,9 @@ import sys
 import subprocess
 import univention.config_registry
 import univention.admin.uldap as udm_uldap
-from ucsschool.lib.models import School
-from ucsschool.lib.schoolldap import SchoolSearchBase, LDAP_ConnectionError
+from ucsschool.lib.schoolldap import get_all_local_searchbases
 from ucsschool.lib.roles import role_pupil, role_teacher, role_staff
 from ucsschool.lib.i18n import ucs_school_name_i18n
-
-def get_hosted_searchbases():
-	ldap_connection, ldap_position = udm_uldap.getMachineConnection( ldap_master = False )
-	schools = School.get_all_hosted(ldap_connection)
-	oulist = map(lambda school: school.name, schools)
-	if not oulist:
-		raise LDAP_ConnectionError('LDAP_Connection: ERROR, COULD NOT FIND ANY OU!!!')
-
-	hosted_searchbases = map(lambda school: SchoolSearchBase(oulist, school), oulist)
-	return hosted_searchbases
 
 def localized_home_prefix(role, ucr):
 	return ucr.get('ucsschool/import/roleshare/%s' % (role,), ucs_school_name_i18n(role))
@@ -72,7 +61,7 @@ def create_roleshare(role, opts, ucr=None):
 		
 	fqdn = "%(hostname)s.%(domainname)s" % ucr
 
-	for searchbase in get_hosted_searchbases():
+	for searchbase in get_all_local_searchbases():
 		school = searchbase.school
 		position = searchbase.shares
 		share = localized_home_prefix(role, ucr)

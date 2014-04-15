@@ -1,3 +1,10 @@
+ucs-school-lib (5.0.3-6) unstable; urgency=medium
+
+  * Move roleshares.get_hosted_searchbases to
+    scholldap.get_all_local_searchbases (Bug #34335)
+
+ -- Arvid Requate <requate@univention.de>  Tue, 15 Apr 2014 14:20:24 +0200
+
 ucs-school-lib (5.0.3-5) unstable; urgency=medium
 
   * Rename School.get_all to School.from_binddn
