@@ -312,7 +312,7 @@ def _init_search_base(ldap_connection, force=False):
 		return
 
 	from ucsschool.lib.models import School
-	schools = School.get_all(ldap_connection)
+	schools = School.from_binddn(ldap_connection)
 	school_names = map(lambda school: school.name, schools)
 	if not school_names:
 		MODULE.warn('All Schools: ERROR, COULD NOT FIND ANY OU!!!')
@@ -517,7 +517,7 @@ class SchoolBaseModule( Base ):
 		"""Returns a list of all available school"""
 		from ucsschool.lib.models import School
 		ret = []
-		schools = School.get_all(ldap_user_read)
+		schools = School.from_binddn(ldap_user_read)
 		for school in schools:
 			ret.append({'id' : school.name, 'label' : school.display_name})
 

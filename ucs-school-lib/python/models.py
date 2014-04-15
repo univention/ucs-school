@@ -857,7 +857,7 @@ class School(UCSSchoolHelperAbstractClass):
 		return schools
 
 	@classmethod
-	def get_all(cls, lo, restrict_to_user=True):
+	def from_binddn(cls, lo, restrict_to_user=True):
 		if restrict_to_user:
 			if lo.binddn.find('ou=') > 0:
 				# we got an OU in the user DN -> school teacher or assistent
@@ -879,7 +879,7 @@ class School(UCSSchoolHelperAbstractClass):
 		return super(School, cls).get_all(None, lo)
 
 	@classmethod
-	def get_all_hosted(cls, lo):
+	def get_all(cls, lo):
 		oulist = ucr.get('ucsschool/local/oulist')
 		if oulist:
 			MODULE.info('All hosted schools: Schools overridden by UCR variable ucsschool/local/oulist')

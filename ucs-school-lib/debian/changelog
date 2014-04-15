@@ -1,3 +1,10 @@
+ucs-school-lib (5.0.3-5) unstable; urgency=medium
+
+  * Rename School.get_all to School.from_binddn
+  * Rename School.get_all_hosted to School.get_all (Bug #34335)
+
+ -- Arvid Requate <requate@univention.de>  Tue, 15 Apr 2014 14:17:37 +0200
+
 ucs-school-lib (5.0.3-4) unstable; urgency=medium
 
   * ucsschool.lib.module.School.get_all_hosted: show all OUs that
