@@ -11,140 +11,190 @@ import univention.testing.strings as uts
 import univention.testing.ucr as ucr_test
 import univention.testing.utils as utils
 
-# generate number of random domain names
-def fakeDomains(count):
-	domains = []
-	for i in range(count):
-		d = uts.random_string()
-		domains.append('%s.de' % d)
-	return domains
+"""""""""""""""""""""""""""""""""""""""
+  Class RandomDomains
+  Generates random domains
+"""""""""""""""""""""""""""""""""""""""
+class RandomDomains():
+	def __init__(self):
+		self.__domains = []
 
-# define an internet rule
-def defineRule(connection, ruleName, ruleType, domainList, wlan, rulePriority):
-	param = [
-			{
-				'object':
+	def getDomains(self, count):
+		for i in range(count):
+			d = uts.random_string()
+			self.__domains.append('%s.de' % d)
+			return self.__domains
+
+
+"""""""""""""""""""""""""""""""""""""""
+  Class InternetRule
+  All the operations related to internet rules
+"""""""""""""""""""""""""""""""""""""""
+class InternetRule():
+	# Initialization
+	def __init__(self, name, typ, domains, wlan, priority):
+		self.__name = name
+		self.__type = typ
+		self.__domains = domains
+		self.__wlan = wlan
+		self.__priority = priority
+
+	# getter
+	def name(self):
+		return self.__name
+
+	# define rule umcp
+	def define(self, umcConnection):
+		param = [
 				{
-					'name':ruleName,
-					'type':ruleType,
-					'domains': domainList,
-					'wlan': wlan,
-					'priority': rulePriority
+					'object':
+					{
+						'name':self.__name,
+						'type':self.__type,
+						'domains': self.__domains,
+						'wlan': self.__wlan,
+						'priority': self.__priority
+						}
 					}
-				}
-			]
-	if not connection.request('internetrules/add', param)[0]['success']:
-		utils.fail('Unable to define rule (%r)' % (param))
+				]
+		if not umcConnection.request('internetrules/add', param)[0]['success']:
+			utils.fail('Unable to define rule (%r)' % (param))
 
-# get an existing internet rule
-def getRule(connection, ruleName, expectedResult):
-	if bool(connection.request('internetrules/get', [ruleName])) != expectedResult:
-		utils.fail('Internet rule (%r) failed to be fetched' % (ruleName))
+	# get the internet rule umcp
+	def get(self, umcConnection, expectedResult):
+		if bool(umcConnection.request('internetrules/get', [self.__name])) != expectedResult:
+			utils.fail('Unexpected i fetching result for internet rule (%r)'  % (self.__name))
 
-# modify an existing internet rule
-def modifyRule(connection, ruleName, ruleType, domainList, wlan, rulePriority):
-	param = [
-			{
-				'object':
+	# try to modify the internet rule
+	def put(self, umcConnection, newName, newtype, newDomains, newWlan, newPriority):
+		param = [
 				{
-					'name':ruleName,
-					'type':ruleType,
-					'domains': domainList,
-					'wlan': wlan,
-					'priority': rulePriority
-					},
-				'options' : { 'name': ruleName }
-				}
-			]
-	if not connection.request('internetrules/put', param)[0]['success']:
-		utils.fail('Unable to modify rule (%r)' % (param))
+					'object':
+					{
+						'name':newName,
+						'type':newtype,
+						'domains': newDomains,
+						'wlan': newWlan,
+						'priority': newPriority
+						},
+					'options' : { 'name': self.__name }
+					}
+				]
+		if not umcConnection.request('internetrules/put', param)[0]['success']:
+			utils.fail('Unable to modify rule (%r)' % (param))
+		else:
+			self.__name = newName
+			self.__type = newtype
+			self.__domains = newDomains
+			self.__wlan = newWlan
+			self.__priority = newPriority
 
-# remove an exisiting internet rule
-def removeRule(connection, ruleName):
-	options = [{ 'object': ruleName }]
-	if not connection.request('internetrules/remove', options )[0]['success']:
-		utils.fail('Unable to remove rule (%r)' % (ruleName))
+	# try to remove  the internet rule
+	def remove(self, umcConnection):
+		options = [{ 'object': self.__name }]
+		if not umcConnection.request('internetrules/remove', options )[0]['success']:
+			utils.fail('Unable to remove rule (%r)' % (self.__name))
 
-# Fetch the values from ucr and check if it matches the correct values
-def checkUcr(ucr, ruleName, ruleType, domainList, wlan, rulePriority, expectedResult):
-	ucr.load()
-	# extract related items from ucr
-	exItems =  dict([(key.split('/')[-1], value) for (key, value) in ucr.items() if ruleName  in key])
-	if bool(exItems) != expectedResult:
-		utils.fail('Unexpected registery items fetched (expectedResult=%r items=%r)' % (expectedResult, exItems))
-	elif expectedResult:
-		curType = exItems['filtertype']
-		curWlan = exItems['wlan']
-		curPriority = exItems['priority']
-		exDomains = dict([(key, value) for (key, value) in exItems.items() if unicode(key).isnumeric()])
-		curDomains = sorted(exDomains.values())
-		if (curType, curPriority, curWlan, curDomains) != (ruleType, rulePriority, wlan, domainList):
-			utils.fail('Values in UCR are not updated for rule (%r)' % (ruleName))
+	# Fetch the values from ucr and check if it matches the correct values for the rule
+	def checkUcr(self, ucr, expectedResult):
+		ucr.load()
+		# extract related items from ucr
+		exItems =  dict([(key.split('/')[-1], value) for (key, value) in ucr.items() if self.__name  in key])
+		if bool(exItems) != expectedResult:
+			utils.fail('Unexpected registery items fetched (expectedResult=%r items=%r)' % (expectedResult, exItems))
+		elif expectedResult:
+			wlan = str(self.__wlan).lower()
+			typ = self.__type
+			if self.__type == "whitelist":
+				typ = "whitelist-block"
+			elif self.__type == "blacklist":
+				typ = "blacklist-pass"
+			curtype = exItems['filtertype']
+			curWlan = exItems['wlan']
+			curPriority = exItems['priority']
+			exDomains = dict([(key, value) for (key, value) in exItems.items() if unicode(key).isnumeric()])
+			curDomains = sorted(exDomains.values())
+			if (curtype, curPriority, curWlan, curDomains) != (typ, self.__priority, wlan, self.__domains):
+				utils.fail('Values in UCR are not updated for rule (%r)' % (self.__name))
 
-# returns a list of all the existing internet rules via UMCP
-def existingRulesUMCP(connection):
-	rules= connection.request('internetrules/query', {'pattern':''})
-	rulesList = sorted([(x['name']) for x in rules])
-	return rulesList
-	
+
+"""""""""""""""""""""""""""""""""""""""
+  Class AllRules
+"""""""""""""""""""""""""""""""""""""""
+class AllRules():
+	def __init__(self):
+		self.__rulesList = []
+
+	# returns a list of all the existing internet rules via UMCP
+	def getRules(self, umcConnection):
+		rules= umcConnection.request('internetrules/query', {'pattern':''})
+		self.__rulesList = sorted([(x['name']) for x in rules])
+		return self.__rulesList
+
 
 def main():
 	with ucr_test.UCSTestConfigRegistry() as ucr:
 		host = ucr.get('hostname')
-		connection = UMCConnection(host)
-		connection.auth('Administrator' ,'univention')
+		umcConnection = UMCConnection(host)
+		umcConnection.auth('Administrator' ,'univention')
+		dom = RandomDomains()
+		allRules = AllRules()
 
 		# Fetch the currently existing internet rules
-		definedRules = existingRulesUMCP(connection)
+		definedRules = allRules.getRules(umcConnection)
 
-		# Initial rule values
-		ruleName = uts.random_string()
-		domains = sorted(fakeDomains(4))
-		ruleType = 'whitelist'
-		rulePriority = '6'
+		# Initializing a rule
+		name = uts.random_string()
+		domains = sorted(dom.getDomains(4))
+		type = 'whitelist'
+		priority = '6'
 		wlan = False
 
-		# Defining a new Rule
-		defineRule(connection, ruleName, ruleType, domains, wlan, rulePriority)
-		definedRules.append(ruleName)
-		# check from internetrules/get
-		getRule(connection, ruleName, True)
-		# check from ucr
-		checkUcr(ucr, ruleName, ruleType + '-block', domains, str(wlan).lower(), rulePriority, True)
+		# Defining the rule
+		rule = InternetRule(name, type, domains, wlan, priority)
+		rule.define(umcConnection)
+
+		definedRules.append(rule.name())
+		# check internetrules/get
+		rule.get(umcConnection, True)
+		# check ucr
+		rule.checkUcr(ucr, True)
 
 		# Fetch the currently existing internet rules
-		definedRules2 = existingRulesUMCP(connection)
+		definedRules2 = allRules.getRules(umcConnection)
 
 		# check if the existing internet rules are correct
 		if definedRules2 != sorted(definedRules):
-			utils.fail('Existing internet rules (%r) do not match the actual ones (%r)' % 
+			utils.fail('Existing internet rules (%r) do not match the actual ones (%r)' %
 					(definedRules2, definedRules))
 
-		# Modifying the created Rule
-		ruleType = 'blacklist'
-		rulePriority = '8'
+		# new rule values:
+		type = 'blacklist'
+		priority = '8'
 		wlan = True
-		domains = sorted(fakeDomains(4))
-		modifyRule(connection, ruleName, ruleType, domains, wlan, rulePriority) 
-		# check from internetrules/get
-		getRule(connection,  ruleName, True)
-		# check from ucr
-		checkUcr(ucr, ruleName, ruleType + '-pass', domains, str(wlan).lower(), rulePriority, True)
+		domains = sorted(dom.getDomains(3))
 
-		# Removing the Rule
-		removeRule(connection, ruleName)
-		definedRules.remove(ruleName)
-		# check from internetrules/get
-		getRule(connection, ruleName, False)
-		# check from ucr
-		checkUcr(ucr, ruleName, ruleType, domains, wlan, rulePriority, False)
+		# Modifying the rule
+		rule.put(umcConnection,name, type, domains, wlan, priority)
+		# check internetrules/get
+		rule.get(umcConnection, True)
+		# check ucr
+		rule.checkUcr(ucr, True)
+
+		# Removing the rule
+		rule.remove(umcConnection)
+		definedRules.remove(name)
+		# check internetrules/get
+		rule.get(umcConnection, False)
+		# check ucr
+		rule.checkUcr(ucr, False)
 
 		# Fetch the currently existing internet rules
-		definedRules2 = existingRulesUMCP(connection)
+		definedRules2 = allRules.getRules(umcConnection)
 
 		# check if the existing internet rules are correct
 		if definedRules2 != sorted(definedRules):
-			utils.fail('Existing internet rules (%r) do not match the actual ones (%r)' % 
+			utils.fail('Existing internet rules (%r) do not match the actual ones (%r)' %
 					(definedRules2, definedRules))
 
 if __name__ == '__main__':
