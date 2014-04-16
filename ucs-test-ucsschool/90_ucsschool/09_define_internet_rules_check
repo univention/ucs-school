@@ -184,7 +184,7 @@ def main():
 
 		# Removing the rule
 		rule.remove(umcConnection)
-		definedRules.remove(name)
+		definedRules.remove(rule.name())
 		# check internetrules/get
 		rule.get(umcConnection, False)
 		# check ucr
