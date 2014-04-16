@@ -33,7 +33,6 @@
 
 import os
 import sys
-import grp
 import subprocess
 import univention.config_registry
 from ucsschool.lib.roles import role_pupil, role_teacher, role_staff
@@ -132,20 +131,38 @@ def create_roleshares(role_list, ucr=None):
 if __name__ == '__main__':
 	from optparse import OptionParser
 	parser = OptionParser()
-	parser.add_option("--setup", dest="setup",
-		help="setup directories",
-		action="store_true", default=False)
+	parser.add_option("--create", dest="roleshares",
+		action="append",
+		help="create role share")
 	parser.add_option("--binddn", dest="binddn",
 		help="udm binddn")
 	parser.add_option("--bindpwd", dest="bindpwd",
 		help="udm bindpwd")
 	(opts, args) = parser.parse_args()
 
+	supported_roles = (role_pupil, role_teacher, role_staff)
+	supported_role_aliases = { 'student': 'pupil' }
+
+	if not opts.roleshares:
+		print "Required option missing: --create"
+		sys.exit(2)
+
+	roles = []
+	for name in opts.roleshares:
+		if name in supported_role_aliases:
+			name = supported_role_aliases[name]
+		if name not in supported_roles:
+			print "Given role is not supported. Only supported roles are %s" % (supported_roles,)
+			sys.exit(1)
+		roles.append(name)
+
 	ucr = univention.config_registry.ConfigRegistry()
 	ucr.load()
 
-	set_credentials(opts.binddn, opts.bindpwd)
+	if not ucr.is_true('ucsschool/import/roleshare', True):
+		print "Creation of role shares disabled via UCR ucsschool/import/roleshare"
+		sys.exit(1)
+
+	set_credentials(opts.binddn, opts.bindpwd) ## for @LDAP_Connection(USER_*)
 		
-	if opts.setup:
-		if ucr.is_true('ucsschool/import/roleshare', True):
-			create_roleshares([role_pupil, role_teacher, role_staff], ucr)
+	create_roleshares(roles, ucr)
