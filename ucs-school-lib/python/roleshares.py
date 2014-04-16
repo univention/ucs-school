@@ -38,15 +38,27 @@ import subprocess
 import univention.config_registry
 from ucsschool.lib.roles import role_pupil, role_teacher, role_staff
 from ucsschool.lib.i18n import ucs_school_name_i18n
-from ucsschool.lib.schoolldap import get_all_local_searchbases, LDAP_Connection, MACHINE_READ
+from ucsschool.lib.schoolldap import get_all_local_searchbases, LDAP_Connection, MACHINE_READ, USER_READ, USER_WRITE, set_credentials
 import univention.admin.uexceptions
+import univention.admin.uldap as udm_uldap
 import univention.admin.modules as udm_modules
 udm_modules.update()
 
-def localized_home_prefix(role, ucr):
-	return ucr.get('ucsschool/import/roleshare/%s' % (role,), ucs_school_name_i18n(role))
+def roleshare_name(role, school_ou, ucr):
+	custom_roleshare_name = ucr.get('ucsschool/import/roleshare/%s' % (role,))
+	if custom_roleshare_name:
+		return custom_roleshare_name
+	else:
+		return "-".join((ucs_school_name_i18n(role), school_ou))
 
-def roleshare_home_prefix(school_ou, roles, ucr=None):
+def roleshare_path(role, school_ou, ucr):
+	custom_roleshare_path = ucr.get('ucsschool/import/roleshare/%s/path' % (role,))
+	if custom_roleshare_path:
+		return custom_roleshare_path
+	else:
+		return os.path.join(school_ou, ucs_school_name_i18n(role))
+
+def roleshare_home_subdir(school_ou, roles, ucr=None):
 	if not ucr:
 		ucr = univention.config_registry.ConfigRegistry()
 		ucr.load()
@@ -54,7 +66,7 @@ def roleshare_home_prefix(school_ou, roles, ucr=None):
 	if ucr.is_true('ucsschool/import/roleshare', True):
 		for role in (role_pupil, role_teacher, role_staff):
 			if role in roles:
-				return os.path.join(school_ou, localized_home_prefix(role, ucr))
+				return roleshare_path(role, school_ou, ucr)
 	return ''
 
 
@@ -73,48 +85,44 @@ def get_gid_from_groupname(groupname, ucr=None, ldap_machine_read=None, ldap_pos
 		return None
 	return group['gidNumber']
 
-def create_roleshare(role, school, position, opts, ucr=None):
+@LDAP_Connection(USER_READ, USER_WRITE)
+def create_roleshare(role, school_ou, share_container, ucr=None, ldap_user_read=None, ldap_user_write=None, ldap_position=None, search_base=None):
 	if not ucr:
 		ucr = univention.config_registry.ConfigRegistry()
 		ucr.load()
 		
-	share = localized_home_prefix(role, ucr)
-	directory = '/home/%s/%s' % (school, share,)
-	teacher_groupname = "-".join((ucs_school_name_i18n(role_teacher), school))
+	teacher_groupname = "-".join((ucs_school_name_i18n(role_teacher), school_ou))
 	teacher_gid = get_gid_from_groupname(teacher_groupname, ucr)
 	if not teacher_gid:
 		raise univention.admin.uexceptions.noObject, "Group not found: %s." % teacher_groupname
 
-	fqdn = "%(hostname)s.%(domainname)s" % ucr
+	try:
+		udm_module_name = 'shares/share'
+		udm_modules.init(ldap_user_write, ldap_position, udm_modules.get(udm_module_name))
+		share_container = udm_uldap.position(share_container)
+		udm_obj = udm_modules.get(udm_module_name).object(None, ldap_user_write, share_container)
+		udm_obj.open()
+		udm_obj["name"] = roleshare_name(role, school_ou, ucr)
+		udm_obj["path"] = os.path.join("/home", roleshare_path(role, school_ou, ucr))
+		udm_obj["host"] = "%(hostname)s.%(domainname)s" % ucr
+		udm_obj["group"] = teacher_gid
+		udm_obj["sambaWriteable"] = 0
+		udm_obj["sambaValidUsers"] = '@"%s"' % (teacher_groupname,)
+		udm_obj["sambaCustomSettings"] = [("admin users", '@"%s"' % (teacher_groupname,))]
+		udm_obj.create()
+	except univention.admin.uexceptions.objectExists, dn:
+		pass
 
-	cmd = ["univention-directory-manager", "shares/share", "create", "--ignore_exists"]
-	if opts.binddn:
-		cmd.extend(["--binddn", opts.binddn])
-	if opts.bindpwd:
-		cmd.extend(["--bindpwd", opts.bindpwd])
-
-	cmd.extend(["--position", position])
-	cmd.extend(["--set", "name=%s" % (share,)])
-	cmd.extend(["--set", "path=%s" % (directory,)])
-	cmd.extend(["--set", "host=%s" % (fqdn,)])
-	cmd.extend(["--set", "group=%s" % (teacher_gid,)])
-	cmd.extend(["--set", "sambaCustomSettings=admin user=@%s" % (teacher_groupname,)])
-
-	p1 = subprocess.Popen(cmd, close_fds=True)
-	p1.wait()
-	if p1.returncode:
-		sys.exit(p1.returncode)
-
-def create_roleshares(role_list, opts, ucr=None):
+def create_roleshares(role_list, ucr=None):
 	if not ucr:
 		ucr = univention.config_registry.ConfigRegistry()
 		ucr.load()
 		
 	for searchbase in get_all_local_searchbases():
-		school = searchbase.school
-		position = searchbase.shares
+		school_ou = searchbase.school
+		share_container = searchbase.shares
 		for role in role_list:
-			create_roleshare(role, school, position, opts, ucr)
+			create_roleshare(role, school_ou, share_container, ucr)
 
 if __name__ == '__main__':
 	from optparse import OptionParser
@@ -130,7 +138,9 @@ if __name__ == '__main__':
 
 	ucr = univention.config_registry.ConfigRegistry()
 	ucr.load()
+
+	set_credentials(opts.binddn, opts.bindpwd)
 		
 	if opts.setup:
 		if ucr.is_true('ucsschool/import/roleshare', True):
-			create_roleshares([role_pupil, role_teacher, role_staff], opts, ucr)
+			create_roleshares([role_pupil, role_teacher, role_staff], ucr)

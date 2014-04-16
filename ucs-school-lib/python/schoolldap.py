@@ -214,8 +214,12 @@ def LDAP_Connection( *connection_types ):
 				kwargs.update( connections )
 				try:
 					return func( *args, **kwargs )
-				except udm_errors.base, e:
-					raise LDAP_ConnectionError( str( e ) )
+				except udm_errors.base, ex:
+					if hasattr(ex, "message"):
+						msg = "%s: %s" % (ex.message, str(ex))
+					else:
+						msg = str(ex)
+					raise LDAP_ConnectionError( msg )
 
 			return []
 

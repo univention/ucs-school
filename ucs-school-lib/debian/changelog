@@ -1,3 +1,12 @@
+ucs-school-lib (5.0.3-11) unstable; urgency=medium
+
+  * Use univention.admin.modules to avoid complex syntax issues of CLI
+  * Add UCR ucsschool/import/roleshare/%s/path
+  * Rename roleshare_home_prefix to roleshare_home_subdir
+  * Make LDAP_Connection return uexception messages (Bug #34335)
+
+ -- Arvid Requate <requate@univention.de>  Wed, 16 Apr 2014 14:49:13 +0200
+
 ucs-school-lib (5.0.3-10) unstable; urgency=medium
 
   * Streamline the role iteration in roleshare creation (Bug #34335)
