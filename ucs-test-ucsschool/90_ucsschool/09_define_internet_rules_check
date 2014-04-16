@@ -23,7 +23,8 @@ class RandomDomains():
 		for i in range(count):
 			d = uts.random_string()
 			self.__domains.append('%s.de' % d)
-			return self.__domains
+		self.__domains.sort()
+		return self.__domains
 
 
 """""""""""""""""""""""""""""""""""""""
