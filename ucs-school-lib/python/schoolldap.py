@@ -227,6 +227,7 @@ class LicenseError( Exception ):
 
 @LDAP_Connection(MACHINE_READ)
 def get_all_local_searchbases(ldap_machine_read=None, ldap_position=None, search_base=None):
+	from ucsschool.lib.models import School
 	schools = School.get_all(ldap_machine_read)
 	oulist = map(lambda school: school.name, schools)
 	if not oulist:

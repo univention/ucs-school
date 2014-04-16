@@ -36,10 +36,12 @@ import sys
 import grp
 import subprocess
 import univention.config_registry
-import univention.admin.uldap as udm_uldap
-from ucsschool.lib.schoolldap import get_all_local_searchbases
 from ucsschool.lib.roles import role_pupil, role_teacher, role_staff
 from ucsschool.lib.i18n import ucs_school_name_i18n
+from ucsschool.lib.schoolldap import get_all_local_searchbases, LDAP_Connection, MACHINE_READ
+import univention.admin.uexceptions
+import univention.admin.modules as udm_modules
+udm_modules.update()
 
 def localized_home_prefix(role, ucr):
 	return ucr.get('ucsschool/import/roleshare/%s' % (role,), ucs_school_name_i18n(role))
@@ -55,6 +57,22 @@ def roleshare_home_prefix(school_ou, roles, ucr=None):
 				return os.path.join(school_ou, localized_home_prefix(role, ucr))
 	return ''
 
+
+@LDAP_Connection(MACHINE_READ)
+def get_gid_from_groupname(groupname, ucr=None, ldap_machine_read=None, ldap_position=None, search_base=None):
+	if not ucr:
+		ucr = univention.config_registry.ConfigRegistry()
+		ucr.load()
+
+	udm_filter = '(name=%s)' % (groupname,)
+	udm_module_name = 'groups/group'
+	udm_modules.init(ldap_machine_read, ldap_position, udm_modules.get(udm_module_name))
+	try:
+		group = udm_modules.lookup(udm_module_name, None, ldap_machine_read, filter=udm_filter, base=ucr['ldap/base'], scope='sub')[0]
+	except IndexError as ex:
+		return None
+	return group['gidNumber']
+
 def create_roleshare(role, opts, ucr=None):
 	if not ucr:
 		ucr = univention.config_registry.ConfigRegistry()
@@ -68,10 +86,9 @@ def create_roleshare(role, opts, ucr=None):
 		share = localized_home_prefix(role, ucr)
 		directory = '/home/%s/%s' % (school, share,)
 		teacher_groupname = "-".join((ucs_school_name_i18n(role_teacher), school))
-		try:
-			teacher_gid = grp.getgrnam(teacher_groupname).gr_gid
-		except KeyError as ex:
-			raise	## what else?
+		teacher_gid = get_gid_from_groupname(teacher_groupname, ucr)
+		if not teacher_gid:
+			raise univention.admin.uexceptions.noObject, "Group not found: %s." % teacher_groupname
 
 		cmd = ["univention-directory-manager", "shares/share", "create", "--ignore_exists"]
 		if opts.binddn:
@@ -86,7 +103,7 @@ def create_roleshare(role, opts, ucr=None):
 		cmd.extend(["--set", "group=%s" % (teacher_gid,)])
 		cmd.extend(["--set", "sambaCustomSettings=admin user=@%s" % (teacher_groupname,)])
 
-		p1 = subprocess.Popen([cmd], close_fds=True)
+		p1 = subprocess.Popen(cmd, close_fds=True)
 		p1.wait()
 		if p1.returncode:
 			sys.exit(p1.returncode)
