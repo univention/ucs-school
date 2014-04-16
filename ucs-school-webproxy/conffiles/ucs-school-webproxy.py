@@ -132,8 +132,8 @@ def createTemporaryConfig(fn_temp_config, configRegistry, DIR_TEMP):
 			proxy_settinglist.add(match.group(1))
 	proxy_settinglist = list(proxy_settinglist)
 
-	roomIPs = {} # { 'theBigRoom': ['127.0.0.1', '127.4.5.7'] }
-	roomRule = {} # { 'kmiyagi': 'theBigRoom' }
+	roomIPs = {} # { 'theBigRoom': ['127.0.0.1', '127.4.5.7'], 'otherRoom': ['127.2.3.4'] }
+	roomRule = {} # { 'kmiyagi': ['theBigRoom', 'otherRoom'] }
 	roomRules = [] # [ 'kmiyagi' ]
 	for key in keylist:
 		if key.startswith('proxy/filter/room/'):
@@ -143,7 +143,7 @@ def createTemporaryConfig(fn_temp_config, configRegistry, DIR_TEMP):
 				if parts[-1] == 'ip':
 					roomIPs[room] = configRegistry[key].split()
 				elif parts[-1] == 'rule':
-					roomRule[configRegistry[key]] = room
+					roomRule.setdefault(configRegistry[key], []).append(room)
 					if room not in roomIPs:
 						roomIPs[room] = []
 		elif key.startswith('proxy/filter/setting-user/'):
@@ -229,20 +229,21 @@ def createTemporaryConfig(fn_temp_config, configRegistry, DIR_TEMP):
 		'blacklist-pass':
 			'!blacklist-%(username)s all\n',
 		}
-	for (username, room, ) in roomRule.items():
-		if username in roomRules:
-			filtertype = configRegistry.get('proxy/filter/setting-user/%s/filtertype' % (username, ), 'whitelist-blacklist-pass')
-			username = quote(username) + '-user'
-		elif username in proxy_settinglist:
-			filtertype = configRegistry.get('proxy/filter/setting/%s/filtertype' % (username, ), 'whitelist-blacklist-pass')
-			username = quote(username)
-		else:
-			continue
-		if filtertype in RULES:
-			f.write('	room-%s {\n' % (quote(room), ))
-			f.write('		pass %s\n' % (RULES[filtertype] % {'username': username, }))
-			f.write('		redirect %s\n' % default_redirect)
-			f.write('	}\n')
+	for (username, rooms, ) in roomRule.items():
+		for room in rooms:
+			if username in roomRules:
+				filtertype = configRegistry.get('proxy/filter/setting-user/%s/filtertype' % (username, ), 'whitelist-blacklist-pass')
+				quoted_username = quote(username) + '-user'
+			elif username in proxy_settinglist:
+				filtertype = configRegistry.get('proxy/filter/setting/%s/filtertype' % (username, ), 'whitelist-blacklist-pass')
+				quoted_username = quote(username)
+			else:
+				continue
+			if filtertype in RULES:
+				f.write('	room-%s {\n' % (quote(room), ))
+				f.write('		pass %s\n' % (RULES[filtertype] % {'username': quoted_username, }))
+				f.write('		redirect %s\n' % default_redirect)
+				f.write('	}\n')
 
 	# acl usergroup
 	for (priority, usergroupname, proxy_setting, ) in reversed(sorted(usergroupSetting)):

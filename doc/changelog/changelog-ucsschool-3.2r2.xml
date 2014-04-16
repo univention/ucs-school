@@ -162,5 +162,8 @@
 			The methodname <emphasis>isAdim</emphasis> has been changed into <emphasis>isAdmin</emphasis>
 			within the UCS@school programming library (<ulink url="&ucsbug;34259">Bug 34259</ulink>).
 		</simpara></listitem>
+		<listitem><simpara>
+		  Additional ucs-test scripts have been added for the &ucsUAS; testsuite (<ulink url="&ucsbug;34279">Bug 34279</ulink>, <ulink url="&ucsbug;34280">Bug 34280</ulink>, <ulink url="&ucsbug;34281">Bug 34281</ulink>).
+		</simpara></listitem>
 	</itemizedlist>
 </section>
