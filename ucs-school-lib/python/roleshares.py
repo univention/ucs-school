@@ -33,11 +33,11 @@
 
 import os
 import sys
-import subprocess
 import univention.config_registry
 from ucsschool.lib.roles import role_pupil, role_teacher, role_staff
 from ucsschool.lib.i18n import ucs_school_name_i18n
-from ucsschool.lib.schoolldap import get_all_local_searchbases, LDAP_Connection, MACHINE_READ, USER_READ, USER_WRITE, set_credentials
+from ucsschool.lib.models import Group
+from ucsschool.lib.schoolldap import get_all_local_searchbases, LDAP_Connection, USER_READ, USER_WRITE, set_credentials
 import univention.admin.uexceptions
 import univention.admin.uldap as udm_uldap
 from univention.admincli.admin import _2utf8
@@ -70,21 +70,6 @@ def roleshare_home_subdir(school_ou, roles, ucr=None):
 	return ''
 
 
-@LDAP_Connection(MACHINE_READ)
-def get_gid_from_groupname(groupname, ucr=None, ldap_machine_read=None, ldap_position=None, search_base=None):
-	if not ucr:
-		ucr = univention.config_registry.ConfigRegistry()
-		ucr.load()
-
-	udm_filter = '(name=%s)' % (groupname,)
-	udm_module_name = 'groups/group'
-	udm_modules.init(ldap_machine_read, ldap_position, udm_modules.get(udm_module_name))
-	try:
-		group = udm_modules.lookup(udm_module_name, None, ldap_machine_read, filter=udm_filter, base=ucr['ldap/base'], scope='sub')[0]
-	except IndexError as ex:
-		return None
-	return group['gidNumber']
-
 @LDAP_Connection(USER_READ, USER_WRITE)
 def create_roleshare(role, school_ou, share_container, ucr=None, ldap_user_read=None, ldap_user_write=None, ldap_position=None, search_base=None):
 	if not ucr:
@@ -92,8 +77,9 @@ def create_roleshare(role, school_ou, share_container, ucr=None, ldap_user_read=
 		ucr.load()
 		
 	teacher_groupname = "-".join((ucs_school_name_i18n(role_teacher), school_ou))
-	teacher_gid = get_gid_from_groupname(teacher_groupname, ucr)
-	if not teacher_gid:
+
+	teacher_group = Group(teacher_groupname, school_ou).get_udm_object(ldap_user_read)
+	if not teacher_group:
 		raise univention.admin.uexceptions.noObject, "Group not found: %s." % teacher_groupname
 
 	try:
@@ -105,7 +91,7 @@ def create_roleshare(role, school_ou, share_container, ucr=None, ldap_user_read=
 		udm_obj["name"] = roleshare_name(role, school_ou, ucr)
 		udm_obj["path"] = os.path.join("/home", roleshare_path(role, school_ou, ucr))
 		udm_obj["host"] = "%(hostname)s.%(domainname)s" % ucr
-		udm_obj["group"] = teacher_gid
+		udm_obj["group"] = teacher_group['gidNumber']
 		udm_obj["sambaBrowseable"] = 0
 		udm_obj["sambaWriteable"] = 0
 		udm_obj["sambaValidUsers"] = '@"%s"' % (teacher_groupname,)
