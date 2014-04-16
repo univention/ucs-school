@@ -1,3 +1,9 @@
+ucs-school-umc-roleshares (1.0.0-3) unstable; urgency=medium
+
+  * Add initial backend routines (Bug #34335)
+
+ -- Arvid Requate <requate@univention.de>  Wed, 16 Apr 2014 18:36:24 +0200
+
 ucs-school-umc-roleshares (1.0.0-2) unstable; urgency=medium
 
   * Document UCR variables (Bug #34335)

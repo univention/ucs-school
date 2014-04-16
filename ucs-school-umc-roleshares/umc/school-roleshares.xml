@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<umc version="2.0">
+	<module id="school-roleshares" icon="school-roleshares" version="1.0">
+		<categories>
+			<category name="ucs-school-admin"/>
+		</categories>
+		<name>Roleshare management</name>
+		<description>Management of UCS@school role shares</description>
+		<keywords></keywords>
+		<command name="school-roleshares/query" function="query" />
+		<command name="school-roleshares/modify" function="modify_share" />
+		<command name="school-roleshares/progress" function="progress" />
+	</module>
+</umc>
