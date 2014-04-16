@@ -17,7 +17,7 @@ Depends: ${misc:Depends},
  univention-management-console-server,
  univention-config-registry,
  ucs-school-umc-common,
- python-ucs-school (>= 5.0.1-2)
+ python-ucs-school (>= 5.0.3-13)
 Description: UCS@school UMC wizard module
  This package contains an UMC module for UCS@school that provides a wizard
  for managing teacher access to student home directories.

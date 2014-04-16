@@ -1,5 +1,12 @@
-ucs-school-umc-roleshares (1.0.0-1) UNRELEASED; urgency=low
+ucs-school-umc-roleshares (1.0.0-2) unstable; urgency=medium
+
+  * Document UCR variables (Bug #34335)
+  * Adjust to modified roleshares.py CLI options and pass credentials
+
+ -- Arvid Requate <requate@univention.de>  Wed, 16 Apr 2014 15:56:17 +0200
+
+ucs-school-umc-roleshares (1.0.0-1) unstable; urgency=low
 
   * Initial package (Bug #34335)
 
- -- Arvid Requate <requate@univention.de>  Thu, 10 Apr 2014 21:15:53 +0200
+ -- Arvid Requate <requate@univention.de>  Wed, 16 Apr 2014 15:50:45 +0200
