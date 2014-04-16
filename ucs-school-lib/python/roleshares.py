@@ -41,6 +41,7 @@ from ucsschool.lib.i18n import ucs_school_name_i18n
 from ucsschool.lib.schoolldap import get_all_local_searchbases, LDAP_Connection, MACHINE_READ, USER_READ, USER_WRITE, set_credentials
 import univention.admin.uexceptions
 import univention.admin.uldap as udm_uldap
+from univention.admincli.admin import _2utf8
 import univention.admin.modules as udm_modules
 udm_modules.update()
 
@@ -106,12 +107,16 @@ def create_roleshare(role, school_ou, share_container, ucr=None, ldap_user_read=
 		udm_obj["path"] = os.path.join("/home", roleshare_path(role, school_ou, ucr))
 		udm_obj["host"] = "%(hostname)s.%(domainname)s" % ucr
 		udm_obj["group"] = teacher_gid
+		udm_obj["sambaBrowseable"] = 0
 		udm_obj["sambaWriteable"] = 0
 		udm_obj["sambaValidUsers"] = '@"%s"' % (teacher_groupname,)
 		udm_obj["sambaCustomSettings"] = [("admin users", '@"%s"' % (teacher_groupname,))]
 		udm_obj.create()
 	except univention.admin.uexceptions.objectExists, dn:
+		print "Object exists: %s" % (dn,)
 		pass
+	else:
+		print 'Object created: %s' % _2utf8( udm_obj.dn )
 
 def create_roleshares(role_list, ucr=None):
 	if not ucr:

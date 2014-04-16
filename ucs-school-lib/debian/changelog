@@ -1,3 +1,9 @@
+ucs-school-lib (5.0.3-12) unstable; urgency=medium
+
+  * Hide roleshares by default (Bug #34335)
+
+ -- Arvid Requate <requate@univention.de>  Wed, 16 Apr 2014 15:10:44 +0200
+
 ucs-school-lib (5.0.3-11) unstable; urgency=medium
 
   * Use univention.admin.modules to avoid complex syntax issues of CLI
