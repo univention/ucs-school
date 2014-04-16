@@ -864,17 +864,17 @@ class School(UCSSchoolHelperAbstractClass):
 				# restrict the visibility to current school
 				# (note that there can be schools with a DN such as ou=25g18,ou=25,dc=...)
 				school_dn = lo.binddn[lo.binddn.find('ou='):]
-				MODULE.info('All Schools: Found an OU in the LDAP binddn. Restricting schools to only show %s' % school_dn)
+				MODULE.info('Schools from binddn: Found an OU in the LDAP binddn. Restricting schools to only show %s' % school_dn)
 				school = cls.from_dn(school_dn, None, lo)
-				MODULE.info('All Schools: Found school: %r' % school)
+				MODULE.info('Schools from binddn: Found school: %r' % school)
 				return [school]
 			else:
-				MODULE.warn('All Schools: Unable to identify OU of this account - showing all OUs!')
+				MODULE.warn('Schools from binddn: Unable to identify OU of this account - showing all OUs!')
 				oulist = ucr.get('ucsschool/local/oulist')
 				if oulist:
 					# OU list override via UCR variable (it can be necessary to adjust the list of
 					# visible schools on specific systems manually)
-					MODULE.info('All Schools: Schools overridden by UCR variable ucsschool/local/oulist')
+					MODULE.info('Schools from binddn: Schools overridden by UCR variable ucsschool/local/oulist')
 					return cls.get_from_oulist(cls, lo, oulist)
 		return super(School, cls).get_all(None, lo)
 
@@ -882,10 +882,10 @@ class School(UCSSchoolHelperAbstractClass):
 	def get_all(cls, lo):
 		oulist = ucr.get('ucsschool/local/oulist')
 		if oulist:
-			MODULE.info('All hosted schools: Schools overridden by UCR variable ucsschool/local/oulist')
+			MODULE.info('All Schools: Schools overridden by UCR variable ucsschool/local/oulist')
 			return cls.get_from_oulist(cls, lo, oulist)
 		else:
-			MODULE.warn('All hosted schools: Unable to identify OU of this account - showing all OUs which DN %s can read.' % lo.binddn)
+			MODULE.warn('All Schools: Unable to identify OU of this account - showing all OUs which DN %s can read.' % lo.binddn)
 			return super(School, cls).get_all(None, lo)
 
 	def __repr__(self):

@@ -73,40 +73,48 @@ def get_gid_from_groupname(groupname, ucr=None, ldap_machine_read=None, ldap_pos
 		return None
 	return group['gidNumber']
 
-def create_roleshare(role, opts, ucr=None):
+def create_roleshare(role, school, position, opts, ucr=None):
 	if not ucr:
 		ucr = univention.config_registry.ConfigRegistry()
 		ucr.load()
 		
+	share = localized_home_prefix(role, ucr)
+	directory = '/home/%s/%s' % (school, share,)
+	teacher_groupname = "-".join((ucs_school_name_i18n(role_teacher), school))
+	teacher_gid = get_gid_from_groupname(teacher_groupname, ucr)
+	if not teacher_gid:
+		raise univention.admin.uexceptions.noObject, "Group not found: %s." % teacher_groupname
+
 	fqdn = "%(hostname)s.%(domainname)s" % ucr
 
+	cmd = ["univention-directory-manager", "shares/share", "create", "--ignore_exists"]
+	if opts.binddn:
+		cmd.extend(["--binddn", opts.binddn])
+	if opts.bindpwd:
+		cmd.extend(["--bindpwd", opts.bindpwd])
+
+	cmd.extend(["--position", position])
+	cmd.extend(["--set", "name=%s" % (share,)])
+	cmd.extend(["--set", "path=%s" % (directory,)])
+	cmd.extend(["--set", "host=%s" % (fqdn,)])
+	cmd.extend(["--set", "group=%s" % (teacher_gid,)])
+	cmd.extend(["--set", "sambaCustomSettings=admin user=@%s" % (teacher_groupname,)])
+
+	p1 = subprocess.Popen(cmd, close_fds=True)
+	p1.wait()
+	if p1.returncode:
+		sys.exit(p1.returncode)
+
+def create_roleshares(role_list, opts, ucr=None):
+	if not ucr:
+		ucr = univention.config_registry.ConfigRegistry()
+		ucr.load()
+		
 	for searchbase in get_all_local_searchbases():
 		school = searchbase.school
 		position = searchbase.shares
-		share = localized_home_prefix(role, ucr)
-		directory = '/home/%s/%s' % (school, share,)
-		teacher_groupname = "-".join((ucs_school_name_i18n(role_teacher), school))
-		teacher_gid = get_gid_from_groupname(teacher_groupname, ucr)
-		if not teacher_gid:
-			raise univention.admin.uexceptions.noObject, "Group not found: %s." % teacher_groupname
-
-		cmd = ["univention-directory-manager", "shares/share", "create", "--ignore_exists"]
-		if opts.binddn:
-			cmd.extend(["--binddn", opts.binddn])
-		if opts.bindpwd:
-			cmd.extend(["--bindpwd", opts.bindpwd])
-
-		cmd.extend(["--position", position])
-		cmd.extend(["--set", "name=%s" % (share,)])
-		cmd.extend(["--set", "path=%s" % (directory,)])
-		cmd.extend(["--set", "host=%s" % (fqdn,)])
-		cmd.extend(["--set", "group=%s" % (teacher_gid,)])
-		cmd.extend(["--set", "sambaCustomSettings=admin user=@%s" % (teacher_groupname,)])
-
-		p1 = subprocess.Popen(cmd, close_fds=True)
-		p1.wait()
-		if p1.returncode:
-			sys.exit(p1.returncode)
+		for role in role_list:
+			create_roleshare(role, school, position, opts, ucr)
 
 if __name__ == '__main__':
 	from optparse import OptionParser
@@ -125,5 +133,4 @@ if __name__ == '__main__':
 		
 	if opts.setup:
 		if ucr.is_true('ucsschool/import/roleshare', True):
-			for role in (role_pupil, role_teacher, role_staff):
-				create_roleshare(role, opts, ucr)
+			create_roleshares([role_pupil, role_teacher, role_staff], opts, ucr)

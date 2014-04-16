@@ -1,3 +1,10 @@
+ucs-school-lib (5.0.3-10) unstable; urgency=medium
+
+  * Streamline the role iteration in roleshare creation (Bug #34335)
+  * Adjust log messages in models.School
+
+ -- Arvid Requate <requate@univention.de>  Wed, 16 Apr 2014 12:23:36 +0200
+
 ucs-school-lib (5.0.3-9) unstable; urgency=medium
 
   * Detection of gidNumber via grp/nss is not available fast enough
