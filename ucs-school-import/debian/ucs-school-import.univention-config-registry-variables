@@ -65,8 +65,8 @@ Type=str
 Categories=ucsschool-base
 
 [ucsschool/import/generate/share/marktplatz/sharepath]
-Description[de]=Vorgabepfad der Freigabe "Marktplatz" (Default: /home/groups/Marktplatz)
-Description[en]=Default path of share "Marktplatz" (default: /home/groups/Marktplatz)
+Description[de]=Vorgabepfad der Freigabe "Marktplatz" (Default: /home/$ou/groups/Marktplatz)
+Description[en]=Default path of share "Marktplatz" (default: /home/$ou/groups/Marktplatz)
 Type=str
 Categories=ucsschool-base
 

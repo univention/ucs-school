@@ -1,3 +1,10 @@
+ucs-school-import (10.0.7-7) unstable; urgency=medium
+
+  * UCR doc for ucsschool/import/generate/share/marktplatz/sharepath
+    (Bug #34335)
+
+ -- Arvid Requate <requate@univention.de>  Thu, 17 Apr 2014 20:36:55 +0200
+
 ucs-school-import (10.0.7-6) unstable; urgency=medium
 
   * create_roleshares during verify_school if ucsschool/import/roleshare
