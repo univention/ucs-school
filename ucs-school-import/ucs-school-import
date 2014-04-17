@@ -1108,7 +1108,10 @@ def verify_group_share(schoolNr, classNr, co, lo, superordinate, base):
 		object.open()
 		object["name"] = "%s"%classNr
 		object["host"] = serverfqdn
-		object["path"] = "/home/groups/klassen/%s"%classNr
+		if configRegistry.is_true('ucsschool/import/roleshare', True):
+			object["path"] = "/home/" + os.path.join(subdir, "groups/klassen/%s" % (classNr,))
+		else:
+			object["path"] = "/home/groups/klassen/%s" % (classNr,)
 		object["writeable"] = "1"
 		object["sambaWriteable"] = "1"
 		object["sambaBrowseable"] = "1"
