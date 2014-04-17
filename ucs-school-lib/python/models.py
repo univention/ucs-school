@@ -885,7 +885,7 @@ class School(UCSSchoolHelperAbstractClass):
 			MODULE.info('All Schools: Schools overridden by UCR variable ucsschool/local/oulist')
 			return cls.get_from_oulist(cls, lo, oulist)
 		else:
-			MODULE.warn('All Schools: Unable to identify OU of this account - showing all OUs which DN %s can read.' % lo.binddn)
+			MODULE.info('All Schools: Showing all OUs which DN %s can read.' % lo.binddn)
 			return super(School, cls).get_all(None, lo)
 
 	def __repr__(self):
