@@ -1,3 +1,10 @@
+ucs-school-umc-exam (2.0.1-2) unstable; urgency=medium
+
+  * Derive exam users home prefix from the original users homeDirectory
+    (Bug #34335)
+
+ -- Arvid Requate <requate@univention.de>  Thu, 17 Apr 2014 18:38:49 +0200
+
 ucs-school-umc-exam (2.0.1-1) unstable; urgency=low
 
   * Bug #33456: use correct functions to check for project name's uniqueness

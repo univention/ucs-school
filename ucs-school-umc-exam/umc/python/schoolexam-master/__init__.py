@@ -34,6 +34,7 @@ UCS@School UMC module schoolexam-master
  UMC module delivering backend services for ucs-school-umc-exam
 '''
 
+import os.path
 import re
 from univention.management.console.config import ucr
 from univention.management.console.log import MODULE
@@ -249,7 +250,13 @@ class Instance( SchoolBaseModule ):
 				if key == 'uid':
 					value = [exam_user_uid]
 				elif key == 'homeDirectory':
-					value = ["/home/%s" % exam_user_uid]
+					user_orig_homeDirectory = value[0]
+					_tmp_split_path = user_orig_homeDirectory.rsplit(os.path.sep, 1)
+					if len(_tmp_split_path) != 2 or _tmp_split_path[1] != exam_user_uid:
+						english_error_detail = "Failed parsing homeDirectory of original user: %s" % (user_orig_homeDirectory,)
+						message = _('ERROR: Creation of exam user account failed\n%s') % (english_error_detail,)
+						raise UMC_CommandError(message)
+					value = [os.path.join(_tmp_split_path[0], exam_user_uid)]
 				elif key == 'sambaHomePath':
 					user_orig_sambaHomePath = value[0]
 					value = [user_orig_sambaHomePath.replace(user_orig['username'], exam_user_uid)]
