@@ -39,10 +39,10 @@ VERSION=1
 
 joinscript_init
 
-umc_init
+# umc_init # disabled for now
 
-# Create role share unless disabled via UCR ucsschool/import/roleshare=no
-python2.6 /usr/lib/pymodules/python2.6/univention/ucsschool/lib/roleshares.py "$@" --create student
+## Create role share unless disabled via UCR ucsschool/import/roleshare=no
+/usr/lib/pymodules/python2.6/ucsschool/lib/roleshares.py "$@" --create student
 
 joinscript_save_current_version
 
