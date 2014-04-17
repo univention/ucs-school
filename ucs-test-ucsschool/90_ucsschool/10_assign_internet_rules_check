@@ -15,7 +15,7 @@ import univention.testing.utils as utils
 
 
 """""""""""""""""""""""""""""""""""""""
-  Class RandomDomains
+  Class RandomDomain
   Generates random domains
 """""""""""""""""""""""""""""""""""""""
 class RandomDomain():
