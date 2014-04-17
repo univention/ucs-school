@@ -41,13 +41,6 @@ joinscript_init
 
 # umc_init # disabled for now
 
-eval "$(univention-config-registry shell)"
-
-if [ "$server_role" != 'domaincontroller_master' ] || is_ucr_true 'ucsschool/singlemaster'; then
-	## Create role share unless disabled via UCR ucsschool/import/roleshare=no
-	/usr/lib/pymodules/python2.6/ucsschool/lib/roleshares.py "$@" --create student
-fi
-
 joinscript_save_current_version
 
 exit 0

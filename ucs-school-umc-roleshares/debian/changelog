@@ -1,3 +1,9 @@
+ucs-school-umc-roleshares (1.0.0-9) unstable; urgency=medium
+
+  * Move roleshare creation to ucs-school-metapackage (Bug #34335)
+
+ -- Arvid Requate <requate@univention.de>  Thu, 17 Apr 2014 19:29:47 +0200
+
 ucs-school-umc-roleshares (1.0.0-8) unstable; urgency=medium
 
   * call_joinscript in postinst (Bug #34335)
