@@ -1,3 +1,10 @@
+ucs-school-import (10.0.7-6) unstable; urgency=medium
+
+  * create_roleshares during verify_school if ucsschool/import/roleshare
+    with cn=admin credentials (Bug #34335)
+
+ -- Arvid Requate <requate@univention.de>  Thu, 17 Apr 2014 20:26:49 +0200
+
 ucs-school-import (10.0.7-5) unstable; urgency=medium
 
   * Don't set ucsschool/import/generate/share/marktplatz/sharepath? default

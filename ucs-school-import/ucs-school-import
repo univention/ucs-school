@@ -75,7 +75,8 @@ import univention.admin.config
 import univention.config_registry
 import univention.lib.policy_result
 from ucsschool.lib.roles import role_pupil, role_teacher, role_staff
-from ucsschool.lib.roleshares import roleshare_home_subdir
+from ucsschool.lib.roleshares import roleshare_home_subdir, create_roleshares
+from ucsschool.lib.schoolldap import set_credentials
 
 configRegistry=univention.config_registry.ConfigRegistry()
 configRegistry.load()
@@ -887,6 +888,9 @@ def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None, ShareFileServer=None
 					print 'need to attach policy: %s' % poldn
 			lo.modify(containerdn,modlist)
 
+	if configRegistry.is_true('ucsschool/import/roleshare', True):
+		set_credentials(binddn, bindpwd)
+		create_roleshares(['student'], [schoolNr], configRegistry)
 
 	# invoke post hooks
 	if created:
@@ -2928,15 +2932,16 @@ def move_domaincontroller_to_ou(co, lo, baseDN, options):
 # init univention-directory-manager
 tls=2
 
-secretFile=open('/etc/ldap.secret','r')
-pwdLine=secretFile.readline()
-pwd=re.sub('\n','',pwdLine)
+bindpwd = None
+with open('/etc/ldap.secret','r') as secretFile:
+	bindpwd = secretFile.read()
+binddn = 'cn=admin,' + baseDN
 
 lo = None
 try:
 	lo = univention.admin.uldap.access(
 		host=configRegistry['ldap/master'], base=baseDN,
-		binddn='cn=admin,'+baseDN, bindpw=pwd, start_tls=tls)
+		binddn=binddn, bindpw=bindpwd, start_tls=tls)
 except Exception, e:
 	univention.debug.debug(univention.debug.ADMIN, univention.debug.WARN, 'authentication error: %s' % str(e))
 	print 'ERROR: authentication error: %s' % str(e)
