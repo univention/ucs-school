@@ -1,3 +1,9 @@
+ucs-school-umc-roleshares (1.0.0-8) unstable; urgency=medium
+
+  * call_joinscript in postinst (Bug #34335)
+
+ -- Arvid Requate <requate@univention.de>  Thu, 17 Apr 2014 17:51:44 +0200
+
 ucs-school-umc-roleshares (1.0.0-7) unstable; urgency=medium
 
   * Only create roleshares on a school slave and singlemaster by default

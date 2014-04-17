@@ -1,8 +1,7 @@
 #!/bin/sh
-# -*- coding: utf-8 -*-
 #
 # UCS@School UMC Module Role Shares
-#  join script
+#  postinst script
 #
 # Copyright 2014 Univention GmbH
 #
@@ -31,23 +30,12 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-VERSION=1
-
-. /usr/share/univention-join/joinscripthelper.lib
-. /usr/share/univention-lib/all.sh
-. /usr/share/ucs-school-lib/umc.sh
-
-joinscript_init
-
-# umc_init # disabled for now
+#DEBHELPER#
 
 eval "$(univention-config-registry shell)"
 
-if [ "$server_role" != 'domaincontroller_master' ] || is_ucr_true 'ucsschool/singlemaster'; then
-	## Create role share unless disabled via UCR ucsschool/import/roleshare=no
-	/usr/lib/pymodules/python2.6/ucsschool/lib/roleshares.py "$@" --create student
-fi
+. /usr/share/univention-lib/all.sh
 
-joinscript_save_current_version
+call_joinscript 38ucs-school-umc-roleshares.inst
 
 exit 0
