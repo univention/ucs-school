@@ -60,7 +60,11 @@ fi
 
 sharepath="$ucsschool_import_generate_share_marktplatz_sharepath"
 if [ -z "$sharepath" ] ; then
-	sharepath="/home/groups/Marktplatz"
+	if is_ucr_true 'ucsschool/import/roleshare':
+		sharepath="/home/$ou/groups/Marktplatz"
+	else
+		sharepath="/home/groups/Marktplatz"
+	fi
 fi
 
 sharemode="$ucsschool_import_generate_share_marktplatz_permissions"

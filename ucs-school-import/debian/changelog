@@ -1,3 +1,12 @@
+ucs-school-import (10.0.7-5) unstable; urgency=medium
+
+  * Don't set ucsschool/import/generate/share/marktplatz/sharepath? default
+    in postinst, derive it in hooks/ou_create_post.d/52marktplatz_create
+    depending on ucsschool/import/roleshare (Bug #34335)
+  * fix undefined variable in ucs-school-import script
+
+ -- Arvid Requate <requate@univention.de>  Thu, 17 Apr 2014 19:06:22 +0200
+
 ucs-school-import (10.0.7-4) unstable; urgency=medium
 
   * Create group shares below /home/$ou if ucsschool/import/roleshare
