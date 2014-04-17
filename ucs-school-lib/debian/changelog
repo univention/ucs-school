@@ -1,3 +1,9 @@
+ucs-school-lib (5.0.3-18) unstable; urgency=medium
+
+  * Support creation of a roleshare for a specific school (Bug #34335)
+
+ -- Arvid Requate <requate@univention.de>  Thu, 17 Apr 2014 20:13:21 +0200
+
 ucs-school-lib (5.0.3-17) unstable; urgency=medium
 
   * Fix log message (Bug #34335)

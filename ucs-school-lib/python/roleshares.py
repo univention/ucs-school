@@ -103,13 +103,25 @@ def create_roleshare(role, school_ou, share_container, ucr=None, ldap_user_read=
 	else:
 		print 'Object created: %s' % _2utf8( udm_obj.dn )
 
-def create_roleshares(role_list, ucr=None):
+def create_roleshares(role_list, school_list=None, ucr=None):
 	if not ucr:
 		ucr = univention.config_registry.ConfigRegistry()
 		ucr.load()
 		
-	for searchbase in get_all_local_searchbases():
+	all_visible_searchbases = get_all_local_searchbases()
+
+	if not school_list:
+		school_list = []
+
+	all_visible_schools = [searchbase.school for searchbase in all_visible_searchbases]
+	for school_ou in school_list:
+		if school_ou not in all_visible_schools:
+			print 'School not found: %s' (school_ou,)
+
+	for searchbase in all_visible_searchbases:
 		school_ou = searchbase.school
+		if school_ou not in school_list:
+			continue
 		share_container = searchbase.shares
 		for role in role_list:
 			create_roleshare(role, school_ou, share_container, ucr)
@@ -120,6 +132,9 @@ if __name__ == '__main__':
 	parser.add_option('--create', dest='roleshares',
 		action='append',
 		help='create role share')
+	parser.add_option('--school', dest='schools',
+		action='append',
+		help='select school')
 	parser.add_option('--binddn', dest='binddn',
 		help='udm binddn')
 	parser.add_option('--bindpwd', dest='bindpwd',
@@ -151,4 +166,4 @@ if __name__ == '__main__':
 
 	set_credentials(opts.binddn, opts.bindpwd) ## for @LDAP_Connection(USER_*)
 		
-	create_roleshares(roles, ucr)
+	create_roleshares(roles, opts.schools, ucr)
