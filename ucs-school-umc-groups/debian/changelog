@@ -1,3 +1,9 @@
+ucs-school-umc-groups (2.0.1-2) unstable; urgency=medium
+
+  * Set share path depending on ucsschool/import/roleshare (Bug #34335)
+
+ -- Arvid Requate <requate@univention.de>  Thu, 17 Apr 2014 19:07:49 +0200
+
 ucs-school-umc-groups (2.0.1-1) unstable; urgency=low
 
   * Bug #31663: fix problems for groupnames which contain uppercase letters

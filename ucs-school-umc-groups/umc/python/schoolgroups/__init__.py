@@ -305,7 +305,10 @@ class Instance( SchoolBaseModule ):
 		shareObj.open()
 		shareObj["name"] = "%s" % groupName
 		shareObj["host"] = serverFQDN
-		shareObj["path"] = "/home/groups/%s" % groupName
+		if ucr.is_true('ucsschool/import/roleshare', True):
+			shareObj["path"] = "/home/" + os.path.join(search_base.school, "groups/%s" % (groupName,))
+		else:
+			shareObj["path"] = "/home/groups/%s" % (groupName,)
 		shareObj["writeable"] = "1"
 		shareObj["sambaWriteable"] = "1"
 		shareObj["sambaBrowseable"] = "1"
