@@ -34,15 +34,17 @@
 VERSION=1
 
 . /usr/share/univention-join/joinscripthelper.lib
-. /usr/share/univention-lib/umc.sh
+. /usr/share/univention-lib/all.sh
 . /usr/share/ucs-school-lib/umc.sh
 
 joinscript_init
 
 # umc_init # disabled for now
 
-## Create role share unless disabled via UCR ucsschool/import/roleshare=no
-/usr/lib/pymodules/python2.6/ucsschool/lib/roleshares.py "$@" --create student
+if [ "$server_role" != 'domaincontroller_master' ] || is_ucr_true 'ucsschool/singlemaster'; then
+	## Create role share unless disabled via UCR ucsschool/import/roleshare=no
+	/usr/lib/pymodules/python2.6/ucsschool/lib/roleshares.py "$@" --create student
+fi
 
 joinscript_save_current_version
 
