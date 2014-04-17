@@ -89,7 +89,6 @@ def create_roleshare(role, school_ou, share_container, ucr=None, ldap_user_read=
 		udm_obj = udm_modules.get(udm_module_name).object(None, ldap_user_write, share_container)
 		udm_obj.open()
 		udm_obj['name'] = roleshare_name(role, school_ou, ucr)
-		udm_obj['description'] = '%s share' % (ucs_school_name_i18n(role),)
 		udm_obj['path'] = os.path.join('/home', roleshare_path(role, school_ou, ucr))
 		udm_obj['host'] = '%(hostname)s.%(domainname)s' % ucr
 		udm_obj['group'] = teacher_group['gidNumber']

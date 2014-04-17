@@ -1,3 +1,9 @@
+ucs-school-lib (5.0.3-16) unstable; urgency=medium
+
+  * shares/share does not offer a description property (Bug #34335)
+
+ -- Arvid Requate <requate@univention.de>  Thu, 17 Apr 2014 13:47:15 +0200
+
 ucs-school-lib (5.0.3-15) unstable; urgency=medium
 
   * Add ucsschool.lib.roles.supported_roles	(Bug #34335)
