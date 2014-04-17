@@ -200,6 +200,8 @@ if is_ucr_true "ucsschool/import/generate/policy/dhcp/dns/set_per_ou" ; then
 	done
 fi
 
+## Create role share unless disabled via UCR ucsschool/import/roleshare=no
+python -B /usr/share/pyshared/ucsschool/lib/roleshares.py "$@" --create student
 
 ucs_addServiceToLocalhost 'UCS@school' "$@"
 

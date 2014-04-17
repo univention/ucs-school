@@ -78,7 +78,6 @@ Recommends:
  ucs-school-umc-users,
  ucs-school-umc-rooms,
  ucs-school-webproxy,
- ucs-school-umc-roleshares,
 Description: UCS@School meta package for UCS DC Slave System
  This meta package installs all required packages for UCS@School on
  a UCS domaincontroller slave. The package ucs-school-master
@@ -129,7 +128,6 @@ Recommends:
  ucs-school-umc-rooms,
  ucs-school-umc-wizards,
  ucs-school-webproxy,
- ucs-school-umc-roleshares,
 Description: UCS@School meta package for UCS DC Master System (single server environment)
  This meta package installs all required packages for UCS@School on
  a UCS domaincontroller master. The domaincontroller master will be 
