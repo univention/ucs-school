@@ -13,138 +13,289 @@ import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool as utu
 import univention.testing.utils as utils
 
-# generate number of random domain names
-def fakeDomains(count):
-	domains = []
-	for i in range(count):
-		d = uts.random_string()
-		domains.append('%s.de' % d)
-	return domains
 
-# define an internet rule
-def defineRule(connection, ruleName, ruleType, domainList, wlan, rulePriority):
-	param = [
-			{
-				'object':
-				{
-					'name':ruleName,
-					'type':ruleType,
-					'domains': domainList,
-					'wlan': wlan,
-					'priority': rulePriority
-					}
-				}
-			]
-	if not connection.request('internetrules/add', param)[0]['success']:
-		utils.fail('Unable to define rule (%r)' % (param))
+"""""""""""""""""""""""""""""""""""""""
+  Class RandomDomains
+  Generates random domains
+"""""""""""""""""""""""""""""""""""""""
+class RandomDomain():
+# Initialization
+	def __init__(self):
+		DOMAIN_NAMES = ["de","com","net","org","gov","info","me",
+							   "email","eu","at","uk","co","ag","sy"]
+		self.__name = uts.random_string()
+		self.__tail = random.choice(DOMAIN_NAMES)
+		self.__domain = '%s.%s' % (self.__name, self.__tail)
 
-# get an existing internet rule
-def getRule(connection, ruleName, expectedResult):
-	if bool(connection.request('internetrules/get', [ruleName])) != expectedResult:
-		utils.fail('Internet rule (%r) failed to be fetched' % (ruleName))
+# single domain getter
+	def name(self):
+		return self.__domain
 
-# Generate a list of newly defined random rules
-def randomRules(connection, count):
-	definedRules = []
-	# supported rule related values
-	priorities = [1,2,3,4,5,6,7,8,9,10]
-	types = ['whitelist', 'blacklist']
-	wlans = [True, False]
-	# Generate Rules
-	for i in range(count):
-		ruleName = uts.random_string()
-		domains = sorted(fakeDomains(random.choice(priorities)))
-		priority = random.choice(priorities)
-		type = random.choice(types)
-		wlan = random.choice(wlans)
-		defineRule(connection, ruleName, type, domains, wlan, priority)
-		definedRules.append(ruleName)
-	return sorted(definedRules)
+# multi domain getter as a list of domain names
+	def getDomainList(self, count):
+		domainList = []
+		for i in range(count):
+			domain = self.__class__()
+			domainList.append(domain.name())
+		return domainList
 
-# create random classes
-def randomClasses(connection, schoolName, count):
-	flavor = 'schoolwizards/classes'
-	cList = []
-	for i in range(count):
-		cName = uts.random_string()
-		description = uts.random_string()
-		param = {
-				'name': cName,
-				'school': schoolName,
-				'description': description,
-				}
-		if connection.request('schoolwizards/classes/create', param, flavor) != None:
-			utils.fail('Unable to create class (%r)' % (param))
+
+"""""""""""""""""""""""""""""""""""""""
+  Class InternetRule
+  All the operations related to internet rules
+"""""""""""""""""""""""""""""""""""""""
+class InternetRule():
+# Initialization (by default all are random)
+	def __init__(self, name=None, typ=None, domains=None, wlan=None, priority=None):
+		priorities = [1,2,3,4,5,6,7,8,9,10]
+		if name:
+			self.__name = name
 		else:
-			cList.append(cName)
-	return sorted(cList)
+			self.__name = uts.random_string()
+		if typ:
+			self.__type = typ
+		else:
+			typs = ['whitelist', 'blacklist']
+			self.__type = random.choice(typs)
+		if domains:
+			self.__domains = domains
+		else:
+			dom = RandomDomain()
+			domains = dom.getDomainList(random.choice(priorities))
+			self.__domains = domains
+		if wlan:
+			self.__wlan = wlan
+		else:
+			wlans = [True, False]
+			self.__wlan = random.choice(wlans)
+		if priority:
+			self.__priority = priority
+		else:
+			self.__priority =  random.choice(priorities)
 
-# Create random workgroups
-def randomWorkgroups(connection, schoolName, count):
-	flavor = 'workgroup-admin'
-	wList = []
-	for i in range(count):
-		groupName = uts.random_string()
-		description = uts.random_string()
+# name getter
+	def name(self):
+		return self.__name
+
+# define rule umcp
+	def define(self, umcConnection):
 		param = [
 				{
-					'object': {
-						'name': groupName,
-						'school': schoolName,
-						'members': [],
-						'description': description
+					'object':
+					{
+						'name':self.__name,
+						'type':self.__type,
+						'domains': self.__domains,
+						'wlan': self.__wlan,
+						'priority': self.__priority
 						}
 					}
 				]
-		if not connection.request('schoolgroups/add', param, flavor):
-			utils.fail('Unable to add workgroup (%r)' % (param))
-		else:
-			wList.append(groupName)
-	return sorted(wList)
+		if not umcConnection.request('internetrules/add', param)[0]['success']:
+			utils.fail('Unable to define rule (%r)' % (param))
 
-# Assign internet rules to workgroups/classes randomly
-# return a list of tuples (groupName, ruleName)
-def assignRules(connection, schoolName, groupList, basedn, ruleList, type):
-	result = []
-	for groupName in groupList:
-		ruleName = random.choice(ruleList)
-		if type == 'workgroup':
-			groupdn = 'cn=%s-%s,cn=schueler,cn=groups,ou=%s,%s' % (schoolName,
-					groupName, schoolName, basedn)
-		elif type == 'class':
-			groupdn = 'cn=%s-%s,cn=klassen,cn=schueler,cn=groups,ou=%s,%s' % (schoolName,
-					groupName, schoolName, basedn)
+# get the internet rule umcp
+	def get(self, umcConnection, expectedResult):
+		if bool(umcConnection.request('internetrules/get', [self.__name])) != expectedResult:
+			utils.fail('Unexpected i fetching result for internet rule (%r)'  % (self.__name))
+
+# try to modify the internet rule
+	def put(self, umcConnection, newName, newtype, newDomains, newWlan, newPriority):
+		param = [
+				{
+					'object':
+					{
+						'name':newName,
+						'type':newtype,
+						'domains': newDomains,
+						'wlan': newWlan,
+						'priority': newPriority
+						},
+					'options' : { 'name': self.__name }
+					}
+				]
+		if not umcConnection.request('internetrules/put', param)[0]['success']:
+			utils.fail('Unable to modify rule (%r)' % (param))
+		else:
+			self.__name = newName
+			self.__type = newtype
+			self.__domains = newDomains
+			self.__wlan = newWlan
+			self.__priority = newPriority
+
+# try to remove  the internet rule
+	def remove(self, umcConnection):
+		options = [{ 'object': self.__name }]
+		if not umcConnection.request('internetrules/remove', options )[0]['success']:
+			utils.fail('Unable to remove rule (%r)' % (self.__name))
+
+# Fetch the values from ucr and check if it matches the correct values for the rule
+	def checkUcr(self, ucr, expectedResult):
+		ucr.load()
+		# extract related items from ucr
+		exItems =  dict([
+			(key.split('/')[-1], value) for (key, value) in ucr.items() if self.__name	in key
+			])
+		if bool(exItems) != expectedResult:
+			utils.fail('Unexpected registery items fetched (expectedResult=%r items=%r)'
+					% (expectedResult, exItems))
+		elif expectedResult:
+			wlan = str(self.__wlan).lower()
+			typ = self.__type
+			if self.__type == "whitelist":
+				typ = "whitelist-block"
+			elif self.__type == "blacklist":
+				typ = "blacklist-pass"
+			curtype = exItems['filtertype']
+			curWlan = exItems['wlan']
+			curPriority = exItems['priority']
+			exDomains = dict([
+				(key, value) for (key, value) in exItems.items() if unicode(key).isnumeric()
+				])
+			curDomains = sorted(exDomains.values())
+			if (curtype, curPriority, curWlan, curDomains) != (typ, self.__priority, wlan, self.__domains):
+				utils.fail('Values in UCR are not updated for rule (%r)' % (self.__name))
+
+# Assign internet rules to workgroups/classes
+# return a tuple (groupName, ruleName)
+	def assign(self, umcConnection, school, groupName, basedn, groupType, default=False):
+		groupdn = ''
+		if groupType == 'workgroup':
+			groupdn = 'cn=%s-%s,cn=schueler,cn=groups,ou=%s,%s' % (school,
+					groupName, school, basedn)
+		elif groupType == 'class':
+			groupdn = 'cn=%s-%s,cn=klassen,cn=schueler,cn=groups,ou=%s,%s' % (school,
+					groupName, school, basedn)
+		if default:
+			name = '$default$'
+		else:
+			name = self.__name
 		param = [
 				{
 					'group': groupdn,
-					'rule': ruleName
+					'rule': name
 					}
 				]
-		if not connection.request('internetrules/groups/assign', param):
+		result = umcConnection.request('internetrules/groups/assign', param)
+		if not result:
 			utils.fail('Unable to assign internet rule to workgroup (%r)' % (param))
 		else:
-			result.append((groupName, ruleName))
-	return result
+			return (groupName, self.__name)
+
+# define multi rules and return list of rules Objects
+	def defineList(self, umcConnection, count):
+		ruleList = []
+		for i in range(count):
+			rule = self.__class__()
+			rule.define(umcConnection)
+			ruleList.append(rule)
+		return ruleList
+
+
+"""""""""""""""""""""""""""""""""""""""
+  Class RandomClass
+"""""""""""""""""""""""""""""""""""""""
+class RandomClass():
+# Initialization
+	def __init__(self):
+		self.__name = uts.random_string()
+		self.__description = uts.random_string()
+
+# name getter
+	def name(self):
+		return self.__name
+
+# create random classes
+	def create(self, umcConnection, school):
+		flavor = 'schoolwizards/classes'
+		param = {
+				'name': self.__name,
+				'school': school,
+				'description': self.__description,
+				}
+		if umcConnection.request('schoolwizards/classes/create', param, flavor) != None:
+			utils.fail('Unable to create class (%r)' % (param))
+
+# create list of random classes returns list of class objects
+	def createList(self, umcConnection, school, count):
+		cList = []
+		for i in range(count):
+			c = self.__class__()
+			c.create(umcConnection, school)
+			cList.append(c)
+		return cList
+
+
+"""""""""""""""""""""""""""""""""""""""
+  Class RandomWorkgroup
+"""""""""""""""""""""""""""""""""""""""
+class RandomWorkgroup():
+# Initialization
+	def __init__(self):
+		self.__name = uts.random_string()
+		self.__description = uts.random_string()
+		self.__members = []
+
+# name getter
+	def name(self):
+		return self.__name
+
+# Create random workgroups
+	def create(self, umcConnection, school):
+		flavor = 'workgroup-admin'
+		param = [
+				{
+					'object': {
+						'name': self.__name,
+						'school': school,
+						'members': self.__members,
+						'description': self.__description
+						}
+					}
+				]
+		if not umcConnection.request('schoolgroups/add', param, flavor):
+			utils.fail('Unable to add workgroup (%r)' % (param))
+
+# create list of random workgroups returns list of groups objects
+	def createList(self, umcConnection, school, count):
+		groupList = []
+		for i in range(count):
+			g = self.__class__()
+			g.create(umcConnection, school)
+			groupList.append(g)
+		return groupList
+
+
+"""""""""""""""""""""""""""""""""""""""
+  Class Check
+  resposible of all the checks operations on rules/groups
+"""""""""""""""""""""""""""""""""""""""
+class Check():
+# Initialization
+	def __init__(self, school, groupRuleCouples):
+		self.__school = school
+		self.__groupRuleCouples = groupRuleCouples
 
 # check if the assigned internet rules are correct UMCP
-def compareRules(connection, schoolName, assignedGroups):
-	for groupName, ruleName in assignedGroups:
-		param = {
-				'school': schoolName,
-				'pattern': groupName
-				}
-		if ruleName == '$default$':
-			ruleName = '-- default settings --'
-		if connection.request('internetrules/groups/query', param)[0]['rule'] != ruleName:
-			utils.fail('Assigned internetrule (%r) to workgroup (%r) does not match' % (ruleName, groupName))
+	def checkRules(self, umcConnection):
+		for  groupName,ruleName  in self.__groupRuleCouples:
+			param = {
+					'school': self.__school,
+					'pattern': groupName
+					}
+			if ruleName == None:
+				ruleName = '-- default settings --'
+			result = umcConnection.request('internetrules/groups/query', param)
+			if result[0]['rule'] != ruleName:
+				utils.fail('Assigned internetrule (%r) to workgroup (%r) does not match' % (ruleName, groupName))
 
 # check ucr variables for groups/ classes internet rules
-def checkUcr(ucr, schoolName, assignedGroups):
-	ucr.load()
-	for groupName, ruleName in assignedGroups:
-		groupid = 'proxy/filter/groupdefault/%s-%s' % (schoolName, groupName)
-		if ucr.get(groupid) != ruleName:
-			utils.fail('Ucr variable (%r) is not correctly set' % (groupid))
+	def checkUcr(self, ucr):
+		ucr.load()
+		for groupName, ruleName in self.__groupRuleCouples:
+			groupid = 'proxy/filter/groupdefault/%s-%s' % (self.__school, groupName)
+			if ucr.get(groupid) != ruleName:
+				utils.fail('Ucr variable (%r) is not correctly set' % (groupid))
 
 
 def main():
@@ -154,93 +305,124 @@ def main():
 			basedn = ucr.get('ldap/base')
 			connection = UMCConnection(host)
 			connection.auth('Administrator' ,'univention')
-			schoolName, oudn = schoolenv.create_ou()
+			school, oudn = schoolenv.create_ou()
 
-			# Create random internet rules
-			newRules = randomRules(connection, 8)
+			# define many random internet rules
+			ruleIns = InternetRule()
+			newRules = ruleIns.defineList(connection, 8)
 
 			# test get the created rules via umc
 			for rule in newRules:
-				getRule(connection, rule, True)
+				rule.get(connection, True)
 
 			# Create random workgroups
-			newWorkgroups = randomWorkgroups(connection, schoolName, 2)
-			assignedGroups = [(groupName,None) for groupName in newWorkgroups]
+			groupIns = RandomWorkgroup()
+			newWorkgroups = groupIns.createList(connection, school, 2)
+			assignedGroups = [(group.name(),None) for group in newWorkgroups]
 
-			# check ucr variables
-			checkUcr(ucr, schoolName, assignedGroups)
-
-			# assign internetrules to groups
-			assignedGroups = assignRules(connection, schoolName, newWorkgroups,
-					basedn, newRules[:4], 'workgroup')
+			check1 = Check(school, assignedGroups)
 
 			# check the assigned internet rules UMCP
-			compareRules(connection, schoolName, assignedGroups)
-
-			# check ucr variables 
-			checkUcr(ucr, schoolName, assignedGroups)
-
-			# switch internetrules for groups
-			assignedGroups = assignRules(connection, schoolName, newWorkgroups,
-					basedn, newRules[4:], 'workgroup')
-
-			# check the assigned internet rules UMCP
-			compareRules(connection, schoolName, assignedGroups)
+			check1.checkRules(connection)
 
 			# check ucr variables
-			checkUcr(ucr, schoolName, assignedGroups)
+			check1.checkUcr(ucr)
+
+			# assign internetrules to groups randomly
+			rules = newRules[:4]
+			assignedGroups = []
+			for group in newWorkgroups:
+				rule = random.choice(rules)
+				rule.assign(connection, school, group.name(), basedn, 'workgroup')
+				assignedGroups.append((group.name(), rule.name()))
+
+			check2 = Check(school, assignedGroups)
+			# check the assigned internet rules UMCP
+			check2.checkRules(connection)
+
+			# check ucr variables
+			check2.checkUcr(ucr)
+
+			# switch internetrules for groups randomly
+			rules = newRules[4:]
+			assignedGroups = []
+			for group in newWorkgroups:
+				rule = random.choice(rules)
+				rule.assign(connection, school, group.name(), basedn, 'workgroup')
+				assignedGroups.append((group.name(), rule.name()))
+
+			check3 = Check(school, assignedGroups)
+
+			# check the assigned internet rules UMCP
+			check3.checkRules(connection)
+
+			# check ucr variables
+			check3.checkUcr(ucr)
 
 			# assign default internetrule to groups
-			assignedGroups = assignRules(connection, schoolName, newWorkgroups,
-					basedn, ['$default$'], 'workgroup')
+			for group in newWorkgroups:
+				rule.assign(connection, school, group.name(), basedn, 'workgroup', default=True)
 
 			# check the assigned internet rules UMCP
-			compareRules(connection, schoolName, assignedGroups)
-
-			assignedGroups = [(groupName,None) for groupName in newWorkgroups]
+			check1.checkRules(connection)
 
 			# check ucr variables
-			checkUcr(ucr, schoolName, assignedGroups)
+			check1.checkUcr(ucr)
 
-			# Create random classes
-			newClasses = randomClasses(connection, schoolName, 2)
-			assignedClasses = [(cName,None) for cName in newClasses]
+			# Create random classs
+			cIns = RandomClass()
+			newclasses = cIns.createList(connection, school, 2)
+			assignedClasses = [(c.name(),None) for c in newclasses]
 
-			# check ucr variables
-			checkUcr(ucr, schoolName, assignedClasses)
-
-			# assign internetrules to classes
-			assignedClasses = assignRules(connection, schoolName, newClasses,
-					basedn, newRules[:4], 'class')
+			check1 = Check(school, assignedClasses)
 
 			# check the assigned internet rules UMCP
-			compareRules(connection, schoolName, assignedClasses)
+			check1.checkRules(connection)
 
 			# check ucr variables
-			checkUcr(ucr, schoolName, assignedClasses)
+			check1.checkUcr(ucr)
 
-			# switch internetrules for classes
-			assignedClasses = assignRules(connection, schoolName, newClasses,
-					basedn, newRules[4:], 'class')
+			# assign internetrules to classes randomly
+			rules = newRules[:4]
+			assignedClasses = []
+			for c in newclasses:
+				rule = random.choice(rules)
+				rule.assign(connection, school, c.name(), basedn, 'class')
+				assignedClasses.append((c.name(), rule.name()))
+
+			check2 = Check(school, assignedClasses)
 
 			# check the assigned internet rules UMCP
-			compareRules(connection, schoolName, assignedClasses)
+			check2.checkRules(connection)
 
 			# check ucr variables
-			checkUcr(ucr, schoolName, assignedClasses)
+			check2.checkUcr(ucr)
 
-			# assign default internet rules to classes
-			assignedClasses = assignRules(connection, schoolName, newClasses,
-					basedn, ['$default$'], 'class')
+			# switch internetrules for classes randomly
+			rules = newRules[4:]
+			assignedClasses = []
+			for c in newclasses:
+				rule = random.choice(rules)
+				rule.assign(connection, school, c.name(), basedn, 'class')
+				assignedClasses.append((c.name(), rule.name()))
+
+			check3 = Check(school, assignedClasses)
 
 			# check the assigned internet rules UMCP
-			compareRules(connection, schoolName, assignedClasses)
-
-			assignedClasses = [(cName,None) for cName in newClasses]
+			check3.checkRules(connection)
 
 			# check ucr variables
-			checkUcr(ucr, schoolName, assignedClasses)
+			check3.checkUcr(ucr)
 
+			# assign default internetrule to classes
+			for c in newclasses:
+				rule.assign(connection, school, c.name(), basedn, 'class', default=True)
+
+			# check the assigned internet rules UMCP
+			check1.checkRules(connection)
+
+			# check ucr variables
+			check1.checkUcr(ucr)
 
 if __name__ == '__main__':
 	sys.exit(main())
