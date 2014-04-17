@@ -33,7 +33,7 @@
 
 from univention.lib.i18n import Translation
 from ucsschool.lib.i18n import ucs_school_name_i18n
-from ucsschool.lib.roles import role_pupil, role_teacher, role_staff
+from ucsschool.lib.roles import role_teacher, supported_roles
 from univention.management.console.log import MODULE
 from univention.management.console.modules.decorators import simple_response
 from ucsschool.lib.schoolldap import SchoolBaseModule, LDAP_Connection, USER_READ, USER_WRITE
@@ -64,30 +64,45 @@ class Instance(SchoolBaseModule):
 		pattern = request.options.get('pattern', '').lower()
 		return self.get_shares(pattern)
 
+	@simple_response
+	def modify(self):
+		"""Modify role shares
+		requests.options = {}
+		"""
+		MODULE.info('%s.modify: options: %s' % (self.module_name, request.options,))
+		sharename = request.options.get('name', '').lower()
+		accessmode = request.options.get('access', '').lower()
+		self.modify_share(sharename, accessmode)
+
+	def valid_role_from_roleshare_name(self, inputstring):
+		search_pattern_parts = inputstring.split("-", 1)
+		for role in supported_roles:
+			if search_pattern_parts[0] == role:
+				return role
+		return None
+
+	def valid_school_from_roleshare_name(self, inputstring, availableSchools):
+		search_pattern_parts = inputstring.split("-", 1)
+		if len(search_pattern_parts) != 2:
+			return None
+		for school_ou in availableSchools:
+			if search_pattern_parts[1] == school_ou:
+				return school_ou
+		return None
+
 	@LDAP_Connection(USER_READ)
-	def get_shares(self, pattern, ldap_user_read=None, ldap_position=None, search_base=None)):
+	def get_shares(self, pattern, ldap_user_read=None, ldap_position=None, search_base=None):
 
 		result = {}
 		result['shares'] = []
-
-		supported_roles = (role_pupil, role_teacher, role_staff)
 
 		if not search_base.availableSchools:
 			MODULE.error('%s.query: No schools available to this user!' % (self.module_name,))
 			return result	## empty
 
-		## sanitize the search pattern to match only role shares
-		search_pattern_parts = pattern.split("-", 1)
-		role_specified=False
-		for role in supported_roles:
-			if search_pattern_parts[0] == role:
-				role_specified=True
-
-		school_ou_specified=False
-		if len(search_pattern_parts) == 2:
-			for school_ou in search_base.availableSchools:
-				if len search_pattern_parts[1] == school_ou:
-					school_ou_specified=True
+		## sanitize the search pattern to match only role shares and only in ou
+		role_specified = self.valid_role_from_roleshare_name(pattern)
+		school_ou_specified = self.valid_school_from_roleshare_name(pattern, search_base.availableSchools)
 
 		udm_filter = None
 		if school_ou_specified:
@@ -123,16 +138,8 @@ class Instance(SchoolBaseModule):
 		result['shares'] = [obj['name'] for obj in res]
 		return result
 
-	@simple_response
-	def modify(self):
-		"""Modify role shares
-		requests.options = {}
-		"""
-		MODULE.info('%s.modify: options: %s' % (self.module_name, request.options,))
-		pattern = request.options.get('name', '').lower()
-
 	@LDAP_Connection(USER_READ, USER_WRITE)
-	def modify_share(self, sharename, accessmode, ldap_user_read=None, ldap_user_write=None, ldap_position=None, search_base=None)):
+	def modify_share(self, sharename, accessmode, ldap_user_read=None, ldap_user_write=None, ldap_position=None, search_base=None):
 
 		result = {}
 
@@ -142,23 +149,14 @@ class Instance(SchoolBaseModule):
 			return result	## TODO: How to communicate the error?
 
 		## sanitize the sharename to match only role shares
-		search_pattern_parts = pattern.split("-", 1)
-		role_specified=False
-		for role in supported_roles:
-			if search_pattern_parts[0] == role:
-				role_specified=True
-		if not role_specified:
+		if not self.valid_role_from_roleshare_name(sharename):
 			MODULE.error('%s.modify: sharename is not a role share: %s' % (self.module_name, sharename,))
 			return result	## TODO: How to communicate the error?
 
 
-		specified_school_ou=None
-		if len(search_pattern_parts) == 2:
-			for school_ou in search_base.availableSchools:
-				if len search_pattern_parts[1] == school_ou:
-					specified_school_ou=school_ou
-		if not specified_school_ou:
-			MODULE.error('%s.modify: sharename is not in an accessible school: %s' % (self.module_name, sharename,))
+		school_ou = self.valid_school_from_roleshare_name(sharename, search_base.availableSchools)
+		if not school_ou:
+			MODULE.error('%s.modify: sharename "%s" is not in an accessible school (%s)' % (self.module_name, sharename, search_base.availableSchools,))
 			return result	## TODO: How to communicate the error?
 
 		udm_modules.init(ldap_user_read, ldap_position, udm_modules.get(self.udm_module_name))
@@ -168,7 +166,7 @@ class Instance(SchoolBaseModule):
 			MODULE.error('%s.modify: share note found: %s' % (self.module_name, sharename,))
 			return result	## TODO: How to communicate the error?
 
-		teacher_groupname = "-".join((ucs_school_name_i18n(role_teacher), specified_school_ou))
+		teacher_groupname = "-".join((ucs_school_name_i18n(role_teacher), school_ou))
 
 		udm_obj = res[0]
 		if accessmode == "read":
