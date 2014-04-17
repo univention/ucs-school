@@ -63,6 +63,7 @@ Depends: univention-ldap-server (>= 8.0.77-4),
  shell-ucs-school,
  python-univention-lib (>= 1.0.51-3),
  shell-univention-lib (>= 1.0.51-3),
+ python-ucs-school (>= 5.0.3-17),
  univention-config
 Recommends:
  ucs-school-branding,
@@ -111,6 +112,7 @@ Depends: univention-ldap-server (>= 8.0.77-4),
  python-univention (>= 6.0.21-1),
  python-univention-lib (>= 1.0.51-3),
  shell-univention-lib (>= 1.0.51-3),
+ python-ucs-school (>= 5.0.3-17),
  ucs-school-netlogon
 Recommends:
  ucs-school-branding,
