@@ -35,3 +35,5 @@ role_pupil   = 'pupil'
 role_teacher = 'teacher'
 role_staff   = 'staff'
 
+supported_roles = (role_pupil, role_teacher, role_staff)	## note: pupil SHOULD come first here for checks
+

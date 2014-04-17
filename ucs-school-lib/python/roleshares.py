@@ -49,7 +49,7 @@ def roleshare_name(role, school_ou, ucr):
 	if custom_roleshare_name:
 		return custom_roleshare_name
 	else:
-		return "-".join((ucs_school_name_i18n(role), school_ou))
+		return '-'.join((ucs_school_name_i18n(role), school_ou))
 
 def roleshare_path(role, school_ou, ucr):
 	custom_roleshare_path = ucr.get('ucsschool/import/roleshare/%s/path' % (role,))
@@ -76,11 +76,11 @@ def create_roleshare(role, school_ou, share_container, ucr=None, ldap_user_read=
 		ucr = univention.config_registry.ConfigRegistry()
 		ucr.load()
 		
-	teacher_groupname = "-".join((ucs_school_name_i18n(role_teacher), school_ou))
+	teacher_groupname = '-'.join((ucs_school_name_i18n(role_teacher), school_ou))
 
 	teacher_group = Group(teacher_groupname, school_ou).get_udm_object(ldap_user_read)
 	if not teacher_group:
-		raise univention.admin.uexceptions.noObject, "Group not found: %s." % teacher_groupname
+		raise univention.admin.uexceptions.noObject, 'Group not found: %s.' % teacher_groupname
 
 	try:
 		udm_module_name = 'shares/share'
@@ -88,17 +88,18 @@ def create_roleshare(role, school_ou, share_container, ucr=None, ldap_user_read=
 		share_container = udm_uldap.position(share_container)
 		udm_obj = udm_modules.get(udm_module_name).object(None, ldap_user_write, share_container)
 		udm_obj.open()
-		udm_obj["name"] = roleshare_name(role, school_ou, ucr)
-		udm_obj["path"] = os.path.join("/home", roleshare_path(role, school_ou, ucr))
-		udm_obj["host"] = "%(hostname)s.%(domainname)s" % ucr
-		udm_obj["group"] = teacher_group['gidNumber']
-		udm_obj["sambaBrowseable"] = 0
-		udm_obj["sambaWriteable"] = 0
-		udm_obj["sambaValidUsers"] = '@"%s"' % (teacher_groupname,)
-		udm_obj["sambaCustomSettings"] = [("admin users", '@"%s"' % (teacher_groupname,))]
+		udm_obj['name'] = roleshare_name(role, school_ou, ucr)
+		udm_obj['description'] = '%s share' % (ucs_school_name_i18n(role),)
+		udm_obj['path'] = os.path.join('/home', roleshare_path(role, school_ou, ucr))
+		udm_obj['host'] = '%(hostname)s.%(domainname)s' % ucr
+		udm_obj['group'] = teacher_group['gidNumber']
+		udm_obj['sambaBrowseable'] = 0
+		udm_obj['sambaWriteable'] = 0
+		udm_obj['sambaValidUsers'] = '@"%s"' % (teacher_groupname,)
+		udm_obj['sambaCustomSettings'] = [('admin users', '@"%s"' % (teacher_groupname,))]
 		udm_obj.create()
 	except univention.admin.uexceptions.objectExists, dn:
-		print "Object exists: %s" % (dn,)
+		print 'Object exists: %s' % (dn,)
 		pass
 	else:
 		print 'Object created: %s' % _2utf8( udm_obj.dn )
@@ -117,20 +118,20 @@ def create_roleshares(role_list, ucr=None):
 if __name__ == '__main__':
 	from optparse import OptionParser
 	parser = OptionParser()
-	parser.add_option("--create", dest="roleshares",
-		action="append",
-		help="create role share")
-	parser.add_option("--binddn", dest="binddn",
-		help="udm binddn")
-	parser.add_option("--bindpwd", dest="bindpwd",
-		help="udm bindpwd")
+	parser.add_option('--create', dest='roleshares',
+		action='append',
+		help='create role share')
+	parser.add_option('--binddn', dest='binddn',
+		help='udm binddn')
+	parser.add_option('--bindpwd', dest='bindpwd',
+		help='udm bindpwd')
 	(opts, args) = parser.parse_args()
 
 	supported_roles = (role_pupil, role_teacher, role_staff)
 	supported_role_aliases = { 'student': 'pupil' }
 
 	if not opts.roleshares:
-		print "Required option missing: --create"
+		print 'Required option missing: --create'
 		sys.exit(2)
 
 	roles = []
@@ -138,7 +139,7 @@ if __name__ == '__main__':
 		if name in supported_role_aliases:
 			name = supported_role_aliases[name]
 		if name not in supported_roles:
-			print "Given role is not supported. Only supported roles are %s" % (supported_roles,)
+			print 'Given role is not supported. Only supported roles are %s' % (supported_roles,)
 			sys.exit(1)
 		roles.append(name)
 
@@ -146,7 +147,7 @@ if __name__ == '__main__':
 	ucr.load()
 
 	if not ucr.is_true('ucsschool/import/roleshare', True):
-		print "Creation of role shares disabled via UCR ucsschool/import/roleshare"
+		print 'Creation of role shares disabled via UCR ucsschool/import/roleshare'
 		sys.exit(1)
 
 	set_credentials(opts.binddn, opts.bindpwd) ## for @LDAP_Connection(USER_*)

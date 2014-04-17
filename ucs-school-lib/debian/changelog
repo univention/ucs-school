@@ -1,3 +1,11 @@
+ucs-school-lib (5.0.3-15) unstable; urgency=medium
+
+  * Add ucsschool.lib.roles.supported_roles	(Bug #34335)
+  * Sanitize quoting in ucsschool.lib.roleshares
+  * Make roleshares.py directly executable as script for manual use
+
+ -- Arvid Requate <requate@univention.de>  Thu, 17 Apr 2014 12:56:51 +0200
+
 ucs-school-lib (5.0.3-14) unstable; urgency=medium
 
   * Use Group.get_udm_object to simplify GID lookup (Bug #34335)
