@@ -75,8 +75,6 @@ import univention.admin.config
 import univention.config_registry
 import univention.lib.policy_result
 from ucsschool.lib.roles import role_pupil, role_teacher, role_staff
-from ucsschool.lib.roleshares import roleshare_home_subdir, create_roleshares
-from ucsschool.lib.schoolldap import set_credentials
 
 configRegistry=univention.config_registry.ConfigRegistry()
 configRegistry.load()
@@ -887,10 +885,6 @@ def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None, ShareFileServer=None
 					modlist.append(('univentionPolicyReference','',poldn))
 					print 'need to attach policy: %s' % poldn
 			lo.modify(containerdn,modlist)
-
-	if configRegistry.is_true('ucsschool/import/roleshare', True):
-		set_credentials(binddn, bindpwd)
-		create_roleshares(['student'], [schoolNr], configRegistry)
 
 	# invoke post hooks
 	if created:
