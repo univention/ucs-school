@@ -1,3 +1,9 @@
+ucs-school-lib (5.0.3-21) unstable; urgency=medium
+
+  * Fix UDM string properties (Bug #34335)
+
+ -- Arvid Requate <requate@univention.de>  Tue, 22 Apr 2014 19:55:31 +0200
+
 ucs-school-lib (5.0.3-20) unstable; urgency=medium
 
   * Remove script functionality from ucsschool.lib.roleshares,

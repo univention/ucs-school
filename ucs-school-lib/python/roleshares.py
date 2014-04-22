@@ -94,8 +94,8 @@ def create_roleshare_on_server(role, school_ou, share_container_dn, serverfqdn, 
 		udm_obj['path'] = os.path.join('/home', roleshare_path(role, school_ou, ucr))
 		udm_obj['host'] = serverfqdn
 		udm_obj['group'] = teacher_group['gidNumber']
-		udm_obj['sambaBrowseable'] = 0
-		udm_obj['sambaWriteable'] = 0
+		udm_obj['sambaBrowseable'] = "0"
+		udm_obj['sambaWriteable'] = "0"
 		udm_obj['sambaValidUsers'] = '@"%s"' % (teacher_groupname,)
 		udm_obj['sambaCustomSettings'] = [('admin users', '@"%s"' % (teacher_groupname,))]
 		udm_obj.create()
