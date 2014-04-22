@@ -10,6 +10,7 @@ Package: ucs-test-ucsschool
 Architecture: all
 Depends: ucs-test-libs,
  ucs-test-framework,
+ python-pycurl,
  ${misc:Depends}
 Provides: ucs-test-module
 Description: Additional UCS@school tests for ucs-test
