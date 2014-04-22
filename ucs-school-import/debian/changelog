@@ -1,3 +1,9 @@
+ucs-school-import (10.0.7-8) unstable; urgency=medium
+
+  * Fix pythonism (Bug #34335)
+
+ -- Arvid Requate <requate@univention.de>  Tue, 22 Apr 2014 15:49:36 +0200
+
 ucs-school-import (10.0.7-7) unstable; urgency=medium
 
   * UCR doc for ucsschool/import/generate/share/marktplatz/sharepath
