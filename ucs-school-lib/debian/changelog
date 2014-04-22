@@ -1,3 +1,9 @@
+ucs-school-lib (5.0.3-19) unstable; urgency=medium
+
+  * Fix 'student' alias in create_roleshares (Bug #34335)
+
+ -- Arvid Requate <requate@univention.de>  Tue, 22 Apr 2014 15:51:02 +0200
+
 ucs-school-lib (5.0.3-18) unstable; urgency=medium
 
   * Support creation of a roleshare for a specific school (Bug #34335)

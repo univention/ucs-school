@@ -108,6 +108,18 @@ def create_roleshares(role_list, school_list=None, ucr=None):
 		ucr = univention.config_registry.ConfigRegistry()
 		ucr.load()
 		
+	supported_roles = (role_pupil, role_teacher, role_staff)
+	supported_role_aliases = { 'student': 'pupil' }
+
+	roles = []
+	for name in role_list:
+		if name in supported_role_aliases:
+			name = supported_role_aliases[name]
+		if name not in supported_roles:
+			print 'Given role is not supported. Only supported roles are %s' % (supported_roles,)
+			sys.exit(1)
+		roles.append(name)
+
 	all_visible_searchbases = get_all_local_searchbases()
 
 	if not school_list:
@@ -123,7 +135,7 @@ def create_roleshares(role_list, school_list=None, ucr=None):
 		if school_ou not in school_list:
 			continue
 		share_container = searchbase.shares
-		for role in role_list:
+		for role in roles:
 			create_roleshare(role, school_ou, share_container, ucr)
 
 if __name__ == '__main__':
@@ -141,21 +153,9 @@ if __name__ == '__main__':
 		help='udm bindpwd')
 	(opts, args) = parser.parse_args()
 
-	supported_roles = (role_pupil, role_teacher, role_staff)
-	supported_role_aliases = { 'student': 'pupil' }
-
 	if not opts.roleshares:
 		print 'Required option missing: --create'
 		sys.exit(2)
-
-	roles = []
-	for name in opts.roleshares:
-		if name in supported_role_aliases:
-			name = supported_role_aliases[name]
-		if name not in supported_roles:
-			print 'Given role is not supported. Only supported roles are %s' % (supported_roles,)
-			sys.exit(1)
-		roles.append(name)
 
 	ucr = univention.config_registry.ConfigRegistry()
 	ucr.load()
