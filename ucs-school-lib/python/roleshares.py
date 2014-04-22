@@ -36,7 +36,7 @@ import sys
 import univention.config_registry
 from ucsschool.lib.roles import role_pupil, role_teacher, role_staff
 from ucsschool.lib.i18n import ucs_school_name_i18n
-from ucsschool.lib.models import Group
+from ucsschool.lib.models import Group, School
 from ucsschool.lib.schoolldap import get_all_local_searchbases, LDAP_Connection, USER_READ, USER_WRITE, set_credentials
 import univention.admin.uexceptions
 import univention.admin.uldap as udm_uldap
@@ -71,26 +71,28 @@ def roleshare_home_subdir(school_ou, roles, ucr=None):
 
 
 @LDAP_Connection(USER_READ, USER_WRITE)
-def create_roleshare(role, school_ou, share_container, ucr=None, ldap_user_read=None, ldap_user_write=None, ldap_position=None, search_base=None):
+def create_roleshare_on_server(role, school_ou, share_container_dn, serverfqdn, teacher_group=None, ucr=None, ldap_user_read=None, ldap_user_write=None, ldap_position=None, search_base=None):
 	if not ucr:
 		ucr = univention.config_registry.ConfigRegistry()
 		ucr.load()
 		
-	teacher_groupname = '-'.join((ucs_school_name_i18n(role_teacher), school_ou))
-
-	teacher_group = Group(teacher_groupname, school_ou).get_udm_object(ldap_user_read)
 	if not teacher_group:
-		raise univention.admin.uexceptions.noObject, 'Group not found: %s.' % teacher_groupname
+		teacher_groupname = '-'.join((ucs_school_name_i18n(role_teacher), school_ou))
+		teacher_group = Group(teacher_groupname, school_ou).get_udm_object(ldap_user_read)
+		if not teacher_group:
+			raise univention.admin.uexceptions.noObject, 'Group not found: %s.' % teacher_groupname
+	else:
+		teacher_groupname = teacher_group['name']
 
 	try:
 		udm_module_name = 'shares/share'
 		udm_modules.init(ldap_user_write, ldap_position, udm_modules.get(udm_module_name))
-		share_container = udm_uldap.position(share_container)
+		share_container = udm_uldap.position(share_container_dn)
 		udm_obj = udm_modules.get(udm_module_name).object(None, ldap_user_write, share_container)
 		udm_obj.open()
 		udm_obj['name'] = roleshare_name(role, school_ou, ucr)
 		udm_obj['path'] = os.path.join('/home', roleshare_path(role, school_ou, ucr))
-		udm_obj['host'] = '%(hostname)s.%(domainname)s' % ucr
+		udm_obj['host'] = serverfqdn
 		udm_obj['group'] = teacher_group['gidNumber']
 		udm_obj['sambaBrowseable'] = 0
 		udm_obj['sambaWriteable'] = 0
@@ -102,6 +104,51 @@ def create_roleshare(role, school_ou, share_container, ucr=None, ldap_user_read=
 		pass
 	else:
 		print 'Object created: %s' % _2utf8( udm_obj.dn )
+
+@LDAP_Connection(USER_READ)
+def fqdn_from_serverdn(serverdn, ucr=None, ldap_user_read=None, ldap_position=None, search_base=None):
+	fqdn = None
+	try:
+		dn, ldap_obj = ldap_user_read.search(base=serverdn, scope='base', attr=['cn', 'associatedDomain'])[0]
+		if 'associatedDomain' in ldap_obj:
+			fqdn = ".".join((ldap_obj['cn'][0], ldap_obj['associatedDomain'][0]))
+	except IndexError:
+		print 'Could not determine FQDN for %s' % (serverdn,)
+		pass
+	return fqdn
+
+@LDAP_Connection(USER_READ)
+def create_roleshare_for_searchbase(role, target_searchbase, ucr=None, ldap_user_read=None, ldap_position=None, search_base=None):
+	if not ucr:
+		ucr = univention.config_registry.ConfigRegistry()
+		ucr.load()
+		
+	school_ou = target_searchbase.school
+	share_container_dn = target_searchbase.shares
+
+	server_list = []
+
+	school_obj = School(school_ou).get_udm_object(ldap_user_read)
+	ucsschoolHomeShareFileServer = school_obj.get('ucsschoolHomeShareFileServer')
+	if ucsschoolHomeShareFileServer:
+		fqdn = fqdn_from_serverdn(ucsschoolHomeShareFileServer, ucr)
+		if fqdn:
+			server_list.append(fqdn)
+
+	ucsschoolClassShareFileServer = school_obj.get('ucsschoolClassShareFileServer')
+	if ucsschoolClassShareFileServer and ucsschoolClassShareFileServer != ucsschoolHomeShareFileServer:
+		fqdn = fqdn_from_serverdn(ucsschoolClassShareFileServer)
+		if fqdn:
+			server_list.append(fqdn)
+	
+	teacher_groupname = '-'.join((ucs_school_name_i18n(role_teacher), school_ou))
+	teacher_group = Group(teacher_groupname, school_ou).get_udm_object(ldap_user_read)
+	if not teacher_group:
+		raise univention.admin.uexceptions.noObject, 'Group not found: %s.' % teacher_groupname
+
+	for serverfqdn in server_list:
+		create_roleshare_on_server(role, school_ou, share_container_dn, serverfqdn, teacher_group, ucr)
+
 
 def create_roleshares(role_list, school_list=None, ucr=None):
 	if not ucr:
@@ -132,38 +179,7 @@ def create_roleshares(role_list, school_list=None, ucr=None):
 
 	for searchbase in all_visible_searchbases:
 		school_ou = searchbase.school
-		if school_ou not in school_list:
+		if school_list and school_ou not in school_list:
 			continue
-		share_container = searchbase.shares
 		for role in roles:
-			create_roleshare(role, school_ou, share_container, ucr)
-
-if __name__ == '__main__':
-	from optparse import OptionParser
-	parser = OptionParser()
-	parser.add_option('--create', dest='roleshares',
-		action='append',
-		help='create role share')
-	parser.add_option('--school', dest='schools',
-		action='append',
-		help='select school')
-	parser.add_option('--binddn', dest='binddn',
-		help='udm binddn')
-	parser.add_option('--bindpwd', dest='bindpwd',
-		help='udm bindpwd')
-	(opts, args) = parser.parse_args()
-
-	if not opts.roleshares:
-		print 'Required option missing: --create'
-		sys.exit(2)
-
-	ucr = univention.config_registry.ConfigRegistry()
-	ucr.load()
-
-	if not ucr.is_true('ucsschool/import/roleshare', True):
-		print 'Creation of role shares disabled via UCR ucsschool/import/roleshare'
-		sys.exit(1)
-
-	set_credentials(opts.binddn, opts.bindpwd) ## for @LDAP_Connection(USER_*)
-		
-	create_roleshares(roles, opts.schools, ucr)
+			create_roleshare_for_searchbase(role, searchbase, ucr)

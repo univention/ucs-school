@@ -1,3 +1,12 @@
+ucs-school-lib (5.0.3-20) unstable; urgency=medium
+
+  * Remove script functionality from ucsschool.lib.roleshares,
+    will be shiped via seaprate package ucs-school-roleshares (Bug #34335)
+  * Create roleshares on ucsschoolHomeShareFileServer and
+    ucsschoolClassShareFileServer instead of on the local host
+
+ -- Arvid Requate <requate@univention.de>  Tue, 22 Apr 2014 19:25:59 +0200
+
 ucs-school-lib (5.0.3-19) unstable; urgency=medium
 
   * Fix 'student' alias in create_roleshares (Bug #34335)
