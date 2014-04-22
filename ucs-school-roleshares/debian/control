@@ -1,26 +1,21 @@
-Source: ucs-school-umc-roleshares
+Source: ucs-school-roleshares
 Section: univention
 Priority: optional
 Maintainer: Univention GmbH <packages@univention.de>
 Build-Depends: debhelper (>= 7.0.50~),
  ucslint,
  python-support,
- univention-management-console-dev,
  python-all
 Standards-Version: 3.5.2
 XS-Python-Version: 2.6
 
-Package: ucs-school-umc-roleshares
+Package: ucs-school-roleshares
 Architecture: all
 Depends: ${misc:Depends},
- univention-management-console,
- univention-management-console-server,
  univention-config-registry,
- ucs-school-umc-common,
- python-ucs-school (>= 5.0.3-13)
-Description: UCS@school UMC wizard module
- This package contains an UMC module for UCS@school that provides a wizard
- for managing teacher access to student home directories.
+ python-ucs-school (>= 5.0.3-20)
+Description: UCS@school role shares
+ This package contains support for UCS@school role shares.
  .
  It is part of Univention Corporate Server (UCS), an
  integrated, directory driven solution for managing

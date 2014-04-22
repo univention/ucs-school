@@ -1,0 +1,2 @@
+scripts/create_roleshares usr/share/ucs-school-import/scripts
+38ucs-school-roleshares.inst usr/lib/univention-install

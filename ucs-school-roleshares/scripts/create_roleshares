@@ -1,0 +1,93 @@
+#!/usr/bin/python2.6
+# -*- coding: iso-8859-15 -*-
+#
+# UCS@school lib
+#  module: Create role specific shares
+#
+# Copyright 2014 Univention GmbH
+#
+# http://www.univention.de/
+#
+# All rights reserved.
+#
+# The source code of this program is made available
+# under the terms of the GNU Affero General Public License version 3
+# (GNU AGPL V3) as published by the Free Software Foundation.
+#
+# Binary versions of this program provided by Univention to you as
+# well as other copyrighted, protected or trademarked materials like
+# Logos, graphics, fonts, specific documentations and configurations,
+# cryptographic keys etc. are subject to a license agreement between
+# you and Univention and not subject to the GNU AGPL V3.
+#
+# In the case you use this program under the terms of the GNU AGPL V3,
+# the program is provided in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public
+# License with the Debian GNU/Linux or Univention distribution in file
+# /usr/share/common-licenses/AGPL-3; if not, see
+# <http://www.gnu.org/licenses/>.
+
+import sys
+from ucsschool.lib.schoolldap import set_credentials, LDAP_Connection, MACHINE_READ
+from ucsschool.lib.roleshares import create_roleshares
+import univention.debug as ud
+from univention.management.console.log import _debug_loglevel
+import univention.config_registry
+from univention.admincli.admin import _2utf8
+import univention.admin.modules as udm_modules
+udm_modules.update()
+
+@LDAP_Connection(MACHINE_READ)
+def dn_from_username(username, ucr=None, ldap_machine_read=None, ldap_position=None, search_base=None):
+	if not ucr:
+		ucr = univention.config_registry.ConfigRegistry()
+		ucr.load()
+		
+	ldap_filter = '(username=%s)' % (username,)
+	try:
+		udm_obj = udm_modules.lookup('users/user', None, ldap_machine_read, scope='sub', base=ucr.get('ldap/base'), filter=str(ldap_filter))[0]
+	except IndexError:
+		return None
+	else:
+		return  _2utf8(udm_obj.dn)
+
+if __name__ == '__main__':
+	from optparse import OptionParser
+	parser = OptionParser()
+	parser.add_option('--create', dest='roleshares',
+		action='append',
+		help='create role share')
+	parser.add_option('--school', dest='schools',
+		action='append',
+		help='select school')
+	parser.add_option('--binddn', dest='binddn',
+		help='udm binddn')
+	parser.add_option('--bindpwd', dest='bindpwd',
+		help='udm bindpwd')
+	(opts, args) = parser.parse_args()
+
+	if not opts.roleshares:
+		print 'Required option missing: --create'
+		sys.exit(2)
+	
+	ucr = univention.config_registry.ConfigRegistry()
+	ucr.load()
+
+	if not opts.binddn:
+		username = raw_input("Administrator name: ")
+	if not opts.bindpwd:
+		opts.bindpwd = raw_input("Password: ")
+	
+	if not opts.binddn:
+		opts.binddn = dn_from_username(username, ucr)
+		if not opts.binddn:
+			print 'User not found'
+			sys.exit(1)
+
+	set_credentials(opts.binddn, opts.bindpwd) ## for @LDAP_Connection(USER_*)
+
+	create_roleshares(opts.roleshares, opts.schools, ucr)
