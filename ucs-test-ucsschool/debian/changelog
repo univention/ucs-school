@@ -1,3 +1,9 @@
+ucs-test-ucsschool (1.0.13-1) unstable; urgency=low
+
+  * Bug #34603: added 13_check_installed_default_packages
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Tue, 22 Apr 2014 17:33:53 +0200
+
 ucs-test-ucsschool (1.0.12-1) unstable; urgency=low
 
   * Bug #34557: added test 11_squidguard_assign_rule_to_2_rooms
