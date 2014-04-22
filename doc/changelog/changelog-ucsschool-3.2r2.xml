@@ -80,13 +80,17 @@
 -->
 
 
+<section>
+  <title>Proxy services</title>
+  <listitem><simpara>
+	A logic error has been fixed that may occured if the same internet rule was assigned to more than one room.
+The LDAP schema for &ucsUAS; has been modified to support the attribute displayName at school OU objects (<ulink url="&ucsbug;34173">Bug 34173</ulink>).
+  </simpara></listitem>
+</section>
+
 <!--
 <section>
 	<title>Print services</title>
-</section>
-
-<section>
-	<title>Proxy services</title>
 </section>
 
 <section>
@@ -163,7 +167,7 @@
 			within the UCS@school programming library (<ulink url="&ucsbug;34259">Bug 34259</ulink>).
 		</simpara></listitem>
 		<listitem><simpara>
-		  Additional ucs-test scripts have been added for the &ucsUAS; testsuite (<ulink url="&ucsbug;34279">Bug 34279</ulink>, <ulink url="&ucsbug;34280">Bug 34280</ulink>, <ulink url="&ucsbug;34281">Bug 34281</ulink>).
+		  Additional ucs-test scripts have been added for the &ucsUAS; testsuite (<ulink url="&ucsbug;34279">Bug 34279</ulink>, <ulink url="&ucsbug;34280">Bug 34280</ulink>, <ulink url="&ucsbug;34281">Bug 34281</ulink>, <ulink url="&ucsbug;34557">Bug 34557</ulink>).
 		</simpara></listitem>
 	</itemizedlist>
 </section>
