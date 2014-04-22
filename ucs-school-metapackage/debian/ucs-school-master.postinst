@@ -75,7 +75,7 @@ if [ "$1" = "configure" -a -n "$2" ]; then
 	fi
 
 	if dpkg --compare-versions "$2" lt 6.0.7-5 ; then
-		## for ucs-school-import, ucs-school-umc-groups and ucs-school-umc-exam
+		## for ucs-school-import and ucs-school-umc-groups
 		univention-config-registry set \
 			ucsschool/import/roleshare=no
 	fi
