@@ -1,3 +1,9 @@
+ucs-school-metapackage (6.0.7-12) unstable; urgency=medium
+
+  * Don't create student roleshares by default (Bug #34335)
+
+ -- Arvid Requate <requate@univention.de>  Tue, 22 Apr 2014 20:47:26 +0200
+
 ucs-school-metapackage (6.0.7-11) unstable; urgency=medium
 
   * Add doc comment about the purpose of ucsschool/import/roleshare=no
