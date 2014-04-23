@@ -3,8 +3,7 @@
 ## roles: [domaincontroller_master]
 ## tags: [apptest]
 ## exposure: dangerous
-## packages:
-##    - ucs-school-umc-helpdesk
+## packages: [ucs-school-umc-helpdesk]
 
 from univention.config_registry import handler_set
 from univention.lib.umc_connection import UMCConnection
@@ -22,7 +21,10 @@ def main():
 	with utu.UCSTestSchool()  as schoolenv:
 		# creating ou & a teacher
 		schoolName, oudn = schoolenv.create_ou(displayName='')
-		userName, userdn = schoolenv.create_user(schoolName, is_teacher=True, password=passwd)
+		userName, userdn = schoolenv.create_user(
+			schoolName,
+			is_teacher=True,
+			password=passwd)
 		with ucr_test.UCSTestConfigRegistry() as ucr:
 			handler_set(['ucsschool/helpdesk/recipient=root@localhost'])
 			host = ucr.get('hostname')
@@ -38,16 +40,19 @@ def main():
 			if not result:
 				utils.fail('Message was not sent successfully')
 	# time out for waiting for the message to be delivered	in seconds
-	timeOut = 10
+	timeOut = 60
 	# periodically checking the receipt of the same sent mail
-	for i in range(0, timeOut):
+	for i in xrange(timeOut):
 		if message in open('/var/mail/systemmail').read():
+			print 'Unique id was found in systemmail'
 			returnValue = 0
 			break
 		else:
 			returnValue = 1
 			time.sleep(1)
-			continue		
+			continue
+	if returnValue:
+		print 'Unique id was not found in systemmail'
 	return returnValue
 
 
