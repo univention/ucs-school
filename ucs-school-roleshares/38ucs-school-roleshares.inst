@@ -38,7 +38,23 @@ VERSION=1
 
 joinscript_init
 
-/usr/share/ucs-school-import/scripts/create_roleshares "$@" --create student
+eval "$(ucr shell)"
+
+multi_school_master() {
+	if [ "$server_role" = "domaincontroller_master" ]; then
+		if ! is_ucr_true 'ucsschool/singlemaster'; then
+			return 0
+		fi
+	fi
+	return 1
+}
+
+if ! multi_school_master; then
+	/usr/share/ucs-school-import/scripts/create_roleshares "$@" --create student
+else
+	echo "INFO: This is a DC Master in an UCS@school multi server domain:"
+	echo "INFO: Skip automatic run of: /usr/share/ucs-school-import/scripts/create_roleshares --create student"
+fi
 
 joinscript_save_current_version
 
