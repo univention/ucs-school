@@ -78,15 +78,23 @@ if __name__ == '__main__':
 	ucr.load()
 
 	if not opts.binddn:
-		username = raw_input("Administrator name: ")
-	if not opts.bindpwd:
-		opts.bindpwd = raw_input("Password: ")
-	
-	if not opts.binddn:
-		opts.binddn = dn_from_username(username, ucr)
-		if not opts.binddn:
-			print 'User not found'
-			sys.exit(1)
+		if ucr['server/role'] == 'domaincontroller_master':
+			try:
+				opts.bindpwd = open('/etc/ldap.secret','r').read()
+				opts.binddn = "cn=admin,%s" % (ucr.get('ldap/base'),)
+				print 'Using cn=admin account'
+			except IOError, ex:
+				print 'Cannot read /etc/ldap.secret: %s' % (ex,)
+				sys.exit(1)
+		else:
+			username = raw_input("Administrator name: ")
+			if not opts.bindpwd:
+				opts.bindpwd = raw_input("Password: ")
+			
+			opts.binddn = dn_from_username(username, ucr)
+			if not opts.binddn:
+				print 'User not found'
+				sys.exit(1)
 
 	set_credentials(opts.binddn, opts.bindpwd) ## for @LDAP_Connection(USER_*)
 
