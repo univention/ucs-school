@@ -1,3 +1,10 @@
+ucs-test-ucsschool (1.0.15-3) unstable; urgency=medium
+
+  * 12_roleshare_student doesn't depend on ucs-school-roleshares,
+    it installs the package during run (Bug #34335)
+
+ -- Arvid Requate <requate@univention.de>  Wed, 23 Apr 2014 14:51:30 +0200
+
 ucs-test-ucsschool (1.0.15-2) unstable; urgency=medium
 
   * Allow 12_roleshare_student not only singlemaster (Bug #34335)

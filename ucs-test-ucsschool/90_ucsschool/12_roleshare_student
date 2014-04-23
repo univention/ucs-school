@@ -6,7 +6,6 @@
 ## packages:
 ##    - ucs-school-import
 ##    - univention-samba | univention-samba4
-##    - ucs-school-roleshares
 
 import sys
 import subprocess
