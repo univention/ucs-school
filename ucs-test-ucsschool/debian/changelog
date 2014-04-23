@@ -1,3 +1,10 @@
+ucs-test-ucsschool (1.0.15-1) unstable; urgency=low
+
+  * Bug #34280 increasing timeout to 60secs 
+        & adding printed message for final state
+
+ -- Ammar Najjar <najjar@univention.de>  Wed, 23 Apr 2014 10:50:04 +0200
+
 ucs-test-ucsschool (1.0.14-1) unstable; urgency=medium
 
   * 90_ucsschool/12_roleshare_student (Bug #34335)
