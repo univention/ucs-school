@@ -40,19 +40,24 @@ joinscript_init
 
 eval "$(ucr shell)"
 
-multi_school_master() {
+automatically_create_student_roleshares() {
 	if [ "$server_role" = "domaincontroller_master" ]; then
-		if ! is_ucr_true 'ucsschool/singlemaster'; then
+		if is_ucr_true "ucsschool/singlemaster"; then
+			return 0
+		fi
+	fi
+	if [ "$server_role" = "domaincontroller_slave" ]; then
+		if is_ucr_true "samba4/provision/secondary"; then
 			return 0
 		fi
 	fi
 	return 1
 }
 
-if ! multi_school_master; then
+if automatically_create_student_roleshares; then
 	/usr/share/ucs-school-import/scripts/create_roleshares "$@" --create student
 else
-	echo "INFO: This is a DC Master in an UCS@school multi server domain:"
+	echo "INFO: This is not a UCS@school Singlemaster and not a UCS@school Slave PDC"
 	echo "INFO: Skip automatic run of: /usr/share/ucs-school-import/scripts/create_roleshares --create student"
 fi
 
