@@ -1,3 +1,13 @@
+ucs-school-metapackage (6.0.7-14) unstable; urgency=medium
+
+  * Copy S4 related UCR defaults from ucs-school-slave.postinst
+    to ucs-school-nonedu-slave.postinst (Bug #34097)
+  * New 62ucs-school-nonedu-slave.inst is basically a clone of
+    62ucs-school-slave.inst with the difference that the system may well
+    not be part of a OU (regarding ldap/hostdn and group-membership)
+
+ -- Arvid Requate <requate@univention.de>  Wed, 23 Apr 2014 19:44:14 +0200
+
 ucs-school-metapackage (6.0.7-13) unstable; urgency=medium
 
   * Update doc comment about the purpose of ucsschool/import/roleshare=no

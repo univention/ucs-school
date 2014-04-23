@@ -29,8 +29,33 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+. /usr/share/univention-lib/all.sh
+
 univention-config-registry set \
-	dhcpd/options/wpad/252?text
+	dhcpd/options/wpad/252?text \
+	directory/manager/samba3/legacy?yes \
+	connector/s4/mapping/sid_to_ucs?no \
+	connector/s4/mapping/sid_to_s4?yes \
+	connector/s4/allow/secondary?true \
+	samba4/service/drepl?false \
+	samba4/provision/secondary=yes \
+	dns/register/srv_records/kerberos?false \
+	dns/register/srv_records/ldap?false \
+	samba4/join/dnsupdate?true \
+	samba4/sysvol/sync/setfacl/AU?false \
+	connector/s4/mapping/wmifilter?yes
+
+if [ "$1" = "configure" ] ; then
+	if [ -z "$2" ] ; then
+		### Defaults for new installations of non-edu Slave PDCs
+		:
+	else
+		### Settings for updates of non-edu Slave PDCs
+		:
+	fi
+fi
+
+call_joinscript 62ucs-school-nonedu-slave.inst
 
 #DEBHELPER#
 
