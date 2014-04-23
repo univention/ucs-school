@@ -501,7 +501,7 @@ ucc              uccg123m-01      10:00:ee:ff:cd:e2  g123m  10.0.5.10
 		<command>/usr/share/ucs-school-import/scripts/create_roleshares</command>,
 		dass auch manuell aufgerufen werden kann.
 		Mit der Standardoption <emphasis>--create student</emphasis> aufgerufen legt es
-		für alle Dateiserver von Klassen- und Benutzerfreigaben des Schulstandorts
+		für alle Dateiserver Benutzerfreigaben des Schulstandorts
 		jeweils eine Freigabe mit dem Namensschema <emphasis>schueler-&lt;OU&gt;</emphasis> an.
 		Die Freigabe erlaubt der Gruppe <emphasis>lehrer-&lt;OU&gt;</emphasis> administrativen
 		Zugriff auf das Basisverzeichnis <emphasis>/home/&lt;OU&gt;/schueler</emphasis>.
