@@ -51,19 +51,19 @@ define([
 
 		getGridColumns: function() {
 			return [{
-				name: 'displayname',
+				name: 'display_name',
 				label: _('Name'),
 				formatter: lang.hitch(this, function(nothing, id) {
 					var item = this._grid.getRowValues(id);
-					return '' + item.displayname + ' (' + item.username + ')';
+					return '' + item.display_name + ' (' + item.name + ')';
 				}),
 				description: _('Name of the %s.', this.objectNameSingular)
 			}, {
-				name: 'type',
+				name: 'role_name',
 				label: _('Role'),
 				description: _('Role of the %s.', this.objectNameSingular)
 			}, {
-				name: 'class',
+				name: 'school_class',
 				label: _('Class'),
 				description: _('Class of the %s.', this.objectNameSingular)
 //			}, {
@@ -79,7 +79,7 @@ define([
 		},
 
 		getObjectIdName: function(item) {
-			return item.username;
+			return item.name;
 		},
 
 		getSearchLayout: function() {
@@ -92,8 +92,7 @@ define([
 				name: 'school',
 				label: _('Schools'),
 				size: 'TwoThirds',
-				dynamicValues: 'schoolwizards/schools',
-				umcpCommand: lang.hitch(this, 'umcpCommand'),
+				staticValues: this.schools,
 				autoHide: true
 			}, {
 				type: ComboBox,

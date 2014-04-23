@@ -32,12 +32,13 @@
 define([
 	"dojo/_base/declare",
 	"dojo/_base/lang",
+	"dojo/_base/array",
 	"umc/dialog",
 	"umc/app",
 	"umc/tools",
 	"umc/widgets/Wizard",
 	"umc/i18n!umc/modules/schoolwizards"
-], function(declare, lang, dialog, app, tools, Wizard, _) {
+], function(declare, lang, array, dialog, app, tools, Wizard, _) {
 
 	return declare("umc.modules.schoolwizards.Wizard", [Wizard], {
 
@@ -66,14 +67,17 @@ define([
 				var dn = this.$dn$.replace(/"/g, '\\"');
 
 				var link = 'require("umc/app").openModule("udm", "navigation", {"openObject": {"objectType":"' + objectType + '", "objectDN": "' + dn + '"}})';
-				udm_link = _('<a %s>special settings</a>', 'href="javascript:void(0)" onclick="' + link.replace(/"/g, "'") + '"');
+				udm_link = '<a href="javascript:void(0)" onclick="' + link.replace(/"/g, "'") + '">' + _('Advanced settings') + '</a>';
 			}
 			return udm_link;
 		},
 
 		loadValues: function() {
 			var load = this.store.get({
-				$dn$: this.$dn$
+				object: {
+					$dn$: this.$dn$,
+					school: this.school
+				}
 			});
 			load.then(lang.hitch(this, function(result) {
 				tools.forIn(result, lang.hitch(this, function(key, value) {
@@ -120,10 +124,27 @@ define([
 
 		finishEditMode: function(currentPage) {
 			var values = this.getValues();
+			values.$dn$ = this.$dn$;
 			return this.standbyDuring(this.store.put(values)).then(lang.hitch(this, function(response) {
 				this.onFinished();  // close this wizard
 				return currentPage;
 			}));
+		},
+
+		getFooterButtons: function(pageName) {
+			var buttons = this.inherited(arguments);
+			if (this._getPageIndex(pageName) === (this.pages.length - 1)) {
+				array.forEach(buttons, lang.hitch(this, function(button) {
+					if (button.name == 'next') {
+						if (this.editMode) {
+							button.label = _('Edit');
+						} else {
+							button.label = _('Add');
+						}
+					}
+				}));
+			}
+			return buttons;
 		},
 
 		_validateForm: function() {

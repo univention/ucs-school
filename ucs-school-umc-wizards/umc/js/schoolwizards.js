@@ -32,14 +32,13 @@
 define([
 	"dojo/_base/declare",
 	"dojo/_base/lang",
-	"dojo/topic",
 	"umc/widgets/Module",
 	"umc/modules/schoolwizards/UserGrid",
 	"umc/modules/schoolwizards/ClassGrid",
 	"umc/modules/schoolwizards/ComputerGrid",
 	"umc/modules/schoolwizards/SchoolGrid",
 	"umc/i18n!umc/modules/schoolwizards"
-], function(declare, lang, topic, Module, UserGrid, ClassGrid, ComputerGrid, SchoolGrid, _) {
+], function(declare, lang, Module, UserGrid, ClassGrid, ComputerGrid, SchoolGrid, _) {
 	var grids = {
 		'schoolwizards/users': UserGrid,
 		'schoolwizards/classes': ClassGrid,
@@ -50,11 +49,18 @@ define([
 	return declare("umc.modules.schoolwizards", [Module], {
 
 		_grid: null,
+		schools: null,
 
 		buildRendering: function() {
 			this.inherited(arguments);
-			this._grid = this._getGrid();
-			this.addChild(this._grid);
+			var schools = this.umcpCommand('schoolwizards/schools').then(lang.hitch(this, function(data) {
+				this.schools = data.result;
+			}));
+			this.standbyDuring(schools);
+			schools.then(lang.hitch(this, function() {
+				this._grid = this._getGrid();
+				this.addChild(this._grid);
+			}));
 		},
 
 		_getGrid: function() {
@@ -62,6 +68,7 @@ define([
 
 			return new Grid({
 				description: this.description,
+				schools: this.schools,
 				umcpCommand: lang.hitch(this, 'umcpCommand'),
 				moduleFlavor: this.moduleFlavor,
 				module: this

@@ -6,7 +6,7 @@
 		</categories>
 		<flavor icon="schoolwizards-user" id="schoolwizards/users" priority="53">
 			<name>School users</name>
-			<description>Manage school users</description>
+			<description>Manage students, teachers, staff</description>
 		</flavor>
 		<flavor icon="schoolwizards-class" id="schoolwizards/classes" priority="52">
 			<name>School classes</name>
@@ -27,26 +27,31 @@
 		<command name="schoolwizards/schools/singlemaster" function="is_singlemaster"/>
 		<command name="schoolwizards/schools/move_dc" function="move_dc"/>
 		<command name="schoolwizards/computers/types" function="computer_types"/>
+		<command name="schoolwizards/schools/share_servers" function="share_servers"/>
 
 		<command name="schoolwizards/schools/query" function="get_schools"/>
+		<command name="schoolwizards/schools/get" function="get_school"/>
 		<command name="schoolwizards/schools/put" function="modify_school"/>
 		<command name="schoolwizards/schools/remove" function="delete_school"/>
 		<command name="schoolwizards/schools/add" function="create_school"/>
 		<command name="schoolwizards/schools/create" function="create_school"/><!-- legacy (backwards compatibility) -->
 
 		<command name="schoolwizards/users/query" function="get_users"/>
+		<command name="schoolwizards/users/get" function="get_user"/>
 		<command name="schoolwizards/users/put" function="modify_user"/>
 		<command name="schoolwizards/users/remove" function="delete_user"/>
 		<command name="schoolwizards/users/add" function="create_user"/>
 		<command name="schoolwizards/users/create" function="create_user"/><!-- legacy (backwards compatibility) -->
 
 		<command name="schoolwizards/classes/query" function="get_classes"/>
+		<command name="schoolwizards/classes/get" function="get_class"/>
 		<command name="schoolwizards/classes/put" function="modify_class"/>
 		<command name="schoolwizards/classes/remove" function="delete_class"/>
 		<command name="schoolwizards/classes/add" function="create_class"/>
 		<command name="schoolwizards/classes/create" function="create_class"/><!-- legacy (backwards compatibility) -->
 
 		<command name="schoolwizards/computers/query" function="get_computers"/>
+		<command name="schoolwizards/computers/get" function="get_computer"/>
 		<command name="schoolwizards/computers/put" function="modify_computer"/>
 		<command name="schoolwizards/computers/remove" function="delete_computer"/>
 		<command name="schoolwizards/computers/add" function="create_computer"/>

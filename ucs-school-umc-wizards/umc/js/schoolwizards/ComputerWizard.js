@@ -105,22 +105,22 @@ define([
 					required: true
 				}, {
 					type: TextBox,
-					name: 'ipAddress',
+					name: 'ip_address',
 					label: _('IP address'),
 					required: true
 				}, {
 					type: TextBox,
-					name: 'subnetMask',
+					name: 'subnet_mask',
 					label: _('Subnet mask'),
 					value: '255.255.255.0'
 				}, {
 					type: TextBox,
-					name: 'mac',
+					name: 'mac_address',
 					label: _('MAC address'),
 					required: true
 				}, {
 					type: TextBox,
-					name: 'inventoryNumber',
+					name: 'inventory_number',
 					label: _('Inventory number')
 				}, {
 					type: Text,
@@ -129,9 +129,9 @@ define([
 				}],
 				layout: [
 					['name'],
-					['ipAddress', 'subnetMask'],
-					['mac'],
-					['inventoryNumber'],
+					['ip_address', 'subnet_mask'],
+					['mac_address'],
+					['inventory_number'],
 					['udm-link']
 				]
 			};

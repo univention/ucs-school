@@ -41,12 +41,13 @@ define([
 	"umc/widgets/Grid",
 	"umc/widgets/Text",
 	"umc/widgets/Page",
+	"umc/widgets/StandbyMixin",
 	"umc/widgets/SearchForm",
 	"umc/widgets/ExpandingTitlePane",
 	"umc/i18n!umc/modules/schoolwizards"
-], function(declare, lang, array, topic, query, tools, dialog, store, Grid, Text, Page, SearchForm, ExpandingTitlePane, _) {
+], function(declare, lang, array, topic, query, tools, dialog, store, Grid, Text, Page, StandbyMixin, SearchForm, ExpandingTitlePane, _) {
 
-	return declare("umc.modules.schoolwizards.Grid", [Page], {
+	return declare("umc.modules.schoolwizards.Grid", [Page, StandbyMixin], {
 
 		module: null,
 		umcpCommand: null,
@@ -93,9 +94,7 @@ define([
 				actions: this.getGridActions(),
 				columns: this.getGridColumns(),
 				moduleStore: this.getGridStore(),
-				query: {
-					pattern: ''
-				}
+				standbyDuring: lang.hitch(this, 'standbyDuring')
 			});
 
 			// Add horizontal scrollbar
@@ -203,7 +202,7 @@ define([
 		},
 
 		filter: function(props) {
-			this._grid.moduleStore.query(props);
+			this._grid.filter(props);
 		},
 
 		createObject: function() {
@@ -276,7 +275,10 @@ define([
 		deleteObjects: function(ids, objects) {
 			// TODO: notifications
 			array.forEach(objects, lang.hitch(this, function(object) {
-				this._grid.moduleStore.remove({$dn$: object.dn});
+				this._grid.moduleStore.remove({
+					$dn$: object.$dn$,
+					school: object.school
+				});
 			}));
 		}
 	});

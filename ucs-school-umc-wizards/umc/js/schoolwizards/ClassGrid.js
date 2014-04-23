@@ -69,8 +69,7 @@ define([
 				size: 'TwoThirds',
 				name: 'school',
 				label: _('Schools'),
-				dynamicValues: 'schoolwizards/schools',
-				umcpCommand: lang.hitch(this, 'umcpCommand'),
+				staticValues: this.schools,
 				autoHide: true
 			}, {
 				type: TextBox,

@@ -54,7 +54,9 @@ define([
 		startup: function() {
 			this.inherited(arguments);
 			if (this.editMode) {
-				this.loadingDeferred.always(lang.hitch(this, function() {
+				this.loadingDeferred.always(lang.hitch(this, function(values) {
+					var type = values.type;
+					this.getWidget('general', 'type').set('value', type);
 					// hack to go to the next page
 					this._next(this.next(null));
 				}));
@@ -125,7 +127,7 @@ define([
 					required: true
 				}, {
 					type: TextBox,
-					name: 'username',
+					name: 'name',
 					label: _('Username'),
 					required: true
 				}, {
@@ -160,7 +162,7 @@ define([
 				}],
 				layout: [
 					['firstname', 'lastname'],
-					['username'],
+					['name'],
 					['class', 'newClass'],
 					['mailPrimaryAddress'],
 					['password'],
@@ -181,7 +183,7 @@ define([
 		},
 
 		addNote: function() {
-			var name = this.getWidget('user', 'username').get('value');
+			var name = this.getWidget('user', 'name').get('value');
 			var message = _('User "%s" has been successfully created. Continue to create another user or press "Cancel" to close this wizard.', name);
 			this.getPage('user').clearNotes();
 			this.getPage('user').addNote(message);

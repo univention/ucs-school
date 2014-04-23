@@ -33,12 +33,12 @@ define([
 	"dojo/_base/declare",
 	"dojo/_base/lang",
 	"dojo/_base/array",
-	"dojo/topic",
+	"dojo/Deferred",
 	"umc/widgets/TextBox",
 	"umc/modules/schoolwizards/SchoolWizard",
 	"umc/modules/schoolwizards/Grid",
 	"umc/i18n!umc/modules/schoolwizards"
-], function(declare, lang, array, topic, TextBox, SchoolWizard, Grid, _) {
+], function(declare, lang, array, Deferred, TextBox, SchoolWizard, Grid, _) {
 
 	return declare("umc.modules.schoolwizards.ComputerGrid", [Grid], {
 
@@ -47,24 +47,38 @@ define([
 		objectNamePlural: _('schools'),
 		objectNameSingular: _('school'),
 		createObjectWizard: SchoolWizard,
+		singleMasterDeferred: null,
 
 		postMixInProperties: function() {
 			this.inherited(arguments);
 			this.school = this.$dn$;
+			this.singleMasterDeferred = new Deferred();
+			this.umcpCommand('schoolwizards/schools/singlemaster').then(lang.hitch(this, function(data) {
+				this.singleMasterDeferred.resolve(data.result);
+			}));
 		},
 
 		getGridColumns: function() {
 			return [{
-				name: 'displayname',
+				name: 'display_name',
 				label: _('Name of the school')
 			}, {
 				name: 'name',
-				label: _('Internal school id')
+				label: _('Internal school ID')
 			}];
 		},
 
 		getObjectIdName: function(item) {
-			return item.displayname;
+			return item.display_name;
+		},
+
+		createWizard: function(props) {
+			var originalArguments = arguments;
+			this.standbyDuring(this.singleMasterDeferred);
+			this.singleMasterDeferred.then(lang.hitch(this, function(singleMaster) {
+				props.singleMaster = singleMaster;
+				this.inherited(originalArguments);
+			}));
 		},
 
 		getGridDeleteAction: function() {
@@ -88,7 +102,7 @@ define([
 
 		getDeleteConfirmMessage: function(objects) {
 			var school = objects[0];
-			var msg = _('Please confirm to delete the school %s (%s).', school.displayname, school.name);
+			var msg = _('Please confirm to delete the school %s (%s).', school.display_name, school.name);
 			msg += '<br/><br/><b>Warning:</b> Deleting this school will also delete every teacher and student.<br/>This action is irreversible and cannot be undone.';
 			return msg;
 		}

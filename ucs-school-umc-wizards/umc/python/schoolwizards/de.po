@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-wizards\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2014-04-10 17:44+0200\n"
+"POT-Creation-Date: 2014-04-16 19:38+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -12,37 +12,28 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: umc/python/schoolwizards/__init__.py:214
+#: umc/python/schoolwizards/__init__.py:217
 msgid "A valid NetBIOS hostname can not be longer than 12 characters."
 msgstr ""
 "Ein gültiger NetBIOS Rechnername darf nicht länger als 12 Zeichen sein."
 
-#: umc/python/schoolwizards/__init__.py:247
-msgid "Class name is already in use"
-msgstr "Klassenname wird bereits benutzt"
-
-#: umc/python/schoolwizards/__init__.py:278
+#: umc/python/schoolwizards/__init__.py:255
 msgid "Computer name is already in use"
-msgstr "Computername wird bereits benutzt"
+msgstr "Rechnername wird bereits benutzt"
 
-#: umc/python/schoolwizards/SchoolImport.py:125
+#: umc/python/schoolwizards/SchoolImport.py:115
 msgid "Could not create class"
 msgstr "Die Klasse konnte nicht erstellt werden"
 
-#: umc/python/schoolwizards/SchoolImport.py:139
+#: umc/python/schoolwizards/SchoolImport.py:129
 msgid "Could not create computer"
-msgstr "Der Computer konnte nicht erstellt werden"
-
-#: umc/python/schoolwizards/SchoolImport.py:112
-#: umc/python/schoolwizards/SchoolImport.py:115
-msgid "Could not create school"
-msgstr "Die Schule konnte nicht erstellt werden"
+msgstr "Der Rechner konnte nicht erstellt werden"
 
 #: umc/python/schoolwizards/SchoolImport.py:105
 msgid "Could not create user"
 msgstr "Der Benutzer konnte nicht erstellt werden"
 
-#: umc/python/schoolwizards/__init__.py:323
+#: umc/python/schoolwizards/__init__.py:300
 msgid "Device with IP address"
 msgstr "Gerät mit IP-Adresse"
 
@@ -51,77 +42,75 @@ msgstr "Gerät mit IP-Adresse"
 msgid "Execution of command failed"
 msgstr "Die Ausführungs des Kommandos schlug fehl"
 
-#: umc/python/schoolwizards/__init__.py:282
+#: umc/python/schoolwizards/__init__.py:259
 msgid "IP address is already in use"
 msgstr "IP-Adresse wird bereits benutzt"
 
-#: umc/python/schoolwizards/__init__.py:129
+#: umc/python/schoolwizards/__init__.py:130
 msgid "Invalid school name"
 msgstr "Ungültiger Schulname"
 
-#: umc/python/schoolwizards/__init__.py:219
+#: umc/python/schoolwizards/__init__.py:222
 msgid "Invalid school server name"
 msgstr "Ungültiger Schulserver name"
 
-#: umc/python/schoolwizards/__init__.py:168
-#: umc/python/schoolwizards/__init__.py:286
+#: umc/python/schoolwizards/__init__.py:169
+#: umc/python/schoolwizards/__init__.py:263
 msgid "Invalid value for  'type' property"
 msgstr "Ungültiger Wert für 'Typ'-Eigenschaft"
 
-#: umc/python/schoolwizards/__init__.py:280
+#: umc/python/schoolwizards/__init__.py:257
 msgid "MAC address is already in use"
 msgstr "MAC-Adresse wird bereits benutzt"
 
-#: umc/python/schoolwizards/__init__.py:322
+#: umc/python/schoolwizards/__init__.py:299
 msgid "Mac OS X"
 msgstr ""
 
-#: umc/python/schoolwizards/__init__.py:158
+#: umc/python/schoolwizards/__init__.py:159
 msgid "Mail address is already in use"
 msgstr "Mail-Adresse wird bereits benutzt"
 
-#: umc/python/schoolwizards/__init__.py:75
+#: umc/python/schoolwizards/__init__.py:76
 #, python-format
 msgid "Missing value for the following properties: %s"
 msgstr "Fehlender Wert für die folgenden Eigenschaften: %s"
 
-#: umc/python/schoolwizards/__init__.py:222
+#: umc/python/schoolwizards/__init__.py:225
 msgid "School name is already in use"
 msgstr "Schulname wird bereits benutzt"
 
-#: umc/python/schoolwizards/__init__.py:253
-msgid "The class could not be created"
-msgstr "Die Klasse konnte nicht erstellt werden"
-
-#: umc/python/schoolwizards/__init__.py:293
+#: umc/python/schoolwizards/__init__.py:270
 msgid "The computer could not be created"
-msgstr "Der Computer konnte nicht erstellt werden"
+msgstr "Der Rechner konnte nicht erstellt werden"
 
-#: umc/python/schoolwizards/__init__.py:216
+#: umc/python/schoolwizards/__init__.py:219
 msgid ""
 "The length of fully qualified domain name is greater than 63 characters."
 msgstr "Die Länge von System- und Domänennamen ist größer als 63 Zeichen."
 
-#: umc/python/schoolwizards/__init__.py:188
+#: umc/python/schoolwizards/__init__.py:189
 msgid "The user could not be created"
 msgstr "Der Benutzer konnte nicht erstellt werden"
 
-#: umc/python/schoolwizards/__init__.py:331
+#: umc/python/schoolwizards/__init__.py:308
 msgid "Univention Corporate Client"
 msgstr "Univention Corporate Client"
 
-#: umc/python/schoolwizards/__init__.py:245
-#: umc/python/schoolwizards/__init__.py:276
+#: umc/python/schoolwizards/__init__.py:253
 msgid "Unknown school"
 msgstr "Unbekannte Schule"
 
-#: umc/python/schoolwizards/__init__.py:154
+#: umc/python/schoolwizards/__init__.py:155
 msgid "Username is already in use"
 msgstr "Benutzername wird bereits benutzt"
 
-#: umc/python/schoolwizards/__init__.py:321
+#: umc/python/schoolwizards/__init__.py:298
 msgid "Windows system"
 msgstr "Windows-System"
+
+#~ msgid "Class name is already in use"
+#~ msgstr "Klassenname wird bereits benutzt"
 
 #~ msgid "Class successfully created"
 #~ msgstr "Klasse erfolgreich erstellt"
@@ -129,11 +118,17 @@ msgstr "Windows-System"
 #~ msgid "Computer successfully created"
 #~ msgstr "Computer erfolgreich erstellt"
 
+#~ msgid "Could not create school"
+#~ msgstr "Die Schule konnte nicht erstellt werden"
+
 #~ msgid "Invalid value for the following properties: %s"
 #~ msgstr "Ungültiger Wert für die folgenden Eigenschaften: %s"
 
 #~ msgid "School successfully created"
 #~ msgstr "Schule wurde erfolgreich erstellt"
+
+#~ msgid "The class could not be created"
+#~ msgstr "Die Klasse konnte nicht erstellt werden"
 
 #~ msgid "The following values are invalid: %s"
 #~ msgstr "Die folgenden Werte sind ungültig: %s"

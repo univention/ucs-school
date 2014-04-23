@@ -53,44 +53,52 @@ define([
 //				helpText: this.editMode ? _('Enter school details') : _('Enter details to create all necessary structures for a new school.'),
 				widgets: [{
 					type: TextBox,
-					name: 'displayname',
+					name: 'display_name',
 					label: _('Name of the school'),
 					description: _("The given value will be shown as school's name within UCS@school."),
 					required: true
 				}, {
 					type: TextBox,
 					name: 'name',
-					label: _("Internal school id"),
+					label: _('Internal school ID'),
 					description: _('The given value will be used as object name for the new school OU object within the LDAP directory. It may consist of the letters a-z, the digits 0-9 and underscores. Usually it is safe to keep the suggested value.'),
 					regExp: '^[a-zA-Z0-9](([a-zA-Z0-9_]*)([a-zA-Z0-9]$))?$',
-					depends: ['displayname'],
+					depends: ['display_name'],
 					dynamicValue: lang.hitch(this, function(values) {
 						if (this.editMode) {
 							return values.name;
 						}
-						return values.displayname.replace(/[^a-zA-Z0-9]/g, '');
+						return values.display_name.replace(/[^a-zA-Z0-9]/g, '');
 					}),
 					disabled: this.editMode,
 					required: true
 				}, {
 					type: TextBox,
-					name: 'schooldc',
+					name: 'dc_name',
 					label: _('Computer name of the school server'),
 					regExp: '^\\w+(\\w|-)*$',
 					description: _('The computer name must be a valid NetBIOS hostname. This requires a maximum length of 12 characters.'),
 					maxLength: 12,
-					required: true,
-					visible: !this.editMode
+					required: !this.singleMaster,
+					visible: !this.editMode && !this.singleMaster
 				}, {
-					name: 'samba-shares',
+					name: 'home_share_file_server',
 					type: ComboBox,
 					label: _('Server for Windows home directories'),
-					staticValues: []
+					dynamicValues: lang.hitch(this, function() {
+						return this.umcpCommand('schoolwizards/schools/share_servers').then(function(data) {
+							return data.result;
+						});
+					})
 				}, {
-					name: 'class-shares',
+					name: 'class_share_file_server',
 					type: ComboBox,
 					label: _('Server for class shares'),
-					staticValues: []
+					dynamicValues: lang.hitch(this, function() {
+						return this.umcpCommand('schoolwizards/schools/share_servers').then(function(data) {
+							return data.result;
+						});
+					})
 				}],
 				layout: this.getSchoolPageLayout()
 			};
@@ -98,9 +106,9 @@ define([
 
 		getSchoolPageLayout: function() {
 			var layout = [
-				['displayname'],
+				['display_name'],
 				['name'],
-				['schooldc']
+				['dc_name']
 			];
 			if (this.editMode) {
 				return [{
@@ -109,38 +117,22 @@ define([
 				}, {
 					label: _('Advanced settings'),
 					open: false,
-					layout: ['samba-shares', 'class-shares']
+					layout: ['home_share_file_server', 'class_share_file_server']
 				}];
 			}
 			return layout;
 		},
 
-		buildRendering: function() {
-			this.inherited(arguments);
-			this.standby(true);
-
-			this.umcpCommand('schoolwizards/schools/singlemaster').then(lang.hitch(this, function(response) {
-				if (response.result.isSinglemaster) {
-					var widget = this.getWidget('school', 'schooldc');
-					widget.hide();
-					widget.set('required', false);
-				}
-				this.standby(false);
-			}), lang.hitch(this, function() {
-				this.standby(false);
-			}));
-		},
-
 		restart: function() {
-			this.getWidget('school', 'displayname').reset();
+			this.getWidget('school', 'display_name').reset();
 			this.getWidget('school', 'name').reset();
-			this.getWidget('school', 'schooldc').reset();
+			this.getWidget('school', 'dc_name').reset();
 			this.inherited(arguments);
 		},
 
 		addNote: function() {
-			var displayname = this.getWidget('school', 'displayname').get('value');
-			var message = _('The school "%s" has been successfully created. Continue to create another school or press "Cancel" to close this wizard.', displayname);
+			var display_name = this.getWidget('school', 'display_name').get('value');
+			var message = _('The school "%s" has been successfully created. Continue to create another school or press "Cancel" to close this wizard.', display_name);
 			this.getPage('school').clearNotes();
 			this.getPage('school').addNote(message);
 		}

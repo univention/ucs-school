@@ -41,15 +41,63 @@ from univention.management.console.modules.decorators import simple_response, sa
 from univention.management.console.modules.sanitizers import StringSanitizer
 from univention.admin.uexceptions import valueError
 import univention.admin.modules as udm_modules
-import univention.admin.syntax as udm_syntax
-from univention.management.console.config import ucr
 
-from ucsschool.lib.schoolldap import SchoolBaseModule, LDAP_Connection, LDAP_Filter, _init_search_base, check_license, LicenseError
+from ucsschool.lib.schoolldap import SchoolBaseModule, LDAP_Connection, LDAP_Filter, check_license, LicenseError, USER_READ, USER_WRITE
+from ucsschool.lib.models import SchoolClass, School, User, Student, Teacher, Staff, TeachersAndStaff, SchoolComputer, WindowsComputer, MacComputer, IPComputer, UCCComputer
+from univention.config_registry import ConfigRegistry
 
 from univention.management.console.modules.schoolwizards.SchoolImport import SchoolImport
 
 _ = Translation('ucs-school-umc-wizards').translate
 
+ucr = ConfigRegistry()
+ucr.load()
+
+def get_user_class(user_type):
+	if user_type == 'student':
+		return Student
+	if user_type == 'teacher':
+		return Teacher
+	if user_type == 'staff':
+		return Staff
+	if user_type == 'teachersAndStaff':
+		return TeachersAndStaff
+	return User
+
+def get_computer_class(computer_type):
+	if computer_type == 'windows':
+		return WindowsComputer
+	if computer_type == 'macos':
+		return MacComputer
+	if computer_type == 'ucc':
+		return UCCComputer
+	return IPComputer
+
+def iter_objects_in_request(request):
+	flavor = request.flavor
+	if flavor == 'schoolwizards/schools':
+		klass = School
+	elif flavor == 'schoolwizards/users':
+		klass = User
+	elif flavor == 'schoolwizards/computers':
+		klass = SchoolComputer
+	elif flavor == 'schoolwizards/classes':
+		klass = SchoolClass
+	for properties in request.options:
+		obj_props = properties['object']
+		for key, value in obj_props.iteritems():
+			if isinstance(value, basestring):
+				obj_props[key] = value.strip()
+		if issubclass(klass, User):
+			if 'type' in obj_props:
+				klass = get_user_class(obj_props['type'])
+		if issubclass(klass, SchoolComputer):
+			if 'type' in obj_props:
+				klass = get_computer_class(obj_props['type'])
+		obj = klass(**obj_props)
+		if '$dn$' in obj_props:
+			obj.old_dn = obj_props['$dn$']
+		yield obj
 
 def response(func):
 	def _decorated(self, request, *a, **kw):
@@ -58,6 +106,7 @@ def response(func):
 		try:
 			ret = func(self, request, *a, **kw)
 		except (ValueError, IOError, OSError, valueError) as err:
+			raise
 			MODULE.info(str(err))
 			raise UMC_CommandError(str(err))
 		else:
@@ -68,33 +117,6 @@ def response(func):
 class Instance(SchoolBaseModule, SchoolImport):
 	"""Base class for the schoolwizards UMC module.
 	"""
-
-	def required_values(self, request, *keys):
-		missing = filter(lambda key: '' == request.options[key], keys)
-		if missing:
-			raise ValueError(_('Missing value for the following properties: %s')
-			                 % ','.join(missing))
-
-	def _username_used(self, username, ldap_user_read):
-		ldap_filter = LDAP_Filter.forAll(username, fullMatch=['username'])
-		user_exists = udm_modules.lookup('users/user', None, ldap_user_read,
-		                                 scope='sub', filter=ldap_filter)
-		return bool(user_exists)
-
-	def _mail_address_used(self, address, ldap_user_read):
-		ldap_filter = LDAP_Filter.forAll(address, fullMatch=['mailPrimaryAddress'])
-		address_exists = udm_modules.lookup('users/user', None, ldap_user_read,
-		                                    scope='sub', filter=ldap_filter)
-		return bool(address_exists)
-
-	def _school_name_used(self, name, ldap_user_read, search_base):
-		return bool(name in search_base.availableSchools)
-
-	def _class_name_used(self, school, name, ldap_user_read, search_base):
-		ldap_filter = LDAP_Filter.forAll('%s-%s' % (school, name), fullMatch=['name'])
-		class_exists = udm_modules.lookup('groups/group', None, ldap_user_read, scope='one',
-		                                  filter=ldap_filter, base=search_base.classes)
-		return bool(class_exists)
 
 	def _computer_name_used(self, name, ldap_user_read):
 		ldap_filter = LDAP_Filter.forAll(name, fullMatch=['name'])
@@ -123,175 +145,6 @@ class Instance(SchoolBaseModule, SchoolImport):
 			self.finished(request.id, dict(message=str(e)))
 			return False
 
-	def _check_school_name(self, name):
-		regex = re.compile('^[a-zA-Z0-9](([a-zA-Z0-9_]*)([a-zA-Z0-9]$))?$')
-		if not regex.match(name):
-			raise ValueError(_('Invalid school name'))
-
-	@LDAP_Connection()
-	@response
-	def create_user(self, request, search_base=None,
-	                ldap_user_read=None, ldap_position=None):
-		"""Create a new user.
-		"""
-		# Validate request options
-		keys = ['username', 'lastname', 'firstname', 'school', 'type']
-		self.required_options(request, *keys)
-		self.required_values(request, *keys)
-
-		request = remove_whitespaces(request)
-
-		username = udm_syntax.UserName.parse(request.options['username'])
-		lastname = request.options['lastname']
-		firstname = request.options['firstname']
-		school = udm_syntax.GroupName.parse(request.options['school'])
-		mail_primary_address = request.options.get('mailPrimaryAddress', '')
-		class_ = request.options.get('class', '')
-		password = request.options.get('password', '')
-		type_ = request.options['type']
-
-		if self._username_used(username, ldap_user_read):
-			raise ValueError(_('Username is already in use'))
-		if mail_primary_address:
-			if self._mail_address_used(udm_syntax.emailAddressTemplate.parse(mail_primary_address),
-				                       ldap_user_read):
-				raise ValueError(_('Mail address is already in use'))
-
-		is_teacher = False
-		is_staff = False
-		if type_ in ['student', 'teacher', 'staff', 'teachersAndStaff']:
-			# The class name is only required if the user is a student
-			if type_ == 'student':
-				self.required_options(request, 'class')
-				self.required_values(request, 'class')
-		else:
-			raise ValueError(_('Invalid value for  \'type\' property'))
-		if type_ == 'teacher':
-			is_teacher = True
-		elif type_ == 'staff':
-			is_staff = True
-		elif type_ == 'teachersAndStaff':
-			is_staff = True
-			is_teacher = True
-
-		# Bug #32337: check if the class exists with OU prefix
-		# if it does not exist the class name without OU prefix is used
-		if class_ and self._class_name_used(school, class_, ldap_user_read, search_base):
-			# class exists with OU prefix
-			class_ = '%s-%s' % (school, class_, )
-
-		# Create the user
-		self.import_user(username, lastname, firstname, school, class_,
-			             mail_primary_address, is_teacher, is_staff, password)
-
-		if not self._username_used(username, ldap_user_read):
-			raise OSError(_('The user could not be created'))
-
-	@LDAP_Connection()
-	@response
-	def create_school(self, request, search_base=None,
-	                  ldap_user_read=None, ldap_position=None):
-		"""Create a new school.
-		"""
-		# Validate request options
-		options = ['name', 'displayname']
-		if not self._is_singlemaster():
-			options.append('schooldc')
-		self.required_options(request, *options)
-		self.required_values(request, *options)
-
-		request = remove_whitespaces(request)
-
-		name = udm_syntax.GroupName.parse(request.options['name'])
-		display_name = udm_syntax.GroupName.parse(request.options['displayname'])
-		self._check_school_name(name)
-
-		schooldc = ''
-		if not self._is_singlemaster():
-			schooldc = request.options.get('schooldc', '')
-
-			if len(schooldc) > 12:
-				raise ValueError(_("A valid NetBIOS hostname can not be longer than 12 characters."))
-			if sum([len(schooldc), 1, len(ucr.get('domainname', ''))]) > 63:
-				raise ValueError(_("The length of fully qualified domain name is greater than 63 characters."))
-			# hostname based upon RFC 952: <let>[*[<let-or-digit-or-hyphen>]<let-or-digit>]
-			if not re.match('^[a-zA-Z](([a-zA-Z0-9-_]*)([a-zA-Z0-9]$))?$', schooldc):
-				raise ValueError(_('Invalid school server name'))
-
-		if self._school_name_used(name, ldap_user_read, search_base):
-			raise ValueError(_('School name is already in use'))
-
-		# Create the school
-		self.create_ou(name, display_name, schooldc)
-		_init_search_base(ldap_user_read, force=True)
-
-	@LDAP_Connection()
-	@response
-	def create_class(self, request, search_base=None,
-	                 ldap_user_read=None, ldap_position=None):
-		"""Create a new class.
-		"""
-		# Validate request options
-		self.required_options(request, 'school', 'name')
-		self.required_values(request, 'school', 'name')
-
-		request = remove_whitespaces(request)
-
-		school = udm_syntax.GroupName.parse(request.options['school'])
-		name = udm_syntax.GroupName.parse(request.options['name'])
-		description = request.options.get('description', '')
-
-		if not self._school_name_used(school, ldap_user_read, search_base):
-			raise ValueError(_('Unknown school'))
-		if self._class_name_used(school, name, ldap_user_read, search_base):
-			raise ValueError(_('Class name is already in use'))
-
-		# Create the school
-		self.import_group(school, name, description)
-
-		if not self._class_name_used(school, name, ldap_user_read, search_base):
-			raise OSError(_('The class could not be created'))
-
-	@LDAP_Connection()
-	@response
-	def create_computer(self, request, search_base=None,
-	                    ldap_user_read=None, ldap_position=None):
-		"""Create a new computer.
-		"""
-		# Validate request options
-		self.required_options(request, 'type', 'name', 'mac', 'school', 'ipAddress')
-		self.required_values(request, 'type', 'name', 'mac', 'school', 'ipAddress')
-
-		request = remove_whitespaces(request)
-
-		type_ = request.options['type']
-		name = udm_syntax.hostName.parse(request.options['name'])
-		mac = udm_syntax.MAC_Address.parse(request.options['mac'])
-		school = request.options['school']
-		ip_address = udm_syntax.ipv4Address.parse(request.options['ipAddress'])
-		subnet_mask = request.options.get('subnetMask', '')
-		inventory_number = request.options.get('inventoryNumber', '')
-
-		if not self._school_name_used(school, ldap_user_read, search_base):
-			raise ValueError(_('Unknown school'))
-		if self._computer_name_used(name, ldap_user_read):
-			raise ValueError(_('Computer name is already in use'))
-		if self._mac_address_used(mac, ldap_user_read):
-			raise ValueError(_('MAC address is already in use'))
-		if self._ip_address_used(ip_address, ldap_user_read):
-			raise ValueError(_('IP address is already in use'))
-		if subnet_mask:
-			subnet_mask = udm_syntax.netmask.parse(subnet_mask)
-		if type_ not in [computer_type_id for computer_type_id, computer_type_label in self._computer_types()]:
-			raise ValueError(_('Invalid value for  \'type\' property'))
-
-		# Create the computer
-		self.import_computer(type_, name, mac, school, ip_address,
-			                 subnet_mask, inventory_number)
-
-		if not self._computer_name_used(name, ldap_user_read):
-			raise OSError(_('The computer could not be created'))
-
 	def _is_singlemaster(self):
 		PKG_NAME = 'ucs-school-singlemaster'
 		cache = apt.Cache()
@@ -303,8 +156,9 @@ class Instance(SchoolBaseModule, SchoolImport):
 
 		return is_installed
 
-	def is_singlemaster(self, request):
-		self.finished(request.id, {'isSinglemaster': self._is_singlemaster()})
+	@simple_response
+	def is_singlemaster(self):
+		return ucr.is_true('ucsschool/singlemaster', False)
 
 	@sanitize(
 		schooldc=StringSanitizer(required=True, regex_pattern=re.compile(r'^[a-zA-Z](([a-zA-Z0-9-_]*)([a-zA-Z0-9]$))?$')),
@@ -323,8 +177,8 @@ class Instance(SchoolBaseModule, SchoolImport):
 			('ipmanagedclient', _('Device with IP address')),
 		]
 		try:
-			import univention.admin.handlers.computers.ucc
-			ucc_available = True
+			import univention.admin.handlers.computers.ucc as ucc
+			ucc_available = bool(ucc)
 		except ImportError:
 			ucc_available = False
 		if ucc_available:
@@ -339,9 +193,185 @@ class Instance(SchoolBaseModule, SchoolImport):
 			ret.append({'id': computer_type_id, 'label': computer_type_label})
 		return ret
 
+	@LDAP_Connection()
+	@response
+	def share_servers(self, request, search_base=None, ldap_user_read=None, ldap_position=None):
+		# udm/syntax/choices UCSSchool_Server_DN
+		ret = [{'id' : '', 'label' : ''}]
+		for module in ['computers/domaincontroller_master', 'computers/domaincontroller_backup', 'computers/domaincontroller_slave', 'computers/memberserver']:
+			for obj in udm_modules.lookup(module, None, ldap_user_read, scope='sub'):
+				obj.open()
+				ret.append({'id' : obj.dn, 'label' : obj.info.get('fqdn', obj.info['name'])})
+		return ret
 
-def remove_whitespaces(request):
-	for key, value in request.options.iteritems():
-		if isinstance(value, basestring):
-			request.options[key] = value.strip()
-	return request
+	@LDAP_Connection()
+	@response
+	def get_users(self, request, search_base=None, ldap_user_read=None, ldap_position=None):
+		school = request.options['school']
+		user_class = get_user_class(request.options['type'])
+		users = user_class.get_all(school, ldap_user_read)
+		return [user.to_dict() for user in users]
+
+	@LDAP_Connection()
+	@response
+	def get_user(self, request, search_base=None,
+	                 ldap_user_read=None, ldap_position=None):
+		ret = []
+		for obj in iter_objects_in_request(request):
+			MODULE.process('Getting %r' % (obj))
+			obj = obj.from_dn(obj.old_dn, obj.school, ldap_user_read)
+			ret.append(obj.to_dict())
+		return ret
+
+	@LDAP_Connection( USER_READ, USER_WRITE )
+	@response
+	def modify_user(self, request, search_base=None,
+	                 ldap_user_read=None, ldap_user_write=None, ldap_position=None):
+		for obj in iter_objects_in_request(request):
+			MODULE.process('Modifying %r' % (obj))
+			obj.modify(ldap_user_write)
+
+	@LDAP_Connection( USER_READ, USER_WRITE )
+	@response
+	def create_user(self, request, search_base=None,
+	                 ldap_user_read=None, ldap_user_write=None, ldap_position=None):
+		for obj in iter_objects_in_request(request):
+			MODULE.process('Creating %r' % (obj))
+			obj.create(ldap_user_write)
+
+	@LDAP_Connection( USER_READ, USER_WRITE )
+	@response
+	def delete_user(self, request, search_base=None, ldap_user_read=None, ldap_user_write=None, ldap_position=None):
+		for obj in iter_objects_in_request(request):
+			obj.name = obj.get_name_from_dn(obj.old_dn)
+			MODULE.process('Deleting %r' % (obj))
+			obj.remove(ldap_user_write)
+
+	@LDAP_Connection()
+	@response
+	def get_computers(self, request, search_base=None, ldap_user_read=None, ldap_position=None):
+		school = request.options['school']
+		computer_class = get_computer_class(request.options['type'])
+		computers = computer_class.get_all(school, ldap_user_read)
+		return [computer.to_dict() for computer in computers]
+
+	@LDAP_Connection()
+	@response
+	def get_computer(self, request, search_base=None,
+	                 ldap_user_read=None, ldap_position=None):
+		ret = []
+		for obj in iter_objects_in_request(request):
+			MODULE.process('Getting %r' % (obj))
+			obj = obj.from_dn(obj.old_dn, obj.school, ldap_user_read)
+			ret.append(obj.to_dict())
+		return ret
+
+	@LDAP_Connection( USER_READ, USER_WRITE )
+	@response
+	def modify_computer(self, request, search_base=None,
+	                 ldap_user_read=None, ldap_user_write=None, ldap_position=None):
+		for obj in iter_objects_in_request(request):
+			MODULE.process('Modifying %r' % (obj))
+			obj.modify(ldap_user_write)
+
+	@LDAP_Connection( USER_READ, USER_WRITE )
+	@response
+	def create_computer(self, request, search_base=None,
+	                 ldap_user_read=None, ldap_user_write=None, ldap_position=None):
+		for obj in iter_objects_in_request(request):
+			MODULE.process('Creating %r' % (obj))
+			obj.create(ldap_user_write)
+
+	@LDAP_Connection( USER_READ, USER_WRITE )
+	@response
+	def delete_computer(self, request, search_base=None, ldap_user_read=None, ldap_user_write=None, ldap_position=None):
+		for obj in iter_objects_in_request(request):
+			obj.name = obj.get_name_from_dn(obj.old_dn)
+			MODULE.process('Deleting %r' % (obj))
+			obj.remove(ldap_user_write)
+
+	@LDAP_Connection()
+	@response
+	def get_classes(self, request, search_base=None, ldap_user_read=None, ldap_position=None):
+		school = request.options['school']
+		school_classes = SchoolClass.get_all(school, ldap_user_read)
+		return [school_class.to_dict() for school_class in school_classes]
+
+	@LDAP_Connection()
+	@response
+	def get_class(self, request, search_base=None,
+	                 ldap_user_read=None, ldap_position=None):
+		ret = []
+		for obj in iter_objects_in_request(request):
+			MODULE.process('Getting %r' % (obj))
+			obj = obj.from_dn(obj.old_dn, obj.school, ldap_user_read)
+			ret.append(obj.to_dict())
+		return ret
+
+	@LDAP_Connection( USER_READ, USER_WRITE )
+	@response
+	def modify_class(self, request, search_base=None,
+	                 ldap_user_read=None, ldap_user_write=None, ldap_position=None):
+		for obj in iter_objects_in_request(request):
+			obj.name = '%s-%s' % (obj.school, obj.name)
+			MODULE.process('Modifying %r' % (obj))
+			obj.modify(ldap_user_write)
+
+	@LDAP_Connection( USER_READ, USER_WRITE )
+	@response
+	def create_class(self, request, search_base=None,
+	                 ldap_user_read=None, ldap_user_write=None, ldap_position=None):
+		for obj in iter_objects_in_request(request):
+			obj.name = '%s-%s' % (obj.school, obj.name)
+			MODULE.process('Creating %r' % (obj))
+			obj.create(ldap_user_write)
+
+	@LDAP_Connection( USER_READ, USER_WRITE )
+	@response
+	def delete_class(self, request, search_base=None, ldap_user_read=None, ldap_user_write=None, ldap_position=None):
+		for obj in iter_objects_in_request(request):
+			obj.name = obj.get_name_from_dn(obj.old_dn)
+			MODULE.process('Deleting %r' % (obj))
+			obj.remove(ldap_user_write)
+
+	@LDAP_Connection()
+	@response
+	def get_schools(self, request, search_base=None, ldap_user_read=None, ldap_position=None):
+		schools = School.get_all(ldap_user_read, restrict_to_user=False)
+		return [school.to_dict() for school in schools]
+
+	@LDAP_Connection()
+	@response
+	def get_school(self, request, search_base=None,
+	                 ldap_user_read=None, ldap_position=None):
+		ret = []
+		for obj in iter_objects_in_request(request):
+			MODULE.process('Getting %r' % (obj))
+			obj = obj.from_dn(obj.old_dn, None, ldap_user_read)
+			ret.append(obj.to_dict())
+		return ret
+
+	@LDAP_Connection( USER_READ, USER_WRITE )
+	@response
+	def modify_school(self, request, search_base=None,
+	                 ldap_user_read=None, ldap_user_write=None, ldap_position=None):
+		for obj in iter_objects_in_request(request):
+			MODULE.process('Modifying %r' % (obj))
+			obj.modify(ldap_user_write)
+
+	@LDAP_Connection( USER_READ, USER_WRITE )
+	@response
+	def create_school(self, request, search_base=None,
+	                 ldap_user_read=None, ldap_user_write=None, ldap_position=None):
+		for obj in iter_objects_in_request(request):
+			MODULE.process('Creating %r' % (obj))
+			obj.create(ldap_user_write)
+
+	@LDAP_Connection( USER_READ, USER_WRITE )
+	@response
+	def delete_school(self, request, search_base=None, ldap_user_read=None, ldap_user_write=None, ldap_position=None):
+		for obj in iter_objects_in_request(request):
+			obj.name = obj.get_name_from_dn(obj.old_dn)
+			MODULE.process('Deleting %r' % (obj))
+			obj.remove(ldap_user_write)
+

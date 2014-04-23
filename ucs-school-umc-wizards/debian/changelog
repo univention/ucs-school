@@ -1,3 +1,9 @@
+ucs-school-umc-wizards (4.0.3-1) unstable; urgency=low
+
+  * Bug #34337: Use ucsschool-lib in Wizards
+
+ -- Dirk Wiesenthal <wiesenthal@univention.de>  Thu, 24 Apr 2014 01:22:39 +0200
+
 ucs-school-umc-wizards (4.0.2-1) unstable; urgency=low
 
   * Bug #34337: [WIP] implement mock up for modification and deletion of schools,

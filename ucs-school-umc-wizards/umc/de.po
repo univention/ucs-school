@@ -13,25 +13,25 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 msgid "School classes"
-msgstr "Schul-Klassen"
+msgstr "Schulklassen"
 
 msgid "School computers"
-msgstr "Schul-Computer"
+msgstr "Schulrechner"
 
 msgid "School users"
-msgstr "Schul-Benutzer"
+msgstr "Schulbenutzer"
 
 msgid "Schools"
 msgstr "Schulen"
 
-msgid "Manage school users"
-msgstr "Schul-Benutzer verwalten"
+msgid "Manage students, teachers, staff"
+msgstr "Schüler, Lehrer, Mitarbeiter verwalten"
 
 msgid "Manage school classes"
-msgstr "Schul-Klassen verwalten"
+msgstr "Schulklassen verwalten"
 
 msgid "Manage school computers"
-msgstr "Schul-Computer verwalten"
+msgstr "Schulrechner verwalten"
 
 msgid "Manage schools"
 msgstr "Schulen verwalten"

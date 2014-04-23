@@ -54,16 +54,16 @@ define([
 				name: 'name',
 				label: _('Name')
 			}, {
-				name: 'type',
+				name: 'type_name',
 				label: _('Type')
 			}, {
-				name: 'ipAddress',
+				name: 'ip_address',
 				label: _('IP address')
 			}, {
-				name: 'mac',
+				name: 'mac_address',
 				label: _('MAC address')
 			}, {
-				name: 'inventoryNumber',
+				name: 'inventory_number',
 				label: _('Inventory number')
 			}];
 		},
@@ -78,8 +78,7 @@ define([
 				size: 'TwoThirds',
 				name: 'school',
 				label: _('Schools'),
-				dynamicValues: 'schoolwizards/schools',
-				umcpCommand: lang.hitch(this, 'umcpCommand'),
+				staticValues: this.schools,
 				autoHide: true
 			}, {
 				type: ComboBox,

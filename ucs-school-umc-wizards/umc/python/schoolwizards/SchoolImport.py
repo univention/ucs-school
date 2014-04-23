@@ -104,16 +104,6 @@ class SchoolImport(object):
 		if return_code:
 			raise OSError(_('Could not create user'))
 
-	def create_ou(self, name, display_name, school_dc):
-		"""Creates a new school
-		"""
-		if not display_name or not name:
-			MODULE.error('Cannot create school: name or displayname is not defined: %r %r' % (name, display_name))
-			raise OSError(_('Could not create school'))
-		return_code, stdout = self._run_script(SchoolImport.SCHOOL_SCRIPT, ['--displayName', display_name, name, school_dc, ], True)
-		if return_code:
-			raise OSError(_('Could not create school'))
-
 	def import_group(self, school, name, description):
 		"""Creates a new class
 		"""
