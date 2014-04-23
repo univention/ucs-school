@@ -385,6 +385,18 @@ class SchoolSearchBase(object):
 			yield self.__class__(availableSchools, school, None, self._ldapBase)
 
 	@property
+	def dhcp(self):
+		return "cn=dhcp,%s" % self.schoolDN
+
+	@property
+	def policies(self):
+		return "cn=policies,%s" % self.schoolDN
+
+	@property
+	def networks(self):
+		return "cn=networks,%s" % self.schoolDN
+
+	@property
 	def school(self):
 		return self._school
 

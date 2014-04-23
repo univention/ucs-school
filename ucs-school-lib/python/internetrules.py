@@ -173,7 +173,7 @@ def findUCRVariables(filterName=None, userRule=False):
 		if imatch:
 			# we found a filter variable
 			iname = imatch.group('name')
-			if not iname or (None != filterName and filterName != iname):
+			if not iname or (filterName is not None and filterName != iname):
 				# empty name or name does not match the specified filter
 				continue
 

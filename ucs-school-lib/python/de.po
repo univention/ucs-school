@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2014-04-11 14:15+0200\n"
+"POT-Creation-Date: 2014-04-24 01:08+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -11,37 +11,35 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: python/models.py:302
+#: python/models.py:143
 #, python-format
 msgid "\"%s\" is required. Please provide this information."
 msgstr "\"%s\" ist erforderlich. Bitte ergänzen Sie diese Information."
 
-#: python/models.py:435
-#, python-format
-msgid "%s could not be changed."
-msgstr "%s konnte nicht verändert werden."
+#: python/models.py:191
+msgid "A valid NetBIOS hostname can not be longer than 12 characters."
+msgstr ""
+"Ein gültiger NetBIOS Rechnername darf nicht länger als 12 Zeichen sein."
 
-#: python/models.py:431
-#, python-format
-msgid "%s could not be created."
-msgstr "%s konnte nicht angelegt werden."
-
-#: python/models.py:433
-#, python-format
-msgid "%s could not be deleted."
-msgstr "%s konnte nicht gelöscht werden."
-
-#: python/models.py:277
-msgid "Action"
-msgstr "Aktion"
-
-#: python/models.py:71
+#: python/models.py:613
 msgid "Birthday"
 msgstr "Geburtstag"
 
-#: python/models.py:509 python/models.py:540
+#: python/models.py:797 python/models.py:825
 msgid "Class"
 msgstr "Klasse"
+
+#: python/models.py:1667
+msgid "Computer"
+msgstr "Rechner"
+
+#: python/models.py:1475
+msgid "Computer path"
+msgstr "Pfad für Rechner"
+
+#: python/models.py:914
+msgid "Container"
+msgstr "Container"
 
 #: python/schoolldap.py:528
 msgid ""
@@ -51,33 +49,161 @@ msgstr ""
 "Es konnte keine Schule gefunden werden. Um Fortzufahren, muss zuerst eine "
 "Schule erstellt werden, dazu kann 'Schule hinzufügen' verwendet werden."
 
-#: python/models.py:72
+#: python/models.py:1083
+msgid "DC Name"
+msgstr "DC Name"
+
+#: python/models.py:1478
+msgid "DHCP path"
+msgstr "Pfad für DHCP"
+
+#: python/models.py:881
+msgid "Description"
+msgstr "Beschreibung"
+
+#: python/models.py:1761
+msgid "Device with IP address"
+msgstr "Gerät mit IP-Adresse"
+
+#: python/models.py:1086
+msgid "Display name"
+msgstr "Anzeigename"
+
+#: python/models.py:1492
+msgid "Domain"
+msgstr "Domäne"
+
+#: python/models.py:614
 msgid "Email"
 msgstr "E-Mail"
 
-#: python/models.py:69
+#: python/models.py:1618
+msgid "Empty attributes"
+msgstr "Leere Attribute"
+
+#: python/models.py:611
 msgid "First name"
 msgstr "Vorname"
 
-#: python/models.py:70
+#: python/models.py:1477
+msgid "Group path"
+msgstr "Pfad für Gruppen"
+
+#: python/models.py:1647
+msgid "Groups"
+msgstr "Gruppen"
+
+#: python/models.py:1491
+msgid "Hostname"
+msgstr "Hostname"
+
+#: python/models.py:1662
+msgid "IP address"
+msgstr "IP-Adresse"
+
+#: python/models.py:184
+msgid "Invalid school name"
+msgstr "Ungültiger Schulname"
+
+#: python/models.py:1665
+msgid "Inventory number"
+msgstr "Inventarnummer"
+
+#: python/models.py:612
 msgid "Last name"
 msgstr "Nachname"
 
-#: python/schoolldap.py:273
+#: python/schoolldap.py:261
 msgid "License not found. During this session add and modify are disabled."
 msgstr ""
 "Keine Lizenz gefunden. Während dieser Sitzung ist das Hinzufügen und "
 "Bearbeiten von Objekten nicht möglich."
 
-#: python/models.py:279
-msgid "Line"
-msgstr "Zeile"
+#: python/models.py:1664
+msgid "MAC address"
+msgstr "MAC-Adresse"
+
+#: python/models.py:1755
+msgid "Mac OS X"
+msgstr "Mac OS X"
+
+#: python/models.py:161
+msgid "May not contain special characters"
+msgstr "Darf keine besonderen Zeichen enthalten"
+
+#: python/models.py:314 python/models.py:880 python/models.py:993
+msgid "Name"
+msgstr "Name"
+
+#: python/models.py:1476
+msgid "Network path"
+msgstr "Pfad für Netzwerk"
 
 #: python/schoollessons.py:61 python/schoollessons.py:129
 msgid "Overlapping lessons are not allowed"
 msgstr "Überlappende Schulstunden sind nicht erlaubt"
 
-#: python/models.py:309
+#: python/models.py:615
+msgid "Password"
+msgstr "Passwort"
+
+#: python/models.py:1479
+msgid "Policy path"
+msgstr "Pfad für Richtlinien"
+
+#: python/models.py:1481
+msgid "Printer path"
+msgstr "Pfad für Drucker"
+
+#: python/models.py:315
+msgid "School"
+msgstr "Schule"
+
+#: python/models.py:994
+msgid "School class"
+msgstr "Schulklasse"
+
+#: python/models.py:1082
+msgid "School name"
+msgstr "Schulname"
+
+#: python/models.py:1085
+msgid "Server for Windows home directories"
+msgstr "Server für Windows-Heimatverzeichnisse"
+
+#: python/models.py:1084
+msgid "Server for class shares"
+msgstr "Server für Klassenfreigaben"
+
+#: python/models.py:1490
+msgid "Service"
+msgstr "Dienst"
+
+#: python/models.py:1480
+msgid "Share path"
+msgstr "Pfad für Freigaben"
+
+#: python/models.py:856
+msgid "Staff"
+msgstr "Mitarbeiter"
+
+#: python/models.py:799
+msgid "Student"
+msgstr "Schüler"
+
+#: python/models.py:1663
+msgid "Subnet mask"
+msgstr "Subnetzmaske"
+
+#: python/models.py:827
+msgid "Teacher"
+msgstr "Lehrer"
+
+#: python/models.py:868
+msgid "Teacher and Staff"
+msgstr "Lehrer und Mitarbeiter"
+
+#: python/models.py:680
 msgid ""
 "The email address is already taken by another user. Please change the email "
 "address."
@@ -85,55 +211,65 @@ msgstr ""
 "Die E-Mail-Adresse wird bereits von einem anderen Benutzer verwendet. Bitte "
 "ändern Sie die E-Mail-Adresse."
 
-#: python/models.py:312
+#: python/models.py:1720
 msgid ""
-"The user already exists and cannot be created. Please change the username to "
-"one that does not yet exist or change the action to be taken."
+"The ip address is already taken by another computer. Please change the ip "
+"address."
 msgstr ""
-"Der Nutzer existiert bereits und kann nicht neu erstellt werden. Bitte "
-"ändern Sie den Benutzernamen zu einem noch nicht vergebenen oder ändern Sie "
-"die durchzuführende Aktion."
+"Die IP-Adresse wird bereits von einem anderen Rechner verwendet. Bitte "
+"ändern Sie die IP-Adresse."
 
-#: python/models.py:329
+#: python/models.py:193
 msgid ""
-"The user does not yet exist and cannot be deleted. Please change the "
-"username to one that exists or change the action to be taken."
-msgstr ""
-"Der Nutzer existiert noch nicht und kann nicht gelöscht werden. Bitte ändern "
-"Sie den Benutzernamen zu einem bereits vergebenen oder ändern Sie die "
-"durchzuführende Aktion."
+"The length of fully qualified domain name is greater than 63 characters."
+msgstr "Die Länge von System- und Domänennamen ist größer als 63 Zeichen."
 
-#: python/models.py:327
+#: python/models.py:1724
 msgid ""
-"The user does not yet exist and cannot be modified. Please change the "
-"username to one that exists or change the action to be taken."
+"The mac address is already taken by another computer. Please change the mac "
+"address."
 msgstr ""
-"Der Nutzer existiert noch nicht und kann nicht verändert werden. Bitte "
-"ändern Sie den Benutzernamen zu einem bereits vergebenen oder ändern Sie die "
-"durchzuführende Aktion."
+"Die MAC-Adresse wird bereits von einem anderen Rechner verwendet. Bitte "
+"ändern Sie die MAC-Adresse."
 
-#: python/models.py:314
+#: python/models.py:365
 msgid ""
-"The username is already used somewhere outside the school. It may not be "
-"taken twice and has to be changed."
+"The name is already used somewhere outside the school. It may not be taken "
+"twice and has to be changed."
 msgstr ""
-"Der Benutzername wird bereits außerhalb dieser Schule genutzt. Er darf nicht "
-"zweimal vorkommen und muss verändert werden."
+"Der Name wird bereits außerhalb dieser Schule genutzt. Er darf nicht zweimal "
+"vorkommen und muss verändert werden."
 
-#: python/models.py:324
+#: python/models.py:368
+#, python-format
+msgid ""
+"The school \"%s\" does not exist. Please choose an existing one or create it."
+msgstr ""
+"Die Schule \"%s\" existiert nicht. Bitte wählen Sie eine existierende oder "
+"erstellen Sie sie."
+
+#: python/models.py:379
 #, python-format
 msgid "The value changed from %(old)s. This seems unlikely."
 msgstr "Der Wert ist eigentlich %(old)s. Eine Änderung ist ungewöhnlich."
 
-#: python/models.py:271
-msgid "Unused"
-msgstr "Unbenutzt"
+#: python/models.py:1767
+msgid "Univention Corporate Client"
+msgstr "Univention Corporate Client"
 
-#: python/models.py:68
+#: python/models.py:1474
+msgid "User path"
+msgstr "Pfad für Benutzer"
+
+#: python/models.py:610
 msgid "Username"
 msgstr "Benutzername"
 
-#: python/schoolldap.py:303
+#: python/models.py:1749
+msgid "Windows system"
+msgstr "Windows-System"
+
+#: python/schoolldap.py:291
 msgid ""
 "You are currently using the \"Free for personal use\" edition of Univention "
 "Corporate Server."
@@ -141,7 +277,7 @@ msgstr ""
 "Sie verwenden derzeit die \"Free for personal use\" Ausgabe von Univention "
 "Corporate Server."
 
-#: python/schoolldap.py:293
+#: python/schoolldap.py:281
 msgid ""
 "You have too many DVS client accounts for your license. During this session "
 "add and modify are disabled."
@@ -149,7 +285,7 @@ msgstr ""
 "Sie haben mehr DVS-Client-Konten, als Ihre Lizenz erlaubt. Während dieser "
 "Sitzung ist das Hinzufügen und Bearbeiten von Objekten nicht möglich."
 
-#: python/schoolldap.py:291
+#: python/schoolldap.py:279
 msgid ""
 "You have too many DVS user accounts for your license. During this session "
 "add and modify are disabled."
@@ -157,7 +293,7 @@ msgstr ""
 "Sie haben mehr DVS-Benutzerkonten, als Ihre Lizenz erlaubt. Während dieser "
 "Sitzung ist das Hinzufügen und Bearbeiten von Objekten nicht möglich."
 
-#: python/schoolldap.py:279
+#: python/schoolldap.py:267
 msgid ""
 "You have too many client accounts for your license. During this session add "
 "and modify are disabled."
@@ -165,7 +301,7 @@ msgstr ""
 "Sie haben mehr Benutzerkonten, als Ihre Lizenz erlaubt. Während dieser "
 "Sitzung ist das Hinzufügen und Bearbeiten von Objekten nicht möglich."
 
-#: python/schoolldap.py:285
+#: python/schoolldap.py:273
 msgid ""
 "You have too many corporate client accounts for your license. During this "
 "session add and modify are disabled."
@@ -174,7 +310,7 @@ msgstr ""
 "Während dieser Sitzung ist das Hinzufügen und Bearbeiten von Objekten nicht "
 "möglich."
 
-#: python/schoolldap.py:287
+#: python/schoolldap.py:275
 msgid ""
 "You have too many desktop accounts for your license. During this session add "
 "and modify are disabled."
@@ -182,7 +318,7 @@ msgstr ""
 "Sie haben mehr Desktop Rechner, als Ihre Lizenz erlaubt. Während dieser "
 "Sitzung ist das Hinzufügen und Bearbeiten von Objekten nicht möglich."
 
-#: python/schoolldap.py:289
+#: python/schoolldap.py:277
 msgid ""
 "You have too many groupware accounts for your license. During this session "
 "add and modify are disabled."
@@ -190,7 +326,7 @@ msgstr ""
 "Sie haben mehr Groupware Konten, als Ihre Lizenz erlaubt. Während dieser "
 "Sitzung ist das Hinzufügen und Bearbeiten von Objekten nicht möglich."
 
-#: python/schoolldap.py:283
+#: python/schoolldap.py:271
 msgid ""
 "You have too many managed client accounts for your license. During this "
 "session add and modify are disabled."
@@ -198,7 +334,7 @@ msgstr ""
 "Sie haben mehr Managed-Client-Konten, als Ihre Lizenz erlaubt. Während "
 "dieser Sitzung ist das Hinzufügen und Bearbeiten von Objekten nicht möglich."
 
-#: python/schoolldap.py:281
+#: python/schoolldap.py:269
 msgid ""
 "You have too many server accounts for your license. During this session add "
 "and modify are disabled."
@@ -206,7 +342,7 @@ msgstr ""
 "Sie haben mehr Server-Konten, als Ihre Lizenz erlaubt. Während dieser "
 "Sitzung ist das Hinzufügen und Bearbeiten von Objekten nicht möglich."
 
-#: python/schoolldap.py:275 python/schoolldap.py:277
+#: python/schoolldap.py:263 python/schoolldap.py:265
 msgid ""
 "You have too many user accounts for your license. During this session add "
 "and modify are disabled."
@@ -214,7 +350,7 @@ msgstr ""
 "Sie haben mehr Benutzerkonten, als Ihre Lizenz erlaubt. Während dieser "
 "Sitzung ist das Hinzufügen und Bearbeiten von Objekten nicht möglich."
 
-#: python/schoolldap.py:301
+#: python/schoolldap.py:289
 msgid ""
 "Your license does not allow modifications. During this session add and "
 "modify are disabled."
@@ -222,14 +358,14 @@ msgstr ""
 "Die installierte Lizenz erlaubt keine Änderungen. Während dieser Sitzung ist "
 "das Hinzufügen und Bearbeiten von Objekten nicht möglich."
 
-#: python/schoolldap.py:295
+#: python/schoolldap.py:283
 msgid ""
 "Your license is expired. During this session add and modify are disabled."
 msgstr ""
 "Die Lizenz ist abgelaufen. Während dieser Sitzung ist das Hinzufügen und "
 "Bearbeiten von Objekten nicht möglich."
 
-#: python/schoolldap.py:297
+#: python/schoolldap.py:285
 msgid ""
 "Your license is not valid for your LDAP-Base. During this session add and "
 "modify are disabled."
@@ -237,14 +373,14 @@ msgstr ""
 "Die installierte Linzenz wurde nicht für diese Basis-DN ausgestellt. Während "
 "dieser Sitzung ist das Hinzufügen und Bearbeiten von Objekten nicht möglich."
 
-#: python/schoolldap.py:299
+#: python/schoolldap.py:287
 msgid ""
 "Your license is not valid. During this session add and modify are disabled."
 msgstr ""
 "Ihre Lizenz ist nicht gültig. Während dieser Sitzung ist das Hinzufügen und "
 "Bearbeiten von Objekten nicht möglich."
 
-#: python/schoolldap.py:305
+#: python/schoolldap.py:293
 msgid ""
 "Your license status could not be validated. Thus, you are not eligible to "
 "support and maintenance. If you have bought a license, please contact "
@@ -254,3 +390,45 @@ msgstr ""
 "Version ohne Support oder Maintenance-Unterstützung durch Univention. Wenn "
 "Sie über eine Lizenz verfügen, wenden Sie sich bitte an Univention oder "
 "Ihren Univention Partner."
+
+#~ msgid "%s could not be changed."
+#~ msgstr "%s konnte nicht verändert werden."
+
+#~ msgid "%s could not be created."
+#~ msgstr "%s konnte nicht angelegt werden."
+
+#~ msgid "%s could not be deleted."
+#~ msgstr "%s konnte nicht gelöscht werden."
+
+#~ msgid "Action"
+#~ msgstr "Aktion"
+
+#~ msgid "Line"
+#~ msgstr "Zeile"
+
+#~ msgid ""
+#~ "The user already exists and cannot be created. Please change the username "
+#~ "to one that does not yet exist or change the action to be taken."
+#~ msgstr ""
+#~ "Der Nutzer existiert bereits und kann nicht neu erstellt werden. Bitte "
+#~ "ändern Sie den Benutzernamen zu einem noch nicht vergebenen oder ändern "
+#~ "Sie die durchzuführende Aktion."
+
+#~ msgid ""
+#~ "The user does not yet exist and cannot be deleted. Please change the "
+#~ "username to one that exists or change the action to be taken."
+#~ msgstr ""
+#~ "Der Nutzer existiert noch nicht und kann nicht gelöscht werden. Bitte "
+#~ "ändern Sie den Benutzernamen zu einem bereits vergebenen oder ändern Sie "
+#~ "die durchzuführende Aktion."
+
+#~ msgid ""
+#~ "The user does not yet exist and cannot be modified. Please change the "
+#~ "username to one that exists or change the action to be taken."
+#~ msgstr ""
+#~ "Der Nutzer existiert noch nicht und kann nicht verändert werden. Bitte "
+#~ "ändern Sie den Benutzernamen zu einem bereits vergebenen oder ändern Sie "
+#~ "die durchzuführende Aktion."
+
+#~ msgid "Unused"
+#~ msgstr "Unbenutzt"
