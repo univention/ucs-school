@@ -487,6 +487,46 @@ ucc              uccg123m-01      10:00:ee:ff:cd:e2  g123m  10.0.5.10
 	  </para>
 	</section>
 
+	<section id="school:setup:roleshares">
+	  <title>Lehrerzugriff auf Benutzerfreigaben</title>
+	  <para>
+		Lehrern kann der Zugriff auf alle Heimatverzeichnisse von Schülern an einer Schule
+		freigeschaltet werden.
+		Dies geschieht durch Installation des Pakets <package>ucs-school-roleshares</package>
+		auf dem jeweiligen Schul-Server.
+		Der Zugriff kann dann über eine spezielle rollenspezifische Dateifreigabe erfolgen.
+	  </para>
+	  <para>
+		Das Paket installiert ein Skript
+		<command>/usr/share/ucs-school-import/scripts/create_roleshares</command>,
+		dass auch manuell aufgerufen werden kann.
+		Mit der Standardoption <emphasis>--create student</emphasis> aufgerufen legt es
+		für alle Dateiserver von Klassen- und Benutzerfreigaben des Schulstandorts
+		jeweils eine Freigabe mit dem Namensschema <emphasis>schueler-&lt;OU&gt;</emphasis> an.
+		Die Freigabe erlaubt der Gruppe <emphasis>lehrer-&lt;OU&gt;</emphasis> administrativen
+		Zugriff auf das Basisverzeichnis <emphasis>/home/&lt;OU&gt;/schueler</emphasis>.
+	  </para>
+	  <para>
+		Per Voreinstellung wird der Lehrergruppe Lesezugriff gewährt.
+		Die Existenz der Freigabe wird vom jeweiligen Dateiserver nicht explizit angezeigt.
+		Eine an einem Windows-Arbeitsplatz angemeldete Lehrkraft sollte automatisch eine Verknüpfung
+		zu dieser Freigabe angezeigt bekommen.
+	  </para>
+	  <para>
+		Die Freigabe-Einstellungen dieser Freigabe können wie üblich über die &ucsUMC; auf
+		dem &ucsMaster; angepasst werden, z.B. um Lehrern auch Schreibzugriff zu gewähren.
+	  </para>
+	  <para>
+		Voraussetzung für diese Funktion ist, dass das Import-Skript die
+		Heimatverzeichnisse der Benutzerkonten in entsprechend strukturierten Unterverzeichnissen
+		angelegt hat. Dies geschieht in Domänen die mit &ucsUAS; 3.2r2 oder später installiert
+		wurden automatisch. In upgedateten Umgebungen wird dies dadurch verhindert, dass dort
+		&ucsUCRV; <envar>ucsschool/import/roleshares</envar> auf <emphasis>no</emphasis> gesetzt ist.
+		Dies gewährleistet eine einheitliche Anlage der Heimatverzeichnisse und sollte erst
+		nach einer manuellen Migration der Heimatverzeichnisse geändert werden.
+	  </para>
+	</section>
+
 	<section id="school:configurehelpdesk">
 	  <title>Konfiguration der Helpdesk-Kontaktadresse</title>
 	  <para>
