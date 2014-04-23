@@ -1,3 +1,9 @@
+ucs-school-import (10.0.7-12) unstable; urgency=medium
+
+  * Add lost import (Bug #34335)
+
+ -- Arvid Requate <requate@univention.de>  Wed, 23 Apr 2014 14:50:23 +0200
+
 ucs-school-import (10.0.7-11) unstable; urgency=medium
 
   * Adjust documentation for ucsschool/import/roleshare (Bug #34335)

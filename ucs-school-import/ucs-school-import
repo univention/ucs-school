@@ -75,6 +75,7 @@ import univention.admin.config
 import univention.config_registry
 import univention.lib.policy_result
 from ucsschool.lib.roles import role_pupil, role_teacher, role_staff
+from ucsschool.lib.roleshares import roleshare_home_subdir
 
 configRegistry=univention.config_registry.ConfigRegistry()
 configRegistry.load()
