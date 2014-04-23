@@ -1,3 +1,9 @@
+ucs-test-ucsschool (1.0.15-2) unstable; urgency=medium
+
+  * Allow 12_roleshare_student not only singlemaster (Bug #34335)
+
+ -- Arvid Requate <requate@univention.de>  Wed, 23 Apr 2014 14:20:59 +0200
+
 ucs-test-ucsschool (1.0.15-1) unstable; urgency=low
 
   * Bug #34280 increasing timeout to 60secs 

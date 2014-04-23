@@ -1,4 +1,3 @@
-#!/usr/bin/python
 #!/usr/share/ucs-test/runner python
 ## desc: Test roleshares creation
 ## roles: [domaincontroller_master]
@@ -7,6 +6,7 @@
 ## packages:
 ##    - ucs-school-import
 ##    - univention-samba | univention-samba4
+##    - ucs-school-roleshares
 
 import sys
 import subprocess
@@ -15,27 +15,40 @@ import univention.testing.utils as testing_utils
 from univention import testing
 import univention.testing.ucr as testing_ucr
 import univention.testing.ucsschool as testing_ucsschool
+from univention.admin.uldap import explodeDn
+from ucsschool.lib.schoolldap import get_all_local_searchbases, set_credentials
+import ucsschool.lib.roleshares as roleshares
+from ucsschool.lib.roles import role_pupil
 try:
 	from univention.testing.ucs_samba import wait_for_drs_replication
 except ImportError:
 	def wait_for_drs_replication(ldap_filter, attrs=None):
 		pass
+
+
+### Initialize globals
 ucr = testing_ucr.UCSTestConfigRegistry()
 ucr.load()
+TESTS_DOMAINADMIN_ACCOUNT = ucr.get('tests/domainadmin/account')
+if TESTS_DOMAINADMIN_ACCOUNT:
+	TESTS_DOMAINADMIN = explodeDn(TESTS_DOMAINADMIN_ACCOUNT, 1)[0]
+TESTS_DOMAINADMIN_PWD = ucr.get('tests/domainadmin/pwd')
+set_credentials(TESTS_DOMAINADMIN_ACCOUNT, TESTS_DOMAINADMIN_PWD)
 
-import ucsschool.lib.roleshares as roleshares
-from ucsschool.lib.roles import role_pupil, role_teacher, role_staff
-from ucsschool.lib.i18n import ucs_school_name_i18n
 
-def access_user_dir(authname, school_id, username, userfilename, password='univention', testwrite=True, write_access=False):
-	fqdn = ".".join((ucr.get('hostname'), ucr.get('domainname')))
-	roleshare = "//%s/%s" % (fqdn, roleshares.roleshare_name(role_pupil, school_id, ucr))
-	
+def access_user_dir(authname, school_id, serverfqdn, username, userfilename, password='univention', testwrite=True, write_access=False):
+	roleshare = "//%s/%s" % (serverfqdn, roleshares.roleshare_name(role_pupil, school_id, ucr))
+	print "INFO: Testing student roleshare access for share %s" % (roleshare,)
+
 	smbcmd = "dir %s" % (username,)
 	cmd = ['smbclient', roleshare, "-U%s%%%s" % (authname, password), "-c", smbcmd]
-	print " ".join(['"%s"' % (part,) for part in cmd])
-	p1 = subprocess.Popen(cmd, close_fds=True, shell=False, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-	(out, err) = p1.communicate()
+	try:
+		p1 = subprocess.Popen(cmd, close_fds=True, shell=False, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+		(out, err) = p1.communicate()
+	except OSError as ex:
+		quoted_cmd_string = " ".join(['"%s"' % (part,) for part in cmd])
+		print "Failed to run: %s" % (quoted_cmd_string,)
+		raise
 	if p1.returncode:
 		print out
 		return False
@@ -43,28 +56,125 @@ def access_user_dir(authname, school_id, username, userfilename, password='unive
 	if testwrite:
 		smbcmd = "del %s\\%s" % (username, userfilename)
 		cmd = ['smbclient', roleshare, "-U%s%%%s" % (authname, password), "-c", smbcmd]
-		print " ".join(['"%s"' % (part,) for part in cmd])
-		p1 = subprocess.Popen(cmd, close_fds=True, shell=False, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-		(out, err) = p1.communicate()
+		try:
+			p1 = subprocess.Popen(cmd, close_fds=True, shell=False, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+			(out, err) = p1.communicate()
+		except OSError as ex:
+			quoted_cmd_string = " ".join(['"%s"' % (part,) for part in cmd])
+			print "Failed to run: %s" % (quoted_cmd_string,)
+			raise
 		if (p1.returncode and write_access):
 			print out
 			return False
 		if not (p1.returncode or write_access):
 			print "ERROR: Removal of %s\\%s succeeded, but it should not."  % (username, userfilename)
+			return False
 
 		teacherfilename = "teacherfile1"
 		smbcmd = "put /etc/hosts %s\\%s" % (username, teacherfilename)
 		cmd = ['smbclient', roleshare, "-U%s%%%s" % (authname, password), "-c", smbcmd]
-		print " ".join(['"%s"' % (part,) for part in cmd])
-		p1 = subprocess.Popen(cmd, close_fds=True, shell=False, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-		(out, err) = p1.communicate()
+		try:
+			p1 = subprocess.Popen(cmd, close_fds=True, shell=False, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+			(out, err) = p1.communicate()
+		except OSError as ex:
+			quoted_cmd_string = " ".join(['"%s"' % (part,) for part in cmd])
+			print "Failed to run: %s" % (quoted_cmd_string,)
+			raise
 		if (p1.returncode and write_access):
 			print out
 			return False
 		if not (p1.returncode or write_access):
 			print "ERROR: Write to %s\\%s succeeded, but it should not."  % (username, teacherfilename)
+			return False
 
 	return True
+
+
+def create_testfile_on_homeshare(fqdn, username, password, filename):
+	share_unc = "//%s/%s" % (fqdn, username)
+	print "INFO: Creating testfile %s on home share %s" % (filename, share_unc,)
+
+	smbcmd = "put /etc/hosts %s" % (filename,)
+	cmd = ['smbclient', share_unc, "-U%s%%%s" % (username, password), "-c", smbcmd]
+	try:
+		p1 = subprocess.Popen(cmd, close_fds=True, shell=False, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+		(out, err) = p1.communicate()
+	except OSError as ex:
+		quoted_cmd_string = " ".join(['"%s"' % (part,) for part in cmd])
+		print "Failed to run: %s" % (quoted_cmd_string,)
+		raise
+	if p1.returncode:
+		print out
+		return False
+
+def access_roleshare_student_on_all_school_fileservers(authname, school_id, username, password='univention', testwrite=True, write_access=False):
+	print "INFO: Testing student roleshare access for school %s" % (school_id,)
+	for fqdn in roleshares.fileservers_for_school(school_id):
+		## trigger home creation for stu1 and create a test file
+		userfilename = "testfile1"
+		create_testfile_on_homeshare(fqdn, username, password, userfilename)
+
+		## and test access
+		if not access_user_dir(authname, school_id, fqdn, username, userfilename):
+			return False
+	
+	return True
+
+def smb_server_online(fqdn):
+	cmd = ['smbclient', "-N", "-L", fqdn]
+	try:
+		p1 = subprocess.Popen(cmd, close_fds=True, shell=False, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+		(out, err) = p1.communicate()
+	except OSError as ex:
+		quoted_cmd_string = " ".join(['"%s"' % (part,) for part in cmd])
+		print "Failed to run: %s" % (quoted_cmd_string,)
+		raise
+
+	if p1.returncode:
+		return False
+
+	return True
+
+def smb_server_offers_roleshare_student(fqdn, school_id):
+	share_name = roleshares.roleshare_name('pupil', school_id, ucr)
+	share_unc = "//%s/%s" % (fqdn, share_name)
+	cmd = ['smbclient', share_unc, "-U%s%%%s" % (TESTS_DOMAINADMIN, TESTS_DOMAINADMIN_PWD), "-c", "quit"]
+	try:
+		p1 = subprocess.Popen(cmd, close_fds=True, shell=False, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+		(out, err) = p1.communicate()
+	except OSError as ex:
+		quoted_cmd_string = " ".join(['"%s"' % (part,) for part in cmd])
+		print "Failed to run: %s" % (quoted_cmd_string,)
+		raise
+
+	if p1.returncode:
+		return False
+
+	return True
+
+def create_roleshare_student(school_id):
+	## create roleshares
+	cmd = ["/usr/share/ucs-school-import/scripts/create_roleshares", "--create", "student", "--school", str(school_id), "--binddn", TESTS_DOMAINADMIN_ACCOUNT, "--bindpwd", TESTS_DOMAINADMIN_PWD]
+	try:
+		p1 = subprocess.Popen(cmd, close_fds=True, shell=False, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+		(out, err) = p1.communicate()
+	except OSError as ex:
+		quoted_cmd_string = " ".join(['"%s"' % (part,) for part in cmd])
+		print "Failed to run: %s" % (quoted_cmd_string,)
+		raise
+
+def prepare_fileservers(school_id):
+	tested_servers = []
+	for fqdn in roleshares.fileservers_for_school(school_id):
+		if smb_server_online(fqdn):
+			if not smb_server_offers_roleshare_student(fqdn, school_id):
+				print "INFO: Manually creating roleshares for %s" % (school_id,)
+				create_roleshare_student(school_id)
+			tested_servers.append(fqdn)
+		else:
+			print "WARNING: Server %s is not online" % (fqdn,)
+	return tested_servers
+
 
 def main():
 	status = 100
@@ -72,42 +182,51 @@ def main():
 	if not ucr.is_true('ucsschool/import/roleshare', True):
 		testing_utils.fail(log_message="ucsschool/import/roleshare has been deactivated, skipping test", returncode=TestCodes.REASON_SKIP)
 
-	cmd = [ucr.get('update/commands/update')]
-	p1 = subprocess.Popen(cmd, close_fds=True, shell=False, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-	(out, err) = p1.communicate()
 
-	cmd = [ucr.get('update/commands/install'), "ucs-school-roleshares"]	## non-interactive
-	p1 = subprocess.Popen(cmd, close_fds=True, shell=False, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-	(out, err) = p1.communicate()
-
-	with testing_ucsschool.UCSTestSchool() as schoolenv:
-		school_id, oudn = schoolenv.create_ou(name_edudc=ucr.get('hostname'))
-		tea1, teadn1 = schoolenv.create_user(school_id, classes='1A', is_teacher=True)
-		stu1, stu1dn = schoolenv.create_user(school_id, classes='1A')
-
-		## create roleshares
-		tests_domainadmin_account = ucr.get('tests/domainadmin/account')
-		tests_domainadmin_pwd = ucr.get('tests/domainadmin/pwd')
-		cmd = ["/usr/share/ucs-school-import/scripts/create_roleshares", "--create", "student", "--binddn", tests_domainadmin_account, "--bindpwd", tests_domainadmin_pwd]
-		p1 = subprocess.Popen(cmd, close_fds=True, shell=False, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+	
+	print "INFO: Installing ucs-school-roleshares"
+	cmd_str = ucr.get('update/commands/update')
+	try:
+		p1 = subprocess.Popen(cmd_str, close_fds=True, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 		(out, err) = p1.communicate()
+	except OSError as ex:
+		print "Failed to run: %s" % (cmd_str,)
+		raise
 
-		testing_utils.wait_for_replication_and_postrun()
-		print "Waiting for DRS replication..."
-		wait_for_drs_replication("(sAMAccountName=%s)" % (stu1,), attrs="objectSid")
-
-		## trigger home creation for stu1 and create a test file
-		fqdn = ".".join((ucr.get('hostname'), ucr.get('domainname')))
-		stu1_homeshare = "//%s/%s" % (fqdn, stu1)
-		userfilename = "testfile1"
-		smbcmd = "put /etc/hosts %s" % (userfilename,)
-		cmd = ['smbclient', stu1_homeshare, "-U%s%%%s" % (stu1, 'univention'), "-c", smbcmd]
-		print " ".join(['"%s"' % (part,) for part in cmd])
-		p1 = subprocess.Popen(cmd, close_fds=True, shell=False, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+	cmd_str = " ".join((ucr.get('update/commands/install'), "ucs-school-roleshares")) ## non-interactive
+	try:
+		p1 = subprocess.Popen(cmd_str, close_fds=True, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 		(out, err) = p1.communicate()
+	except OSError as ex:
+		print "Failed to run: %s" % (cmd_str,)
+		raise
+	print out	## show if the package needed to be installed
 
-		if not access_user_dir(tea1, school_id, stu1, userfilename):
-			testing_utils.fail(returncode=TestCodes.REASON_FAIL)
+	all_available_servers = []
+	all_visible_schools = [searchbase.school for searchbase in get_all_local_searchbases()]
+	for school_id in all_visible_schools:
+		available_servers = prepare_fileservers(school_id)
+		if available_servers:
+			all_available_servers.extend(available_servers)
+		else:
+			print "WARNING: No file servers online for school %s" % (school_id,)
+			continue
+
+		with testing_ucsschool.UCSTestSchool() as schoolenv:
+
+			tea1, teadn1 = schoolenv.create_user(school_id, classes='1A', is_teacher=True)
+			stu1, stu1dn = schoolenv.create_user(school_id, classes='1A')
+
+
+			testing_utils.wait_for_replication_and_postrun()
+			print "Waiting for DRS replication..."
+			wait_for_drs_replication("(sAMAccountName=%s)" % (stu1,), attrs="objectSid")
+
+			if not access_roleshare_student_on_all_school_fileservers(tea1, school_id, stu1):
+				testing_utils.fail(returncode=TestCodes.REASON_FAIL)
+
+	if not all_available_servers:
+		testing_utils.fail(log_message="No fileserver online", returncode=TestCodes.REASON_FAIL)
 
 	return status
 
