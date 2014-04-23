@@ -1,11 +1,11 @@
 #!/usr/share/ucs-test/runner python
 
+from . import RandomDomain
 from univention.lib.umc_connection import UMCConnection
-import univention.testing.ucr as ucr_test
 import random
 import univention.testing.strings as uts
+import univention.testing.ucr as ucr_test
 import univention.testing.utils as utils
-from . import RandomDomain
 
 """""""""""""""""""""""""""""""""""""""
   Class InternetRule
@@ -25,17 +25,16 @@ class InternetRule(object):
 			domains=None,
 			wlan=None,
 			priority=None):
-		priorities = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 		self.name = name if name else uts.random_string()
 		self.type = typ if typ else random.choice(['whitelist', 'blacklist'])
 		if domains:
 			self.domains = domains
 		else:
 			dom = RandomDomain.RandomDomain()
-			domains = dom.getDomainList(random.choice(priorities))
+			domains = dom.getDomainList(random.randint(1,10))
 			self.domains = sorted(domains)
 		self.wlan = wlan if wlan else random.choice([True, False])
-		self.priority = priority if priority else random.choice(priorities)
+		self.priority = priority if priority else random.randint(1,10)
 		self.ucr = ucr if ucr else ucr_test.UCSTestConfigRegistry()
 		if umcConnection:
 			self.umcConnection = umcConnection
@@ -55,9 +54,6 @@ class InternetRule(object):
 
 	# define the rule umcp
 	def define(self):
-		print 'defining rule %s with UMCP:%s' % (
-			self.name,
-			'internetrules/add')
 		param = [
 			{
 				'object':
@@ -70,6 +66,10 @@ class InternetRule(object):
 					}
 				}
 			]
+		print 'defining rule %s with UMCP:%s, param = %r' % (
+			self.name,
+			'internetrules/add',
+			param)
 		reqResult = self.umcConnection.request('internetrules/add', param)
 		if not reqResult[0]['success']:
 			utils.fail('Unable to define rule (%r)' % (param))
@@ -107,9 +107,10 @@ class InternetRule(object):
 				'options': {'name': self.name}
 				}
 			]
-		print 'Modifying rule %s with UMCP:%s' % (
+		print 'Modifying rule %s with UMCP:%s, param = %r' % (
 			self.name,
-			'internetrules/put')
+			'internetrules/put',
+			param)
 		reqResult = self.umcConnection.request('internetrules/put', param)
 		if not reqResult[0]['success']:
 			utils.fail('Unable to modify rule (%r)' % (param))
@@ -218,7 +219,7 @@ class InternetRule(object):
 
 	# returns a list of all the existing internet rules via UMCP
 	def allRules(self):
-		print 'Calling %s' % ('internetrules/query')
+		print 'Calling %s = get all defined rules' % ('internetrules/query')
 		ruleList = []
 		rules = self.umcConnection.request(
 			'internetrules/query', {'pattern': ''})

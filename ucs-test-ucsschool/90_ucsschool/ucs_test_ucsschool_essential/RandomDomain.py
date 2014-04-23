@@ -24,6 +24,6 @@ class RandomDomain(object):
 	def getDomainList(self, count):
 		domainList = []
 		for i in xrange(count):
-			domain = self.__class__()
-			domainList.append(getattr(domain, 'name'))
+			dom = self.__class__()
+			domainList.append(getattr(dom, 'domain'))
 		return domainList
