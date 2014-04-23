@@ -1,3 +1,12 @@
+ucs-school-metapackage (6.0.7-15) unstable; urgency=medium
+
+  * If we allow samba4 on a nonedu-slave then we need
+    libunivention-ldb-modules (Bug #34097)
+  * Since nonedu-slaves are for logon, file and print it might actually
+    be a good idea to install univention-samba(|4) as well
+
+ -- Arvid Requate <requate@univention.de>  Wed, 23 Apr 2014 19:53:16 +0200
+
 ucs-school-metapackage (6.0.7-14) unstable; urgency=medium
 
   * Copy S4 related UCR defaults from ucs-school-slave.postinst

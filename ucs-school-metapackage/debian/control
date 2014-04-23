@@ -142,7 +142,10 @@ Description: UCS@School meta package for UCS DC Master System (single server env
 
 Package: ucs-school-nonedu-slave
 Architecture: all
-Depends: univention-config
+Depends: univention-config,
+ univention-samba4 (>= 1.0.138-11) | univention-samba (>= 6.0.27-1),
+ univention-s4-connector (>= 6.0.128-24) | univention-samba-slave-pdc,
+ libunivention-ldb-modules | univention-samba (>= 6.0.27-1)
 Description: UCS@school meta package for non-educational Slave servers
  .
  This package is part of Univention Corporate Server (UCS),
