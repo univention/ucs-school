@@ -125,8 +125,8 @@ Type=str
 Categories=ucsschool-base
 
 [ucsschool/import/roleshare]
-Description[de]=Über diese Variable lässt sich das Anlegen von übergeordneten Datei-Freigaben für den Lehrer-Zugriff auf Homeverzeichnisse von Schülern oder anderen UCS@School Rollen steuern.
-Description[en]=This variable controls the creation of file shares for teachers to access home directories of students or other UCS@School roles.
+Description[de]=Falls diese Variable nicht auf "false" oder "no" gesetzt, dann werden Homeverzeichnisse für Benutzer und Klassengruppen in einer rollen- und schulspezifischen Struktur von Unterverzeichnissen angelegt, z.B. unter /home/$ou/schueler/.
+Description[en]=If this variable is not set to "false" or "no", then home directories for users and class groups will be created in a role and school specific structure of subdirectories, e.g. in /home/$ou/schueler/.
 Type=str
 Categories=ucsschool-base
 
