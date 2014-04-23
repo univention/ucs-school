@@ -1,3 +1,10 @@
+ucs-school-lib (5.0.3-23) unstable; urgency=medium
+
+  * Don't create shares on ucsschoolClassShareFileServer, more
+    conceptual work is required for that (Bug #34335)
+
+ -- Arvid Requate <requate@univention.de>  Wed, 23 Apr 2014 16:48:39 +0200
+
 ucs-school-lib (5.0.3-22) unstable; urgency=medium
 
   * Add fileservers_for_school to ucsschool.lib.roleshares (Bug #34335)

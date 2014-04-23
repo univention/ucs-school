@@ -122,10 +122,9 @@ def fileservers_for_school(school_id, ldap_machine_read=None, ldap_position=None
 	school_obj = School(school_id).get_udm_object(ldap_machine_read)
 
 	server_dn_list = []
-	for property in ('ucsschoolHomeShareFileServer', 'ucsschoolClassShareFileServer'):
-		server_dn = school_obj.get(property)
-		if server_dn:
-			server_dn_list.append(server_dn)
+	server_dn = school_obj.get('ucsschoolHomeShareFileServer')
+	if server_dn:
+		server_dn_list.append(server_dn)
 
 	server_list = []
 	for server_dn in server_dn_list:
