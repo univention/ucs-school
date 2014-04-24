@@ -258,6 +258,7 @@ class UCSSchoolHelperOptions(object):
 		self.set_from_meta_object(meta, 'udm_module', None)
 		self.set_from_meta_object(meta, 'udm_filter', '')
 		self.set_from_meta_object(meta, 'name_is_unique', False)
+		self.set_from_meta_object(meta, 'allow_school_change', False)
 		udm_module_short = None
 		if self.udm_module:
 			udm_module_short = self.udm_module.split('/')[1]
@@ -329,6 +330,10 @@ class UCSSchoolHelperAbstractClass(object):
 			cls._cache[key] = obj
 		return cls._cache[key]
 
+	@classmethod
+	def supports_school(cls):
+		return 'school' in cls._attributes
+
 	def __init__(self, **kwargs):
 		self._udm_obj_searched = False
 		self._udm_obj = None
@@ -360,10 +365,10 @@ class UCSSchoolHelperAbstractClass(object):
 				attr.validate(value)
 			except ValueError as e:
 				self.add_error(name, str(e))
-		if self._meta.name_is_unique:
+		if self._meta.name_is_unique and not self._meta.allow_school_change:
 			if self.exists_outside_school(lo):
 				self.add_error('name', _('The name is already used somewhere outside the school. It may not be taken twice and has to be changed.'))
-		if self._attributes.get('school') and self.school:
+		if self.supports_school() and self.school:
 			if not School.get(self.school).exists(lo):
 				self.add_error('school', _('The school "%s" does not exist. Please choose an existing one or create it.') % self.school)
 		if validate_unlikely_changes:
@@ -444,16 +449,20 @@ class UCSSchoolHelperAbstractClass(object):
 				raise ValidationError(self.errors.copy())
 
 		udm_obj = self.get_udm_object(lo)
+		if not udm_obj:
+			MODULE.process('%s does not exist!' % self.old_dn)
+			return False
+
 		old_attrs = deepcopy(udm_obj.info)
 		self.do_modify(udm_obj, lo)
-		same = old_attrs == udm_obj.info
-		if self.old_dn:
-			if ','.join(lo.explodeDn(self.old_dn)[1:]) != self.get_own_container():
-				udm_obj.move(self.dn)
-				same = False
-		self.set_dn(self.dn)
 		# get it fresh from the database
 		self._udm_obj_searched = False
+		self.set_dn(self.dn)
+		udm_obj = self.get_udm_object(lo)
+		same = old_attrs == udm_obj.info
+		if udm_obj.dn != self.dn:
+			udm_obj.move(self.dn)
+			same = False
 		return not same
 
 	def do_modify(self, udm_obj, lo):
@@ -502,7 +511,7 @@ class UCSSchoolHelperAbstractClass(object):
 		return self._udm_obj
 
 	def get_own_container(self):
-		if not self.school:
+		if self.supports_school() and not self.school:
 			return None
 		return self.get_container(self.school)
 
@@ -552,7 +561,7 @@ class UCSSchoolHelperAbstractClass(object):
 		return cls
 
 	def __repr__(self):
-		if 'school' in self._attributes:
+		if self.supports_school():
 			return '%s(name=%r, school=%r, dn=%s)' % (self.__class__.__name__, self.name, self.school, self.custom_dn or self.old_dn)
 		else:
 			return '%s(name=%r, dn=%s)' % (self.__class__.__name__, self.name, self.custom_dn or self.old_dn)
@@ -650,23 +659,36 @@ class User(UCSSchoolHelperAbstractClass):
 		self.create_mail_domain(lo)
 		self.password = self.password or generate_random()
 		udm_obj['primaryGroup'] = self.primary_group_dn(lo)
-		# not done here. instead in bulk_group_change() for performance reasons
-		#   and to avoid problems with overwriting unrelated groups
-		# udm_obj['groups'] = ...
+		udm_obj['groups'] = self.groups_used(lo)
 		return super(User, self).do_create(udm_obj, lo)
 
 	def do_modify(self, udm_obj, lo):
 		self.create_mail_domain(lo)
 		self.password = self.password or None
-		# not done here. instead in bulk_group_change() for performance reasons
-		# and to avoid problems with overwriting unrelated groups
-		# udm_obj['groups'] = ...
+		mandatory_groups = self.groups_used(lo)
+		all_schools = School.get_all(lo, respect_local_oulist=False)
+		for group_dn in udm_obj['groups'][:]:
+			MODULE.info('Checking group %s for removal' % group_dn)
+			if group_dn not in mandatory_groups:
+				MODULE.info('Group not mandatory! Part of a school?')
+				for school in all_schools:
+					if Group.is_school_group(school.name, group_dn):
+						MODULE.info('Yes, part of %s! Removing...' % school)
+						udm_obj['groups'].remove(group_dn)
+						break
+				else:
+					MODULE.info('No. Leaving it alone...')
+		for group_dn in mandatory_groups:
+			MODULE.info('Checking group %s for adding' % group_dn)
+			if group_dn not in udm_obj['groups']:
+				MODULE.info('Group is not yet part of the user. Adding...')
+				udm_obj['groups'].append(group_dn)
 		return super(User, self).do_modify(udm_obj, lo)
 
 	def create_mail_domain(self, lo):
 		if self.email:
 			domain_name = self.email.split('@')[-1]
-			mail_domain = MailDomain.get(domain_name, self.school)
+			mail_domain = MailDomain.get(domain_name)
 			mail_domain.create(lo)
 
 	def get_specific_groups(self, lo):
@@ -706,25 +728,9 @@ class User(UCSSchoolHelperAbstractClass):
 		prefix = ucr.get('ucsschool/ldap/default/groupprefix/staff', 'mitarbeiter-')
 		return self.get_group_dn('%s%s' % (prefix, self.school))
 
-	def groups_for_ucs_school(self, lo, all_found_classes, without_school_classes=False):
-		group_dns = []
-		group_dns.append(self.primary_group_dn(lo))
-		group_dns.append(self.get_students_group_dn())
-		group_dns.append(self.get_teachers_group_dn())
-		group_dns.append(self.get_staff_group_dn())
-
-		if not without_school_classes:
-			for school_class_group in all_found_classes:
-				group_dns.append(school_class_group.dn)
-
-		for group_dn in group_dns:
-			self.get_or_create_group_udm_object(group_dn, lo, self.school)
-
-		return group_dns
-
 	def groups_used(self, lo):
 		group_dns = []
-		group_dns.append(self.get_group_dn('Domain Users %s' % self.school))
+		group_dns.append(self.primary_group_dn(lo))
 		group_dns.extend(self.get_specific_groups(lo))
 
 		for group_dn in group_dns:
@@ -792,6 +798,7 @@ class User(UCSSchoolHelperAbstractClass):
 	class Meta:
 		udm_module = 'users/user'
 		name_is_unique = True
+		allow_school_change = False # code _should_ be able to handle it
 
 class Student(User):
 	school_class = SchoolClassStringAttribute(_('Class'), aka=['Class'])
@@ -883,6 +890,10 @@ class Group(UCSSchoolHelperAbstractClass):
 	@classmethod
 	def get_container(cls, school):
 		return cls.get_search_base(school).groups
+
+	@classmethod
+	def is_school_group(cls, school, group_dn):
+		return cls.get_search_base(school).isGroup(group_dn)
 
 	@classmethod
 	def is_school_class(cls, school, group_dn):
@@ -1071,9 +1082,6 @@ class ClassShare(UCSSchoolHelperAbstractClass):
 class MailDomain(UCSSchoolHelperAbstractClass):
 	school = None
 
-	def get_own_container(cls):
-		return cls.get_container()
-
 	@classmethod
 	def get_container(cls, school=None):
 		return 'cn=domain,cn=mail,%s' % ucr.get('ldap/base')
@@ -1093,9 +1101,9 @@ class School(UCSSchoolHelperAbstractClass):
 		super(School, self).__init__(**kwargs)
 		self.display_name = self.display_name or self.name
 
-	#def build_hook_line(self, hook_time, func_name):
-	#	if func_name == 'create':
-	#		return self._build_hook_line(self.name, self.writedccn) # FIXME
+	def build_hook_line(self, hook_time, func_name):
+		if func_name == 'create':
+			return self._build_hook_line(self.name, self.dc_name)
 
 	def get_district(self):
 		if ucr.is_true('ucsschool/ldap/district/enable'):
@@ -1387,35 +1395,28 @@ class School(UCSSchoolHelperAbstractClass):
 		return schools
 
 	@classmethod
-	def from_binddn(cls, lo, restrict_to_user=True):
-		if restrict_to_user:
-			if lo.binddn.find('ou=') > 0:
-				# we got an OU in the user DN -> school teacher or assistent
-				# restrict the visibility to current school
-				# (note that there can be schools with a DN such as ou=25g18,ou=25,dc=...)
-				school_dn = lo.binddn[lo.binddn.find('ou='):]
-				MODULE.info('Schools from binddn: Found an OU in the LDAP binddn. Restricting schools to only show %s' % school_dn)
-				school = cls.from_dn(school_dn, None, lo)
-				MODULE.info('Schools from binddn: Found school: %r' % school)
-				return [school]
-			else:
-				MODULE.warn('Schools from binddn: Unable to identify OU of this account - showing all OUs!')
-				oulist = ucr.get('ucsschool/local/oulist')
-				if oulist:
-					# OU list override via UCR variable (it can be necessary to adjust the list of
-					# visible schools on specific systems manually)
-					MODULE.info('Schools from binddn: Schools overridden by UCR variable ucsschool/local/oulist')
-					return cls.get_from_oulist(cls, lo, oulist)
-		return super(School, cls).get_all(None, lo)
+	def from_binddn(cls, lo):
+		MODULE.info('All Schools: Showing all OUs which DN %s can read.' % lo.binddn)
+		if lo.binddn.find('ou=') > 0:
+			# we got an OU in the user DN -> school teacher or assistent
+			# restrict the visibility to current school
+			# (note that there can be schools with a DN such as ou=25g18,ou=25,dc=...)
+			school_dn = lo.binddn[lo.binddn.find('ou='):]
+			MODULE.info('Schools from binddn: Found an OU in the LDAP binddn. Restricting schools to only show %s' % school_dn)
+			school = cls.from_dn(school_dn, None, lo)
+			MODULE.info('Schools from binddn: Found school: %r' % school)
+			return [school]
+		else:
+			MODULE.warn('Schools from binddn: Unable to identify OU of this account - showing all OUs!')
+			return School.get_all(lo)
 
 	@classmethod
-	def get_all(cls, lo):
+	def get_all(cls, lo, respect_local_oulist=True):
 		oulist = ucr.get('ucsschool/local/oulist')
-		if oulist:
+		if oulist and respect_local_oulist:
 			MODULE.info('All Schools: Schools overridden by UCR variable ucsschool/local/oulist')
 			return cls.get_from_oulist(cls, lo, oulist)
 		else:
-			MODULE.info('All Schools: Showing all OUs which DN %s can read.' % lo.binddn)
 			return super(School, cls).get_all(None, lo)
 
 	def __str__(self):

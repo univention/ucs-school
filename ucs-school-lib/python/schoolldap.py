@@ -510,6 +510,9 @@ class SchoolSearchBase(object):
 		cnPart = groupDN[:-len(self.workgroups)-1]
 		return cnPart.find(',') < 0
 
+	def isGroup(self, groupDN):
+		return groupDN.endswith(self.groups)
+
 	def isClass(self, groupDN):
 		return groupDN.endswith(self.classes)
 

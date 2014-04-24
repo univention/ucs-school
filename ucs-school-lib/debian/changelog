@@ -1,3 +1,9 @@
+ucs-school-lib (5.0.6-1) unstable; urgency=low
+
+  * Bug #34337: Better move code, users automatically set correct groups
+
+ -- Dirk Wiesenthal <wiesenthal@univention.de>  Thu, 24 Apr 2014 22:07:26 +0200
+
 ucs-school-lib (5.0.5-1) unstable; urgency=low
 
   * Bug #34264: Fix group dn handling in users
