@@ -1,3 +1,9 @@
+ucs-school-umc-wizards (4.0.5-1) unstable; urgency=low
+
+  * Bug #34173: updated naming of OU's display name and short name
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Thu, 24 Apr 2014 16:53:50 +0200
+
 ucs-school-umc-wizards (4.0.4-1) unstable; urgency=low
 
   * Bug #34337: Quickfix for missing groups in users
