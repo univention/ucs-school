@@ -175,14 +175,14 @@ define([
 				widgets: [{
 					type: TextBox,
 					name: 'OUdisplayname',
-					label: _('Display name of the school'),
+					label: _('Name of the school'),
 					description: _('The given value will be shown as school\'s name within UCS@school.'),
 					required: true
 				}, {
 					type: TextBox,
 					name: 'schoolOU',
-					label: _("LDAP name of the school OU"),
-					description: _('The given value will be used as object name for the new school OU object within the LDAP directory. It may consist of the letters a-z, the digits 0-9 and underscores. Usually it is safe to keep the suggested value.'),
+					label: _("School abbreviation"),
+					description: _('The given value will be used as object name for the new school OU object within the LDAP directory and as prefix for several school objects like group names. It may consist of the letters a-z, the digits 0-9 and underscores. Usually it is safe to keep the suggested value.'),
 					regExp: '^[a-zA-Z0-9](([a-zA-Z0-9_]*)([a-zA-Z0-9]$))?$',
 					depends: ['OUdisplayname'],
 					dynamicValue: function(values) { return values.OUdisplayname.replace(/[^a-zA-Z0-9]/g, ''); },

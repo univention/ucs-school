@@ -3,8 +3,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-installer\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2014-03-25 19:50+0000\n"
-"PO-Revision-Date: 2014-03-26 10:34+0100\n"
+"POT-Creation-Date: 2014-04-24 16:38+0200\n"
+"PO-Revision-Date: 2014-04-24 16:39+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
@@ -111,10 +111,6 @@ msgstr "Abbrechen"
 msgid "Close"
 msgstr "Schließen"
 
-#: umc/js/schoolinstaller.js:178
-msgid "Display name of the school"
-msgstr "Anzeigename der Schule"
-
 #: umc/js/schoolinstaller.js:134
 msgid "Domain password"
 msgstr "Domänenpasswort"
@@ -193,10 +189,6 @@ msgstr ""
 msgid "Install"
 msgstr "Installieren"
 
-#: umc/js/schoolinstaller.js:184
-msgid "LDAP name of the school OU"
-msgstr "LDAP-Name der Schul-OU"
-
 #: umc/js/schoolinstaller.js:92
 msgid "Multi server environment"
 msgstr "Multi-Server-Umgebung"
@@ -204,6 +196,10 @@ msgstr "Multi-Server-Umgebung"
 #: umc/js/schoolinstaller.js:152
 msgid "NT-compatible domain controller (Samba 3)"
 msgstr "NT-kompatibler Domänencontroller (Samba 3)"
+
+#: umc/js/schoolinstaller.js:178
+msgid "Name of the school"
+msgstr "Name der Schule"
 
 #: umc/js/schoolinstaller.js:238
 #, python-format
@@ -263,6 +259,10 @@ msgstr ""
 "oder Gruppenrichtlinien (GPOs). Samba 4 ist die für UCS@school empfohlene "
 "Version."
 
+#: umc/js/schoolinstaller.js:184
+msgid "School abbreviation"
+msgstr "Schulkürzel"
+
 #: umc/js/schoolinstaller.js:88
 msgid "Single server environment"
 msgstr "Single-Server-Umgebung"
@@ -286,14 +286,17 @@ msgstr "Lehrer können mit dem %s Klassen zugeordnet werden."
 
 #: umc/js/schoolinstaller.js:179
 msgid "The given value will be shown as school's name within UCS@school."
-msgstr "Der hier eingegebene Wert wird innerhalb von UCS@school als Name für die neue Schule verwendet."
+msgstr ""
+"Der hier eingegebene Wert wird innerhalb von UCS@school als Name für die "
+"neue Schule verwendet."
 
 #: umc/js/schoolinstaller.js:185
 msgid ""
 "The given value will be used as object name for the new school OU object "
-"within the LDAP directory. It may consist of the letters a-z, the digits 0-9 "
-"and underscores. Usually it is safe to keep the suggested value."
-msgstr "Der angegebene Wert wird als Objektname für das neue Schul-OU-Objekt im LDAP-Verzeichnis verwendet. Es darf aus den Buchstaben a-z, den Ziffern 0-9 und dem Unterstrich (_) bestehen. In der Regel kann der automatisch vorgeschlagene Wert unverändert übernommen werden."
+"within the LDAP directory and as prefix for several school objects like "
+"group names. It may consist of the letters a-z, the digits 0-9 and "
+"underscores. Usually it is safe to keep the suggested value."
+msgstr "Der angegebene Wert wird als Objektname für das neue Schul-OU-Objekt im LDAP-Verzeichnis sowie als Präfix für unterschiedliche Schulobjekte, wie z.B. Gruppennamen, verwendet. Er darf aus den Buchstaben a-z, den Ziffern 0-9 und dem Unterstrich (_) bestehen. In der Regel kann der automatisch vorgeschlagene Wert unverändert übernommen werden."
 
 #: umc/js/schoolinstaller.js:214
 msgid "The installation of UCS@school has been finished successfully."
@@ -363,6 +366,9 @@ msgstr "UCS@school wurde bereits auf diesem System eingerichtet."
 #, python-format
 msgid "Workgroups can be created and managed with the %s."
 msgstr "Arbeitsgruppen können mit dem %s erstellt und verwaltet werden."
+
+#~ msgid "LDAP name of the school OU"
+#~ msgstr "LDAP-Name der Schul-OU"
 
 #~ msgid "Please confirm to start the installation process."
 #~ msgstr "Bitte bestätigen sie den Start des Installationsvorganges."

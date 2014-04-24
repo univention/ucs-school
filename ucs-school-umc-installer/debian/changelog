@@ -1,3 +1,9 @@
+ucs-school-umc-installer (2.0.4-1) unstable; urgency=low
+
+  * Bug #34173: updated naming of OU's display name and short name
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Thu, 24 Apr 2014 16:42:30 +0200
+
 ucs-school-umc-installer (2.0.3-1) unstable; urgency=low
 
   * Bug #34605: added new meta package for UCS@school 3.2 R2 Milestone 1
