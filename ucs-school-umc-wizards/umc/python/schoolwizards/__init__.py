@@ -99,6 +99,47 @@ def iter_objects_in_request(request):
 			obj.old_dn = obj_props['$dn$']
 		yield obj
 
+def merge_additional_group_changes(user, lo, changes, all_found_classes, without_school_classes=False):
+	udm_obj = user.get_udm_object(lo)
+	if not udm_obj:
+		MODULE.error('%s does not have an associated UDM object. This should not happen. Unable to set group memberships here!' % user.name)
+		return
+	udm_obj.open()
+	dn = udm_obj.dn
+	all_groups = user.groups_for_ucs_school(lo, all_found_classes, without_school_classes=without_school_classes)
+	my_groups = user.groups_used(lo)
+	for group in all_groups:
+		if group in my_groups:
+			continue
+		group_change = changes.setdefault(group, {'add' : [], 'remove' : []})
+		group_change['remove'].append(dn)
+	for group in my_groups:
+		group_change = changes.setdefault(group, {'add' : [], 'remove' : []})
+		group_change['add'].append(dn)
+
+def bulk_group_change(user, lo, school, group_changes):
+	for group_dn, group_changes in group_changes.iteritems():
+		MODULE.process('Changing group memberships for %s' % group_dn)
+		MODULE.info('Changes: %r' % group_changes)
+
+		# do not use the group cache. get a fresh instance from database
+		group = user.get_or_create_group_udm_object(group_dn, lo, school, fresh=True)
+		group_obj = group.get_udm_object(lo)
+		group_obj.open()
+		group_users = group_obj['users'][:]
+		MODULE.info('Members already present: %s' % ', '.join(group_users))
+
+		for remove in group_changes['remove']:
+			if remove in group_users:
+				MODULE.info('Removing %s from %s' % (remove, group_dn))
+				group_users.remove(remove)
+		for add in group_changes['add']:
+			if add not in group_users:
+				MODULE.info('Adding %s to %s' % (add, group_dn))
+				group_users.append(add)
+		group_obj['users'] = group_users
+		group_obj.modify()
+
 def response(func):
 	def _decorated(self, request, *a, **kw):
 		if not self._check_license(request):
@@ -144,17 +185,6 @@ class Instance(SchoolBaseModule, SchoolImport):
 			MODULE.warn('License error: %s' % e)
 			self.finished(request.id, dict(message=str(e)))
 			return False
-
-	def _is_singlemaster(self):
-		PKG_NAME = 'ucs-school-singlemaster'
-		cache = apt.Cache()
-
-		is_installed = False
-		if PKG_NAME in cache:
-			pkg = cache[PKG_NAME]
-			is_installed = pkg.is_installed
-
-		return is_installed
 
 	@simple_response
 	def is_singlemaster(self):
@@ -230,6 +260,10 @@ class Instance(SchoolBaseModule, SchoolImport):
 		for obj in iter_objects_in_request(request):
 			MODULE.process('Modifying %r' % (obj))
 			obj.modify(ldap_user_write)
+			changes = {}
+			all_found_classes = SchoolClass.get_all(obj.school, ldap_user_read)
+			merge_additional_group_changes(obj, ldap_user_write, changes, all_found_classes, without_school_classes=not isinstance(obj, Student))
+			bulk_group_change(obj, ldap_user_write, obj.school, changes)
 
 	@LDAP_Connection( USER_READ, USER_WRITE )
 	@response
@@ -238,6 +272,10 @@ class Instance(SchoolBaseModule, SchoolImport):
 		for obj in iter_objects_in_request(request):
 			MODULE.process('Creating %r' % (obj))
 			obj.create(ldap_user_write)
+			changes = {}
+			all_found_classes = SchoolClass.get_all(obj.school, ldap_user_read)
+			merge_additional_group_changes(obj, ldap_user_write, changes, all_found_classes, without_school_classes=not isinstance(obj, Student))
+			bulk_group_change(obj, ldap_user_write, obj.school, changes)
 
 	@LDAP_Connection( USER_READ, USER_WRITE )
 	@response

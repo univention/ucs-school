@@ -132,7 +132,7 @@ define([
 					required: true
 				}, {
 					type: ComboBox,
-					name: 'class',
+					name: 'school_class',
 					label: _('Class')
 				}, {
 					type: TextBox,
@@ -163,7 +163,7 @@ define([
 				layout: [
 					['firstname', 'lastname'],
 					['name'],
-					['class', 'newClass'],
+					['school_class', 'newClass'],
 					['mailPrimaryAddress'],
 					['password'],
 					['udm-link']
@@ -175,7 +175,7 @@ define([
 			tools.forIn(this.getPage('user')._form._widgets, function(iname, iwidget) {
 				if (iname === 'password') {
 					iwidget._setValueAttr(null);
-				} else if (iname !== 'class') {
+				} else if (iname !== 'school_class') {
 					iwidget.reset();
 				}
 			});
@@ -193,7 +193,7 @@ define([
 			if (currentPage === 'general') {
 				var selectedType = this.getWidget('general', 'type').get('value');
 				var types = ['teacher', 'staff', 'teachersAndStaff'];
-				var classBox = this.getWidget('user', 'class');
+				var classBox = this.getWidget('user', 'school_class');
 				var newClassButton = this.getPage('user')._form.getButton('newClass');
 				if (array.indexOf(types, selectedType) >= 0) {
 					classBox.set('value', null);
@@ -221,7 +221,7 @@ define([
 						var classes = array.map(response.result, function(item) {
 							return item.label;
 						});
-						this.getWidget('user', 'class').set('staticValues', classes);
+						this.getWidget('user', 'school_class').set('staticValues', classes);
 					})
 				);
 			}
