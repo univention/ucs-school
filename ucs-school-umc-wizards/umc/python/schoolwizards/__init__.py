@@ -31,7 +31,6 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-import apt
 import re
 
 from univention.lib.i18n import Translation
@@ -99,47 +98,6 @@ def iter_objects_in_request(request):
 			obj.old_dn = obj_props['$dn$']
 		yield obj
 
-def merge_additional_group_changes(user, lo, changes, all_found_classes, without_school_classes=False):
-	udm_obj = user.get_udm_object(lo)
-	if not udm_obj:
-		MODULE.error('%s does not have an associated UDM object. This should not happen. Unable to set group memberships here!' % user.name)
-		return
-	udm_obj.open()
-	dn = udm_obj.dn
-	all_groups = user.groups_for_ucs_school(lo, all_found_classes, without_school_classes=without_school_classes)
-	my_groups = user.groups_used(lo)
-	for group in all_groups:
-		if group in my_groups:
-			continue
-		group_change = changes.setdefault(group, {'add' : [], 'remove' : []})
-		group_change['remove'].append(dn)
-	for group in my_groups:
-		group_change = changes.setdefault(group, {'add' : [], 'remove' : []})
-		group_change['add'].append(dn)
-
-def bulk_group_change(user, lo, school, group_changes):
-	for group_dn, group_changes in group_changes.iteritems():
-		MODULE.process('Changing group memberships for %s' % group_dn)
-		MODULE.info('Changes: %r' % group_changes)
-
-		# do not use the group cache. get a fresh instance from database
-		group = user.get_or_create_group_udm_object(group_dn, lo, school, fresh=True)
-		group_obj = group.get_udm_object(lo)
-		group_obj.open()
-		group_users = group_obj['users'][:]
-		MODULE.info('Members already present: %s' % ', '.join(group_users))
-
-		for remove in group_changes['remove']:
-			if remove in group_users:
-				MODULE.info('Removing %s from %s' % (remove, group_dn))
-				group_users.remove(remove)
-		for add in group_changes['add']:
-			if add not in group_users:
-				MODULE.info('Adding %s to %s' % (add, group_dn))
-				group_users.append(add)
-		group_obj['users'] = group_users
-		group_obj.modify()
-
 def response(func):
 	def _decorated(self, request, *a, **kw):
 		if not self._check_license(request):
@@ -147,7 +105,6 @@ def response(func):
 		try:
 			ret = func(self, request, *a, **kw)
 		except (ValueError, IOError, OSError, valueError) as err:
-			raise
 			MODULE.info(str(err))
 			raise UMC_CommandError(str(err))
 		else:
@@ -236,15 +193,7 @@ class Instance(SchoolBaseModule, SchoolImport):
 
 	@LDAP_Connection()
 	@response
-	def get_users(self, request, search_base=None, ldap_user_read=None, ldap_position=None):
-		school = request.options['school']
-		user_class = get_user_class(request.options['type'])
-		users = user_class.get_all(school, ldap_user_read)
-		return [user.to_dict() for user in users]
-
-	@LDAP_Connection()
-	@response
-	def get_user(self, request, search_base=None,
+	def _get_obj(self, request, search_base=None,
 	                 ldap_user_read=None, ldap_position=None):
 		ret = []
 		for obj in iter_objects_in_request(request):
@@ -255,35 +204,55 @@ class Instance(SchoolBaseModule, SchoolImport):
 
 	@LDAP_Connection( USER_READ, USER_WRITE )
 	@response
-	def modify_user(self, request, search_base=None,
+	def _create_obj(self, request, search_base=None,
 	                 ldap_user_read=None, ldap_user_write=None, ldap_position=None):
+		ret = []
 		for obj in iter_objects_in_request(request):
-			MODULE.process('Modifying %r' % (obj))
-			obj.modify(ldap_user_write)
-			changes = {}
-			all_found_classes = SchoolClass.get_all(obj.school, ldap_user_read)
-			merge_additional_group_changes(obj, ldap_user_write, changes, all_found_classes, without_school_classes=not isinstance(obj, Student))
-			bulk_group_change(obj, ldap_user_write, obj.school, changes)
-
-	@LDAP_Connection( USER_READ, USER_WRITE )
-	@response
-	def create_user(self, request, search_base=None,
-	                 ldap_user_read=None, ldap_user_write=None, ldap_position=None):
-		for obj in iter_objects_in_request(request):
+			if isinstance(obj, SchoolClass):
+				# workaround to be able to reuse this function everywhere
+				obj.name = '%s-%s' % (obj.school, obj.name)
 			MODULE.process('Creating %r' % (obj))
-			obj.create(ldap_user_write)
-			changes = {}
-			all_found_classes = SchoolClass.get_all(obj.school, ldap_user_read)
-			merge_additional_group_changes(obj, ldap_user_write, changes, all_found_classes, without_school_classes=not isinstance(obj, Student))
-			bulk_group_change(obj, ldap_user_write, obj.school, changes)
+			ret.append(obj.create(ldap_user_write))
+		return ret
 
 	@LDAP_Connection( USER_READ, USER_WRITE )
 	@response
-	def delete_user(self, request, search_base=None, ldap_user_read=None, ldap_user_write=None, ldap_position=None):
+	def _modify_obj(self, request, search_base=None,
+	                 ldap_user_read=None, ldap_user_write=None, ldap_position=None):
+		ret = []
+		for obj in iter_objects_in_request(request):
+			if isinstance(obj, SchoolClass):
+				# workaround to be able to reuse this function everywhere
+				obj.name = '%s-%s' % (obj.school, obj.name)
+			MODULE.process('Modifying %r' % (obj))
+			ret.append(obj.modify(ldap_user_write))
+		return ret
+
+	@LDAP_Connection( USER_READ, USER_WRITE )
+	@response
+	def _delete_obj(self, request, search_base=None, ldap_user_read=None, ldap_user_write=None, ldap_position=None):
+		ret = []
 		for obj in iter_objects_in_request(request):
 			obj.name = obj.get_name_from_dn(obj.old_dn)
 			MODULE.process('Deleting %r' % (obj))
-			obj.remove(ldap_user_write)
+			ret.append(obj.remove(ldap_user_write))
+		return ret
+
+	@LDAP_Connection()
+	@response
+	def get_users(self, request, search_base=None, ldap_user_read=None, ldap_position=None):
+		school = request.options['school']
+		user_class = get_user_class(request.options['type'])
+		users = user_class.get_all(school, ldap_user_read)
+		return [user.to_dict() for user in users]
+
+	get_user = _get_obj
+
+	modify_user = _modify_obj
+
+	create_user = _create_obj
+
+	delete_user = _delete_obj
 
 	@LDAP_Connection()
 	@response
@@ -293,40 +262,13 @@ class Instance(SchoolBaseModule, SchoolImport):
 		computers = computer_class.get_all(school, ldap_user_read)
 		return [computer.to_dict() for computer in computers]
 
-	@LDAP_Connection()
-	@response
-	def get_computer(self, request, search_base=None,
-	                 ldap_user_read=None, ldap_position=None):
-		ret = []
-		for obj in iter_objects_in_request(request):
-			MODULE.process('Getting %r' % (obj))
-			obj = obj.from_dn(obj.old_dn, obj.school, ldap_user_read)
-			ret.append(obj.to_dict())
-		return ret
+	get_computer = _get_obj
 
-	@LDAP_Connection( USER_READ, USER_WRITE )
-	@response
-	def modify_computer(self, request, search_base=None,
-	                 ldap_user_read=None, ldap_user_write=None, ldap_position=None):
-		for obj in iter_objects_in_request(request):
-			MODULE.process('Modifying %r' % (obj))
-			obj.modify(ldap_user_write)
+	modify_computer = _modify_obj
 
-	@LDAP_Connection( USER_READ, USER_WRITE )
-	@response
-	def create_computer(self, request, search_base=None,
-	                 ldap_user_read=None, ldap_user_write=None, ldap_position=None):
-		for obj in iter_objects_in_request(request):
-			MODULE.process('Creating %r' % (obj))
-			obj.create(ldap_user_write)
+	create_computer = _create_obj
 
-	@LDAP_Connection( USER_READ, USER_WRITE )
-	@response
-	def delete_computer(self, request, search_base=None, ldap_user_read=None, ldap_user_write=None, ldap_position=None):
-		for obj in iter_objects_in_request(request):
-			obj.name = obj.get_name_from_dn(obj.old_dn)
-			MODULE.process('Deleting %r' % (obj))
-			obj.remove(ldap_user_write)
+	delete_computer = _delete_obj
 
 	@LDAP_Connection()
 	@response
@@ -335,81 +277,25 @@ class Instance(SchoolBaseModule, SchoolImport):
 		school_classes = SchoolClass.get_all(school, ldap_user_read)
 		return [school_class.to_dict() for school_class in school_classes]
 
-	@LDAP_Connection()
-	@response
-	def get_class(self, request, search_base=None,
-	                 ldap_user_read=None, ldap_position=None):
-		ret = []
-		for obj in iter_objects_in_request(request):
-			MODULE.process('Getting %r' % (obj))
-			obj = obj.from_dn(obj.old_dn, obj.school, ldap_user_read)
-			ret.append(obj.to_dict())
-		return ret
+	get_class = _get_obj
 
-	@LDAP_Connection( USER_READ, USER_WRITE )
-	@response
-	def modify_class(self, request, search_base=None,
-	                 ldap_user_read=None, ldap_user_write=None, ldap_position=None):
-		for obj in iter_objects_in_request(request):
-			obj.name = '%s-%s' % (obj.school, obj.name)
-			MODULE.process('Modifying %r' % (obj))
-			obj.modify(ldap_user_write)
+	modify_class = _modify_obj
 
-	@LDAP_Connection( USER_READ, USER_WRITE )
-	@response
-	def create_class(self, request, search_base=None,
-	                 ldap_user_read=None, ldap_user_write=None, ldap_position=None):
-		for obj in iter_objects_in_request(request):
-			obj.name = '%s-%s' % (obj.school, obj.name)
-			MODULE.process('Creating %r' % (obj))
-			obj.create(ldap_user_write)
+	create_class = _create_obj
 
-	@LDAP_Connection( USER_READ, USER_WRITE )
-	@response
-	def delete_class(self, request, search_base=None, ldap_user_read=None, ldap_user_write=None, ldap_position=None):
-		for obj in iter_objects_in_request(request):
-			obj.name = obj.get_name_from_dn(obj.old_dn)
-			MODULE.process('Deleting %r' % (obj))
-			obj.remove(ldap_user_write)
+	delete_class = _delete_obj
 
 	@LDAP_Connection()
 	@response
 	def get_schools(self, request, search_base=None, ldap_user_read=None, ldap_position=None):
-		schools = School.get_all(ldap_user_read, restrict_to_user=False)
+		schools = School.get_all(ldap_user_read)
 		return [school.to_dict() for school in schools]
 
-	@LDAP_Connection()
-	@response
-	def get_school(self, request, search_base=None,
-	                 ldap_user_read=None, ldap_position=None):
-		ret = []
-		for obj in iter_objects_in_request(request):
-			MODULE.process('Getting %r' % (obj))
-			obj = obj.from_dn(obj.old_dn, None, ldap_user_read)
-			ret.append(obj.to_dict())
-		return ret
+	get_school = _get_obj
 
-	@LDAP_Connection( USER_READ, USER_WRITE )
-	@response
-	def modify_school(self, request, search_base=None,
-	                 ldap_user_read=None, ldap_user_write=None, ldap_position=None):
-		for obj in iter_objects_in_request(request):
-			MODULE.process('Modifying %r' % (obj))
-			obj.modify(ldap_user_write)
+	modify_school = _modify_obj
 
-	@LDAP_Connection( USER_READ, USER_WRITE )
-	@response
-	def create_school(self, request, search_base=None,
-	                 ldap_user_read=None, ldap_user_write=None, ldap_position=None):
-		for obj in iter_objects_in_request(request):
-			MODULE.process('Creating %r' % (obj))
-			obj.create(ldap_user_write)
+	create_school = _create_obj
 
-	@LDAP_Connection( USER_READ, USER_WRITE )
-	@response
-	def delete_school(self, request, search_base=None, ldap_user_read=None, ldap_user_write=None, ldap_position=None):
-		for obj in iter_objects_in_request(request):
-			obj.name = obj.get_name_from_dn(obj.old_dn)
-			MODULE.process('Deleting %r' % (obj))
-			obj.remove(ldap_user_write)
+	delete_school = _delete_obj
 

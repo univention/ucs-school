@@ -275,10 +275,10 @@ define([
 		deleteObjects: function(ids, objects) {
 			// TODO: notifications
 			array.forEach(objects, lang.hitch(this, function(object) {
-				this._grid.moduleStore.remove({
+				this.standbyDuring(this._grid.moduleStore.remove({
 					$dn$: object.$dn$,
 					school: object.school
-				});
+				}));
 			}));
 		}
 	});
