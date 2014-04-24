@@ -1,3 +1,9 @@
+ucs-school-metapackage (6.0.7-18) unstable; urgency=low
+
+  * Bug #34182: added CSV import module as recommended package
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Thu, 24 Apr 2014 17:57:51 +0200
+
 ucs-school-metapackage (6.0.7-17) unstable; urgency=medium
 
   * Additional dependencies for nonedu-slave (Bug #34097)

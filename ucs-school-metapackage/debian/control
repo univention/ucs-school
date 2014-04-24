@@ -26,6 +26,7 @@ Depends: univention-ldap-server (>= 8.0.77-4),
  univention-samba4-sysvol-sync,
  univention-config
 Recommends:
+ ucs-school-umc-csv-import,
  ucs-school-umc-groups,
  ucs-school-umc-users,
  ucs-school-umc-rooms,
@@ -118,6 +119,7 @@ Recommends:
  ucs-school-branding,
  ucs-school-ucc-integration,
  ucs-school-umc-computerroom,
+ ucs-school-umc-csv-import,
  ucs-school-umc-distribution,
  ucs-school-umc-exam,
  ucs-school-umc-exam-master,
