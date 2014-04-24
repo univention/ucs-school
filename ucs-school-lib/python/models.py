@@ -696,19 +696,19 @@ class User(UCSSchoolHelperAbstractClass):
 
 	def get_students_group_dn(self):
 		prefix = ucr.get('ucsschool/ldap/default/groupprefix/pupils', 'schueler-')
-		self.get_group_dn('%s%s' % (prefix, self.school))
+		return self.get_group_dn('%s%s' % (prefix, self.school))
 
 	def get_teachers_group_dn(self):
 		prefix = ucr.get('ucsschool/ldap/default/groupprefix/teachers', 'lehrer-')
-		self.get_group_dn('%s%s' % (prefix, self.school))
+		return self.get_group_dn('%s%s' % (prefix, self.school))
 
 	def get_staff_group_dn(self):
 		prefix = ucr.get('ucsschool/ldap/default/groupprefix/staff', 'mitarbeiter-')
-		self.get_group_dn('%s%s' % (prefix, self.school))
+		return self.get_group_dn('%s%s' % (prefix, self.school))
 
 	def groups_for_ucs_school(self, lo, all_found_classes, without_school_classes=False):
 		group_dns = []
-		group_dns.append(self.get_group_dn('Domain Users %s' % self.school))
+		group_dns.append(self.primary_group_dn(lo))
 		group_dns.append(self.get_students_group_dn())
 		group_dns.append(self.get_teachers_group_dn())
 		group_dns.append(self.get_staff_group_dn())
@@ -1070,6 +1070,9 @@ class ClassShare(UCSSchoolHelperAbstractClass):
 
 class MailDomain(UCSSchoolHelperAbstractClass):
 	school = None
+
+	def get_own_container(cls):
+		return cls.get_container()
 
 	@classmethod
 	def get_container(cls, school=None):
