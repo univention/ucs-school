@@ -181,50 +181,6 @@ class CSVUser(User):
 				columns.append({'name' : field, 'label' : label})
 		return columns
 
-	@classmethod
-	def bulk_group_change(cls, lo, school, group_changes):
-		for group_dn, group_changes in group_changes.iteritems():
-			MODULE.process('Changing group memberships for %s' % group_dn)
-			MODULE.info('Changes: %r' % group_changes)
-
-			# do not use the group cache. get a fresh instance from database
-			group = cls.get_or_create_group_udm_object(group_dn, lo, school, fresh=True)
-			group_obj = group.get_udm_object(lo)
-			group_obj.open()
-			group_users = group_obj['users'][:]
-			MODULE.info('Members already present: %s' % ', '.join(group_users))
-
-			for remove in group_changes['remove']:
-				if remove in group_users:
-					MODULE.info('Removing %s from %s' % (remove, group_dn))
-					group_users.remove(remove)
-			for add in group_changes['add']:
-				if add not in group_users:
-					MODULE.info('Adding %s to %s' % (add, group_dn))
-					group_users.append(add)
-			group_obj['users'] = group_users
-			group_obj.modify()
-
-	def merge_additional_group_changes(self, lo, changes, all_found_classes, without_school_classes=False):
-		if self.action not in ['create', 'modify']:
-			return
-		udm_obj = self.get_udm_object(lo)
-		if not udm_obj:
-			MODULE.error('%s does not have an associated UDM object. This should not happen. Unable to set group memberships here!' % self.name)
-			return
-		udm_obj.open()
-		dn = udm_obj.dn
-		all_groups = self.groups_for_ucs_school(lo, all_found_classes, without_school_classes=without_school_classes)
-		my_groups = self.groups_used(lo)
-		for group in all_groups:
-			if group in my_groups:
-				continue
-			group_change = changes.setdefault(group, {'add' : [], 'remove' : []})
-			group_change['remove'].append(dn)
-		for group in my_groups:
-			group_change = changes.setdefault(group, {'add' : [], 'remove' : []})
-			group_change['add'].append(dn)
-
 	def to_dict(self, format_birthday):
 		attrs = super(CSVUser, self).to_dict()
 		if format_birthday:

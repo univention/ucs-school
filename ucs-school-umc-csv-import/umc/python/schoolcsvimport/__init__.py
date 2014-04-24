@@ -44,7 +44,7 @@ from univention.management.console.modules.mixins import ProgressMixin
 from univention.config_registry import ConfigRegistry
 
 from ucsschool.lib.schoolldap import SchoolBaseModule, open_ldap_connection
-from ucsschool.lib.models import SchoolClass, generate_random
+from ucsschool.lib.models import generate_random
 
 from univention.management.console.modules.schoolcsvimport.util import CSVStudent, CSVTeacher, CSVStaff, CSVTeachersAndStaff
 
@@ -235,15 +235,9 @@ class Instance(SchoolBaseModule, ProgressMixin):
 	def import_users(self, iterator, file_id, attrs):
 		lo = open_ldap_connection(self._user_dn, self._password, ucr.get('ldap/server/name'))
 		file_info = None
-		group_changes = {}
-		without_school_classes = True
-		all_found_classes = []
 		for file_id, attrs in iterator:
 			if file_info is None:
 				file_info = self.file_map[file_id]
-				without_school_classes = 'school_class' not in file_info.columns and file_info.user_klass.supports_school_classes
-				if not without_school_classes:
-					all_found_classes = SchoolClass.get_all(file_info.school, lo)
 			user = file_info.user_klass.from_frontend_attrs(attrs, file_info.school, file_info.date_format)
 			MODULE.process('Going to %s %s %s' % (user.action, file_info.user_klass.__name__, user.name))
 			action = user.action
@@ -257,8 +251,6 @@ class Instance(SchoolBaseModule, ProgressMixin):
 				yield {'username' : user.name, 'action' : action, 'success' : True}
 			else:
 				yield {'username' : user.name, 'action' : action, 'success' : False, 'msg' : user.get_error_msg()}
-			user.merge_additional_group_changes(lo, group_changes, all_found_classes, without_school_classes=without_school_classes)
-		file_info.user_klass.bulk_group_change(lo, file_info.school, group_changes)
 		os.unlink(file_info.filename)
 		del self.file_map[file_id]
 
