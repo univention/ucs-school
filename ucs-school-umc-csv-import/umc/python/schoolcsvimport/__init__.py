@@ -42,10 +42,11 @@ from univention.management.console.log import MODULE
 from univention.management.console.modules.decorators import file_upload, simple_response, multi_response
 from univention.management.console.modules.mixins import ProgressMixin
 from univention.config_registry import ConfigRegistry
-import univention.admin.modules as udm_modules
 
 from ucsschool.lib.schoolldap import SchoolBaseModule, open_ldap_connection
-from ucsschool.lib.models import Student, Teacher, Staff, TeacherAndStaff, SchoolClass, generate_random
+from ucsschool.lib.models import SchoolClass, generate_random
+
+from univention.management.console.modules.schoolcsvimport.util import CSVStudent, CSVTeacher, CSVStaff, CSVTeachersAndStaff
 
 _ = Translation('ucs-school-umc-csv-import').translate
 
@@ -77,13 +78,13 @@ class Instance(SchoolBaseModule, ProgressMixin):
 		delete_not_mentioned = bool(request.body.get('delete_not_mentioned'))
 		user_klass = None
 		if user_type == 'student':
-			user_klass = Student
+			user_klass = CSVStudent
 		elif user_type == 'teacher':
-			user_klass = Teacher
+			user_klass = CSVTeacher
 		elif user_type == 'staff':
-			user_klass = Staff
+			user_klass = CSVStaff
 		elif user_type == 'teachersAndStaff':
-			user_klass = TeacherAndStaff
+			user_klass = CSVTeachersAndStaff
 		filename = request.options[0]['tmpfile']
 		MODULE.process('Processing %s' % filename)
 		sniffer = csv.Sniffer()
@@ -126,7 +127,7 @@ class Instance(SchoolBaseModule, ProgressMixin):
 				if len(first_lines) < 10:
 					first_lines.append(line)
 				# go through all lines to validate csv format
-			columns = [user_klass.find_column(column, i) for i, column in enumerate(columns)]
+			columns = [user_klass.find_field_name_from_label(column, i) for i, column in enumerate(columns)]
 			MODULE.process('First line translates to columns: %r' % columns)
 		except csv.Error as exc:
 			MODULE.warn('Malformatted CSV file? %s' % exc)
@@ -185,38 +186,38 @@ class Instance(SchoolBaseModule, ProgressMixin):
 		if file_info.has_header:
 			line_no = 2
 		for line in reader:
-			attrs = {'line' : line_no}
-			attrs.update(line)
 			if 'birthday' in columns:
 				date_pattern, python_date_format = self._guess_date_format(date_pattern, python_date_format, line['birthday'])
-			user = file_info.user_klass(lo, file_info.school, python_date_format, attrs)
+			user = file_info.user_klass.from_csv_line(line, file_info.school, python_date_format, line_no, lo)
 			user.validate(lo)
-			users.append(user.to_dict())
+			users.append(user)
 			line_no += 1
-			progress.progress(message=user.username)
-		if 'username' not in columns:
+			progress.progress(message=user.name)
+		if 'name' not in columns:
 			# add username here:
 			# 1. it has to be presented and will be populated by a guess
 			# 2. do it before adding the to_be_deleted, as they need it
 			# in the columns, otherwise their real username gets overwritten
-			columns.insert(0, 'username')
+			columns.insert(0, 'name')
 		if file_info.delete_not_mentioned:
-			mentioned_usernames = map(lambda u: u['username'], users)
-			progress.title = _('Checking users from database')
-			existing_udm_users = udm_modules.lookup('users/user', None, lo, scope='sub', base=file_info.user_klass.get_container(file_info.school))
-			for user in existing_udm_users:
-				if user['username'] not in mentioned_usernames:
+			mentioned_usernames = map(lambda u: u.name, users)
+			progress.title= _('Checking users from database')
+			progress.message = ''
+			existing_users = file_info.user_klass.get_all(file_info.school, lo)
+			for user in existing_users:
+				if user.name not in mentioned_usernames:
 					if 'birthday' in columns:
-						date_pattern, python_date_format = self._guess_date_format(date_pattern, python_date_format, user['birthday'])
-					user = file_info.user_klass.from_udm_obj(user, lo, file_info.school, python_date_format, columns, action='delete')
-					users.append(user.to_dict())
-					progress.progress(message=user.username)
-		result['users'] = users
+						date_pattern, python_date_format = self._guess_date_format(date_pattern, python_date_format, user.birthday)
+					user.action = 'delete'
+					user.line = ''
+					users.append(user)
+					progress.progress(message=user.name)
 		file_info.date_format = python_date_format
 		file_info.columns = columns
 		result['date_pattern'] = date_pattern
 		result['columns'] = file_info.user_klass.get_columns_for_spreadsheet(columns)
 		result['required_columns'] = file_info.user_klass.get_required_columns()
+		result['users'] = [user.to_dict(file_info.date_format) for user in users]
 		return result
 
 	@simple_response
@@ -225,9 +226,9 @@ class Instance(SchoolBaseModule, ProgressMixin):
 		lo = open_ldap_connection(self._user_dn, self._password, ucr.get('ldap/server/name'))
 		users = []
 		for attrs in user_attrs:
-			user = file_info.user_klass(lo, file_info.school, file_info.date_format, attrs)
+			user = file_info.user_klass.from_frontend_attrs(attrs, file_info.school, file_info.date_format)
 			user.validate(lo)
-			users.append(user.to_dict())
+			users.append(user.to_dict(file_info.date_format))
 		return users
 
 	@multi_response(progress=[_('Processing %d user(s)'), _('%(username)s %(action)s')])
@@ -243,8 +244,8 @@ class Instance(SchoolBaseModule, ProgressMixin):
 				without_school_classes = 'school_class' not in file_info.columns and file_info.user_klass.supports_school_classes
 				if not without_school_classes:
 					all_found_classes = SchoolClass.get_all(file_info.school, lo)
-			user = file_info.user_klass(lo, file_info.school, file_info.date_format, attrs)
-			MODULE.process('Going to %s %s %s' % (user.action, file_info.user_klass.__name__, user.username))
+			user = file_info.user_klass.from_frontend_attrs(attrs, file_info.school, file_info.date_format)
+			MODULE.process('Going to %s %s %s' % (user.action, file_info.user_klass.__name__, user.name))
 			action = user.action
 			if action == 'create':
 				action = _('created')
@@ -253,9 +254,9 @@ class Instance(SchoolBaseModule, ProgressMixin):
 			if action == 'delete':
 				action = _('deleted')
 			if user.commit(lo):
-				yield {'username' : user.username, 'action' : action, 'success' : True}
+				yield {'username' : user.name, 'action' : action, 'success' : True}
 			else:
-				yield {'username' : user.username, 'action' : action, 'success' : False, 'msg' : user.get_error_msg()}
+				yield {'username' : user.name, 'action' : action, 'success' : False, 'msg' : user.get_error_msg()}
 			user.merge_additional_group_changes(lo, group_changes, all_found_classes, without_school_classes=without_school_classes)
 		file_info.user_klass.bulk_group_change(lo, file_info.school, group_changes)
 		os.unlink(file_info.filename)

@@ -205,7 +205,7 @@ define([
 					return deferred;
 				}
 				var auto_username = false;
-				if (array.indexOf(fields, 'username') == -1) {
+				if (array.indexOf(fields, 'name') == -1) {
 					auto_username = true;
 				}
 				if (auto_username) {
@@ -604,7 +604,7 @@ define([
 					}
 				}
 			});
-			assertUniqueness(items, 'username', _('Username occurs multiple times in the file. Please change the usernames so that all are unique.'), grid._grid);
+			assertUniqueness(items, 'name', _('Username occurs multiple times in the file. Please change the usernames so that all are unique.'), grid._grid);
 			assertUniqueness(items, 'email', _('Email address occurs multiple times in the file. Please change the email adresses so that all are unique.'), grid._grid);
 			grid._grid.update();
 		},
