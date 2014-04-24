@@ -11,7 +11,6 @@ import univention.testing.utils as utils
 import univention.testing.strings as uts
 import univention.testing.ucr
 import univention.testing.ucsschool as ut_school
-import atexit
 import random
 import subprocess
 

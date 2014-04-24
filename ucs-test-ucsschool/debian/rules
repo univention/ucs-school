@@ -3,7 +3,7 @@
 # Univention UCS test
 #  rules file for the debian package
 #
-# Copyright 2013 Univention GmbH
+# Copyright 2014 Univention GmbH
 #
 # http://www.univention.de/
 #
@@ -31,6 +31,10 @@
 # <http://www.gnu.org/licenses/>.
 
 export DH_ALWAYS_EXCLUDE=.svn
+
+override_dh_auto_test:
+	dh_auto_test
+	ucslint
 
 %:
 	dh $@
