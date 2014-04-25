@@ -1364,7 +1364,7 @@ class School(UCSSchoolHelperAbstractClass):
 			dhcp_service.create(lo)
 			dhcp_service.add_server(dc_name, lo)
 
-	def create(self, lo, verify=True):
+	def create(self, lo, validate=True):
 		district = self.get_district()
 		if district:
 			ou = OU(name=district)
@@ -1373,7 +1373,7 @@ class School(UCSSchoolHelperAbstractClass):
 		self.class_share_file_server = self.get_class_share_file_server(lo)
 		self.home_share_file_server = self.get_home_share_file_server(lo)
 
-		success = super(School, self).create(lo, verify)
+		success = super(School, self).create(lo, validate)
 		if not success:
 			return False
 

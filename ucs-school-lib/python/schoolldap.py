@@ -205,6 +205,7 @@ def LDAP_Connection( *connection_types ):
 
 			# try to execute the method with the given connection
 			# in case of an error, re-open a new LDAP connection and try again
+			return func( *args, **kwargs )
 			try:
 				return func( *args, **kwargs )
 			except ( LDAPError, udm_errors.base ), e:
