@@ -132,7 +132,7 @@ def acceptprint(connection, userName, printJobPath, printerName, spoolHost):
 			}
 	reqResult = connection.request('printermoderation/print', param)
 	print 'reqResult = ', reqResult
-	if not  reqResult:
+	if not reqResult:
 		utils.fail('Could not pass print jobs to hard printer')
 
 
