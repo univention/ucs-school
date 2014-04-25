@@ -5,10 +5,10 @@
 ## exposure: careful
 ## packages:  [ucs-school-umc-internetrules]
 
-from ucs_test_ucsschool_essential import Check
-from ucs_test_ucsschool_essential import InternetRule
-from ucs_test_ucsschool_essential import Klasse
-from ucs_test_ucsschool_essential import Workgroup
+from ucs_test_ucsschool_essential.Check import Check
+from ucs_test_ucsschool_essential.InternetRule import InternetRule
+from ucs_test_ucsschool_essential.Klasse import Klasse
+from ucs_test_ucsschool_essential.Workgroup import Workgroup
 import random
 import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool as utu
@@ -34,7 +34,7 @@ def main():
 			school, oudn = schoolenv.create_ou()
 
 			# Instantiate InternetRule instance
-			ruleIns = InternetRule.InternetRule(ucr=ucr)
+			ruleIns = InternetRule(ucr=ucr)
 
 			# define many random internet rules
 			newRules = ruleIns.defineList(8)
@@ -44,12 +44,12 @@ def main():
 				rule.get(expectedResult=True)
 
 			# Create random workgroups
-			groupIns = Workgroup.Workgroup(school, ucr=ucr)
+			groupIns = Workgroup(school, ucr=ucr)
 			newWorkgroups = groupIns.createList(2)
 			assignedGroups = [(group.name, None) for group in newWorkgroups]
 
 			# Instantiate Check instance
-			check1 = Check.Check(school, assignedGroups, ucr=ucr)
+			check1 = Check(school, assignedGroups, ucr=ucr)
 
 			# check the assigned internet rules UMCP
 			check1.checkRules()
@@ -65,7 +65,7 @@ def main():
 				'workgroup')
 
 			# Instantiate another Check instance
-			check2 = Check.Check(school, assignedGroups, ucr=ucr)
+			check2 = Check(school, assignedGroups, ucr=ucr)
 
 			# check the assigned internet rules UMCP
 			check2.checkRules()
@@ -81,7 +81,7 @@ def main():
 				'workgroup')
 
 			# Instantiate another Check instance
-			check3 = Check.Check(school, assignedGroups, ucr=ucr)
+			check3 = Check(school, assignedGroups, ucr=ucr)
 
 			# check the assigned internet rules UMCP
 			check3.checkRules()
@@ -102,11 +102,11 @@ def main():
 			check1.checkUcr()
 
 			# Create random classs
-			cIns = Klasse.Klasse(school, ucr=ucr)
+			cIns = Klasse(school, ucr=ucr)
 			newclasses = cIns.createList(2)
 			assignedClasses = [ (c.name, None) for c in newclasses]
 
-			check1 = Check.Check(school, assignedClasses, ucr=ucr)
+			check1 = Check(school, assignedClasses, ucr=ucr)
 
 			# check the assigned internet rules UMCP
 			check1.checkRules()
@@ -121,7 +121,7 @@ def main():
 				school,
 				'class')
 
-			check2 = Check.Check(school, assignedClasses, ucr=ucr)
+			check2 = Check(school, assignedClasses, ucr=ucr)
 
 			# check the assigned internet rules UMCP
 			check2.checkRules()
@@ -135,7 +135,7 @@ def main():
 				rules,
 				school,
 				'class')
-			check3 = Check.Check(school, assignedClasses, ucr=ucr)
+			check3 = Check(school, assignedClasses, ucr=ucr)
 
 			# check the assigned internet rules UMCP
 			check3.checkRules()
