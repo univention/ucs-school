@@ -83,7 +83,7 @@ class CSVUser(User):
 				hints.append(expression('birthday', escape_filter_chars(unformat_date(self.birthday, date_format))))
 		if hints:
 			ldap_filter = conjunction('&', hints)
-			udm_obj = self.get_first(lo, str(ldap_filter))
+			udm_obj = self.get_first_udm_obj(lo, str(ldap_filter))
 			if udm_obj:
 				return udm_obj['username']
 
@@ -141,12 +141,6 @@ class CSVUser(User):
 	@classmethod
 	def find_all_fields(cls):
 		return cls._attributes.keys()
-
-	@classmethod
-	def find_field_label_from_name(cls, field):
-		for name, attr in cls._attributes.items():
-			if name == field:
-				return attr.label
 
 	@classmethod
 	def find_field_name_from_label(cls, label, i):
