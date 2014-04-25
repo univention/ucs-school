@@ -5,7 +5,7 @@
 ## exposure: careful
 ## packages: [ucs-school-umc-internetrules]
 
-from ucs_test_ucsschool_essential.InternetRule import InternetRule
+from essential.internetrule import InternetRule
 import univention.testing.utils as utils
 
 

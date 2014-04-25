@@ -1,6 +1,6 @@
 #!/usr/share/ucs-test/runner python
 
-from . import RandomDomain
+from .randomdomain import RandomDomain
 from univention.lib.umc_connection import UMCConnection
 import random
 import univention.testing.strings as uts
@@ -30,7 +30,7 @@ class InternetRule(object):
 		if domains:
 			self.domains = domains
 		else:
-			dom = RandomDomain.RandomDomain()
+			dom = RandomDomain()
 			domains = dom.getDomainList(random.randint(1,10))
 			self.domains = sorted(domains)
 		self.wlan = wlan if wlan else random.choice([True, False])

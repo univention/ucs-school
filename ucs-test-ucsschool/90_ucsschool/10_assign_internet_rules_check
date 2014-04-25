@@ -5,10 +5,10 @@
 ## exposure: careful
 ## packages:  [ucs-school-umc-internetrules]
 
-from ucs_test_ucsschool_essential.Check import Check
-from ucs_test_ucsschool_essential.InternetRule import InternetRule
-from ucs_test_ucsschool_essential.Klasse import Klasse
-from ucs_test_ucsschool_essential.Workgroup import Workgroup
+from essential.check import Check
+from essential.internetrule import InternetRule
+from essential.klasse import Klasse
+from essential.workgroup import Workgroup
 import random
 import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool as utu
