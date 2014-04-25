@@ -3089,15 +3089,18 @@ elif sys.argv[0].endswith("import_group"):
 elif sys.argv[0].endswith("import_printer"):
 	import_printer()
 elif sys.argv[0].endswith("create_ou"):
-	dcName=None
+	dcNameEducation = None
+	dcNameManagement = None
 
-	usage  = '%prog [options] <ou_name> [<dc_name>]\n'
-	usage += ' create school container for ucs@school\n\n'
-	usage += 'Arguments:\n'
-	usage += '  <ou_name>  name of ou that shall be created or verified\n'
-	usage += '  <dc_name>  name of domaincontroller for specified OU\n'
-	usage += '             (if dc_name is not specified "dc<ou_name>-01" will be\n'
-	usage += '             used as the default for the domaincontroller name)'
+	usage  = '''%prog [options] <ou_name> [<edu_dc_name> [<management_dc_name>]]
+ create school container for UCS@school
+
+Arguments:
+  <ou_name>		        name of ou that shall be created or verified
+  <edu_dc_name>		    hostname of the educational DC for specified OU
+					    (if dc_name is not specified "dc<ou_name>-01" will be
+					    used as the default for the domaincontroller name)
+  <management_dc_name>  hostname of the management DC for the specified OU'''
 	parser = optparse.OptionParser(usage=usage)
 	parser.add_option(
 		'--sharefileserver', action='store', type='string',
@@ -3106,21 +3109,27 @@ elif sys.argv[0].endswith("create_ou"):
 	parser.add_option(
 		'--displayName', action='store', type='string',
 		dest='displayName', default=None,
-		help='Descriptive name of school OU that is shown within UCS@school modules as school name (e.g. "Gymnasium Mitte")')
+		help='Descriptive name of the school OU that is shown within UCS@school modules as school name (e.g. "Gymnasium Mitte")')
 
 	(options, args, ) = parser.parse_args()
 	if len(args) > 0:
 		ouname = args[0]
 		if len(args) > 1:
-			dcName = args[1]
+			dcNameEducation = args[1]
+		if len(args) > 2:
+			dcNameManagement = args[2]
 
 		if not is_valid_ou_name(ouname):
 			print 'ERROR: invalid ou name given'
 			sys.exit(1)
 
-		# hostname based upon RFC 952: <let>[*[<let-or-digit-or-hyphen>]<let-or-digit>]
-		if dcName and not re.match('^[a-zA-Z](([a-zA-Z0-9-_]*)([a-zA-Z0-9]$))?$', dcName):
-			print 'ERROR: invalid domaincontroller name given'
+		for name in (dcNameEducation, dcNameManagement):
+			if name and not is_valid_hostname(name):
+				print 'ERROR: invalid domaincontroller name given: %r' % name
+				sys.exit(1)
+
+		if dcNameEducation and dcNameManagement and dcNameEducation == dcNameManagement:
+			print 'ERROR: hostname of educational DC and management DC may not be equal!'
 			sys.exit(1)
 
 		if not options.ShareFileServer is None:
@@ -3133,10 +3142,12 @@ elif sys.argv[0].endswith("create_ou"):
 				sys.exit(1)
 
 		# In a single server environment the default school DC is the master
-		if not dcName and configRegistry.is_true('ucsschool/singlemaster', False):
-			dcName = configRegistry.get('hostname')
+		if not dcNameEducation and configRegistry.is_true('ucsschool/singlemaster', False):
+			dcNameEducation = configRegistry.get('hostname')
 
-		verify_school_ou(ouname, co, lo, baseDN, dcName=dcName, ShareFileServer=options.ShareFileServer, displayName=options.displayName)
+		verify_school_ou(ouname, co, lo, baseDN, dcName=dcNameEducation, ShareFileServer=options.ShareFileServer, displayName=options.displayName)
+		if dcNameManagement:
+			create_dc(ouname, co, lo, baseDN, dcNameManagement, TYPE_DC_MANAGEMENT)
 		sys.exit(0)
 	parser.print_help()
 	sys.exit(1)
