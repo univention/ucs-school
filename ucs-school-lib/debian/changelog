@@ -1,3 +1,9 @@
+ucs-school-lib (5.0.7-1) unstable; urgency=low
+
+  * Bug #34447: Support validation error messages
+
+ -- Dirk Wiesenthal <wiesenthal@univention.de>  Fri, 25 Apr 2014 02:09:13 +0200
+
 ucs-school-lib (5.0.6-1) unstable; urgency=low
 
   * Bug #34337: Better move code, users automatically set correct groups

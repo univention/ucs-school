@@ -465,6 +465,25 @@ class UCSSchoolHelperAbstractClass(object):
 			same = False
 		return not same
 
+	@classmethod
+	def find_field_label_from_name(cls, field):
+		for name, attr in cls._attributes.items():
+			if name == field:
+				return attr.label
+
+	def get_error_msg(self):
+		error_msg = ''
+		for key, errors in self.errors.iteritems():
+			label = self.find_field_label_from_name(key)
+			error_str = ''
+			for error in errors:
+				error_str += error
+				if not (error.endswith('!') or error.endswith('.')):
+					error_str += '.'
+				error_str += ' '
+			error_msg += '%s: %s' % (label, error_str)
+		return error_msg[:-1]
+
 	def do_modify(self, udm_obj, lo):
 		self._alter_udm_obj(udm_obj)
 		udm_obj.modify()
