@@ -373,6 +373,14 @@ def getDN (schoolNr, base='school', basedn=baseDN):
 	return dn % values
 
 
+def is_valid_ou_name(name):
+	return not(bool(re.match('^[a-zA-Z0-9](([a-zA-Z0-9_]*)([a-zA-Z0-9]$))?$', name)))
+
+
+def is_valid_hostname(name):
+	return not(bool(re.match('^[a-zA-Z](([a-zA-Z0-9-_]*)([a-zA-Z0-9]$))?$', name)))
+
+
 def verify_policy(objdn, schoolNr, policy_dn_list):
 	# test if all policy objects exist and if all referenced objects are policy objects
 	global problem_hints
@@ -3044,8 +3052,7 @@ elif sys.argv[0].endswith("create_ou"):
 		if len(args) > 1:
 			dcName = args[1]
 
-		# hostname based upon RFC 952: <let>[*[<let-or-digit-or-hyphen>]<let-or-digit>]
-		if not re.match('^[a-zA-Z0-9](([a-zA-Z0-9_]*)([a-zA-Z0-9]$))?$', ouname):
+		if not is_valid_ou_name(ouname):
 			print 'ERROR: invalid ou name given'
 			sys.exit(1)
 
@@ -3055,8 +3062,7 @@ elif sys.argv[0].endswith("create_ou"):
 			sys.exit(1)
 
 		if not options.ShareFileServer is None:
-			# hostname based upon RFC 952: <let>[*[<let-or-digit-or-hyphen>]<let-or-digit>]
-			if options.ShareFileServer and not re.match('^[a-zA-Z](([a-zA-Z0-9-_]*)([a-zA-Z0-9]$))?$', options.ShareFileServer):
+			if options.ShareFileServer and not is_valid_hostname(options.ShareFileServer):
 				print 'ERROR: invalid share server name given: "%s"' % options.ShareFileServer
 				sys.exit(1)
 			objects = lo.searchDn(filter='(&(objectClass=univentionHost)(cn=%s))' % options.ShareFileServer, base=baseDN)
@@ -3091,15 +3097,13 @@ within an OU LDAP subtree to the given OU.'''
 		parser.print_help()
 		sys.exit(1)
 
-	# hostname based upon RFC 952: <let>[*[<let-or-digit-or-hyphen>]<let-or-digit>]
-	if not re.match('^[a-zA-Z0-9](([a-zA-Z0-9_]*)([a-zA-Z0-9]$))?$', options.ou):
+	if not is_valid_ou_name(options.ou):
 		print 'ERROR: invalid ou name given'
 		print
 		parser.print_help()
 		sys.exit(1)
 
-	# hostname based upon RFC 952: <let>[*[<let-or-digit-or-hyphen>]<let-or-digit>]
-	if not re.match('^[a-zA-Z](([a-zA-Z0-9-_]*)([a-zA-Z0-9]$))?$', options.dcname):
+	if not is_valid_hostname(options.dcname):
 		print 'ERROR: invalid domaincontroller name given'
 		print
 		parser.print_help()
