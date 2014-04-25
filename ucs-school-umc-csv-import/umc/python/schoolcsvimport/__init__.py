@@ -201,7 +201,7 @@ class Instance(SchoolBaseModule, ProgressMixin):
 			columns.insert(0, 'name')
 		if file_info.delete_not_mentioned:
 			mentioned_usernames = map(lambda u: u.name, users)
-			progress.title= _('Checking users from database')
+			progress.title = _('Checking users from database')
 			progress.message = ''
 			existing_users = file_info.user_klass.get_all(file_info.school, lo)
 			for user in existing_users:

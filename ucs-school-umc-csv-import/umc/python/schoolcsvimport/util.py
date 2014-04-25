@@ -203,7 +203,7 @@ class CSVUser(User):
 			elif self.action == 'modify':
 				self.modify(lo, validate=False)
 			elif self.action == 'delete':
-				self.delete(lo)
+				self.remove(lo)
 		except Exception as exc:
 			MODULE.warn('Something went wrong. %s' % traceback.format_exc())
 			self._error_msg = str(exc)
@@ -211,8 +211,8 @@ class CSVUser(User):
 		else:
 			return True
 
-	def validate(self, lo):
-		super(CSVUser, self).validate(lo, validate_unlikely_changes=True)
+	def validate(self, lo, validate_unlikely_changes=True):
+		super(CSVUser, self).validate(lo, validate_unlikely_changes)
 		if self.exists(lo):
 			if self.action == 'create':
 				self.add_error('action', _('The user already exists and cannot be created. Please change the username to one that does not yet exist or change the action to be taken.'))
