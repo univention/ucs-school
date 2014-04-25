@@ -126,7 +126,11 @@ define([
 			var values = this.getValues();
 			values.$dn$ = this.$dn$;
 			return this.standbyDuring(this.store.put(values)).then(lang.hitch(this, function(response) {
-				this.onFinished();  // close this wizard
+				if (response.result) {
+					dialog.alert(response.result.message);
+				} else {
+					this.onFinished();  // close this wizard
+				}
 				return currentPage;
 			}));
 		},

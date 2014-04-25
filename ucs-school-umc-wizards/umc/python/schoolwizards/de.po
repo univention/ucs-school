@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-wizards\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2014-04-16 19:38+0200\n"
+"POT-Creation-Date: 2014-04-25 01:54+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -12,14 +12,10 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: umc/python/schoolwizards/__init__.py:217
-msgid "A valid NetBIOS hostname can not be longer than 12 characters."
-msgstr ""
-"Ein gültiger NetBIOS Rechnername darf nicht länger als 12 Zeichen sein."
-
-#: umc/python/schoolwizards/__init__.py:255
-msgid "Computer name is already in use"
-msgstr "Rechnername wird bereits benutzt"
+#: umc/python/schoolwizards/__init__.py:222
+#, python-format
+msgid "\"%s\" already exists!"
+msgstr "\"%s\" existiert bereits!"
 
 #: umc/python/schoolwizards/SchoolImport.py:115
 msgid "Could not create class"
@@ -33,7 +29,7 @@ msgstr "Der Rechner konnte nicht erstellt werden"
 msgid "Could not create user"
 msgstr "Der Benutzer konnte nicht erstellt werden"
 
-#: umc/python/schoolwizards/__init__.py:300
+#: umc/python/schoolwizards/__init__.py:164
 msgid "Device with IP address"
 msgstr "Gerät mit IP-Adresse"
 
@@ -42,72 +38,21 @@ msgstr "Gerät mit IP-Adresse"
 msgid "Execution of command failed"
 msgstr "Die Ausführungs des Kommandos schlug fehl"
 
-#: umc/python/schoolwizards/__init__.py:259
-msgid "IP address is already in use"
-msgstr "IP-Adresse wird bereits benutzt"
-
-#: umc/python/schoolwizards/__init__.py:130
-msgid "Invalid school name"
-msgstr "Ungültiger Schulname"
-
-#: umc/python/schoolwizards/__init__.py:222
-msgid "Invalid school server name"
-msgstr "Ungültiger Schulserver name"
-
-#: umc/python/schoolwizards/__init__.py:169
-#: umc/python/schoolwizards/__init__.py:263
-msgid "Invalid value for  'type' property"
-msgstr "Ungültiger Wert für 'Typ'-Eigenschaft"
-
-#: umc/python/schoolwizards/__init__.py:257
-msgid "MAC address is already in use"
-msgstr "MAC-Adresse wird bereits benutzt"
-
-#: umc/python/schoolwizards/__init__.py:299
+#: umc/python/schoolwizards/__init__.py:163
 msgid "Mac OS X"
-msgstr ""
+msgstr "Mac OS X"
 
-#: umc/python/schoolwizards/__init__.py:159
-msgid "Mail address is already in use"
-msgstr "Mail-Adresse wird bereits benutzt"
-
-#: umc/python/schoolwizards/__init__.py:76
-#, python-format
-msgid "Missing value for the following properties: %s"
-msgstr "Fehlender Wert für die folgenden Eigenschaften: %s"
-
-#: umc/python/schoolwizards/__init__.py:225
-msgid "School name is already in use"
-msgstr "Schulname wird bereits benutzt"
-
-#: umc/python/schoolwizards/__init__.py:270
-msgid "The computer could not be created"
-msgstr "Der Rechner konnte nicht erstellt werden"
-
-#: umc/python/schoolwizards/__init__.py:219
-msgid ""
-"The length of fully qualified domain name is greater than 63 characters."
-msgstr "Die Länge von System- und Domänennamen ist größer als 63 Zeichen."
-
-#: umc/python/schoolwizards/__init__.py:189
-msgid "The user could not be created"
-msgstr "Der Benutzer konnte nicht erstellt werden"
-
-#: umc/python/schoolwizards/__init__.py:308
+#: umc/python/schoolwizards/__init__.py:172
 msgid "Univention Corporate Client"
 msgstr "Univention Corporate Client"
 
-#: umc/python/schoolwizards/__init__.py:253
-msgid "Unknown school"
-msgstr "Unbekannte Schule"
-
-#: umc/python/schoolwizards/__init__.py:155
-msgid "Username is already in use"
-msgstr "Benutzername wird bereits benutzt"
-
-#: umc/python/schoolwizards/__init__.py:298
+#: umc/python/schoolwizards/__init__.py:162
 msgid "Windows system"
 msgstr "Windows-System"
+
+#~ msgid "A valid NetBIOS hostname can not be longer than 12 characters."
+#~ msgstr ""
+#~ "Ein gültiger NetBIOS Rechnername darf nicht länger als 12 Zeichen sein."
 
 #~ msgid "Class name is already in use"
 #~ msgstr "Klassenname wird bereits benutzt"
@@ -115,14 +60,41 @@ msgstr "Windows-System"
 #~ msgid "Class successfully created"
 #~ msgstr "Klasse erfolgreich erstellt"
 
+#~ msgid "Computer name is already in use"
+#~ msgstr "Rechnername wird bereits benutzt"
+
 #~ msgid "Computer successfully created"
 #~ msgstr "Computer erfolgreich erstellt"
 
 #~ msgid "Could not create school"
 #~ msgstr "Die Schule konnte nicht erstellt werden"
 
+#~ msgid "IP address is already in use"
+#~ msgstr "IP-Adresse wird bereits benutzt"
+
+#~ msgid "Invalid school name"
+#~ msgstr "Ungültiger Schulname"
+
+#~ msgid "Invalid school server name"
+#~ msgstr "Ungültiger Schulserver name"
+
+#~ msgid "Invalid value for  'type' property"
+#~ msgstr "Ungültiger Wert für 'Typ'-Eigenschaft"
+
 #~ msgid "Invalid value for the following properties: %s"
 #~ msgstr "Ungültiger Wert für die folgenden Eigenschaften: %s"
+
+#~ msgid "MAC address is already in use"
+#~ msgstr "MAC-Adresse wird bereits benutzt"
+
+#~ msgid "Mail address is already in use"
+#~ msgstr "Mail-Adresse wird bereits benutzt"
+
+#~ msgid "Missing value for the following properties: %s"
+#~ msgstr "Fehlender Wert für die folgenden Eigenschaften: %s"
+
+#~ msgid "School name is already in use"
+#~ msgstr "Schulname wird bereits benutzt"
 
 #~ msgid "School successfully created"
 #~ msgstr "Schule wurde erfolgreich erstellt"
@@ -130,11 +102,27 @@ msgstr "Windows-System"
 #~ msgid "The class could not be created"
 #~ msgstr "Die Klasse konnte nicht erstellt werden"
 
+#~ msgid "The computer could not be created"
+#~ msgstr "Der Rechner konnte nicht erstellt werden"
+
 #~ msgid "The following values are invalid: %s"
 #~ msgstr "Die folgenden Werte sind ungültig: %s"
+
+#~ msgid ""
+#~ "The length of fully qualified domain name is greater than 63 characters."
+#~ msgstr "Die Länge von System- und Domänennamen ist größer als 63 Zeichen."
 
 #~ msgid "The school could not be created"
 #~ msgstr "Die Schule konnte nicht erstellt werden"
 
+#~ msgid "The user could not be created"
+#~ msgstr "Der Benutzer konnte nicht erstellt werden"
+
+#~ msgid "Unknown school"
+#~ msgstr "Unbekannte Schule"
+
 #~ msgid "User successfully created"
 #~ msgstr "Benutzer wurde erfolgreich erstellt"
+
+#~ msgid "Username is already in use"
+#~ msgstr "Benutzername wird bereits benutzt"

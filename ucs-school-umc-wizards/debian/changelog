@@ -1,3 +1,9 @@
+ucs-school-umc-wizards (4.0.7-1) unstable; urgency=low
+
+  * Bug #34447: Add validation error messages
+
+ -- Dirk Wiesenthal <wiesenthal@univention.de>  Fri, 25 Apr 2014 02:08:33 +0200
+
 ucs-school-umc-wizards (4.0.6-1) unstable; urgency=low
 
   * Bug #34447: Correct return values in wizard functions; simplifications

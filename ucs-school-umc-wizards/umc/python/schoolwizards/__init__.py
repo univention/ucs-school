@@ -212,7 +212,14 @@ class Instance(SchoolBaseModule, SchoolImport):
 				# workaround to be able to reuse this function everywhere
 				obj.name = '%s-%s' % (obj.school, obj.name)
 			MODULE.process('Creating %r' % (obj))
-			ret.append(obj.create(ldap_user_write))
+			obj.validate(ldap_user_read)
+			if obj.errors:
+				ret.append({'result' : {'message' : obj.get_error_msg()}})
+				continue
+			if obj.create(ldap_user_write, validate=False):
+				ret.append(True)
+			else:
+				ret.append({'result' : {'message' : _('"%s" already exists!') % obj.name}})
 		return ret
 
 	@LDAP_Connection( USER_READ, USER_WRITE )
@@ -225,7 +232,12 @@ class Instance(SchoolBaseModule, SchoolImport):
 				# workaround to be able to reuse this function everywhere
 				obj.name = '%s-%s' % (obj.school, obj.name)
 			MODULE.process('Modifying %r' % (obj))
-			ret.append(obj.modify(ldap_user_write))
+			obj.validate(ldap_user_read)
+			if obj.errors:
+				ret.append({'result' : {'message' : obj.get_error_msg()}})
+				continue
+			obj.modify(ldap_user_write, validate=False)
+			ret.append(True) # no changes? who cares?
 		return ret
 
 	@LDAP_Connection( USER_READ, USER_WRITE )

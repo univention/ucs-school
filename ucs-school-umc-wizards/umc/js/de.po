@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-wizards\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2014-04-24 16:48+0200\n"
+"POT-Creation-Date: 2014-04-25 01:54+0200\n"
 "PO-Revision-Date: 2014-04-24 16:49+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -22,7 +22,7 @@ msgstr ""
 msgid "%(nSelected)d %(objSingular)s of %(nTotal)d selected"
 msgstr ""
 
-#: umc/js/schoolwizards/Grid.js:116 umc/js/schoolwizards/Wizard.js:142
+#: umc/js/schoolwizards/Wizard.js:142 umc/js/schoolwizards/Grid.js:116
 msgid "Add"
 msgstr "Hinzufügen"
 
@@ -41,7 +41,7 @@ msgstr "Erweiterte Einstellungen"
 msgid "All"
 msgstr "Alle"
 
-#: umc/js/schoolwizards/UserWizard.js:136 umc/js/schoolwizards/UserGrid.js:67
+#: umc/js/schoolwizards/UserGrid.js:67 umc/js/schoolwizards/UserWizard.js:136
 msgid "Class"
 msgstr "Klasse"
 
@@ -86,7 +86,7 @@ msgstr "Löschen"
 msgid "Deleting the selected %s."
 msgstr "Den ausgewählten %s löschen."
 
-#: umc/js/schoolwizards/ClassWizard.js:66 umc/js/schoolwizards/ClassGrid.js:58
+#: umc/js/schoolwizards/ClassGrid.js:58 umc/js/schoolwizards/ClassWizard.js:66
 msgid "Description"
 msgstr "Beschreibung"
 
@@ -103,7 +103,7 @@ msgstr "E-Mail Adresse"
 msgid "E-Mail address of the %s."
 msgstr "E-Mail Adresse des %s."
 
-#: umc/js/schoolwizards/Grid.js:128 umc/js/schoolwizards/Wizard.js:140
+#: umc/js/schoolwizards/Wizard.js:140 umc/js/schoolwizards/Grid.js:128
 msgid "Edit"
 msgstr "Bearbeiten"
 
@@ -144,9 +144,9 @@ msgstr "Geben Sie Detailinformationen zum Anlegen einer neuen Schule an."
 msgid "Enter school details"
 msgstr "Geben Sie Detailinformationen der Schule an."
 
-#: umc/js/schoolwizards/ClassGrid.js:78 umc/js/schoolwizards/SchoolGrid.js:95
+#: umc/js/schoolwizards/SchoolGrid.js:95
 #: umc/js/schoolwizards/ComputerGrid.js:107
-#: umc/js/schoolwizards/UserGrid.js:122
+#: umc/js/schoolwizards/ClassGrid.js:78 umc/js/schoolwizards/UserGrid.js:122
 msgid "Filter"
 msgstr ""
 
@@ -193,10 +193,10 @@ msgstr "Verwaltung von Schulbenutzern"
 msgid "Management of schools"
 msgstr "Verwaltung von Schulen"
 
-#: umc/js/schoolwizards/ClassWizard.js:61 umc/js/schoolwizards/ClassGrid.js:55
 #: umc/js/schoolwizards/ComputerGrid.js:55
 #: umc/js/schoolwizards/ComputerWizard.js:104
-#: umc/js/schoolwizards/UserGrid.js:55
+#: umc/js/schoolwizards/ClassGrid.js:55 umc/js/schoolwizards/UserGrid.js:55
+#: umc/js/schoolwizards/ClassWizard.js:61
 msgid "Name"
 msgstr "Name"
 
@@ -205,8 +205,8 @@ msgstr "Name"
 msgid "Name of the %s."
 msgstr "Name des %s."
 
-#: umc/js/schoolwizards/SchoolGrid.js:64
 #: umc/js/schoolwizards/SchoolWizard.js:57
+#: umc/js/schoolwizards/SchoolGrid.js:64
 msgid "Name of the school"
 msgstr "Name der Schule"
 
@@ -255,8 +255,8 @@ msgstr "Schulkürzel"
 msgid "School information"
 msgstr "Schulinformationen"
 
-#: umc/js/schoolwizards/ClassGrid.js:71
-#: umc/js/schoolwizards/ComputerGrid.js:80 umc/js/schoolwizards/UserGrid.js:93
+#: umc/js/schoolwizards/ComputerGrid.js:80
+#: umc/js/schoolwizards/ClassGrid.js:71 umc/js/schoolwizards/UserGrid.js:93
 msgid "Schools"
 msgstr "Schulen"
 
@@ -289,11 +289,11 @@ msgstr "Geben Sie die Benutzerrolle, die angelegt werden soll, an."
 msgid "Specify the role of user."
 msgstr "Geben Sie den Benutzertyp an."
 
-#: umc/js/schoolwizards/UserWizard.js:96 umc/js/schoolwizards/UserGrid.js:113
+#: umc/js/schoolwizards/UserGrid.js:113 umc/js/schoolwizards/UserWizard.js:96
 msgid "Staff"
 msgstr "Mitarbeiter"
 
-#: umc/js/schoolwizards/UserWizard.js:90 umc/js/schoolwizards/UserGrid.js:107
+#: umc/js/schoolwizards/UserGrid.js:107 umc/js/schoolwizards/UserWizard.js:90
 msgid "Student"
 msgstr "Schüler"
 
@@ -301,11 +301,11 @@ msgstr "Schüler"
 msgid "Subnet mask"
 msgstr "Subnetzmaske"
 
-#: umc/js/schoolwizards/UserWizard.js:93 umc/js/schoolwizards/UserGrid.js:110
+#: umc/js/schoolwizards/UserGrid.js:110 umc/js/schoolwizards/UserWizard.js:93
 msgid "Teacher"
 msgstr "Lehrer"
 
-#: umc/js/schoolwizards/UserWizard.js:99 umc/js/schoolwizards/UserGrid.js:116
+#: umc/js/schoolwizards/UserGrid.js:116 umc/js/schoolwizards/UserWizard.js:99
 msgid "Teachers and staff"
 msgstr "Lehrer und Mitarbeiter"
 
@@ -329,7 +329,12 @@ msgid ""
 "within the LDAP directory and as prefix for several school objects like "
 "group names. It may consist of the letters a-z, the digits 0-9 and "
 "underscores. Usually it is safe to keep the suggested value."
-msgstr "Der hier eingegebene Wert wird als Objektname für die neue Schul-OU im LDAP-Verzeichnis sowie als Präfix für unterschiedliche Schulobjekte, wie z.B. Gruppennamen, verwendet. Er darf aus den Buchstaben a-z, den Ziffern 0-9 und dem Unterstrich bestehen. In der Regel kann der automatisch vorgeschlagene Wert unverändert übernommen werden."
+msgstr ""
+"Der hier eingegebene Wert wird als Objektname für die neue Schul-OU im LDAP-"
+"Verzeichnis sowie als Präfix für unterschiedliche Schulobjekte, wie z.B. "
+"Gruppennamen, verwendet. Er darf aus den Buchstaben a-z, den Ziffern 0-9 und "
+"dem Unterstrich bestehen. In der Regel kann der automatisch vorgeschlagene "
+"Wert unverändert übernommen werden."
 
 #: umc/js/schoolwizards/SchoolWizard.js:135
 #, python-format
@@ -341,10 +346,10 @@ msgstr ""
 "Schule erstellt oder der Wizard über die Schaltfläche \"Abbrechen\" beendet "
 "werden."
 
-#: umc/js/schoolwizards/UserWizard.js:87
 #: umc/js/schoolwizards/ComputerGrid.js:58
 #: umc/js/schoolwizards/ComputerGrid.js:87
 #: umc/js/schoolwizards/ComputerWizard.js:87
+#: umc/js/schoolwizards/UserWizard.js:87
 msgid "Type"
 msgstr "Typ"
 
