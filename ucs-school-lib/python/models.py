@@ -946,7 +946,7 @@ class BasicGroup(Group):
 	def __init__(self, **kwargs):
 		if 'container' not in kwargs:
 			kwargs['container'] = 'cn=groups,%s' % ucr.get('ldap/base')
-		return super(BasicGroup, self).__init__(**kwargs)
+		super(BasicGroup, self).__init__(**kwargs)
 
 	def create(self, lo, validate=True):
 		# prepare LDAP: create containers where this basic group lives if necessary
@@ -1157,7 +1157,7 @@ class School(UCSSchoolHelperAbstractClass):
 			user_containers.extend([cn_staff, cn_teachers_staff])
 			group_containers.append(cn_staff)
 		containers_with_path = {
-			'group_path': ['printers'],
+			'printer_path': ['printers'],
 			'user_path' : ['users', user_containers],
 			'computer_path' : ['computers', ['server', ['dc']]],
 			'network_path' : ['networks'],
@@ -1368,7 +1368,7 @@ class School(UCSSchoolHelperAbstractClass):
 		district = self.get_district()
 		if district:
 			ou = OU(name=district)
-			ou.create_in_container(ucr.get('ldap/base', lo))
+			ou.create_in_container(ucr.get('ldap/base'), lo)
 
 		self.class_share_file_server = self.get_class_share_file_server(lo)
 		self.home_share_file_server = self.get_home_share_file_server(lo)
@@ -1709,7 +1709,7 @@ class SchoolComputer(UCSSchoolHelperAbstractClass):
 		try:
 			return ipaddr.IPv4Network(network_str)
 		except (ipaddr.AddressValueError, ipaddr.NetmaskValueError, ValueError):
-			MODULE.warning('Unparsable network: %r' % network_str)
+			MODULE.warn('Unparsable network: %r' % network_str)
 
 	def get_network(self):
 		ipv4_network = self.get_ipv4_network()
