@@ -122,6 +122,10 @@ UCRV_create_mail_domain = configRegistry.is_true("ucsschool/import/generate/mail
 
 generate_logins = configRegistry.get('ucsschool/import/generate/logins', 'no').lower() in ( 'yes', 'true', '1' )
 
+TYPE_DC_MANAGEMENT = 'management'
+TYPE_DC_EDUCATION = 'education'
+
+
 # IP address prefix len conecerning the netmask
 default_prefixlen = 24
 
@@ -2914,6 +2918,78 @@ def move_domaincontroller_to_ou(co, lo, baseDN, options):
 	print 'HINT: the domaincontroller slave has to be rejoined into the domain!'
 
 
+def create_dc(co, lo, baseDN, ou_name, dc_name, dc_type):
+	if not dc_type in (TYPE_DC_EDUCATION, TYPE_DC_MANAGEMENT):
+		print 'ERROR: invalid type for domaincontroller given in create_dc(): %r' % (dc_type, )
+		sys.exit(1)
+
+	if dc_type == TYPE_DC_MANAGEMENT and not configRegistry.is_true('ucsschool/ldap/noneducational/create/objects', True):
+		print 'ERROR: cannot create management DC - noneducational objects disabled via ucsschool/ldap/noneducational/create/objects'
+		sys.exit(1)
+
+	if not dc_name or not is_valid_hostname(dc_name):
+		print 'ERROR: invalid management server name given: %r' % dc_name
+		sys.exit(1)
+
+	# verify if OU already exists - abort otherwise
+	ou_objects = univention.admin.modules.lookup(computer_module, co, lo, scope='sub', superordinate=superordinate, base=baseDN,
+												 filter=univention.admin.filter.expression('ou', ou_name))
+	if not ou_objects:
+		print 'ERROR: specified OU %r does not exist' % ou_name
+		sys.exit(1)
+
+
+	# get list of desired group memberships
+	group_dn_list = { TYPE_DC_MANAGEMENT: ['cn=OU%s-DC-Verwaltungsnetz,cn=ucsschool,cn=groups,%s' % (ou_name.lower(), baseDN),
+										   'cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,%s' % (baseDN,),
+										   ],
+					  TYPE_DC_EDUCATION: ['cn=DC-Edukativnetz,cn=ucsschool,cn=groups,%s' % (baseDN,),
+										  'cn=OU%s-DC-Edukativnetz,cn=ucsschool,cn=groups,%s' % (ou_name.lower(), baseDN),
+										  ],
+					  }[dc_type]
+	for grpdn in group_dn_list:
+		verify_group(grpdn, co, lo, superordinate, baseDN)
+
+
+	host_objects = univention.admin.modules.lookup(computer_module, co, lo, scope='sub', superordinate=superordinate, base=baseDN,
+												   filter=univention.admin.filter.expression('cn', dc_name))
+	slave_objects = univention.admin.modules.lookup(server_module, co, lo, scope='sub', superordinate=superordinate, base=baseDN,
+													filter=univention.admin.filter.expression('cn', dc_name))
+	if host_objects and not slave_objects:
+		print 'ERROR: given host name "%s" is already in use and no domaincontroller slave system. Please choose another name.' % dc_name
+		sys.exit(1)
+
+	if slave_objects:
+		# slave object does exist
+		if len(slave_objects) > 1:
+			print 'ERROR: more than one domaincontroller slave with cn=%s found in LDAP: %r' % (dc_name, slave_objects)
+			sys.exit(1)
+
+		slave_object = slave_objects[0]
+		slave_object.open()
+		modified = False
+		for grpdn in group_dn_list:
+			if grpdn not in slave_object["groups"]:
+				slave_object["groups"].append(grpdn)
+				modified = True
+		if modified:
+			modify_object(slave_object)
+	else:
+		# slave object does NOT exist - create missing DC object
+		position = univention.admin.uldap.position(baseDN)
+		position.setDn('cn=dc,cn=server,cn=computers,%s' % getDN(ou_name))
+		slave_object = server_module.object(co, lo, position=position, superordinate=superordinate)
+		slave_object.open()
+		slave_object['name'] = dc_name
+		slave_object['unixhome'] = '/dev/null'
+		slave_object['shell'] = '/bin/bash'
+		slave_object['primaryGroup'] = 'cn=DC Slave Hosts,cn=groups,%s' % (baseDN,)
+		for grpdn in group_dn_list:
+			if grpdn not in slave_object["groups"]:
+				slave_object["groups"].append(grpdn)
+		create_object(slave_object)
+
+
 #------------------------------------------------------------------------------------------#
 # MAIN                                                                                     #
 #------------------------------------------------------------------------------------------#
@@ -3064,6 +3140,43 @@ elif sys.argv[0].endswith("create_ou"):
 		sys.exit(0)
 	parser.print_help()
 	sys.exit(1)
+
+elif sys.argv[0].endswith("create_dc"):
+	usage = '''%prog --ou <ou> --name <dcname> --type <dctype>
+
+%prog creates domaincontroller slave objects within the given OU.'''
+
+	parser = optparse.OptionParser(usage=usage)
+	parser.add_option('--name', action='store', dest='dc_name', default=None, help='hostname of the domaincontroller slave object that shall be created')
+	parser.add_option('--ou', action='store', dest='ou_name', default=None, help='target OU where the domaincontroller slave object will be created in')
+	parser.add_option('--type', action='store', dest='dc_type', default=None, help='UCS@school type of the domaincontroller slave object (valid values: %r, %r)' % (TYPE_DC_EDUCATION, TYPE_DC_MANAGEMENT))
+	(options, args, ) = parser.parse_args()
+
+	if not options.dc_name or not options.ou_name:
+		print 'ERROR: no domaincontroller hostname or ou specified'
+		print
+		parser.print_help()
+		sys.exit(1)
+
+	if not is_valid_ou_name(options.ou_name):
+		print 'ERROR: invalid ou name given'
+		print
+		parser.print_help()
+		sys.exit(1)
+
+	if not is_valid_hostname(options.dc_name):
+		print 'ERROR: invalid domaincontroller name given'
+		print
+		parser.print_help()
+		sys.exit(1)
+
+	if not options.dc_type in (TYPE_DC_EDUCATION, TYPE_DC_MANAGEMENT):
+		print 'ERROR: invalid type specified'
+		print
+		parser.print_help()
+		sys.exit(1)
+
+	create_dc(co, lo, baseDN, options.ou_name, options.dc_name, options.dc_type)
 
 elif sys.argv[0].endswith("move_domaincontroller_to_ou"):
 	usage = '''%prog --dcname <dcname> --ou <ou>
