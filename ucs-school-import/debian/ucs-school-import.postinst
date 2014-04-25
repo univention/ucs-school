@@ -43,7 +43,7 @@ univention-config-registry set \
 	ucsschool/ldap/default/groupprefix/admins?"admins-" \
 	ucsschool/ldap/default/groupprefix/pupils?"schueler-" \
 	ucsschool/ldap/default/groupprefix/staff?"mitarbeiter-" \
-	ucsschool/ldap/default/dcs?"edukativ verwaltung" \
+	ucsschool/ldap/default/dcs?"edukativ" \
 	ucsschool/ldap/noneducational/create/objects?"true" \
 	ucsschool/update/user/role?yes \
 	ucsschool/import/generate/mail/domain?yes
@@ -96,6 +96,14 @@ if [ "$1" = "configure" ] && dpkg --compare-versions "$2" lt-nl 9.0.5; then
 			/usr/share/ucs-school-import/scripts/ucs-school-update-ou-fileservers --auto-detect
 			echo "Finished updating file server settings at all UCS@school OU objects."
 		fi
+	fi
+fi
+
+# Bug #26137: do not create management slave automatically any longer ==>
+#             change default during switch from UCS@school 3.2 to 3.2R2
+if [ "$1" = "configure" ] && dpkg --compare-versions "$2" lt-nl 10.0.8 ; then
+	if [ "$ucsschool_ldap_default_dcs" = "edukativ verwaltung" ] ; then
+		ucr set ucsschool/ldap/default/dcs="edukativ"
 	fi
 fi
 
