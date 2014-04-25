@@ -36,7 +36,7 @@ class SimpleCurl(object):
 		self.curl.setopt(pycurl.PROXYUSERPWD, "%s:%s" % (username, password))
 		self.curl.setopt(pycurl.PROXYAUTH, auth)
 
-	def getPage(self, url, bVerbose, postData=None):
+	def getPage(self, url, bVerbose=False, postData=None):
 		self.curl.setopt(pycurl.URL, str(url))
 		self.curl.setopt(pycurl.VERBOSE, bVerbose)
 		if postData:
@@ -50,6 +50,13 @@ class SimpleCurl(object):
 
 	def httpCode(self):
 		return self.curl.getinfo(pycurl.HTTP_CODE)
+
+	def response(self, url):
+		self.getPage(url)
+		return self.httpCode()
+
+	def close(self):
+		self.curl.close()
 
 	def __del__(self):
 		self.curl.close()

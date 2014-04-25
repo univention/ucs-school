@@ -33,12 +33,10 @@ class Klasse():
 			self.umcConnection.auth('Administrator', 'univention')
 
 	def __enter__(self):
-		with ucr_test.UCSTestConfigRegistry() as ucr:
-			self.ucr = ucr
 		return self
 
 	def __exit__(self, type, value, trace_back):
-		pass
+		self.ucr.revert_to_original_registry()
 
 	# create class
 	def create(self):

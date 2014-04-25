@@ -1,9 +1,9 @@
 #!/usr/share/ucs-test/runner python
 
-import univention.testing.strings as uts
-import univention.testing.utils as utils
-import univention.testing.ucr as ucr_test
 from univention.lib.umc_connection import UMCConnection
+import univention.testing.strings as uts
+import univention.testing.ucr as ucr_test
+import univention.testing.utils as utils
 
 """""""""""""""""""""""""""""""""""""""
   Class Workgroup
@@ -35,16 +35,14 @@ class Workgroup(object):
 			self.umcConnection.auth('Administrator', 'univention')
 
 	def __enter__(self):
-		with ucr_test.UCSTestConfigRegistry() as ucr:
-			self.ucr = ucr
 		return self
 
 	def __exit__(self, type, value, trace_back):
-		pass
+		self.ucr.revert_to_original_registry()
 
 	# Create workgroup UMCP
 	def create(self):
-		print 'Ceate workgroup %s in school %s' % (
+		print 'Creating workgroup %s in school %s' % (
 			self.name,
 			self.school)
 		flavor = 'workgroup-admin'

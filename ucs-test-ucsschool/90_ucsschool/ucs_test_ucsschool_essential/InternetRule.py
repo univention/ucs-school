@@ -45,12 +45,10 @@ class InternetRule(object):
 			self.umcConnection.auth('Administrator', 'univention')
 
 	def __enter__(self):
-		with ucr_test.UCSTestConfigRegistry() as ucr:
-			self.ucr = ucr
 		return self
 
 	def __exit__(self, type, value, trace_back):
-		pass
+		self.ucr.revert_to_original_registry()
 
 	# define the rule umcp
 	def define(self):
@@ -66,10 +64,10 @@ class InternetRule(object):
 					}
 				}
 			]
-		print 'defining rule %s with UMCP:%s, param = %r' % (
+		print 'defining rule %s with UMCP:%s' % (
 			self.name,
-			'internetrules/add',
-			param)
+			'internetrules/add')
+		print 'param = %r' % (param)
 		reqResult = self.umcConnection.request('internetrules/add', param)
 		if not reqResult[0]['success']:
 			utils.fail('Unable to define rule (%r)' % (param))
@@ -107,10 +105,10 @@ class InternetRule(object):
 				'options': {'name': self.name}
 				}
 			]
-		print 'Modifying rule %s with UMCP:%s, param = %r' % (
+		print 'Modifying rule %s with UMCP:%s' % (
 			self.name,
-			'internetrules/put',
-			param)
+			'internetrules/put')
+		print 'param = %r' % (param)
 		reqResult = self.umcConnection.request('internetrules/put', param)
 		if not reqResult[0]['success']:
 			utils.fail('Unable to modify rule (%r)' % (param))
