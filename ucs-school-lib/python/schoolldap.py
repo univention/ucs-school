@@ -30,17 +30,13 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-import univention.debug as ud
 import univention.config_registry
 import univention.uldap
 import univention.admin.config
 import univention.admin.modules
 
-import univention.admin as udm
 import univention.admin.modules as udm_modules
-import univention.admin.objects as udm_objects
 import univention.admin.uldap as udm_uldap
-import univention.admin.syntax as udm_syntax
 import univention.admin.uexceptions as udm_errors
 from univention.management.console.protocol.message import Message
 
@@ -208,7 +204,7 @@ def LDAP_Connection( *connection_types ):
 			return func( *args, **kwargs )
 			try:
 				return func( *args, **kwargs )
-			except ( LDAPError, udm_errors.base ), e:
+			except ( LDAPError, udm_errors.base ):
 				MODULE.info( 'LDAP operation has failed' )
 				connections = get_ldap_connections( _connection_types, force = True )
 

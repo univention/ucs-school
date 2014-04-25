@@ -241,6 +241,7 @@ class Groups(Attribute):
 	syntax = GroupDN
 
 class IPAddress(Attribute):
+	udm_name = 'ip'
 	syntax = ipAddress
 
 class SubnetMask(Attribute):

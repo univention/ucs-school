@@ -1,3 +1,9 @@
+ucs-school-lib (5.0.10-1) unstable; urgency=low
+
+  * Bug #34447: Save IP address for computers
+
+ -- Dirk Wiesenthal <wiesenthal@univention.de>  Fri, 25 Apr 2014 15:38:39 +0200
+
 ucs-school-lib (5.0.9-1) unstable; urgency=low
 
   * Bug #34447: Fix typo (2)
