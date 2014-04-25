@@ -2406,20 +2406,6 @@ def import_printer():
 		dn = None
 		success = True
 
-		objects=''
-		try:
-			objects = univention.admin.modules.lookup(
-				printer_module, co, lo, scope='sub',
-				superordinate=superordinate, base=container,
-				filter=univention.admin.filter.expression(type,name))
-		except:
-			pass
-		if objects:
-			for object in objects:
-				if codecs.latin_1_encode(univention.admin.objects.dn(object))[0]==position_dn:
-					container_exists = 1
-					break
-
 		if action in ['A','M']: # Add/Modify printer
 			position=univention.admin.uldap.position(baseDN)
 			position.setDn(container)
