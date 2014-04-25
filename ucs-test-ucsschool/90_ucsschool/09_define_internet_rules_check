@@ -5,15 +5,15 @@
 ## exposure: careful
 ## packages: [ucs-school-umc-internetrules]
 
-from ucs_test_ucsschool_essential import InternetRule
+from ucs_test_ucsschool_essential.InternetRule import InternetRule
 import univention.testing.utils as utils
 
 
 def main():
 
-	with InternetRule.InternetRule() as rule:
+	with InternetRule() as rule:
 
-		# Fetch the currently existing internet rules
+		# Fetch the currently defined internet rules
 		definedRules = rule.allRules()
 
 		# Defining rule
