@@ -48,7 +48,7 @@ define([
 
 		getSchoolPage: function() {
 			return {
-				name: 'school',
+				name: 'item',
 				headerText: this.description,
 //				helpText: this.editMode ? _('Enter school details') : _('Enter details to create all necessary structures for a new school.'),
 				widgets: [{
@@ -124,17 +124,17 @@ define([
 		},
 
 		restart: function() {
-			this.getWidget('school', 'display_name').reset();
-			this.getWidget('school', 'name').reset();
-			this.getWidget('school', 'dc_name').reset();
+			this.getWidget('item', 'display_name').reset();
+			this.getWidget('item', 'name').reset();
+			this.getWidget('item', 'dc_name').reset();
 			this.inherited(arguments);
 		},
 
 		addNote: function() {
-			var display_name = this.getWidget('school', 'display_name').get('value');
+			var display_name = this.getWidget('item', 'display_name').get('value');
 			var message = _('The school "%s" has been successfully created. Continue to create another school or press "Cancel" to close this wizard.', display_name);
-			this.getPage('school').clearNotes();
-			this.getPage('school').addNote(message);
+			this.getPage('item').clearNotes();
+			this.getPage('item').addNote(message);
 		}
 	});
 });

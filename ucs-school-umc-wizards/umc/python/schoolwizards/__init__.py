@@ -39,6 +39,7 @@ from univention.management.console.modules import UMC_CommandError
 from univention.management.console.modules.decorators import simple_response, sanitize
 from univention.management.console.modules.sanitizers import StringSanitizer
 from univention.admin.uexceptions import valueError
+from univention.admin.uexceptions import base as uldapBaseException
 import univention.admin.modules as udm_modules
 
 from ucsschool.lib.schoolldap import SchoolBaseModule, LDAP_Connection, LDAP_Filter, check_license, LicenseError, USER_READ, USER_WRITE
@@ -70,7 +71,9 @@ def get_computer_class(computer_type):
 		return MacComputer
 	if computer_type == 'ucc':
 		return UCCComputer
-	return IPComputer
+	if computer_type == 'ipmanagedclient':
+		return IPComputer
+	return SchoolComputer
 
 def iter_objects_in_request(request):
 	flavor = request.flavor
@@ -216,10 +219,13 @@ class Instance(SchoolBaseModule, SchoolImport):
 			if obj.errors:
 				ret.append({'result' : {'message' : obj.get_error_msg()}})
 				continue
-			if obj.create(ldap_user_write, validate=False):
-				ret.append(True)
-			else:
-				ret.append({'result' : {'message' : _('"%s" already exists!') % obj.name}})
+			try:
+				if obj.create(ldap_user_write, validate=False):
+					ret.append(True)
+				else:
+					ret.append({'result' : {'message' : _('"%s" already exists!') % obj.name}})
+			except uldapBaseException as exc:
+				ret.append({'result' : {'message' : str(exc)}})
 		return ret
 
 	@LDAP_Connection( USER_READ, USER_WRITE )
@@ -236,8 +242,13 @@ class Instance(SchoolBaseModule, SchoolImport):
 			if obj.errors:
 				ret.append({'result' : {'message' : obj.get_error_msg()}})
 				continue
-			obj.modify(ldap_user_write, validate=False)
-			ret.append(True) # no changes? who cares?
+			try:
+				obj.modify(ldap_user_write, validate=False)
+			except uldapBaseException as exc:
+				raise
+				ret.append({'result' : {'message' : str(exc)}})
+			else:
+				ret.append(True) # no changes? who cares?
 		return ret
 
 	@LDAP_Connection( USER_READ, USER_WRITE )
@@ -250,13 +261,21 @@ class Instance(SchoolBaseModule, SchoolImport):
 			ret.append(obj.remove(ldap_user_write))
 		return ret
 
+	def _get_all(self, user_class, school, lo):
+		if school:
+			objs = user_class.get_all(school, lo)
+		else:
+			objs = []
+			for school in School.from_binddn(lo):
+				objs.extend(user_class.get_all(school.name, lo))
+		return [obj.to_dict() for obj in objs]
+
 	@LDAP_Connection()
 	@response
 	def get_users(self, request, search_base=None, ldap_user_read=None, ldap_position=None):
 		school = request.options['school']
 		user_class = get_user_class(request.options['type'])
-		users = user_class.get_all(school, ldap_user_read)
-		return [user.to_dict() for user in users]
+		return self._get_all(user_class, school, ldap_user_read)
 
 	get_user = _get_obj
 
@@ -271,8 +290,7 @@ class Instance(SchoolBaseModule, SchoolImport):
 	def get_computers(self, request, search_base=None, ldap_user_read=None, ldap_position=None):
 		school = request.options['school']
 		computer_class = get_computer_class(request.options['type'])
-		computers = computer_class.get_all(school, ldap_user_read)
-		return [computer.to_dict() for computer in computers]
+		return self._get_all(computer_class, school, ldap_user_read)
 
 	get_computer = _get_obj
 
@@ -286,8 +304,7 @@ class Instance(SchoolBaseModule, SchoolImport):
 	@response
 	def get_classes(self, request, search_base=None, ldap_user_read=None, ldap_position=None):
 		school = request.options['school']
-		school_classes = SchoolClass.get_all(school, ldap_user_read)
-		return [school_class.to_dict() for school_class in school_classes]
+		return self._get_all(SchoolClass, school, ldap_user_read)
 
 	get_class = _get_obj
 

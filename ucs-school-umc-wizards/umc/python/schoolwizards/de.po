@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-wizards\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2014-04-25 01:54+0200\n"
+"POT-Creation-Date: 2014-04-25 13:25+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: umc/python/schoolwizards/__init__.py:222
+#: umc/python/schoolwizards/__init__.py:226
 #, python-format
 msgid "\"%s\" already exists!"
 msgstr "\"%s\" existiert bereits!"
@@ -29,7 +29,7 @@ msgstr "Der Rechner konnte nicht erstellt werden"
 msgid "Could not create user"
 msgstr "Der Benutzer konnte nicht erstellt werden"
 
-#: umc/python/schoolwizards/__init__.py:164
+#: umc/python/schoolwizards/__init__.py:167
 msgid "Device with IP address"
 msgstr "Gerät mit IP-Adresse"
 
@@ -38,15 +38,15 @@ msgstr "Gerät mit IP-Adresse"
 msgid "Execution of command failed"
 msgstr "Die Ausführungs des Kommandos schlug fehl"
 
-#: umc/python/schoolwizards/__init__.py:163
+#: umc/python/schoolwizards/__init__.py:166
 msgid "Mac OS X"
 msgstr "Mac OS X"
 
-#: umc/python/schoolwizards/__init__.py:172
+#: umc/python/schoolwizards/__init__.py:175
 msgid "Univention Corporate Client"
 msgstr "Univention Corporate Client"
 
-#: umc/python/schoolwizards/__init__.py:162
+#: umc/python/schoolwizards/__init__.py:165
 msgid "Windows system"
 msgstr "Windows-System"
 

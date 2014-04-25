@@ -48,8 +48,7 @@ define([
 
 		getClassPage: function() {
 			return {
-				name: 'class',
-				headerText: this.description,
+				name: 'item',
 				helpText: this.editMode ? _('Enter details of the class.') : _('Enter details to create a new class.'),
 				widgets: [{
 					name: 'school',
@@ -67,23 +66,23 @@ define([
 				}, {
 					type: Text,
 					name: 'udm-link',
-					content: this.get_link_to_udm_module()
+					content: this.getLinkToUDM()
 				}],
 				layout: [['name', 'description'], ['udm-link']]
 			};
 		},
 
 		restart: function() {
-			this.getWidget('class', 'name').reset();
-			this.getWidget('class', 'description').reset();
+			this.getWidget('item', 'name').reset();
+			this.getWidget('item', 'description').reset();
 			this.inherited(arguments);
 		},
 
 		addNote: function() {
-			var name = this.getWidget('class', 'name').get('value');
+			var name = this.getWidget('item', 'name').get('value');
 			var message = _('Class "%s" has been successfully created. Continue to create another class or press "Cancel" to close this wizard.', name);
-			this.getPage('class').clearNotes();
-			this.getPage('class').addNote(message);
+			this.getPage('item').clearNotes();
+			this.getPage('item').addNote(message);
 		}
 	});
 });

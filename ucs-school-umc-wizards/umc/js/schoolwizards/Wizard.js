@@ -43,15 +43,21 @@ define([
 	return declare("umc.modules.schoolwizards.Wizard", [Wizard], {
 
 		umcpCommand: null,
-		description: null,
 		store: null,
 
+		udmLinkEnabled: null, // flag for showing a link to the fully flegded UDM module
 		editMode: null,  // flag for edit mode
 		$dn$: null,  // the object we edit
 		school: null,  // the school of that object
 		objectType: null, // the UDM type of that object
+		objectTypeReadable: null, // 'users/user' => _('User')
 
 		loadingDeferred: null,
+
+		editModeDescriptionWithoutSchool: _('Edit {itemType} {itemName}'),
+		createModeDescriptionWithoutSchool: _('Create a new {itemType}'),
+		editModeDescription: _('{itemSchool}: edit {itemType} {itemName}'),
+		createModeDescription: _('{itemSchool}: create a new {itemType}'),
 
 		startup: function() {
 			this.inherited(arguments);
@@ -60,9 +66,73 @@ define([
 			}
 		},
 
-		get_link_to_udm_module: function() {
+		buildRendering: function() {
+			this.inherited(arguments);
+			this.itemSchool = this.school;
+			var typeWidget = this.getWidget('general', 'type');
+			if (typeWidget) {
+				typeWidget.watch('value', lang.hitch(this, 'setHeader', typeWidget));
+			}
+			var schoolWidget = this.getWidget('general', 'school');
+			if (schoolWidget) {
+				schoolWidget.watch('value', 'setHeader', schoolWidget);
+			}
+			var nameWidget = this.getWidget('item', 'name');
+			nameWidget.watch('value', lang.hitch(this, 'setHeader', nameWidget));
+			this.setHeader();
+		},
+
+		setHeader: function(widget, attr, oldVal, newVal) {
+			if (widget) {
+				if (widget.getAllItems) {
+					var allItems = widget.getAllItems();
+					array.some(allItems, function(item) {
+						if (item.id === newVal) {
+							newVal = item.label;
+							return true;
+						}
+					});
+				}
+				this.set('item' + tools.capitalize(widget.name), newVal);
+			}
+			var header = null;
+			if (this.editMode) {
+				if (this.itemSchool) {
+					header = lang.replace(this.editModeDescription, {itemSchool: this.itemSchool, itemName: this.itemName, itemType: this.itemType});
+				} else {
+					header = lang.replace(this.editModeDescriptionWithoutSchool, {itemName: this.itemName, itemType: this.itemType});
+				}
+			} else {
+				if (this.itemSchool) {
+					header = lang.replace(this.createModeDescription, {itemSchool: this.itemSchool, itemName: this.itemName, itemType: this.itemType});
+				} else {
+					header = lang.replace(this.createModeDescriptionWithoutSchool, {itemName: this.itemName, itemType: this.itemType});
+				}
+			}
+			tools.forIn(this._pages, function(name, page) {
+				page.set('headerText', header);
+			});
+		},
+
+		//onObjectTypeReadableChanged: function(objectTypeReadable) {
+		//},
+
+		//onSchoolChanged: function(school) {
+		//},
+
+		//_setSchoolAttr: function(school) {
+		//	this._set('school', school);
+		//	this.onSchoolChanged(school);
+		//},
+
+		//_setObjectTypeReadableAttr: function(objectTypeReadable) {
+		//	this._set('objectTypeReadable', objectTypeReadable);
+		//	this.onObjectTypeReadableChanged(objectTypeReadable);
+		//},
+
+		getLinkToUDM: function() {
 			var udm_link = '';
-			if (this.editMode && this.objectType && app.getModule('udm', 'navigation')) {
+			if (this.udmLinkEnabled && this.editMode && this.objectType && app.getModule('udm', 'navigation')) {
 				var objectType = this.objectType.replace(/"/g, '\\"');
 				var dn = this.$dn$.replace(/"/g, '\\"');
 
@@ -140,11 +210,7 @@ define([
 			if (this._getPageIndex(pageName) === (this.pages.length - 1)) {
 				array.forEach(buttons, lang.hitch(this, function(button) {
 					if (button.name == 'next') {
-						if (this.editMode) {
-							button.label = _('Edit');
-						} else {
-							button.label = _('Add');
-						}
+						button.label = _('Save');
 					}
 				}));
 			}

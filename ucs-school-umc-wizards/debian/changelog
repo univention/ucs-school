@@ -1,3 +1,10 @@
+ucs-school-umc-wizards (4.0.8-1) unstable; urgency=low
+
+  * Bug #34447: Make UDM link configurable, set wizard title to a meaningful
+    value, support searching for all schools, text changes
+
+ -- Dirk Wiesenthal <wiesenthal@univention.de>  Fri, 25 Apr 2014 15:39:27 +0200
+
 ucs-school-umc-wizards (4.0.7-1) unstable; urgency=low
 
   * Bug #34447: Add validation error messages

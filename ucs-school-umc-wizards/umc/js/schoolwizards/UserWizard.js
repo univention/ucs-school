@@ -105,7 +105,7 @@ define([
 
 		getUserPage: function() {
 			return {
-				name: 'user',
+				name: 'item',
 				headerText: this.description,
 				helpText: this.editMode ? _('Enter details of the user') : _('Enter details to create a new user'),
 				buttons: [{
@@ -144,7 +144,7 @@ define([
 					label: _('Password'),
 					focus: lang.hitch(this, function() {
 						// just a workaround for Bug #30110
-						var widget = this.getWidget('user', 'password');
+						var widget = this.getWidget('item', 'password');
 						if (! widget._firstWidget.get('value')) {
 							widget._firstWidget.focus();
 						} else {
@@ -153,12 +153,12 @@ define([
 					}),
 					validate: lang.hitch(this, function() {
 						// ...and another one for Bug #30109
-						return this.getWidget('user', 'password').isValid();
+						return this.getWidget('item', 'password').isValid();
 					})
 				}, {
 					type: Text,
 					name: 'udm-link',
-					content: this.get_link_to_udm_module()
+					content: this.getLinkToUDM()
 				}],
 				layout: [
 					['firstname', 'lastname'],
@@ -172,7 +172,7 @@ define([
 		},
 
 		restart: function() {
-			tools.forIn(this.getPage('user')._form._widgets, function(iname, iwidget) {
+			tools.forIn(this.getPage('item')._form._widgets, function(iname, iwidget) {
 				if (iname === 'password') {
 					iwidget._setValueAttr(null);
 				} else if (iname !== 'school_class') {
@@ -183,18 +183,18 @@ define([
 		},
 
 		addNote: function() {
-			var name = this.getWidget('user', 'name').get('value');
+			var name = this.getWidget('item', 'name').get('value');
 			var message = _('User "%s" has been successfully created. Continue to create another user or press "Cancel" to close this wizard.', name);
-			this.getPage('user').clearNotes();
-			this.getPage('user').addNote(message);
+			this.getPage('item').clearNotes();
+			this.getPage('item').addNote(message);
 		},
 
 		updateWidgets: function(/*String*/ currentPage) {
 			if (currentPage === 'general') {
 				var selectedType = this.getWidget('general', 'type').get('value');
 				var types = ['teacher', 'staff', 'teachersAndStaff'];
-				var classBox = this.getWidget('user', 'school_class');
-				var newClassButton = this.getPage('user')._form.getButton('newClass');
+				var classBox = this.getWidget('item', 'school_class');
+				var newClassButton = this.getPage('item')._form.getButton('newClass');
 				if (array.indexOf(types, selectedType) >= 0) {
 					classBox.set('value', null);
 					classBox.set('required', false);
@@ -221,7 +221,7 @@ define([
 						var classes = array.map(response.result, function(item) {
 							return item.label;
 						});
-						this.getWidget('user', 'school_class').set('staticValues', classes);
+						this.getWidget('item', 'school_class').set('staticValues', classes);
 					})
 				);
 			}

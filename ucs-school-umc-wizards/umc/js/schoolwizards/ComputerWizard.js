@@ -95,7 +95,7 @@ define([
 
 		getComputerPage: function() {
 			return {
-				name: 'computer',
+				name: 'item',
 				headerText: this.description,
 				helpText: this.editMode ? _('Enter details of the computer.') : _('Enter details to create a new computer.'),
 				widgets: [{
@@ -125,7 +125,7 @@ define([
 				}, {
 					type: Text,
 					name: 'udm-link',
-					content: this.get_link_to_udm_module()
+					content: this.getLinkToUDM()
 				}],
 				layout: [
 					['name'],
@@ -138,17 +138,17 @@ define([
 		},
 
 		restart: function() {
-			tools.forIn(this.getPage('computer')._form._widgets, function(iname, iwidget) {
+			tools.forIn(this.getPage('item')._form._widgets, function(iname, iwidget) {
 				iwidget.reset();
 			});
 			this.inherited(arguments);
 		},
 
 		addNote: function() {
-			var name = this.getWidget('computer', 'name').get('value');
+			var name = this.getWidget('item', 'name').get('value');
 			var message = _('Computer "%s" has been successfully created. Continue to create another computer or press "Cancel" to close this wizard.', name);
-			this.getPage('computer').clearNotes();
-			this.getPage('computer').addNote(message);
+			this.getPage('item').clearNotes();
+			this.getPage('item').addNote(message);
 		}
 	});
 });

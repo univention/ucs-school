@@ -32,13 +32,15 @@
 define([
 	"dojo/_base/declare",
 	"dojo/_base/lang",
+	"dojo/promise/all",
+	"umc/tools",
 	"umc/widgets/Module",
 	"umc/modules/schoolwizards/UserGrid",
 	"umc/modules/schoolwizards/ClassGrid",
 	"umc/modules/schoolwizards/ComputerGrid",
 	"umc/modules/schoolwizards/SchoolGrid",
 	"umc/i18n!umc/modules/schoolwizards"
-], function(declare, lang, Module, UserGrid, ClassGrid, ComputerGrid, SchoolGrid, _) {
+], function(declare, lang, all, tools, Module, UserGrid, ClassGrid, ComputerGrid, SchoolGrid, _) {
 	var grids = {
 		'schoolwizards/users': UserGrid,
 		'schoolwizards/classes': ClassGrid,
@@ -53,11 +55,19 @@ define([
 
 		buildRendering: function() {
 			this.inherited(arguments);
-			var schools = this.umcpCommand('schoolwizards/schools').then(lang.hitch(this, function(data) {
+			var schools = this.umcpCommand('schoolwizards/schools', {'all_option_if_appropriate' : true}).then(lang.hitch(this, function(data) {
 				this.schools = data.result;
+				if (this.schools.length > 1) {
+					this.schools.unshift({id: '/', label: _('All')});
+				}
 			}));
-			this.standbyDuring(schools);
-			schools.then(lang.hitch(this, function() {
+			var udmSearch = tools.ucr(['ucsschool/wizards/udmlink']).then(lang.hitch(this, lang.hitch(this, function(ucr) {
+				var variable = ucr['ucsschool/wizards/udmlink'];
+				this.udmLinkEnabled = variable === null || tools.isTrue(variable);
+			})));
+			var preparation = all([schools, udmSearch]);
+			this.standbyDuring(preparation);
+			preparation.then(lang.hitch(this, function() {
 				this._grid = this._getGrid();
 				this.addChild(this._grid);
 			}));
@@ -69,6 +79,7 @@ define([
 			return new Grid({
 				description: this.description,
 				schools: this.schools,
+			        udmLinkEnabled: this.udmLinkEnabled,
 				umcpCommand: lang.hitch(this, 'umcpCommand'),
 				moduleFlavor: this.moduleFlavor,
 				module: this

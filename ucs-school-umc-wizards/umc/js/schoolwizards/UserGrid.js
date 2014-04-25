@@ -90,7 +90,7 @@ define([
 			return [{
 				type: ComboBox,
 				name: 'school',
-				label: _('Schools'),
+				label: _('School'),
 				size: 'TwoThirds',
 				staticValues: this.schools,
 				autoHide: true
