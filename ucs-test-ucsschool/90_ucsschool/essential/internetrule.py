@@ -111,12 +111,13 @@ class InternetRule(object):
 
 	def put(
 			self,
-			new_name,
-			new_type,
-			new_domains,
-			new_wlan,
-			new_priority):
+			new_name=None,
+			new_type=None,
+			new_domains=None,
+			new_wlan=None,
+			new_priority=None):
 		"""Modify internet rule via UMCP\n
+		with no args passed this only reset the rule properties\n
 		:param new_name:
 		:type new_name: str
 		:param new_type:
@@ -128,6 +129,12 @@ class InternetRule(object):
 		:param new_priority:
 		:type new_priority: int [1,10]
 		"""
+		new_name = self.name if new_name is None else new_name
+		new_type = self.typ if new_type is None else new_type
+		new_domains = self.domains if new_domains is None else new_domains
+		new_wlan = self.wlan if new_wlan is None else new_wlan
+		new_priority = self.priority if new_priority is None else new_priority
+
 		param = [
 			{
 				'object':
