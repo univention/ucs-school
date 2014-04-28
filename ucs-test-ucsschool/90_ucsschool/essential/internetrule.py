@@ -1,5 +1,15 @@
 #!/usr/share/ucs-test/runner python
 
+"""""""""""""""""""""""""""""""""""""""
+  **Class InternetRule**\n
+  All the operations related to internet rules
+"""""""""""""""""""""""""""""""""""""""
+"""
+.. module:: internetrule
+	:platform: Unix
+
+.. moduleauthor:: Ammar Najjar <najjar@univention.de>
+"""
 from .randomdomain import RandomDomain
 from univention.lib.umc_connection import UMCConnection
 import random
@@ -7,15 +17,27 @@ import univention.testing.strings as uts
 import univention.testing.ucr as ucr_test
 import univention.testing.utils as utils
 
-"""""""""""""""""""""""""""""""""""""""
-  Class InternetRule
-  All the operations related to internet rules
-"""""""""""""""""""""""""""""""""""""""
-
 
 class InternetRule(object):
 
-	# Initialization (None is used to invoke the default values)
+	"""Contains the needed functuality for internet rules.
+	By default they are randomly formed\n
+	:param umcConnection:
+	:type umcConnection: UMC connection object
+	:param ucr:
+	:type ucr: UCR object
+	:param name: name of the internet rule to be created later
+	:type name: str
+	:param typ: type of the internet rule to be created later
+	:type typ: str='whitelist' or 'blacklist'
+	:param domains: list of the internet rule to be created later
+	:type domains: [str]
+	:param wlan: if the internet rule supports wlan
+	:type wlan: bool
+	:param priority: priority of the internet rule [1,10]
+	:type priority: [int]
+	"""
+
 	def __init__(
 			self,
 			umcConnection=None,
@@ -31,10 +53,10 @@ class InternetRule(object):
 			self.domains = domains
 		else:
 			dom = RandomDomain()
-			domains = dom.getDomainList(random.randint(1,10))
+			domains = dom.getDomainList(random.randint(1, 10))
 			self.domains = sorted(domains)
 		self.wlan = wlan if wlan else random.choice([True, False])
-		self.priority = priority if priority else random.randint(1,10)
+		self.priority = priority if priority else random.randint(1, 10)
 		self.ucr = ucr if ucr else ucr_test.UCSTestConfigRegistry()
 		if umcConnection:
 			self.umcConnection = umcConnection
@@ -52,6 +74,7 @@ class InternetRule(object):
 
 	# define the rule umcp
 	def define(self):
+		"""Define internet rule via UMCP"""
 		param = [
 			{
 				'object':
@@ -72,8 +95,10 @@ class InternetRule(object):
 		if not reqResult[0]['success']:
 			utils.fail('Unable to define rule (%r)' % (param))
 
-	# get the rule umcp
 	def get(self, expectedResult):
+		"""gets internet rule via UMCP\n
+		:param expectedResult: True if the rule is expected to be found
+		:type expectedResult: bool"""
 		print 'Calling %s for %s' % (
 			'internetrules/get',
 			self.name)
@@ -84,23 +109,34 @@ class InternetRule(object):
 				'Unexpected fetching result for internet rule (%r)' %
 				(self.name))
 
-	# try to modify the internet rule UMCP
 	def put(
 			self,
-			newName,
-			newtype,
-			newDomains,
-			newWlan,
-			newPriority):
+			new_name,
+			new_type,
+			new_domains,
+			new_wlan,
+			new_priority):
+		"""Modify internet rule via UMCP\n
+		:param new_name:
+		:type new_name: str
+		:param new_type:
+		:type new_type: str
+		:param new_domains:
+		:type new_domains: [str]
+		:param new_wlan:
+		:type new_wlan: bool
+		:param new_priority:
+		:type new_priority: int [1,10]
+		"""
 		param = [
 			{
 				'object':
 				{
-					'name': newName,
-					'type': newtype,
-					'domains': newDomains,
-					'wlan': newWlan,
-					'priority': newPriority
+					'name': new_name,
+					'type': new_type,
+					'domains': new_domains,
+					'wlan': new_wlan,
+					'priority': new_priority
 					},
 				'options': {'name': self.name}
 				}
@@ -113,14 +149,14 @@ class InternetRule(object):
 		if not reqResult[0]['success']:
 			utils.fail('Unable to modify rule (%r)' % (param))
 		else:
-			self.name = newName
-			self.type = newtype
-			self.domains = newDomains
-			self.wlan = newWlan
-			self.priority = newPriority
+			self.name = new_name
+			self.type = new_type
+			self.domains = new_domains
+			self.wlan = new_wlan
+			self.priority = new_priority
 
-	# try to remove rule UMCP
 	def remove(self):
+		"""removes internet rule via UMCP"""
 		print 'Calling %s for %s' % (
 			'internetrules/remove',
 			self.name)
@@ -134,6 +170,12 @@ class InternetRule(object):
 	# Fetch the values from ucr and check if it matches
 	# the correct values for the rule
 	def checkUcr(self, expectedResult):
+		"""check ucr for internet rule\n
+		Fetch the values from ucr and check if it matches
+		the correct values for the rule\n
+		:param expectedResult:
+		:type  expectedResult: bool
+		"""
 		print 'Checking UCR for %s' % self.name
 		self.ucr.load()
 		# extract related items from ucr
@@ -172,6 +214,16 @@ class InternetRule(object):
 			groupName,
 			groupType,
 			default=False):
+		"""Assign internet rule via UMCP\n
+		:param school: name of the ou
+		:type school: str
+		:param groupName: name of the group or class
+		:type groupName: str
+		:param groupType: 'workgroup' or 'class'
+		:type groupType: str
+		:param defalt: if the groups is assigned to default values
+		:type defalt: bool
+		"""
 		self.ucr.load()
 		basedn = self.ucr.get('ldap/base')
 		groupdn = ''
@@ -207,6 +259,11 @@ class InternetRule(object):
 
 	# define multi rules and return list of rules Objects
 	def defineList(self, count):
+		"""Define list of random internet rules\n
+		:param count: number of wanted rules
+		:type count: int
+		:returns: list of rule objects
+		"""
 		print 'Defining ruleList'
 		ruleList = []
 		for i in xrange(count):
@@ -217,6 +274,9 @@ class InternetRule(object):
 
 	# returns a list of all the existing internet rules via UMCP
 	def allRules(self):
+		"""Get all defined rules via UMCP\n
+		:returns: [str] list of rules names
+		"""
 		print 'Calling %s = get all defined rules' % ('internetrules/query')
 		ruleList = []
 		rules = self.umcConnection.request(

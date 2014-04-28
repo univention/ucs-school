@@ -1,17 +1,19 @@
 #!/usr/share/ucs-test/runner python
 
+"""
+.. module:: randomdomain
+	:platform: Unix
+
+.. moduleauthor:: Ammar Najjar <najjar@univention.de>
+"""
 import random
 import univention.testing.strings as uts
 
 
-"""""""""""""""""""""""""""""""""""""""
-  Class RandomDomain
-"""""""""""""""""""""""""""""""""""""""
-
-
 class RandomDomain(object):
 
-	# Initialization
+	"""Generates random internet domain names"""
+
 	def __init__(self):
 		DOMAIN_NAMES = [
 			"de", "com", "net", "org", "gov", "info", "me",
@@ -20,8 +22,12 @@ class RandomDomain(object):
 		self.tail = random.choice(DOMAIN_NAMES)
 		self.domain = '%s.%s' % (self.name, self.tail)
 
-	# multi domain getter as a list of domain names
 	def getDomainList(self, count):
+		"""Generate list of domains names\n
+		:param count: number of wanted domains
+		:type count: int
+		:returns: [str] domains list
+		"""
 		domainList = []
 		for i in xrange(count):
 			dom = self.__class__()

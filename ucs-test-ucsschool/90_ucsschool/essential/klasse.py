@@ -1,16 +1,32 @@
 #!/usr/share/ucs-test/runner python
 
+"""
+.. module:: Klasse
+	:platform: Unix
+
+.. moduleauthor:: Ammar Najjar <najjar@univention.de>
+"""
 import univention.testing.strings as uts
 import univention.testing.utils as utils
 from univention.lib.umc_connection import UMCConnection
 import univention.testing.ucr as ucr_test
 
-"""""""""""""""""""""""""""""""""""""""
-  Class Klasse
-"""""""""""""""""""""""""""""""""""""""
-
 
 class Klasse():
+
+	"""Contains the needed functuality for classes in an already created OU,
+	By default they are randomly formed except the OU, should be provided\n
+	:param school: name of the ou
+	:type school: str
+	:param umcConnection:
+	:type umcConnection: UMC connection object
+	:param ucr:
+	:type ucr: UCR object
+	:param name: name of the class to be created later
+	:type name: str
+	:param description: description of the class to be created later
+	:type description: str
+	"""
 
 	# Initialization (Random by default)
 	def __init__(self,
@@ -38,9 +54,9 @@ class Klasse():
 	def __exit__(self, type, value, trace_back):
 		self.ucr.revert_to_original_registry()
 
-	# create class
 	def create(self):
-		print 'Creating class %s in school %s' %(
+		"""Creates object class"""
+		print 'Creating class %s in school %s' % (
 			self.name,
 			self.school)
 		flavor = 'schoolwizards/classes'
@@ -58,6 +74,12 @@ class Klasse():
 
 	# create list of random classes returns list of class objects
 	def createList(self, count):
+		"""Create a list of classes inside the specific ou
+		with random names and description\n
+		:param count: number of wanted classes
+		:type count: int
+		:returns: [klasse_object]
+		"""
 		print 'Creating classesList'
 		cList = []
 		for i in xrange(count):

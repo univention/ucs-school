@@ -1,18 +1,30 @@
 #!/usr/share/ucs-test/runner python
 
+"""
+.. module:: check
+	:platform: Unix
+
+.. moduleauthor:: Ammar Najjar <najjar@univention.de>
+"""
 from univention.lib.umc_connection import UMCConnection
 import univention.testing.ucr as ucr_test
 import univention.testing.utils as utils
 
-"""""""""""""""""""""""""""""""""""""""
-  Class Check
-  resposible of all the checks operations on rules/groups
-"""""""""""""""""""""""""""""""""""""""
-
 
 class Check(object):
 
-	# Initialization
+	"""Contains the needed functuality for checks related to internet rules
+     within groups/classes.\n
+	:param school: name of the ou
+	:type school: str
+	:param groupRuleCouples: couples of groups and rules assigned to them
+	:type groupRuleCouples: tuple(str,str)
+	:param umcConnection:
+	:type umcConnection: UMC connection object
+	:param ucr:
+	:type ucr: UCR object
+	"""
+
 	def __init__(
 			self,
 			school,
@@ -36,8 +48,8 @@ class Check(object):
 	def __exit__(self, type, value, trace_back):
 		self.ucr.revert_to_original_registry()
 
-	# check if the assigned internet rules are correct UMCP
 	def checkRules(self):
+		"""Check if the assigned internet rules are correct UMCP"""
 		for groupName, ruleName in self.groupRuleCouples:
 			print 'Checking %s rules' % (groupName)
 			param = {
@@ -45,18 +57,17 @@ class Check(object):
 				'pattern': groupName
 				}
 			if ruleName is None:
-				ruleName_eng = '-- default settings --'
-				ruleName_deu = '-- Voreinstellungen --'
+				ruleName = '-- default settings --' + '-- Voreinstellungen --'
 			result = self.umcConnection.request(
 				'internetrules/groups/query',
 				param)[0]['rule']
-			if result != ruleName_eng and result != ruleName_deu:
+			if not result in ruleName:
 				utils.fail(
 					'Assigned rule (%r) to workgroup (%r) doesn\'t match' %
 					(ruleName, groupName))
 
-	# check ucr variables for groups/ classes internet rules
 	def checkUcr(self):
+		"""Check ucr variables for groups/ classes internet rules"""
 		self.ucr.load()
 		for groupName, ruleName in self.groupRuleCouples:
 			print 'Checking %s UCR variables' % (groupName)
