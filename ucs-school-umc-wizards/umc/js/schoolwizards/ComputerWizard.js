@@ -43,57 +43,21 @@ define([
 
 	return declare("umc.modules.schoolwizards.ComputerWizard", [Wizard], {
 
-		postMixInProperties: function() {
-			this.inherited(arguments);
-			this.pages = this.getPages();
-		},
-
-		startup: function() {
-			this.inherited(arguments);
-			if (this.editMode) {
-				this.loadingDeferred.always(lang.hitch(this, function() {
-					// hack to go to the next page
-					this._next(this.next(null));
-				}));
-			}
-		},
-
-		hasPrevious: function() {
-			if (this.editMode) {
-				// make it impossible to show the general page
-				return false;
-			}
-			return this.inherited(arguments);
-		},
-
-		getPages: function() {
-			var general = this.getGeneralPage();
-			var computer = this.getComputerPage();
-			return [general, computer];
-		},
-
 		getGeneralPage: function() {
-			return {
-				name: 'general',
-				headerText: this.description,
-				helpText: _('Specify the computer type.'),
-				widgets: [{
-					name: 'school',
-					type: HiddenInput,
-					value: this.school
-				}, {
-					type: ComboBox,
-					name: 'type',
-					label: _('Type'),
-					dynamicValues: 'schoolwizards/computers/types',
-					umcpCommand: lang.hitch(this, 'umcpCommand'),
-					sortDynamicValues: false
-				}],
-				layout: [['school'], ['type']]
-			};
+			var page = this.inherited(arguments);
+			page.widgets.push({
+				type: ComboBox,
+				name: 'type',
+				label: _('Type'),
+				dynamicValues: 'schoolwizards/computers/types',
+				umcpCommand: lang.hitch(this, 'umcpCommand'),
+				sortDynamicValues: false
+			});
+			page.layout.push('type');
+			return page;
 		},
 
-		getComputerPage: function() {
+		getItemPage: function() {
 			return {
 				name: 'item',
 				headerText: this.description,
@@ -152,3 +116,4 @@ define([
 		}
 	});
 });
+

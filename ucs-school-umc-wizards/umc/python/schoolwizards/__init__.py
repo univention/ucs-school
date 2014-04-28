@@ -161,19 +161,15 @@ class Instance(SchoolBaseModule, SchoolImport):
 		return {'success': return_code == 0, 'message': stdout}
 
 	def _computer_types(self):
-		computer_types = [
-			('windows', _('Windows system')),
-			('macos', _('Mac OS X')),
-			('ipmanagedclient', _('Device with IP address')),
-		]
+		computer_types = [WindowsComputer, MacComputer, IPComputer]
 		try:
 			import univention.admin.handlers.computers.ucc as ucc
 			ucc_available = bool(ucc)
 		except ImportError:
 			ucc_available = False
 		if ucc_available:
-			computer_types.insert(1, ('ucc', _('Univention Corporate Client')))
-		return computer_types
+			computer_types.insert(1, UCCComputer)
+		return [(computer_type._meta.udm_module_short, computer_type.type_name) for computer_type in computer_types]
 
 	@simple_response
 	def computer_types(self):

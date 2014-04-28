@@ -33,12 +33,15 @@ define([
 	"dojo/_base/declare",
 	"dojo/_base/lang",
 	"dojo/_base/array",
+	"dojo/when",
+	"dojo/promise/all",
 	"umc/dialog",
 	"umc/app",
 	"umc/tools",
 	"umc/widgets/Wizard",
+	"umc/widgets/ComboBox",
 	"umc/i18n!umc/modules/schoolwizards"
-], function(declare, lang, array, dialog, app, tools, Wizard, _) {
+], function(declare, lang, array, when, all, dialog, app, tools, Wizard, ComboBox, _) {
 
 	return declare("umc.modules.schoolwizards.Wizard", [Wizard], {
 
@@ -50,36 +53,67 @@ define([
 		$dn$: null,  // the object we edit
 		school: null,  // the school of that object
 		objectType: null, // the UDM type of that object
-		objectTypeReadable: null, // 'users/user' => _('User')
-
-		loadingDeferred: null,
 
 		editModeDescriptionWithoutSchool: _('Edit {itemType} {itemName}'),
 		createModeDescriptionWithoutSchool: _('Create a new {itemType}'),
 		editModeDescription: _('{itemSchool}: edit {itemType} {itemName}'),
 		createModeDescription: _('{itemSchool}: create a new {itemType}'),
 
-		startup: function() {
+		postMixInProperties: function() {
 			this.inherited(arguments);
-			if (this.editMode) {
-				this.loadingDeferred = this.standbyDuring(this.loadValues());
+			this.pages = [];
+			var generalPage = this.getGeneralPage();
+			if (generalPage) {
+				this.pages.push(generalPage);
 			}
+			this.pages.push(this.getItemPage());
 		},
 
-		buildRendering: function() {
+		startup: function() {
 			this.inherited(arguments);
-			this.itemSchool = this.school;
-			var typeWidget = this.getWidget('general', 'type');
-			if (typeWidget) {
-				typeWidget.watch('value', lang.hitch(this, 'setHeader', typeWidget));
+			var loading = [this.loadValues()];
+			tools.forIn(this._pages, function(name, page) {
+				if (page._form) {
+					loading.push(page._form.ready());
+				}
+			});
+			loading = all(loading);
+			this.standbyDuring(loading);
+			when(loading).always(lang.hitch(this, function(values) {
+				var name = values && values[0] && values[0].name;
+				var _setHandlerAndValue = lang.hitch(this, function(widget, value) {
+					if (widget) {
+						if (!value && widget.getAllItems) {
+							var firstItem = widget.getAllItems()[0];
+							value = firstItem && firstItem.id;
+						}
+						if (value) {
+							widget.set('value', value);
+							this.setHeader(widget, null, null, value);
+						}
+						widget.watch('value', lang.hitch(this, 'setHeader', widget));
+					}
+				});
+				var typeWidget = this.getWidget('general', 'type');
+				var schoolWidget = this.getWidget('general', 'school');
+				var nameWidget = this.getWidget('item', 'name');
+				_setHandlerAndValue(typeWidget, this.type);
+				_setHandlerAndValue(schoolWidget, this.school);
+				_setHandlerAndValue(nameWidget, name);
+				this.setHeader();
+				if (this.school && (!typeWidget || this.type)) {
+					// hack to go to the next page (itemPage)
+					this._next(this.next(null));
+				}
+			}));
+		},
+
+		hasPrevious: function() {
+			if (this.editMode) {
+				// make it impossible to show the general page
+				return false;
 			}
-			var schoolWidget = this.getWidget('general', 'school');
-			if (schoolWidget) {
-				schoolWidget.watch('value', 'setHeader', schoolWidget);
-			}
-			var nameWidget = this.getWidget('item', 'name');
-			nameWidget.watch('value', lang.hitch(this, 'setHeader', nameWidget));
-			this.setHeader();
+			return this.inherited(arguments);
 		},
 
 		setHeader: function(widget, attr, oldVal, newVal) {
@@ -114,21 +148,21 @@ define([
 			});
 		},
 
-		//onObjectTypeReadableChanged: function(objectTypeReadable) {
-		//},
-
-		//onSchoolChanged: function(school) {
-		//},
-
-		//_setSchoolAttr: function(school) {
-		//	this._set('school', school);
-		//	this.onSchoolChanged(school);
-		//},
-
-		//_setObjectTypeReadableAttr: function(objectTypeReadable) {
-		//	this._set('objectTypeReadable', objectTypeReadable);
-		//	this.onObjectTypeReadableChanged(objectTypeReadable);
-		//},
+		getGeneralPage: function() {
+			return {
+				name: 'general',
+				headerText: this.description,
+				widgets: [{
+					name: 'school',
+					label: _('School'),
+					type: ComboBox,
+					staticValues: this.schools,
+					value: this.school,
+					autoHide: true
+				}],
+				layout: ['school']
+			};
+		},
 
 		getLinkToUDM: function() {
 			var udm_link = '';
@@ -143,6 +177,9 @@ define([
 		},
 
 		loadValues: function() {
+			if (!this.$dn$) {
+				return null;
+			}
 			var load = this.store.get({
 				object: {
 					$dn$: this.$dn$,
@@ -235,7 +272,7 @@ define([
 					return false;
 				}
 				return true;
-			}), lang.hitch(this, function(result) { return false; }));
+			}), lang.hitch(this, function() { return false; }));
 		},
 
 		restart: function() {

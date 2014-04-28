@@ -41,20 +41,11 @@ define([
 
 	return declare("umc.modules.schoolwizards.ClassWizard", [Wizard], {
 
-		postMixInProperties: function() {
-			this.inherited(arguments);
-			this.pages = [this.getClassPage()];
-		},
-
-		getClassPage: function() {
+		getItemPage: function() {
 			return {
 				name: 'item',
 				helpText: this.editMode ? _('Enter details of the class.') : _('Enter details to create a new class.'),
 				widgets: [{
-					name: 'school',
-					type: HiddenInput,
-					value: this.school
-				}, {
 					type: TextBox,
 					name: 'name',
 					label: _('Name'),
@@ -86,3 +77,4 @@ define([
 		}
 	});
 });
+

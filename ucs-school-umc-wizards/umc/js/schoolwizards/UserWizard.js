@@ -46,64 +46,31 @@ define([
 
 	return declare("umc.modules.schoolwizards.UserWizard", [Wizard], {
 
-		postMixInProperties: function() {
-			this.inherited(arguments);
-			this.pages = [this.getGeneralPage(), this.getUserPage()];
-		},
-
-		startup: function() {
-			this.inherited(arguments);
-			if (this.editMode) {
-				this.loadingDeferred.always(lang.hitch(this, function(values) {
-					var type = values.type;
-					this.getWidget('general', 'type').set('value', type);
-					// hack to go to the next page
-					this._next(this.next(null));
-				}));
-			}
-		},
-
-		hasPrevious: function() {
-			if (this.editMode) {
-				// make it impossible to show the general page
-				return false;
-			}
-			return this.inherited(arguments);
-		},
-
 		getGeneralPage: function() {
-			return {
-				name: 'general',
-				headerText: this.description,
-				helpText: this.editMode ? _('Specify the role of user.') : _('Specify the role of user to be created.'),
-				widgets: [{
-					name: 'school',
-					label: _('School'),
-					type: HiddenInput,
-					value: this.school
+			var page = this.inherited(arguments);
+			page.widgets.push({
+				type: ComboBox,
+				name: 'type',
+				label: _('Type'),
+				staticValues: [{
+					id: 'student',
+					label: _('Student')
 				}, {
-					type: ComboBox,
-					name: 'type',
-					label: _('Type'),
-					staticValues: [{
-						id: 'student',
-						label: _('Student')
-					}, {
-						id: 'teacher',
-						label: _('Teacher')
-					}, {
-						id: 'staff',
-						label: _('Staff')
-					}, {
-						id: 'teachersAndStaff',
-						label: _('Teachers and staff')
-					}]
-				}],
-				layout: [['school'], ['type']]
-			};
+					id: 'teacher',
+					label: _('Teacher')
+				}, {
+					id: 'staff',
+					label: _('Staff')
+				}, {
+					id: 'teachersAndStaff',
+					label: _('Teachers and staff')
+				}]
+			});
+			page.layout.push('type');
+			return page;
 		},
 
-		getUserPage: function() {
+		getItemPage: function() {
 			return {
 				name: 'item',
 				headerText: this.description,
@@ -228,3 +195,4 @@ define([
 		}
 	});
 });
+

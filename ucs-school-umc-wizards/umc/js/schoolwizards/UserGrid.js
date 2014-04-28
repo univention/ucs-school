@@ -59,7 +59,7 @@ define([
 				}),
 				description: _('Name of the %s.', this.objectNameSingular)
 			}, {
-				name: 'role_name',
+				name: 'type_name',
 				label: _('Role'),
 				description: _('Role of the %s.', this.objectNameSingular)
 			}, {
@@ -87,12 +87,16 @@ define([
 		},
 
 		getSearchWidgets: function() {
+			var schools = lang.clone(this.schools);
+			if (schools.length > 1) {
+				schools.unshift({id: '/', label: _('All')});
+			}
 			return [{
 				type: ComboBox,
 				name: 'school',
 				label: _('School'),
 				size: 'TwoThirds',
-				staticValues: this.schools,
+				staticValues: schools,
 				autoHide: true
 			}, {
 				type: ComboBox,

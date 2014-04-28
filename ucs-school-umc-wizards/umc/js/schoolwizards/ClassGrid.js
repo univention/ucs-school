@@ -64,12 +64,16 @@ define([
 		},
 
 		getSearchWidgets: function() {
+			var schools = lang.clone(this.schools);
+			if (schools.length > 1) {
+				schools.unshift({id: '/', label: _('All')});
+			}
 			return [{
 				type: ComboBox,
 				size: 'TwoThirds',
 				name: 'school',
 				label: _('School'),
-				staticValues: this.schools,
+				staticValues: schools,
 				autoHide: true
 			}, {
 				type: TextBox,

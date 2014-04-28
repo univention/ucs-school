@@ -50,6 +50,7 @@ define([
 
 	return declare("umc.modules.schoolwizards.Grid", [Page, StandbyMixin], {
 
+		autoSearch: true,
 		udmLinkEnabled: null,
 		module: null,
 		umcpCommand: null,
@@ -75,10 +76,21 @@ define([
 		},
 
 		getSelectedSchool: function() {
-			var school = this._searchForm.getWidget('school');
-			if (school) {
-				var val = school.get('value');
+			var widget = this._searchForm.getWidget('school');
+			if (widget) {
+				var val = widget.get('value');
 				if (val == '/') {
+					val = '';
+				}
+				return val;
+			}
+		},
+
+		getSelectedType: function() {
+			var widget = this._searchForm.getWidget('type');
+			if (widget) {
+				var val = widget.get('value');
+				if (val == 'all') {
 					val = '';
 				}
 				return val;
@@ -203,13 +215,17 @@ define([
 			var buttons = this.getSearchButtons();
 			var layout = this.getSearchLayout();
 
-			return new SearchForm({
+			var form = new SearchForm({
 				region: 'top',
 				widgets: widgets,
 				layout: layout,
 				buttons: buttons,
 				onSearch: lang.hitch(this, 'filter')
 			});
+			if (this.autoSearch) {
+				form.ready().then(lang.hitch(this, 'filter', {type: 'all'}));
+			}
+			return form;
 		},
 
 		getSearchButtons: function() {
@@ -241,6 +257,7 @@ define([
 				editMode: false,
 				$dn$: null,
 				school: this.getSelectedSchool(),
+				type: this.getSelectedType(),
 				itemType: tools.capitalize(this.objectNameSingular),
 				objectType: null
 			});
@@ -252,6 +269,7 @@ define([
 				editMode: true,
 				$dn$: item.$dn$,
 				school: item.school,
+				type: item.type,
 				itemType: tools.capitalize(this.objectNameSingular),
 				objectType: item.objectType
 			});
@@ -261,6 +279,7 @@ define([
 			var wizard = new this.createObjectWizard(lang.mixin({
 				udmLinkEnabled: this.udmLinkEnabled,
 				store: this._grid.moduleStore,
+				schools: this.schools,
 				umcpCommand: lang.hitch(this, 'umcpCommand')
 			}, props));
 			this.module.addChild(wizard);

@@ -40,17 +40,15 @@ define([
 
 	return declare("umc.modules.schoolwizards.SchoolWizard", [Wizard], {
 
-		postMixInProperties: function() {
-			this.inherited(arguments);
-			this.pages = [this.getSchoolPage()];
-			this.standbyOpacity = 1;
+		getGeneralPage: function() {
+			// no need for "school" and "type" widgets
+			return null;
 		},
 
-		getSchoolPage: function() {
+		getItemPage: function() {
 			return {
 				name: 'item',
 				headerText: this.description,
-//				helpText: this.editMode ? _('Enter school details') : _('Enter details to create all necessary structures for a new school.'),
 				widgets: [{
 					type: TextBox,
 					name: 'display_name',
@@ -138,3 +136,4 @@ define([
 		}
 	});
 });
+

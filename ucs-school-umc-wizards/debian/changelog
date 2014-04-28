@@ -1,3 +1,9 @@
+ucs-school-umc-wizards (4.0.9-1) unstable; urgency=low
+
+  * Bug #34447: Autosearch, wizard header improvements, code unification
+
+ -- Dirk Wiesenthal <wiesenthal@univention.de>  Tue, 29 Apr 2014 00:52:29 +0200
+
 ucs-school-umc-wizards (4.0.8-1) unstable; urgency=low
 
   * Bug #34447: Make UDM link configurable, set wizard title to a meaningful

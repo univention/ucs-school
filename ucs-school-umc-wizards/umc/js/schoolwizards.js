@@ -57,15 +57,13 @@ define([
 			this.inherited(arguments);
 			var schools = this.umcpCommand('schoolwizards/schools', {'all_option_if_appropriate' : true}).then(lang.hitch(this, function(data) {
 				this.schools = data.result;
-				if (this.schools.length > 1) {
-					this.schools.unshift({id: '/', label: _('All')});
-				}
 			}));
-			var udmSearch = tools.ucr(['ucsschool/wizards/udmlink']).then(lang.hitch(this, lang.hitch(this, function(ucr) {
+			var ucrVariables = tools.ucr(['ucsschool/wizards/udmlink', 'ucsschool/wizards/autosearch', 'ucsschool/wizards/' + this.moduleFlavor + '/autosearch']).then(lang.hitch(this, lang.hitch(this, function(ucr) {
 				var variable = ucr['ucsschool/wizards/udmlink'];
+				this.autoSearch = tools.isTrue(ucr['ucsschool/wizards/' + this.moduleFlavor + '/autosearch'] || ucr['ucsschool/wizards/autosearch'] || true);
 				this.udmLinkEnabled = variable === null || tools.isTrue(variable);
 			})));
-			var preparation = all([schools, udmSearch]);
+			var preparation = all([schools, ucrVariables]);
 			this.standbyDuring(preparation);
 			preparation.then(lang.hitch(this, function() {
 				this._grid = this._getGrid();
@@ -80,6 +78,7 @@ define([
 				description: this.description,
 				schools: this.schools,
 			        udmLinkEnabled: this.udmLinkEnabled,
+				autoSearch: this.autoSearch,
 				umcpCommand: lang.hitch(this, 'umcpCommand'),
 				moduleFlavor: this.moduleFlavor,
 				module: this
