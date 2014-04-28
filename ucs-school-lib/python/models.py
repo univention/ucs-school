@@ -376,13 +376,14 @@ class UCSSchoolHelperAbstractClass(object):
 			if self.exists(lo):
 				udm_obj = self.get_udm_object(lo)
 				original_self = self.from_udm_obj(udm_obj, self.school, lo)
-				for name, attr in self._attributes.iteritems():
-					if attr.unlikely_to_change:
-						new_value = getattr(self, name)
-						old_value = getattr(original_self, name)
-						if new_value and old_value:
-							if new_value != old_value:
-								self.add_warning(name, _('The value changed from %(old)s. This seems unlikely.') % {'old' : old_value})
+				if original_self:
+					for name, attr in self._attributes.iteritems():
+						if attr.unlikely_to_change:
+							new_value = getattr(self, name)
+							old_value = getattr(original_self, name)
+							if new_value and old_value:
+								if new_value != old_value:
+									self.add_warning(name, _('The value changed from %(old)s. This seems unlikely.') % {'old' : old_value})
 
 	def add_warning(self, attribute, warning_message):
 		warnings = self.warnings.setdefault(attribute, [])
@@ -561,14 +562,20 @@ class UCSSchoolHelperAbstractClass(object):
 		udm_objs = udm_modules.lookup(cls._meta.udm_module, None, lo, filter=cls._meta.udm_filter, base=cls.get_container(school), scope='sub')
 		for udm_obj in udm_objs:
 			udm_obj.open()
-			ret.append(cls.from_udm_obj(udm_obj, school, lo))
+			obj = cls.from_udm_obj(udm_obj, school, lo)
+			if obj:
+				ret.append(obj)
 		return ret
 
 	@classmethod
 	def from_udm_obj(cls, udm_obj, school, lo):
 		cls.init_udm_module(lo)
 		klass = cls.get_class_for_udm_obj(udm_obj, school)
+		if klass is None:
+			MODULE.warn('UDM object %s does not correspond to a class in UCS school lib!' % udm_obj.dn)
+			return None
 		if klass is not cls:
+			MODULE.process('UDM object %s is not %s, but actually %s' % (udm_obj.dn, cls.__name__, klass.__name__))
 			return klass.from_udm_obj(udm_obj, school, lo)
 		attrs = {'school' : school}
 		for name, attr in cls._attributes.iteritems():
@@ -599,8 +606,9 @@ class UCSSchoolHelperAbstractClass(object):
 			raise noObject('Wrong objectClass')
 		udm_obj.open()
 		obj = cls.from_udm_obj(udm_obj, school, lo)
-		obj.custom_dn = dn
-		return obj
+		if obj:
+			obj.custom_dn = dn
+			return obj
 
 	@classmethod
 	def get_first_udm_obj(cls, lo, filter_str):
@@ -643,7 +651,7 @@ class User(UCSSchoolHelperAbstractClass):
 	email = Email(_('Email'), aka=['Email'], unlikely_to_change=True)
 	password = Password(_('Password'), aka=['Password'])
 
-	role_name = None
+	type_name = None
 
 	@classmethod
 	def is_student(cls, school, dn):
@@ -672,8 +680,9 @@ class User(UCSSchoolHelperAbstractClass):
 	@classmethod
 	def from_udm_obj(cls, udm_obj, school, lo):
 		obj = super(User, cls).from_udm_obj(udm_obj, school, lo)
-		obj.password = None
-		return obj
+		if obj:
+			obj.password = None
+			return obj
 
 	def do_create(self, udm_obj, lo):
 		self.create_mail_domain(lo)
@@ -806,7 +815,7 @@ class User(UCSSchoolHelperAbstractClass):
 		if self.lastname:
 			display_name.append(self.lastname)
 		ret['display_name'] = ' '.join(display_name)
-		ret['role_name'] = self.role_name
+		ret['type_name'] = self.type_name
 		ret['type'] = self.__class__.__name__
 		ret['type'] = ret['type'][0].lower() + ret['type'][1:]
 		return ret
@@ -823,19 +832,20 @@ class User(UCSSchoolHelperAbstractClass):
 class Student(User):
 	school_class = SchoolClassStringAttribute(_('Class'), aka=['Class'])
 
-	role_name = _('Student')
+	type_name = _('Student')
 
 	@classmethod
 	def from_udm_obj(cls, udm_obj, school, lo):
 		obj = super(Student, cls).from_udm_obj(udm_obj, school, lo)
-		school_class = None
-		for group in udm_obj['groups']:
-			if Group.is_school_class(school, group):
-				school_class_name = cls.get_name_from_dn(group)
-				school_class = school_class_name.split('-')[-1]
-				break
-		obj.school_class = school_class
-		return obj
+		if obj:
+			school_class = None
+			for group in udm_obj['groups']:
+				if Group.is_school_class(school, group):
+					school_class_name = cls.get_name_from_dn(group)
+					school_class = school_class_name.split('-')[-1]
+					break
+			obj.school_class = school_class
+			return obj
 
 	@classmethod
 	def get_container(cls, school):
@@ -851,21 +861,22 @@ class Student(User):
 class Teacher(User):
 	school_class = SchoolClassStringAttribute(_('Class'), aka=['Class'])
 
-	role_name = _('Teacher')
+	type_name = _('Teacher')
 
 	@classmethod
 	def from_udm_obj(cls, udm_obj, school, lo):
 		obj = super(Teacher, cls).from_udm_obj(udm_obj, school, lo)
-		school_class = None
-		school_classes = []
-		for group in udm_obj['groups']:
-			if Group.is_school_class(school, group):
-				school_class_name = cls.get_name_from_dn(group)
-				school_class = school_class_name.split('-')[-1]
-				school_classes.append(school_class)
-			school_class = ','.join(school_classes)
-		obj.school_class = school_class
-		return obj
+		if obj:
+			school_class = None
+			school_classes = []
+			for group in udm_obj['groups']:
+				if Group.is_school_class(school, group):
+					school_class_name = cls.get_name_from_dn(group)
+					school_class = school_class_name.split('-')[-1]
+					school_classes.append(school_class)
+				school_class = ','.join(school_classes)
+			obj.school_class = school_class
+			return obj
 
 	@classmethod
 	def get_container(cls, school):
@@ -880,7 +891,7 @@ class Teacher(User):
 		return groups
 
 class Staff(User):
-	role_name = _('Staff')
+	type_name = _('Staff')
 
 	@classmethod
 	def get_container(cls, school):
@@ -892,7 +903,7 @@ class Staff(User):
 		return groups
 
 class TeachersAndStaff(Teacher):
-	role_name = _('Teacher and Staff')
+	type_name = _('Teacher and Staff')
 
 	@classmethod
 	def get_container(cls, school):
@@ -1745,20 +1756,22 @@ class SchoolComputer(UCSSchoolHelperAbstractClass):
 			return MacComputer
 		if 'univentionCorporateClient' in object_classes:
 			return UCCComputer
-		else:
+		if 'univentionClient' in object_classes:
 			return IPComputer
 
 	@classmethod
 	def from_udm_obj(cls, udm_obj, school, lo):
 		obj = super(SchoolComputer, cls).from_udm_obj(udm_obj, school, lo)
-		obj.ip_address = udm_obj['ip']
-		obj.subnet_mask = '255.255.255.0' # FIXME
-		obj.inventory_number = udm_obj['inventoryNumber']
-		return obj
+		if obj:
+			obj.ip_address = udm_obj['ip']
+			obj.subnet_mask = '255.255.255.0' # FIXME
+			obj.inventory_number = udm_obj['inventoryNumber']
+			return obj
 
 	def to_dict(self):
 		ret = super(SchoolComputer, self).to_dict()
 		ret['type_name'] = self.type_name
+		ret['type'] = self._meta.udm_module_short
 		return ret
 
 	class Meta:

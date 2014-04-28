@@ -1,3 +1,10 @@
+ucs-school-lib (5.0.11-1) unstable; urgency=low
+
+  * Bug #34447: Better computer support: Detection of IPManagedClient,
+    skipping unknown types
+
+ -- Dirk Wiesenthal <wiesenthal@univention.de>  Tue, 29 Apr 2014 00:50:16 +0200
+
 ucs-school-lib (5.0.10-1) unstable; urgency=low
 
   * Bug #34447: Save IP address for computers
