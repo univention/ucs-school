@@ -1,3 +1,9 @@
+ucs-school-umc-csv-import (1.0.13-1) unstable; urgency=low
+
+  * Bug #34199: fixed typo in msg string
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Tue, 29 Apr 2014 09:59:53 +0200
+
 ucs-school-umc-csv-import (1.0.12-1) unstable; urgency=low
 
   * Bug #34199: Fix typo (2)

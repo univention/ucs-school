@@ -69,7 +69,7 @@ define([
 			this.pages = [{
 				name: 'general',
 				headerText: this.description,
-				helpText: _('This assistant guides through the individual steps for importing UCS@school users with a CSV file. At first, the user role for the users from the CSV file nneds to be specified.'),
+				helpText: _('This assistant guides through the individual steps for importing UCS@school users with a CSV file. At first, the user role for the users from the CSV file needs to be specified.'),
 				widgets: [{
 					type: ComboBox,
 					name: 'school',
