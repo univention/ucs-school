@@ -48,8 +48,10 @@ from univention.admin.syntax import gid, string_numbers_letters_dots_spaces, uid
 from univention.config_registry import ConfigRegistry, handler_set
 import univention.admin.modules as udm_modules
 import univention.admin.objects as udm_objects
+from univention.admin.filter import conjunction, expression
 
 from univention.management.console.log import MODULE
+from univention.management.console.modules.sanitizers import LDAPSearchSanitizer
 from univention.lib.i18n import Translation
 
 from ucsschool.lib.schoolldap import SchoolSearchBase
@@ -556,16 +558,38 @@ class UCSSchoolHelperAbstractClass(object):
 		cls._initialized_udm_modules.append(cls._meta.udm_module)
 
 	@classmethod
-	def get_all(cls, school, lo):
+	def get_all(cls, lo, school, filter_str=None):
 		cls.init_udm_module(lo)
 		ret = []
-		udm_objs = udm_modules.lookup(cls._meta.udm_module, None, lo, filter=cls._meta.udm_filter, base=cls.get_container(school), scope='sub')
+		complete_filter = cls._meta.udm_filter
+		filter_from_filter_str = cls.build_filter(filter_str)
+		if filter_from_filter_str:
+			if complete_filter:
+				complete_filter = conjunction('&', [complete_filter, filter_from_filter_str])
+			else:
+				complete_filter = filter_from_filter_str
+		complete_filter = str(complete_filter)
+		MODULE.process('Getting all %s with filter %r' % (cls.__name__, complete_filter))
+		udm_objs = udm_modules.lookup(cls._meta.udm_module, None, lo, filter=complete_filter, base=cls.get_container(school), scope='sub')
 		for udm_obj in udm_objs:
 			udm_obj.open()
 			obj = cls.from_udm_obj(udm_obj, school, lo)
 			if obj:
 				ret.append(obj)
 		return ret
+
+	@classmethod
+	def build_filter(cls, filter_str):
+		if filter_str:
+			sanitizer = LDAPSearchSanitizer()
+			filter_str = sanitizer.sanitize('filter_str', {'filter_str' : filter_str})
+			expressions = []
+			module = udm_modules.get(cls._meta.udm_module)
+			for key, prop in module.property_descriptions.iteritems():
+				if prop.include_in_default_search:
+					expressions.append(expression(key, filter_str))
+			if expressions:
+				return conjunction('|', expressions)
 
 	@classmethod
 	def from_udm_obj(cls, udm_obj, school, lo):
@@ -1442,13 +1466,13 @@ class School(UCSSchoolHelperAbstractClass):
 			return School.get_all(lo)
 
 	@classmethod
-	def get_all(cls, lo, respect_local_oulist=True):
+	def get_all(cls, lo, filter_str=None, respect_local_oulist=True):
 		oulist = ucr.get('ucsschool/local/oulist')
 		if oulist and respect_local_oulist:
 			MODULE.info('All Schools: Schools overridden by UCR variable ucsschool/local/oulist')
 			return cls.get_from_oulist(cls, lo, oulist)
 		else:
-			return super(School, cls).get_all(None, lo)
+			return super(School, cls).get_all(lo, school=None, filter_str=filter_str)
 
 	def __str__(self):
 		return self.name

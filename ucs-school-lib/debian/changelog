@@ -1,3 +1,10 @@
+ucs-school-lib (5.0.12-1) unstable; urgency=low
+
+  * Bug #34447: Support filter argument when searching all items
+  * Bug #34335: New lib version
+
+ -- Dirk Wiesenthal <wiesenthal@univention.de>  Wed, 30 Apr 2014 00:55:18 +0200
+
 ucs-school-lib (5.0.11-1) unstable; urgency=low
 
   * Bug #34447: Better computer support: Detection of IPManagedClient,
