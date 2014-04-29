@@ -1,0 +1,5 @@
+ucs-school-s4-branch-site (1.0.0-1) unstable; urgency=medium
+
+  * Initial package (Bug #32187)
+
+ -- Arvid Requate <requate@univention.de>  Tue, 29 Apr 2014 18:59:24 +0200
