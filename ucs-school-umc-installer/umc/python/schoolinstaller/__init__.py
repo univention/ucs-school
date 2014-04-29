@@ -151,7 +151,7 @@ def get_master_dns_lookup():
 		result = dns.resolver.query(query, 'SRV')
 		if result:
 			return result[0].target.canonicalize().split(1)[0].to_text()
-	except dns.resolver.NXDOMAIN as err:
+	except dns.resolver.NXDOMAIN:
 		MODULE.error('Error to perform a DNS query for service record: %s' % query)
 	return ''
 
@@ -221,8 +221,17 @@ def get_user_dn(username, password, master):
 
 def create_ou_local(ou, displayName):
 	'''Calls create_ou locally as user root (only on master).'''
+	if not displayName:
+		MODULE.warn('create_ou_local(): display name is undefined - using OU name as display name')
+		displayName = ou
+
+	if type(ou) != str or type(displayName) != str:
+		MODULE.error('create_ou_local(): invalid argument given - create_ou failed (ou=%r displayName=%r)' % (ou, displayName))
+		return False
+
 	# call create_ou
 	cmd = ['/usr/share/ucs-school-import/scripts/create_ou', '--displayName', displayName, ou]
+	MODULE.info('Executing: %s' % ' '.join(cmd))
 	process = subprocess.Popen(cmd, shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 	stdout, stderr = process.communicate()
 
@@ -237,7 +246,7 @@ def create_ou_remote(master, username, password, ou, displayname, slave):
 	"""Create a school OU via the UMC interface."""
 	try:
 		umc(username, password, master, ['schoolwizards/schools/create', '-o' ,'name=%s' % ou, '-o', 'displayname=%s' % displayname, '-o', 'schooldc=%s' % slave, '-f', 'schoolwizards/schools'])
-	except RuntimeError as err:
+	except RuntimeError:
 		return False
 	return True
 
@@ -487,8 +496,8 @@ class Instance(Base):
 		password = request.options.get('password')
 		master = request.options.get('master')
 		samba = request.options.get('samba')
-		OUdisplayname = request.options.get('OUdisplayname')
 		schoolOU = request.options.get('schoolOU')
+		OUdisplayname = request.options.get('OUdisplayname', schoolOU)  # use school OU name as fallback
 		setup = request.options.get('setup')
 		serverRole = ucr.get('server/role')
 		joined = os.path.exists('/var/univention-join/joined')
