@@ -86,17 +86,12 @@ define([
 					type: TextBox,
 					name: 'inventory_number',
 					label: _('Inventory number')
-				}, {
-					type: Text,
-					name: 'udm-link',
-					content: this.getLinkToUDM()
 				}],
 				layout: [
 					['name'],
 					['ip_address', 'subnet_mask'],
 					['mac_address'],
-					['inventory_number'],
-					['udm-link']
+					['inventory_number']
 				]
 			};
 		},

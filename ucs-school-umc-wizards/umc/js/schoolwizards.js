@@ -59,9 +59,9 @@ define([
 				this.schools = data.result;
 			}));
 			var ucrVariables = tools.ucr(['ucsschool/wizards/udmlink', 'ucsschool/wizards/autosearch', 'ucsschool/wizards/' + this.moduleFlavor + '/autosearch']).then(lang.hitch(this, lang.hitch(this, function(ucr) {
-				var variable = ucr['ucsschool/wizards/udmlink'];
 				this.autoSearch = tools.isTrue(ucr['ucsschool/wizards/' + this.moduleFlavor + '/autosearch'] || ucr['ucsschool/wizards/autosearch'] || true);
-				this.udmLinkEnabled = variable === null || tools.isTrue(variable);
+				var udmLink = ucr['ucsschool/wizards/udmlink'];
+				this.udmLinkEnabled = udmLink === null || tools.isTrue(udmLink);
 			})));
 			var preparation = all([schools, ucrVariables]);
 			this.standbyDuring(preparation);

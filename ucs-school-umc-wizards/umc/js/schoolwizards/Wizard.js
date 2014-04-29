@@ -41,7 +41,7 @@ define([
 	"umc/widgets/Wizard",
 	"umc/widgets/ComboBox",
 	"umc/i18n!umc/modules/schoolwizards"
-], function(declare, lang, array, when, all, dialog, app, tools, Wizard, ComboBox, _) {
+], function(declare, lang, array, when, all, dialog, UMCApplication, tools, Wizard, ComboBox, _) {
 
 	return declare("umc.modules.schoolwizards.Wizard", [Wizard], {
 
@@ -66,7 +66,27 @@ define([
 			if (generalPage) {
 				this.pages.push(generalPage);
 			}
-			this.pages.push(this.getItemPage());
+			var itemPage = this.getItemPage();
+			this.addUDMLink(itemPage);
+			this.pages.push(itemPage);
+		},
+
+		addUDMLink: function(page) {
+			if (this.udmLinkEnabled && this.editMode && this.objectType && UMCApplication.getModule('udm', 'navigation')) {
+				var buttons = page.buttons;
+				if (!buttons) {
+					buttons = page.buttons = [];
+				}
+				buttons.push({
+					name: 'udm_link',
+					label: _('Advanced settings'),
+					callback: lang.hitch(this, function() {
+						UMCApplication.openModule('udm', 'navigation', {openObject: {objectType: this.objectType, objectDN: this.$dn$}});
+						this.finishEditMode();
+					})
+				});
+				page.layout.push('udm_link');
+			}
 		},
 
 		startup: function() {
@@ -162,18 +182,6 @@ define([
 				}],
 				layout: ['school']
 			};
-		},
-
-		getLinkToUDM: function() {
-			var udm_link = '';
-			if (this.udmLinkEnabled && this.editMode && this.objectType && app.getModule('udm', 'navigation')) {
-				var objectType = this.objectType.replace(/"/g, '\\"');
-				var dn = this.$dn$.replace(/"/g, '\\"');
-
-				var link = 'require("umc/app").openModule("udm", "navigation", {"openObject": {"objectType":"' + objectType + '", "objectDN": "' + dn + '"}})';
-				udm_link = '<a href="javascript:void(0)" onclick="' + link.replace(/"/g, "'") + '">' + _('Advanced settings') + '</a>';
-			}
-			return udm_link;
 		},
 
 		loadValues: function() {

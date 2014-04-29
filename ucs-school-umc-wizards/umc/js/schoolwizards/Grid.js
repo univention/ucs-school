@@ -36,6 +36,7 @@ define([
 	"dojo/topic",
 	"dojo/query",
 	"dojo/on",
+	"dojo/aspect",
 	"umc/tools",
 	"umc/dialog",
 	"umc/store",
@@ -46,7 +47,7 @@ define([
 	"umc/widgets/SearchForm",
 	"umc/widgets/ExpandingTitlePane",
 	"umc/i18n!umc/modules/schoolwizards"
-], function(declare, lang, array, topic, query, on, tools, dialog, store, Grid, Text, Page, StandbyMixin, SearchForm, ExpandingTitlePane, _) {
+], function(declare, lang, array, topic, query, on, aspect, tools, dialog, store, Grid, Text, Page, StandbyMixin, SearchForm, ExpandingTitlePane, _) {
 
 	return declare("umc.modules.schoolwizards.Grid", [Page, StandbyMixin], {
 
@@ -223,7 +224,27 @@ define([
 				onSearch: lang.hitch(this, 'filter')
 			});
 			if (this.autoSearch) {
-				form.ready().then(lang.hitch(this, 'filter', {type: 'all'}));
+				form.ready().then(lang.hitch(this, function() {
+					this.filter({type: 'all'});
+					var handler = aspect.before(this._grid._grid, '_onFetchComplete', lang.hitch(this, function(items) {
+						handler.remove();
+						if (items.length === 0) {
+							dialog.confirm(_('Would you like to create a %(objectNameSingular)s?', {objectNameSingular: this.objectNameSingular}), [{
+								name: 'cancel',
+								label: _('Cancel')
+							}, {
+								name: 'add',
+								'default': true,
+								label: _('Add')
+							}], _('No %(objectNamePlural)s created yet', {objectNamePlural: this.objectNamePlural})).then(lang.hitch(this, function(response) {
+								if (response == 'add') {
+									this.createObject();
+								}
+							}));
+						}
+						return arguments;
+					}));
+				}));
 			}
 			return form;
 		},

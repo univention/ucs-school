@@ -1,3 +1,10 @@
+ucs-school-umc-wizards (4.0.10-1) unstable; urgency=low
+
+  * Bug #34447: Support filter argument, popup on initial empty grid, better
+    UDM link
+
+ -- Dirk Wiesenthal <wiesenthal@univention.de>  Wed, 30 Apr 2014 00:57:10 +0200
+
 ucs-school-umc-wizards (4.0.9-1) unstable; urgency=low
 
   * Bug #34447: Autosearch, wizard header improvements, code unification

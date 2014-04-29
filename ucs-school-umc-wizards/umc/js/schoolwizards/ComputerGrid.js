@@ -89,10 +89,6 @@ define([
 				size: 'TwoThirds',
 				name: 'type',
 				label: _('Type'),
-				staticValues: [{
-					name: 'all',
-					label: _('All')
-				}],
 				dynamicValues: 'schoolwizards/computers/types',
 				umcpCommand: lang.hitch(this, function() {
 					return this.umcpCommand.apply(this.umcpCommand, arguments).then(function(response) {

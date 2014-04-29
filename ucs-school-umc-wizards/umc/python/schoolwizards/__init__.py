@@ -257,13 +257,14 @@ class Instance(SchoolBaseModule, SchoolImport):
 			ret.append(obj.remove(ldap_user_write))
 		return ret
 
-	def _get_all(self, user_class, school, lo):
+	def _get_all(self, klass, school, filter_str, lo):
 		if school:
-			objs = user_class.get_all(school, lo)
+			schools = [school]
 		else:
-			objs = []
-			for school in School.from_binddn(lo):
-				objs.extend(user_class.get_all(school.name, lo))
+			schools = School.from_binddn(lo)
+		objs = []
+		for school in schools:
+			objs.extend(klass.get_all(lo, school.name, filter_str=filter_str))
 		return [obj.to_dict() for obj in objs]
 
 	@LDAP_Connection()
@@ -271,7 +272,7 @@ class Instance(SchoolBaseModule, SchoolImport):
 	def get_users(self, request, search_base=None, ldap_user_read=None, ldap_position=None):
 		school = request.options['school']
 		user_class = get_user_class(request.options['type'])
-		return self._get_all(user_class, school, ldap_user_read)
+		return self._get_all(user_class, school, request.options.get('filter'), ldap_user_read)
 
 	get_user = _get_obj
 
@@ -286,7 +287,7 @@ class Instance(SchoolBaseModule, SchoolImport):
 	def get_computers(self, request, search_base=None, ldap_user_read=None, ldap_position=None):
 		school = request.options['school']
 		computer_class = get_computer_class(request.options['type'])
-		return self._get_all(computer_class, school, ldap_user_read)
+		return self._get_all(computer_class, school, request.options.get('filter'), ldap_user_read)
 
 	get_computer = _get_obj
 
@@ -300,7 +301,7 @@ class Instance(SchoolBaseModule, SchoolImport):
 	@response
 	def get_classes(self, request, search_base=None, ldap_user_read=None, ldap_position=None):
 		school = request.options['school']
-		return self._get_all(SchoolClass, school, ldap_user_read)
+		return self._get_all(SchoolClass, school, request.options.get('filter'), ldap_user_read)
 
 	get_class = _get_obj
 
@@ -313,7 +314,7 @@ class Instance(SchoolBaseModule, SchoolImport):
 	@LDAP_Connection()
 	@response
 	def get_schools(self, request, search_base=None, ldap_user_read=None, ldap_position=None):
-		schools = School.get_all(ldap_user_read)
+		schools = School.get_all(ldap_user_read, filter_str=request.options.get('filter'))
 		return [school.to_dict() for school in schools]
 
 	get_school = _get_obj

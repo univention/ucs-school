@@ -45,6 +45,10 @@ define([
 			return null;
 		},
 
+		addUDMLink: function() {
+			// no link to UDM module
+		},
+
 		getItemPage: function() {
 			return {
 				name: 'item',

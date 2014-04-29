@@ -122,18 +122,13 @@ define([
 						// ...and another one for Bug #30109
 						return this.getWidget('item', 'password').isValid();
 					})
-				}, {
-					type: Text,
-					name: 'udm-link',
-					content: this.getLinkToUDM()
 				}],
 				layout: [
 					['firstname', 'lastname'],
 					['name'],
 					['school_class', 'newClass'],
 					['mailPrimaryAddress'],
-					['password'],
-					['udm-link']
+					['password']
 				]
 			};
 		},

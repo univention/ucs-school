@@ -55,11 +55,8 @@ define([
 					name: 'description',
 					label: _('Description')
 				}, {
-					type: Text,
-					name: 'udm-link',
-					content: this.getLinkToUDM()
 				}],
-				layout: [['name', 'description'], ['udm-link']]
+				layout: [['name', 'description']]
 			};
 		},
 
