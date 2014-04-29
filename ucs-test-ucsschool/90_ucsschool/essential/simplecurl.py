@@ -85,9 +85,10 @@ class SimpleCurl(object):
 			except Exception as e:
 				time.sleep(1)
 				print '.'
+				if i == 59:
+					print 'Requested page could not be fetched'
+					raise e
 				continue
-			print 'page not reachable'
-			raise e
 		page = buf.getvalue()
 		# print page[1:100]
 		buf.close()
