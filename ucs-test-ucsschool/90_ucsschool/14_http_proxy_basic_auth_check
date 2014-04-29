@@ -1,5 +1,5 @@
 #!/usr/share/ucs-test/runner python
-## desc: ucs-school-assign_internet_rules_check
+## desc: http-proxy-basic-auth-check
 ## roles: [domaincontroller_master, domaincontroller_backup, domaincontroller_slave, memberserver]
 ## tags: [apptest]
 ## exposure: dangerous
