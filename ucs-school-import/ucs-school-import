@@ -139,6 +139,17 @@ if not (cn_pupils and cn_teachers and cn_teachers_staff and cn_admins and cn_sta
 '''
 	sys.exit (1)
 
+
+def is_valid_ou_name(name):
+	""" check if given OU name is valid """
+	return bool(re.match('^[a-zA-Z0-9](([a-zA-Z0-9_]*)([a-zA-Z0-9]$))?$', name))
+
+
+def is_valid_hostname(name):
+	""" check if given hostname is valid """
+	return bool(re.match('^[a-zA-Z](([a-zA-Z0-9-_]*)([a-zA-Z0-9]$))?$', name))
+
+
 # exception classes
 class DeleteObjectError( Exception ): pass
 class CreateObjectError( Exception ): pass
@@ -375,14 +386,6 @@ def getDN (schoolNr, base='school', basedn=baseDN):
 		values['district'] = ''
 		values['school'] = ''
 	return dn % values
-
-
-def is_valid_ou_name(name):
-	return not(bool(re.match('^[a-zA-Z0-9](([a-zA-Z0-9_]*)([a-zA-Z0-9]$))?$', name)))
-
-
-def is_valid_hostname(name):
-	return not(bool(re.match('^[a-zA-Z](([a-zA-Z0-9-_]*)([a-zA-Z0-9]$))?$', name)))
 
 
 def verify_policy(objdn, schoolNr, policy_dn_list):

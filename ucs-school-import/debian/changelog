@@ -1,3 +1,9 @@
+ucs-school-import (10.0.9-1) unstable; urgency=low
+
+  * Bug #26137: fixed logic error in create_ou
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Tue, 29 Apr 2014 13:48:13 +0200
+
 ucs-school-import (10.0.8-1) unstable; urgency=low
 
   * Bug #26137: added create_dc functionality to ucs-school-import
