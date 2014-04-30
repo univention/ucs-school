@@ -7,12 +7,15 @@
 
 from univention.config_registry import handler_set
 from univention.lib.umc_connection import UMCConnection
-import sys, time
+import subprocess
+import sys
+import time
 import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool as utu
 import univention.testing.utils as utils
 
 def main():
+	subprocess.call(['/usr/bin/newaliases']) # Workaround for bug 31837
 	# initializing mail data
 	message = time.time() * 1000
 	message = '%.30f' % message
