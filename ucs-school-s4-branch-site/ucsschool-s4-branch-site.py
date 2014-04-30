@@ -35,6 +35,7 @@ __package__='' 	# workaround for PEP 366
 import listener
 import univention.debug as ud
 import univention.admin.uexceptions as udm_errors
+import univention.uldap
 import univention.config_registry
 
 ## import s4-connector listener module code, but don't generate pyc file
@@ -54,6 +55,13 @@ attributes=[]
 modrdn="1"
 
 ldap_hostdn = listener.configRegistry.get('ldap/hostdn')
+local_schoolDN = None
+local_school = None
+_char_index = ldap_hostdn.find('ou=')	## this the school detection used in scholldap.SearchBase.getOU
+if _char_index < 0:
+	local_schoolDN = ldap_hostdn[_char_index:]
+	local_school = univention.uldap.explodeDn( local_schoolDN, 1 )[0]
+
 record_type = "srv_record"
 
 STD_SRV_PRIO = 0
@@ -94,35 +102,40 @@ STD_S4_SRV_RECORDS = {
 ## _ldap._tcp.default-first-site-name._sites.gc._msdcs only on ucs-school-slave ?
 
 @LDAP_Connection(MACHINE_READ)
-def samba4_dcs_below_school_ou(school, ldap_machine_read=None, ldap_position=None, search_base=None):
-	_samba4_dcs_below_school_ou = []
+def visible_samba4_school_dcs(ldap_machine_read=None, ldap_position=None, search_base=None):
+	_visible_samba4_school_dcs = []
 	filter = '(&(objectClass=univentionDomainController)(univentionService=Samba 4)(univentionService=UCS@school))'
 	try:
 		res = ldap_machine_read.search(base=ldap_position.getDn(), filter=filter, attr=['cn', 'associatedDomain'])
 		for (record_dn, obj) in res:
-			_samba4_dcs_below_school_ou.append('.'.join((obj['cn'], obj['associatedDomain'])))
+			if search_base.getOU(record_dn): # select only school branches
+				_visible_samba4_school_dcs.append('.'.join((obj['cn'][0], obj['associatedDomain'][0])))
 	except udm_errors.ldapError, e:
 		ud.debug(ud.LISTENER, ud.ERROR, '%s: Error accessing LDAP: %s' % (name, e))
 
-	return _samba4_dcs_below_school_ou
+	return _visible_samba4_school_dcs
 
 
 @LDAP_Connection(MACHINE_READ)
 def update_records(ldap_machine_read=None, ldap_position=None, search_base=None):
+	ud.debug(ud.LISTENER, ud.ERROR, '%s: update_records' % (name,))
 	global STD_S4_SRV_RECORDS
 	global record_type
 
 	domain = listener.configRegistry.get('domainname')
 
-	server_fqdn_list = samba4_dcs_below_school_ou()
+	server_fqdn_list = visible_samba4_school_dcs()
 
 	ucr = univention.config_registry.ConfigRegistry()
 	ucr.load()
 
+	ucr_key_value_list = []
+	rdn_list = []
 	for (relativeDomainName, prio_weight_port) in STD_S4_SRV_RECORDS.items():
 		## construct ucr key name
 		record_fqdn = ".".join((relativeDomainName, domain))
 		key = 'connector/s4/mapping/dns/%s/%s/location' % (record_type, record_fqdn)
+		ud.debug(ud.LISTENER, ud.ERROR, '%s: update_records check: %s' % (name, key))
 
 		## check old value
 		old_value = ucr.get(key)
@@ -138,11 +151,18 @@ def update_records(ldap_machine_read=None, ldap_position=None, search_base=None)
 
 		## set new value
 		ucr_key_value = "=".join((key, value))
-		univention.config_registry.handler_set(ucr_key_value)
+		ud.debug(ud.LISTENER, ud.PROCESS, '%s: update_records set: %s' % (name, value))
+		ucr_key_value_list.append(ucr_key_value)
+		rdn_list.append(relativeDomainName)
+	
+	if ucr_key_value_list:
+		univention.config_registry.handler_set(ucr_key_value_list)
 
+	for relativeDomainName in rdn_list:
 		### trigger S4 Connector
 		filter = '(&(univentionObjectType=dns/%s)(zoneName=%s)(relativeDomainName=%s))' % (record_type, domain, relativeDomainName)
 		try:
+			ud.debug(ud.LISTENER, ud.PROCESS, '%s: update_records trigger s4 connector: %s' % (name, relativeDomainName))
 			res = ldap_machine_read.search(base=ldap_position.getDn(), filter=filter)
 			for (record_dn, obj) in res:
 				s4_connector_listener.handler(record_dn, obj, obj, 'm')
@@ -151,8 +171,8 @@ def update_records(ldap_machine_read=None, ldap_position=None, search_base=None)
 
 
 def add(dn, new):
-	cn = new.get('cn')
-	associatedDomain = new.get('associatedDomain')
+	cn = new.get('cn')[0]
+	associatedDomain = new.get('associatedDomain')[0]
 	fqdn = ('.'.join((cn, associatedDomain)))
 	## TODO
 	update_records()
@@ -166,6 +186,8 @@ def delete(old_dn, old):
 	update_records()
 
 def handler(dn, new, old, command):
+	if dn.find('ou=') < 0:	## only handle DCs in school branch sites
+		return
 
 	listener.setuid(0)
 	try:

@@ -1,3 +1,10 @@
+ucs-school-s4-branch-site (1.0.0-3) unstable; urgency=medium
+
+  * Only consider DCs below OUs (Bug #32187)
+  * Work around univention.config_registry.handler_set locking issue
+
+ -- Arvid Requate <requate@univention.de>  Wed, 30 Apr 2014 16:30:23 +0200
+
 ucs-school-s4-branch-site (1.0.0-2) unstable; urgency=medium
 
   * Limit control: Don't touch the connector/s4/mapping/dns/*/*/location UCR
