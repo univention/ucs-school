@@ -1,3 +1,14 @@
+ucs-school-s4-branch-site (1.0.0-2) unstable; urgency=medium
+
+  * Limit control: Don't touch the connector/s4/mapping/dns/*/*/location UCR
+    variables if unset or 'ignore' (Bug #32187)
+  * Avoid generating a byte compiled pyc file while importing the s4-connector
+    listener module code
+  * Filter on DCs to make things explicit
+  * Remove restriction to only consider Samba4 DCs on same school as hostdn
+
+ -- Arvid Requate <requate@univention.de>  Wed, 30 Apr 2014 12:29:30 +0200
+
 ucs-school-s4-branch-site (1.0.0-1) unstable; urgency=medium
 
   * Initial package (Bug #32187)

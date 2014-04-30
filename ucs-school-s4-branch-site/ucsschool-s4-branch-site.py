@@ -36,14 +36,18 @@ import listener
 import univention.debug as ud
 import univention.admin.uexceptions as udm_errors
 import univention.config_registry
+
+## import s4-connector listener module code, but don't generate pyc file
+import sys
+sys.dont_write_bytecode = True
 import imp
 s4_connector_listener_path = '/usr/lib/univention-directory-listener/system/s4-connector.py'
 s4_connector_listener = imp.load_source('s4_connector', s4_connector_listener_path)
-from ucsschool.lib.schoolldap import LDAP_Connection, MACHINE_READ, get_all_local_searchbases
+from ucsschool.lib.schoolldap import LDAP_Connection, MACHINE_READ
 
 name='ucsschool-s4-branch-site'
 description='UCS@school S4 branch site module'
-filter='(&(univentionService=Samba 4)(univentionService=UCS@school))'
+filter='(&(objectClass=univentionDomainController)(univentionService=Samba 4)(univentionService=UCS@school))'
 attributes=[]
 
 # use the modrdn listener extension
@@ -92,7 +96,7 @@ STD_S4_SRV_RECORDS = {
 @LDAP_Connection(MACHINE_READ)
 def samba4_dcs_below_school_ou(school, ldap_machine_read=None, ldap_position=None, search_base=None):
 	_samba4_dcs_below_school_ou = []
-	filter = '(&(univentionService=Samba 4)(univentionService=UCS@school))'
+	filter = '(&(objectClass=univentionDomainController)(univentionService=Samba 4)(univentionService=UCS@school))'
 	try:
 		res = ldap_machine_read.search(base=ldap_position.getDn(), filter=filter, attr=['cn', 'associatedDomain'])
 		for (record_dn, obj) in res:
@@ -112,15 +116,27 @@ def update_records(ldap_machine_read=None, ldap_position=None, search_base=None)
 
 	server_fqdn_list = samba4_dcs_below_school_ou()
 
+	ucr = univention.config_registry.ConfigRegistry()
+	ucr.load()
+
 	for (relativeDomainName, prio_weight_port) in STD_S4_SRV_RECORDS.items():
+		## construct ucr key name
+		record_fqdn = ".".join((relativeDomainName, domain))
+		key = 'connector/s4/mapping/dns/%s/%s/location' % (record_type, record_fqdn)
+
+		## check old value
+		old_value = ucr.get(key)
+		if not old_value or old_value == 'ignore':
+			continue	## don't touch if unset or ignored
+
+		## create new value
 		value = ""
 		for server_fqdn in server_fqdn_list:
 			if value:
 				value += " "
 			value += "%s %s." % (prio_weight_port, server_fqdn)
 
-		record_fqdn = ".".join((relativeDomainName, domain))
-		key = 'connector/s4/mapping/dns/%s/%s/location' % (record_type, record_fqdn)
+		## set new value
 		ucr_key_value = "=".join((key, value))
 		univention.config_registry.handler_set(ucr_key_value)
 
@@ -134,45 +150,20 @@ def update_records(ldap_machine_read=None, ldap_position=None, search_base=None)
 			ud.debug(ud.LISTENER, ud.ERROR, '%s: Error accessing LDAP: %s' % (name, e))
 
 
-def dn_is_in_local_school(dn):
-	global ldap_hostdn
-
-	_ldap_hostdn_lower = ldap_hostdn.lower()
-	_dn_lower = dn.lower()
-
-	for searchbase in get_all_local_searchbases():
-		_schooldn_lower = searchbase.schoolDN.lower()
-		if _ldap_hostdn_lower.endswith(_schooldn_lower):
-			local_school = searchbase.school
-		if _dn_lower.endswith(_schooldn_lower):
-			object_school = searchbase.school
-
-	if not (object_school and local_school):
-		## TODO: Log
-		return False
-
-	if object_school == local_school:
-		return True
-		
-	return False
-
 def add(dn, new):
-	if dn_is_in_local_school(dn):
-		cn = new.get('cn')
-		associatedDomain = new.get('associatedDomain')
-		fqdn = ('.'.join((cn, associatedDomain)))
-		## TODO
-		update_records()
+	cn = new.get('cn')
+	associatedDomain = new.get('associatedDomain')
+	fqdn = ('.'.join((cn, associatedDomain)))
+	## TODO
+	update_records()
 
 def modify(dn, new, old, old_dn=None):
-	if dn_is_in_local_school(dn):
-		## TODO
-		update_records()
+	## TODO
+	update_records()
 
 def delete(old_dn, old):
-	if dn_is_in_local_school(old_dn):
-		## TODO
-		update_records()
+	## TODO
+	update_records()
 
 def handler(dn, new, old, command):
 
