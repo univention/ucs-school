@@ -668,12 +668,12 @@ class UCSSchoolHelperAbstractClass(object):
 		return SEP_CHAR.join(attrs)
 
 class User(UCSSchoolHelperAbstractClass):
-	name = UserName(_('Username'), aka=['Username'])
-	firstname = Firstname(_('First name'), aka=['First name'], required=True, unlikely_to_change=True)
-	lastname = Lastname(_('Last name'), aka=['Last name'], required=True, unlikely_to_change=True)
-	birthday = Birthday(_('Birthday'), aka=['Birthday'], unlikely_to_change=True)
-	email = Email(_('Email'), aka=['Email'], unlikely_to_change=True)
-	password = Password(_('Password'), aka=['Password'])
+	name = UserName(_('Username'), aka=['Username', 'Benutzername'])
+	firstname = Firstname(_('First name'), aka=['First name', 'Vorname'], required=True, unlikely_to_change=True)
+	lastname = Lastname(_('Last name'), aka=['Last name', 'Nachname'], required=True, unlikely_to_change=True)
+	birthday = Birthday(_('Birthday'), aka=['Birthday', 'Geburtstag'], unlikely_to_change=True)
+	email = Email(_('Email'), aka=['Email', 'E-Mail'], unlikely_to_change=True)
+	password = Password(_('Password'), aka=['Password', 'Passwort'])
 
 	type_name = None
 
@@ -854,7 +854,7 @@ class User(UCSSchoolHelperAbstractClass):
 		allow_school_change = False # code _should_ be able to handle it
 
 class Student(User):
-	school_class = SchoolClassStringAttribute(_('Class'), aka=['Class'])
+	school_class = SchoolClassStringAttribute(_('Class'), aka=['Class', 'Klasse'])
 
 	type_name = _('Student')
 
@@ -883,7 +883,7 @@ class Student(User):
 		return groups
 
 class Teacher(User):
-	school_class = SchoolClassStringAttribute(_('Class'), aka=['Class'])
+	school_class = SchoolClassStringAttribute(_('Class'), aka=['Class', 'Klasse'])
 
 	type_name = _('Teacher')
 

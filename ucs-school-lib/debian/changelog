@@ -1,38 +1,50 @@
+ucs-school-lib (5.0.14-1) unstable; urgency=low
+
+  * Bug #34199: More aliases for attributes
+
+ -- Dirk Wiesenthal <wiesenthal@univention.de>  Thu, 01 May 2014 00:40:54 +0200
+
+ucs-school-lib (5.0.13-1) unstable; urgency=low
+
+  * Bug #34335: New lib version
+
+ -- Dirk Wiesenthal <wiesenthal@univention.de>  Thu, 01 May 2014 00:37:31 +0200
+
 ucs-school-lib (5.0.12-1) unstable; urgency=low
 
-  * Bug #34447: Support filter argument when searching all items
+  * Bug #34337: Support filter argument when searching all items
   * Bug #34335: New lib version
 
  -- Dirk Wiesenthal <wiesenthal@univention.de>  Wed, 30 Apr 2014 00:55:18 +0200
 
 ucs-school-lib (5.0.11-1) unstable; urgency=low
 
-  * Bug #34447: Better computer support: Detection of IPManagedClient,
+  * Bug #34337: Better computer support: Detection of IPManagedClient,
     skipping unknown types
 
  -- Dirk Wiesenthal <wiesenthal@univention.de>  Tue, 29 Apr 2014 00:50:16 +0200
 
 ucs-school-lib (5.0.10-1) unstable; urgency=low
 
-  * Bug #34447: Save IP address for computers
+  * Bug #34337: Save IP address for computers
 
  -- Dirk Wiesenthal <wiesenthal@univention.de>  Fri, 25 Apr 2014 15:38:39 +0200
 
 ucs-school-lib (5.0.9-1) unstable; urgency=low
 
-  * Bug #34447: Fix typo (2)
+  * Bug #34337: Fix typo (2)
 
  -- Dirk Wiesenthal <wiesenthal@univention.de>  Fri, 25 Apr 2014 10:16:00 +0200
 
 ucs-school-lib (5.0.8-1) unstable; urgency=low
 
-  * Bug #34447: Fix typo
+  * Bug #34337: Fix typo
 
  -- Dirk Wiesenthal <wiesenthal@univention.de>  Fri, 25 Apr 2014 09:57:09 +0200
 
 ucs-school-lib (5.0.7-1) unstable; urgency=low
 
-  * Bug #34447: Support validation error messages
+  * Bug #34337: Support validation error messages
 
  -- Dirk Wiesenthal <wiesenthal@univention.de>  Fri, 25 Apr 2014 02:09:13 +0200
 
