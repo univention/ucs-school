@@ -37,6 +37,7 @@ import univention.debug as ud
 import univention.admin.uexceptions as udm_errors
 import univention.uldap
 import univention.config_registry
+import subprocess
 
 ## import s4-connector listener module code, but don't generate pyc file
 import sys
@@ -54,6 +55,7 @@ attributes=[]
 # use the modrdn listener extension
 modrdn="1"
 
+domain = listener.configRegistry.get('domainname')
 ldap_hostdn = listener.configRegistry.get('ldap/hostdn')
 local_schoolDN = None
 local_school = None
@@ -63,6 +65,8 @@ if _char_index < 0:
 	local_school = univention.uldap.explodeDn( local_schoolDN, 1 )[0]
 
 record_type = "srv_record"
+__relativeDomainName_trigger_set = set()
+__s4_connector_restart = False
 
 STD_SRV_PRIO = 0
 STD_SRV_WEIGHT = 100
@@ -101,14 +105,16 @@ STD_S4_SRV_RECORDS = {
 ## _kerberos._tcp.default-first-site-name._sites.gc._msdcs only on ucs-school-master ?
 ## _ldap._tcp.default-first-site-name._sites.gc._msdcs only on ucs-school-slave ?
 
+
 @LDAP_Connection(MACHINE_READ)
-def visible_samba4_school_dcs(ldap_machine_read=None, ldap_position=None, search_base=None):
+def visible_samba4_school_dcs(excludeDN=None, ldap_machine_read=None, ldap_position=None, search_base=None):
 	_visible_samba4_school_dcs = []
 	filter = '(&(objectClass=univentionDomainController)(univentionService=Samba 4)(univentionService=UCS@school))'
 	try:
 		res = ldap_machine_read.search(base=ldap_position.getDn(), filter=filter, attr=['cn', 'associatedDomain'])
 		for (record_dn, obj) in res:
-			if search_base.getOU(record_dn): # select only school branches
+			## select only school branches and exclude a modrdn 'r' phase DN which still exists
+			if search_base.getOU(record_dn) and record_dn != excludeDN:
 				_visible_samba4_school_dcs.append('.'.join((obj['cn'][0], obj['associatedDomain'][0])))
 	except udm_errors.ldapError, e:
 		ud.debug(ud.LISTENER, ud.ERROR, '%s: Error accessing LDAP: %s' % (name, e))
@@ -116,26 +122,25 @@ def visible_samba4_school_dcs(ldap_machine_read=None, ldap_position=None, search
 	return _visible_samba4_school_dcs
 
 
-@LDAP_Connection(MACHINE_READ)
-def update_records(ldap_machine_read=None, ldap_position=None, search_base=None):
-	ud.debug(ud.LISTENER, ud.ERROR, '%s: update_records' % (name,))
+def update_records(excludeDN=None):
 	global STD_S4_SRV_RECORDS
 	global record_type
+	global domain
+	global __s4_connector_restart
+	global __relativeDomainName_trigger_set
 
-	domain = listener.configRegistry.get('domainname')
-
-	server_fqdn_list = visible_samba4_school_dcs()
+	server_fqdn_list = visible_samba4_school_dcs(excludeDN=excludeDN)
+	ud.debug(ud.LISTENER, ud.ALL, '%s: server_fqdn_list: %s' % (name, server_fqdn_list))
 
 	ucr = univention.config_registry.ConfigRegistry()
 	ucr.load()
 
 	ucr_key_value_list = []
-	rdn_list = []
 	for (relativeDomainName, prio_weight_port) in STD_S4_SRV_RECORDS.items():
 		## construct ucr key name
 		record_fqdn = ".".join((relativeDomainName, domain))
 		key = 'connector/s4/mapping/dns/%s/%s/location' % (record_type, record_fqdn)
-		ud.debug(ud.LISTENER, ud.ERROR, '%s: update_records check: %s' % (name, key))
+		ud.debug(ud.LISTENER, ud.ALL, '%s: UCR check: %s' % (name, key))
 
 		## check old value
 		old_value = ucr.get(key)
@@ -149,58 +154,96 @@ def update_records(ldap_machine_read=None, ldap_position=None, search_base=None)
 				value += " "
 			value += "%s %s." % (prio_weight_port, server_fqdn)
 
-		## set new value
-		ucr_key_value = "=".join((key, value))
-		ud.debug(ud.LISTENER, ud.PROCESS, '%s: update_records set: %s' % (name, value))
-		ucr_key_value_list.append(ucr_key_value)
-		rdn_list.append(relativeDomainName)
+		if value == old_value:
+			ud.debug(ud.LISTENER, ud.ALL, '%s: UCR skip: %s' % (name, value))
+		else:
+			## set new value
+			ucr_key_value = "=".join((key, value))
+			ud.debug(ud.LISTENER, ud.PROCESS, '%s: UCR set: %s' % (name, value))
+			ucr_key_value_list.append(ucr_key_value)
+
+		## trigger anyway
+		__relativeDomainName_trigger_set.add(relativeDomainName)
 	
 	if ucr_key_value_list:
 		univention.config_registry.handler_set(ucr_key_value_list)
+		__s4_connector_restart = True
 
-	for relativeDomainName in rdn_list:
+@LDAP_Connection(MACHINE_READ)
+def trigger_sync_ucs_to_s4(ldap_machine_read=None, ldap_position=None, search_base=None):
+	global record_type
+	global domain
+	global __relativeDomainName_trigger_set
+
+	for relativeDomainName in list(__relativeDomainName_trigger_set):
 		### trigger S4 Connector
 		filter = '(&(univentionObjectType=dns/%s)(zoneName=%s)(relativeDomainName=%s))' % (record_type, domain, relativeDomainName)
 		try:
-			ud.debug(ud.LISTENER, ud.PROCESS, '%s: update_records trigger s4 connector: %s' % (name, relativeDomainName))
+			ud.debug(ud.LISTENER, ud.PROCESS, '%s: trigger s4 connector: %s' % (name, relativeDomainName))
 			res = ldap_machine_read.search(base=ldap_position.getDn(), filter=filter)
 			for (record_dn, obj) in res:
 				s4_connector_listener.handler(record_dn, obj, obj, 'm')
+				__relativeDomainName_trigger_set.remove(relativeDomainName)
 		except udm_errors.ldapError, e:
 			ud.debug(ud.LISTENER, ud.ERROR, '%s: Error accessing LDAP: %s' % (name, e))
 
 
 def add(dn, new):
-	cn = new.get('cn')[0]
-	associatedDomain = new.get('associatedDomain')[0]
-	fqdn = ('.'.join((cn, associatedDomain)))
-	## TODO
-	update_records()
-
-def modify(dn, new, old, old_dn=None):
-	## TODO
-	update_records()
-
-def delete(old_dn, old):
-	## TODO
-	update_records()
-
-def handler(dn, new, old, command):
-	if dn.find('ou=') < 0:	## only handle DCs in school branch sites
-		return
-
 	listener.setuid(0)
 	try:
-		if new:
-			if old:
-				modify(dn, new, old)
-			else:
-				add(dn, new)
-		else:
-			## TODO: command == 'r'
-			if old:
-				delete(dn, new, old)
-			else:
-				pass
+		update_records()
 	finally:
 		listener.unsetuid()
+
+def modify(dn, new, old):
+	listener.setuid(0)
+	try:
+		update_records()
+	finally:
+		listener.unsetuid()
+
+def delete(old_dn, old, command):
+	## this is also called on modrdn (command == 'r').
+	listener.setuid(0)
+	try:
+		## in modrdn phase 'r' the DN is still present in local LDAP, so we explicitly exclude it
+		update_records(excludeDN=old_dn)
+	finally:
+		listener.unsetuid()
+
+
+def handler(dn, new, old, command):
+	univention.debug.debug(univention.debug.LISTENER, univention.debug.ALL, '%s: command: %s, dn: %s, new: %s, old: %s' % (name, command, dn, bool(new), bool(old)))
+	if new:
+		if dn.find('ou=') < 0:	## only handle DCs in school branch sites
+			return
+
+		if old:
+			modify(dn, new, old)
+		else:
+			add(dn, new)
+	else:
+		if old:
+			## this is also called on modrdn (command == 'r').
+			delete(dn, old, command)
+		else:
+			pass
+
+def postrun():
+	global __s4_connector_restart
+	global __relativeDomainName_trigger_set
+
+	if __s4_connector_restart:
+		univention.debug.debug(univention.debug.LISTENER, univention.debug.PROCESS, '%s: Restarting S4 Connector' % (name,))
+		listener.setuid(0)
+		try:
+			p = subprocess.Popen(["/etc/init.d/univention-s4-connector", "restart"], close_fds=True)
+			p.wait()
+			if p.returncode != 0:
+				ud.debug(ud.LISTENER, ud.ERROR, '%s: S4 Connector restart returned %s.' % (name, p.returncode))
+			__s4_connector_restart = False
+		finally:
+			listener.unsetuid()
+
+	if __relativeDomainName_trigger_set:
+		trigger_sync_ucs_to_s4()
