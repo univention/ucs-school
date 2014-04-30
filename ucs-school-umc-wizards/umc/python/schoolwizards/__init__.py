@@ -259,7 +259,7 @@ class Instance(SchoolBaseModule, SchoolImport):
 
 	def _get_all(self, klass, school, filter_str, lo):
 		if school:
-			schools = [school]
+			schools = [School.get(school)]
 		else:
 			schools = School.from_binddn(lo)
 		objs = []

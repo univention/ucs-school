@@ -15,12 +15,12 @@ msgstr ""
 #: umc/js/schoolwizards/Grid.js:197
 #, python-format
 msgid "%(nSelected)d %(objPlural)s of %(nTotal)d selected"
-msgstr ""
+msgstr "%(nSelected)d %(objPlural) von %(nTotal)d ausgewählt"
 
 #: umc/js/schoolwizards/Grid.js:195
 #, python-format
 msgid "%(nSelected)d %(objSingular)s of %(nTotal)d selected"
-msgstr ""
+msgstr "%(nSelected)d %(objSingular) von %(nTotal)d ausgewählt"
 
 #: umc/js/schoolwizards/Grid.js:130
 msgid "Add"
@@ -156,7 +156,7 @@ msgstr "Geben Sie Detailinformationen der Schule an."
 #: umc/js/schoolwizards/ComputerGrid.js:107
 #: umc/js/schoolwizards/ClassGrid.js:78 umc/js/schoolwizards/UserGrid.js:122
 msgid "Filter"
-msgstr ""
+msgstr "Filter"
 
 #: umc/js/schoolwizards/UserWizard.js:121
 msgid "Firstname"
@@ -221,7 +221,7 @@ msgstr "Name der Schule"
 #: umc/js/schoolwizards/Grid.js:193
 #, python-format
 msgid "No %(objPlural)s could be found"
-msgstr ""
+msgstr "Es konnten keine %(objPlural)s gefunden werden"
 
 #: umc/js/schoolwizards/UserWizard.js:144
 msgid "Password"

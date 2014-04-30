@@ -35,7 +35,6 @@ define([
 	"dojo/_base/array",
 	"dojo/topic",
 	"dojo/query",
-	"dojo/on",
 	"dojo/aspect",
 	"umc/tools",
 	"umc/dialog",
@@ -47,7 +46,7 @@ define([
 	"umc/widgets/SearchForm",
 	"umc/widgets/ExpandingTitlePane",
 	"umc/i18n!umc/modules/schoolwizards"
-], function(declare, lang, array, topic, query, on, aspect, tools, dialog, store, Grid, Text, Page, StandbyMixin, SearchForm, ExpandingTitlePane, _) {
+], function(declare, lang, array, topic, query, aspect, tools, dialog, store, Grid, Text, Page, StandbyMixin, SearchForm, ExpandingTitlePane, _) {
 
 	return declare("umc.modules.schoolwizards.Grid", [Page, StandbyMixin], {
 
@@ -113,6 +112,7 @@ define([
 				actions: this.getGridActions(),
 				columns: this.getGridColumns(),
 				moduleStore: this.getGridStore(),
+				sortIndex: null,
 				standbyDuring: lang.hitch(this, 'standbyDuring')
 			});
 			// when using All schools, sort by school, name
@@ -268,9 +268,6 @@ define([
 			props.school = this.getSelectedSchool();
 			this._grid.filter(props);
 			this._grid.set('columns', this.getGridColumnsWithSchool());
-			on.once(this._grid, 'filterDone', lang.hitch(this, function() {
-				this._grid._grid.setSortIndex(100); // hack: do not sort explicitely; use sortFields
-			}));
 		},
 
 		createObject: function() {
