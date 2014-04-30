@@ -1,3 +1,15 @@
+ucs-school-umc-csv-import (1.0.15-1) unstable; urgency=low
+
+  * Bug #34199: Fix usability issues
+
+ -- Dirk Wiesenthal <wiesenthal@univention.de>  Thu, 01 May 2014 00:40:05 +0200
+
+ucs-school-umc-csv-import (1.0.14-1) unstable; urgency=low
+
+  * Bug #34199: New lib version
+
+ -- Dirk Wiesenthal <wiesenthal@univention.de>  Wed, 30 Apr 2014 00:54:53 +0200
+
 ucs-school-umc-csv-import (1.0.13-1) unstable; urgency=low
 
   * Bug #34199: fixed typo in msg string

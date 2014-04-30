@@ -36,6 +36,7 @@ define([
 	"dojo/query",
 	"dojo/topic",
 	"dojo/when",
+	"dojo/on",
 	"dojo/Deferred",
 	"dojo/store/Memory",
 	"dojo/_base/window",
@@ -62,7 +63,7 @@ define([
 	"umc/widgets/Module",
 	"umc/modules/schoolcsvimport/User",
 	"umc/i18n!umc/modules/schoolcsvimport"
-], function(declare, lang, array, query, topic, when, Deferred, Memory, win, construct, style, attr, geometry, dateLocaleModule, Menu, CheckedMenuItem, timing, tools, dialog, Text, TextBox, Form, ProgressBar, ComboBox, Uploader, CheckBox, Wizard, DateBox, Grid, Module, User, _) {
+], function(declare, lang, array, query, topic, when, on, Deferred, Memory, win, construct, style, attr, geometry, dateLocaleModule, Menu, CheckedMenuItem, timing, tools, dialog, Text, TextBox, Form, ProgressBar, ComboBox, Uploader, CheckBox, Wizard, DateBox, Grid, Module, User, _) {
 	var UploadWizard = declare('umc.modules.schoolcsvimport.Wizard', Wizard, {
 		postMixInProperties: function() {
 			this.inherited(arguments);
@@ -160,11 +161,7 @@ define([
 								firstname: _('First name'),
 								lastname: _('Last name'),
 								birthday: _('Birthday')}) + '\n' +
-							lang.replace('{example_username},{example_firstname},{example_lastname},{example_birthday}', {
-								example_username: _('example_username'),
-								example_firstname: _('example_firstname'),
-								example_lastname: _('example_lastname'),
-								example_birthday: _('example_birthday')}) + '\n' +
+							_('john.doe,"Johnathan James",Doe,03/15/2000') + '\n' +
 							'[...]' +
 						'</pre>'
 				}]
@@ -246,7 +243,7 @@ define([
 				grid = page._grid;
 				var items = grid.moduleStore.data;
 				var params = [];
-				var nAdd = 0, nMod = 0, nDel = 0, nSkip = 0;
+				var nAdd = 0, nMod = 0, nDel = 0, nIgn = 0;
 				var unresolvedErrors = false;
 				array.forEach(items, lang.hitch(this, function(item) {
 					var action = item.action;
@@ -257,9 +254,9 @@ define([
 					} else if (action == 'delete') {
 						nDel += 1;
 					} else {
-						nSkip += 1;
+						nIgn += 1;
 					}
-					if (action != 'skip') {
+					if (action != 'ignore') {
 						if (!tools.isEqual(item.errors, {})) {
 							unresolvedErrors = true;
 						}
@@ -281,7 +278,7 @@ define([
 						_('%s user(s) will be deleted', nDel) +
 						(nDel ? '</strong>' : '') +
 					'</li><li>' +
-						_('%s user(s) will be skipped', nSkip) +
+						_('%s user(s) will be ignored', nIgn) +
 					'</li></ul>', [{
 					label: _('Cancel'),
 					name: 'cancel'
@@ -479,9 +476,9 @@ define([
 					column.formatter = function(value) {
 						var actionMap = {
 							'delete' : _('Delete'),
-							'create' : _('New'),
-							'modify' : _('Change'),
-							'skip' : _('Skip')
+							'create' : _('Create'),
+							'modify' : _('Modify'),
+							'ignore' : _('Ignore')
 						};
 						return actionMap[value];
 					};
@@ -497,6 +494,34 @@ define([
 				region: 'center',
 				moduleStore: dataStore,
 				actions: [{
+					name: 'edit',
+					label: _('Edit'),
+					description: _('Edit this line'),
+					iconClass: 'umcIconEdit',
+					isStandardAction: true,
+					isContextAction: true,
+					callback: lang.hitch(this, function(ids, items) {
+						var grid = this.getPage('spreadsheet')._grid;
+						array.forEach(items, lang.hitch(this, function(item) {
+							this.openEditDialog(item, grid);
+						}));
+					})
+				}, {
+					name: 'ignore',
+					label: _('Ignore'),
+					description: _('Ignore the selected lines'),
+					isMultiAction: true,
+					isStandardAction: true,
+					isContextAction: true,
+					callback: lang.hitch(this, function(ids, items) {
+						var itemObjs = [];
+						array.forEach(items, function(item) {
+							item.action = 'ignore';
+						});
+						this.checkThemAll(grid);
+						this.standbyDuring(recheck);
+					})
+				}, {
 					name: 'reset',
 					label: _('Reset'),
 					description: _('Restore initial values from the uploaded file'),
@@ -519,19 +544,6 @@ define([
 						}));
 						this.standbyDuring(recheck);
 					})
-				}, {
-					name: 'edit',
-					label: _('Edit'),
-					description: _('Edit this line'),
-					iconClass: 'umcIconEdit',
-					isStandardAction: true,
-					isContextAction: true,
-					callback: lang.hitch(this, function(ids, items) {
-						var grid = this.getPage('spreadsheet')._grid;
-						array.forEach(items, lang.hitch(this, function(item) {
-							this.openEditDialog(item, grid);
-						}));
-					})
 				}],
 				columns: columns
 			});
@@ -541,6 +553,12 @@ define([
 					item.styleError(this, row);
 				}
 			});
+			grid._grid.on('cellDblClick', lang.hitch(this, function(e) {
+				var cell = e.cell;
+				var grid = this.getPage('spreadsheet')._grid;
+				var item = grid._grid.getItem(e.rowIndex);
+				this.openEditDialog(item, grid, cell.field);
+			}));
 			this.checkThemAll(grid);
 			var lineIdx = grid._grid.getCellByField('line').index + 1;
 			grid._grid.setSortIndex(lineIdx);
@@ -559,7 +577,7 @@ define([
 				var values = [];
 				var doubles = [];
 				array.forEach(users, function(item) {
-					if (item.action == 'skip') {
+					if (item.action == 'ignore') {
 						return;
 					}
 					var value = item[field];
@@ -587,7 +605,7 @@ define([
 			var dateConstraints = {datePattern: this.datePattern, selector: 'date'};
 			array.forEach(items, function(item) {
 				item.resetError();
-				if (item.action == 'skip') {
+				if (item.action == 'ignore') {
 					return;
 				}
 				var birthday = item.birthday;
@@ -597,20 +615,15 @@ define([
 						item.setError('birthday', _('The birthday does not follow the format for dates. Please change the birthday.'), grid._grid);
 					}
 				}
-				var email = item.email;
-				if (email) {
-					if (!(/.@./).test(email)) {
-						item.setError('email', _('The email does not follow the format for email adresses. Please change the email.'), grid._grid);
-					}
-				}
 			});
 			assertUniqueness(items, 'name', _('Username occurs multiple times in the file. Please change the usernames so that all are unique.'), grid._grid);
 			assertUniqueness(items, 'email', _('Email address occurs multiple times in the file. Please change the email adresses so that all are unique.'), grid._grid);
 			grid._grid.update();
 		},
 
-		openEditDialog: function(item, grid) {
+		openEditDialog: function(item, grid, focusWidget) {
 			var widgets = [];
+			var form;
 			array.forEach(grid._grid.get('structure'), lang.hitch(this, function(struct) {
 				var key = struct.field;
 				var value = item[key];
@@ -627,7 +640,7 @@ define([
 				}
 				if (key == 'action') {
 					type = ComboBox;
-					staticValues = [{id: 'create', label: _('New')}, {id: 'modify', label: _('Change')}, {id: 'delete', label: _('Delete')}, {id: 'skip', label: _('Skip')}];
+					staticValues = [{id: 'create', label: _('Create')}, {id: 'modify', label: _('Modify')}, {id: 'delete', label: _('Delete')}, {id: 'ignore', label: _('Ignore')}];
 				}
 				var label = grid._grid.getCellByField(key).name;
 				widgets.push({
@@ -637,17 +650,45 @@ define([
 					required: required,
 					staticValues: staticValues,
 					datePattern: datePattern,
+					validate: function() {
+						var action = null;
+						if (form) {
+							var actionWidget = form.getWidget('action');
+							action = actionWidget.get('value');
+						}
+						if (action == 'ignore') {
+							return true;
+						} else {
+							return type.prototype.validate.apply(this, arguments);
+						}
+					},
 					value: value
 				});
 			}));
+			form = new Form({
+				widgets: widgets
+			});
+			if (focusWidget) {
+				on.once(form, 'show', function() {
+					var widget = this.getWidget(focusWidget);
+					if (focusWidget == 'birthday') {
+						widget = widget._dateBox;
+					}
+					setTimeout(function() {
+						if (widget.focusNode) {
+							widget.focusNode.select();
+						}
+					}, 500);
+				});
+			}
 			dialog.confirmForm({
 				title: _('Edit this line'),
-				submit: _('Edit'),
-				widgets: widgets
+				submit: _('Apply'),
+				form: form
 			}).then(lang.hitch(this, function(values) {
 				item.setValues(values);
 				var recheck = null;
-				if (values.action != 'skip') {
+				if (values.action != 'ignore') {
 					var itemObj = item.toObject();
 					recheck = tools.umcpCommand('schoolcsvimport/recheck', {file_id: this.fileID, user_attrs: [itemObj]}).then(function(data) {
 						var recheckedItem = data.result[0];

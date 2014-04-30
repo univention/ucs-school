@@ -114,21 +114,26 @@ class Instance(SchoolBaseModule, ProgressMixin):
 			if has_header:
 				MODULE.process('Seems to be a header...')
 
-			reader = csv.reader(lines, dialect)
-			columns = []
-			first_lines = []
-			for line in reader:
-				if not columns:
-					if has_header:
-						columns = line
+			with open(filename, 'wb') as f:
+				reader = csv.reader(lines, dialect)
+				writer = csv.writer(f, dialect)
+				columns = []
+				first_lines = []
+				for line in reader:
+					if not any(cell.strip() for cell in line):
+						# empty line
 						continue
-					else:
-						columns = ['unused%d' % x for x in range(len(line))]
-				if len(first_lines) < 10:
-					first_lines.append(line)
-				# go through all lines to validate csv format
-			columns = [user_klass.find_field_name_from_label(column, i) for i, column in enumerate(columns)]
-			MODULE.process('First line translates to columns: %r' % columns)
+					writer.writerow(line)
+					if not columns:
+						if has_header:
+							columns = line
+							continue
+						else:
+							columns = ['unused%d' % x for x in range(len(line))]
+					if len(first_lines) < 10:
+						first_lines.append(line)
+				columns = [user_klass.find_field_name_from_label(column, i) for i, column in enumerate(columns)]
+				MODULE.process('First line translates to columns: %r' % columns)
 		except csv.Error as exc:
 			MODULE.warn('Malformatted CSV file? %s' % exc)
 			result['success'] = False
@@ -203,7 +208,7 @@ class Instance(SchoolBaseModule, ProgressMixin):
 			mentioned_usernames = map(lambda u: u.name, users)
 			progress.title = _('Checking users from database')
 			progress.message = ''
-			existing_users = file_info.user_klass.get_all(file_info.school, lo)
+			existing_users = file_info.user_klass.get_all(lo, file_info.school)
 			for user in existing_users:
 				if user.name not in mentioned_usernames:
 					if 'birthday' in columns:
@@ -251,8 +256,9 @@ class Instance(SchoolBaseModule, ProgressMixin):
 				yield {'username' : user.name, 'action' : action, 'success' : True}
 			else:
 				yield {'username' : user.name, 'action' : action, 'success' : False, 'msg' : user.get_error_msg()}
-		os.unlink(file_info.filename)
-		del self.file_map[file_id]
+		if file_info:
+			os.unlink(file_info.filename)
+			del self.file_map[file_id]
 
 	@simple_response
 	def ping(self):

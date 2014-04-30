@@ -40,7 +40,7 @@ from univention.lib.i18n import Translation
 from univention.management.console.log import MODULE
 from univention.admin.filter import conjunction, expression
 
-from ucsschool.lib.models import User, Student, Teacher, Staff, TeachersAndStaff
+from ucsschool.lib.models import User, Student, Teacher, Staff, TeachersAndStaff, Attribute
 
 _ = Translation('ucs-school-umc-csv-import').translate
 
@@ -61,6 +61,10 @@ def format_date(value, date_format):
 		return datetime.strptime(value, '%Y-%m-%d').strftime(date_format)
 	except (TypeError, ValueError):
 		return value
+
+class Birthday(Attribute):
+	udm_name = 'birthday'
+	# no syntax = iso8601Date, error message is misleading (some iso standard, not our python_format)
 
 class CSVUser(User):
 	def __init__(self, **kwargs):
@@ -98,6 +102,7 @@ class CSVUser(User):
 
 	@classmethod
 	def from_csv_line(cls, attrs, school, date_format, line_no, lo):
+		attrs = dict((key, value) for key, value in attrs.iteritems() if isinstance(key, basestring))
 		user = cls(**attrs)
 		user.name = user.guess_username(lo, date_format)
 		user.school = school
@@ -135,7 +140,7 @@ class CSVUser(User):
 				if not found_column.startswith('unused'):
 					real_column += 1
 		# at least 2: Prevent false positives because of someone
-		# called Mr. Line
+		# called Mr. Surname
 		return real_column > 1
 
 	@classmethod
@@ -246,15 +251,20 @@ class CSVUser(User):
 			return CSVStaff
 		return cls
 
+# same as normal but without syntax validation (done by our validate function)
+# has to be specified in each class, otherwise the base class Student would overwrite
+# it from base class CSVUser
+birthday_attr = Birthday(_('Birthday'), aka=['Birthday', 'Geburtstag'], unlikely_to_change=True)
+
 class CSVStudent(CSVUser, Student):
-	pass
+	birthday = birthday_attr
 
 class CSVTeacher(CSVUser, Teacher):
-	pass
+	birthday = birthday_attr
 
 class CSVStaff(CSVUser, Staff):
-	pass
+	birthday = birthday_attr
 
 class CSVTeachersAndStaff(CSVUser, TeachersAndStaff):
-	pass
+	birthday = birthday_attr
 

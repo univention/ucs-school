@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-csv-import\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2014-04-11 15:44+0200\n"
+"POT-Creation-Date: 2014-05-01 00:33+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -12,23 +12,81 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: umc/python/schoolcsvimport/__init__.py:233
+#: umc/python/schoolcsvimport/__init__.py:239
 #, python-format
 msgid "%(username)s %(action)s"
 msgstr "%(username)s %(action)s"
 
-#: umc/python/schoolcsvimport/__init__.py:171
+#: umc/python/schoolcsvimport/util.py:239
+#, python-format
+msgid "%s could not be changed."
+msgstr "%s konnte nicht verändert werden."
+
+#: umc/python/schoolcsvimport/util.py:235
+#, python-format
+msgid "%s could not be created."
+msgstr "%s konnte nicht angelegt werden."
+
+#: umc/python/schoolcsvimport/util.py:237
+#, python-format
+msgid "%s could not be deleted."
+msgstr "%s konnte nicht gelöscht werden."
+
+#: umc/python/schoolcsvimport/util.py:169
+msgid "Action"
+msgstr "Aktion"
+
+#: umc/python/schoolcsvimport/util.py:257
+msgid "Birthday"
+msgstr "Geburtstag"
+
+#: umc/python/schoolcsvimport/__init__.py:177
 msgid "Checking users from CSV file"
 msgstr "Benutzer aus der CSV-Datei werden überprüft"
 
-#: umc/python/schoolcsvimport/__init__.py:205
+#: umc/python/schoolcsvimport/__init__.py:209
 msgid "Checking users from database"
 msgstr "Benutzer aus der Datenbank werden überprüft"
 
-#: umc/python/schoolcsvimport/__init__.py:233
+#: umc/python/schoolcsvimport/util.py:171
+msgid "Line"
+msgstr "Zeile"
+
+#: umc/python/schoolcsvimport/__init__.py:239
 #, python-format
 msgid "Processing %d user(s)"
 msgstr "Verarbeite %d Benutzer"
+
+#: umc/python/schoolcsvimport/util.py:223
+msgid ""
+"The user already exists and cannot be created. Please change the username to "
+"one that does not yet exist or change the action to be taken."
+msgstr ""
+"Der Nutzer existiert bereits und kann nicht neu erstellt werden. Bitte "
+"ändern Sie den Benutzernamen zu einem noch nicht vergebenen oder ändern Sie "
+"die durchzuführende Aktion."
+
+#: umc/python/schoolcsvimport/util.py:228
+msgid ""
+"The user does not yet exist and cannot be deleted. Please change the "
+"username to one that exists or change the action to be taken."
+msgstr ""
+"Der Nutzer existiert noch nicht und kann nicht gelöscht werden. Bitte ändern "
+"Sie den Benutzernamen zu einem bereits vergebenen oder ändern Sie die "
+"durchzuführende Aktion."
+
+#: umc/python/schoolcsvimport/util.py:226
+msgid ""
+"The user does not yet exist and cannot be modified. Please change the "
+"username to one that exists or change the action to be taken."
+msgstr ""
+"Der Nutzer existiert noch nicht und kann nicht verändert werden. Bitte "
+"ändern Sie den Benutzernamen zu einem bereits vergebenen oder ändern Sie die "
+"durchzuführende Aktion."
+
+#: umc/python/schoolcsvimport/util.py:163
+msgid "Unused"
+msgstr "Unbenutzt"
 
 #: umc/python/schoolcsvimport/__init__.py:250
 msgid "created"
@@ -45,21 +103,6 @@ msgstr "verändert"
 #~ msgid "\"%s\" is required. Please provide this information."
 #~ msgstr "\"%s\" ist erforderlich. Bitte ergänzen Sie diese Information."
 
-#~ msgid "%s could not be changed."
-#~ msgstr "%s konnte nicht verändert werden."
-
-#~ msgid "%s could not be created."
-#~ msgstr "%s konnte nicht angelegt werden."
-
-#~ msgid "%s could not be deleted."
-#~ msgstr "%s konnte nicht gelöscht werden."
-
-#~ msgid "Action"
-#~ msgstr "Aktion"
-
-#~ msgid "Birthday"
-#~ msgstr "Geburtstag"
-
 #~ msgid "Class"
 #~ msgstr "Klasse"
 
@@ -72,39 +115,12 @@ msgstr "verändert"
 #~ msgid "Last name"
 #~ msgstr "Nachname"
 
-#~ msgid "Line"
-#~ msgstr "Zeile"
-
 #~ msgid ""
 #~ "The email address is already taken by another user. Please change the "
 #~ "email address."
 #~ msgstr ""
 #~ "Die E-Mail-Adresse wird bereits von einem anderen Benutzer verwendet. "
 #~ "Bitte ändern Sie die E-Mail-Adresse."
-
-#~ msgid ""
-#~ "The user already exists and cannot be created. Please change the username "
-#~ "to one that does not yet exist or change the action to be taken."
-#~ msgstr ""
-#~ "Der Nutzer existiert bereits und kann nicht neu erstellt werden. Bitte "
-#~ "ändern Sie den Benutzernamen zu einem noch nicht vergebenen oder ändern "
-#~ "Sie die durchzuführende Aktion."
-
-#~ msgid ""
-#~ "The user does not yet exist and cannot be deleted. Please change the "
-#~ "username to one that exists or change the action to be taken."
-#~ msgstr ""
-#~ "Der Nutzer existiert noch nicht und kann nicht gelöscht werden. Bitte "
-#~ "ändern Sie den Benutzernamen zu einem bereits vergebenen oder ändern Sie "
-#~ "die durchzuführende Aktion."
-
-#~ msgid ""
-#~ "The user does not yet exist and cannot be modified. Please change the "
-#~ "username to one that exists or change the action to be taken."
-#~ msgstr ""
-#~ "Der Nutzer existiert noch nicht und kann nicht verändert werden. Bitte "
-#~ "ändern Sie den Benutzernamen zu einem bereits vergebenen oder ändern Sie "
-#~ "die durchzuführende Aktion."
 
 #~ msgid ""
 #~ "The username is already used somewhere outside the school. It may not be "
@@ -115,9 +131,6 @@ msgstr "verändert"
 
 #~ msgid "The value changed from %(old)s. This seems unlikely."
 #~ msgstr "Der Wert ist eigentlich %(old)s. Eine Änderung ist ungewöhnlich."
-
-#~ msgid "Unused"
-#~ msgstr "Unbenutzt"
 
 #~ msgid "Username"
 #~ msgstr "Benutzername"

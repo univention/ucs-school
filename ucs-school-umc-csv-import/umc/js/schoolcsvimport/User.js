@@ -69,7 +69,7 @@ define([
 			this.errors = {};
 			this.warnings = {};
 			this.errorState = ['all-good'];
-			if (this.action == 'skip') {
+			if (this.action == 'ignore') {
 				return;
 			}
 			tools.forIn(this._initialValues.errors, lang.hitch(this, function(field, notes) {
