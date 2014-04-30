@@ -1,38 +1,38 @@
 ucs-school-umc-wizards (4.0.11-1) unstable; urgency=low
 
-  * Bug #34447: Fix double filtering
+  * Bug #34337: Fix double filtering
 
  -- Dirk Wiesenthal <wiesenthal@univention.de>  Thu, 01 May 2014 00:36:57 +0200
 
 ucs-school-umc-wizards (4.0.10-1) unstable; urgency=low
 
-  * Bug #34447: Support filter argument, popup on initial empty grid, better
+  * Bug #34337: Support filter argument, popup on initial empty grid, better
     UDM link
 
  -- Dirk Wiesenthal <wiesenthal@univention.de>  Wed, 30 Apr 2014 00:57:10 +0200
 
 ucs-school-umc-wizards (4.0.9-1) unstable; urgency=low
 
-  * Bug #34447: Autosearch, wizard header improvements, code unification
+  * Bug #34337: Autosearch, wizard header improvements, code unification
 
  -- Dirk Wiesenthal <wiesenthal@univention.de>  Tue, 29 Apr 2014 00:52:29 +0200
 
 ucs-school-umc-wizards (4.0.8-1) unstable; urgency=low
 
-  * Bug #34447: Make UDM link configurable, set wizard title to a meaningful
+  * Bug #34337: Make UDM link configurable, set wizard title to a meaningful
     value, support searching for all schools, text changes
 
  -- Dirk Wiesenthal <wiesenthal@univention.de>  Fri, 25 Apr 2014 15:39:27 +0200
 
 ucs-school-umc-wizards (4.0.7-1) unstable; urgency=low
 
-  * Bug #34447: Add validation error messages
+  * Bug #34337: Add validation error messages
 
  -- Dirk Wiesenthal <wiesenthal@univention.de>  Fri, 25 Apr 2014 02:08:33 +0200
 
 ucs-school-umc-wizards (4.0.6-1) unstable; urgency=low
 
-  * Bug #34447: Correct return values in wizard functions; simplifications
+  * Bug #34337: Correct return values in wizard functions; simplifications
 
  -- Dirk Wiesenthal <wiesenthal@univention.de>  Thu, 24 Apr 2014 22:09:20 +0200
 
