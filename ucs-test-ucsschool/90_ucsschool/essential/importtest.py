@@ -434,6 +434,9 @@ def import_ou_basics(use_cli_api=True):
 											continue
 										if not dc and dc_management:
 											continue  # cannot specify management dc without education dc
+										if not noneducational_create_object and dc_management:
+											print 'NOTE: cannot create management DC without management objects in LDAP'
+											continue
 										if sharefileserver:
 											sharefileserver=uts.random_name()
 											udm.create_object('computers/domaincontroller_slave', name=sharefileserver)
