@@ -1,3 +1,10 @@
+ucs-test-ucsschool (1.0.18-1) unstable; urgency=low
+
+  * Bug #26137: added test for create_ou with name for management dc
+  * Bug #26137: added test for create_dc
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 02 May 2014 14:08:19 +0200
+
 ucs-test-ucsschool (1.0.17-1) unstable; urgency=low
 
   * Bug #34477 use ucr variable 'domainname' instead of hard coding

@@ -1,3 +1,5 @@
+## -*- coding: utf-8 -*-
+
 import univention.testing.utils as utils
 import univention.testing.strings as uts
 import univention.testing.udm
@@ -6,7 +8,6 @@ import univention.uldap
 from univention.testing.ucsschool import UCSTestSchool
 import os
 import random
-from univention.config_registry.frontend import ucr_update
 import subprocess
 import string
 import univention.admin.modules
@@ -16,6 +17,8 @@ from univention.config_registry.interfaces import Interfaces
 
 HOOK_BASEDIR = '/usr/share/ucs-school-import/hooks'
 
+TYPE_DC_MANAGEMENT = 'management'
+TYPE_DC_EDUCATION = 'education'
 
 class CreateOU(Exception):
 	pass
@@ -23,7 +26,7 @@ class DCNotFound(Exception):
 	pass
 class DCMembership(Exception):
 	pass
-class DCisMemberOfMemberGroup(Exception):
+class DCisMemberOfGroup(Exception):
 	pass
 class DhcpdLDAPBase(Exception):
 	pass
@@ -40,19 +43,23 @@ def remove_ou(ou_name):
 	schoolenv.cleanup_ou(ou_name)
 
 
-def create_ou_cli(ou, dc=None, sharefileserver=None):
+def create_ou_cli(ou, dc=None, dc_management=None, sharefileserver=None, ou_displayname=None):
 	cmd_block = ['/usr/share/ucs-school-import/scripts/create_ou', ou]
 	if dc:
 		cmd_block.append(dc)
+	if dc_management:
+		cmd_block.append(dc_management)
+	if ou_displayname:
+		cmd_block.append('--displayName=%s' % ou_displayname)
 	if sharefileserver:
 		cmd_block.append('--sharefileserver=%s' % sharefileserver)
 
-	print 'cmd_block: %s' % cmd_block
+	print 'cmd_block: %r' % cmd_block
 	retcode = subprocess.call(cmd_block , shell=False)
 	if retcode:
 		raise CreateOU('Failed to execute "%s". Return code: %d.' % (string.join(cmd_block), retcode))
 
-def create_ou_umc(ou, dc, sharefileserver):
+def create_ou_umc(ou, dc, dc_management, sharefileserver, ou_displayname):
 	raise NotImplementedError
 
 def import_ou_create_pre_hook(ou, ou_base, dc, singlemaster):
@@ -126,12 +133,14 @@ def get_ou_base(ou, district_enable):
 	return ou_base
 
 
-def create_and_verify_ou(ou, dc, sharefileserver, singlemaster=False, noneducational_create_objects=False, district_enable=False, default_dcs=None, dhcp_dns_clearou=False, do_cleanup=True, use_cli_api=True):
+def create_and_verify_ou(ou, dc, sharefileserver, dc_management=None, ou_displayname=None, singlemaster=False, noneducational_create_objects=False, district_enable=False, default_dcs=None, dhcp_dns_clearou=False, do_cleanup=True, use_cli_api=True):
 
 	print '******************************************************'
 	print '**** create_and_verify_ou test run'
 	print '****	ou=%s' % ou
+	print '****	ou_displayname=%r' % ou_displayname
 	print '****	dc=%s' % dc
+	print '****	dc_management=%s' % dc_management
 	print '****	sharefileserver=%s' % sharefileserver
 	print '****	singlemaster=%s' % singlemaster
 	print '****	noneducational_create_objects=%s' % noneducational_create_objects
@@ -185,6 +194,7 @@ def create_and_verify_ou(ou, dc, sharefileserver, singlemaster=False, noneducati
 		dc_dn = 'cn=dc%s-01,cn=dc,cn=server,cn=computers,%s' % (ou, ou_base)
 		dc_name = 'dc%s-01' % ou
 
+
 	if sharefileserver:
 		result = lo.search(filter='(&(objectClass=univentionDomainController)(cn=%s))' % sharefileserver, base=base_dn, attr=['cn'])
 		if result:
@@ -195,9 +205,9 @@ def create_and_verify_ou(ou, dc, sharefileserver, singlemaster=False, noneducati
 		sharefileserver_dn = dc_dn
 
 	if use_cli_api:
-		create_ou_cli(ou, dc, sharefileserver)
+		create_ou_cli(ou, dc, dc_management, sharefileserver, ou_displayname)
 	else:
-		create_ou_umc(ou, dc, sharefileserver)
+		create_ou_umc(ou, dc, dc_management, sharefileserver, ou_displayname)
 
 	# cleanup hooks
 	os.remove(pre_hook)
@@ -215,8 +225,6 @@ def create_and_verify_ou(ou, dc, sharefileserver, singlemaster=False, noneducati
 
 
 	utils.verify_ldap_object(ou_base, expected_attr={'ou': [ou], 'ucsschoolClassShareFileServer': [sharefileserver_dn], 'ucsschoolHomeShareFileServer': [sharefileserver_dn]}, should_exist=True)
-
-	utils.verify_ldap_object(dc_dn, should_exist=True)
 
 	utils.verify_ldap_object('cn=printers,%s' % ou_base, expected_attr={'cn': ['printers']}, should_exist=True)
 	utils.verify_ldap_object('cn=users,%s'% ou_base, expected_attr={'cn': ['users']}, should_exist=True)
@@ -264,33 +272,10 @@ def create_and_verify_ou(ou, dc, sharefileserver, singlemaster=False, noneducati
 
 
 	if not singlemaster:
-		try:
-			utils.verify_ldap_object('cn=DC-Edukativnetz,cn=ucsschool,cn=groups,%s' % base_dn, expected_attr={'uniqueMember': [dc_dn]}, should_exist=True)
-		except utils.LDAPObjectUnexpectedValue:
-			# ignore unepexted values
-			pass
+		verify_dc(ou, dc, TYPE_DC_EDUCATION, base_dn)
 
-		try:
-			utils.verify_ldap_object('cn=Member-Edukativnetz,cn=ucsschool,cn=groups,%s' % base_dn, expected_attr={'uniqueMember': [dc_dn]}, should_exist=True)
-		except utils.LDAPObjectValueMissing:
-			# The value should not be set
-			pass
-		else:
-			raise DCisMemberOfMemberGroup()
-
-		try:
-			utils.verify_ldap_object('cn=OU%s-DC-Edukativnetz,cn=ucsschool,cn=groups,%s' % (ou, base_dn), expected_attr={'uniqueMember': [dc_dn]}, should_exist=True)
-		except utils.LDAPObjectUnexpectedValue:
-			# ignore unepexted values
-			pass
-
-		try:
-			utils.verify_ldap_object('cn=OU%s-Member-Edukativnetz,cn=ucsschool,cn=groups,%s' % (ou, base_dn), expected_attr={'uniqueMember': [dc_dn]}, should_exist=True)
-		except utils.LDAPObjectValueMissing:
-			# The value should not be set
-			pass
-		else:
-			raise DCisMemberOfMemberGroup()
+	if dc_management:
+		verify_dc(ou, dc_management, TYPE_DC_MANAGEMENT, base_dn)
 
 	grp_prefix_pupils = ucr.get('ucsschool/ldap/default/groupprefix/pupils', 'schueler-')
 	grp_prefix_teachers = ucr.get('ucsschool/ldap/default/groupprefix/teachers', 'lehrer-')
@@ -380,6 +365,54 @@ def create_and_verify_ou(ou, dc, sharefileserver, singlemaster=False, noneducati
 	if do_cleanup:
 		remove_ou(ou)
 
+
+def verify_dc(ou, dc_name, dc_type, base_dn=None):
+	''' Arguments:
+        dc_name: name of the domaincontroller (cn)
+        dc_type: type of the domaincontroller ('education' or 'management')
+	'''
+	assert(dc_type in (TYPE_DC_MANAGEMENT, TYPE_DC_EDUCATION))
+
+	ucr = univention.testing.ucr.UCSTestConfigRegistry()
+	ucr.load()
+	if not base_dn:
+		base_dn = ucr.get('ldap/base')
+	ou_base = get_ou_base(ou, ucr.is_true('ucsschool/ldap/district/enable', False))
+	dc_dn = 'cn=%s,cn=dc,cn=server,cn=computers,%s' % (dc_name, ou_base)
+
+	# get list of (un-)desired group memberships ==> [(IS_MEMBER, GROUP_DN), ...]
+	group_dn_list = {TYPE_DC_MANAGEMENT: [(True, 'cn=OU%s-DC-Verwaltungsnetz,cn=ucsschool,cn=groups,%s' % (ou.lower(), base_dn)),
+										  (True, 'cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,%s' % (base_dn, )),
+										  (False, 'cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,%s' % base_dn),
+										  (False, 'cn=OU%s-Member-Verwaltungsnetz,cn=ucsschool,cn=groups,%s' % (ou, base_dn))
+										  (False, 'cn=OU%s-DC-Edukativnetz,cn=ucsschool,cn=groups,%s' % (ou.lower(), base_dn)),
+										  (False, 'cn=DC-Edukativnetz,cn=ucsschool,cn=groups,%s' % (base_dn, )),
+										  (False, 'cn=Member-Edukativnetz,cn=ucsschool,cn=groups,%s' % base_dn),
+										  (False, 'cn=OU%s-Member-Edukativnetz,cn=ucsschool,cn=groups,%s' % (ou, base_dn))
+										  ],
+					 TYPE_DC_EDUCATION: [(False, 'cn=OU%s-DC-Verwaltungsnetz,cn=ucsschool,cn=groups,%s' % (ou.lower(), base_dn)),
+										 (False, 'cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,%s' % (base_dn, )),
+										 (False, 'cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,%s' % base_dn),
+										 (False, 'cn=OU%s-Member-Verwaltungsnetz,cn=ucsschool,cn=groups,%s' % (ou, base_dn))
+										 (True, 'cn=OU%s-DC-Edukativnetz,cn=ucsschool,cn=groups,%s' % (ou.lower(), base_dn)),
+										 (True, 'cn=DC-Edukativnetz,cn=ucsschool,cn=groups,%s' % (base_dn, )),
+										 (False, 'cn=Member-Edukativnetz,cn=ucsschool,cn=groups,%s' % base_dn),
+										 (False, 'cn=OU%s-Member-Edukativnetz,cn=ucsschool,cn=groups,%s' % (ou, base_dn))
+										 ],
+					 }[dc_type]
+
+	utils.verify_ldap_object(dc_dn, should_exist=True)
+
+	for (expected_membership, grpdn) in group_dn_list:
+		try:
+			utils.verify_ldap_object(grpdn, expected_attr={'uniqueMember': [dc_dn]}, strict=False, should_exist=True)
+			if not expected_membership:
+				raise DCisMemberOfGroup('%s DC %r is member of group %r' % (dc_type, dc_dn, grpdn))
+		except utils.LDAPObjectValueMissing:
+			if expected_membership:
+				raise
+
+
 def import_ou_basics(use_cli_api=True):
 	with univention.testing.udm.UCSTestUDM() as udm:
 		for dc in [None, 'generate']:
@@ -389,26 +422,34 @@ def import_ou_basics(use_cli_api=True):
 						for default_dcs in [None, 'edukativ', uts.random_string()]:
 							for dhcp_dns_clearou in [True, False]:
 								for sharefileserver in [None, 'generate']:
-									if singlemaster and dc == 'generate':
-										continue
-									if sharefileserver:
-										sharefileserver=uts.random_name()
-										udm.create_object('computers/domaincontroller_slave', name=sharefileserver)
-									ou_name=uts.random_name()
-									try:
-										create_and_verify_ou(
-												ou=ou_name,
-												dc=(uts.random_name() if dc else None),
-												sharefileserver=sharefileserver,
-												singlemaster=singlemaster,
-												noneducational_create_objects=noneducational_create_object,
-												district_enable=district_enable,
-												default_dcs=default_dcs,
-												dhcp_dns_clearou=dhcp_dns_clearou,
-												use_cli_api=use_cli_api
-										)
-									finally:
-										remove_ou(ou_name)
+									for dc_management in [None, 'generate']:
+										if singlemaster and dc == 'generate':
+											continue
+										if not dc and dc_management:
+											continue  # cannot specify management dc without education dc
+										if sharefileserver:
+											sharefileserver=uts.random_name()
+											udm.create_object('computers/domaincontroller_slave', name=sharefileserver)
+										ou_name=uts.random_name()
+										# character set contains multiple whitespaces to increase chance to get several words
+										charset = uts.STR_ALPHANUMDOTDASH + uts.STR_ALPHA.upper() + '()[]/,;:_#"+*@<>~ßöäüÖÄÜ$%&!     '
+										ou_displayname=uts.random_string(length=random.randint(1, 50), charset=charset)
+										try:
+											create_and_verify_ou(
+													ou=ou_name,
+													ou_displayname=ou_displayname,
+													dc=(uts.random_name() if dc else None),
+													dc_management=(uts.random_name() if dc_management else None),
+													sharefileserver=sharefileserver,
+													singlemaster=singlemaster,
+													noneducational_create_objects=noneducational_create_object,
+													district_enable=district_enable,
+													default_dcs=default_dcs,
+													dhcp_dns_clearou=dhcp_dns_clearou,
+													use_cli_api=use_cli_api
+											)
+										finally:
+											remove_ou(ou_name)
 
 def import_ou_with_existing_dc(use_cli_api=True):
 	with univention.testing.udm.UCSTestUDM() as udm:
@@ -440,7 +481,9 @@ def import_ou_with_existing_dc(use_cli_api=True):
 		try:
 			create_and_verify_ou(
 										ou=ou_name,
+										ou_displayname=None,
 										dc=dc_name,
+										dc_management=None,
 										sharefileserver=None,
 										singlemaster=False,
 										noneducational_create_objects=True,
