@@ -1,3 +1,14 @@
+ucs-test-ucsschool (1.0.17-1) unstable; urgency=low
+
+  * Bug #34477 use ucr variable 'domainname' instead of hard coding
+  * Bug #34496 use ucr variable 'domainname' instead of hard coding
+  * Bug #34280 Workaround for bug #31837 added.
+  * Bug #34368 correct some logical mistakes
+  * Bug #34368 use Workgroup objects instead of functions
+  * Bug #34368 add some methods to Workgroup class in essential package
+
+ -- Ammar Najjar <najjar@univention.de>  Fri, 02 May 2014 11:30:38 +0200
+
 ucs-test-ucsschool (1.0.16-1) unstable; urgency=low
 
   * Added create_ou tests (Bug #34548)
