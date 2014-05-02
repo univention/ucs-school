@@ -1,3 +1,9 @@
+ucs-school-import (10.0.12-1) unstable; urgency=low
+
+  * Bug #26137: fixed traceback due to wrong argument order
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 02 May 2014 17:14:41 +0200
+
 ucs-school-import (10.0.11-1) unstable; urgency=low
 
   * Bug #34737: do not rename share if renaming of class group failed

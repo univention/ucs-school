@@ -3151,7 +3151,7 @@ Arguments:
 
 		verify_school_ou(ouname, co, lo, baseDN, dcName=dcNameEducation, ShareFileServer=options.ShareFileServer, displayName=options.displayName)
 		if dcNameManagement:
-			create_dc(ouname, co, lo, baseDN, dcNameManagement, TYPE_DC_MANAGEMENT)
+			create_dc(co, lo, baseDN, ouname, dcNameManagement, TYPE_DC_MANAGEMENT)
 		sys.exit(0)
 	parser.print_help()
 	sys.exit(1)
