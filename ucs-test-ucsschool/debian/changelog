@@ -1,3 +1,9 @@
+ucs-test-ucsschool (1.0.16-1) unstable; urgency=low
+
+  * Added create_ou tests (Bug #34548)
+
+ -- Stefan Gohmann <gohmann@univention.de>  Fri, 02 May 2014 11:16:47 +0200
+
 ucs-test-ucsschool (1.0.15-3) unstable; urgency=medium
 
   * 12_roleshare_student doesn't depend on ucs-school-roleshares,

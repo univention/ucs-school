@@ -1,0 +1,16 @@
+#!/usr/share/ucs-test/runner python
+## -*- coding: utf-8 -*-
+## desc: Import OU via CLI
+## tags: [apptest,ucsschool]
+## roles: [domaincontroller_master]
+## exposure: dangerous
+## packages:
+##   - ucs-school-import
+##   - ucs-school-master
+
+from essential.importtest import *
+
+if __name__ == '__main__':
+	import_ou_basics(use_cli_api=True)
+	import_ou_with_existing_dc(use_cli_api=True)
+

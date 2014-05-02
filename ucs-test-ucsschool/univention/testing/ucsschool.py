@@ -147,9 +147,12 @@ class UCSTestSchool(object):
 			self._remove_udm_object('groups/group', grpdn)
 
 		# remove OU recursively
-		oudn = 'ou=%(ou)s,%(basedn)s' % {'ou': ou_name, 'basedn': self._ucr.get('ldap/base')}
+		if self._ucr.is_true('ucsschool/ldap/district/enable'):
+			oudn = 'ou=%(ou)s,ou=%(district)s,%(basedn)s' % {'ou': ou_name, 'district': ou_name[0:2], 'basedn': self._ucr.get('ldap/base')}
+		else:
+			oudn = 'ou=%(ou)s,%(basedn)s' % {'ou': ou_name, 'basedn': self._ucr.get('ldap/base')}
 		self._remove_udm_object('container/ou', oudn)
-		print '*** Purging OU %s and related objects: done' % ou_name
+		print '*** Purging OU %s and related objects (%s): done' % (ou_name,oudn)
 
 
 	def create_ou(self, ou_name=None, name_edudc=None, displayName=''):

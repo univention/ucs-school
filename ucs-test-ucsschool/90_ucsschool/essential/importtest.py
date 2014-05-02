@@ -1,0 +1,473 @@
+import univention.testing.utils as utils
+import univention.testing.strings as uts
+import univention.testing.udm
+import univention.testing.ucr
+import univention.uldap
+from univention.testing.ucsschool import UCSTestSchool
+import os
+import random
+from univention.config_registry.frontend import ucr_update
+import subprocess
+import string
+import univention.admin.modules
+import univention.admin.filter
+univention.admin.modules.update()
+from univention.config_registry.interfaces import Interfaces
+
+HOOK_BASEDIR = '/usr/share/ucs-school-import/hooks'
+
+
+class CreateOU(Exception):
+	pass
+class DCNotFound(Exception):
+	pass
+class DCMembership(Exception):
+	pass
+class DCisMemberOfMemberGroup(Exception):
+	pass
+class DhcpdLDAPBase(Exception):
+	pass
+class PreHookFailed(Exception):
+	pass
+class PostHookFailed(Exception):
+	pass
+
+
+def remove_ou(ou_name):
+	schoolenv = UCSTestSchool()
+	# the reload is necessary, otherwise the UCR variables are not up-to-date
+	schoolenv._ucr.load()
+	schoolenv.cleanup_ou(ou_name)
+
+
+def create_ou_cli(ou, dc=None, sharefileserver=None):
+	cmd_block = ['/usr/share/ucs-school-import/scripts/create_ou', ou]
+	if dc:
+		cmd_block.append(dc)
+	if sharefileserver:
+		cmd_block.append('--sharefileserver=%s' % sharefileserver)
+
+	print 'cmd_block: %s' % cmd_block
+	retcode = subprocess.call(cmd_block , shell=False)
+	if retcode:
+		raise CreateOU('Failed to execute "%s". Return code: %d.' % (string.join(cmd_block), retcode))
+
+def create_ou_umc(ou, dc, sharefileserver):
+	raise NotImplementedError
+
+def import_ou_create_pre_hook(ou, ou_base, dc, singlemaster):
+	pre_hook_base = os.path.join(HOOK_BASEDIR, 'ou_create_pre.d')
+	pre_hook = os.path.join(pre_hook_base, uts.random_name())
+
+	pre_hook_fd = open(pre_hook, 'w+')
+	successful_file = '%s-successful' % pre_hook
+
+	pre_hook_fd.write('''#!/bin/sh
+set -x
+cat $1
+univention-ldapsearch -b "%(ou_base)s" >/dev/null && exit 1
+''' % {'ou_base': ou_base})
+
+	if singlemaster:
+		pre_hook_fd.write('egrep "^%(ou)s\t$(ucr get hostname)$" $1 || exit 1\n' % {'ou': ou, 'dc': dc})
+	elif dc:
+		pre_hook_fd.write('egrep "^%(ou)s\t%(dc)s$" $1 || exit 1\n' % {'ou': ou, 'dc': dc})
+	else:
+		pre_hook_fd.write('egrep "^%(ou)s$" $1 || exit 1\n' % {'ou': ou, 'dc': dc})
+
+	pre_hook_fd.write('touch "%s"' % successful_file)
+
+	pre_hook_fd.close()
+	os.chmod(pre_hook, 0755)
+
+	return (pre_hook, successful_file)
+
+
+def import_ou_create_post_hook(ou, ou_base, dc, singlemaster):
+	post_hook_base = os.path.join(HOOK_BASEDIR, 'ou_create_post.d')
+	post_hook = os.path.join(post_hook_base, uts.random_name())
+
+	post_hook_fd = open(post_hook, 'w+')
+	successful_file = '%s-successful' % post_hook
+
+	post_hook_fd = open(post_hook, 'w+')
+	post_hook_fd.write('''#!/bin/sh
+set -x
+cat $1
+test "%(ou_base)s" = "$2" || exit 1
+univention-ldapsearch -b "$2" >/dev/null || exit 1
+''' % {'ou_base': ou_base})
+	if singlemaster:
+		post_hook_fd.write('egrep "^%(ou)s\t$(ucr get hostname)$" $1 || exit 1\n' % {'ou': ou, 'dc': dc})
+	elif dc:
+		post_hook_fd.write('egrep "^%(ou)s\t%(dc)s$" $1 || exit 1\n' % {'ou': ou, 'dc': dc})
+	else:
+		post_hook_fd.write('egrep "^%(ou)s$" $1 || exit 1\n' % {'ou': ou, 'dc': dc})
+
+	post_hook_fd.write('touch "%s"' % successful_file)
+
+	post_hook_fd.close()
+	os.chmod(post_hook, 0755)
+
+	return (post_hook, successful_file)
+
+
+def get_ou_base(ou, district_enable):
+	ucr = univention.testing.ucr.UCSTestConfigRegistry()
+	ucr.load()
+
+	base_dn = ucr.get('ldap/base')
+
+	if district_enable:
+		ou_base = 'ou=%s,ou=%s,%s' % (ou, ou[0:2], base_dn)
+	else:
+		ou_base = 'ou=%s,%s' % (ou, base_dn)
+
+	return ou_base
+
+
+def create_and_verify_ou(ou, dc, sharefileserver, singlemaster=False, noneducational_create_objects=False, district_enable=False, default_dcs=None, dhcp_dns_clearou=False, do_cleanup=True, use_cli_api=True):
+
+	print '******************************************************'
+	print '**** create_and_verify_ou test run'
+	print '****	ou=%s' % ou
+	print '****	dc=%s' % dc
+	print '****	sharefileserver=%s' % sharefileserver
+	print '****	singlemaster=%s' % singlemaster
+	print '****	noneducational_create_objects=%s' % noneducational_create_objects
+	print '****	district_enable=%s' % district_enable
+	print '****	default_dcs=%s' % default_dcs
+	print '****	dhcp_dns_clearou=%s' % dhcp_dns_clearou
+	print '******************************************************'
+
+	ucr = univention.testing.ucr.UCSTestConfigRegistry()
+	ucr.load()
+
+	lo = univention.uldap.getMachineConnection()
+
+	cn_pupils = ucr.get('ucsschool/ldap/default/container/pupils', 'schueler')
+	cn_teachers = ucr.get('ucsschool/ldap/default/container/teachers', 'lehrer')
+	cn_teachers_staff = ucr.get('ucsschool/ldap/default/container/teachers-and-staff', 'lehrer und mitarbeiter')
+	cn_admins = ucr.get('ucsschool/ldap/default/container/admins', 'admins')
+	cn_staff = ucr.get('ucsschool/ldap/default/container/staff', 'mitarbeiter')
+
+	# set UCR
+	univention.config_registry.handler_set([
+		'ucsschool/singlemaster=%s' % ('true' if singlemaster else 'false'),
+		'ucsschool/ldap/noneducational/create/objects=%s' % ('true' if noneducational_create_objects else 'false'),
+		'ucsschool/ldap/district/enable=%s' % ('true' if district_enable else 'false'),
+		'ucsschool/ldap/default/dcs=%s' % default_dcs,
+		'ucsschool/import/generate/policy/dhcp/dns/clearou=%s' % ('true' if dhcp_dns_clearou else 'false'),
+	])
+	univention.config_registry.handler_unset([
+		'dhcpd/ldap/base'
+	])
+
+	base_dn = ucr.get('ldap/base')
+	ou_base = get_ou_base(ou, district_enable)
+
+	# create hooks
+	(pre_hook, pre_hook_successful) = import_ou_create_pre_hook(ou, ou_base, dc, singlemaster)
+	(post_hook, post_hook_successful) = import_ou_create_post_hook(ou, ou_base, dc, singlemaster)
+
+	# does dc exist?
+	if singlemaster:
+		dc_dn = ucr.get('ldap/hostdn')
+		dc_name = ucr.get('hostname')
+	elif dc:
+		result = lo.search(filter='(&(objectClass=univentionDomainController)(cn=%s))' % dc, base=base_dn, attr=['cn'])
+		if result:
+			dc_dn = result[0][0]
+		else:
+			dc_dn = 'cn=%s,cn=dc,cn=server,cn=computers,%s' % (dc,ou_base)
+		dc_name = dc
+	else:
+		dc_dn = 'cn=dc%s-01,cn=dc,cn=server,cn=computers,%s' % (ou, ou_base)
+		dc_name = 'dc%s-01' % ou
+
+	if sharefileserver:
+		result = lo.search(filter='(&(objectClass=univentionDomainController)(cn=%s))' % sharefileserver, base=base_dn, attr=['cn'])
+		if result:
+			sharefileserver_dn = result[0][0]
+		sharefileserver_name = sharefileserver
+	else:
+		sharefileserver_name = dc_name
+		sharefileserver_dn = dc_dn
+
+	if use_cli_api:
+		create_ou_cli(ou, dc, sharefileserver)
+	else:
+		create_ou_umc(ou, dc, sharefileserver)
+
+	# cleanup hooks
+	os.remove(pre_hook)
+	os.remove(post_hook)
+
+	if os.path.exists(pre_hook_successful):
+		os.unlink(pre_hook_successful)
+	else:
+		raise PreHookFailed()
+
+	if os.path.exists(post_hook_successful):
+		os.unlink(post_hook_successful)
+	else:
+		raise PostHookFailed()
+
+
+	utils.verify_ldap_object(ou_base, expected_attr={'ou': [ou], 'ucsschoolClassShareFileServer': [sharefileserver_dn], 'ucsschoolHomeShareFileServer': [sharefileserver_dn]}, should_exist=True)
+
+	utils.verify_ldap_object(dc_dn, should_exist=True)
+
+	utils.verify_ldap_object('cn=printers,%s' % ou_base, expected_attr={'cn': ['printers']}, should_exist=True)
+	utils.verify_ldap_object('cn=users,%s'% ou_base, expected_attr={'cn': ['users']}, should_exist=True)
+	utils.verify_ldap_object('cn=%s,cn=users,%s' % (cn_pupils, ou_base), expected_attr={'cn': [cn_pupils]}, should_exist=True)
+	utils.verify_ldap_object('cn=%s,cn=users,%s' % (cn_teachers, ou_base), expected_attr={'cn': [cn_teachers]}, should_exist=True)
+	utils.verify_ldap_object('cn=%s,cn=users,%s' % (cn_admins, ou_base), expected_attr={'cn': [cn_admins]}, should_exist=True)
+	utils.verify_ldap_object('cn=%s,cn=users,%s' % (cn_admins, ou_base), expected_attr={'cn': [cn_admins]}, should_exist=True)
+
+	utils.verify_ldap_object('cn=computers,%s' % ou_base, expected_attr={'cn': ['computers']}, should_exist=True)
+	utils.verify_ldap_object('cn=server,cn=computers,%s' % ou_base, expected_attr={'cn': ['server']}, should_exist=True)
+	utils.verify_ldap_object('cn=dc,cn=server,cn=computers,%s' % ou_base, expected_attr={'cn': ['dc']}, should_exist=True)
+	utils.verify_ldap_object('cn=networks,%s' % ou_base, expected_attr={'cn': ['networks']}, should_exist=True)
+	utils.verify_ldap_object('cn=groups,%s' % ou_base, expected_attr={'cn': ['groups']}, should_exist=True)
+	utils.verify_ldap_object('cn=%s,cn=groups,%s' % (cn_pupils, ou_base), expected_attr={'cn': [cn_pupils]}, should_exist=True)
+	utils.verify_ldap_object('cn=%s,cn=groups,%s' % (cn_teachers, ou_base), expected_attr={'cn': [cn_teachers]}, should_exist=True)
+	utils.verify_ldap_object('cn=klassen,cn=%s,cn=groups,%s' % (cn_pupils, ou_base), expected_attr={'cn': ['klassen']}, should_exist=True)
+	utils.verify_ldap_object('cn=raeume,cn=groups,%s' % ou_base, expected_attr={'cn': ['raeume']}, should_exist=True)
+
+	utils.verify_ldap_object('cn=dhcp,%s' % ou_base, expected_attr={'cn': ['dhcp']}, should_exist=True)
+	utils.verify_ldap_object('cn=policies,%s' % ou_base, expected_attr={'cn': ['policies']}, should_exist=True)
+	utils.verify_ldap_object('cn=shares,%s' % ou_base, expected_attr={'cn': ['shares']}, should_exist=True)
+	utils.verify_ldap_object('cn=klassen,cn=shares,%s' % ou_base, expected_attr={'cn': ['klassen']}, should_exist=True)
+	utils.verify_ldap_object('cn=dc,cn=server,cn=computers,%s' % ou_base, expected_attr={'cn': ['dc']}, should_exist=True)
+
+	if noneducational_create_objects:
+		utils.verify_ldap_object('cn=%s,cn=users,%s' % (cn_staff, ou_base), should_exist=True)
+		utils.verify_ldap_object('cn=%s,cn=users,%s' % (cn_teachers_staff, ou_base), should_exist=True)
+		utils.verify_ldap_object('cn=%s,cn=groups,%s' % (cn_staff, ou_base), should_exist=True)
+	else:
+		utils.verify_ldap_object('cn=%s,cn=users,%s' % (cn_staff, ou_base), should_exist=False)
+		utils.verify_ldap_object('cn=%s,cn=users,%s' % (cn_teachers_staff, ou_base), should_exist=False)
+		utils.verify_ldap_object('cn=%s,cn=groups,%s' % (cn_staff, ou_base), should_exist=False)
+
+	if noneducational_create_objects:
+		utils.verify_ldap_object('cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,%s' % base_dn, should_exist=True)
+		utils.verify_ldap_object('cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,%s' % base_dn, should_exist=True)
+		utils.verify_ldap_object('cn=OU%s-DC-Verwaltungsnetz,cn=ucsschool,cn=groups,%s' % (ou, base_dn), should_exist=True)
+		utils.verify_ldap_object('cn=OU%s-Member-Verwaltungsnetz,cn=ucsschool,cn=groups,%s' % (ou, base_dn), should_exist=True)
+	# This will fail because we don't cleanup these groups in cleanup_ou
+	#else:
+	#	utils.verify_ldap_object("cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,%s" % base_dn, should_exist=False)
+	#	utils.verify_ldap_object("cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,%s" % base_dn, should_exist=False)
+	#	utils.verify_ldap_object('cn=OU%s-DC-Verwaltungsnetz,cn=ucsschool,cn=groups,%s' % (ou, base_dn), should_exist=False)
+	#	utils.verify_ldap_object('cn=OU%s-Member-Verwaltungsnetz,cn=ucsschool,cn=groups,%s' % (ou, base_dn), should_exist=False)
+
+
+	if not singlemaster:
+		try:
+			utils.verify_ldap_object('cn=DC-Edukativnetz,cn=ucsschool,cn=groups,%s' % base_dn, expected_attr={'uniqueMember': [dc_dn]}, should_exist=True)
+		except utils.LDAPObjectUnexpectedValue:
+			# ignore unepexted values
+			pass
+
+		try:
+			utils.verify_ldap_object('cn=Member-Edukativnetz,cn=ucsschool,cn=groups,%s' % base_dn, expected_attr={'uniqueMember': [dc_dn]}, should_exist=True)
+		except utils.LDAPObjectValueMissing:
+			# The value should not be set
+			pass
+		else:
+			raise DCisMemberOfMemberGroup()
+
+		try:
+			utils.verify_ldap_object('cn=OU%s-DC-Edukativnetz,cn=ucsschool,cn=groups,%s' % (ou, base_dn), expected_attr={'uniqueMember': [dc_dn]}, should_exist=True)
+		except utils.LDAPObjectUnexpectedValue:
+			# ignore unepexted values
+			pass
+
+		try:
+			utils.verify_ldap_object('cn=OU%s-Member-Edukativnetz,cn=ucsschool,cn=groups,%s' % (ou, base_dn), expected_attr={'uniqueMember': [dc_dn]}, should_exist=True)
+		except utils.LDAPObjectValueMissing:
+			# The value should not be set
+			pass
+		else:
+			raise DCisMemberOfMemberGroup()
+
+	grp_prefix_pupils = ucr.get('ucsschool/ldap/default/groupprefix/pupils', 'schueler-')
+	grp_prefix_teachers = ucr.get('ucsschool/ldap/default/groupprefix/teachers', 'lehrer-')
+	grp_prefix_admins = ucr.get('ucsschool/ldap/default/groupprefix/admins', 'admins-')
+	grp_prefix_staff = ucr.get('ucsschool/ldap/default/groupprefix/staff', 'mitarbeiter-')
+
+	grp_policy_pupils = ucr.get('ucsschool/ldap/default/policy/umc/pupils', 'cn=ucsschool-umc-pupils-default,cn=UMC,cn=policies,%s' % base_dn)
+	grp_policy_teachers = ucr.get('ucsschool/ldap/default/policy/umc/teachers', 'cn=ucsschool-umc-teachers-default,cn=UMC,cn=policies,%s' % base_dn)
+	grp_policy_admins = ucr.get('ucsschool/ldap/default/policy/umc/admins', 'cn=ucsschool-umc-admins-default,cn=UMC,cn=policies,%s' % base_dn)
+	grp_policy_staff = ucr.get('ucsschool/ldap/default/policy/umc/staff', 'cn=ucsschool-umc-staff-default,cn=UMC,cn=policies,%s' % base_dn)
+
+	utils.verify_ldap_object("cn=%s%s,cn=ouadmins,cn=groups,%s" % (grp_prefix_admins, ou, base_dn), expected_attr={'univentionPolicyReference': [grp_policy_admins]}, should_exist=True)
+	utils.verify_ldap_object("cn=%s%s,cn=groups,%s" % (grp_prefix_pupils, ou, ou_base),	expected_attr={'univentionPolicyReference': [grp_policy_pupils]}, should_exist=True)
+	utils.verify_ldap_object("cn=%s%s,cn=groups,%s" % (grp_prefix_teachers, ou, ou_base), expected_attr={'univentionPolicyReference': [grp_policy_teachers]}, should_exist=True)
+
+	if noneducational_create_objects:
+		utils.verify_ldap_object("cn=%s%s,cn=groups,%s" % (grp_prefix_staff, ou, ou_base), expected_attr={'univentionPolicyReference': [grp_policy_staff]}, should_exist=True)
+
+	dcmaster_module = univention.admin.modules.get("computers/domaincontroller_master")
+	dcbackup_module = univention.admin.modules.get("computers/domaincontroller_backup")
+	dcslave_module = univention.admin.modules.get("computers/domaincontroller_slave")
+
+	masterobjs = univention.admin.modules.lookup(dcmaster_module, None, lo, scope='sub', superordinate=None, base=base_dn,
+										 filter=univention.admin.filter.expression('cn', dc_name))
+	backupobjs = univention.admin.modules.lookup(dcbackup_module, None, lo, scope='sub', superordinate=None, base=base_dn,
+										 filter=univention.admin.filter.expression('cn', dc_name))
+	slaveobjs = univention.admin.modules.lookup(dcslave_module, None, lo, scope='sub', superordinate=None, base=base_dn,
+										 filter=univention.admin.filter.expression('cn', dc_name))
+
+	# check group membership
+	#  slave should be member
+	#  master and backup should not be member
+	dcgroups = ["cn=OU%s-DC-Edukativnetz,cn=ucsschool,cn=groups,%s" % (ou, base_dn),
+				"cn=DC-Edukativnetz,cn=ucsschool,cn=groups,%s" % (base_dn)]
+
+	if masterobjs:
+		is_master_or_backup = True
+		dcobject = masterobjs[0]
+	elif backupobjs:
+		is_master_or_backup = True
+		dcobject = backupobjs[0]
+	elif slaveobjs:
+		is_master_or_backup = False
+		dcobject = slaveobjs[0]
+	else:
+		raise DCNotFound()
+
+	dcobject.open()
+	groups = []
+	membership = False
+	for group in dcobject.get('groups'):
+		groups.append(group.lower())
+	for dcgroup in dcgroups:
+		if dcgroup.lower() in groups:
+			membership = True
+
+	if is_master_or_backup and membership:
+		raise DCMembership()
+	elif not is_master_or_backup and not membership:
+		raise DCMembership()
+
+	# dhcp
+	dhcp_dn = "cn=dhcp,%s" % (ou_base)
+	dhcp_service_dn = "cn=%s,%s" % (ou, dhcp_dn)
+	dhcp_server_dn = "cn=%s,%s" % (dc_name, dhcp_service_dn)
+	utils.verify_ldap_object(dhcp_service_dn,	expected_attr={'dhcpOption': ['wpad "http://%s.%s/proxy.pac"' % (dc_name,ucr.get('domainname'))]}, should_exist=True)
+	utils.verify_ldap_object(dhcp_server_dn, should_exist=True)
+
+	if singlemaster:
+		ucr.load()
+		if ucr.get('dhcpd/ldap/base') != dhcp_dn:
+			print ucr.get('dhcpd/ldap/base')
+			print dhcp_dn
+			raise DhcpdLDAPBase()
+
+	dhcp_dns_clearou_dn = 'cn=dhcp-dns-clear,cn=policies,%s' % ou_base
+	if dhcp_dns_clearou:
+		utils.verify_ldap_object(dhcp_dns_clearou_dn, expected_attr={'emptyAttributes': ['univentionDhcpDomainNameServers']}, should_exist=True)
+		try:
+			utils.verify_ldap_object(ou_base, expected_attr={'univentionPolicyReference': [dhcp_dns_clearou_dn]}, should_exist=True)
+		except utils.LDAPObjectUnexpectedValue:
+			# ignore other policies
+			pass
+	else:
+		utils.verify_ldap_object(dhcp_dns_clearou_dn, should_exist=False)
+
+	if do_cleanup:
+		remove_ou(ou)
+
+def import_ou_basics(use_cli_api=True):
+	with univention.testing.udm.UCSTestUDM() as udm:
+		for dc in [None, 'generate']:
+			for singlemaster in [True, False]:
+				for noneducational_create_object in [True, False]:
+					for district_enable in [True, False]:
+						for default_dcs in [None, 'edukativ', uts.random_string()]:
+							for dhcp_dns_clearou in [True, False]:
+								for sharefileserver in [None, 'generate']:
+									if singlemaster and dc == 'generate':
+										continue
+									if sharefileserver:
+										sharefileserver=uts.random_name()
+										udm.create_object('computers/domaincontroller_slave', name=sharefileserver)
+									ou_name=uts.random_name()
+									try:
+										create_and_verify_ou(
+												ou=ou_name,
+												dc=(uts.random_name() if dc else None),
+												sharefileserver=sharefileserver,
+												singlemaster=singlemaster,
+												noneducational_create_objects=noneducational_create_object,
+												district_enable=district_enable,
+												default_dcs=default_dcs,
+												dhcp_dns_clearou=dhcp_dns_clearou,
+												use_cli_api=use_cli_api
+										)
+									finally:
+										remove_ou(ou_name)
+
+def import_ou_with_existing_dc(use_cli_api=True):
+	with univention.testing.udm.UCSTestUDM() as udm:
+		dc_name = uts.random_name()
+		dc_dn = udm.create_object('computers/domaincontroller_slave', name = dc_name)
+
+		dhcp_service_name = uts.random_name()
+
+		dhcp_service = udm.create_object('dhcp/service', service = dhcp_service_name)
+
+		dhcp_server = udm.create_object('dhcp/server', server = dc_name, superordinate = dhcp_service)
+
+		dhcp_subnet_properties = {
+			'subnet': '10.20.30.0',
+			'subnetmask': '24',
+		}
+		dhcp_subnet1 = udm.create_object('dhcp/subnet', superordinate = dhcp_service, **dhcp_subnet_properties)
+
+		default_ip = Interfaces().get_default_ip_address()
+		dhcp_subnet_properties = {
+			'subnet': default_ip.ip,
+			'subnetmask': default_ip.prefixlen,
+		}
+		dhcp_subnet2 = udm.create_object('dhcp/subnet', superordinate = dhcp_service, **dhcp_subnet_properties)
+
+		ou_name = uts.random_name()
+
+		# creatd dc
+		try:
+			create_and_verify_ou(
+										ou=ou_name,
+										dc=dc_name,
+										sharefileserver=None,
+										singlemaster=False,
+										noneducational_create_objects=True,
+										district_enable=False,
+										default_dcs=None,
+										dhcp_dns_clearou=False,
+										do_cleanup=False,
+										use_cli_api=use_cli_api
+			)
+
+			utils.verify_ldap_object(dhcp_subnet1, should_exist=True)
+			utils.verify_ldap_object(dhcp_subnet2, should_exist=True)
+
+			# dhcp subnet2 should be copied
+			ou_base = get_ou_base(ou=ou_name, district_enable=False)
+			new_dhcp_service_dn = 'cn=%(ou)s,cn=dhcp,%(ou_base)s' % {'ou': ou_name, 'ou_base': ou_base}
+			new_dhcp_subnet2_dn = 'cn=%s,%s' % (default_ip.ip, new_dhcp_service_dn)
+			utils.verify_ldap_object(new_dhcp_subnet2_dn, should_exist=True)
+
+			# dhcp subnet1 should not be copied
+			new_dhcp_subnet1_dn = 'cn=10.20.30.0,%s' % (new_dhcp_service_dn)
+			utils.verify_ldap_object(new_dhcp_subnet1_dn, should_exist=False)
+
+			# dhcp server has been moved
+			utils.verify_ldap_object('cn=%s,%s' %(dc_name,new_dhcp_service_dn), should_exist=True)
+			utils.verify_ldap_object(dhcp_server, should_exist=False)
+		finally:
+			remove_ou(ou_name)
+
+
