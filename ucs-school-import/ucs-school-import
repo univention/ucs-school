@@ -2787,22 +2787,23 @@ def rename_class():
 				success = False
 				messages.append("Renaming of group %s to %s failed: %s" % (oldName, newName, str(e)))
 
-			# rename share and share path
-			shareObject.open()
-			path = shareObject['path'].split(os.path.sep)
-			path[-1] = newName
-			shareObject['name'] = newName
-			if shareObject['sambaName'] == oldName:
-				shareObject['sambaName'] = newName
-			if shareObject['sambaForceGroup'] == '+%s' % (oldName, ):
-				shareObject['sambaForceGroup'] = '+%s' % (newName, )
-			shareObject['path'] = os.path.sep.join(path)	
-			try:
-				shareObject.modify()
-				messages.append("Renaming of share %s to %s successfully" % (oldName, newName))
-			except Exception, e:
-				success = False
-				messages.append("Renaming of share %s to %s failed: %s" % (oldName, newName, str(e)))
+			if success:
+				# rename share and share path
+				shareObject.open()
+				path = shareObject['path'].split(os.path.sep)
+				path[-1] = newName
+				shareObject['name'] = newName
+				if shareObject['sambaName'] == oldName:
+					shareObject['sambaName'] = newName
+				if shareObject['sambaForceGroup'] == '+%s' % (oldName, ):
+					shareObject['sambaForceGroup'] = '+%s' % (newName, )
+				shareObject['path'] = os.path.sep.join(path)	
+				try:
+					shareObject.modify()
+					messages.append("Renaming of share %s to %s successfully" % (oldName, newName))
+				except Exception, e:
+					success = False
+					messages.append("Renaming of share %s to %s failed: %s" % (oldName, newName, str(e)))
 
 			# group post mod hook
 			if success:

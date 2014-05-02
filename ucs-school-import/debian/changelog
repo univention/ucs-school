@@ -1,3 +1,9 @@
+ucs-school-import (10.0.11-1) unstable; urgency=low
+
+  * Bug #34737: do not rename share if renaming of class group failed
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 02 May 2014 15:38:58 +0200
+
 ucs-school-import (10.0.10-1) unstable; urgency=low
 
   * Bug #26137: fixed logic error in create_dc
