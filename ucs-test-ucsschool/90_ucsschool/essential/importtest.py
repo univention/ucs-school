@@ -272,7 +272,7 @@ def create_and_verify_ou(ou, dc, sharefileserver, dc_management=None, ou_display
 
 
 	if not singlemaster:
-		verify_dc(ou, dc, TYPE_DC_EDUCATION, base_dn)
+		verify_dc(ou, dc_name, TYPE_DC_EDUCATION, base_dn)
 
 	if dc_management:
 		verify_dc(ou, dc_management, TYPE_DC_MANAGEMENT, base_dn)
@@ -380,26 +380,33 @@ def verify_dc(ou, dc_name, dc_type, base_dn=None):
 	ou_base = get_ou_base(ou, ucr.is_true('ucsschool/ldap/district/enable', False))
 	dc_dn = 'cn=%s,cn=dc,cn=server,cn=computers,%s' % (dc_name, ou_base)
 
-	# get list of (un-)desired group memberships ==> [(IS_MEMBER, GROUP_DN), ...]
-	group_dn_list = {TYPE_DC_MANAGEMENT: [(True, 'cn=OU%s-DC-Verwaltungsnetz,cn=ucsschool,cn=groups,%s' % (ou.lower(), base_dn)),
-										  (True, 'cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,%s' % (base_dn, )),
-										  (False, 'cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,%s' % base_dn),
-										  (False, 'cn=OU%s-Member-Verwaltungsnetz,cn=ucsschool,cn=groups,%s' % (ou, base_dn))
-										  (False, 'cn=OU%s-DC-Edukativnetz,cn=ucsschool,cn=groups,%s' % (ou.lower(), base_dn)),
-										  (False, 'cn=DC-Edukativnetz,cn=ucsschool,cn=groups,%s' % (base_dn, )),
-										  (False, 'cn=Member-Edukativnetz,cn=ucsschool,cn=groups,%s' % base_dn),
-										  (False, 'cn=OU%s-Member-Edukativnetz,cn=ucsschool,cn=groups,%s' % (ou, base_dn))
-										  ],
-					 TYPE_DC_EDUCATION: [(False, 'cn=OU%s-DC-Verwaltungsnetz,cn=ucsschool,cn=groups,%s' % (ou.lower(), base_dn)),
-										 (False, 'cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,%s' % (base_dn, )),
-										 (False, 'cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,%s' % base_dn),
-										 (False, 'cn=OU%s-Member-Verwaltungsnetz,cn=ucsschool,cn=groups,%s' % (ou, base_dn))
-										 (True, 'cn=OU%s-DC-Edukativnetz,cn=ucsschool,cn=groups,%s' % (ou.lower(), base_dn)),
-										 (True, 'cn=DC-Edukativnetz,cn=ucsschool,cn=groups,%s' % (base_dn, )),
-										 (False, 'cn=Member-Edukativnetz,cn=ucsschool,cn=groups,%s' % base_dn),
-										 (False, 'cn=OU%s-Member-Edukativnetz,cn=ucsschool,cn=groups,%s' % (ou, base_dn))
-										 ],
-					 }[dc_type]
+	# define list of (un-)desired group memberships ==> [(IS_MEMBER, GROUP_DN), ...]
+	group_dn_list = []
+	if dc_type == TYPE_DC_MANAGEMENT:
+		group_dn_list += [
+			(True, 'cn=OU%s-DC-Verwaltungsnetz,cn=ucsschool,cn=groups,%s' % (ou.lower(), base_dn)),
+			(True, 'cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,%s' % (base_dn, )),
+			(False, 'cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,%s' % base_dn),
+			(False, 'cn=OU%s-Member-Verwaltungsnetz,cn=ucsschool,cn=groups,%s' % (ou, base_dn)),
+			(False, 'cn=OU%s-DC-Edukativnetz,cn=ucsschool,cn=groups,%s' % (ou.lower(), base_dn)),
+			(False, 'cn=DC-Edukativnetz,cn=ucsschool,cn=groups,%s' % (base_dn, )),
+			(False, 'cn=Member-Edukativnetz,cn=ucsschool,cn=groups,%s' % base_dn),
+			(False, 'cn=OU%s-Member-Edukativnetz,cn=ucsschool,cn=groups,%s' % (ou, base_dn)),
+			]
+	else:
+		group_dn_list += [
+			(True, 'cn=OU%s-DC-Edukativnetz,cn=ucsschool,cn=groups,%s' % (ou.lower(), base_dn)),
+			(True, 'cn=DC-Edukativnetz,cn=ucsschool,cn=groups,%s' % (base_dn, )),
+			(False, 'cn=Member-Edukativnetz,cn=ucsschool,cn=groups,%s' % base_dn),
+			(False, 'cn=OU%s-Member-Edukativnetz,cn=ucsschool,cn=groups,%s' % (ou, base_dn)),
+			]
+		if ucr.is_true('ucsschool/ldap/noneducational/create/objects', True):
+			group_dn_list += [
+				(False, 'cn=OU%s-DC-Verwaltungsnetz,cn=ucsschool,cn=groups,%s' % (ou.lower(), base_dn)),
+				(False, 'cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,%s' % (base_dn, )),
+				(False, 'cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,%s' % base_dn),
+				(False, 'cn=OU%s-Member-Verwaltungsnetz,cn=ucsschool,cn=groups,%s' % (ou, base_dn)),
+				]
 
 	utils.verify_ldap_object(dc_dn, should_exist=True)
 
