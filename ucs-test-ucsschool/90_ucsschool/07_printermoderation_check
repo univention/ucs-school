@@ -3,7 +3,7 @@
 ## roles: [domaincontroller_master, domaincontroller_backup, domaincontroller_slave, memberserver]
 ## tags: [apptest]
 ## exposure: dangerous
-## packages:  [ucs-school-umc-printermoderation]
+## packages: [ucs-school-umc-printermoderation]
 
 from mimetypes import MimeTypes
 from univention.lib.umc_connection import UMCConnection
@@ -47,10 +47,10 @@ def orderPrint(printer, userName, file):
 
 
 # add / del / modify Printer
-def doPrinter(operation, printer_name, schoolName, spool_host):
+def doPrinter(operation, printer_name, schoolName, spool_host, domainname):
 	localIp = socket.gethostbyname(socket.gethostname())
 	uri = '%s://%s' % ('lpd', localIp)
-	print_server = '%s.%s.%s' % (spool_host, 'univention', 'local')
+	print_server = '%s.%s' % (spool_host, domainname)
 	f = tempfile.NamedTemporaryFile(suffix='.csv')
 	line = '%s\t%s\t%s\t%s\t%s\n' % (operation, schoolName, print_server,
 			printer_name, uri)
@@ -66,17 +66,25 @@ def doPrinter(operation, printer_name, schoolName, spool_host):
 # check the existance of the created printer
 def printerExist(connection, printerName):
 	requestResult = connection.request('printermoderation/printers')
-	printerFound = [dict for dict in requestResult if dict['label'] == printerName]
+	printerFound = [d for d in requestResult if d['label'] == printerName]
 	if printerFound:
 		return True
 	else:
 		return False
 
-
 # get the current printed jobs
-def queryPrintJobs(connection, printerName, cName, schoolName, pattern, basedn):
+def queryPrintJobs(
+		connection,
+		printerName,
+		cName,
+		schoolName,
+		pattern,
+		basedn):
 	if cName != 'None':
-		cdn = 'cn=%s,cn=klassen,cn=schueler,cn=groups,ou=%s,%s' % (cName, schoolName, basedn)
+		cdn = 'cn=%s,cn=klassen,cn=schueler,cn=groups,ou=%s,%s' % (
+				cName,
+				schoolName,
+				basedn)
 	else:
 		cdn = cName
 	param = {
@@ -122,9 +130,15 @@ def getPrintJobs(alljobs, userName):
 	return ([x['id'] for x in alljobs if x['username']==userName])
 
 # Accept printjobs and send them to the hard printer
-def acceptprint(connection, userName, printJobPath, printerName, spoolHost):
+def acceptprint(
+		connection,
+		userName,
+		printJobPath,
+		printerName,
+		spoolHost,
+		domainname):
 	printJob = printJobPath.split('/')[-1]
-	printerURI = '%s.univention.local://%s' % (spoolHost, printerName)
+	printerURI = '%s.%s://%s' % (spoolHost, domainname, printerName)
 	param = {
 			'username': userName,
 			'printjob': printJob,
@@ -138,23 +152,24 @@ def acceptprint(connection, userName, printJobPath, printerName, spoolHost):
 
 def main():
 	with utu.UCSTestSchool()  as schoolenv:
-		default_printer = 'PDFDrucker'
 		newPrinterName = uts.random_string()
+		default_printer = 'PDFDrucker'
 		test_file = 'testpage.ps'
 		ucr = ucr_test.UCSTestConfigRegistry()
 		ucr.load()
 		host = ucr.get('hostname')
+		domainname = ucr.get('domainname')
 		basedn = ucr.get('ldap/base')
 		schoolName, oudn = schoolenv.create_ou()
-		tea1, teadn1 = schoolenv.create_user(schoolName, classes='1A', is_teacher=True)
-		stu1, stu1dn = schoolenv.create_user(schoolName, classes='1A')
-		stu2, stu2dn = schoolenv.create_user(schoolName, classes='2B')
+		tea, _ = schoolenv.create_user(schoolName, classes='1A', is_teacher=True)
+		stu1, _ = schoolenv.create_user(schoolName, classes='1A')
+		stu2, _ = schoolenv.create_user(schoolName, classes='2B')
 
 		co = UMCConnection(host)
-		co.auth(tea1 ,'univention')
+		co.auth(tea ,'univention')
 
 		# add new printer
-		doPrinter('A', newPrinterName, schoolName, host)
+		doPrinter('A', newPrinterName, schoolName, host, domainname)
 
 		# check if the printer exists
 		if not printerExist(co, newPrinterName):
@@ -165,9 +180,21 @@ def main():
 		orderPrint(default_printer, stu2, test_file)
 
 		# query all orderd print jobs
-		alljobs = queryPrintJobs(co, newPrinterName, 'None', schoolName, "", basedn)
+		alljobs = queryPrintJobs(
+				co,
+				newPrinterName,
+				'None',
+				schoolName,
+				"",
+				basedn)
 		# query all orderd print jobs from classes 1A
-		alljobs1A = queryPrintJobs(co, newPrinterName, '1A', schoolName, "", basedn)
+		alljobs1A = queryPrintJobs(
+				co,
+				newPrinterName,
+				'1A',
+				schoolName,
+				"",
+				basedn)
 		if alljobs1A == alljobs:
 			utils.fail('Unexpected job query result')
 
@@ -183,7 +210,7 @@ def main():
 		downloadPrintJobs(co, stu1, printJobs1[0])
 
 		# accepting a print job from stu1
-		acceptprint(co, stu1, printJobs1[0], newPrinterName, host)
+		acceptprint(co, stu1, printJobs1[0], newPrinterName, host, domainname)
 
 		# delete a print job for stu 1
 		delPrintJob(co, stu1, printJobs1[0])
@@ -192,7 +219,7 @@ def main():
 		delPrintJob(co, stu2, printJobs2[0])
 
 		# delete the created printer
-		doPrinter('D', newPrinterName, schoolName, host)
+		doPrinter('D', newPrinterName, schoolName, host, domainname)
 
 if __name__ == '__main__':
 	sys.exit(main())
