@@ -14,7 +14,14 @@
 	   The import script <emphasis>create_ou</emphasis> now supports the new command line argument <emphasis>--displayname</emphasis> for defining a display name for school OU objects (<ulink url="&ucsbug;34173">Bug 34173</ulink>).
 	</simpara></listitem>
 	<listitem><simpara>
+	  The import script <emphasis>create_ou</emphasis> now supports an additional argument for creating a management DC. Additionally a new script <emphasis>create_dc</emphasis> has been added that enables the admin to create a management DCs for a school OU retrospectively (<ulink url="&ucsbug;26137">Bug 26137</ulink>).
+	</simpara></listitem>
+
+	<listitem><simpara>
 	   A typo in the CLI tool <emphasis>rename_class</emphasis> has been fixed that could lead to a traceback in certain error conditions (<ulink url="&ucsbug;34209">Bug 34209</ulink>).
+	</simpara></listitem>
+	<listitem><simpara>
+	  The CLI tool <emphasis>rename_class</emphasis> does no longer rename the class share object if renaming of the group share object failed (<ulink url="&ucsbug;34737">Bug 34737</ulink>).
 	</simpara></listitem>
   </itemizedlist>
 </section>
