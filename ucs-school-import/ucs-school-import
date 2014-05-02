@@ -2935,7 +2935,7 @@ def create_dc(co, lo, baseDN, ou_name, dc_name, dc_type):
 		sys.exit(1)
 
 	# verify if OU already exists - abort otherwise
-	ou_objects = univention.admin.modules.lookup(computer_module, co, lo, scope='sub', superordinate=superordinate, base=baseDN,
+	ou_objects = univention.admin.modules.lookup(ou_module, co, lo, scope='sub', superordinate=superordinate, base=baseDN,
 												 filter=univention.admin.filter.expression('ou', ou_name))
 	if not ou_objects:
 		print 'ERROR: specified OU %r does not exist' % ou_name
