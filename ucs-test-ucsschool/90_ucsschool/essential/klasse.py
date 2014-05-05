@@ -56,20 +56,26 @@ class Klasse():
 
 	def create(self):
 		"""Creates object class"""
-		print 'Creating class %s in school %s' % (
-			self.name,
-			self.school)
 		flavor = 'schoolwizards/classes'
-		param = {
-			'name': self.name,
-			'school': self.school,
-			'description': self.description,
-			}
+		param =	[
+				{
+					'object':{
+						'name': self.name,
+						'school': self.school,
+						'description': self.description,
+						},
+					'options': None
+					}
+				]
+		print 'Creating class %s in school %s' % (
+				self.name,
+				self.school)
+		print 'param = %s' % (param)
 		reqResult = self.umcConnection.request(
-			'schoolwizards/classes/create',
-			param,
-			flavor)
-		if reqResult is not None:
+				'schoolwizards/classes/add',
+				param,
+				flavor)
+		if not reqResult[0]:
 			utils.fail('Unable to create class (%r)' % (param))
 
 	# create list of random classes returns list of class objects

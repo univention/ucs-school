@@ -254,6 +254,7 @@ class InternetRule(object):
 			self.name,
 			groupType,
 			groupName)
+		print 'param = %r' % (param)
 		result = self.umcConnection.request(
 			'internetrules/groups/assign',
 			param)

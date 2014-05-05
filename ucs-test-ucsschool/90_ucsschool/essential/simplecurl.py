@@ -44,7 +44,8 @@ class SimpleCurl(object):
 			connectTimout=10,
 			timeOut=10,
 			port=3128,
-			auth=pycurl.HTTPAUTH_BASIC):
+			auth=pycurl.HTTPAUTH_BASIC,
+			userpwd=None):
 			# Perform basic authentication by default
 		self.curl = pycurl.Curl()
 		self.curl.setopt(pycurl.FOLLOWLOCATION, bFollowLocation)
@@ -56,8 +57,11 @@ class SimpleCurl(object):
 		# self.cookieFilename = os.tempnam()
 		# self.curl.setopt(pycurl.COOKIEFILE, self.cookieFilename)
 		# self.curl.setopt(pycurl.COOKIEJAR, self.cookieFilename)
-		self.curl.setopt(pycurl.PROXYUSERPWD, "%s:%s" % (username, password))
 		self.curl.setopt(pycurl.PROXYAUTH, auth)
+		self.curl.setopt(pycurl.PROXYUSERPWD, "%s:%s" % (username, password))
+		if userpwd:
+			self.curl.setopt(pycurl.USERPWD, userpwd)
+
 
 	def getPage(self, url, bVerbose=False, postData=None):
 		"""Gets a http page
