@@ -502,19 +502,23 @@ define([
 			var guessRoom = getIP.then(lang.hitch(this, function(ipaddresses) {
 				return this.umcpCommand('computerroom/room/guess', {ipaddress: ipaddresses});
 			}));
-			var resp = guessRoom.then(lang.hitch(this, function(response) {
+			var roomdn = guessRoom.then(lang.hitch(this, function(response) {
 				return response.result.room;  // roomdn
+			}));
+			var school = guessRoom.then(lang.hitch(this, function(response) {
+				return response.result.school;  // OU name
 			}));
 
 			var roomGuessed = new Deferred();
 			all({
 				foo: getIP,
 				bar: guessRoom,
-				roomdn: resp
+				roomdn: roomdn,
+				school: school
 			}).then(function(result) {
 				var roomdn = result.roomdn;
 				if (roomdn) {
-					roomGuessed.resolve(roomdn);
+					roomGuessed.resolve({roomdn: roomdn, school: result.school});
 				} else {
 					roomGuessed.cancel();
 				}
@@ -820,8 +824,24 @@ define([
 			} else {
 				// no auto load of a specific room, try to guess one
 				this.standbyDuring(this._guessRoomOfTeacher()).then(
-					lang.hitch(this, function(roomdn) {
-						this.standbyDuring(this._acquireRoom(roomdn, true)).then(undefined, lang.hitch(this, 'changeRoom'));
+					lang.hitch(this, function(guessed) {
+						this.umcpCommand('computerroom/rooms', {school: guessed.school}).then(lang.hitch(this, function(response) {
+							var deferred = new Deferred();
+							deferred.resolve();
+
+							var _room;
+							array.forEach(response.result, function(iroom) {
+								if (iroom.id == guessed.roomdn) {
+									_room = iroom;
+								}
+							});
+							if (_room && _room.locked) {
+								deferred = this.displayRoomTakeoverDialog(_room);
+							}
+							deferred.then(lang.hitch(this, function() {
+								this.standbyDuring(this._acquireRoom(guessed.roomdn, true)).then(undefined, lang.hitch(this, 'changeRoom'));
+							}), lang.hitch(this, 'changeRoom'));
+						}));
 					}),
 					lang.hitch(this, 'changeRoom')
 				);
@@ -1031,19 +1051,7 @@ define([
 				// show confirmation dialog if room is already locked
 				var room = _getRoom(vals.room);
 				if (room.locked) {
-					deferred = dialog.confirm(_('This computer room is currently in use by %s. You can take control over the room, however, the current teacher will be prompted a notification and its session will be closed.', room.user), [{
-						name: 'cancel',
-						label: _('Cancel'),
-						'default': true
-					}, {
-						name: 'takeover',
-						label: _('Take over')
-					}]).then(function(response) {
-						if (response != 'takeover') {
-							// cancel deferred chain
-							throw false;
-						}
-					});
+					deferred = this.displayRoomTakeoverDialog(room);
 				}
 
 				deferred = deferred.then(lang.hitch(this, function () {
@@ -1136,6 +1144,22 @@ define([
 			});
 			_dialog.show();
 			okButton.set('disabled', true);
+		},
+
+		displayRoomTakeoverDialog: function(room) {
+			return dialog.confirm(_('This computer room is currently in use by %s. You can take control over the room, however, the current teacher will be prompted a notification and its session will be closed.', room.user), [{
+				name: 'cancel',
+				label: _('Cancel'),
+				'default': true
+			}, {
+				name: 'takeover',
+				label: _('Take over')
+			}]).then(function(response) {
+				if (response != 'takeover') {
+					// cancel deferred chain
+					throw false;
+				}
+			});
 		},
 
 		queryRoom: function(reload) {

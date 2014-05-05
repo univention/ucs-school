@@ -1,3 +1,10 @@
+ucs-school-umc-computerroom (5.0.2-1) unstable; urgency=low
+
+  * Bug #25762: display room takeover dialog when room is locked and should be opened on
+  	startup;
+
+ -- Florian Best <best@univention.de>  Mon, 05 May 2014 11:32:10 +0200
+
 ucs-school-umc-computerroom (5.0.1-2) unstable; urgency=low
 
   * Bug #25762: removed dependency to univention-management-console-web-server
