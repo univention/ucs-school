@@ -1,5 +1,5 @@
 #!/usr/share/ucs-test/runner python
-## desc: ucs-school-assign_internet_rules_check
+## desc: http-proxy-multi-auth-check
 ## roles: [domaincontroller_master, domaincontroller_backup, domaincontroller_slave, memberserver]
 ## tags: [apptest]
 ## exposure: dangerous
@@ -86,8 +86,8 @@ def main():
 		checkBasic(host, url, http_code=200)
 
 		# NTLM Auth Check
-		checkNTLM(host, url, http_code=407, enabled=False)
 		checkNTLM(host, url, http_code=200)
+		checkNTLM(host, url, http_code=407, enabled=False)
 
 		# Gssnegotiate Auth Check
 		checkGssnegotiate(host, url, http_code=200)
