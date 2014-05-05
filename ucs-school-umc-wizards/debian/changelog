@@ -1,3 +1,9 @@
+ucs-school-umc-wizards (4.0.12-1) unstable; urgency=low
+
+  * Bug #34337: New lib version
+
+ -- Dirk Wiesenthal <wiesenthal@univention.de>  Tue, 06 May 2014 00:26:39 +0200
+
 ucs-school-umc-wizards (4.0.11-1) unstable; urgency=low
 
   * Bug #34337: Fix double filtering

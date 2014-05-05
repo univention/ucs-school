@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-wizards\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2014-04-25 13:25+0200\n"
+"POT-Creation-Date: 2014-05-05 14:53+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: umc/python/schoolwizards/__init__.py:226
+#: umc/python/schoolwizards/__init__.py:222
 #, python-format
 msgid "\"%s\" already exists!"
 msgstr "\"%s\" existiert bereits!"
@@ -29,26 +29,10 @@ msgstr "Der Rechner konnte nicht erstellt werden"
 msgid "Could not create user"
 msgstr "Der Benutzer konnte nicht erstellt werden"
 
-#: umc/python/schoolwizards/__init__.py:167
-msgid "Device with IP address"
-msgstr "Gerät mit IP-Adresse"
-
 #: umc/python/schoolwizards/SchoolImport.py:71
 #: umc/python/schoolwizards/SchoolImport.py:89
 msgid "Execution of command failed"
 msgstr "Die Ausführungs des Kommandos schlug fehl"
-
-#: umc/python/schoolwizards/__init__.py:166
-msgid "Mac OS X"
-msgstr "Mac OS X"
-
-#: umc/python/schoolwizards/__init__.py:175
-msgid "Univention Corporate Client"
-msgstr "Univention Corporate Client"
-
-#: umc/python/schoolwizards/__init__.py:165
-msgid "Windows system"
-msgstr "Windows-System"
 
 #~ msgid "A valid NetBIOS hostname can not be longer than 12 characters."
 #~ msgstr ""
@@ -69,6 +53,9 @@ msgstr "Windows-System"
 #~ msgid "Could not create school"
 #~ msgstr "Die Schule konnte nicht erstellt werden"
 
+#~ msgid "Device with IP address"
+#~ msgstr "Gerät mit IP-Adresse"
+
 #~ msgid "IP address is already in use"
 #~ msgstr "IP-Adresse wird bereits benutzt"
 
@@ -86,6 +73,9 @@ msgstr "Windows-System"
 
 #~ msgid "MAC address is already in use"
 #~ msgstr "MAC-Adresse wird bereits benutzt"
+
+#~ msgid "Mac OS X"
+#~ msgstr "Mac OS X"
 
 #~ msgid "Mail address is already in use"
 #~ msgstr "Mail-Adresse wird bereits benutzt"
@@ -118,6 +108,9 @@ msgstr "Windows-System"
 #~ msgid "The user could not be created"
 #~ msgstr "Der Benutzer konnte nicht erstellt werden"
 
+#~ msgid "Univention Corporate Client"
+#~ msgstr "Univention Corporate Client"
+
 #~ msgid "Unknown school"
 #~ msgstr "Unbekannte Schule"
 
@@ -126,3 +119,6 @@ msgstr "Windows-System"
 
 #~ msgid "Username is already in use"
 #~ msgstr "Benutzername wird bereits benutzt"
+
+#~ msgid "Windows system"
+#~ msgstr "Windows-System"
