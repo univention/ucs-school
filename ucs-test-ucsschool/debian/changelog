@@ -1,3 +1,9 @@
+ucs-test-ucsschool (1.0.20-1) unstable; urgency=medium
+
+  * Add 90_ucsschool/16_s4_slave_automatic_srv_record.py (Bug #32187)
+
+ -- Arvid Requate <requate@univention.de>  Mon, 05 May 2014 20:32:00 +0200
+
 ucs-test-ucsschool (1.0.19-1) unstable; urgency=low
 
   * Bug #34491: change in "Klasse" class in package "essential" accourding to
