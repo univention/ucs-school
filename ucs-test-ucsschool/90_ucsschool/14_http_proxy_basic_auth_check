@@ -52,7 +52,7 @@ def doCheck(host, banPage, user, rulesType, ruleWithHigherPrio, ruleWithLowerPri
 def main():
 	with utu.UCSTestSchool()  as schoolenv:
 		with ucr_test.UCSTestConfigRegistry() as ucr:
-			host = ucr.get('connector/s4/ldap/host')
+			host = ucr.get('hostname')
 			connection = UMCConnection(host)
 			connection.auth('Administrator', 'univention')
 
