@@ -1,0 +1,97 @@
+#!/usr/share/ucs-test/runner python
+## desc: ucs-school-assign_internet_rules_check
+## roles: [domaincontroller_master, domaincontroller_backup, domaincontroller_slave, memberserver]
+## tags: [apptest]
+## exposure: dangerous
+## packages: [ucs-school-webproxy]
+
+from essential.simplecurl import SimpleCurl
+from univention.config_registry import handler_set, handler_unset
+import pycurl
+import subprocess
+import univention.testing.ucr as ucr_test
+import univention.testing.utils as utils
+
+def checkGssnegotiate(host, url, http_code, enabled=True):
+	print 'Gssnegotiate proxy auth check, enabled = %r' % (enabled)
+	if enabled:
+		handler_set(['squid/krb5auth=yes'])
+		handler_set(['squid/krb5auth/keepalive=yes'])
+	else:
+		handler_unset(['squid/krb5auth'])
+		handler_unset(['squid/krb5auth/keepalive'])
+	subprocess.call(["/etc/init.d/squid3", "restart"])
+	kinit = subprocess.Popen([
+		"kinit",
+		"--password-file=STDIN",
+		"Administrator"],
+		stdin=subprocess.PIPE,
+		stdout=subprocess.PIPE).communicate('univention')[0]
+	klist = subprocess.Popen(["klist"],stdout=subprocess.PIPE).communicate()[0]
+	print kinit
+	print klist
+	adminCurl = SimpleCurl(proxy=host, auth=pycurl.HTTPAUTH_GSSNEGOTIATE)
+	page = adminCurl.getPage(url)
+	result = adminCurl.httpCode()
+	adminCurl.close()
+	print result
+	print page[0:200]
+	if result != http_code:
+		utils.fail('Gssnegotiate proxy auth check failed with http_code = %r, expected = %r' % (
+			result, http_code))
+
+def checkNTLM(host, url, http_code, enabled=True):
+	print 'NTLM proxy auth check, enabled = %r' % (enabled)
+	if enabled:
+		handler_set(['squid/ntlmauth=yes'])
+	else:
+		handler_unset(['squid/ntlmauth'])
+	subprocess.call(["/etc/init.d/squid3", "restart"])
+	adminCurl = SimpleCurl(proxy=host, auth=pycurl.HTTPAUTH_NTLM)
+	page = adminCurl.getPage(url)
+	result = adminCurl.httpCode()
+	adminCurl.close()
+	print result
+	print page[0:200]
+	if result != http_code:
+		utils.fail('NTLM proxy auth check failed with http_code = %r, expected = %r' % (
+			result, http_code))
+	
+def checkBasic(host, url, http_code, enabled=True):
+	print 'Basic proxy auth check, enabled = %r' % (enabled)
+	if enabled:
+		handler_set(['squid/basicauth=yes'])
+	else:
+		handler_unset(['squid/basicauth'])
+	subprocess.call(["/etc/init.d/squid3", "restart"])
+	adminCurl = SimpleCurl(proxy=host, auth=pycurl.HTTPAUTH_BASIC)
+	page = adminCurl.getPage(url)
+	result = adminCurl.httpCode()
+	adminCurl.close()
+	print result
+	print page[0:200]
+	if result != http_code:
+		utils.fail('Basic proxy auth check failed with http_code = %r, expected = %r' % (
+			result, http_code))
+
+def main():
+	with ucr_test.UCSTestConfigRegistry() as ucr:
+		# url = ucr.get('proxy/filter/redirecttarget')
+		url = 'http://www.univention.de'
+		host = '%s.%s' % (ucr.get('hostname'), ucr.get('domainname'))
+
+
+		# Basic Auth Check
+		checkBasic(host, url, http_code=407, enabled=False,)
+		checkBasic(host, url, http_code=200)
+
+		# NTLM Auth Check
+		checkNTLM(host, url, http_code=407, enabled=False)
+		checkNTLM(host, url, http_code=200)
+
+		# Gssnegotiate Auth Check
+		checkGssnegotiate(host, url, http_code=200)
+		checkGssnegotiate(host, url, http_code=407, enabled=False)
+
+if __name__ == '__main__':
+	main()
