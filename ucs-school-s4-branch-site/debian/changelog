@@ -1,3 +1,10 @@
+ucs-school-s4-branch-site (1.0.0-6) unstable; urgency=medium
+
+  * Only perform s4-connector related operations if it is installed
+    (Bug #32187)
+
+ -- Arvid Requate <requate@univention.de>  Mon, 05 May 2014 19:25:07 +0200
+
 ucs-school-s4-branch-site (1.0.0-5) unstable; urgency=medium
 
   * Support hooks in listener module (Bug #32187)

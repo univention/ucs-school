@@ -161,7 +161,7 @@ def update_records(excludeDN=None):
 		else:
 			## set new value
 			ucr_key_value = "=".join((key, value))
-			ud.debug(ud.LISTENER, ud.PROCESS, '%s: UCR set: %s' % (name, value))
+			ud.debug(ud.LISTENER, ud.PROCESS, '%s: UCR set: %s="%s"' % (name, key, value))
 			ucr_key_value_list.append(ucr_key_value)
 
 		## trigger anyway
@@ -280,19 +280,20 @@ def postrun():
 	global __s4_connector_restart
 	global __relativeDomainName_trigger_set
 
-	if __s4_connector_restart:
-		univention.debug.debug(univention.debug.LISTENER, univention.debug.PROCESS, '%s: Restarting S4 Connector' % (name,))
-		listener.setuid(0)
-		try:
-			p = subprocess.Popen(["/etc/init.d/univention-s4-connector", "restart"], close_fds=True)
-			p.wait()
-			if p.returncode != 0:
-				ud.debug(ud.LISTENER, ud.ERROR, '%s: S4 Connector restart returned %s.' % (name, p.returncode))
-			__s4_connector_restart = False
-		finally:
-			listener.unsetuid()
+	if os.path.isfile('/etc/init.d/univention-s4-connector'):
+		if __s4_connector_restart:
+			univention.debug.debug(univention.debug.LISTENER, univention.debug.PROCESS, '%s: Restarting S4 Connector' % (name,))
+			listener.setuid(0)
+			try:
+				p = subprocess.Popen(["/etc/init.d/univention-s4-connector", "restart"], close_fds=True)
+				p.wait()
+				if p.returncode != 0:
+					ud.debug(ud.LISTENER, ud.ERROR, '%s: S4 Connector restart returned %s.' % (name, p.returncode))
+				__s4_connector_restart = False
+			finally:
+				listener.unsetuid()
 
-	if __relativeDomainName_trigger_set:
-		trigger_sync_ucs_to_s4()
+		if __relativeDomainName_trigger_set:
+			trigger_sync_ucs_to_s4()
 
 	run_hooks("postrun")
