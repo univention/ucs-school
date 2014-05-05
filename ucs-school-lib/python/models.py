@@ -34,27 +34,29 @@ import os.path
 from ldap.filter import escape_filter_chars
 from ldap.dn import escape_dn_chars, str2dn
 import random
-import string
 import ldap
 from copy import deepcopy
 import tempfile
 import subprocess
 import re
 import ipaddr
+from functools import partial
 
 import univention.admin.uldap as udm_uldap
 from univention.admin.uexceptions import noObject, valueError, objectExists
-from univention.admin.syntax import gid, string_numbers_letters_dots_spaces, uid_umlauts, iso8601Date, primaryEmailAddressValidDomain, boolean, UCSSchool_Server_DN, GroupDN, ipAddress, MAC_Address
+from univention.admin.syntax import gid, string_numbers_letters_dots_spaces, uid_umlauts, iso8601Date, primaryEmailAddressValidDomain, boolean, GroupDN, ipAddress, MAC_Address, disabled, reverseLookupSubnet, ipv4Address, v4netmask, netmask, UCS_Server
 from univention.config_registry import ConfigRegistry, handler_set
 import univention.admin.modules as udm_modules
 import univention.admin.objects as udm_objects
 from univention.admin.filter import conjunction, expression
+from univention.lib.policy_result import policy_result
 
 from univention.management.console.log import MODULE
 from univention.management.console.modules.sanitizers import LDAPSearchSanitizer
 from univention.lib.i18n import Translation
 
 from ucsschool.lib.schoolldap import SchoolSearchBase
+from ucsschool.lib.roles import role_pupil, role_teacher, role_staff
 
 _ = Translation('python-ucs-school').translate
 
@@ -63,54 +65,32 @@ udm_modules.update()
 ucr = ConfigRegistry()
 ucr.load()
 
-SEP_CHAR = '\t'
+HOOK_SEP_CHAR = '\t'
 HOOK_PATH = '/usr/share/ucs-school-import/hooks/'
-def call_hooks(obj, hook_time, func_name):
-	# verify path
-	module = obj._meta.udm_module_short
-	path = os.path.join(HOOK_PATH, '%s_%s_%s.d' % (module, func_name, hook_time))
-	if not os.path.isdir(path) or not os.listdir(path):
-		return False
 
-	dn = None
-	if hook_time == 'post':
-		dn = obj.old_dn
+_pw_length_cache = {}
+def create_passwd(length=8, dn=None):
+	if dn:
+		# get dn pw policy
+		if not _pw_length_cache.get(dn):
+			try:
+				results, policies = policy_result(dn)
+				_pw_length_cache[dn] = int(results.get('univentionPWLength', ['8'])[0])
+			except Exception:
+				pass
+		length = _pw_length_cache.get(dn, length)
 
-	line = obj.build_hook_line(hook_time, func_name)
-	if not line:
-		return None
-	line = line.strip() + '\n'
+		# get ou pw policy
+		ou = 'ou=' + dn[dn.find('ou=') + 3:]
+		if not _pw_length_cache.get(ou):
+			try:
+				results, policies = policy_result(ou)
+				_pw_length_cache[ou] = int(results.get('univentionPWLength', ['8'])[0])
+			except Exception:
+				pass
+		length = _pw_length_cache.get(ou, length)
 
-	# create temporary file with data
-	with tempfile.NamedTemporaryFile() as tmpfile:
-		tmpfile.write(line)
-		tmpfile.flush()
-
-		# invoke hook scripts
-		# <script> <temporary file> [<ldap dn>]
-		command = ['run-parts', path, '--arg', tmpfile.name]
-		if dn:
-			command.extend(('--arg', dn))
-
-		ret_code = subprocess.call(command)
-
-		return ret_code == 0
-
-# TODO: activate
-def hook(func):
-	func_name = func.__name__
-	def _func(*args, **kwargs):
-		self_obj = args[0]
-
-		call_hooks(self_obj, 'pre', func_name)
-		ret = func(*args, **kwargs)
-		if ret:
-			call_hooks(self_obj, 'post', func_name)
-		return ret
-	return _func
-
-def generate_random(length=30):
-	chars = string.ascii_letters + string.digits
+	chars = 'abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ!"$%&/()=?'
 	return ''.join(random.choice(chars) for x in range(length))
 
 def flatten(list_of_lists):
@@ -175,6 +155,14 @@ class GroupName(CommonName):
 class ShareName(CommonName):
 	syntax = string_numbers_letters_dots_spaces
 
+class SubnetName(CommonName):
+	udm_name = 'subnet'
+	syntax = reverseLookupSubnet
+
+class DHCPSubnetName(SubnetName):
+	udm_name = 'subnet'
+	syntax = ipv4Address
+
 class SchoolName(CommonName):
 	udm_name = 'name'
 
@@ -211,6 +199,10 @@ class Email(Attribute):
 class Password(Attribute):
 	udm_name = 'password'
 
+class Disabled(Attribute):
+	udm_name = 'disabled'
+	syntax = disabled
+
 class SchoolAttribute(CommonName):
 	udm_name = None
 
@@ -236,7 +228,7 @@ class ContainerPath(Attribute):
 	syntax = boolean
 
 class ShareFileServer(Attribute):
-	syntax = UCSSchool_Server_DN
+	syntax = UCS_Server
 	extended = True
 
 class Groups(Attribute):
@@ -248,6 +240,25 @@ class IPAddress(Attribute):
 
 class SubnetMask(Attribute):
 	pass
+
+class DHCPSubnetMask(Attribute):
+	udm_name = 'subnetmask'
+	syntax = v4netmask
+
+class BroadcastAddress(Attribute):
+	udm_name = 'broadcastaddress'
+	syntax = ipv4Address
+
+class NetworkBroadcastAddress(Attribute):
+	syntax = ipv4Address
+
+class NetworkAttribute(Attribute):
+	udm_name = 'network'
+	syntax = ipAddress
+
+class Netmask(Attribute):
+	udm_name = 'netmask'
+	syntax = netmask
 
 class MACAddress(Attribute):
 	udm_name = 'mac'
@@ -266,6 +277,7 @@ class UCSSchoolHelperOptions(object):
 		if self.udm_module:
 			udm_module_short = self.udm_module.split('/')[1]
 		self.set_from_meta_object(meta, 'udm_module_short', udm_module_short)
+		self.set_from_meta_object(meta, 'hook_path', udm_module_short) # default same as udm_module_short
 		if self.udm_module:
 			module = udm_modules.get(self.udm_module)
 			if not module:
@@ -278,10 +290,12 @@ class UCSSchoolHelperOptions(object):
 					# extended? only available after module_init(lo)
 					#   we have to trust ourselved here
 					if attr.udm_name not in module.property_descriptions:
-						raise RuntimeError('%s\'s attribute "%s" is has no counterpart in the module\'s property_descriptions ("%s")!' % (klass.__name__, key, attr.udm_name))
+						raise RuntimeError('%s\'s attribute "%s" has no counterpart in the %s\'s property_descriptions ("%s")!' % (klass.__name__, key, self.udm_module, attr.udm_name))
 			udm_name = klass._attributes['name'].udm_name
 			ldap_name = module.mapping.mapName(udm_name)
 			self.ldap_name_part = ldap_name
+			ldap_map_function = partial(module.mapping.mapValue, udm_name)
+			self.ldap_map_function = ldap_map_function
 
 	def set_from_meta_object(self, meta, name, default):
 		value = default
@@ -353,7 +367,8 @@ class UCSSchoolHelperAbstractClass(object):
 			return self.custom_dn
 		container = self.get_own_container()
 		if self.name and container:
-			return '%s=%s,%s' % (self._meta.ldap_name_part, self.name, container)
+			name = self._meta.ldap_map_function(self.name)
+			return '%s=%s,%s' % (self._meta.ldap_name_part, name, container)
 
 	def set_dn(self, dn):
 		self.custom_dn = None
@@ -406,6 +421,48 @@ class UCSSchoolHelperAbstractClass(object):
 			return False
 		return ('ou=%s,' % self.school) not in udm_obj.dn
 
+	def call_hooks(self, hook_time, func_name):
+		# verify path
+		hook_path = self._meta.hook_path
+		path = os.path.join(HOOK_PATH, '%s_%s_%s.d' % (hook_path, func_name, hook_time))
+		MODULE.info('%s shall be executed' % path)
+		if not os.path.isdir(path) or not os.listdir(path):
+			MODULE.info('%s not found or empty' % path)
+			return None
+
+		dn = None
+		if hook_time == 'post':
+			dn = self.old_dn
+
+		MODULE.info('Building hook line: %r.build_hook_line(%r, %r)' % (self, hook_time, func_name))
+		line = self.build_hook_line(hook_time, func_name)
+		if not line:
+			MODULE.info('No line. Skipping!')
+			return None
+		else:
+			# TODO: remove! contains password
+			MODULE.info('Line: %r' % line)
+		line = line.strip() + '\n'
+
+		# create temporary file with data
+		with tempfile.NamedTemporaryFile() as tmpfile:
+			tmpfile.write(line)
+			tmpfile.flush()
+
+			# invoke hook scripts
+			# <script> <temporary file> [<ldap dn>]
+			command = ['run-parts', path, '--arg', tmpfile.name]
+			if dn:
+				command.extend(('--arg', dn))
+
+			ret_code = subprocess.call(command)
+
+			raise ValueError()
+			return ret_code == 0
+
+	def build_hook_line(self, hook_time, func_name):
+		return None
+
 	def _alter_udm_obj(self, udm_obj):
 		for name, attr in self._attributes.iteritems():
 			if attr.udm_name:
@@ -413,8 +470,14 @@ class UCSSchoolHelperAbstractClass(object):
 				if value is not None:
 					udm_obj[attr.udm_name] = value
 
-	#@hook
 	def create(self, lo, validate=True):
+		self.call_hooks('pre', 'create')
+		success = self.create_without_hooks(lo, validate)
+		if success:
+			self.call_hooks('post', 'create')
+		return success
+
+	def create_without_hooks(self, lo, validate):
 		MODULE.process('Creating %r' % self)
 
 		if self.exists(lo):
@@ -428,7 +491,7 @@ class UCSSchoolHelperAbstractClass(object):
 
 		pos = udm_uldap.position(ucr.get('ldap/base'))
 		pos.setDn(self.get_own_container())
-		udm_obj = udm_modules.get(self._meta.udm_module).object(None, lo, pos)
+		udm_obj = udm_modules.get(self._meta.udm_module).object(None, lo, pos, superordinate=self.get_superordinate())
 		udm_obj.open()
 
 		# here is the real logic
@@ -437,14 +500,21 @@ class UCSSchoolHelperAbstractClass(object):
 		# get it fresh from the database (needed for udm_obj._exists ...)
 		self._udm_obj_searched = False
 		self.set_dn(self.dn)
+		MODULE.process('%r successfully created' % self)
 		return True
 
 	def do_create(self, udm_obj, lo):
 		self._alter_udm_obj(udm_obj)
 		udm_obj.create()
 
-	#@hook
 	def modify(self, lo, validate=True):
+		self.call_hooks('pre', 'modify')
+		success = self.modify_without_hooks(lo, validate)
+		if success:
+			self.call_hooks('post', 'modify')
+		return success
+
+	def modify_without_hooks(self, lo, validate):
 		MODULE.process('Modifying %r' % self)
 
 		if validate:
@@ -467,7 +537,40 @@ class UCSSchoolHelperAbstractClass(object):
 		if udm_obj.dn != self.dn:
 			udm_obj.move(self.dn)
 			same = False
-		return not same
+		if same:
+			MODULE.process('%r not modified. Nothing changed' % self)
+		else:
+			MODULE.process('%r successfully modified' % self)
+		# return not same
+		return True
+
+	def do_modify(self, udm_obj, lo):
+		self._alter_udm_obj(udm_obj)
+		udm_obj.modify()
+
+	def remove(self, lo):
+		self.call_hooks('pre', 'remove')
+		success = self.remove_without_hooks(lo)
+		if success:
+			self.call_hooks('post', 'remove')
+		return success
+
+	def remove_without_hooks(self, lo):
+		MODULE.process('Deleting %r' % self)
+		udm_obj = self.get_udm_object(lo)
+		if udm_obj:
+			udm_obj.remove(remove_childs=True)
+			self._udm_obj_searched = False
+			self.set_dn(None)
+			MODULE.process('%r successfully removed' % self)
+			return True
+		MODULE.process('%r does not exist!' % self)
+		return False
+
+	@classmethod
+	def get_name_from_dn(cls, dn):
+		if dn:
+			return ldap.explode_dn(dn, 1)[0]
 
 	@classmethod
 	def find_field_label_from_name(cls, field):
@@ -487,26 +590,6 @@ class UCSSchoolHelperAbstractClass(object):
 				error_str += ' '
 			error_msg += '%s: %s' % (label, error_str)
 		return error_msg[:-1]
-
-	def do_modify(self, udm_obj, lo):
-		self._alter_udm_obj(udm_obj)
-		udm_obj.modify()
-
-	#@hook
-	def remove(self, lo):
-		MODULE.process('Deleting %r' % self)
-		udm_obj = self.get_udm_object(lo)
-		if udm_obj:
-			udm_obj.remove(remove_childs=True)
-			self._udm_obj_searched = False
-			self.set_dn(None)
-			return True
-		return False
-
-	@classmethod
-	def get_name_from_dn(cls, dn):
-		if dn:
-			return ldap.explode_dn(dn, 1)[0]
 
 	def get_udm_object(self, lo):
 		if self._udm_obj_searched is False:
@@ -532,6 +615,9 @@ class UCSSchoolHelperAbstractClass(object):
 				self._udm_obj.open()
 			self._udm_obj_searched = True
 		return self._udm_obj
+
+	def get_superordinate(self):
+		return None
 
 	def get_own_container(self):
 		if self.supports_school() and not self.school:
@@ -654,6 +740,14 @@ class UCSSchoolHelperAbstractClass(object):
 				ret[name] = getattr(self, name)
 		return ret
 
+	def _map_func_name_to_code(cls, func_name):
+		if func_name == 'create':
+			return 'A'
+		elif func_name == 'modify':
+			return 'M'
+		elif func_name == 'remove':
+			return 'D'
+
 	def _build_hook_line(self, *args):
 		attrs = []
 		for arg in args:
@@ -665,7 +759,7 @@ class UCSSchoolHelperAbstractClass(object):
 			if arg is True:
 				val = 1
 			attrs.append(str(val))
-		return SEP_CHAR.join(attrs)
+		return HOOK_SEP_CHAR.join(attrs)
 
 class User(UCSSchoolHelperAbstractClass):
 	name = UserName(_('Username'), aka=['Username', 'Benutzername'])
@@ -674,8 +768,56 @@ class User(UCSSchoolHelperAbstractClass):
 	birthday = Birthday(_('Birthday'), aka=['Birthday', 'Geburtstag'], unlikely_to_change=True)
 	email = Email(_('Email'), aka=['Email', 'E-Mail'], unlikely_to_change=True)
 	password = Password(_('Password'), aka=['Password', 'Passwort'])
+	disabled = Disabled(_('Disabled'), aka=['Disabled', 'Gesperrt'])
 
 	type_name = None
+
+	_profile_path_cache = {}
+	_samba_home_path_cache = {}
+
+	roles = []
+
+	def get_roleshare_home_subdir(self):
+		from ucsschool.lib.roleshares import roleshare_home_subdir
+		return roleshare_home_subdir(self.school, self.roles, ucr)
+
+	def get_samba_home_path(self, lo):
+		school = School.get(self.school)
+		# if defined then use UCR value
+		ucr_variable = ucr.get('ucsschool/import/set/sambahome')
+		if ucr_variable is not None:
+			samba_home_path = r'\\%s' % ucr_variable.strip('\\')
+		# in single server environments the master is always the fileserver
+		elif ucr.is_true('ucsschool/singlemaster', False):
+			samba_home_path = r'\\%s' % ucr.get('hostname')
+		# if there's a cached result then use it
+		elif school.dn not in self._samba_home_path_cache:
+			samba_home_path = None
+			# get windows home server from OU object
+			school = School.from_dn(school.dn, None, lo)
+			home_share_file_server = school.get_home_share_file_server(lo)
+			if home_share_file_server:
+				samba_home_path = r'\\%s' % self.get_name_from_dn(home_share_file_server)
+			self._samba_home_path_cache[school.dn] = samba_home_path
+		else:
+			samba_home_path = self._samba_home_path_cache[school.dn]
+		if samba_home_path is not None:
+			return r'%s\%s' % (samba_home_path, self.name)
+
+	def get_profile_path(self, lo):
+		ucr_variable = ucr.get('ucsschool/import/set/serverprofile/path')
+		if ucr_variable is not None:
+			return ucr_variable
+		school = School.get(self.school)
+		if school.dn not in self._profile_path_cache:
+			profile_path = r'%s\%%USERNAME%%\windows-profiles\default'
+			for computer in AnyComputer.get_all(lo, self.school, 'univentionService=Windows Profile Server'):
+				profile_path = profile_path % (r'\\%s' % computer.name)
+				break
+			else:
+				profile_path = profile_path % '%LOGONSERVER%'
+			self._profile_path_cache[school.dn] = profile_path
+		return self._profile_path_cache[school.dn]
 
 	@classmethod
 	def is_student(cls, school, dn):
@@ -710,9 +852,28 @@ class User(UCSSchoolHelperAbstractClass):
 
 	def do_create(self, udm_obj, lo):
 		self.create_mail_domain(lo)
-		self.password = self.password or generate_random()
+		self.password = self.password or create_passwd(self.dn)
 		udm_obj['primaryGroup'] = self.primary_group_dn(lo)
 		udm_obj['groups'] = self.groups_used(lo)
+		subdir = self.get_roleshare_home_subdir()
+		udm_obj['unixhome'] = '/home/' + os.path.join(subdir, self.name)
+		udm_obj['overridePWHistory'] = '1'
+		udm_obj['overridePWLength'] = '1'
+		udm_obj['e-mail'] = self.email
+		udm_obj['departmentNumber'] = self.school
+		if self.disabled is None:
+			udm_obj['disabled'] = 'none'
+		if udm_obj.has_key('mailbox'):
+			udm_obj['mailbox'] = '/var/spool/%s/' % self.name
+		profile_path = self.get_profile_path(lo)
+		if profile_path:
+			udm_obj['profilepath'] = profile_path
+		home_drive = ucr.get('ucsschool/import/set/homedrive')
+		if home_drive is not None:
+			udm_obj['homedrive'] = home_drive
+		script_path = ucr.get('ucsschool/import/set/netlogon/script/path')
+		if script_path is not None:
+			udm_obj['scriptpath'] = script_path
 		return super(User, self).do_create(udm_obj, lo)
 
 	def do_modify(self, udm_obj, lo):
@@ -803,22 +964,14 @@ class User(UCSSchoolHelperAbstractClass):
 		group.create(lo)
 		return group
 
-	def _map_func_name_to_code(cls, func_name):
-		if func_name == 'create':
-			return 'A'
-		elif func_name == 'modify':
-			return 'M'
-		elif func_name == 'remove':
-			return 'D'
+	def is_active(self):
+		return self.disabled != 'all'
 
 	def build_hook_line(self, hook_time, func_name):
 		code = self._map_func_name_to_code(func_name)
-		name = self.name or ''
-		if name:
-			name = name.lower()
 		return self._build_hook_line(
 				code,
-				name,
+				self.name,
 				self.lastname,
 				self.firstname,
 				self.school,
@@ -857,6 +1010,7 @@ class Student(User):
 	school_class = SchoolClassStringAttribute(_('Class'), aka=['Class', 'Klasse'])
 
 	type_name = _('Student')
+	roles = [role_pupil]
 
 	@classmethod
 	def from_udm_obj(cls, udm_obj, school, lo):
@@ -886,6 +1040,7 @@ class Teacher(User):
 	school_class = SchoolClassStringAttribute(_('Class'), aka=['Class', 'Klasse'])
 
 	type_name = _('Teacher')
+	roles = [role_teacher]
 
 	@classmethod
 	def from_udm_obj(cls, udm_obj, school, lo):
@@ -916,6 +1071,7 @@ class Teacher(User):
 
 class Staff(User):
 	type_name = _('Staff')
+	roles = [role_staff]
 
 	@classmethod
 	def get_container(cls, school):
@@ -928,6 +1084,7 @@ class Staff(User):
 
 class TeachersAndStaff(Teacher):
 	type_name = _('Teacher and Staff')
+	roles = [role_teacher, role_staff]
 
 	@classmethod
 	def get_container(cls, school):
@@ -971,6 +1128,26 @@ class Group(UCSSchoolHelperAbstractClass):
 		else:
 			policy.attach(self, lo)
 
+	def build_hook_line(self, hook_time, func_name):
+		code = self._map_func_name_to_code(func_name)
+		if code != 'M':
+			return self._build_hook_line(
+					code,
+					self.school,
+					self.name,
+					self.description,
+				)
+		else:
+			# This is probably a bug. See ucs-school-import and Bug #34736
+			old_name = self.get_name_from_dn(self.old_dn)
+			new_name = self.name
+			if old_name != new_name:
+				return self._build_hook_line(
+						code,
+						old_name,
+						new_name,
+					)
+
 	class Meta:
 		udm_module = 'groups/group'
 		name_is_unique = True
@@ -984,7 +1161,7 @@ class BasicGroup(Group):
 			kwargs['container'] = 'cn=groups,%s' % ucr.get('ldap/base')
 		super(BasicGroup, self).__init__(**kwargs)
 
-	def create(self, lo, validate=True):
+	def create_without_hooks(self, lo, validate):
 		# prepare LDAP: create containers where this basic group lives if necessary
 		container_dn = self.get_own_container()[:-len(ucr.get('ldap/base'))-1]
 		containers = str2dn(container_dn)
@@ -996,27 +1173,29 @@ class BasicGroup(Group):
 			else:
 				container = Container(name=cn, school='', group_path='1')
 			super_container_dn = container.create_in_container(super_container_dn, lo)
-		return super(BasicGroup, self).create(lo, validate)
+		return super(BasicGroup, self).create_without_hooks(lo, validate)
 
 	def get_own_container(self):
 		return self.container
+
+	def build_hook_line(self, hook_time, func_name):
+		return None
 
 	@classmethod
 	def get_container(cls, school=None):
 		return ucr.get('ldap/base')
 
 class SchoolClass(Group):
-	def create(self, lo, validate=True):
-		success = super(SchoolClass, self).create(lo, validate)
-		self.create_share(lo)
-		return success
+	def create_without_hooks(self, lo, validate):
+		super(SchoolClass, self).create_without_hooks(lo, validate) # success = ?
+		self.create_share(lo) # success = success and ?
+		return True # success?
 
 	def create_share(self, lo):
 		share = ClassShare.from_school_class(self)
-		share.create(lo)
-		return share
+		return share.create(lo)
 
-	def modify(self, lo, validate=True):
+	def modify_without_hooks(self, lo, validate):
 		share = ClassShare.from_school_class(self)
 		if self.old_dn:
 			old_name = self.get_name_from_dn(self.old_dn)
@@ -1027,18 +1206,19 @@ class SchoolClass(Group):
 				# share.old_dn incorrectly
 				share = ClassShare(name=old_name, school=self.school, school_class=self)
 				share.name = self.name
-		udm_obj = super(SchoolClass, self).modify(lo, validate)
-		if share.exists(lo):
-			share.modify(lo)
-		else:
-			self.create_share(lo)
-		return udm_obj
+		success = super(SchoolClass, self).modify_without_hooks(lo, validate)
+		if success:
+			if share.exists(lo):
+				success = share.modify(lo)
+			else:
+				success = self.create_share(lo)
+		return success
 
-	def remove(self, lo):
-		udm_obj = super(SchoolClass, self).remove(lo)
+	def remove_without_hooks(self, lo):
+		success = super(SchoolClass, self).remove_without_hooks(lo)
 		share = ClassShare.from_school_class(self)
-		share.remove(lo)
-		return udm_obj
+		success = success and share.remove(lo)
+		return success
 
 	@classmethod
 	def get_container(cls, school):
@@ -1400,7 +1580,7 @@ class School(UCSSchoolHelperAbstractClass):
 			dhcp_service.create(lo)
 			dhcp_service.add_server(dc_name, lo)
 
-	def create(self, lo, validate=True):
+	def create_without_hooks(self, lo, validate):
 		district = self.get_district()
 		if district:
 			ou = OU(name=district)
@@ -1409,7 +1589,7 @@ class School(UCSSchoolHelperAbstractClass):
 		self.class_share_file_server = self.get_class_share_file_server(lo)
 		self.home_share_file_server = self.get_home_share_file_server(lo)
 
-		success = super(School, self).create(lo, validate)
+		success = super(School, self).create_without_hooks(lo, validate)
 		if not success:
 			return False
 
@@ -1670,6 +1850,8 @@ class DHCPDNSPolicy(Policy):
 class AnyComputer(UCSSchoolHelperAbstractClass):
 	@classmethod
 	def get_container(cls, school=None):
+		if school:
+			return School.get(school).dn
 		return ucr.get('ldap/base')
 
 	class Meta:
@@ -1710,12 +1892,21 @@ class SchoolComputer(UCSSchoolHelperAbstractClass):
 	subnet_mask = SubnetMask(_('Subnet mask'))
 	mac_address = MACAddress(_('MAC address'), required=True)
 	inventory_number = InventoryNumber(_('Inventory number'))
+	zone = Attribute(_('Zone'))
 
 	type_name = _('Computer')
 
-	def _alter_udm_obj(self, udm_obj):
+	DEFAULT_PREFIX_LEN = 24 # 255.255.255.0
+
+	def get_inventory_numbers(self):
 		if isinstance(self.inventory_number, basestring):
-			udm_obj['inventoryNumber'] = self.inventory_number.split(',')
+			return self.inventory_number.split(',')
+		return []
+
+	def _alter_udm_obj(self, udm_obj):
+		inventory_numbers = self.get_inventory_numbers()
+		if inventory_numbers:
+			udm_obj['inventoryNumber'] = inventory_numbers
 		ipv4_network = self.get_ipv4_network()
 		if ipv4_network and ipv4_network.ip != ipv4_network.network:
 			udm_obj['ip'] = str(ipv4_network.ip)
@@ -1726,8 +1917,13 @@ class SchoolComputer(UCSSchoolHelperAbstractClass):
 		return cls.get_search_base(school).computers
 
 	def create(self, lo, validate=True):
-		self.create_network(lo)
+		if self.subnet_mask is None:
+			self.subnet_mask = self.DEFAULT_PREFIX_LEN
 		return super(SchoolComputer, self).create(lo, validate)
+
+	def create_without_hooks(self, lo, validate):
+		self.create_network(lo)
+		return super(SchoolComputer, self).create_without_hooks(lo, validate)
 
 	def do_create(self, udm_obj, lo):
 		network = self.get_network()
@@ -1737,9 +1933,8 @@ class SchoolComputer(UCSSchoolHelperAbstractClass):
 		return super(SchoolComputer, self).do_create(udm_obj, lo)
 
 	def get_ipv4_network(self):
-		return None # FIXME
-		if self.subnet_mask:
-			network_str = '%s/%s' % self.ip_address, self.subnet_mask
+		if self.subnet_mask is not None:
+			network_str = '%s/%s' % (self.ip_address, self.subnet_mask)
 		else:
 			network_str = str(self.ip_address)
 		try:
@@ -1751,7 +1946,10 @@ class SchoolComputer(UCSSchoolHelperAbstractClass):
 		ipv4_network = self.get_ipv4_network()
 		if ipv4_network:
 			network_name = '%s-%s' % (self.school.lower(), ipv4_network.network)
-			return Network(name=network_name, school=self.school)
+			network = str(ipv4_network.network)
+			netmask = str(ipv4_network.netmask)
+			broadcast = str(ipv4_network.broadcast)
+			return Network(name=network_name, school=self.school, network=network, netmask=netmask, broadcast=broadcast)
 
 	def create_network(self, lo):
 		network = self.get_network()
@@ -1788,9 +1986,28 @@ class SchoolComputer(UCSSchoolHelperAbstractClass):
 		obj = super(SchoolComputer, cls).from_udm_obj(udm_obj, school, lo)
 		if obj:
 			obj.ip_address = udm_obj['ip']
+			school = School.get(obj.school)
+			edukativnetz_group = school.get_administrative_group_name('educational', domain_controller=False, as_dn=True)
+			if edukativnetz_group in udm_obj['groups']:
+				obj.zone = 'edukativ'
+			verwaltungsnetz_group = school.get_administrative_group_name('noneducational', domain_controller=False, as_dn=True)
+			if verwaltungsnetz_group in udm_obj['groups']:
+				obj.zone = 'verwaltung'
 			obj.subnet_mask = '255.255.255.0' # FIXME
-			obj.inventory_number = udm_obj['inventoryNumber']
+			obj.inventory_number = ','.join(udm_obj['inventoryNumber'])
 			return obj
+
+	def build_hook_line(self, hook_time, func_name):
+		module_part = self._meta.udm_module.split('/')[1]
+		return self._build_hook_line(
+			module_part,
+			self.name,
+			self.mac_address,
+			self.school,
+			self.get_ipv4_network(),
+			','.join(self.get_inventory_numbers()),
+			self.zone
+		)
 
 	def to_dict(self):
 		ret = super(SchoolComputer, self).to_dict()
@@ -1807,30 +2024,116 @@ class WindowsComputer(SchoolComputer):
 
 	class Meta(SchoolComputer.Meta):
 		udm_module = 'computers/windows'
+		hook_path = 'computer'
 
 class MacComputer(SchoolComputer):
 	type_name = _('Mac OS X')
 
 	class Meta(SchoolComputer.Meta):
 		udm_module = 'computers/macos'
+		hook_path = 'computer'
 
 class IPComputer(SchoolComputer):
 	type_name = _('Device with IP address')
 
 	class Meta(SchoolComputer.Meta):
 		udm_module = 'computers/ipmanagedclient'
+		hook_path = 'computer'
 
 class UCCComputer(SchoolComputer):
 	type_name = _('Univention Corporate Client')
 
 	class Meta(SchoolComputer.Meta):
 		udm_module = 'computers/ucc'
+		hook_path = 'computer'
 
 class Network(UCSSchoolHelperAbstractClass):
+	netmask = Netmask(_('Netmask'))
+	network = NetworkAttribute(_('Network'))
+	broadcast = NetworkBroadcastAddress(_('Broadcast'))
+
 	@classmethod
 	def get_container(cls, school):
 		return cls.get_search_base(school).networks
 
+	def get_subnet(self):
+		# WORKAROUND for Bug #14795
+		subnetbytes = 0
+		netmask_parts = self.netmask.split('.')
+		for part in netmask_parts:
+			if part == '255':
+				subnetbytes += 1
+			else:
+				break
+		return '.'.join(self.network.split('.')[:subnetbytes])
+
+	def create_without_hooks(self, lo, validate):
+		dns_reverse_zone = DNSReverseZone.get(self.get_subnet())
+		dns_reverse_zone.create(lo)
+
+		dhcp_subnet = DHCPSubnet(name=self.network, school=self.school, subnet_mask=self.netmask, broadcast=self.broadcast)
+		dhcp_subnet.create(lo)
+
+		# TODO:
+		# set netbios and router for dhcp subnet
+		#if defaultrouter:
+		#	print 'setting default router'
+		#	set_router_for_subnet (network, defaultrouter, schoolNr)
+
+		#if netbiosserver:
+		#	print 'setting netbios server'
+		#	set_netbiosserver_for_subnet (network, netbiosserver, schoolNr)
+
+		## set default value for nameserver
+		#if nameserver:
+		#	print 'setting nameserver'
+		#	set_nameserver_for_subnet (network, nameserver, schoolNr)
+
+		return super(Network, self).create_without_hooks(lo, validate)
+
+	def do_create(self, udm_obj, lo):
+		# TODO:
+		#if iprange:
+		#	object['ipRange']=[[str(iprange[0]), str(iprange[1])]]
+
+		# TODO: this is a DHCPServer created when school is created (not implemented yet)
+		udm_obj['dhcpEntryZone'] = 'cn=%s,cn=dhcp,%s' % (self.school, School.get(self.school).dn)
+		udm_obj['dnsEntryZoneForward'] = 'zoneName=%s,cn=dns,%s' % (ucr.get('domainname'), ucr.get('ldap/base'))
+		reversed_subnet = '.'.join(reversed(self.get_subnet().split('.')))
+		udm_obj['dnsEntryZoneReverse'] = 'zoneName=%s.in-addr.arpa,cn=dns,%s' % (reversed_subnet, ucr.get('ldap/base'))
+		return super(Network, self).do_create(udm_obj, lo)
+
 	class Meta:
 		udm_module = 'networks/network'
+
+class DNSReverseZone(UCSSchoolHelperAbstractClass):
+	name = SubnetName(_('Subnet'))
+	school = None
+
+	@classmethod
+	def get_container(cls, school=None):
+		return 'cn=dns,%s' % ucr.get('ldap/base')
+
+	def do_create(self, udm_obj, lo):
+		udm_obj['nameserver'] = ucr.get('ldap/master')
+		udm_obj['contact'] = 'root@%s' % ucr.get('domainname')
+		return super(DNSReverseZone, self).do_create(udm_obj, lo)
+
+	class Meta:
+		udm_module = 'dns/reverse_zone'
+
+class DHCPSubnet(UCSSchoolHelperAbstractClass):
+	name = DHCPSubnetName(_('Subnet address'))
+	subnet_mask = DHCPSubnetMask(_('Netmask'))
+	broadcast = BroadcastAddress(_('Broadcast'))
+
+	@classmethod
+	def get_container(cls, school):
+		return cls.get_search_base(school).dhcp
+
+	def get_superordinate(self):
+		return udm_modules.get(self._meta.udm_module)
+
+	class Meta:
+		udm_module = 'dhcp/subnet'
 

@@ -1,3 +1,9 @@
+ucs-school-lib (5.0.15-1) unstable; urgency=low
+
+  * Bug #34337: Support hooks, build network when creating a computer
+
+ -- Dirk Wiesenthal <wiesenthal@univention.de>  Tue, 06 May 2014 00:25:14 +0200
+
 ucs-school-lib (5.0.14-1) unstable; urgency=low
 
   * Bug #34199: More aliases for attributes

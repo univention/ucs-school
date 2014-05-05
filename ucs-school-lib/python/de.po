@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2014-04-25 15:38+0200\n"
+"POT-Creation-Date: 2014-05-05 13:43+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -11,33 +11,37 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: python/models.py:143
+#: python/models.py:124
 #, python-format
 msgid "\"%s\" is required. Please provide this information."
 msgstr "\"%s\" ist erforderlich. Bitte ergänzen Sie diese Information."
 
-#: python/models.py:191
+#: python/models.py:180
 msgid "A valid NetBIOS hostname can not be longer than 12 characters."
 msgstr ""
 "Ein gültiger NetBIOS Rechnername darf nicht länger als 12 Zeichen sein."
 
-#: python/models.py:642
+#: python/models.py:757
 msgid "Birthday"
 msgstr "Geburtstag"
 
-#: python/models.py:824 python/models.py:852
+#: python/models.py:2039 python/models.py:2113
+msgid "Broadcast"
+msgstr "Broadcast"
+
+#: python/models.py:999 python/models.py:1029
 msgid "Class"
 msgstr "Klasse"
 
-#: python/models.py:1679
+#: python/models.py:1886
 msgid "Computer"
 msgstr "Rechner"
 
-#: python/models.py:1487
+#: python/models.py:1691
 msgid "Computer path"
 msgstr "Pfad für Rechner"
 
-#: python/models.py:945
+#: python/models.py:1146
 msgid "Container"
 msgstr "Container"
 
@@ -49,67 +53,71 @@ msgstr ""
 "Es konnte keine Schule gefunden werden. Um Fortzufahren, muss zuerst eine "
 "Schule erstellt werden, dazu kann 'Schule hinzufügen' verwendet werden."
 
-#: python/models.py:1114
+#: python/models.py:1318
 msgid "DC Name"
 msgstr "DC Name"
 
-#: python/models.py:1490
+#: python/models.py:1694
 msgid "DHCP path"
 msgstr "Pfad für DHCP"
 
-#: python/models.py:908
+#: python/models.py:1089
 msgid "Description"
 msgstr "Beschreibung"
 
-#: python/models.py:1781
+#: python/models.py:2023
 msgid "Device with IP address"
 msgstr "Gerät mit IP-Adresse"
 
-#: python/models.py:1117
+#: python/models.py:760
+msgid "Disabled"
+msgstr "Deaktiviert"
+
+#: python/models.py:1321
 msgid "Display name"
 msgstr "Anzeigename"
 
-#: python/models.py:1504
+#: python/models.py:1708
 msgid "Domain"
 msgstr "Domäne"
 
-#: python/models.py:643
+#: python/models.py:758
 msgid "Email"
 msgstr "E-Mail"
 
-#: python/models.py:1630
+#: python/models.py:1834
 msgid "Empty attributes"
 msgstr "Leere Attribute"
 
-#: python/models.py:640
+#: python/models.py:755
 msgid "First name"
 msgstr "Vorname"
 
-#: python/models.py:1489
+#: python/models.py:1693
 msgid "Group path"
 msgstr "Pfad für Gruppen"
 
-#: python/models.py:1659
+#: python/models.py:1865
 msgid "Groups"
 msgstr "Gruppen"
 
-#: python/models.py:1503
+#: python/models.py:1707
 msgid "Hostname"
 msgstr "Hostname"
 
-#: python/models.py:1674
+#: python/models.py:1880
 msgid "IP address"
 msgstr "IP-Adresse"
 
-#: python/models.py:184
+#: python/models.py:173
 msgid "Invalid school name"
 msgstr "Ungültiger Schulname"
 
-#: python/models.py:1677
+#: python/models.py:1883
 msgid "Inventory number"
 msgstr "Inventarnummer"
 
-#: python/models.py:641
+#: python/models.py:756
 msgid "Last name"
 msgstr "Nachname"
 
@@ -119,23 +127,31 @@ msgstr ""
 "Keine Lizenz gefunden. Während dieser Sitzung ist das Hinzufügen und "
 "Bearbeiten von Objekten nicht möglich."
 
-#: python/models.py:1676
+#: python/models.py:1882
 msgid "MAC address"
 msgstr "MAC-Adresse"
 
-#: python/models.py:1775
+#: python/models.py:2016
 msgid "Mac OS X"
 msgstr "Mac OS X"
 
-#: python/models.py:161
+#: python/models.py:142
 msgid "May not contain special characters"
 msgstr "Darf keine besonderen Zeichen enthalten"
 
-#: python/models.py:316 python/models.py:907 python/models.py:1024
+#: python/models.py:325 python/models.py:1088 python/models.py:1228
 msgid "Name"
 msgstr "Name"
 
-#: python/models.py:1488
+#: python/models.py:2037 python/models.py:2112
+msgid "Netmask"
+msgstr "Netzmaske"
+
+#: python/models.py:2038
+msgid "Network"
+msgstr "Netzwerk"
+
+#: python/models.py:1692
 msgid "Network path"
 msgstr "Pfad für Netzwerk"
 
@@ -143,67 +159,75 @@ msgstr "Pfad für Netzwerk"
 msgid "Overlapping lessons are not allowed"
 msgstr "Überlappende Schulstunden sind nicht erlaubt"
 
-#: python/models.py:644
+#: python/models.py:759
 msgid "Password"
 msgstr "Passwort"
 
-#: python/models.py:1491
+#: python/models.py:1695
 msgid "Policy path"
 msgstr "Pfad für Richtlinien"
 
-#: python/models.py:1493
+#: python/models.py:1697
 msgid "Printer path"
 msgstr "Pfad für Drucker"
 
-#: python/models.py:317
+#: python/models.py:326
 msgid "School"
 msgstr "Schule"
 
-#: python/models.py:1025
+#: python/models.py:1229
 msgid "School class"
 msgstr "Schulklasse"
 
-#: python/models.py:1113
+#: python/models.py:1317
 msgid "School name"
 msgstr "Schulname"
 
-#: python/models.py:1116
+#: python/models.py:1320
 msgid "Server for Windows home directories"
 msgstr "Server für Windows-Heimatverzeichnisse"
 
-#: python/models.py:1115
+#: python/models.py:1319
 msgid "Server for class shares"
 msgstr "Server für Klassenfreigaben"
 
-#: python/models.py:1502
+#: python/models.py:1706
 msgid "Service"
 msgstr "Dienst"
 
-#: python/models.py:1492
+#: python/models.py:1696
 msgid "Share path"
 msgstr "Pfad für Freigaben"
 
-#: python/models.py:883
+#: python/models.py:1062
 msgid "Staff"
 msgstr "Mitarbeiter"
 
-#: python/models.py:826
+#: python/models.py:1001
 msgid "Student"
 msgstr "Schüler"
 
-#: python/models.py:1675
+#: python/models.py:2095
+msgid "Subnet"
+msgstr "Subnetz"
+
+#: python/models.py:2111
+msgid "Subnet address"
+msgstr "Subnetz-Adresse"
+
+#: python/models.py:1881
 msgid "Subnet mask"
 msgstr "Subnetzmaske"
 
-#: python/models.py:854
+#: python/models.py:1031
 msgid "Teacher"
 msgstr "Lehrer"
 
-#: python/models.py:895
+#: python/models.py:1075
 msgid "Teacher and Staff"
 msgstr "Lehrer und Mitarbeiter"
 
-#: python/models.py:722
+#: python/models.py:905
 msgid ""
 "The email address is already taken by another user. Please change the email "
 "address."
@@ -211,7 +235,7 @@ msgstr ""
 "Die E-Mail-Adresse wird bereits von einem anderen Benutzer verwendet. Bitte "
 "ändern Sie die E-Mail-Adresse."
 
-#: python/models.py:1732
+#: python/models.py:1951
 msgid ""
 "The ip address is already taken by another computer. Please change the ip "
 "address."
@@ -219,12 +243,12 @@ msgstr ""
 "Die IP-Adresse wird bereits von einem anderen Rechner verwendet. Bitte "
 "ändern Sie die IP-Adresse."
 
-#: python/models.py:193
+#: python/models.py:182
 msgid ""
 "The length of fully qualified domain name is greater than 63 characters."
 msgstr "Die Länge von System- und Domänennamen ist größer als 63 Zeichen."
 
-#: python/models.py:1736
+#: python/models.py:1955
 msgid ""
 "The mac address is already taken by another computer. Please change the mac "
 "address."
@@ -232,7 +256,7 @@ msgstr ""
 "Die MAC-Adresse wird bereits von einem anderen Rechner verwendet. Bitte "
 "ändern Sie die MAC-Adresse."
 
-#: python/models.py:371
+#: python/models.py:380
 msgid ""
 "The name is already used somewhere outside the school. It may not be taken "
 "twice and has to be changed."
@@ -240,7 +264,7 @@ msgstr ""
 "Der Name wird bereits außerhalb dieser Schule genutzt. Er darf nicht zweimal "
 "vorkommen und muss verändert werden."
 
-#: python/models.py:374
+#: python/models.py:383
 #, python-format
 msgid ""
 "The school \"%s\" does not exist. Please choose an existing one or create it."
@@ -248,24 +272,24 @@ msgstr ""
 "Die Schule \"%s\" existiert nicht. Bitte wählen Sie eine existierende oder "
 "erstellen Sie sie."
 
-#: python/models.py:385
+#: python/models.py:395
 #, python-format
 msgid "The value changed from %(old)s. This seems unlikely."
 msgstr "Der Wert ist eigentlich %(old)s. Eine Änderung ist ungewöhnlich."
 
-#: python/models.py:1787
+#: python/models.py:2030
 msgid "Univention Corporate Client"
 msgstr "Univention Corporate Client"
 
-#: python/models.py:1486
+#: python/models.py:1690
 msgid "User path"
 msgstr "Pfad für Benutzer"
 
-#: python/models.py:639
+#: python/models.py:754
 msgid "Username"
 msgstr "Benutzername"
 
-#: python/models.py:1769
+#: python/models.py:2009
 msgid "Windows system"
 msgstr "Windows-System"
 
@@ -390,6 +414,10 @@ msgstr ""
 "Version ohne Support oder Maintenance-Unterstützung durch Univention. Wenn "
 "Sie über eine Lizenz verfügen, wenden Sie sich bitte an Univention oder "
 "Ihren Univention Partner."
+
+#: python/models.py:1884
+msgid "Zone"
+msgstr "Zone"
 
 #~ msgid "%s could not be changed."
 #~ msgstr "%s konnte nicht verändert werden."
