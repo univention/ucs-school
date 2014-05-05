@@ -4,7 +4,7 @@
 # Univention S4 Connector
 #  Univention Directory Listener script for the s4 connector
 #
-# Copyright 2004-2013 Univention GmbH
+# Copyright 2014 Univention GmbH
 #
 # http://www.univention.de/
 #
@@ -41,6 +41,8 @@ import subprocess
 
 ## import s4-connector listener module code, but don't generate pyc file
 import sys
+import os
+import traceback
 sys.dont_write_bytecode = True
 import imp
 s4_connector_listener_path = '/usr/lib/univention-directory-listener/system/s4-connector.py'
@@ -212,6 +214,48 @@ def delete(old_dn, old, command):
 		listener.unsetuid()
 
 
+################ <Hooks handling> ###############
+HOOKS_BASEDIR = "/usr/lib/univention-directory-listener/hooks"
+LISTENER_HOOKS_BASEDIR = os.path.join(HOOKS_BASEDIR, "%s.d" % (name,))
+
+def load_hooks():
+	hooks = []
+	if not os.path.isdir(LISTENER_HOOKS_BASEDIR):
+		return hooks
+
+	filenames = os.listdir(LISTENER_HOOKS_BASEDIR)
+	filenames.sort()
+	for filename in filenames:
+		if not filename.endswith('.py') or filename.startswith('__'):
+			continue
+		file_path = os.path.join(LISTENER_HOOKS_BASEDIR, filename)
+
+		modulename = '.'.join((name.replace('-', '_'), filename[:-3].replace('-', '_')))
+		ud.debug(ud.LISTENER, ud.ALL, "%s: importing '%s'" % (name, modulename))
+		try:
+			hook = imp.load_source(modulename, file_path)
+		except Exception as ex:
+			ud.debug(ud.LISTENER, ud.ERROR, "Error importing %s as %s:" % (file_path, modulename))
+			ud.debug(ud.LISTENER, ud.ERROR, traceback.format_exc())
+		hooks.append(hook)
+
+	return hooks
+
+def run_hooks(fname, *args):
+	global __hooks
+	for hook in __hooks:
+		if hasattr(hook, fname):
+			try:
+				hook_func = getattr(hook, fname)
+				hook_func(*args)
+			except Exception as ex:
+				ud.debug(ud.LISTENER, ud.ERROR, "Error running %s.%s():" % (hook.__name__, fname))
+				ud.debug(ud.LISTENER, ud.ERROR, traceback.format_exc())
+
+__hooks = load_hooks()
+################ </Hooks handling> ##############
+
+
 def handler(dn, new, old, command):
 	univention.debug.debug(univention.debug.LISTENER, univention.debug.ALL, '%s: command: %s, dn: %s, new: %s, old: %s' % (name, command, dn, bool(new), bool(old)))
 	if new:
@@ -228,6 +272,9 @@ def handler(dn, new, old, command):
 			delete(dn, old, command)
 		else:
 			pass
+
+	run_hooks("handler", dn, new, old, command)
+
 
 def postrun():
 	global __s4_connector_restart
@@ -247,3 +294,5 @@ def postrun():
 
 	if __relativeDomainName_trigger_set:
 		trigger_sync_ucs_to_s4()
+
+	run_hooks("postrun")

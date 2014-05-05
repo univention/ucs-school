@@ -36,4 +36,17 @@
 #
 # . /usr/share/univention-lib/all.sh
 
+if [ "$1" = "configure" ]; then
+
+	if [ -z "$2" ]; then    ## fresh install
+		:
+	else					## update
+		:
+	fi
+
+	if [ -x /etc/init.d/univention-directory-listener ]; then
+		/etc/init.d/univention-directory-listener crestart
+	fi
+fi
+
 exit 0
