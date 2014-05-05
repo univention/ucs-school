@@ -44,7 +44,7 @@ from univention.management.console.modules.mixins import ProgressMixin
 from univention.config_registry import ConfigRegistry
 
 from ucsschool.lib.schoolldap import SchoolBaseModule, open_ldap_connection
-from ucsschool.lib.models import generate_random
+from ucsschool.lib.models import create_passwd
 
 from univention.management.console.modules.schoolcsvimport.util import CSVStudent, CSVTeacher, CSVStaff, CSVTeachersAndStaff
 
@@ -52,6 +52,9 @@ _ = Translation('ucs-school-umc-csv-import').translate
 
 ucr = ConfigRegistry()
 ucr.load()
+
+def generate_random():
+	return create_passwd(length=30)
 
 class FileInfo(object):
 	def __init__(self, filename, school, user_klass, dialect, has_header, delete_not_mentioned, date_format=None, columns=None):
