@@ -90,8 +90,7 @@
 <section>
   <title>Proxy services</title>
   <listitem><simpara>
-	A logic error has been fixed that may occured if the same internet rule was assigned to more than one room.
-The LDAP schema for &ucsUAS; has been modified to support the attribute displayName at school OU objects (<ulink url="&ucsbug;34173">Bug 34173</ulink>).
+	A logic error has been fixed that may occurred if the same internet rule was assigned to more than one room (<ulink url="&ucsbug;34557">Bug 34557</ulink>).
   </simpara></listitem>
 </section>
 
