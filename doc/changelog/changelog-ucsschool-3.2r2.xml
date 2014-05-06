@@ -2,7 +2,7 @@
 	<title>General</title>
 		<itemizedlist>
 			<listitem><simpara>
-				 &ucsUAS; now supports display names for school OU objects. They are shown within the &ucsUAS; modules. During creation of an school OU the display name has to be entered. The internal LDAP name of the school OU objects is derived from the display name automatically but may be modified manually (<ulink url="&ucsbug;34173">Bug 34173</ulink>).
+				 &ucsUAS; now supports display names for school OU objects. They are shown within the &ucsUAS; modules. During creation of an school OU the display name has to be entered. The internal LDAP name of the school OU objects is derived from the display name automatically but may be modified manually (<ulink url="&ucsbug;34173">Bug 34173</ulink>, <ulink url="&ucsbug;34264">Bug 34264</ulink>).
 			</simpara></listitem>
 		</itemizedlist>
 </section>
