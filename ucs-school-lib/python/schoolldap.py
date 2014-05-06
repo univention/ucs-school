@@ -361,15 +361,30 @@ class SchoolSearchBase(object):
 		self._examUserContainerName = ucr.get('ucsschool/ldap/default/container/exam', 'examusers')
 		self._examGroupNameTemplate = ucr.get('ucsschool/ldap/default/groupname/exam', 'OU%(ou)s-Klassenarbeit')
 
-	@staticmethod
-	def getOU(dn):
-		'''Return the school OU for a given DN.'''
-		if dn.find('ou=') < 0:
-			# no 'ou=' in the string
-			return None
-		schoolDN = dn[dn.find('ou='):]
-		school = univention.uldap.explodeDn( schoolDN, 1 )[0]
-		return school
+	@classmethod
+	def getOU(cls, dn):
+		"""Return the school OU for a given DN.
+
+			>>> SchoolSearchBase.getOU('uid=a,fou=bar,Ou=dc1,oU=dc,dc=foo,dc=bar')
+			'dc1'
+		"""
+		school_dn = cls._get_ou_from_dn(dn)
+		if school_dn:
+			return univention.uldap.explodeDn(school_dn, True)[0]
+
+	@classmethod
+	def _get_ou_from_dn(cls, dn):
+		"""Return the School OU-DN part for a given DN.
+
+			>>> SchoolSearchBase._get_ou_from_dn('uid=a,fou=bar,Ou=dc1,oU=dc,dc=foo,dc=bar')
+			'Ou=dc1,oU=dc,dc=foo,dc=bar'
+			>>> SchoolSearchBase._get_ou_from_dn('ou=dc1,ou=dc,dc=foo,dc=bar')
+			'ou=dc1,ou=dc,dc=foo,dc=bar'
+		"""
+		match = cls._get_ou_from_dn.RE_OU.search(dn)
+		if match:
+			return match.group(1)
+	_get_ou_from_dn.RE_OU = re.compile('(?:^|,)(ou=.*)$', re.I)
 
 	@property
 	def availableSchools(self):
