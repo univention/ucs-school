@@ -15,12 +15,12 @@ msgstr ""
 #: umc/js/schoolwizards/Grid.js:210
 #, python-format
 msgid "%(nSelected)d %(objPlural)s of %(nTotal)d selected"
-msgstr "%(nSelected)d %(objPlural) von %(nTotal)d ausgewählt"
+msgstr "%(nSelected)d %(objPlural)s von %(nTotal)d ausgewählt"
 
 #: umc/js/schoolwizards/Grid.js:208
 #, python-format
 msgid "%(nSelected)d %(objSingular)s of %(nTotal)d selected"
-msgstr "%(nSelected)d %(objSingular) von %(nTotal)d ausgewählt"
+msgstr "%(nSelected)d %(objSingular)s von %(nTotal)d ausgewählt"
 
 #: umc/js/schoolwizards/Grid.js:143 umc/js/schoolwizards/Grid.js:238
 msgid "Add"

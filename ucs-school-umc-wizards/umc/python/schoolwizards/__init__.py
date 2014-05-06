@@ -35,15 +35,14 @@ import re
 
 from univention.lib.i18n import Translation
 from univention.management.console.log import MODULE
-from univention.management.console.modules import UMC_CommandError
 from univention.management.console.modules.decorators import simple_response, sanitize
 from univention.management.console.modules.sanitizers import StringSanitizer
-from univention.admin.uexceptions import valueError
 from univention.admin.uexceptions import base as uldapBaseException
 import univention.admin.modules as udm_modules
 
-from ucsschool.lib.schoolldap import SchoolBaseModule, LDAP_Connection, LDAP_Filter, check_license, LicenseError, USER_READ, USER_WRITE
+from ucsschool.lib.schoolldap import SchoolBaseModule, LDAP_Connection, check_license, LicenseError, USER_READ, USER_WRITE
 from ucsschool.lib.models import SchoolClass, School, User, Student, Teacher, Staff, TeachersAndStaff, SchoolComputer, WindowsComputer, MacComputer, IPComputer, UCCComputer
+from ucsschool.lib.models.utils import add_module_logger_to_schoollib
 from univention.config_registry import ConfigRegistry
 
 from univention.management.console.modules.schoolwizards.SchoolImport import SchoolImport
@@ -52,6 +51,15 @@ _ = Translation('ucs-school-umc-wizards').translate
 
 ucr = ConfigRegistry()
 ucr.load()
+
+# TODO: remove once this is implemented in uexceptions, see Bug #30088
+def get_exception_msg(e):
+	msg = getattr(e, 'message', '')
+	if getattr(e, 'args', False):
+		if e.args[0] != msg or len(e.args) != 1:
+			for arg in e.args:
+				msg += ' ' + arg
+	return msg
 
 def get_user_class(user_type):
 	if user_type == 'student':
@@ -96,46 +104,30 @@ def iter_objects_in_request(request):
 		if issubclass(klass, SchoolComputer):
 			if 'type' in obj_props:
 				klass = get_computer_class(obj_props['type'])
+		dn = obj_props.get('$dn$')
+		if 'name' not in obj_props:
+			# important for get_school in district_mode!
+			obj_props['name'] = klass.get_name_from_dn(dn)
 		obj = klass(**obj_props)
-		if '$dn$' in obj_props:
-			obj.old_dn = obj_props['$dn$']
+		if dn:
+			obj.old_dn = dn
 		yield obj
 
 def response(func):
 	def _decorated(self, request, *a, **kw):
 		if not self._check_license(request):
 			return
-		try:
-			ret = func(self, request, *a, **kw)
-		except (ValueError, IOError, OSError, valueError) as err:
-			MODULE.info(str(err))
-			raise UMC_CommandError(str(err))
-		else:
-			self.finished(request.id, ret)
+		ret = func(self, request, *a, **kw)
+		self.finished(request.id, ret)
 	return _decorated
 
 
 class Instance(SchoolBaseModule, SchoolImport):
 	"""Base class for the schoolwizards UMC module.
 	"""
-
-	def _computer_name_used(self, name, ldap_user_read):
-		ldap_filter = LDAP_Filter.forAll(name, fullMatch=['name'])
-		computer_exists = udm_modules.lookup('computers/computer', None, ldap_user_read,
-		                                     scope='sub', filter=ldap_filter)
-		return bool(computer_exists)
-
-	def _mac_address_used(self, address, ldap_user_read):
-		ldap_filter = LDAP_Filter.forAll(address, fullMatch=['mac'])
-		address_exists = udm_modules.lookup('computers/computer', None, ldap_user_read,
-		                                    scope='sub', filter=ldap_filter)
-		return bool(address_exists)
-
-	def _ip_address_used(self, address, ldap_user_read):
-		ldap_filter = LDAP_Filter.forAll(address, fullMatch=['ip'])
-		address_exists = udm_modules.lookup('computers/computer', None, ldap_user_read,
-		                                    scope='sub', filter=ldap_filter)
-		return bool(address_exists)
+	def init(self):
+		super(Instance, self).init()
+		add_module_logger_to_schoollib()
 
 	def _check_license(self, request):
 		try:
@@ -160,7 +152,9 @@ class Instance(SchoolBaseModule, SchoolImport):
 		return_code, stdout = self._run_script(SchoolImport.MOVE_DC_SCRIPT, params, True)
 		return {'success': return_code == 0, 'message': stdout}
 
-	def _computer_types(self):
+	@simple_response
+	def computer_types(self):
+		ret = []
 		computer_types = [WindowsComputer, MacComputer, IPComputer]
 		try:
 			import univention.admin.handlers.computers.ucc as ucc
@@ -170,11 +164,6 @@ class Instance(SchoolBaseModule, SchoolImport):
 		if ucc_available:
 			computer_types.insert(1, UCCComputer)
 		return [(computer_type._meta.udm_module_short, computer_type.type_name) for computer_type in computer_types]
-
-	@simple_response
-	def computer_types(self):
-		ret = []
-		computer_types = self._computer_types()
 		for computer_type_id, computer_type_label in computer_types:
 			ret.append({'id': computer_type_id, 'label': computer_type_label})
 		return ret
@@ -221,7 +210,7 @@ class Instance(SchoolBaseModule, SchoolImport):
 				else:
 					ret.append({'result' : {'message' : _('"%s" already exists!') % obj.name}})
 			except uldapBaseException as exc:
-				ret.append({'result' : {'message' : str(exc)}})
+				ret.append({'result' : {'message' : get_exception_msg(exc)}})
 		return ret
 
 	@LDAP_Connection( USER_READ, USER_WRITE )
@@ -241,8 +230,7 @@ class Instance(SchoolBaseModule, SchoolImport):
 			try:
 				obj.modify(ldap_user_write, validate=False)
 			except uldapBaseException as exc:
-				raise
-				ret.append({'result' : {'message' : str(exc)}})
+				ret.append({'result' : {'message' : get_exception_msg(exc)}})
 			else:
 				ret.append(True) # no changes? who cares?
 		return ret

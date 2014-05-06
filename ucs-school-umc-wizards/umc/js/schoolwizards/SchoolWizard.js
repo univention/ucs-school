@@ -50,10 +50,7 @@ define([
 		},
 
 		getItemPage: function() {
-			return {
-				name: 'item',
-				headerText: this.description,
-				widgets: [{
+			var widgets = [{
 					type: TextBox,
 					name: 'display_name',
 					label: _('Name of the school'),
@@ -83,7 +80,9 @@ define([
 					maxLength: 12,
 					required: !this.singleMaster,
 					visible: !this.editMode && !this.singleMaster
-				}, {
+				}];
+			if (this.editMode) {
+				widgets.push({
 					name: 'home_share_file_server',
 					type: ComboBox,
 					label: _('Server for Windows home directories'),
@@ -92,7 +91,8 @@ define([
 							return data.result;
 						});
 					})
-				}, {
+				});
+				widgets.push({
 					name: 'class_share_file_server',
 					type: ComboBox,
 					label: _('Server for class shares'),
@@ -101,7 +101,12 @@ define([
 							return data.result;
 						});
 					})
-				}],
+				});
+			}
+			return {
+				name: 'item',
+				headerText: this.description,
+				widgets: widgets,
 				layout: this.getSchoolPageLayout()
 			};
 		},
