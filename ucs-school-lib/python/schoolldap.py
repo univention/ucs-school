@@ -381,10 +381,10 @@ class SchoolSearchBase(object):
 			>>> SchoolSearchBase.getOUDN('ou=dc1,ou=dc,dc=foo,dc=bar')
 			'ou=dc1,ou=dc,dc=foo,dc=bar'
 		"""
-		match = cls.getOUDN.RE_OU.search(dn)
+		match = cls._RE_OUDN.search(dn)
 		if match:
 			return match.group(1)
-	getOUDN.RE_OU = re.compile('(?:^|,)(ou=.*)$', re.I)
+	_RE_OUDN = re.compile('(?:^|,)(ou=.*)$', re.I)
 
 	@property
 	def availableSchools(self):
