@@ -135,7 +135,7 @@ class User(UCSSchoolHelperAbstractClass):
 
 	def do_create(self, udm_obj, lo):
 		self.create_mail_domain(lo)
-		self.password = self.password or create_passwd(self.dn)
+		self.password = self.password or create_passwd(dn=self.dn)
 		udm_obj['primaryGroup'] = self.primary_group_dn(lo)
 		udm_obj['groups'] = self.groups_used(lo)
 		subdir = self.get_roleshare_home_subdir()
