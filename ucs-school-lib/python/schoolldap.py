@@ -345,10 +345,10 @@ class SchoolSearchBase(object):
 		else:
 			self._ldapBase = ucr.get('ldap/base')
 
+		from ucsschool.lib.models import School
 		self._availableSchools = availableSchools
 		self._school = school or availableSchools[0]
-		# FIXME: search for OU to get correct dn
-		self._schoolDN = dn or 'ou=%s,%s' % (self.school, self._ldapBase )
+		self._schoolDN = dn or School.get(self.school).dn
 
 		# prefixes
 		self._containerAdmins = ucr.get('ucsschool/ldap/default/container/admins', 'admins')
