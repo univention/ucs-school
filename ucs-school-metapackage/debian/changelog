@@ -1,3 +1,9 @@
+ucs-school-metapackage (6.0.7-20) unstable; urgency=medium
+
+  * Use ucs-school-s4-branch-site in ucs-school-*slave (Bug #32187)
+
+ -- Arvid Requate <requate@univention.de>  Tue, 06 May 2014 15:03:26 +0200
+
 ucs-school-metapackage (6.0.7-19) unstable; urgency=medium
 
   * Add UCS@school service to school-nonedu-slave (Bug #34097)
