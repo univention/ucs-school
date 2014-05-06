@@ -53,6 +53,94 @@ HOOK_SEP_CHAR = '\t'
 HOOK_PATH = '/usr/share/ucs-school-import/hooks/'
 
 class UCSSchoolHelperAbstractClass(object):
+	'''
+	Base class of all UCS@school models.
+	Hides UDM.
+
+	Attributes used for a class are defined like this:
+
+	class MyModel(UCSSchoolHelperAbstractClass):
+	  my_attribute = Attribute('Label', required=True, udm_name='myAttr')
+
+	From there on my_attribute=value may be passed to __init__,
+	my_model.my_attribute can be accessed and the value will be saved
+	as obj['myAttr'] in UDM when saving this instance.
+	If an attribute of a base class is not wanted, it can be overridden:
+
+	class MyModel(UCSSchoolHelperAbstractClass):
+	  school = None
+
+	Meta information about the class are defined like this:
+	class MyModel(UCSSchoolHelperAbstractClass):
+	  class Meta:
+	    udm_module = 'my/model'
+
+	The meta information is then accessible in cls._meta
+
+	Important functions:
+		__init__(**kwargs):
+		  kwargs should be the defined attributes
+		create(lo)
+		  lo is an LDAP connection, specifically univention.admin.access.
+		  creates a new object. Returns False is the object already exists.
+		  And True after the creation
+		modify(lo)
+		  modifies an existing object. Returns False if the object does not
+		  exist and True after the modification (regardless whether something
+		  actually changed or not)
+		remove(lo)
+		  deletes the object. Returns False if the object does not exist and True
+		  after the deletion.
+		get_all(lo, school, filter)
+		  classmethod; retrieves all objects found for this school. filter can be a string
+		  that is used to narrow down a search. Each property of the class' udm_module
+		  that is include_in_default_search is queried for that string.
+		  Example:
+		  User.get_all(lo, 'school', filter='name') will search in cn=users,ou=school,$base
+		  for users/user UDM objects with |(username=*name*)(firstname=*name*)(...) and return
+		  User objects (not UDM objects)
+		get_container(school)
+		  a classmethod that points to the container where new instances are created
+		  and existing ones are searched.
+		dn
+		  property, current distinguishable name of the instance. Calculated on the fly, it
+		  changes if instance.name or instance.school changes.
+		  instance.old_dn will be set to the original dn when the instance was created
+		get_udm_object(lo)
+		  searches UDM for an entry that corresponds to self. Normally uses the old_dn or dn.
+		  If cls._meta.name_is_unique then any object with self.name will match
+		exists(lo)
+		  whether this object can be found in UDM.
+		from_udm_obj(udm_obj, school, lo)
+		  classmethod; maps the info of udm_obj into a new instance (and sets school)
+		from_dn(dn, school, lo)
+		  finds dn in LDAP and uses from_udm_obj
+		get_first_udm_obj(lo, filter_str)
+		  returns the first found object of type cls._meta.udm_module that matches an
+		  arbitrary filter_str
+
+	More features:
+	  * Validation:
+	    There are some auto checks built in: Attributes of the model that have a
+	    UDM syntax attached are validated against this syntax. Attributes that are
+	    required must be present.
+	    Attributes that are unlikely_to_change give a warning (not error) if the object
+	    already exists with other values.
+	    If the Meta information states that name_is_unique, the complete LDAP is searched
+	    for the instance's name before continuing.
+	    validate() can be further customized.
+	  * Hooks:
+	    Before create, modify and remove, hooks are called if build_hook_line()
+	    returns something. If the operation was successful, another set of hooks
+	    are called.
+	    All scripts in
+	    /usr/share/ucs-school-import/hooks/%(module)s_{create|modify|remove}_{pre|post}.d/
+	    are called with the name of a temporary file containing the hook_line via run-parts.
+	    %(module)s is 'ucc' for cls._meta.udm_module == 'computers/ucc' by default and
+	    can be explicitely set with
+	      class Meta:
+	        hook_path = 'computer'
+	'''
 	__metaclass__ = UCSSchoolHelperMetaClass
 	_cache = {}
 
@@ -64,6 +152,10 @@ class UCSSchoolHelperAbstractClass(object):
 
 	@classmethod
 	def get(cls, *args, **kwargs):
+		'''Initializes a new instance and caches it for subsequent calls.
+		Useful when using School.get(school_name) a lot in different
+		functions, in loops, etc.
+		'''
 		args = list(args)
 		if args:
 			kwargs['name'] = args.pop(0)
@@ -82,6 +174,16 @@ class UCSSchoolHelperAbstractClass(object):
 		return 'school' in cls._attributes
 
 	def __init__(self, **kwargs):
+		'''Initializes a new instance with kwargs.
+		Not every kwarg is accepted, though: The name
+		must be defined as a attribute at class level
+		(or by a base class). All attributes are
+		initialized at least with None
+		Sets self.old_dn to self.dn, i.e. the name
+		in __init__ will determine the old_dn, changing
+		it after __init__ will result in trying to move the
+		object!
+		'''
 		self._udm_obj_searched = False
 		self._udm_obj = None
 		for key in self._attributes:
@@ -93,6 +195,10 @@ class UCSSchoolHelperAbstractClass(object):
 
 	@property
 	def dn(self):
+		'''Generates a DN where the lib would assume this
+		instance to be. Changing name or school of self will most
+		likely change the outcome of self.dn as well
+		'''
 		if self.custom_dn:
 			return self.custom_dn
 		container = self.get_own_container()
@@ -101,6 +207,10 @@ class UCSSchoolHelperAbstractClass(object):
 			return '%s=%s,%s' % (self._meta.ldap_name_part, name, container)
 
 	def set_dn(self, dn):
+		'''Does not really set dn, as this is generated
+		on-the-fly. Instead, sets old_dn in case it was
+		misset in the beginning or after create/modify/remove
+		'''
 		self.custom_dn = None
 		self.old_dn = dn
 
@@ -153,6 +263,16 @@ class UCSSchoolHelperAbstractClass(object):
 		return ('ou=%s,' % self.school) not in udm_obj.dn
 
 	def call_hooks(self, hook_time, func_name):
+		'''Calls run-parts in 
+		os.path.join(HOOK_PATH, '%s_%s_%s.d' % (self._meta.hook_path, func_name, hook_time))
+		if self.build_hook_line(hook_time, func_name) returns a non-empty string
+
+		Usage in lib itself:
+		  hook_time in ['pre', 'post']
+		  func_name in ['create', 'modify', 'remove']
+
+		In the lib, post-hooks are only called if the corresponding function returns True
+		'''
 		# verify path
 		hook_path = self._meta.hook_path
 		path = os.path.join(HOOK_PATH, '%s_%s_%s.d' % (hook_path, func_name, hook_time))
@@ -191,6 +311,10 @@ class UCSSchoolHelperAbstractClass(object):
 			return ret_code == 0
 
 	def build_hook_line(self, hook_time, func_name):
+		'''Must be overridden if the model wants to support hooks.
+		Do so by something like:
+		  return self._build_hook_line(self.attr1, self.attr2, 'constant')
+		'''
 		return None
 
 	def _alter_udm_obj(self, udm_obj):
@@ -201,6 +325,13 @@ class UCSSchoolHelperAbstractClass(object):
 					udm_obj[attr.udm_name] = value
 
 	def create(self, lo, validate=True):
+		'''
+		Creates a new UDM instance.
+		Calls pre-hooks.
+		If the object already exists, returns False.
+		If the object does not yet exist, creates it, returns True and
+		calls post-hooks.
+		'''
 		self.call_hooks('pre', 'create')
 		success = self.create_without_hooks(lo, validate)
 		if success:
@@ -234,10 +365,23 @@ class UCSSchoolHelperAbstractClass(object):
 		return True
 
 	def do_create(self, udm_obj, lo):
+		'''Actual udm_obj manipulation. Override this if
+		you want to further change values of udm_obj, e.g.
+		  def do_create(self, udm_obj, lo):
+		    udm_obj['used_in_ucs_school'] = '1'
+		    super(MyModel, self).do_create(udm_obj, lo)
+		'''
 		self._alter_udm_obj(udm_obj)
 		udm_obj.create()
 
 	def modify(self, lo, validate=True):
+		'''
+		Modifies an existing UDM instance.
+		Calls pre-hooks.
+		If the object does not exist, returns False.
+		If the object exists, modifies it, returns True and
+		calls post-hooks.
+		'''
 		self.call_hooks('pre', 'modify')
 		success = self.modify_without_hooks(lo, validate)
 		if success:
@@ -275,10 +419,23 @@ class UCSSchoolHelperAbstractClass(object):
 		return True
 
 	def do_modify(self, udm_obj, lo):
+		'''Actual udm_obj manipulation. Override this if
+		you want to further change values of udm_obj, e.g.
+		  def do_modify(self, udm_obj, lo):
+		    udm_obj['used_in_ucs_school'] = '1'
+		    super(MyModel, self).do_modify(udm_obj, lo)
+		'''
 		self._alter_udm_obj(udm_obj)
 		udm_obj.modify()
 
 	def remove(self, lo):
+		'''
+		Removes an existing UDM instance.
+		Calls pre-hooks.
+		If the object does not exist, returns False.
+		If the object exists, removes it, returns True and
+		calls post-hooks.
+		'''
 		self.call_hooks('pre', 'remove')
 		success = self.remove_without_hooks(lo)
 		if success:
@@ -300,7 +457,8 @@ class UCSSchoolHelperAbstractClass(object):
 	@classmethod
 	def get_name_from_dn(cls, dn):
 		if dn:
-			return explode_dn(dn, 1)[0]
+			name = explode_dn(dn, 1)[0]
+			return cls._meta.ldap_unmap_function([name])
 
 	@classmethod
 	def find_field_label_from_name(cls, field):
@@ -322,6 +480,14 @@ class UCSSchoolHelperAbstractClass(object):
 		return error_msg[:-1]
 
 	def get_udm_object(self, lo):
+		'''Returns the UDM object that corresponds to self.
+		If self._meta.name_is_unique it searches for any UDM object
+		with self.name.
+		If not (which is the default) it searches for self.old_dn or self.dn
+		Returns None if no object was found. Caches the result, even None
+		If you want to re-search, you need to explicitely set
+		  self._udm_obj_searched = False
+		'''
 		if self._udm_obj_searched is False:
 			dn = self.old_dn or self.dn
 			if dn is None:
@@ -356,6 +522,8 @@ class UCSSchoolHelperAbstractClass(object):
 
 	@classmethod
 	def get_container(cls, school):
+		'''raises NotImplementedError by default. Needs to be overridden!
+		'''
 		raise NotImplementedError()
 
 	@classmethod
@@ -376,6 +544,12 @@ class UCSSchoolHelperAbstractClass(object):
 
 	@classmethod
 	def get_all(cls, lo, school, filter_str=None):
+		'''
+		Returns a list of all objects that can be found in cls.get_container() with the
+		correct udm_module
+		If filter_str is given, all udm properties with include_in_default_search are
+		queried for that string (so that it should be the value)
+		'''
 		cls.init_udm_module(lo)
 		complete_filter = cls._meta.udm_filter
 		filter_from_filter_str = cls.build_filter(filter_str)
@@ -414,6 +588,9 @@ class UCSSchoolHelperAbstractClass(object):
 
 	@classmethod
 	def from_udm_obj(cls, udm_obj, school, lo):
+		'''Creates a new instance with attributes of the udm_obj.
+		Uses get_class_for_udm_obj()
+		'''
 		cls.init_udm_module(lo)
 		klass = cls.get_class_for_udm_obj(udm_obj, school)
 		if klass is None:
@@ -430,6 +607,23 @@ class UCSSchoolHelperAbstractClass(object):
 
 	@classmethod
 	def get_class_for_udm_obj(cls, udm_obj, school):
+		'''Returns cls by default.
+		Can be overridden for base classes:
+		  class User(UCSSchoolHelperAbstractClass):
+		    @classmethod
+		    def get_class_for_udm_obj(cls, udm_obj, school)
+		      if something:
+		        return SpecialUser
+		      return cls
+
+		class SpecialUser(User):
+		  pass
+
+		Now, User.get_all() will return a list of User and SpecialUser objects
+		If this function returns None for a udm_obj, that obj will not
+		yield a new instance in get_all() and from_udm_obj() will return None
+		for that udm_obj
+		'''
 		return cls
 
 	def __repr__(self):
@@ -443,6 +637,9 @@ class UCSSchoolHelperAbstractClass(object):
 
 	@classmethod
 	def from_dn(cls, dn, school, lo):
+		'''Returns a new instance based on the UDM object found at dn
+		raises noObject if the udm_module does not match the dn
+		'''
 		cls.init_udm_module(lo)
 		try:
 			udm_obj = udm_modules.lookup(cls._meta.udm_module, None, lo, filter=cls._meta.udm_filter, base=dn, scope='base')[0]
@@ -457,6 +654,9 @@ class UCSSchoolHelperAbstractClass(object):
 
 	@classmethod
 	def get_first_udm_obj(cls, lo, filter_str):
+		'''Returns the first UDM object of class cls._meta.udm_module that
+		matches a given filter
+		'''
 		cls.init_udm_module(lo)
 		if cls._meta.udm_filter:
 			filter_str = '(&(%s)(%s))' % (cls._meta.udm_filter, filter_str)
@@ -469,6 +669,11 @@ class UCSSchoolHelperAbstractClass(object):
 			return obj
 
 	def to_dict(self):
+		'''Returns a dictionary somewhat representing this instance.
+		This dictionary is usually used when sending the instance to
+		a browser as JSON.
+		By default the attributes are present as well as the dn and
+		the udm_module.'''
 		ret = {'$dn$' : self.dn, 'objectType' : self._meta.udm_module}
 		for name, attr in self._attributes.iteritems():
 			if not attr.internal:

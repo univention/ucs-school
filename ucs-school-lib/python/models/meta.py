@@ -65,6 +65,8 @@ class UCSSchoolHelperOptions(object):
 			self.ldap_name_part = ldap_name
 			ldap_map_function = partial(module.mapping.mapValue, udm_name)
 			self.ldap_map_function = ldap_map_function
+			ldap_unmap_function = partial(module.mapping.unmapValue, module.mapping.mapName(udm_name))
+			self.ldap_unmap_function = ldap_unmap_function
 
 	def set_from_meta_object(self, meta, name, default):
 		value = default

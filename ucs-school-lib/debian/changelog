@@ -1,3 +1,9 @@
+ucs-school-lib (5.0.19-1) unstable; urgency=low
+
+  * Bug #34337: Documentation for baseclass of models
+
+ -- Dirk Wiesenthal <wiesenthal@univention.de>  Wed, 07 May 2014 00:29:00 +0200
+
 ucs-school-lib (5.0.18-1) unstable; urgency=low
 
   * Bug #34337: Typo
