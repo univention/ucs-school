@@ -70,13 +70,13 @@ class Klasse():
 		print 'Creating class %s in school %s' % (
 				self.name,
 				self.school)
-		print 'param = %s' % (param)
+		print 'param = %s' % (param,)
 		reqResult = self.umcConnection.request(
 				'schoolwizards/classes/add',
 				param,
 				flavor)
 		if not reqResult[0]:
-			utils.fail('Unable to create class (%r)' % (param))
+			utils.fail('Unable to create class (%r)' % (param,))
 
 	# create list of random classes returns list of class objects
 	def createList(self, count):

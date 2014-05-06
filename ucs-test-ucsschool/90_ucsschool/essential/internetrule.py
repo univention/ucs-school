@@ -90,10 +90,10 @@ class InternetRule(object):
 		print 'defining rule %s with UMCP:%s' % (
 			self.name,
 			'internetrules/add')
-		print 'param = %r' % (param)
+		print 'param = %r' % (param,)
 		reqResult = self.umcConnection.request('internetrules/add', param)
 		if not reqResult[0]['success']:
-			utils.fail('Unable to define rule (%r)' % (param))
+			utils.fail('Unable to define rule (%r)' % (param,))
 
 	def get(self, expectedResult):
 		"""gets internet rule via UMCP\n
@@ -151,10 +151,10 @@ class InternetRule(object):
 		print 'Modifying rule %s with UMCP:%s' % (
 			self.name,
 			'internetrules/put')
-		print 'param = %r' % (param)
+		print 'param = %r' % (param,)
 		reqResult = self.umcConnection.request('internetrules/put', param)
 		if not reqResult[0]['success']:
-			utils.fail('Unable to modify rule (%r)' % (param))
+			utils.fail('Unable to modify rule (%r)' % (param,))
 		else:
 			self.name = new_name
 			self.type = new_type
@@ -254,14 +254,14 @@ class InternetRule(object):
 			self.name,
 			groupType,
 			groupName)
-		print 'param = %r' % (param)
+		print 'param = %r' % (param,)
 		result = self.umcConnection.request(
 			'internetrules/groups/assign',
 			param)
 		if not result:
 			utils.fail(
 				'Unable to assign internet rule to workgroup (%r)' %
-				(param))
+				(param,))
 		else:
 			return (groupName, self.name)
 

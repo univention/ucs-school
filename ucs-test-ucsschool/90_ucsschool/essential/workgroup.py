@@ -106,7 +106,7 @@ class Workgroup(object):
 				param,
 				flavor)
 		if not requestResult:
-			utils.fail('Unable to add workgroup (%r)' % (param))
+			utils.fail('Unable to add workgroup (%r)' % (param,))
 		return requestResult
 
 	def createList(self, count):
