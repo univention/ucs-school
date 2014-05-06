@@ -44,7 +44,7 @@ from univention.management.console.modules.mixins import ProgressMixin
 from univention.config_registry import ConfigRegistry
 
 from ucsschool.lib.schoolldap import SchoolBaseModule, open_ldap_connection
-from ucsschool.lib.models import create_passwd
+from ucsschool.lib.models.utils import create_passwd, add_module_logger_to_schoollib
 
 from univention.management.console.modules.schoolcsvimport.util import CSVStudent, CSVTeacher, CSVStaff, CSVTeachersAndStaff
 
@@ -70,6 +70,7 @@ class FileInfo(object):
 class Instance(SchoolBaseModule, ProgressMixin):
 	def init(self):
 		super(Instance, self).init()
+		add_module_logger_to_schoollib()
 		self.file_map = {}
 
 	@file_upload

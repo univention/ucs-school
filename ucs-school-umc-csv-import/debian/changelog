@@ -1,3 +1,9 @@
+ucs-school-umc-csv-import (1.0.17-1) unstable; urgency=low
+
+  * Bug #34199: New lib version
+
+ -- Dirk Wiesenthal <wiesenthal@univention.de>  Tue, 06 May 2014 14:54:11 +0200
+
 ucs-school-umc-csv-import (1.0.16-1) unstable; urgency=low
 
   * Bug #34199: New lib version
