@@ -498,9 +498,9 @@ define([
 		},
 
 		_guessRoomOfTeacher: function() {
-			var getIP = this.umcpCommand('get/ipaddress');
+			var getIP = this.umcpCommand('get/ipaddress', undefined, false);
 			var guessRoom = getIP.then(lang.hitch(this, function(ipaddresses) {
-				return this.umcpCommand('computerroom/room/guess', {ipaddress: ipaddresses});
+				return this.umcpCommand('computerroom/room/guess', {ipaddress: ipaddresses}, false);
 			}));
 			var roomdn = guessRoom.then(lang.hitch(this, function(response) {
 				return response.result.room;  // roomdn
