@@ -37,35 +37,38 @@ import univention.debug as ud
 import univention.admin.uexceptions as udm_errors
 import univention.uldap
 import univention.config_registry
-import subprocess
 
 ## import s4-connector listener module code, but don't generate pyc file
-import sys
 import os
-import traceback
+import sys
 sys.dont_write_bytecode = True
 import imp
 s4_connector_listener_path = '/usr/lib/univention-directory-listener/system/s4-connector.py'
 s4_connector_listener = imp.load_source('s4_connector', s4_connector_listener_path)
-from ucsschool.lib.schoolldap import LDAP_Connection, MACHINE_READ, SchoolSearchBase
+from ucsschool.lib.schoolldap import LDAP_Connection, MACHINE_READ
+import traceback
+import subprocess
 
+### Global variables
+## LDAP filter, extended in on_load() and re-used in visible_samba4_school_dcs() below
+_ucsschool_service_specialization_filter = ''
+_ldap_filter_s4_slave_pdc_and_ucsschool_service_specialization = '(&(univentionService=S4 SlavePDC)%s)' \
+	% (_ucsschool_service_specialization_filter,)
+_relativeDomainName_trigger_set = set()
+_s4_connector_restart = False
+_local_domainname = listener.configRegistry.get('domainname')
+_ldap_hostdn = listener.configRegistry.get('ldap/hostdn')
+_hooks = []
+
+### The Listener registration data
 name='ucsschool-s4-branch-site'
 description='UCS@school S4 branch site module'
-filter='(&(objectClass=univentionDomainController)(univentionService=Samba 4)(univentionService=UCS@school))'
+filter = _ldap_filter_s4_slave_pdc_and_ucsschool_service_specialization
 attributes=[]
+modrdn="1"	# use the modrdn listener extension
 
-# use the modrdn listener extension
-modrdn="1"
-
-domain = listener.configRegistry.get('domainname')
-ldap_hostdn = listener.configRegistry.get('ldap/hostdn')
-local_schoolDN = SchoolSearchBase.getOUDN(ldap_hostdn)
-local_school = SchoolSearchBase.getOU(ldap_hostdn)
-
-record_type = "srv_record"
-__relativeDomainName_trigger_set = set()
-__s4_connector_restart = False
-
+### Contants
+_record_type = "srv_record"
 STD_SRV_PRIO = 0
 STD_SRV_WEIGHT = 100
 KDC_PORT = 88
@@ -103,17 +106,23 @@ STD_S4_SRV_RECORDS = {
 ## _kerberos._tcp.default-first-site-name._sites.gc._msdcs only on ucs-school-master ?
 ## _ldap._tcp.default-first-site-name._sites.gc._msdcs only on ucs-school-slave ?
 
-
+### Listener code
 @LDAP_Connection(MACHINE_READ)
 def visible_samba4_school_dcs(excludeDN=None, ldap_machine_read=None, ldap_position=None, search_base=None):
+	global _ldap_filter_s4_slave_pdc_and_ucsschool_service_specialization
 	_visible_samba4_school_dcs = []
-	filter = '(&(objectClass=univentionDomainController)(univentionService=Samba 4)(univentionService=UCS@school))'
 	try:
-		res = ldap_machine_read.search(base=ldap_position.getDn(), filter=filter, attr=['cn', 'associatedDomain'])
+		res = ldap_machine_read.search(base=ldap_position.getDn(),
+			filter=_ldap_filter_s4_slave_pdc_and_ucsschool_service_specialization,
+			attr=['cn', 'associatedDomain'])
 		for (record_dn, obj) in res:
 			## select only school branches and exclude a modrdn 'r' phase DN which still exists
 			if search_base.getOU(record_dn) and record_dn != excludeDN:
-				_visible_samba4_school_dcs.append('.'.join((obj['cn'][0], obj['associatedDomain'][0])))
+				if 'associatedDomain' in obj:
+					domainname = obj['associatedDomain'][0]
+				else:
+					domainname = _local_domainname
+				_visible_samba4_school_dcs.append('.'.join((obj['cn'][0], domainname)))
 	except udm_errors.ldapError, e:
 		ud.debug(ud.LISTENER, ud.ERROR, '%s: Error accessing LDAP: %s' % (name, e))
 
@@ -122,22 +131,22 @@ def visible_samba4_school_dcs(excludeDN=None, ldap_machine_read=None, ldap_posit
 
 def update_records(excludeDN=None):
 	global STD_S4_SRV_RECORDS
-	global record_type
-	global domain
-	global __s4_connector_restart
-	global __relativeDomainName_trigger_set
+	global _record_type
+	global _local_domainname
+	global _s4_connector_restart
+	global _relativeDomainName_trigger_set
 
 	server_fqdn_list = visible_samba4_school_dcs(excludeDN=excludeDN)
 	ud.debug(ud.LISTENER, ud.ALL, '%s: server_fqdn_list: %s' % (name, server_fqdn_list))
 
 	ucr = univention.config_registry.ConfigRegistry()
-	ucr.load()
+	ucr.load()    # dynamic reload
 
 	ucr_key_value_list = []
 	for (relativeDomainName, prio_weight_port) in STD_S4_SRV_RECORDS.items():
 		## construct ucr key name
-		record_fqdn = ".".join((relativeDomainName, domain))
-		key = 'connector/s4/mapping/dns/%s/%s/location' % (record_type, record_fqdn)
+		record_fqdn = ".".join((relativeDomainName, _local_domainname))
+		key = 'connector/s4/mapping/dns/%s/%s/location' % (_record_type, record_fqdn)
 		ud.debug(ud.LISTENER, ud.ALL, '%s: UCR check: %s' % (name, key))
 
 		## check old value
@@ -161,27 +170,27 @@ def update_records(excludeDN=None):
 			ucr_key_value_list.append(ucr_key_value)
 
 		## trigger anyway
-		__relativeDomainName_trigger_set.add(relativeDomainName)
+		_relativeDomainName_trigger_set.add(relativeDomainName)
 	
 	if ucr_key_value_list:
 		univention.config_registry.handler_set(ucr_key_value_list)
-		__s4_connector_restart = True
+		_s4_connector_restart = True
 
 @LDAP_Connection(MACHINE_READ)
 def trigger_sync_ucs_to_s4(ldap_machine_read=None, ldap_position=None, search_base=None):
-	global record_type
-	global domain
-	global __relativeDomainName_trigger_set
+	global _record_type
+	global _local_domainname
+	global _relativeDomainName_trigger_set
 
-	for relativeDomainName in list(__relativeDomainName_trigger_set):
+	for relativeDomainName in list(_relativeDomainName_trigger_set):
 		### trigger S4 Connector
-		filter = '(&(univentionObjectType=dns/%s)(zoneName=%s)(relativeDomainName=%s))' % (record_type, domain, relativeDomainName)
+		ldap_filter = '(&(univentionObjectType=dns/%s)(zoneName=%s)(relativeDomainName=%s))' % (_record_type, _local_domainname, relativeDomainName)
 		try:
 			ud.debug(ud.LISTENER, ud.PROCESS, '%s: trigger s4 connector: %s' % (name, relativeDomainName))
-			res = ldap_machine_read.search(base=ldap_position.getDn(), filter=filter)
+			res = ldap_machine_read.search(base=ldap_position.getDn(), filter=ldap_filter)
 			for (record_dn, obj) in res:
 				s4_connector_listener.handler(record_dn, obj, obj, 'm')
-				__relativeDomainName_trigger_set.remove(relativeDomainName)
+				_relativeDomainName_trigger_set.remove(relativeDomainName)
 		except udm_errors.ldapError, e:
 			ud.debug(ud.LISTENER, ud.ERROR, '%s: Error accessing LDAP: %s' % (name, e))
 
@@ -238,8 +247,8 @@ def load_hooks():
 	return hooks
 
 def run_hooks(fname, *args):
-	global __hooks
-	for hook in __hooks:
+	global _hooks
+	for hook in _hooks:
 		if hasattr(hook, fname):
 			try:
 				hook_func = getattr(hook, fname)
@@ -247,15 +256,13 @@ def run_hooks(fname, *args):
 			except Exception as ex:
 				ud.debug(ud.LISTENER, ud.ERROR, "Error running %s.%s():" % (hook.__name__, fname))
 				ud.debug(ud.LISTENER, ud.ERROR, traceback.format_exc())
-
-__hooks = load_hooks()
 ################ </Hooks handling> ##############
 
 
 def handler(dn, new, old, command):
 	univention.debug.debug(univention.debug.LISTENER, univention.debug.ALL, '%s: command: %s, dn: %s, new: %s, old: %s' % (name, command, dn, bool(new), bool(old)))
 	if new:
-		if 'ou=' not in dn:	## only handle DCs in school branch sites
+		if ',ou=' not in dn.lower():	## only handle DCs in school branch sites
 			return
 
 		if old:
@@ -273,11 +280,11 @@ def handler(dn, new, old, command):
 
 
 def postrun():
-	global __s4_connector_restart
-	global __relativeDomainName_trigger_set
+	global _s4_connector_restart
+	global _relativeDomainName_trigger_set
 
 	if os.path.isfile('/etc/init.d/univention-s4-connector'):
-		if __s4_connector_restart:
+		if _s4_connector_restart:
 			univention.debug.debug(univention.debug.LISTENER, univention.debug.PROCESS, '%s: Restarting S4 Connector' % (name,))
 			listener.setuid(0)
 			try:
@@ -285,11 +292,37 @@ def postrun():
 				p.wait()
 				if p.returncode != 0:
 					ud.debug(ud.LISTENER, ud.ERROR, '%s: S4 Connector restart returned %s.' % (name, p.returncode))
-				__s4_connector_restart = False
+				_s4_connector_restart = False
 			finally:
 				listener.unsetuid()
 
-		if __relativeDomainName_trigger_set:
+		if _relativeDomainName_trigger_set:
 			trigger_sync_ucs_to_s4()
 
 	run_hooks("postrun")
+
+
+@LDAP_Connection(MACHINE_READ)
+def on_load(ldap_machine_read=None, ldap_position=None, search_base=None):
+	global _ldap_hostdn
+	global _hooks
+	_hooks = load_hooks()
+
+	global _ucsschool_service_specialization_filter
+	try:
+		res = ldap_machine_read.search(base=_ldap_hostdn, scope='base', attr=('univentionService',))
+		(record_dn, obj) = res[0]
+		services = obj['univentionService']
+		for service_id in ('UCS@school Education', 'UCS@school Management'):
+			if service_id in services:
+				_ucsschool_service_specialization_filter = "(univentionService=%s)" % service_id
+				break
+	except udm_errors.ldapError, e:
+		ud.debug(ud.LISTENER, ud.ERROR, '%s: Error accessing LDAP: %s' % (name, e))
+
+### Initialization of global variables
+listener.setuid(0)
+try:
+	on_load()
+finally:
+	listener.unsetuid()

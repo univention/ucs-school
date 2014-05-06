@@ -1,3 +1,10 @@
+ucs-school-s4-branch-site (1.0.1-2) unstable; urgency=medium
+
+  * Dynamically filter for UCS@school service type of local DC (Bug #32187)
+  * District mode related code doesn't seem relevant any longer here
+
+ -- Arvid Requate <requate@univention.de>  Tue, 06 May 2014 15:11:37 +0200
+
 ucs-school-s4-branch-site (1.0.1-1) unstable; urgency=low
 
   * Bug #31407: enable district mode
