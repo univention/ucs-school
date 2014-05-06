@@ -1,3 +1,12 @@
+ucs-school-metapackage (6.0.7-19) unstable; urgency=medium
+
+  * Add UCS@school service to school-nonedu-slave (Bug #34097)
+  * Register service 'UCS@school Management' for ucs-school-nonedu-slave
+  * Register service 'UCS@school Education' for ucs-school-singlemaster
+  * Register service 'UCS@school Education' for ucs-school-slave (Bug #34172)
+
+ -- Arvid Requate <requate@univention.de>  Tue, 06 May 2014 14:56:38 +0200
+
 ucs-school-metapackage (6.0.7-18) unstable; urgency=low
 
   * Bug #34182: added CSV import module as recommended package
