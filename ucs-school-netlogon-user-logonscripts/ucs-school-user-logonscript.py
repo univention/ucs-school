@@ -52,7 +52,7 @@ strTeacher = listener.baseConfig.get('ucsschool/ldap/default/container/teachers'
 strStaff = listener.baseConfig.get('ucsschool/ldap/default/container/teachers-and-staff', 'lehrer und mitarbeiter')
 ldapbase = listener.baseConfig.get('ldap/base', '')
 umcLink = listener.baseConfig.get('ucsschool/userlogon/umclink/link', 'http://%s.%s/univention-management-console' % (hostname, domainname))
-reTeacher = re.compile(listener.baseConfig.get('ucsschool/userlogon/umclink/re', '^(.*),cn=(%s|%s),cn=users,ou=([^,]+),%s$' % (strTeacher, strStaff, ldapbase)))
+reTeacher = re.compile(listener.baseConfig.get('ucsschool/userlogon/umclink/re', '^(.*),cn=(%s|%s),cn=users,ou=([^,]+),(?:ou=[^,]+,)?%s$' % (strTeacher, strStaff, ldapbase)))
 
 # create netlogon scripts for samba3 and samba4
 def getScriptPath():
@@ -457,7 +457,7 @@ def userchange(dn, new, old):
 
 
 		mappings = {}
-		classre = re.compile ('^cn=([^,]*),cn=klassen,cn=shares,ou=([^,]*),%s$' % ldapbase)
+		classre = re.compile ('^cn=([^,]*),cn=klassen,cn=shares,ou=([^,]*),(?:ou=[^,]+,)?%s$' % ldapbase)
 		links = {}
 		validservers = frozenset(listener.baseConfig.get('ucsschool/userlogon/shares/validservers', listener.baseConfig.get('hostname') ).split(','))
 

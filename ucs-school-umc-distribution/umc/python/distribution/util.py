@@ -225,9 +225,9 @@ def openRecipients(entryDN, ldap_connection, search_base):
 			return user
 		elif obj_types[ 0 ] == 'groups/group':
 			# initiate a new search base using the ou in the group
-			schoolDN = entryObj.dn[entryObj.dn.find('ou='):]
-			school = ldap_connection.explodeDn(schoolDN, 1)[0]
-			_search_base = SchoolSearchBase(school, school, schoolDN)
+			schoolDN = SchoolSearchBase.getOUDN(entryObj.dn)
+			school = SchoolSearchBase.getOU(entryObj.dn)
+			_search_base = SchoolSearchBase([school], school, schoolDN)
 
 			# open group object
 			name_pattern = re.compile('^%s-' % (re.escape(_search_base.school)), flags=re.I)

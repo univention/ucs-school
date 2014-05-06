@@ -1,3 +1,9 @@
+ucs-school-s4-branch-site (1.0.1-1) unstable; urgency=low
+
+  * Bug #31407: enable district mode
+
+ -- Florian Best <best@univention.de>  Tue, 06 May 2014 11:14:35 +0200
+
 ucs-school-s4-branch-site (1.0.0-6) unstable; urgency=medium
 
   * Only perform s4-connector related operations if it is installed

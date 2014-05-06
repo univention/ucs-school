@@ -47,7 +47,7 @@ sys.dont_write_bytecode = True
 import imp
 s4_connector_listener_path = '/usr/lib/univention-directory-listener/system/s4-connector.py'
 s4_connector_listener = imp.load_source('s4_connector', s4_connector_listener_path)
-from ucsschool.lib.schoolldap import LDAP_Connection, MACHINE_READ
+from ucsschool.lib.schoolldap import LDAP_Connection, MACHINE_READ, SchoolSearchBase
 
 name='ucsschool-s4-branch-site'
 description='UCS@school S4 branch site module'
@@ -59,12 +59,8 @@ modrdn="1"
 
 domain = listener.configRegistry.get('domainname')
 ldap_hostdn = listener.configRegistry.get('ldap/hostdn')
-local_schoolDN = None
-local_school = None
-_char_index = ldap_hostdn.find('ou=')	## this the school detection used in scholldap.SearchBase.getOU
-if _char_index < 0:
-	local_schoolDN = ldap_hostdn[_char_index:]
-	local_school = univention.uldap.explodeDn( local_schoolDN, 1 )[0]
+local_schoolDN = SchoolSearchBase.getOUDN(ldap_hostdn)
+local_school = SchoolSearchBase.getOU(ldap_hostdn)
 
 record_type = "srv_record"
 __relativeDomainName_trigger_set = set()
@@ -259,7 +255,7 @@ __hooks = load_hooks()
 def handler(dn, new, old, command):
 	univention.debug.debug(univention.debug.LISTENER, univention.debug.ALL, '%s: command: %s, dn: %s, new: %s, old: %s' % (name, command, dn, bool(new), bool(old)))
 	if new:
-		if dn.find('ou=') < 0:	## only handle DCs in school branch sites
+		if 'ou=' not in dn:	## only handle DCs in school branch sites
 			return
 
 		if old:

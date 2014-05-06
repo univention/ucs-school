@@ -33,6 +33,7 @@
 
 import datetime
 import os
+import re
 import shlex
 import signal
 import subprocess
@@ -65,6 +66,7 @@ from ucsschool.lib.schoolldap import LDAP_Connection, SchoolBaseModule, Display
 from ucsschool.lib.schoollessons import SchoolLessons
 from ucsschool.lib.smbstatus import SMB_Status
 import ucsschool.lib.internetrules as internetrules
+from ucsschool.lib.models import School
 
 #import univention.management.console.modules.schoolexam.util as exam_util
 
@@ -289,11 +291,10 @@ class Instance(SchoolBaseModule):
 
 		# match the corresponding school OU
 		school = None
-		roomParts = explodeDn(roomDN)
-		for ischool in search_base.availableSchools:
-			if ('ou=%s' % ischool) in roomParts:
-				# match
-				school = ischool
+		for ischool in School.get_all(ldap_user_read):
+			pattern = re.compile('.*%s$' % (re.escape(ischool.dn)), re.I)
+			if pattern.match(roomDN):
+				school = ischool.name
 				break
 		else:
 			# no match found
@@ -383,7 +384,7 @@ class Instance(SchoolBaseModule):
 		return '(|(%s))' % ')('.join('uniqueMember=%s' % (escape_filter_chars(computer),) for computer in computers)
 
 	def _get_host_filter(self, ipaddresses):
-		records = { 4:'aRecord=%s', 6: 'aAAARecord=%s'}
+		records = {4: 'aRecord=%s', 6: 'aAAARecord=%s'}
 		return '(|(%s))' % ')('.join(records[ipaddress.version] % (ipaddress.exploded,) for ipaddress in ipaddresses)
 
 	def _checkRoomAccess(self):

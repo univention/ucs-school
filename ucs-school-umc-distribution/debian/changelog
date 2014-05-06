@@ -1,3 +1,9 @@
+ucs-school-umc-distribution (11.0.3-1) unstable; urgency=low
+
+  * Bug #31407: enable district mode
+
+ -- Florian Best <best@univention.de>  Tue, 06 May 2014 11:13:44 +0200
+
 ucs-school-umc-distribution (11.0.2-1) unstable; urgency=low
 
   * Bug #33456: do not try to load project, if not projectname has been specified

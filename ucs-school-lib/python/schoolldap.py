@@ -368,23 +368,23 @@ class SchoolSearchBase(object):
 			>>> SchoolSearchBase.getOU('uid=a,fou=bar,Ou=dc1,oU=dc,dc=foo,dc=bar')
 			'dc1'
 		"""
-		school_dn = cls._get_ou_from_dn(dn)
+		school_dn = cls.getOUDN(dn)
 		if school_dn:
 			return univention.uldap.explodeDn(school_dn, True)[0]
 
 	@classmethod
-	def _get_ou_from_dn(cls, dn):
+	def getOUDN(cls, dn):
 		"""Return the School OU-DN part for a given DN.
 
-			>>> SchoolSearchBase._get_ou_from_dn('uid=a,fou=bar,Ou=dc1,oU=dc,dc=foo,dc=bar')
+			>>> SchoolSearchBase.getOUDN('uid=a,fou=bar,Ou=dc1,oU=dc,dc=foo,dc=bar')
 			'Ou=dc1,oU=dc,dc=foo,dc=bar'
-			>>> SchoolSearchBase._get_ou_from_dn('ou=dc1,ou=dc,dc=foo,dc=bar')
+			>>> SchoolSearchBase.getOUDN('ou=dc1,ou=dc,dc=foo,dc=bar')
 			'ou=dc1,ou=dc,dc=foo,dc=bar'
 		"""
-		match = cls._get_ou_from_dn.RE_OU.search(dn)
+		match = cls.getOUDN.RE_OU.search(dn)
 		if match:
 			return match.group(1)
-	_get_ou_from_dn.RE_OU = re.compile('(?:^|,)(ou=.*)$', re.I)
+	getOUDN.RE_OU = re.compile('(?:^|,)(ou=.*)$', re.I)
 
 	@property
 	def availableSchools(self):

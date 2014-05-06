@@ -1,3 +1,9 @@
+ucs-school-umc-computerroom (5.0.3-1) unstable; urgency=low
+
+  * Bug #31407: enable district mode
+
+ -- Florian Best <best@univention.de>  Tue, 06 May 2014 11:14:24 +0200
+
 ucs-school-umc-computerroom (5.0.2-1) unstable; urgency=low
 
   * Bug #25762: display room takeover dialog when room is locked and should be opened on

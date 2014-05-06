@@ -382,9 +382,9 @@ class Instance( SchoolBaseModule ):
 		grp = udm_modules.get( 'groups/group' ).object( None, ldap_user_write, ldap_position, group[ 0 ] )
 
 		# get the SchoolSearchBase based on the DN of the group to be deleted
-		if grp.dn.find('ou=') < 0:
+		schoolDN = SchoolSearchBase.getOUDN(grp.dn)
+		if not schoolDN:
 			raise UMC_CommandError( 'Group must within the scope of a school OU: %s' % grp.dn )
-		schoolDN = grp.dn[grp.dn.find('ou='):]
 		school = ldap_user_write.explodeDn( schoolDN, 1 )[0]
 		MODULE.info('schoolDN=%s school=%s availableSchools=%s' % (schoolDN, school, search_base.availableSchools))
 		search_base = SchoolSearchBase( search_base.availableSchools, school )
