@@ -4,8 +4,9 @@
 ## tags: [apptest]
 ## exposure: dangerous
 ## packages:
+##    - ucs-school-slave | ucs-school-nonedu-slave
+##    - univention-samba4
 ##    - ucs-school-s4-branch-site
-##    - univention-samba | univention-samba4
 
 import os
 import sys
@@ -19,6 +20,8 @@ import univention.testing.ucr as testing_ucr
 import univention.testing.udm as testing_udm
 from univention.admin.uldap import explodeDn
 from ucsschool.lib.schoolldap import get_all_local_searchbases, set_credentials
+from ucsschool.lib.schoolldap import LDAP_Connection, MACHINE_READ
+import univention.admin.uexceptions as udm_errors
 import univention.testing.strings as uts
 import univention.config_registry
 
@@ -84,42 +87,89 @@ class Test():
 		p1 = subprocess.Popen(cmd)
 		p1.wait()
 
-	def run(self):
+	@LDAP_Connection(MACHINE_READ)
+	def run(self, ldap_machine_read=None, ldap_position=None, search_base=None):
 		status = 100
+		positive_test_fqdn_list = []
+		negative_test_fqdn_list = []
 
-		test_fqdn_list = []
+		try:
+			res = ldap_machine_read.search(base=ucr['ldap/hostdn'], scope='base', attr=('univentionService',))
+		except udm_errors.ldapError, e:
+			testing_utils.fail(log_message="Error accessing LDAP: %s" % (e,))
+
+		(record_dn, obj) = res[0]
+		services = obj['univentionService']
+		_ucsschool_services = set(('UCS@school Education', 'UCS@school Management'))
+		for service_id in _ucsschool_services:
+			if service_id in services:
+				_local_ucsschool_service = service_id
+				_ucsschool_services.remove(service_id)
+				_not_local_ucsschool_service = _ucsschool_services.pop()
+				break
+
+		try:
+			ldap_filter = "(&(objectClass=univentionDomainController)(!(univentionService=%s)))" \
+				% _local_ucsschool_service
+			attrs = ['cn', 'associatedDomain']
+			res = ldap_machine_read.search(base=ldap_position.getDn(), filter=ldap_filter, attr=attrs)
+		except udm_errors.ldapError, e:
+			testing_utils.fail(log_message="Error accessing LDAP: %s" % (e,))
+
+		for (record_dn, obj) in res:
+				negative_test_fqdn_list.append(".".join((obj['cn'][0], obj['associatedDomain'][0])))
+
 		with testing_udm.UCSTestUDM() as udm:
 			for searchbase in get_all_local_searchbases():
-				test_hostname = uts.random_name()
+				positive_test_hostname = uts.random_name()
 				dn = udm.create_object("computers/domaincontroller_slave",
-					name = test_hostname,
+					name = positive_test_hostname,
 					position = "cn=dc,cn=server,cn=computers,%s" % (searchbase.schoolDN,),
 					domain = ucr.get('domainname'),
-					service = ("Samba 4", "UCS@school"),
+					service = ("S4 SlavePDC", _local_ucsschool_service),
 					groups = ("cn=DC-Edukativnetz,cn=ucsschool,cn=groups,%(ldap/base)s" % ucr)
 					)
 
-				test_fqdn = ".".join((test_hostname, ucr.get('domainname')))
-				test_fqdn_list.append(test_fqdn)
+				positive_test_fqdn = ".".join((positive_test_hostname, ucr.get('domainname')))
+				positive_test_fqdn_list.append(positive_test_fqdn)
+
+				negative_test_hostname = uts.random_name()
+				dn = udm.create_object("computers/domaincontroller_slave",
+					name = negative_test_hostname,
+					position = "cn=dc,cn=server,cn=computers,%s" % (searchbase.schoolDN,),
+					domain = ucr.get('domainname'),
+					service = ("S4 SlavePDC", _not_local_ucsschool_service),
+					groups = ("cn=DC-Edukativnetz,cn=ucsschool,cn=groups,%(ldap/base)s" % ucr)
+					)
+
+				negative_test_fqdn = ".".join((negative_test_hostname, ucr.get('domainname')))
 
 				testing_utils.wait_for_replication_and_postrun()
 
-				## verify that the test DC is present in the UCR variables
+				## verify that the positive test DC is present in the UCR variables
 				ucr2 = univention.config_registry.ConfigRegistry()
 				ucr2.load()
 				test_srv_record = '_kerberos._tcp'
 				ucr_var = 'connector/s4/mapping/dns/srv_record/%s.%s/location' % (test_srv_record, ucr.get('domainname'))
 				test_value = ucr2.get(ucr_var, '')
-				if test_value.find(test_fqdn) == -1:
-					testing_utils.fail(log_message="%s not found in %s" % (test_fqdn, ucr_var))
+				if test_value.find(positive_test_fqdn) == -1:
+					testing_utils.fail(log_message="%s not found in %s" % (positive_test_fqdn, ucr_var))
 
-				## verify that the test DC is present in DNS/Samba4
+				## verify that the negative test DC is NOT present in the UCR variables
+				if test_value.find(negative_test_fqdn) != -1:
+					testing_utils.fail(log_message="%s found in %s" % (negative_test_fqdn, ucr_var))
+
+				## verify that the positive_test DC is present in DNS/Samba4
 				time.sleep(3)
 				p1 = subprocess.Popen(['host', '-t', 'srv', test_srv_record], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 				(stdout, stderr) = p1.communicate()
 
-				if stdout.find(test_fqdn) == -1:
-					testing_utils.fail(log_message="%s not found in DNS SRV record %s" % (test_fqdn, test_srv_record))
+				if stdout.find(positive_test_fqdn) == -1:
+					testing_utils.fail(log_message="%s not found in DNS SRV record %s" % (positive_test_fqdn, test_srv_record))
+
+				## verify that the negative_test DC is NOT present in DNS/Samba4
+				if stdout.find(negative_test_fqdn) != -1:
+					testing_utils.fail(log_message="%s found in DNS SRV record %s" % (negative_test_fqdn, test_srv_record))
 
 			## restart listener to load the test hooks before the test DCs get removed
 			cmd = ["/etc/init.d/univention-directory-listener", "restart"]
@@ -130,17 +180,18 @@ class Test():
 		testing_utils.wait_for_replication_and_postrun()
 		time.sleep(1)
 
-		## verify that the test DCs are removed from DNS/Samba4
+		## verify that the postitive test DCs are removed from DNS/Samba4
 		p1 = subprocess.Popen(['host', '-t', 'srv', '_kerberos._tcp'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 		(stdout, stderr) = p1.communicate()
-		for test_fqdn in test_fqdn_list:
-			if stdout.find(test_fqdn) != -1:
-				testing_utils.fail(log_message="%s still found in DNS SRV record %s" % (test_fqdn, test_srv_record))
+		for postitive_test_fqdn in positive_test_fqdn_list:
+			if stdout.find(postitive_test_fqdn) != -1:
+				testing_utils.fail(log_message="%s still found in DNS SRV record %s" % (postitive_test_fqdn, test_srv_record))
 
-		## verify that the "Verwaltung" DCs are not in DNS/Samba4
-		default_verwaltungs_dc_name = ucr.get("hostname") + "v"
-		if stdout.find(default_verwaltungs_dc_name) != -1:
-			testing_utils.fail(log_message="%s present in DNS SRV record %s" % (default_verwaltungs_dc_name, test_srv_record))
+
+		## verify that the "negative" DCs of the other Role (Education/Management) are not in DNS/Samba4
+		for negative_test_fqdn in negative_test_fqdn_list:
+			if stdout.find(negative_test_fqdn) != -1:
+				testing_utils.fail(log_message="%s present in DNS SRV record %s" % (negative_test_fqdn, test_srv_record))
 
 		## verify that the local DC is still in DNS/Samba4
 		local_fqdn = ".".join((ucr.get("hostname"),ucr.get("domainname")))
@@ -148,27 +199,28 @@ class Test():
 			testing_utils.fail(log_message="%s not present in DNS SRV record %s" % (local_fqdn, test_srv_record))
 
 
-		## verify that the test DCs are removed from the UCR variable
+		## verify that the positive test DCs are removed from the UCR variable
 		ucr2 = univention.config_registry.ConfigRegistry()
 		ucr2.load()
 		test_srv_record = '_kerberos._tcp'
 		ucr_var = 'connector/s4/mapping/dns/srv_record/%s.%s/location' % (test_srv_record, ucr.get('domainname'))
 		test_value = ucr2.get(ucr_var, '')
-		for test_fqdn in test_fqdn_list:
-			if test_value.find(test_fqdn) != -1:
-				testing_utils.fail(log_message="%s still found in UCR variable %s" % (test_fqdn, ucr_var))
+		for positive_test_fqdn in positive_test_fqdn_list:
+			if test_value.find(positive_test_fqdn) != -1:
+				testing_utils.fail(log_message="%s still found in UCR variable %s" % (positive_test_fqdn, ucr_var))
 
-		## verify that the "Verwaltung" DCs are not in the UCR variable
-		if test_value.find(test_hostname) != -1:
-			testing_utils.fail(log_message="%s found in UCR variable %s" % (test_hostname, ucr_var))
+		## verify that the "negative" DCs are not in the UCR variable:
+		for negative_test_fqdn in negative_test_fqdn_list:
+			if test_value.find(negative_test_fqdn) != -1:
+				testing_utils.fail(log_message="%s found in UCR variable %s" % (negative_test_fqdn, ucr_var))
 
 		## verify that the local DC is still in the UCR variable
 		if test_value.find(local_fqdn) == -1:
 			testing_utils.fail(log_message="%s not present in UCR variable %s" % (local_fqdn, ucr_var))
 
-		## check that the listener hooks have been run:
+		## check that the listener hooks of 02_hook have been run:
 		for attr in ("handler", "postrun"):
-			search_string = "%s %s called" % (attr, self.secret_str)
+			search_string = "02_hook %s %s called" % (attr, self.secret_str)
 			cmd = ["grep", "-q", search_string, "/var/log/univention/listener.log"]
 			p1 = subprocess.Popen(cmd, shell=False, close_fds=True)
 			p1.wait()
