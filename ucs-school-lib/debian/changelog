@@ -1,3 +1,9 @@
+ucs-school-lib (5.0.17-1) unstable; urgency=low
+
+  * Bug #34337: Split models into several files, better logging
+
+ -- Dirk Wiesenthal <wiesenthal@univention.de>  Tue, 06 May 2014 14:49:37 +0200
+
 ucs-school-lib (5.0.16-2) unstable; urgency=low
 
   * Bug #31407: fix typo

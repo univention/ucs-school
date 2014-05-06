@@ -1,3 +1,4 @@
 python/*.py usr/share/pyshared/ucsschool/lib/
+python/models/*.py usr/share/pyshared/ucsschool/lib/models/
 python/*.mo usr/share/locale/de/LC_MESSAGES/
 lessons.ini usr/share/ucs-school-lib/

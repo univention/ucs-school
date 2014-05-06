@@ -108,8 +108,8 @@ def open_ldap_connection( binddn, bindpw, ldap_server ):
 
 	try:
 		lo = udm_uldap.access( host = ldap_server, base = ucr.get( 'ldap/base' ), binddn = binddn, bindpw = bindpw, start_tls = 2 )
-	except udm_errors.noObject, e:
-		raise e
+	except udm_errors.noObject:
+		raise
 	except LDAPError, e:
 		raise LDAP_ConnectionError( 'Opening LDAP connection failed: %s' % str( e ) )
 
