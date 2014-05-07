@@ -1,3 +1,9 @@
+ucs-school-umc-installer (2.0.6-1) unstable; urgency=low
+
+  * Bug #34337: Command args changed
+
+ -- Dirk Wiesenthal <wiesenthal@univention.de>  Wed, 07 May 2014 11:50:31 +0200
+
 ucs-school-umc-installer (2.0.5-1) unstable; urgency=low
 
   * Bug #34173: fixed installer problem if display name is not defined
