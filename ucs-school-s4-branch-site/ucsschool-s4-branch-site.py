@@ -61,11 +61,11 @@ _ldap_hostdn = listener.configRegistry.get('ldap/hostdn')
 _hooks = []
 
 ### The Listener registration data
-name='ucsschool-s4-branch-site'
-description='UCS@school S4 branch site module'
+name = 'ucsschool-s4-branch-site'
+description = 'UCS@school S4 branch site module'
 filter = _ldap_filter_s4_slave_pdc_and_ucsschool_service_specialization
-attributes=[]
-modrdn="1"	# use the modrdn listener extension
+attributes = ['cn', 'associatedDomain', 'description']	## support retrigger via description
+modrdn = "1"	# use the modrdn listener extension
 
 ### Contants
 _record_type = "srv_record"
@@ -129,7 +129,7 @@ def visible_samba4_school_dcs(excludeDN=None, ldap_machine_read=None, ldap_posit
 	return _visible_samba4_school_dcs
 
 
-def update_records(excludeDN=None):
+def update_ucr_overrides(excludeDN=None):
 	global STD_S4_SRV_RECORDS
 	global _record_type
 	global _local_domainname
@@ -150,26 +150,25 @@ def update_records(excludeDN=None):
 		ud.debug(ud.LISTENER, ud.ALL, '%s: UCR check: %s' % (name, key))
 
 		## check old value
-		old_value = ucr.get(key)
-		if not old_value or old_value == 'ignore':
+		old_ucr_locations = ucr.get(key)
+		if not old_ucr_locations or old_ucr_locations == 'ignore':
 			continue	## don't touch if unset or ignored
 
 		## create new value
-		value = ""
+		ucr_locations_list = []
 		for server_fqdn in server_fqdn_list:
-			if value:
-				value += " "
-			value += "%s %s." % (prio_weight_port, server_fqdn)
+			ucr_locations_list.append("%s %s." % (prio_weight_port, server_fqdn))
+		ucr_locations = " ".join(ucr_locations_list)
 
-		if value == old_value:
-			ud.debug(ud.LISTENER, ud.ALL, '%s: UCR skip: %s' % (name, value))
+		## set new value
+		if ucr_locations == old_ucr_locations:
+			ud.debug(ud.LISTENER, ud.ALL, '%s: UCR skip: %s' % (name, ucr_locations))
 		else:
-			## set new value
-			ucr_key_value = "=".join((key, value))
-			ud.debug(ud.LISTENER, ud.PROCESS, '%s: UCR set: %s="%s"' % (name, key, value))
+			ucr_key_value = "=".join((key, ucr_locations))
+			ud.debug(ud.LISTENER, ud.PROCESS, '%s: UCR set: %s="%s"' % (name, key, ucr_locations))
 			ucr_key_value_list.append(ucr_key_value)
 
-		## trigger anyway
+		## always trigger S4 Connector
 		_relativeDomainName_trigger_set.add(relativeDomainName)
 	
 	if ucr_key_value_list:
@@ -198,14 +197,14 @@ def trigger_sync_ucs_to_s4(ldap_machine_read=None, ldap_position=None, search_ba
 def add(dn, new):
 	listener.setuid(0)
 	try:
-		update_records()
+		update_ucr_overrides()
 	finally:
 		listener.unsetuid()
 
 def modify(dn, new, old):
 	listener.setuid(0)
 	try:
-		update_records()
+		update_ucr_overrides()
 	finally:
 		listener.unsetuid()
 
@@ -214,7 +213,7 @@ def delete(old_dn, old, command):
 	listener.setuid(0)
 	try:
 		## in modrdn phase 'r' the DN is still present in local LDAP, so we explicitly exclude it
-		update_records(excludeDN=old_dn)
+		update_ucr_overrides(excludeDN=old_dn)
 	finally:
 		listener.unsetuid()
 
@@ -260,7 +259,12 @@ def run_hooks(fname, *args):
 
 
 def handler(dn, new, old, command):
-	univention.debug.debug(univention.debug.LISTENER, univention.debug.ALL, '%s: command: %s, dn: %s, new: %s, old: %s' % (name, command, dn, bool(new), bool(old)))
+	if not _ucsschool_service_specialization_filter:
+		univention.debug.debug(univention.debug.LISTENER, univention.debug.INFO, '%s: Local UCS@school server type still unknown, ignoring.' % (name,))
+		return
+
+	univention.debug.debug(univention.debug.LISTENER, univention.debug.ALL, '%s: command: %s, dn: %s, new? %s, old? %s' % (name, command, dn, bool(new), bool(old)))
+
 	if new:
 		if ',ou=' not in dn.lower():	## only handle DCs in school branch sites
 			return

@@ -1,3 +1,11 @@
+ucs-school-s4-branch-site (1.0.1-3) unstable; urgency=medium
+
+  * Only run handler if local UCS@school server role is known
+  * Only register for a subset of attributes to reduce modify calls
+  * Small coding style changes (Bug #32187)
+
+ -- Arvid Requate <requate@univention.de>  Wed, 07 May 2014 08:10:16 +0200
+
 ucs-school-s4-branch-site (1.0.1-2) unstable; urgency=medium
 
   * Dynamically filter for UCS@school service type of local DC (Bug #32187)
