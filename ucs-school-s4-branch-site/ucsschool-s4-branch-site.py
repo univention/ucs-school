@@ -49,21 +49,85 @@ from ucsschool.lib.schoolldap import LDAP_Connection, MACHINE_READ
 import traceback
 import subprocess
 
+### Listener registration data
+name = 'ucsschool-s4-branch-site'
+description = 'UCS@school S4 branch site module'
+
+################ <Hooks handling> ###############
+HOOKS_BASEDIR = "/usr/lib/univention-directory-listener/hooks"
+LISTENER_HOOKS_BASEDIR = os.path.join(HOOKS_BASEDIR, "%s.d" % (name,))
+
+def load_hooks():
+	hooks = []
+	if not os.path.isdir(LISTENER_HOOKS_BASEDIR):
+		return hooks
+
+	filenames = os.listdir(LISTENER_HOOKS_BASEDIR)
+	filenames.sort()
+	for filename in filenames:
+		if not filename.endswith('.py') or filename.startswith('__'):
+			continue
+		file_path = os.path.join(LISTENER_HOOKS_BASEDIR, filename)
+
+		modulename = '.'.join((name.replace('-', '_'), filename[:-3].replace('-', '_')))
+		ud.debug(ud.LISTENER, ud.ALL, "%s: importing '%s'" % (name, modulename))
+		try:
+			hook = imp.load_source(modulename, file_path)
+		except Exception as ex:
+			ud.debug(ud.LISTENER, ud.ERROR, "Error importing %s as %s:" % (file_path, modulename))
+			ud.debug(ud.LISTENER, ud.ERROR, traceback.format_exc())
+		hooks.append(hook)
+
+	return hooks
+
+def run_hooks(fname, *args):
+	global _hooks
+	for hook in _hooks:
+		if hasattr(hook, fname):
+			try:
+				hook_func = getattr(hook, fname)
+				hook_func(*args)
+			except Exception as ex:
+				ud.debug(ud.LISTENER, ud.ERROR, "Error running %s.%s():" % (hook.__name__, fname))
+				ud.debug(ud.LISTENER, ud.ERROR, traceback.format_exc())
+################ </Hooks handling> ##############
+
+
 ### Global variables
-## LDAP filter, extended in on_load() and re-used in visible_samba4_school_dcs() below
 _ucsschool_service_specialization_filter = ''
-_ldap_filter_s4_slave_pdc_and_ucsschool_service_specialization = '(&(univentionService=S4 SlavePDC)%s)' \
-	% (_ucsschool_service_specialization_filter,)
 _relativeDomainName_trigger_set = set()
 _s4_connector_restart = False
 _local_domainname = listener.configRegistry.get('domainname')
 _ldap_hostdn = listener.configRegistry.get('ldap/hostdn')
 _hooks = []
 
-### The Listener registration data
-name = 'ucsschool-s4-branch-site'
-description = 'UCS@school S4 branch site module'
-filter = _ldap_filter_s4_slave_pdc_and_ucsschool_service_specialization
+@LDAP_Connection(MACHINE_READ)
+def on_load(ldap_machine_read=None, ldap_position=None, search_base=None):
+	global _ldap_hostdn
+	global _hooks
+	_hooks = load_hooks()
+
+	global _ucsschool_service_specialization_filter
+	try:
+		res = ldap_machine_read.search(base=_ldap_hostdn, scope='base', attr=('univentionService',))
+		(record_dn, obj) = res[0]
+		services = obj['univentionService']
+		for service_id in ('UCS@school Education', 'UCS@school Management'):
+			if service_id in services:
+				_ucsschool_service_specialization_filter = "(univentionService=%s)" % service_id
+				break
+	except udm_errors.ldapError, e:
+		ud.debug(ud.LISTENER, ud.ERROR, '%s: Error accessing LDAP: %s' % (name, e))
+
+### Initialization of global variables
+listener.setuid(0)
+try:
+	on_load()
+finally:
+	listener.unsetuid()
+
+### Listener registration data
+filter = '(&(univentionService=S4 SlavePDC)%s)' % (_ucsschool_service_specialization_filter,)
 attributes = ['cn', 'associatedDomain', 'description']	## support retrigger via description
 modrdn = "1"	# use the modrdn listener extension
 
@@ -77,10 +141,10 @@ S4_LDAP_PORT = 389
 GC_LDAP_PORT = 3268
 
 STD_SRV_PRIO_WEIGHT_PORT = {
-	'kdc': " ".join((str(STD_SRV_PRIO), str(STD_SRV_WEIGHT), str(KDC_PORT))),
-	'kpasswd': " ".join((str(STD_SRV_PRIO), str(STD_SRV_WEIGHT), str(KPASSWD_PORT))),
-	's4_ldap': " ".join((str(STD_SRV_PRIO), str(STD_SRV_WEIGHT), str(S4_LDAP_PORT))),
-	'gc_ldap': " ".join((str(STD_SRV_PRIO), str(STD_SRV_WEIGHT), str(GC_LDAP_PORT))),
+	'kdc': (STD_SRV_PRIO, STD_SRV_WEIGHT, KDC_PORT),
+	'kpasswd': (STD_SRV_PRIO, STD_SRV_WEIGHT, KPASSWD_PORT),
+	's4_ldap': (STD_SRV_PRIO, STD_SRV_WEIGHT, S4_LDAP_PORT),
+	'gc_ldap': (STD_SRV_PRIO, STD_SRV_WEIGHT, GC_LDAP_PORT),
 }
 
 STD_S4_SRV_RECORDS = {
@@ -109,11 +173,11 @@ STD_S4_SRV_RECORDS = {
 ### Listener code
 @LDAP_Connection(MACHINE_READ)
 def visible_samba4_school_dcs(excludeDN=None, ldap_machine_read=None, ldap_position=None, search_base=None):
-	global _ldap_filter_s4_slave_pdc_and_ucsschool_service_specialization
+	global filter
 	_visible_samba4_school_dcs = []
 	try:
 		res = ldap_machine_read.search(base=ldap_position.getDn(),
-			filter=_ldap_filter_s4_slave_pdc_and_ucsschool_service_specialization,
+			filter=filter,
 			attr=['cn', 'associatedDomain'])
 		for (record_dn, obj) in res:
 			## select only school branches and exclude a modrdn 'r' phase DN which still exists
@@ -137,7 +201,7 @@ def update_ucr_overrides(excludeDN=None):
 	global _relativeDomainName_trigger_set
 
 	server_fqdn_list = visible_samba4_school_dcs(excludeDN=excludeDN)
-	ud.debug(ud.LISTENER, ud.ALL, '%s: server_fqdn_list: %s' % (name, server_fqdn_list))
+	server_fqdn_list.sort()
 
 	ucr = univention.config_registry.ConfigRegistry()
 	ucr.load()    # dynamic reload
@@ -151,13 +215,43 @@ def update_ucr_overrides(excludeDN=None):
 
 		## check old value
 		old_ucr_locations = ucr.get(key)
-		if not old_ucr_locations or old_ucr_locations == 'ignore':
+		if old_ucr_locations == None or old_ucr_locations == 'ignore':
 			continue	## don't touch if unset or ignored
+		## Extract current prio/weight/port
+		old_server_fqdn_list = []
+		old_prio_weight_port = {}
+		priority=None; weight=None; port=None; target=None
+		for v in old_ucr_locations.split(' '):
+			try:
+				## Check explicit for None, because the int values may be 0
+				if priority == None: priority=int(v)
+				elif weight == None: weight=int(v)
+				elif port == None: port=int(v)
+				elif not target: target=v.rstrip('.')
+				if priority != None and weight != None and port != None and target:
+					old_server_fqdn_list.append(target)
+					old_prio_weight_port[target] = (priority, weight, port)
+					priority=None; weight=None; port=None; target=None
+			except ValueError as ex:
+				ud.debug(ud.LISTENER, ud.ERROR, '%s: Error parsing UCR variable %s: %s' % (name, key, ex))
+				priority=None; weight=None; port=None; target=None
 
 		## create new value
 		ucr_locations_list = []
+		## add the old ones in ucr given order, if they are still visible
+		done_list = []
+		for server_fqdn in old_server_fqdn_list:
+			if server_fqdn in server_fqdn_list:
+				_prio_weight_port_str = " ".join(map(str, old_prio_weight_port[server_fqdn]))
+				ucr_locations_list.append("%s %s." % (_prio_weight_port_str, server_fqdn))
+				done_list.append(server_fqdn)
+			else:
+				ud.debug(ud.LISTENER, ud.ALL, '%s: server in UCR not visible in LDAP: %s' % (name, server_fqdn))
+		## append the ones visible in LDAP but not yet in UCR:
 		for server_fqdn in server_fqdn_list:
-			ucr_locations_list.append("%s %s." % (prio_weight_port, server_fqdn))
+			if not server_fqdn in done_list:
+				_prio_weight_port_str = " ".join(map(str, prio_weight_port))
+				ucr_locations_list.append("%s %s." % (_prio_weight_port_str, server_fqdn))
 		ucr_locations = " ".join(ucr_locations_list)
 
 		## set new value
@@ -218,46 +312,6 @@ def delete(old_dn, old, command):
 		listener.unsetuid()
 
 
-################ <Hooks handling> ###############
-HOOKS_BASEDIR = "/usr/lib/univention-directory-listener/hooks"
-LISTENER_HOOKS_BASEDIR = os.path.join(HOOKS_BASEDIR, "%s.d" % (name,))
-
-def load_hooks():
-	hooks = []
-	if not os.path.isdir(LISTENER_HOOKS_BASEDIR):
-		return hooks
-
-	filenames = os.listdir(LISTENER_HOOKS_BASEDIR)
-	filenames.sort()
-	for filename in filenames:
-		if not filename.endswith('.py') or filename.startswith('__'):
-			continue
-		file_path = os.path.join(LISTENER_HOOKS_BASEDIR, filename)
-
-		modulename = '.'.join((name.replace('-', '_'), filename[:-3].replace('-', '_')))
-		ud.debug(ud.LISTENER, ud.ALL, "%s: importing '%s'" % (name, modulename))
-		try:
-			hook = imp.load_source(modulename, file_path)
-		except Exception as ex:
-			ud.debug(ud.LISTENER, ud.ERROR, "Error importing %s as %s:" % (file_path, modulename))
-			ud.debug(ud.LISTENER, ud.ERROR, traceback.format_exc())
-		hooks.append(hook)
-
-	return hooks
-
-def run_hooks(fname, *args):
-	global _hooks
-	for hook in _hooks:
-		if hasattr(hook, fname):
-			try:
-				hook_func = getattr(hook, fname)
-				hook_func(*args)
-			except Exception as ex:
-				ud.debug(ud.LISTENER, ud.ERROR, "Error running %s.%s():" % (hook.__name__, fname))
-				ud.debug(ud.LISTENER, ud.ERROR, traceback.format_exc())
-################ </Hooks handling> ##############
-
-
 def handler(dn, new, old, command):
 	if not _ucsschool_service_specialization_filter:
 		univention.debug.debug(univention.debug.LISTENER, univention.debug.INFO, '%s: Local UCS@school server type still unknown, ignoring.' % (name,))
@@ -304,29 +358,3 @@ def postrun():
 			trigger_sync_ucs_to_s4()
 
 	run_hooks("postrun")
-
-
-@LDAP_Connection(MACHINE_READ)
-def on_load(ldap_machine_read=None, ldap_position=None, search_base=None):
-	global _ldap_hostdn
-	global _hooks
-	_hooks = load_hooks()
-
-	global _ucsschool_service_specialization_filter
-	try:
-		res = ldap_machine_read.search(base=_ldap_hostdn, scope='base', attr=('univentionService',))
-		(record_dn, obj) = res[0]
-		services = obj['univentionService']
-		for service_id in ('UCS@school Education', 'UCS@school Management'):
-			if service_id in services:
-				_ucsschool_service_specialization_filter = "(univentionService=%s)" % service_id
-				break
-	except udm_errors.ldapError, e:
-		ud.debug(ud.LISTENER, ud.ERROR, '%s: Error accessing LDAP: %s' % (name, e))
-
-### Initialization of global variables
-listener.setuid(0)
-try:
-	on_load()
-finally:
-	listener.unsetuid()
