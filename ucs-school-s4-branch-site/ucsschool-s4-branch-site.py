@@ -110,14 +110,20 @@ def on_load(ldap_machine_read=None, ldap_position=None, search_base=None):
 	global _ucsschool_service_specialization_filter
 	try:
 		res = ldap_machine_read.search(base=_ldap_hostdn, scope='base', attr=('univentionService',))
-		(record_dn, obj) = res[0]
-		services = obj['univentionService']
-		for service_id in ('UCS@school Education', 'UCS@school Management'):
-			if service_id in services:
-				_ucsschool_service_specialization_filter = "(univentionService=%s)" % service_id
-				break
 	except udm_errors.ldapError, e:
 		ud.debug(ud.LISTENER, ud.ERROR, '%s: Error accessing LDAP: %s' % (name, e))
+		return
+
+	services = []
+	if res:
+		(record_dn, obj) = res[0]
+		if 'univentionService' in obj:
+			services = obj['univentionService']
+
+	for service_id in ('UCS@school Education', 'UCS@school Management'):
+		if service_id in services:
+			_ucsschool_service_specialization_filter = "(univentionService=%s)" % service_id
+			break
 
 ### Initialization of global variables
 listener.setuid(0)
