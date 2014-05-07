@@ -3,76 +3,85 @@
 ## roles: [domaincontroller_master, domaincontroller_backup, domaincontroller_slave, memberserver]
 ## tags: [apptest]
 ## exposure: dangerous
-## packages: [ucs-school-webproxy]
+## packages: [univention-samba4, ucs-school-webproxy]
 
 from essential.simplecurl import SimpleCurl
 from univention.config_registry import handler_set, handler_unset
+import itertools
 import pycurl
 import subprocess
 import univention.testing.ucr as ucr_test
 import univention.testing.utils as utils
 
-def checkGssnegotiate(host, url, http_code, enabled=True):
-	print 'Gssnegotiate proxy auth check, enabled = %r' % (enabled)
-	if enabled:
+def checkAuths(host, passwd,  url, (basic, ntlm, gneg), allow_wrong_passwd):
+	if basic or ntlm or gneg:
+		http_basic = 200 if (basic and not allow_wrong_passwd) else 407
+		http_ntlm = 200 if (ntlm and not allow_wrong_passwd) else 407
+		# in Gssnegotiate case kinit is called with the password
+		# if passwd is wrong it fails setting the auth up but returns 200
+		http_gneg = 200 if (gneg) else 407
+		checkBasic(host, passwd, url, http_basic)
+		checkNTLM(host, passwd, url, http_ntlm)
+		checkGssnegotiate(host, passwd, url, http_gneg, allow_wrong_passwd)
+	else:
+		# in case all auth are disabled, all return 200
+		http_code = 200 
+		checkBasic(host, passwd, url, http_code)
+		checkNTLM(host, passwd, url, http_code)
+		checkGssnegotiate(host, passwd, url, http_code, allow_wrong_passwd)
+
+def checkBasic(host, passwd, url, http_code):
+	print 'Performing Basic proxy auth check'
+	curl = SimpleCurl(proxy=host, password=passwd, auth=pycurl.HTTPAUTH_BASIC)
+	if http_code != curl.response(url):
+		utils.fail('Basic proxy auth check failed, http_code = %r, expected = %r' % (result, http_code))
+
+def checkNTLM(host, passwd, url, http_code):
+	print 'Performing NTLM proxy auth check'
+	curl = SimpleCurl(proxy=host, password=passwd, auth=pycurl.HTTPAUTH_NTLM)
+	if http_code != curl.response(url):
+		utils.fail('NTLM proxy auth check failed, http_code = %r, expected = %r' % (result, http_code))
+
+def checkGssnegotiate(host, passwd, url, http_code, allow_wrong_passwd):
+	print 'Performing Gssnegotiate proxy auth check'
+	curl = SimpleCurl(
+			proxy=host,
+			password=passwd,
+			auth=pycurl.HTTPAUTH_GSSNEGOTIATE)
+	pop = subprocess.Popen(
+			["kinit", "--password-file=STDIN", "Administrator"],
+			stdin=subprocess.PIPE)
+	pop.communicate(passwd)
+	subprocess.call(["klist"])
+	if http_code != curl.response(url):
+		utils.fail('Gssnegotiate proxy auth check failed, http_code = %r, expected = %r' % (result, http_code))
+	else:
+		if not allow_wrong_passwd and pop.returncode != 0:
+			utils.fail('kinit: correct Password used but did not work')
+
+def setAuthVariables((basic, ntlm, gneg)):
+	"""set ucr variables according to the auth states, and restart Squid"""
+	if basic:
+		handler_set(['squid/basicauth=yes'])
+	else:
+		handler_unset(['squid/basicauth'])
+	if ntlm:
+		handler_set(['squid/ntlmauth=yes'])
+	else:
+		handler_unset(['squid/ntlmauth'])
+	if gneg:
 		handler_set(['squid/krb5auth=yes'])
 		handler_set(['squid/krb5auth/keepalive=yes'])
 	else:
 		handler_unset(['squid/krb5auth'])
 		handler_unset(['squid/krb5auth/keepalive'])
 	subprocess.call(["/etc/init.d/squid3", "restart"])
-	kinit = subprocess.Popen([
-		"kinit",
-		"--password-file=STDIN",
-		"Administrator"],
-		stdin=subprocess.PIPE,
-		stdout=subprocess.PIPE).communicate('univention')[0]
-	klist = subprocess.Popen(["klist"],stdout=subprocess.PIPE).communicate()[0]
-	print kinit
-	print klist
-	adminCurl = SimpleCurl(proxy=host, auth=pycurl.HTTPAUTH_GSSNEGOTIATE)
-	page = adminCurl.getPage(url)
-	result = adminCurl.httpCode()
-	adminCurl.close()
-	print result
-	print page[0:200]
-	if result != http_code:
-		utils.fail('Gssnegotiate proxy auth check failed with http_code = %r, expected = %r' % (
-			result, http_code))
 
-def checkNTLM(host, url, http_code, enabled=True):
-	print 'NTLM proxy auth check, enabled = %r' % (enabled)
-	if enabled:
-		handler_set(['squid/ntlmauth=yes'])
-	else:
-		handler_unset(['squid/ntlmauth'])
-	subprocess.call(["/etc/init.d/squid3", "restart"])
-	adminCurl = SimpleCurl(proxy=host, auth=pycurl.HTTPAUTH_NTLM)
-	page = adminCurl.getPage(url)
-	result = adminCurl.httpCode()
-	adminCurl.close()
-	print result
-	print page[0:200]
-	if result != http_code:
-		utils.fail('NTLM proxy auth check failed with http_code = %r, expected = %r' % (
-			result, http_code))
-	
-def checkBasic(host, url, http_code, enabled=True):
-	print 'Basic proxy auth check, enabled = %r' % (enabled)
-	if enabled:
-		handler_set(['squid/basicauth=yes'])
-	else:
-		handler_unset(['squid/basicauth'])
-	subprocess.call(["/etc/init.d/squid3", "restart"])
-	adminCurl = SimpleCurl(proxy=host, auth=pycurl.HTTPAUTH_BASIC)
-	page = adminCurl.getPage(url)
-	result = adminCurl.httpCode()
-	adminCurl.close()
-	print result
-	print page[0:200]
-	if result != http_code:
-		utils.fail('Basic proxy auth check failed with http_code = %r, expected = %r' % (
-			result, http_code))
+def printHeader(state, passwd, allow_wrong_passwd):
+	print '-' * 40
+	print '(Basic, NTLM, Gssnegotiate) = %s' % (state,)
+	print 'Password used: %s, allow_wrong_passwd: %s' % (
+			passwd, allow_wrong_passwd)
 
 def main():
 	with ucr_test.UCSTestConfigRegistry() as ucr:
@@ -80,18 +89,23 @@ def main():
 		url = 'http://www.univention.de'
 		host = '%s.%s' % (ucr.get('hostname'), ucr.get('domainname'))
 
+		# list of tuples (passwd, allow_wrong_passwd) used in the test
+		passwords = [('univention', False),('wrong_passwd',True)]
 
-		# Basic Auth Check
-		checkBasic(host, url, http_code=407, enabled=False,)
-		checkBasic(host, url, http_code=200)
+		# Generate all the possibilities for the auth states
+		# [(0, 0, 0), (0, 0, 1), (0, 1, 0), (0, 1, 1), 
+		#  (1, 0, 0), (1, 0, 1), (1, 1, 0), (1, 1, 1)]
+		authStates = list(itertools.product([0,1], repeat=3))
 
-		# NTLM Auth Check
-		checkNTLM(host, url, http_code=200)
-		checkNTLM(host, url, http_code=407, enabled=False)
+		for passwd, allow_wrong_passwd in passwords:
+			for state in authStates:
+				printHeader(state, passwd, allow_wrong_passwd)
 
-		# Gssnegotiate Auth Check
-		checkGssnegotiate(host, url, http_code=200)
-		checkGssnegotiate(host, url, http_code=407, enabled=False)
+				# set ucr variables according to the auth states
+				setAuthVariables(state)
+
+				# Perform the checks
+				checkAuths(host, passwd, url, state, allow_wrong_passwd)
 
 if __name__ == '__main__':
 	main()
