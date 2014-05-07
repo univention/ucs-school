@@ -1,3 +1,9 @@
+ucs-test-ucsschool (1.0.21-1) unstable; urgency=low
+
+  * Bug #34281 change exposure to dangerous
+
+ -- Ammar Najjar <najjar@univention.de>  Wed, 07 May 2014 12:43:10 +0200
+
 ucs-test-ucsschool (1.0.20-2) unstable; urgency=medium
 
   * Make 16_s4_slave_automatic_srv_record also work on nonedu-slave
