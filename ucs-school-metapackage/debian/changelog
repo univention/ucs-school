@@ -1,3 +1,9 @@
+ucs-school-metapackage (6.0.7-21) unstable; urgency=medium
+
+  * Depend on ucs-school-s4-branch-site or univention-samba  (Bug #32187)
+
+ -- Arvid Requate <requate@univention.de>  Thu, 08 May 2014 12:12:55 +0200
+
 ucs-school-metapackage (6.0.7-20) unstable; urgency=medium
 
   * Use ucs-school-s4-branch-site in ucs-school-*slave (Bug #32187)
