@@ -59,7 +59,7 @@ class School(UCSSchoolHelperAbstractClass):
 
 	def build_hook_line(self, hook_time, func_name):
 		if func_name == 'create':
-			return self._build_hook_line(self.name, self.dc_name)
+			return self._build_hook_line(self.name, self.get_dc_name())
 
 	def get_district(self):
 		if ucr.is_true('ucsschool/ldap/district/enable'):
@@ -168,15 +168,27 @@ class School(UCSSchoolHelperAbstractClass):
 			group.create(lo)
 			group.add_umc_policy(self.get_umc_policy_dn('staff'), lo)
 
-	def get_share_fileserver_dn(self, set_by_self, lo):
-		if set_by_self:
-			hostname = set_by_self
-		elif self.dc_name:
-			hostname = self.dc_name
-		elif ucr.is_true('ucsschool/singlemaster', False):
-			hostname = ucr.get('hostname')
+	def get_dc_name_fallback(self, administrative=False):
+		if administrative:
+			return 'dc%sv-01' % self.name.lower() # this is the naming convention, a trailing v for Verwaltungsnetz DCs
 		else:
-			hostname = 'dc%s-01' % self.name.lower()
+			return 'dc%s-01' % self.name.lower()
+
+	def get_dc_name(self, administrative=False):
+		if ucr.is_true('ucsschool/singlemaster', False):
+			return ucr.get('hostname')
+		elif self.dc_name:
+			if administrative:
+				return '%sv' % self.dc_name
+			else:
+				return self.dc_name
+		else:
+			return self.get_dc_name_fallback(administrative=administrative)
+
+	def get_share_fileserver_dn(self, set_by_self, lo):
+		hostname = set_by_self or self.get_dc_name()
+		if hostname == self.get_dc_name_fallback():
+			# does not matter if exists or not - dc object will be created later
 			host = SchoolDC.get(hostname, self.name)
 			return host.dn
 
@@ -232,17 +244,14 @@ class School(UCSSchoolHelperAbstractClass):
 	def add_domain_controllers(self, lo):
 		school_dcs = ucr.get('ucsschool/ldap/default/dcs', 'edukativ').split()
 		for dc in school_dcs:
-			if dc == 'verwaltung':
+			administrative = dc == 'verwaltung'
+			if administrative:
 				if not ucr.is_true('ucsschool/ldap/noneducational/create/objects', True):
 					continue
 				groups = self.get_administrative_group_name('noneducational', ou_specific='both', as_dn=True)
-				dc_name = '%sv' % self.dc_name or 'dc%sv-01' % self.name.lower() # this is the naming convention, a trailing v for Verwaltungsnetz DCs
-
 			else:
-				dc_name = self.dc_name or 'dc%s-01' % self.name.lower()
 				groups = self.get_administrative_group_name('educational', ou_specific='both', as_dn=True)
-			if ucr.is_true('ucsschool/singlemaster', False):
-				dc_name = ucr.get('hostname')
+			dc_name = self.get_dc_name(administrative=administrative)
 
 			server = AnyComputer.get_first_udm_obj(lo, 'cn=%s' % escape_filter_chars(dc_name))
 			if not server and not self.dc_name:

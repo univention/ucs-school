@@ -1,3 +1,10 @@
+ucs-school-lib (5.0.23-1) unstable; urgency=low
+
+  * Bug #34337: Fix school creation: getting correct DC name; fixing
+    initializing of UDM modules
+
+ -- Dirk Wiesenthal <wiesenthal@univention.de>  Thu, 08 May 2014 23:53:35 +0200
+
 ucs-school-lib (5.0.22-1) unstable; urgency=low
 
   * Bug #34337: Fix school creation: adding DC with correct groups

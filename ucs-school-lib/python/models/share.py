@@ -78,9 +78,9 @@ class ClassShare(UCSSchoolHelperAbstractClass):
 		return super(ClassShare, self).do_modify(udm_obj, lo)
 
 	def get_server_fqdn(self, lo):
-		from ucsschool.lib.models.school import School
 		domainname = ucr.get('domainname')
-		school_dn = School.get(self.school).dn
+		school = self.get_school_obj(lo)
+		school_dn = school.dn
 
 		# fetch serverfqdn from OU
 		result = lo.get(school_dn, ['ucsschoolClassShareFileServer'])
@@ -112,7 +112,7 @@ class ClassShare(UCSSchoolHelperAbstractClass):
 					return '%s.%s' % (alternative_server_uid, domainname)
 
 		# fallback
-		return 'dc%s-01.%s' % (self.school.lower(), domainname)
+		return '%s.%s' (school.get_dc_name_fallback(), domainname)
 
 	class Meta:
 		udm_module = 'shares/share'

@@ -499,6 +499,7 @@ class UCSSchoolHelperAbstractClass(object):
 		If you want to re-search, you need to explicitely set
 		  self._udm_obj_searched = False
 		'''
+		self.init_udm_module(lo)
 		if self._udm_obj_searched is False:
 			dn = self.old_dn or self.dn
 			superordinate = self.get_superordinate()
@@ -514,13 +515,13 @@ class UCSSchoolHelperAbstractClass(object):
 				logger.debug('Getting UDM object by filter: %s' % filter_str)
 				self._udm_obj = self.get_first_udm_obj(lo, filter_str, superordinate)
 			else:
+				logger.debug('Getting UDM object by dn: %s' % dn)
 				try:
-					logger.debug('Getting UDM object by dn: %s' % dn)
 					self._udm_obj = udm_modules.lookup(self._meta.udm_module, None, lo, scope='base', base=dn, superordinate=superordinate)[0]
 				except (noObject, IndexError):
 					self._udm_obj = None
-			if self._udm_obj:
-				self._udm_obj.open()
+				else:
+					self._udm_obj.open()
 			self._udm_obj_searched = True
 		return self._udm_obj
 
@@ -672,14 +673,12 @@ class UCSSchoolHelperAbstractClass(object):
 		raises noObject if the udm_module does not match the dn
 		or dn is not found
 		'''
-		cls.init_udm_module(lo)
 		try:
 			logger.info('Looking up %s with dn %r' % (cls.__name__, dn))
 			udm_obj = udm_modules.lookup(cls._meta.udm_module, None, lo, filter=cls._meta.udm_filter, base=dn, scope='base', superordinate=superordinate)[0]
 		except IndexError:
 			# happens when cls._meta.udm_module does not "match" the dn
 			raise noObject('Wrong objectClass')
-		udm_obj.open()
 		obj = cls.from_udm_obj(udm_obj, school, lo)
 		if obj:
 			obj.custom_dn = dn
