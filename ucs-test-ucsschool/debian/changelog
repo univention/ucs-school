@@ -1,3 +1,9 @@
+ucs-test-ucsschool (1.0.26-1) unstable; urgency=low
+
+  * Bug #34477: disabled script 08_ucs-school-printermoderatoion-find-printer-in-ou-check
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Thu, 08 May 2014 20:50:57 +0200
+
 ucs-test-ucsschool (1.0.25-3) unstable; urgency=medium
 
   * Work around missing attribute on Verwaltungs-DC
