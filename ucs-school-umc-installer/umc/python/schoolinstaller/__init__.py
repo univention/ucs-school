@@ -59,7 +59,9 @@ from univention.management.console.config import ucr
 from univention.management.console.modules.decorators import simple_response, sanitize
 from univention.management.console.modules.sanitizers import StringSanitizer, ChoicesSanitizer
 import univention.uldap
+import univention.admin.uldap
 import univention.admin.modules as udm_modules
+udm_modules.update()
 from ucsschool.lib.schoolldap import SchoolSearchBase
 
 from univention.lib.i18n import Translation
@@ -242,10 +244,12 @@ def create_ou_local(ou, displayName):
 		return False
 	return True
 
-def create_ou_remote(master, username, password, ou, display_name, slave):
+def create_ou_remote(master, username, password, ou, display_name, educational_slave, administrative_slave=None):
 	"""Create a school OU via the UMC interface."""
 	try:
-		opts = [{'object' : {'name' : ou, 'display_name' : display_name, 'dc_name' : slave}}]
+		opts = [{'object' : {'name' : ou, 'display_name' : display_name, 'dc_name_educational' : educational_slave}}]
+		if administrative_slave:
+			opts[0]['object']['dc_name_administrative'] = administrative_slave
 		umc(username, password, master, ['schoolwizards/schools/create', '-e', '-o', repr(opts), '-f', 'schoolwizards/schools'])
 	except RuntimeError:
 		return False
@@ -484,12 +488,100 @@ class Instance(Base):
 		return self.progress_state.poll()
 
 	@sanitize(
+		master=HostSanitizer(required=True, regex_pattern=RE_HOSTNAME),
+		username=StringSanitizer(required=True),
+		password=StringSanitizer(required=True),
+		schoolOU=StringSanitizer(required=True),
+	)
+	def get_schoolinfo(self, request):
+		username = request.options.get('username')
+		password = request.options.get('password')
+		master = request.options.get('master')
+		schoolOU = request.options.get('schoolOU')
+
+		serverRole = ucr.get('server/role')
+		if serverRole != 'domaincontroller_slave':
+			# use the credentials of the currently authenticated user on a master/backup system
+			username = self._username
+			password = self._password
+			master = '%s.%s' % (ucr.get('hostname'), ucr.get('domainname'))
+		if serverRole == 'domaincontroller_backup':
+			master = ucr.get('ldap/master')
+
+		# check for valid school OU
+		if not RE_OU.match(schoolOU):
+			result = {'success': False, 'error': _('The specified school OU is not valid.')}
+		else:
+			# get OU information
+			result = self._get_schoolinfo(self, username, password, master, schoolOU)
+		self.finished(request.id, result)
+
+	def _get_schoolinfo(self, username, password, master, schoolOU):
+		"""
+		Fetches LDAP information from master about specified OU.
+		This function assumes that the given arguments have already been validated!
+		"""
+
+		# try to query the LDAP base of the master
+		try:
+			ucrMaster = get_ucr_master(username, password, master, 'ldap/base', 'ldap/master/port')
+		except RuntimeError as err:
+			MODULE.warn('Could not query the LDAP base of the master system %s.' % master)
+			return {'success': False, 'error': str(err)}
+
+		values = {'exists': False,
+				  'school': schoolOU,
+				  'classShareServer': None,
+				  'homeShareServer': None,
+				  'educational_slaves': [],
+				  'administrative_slaves': [],
+				  }
+
+		try:
+			# get the userDN from the master
+			userDN = get_user_dn(username, password, master)
+			lo = univention.admin.uldap.access(host=master, base=ucrMaster.get('ldap/base'), port=int(ucrMaster.get('ldap/master/port', '7389')), binddn=userDN, bindpw=password)
+
+			# initialize required UDM modules
+			for module_name in ('computers/domaincontroller_slave', 'container/ou'):
+				module = udm_modules.get(module_name)
+				position = univention.admin.uldap.position(ucrMaster.get('ldap/base'))
+				udm_modules.init(lo, position, module)
+
+			# check if the OU already exists
+			result = udm_modules.lookup('container/ou', None, lo, base=ucrMaster.get('ldap/base'), scope='sub', filter='(&(objectClass=ucsschoolOrganizationalUnit)(name=%s))' % schoolOU)
+			if result:
+				# OU already exists...
+				values['exists'] = True
+				values['classShareServer'] = result[0].get('ucsschoolClassShareFileServer')
+				values['homeShareServer'] = result[0].get('ucsschoolHomeShareFileServer')
+				# ...find all joined slave systems in the ou
+				searchBase = SchoolSearchBase([schoolOU], ldapBase=ucrMaster.get('ldap/base'))
+				slaves = udm_modules.lookup('computers/domaincontroller_slave', None, lo, base=searchBase.computers, scope='sub', filter='service=LDAP')
+
+				# make sure that no joined DC slave is the main DC for this school
+				for islave in slaves:
+					islave.open()
+					if searchBase.educationalDCGroup in islave['groups']:
+						values['educational_slaves'].append(islave['name'])
+					if searchBase.administrativeDCGroup in islave['groups']:
+						values['administrative_slaves'].append(islave['name'])
+		except univention.uldap.ldap.LDAPError as err:
+			MODULE.warn('LDAP connection to %s failed: %s' % (master, err))
+			return {'success': False, 'error': _('The LDAP connection to the master system %s failed.') % master}
+
+		return {'success': True, 'schoolinfo': values}
+
+
+	@sanitize(
 		username=StringSanitizer(required=True),
 		password=StringSanitizer(required=True),
 		master=HostSanitizer(required=True, regex_pattern=RE_HOSTNAME),
 		samba=ChoicesSanitizer(['3', '4']),
 		schoolOU=StringSanitizer(required=True),
 		setup=ChoicesSanitizer(['multiserver', 'singlemaster']),
+		server_type=ChoicesSanitizer(['educational', 'administrative']),
+		name_edu_server=HostSanitizer(regex_pattern=RE_HOSTNAME),
 	)
 	def install(self, request):
 		# get all arguments
@@ -498,7 +590,9 @@ class Instance(Base):
 		master = request.options.get('master')
 		samba = request.options.get('samba')
 		schoolOU = request.options.get('schoolOU')
+		educational_slave = request.options.get('name_edu_server')
 		OUdisplayname = request.options.get('OUdisplayname', schoolOU)  # use school OU name as fallback
+		server_type = request.options.get('server_type')
 		setup = request.options.get('setup')
 		serverRole = ucr.get('server/role')
 		joined = os.path.exists('/var/univention-join/joined')
@@ -560,44 +654,17 @@ class Instance(Base):
 			# to be able to build up secure connections
 			certOrigFile = retrieveRootCertificate(master)
 
-			# try to query the LDAP base of the master
-			try:
-				ucrMaster = get_ucr_master(username, password, master, 'ldap/base', 'ldap/master/port')
-			except RuntimeError as err:
-				MODULE.warn('Could not query the LDAP base of the mater system %s.' % master)
-				_error(str(err))
-				return
-
-			# make sure that it is safe to join into the specified school OU
-			try:
-				# get the userDN from the master
-				userDN = get_user_dn(username, password, master)
-				lo = univention.uldap.access(host=master, base=ucrMaster.get('ldap/base'), port=int(ucrMaster.get('ldap/master/port', '7389')), binddn=userDN, bindpw=password)
-
-				# check whether we may create and join into the OU
-				result = udm_modules.lookup('container/ou', None, lo, base=ucrMaster.get('ldap/base'), scope='sub', filter='name=%s' % schoolOU)
-				if result:
-					# OU already exists... find all joined slave systems in the ou
-					searchBase = SchoolSearchBase([schoolOU], ldapBase=ucrMaster.get('ldap/base'))
-					slaves = udm_modules.lookup('computers/domaincontroller_slave', None, lo, base=searchBase.computers, scope='sub', filter='service=LDAP')
-
-					# make sure that no joined DC slave is the main DC for this school
-					for islave in slaves:
-						islave.open()
-						if searchBase.educationalDCGroup in islave['groups'] and ucr.get('hostname') != islave['name']:
-							# school OU already has a joined main DC
-							_error(_('The OU "%s" is already in use and has been assigned to a different slave domain controller system. Please choose a different name for the associated school OU.') % schoolOU)
-							return
-			except univention.uldap.ldap.LDAPError as err:
-				MODULE.warn('Could not build up LDAP connection to %s: %s' % (master, err))
-				_error(_('Cannot build up an LDAP connection to master system %s.') % master)
+			schoolinfo = self._get_schoolinfo(username, password, master, schoolOU)
+			if not schoolinfo.get('success'):
+				MODULE.error('Failed to get schoolinfo for school %r:\n%r' % (schoolOU, schoolinfo))
+				_error(schoolinfo.get('msg', _('The LDAP connection to the master system %s failed.') % (master,)))
 				return
 
 		# everything ok, try to acquire the lock for the package installation
 		lock_aquired = self.package_manager.lock(raise_on_fail=False)
 		if not lock_aquired:
 			MODULE.warn('Could not aquire lock for package manager')
-			_error(_('Cannot get lock for installation process. Another Package Manager seems to block the operation.'))
+			_error(_('Cannot get lock for installation process. Another package manager seems to block the operation.'))
 			return
 
 		# see which packages we need to install
@@ -617,7 +684,10 @@ class Instance(Base):
 				installPackages.extend(['univention-samba', 'univention-samba-slave-pdc'])
 			elif sambaVersionInstalled == 4:  # safety fallback if samba is unset
 				installPackages.extend(['univention-samba4', 'univention-s4-connector'])
-			installPackages.append('ucs-school-slave')
+			if server_type == 'educational':
+				installPackages.append('ucs-school-slave')
+			else:
+				installPackages.append('ucs-school-nonedu-slave')
 		else:
 			# master or backup
 			if setup == 'singlemaster':
@@ -670,7 +740,11 @@ class Instance(Base):
 				progress_state.info = ''
 				if serverRole == 'domaincontroller_slave':
 					# create ou remotely on the slave
-					success = create_ou_remote(master, username, password, schoolOU, OUdisplayname, ucr.get('hostname'))
+					if server_type == 'educational':
+						success = create_ou_remote(master, username, password, schoolOU, OUdisplayname, ucr.get('hostname'))
+					else:
+						# create DC in administrative network
+						success = create_ou_remote(master, username, password, schoolOU, OUdisplayname, educational_slave, ucr.get('hostname'))
 				elif serverRole == 'domaincontroller_master':
 					# create ou locally on the master
 					success = create_ou_local(schoolOU, OUdisplayname)

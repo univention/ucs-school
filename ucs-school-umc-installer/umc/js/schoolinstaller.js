@@ -199,6 +199,29 @@ define([
 					content: '<p>' + _('For the single server environment, all school OUs are accessed from the master system itself.') + '</p>'
 				}]
 			}, {
+				name: 'server_type',
+				headerText: _('UCS@school - educational server vs. administrative server'),
+				helpText: _('<p>The UCS@school multi server environment distinguishes between educational servers and administrative servers. The educational servers provide all educational functions of UCS@school. The administrative servers only provide a very limited set of functions, e.g. logon services for staff users.</p><p>Usually the domaincontroller slave is configured as educational server.</p>'),
+				widgets: [{
+					type: ComboBox,
+					name: 'server_type',
+					label: _('Please choose the server type for this domaincontroller slave:'),
+					staticValues: [ { id: 'educational', label: _('Educational server') },
+									{ id: 'administrative', label: _('Administrative server') }]
+				}]
+			}, {
+				name: 'administrativesetup',
+				headerText: _('UCS@school - extended school OU setup'),
+				helpText: _('During installation this server will be configured as administrative server. To create the specified school, the name of a second/future domaincontroller slave is required, which will be configured as educational server.'),
+				widgets: [{
+					type: TextBox,
+					name: 'nameEduServer',
+					label: _("Name of educational school server"),
+					description: _('Name of the educational domaincontroller slave for the new school. The server name may consist of the letters a-z, the digits 0-9 and underscores. The name of the educational server may not be equal to the administrative server!'),
+					regExp: '^[a-zA-Z0-9](([a-zA-Z0-9_]*)([a-zA-Z0-9]$))?$',
+					required: true
+				}]
+			}, {
 				name: 'error',
 				headerText: _('UCS@school - an error ocurred'),
 				helpText: _('An error occurred during the installation of UCS@school. The following information will give you some more details on which problems occurred during the installation process.'),
@@ -372,7 +395,7 @@ define([
 					next = 'setup';
 				}
 
-				// show credentials page only on domaincontroller Slave
+				// show credentials page only on domaincontroller slave
 				if (next == 'credentials' && this._serverRole != 'domaincontroller_slave') {
 					next = 'samba';
 				}
@@ -383,68 +406,44 @@ define([
 					next = 'school';
 				}
 
-				// no schoolOU page on a DC master w/multi server environment and a DC backup in general
+				// no schoolOU/server_type/administrativesetup page on a DC master w/multi server environment and a DC backup in general
 				if (next == 'school' && ((this.getWidget('setup', 'setup').get('value') == 'multiserver' && this._serverRole == 'domaincontroller_master') || this._serverRole == 'domaincontroller_backup')) {
 					next = 'install';
 				}
 
-				// after the schoolOU page, the installation begins
-				if (pageName == 'school') {
+				// show server type page only on domaincontroller slave
+				if (next == 'server_type' && this._serverRole != 'domaincontroller_slave') {
+					next = 'install';
+				}
+
+				// show administrativesetup page only if the selected server type is 'administrative'
+				if (next == 'administrativesetup' && this.getWidget('server_type', 'server_type').get('value') == 'educational') {
+					next = 'install';
+				}
+
+				// show managementsetup page only if no slave has been specified or OU does not exist yet
+				if (next == 'administrativesetup') {
+					this.standby(true);
+					var args = { schoolOU: this.getWidget('school', 'schoolOU').get('value') };
+					next = tools.umcpCommand('schoolinstaller/get/schoolinfo', args).then(lang.hitch(this, function(data) {
+						this.standby(false);
+						if (data.result.educational_slaves) {
+							this.getWidget('administrativesetup', 'nameEduServer').set('value', data.result.educational_slaves[0]);
+							return this._start_installation(); // Warning: the deferred object returns a deferred object!
+						} else {
+							return 'administrativesetup';
+						}
+					}));
+				}
+
+				// after the administrativesetup page, the installation begins
+				if (pageName == 'administrativesetup') {
 					next = 'install';
 				}
 
 				// installation
 				if (next == 'install') {
-					// start standby animation
-					var values = this.getValues();
-
-					// clear entered password and make sure that no error is indicated
-					this.getWidget('credentials', 'password').set('value', '');
-					this.getWidget('credentials', 'password').set('state', 'Incomplete');
-
-					// request installation
-					next = dialog.confirm('<div style="max-width: 500px">' + _('All necessary information for the installation of UCS@school on this system has been collected. Please confirm now to continue with the installation process.') + '</div>', [{
-						name: 'cancel',
-						label: _('Cancel'),
-						'default': true
-					}, {
-						name: 'install',
-						label: _('Install')
-					}]).then(lang.hitch(this, function(install) {
-						if (install == 'cancel') {
-							return pageName;
-						}
-						this.standby(true);
-						return tools.umcpCommand('schoolinstaller/install', values).then(lang.hitch(this, function(result) {
-							if (!result.result.success) {
-								this.getWidget('error', 'info').set('content', result.result.error);
-								return 'error';
-							}
-
-							// show the progress bar
-							this._progressBar.reset(_('Starting the configuration process...' ));
-							this.standby(false);
-							this.standby(true, this._progressBar);
-							var deferred = new Deferred();
-							this._progressBar.auto(
-								'schoolinstaller/progress',
-								{},
-								lang.hitch(this, '_installationFinished', deferred),
-								undefined,
-								undefined,
-								true
-							);
-							return deferred;
-						}), lang.hitch(this, function(error) {
-							// an unexpected error occurred
-							this.getWidget('error', 'info').set('content', _('An unexpected error occurred.'));
-							return 'error';
-						}));
-					}));
-
-					next.then(lang.hitch(this, function() {
-						this.standby(false);
-					}));
+					next = this._start_installation();
 				}
 
 				when(next, lang.hitch(this, function(next) {
@@ -457,6 +456,60 @@ define([
 
 				return next;
 			}));
+		},
+
+		_start_installation: function() {
+			var values = this.getValues();
+
+			// clear entered password and make sure that no error is indicated
+			this.getWidget('credentials', 'password').set('value', '');
+			this.getWidget('credentials', 'password').set('state', 'Incomplete');
+
+			// request installation
+			next = dialog.confirm('<div style="max-width: 500px">' + _('All necessary information for the installation of UCS@school on this system has been collected. Please confirm now to continue with the installation process.') + '</div>', [{
+				name: 'cancel',
+				label: _('Cancel'),
+				'default': true
+			}, {
+				name: 'install',
+				label: _('Install')
+			}]).then(lang.hitch(this, function(install) {
+				if (install == 'cancel') {
+					return pageName;
+				}
+				this.standby(true);
+				return tools.umcpCommand('schoolinstaller/install', values).then(lang.hitch(this, function(result) {
+					if (!result.result.success) {
+						this.getWidget('error', 'info').set('content', result.result.error);
+						return 'error';
+					}
+
+					// show the progress bar
+					this._progressBar.reset(_('Starting the configuration process...' ));
+					this.standby(false);
+					this.standby(true, this._progressBar);
+					var deferred = new Deferred();
+					this._progressBar.auto(
+						'schoolinstaller/progress',
+						{},
+						lang.hitch(this, '_installationFinished', deferred),
+						undefined,
+						undefined,
+						true
+					);
+					return deferred;
+				}), lang.hitch(this, function(error) {
+					// an unexpected error occurred
+					this.getWidget('error', 'info').set('content', _('An unexpected error occurred.'));
+					return 'error';
+				}));
+			}));
+
+			next.then(lang.hitch(this, function() {
+				this.standby(false);
+			}));
+
+			return next;
 		},
 
 		_update_school_page: function() {

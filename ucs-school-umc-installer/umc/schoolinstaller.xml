@@ -12,5 +12,6 @@
 	<command name="schoolinstaller/credentials" function="credentials"/>
 	<command name="schoolinstaller/samba" function="samba"/>
 	<command name="schoolinstaller/progress" function="progress"/>
+	<command name="schoolinstaller/get/schoolinfo" function="get_schoolinfo"/>
   </module>
 </umc>
