@@ -41,6 +41,7 @@ from ldap.filter import escape_filter_chars
 import univention.admin.uldap as udm_uldap
 from univention.admin.uexceptions import noObject
 import univention.admin.modules as udm_modules
+import univention.admin.objects as udm_objects
 from univention.admin.filter import conjunction, expression
 from univention.management.console.modules.sanitizers import LDAPSearchSanitizer
 
@@ -51,6 +52,10 @@ from ucsschool.lib.models.utils import ucr, _, logger
 
 HOOK_SEP_CHAR = '\t'
 HOOK_PATH = '/usr/share/ucs-school-import/hooks/'
+
+class MultipleObjectsError(Exception):
+	def __init__(self, objs):
+		self.objs = objs
 
 class UCSSchoolHelperAbstractClass(object):
 	'''
@@ -351,7 +356,11 @@ class UCSSchoolHelperAbstractClass(object):
 				raise ValidationError(self.errors.copy())
 
 		pos = udm_uldap.position(ucr.get('ldap/base'))
-		pos.setDn(self.get_own_container())
+		container = self.get_own_container()
+		if not container:
+			logger.error('%r cannot determine a container. Unable to create!')
+			return False
+		pos.setDn(container)
 		udm_obj = udm_modules.get(self._meta.udm_module).object(None, lo, pos, superordinate=self.get_superordinate())
 		udm_obj.open()
 
@@ -409,7 +418,7 @@ class UCSSchoolHelperAbstractClass(object):
 		udm_obj = self.get_udm_object(lo)
 		same = old_attrs == udm_obj.info
 		if udm_obj.dn != self.dn:
-			udm_obj.move(self.dn)
+			udm_obj.move(self.dn, ignore_license=1)
 			same = False
 		if same:
 			logger.info('%r not modified. Nothing changed' % self)
@@ -490,6 +499,7 @@ class UCSSchoolHelperAbstractClass(object):
 		'''
 		if self._udm_obj_searched is False:
 			dn = self.old_dn or self.dn
+			superordinate = self.get_superordinate()
 			if dn is None:
 				logger.debug('Getting UDM object: No DN!')
 				return
@@ -500,17 +510,28 @@ class UCSSchoolHelperAbstractClass(object):
 				name = self.get_name_from_dn(dn)
 				filter_str = '%s=%s' % (udm_name, escape_filter_chars(name))
 				logger.debug('Getting UDM object by filter: %s' % filter_str)
-				self._udm_obj = self.get_first_udm_obj(lo, filter_str)
+				self._udm_obj = self.get_first_udm_obj(lo, filter_str, superordinate)
 			else:
 				try:
 					logger.debug('Getting UDM object by dn: %s' % dn)
-					self._udm_obj = udm_modules.lookup(self._meta.udm_module, None, lo, scope='base', base=dn)[0]
+					self._udm_obj = udm_modules.lookup(self._meta.udm_module, None, lo, scope='base', base=dn, superordinate=superordinate)[0]
 				except (noObject, IndexError):
 					self._udm_obj = None
 			if self._udm_obj:
 				self._udm_obj.open()
 			self._udm_obj_searched = True
 		return self._udm_obj
+
+	def get_school_obj(self, lo):
+		from ucsschool.lib.models.school import School
+		if not self.supports_school():
+			return None
+		school = School.get(self.school)
+		try:
+			return School.from_dn(school.dn, None, lo)
+		except noObject:
+			logger.warning('%r does not exist!' % school)
+			return None
 
 	def get_superordinate(self):
 		return None
@@ -543,7 +564,7 @@ class UCSSchoolHelperAbstractClass(object):
 		cls._initialized_udm_modules.append(cls._meta.udm_module)
 
 	@classmethod
-	def get_all(cls, lo, school, filter_str=None):
+	def get_all(cls, lo, school, filter_str=None, superordinate=None):
 		'''
 		Returns a list of all objects that can be found in cls.get_container() with the
 		correct udm_module
@@ -561,9 +582,9 @@ class UCSSchoolHelperAbstractClass(object):
 		complete_filter = str(complete_filter)
 		logger.info('Getting all %s of %s with filter %r' % (cls.__name__, school, complete_filter))
 		try:
-			udm_objs = udm_modules.lookup(cls._meta.udm_module, None, lo, filter=complete_filter, base=cls.get_container(school), scope='sub')
+			udm_objs = udm_modules.lookup(cls._meta.udm_module, None, lo, filter=complete_filter, base=cls.get_container(school), scope='sub', superordinate=superordinate)
 		except noObject:
-			logger.warning('Error while getting all %s of %s: %s does not exist!' % (cls.__name__, school, cls.get_container(school)))
+			logger.warning('Error while getting all %s of %s: %r does not exist!' % (cls.__name__, school, cls.get_container(school)))
 			return []
 		ret = []
 		for udm_obj in udm_objs:
@@ -603,7 +624,9 @@ class UCSSchoolHelperAbstractClass(object):
 		for name, attr in cls._attributes.iteritems():
 			if attr.udm_name:
 				attrs[name] = udm_obj[attr.udm_name]
-		return cls(**attrs)
+		obj = cls(**attrs)
+		obj.set_dn(udm_obj.dn)
+		return obj
 
 	@classmethod
 	def get_class_for_udm_obj(cls, udm_obj, school):
@@ -636,13 +659,15 @@ class UCSSchoolHelperAbstractClass(object):
 		return self.name < other.name
 
 	@classmethod
-	def from_dn(cls, dn, school, lo):
+	def from_dn(cls, dn, school, lo, superordinate=None):
 		'''Returns a new instance based on the UDM object found at dn
 		raises noObject if the udm_module does not match the dn
+		or dn is not found
 		'''
 		cls.init_udm_module(lo)
 		try:
-			udm_obj = udm_modules.lookup(cls._meta.udm_module, None, lo, filter=cls._meta.udm_filter, base=dn, scope='base')[0]
+			logger.info('Looking up %s with dn %r' % (cls.__name__, dn))
+			udm_obj = udm_modules.lookup(cls._meta.udm_module, None, lo, filter=cls._meta.udm_filter, base=dn, scope='base', superordinate=superordinate)[0]
 		except IndexError:
 			# happens when cls._meta.udm_module does not "match" the dn
 			raise noObject('Wrong objectClass')
@@ -653,20 +678,40 @@ class UCSSchoolHelperAbstractClass(object):
 			return obj
 
 	@classmethod
-	def get_first_udm_obj(cls, lo, filter_str):
-		'''Returns the first UDM object of class cls._meta.udm_module that
-		matches a given filter
+	def get_only_udm_obj(cls, lo, filter_str, superordinate=None):
+		'''Returns the one UDM object of class cls._meta.udm_module that
+		matches a given filter.
+		If more than one is found, a MultipleObjectsError is raised
+		If none is found, None is returned
 		'''
 		cls.init_udm_module(lo)
 		if cls._meta.udm_filter:
 			filter_str = '(&(%s)(%s))' % (cls._meta.udm_filter, filter_str)
-		try:
-			obj = udm_modules.lookup(cls._meta.udm_module, None, lo, scope='sub', base=ucr.get('ldap/base'), filter=str(filter_str))[0]
-		except IndexError:
+		objs = udm_modules.lookup(cls._meta.udm_module, None, lo, scope='sub', base=ucr.get('ldap/base'), filter=str(filter_str), superordinate=superordinate)
+		if len(objs) == 0:
 			return None
-		else:
+		if len(objs) > 1:
+			raise MultipleObjectsError(objs)
+		obj = objs[0]
+		obj.open()
+		return obj
+
+	@classmethod
+	def get_first_udm_obj(cls, lo, filter_str, superordinate=None):
+		'''Returns the first UDM object of class cls._meta.udm_module that
+		matches a given filter
+		'''
+		try:
+			return cls.get_only_udm_obj(lo, filter_str, superordinate)
+		except MultipleObjectsError as e:
+			obj = e.objs[0]
 			obj.open()
 			return obj
+
+	@classmethod
+	def find_udm_superordinate(cls, dn, lo):
+		module = udm_modules.get(cls._meta.udm_module)
+		return udm_objects.get_superordinate(module, None, lo, dn)
 
 	def to_dict(self):
 		'''Returns a dictionary somewhat representing this instance.

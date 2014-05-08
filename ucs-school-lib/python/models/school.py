@@ -297,9 +297,12 @@ class School(UCSSchoolHelperAbstractClass):
 				dc = SchoolDCSlave.get(dc_name, self.name, groups=groups)
 				dc.create(lo)
 
-			dhcp_service = DHCPService.get(self.name.lower(), self.name, hostname=dc_name, domainname=ucr.get('domainname'))
+			dhcp_service = self.get_dhcp_service(dc_name)
 			dhcp_service.create(lo)
 			dhcp_service.add_server(dc_name, lo)
+
+	def get_dhcp_service(self, hostname=None):
+		return DHCPService.get(self.name.lower(), self.name, hostname=hostname, domainname=ucr.get('domainname'))
 
 	def create_without_hooks(self, lo, validate):
 		district = self.get_district()

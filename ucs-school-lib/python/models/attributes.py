@@ -80,6 +80,9 @@ class Username(CommonName):
 	udm_name = 'username'
 	syntax = uid_umlauts
 
+class DHCPServerName(CommonName):
+	udm_name = 'server'
+
 class DHCPServiceName(CommonName):
 	udm_name = 'service'
 
@@ -178,6 +181,9 @@ class SubnetMask(Attribute):
 class DHCPSubnetMask(Attribute):
 	udm_name = 'subnetmask'
 	syntax = v4netmask
+
+class DHCPServiceAttribute(Attribute):
+	pass
 
 class BroadcastAddress(Attribute):
 	udm_name = 'broadcastaddress'

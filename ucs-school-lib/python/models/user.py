@@ -77,7 +77,7 @@ class User(UCSSchoolHelperAbstractClass):
 		elif school.dn not in self._samba_home_path_cache:
 			samba_home_path = None
 			# get windows home server from OU object
-			school = School.from_dn(school.dn, None, lo)
+			school = self.get_school_obj(lo)
 			home_share_file_server = school.get_home_share_file_server(lo)
 			if home_share_file_server:
 				samba_home_path = r'\\%s' % self.get_name_from_dn(home_share_file_server)

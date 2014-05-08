@@ -30,13 +30,15 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-import ipaddr
+import re
 
+import ipaddr
 from ldap.filter import escape_filter_chars
 
 from ucsschool.lib.models.attributes import Groups, IPAddress, SubnetMask, MACAddress, InventoryNumber, Attribute
-from ucsschool.lib.models.base import UCSSchoolHelperAbstractClass
+from ucsschool.lib.models.base import UCSSchoolHelperAbstractClass, MultipleObjectsError
 
+from ucsschool.lib.models.dhcp import DHCPServer, AnyDHCPService
 from ucsschool.lib.models.network import Network
 from ucsschool.lib.models.group import BasicGroup
 from ucsschool.lib.models.utils import ucr, _, logger
@@ -67,6 +69,18 @@ class SchoolDC(UCSSchoolHelperAbstractClass):
 			return SchoolDCSlave
 		return cls
 
+	def create(self, lo, validate=True):
+		raise NotImplementedError()
+
+	def modify(self, lo, validate=True):
+		raise NotImplementedError()
+
+	def remove(self, lo):
+		raise NotImplementedError()
+
+	class Meta:
+		udm_module = 'computers/computer'
+
 class SchoolDCSlave(SchoolDC):
 	groups = Groups(_('Groups'))
 
@@ -78,6 +92,53 @@ class SchoolDCSlave(SchoolDC):
 			if group not in udm_obj['groups']:
 				udm_obj['groups'].append(group)
 		return super(SchoolDCSlave, self).do_create(udm_obj, lo)
+
+	def move_to_school(self, lo, force=False):
+		try:
+			udm_obj = self.get_only_udm_obj(lo, 'cn=%s' % escape_filter_chars(self.name))
+		except MultipleObjectsError:
+			logger.error('Found more than one DC Slave with hostname "%s"' % self.name)
+			return False
+		if udm_obj is None:
+			logger.error('Cannot find DC Slave with hostname "%s"' % self.name)
+			return False
+		old_dn = udm_obj.dn
+		if old_dn == self.dn:
+			logger.info('DC Slave "%s" is already located in "%s" - stopping here' % (self.name, self.school))
+		self.set_dn(old_dn)
+		in_another_school_re = re.compile('^.+,ou=[^,]+,%s$' % ucr.get('ldap/base'))
+		if in_another_school_re.match(self.old_dn):
+			if not force:
+				logger.error('DC Slave "%s" is located in another OU - %s' % (self.name, udm_obj.dn))
+				logger.error('Use force=True to override')
+				return False
+		school = self.get_school_obj(lo)
+		if school is None:
+			logger.error('Cannot move DC Slave object - School does not exist: %r' % school)
+			return False
+		self.modify_without_hooks(lo)
+		if school.class_share_file_server == old_dn:
+			school.class_share_file_server = self.dn
+		if school.home_share_file_server == old_dn:
+			school.home_share_file_server = self.dn
+		school.modify_without_hooks(lo)
+
+		removed = False
+		# find dhcp server object by checking all dhcp service objects
+		for dhcp_service in AnyDHCPService.get_all(lo, None):
+			for dhcp_server in dhcp_service.get_servers(lo):
+				if dhcp_server.name == self.name and not dhcp_server.dn.endswith(',%s' % school.dn):
+					dhcp_server.remove(lo)
+					removed = True
+
+		if removed:
+			own_dhcp_service = school.get_dhcp_service()
+
+			dhcp_server = DHCPServer(name=self.name, school=self.school, dhcp_service=own_dhcp_service)
+			dhcp_server.create(lo)
+
+		logger.info('Move complete')
+		logger.warning('The DC Slave has to be rejoined into the domain!')
 
 	class Meta:
 		udm_module = 'computers/domaincontroller_slave'
