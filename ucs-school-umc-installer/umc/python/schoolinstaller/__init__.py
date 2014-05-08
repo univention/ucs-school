@@ -227,10 +227,6 @@ def create_ou_local(ou, displayName):
 		MODULE.warn('create_ou_local(): display name is undefined - using OU name as display name')
 		displayName = ou
 
-	if type(ou) != str or type(displayName) != str:
-		MODULE.error('create_ou_local(): invalid argument given - create_ou failed (ou=%r displayName=%r)' % (ou, displayName))
-		return False
-
 	# call create_ou
 	cmd = ['/usr/share/ucs-school-import/scripts/create_ou', '--displayName', displayName, ou]
 	MODULE.info('Executing: %s' % ' '.join(cmd))

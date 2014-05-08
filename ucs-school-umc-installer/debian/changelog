@@ -1,3 +1,9 @@
+ucs-school-umc-installer (2.0.8-1) unstable; urgency=low
+
+  * Bug #34173: removed bogus argument validation in create_ou_local()
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Thu, 08 May 2014 14:03:34 +0200
+
 ucs-school-umc-installer (2.0.7-1) unstable; urgency=low
 
   * Bug #34166: added support for administrative slaves
