@@ -1,3 +1,9 @@
+ucs-school-umc-installer (2.0.9-2) unstable; urgency=low
+
+  * Bug #34166: fixed traceback
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Thu, 08 May 2014 16:04:58 +0200
+
 ucs-school-umc-installer (2.0.9-1) unstable; urgency=low
 
   * Bug #34166: added argument validation in install()

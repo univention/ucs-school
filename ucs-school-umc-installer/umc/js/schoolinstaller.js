@@ -424,7 +424,10 @@ define([
 				// show managementsetup page only if no slave has been specified or OU does not exist yet
 				if (next == 'administrativesetup') {
 					this.standby(true);
-					var args = { schoolOU: this.getWidget('school', 'schoolOU').get('value') };
+					var args = { schoolOU: this.getWidget('school', 'schoolOU').get('value'),
+							     username: this.getWidget('credentials', 'username').get('value'),
+							     password: this.getWidget('credentials', 'password').get('value'),
+							     master: this.getWidget('credentials', 'master').get('value')};
 					next = tools.umcpCommand('schoolinstaller/get/schoolinfo', args).then(lang.hitch(this, function(data) {
 						this.standby(false);
 						if (data.result.educational_slaves) {

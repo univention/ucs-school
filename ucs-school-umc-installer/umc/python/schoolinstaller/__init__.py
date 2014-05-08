@@ -509,7 +509,7 @@ class Instance(Base):
 			result = {'success': False, 'error': _('The specified school OU is not valid.')}
 		else:
 			# get OU information
-			result = self._get_schoolinfo(self, username, password, master, schoolOU)
+			result = self._get_schoolinfo(username, password, master, schoolOU)
 		self.finished(request.id, result)
 
 	def _get_schoolinfo(self, username, password, master, schoolOU):
