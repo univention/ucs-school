@@ -1,3 +1,9 @@
+ucs-school-umc-wizards (4.0.14-1) unstable; urgency=low
+
+  * Bug #34337: Fix user form, school grid; add deletion error feedback
+
+ -- Dirk Wiesenthal <wiesenthal@univention.de>  Thu, 08 May 2014 15:21:09 +0200
+
 ucs-school-umc-wizards (4.0.13-1) unstable; urgency=low
 
   * Bug #34337: Better exception messages, fix issues with school form

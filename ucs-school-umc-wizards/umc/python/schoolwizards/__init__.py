@@ -40,7 +40,7 @@ from univention.management.console.modules.sanitizers import StringSanitizer
 from univention.admin.uexceptions import base as uldapBaseException
 import univention.admin.modules as udm_modules
 
-from ucsschool.lib.schoolldap import SchoolBaseModule, LDAP_Connection, check_license, LicenseError, USER_READ, USER_WRITE
+from ucsschool.lib.schoolldap import SchoolBaseModule, LDAP_Connection, USER_READ, USER_WRITE
 from ucsschool.lib.models import SchoolClass, School, User, Student, Teacher, Staff, TeachersAndStaff, SchoolComputer, WindowsComputer, MacComputer, IPComputer, UCCComputer
 from ucsschool.lib.models.utils import add_module_logger_to_schoollib
 from univention.config_registry import ConfigRegistry
@@ -115,8 +115,6 @@ def iter_objects_in_request(request):
 
 def response(func):
 	def _decorated(self, request, *a, **kw):
-		if not self._check_license(request):
-			return
 		ret = func(self, request, *a, **kw)
 		self.finished(request.id, ret)
 	return _decorated
@@ -128,15 +126,6 @@ class Instance(SchoolBaseModule, SchoolImport):
 	def init(self):
 		super(Instance, self).init()
 		add_module_logger_to_schoollib()
-
-	def _check_license(self, request):
-		try:
-			check_license()
-			return True
-		except (LicenseError) as e:
-			MODULE.warn('License error: %s' % e)
-			self.finished(request.id, dict(message=str(e)))
-			return False
 
 	@simple_response
 	def is_singlemaster(self):
@@ -163,9 +152,8 @@ class Instance(SchoolBaseModule, SchoolImport):
 			ucc_available = False
 		if ucc_available:
 			computer_types.insert(1, UCCComputer)
-		return [(computer_type._meta.udm_module_short, computer_type.type_name) for computer_type in computer_types]
-		for computer_type_id, computer_type_label in computer_types:
-			ret.append({'id': computer_type_id, 'label': computer_type_label})
+		for computer_type in computer_types:
+			ret.append({'id': computer_type._meta.udm_module_short, 'label': computer_type.type_name})
 		return ret
 
 	@LDAP_Connection()
@@ -242,7 +230,10 @@ class Instance(SchoolBaseModule, SchoolImport):
 		for obj in iter_objects_in_request(request):
 			obj.name = obj.get_name_from_dn(obj.old_dn)
 			MODULE.process('Deleting %r' % (obj))
-			ret.append(obj.remove(ldap_user_write))
+			if obj.remove(ldap_user_write):
+				ret.append(True)
+			else:
+				ret.append({'result' : {'message' : _('"%s" does not exist!') % obj.name}})
 		return ret
 
 	def _get_all(self, klass, school, filter_str, lo):
@@ -252,7 +243,7 @@ class Instance(SchoolBaseModule, SchoolImport):
 			schools = School.from_binddn(lo)
 		objs = []
 		for school in schools:
-			objs.extend(klass.get_all(lo, school.name, filter_str=filter_str))
+			objs.extend(klass.get_all(lo, school.name, filter_str=filter_str, easy_filter=True))
 		return [obj.to_dict() for obj in objs]
 
 	@LDAP_Connection()
@@ -302,7 +293,7 @@ class Instance(SchoolBaseModule, SchoolImport):
 	@LDAP_Connection()
 	@response
 	def get_schools(self, request, search_base=None, ldap_user_read=None, ldap_position=None):
-		schools = School.get_all(ldap_user_read, filter_str=request.options.get('filter'))
+		schools = School.get_all(ldap_user_read, filter_str=request.options.get('filter'), easy_filter=True)
 		return [school.to_dict() for school in schools]
 
 	get_school = _get_obj

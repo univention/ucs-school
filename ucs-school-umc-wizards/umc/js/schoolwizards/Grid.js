@@ -65,7 +65,7 @@ define([
 
 			this._grid = this.getGrid();
 
-			this._searchForm = this.getSearchForm();
+			this.buildSearchForm();
 			titlePane.addChild(this._grid);
 			titlePane.addChild(this._searchForm);
 		},
@@ -211,12 +211,12 @@ define([
 			}
 		},
 
-		getSearchForm: function() {
+		buildSearchForm: function() {
 			var widgets = this.getSearchWidgets();
 			var buttons = this.getSearchButtons();
 			var layout = this.getSearchLayout();
 
-			var form = new SearchForm({
+			this._searchForm = new SearchForm({
 				region: 'top',
 				widgets: widgets,
 				layout: layout,
@@ -224,7 +224,7 @@ define([
 				onSearch: lang.hitch(this, 'filter')
 			});
 			if (this.autoSearch) {
-				form.ready().then(lang.hitch(this, function() {
+				this._searchForm.ready().then(lang.hitch(this, function() {
 					this.filter({type: 'all'});
 					var handler = aspect.before(this._grid._grid, '_onFetchComplete', lang.hitch(this, function(items) {
 						handler.remove();
@@ -246,7 +246,6 @@ define([
 					}));
 				}));
 			}
-			return form;
 		},
 
 		getSearchButtons: function() {
@@ -345,13 +344,31 @@ define([
 		},
 
 		deleteObjects: function(ids, objects) {
-			// TODO: notifications
-			array.forEach(objects, lang.hitch(this, function(object) {
-				this.standbyDuring(this._grid.moduleStore.remove({
+			var transaction = this._grid.moduleStore.transaction();
+			array.forEach(objects, function(object) {
+				this._grid.moduleStore.remove({
 					$dn$: object.$dn$,
 					school: object.school
-				}));
-			}));
+				});
+			}, this);
+			this.standbyDuring(transaction.commit()).then(
+				function(response) {
+					var errorMessages = [];
+					array.forEach(response, function(res) {
+						if (res.result) {
+							errorMessages.push(res.result.message);
+						}
+					});
+					if (errorMessages.length) {
+						dialog.alert(errorMessages.join(' '));
+						return false;
+					}
+					return true;
+				},
+				function() {
+					return false;
+				}
+			);
 		}
 	});
 });

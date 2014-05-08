@@ -40,7 +40,7 @@ define([
 	"umc/i18n!umc/modules/schoolwizards"
 ], function(declare, lang, array, Deferred, TextBox, SchoolWizard, Grid, _) {
 
-	return declare("umc.modules.schoolwizards.ComputerGrid", [Grid], {
+	return declare("umc.modules.schoolwizards.SchoolGrid", [Grid], {
 
 		headerText: _('Management of schools'),
 		helpText: '',

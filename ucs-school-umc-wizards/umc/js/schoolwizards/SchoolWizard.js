@@ -78,7 +78,7 @@ define([
 					regExp: '^\\w+(\\w|-)*$',
 					description: _('The computer name must be a valid NetBIOS hostname. This requires a maximum length of 12 characters.'),
 					maxLength: 12,
-					required: !this.singleMaster,
+					required: !this.editMode && !this.singleMaster,
 					visible: !this.editMode && !this.singleMaster
 				}];
 			if (this.editMode) {

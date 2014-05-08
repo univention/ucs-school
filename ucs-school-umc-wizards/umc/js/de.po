@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-wizards\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2014-05-05 14:53+0200\n"
+"POT-Creation-Date: 2014-05-08 13:12+0200\n"
 "PO-Revision-Date: 2014-04-24 16:49+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -31,7 +31,7 @@ msgstr "Hinzufügen"
 msgid "Add a new %s"
 msgstr "%s hinzufügen"
 
-#: umc/js/schoolwizards/SchoolWizard.js:120 umc/js/schoolwizards/Wizard.js:82
+#: umc/js/schoolwizards/SchoolWizard.js:125 umc/js/schoolwizards/Wizard.js:82
 msgid "Advanced settings"
 msgstr "Erweiterte Einstellungen"
 
@@ -74,7 +74,7 @@ msgstr ""
 "Computer erstellt oder der Wizard beendet über die Schaltfläche \"Abbrechen"
 "\" beendet werden."
 
-#: umc/js/schoolwizards/SchoolWizard.js:80
+#: umc/js/schoolwizards/SchoolWizard.js:77
 msgid "Computer name of the school server"
 msgstr "Rechnername des Schulservers"
 
@@ -188,7 +188,7 @@ msgstr "Verwaltung von Schulklassen"
 
 #: umc/js/schoolwizards/ComputerGrid.js:46
 msgid "Management of school computers"
-msgstr "Verwaltung von Schulcomputern"
+msgstr "Verwaltung von Schulrechnern"
 
 #: umc/js/schoolwizards/UserGrid.js:46
 msgid "Management of school users"
@@ -210,7 +210,7 @@ msgstr "Name"
 msgid "Name of the %s."
 msgstr "Name des %s."
 
-#: umc/js/schoolwizards/SchoolWizard.js:59
+#: umc/js/schoolwizards/SchoolWizard.js:56
 #: umc/js/schoolwizards/SchoolGrid.js:64
 msgid "Name of the school"
 msgstr "Name der Schule"
@@ -232,7 +232,7 @@ msgstr "Passwort"
 #: umc/js/schoolwizards/Grid.js:328
 #, python-format
 msgid "Please confirm to delete %s %s"
-msgstr "Bitte bestätigen Sie die Löschung des %s %s"
+msgstr "Bitte bestätigen, dass %s %s gelöscht werden soll"
 
 #: umc/js/schoolwizards/Grid.js:326
 #, python-format
@@ -263,11 +263,11 @@ msgstr "Speichern"
 msgid "School"
 msgstr "Schule"
 
-#: umc/js/schoolwizards/SchoolWizard.js:65
+#: umc/js/schoolwizards/SchoolWizard.js:62
 msgid "School abbreviation"
 msgstr "Schulkürzel"
 
-#: umc/js/schoolwizards/SchoolWizard.js:117
+#: umc/js/schoolwizards/SchoolWizard.js:122
 msgid "School information"
 msgstr "Schulinformationen"
 
@@ -280,7 +280,7 @@ msgstr "Suchen"
 msgid "Search for %s"
 msgstr "Suche nach %s"
 
-#: umc/js/schoolwizards/SchoolWizard.js:89
+#: umc/js/schoolwizards/SchoolWizard.js:88
 msgid "Server for Windows home directories"
 msgstr "Server für Windows-Heimatverzeichnisse"
 
@@ -308,7 +308,7 @@ msgstr "Lehrer"
 msgid "Teachers and staff"
 msgstr "Lehrer und Mitarbeiter"
 
-#: umc/js/schoolwizards/SchoolWizard.js:82
+#: umc/js/schoolwizards/SchoolWizard.js:79
 msgid ""
 "The computer name must be a valid NetBIOS hostname. This requires a maximum "
 "length of 12 characters."
@@ -316,13 +316,13 @@ msgstr ""
 "Der Rechnername muss ein gültiger NetBIOS-Rechnername sein. Das erfordert "
 "eine maximale Länge von 12 Zeichen."
 
-#: umc/js/schoolwizards/SchoolWizard.js:60
+#: umc/js/schoolwizards/SchoolWizard.js:57
 msgid "The given value will be shown as school's name within UCS@school."
 msgstr ""
 "Der hier eingegebene Wert wird innerhalb von UCS@school als Name für die "
 "neue Schule angezeigt."
 
-#: umc/js/schoolwizards/SchoolWizard.js:66
+#: umc/js/schoolwizards/SchoolWizard.js:63
 msgid ""
 "The given value will be used as object name for the new school OU object "
 "within the LDAP directory and as prefix for several school objects like "
@@ -335,7 +335,7 @@ msgstr ""
 "dem Unterstrich bestehen. In der Regel kann der automatisch vorgeschlagene "
 "Wert unverändert übernommen werden."
 
-#: umc/js/schoolwizards/SchoolWizard.js:137
+#: umc/js/schoolwizards/SchoolWizard.js:142
 #, python-format
 msgid ""
 "The school \"%s\" has been successfully created. Continue to create another "
@@ -369,7 +369,7 @@ msgstr "Benutzername"
 #: umc/js/schoolwizards/Grid.js:232
 #, python-format
 msgid "Would you like to create a %(objectNameSingular)s?"
-msgstr ""
+msgstr "%(objectNameSingular)s anlegen?"
 
 #: umc/js/schoolwizards/ClassGrid.js:49
 msgid "class"
@@ -381,11 +381,11 @@ msgstr "Klassen"
 
 #: umc/js/schoolwizards/ComputerGrid.js:49
 msgid "computer"
-msgstr "Computer"
+msgstr "Rechner"
 
 #: umc/js/schoolwizards/ComputerGrid.js:48
 msgid "computers"
-msgstr "Computer"
+msgstr "Rechner"
 
 #: umc/js/schoolwizards/SchoolGrid.js:48
 msgid "school"

@@ -53,6 +53,7 @@ define([
 		$dn$: null,  // the object we edit
 		school: null,  // the school of that object
 		objectType: null, // the UDM type of that object
+		loadedValues: null, // the values of the object as seen from server
 
 		editModeDescriptionWithoutSchool: _('Edit {itemType} {itemName}'),
 		createModeDescriptionWithoutSchool: _('Create a new {itemType}'),
@@ -195,6 +196,7 @@ define([
 				}
 			});
 			load.then(lang.hitch(this, function(result) {
+				this.loadedValues = result;
 				tools.forIn(result, lang.hitch(this, function(key, value) {
 					var widget = this.getWidget(key);
 					if (widget) {
@@ -274,13 +276,18 @@ define([
 
 		_createObject: function() {
 			var values = this.getValues();
-			return this.standbyDuring(this.store.add(values)).then(lang.hitch(this, function(response) {
-				if (response.result) {
-					dialog.alert(response.result.message);
+			return this.standbyDuring(this.store.add(values)).then(
+				function(response) {
+					if (response.result) {
+						dialog.alert(response.result.message);
+						return false;
+					}
+					return true;
+				},
+				function() {
 					return false;
 				}
-				return true;
-			}), lang.hitch(this, function() { return false; }));
+			);
 		},
 
 		restart: function() {

@@ -39,10 +39,9 @@ define([
 	"umc/widgets/Text",
 	"umc/widgets/ComboBox",
 	"umc/widgets/PasswordInputBox",
-	"umc/widgets/HiddenInput",
 	"umc/modules/schoolwizards/Wizard",
 	"umc/i18n!umc/modules/schoolwizards"
-], function(declare, lang, array, topic, tools, TextBox, Text, ComboBox, PasswordInputBox, HiddenInput, Wizard, _) {
+], function(declare, lang, array, topic, tools, TextBox, Text, ComboBox, PasswordInputBox, Wizard, _) {
 
 	return declare("umc.modules.schoolwizards.UserWizard", [Wizard], {
 
@@ -96,6 +95,7 @@ define([
 					type: TextBox,
 					name: 'name',
 					label: _('Username'),
+					disabled: this.editMode,
 					required: true
 				}, {
 					type: ComboBox,
@@ -103,7 +103,7 @@ define([
 					label: _('Class')
 				}, {
 					type: TextBox,
-					name: 'mailPrimaryAddress',
+					name: 'email',
 					label: _('E-Mail')
 				}, {
 					type: PasswordInputBox,
@@ -127,7 +127,7 @@ define([
 					['firstname', 'lastname'],
 					['name'],
 					['school_class', 'newClass'],
-					['mailPrimaryAddress'],
+					['email'],
 					['password']
 				]
 			};
@@ -183,7 +183,11 @@ define([
 						var classes = array.map(response.result, function(item) {
 							return item.label;
 						});
-						this.getWidget('item', 'school_class').set('staticValues', classes);
+						var widget = this.getWidget('item', 'school_class');
+						widget.set('staticValues', classes);
+						if (this.loadedValues && this.loadedValues.school_class) {
+							widget.set('value', this.loadedValues.school_class);
+						}
 					})
 				);
 			}

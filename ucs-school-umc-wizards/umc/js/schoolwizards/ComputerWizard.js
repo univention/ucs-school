@@ -66,6 +66,7 @@ define([
 					type: TextBox,
 					name: 'name',
 					label: _('Name'),
+					disabled: this.editMode,
 					required: true
 				}, {
 					type: TextBox,
