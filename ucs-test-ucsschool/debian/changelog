@@ -1,3 +1,9 @@
+ucs-test-ucsschool (1.0.22-2) unstable; urgency=low
+
+  * importtests: activate tests on singlemaster (Bug #34548)
+
+ -- Stefan Gohmann <gohmann@univention.de>  Thu, 08 May 2014 09:42:29 +0200
+
 ucs-test-ucsschool (1.0.22-1) unstable; urgency=low
 
   * importtests: move existing dc to ou (Bug #34548)

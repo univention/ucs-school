@@ -6,7 +6,6 @@
 ## exposure: dangerous
 ## packages:
 ##   - ucs-school-import
-##   - ucs-school-master
 
 from essential.importtest import *
 
