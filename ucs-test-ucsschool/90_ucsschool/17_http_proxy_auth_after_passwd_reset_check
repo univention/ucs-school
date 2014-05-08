@@ -1,0 +1,92 @@
+#!/usr/share/ucs-test/runner python
+## desc: http_proxy_auth_after_passwd_reset_check
+## roles: [domaincontroller_master, domaincontroller_backup, domaincontroller_slave, memberserver]
+## tags: [apptest]
+## exposure: dangerous
+## packages: [univention-samba4, ucs-school-webproxy]
+
+from essential.simplecurl import SimpleCurl
+from univention.config_registry import handler_set
+from univention.lib.umc_connection import UMCConnection
+import pycurl
+import subprocess
+import univention.testing.strings as uts
+import univention.testing.ucr as ucr_test
+import univention.testing.ucsschool as utu
+import univention.testing.utils as utils
+
+def resetPasswd(host, userdn, flavor, nextLogin):
+	print 'Resetting password for (%r)' % (userdn,)
+	newpassword = uts.random_string()
+	options = {
+			'userDN': userdn,
+			'newPassword': newpassword,
+			'nextLogin': nextLogin
+			}
+	connection = UMCConnection(host)
+	connection.auth('Administrator', 'univention')
+	if connection.request('schoolusers/password/reset', options, flavor):
+		return newpassword
+	else:
+		utils.fail('Password reset for (%r) unsuccessful' % (userdn,))
+
+def authProxy(host,url, name, passwd, authTyp, expected_response):
+	print 'Performing auth %r check' % (authTyp,)
+	curl = SimpleCurl(proxy=host, username=name, password=passwd, auth=authTyp)
+	result = curl.response(url)
+	if result != expected_response:
+		utils.fail('Proxy auth %r returns %s, expected %s' % (
+			authTyp,
+			result,
+			expected_response))
+
+def main():
+	url = 'http://www.univention.de'
+	with ucr_test.UCSTestConfigRegistry() as ucr:
+		host = '%s.%s' % (ucr.get('hostname'), ucr.get('domainname'))
+		handler_set(['squid/basicauth=yes'])
+		handler_set(['squid/basicauth/children=1'])
+		handler_set(['squid/ntlmauth=yes'])
+		handler_set(['squid/ntlmauth/children=1'])
+		subprocess.call(["/etc/init.d/squid3", "restart"])
+		with utu.UCSTestSchool()  as schoolenv:
+			school, oudn = schoolenv.create_ou()
+			stu, studn = schoolenv.create_user(school)
+
+			# check auth with initial state
+			authProxy(host, url, stu, 'univention', pycurl.HTTPAUTH_BASIC, 200)
+			authProxy(host, url, stu, 'univention', pycurl.HTTPAUTH_NTLM, 200)
+
+			# resetting user password
+			newpasswd = resetPasswd(host, studn,'student', False) 
+			utils.wait_for_replication_and_postrun()
+			
+			# check auth with the old password
+			authProxy(host, url, stu, 'univention', pycurl.HTTPAUTH_BASIC, 407)
+			authProxy(host, url, stu, 'univention', pycurl.HTTPAUTH_NTLM, 407)
+
+			# check auth with the new password
+			authProxy(host, url, stu, newpasswd, pycurl.HTTPAUTH_BASIC, 200)
+			authProxy(host, url, stu, newpasswd, pycurl.HTTPAUTH_NTLM, 200)
+			
+			tea, teadn = schoolenv.create_user(school, is_teacher=True)
+
+			# check auth with initial state
+			authProxy(host, url, tea, 'univention', pycurl.HTTPAUTH_BASIC, 200)
+			authProxy(host, url, tea, 'univention', pycurl.HTTPAUTH_NTLM, 200)
+
+			# resetting user password
+			newpasswd = resetPasswd(host, teadn,'teacher', False) 
+			utils.wait_for_replication_and_postrun()
+
+			# check auth with the old password
+			authProxy(host, url, tea, 'univention', pycurl.HTTPAUTH_BASIC, 407)
+			authProxy(host, url, tea, 'univention', pycurl.HTTPAUTH_NTLM, 407)
+
+			# check auth with the new password
+			authProxy(host, url, tea, newpasswd, pycurl.HTTPAUTH_BASIC, 200)
+			authProxy(host, url, tea, newpasswd, pycurl.HTTPAUTH_NTLM, 200)
+
+
+if __name__ == '__main__':
+	main()
