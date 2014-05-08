@@ -1,3 +1,9 @@
+ucs-school-metapackage (6.0.7-22) unstable; urgency=medium
+
+  * Singlemaster shall not reister service UCS@school Education (Bug #34172)
+
+ -- Arvid Requate <requate@univention.de>  Thu, 08 May 2014 20:49:56 +0200
+
 ucs-school-metapackage (6.0.7-21) unstable; urgency=medium
 
   * Depend on ucs-school-s4-branch-site or univention-samba  (Bug #32187)

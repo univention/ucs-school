@@ -71,7 +71,6 @@ if is_ucr_true "ucsschool/import/generate/policy/dhcp/dns/set_per_ou" ; then
 fi
 
 ucs_addServiceToLocalhost 'UCS@school' "$@"
-ucs_addServiceToLocalhost 'UCS@school Education' "$@"
 
 joinscript_save_current_version
 
