@@ -6,7 +6,7 @@
 ## packages: [univention-samba4, ucs-school-webproxy]
 
 from essential.simplecurl import SimpleCurl
-from univention.config_registry import handler_set
+from univention.config_registry import handler_set, handler_unset
 from univention.lib.umc_connection import UMCConnection
 import pycurl
 import subprocess
@@ -47,6 +47,7 @@ def main():
 		handler_set(['squid/basicauth=yes'])
 		handler_set(['squid/basicauth/children=1'])
 		handler_set(['squid/ntlmauth=yes'])
+		handler_unset(['squid/ntlmauth/keepalive'])
 		handler_set(['squid/ntlmauth/children=1'])
 		subprocess.call(["/etc/init.d/squid3", "restart"])
 		with utu.UCSTestSchool()  as schoolenv:
