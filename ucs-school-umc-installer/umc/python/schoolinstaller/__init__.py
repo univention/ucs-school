@@ -620,6 +620,14 @@ class Instance(Base):
 			_error(_('Invalid server role! UCS@school can only be installed on the system roles master domain controller, backup domain controller, or slave domain controller.'))
 			return
 
+		if serverRole == 'domaincontroller_slave' and not server_type:
+			_error(_('Server type has to be set for domaincontroller slave'))
+			return
+
+		if serverRole == 'domaincontroller_slave' and server_type == 'administrative' and not educational_slave:
+			_error(_('The name of an educational server has to be specified if the system shall be configured as administrative server.'))
+			return
+
 		if serverRole != 'domaincontroller_master':
 			# check for a compatible environment on the DC master
 			try:
