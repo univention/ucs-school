@@ -1,3 +1,9 @@
+ucs-school-webproxy (10.0.3-1) unstable; urgency=low
+
+  * Bug #34774: activate correct handling of X-Forwarded-For in squid
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Thu, 08 May 2014 15:08:55 +0200
+
 ucs-school-webproxy (10.0.2-1) unstable; urgency=low
 
   * Bug #34557: fixed logic problem while generating squidguard

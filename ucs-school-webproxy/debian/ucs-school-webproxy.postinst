@@ -74,6 +74,11 @@ case "$1" in
 			'dhcpd/options/wpad/252=text' \
 			'dhcpd/authoritative=yes'
 
+		# set variable on fresh installation and during update to version 10.0.3 (aka UCS@school 3.2R2)
+		if dpkg --compare-versions "$2" lt 10.0.3 ; then
+			ucr set squid/forwardedfor=on
+		fi
+
 		invoke-rc.d univention-dhcp restart || true
 		;;
 
