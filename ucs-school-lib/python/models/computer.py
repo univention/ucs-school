@@ -69,18 +69,6 @@ class SchoolDC(UCSSchoolHelperAbstractClass):
 			return SchoolDCSlave
 		return cls
 
-	def create(self, lo, validate=True):
-		raise NotImplementedError()
-
-	def modify(self, lo, validate=True):
-		raise NotImplementedError()
-
-	def remove(self, lo):
-		raise NotImplementedError()
-
-	class Meta:
-		udm_module = 'computers/computer'
-
 class SchoolDCSlave(SchoolDC):
 	groups = Groups(_('Groups'))
 

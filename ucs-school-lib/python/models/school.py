@@ -371,13 +371,13 @@ class School(UCSSchoolHelperAbstractClass):
 			return School.get_all(lo)
 
 	@classmethod
-	def get_all(cls, lo, filter_str=None, respect_local_oulist=True):
+	def get_all(cls, lo, filter_str=None, easy_filter=False, respect_local_oulist=True):
 		oulist = ucr.get('ucsschool/local/oulist')
 		if oulist and respect_local_oulist:
 			logger.debug('All Schools: Schools overridden by UCR variable ucsschool/local/oulist')
 			return cls.get_from_oulist(cls, lo, oulist)
 		else:
-			return super(School, cls).get_all(lo, school=None, filter_str=filter_str)
+			return super(School, cls).get_all(lo, school=None, filter_str=filter_str, easy_filter=easy_filter)
 
 	def __str__(self):
 		return self.name

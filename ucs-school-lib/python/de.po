@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2014-05-08 11:39+0200\n"
+"POT-Creation-Date: 2014-05-08 14:36+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -216,7 +216,7 @@ msgstr "Mitarbeiter"
 msgid "Student"
 msgstr "Schüler"
 
-#: python/models/network.py:99
+#: python/models/network.py:100
 msgid "Subnet"
 msgstr "Subnetz"
 
@@ -427,48 +427,3 @@ msgstr ""
 #: python/models/computer.py:139
 msgid "Zone"
 msgstr "Zone"
-
-#~ msgid "%s could not be changed."
-#~ msgstr "%s konnte nicht verändert werden."
-
-#~ msgid "%s could not be created."
-#~ msgstr "%s konnte nicht angelegt werden."
-
-#~ msgid "%s could not be deleted."
-#~ msgstr "%s konnte nicht gelöscht werden."
-
-#~ msgid "Action"
-#~ msgstr "Aktion"
-
-#~ msgid "All schools"
-#~ msgstr "Alle Schulen"
-
-#~ msgid "Line"
-#~ msgstr "Zeile"
-
-#~ msgid ""
-#~ "The user already exists and cannot be created. Please change the username "
-#~ "to one that does not yet exist or change the action to be taken."
-#~ msgstr ""
-#~ "Der Nutzer existiert bereits und kann nicht neu erstellt werden. Bitte "
-#~ "ändern Sie den Benutzernamen zu einem noch nicht vergebenen oder ändern "
-#~ "Sie die durchzuführende Aktion."
-
-#~ msgid ""
-#~ "The user does not yet exist and cannot be deleted. Please change the "
-#~ "username to one that exists or change the action to be taken."
-#~ msgstr ""
-#~ "Der Nutzer existiert noch nicht und kann nicht gelöscht werden. Bitte "
-#~ "ändern Sie den Benutzernamen zu einem bereits vergebenen oder ändern Sie "
-#~ "die durchzuführende Aktion."
-
-#~ msgid ""
-#~ "The user does not yet exist and cannot be modified. Please change the "
-#~ "username to one that exists or change the action to be taken."
-#~ msgstr ""
-#~ "Der Nutzer existiert noch nicht und kann nicht verändert werden. Bitte "
-#~ "ändern Sie den Benutzernamen zu einem bereits vergebenen oder ändern Sie "
-#~ "die durchzuführende Aktion."
-
-#~ msgid "Unused"
-#~ msgstr "Unbenutzt"

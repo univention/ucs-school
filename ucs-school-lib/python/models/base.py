@@ -96,14 +96,16 @@ class UCSSchoolHelperAbstractClass(object):
 		remove(lo)
 		  deletes the object. Returns False if the object does not exist and True
 		  after the deletion.
-		get_all(lo, school, filter)
+		get_all(lo, school, filter_str, easy_filter=False)
 		  classmethod; retrieves all objects found for this school. filter can be a string
 		  that is used to narrow down a search. Each property of the class' udm_module
 		  that is include_in_default_search is queried for that string.
 		  Example:
-		  User.get_all(lo, 'school', filter='name') will search in cn=users,ou=school,$base
+		  User.get_all(lo, 'school', filter_str='name', easy_filter=True)
+		  will search in cn=users,ou=school,$base
 		  for users/user UDM objects with |(username=*name*)(firstname=*name*)(...) and return
 		  User objects (not UDM objects)
+		  With easy_filter=False (default) it will use this very filter_str
 		get_container(school)
 		  a classmethod that points to the container where new instances are created
 		  and existing ones are searched.
@@ -435,7 +437,7 @@ class UCSSchoolHelperAbstractClass(object):
 		    super(MyModel, self).do_modify(udm_obj, lo)
 		'''
 		self._alter_udm_obj(udm_obj)
-		udm_obj.modify()
+		udm_obj.modify(ignore_license=1)
 
 	def remove(self, lo):
 		'''
@@ -564,7 +566,7 @@ class UCSSchoolHelperAbstractClass(object):
 		cls._initialized_udm_modules.append(cls._meta.udm_module)
 
 	@classmethod
-	def get_all(cls, lo, school, filter_str=None, superordinate=None):
+	def get_all(cls, lo, school, filter_str=None, easy_filter=False, superordinate=None):
 		'''
 		Returns a list of all objects that can be found in cls.get_container() with the
 		correct udm_module
@@ -573,7 +575,10 @@ class UCSSchoolHelperAbstractClass(object):
 		'''
 		cls.init_udm_module(lo)
 		complete_filter = cls._meta.udm_filter
-		filter_from_filter_str = cls.build_filter(filter_str)
+		if easy_filter:
+			filter_from_filter_str = cls.build_easy_filter(filter_str)
+		else:
+			filter_from_filter_str = filter_str
 		if filter_from_filter_str:
 			if complete_filter:
 				complete_filter = conjunction('&', [complete_filter, filter_from_filter_str])
@@ -595,7 +600,7 @@ class UCSSchoolHelperAbstractClass(object):
 		return ret
 
 	@classmethod
-	def build_filter(cls, filter_str):
+	def build_easy_filter(cls, filter_str):
 		if filter_str:
 			sanitizer = LDAPSearchSanitizer()
 			filter_str = sanitizer.sanitize('filter_str', {'filter_str' : filter_str})
@@ -625,6 +630,8 @@ class UCSSchoolHelperAbstractClass(object):
 			if attr.udm_name:
 				attrs[name] = udm_obj[attr.udm_name]
 		obj = cls(**attrs)
+		obj._udm_obj_searched = True
+		obj._udm_obj = udm_obj
 		obj.set_dn(udm_obj.dn)
 		return obj
 

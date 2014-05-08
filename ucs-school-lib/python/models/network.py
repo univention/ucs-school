@@ -59,7 +59,8 @@ class Network(UCSSchoolHelperAbstractClass):
 		dns_reverse_zone = DNSReverseZone.get(self.get_subnet())
 		dns_reverse_zone.create(lo)
 
-		dhcp_subnet = DHCPSubnet(name=self.network, school=self.school, subnet_mask=self.netmask, broadcast=self.broadcast)
+		dhcp_service = self.get_school_obj(lo).get_dhcp_service()
+		dhcp_subnet = DHCPSubnet(name=self.network, school=self.school, subnet_mask=self.netmask, broadcast=self.broadcast, dhcp_service=dhcp_service)
 		dhcp_subnet.create(lo)
 
 		# TODO:
