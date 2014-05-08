@@ -1,3 +1,9 @@
+ucs-test-ucsschool (1.0.24-2) unstable; urgency=low
+
+  * Bug #34337: fixed executable flag
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Thu, 08 May 2014 18:02:00 +0200
+
 ucs-test-ucsschool (1.0.24-1) unstable; urgency=low
 
   * Bug #34337: added School.create() test for ucs-school-lib python API
