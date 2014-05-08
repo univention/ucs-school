@@ -63,9 +63,9 @@ def main():
 			newClass.create()
 
 			# create user in that class student/teacher
-			tea, teadn = schoolenv.create_user(school,	classes='%s-%s' % (
+			tea, teadn = schoolenv.create_user(school, classes='%s-%s' % (
 				school, newClass.name), is_teacher=True)
-			stu, studn = schoolenv.create_user(school,	classes='%s-%s' % (
+			stu, studn = schoolenv.create_user(school, classes='%s-%s' % (
 				school, newClass.name))
 
 			# Getting the redirection page when blocked
