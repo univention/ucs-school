@@ -625,6 +625,7 @@ class UCSSchoolHelperAbstractClass(object):
 		if klass is not cls:
 			logger.info('UDM object %s is not %s, but actually %s' % (udm_obj.dn, cls.__name__, klass.__name__))
 			return klass.from_udm_obj(udm_obj, school, lo)
+		udm_obj.open()
 		attrs = {'school' : school}
 		for name, attr in cls._attributes.iteritems():
 			if attr.udm_name:

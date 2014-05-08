@@ -1,3 +1,9 @@
+ucs-school-lib (5.0.22-1) unstable; urgency=low
+
+  * Bug #34337: Fix school creation: adding DC with correct groups
+
+ -- Dirk Wiesenthal <wiesenthal@univention.de>  Thu, 08 May 2014 17:05:21 +0200
+
 ucs-school-lib (5.0.21-1) unstable; urgency=low
 
   * Bug #34337: Better filter control, fixes in user creation

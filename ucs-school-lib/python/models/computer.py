@@ -91,6 +91,11 @@ class SchoolDCSlave(SchoolDC):
 			logger.error('Cannot find DC Slave with hostname "%s"' % self.name)
 			return False
 		old_dn = udm_obj.dn
+		school = self.get_school_obj(lo)
+		group_dn = school.get_administrative_group_name('educational', ou_specific=True, as_dn=True)
+		if group_dn not in udm_obj['groups']:
+			logger.error('%r has no LDAP access to %r' % (self, school))
+			return False
 		if old_dn == self.dn:
 			logger.info('DC Slave "%s" is already located in "%s" - stopping here' % (self.name, self.school))
 		self.set_dn(old_dn)
@@ -100,7 +105,6 @@ class SchoolDCSlave(SchoolDC):
 				logger.error('DC Slave "%s" is located in another OU - %s' % (self.name, udm_obj.dn))
 				logger.error('Use force=True to override')
 				return False
-		school = self.get_school_obj(lo)
 		if school is None:
 			logger.error('Cannot move DC Slave object - School does not exist: %r' % school)
 			return False
@@ -130,6 +134,7 @@ class SchoolDCSlave(SchoolDC):
 
 	class Meta:
 		udm_module = 'computers/domaincontroller_slave'
+		name_is_unique = True
 
 class SchoolComputer(UCSSchoolHelperAbstractClass):
 	ip_address = IPAddress(_('IP address'), required=True)

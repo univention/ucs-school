@@ -51,14 +51,15 @@ class Policy(UCSSchoolHelperAbstractClass):
 				return
 		# add the missing policy
 		pl = lo.get(obj.dn, ['univentionPolicyReference'])
-		logger.warning('Attaching %r to %r' % (self, obj))
+		logger.info('Attaching %r to %r' % (self, obj))
 		if self.dn.lower() not in map(lambda x: x.lower(), pl.get('univentionPolicyReference', [])):
 			modlist = [('univentionPolicyReference', '', self.dn)]
-			logger.info('Attaching %r to %r' % (self, obj))
 			try:
 				lo.modify(obj.dn, modlist)
 			except:
 				logger.warning('Policy %s cannot be referenced to %r' % (self, obj))
+		else:
+			logger.info('Already attached!')
 
 class UMCPolicy(Policy):
 	class Meta:
