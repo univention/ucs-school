@@ -117,7 +117,11 @@ class Test():
 			testing_utils.fail(log_message="Error accessing LDAP: %s" % (e,))
 
 		for (record_dn, obj) in res:
-				negative_test_fqdn_list.append(".".join((obj['cn'][0], obj['associatedDomain'][0])))
+				if 'associatedDomain' in obj:
+					domainname = obj['associatedDomain'][0]
+				else:
+					domainname = ucr['domainname']
+				negative_test_fqdn_list.append(".".join((obj['cn'][0], domainname)))
 
 		with testing_udm.UCSTestUDM() as udm:
 			for searchbase in get_all_local_searchbases():
@@ -145,6 +149,7 @@ class Test():
 				negative_test_fqdn = ".".join((negative_test_hostname, ucr.get('domainname')))
 
 				testing_utils.wait_for_replication_and_postrun()
+				time.sleep(3)
 
 				## verify that the positive test DC is present in the UCR variables
 				ucr2 = univention.config_registry.ConfigRegistry()
@@ -178,7 +183,7 @@ class Test():
 
 		## ok wait for postrun
 		testing_utils.wait_for_replication_and_postrun()
-		time.sleep(1)
+		time.sleep(3)
 
 		## verify that the postitive test DCs are removed from DNS/Samba4
 		p1 = subprocess.Popen(['host', '-t', 'srv', '_kerberos._tcp'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)

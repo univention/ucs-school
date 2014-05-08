@@ -1,3 +1,10 @@
+ucs-test-ucsschool (1.0.25-3) unstable; urgency=medium
+
+  * Work around missing attribute on Verwaltungs-DC
+  * Wait longer for replication (Bug #32187)
+
+ -- Arvid Requate <requate@univention.de>  Thu, 08 May 2014 20:12:01 +0200
+
 ucs-test-ucsschool (1.0.24-2) unstable; urgency=low
 
   * Bug #34337: fixed executable flag
