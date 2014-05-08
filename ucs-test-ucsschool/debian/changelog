@@ -1,6 +1,7 @@
 ucs-test-ucsschool (1.0.26-1) unstable; urgency=low
 
   * Bug #34477: disabled script 08_ucs-school-printermoderatoion-find-printer-in-ou-check
+  * Bug #34335: added debug output
 
  -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Thu, 08 May 2014 20:50:57 +0200
 

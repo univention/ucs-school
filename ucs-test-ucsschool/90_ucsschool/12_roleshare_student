@@ -23,6 +23,8 @@ try:
 except ImportError:
 	def wait_for_drs_replication(ldap_filter, attrs=None):
 		pass
+from ucsschool.lib.models.utils import add_stream_logger_to_schoollib
+add_stream_logger_to_schoollib()
 
 
 ### Initialize globals
@@ -192,7 +194,7 @@ def main():
 		print "Failed to run: %s" % (cmd_str,)
 		raise
 
-	cmd_str = " ".join((ucr.get('update/commands/install'), "ucs-school-roleshares")) ## non-interactive
+	cmd_str = " ".join((ucr.get('update/commands/install'), "--force-yes", "--yes", "ucs-school-roleshares")) ## non-interactive
 	try:
 		p1 = subprocess.Popen(cmd_str, close_fds=True, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 		(out, err) = p1.communicate()
