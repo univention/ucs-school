@@ -3,7 +3,7 @@
 # UCS@School
 #  postinst script
 #
-# Copyright 2006-2013 Univention GmbH
+# Copyright 2006-2014 Univention GmbH
 #
 # http://www.univention.de/
 #
@@ -53,12 +53,12 @@ case "$1" in
 
 		if [ -x /etc/init.d/samba ]; then
 			/etc/init.d/samba reload
-			sleep 2s
+			sleep 2
 		fi
 
 		if [ -x /etc/init.d/winbind ]; then
 			/etc/init.d/winbind restart
-			sleep 2s
+			sleep 2
 		fi
 
 		if [ -x /etc/init.d/squid3 ]; then
