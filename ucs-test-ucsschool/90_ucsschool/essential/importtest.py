@@ -22,6 +22,8 @@ TYPE_DC_EDUCATION = 'education'
 
 class CreateOU(Exception):
 	pass
+class MoveDCToOU(Exception):
+	pass
 class DCNotFound(Exception):
 	pass
 class DCMembership(Exception):
@@ -61,6 +63,14 @@ def create_ou_cli(ou, dc=None, dc_management=None, sharefileserver=None, ou_disp
 
 def create_ou_umc(ou, dc, dc_management, sharefileserver, ou_displayname):
 	raise NotImplementedError
+
+def move_domaincontroller_to_ou_cli(dc_name, ou):
+	cmd_block = ['/usr/share/ucs-school-import/scripts/move_domaincontroller_to_ou', '--ou', ou, '--dcname', dc_name]
+	print 'cmd_block: %r' % cmd_block
+
+	retcode = subprocess.call(cmd_block , shell=False)
+	if retcode:
+		raise MoveDCToOU('Failed to execute "%s". Return code: %d.' % (string.join(cmd_block), retcode))
 
 def import_ou_create_pre_hook(ou, ou_base, dc, singlemaster):
 	pre_hook_base = os.path.join(HOOK_BASEDIR, 'ou_create_pre.d')
@@ -179,6 +189,8 @@ def create_and_verify_ou(ou, dc, sharefileserver, dc_management=None, ou_display
 	(pre_hook, pre_hook_successful) = import_ou_create_pre_hook(ou, ou_base, dc, singlemaster)
 	(post_hook, post_hook_successful) = import_ou_create_post_hook(ou, ou_base, dc, singlemaster)
 
+	move_dc_after_create_ou = False
+
 	# does dc exist?
 	if singlemaster:
 		dc_dn = ucr.get('ldap/hostdn')
@@ -186,9 +198,9 @@ def create_and_verify_ou(ou, dc, sharefileserver, dc_management=None, ou_display
 	elif dc:
 		result = lo.search(filter='(&(objectClass=univentionDomainController)(cn=%s))' % dc, base=base_dn, attr=['cn'])
 		if result:
-			dc_dn = result[0][0]
-		else:
-			dc_dn = 'cn=%s,cn=dc,cn=server,cn=computers,%s' % (dc,ou_base)
+			#dc_dn = result[0][0]
+			move_dc_after_create_ou = True
+		dc_dn = 'cn=%s,cn=dc,cn=server,cn=computers,%s' % (dc,ou_base)
 		dc_name = dc
 	else:
 		dc_dn = 'cn=dc%s-01,cn=dc,cn=server,cn=computers,%s' % (ou, ou_base)
@@ -208,6 +220,9 @@ def create_and_verify_ou(ou, dc, sharefileserver, dc_management=None, ou_display
 		create_ou_cli(ou, dc, dc_management, sharefileserver, ou_displayname)
 	else:
 		create_ou_umc(ou, dc, dc_management, sharefileserver, ou_displayname)
+
+	if move_dc_after_create_ou:
+		move_domaincontroller_to_ou_cli(dc_name, ou)
 
 	# cleanup hooks
 	os.remove(pre_hook)
@@ -522,5 +537,4 @@ def import_ou_with_existing_dc(use_cli_api=True):
 			utils.verify_ldap_object(dhcp_server, should_exist=False)
 		finally:
 			remove_ou(ou_name)
-
 
