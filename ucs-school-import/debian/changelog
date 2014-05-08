@@ -1,3 +1,9 @@
+ucs-school-import (10.0.13-1) unstable; urgency=low
+
+  * Bug #26137: fixed confusing variable names
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Wed, 07 May 2014 21:57:36 +0200
+
 ucs-school-import (10.0.12-1) unstable; urgency=low
 
   * Bug #26137: fixed traceback due to wrong argument order
