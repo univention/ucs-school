@@ -92,6 +92,9 @@
   <listitem><simpara>
 	A logic error has been fixed that may occurred if the same internet rule was assigned to more than one room (<ulink url="&ucsbug;34557">Bug 34557</ulink>).
   </simpara></listitem>
+  <listitem><simpara>
+	&ucsUAS; has been prepared for an upcoming UCS erratum which enables &ucsUAS; to enable the configurable handling of the HTTP header X-Forwarded-For by the proxy squid (<ulink url="&ucsbug;34773">Bug 34773</ulink>).
+  </simpara></listitem>
 </section>
 
 <!--
