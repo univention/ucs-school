@@ -5,6 +5,7 @@ import univention.testing.strings as uts
 import univention.testing.udm
 import univention.testing.ucr
 import univention.uldap
+import univention.admin.uldap
 from univention.testing.ucsschool import UCSTestSchool
 import os
 import random
@@ -14,6 +15,11 @@ import univention.admin.modules
 import univention.admin.filter
 univention.admin.modules.update()
 from univention.config_registry.interfaces import Interfaces
+from ucsschool.lib.models import School, User
+from ucsschool.lib.models.utils import add_stream_logger_to_schoollib
+import ucsschool.lib.models.utils
+
+add_stream_logger_to_schoollib()
 
 HOOK_BASEDIR = '/usr/share/ucs-school-import/hooks'
 
@@ -61,8 +67,28 @@ def create_ou_cli(ou, dc=None, dc_administrative=None, sharefileserver=None, ou_
 	if retcode:
 		raise CreateOU('Failed to execute "%s". Return code: %d.' % (string.join(cmd_block), retcode))
 
-def create_ou_umc(ou, dc, dc_administrative, sharefileserver, ou_displayname):
-	raise NotImplementedError
+def create_ou_python_api(ou, dc, dc_administrative, sharefileserver, ou_displayname):
+	kwargs = {'name': ou, 'dc_name': dc}
+	if dc_administrative:
+		raise NotImplementedError
+		kwargs['dc_name_administrative'] = dc_administrative
+	if sharefileserver:
+		kwargs['class_share_file_server'] = sharefileserver
+		kwargs['home_share_file_server'] = sharefileserver
+	if ou_displayname:
+		kwargs['display_name'] = ou_displayname
+
+	# invalidate caches and reload UCR
+	ucsschool.lib.models.utils.ucr.load()
+	ucsschool.lib.models.utils._pw_length_cache.clear()
+	# UCSSchoolHelperAbstractClass._search_base_cache.clear()
+	User._profile_path_cache.clear()
+	User._samba_home_path_cache.clear()
+
+	lo = univention.admin.uldap.getAdminConnection()[0]
+	School.init_udm_module(lo) # TODO FIXME has to be fixed in ucs-school-lib - should be done automatically
+	School(**kwargs).create(lo)
+
 
 def move_domaincontroller_to_ou_cli(dc_name, ou):
 	cmd_block = ['/usr/share/ucs-school-import/scripts/move_domaincontroller_to_ou', '--ou', ou, '--dcname', dc_name]
@@ -143,7 +169,9 @@ def get_ou_base(ou, district_enable):
 	return ou_base
 
 
-def create_and_verify_ou(ou, dc, sharefileserver, dc_administrative=None, ou_displayname=None, singlemaster=False, noneducational_create_objects=False, district_enable=False, default_dcs=None, dhcp_dns_clearou=False, do_cleanup=True, use_cli_api=True):
+def create_and_verify_ou(ou, dc, sharefileserver, dc_administrative=None, ou_displayname=None, singlemaster=False, noneducational_create_objects=False, district_enable=False, default_dcs=None, dhcp_dns_clearou=False, do_cleanup=True, use_cli_api=True, use_python_api=False):
+
+	assert(use_cli_api != use_python_api)
 
 	print '******************************************************'
 	print '**** create_and_verify_ou test run'
@@ -218,8 +246,8 @@ def create_and_verify_ou(ou, dc, sharefileserver, dc_administrative=None, ou_dis
 
 	if use_cli_api:
 		create_ou_cli(ou, dc, dc_administrative, sharefileserver, ou_displayname)
-	else:
-		create_ou_umc(ou, dc, dc_administrative, sharefileserver, ou_displayname)
+	if use_python_api:
+		create_ou_python_api(ou, dc, dc_administrative, sharefileserver, ou_displayname)
 
 	if move_dc_after_create_ou:
 		move_domaincontroller_to_ou_cli(dc_name, ou)
@@ -435,16 +463,16 @@ def verify_dc(ou, dc_name, dc_type, base_dn=None):
 				raise
 
 
-def import_ou_basics(use_cli_api=True):
+def import_ou_basics(use_cli_api=True, use_python_api=False):
 	with univention.testing.udm.UCSTestUDM() as udm:
-		for dc in [None, 'generate']:
-			for singlemaster in [True, False]:
-				for noneducational_create_object in [True, False]:
-					for district_enable in [True, False]:
-						for default_dcs in [None, 'edukativ', uts.random_string()]:
-							for dhcp_dns_clearou in [True, False]:
-								for sharefileserver in [None, 'generate']:
-									for dc_administrative in [None, 'generate']:
+		for dc_administrative in [None, 'generate']:
+			for dc in [None, 'generate']:
+				for singlemaster in [True, False]:
+					for noneducational_create_object in [True, False]:
+						for district_enable in [True, False]:
+							for default_dcs in [None, 'edukativ', uts.random_string()]:
+								for dhcp_dns_clearou in [True, False]:
+									for sharefileserver in [None, 'generate']:
 										if singlemaster and dc == 'generate':
 											continue
 										if not dc and dc_administrative:
@@ -471,12 +499,13 @@ def import_ou_basics(use_cli_api=True):
 													district_enable=district_enable,
 													default_dcs=default_dcs,
 													dhcp_dns_clearou=dhcp_dns_clearou,
-													use_cli_api=use_cli_api
+													use_cli_api=use_cli_api,
+													use_python_api=use_python_api,
 											)
 										finally:
 											remove_ou(ou_name)
 
-def import_ou_with_existing_dc(use_cli_api=True):
+def import_ou_with_existing_dc(use_cli_api=True, use_python_api=False):
 	with univention.testing.udm.UCSTestUDM() as udm:
 		dc_name = uts.random_name()
 		dc_dn = udm.create_object('computers/domaincontroller_slave', name = dc_name)
@@ -516,7 +545,8 @@ def import_ou_with_existing_dc(use_cli_api=True):
 										default_dcs=None,
 										dhcp_dns_clearou=False,
 										do_cleanup=False,
-										use_cli_api=use_cli_api
+										use_cli_api=use_cli_api,
+										use_python_api=use_python_api,
 			)
 
 			utils.verify_ldap_object(dhcp_subnet1, should_exist=True)
