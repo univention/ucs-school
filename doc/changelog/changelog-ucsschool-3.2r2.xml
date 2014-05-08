@@ -39,15 +39,15 @@
 
 <section>
 	<title>Domain services</title>
-<!--
 	<section>
 		<title>Samba4</title>
 			<itemizedlist>
 				<listitem><simpara>
-					FOO
+					The new package <package>ucs-school-s4-branch-site<package> provides a listener module which takes care of Samba4 specific DNS service record registration on &ucsUAS; Samba 4 Slave PDCs. This simplifies the installation of an additional Samba 4 Slave PDC at some &ucsUAS; branch site (<ulink url="&ucsbug;34172">Bug 34172</ulink>).
 				</simpara></listitem>
 			</itemizedlist>
 	</section>
+<!--
 	<section>
 		<title>OpenLDAP</title>
 	</section>
@@ -78,7 +78,7 @@
 		<title>Services for Windows</title>
 		<itemizedlist>
 		<listitem><simpara>
-			<package>ucs-school-netlogon-user-logonscripts<package> now creates a desktop link to the UMC of the school DC 
+			<package>ucs-school-netlogon-user-logonscripts</package> now creates a desktop link to the UMC of the school DC 
 			for teacher accounts, configurable via the &ucsUCR; variables 
 			<env>ucsschool/userlogon/umclink/re</env> and <env>ucsschool/userlogon/umclink/link</env>
 			(<ulink url="&ucsbug;22737">Bug 22737</ulink>).
