@@ -17,8 +17,8 @@ from univention.config_registry.interfaces import Interfaces
 
 HOOK_BASEDIR = '/usr/share/ucs-school-import/hooks'
 
-TYPE_DC_MANAGEMENT = 'management'
-TYPE_DC_EDUCATION = 'education'
+TYPE_DC_ADMINISTRATIVE = 'administrative'
+TYPE_DC_EDUCATIONAL = 'educational'
 
 class CreateOU(Exception):
 	pass
@@ -45,12 +45,12 @@ def remove_ou(ou_name):
 	schoolenv.cleanup_ou(ou_name)
 
 
-def create_ou_cli(ou, dc=None, dc_management=None, sharefileserver=None, ou_displayname=None):
+def create_ou_cli(ou, dc=None, dc_administrative=None, sharefileserver=None, ou_displayname=None):
 	cmd_block = ['/usr/share/ucs-school-import/scripts/create_ou', ou]
 	if dc:
 		cmd_block.append(dc)
-	if dc_management:
-		cmd_block.append(dc_management)
+	if dc_administrative:
+		cmd_block.append(dc_administrative)
 	if ou_displayname:
 		cmd_block.append('--displayName=%s' % ou_displayname)
 	if sharefileserver:
@@ -61,7 +61,7 @@ def create_ou_cli(ou, dc=None, dc_management=None, sharefileserver=None, ou_disp
 	if retcode:
 		raise CreateOU('Failed to execute "%s". Return code: %d.' % (string.join(cmd_block), retcode))
 
-def create_ou_umc(ou, dc, dc_management, sharefileserver, ou_displayname):
+def create_ou_umc(ou, dc, dc_administrative, sharefileserver, ou_displayname):
 	raise NotImplementedError
 
 def move_domaincontroller_to_ou_cli(dc_name, ou):
@@ -143,14 +143,14 @@ def get_ou_base(ou, district_enable):
 	return ou_base
 
 
-def create_and_verify_ou(ou, dc, sharefileserver, dc_management=None, ou_displayname=None, singlemaster=False, noneducational_create_objects=False, district_enable=False, default_dcs=None, dhcp_dns_clearou=False, do_cleanup=True, use_cli_api=True):
+def create_and_verify_ou(ou, dc, sharefileserver, dc_administrative=None, ou_displayname=None, singlemaster=False, noneducational_create_objects=False, district_enable=False, default_dcs=None, dhcp_dns_clearou=False, do_cleanup=True, use_cli_api=True):
 
 	print '******************************************************'
 	print '**** create_and_verify_ou test run'
 	print '****	ou=%s' % ou
 	print '****	ou_displayname=%r' % ou_displayname
 	print '****	dc=%s' % dc
-	print '****	dc_management=%s' % dc_management
+	print '****	dc_administrative=%s' % dc_administrative
 	print '****	sharefileserver=%s' % sharefileserver
 	print '****	singlemaster=%s' % singlemaster
 	print '****	noneducational_create_objects=%s' % noneducational_create_objects
@@ -217,9 +217,9 @@ def create_and_verify_ou(ou, dc, sharefileserver, dc_management=None, ou_display
 		sharefileserver_dn = dc_dn
 
 	if use_cli_api:
-		create_ou_cli(ou, dc, dc_management, sharefileserver, ou_displayname)
+		create_ou_cli(ou, dc, dc_administrative, sharefileserver, ou_displayname)
 	else:
-		create_ou_umc(ou, dc, dc_management, sharefileserver, ou_displayname)
+		create_ou_umc(ou, dc, dc_administrative, sharefileserver, ou_displayname)
 
 	if move_dc_after_create_ou:
 		move_domaincontroller_to_ou_cli(dc_name, ou)
@@ -287,10 +287,10 @@ def create_and_verify_ou(ou, dc, sharefileserver, dc_management=None, ou_display
 
 
 	if not singlemaster:
-		verify_dc(ou, dc_name, TYPE_DC_EDUCATION, base_dn)
+		verify_dc(ou, dc_name, TYPE_DC_EDUCATIONAL, base_dn)
 
-	if dc_management:
-		verify_dc(ou, dc_management, TYPE_DC_MANAGEMENT, base_dn)
+	if dc_administrative:
+		verify_dc(ou, dc_administrative, TYPE_DC_ADMINISTRATIVE, base_dn)
 
 	grp_prefix_pupils = ucr.get('ucsschool/ldap/default/groupprefix/pupils', 'schueler-')
 	grp_prefix_teachers = ucr.get('ucsschool/ldap/default/groupprefix/teachers', 'lehrer-')
@@ -384,9 +384,9 @@ def create_and_verify_ou(ou, dc, sharefileserver, dc_management=None, ou_display
 def verify_dc(ou, dc_name, dc_type, base_dn=None):
 	''' Arguments:
         dc_name: name of the domaincontroller (cn)
-        dc_type: type of the domaincontroller ('education' or 'management')
+        dc_type: type of the domaincontroller ('educational' or 'administrative')
 	'''
-	assert(dc_type in (TYPE_DC_MANAGEMENT, TYPE_DC_EDUCATION))
+	assert(dc_type in (TYPE_DC_ADMINISTRATIVE, TYPE_DC_EDUCATIONAL))
 
 	ucr = univention.testing.ucr.UCSTestConfigRegistry()
 	ucr.load()
@@ -397,7 +397,7 @@ def verify_dc(ou, dc_name, dc_type, base_dn=None):
 
 	# define list of (un-)desired group memberships ==> [(IS_MEMBER, GROUP_DN), ...]
 	group_dn_list = []
-	if dc_type == TYPE_DC_MANAGEMENT:
+	if dc_type == TYPE_DC_ADMINISTRATIVE:
 		group_dn_list += [
 			(True, 'cn=OU%s-DC-Verwaltungsnetz,cn=ucsschool,cn=groups,%s' % (ou.lower(), base_dn)),
 			(True, 'cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,%s' % (base_dn, )),
@@ -444,13 +444,13 @@ def import_ou_basics(use_cli_api=True):
 						for default_dcs in [None, 'edukativ', uts.random_string()]:
 							for dhcp_dns_clearou in [True, False]:
 								for sharefileserver in [None, 'generate']:
-									for dc_management in [None, 'generate']:
+									for dc_administrative in [None, 'generate']:
 										if singlemaster and dc == 'generate':
 											continue
-										if not dc and dc_management:
-											continue  # cannot specify management dc without education dc
-										if not noneducational_create_object and dc_management:
-											print 'NOTE: cannot create management DC without management objects in LDAP'
+										if not dc and dc_administrative:
+											continue  # cannot specify administrative dc without educational dc
+										if not noneducational_create_object and dc_administrative:
+											print 'NOTE: cannot create administrative DC without administrative objects in LDAP'
 											continue
 										if sharefileserver:
 											sharefileserver=uts.random_name()
@@ -464,7 +464,7 @@ def import_ou_basics(use_cli_api=True):
 													ou=ou_name,
 													ou_displayname=ou_displayname,
 													dc=(uts.random_name() if dc else None),
-													dc_management=(uts.random_name() if dc_management else None),
+													dc_administrative=(uts.random_name() if dc_administrative else None),
 													sharefileserver=sharefileserver,
 													singlemaster=singlemaster,
 													noneducational_create_objects=noneducational_create_object,
@@ -508,7 +508,7 @@ def import_ou_with_existing_dc(use_cli_api=True):
 										ou=ou_name,
 										ou_displayname=None,
 										dc=dc_name,
-										dc_management=None,
+										dc_administrative=None,
 										sharefileserver=None,
 										singlemaster=False,
 										noneducational_create_objects=True,

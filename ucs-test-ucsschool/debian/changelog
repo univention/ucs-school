@@ -1,3 +1,9 @@
+ucs-test-ucsschool (1.0.23-1) unstable; urgency=low
+
+  * Bug #26137: fixed confusing variable names
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Wed, 07 May 2014 21:58:25 +0200
+
 ucs-test-ucsschool (1.0.22-2) unstable; urgency=low
 
   * importtests: activate tests on singlemaster (Bug #34548)
