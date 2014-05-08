@@ -78,10 +78,10 @@
 		<title>Services for Windows</title>
 		<itemizedlist>
 		<listitem><simpara>
-          <package>ucs-school-netlogon-user-logonscripts<package> now creates a desktop link to the UMC of the school DC 
-          for tearcher accounts, configurable via the &ucsUCR; variables 
-          <env>ucsschool/userlogon/umclink/re</env> and <env>ucsschool/userlogon/umclink/link</env>
-         (<ulink url="&ucsbug;22737">Bug 22737</ulink>).
+			<package>ucs-school-netlogon-user-logonscripts<package> now creates a desktop link to the UMC of the school DC 
+			for teacher accounts, configurable via the &ucsUCR; variables 
+			<env>ucsschool/userlogon/umclink/re</env> and <env>ucsschool/userlogon/umclink/link</env>
+			(<ulink url="&ucsbug;22737">Bug 22737</ulink>).
 		</simpara></listitem>
 		</itemizedlist>
 	</section>
