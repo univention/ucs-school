@@ -99,8 +99,8 @@ if [ "$1" = "configure" ] && dpkg --compare-versions "$2" lt-nl 9.0.5; then
 	fi
 fi
 
-# Bug #26137: do not create management slave automatically any longer ==>
-#             change default during switch from UCS@school 3.2 to 3.2R2
+# Bug #26137: do not create administrative slaves automatically any longer ==>
+#             default change during switch from UCS@school 3.2 to 3.2R2
 if [ "$1" = "configure" ] && dpkg --compare-versions "$2" lt-nl 10.0.8 ; then
 	if [ "$ucsschool_ldap_default_dcs" = "edukativ verwaltung" ] ; then
 		ucr set ucsschool/ldap/default/dcs="edukativ"
