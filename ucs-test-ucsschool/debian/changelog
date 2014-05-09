@@ -1,3 +1,9 @@
+ucs-test-ucsschool (1.0.29-1) unstable; urgency=low
+
+  * Bug #34801: added test for UMCP command schoolwizards/schools/create
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 09 May 2014 17:59:23 +0200
+
 ucs-test-ucsschool (1.0.28-1) unstable; urgency=low
 
   * Renamed service 'UCS@school Management' to 'UCS@school Administration' (Bug #34172)
