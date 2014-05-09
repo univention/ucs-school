@@ -1,3 +1,9 @@
+ucs-school-lib (5.0.25-1) unstable; urgency=low
+
+  * Bug #34337: Fix typos
+
+ -- Dirk Wiesenthal <wiesenthal@univention.de>  Fri, 09 May 2014 10:57:42 +0200
+
 ucs-school-lib (5.0.24-1) unstable; urgency=low
 
   * Bug #34337: Fix school creation: adding DC with correct groups

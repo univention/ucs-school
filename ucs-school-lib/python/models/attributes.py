@@ -104,7 +104,7 @@ class SchoolName(CommonName):
 	udm_name = 'name'
 
 	def validate(self, value):
-		super(CommonName, self).validate(value)
+		super(SchoolName, self).validate(value)
 		if ucr.is_true('ucsschool/singlemaster', False):
 			regex = re.compile('^[a-zA-Z0-9](([a-zA-Z0-9_]*)([a-zA-Z0-9]$))?$')
 			if not regex.match(value):

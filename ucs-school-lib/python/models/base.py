@@ -297,9 +297,6 @@ class UCSSchoolHelperAbstractClass(object):
 		if not line:
 			logger.debug('No line. Skipping!')
 			return None
-		else:
-			# TODO: remove! contains password
-			logger.debug('Line: %r' % line)
 		line = line.strip() + '\n'
 
 		# create temporary file with data
@@ -512,7 +509,6 @@ class UCSSchoolHelperAbstractClass(object):
 				udm_name = self._attributes['name'].udm_name
 				name = self.get_name_from_dn(dn)
 				filter_str = '%s=%s' % (udm_name, escape_filter_chars(name))
-				logger.debug('Getting UDM object by filter: %s' % filter_str)
 				self._udm_obj = self.get_first_udm_obj(lo, filter_str, superordinate)
 			else:
 				logger.debug('Getting UDM object by dn: %s' % dn)
@@ -694,6 +690,7 @@ class UCSSchoolHelperAbstractClass(object):
 		cls.init_udm_module(lo)
 		if cls._meta.udm_filter:
 			filter_str = '(&(%s)(%s))' % (cls._meta.udm_filter, filter_str)
+		logger.debug('Getting UDM object by filter: %s' % filter_str)
 		objs = udm_modules.lookup(cls._meta.udm_module, None, lo, scope='sub', base=ucr.get('ldap/base'), filter=str(filter_str), superordinate=superordinate)
 		if len(objs) == 0:
 			return None
@@ -732,7 +729,7 @@ class UCSSchoolHelperAbstractClass(object):
 				ret[name] = getattr(self, name)
 		return ret
 
-	def _map_func_name_to_code(cls, func_name):
+	def _map_func_name_to_code(self, func_name):
 		if func_name == 'create':
 			return 'A'
 		elif func_name == 'modify':

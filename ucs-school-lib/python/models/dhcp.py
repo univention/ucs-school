@@ -78,7 +78,7 @@ class DHCPService(UCSSchoolHelperAbstractClass):
 					interfaces.append(address)
 				except ValueError as exc:
 					logger.info('Skipping invalid interface %s:\n%s' % (interface_name, exc))
-			subnet_dns = DHCPSubnet.find_any_dn_below_base(old_dhcp_server_container)
+			subnet_dns = DHCPSubnet.find_any_dn_below_base(old_dhcp_server_container, lo)
 			for subnet_dn in subnet_dns:
 				dhcp_subnet = DHCPSubnet.from_dn(subnet_dn, self.school, lo, superordinate=self)
 				subnet = dhcp_subnet.get_ipv4_subnet()

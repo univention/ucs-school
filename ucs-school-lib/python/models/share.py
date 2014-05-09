@@ -112,7 +112,7 @@ class ClassShare(UCSSchoolHelperAbstractClass):
 					return '%s.%s' % (alternative_server_uid, domainname)
 
 		# fallback
-		return '%s.%s' (school.get_dc_name_fallback(), domainname)
+		return '%s.%s' % (school.get_dc_name_fallback(), domainname)
 
 	class Meta:
 		udm_module = 'shares/share'

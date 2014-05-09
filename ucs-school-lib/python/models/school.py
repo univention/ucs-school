@@ -189,7 +189,7 @@ class School(UCSSchoolHelperAbstractClass):
 		hostname = set_by_self or self.get_dc_name()
 		if hostname == self.get_dc_name_fallback():
 			# does not matter if exists or not - dc object will be created later
-			host = SchoolDC.get(hostname, self.name)
+			host = SchoolDC(name=hostname, school=self.name)
 			return host.dn
 
 		host = AnyComputer.get_first_udm_obj(lo, 'cn=%s' % escape_filter_chars(hostname))
@@ -227,7 +227,7 @@ class School(UCSSchoolHelperAbstractClass):
 
 	def add_host_to_dc_group(self, lo):
 		if self.dc_name:
-			dc = SchoolDCSlave.get(self.dc_name, self.name)
+			dc = SchoolDCSlave(name=self.dc_name, school=self.name)
 			dc.create(lo)
 			dc_udm_obj = dc.get_udm_object(lo)
 			name_of_noneducational_group = self.get_administrative_group_name(group_type='noneducational')
@@ -304,12 +304,13 @@ class School(UCSSchoolHelperAbstractClass):
 						logger.info('Modifying %s' % obj.dn)
 						obj.modify()
 			else:
-				dc = SchoolDCSlave(dc_name, self.name, groups=groups)
+				dc = SchoolDCSlave(name=dc_name, school=self.name, groups=groups)
 				dc.create(lo)
 
 			dhcp_service = self.get_dhcp_service(dc_name)
 			dhcp_service.create(lo)
 			dhcp_service.add_server(dc_name, lo)
+			return True
 
 	def get_dhcp_service(self, hostname=None):
 		return DHCPService.get(self.name.lower(), self.name, hostname=hostname, domainname=ucr.get('domainname'))
@@ -330,7 +331,8 @@ class School(UCSSchoolHelperAbstractClass):
 		self.create_default_containers(lo)
 		self.create_default_groups(lo)
 		self.add_host_to_dc_group(lo)
-		self.add_domain_controllers(lo)
+		if not self.add_domain_controllers(lo):
+			return False
 
 		# In a single server environment the default DHCP container must
 		# be set to the DHCP container in the school ou. Otherwise newly
