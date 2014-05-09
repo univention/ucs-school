@@ -63,9 +63,9 @@ def main():
 			newClass.create()
 
 			# create user in that class student/teacher
-			tea, teadn = schoolenv.create_user(school, classes='%s-%s' % (
+			tea, teadn = schoolenv.create_user(school,	classes='%s-%s' % (
 				school, newClass.name), is_teacher=True)
-			stu, studn = schoolenv.create_user(school, classes='%s-%s' % (
+			stu, studn = schoolenv.create_user(school,	classes='%s-%s' % (
 				school, newClass.name))
 
 			# Getting the redirection page when blocked
@@ -78,6 +78,7 @@ def main():
 			rule1 = InternetRule(
 					ucr=ucr,
 					umcConnection=connection,
+					typ='whitelist',
 					domains=['univention.de'],
 					priority=3)
 			rule1.define()
@@ -103,6 +104,7 @@ def main():
 			rule2 = InternetRule(
 					ucr=ucr,
 					umcConnection=connection,
+					typ='whitelist',
 					domains=['google.de', 'univention.de'],
 					priority=4)
 			rule2.define()
