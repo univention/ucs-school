@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-wizards\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2014-05-08 13:12+0200\n"
+"POT-Creation-Date: 2014-05-09 14:13+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -12,12 +12,12 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: umc/python/schoolwizards/__init__.py:211
+#: umc/python/schoolwizards/__init__.py:199
 #, python-format
 msgid "\"%s\" already exists!"
 msgstr "\"%s\" existiert bereits!"
 
-#: umc/python/schoolwizards/__init__.py:248
+#: umc/python/schoolwizards/__init__.py:236
 #, python-format
 msgid "\"%s\" does not exist!"
 msgstr "\"%s\" existiert nicht!"
