@@ -226,6 +226,7 @@ class School(UCSSchoolHelperAbstractClass):
 			return name
 
 	def add_host_to_dc_group(self, lo):
+		logger.info('School.add_host_to_dc_group(): ou_name=%r  dc_name=%r' % (self.name, self.dc_name))
 		if self.dc_name:
 			dc = SchoolDCSlave(name=self.dc_name, school=self.name)
 			dc.create(lo)
@@ -264,11 +265,13 @@ class School(UCSSchoolHelperAbstractClass):
 			return dc.create(lo)
 
 	def add_domain_controllers(self, lo):
+		logger.info('School.add_domain_controllers(): ou_name=%r' % self.name)
 		school_dcs = ucr.get('ucsschool/ldap/default/dcs', 'edukativ').split()
 		for dc in school_dcs:
 			administrative = dc == 'verwaltung'
 			dc_name = self.get_dc_name(administrative=administrative)
 			server = AnyComputer.get_first_udm_obj(lo, 'cn=%s' % escape_filter_chars(dc_name))
+			logger.info('School.add_domain_controllers(): administrative=%r  dc_name=%s  self.dc_name=%r  server=%r' % (administrative, dc_name, self.dc_name, server))
 			if not server and not self.dc_name:
 				if administrative:
 					administrative_type = 'administrative'
@@ -284,9 +287,9 @@ class School(UCSSchoolHelperAbstractClass):
 					return
 
 				if hostlist:
-					continue # if at least one DC has control over this OU then jump to next 'school_dcs' item
+					continue # if at least one DC has control over this OU then jump to next 'school_dcs' item ==> do not create default slave objects
 
-			self.create_dc_slave(lo, dc_name, administrative=administrative)
+				self.create_dc_slave(lo, dc_name, administrative=administrative)
 
 			dhcp_service = self.get_dhcp_service(dc_name)
 			dhcp_service.create(lo)
