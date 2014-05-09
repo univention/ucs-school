@@ -1,3 +1,14 @@
+ucs-test-ucsschool (1.0.27-1) unstable; urgency=low
+
+  * Bug # 34491 add 5 scripts to the test:
+  * define_internet_rules_check
+  * assign_internet_rules_check
+  * http_proxy_basic_auth_check
+  * http_proxy_multi_auth_check
+  * http_proxy_auth_after_passwd_reset_check
+
+ -- Ammar Najjar <najjar@univention.de>  Fri, 09 May 2014 09:53:06 +0200
+
 ucs-test-ucsschool (1.0.26-1) unstable; urgency=low
 
   * Bug #34477: disabled script 08_ucs-school-printermoderatoion-find-printer-in-ou-check
