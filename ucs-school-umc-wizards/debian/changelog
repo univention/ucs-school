@@ -1,3 +1,10 @@
+ucs-school-umc-wizards (4.0.16-1) unstable; urgency=low
+
+  * Bug #34337: schoolwizards/schools/create creates/adds new DCs to OU if
+    OU already exists
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 09 May 2014 18:04:10 +0200
+
 ucs-school-umc-wizards (4.0.15-1) unstable; urgency=low
 
   * Bug #34337: Improve handling of situations without schools
