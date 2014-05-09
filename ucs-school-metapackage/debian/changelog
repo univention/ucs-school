@@ -1,3 +1,9 @@
+ucs-school-metapackage (6.0.7-23) unstable; urgency=low
+
+  * Renamed service 'UCS@school Management' to 'UCS@school Administration' (Bug #34172)
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 09 May 2014 11:55:57 +0200
+
 ucs-school-metapackage (6.0.7-22) unstable; urgency=medium
 
   * Singlemaster shall not reister service UCS@school Education (Bug #34172)

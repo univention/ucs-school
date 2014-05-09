@@ -1,3 +1,9 @@
+ucs-test-ucsschool (1.0.28-1) unstable; urgency=low
+
+  * Renamed service 'UCS@school Management' to 'UCS@school Administration' (Bug #34172)
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 09 May 2014 12:03:44 +0200
+
 ucs-test-ucsschool (1.0.27-1) unstable; urgency=low
 
   * Bug # 34491 add 5 scripts to the test:

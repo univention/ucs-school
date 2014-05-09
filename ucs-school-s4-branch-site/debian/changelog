@@ -1,3 +1,9 @@
+ucs-school-s4-branch-site (1.0.2-1) unstable; urgency=low
+
+  * Renamed service 'UCS@school Management' to 'UCS@school Administration' (Bug #34172)
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 09 May 2014 12:03:21 +0200
+
 ucs-school-s4-branch-site (1.0.1-5) unstable; urgency=medium
 
   * Fix a fringe case traceback (Bug #32187)

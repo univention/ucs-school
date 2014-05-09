@@ -100,7 +100,7 @@ class Test():
 
 		(record_dn, obj) = res[0]
 		services = obj['univentionService']
-		_ucsschool_services = set(('UCS@school Education', 'UCS@school Management'))
+		_ucsschool_services = set(('UCS@school Education', 'UCS@school Administration'))
 		for service_id in _ucsschool_services:
 			if service_id in services:
 				_local_ucsschool_service = service_id
@@ -193,7 +193,7 @@ class Test():
 				testing_utils.fail(log_message="%s still found in DNS SRV record %s" % (postitive_test_fqdn, test_srv_record))
 
 
-		## verify that the "negative" DCs of the other Role (Education/Management) are not in DNS/Samba4
+		## verify that the "negative" DCs of the other Role (Education/Administration) are not in DNS/Samba4
 		for negative_test_fqdn in negative_test_fqdn_list:
 			if stdout.find(negative_test_fqdn) != -1:
 				testing_utils.fail(log_message="%s present in DNS SRV record %s" % (negative_test_fqdn, test_srv_record))

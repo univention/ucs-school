@@ -120,7 +120,7 @@ def on_load(ldap_machine_read=None, ldap_position=None, search_base=None):
 		if 'univentionService' in obj:
 			services = obj['univentionService']
 
-	for service_id in ('UCS@school Education', 'UCS@school Management'):
+	for service_id in ('UCS@school Education', 'UCS@school Administration'):
 		if service_id in services:
 			_ucsschool_service_specialization_filter = "(univentionService=%s)" % service_id
 			break
