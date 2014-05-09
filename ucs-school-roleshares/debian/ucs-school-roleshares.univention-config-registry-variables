@@ -1,11 +1,11 @@
 [ucsschool/import/roleshare/.*]
-Description[de]=Diese Variable ermöglichen die Vorgabe der Freigabe-Namen für das Anlegen von Datei-Freigaben für den Lehrer-Zugriff auf Homeverzeichnisse von Schülern oder anderen UCS@School Rollen. Der Platzhalter steht für eine der UCS@School Rollen in englischer Schreibweise (pupil, teacher, staff).
+Description[de]=Diese Variable ermöglichen die Vorgabe der Freigabe-Namen für das Anlegen von Datei-Freigaben für den Lehrer-Zugriff auf Homeverzeichnisse von Schülern oder anderen UCS@school Rollen. Der Platzhalter steht für eine der UCS@school Rollen in englischer Schreibweise (pupil, teacher, staff).
 Description[en]=These variables allow definition of the share names used for the creation file shares for teachers to access home directories of students and other UCS@school roles. The variable part should be replaced by one of the UCS@school roles (pupil, teacher, staff).
 Type=str
 Categories=ucsschool-base
 
 [ucsschool/import/roleshare/.*/path]
-Description[de]=Diese Variable ermöglichen die Vorgabe der Unterverzeichnisnamen für das Anlegen von Datei-Freigaben für den Lehrer-Zugriff auf Homeverzeichnisse von Schülern oder anderen UCS@School Rollen. Der Platzhalter steht  für eine der UCS@School Rollen in englischer Schreibweise (pupil, teacher, staff).
+Description[de]=Diese Variable ermöglichen die Vorgabe der Unterverzeichnisnamen für das Anlegen von Datei-Freigaben für den Lehrer-Zugriff auf Homeverzeichnisse von Schülern oder anderen UCS@school Rollen. Der Platzhalter steht für eine der UCS@school Rollen in englischer Schreibweise (pupil, teacher, staff).
 Description[en]=These variables allow definition of the subdirectory names used for the creation file shares for teachers to access home directories of students and other UCS@school roles. The variable part should be replaced by one of the UCS@school roles (pupil, teacher, staff).
 Type=str
 Categories=ucsschool-base
