@@ -243,7 +243,7 @@ def create_ou_local(ou, displayName):
 def create_ou_remote(master, username, password, ou, display_name, educational_slave, administrative_slave=None):
 	"""Create a school OU via the UMC interface."""
 	try:
-		opts = [{'object' : {'name' : ou, 'display_name' : display_name, 'dc_name_educational' : educational_slave}}]
+		opts = [{'object' : {'name' : ou, 'display_name' : display_name, 'dc_name' : educational_slave}}]
 		if administrative_slave:
 			opts[0]['object']['dc_name_administrative'] = administrative_slave
 		umc(username, password, master, ['schoolwizards/schools/create', '-e', '-o', repr(opts), '-f', 'schoolwizards/schools'])
