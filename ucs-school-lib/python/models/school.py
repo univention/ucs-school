@@ -230,13 +230,7 @@ class School(UCSSchoolHelperAbstractClass):
 			dc = SchoolDCSlave(name=self.dc_name, school=self.name)
 			dc.create(lo)
 			dc_udm_obj = dc.get_udm_object(lo)
-			name_of_noneducational_group = self.get_administrative_group_name(group_type='noneducational')
-			for grp in dc_udm_obj['groups']:
-				if grp.startswith('cn=%s,' % name_of_noneducational_group):
-					groups = self.get_administrative_group_name('noneducational', ou_specific='both', as_dn=True)
-					break
-			else:
-				groups = self.get_administrative_group_name('educational', ou_specific='both', as_dn=True)
+			groups = self.get_administrative_group_name('educational', ou_specific='both', as_dn=True)
 			for grp in groups:
 				if grp not in dc_udm_obj['groups']:
 					dc_udm_obj['groups'].append(grp)

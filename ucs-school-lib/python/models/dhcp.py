@@ -78,7 +78,7 @@ class DHCPService(UCSSchoolHelperAbstractClass):
 					interfaces.append(address)
 				except ValueError as exc:
 					logger.info('Skipping invalid interface %s:\n%s' % (interface_name, exc))
-			subnet_dns = DHCPSubnet.find_any_dn_below_base(old_dhcp_server_container, lo)
+			subnet_dns = DHCPSubnet.find_all_dns_below_base(old_dhcp_server_container, lo)
 			for subnet_dn in subnet_dns:
 				dhcp_subnet = DHCPSubnet.from_dn(subnet_dn, self.school, lo, superordinate=self)
 				subnet = dhcp_subnet.get_ipv4_subnet()
@@ -135,8 +135,11 @@ class DHCPServer(UCSSchoolHelperAbstractClass):
 
 	@classmethod
 	def find_any_dn_with_name(cls, name, lo):
-		logger.debug('Searching dhcpServer with cn=%s' % name)
-		return lo.searchDn(filter='(&(objectClass=dhcpServer)(cn=%s))' % name, base=ucr.get('ldap/base'))
+		logger.debug('Searching first dhcpServer with cn=%s' % name)
+		try:
+			return lo.searchDn(filter='(&(objectClass=dhcpServer)(cn=%s))' % name, base=ucr.get('ldap/base'))[0]
+		except IndexError:
+			return None
 
 	class Meta:
 		udm_module = 'dhcp/server'
@@ -167,8 +170,8 @@ class DHCPSubnet(UCSSchoolHelperAbstractClass):
 			logger.info('%r is no valid IPv4Network:\n%s' % (network_str, exc))
 
 	@classmethod
-	def find_any_dn_below_base(cls, dn, lo):
-		logger.debug('Searching univentionDhcpSubnet in %r' % dn)
+	def find_all_dns_below_base(cls, dn, lo):
+		logger.debug('Searching all univentionDhcpSubnet in %r' % dn)
 		return lo.searchDn(filter='(objectClass=univentionDhcpSubnet)', base=dn)
 
 	class Meta:
