@@ -33,7 +33,6 @@
 import ldap
 from ldap.filter import escape_filter_chars
 
-import univention.admin.modules as udm_modules
 from univention.config_registry import handler_set
 
 from ucsschool.lib.models.attributes import SchoolName, DCName, ShareFileServer, DisplayName
@@ -48,6 +47,7 @@ from ucsschool.lib.models.utils import flatten, ucr, _, logger
 class School(UCSSchoolHelperAbstractClass):
 	name = SchoolName(_('School name'))
 	dc_name = DCName(_('DC Name'))
+	dc_name_administrative = DCName(_('DC Name administrative server'))
 	class_share_file_server = ShareFileServer(_('Server for class shares'), udm_name='ucsschoolClassShareFileServer')
 	home_share_file_server = ShareFileServer(_('Server for Windows home directories'), udm_name='ucsschoolHomeShareFileServer')
 	display_name = DisplayName(_('Display name'))
@@ -88,7 +88,7 @@ class School(UCSSchoolHelperAbstractClass):
 		cn_rooms = self.cn_name('rooms', 'raeume')
 		user_containers = [cn_pupils, cn_teachers, cn_admins]
 		group_containers = [cn_pupils, [cn_classes], cn_teachers, cn_rooms]
-		if ucr.is_true('ucsschool/ldap/noneducational/create/objects', True):
+		if self.shall_create_administrative_objects():
 			cn_staff = self.cn_name('staff', 'mitarbeiter')
 			cn_teachers_staff = self.cn_name('teachers-and-staff', 'lehrer und mitarbeiter')
 			user_containers.extend([cn_staff, cn_teachers_staff])
@@ -140,8 +140,8 @@ class School(UCSSchoolHelperAbstractClass):
 		# Member-Edukativnetz
 		# OU%s-Member-Edukativnetz
 		administrative_group_names = self.get_administrative_group_name('educational', domain_controller='both', ou_specific='both')
-		if ucr.is_true('ucsschool/ldap/noneducational/create/objects', True):
-			administrative_group_names.extend(self.get_administrative_group_name('noneducational', domain_controller='both', ou_specific='both')) # same with Verwaltungsnetz
+		if self.shall_create_administrative_objects():
+			administrative_group_names.extend(self.get_administrative_group_name('administrative', domain_controller='both', ou_specific='both')) # same with Verwaltungsnetz
 		for administrative_group_name in administrative_group_names:
 			group = BasicGroup.get(name=administrative_group_name, container=administrative_group_container)
 			group.create(lo)
@@ -163,7 +163,7 @@ class School(UCSSchoolHelperAbstractClass):
 		group.add_umc_policy(self.get_umc_policy_dn('teachers'), lo)
 
 		# cn=mitarbeiter
-		if ucr.is_true('ucsschool/ldap/noneducational/create/objects', True):
+		if self.shall_create_administrative_objects():
 			group = Group.get(self.group_name('staff', 'mitarbeiter-'), self.name)
 			group.create(lo)
 			group.add_umc_policy(self.get_umc_policy_dn('staff'), lo)
@@ -210,7 +210,7 @@ class School(UCSSchoolHelperAbstractClass):
 			return flatten([self.get_administrative_group_name(group_type, True, ou_specific, as_dn), self.get_administrative_group_name(group_type, False, ou_specific, as_dn)])
 		if ou_specific == 'both':
 			return flatten([self.get_administrative_group_name(group_type, domain_controller, False, as_dn), self.get_administrative_group_name(group_type, domain_controller, True, as_dn)])
-		if group_type == 'noneducational':
+		if group_type == 'administrative':
 			name = 'Verwaltungsnetz'
 		else:
 			name = 'Edukativnetz'
@@ -236,70 +236,57 @@ class School(UCSSchoolHelperAbstractClass):
 					dc_udm_obj['groups'].append(grp)
 			dc_udm_obj.modify()
 
+	def shall_create_administrative_objects(self):
+		return ucr.is_true('ucsschool/ldap/noneducational/create/objects', True)
+
+	def create_dc_slave(self, lo, name, administrative=False):
+		if administrative and not self.shall_create_administrative_objects():
+			logger.warning('Not creating %s: An administrative DC shall not be created as by UCR variable %r' % (name, 'ucsschool/ldap/noneducational/create/objects'))
+			return False
+		if not self.exists(lo):
+			logger.error('%r does not exist. Cannot create %s' % (self, name))
+			return False
+		if administrative:
+			groups = self.get_administrative_group_name('administrative', ou_specific='both', as_dn=True)
+		else:
+			groups = self.get_administrative_group_name('educational', ou_specific='both', as_dn=True)
+		logger.debug('DC shall become member of %r' % groups)
+
+		dc = SchoolDCSlave(name=name, school=self.name, groups=groups)
+		if dc.exists(lo):
+			logger.info('%r exists. Setting groups' % dc)
+			return dc.modify(lo)
+		else:
+			existing_host = AnyComputer.get_first_udm_obj(lo, 'cn=%s' % escape_filter_chars(name))
+			if existing_host:
+				logger.error('Given host name "%s" is already in use and no domaincontroller slave system. Please choose another name.' % name)
+				return False
+			return dc.create(lo)
+
 	def add_domain_controllers(self, lo):
 		school_dcs = ucr.get('ucsschool/ldap/default/dcs', 'edukativ').split()
 		for dc in school_dcs:
 			administrative = dc == 'verwaltung'
-			if administrative:
-				if not ucr.is_true('ucsschool/ldap/noneducational/create/objects', True):
-					continue
-				groups = self.get_administrative_group_name('noneducational', ou_specific='both', as_dn=True)
-			else:
-				groups = self.get_administrative_group_name('educational', ou_specific='both', as_dn=True)
 			dc_name = self.get_dc_name(administrative=administrative)
-
 			server = AnyComputer.get_first_udm_obj(lo, 'cn=%s' % escape_filter_chars(dc_name))
 			if not server and not self.dc_name:
-				group_dn = groups[0] # cn=OU%s-DC-[Verwaltungs|Edukativ]netz,...
+				if administrative:
+					administrative_type = 'administrative'
+				else:
+					administrative_type = 'educational'
+				group_dn = self.get_administrative_group_name(administrative_type, ou_specific=True, as_dn=True)
 				try:
 					hostlist = lo.get(group_dn, ['uniqueMember']).get('uniqueMember', [])
 				except ldap.NO_SUCH_OBJECT:
 					hostlist = []
 				except Exception, e:
 					logger.error('cannot read %s: %s' % (group_dn, e))
+					return
 
 				if hostlist:
 					continue # if at least one DC has control over this OU then jump to next 'school_dcs' item
 
-			if server:
-				if self.dc_name:
-					# manual dc name has been specified by user
-
-					# check if existing system is a DC master or DC backup
-					def get_computer_objs(module, hostname):
-						filter_str = 'cn=%s' % escape_filter_chars(hostname)
-						return udm_modules.lookup(module, None, lo, scope='sub', base=ucr.get('ldap/base'), filter=filter_str)
-					master_objs = get_computer_objs('computers/domaincontroller_master', dc_name)
-					backup_objs = get_computer_objs('computers/domaincontroller_backup', dc_name)
-					is_master_or_backup = master_objs or backup_objs
-
-					# check if existing system is a DC slave
-					slave_objs = get_computer_objs('computers/domaincontroller_slave', dc_name)
-					is_slave = len(slave_objs) > 0
-
-					if not is_master_or_backup and not is_slave:
-						logger.warning('Given system name %s is already in use and no domaincontroller system. Please choose another name' % dc_name)
-						return
-
-					if is_master_or_backup and is_slave:
-						logger.error('Implementation error: %s seems to be dc slave and dc master at the same time' % dc_name)
-						return
-
-					if len(slave_objs) > 1:
-						logger.error('More than one system with cn=%s found' % dc_name)
-						return
-
-					if is_slave:
-						obj = slave_objs[0]
-						obj.open()
-						for group in groups:
-							if group not in obj['groups']:
-								obj['groups'].append(group)
-						logger.info('Modifying %s' % obj.dn)
-						obj.modify()
-			else:
-				dc = SchoolDCSlave(name=dc_name, school=self.name, groups=groups)
-				dc.create(lo)
+			self.create_dc_slave(lo, dc_name, administrative=administrative)
 
 			dhcp_service = self.get_dhcp_service(dc_name)
 			dhcp_service.create(lo)
@@ -327,6 +314,8 @@ class School(UCSSchoolHelperAbstractClass):
 		self.add_host_to_dc_group(lo)
 		if not self.add_domain_controllers(lo):
 			return False
+		if self.dc_name_administrative:
+			self.create_dc_slave(lo, self.dc_name_administrative, administrative=True)
 
 		# In a single server environment the default DHCP container must
 		# be set to the DHCP container in the school ou. Otherwise newly

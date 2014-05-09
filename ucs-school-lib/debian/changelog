@@ -1,3 +1,9 @@
+ucs-school-lib (5.0.27-1) unstable; urgency=low
+
+  * Bug #34337: Fix school creation: Add dc_name_administrative argument
+
+ -- Dirk Wiesenthal <wiesenthal@univention.de>  Fri, 09 May 2014 13:43:02 +0200
+
 ucs-school-lib (5.0.26-1) unstable; urgency=low
 
   * Bug #34337: Fix school creation: Correct DHCP Server search, DC is always

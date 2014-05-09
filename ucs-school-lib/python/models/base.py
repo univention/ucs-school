@@ -501,7 +501,7 @@ class UCSSchoolHelperAbstractClass(object):
 			dn = self.old_dn or self.dn
 			superordinate = self.get_superordinate()
 			if dn is None:
-				logger.debug('Getting UDM object: No DN!')
+				logger.debug('Getting %s UDM object: No DN!' % self.__class__.__name__)
 				return
 			if self._meta.name_is_unique:
 				if self.name is None:
@@ -511,7 +511,7 @@ class UCSSchoolHelperAbstractClass(object):
 				filter_str = '%s=%s' % (udm_name, escape_filter_chars(name))
 				self._udm_obj = self.get_first_udm_obj(lo, filter_str, superordinate)
 			else:
-				logger.debug('Getting UDM object by dn: %s' % dn)
+				logger.debug('Getting %s UDM object by dn: %s' % (self.__class__.__name__, dn))
 				try:
 					self._udm_obj = udm_modules.lookup(self._meta.udm_module, None, lo, scope='base', base=dn, superordinate=superordinate)[0]
 				except (noObject, IndexError):
@@ -690,7 +690,7 @@ class UCSSchoolHelperAbstractClass(object):
 		cls.init_udm_module(lo)
 		if cls._meta.udm_filter:
 			filter_str = '(&(%s)(%s))' % (cls._meta.udm_filter, filter_str)
-		logger.debug('Getting UDM object by filter: %s' % filter_str)
+		logger.debug('Getting %s UDM object by filter: %s' % (cls.__name__, filter_str))
 		objs = udm_modules.lookup(cls._meta.udm_module, None, lo, scope='sub', base=ucr.get('ldap/base'), filter=str(filter_str), superordinate=superordinate)
 		if len(objs) == 0:
 			return None

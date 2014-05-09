@@ -45,6 +45,7 @@ class Attribute(object):
 	udm_name = None
 	syntax = None
 	extended = False
+	value_list = False
 
 	def __init__(self, label, aka=None, udm_name=None, required=False, unlikely_to_change=False, internal=False):
 		self.label = label
@@ -55,13 +56,22 @@ class Attribute(object):
 		self.udm_name = udm_name or self.udm_name
 
 	def validate(self, value):
-		if self.required and not value:
-			raise ValueError(_('"%s" is required. Please provide this information.') % self.label)
-		if self.syntax and value:
-			try:
-				self.syntax.parse(value)
-			except valueError as e:
-				raise ValueError(str(e))
+		if value:
+			if self.value_list:
+				if not isinstance(value, (list, tuple)):
+					raise ValueError(_('Needs to be a list of values!'))
+				values = value
+			else:
+				values = [value]
+			if self.syntax:
+				for val in values:
+					try:
+						self.syntax.parse(val)
+					except valueError as e:
+						raise ValueError(str(e))
+		else:
+			if self.required:
+				raise ValueError(_('"%s" is required. Please provide this information.') % self.label)
 
 class CommonName(Attribute):
 	udm_name = 'name'
@@ -113,11 +123,15 @@ class SchoolName(CommonName):
 class DCName(Attribute):
 	def validate(self, value):
 		super(DCName, self).validate(value)
-		if value and ucr.is_true('ucsschool/singlemaster', False):
-			if len(value) > 12:
-				raise ValueError(_('A valid NetBIOS hostname can not be longer than 12 characters.'))
-			if sum([len(value), 1, len(ucr.get('domainname', ''))]) > 63:
-				raise ValueError(_('The length of fully qualified domain name is greater than 63 characters.'))
+		if value:
+			regex = re.compile('^[a-zA-Z0-9](([a-zA-Z0-9_]*)([a-zA-Z0-9]$))?$')
+			if not regex.match(value):
+				raise ValueError(_('Invalid Domain Controller name'))
+			if ucr.is_true('ucsschool/singlemaster', False):
+				if len(value) > 12:
+					raise ValueError(_('A valid NetBIOS hostname can not be longer than 12 characters.'))
+				if sum([len(value), 1, len(ucr.get('domainname', ''))]) > 63:
+					raise ValueError(_('The length of fully qualified domain name is greater than 63 characters.'))
 
 class Firstname(Attribute):
 	udm_name = 'firstname'
@@ -170,6 +184,7 @@ class ShareFileServer(Attribute):
 
 class Groups(Attribute):
 	syntax = GroupDN
+	value_list = True
 
 class IPAddress(Attribute):
 	udm_name = 'ip'

@@ -76,10 +76,14 @@ class SchoolDCSlave(SchoolDC):
 		udm_obj['unixhome'] = '/dev/null'
 		udm_obj['shell'] = '/bin/bash'
 		udm_obj['primaryGroup'] = BasicGroup.get('DC Slave Hosts').dn
-		for group in self.groups:
-			if group not in udm_obj['groups']:
-				udm_obj['groups'].append(group)
 		return super(SchoolDCSlave, self).do_create(udm_obj, lo)
+
+	def _alter_udm_obj(self, udm_obj):
+		if self.groups:
+			for group in self.groups:
+				if group not in udm_obj['groups']:
+					udm_obj['groups'].append(group)
+		return super(SchoolDCSlave, self)._alter_udm_obj(udm_obj)
 
 	def move_to_school(self, lo, force=False):
 		try:
@@ -240,7 +244,7 @@ class SchoolComputer(UCSSchoolHelperAbstractClass):
 			edukativnetz_group = school.get_administrative_group_name('educational', domain_controller=False, as_dn=True)
 			if edukativnetz_group in udm_obj['groups']:
 				obj.zone = 'edukativ'
-			verwaltungsnetz_group = school.get_administrative_group_name('noneducational', domain_controller=False, as_dn=True)
+			verwaltungsnetz_group = school.get_administrative_group_name('administrative', domain_controller=False, as_dn=True)
 			if verwaltungsnetz_group in udm_obj['groups']:
 				obj.zone = 'verwaltung'
 			obj.subnet_mask = '255.255.255.0' # FIXME
