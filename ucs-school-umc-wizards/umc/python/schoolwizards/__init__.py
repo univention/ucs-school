@@ -196,8 +196,6 @@ class Instance(SchoolBaseModule, SchoolImport):
 				if obj.create(ldap_user_write, validate=False):
 					ret.append(True)
 				else:
-					obj.add_domain_controllers(ldap_user_write)
-					obj.add_host_to_dc_group(ldap_user_write)
 					ret.append({'result' : {'message' : _('"%s" already exists!') % obj.name}})
 			except uldapBaseException as exc:
 				ret.append({'result' : {'message' : get_exception_msg(exc)}})

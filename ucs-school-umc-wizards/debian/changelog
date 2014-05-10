@@ -1,3 +1,9 @@
+ucs-school-umc-wizards (4.0.17-1) unstable; urgency=low
+
+  * Bug #34337: Revert changes from 4.0.16-1
+
+ -- Dirk Wiesenthal <wiesenthal@univention.de>  Sun, 11 May 2014 00:12:39 +0200
+
 ucs-school-umc-wizards (4.0.16-1) unstable; urgency=low
 
   * Bug #34337: schoolwizards/schools/create creates/adds new DCs to OU if
