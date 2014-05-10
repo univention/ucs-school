@@ -1,4 +1,4 @@
-ucs-school-lib (5.0.28-1) unstable; urgency=low
+ucs-school-lib (5.0.29-1) unstable; urgency=low
 
   * Bug #34337: Fix school creation: Hook line, do not fail when DC should
     move to school, do not stop creation if OU exists
