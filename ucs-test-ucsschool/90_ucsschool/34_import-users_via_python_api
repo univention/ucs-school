@@ -7,7 +7,7 @@
 ## packages:
 ##   - ucs-school-import
 
-from essential.importtest import *
+from essential.importusers import *
 
 if __name__ == '__main__':
 	import_users_basics(use_cli_api=False, use_python_api=True)
