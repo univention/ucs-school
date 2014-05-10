@@ -382,7 +382,7 @@ class UCSSchoolHelperAbstractClass(object):
 		self._alter_udm_obj(udm_obj)
 		udm_obj.create()
 
-	def modify(self, lo, validate=True):
+	def modify(self, lo, validate=True, move_if_necessary=None):
 		'''
 		Modifies an existing UDM instance.
 		Calls pre-hooks.
@@ -391,13 +391,16 @@ class UCSSchoolHelperAbstractClass(object):
 		calls post-hooks.
 		'''
 		self.call_hooks('pre', 'modify')
-		success = self.modify_without_hooks(lo, validate)
+		success = self.modify_without_hooks(lo, validate, move_if_necessary)
 		if success:
 			self.call_hooks('post', 'modify')
 		return success
 
-	def modify_without_hooks(self, lo, validate):
+	def modify_without_hooks(self, lo, validate, move_if_necessary):
 		logger.info('Modifying %r' % self)
+
+		if move_if_necessary is None:
+			move_if_necessary = self._meta.allow_school_change
 
 		if validate:
 			self.validate(lo, validate_unlikely_changes=True)
@@ -417,8 +420,9 @@ class UCSSchoolHelperAbstractClass(object):
 		udm_obj = self.get_udm_object(lo)
 		same = old_attrs == udm_obj.info
 		if udm_obj.dn != self.dn:
-			udm_obj.move(self.dn, ignore_license=1)
-			same = False
+			if move_if_necessary:
+				if self.move(lo, udm_obj, force=True):
+					same = False
 		if same:
 			logger.info('%r not modified. Nothing changed' % self)
 		else:
@@ -435,6 +439,23 @@ class UCSSchoolHelperAbstractClass(object):
 		'''
 		self._alter_udm_obj(udm_obj)
 		udm_obj.modify(ignore_license=1)
+
+	def move(self, lo, udm_obj=None, force=False):
+		if udm_obj is None:
+			udm_obj = self.get_udm_object(lo)
+		if udm_obj is None:
+			logger.warning('No UDM object found to move from (%r)' % self)
+			return False
+		logger.info('Moving %r to %r' % (udm_obj.dn, self))
+		if udm_obj.dn == self.dn:
+			logger.warning('%r wants to move to its own DN!' % self)
+			return False
+		if force or self._meta.allow_school_change:
+			udm_obj.move(self.dn, ignore_license=1)
+		else:
+			logger.warning('Would like to move %s to %r. But it is not allowed!' % (udm_obj.dn, self))
+			return False
+		return True
 
 	def remove(self, lo):
 		'''

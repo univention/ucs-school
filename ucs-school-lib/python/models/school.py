@@ -59,7 +59,7 @@ class School(UCSSchoolHelperAbstractClass):
 
 	def build_hook_line(self, hook_time, func_name):
 		if func_name == 'create':
-			return self._build_hook_line(self.name, self.get_dc_name())
+			return self._build_hook_line(self.name, self.get_dc_name(or_fallback=False))
 
 	def get_district(self):
 		if ucr.is_true('ucsschool/ldap/district/enable'):
@@ -174,7 +174,7 @@ class School(UCSSchoolHelperAbstractClass):
 		else:
 			return 'dc%s-01' % self.name.lower()
 
-	def get_dc_name(self, administrative=False):
+	def get_dc_name(self, administrative=False, or_fallback=True):
 		if ucr.is_true('ucsschool/singlemaster', False):
 			return ucr.get('hostname')
 		elif self.dc_name:
@@ -183,7 +183,10 @@ class School(UCSSchoolHelperAbstractClass):
 			else:
 				return self.dc_name
 		else:
-			return self.get_dc_name_fallback(administrative=administrative)
+			if or_fallback:
+				return self.get_dc_name_fallback(administrative=administrative)
+			else:
+				return None
 
 	def get_share_fileserver_dn(self, set_by_self, lo):
 		hostname = set_by_self or self.get_dc_name()
@@ -255,8 +258,9 @@ class School(UCSSchoolHelperAbstractClass):
 
 		dc = SchoolDCSlave(name=name, school=self.name, groups=groups)
 		if dc.exists(lo):
-			logger.info('%r exists. Setting groups' % dc)
-			return dc.modify(lo)
+			logger.info('%r exists. Setting groups, do not move to %r!' % (dc, self))
+			# call dc.move() if really necessary to move
+			return dc.modify(lo, move_if_necessary=False)
 		else:
 			existing_host = AnyComputer.get_first_udm_obj(lo, 'cn=%s' % escape_filter_chars(name))
 			if existing_host:
@@ -309,8 +313,6 @@ class School(UCSSchoolHelperAbstractClass):
 		self.home_share_file_server = self.get_home_share_file_server(lo)
 
 		success = super(School, self).create_without_hooks(lo, validate)
-		if not success:
-			return False
 
 		self.create_default_containers(lo)
 		self.create_default_groups(lo)

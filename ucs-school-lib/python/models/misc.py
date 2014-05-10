@@ -68,7 +68,7 @@ class OU(UCSSchoolHelperAbstractClass):
 	def create(self, lo, validate=True):
 		raise NotImplementedError()
 
-	def modify(self, lo, validate=True):
+	def modify(self, lo, validate=True, move_if_necessary=None):
 		raise NotImplementedError()
 
 	def remove(self, lo):

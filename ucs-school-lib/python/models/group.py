@@ -141,7 +141,7 @@ class SchoolClass(Group):
 		share = ClassShare.from_school_class(self)
 		return share.create(lo)
 
-	def modify_without_hooks(self, lo, validate):
+	def modify_without_hooks(self, lo, validate, move_if_necessary):
 		share = ClassShare.from_school_class(self)
 		if self.old_dn:
 			old_name = self.get_name_from_dn(self.old_dn)
@@ -152,7 +152,7 @@ class SchoolClass(Group):
 				# share.old_dn incorrectly
 				share = ClassShare(name=old_name, school=self.school, school_class=self)
 				share.name = self.name
-		success = super(SchoolClass, self).modify_without_hooks(lo, validate)
+		success = super(SchoolClass, self).modify_without_hooks(lo, validate, move_if_necessary)
 		if success:
 			if share.exists(lo):
 				success = share.modify(lo)

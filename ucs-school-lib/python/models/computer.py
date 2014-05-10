@@ -85,15 +85,16 @@ class SchoolDCSlave(SchoolDC):
 					udm_obj['groups'].append(group)
 		return super(SchoolDCSlave, self)._alter_udm_obj(udm_obj)
 
-	def move_to_school(self, lo, force=False):
-		try:
-			udm_obj = self.get_only_udm_obj(lo, 'cn=%s' % escape_filter_chars(self.name))
-		except MultipleObjectsError:
-			logger.error('Found more than one DC Slave with hostname "%s"' % self.name)
-			return False
+	def move(self, lo, udm_obj=None, force=False):
 		if udm_obj is None:
-			logger.error('Cannot find DC Slave with hostname "%s"' % self.name)
-			return False
+			try:
+				udm_obj = self.get_only_udm_obj(lo, 'cn=%s' % escape_filter_chars(self.name))
+			except MultipleObjectsError:
+				logger.error('Found more than one DC Slave with hostname "%s"' % self.name)
+				return False
+			if udm_obj is None:
+				logger.error('Cannot find DC Slave with hostname "%s"' % self.name)
+				return False
 		old_dn = udm_obj.dn
 		school = self.get_school_obj(lo)
 		group_dn = school.get_administrative_group_name('educational', ou_specific=True, as_dn=True)
@@ -139,6 +140,7 @@ class SchoolDCSlave(SchoolDC):
 	class Meta:
 		udm_module = 'computers/domaincontroller_slave'
 		name_is_unique = True
+		allow_school_change = True
 
 class SchoolComputer(UCSSchoolHelperAbstractClass):
 	ip_address = IPAddress(_('IP address'), required=True)

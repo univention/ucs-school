@@ -1,5 +1,12 @@
 ucs-school-lib (5.0.28-1) unstable; urgency=low
 
+  * Bug #34337: Fix school creation: Hook line, do not fail when DC should
+    move to school, do not stop creation if OU exists
+
+ -- Dirk Wiesenthal <wiesenthal@univention.de>  Sat, 10 May 2014 23:39:40 +0200
+
+ucs-school-lib (5.0.28-1) unstable; urgency=low
+
   * Bug #34337: Fixed school creation: create slaves only if they do not
     exist
   * Bug #34337: school creation: added debug output
