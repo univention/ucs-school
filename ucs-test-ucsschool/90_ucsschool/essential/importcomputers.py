@@ -8,7 +8,7 @@ import tempfile
 import univention.testing.utils as utils
 import univention.testing.strings as uts
 
-from essential.importtest import remove_ou
+from essential.importou import remove_ou
 
 HOOK_BASEDIR = '/usr/share/ucs-school-import/hooks'
 
@@ -241,7 +241,7 @@ exit 0
 		os.remove(self.pre_hook_result)
 		os.remove(self.post_hook_result)
 		
-class ComputerSchoolImport():
+class ComputerImport():
 	def __init__(self, nr_windows=20, nr_memberserver=10, nr_macos=5, nr_ipmanagedclient=3):
 		assert (nr_windows > 2)
 		assert (nr_memberserver > 2)
@@ -310,18 +310,18 @@ def create_and_verify_computers(use_cli_api=True, use_python_api=False, nr_windo
 	assert(use_cli_api != use_python_api)
 
 	print '********** Generate school data'
-	computer_school = ComputerSchoolImport(nr_windows=nr_windows, nr_memberserver=nr_memberserver, nr_macos=nr_macos, nr_ipmanagedclient=nr_ipmanagedclient)
+	computer_import = ComputerImport(nr_windows=nr_windows, nr_memberserver=nr_memberserver, nr_macos=nr_macos, nr_ipmanagedclient=nr_ipmanagedclient)
 	import_file = ImportFile(use_cli_api, use_python_api)
 
-	print computer_school
+	print computer_import
 
 	try:
 		print '********** Create computers'
-		import_file.run_import(str(computer_school))
-		computer_school.verify()
+		import_file.run_import(str(computer_import))
+		computer_import.verify()
 
 	finally:
-		remove_ou(computer_school.school)
+		remove_ou(computer_import.school)
 
 
 def import_computers_basics(use_cli_api=True, use_python_api=False):

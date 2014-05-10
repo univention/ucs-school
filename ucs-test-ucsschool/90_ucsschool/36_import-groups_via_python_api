@@ -1,14 +1,14 @@
 #!/usr/share/ucs-test/runner python
 ## -*- coding: utf-8 -*-
-## desc: Import OU via python API
+## desc: Import groups via python API
 ## tags: [apptest,ucsschool]
 ## roles: [domaincontroller_master]
 ## exposure: dangerous
 ## packages:
 ##   - ucs-school-import
 
-from essential.importou import *
+from essential.importgroups import *
 
 if __name__ == '__main__':
-	import_ou_basics(use_cli_api=False, use_python_api=True)
-	import_ou_with_existing_dc(use_cli_api=False, use_python_api=True)
+	import_groups_basics(use_cli_api=False, use_python_api=True)
+

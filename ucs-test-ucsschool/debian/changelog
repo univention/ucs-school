@@ -1,3 +1,10 @@
+ucs-test-ucsschool (1.0.33-1) unstable; urgency=low
+
+  * Added group import tests (Bug #34551)
+  * Some cleanups for ou, users and group import tests
+
+ -- Stefan Gohmann <gohmann@univention.de>  Sat, 10 May 2014 21:33:34 +0200
+
 ucs-test-ucsschool (1.0.32-1) unstable; urgency=low
 
   * Added computer import tests (Bug #34550)

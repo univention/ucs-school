@@ -7,7 +7,7 @@ import tempfile
 import univention.testing.utils as utils
 import univention.testing.strings as uts
 
-from essential.importtest import remove_ou
+from essential.importou import remove_ou
 
 HOOK_BASEDIR = '/usr/share/ucs-school-import/hooks'
 
@@ -323,7 +323,7 @@ exit 0
 		os.remove(self.pre_hook_result)
 		os.remove(self.post_hook_result)
 		
-class SchoolImport():
+class UserImport():
 	def __init__(self, nr_students=20, nr_teachers=10, nr_staff=5, nr_teacher_staff=3):
 		assert (nr_students > 2)
 		assert (nr_teachers > 2)
@@ -439,28 +439,28 @@ def create_and_verify_users(use_cli_api=True, use_python_api=False, nr_students=
 	assert(use_cli_api != use_python_api)
 
 	print '********** Generate school data'
-	school = SchoolImport(nr_students=nr_students, nr_teachers=nr_teachers, nr_staff=nr_staff, nr_teacher_staff=nr_teacher_staff)
+	user_import = UserImport(nr_students=nr_students, nr_teachers=nr_teachers, nr_staff=nr_staff, nr_teacher_staff=nr_teacher_staff)
 	import_file = ImportFile(use_cli_api, use_python_api)
 
-	print school
+	print user_import
 
 	try:
 		print '********** Create users'
-		import_file.run_import(str(school))
-		school.verify()
+		import_file.run_import(str(user_import))
+		user_import.verify()
 
 		print '********** Modify users'
-		school.modify()
-		import_file.run_import(str(school))
-		school.verify()
+		user_import.modify()
+		import_file.run_import(str(user_import))
+		user_import.verify()
 
 		print '********** Delete users'
-		school.delete()
-		import_file.run_import(str(school))
-		school.verify()
+		user_import.delete()
+		import_file.run_import(str(user_import))
+		user_import.verify()
 
 	finally:
-		remove_ou(school.school)
+		remove_ou(user_import.school)
 
 
 def import_users_basics(use_cli_api=True, use_python_api=False):
