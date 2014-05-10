@@ -1,3 +1,9 @@
+ucs-test-ucsschool (1.0.32-1) unstable; urgency=low
+
+  * Added computer import tests (Bug #34550)
+
+ -- Stefan Gohmann <gohmann@univention.de>  Sat, 10 May 2014 21:05:58 +0200
+
 ucs-test-ucsschool (1.0.31-2) unstable; urgency=low
 
   * 90_ucsschool/34_import-users_via_python_api: fixed wrong import
