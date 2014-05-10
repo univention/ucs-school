@@ -9,7 +9,11 @@ import univention.testing.strings as uts
 
 from essential.importtest import remove_ou
 
+HOOK_BASEDIR = '/usr/share/ucs-school-import/hooks'
+
 class ImportUser(Exception):
+	pass
+class UserHookResult(Exception):
 	pass
 
 import univention.config_registry
@@ -228,12 +232,23 @@ class ImportFile():
 		os.close(self.import_fd)
 
 	def run_import(self, data):
-		self.write_import(data)
-		if self.use_cli_api:
-			self._run_import_via_cli()
-		elif self.use_python_api:
-			self._run_import_via_python_api()
-		os.remove(self.import_file)
+		hooks = UserHooks()
+		try:
+			self.write_import(data)
+			if self.use_cli_api:
+				self._run_import_via_cli()
+			elif self.use_python_api:
+				self._run_import_via_python_api()
+			pre_result = hooks.get_pre_result()
+			post_result = hooks.get_post_result()
+			print 'PRE  HOOK result: %s' % pre_result
+			print 'POST HOOK result: %s' % post_result
+			print 'SCHOOL DATA     : %s' % data
+			if pre_result != post_result != data:
+				raise UserHookResult()
+		finally:
+			hooks.cleanup()
+			os.remove(self.import_file)
 
 	def _run_import_via_cli(self):
 		cmd_block = ['/usr/share/ucs-school-import/scripts/import_user', self.import_file]
@@ -246,7 +261,68 @@ class ImportFile():
 	def _run_import_via_python_api(self):
 		raise NotImplementedError
 
+class UserHooks():
+	def __init__(self):
+		fd, self.pre_hook_result = tempfile.mkstemp()
+		os.close(fd)
+	
+		fd, self.post_hook_result = tempfile.mkstemp()
+		os.close(fd)
+		
+		self.create_hooks()
 
+	def get_pre_result(self):
+		return open(self.pre_hook_result, 'r').read()
+	def get_post_result(self):
+		return open(self.post_hook_result, 'r').read()
+		
+	def create_hooks(self):
+		self.pre_hooks = [
+				os.path.join(os.path.join(HOOK_BASEDIR, 'user_create_pre.d'), uts.random_name()),
+				os.path.join(os.path.join(HOOK_BASEDIR, 'user_remove_pre.d'), uts.random_name()),
+				os.path.join(os.path.join(HOOK_BASEDIR, 'user_modify_pre.d'), uts.random_name()),
+		]
+
+		self.post_hooks = [
+				os.path.join(os.path.join(HOOK_BASEDIR, 'user_create_post.d'), uts.random_name()),
+				os.path.join(os.path.join(HOOK_BASEDIR, 'user_modify_post.d'), uts.random_name()),
+				os.path.join(os.path.join(HOOK_BASEDIR, 'user_remove_post.d'), uts.random_name()),
+		]
+
+		for pre_hook in self.pre_hooks:
+			with open(pre_hook, 'w+') as fd:
+				fd.write('''#!/bin/sh
+set -x
+test $# = 1 || exit 1
+cat $1 >>%(pre_hook_result)s
+exit 0
+''' % {'pre_hook_result': self.pre_hook_result})
+			os.chmod(pre_hook, 0755)
+
+		for post_hook in self.post_hooks:
+			with open(post_hook, 'w+') as fd:
+				fd.write('''#!/bin/sh
+set -x
+dn="$2"
+username="$(cat $1 | awk -F '\t' '{print $2}')"
+mode="$(cat $1 | awk -F '\t' '{print $1}')"
+if [ "$mode" != D ]; then
+	ldap_dn="$(univention-ldapsearch uid="$username" | ldapsearch-wrapper | sed -ne 's|dn: ||p')"
+	test "$dn" = "$ldap_dn" || exit 1
+fi
+cat $1 >>%(post_hook_result)s
+exit 0
+''' % {'post_hook_result': self.post_hook_result})
+			os.chmod(post_hook, 0755)
+
+	def cleanup(self):
+		for pre_hook in self.pre_hooks:
+			os.remove(pre_hook)
+		for post_hook in self.post_hooks:
+			os.remove(post_hook)
+		os.remove(self.pre_hook_result)
+		os.remove(self.post_hook_result)
+		
 class SchoolImport():
 	def __init__(self, nr_students=20, nr_teachers=10, nr_staff=5, nr_teacher_staff=3):
 		assert (nr_students > 2)
@@ -368,7 +444,6 @@ def create_and_verify_users(use_cli_api=True, use_python_api=False, nr_students=
 
 	print school
 
-	# TODO: check hooks
 	try:
 		print '********** Create users'
 		import_file.run_import(str(school))
