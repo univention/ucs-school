@@ -44,6 +44,7 @@ class Network:
 		self.nameserver = self._net.network+2
 		self.netbiosserver = self._net.network+8
 
+		self.router_mode = False
 		self.school = school
 		self.name = '%s-%s' % (self.school, self._net.network)
 
@@ -101,18 +102,22 @@ class Network:
 			defaultrouter_policy_dn = 'cn=%s,cn=routing,cn=dhcp,cn=policies,%s' % (self.name, self.school_base)
 			utils.verify_ldap_object(defaultrouter_policy_dn, expected_attr = { 'univentionDhcpRouters': [str(self.defaultrouter)]},should_exist=True)
 			utils.verify_ldap_object(subnet_dn, expected_attr = { 'univentionPolicyReference': [defaultrouter_policy_dn]}, strict=False, should_exist=True)
-		if self.nameserver:
+		if self.nameserver and not self.router_mode:
 			nameserver_policy_dn = 'cn=%s,cn=dns,cn=dhcp,cn=policies,%s' % (self.name, self.school_base)
 			utils.verify_ldap_object(nameserver_policy_dn, expected_attr = { 'univentionDhcpDomainName': [configRegistry.get('domainname')], 'univentionDhcpDomainNameServers': [str(self.nameserver)]},should_exist=True)
 			utils.verify_ldap_object(subnet_dn, expected_attr = { 'univentionPolicyReference': [nameserver_policy_dn]}, strict=False, should_exist=True)
-		if self.netbiosserver:
+		if self.netbiosserver and not self.router_mode:
 			netbios_policy_dn = "cn=%s,cn=netbios,cn=dhcp,cn=policies,%s" % (self.name, self.school_base)
 			utils.verify_ldap_object(netbios_policy_dn, expected_attr = {'univentionDhcpNetbiosNodeType': ['8'], 'univentionDhcpNetbiosNameServers': [str(self.netbiosserver)]},should_exist=True)
 			utils.verify_ldap_object(subnet_dn, expected_attr = { 'univentionPolicyReference': [netbios_policy_dn]}, strict=False, should_exist=True)
 
+	def set_mode_to_router(self):
+		self.router_mode = True
+
 
 class ImportFile():
 	def __init__(self, use_cli_api, use_python_api):
+		self.router_mode = False
 		self.use_cli_api = use_cli_api
 		self.use_python_api = use_python_api
 		self.import_fd,self.import_file = tempfile.mkstemp()
@@ -124,7 +129,7 @@ class ImportFile():
 		os.close(self.import_fd)
 
 	def run_import(self, data):
-		hooks = NetworkHooks()
+		hooks = NetworkHooks(self.router_mode)
 		try:
 			self.write_import(data)
 			if self.use_cli_api:
@@ -143,7 +148,10 @@ class ImportFile():
 			os.remove(self.import_file)
 
 	def _run_import_via_cli(self):
-		cmd_block = ['/usr/share/ucs-school-import/scripts/import_networks', self.import_file]
+		if self.router_mode:
+			cmd_block = ['/usr/share/ucs-school-import/scripts/import_router', self.import_file]
+		else:
+			cmd_block = ['/usr/share/ucs-school-import/scripts/import_networks', self.import_file]
 
 		print 'cmd_block: %r' % cmd_block
 		retcode = subprocess.call(cmd_block , shell=False)
@@ -153,15 +161,21 @@ class ImportFile():
 	def _run_import_via_python_api(self):
 		raise NotImplementedError
 
+	def set_mode_to_router(self):
+		self.router_mode = True
+
 class NetworkHooks():
-	def __init__(self):
+	def __init__(self, router_mode):
 		fd, self.pre_hook_result = tempfile.mkstemp()
 		os.close(fd)
 	
 		fd, self.post_hook_result = tempfile.mkstemp()
 		os.close(fd)
+
+		self.router_mode = router_mode
 		
 		self.create_hooks()
+
 
 	def get_pre_result(self):
 		return open(self.pre_hook_result, 'r').read()
@@ -171,11 +185,18 @@ class NetworkHooks():
 	def create_hooks(self):
 		self.pre_hooks = [
 				os.path.join(os.path.join(HOOK_BASEDIR, 'network_create_pre.d'), uts.random_name()),
+				os.path.join(os.path.join(HOOK_BASEDIR, 'router_create_pre.d'), uts.random_name()),
 		]
 
 		self.post_hooks = [
 				os.path.join(os.path.join(HOOK_BASEDIR, 'network_create_post.d'), uts.random_name()),
+				os.path.join(os.path.join(HOOK_BASEDIR, 'router_create_post.d'), uts.random_name()),
 		]
+
+		if self.router_mode:
+			search_object_class = 'univentionPolicyDhcpRouting'
+		else:
+			search_object_class = 'univentionNetworkClass'
 
 		for pre_hook in self.pre_hooks:
 			with open(pre_hook, 'w+') as fd:
@@ -194,11 +215,11 @@ set -x
 dn="$2"
 network="$(cat $1 | awk -F '\t' '{print $2}' | sed -e 's|/.*||')"
 school="$(cat $1 | awk -F '\t' '{print $1}')"
-ldap_dn="$(univention-ldapsearch "(&(objectClass=univentionNetworkClass)(cn=$school-$network))" | ldapsearch-wrapper | sed -ne 's|dn: ||p')"
+ldap_dn="$(univention-ldapsearch "(&(objectClass=%(search_object_class)s)(cn=$school-$network))" | ldapsearch-wrapper | sed -ne 's|dn: ||p')"
 test "$dn" = "$ldap_dn" || exit 1
 cat $1 >>%(post_hook_result)s
 exit 0
-''' % {'post_hook_result': self.post_hook_result})
+''' % {'post_hook_result': self.post_hook_result, 'search_object_class': search_object_class})
 			os.chmod(post_hook, 0755)
 
 	def cleanup(self):
@@ -232,6 +253,18 @@ class NetworkImport():
 		for network in self.networks:
 			network.verify()
 
+	def set_mode_to_router(self):
+		for network in self.networks:
+			network.set_mode_to_router()
+
+	def modify(self):
+		self.networks[0].defaultrouter += 2
+		# self.networks[1].defaultrouter = ''
+		self.networks[2].nameserver += 3
+		self.networks[3].defaultrouter += 3
+		self.networks[3].netbiosserver += 3
+		
+
 def create_and_verify_networks(use_cli_api=True, use_python_api=False, nr_networks=5):
 	assert(use_cli_api != use_python_api)
 
@@ -246,6 +279,12 @@ def create_and_verify_networks(use_cli_api=True, use_python_api=False, nr_networ
 		import_file.run_import(str(network_import))
 		network_import.verify()
 
+		print '********** Create routers'
+		network_import.set_mode_to_router()
+		import_file.set_mode_to_router()
+		network_import.modify()
+		import_file.run_import(str(network_import))
+		network_import.verify()
 
 	finally:
 		remove_ou(network_import.school)
