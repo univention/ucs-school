@@ -84,6 +84,7 @@ class DHCPService(UCSSchoolHelperAbstractClass):
 				subnet = dhcp_subnet.get_ipv4_subnet()
 				if subnet in interfaces: # subnet matches any local subnet
 					logger.info('Creating new DHCPSubnet from %s' % subnet_dn)
+					dhcp_subnet.custom_dn = None
 					dhcp_subnet.dhcp_service = self
 					dhcp_subnet.set_dn(dhcp_subnet.dn)
 					dhcp_subnet.create(lo)
@@ -137,9 +138,11 @@ class DHCPServer(UCSSchoolHelperAbstractClass):
 	def find_any_dn_with_name(cls, name, lo):
 		logger.debug('Searching first dhcpServer with cn=%s' % name)
 		try:
-			return lo.searchDn(filter='(&(objectClass=dhcpServer)(cn=%s))' % name, base=ucr.get('ldap/base'))[0]
+			dn = lo.searchDn(filter='(&(objectClass=dhcpServer)(cn=%s))' % name, base=ucr.get('ldap/base'))[0]
 		except IndexError:
-			return None
+			dn = None
+		logger.debug('... %r found' % dn)
+		return dn
 
 	class Meta:
 		udm_module = 'dhcp/server'

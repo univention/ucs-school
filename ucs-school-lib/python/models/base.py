@@ -217,7 +217,9 @@ class UCSSchoolHelperAbstractClass(object):
 		'''Does not really set dn, as this is generated
 		on-the-fly. Instead, sets old_dn in case it was
 		misset in the beginning or after create/modify/remove
+		Also resets cached udm_obj as it may point to somewhere else
 		'''
+		self._udm_obj_searched = False
 		self.custom_dn = None
 		self.old_dn = dn
 
@@ -367,7 +369,6 @@ class UCSSchoolHelperAbstractClass(object):
 		self.do_create(udm_obj, lo)
 
 		# get it fresh from the database (needed for udm_obj._exists ...)
-		self._udm_obj_searched = False
 		self.set_dn(self.dn)
 		logger.info('%r successfully created' % self)
 		return True
@@ -396,7 +397,7 @@ class UCSSchoolHelperAbstractClass(object):
 			self.call_hooks('post', 'modify')
 		return success
 
-	def modify_without_hooks(self, lo, validate, move_if_necessary):
+	def modify_without_hooks(self, lo, validate=True, move_if_necessary=None):
 		logger.info('Modifying %r' % self)
 
 		if move_if_necessary is None:
@@ -415,7 +416,6 @@ class UCSSchoolHelperAbstractClass(object):
 		old_attrs = deepcopy(udm_obj.info)
 		self.do_modify(udm_obj, lo)
 		# get it fresh from the database
-		self._udm_obj_searched = False
 		self.set_dn(self.dn)
 		udm_obj = self.get_udm_object(lo)
 		same = old_attrs == udm_obj.info
@@ -476,7 +476,6 @@ class UCSSchoolHelperAbstractClass(object):
 		udm_obj = self.get_udm_object(lo)
 		if udm_obj:
 			udm_obj.remove(remove_childs=True)
-			self._udm_obj_searched = False
 			self.set_dn(None)
 			logger.info('%r successfully removed' % self)
 			return True
@@ -649,9 +648,9 @@ class UCSSchoolHelperAbstractClass(object):
 			if attr.udm_name:
 				attrs[name] = udm_obj[attr.udm_name]
 		obj = cls(**attrs)
+		obj.set_dn(udm_obj.dn)
 		obj._udm_obj_searched = True
 		obj._udm_obj = udm_obj
-		obj.set_dn(udm_obj.dn)
 		return obj
 
 	@classmethod

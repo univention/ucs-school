@@ -199,7 +199,7 @@ class School(UCSSchoolHelperAbstractClass):
 		if host:
 			return host.dn
 		else:
-			logger.warning('Using this host as ShareFileServer ("%s").' % ucr.get('hostname'))
+			logger.warning('Could not find %s. Using this host as ShareFileServer ("%s").' % (hostname, ucr.get('hostname')))
 			return ucr.get('ldap/hostdn')
 
 	def get_class_share_file_server(self, lo):
@@ -309,18 +309,38 @@ class School(UCSSchoolHelperAbstractClass):
 			ou = OU(name=district)
 			ou.create_in_container(ucr.get('ldap/base'), lo)
 
+		# setting class_share_file_server and home_share_file_server:
+		# 1. set to None
+		# 2. create school
+		# 3. (maybe) create file_servers <- that is why this is necessary
+		# 4. set file_servers
+		# 5. modify school
+		saved_class_share_file_server = self.class_share_file_server
+		saved_home_share_file_server = self.home_share_file_server
+		self.class_share_file_server = None
+		self.home_share_file_server = None
+
+		try:
+			success = super(School, self).create_without_hooks(lo, validate)
+			if not success:
+				logger.warning('Creating %r failed (maybe it already exists?)! Trying to set it up nonetheless')
+				self.modify_without_hooks(lo)
+
+			self.create_default_containers(lo)
+			self.create_default_groups(lo)
+			self.add_host_to_dc_group(lo)
+			if not self.add_domain_controllers(lo):
+				return False
+			if self.dc_name_administrative:
+				self.create_dc_slave(lo, self.dc_name_administrative, administrative=True)
+		finally:
+			logger.debug('Resetting share file servers from None to %r and %r' % (saved_home_share_file_server, saved_class_share_file_server))
+			self.class_share_file_server = saved_class_share_file_server
+			self.home_share_file_server = saved_home_share_file_server
 		self.class_share_file_server = self.get_class_share_file_server(lo)
 		self.home_share_file_server = self.get_home_share_file_server(lo)
-
-		success = super(School, self).create_without_hooks(lo, validate)
-
-		self.create_default_containers(lo)
-		self.create_default_groups(lo)
-		self.add_host_to_dc_group(lo)
-		if not self.add_domain_controllers(lo):
-			return False
-		if self.dc_name_administrative:
-			self.create_dc_slave(lo, self.dc_name_administrative, administrative=True)
+		logger.debug('Now it is %r and %r - %r should be modified accordingly' % (self.home_share_file_server, self.class_share_file_server, self))
+		self.modify_without_hooks(lo)
 
 		# In a single server environment the default DHCP container must
 		# be set to the DHCP container in the school ou. Otherwise newly
@@ -339,9 +359,9 @@ class School(UCSSchoolHelperAbstractClass):
 
 		return success
 
-	def do_create(self, udm_obj, lo):
+	def _alter_udm_obj(self, udm_obj):
 		udm_obj.options = ['UCSschool-School-OU']
-		return super(School, self).do_create(udm_obj, lo)
+		return super(School, self)._alter_udm_obj(udm_obj)
 
 	@classmethod
 	def get_from_oulist(cls, lo, oulist):
