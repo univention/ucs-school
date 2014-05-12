@@ -194,7 +194,8 @@
 			within the UCS@school programming library (<ulink url="&ucsbug;34259">Bug 34259</ulink>).
 		</simpara></listitem>
 		<listitem><simpara>
-		  Additional ucs-test scripts have been added for the &ucsUAS; testsuite (<ulink url="&ucsbug;34279">Bug 34279</ulink>, <ulink url="&ucsbug;34280">Bug 34280</ulink>, <ulink url="&ucsbug;34281">Bug 34281</ulink>, <ulink url="&ucsbug;34557">Bug 34557</ulink>).
+		  Additional ucs-test scripts have been added for the &ucsUAS; testsuite (<ulink url="&ucsbug;34279">Bug 34279</ulink>, <ulink url="&ucsbug;34280">Bug 34280</ulink>, <ulink url="&ucsbug;34281">Bug 34281</ulink>, <ulink url="&ucsbug;34557">Bug 34557</ulink>,
+		  <ulink url="&ucsbug;34548">Bug 34548</ulink>,<ulink url="&ucsbug;34549">Bug 34549</ulink>, <ulink url="&ucsbug;34550">Bug 34550</ulink>,<ulink url="&ucsbug;34551">Bug 34551</ulink>).
 		</simpara></listitem>
 		<listitem><simpara>
 			Various UCS@school UMC modules have been enabled to work in district mode (<ulink url="&ucsbug;31407">Bug 31407</ulink>).
