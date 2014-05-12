@@ -1,5 +1,6 @@
 ## -*- coding: utf-8 -*-
 
+import ldap
 import os
 import smbpasswd
 import string
@@ -11,6 +12,13 @@ import univention.testing.ucr
 import univention.testing.utils as utils
 import univention.testing.udm as udm_test
 import univention.uldap
+from ucsschool.lib.models import Student as StudentLib
+from ucsschool.lib.models import Teacher as TeacherLib
+from ucsschool.lib.models import Staff as StaffLib
+from ucsschool.lib.models import TeachersAndStaff as TeachersAndStaffLib
+from ucsschool.lib.models import School as SchoolLib
+from ucsschool.lib.models.utils import add_stream_logger_to_schoollib
+import ucsschool.lib.models.utils
 
 from essential.importou import remove_ou, create_ou_cli, get_school_base
 
@@ -195,7 +203,11 @@ class Person:
 			print 'get_samba_home_path_server: Singlemaster'
 			return configRegistry.get('hostname')
 		lo = univention.uldap.getMachineConnection()
-		return lo.search(base=self.school_base, scope=ldap.SCOPE_BASE, attr=['ucsschoolHomeShareFileServer'], unique=1, required=1)[0][1].get('ucsschoolHomeShareFileServer')[0]
+		result = lo.search(base=self.school_base, scope=ldap.SCOPE_BASE, attr=['ucsschoolHomeShareFileServer'])
+		if result:
+			share_file_server_dn = result[0][1].get('ucsschoolHomeShareFileServer')[0]
+			return ldap.explode_rdn(share_file_server_dn, notypes=1)[0]
+		return None
 
 	def get_profile_path_server(self):
 		if configRegistry.get('ucsschool/import/set/serverprofile/path'):
@@ -254,17 +266,19 @@ class ImportFile:
 		self.use_python_api = use_python_api
 		self.import_fd, self.import_file = tempfile.mkstemp()
 		os.close(self.import_fd)
+		self.user_import = None
 
-	def write_import(self, data):
+	def write_import(self):
 		self.import_fd = os.open(self.import_file, os.O_RDWR|os.O_CREAT)
-		os.write(self.import_fd, data)
+		os.write(self.import_fd, str(self.user_import))
 		os.close(self.import_fd)
 
-	def run_import(self, data):
+	def run_import(self, user_import):
 		hooks = UserHooks()
+		self.user_import = user_import
 		try:
-			self.write_import(data)
 			if self.use_cli_api:
+				self.write_import()
 				self._run_import_via_cli()
 			elif self.use_python_api:
 				self._run_import_via_python_api()
@@ -272,8 +286,8 @@ class ImportFile:
 			post_result = hooks.get_post_result()
 			print 'PRE  HOOK result: %s' % pre_result
 			print 'POST HOOK result: %s' % post_result
-			print 'SCHOOL DATA     : %s' % data
-			if pre_result != post_result != data:
+			print 'SCHOOL DATA     : %s' % str(self.user_import)
+			if pre_result != post_result != str(self.user_import):
 				raise UserHookResult()
 		finally:
 			hooks.cleanup()
@@ -288,7 +302,66 @@ class ImportFile:
 			raise ImportUser('Failed to execute "%s". Return code: %d.' % (string.join(cmd_block), retcode))
 
 	def _run_import_via_python_api(self):
-		raise NotImplementedError
+		# reload UCR
+		ucsschool.lib.models.utils.ucr.load()
+
+		lo = univention.admin.uldap.getAdminConnection()[0]
+
+		# get school from first user
+		school = self.user_import.students[0].school
+
+		SchoolLib.init_udm_module(lo)
+
+		if not SchoolLib.get(school).exists(lo):
+			SchoolLib(name=school, dc_name=uts.random_name(), display_name=school).create(lo)
+
+		def _set_kwargs(user):
+			kwargs = {
+				'school': user.school,
+				'name': user.username,
+				'firstname': user.username,
+				'lastname': user.username,
+				'email': user.username,
+				'password': user.username,
+				'disabled': user.username,
+			}
+			return kwargs
+
+		for user in self.user_import.students:
+			kwargs = _set_kwargs(user)
+			if user.mode == 'A':
+				StudentLib(**kwargs).create(lo)
+			elif user.mode == 'M':
+				StudentLib(**kwargs).modify(lo)
+			elif user.mode == 'D':
+				StudentLib(**kwargs).delete(lo)
+
+		for user in self.user_import.teacher:
+			kwargs = _set_kwargs(user)
+			if user.mode == 'A':
+				TeacherLib(**kwargs).create(lo)
+			elif user.mode == 'M':
+				TeacherLib(**kwargs).modify(lo)
+			elif user.mode == 'D':
+				TeacherLib(**kwargs).delete(lo)
+
+		for user in self.user_import.staff:
+			kwargs = _set_kwargs(user)
+			if user.mode == 'A':
+				StaffLib(**kwargs).create(lo)
+			elif user.mode == 'M':
+				StaffLib(**kwargs).modify(lo)
+			elif user.mode == 'D':
+				StaffLib(**kwargs).delete(lo)
+
+		for user in self.user_import.teacher_staff:
+			kwargs = _set_kwargs(user)
+			if user.mode == 'A':
+				TeachersAndStaffLib(**kwargs).create(lo)
+			elif user.mode == 'M':
+				TeachersAndStaffLib(**kwargs).modify(lo)
+			elif user.mode == 'D':
+				TeachersAndStaffLib(**kwargs).delete(lo)
 
 class UserHooks:
 	def __init__(self):
@@ -468,17 +541,17 @@ def create_and_verify_users(use_cli_api=True, use_python_api=False, school_name=
 	print user_import
 
 	print '********** Create users'
-	import_file.run_import(str(user_import))
+	import_file.run_import(user_import)
 	user_import.verify()
 
 	print '********** Modify users'
 	user_import.modify()
-	import_file.run_import(str(user_import))
+	import_file.run_import(user_import)
 	user_import.verify()
 
 	print '********** Delete users'
 	user_import.delete()
-	import_file.run_import(str(user_import))
+	import_file.run_import(user_import)
 	user_import.verify()
 
 def create_windows_profile_server(udm, ou, name):
@@ -502,7 +575,7 @@ def import_users_basics(use_cli_api=True, use_python_api=False):
 
 	udm = udm_test.UCSTestUDM()
 
-	for singlemaster in [True, False]:
+	for singlemaster in [False, True]:
 		for samba_home_server in [None, 'generate']:
 			for profile_path_server in [None, 'generate']:
 				for home_server_at_ou in [None, 'generate']:
@@ -553,7 +626,7 @@ def import_users_basics(use_cli_api=True, use_python_api=False):
 							print '****    home_server_at_ou: %s' % home_server_at_ou
 							print '****    windows_profile_server: %s' % windows_profile_server
 							print ''
-							create_and_verify_users(use_cli_api, use_python_api, school_name, 5, 4, 3, 3)
+							create_and_verify_users(use_cli_api, use_python_api, school_name, 3, 3, 3, 3)
 						finally:
 							remove_ou(school_name)
 

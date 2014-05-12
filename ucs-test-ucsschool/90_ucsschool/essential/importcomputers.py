@@ -7,6 +7,10 @@ import subprocess
 import tempfile
 import univention.testing.utils as utils
 import univention.testing.strings as uts
+from ucsschool.lib.models import SchoolComputer as SchoolComputerLib
+from ucsschool.lib.models import School as SchoolLib
+from ucsschool.lib.models.utils import add_stream_logger_to_schoollib
+import ucsschool.lib.models.utils
 
 from essential.importou import remove_ou, get_school_base
 
@@ -148,17 +152,19 @@ class ImportFile:
 		self.use_python_api = use_python_api
 		self.import_fd, self.import_file = tempfile.mkstemp()
 		os.close(self.import_fd)
+		self.computer_import = None
 
-	def write_import(self, data):
+	def write_import(self):
 		self.import_fd = os.open(self.import_file, os.O_RDWR|os.O_CREAT)
-		os.write(self.import_fd, data)
+		os.write(self.import_fd, str(self.computer_import))
 		os.close(self.import_fd)
 
-	def run_import(self, data):
+	def run_import(self, computer_import):
 		hooks = ComputerHooks()
+		self.computer_import = computer_import
 		try:
-			self.write_import(data)
 			if self.use_cli_api:
+				self.write_import()
 				self._run_import_via_cli()
 			elif self.use_python_api:
 				self._run_import_via_python_api()
@@ -166,8 +172,8 @@ class ImportFile:
 			post_result = hooks.get_post_result()
 			print 'PRE  HOOK result: %s' % pre_result
 			print 'POST HOOK result: %s' % post_result
-			print 'SCHOOL DATA     : %s' % data
-			if pre_result != post_result != data:
+			print 'SCHOOL DATA     : %s' % str(self.computer_import)
+			if pre_result != post_result != str(self.computer_import):
 				raise ComputerHookResult()
 		finally:
 			hooks.cleanup()
@@ -182,7 +188,39 @@ class ImportFile:
 			raise ImportComputer('Failed to execute "%s". Return code: %d.' % (string.join(cmd_block), retcode))
 
 	def _run_import_via_python_api(self):
-		raise NotImplementedError
+		# reload UCR
+		ucsschool.lib.models.utils.ucr.load()
+
+		lo = univention.admin.uldap.getAdminConnection()[0]
+
+		# get school from first computer
+		school = self.computer_import.windows[0].school
+
+		SchoolLib.init_udm_module(lo)
+
+		if not SchoolLib.get(school).exists(lo):
+			SchoolLib(name=school, dc_name=uts.random_name(), display_name=school).create(lo)
+
+		self.windows = []
+		self.memberservers = []
+		self.macos = []
+		self.ipmanagedclients = []
+		for computer in self.computer_import.windows + self.computer_import.memberservers + self.computer_import.macos + self.computer_import.ipmanagedclients:
+			kwargs = {
+					'school': computer.school,
+					'name': computer.name,
+					'ip_address': computer.ip,
+					'mac_address': computer.mac,
+					'type_name': computer.ctype,
+					'inventory_number': computer.inventorynumbers,
+					'zone': computer.zone,
+			}
+			if computer.mode == 'A':
+				SchoolComputerLib(**kwargs).create(lo)
+			#elif computer.mode == 'M':
+			#	SchoolComputerLib(**kwargs).modify(lo)
+			#elif computer.mode == 'D':
+			#	SchoolComputerLib(**kwargs).delete(lo)
 
 class ComputerHooks:
 	def __init__(self):
@@ -319,7 +357,7 @@ def create_and_verify_computers(use_cli_api=True, use_python_api=False, nr_windo
 
 	try:
 		print '********** Create computers'
-		import_file.run_import(str(computer_import))
+		import_file.run_import(computer_import)
 		computer_import.verify()
 
 	finally:

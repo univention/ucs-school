@@ -6,6 +6,10 @@ import subprocess
 import tempfile
 import univention.testing.utils as utils
 import univention.testing.strings as uts
+from ucsschool.lib.models import Group as GroupLib
+from ucsschool.lib.models import School as SchoolLib
+from ucsschool.lib.models.utils import add_stream_logger_to_schoollib
+import ucsschool.lib.models.utils
 
 from essential.importou import remove_ou, get_school_base
 
@@ -74,17 +78,19 @@ class ImportFile:
 		self.use_python_api = use_python_api
 		self.import_fd, self.import_file = tempfile.mkstemp()
 		os.close(self.import_fd)
+		self.group_import = None
 
-	def write_import(self, data):
+	def write_import(self):
 		self.import_fd = os.open(self.import_file, os.O_RDWR|os.O_CREAT)
-		os.write(self.import_fd, data)
+		os.write(self.import_fd, str(self.group_import))
 		os.close(self.import_fd)
 
-	def run_import(self, data):
+	def run_import(self, group_import):
 		hooks = GroupHooks()
+		self.group_import = group_import
 		try:
-			self.write_import(data)
 			if self.use_cli_api:
+				self.write_import()
 				self._run_import_via_cli()
 			elif self.use_python_api:
 				self._run_import_via_python_api()
@@ -92,8 +98,8 @@ class ImportFile:
 			post_result = hooks.get_post_result()
 			print 'PRE  HOOK result: %s' % pre_result
 			print 'POST HOOK result: %s' % post_result
-			print 'SCHOOL DATA     : %s' % data
-			if pre_result != post_result != data:
+			print 'SCHOOL DATA     : %s' % str(self.group_import)
+			if pre_result != post_result != str(self.group_import):
 				raise GroupHookResult()
 		finally:
 			hooks.cleanup()
@@ -108,7 +114,28 @@ class ImportFile:
 			raise ImportGroup('Failed to execute "%s". Return code: %d.' % (string.join(cmd_block), retcode))
 
 	def _run_import_via_python_api(self):
-		raise NotImplementedError
+		
+		# reload UCR
+		ucsschool.lib.models.utils.ucr.load()
+
+		lo = univention.admin.uldap.getAdminConnection()[0]
+
+		# get school from first group
+		school = self.group_import.groups[0].school
+
+		SchoolLib.init_udm_module(lo)
+
+		if not SchoolLib.get(school).exists(lo):
+			SchoolLib(name=school, dc_name=uts.random_name(), display_name=school).create(lo)
+
+		for grp in self.group_import.groups:
+			kwargs = {'school': grp.school, 'name': grp.name, 'description': grp.description}
+			if grp.mode == 'A':
+				GroupLib(**kwargs).create(lo)
+			elif grp.mode == 'M':
+				GroupLib(**kwargs).modify(lo)
+			elif grp.mode == 'D':
+				GroupLib(**kwargs).delete(lo)
 
 class GroupHooks:
 	def __init__(self):
@@ -197,8 +224,8 @@ class GroupImport:
 	def modify(self):
 		for group in self.groups:
 			group.set_mode_to_modify()
-		self.groups[0].descriptipn = uts.random_name()
-		self.groups[1].descriptipn = uts.random_name()
+		self.groups[0].description = uts.random_name()
+		self.groups[1].description = uts.random_name()
 
 	def delete(self):
 		for group in self.groups:
@@ -215,17 +242,17 @@ def create_and_verify_groups(use_cli_api=True, use_python_api=False, nr_groups=5
 
 	try:
 		print '********** Create groups'
-		import_file.run_import(str(group_import))
+		import_file.run_import(group_import)
 		group_import.verify()
 
 		print '********** Modify groups'
 		group_import.modify()
-		import_file.run_import(str(group_import))
+		import_file.run_import(group_import)
 		group_import.verify()
 
 		print '********** Delete groups'
 		group_import.delete()
-		import_file.run_import(str(group_import))
+		import_file.run_import(group_import)
 		group_import.verify()
 
 	finally:
