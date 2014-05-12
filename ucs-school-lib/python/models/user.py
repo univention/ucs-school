@@ -102,6 +102,15 @@ class User(UCSSchoolHelperAbstractClass):
 			self._profile_path_cache[school.dn] = profile_path
 		return self._profile_path_cache[school.dn]
 
+	def self_is_student(self):
+		return self.is_student(self.school, self.dn)
+
+	def self_is_teacher(self):
+		return self.is_teacher(self.school, self.dn)
+
+	def self_is_staff(self):
+		return self.is_staff(self.school, self.dn)
+
 	@classmethod
 	def is_student(cls, school, dn):
 		return cls.get_search_base(school).isStudent(dn)
@@ -261,9 +270,9 @@ class User(UCSSchoolHelperAbstractClass):
 				self.school_class,
 				'', # TODO: rights?
 				self.email,
-				self.is_teacher(),
+				self.self_is_teacher(),
 				self.is_active(),
-				self.is_staff(),
+				self.self_is_staff(),
 				self.password,
 			)
 

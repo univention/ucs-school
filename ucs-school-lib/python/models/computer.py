@@ -86,56 +86,59 @@ class SchoolDCSlave(SchoolDC):
 		return super(SchoolDCSlave, self)._alter_udm_obj(udm_obj)
 
 	def move(self, lo, udm_obj=None, force=False):
-		if udm_obj is None:
-			try:
-				udm_obj = self.get_only_udm_obj(lo, 'cn=%s' % escape_filter_chars(self.name))
-			except MultipleObjectsError:
-				logger.error('Found more than one DC Slave with hostname "%s"' % self.name)
-				return False
+		try:
 			if udm_obj is None:
-				logger.error('Cannot find DC Slave with hostname "%s"' % self.name)
+				try:
+					udm_obj = self.get_only_udm_obj(lo, 'cn=%s' % escape_filter_chars(self.name))
+				except MultipleObjectsError:
+					logger.error('Found more than one DC Slave with hostname "%s"' % self.name)
+					return False
+				if udm_obj is None:
+					logger.error('Cannot find DC Slave with hostname "%s"' % self.name)
+					return False
+			old_dn = udm_obj.dn
+			school = self.get_school_obj(lo)
+			group_dn = school.get_administrative_group_name('educational', ou_specific=True, as_dn=True)
+			if group_dn not in udm_obj['groups']:
+				logger.error('%r has no LDAP access to %r' % (self, school))
 				return False
-		old_dn = udm_obj.dn
-		school = self.get_school_obj(lo)
-		group_dn = school.get_administrative_group_name('educational', ou_specific=True, as_dn=True)
-		if group_dn not in udm_obj['groups']:
-			logger.error('%r has no LDAP access to %r' % (self, school))
-			return False
-		if old_dn == self.dn:
-			logger.info('DC Slave "%s" is already located in "%s" - stopping here' % (self.name, self.school))
-		self.set_dn(old_dn)
-		in_another_school_re = re.compile('^.+,ou=[^,]+,%s$' % ucr.get('ldap/base'))
-		if in_another_school_re.match(self.old_dn):
-			if not force:
-				logger.error('DC Slave "%s" is located in another OU - %s' % (self.name, udm_obj.dn))
-				logger.error('Use force=True to override')
+			if old_dn == self.dn:
+				logger.info('DC Slave "%s" is already located in "%s" - stopping here' % (self.name, self.school))
+			self.set_dn(old_dn)
+			in_another_school_re = re.compile('^.+,ou=[^,]+,%s$' % ucr.get('ldap/base'))
+			if in_another_school_re.match(self.old_dn):
+				if not force:
+					logger.error('DC Slave "%s" is located in another OU - %s' % (self.name, udm_obj.dn))
+					logger.error('Use force=True to override')
+					return False
+			if school is None:
+				logger.error('Cannot move DC Slave object - School does not exist: %r' % school)
 				return False
-		if school is None:
-			logger.error('Cannot move DC Slave object - School does not exist: %r' % school)
-			return False
-		self.modify_without_hooks(lo)
-		if school.class_share_file_server == old_dn:
-			school.class_share_file_server = self.dn
-		if school.home_share_file_server == old_dn:
-			school.home_share_file_server = self.dn
-		school.modify_without_hooks(lo)
+			self.modify_without_hooks(lo)
+			if school.class_share_file_server == old_dn:
+				school.class_share_file_server = self.dn
+			if school.home_share_file_server == old_dn:
+				school.home_share_file_server = self.dn
+			school.modify_without_hooks(lo)
 
-		removed = False
-		# find dhcp server object by checking all dhcp service objects
-		for dhcp_service in AnyDHCPService.get_all(lo, None):
-			for dhcp_server in dhcp_service.get_servers(lo):
-				if dhcp_server.name == self.name and not dhcp_server.dn.endswith(',%s' % school.dn):
-					dhcp_server.remove(lo)
-					removed = True
+			removed = False
+			# find dhcp server object by checking all dhcp service objects
+			for dhcp_service in AnyDHCPService.get_all(lo, None):
+				for dhcp_server in dhcp_service.get_servers(lo):
+					if dhcp_server.name == self.name and not dhcp_server.dn.endswith(',%s' % school.dn):
+						dhcp_server.remove(lo)
+						removed = True
 
-		if removed:
-			own_dhcp_service = school.get_dhcp_service()
+			if removed:
+				own_dhcp_service = school.get_dhcp_service()
 
-			dhcp_server = DHCPServer(name=self.name, school=self.school, dhcp_service=own_dhcp_service)
-			dhcp_server.create(lo)
+				dhcp_server = DHCPServer(name=self.name, school=self.school, dhcp_service=own_dhcp_service)
+				dhcp_server.create(lo)
 
-		logger.info('Move complete')
-		logger.warning('The DC Slave has to be rejoined into the domain!')
+			logger.info('Move complete')
+			logger.warning('The DC Slave has to be rejoined into the domain!')
+		finally:
+			self.invalidate_cache()
 
 	class Meta:
 		udm_module = 'computers/domaincontroller_slave'

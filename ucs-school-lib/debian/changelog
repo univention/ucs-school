@@ -1,3 +1,10 @@
+ucs-school-lib (5.0.31-1) unstable; urgency=low
+
+  * Bug #34337: Fix user creation: Invalidate cache, add methods for class
+    checks
+
+ -- Dirk Wiesenthal <wiesenthal@univention.de>  Mon, 12 May 2014 23:39:08 +0200
+
 ucs-school-lib (5.0.30-1) unstable; urgency=low
 
   * Bug #34337: Fix school creation: correct DHCP subnet creation, correct
