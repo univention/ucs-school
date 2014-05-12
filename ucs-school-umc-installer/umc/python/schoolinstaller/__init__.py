@@ -577,7 +577,7 @@ class Instance(Base):
 		schoolOU=StringSanitizer(required=True),
 		setup=ChoicesSanitizer(['multiserver', 'singlemaster']),
 		server_type=ChoicesSanitizer(['educational', 'administrative']),
-		name_edu_server=HostSanitizer(regex_pattern=RE_HOSTNAME),
+		nameEduServer=HostSanitizer(regex_pattern=RE_HOSTNAME),
 	)
 	def install(self, request):
 		# get all arguments
@@ -586,7 +586,7 @@ class Instance(Base):
 		master = request.options.get('master')
 		samba = request.options.get('samba')
 		schoolOU = request.options.get('schoolOU')
-		educational_slave = request.options.get('name_edu_server')
+		educational_slave = request.options.get('nameEduServer')
 		OUdisplayname = request.options.get('OUdisplayname', schoolOU)  # use school OU name as fallback
 		server_type = request.options.get('server_type')
 		setup = request.options.get('setup')

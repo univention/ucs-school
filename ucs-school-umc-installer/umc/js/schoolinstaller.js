@@ -430,8 +430,8 @@ define([
 							     master: this.getWidget('credentials', 'master').get('value')};
 					next = tools.umcpCommand('schoolinstaller/get/schoolinfo', args).then(lang.hitch(this, function(data) {
 						this.standby(false);
-						if (data.result.educational_slaves) {
-							this.getWidget('administrativesetup', 'nameEduServer').set('value', data.result.educational_slaves[0]);
+						if (data.result.schoolinfo.educational_slaves) {
+							this.getWidget('administrativesetup', 'nameEduServer').set('value', data.result.schoolinfo.educational_slaves[0]);
 							return this._start_installation(); // Warning: the deferred object returns a deferred object!
 						} else {
 							return 'administrativesetup';

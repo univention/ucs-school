@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-installer\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2014-05-07 21:32+0200\n"
+"POT-Creation-Date: 2014-05-12 08:08+0000\n"
 "PO-Revision-Date: 2014-05-07 21:37+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -60,7 +60,14 @@ msgid ""
 "a very limited set of functions, e.g. logon services for staff users.</"
 "p><p>Usually the domaincontroller slave is configured as educational server."
 "</p>"
-msgstr "<p>Die UCS@school Multi-Server-Umgebung unterscheidet zwischen edukativen Schulservern und Verwaltungsservern. Die edukativen Schulserver stellen alle edukativen Funktionen von UCS@school bereit. Die Server des Verwaltungsnetzes bieten nur einen eingeschränkten Funktionsumfang an (z.B. Anmeldedienste für Mitarbeiter in der Verwaltung).</p><p>In den meisten Fällen ist die Konfiguration des Domänencontroller Slave als edukativer Schulserver sinnvoll.</p>"
+msgstr ""
+"<p>Die UCS@school Multi-Server-Umgebung unterscheidet zwischen edukativen "
+"Schulservern und Verwaltungsservern. Die edukativen Schulserver stellen alle "
+"edukativen Funktionen von UCS@school bereit. Die Server des "
+"Verwaltungsnetzes bieten nur einen eingeschränkten Funktionsumfang an (z.B. "
+"Anmeldedienste für Mitarbeiter in der Verwaltung).</p><p>In den meisten "
+"Fällen ist die Konfiguration des Domänencontroller Slave als edukativer "
+"Schulserver sinnvoll.</p>"
 
 #: umc/js/schoolinstaller.js:108
 msgid ""
@@ -94,7 +101,7 @@ msgstr "Active Directory-kompatibler Domänencontroller (Samba 4)"
 msgid "Administrative server"
 msgstr "Verwaltungsserver"
 
-#: umc/js/schoolinstaller.js:469
+#: umc/js/schoolinstaller.js:472
 msgid ""
 "All necessary information for the installation of UCS@school on this system "
 "has been collected. Please confirm now to continue with the installation "
@@ -113,11 +120,11 @@ msgstr ""
 "Ein Fehler trat während der Installation von UCS@school auf. Die folgenden "
 "Informationen werden genauere Hinweise zu den aufgetretenen Problem geben."
 
-#: umc/js/schoolinstaller.js:503
+#: umc/js/schoolinstaller.js:506
 msgid "An unexpected error occurred."
 msgstr "Ein unerwarteter Fehler trat auf."
 
-#: umc/js/schoolinstaller.js:471
+#: umc/js/schoolinstaller.js:474
 msgid "Cancel"
 msgstr "Abbrechen"
 
@@ -138,7 +145,11 @@ msgid ""
 "During installation this server will be configured as administrative server. "
 "To create the specified school, the name of a second/future domaincontroller "
 "slave is required, which will be configured as educational server."
-msgstr "Während der Installation wird dieser Server als Verwaltungsserver konfiguriert. Um die angegebene Schule zu erstellen, wird zusätzlich der Name eines zweiten/zukünftigen Domänencontroller Slave benötigt, der als edukativer Schulserver konfiguriert wird."
+msgstr ""
+"Während der Installation wird dieser Server als Verwaltungsserver "
+"konfiguriert. Um die angegebene Schule zu erstellen, wird zusätzlich der "
+"Name eines zweiten/zukünftigen Domänencontroller Slave benötigt, der als "
+"edukativer Schulserver konfiguriert wird."
 
 #: umc/js/schoolinstaller.js:209
 msgid "Educational server"
@@ -186,7 +197,7 @@ msgstr ""
 "Namen der Schul-OU ein, die während des Installationsvorgangs erzeugt werden "
 "soll."
 
-#: umc/js/schoolinstaller.js:524
+#: umc/js/schoolinstaller.js:527
 msgid ""
 "In order to complete the installation of UCS@school, a restart of the UMC "
 "server components is necessary."
@@ -210,7 +221,7 @@ msgstr ""
 "Bitte geben Sie die Anmeldedaten eines Domänenkontos mit Join-Rechten an, um "
 "dieses System als Domänencontroller Slave für UCS@school zu konfigurieren."
 
-#: umc/js/schoolinstaller.js:291 umc/js/schoolinstaller.js:475
+#: umc/js/schoolinstaller.js:291 umc/js/schoolinstaller.js:478
 msgid "Install"
 msgstr "Installieren"
 
@@ -232,7 +243,11 @@ msgid ""
 "server name may consist of the letters a-z, the digits 0-9 and underscores. "
 "The name of the educational server may not be equal to the administrative "
 "server!"
-msgstr "Name des edukativen Schulservers der neuen Schule. Der Servername darf aus den Buchstaben a-z, den Ziffern 0-9 und dem Unterstrich _ bestehen. Der Name des edukativen Schulservers darf nicht identisch mit dem Namen des Verwaltungsservers sein!"
+msgstr ""
+"Name des edukativen Schulservers der neuen Schule. Der Servername darf aus "
+"den Buchstaben a-z, den Ziffern 0-9 und dem Unterstrich _ bestehen. Der Name "
+"des edukativen Schulservers darf nicht identisch mit dem Namen des "
+"Verwaltungsservers sein!"
 
 #: umc/js/schoolinstaller.js:178
 msgid "Name of the school"
@@ -308,7 +323,7 @@ msgstr "Schulkürzel"
 msgid "Single server environment"
 msgstr "Single-Server-Umgebung"
 
-#: umc/js/schoolinstaller.js:488
+#: umc/js/schoolinstaller.js:491
 msgid "Starting the configuration process..."
 msgstr "Beginne den Konfigurationsprozess..."
 
