@@ -6,7 +6,7 @@ import subprocess
 import tempfile
 import univention.testing.utils as utils
 import univention.testing.strings as uts
-from ucsschool.lib.models import Group as GroupLib
+from ucsschool.lib.models import SchoolClass as GroupLib
 from ucsschool.lib.models import School as SchoolLib
 from ucsschool.lib.models.utils import add_stream_logger_to_schoollib
 import ucsschool.lib.models.utils
@@ -103,7 +103,10 @@ class ImportFile:
 				raise GroupHookResult()
 		finally:
 			hooks.cleanup()
-			os.remove(self.import_file)
+			try:
+				os.remove(self.import_file)
+			except OSError as e:
+				print 'WARNING: %s not removed. %s' % (self.import_file, e)
 
 	def _run_import_via_cli(self):
 		cmd_block = ['/usr/share/ucs-school-import/scripts/import_group', self.import_file]
@@ -135,7 +138,7 @@ class ImportFile:
 			elif grp.mode == 'M':
 				GroupLib(**kwargs).modify(lo)
 			elif grp.mode == 'D':
-				GroupLib(**kwargs).delete(lo)
+				GroupLib(**kwargs).remove(lo)
 
 class GroupHooks:
 	def __init__(self):

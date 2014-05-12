@@ -6,7 +6,6 @@ import smbpasswd
 import string
 import subprocess
 import tempfile
-import traceback
 import univention.testing.strings as uts
 import univention.testing.ucr
 import univention.testing.utils as utils
@@ -334,7 +333,7 @@ class ImportFile:
 			elif user.mode == 'M':
 				StudentLib(**kwargs).modify(lo)
 			elif user.mode == 'D':
-				StudentLib(**kwargs).delete(lo)
+				StudentLib(**kwargs).remove(lo)
 
 		for user in self.user_import.teacher:
 			kwargs = _set_kwargs(user)
@@ -343,7 +342,7 @@ class ImportFile:
 			elif user.mode == 'M':
 				TeacherLib(**kwargs).modify(lo)
 			elif user.mode == 'D':
-				TeacherLib(**kwargs).delete(lo)
+				TeacherLib(**kwargs).remove(lo)
 
 		for user in self.user_import.staff:
 			kwargs = _set_kwargs(user)
@@ -352,7 +351,7 @@ class ImportFile:
 			elif user.mode == 'M':
 				StaffLib(**kwargs).modify(lo)
 			elif user.mode == 'D':
-				StaffLib(**kwargs).delete(lo)
+				StaffLib(**kwargs).remove(lo)
 
 		for user in self.user_import.teacher_staff:
 			kwargs = _set_kwargs(user)
@@ -361,7 +360,7 @@ class ImportFile:
 			elif user.mode == 'M':
 				TeachersAndStaffLib(**kwargs).modify(lo)
 			elif user.mode == 'D':
-				TeachersAndStaffLib(**kwargs).delete(lo)
+				TeachersAndStaffLib(**kwargs).remove(lo)
 
 class UserHooks:
 	def __init__(self):

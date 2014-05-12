@@ -220,7 +220,7 @@ class ImportFile:
 			#elif computer.mode == 'M':
 			#	SchoolComputerLib(**kwargs).modify(lo)
 			#elif computer.mode == 'D':
-			#	SchoolComputerLib(**kwargs).delete(lo)
+			#	SchoolComputerLib(**kwargs).remove(lo)
 
 class ComputerHooks:
 	def __init__(self):
