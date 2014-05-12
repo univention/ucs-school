@@ -9,7 +9,7 @@ import tempfile
 import univention.testing.utils as utils
 import univention.testing.strings as uts
 
-from essential.importou import remove_ou
+from essential.importou import remove_ou, get_school_base
 from essential.importcomputers import random_ip
 
 HOOK_BASEDIR = '/usr/share/ucs-school-import/hooks'
@@ -51,11 +51,7 @@ class Network:
 		self.school = school
 		self.name = '%s-%s' % (self.school, self._net.network)
 
-		if configRegistry.is_true('ucsschool/ldap/district/enable'):
-			self.school_base = 'ou=%(ou)s,ou=%(district)s,%(basedn)s' % \
-				{'ou': self.school, 'district': self.school[0:2], 'basedn': configRegistry.get('ldap/base')}
-		else:
-			self.school_base = 'ou=%(ou)s,%(basedn)s' % {'ou': self.school, 'basedn': configRegistry.get('ldap/base')}
+		self.school_base = get_school_base(self.school)
 
 		self.dn = 'cn=%s,cn=networks,%s' % (self.name, self.school_base)
 

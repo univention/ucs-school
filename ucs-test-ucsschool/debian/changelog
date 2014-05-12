@@ -1,3 +1,11 @@
+ucs-test-ucsschool (1.0.40-1) unstable; urgency=low
+
+  * user import: test different samba profile path and samba home path
+    settings (Bug #34549)
+  * import ou: wait for replication at the end of the tests
+
+ -- Stefan Gohmann <gohmann@univention.de>  Mon, 12 May 2014 14:04:39 +0200
+
 ucs-test-ucsschool (1.0.39-1) unstable; urgency=low
 
   * Bug #34337: dc_name_administrative is now implemented

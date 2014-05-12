@@ -19,6 +19,8 @@ from ucsschool.lib.models import School, User
 from ucsschool.lib.models.utils import add_stream_logger_to_schoollib
 import ucsschool.lib.models.utils
 
+import univention.config_registry
+
 add_stream_logger_to_schoollib()
 
 HOOK_BASEDIR = '/usr/share/ucs-school-import/hooks'
@@ -50,6 +52,14 @@ def remove_ou(ou_name):
 	schoolenv._ucr.load()
 	schoolenv.cleanup_ou(ou_name)
 
+def get_school_base(ou):
+	configRegistry = univention.config_registry.ConfigRegistry()
+	configRegistry.load()
+
+	if configRegistry.is_true('ucsschool/ldap/district/enable'):
+		return 'ou=%(ou)s,ou=%(district)s,%(basedn)s' % {'ou': ou, 'district': ou[0:2], 'basedn': configRegistry.get('ldap/base')}
+	else:
+		return 'ou=%(ou)s,%(basedn)s' % {'ou': ou, 'basedn': configRegistry.get('ldap/base')}
 
 def create_ou_cli(ou, dc=None, dc_administrative=None, sharefileserver=None, ou_displayname=None):
 	cmd_block = ['/usr/share/ucs-school-import/scripts/create_ou', ou]
@@ -501,6 +511,7 @@ def import_ou_basics(use_cli_api=True, use_python_api=False):
 											)
 										finally:
 											remove_ou(ou_name)
+	utils.wait_for_replication()
 
 def import_ou_with_existing_dc(use_cli_api=True, use_python_api=False):
 	with univention.testing.udm.UCSTestUDM() as udm:
@@ -563,4 +574,6 @@ def import_ou_with_existing_dc(use_cli_api=True, use_python_api=False):
 			utils.verify_ldap_object(dhcp_server, should_exist=False)
 		finally:
 			remove_ou(ou_name)
+
+	utils.wait_for_replication()
 

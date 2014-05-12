@@ -7,7 +7,7 @@ import tempfile
 import univention.testing.utils as utils
 import univention.testing.strings as uts
 
-from essential.importou import remove_ou, create_ou_cli
+from essential.importou import remove_ou, create_ou_cli, get_school_base
 
 HOOK_BASEDIR = '/usr/share/ucs-school-import/hooks'
 
@@ -29,10 +29,7 @@ class Printer:
 		self.school = school
 		self.mode = 'A'
 
-		if configRegistry.is_true('ucsschool/ldap/district/enable'):
-			self.school_base = 'ou=%(ou)s,ou=%(district)s,%(basedn)s' % {'ou': self.school, 'district': self.school[0:2], 'basedn': configRegistry.get('ldap/base')}
-		else:
-			self.school_base = 'ou=%(ou)s,%(basedn)s' % {'ou': self.school, 'basedn': configRegistry.get('ldap/base')}
+		self.school_base = get_school_base(self.school)
 
 		self.dn = 'cn=%s,cn=printers,%s' % (self.name, self.school_base)
 

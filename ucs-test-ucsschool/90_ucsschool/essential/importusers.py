@@ -5,10 +5,14 @@ import smbpasswd
 import string
 import subprocess
 import tempfile
-import univention.testing.utils as utils
+import traceback
 import univention.testing.strings as uts
+import univention.testing.ucr
+import univention.testing.utils as utils
+import univention.testing.udm as udm_test
+import univention.uldap
 
-from essential.importou import remove_ou
+from essential.importou import remove_ou, create_ou_cli, get_school_base
 
 HOOK_BASEDIR = '/usr/share/ucs-school-import/hooks'
 
@@ -67,10 +71,7 @@ class Person:
 		self.active = True
 		self.password = None
 
-		if configRegistry.is_true('ucsschool/ldap/district/enable'):
-			self.school_base = 'ou=%(ou)s,ou=%(district)s,%(basedn)s' % {'ou': self.school, 'district': self.school[0:2], 'basedn': configRegistry.get('ldap/base')}
-		else:
-			self.school_base = 'ou=%(ou)s,%(basedn)s' % {'ou': self.school, 'basedn': configRegistry.get('ldap/base')}
+		self.school_base = get_school_base(self.school)
 
 		self.dn = 'uid=%s,cn=%s,cn=users,%s' % (self.username, self.cn, self.school_base)
 
@@ -100,9 +101,9 @@ class Person:
 		line += delimiter
 		line += ','.join(self.classes)
 		line += delimiter
-		line += ''	# TODO: rights?
+		line += ''
 		line += delimiter
-		line += self.mail # TODO: Do we need to create the mail domain object?
+		line += self.mail
 		line += delimiter
 		if self.is_teacher() or self.is_teacher_staff():
 			line += '1'
@@ -176,16 +177,43 @@ class Person:
 		if configRegistry.get('ucsschool/import/set/homedrive'):
 			attr['sambaHomeDrive'] = [configRegistry.get('ucsschool/import/set/homedrive')]
 		
-		# TODO:
-		#		if calculateSambahomePath(getDN(person.sNr, basedn=baseDN), object["username"]) is not None:
-		#			object["sambahome"] = calculateSambahomePath(getDN(person.sNr, basedn=baseDN), object["username"])
-		#		profilePath = calculateProfilePath(getDN(person.sNr, basedn=baseDN))
-		#		if profilePath:
-		#			object["profilepath"] = profilePath
+		samba_home_path_server = self.get_samba_home_path_server()
+		if samba_home_path_server:
+			attr['sambaHomePath'] = ['\\\\%s\\%s' % (samba_home_path_server, self.username)]
+
+		profile_path_server = self.get_profile_path_server()
+		if profile_path_server:
+			attr['sambaProfilePath'] = [profile_path_server]
+
 		return attr
+
+	def get_samba_home_path_server(self):
+		if configRegistry.get('ucsschool/import/set/sambahome'):
+			print 'get_samba_home_path_server: UCR variable ucsschool/import/set/sambahome is set'
+			return configRegistry.get('ucsschool/import/set/sambahome')
+		if configRegistry.is_true('ucsschool/singlemaster', False):
+			print 'get_samba_home_path_server: Singlemaster'
+			return configRegistry.get('hostname')
+		lo = univention.uldap.getMachineConnection()
+		return lo.search(base=self.school_base, scope=ldap.SCOPE_BASE, attr=['ucsschoolHomeShareFileServer'], unique=1, required=1)[0][1].get('ucsschoolHomeShareFileServer')[0]
+
+	def get_profile_path_server(self):
+		if configRegistry.get('ucsschool/import/set/serverprofile/path'):
+			print 'get_profile_path_server: UCR variable ucsschool/import/set/serverprofile/path is set'
+			return configRegistry.get('samba_home_path_server')
+		lo = univention.uldap.getMachineConnection()
+		result = lo.search(base=self.school_base, filter='univentionService=Windows Profile Server', attr=['cn'])
+		if result:
+			server = '\\\\%s' % result[0][1].get('cn')[0]
+		else:
+			server = '%LOGONSERVER%'
+
+		return server+'\\%USERNAME%\\windows-profiles\\default'
 
 	def verify(self):
 		print 'verify person: %s' % self.username
+		# reload UCR
+		configRegistry.load()
 
 		if self.mode == 'D':
 			utils.verify_ldap_object(self.dn, should_exist=False)
@@ -328,14 +356,13 @@ exit 0
 		os.remove(self.post_hook_result)
 		
 class UserImport:
-	def __init__(self, nr_students=20, nr_teachers=10, nr_staff=5, nr_teacher_staff=3):
+	def __init__(self, school_name=None, nr_students=20, nr_teachers=10, nr_staff=5, nr_teacher_staff=3):
 		assert (nr_students > 2)
 		assert (nr_teachers > 2)
 		assert (nr_staff > 2)
 		assert (nr_teacher_staff > 2)
 
-		# TODO: multi schools ?
-		self.school = uts.random_name()
+		self.school = school_name
 
 		self.students = []
 		for i in range(0, nr_students):
@@ -395,8 +422,6 @@ class UserImport:
 		for student in self.students:
 			student.set_mode_to_modify()
 		self.students[1].mail = '%s@%s' % (uts.random_name(), configRegistry.get('domainname'))
-		# TODO: rename?
-		# self.students[1].username = uts.random_name()
 		self.students[2].firstname = uts.random_name()
 		self.students[2].lastname = uts.random_name()
 		self.students[2].set_inactive()
@@ -404,24 +429,18 @@ class UserImport:
 		for teacher in self.teachers:
 			teacher.set_mode_to_modify()
 		self.students[0].mail = '%s@%s' % (uts.random_name(), configRegistry.get('domainname'))
-		# TODO: rename?
-		# self.students[1].username = uts.random_name()
 		self.students[2].firstname = uts.random_name()
 		self.students[2].lastname = uts.random_name()
 
 		for staff in self.staff:
 			staff.set_mode_to_modify()
 		self.students[0].set_inactive()
-		# TODO: rename?
-		# self.students[1].username = uts.random_name()
 		self.students[2].firstname = uts.random_name()
 		self.students[2].lastname = uts.random_name()
 
 		for teacher_staff in self.teacher_staff:
 			teacher_staff.set_mode_to_modify()
 		self.students[0].set_inactive()
-		# TODO: rename?
-		# self.students[1].username = uts.random_name()
 		self.students[2].firstname = uts.random_name()
 		self.students[2].lastname = uts.random_name()
 
@@ -439,34 +458,104 @@ class UserImport:
 			teacher_staff.set_mode_to_delete()
 
 
-def create_and_verify_users(use_cli_api=True, use_python_api=False, nr_students=3, nr_teachers=3, nr_staff=3, nr_teacher_staff=3):
+def create_and_verify_users(use_cli_api=True, use_python_api=False, school_name=None, nr_students=3, nr_teachers=3, nr_staff=3, nr_teacher_staff=3):
 	assert(use_cli_api != use_python_api)
 
 	print '********** Generate school data'
-	user_import = UserImport(nr_students=nr_students, nr_teachers=nr_teachers, nr_staff=nr_staff, nr_teacher_staff=nr_teacher_staff)
+	user_import = UserImport(school_name=school_name, nr_students=nr_students, nr_teachers=nr_teachers, nr_staff=nr_staff, nr_teacher_staff=nr_teacher_staff)
 	import_file = ImportFile(use_cli_api, use_python_api)
 
 	print user_import
 
-	try:
-		print '********** Create users'
-		import_file.run_import(str(user_import))
-		user_import.verify()
+	print '********** Create users'
+	import_file.run_import(str(user_import))
+	user_import.verify()
 
-		print '********** Modify users'
-		user_import.modify()
-		import_file.run_import(str(user_import))
-		user_import.verify()
+	print '********** Modify users'
+	user_import.modify()
+	import_file.run_import(str(user_import))
+	user_import.verify()
 
-		print '********** Delete users'
-		user_import.delete()
-		import_file.run_import(str(user_import))
-		user_import.verify()
+	print '********** Delete users'
+	user_import.delete()
+	import_file.run_import(str(user_import))
+	user_import.verify()
 
-	finally:
-		remove_ou(user_import.school)
+def create_windows_profile_server(udm, ou, name):
+	properties = {
+		'name': name,
+		'service': 'Windows Profile Server',
+	}
+	school_base = get_school_base(ou)
 
+	udm.create_object('computers/memberserver', position=school_base, **properties)
+
+def create_home_server(udm, name):
+	properties = {
+		'name': name,
+	}
+	udm.create_object('computers/memberserver', **properties)
 
 def import_users_basics(use_cli_api=True, use_python_api=False):
-	create_and_verify_users(use_cli_api, use_python_api, 5, 4, 3, 3)
+	ucr = univention.testing.ucr.UCSTestConfigRegistry()
+	ucr.load()
+
+	udm = udm_test.UCSTestUDM()
+
+	for singlemaster in [True, False]:
+		for samba_home_server in [None, 'generate']:
+			for profile_path_server in [None, 'generate']:
+				for home_server_at_ou in [None, 'generate']:
+					for windows_profile_server in [None, 'generate']:
+
+						
+						if samba_home_server == 'generate':
+							samba_home_server = uts.random_name()
+
+						if profile_path_server == 'generate':
+							profile_path_server = uts.random_name()
+
+						school_name = uts.random_name()
+
+						if home_server_at_ou:
+							home_server_at_ou = uts.random_name()
+							create_home_server(udm, home_server_at_ou)
+							create_ou_cli(school_name, sharefileserver=home_server_at_ou)
+						else:
+							create_ou_cli(school_name)
+
+						try:
+							if windows_profile_server:
+								windows_profile_server = uts.random_name()
+								create_windows_profile_server(udm=udm, ou=school_name, name=windows_profile_server)
+
+							univention.config_registry.handler_set([
+								'ucsschool/singlemaster=%s' % ('true' if singlemaster else 'false'),
+								'ucsschool/import/set/sambahome=%s' % samba_home_server,
+								'ucsschool/import/set/serverprofile/path=%s' % profile_path_server,
+							])
+
+							if not samba_home_server:
+								univention.config_registry.handler_unset([
+									'ucsschool/import/set/sambahome',
+								])
+
+							if not profile_path_server:
+								univention.config_registry.handler_unset([
+									'ucsschool/import/set/serverprofile/path',
+								])
+
+							print ''
+							print '**** import_users_basics:'
+							print '****    singlemaster: %s' % singlemaster
+							print '****    samba_home_server: %s' % samba_home_server
+							print '****    profile_path_server: %s' % profile_path_server
+							print '****    home_server_at_ou: %s' % home_server_at_ou
+							print '****    windows_profile_server: %s' % windows_profile_server
+							print ''
+							create_and_verify_users(use_cli_api, use_python_api, school_name, 5, 4, 3, 3)
+						finally:
+							remove_ou(school_name)
+
+	utils.wait_for_replication()
 
