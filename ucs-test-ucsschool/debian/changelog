@@ -1,4 +1,11 @@
-ucs-test-ucsschool (1.0.36-1) Uunstable; urgency=low
+ucs-test-ucsschool (1.0.37-1) unstable; urgency=low
+
+  * Cleanup 90_ucsschool/essential/import*
+    (Bug #34551, Bug #34550, Bug #34549)
+
+ -- Stefan Gohmann <gohmann@univention.de>  Mon, 12 May 2014 07:09:42 +0200
+
+ucs-test-ucsschool (1.0.36-1) unstable; urgency=low
 
   * Added router import tests to importnetworks (Bug #34551)
 

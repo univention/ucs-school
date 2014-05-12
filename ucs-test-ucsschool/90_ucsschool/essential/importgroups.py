@@ -1,7 +1,7 @@
 ## -*- coding: utf-8 -*-
 
 import os
-import smbpasswd
+import string
 import subprocess
 import tempfile
 import univention.testing.utils as utils
@@ -17,10 +17,10 @@ class GroupHookResult(Exception):
 	pass
 
 import univention.config_registry
-configRegistry =  univention.config_registry.ConfigRegistry()
+configRegistry = univention.config_registry.ConfigRegistry()
 configRegistry.load()
 
-cn_pupils   = configRegistry.get('ucsschool/ldap/default/container/pupils', 'schueler')
+cn_pupils = configRegistry.get('ucsschool/ldap/default/container/pupils', 'schueler')
 
 class Group:
 	def __init__(self, school):
@@ -71,11 +71,11 @@ class Group:
 		utils.verify_ldap_object(self.share_dn, should_exist=True)
 
 
-class ImportFile():
+class ImportFile:
 	def __init__(self, use_cli_api, use_python_api):
 		self.use_cli_api = use_cli_api
 		self.use_python_api = use_python_api
-		self.import_fd,self.import_file = tempfile.mkstemp()
+		self.import_fd, self.import_file = tempfile.mkstemp()
 		os.close(self.import_fd)
 
 	def write_import(self, data):
@@ -106,28 +106,28 @@ class ImportFile():
 		cmd_block = ['/usr/share/ucs-school-import/scripts/import_group', self.import_file]
 
 		print 'cmd_block: %r' % cmd_block
-		retcode = subprocess.call(cmd_block , shell=False)
+		retcode = subprocess.call(cmd_block, shell=False)
 		if retcode:
 			raise ImportGroup('Failed to execute "%s". Return code: %d.' % (string.join(cmd_block), retcode))
 
 	def _run_import_via_python_api(self):
 		raise NotImplementedError
 
-class GroupHooks():
+class GroupHooks:
 	def __init__(self):
 		fd, self.pre_hook_result = tempfile.mkstemp()
 		os.close(fd)
-	
+
 		fd, self.post_hook_result = tempfile.mkstemp()
 		os.close(fd)
-		
+
 		self.create_hooks()
 
 	def get_pre_result(self):
 		return open(self.pre_hook_result, 'r').read()
 	def get_post_result(self):
 		return open(self.post_hook_result, 'r').read()
-		
+
 	def create_hooks(self):
 		self.pre_hooks = [
 				os.path.join(os.path.join(HOOK_BASEDIR, 'group_create_pre.d'), uts.random_name()),
@@ -174,15 +174,15 @@ exit 0
 			os.remove(post_hook)
 		os.remove(self.pre_hook_result)
 		os.remove(self.post_hook_result)
-		
-class GroupImport():
+
+class GroupImport:
 	def __init__(self, nr_groups=20):
 		assert (nr_groups > 3)
 
 		self.school = uts.random_name()
 
 		self.groups = []
-		for i in range(0,nr_groups):
+		for i in range(0, nr_groups):
 			self.groups.append(Group(self.school))
 
 	def __str__(self):

@@ -2,7 +2,7 @@
 
 import os
 import random
-import smbpasswd
+import string
 import subprocess
 import tempfile
 import univention.testing.utils as utils
@@ -16,14 +16,16 @@ class ImportComputer(Exception):
 	pass
 class ComputerHookResult(Exception):
 	pass
+class WrongMembership(Exception):
+	pass
 
 import univention.config_registry
-configRegistry =  univention.config_registry.ConfigRegistry()
+configRegistry = univention.config_registry.ConfigRegistry()
 configRegistry.load()
 
 
 def random_mac():
-	mac = [ 
+	mac = [
 		random.randint(0x00, 0x7f),
 		random.randint(0x00, 0x7f),
 		random.randint(0x00, 0x7f),
@@ -143,11 +145,11 @@ class IPManagedClient(Computer):
 	def __init__(self, school):
 		Computer.__init__(self, school, 'ipmanagedclient')
 
-class ImportFile():
+class ImportFile:
 	def __init__(self, use_cli_api, use_python_api):
 		self.use_cli_api = use_cli_api
 		self.use_python_api = use_python_api
-		self.import_fd,self.import_file = tempfile.mkstemp()
+		self.import_fd, self.import_file = tempfile.mkstemp()
 		os.close(self.import_fd)
 
 	def write_import(self, data):
@@ -178,28 +180,31 @@ class ImportFile():
 		cmd_block = ['/usr/share/ucs-school-import/scripts/import_computer', self.import_file]
 
 		print 'cmd_block: %r' % cmd_block
-		retcode = subprocess.call(cmd_block , shell=False)
+		retcode = subprocess.call(cmd_block, shell=False)
 		if retcode:
 			raise ImportComputer('Failed to execute "%s". Return code: %d.' % (string.join(cmd_block), retcode))
 
 	def _run_import_via_python_api(self):
 		raise NotImplementedError
 
-class ComputerHooks():
+class ComputerHooks:
 	def __init__(self):
 		fd, self.pre_hook_result = tempfile.mkstemp()
 		os.close(fd)
-	
+
 		fd, self.post_hook_result = tempfile.mkstemp()
 		os.close(fd)
-		
+
+		self.pre_hooks = []
+		self.post_hooks = []
+
 		self.create_hooks()
 
 	def get_pre_result(self):
 		return open(self.pre_hook_result, 'r').read()
 	def get_post_result(self):
 		return open(self.post_hook_result, 'r').read()
-		
+
 	def create_hooks(self):
 		self.pre_hooks = [
 				os.path.join(os.path.join(HOOK_BASEDIR, 'computer_create_pre.d'), uts.random_name()),
@@ -240,8 +245,8 @@ exit 0
 			os.remove(post_hook)
 		os.remove(self.pre_hook_result)
 		os.remove(self.post_hook_result)
-		
-class ComputerImport():
+
+class ComputerImport:
 	def __init__(self, nr_windows=20, nr_memberserver=10, nr_macos=5, nr_ipmanagedclient=3):
 		assert (nr_windows > 2)
 		assert (nr_memberserver > 2)
@@ -251,25 +256,25 @@ class ComputerImport():
 		self.school = uts.random_name()
 
 		self.windows = []
-		for i in range(0,nr_windows):
+		for i in range(0, nr_windows):
 			self.windows.append(Windows(self.school))
 		self.windows[1].set_inventorynumbers()
 		self.windows[2].set_zone_verwaltng()
 
 		self.memberservers = []
-		for i in range(0,nr_memberserver):
+		for i in range(0, nr_memberserver):
 			self.memberservers.append(Memberserver(self.school))
 		self.memberservers[2].set_inventorynumbers()
 		self.memberservers[0].set_zone_verwaltng()
 
 		self.macos = []
-		for i in range(0,nr_macos):
+		for i in range(0, nr_macos):
 			self.macos.append(MacOS(self.school))
 		self.macos[0].set_inventorynumbers()
 		self.memberservers[1].set_zone_edukativ()
 
 		self.ipmanagedclients = []
-		for i in range(0,nr_ipmanagedclient):
+		for i in range(0, nr_ipmanagedclient):
 			self.ipmanagedclients.append(IPManagedClient(self.school))
 		self.ipmanagedclients[0].set_inventorynumbers()
 		self.ipmanagedclients[0].set_zone_edukativ()

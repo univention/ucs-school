@@ -2,6 +2,7 @@
 
 import os
 import smbpasswd
+import string
 import subprocess
 import tempfile
 import univention.testing.utils as utils
@@ -17,10 +18,10 @@ class UserHookResult(Exception):
 	pass
 
 import univention.config_registry
-configRegistry =  univention.config_registry.ConfigRegistry()
+configRegistry = univention.config_registry.ConfigRegistry()
 configRegistry.load()
 
-cn_pupils  = configRegistry.get('ucsschool/ldap/default/container/pupils', 'schueler')
+cn_pupils = configRegistry.get('ucsschool/ldap/default/container/pupils', 'schueler')
 cn_teachers = configRegistry.get('ucsschool/ldap/default/container/teachers', 'lehrer')
 cn_teachers_staff = configRegistry.get('ucsschool/ldap/default/container/teachers-and-staff', 'lehrer und mitarbeiter')
 cn_staff = configRegistry.get('ucsschool/ldap/default/container/staff', 'mitarbeiter')
@@ -197,7 +198,7 @@ class Person:
 
 		for cl in self.classes:
 			cl_group_dn = 'cn=%s,cn=klassen,cn=%s,cn=groups,%s' % (cl, cn_pupils, self.school_base)
-			utils.verify_ldap_object(default_group_dn, expected_attr={'uniqueMember': [self.dn], 'memberUid': [self.username]}, strict=False, should_exist=True)
+			utils.verify_ldap_object(cl_group_dn, expected_attr={'uniqueMember': [self.dn], 'memberUid': [self.username]}, strict=False, should_exist=True)
 
 		role_group_dn = 'cn=%s%s,cn=groups,%s' % (self.grp_prefix, self.school, self.school_base)
 		utils.verify_ldap_object(role_group_dn, expected_attr={'uniqueMember': [self.dn], 'memberUid': [self.username]}, strict=False, should_exist=True)
@@ -219,11 +220,11 @@ class TeacherStaff(Person):
 	def __init__(self, school):
 		Person.__init__(self, school, 'teacher_staff')
 
-class ImportFile():
+class ImportFile:
 	def __init__(self, use_cli_api, use_python_api):
 		self.use_cli_api = use_cli_api
 		self.use_python_api = use_python_api
-		self.import_fd,self.import_file = tempfile.mkstemp()
+		self.import_fd, self.import_file = tempfile.mkstemp()
 		os.close(self.import_fd)
 
 	def write_import(self, data):
@@ -254,14 +255,14 @@ class ImportFile():
 		cmd_block = ['/usr/share/ucs-school-import/scripts/import_user', self.import_file]
 
 		print 'cmd_block: %r' % cmd_block
-		retcode = subprocess.call(cmd_block , shell=False)
+		retcode = subprocess.call(cmd_block, shell=False)
 		if retcode:
 			raise ImportUser('Failed to execute "%s". Return code: %d.' % (string.join(cmd_block), retcode))
 
 	def _run_import_via_python_api(self):
 		raise NotImplementedError
 
-class UserHooks():
+class UserHooks:
 	def __init__(self):
 		fd, self.pre_hook_result = tempfile.mkstemp()
 		os.close(fd)
@@ -269,6 +270,9 @@ class UserHooks():
 		fd, self.post_hook_result = tempfile.mkstemp()
 		os.close(fd)
 		
+		self.pre_hooks = []
+		self.post_hooks = []
+
 		self.create_hooks()
 
 	def get_pre_result(self):
@@ -323,7 +327,7 @@ exit 0
 		os.remove(self.pre_hook_result)
 		os.remove(self.post_hook_result)
 		
-class UserImport():
+class UserImport:
 	def __init__(self, nr_students=20, nr_teachers=10, nr_staff=5, nr_teacher_staff=3):
 		assert (nr_students > 2)
 		assert (nr_teachers > 2)
@@ -334,28 +338,28 @@ class UserImport():
 		self.school = uts.random_name()
 
 		self.students = []
-		for i in range(0,nr_students):
+		for i in range(0, nr_students):
 			self.students.append(Student(self.school))
 		self.students[2].set_inactive()
-		self.students[0].password=uts.random_name()
+		self.students[0].password = uts.random_name()
 
 		self.teachers = []
-		for i in range(0,nr_teachers):
+		for i in range(0, nr_teachers):
 			self.teachers.append(Teacher(self.school))
 		self.teachers[1].set_inactive()
-		self.teachers[1].password=uts.random_name()
+		self.teachers[1].password = uts.random_name()
 
 		self.staff = []
-		for i in range(0,nr_staff):
+		for i in range(0, nr_staff):
 			self.staff.append(Staff(self.school))
 		self.staff[2].set_inactive()
-		self.staff[1].password=uts.random_name()
+		self.staff[1].password = uts.random_name()
 
 		self.teacher_staff = []
-		for i in range(0,nr_teacher_staff):
+		for i in range(0, nr_teacher_staff):
 			self.teacher_staff.append(TeacherStaff(self.school))
 		self.teacher_staff[1].set_inactive()
-		self.teacher_staff[2].password=uts.random_name()
+		self.teacher_staff[2].password = uts.random_name()
 
 	def __str__(self):
 		lines = []
@@ -390,36 +394,36 @@ class UserImport():
 	def modify(self):
 		for student in self.students:
 			student.set_mode_to_modify()
-		self.students[1].mail='%s@%s' % (uts.random_name(),configRegistry.get('domainname'))
+		self.students[1].mail = '%s@%s' % (uts.random_name(), configRegistry.get('domainname'))
 		# TODO: rename?
-		# self.students[1].username=uts.random_name()
-		self.students[2].firstname=uts.random_name()
-		self.students[2].lastname=uts.random_name()
+		# self.students[1].username = uts.random_name()
+		self.students[2].firstname = uts.random_name()
+		self.students[2].lastname = uts.random_name()
 		self.students[2].set_inactive()
 
 		for teacher in self.teachers:
 			teacher.set_mode_to_modify()
-		self.students[0].mail='%s@%s' % (uts.random_name(),configRegistry.get('domainname'))
+		self.students[0].mail = '%s@%s' % (uts.random_name(), configRegistry.get('domainname'))
 		# TODO: rename?
-		# self.students[1].username=uts.random_name()
-		self.students[2].firstname=uts.random_name()
-		self.students[2].lastname=uts.random_name()
+		# self.students[1].username = uts.random_name()
+		self.students[2].firstname = uts.random_name()
+		self.students[2].lastname = uts.random_name()
 
 		for staff in self.staff:
 			staff.set_mode_to_modify()
 		self.students[0].set_inactive()
 		# TODO: rename?
-		# self.students[1].username=uts.random_name()
-		self.students[2].firstname=uts.random_name()
-		self.students[2].lastname=uts.random_name()
+		# self.students[1].username = uts.random_name()
+		self.students[2].firstname = uts.random_name()
+		self.students[2].lastname = uts.random_name()
 
 		for teacher_staff in self.teacher_staff:
 			teacher_staff.set_mode_to_modify()
 		self.students[0].set_inactive()
 		# TODO: rename?
-		# self.students[1].username=uts.random_name()
-		self.students[2].firstname=uts.random_name()
-		self.students[2].lastname=uts.random_name()
+		# self.students[1].username = uts.random_name()
+		self.students[2].firstname = uts.random_name()
+		self.students[2].lastname = uts.random_name()
 
 	def delete(self):
 		for student in self.students:

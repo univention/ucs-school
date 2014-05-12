@@ -63,7 +63,7 @@ def create_ou_cli(ou, dc=None, dc_administrative=None, sharefileserver=None, ou_
 		cmd_block.append('--sharefileserver=%s' % sharefileserver)
 
 	print 'cmd_block: %r' % cmd_block
-	retcode = subprocess.call(cmd_block , shell=False)
+	retcode = subprocess.call(cmd_block, shell=False)
 	if retcode:
 		raise CreateOU('Failed to execute "%s". Return code: %d.' % (string.join(cmd_block), retcode))
 
@@ -94,7 +94,7 @@ def move_domaincontroller_to_ou_cli(dc_name, ou):
 	cmd_block = ['/usr/share/ucs-school-import/scripts/move_domaincontroller_to_ou', '--ou', ou, '--dcname', dc_name]
 	print 'cmd_block: %r' % cmd_block
 
-	retcode = subprocess.call(cmd_block , shell=False)
+	retcode = subprocess.call(cmd_block, shell=False)
 	if retcode:
 		raise MoveDCToOU('Failed to execute "%s". Return code: %d.' % (string.join(cmd_block), retcode))
 
@@ -141,11 +141,11 @@ test "%(ou_base)s" = "$2" || exit 1
 univention-ldapsearch -b "$2" >/dev/null || exit 1
 ''' % {'ou_base': ou_base})
 	if singlemaster:
-		post_hook_fd.write('egrep "^%(ou)s\t$(ucr get hostname)$" $1 || exit 1\n' % {'ou': ou, 'dc': dc})
+		post_hook_fd.write('egrep "^%(ou)s\t$(ucr get hostname)$" $1 || exit 1\n' % {'ou': ou})
 	elif dc:
 		post_hook_fd.write('egrep "^%(ou)s\t%(dc)s$" $1 || exit 1\n' % {'ou': ou, 'dc': dc})
 	else:
-		post_hook_fd.write('egrep "^%(ou)s$" $1 || exit 1\n' % {'ou': ou, 'dc': dc})
+		post_hook_fd.write('egrep "^%(ou)s$" $1 || exit 1\n' % {'ou': ou})
 
 	post_hook_fd.write('touch "%s"' % successful_file)
 
@@ -228,7 +228,7 @@ def create_and_verify_ou(ou, dc, sharefileserver, dc_administrative=None, ou_dis
 		if result:
 			#dc_dn = result[0][0]
 			move_dc_after_create_ou = True
-		dc_dn = 'cn=%s,cn=dc,cn=server,cn=computers,%s' % (dc,ou_base)
+		dc_dn = 'cn=%s,cn=dc,cn=server,cn=computers,%s' % (dc, ou_base)
 		dc_name = dc
 	else:
 		dc_dn = 'cn=dc%s-01,cn=dc,cn=server,cn=computers,%s' % (ou, ou_base)
@@ -239,9 +239,7 @@ def create_and_verify_ou(ou, dc, sharefileserver, dc_administrative=None, ou_dis
 		result = lo.search(filter='(&(objectClass=univentionDomainController)(cn=%s))' % sharefileserver, base=base_dn, attr=['cn'])
 		if result:
 			sharefileserver_dn = result[0][0]
-		sharefileserver_name = sharefileserver
 	else:
-		sharefileserver_name = dc_name
 		sharefileserver_dn = dc_dn
 
 	if use_cli_api:
@@ -384,7 +382,7 @@ def create_and_verify_ou(ou, dc, sharefileserver, dc_administrative=None, ou_dis
 	dhcp_dn = "cn=dhcp,%s" % (ou_base)
 	dhcp_service_dn = "cn=%s,%s" % (ou, dhcp_dn)
 	dhcp_server_dn = "cn=%s,%s" % (dc_name, dhcp_service_dn)
-	utils.verify_ldap_object(dhcp_service_dn,	expected_attr={'dhcpOption': ['wpad "http://%s.%s/proxy.pac"' % (dc_name,ucr.get('domainname'))]}, should_exist=True)
+	utils.verify_ldap_object(dhcp_service_dn, expected_attr={'dhcpOption': ['wpad "http://%s.%s/proxy.pac"' % (dc_name, ucr.get('domainname'))]}, should_exist=True)
 	utils.verify_ldap_object(dhcp_server_dn, should_exist=True)
 
 	if singlemaster:
@@ -481,12 +479,12 @@ def import_ou_basics(use_cli_api=True, use_python_api=False):
 											print 'NOTE: cannot create administrative DC without administrative objects in LDAP'
 											continue
 										if sharefileserver:
-											sharefileserver=uts.random_name()
+											sharefileserver = uts.random_name()
 											udm.create_object('computers/domaincontroller_slave', name=sharefileserver)
-										ou_name=uts.random_name()
+										ou_name = uts.random_name()
 										# character set contains multiple whitespaces to increase chance to get several words
 										charset = uts.STR_ALPHANUMDOTDASH + uts.STR_ALPHA.upper() + '()[]/,;:_#"+*@<>~ßöäüÖÄÜ$%&!     '
-										ou_displayname=uts.random_string(length=random.randint(1, 50), charset=charset)
+										ou_displayname = uts.random_string(length=random.randint(1, 50), charset=charset)
 										try:
 											create_and_verify_ou(
 													ou=ou_name,
@@ -508,26 +506,25 @@ def import_ou_basics(use_cli_api=True, use_python_api=False):
 def import_ou_with_existing_dc(use_cli_api=True, use_python_api=False):
 	with univention.testing.udm.UCSTestUDM() as udm:
 		dc_name = uts.random_name()
-		dc_dn = udm.create_object('computers/domaincontroller_slave', name = dc_name)
 
 		dhcp_service_name = uts.random_name()
 
-		dhcp_service = udm.create_object('dhcp/service', service = dhcp_service_name)
+		dhcp_service = udm.create_object('dhcp/service', service=dhcp_service_name)
 
-		dhcp_server = udm.create_object('dhcp/server', server = dc_name, superordinate = dhcp_service)
+		dhcp_server = udm.create_object('dhcp/server', server=dc_name, superordinate=dhcp_service)
 
 		dhcp_subnet_properties = {
 			'subnet': '10.20.30.0',
 			'subnetmask': '24',
 		}
-		dhcp_subnet1 = udm.create_object('dhcp/subnet', superordinate = dhcp_service, **dhcp_subnet_properties)
+		dhcp_subnet1 = udm.create_object('dhcp/subnet', superordinate=dhcp_service, **dhcp_subnet_properties)
 
 		default_ip = Interfaces().get_default_ip_address()
 		dhcp_subnet_properties = {
 			'subnet': default_ip.ip,
 			'subnetmask': default_ip.prefixlen,
 		}
-		dhcp_subnet2 = udm.create_object('dhcp/subnet', superordinate = dhcp_service, **dhcp_subnet_properties)
+		dhcp_subnet2 = udm.create_object('dhcp/subnet', superordinate=dhcp_service, **dhcp_subnet_properties)
 
 		ou_name = uts.random_name()
 
@@ -563,7 +560,7 @@ def import_ou_with_existing_dc(use_cli_api=True, use_python_api=False):
 			utils.verify_ldap_object(new_dhcp_subnet1_dn, should_exist=False)
 
 			# dhcp server has been moved
-			utils.verify_ldap_object('cn=%s,%s' %(dc_name,new_dhcp_service_dn), should_exist=True)
+			utils.verify_ldap_object('cn=%s,%s' % (dc_name, new_dhcp_service_dn), should_exist=True)
 			utils.verify_ldap_object(dhcp_server, should_exist=False)
 		finally:
 			remove_ou(ou_name)
