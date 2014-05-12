@@ -70,7 +70,6 @@ def create_ou_cli(ou, dc=None, dc_administrative=None, sharefileserver=None, ou_
 def create_ou_python_api(ou, dc, dc_administrative, sharefileserver, ou_displayname):
 	kwargs = {'name': ou, 'dc_name': dc}
 	if dc_administrative:
-		raise NotImplementedError
 		kwargs['dc_name_administrative'] = dc_administrative
 	if sharefileserver:
 		kwargs['class_share_file_server'] = sharefileserver
