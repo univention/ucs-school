@@ -209,7 +209,8 @@ target_school_ou=$(school_ou "$target_school_dc_hostdn")
 
 echo "$(LC_ALL=C date): start $0" >>/var/log/univention/join.log 2>&1
 
-univention-install univention-samba4 libunivention-ldb-modules || exit 1
+univention-install univention-samba4 || exit 1
+univention-add-app ucsschool -l libunivention-ldb-modules || exit 1
 
 . /usr/share/univention-samba4/lib/all.sh
 
