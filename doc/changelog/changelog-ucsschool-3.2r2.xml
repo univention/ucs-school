@@ -137,15 +137,10 @@
 			<title>UCS@school configuration</title>
 			<itemizedlist>
 				<listitem><simpara>
-					The &ucsUAS; configuration wizard is now also able to create administrative school servers (<ulink url="&ucsbug;34166">Bug 34166</ulink>).
+					The &ucsUAS; configuration wizard is now also able to create administrative school servers (<ulink url="&ucsbug;34166">Bug 34166</ulink>, <ulink url="&ucsbug;34823">Bug 34823</ulink>).
 				</simpara></listitem>
-			</itemizedlist>
-		</section>
-		<section>
-			<title>Configuration wizards</title>
-			<itemizedlist>
 				<listitem><simpara>
-					The wizard for installing UCS@school does now support the additional attribute <emphasis>displayName</emphasis> (<ulink url="&ucsbug;34173">Bug 34173</ulink>).
+				  	Upon creating a new school, the administrator is now able to define a display name in addition to the school name/OU name (<ulink url="&ucsbug;34173">Bug 34173</ulink>).
 				</simpara></listitem>
 			</itemizedlist>
 		</section>
@@ -153,7 +148,7 @@
 			<title>Add OU wizard</title>
 			<itemizedlist>
 				<listitem><simpara>
-					The wizard for creating schools does now support the additional attribute <emphasis>displayName</emphasis> (<ulink url="&ucsbug;34173">Bug 34173</ulink>).
+				  	Upon creating a new school, the administrator is now able to define a display name in addition to the school name/OU name (<ulink url="&ucsbug;34173">Bug 34173</ulink>).
 				</simpara></listitem>
 			</itemizedlist>
 		</section>
