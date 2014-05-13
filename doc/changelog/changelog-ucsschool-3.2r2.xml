@@ -37,17 +37,16 @@
 -->
 
 
+<!--
 <section>
 	<title>Domain services</title>
 	<section>
 		<title>Samba4</title>
-			<itemizedlist>
-				<listitem><simpara>
-						The new package <package>ucs-school-s4-branch-site</package> provides a listener module which takes care of Samba4 specific DNS service record registration on &ucsUAS; Samba 4 Slave PDCs. This simplifies the installation of an additional Samba 4 Slave PDC at some &ucsUAS; branch site (<ulink url="&ucsbug;32187">Bug 32187</ulink>).
-				</simpara></listitem>
-			</itemizedlist>
+		<itemizedlist>
+			<listitem><simpara>
+			</simpara></listitem>
+		</itemizedlist>
 	</section>
-<!--
 	<section>
 		<title>OpenLDAP</title>
 	</section>
