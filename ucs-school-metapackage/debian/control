@@ -51,6 +51,7 @@ Depends: univention-ldap-server (>= 8.0.77-4),
  univention-samba4 (>= 1.0.138-11) | univention-samba (>= 6.0.27-1),
  univention-s4-connector (>= 6.0.128-24) | univention-samba-slave-pdc,
  libunivention-ldb-modules | univention-samba (>= 6.0.27-1),
+ ucs-school-s4-branch-site | univention-samba,
  ucs-school-netlogon-user-logonscripts,
  ucs-school-old-homedirs,
  ucs-school-old-sharedirs,
@@ -149,7 +150,8 @@ Depends: univention-config,
  python-ucs-school (>= 5.0.3-17),
  univention-samba4 (>= 1.0.138-11) | univention-samba (>= 6.0.27-1),
  univention-s4-connector (>= 6.0.128-24) | univention-samba-slave-pdc,
- libunivention-ldb-modules | univention-samba (>= 6.0.27-1)
+ libunivention-ldb-modules | univention-samba (>= 6.0.27-1),
+ ucs-school-s4-branch-site | univention-samba
 Description: UCS@school meta package for non-educational Slave servers
  .
  This package is part of Univention Corporate Server (UCS),
