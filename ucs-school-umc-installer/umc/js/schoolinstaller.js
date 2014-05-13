@@ -58,6 +58,7 @@ define([
 		_joined: null,
 		_samba: null,
 		_requestRestart: false,
+		_hostname: null,
 
 		_progressBar: null,
 
@@ -303,6 +304,7 @@ define([
 			// query initial information
 			this._initialDeferred = tools.umcpCommand('schoolinstaller/query').then(lang.hitch(this, function(data) {
 				this._serverRole = data.result.server_role;
+				this._hostname = data.result.hostname;
 				this._joined = data.result.joined;
 				this._samba = data.result.samba;
 				this._ucsschool = data.result.ucsschool;
@@ -416,11 +418,6 @@ define([
 					next = 'install';
 				}
 
-				// show administrativesetup page only if the selected server type is 'administrative'
-				if (next == 'administrativesetup' && this.getWidget('server_type', 'server_type').get('value') == 'educational') {
-					next = 'install';
-				}
-
 				// show managementsetup page only if no slave has been specified or OU does not exist yet
 				if (next == 'administrativesetup') {
 					this.standby(true);
@@ -430,11 +427,46 @@ define([
 							     master: this.getWidget('credentials', 'master').get('value')};
 					next = tools.umcpCommand('schoolinstaller/get/schoolinfo', args).then(lang.hitch(this, function(data) {
 						this.standby(false);
-						if (data.result.schoolinfo.educational_slaves) {
-							this.getWidget('administrativesetup', 'nameEduServer').set('value', data.result.schoolinfo.educational_slaves[0]);
-							return this._start_installation(); // Warning: the deferred object returns a deferred object!
+						// on error, stop here
+						if ((!(data.result.success)) && (data.result.error.length > 0)) {
+							return dialog.alert(data.result.error);
+						}
+
+						if (this.getWidget('server_type', 'server_type').get('value') == 'educational') {
+							// check if there are other UCS@school slaves defined
+							if ((data.result.schoolinfo.educational_slaves.length > 0) && (array.indexOf(data.result.schoolinfo.educational_slaves, this._hostname) < 0)) {
+								// show error message and then jump back to server role selection
+								return dialog.confirm('<div style="max-width: 500px">' + _('UCS@school supports only one educational server per school. Please check if the educational server "') + data.result.schoolinfo.educational_slaves[0] + _('" is still in use. Otherwise the corresponding host object has to be deleted first.') + '</div>', [{
+									name: 'ok',
+									label: _('Ok'),
+									'default': true
+								}], _('Error')).then(lang.hitch(this, function() {
+									return 'server_type';
+								}));
+							} else {
+								// otherwise start installation
+								return this._start_installation();
+							}
 						} else {
-							return 'administrativesetup';
+							// check if there are other UCS@school slaves defined
+							if ((data.result.schoolinfo.administrative_slaves.length > 0) && (array.indexOf(data.result.schoolinfo.administrative_slaves, this._hostname) < 0)) {
+								// show error message and then jump back to server role selection
+								return dialog.confirm('<div style="max-width: 500px">' + _('UCS@school supports only one administrative server per school. Please check if the administrative server "') + data.result.schoolinfo.administrative_slaves[0] + _('" is still in use. Otherwise the corresponding host object has to be deleted first.') + '</div>', [{
+									name: 'ok',
+									label: _('Ok'),
+									'default': true
+								}], _('Error')).then(lang.hitch(this, function() {
+									return 'server_type';
+								}));
+							} else  {
+								// otherwise ask for a name of the educational slave if none is already define; if defined, start the installation
+								if (data.result.schoolinfo.educational_slaves.length > 0) {
+									this.getWidget('administrativesetup', 'nameEduServer').set('value', data.result.schoolinfo.educational_slaves[0]);
+									return this._start_installation(); // Warning: the deferred object returns a deferred object!
+								} else {
+									return 'administrativesetup';
+								}
+							}
 						}
 					}));
 				}
@@ -464,10 +496,6 @@ define([
 		_start_installation: function() {
 			var values = this.getValues();
 
-			// clear entered password and make sure that no error is indicated
-			this.getWidget('credentials', 'password').set('value', '');
-			this.getWidget('credentials', 'password').set('state', 'Incomplete');
-
 			// request installation
 			next = dialog.confirm('<div style="max-width: 500px">' + _('All necessary information for the installation of UCS@school on this system has been collected. Please confirm now to continue with the installation process.') + '</div>', [{
 				name: 'cancel',
@@ -481,6 +509,11 @@ define([
 					return pageName;
 				}
 				this.standby(true);
+
+				// clear entered password and make sure that no error is indicated
+				this.getWidget('credentials', 'password').set('value', '');
+				this.getWidget('credentials', 'password').set('state', 'Incomplete');
+
 				return tools.umcpCommand('schoolinstaller/install', values).then(lang.hitch(this, function(result) {
 					if (!result.result.success) {
 						this.getWidget('error', 'info').set('content', result.result.error);

@@ -477,6 +477,7 @@ class Instance(Base):
 			'samba': self.get_samba_version(),
 			'ucsschool': self.get_ucs_school_version(),
 			'guessed_master': get_master_dns_lookup(),
+			'hostname': ucr.get('hostname'),
 		}
 
 	@simple_response
@@ -553,9 +554,8 @@ class Instance(Base):
 				values['homeShareServer'] = result[0].get('ucsschoolHomeShareFileServer')
 				# ...find all joined slave systems in the ou
 				searchBase = SchoolSearchBase([schoolOU], ldapBase=ucrMaster.get('ldap/base'))
-				slaves = udm_modules.lookup('computers/domaincontroller_slave', None, lo, base=searchBase.computers, scope='sub', filter='service=LDAP')
+				slaves = udm_modules.lookup('computers/domaincontroller_slave', None, lo, base=searchBase.computers, scope='sub')
 
-				# make sure that no joined DC slave is the main DC for this school
 				for islave in slaves:
 					islave.open()
 					if searchBase.educationalDCGroup in islave['groups']:

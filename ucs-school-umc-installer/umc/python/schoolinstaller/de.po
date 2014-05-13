@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-installer\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2014-05-12 08:08+0000\n"
+"POT-Creation-Date: 2014-05-13 14:05+0000\n"
 "PO-Revision-Date: 2014-05-12 10:16+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -111,7 +111,9 @@ msgstr "Vorbereiten des Domänenbeitritts..."
 
 #: umc/python/schoolinstaller/__init__.py:624
 msgid "Server type has to be set for domaincontroller slave"
-msgstr "Es muss ein Servertyp (Edukativ/Verwaltung) für den Domänencontroller Slave angegeben werden."
+msgstr ""
+"Es muss ein Servertyp (Edukativ/Verwaltung) für den Domänencontroller Slave "
+"angegeben werden."
 
 #: umc/python/schoolinstaller/__init__.py:393
 msgid ""
@@ -188,9 +190,11 @@ msgstr ""
 msgid ""
 "The name of an educational server has to be specified if the system shall be "
 "configured as administrative server."
-msgstr "Der Name eines edukativen Schulservers muss angegeben werden, wenn das aktuelle System als Verwaltungsserver konfiguriert werden soll."
+msgstr ""
+"Der Name eines edukativen Schulservers muss angegeben werden, wenn das "
+"aktuelle System als Verwaltungsserver konfiguriert werden soll."
 
-#: umc/python/schoolinstaller/__init__.py:509
+#: umc/python/schoolinstaller/__init__.py:510
 #: umc/python/schoolinstaller/__init__.py:615
 msgid "The specified school OU is not valid."
 msgstr "Die angegebene Schul-OU ist ungültig."

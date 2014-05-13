@@ -3,8 +3,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-installer\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2014-05-12 08:08+0000\n"
-"PO-Revision-Date: 2014-05-07 21:37+0200\n"
+"POT-Creation-Date: 2014-05-13 14:42+0000\n"
+"PO-Revision-Date: 2014-05-13 16:11+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
@@ -12,7 +12,15 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: umc/js/schoolinstaller.js:99
+#: umc/js/schoolinstaller.js:439 umc/js/schoolinstaller.js:454
+msgid ""
+"\" is still in use. Otherwise the corresponding host object has to be "
+"deleted first."
+msgstr ""
+"\" weiterhin in Benutzung ist. Falls nicht, muss das entsprechende "
+"Rechnerobjekt zuvor gelöscht werden."
+
+#: umc/js/schoolinstaller.js:100
 msgid ""
 "<p>In a multi server environment, the master domain controller system is "
 "configured as central instance hosting the complete set of LDAP data. Each "
@@ -35,7 +43,7 @@ msgstr ""
 "konfiguriert wurde, müssen ein oder mehrere Slave-Systeme konfiguriert "
 "werden und der Domäne beitreten."
 
-#: umc/js/schoolinstaller.js:100
+#: umc/js/schoolinstaller.js:101
 msgid ""
 "<p>In a single server environment, the master domain controller system is "
 "configured as standalone UCS@school server instance. All school related data "
@@ -52,7 +60,7 @@ msgstr ""
 "Diese Konfiguration kann in größeren Umgebung zu Performance-Problemen "
 "führen.</p>"
 
-#: umc/js/schoolinstaller.js:204
+#: umc/js/schoolinstaller.js:205
 msgid ""
 "<p>The UCS@school multi server environment distinguishes between educational "
 "servers and administrative servers. The educational servers provide all "
@@ -69,7 +77,7 @@ msgstr ""
 "Fällen ist die Konfiguration des Domänencontroller Slave als edukativer "
 "Schulserver sinnvoll.</p>"
 
-#: umc/js/schoolinstaller.js:108
+#: umc/js/schoolinstaller.js:109
 msgid ""
 "<p>The local server role is slave domain controller, for which only a multi "
 "server environment can be configured.</p>"
@@ -77,7 +85,7 @@ msgstr ""
 "<p>Die lokale Serverrolle ist Domänencontroller Slave. Diese Rolle kann nur "
 "für eine Multi-Server-Umgebung konfiguriert werden.</p>"
 
-#: umc/js/schoolinstaller.js:69
+#: umc/js/schoolinstaller.js:70
 msgid ""
 "<p>This wizard guides you step by step through the installation of "
 "UCS@school in your domain.</p><p>For the installation of UCS@school, there "
@@ -93,15 +101,15 @@ msgstr ""
 "Auswirkungen auf die nachfolgenden Installationsschritte. Weitere Hinweise "
 "für die jeweilige Umgebung werden untenstehend angezeigt.</p>"
 
-#: umc/js/schoolinstaller.js:151
+#: umc/js/schoolinstaller.js:152
 msgid "Active Directory-compatible domain controller (Samba 4)"
 msgstr "Active Directory-kompatibler Domänencontroller (Samba 4)"
 
-#: umc/js/schoolinstaller.js:210
+#: umc/js/schoolinstaller.js:211
 msgid "Administrative server"
 msgstr "Verwaltungsserver"
 
-#: umc/js/schoolinstaller.js:472
+#: umc/js/schoolinstaller.js:500
 msgid ""
 "All necessary information for the installation of UCS@school on this system "
 "has been collected. Please confirm now to continue with the installation "
@@ -111,7 +119,7 @@ msgstr ""
 "Informationen wurden zusammengetragen. Bitte bestätigen Sie jetzt, um mit "
 "dem Installationsprozess zu beginnen."
 
-#: umc/js/schoolinstaller.js:227
+#: umc/js/schoolinstaller.js:228
 msgid ""
 "An error occurred during the installation of UCS@school. The following "
 "information will give you some more details on which problems occurred "
@@ -120,27 +128,27 @@ msgstr ""
 "Ein Fehler trat während der Installation von UCS@school auf. Die folgenden "
 "Informationen werden genauere Hinweise zu den aufgetretenen Problem geben."
 
-#: umc/js/schoolinstaller.js:506
+#: umc/js/schoolinstaller.js:539
 msgid "An unexpected error occurred."
 msgstr "Ein unerwarteter Fehler trat auf."
 
-#: umc/js/schoolinstaller.js:474
+#: umc/js/schoolinstaller.js:502
 msgid "Cancel"
 msgstr "Abbrechen"
 
-#: umc/js/schoolinstaller.js:293
+#: umc/js/schoolinstaller.js:294
 msgid "Close"
 msgstr "Schließen"
 
-#: umc/js/schoolinstaller.js:134
+#: umc/js/schoolinstaller.js:135
 msgid "Domain password"
 msgstr "Domänenpasswort"
 
-#: umc/js/schoolinstaller.js:129
+#: umc/js/schoolinstaller.js:130
 msgid "Domain username"
 msgstr "Domänenbenutzername"
 
-#: umc/js/schoolinstaller.js:215
+#: umc/js/schoolinstaller.js:216
 msgid ""
 "During installation this server will be configured as administrative server. "
 "To create the specified school, the name of a second/future domaincontroller "
@@ -151,11 +159,15 @@ msgstr ""
 "Name eines zweiten/zukünftigen Domänencontroller Slave benötigt, der als "
 "edukativer Schulserver konfiguriert wird."
 
-#: umc/js/schoolinstaller.js:209
+#: umc/js/schoolinstaller.js:210
 msgid "Educational server"
 msgstr "Edukativer Schulserver"
 
-#: umc/js/schoolinstaller.js:144
+#: umc/js/schoolinstaller.js:443 umc/js/schoolinstaller.js:458
+msgid "Error"
+msgstr "Fehler"
+
+#: umc/js/schoolinstaller.js:145
 msgid ""
 "For providing Windows domain services, UCS@school requires the installation "
 "of the Samba software component. The Samba component is available in two "
@@ -167,7 +179,7 @@ msgstr ""
 "unterschiedlichen Versionen: Samba 3 und Samba 4. Es wird empfohlen, "
 "domänenweit die gleiche Samba-Version einzusetzen."
 
-#: umc/js/schoolinstaller.js:199
+#: umc/js/schoolinstaller.js:200
 msgid ""
 "For the single server environment, all school OUs are accessed from the "
 "master system itself."
@@ -175,7 +187,7 @@ msgstr ""
 "In einer Single-Server-Umgebung werden alle Schul-OUs von dem "
 "Domänencontroller Master selbst verwaltet."
 
-#: umc/js/schoolinstaller.js:139
+#: umc/js/schoolinstaller.js:140
 msgid ""
 "Fully qualified domain name of master domain controller (e.g. schoolmaster."
 "example.com)"
@@ -183,7 +195,7 @@ msgstr ""
 "Der vollständige Domänenname des Domänencontroller Masters (bspw. "
 "schoolmaster.example.com)"
 
-#: umc/js/schoolinstaller.js:174
+#: umc/js/schoolinstaller.js:175
 msgid ""
 "In UCS@school, each school is organized in its own LDAP organizational unit "
 "(so-called OU). All school related information (students, classes, "
@@ -197,7 +209,7 @@ msgstr ""
 "Namen der Schul-OU ein, die während des Installationsvorgangs erzeugt werden "
 "soll."
 
-#: umc/js/schoolinstaller.js:527
+#: umc/js/schoolinstaller.js:560
 msgid ""
 "In order to complete the installation of UCS@school, a restart of the UMC "
 "server components is necessary."
@@ -205,7 +217,7 @@ msgstr ""
 "Um die Installation von UCS@school abzuschließen, ist ein Neustart der UMC-"
 "Server-Komponenten notwendig."
 
-#: umc/js/schoolinstaller.js:379
+#: umc/js/schoolinstaller.js:381
 msgid ""
 "In order to install UCS@school on a backup domain controller, the system "
 "needs to be joined first."
@@ -213,7 +225,7 @@ msgstr ""
 "Bevor UCS@school auf einem Domänencontroller Backup installiert werden kann, "
 "muss dieses System zuerst der Domäne beigetreten sein."
 
-#: umc/js/schoolinstaller.js:123
+#: umc/js/schoolinstaller.js:124
 msgid ""
 "In order to setup this system as UCS@school slave domain controller, please "
 "enter the domain credentials of a domain account with join privileges."
@@ -221,23 +233,23 @@ msgstr ""
 "Bitte geben Sie die Anmeldedaten eines Domänenkontos mit Join-Rechten an, um "
 "dieses System als Domänencontroller Slave für UCS@school zu konfigurieren."
 
-#: umc/js/schoolinstaller.js:291 umc/js/schoolinstaller.js:478
+#: umc/js/schoolinstaller.js:292 umc/js/schoolinstaller.js:506
 msgid "Install"
 msgstr "Installieren"
 
-#: umc/js/schoolinstaller.js:92
+#: umc/js/schoolinstaller.js:93
 msgid "Multi server environment"
 msgstr "Multi-Server-Umgebung"
 
-#: umc/js/schoolinstaller.js:152
+#: umc/js/schoolinstaller.js:153
 msgid "NT-compatible domain controller (Samba 3)"
 msgstr "NT-kompatibler Domänencontroller (Samba 3)"
 
-#: umc/js/schoolinstaller.js:219
+#: umc/js/schoolinstaller.js:220
 msgid "Name of educational school server"
 msgstr "Name des Schulservers im Edukativnetz"
 
-#: umc/js/schoolinstaller.js:220
+#: umc/js/schoolinstaller.js:221
 msgid ""
 "Name of the educational domaincontroller slave for the new school. The "
 "server name may consist of the letters a-z, the digits 0-9 and underscores. "
@@ -249,16 +261,16 @@ msgstr ""
 "des edukativen Schulservers darf nicht identisch mit dem Namen des "
 "Verwaltungsservers sein!"
 
-#: umc/js/schoolinstaller.js:178
+#: umc/js/schoolinstaller.js:179
 msgid "Name of the school"
 msgstr "Name der Schule"
 
-#: umc/js/schoolinstaller.js:261
+#: umc/js/schoolinstaller.js:262
 #, python-format
 msgid "New school classes can be created with the %s."
 msgstr "Neue Schulklassen können mit dem %s erstellt werden."
 
-#: umc/js/schoolinstaller.js:194
+#: umc/js/schoolinstaller.js:195
 msgid ""
 "Note that each slave domain controller system is directly associated with a "
 "school OU. A slave domain controller has only access to the data below its "
@@ -268,23 +280,27 @@ msgstr ""
 "hat nur Zugang zu den Daten unterhalb seiner eigenen Schul-OU, auf Daten "
 "anderer Schulen kann nicht zugegriffen werden."
 
-#: umc/js/schoolinstaller.js:73
+#: umc/js/schoolinstaller.js:441 umc/js/schoolinstaller.js:456
+msgid "Ok"
+msgstr "OK"
+
+#: umc/js/schoolinstaller.js:74
 msgid "Please choose an environment type:"
 msgstr "Bitte wählen Sie ein Installationsszenario aus:"
 
-#: umc/js/schoolinstaller.js:208
+#: umc/js/schoolinstaller.js:209
 msgid "Please choose the server type for this domaincontroller slave:"
 msgstr "Bitte wählen Sie den gewünschten Servertyp für dieses System aus:"
 
-#: umc/js/schoolinstaller.js:148
+#: umc/js/schoolinstaller.js:149
 msgid "Please choose which Samba version you would like to install:"
 msgstr "Bitte wählen Sie, welche Samba Version installiert werden soll:"
 
-#: umc/js/schoolinstaller.js:292
+#: umc/js/schoolinstaller.js:293
 msgid "Retry"
 msgstr "Wiederholen"
 
-#: umc/js/schoolinstaller.js:157
+#: umc/js/schoolinstaller.js:158
 msgid ""
 "Samba 3 implements domain services based on the domain technology of "
 "Microsoft Windows NT. Samba 3 is the current, stable and tried-and-tested "
@@ -296,7 +312,7 @@ msgstr ""
 "Release-Serie des Samba-Projekts und ist seit vielen Jahren in UCS "
 "integriert."
 
-#: umc/js/schoolinstaller.js:156
+#: umc/js/schoolinstaller.js:157
 msgid ""
 "Samba 4 is the next generation of the Samba suite. The most important "
 "innovation of Samba 4 is the support of domain, directory and authentication "
@@ -315,19 +331,19 @@ msgstr ""
 "oder Gruppenrichtlinien (GPOs). Samba 4 ist die für UCS@school empfohlene "
 "Version."
 
-#: umc/js/schoolinstaller.js:184
+#: umc/js/schoolinstaller.js:185
 msgid "School abbreviation"
 msgstr "Schulkürzel"
 
-#: umc/js/schoolinstaller.js:88
+#: umc/js/schoolinstaller.js:89
 msgid "Single server environment"
 msgstr "Single-Server-Umgebung"
 
-#: umc/js/schoolinstaller.js:491
+#: umc/js/schoolinstaller.js:524
 msgid "Starting the configuration process..."
 msgstr "Beginne den Konfigurationsprozess..."
 
-#: umc/js/schoolinstaller.js:264
+#: umc/js/schoolinstaller.js:265
 #, python-format
 msgid ""
 "Teachers and students can be added to the UCS@school domain with the %s."
@@ -335,18 +351,18 @@ msgstr ""
 "Lehrer und Schüler können mit dem %s in der UCS@school-Domäne neu angelegt "
 "werden."
 
-#: umc/js/schoolinstaller.js:267
+#: umc/js/schoolinstaller.js:268
 #, python-format
 msgid "Teachers can be assigned to classes with the %s."
 msgstr "Lehrer können mit dem %s Klassen zugeordnet werden."
 
-#: umc/js/schoolinstaller.js:179
+#: umc/js/schoolinstaller.js:180
 msgid "The given value will be shown as school's name within UCS@school."
 msgstr ""
 "Der hier eingegebene Wert wird innerhalb von UCS@school als Name für die "
 "neue Schule verwendet."
 
-#: umc/js/schoolinstaller.js:185
+#: umc/js/schoolinstaller.js:186
 msgid ""
 "The given value will be used as object name for the new school OU object "
 "within the LDAP directory and as prefix for several school objects like "
@@ -359,11 +375,11 @@ msgstr ""
 "dem Unterstrich (_) bestehen. In der Regel kann der automatisch "
 "vorgeschlagene Wert unverändert übernommen werden."
 
-#: umc/js/schoolinstaller.js:237
+#: umc/js/schoolinstaller.js:238
 msgid "The installation of UCS@school has been finished successfully."
 msgstr "Die Installation von UCS@school wurde erfolgreich abgeschlossen."
 
-#: umc/js/schoolinstaller.js:259
+#: umc/js/schoolinstaller.js:260
 msgid ""
 "There are several modules that assist in further configuring the UCS@school "
 "domain:"
@@ -371,7 +387,7 @@ msgstr ""
 "Es gibt verschiedene Module, die bei der weiteren Konfiguration der "
 "UCS@school-Domäne behilflich sind:"
 
-#: umc/js/schoolinstaller.js:313
+#: umc/js/schoolinstaller.js:315
 msgid ""
 "This wizard guides you step by step through the installation of an "
 "UCS@school slave domain controller. Before continuing please make sure that "
@@ -383,39 +399,39 @@ msgstr ""
 "UCS@school Domänencontroller Master bereits für eine Multi-Server-Umgebung "
 "eingerichtet wurde."
 
-#: umc/js/schoolinstaller.js:226
+#: umc/js/schoolinstaller.js:227
 msgid "UCS@school - an error ocurred"
 msgstr "UCS@school - ein Fehler trat auf"
 
-#: umc/js/schoolinstaller.js:122
+#: umc/js/schoolinstaller.js:123
 msgid "UCS@school - domain credentials"
 msgstr "UCS@school - Anmeldedaten"
 
-#: umc/js/schoolinstaller.js:203
+#: umc/js/schoolinstaller.js:204
 msgid "UCS@school - educational server vs. administrative server"
 msgstr "UCS@school - edukative Schulserver/Verwaltungsserver"
 
-#: umc/js/schoolinstaller.js:214
+#: umc/js/schoolinstaller.js:215
 msgid "UCS@school - extended school OU setup"
 msgstr "UCS@school - Erweiterte Schul-OU-Konfiguration"
 
-#: umc/js/schoolinstaller.js:236
+#: umc/js/schoolinstaller.js:237
 msgid "UCS@school - installation successful"
 msgstr "UCS@school - Installation erfolgreich"
 
-#: umc/js/schoolinstaller.js:143
+#: umc/js/schoolinstaller.js:144
 msgid "UCS@school - samba setup"
 msgstr "UCS@school - Samba-Konfiguration"
 
-#: umc/js/schoolinstaller.js:173
+#: umc/js/schoolinstaller.js:174
 msgid "UCS@school - school OU setup"
 msgstr "UCS@school - Schul-OU-Konfiguration"
 
-#: umc/js/schoolinstaller.js:68
+#: umc/js/schoolinstaller.js:69
 msgid "UCS@school - server setup"
 msgstr "UCS@school - Server-Konfiguration"
 
-#: umc/js/schoolinstaller.js:373
+#: umc/js/schoolinstaller.js:375
 msgid ""
 "UCS@school can only be installed on the system roles master domain "
 "controller, backup domain controller, or slave domain controller."
@@ -423,15 +439,31 @@ msgstr ""
 "UCS@school kann nur auf den Serverrollen Domänencontroller Master, "
 "Domänencontroller Backup oder Domänencontroller Slave installiert werden."
 
-#: umc/js/schoolinstaller.js:245
+#: umc/js/schoolinstaller.js:246
 msgid "UCS@school configuration wizard"
 msgstr "UCS@school Einrichtungsassistent"
 
-#: umc/js/schoolinstaller.js:246
+#: umc/js/schoolinstaller.js:247
 msgid "UCS@school has already been configured on this system."
 msgstr "UCS@school wurde bereits auf diesem System eingerichtet."
 
-#: umc/js/schoolinstaller.js:270
+#: umc/js/schoolinstaller.js:454
+msgid ""
+"UCS@school supports only one administrative server per school. Please check "
+"if the administrative server \""
+msgstr ""
+"UCS@school unterstützt nur einen Verwaltungsserver pro Schule. Bitte prüfen "
+"Sie, ob der Verwaltungsserver \""
+
+#: umc/js/schoolinstaller.js:439
+msgid ""
+"UCS@school supports only one educational server per school. Please check if "
+"the educational server \""
+msgstr ""
+"UCS@school unterstützt nur einen edukativen Schulserver pro Schule. Bitte "
+"prüfen Sie, ob der Schulserver \""
+
+#: umc/js/schoolinstaller.js:271
 #, python-format
 msgid "Workgroups can be created and managed with the %s."
 msgstr "Arbeitsgruppen können mit dem %s erstellt und verwaltet werden."
