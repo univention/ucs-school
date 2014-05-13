@@ -1,3 +1,10 @@
+ucs-school-import (10.0.14-2) unstable; urgency=medium
+
+  * Add copyright header to ucs-school-join-secondary-samba4
+  * Relax join requirement (Bug #32187)
+
+ -- Arvid Requate <requate@univention.de>  Tue, 13 May 2014 17:41:28 +0200
+
 ucs-school-import (10.0.14-1) unstable; urgency=medium
 
   * New script ucs-school-join-secondary-samba4 (Bug #32187)
