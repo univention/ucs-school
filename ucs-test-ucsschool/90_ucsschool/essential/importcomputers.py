@@ -100,6 +100,7 @@ class Computer:
 		attr['aRecord'] = [self.ip]
 		if self.inventorynumbers:
 			attr['univentionInventoryNumber'] = self.inventorynumbers
+		attr['univentionObjectType'] = ['computers/%s' % self.ctype]
 
 		return attr
 
