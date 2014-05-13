@@ -1,6 +1,6 @@
 #!/usr/share/ucs-test/runner python
 ## desc: http-proxy-basic-auth-check
-## roles: [domaincontroller_master, domaincontroller_backup, domaincontroller_slave, memberserver]
+## roles: [domaincontroller_master, domaincontroller_backup]
 ## tags: [apptest]
 ## exposure: dangerous
 ## packages: [ucs-school-webproxy]

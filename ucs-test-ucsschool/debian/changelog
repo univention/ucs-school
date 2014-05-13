@@ -1,3 +1,10 @@
+ucs-test-ucsschool (1.0.46-1) unstable; urgency=low
+
+  * Bug #34820: disabled some test scripts on DC slaves due to missing
+    functionality in univention/testing/ucsschool.py
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Tue, 13 May 2014 11:00:16 +0200
+
 ucs-test-ucsschool (1.0.45-1) unstable; urgency=low
 
   * computer import: check univentionObjectType (Bug #34550)
