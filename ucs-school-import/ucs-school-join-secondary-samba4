@@ -220,6 +220,7 @@ if [ -n "$target_school_samba4_join_site" ]; then
 	ucr set samba4/join/site="$target_school_samba4_join_site"
 fi
 
+master_hostname="$(echo $ldap_master | cut -d '.' -f 1)"
 ucr set \
 	nameserver1="$target_school_dc_ip" \
 	samba4/dc="$target_school_dc_ip" \
@@ -228,7 +229,9 @@ ucr set \
 	dns/register/srv_records/kerberos?false \
 	dns/register/srv_records/ldap?false \
 	samba4/dns/domain/register?false \
-	samba4/join/dnsupdate?true
+	samba4/join/dnsupdate?true \
+	samba/share/sysvol/readonly?no \
+	samba4/sysvol/sync/host?"$master_hostname" # Don''t use the FQDN, Bug #27247
 
 ucr unset nameserver2 nameserver3
 

@@ -1,3 +1,11 @@
+ucs-school-import (10.0.14-5) unstable; urgency=medium
+
+  * ucs-school-join-secondary-samba4: more things from 62ucs-school-slave:
+  * Set samba/share/sysvol/readonly=no
+  * Set samba4/sysvol/sync/host	(Bug #32187)
+
+ -- Arvid Requate <requate@univention.de>  Tue, 13 May 2014 18:49:52 +0200
+
 ucs-school-import (10.0.14-4) unstable; urgency=medium
 
   * ucs-school-join-secondary-samba4:
