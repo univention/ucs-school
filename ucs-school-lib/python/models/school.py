@@ -189,6 +189,8 @@ class School(UCSSchoolHelperAbstractClass):
 				return None
 
 	def get_share_fileserver_dn(self, set_by_self, lo):
+		if set_by_self:
+			set_by_self = self.get_name_from_dn(set_by_self)
 		hostname = set_by_self or self.get_dc_name()
 		if hostname == self.get_dc_name_fallback():
 			# does not matter if exists or not - dc object will be created later

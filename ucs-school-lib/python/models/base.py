@@ -35,6 +35,7 @@ from copy import deepcopy
 import tempfile
 import subprocess
 
+import ldap
 from ldap import explode_dn
 from ldap.filter import escape_filter_chars
 
@@ -352,23 +353,23 @@ class UCSSchoolHelperAbstractClass(object):
 		return success
 
 	def create_without_hooks(self, lo, validate):
+		logger.info('Creating %r' % self)
+
+		if self.exists(lo):
+			logger.info('%s already exists!' % self.dn)
+			return False
+
+		if validate:
+			self.validate(lo)
+			if self.errors:
+				raise ValidationError(self.errors.copy())
+
+		pos = udm_uldap.position(ucr.get('ldap/base'))
+		container = self.get_own_container()
+		if not container:
+			logger.error('%r cannot determine a container. Unable to create!')
+			return False
 		try:
-			logger.info('Creating %r' % self)
-
-			if self.exists(lo):
-				logger.info('%s already exists!' % self.dn)
-				return False
-
-			if validate:
-				self.validate(lo)
-				if self.errors:
-					raise ValidationError(self.errors.copy())
-
-			pos = udm_uldap.position(ucr.get('ldap/base'))
-			container = self.get_own_container()
-			if not container:
-				logger.error('%r cannot determine a container. Unable to create!')
-				return False
 			pos.setDn(container)
 			udm_obj = udm_modules.get(self._meta.udm_module).object(None, lo, pos, superordinate=self.get_superordinate())
 			udm_obj.open()
@@ -408,30 +409,30 @@ class UCSSchoolHelperAbstractClass(object):
 		return success
 
 	def modify_without_hooks(self, lo, validate=True, move_if_necessary=None):
+		logger.info('Modifying %r' % self)
+
+		if move_if_necessary is None:
+			move_if_necessary = self._meta.allow_school_change
+
+		if validate:
+			self.validate(lo, validate_unlikely_changes=True)
+			if self.errors:
+				raise ValidationError(self.errors.copy())
+
+		udm_obj = self.get_udm_object(lo)
+		if not udm_obj:
+			logger.info('%s does not exist!' % self.old_dn)
+			return False
+
 		try:
-			logger.info('Modifying %r' % self)
-
-			if move_if_necessary is None:
-				move_if_necessary = self._meta.allow_school_change
-
-			if validate:
-				self.validate(lo, validate_unlikely_changes=True)
-				if self.errors:
-					raise ValidationError(self.errors.copy())
-
-			udm_obj = self.get_udm_object(lo)
-			if not udm_obj:
-				logger.info('%s does not exist!' % self.old_dn)
-				return False
-
 			old_attrs = deepcopy(udm_obj.info)
 			self.do_modify(udm_obj, lo)
 			# get it fresh from the database
 			self.set_dn(self.dn)
 			udm_obj = self.get_udm_object(lo)
 			same = old_attrs == udm_obj.info
-			if udm_obj.dn != self.dn:
-				if move_if_necessary:
+			if move_if_necessary:
+				if udm_obj.dn != self.dn:
 					if self.move(lo, udm_obj, force=True):
 						same = False
 			if same:
@@ -454,24 +455,24 @@ class UCSSchoolHelperAbstractClass(object):
 		udm_obj.modify(ignore_license=1)
 
 	def move(self, lo, udm_obj=None, force=False):
-		try:
-			if udm_obj is None:
-				udm_obj = self.get_udm_object(lo)
-			if udm_obj is None:
-				logger.warning('No UDM object found to move from (%r)' % self)
-				return False
-			logger.info('Moving %r to %r' % (udm_obj.dn, self))
-			if udm_obj.dn == self.dn:
-				logger.warning('%r wants to move to its own DN!' % self)
-				return False
-			if force or self._meta.allow_school_change:
+		if udm_obj is None:
+			udm_obj = self.get_udm_object(lo)
+		if udm_obj is None:
+			logger.warning('No UDM object found to move from (%r)' % self)
+			return False
+		logger.info('Moving %r to %r' % (udm_obj.dn, self))
+		if udm_obj.dn == self.dn:
+			logger.warning('%r wants to move to its own DN!' % self)
+			return False
+		if force or self._meta.allow_school_change:
+			try:
 				udm_obj.move(self.dn, ignore_license=1)
-			else:
-				logger.warning('Would like to move %s to %r. But it is not allowed!' % (udm_obj.dn, self))
-				return False
+			finally:
+				self.invalidate_cache()
 			return True
-		finally:
-			self.invalidate_cache()
+		else:
+			logger.warning('Would like to move %s to %r. But it is not allowed!' % (udm_obj.dn, self))
+			return False
 
 	def remove(self, lo):
 		'''
@@ -488,23 +489,26 @@ class UCSSchoolHelperAbstractClass(object):
 		return success
 
 	def remove_without_hooks(self, lo):
-		try:
-			logger.info('Deleting %r' % self)
-			udm_obj = self.get_udm_object(lo)
-			if udm_obj:
+		logger.info('Deleting %r' % self)
+		udm_obj = self.get_udm_object(lo)
+		if udm_obj:
+			try:
 				udm_obj.remove(remove_childs=True)
 				self.set_dn(None)
 				logger.info('%r successfully removed' % self)
 				return True
-			logger.info('%r does not exist!' % self)
-			return False
-		finally:
-			self.invalidate_cache()
+			finally:
+				self.invalidate_cache()
+		logger.info('%r does not exist!' % self)
+		return False
 
 	@classmethod
 	def get_name_from_dn(cls, dn):
 		if dn:
-			name = explode_dn(dn, 1)[0]
+			try:
+				name = explode_dn(dn, 1)[0]
+			except ldap.DECODING_ERROR:
+				name = ''
 			return cls._meta.ldap_unmap_function([name])
 
 	@classmethod
@@ -665,7 +669,10 @@ class UCSSchoolHelperAbstractClass(object):
 		attrs = {'school' : school}
 		for name, attr in cls._attributes.iteritems():
 			if attr.udm_name:
-				attrs[name] = udm_obj[attr.udm_name]
+				udm_value = udm_obj[attr.udm_name]
+				if udm_value == '':
+					udm_value = None
+				attrs[name] = udm_value
 		obj = cls(**attrs)
 		obj.set_dn(udm_obj.dn)
 		obj._udm_obj_searched = True

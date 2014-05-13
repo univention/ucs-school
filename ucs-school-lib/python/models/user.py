@@ -78,7 +78,7 @@ class User(UCSSchoolHelperAbstractClass):
 			samba_home_path = None
 			# get windows home server from OU object
 			school = self.get_school_obj(lo)
-			home_share_file_server = school.get_home_share_file_server(lo)
+			home_share_file_server = school.home_share_file_server
 			if home_share_file_server:
 				samba_home_path = r'\\%s' % self.get_name_from_dn(home_share_file_server)
 			self._samba_home_path_cache[school.dn] = samba_home_path
@@ -144,19 +144,25 @@ class User(UCSSchoolHelperAbstractClass):
 
 	def do_create(self, udm_obj, lo):
 		self.create_mail_domain(lo)
-		self.password = self.password or create_passwd(dn=self.dn)
+		password_created = False
+		if not self.password:
+			logger.debug('No password given. Generating random one')
+			old_password = self.password # None or ''
+			self.password = create_passwd(dn=self.dn)
+			password_created = True
 		udm_obj['primaryGroup'] = self.primary_group_dn(lo)
 		udm_obj['groups'] = self.groups_used(lo)
 		subdir = self.get_roleshare_home_subdir()
 		udm_obj['unixhome'] = '/home/' + os.path.join(subdir, self.name)
 		udm_obj['overridePWHistory'] = '1'
 		udm_obj['overridePWLength'] = '1'
-		udm_obj['e-mail'] = self.email
-		udm_obj['departmentNumber'] = self.school
 		if self.disabled is None:
 			udm_obj['disabled'] = 'none'
 		if udm_obj.has_key('mailbox'):
 			udm_obj['mailbox'] = '/var/spool/%s/' % self.name
+		samba_home = self.get_samba_home_path(lo)
+		if samba_home:
+			udm_obj['sambahome'] = samba_home
 		profile_path = self.get_profile_path(lo)
 		if profile_path:
 			udm_obj['profilepath'] = profile_path
@@ -166,7 +172,11 @@ class User(UCSSchoolHelperAbstractClass):
 		script_path = ucr.get('ucsschool/import/set/netlogon/script/path')
 		if script_path is not None:
 			udm_obj['scriptpath'] = script_path
-		return super(User, self).do_create(udm_obj, lo)
+		success = super(User, self).do_create(udm_obj, lo)
+		if password_created:
+			# to not show up in host_hooks
+			self.password = old_password
+		return success
 
 	def do_modify(self, udm_obj, lo):
 		self.create_mail_domain(lo)
@@ -191,6 +201,13 @@ class User(UCSSchoolHelperAbstractClass):
 				udm_obj['groups'].append(group_dn)
 		return super(User, self).do_modify(udm_obj, lo)
 
+	def _alter_udm_obj(self, udm_obj):
+		if self.email is not None:
+			udm_obj['e-mail'] = self.email
+		udm_obj['departmentNumber'] = self.school
+		ret = super(User, self)._alter_udm_obj(udm_obj)
+		return ret
+
 	def create_mail_domain(self, lo):
 		if self.email:
 			domain_name = self.email.split('@')[-1]
@@ -214,8 +231,10 @@ class User(UCSSchoolHelperAbstractClass):
 		# Bug #32337: check if the class exists without OU prefix
 		# if it does not exist the class name with OU prefix is used
 		school_class = SchoolClass.get(class_name, self.school)
-		if not school_class.exists(lo):
-			school_class = SchoolClass.get('%s-%s' % (self.school, class_name), self.school)
+		if not class_name.startswith('%s-' % self.school):
+			if not school_class.exists(lo):
+				class_name = '%s-%s' % (self.school, class_name)
+				school_class = SchoolClass.get(class_name, self.school)
 		return school_class.dn
 
 	def primary_group_dn(self, lo):
@@ -261,18 +280,24 @@ class User(UCSSchoolHelperAbstractClass):
 
 	def build_hook_line(self, hook_time, func_name):
 		code = self._map_func_name_to_code(func_name)
+		is_staff = self.self_is_staff()
+		is_teacher = self.self_is_teacher()
+		if is_staff and not is_teacher:
+			school_class = ''
+		else:
+			school_class = self.school_class
 		return self._build_hook_line(
 				code,
 				self.name,
 				self.lastname,
 				self.firstname,
 				self.school,
-				self.school_class,
+				school_class,
 				'', # TODO: rights?
 				self.email,
-				self.self_is_teacher(),
+				is_teacher,
 				self.is_active(),
-				self.self_is_staff(),
+				is_staff,
 				self.password,
 			)
 
@@ -312,7 +337,7 @@ class Student(User):
 			for group in udm_obj['groups']:
 				if Group.is_school_class(school, group):
 					school_class_name = cls.get_name_from_dn(group)
-					school_class = school_class_name.split('-')[-1]
+					school_class = school_class_name
 					break
 			obj.school_class = school_class
 			return obj
@@ -343,7 +368,7 @@ class Teacher(User):
 			for group in udm_obj['groups']:
 				if Group.is_school_class(school, group):
 					school_class_name = cls.get_name_from_dn(group)
-					school_class = school_class_name.split('-')[-1]
+					school_class = school_class_name
 					school_classes.append(school_class)
 				school_class = ','.join(school_classes)
 			obj.school_class = school_class

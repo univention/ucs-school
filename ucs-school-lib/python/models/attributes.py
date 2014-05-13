@@ -56,7 +56,7 @@ class Attribute(object):
 		self.udm_name = udm_name or self.udm_name
 
 	def validate(self, value):
-		if value:
+		if value is not None:
 			if self.value_list:
 				if not isinstance(value, (list, tuple)):
 					raise ValueError(_('Needs to be a list of values!'))

@@ -159,6 +159,8 @@ class SchoolComputer(UCSSchoolHelperAbstractClass):
 	def get_inventory_numbers(self):
 		if isinstance(self.inventory_number, basestring):
 			return self.inventory_number.split(',')
+		if isinstance(self.inventory_number, (list, tuple)):
+			return list(self.inventory_number)
 		return []
 
 	def _alter_udm_obj(self, udm_obj):
