@@ -1,3 +1,9 @@
+ucs-school-umc-csv-import (1.0.18-1) unstable; urgency=low
+
+  * Bug #34199: Add license check
+
+ -- Dirk Wiesenthal <wiesenthal@univention.de>  Wed, 14 May 2014 01:16:33 +0200
+
 ucs-school-umc-csv-import (1.0.17-1) unstable; urgency=low
 
   * Bug #34199: New lib version

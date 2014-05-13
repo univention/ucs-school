@@ -268,3 +268,112 @@ class CSVStaff(CSVUser, Staff):
 class CSVTeachersAndStaff(CSVUser, TeachersAndStaff):
 	birthday = birthday_attr
 
+########################################################################
+#### LICENSE CHECK - copied from ad-takeover ###########################
+
+import univention.admin.uexceptions as uexceptions
+from univention.admincli import license_check
+import univention.admin.uldap
+
+class LicenseInsufficient(Exception):
+	pass
+
+class UCS_License_detection(object):
+
+	def __init__(self, ucr):
+		self.ucr = ucr
+
+		self.GPLversion = False
+		try:
+			import univention.admin.license
+			self.License = univention.admin.license.License
+			self._license = univention.admin.license._license
+			self.ignored_users_list = self._license.sysAccountNames
+		except ImportError:	## GPLversion
+			self.GPLversion = True
+			self.ignored_users_list = []
+
+	def determine_license(self, lo, dn):
+		def mylen(xs):
+			if xs is None:
+				return 0
+			return len(xs)
+		v = self._license.version
+		types = self._license.licenses[v]
+		if dn is None:
+			max = [ self._license.licenses[v][type]
+				for type in types ]
+		else:
+			max = [ lo.get(dn)[self._license.keys[v][type]][0]
+				for type in types ]
+
+		objs = [ lo.searchDn(filter=self._license.filters[v][type])
+			for type in types ]
+		num = [ mylen (obj)
+			for obj in objs]
+		self._license.checkObjectCounts(max, num)
+		result = []
+		for i in types.keys():
+			m = max[i]
+			n = num[i]
+			if i == self.License.USERS or i == self.License.ACCOUNT:
+				n -= self._license.sysAccountsFound
+				if n < 0: n=0
+			l = self._license.names[v][i]
+			if m:
+				if i == self.License.USERS or i == self.License.ACCOUNT:
+					MODULE.info('determine_license for current UCS %s: %s of %s' % (l, n, m))
+					MODULE.info('  %s Systemaccounts are ignored.' % self._license.sysAccountsFound)
+					result.append((l, n, m))
+		return result
+
+	def check_license(self, domain_info):
+
+		if self.GPLversion:
+			return True
+
+		binddn = self.ucr['ldap/hostdn']
+		with open('/etc/machine.secret', 'r') as pwfile:
+			bindpw = pwfile.readline().strip()
+
+		try:
+			lo = univention.admin.uldap.access(host = self.ucr['ldap/master'],
+							port = int(self.ucr.get('ldap/master/port', '7389')),
+							base = self.ucr['ldap/base'],
+							binddn = binddn,
+							bindpw = bindpw)
+		except uexceptions.authFail:
+			raise LicenseInsufficient(_('Internal Error: License check failed.'))
+
+		try:
+			self._license.init_select(lo, 'admin')
+			check_array = self.determine_license(lo, None)
+		except uexceptions.base:
+			dns = license_check.find_licenses(lo, self.ucr['ldap/base'], 'admin')
+			dn, expired = license_check.choose_license(lo, dns)
+			check_array = self.determine_license(lo, dn)
+
+		## some name translation
+		object_displayname_for_licensetype= {'Accounts': _('users'), 'Users': _('users')}
+		import_object_count_for_licensetype = {'Accounts': domain_info['users'], 'Users': domain_info['users']}
+
+		license_sufficient = True
+		error_msg = None
+		for object_type, num, max_objs in check_array:
+			object_displayname = object_displayname_for_licensetype.get(object_type, object_type)
+			MODULE.info('Found %s %s objects on the remote server.' % (import_object_count_for_licensetype[object_type], object_displayname))
+			sum_objs = num + import_object_count_for_licensetype[object_type]
+			domain_info['licensed_%s' % (object_displayname,)] = max_objs
+			domain_info['estimated_%s' % (object_displayname,)] = sum_objs
+			if self._license.compare(sum_objs, max_objs) > 0:
+				license_sufficient = False
+				error_msg = _('Number of %(object_name)s after the import would be %(sum)s. This would exceed the number of licensed objects (%(max)s).') % {
+							'object_name' : object_displayname,
+							'sum' : sum_objs,
+							'max' : max_objs,
+						}
+				MODULE.warn(error_msg)
+
+		if not license_sufficient:
+			raise LicenseInsufficient(error_msg)
+

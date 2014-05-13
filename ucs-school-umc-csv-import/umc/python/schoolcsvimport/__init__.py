@@ -46,7 +46,7 @@ from univention.config_registry import ConfigRegistry
 from ucsschool.lib.schoolldap import SchoolBaseModule, open_ldap_connection
 from ucsschool.lib.models.utils import create_passwd, add_module_logger_to_schoollib
 
-from univention.management.console.modules.schoolcsvimport.util import CSVStudent, CSVTeacher, CSVStaff, CSVTeachersAndStaff
+from univention.management.console.modules.schoolcsvimport.util import CSVStudent, CSVTeacher, CSVStaff, CSVTeachersAndStaff, UCS_License_detection, LicenseInsufficient
 
 _ = Translation('ucs-school-umc-csv-import').translate
 
@@ -55,6 +55,20 @@ ucr.load()
 
 def generate_random():
 	return create_passwd(length=30)
+
+def license_check(users):
+	change = 0
+	for user in users:
+		if user.action == 'delete':
+			change -= 1
+		if user.action == 'create':
+			change += 1
+	user_info = {'users' : change}
+	ucs_license = UCS_License_detection(ucr)
+	try:
+		ucs_license.check_license(user_info)
+	except LicenseInsufficient as e:
+		return str(e) + ' ' + _('You may proceed with the import, but the domain management may be limited afterwards until a new license is installed. Please note that this warning is based on the assumption that all users will be imported. You may ignore certain lines in the following.')
 
 class FileInfo(object):
 	def __init__(self, filename, school, user_klass, dialect, has_header, delete_not_mentioned, date_format=None, columns=None):
@@ -227,6 +241,7 @@ class Instance(SchoolBaseModule, ProgressMixin):
 		result['columns'] = file_info.user_klass.get_columns_for_spreadsheet(columns)
 		result['required_columns'] = file_info.user_klass.get_required_columns()
 		result['users'] = [user.to_dict(file_info.date_format) for user in users]
+		result['license_error'] = license_check(users)
 		return result
 
 	@simple_response

@@ -65,6 +65,8 @@ define([
 	"umc/i18n!umc/modules/schoolcsvimport"
 ], function(declare, lang, array, query, topic, when, on, Deferred, Memory, win, construct, style, attr, geometry, dateLocaleModule, Menu, CheckedMenuItem, timing, tools, dialog, Text, TextBox, Form, ProgressBar, ComboBox, Uploader, CheckBox, Wizard, DateBox, Grid, Module, User, _) {
 	var UploadWizard = declare('umc.modules.schoolcsvimport.Wizard', Wizard, {
+		autoValidate: true,
+
 		postMixInProperties: function() {
 			this.inherited(arguments);
 			this.pages = [{
@@ -76,7 +78,8 @@ define([
 					name: 'school',
 					label: _('School'),
 					dynamicValues: 'schoolcsvimport/schools',
-					autoHide: true
+					autoHide: true,
+					required: true
 				}, {
 					type: ComboBox,
 					name: 'type',
@@ -235,7 +238,24 @@ define([
 							this.datePattern = result.date_pattern;
 							this.requiredColumns = result.required_columns;
 							page._grid = this.addGridSpreadSheet(page, result.columns, result.users);
-							return nextPage;
+							if (result.license_error) {
+								return dialog.confirm(result.license_error, [{
+									name: 'cancel',
+									'default': true,
+									label: _('Cancel')
+								}, {
+									name: 'continue',
+									label: _('Continue')
+								}], _('Error while validating the license')).then(function(response) {
+									if (response == 'continue') {
+										return nextPage;
+									} else {
+										return 'upload';
+									}
+								});
+							} else {
+								return nextPage;
+							}
 						}));
 					return this.standbyDuring(showing, this.progressBar);
 				}));

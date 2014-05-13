@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-csv-import\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2014-05-01 00:33+0200\n"
+"POT-Creation-Date: 2014-05-14 01:08+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: umc/python/schoolcsvimport/__init__.py:239
+#: umc/python/schoolcsvimport/__init__.py:258
 #, python-format
 msgid "%(username)s %(action)s"
 msgstr "%(username)s %(action)s"
@@ -40,19 +40,32 @@ msgstr "Aktion"
 msgid "Birthday"
 msgstr "Geburtstag"
 
-#: umc/python/schoolcsvimport/__init__.py:177
+#: umc/python/schoolcsvimport/__init__.py:195
 msgid "Checking users from CSV file"
 msgstr "Benutzer aus der CSV-Datei werden überprüft"
 
-#: umc/python/schoolcsvimport/__init__.py:209
+#: umc/python/schoolcsvimport/__init__.py:227
 msgid "Checking users from database"
 msgstr "Benutzer aus der Datenbank werden überprüft"
+
+#: umc/python/schoolcsvimport/util.py:346
+msgid "Internal Error: License check failed."
+msgstr "Interner Fehler: Lizenzprüfung fehlgeschlagen."
 
 #: umc/python/schoolcsvimport/util.py:171
 msgid "Line"
 msgstr "Zeile"
 
-#: umc/python/schoolcsvimport/__init__.py:239
+#: umc/python/schoolcsvimport/util.py:370
+#, python-format
+msgid ""
+"Number of %(object_name)s after the import would be %(sum)s. This would "
+"exceed the number of licensed objects (%(max)s)."
+msgstr ""
+"Anzahl der %(object_name)s nach dem Import wäre %(sum)s. Das übersteigt "
+"die Anzahl an lizenzierten Objekten (%(max)s)."
+
+#: umc/python/schoolcsvimport/__init__.py:258
 #, python-format
 msgid "Processing %d user(s)"
 msgstr "Verarbeite %d Benutzer"
@@ -88,17 +101,33 @@ msgstr ""
 msgid "Unused"
 msgstr "Unbenutzt"
 
-#: umc/python/schoolcsvimport/__init__.py:250
+#: umc/python/schoolcsvimport/__init__.py:71
+msgid ""
+"You may proceed with the import, but the domain management may be limited "
+"afterwards until a new license is installed. Please note that this warning "
+"is based on the assumption that all users will be imported. You may ignore "
+"certain lines in the following."
+msgstr ""
+"Der Import kann fortgeführt werden, aber die Domäne kann danach womöglich "
+"nur eingeschränkt verwaltet werden, bis eine neue Lizenz installiert wird. "
+"Bitte beachten Sie, dass diese Warnmeldung darauf basiert, dass alle "
+"Benutzer importiert werden. Sie können Zeilen im Folgenden auch ignorieren."
+
+#: umc/python/schoolcsvimport/__init__.py:269
 msgid "created"
 msgstr "angelegt"
 
-#: umc/python/schoolcsvimport/__init__.py:254
+#: umc/python/schoolcsvimport/__init__.py:273
 msgid "deleted"
 msgstr "gelöscht"
 
-#: umc/python/schoolcsvimport/__init__.py:252
+#: umc/python/schoolcsvimport/__init__.py:271
 msgid "modified"
 msgstr "verändert"
+
+#: umc/python/schoolcsvimport/util.py:357
+msgid "users"
+msgstr "Benutzer"
 
 #~ msgid "\"%s\" is required. Please provide this information."
 #~ msgstr "\"%s\" ist erforderlich. Bitte ergänzen Sie diese Information."
