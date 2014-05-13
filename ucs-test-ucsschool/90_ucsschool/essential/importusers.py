@@ -132,6 +132,8 @@ class Person:
 		self.classes.append('%s-%s%s' % (self.school, uts.random_int(), uts.random_string(length=1, alpha=True, numeric=False)))
 
 	def append_random_working_group(self):
+		return
+		# working groups cannot be specified, neither in file for CLI nor by API in Python
 		self.classes.append('%s-%s' % (self.school, uts.random_string(length=9, alpha=True, numeric=False)))
 
 	def is_student(self):
@@ -283,14 +285,17 @@ class ImportFile:
 				self._run_import_via_python_api()
 			pre_result = hooks.get_pre_result()
 			post_result = hooks.get_post_result()
-			print 'PRE  HOOK result: %s' % pre_result
-			print 'POST HOOK result: %s' % post_result
-			print 'SCHOOL DATA     : %s' % str(self.user_import)
+			print 'PRE  HOOK result:\n%s' % pre_result
+			print 'POST HOOK result:\n%s' % post_result
+			print 'SCHOOL DATA     :\n%s' % str(self.user_import)
 			if pre_result != post_result != str(self.user_import):
 				raise UserHookResult()
 		finally:
 			hooks.cleanup()
-			os.remove(self.import_file)
+			try:
+				os.remove(self.import_file)
+			except OSError as e:
+				print 'WARNING: %s not removed. %s' % (self.import_file, e)
 
 	def _run_import_via_cli(self):
 		cmd_block = ['/usr/share/ucs-school-import/scripts/import_user', self.import_file]
@@ -320,6 +325,7 @@ class ImportFile:
 				'name': user.username,
 				'firstname': user.firstname,
 				'lastname': user.lastname,
+				'school_class': ','.join(user.classes),
 				'email': user.mail,
 				'password': user.password,
 				'disabled': 'none' if user.active else 'all',

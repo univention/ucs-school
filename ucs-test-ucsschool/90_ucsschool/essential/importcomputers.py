@@ -175,14 +175,17 @@ class ImportFile:
 				self._run_import_via_python_api()
 			pre_result = hooks.get_pre_result()
 			post_result = hooks.get_post_result()
-			print 'PRE  HOOK result: %s' % pre_result
-			print 'POST HOOK result: %s' % post_result
-			print 'SCHOOL DATA     : %s' % str(self.computer_import)
+			print 'PRE  HOOK result:\n%s' % pre_result
+			print 'POST HOOK result:\n%s' % post_result
+			print 'SCHOOL DATA     :\n%s' % str(self.computer_import)
 			if pre_result != post_result != str(self.computer_import):
 				raise ComputerHookResult()
 		finally:
 			hooks.cleanup()
-			os.remove(self.import_file)
+			try:
+				os.remove(self.import_file)
+			except OSError as e:
+				print 'WARNING: %s not removed. %s' % (self.import_file, e)
 
 	def _run_import_via_cli(self):
 		cmd_block = ['/usr/share/ucs-school-import/scripts/import_computer', self.import_file]

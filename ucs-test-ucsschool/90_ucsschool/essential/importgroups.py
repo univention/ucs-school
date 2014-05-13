@@ -96,9 +96,9 @@ class ImportFile:
 				self._run_import_via_python_api()
 			pre_result = hooks.get_pre_result()
 			post_result = hooks.get_post_result()
-			print 'PRE  HOOK result: %s' % pre_result
-			print 'POST HOOK result: %s' % post_result
-			print 'SCHOOL DATA     : %s' % str(self.group_import)
+			print 'PRE  HOOK result:\n%s' % pre_result
+			print 'POST HOOK result:\n%s' % post_result
+			print 'SCHOOL DATA     :\n%s' % str(self.group_import)
 			if pre_result != post_result != str(self.group_import):
 				raise GroupHookResult()
 		finally:

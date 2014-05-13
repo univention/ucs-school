@@ -1,5 +1,11 @@
 ucs-test-ucsschool (1.0.46-1) unstable; urgency=low
 
+  * Bug #34551: Corrected API calls
+
+ -- Dirk Wiesenthal <wiesenthal@univention.de>  Tue, 13 May 2014 23:30:33 +0200
+
+ucs-test-ucsschool (1.0.46-1) unstable; urgency=low
+
   * Bug #34820: disabled some test scripts on DC slaves due to missing
     functionality in univention/testing/ucsschool.py
 
