@@ -1,3 +1,13 @@
+ucs-school-import (10.0.14-4) unstable; urgency=medium
+
+  * ucs-school-join-secondary-samba4:
+  * cannot call move_domaincontroller_to_ou, it only works on the master
+  * then also skip modifying the DC-Edukativenetz groups.
+  * install and register libunivention-ldb-modules
+  * Remove the Kerberos and LDAP SRV records from OpenLDAP (Bug #32187)
+
+ -- Arvid Requate <requate@univention.de>  Tue, 13 May 2014 18:34:55 +0200
+
 ucs-school-import (10.0.14-3) unstable; urgency=medium
 
   * ucs-school-join-secondary-samba4: Check for UCS@school on the local DC

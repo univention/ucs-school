@@ -209,60 +209,45 @@ target_school_ou=$(school_ou "$target_school_dc_hostdn")
 
 echo "$(LC_ALL=C date): start $0" >>/var/log/univention/join.log 2>&1
 
-univention-install univention-samba4 || exit 1
+univention-install univention-samba4 libunivention-ldb-modules || exit 1
 
 . /usr/share/univention-samba4/lib/all.sh
 
-## Add to group DC-Edukativnetz
-educative_dc_group_dn=$(univention-ldapsearch -xLLL "(&(objectClass=univentionGroup)(cn=DC-Edukativnetz))" dn | ldapsearch-wrapper | ldapsearch-decode64 | sed -n 's/^dn: //p')
-if [ -z "$educative_dc_group_dn" ]; then
-	echo "Unable to find group DC-Edukativnetz in LDAP"
-	exit 1
-fi
-
-univention-directory-manager groups/group modify \
-	--ignore_exists \
-	--binddn "$binddn" --bindpwd "$(<"$DCPWD")" \
-	--dn "$educative_dc_group_dn" \
-	--append hosts="$ldap_hostdn"
-
 eval "$(univention-ssh "$ROOTPWD" root@"$target_school_dc_ip" \
 	ucr shell ldap/hostdn samba4/join/site | sed -n 's/^/target_school_/p')"
-
-ucr set \
-	nameserver1="$target_school_dc_ip" \
-	dns/register/srv_records/kerberos?false \
-	dns/register/srv_records/ldap?false \
-	samba4/dc="$target_school_dc_ip" \
-	samba4/join/dnsupdate?true
-
-ucr unset nameserver2 nameserver3
 
 if [ -n "$target_school_samba4_join_site" ]; then
 	ucr set samba4/join/site="$target_school_samba4_join_site"
 fi
 
-if [ -n "$target_school_ou" ]; then
-	## Add to group DC-Edukativnetz
-	educative_school_ou_dc_group_name="OU${target_school_ou}-DC-Edukativnetz"
-	educative_school_ou_dc_group_dn=$(univention-ldapsearch -xLLL "(&(objectClass=univentionGroup)(cn=$educative_school_ou_dc_group_name))" dn | ldapsearch-wrapper | ldapsearch-decode64 | sed -n 's/^dn: //p')
-	if [ -z "$educative_school_ou_dc_group_dn" ]; then
-		echo "Unable to find group $educative_school_ou_dc_group_name in LDAP"
-		exit 1
-	fi
+ucr set \
+	nameserver1="$target_school_dc_ip" \
+	samba4/dc="$target_school_dc_ip" \
+	samba4/ldb/sam/module/prepend="univention_samaccountname_ldap_check" \
+	directory/manager/samba3/legacy?yes \
+	dns/register/srv_records/kerberos?false \
+	dns/register/srv_records/ldap?false \
+	samba4/dns/domain/register?false \
+	samba4/join/dnsupdate?true
 
-	univention-directory-manager groups/group modify \
-		--ignore_exists \
-		--binddn "$binddn" --bindpwd "$(<"$DCPWD")" \
-		--dn "$educative_school_ou_dc_group_dn" \
-		--append hosts="$ldap_hostdn"
+ucr unset nameserver2 nameserver3
 
-	## After this we have to rejoin if the host object actually has been moved.
-	univention-ssh "$ROOTPWD" root@"$target_school_dc_ip" \
-		"/usr/share/ucs-school-import/scripts/move_domaincontroller_to_ou --dcname=$hostname --ou=$target_school_ou"
-
+# Remove own values from kerberos SRV records
+if ! is_ucr_true dns/register/srv_records/kerberos; then
+	/usr/share/univention-directory-manager-tools/univention-dnsedit "$@" --ignore-exists $domainname remove srv kerberos tcp 0 100 88 "$hostname.$domainname."
+	/usr/share/univention-directory-manager-tools/univention-dnsedit "$@" --ignore-exists $domainname remove srv kerberos udp 0 100 88 "$hostname.$domainname."
+	/usr/share/univention-directory-manager-tools/univention-dnsedit "$@" --ignore-exists "$domainname" remove srv kerberos "tcp.dc._msdcs" 0 100 88 "$hostname.$domainname."
+	/usr/share/univention-directory-manager-tools/univention-dnsedit "$@" --ignore-exists "$domainname" remove srv kpasswd "tcp" 0 100 464 "$hostname.$domainname."
+	/usr/share/univention-directory-manager-tools/univention-dnsedit "$@" --ignore-exists "$domainname" remove srv kpasswd "udp" 0 100 464 "$hostname.$domainname."
 fi
 
+# Remove own values from ldap SRV records
+if ! is_ucr_true dns/register/srv_records/ldap; then
+	/usr/share/univention-directory-manager-tools/univention-dnsedit "$@" --ignore-exists "$domainname" remove srv ldap tcp 0 100 7389 "$hostname.$domainname."
+	/usr/share/univention-directory-manager-tools/univention-dnsedit "$@" --ignore-exists "$domainname" remove srv ldap tcp 0 100 389 "$hostname.$domainname."
+	/usr/share/univention-directory-manager-tools/univention-dnsedit "$@" --ignore-exists "$domainname" remove srv ldap "tcp.pdc._msdcs" 0 100 389 "$hostname.$domainname."
+	/usr/share/univention-directory-manager-tools/univention-dnsedit "$@" --ignore-exists "$domainname" remove srv ldap "tcp.dc._msdcs" 0 100 389 "$hostname.$domainname."
+fi
 
 trapOnExit2() {
 	trap '' SIGINT
