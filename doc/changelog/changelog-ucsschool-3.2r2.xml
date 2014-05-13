@@ -45,6 +45,9 @@
 			<listitem><simpara>
 				The packages <package>ucs-school-master</package> and <package>ucs-school-singlemaster</package> now set an UCR policy at the LDAP base for domain wide configuration of SID generation in &ucsUDM; in &ucsUAS; Samba4 domains. This avoids problems with accounts created via UDM running e.g. on a Memberserver (<ulink url="&ucsbug;33677">Bug 33677</ulink>).
 			</simpara></listitem>
+			<listitem><simpara>
+					The package <package>ucs-school-import</package> now ships a script <emphasis>ucs-school-join-secondary-samba4</emphasis> which may be used to add an additional standard UCS DC to a &ucsUAS; branch site (<ulink url="&ucsbug;32187">Bug 32187</ulink>).
+			</simpara></listitem>
 		</itemizedlist>
 	</section>
 <!--
