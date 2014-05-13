@@ -2,6 +2,7 @@ ucs-school-create-dummy-users                               usr/share/ucs-school
 ucs-school-import                                           usr/share/ucs-school-import/scripts
 ucs-school-change-share-server                              usr/share/ucs-school-import/scripts
 ucs-school-update-ou-fileservers							usr/share/ucs-school-import/scripts
+ucs-school-join-secondary-samba4                            usr/share/ucs-school-import/scripts
 35ucs-school-import.inst                                    usr/lib/univention-install/
 hooks/ou_create_post.d/40dhcpsearchbase_create              usr/share/ucs-school-import/hooks/ou_create_post.d
 hooks/ou_create_post.d/45dhcpdns_create                     usr/share/ucs-school-import/hooks/ou_create_post.d

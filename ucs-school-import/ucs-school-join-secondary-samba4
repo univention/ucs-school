@@ -1,0 +1,246 @@
+#!/bin/bash
+
+. /usr/share/univention-lib/all.sh
+. /usr/share/univention-samba4/lib/all.sh
+
+display_help() {
+	cat <<-EOL
+	Syntax:
+	  $0 [options] "<IP of UCS@school DC>"
+
+	Options:
+	  --dcaccount <account>:          Name of DC master account
+	  --dcpwd <password file>:        File with DC master password
+	  --rootpassword <fqdn>:          Root Password of UCS@school Samba4 DC
+	  -h | --help | -?:              Print this usage message and exit program
+
+	Description:
+	  $0 installs Samba4 on a second Slave DC and joins it to an UCS@school DC
+	  The script must be called with IP of a UCS@school DC running the S4 Connector service
+
+	EOL
+}
+
+school_ou() {
+	# syntax: school_ou [hostdn]
+	#
+	# Tries to determine the LDAP name of the host's OU.
+	# The OU name is derived from the given host DN. If no DN has been passed to
+	# the function, the hostdn of the system is used as fallback.
+	# PLEASE NOTE: This function works only on domaincontroller_slave systems!
+	#              Other systems will return an empty value!
+	#
+	# example:
+	# $ ucr get ldap/hostdn
+	# cn=myslave,cn=dc,cn=server,cn=computers,ou=gymmitte,dc=example,dc=com
+	# $ school_ou
+	# gymmitte
+	# $ school_ou cn=myslave,cn=dc,cn=server,cn=computers,ou=foobar,dc=example,dc=com
+	# foobar
+	# $ school_ou cn=myslave,cn=dc,cn=server,cn=computers,ou=foo,ou=bar,dc=example,dc=com
+	# foo
+
+	local ldap_hostdn
+
+	if [ -n "$1" ] ; then
+		ldap_hostdn=",$1" # add leading comma, in case only the DN of the OU is given
+	else
+		ldap_hostdn="$(/usr/sbin/univention-config-registry get ldap/hostdn)"
+	fi
+
+	echo "$ldap_hostdn" | sed -nre 's/^.*,[oO][uU]=([^,]+),.*/\1/p'
+}
+
+eval "$(univention-config-registry shell)"
+
+if [ "$server_role" != "domaincontroller_slave" ]; then
+	echo "This script can only be run on a DC Slave"
+	exit 1
+fi
+
+while [ $# -gt 0 ]
+do
+	case "$1" in
+		"--dcaccount")
+			DCACCOUNT="${2:?missing DC master account}"
+			shift 2 || exit 2
+			;;
+		"--dcpwd")
+			dcpwd="${2:?missing DC password file}"
+			shift 2 || exit 2
+			cp "$dcpwd" "$DCPWD" || exit 2
+			;;
+		"--rootpassword")
+			rootpwd="${2:?missing root password}"
+			cp "$rootpwd" "$ROOTPWD" || exit 2
+			shift 2 || exit 2
+			;;
+		"--help"|"-h"|"-?")
+			display_help
+			exit 0
+			;;
+		-*)
+			display_help
+			exit 1
+			;;
+		*)
+			if [ -z "$target_school_dc_ip" ]; then
+				target_school_dc_ip="$1"
+				shift
+			else
+				display_help
+				exit 1
+			fi
+			;;
+	esac
+done
+if [ -z "$target_school_dc_ip" ]; then
+	display_help
+	exit 1
+fi
+
+echo "$(LC_ALL=C date): starting $0 $*" >>/var/log/univention/join.log 2>&1
+
+if not univention-check-join-status >/dev/null 2>&1; then
+	echo "The DC Slave needs to be joined first without Samba4 installed"
+	exit 1
+fi
+
+USERTMP="$(mktemp -d)"
+DCPWD="$USERTMP/dcpwd"
+ROOTPWD="$USERTMP/rootpwd"
+
+trapOnExit() {
+	rm -rf "$USERTMP"
+	echo "$(LC_ALL=C date): finish $0" >>/var/log/univention/join.log 2>&1
+}
+
+trap trapOnExit EXIT
+
+
+if [ -z "$DCACCOUNT" ]; then
+	echo -n "Enter DC Master Account : "
+	read DCACCOUNT
+fi
+if [ ! -f "$DCPWD" ]; then
+	touch "$DCPWD"
+	chmod 600 "$DCPWD"
+	echo -n "Enter DC Master Password: "
+	read -s password
+	echo -n "$password" >>"$DCPWD"
+	echo ""
+	echo ""
+fi
+if [ ! -f "$ROOTPWD" ]; then
+	touch "$ROOTPWD"
+	chmod 600 "$ROOTPWD"
+	echo -n "Enter Root Password of UCS@school Samba4 DC: "
+	read -s password
+	echo -n "$password" >>"$ROOTPWD"
+	echo ""
+	echo ""
+fi
+
+echo -n "Search LDAP binddn : "
+binddn=$(univention-ldapsearch -xLLL "(&(objectClass=posixAccount)(uid=$DCACCOUNT))" | ldapsearch-wrapper | ldapsearch-decode64  | sed -n 's/^dn: //p')
+if [ -z "$binddn" ]; then
+	echo "binddn for user $DCACCOUNT not found. "
+	exit 1
+fi
+echo " [done]."
+
+
+target_school_dc_hostdn=$(univention-ldapsearch -xLLL "(&(univentionService=UCS@school)(univentionService=S4 Connector)(aRecord=$target_school_dc_ip))" dn | ldapsearch-wrapper | ldapsearch-decode64  | sed -n 's/^dn: //p')
+
+if [ -z "$target_school_dc_hostdn" ]; then
+	echo "Could not verify that $target_school_dc_ip is a UCS@school DC running the S4 Connector service"
+	exit 1
+fi
+
+echo -n "Trying ssh access too root@$target_school_dc_hostdn : "
+if test_output=$(univention-ssh "$ROOTPWD" root@"$target_school_dc_ip" ucr get ldap/hostdn); then
+	if [ "$test_output" != "$target_school_dc_hostdn" ]; then
+		echo "ERROR: univention-ssh "$target_school_dc_ip" ucr get ldap/hostdn returned $test_output"
+		echo "       expected: $target_school_dc_hostdn"
+		exit 1
+	fi
+else
+	echo "ssh access to root@$target_school_dc_hostdn failed"
+	exit 1
+fi
+
+target_school_ou=$(school_ou "$target_school_dc_hostdn")
+
+echo "$(LC_ALL=C date): start $0" >>/var/log/univention/join.log 2>&1
+
+univention-install univention-samba4 || exit 1
+
+## Add to group DC-Edukativnetz
+educative_dc_group_dn=$(univention-ldapsearch -xLLL "(&(objectClass=univentionGroup)(cn=DC-Edukativnetz))" dn | ldapsearch-wrapper | ldapsearch-decode64 | sed -n 's/^dn: //p')
+if [ -z "$educative_dc_group_dn" ]; then
+	echo "Unable to find group DC-Edukativnetz in LDAP"
+	exit 1
+fi
+
+univention-directory-manager groups/group modify \
+	--ignore_exists \
+	--binddn "$binddn" --bindpwd "$(<"$DCPWD")" \
+	--dn "$educative_dc_group_dn" \
+	--append hosts="$ldap_hostdn"
+
+eval "$(univention-ssh "$ROOTPWD" root@"$target_school_dc_ip" \
+	ucr shell ldap/hostdn samba4/join/site | sed -n 's/^/target_school_/p')"
+
+ucr set \
+	nameserver1="$target_school_dc_ip" \
+	dns/register/srv_records/kerberos?false \
+	dns/register/srv_records/ldap?false \
+	samba4/dc="$target_school_dc_ip" \
+	samba4/join/dnsupdate?true
+
+ucr unset nameserver2 nameserver3
+
+if [ -n "$target_school_samba4_join_site" ]; then
+	ucr set samba4/join/site="$target_school_samba4_join_site"
+fi
+
+if [ -n "$target_school_ou" ]; then
+	## Add to group DC-Edukativnetz
+	educative_school_ou_dc_group_name="OU${target_school_ou}-DC-Edukativnetz"
+	educative_school_ou_dc_group_dn=$(univention-ldapsearch -xLLL "(&(objectClass=univentionGroup)(cn=$educative_school_ou_dc_group_name))" dn | ldapsearch-wrapper | ldapsearch-decode64 | sed -n 's/^dn: //p')
+	if [ -z "$educative_school_ou_dc_group_dn" ]; then
+		echo "Unable to find group $educative_school_ou_dc_group_name in LDAP"
+		exit 1
+	fi
+
+	univention-directory-manager groups/group modify \
+		--ignore_exists \
+		--binddn "$binddn" --bindpwd "$(<"$DCPWD")" \
+		--dn "$educative_school_ou_dc_group_dn" \
+		--append hosts="$ldap_hostdn"
+
+	## After this we have to rejoin if the host object actually has been moved.
+	univention-ssh "$ROOTPWD" root@"$target_school_dc_ip" \
+		"/usr/share/ucs-school-import/scripts/move_domaincontroller_to_ou --dcname=$hostname --ou=$target_school_ou"
+
+fi
+
+
+trapOnExit2() {
+	trap '' SIGINT
+	univention-ssh "$ROOTPWD" root@"$target_school_dc_ip" \
+	"/usr/share/univention-samba4/scripts/register_ldb_module.py -H /var/lib/samba/private/sam.ldb --ignore-exists --prepend=univention_samaccountname_ldap_check && /etc/init.d/samba-ad-dc restart"
+	trapOnExit
+}
+
+trap trapOnExit2 EXIT
+
+univention-ssh "$ROOTPWD" root@"$target_school_dc_ip" \
+	"/usr/share/univention-samba4/scripts/register_ldb_module.py -H /var/lib/samba/private/sam.ldb --ignore-exists --remove=univention_samaccountname_ldap_check && /etc/init.d/samba-ad-dc restart"
+	
+univention-join -dcaccount "$DCACCOUNT" -dcpwd "$DCPWD"
+
+univention-ssh "$ROOTPWD" root@"$target_school_dc_ip" \
+	"/usr/share/univention-samba4/scripts/register_ldb_module.py -H /var/lib/samba/private/sam.ldb --ignore-exists --prepend=univention_samaccountname_ldap_check && /etc/init.d/samba-ad-dc restart"
+
+trap trapOnExit EXIT

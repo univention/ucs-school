@@ -1,3 +1,9 @@
+ucs-school-import (10.0.14-1) unstable; urgency=medium
+
+  * New script ucs-school-join-secondary-samba4 (Bug #32187)
+
+ -- Arvid Requate <requate@univention.de>  Tue, 13 May 2014 17:16:53 +0200
+
 ucs-school-import (10.0.13-2) unstable; urgency=low
 
   * Bug #26137: fixed confusing variable names
