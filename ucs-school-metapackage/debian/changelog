@@ -1,3 +1,10 @@
+ucs-school-metapackage (6.0.7-24) unstable; urgency=medium
+
+  * Set UCR policy at LDAP base: Instruct UDM domain wide to generate SIDs
+    (Bug #33677)
+
+ -- Arvid Requate <requate@univention.de>  Tue, 13 May 2014 13:22:30 +0200
+
 ucs-school-metapackage (6.0.7-23) unstable; urgency=low
 
   * Renamed service 'UCS@school Management' to 'UCS@school Administration' (Bug #34172)

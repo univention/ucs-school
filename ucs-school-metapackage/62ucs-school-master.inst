@@ -37,6 +37,21 @@ joinscript_init
 eval "$(ucr shell)"
 . /usr/share/univention-lib/all.sh
 
+ensure_that_all_udm_generate_sids() {
+	local policy_name
+	local ucr_policy_base
+	policy_name="ucsschool-samba4"
+	ucr_policy_base="cn=config-registry,cn=policies,$ldap_base"
+	univention-directory-manager policies/registry create --ignore_exists "$@" \
+		--position "$ucr_policy_base" \
+		--set name="$policy_name" \
+		--set registry="directory/manager/samba3/legacy yes"
+
+	univention-directory-manager container/dc modify --ignore_exists "$@" \
+		--dn "$ldap_base" \
+		--policy-reference "cn=$policy_name,$ucr_policy_base"
+}
+
 # Added dns-$hostname to the ignore list
 if [ -z "$connector_s4_mapping_user_ignorelist" ]; then
 	ucr set connector/s4/mapping/user/ignorelist?"root,pcpatch,ucs-s4sync,dns-$hostname"
@@ -82,6 +97,8 @@ if [ $JS_LAST_EXECUTED_VERSION -lt 1 ]; then
 				connector/s4/mapping/dns/srv_record/_gc._tcp.default-first-site-name._sites.$domainname/location?"ignore"
 	fi
 fi
+
+ensure_that_all_udm_generate_sids "$@"
 
 ucs_addServiceToLocalhost 'UCS@school' "$@"
 
