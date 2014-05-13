@@ -1,3 +1,9 @@
+ucs-school-metapackage (6.0.7-25) unstable; urgency=medium
+
+  * Remove dependency on ucs-school-s4-branch-site (Bug #32187)
+
+ -- Arvid Requate <requate@univention.de>  Tue, 13 May 2014 13:23:41 +0200
+
 ucs-school-metapackage (6.0.7-24) unstable; urgency=medium
 
   * Set UCR policy at LDAP base: Instruct UDM domain wide to generate SIDs
