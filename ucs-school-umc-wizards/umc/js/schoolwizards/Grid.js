@@ -324,22 +324,24 @@ define([
 		getDeleteConfirmMessage: function(objects) {
 			var msg = _('Please confirm to delete the %d selected %s!', objects.length, this.objectNamePlural);
 			if (objects.length == 1) {
-				msg = _('Please confirm to delete %s %s', this.objectNameSingular, this.getObjectIdName(objects[0]));
+				msg = _('Please confirm to delete %s "%s"', this.objectNameSingular, this.getObjectIdName(objects[0]));
 			}
 			return msg;
 		},
 
 		confirmObjectDeletion: function(ids, objects) {
-			dialog.confirmForm({
-				widgets: [{
-					type: Text,
-					label: '',
-					name: 'text',
-					content: '<p>' + this.getDeleteConfirmMessage(objects) + '</p>'
-				}],
-				submit: _('Delete')
-			}).then(lang.hitch(this, function() {
-				return this.deleteObjects(ids, objects);
+			dialog.confirm('<p>' + this.getDeleteConfirmMessage(objects) + '</p>',
+				[{
+				name: 'cancel',
+				'default': true,
+				label: _('Cancel')
+			}, {
+				name: 'delete',
+				label: _('Delete')
+			}]).then(lang.hitch(this, function(response) {
+				if (response == 'delete') {
+					this.deleteObjects(ids, objects);
+				}
 			}));
 		},
 

@@ -60,6 +60,10 @@ define([
 			var schools = this.umcpCommand('schoolwizards/schools', {}, false).then(
 				lang.hitch(this, function(data) {
 					this.schools = data.result;
+					this.schools.sort(tools.cmpObjects({
+						attribute: 'label',
+						ignoreCase: true
+					}));
 				}),
 				lang.hitch(this, function() {
 					// error. most probably no schools found

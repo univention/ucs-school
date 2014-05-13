@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-wizards\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2014-05-09 14:14+0200\n"
+"POT-Creation-Date: 2014-05-13 18:56+0200\n"
 "PO-Revision-Date: 2014-04-24 16:49+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -42,7 +42,8 @@ msgstr "Erweiterte Einstellungen"
 msgid "All"
 msgstr "Alle"
 
-#: umc/js/schoolwizards.js:71 umc/js/schoolwizards/Grid.js:234
+#: umc/js/schoolwizards.js:72 umc/js/schoolwizards/Grid.js:234
+#: umc/js/schoolwizards/Grid.js:337
 msgid "Cancel"
 msgstr "Abbrechen"
 
@@ -86,7 +87,7 @@ msgstr "Neue Klasse erstellen"
 msgid "Create a new {itemType}"
 msgstr "{itemType} erstellen"
 
-#: umc/js/schoolwizards.js:75
+#: umc/js/schoolwizards.js:76
 msgid "Create school"
 msgstr "Schule erstellen"
 
@@ -98,6 +99,10 @@ msgstr "Löschen"
 #, python-format
 msgid "Deleting the selected %s."
 msgstr "Ausgewählte %s löschen."
+
+#: umc/js/schoolwizards/SchoolGrid.js:108
+msgid "Deleting this school will also delete every teacher and student."
+msgstr "Das Löschen der Schule wird ebenfalls alle Lehrer und Schüler löschen."
 
 #: umc/js/schoolwizards/ClassGrid.js:58 umc/js/schoolwizards/ClassWizard.js:56
 msgid "Description"
@@ -229,7 +234,7 @@ msgstr "Es konnten keine %(objPlural)s gefunden werden"
 msgid "No %(objectNamePlural)s created yet"
 msgstr "Noch keine %(objectNamePlural)s erstellt"
 
-#: umc/js/schoolwizards.js:76
+#: umc/js/schoolwizards.js:77
 msgid "No school found"
 msgstr "Es konnte keine Schule gefunden werden"
 
@@ -239,8 +244,8 @@ msgstr "Passwort"
 
 #: umc/js/schoolwizards/Grid.js:327
 #, python-format
-msgid "Please confirm to delete %s %s"
-msgstr "Bitte bestätigen, dass %s %s gelöscht werden soll"
+msgid "Please confirm to delete %s \"%s\""
+msgstr "Bitte bestätigen, dass %s \"%s\" gelöscht werden soll"
 
 #: umc/js/schoolwizards/Grid.js:325
 #, python-format
@@ -249,8 +254,8 @@ msgstr "Bitte bestätigen Sie die Löschung der %d ausgewählten %s!"
 
 #: umc/js/schoolwizards/SchoolGrid.js:105
 #, python-format
-msgid "Please confirm to delete the school %s (%s)."
-msgstr "Bitte bestätigen Sie die Löschung der Schule %s (%s)."
+msgid "Please confirm to delete the school \"%s\" (%s)."
+msgstr "Bitte bestätigen Sie die Löschung der Schule \"%s\" (%s)."
 
 #: umc/js/schoolwizards/UserGrid.js:63 umc/js/schoolwizards/UserGrid.js:104
 msgid "Role"
@@ -353,6 +358,10 @@ msgstr ""
 "Schule erstellt oder der Wizard über die Schaltfläche \"Abbrechen\" beendet "
 "werden."
 
+#: umc/js/schoolwizards/SchoolGrid.js:108
+msgid "This action is cannot be undone."
+msgstr "Diese Aktion kann nicht rückgängig gemacht werden."
+
 #: umc/js/schoolwizards/ComputerGrid.js:58
 #: umc/js/schoolwizards/ComputerGrid.js:91
 #: umc/js/schoolwizards/ComputerWizard.js:51
@@ -374,12 +383,16 @@ msgstr ""
 msgid "Username"
 msgstr "Benutzername"
 
+#: umc/js/schoolwizards/SchoolGrid.js:107
+msgid "Warning"
+msgstr "Warnung"
+
 #: umc/js/schoolwizards/Grid.js:232
 #, python-format
 msgid "Would you like to create a %(objectNameSingular)s?"
 msgstr "%(objectNameSingular)s anlegen?"
 
-#: umc/js/schoolwizards.js:69
+#: umc/js/schoolwizards.js:70
 msgid "Would you like to create a first school?"
 msgstr "Soll eine erste Schule angelegt werden?"
 

@@ -102,8 +102,10 @@ define([
 
 		getDeleteConfirmMessage: function(objects) {
 			var school = objects[0];
-			var msg = _('Please confirm to delete the school %s (%s).', school.display_name, school.name);
-			msg += '<br/><br/><b>Warning:</b> Deleting this school will also delete every teacher and student.<br/>This action is irreversible and cannot be undone.';
+			var msg = _('Please confirm to delete the school "%s" (%s).', school.display_name, school.name);
+			msg += '<br/><br/>';
+			msg += '<strong>' + _('Warning') + ':</strong> ';
+			msg += _('Deleting this school will also delete every teacher and student.') + '<br/>' + _('This action is cannot be undone.');
 			return msg;
 		}
 	});
