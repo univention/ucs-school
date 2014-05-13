@@ -131,7 +131,14 @@ fi
 echo "$(LC_ALL=C date): starting $0 $*" >>/var/log/univention/join.log 2>&1
 
 if ! ldapsearch -xLLL -h "$target_school_dc_ip" -p 7389 -s base -b "$ldap_base" -D "$ldap_hostdn" -y /etc/machine.secret >/dev/null 2>&1; then
-	echo "The DC Slave needs to be joined first without Samba4 installed"
+	echo "The DC Slave needs to be joined first without Samba4 or UCS@school installed"
+	exit 1
+fi
+
+test_school_role=$(univention-ldapsearch -xLLL "(univentionService=UCS@school)" -b "$ldap_hostdn" -s base dn | ldapsearch-wrapper | ldapsearch-decode64  | sed -n 's/^dn: //p')
+
+if [ -n "$test_school_role" ]; then
+	echo "This system is a UCS@school DC. This script can only be run on a non UCS@school DC"
 	exit 1
 fi
 
