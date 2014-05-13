@@ -37,16 +37,17 @@
 -->
 
 
-<!--
 <section>
 	<title>Domain services</title>
 	<section>
 		<title>Samba4</title>
 		<itemizedlist>
 			<listitem><simpara>
+				The packages <package>ucs-school-master</package> and <package>ucs-school-singlemaster</package> now set an UCR policy at the LDAP base for domain wide configuration of SID generation in &ucsUDM; in &ucsUAS; Samba4 domains. This avoids problems with accounts created via UDM running e.g. on a Memberserver (<ulink url="&ucsbug;33677">Bug 33677</ulink>).
 			</simpara></listitem>
 		</itemizedlist>
 	</section>
+<!--
 	<section>
 		<title>OpenLDAP</title>
 	</section>
