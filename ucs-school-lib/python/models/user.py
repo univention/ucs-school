@@ -215,7 +215,10 @@ class User(UCSSchoolHelperAbstractClass):
 			mail_domain.create(lo)
 
 	def get_specific_groups(self, lo):
-		return []
+		groups = []
+		for school_class in self.get_school_class_objs():
+			groups.append(self.get_class_dn(school_class.name, lo))
+		return groups
 
 	def validate(self, lo, validate_unlikely_changes=False):
 		super(User, self).validate(lo, validate_unlikely_changes)
@@ -309,10 +312,18 @@ class User(UCSSchoolHelperAbstractClass):
 		if self.lastname:
 			display_name.append(self.lastname)
 		ret['display_name'] = ' '.join(display_name)
+		school_classes = []
+		for school_class in self.get_school_class_objs():
+			school_classes.append(school_class.get_relative_name())
+		if school_classes:
+			ret['school_class'] = ', '.join(school_classes)
 		ret['type_name'] = self.type_name
 		ret['type'] = self.__class__.__name__
 		ret['type'] = ret['type'][0].lower() + ret['type'][1:]
 		return ret
+
+	def get_school_class_objs(self):
+		return []
 
 	@classmethod
 	def get_container(cls, school):
@@ -347,11 +358,22 @@ class Student(User):
 		return cls.get_search_base(school).students
 
 	def get_specific_groups(self, lo):
-		groups = []
+		groups = super(Student, self).get_specific_groups(lo)
 		groups.append(self.get_students_group_dn())
-		if self.school_class:
-			groups.append(self.get_class_dn(self.school_class, lo))
 		return groups
+
+	def get_school_class_objs(self):
+		if self.school_class:
+			return [SchoolClass.get(self.school_class, self.school)]
+		return []
+
+	def to_dict(self):
+		ret = super(Student, self).to_dict()
+		school_classes = []
+		for school_class in self.get_school_class_objs():
+			school_classes.append(school_class.get_relative_name())
+		ret['school_class'] = ', '.join(school_classes)
+		return ret
 
 class Teacher(User):
 	school_class = SchoolClassStringAttribute(_('Class'), aka=['Class', 'Klasse'])
@@ -379,12 +401,16 @@ class Teacher(User):
 		return cls.get_search_base(school).teachers
 
 	def get_specific_groups(self, lo):
-		groups = []
+		groups = super(Teacher, self).get_specific_groups(lo)
 		groups.append(self.get_teachers_group_dn())
+		return groups
+
+	def get_school_class_objs(self):
+		ret = []
 		if self.school_class:
 			for school_class in self.school_class.split(','):
-				groups.append(self.get_class_dn(school_class, lo))
-		return groups
+				ret.append(SchoolClass.get(school_class, self.school))
+		return ret
 
 class Staff(User):
 	type_name = _('Staff')
@@ -395,7 +421,7 @@ class Staff(User):
 		return cls.get_search_base(school).staff
 
 	def get_specific_groups(self, lo):
-		groups = []
+		groups = super(Staff, self).get_specific_groups(lo)
 		groups.append(self.get_staff_group_dn())
 		return groups
 

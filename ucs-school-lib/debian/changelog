@@ -1,3 +1,9 @@
+ucs-school-lib (5.0.33-1) unstable; urgency=low
+
+  * Bug #34337: Fix issues in the wizards
+
+ -- Dirk Wiesenthal <wiesenthal@univention.de>  Wed, 14 May 2014 01:28:43 +0200
+
 ucs-school-lib (5.0.32-1) unstable; urgency=low
 
   * Bug #34337: Fix user creation: Correct samba share path, e-mail, password

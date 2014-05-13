@@ -147,6 +147,11 @@ class Email(Attribute):
 	udm_name = 'mailPrimaryAddress'
 	syntax = primaryEmailAddressValidDomain
 
+	def validate(self, value):
+		if value:
+			# do not validate ''
+			super(Email, self).validate(value)
+
 class Password(Attribute):
 	udm_name = 'password'
 
