@@ -8,6 +8,10 @@ import tempfile
 import univention.testing.utils as utils
 import univention.testing.strings as uts
 from ucsschool.lib.models import SchoolComputer as SchoolComputerLib
+from ucsschool.lib.models import WindowsComputer as WindowsComputerLib
+from ucsschool.lib.models import MacComputer as MacComputerLib
+from ucsschool.lib.models import IPComputer as IPComputerLib
+from ucsschool.lib.models import UCCComputer as UCCComputerLib
 from ucsschool.lib.models import School as SchoolLib
 from ucsschool.lib.models.utils import add_stream_logger_to_schoollib
 import ucsschool.lib.models.utils
@@ -201,11 +205,7 @@ class ImportFile:
 		if not SchoolLib.get(school).exists(lo):
 			SchoolLib(name=school, dc_name=uts.random_name(), display_name=school).create(lo)
 
-		self.windows = []
-		self.memberservers = []
-		self.macos = []
-		self.ipmanagedclients = []
-		for computer in self.computer_import.windows + self.computer_import.memberservers + self.computer_import.macos + self.computer_import.ipmanagedclients:
+		def _set_kwargs(computer):
 			kwargs = {
 					'school': computer.school,
 					'name': computer.name,
@@ -215,12 +215,20 @@ class ImportFile:
 					'inventory_number': computer.inventorynumbers,
 					'zone': computer.zone,
 			}
-			if computer.mode == 'A':
-				SchoolComputerLib(**kwargs).create(lo)
-			#elif computer.mode == 'M':
-			#	SchoolComputerLib(**kwargs).modify(lo)
-			#elif computer.mode == 'D':
-			#	SchoolComputerLib(**kwargs).remove(lo)
+			return kwargs
+
+		for computer in self.computer_import.windows:
+			kwargs = _set_kwargs(computer)
+			WindowsComputerLib(**kwargs).create(lo)
+		for computer in self.computer_import.memberservers:
+			kwargs = _set_kwargs(computer)
+			IPComputerLib(**kwargs).create(lo)
+		for computer in self.computer_import.macos:
+			kwargs = _set_kwargs(computer)
+			MacComputerLib(**kwargs).create(lo)
+		for computer in self.computer_import.ipmanagedclients:
+			kwargs = _set_kwargs(computer)
+			IPComputerLib(**kwargs).create(lo)
 
 class ComputerHooks:
 	def __init__(self):

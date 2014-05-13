@@ -318,11 +318,11 @@ class ImportFile:
 			kwargs = {
 				'school': user.school,
 				'name': user.username,
-				'firstname': user.username,
-				'lastname': user.username,
-				'email': user.username,
-				'password': user.username,
-				'disabled': user.username,
+				'firstname': user.firstname,
+				'lastname': user.lastname,
+				'email': user.mail,
+				'password': user.password,
+				'disabled': 'none' if user.active else 'all',
 			}
 			return kwargs
 
@@ -335,7 +335,7 @@ class ImportFile:
 			elif user.mode == 'D':
 				StudentLib(**kwargs).remove(lo)
 
-		for user in self.user_import.teacher:
+		for user in self.user_import.teachers:
 			kwargs = _set_kwargs(user)
 			if user.mode == 'A':
 				TeacherLib(**kwargs).create(lo)
