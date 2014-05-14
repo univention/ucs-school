@@ -53,7 +53,7 @@ class DHCPService(UCSSchoolHelperAbstractClass):
 		from ucsschool.lib.models.school import School
 
 		# create dhcp-server if not exsistant
-		school = School.get(self.school)
+		school = School.cache(self.school)
 		dhcp_server = DHCPServer(name=dc_name, school=school.name, dhcp_service=self)
 		existing_dhcp_server_dn = DHCPServer.find_any_dn_with_name(dc_name, lo)
 		if existing_dhcp_server_dn:

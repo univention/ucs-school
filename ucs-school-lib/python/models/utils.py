@@ -30,10 +30,14 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-import random
+from random import choice
 import logging
 from logging import StreamHandler, Logger
 from logging.handlers import MemoryHandler
+from contextlib import contextmanager
+import subprocess
+
+from psutil import process_iter
 
 from univention.lib.policy_result import policy_result
 from univention.lib.i18n import Translation
@@ -104,7 +108,7 @@ def create_passwd(length=8, dn=None):
 		length = _pw_length_cache.get(ou, length)
 
 	chars = 'abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ!"$%&/()=?'
-	return ''.join(random.choice(chars) for x in range(length))
+	return ''.join(choice(chars) for x in range(length))
 
 def flatten(list_of_lists):
 	# return [item for sublist in list_of_lists for item in sublist]
@@ -116,4 +120,40 @@ def flatten(list_of_lists):
 		else:
 			ret.append(sublist)
 	return ret
+
+@contextmanager
+def stopped_notifier():
+	def _run(args):
+		process = subprocess.Popen(args, shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+		stdout, stderr = process.communicate()
+		if stdout:
+			logger.info(stdout)
+		if stderr:
+			logger.error(stderr)
+		return process.returncode == 0
+
+	notifier_running = False
+	logger.warn('Stopping notifier')
+	for process in process_iter():
+		if process.name == 'univention-directory-notifier':
+			notifier_running = True
+			break
+	if not notifier_running:
+		logger.warn('Notifier is not running! Skipping')
+	else:
+		if _run(['sv', 'down', 'univention-directory-notifier']):
+			logger.info('Notifier stopped')
+		else:
+			logger.error('Failed to stop notifier... Will try to start it in the end nonetheless')
+	try:
+		yield
+	finally:
+		logger.warn('Starting notifier')
+		if not notifier_running:
+			logger.warn('Notifier was not running! Skipping')
+		else:
+			if _run(['sv', 'up', 'univention-directory-notifier']):
+				logger.info('Notifier started')
+			else:
+				logger.error('Failed to start notifier... Bad news! Better run "sv up univention-directory-notifier" manually!')
 

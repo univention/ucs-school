@@ -30,15 +30,19 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+from ipaddr import IPv4Network, AddressValueError, NetmaskValueError
+
 from ucsschool.lib.models.attributes import Netmask, NetworkAttribute, NetworkBroadcastAddress, SubnetName
 from ucsschool.lib.models.base import UCSSchoolHelperAbstractClass
 from ucsschool.lib.models.dhcp import DHCPSubnet
-from ucsschool.lib.models.utils import ucr, _
+from ucsschool.lib.models.utils import ucr, _, logger
 
 class Network(UCSSchoolHelperAbstractClass):
 	netmask = Netmask(_('Netmask'))
 	network = NetworkAttribute(_('Network'))
 	broadcast = NetworkBroadcastAddress(_('Broadcast'))
+
+	_netmask_cache = {}
 
 	@classmethod
 	def get_container(cls, school):
@@ -56,7 +60,7 @@ class Network(UCSSchoolHelperAbstractClass):
 		return '.'.join(self.network.split('.')[:subnetbytes])
 
 	def create_without_hooks(self, lo, validate):
-		dns_reverse_zone = DNSReverseZone.get(self.get_subnet())
+		dns_reverse_zone = DNSReverseZone.cache(self.get_subnet())
 		dns_reverse_zone.create(lo)
 
 		dhcp_service = self.get_school_obj(lo).get_dhcp_service()
@@ -87,11 +91,32 @@ class Network(UCSSchoolHelperAbstractClass):
 		#	object['ipRange']=[[str(iprange[0]), str(iprange[1])]]
 
 		# TODO: this is a DHCPServer created when school is created (not implemented yet)
-		udm_obj['dhcpEntryZone'] = 'cn=%s,cn=dhcp,%s' % (self.school, School.get(self.school).dn)
+		udm_obj['dhcpEntryZone'] = 'cn=%s,cn=dhcp,%s' % (self.school, School.cache(self.school).dn)
 		udm_obj['dnsEntryZoneForward'] = 'zoneName=%s,cn=dns,%s' % (ucr.get('domainname'), ucr.get('ldap/base'))
 		reversed_subnet = '.'.join(reversed(self.get_subnet().split('.')))
 		udm_obj['dnsEntryZoneReverse'] = 'zoneName=%s.in-addr.arpa,cn=dns,%s' % (reversed_subnet, ucr.get('ldap/base'))
 		return super(Network, self).do_create(udm_obj, lo)
+
+	@classmethod
+	def invalidate_cache(cls):
+		super(Network, cls).invalidate_cache()
+		cls._netmask_cache.clear()
+
+	@classmethod
+	def get_netmask(cls, dn, school, lo):
+		if dn not in cls._netmask_cache:
+			network = cls.from_dn(dn, school, lo)
+			netmask = network.netmask # e.g. '24'
+			network_str = '0.0.0.0/%s' % netmask
+			try:
+				ipv4_network = IPv4Network(network_str)
+			except (AddressValueError, NetmaskValueError, ValueError):
+				logger.warning('Unparsable network: %r' % network_str)
+			else:
+				netmask = str(ipv4_network.netmask) # e.g. '255.255.255.0'
+			logger.debug('Network mask: %r is %r' % (dn, netmask))
+			cls._netmask_cache[dn] = netmask
+		return cls._netmask_cache[dn]
 
 	class Meta:
 		udm_module = 'networks/network'

@@ -1,3 +1,10 @@
+ucs-school-lib (5.0.34-1) unstable; urgency=low
+
+  * Bug #34825, Bug #34826: Support stopping notifier temporarily
+  * Bug #34337: Get subnets for computer
+
+ -- Dirk Wiesenthal <wiesenthal@univention.de>  Wed, 14 May 2014 17:43:52 +0200
+
 ucs-school-lib (5.0.33-1) unstable; urgency=low
 
   * Bug #34337: Fix issues in the wizards

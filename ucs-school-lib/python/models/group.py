@@ -102,10 +102,10 @@ class BasicGroup(Group):
 	school = None
 	container = Attribute(_('Container'), required=True)
 
-	def __init__(self, **kwargs):
+	def __init__(self, name=None, school=None, **kwargs):
 		if 'container' not in kwargs:
 			kwargs['container'] = 'cn=groups,%s' % ucr.get('ldap/base')
-		super(BasicGroup, self).__init__(**kwargs)
+		super(BasicGroup, self).__init__(name=name, school=school, **kwargs)
 
 	def create_without_hooks(self, lo, validate):
 		# prepare LDAP: create containers where this basic group lives if necessary
@@ -172,7 +172,7 @@ class SchoolClass(Group):
 
 	def get_relative_name(self):
 		# schoolname-1a => 1a
-		if self.name.startswith(self.school):
+		if self.name.startswith('%s-' % self.school):
 			return self.name[len(self.school) + 1:]
 		return self.name
 

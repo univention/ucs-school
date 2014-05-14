@@ -53,8 +53,8 @@ class School(UCSSchoolHelperAbstractClass):
 	display_name = DisplayName(_('Display name'))
 	school = None
 
-	def __init__(self, **kwargs):
-		super(School, self).__init__(**kwargs)
+	def __init__(self, name=None, school=None, **kwargs):
+		super(School, self).__init__(name=name, **kwargs)
 		self.display_name = self.display_name or self.name
 
 	def build_hook_line(self, hook_time, func_name):
@@ -143,28 +143,28 @@ class School(UCSSchoolHelperAbstractClass):
 		if self.shall_create_administrative_objects():
 			administrative_group_names.extend(self.get_administrative_group_name('administrative', domain_controller='both', ou_specific='both')) # same with Verwaltungsnetz
 		for administrative_group_name in administrative_group_names:
-			group = BasicGroup.get(name=administrative_group_name, container=administrative_group_container)
+			group = BasicGroup.cache(name=administrative_group_name, container=administrative_group_container)
 			group.create(lo)
 
 		# cn=ouadmins
 		admin_group_container = 'cn=ouadmins,cn=groups,%s' % ucr.get('ldap/base')
-		group = BasicGroup.get(self.group_name('admins', 'admins-'), container=admin_group_container)
+		group = BasicGroup.cache(self.group_name('admins', 'admins-'), container=admin_group_container)
 		group.create(lo)
 		group.add_umc_policy(self.get_umc_policy_dn('admins'), lo)
 
 		# cn=schueler
-		group = Group.get(self.group_name('pupils', 'schueler-'), self.name)
+		group = Group.cache(self.group_name('pupils', 'schueler-'), self.name)
 		group.create(lo)
 		group.add_umc_policy(self.get_umc_policy_dn('pupils'), lo)
 
 		# cn=lehrer
-		group = Group.get(self.group_name('teachers', 'lehrer-'), self.name)
+		group = Group.cache(self.group_name('teachers', 'lehrer-'), self.name)
 		group.create(lo)
 		group.add_umc_policy(self.get_umc_policy_dn('teachers'), lo)
 
 		# cn=mitarbeiter
 		if self.shall_create_administrative_objects():
-			group = Group.get(self.group_name('staff', 'mitarbeiter-'), self.name)
+			group = Group.cache(self.group_name('staff', 'mitarbeiter-'), self.name)
 			group.create(lo)
 			group.add_umc_policy(self.get_umc_policy_dn('staff'), lo)
 
@@ -190,7 +190,7 @@ class School(UCSSchoolHelperAbstractClass):
 
 	def get_share_fileserver_dn(self, set_by_self, lo):
 		if set_by_self:
-			set_by_self = self.get_name_from_dn(set_by_self)
+			set_by_self = self.get_name_from_dn(set_by_self) or set_by_self
 		hostname = set_by_self or self.get_dc_name()
 		if hostname == self.get_dc_name_fallback():
 			# does not matter if exists or not - dc object will be created later
@@ -303,7 +303,7 @@ class School(UCSSchoolHelperAbstractClass):
 			return True
 
 	def get_dhcp_service(self, hostname=None):
-		return DHCPService.get(self.name.lower(), self.name, hostname=hostname, domainname=ucr.get('domainname'))
+		return DHCPService.cache(self.name.lower(), self.name, hostname=hostname, domainname=ucr.get('domainname'))
 
 	def create_without_hooks(self, lo, validate):
 		district = self.get_district()
@@ -400,6 +400,12 @@ class School(UCSSchoolHelperAbstractClass):
 			return cls.get_from_oulist(cls, lo, oulist)
 		else:
 			return super(School, cls).get_all(lo, school=None, filter_str=filter_str, easy_filter=easy_filter)
+
+	@classmethod
+	def invalidate_cache(cls):
+		from ucsschool.lib.models.user import User
+		super(School, cls).invalidate_cache()
+		User._samba_home_path_cache.clear()
 
 	def __str__(self):
 		return self.name

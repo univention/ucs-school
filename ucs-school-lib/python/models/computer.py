@@ -32,7 +32,7 @@
 
 import re
 
-import ipaddr
+from ipaddr import IPv4Network, AddressValueError, NetmaskValueError
 from ldap.filter import escape_filter_chars
 
 from ucsschool.lib.models.attributes import Groups, IPAddress, SubnetMask, MACAddress, InventoryNumber, Attribute
@@ -48,7 +48,7 @@ class AnyComputer(UCSSchoolHelperAbstractClass):
 	def get_container(cls, school=None):
 		from ucsschool.lib.models.school import School
 		if school:
-			return School.get(school).dn
+			return School.cache(school).dn
 		return ucr.get('ldap/base')
 
 	class Meta:
@@ -75,7 +75,7 @@ class SchoolDCSlave(SchoolDC):
 	def do_create(self, udm_obj, lo):
 		udm_obj['unixhome'] = '/dev/null'
 		udm_obj['shell'] = '/bin/bash'
-		udm_obj['primaryGroup'] = BasicGroup.get('DC Slave Hosts').dn
+		udm_obj['primaryGroup'] = BasicGroup.cache('DC Slave Hosts').dn
 		return super(SchoolDCSlave, self).do_create(udm_obj, lo)
 
 	def _alter_udm_obj(self, udm_obj):
@@ -198,8 +198,8 @@ class SchoolComputer(UCSSchoolHelperAbstractClass):
 		else:
 			network_str = str(self.ip_address)
 		try:
-			return ipaddr.IPv4Network(network_str)
-		except (ipaddr.AddressValueError, ipaddr.NetmaskValueError, ValueError):
+			return IPv4Network(network_str)
+		except (AddressValueError, NetmaskValueError, ValueError):
 			logger.warning('Unparsable network: %r' % network_str)
 
 	def get_network(self):
@@ -247,15 +247,18 @@ class SchoolComputer(UCSSchoolHelperAbstractClass):
 		obj = super(SchoolComputer, cls).from_udm_obj(udm_obj, school, lo)
 		if obj:
 			obj.ip_address = udm_obj['ip']
-			school = School.get(obj.school)
-			edukativnetz_group = school.get_administrative_group_name('educational', domain_controller=False, as_dn=True)
+			school_obj = School.cache(obj.school)
+			edukativnetz_group = school_obj.get_administrative_group_name('educational', domain_controller=False, as_dn=True)
 			if edukativnetz_group in udm_obj['groups']:
 				obj.zone = 'edukativ'
-			verwaltungsnetz_group = school.get_administrative_group_name('administrative', domain_controller=False, as_dn=True)
+			verwaltungsnetz_group = school_obj.get_administrative_group_name('administrative', domain_controller=False, as_dn=True)
 			if verwaltungsnetz_group in udm_obj['groups']:
 				obj.zone = 'verwaltung'
-			obj.subnet_mask = '255.255.255.0' # FIXME
-			obj.inventory_number = ','.join(udm_obj['inventoryNumber'])
+			network_dn = udm_obj['network']
+			if network_dn:
+				netmask = Network.get_netmask(network_dn, school, lo)
+				obj.subnet_mask = netmask
+			obj.inventory_number = ', '.join(udm_obj['inventoryNumber'])
 			return obj
 
 	def build_hook_line(self, hook_time, func_name):

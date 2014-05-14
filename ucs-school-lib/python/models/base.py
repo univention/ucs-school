@@ -159,9 +159,9 @@ class UCSSchoolHelperAbstractClass(object):
 	school = SchoolAttribute(_('School'), aka=['School'])
 
 	@classmethod
-	def get(cls, *args, **kwargs):
+	def cache(cls, *args, **kwargs):
 		'''Initializes a new instance and caches it for subsequent calls.
-		Useful when using School.get(school_name) a lot in different
+		Useful when using School.cache(school_name) a lot in different
 		functions, in loops, etc.
 		'''
 		args = list(args)
@@ -188,7 +188,7 @@ class UCSSchoolHelperAbstractClass(object):
 	def supports_school(cls):
 		return 'school' in cls._attributes
 
-	def __init__(self, **kwargs):
+	def __init__(self, name=None, school=None, **kwargs):
 		'''Initializes a new instance with kwargs.
 		Not every kwarg is accepted, though: The name
 		must be defined as a attribute at class level
@@ -201,6 +201,8 @@ class UCSSchoolHelperAbstractClass(object):
 		'''
 		self._udm_obj_searched = False
 		self._udm_obj = None
+		kwargs['name'] = name
+		kwargs['school'] = school
 		for key in self._attributes:
 			setattr(self, key, kwargs.get(key))
 		self.custom_dn = None
@@ -245,7 +247,7 @@ class UCSSchoolHelperAbstractClass(object):
 			if self.exists_outside_school(lo):
 				self.add_error('name', _('The name is already used somewhere outside the school. It may not be taken twice and has to be changed.'))
 		if self.supports_school() and self.school:
-			if not School.get(self.school).exists(lo):
+			if not School.cache(self.school).exists(lo):
 				self.add_error('school', _('The school "%s" does not exist. Please choose an existing one or create it.') % self.school)
 		if validate_unlikely_changes:
 			if self.exists(lo):
@@ -568,7 +570,7 @@ class UCSSchoolHelperAbstractClass(object):
 		from ucsschool.lib.models.school import School
 		if not self.supports_school():
 			return None
-		school = School.get(self.school)
+		school = School.cache(self.school)
 		try:
 			return School.from_dn(school.dn, None, lo)
 		except noObject:

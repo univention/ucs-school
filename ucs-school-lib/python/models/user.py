@@ -57,6 +57,7 @@ class User(UCSSchoolHelperAbstractClass):
 
 	_profile_path_cache = {}
 	_samba_home_path_cache = {}
+	# _samba_home_path_cache is invalidated in School.invalidate_cache()
 
 	roles = []
 
@@ -65,7 +66,7 @@ class User(UCSSchoolHelperAbstractClass):
 		return roleshare_home_subdir(self.school, self.roles, ucr)
 
 	def get_samba_home_path(self, lo):
-		school = School.get(self.school)
+		school = School.cache(self.school)
 		# if defined then use UCR value
 		ucr_variable = ucr.get('ucsschool/import/set/sambahome')
 		if ucr_variable is not None:
@@ -91,7 +92,7 @@ class User(UCSSchoolHelperAbstractClass):
 		ucr_variable = ucr.get('ucsschool/import/set/serverprofile/path')
 		if ucr_variable is not None:
 			return ucr_variable
-		school = School.get(self.school)
+		school = School.cache(self.school)
 		if school.dn not in self._profile_path_cache:
 			profile_path = r'%s\%%USERNAME%%\windows-profiles\default'
 			for computer in AnyComputer.get_all(lo, self.school, 'univentionService=Windows Profile Server'):
@@ -211,7 +212,7 @@ class User(UCSSchoolHelperAbstractClass):
 	def create_mail_domain(self, lo):
 		if self.email:
 			domain_name = self.email.split('@')[-1]
-			mail_domain = MailDomain.get(domain_name)
+			mail_domain = MailDomain.cache(domain_name)
 			mail_domain.create(lo)
 
 	def get_specific_groups(self, lo):
@@ -228,16 +229,16 @@ class User(UCSSchoolHelperAbstractClass):
 				self.add_error('email', _('The email address is already taken by another user. Please change the email address.'))
 
 	def get_group_dn(self, group_name):
-		return Group.get(group_name, self.school).dn
+		return Group.cache(group_name, self.school).dn
 
 	def get_class_dn(self, class_name, lo):
 		# Bug #32337: check if the class exists without OU prefix
 		# if it does not exist the class name with OU prefix is used
-		school_class = SchoolClass.get(class_name, self.school)
-		if not class_name.startswith('%s-' % self.school):
+		school_class = SchoolClass.cache(class_name, self.school)
+		if school_class.get_relative_name() != school_class.name:
 			if not school_class.exists(lo):
 				class_name = '%s-%s' % (self.school, class_name)
-				school_class = SchoolClass.get(class_name, self.school)
+				school_class = SchoolClass.cache(class_name, self.school)
 		return school_class.dn
 
 	def primary_group_dn(self, lo):
@@ -270,9 +271,9 @@ class User(UCSSchoolHelperAbstractClass):
 	def get_or_create_group_udm_object(cls, group_dn, lo, school, fresh=False):
 		name = cls.get_name_from_dn(group_dn)
 		if Group.is_school_class(school, group_dn):
-			group = SchoolClass.get(name, school)
+			group = SchoolClass.cache(name, school)
 		else:
-			group = Group.get(name, school)
+			group = Group.cache(name, school)
 		if fresh:
 			group._udm_obj_searched = False
 		group.create(lo)
@@ -364,7 +365,7 @@ class Student(User):
 
 	def get_school_class_objs(self):
 		if self.school_class:
-			return [SchoolClass.get(self.school_class, self.school)]
+			return [SchoolClass.cache(self.school_class, self.school)]
 		return []
 
 	def to_dict(self):
@@ -409,7 +410,7 @@ class Teacher(User):
 		ret = []
 		if self.school_class:
 			for school_class in self.school_class.split(','):
-				ret.append(SchoolClass.get(school_class, self.school))
+				ret.append(SchoolClass.cache(school_class, self.school))
 		return ret
 
 class Staff(User):

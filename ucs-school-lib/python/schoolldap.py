@@ -348,7 +348,7 @@ class SchoolSearchBase(object):
 		from ucsschool.lib.models import School
 		self._availableSchools = availableSchools
 		self._school = school or availableSchools[0]
-		self._schoolDN = dn or School.get(self.school).dn
+		self._schoolDN = dn or School.cache(self.school).dn
 
 		# prefixes
 		self._containerAdmins = ucr.get('ucsschool/ldap/default/container/admins', 'admins')
