@@ -16,7 +16,6 @@ from ucsschool.lib.models import Teacher as TeacherLib
 from ucsschool.lib.models import Staff as StaffLib
 from ucsschool.lib.models import TeachersAndStaff as TeachersAndStaffLib
 from ucsschool.lib.models import School as SchoolLib
-from ucsschool.lib.models.utils import add_stream_logger_to_schoollib
 import ucsschool.lib.models.utils
 
 from essential.importou import remove_ou, create_ou_cli, get_school_base
@@ -314,10 +313,10 @@ class ImportFile:
 		# get school from first user
 		school = self.user_import.students[0].school
 
-		SchoolLib.init_udm_module(lo)
-
-		if not SchoolLib.get(school).exists(lo):
-			SchoolLib(name=school, dc_name=uts.random_name(), display_name=school).create(lo)
+		school_obj = SchoolLib.cache(school, display_name=school)
+		if not school_obj.exists(lo):
+			school_obj.dc_name = uts.random_name()
+			school_obj.create(lo)
 
 		def _set_kwargs(user):
 			kwargs = {

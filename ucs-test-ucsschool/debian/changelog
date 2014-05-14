@@ -1,3 +1,9 @@
+ucs-test-ucsschool (1.0.49-1) unstable; urgency=low
+
+  * Bug #34551: New lib version
+
+ -- Dirk Wiesenthal <wiesenthal@univention.de>  Wed, 14 May 2014 17:46:09 +0200
+
 ucs-test-ucsschool (1.0.48-1) unstable; urgency=low
 
   * Bug #34801: added test for UMCP command schoolwizards/schools/create
