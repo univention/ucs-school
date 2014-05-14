@@ -1,3 +1,9 @@
+ucs-school-import (10.0.14-7) unstable; urgency=low
+
+  * Bug #34826: Stopping notifier while using the import
+
+ -- Dirk Wiesenthal <wiesenthal@univention.de>  Wed, 14 May 2014 23:34:11 +0200
+
 ucs-school-import (10.0.14-6) unstable; urgency=medium
 
   * Use univention-add-app to install libunivention-ldb-modules (Bug #32187)
