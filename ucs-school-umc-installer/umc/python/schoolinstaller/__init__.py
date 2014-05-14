@@ -73,6 +73,7 @@ os.umask(0022)
 
 RE_FQDN     = re.compile('^[a-z]([a-z0-9-]*[a-z0-9])*\.([a-z0-9]([a-z0-9-]*[a-z0-9])*[.])*[a-z0-9]([a-z0-9-]*[a-z0-9])*$')
 RE_HOSTNAME = re.compile('^[a-z]([a-z0-9-]*[a-z0-9])*(\.([a-z0-9]([a-z0-9-]*[a-z0-9])*[.])*[a-z0-9]([a-z0-9-]*[a-z0-9])*)?$')
+RE_HOSTNAME_OR_EMPTY = re.compile('^([a-z]([a-z0-9-]*[a-z0-9])*(\.([a-z0-9]([a-z0-9-]*[a-z0-9])*[.])*[a-z0-9]([a-z0-9-]*[a-z0-9])*)?)?$')
 RE_OU       = re.compile('^[a-zA-Z0-9](([a-zA-Z0-9_]*)([a-zA-Z0-9]$))?$')
 
 CMD_ENABLE_EXEC = ['/usr/share/univention-updater/enable-apache2-umc', '--no-restart']
@@ -577,7 +578,7 @@ class Instance(Base):
 		schoolOU=StringSanitizer(required=True),
 		setup=ChoicesSanitizer(['multiserver', 'singlemaster']),
 		server_type=ChoicesSanitizer(['educational', 'administrative']),
-		nameEduServer=HostSanitizer(regex_pattern=RE_HOSTNAME),
+		nameEduServer=HostSanitizer(regex_pattern=RE_HOSTNAME_OR_EMPTY),  # javascript wizard page always passes value to backend, even if empty
 	)
 	def install(self, request):
 		# get all arguments
