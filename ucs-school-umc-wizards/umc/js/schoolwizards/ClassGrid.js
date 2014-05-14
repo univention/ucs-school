@@ -47,6 +47,7 @@ define([
 		helpText: '',
 		objectNamePlural: _('classes'),
 		objectNameSingular: _('class'),
+		firstObject: _('a first school class'),
 		createObjectWizard: ClassWizard,
 
 		getGridColumns: function() {

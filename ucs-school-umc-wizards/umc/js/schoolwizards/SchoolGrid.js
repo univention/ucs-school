@@ -46,6 +46,7 @@ define([
 		helpText: '',
 		objectNamePlural: _('schools'),
 		objectNameSingular: _('school'),
+		firstObject: _('a first school'),
 		createObjectWizard: SchoolWizard,
 		singleMasterDeferred: null,
 

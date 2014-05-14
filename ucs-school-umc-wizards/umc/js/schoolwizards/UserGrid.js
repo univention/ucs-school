@@ -47,6 +47,7 @@ define([
 		helpText: '',
 		objectNamePlural: _('users'),
 		objectNameSingular: _('user'),
+		firstObject: _('a first user'),
 		createObjectWizard: UserWizard,
 
 		getGridColumns: function() {

@@ -1,3 +1,9 @@
+ucs-school-umc-wizards (4.0.19-1) unstable; urgency=low
+
+  * Bug #34337: Wording
+
+ -- Dirk Wiesenthal <wiesenthal@univention.de>  Wed, 14 May 2014 18:07:15 +0200
+
 ucs-school-umc-wizards (4.0.18-1) unstable; urgency=low
 
   * Bug #34337: Wording

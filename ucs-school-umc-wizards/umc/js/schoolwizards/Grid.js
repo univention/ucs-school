@@ -229,13 +229,16 @@ define([
 					var handler = aspect.before(this._grid._grid, '_onFetchComplete', lang.hitch(this, function(items) {
 						handler.remove();
 						if (items.length === 0) {
-							dialog.confirm(_('Would you like to create a %(objectNameSingular)s?', {objectNameSingular: this.objectNameSingular}), [{
+							var title = _('No %(objectNamePlural)s created yet', {objectNamePlural: this.objectNamePlural});
+							var txt = title;
+							txt += '. ' + _('Would you like to create %(firstObject)s?', {firstObject: this.firstObject});
+							dialog.confirm(txt, [{
 								name: 'cancel',
 								label: _('Cancel')
 							}, {
 								name: 'add',
 								'default': true,
-								label: _('Add')
+								label: _('Create')
 							}], _('No %(objectNamePlural)s created yet', {objectNamePlural: this.objectNamePlural})).then(lang.hitch(this, function(response) {
 								if (response == 'add') {
 									this.createObject();
