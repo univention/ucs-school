@@ -10,5 +10,5 @@
 from essential.importcomputers import *
 
 if __name__ == '__main__':
-	import_computers_basics(use_cli_api=False, use_python_api=True)
+	import_computers_basics(use_cli_api=False, use_python_api=True, nr_memberserver=0)
 

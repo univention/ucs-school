@@ -224,9 +224,9 @@ class ImportFile:
 		for computer in self.computer_import.windows:
 			kwargs = _set_kwargs(computer)
 			WindowsComputerLib(**kwargs).create(lo)
-		for computer in self.computer_import.memberservers:
-			kwargs = _set_kwargs(computer)
-			IPComputerLib(**kwargs).create(lo)
+		# for computer in self.computer_import.memberservers:
+		# 	kwargs = _set_kwargs(computer)
+		# 	IPComputerLib(**kwargs).create(lo)
 		for computer in self.computer_import.macos:
 			kwargs = _set_kwargs(computer)
 			MacComputerLib(**kwargs).create(lo)
@@ -296,7 +296,6 @@ exit 0
 class ComputerImport:
 	def __init__(self, nr_windows=20, nr_memberserver=10, nr_macos=5, nr_ipmanagedclient=3):
 		assert (nr_windows > 2)
-		assert (nr_memberserver > 2)
 		assert (nr_macos > 2)
 		assert (nr_ipmanagedclient > 2)
 
@@ -311,14 +310,15 @@ class ComputerImport:
 		self.memberservers = []
 		for i in range(0, nr_memberserver):
 			self.memberservers.append(Memberserver(self.school))
-		self.memberservers[2].set_inventorynumbers()
-		self.memberservers[0].set_zone_verwaltng()
+		if self.memberservers:
+			self.memberservers[2].set_inventorynumbers()
+			self.memberservers[0].set_zone_verwaltng()
 
 		self.macos = []
 		for i in range(0, nr_macos):
 			self.macos.append(MacOS(self.school))
 		self.macos[0].set_inventorynumbers()
-		self.memberservers[1].set_zone_edukativ()
+		self.macos[1].set_zone_edukativ()
 
 		self.ipmanagedclients = []
 		for i in range(0, nr_ipmanagedclient):
@@ -376,6 +376,6 @@ def create_and_verify_computers(use_cli_api=True, use_python_api=False, nr_windo
 		remove_ou(computer_import.school)
 
 
-def import_computers_basics(use_cli_api=True, use_python_api=False):
-	create_and_verify_computers(use_cli_api, use_python_api, 5, 4, 3, 3)
+def import_computers_basics(use_cli_api=True, use_python_api=False, nr_memberserver=4):
+	create_and_verify_computers(use_cli_api, use_python_api, 5, nr_memberserver, 3, 3)
 

@@ -1,3 +1,10 @@
+ucs-test-ucsschool (1.0.47-1) unstable; urgency=low
+
+  * computer import: skript memberserver in python api mode
+    (Bug #34550)
+
+ -- Stefan Gohmann <gohmann@univention.de>  Wed, 14 May 2014 06:44:36 +0200
+
 ucs-test-ucsschool (1.0.46-1) unstable; urgency=low
 
   * Bug #34551: Corrected API calls
