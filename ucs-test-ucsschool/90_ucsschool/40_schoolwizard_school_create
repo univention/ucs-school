@@ -8,6 +8,7 @@
 ##   - ucs-school-master | ucs-school-singlemaster
 
 import subprocess
+import simplejson as json
 import univention.testing.ucr as ucr_test
 import univention.testing.utils as utils
 import univention.testing.strings as uts
@@ -18,18 +19,21 @@ ucr = ucr_test.UCSTestConfigRegistry()
 ucr.load()
 
 
-def schoolwizards_schools_create(ou_name, dc_name=None):
+def schoolwizards_schools_create(ou_name, dc_name=None, dc_name_administrative=None):
+	jsonargs = [{'object': {'display_name': ou_name, 'name': ou_name}}]
+	if dc_name:
+		jsonargs[0]['object']['dc_name'] = dc_name
+	if dc_name_administrative:
+		jsonargs[0]['object']['dc_name_administrative'] = dc_name_administrative
+
 	cmd = ['/usr/sbin/umc-command',
 		   '-U', 'Administrator', '-P', 'univention',
 		   '-s', '%s.%s' % (ucr.get('hostname'), ucr.get('domainname')),
 		   'schoolwizards/schools/create',
 		   '-e',
+		   '-o', json.dumps(jsonargs),
+		   '-f', 'schoolwizards/schools',
 		   ]
-	if dc_name:
-		cmd += ['-o', "[{'object': {'dc_name': '%(dc_name)s', 'display_name': '%(ou_name)s', 'name': '%(ou_name)s'}}]" % {'dc_name': dc_name, 'ou_name': ou_name}]
-	else:
-		cmd += ['-o', "[{'object': {'display_name': '%(ou_name)s', 'name': '%(ou_name)s'}}]" % {'dc_name': dc_name, 'ou_name': ou_name}]
-	cmd += ['-f', 'schoolwizards/schools']
 
 	print '*** calling %r' % (cmd, )
 	pipe = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -47,6 +51,7 @@ def main():
 	testschool = UCSTestSchool()
 	try:
 		msg = 'new random OU, no DC specified'
+		print '---------------------------[%s]---------------------------' % (msg, )
 		ou_name = uts.random_string()
 		dc_name = 'dc%s-01' % ou_name
 		remove_ous.append(ou_name)
@@ -62,6 +67,7 @@ def main():
 			utils.verify_ldap_object(grp_dn, expected_attr={'uniqueMember': [dc_dn]}, strict=False, should_exist=True)
 
 		msg = 'new random OU, new random DC'
+		print '---------------------------[%s]---------------------------' % (msg, )
 		ou_name = uts.random_string()
 		dc_name = uts.random_string()
 		remove_ous.append(ou_name)
@@ -77,6 +83,7 @@ def main():
 			utils.verify_ldap_object(grp_dn, expected_attr={'uniqueMember': [dc_dn]}, strict=False, should_exist=True)
 
 		msg = 'new random OU, existing DC in other OU'
+		print '---------------------------[%s]---------------------------' % (msg, )
 		ou_name = uts.random_string()
 		remove_ous.append(ou_name)
 		out, err, exitcode = schoolwizards_schools_create(ou_name, dc_name)
@@ -90,7 +97,8 @@ def main():
 			grp_dn = grp_dn % {'ou': ou_name, 'basedn': ucr.get('ldap/base')}
 			utils.verify_ldap_object(grp_dn, expected_attr={'uniqueMember': [dc_dn]}, strict=False, should_exist=True)
 
-		msg = 'cannot create new random OU with existing DC in cn=computers,BASEDN'
+		msg = 'new random OU with existing DC in cn=computers,BASEDN'
+		print '---------------------------[%s]---------------------------' % (msg, )
 		with univention.testing.udm.UCSTestUDM() as udm:
 			print '*** Stopping existing UDM CLI server'
 			udm.stop_cli_server()
@@ -115,6 +123,7 @@ def main():
 
 
 		msg = 'new random OU, new random DC and then try to add a second new random DC'
+		print '---------------------------[%s]---------------------------' % (msg, )
 		ou_name = uts.random_string()
 		dc_name = uts.random_string()
 		remove_ous.append(ou_name)
@@ -140,6 +149,64 @@ def main():
 					  ):
 			grp_dn = grp_dn % {'ou': ou_name, 'basedn': ucr.get('ldap/base')}
 			utils.verify_ldap_object(grp_dn, expected_attr={'uniqueMember': [dc_dn]}, strict=False, should_exist=True)
+
+
+		msg = 'new random OU, new random administrative DC'
+		print '---------------------------[%s]---------------------------' % (msg, )
+		ou_name = uts.random_string()
+		dc_name_administrative = uts.random_string()
+		dc_name = uts.random_string()
+		remove_ous.append(ou_name)
+		out, err, exitcode = schoolwizards_schools_create(ou_name, dc_name, dc_name_administrative)
+		if exitcode:
+			utils.fail('Cannot create %s' % msg)
+		dc_dn = 'cn=%s,cn=dc,cn=server,cn=computers,%s' % (dc_name, testschool.get_ou_base_dn(ou_name))
+		dc_dn_administrative = 'cn=%s,cn=dc,cn=server,cn=computers,%s' % (dc_name_administrative, testschool.get_ou_base_dn(ou_name))
+		utils.verify_ldap_object(dc_dn_administrative, expected_attr={'cn': [dc_name_administrative]}, strict=True, should_exist=True)
+		for grp_dn in ('cn=OU%(ou)s-DC-Edukativnetz,cn=ucsschool,cn=groups,%(basedn)s',
+					   'cn=DC-Edukativnetz,cn=ucsschool,cn=groups,%(basedn)s',
+					  ):
+			grp_dn = grp_dn % {'ou': ou_name, 'basedn': ucr.get('ldap/base')}
+			utils.verify_ldap_object(grp_dn, expected_attr={'uniqueMember': [dc_dn]}, strict=False, should_exist=True)
+		for grp_dn in ('cn=OU%(ou)s-DC-Verwaltungsnetz,cn=ucsschool,cn=groups,%(basedn)s',
+					   'cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,%(basedn)s',
+					  ):
+			grp_dn = grp_dn % {'ou': ou_name, 'basedn': ucr.get('ldap/base')}
+			utils.verify_ldap_object(grp_dn, expected_attr={'uniqueMember': [dc_dn_administrative]}, strict=False, should_exist=True)
+
+
+		msg = 'new random OU, new random educational DC and then try to add a second new random administrative DC'
+		print '---------------------------[%s]---------------------------' % (msg, )
+		ou_name = uts.random_string()
+		dc_name = uts.random_string()
+		remove_ous.append(ou_name)
+		out, err, exitcode = schoolwizards_schools_create(ou_name, dc_name)
+		if exitcode:
+			utils.fail('Cannot create %s' % msg)
+		dc_dn = 'cn=%s,cn=dc,cn=server,cn=computers,%s' % (dc_name, testschool.get_ou_base_dn(ou_name))
+		utils.verify_ldap_object(dc_dn, expected_attr={'cn': [dc_name]}, strict=True, should_exist=True)
+		for grp_dn in ('cn=OU%(ou)s-DC-Edukativnetz,cn=ucsschool,cn=groups,%(basedn)s',
+					   'cn=DC-Edukativnetz,cn=ucsschool,cn=groups,%(basedn)s',
+					  ):
+			grp_dn = grp_dn % {'ou': ou_name, 'basedn': ucr.get('ldap/base')}
+			utils.verify_ldap_object(grp_dn, expected_attr={'uniqueMember': [dc_dn]}, strict=False, should_exist=True)
+
+		dc_name_administrative = uts.random_string()
+		out, err, exitcode = schoolwizards_schools_create(ou_name, dc_name, dc_name_administrative)
+		if exitcode:
+			utils.fail('Cannot create %s' % msg)
+		dc_dn_administrative = 'cn=%s,cn=dc,cn=server,cn=computers,%s' % (dc_name_administrative, testschool.get_ou_base_dn(ou_name))
+		utils.verify_ldap_object(dc_dn_administrative, expected_attr={'cn': [dc_name_administrative]}, strict=True, should_exist=True)
+		for grp_dn in ('cn=OU%(ou)s-DC-Edukativnetz,cn=ucsschool,cn=groups,%(basedn)s',
+					   'cn=DC-Edukativnetz,cn=ucsschool,cn=groups,%(basedn)s',
+					  ):
+			grp_dn = grp_dn % {'ou': ou_name, 'basedn': ucr.get('ldap/base')}
+			utils.verify_ldap_object(grp_dn, expected_attr={'uniqueMember': [dc_dn]}, strict=False, should_exist=True)
+		for grp_dn in ('cn=OU%(ou)s-DC-Verwaltungsnetz,cn=ucsschool,cn=groups,%(basedn)s',
+					   'cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,%(basedn)s',
+					  ):
+			grp_dn = grp_dn % {'ou': ou_name, 'basedn': ucr.get('ldap/base')}
+			utils.verify_ldap_object(grp_dn, expected_attr={'uniqueMember': [dc_dn_administrative]}, strict=False, should_exist=True)
 
 
 	finally:
