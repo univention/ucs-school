@@ -44,7 +44,7 @@ from univention.management.console.modules.mixins import ProgressMixin
 from univention.config_registry import ConfigRegistry
 
 from ucsschool.lib.schoolldap import SchoolBaseModule, open_ldap_connection
-from ucsschool.lib.models.utils import create_passwd, add_module_logger_to_schoollib
+from ucsschool.lib.models.utils import create_passwd, add_module_logger_to_schoollib, stopped_notifier
 
 from univention.management.console.modules.schoolcsvimport.util import CSVStudent, CSVTeacher, CSVStaff, CSVTeachersAndStaff, UCS_License_detection, LicenseInsufficient
 
@@ -259,22 +259,23 @@ class Instance(SchoolBaseModule, ProgressMixin):
 	def import_users(self, iterator, file_id, attrs):
 		lo = open_ldap_connection(self._user_dn, self._password, ucr.get('ldap/server/name'))
 		file_info = None
-		for file_id, attrs in iterator:
-			if file_info is None:
-				file_info = self.file_map[file_id]
-			user = file_info.user_klass.from_frontend_attrs(attrs, file_info.school, file_info.date_format)
-			MODULE.process('Going to %s %s %s' % (user.action, file_info.user_klass.__name__, user.name))
-			action = user.action
-			if action == 'create':
-				action = _('created')
-			elif action == 'modify':
-				action = _('modified')
-			if action == 'delete':
-				action = _('deleted')
-			if user.commit(lo):
-				yield {'username' : user.name, 'action' : action, 'success' : True}
-			else:
-				yield {'username' : user.name, 'action' : action, 'success' : False, 'msg' : user.get_error_msg()}
+		with stopped_notifier():
+			for file_id, attrs in iterator:
+				if file_info is None:
+					file_info = self.file_map[file_id]
+				user = file_info.user_klass.from_frontend_attrs(attrs, file_info.school, file_info.date_format)
+				MODULE.process('Going to %s %s %s' % (user.action, file_info.user_klass.__name__, user.name))
+				action = user.action
+				if action == 'create':
+					action = _('created')
+				elif action == 'modify':
+					action = _('modified')
+				if action == 'delete':
+					action = _('deleted')
+				if user.commit(lo):
+					yield {'username' : user.name, 'action' : action, 'success' : True}
+				else:
+					yield {'username' : user.name, 'action' : action, 'success' : False, 'msg' : user.get_error_msg()}
 		if file_info:
 			os.unlink(file_info.filename)
 			del self.file_map[file_id]
