@@ -26,6 +26,9 @@
 	<listitem><simpara>
 	  The CLI tool <emphasis>rename_class</emphasis> does no longer rename the class share object if renaming of the group share object failed (<ulink url="&ucsbug;34737">Bug 34737</ulink>).
 	</simpara></listitem>
+	<listitem><simpara>
+	  When calling the &ucsUAS; CLI tools like <emphasis>import_user</emphasis>, the &ucsUDN; will be now stopped automatically during the time the tool is running (<ulink url="&ucsbug;34826">Bug 34826</ulink>).
+	</simpara></listitem>
   </itemizedlist>
 </section>
 
