@@ -166,6 +166,15 @@
 			  (<ulink url="&ucsbug;33456">Bug 33456</ulink>).  </simpara></listitem>
 			</itemizedlist>
 		</section>
+		<section>
+		  <title>CSV-Import</title>
+		  <itemizedlist>
+			<listitem><simpara>
+			  The new UMC module <emphasis>CSV-Import</emphasis> stops the &ucsUDN; automatically during the import of the CSV file (<ulink url="&ucsbug;34825">Bug 34825</ulink>).
+			</simpara></listitem>
+		  </itemizedlist>
+		</section>
+		
 <!--
 		<section>
 			<title>Computerroom module</title>
