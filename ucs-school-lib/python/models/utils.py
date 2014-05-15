@@ -122,7 +122,15 @@ def flatten(list_of_lists):
 	return ret
 
 @contextmanager
-def stopped_notifier():
+def stopped_notifier(strict=True):
+	'''Stops univention-directory-notifier while in the block
+	 with stopped_notifier():
+	 	...
+	Starts it in the end.
+	Service if stopped/started by /etc/init.d
+	Raises RuntimeError if stopping failed and strict=True
+	Will not start if ucr get notifier/autostart=no -- but stop!
+	'''
 	service_name = 'univention-directory-notifier'
 	def _run(args):
 		process = subprocess.Popen(args, shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -134,24 +142,28 @@ def stopped_notifier():
 		return process.returncode == 0
 
 	notifier_running = False
-	logger.warn('Stopping %s' % service_name)
+	logger.warning('Stopping %s' % service_name)
 	for process in process_iter():
 		if process.name == service_name:
 			notifier_running = True
 			break
 	if not notifier_running:
-		logger.warn('%s is not running! Skipping' % service_name)
+		logger.warning('%s is not running! Skipping' % service_name)
 	else:
 		if _run(['/etc/init.d/%s' % service_name, 'stop']):
 			logger.info('%s stopped' % service_name)
 		else:
-			logger.error('Failed to stop %s... Will try to start it in the end nonetheless' % service_name)
+			logger.error('Failed to stop %s...' % service_name)
+			if strict:
+				raise RuntimeError('Failed to stop %s, but this seems to be very important (strict=True was specified)' % service_name)
+			else:
+				logger.warning('In the end, will try to start it nonetheless')
 	try:
 		yield
 	finally:
-		logger.warn('Starting %s' % service_name)
+		logger.warning('Starting %s' % service_name)
 		if not notifier_running:
-			logger.warn('Notifier was not running! Skipping')
+			logger.warning('Notifier was not running! Skipping')
 		else:
 			start_disabled = ucr.is_false('notifier/autostart', False)
 			command = ['/etc/init.d/%s' % service_name, 'start']
