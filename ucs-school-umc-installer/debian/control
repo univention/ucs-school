@@ -34,6 +34,7 @@ Description: This installation wizard guides the installation of UCS@school in t
 
 Package: ucs-school-umc-installer-preview
 Architecture: all
+Provides: ucs-school-umc-installer
 Depends: ${misc:Depends},
  univention-management-console-server,
  python-paramiko,
