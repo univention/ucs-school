@@ -123,6 +123,7 @@ def flatten(list_of_lists):
 
 @contextmanager
 def stopped_notifier():
+	service_name = 'univention-directory-notifier'
 	def _run(args):
 		process = subprocess.Popen(args, shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 		stdout, stderr = process.communicate()
@@ -133,27 +134,29 @@ def stopped_notifier():
 		return process.returncode == 0
 
 	notifier_running = False
-	logger.warn('Stopping notifier')
+	logger.warn('Stopping %s' % service_name)
 	for process in process_iter():
-		if process.name == 'univention-directory-notifier':
+		if process.name == service_name:
 			notifier_running = True
 			break
 	if not notifier_running:
-		logger.warn('Notifier is not running! Skipping')
+		logger.warn('%s is not running! Skipping' % service_name)
 	else:
-		if _run(['sv', 'down', 'univention-directory-notifier']):
-			logger.info('Notifier stopped')
+		if _run(['/etc/init.d/%s' % service_name, 'stop']):
+			logger.info('%s stopped' % service_name)
 		else:
-			logger.error('Failed to stop notifier... Will try to start it in the end nonetheless')
+			logger.error('Failed to stop %s... Will try to start it in the end nonetheless' % service_name)
 	try:
 		yield
 	finally:
-		logger.warn('Starting notifier')
+		logger.warn('Starting %s' % service_name)
 		if not notifier_running:
 			logger.warn('Notifier was not running! Skipping')
 		else:
-			if _run(['sv', 'up', 'univention-directory-notifier']):
-				logger.info('Notifier started')
+			start_disabled = ucr.is_false('notifier/autostart', False)
+			command = ['/etc/init.d/%s' % service_name, 'start']
+			if not start_disabled and _run(command):
+				logger.info('%s started' % service_name)
 			else:
-				logger.error('Failed to start notifier... Bad news! Better run "sv up univention-directory-notifier" manually!')
+				logger.error('Failed to start %s... Bad news! Better run "%s" manually!' % (service_name, ' '.join(command))) # correct: shlex... unnecessary
 

@@ -1,3 +1,10 @@
+ucs-school-lib (5.0.35-1) unstable; urgency=low
+
+  * Bug #34825, Bug #34826: Stopping notifier by /etc/init.d, honor autostart
+    ucr variable
+
+ -- Dirk Wiesenthal <wiesenthal@univention.de>  Thu, 15 May 2014 12:49:48 +0200
+
 ucs-school-lib (5.0.34-1) unstable; urgency=low
 
   * Bug #34825, Bug #34826: Support stopping notifier temporarily
