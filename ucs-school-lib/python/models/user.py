@@ -368,14 +368,6 @@ class Student(User):
 			return [SchoolClass.cache(self.school_class, self.school)]
 		return []
 
-	def to_dict(self):
-		ret = super(Student, self).to_dict()
-		school_classes = []
-		for school_class in self.get_school_class_objs():
-			school_classes.append(school_class.get_relative_name())
-		ret['school_class'] = ', '.join(school_classes)
-		return ret
-
 class Teacher(User):
 	school_class = SchoolClassStringAttribute(_('Class'), aka=['Class', 'Klasse'])
 
@@ -410,6 +402,7 @@ class Teacher(User):
 		ret = []
 		if self.school_class:
 			for school_class in self.school_class.split(','):
+				school_class = school_class.strip()
 				ret.append(SchoolClass.cache(school_class, self.school))
 		return ret
 

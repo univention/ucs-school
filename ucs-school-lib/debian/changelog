@@ -1,3 +1,9 @@
+ucs-school-lib (5.0.37-1) unstable; urgency=low
+
+  * Bug #34337: Fix user creation: Correct group name of classes
+
+ -- Dirk Wiesenthal <wiesenthal@univention.de>  Thu, 15 May 2014 17:04:27 +0200
+
 ucs-school-lib (5.0.36-1) unstable; urgency=low
 
   * Bug #34337: Fix user creation: Correct group name of classes

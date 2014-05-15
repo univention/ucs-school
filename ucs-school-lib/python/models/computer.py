@@ -158,7 +158,7 @@ class SchoolComputer(UCSSchoolHelperAbstractClass):
 
 	def get_inventory_numbers(self):
 		if isinstance(self.inventory_number, basestring):
-			return self.inventory_number.split(',')
+			return [inv.strip() for inv in self.inventory_number.split(',')]
 		if isinstance(self.inventory_number, (list, tuple)):
 			return list(self.inventory_number)
 		return []
