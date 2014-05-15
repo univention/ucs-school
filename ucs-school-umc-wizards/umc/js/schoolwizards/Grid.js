@@ -55,6 +55,7 @@ define([
 		module: null,
 		umcpCommand: null,
 		moduleFlavor: null,
+		sortFields: ['school', 'name'],
 		idProperty: '$dn$',
 
 		buildRendering: function() {
@@ -116,13 +117,12 @@ define([
 				standbyDuring: lang.hitch(this, 'standbyDuring')
 			});
 			// when using All schools, sort by school, name
-			grid._grid.sortFields = [{
-				attribute: 'school',
-				descending: false
-			}, {
-				attribute: 'name',
-				descending: false
-			}];
+			grid._grid.sortFields = array.map(this.sortFields, function(field) {
+				return {
+					attribute: field,
+					descending: false
+				};
+			});
 
 			// Add horizontal scrollbar
 			//query('.dojoxGridScrollbox', grid.domNode).style('overflowX', 'auto');
@@ -229,9 +229,9 @@ define([
 					var handler = aspect.before(this._grid._grid, '_onFetchComplete', lang.hitch(this, function(items) {
 						handler.remove();
 						if (items.length === 0) {
-							var title = _('No %(objectNamePlural)s created yet', {objectNamePlural: this.objectNamePlural});
-							var txt = title;
-							txt += '. ' + _('Would you like to create %(firstObject)s?', {firstObject: this.firstObject});
+							var title = _('No %(objectNamePlural)s found', {objectNamePlural: this.objectNamePlural});
+							var txt = _('No %(objectNamePlural)s were found.', {objectNamePlural: this.objectNamePlural});
+							txt += ' ' + _('Would you like to create %(firstObject)s now?', {firstObject: this.firstObject});
 							dialog.confirm(txt, [{
 								name: 'cancel',
 								label: _('Cancel')
@@ -239,7 +239,7 @@ define([
 								name: 'add',
 								'default': true,
 								label: _('Create')
-							}], _('No %(objectNamePlural)s created yet', {objectNamePlural: this.objectNamePlural})).then(lang.hitch(this, function(response) {
+							}], title).then(lang.hitch(this, function(response) {
 								if (response == 'add') {
 									this.createObject();
 								}
@@ -325,9 +325,9 @@ define([
 		},
 
 		getDeleteConfirmMessage: function(objects) {
-			var msg = _('Please confirm to delete the %d selected %s!', objects.length, this.objectNamePlural);
+			var msg = _('Please confirm to delete the %(num)d selected %(objectNamePlural)s!', {num: objects.length, objectNamePlural: this.objectNamePlural});
 			if (objects.length == 1) {
-				msg = _('Please confirm to delete %s "%s"', this.objectNameSingular, this.getObjectIdName(objects[0]));
+				msg = _('Please confirm to delete %(objectNameSingular)s "%(objectName)s"', {objectNameSingular: this.objectNameSingular, objectName: this.getObjectIdName(objects[0])});
 			}
 			return msg;
 		},

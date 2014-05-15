@@ -46,8 +46,9 @@ define([
 		helpText: '',
 		objectNamePlural: _('schools'),
 		objectNameSingular: _('school'),
-		firstObject: _('a first school'),
+		firstObject: _('the first school'),
 		createObjectWizard: SchoolWizard,
+		sortFields: ['display_name'],
 		singleMasterDeferred: null,
 
 		postMixInProperties: function() {
@@ -83,7 +84,7 @@ define([
 		},
 
 		getGridDeleteAction: function() {
-			// it's only possible to delete one OU-school at once
+			// it is only possible to delete one OU-school at once
 			var action = this.inherited(arguments);
 			action.isMultiAction = false;
 			return action;
@@ -103,7 +104,7 @@ define([
 
 		getDeleteConfirmMessage: function(objects) {
 			var school = objects[0];
-			var msg = _('Please confirm to delete the school "%s" (%s).', school.display_name, school.name);
+			var msg = _('Please confirm to delete the school "%(displayName)s" (%(name)s).', {displayName: school.display_name, name: school.name});
 			msg += '<br/><br/>';
 			msg += '<strong>' + _('Warning') + ':</strong> ';
 			msg += _('Deleting this school will also delete every teacher and student.') + '<br/>' + _('This action is cannot be undone.');

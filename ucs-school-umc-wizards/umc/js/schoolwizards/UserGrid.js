@@ -45,9 +45,9 @@ define([
 
 		headerText: _('Management of school users'),
 		helpText: '',
-		objectNamePlural: _('users'),
-		objectNameSingular: _('user'),
-		firstObject: _('a first user'),
+		objectNamePlural: _('school users'),
+		objectNameSingular: _('school user'),
+		firstObject: _('the first school user'),
 		createObjectWizard: UserWizard,
 
 		getGridColumns: function() {

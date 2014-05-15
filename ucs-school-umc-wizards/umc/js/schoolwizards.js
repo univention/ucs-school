@@ -71,18 +71,15 @@ define([
 						// goto school grid. no need for error message
 						return;
 					}
-					dialog.confirm(_('Would you like to create a first school?'), [{
-						name: 'cancel',
-						label: _('Cancel')
-					}, {
-						name: 'add',
+					var txt = _('No school could be found within the domain. Before students, classes, and computers can be administrated, at least one school has to be created.');
+					txt = txt + '<br />' + _('The module for administrating schools will be opened.');
+					dialog.confirm(txt, [{
+						name: 'submit',
 						'default': true,
 						label: _('Create school')
 					}], _('No school found')).then(lang.hitch(this, function(response) {
-						if (response == 'add') {
-							topic.publish('/umc/modules/open', 'schoolwizards', 'schoolwizards/schools');
-							topic.publish('/umc/tabs/close', this);
-						}
+						topic.publish('/umc/modules/open', 'schoolwizards', 'schoolwizards/schools');
+						topic.publish('/umc/tabs/close', this);
 					}));
 				})
 			);

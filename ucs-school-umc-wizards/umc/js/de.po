@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-wizards\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2014-05-14 18:06+0200\n"
+"POT-Creation-Date: 2014-05-15 13:53+0200\n"
 "PO-Revision-Date: 2014-04-24 16:49+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -42,8 +42,7 @@ msgstr "Erweiterte Einstellungen"
 msgid "All"
 msgstr "Alle"
 
-#: umc/js/schoolwizards.js:76 umc/js/schoolwizards/Grid.js:237
-#: umc/js/schoolwizards/Grid.js:340
+#: umc/js/schoolwizards/Grid.js:237 umc/js/schoolwizards/Grid.js:340
 msgid "Cancel"
 msgstr "Abbrechen"
 
@@ -233,10 +232,24 @@ msgstr "Name der Schule"
 msgid "No %(objPlural)s could be found"
 msgstr "Es konnten keine %(objPlural)s gefunden werden"
 
-#: umc/js/schoolwizards/Grid.js:232 umc/js/schoolwizards/Grid.js:242
+#: umc/js/schoolwizards/Grid.js:232
 #, python-format
-msgid "No %(objectNamePlural)s created yet"
-msgstr "Noch keine %(objectNamePlural)s erstellt"
+msgid "No %(objectNamePlural)s found"
+msgstr "Keine %(objectNamePlural)s gefunden"
+
+#: umc/js/schoolwizards/Grid.js:233
+#, python-format
+msgid "No %(objectNamePlural)s were found."
+msgstr "Es wurden keine %(objectNamePlural)s gefunden."
+
+#: umc/js/schoolwizards.js:76
+msgid ""
+"No school could be found within the domain. Before students, classes, and "
+"computers can be administrated, at least one school has to be created."
+msgstr ""
+"Es wurde keine Schule in der Domäne gefunden. Bevor Schüler, Klassen und "
+"Rechner verwaltet werden können, muss mindestens eine Schule eingerichtet "
+"werden."
 
 #: umc/js/schoolwizards.js:81
 msgid "No school found"
@@ -248,18 +261,23 @@ msgstr "Passwort"
 
 #: umc/js/schoolwizards/Grid.js:330
 #, python-format
-msgid "Please confirm to delete %s \"%s\""
-msgstr "Bitte bestätigen, dass %s \"%s\" gelöscht werden soll"
+msgid "Please confirm to delete %(objectNameSingular)s \"%(objectName)s\""
+msgstr ""
+"Bitte bestätigen, dass %(objectNameSingular)s \"%(objectName)s\" gelöscht "
+"werden soll"
 
 #: umc/js/schoolwizards/Grid.js:328
 #, python-format
-msgid "Please confirm to delete the %d selected %s!"
-msgstr "Bitte bestätigen Sie die Löschung der %d ausgewählten %s!"
+msgid "Please confirm to delete the %(num)d selected %(objectNamePlural)s!"
+msgstr ""
+"Bitte bestätigen Sie die Löschung der %(num)d ausgewählten "
+"%(objectNamePlural)s!"
 
 #: umc/js/schoolwizards/SchoolGrid.js:106
 #, python-format
-msgid "Please confirm to delete the school \"%s\" (%s)."
-msgstr "Bitte bestätigen Sie die Löschung der Schule \"%s\" (%s)."
+msgid "Please confirm to delete the school \"%(displayName)s\" (%(name)s)."
+msgstr ""
+"Bitte bestätigen Sie die Löschung der Schule \"%(displayName)s\" (%(name)s)."
 
 #: umc/js/schoolwizards/UserGrid.js:64 umc/js/schoolwizards/UserGrid.js:105
 msgid "Role"
@@ -352,6 +370,10 @@ msgstr ""
 "dem Unterstrich bestehen. In der Regel kann der automatisch vorgeschlagene "
 "Wert unverändert übernommen werden."
 
+#: umc/js/schoolwizards.js:77
+msgid "The module for administrating schools will be opened."
+msgstr "Es wird daher jetzt das Modul zur Verwaltung von Schulen geöffnet."
+
 #: umc/js/schoolwizards/SchoolWizard.js:142
 #, python-format
 msgid ""
@@ -393,28 +415,8 @@ msgstr "Warnung"
 
 #: umc/js/schoolwizards/Grid.js:234
 #, python-format
-msgid "Would you like to create %(firstObject)s?"
-msgstr "Möchten Sie %(firstObject)s angelegen?"
-
-#: umc/js/schoolwizards.js:74
-msgid "Would you like to create a first school?"
-msgstr "Möchten Sie eine erste Schule angelegen?"
-
-#: umc/js/schoolwizards/ComputerGrid.js:50
-msgid "a first computer"
-msgstr "einen ersten Rechner"
-
-#: umc/js/schoolwizards/SchoolGrid.js:49
-msgid "a first school"
-msgstr "eine erste Schule"
-
-#: umc/js/schoolwizards/ClassGrid.js:50
-msgid "a first school class"
-msgstr "eine erste Schulklasse"
-
-#: umc/js/schoolwizards/UserGrid.js:50
-msgid "a first user"
-msgstr "einen ersten Benutzer"
+msgid "Would you like to create %(firstObject)s now?"
+msgstr "Möchten Sie jetzt %(firstObject)s angelegen?"
 
 #: umc/js/schoolwizards/ClassGrid.js:49
 msgid "class"
@@ -436,17 +438,33 @@ msgstr "Rechner"
 msgid "school"
 msgstr "Schule"
 
+#: umc/js/schoolwizards/UserGrid.js:49
+msgid "school user"
+msgstr "Schulbenutzer"
+
+#: umc/js/schoolwizards/UserGrid.js:48
+msgid "school users"
+msgstr "Schulbenutzer"
+
 #: umc/js/schoolwizards/SchoolGrid.js:47
 msgid "schools"
 msgstr "Schulen"
 
-#: umc/js/schoolwizards/UserGrid.js:49
-msgid "user"
-msgstr "Benutzer"
+#: umc/js/schoolwizards/ClassGrid.js:50
+msgid "the first class"
+msgstr "die erste Klasse"
 
-#: umc/js/schoolwizards/UserGrid.js:48
-msgid "users"
-msgstr "Benutzer"
+#: umc/js/schoolwizards/ComputerGrid.js:50
+msgid "the first computer"
+msgstr "den ersten Rechner"
+
+#: umc/js/schoolwizards/SchoolGrid.js:49
+msgid "the first school"
+msgstr "die erste Schule"
+
+#: umc/js/schoolwizards/UserGrid.js:50
+msgid "the first school user"
+msgstr "den ersten Schulbenutzer"
 
 #: umc/js/schoolwizards/Wizard.js:61
 msgid "{itemSchool}: create a new {itemType}"
@@ -474,6 +492,9 @@ msgstr "{itemSchool}: {itemType} {itemName} bearbeiten"
 #~ msgid "LDAP name of the school OU"
 #~ msgstr "LDAP-Name der Schul-OU"
 
+#~ msgid "No %(objectNamePlural)s could be found."
+#~ msgstr "Es konnten keine %(objPlural)s gefunden werden"
+
 #~ msgid "Schools"
 #~ msgstr "Schulen"
 
@@ -488,3 +509,6 @@ msgstr "{itemSchool}: {itemType} {itemName} bearbeiten"
 
 #~ msgid "User"
 #~ msgstr "Benutzer"
+
+#~ msgid "Would you like to create a first school?"
+#~ msgstr "Möchten Sie eine erste Schule angelegen?"

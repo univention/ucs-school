@@ -47,7 +47,7 @@ define([
 		helpText: '',
 		objectNamePlural: _('computers'),
 		objectNameSingular: _('computer'),
-		firstObject: _('a first computer'),
+		firstObject: _('the first computer'),
 		createObjectWizard: ComputerWizard,
 
 		getGridColumns: function() {
