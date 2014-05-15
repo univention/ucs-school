@@ -235,7 +235,7 @@ class User(UCSSchoolHelperAbstractClass):
 		# Bug #32337: check if the class exists without OU prefix
 		# if it does not exist the class name with OU prefix is used
 		school_class = SchoolClass.cache(class_name, self.school)
-		if school_class.get_relative_name() != school_class.name:
+		if school_class.get_relative_name() == school_class.name:
 			if not school_class.exists(lo):
 				class_name = '%s-%s' % (self.school, class_name)
 				school_class = SchoolClass.cache(class_name, self.school)
