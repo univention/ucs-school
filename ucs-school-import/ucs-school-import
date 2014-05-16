@@ -2847,7 +2847,10 @@ def move_domaincontroller_to_ou(co, lo, baseDN, options):
 	ouDn = oulist[0].dn
 
 	group_filter = univention.admin.filter.conjunction('&', [
-			univention.admin.filter.expression('cn', 'OU%s-DC-Edukativnetz' % options.ou),
+			univention.admin.filter.conjunction('|', [
+					univention.admin.filter.expression('cn', 'OU%s-DC-Edukativnetz' % options.ou),
+					univention.admin.filter.expression('cn', 'OU%s-DC-Verwaltungsnetz' % options.ou),
+					]),
 			univention.admin.filter.expression('uniqueMember', slave.dn),
 			])
 	groups = univention.admin.modules.lookup(group_module, co, lo, scope='sub', base=baseDN, filter=group_filter)

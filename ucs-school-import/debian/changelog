@@ -1,3 +1,10 @@
+ucs-school-import (10.0.16-1) unstable; urgency=low
+
+  * Bug #34166: move_domaincontroller_to_ou is now able to move
+    administrative school DCs
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 16 May 2014 16:27:39 +0200
+
 ucs-school-import (10.0.15-1) unstable; urgency=low
 
   * Bug #31407: fixed district mode handling of ucs-school-change-share-server
