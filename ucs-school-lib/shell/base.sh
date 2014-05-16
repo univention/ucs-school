@@ -58,7 +58,7 @@ school_ou() {
 		ldap_hostdn="$(/usr/sbin/univention-config-registry get ldap/hostdn)"
 	fi
 
-	echo "$ldap_hostdn" | sed -nre 's/^.*,[oO][uU]=([^,]+),.*/\1/p'
+	echo "$ldap_hostdn" | grep -oiE ',ou=.*$' | sed -nre 's/^,[oO][uU]=([^,]+),.*/\1/p'
 }
 
 school_dn() {

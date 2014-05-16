@@ -13,9 +13,10 @@ Provides: sfb-import
 Depends: univention-directory-manager,
  ucs-school-import-schema,
  univention-policy-tools (>= 5.0.8),
+ shell-ucs-school (>= 5.0.38),
  python-ucs-school (>= 5.0.3-18),
  univention-config,
-Description: UCS@School: Importing objects like users and computers
+Description: UCS@school: Importing objects like users and computers
  This package provides scripts for importing objects like users, groups,
  networks and computers.
  .
@@ -33,7 +34,7 @@ Replaces: sfb-import-schema
 Conflicts: sfb-import-schema
 Provides: sfb-import-schema
 Architecture: all
-Description: UCS@School: LDAP import schema and custom attributes
+Description: UCS@school: LDAP import schema and custom attributes
  This package provides LDAP schema required by ucs-school-import.
  .
  This package is part of Univention Corporate Server (UCS),

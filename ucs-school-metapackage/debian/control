@@ -23,6 +23,7 @@ Depends: univention-ldap-server (>= 8.0.77-4),
  univention-management-console-web-server (>= 1.0.320-1),
  python-univention-lib (>= 1.0.51-3),
  shell-univention-lib (>= 1.0.51-3),
+ shell-ucs-school (>= 5.0.38),
  univention-samba4-sysvol-sync,
  univention-config
 Recommends:
@@ -65,6 +66,7 @@ Depends: univention-ldap-server (>= 8.0.77-4),
  shell-ucs-school,
  python-univention-lib (>= 1.0.51-3),
  shell-univention-lib (>= 1.0.51-3),
+ shell-ucs-school (>= 5.0.38),
  python-ucs-school (>= 5.0.3-17),
  univention-config
 Recommends:
@@ -114,6 +116,7 @@ Depends: univention-ldap-server (>= 8.0.77-4),
  python-univention (>= 6.0.21-1),
  python-univention-lib (>= 1.0.51-3),
  shell-univention-lib (>= 1.0.51-3),
+ shell-ucs-school (>= 5.0.38),
  python-ucs-school (>= 5.0.3-17),
  ucs-school-netlogon
 Recommends:
@@ -146,7 +149,7 @@ Description: UCS@School meta package for UCS DC Master System (single server env
 Package: ucs-school-nonedu-slave
 Architecture: all
 Depends: univention-config,
- shell-ucs-school (>= 5.0.3-17),
+ shell-ucs-school (>= 5.0.38),
  python-ucs-school (>= 5.0.3-17),
  univention-samba4 (>= 1.0.138-11) | univention-samba (>= 6.0.27-1),
  univention-s4-connector (>= 6.0.128-24) | univention-samba-slave-pdc,

@@ -31,6 +31,7 @@
 # <http://www.gnu.org/licenses/>.
 
 . /usr/share/univention-lib/all.sh
+. /usr/share/ucs-school-lib/base.sh
 
 display_help() {
 	cat <<-EOL
@@ -48,36 +49,6 @@ display_help() {
 	  The script must be called with IP of a UCS@school DC running the S4 Connector service
 
 	EOL
-}
-
-school_ou() {
-	# syntax: school_ou [hostdn]
-	#
-	# Tries to determine the LDAP name of the host's OU.
-	# The OU name is derived from the given host DN. If no DN has been passed to
-	# the function, the hostdn of the system is used as fallback.
-	# PLEASE NOTE: This function works only on domaincontroller_slave systems!
-	#              Other systems will return an empty value!
-	#
-	# example:
-	# $ ucr get ldap/hostdn
-	# cn=myslave,cn=dc,cn=server,cn=computers,ou=gymmitte,dc=example,dc=com
-	# $ school_ou
-	# gymmitte
-	# $ school_ou cn=myslave,cn=dc,cn=server,cn=computers,ou=foobar,dc=example,dc=com
-	# foobar
-	# $ school_ou cn=myslave,cn=dc,cn=server,cn=computers,ou=foo,ou=bar,dc=example,dc=com
-	# foo
-
-	local ldap_hostdn
-
-	if [ -n "$1" ] ; then
-		ldap_hostdn=",$1" # add leading comma, in case only the DN of the OU is given
-	else
-		ldap_hostdn="$(/usr/sbin/univention-config-registry get ldap/hostdn)"
-	fi
-
-	echo "$ldap_hostdn" | sed -nre 's/^.*,[oO][uU]=([^,]+),.*/\1/p'
 }
 
 eval "$(univention-config-registry shell)"
