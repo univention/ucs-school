@@ -30,6 +30,8 @@
 # <http://www.gnu.org/licenses/>.
 #
 
+. /usr/share/univention-lib/all.sh
+
 OU="$1"
 DNOLD="$2"
 DNNEW="$3"
@@ -51,17 +53,22 @@ eval "$(univention-config-registry shell)"
 FQDNOLD="$(univention-ldapsearch -LLL -x -b "$DNOLD" uid | grep ^uid | sed -re 's|uid: ||' -e 's|\$$||').$domainname"
 FQDNNEW="$(univention-ldapsearch -LLL -x -b "$DNNEW" uid | grep ^uid | sed -re 's|uid: ||' -e 's|\$$||').$domainname"
 
+district=""
+if is_ucr_true "ucsschool/ldap/district/enable" ; then
+	district=",ou=${OU:0:2}"
+fi
+
 echo "OU: $OU"
 echo "old server fqdn: $FQDNOLD"
 echo "new server fqdn: $FQDNNEW"
 echo ""
 echo "changing file shares"
-univention-ldapsearch -LLL -b "ou=$OU,$ldap_base" -x "(&(objectClass=univentionShare)(univentionShareHost=$FQDNOLD))" dn | grep ^dn | sed -re 's|^dn: ||' | while read dn; do
+univention-ldapsearch -LLL -b "ou=$OU${district},$ldap_base" -x "(&(objectClass=univentionShare)(univentionShareHost=$FQDNOLD))" dn | ldapsearch-wrapper | grep ^dn | sed -re 's|^dn: ||' | while read dn; do
 	univention-directory-manager shares/share modify --dn "$dn" --set host="$FQDNNEW"
 done
 
 echo ""
 echo "changing printer shares"
-univention-ldapsearch -LLL -b "ou=$OU,$ldap_base" -x "(&(objectClass=univentionPrinter)(univentionPrinterSpoolHost=$FQDNOLD))" dn | grep ^dn | sed -re 's|^dn: ||' | while read dn; do
+univention-ldapsearch -LLL -b "ou=$OU${district},$ldap_base" -x "(&(objectClass=univentionPrinter)(univentionPrinterSpoolHost=$FQDNOLD))" dn | ldapsearch-wrapper | grep ^dn | sed -re 's|^dn: ||' | while read dn; do
 	univention-directory-manager shares/printer modify --dn "$dn" --set spoolHost="$FQDNNEW"
 done

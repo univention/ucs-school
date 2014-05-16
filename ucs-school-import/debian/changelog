@@ -1,3 +1,9 @@
+ucs-school-import (10.0.15-1) unstable; urgency=low
+
+  * Bug #31407: fixed district mode handling of ucs-school-change-share-server
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 16 May 2014 08:59:34 +0200
+
 ucs-school-import (10.0.14-7) unstable; urgency=low
 
   * Bug #34826: Stopping notifier while using the import
