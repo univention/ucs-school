@@ -59,12 +59,16 @@ def main():
 		if exitcode:
 			utils.fail('Cannot create %s' % msg)
 		dc_dn = 'cn=%s,cn=dc,cn=server,cn=computers,%s' % (dc_name, testschool.get_ou_base_dn(ou_name))
-		utils.verify_ldap_object(dc_dn, expected_attr={'cn': [dc_name]}, strict=True, should_exist=True)
-		for grp_dn in ('cn=OU%(ou)s-DC-Edukativnetz,cn=ucsschool,cn=groups,%(basedn)s',
-					   'cn=DC-Edukativnetz,cn=ucsschool,cn=groups,%(basedn)s',
-					  ):
-			grp_dn = grp_dn % {'ou': ou_name, 'basedn': ucr.get('ldap/base')}
-			utils.verify_ldap_object(grp_dn, expected_attr={'uniqueMember': [dc_dn]}, strict=False, should_exist=True)
+		if testschool._ucr.get('ucsschool/singlemaster'):
+			# on singlemaster systems a seperate DC should not be created
+			utils.verify_ldap_object(dc_dn, expected_attr={'cn': [dc_name]}, strict=True, should_exist=False)
+		else:
+			utils.verify_ldap_object(dc_dn, expected_attr={'cn': [dc_name]}, strict=True, should_exist=True)
+			for grp_dn in ('cn=OU%(ou)s-DC-Edukativnetz,cn=ucsschool,cn=groups,%(basedn)s',
+						   'cn=DC-Edukativnetz,cn=ucsschool,cn=groups,%(basedn)s',
+						   ):
+				grp_dn = grp_dn % {'ou': ou_name, 'basedn': ucr.get('ldap/base')}
+				utils.verify_ldap_object(grp_dn, expected_attr={'uniqueMember': [dc_dn]}, strict=False, should_exist=True)
 
 		msg = 'new random OU, new random DC'
 		print '---------------------------[%s]---------------------------' % (msg, )
