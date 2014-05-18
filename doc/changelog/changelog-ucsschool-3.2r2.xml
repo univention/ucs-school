@@ -175,12 +175,19 @@
 		  </itemizedlist>
 		</section>
 		
-<!--
 		<section>
-			<title>Computerroom module</title>
-			<itemizedlist>
-			</itemizedlist>
+		  <title>Computerroom module</title>
+		  <itemizedlist>
+			<listitem>
+			  <simpara> 
+				The UMC module <emphasis>Computerroom</emphasis> now tries to open the correct
+				computerroom automatically. This is achieved by determining the IP address of the browser connecting
+				to the UMC (<ulink url="&ucsbug;25762">Bug 25762</ulink>).
+			  </simpara>
+			</listitem>
+		  </itemizedlist>
 		</section>
+<!--
 		<section>
 			<title>Helpdesk module</title>
 		</section>
