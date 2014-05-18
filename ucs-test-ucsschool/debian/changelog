@@ -1,3 +1,9 @@
+ucs-test-ucsschool (1.0.53-1) unstable; urgency=low
+
+  * Bug #34801: added additional check to 40_schoolwizard_school_create
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Sun, 18 May 2014 20:56:08 +0200
+
 ucs-test-ucsschool (1.0.52-1) unstable; urgency=low
 
   * Bug #34801: fixed 40_schoolwizard_school_create on singlemaster systems

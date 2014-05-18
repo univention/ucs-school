@@ -212,6 +212,36 @@ def main():
 			grp_dn = grp_dn % {'ou': ou_name, 'basedn': ucr.get('ldap/base')}
 			utils.verify_ldap_object(grp_dn, expected_attr={'uniqueMember': [dc_dn_administrative]}, strict=False, should_exist=True)
 
+		msg = 'new random OU with existing administrative DC in cn=computers,BASEDN'
+		print '---------------------------[%s]---------------------------' % (msg, )
+		with univention.testing.udm.UCSTestUDM() as udm:
+			print '*** Stopping existing UDM CLI server'
+			udm.stop_cli_server()
+
+			# create new DC
+			dc_name = uts.random_string()
+			dc_name_administrative = uts.random_string()
+			dc_dn_administrative = udm.create_object('computers/domaincontroller_slave', position='cn=computers,%s' % (ucr.get('ldap/base'), ), name=dc_name_administrative)
+			utils.verify_ldap_object(dc_dn_administrative, expected_attr={'cn': [dc_name_administrative]}, strict=True, should_exist=True)
+
+			ou_name = uts.random_string()
+			remove_ous.append(ou_name)
+			out, err, exitcode = schoolwizards_schools_create(ou_name, dc_name, dc_name_administrative)
+			if exitcode:
+				utils.fail('Cannot create %s' % msg)
+
+			dc_dn = 'cn=%s,cn=dc,cn=server,cn=computers,%s' % (dc_name, testschool.get_ou_base_dn(ou_name))
+			utils.verify_ldap_object(dc_dn, expected_attr={'cn': [dc_name]}, strict=True, should_exist=True)
+			for grp_dn in ('cn=OU%(ou)s-DC-Edukativnetz,cn=ucsschool,cn=groups,%(basedn)s',
+						   'cn=DC-Edukativnetz,cn=ucsschool,cn=groups,%(basedn)s',
+					  ):
+				grp_dn = grp_dn % {'ou': ou_name, 'basedn': ucr.get('ldap/base')}
+				utils.verify_ldap_object(grp_dn, expected_attr={'uniqueMember': [dc_dn]}, strict=False, should_exist=True)
+			for grp_dn in ('cn=OU%(ou)s-DC-Verwaltungsnetz,cn=ucsschool,cn=groups,%(basedn)s',
+						   'cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,%(basedn)s',
+						   ):
+				grp_dn = grp_dn % {'ou': ou_name, 'basedn': ucr.get('ldap/base')}
+				utils.verify_ldap_object(grp_dn, expected_attr={'uniqueMember': [dc_dn_administrative]}, strict=False, should_exist=True)
 
 	finally:
 		for ou in remove_ous:
