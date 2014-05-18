@@ -578,7 +578,7 @@ class Instance(Base):
 		schoolOU=StringSanitizer(required=True),
 		setup=ChoicesSanitizer(['multiserver', 'singlemaster']),
 		server_type=ChoicesSanitizer(['educational', 'administrative']),
-		nameEduServer=HostSanitizer(regex_pattern=RE_HOSTNAME_OR_EMPTY),  # javascript wizard page always passes value to backend, even if empty
+		nameEduServer=StringSanitizer(regex_pattern=RE_HOSTNAME_OR_EMPTY),  # javascript wizard page always passes value to backend, even if empty
 	)
 	def install(self, request):
 		# get all arguments
