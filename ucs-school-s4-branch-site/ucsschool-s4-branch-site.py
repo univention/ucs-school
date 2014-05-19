@@ -131,8 +131,7 @@ listener.setuid(0)
 try:
 	on_load()
 except ldap.INVALID_CREDENTIALS as ex:
-	ud.debug(ud.LISTENER, ud.ERROR, '%s: Error accessing LDAP via machine account: %s' % (name, ex))
-	sys.exit(1)
+	raise ImportError("Error accessing LDAP via machine account: %s" % (ex,))
 finally:
 	listener.unsetuid()
 
