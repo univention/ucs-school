@@ -41,6 +41,7 @@ import univention.config_registry
 ## import s4-connector listener module code, but don't generate pyc file
 import os
 import sys
+import ldap
 sys.dont_write_bytecode = True
 import imp
 s4_connector_listener_path = '/usr/lib/univention-directory-listener/system/s4-connector.py'
@@ -129,6 +130,9 @@ def on_load(ldap_machine_read=None, ldap_position=None, search_base=None):
 listener.setuid(0)
 try:
 	on_load()
+except ldap.INVALID_CREDENTIALS as ex:
+	ud.debug(ud.LISTENER, ud.ERROR, '%s: Error accessing LDAP via machine account: %s' % (name, ex))
+	sys.exit(1)
 finally:
 	listener.unsetuid()
 
