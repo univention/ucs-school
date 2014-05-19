@@ -1,3 +1,10 @@
+ucs-school-import (10.0.17-2) unstable; urgency=medium
+
+  * Fix handling of ucsschool/import/roleshare in 52marktplatz_create hook
+    (Bug #34335)
+
+ -- Arvid Requate <requate@univention.de>  Mon, 19 May 2014 16:59:10 +0200
+
 ucs-school-import (10.0.17-1) unstable; urgency=low
 
   * Bug #31407: fixed district mode related bug in ucs-school-join-secondary-samba4
