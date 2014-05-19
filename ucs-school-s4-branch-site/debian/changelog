@@ -1,3 +1,10 @@
+ucs-school-s4-branch-site (1.0.2-4) unstable; urgency=medium
+
+  * Don't trigger S4 Connector if connector/s4/autostart has not been
+    allowed at the time the listener module was last started (Bug #32187).
+
+ -- Arvid Requate <requate@univention.de>  Mon, 19 May 2014 21:33:53 +0200
+
 ucs-school-s4-branch-site (1.0.2-3) unstable; urgency=medium
 
   * Don't sys.exit, raise ImportError instead (Bug #32187)

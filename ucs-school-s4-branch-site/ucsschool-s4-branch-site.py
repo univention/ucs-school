@@ -350,6 +350,10 @@ def postrun():
 	global _s4_connector_restart
 	global _relativeDomainName_trigger_set
 
+	if not listener.configRegistry.is_true('connector/s4/autostart', True):
+		univention.debug.debug(univention.debug.LISTENER, univention.debug.PROCESS, '%s: S4 Connector restart skipped, disabled via connector/s4/autostart.' % (name,))
+		return
+
 	if os.path.isfile('/etc/init.d/univention-s4-connector'):
 		if _s4_connector_restart:
 			univention.debug.debug(univention.debug.LISTENER, univention.debug.PROCESS, '%s: Restarting S4 Connector' % (name,))
