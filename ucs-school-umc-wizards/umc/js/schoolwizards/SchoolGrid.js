@@ -27,18 +27,21 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-/*global define*/
+/*global define window*/
 
 define([
 	"dojo/_base/declare",
 	"dojo/_base/lang",
 	"dojo/_base/array",
+	"dojo/topic",
 	"dojo/Deferred",
+	"umc/tools",
+	"umc/dialog",
 	"umc/widgets/TextBox",
 	"umc/modules/schoolwizards/SchoolWizard",
 	"umc/modules/schoolwizards/Grid",
 	"umc/i18n!umc/modules/schoolwizards"
-], function(declare, lang, array, Deferred, TextBox, SchoolWizard, Grid, _) {
+], function(declare, lang, array, topic, Deferred, tools, dialog, TextBox, SchoolWizard, Grid, _) {
 
 	return declare("umc.modules.schoolwizards.SchoolGrid", [Grid], {
 
@@ -109,6 +112,29 @@ define([
 			msg += '<strong>' + _('Warning') + ':</strong> ';
 			msg += _('Deleting this school will also delete every teacher and student.') + '<br/>' + _('This action is cannot be undone.');
 			return msg;
+		},
+
+		deleteObjects: function(ids, objects) {
+			var deferred = this.inherited(arguments);
+			deferred.then(lang.hitch(this, function() {
+				this.relogin();
+			}));
+			return deferred;
+		},
+
+		relogin: function() {
+			// copied from umc/app.js with different wording
+			dialog.confirm(_('After deleting a school it is recommended to start with a new session. A list of all schools was saved at the beginning in various places which is now outdated. This may result in (harmless but annoying) error messages. Do you want to logout?'), [{
+				label: _('Cancel')
+			}, {
+				label: _('Logout'),
+				'default': true,
+				callback: lang.hitch(this, function() {
+					topic.publish('/umc/actions', 'session', 'logout');
+					tools.closeSession();
+					window.location.reload();
+				})
+			}]);
 		}
 	});
 });

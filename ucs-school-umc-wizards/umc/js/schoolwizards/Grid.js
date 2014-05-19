@@ -356,7 +356,7 @@ define([
 					school: object.school
 				});
 			}, this);
-			this.standbyDuring(transaction.commit()).then(
+			return this.standbyDuring(transaction.commit()).then(
 				function(response) {
 					var errorMessages = [];
 					array.forEach(response, function(res) {
