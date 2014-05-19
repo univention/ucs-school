@@ -1,4 +1,4 @@
-#!/bin/sh 
+#!/bin/bash 
 #
 # UCS@School
 #  join script
@@ -37,19 +37,50 @@ joinscript_init
 eval "$(ucr shell)"
 . /usr/share/univention-lib/all.sh
 
-ensure_that_all_udm_generate_sids() {
-	local policy_name
-	local ucr_policy_base
-	policy_name="ucsschool-samba4"
-	ucr_policy_base="cn=config-registry,cn=policies,$ldap_base"
-	univention-directory-manager policies/registry create --ignore_exists "$@" \
-		--position "$ucr_policy_base" \
-		--set name="$policy_name" \
-		--set registry="directory/manager/samba3/legacy yes"
+append_ucr_policy_to_base() {
+    local policy_dn_list
+    local policy_dn
+    local ldif
+    local tmp_dn
+    local policy_name
+    local ucr_policy_base
+    local key
+    local value
 
-	univention-directory-manager container/dc modify --ignore_exists "$@" \
-		--dn "$ldap_base" \
-		--policy-reference "cn=$policy_name,$ucr_policy_base"
+    key="${1?append_ucr_policy: Key missing}"
+    value="${2?append_ucr_policy: Value missing}"
+    shift 2
+
+    policy_dn_list=$(univention-directory-manager container/dc list "$@" \
+        --dn "$ldap_base" | sed -n 's/^\s*univentionPolicyReference: //p')
+
+    while read policy_dn; do
+        ldif=$(univention-ldapsearch -x -b "$policy_dn" -s base \
+            "(objectClass=univentionPolicyRegistry)" \
+            univentionRegistry \
+            | ldapsearch-wrapper
+        )
+        tmp_dn=$(sed -n '/^dn: /p' <<<"$ldif")
+        if [ -n "$tmp_dn" ]; then
+            univention-directory-manager policies/registry modify "$@" \
+                --dn "$policy_dn" \
+                --append registry="$key $value" 
+            break
+        fi
+    done <<<"$policy_dn_list"
+
+    if [ -z "$tmp_dn" ]; then
+        policy_name="ucsschool-config-registry"
+        ucr_policy_base="cn=config-registry,cn=policies,$ldap_base"
+        univention-directory-manager policies/registry create --ignore_exists "$@" \
+            --position "$ucr_policy_base" \
+            --set name="$policy_name" \
+            --set registry="$key $value" 
+        
+        univention-directory-manager container/dc modify "$@" \
+            --dn "$ldap_base" \
+            --policy-reference "cn=$policy_name,$ucr_policy_base"
+    fi
 }
 
 # Added dns-$hostname to the ignore list
@@ -98,7 +129,10 @@ if [ $JS_LAST_EXECUTED_VERSION -lt 1 ]; then
 	fi
 fi
 
-ensure_that_all_udm_generate_sids "$@"
+append_ucr_policy_to_base directory/manager/samba3/legacy yes "$@"
+if [ $JS_LAST_EXECUTED_VERSION -gt 0 ]; then
+	append_ucr_policy_to_base ucsschool/import/roleshare no "$@"
+fi
 
 ucs_addServiceToLocalhost 'UCS@school' "$@"
 
