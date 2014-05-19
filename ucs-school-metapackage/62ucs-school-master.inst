@@ -38,49 +38,67 @@ eval "$(ucr shell)"
 . /usr/share/univention-lib/all.sh
 
 append_ucr_policy_to_base() {
-    local policy_dn_list
-    local policy_dn
-    local ldif
-    local tmp_dn
-    local policy_name
-    local ucr_policy_base
-    local key
-    local value
+	local policy_dn_list
+	local policy_dn
+	local ldif
+	local tmp_ucr_policy_dn
+	local tmp_str
+	local policy_name
+	local ucr_policy_base
+	local key
+	local key_hex
+	local value
+	local target_ucr_policy_dn
 
-    key="${1?append_ucr_policy: Key missing}"
-    value="${2?append_ucr_policy: Value missing}"
-    shift 2
+	key="${1?append_ucr_policy: Key missing}"
+	value="${2?append_ucr_policy: Value missing}"
+	shift 2
 
-    policy_dn_list=$(univention-directory-manager container/dc list "$@" \
-        --dn "$ldap_base" | sed -n 's/^\s*univentionPolicyReference: //p')
+	key_hex=$(python -c "print '$key'.encode('hex')")
 
-    while read policy_dn; do
-        ldif=$(univention-ldapsearch -x -b "$policy_dn" -s base \
-            "(objectClass=univentionPolicyRegistry)" \
-            univentionRegistry \
-            | ldapsearch-wrapper
-        )
-        tmp_dn=$(sed -n '/^dn: /p' <<<"$ldif")
-        if [ -n "$tmp_dn" ]; then
-            univention-directory-manager policies/registry modify "$@" \
-                --dn "$policy_dn" \
-                --append registry="$key $value" 
-            break
-        fi
-    done <<<"$policy_dn_list"
+	policy_dn_list=$(univention-directory-manager container/dc list "$@" \
+		--dn "$ldap_base" | sed -n 's/^\s*univentionPolicyReference: //p')
 
-    if [ -z "$tmp_dn" ]; then
-        policy_name="ucsschool-config-registry"
-        ucr_policy_base="cn=config-registry,cn=policies,$ldap_base"
-        univention-directory-manager policies/registry create --ignore_exists "$@" \
-            --position "$ucr_policy_base" \
-            --set name="$policy_name" \
-            --set registry="$key $value" 
-        
-        univention-directory-manager container/dc modify "$@" \
-            --dn "$ldap_base" \
-            --policy-reference "cn=$policy_name,$ucr_policy_base"
-    fi
+	while read policy_dn; do
+		ldif=$(univention-ldapsearch -xLLL -b "$policy_dn" -s base \
+			"(objectClass=univentionPolicyRegistry)" \
+			univentionRegistry \
+			| ldapsearch-wrapper
+		)
+		tmp_ucr_policy_dn=$(sed -n 's/^dn: //p' <<<"$ldif")
+
+		if [ -z "$target_ucr_policy_dn" ]; then
+			target_ucr_policy_dn="$tmp_ucr_policy_dn"
+		else
+			echo "WARNING: More than one UCR policies registered at $ldap_base"
+		fi
+
+		if [ -n "$tmp_ucr_policy_dn" ]; then
+			tmp_str=$(sed -rn 's/^univentionRegistry;entry-hex-([^:]+): .*/\1/p' <<<"$ldif")
+			if [ "$tmp_str" = "$key_hex" ]; then
+				echo "INFO: UCR key $key already present at '$tmp_ucr_policy_dn'"
+				target_ucr_policy_dn="$tmp_ucr_policy_dn"
+				break
+			fi
+		fi
+	done <<<"$policy_dn_list"
+
+	if [ -n "$target_ucr_policy_dn" ]; then
+		univention-directory-manager policies/registry modify "$@" \
+			--dn "$target_ucr_policy_dn" \
+			--append registry="$key $value" 
+	else
+		policy_name="ucsschool-import-roleshares"
+		ucr_policy_base="cn=config-registry,cn=policies,$ldap_base"
+		univention-directory-manager policies/registry create --ignore_exists "$@" \
+			--position "$ucr_policy_base" \
+			--set name="$policy_name" \
+			--set registry="$key $value" 
+
+		univention-directory-manager container/dc modify "$@" \
+			--dn "$ldap_base" \
+			--policy-reference "cn=$policy_name,$ucr_policy_base"
+	fi
 }
 
 # Added dns-$hostname to the ignore list
