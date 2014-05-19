@@ -161,12 +161,10 @@
 		<section>
 		  <title>CSV-Import</title>
 		  <itemizedlist>
-			<listitem><simpara>
-				A new UMC module <emphasis>CSV-Import</emphasis> was added which can be
-				used to import many users at once using CSV files (<ulink
-					url="&ucsbug;34199">Bug 34199</ulink>). Notable: the module stops
-				the &ucsUDN; automatically during the import of the CSV file (<ulink
-					url="&ucsbug;34825">Bug 34825</ulink>).
+			<listitem><simpara> A new UMC module <emphasis>CSV-Import</emphasis> was added which can
+			be used to import many users at once using CSV files (<ulink url="&ucsbug;34199">Bug
+			34199</ulink>). Notable: the module stops the &ucsUDN; automatically during the import of the CSV
+			file and restarts it afterwards (<ulink url="&ucsbug;34825">Bug 34825</ulink>).
 			</simpara></listitem>
 		  </itemizedlist>
 		</section>
