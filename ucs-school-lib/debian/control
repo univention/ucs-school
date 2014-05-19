@@ -16,7 +16,8 @@ Depends: ${misc:Depends},
  ${python:Depends},
  univention-management-console,
  univention-config-registry,
- python-univention-directory-manager
+ python-univention-directory-manager,
+ python-univention-lib
 Provides: ${python:Provides}
 Description: UCS@school - common Python modules
  This package contains Python modules used by various

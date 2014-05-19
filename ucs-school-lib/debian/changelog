@@ -1,3 +1,11 @@
+ucs-school-lib (5.0.38-3) unstable; urgency=medium
+
+  * Create the roleshares as samba-only, i.e. no NFS.
+  * Give Domain Admins (or the customized equivalent name) root access
+    to roleshares (Bug #34335)
+
+ -- Arvid Requate <requate@univention.de>  Mon, 19 May 2014 17:38:23 +0200
+
 ucs-school-lib (5.0.38-2) unstable; urgency=medium
 
   * Consider ucsschool/import/roleshare in python/models/share.py

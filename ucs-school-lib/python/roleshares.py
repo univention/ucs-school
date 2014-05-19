@@ -41,6 +41,7 @@ from ucsschool.lib.schoolldap import get_all_local_searchbases, LDAP_Connection,
 import univention.admin.uexceptions
 import univention.admin.uldap as udm_uldap
 from univention.admincli.admin import _2utf8
+from univention.lib.misc import custom_groupname
 import univention.admin.modules as udm_modules
 udm_modules.update()
 
@@ -84,20 +85,22 @@ def create_roleshare_on_server(role, school_ou, share_container_dn, serverfqdn, 
 	else:
 		teacher_groupname = teacher_group['name']
 
+	custom_groupname_domainadmins = custom_groupname('Domain Admins')
 	try:
 		udm_module_name = 'shares/share'
 		udm_modules.init(ldap_user_write, ldap_position, udm_modules.get(udm_module_name))
 		share_container = udm_uldap.position(share_container_dn)
 		udm_obj = udm_modules.get(udm_module_name).object(None, ldap_user_write, share_container)
 		udm_obj.open()
+		udm_obj.options = ['samba']
 		udm_obj['name'] = roleshare_name(role, school_ou, ucr)
 		udm_obj['path'] = os.path.join('/home', roleshare_path(role, school_ou, ucr))
 		udm_obj['host'] = serverfqdn
 		udm_obj['group'] = teacher_group['gidNumber']
 		udm_obj['sambaBrowseable'] = "0"
 		udm_obj['sambaWriteable'] = "0"
-		udm_obj['sambaValidUsers'] = '@"%s"' % (teacher_groupname,)
-		udm_obj['sambaCustomSettings'] = [('admin users', '@"%s"' % (teacher_groupname,))]
+		udm_obj['sambaValidUsers'] = '@"%s" @"%s"' % (teacher_groupname, custom_groupname_domainadmins)
+		udm_obj['sambaCustomSettings'] = [('admin users', '@"%s" @"%s"' % (teacher_groupname, custom_groupname_domainadmins))]
 		udm_obj.create()
 	except univention.admin.uexceptions.objectExists, dn:
 		print 'Object exists: %s' % (dn,)
