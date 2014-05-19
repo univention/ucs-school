@@ -6,19 +6,19 @@
 		</categories>
 		<flavor icon="schoolwizards-user" id="schoolwizards/users" priority="53">
 			<name>School users</name>
-			<description>Manage students, teachers, staff</description>
+			<description>Management of students, teachers, staff</description>
 		</flavor>
 		<flavor icon="schoolwizards-class" id="schoolwizards/classes" priority="52">
 			<name>School classes</name>
-			<description>Manage school classes</description>
+			<description>Management of school classes</description>
 		</flavor>
 		<flavor icon="schoolwizards-computer" id="schoolwizards/computers" priority="51">
 			<name>School computers</name>
-			<description>Manage school computers</description>
+			<description>Management of school computers</description>
 		</flavor>
 		<flavor icon="schoolwizards-school" id="schoolwizards/schools" priority="50">
 			<name>Schools</name>
-			<description>Manage schools</description>
+			<description>Management of schools</description>
 		</flavor>
 
 		<command name="schoolwizards/schools" function="schools"/>

@@ -24,14 +24,14 @@ msgstr "Schulbenutzer"
 msgid "Schools"
 msgstr "Schulen"
 
-msgid "Manage students, teachers, staff"
+msgid "Management of students, teachers, staff"
 msgstr "Schüler, Lehrer, Mitarbeiter verwalten"
 
-msgid "Manage school classes"
+msgid "Management of school classes"
 msgstr "Schulklassen verwalten"
 
-msgid "Manage school computers"
+msgid "Management of school computers"
 msgstr "Schulrechner verwalten"
 
-msgid "Manage schools"
+msgid "Management of schools"
 msgstr "Schulen verwalten"
