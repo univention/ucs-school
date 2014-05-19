@@ -633,6 +633,10 @@ class Instance(Base):
 			_error(_('The name of an educational server has to be specified if the system shall be configured as administrative server.'))
 			return
 
+		if serverRole == 'domaincontroller_slave' and server_type == 'administrative' and educational_slave.lower() == ucr.get('hostname').lower():
+			_error(_('The name of the educational server may not be equal to the name of the administrative slave.'))
+			return
+
 		if serverRole != 'domaincontroller_master':
 			# check for a compatible environment on the DC master
 			try:
