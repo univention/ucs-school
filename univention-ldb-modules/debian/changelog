@@ -1,3 +1,10 @@
+univention-ldb-modules (2.0.3-2) unstable; urgency=medium
+
+  * Revert last change: despite its name 98univention-samba4slavepdc-dns.inst
+    also runs on a ucs-school-singlemaster (Bug #32187)
+
+ -- Arvid Requate <requate@univention.de>  Mon, 19 May 2014 21:23:01 +0200
+
 univention-ldb-modules (2.0.3-1) unstable; urgency=medium
 
   * depend on functionality implemented by ucsschool-s4-branch-site
