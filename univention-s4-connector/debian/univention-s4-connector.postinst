@@ -1,0 +1,105 @@
+#!/bin/bash
+#
+# Univention Samba4 Connector
+#  postinst script of the samba4 connector package
+#
+# Copyright 2004-2014 Univention GmbH
+#
+# http://www.univention.de/
+#
+# All rights reserved.
+#
+# The source code of this program is made available
+# under the terms of the GNU Affero General Public License version 3
+# (GNU AGPL V3) as published by the Free Software Foundation.
+#
+# Binary versions of this program provided by Univention to you as
+# well as other copyrighted, protected or trademarked materials like
+# Logos, graphics, fonts, specific documentations and configurations,
+# cryptographic keys etc. are subject to a license agreement between
+# you and Univention and not subject to the GNU AGPL V3.
+#
+# In the case you use this program under the terms of the GNU AGPL V3,
+# the program is provided in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public
+# License with the Debian GNU/Linux or Univention distribution in file
+# /usr/share/common-licenses/AGPL-3; if not, see
+# <http://www.gnu.org/licenses/>.
+
+. /usr/share/univention-lib/all.sh
+. /usr/share/univention-samba4/lib/all.sh
+
+create_logfile /var/log/univention/connector-s4.log "root:adm" 640
+create_logfile /var/log/univention/connector-s4-status.log "root:adm" 640
+
+#DEBHELPER#
+
+eval "$(ucr shell)"
+
+if [ "$1" = "configure" -a -n "$2" ] && dpkg --compare-versions "$2" lt 8.0.0-1; then
+	univention-config-registry set connector/s4/mapping/group/grouptype?false \
+				connector/s4/mapping/group/ignorelist?"${connector_s4_mapping_group_ignorelist},Remote Interactive Logon,SChannel Authentication,Digest Authentication,Terminal Server User,NTLM Authentication,Other Organization,This Organization,Anonymous Logon,Network Service,Creator Group,Creator Owner,Local Service,Owner Rights,Interactive,Restricted,Network,Service,Dialup,System,Batch,Proxy,IUSR,Self"
+fi
+
+univention-config-registry set connector/s4/listener/dir?/var/lib/univention-connector/s4 \
+							   connector/s4/poll/sleep?5 \
+							   connector/s4/retryrejected?10 \
+							   connector/s4/ldap/port?389 \
+							   connector/s4/ldap/ssl?no \
+							   connector/debug/function?0 \
+							   connector/debug/level?2 \
+							   connector/ad/mapping/group/language?de \
+							   connector/s4/mapping/syncmode?sync \
+							   connector/s4/mapping/sid?true \
+							   connector/s4/mapping/gpo?true \
+							   connector/s4/mapping/user/ignorelist?"root,ucs-s4sync" \
+							   connector/s4/mapping/group/grouptype?true \
+							   connector/s4/mapping/group/ignorelist?"Windows Hosts,Authenticated Users,World Authority,Everyone,Null Authority,Nobody,Enterprise Domain Controllers,Remote Interactive Logon,SChannel Authentication,Digest Authentication,Terminal Server User,NTLM Authentication,Other Organization,This Organization,Anonymous Logon,Network Service,Creator Group,Creator Owner,Local Service,Owner Rights,Interactive,Restricted,Network,Service,Dialup,System,Batch,Proxy,IUSR,Self" \
+							   connector/s4/mapping/group/table/Printer-Admins?"Print Operators" \
+							   connector/s4/mapping/container/ignorelist?"mail,kerberos,MicrosoftDNS" \
+							   connector/s4/mapping/dns/ignorelist?"DC=_ldap._tcp.Default-First-Site-Name._site"
+
+if [ ! -d /var/lib/univention-connector/s4 ]; then
+	mkdir -p /var/lib/univention-connector/s4
+	chown 0.0 /var/lib/univention-connector/s4
+fi
+
+/etc/init.d/univention-directory-listener crestart || true
+
+if [ "$1" = "configure" ]; then
+	uinst=/usr/lib/univention-install/03univention-s4-connector.uinst
+	[ -e "$uinst" ] && rm "$uinst"
+fi
+
+call_joinscript 97univention-s4-connector.inst
+
+stop_udm_cli_server
+
+if [ -x /etc/init.d/univention-s4-connector ] && [ -f /usr/share/univention-join/.joined ]; then
+	if [ "$1" = "configure" -a -n "$2" ] && dpkg --compare-versions "$2" lt 6.0.128-1  && is_ucr_true connector/s4/mapping/gpo; then
+		# Write the MS GPO settings from Samba 4 to UCS
+		/etc/init.d/univention-s4-connector stop
+		/usr/share/univention-s4-connector/msgpo.py --write2ucs
+		# Added GPO objects to S4 rejected table, this will resync these objects
+		/usr/share/univention-s4-connector/upgrade_groupPolicyContainer.py
+		/etc/init.d/univention-s4-connector start
+		restart=true
+	fi
+
+	if [ "$1" = "configure" -a -n "$2" ] && dpkg --compare-versions "$2" lt 7.0.3-1; then
+		/etc/init.d/univention-s4-connector stop
+		/usr/share/univention-s4-connector/write_password_settings.py --write2ucs
+		/etc/init.d/univention-s4-connector start
+		restart=true
+	fi
+
+	if [ "$restart" != "true" ]; then
+		/etc/init.d/univention-s4-connector restart
+	fi
+fi
+
+exit 0
