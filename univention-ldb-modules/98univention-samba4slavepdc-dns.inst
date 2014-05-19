@@ -73,6 +73,8 @@ fi
 
 samba_dnsupdate || die
 
+univention-directory-listener-ctrl resync ucsschool-s4-branch-site
+
 joinscript_save_current_version
 
 exit 0
