@@ -1,3 +1,9 @@
+univention-s4-connector (8.0.33-48) unstable; urgency=low
+
+  * Restart bind9 if the ldap/master can't be resolved (Bug #34865)
+
+ -- Stefan Gohmann <gohmann@univention.de>  Mon, 19 May 2014 10:21:54 +0200
+
 univention-s4-connector (8.0.33-46) unstable; urgency=low
 
   * Don't close the lock_file fd (Bug #34410)
