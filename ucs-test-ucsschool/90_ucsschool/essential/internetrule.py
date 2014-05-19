@@ -48,7 +48,7 @@ class InternetRule(object):
 			wlan=None,
 			priority=None):
 		self.name = name if name else uts.random_string()
-		self.type = typ if typ else random.choice(['whitelist', 'blacklist'])
+		self.typ = typ if typ else random.choice(['whitelist', 'blacklist'])
 		if domains:
 			self.domains = domains
 		else:
@@ -80,7 +80,7 @@ class InternetRule(object):
 				'object':
 				{
 					'name': self.name,
-					'type': self.type,
+					'type': self.typ,
 					'domains': self.domains,
 					'wlan': self.wlan,
 					'priority': self.priority
@@ -129,11 +129,11 @@ class InternetRule(object):
 		:param new_priority:
 		:type new_priority: int [1,10]
 		"""
-		new_name = self.name if new_name is None else new_name
-		new_type = self.typ if new_type is None else new_type
-		new_domains = self.domains if new_domains is None else new_domains
-		new_wlan = self.wlan if new_wlan is None else new_wlan
-		new_priority = self.priority if new_priority is None else new_priority
+		new_name = new_name if new_name else self.name
+		new_type = new_type if new_type else self.typ
+		new_domains = new_domains if new_domains else self.domains
+		new_wlan = new_wlan if new_wlan else self.wlan
+		new_priority = new_priority if new_priority else self.priority
 
 		param = [
 			{
@@ -157,7 +157,7 @@ class InternetRule(object):
 			utils.fail('Unable to modify rule (%r)' % (param,))
 		else:
 			self.name = new_name
-			self.type = new_type
+			self.typ = new_type
 			self.domains = new_domains
 			self.wlan = new_wlan
 			self.priority = new_priority
@@ -195,10 +195,10 @@ class InternetRule(object):
 				(expectedResult, exItems))
 		elif expectedResult:
 			wlan = str(self.wlan).lower()
-			typ = self.type
-			if self.type == "whitelist":
+			typ = self.typ
+			if self.typ == "whitelist":
 				typ = "whitelist-block"
-			elif self.type == "blacklist":
+			elif self.typ == "blacklist":
 				typ = "blacklist-pass"
 			curtype = exItems['filtertype']
 			curWlan = exItems['wlan']

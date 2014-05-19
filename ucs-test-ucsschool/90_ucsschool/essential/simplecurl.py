@@ -3,7 +3,7 @@
 import pycurl
 import StringIO
 import time
-# import os
+import os
 
 """
 .. module:: randomdomain
@@ -45,7 +45,7 @@ class SimpleCurl(object):
 			timeOut=10,
 			port=3128,
 			auth=pycurl.HTTPAUTH_BASIC,
-			userpwd=None):
+			cookie=None):
 			# Perform basic authentication by default
 		self.curl = pycurl.Curl()
 		self.curl.setopt(pycurl.FOLLOWLOCATION, bFollowLocation)
@@ -54,14 +54,14 @@ class SimpleCurl(object):
 		self.curl.setopt(pycurl.TIMEOUT, timeOut)
 		self.curl.setopt(pycurl.PROXY, proxy)
 		self.curl.setopt(pycurl.PROXYPORT, port)
-		# self.cookieFilename = os.tempnam()
-		# self.curl.setopt(pycurl.COOKIEFILE, self.cookieFilename)
-		# self.curl.setopt(pycurl.COOKIEJAR, self.cookieFilename)
 		self.curl.setopt(pycurl.PROXYAUTH, auth)
 		self.curl.setopt(pycurl.PROXYUSERPWD, "%s:%s" % (username, password))
-		if userpwd:
-			self.curl.setopt(pycurl.USERPWD, userpwd)
+		self.cookieFilename = os.tempnam()
+		self.curl.setopt(pycurl.COOKIEJAR, self.cookieFilename)
+		self.curl.setopt(pycurl.COOKIEFILE, self.cookieFilename)
 
+	def cookies(self):
+		return self.curl.getinfo(pycurl.INFO_COOKIELIST)
 
 	def getPage(self, url, bVerbose=False, postData=None):
 		"""Gets a http page
@@ -94,7 +94,7 @@ class SimpleCurl(object):
 					raise e
 				continue
 		page = buf.getvalue()
-		# print page[1:100]
+		# print page[1:150]
 		buf.close()
 		return page
 
@@ -111,13 +111,15 @@ class SimpleCurl(object):
 		:returns: int - HTTP status code
 		"""
 		self.getPage(url)
+		# print page[0:200]
 		return self.httpCode()
 
 	def close(self):
 		"""Close the curl connection"""
 		self.curl.close()
 
+
 	def __del__(self):
 		self.curl.close()
-		# if os.path.exists(self.cookieFilename):
-		#	os.remove(self.cookieFilename)
+		if os.path.exists(self.cookieFilename):
+			os.remove(self.cookieFilename)
