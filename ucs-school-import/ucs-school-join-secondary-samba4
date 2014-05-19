@@ -31,7 +31,6 @@
 # <http://www.gnu.org/licenses/>.
 
 . /usr/share/univention-lib/all.sh
-. /usr/share/ucs-school-lib/base.sh
 
 display_help() {
 	cat <<-EOL
@@ -49,6 +48,40 @@ display_help() {
 	  The script must be called with IP of a UCS@school DC running the S4 Connector service
 
 	EOL
+}
+
+#
+# determine the school OU from ldap/hostdn
+#
+
+school_ou() {
+	# syntax: school_ou [hostdn]
+	#
+	# Tries to determine the LDAP name of the host's OU.
+	# The OU name is derived from the given host DN. If no DN has been passed to
+	# the function, the hostdn of the system is used as fallback.
+	# PLEASE NOTE: This function works only on domaincontroller_slave systems!
+	#              Other systems will return an empty value!
+	#
+	# example:
+	# $ ucr get ldap/hostdn
+	# cn=myslave,cn=dc,cn=server,cn=computers,ou=gymmitte,dc=example,dc=com
+	# $ school_ou
+	# gymmitte
+	# $ school_ou cn=myslave,cn=dc,cn=server,cn=computers,ou=foobar,dc=example,dc=com
+	# foobar
+	# $ school_ou cn=myslave,cn=dc,cn=server,cn=computers,ou=foo,ou=bar,dc=example,dc=com
+	# foo
+
+	local ldap_hostdn
+
+	if [ -n "$1" ] ; then
+		ldap_hostdn=",$1" # add leading comma, in case only the DN of the OU is given
+	else
+		ldap_hostdn="$(/usr/sbin/univention-config-registry get ldap/hostdn)"
+	fi
+
+	echo "$ldap_hostdn" | grep -oiE ',ou=.*$' | sed -nre 's/^,[oO][uU]=([^,]+),.*/\1/p'
 }
 
 eval "$(univention-config-registry shell)"
@@ -101,10 +134,10 @@ fi
 
 echo "$(LC_ALL=C date): starting $0 $*" >>/var/log/univention/join.log 2>&1
 
-if ! ldapsearch -xLLL -h "$target_school_dc_ip" -p 7389 -s base -b "$ldap_base" -D "$ldap_hostdn" -y /etc/machine.secret >/dev/null 2>&1; then
-	echo "The DC Slave needs to be joined first without Samba4 or UCS@school installed"
-	exit 1
-fi
+# if ! ldapsearch -xLLL -h "$target_school_dc_ip" -p 7389 -s base -b "$ldap_base" -D "$ldap_hostdn" -y /etc/machine.secret >/dev/null 2>&1; then
+# 	echo "The DC Slave needs to be joined first without Samba4 or UCS@school installed"
+# 	exit 1
+# fi
 
 test_school_role=$(univention-ldapsearch -xLLL "(univentionService=UCS@school)" -b "$ldap_hostdn" -s base dn | ldapsearch-wrapper | ldapsearch-decode64  | sed -n 's/^dn: //p')
 
@@ -209,19 +242,19 @@ ucr unset nameserver2 nameserver3
 
 # Remove own values from kerberos SRV records
 if ! is_ucr_true dns/register/srv_records/kerberos; then
-	/usr/share/univention-directory-manager-tools/univention-dnsedit "$@" --ignore-exists $domainname remove srv kerberos tcp 0 100 88 "$hostname.$domainname."
-	/usr/share/univention-directory-manager-tools/univention-dnsedit "$@" --ignore-exists $domainname remove srv kerberos udp 0 100 88 "$hostname.$domainname."
-	/usr/share/univention-directory-manager-tools/univention-dnsedit "$@" --ignore-exists "$domainname" remove srv kerberos "tcp.dc._msdcs" 0 100 88 "$hostname.$domainname."
-	/usr/share/univention-directory-manager-tools/univention-dnsedit "$@" --ignore-exists "$domainname" remove srv kpasswd "tcp" 0 100 464 "$hostname.$domainname."
-	/usr/share/univention-directory-manager-tools/univention-dnsedit "$@" --ignore-exists "$domainname" remove srv kpasswd "udp" 0 100 464 "$hostname.$domainname."
+	/usr/share/univention-directory-manager-tools/univention-dnsedit -dcaccount "$DCACCOUNT" -dcpwd "$DCPWD" --ignore-exists $domainname remove srv kerberos tcp 0 100 88 "$hostname.$domainname."
+	/usr/share/univention-directory-manager-tools/univention-dnsedit -dcaccount "$DCACCOUNT" -dcpwd "$DCPWD" --ignore-exists $domainname remove srv kerberos udp 0 100 88 "$hostname.$domainname."
+	/usr/share/univention-directory-manager-tools/univention-dnsedit -dcaccount "$DCACCOUNT" -dcpwd "$DCPWD" --ignore-exists "$domainname" remove srv kerberos "tcp.dc._msdcs" 0 100 88 "$hostname.$domainname."
+	/usr/share/univention-directory-manager-tools/univention-dnsedit -dcaccount "$DCACCOUNT" -dcpwd "$DCPWD" --ignore-exists "$domainname" remove srv kpasswd "tcp" 0 100 464 "$hostname.$domainname."
+	/usr/share/univention-directory-manager-tools/univention-dnsedit -dcaccount "$DCACCOUNT" -dcpwd "$DCPWD" --ignore-exists "$domainname" remove srv kpasswd "udp" 0 100 464 "$hostname.$domainname."
 fi
 
 # Remove own values from ldap SRV records
 if ! is_ucr_true dns/register/srv_records/ldap; then
-	/usr/share/univention-directory-manager-tools/univention-dnsedit "$@" --ignore-exists "$domainname" remove srv ldap tcp 0 100 7389 "$hostname.$domainname."
-	/usr/share/univention-directory-manager-tools/univention-dnsedit "$@" --ignore-exists "$domainname" remove srv ldap tcp 0 100 389 "$hostname.$domainname."
-	/usr/share/univention-directory-manager-tools/univention-dnsedit "$@" --ignore-exists "$domainname" remove srv ldap "tcp.pdc._msdcs" 0 100 389 "$hostname.$domainname."
-	/usr/share/univention-directory-manager-tools/univention-dnsedit "$@" --ignore-exists "$domainname" remove srv ldap "tcp.dc._msdcs" 0 100 389 "$hostname.$domainname."
+	/usr/share/univention-directory-manager-tools/univention-dnsedit -dcaccount "$DCACCOUNT" -dcpwd "$DCPWD" --ignore-exists "$domainname" remove srv ldap tcp 0 100 7389 "$hostname.$domainname."
+	/usr/share/univention-directory-manager-tools/univention-dnsedit -dcaccount "$DCACCOUNT" -dcpwd "$DCPWD" --ignore-exists "$domainname" remove srv ldap tcp 0 100 389 "$hostname.$domainname."
+	/usr/share/univention-directory-manager-tools/univention-dnsedit -dcaccount "$DCACCOUNT" -dcpwd "$DCPWD" --ignore-exists "$domainname" remove srv ldap "tcp.pdc._msdcs" 0 100 389 "$hostname.$domainname."
+	/usr/share/univention-directory-manager-tools/univention-dnsedit -dcaccount "$DCACCOUNT" -dcpwd "$DCPWD" --ignore-exists "$domainname" remove srv ldap "tcp.dc._msdcs" 0 100 389 "$hostname.$domainname."
 fi
 
 trapOnExit2() {
