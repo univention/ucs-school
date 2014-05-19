@@ -110,7 +110,7 @@ def access_roleshare_student_on_all_school_fileservers(school_id, name_student, 
 		## and test access with student
 		access_user_dir(name_student, school_id, fqdn, name_student, userfilename, testwrite=True, write_access=False, read_access=False)
 		## and test access with Administrator
-		access_user_dir(TESTS_DOMAINADMIN, school_id, fqdn, name_student, userfilename, testwrite=True, write_access=False, read_access=False)
+		access_user_dir(TESTS_DOMAINADMIN, school_id, fqdn, name_student, userfilename, testwrite=True, write_access=True, read_access=True)
 
 
 def smb_server_online(fqdn):
