@@ -148,6 +148,9 @@
 				<listitem><simpara>
 				  	Upon creating a new school, the administrator is now able to define a display name in addition to the school name/OU name (<ulink url="&ucsbug;34173">Bug 34173</ulink>).
 				</simpara></listitem>
+				<listitem><simpara>
+				  The &ucsUAS; configuration wizard is now prevented from being opened more than once per UMC session (<ulink url="&ucsbug;34837">Bug 34837</ulink>).
+				</simpara></listitem>
 			</itemizedlist>
 		</section>
 		<section>
