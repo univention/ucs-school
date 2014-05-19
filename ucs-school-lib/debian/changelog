@@ -1,3 +1,10 @@
+ucs-school-lib (5.0.38-2) unstable; urgency=medium
+
+  * Consider ucsschool/import/roleshare in python/models/share.py
+    (Bug #34335)
+
+ -- Arvid Requate <requate@univention.de>  Mon, 19 May 2014 17:09:52 +0200
+
 ucs-school-lib (5.0.38-1) unstable; urgency=low
 
   * Bug #31407: fixed district mode related bug in school_ou()
