@@ -1,3 +1,10 @@
+ucs-test-ucsschool (1.0.54-1) unstable; urgency=low
+
+  * 61_samba*_login: Added two test cases to test the samba login
+    (Bug #32187)
+
+ -- Stefan Gohmann <gohmann@univention.de>  Mon, 19 May 2014 08:50:02 +0200
+
 ucs-test-ucsschool (1.0.53-1) unstable; urgency=low
 
   * Bug #34801: added additional check to 40_schoolwizard_school_create
