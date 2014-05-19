@@ -28,8 +28,10 @@ import univention.config_registry
 try:
 	from univention.testing.ucs_samba import wait_for_drs_replication
 except ImportError:
+	print "WARNING: Using dummy implementation for wait_for_drs_replication."
 	def wait_for_drs_replication(ldap_filter, attrs=None):
-		pass
+		print "wait_for_drs_replication: sleeping 15 seconds"
+		time.sleep(15)
 
 ### Initialize globals
 ucr = testing_ucr.UCSTestConfigRegistry()
@@ -148,8 +150,12 @@ class Test():
 
 				negative_test_fqdn = ".".join((negative_test_hostname, ucr.get('domainname')))
 
+				## wait for postrun and S4 Connector, check by creating a dummy user and waiting for that object to appear
+				dummy_username = uts.random_username()
+				dummy_password = uts.random_string()
+				dummy_user_dn = udm.create_user(username=dummy_username, password=dummy_password)
 				testing_utils.wait_for_replication_and_postrun()
-				time.sleep(3)
+				wait_for_drs_replication("(sAMAccountName=%s)" % (dummy_username,), attrs="sAMAccountName")
 
 				## verify that the positive test DC is present in the UCR variables
 				ucr2 = univention.config_registry.ConfigRegistry()
@@ -181,9 +187,14 @@ class Test():
 			p1 = subprocess.Popen(cmd)
 			p1.wait()
 
-		## ok wait for postrun
-		testing_utils.wait_for_replication_and_postrun()
-		time.sleep(3)
+		## Ok, now the UCSTestUDM() context got destroyed via UCSTestUDM().__exit__()
+		## wait for postrun and S4 Connector, check by creating a dummy user and waiting for that object to appear
+		with testing_udm.UCSTestUDM() as udm:
+			dummy_username = uts.random_username()
+			dummy_password = uts.random_string()
+			dummy_user_dn = udm.create_user(username=dummy_username, password=dummy_password)
+			testing_utils.wait_for_replication_and_postrun()
+			wait_for_drs_replication("(sAMAccountName=%s)" % (dummy_username,), attrs="sAMAccountName")
 
 		## verify that the postitive test DCs are removed from DNS/Samba4
 		p1 = subprocess.Popen(['host', '-t', 'srv', '_kerberos._tcp'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)

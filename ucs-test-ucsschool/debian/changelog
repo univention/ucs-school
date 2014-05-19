@@ -1,3 +1,10 @@
+ucs-test-ucsschool (1.0.54-3) unstable; urgency=medium
+
+  * Let 16_s4_slave_automatic_srv_record.py wait for S4 Connector
+    (Bug #32187)
+
+ -- Arvid Requate <requate@univention.de>  Mon, 19 May 2014 20:24:47 +0200
+
 ucs-test-ucsschool (1.0.54-2) unstable; urgency=medium
 
   * check read and write access for the test Administrator in
