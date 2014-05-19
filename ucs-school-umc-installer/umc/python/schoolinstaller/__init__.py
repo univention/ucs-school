@@ -463,7 +463,7 @@ class Instance(Base):
 		'''Returns 'singlemaster', 'multiserver', or None'''
 		if self.package_manager.is_installed('ucs-school-singlemaster'):
 			return 'singlemaster'
-		elif self.package_manager.is_installed('ucs-school-slave') or self.package_manager.is_installed('ucs-school-master'):
+		elif self.package_manager.is_installed('ucs-school-slave') or self.package_manager.is_installed('ucs-school-nonedu-slave') or self.package_manager.is_installed('ucs-school-master'):
 			return 'multiserver'
 		return None
 
@@ -555,7 +555,11 @@ class Instance(Base):
 				values['homeShareServer'] = result[0].get('ucsschoolHomeShareFileServer')
 				# ...find all joined slave systems in the ou
 				searchBase = SchoolSearchBase([schoolOU], ldapBase=ucrMaster.get('ldap/base'))
-				slaves = udm_modules.lookup('computers/domaincontroller_slave', None, lo, base=searchBase.computers, scope='sub')
+				try:
+					slaves = udm_modules.lookup('computers/domaincontroller_slave', None, lo, base=searchBase.computers, scope='sub')
+				except univention.admin.uexceptions.noObject:
+					slaves = []
+					MODULE.warn('School OU %r seems to be inconsistent! Container %r is missing!' % (schoolOU, searchBase.computers))
 
 				for islave in slaves:
 					islave.open()
