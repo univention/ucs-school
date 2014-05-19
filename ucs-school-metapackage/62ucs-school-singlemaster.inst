@@ -135,7 +135,7 @@ if is_ucr_true "ucsschool/import/generate/policy/dhcp/dns/set_per_ou" ; then
 fi
 
 append_ucr_policy_to_base directory/manager/samba3/legacy yes "$@"
-if [ $JS_LAST_EXECUTED_VERSION -gt 0 ]; then
+if [ $JS_LAST_EXECUTED_VERSION = 1 ]; then
 	append_ucr_policy_to_base ucsschool/import/roleshare no "$@"
 fi
 

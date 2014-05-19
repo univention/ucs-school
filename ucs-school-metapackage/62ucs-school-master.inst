@@ -30,7 +30,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-VERSION=1
+VERSION=2
 . /usr/share/univention-join/joinscripthelper.lib
 joinscript_init
 
@@ -148,7 +148,7 @@ if [ $JS_LAST_EXECUTED_VERSION -lt 1 ]; then
 fi
 
 append_ucr_policy_to_base directory/manager/samba3/legacy yes "$@"
-if [ $JS_LAST_EXECUTED_VERSION -gt 0 ]; then
+if [ $JS_LAST_EXECUTED_VERSION = 1 ]; then
 	append_ucr_policy_to_base ucsschool/import/roleshare no "$@"
 fi
 
