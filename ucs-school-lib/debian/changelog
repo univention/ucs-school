@@ -1,3 +1,9 @@
+ucs-school-lib (5.0.39-1) unstable; urgency=low
+
+  * Bug #34837: added stdout as possible log target for stopped_notifier()
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Tue, 20 May 2014 21:43:55 +0200
+
 ucs-school-lib (5.0.38-5) unstable; urgency=medium
 
   * Another attempt to fix the roleshare code in models/share.py (Bug #34335)
