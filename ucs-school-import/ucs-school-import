@@ -63,7 +63,6 @@ import sys
 import tempfile
 import time
 import traceback
-import logging
 
 import univention.debug
 univention.debug.init('/var/log/univention/admin-cmd.log', 1, 0)
@@ -82,7 +81,7 @@ from ucsschool.lib.models.utils import stopped_notifier, add_stream_logger_to_sc
 configRegistry=univention.config_registry.ConfigRegistry()
 configRegistry.load()
 
-add_stream_logger_to_schoollib(logging.ERROR)
+add_stream_logger_to_schoollib(stream=sys.stdout)
 
 baseDN=configRegistry['ldap/base']
 domainname=configRegistry['domainname']
@@ -1535,7 +1534,7 @@ def import_user():
 		OUT = open(options.outfile, "w")
 
 
-	with stopped_notifier(log2stdout=True):
+	with stopped_notifier():
 		problem_hints=""
 		linecnt=0
 
@@ -1853,7 +1852,7 @@ def import_networks(router_only=False):
 
 	problem_hints=""
 
-	with stopped_notifier(log2stdout=True):
+	with stopped_notifier():
 		for line in inf:	
 
 			if emptyLineRe.match(line):
@@ -2002,7 +2001,7 @@ def set_inventory_number_for_computer():
 
 	problem_hints=""
 
-	with stopped_notifier(log2stdout=True):
+	with stopped_notifier():
 		for line in inf:
 
 			if emptyLineRe.match(line):
@@ -2183,7 +2182,7 @@ def import_computer():
 	problem_hints=""
 	linecnt=0
 
-	with stopped_notifier(log2stdout=True):
+	with stopped_notifier():
 		for line in inf:
 			linecnt += 1
 
@@ -2316,7 +2315,7 @@ def import_group():
 
 	problem_hints=""
 
-	with stopped_notifier(log2stdout=True):
+	with stopped_notifier():
 		for line in inf:
 
 			if emptyLineRe.match(line):
@@ -2392,7 +2391,7 @@ def import_printer():
 	print "infile is  : "+infile
 	inf = open(infile,'r')
 
-	with stopped_notifier(log2stdout=True):
+	with stopped_notifier():
 		for line in inf:
 
 			if emptyLineRe.match(line):
@@ -2529,7 +2528,7 @@ def activate_groupmembers():
 
 	###
 
-	with stopped_notifier(log2stdout=True):
+	with stopped_notifier():
 		# outfile = os.path.basename(actgrp+'.csv')
 		outfile = "/var/lib/ucs-school-import/activate-grp-%s-%s.csv" % (time.strftime("%Y%m%d-%H%M%S"), actgrp)
 		print "outfile is : "+outfile
@@ -2673,7 +2672,7 @@ def set_ou_sharefileserver():
 		ShareFileServer = objects[0]
 
 
-	with stopped_notifier(log2stdout=True):
+	with stopped_notifier():
 		r = lo.get(getDN(ouname), ['objectClass'])
 		if 'ucsschoolOrganizationalUnit' not in r['objectClass']:
 			r = lo.modify(getDN(ouname), [ ('objectClass','','ucsschoolOrganizationalUnit'),
@@ -2778,7 +2777,7 @@ def rename_class():
 			print "do nothing"
 			sys.exit(0)
 
-	with stopped_notifier(log2stdout=True):
+	with stopped_notifier():
 		# do it, rename groups and shares and modify share path
 		messages = []
 		for i in newGroups:
@@ -3169,7 +3168,7 @@ Arguments:
 		if not dcNameEducational and configRegistry.is_true('ucsschool/singlemaster', False):
 			dcNameEducational = configRegistry.get('hostname')
 
-		with stopped_notifier(log2stdout=True):
+		with stopped_notifier():
 			verify_school_ou(ouname, co, lo, baseDN, dcName=dcNameEducational, ShareFileServer=options.ShareFileServer, displayName=options.displayName)
 			if dcNameAdministrative:
 				create_dc(co, lo, baseDN, ouname, dcNameAdministrative, TYPE_DC_ADMINISTRATIVE)
@@ -3212,7 +3211,7 @@ elif sys.argv[0].endswith("create_dc"):
 		parser.print_help()
 		sys.exit(1)
 
-	with stopped_notifier(log2stdout=True):
+	with stopped_notifier():
 		create_dc(co, lo, baseDN, options.ou_name, options.dc_name, options.dc_type)
 
 elif sys.argv[0].endswith("move_domaincontroller_to_ou"):
@@ -3245,7 +3244,7 @@ within an OU LDAP subtree to the given OU.'''
 		parser.print_help()
 		sys.exit(1)
 
-	with stopped_notifier(log2stdout=True):
+	with stopped_notifier():
 		move_domaincontroller_to_ou(co, lo, baseDN, options)
 
 elif sys.argv[0].endswith("activate_groupmembers"):
