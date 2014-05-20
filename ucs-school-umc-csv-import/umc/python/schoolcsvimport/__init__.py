@@ -68,7 +68,7 @@ def license_check(users):
 	try:
 		ucs_license.check_license(user_info)
 	except LicenseInsufficient as e:
-		return str(e) + ' ' + _('You may proceed with the import, but the domain management may be limited afterwards until a new license is installed. Please note that this warning is based on the assumption that all users will be imported. You may ignore certain lines in the following.')
+		return str(e) + ' ' + _('You may proceed with the import, but the domain management may be limited afterwards until a new UCS license is imported. Please note that this warning is based on the assumption that all users will be imported. You may ignore certain lines in the following.')
 
 class FileInfo(object):
 	def __init__(self, filename, school, user_klass, dialect, has_header, delete_not_mentioned, date_format=None, columns=None):
@@ -107,13 +107,22 @@ class Instance(SchoolBaseModule, ProgressMixin):
 		MODULE.process('Processing %s' % filename)
 		sniffer = csv.Sniffer()
 		with open(filename, 'rb') as f:
-			lines = f.readlines()
-			content = '\n'.join(lines)
+			content = f.read()
+			# try utf-8 and latin-1
+			# if this still fails -> traceback...
+			try:
+				content = content.decode('utf-8')
+			except UnicodeDecodeError:
+				content = content.decode('latin-1')
+			lines = content.splitlines()
 		try:
 			first_line = ''
 			if lines:
 				first_line = lines[0].strip()
-				MODULE.process('First line is:\n%s' % first_line)
+				try:
+					MODULE.process('First line is:\n%s' % first_line)
+				except TypeError:
+					MODULE.error('First line is not printable! Wrong CSV format!')
 			try:
 				# be strict regarding delimiters. I have seen the
 				# sniffer returning 'b' as the delimiter in some cases
@@ -132,6 +141,7 @@ class Instance(SchoolBaseModule, ProgressMixin):
 			if has_header:
 				MODULE.process('Seems to be a header...')
 
+			num_lines = 0
 			with open(filename, 'wb') as f:
 				reader = csv.reader(lines, dialect)
 				writer = csv.writer(f, dialect)
@@ -150,6 +160,9 @@ class Instance(SchoolBaseModule, ProgressMixin):
 							columns = ['unused%d' % x for x in range(len(line))]
 					if len(first_lines) < 10:
 						first_lines.append(line)
+					num_lines += 1
+				if num_lines == 0:
+					raise csv.Error('Empty!')
 				columns = [user_klass.find_field_name_from_label(column, i) for i, column in enumerate(columns)]
 				MODULE.process('First line translates to columns: %r' % columns)
 		except csv.Error as exc:
@@ -165,6 +178,7 @@ class Instance(SchoolBaseModule, ProgressMixin):
 			result['available_columns'] = user_klass.get_columns_for_assign()
 			result['given_columns'] = columns
 			result['first_lines'] = first_lines
+			result['num_more_lines'] = num_lines - len(first_lines)
 			self.finished(request.id, [result])
 
 	def _guess_date_format(self, date_pattern, python_date_format, value):
@@ -201,7 +215,7 @@ class Instance(SchoolBaseModule, ProgressMixin):
 				lines = lines[1:]
 		reader = csv.DictReader(lines, columns, dialect=file_info.dialect)
 		users = []
-		date_pattern = 'yyyy.MMM.dd'
+		date_pattern = 'yyyy-MMM-dd'
 		if locale.getlocale()[0] == 'de':
 			date_pattern = 'dd.MMM.yyyy'
 		python_date_format = None

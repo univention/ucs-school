@@ -145,11 +145,12 @@ class CSVUser(User):
 
 	@classmethod
 	def find_all_fields(cls):
-		return cls._attributes.keys()
+		return ['name', 'firstname', 'lastname', 'birthday', 'email', 'school_class', 'password']
 
 	@classmethod
 	def find_field_name_from_label(cls, label, i):
-		for name, attr in cls._attributes.items():
+		for name in cls.find_all_fields():
+			attr = cls._attributes[name]
 			if attr.label == label or label in attr.aka:
 				return name
 		return 'unused%d' % i

@@ -15,5 +15,5 @@ msgstr ""
 msgid "CSV import"
 msgstr "CSV-Import"
 
-msgid "CSV import for UCS@school users"
-msgstr "CSV-Import für UCS@school-Benutzer"
+msgid "CSV import of UCS@school users"
+msgstr "Benutzerverwaltung für Schulen über CSV-Dateien"

@@ -97,15 +97,28 @@ define([
 						id: 'teachersAndStaff',
 						label: _('Teachers and staff')
 					}]
+				}, {
+					type: CheckBox,
+					name: 'delete_not_mentioned',
+					label: _('Completely replace the existing users of the selected user role with the users in the CSV file.')
 				}]
 			}, {
 				name: 'upload',
 				headerText: this.description,
-				helpText: _('Please upload the CSV file. The CSV file has to contain comma separated values, enclosed by double quotes.'),
+				helpText: _('Please upload the CSV file. The CSV file has to contain comma separated values. A "header line" helps with the assignment of the individual columns after uploading. This line is optional.'),
 				widgets: [{
-					type: CheckBox,
-					name: 'delete_not_mentioned',
-					label: _('Delete those who are not mentioned in the uploaded file (only applies to users of the selected user role)')
+					type: Text,
+					name: 'csv_help',
+					content: _('Example of a CSV file:') +
+						'<pre>' +
+							lang.replace('{username},{firstname},{lastname},{birthday}', {
+								username: _('Username'),
+								firstname: _('First name'),
+								lastname: _('Last name'),
+								birthday: _('Birthday')}) + '\n' +
+							_('john.doe,Johnathan James,Doe,03/15/2000') + '\n' +
+							'[...]' +
+						'</pre>'
 				}, {
 					type: Uploader,
 					name: 'file',
@@ -134,6 +147,11 @@ define([
 							});
 							users.push(user);
 						});
+						if (result.num_more_lines) {
+							var fakeUser = {};
+							fakeUser[givenColumns[0]] = _('%d more lines...', result.num_more_lines);
+							users.push(fakeUser);
+						}
 						givenColumns = array.map(givenColumns, function(column) {
 							var givenColumn = null;
 							var originalColumn = column;
@@ -154,19 +172,6 @@ define([
 						page._grid = this.addGridAssign(page, availableColumns, givenColumns, users);
 						this._next('upload');
 					})
-				}, {
-					type: Text,
-					name: 'csv_help',
-					content: _('A "header" helps in the next step after uploading but it is not required.') + ' ' + _('Example of a file:') +
-						'<pre>' +
-							lang.replace('{username},{firstname},{lastname},{birthday}', {
-								username: _('Username'),
-								firstname: _('First name'),
-								lastname: _('Last name'),
-								birthday: _('Birthday')}) + '\n' +
-							_('john.doe,"Johnathan James",Doe,03/15/2000') + '\n' +
-							'[...]' +
-						'</pre>'
 				}]
 			}, {
 				name: 'assign',
@@ -348,7 +353,7 @@ define([
 			var school = this.getWidget('general', 'school').get('value');
 			var type = this.getWidget('general', 'type').get('value');
 			var params = {school: school, type: type};
-			var delete_not_mentioned = this.getWidget('upload', 'delete_not_mentioned').get('value');
+			var delete_not_mentioned = this.getWidget('general', 'delete_not_mentioned').get('value');
 			if (delete_not_mentioned) {
 				// only put it here when set. false will go into body and is then
 				// translated to string "false" in python which evaluates to True...
@@ -539,7 +544,6 @@ define([
 							item.action = 'ignore';
 						});
 						this.checkThemAll(grid);
-						this.standbyDuring(recheck);
 					})
 				}, {
 					name: 'reset',
@@ -628,11 +632,16 @@ define([
 				if (item.action == 'ignore') {
 					return;
 				}
-				var birthday = item.birthday;
-				if (birthday) {
-					var parsedDate = dateLocaleModule.parse(birthday, dateConstraints);
-					if (!parsedDate) {
-						item.setError('birthday', _('The birthday does not follow the format for dates. Please change the birthday.'), grid._grid);
+				var birthdayColumnExists = array.some(grid._grid.get('structure'), function(struct) {
+					return struct.field == 'birthday';
+				});
+				if (birthdayColumnExists) {
+					var birthday = item.birthday;
+					if (birthday) {
+						var parsedDate = dateLocaleModule.parse(birthday, dateConstraints);
+						if (!parsedDate) {
+							item.setError('birthday', _('The birthday does not follow the format for dates. Please change the birthday.'), grid._grid);
+						}
 					}
 				}
 			});
@@ -691,14 +700,16 @@ define([
 			if (focusWidget) {
 				on.once(form, 'show', function() {
 					var widget = this.getWidget(focusWidget);
-					if (focusWidget == 'birthday') {
-						widget = widget._dateBox;
-					}
-					setTimeout(function() {
-						if (widget.focusNode) {
-							widget.focusNode.select();
+					if (widget) {
+						if (focusWidget == 'birthday') {
+							widget = widget._dateBox;
 						}
-					}, 500);
+						setTimeout(function() {
+							if (widget.focusNode) {
+								widget.focusNode.select();
+							}
+						}, 500);
+					}
 				});
 			}
 			dialog.confirmForm({
