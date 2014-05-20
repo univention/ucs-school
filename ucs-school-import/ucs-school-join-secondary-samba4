@@ -377,7 +377,7 @@ if len(res.msgs) == 0:
 	print "ERROR: SID '$my_sid' not found associated with $hostname in Samba4 on $target_school_dc_ip"
 	res = sam_ldb.search(sam_ldb.get_default_basedn(), scope=ldb.SCOPE_SUBTREE, expression="(sAMAccountName=$hostname$)", attrs = ["objectSid",])
 	if len(res.msgs) != 0:
-		print "       Found instead: %s" % (res.msgs[0]["objectSid"][0],)
+		print "       Found instead: %s" % (ndr_unpack(security.dom_sid, res.msgs[0]["objectSid"][0]),)
 		print "ADVICE:Check output of univention-s4connector-list-rejected on $target_school_dc_ip"
 	sys.exit(1)
 

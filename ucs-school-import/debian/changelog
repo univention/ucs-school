@@ -1,3 +1,9 @@
+ucs-school-import (10.0.17-11) unstable; urgency=medium
+
+  * fix ndr_unpack of objectsid (Bug #32187)
+
+ -- Arvid Requate <requate@univention.de>  Tue, 20 May 2014 20:40:14 +0200
+
 ucs-school-import (10.0.17-10) unstable; urgency=medium
 
   * ucs-school-join-secondary-samba4 (Bug #32187):
