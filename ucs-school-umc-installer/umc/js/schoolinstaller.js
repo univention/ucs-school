@@ -52,7 +52,6 @@ define([
 
 	var Installer = declare("umc.modules.schoolinstaller.Installer", [ Wizard, StandbyMixin ], {
 		_initialDeferred: null,
-		unique: true, // only one UCS@school installer may be opened at the same time
 
 		// entries returned from the initial request
 		_serverRole: null,
@@ -604,6 +603,8 @@ define([
 	return declare("umc.modules.schoolinstaller", [ Module ], {
 		// internal reference to the installer
 		_installer: null,
+
+		unique: true, // only one UCS@school installer may be opened at the same time
 
 		buildRendering: function() {
 			this.inherited(arguments);
