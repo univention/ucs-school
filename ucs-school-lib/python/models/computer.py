@@ -30,8 +30,6 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-import re
-
 from ipaddr import IPv4Network, AddressValueError, NetmaskValueError
 from ldap.filter import escape_filter_chars
 
@@ -105,8 +103,7 @@ class SchoolDCSlave(SchoolDC):
 			if old_dn == self.dn:
 				logger.info('DC Slave "%s" is already located in "%s" - stopping here' % (self.name, self.school))
 			self.set_dn(old_dn)
-			in_another_school_re = re.compile('^.+,ou=[^,]+,%s$' % ucr.get('ldap/base'))
-			if in_another_school_re.match(self.old_dn):
+			if self.exists_outside_school(lo):
 				if not force:
 					logger.error('DC Slave "%s" is located in another OU - %s' % (self.name, udm_obj.dn))
 					logger.error('Use force=True to override')

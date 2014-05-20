@@ -32,7 +32,7 @@
 
 from random import choice
 import logging
-from logging import StreamHandler, Logger
+from logging import StreamHandler, Logger, Formatter
 from logging.handlers import MemoryHandler
 from contextlib import contextmanager
 import subprocess
@@ -67,9 +67,18 @@ class ModuleLogger(object):
 		else:
 			MODULE.error(record.msg)
 
-def add_stream_logger_to_schoollib(level=logging.DEBUG):
-	stream_handler = StreamHandler()
+def add_stream_logger_to_schoollib(level=logging.DEBUG, stream=None, log_format=None):
+	'''Outputs all log messages of the models code to a stream (default: sys.stderr)
+	>>> from ucsschool.lib.models.utils import add_stream_logger_to_schoollib
+	>>> add_module_logger_to_schoollib()
+	>>> # or:
+	>>> add_module_logger_to_schoollib(level=logging.ERROR, stream=sys.stdout, log_format='ERROR (or worse): %(message)s')
+	'''
+	stream_handler = StreamHandler(stream)
 	stream_handler.setLevel(level)
+	if log_format:
+		formatter = Formatter(log_format)
+		stream_handler.setFormatter(formatter)
 	logger.addHandler(stream_handler)
 	return stream_handler
 
@@ -122,16 +131,14 @@ def flatten(list_of_lists):
 	return ret
 
 @contextmanager
-def stopped_notifier(strict=True, log2stdout=False):
-	'''Stops univention-directory-notifier while in the block
-	 with stopped_notifier():
-	 	...
-	Starts it in the end.
+def stopped_notifier(strict=True):
+	'''Stops univention-directory-notifier while in a block
+	Starts it in the end
 	Service if stopped/started by /etc/init.d
 	Raises RuntimeError if stopping failed and strict=True
 	Will not start if ucr get notifier/autostart=no -- but stop!
 	>>> with stopped_notifier():
-	>>>      ...
+	>>> 	...
 	'''
 	service_name = 'univention-directory-notifier'
 	def _run(args):
@@ -143,39 +150,34 @@ def stopped_notifier(strict=True, log2stdout=False):
 			logger.error(stderr)
 		return process.returncode == 0
 
-	def _log(func, msg):
-		if log2stdout:
-			print msg
-		else:
-			func(msg)
-
 	notifier_running = False
-	_log(logger.warning, 'Stopping %s' % service_name)
+	logger.warning('Stopping %s' % service_name)
 	for process in process_iter():
 		if process.name == service_name:
 			notifier_running = True
 			break
 	if not notifier_running:
-		_log(logger.warning, '%s is not running! Skipping' % service_name)
+		logger.warning('%s is not running! Skipping' % service_name)
 	else:
 		if _run(['/etc/init.d/%s' % service_name, 'stop']):
-			_log(logger.info, '%s stopped' % service_name)
+			logger.info('%s stopped' % service_name)
 		else:
-			_log(logger.error, 'Failed to stop %s...' % service_name)
+			logger.error('Failed to stop %s...' % service_name)
 			if strict:
 				raise RuntimeError('Failed to stop %s, but this seems to be very important (strict=True was specified)' % service_name)
 			else:
-				_log(logger.warning, 'In the end, will try to start %s nonetheless' % service_name)
+				logger.warning('In the end, will try to start it nonetheless')
 	try:
 		yield
 	finally:
+		logger.warning('Starting %s' % service_name)
 		if not notifier_running:
 			logger.warning('Notifier was not running! Skipping')
 		else:
-			_log(logger.warning, 'Starting %s' % service_name)
 			start_disabled = ucr.is_false('notifier/autostart', False)
 			command = ['/etc/init.d/%s' % service_name, 'start']
 			if not start_disabled and _run(command):
-				_log(logger.info, '%s started' % service_name)
+				logger.info('%s started' % service_name)
 			else:
-				_log(logger.error, 'Failed to start %s... Bad news! Better run "%s" manually!' % (service_name, ' '.join(command))) # correct: shlex... unnecessary
+				logger.error('Failed to start %s... Bad news! Better run "%s" manually!' % (service_name, ' '.join(command))) # correct: shlex... unnecessary
+

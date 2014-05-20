@@ -223,6 +223,15 @@ class User(UCSSchoolHelperAbstractClass):
 
 	def validate(self, lo, validate_unlikely_changes=False):
 		super(User, self).validate(lo, validate_unlikely_changes)
+		udm_obj = self.get_udm_object(lo)
+		if udm_obj:
+			original_class = self.get_class_for_udm_obj(udm_obj, self.school)
+			if original_class is not self.__class__:
+				self.add_error('name', _('It is not supported to change the role of a user. %(old_role)s %(name)s cannot become a %(new_role)s.') % {
+					'old_role' : original_class.type_name,
+					'name' : self.name,
+					'new_role' : self.type_name
+				})
 		if self.email:
 			name, email = escape_filter_chars(self.name), escape_filter_chars(self.email)
 			if self.get_first_udm_obj(lo, '&(!(uid=%s))(mailPrimaryAddress=%s)' % (name, email)):

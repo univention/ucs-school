@@ -1,3 +1,9 @@
+ucs-school-lib (5.0.40-1) unstable; urgency=low
+
+  * Bug #34199: Validate that user role does not change
+
+ -- Dirk Wiesenthal <wiesenthal@univention.de>  Wed, 21 May 2014 01:00:42 +0200
+
 ucs-school-lib (5.0.39-1) unstable; urgency=low
 
   * Bug #34837: added stdout as possible log target for stopped_notifier()

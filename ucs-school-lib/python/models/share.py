@@ -50,7 +50,7 @@ class ClassShare(UCSSchoolHelperAbstractClass):
 		return cls.get_search_base(school).classShares
 
 	def do_create(self, udm_obj, lo):
-		gidNumber = self.school_class.get_udm_object(lo)['gidNumber']
+		gid = self.school_class.get_udm_object(lo)['gidNumber']
 		udm_obj['host'] = self.get_server_fqdn(lo)
 		if ucr.is_true('ucsschool/import/roleshare', True):
 			udm_obj['path'] = '/home/%s/groups/klassen/%s' % (self.school_class.school, self.name)
@@ -63,7 +63,7 @@ class ClassShare(UCSSchoolHelperAbstractClass):
 		udm_obj['sambaCreateMode'] = '0770'
 		udm_obj['sambaDirectoryMode'] = '0770'
 		udm_obj['owner'] = '0'
-		udm_obj['group'] = gidNumber
+		udm_obj['group'] = gid
 		udm_obj['directorymode'] = '0770'
 		logger.info('Creating share on "%s"' % udm_obj['host'])
 		return super(ClassShare, self).do_create(udm_obj, lo)

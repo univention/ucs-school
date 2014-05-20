@@ -276,13 +276,14 @@ class UCSSchoolHelperAbstractClass(object):
 		return self.get_udm_object(lo) is not None
 
 	def exists_outside_school(self, lo):
+		from ucsschool.lib.models.school import School
 		udm_obj = self.get_udm_object(lo)
 		if udm_obj is None:
 			return False
-		return ('ou=%s,' % self.school) not in udm_obj.dn
+		return not udm_obj.dn.endswith(School.cache(self.school).dn)
 
 	def call_hooks(self, hook_time, func_name):
-		'''Calls run-parts in 
+		'''Calls run-parts in
 		os.path.join(HOOK_PATH, '%s_%s_%s.d' % (self._meta.hook_path, func_name, hook_time))
 		if self.build_hook_line(hook_time, func_name) returns a non-empty string
 
