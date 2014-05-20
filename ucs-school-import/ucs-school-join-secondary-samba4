@@ -137,6 +137,8 @@ if [ ! -f "$DCPWD" ]; then
 	echo ""
 	echo ""
 fi
+bindpwd=$(<"$DCPWD")
+
 if [ ! -f "$ROOTPWD" ]; then
 	touch "$ROOTPWD"
 	chmod 600 "$ROOTPWD"
@@ -300,19 +302,19 @@ ucr unset nameserver2 nameserver3
 
 # Remove own values from kerberos SRV records
 if ! is_ucr_true dns/register/srv_records/kerberos; then
-	/usr/share/univention-directory-manager-tools/univention-dnsedit --dcaccount "$DCACCOUNT" --dcpwd "$DCPWD" --ignore-exists $domainname remove srv kerberos tcp 0 100 88 "$hostname.$domainname."
-	/usr/share/univention-directory-manager-tools/univention-dnsedit --dcaccount "$DCACCOUNT" --dcpwd "$DCPWD" --ignore-exists $domainname remove srv kerberos udp 0 100 88 "$hostname.$domainname."
-	/usr/share/univention-directory-manager-tools/univention-dnsedit --dcaccount "$DCACCOUNT" --dcpwd "$DCPWD" --ignore-exists "$domainname" remove srv kerberos "tcp.dc._msdcs" 0 100 88 "$hostname.$domainname."
-	/usr/share/univention-directory-manager-tools/univention-dnsedit --dcaccount "$DCACCOUNT" --dcpwd "$DCPWD" --ignore-exists "$domainname" remove srv kpasswd "tcp" 0 100 464 "$hostname.$domainname."
-	/usr/share/univention-directory-manager-tools/univention-dnsedit --dcaccount "$DCACCOUNT" --dcpwd "$DCPWD" --ignore-exists "$domainname" remove srv kpasswd "udp" 0 100 464 "$hostname.$domainname."
+	/usr/share/univention-directory-manager-tools/univention-dnsedit --binddn "$binddn" --bindpwd "$bindpwd" --ignore-exists $domainname remove srv kerberos tcp 0 100 88 "$hostname.$domainname."
+	/usr/share/univention-directory-manager-tools/univention-dnsedit --binddn "$binddn" --bindpwd "$bindpwd" --ignore-exists $domainname remove srv kerberos udp 0 100 88 "$hostname.$domainname."
+	/usr/share/univention-directory-manager-tools/univention-dnsedit --binddn "$binddn" --bindpwd "$bindpwd" --ignore-exists "$domainname" remove srv kerberos "tcp.dc._msdcs" 0 100 88 "$hostname.$domainname."
+	/usr/share/univention-directory-manager-tools/univention-dnsedit --binddn "$binddn" --bindpwd "$bindpwd" --ignore-exists "$domainname" remove srv kpasswd "tcp" 0 100 464 "$hostname.$domainname."
+	/usr/share/univention-directory-manager-tools/univention-dnsedit --binddn "$binddn" --bindpwd "$bindpwd" --ignore-exists "$domainname" remove srv kpasswd "udp" 0 100 464 "$hostname.$domainname."
 fi
 
 # Remove own values from ldap SRV records
 if ! is_ucr_true dns/register/srv_records/ldap; then
-	/usr/share/univention-directory-manager-tools/univention-dnsedit --dcaccount "$DCACCOUNT" --dcpwd "$DCPWD" --ignore-exists "$domainname" remove srv ldap tcp 0 100 7389 "$hostname.$domainname."
-	/usr/share/univention-directory-manager-tools/univention-dnsedit --dcaccount "$DCACCOUNT" --dcpwd "$DCPWD" --ignore-exists "$domainname" remove srv ldap tcp 0 100 389 "$hostname.$domainname."
-	/usr/share/univention-directory-manager-tools/univention-dnsedit --dcaccount "$DCACCOUNT" --dcpwd "$DCPWD" --ignore-exists "$domainname" remove srv ldap "tcp.pdc._msdcs" 0 100 389 "$hostname.$domainname."
-	/usr/share/univention-directory-manager-tools/univention-dnsedit --dcaccount "$DCACCOUNT" --dcpwd "$DCPWD" --ignore-exists "$domainname" remove srv ldap "tcp.dc._msdcs" 0 100 389 "$hostname.$domainname."
+	/usr/share/univention-directory-manager-tools/univention-dnsedit --binddn "$binddn" --bindpwd "$bindpwd" --ignore-exists "$domainname" remove srv ldap tcp 0 100 7389 "$hostname.$domainname."
+	/usr/share/univention-directory-manager-tools/univention-dnsedit --binddn "$binddn" --bindpwd "$bindpwd" --ignore-exists "$domainname" remove srv ldap tcp 0 100 389 "$hostname.$domainname."
+	/usr/share/univention-directory-manager-tools/univention-dnsedit --binddn "$binddn" --bindpwd "$bindpwd" --ignore-exists "$domainname" remove srv ldap "tcp.pdc._msdcs" 0 100 389 "$hostname.$domainname."
+	/usr/share/univention-directory-manager-tools/univention-dnsedit --binddn "$binddn" --bindpwd "$bindpwd" --ignore-exists "$domainname" remove srv ldap "tcp.dc._msdcs" 0 100 389 "$hostname.$domainname."
 fi
 
 trapOnExit2() {
