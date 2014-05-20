@@ -1,3 +1,11 @@
+ucs-school-import (10.0.17-10) unstable; urgency=medium
+
+  * ucs-school-join-secondary-samba4 (Bug #32187):
+  * Postpone the univention-dnsedit till after the join
+  * Postpone the univention-add-app till after the join
+
+ -- Arvid Requate <requate@univention.de>  Tue, 20 May 2014 20:36:26 +0200
+
 ucs-school-import (10.0.17-9) unstable; urgency=medium
 
   * ucs-school-join-secondary-samba4 (Bug #32187):

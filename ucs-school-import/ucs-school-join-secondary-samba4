@@ -274,7 +274,6 @@ echo "$(LC_ALL=C date): start $0" >>/var/log/univention/join.log 2>&1
 
 ucr commit /etc/apt/sources.list.d/*
 univention-install univention-samba4 || exit 1
-univention-add-app ucsschool -l libunivention-ldb-modules || exit 1
 
 . /usr/share/univention-samba4/lib/all.sh
 
@@ -299,23 +298,6 @@ ucr set \
 	samba4/sysvol/sync/host?"$master_hostname" # Don''t use the FQDN, Bug #27247
 
 ucr unset nameserver2 nameserver3
-
-# Remove own values from kerberos SRV records
-if ! is_ucr_true dns/register/srv_records/kerberos; then
-	/usr/share/univention-directory-manager-tools/univention-dnsedit --binddn "$binddn" --bindpwd "$bindpwd" --ignore-exists $domainname remove srv kerberos tcp 0 100 88 "$hostname.$domainname."
-	/usr/share/univention-directory-manager-tools/univention-dnsedit --binddn "$binddn" --bindpwd "$bindpwd" --ignore-exists $domainname remove srv kerberos udp 0 100 88 "$hostname.$domainname."
-	/usr/share/univention-directory-manager-tools/univention-dnsedit --binddn "$binddn" --bindpwd "$bindpwd" --ignore-exists "$domainname" remove srv kerberos "tcp.dc._msdcs" 0 100 88 "$hostname.$domainname."
-	/usr/share/univention-directory-manager-tools/univention-dnsedit --binddn "$binddn" --bindpwd "$bindpwd" --ignore-exists "$domainname" remove srv kpasswd "tcp" 0 100 464 "$hostname.$domainname."
-	/usr/share/univention-directory-manager-tools/univention-dnsedit --binddn "$binddn" --bindpwd "$bindpwd" --ignore-exists "$domainname" remove srv kpasswd "udp" 0 100 464 "$hostname.$domainname."
-fi
-
-# Remove own values from ldap SRV records
-if ! is_ucr_true dns/register/srv_records/ldap; then
-	/usr/share/univention-directory-manager-tools/univention-dnsedit --binddn "$binddn" --bindpwd "$bindpwd" --ignore-exists "$domainname" remove srv ldap tcp 0 100 7389 "$hostname.$domainname."
-	/usr/share/univention-directory-manager-tools/univention-dnsedit --binddn "$binddn" --bindpwd "$bindpwd" --ignore-exists "$domainname" remove srv ldap tcp 0 100 389 "$hostname.$domainname."
-	/usr/share/univention-directory-manager-tools/univention-dnsedit --binddn "$binddn" --bindpwd "$bindpwd" --ignore-exists "$domainname" remove srv ldap "tcp.pdc._msdcs" 0 100 389 "$hostname.$domainname."
-	/usr/share/univention-directory-manager-tools/univention-dnsedit --binddn "$binddn" --bindpwd "$bindpwd" --ignore-exists "$domainname" remove srv ldap "tcp.dc._msdcs" 0 100 389 "$hostname.$domainname."
-fi
 
 ## Workaround for Bug #34754
 if [ -r /var/lib/samba/private/sam.ldb ]; then
@@ -365,11 +347,14 @@ univention-ssh "$ROOTPWD" root@"$target_school_dc_ip" \
 trap trapOnExit EXIT
 ########### core join end
 
+eval "$(univention-config-registry shell)"
+
 ### Workaround for "Bad DSA objectGUID <GUID> for sid <UDM sid>  - expected sid <Samba sid>" during replication in log.samba
 ## * this seems to be due to directory/manager/samba3/legacy=yes and S4 Connector overwriting the temporary Samba SID
 ## * the DRS replication code finds the temporary Samba SID still present in the extended DN blob of the serverReference attribute
 ## * let's rewrite it to the correct value:
 my_sid=$(univention-ldapsearch -x -b "$ldap_hostdn" sambaSID | sed -n 's/^sambaSID: //p')
+echo "Checking my SID '$my_sid' in the remote Samba4:"
 univention-ssh --no-split "$ROOTPWD" "root@${target_school_dc_ip}" \
         'TMP_SCRIPT=$(mktemp) && trap "rm -f \"$TMP_SCRIPT\"" EXIT && cat >"$TMP_SCRIPT" && /usr/bin/python2.6 "$TMP_SCRIPT" && /etc/init.d/samba-ad-dc restart' \
 	<<%EOF
@@ -387,9 +372,15 @@ lp.load('/etc/samba/smb.conf')
 
 sam_ldb = Ldb('/var/lib/samba/private/sam.ldb', session_info=system_session(), lp=lp)
 
-server_objectSid_str = "$my_sid"
-server_objectSid_ndr = ndr_pack(security.dom_sid(server_objectSid_str))
-res = sam_ldb.search(sam_ldb.get_default_basedn(), scope=ldb.SCOPE_SUBTREE, expression="(&(sAMAccountName=$hostname$)(objectSid=%s))" % server_objectSid_str, attrs = ["objectSid", "serverReferenceBL"])
+res = sam_ldb.search(sam_ldb.get_default_basedn(), scope=ldb.SCOPE_SUBTREE, expression="(&(sAMAccountName=$hostname$)(objectSid=$my_sid))", attrs = ["objectSid", "serverReferenceBL"])
+if len(res.msgs) == 0:
+	print "ERROR: SID '$my_sid' not found associated with $hostname in Samba4 on $target_school_dc_ip"
+	res = sam_ldb.search(sam_ldb.get_default_basedn(), scope=ldb.SCOPE_SUBTREE, expression="(sAMAccountName=$hostname$)", attrs = ["objectSid",])
+	if len(res.msgs) != 0:
+		print "       Found instead: %s" % (res.msgs[0]["objectSid"][0],)
+		print "ADVICE:Check output of univention-s4connector-list-rejected on $target_school_dc_ip"
+	sys.exit(1)
+
 record = res.msgs[0]
 sid1_ndr = record["objectSid"][0]
 sid1_str = ndr_unpack(security.dom_sid, sid1_ndr)
@@ -453,7 +444,26 @@ if [ -n "$new_rIDAllocationPool" ] && [ -z "$new_rIDNextRID" ]; then
 	fi
 fi
 
-## In case Bug #34754 or the "Bad DSA objectGUID" issue hit us, 98univention-samba4slavepdc-dns.inst will have failed. so just run it again:
+# Remove own values from kerberos SRV records
+if ! is_ucr_true dns/register/srv_records/kerberos; then
+	/usr/share/univention-directory-manager-tools/univention-dnsedit --binddn "$binddn" --bindpwd "$bindpwd" --ignore-exists $domainname remove srv kerberos tcp 0 100 88 "$hostname.$domainname."
+	/usr/share/univention-directory-manager-tools/univention-dnsedit --binddn "$binddn" --bindpwd "$bindpwd" --ignore-exists $domainname remove srv kerberos udp 0 100 88 "$hostname.$domainname."
+	/usr/share/univention-directory-manager-tools/univention-dnsedit --binddn "$binddn" --bindpwd "$bindpwd" --ignore-exists "$domainname" remove srv kerberos "tcp.dc._msdcs" 0 100 88 "$hostname.$domainname."
+	/usr/share/univention-directory-manager-tools/univention-dnsedit --binddn "$binddn" --bindpwd "$bindpwd" --ignore-exists "$domainname" remove srv kpasswd "tcp" 0 100 464 "$hostname.$domainname."
+	/usr/share/univention-directory-manager-tools/univention-dnsedit --binddn "$binddn" --bindpwd "$bindpwd" --ignore-exists "$domainname" remove srv kpasswd "udp" 0 100 464 "$hostname.$domainname."
+fi
+
+# Remove own values from ldap SRV records
+if ! is_ucr_true dns/register/srv_records/ldap; then
+	/usr/share/univention-directory-manager-tools/univention-dnsedit --binddn "$binddn" --bindpwd "$bindpwd" --ignore-exists "$domainname" remove srv ldap tcp 0 100 7389 "$hostname.$domainname."
+	/usr/share/univention-directory-manager-tools/univention-dnsedit --binddn "$binddn" --bindpwd "$bindpwd" --ignore-exists "$domainname" remove srv ldap tcp 0 100 389 "$hostname.$domainname."
+	/usr/share/univention-directory-manager-tools/univention-dnsedit --binddn "$binddn" --bindpwd "$bindpwd" --ignore-exists "$domainname" remove srv ldap "tcp.pdc._msdcs" 0 100 389 "$hostname.$domainname."
+	/usr/share/univention-directory-manager-tools/univention-dnsedit --binddn "$binddn" --bindpwd "$bindpwd" --ignore-exists "$domainname" remove srv ldap "tcp.dc._msdcs" 0 100 389 "$hostname.$domainname."
+fi
+
+## In case Bug #34754 or the "Bad DSA objectGUID" issue hit us, 98univention-samba4slavepdc-dns.inst will have failed.
+## Also, we have to install libunivention-ldb-modules and run its joinscripts (cannot to univention-add-app before initial join)
+univention-add-app ucsschool -l libunivention-ldb-modules || exit 1
 univention-run-join-scripts -dcaccount "$DCACCOUNT" -dcpwd "$DCPWD"
 
 ucs_addServiceToLocalhost "$target_server_ucsschool_service" --binddn "$binddn" --bindpwdfile "$DCPWD"	## required for the ucsschool-s4-branch-site listener
