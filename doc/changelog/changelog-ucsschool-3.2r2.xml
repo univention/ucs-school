@@ -245,7 +245,7 @@
 			Various UCS@school UMC modules have been enabled to work in district mode (<ulink url="&ucsbug;31407">Bug 31407</ulink>).
 		</simpara></listitem>
 		<listitem><simpara>
-			The package <package>ucs-school-nonedu-slave</package> now also sets ships a joinscript which prepares the system to support running Samba 4 on it. (<ulink url="&ucsbug;34097">Bug 34097</ulink>).
+			The package <package>ucs-school-nonedu-slave</package> adds support for Samba 4 on non educative school slaves. (<ulink url="&ucsbug;34097">Bug 34097</ulink>).
 		</simpara></listitem>
 		<listitem><simpara>
 				The packages <package>ucs-school-slave</package> and <package>ucs-school-nonedu-slave</package> now explicitly register specific services with each &ucsUAS; Slave, either <emphasis>UCS@school Education</emphasis> or <emphasis>UCS@school Administration</emphasis> (<ulink url="&ucsbug;34172">Bug 34172</ulink>).
