@@ -1,3 +1,9 @@
+ucs-school-lib (5.0.38-5) unstable; urgency=medium
+
+  * Another attempt to fix the roleshare code in models/share.py (Bug #34335)
+
+ -- Arvid Requate <requate@univention.de>  Tue, 20 May 2014 13:13:43 +0200
+
 ucs-school-lib (5.0.38-4) unstable; urgency=medium
 
   * Try to fix roleshare specific code in python/models/share.py (Bug #34335)
