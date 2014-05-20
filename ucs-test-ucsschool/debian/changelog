@@ -1,3 +1,9 @@
+ucs-test-ucsschool (1.0.55-1) unstable; urgency=low
+
+  * Big #34491 adding wait for replications
+
+ -- Ammar Najjar <najjar@univention.de>  Tue, 20 May 2014 09:35:11 +0200
+
 ucs-test-ucsschool (1.0.54-3) unstable; urgency=medium
 
   * Let 16_s4_slave_automatic_srv_record.py wait for S4 Connector
