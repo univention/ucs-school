@@ -1,3 +1,9 @@
+ucs-school-lib (5.0.38-4) unstable; urgency=medium
+
+  * Try to fix roleshare specific code in python/models/share.py (Bug #34335)
+
+ -- Arvid Requate <requate@univention.de>  Tue, 20 May 2014 12:42:13 +0200
+
 ucs-school-lib (5.0.38-3) unstable; urgency=medium
 
   * Create the roleshares as samba-only, i.e. no NFS.
