@@ -168,15 +168,49 @@ else
 fi
 
 echo -n "Search school server binddn : "
-target_school_dc_hostdn=$(univention-ssh "$ROOTPWD" "root@${target_school_dc_ip}" \
-	/usr/sbin/udm computers/domaincontroller_slave list --filter "\'(&(service=UCS@school)(service=S4 Connector)(ip=$target_school_dc_ip))\'" \
-	| sed -n 's/^DN: //p')
+target_server_udm_output=$(univention-ssh "$ROOTPWD" "root@${target_school_dc_ip}" \
+	/usr/sbin/udm computers/domaincontroller_slave list --filter "\'(&(service=UCS@school)(service=S4 Connector)(ip=$target_school_dc_ip))\'")
+target_school_dc_hostdn=$(echo "$target_server_udm_output" | sed -n 's/^DN: //p')
 if [ -z "$target_school_dc_hostdn" ]; then
 	echo -e "\033[60Gfailed"
 	echo "Could not verify that $target_school_dc_ip is a UCS@school DC running the S4 Connector service"
 	exit 1
 else
 	echo -e "\033[60Gdone"
+fi
+
+echo -n "School server type : "
+target_server_ucsschool_service=''
+while read service; do
+	case "$service" in
+		"UCS@school Education")
+			target_server_ucsschool_type=Edukativnetz
+			target_server_ucsschool_service="$service"
+			;;
+		"UCS@school Administration")
+			target_server_ucsschool_type=Verwaltungsnetz
+			target_server_ucsschool_service="$service"
+			;;
+	esac
+done < <(echo "$target_server_udm_output" | sed -n 's/^ *service: //p')
+if [ -z "$target_server_ucsschool_service" ]; then
+	echo -e "\033[60Gfailed"
+	echo "Could not determine UCS@school server type of $target_school_dc_ip."
+	exit 1
+else
+	echo -e "\033[60G$target_server_ucsschool_service"
+fi
+
+echo -n "Determine school OU of school server : "	## check with given Admin credentials, to verify them
+target_school_ou=$(univention-ssh "$DCPWD" "${DCACCOUNT}@${target_school_dc_ip}" \
+	". /usr/share/ucs-school-lib/base.sh; school_ou '$target_school_dc_hostdn'")
+
+if [ -z "$target_school_ou" ]; then
+	echo -e "\033[60Gfailed"
+	echo "ERROR: Could not determine school OU of the remote school DC."
+	exit 1
+else
+	echo -e "\033[60G$target_school_ou"
 fi
 
 echo -n "Verify LDAP hostdn : "
@@ -191,33 +225,38 @@ else
 	echo -e "\033[60Gdone"
 fi
 
-
 echo -n "Search school OU : "	## check with given Admin credentials, to verify them
-target_school_ou=$(univention-ssh "$DCPWD" "${DCACCOUNT}@${target_school_dc_ip}" \
+my_school_ou=$(univention-ssh "$DCPWD" "${DCACCOUNT}@${target_school_dc_ip}" \
 	". /usr/share/ucs-school-lib/base.sh; school_ou '$target_ldap_hostdn'")
 
-if [ -z "$target_school_ou" ]; then
+if [ -z "$my_school_ou" ]; then
 	echo -e "\033[60Gfailed"
 	echo "Could not determine school OU for local DC."
 	echo "First the host account $hostname needs to be moved to the school OU it should join to."
 	exit 1
 else
-	echo -e "\033[60G$target_school_ou"
+	echo -e "\033[60G$my_school_ou"
+fi
+
+if [ "$target_school_ou" != "$my_school_ou" ]; then
+	echo "ERROR: The account of this server $hostname is located below $my_school_ou"
+	echo "        but the server $target_school_dc_ip is in $target_school_ou."
+	exit 1
 fi
 
 echo -n "Check group memberschip : "
 test_output=$(univention-ssh "$ROOTPWD" "root@${target_school_dc_ip}" \
-	/usr/sbin/udm groups/group list --filter name=DC-Edukativnetz | sed -n "/^ *hosts: $target_ldap_hostdn$/p")
+	/usr/sbin/udm groups/group list --filter name="DC-$target_server_ucsschool_type" | sed -n "/^ *hosts: $target_ldap_hostdn$/p")
 if [ -z "$test_output" ]; then
 	echo -e "\033[60Gfailed"
-	echo "$hostname is not member of the group DC-Edukativnetz, this needs to be fixed first manually."
+	echo "$hostname is not member of the group DC-$target_server_ucsschool_type, this needs to be fixed first manually."
 	exit 1
 fi
 test_output=$(univention-ssh "$ROOTPWD" "root@${target_school_dc_ip}" \
-	/usr/sbin/udm groups/group list --filter name=OU$target_school_ou-DC-Edukativnetz | sed -n "/^ *hosts: $target_ldap_hostdn$/p")
+	/usr/sbin/udm groups/group list --filter name="OU$my_school_ou-DC-$target_server_ucsschool_type" | sed -n "/^ *hosts: $target_ldap_hostdn$/p")
 if [ -z "$test_output" ]; then
 	echo -e "\033[60Gfailed"
-	echo "$hostname is not member of the group OU$target_school_ou-DC-Edukativnetz, this needs to be fixed first manually."
+	echo "$hostname is not member of the group OU$my_school_ou-DC-$target_server_ucsschool_type, this needs to be fixed first manually."
 	exit 1
 else
 	echo -e "\033[60Gdone"
@@ -231,6 +270,7 @@ fi
 
 echo "$(LC_ALL=C date): start $0" >>/var/log/univention/join.log 2>&1
 
+ucr commit /etc/apt/sources.list.d/*
 univention-install univention-samba4 || exit 1
 univention-add-app ucsschool -l libunivention-ldb-modules || exit 1
 
@@ -285,11 +325,13 @@ trapOnExit2() {
 trap trapOnExit2 EXIT
 
 univention-ssh "$ROOTPWD" root@"$target_school_dc_ip" \
-	"/usr/share/univention-samba4/scripts/register_ldb_module.py -H /var/lib/samba/private/sam.ldb --ignore-exists --remove=univention_samaccountname_ldap_check && /etc/init.d/samba-ad-dc restart"
+	"/usr/sbin/ucr set samba4/service/drepl=true; /usr/share/univention-samba4/scripts/register_ldb_module.py -H /var/lib/samba/private/sam.ldb --ignore-exists --remove=univention_samaccountname_ldap_check && /etc/init.d/samba-ad-dc restart"
 	
 univention-join -dcaccount "$DCACCOUNT" -dcpwd "$DCPWD"
 
 univention-ssh "$ROOTPWD" root@"$target_school_dc_ip" \
 	"/usr/share/univention-samba4/scripts/register_ldb_module.py -H /var/lib/samba/private/sam.ldb --ignore-exists --prepend=univention_samaccountname_ldap_check && /etc/init.d/samba-ad-dc restart"
+
+ucs_addServiceToLocalhost "$target_server_ucsschool_service" --binddn "$binddn" --bindpwdfile "$DCPWD"	## required for the ucsschool-s4-branch-site listener
 
 trap trapOnExit EXIT
