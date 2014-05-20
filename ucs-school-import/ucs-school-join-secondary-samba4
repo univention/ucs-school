@@ -38,7 +38,7 @@ display_help() {
 	  $0 [options] "<IP of UCS@school DC>"
 
 	Options:
-	  --dcaccount <account>:    Name of DC master account
+	  --dcaccount <account>:    Name of Administrator account
 	  --dcpwd <password file>:  File with DC master password
 	  --rootpassword <file>:    File with root password of UCS@school Samba4 Slave
 	  -h | --help | -?:         Print this usage message and exit program
@@ -56,6 +56,17 @@ if [ "$server_role" != "domaincontroller_slave" ]; then
 	echo "This script can only be run on a DC Slave"
 	exit 1
 fi
+
+USERTMP="$(mktemp -d)"
+DCPWD="$USERTMP/dcpwd"
+ROOTPWD="$USERTMP/rootpwd"
+
+trapOnExit() {
+	rm -rf "$USERTMP"
+	echo "$(LC_ALL=C date): finish $0" >>/var/log/univention/join.log 2>&1
+}
+
+trap trapOnExit EXIT
 
 while [ $# -gt 0 ]
 do
@@ -111,17 +122,6 @@ if [ -n "$test_school_role" ]; then
 	echo "This system is a UCS@school DC. This script can only be run on a non UCS@school DC"
 	exit 1
 fi
-
-USERTMP="$(mktemp -d)"
-DCPWD="$USERTMP/dcpwd"
-ROOTPWD="$USERTMP/rootpwd"
-
-trapOnExit() {
-	rm -rf "$USERTMP"
-	echo "$(LC_ALL=C date): finish $0" >>/var/log/univention/join.log 2>&1
-}
-
-trap trapOnExit EXIT
 
 
 if [ -z "$DCACCOUNT" ]; then
