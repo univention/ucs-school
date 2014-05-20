@@ -1,3 +1,9 @@
+ucs-school-umc-wizards (4.0.23-1) unstable; urgency=low
+
+  * Bug #34337: Wording
+
+ -- Dirk Wiesenthal <wiesenthal@univention.de>  Wed, 21 May 2014 01:17:18 +0200
+
 ucs-school-umc-wizards (4.0.22-1) unstable; urgency=low
 
   * Bug #34337: Recommend logging out after deleting a school

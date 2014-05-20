@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-wizards\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2014-05-20 01:00+0200\n"
+"POT-Creation-Date: 2014-05-20 10:36+0200\n"
 "PO-Revision-Date: 2014-04-24 16:49+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -278,17 +278,16 @@ msgstr "Passwort"
 
 #: umc/js/schoolwizards/Grid.js:330
 #, python-format
-msgid "Please confirm to delete %(objectNameSingular)s \"%(objectName)s\""
+msgid "Please confirm to delete %(objectNameSingular)s \"%(objectName)s\"."
 msgstr ""
 "Bitte bestätigen, dass %(objectNameSingular)s \"%(objectName)s\" gelöscht "
-"werden soll"
+"werden soll."
 
 #: umc/js/schoolwizards/Grid.js:328
-#, python-format
-msgid "Please confirm to delete the %(num)d selected %(objectNamePlural)s!"
+msgid "Please confirm to delete the %(num)d selected %(objectNamePlural)."
 msgstr ""
 "Bitte bestätigen Sie die Löschung der %(num)d ausgewählten "
-"%(objectNamePlural)s!"
+"%(objectNamePlural)s."
 
 #: umc/js/schoolwizards/SchoolGrid.js:110
 #, python-format
