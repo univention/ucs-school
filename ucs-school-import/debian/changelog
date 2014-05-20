@@ -1,3 +1,12 @@
+ucs-school-import (10.0.17-9) unstable; urgency=medium
+
+  * ucs-school-join-secondary-samba4 (Bug #32187):
+  * Add dns-$hostname account to user/ignorelist on the remote slave PDC
+  * Add workaround for "Bad DSA objectGUID" in DRS replication
+  * Add workaround for Bug #34754 for re-joins
+
+ -- Arvid Requate <requate@univention.de>  Tue, 20 May 2014 19:50:41 +0200
+
 ucs-school-import (10.0.17-8) unstable; urgency=medium
 
   * Fix univention-dnsedit options (Bug #32187)

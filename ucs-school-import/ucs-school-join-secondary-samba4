@@ -317,6 +317,34 @@ if ! is_ucr_true dns/register/srv_records/ldap; then
 	/usr/share/univention-directory-manager-tools/univention-dnsedit --binddn "$binddn" --bindpwd "$bindpwd" --ignore-exists "$domainname" remove srv ldap "tcp.dc._msdcs" 0 100 389 "$hostname.$domainname."
 fi
 
+## Workaround for Bug #34754
+if [ -r /var/lib/samba/private/sam.ldb ]; then
+	ridset_dn=$(univention-s4search sAMAccountName="$hostname$" rIDSetReferences  | ldapsearch-wrapper | sed -n 's/^rIDSetReferences: //p')
+	if [ -n "$ridset_dn" ]; then
+		test_output=$(univention-s4search -s base -b "$ridset_dn" | ldapsearch-wrapper)
+		old_rIDAllocationPool=$(sed -n 's/^rIDAllocationPool: //p' <<<"$test_output")
+		old_rIDPreviousAllocationPool=$(sed -n 's/^rIDPreviousAllocationPool: //p' <<<"$test_output")
+		old_rIDNextRID=$(sed -n 's/^rIDNextRID: //p' <<<"$test_output")
+	fi
+fi
+
+## append dns-$hostname to connector/s4/mapping/user/ignorelist on remote host
+test_output=$(univention-ssh "$ROOTPWD" root@"$target_school_dc_ip" \
+	/usr/sbin/ucr get connector/s4/mapping/user/ignorelist)
+ignored_users=( $(sed -e 's/,/ /g' <<<"$test_output") )
+found=''
+for str in "${ignored_users[@]}"; do
+	if [ "$str" = "dns-$hostname" ]; then
+		found=1
+		break
+	fi
+done
+if [ -z "$found" ]; then
+	univention-ssh "$ROOTPWD" root@"$target_school_dc_ip" \
+		/usr/sbin/ucr set connector/s4/mapping/user/ignorelist="$test_output,dns-$hostname"
+fi
+
+########### core join start
 trapOnExit2() {
 	trap '' SIGINT
 	univention-ssh "$ROOTPWD" root@"$target_school_dc_ip" \
@@ -328,12 +356,105 @@ trap trapOnExit2 EXIT
 
 univention-ssh "$ROOTPWD" root@"$target_school_dc_ip" \
 	"/usr/sbin/ucr set samba4/service/drepl=true; /usr/share/univention-samba4/scripts/register_ldb_module.py -H /var/lib/samba/private/sam.ldb --ignore-exists --remove=univention_samaccountname_ldap_check && /etc/init.d/samba-ad-dc restart"
-	
+
 univention-join -dcaccount "$DCACCOUNT" -dcpwd "$DCPWD"
 
 univention-ssh "$ROOTPWD" root@"$target_school_dc_ip" \
 	"/usr/share/univention-samba4/scripts/register_ldb_module.py -H /var/lib/samba/private/sam.ldb --ignore-exists --prepend=univention_samaccountname_ldap_check && /etc/init.d/samba-ad-dc restart"
 
+trap trapOnExit EXIT
+########### core join end
+
+### Workaround for "Bad DSA objectGUID <GUID> for sid <UDM sid>  - expected sid <Samba sid>" during replication in log.samba
+## * this seems to be due to directory/manager/samba3/legacy=yes and S4 Connector overwriting the temporary Samba SID
+## * the DRS replication code finds the temporary Samba SID still present in the extended DN blob of the serverReference attribute
+## * let's rewrite it to the correct value:
+my_sid=$(univention-ldapsearch -x -b "$ldap_hostdn" sambaSID | sed -n 's/^sambaSID: //p')
+univention-ssh --no-split "$ROOTPWD" "root@${target_school_dc_ip}" \
+        'TMP_SCRIPT=$(mktemp) && trap "rm -f \"$TMP_SCRIPT\"" EXIT && cat >"$TMP_SCRIPT" && /usr/bin/python2.6 "$TMP_SCRIPT" && /etc/init.d/samba-ad-dc restart' \
+	<<%EOF
+#!/usr/bin/python
+import ldb
+from samba.auth import system_session
+from samba.param import LoadParm
+from samba import Ldb
+from samba.ndr import ndr_pack, ndr_unpack
+from samba.dcerpc import security
+import sys
+
+lp = LoadParm()
+lp.load('/etc/samba/smb.conf')
+
+sam_ldb = Ldb('/var/lib/samba/private/sam.ldb', session_info=system_session(), lp=lp)
+
+server_objectSid_str = "$my_sid"
+server_objectSid_ndr = ndr_pack(security.dom_sid(server_objectSid_str))
+res = sam_ldb.search(sam_ldb.get_default_basedn(), scope=ldb.SCOPE_SUBTREE, expression="(&(sAMAccountName=$hostname$)(objectSid=%s))" % server_objectSid_str, attrs = ["objectSid", "serverReferenceBL"])
+record = res.msgs[0]
+sid1_ndr = record["objectSid"][0]
+sid1_str = ndr_unpack(security.dom_sid, sid1_ndr)
+print "$hostname objecSid:\t%s" % (sid1_str,)
+
+if "serverReferenceBL" in record:
+        res = sam_ldb.search(base=record["serverReferenceBL"][0], scope=ldb.SCOPE_BASE, expression="(objectClass=server)", attrs = ["serverReference"], controls=["extended_dn:0"])
+	record = res.msgs[0]
+	serverReference_str = record["serverReference"][0]
+	serverReference_Dn = ldb.Dn(sam_ldb, record["serverReference"][0])
+	sid2_ndr = serverReference_Dn.get_extended_component("SID")
+	sid2_str = ndr_unpack(security.dom_sid, sid2_ndr)
+	print "serverRefrence SID:\t%s" % (sid2_str,)
+	if sid2_str != sid1_str:
+		msg = ldb.Message()
+		msg.dn = record.dn
+		serverReference_Dn.set_extended_component("SID", sid1_ndr)
+		msg["serverReference"] = ldb.MessageElement( [ serverReference_Dn.extended_str() ] , ldb.FLAG_MOD_REPLACE, "serverReference")
+		sam_ldb.modify(msg)
+	else:
+		sys.exit(2)
+%EOF
+
+
+## Workaround for Bug #34754
+if [ -r /var/lib/samba/private/sam.ldb ]; then
+	ridset_dn=$(univention-s4search sAMAccountName="$hostname$" rIDSetReferences  | ldapsearch-wrapper | sed -n 's/^rIDSetReferences: //p')
+	if [ -n "$ridset_dn" ]; then
+		test_output=$(univention-s4search -s base -b "$ridset_dn" | ldapsearch-wrapper)
+		new_rIDAllocationPool=$(sed -n 's/^rIDAllocationPool: //p' <<<"$test_output")
+		new_rIDPreviousAllocationPool=$(sed -n 's/^rIDPreviousAllocationPool: //p' <<<"$test_output")
+		new_rIDNextRID=$(sed -n 's/^rIDNextRID: //p' <<<"$test_output")
+	fi
+fi
+if [ -n "$new_rIDAllocationPool" ] && [ -z "$new_rIDNextRID" ]; then
+	if [ "$new_rIDAllocationPool" = "$old_rIDAllocationPool" ] && [ -n "$old_rIDNextRID" ]; then
+		{
+		cat <<-%EOF
+		dn: $ridset_dn
+		changetype: modify
+		add: rIDNextRID
+		rIDNextRID: $old_rIDNextRID
+		%EOF
+
+		if [ -z "$new_rIDPreviousAllocationPool" ]; then
+			if [ -n "$old_rIDPreviousAllocationPool" ]; then
+				cat <<-%EOF
+				-
+				add: rIDPreviousAllocationPool
+				rIDPreviousAllocationPool: $old_rIDPreviousAllocationPool
+				%EOF
+			else
+				cat <<-%EOF
+				-
+				add: rIDPreviousAllocationPool
+				rIDPreviousAllocationPool: $new_rIDAllocationPool
+				%EOF
+			fi
+		fi
+		} | ldbmodify -H /var/lib/samba/private/sam.ldb
+	fi
+fi
+
+## In case Bug #34754 or the "Bad DSA objectGUID" issue hit us, 98univention-samba4slavepdc-dns.inst will have failed. so just run it again:
+univention-run-join-scripts -dcaccount "$DCACCOUNT" -dcpwd "$DCPWD"
+
 ucs_addServiceToLocalhost "$target_server_ucsschool_service" --binddn "$binddn" --bindpwdfile "$DCPWD"	## required for the ucsschool-s4-branch-site listener
 
-trap trapOnExit EXIT
