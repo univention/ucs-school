@@ -13,7 +13,6 @@ from univention.lib.umc_connection import UMCConnection
 import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool as utu
 import univention.testing.utils as utils
-from subprocess import call
 
 # Checks a list of rules defined and return the active rule
 # for a specific user
@@ -96,9 +95,7 @@ def main():
 			# assign whitelist rule1 to the class
 			rule1.assign(school, newClass.name, 'class')
 
-			# restarting squid
-			call(['/etc/init.d/squid3', 'restart'])
-
+			utils.wait_for_replication_and_postrun()
 			# Check for whitelist and student
 			# for one rule
 			doCheck(host, banPage, stu,'whitelist', rule1)
@@ -118,15 +115,13 @@ def main():
 					ucr=ucr,
 					umcConnection=connection,
 					typ='whitelist',
-					domains=['google.de', 'univention.de'],
+					domains=['google.de', 'gmx.net'],
 					priority=4)
 			rule2.define()
 
 			# Assign whitelist rule to the new Workgroup
 			rule2.assign(school, newWorkgroup.name, 'workgroup')
-
-			# restarting squid
-			call(['/etc/init.d/squid3', 'restart'])
+			utils.wait_for_replication_and_postrun()
 
 			# Check for whitelist and student
 			# for two rules with different priotities
@@ -136,9 +131,8 @@ def main():
 			# for two rules with different priotities
 			doCheck(host, banPage, tea,'whitelist', rule2, rule1)
 
-			# switch the rules to be 'blacklist' with higher proirity
+			# switch rule1 to be 'blacklist' with higher proirity
 			rule1.put(new_type='blacklist', new_priority=5)
-			rule2.put(new_type='blacklist', new_priority=6)
 
 			# Check for blacklist and student
 			# for one rule
@@ -147,6 +141,9 @@ def main():
 			# Check for blacklist and teacher
 			# for one rule
 			doCheck(host, banPage, tea,'blacklist', rule1)
+
+			# switch rule2 to be 'blacklist' with higher proirity
+			rule2.put(new_type='blacklist', new_priority=6)
 
 			# Check for blacklist and student
 			# for two rules with different priotities
