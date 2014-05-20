@@ -38,10 +38,10 @@ display_help() {
 	  $0 [options] "<IP of UCS@school DC>"
 
 	Options:
-	  --dcaccount <account>:          Name of DC master account
-	  --dcpwd <password file>:        File with DC master password
-	  --rootpassword <fqdn>:          Root Password of UCS@school Samba4 DC
-	  -h | --help | -?:              Print this usage message and exit program
+	  --dcaccount <account>:    Name of DC master account
+	  --dcpwd <password file>:  File with DC master password
+	  --rootpassword <file>:    File with root password of UCS@school Samba4 Slave
+	  -h | --help | -?:         Print this usage message and exit program
 
 	Description:
 	  $0 installs Samba4 on a second Slave DC and joins it to an UCS@school DC

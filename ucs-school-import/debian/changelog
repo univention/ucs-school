@@ -1,3 +1,9 @@
+ucs-school-import (10.0.17-6) unstable; urgency=medium
+
+  * Fix option description of ucs-school-join-secondary-samba4 (Bug #32187)
+
+ -- Arvid Requate <requate@univention.de>  Tue, 20 May 2014 14:54:54 +0200
+
 ucs-school-import (10.0.17-5) unstable; urgency=medium
 
   * ucs-school-join-secondary-samba4 (Bug #32187):
