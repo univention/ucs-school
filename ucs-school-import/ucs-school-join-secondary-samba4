@@ -60,13 +60,18 @@ fi
 USERTMP="$(mktemp -d)"
 DCPWD="$USERTMP/dcpwd"
 ROOTPWD="$USERTMP/rootpwd"
+JOIN_LOGFILE="/var/log/univention/join-secondary-samba4.log"
 
 trapOnExit() {
 	rm -rf "$USERTMP"
-	echo "$(LC_ALL=C date): finish $0" >>/var/log/univention/join.log 2>&1
+	echo "$(LC_ALL=C date): finish $0" >>"$JOIN_LOGFILE" 2>&1
 }
 
 trap trapOnExit EXIT
+
+{	## start logging
+
+echo "$(LC_ALL=C date): starting $0 $*" >>"$JOIN_LOGFILE" 2>&1
 
 while [ $# -gt 0 ]
 do
@@ -108,8 +113,6 @@ if [ -z "$target_school_dc_ip" ]; then
 	display_help
 	exit 1
 fi
-
-echo "$(LC_ALL=C date): starting $0 $*" >>/var/log/univention/join.log 2>&1
 
 # if ! ldapsearch -xLLL -h "$target_school_dc_ip" -p 7389 -s base -b "$ldap_base" -D "$ldap_hostdn" -y /etc/machine.secret >/dev/null 2>&1; then
 # 	echo "The DC Slave needs to be joined first without Samba4 or UCS@school installed"
@@ -173,6 +176,7 @@ echo -n "Search school server binddn : "
 target_server_udm_output=$(univention-ssh "$ROOTPWD" "root@${target_school_dc_ip}" \
 	/usr/sbin/udm computers/domaincontroller_slave list --filter "\'(&(service=UCS@school)(service=S4 Connector)(ip=$target_school_dc_ip))\'")
 target_school_dc_hostdn=$(echo "$target_server_udm_output" | sed -n 's/^DN: //p')
+target_school_dc_name=$(echo "$target_server_udm_output" | sed -n 's/^ *name: //p')
 if [ -z "$target_school_dc_hostdn" ]; then
 	echo -e "\033[60Gfailed"
 	echo "Could not verify that $target_school_dc_ip is a UCS@school DC running the S4 Connector service"
@@ -264,16 +268,25 @@ else
 	echo -e "\033[60Gdone"
 fi
 
+echo "$(LC_ALL=C date): $0 pre-checks done" >>"$JOIN_LOGFILE" 2>&1
+
 if [ -x /usr/bin/rdate ]; then
 	echo -n "Sync time "
 	/usr/bin/rdate "$target_school_dc_ip" >/dev/null 2>&1
 	echo -e "\033[60Gdone"
 fi
 
-echo "$(LC_ALL=C date): start $0" >>/var/log/univention/join.log 2>&1
-
 ucr commit /etc/apt/sources.list.d/*
-univention-install univention-samba4 || exit 1
+# Cannot use univention-install here as it's interactive:  univention-install univention-samba4 || exit 1
+(
+LOGFILE="/var/log/univention/actualise.log"
+export DEBIAN_FRONTEND=noninteractive
+echo "***** Starting \"univention-install $@\" on $(date)" >> "$LOGFILE"
+set -e
+set -o pipefail
+$update_commands_update 2>&1 | tee -a "$LOGFILE"
+exec $update_commands_install univention-samba4 2>&1 | tee -a "$LOGFILE"
+) || exit 1
 
 . /usr/share/univention-samba4/lib/all.sh
 
@@ -295,9 +308,26 @@ ucr set \
 	samba4/dns/domain/register?false \
 	samba4/join/dnsupdate?true \
 	samba/share/sysvol/readonly?no \
-	samba4/sysvol/sync/host?"$master_hostname" # Don''t use the FQDN, Bug #27247
+	samba4/sysvol/sync/host?"$target_school_dc_name" ## Workaround for Bug #34905  # Don''t use the FQDN, Bug #27247
 
 ucr unset nameserver2 nameserver3
+
+## In case this script is run a second time, e.g. to rejoin, we have to re-enable local account creation to re-create the dns-$hostname account
+ucr set --forced samba4/ldb/sam/module/prepend=''	## This shadows the value above, will be unset later to let the usual value re-surface.
+
+stop_udm_cli_server	## to make it pick up the modified directory/manager/samba3/legacy
+
+## Workaround for Bug #34908
+samba_krb5conf_template="/usr/share/samba/setup/krb5.conf"
+dpkg-divert --quiet --rename --local --divert "${samba_krb5conf_template}.debian" --add "${samba_krb5conf_template}"
+cp "${samba_krb5conf_template}.debian" "${samba_krb5conf_template}"
+cat >> "${samba_krb5conf_template}" <<%EOF
+
+[realms]
+\${REALM} = {
+	kdc = 127.0.0.1
+}
+%EOF
 
 ## Workaround for Bug #34754
 if [ -r /var/lib/samba/private/sam.ldb ]; then
@@ -337,9 +367,13 @@ trapOnExit2() {
 trap trapOnExit2 EXIT
 
 univention-ssh "$ROOTPWD" root@"$target_school_dc_ip" \
-	"/usr/sbin/ucr set samba4/service/drepl=true; /usr/share/univention-samba4/scripts/register_ldb_module.py -H /var/lib/samba/private/sam.ldb --ignore-exists --remove=univention_samaccountname_ldap_check && /etc/init.d/samba-ad-dc restart"
+	"/usr/sbin/ucr set samba4/service/drepl=true; /usr/share/univention-samba4/scripts/register_ldb_module.py -H /var/lib/samba/private/sam.ldb --ignore-exists --remove=univention_samaccountname_ldap_check && /etc/init.d/samba-ad-dc restart; /etc/init.d/univention-s4-connector restart"
 
 univention-join -dcaccount "$DCACCOUNT" -dcpwd "$DCPWD"
+echo "**************************************************************************"
+echo "* INFO: In case 98univention-samba4slavepdc-dns.inst failed, this is ok"
+echo "*       for rejoins and will be retried in a couple of seconds below."
+echo "**************************************************************************"
 
 univention-ssh "$ROOTPWD" root@"$target_school_dc_ip" \
 	"/usr/share/univention-samba4/scripts/register_ldb_module.py -H /var/lib/samba/private/sam.ldb --ignore-exists --prepend=univention_samaccountname_ldap_check && /etc/init.d/samba-ad-dc restart"
@@ -387,7 +421,7 @@ sid1_str = ndr_unpack(security.dom_sid, sid1_ndr)
 print "$hostname objecSid:\t%s" % (sid1_str,)
 
 if "serverReferenceBL" in record:
-        res = sam_ldb.search(base=record["serverReferenceBL"][0], scope=ldb.SCOPE_BASE, expression="(objectClass=server)", attrs = ["serverReference"], controls=["extended_dn:0"])
+	res = sam_ldb.search(base=record["serverReferenceBL"][0], scope=ldb.SCOPE_BASE, expression="(objectClass=server)", attrs = ["serverReference"], controls=["extended_dn:0"])
 	record = res.msgs[0]
 	serverReference_str = record["serverReference"][0]
 	serverReference_Dn = ldb.Dn(sam_ldb, record["serverReference"][0])
@@ -395,11 +429,20 @@ if "serverReferenceBL" in record:
 	sid2_str = ndr_unpack(security.dom_sid, sid2_ndr)
 	print "serverRefrence SID:\t%s" % (sid2_str,)
 	if sid2_str != sid1_str:
+		print "Fixing serverRefrence SID."
 		msg = ldb.Message()
 		msg.dn = record.dn
 		serverReference_Dn.set_extended_component("SID", sid1_ndr)
 		msg["serverReference"] = ldb.MessageElement( [ serverReference_Dn.extended_str() ] , ldb.FLAG_MOD_REPLACE, "serverReference")
 		sam_ldb.modify(msg)
+
+		res = sam_ldb.search(base=record.dn, scope=ldb.SCOPE_BASE, expression="(objectClass=server)", attrs = ["serverReference"], controls=["extended_dn:0"])
+		record = res.msgs[0]
+		serverReference_str = record["serverReference"][0]
+		serverReference_Dn = ldb.Dn(sam_ldb, record["serverReference"][0])
+		sid2_ndr = serverReference_Dn.get_extended_component("SID")
+		sid2_str = ndr_unpack(security.dom_sid, sid2_ndr)
+		print "serverRefrence SID:\t%s" % (sid2_str,)
 	else:
 		sys.exit(2)
 %EOF
@@ -461,10 +504,24 @@ if ! is_ucr_true dns/register/srv_records/ldap; then
 	/usr/share/univention-directory-manager-tools/univention-dnsedit --binddn "$binddn" --bindpwd "$bindpwd" --ignore-exists "$domainname" remove srv ldap "tcp.dc._msdcs" 0 100 389 "$hostname.$domainname."
 fi
 
-## In case Bug #34754 or the "Bad DSA objectGUID" issue hit us, 98univention-samba4slavepdc-dns.inst will have failed.
-## Also, we have to install libunivention-ldb-modules and run its joinscripts (cannot to univention-add-app before initial join)
+############# start run-jounscripts #2
+#### In case Bug #34754 or the "Bad DSA objectGUID" issue hit us, 98univention-samba4-dns.inst may have failed.
+univention-run-join-scripts -dcaccount "$DCACCOUNT" -dcpwd "$DCPWD" --force --run-scripts 98univention-samba4-dns.inst
+############# end run-jounscripts #2
+
+
+############# start run-jounscripts #3
+## Finally, we have to install libunivention-ldb-modules and run its joinscripts (cannot to univention-add-app before initial join)
+ucr unset --forced samba4/ldb/sam/module/prepend	## this restores the regular value set above.
 univention-add-app ucsschool -l libunivention-ldb-modules || exit 1
-univention-run-join-scripts -dcaccount "$DCACCOUNT" -dcpwd "$DCPWD"
+#### And run the joinscripts from this package, some with --force:
+univention-run-join-scripts -dcaccount "$DCACCOUNT" -dcpwd "$DCPWD" --run-scripts 96univention-samba4slavepdc.inst
+#### And run the other Joinscripts, we need to --force here: In the re-join case samba4/ldb/sam/module/prepend needs to be evaluated now:
+univention-run-join-scripts -dcaccount "$DCACCOUNT" -dcpwd "$DCPWD" --force --run-scripts 97libunivention-ldb-modules.inst
+#### In case Bug #34754 or the "Bad DSA objectGUID" issue hit us, 98univention-samba4slavepdc-dns.inst will have failed (on re-join)
+univention-run-join-scripts -dcaccount "$DCACCOUNT" -dcpwd "$DCPWD" --force --run-scripts 98univention-samba4slavepdc-dns.inst
+############# end run-jounscripts #3
 
 ucs_addServiceToLocalhost "$target_server_ucsschool_service" --binddn "$binddn" --bindpwdfile "$DCPWD"	## required for the ucsschool-s4-branch-site listener
 
+} 2>&1 | tee -a "$JOIN_LOGFILE"

@@ -1,3 +1,9 @@
+ucs-school-import (10.0.20-1) unstable; urgency=medium
+
+  * Bug #32187: Another bunch of fixes for ucs-school-join-secondary-samba4
+
+ -- Arvid Requate <requate@univention.de>  Wed, 21 May 2014 21:57:25 +0200
+
 ucs-school-import (10.0.19-1) unstable; urgency=low
 
   * Bug #34826: Log to stdout
