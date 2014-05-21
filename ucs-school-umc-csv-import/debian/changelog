@@ -1,3 +1,9 @@
+ucs-school-umc-csv-import (1.0.21-1) unstable; urgency=low
+
+  * Bug #34199: Wording, JS fixes
+
+ -- Dirk Wiesenthal <wiesenthal@univention.de>  Wed, 21 May 2014 13:55:36 +0200
+
 ucs-school-umc-csv-import (1.0.20-1) unstable; urgency=low
 
   * Bug #34199: Wording, encoding, JS fixes

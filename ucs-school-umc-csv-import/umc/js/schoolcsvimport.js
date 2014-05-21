@@ -97,10 +97,6 @@ define([
 						id: 'teachersAndStaff',
 						label: _('Teachers and staff')
 					}]
-				}, {
-					type: CheckBox,
-					name: 'delete_not_mentioned',
-					label: _('Completely replace the existing users of the selected user role with the users in the CSV file.')
 				}]
 			}, {
 				name: 'upload',
@@ -109,7 +105,7 @@ define([
 				widgets: [{
 					type: Text,
 					name: 'csv_help',
-					content: _('Example of a CSV file:') +
+					content: '<p>' + _('Example of a CSV file:') +
 						'<pre>' +
 							lang.replace('{username},{firstname},{lastname},{birthday}', {
 								username: _('Username'),
@@ -118,7 +114,11 @@ define([
 								birthday: _('Birthday')}) + '\n' +
 							_('john.doe,Johnathan James,Doe,03/15/2000') + '\n' +
 							'[...]' +
-						'</pre>'
+						'</pre></p>'
+				}, {
+					type: CheckBox,
+					name: 'delete_not_mentioned',
+					label: _('Replacement of the existing users of the selected user role with the users in the CSV file. This means that all users not included in the CSV file will be deleted.')
 				}, {
 					type: Uploader,
 					name: 'file',
@@ -176,7 +176,7 @@ define([
 			}, {
 				name: 'assign',
 				headerText: this.description,
-				helpText: _('The first lines of the CSV file are presented. It is necessary for the import to assign the individual columns concrete data types (first name, last name, ...). Please click on the header line of the table and choose the corresponding data type for each column. At least first name and last name need to be given.')
+				helpText: _('In the table below the first 10 lines of the CSV file are shown. It is necessary for the import to assign the individual columns concrete data types (first name, last name, ...). By clicking on the header line of the table the corresponding data type for each column can be chosen. At least first name and last name need to be given for the import to be successful.')
 			}, {
 				name: 'spreadsheet',
 				headerText: this.description,
@@ -191,6 +191,12 @@ define([
 					content: _('No errors occurred during import.')
 				}]
 			}];
+		},
+
+		buildRendering: function() {
+			this.inherited(arguments);
+			var widget = this.getWidget('upload', 'delete_not_mentioned');
+			query('.umcLabelPaneLabeNodeRight', widget.$refLabel$.domNode).style('display', 'inline');
 		},
 
 		next: function(pageName) {
@@ -353,7 +359,7 @@ define([
 			var school = this.getWidget('general', 'school').get('value');
 			var type = this.getWidget('general', 'type').get('value');
 			var params = {school: school, type: type};
-			var delete_not_mentioned = this.getWidget('general', 'delete_not_mentioned').get('value');
+			var delete_not_mentioned = this.getWidget('upload', 'delete_not_mentioned').get('value');
 			if (delete_not_mentioned) {
 				// only put it here when set. false will go into body and is then
 				// translated to string "false" in python which evaluates to True...
@@ -368,18 +374,20 @@ define([
 				label: label,
 				name: name,
 				onClick: function() {
-					var unused = 'unused';
-					var unusedLabel = _('Unused');
-					var fieldName = this.get('name');
-					var fieldLabel = this.get('label');
-					if (!this.get('checked')) {
-						fieldName = unused;
-						fieldLabel = unusedLabel;
+					if (this._headerCell) {
+						var unused = 'unused';
+						var unusedLabel = _('Unused');
+						var fieldName = this.get('name');
+						var fieldLabel = this.get('label');
+						if (!this.get('checked')) {
+							fieldName = unused;
+							fieldLabel = unusedLabel;
+						}
+						var grid = this._headerCell.grid;
+						var myField = this._headerCell.field;
+						updateGridField(grid, myField, fieldName, fieldLabel, unusedLabel);
+						grid.update();
 					}
-					var grid = this._headerCell.grid;
-					var myField = this._headerCell.field;
-					updateGridField(grid, myField, fieldName, fieldLabel, unusedLabel);
-					grid.update();
 				}
 			}));
 		},
@@ -427,6 +435,7 @@ define([
 				columns: givenColumns,
 				footerFormatter: function() { return ''; },
 				_updateContextItem: function() {},
+				_onRowClick: function() {},
 				gridOptions: {
 					selectionMode: 'none',
 					canSort: function() {

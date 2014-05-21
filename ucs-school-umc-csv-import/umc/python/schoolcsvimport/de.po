@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-csv-import\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2014-05-20 23:42+0200\n"
+"POT-Creation-Date: 2014-05-21 11:44+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: umc/python/schoolcsvimport/__init__.py:263
+#: umc/python/schoolcsvimport/__init__.py:272
 #, python-format
 msgid "%(username)s %(action)s"
 msgstr "%(username)s %(action)s"
@@ -40,11 +40,11 @@ msgstr "Aktion"
 msgid "Birthday"
 msgstr "Geburtstag"
 
-#: umc/python/schoolcsvimport/__init__.py:200
+#: umc/python/schoolcsvimport/__init__.py:209
 msgid "Checking users from CSV file"
 msgstr "Benutzer aus der CSV-Datei werden überprüft"
 
-#: umc/python/schoolcsvimport/__init__.py:232
+#: umc/python/schoolcsvimport/__init__.py:241
 msgid "Checking users from database"
 msgstr "Benutzer aus der Datenbank werden überprüft"
 
@@ -65,7 +65,7 @@ msgstr ""
 "Anzahl der %(object_name)s nach dem Import wäre %(sum)s. Das übersteigt die "
 "Anzahl an lizenzierten Objekten (%(max)s)."
 
-#: umc/python/schoolcsvimport/__init__.py:263
+#: umc/python/schoolcsvimport/__init__.py:272
 #, python-format
 msgid "Processing %d user(s)"
 msgstr "Verarbeite %d Benutzer"
@@ -113,15 +113,15 @@ msgstr ""
 "wird. Bitte beachten Sie, dass diese Warnmeldung darauf basiert, dass alle "
 "Benutzer importiert werden. Sie können Zeilen im Folgenden auch ignorieren."
 
-#: umc/python/schoolcsvimport/__init__.py:275
+#: umc/python/schoolcsvimport/__init__.py:284
 msgid "created"
 msgstr "angelegt"
 
-#: umc/python/schoolcsvimport/__init__.py:279
+#: umc/python/schoolcsvimport/__init__.py:288
 msgid "deleted"
 msgstr "gelöscht"
 
-#: umc/python/schoolcsvimport/__init__.py:277
+#: umc/python/schoolcsvimport/__init__.py:286
 msgid "modified"
 msgstr "verändert"
 
