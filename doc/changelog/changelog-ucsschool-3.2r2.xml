@@ -14,7 +14,7 @@
 	   The import script <emphasis>create_ou</emphasis> now supports the new command line argument <emphasis>--displayname</emphasis> for defining a display name for school OU objects (<ulink url="&ucsbug;34173">Bug 34173</ulink>).
 	</simpara></listitem>
 	<listitem><simpara>
-	  Starting from &ucsUAS; 3.2R2 the import script <emphasis>create_ou</emphasis> does not create automatically domaincontroller slave objects for the administrative network. The old behaviour may be restored by setting the &ucsUCR; variable <env>ucsschool/ldap/default/dcs</env> back to <emphasis>edukativ verwaltung</emphasis>. New slaves for the administrative network may be installed via the &ucsUAS; installer (<ulink url="&ucsbug;26137">Bug 26137</ulink>).
+	  Starting from &ucsUAS; 3.2R2 the import script <emphasis>create_ou</emphasis> does not create automatically domaincontroller slave objects for the administrative network. The old behaviour may be restored by setting the &ucsUCR; variable <envar>ucsschool/ldap/default/dcs</envar> back to <emphasis>edukativ verwaltung</emphasis>. New slaves for the administrative network may be installed via the &ucsUAS; installer (<ulink url="&ucsbug;26137">Bug 26137</ulink>).
 	</simpara></listitem>
 	<listitem><simpara>
 	  The import script <emphasis>create_ou</emphasis> now supports an additional argument for creating a management DC. Additionally a new script <emphasis>create_dc</emphasis> has been added that enables the admin to create a management DCs for a school OU retrospectively (<ulink url="&ucsbug;34166">Bug 34166</ulink>, <ulink url="&ucsbug;26137">Bug 26137</ulink>).
@@ -88,7 +88,7 @@
 		<listitem><simpara>
 			<package>ucs-school-netlogon-user-logonscripts</package> now creates a desktop link to the UMC of the school DC 
 			for teacher accounts, configurable via the &ucsUCR; variables 
-			<env>ucsschool/userlogon/umclink/re</env> and <env>ucsschool/userlogon/umclink/link</env>
+			<envar>ucsschool/userlogon/umclink/re</envar> and <envar>ucsschool/userlogon/umclink/link</envar>
 			(<ulink url="&ucsbug;22737">Bug 22737</ulink>).
 		</simpara></listitem>
 		</itemizedlist>
