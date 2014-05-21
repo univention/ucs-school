@@ -1,3 +1,9 @@
+ucs-test-ucsschool (1.0.56-1) unstable; urgency=low
+
+  * corrected expected write result for Administrator in 12_roleshare_student (Bug #34335)
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Wed, 21 May 2014 09:33:44 +0200
+
 ucs-test-ucsschool (1.0.55-1) unstable; urgency=low
 
   * Big #34491 adding wait for replications
