@@ -74,12 +74,13 @@ append_ucr_policy_to_base() {
 		fi
 
 		if [ -n "$tmp_ucr_policy_dn" ]; then
-			tmp_str=$(sed -rn 's/^univentionRegistry;entry-hex-([^:]+): .*/\1/p' <<<"$ldif")
-			if [ "$tmp_str" = "$key_hex" ]; then
-				echo "INFO: UCR key $key already present at '$tmp_ucr_policy_dn'"
-				target_ucr_policy_dn="$tmp_ucr_policy_dn"
-				break
-			fi
+			while read tmp_str; do
+				if [ "$tmp_str" = "$key_hex" ]; then
+					echo "INFO: UCR key $key already present at '$tmp_ucr_policy_dn'"
+					target_ucr_policy_dn="$tmp_ucr_policy_dn"
+					break 2
+				fi
+			done < <(sed -rn 's/^univentionRegistry;entry-hex-([^:]+): .*/\1/p' <<<"$ldif")
 		fi
 	done <<<"$policy_dn_list"
 
@@ -88,7 +89,7 @@ append_ucr_policy_to_base() {
 			--dn "$target_ucr_policy_dn" \
 			--append registry="$key $value" 
 	else
-		policy_name="ucsschool-import-roleshares"
+		policy_name="ucsschool-ucr-settings"
 		ucr_policy_base="cn=config-registry,cn=policies,$ldap_base"
 		univention-directory-manager policies/registry create --ignore_exists "$@" \
 			--position "$ucr_policy_base" \

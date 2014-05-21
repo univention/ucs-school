@@ -1,3 +1,9 @@
+ucs-school-metapackage (6.0.8-5) unstable; urgency=medium
+
+  * Bug #34335: Fix for UCR policy creation
+
+ -- Arvid Requate <requate@univention.de>  Wed, 21 May 2014 12:19:20 +0200
+
 ucs-school-metapackage (6.0.8-4) unstable; urgency=medium
 
   * increment joinscript version of ucs-school-master
