@@ -284,7 +284,7 @@ msgstr ""
 "werden soll."
 
 #: umc/js/schoolwizards/Grid.js:328
-msgid "Please confirm to delete the %(num)d selected %(objectNamePlural)."
+msgid "Please confirm to delete the %(num)d selected %(objectNamePlural)s."
 msgstr ""
 "Bitte bestätigen Sie die Löschung der %(num)d ausgewählten "
 "%(objectNamePlural)s."
