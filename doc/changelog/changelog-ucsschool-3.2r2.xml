@@ -67,9 +67,11 @@
 -->
 	<section>
 		<title>LDAP schema changes</title>
+		<itemizedlist>
 		<listitem><simpara>
 		  The LDAP schema for &ucsUAS; has been modified to support the attribute displayName at school OU objects (<ulink url="&ucsbug;34173">Bug 34173</ulink>).
 		</simpara></listitem>
+		</itemizedlist>
 	</section>
 <!--
 	<section>
@@ -105,12 +107,14 @@
 
 <section>
   <title>Proxy services</title>
+	<itemizedlist>
   <listitem><simpara>
 	A logic error has been fixed that may occurred if the same internet rule was assigned to more than one room (<ulink url="&ucsbug;34557">Bug 34557</ulink>).
   </simpara></listitem>
   <listitem><simpara>
 	&ucsUAS; has been prepared for an upcoming UCS erratum which enables &ucsUAS; to enable the configurable handling of the HTTP header X-Forwarded-For by the proxy squid (<ulink url="&ucsbug;34773">Bug 34773</ulink>).
   </simpara></listitem>
+	</itemizedlist>
 </section>
 
 <!--
