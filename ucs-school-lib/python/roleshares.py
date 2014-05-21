@@ -109,15 +109,14 @@ def create_roleshare_on_server(role, school_ou, share_container_dn, serverfqdn, 
 		print 'Object created: %s' % _2utf8( udm_obj.dn )
 
 @LDAP_Connection(MACHINE_READ)
-def fqdn_from_serverdn(serverdn, ldap_machine_read=None, ldap_position=None, search_base=None):
+def fqdn_from_serverdn(server_dn, ldap_machine_read=None, ldap_position=None, search_base=None):
 	fqdn = None
 	try:
-		dn, ldap_obj = ldap_machine_read.search(base=serverdn, scope='base', attr=['cn', 'associatedDomain'])[0]
+		dn, ldap_obj = ldap_machine_read.search(base=server_dn, scope='base', attr=['cn', 'associatedDomain'])[0]
 		if 'associatedDomain' in ldap_obj:
 			fqdn = ".".join((ldap_obj['cn'][0], ldap_obj['associatedDomain'][0]))
 	except IndexError:
-		print 'Could not determine FQDN for %s' % (serverdn,)
-		pass
+		print 'Could not determine FQDN for %s' % (server_dn,)
 	return fqdn
 
 @LDAP_Connection(MACHINE_READ)
@@ -131,7 +130,11 @@ def fileservers_for_school(school_id, ldap_machine_read=None, ldap_position=None
 
 	server_list = []
 	for server_dn in server_dn_list:
-		fqdn = fqdn_from_serverdn(server_dn)
+		try:
+			fqdn = fqdn_from_serverdn(server_dn)
+		except univention.admin.uexceptions.noObject:
+			print 'Ignoring non-existant ucsschoolHomeShareFileServer "%s"' % (server_dn,)
+			continue
 		if fqdn:
 			server_list.append(fqdn)
 	return set(server_list)
