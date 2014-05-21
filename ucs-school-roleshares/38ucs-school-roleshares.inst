@@ -55,7 +55,7 @@ automatically_create_student_roleshares() {
 }
 
 if automatically_create_student_roleshares; then
-	/usr/share/ucs-school-import/scripts/create_roleshares "$@" --create student
+	/usr/share/ucs-school-import/scripts/create_roleshares "$@" --create student || die
 else
 	echo "INFO: This is not a UCS@school Singlemaster and not a UCS@school Slave PDC"
 	echo "INFO: Skip automatic run of: /usr/share/ucs-school-import/scripts/create_roleshares --create student"
