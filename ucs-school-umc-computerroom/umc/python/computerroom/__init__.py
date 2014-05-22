@@ -809,11 +809,11 @@ class Instance(SchoolBaseModule):
 
 		# reset SMB connections
 		smbstatus = SMB_Status()
-		italc_users = self._italc.users
+		italc_users = [x.lower() for x in self._italc.users if x]
 		MODULE.info('iTALC users: %s' % ', '.join(italc_users))
 		for process in smbstatus:
 			MODULE.info('SMB process: %s' % str(process))
-			if process.username in italc_users:
+			if process.username and process.username.lower() in italc_users:
 				MODULE.info('Kill SMB process %s' % process.pid)
 				os.kill(int(process.pid), signal.SIGTERM)
 		_finished()
