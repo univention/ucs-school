@@ -1,3 +1,9 @@
+ucs-school-metapackage (6.0.8-7) unstable; urgency=medium
+
+  * Enable sysvol-sync on ucs-school-master (Bug #34905)
+
+ -- Arvid Requate <requate@univention.de>  Thu, 22 May 2014 14:23:24 +0200
+
 ucs-school-metapackage (6.0.8-6) unstable; urgency=medium
 
   * Register service UCS@school Education in ucs-school-singlemaster

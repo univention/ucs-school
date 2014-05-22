@@ -39,6 +39,7 @@ univention-config-registry set \
 	listener/shares/rename?yes \
 	samba4/join/dnsupdate?true \
 	samba4/sysvol/sync/setfacl/AU?false \
+	samba4/sysvol/sync/cron?"*/5 * * * *" \
 	connector/s4/mapping/wmifilter?yes \
 	ucsschool/import/generate/policy/dhcp/dns/set_per_ou?true \
 	ucs/web/overview/entries/service/teacherconsole/icon?"/univention-management-console/js/dijit/themes/umc/icons/50x50/univention-management-console.png" \
