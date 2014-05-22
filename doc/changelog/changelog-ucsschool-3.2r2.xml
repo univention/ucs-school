@@ -186,6 +186,18 @@
 				to the UMC (<ulink url="&ucsbug;25762">Bug 25762</ulink>).
 			  </simpara>
 			</listitem>
+			<listitem>
+			  <simpara> 
+				In some situations changed settings for share access have not been enforced. This
+				problem has been fixed (<ulink url="&ucsbug;34912">Bug 34911</ulink>).
+			  </simpara>
+			</listitem>
+			<listitem>
+			  <simpara> 
+				The log level of a debug message has been decreased (<ulink url="&ucsbug;34912">Bug
+				34912</ulink>).
+			  </simpara>
+			</listitem>
 		  </itemizedlist>
 		</section>
 
