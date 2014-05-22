@@ -51,6 +51,9 @@
 			<listitem><simpara>
 					The package <package>ucs-school-import</package> now ships a script <emphasis>ucs-school-join-secondary-samba4</emphasis> which may be used to add an additional standard UCS DC to a &ucsUAS; branch site (<ulink url="&ucsbug;32187">Bug 32187</ulink>).
 			</simpara></listitem>
+			<listitem><simpara>
+					The package <package>ucs-school-master</package> now activates GPO sysvol replication also if no Samba4 is installed on the &ucsUAS; Master itself (<ulink url="&ucsbug;34905">Bug 34905</ulink>).
+			</simpara></listitem>
 		</itemizedlist>
 	</section>
 <!--
