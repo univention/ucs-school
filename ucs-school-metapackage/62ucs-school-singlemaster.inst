@@ -141,6 +141,7 @@ if [ $JS_LAST_EXECUTED_VERSION = 1 ]; then
 fi
 
 ucs_addServiceToLocalhost 'UCS@school' "$@"
+ucs_addServiceToLocalhost 'UCS@school Education' "$@"
 
 joinscript_save_current_version
 
