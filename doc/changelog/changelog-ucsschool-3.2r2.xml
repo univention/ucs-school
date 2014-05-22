@@ -17,7 +17,7 @@
 	  Starting from &ucsUAS; 3.2R2 the import script <emphasis>create_ou</emphasis> does not create automatically domaincontroller slave objects for the administrative network. The old behaviour may be restored by setting the &ucsUCR; variable <envar>ucsschool/ldap/default/dcs</envar> back to <emphasis>edukativ verwaltung</emphasis>. New slaves for the administrative network may be installed via the &ucsUAS; installer (<ulink url="&ucsbug;26137">Bug 26137</ulink>).
 	</simpara></listitem>
 	<listitem><simpara>
-	  The import script <emphasis>create_ou</emphasis> now supports an additional argument for creating a management DC. Additionally a new script <emphasis>create_dc</emphasis> has been added that enables the admin to create a management DCs for a school OU retrospectively (<ulink url="&ucsbug;34166">Bug 34166</ulink>, <ulink url="&ucsbug;26137">Bug 26137</ulink>).
+	  The import script <emphasis>create_ou</emphasis> now supports an additional argument for creating a management DC. Additionally a new script <emphasis>create_dc</emphasis> has been added that enables the admin to create a management DC for a school OU retrospectively (<ulink url="&ucsbug;34166">Bug 34166</ulink>, <ulink url="&ucsbug;26137">Bug 26137</ulink>).
 	</simpara></listitem>
 
 	<listitem><simpara>
