@@ -105,7 +105,7 @@ define([
 				widgets: [{
 					type: Text,
 					name: 'csv_help',
-					content: '<p>' + _('Example of a CSV file:') +
+					content: _('Example of a CSV file:') +
 						'<pre>' +
 							lang.replace('{username},{firstname},{lastname},{birthday}', {
 								username: _('Username'),
@@ -114,7 +114,7 @@ define([
 								birthday: _('Birthday')}) + '\n' +
 							_('john.doe,Johnathan James,Doe,03/15/2000') + '\n' +
 							'[...]' +
-						'</pre></p>'
+						'</pre>'
 				}, {
 					type: CheckBox,
 					name: 'delete_not_mentioned',
@@ -197,6 +197,7 @@ define([
 			this.inherited(arguments);
 			var widget = this.getWidget('upload', 'delete_not_mentioned');
 			query('.umcLabelPaneLabeNodeRight', widget.$refLabel$.domNode).style('display', 'inline');
+			query(widget.$refLabel$.domNode).style({marginBottom: '1.5em', marginTop: '1.5em'});
 		},
 
 		next: function(pageName) {

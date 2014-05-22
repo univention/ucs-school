@@ -1,3 +1,9 @@
+ucs-school-umc-csv-import (1.0.22-1) unstable; urgency=low
+
+  * Bug #34199: Invalidate cache, handle double columns
+
+ -- Dirk Wiesenthal <wiesenthal@univention.de>  Thu, 22 May 2014 15:11:38 +0200
+
 ucs-school-umc-csv-import (1.0.21-1) unstable; urgency=low
 
   * Bug #34199: Wording, JS fixes

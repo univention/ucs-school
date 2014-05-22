@@ -46,7 +46,7 @@ from univention.config_registry import ConfigRegistry
 from ucsschool.lib.schoolldap import SchoolBaseModule, open_ldap_connection
 from ucsschool.lib.models.utils import create_passwd, add_module_logger_to_schoollib, stopped_notifier
 
-from univention.management.console.modules.schoolcsvimport.util import CSVStudent, CSVTeacher, CSVStaff, CSVTeachersAndStaff, UCS_License_detection, LicenseInsufficient
+from univention.management.console.modules.schoolcsvimport.util import CSVUser, CSVStudent, CSVTeacher, CSVStaff, CSVTeachersAndStaff, UCS_License_detection, LicenseInsufficient
 
 _ = Translation('ucs-school-umc-csv-import').translate
 
@@ -126,7 +126,7 @@ class Instance(SchoolBaseModule, ProgressMixin):
 			try:
 				# be strict regarding delimiters. I have seen the
 				# sniffer returning 'b' as the delimiter in some cases
-				dialect = sniffer.sniff(content, delimiters=' ,;\t')
+				dialect = sniffer.sniff(str(content), delimiters=' ,;\t')
 				dialect.strict = True
 			except csv.Error:
 				# Something went wrong. But the sniffer is not exact
@@ -145,25 +145,30 @@ class Instance(SchoolBaseModule, ProgressMixin):
 			with open(filename, 'wb') as f:
 				reader = csv.reader(lines, dialect)
 				writer = csv.writer(f, dialect)
-				columns = []
+				csv_columns = [] # Benutzername,Vorname,Irgendwas
+				columns = [] # name,firstname,unused2
 				first_lines = []
 				for line in reader:
 					if not any(cell.strip() for cell in line):
 						# empty line
 						continue
 					writer.writerow(line)
-					if not columns:
+					if not csv_columns:
 						if has_header:
-							columns = line
+							csv_columns = line
 							continue
 						else:
-							columns = ['unused%d' % x for x in range(len(line))]
+							csv_columns = ['unused%d' % x for x in range(len(line))]
 					if len(first_lines) < 10:
 						first_lines.append(line)
 					num_lines += 1
 				if num_lines == 0:
 					raise csv.Error('Empty!')
-				columns = [user_klass.find_field_name_from_label(column, i) for i, column in enumerate(columns)]
+				for i, column in enumerate(csv_columns):
+					column_name = user_klass.find_field_name_from_label(column, i)
+					if column_name in columns:
+						column_name = 'unused%d' % i
+					columns.append(column_name)
 				MODULE.process('First line translates to columns: %r' % columns)
 		except csv.Error as exc:
 			MODULE.warn('Malformatted CSV file? %s' % exc)
@@ -274,6 +279,7 @@ class Instance(SchoolBaseModule, ProgressMixin):
 		lo = open_ldap_connection(self._user_dn, self._password, ucr.get('ldap/server/name'))
 		file_info = None
 		with stopped_notifier():
+			CSVUser.invalidate_all_caches()
 			for file_id, attrs in iterator:
 				if file_info is None:
 					file_info = self.file_map[file_id]
