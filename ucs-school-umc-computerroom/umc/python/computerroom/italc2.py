@@ -130,7 +130,7 @@ _usermap = UserMap()
 class LockableAttribute( object ):
 	def __init__( self, initial_value = None, locking = True ):
 		self._lock = locking and threading.Lock() or None
-		MODULE.warn( 'Locking object: %s' % self._lock )
+		MODULE.info( 'Locking object: %s' % self._lock )
 		self._old = initial_value
 		self._current = copy.copy( initial_value )
 
