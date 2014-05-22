@@ -178,6 +178,18 @@ class UCSSchoolHelperAbstractClass(object):
 		return cls._cache[key]
 
 	@classmethod
+	def invalidate_all_caches(cls):
+		from ucsschool.lib.models.user import User
+		from ucsschool.lib.models.network import Network
+		from ucsschool.lib.models.utils import _pw_length_cache
+		cls._cache.clear()
+		# cls._search_base_cache.clear() # useless to clear
+		_pw_length_cache.clear()
+		Network._netmask_cache.clear()
+		User._profile_path_cache.clear()
+		User._samba_home_path_cache.clear()
+
+	@classmethod
 	def invalidate_cache(cls):
 		for key in cls._cache.keys():
 			if key[0] == cls.__name__:

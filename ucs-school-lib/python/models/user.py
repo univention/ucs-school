@@ -61,6 +61,10 @@ class User(UCSSchoolHelperAbstractClass):
 
 	roles = []
 
+	@classmethod
+	def shall_create_mail_domain(cls):
+		return ucr.is_true('ucsschool/import/generate/mail/domain')
+
 	def get_roleshare_home_subdir(self):
 		from ucsschool.lib.roleshares import roleshare_home_subdir
 		return roleshare_home_subdir(self.school, self.roles, ucr)
@@ -209,11 +213,18 @@ class User(UCSSchoolHelperAbstractClass):
 		ret = super(User, self)._alter_udm_obj(udm_obj)
 		return ret
 
-	def create_mail_domain(self, lo):
+	def get_mail_domain(self):
 		if self.email:
 			domain_name = self.email.split('@')[-1]
-			mail_domain = MailDomain.cache(domain_name)
-			mail_domain.create(lo)
+			return MailDomain.cache(domain_name)
+
+	def create_mail_domain(self, lo):
+		mail_domain = self.get_mail_domain()
+		if mail_domain is not None and not mail_domain.exists(lo):
+			if self.shall_create_mail_domain():
+				mail_domain.create(lo)
+			else:
+				logger.warning('Not allowed to create %r.' % mail_domain)
 
 	def get_specific_groups(self, lo):
 		groups = []
@@ -236,6 +247,9 @@ class User(UCSSchoolHelperAbstractClass):
 			name, email = escape_filter_chars(self.name), escape_filter_chars(self.email)
 			if self.get_first_udm_obj(lo, '&(!(uid=%s))(mailPrimaryAddress=%s)' % (name, email)):
 				self.add_error('email', _('The email address is already taken by another user. Please change the email address.'))
+			# mail_domain = self.get_mail_domain(lo)
+			# if not mail_domain.exists(lo) and not self.shall_create_mail_domain():
+			# 	self.add_error('email', _('The mail domain is unknown. Please change the email address or create the mail domain "%s" using the Univention Directory Manager.') % mail_domain.name)
 
 	def get_group_dn(self, group_name):
 		return Group.cache(group_name, self.school).dn

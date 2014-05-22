@@ -1,3 +1,10 @@
+ucs-school-lib (5.0.44-1) unstable; urgency=low
+
+  * Bug #34918: Create mail domains only when UCR says so
+  * Bug #34199: Support invalidating all caches
+
+ -- Dirk Wiesenthal <wiesenthal@univention.de>  Thu, 22 May 2014 15:12:45 +0200
+
 ucs-school-lib (5.0.43-1) unstable; urgency=low
 
   * Bug #34337: Fix computer modification: Create networks (continued)
