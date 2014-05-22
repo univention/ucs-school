@@ -1,3 +1,9 @@
+ucs-school-lib (5.0.42-1) unstable; urgency=low
+
+  * Bug #34337: Fix computer modification: Create networks
+
+ -- Dirk Wiesenthal <wiesenthal@univention.de>  Thu, 22 May 2014 13:16:08 +0200
+
 ucs-school-lib (5.0.41-1) unstable; urgency=low
 
   * Bug #34199: Missing translation

@@ -53,6 +53,9 @@ class AnyComputer(UCSSchoolHelperAbstractClass):
 		udm_module = 'computers/computer'
 
 class SchoolDC(UCSSchoolHelperAbstractClass):
+	# NOTE: evaluate filter (&(service=UCS@school)(service=UCS@school Education)) # UCS@school Administration
+	# vs. group memberships
+
 	@classmethod
 	def get_container(cls, school):
 		return 'cn=dc,cn=server,%s' % cls.get_search_base(school).computers
@@ -181,6 +184,10 @@ class SchoolComputer(UCSSchoolHelperAbstractClass):
 	def create_without_hooks(self, lo, validate):
 		self.create_network(lo)
 		return super(SchoolComputer, self).create_without_hooks(lo, validate)
+
+	def modify_without_hooks(self, lo, validate=True, move_if_necessary=None):
+		self.create_network(lo)
+		return super(SchoolComputer, self).modify_without_hooks(lo, validate, move_if_necessary)
 
 	def do_create(self, udm_obj, lo):
 		network = self.get_network()
