@@ -189,7 +189,7 @@
 			<listitem>
 			  <simpara> 
 				In some situations changed settings for share access have not been enforced. This
-				problem has been fixed (<ulink url="&ucsbug;34912">Bug 34911</ulink>).
+				problem has been fixed (<ulink url="&ucsbug;34912">Bug 34912</ulink>).
 			  </simpara>
 			</listitem>
 			<listitem>
