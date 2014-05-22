@@ -185,16 +185,23 @@ class SchoolComputer(UCSSchoolHelperAbstractClass):
 		self.create_network(lo)
 		return super(SchoolComputer, self).create_without_hooks(lo, validate)
 
-	def modify_without_hooks(self, lo, validate=True, move_if_necessary=None):
-		self.create_network(lo)
-		return super(SchoolComputer, self).modify_without_hooks(lo, validate, move_if_necessary)
-
 	def do_create(self, udm_obj, lo):
 		network = self.get_network()
 		if network:
 			udm_obj['network'] = network.dn
 		# TODO: groups. for memberserver...
 		return super(SchoolComputer, self).do_create(udm_obj, lo)
+
+	def modify_without_hooks(self, lo, validate=True, move_if_necessary=None):
+		self.create_network(lo)
+		return super(SchoolComputer, self).modify_without_hooks(lo, validate, move_if_necessary)
+
+	def do_modify(self, udm_obj, lo):
+		network = self.get_network()
+		if network:
+			udm_obj['network'] = network.dn
+		# TODO: groups. for memberserver...
+		return super(SchoolComputer, self).do_modify(udm_obj, lo)
 
 	def get_ipv4_network(self):
 		if self.subnet_mask is not None:
@@ -213,7 +220,7 @@ class SchoolComputer(UCSSchoolHelperAbstractClass):
 			network = str(ipv4_network.network)
 			netmask = str(ipv4_network.netmask)
 			broadcast = str(ipv4_network.broadcast)
-			return Network(name=network_name, school=self.school, network=network, netmask=netmask, broadcast=broadcast)
+			return Network.cache(network_name, self.school, network=network, netmask=netmask, broadcast=broadcast)
 
 	def create_network(self, lo):
 		network = self.get_network()
