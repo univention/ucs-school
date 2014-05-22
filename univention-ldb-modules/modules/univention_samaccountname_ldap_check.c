@@ -208,12 +208,12 @@ static int univention_samaccountname_ldap_check_add(struct ldb_module *module, s
 		} else if ( pid == 0 ) {
 
 			if (opt_unicodePwd != NULL) {
-				execlp("/usr/sbin/umc-command", "/usr/sbin/umc-command", "-s", ldap_master, "-P", machine_pass, "-U", opt_my_samaccoutname, "selectiveudm/create_windows_computer", "-o", opt_name, "-o", opt_unicodePwd, "-o", "decode_password=yes", "-o", opt_usersid, NULL);
+				execlp("/usr/sbin/ucs-school-create_windows_computer", "/usr/sbin/ucs-school-create_windows_computer", "-s", ldap_master, "-P", machine_pass, "-U", opt_my_samaccoutname, "selectiveudm/create_windows_computer", "-o", opt_name, "-o", opt_unicodePwd, "-o", "decode_password=yes", "-o", opt_usersid, NULL);
 			} else {
-				execlp("/usr/sbin/umc-command", "/usr/sbin/umc-command", "-s", ldap_master, "-P", machine_pass, "-U", opt_my_samaccoutname, "selectiveudm/create_windows_computer", "-o", opt_name, "-o", opt_usersid, NULL);
+				execlp("/usr/sbin/ucs-school-create_windows_computer", "/usr/sbin/ucs-school-create_windows_computer", "-s", ldap_master, "-P", machine_pass, "-U", opt_my_samaccoutname, "selectiveudm/create_windows_computer", "-o", opt_name, "-o", opt_usersid, NULL);
 			}
 
-			ldb_debug(ldb, LDB_DEBUG_ERROR, ("%s: exec of /usr/sbin/umc-command failed\n"), ldb_module_get_name(module));
+			ldb_debug(ldb, LDB_DEBUG_ERROR, ("%s: exec of /usr/sbin/ucs-school-create_windows_computer failed\n"), ldb_module_get_name(module));
 			_exit(1);
 		} else {
 			if ( waitpid(pid, &status, 0) == -1 ) {
@@ -234,11 +234,20 @@ static int univention_samaccountname_ldap_check_add(struct ldb_module *module, s
 
 		if( ! WIFEXITED(status) ) {
 			
-			ldb_debug(ldb, LDB_DEBUG_ERROR, "%s: Cannot determine return status of umc-command: %s (%d)\n", ldb_module_get_name(module), strerror(errno_wait), errno_wait);
+			ldb_debug(ldb, LDB_DEBUG_ERROR, "%s: Cannot determine return status of ucs-school-create_windows_computer: %s (%d)\n", ldb_module_get_name(module), strerror(errno_wait), errno_wait);
 			return LDB_ERR_UNWILLING_TO_PERFORM;
-		} else if( WEXITSTATUS(status) ) {
+		} else if( WEXITSTATUS(status) == 1 ) {
 			ldb_debug(ldb, LDB_DEBUG_ERROR, "%s: LDB_ERR_ENTRY_ALREADY_EXISTS\n", ldb_module_get_name(module));
 			return LDB_ERR_ENTRY_ALREADY_EXISTS;
+		} else if( WEXITSTATUS(status) == 2 ) {
+			ldb_debug(ldb, LDB_DEBUG_ERROR, ("%s: ldb_add of machine object is disabled\n"), ldb_module_get_name(module));
+			return LDB_ERR_UNWILLING_TO_PERFORM;
+		} else if( WEXITSTATUS(status) == 3 ) {
+			ldb_debug(ldb, LDB_DEBUG_TRACE, ("%s: ldb_add of machine object ignored in dummy mode\n"), ldb_module_get_name(module));
+			return LDB_SUCCESS;
+		} else if( WEXITSTATUS(status) ) {
+			ldb_debug(ldb, LDB_DEBUG_ERROR, ("%s: unknown error code from ucs-school-create_windows_computer: %d\n"), ldb_module_get_name(module), WEXITSTATUS(status));
+			return LDB_ERR_UNWILLING_TO_PERFORM;
 		}
 
 	} else if ( is_user || is_group ) {

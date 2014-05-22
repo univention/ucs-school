@@ -4,3 +4,4 @@ register_ldb_module.py usr/share/univention-samba4/scripts
 97libunivention-ldb-modules.inst usr/lib/univention-install
 96univention-samba4slavepdc.inst usr/lib/univention-install
 98univention-samba4slavepdc-dns.inst usr/lib/univention-install
+ucs-school-create_windows_computer usr/sbin

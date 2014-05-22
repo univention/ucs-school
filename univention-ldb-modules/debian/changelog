@@ -1,3 +1,9 @@
+univention-ldb-modules (2.0.3-3) unstable; urgency=medium
+
+  * New UCR variable samba4/addmachine (Bug #32187)
+
+ -- Arvid Requate <requate@univention.de>  Thu, 22 May 2014 17:30:55 +0200
+
 univention-ldb-modules (2.0.3-2) unstable; urgency=medium
 
   * Revert last change: despite its name 98univention-samba4slavepdc-dns.inst
