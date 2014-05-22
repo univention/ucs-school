@@ -1,3 +1,10 @@
+ucs-school-import (10.0.20-2) unstable; urgency=medium
+
+  * Support singlemaster in ucs-school-join-secondary-samba4 (Bug #32187)
+  * Fix returncode passing
+
+ -- Arvid Requate <requate@univention.de>  Thu, 22 May 2014 13:31:32 +0200
+
 ucs-school-import (10.0.20-1) unstable; urgency=medium
 
   * Bug #32187: Another bunch of fixes for ucs-school-join-secondary-samba4
