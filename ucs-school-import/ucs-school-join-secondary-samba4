@@ -309,6 +309,7 @@ ucr set \
 	nameserver1="$target_school_dc_ip" \
 	samba4/dc="$target_school_dc_ip" \
 	samba4/ldb/sam/module/prepend="univention_samaccountname_ldap_check" \
+	samba4/addmachine?deny \
 	directory/manager/samba3/legacy?yes \
 	dns/register/srv_records/kerberos?false \
 	dns/register/srv_records/ldap?false \

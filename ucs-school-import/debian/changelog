@@ -1,3 +1,10 @@
+ucs-school-import (10.0.20-3) unstable; urgency=medium
+
+  * Set samba4/addmachine?deny in ucs-school-join-secondary-samba4
+    (Bug #32187)
+
+ -- Arvid Requate <requate@univention.de>  Thu, 22 May 2014 17:25:09 +0200
+
 ucs-school-import (10.0.20-2) unstable; urgency=medium
 
   * Support singlemaster in ucs-school-join-secondary-samba4 (Bug #32187)
