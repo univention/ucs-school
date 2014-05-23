@@ -8,9 +8,7 @@
 .. moduleauthor:: Ammar Najjar <najjar@univention.de>
 """
 
-from shutil import move
 from univention.lib.umc_connection import UMCConnection
-import getpass
 import os
 import time
 import univention.testing.strings as uts
@@ -152,7 +150,6 @@ html5
 		boundary= '---------------------------103454444410473823401882756'
 		data = self.genData(file_name, content_type , boundary, self.flavor)
 		headers = dict(self.umcConnection._headers)  # copy headers!
-		reserved_headers = headers
 		httpcon = self.umcConnection.get_connection()
 		header_content = {
 			'Content-Type': 'multipart/form-data; boundary=%s' % (boundary,)
@@ -411,6 +408,7 @@ html5
 		if reqResult:
 			utils.fail('Unable to chack files for project (%r)' % (param,))
 
+	# FIXME under construction
 	def check_put(self):
 		"""Calls 'distribution/get' and check the existance of the added project"""
 		print 'Checking %s modification' % (self.name,)
