@@ -252,7 +252,7 @@ class Instance( SchoolBaseModule ):
 				elif key == 'homeDirectory':
 					user_orig_homeDirectory = value[0]
 					_tmp_split_path = user_orig_homeDirectory.rsplit(os.path.sep, 1)
-					if len(_tmp_split_path) != 2 or _tmp_split_path[1] != exam_user_uid:
+					if len(_tmp_split_path) != 2:
 						english_error_detail = "Failed parsing homeDirectory of original user: %s" % (user_orig_homeDirectory,)
 						message = _('ERROR: Creation of exam user account failed\n%s') % (english_error_detail,)
 						raise UMC_CommandError(message)

@@ -1,3 +1,9 @@
+ucs-school-umc-exam (2.0.2-1) unstable; urgency=low
+
+  * Fixed bug in parsing the users homeDirectory (Bug #34335)
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 23 May 2014 17:42:26 +0200
+
 ucs-school-umc-exam (2.0.1-2) unstable; urgency=medium
 
   * Derive exam users home prefix from the original users homeDirectory
