@@ -74,9 +74,9 @@ define([
 				}, {
 					type: TextBox,
 					name: 'dc_name',
-					label: _('Computer name of the school server'),
+					label: _('Name of educational school server'),
 					regExp: '^\\w+(\\w|-)*$',
-					description: _('The computer name must be a valid NetBIOS hostname. This requires a maximum length of 12 characters.'),
+					description: _('Name of the educational domaincontroller slave for the new school. The server name may consist of the letters a-z, the digits 0-9 and underscores. The name of the educational server may not be equal to the administrative server!'),
 					maxLength: 12,
 					required: !this.editMode && !this.singleMaster,
 					visible: !this.editMode && !this.singleMaster
