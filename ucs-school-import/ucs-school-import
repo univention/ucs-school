@@ -632,7 +632,14 @@ def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None, ShareFileServer=None
 		if grppolicy and grppolicy.lower() != 'none':
 			verify_policy(group, schoolNr, [ grppolicy ])
 
-
+	# In a single server environment the default DHCP container must
+	# be set to the DHCP container in the school ou. Otherwise newly
+	# imported computers have the DHCP objects in the wrong DHCP container
+	if configRegistry.is_true('ucsschool/singlemaster', False):
+		dhcpd_ldap_base = configRegistry.get('dhcpd/ldap/base')
+		if not dhcpd_ldap_base:
+			dhcpd_ldap_base = 'cn=dhcp,%s' % (getDN(schoolNr),)
+			univention.config_registry.handler_set(['dhcpd/ldap/base=%s' % (dhcpd_ldap_base,)])
 
 	for dc in school_dcs.split ():
 		if dcName:
@@ -777,24 +784,29 @@ def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None, ShareFileServer=None
 			obj = univention.admin.objects.get(dhcp_server_module, co, lo, position='', dn=objects[0])
 			obj.open()
 			dhcpServerContainer = ','.join(objects[0].split(',')[1:])
-			if obj.dn.lower() != newDHCPServerDN.lower():
-				attr_server = obj["server"]
-				print "need to remove dhcp server: %s" % obj.dn
-				try:
-					obj.remove()
-				except:
-					print "Failed to remove dhcp server: %s" % (obj.dn, )
-					problem_hints = problem_hints + "there were problems verifying this ou %s\n" % schoolNr
-				position.setDn("cn=%s,cn=dhcp,%s"%(schoolNr.lower (), getDN (schoolNr)))
-				print "need to create dhcp server: %s" % (position.getDn(), )
-				object=dhcp_server_module.object(co, lo, position=position, superordinate=dhcp_service_object)
-				object.open()
-				object["server"]=attr_server
-				try:
-					create_object(object)
-				except:
-					print "Failed to create dhcp server: %s" % (position.getDn(), )
-					problem_hints = problem_hints + "there were problems verifying this ou %s\n" % schoolNr
+
+			# only move if
+			# - in multiserver environments OR
+			# - desired dhcp server DN matches with UCR config
+			if configRegistry.is_false('ucsschool/singlemaster', False) or (newDHCPServerDN.endswith(',%s' % dhcpd_ldap_base)):
+				if obj.dn.lower() != newDHCPServerDN.lower():
+					attr_server = obj["server"]
+					print "need to remove dhcp server: %s" % obj.dn
+					try:
+						obj.remove()
+					except:
+						print "Failed to remove dhcp server: %s" % (obj.dn, )
+						problem_hints = problem_hints + "there were problems verifying this ou %s\n" % schoolNr
+					position.setDn("cn=%s,cn=dhcp,%s"%(schoolNr.lower (), getDN (schoolNr)))
+					print "need to create dhcp server: %s" % (position.getDn(), )
+					object=dhcp_server_module.object(co, lo, position=position, superordinate=dhcp_service_object)
+					object.open()
+					object["server"]=attr_server
+					try:
+						create_object(object)
+					except:
+						print "Failed to create dhcp server: %s" % (position.getDn(), )
+						problem_hints = problem_hints + "there were problems verifying this ou %s\n" % schoolNr
 			################
 			# copy subnets #
 			################
@@ -844,13 +856,6 @@ def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None, ShareFileServer=None
 
 	if not schoolNr in verified_ous:
 		verified_ous.append(schoolNr)
-
-	# In a single server environment the default DHCP container must
-	# be set to the DHCP container in the school ou. Otherwise newly
-	# imported computers have the DHCP objects in the wrong DHCP container
-	if configRegistry.is_true('ucsschool/singlemaster', False):
-		if not configRegistry.get('dhcpd/ldap/base'):
-			univention.config_registry.handler_set(['dhcpd/ldap/base=cn=dhcp,%s' % (getDN (schoolNr))])
 
 	# if requested, then create dhcp_dns policy that clears univentionDhcpDomainNameServers at OU level
 	# to prevent problems with "wrong" DHCP DNS policy connected to ldap base
