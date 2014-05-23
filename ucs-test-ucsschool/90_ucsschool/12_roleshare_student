@@ -6,6 +6,7 @@
 ## packages:
 ##    - ucs-school-import
 ##    - univention-samba | univention-samba4
+##    - ucs-school-roleshares
 
 import sys
 import subprocess
@@ -85,6 +86,10 @@ def create_testfile_on_homeshare(fqdn, username, password, filename):
 	share_unc = "//%s/%s" % (fqdn, username)
 	print "INFO: Creating testfile %s on home share %s" % (filename, share_unc,)
 
+	smbcmd = "dir" % (username,)
+	if run_smbclient(share_unc, username, password, smbcmd):
+		utils.fail('Failed to list home directory')
+
 	smbcmd = "put /etc/hosts %s" % (filename,)
 	if run_smbclient(share_unc, username, password, smbcmd):
 		utils.fail('Failed to create testfile: %r' % (smbcmd,))
@@ -149,13 +154,6 @@ def main():
 
 	if not ucr.is_true('ucsschool/import/roleshare', True):
 		utils.fail(log_message="ucsschool/import/roleshare has been deactivated, skipping test", returncode=TestCodes.REASON_SKIP)
-
-	print "INFO: Installing ucs-school-roleshares"
-	cmd_str = ucr.get('update/commands/update')
-	run_cmd(cmd_str, shell=True, print_output=False)
-
-	cmd_str = " ".join((ucr.get('update/commands/install'), "--force-yes", "--yes", "ucs-school-roleshares"))  # non-interactive
-	run_cmd(cmd_str, shell=True)
 
 	all_available_servers = []
 	all_visible_schools = [searchbase.school for searchbase in get_all_local_searchbases()]

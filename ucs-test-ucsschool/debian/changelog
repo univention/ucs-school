@@ -1,4 +1,10 @@
-ucs-test-ucsschool (1.0.57-1.1) unstable; urgency=low
+ucs-test-ucsschool (1.0.58-1) unstable; urgency=low
+
+  * Bug #34335: do not install ucs-school-roleshares
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 23 May 2014 14:19:57 +0200
+
+ucs-test-ucsschool (1.0.57-1) unstable; urgency=low
 
   * Check for rejected objects (Bug #34888)
 
