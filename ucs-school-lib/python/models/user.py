@@ -52,6 +52,7 @@ class User(UCSSchoolHelperAbstractClass):
 	email = Email(_('Email'), aka=['Email', 'E-Mail'], unlikely_to_change=True)
 	password = Password(_('Password'), aka=['Password', 'Passwort'])
 	disabled = Disabled(_('Disabled'), aka=['Disabled', 'Gesperrt'])
+	school_class = None # not defined by default (Staff)
 
 	type_name = None
 
@@ -194,8 +195,20 @@ class User(UCSSchoolHelperAbstractClass):
 				logger.debug('Group not mandatory! Part of a school?')
 				for school in all_schools:
 					if Group.is_school_group(school.name, group_dn):
-						logger.debug('Yes, part of %s! Removing...' % school)
-						udm_obj['groups'].remove(group_dn)
+						logger.debug('Yes, part of %s!' % school)
+						# Okay. What now?
+						#   -> "Foreign school"? -> remove
+						#   -> "My school"?
+						#      -> is_no_school_class (e.g. working group)? -> stay
+						#      -> is_school_class and self defined its own classes? -> remove as not in mandatory
+						remove = school.name != self.school
+						if not remove:
+							remove = self.school_class is not None and Group.is_school_class(school.name, group_dn)
+						if remove:
+							logger.debug('Removing it!')
+							udm_obj['groups'].remove(group_dn)
+						else:
+							logger.debug('Leaving it alone: Part of own school and either non-school class or new school classes were not defined at all')
 						break
 				else:
 					logger.debug('No. Leaving it alone...')
@@ -307,24 +320,18 @@ class User(UCSSchoolHelperAbstractClass):
 
 	def build_hook_line(self, hook_time, func_name):
 		code = self._map_func_name_to_code(func_name)
-		is_staff = self.self_is_staff()
-		is_teacher = self.self_is_teacher()
-		if is_staff and not is_teacher:
-			school_class = ''
-		else:
-			school_class = self.school_class
 		return self._build_hook_line(
 				code,
 				self.name,
 				self.lastname,
 				self.firstname,
 				self.school,
-				school_class,
+				self.school_class,
 				'', # TODO: rights?
 				self.email,
-				is_teacher,
+				self.is_teacher(),
 				self.is_active(),
-				is_staff,
+				self.is_staff(),
 				self.password,
 			)
 
