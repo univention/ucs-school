@@ -49,7 +49,18 @@ class DHCPService(UCSSchoolHelperAbstractClass):
 	def get_container(cls, school):
 		return cls.get_search_base(school).dhcp
 
-	def add_server(self, dc_name, lo):
+	def add_server(self, dc_name, lo, force_dhcp_server_move=False):
+		"""
+		Create the given DHCP server within the DHCP service. If the DHCP server
+		object already exists somewhere else within the LDAP tree, it may be moved
+		to the DHCP service.
+
+		PLEASE NOTE:
+		In multiserver environments an existing DHCP server object is always
+		moved to the current DHCP service. In single server environments the
+		DHCP server object is *ONLY* moved, if the UCR variable dhcpd/ldap/base
+		matches to the current DHCP service.
+		"""
 		from ucsschool.lib.models.school import School
 
 		# create dhcp-server if not exsistant
@@ -59,13 +70,20 @@ class DHCPService(UCSSchoolHelperAbstractClass):
 		if existing_dhcp_server_dn:
 			logger.info('DHCP server %s exists!' % existing_dhcp_server_dn)
 			old_dhcp_server_container = ','.join(lo.explodeDn(existing_dhcp_server_dn)[1:])
-			# move existing dhcp server object to OU
-			if existing_dhcp_server_dn != dhcp_server.dn:
-				logger.info('DHCP server %s not in school %r! Removing and creating new one!' % (existing_dhcp_server_dn, school))
-				old_superordinate = DHCPServer.find_udm_superordinate(existing_dhcp_server_dn, lo)
-				old_dhcp_server = DHCPServer.from_dn(existing_dhcp_server_dn, None, lo, superordinate=old_superordinate)
-				old_dhcp_server.remove(lo)
-				dhcp_server.create(lo)
+			dhcpd_ldap_base = ucr.get('dhcpd/ldap/base', '')
+			# only move if
+			# - forced via kwargs OR
+			# - in multiserver environments OR
+			# - desired dhcp server DN matches with UCR config
+			if force_dhcp_server_move or ucr.is_false('ucsschool/singlemaster', False) or (dhcp_server.dn.endswith(',%s' % dhcpd_ldap_base)):
+				# move if existing DN does not match with desired DN
+				if existing_dhcp_server_dn != dhcp_server.dn:
+					# move existing dhcp server object to OU/DHCP service
+					logger.info('DHCP server %s not in school %r! Removing and creating new one at %s!' % (existing_dhcp_server_dn, school, dhcp_server.dn))
+					old_superordinate = DHCPServer.find_udm_superordinate(existing_dhcp_server_dn, lo)
+					old_dhcp_server = DHCPServer.from_dn(existing_dhcp_server_dn, None, lo, superordinate=old_superordinate)
+					old_dhcp_server.remove(lo)
+					dhcp_server.create(lo)
 			################
 			# copy subnets #
 			################
