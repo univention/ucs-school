@@ -158,6 +158,11 @@
 				<listitem><simpara>
 				  The &ucsUAS; configuration wizard is now prevented from being opened more than once per UMC session (<ulink url="&ucsbug;34837">Bug 34837</ulink>).
 				</simpara></listitem>
+				<listitem><simpara>
+					The package list is now updated just before installing the packages.
+					This prevents errors with outdated packages that cannot be found in
+					the online repository (<ulink url="&ucsbug;34904">Bug 34904</ulink>).
+				</simpara></listitem>
 			</itemizedlist>
 		</section>
 		<section>
