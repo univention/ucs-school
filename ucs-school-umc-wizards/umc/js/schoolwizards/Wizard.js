@@ -83,7 +83,7 @@ define([
 					label: _('Advanced settings'),
 					callback: lang.hitch(this, function() {
 						UMCApplication.openModule('udm', 'navigation', {openObject: {objectType: this.objectType, objectDN: this.$dn$}});
-						this.finishEditMode();
+						this.onFinished();  // close this wizard
 					})
 				});
 				page.layout.push('udm_link');

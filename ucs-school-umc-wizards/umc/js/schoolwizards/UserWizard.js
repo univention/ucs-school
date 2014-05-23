@@ -100,6 +100,7 @@ define([
 				}, {
 					type: ComboBox,
 					name: 'school_class',
+					sortStaticValues: true,
 					label: _('Class')
 				}, {
 					type: TextBox,
@@ -153,11 +154,9 @@ define([
 
 		updateWidgets: function(/*String*/ currentPage) {
 			if (currentPage === 'general') {
-				var selectedType = this.getWidget('general', 'type').get('value');
-				var types = ['teacher', 'staff', 'teachersAndStaff'];
 				var classBox = this.getWidget('item', 'school_class');
 				var newClassButton = this.getPage('item')._form.getButton('newClass');
-				if (array.indexOf(types, selectedType) >= 0) {
+				if (!this.hasClassWidget()) {
 					classBox.set('value', null);
 					classBox.set('required', false);
 					classBox.hide();
@@ -175,6 +174,19 @@ define([
 			this.reloadClasses();
 		},
 
+		hasClassWidget: function() {
+			var selectedType = this.getWidget('general', 'type').get('value');
+			return selectedType == 'student';
+		},
+
+		getValues: function() {
+			var values = this.inherited(arguments);
+			if (!this.hasClassWidget()) {
+				delete values.school_class;
+			}
+			return values;
+		},
+
 		reloadClasses: function() {
 			var schoolName = this.getWidget('general', 'school').get('value');
 			if (schoolName) {
@@ -186,7 +198,9 @@ define([
 						var widget = this.getWidget('item', 'school_class');
 						widget.set('staticValues', classes);
 						if (this.loadedValues && this.loadedValues.school_class) {
-							widget.set('value', this.loadedValues.school_class);
+							if (this.hasClassWidget()) {
+								widget.set('value', this.loadedValues.school_class);
+							}
 						}
 					})
 				);
