@@ -1,3 +1,9 @@
+ucs-school-umc-groups (2.0.4-1) unstable; urgency=low
+
+  * Bug #34933: updated module icons
+
+ -- Alexander Kläser <klaeser@univention.de>  Fri, 23 May 2014 12:18:09 +0200
+
 ucs-school-umc-groups (2.0.3-1) unstable; urgency=low
 
   * Bug #31407: enable district mode
