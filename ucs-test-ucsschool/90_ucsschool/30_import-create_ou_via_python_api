@@ -7,8 +7,9 @@
 ## packages:
 ##   - ucs-school-import
 
-from essential.importou import *
+import essential.importou as eio
 
 if __name__ == '__main__':
-	import_ou_basics(use_cli_api=False, use_python_api=True)
-	import_ou_with_existing_dc(use_cli_api=False, use_python_api=True)
+	eio.import_ou_basics(use_cli_api=False, use_python_api=True)
+	eio.import_ou_with_existing_dc(use_cli_api=False, use_python_api=True)
+	eio.import_3_ou_in_a_row(use_cli_api=False, use_python_api=True)

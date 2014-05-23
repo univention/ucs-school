@@ -1,3 +1,10 @@
+ucs-test-ucsschool (1.0.59-1) unstable; urgency=low
+
+  * Bug #34940: test changes to ucs-school-lib and ucs-school-import
+    regarding movement of DHCP server objects
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 23 May 2014 23:34:24 +0200
+
 ucs-test-ucsschool (1.0.58-1) unstable; urgency=low
 
   * Bug #34335: do not install ucs-school-roleshares

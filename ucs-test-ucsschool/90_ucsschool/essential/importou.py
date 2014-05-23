@@ -61,6 +61,15 @@ def get_school_base(ou):
 	else:
 		return 'ou=%(ou)s,%(basedn)s' % {'ou': ou, 'basedn': configRegistry.get('ldap/base')}
 
+def get_school_ou_from_dn(dn, ucr=None):
+	if not ucr:
+		ucr = univention.config_registry.ConfigRegistry()
+		ucr.load()
+	oulist = [x[3:] for x in univention.admin.uldap.explodeDn(dn) if x.startswith('ou=')]
+	if ucr.is_true('ucsschool/ldap/district/enable'):
+		return oulist[-2]
+	return oulist[-1]
+
 def create_ou_cli(ou, dc=None, dc_administrative=None, sharefileserver=None, ou_displayname=None):
 	cmd_block = ['/usr/share/ucs-school-import/scripts/create_ou', ou]
 	if dc:
@@ -178,7 +187,7 @@ def get_ou_base(ou, district_enable):
 	return ou_base
 
 
-def create_and_verify_ou(ou, dc, sharefileserver, dc_administrative=None, ou_displayname=None, singlemaster=False, noneducational_create_objects=False, district_enable=False, default_dcs=None, dhcp_dns_clearou=False, do_cleanup=True, use_cli_api=True, use_python_api=False):
+def create_and_verify_ou(ou, dc, sharefileserver, dc_administrative=None, ou_displayname=None, singlemaster=False, noneducational_create_objects=False, district_enable=False, default_dcs=None, dhcp_dns_clearou=False, do_cleanup=True, unset_dhcpd_base=True, ucr=None, use_cli_api=True, use_python_api=False):
 
 	assert(use_cli_api != use_python_api)
 
@@ -196,7 +205,8 @@ def create_and_verify_ou(ou, dc, sharefileserver, dc_administrative=None, ou_dis
 	print '****	dhcp_dns_clearou=%s' % dhcp_dns_clearou
 	print '******************************************************'
 
-	ucr = univention.testing.ucr.UCSTestConfigRegistry()
+	if ucr is None:
+		ucr = univention.testing.ucr.UCSTestConfigRegistry()
 	ucr.load()
 
 	lo = univention.uldap.getMachineConnection()
@@ -215,10 +225,12 @@ def create_and_verify_ou(ou, dc, sharefileserver, dc_administrative=None, ou_dis
 		'ucsschool/ldap/default/dcs=%s' % default_dcs,
 		'ucsschool/import/generate/policy/dhcp/dns/clearou=%s' % ('true' if dhcp_dns_clearou else 'false'),
 	])
-	univention.config_registry.handler_unset([
-		'dhcpd/ldap/base'
-	])
+	if unset_dhcpd_base:
+		univention.config_registry.handler_unset([
+				'dhcpd/ldap/base'
+		])
 
+	old_dhcpd_ldap_base = ucr.get('dhcpd/ldap/base')
 	base_dn = ucr.get('ldap/base')
 	ou_base = get_ou_base(ou, district_enable)
 
@@ -387,19 +399,35 @@ def create_and_verify_ou(ou, dc, sharefileserver, dc_administrative=None, ou_dis
 	elif not is_master_or_backup and not membership:
 		raise DCMembership()
 
+
+	ucr.load()
+	if not singlemaster:
+		# in multiserver setups all dhcp settings have to be checked
+		dhcp_dn = "cn=dhcp,%s" % (ou_base)
+	else:
+		# in singleserver setup only the first OU sets dhcpd/ldap/base and all following OUs
+		# should leave the UCR variable untouched.
+		dhcpd_ldap_base = ucr.get('dhcpd/ldap/base')
+		if not dhcpd_ldap_base or not 'ou=' in dhcpd_ldap_base:
+			raise DhcpdLDAPBase('dhcpd/ldap/base=%r contains no "ou="' % (dhcpd_ldap_base,))
+
+		if not old_dhcpd_ldap_base:
+			# seems to be the first OU, so check the variable settings
+			if ucr.get('dhcpd/ldap/base') != "cn=dhcp,%s" % (ou_base,):
+				print 'ERROR: dhcpd/ldap/base =', ucr.get('dhcpd/ldap/base')
+				print 'ERROR: expected base =', dhcp_dn
+				raise DhcpdLDAPBase()
+
+		# use the UCR value and check if the DHCP service exists
+		dhcp_dn = dhcpd_ldap_base
+
 	# dhcp
-	dhcp_dn = "cn=dhcp,%s" % (ou_base)
-	dhcp_service_dn = "cn=%s,%s" % (ou, dhcp_dn)
+	print 'LDAP base of dhcpd = %r' % dhcp_dn
+	dhcp_service_dn = "cn=%s,%s" % (get_school_ou_from_dn(dhcp_dn, ucr), dhcp_dn)
 	dhcp_server_dn = "cn=%s,%s" % (dc_name, dhcp_service_dn)
 	utils.verify_ldap_object(dhcp_service_dn, expected_attr={'dhcpOption': ['wpad "http://%s.%s/proxy.pac"' % (dc_name, ucr.get('domainname'))]}, should_exist=True)
 	utils.verify_ldap_object(dhcp_server_dn, should_exist=True)
 
-	if singlemaster:
-		ucr.load()
-		if ucr.get('dhcpd/ldap/base') != dhcp_dn:
-			print ucr.get('dhcpd/ldap/base')
-			print dhcp_dn
-			raise DhcpdLDAPBase()
 
 	dhcp_dns_clearou_dn = 'cn=dhcp-dns-clear,cn=policies,%s' % ou_base
 	if dhcp_dns_clearou:
@@ -577,3 +605,42 @@ def import_ou_with_existing_dc(use_cli_api=True, use_python_api=False):
 
 	utils.wait_for_replication()
 
+
+def import_3_ou_in_a_row(use_cli_api=True, use_python_api=False):
+	"""
+	Creates 3 OUs in a row
+	"""
+	ucr = univention.testing.ucr.UCSTestConfigRegistry()
+
+
+	for singlemaster in [True, False]:
+		for district_enable in [False, True]:
+			cleanup_ou_list = []
+			try:
+				# reset DHCPD ldap search base which is also to be tested
+				univention.config_registry.handler_unset(['dhcpd/ldap/base'])
+
+				for i in xrange(1, 4):
+					ou_name = uts.random_name()
+					print '\n*** Creating OU #%d (ou_name=%s) ***\n' % (i, ou_name)
+					cleanup_ou_list.append(ou_name)
+					create_and_verify_ou(
+						ou=ou_name,
+						ou_displayname=ou_name,
+						dc=(uts.random_name() if not singlemaster else None),
+						dc_administrative=None,
+						sharefileserver=None,
+						singlemaster=singlemaster,
+						noneducational_create_objects=False,
+						district_enable=district_enable,
+						default_dcs=None,
+						dhcp_dns_clearou=True,
+						unset_dhcpd_base=False,
+						ucr=ucr,
+						do_cleanup=False,
+						use_cli_api=use_cli_api,
+						use_python_api=use_python_api,
+						)
+			finally:
+				for ou_name in cleanup_ou_list:
+					remove_ou(ou_name)
