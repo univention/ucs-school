@@ -29,6 +29,14 @@
 	<listitem><simpara>
 	  When calling the &ucsUAS; CLI tools like <emphasis>import_user</emphasis>, the &ucsUDN; will be now stopped automatically during the time the tool is running (<ulink url="&ucsbug;34826">Bug 34826</ulink>).
 	</simpara></listitem>
+	<listitem>
+	  <simpara> 
+		In previous versions of &ucsUAS; the CLI tool <emphasis>create_ou</emphasis> moved the DHCP
+		server object of the single master to the new OU which could break the DHCP server functionality. As
+		of &ucsUAS; 3.2 R2 the DHCP server object is no longer moved out of the configured DHCP LDAP search
+		base (<ulink url="&ucsbug;34940">Bug 34940</ulink>).
+	  </simpara>
+	</listitem>
   </itemizedlist>
 </section>
 
