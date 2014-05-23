@@ -1,3 +1,9 @@
+ucs-school-umc-installer (2.0.17-1) unstable; urgency=low
+
+  * Bug #34904: Update package list before installing packages
+
+ -- Dirk Wiesenthal <wiesenthal@univention.de>  Fri, 23 May 2014 11:17:28 +0200
+
 ucs-school-umc-installer (2.0.16-1) unstable; urgency=low
 
   * Bug #34837: set the unique flag at the UCS@school installer module

@@ -738,6 +738,7 @@ class Instance(Base):
 			MODULE.process('Starting package installation')
 			with _self.package_manager.locked(reset_status=True, set_finished=True):
 				with _self.package_manager.no_umc_restart(exclude_apache=True):
+					_self.package_manager.update()
 					success = _self.package_manager.install(*packages)
 			MODULE.info('Result of package installation: success=%s' % success)
 
