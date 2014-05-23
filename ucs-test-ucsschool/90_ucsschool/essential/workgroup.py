@@ -1,5 +1,3 @@
-#!/usr/share/ucs-test/runner python
-
 """
 .. module:: Workgroup
 	:platform: Unix
@@ -259,3 +257,13 @@ class Workgroup(object):
 					self.school,
 					basedn)
 		utils.verify_ldap_object(sharedn, should_exist=expected_share_result)
+
+
+	def dn(self):
+		basedn = self.ucr.get('ldap/base')
+		return 'cn=%s-%s,cn=schueler,cn=groups,ou=%s,%s' % (
+				self.school,
+				self.name,
+				self.school,
+				basedn)
+

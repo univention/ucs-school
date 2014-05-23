@@ -1,5 +1,3 @@
-#!/usr/share/ucs-test/runner python
-
 """
 .. module:: Klasse
 	:platform: Unix

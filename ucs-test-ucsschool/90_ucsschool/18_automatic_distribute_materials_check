@@ -1,0 +1,85 @@
+#!/usr/share/ucs-test/runner python
+## desc: automatic_distribute_materials_check
+## roles: [domaincontroller_master, domaincontroller_backup, domaincontroller_slave, memberserver]
+## tags: [apptest]
+## exposure: dangerous
+## packages: [ucs-school-umc-distribution]
+
+from essential.distribution import Distribution
+from essential.workgroup import Workgroup
+from subprocess import call
+from univention.config_registry import handler_set
+from univention.lib.umc_connection import UMCConnection
+import time
+import univention.testing.ucr as ucr_test
+import univention.testing.ucsschool as utu
+import univention.testing.utils as utils
+
+def main():
+	call(['rdate', '192.168.0.3'])
+	MIN_DIST_TIME = 6*60
+	MIN_COLL_TIME = 16*60
+	try:
+		with utu.UCSTestSchool() as schoolenv:
+			with ucr_test.UCSTestConfigRegistry() as ucr:
+				host = ucr.get('hostname')
+				handler_set(['umc/http/session/timeout=960'])
+				handler_set(['umc/module/timeout=960'])
+				call(['invoke-rc.d', 'univention-management-console-web-server', 'restart'])
+				call(['invoke-rc.d', 'univention-management-console-server', 'restart'])
+				con = UMCConnection(host)
+
+				# Create ou, teacher, student, group
+				school, oudn = schoolenv.create_ou(displayName='')
+				tea, teadn = schoolenv.create_user(school, is_teacher=True)
+				stu, studn = schoolenv.create_user(school)
+				group = Workgroup(school, members=[studn])
+				group.create()
+				utils.wait_for_replication_and_postrun()
+
+				con.auth(tea, 'univention')
+
+				# Prepare times for auto distribution and collection
+				local = list(time.localtime(time.time()+MIN_DIST_TIME))
+				distTime = time.strftime('%I:%M', local)
+				distDate = time.strftime('%Y-%m-%d', local)
+
+				local = list(time.localtime(time.time()+MIN_COLL_TIME))
+				collTime = time.strftime('%I:%M', local)
+				collDate = time.strftime('%Y-%m-%d', local)
+
+				# Creating new project
+				project = Distribution(
+						school,
+						username=tea,
+						umcConnection=con,
+						ucr=ucr,
+						files=["file_name"],
+						recipients=[group],
+						distributeType='automatic',
+						distributeTime=distTime,
+						distributeDate=distDate,
+						collectType='automatic',
+						collectTime=collTime,
+						collectDate=collDate,
+						flavor='teacher')
+				project.add()
+				project.check_add()
+
+				project.put(description='newDisctiption')
+
+				print 'waiting for 6 mins for the project to be automatically distributed'
+				time.sleep(MIN_DIST_TIME + 1)
+				project.check_distribute([stu])
+				print 'waiting for 11 mins for the project to be automatically collected'
+				time.sleep(MIN_COLL_TIME - MIN_DIST_TIME + 1)
+				project.check_collect([stu])
+				project.remove()
+				project.check_remove()
+	finally:
+		call(['invoke-rc.d', 'univention-management-console-web-server', 'restart'])
+		call(['invoke-rc.d', 'univention-management-console-server', 'restart'])
+
+if __name__ == '__main__':
+	main()
+

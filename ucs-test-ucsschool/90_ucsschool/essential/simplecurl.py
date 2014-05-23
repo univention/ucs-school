@@ -1,16 +1,13 @@
-#!/usr/share/ucs-test/runner python
-
-import pycurl
-import StringIO
-import time
-import os
-
 """
 .. module:: randomdomain
 	:platform: Unix
 
 .. moduleauthor:: Ammar Najjar <najjar@univention.de>
 """
+import pycurl
+import StringIO
+import time
+import os
 
 
 class SimpleCurl(object):
@@ -91,7 +88,7 @@ class SimpleCurl(object):
 				print '.'
 				if i == 59:
 					print 'Requested page could not be fetched'
-					raise e
+					raise
 				continue
 		page = buf.getvalue()
 		# print page[1:150]

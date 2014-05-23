@@ -1,5 +1,3 @@
-#!/usr/share/ucs-test/runner python
-
 """""""""""""""""""""""""""""""""""""""
   **Class InternetRule**\n
   All the operations related to internet rules
@@ -37,7 +35,6 @@ class InternetRule(object):
 	:param priority: priority of the internet rule [1,10]
 	:type priority: [int]
 	"""
-
 	def __init__(
 			self,
 			umcConnection=None,

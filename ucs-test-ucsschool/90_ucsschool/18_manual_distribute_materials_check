@@ -1,0 +1,55 @@
+#!/usr/share/ucs-test/runner python
+## desc: manual_distribute_materials_check
+## roles: [domaincontroller_master, domaincontroller_backup, domaincontroller_slave, memberserver]
+## tags: [apptest]
+## exposure: dangerous
+## packages: [ucs-school-umc-distribution]
+
+from essential.distribution import Distribution
+from essential.workgroup import Workgroup
+from subprocess import call
+from univention.lib.umc_connection import UMCConnection
+import univention.testing.ucr as ucr_test
+import univention.testing.ucsschool as utu
+import univention.testing.utils as utils
+
+def main():
+	call(['rdate', '192.168.0.3'])
+	with utu.UCSTestSchool() as schoolenv:
+		with ucr_test.UCSTestConfigRegistry() as ucr:
+			host = ucr.get('hostname')
+			con = UMCConnection(host)
+
+			# Create ou, teacher, student, group
+			school, oudn = schoolenv.create_ou(displayName='')
+			tea, teadn = schoolenv.create_user(school, is_teacher=True)
+			stu, studn = schoolenv.create_user(school)
+			group = Workgroup(school, members=[studn])
+			group.create()
+			utils.wait_for_replication_and_postrun()
+
+			con.auth(tea, 'univention')
+
+			# Create new project
+			project = Distribution(
+					school,
+					username=tea,
+					umcConnection=con,
+					ucr=ucr,
+					files=["file_name"],
+					recipients=[group],
+					flavor='teacher')
+			project.add()
+			project.check_add()
+
+			project.put(description='newDisctiption')
+
+			project.distribute()
+			project.check_distribute([stu])
+			project.collect()
+			project.check_collect([stu])
+			project.remove()
+			project.check_remove()
+
+if __name__ == '__main__':
+	main()

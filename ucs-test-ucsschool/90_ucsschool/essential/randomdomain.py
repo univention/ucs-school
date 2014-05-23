@@ -1,5 +1,3 @@
-#!/usr/share/ucs-test/runner python
-
 """
 .. module:: randomdomain
 	:platform: Unix
