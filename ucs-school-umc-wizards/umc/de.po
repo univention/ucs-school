@@ -12,26 +12,26 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-msgid "School classes"
-msgstr "Schulklassen"
+msgid "Classes (schools)"
+msgstr "Klassen (Schulen)"
 
-msgid "School computers"
-msgstr "Schulrechner"
+msgid "Computers (schools)"
+msgstr "Rechner (Schulen)"
 
-msgid "School users"
-msgstr "Schulbenutzer"
+msgid "Users (schools)"
+msgstr "Benutzer (Schulen)"
 
 msgid "Schools"
 msgstr "Schulen"
 
-msgid "Management of students, teachers, staff"
-msgstr "Schüler, Lehrer, Mitarbeiter verwalten"
+msgid "Simplified management of users for schools (students, teachers, staff)"
+msgstr "Vereinfachte Benutzerverwaltung für Schulen (Schüler, Lehrer, Mitarbeiter)"
 
-msgid "Management of school classes"
-msgstr "Schulklassen verwalten"
+msgid "Simplified management of classes for schools"
+msgstr "Vereinfachte Klassenverwaltung für Schulen"
 
-msgid "Management of school computers"
-msgstr "Schulrechner verwalten"
+msgid "Simplified management of computers for schools"
+msgstr "Vereinfachte Rechnerverwaltung für Schulen"
 
-msgid "Management of schools"
-msgstr "Schulen verwalten"
+msgid "Simplified management of schools"
+msgstr "Vereinfachte Schulverwaltung"

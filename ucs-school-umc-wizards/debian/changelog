@@ -1,3 +1,9 @@
+ucs-school-umc-wizards (4.0.25-1) unstable; urgency=low
+
+  * Bug #34337: rename name and description of wizard flavors
+
+ -- Florian Best <best@univention.de>  Fri, 23 May 2014 12:03:10 +0200
+
 ucs-school-umc-wizards (4.0.24-1) unstable; urgency=low
 
   * Bug #34337: Typo

@@ -5,20 +5,20 @@
 			<category name="ucs-school-admin"/>
 		</categories>
 		<flavor icon="schoolwizards-user" id="schoolwizards/users" priority="53">
-			<name>School users</name>
-			<description>Management of students, teachers, staff</description>
+			<name>Users (schools)</name>
+			<description>Simplified management of users for schools (students, teachers, staff)</description>
 		</flavor>
 		<flavor icon="schoolwizards-class" id="schoolwizards/classes" priority="52">
-			<name>School classes</name>
-			<description>Management of school classes</description>
+			<name>Classes (schools)</name>
+			<description>Simplified management of classes for schools</description>
 		</flavor>
 		<flavor icon="schoolwizards-computer" id="schoolwizards/computers" priority="51">
-			<name>School computers</name>
-			<description>Management of school computers</description>
+			<name>Computers (schools)</name>
+			<description>Simplified management of computers for schools</description>
 		</flavor>
 		<flavor icon="schoolwizards-school" id="schoolwizards/schools" priority="50">
 			<name>Schools</name>
-			<description>Management of schools</description>
+			<description>Simplified management of schools</description>
 		</flavor>
 
 		<command name="schoolwizards/schools" function="schools"/>
