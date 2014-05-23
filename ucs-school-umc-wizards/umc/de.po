@@ -24,14 +24,14 @@ msgstr "Benutzer (Schulen)"
 msgid "Schools"
 msgstr "Schulen"
 
-msgid "Simplified management of users for schools (students, teachers, staff)"
-msgstr "Vereinfachte Benutzerverwaltung für Schulen (Schüler, Lehrer, Mitarbeiter)"
+msgid "Management of users for schools (students, teachers, staff)"
+msgstr "Benutzerverwaltung für Schulen (Schüler, Lehrer, Mitarbeiter)"
 
-msgid "Simplified management of classes for schools"
-msgstr "Vereinfachte Klassenverwaltung für Schulen"
+msgid "Management of classes for schools"
+msgstr "Klassenverwaltung für Schulen"
 
-msgid "Simplified management of computers for schools"
-msgstr "Vereinfachte Rechnerverwaltung für Schulen"
+msgid "Management of computers for schools"
+msgstr "Rechnerverwaltung für Schulen"
 
-msgid "Simplified management of schools"
-msgstr "Vereinfachte Schulverwaltung"
+msgid "Management of schools in the domain"
+msgstr "Verwaltung von Schulen in der Domäne"
