@@ -328,6 +328,14 @@ class School(UCSSchoolHelperAbstractClass):
 				logger.warning('Creating %r failed (maybe it already exists?)! Trying to set it up nonetheless')
 				self.modify_without_hooks(lo)
 
+			# In a single server environment the default DHCP container must
+			# be set to the DHCP container in the school ou. Otherwise newly
+			# imported computers have the DHCP objects in the wrong DHCP container
+			if ucr.is_true('ucsschool/singlemaster', False):
+				if not ucr.get('dhcpd/ldap/base'):
+					handler_set(['dhcpd/ldap/base=cn=dhcp,%s' % (self.dn)])
+					ucr.load()
+
 			self.create_default_containers(lo)
 			self.create_default_groups(lo)
 			self.add_host_to_dc_group(lo)
@@ -343,14 +351,6 @@ class School(UCSSchoolHelperAbstractClass):
 		self.home_share_file_server = self.get_home_share_file_server(lo)
 		logger.debug('Now it is %r and %r - %r should be modified accordingly' % (self.home_share_file_server, self.class_share_file_server, self))
 		self.modify_without_hooks(lo)
-
-		# In a single server environment the default DHCP container must
-		# be set to the DHCP container in the school ou. Otherwise newly
-		# imported computers have the DHCP objects in the wrong DHCP container
-		if ucr.is_true('ucsschool/singlemaster', False):
-			if not ucr.get('dhcpd/ldap/base'):
-				handler_set(['dhcpd/ldap/base=cn=dhcp,%s' % (self.dn)])
-				ucr.load()
 
 		# if requested, then create dhcp_dns policy that clears univentionDhcpDomainNameServers at OU level
 		# to prevent problems with "wrong" DHCP DNS policy connected to ldap base
