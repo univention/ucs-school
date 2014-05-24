@@ -59,15 +59,15 @@ feedback@univention.de
   &introduction;
   &structure;
   &installation;
-  &module-overview;
   &setup-school;
   &data-management;
   &windows;
+  &module-overview;
   &proxy;
   &radius;
-  &import-hooks;
   &schoolexam;
   &ucc-integration;
+  &import-hooks;
   &performance;
 
   <bibliography>
