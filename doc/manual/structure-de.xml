@@ -129,8 +129,8 @@
 				Zur Unterteilung der im LDAP-Verzeichnisdienst hinterlegten Objekte und
 				Einstellungen wird für jede Schule im LDAP-Verzeichnis eine eigene
 				<emphasis>Organisationseinheit</emphasis> (OU) angelegt. Unterhalb dieser OU
-				werden Container für z.B. Benutzerobjekte, Gruppen, DNS- und
-				DHCP-Einstellungen, usw. angelegt. Diese OUs werden direkt unterhalb
+				werden Container für z.B. Benutzerobjekte, Gruppen, DHCP-Einstellungen, 
+				usw. angelegt. Diese OUs werden direkt unterhalb
 				der LDAP-Basis angelegt. Der Name einer OU sollte sich auf Buchstaben
 				und Ziffern sowie auf den Bindestrich beschränken, da er z.B. die
 				Grundlage für Gruppen- und Rechnernamen bildet. Häufig kommen hier
@@ -182,5 +182,165 @@
 			gleichen Netzwerksegment verwendet werden.
 		  </para>
 		</caution>
+	</section>
+
+	<section id="structure:ldap">
+	  <title>&ucsUAS;-Objekte im LDAP-Verzeichnisdienst</title>
+	  <para>
+		&ucsUAS; erstellt zur Verwaltung der schulspezifischen Erweiterungen zusätzliche Strukturen
+		im LDAP-Verzeichnisdienst. Im Folgenden werden einige Funktion dieser Container und Objekte genauer
+		vorgestellt.
+	  </para>
+	  <para>
+		Wie bereits im <xref linkend="structure:ou:replication"/> beschrieben wurde, wird für jede
+		Schule direkt unterhalb der LDAP-Basis eine eigene Organisationseinheit (OU) angelegt. Unterhalb
+		dieser OU werden Container für Benutzerobjekte, Gruppen und weitere &ucsUAS;-relevante Objekte
+		erstellt. Darüber hinaus werden einige neue Objekte in den bereits bestehenden UCS-Strukturen des
+		LDAP-Verzeichnisses angelegt.
+	  </para>
+
+	  <section id="structure:ldap:ou">
+		<title>Struktur einer &ucsUAS;-OU</title>
+		<para>
+		  Der Aufbau einer Schul-OU wird nachfolgend am Beispiel der Schul-OU
+		  <emphasis>gymmitte</emphasis> in einem LDAP-Verzeichnis mit der LDAP-Basis
+		  <emphasis>dc=example,dc=com</emphasis> erläutert.
+		</para>
+		<itemizedlist>
+		  <listitem>
+			<para><emphasis>cn=computers,ou=gymmitte,dc=example,dc=com</emphasis></para>
+			<para>
+			  In diesem Container werden Rechnerobjekte abgelegt, die von der OU verwaltet
+			  werden. Dies können z.B. Objekte vom Typ <emphasis>Windows-Client</emphasis> oder
+			  <emphasis>IP-Managed-Client</emphasis> sein. Die Rechnerobjekte für Schulserver (Verwaltungs- und
+			  Edukativnetz) werden in dem Untercontainer
+			  <emphasis>cn=dc,cn=server,cn=computers,ou=gymmitte,dc=example,dc=com</emphasis> abgelegt.
+			</para>
+		  </listitem>
+		  <listitem>
+			<para><emphasis>cn=examusers,ou=gymmitte,dc=example,dc=com</emphasis></para>
+			<para>
+			  Dieser Container enthält temporäre Prüfungsbenutzer, die für den Klassenarbeitsmodus
+			  benötigt werden. Sie werden zu Beginn bzw. nach Beendigung des Klassenarbeitsmodus automatisch
+			  erstellt bzw. wieder gelöscht.
+			</para>
+		  </listitem>
+		  <listitem>
+			<para><emphasis>cn=groups,ou=gymmitte,dc=example,dc=com</emphasis></para>
+			<para><emphasis>cn=raeume,cn=groups,ou=gymmitte,dc=example,dc=com</emphasis></para>
+			<para><emphasis>cn=schueler,cn=groups,ou=gymmitte,dc=example,dc=com</emphasis></para>
+			<para><emphasis>cn=klassen,cn=schueler,cn=groups,ou=gymmitte,dc=example,dc=com</emphasis></para>
+			<para>
+			  In den aufgeführten Containern werden Gruppenobjekte für &ucsUAS; vorgehalten. Im
+			  Container <emphasis>cn=groups</emphasis> werden automatisch einige Standard-Gruppen angelegt, die
+			  alle Schüler, Lehrer bzw. Mitarbeiter der Schul-OU als Gruppenmitglied enthalten. Diese Gruppen
+			  werden bei der Verwendung der &ucsUAS;-Import-Mechanismen automatisch gepflegt. Beim Import von
+			  Benutzern über die Importskripte oder über die UMC-Module wird den Benutzern je nach ihrer
+			  Benutzerrolle eine der drei Gruppen automatisch als primäre Gruppe zugeordnet. Die Namen der drei
+			  Gruppen lauten <emphasis>schueler-gymmitte</emphasis>, <emphasis>lehrer-gymmitte</emphasis> und
+			  <emphasis>mitarbeiter-gymmitte</emphasis>.
+			</para>
+			<para>
+			  Gruppenobjekte für Schulklassen müssen im Untercontainer
+			  <emphasis>cn=klassen</emphasis> abgelegt werden, damit diese von &ucsUAS; korrekt als Klassengruppe
+			  erkannt werden. Im übergeordneten Container <emphasis>cn=schueler</emphasis> werden von den
+			  &ucsUAS;-Modulen Gruppenobjekte für klassenübergreifende Arbeitsgruppen (z.B. Musik-AG) gepflegt,
+			  die z.B. über das UMC-Modul <guimenu>Arbeitsgruppen verwalten</guimenu> erstellt werden.
+			</para>
+			<para>
+			  Beim Anlegen von Räumen über das UMC-Modul <guimenu>Computerräume verwalten</guimenu>
+			  werden ebenfalls Gruppenobjekte erstellt, die im Container <emphasis>cn=raeume</emphasis> abgelegt
+			  werden. Diese Gruppenobjekte enthalten üblicherweise ausschließlich Rechnerobjekte als
+			  Gruppenmitglieder.
+			</para>
+		  </listitem>
+		  <listitem>
+			<para><emphasis>cn=shares,ou=gymmitte,dc=example,dc=com</emphasis></para>
+			<para><emphasis>cn=klassen,cn=shares,ou=gymmitte,dc=example,dc=com</emphasis></para>
+			<para>
+			  Die beiden Container enthalten allgemeine bzw. klassenspezifische Freigabeobjekte für
+			  die Schul-OU.
+			</para>
+		  </listitem>
+		  <listitem>
+			<para><emphasis>cn=users,ou=gymmitte,dc=example,dc=com</emphasis></para>
+			<para>
+			  Die Benutzerobjekte für &ucsUAS; müssen entsprechend ihrer Benutzerrolle in einem der
+			  vier Untercontainer <emphasis>cn=schueler</emphasis>, <emphasis>cn=lehrer</emphasis>,
+			  <emphasis>cn=lehrer und mitarbeiter</emphasis>, <emphasis>cn=mitarbeiter</emphasis> oder
+			  <emphasis>cn=admins</emphasis> erstellt werden.
+			</para>
+		  </listitem>
+		  <listitem>
+			<para><emphasis>cn=dhcp,ou=gymmitte,dc=example,dc=com</emphasis></para>
+			<para><emphasis>cn=networks,ou=gymmitte,dc=example,dc=com</emphasis></para>
+			<para><emphasis>cn=policies,ou=gymmitte,dc=example,dc=com</emphasis></para>
+			<para><emphasis>cn=printers,ou=gymmitte,dc=example,dc=com</emphasis></para>
+			<para>
+			  Die genannten Container enthalten (analog zu ihrem globalem Pendant direkt unterhalb der
+			  LDAP-Basis) die DHCP-, Netzwerk-, Richtlinien- und Drucker-Objekte für die jeweilige Schul-OU.
+			</para>
+		  </listitem>
+		</itemizedlist>
+
+		<note>
+		  &ucsUAS; unterstützt aktuell keine weitere Strukturierung der LDAP-Objekte durch
+		  Untercontainer oder Unter-OUs in den oben angegebenen Containern.
+		</note>		
+	  </section>
+
+	  <section id="structure:ldap:global">
+		<title>Weitere &ucsUAS;-Objekte</title>
+		<para>
+		  Für die Steuerung von Zugriffsrechten auf &ucsUAS;-Funktionen und das LDAP-Verzeichnis werden mit dem Erstellen einer neuen Schul-OU automatisch einige Gruppen erstellt.
+		  Auch diese Gruppen werden am Beispiel der OU <emphasis>gymmitte</emphasis> in einem LDAP-Verzeichnis mit der LDAP-Basis <emphasis>dc=example,dc=com</emphasis> erläutert.
+		</para>
+		<itemizedlist>
+		  <listitem>
+			<para><emphasis>cn=DC-Edukativnetz,cn=ucsschool,cn=groups,dc=example,dc=com</emphasis></para>
+			<para><emphasis>cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,dc=example,dc=com</emphasis></para>
+			<para><emphasis>cn=Member-Edukativnetz,cn=ucsschool,cn=groups,dc=example,dc=com</emphasis></para>
+			<para><emphasis>cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,dc=example,dc=com</emphasis></para>
+			<para>
+			  Diese Gruppen werden beim Erstellen der ersten Schul-OU einmalig angelegt und sind
+			  nicht OU-spezifisch. Sie enthalten (entsprechend ihrem Namen) als Gruppenmitglieder die Schul-DCs
+			  oder die Memberserver der Schulstandorte, wobei diese jeweils nach Verwaltungsnetz und Edukativnetz
+			  getrennt werden. Domaincontroller Master und Domaincontroller Backup dürfen
+			  <emphasis>kein</emphasis> Mitglied in einer dieser Gruppen sein!
+			</para>
+		  </listitem>
+
+		  <listitem>
+			<para><emphasis>cn=OUgymmitte-DC-Edukativnetz,cn=ucsschool,cn=groups,dc=example,dc=com</emphasis></para>
+			<para><emphasis>cn=OUgymmitte-DC-Verwaltungsnetz,cn=ucsschool,cn=groups,dc=example,dc=com</emphasis></para>
+			<para><emphasis>cn=OUgymmitte-Member-Edukativnetz,cn=ucsschool,cn=groups,dc=example,dc=com</emphasis></para>
+			<para><emphasis>cn=OUgymmitte-Member-Verwaltungsnetz,cn=ucsschool,cn=groups,dc=example,dc=com</emphasis></para>
+			<para>
+			  Diese OU-spezifischen Gruppen werden während des Anlegens der Schul-OU erstellt. Sie
+			  enthalten (entsprechend ihrem Namen) als Gruppenmitglieder die Schul-DCs oder die Memberserver der
+			  jeweiligen OU (hier <emphasis>gymmitte</emphasis>), wobei diese jeweils nach Verwaltungsnetz und
+			  Edukativnetz getrennt werden. Domaincontroller Master und Domaincontroller Backup dürfen
+			  <emphasis>kein</emphasis> Mitglied in einer dieser Gruppen sein!
+			</para>
+		  </listitem>
+
+		  <listitem>
+			<para><emphasis>cn=OUgymmitte-Klassenarbeit,cn=ucsschool,cn=groups,dc=example,dc=com</emphasis></para>
+			<para>
+			  Während eines laufenden Klassenarbeitsmodus werden die beteiligten Benutzer und
+			  Rechner als Gruppenmitglieder zu dieser Gruppe hinzugefügt. Sie wird z.B. für die Steuerung von
+			  speziellen Einstellungen für den Klassenarbeitsmodus verwendet.
+			</para>
+		  </listitem>
+
+		  <listitem>
+			<para><emphasis>cn=admins-gymmitte,cn=ouadmins,cn=groups,dc=example,dc=com</emphasis></para>
+			<para>
+			  Benutzer, die Mitglied dieser Gruppe sind, werden von &ucsUAS; in der betreffenden OU automatisch als Schuladministrator behandelt.
+			  Siehe dazu auch <xref linkend="school:importusers:schooladmins"/>.
+			</para>
+		  </listitem>
+		</itemizedlist>
+	  </section>
 	</section>
 </chapter>
