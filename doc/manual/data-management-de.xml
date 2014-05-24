@@ -158,16 +158,17 @@ D  a.musterfr Musterfrau  Anke   g123m  2B        a.mfr@schule.edu 1 1 1
 		<itemizedlist>
 		  <listitem>
 			<simpara> 
-			  Für die Verwendung von Samba ist es notwendig, dass für jeden Benutzer ein Pfad für
+			  Für die Verwendung von Samba ist es notwendig, dass für jeden Benutzer ein UNC-Pfad für
 			  das Windows-Benutzerprofil vorgegeben wird. In der Standardeinstellung von &ucsUAS; wird der
 			  jeweilige Logonserver als Ablageort für das Benutzerprofil definiert
 			  (<emphasis>\\%LOGONSERVER%\%USERNAME%\windows-profiles\default</emphasis>).  Falls die
-			  Benutzerprofile abweichend auf einem anderen Dateiserver gespeichert werden sollen, kann in der
+			  Benutzerprofile statt auf dem Logonserver auf einem anderen Dateiserver gespeichert werden sollen, kann in der
 			  &ucsUMC; am Rechnerobjekt des gewünschten Dateiservers der Dienst <emphasis>Windows Profile
-			  Server</emphasis> gesetzt werden. 
+			  Server</emphasis> gesetzt werden. Es wird dann ein UNC-Pfad nach dem Schema
+			  <emphasis>\\DATEISERVERNAME\%USERNAME%\windows-profiles\default</emphasis> am Benutzerobjekt gespeichert.
 			  <note>
 				<para>
-				  Für den reibungslosen Betrieb darf der Dienst nur an einem Dateiserver pro OU
+				  Für den reibungslosen Betrieb darf der Dienst <emphasis>Windows Profile Server</emphasis> nur an einem Dateiserver pro OU
 				  gesetzt werden. Weiterhin ist der Dienst <emphasis>Windows Profile Server</emphasis> veraltet und wird in
 				  einer zukünftigen &ucsUAS;-Version entfernt bzw. durch einen äquivalenten Mechanismus ersetzt.
 				</para>
@@ -182,16 +183,17 @@ D  a.musterfr Musterfrau  Anke   g123m  2B        a.mfr@schule.edu 1 1 1
 			  OU-Objekt hinterlegt. Um diesen zu ändern, muss in der &ucsUMC; das OU-Objekt geöffnet werden und
 			  auf dem Reiter <emphasis>UCS@school</emphasis> im Auswahlfeld <emphasis>Server für
 			  Windows-Heimatverzeichnisse</emphasis> ein geeigneter Dateiserver ausgewählt werden. Der dort
-			  definierte Dateiserver wird beim Anlegen eines Benutzers ausgelesen und der Pfad am Benutzerobjekt
+			  definierte Dateiserver wird beim Anlegen eines Benutzers ausgelesen und der UNC-Pfad am Benutzerobjekt
 			  entsprechend gesetzt (Beispiel: <emphasis>\\server3.example.com\benutzer123</emphasis>).
 			</simpara>
 		  </listitem>
 		</itemizedlist>
 		<note>
 		  <para>
-			Die Windows-spezifischen Einstellungen werden nur beim Anlegen eines Benutzers
-			gesetzt. Ein nachträgliches Modifizieren des Benutzers über die Importskripte hat keinen Einfluss
-			auf diese Einstellungen.
+			Die Windows-spezifischen Einstellungen werden nur beim Anlegen eines Benutzers gesetzt
+			und am Benutzerobjekt gespeichert. Ein nachträgliches Modifizieren des Benutzers über die
+			Importskripte hat keinen Einfluss auf diese Einstellungen. Änderungen müssen manuell z.B. über das
+			UMC-Modul <emphasis>Benutzer</emphasis> erfolgen.
 		  </para>
 		</note>
 	  </para>
