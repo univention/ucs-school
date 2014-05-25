@@ -86,7 +86,7 @@ def create_testfile_on_homeshare(fqdn, username, password, filename):
 	share_unc = "//%s/%s" % (fqdn, username)
 	print "INFO: Creating testfile %s on home share %s" % (filename, share_unc,)
 
-	smbcmd = "dir %s" % (username,)
+	smbcmd = "dir"
 	if run_smbclient(share_unc, username, password, smbcmd):
 		utils.fail('Failed to list home directory')
 

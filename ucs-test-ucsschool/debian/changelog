@@ -1,3 +1,9 @@
+ucs-test-ucsschool (1.0.61-1) unstable; urgency=low
+
+  * Bug #34335: fixed home share "dir" test in 12_roleshare_student
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Sun, 25 May 2014 21:47:37 +0200
+
 ucs-test-ucsschool (1.0.60-2) unstable; urgency=low
 
   * Bug #34940: fixed UCR cleanup in essential/importou.py
