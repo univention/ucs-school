@@ -187,7 +187,7 @@ def get_ou_base(ou, district_enable):
 	return ou_base
 
 
-def create_and_verify_ou(ou, dc, sharefileserver, dc_administrative=None, ou_displayname=None, singlemaster=False, noneducational_create_objects=False, district_enable=False, default_dcs=None, dhcp_dns_clearou=False, do_cleanup=True, unset_dhcpd_base=True, ucr=None, use_cli_api=True, use_python_api=False):
+def create_and_verify_ou(ucr, ou, dc, sharefileserver, dc_administrative=None, ou_displayname=None, singlemaster=False, noneducational_create_objects=False, district_enable=False, default_dcs=None, dhcp_dns_clearou=False, do_cleanup=True, unset_dhcpd_base=True, use_cli_api=True, use_python_api=False):
 
 	assert(use_cli_api != use_python_api)
 
@@ -205,8 +205,6 @@ def create_and_verify_ou(ou, dc, sharefileserver, dc_administrative=None, ou_dis
 	print '****	dhcp_dns_clearou=%s' % dhcp_dns_clearou
 	print '******************************************************'
 
-	if ucr is None:
-		ucr = univention.testing.ucr.UCSTestConfigRegistry()
 	ucr.load()
 
 	lo = univention.uldap.getMachineConnection()
@@ -229,6 +227,7 @@ def create_and_verify_ou(ou, dc, sharefileserver, dc_administrative=None, ou_dis
 		univention.config_registry.handler_unset([
 				'dhcpd/ldap/base'
 		])
+	ucr.load()
 
 	old_dhcpd_ldap_base = ucr.get('dhcpd/ldap/base')
 	base_dn = ucr.get('ldap/base')
@@ -499,148 +498,151 @@ def verify_dc(ou, dc_name, dc_type, base_dn=None):
 
 
 def import_ou_basics(use_cli_api=True, use_python_api=False):
-	with univention.testing.udm.UCSTestUDM() as udm:
-		for dc_administrative in [None, 'generate']:
-			for dc in [None, 'generate']:
-				for singlemaster in [True, False]:
-					for noneducational_create_object in [True, False]:
-						for district_enable in [True, False]:
-							for default_dcs in [None, 'edukativ', uts.random_string()]:
-								for dhcp_dns_clearou in [True, False]:
-									for sharefileserver in [None, 'generate']:
-										if singlemaster and dc == 'generate':
-											continue
-										if not dc and dc_administrative:
-											continue  # cannot specify administrative dc without educational dc
-										if not noneducational_create_object and dc_administrative:
-											print 'NOTE: cannot create administrative DC without administrative objects in LDAP'
-											continue
-										if sharefileserver:
-											sharefileserver = uts.random_name()
-											udm.create_object('computers/domaincontroller_slave', name=sharefileserver)
-										ou_name = uts.random_name()
-										# character set contains multiple whitespaces to increase chance to get several words
-										charset = uts.STR_ALPHANUMDOTDASH + uts.STR_ALPHA.upper() + '()[]/,;:_#"+*@<>~ßöäüÖÄÜ$%&!     '
-										ou_displayname = uts.random_string(length=random.randint(1, 50), charset=charset)
-										try:
-											create_and_verify_ou(
-													ou=ou_name,
-													ou_displayname=ou_displayname,
-													dc=(uts.random_name() if dc else None),
-													dc_administrative=(uts.random_name() if dc_administrative else None),
-													sharefileserver=sharefileserver,
-													singlemaster=singlemaster,
-													noneducational_create_objects=noneducational_create_object,
-													district_enable=district_enable,
-													default_dcs=default_dcs,
-													dhcp_dns_clearou=dhcp_dns_clearou,
-													use_cli_api=use_cli_api,
-													use_python_api=use_python_api,
-											)
-										finally:
-											remove_ou(ou_name)
-	utils.wait_for_replication()
+	with univention.testing.ucr.UCSTestConfigRegistry() as ucr:
+		with univention.testing.udm.UCSTestUDM() as udm:
+			for dc_administrative in [None, 'generate']:
+				for dc in [None, 'generate']:
+					for singlemaster in [True, False]:
+						for noneducational_create_object in [True, False]:
+							for district_enable in [True, False]:
+								for default_dcs in [None, 'edukativ', uts.random_string()]:
+									for dhcp_dns_clearou in [True, False]:
+										for sharefileserver in [None, 'generate']:
+											if singlemaster and dc == 'generate':
+												continue
+											if not dc and dc_administrative:
+												continue  # cannot specify administrative dc without educational dc
+											if not noneducational_create_object and dc_administrative:
+												print 'NOTE: cannot create administrative DC without administrative objects in LDAP'
+												continue
+											if sharefileserver:
+												sharefileserver = uts.random_name()
+												udm.create_object('computers/domaincontroller_slave', name=sharefileserver)
+											ou_name = uts.random_name()
+											# character set contains multiple whitespaces to increase chance to get several words
+											charset = uts.STR_ALPHANUMDOTDASH + uts.STR_ALPHA.upper() + '()[]/,;:_#"+*@<>~ßöäüÖÄÜ$%&!     '
+											ou_displayname = uts.random_string(length=random.randint(1, 50), charset=charset)
+											try:
+												create_and_verify_ou(
+														ucr,
+														ou=ou_name,
+														ou_displayname=ou_displayname,
+														dc=(uts.random_name() if dc else None),
+														dc_administrative=(uts.random_name() if dc_administrative else None),
+														sharefileserver=sharefileserver,
+														singlemaster=singlemaster,
+														noneducational_create_objects=noneducational_create_object,
+														district_enable=district_enable,
+														default_dcs=default_dcs,
+														dhcp_dns_clearou=dhcp_dns_clearou,
+														use_cli_api=use_cli_api,
+														use_python_api=use_python_api,
+												)
+											finally:
+												remove_ou(ou_name)
+		utils.wait_for_replication()
 
 def import_ou_with_existing_dc(use_cli_api=True, use_python_api=False):
-	with univention.testing.udm.UCSTestUDM() as udm:
-		dc_name = uts.random_name()
+	with univention.testing.ucr.UCSTestConfigRegistry() as ucr:
+		with univention.testing.udm.UCSTestUDM() as udm:
+			dc_name = uts.random_name()
 
-		dhcp_service_name = uts.random_name()
+			dhcp_service_name = uts.random_name()
 
-		dhcp_service = udm.create_object('dhcp/service', service=dhcp_service_name)
+			dhcp_service = udm.create_object('dhcp/service', service=dhcp_service_name)
 
-		dhcp_server = udm.create_object('dhcp/server', server=dc_name, superordinate=dhcp_service)
+			dhcp_server = udm.create_object('dhcp/server', server=dc_name, superordinate=dhcp_service)
 
-		dhcp_subnet_properties = {
-			'subnet': '10.20.30.0',
-			'subnetmask': '24',
-		}
-		dhcp_subnet1 = udm.create_object('dhcp/subnet', superordinate=dhcp_service, **dhcp_subnet_properties)
+			dhcp_subnet_properties = {
+				'subnet': '10.20.30.0',
+				'subnetmask': '24',
+			}
+			dhcp_subnet1 = udm.create_object('dhcp/subnet', superordinate=dhcp_service, **dhcp_subnet_properties)
 
-		default_ip = Interfaces().get_default_ip_address()
-		dhcp_subnet_properties = {
-			'subnet': default_ip.ip,
-			'subnetmask': default_ip.prefixlen,
-		}
-		dhcp_subnet2 = udm.create_object('dhcp/subnet', superordinate=dhcp_service, **dhcp_subnet_properties)
+			default_ip = Interfaces().get_default_ip_address()
+			dhcp_subnet_properties = {
+				'subnet': default_ip.ip,
+				'subnetmask': default_ip.prefixlen,
+			}
+			dhcp_subnet2 = udm.create_object('dhcp/subnet', superordinate=dhcp_service, **dhcp_subnet_properties)
 
-		ou_name = uts.random_name()
+			ou_name = uts.random_name()
 
-		# creatd dc
-		try:
-			create_and_verify_ou(
-										ou=ou_name,
-										ou_displayname=None,
-										dc=dc_name,
-										dc_administrative=None,
-										sharefileserver=None,
-										singlemaster=False,
-										noneducational_create_objects=True,
-										district_enable=False,
-										default_dcs=None,
-										dhcp_dns_clearou=False,
-										do_cleanup=False,
-										use_cli_api=use_cli_api,
-										use_python_api=use_python_api,
-			)
+			# creatd dc
+			try:
+				create_and_verify_ou(
+											ucr,
+											ou=ou_name,
+											ou_displayname=None,
+											dc=dc_name,
+											dc_administrative=None,
+											sharefileserver=None,
+											singlemaster=False,
+											noneducational_create_objects=True,
+											district_enable=False,
+											default_dcs=None,
+											dhcp_dns_clearou=False,
+											do_cleanup=False,
+											use_cli_api=use_cli_api,
+											use_python_api=use_python_api,
+				)
 
-			utils.verify_ldap_object(dhcp_subnet1, should_exist=True)
-			utils.verify_ldap_object(dhcp_subnet2, should_exist=True)
+				utils.verify_ldap_object(dhcp_subnet1, should_exist=True)
+				utils.verify_ldap_object(dhcp_subnet2, should_exist=True)
 
-			# dhcp subnet2 should be copied
-			ou_base = get_ou_base(ou=ou_name, district_enable=False)
-			new_dhcp_service_dn = 'cn=%(ou)s,cn=dhcp,%(ou_base)s' % {'ou': ou_name, 'ou_base': ou_base}
-			new_dhcp_subnet2_dn = 'cn=%s,%s' % (default_ip.ip, new_dhcp_service_dn)
-			utils.verify_ldap_object(new_dhcp_subnet2_dn, should_exist=True)
+				# dhcp subnet2 should be copied
+				ou_base = get_ou_base(ou=ou_name, district_enable=False)
+				new_dhcp_service_dn = 'cn=%(ou)s,cn=dhcp,%(ou_base)s' % {'ou': ou_name, 'ou_base': ou_base}
+				new_dhcp_subnet2_dn = 'cn=%s,%s' % (default_ip.ip, new_dhcp_service_dn)
+				utils.verify_ldap_object(new_dhcp_subnet2_dn, should_exist=True)
 
-			# dhcp subnet1 should not be copied
-			new_dhcp_subnet1_dn = 'cn=10.20.30.0,%s' % (new_dhcp_service_dn)
-			utils.verify_ldap_object(new_dhcp_subnet1_dn, should_exist=False)
+				# dhcp subnet1 should not be copied
+				new_dhcp_subnet1_dn = 'cn=10.20.30.0,%s' % (new_dhcp_service_dn)
+				utils.verify_ldap_object(new_dhcp_subnet1_dn, should_exist=False)
 
-			# dhcp server has been moved
-			utils.verify_ldap_object('cn=%s,%s' % (dc_name, new_dhcp_service_dn), should_exist=True)
-			utils.verify_ldap_object(dhcp_server, should_exist=False)
-		finally:
-			remove_ou(ou_name)
+				# dhcp server has been moved
+				utils.verify_ldap_object('cn=%s,%s' % (dc_name, new_dhcp_service_dn), should_exist=True)
+				utils.verify_ldap_object(dhcp_server, should_exist=False)
+			finally:
+				remove_ou(ou_name)
 
-	utils.wait_for_replication()
+		utils.wait_for_replication()
 
 
 def import_3_ou_in_a_row(use_cli_api=True, use_python_api=False):
 	"""
 	Creates 3 OUs in a row
 	"""
-	ucr = univention.testing.ucr.UCSTestConfigRegistry()
+	with univention.testing.ucr.UCSTestConfigRegistry() as ucr:
+		for singlemaster in [True, False]:
+			for district_enable in [False, True]:
+				cleanup_ou_list = []
+				try:
+					# reset DHCPD ldap search base which is also to be tested
+					univention.config_registry.handler_unset(['dhcpd/ldap/base'])
+					ucr.load()
 
-
-	for singlemaster in [True, False]:
-		for district_enable in [False, True]:
-			cleanup_ou_list = []
-			try:
-				# reset DHCPD ldap search base which is also to be tested
-				univention.config_registry.handler_unset(['dhcpd/ldap/base'])
-
-				for i in xrange(1, 4):
-					ou_name = uts.random_name()
-					print '\n*** Creating OU #%d (ou_name=%s) ***\n' % (i, ou_name)
-					cleanup_ou_list.append(ou_name)
-					create_and_verify_ou(
-						ou=ou_name,
-						ou_displayname=ou_name,
-						dc=(uts.random_name() if not singlemaster else None),
-						dc_administrative=None,
-						sharefileserver=None,
-						singlemaster=singlemaster,
-						noneducational_create_objects=False,
-						district_enable=district_enable,
-						default_dcs=None,
-						dhcp_dns_clearou=True,
-						unset_dhcpd_base=False,
-						ucr=ucr,
-						do_cleanup=False,
-						use_cli_api=use_cli_api,
-						use_python_api=use_python_api,
-						)
-			finally:
-				for ou_name in cleanup_ou_list:
-					remove_ou(ou_name)
+					for i in xrange(1, 4):
+						ou_name = uts.random_name()
+						print '\n*** Creating OU #%d (ou_name=%s) ***\n' % (i, ou_name)
+						cleanup_ou_list.append(ou_name)
+						create_and_verify_ou(
+							ucr,
+							ou=ou_name,
+							ou_displayname=ou_name,
+							dc=(uts.random_name() if not singlemaster else None),
+							dc_administrative=None,
+							sharefileserver=None,
+							singlemaster=singlemaster,
+							noneducational_create_objects=False,
+							district_enable=district_enable,
+							default_dcs=None,
+							dhcp_dns_clearou=True,
+							unset_dhcpd_base=False,
+							do_cleanup=False,
+							use_cli_api=use_cli_api,
+							use_python_api=use_python_api,
+							)
+				finally:
+					for ou_name in cleanup_ou_list:
+						remove_ou(ou_name)
