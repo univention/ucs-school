@@ -329,9 +329,9 @@ class User(UCSSchoolHelperAbstractClass):
 				self.school_class,
 				'', # TODO: rights?
 				self.email,
-				self.is_teacher(),
+				self.self_is_teacher(),
 				self.is_active(),
-				self.is_staff(),
+				self.self_is_staff(),
 				self.password,
 			)
 

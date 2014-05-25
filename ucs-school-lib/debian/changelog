@@ -1,3 +1,9 @@
+ucs-school-lib (5.0.46-2) unstable; urgency=low
+
+  * Bug #34337: fixed traceback
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Sun, 25 May 2014 14:12:27 +0200
+
 ucs-school-lib (5.0.46-1) unstable; urgency=low
 
   * Bug #34940: move existing DHCP server objects only in certain conditions
