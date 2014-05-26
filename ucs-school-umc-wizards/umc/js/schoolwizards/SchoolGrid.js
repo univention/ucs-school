@@ -69,7 +69,7 @@ define([
 				label: _('Name of the school')
 			}, {
 				name: 'name',
-				label: _('Internal school ID')
+				label: _('School abbreviation')
 			}];
 		},
 
