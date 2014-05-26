@@ -1,3 +1,9 @@
+ucs-school-import (10.0.21-2) unstable; urgency=low
+
+  * Bug #34940: move existing DHCP server objects only in certain conditions
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Mon, 26 May 2014 13:27:27 +0200
+
 ucs-school-import (10.0.21-1) unstable; urgency=low
 
   * Bug #34940: move existing DHCP server objects only in certain conditions

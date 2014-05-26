@@ -635,8 +635,8 @@ def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None, ShareFileServer=None
 	# In a single server environment the default DHCP container must
 	# be set to the DHCP container in the school ou. Otherwise newly
 	# imported computers have the DHCP objects in the wrong DHCP container
+	dhcpd_ldap_base = configRegistry.get('dhcpd/ldap/base')
 	if configRegistry.is_true('ucsschool/singlemaster', False):
-		dhcpd_ldap_base = configRegistry.get('dhcpd/ldap/base')
 		if not dhcpd_ldap_base:
 			dhcpd_ldap_base = 'cn=dhcp,%s' % (getDN(schoolNr),)
 			univention.config_registry.handler_set(['dhcpd/ldap/base=%s' % (dhcpd_ldap_base,)])
