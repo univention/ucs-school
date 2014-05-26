@@ -40,6 +40,63 @@ feedback@univention.de
 	</bookinfo>
 
 	<chapter>
+	  <title>Release-Highlights</title>
+	  <para>
+		Bei UCS@school 3.2 R2 handelt es sich um ein Feature-Release, welches die folgenden neues
+		Features sowie diverse Fehlerkorrekturen und kleinere Verbesserungen mitbringt:
+	  </para>
+	  <itemizedlist>
+		<listitem>
+		  <para>
+			&ucsUAS; unterstützt den Massenimport von Benutzerkonten über CSV-Datei bereits seit
+			einiger Zeit. Mit diesem Release von &ucsUAS; wird ein neuer Assistent installiert, der den Import
+			von CSV-Dateien erheblich vereinfacht. CSV-Dateien sind für den Benutzerimport der bevorzugte Weg
+			und werden von nahezu jeder vorhanden Schulverwaltungssoftware als Exportformat angeboten. Die
+			einzelnen Spalten der CSV-Datei müssen anders als beim Kommandozeilenimport nicht mehr in einer
+			bestimmten Reihenfolge vorliegen, sondern können interaktiv im Assistenten den einzelnen
+			Benutzerkonto-Attributen zugeordnet werden. Darüber hinaus überprüft der Assistent die CSV-Daten auf
+			Duplikate oder andere potenzielle Importfehler und erlaubt es, die betreffenden Importzeilen
+			innerhalb des Assistenten anzupassen.
+		  </para>
+		</listitem>
+		<listitem>
+		  <para>
+			Der &ucsUAS;-Konfigurationsassistent unterstützt jetzt die Einrichtung von Schulservern
+			für das Edukativnetz und für das Verwaltungsnetz. Bisher hat der Konfigurationsassistent nur
+			Schulserver für das Edukativnetz unterstützt.
+		  </para>
+		</listitem>
+		<listitem>
+		  <para>
+			Lehrern kann jetzt der Zugriff auf die Heimatverzeichnisse der Schüler gewährt
+			werden. Dieses Feature ermöglicht z.B. den Zugriff auf vergessene Abgaben oder eine direktere
+			Unterstützung durch den Lehrer. Der Zugriff auf die Heimatverzeichnisse ist in der
+			Standardeinstellung deaktiviert und kann nachträglich konfiguriert werden.
+		  </para>
+		</listitem>
+		<listitem>
+		  <para>
+			Für jede Schule kann jetzt neben dem Namen für die Organisationseinheit (OU) auch ein
+			sprechender Name definiert werden, der keinen Zeichenbeschränkungen unterliegt und im Gegensatz zum
+			OU-Namen auch nachträglich modifiziert werden kann.
+		  </para>
+		</listitem>
+		<listitem>
+		  <para>
+			Das Computerraum-Modul erkennt jetzt automatisch die Computer eines Computerraums. Beim
+			Öffnen des Moduls durch den Lehrer wird automatisch bestimmt, an welchem Rechner er sich befindet,
+			und automatisch der passende Computerraum geöffnet.
+		  </para>
+		</listitem>
+		<listitem>
+		  <para>
+			Die Dokumentation für &ucsUAS; wurde erweitert und beschreibt jetzt die Aufnahme zusätzlicher UCS-Systeme in die &ucsUAS;-Umgebung. Dies erhöht die Skalierbarkeit von &ucsUAS;-Umgebungen, da Dienste auf die zusätzlichen UCS-Systeme ausgelagert werden können.
+		  </para>
+		</listitem>
+	  </itemizedlist>
+	</chapter>
+
+	<chapter>
 	  <title>Empfohlene Update-Reihenfolge für Umgebungen mit mehr als einem UCS-Server / Update von Systemen mit UCS-Komponenten</title>
 	  <para>
 		Für das Update von UCS-Umgebungen mit mehr als einem UCS-System wird
