@@ -51,7 +51,7 @@ def main():
 				# Creating new project
 				project = Distribution(
 						school,
-						username=tea,
+						sender=tea,
 						umcConnection=con,
 						ucr=ucr,
 						files=["file_name"],

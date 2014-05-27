@@ -9,9 +9,18 @@ from essential.distribution import Distribution
 from essential.workgroup import Workgroup
 from subprocess import call
 from univention.lib.umc_connection import UMCConnection
+import time
+import univention.testing.strings as uts
 import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool as utu
 import univention.testing.utils as utils
+
+def getDateTime(starttime, deadline):
+	distTime = time.strftime('%I:%M', starttime)
+	distDate = time.strftime('%Y-%m-%d', starttime)
+	collTime = time.strftime('%I:%M', deadline)
+	collDate = time.strftime('%Y-%m-%d', deadline)
+	return distTime, distDate, collTime, collDate
 
 def main():
 	call(['rdate', '192.168.0.3'])
@@ -23,33 +32,76 @@ def main():
 			# Create ou, teacher, student, group
 			school, oudn = schoolenv.create_ou(displayName='')
 			tea, teadn = schoolenv.create_user(school, is_teacher=True)
+			tea2, teadn2 = schoolenv.create_user(school, is_teacher=True)
 			stu, studn = schoolenv.create_user(school)
 			group = Workgroup(school, members=[studn])
 			group.create()
 			utils.wait_for_replication_and_postrun()
 
+			filename = uts.random_string()
 			con.auth(tea, 'univention')
 
 			# Create new project
 			project = Distribution(
 					school,
-					username=tea,
+					sender=tea,
 					umcConnection=con,
 					ucr=ucr,
-					files=["file_name"],
+					files=[filename],
 					recipients=[group],
 					flavor='teacher')
 			project.add()
 			project.check_add()
-
-			project.put(description='newDisctiption')
-
 			project.distribute()
 			project.check_distribute([stu])
 			project.collect()
 			project.check_collect([stu])
+
+			# Adopting Check
+			con2 = UMCConnection(host)
+			con2.auth(tea2, 'univention')
+			filename = uts.random_string()
+			# create new project
+			project2 = Distribution(
+					school,
+					sender=tea2,
+					umcConnection=con2,
+					ucr=ucr,
+					files=[filename],
+					recipients=[group],
+					flavor='teacher')
+			project2.add()
+			project.adopt(project2.name)
+			project.check_adopt(project2.name)
+
+			# Editing porject check
+			MIN_DIST_TIME = 6*60
+			MIN_COLL_TIME = 16*60
+			for distType in ['manual', 'automatic']:
+				for collType in ['manual', 'automatic']:
+					get = project.get()
+					# change attributes
+					now = time.time()
+					starttime = time.localtime(now + MIN_DIST_TIME)
+					deadline = time.localtime(now + MIN_COLL_TIME)
+					distTime, distDate, collTime, collDate = getDateTime(starttime, deadline)
+					new_description = uts.random_string()
+					new_group = Workgroup(school, members=[studn])
+					new_group.create()
+					project.put(
+							description=new_description,
+							distributeType=distType,
+							distributeTime=distTime,
+							distributeDate=distDate,
+							collectType=collType,
+							collectTime=collTime,
+							collectDate=collDate,
+							recipients=[new_group])
+					project.check_put(get)
+					MIN_DIST_TIME += 2 * 60
+					MIN_COLL_TIME += 2 * 60
+
 			project.remove()
 			project.check_remove()
-
 if __name__ == '__main__':
 	main()
