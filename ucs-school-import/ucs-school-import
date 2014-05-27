@@ -788,7 +788,7 @@ def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None, ShareFileServer=None
 			# only move if
 			# - in multiserver environments OR
 			# - desired dhcp server DN matches with UCR config
-			if configRegistry.is_false('ucsschool/singlemaster', False) or (newDHCPServerDN.endswith(',%s' % dhcpd_ldap_base)):
+			if not(configRegistry.is_true('ucsschool/singlemaster', False)) or (newDHCPServerDN.endswith(',%s' % dhcpd_ldap_base)):
 				if obj.dn.lower() != newDHCPServerDN.lower():
 					attr_server = obj["server"]
 					print "need to remove dhcp server: %s" % obj.dn

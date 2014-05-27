@@ -1,3 +1,9 @@
+ucs-school-import (10.0.22-1) unstable; urgency=low
+
+  * Bug #34940: fixed logic bug
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Tue, 27 May 2014 09:08:02 +0200
+
 ucs-school-import (10.0.21-2) unstable; urgency=low
 
   * Bug #34940: move existing DHCP server objects only in certain conditions
