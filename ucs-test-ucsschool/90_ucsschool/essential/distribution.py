@@ -447,7 +447,6 @@ html5
 		:param after_time: time after using put command
 		:type after_time: str
 		"""
-		print 'IN PROCESS'
 		fail_state = False
 		# manual -> manual
 		# atJobs == don't care
