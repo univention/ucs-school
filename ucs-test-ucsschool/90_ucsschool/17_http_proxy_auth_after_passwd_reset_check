@@ -1,7 +1,4 @@
-#!/usr/share/ucs-test/runner python
-## desc: http_proxy_auth_after_passwd_reset_check
-## roles: [domaincontroller_master, domaincontroller_backup, domaincontroller_slave, memberserver]
-## tags: [apptest]
+#!/usr/share/ucs-test/runner python ## desc: http_proxy_auth_after_passwd_reset_check ## roles: [domaincontroller_master, domaincontroller_backup, domaincontroller_slave, memberserver] ## tags: [apptest]
 ## exposure: dangerous
 ## packages: [univention-samba4, ucs-school-webproxy]
 
@@ -44,11 +41,12 @@ def main():
 	url = 'http://www.univention.de'
 	with ucr_test.UCSTestConfigRegistry() as ucr:
 		host = '%s.%s' % (ucr.get('hostname'), ucr.get('domainname'))
-		handler_set(['squid/basicauth=yes'])
-		handler_set(['squid/basicauth/children=1'])
-		handler_set(['squid/ntlmauth=yes'])
+		handler_set([
+		'squid/basicauth=yes',
+		'squid/basicauth/children=1',
+		'squid/ntlmauth=yes',
+		'squid/ntlmauth/children=1'])
 		handler_unset(['squid/ntlmauth/keepalive'])
-		handler_set(['squid/ntlmauth/children=1'])
 		subprocess.call(["/etc/init.d/squid3", "restart"])
 		with utu.UCSTestSchool()  as schoolenv:
 			school, oudn = schoolenv.create_ou()

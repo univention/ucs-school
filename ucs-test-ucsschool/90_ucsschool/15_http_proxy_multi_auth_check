@@ -33,13 +33,15 @@ def checkAuths(host, passwd,  url, (basic, ntlm, gneg), allow_wrong_passwd):
 def checkBasic(host, passwd, url, http_code):
 	print 'Performing Basic proxy auth check'
 	curl = SimpleCurl(proxy=host, password=passwd, auth=pycurl.HTTPAUTH_BASIC)
-	if http_code != curl.response(url):
+	result = curl.response(url)
+	if http_code != result:
 		utils.fail('Basic proxy auth check failed, http_code = %r, expected = %r' % (result, http_code))
 
 def checkNTLM(host, passwd, url, http_code):
 	print 'Performing NTLM proxy auth check'
 	curl = SimpleCurl(proxy=host, password=passwd, auth=pycurl.HTTPAUTH_NTLM)
-	if http_code != curl.response(url):
+	result = curl.response(url)
+	if http_code != result:
 		utils.fail('NTLM proxy auth check failed, http_code = %r, expected = %r' % (result, http_code))
 
 def checkGssnegotiate(host, passwd, url, http_code, allow_wrong_passwd):
@@ -53,7 +55,8 @@ def checkGssnegotiate(host, passwd, url, http_code, allow_wrong_passwd):
 			stdin=subprocess.PIPE)
 	pop.communicate(passwd)
 	subprocess.call(["klist"])
-	if http_code != curl.response(url):
+	result = curl.response(url)
+	if http_code != result:
 		utils.fail('Gssnegotiate proxy auth check failed, http_code = %r, expected = %r' % (result, http_code))
 	else:
 		if not allow_wrong_passwd and pop.returncode != 0:
@@ -70,11 +73,9 @@ def setAuthVariables((basic, ntlm, gneg)):
 	else:
 		handler_unset(['squid/ntlmauth'])
 	if gneg:
-		handler_set(['squid/krb5auth=yes'])
-		handler_set(['squid/krb5auth/keepalive=yes'])
+		handler_set(['squid/krb5auth=yes', 'squid/krb5auth/keepalive=yes'])
 	else:
-		handler_unset(['squid/krb5auth'])
-		handler_unset(['squid/krb5auth/keepalive'])
+		handler_unset(['squid/krb5auth', 'squid/krb5auth/keepalive'])
 	subprocess.call(["/etc/init.d/squid3", "restart"])
 
 def printHeader(state, passwd, allow_wrong_passwd):
