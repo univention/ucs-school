@@ -1,3 +1,10 @@
+ucs-test-ucsschool (1.0.62-1) unstable; urgency=low
+
+  * Bug #34789 add two scripts to test distribution materials module
+  * Bug #34491 Fix some minor errors.
+
+ -- Ammar Najjar <najjar@univention.de>  Tue, 27 May 2014 12:13:30 +0200
+
 ucs-test-ucsschool (1.0.61-1) unstable; urgency=low
 
   * Bug #34335: fixed home share "dir" test in 12_roleshare_student
