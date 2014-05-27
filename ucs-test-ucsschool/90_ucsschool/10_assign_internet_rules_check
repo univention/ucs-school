@@ -1,6 +1,6 @@
 #!/usr/share/ucs-test/runner python
 ## desc: ucs-school-assign-internet-rules-check
-## roles: [domaincontroller_master, domaincontroller_backup]
+## roles: [domaincontroller_master, domaincontroller_backup, domaincontroller_slave, memberserver]
 ## tags: [apptest]
 ## exposure: careful
 ## packages:  [ucs-school-umc-internetrules]
@@ -12,6 +12,7 @@ from essential.workgroup import Workgroup
 import random
 import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool as utu
+import univention.testing.utils as utils
 
 
 # Assign internetrules to groups randomly
@@ -25,6 +26,7 @@ def assignRulesToGroupsRandomly(groupList, ruleList, school, groupType):
 			groupType)
 		assignedGroups.append(
 			(group.name, rule.name))
+	utils.wait_for_replication_and_postrun()
 	return assignedGroups
 
 
@@ -104,7 +106,7 @@ def main():
 			# Create random classs
 			cIns = Klasse(school, ucr=ucr)
 			newclasses = cIns.createList(2)
-			assignedClasses = [ (c.name, None) for c in newclasses]
+			assignedClasses = [(c.name, None) for c in newclasses]
 
 			check1 = Check(school, assignedClasses, ucr=ucr)
 
