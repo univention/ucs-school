@@ -1,3 +1,9 @@
+ucs-school-lib (5.0.47-1) unstable; urgency=low
+
+  * Bug #34940: fixed logic bug
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Tue, 27 May 2014 09:20:06 +0200
+
 ucs-school-lib (5.0.46-2) unstable; urgency=low
 
   * Bug #34337: fixed traceback

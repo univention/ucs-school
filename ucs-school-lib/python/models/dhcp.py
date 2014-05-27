@@ -75,7 +75,7 @@ class DHCPService(UCSSchoolHelperAbstractClass):
 			# - forced via kwargs OR
 			# - in multiserver environments OR
 			# - desired dhcp server DN matches with UCR config
-			if force_dhcp_server_move or ucr.is_false('ucsschool/singlemaster', False) or (dhcp_server.dn.endswith(',%s' % dhcpd_ldap_base)):
+			if force_dhcp_server_move or not(ucr.is_true('ucsschool/singlemaster', False)) or (dhcp_server.dn.endswith(',%s' % dhcpd_ldap_base)):
 				# move if existing DN does not match with desired DN
 				if existing_dhcp_server_dn != dhcp_server.dn:
 					# move existing dhcp server object to OU/DHCP service
