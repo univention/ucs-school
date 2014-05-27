@@ -17,8 +17,8 @@ import univention.testing.utils as utils
 
 def main():
 	call(['rdate', '192.168.0.3'])
-	MIN_DIST_TIME = 6*60
-	MIN_COLL_TIME = 16*60
+	MIN_DIST_TIME = 6 * 60
+	MIN_COLL_TIME = 16 * 60
 	try:
 		with utu.UCSTestSchool() as schoolenv:
 			with ucr_test.UCSTestConfigRegistry() as ucr:
@@ -66,14 +66,14 @@ def main():
 				project.add()
 				project.check_add()
 
-				project.put(description='newDisctiption')
-
 				print 'waiting for 6 mins for the project to be automatically distributed'
 				time.sleep(MIN_DIST_TIME + 1)
 				project.check_distribute([stu])
+
 				print 'waiting for 11 mins for the project to be automatically collected'
 				time.sleep(MIN_COLL_TIME - MIN_DIST_TIME + 1)
 				project.check_collect([stu])
+
 				project.remove()
 				project.check_remove()
 	finally:

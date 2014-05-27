@@ -75,8 +75,8 @@ def main():
 			project.check_adopt(project2.name)
 
 			# Editing porject check
-			MIN_DIST_TIME = 6*60
-			MIN_COLL_TIME = 16*60
+			MIN_DIST_TIME = 6 * 60
+			MIN_COLL_TIME = 16 * 60
 			for distType in ['manual', 'automatic']:
 				for collType in ['manual', 'automatic']:
 					get = project.get()
