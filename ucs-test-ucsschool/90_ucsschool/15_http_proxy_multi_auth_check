@@ -13,22 +13,18 @@ import subprocess
 import univention.testing.ucr as ucr_test
 import univention.testing.utils as utils
 
-def checkAuths(host, passwd,  url, (basic, ntlm, gneg), allow_wrong_passwd):
+def checkAuths(host, passwd,  url, (basic, ntlm, gneg), expect_wrong_password):
+	# in case all auth are disabled, all return 200
+	http_basic, http_ntlm, http_gneg = (200, 200, 200)
 	if basic or ntlm or gneg:
-		http_basic = 200 if (basic and not allow_wrong_passwd) else 407
-		http_ntlm = 200 if (ntlm and not allow_wrong_passwd) else 407
+		http_basic = 200 if (basic and not expect_wrong_password) else 407
+		http_ntlm = 200 if (ntlm and not expect_wrong_password) else 407
 		# in Gssnegotiate case kinit is called with the password
 		# if passwd is wrong it fails setting the auth up but returns 200
 		http_gneg = 200 if (gneg) else 407
-		checkBasic(host, passwd, url, http_basic)
-		checkNTLM(host, passwd, url, http_ntlm)
-		checkGssnegotiate(host, passwd, url, http_gneg, allow_wrong_passwd)
-	else:
-		# in case all auth are disabled, all return 200
-		http_code = 200 
-		checkBasic(host, passwd, url, http_code)
-		checkNTLM(host, passwd, url, http_code)
-		checkGssnegotiate(host, passwd, url, http_code, allow_wrong_passwd)
+	checkBasic(host, passwd, url, http_basic)
+	checkNTLM(host, passwd, url, http_ntlm)
+	checkGssnegotiate(host, passwd, url, http_gneg, expect_wrong_password)
 
 def checkBasic(host, passwd, url, http_code):
 	print 'Performing Basic proxy auth check'
@@ -44,7 +40,7 @@ def checkNTLM(host, passwd, url, http_code):
 	if http_code != result:
 		utils.fail('NTLM proxy auth check failed, http_code = %r, expected = %r' % (result, http_code))
 
-def checkGssnegotiate(host, passwd, url, http_code, allow_wrong_passwd):
+def checkGssnegotiate(host, passwd, url, http_code, expect_wrong_password):
 	print 'Performing Gssnegotiate proxy auth check'
 	curl = SimpleCurl(
 			proxy=host,
@@ -59,7 +55,7 @@ def checkGssnegotiate(host, passwd, url, http_code, allow_wrong_passwd):
 	if http_code != result:
 		utils.fail('Gssnegotiate proxy auth check failed, http_code = %r, expected = %r' % (result, http_code))
 	else:
-		if not allow_wrong_passwd and pop.returncode != 0:
+		if not expect_wrong_password and pop.returncode != 0:
 			utils.fail('kinit: correct Password used but did not work')
 
 def setAuthVariables((basic, ntlm, gneg)):
@@ -78,11 +74,11 @@ def setAuthVariables((basic, ntlm, gneg)):
 		handler_unset(['squid/krb5auth', 'squid/krb5auth/keepalive'])
 	subprocess.call(["/etc/init.d/squid3", "restart"])
 
-def printHeader(state, passwd, allow_wrong_passwd):
+def printHeader(state, passwd, expect_wrong_password):
 	print '-' * 40
 	print '(Basic, NTLM, Gssnegotiate) = %s' % (state,)
-	print 'Password used: %s, allow_wrong_passwd: %s' % (
-			passwd, allow_wrong_passwd)
+	print 'Password used: %s, expect_wrong_password: %s' % (
+			passwd, expect_wrong_password)
 
 def main():
 	with ucr_test.UCSTestConfigRegistry() as ucr:
@@ -90,7 +86,7 @@ def main():
 		url = 'http://www.univention.de'
 		host = '%s.%s' % (ucr.get('hostname'), ucr.get('domainname'))
 
-		# list of tuples (passwd, allow_wrong_passwd) used in the test
+		# list of tuples (passwd, expect_wrong_password) used in the test
 		passwords = [('univention', False),('wrong_passwd',True)]
 
 		# Generate all the possibilities for the auth states
@@ -98,15 +94,15 @@ def main():
 		#  (1, 0, 0), (1, 0, 1), (1, 1, 0), (1, 1, 1)]
 		authStates = list(itertools.product([0,1], repeat=3))
 
-		for passwd, allow_wrong_passwd in passwords:
+		for passwd, expect_wrong_password in passwords:
 			for state in authStates:
-				printHeader(state, passwd, allow_wrong_passwd)
+				printHeader(state, passwd, expect_wrong_password)
 
 				# set ucr variables according to the auth states
 				setAuthVariables(state)
 
 				# Perform the checks
-				checkAuths(host, passwd, url, state, allow_wrong_passwd)
+				checkAuths(host, passwd, url, state, expect_wrong_password)
 
 if __name__ == '__main__':
 	main()
