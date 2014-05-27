@@ -42,13 +42,13 @@ feedback@univention.de
 	<chapter>
 	  <title>Release-Highlights</title>
 	  <para>
-		Bei UCS@school 3.2 R2 handelt es sich um ein Feature-Release, welches die folgenden neues
+		Bei UCS@school 3.2 R2 handelt es sich um ein Feature-Release, welches die folgenden neuen
 		Features sowie diverse Fehlerkorrekturen und kleinere Verbesserungen mitbringt:
 	  </para>
 	  <itemizedlist>
 		<listitem>
 		  <para>
-			&ucsUAS; unterstützt den Massenimport von Benutzerkonten über CSV-Datei bereits seit
+			&ucsUAS; unterstützt den Massenimport von Benutzerkonten über CSV-Dateien bereits seit
 			einiger Zeit. Mit diesem Release von &ucsUAS; wird ein neuer Assistent installiert, der den Import
 			von CSV-Dateien erheblich vereinfacht. CSV-Dateien sind für den Benutzerimport der bevorzugte Weg
 			und werden von nahezu jeder vorhanden Schulverwaltungssoftware als Exportformat angeboten. Die
@@ -69,9 +69,9 @@ feedback@univention.de
 		<listitem>
 		  <para>
 			Lehrern kann jetzt der Zugriff auf die Heimatverzeichnisse der Schüler gewährt
-			werden. Dieses Feature ermöglicht z.B. den Zugriff auf vergessene Abgaben oder eine direktere
+			werden. Dieses Feature ermöglicht z.B. den Zugriff auf vergessene Hausaufgaben oder eine direktere
 			Unterstützung durch den Lehrer. Der Zugriff auf die Heimatverzeichnisse ist in der
-			Standardeinstellung deaktiviert und kann nachträglich konfiguriert werden.
+			Standardeinstellung deaktiviert und kann konfiguriert werden.
 		  </para>
 		</listitem>
 		<listitem>
@@ -85,7 +85,7 @@ feedback@univention.de
 		  <para>
 			Das Computerraum-Modul erkennt jetzt automatisch die Computer eines Computerraums. Beim
 			Öffnen des Moduls durch den Lehrer wird automatisch bestimmt, an welchem Rechner er sich befindet,
-			und automatisch der passende Computerraum geöffnet.
+			und automatisch der passende Computerraum im Webbrowser geöffnet.
 		  </para>
 		</listitem>
 		<listitem>
