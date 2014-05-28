@@ -1,3 +1,10 @@
+ucs-test-ucsschool (1.0.63-1) unstable; urgency=low
+
+  * Bug #34491 fixing the issue of not assigning an internet rule to a workinggorup
+  * when district mode is enabled.	
+
+ -- Ammar Najjar <najjar@univention.de>  Wed, 28 May 2014 11:25:19 +0200
+
 ucs-test-ucsschool (1.0.62-1) unstable; urgency=low
 
   * Bug #34789 add two scripts to test distribution materials module
