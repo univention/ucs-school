@@ -19,7 +19,7 @@ import univention.testing.utils as utils
 def ruleInControl(user, ruleList, host, banPage):
 	inCtrl = []
 	localCurl = SimpleCurl(proxy=host, username=user)
-	ruleList = [rule for rule in ruleList if rule != None]
+	ruleList = [rule for rule in ruleList if rule is not None]
 	for rule in ruleList:
 		if rule.typ == 'blacklist':
 			if all(localCurl.getPage(dom) == banPage for dom in rule.domains):
@@ -133,7 +133,7 @@ def main():
 
 			# switch rule1 to be 'blacklist' with higher proirity
 			rule1.put(new_type='blacklist', new_priority=5)
-
+			
 			# Check for blacklist and student
 			# for one rule
 			doCheck(host, banPage, stu,'blacklist', rule1)

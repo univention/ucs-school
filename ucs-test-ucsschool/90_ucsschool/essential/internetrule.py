@@ -14,6 +14,7 @@ import random
 import univention.testing.strings as uts
 import univention.testing.ucr as ucr_test
 import univention.testing.utils as utils
+from univention.testing.ucsschool import UCSTestSchool
 
 
 class InternetRule(object):
@@ -232,8 +233,8 @@ class InternetRule(object):
 		basedn = self.ucr.get('ldap/base')
 		groupdn = ''
 		if groupType == 'workgroup':
-			groupdn = 'cn=%s-%s,cn=schueler,cn=groups,ou=%s,%s' % (
-				school, groupName, school, basedn)
+			ucsschool = UCSTestSchool()
+			groupdn = ucsschool.get_workinggroup_dn(school, groupName)
 		elif groupType == 'class':
 			groupdn = 'cn=%s-%s,cn=klassen,cn=schueler,cn=groups,ou=%s,%s' % (
 				school, groupName, school, basedn)

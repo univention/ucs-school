@@ -10,6 +10,7 @@ import univention.testing.strings as uts
 import univention.testing.ucr as ucr_test
 import univention.testing.utils as utils
 import univention.uldap as uu
+from univention.testing.ucsschool import UCSTestSchool
 
 
 class Workgroup(object):
@@ -260,10 +261,6 @@ class Workgroup(object):
 
 
 	def dn(self):
-		basedn = self.ucr.get('ldap/base')
-		return 'cn=%s-%s,cn=schueler,cn=groups,ou=%s,%s' % (
-				self.school,
-				self.name,
-				self.school,
-				basedn)
-
+		ucsschool = UCSTestSchool()
+		groupdn = ucsschool.get_workinggroup_dn(self.school, self.name)
+		return groupdn
