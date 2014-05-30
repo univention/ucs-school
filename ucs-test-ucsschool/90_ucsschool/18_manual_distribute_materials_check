@@ -75,8 +75,8 @@ def main():
 			project.check_adopt(project2.name)
 
 			# Editing porject check
-			MIN_DIST_TIME = 6 * 60
-			MIN_COLL_TIME = 16 * 60
+			MIN_DIST_TIME = 8 * 60
+			MIN_COLL_TIME = 18 * 60
 			for distType in ['manual', 'automatic']:
 				for collType in ['manual', 'automatic']:
 					get = project.get()
@@ -98,8 +98,8 @@ def main():
 							collectDate=collDate,
 							recipients=[new_group])
 					project.check_put(get)
-					MIN_DIST_TIME += 2 * 60
-					MIN_COLL_TIME += 2 * 60
+					MIN_DIST_TIME += 3 * 60
+					MIN_COLL_TIME += 3 * 60
 
 			project.remove()
 			project.check_remove()

@@ -16,8 +16,8 @@ import univention.testing.ucsschool as utu
 import univention.testing.utils as utils
 
 def main():
-	MIN_DIST_TIME = 6 * 60
-	MIN_COLL_TIME = 16 * 60
+	MIN_DIST_TIME = 8 * 60
+	MIN_COLL_TIME = 18 * 60
 	try:
 		with utu.UCSTestSchool() as schoolenv:
 			with ucr_test.UCSTestConfigRegistry() as ucr:
