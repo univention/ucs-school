@@ -6,8 +6,9 @@
 	  <!ENTITY structure SYSTEM "structure-de.xml">
 	  <!ENTITY installation SYSTEM "installation-de.xml">
 	  <!ENTITY module-overview SYSTEM "module-overview-de.xml">
-	  <!ENTITY setup-school SYSTEM "setup-school-de.xml">
-	  <!ENTITY data-management SYSTEM "data-management-de.xml">
+	  <!ENTITY setup-school-umc SYSTEM "setup-school-umc-de.xml">
+	  <!ENTITY setup-school-cli SYSTEM "setup-school-cli-de.xml">
+	  <!ENTITY setup-school-generic SYSTEM "setup-school-generic-de.xml">
 	  <!ENTITY windows SYSTEM "windows-de.xml">
 	  <!ENTITY proxy SYSTEM "proxy-de.xml">
 	  <!ENTITY radius SYSTEM "radius-de.xml">
@@ -59,8 +60,9 @@ feedback@univention.de
   &introduction;
   &structure;
   &installation;
-  &setup-school;
-  &data-management;
+  &setup-school-umc;
+  &setup-school-cli;
+  &setup-school-generic;
   &windows;
   &module-overview;
   &proxy;

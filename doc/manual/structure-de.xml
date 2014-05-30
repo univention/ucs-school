@@ -12,7 +12,7 @@
 		einige schulspezifische Erweiterungen.
 	</para>
 
-	<section>
+	<section id="structure:userroles">
 		<title>&ucsUAS;-Benutzerrollen</title>
 		<para>
 			In einer Standard-UCS-Installation sind alle Benutzerkonten vom selben
