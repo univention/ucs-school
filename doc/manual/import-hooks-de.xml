@@ -116,7 +116,7 @@ echo "$(basename $0): Added policy dhcpd_ldap_base ."</programlisting>
 		  <para>
 			Diese Variable definiert das Verzeichnis auf dem Server, welches als
 			Freigabe <emphasis>Marktplatz</emphasis> freigegeben wird. In der Standardeinstellung wird das Verzeichnis
-			<filename>/home/groups/Marktplatz</filename> verwendet.
+			<filename>/home/&lt;OU&gt;/groups/Marktplatz</filename> verwendet.
 		  </para>
 		</listitem>
 		<listitem>
