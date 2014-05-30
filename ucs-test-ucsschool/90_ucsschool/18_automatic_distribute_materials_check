@@ -16,7 +16,6 @@ import univention.testing.ucsschool as utu
 import univention.testing.utils as utils
 
 def main():
-	call(['rdate', '192.168.0.3'])
 	MIN_DIST_TIME = 6 * 60
 	MIN_COLL_TIME = 16 * 60
 	try:

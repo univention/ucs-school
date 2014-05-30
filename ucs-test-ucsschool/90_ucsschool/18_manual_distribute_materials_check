@@ -24,7 +24,6 @@ def getDateTime(starttime, deadline):
 	return distTime, distDate, collTime, collDate
 
 def main():
-	call(['rdate', '192.168.0.3'])
 	with utu.UCSTestSchool() as schoolenv:
 		with ucr_test.UCSTestConfigRegistry() as ucr:
 			host = ucr.get('hostname')

@@ -333,7 +333,6 @@ html5
 			self.files = files
 			self.recipients = recipients
 
-	# FIXME under construction
 	def check_put(self, previousGetResult):
 		"""Calls 'distribution/get' and check the modified project
 		:param previousGetResult: info from previous get
