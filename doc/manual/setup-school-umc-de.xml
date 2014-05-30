@@ -1,58 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
 <chapter id="school:setup:umc">
 	<title>Verwaltung von Schulen über die &ucsUMC;</title>
 	<para>
-	  &ucsUAS; bietet für viele der regelmäßig wiederkehrenden Verwaltungsaufgaben spezielle Module
-	  und Assistenten an, die beim Anlegen, Modifizieren und Löschen von z.B. Schulen, Benutzerkonten und
-	  Rechnern unterstützen. Ergänzend hierzu gibt es Programme für die Kommandozeile, die auch eine
-	  automatisierte Pflege der &ucsUAS;-Umgebung zulassen (siehe hierzu auch <xref
-	  linkend="school:setup:cli"/>).
+	  &ucsUAS; bietet für viele der regelmäßig wiederkehrenden Verwaltungsaufgaben spezielle
+	  UMC-Module und -Assistenten an, die beim Anlegen, Modifizieren und Löschen von z.B. Schulen,
+	  Benutzerkonten und Rechnern unterstützen. Ergänzend hierzu gibt es Programme für die Kommandozeile,
+	  die auch eine automatisierte Pflege der &ucsUAS;-Umgebung zulassen (diese werden in <xref
+	  linkend="school:setup:cli"/> näher beschrieben).
 	</para>
 
 	<section id="school:setup:umc:schools">
 		<title>Verwaltung von Schulen</title>
 		<para>
-			Die Daten eines Schulservers werden in einer Organisationseinheit (OU) -
-			einem Teilbaum des LDAP-Verzeichnisses - gespeichert. Nur die für
-			einen Schulserver relevanten Daten werden dorthin übertragen (siehe auch <xref linkend="structure"/>).
-		</para>
-		<para>
-		  Die Verwaltung der logischen Einheit <emphasis>Schule</emphasis> kann in der &ucsUMC; über
-		  das Modul <guimenu>Schulen</guimenu> erfolgen, welches sich in der Modulgruppe
-		  <emphasis>Schul-Administration</emphasis> befindet. Es ermöglicht das Suchen, Anlegen, Bearbeiten und
-		  Löschen von Schulen in der &ucsUAS;-Umgebung.
+		  Die Daten einer Schule werden in einer Organisationseinheit (OU) - einem Teilbaum des
+		  LDAP-Verzeichnisdienstes - gespeichert (siehe auch <xref linkend="structure"/>).  Die Verwaltung der
+		  logischen Einheit <emphasis>Schule</emphasis> kann in der &ucsUMC; über das Modul
+		  <guimenu>Schulen</guimenu> erfolgen, welches sich in der Modulgruppe
+		  <emphasis>Schul-Administration</emphasis> befindet. Es ermöglicht das Suchen, Anlegen, Bearbeiten
+		  und Löschen von Schulen in der &ucsUAS;-Umgebung.
 		</para>
 		<section id="school:setup:umc:schools:create">
 		  <title>Anlegen von Schulen</title>
 		  <para>
 			Um den Assistenten für das Hinzufügen einer neuen Schule zu starten, ist die
 			Schaltfläche <guimenu>Hinzufügen</guimenu> oberhalb der Tabelle auszuwählen. Bei Neuinstallationen
-			ohne bestehende Schulen fragt das Modul interaktiv, ob jetzt die erste Schule angelegt werden soll.
+			ohne bestehende Schulen fragt das UMC-Modul automatisch beim Öffnen, ob jetzt die erste Schule angelegt
+			werden soll.
 		  </para>
 		  <para>
 			Der Assistent fragt in jeder &ucsUAS;-Umgebung mindestens die beiden Werte <guimenu>Name
-			der Schule</guimenu> und <guimenu>Schulkürzel</guimenu> ab. In &ucsUAS;-Multi-Server-Umgebungen wird
+			der Schule</guimenu> und <guimenu>Schulkürzel</guimenu> ab. In Multi-Server-Umgebungen wird
 			zusätzlich der Name des edukativen Schulservers abgefragt, welcher später die Dienste für die neue
 			Schule bereitstellen soll.
 		  </para>
 		  <para>
-			Im Feld <guimenu>Name der Schule</guimenu> ist ein beliebige Beschreibung für die
-			Schule anzugeben, die keiner Zeichenlimitierung unterliegt. Sie wird später in den &ucsUAS;-Modulen
-			angezeigt, wenn zwischen unterschiedlichen Schulen zu wählen ist. Nachdem ein Wert eingetragen
-			wurde, wird beim Wechsel in das nächste Feld automatisch ein Vorschlag für das
-			<guimenu>Schulkürzel</guimenu> generiert.
+			Im Eingabefeld <guimenu>Name der Schule</guimenu> ist ein beliebige Beschreibung für die
+			Schule (z.B. <emphasis>Gymnasium Mitte</emphasis>) anzugeben, die keiner Zeichenlimitierung
+			unterliegt. Sie wird später in den &ucsUAS;-Modulen angezeigt, wenn zwischen unterschiedlichen
+			Schulen zu wählen ist. Nachdem ein Wert eingetragen wurde, wird beim Wechsel in das nächste
+			Eingabefeld automatisch ein Vorschlag für das <guimenu>Schulkürzel</guimenu> generiert.
 		  </para>
 		  <para>
 			Das Schulkürzel ist i.d.R. ein kurzer Bezeichner für die Schule, der sich später an
 			unterschiedlichen Stellen wiederfindet. Es wird automatisch u.a. als Präfix für Gruppen- und
 			Freigabenamen verwendet. Darüber hinaus wird das Schulkürzel als Name für die Organisationseinheit
-			(OU) im Verzeichnisdienst verwendet. Üblicherweise werden Bezeichner wie
-			z.B. <emphasis>schule340</emphasis> oder <emphasis>gymmitte</emphasis> verwendet.
+			(OU) im Verzeichnisdienst verwendet. Häufig kommen hier Schulnummern wie <emphasis>340</emphasis>
+			oder zusammengesetzte Kürzel wie <emphasis>g123m</emphasis> oder <emphasis>gymmitte</emphasis> zum
+			Einsatz.
 		  </para>
 		  <para>
-			In Single-Server-Umgebungen ist die Angabe eines Schulservernamens nicht erforderlich, während in
-			Multi-Server-Umgebungen der <guimenu>Rechnername des Schulservers</guimenu> angegeben werden muss.
-			Wurde ein Schulserver angegeben, wird dieser automatisch als Dateiserver für Klassen- und
-			Benutzerfreigaben verwendet (siehe <xref linkend="school:windows:shares"/>).
+			In Single-Server-Umgebungen ist die Angabe eines Schulservernamens nicht erforderlich,
+			während in Multi-Server-Umgebungen der <guimenu>Rechnername des Schulservers</guimenu> angegeben
+			werden muss.  Der eingetragene Schulserver wird automatisch als Dateiserver für Klassen- und
+			Benutzerfreigaben verwendet (siehe <xref linkend="school:setup:generic:windowsattributes"/> und
+			<xref linkend="school:windows:shares"/>).
 		  </para>
 		  <para>
 			Nach dem erfolgreichen Anlegen der Schule über die Schaltfläche
@@ -81,8 +82,8 @@
 		  <para>
 			Darüber hinaus können durch einen Klick auf <guimenu>Erweiterte Einstellungen</guimenu>
 			die für die Schule zuständigen Freigabeserver eingesehen und modifiziert werden.  Die genaue
-			Funktion dieser Freigabeserver wird in <xref linkend="school:importusers:windowsattributes"/>
-			beschrieben.
+			Funktion dieser Freigabeserver wird in <xref linkend="school:setup:generic:windowsattributes"/> und
+			<xref linkend="school:windows:shares"/> beschrieben.
 		  </para>
 		</section>
 		<section id="school:setup:umc:schools:delete">
@@ -93,8 +94,8 @@
 		  </para>
 		  <caution>
 			Das Löschen einer Schule umfasst auch das Entfernen aller damit verbundenen Objekte wie
-			Benutzerkonten, Klassen, Arbeitsgruppen, Rechner, Drucker und Freigaben! Das Löschen einer Schule
-			kann nicht rückgängig gemacht werden!
+			Benutzerkonten, Klassen, Arbeitsgruppen, Rechner, DHCP-Leases, Drucker und Freigaben! Das Löschen
+			einer Schule kann nicht rückgängig gemacht werden!
 		  </caution>
 		</section>
 	</section>
@@ -112,35 +113,39 @@
 		<para>
 		  Um den Assistenten für das Hinzufügen eines neuen Benutzers zu starten, ist die
 		  Schaltfläche <guimenu>Hinzufügen</guimenu> oberhalb der Tabelle auszuwählen. In &ucsUAS;-Umgebungen
-		  ohne bestehende Benutzer fragt das Modul interaktiv, ob jetzt der erste Benutzer angelegt werden soll.
+		  ohne bestehende Benutzer fragt das Modul automatisch beim Öffnen, ob jetzt der erste Benutzer
+		  angelegt werden soll.
 		</para>
 		<para>
 		  Die erste Seite des Assistenten fragt zunächst die gewünschte Benutzerrolle für das neue
-		  Benutzerkonto ab.  Zur Auswahl stehen <emphasis>Schüler</emphasis>, <emphasis>Lehrer</emphasis>,
-		  <emphasis>Lehrer und Mitarbeiter</emphasis> und <emphasis>Mitarbeiter</emphasis>. Die einzelnen
-		  Benutzerrollen werden in <xref linkend="structure:userroles"/> genauer beschrieben. Sind
-		  mehrere Schulen in der &ucsUAS;-Umgebung eingerichtet, wird zusätzlich abgefragt, in
-		  welcher Schule das Benutzerkonto angelegt werden soll.
+		  Benutzerkonto ab.  Zur Auswahl stehen die vier Benutzerrollen <emphasis>Schüler</emphasis>,
+		  <emphasis>Lehrer</emphasis>, <emphasis>Lehrer und Mitarbeiter</emphasis> und
+		  <emphasis>Mitarbeiter</emphasis>. Die einzelnen Benutzerrollen werden in <xref
+		  linkend="structure:userroles"/> genauer beschrieben. Sind mehrere Schulen in der &ucsUAS;-Umgebung
+		  eingerichtet, wird zusätzlich abgefragt, in welcher Schule das Benutzerkonto angelegt werden soll.
 		</para>
 		<para>
 		  Über die Schaltfläche <guimenu>Weiter</guimenu> gelangt man auf die zweite Seite des
-		  Assistenten. Dort werden die für &ucsUAS; relevanten Benutzerattribute abgefragt: Vor- und Nachname,
-		  Benutzername, ggf. Klasse, E-Mail-Adresse und Passwort. Über die Schaltfläche <guimenu>Neue Klasse
-		  erstellen</guimenu> ist es möglich, direkt in das UMC-Modul <guimenu>Klassen (Schule)</guimenu> zu
-		  wechseln, um dort eine weitere Schulklasse anlegen zu können. Die Angabe von E-Mail-Adresse und
-		  Passwort ist optional. Ist kein Passwort vergeben, muss das Passwort zunächst zurückgesetzt werden,
-		  bevor das Benutzerkonto vom Benutzer verwendet werden kann.
+		  Assistenten. Dort werden die für &ucsUAS; relevanten Benutzerattribute abgefragt:
+		  <emphasis>Vorname</emphasis>, <emphasis>Nachname</emphasis>, <emphasis>Benutzername</emphasis>,
+		  ggf. <emphasis>Klasse</emphasis>, <emphasis>E-Mail-Adresse</emphasis> und
+		  <emphasis>Passwort</emphasis>. Über die Schaltfläche <guimenu>Neue Klasse erstellen</guimenu> ist es
+		  möglich, direkt in das UMC-Modul <guimenu>Klassen (Schule)</guimenu> zu wechseln, um dort eine
+		  weitere Schulklasse anlegen zu können. Die Angabe von E-Mail-Adresse und Passwort ist optional. Ist
+		  kein Passwort vergeben, muss das Passwort vom Administrator (oder Lehrer) zurückgesetzt werden,
+		  bevor das Benutzerkonto vom Benutzer erstmalig verwendet werden kann.
 		</para>
 		<para>
 		  Nach dem Anklicken der Schaltfläche <guimenu>Speichern</guimenu> wird das Benutzerkonto im
 		  Verzeichnisdienst angelegt und eine Benachrichtigung über den Erfolg der Aktion
 		  angezeigt. Anschließend wird wieder die zweite Seite des Assistenten angezeigt, um weitere
-		  Benutzerkonten anlegen zu können. Mit der Verwendung der Schaltfläche <guimenu>Abbrechen</guimenu>
-		  gelangt man zurück zum zentralen Suchdialog des UMC-Moduls.
+		  Benutzerkonten anlegen zu können. Die Einstellungen für Schule und Benutzerrolle bleiben dabei
+		  erhalten. Mit der Verwendung der Schaltfläche <guimenu>Abbrechen</guimenu> gelangt man zurück zum
+		  zentralen Suchdialog des UMC-Moduls.
 		</para>
 		<note>
 		  Die Benutzernamen müssen schulübergreifend eindeutig sein. D.h. es ist nicht möglich, den
-		  gleichen Benutzernamen an zwei oder mehr unterschiedlichen Schulen zu verwenden.
+		  gleichen Benutzernamen an zwei unterschiedlichen Schulen zu verwenden.
 		</note>
 	  </section>
 	  <section id="school:setup:umc:user:modify">
@@ -151,10 +156,11 @@
 		  Benutzerkontos bearbeitet werden. Das nachträgliche Ändern des Benutzernamens ist nicht möglich.
 		</para>
 		<para>
-		  Sofern der angemeldete Benutzer die Rechte für das UMC-Modul <guimenu>Benutzer</guimenu>
-		  aus der Modulgruppe <emphasis>Domäne</emphasis> besitzt, wird die Schaltfläche <guimenu>Erweiterte
-		  Einstellungen</guimenu> angezeigt. Über sie kann das UMC-Modul <guimenu>Benutzer</guimenu> geöffnet
-		  werden, wodurch viele erweiterte Einstellungen für das Benutzerkonto ermöglicht werden.
+		  Sofern der angemeldete UMC-Benutzer die Rechte für das UMC-Modul
+		  <guimenu>Benutzer</guimenu> aus der Modulgruppe <emphasis>Domäne</emphasis> besitzt, wird zusätzlich
+		  die Schaltfläche <guimenu>Erweiterte Einstellungen</guimenu> angezeigt. Über sie kann das UMC-Modul
+		  <guimenu>Benutzer</guimenu> geöffnet werden, in dem viele erweiterte Einstellungen für das
+		  Benutzerkonto möglich sind.
 		</para>
 	  </section>
 	  <section id="school:setup:umc:user:delete">
@@ -170,8 +176,166 @@
 	<section id="school:setup:umc:csvimport">
 	  <title>Pflege von Benutzerkonten über CSV-Dateien</title>
 	  <para>
-		...
+		Zusätzlich zum UMC-Modul <guimenu>Benutzer (Schulen)</guimenu>, welches die Pflege einzelner
+		Benutzerkonten erlaubt, bringt &ucsUAS; den Assistenten <guimenu>CSV-Import</guimenu> für die Pflege von
+		Benutzerkonten über CSV-Dateien mit.
 	  </para>
+	  <para>
+		Der Assistent erlaubt es, eine CSV-Datei mit Benutzerinformationen einzulesen. Die
+		eingelesenen Daten werden z.B. auf Schreibfehler oder Konflikte geprüft und werden vor dem
+		eigentlichen Import innerhalb des Assistenten noch einmal angezeigt. Dort können die Daten
+		nachträglich bearbeitet werden. Neben dem Anlegen neuer Benutzerkonten ist es auch möglich, vorhandene
+		Benutzerkonten zu modifizieren oder zu löschen.
+	  </para>
+	  <section id="school:setup:umc:csvimport:import">
+		<title>Import von CSV-Dateien</title>
+		<para>
+		  Für den Import einer CSV-Datei muss das UMC-Modul <guimenu>CSV-Import</guimenu> aus der
+		  UMC-Modulgruppe <guimenu>Schul-Administration</guimenu> geöffnet werden. Der Assistent sieht vor,
+		  dass durch eine CSV-Datei nur Benutzer einer bestimmten Benutzerrolle importiert werden können. Der
+		  gleichzeitige Import von z.B. Schülern und Lehrern durch den Import einer einzelnen CSV-Datei ist
+		  daher nicht möglich. Auf der ersten Seite des Assistenten ist daher die gewünschte Benutzerrolle
+		  auszuwählen (siehe <xref linkend="csvimport:userrole"/>. Sind mehrere Schulen in der
+		  &ucsUAS;-Umgebung eingerichtet, wird zusätzlich abgefragt, in welche Schule die CSV-Datei
+		  importiert werden soll.
+		  <figure id="csvimport:userrole">
+			<title>CSV-Import: Auswahl der Benutzerrolle</title>
+			<graphic scalefit="1" width="97%" align="center" fileref="illustrations/csvimport-userrole.png"/>
+		  </figure>
+		</para>
+		<para>
+		  Nach dem Auswählen der Schaltfläche <guimenu>Weiter</guimenu> ist auf der zweiten Seite
+		  der Import-Modus auszuwählen sowie die CSV-Datei hochzuladen.
+		</para>
+		<para>
+		  In der Standardeinstellung werden die in der CSV-Datei angebenen Benutzerkonten
+		  hinzugefügt. Sollten gleichlautende Benutzerkonten schon im Verzeichnisdienst existieren, werden sie
+		  entsprechend der CSV-Datei modifiziert. Dieser Import-Modus ist für den Erstimport von Benutzerkonten
+		  (z.B. ein einzelner Klassensatz) oder das nachträgliche Modifizieren einer Teilmenge der vorhandenen
+		  Benutzerkonten gedacht.
+		</para>
+		<para>
+		  Liegt eine CSV-Datei mit allen gültigen Benutzern vor, kann alternativ der zweite
+		  Import-Modus verwendet werden. In diesem Modus werden (zusätzlich zum vorher beschriebenen
+		  Verhalten) alle Benutzerkonten gelöscht, die im Verzeichnisdienst aber nicht in der CSV-Datei
+		  enthalten sind. Z.B. kann so zum Schuljahreswechsel ein CSV-Komplettexport der Schülerdatenbank aus
+		  der Schulverwaltungssoftware durchgeführt und die CSV-Datei in &ucsUAS; importiert werden: für neue
+		  Schüler werden Benutzerkonten erstellt, die Benutzerkonten von vorhandenen Schülern werden
+		  aktualisiert und die Benutzerkonten von abgegangenen Schülern werden gelöscht. Für den zweiten
+		  Import-Modus ist die Checkbox <guimenu>Austausch der vorhandenen Benutzer mit der ausgewählten
+		  Benutzerrolle durch die Benutzer der CSV-Datei</guimenu> zu aktivieren.
+		  <figure id="csvimport:upload">
+			<title>CSV-Import: Upload der CSV-Datei</title>
+			<graphic scalefit="1" width="97%" align="center" fileref="illustrations/csvimport-upload.png"/>
+		  </figure>
+		</para>
+		<para>
+		  Mit dem <guimenu>Hochladen</guimenu> einer CSV-Datei wechselt der Assistent automatisch
+		  zum dritten Schritt, in dem eine Zuordnung der Spalten der CSV-Datei zu konkreten Benutzerattributen
+		  erfolgt. Folgende Benutzerattribute stehen für die Zuordnung zur Verfügung:
+		  <itemizedlist>
+			<listitem><para>Benutzername</para></listitem>
+			<listitem><para>Vorname</para></listitem>
+			<listitem><para>Nachname</para></listitem>
+			<listitem><para>Geburtstag</para></listitem>
+			<listitem><para>E-Mail</para></listitem>
+			<listitem><para>Klasse</para></listitem>
+			<listitem><para>Passwort</para></listitem>
+		  </itemizedlist>
+		  Für die einfachere Zuordnung zeigt der Assistent die ersten 10 Zeilen der CSV-Datei
+		  an. Mit einem Klick auf den Titel der jeweiligen Spalte kann die Zuordnung geändert
+		  werden (siehe <xref linkend="csvimport:assignment"/>.
+		</para>
+		<para>
+		  Für den Import wird mindestens die Zuordnung der Benutzerattribute
+		  <emphasis>Vorname</emphasis> und <emphasis>Nachname</emphasis> benötigt. Wurde dem Attribut
+		  <emphasis>Benutzername</emphasis> keine Spalte aus der CSV-Datei zugeordnet, wird der Benutzername
+		  automatisch aus Vor- und Nachnamen generiert
+		  (<emphasis>&lt;Vorname&gt;.&lt;Nachname&gt;</emphasis>). Bei jedem weiteren Import wird der
+		  Benutzername erneut generiert und ggf. anhand von zusätzlich angebenen Attributen zu bestehenden
+		  Benutzerkonten zugeordnet.
+		</para>
+		<figure id="csvimport:assignment">
+		  <title>CSV-Import: Zuordnung der Benutzerattribute</title>
+		  <graphic scalefit="1" width="97%" align="center" fileref="illustrations/csvimport-assignment.png"/>
+		</figure>
+		<para>
+		  Auf der letzten Seite des Assistenten werden zur Prüfung alle vorgesehenen
+		  Änderungsschritte in einer Tabelle angezeigt. Jede Zeile der Tabelle repräsentiert ein Benutzerkonto
+		  und enthält die folgenden Angaben:
+		  <itemizedlist>
+			<listitem><para>den Benutzernamen (ggf. automatisch generiert, falls nicht zugeordnet),</para></listitem>
+			<listitem><para>die zugeordneten Attribute aus der CSV-Datei,</para></listitem>
+			<listitem>
+			  <para>
+				die vorgesehene <guimenu>Aktion</guimenu> für das Benutzerkonto, welche angibt, ob
+				das betreffende Benutzerkonto neu angelegt werden soll (<guimenu>Erstellen</guimenu>), bereits
+				existiert und modifiziert werden soll (<guimenu>Ändern</guimenu>) oder gelöscht werden soll
+				(<guimenu>Löschen</guimenu>). Darüber hinaus können Einträge während des Imports auch manuell
+				ausgelassen werden (<guimenu>Ignorieren</guimenu>).
+			  </para>
+			</listitem>
+			<listitem><para>der Angabe der betreffenden Zeile in der CSV-Datei</para></listitem>
+		  </itemizedlist>
+		  
+		  Werden bei der automatischen Prüfung der CSV-Datei Unstimmingkeiten oder Probleme erkannt,
+		  werden die betreffenden Attributfelder farblich hervorgehoben:
+		  <itemizedlist>
+			<listitem>
+			  <para>
+				Gelbe Zellen weisen auf ungewöhnliche Änderungen hin (z.B. eine Änderung des
+				Geburtsdatums). Die betreffenden Zeilen sollten manuell geprüft werden. Sie stellen jedoch kein
+				Hindernis für einen Import dar.
+			  </para>
+			</listitem>
+			<listitem>
+			  <para>
+				Rot markierte Zellen enthalten ein gravierendes Problem, wie z.B. die doppelte
+				Vergabe eines Benutzernamens oder die ungültige Schreibweise eines Geburtsdatums. Probleme, die durch
+				die roten Zellen angezeigt werden, müssen korrigiert (siehe unten) werden, da ansonsten der Import
+				verweigert wird. Alternativ kann die betroffene Zeile markiert und über die Schaltfläche
+				<guimenu>Ignorieren</guimenu> ignoriert werden.
+			  </para>
+			</listitem>
+		  </itemizedlist>
+		  Beim Verweilen des Mauszeigers über einer farblich markierten Zeile wird ein Tooltip mit
+		  näheren Informationen zu erkannten Problemen angezeigt. Über die Checkbox <guimenu>Nur Zeilen mit
+		  Problemen anzeigen</guimenu> kann die Anzeige auf Einträge mit gelb oder rot markierten Zellen
+		  beschränkt werden.
+		  <figure id="csvimport:check">
+			<title>CSV-Import: Überprüfung der bevorstehenden Änderungen</title>
+			<graphic scalefit="1" width="97%" align="center" fileref="illustrations/csvimport-check.png"/>
+		  </figure>
+		</para>
+		<para>
+		  Um fehlerhafte Werte einer Zeile zu korrigieren, muss die betroffene Zeile zunächst
+		  ausgewählt und anschließend die Schaltfläche <guimenu>Bearbeiten</guimenu> angeklickt werden. Es
+		  öffnet sich ein Bearbeitungsdialog, in dem alle Werte einer Tabellenzeile angezeigt
+		  werden. Alternativ kann in der Tabelle mit einem Doppelklick auf die betreffende Zelle ebenfalls der
+		  Dialog zum Bearbeiten eines Eintrags geöffnet werden.
+		</para>
+		<para>
+		  Über die Schaltfläche <guimenu>Zurücksetzen</guimenu> können nach einer Modifikation die
+		  markierten Zeilen wieder auf die Originalwerte aus der CSV-Datei zurückgesetzt werden.
+		</para>
+		<para>
+		  Nach Abschluss der manuellen Prüfung und möglicher Korrekturen kann über die Schaltfläche
+		  <guimenu>Weiter</guimenu> ein Zusammenfassung über die bevorstehenden Änderungen im
+		  Verzeichnisdienst angezeigt werden (siehe Abbildung <xref linkend="csvimport:summary"/>). Nach der Bestätigung der bevorstehenden
+		  Änderungen werden diese in den Verzeichnisdienst eingepflegt. Je nach Menge der zu importierenden
+		  Daten kann dies einen Moment dauern. Ein Fortschrittsbalken informiert über den aktuellen
+		  Fortschritt.
+		  <figure id="csvimport:summary">
+			<title>CSV-Import: Abschließende Zusammenfassung</title>
+			<graphic scalefit="1" width="37%" align="center" fileref="illustrations/csvimport-summary.png"/>
+		  </figure>
+		</para>
+		<para>
+		  Nach Abschluss des Imports wird eine kurze Rückmeldung zum Import angezeigt. Die
+		  angelegten bzw. geänderten Benutzerkonten stehen nach Abschluss der Verzeichnisdienstreplikation auf
+		  den betreffenden &ucsUAS;-Systemen zur Verfügung.
+		</para>
+	  </section>
 	</section>
 
 	<section id="school:setup:umc:classes">
@@ -181,8 +345,8 @@
 		UMC-Modul <guimenu>Klassen (Schulen)</guimenu> erfolgen. Das Anlegen einer Schulklasse ist
 		erforderlich, bevor das erste Schüler-Benutzerkonto erstellt werden kann. Die eigentliche Zuordnung
 		von Schülern zu einer Klasse erfolgt über das UMC-Modul <guimenu>Benutzer (Schulen)</guimenu> am
-		Schüler-Benutzerobjekt. Die Zuordnung von Lehrern zu Klassen muss über das UMC-Modul <guimenu>Lehrer
-		Klassen zuordnen</guimenu> erfolgen.
+		Schüler-Benutzerobjekt oder während des CSV-Imports. Die Zuordnung von Lehrern zu Klassen muss über
+		das UMC-Modul <guimenu>Lehrer Klassen zuordnen</guimenu> erfolgen.
 	  </para>
 	  <section id="school:setup:umc:classes:create">
 		<title>Anlegen von Schulklassen</title>
@@ -197,17 +361,16 @@
 		  Anschließend wird für die neue Klasse ein Name sowie eine Beschreibung erfragt. Sprechende
 		  Namen, wie zum Beispiel <emphasis>Igel</emphasis> oder <emphasis>BiologieLK</emphasis> sind als
 		  Namen ebenso möglich wie Buchstaben-Ziffern-Kombinationen (<emphasis>10R</emphasis>). Über die
-		  Schaltfläche <guimenu>Speichern</guimenu> wird die neue Klasse im Verzeichnisdienst angelegt, der
-		  dann Schüler und Lehrer zugeordnet werden können.
+		  Schaltfläche <guimenu>Speichern</guimenu> wird die neue Klasse im Verzeichnisdienst angelegt.
 		</para>
 		<para>
-		  Bei der Vergabe des Klassennamens ist zu beachten, dass die Klassennamen schulübergreifend
-		  eindeutig sein müssen. Um trotzdem z.B. die Klasse <emphasis>7A</emphasis> im mehreren Schule
-		  verwenden zu können, wird dem Klassennamen im Verzeichnisdienst automatisch das jeweilige
-		  Schulkürzel als Präfix vorangestellt. Für die Klasse <emphasis>7A</emphasis> an der Schule mit dem
-		  Schulkürzel <emphasis>gymmitte</emphasis> wird daher das Klassenobjekt
-		  <emphasis>gymmitte-7A</emphasis> erstellt. Dieser Name mit Präfix zeigt sich z.B. später bei der
-		  Administration von Datei- und Verzeichnisberechtigungen auf Windows-Rechnern.
+		  Die Klassennamen in &ucsUAS; müssen schulübergreifend eindeutig sein müssen. Um trotzdem
+		  z.B. die Klasse <emphasis>7A</emphasis> in mehreren Schule verwenden zu können, wird dem
+		  Klassennamen im Verzeichnisdienst automatisch das jeweilige Schulkürzel als Präfix
+		  vorangestellt. Für die Klasse <emphasis>7A</emphasis> an der Schule mit dem Schulkürzel
+		  <emphasis>gymmitte</emphasis> wird daher das Klassenobjekt <emphasis>gymmitte-7A</emphasis>
+		  erstellt. Dieser Name mit Präfix zeigt sich z.B. später bei der Administration von Datei- und
+		  Verzeichnisberechtigungen auf Windows-Rechnern.
 		</para>
 		<para>
 		  Um innerhalb einer Klasse den Austausch von Dokumenten zu vereinfachen, wird mit dem
@@ -231,10 +394,11 @@
 		  wieder Zugriff auf die Freigabe zu erhalten.
 		</note>
 		<para>
-		  Sofern der angemeldete Benutzer die Rechte für das UMC-Modul <guimenu>Gruppen</guimenu>
-		  aus der Modulgruppe <emphasis>Domäne</emphasis> besitzt, wird die Schaltfläche <guimenu>Erweiterte
-		  Einstellungen</guimenu> angezeigt. Über sie kann das UMC-Modul <guimenu>Gruppen</guimenu> geöffnet
-		  werden, wodurch viele erweiterte Einstellungen für das Klassengruppenobjekt ermöglicht werden.
+		  Sofern der angemeldete UMC-Benutzer die Rechte für das UMC-Modul
+		  <guimenu>Gruppen</guimenu> aus der Modulgruppe <emphasis>Domäne</emphasis> besitzt, wird zusätzlich
+		  die Schaltfläche <guimenu>Erweiterte Einstellungen</guimenu> angezeigt. Über sie kann das UMC-Modul
+		  <guimenu>Gruppen</guimenu> geöffnet werden, in dem viele erweiterte Einstellungen für das
+		  Benutzerkonto möglich sind.
 		</para>
 	  </section>
 	  <section id="school:setup:umc:classes:delete">
@@ -259,10 +423,10 @@
 		Verzeichnisdienst Rechnerkonten benötigt. Rechnerkonten werden z.B. von Windows-Rechnern automatisch
 		beim Domänenbeitritt angelegt. Sie können aber auch vor dem Domänenbeitritt manuell über das
 		UMC-Modul <guimenu>Rechner (Schulen)</guimenu> eingepflegt werden. Dies ist unter anderem für
-		IP-Managed-Clients wie Drucker notwendig.
+		IP-Managed-Clients wie z.B. Netzwerkdrucker notwendig.
 	  </para>
 	  <para>
-		Das Anlegen der Rechnerkonten vor der Inbetriebname bringt den Vorteil, dass z.B. die für
+		Das Anlegen der Rechnerkonten vor der Inbetriebnahme bringt den Vorteil, dass z.B. die für
 		DHCP notwendigen Informationen wie IP- und MAC-Adresse schon hinterlegt sind.
 	  </para>
 	  <section id="school:setup:umc:computers:create">
@@ -295,10 +459,11 @@
 		</para>
 		<para>
 		  Auf der nächste Seite des Assistenten müssen <guimenu>Name</guimenu>,
-		  <guimenu>IP-Adresse</guimenu> und <guimenu>MAC-Adresse</guimenu> des neuen Rechners angegeben
-		  werden. Die <guimenu>Subnetzmaske</guimenu> kann in den meisten Fällen auf der Voreinstellung
-		  belassen werden. Die MAC-Adresse wird unter anderem für die statische Vergabe der IP-Adressen per
-		  DHCP verwendet. Die Angabe der Inventarnummer ist optional.
+		  <guimenu>IP-Adresse</guimenu> und <guimenu>MAC-Adresse</guimenu> des neuen Rechnerkontos angegeben
+		  werden. Um Probleme beim Domänenbeitritt zu vermeiden, muss der Name des Rechnerkontos mit dem Namen
+		  des Rechners übereinstimmen. Die <guimenu>Subnetzmaske</guimenu> kann in den meisten Fällen auf der
+		  Voreinstellung belassen werden. Die MAC-Adresse wird unter anderem für die statische Vergabe der
+		  IP-Adressen per DHCP verwendet. Die Angabe der Inventarnummer ist optional.
 		</para>
 	  </section>
 	  <section id="school:setup:umc:computers:modify">
@@ -310,10 +475,11 @@
 		  nicht möglich.
 		</para>
 		<para>
-		  Sofern der angemeldete Benutzer die Rechte für das UMC-Modul <guimenu>Gruppen</guimenu>
-		  aus der Modulgruppe <emphasis>Domäne</emphasis> besitzt, wird die Schaltfläche <guimenu>Erweiterte
-		  Einstellungen</guimenu> angezeigt. Über sie kann das UMC-Modul <guimenu>Gruppen</guimenu> geöffnet
-		  werden, wodurch viele erweiterte Einstellungen für das Klassengruppenobjekt ermöglicht werden.
+		  Sofern der angemeldete UMC-Benutzer die Rechte für das UMC-Modul
+		  <guimenu>Gruppen</guimenu> aus der Modulgruppe <emphasis>Domäne</emphasis> besitzt, wird zusätzlich
+		  die Schaltfläche <guimenu>Erweiterte Einstellungen</guimenu> angezeigt. Über sie kann das UMC-Modul
+		  <guimenu>Gruppen</guimenu> geöffnet werden, in dem viele erweiterte Einstellungen für das
+		  Benutzerkonto möglich sind.
 		</para>
 	  </section>
 	  <section id="school:setup:umc:computers:delete">

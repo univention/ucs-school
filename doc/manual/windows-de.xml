@@ -11,7 +11,7 @@
 	durchgeführt werden. Weitere Hinweise finden sich in <xref linkend="school:schoolcreate:computers:import"/>.
   </para>
   <para>
-	Beim Import von neuen Benutzern über die Importskripte oder über den Assistenten in der UMC werden automatisch windows-spezifische Einstellungen zum Profilpfad und zum Heimatverzeichnispfad vorgenommen. Weitere Hinweise finden sich in <xref linkend="school:importusers:windowsattributes"/>.
+	Beim Import von neuen Benutzern über die Importskripte oder über den Assistenten in der UMC werden automatisch windows-spezifische Einstellungen zum Profilpfad und zum Heimatverzeichnispfad vorgenommen. Weitere Hinweise finden sich in <xref linkend="school:setup:generic:windowsattributes"/>.
   </para>
   <para>
 	Auf den Windows-Clients der Schüler kann die Software <emphasis>iTALC</emphasis> installiert werden. Sie

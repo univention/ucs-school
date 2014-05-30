@@ -3,9 +3,9 @@
   <para>
 	&ucsUAS; bietet für viele der regelmäßig wiederkehrenden Verwaltungsaufgaben spezielle
 	UMC-Module und Assistenten an, die beim Anlegen, Modifizieren und Löschen von z.B. Schulen,
-	Benutzerkonten und Rechnern unterstützen (siehe hierzu auch <xref
-	linkend="school:setup:umc"/>). Ergänzend hierzu gibt es Programme für die Kommandozeile, die auch
-	eine automatisierte Pflege der &ucsUAS;-Umgebung zulassen.
+	Benutzerkonten und Rechnern unterstützen (diese werden in <xref linkend="school:setup:umc"/>
+	beschrieben). Ergänzend hierzu gibt es Programme für die Kommandozeile, die auch eine automatisierte
+	Pflege der &ucsUAS;-Umgebung zulassen.
   </para>
   <caution>
 	Seit der &ucsUAS;-Version 3.2 R2 halten die kommandozeilenbasierten Importskripte zu Beginn
@@ -13,8 +13,8 @@
 	wird der &ucsUDN; wieder gestartet.
   </caution>
 
-  <section id="school:importusers">
-	<title>Import von Benutzerkonten für Schüler, Lehrer und Mitarbeiter</title>
+  <section id="school:setup:cli:importusers">
+	<title>Pflege von Benutzerkonten für Schüler, Lehrer und Mitarbeiter</title>
 	<para>
 	  Die Verwaltung der Schüler-, Lehrer und Mitarbeiterdaten und deren Aktualisierung zum
 	  Schuljahreswechsel (Versetzungen, Schulabgänge etc.) erfolgt in der Regel durch
@@ -22,16 +22,15 @@
 	  eingesetzt, die sich von Schulträger zu Schulträger unterscheidet.
 	</para>
 	<para>
-	  Die Benutzerverwaltung von &ucsUAS; ist darauf ausgelegt, dass die
-	  primäre Verwaltung der Schuldaten weiterhin durch die Schulverwaltung
-	  erfolgt. Diese Daten werden dann in eine Datei im CSV-Format exportiert und
-	  in &ucsUAS; importiert. Die einzelnen Felder der CSV-Datei sind durch ein
-	  Tabulatorzeichen zu trennen.
+	  Die Benutzerverwaltung von &ucsUAS; ist darauf ausgelegt, dass die primäre Verwaltung der
+	  Schuldaten weiterhin durch die Schulverwaltung erfolgen kann. Diese Daten werden dann in eine Datei
+	  im CSV-Format exportiert und kommandozeilenbasiert in &ucsUAS; importiert. Die einzelnen Felder der
+	  CSV-Datei sind durch ein Tabulatorzeichen zu trennen.
 	</para>
 	<para>
 	  Für punktuelle Anpassungen - etwa ein Schulwechsel mitten im Schuljahr -
 	  besteht die Möglichkeit einzelne Schüler manuell zu bearbeiten. Dies
-	  wird in <xref linkend="school:setup:umc:users"/> beschrieben.
+	  wird in <xref linkend="school:setup:umc:user"/> beschrieben.
 	</para>
 	<para>
 	  Der Import der Schuldaten ist bei Single- und Multi-Server-Umgebungen identisch.
@@ -253,7 +252,7 @@ D	  g123m		g123m-R12		 Klasse R12
 	  <listitem>
 		<simpara>Eine Liste aller Schulabgänger wird aus der
 		Schulverwaltungssoftware exportiert und die Konten werden über das Import-Skript
-		entfernt (Aktion D, siehe <xref linkend="school:importusers"/>).
+		entfernt (Aktion D, siehe <xref linkend="school:setup:cli:importusers"/>).
 		Die Klassen der Schulabgänger müssen ebenfalls über das
 		Import-Skript für Gruppen entfernt werden.
 		</simpara>
@@ -290,13 +289,13 @@ gymmitte-5B		gymmitte-6B</programlisting>
 	  </listitem>
 	  <listitem>
 		<simpara>Eine aktuelle Liste aller verbleibenden Schülerdaten wird über das
-		Import-Skript neu eingelesen (Aktion M, siehe <xref linkend="school:importusers"/>).
+		Import-Skript neu eingelesen (Aktion M, siehe <xref linkend="school:setup:cli:importusers"/>).
 		</simpara>
 	  </listitem>
 	  <listitem>
 		<simpara>Eine Liste aller Neuzugänge wird aus der
 		Schulverwaltungssoftware exportiert und über das Import-Skript
-		importiert (Aktion A, siehe <xref linkend="school:importusers"/>).
+		importiert (Aktion A, siehe <xref linkend="school:setup:cli:importusers"/>).
 		</simpara>
 	  </listitem>
 	</orderedlist>
@@ -509,7 +508,7 @@ ucc              uccg123m-01      10:00:ee:ff:cd:e2  g123m  10.0.5.10
 	</section>
   </section>
 
-  <section id="school:setup:printers">
+  <section id="school:setup:cli:printers">
 	<title>Konfiguration von Druckern an der Schule</title>
 	<para>
 	  Der Import der Drucker kann skriptbasiert über das

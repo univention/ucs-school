@@ -348,7 +348,7 @@
 			<para><emphasis>cn=admins-gymmitte,cn=ouadmins,cn=groups,dc=example,dc=com</emphasis></para>
 			<para>
 			  Benutzer, die Mitglied dieser Gruppe sind, werden von &ucsUAS; in der betreffenden OU automatisch als Schuladministrator behandelt.
-			  Siehe dazu auch <xref linkend="school:importusers:schooladmins"/>.
+			  Siehe dazu auch <xref linkend="school:setup:generic:schooladmins"/>.
 			</para>
 		  </listitem>
 		</itemizedlist>

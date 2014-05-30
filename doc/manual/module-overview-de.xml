@@ -50,7 +50,7 @@
 					technisch versierte Lehrer an den Schulen umgesetzt werden. Über das
 					Modul <emphasis>Helpdesk kontaktieren</emphasis> können Lehrer und
 					Schuladministratoren eine E-Mail-Anfrage stellen. Die Konfiguration
-					des Helpdesk-Moduls wird in <xref linkend="school:configurehelpdesk"/>
+					des Helpdesk-Moduls wird in <xref linkend="school:setup:generic:configurehelpdesk"/>
 					beschrieben.
 				</simpara>
 			</listitem>

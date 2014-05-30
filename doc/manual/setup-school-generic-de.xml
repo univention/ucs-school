@@ -1,99 +1,7 @@
 <chapter id="school:setup:generic">
   <title>Erweiterte Konfiguration</title>
 
-  <section id="school:importusers:windowsattributes">
-	<title>Windows-spezifische Benutzereinstellungen</title>
-	<para>
-	  Neben den in <xref linkend="school:importusers"/> genannten Attributen für Benutzer werden
-	  beim Anlegen eines Benutzers auch automatisch einige Windows-spezifische Einstellungen vorgenommen:
-	  <itemizedlist>
-		<listitem>
-		  <simpara> 
-			Für die Verwendung von Samba ist es notwendig, dass für jeden Benutzer ein UNC-Pfad für
-			das Windows-Benutzerprofil vorgegeben wird. In der Standardeinstellung von &ucsUAS; wird der
-			jeweilige Logonserver als Ablageort für das Benutzerprofil definiert
-			(<emphasis>\\%LOGONSERVER%\%USERNAME%\windows-profiles\default</emphasis>).  Falls die
-			Benutzerprofile statt auf dem Logonserver auf einem anderen Dateiserver gespeichert werden sollen, kann in der
-			&ucsUMC; am Rechnerobjekt des gewünschten Dateiservers der Dienst <emphasis>Windows Profile
-			Server</emphasis> gesetzt werden. Es wird dann ein UNC-Pfad nach dem Schema
-			<emphasis>\\DATEISERVERNAME\%USERNAME%\windows-profiles\default</emphasis> am Benutzerobjekt gespeichert.
-			<note>
-			  <para>
-				Für den reibungslosen Betrieb darf der Dienst <emphasis>Windows Profile Server</emphasis> nur an einem Dateiserver pro OU
-				gesetzt werden. Weiterhin ist der Dienst <emphasis>Windows Profile Server</emphasis> veraltet und wird in
-				einer zukünftigen &ucsUAS;-Version entfernt bzw. durch einen äquivalenten Mechanismus ersetzt.
-			  </para>
-			</note>
-		  </simpara>
-		</listitem>
-		<listitem>
-		  <simpara>
-			Darüber hinaus wird auch automatisch der Pfad zum Heimatverzeichnis des Benutzers
-			gesetzt. In einer Single-Server-Umgebung wird automatisch der Domaincontroller Master als
-			Dateiserver eingetragen. In Multi-Server-Umgebungen ist der für die OU zuständige Dateiserver am
-			OU-Objekt hinterlegt. Um diesen zu ändern, muss in der &ucsUMC; das OU-Objekt geöffnet werden und
-			auf dem Reiter <emphasis>UCS@school</emphasis> im Auswahlfeld <emphasis>Server für
-			Windows-Heimatverzeichnisse</emphasis> ein geeigneter Dateiserver ausgewählt werden. Der dort
-			definierte Dateiserver wird beim Anlegen eines Benutzers ausgelesen und der UNC-Pfad am Benutzerobjekt
-			entsprechend gesetzt (Beispiel: <emphasis>\\server3.example.com\benutzer123</emphasis>).
-		  </simpara>
-		</listitem>
-	  </itemizedlist>
-	  <note>
-		<para>
-		  Die Windows-spezifischen Einstellungen werden nur beim Anlegen eines Benutzers gesetzt
-		  und am Benutzerobjekt gespeichert. Ein nachträgliches Modifizieren des Benutzers über die
-		  Importskripte hat keinen Einfluss auf diese Einstellungen. Änderungen müssen manuell z.B. über das
-		  UMC-Modul <emphasis>Benutzer</emphasis> erfolgen.
-		</para>
-	  </note>
-	</para>
-  </section>
-  
-  <section id="school:importusers:schooladmins">
-	<title>Anlegen von Benutzerkonten für Schuladministratoren</title>
-	<para>
-	  Benutzerkonten von Lehrern können durch eine zusätzliche Gruppenmitgliedschaft zu
-	  Schuladministratoren umgewandelt werden. Sie unterliegen dann jedoch der Einschränkung, dass die
-	  Benutzerkonten der Lehrer-Schuladministratoren nur auf den edukativen Schulserver und nicht auf den
-	  Schulserver des Verwaltungsnetzes repliziert werden.
-	</para>
-	<para>
-	  Die zusätzliche Gruppenmitgliedschaft muss manuell über das UMC-Modul
-	  <guimenu>Benutzer</guimenu> auf dem &ucsMaster; hinzugefügt werden. Auf dem Reiter
-	  <guimenu>Gruppen</guimenu> muss das Benutzerkonto in die Gruppe <emphasis>admins-OU</emphasis> (bei
-	  der OU <emphasis>gym17</emphasis> ist dies die Gruppe <emphasis>admins-gym17</emphasis>) aufgenommen
-	  werden.
-	</para>
-	<para>
-	  Soll das Benutzerkonten des Schuladministrators auch auf den Systemen des Verwaltungsnetzes
-	  verfügbar sein, so reicht es nicht aus, die Gruppenmitgliedschaft zu ändern. Es muss manuell
-	  ein neues Benutzerkonto über das UMC-Modul <guimenu>Benutzer</guimenu> auf dem &ucsMaster;
-	  angelegt werden.
-	</para>
-	<para>
-	  Die Benutzerkonten der Schuladministratoren müssen unterhalb der OU der Schule im Container
-	  <emphasis>cn=admins,cn=users</emphasis> angelegt werden. Die Auswahl findet mit der Option
-	  <guimenu>Container</guimenu> beim Anlegen eines Benutzers statt. Bei einer OU
-	  <emphasis>gym17</emphasis> muss beispielsweise der Container <emphasis>gym17/users/admins</emphasis>
-	  ausgewählt werden.
-	</para>
-	<para>
-	  Der Benutzer muss außerdem im Reiter <guimenu>Gruppen</guimenu> in die Gruppe
-	  <emphasis>admins-OU</emphasis>, also z.B. <emphasis>admins-gym17</emphasis> aufgenommen werden.
-	</para>
-	<para>
-	  Sollte der Schuladministrator auch als Lehrer tätig sein, muss zusätzlich die Gruppe
-	  <emphasis>lehrer-OU</emphasis>, also z.B. <emphasis>lehrer-gym17</emphasis>, hinzugefügt werden.
-	</para>
-	<para>
-	  Abschließend müssen die Angaben für Profilpfad und Heimatverzeichnispfad am Benutzerobjekt
-	  gesetzt werden, um das gleiche Verhalten wie bei Schüler- und Lehrerkonten zu erhalten (siehe dazu
-	  auch <xref linkend="school:importusers:windowsattributes"/>).
-	</para>
-  </section>
-
-  <section id="school:setup:printmoderation">
+  <section id="school:setup:generic:printmoderation">
 	<title>Einrichtung der Druckmoderation</title>
 	<para>
 	  Um unnötige oder fehlerhafte Druckaufträge zu minimieren, bietet &ucsUAS; den Lehrern die
@@ -110,7 +18,7 @@
 	</para>
 	<para>
 	  Für die Druckmoderation ist es erforderlich, dass zunächst wie in <xref
-	  linkend="school:setup:printers"/> beschrieben, Druckfreigaben für die zu verwendenden, physikalisch
+	  linkend="school:setup:cli:printers"/> beschrieben, Druckfreigaben für die zu verwendenden, physikalisch
 	  existierenden Drucker angelegt werden.
 	</para>
 	<para>
@@ -141,7 +49,7 @@
 	  Druckern erlauben.
 	</para>
 
-	<section id="school:setup:moderated-printer">
+	<section id="school:setup:generic:moderated-printer">
 	  <title>Anlegen eines PDF-Druckers für die Druckermoderation</title>
 	  <para>
 		Druckerfreigaben werden, wie in einer Standard-UCS-Installation, über
@@ -208,9 +116,57 @@
 	</section>
   </section>
 
+  <section id="school:setup:generic:windowsattributes">
+	<title>Windows-spezifische Benutzereinstellungen</title>
+	<para>
+	  Neben den in <xref linkend="school:setup:umc:user"/>  und <xref linkend="school:setup:cli:importusers"/> genannten Attributen für Benutzer werden
+	  beim Anlegen eines Benutzers auch automatisch einige Windows-spezifische Einstellungen vorgenommen:
+	  <itemizedlist>
+		<listitem>
+		  <simpara> 
+			Für die Verwendung von Samba ist es notwendig, dass für jeden Benutzer ein UNC-Pfad für
+			das Windows-Benutzerprofil vorgegeben wird. In der Standardeinstellung von &ucsUAS; wird der
+			jeweilige Logonserver als Ablageort für das Benutzerprofil definiert
+			(<emphasis>\\%LOGONSERVER%\%USERNAME%\windows-profiles\default</emphasis>).  Falls die
+			Benutzerprofile statt auf dem Logonserver auf einem anderen Dateiserver gespeichert werden sollen, kann in der
+			&ucsUMC; am Rechnerobjekt des gewünschten Dateiservers der Dienst <emphasis>Windows Profile
+			Server</emphasis> gesetzt werden. Es wird dann ein UNC-Pfad nach dem Schema
+			<emphasis>\\DATEISERVERNAME\%USERNAME%\windows-profiles\default</emphasis> am Benutzerobjekt gespeichert.
+			<note>
+			  <para>
+				Für den reibungslosen Betrieb darf der Dienst <emphasis>Windows Profile Server</emphasis> nur an einem Dateiserver pro OU
+				gesetzt werden. Weiterhin ist der Dienst <emphasis>Windows Profile Server</emphasis> veraltet und wird in
+				einer zukünftigen &ucsUAS;-Version entfernt bzw. durch einen äquivalenten Mechanismus ersetzt.
+			  </para>
+			</note>
+		  </simpara>
+		</listitem>
+		<listitem>
+		  <simpara>
+			Darüber hinaus wird auch automatisch der Pfad zum Heimatverzeichnis des Benutzers
+			gesetzt. In einer Single-Server-Umgebung wird automatisch der Domaincontroller Master als
+			Dateiserver eingetragen. In Multi-Server-Umgebungen ist der für die OU zuständige Dateiserver am
+			Schul-OU-Objekt hinterlegt. Um diesen zu ändern, muss in der &ucsUMC; das OU-Objekt geöffnet werden
+			und auf dem Reiter <emphasis>UCS@school</emphasis> im Auswahlfeld <emphasis>Server für
+			Windows-Heimatverzeichnisse</emphasis> ein geeigneter Dateiserver ausgewählt werden (siehe auch
+			<xref linkend="school:setup:umc:schools:modify"/>). Der dort definierte Dateiserver wird beim Anlegen
+			eines Benutzers ausgelesen und der UNC-Pfad am Benutzerobjekt entsprechend gesetzt (Beispiel:
+			<emphasis>\\server3.example.com\benutzer123</emphasis>).
+		  </simpara>
+		</listitem>
+	  </itemizedlist>
+	  <note>
+		<para>
+		  Die Windows-spezifischen Einstellungen werden nur beim Anlegen eines Benutzers gesetzt
+		  und am Benutzerobjekt gespeichert. Ein nachträgliches Modifizieren des Benutzers über die
+		  Importskripte hat keinen Einfluss auf diese Einstellungen. Änderungen müssen manuell z.B. über das
+		  UMC-Modul <emphasis>Benutzer</emphasis> erfolgen.
+		</para>
+	  </note>
+	</para>
+  </section>
 
-
-  <section id="school:setup:shares">
+  <section id="school:setup:generic:shares">
 	<title>Anlegen von Freigaben</title>
 	<para>
 	  Die meisten Freigaben in einer &ucsUAS;-Umgebung werden automatisch
@@ -238,7 +194,7 @@
 	</para>
   </section>
 
-  <section id="school:setup:roleshares">
+  <section id="school:setup:generic:roleshares">
 	<title>Lehrerzugriff auf Benutzerfreigaben</title>
 	<para>
 	  Lehrern kann der Zugriff auf alle Heimatverzeichnisse von Schülern an einer Schule
@@ -248,14 +204,14 @@
 	  Der Zugriff kann dann über eine spezielle Dateifreigabe erfolgen.
 	</para>
 	<para>
-	  Das Paket installiert ein Skript
+	  Das Paket installiert das Skript
 	  <command>/usr/share/ucs-school-import/scripts/create_roleshares</command>,
-	  welches über das Joinscript automatisch aufgerufen wird und später auch manuell
+	  welches über das Joinskript automatisch aufgerufen wird und später auch manuell
 	  aufgerufen werden kann.
 	  Mit der Standardoption <emphasis>--create student</emphasis> aufgerufen, legt es
 	  für alle Dateiserver des Schulstandorts
 	  jeweils eine Freigabe mit dem Namensschema <emphasis>schueler-&lt;OU&gt;</emphasis> an.
-	  Die Freigabe erlaubt der Gruppe <emphasis>lehrer-&lt;OU&gt;</emphasis> administrativen
+	  Die Freigabe erlaubt der Gruppe <emphasis>lehrer-&lt;OU&gt;</emphasis> den administrativen
 	  Zugriff auf das Basisverzeichnis <emphasis>/home/&lt;OU&gt;/schueler</emphasis>.
 	</para>
 	<para>
@@ -279,7 +235,50 @@
 	</para>
   </section>
 
-  <section id="school:configurehelpdesk">
+  <section id="school:setup:generic:schooladmins">
+	<title>Anlegen von Benutzerkonten für Schuladministratoren</title>
+	<para>
+	  Benutzerkonten von Lehrern können durch eine zusätzliche Gruppenmitgliedschaft zu
+	  Schuladministratoren umgewandelt werden. Sie unterliegen dann jedoch der Einschränkung, dass die
+	  Benutzerkonten der Lehrer-Schuladministratoren nur auf den edukativen Schulserver und nicht auf den
+	  Schulserver des Verwaltungsnetzes repliziert werden.
+	</para>
+	<para>
+	  Die zusätzliche Gruppenmitgliedschaft muss manuell über das UMC-Modul
+	  <guimenu>Benutzer</guimenu> auf dem &ucsMaster; hinzugefügt werden. Auf dem Reiter
+	  <guimenu>Gruppen</guimenu> muss das Benutzerkonto in die Gruppe <emphasis>admins-OU</emphasis> (bei
+	  der OU <emphasis>gym17</emphasis> ist dies die Gruppe <emphasis>admins-gym17</emphasis>) aufgenommen
+	  werden.
+	</para>
+	<para>
+	  Soll das Benutzerkonten des Schuladministrators auch auf den Systemen des Verwaltungsnetzes
+	  verfügbar sein, so reicht es nicht aus, die Gruppenmitgliedschaft zu ändern. Es muss manuell
+	  ein neues Benutzerkonto über das UMC-Modul <guimenu>Benutzer</guimenu> auf dem &ucsMaster;
+	  angelegt werden.
+	</para>
+	<para>
+	  Die Benutzerkonten der Schuladministratoren müssen unterhalb der OU der Schule im Container
+	  <emphasis>cn=admins,cn=users</emphasis> angelegt werden. Die Auswahl findet mit der Option
+	  <guimenu>Container</guimenu> beim Anlegen eines Benutzers statt. Bei einer OU
+	  <emphasis>gym17</emphasis> muss beispielsweise der Container <emphasis>gym17/users/admins</emphasis>
+	  ausgewählt werden.
+	</para>
+	<para>
+	  Der Benutzer muss außerdem im Reiter <guimenu>Gruppen</guimenu> in die Gruppe
+	  <emphasis>admins-OU</emphasis>, also z.B. <emphasis>admins-gym17</emphasis> aufgenommen werden.
+	</para>
+	<para>
+	  Sollte der Schuladministrator auch als Lehrer tätig sein, muss zusätzlich die Gruppe
+	  <emphasis>lehrer-OU</emphasis>, also z.B. <emphasis>lehrer-gym17</emphasis>, hinzugefügt werden.
+	</para>
+	<para>
+	  Abschließend müssen die Angaben für Profilpfad und Heimatverzeichnispfad am Benutzerobjekt
+	  gesetzt werden, um das gleiche Verhalten wie bei Schüler- und Lehrerkonten zu erhalten (siehe dazu
+	  auch <xref linkend="school:setup:generic:windowsattributes"/>).
+	</para>
+  </section>
+
+  <section id="school:setup:generic:configurehelpdesk">
 	<title>Konfiguration der Helpdesk-Kontaktadresse</title>
 	<para>
 	  Über das Helpdesk-Modul können Lehrer per E-Mail Kontakt zum
