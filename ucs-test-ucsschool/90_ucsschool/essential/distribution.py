@@ -233,6 +233,7 @@ html5
 			'distribution/add',
 			param,
 			flavor)
+		print 'reqResult =', reqResult
 		if not reqResult[0]['success']:
 			utils.fail('Unable to add project (%r)' % (param,))
 
@@ -320,6 +321,7 @@ html5
 			'distribution/put',
 			param,
 			flavor)
+		print 'reqResult =', reqResult
 		if not reqResult[0]['success']:
 			utils.fail('Unable to edit project with params =(%r)' % (param,))
 		else:
