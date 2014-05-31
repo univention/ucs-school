@@ -70,7 +70,7 @@
 		</para>
 		<figure id="install-via-appcenter">
 		  <title>Installation von &ucsUAS; über das Univention App Center</title>
-		  <graphic scalefit="1" width="97%" align="center" fileref="illustrations/appcenter_ucsschool.png"/>
+		  <graphic scalefit="1" width="97%" align="center" fileref="illustrations/appcenter_ucsschool_32.png"/>
 		</figure>
 		<para>
 		  Wurde während der Installation des DC Masters ein DHCP-Server installiert, verschiebt der
