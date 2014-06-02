@@ -496,10 +496,7 @@ html5
 		"""
 		print 'Checking %s distribution' % (self.name,)
 		for user in users:
-			path = '/home/{0}/schueler/{1}/Unterrichtsmaterial/{2}'.format(
-				self.school,
-				user,
-				self.name)
+			path = self.getUserFilesPath(user, 'distribute')
 			print 'file_path=', path
 			existingFiles = self.idir(path)
 			print 'existingFiles=', existingFiles
@@ -527,11 +524,7 @@ html5
 		"""
 		print 'Checking %s collection' % (self.name,)
 		for user in users:
-			path = '/home/{0}/lehrer/{1}/Unterrichtsmaterial/{2}/{3}'.format(
-				self.school,
-				self.sender,
-				self.name,
-				user)
+			path = self.getUserFilesPath(user, 'collect')
 			print 'file_path=', path
 			existingFiles = self.idir(path)
 			print 'existingFiles=', existingFiles
@@ -602,3 +595,38 @@ html5
 			utils.fail(
 				'Project %s was not adopted successfully' %
 				(project_name,))
+
+
+	def getUserFilesPath(self, user, purpose='distribute'):
+		"""Gets the correct files path for a specific user depending on
+		the value of the ucr variable ucsschool/import/roleshare.\n
+		:param user: user name
+		:type user: str
+		:param purpose: either for distribution or collection
+		:type purpose: str ('distribute' or 'collect')
+		"""
+		path = ''
+		self.ucr.load()
+		roleshare = self.ucr.get('ucsschool/import/roleshare')
+		if purpose == 'distribute':
+			if roleshare == 'no' or roleshare == False:
+				path = '/home/{0}/Unterrichtsmaterial/{1}/'.format(user, self.name)
+			else:
+				path = '/home/{0}/schueler/{1}/Unterrichtsmaterial/{2}'.format(
+					self.school,
+					user,
+					self.name)
+		elif purpose == 'collect':
+			if roleshare == 'no' or roleshare == False:
+				path = '/home/{0}/Unterrichtsmaterial/{1}/{2}/'.format(
+						self.sender,
+						self.name,
+						user)
+			else:
+				path = '/home/{0}/lehrer/{1}/Unterrichtsmaterial/{2}/{3}'.format(
+					self.school,
+					self.sender,
+					self.name,
+					user)
+		return path
+
