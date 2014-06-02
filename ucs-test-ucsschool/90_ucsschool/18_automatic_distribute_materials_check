@@ -22,8 +22,8 @@ def main():
 		with utu.UCSTestSchool() as schoolenv:
 			with ucr_test.UCSTestConfigRegistry() as ucr:
 				host = ucr.get('hostname')
-				handler_set(['umc/http/session/timeout=960'])
-				handler_set(['umc/module/timeout=960'])
+				handler_set(['umc/http/session/timeout=1200'])
+				handler_set(['umc/module/timeout=1200'])
 				call(['invoke-rc.d', 'univention-management-console-web-server', 'restart'])
 				call(['invoke-rc.d', 'univention-management-console-server', 'restart'])
 				con = UMCConnection(host)
