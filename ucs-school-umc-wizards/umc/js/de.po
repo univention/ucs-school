@@ -3,8 +3,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-wizards\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2014-05-23 15:25+0200\n"
-"PO-Revision-Date: 2014-05-23 15:27+0200\n"
+"POT-Creation-Date: 2014-06-03 09:54+0200\n"
+"PO-Revision-Date: 2014-06-03 09:54+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
@@ -187,10 +187,6 @@ msgstr "Vorname"
 msgid "IP address"
 msgstr "IP-Adresse"
 
-#: umc/js/schoolwizards/SchoolGrid.js:72
-msgid "Internal school ID"
-msgstr "Interne Schul-ID"
-
 #: umc/js/schoolwizards/ComputerGrid.js:68
 #: umc/js/schoolwizards/ComputerWizard.js:89
 msgid "Inventory number"
@@ -244,10 +240,14 @@ msgstr "Name des %s."
 #: umc/js/schoolwizards/SchoolWizard.js:79
 msgid ""
 "Name of the educational domaincontroller slave for the new school. The "
-"server name may consist of the letters a-z, the digits 0-9 and underscores. "
+"server name may consist of the letters a-z, the digits 0-9 and hyphens (-). "
 "The name of the educational server may not be equal to the administrative "
 "server!"
-msgstr "Name des edukativen Schulservers der neuen Schule. Der Servername darf aus den Buchstaben a-z, den Ziffern 0-9 und dem Unterstrich _ bestehen. Der Name des edukativen Schulservers darf nicht identisch mit dem Namen des Verwaltungsservers sein!"
+msgstr ""
+"Name des edukativen Schulservers der neuen Schule. Der Servername darf aus "
+"den Buchstaben a-z, den Ziffern 0-9 und dem Bindestrich (-) bestehen. Der "
+"Name des edukativen Schulservers darf nicht identisch mit dem Namen des "
+"Verwaltungsservers sein!"
 
 #: umc/js/schoolwizards/SchoolGrid.js:69
 #: umc/js/schoolwizards/SchoolWizard.js:56
@@ -325,6 +325,7 @@ msgstr "Speichern"
 msgid "School"
 msgstr "Schule"
 
+#: umc/js/schoolwizards/SchoolGrid.js:72
 #: umc/js/schoolwizards/SchoolWizard.js:62
 msgid "School abbreviation"
 msgstr "Schulkürzel"
@@ -494,6 +495,9 @@ msgstr "{itemSchool}: {itemType} erstellen"
 #, python-brace-format
 msgid "{itemSchool}: edit {itemType} {itemName}"
 msgstr "{itemSchool}: {itemType} {itemName} bearbeiten"
+
+#~ msgid "Internal school ID"
+#~ msgstr "Interne Schul-ID"
 
 #~ msgid ""
 #~ "The computer name must be a valid NetBIOS hostname. This requires a "

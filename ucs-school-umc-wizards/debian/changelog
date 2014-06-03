@@ -1,3 +1,9 @@
+ucs-school-umc-wizards (4.0.31-1) unstable; urgency=low
+
+  * Bug #35032: fixed tooltip and regex for educational slave
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Tue, 03 Jun 2014 09:57:30 +0200
+
 ucs-school-umc-wizards (4.0.30-1) unstable; urgency=low
 
   * Bug #34173: adapted wording
