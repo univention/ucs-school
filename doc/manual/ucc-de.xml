@@ -105,7 +105,7 @@
 		Die Verwendung von UCC in &ucsUAS; setzt die Verwendung des offiziellen UCC-Desktop-Images
 		oder eines selbsterstellten Desktop-Images voraus. Das offizielle UCC-Desktop-Image wird während der
 		Installation vom Univention UCC-Repository-Server heruntergeladen und hat im gepackten Zustand eine
-		Größe von ca. 3GB. Es ist daher, je nach Art und Geschwindigkeit der Internetanbindung, mit längeren
+		Größe von ca. 1 GB. Es ist daher, je nach Art und Geschwindigkeit der Internetanbindung, mit längeren
 		Downloadzeiten zu rechnen. Nach erfolgreichem Download wird das Image entpackt. Daher muss vor der
 		Installation von UCC auf dem Schulserver sichergestellt werden, dass mindestens mindestens 22 GB an
 		freiem Speicherplatz vorhanden sind.
@@ -119,17 +119,16 @@
 		  <simpara>
 			Die Installation von UCC erfolgt über das Univention App Center. Dafür muss auf dem
 			betreffenden System im Univention App Center die Applikation <emphasis>Univention Corporate
-			Client</emphasis> ausgewählt und installiert werden.
+			Client</emphasis> ausgewählt und installiert werden. Der
+			<emphasis>UCC-Setup</emphasis>-Assistent ist nicht für die Einrichtung von ucs@School geeignet!
 		  </simpara>
 		</listitem>
 		<listitem>
 		  <simpara>
-			Nach Abschluss der App-Installation ist das offizielle UCC-Desktop-Image
-			nachzuinstallieren. Die Installation des UCC-Desktop-Images kann im Univention App Center auf dem
-			Reiter <emphasis>Erweiterte Software-Verwaltung</emphasis> erfolgen. Als Paketname ist
-			<package>ucc-1.0-rev2-desktop-image</package> (oder eine neuere Version) für die Installation
-			auszuwählen. Alternativ kann das Paket auf der Kommandozeile mit dem Befehl
-			<command>univention-install ucc-1.0-rev2-desktop-image</command> installiert werden.
+			Nun muss das offizielle UCC-Desktop-Image installiert werden. Dazu wird das
+			&ucsUMC;-Modul <guimenu>UCC-Images</guimenu> geöffnet und <emphasis>UCC 2.0 desktop
+			image</emphasis> ausgewählt. Nach einem Klick auf <guimenu>Herunterladen</guimenu> wird
+			das Image heruntergeladen.
 		  </simpara>
 		</listitem>
 		<listitem>
