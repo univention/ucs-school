@@ -174,10 +174,10 @@ D  a.la  Lang   Anke    g123m  g123m-4C           a.la@schule.edu  1 1 1
   <section id="school:setup:cli:classes">
 	<title>Import von Schulklassen</title>
 	<para>
-	  Beim Import schon Schulklassen ist zu beachten, dass die Klassennamen domänenweit eindeutig sein müssen. Das heißt eine
+	  Beim Import schon Schulklassen ist zu beachten, dass die Klassennamen domänenweit eindeutig sein müssen. Das heißt, eine
 	  Klasse <emphasis>1A</emphasis> kann nicht in mehreren OUs verwendet werden. Daher sollte jedem
-	  Klassennamen die OU vorangestellt werden. Bei der Erstellung von Klassen über das UMC-Modul
-	  <emphasis>Klasse hinzufügen</emphasis> geschieht dies automatisch. Sprechende Namen, wie zum
+	  Klassennamen die OU und ein Bindestrich vorangestellt werden. Bei der Erstellung von Klassen über das UMC-Modul
+	  <emphasis>Klassen (Schulen)</emphasis> geschieht dies automatisch. Sprechende Namen, wie zum
 	  Beispiel <emphasis>Igel</emphasis> oder <emphasis>BiologieAG</emphasis>, sind für Klassennamen
 	  ebenso möglich wie Buchstaben-Ziffern-Kombinationen (<emphasis>10R</emphasis>). Beispiele für die
 	  Schule gym123:
@@ -186,8 +186,12 @@ D  a.la  Lang   Anke    g123m  g123m-4C           a.la@schule.edu  1 1 1
 gym123-1B
 gym123-2A
 gym123-Igel</programlisting>
+
 	<para>
-	  Das Dateiformat für die Gruppen-Importdatei ist wie folgt aufgebaut:
+	  Der Import von Benutzern erfolgt über das Skript
+	  <command>/usr/share/ucs-school-import/scripts/import_group</command>, das auf dem &ucsMaster; als
+	  Benutzer <emphasis>root</emphasis> gestartet werden muss.  Es erwartet den Namen einer CSV-Datei als
+	  ersten Parameter. Das Dateiformat für die Gruppen-Importdatei ist wie folgt aufgebaut:
 	</para>
 	<table>
 	  <title>Aufbau der Datenzeilen für den Gruppen-Import</title>
@@ -419,7 +423,7 @@ g123m  10.0.6.0/25  10.0.6.5-10.0.6.120  10.0.6.1  10.0.6.2  10.0.6.15
 		Tabulatorzeichen zu trennen.
 	  </para>
 	  <para>
-		Es ist zu beachten, dass Computernamen domänenweit eindeutig sein müssen. Das heißt ein
+		Es ist zu beachten, dass Computernamen domänenweit eindeutig sein müssen. Das heißt, ein
 		Computer <emphasis>windows01</emphasis> kann nicht in mehreren OUs verwendet werden. Um die
 		Eindeutigkeit zu gewährleisten, wird empfohlen, jedem Computernamen die OU voranzustellen oder zu
 		integrieren (z.B. <emphasis>340win01</emphasis> für Schule <emphasis>340</emphasis>).
