@@ -1,3 +1,9 @@
+ucs-school-umc-installer (2.0.17-3) unstable; urgency=low
+
+  * Bug #34988: fixed typo in german translation
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Tue, 03 Jun 2014 17:40:27 +0200
+
 ucs-school-umc-installer (2.0.17-2) unstable; urgency=low
 
   * Bug #35032: updated regex for check of educational slave's name
