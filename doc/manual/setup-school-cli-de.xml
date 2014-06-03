@@ -64,7 +64,7 @@
 		  <row><entry>Nachname</entry><entry>Der Nachname des Benutzers</entry><entry>---</entry><entry>Mustermann</entry></row>
 		  <row><entry>Vorname</entry><entry>Der Vorname des Benutzers</entry><entry>---</entry><entry>Michael</entry></row>
 		  <row><entry>OU</entry><entry>Die OU, unter der der Benutzer angelegt werden soll</entry><entry>---</entry><entry>g123m</entry></row>
-		  <row><entry>Klasse</entry><entry>Name der Klasse des Benutzers; nur Lehrer können in mehreren Klassen vertreten sein!</entry><entry>---</entry><entry>1A,1B,2A,4C</entry></row>
+		  <row><entry>Klasse</entry><entry>Name der Klasse des Benutzers; nur Lehrer können in mehreren Klassen vertreten sein!</entry><entry>---</entry><entry>g123m-1A,g123m-1B, g123m-2A,g123m-4C</entry></row>
 		  <row><entry>Rechte</entry><entry>derzeit ungenutzt; das Feld sollte leer bleiben, so dass 2 Tabulator-Zeichen aufeinander folgen</entry><entry>---</entry><entry></entry></row>
 		  <row><entry>Email-Adresse</entry><entry>Mailadresse des Benutzers</entry><entry>---</entry><entry>m.musterm@beispiel.edu</entry></row>
 		  <row><entry>(Lehrer)</entry><entry>Definiert, ob der Benutzer ein Lehrer ist</entry><entry><emphasis>0</emphasis>=Kein Lehrer, <emphasis>1</emphasis>=Lehrer</entry><entry>1</entry></row>
@@ -77,10 +77,10 @@
 	  Ein Beispiel für eine Importdatei:
 	</para>
 	<programlisting>
-A  max        Mustermann  Max    g123m  1A        max@schule.edu   0 1 0
-M  m.musterma Mustermann  Moritz g123m  1A,2D,4C  m.m@schule.edu   1 1 0
-D  a.musterfr Musterfrau  Anke   g123m  2B        a.mfr@schule.edu 1 1 1
-	</programlisting>
+A  max   Meyer  Max     g123m  g123m-1A           max@schule.edu   0 1 0
+M  m.we  Weber  Moritz  g123m  g123m-1A,g123m-2D  mw@schule.edu    1 1 0
+D  a.la  Lang   Anke    g123m  g123m-4C           a.la@schule.edu  1 1 1
+</programlisting>
 	<para>
 	  Über das Feld <emphasis>Aktion</emphasis> kann die Art der Benutzermodifikation gesteuert
 	  werden. Folgende Aktionen sind definiert:
@@ -113,6 +113,13 @@ D  a.musterfr Musterfrau  Anke   g123m  2B        a.mfr@schule.edu 1 1 1
 	  eingetragen werden und sie somit auch Zugriff auf die jeweilige Dateifreigabe
 	  der Klasse erhalten. Bei Mitarbeitern ist das Feld Klasse leer zu lassen.
 	</para>
+	<note>
+	  Bei der Angabe von Schulklassen ist zu beachten, dass die Klassennamen domänenweit eindeutig
+	  sein müssen. Das heißt, eine Klasse <emphasis>1A</emphasis> kann nicht in mehreren OUs verwendet
+	  werden. Bei der Erstellung von Klassen über das UMC-Modul <emphasis>Klassen (Schulen)</emphasis>
+	  wird daher automatisch die OU und ein Bindestrich dem Klassennamen als Präfix vorangestellt. Dieses
+	  Vorgehen wird auch für den Import auf der Kommandozeile empfohlen.
+	</note>
 	<para>
 	  Die optionalen Felder <emphasis>Lehrer</emphasis> und <emphasis>Mitarbeiter</emphasis> bestimmen die
 	  Rolle des Benutzers im System. Werden die Werte nicht angegeben, so
