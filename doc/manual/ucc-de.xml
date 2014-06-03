@@ -242,7 +242,7 @@
 			Für die Installation eines UCC-Desktop-Systems muss zunächst für jedes zu installierende
 			System ein UCC-Objekt im LDAP-Verzeichnis erstellt werden. Hierzu werden Angaben wie IP-Adresse und
 			MAC-Adresse benötigt. Das UCC-Objekt muss entweder in der Univention Management Console über das
-			Modul <emphasis>Computer hinzufügen</emphasis> oder auf der Kommandozeile über das
+			Modul <emphasis>Rechner (Schulen)</emphasis> oder auf der Kommandozeile über das
 			&ucsUAS;-Importskript <command>import_computer</command> angelegt werden. Bei beiden Varianten ist
 			darauf zu achten, dass als Rechnertyp <emphasis>Univention Corporate Client</emphasis>
 			bzw. <emphasis>ucc</emphasis> angegeben wird. Hinweise zum Importskript
@@ -252,12 +252,13 @@
 		</listitem>
 		<listitem>
 		  <simpara>
-			Nach dem Anlegen des UCC-Objektes muss das Objekt in der Univention Management Console
+			Nach dem Anlegen des UCC-Objektes muss das Rechner-Objekt in der Univention Management Console
 			geöffnet und auf den Reiter <emphasis>Images</emphasis> gewechselt werden. Dort sollte als
-			Startvariante <emphasis>Image-Boot mit Update-Prüfung / Erstinstallation</emphasis>, das gewünschte
-			UCC-Desktop-Image sowie <emphasis>Neupartitionierung für installierte Systeme</emphasis> ausgewählt
-			werden. Diese Einstellunge beziehen sich ausschließlich auf den erstmaligen Rollout des UCC-Images
-			auf ein neues System. Dabei werden alle vorhandenen Daten des Systems überschrieben.
+			Startvariante <emphasis>Installation: Neupartitionierung und Image-Rollout</emphasis> und das gewünschte
+			UCC-Desktop-Image ausgewählt werden. Diese Einstellungen beziehen sich ausschließlich auf
+			den erstmaligen Rollout des UCC-Images auf ein neues System. Der Rechner muss nun neu
+			gestartet und ein PXE-Boot initiiert werden. Dabei werden im Rahmen des Rollouts alle
+			vorhandenen Daten des Systems überschrieben!
 		  </simpara>
 		</listitem>
 		<listitem>
