@@ -1,3 +1,9 @@
+ucs-school-umc-installer (2.0.17-2) unstable; urgency=low
+
+  * Bug #35032: updated regex for check of educational slave's name
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Tue, 03 Jun 2014 10:27:30 +0200
+
 ucs-school-umc-installer (2.0.17-1) unstable; urgency=low
 
   * Bug #34904: Update package list before installing packages
