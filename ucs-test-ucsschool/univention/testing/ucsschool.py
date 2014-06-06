@@ -31,6 +31,11 @@ API for testing UCS@school and cleaning up after performed tests
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+# This module (univention.testing.ucsschool) tries to import ucsschool.lib.models.
+# Without absolute_import python is looking for lib.modules within THIS file which
+# is obviously wrong in this case.
+from __future__ import absolute_import
+
 import tempfile
 import ldap
 import random
@@ -39,12 +44,22 @@ import univention.testing.utils as utils
 import univention.testing.ucr
 import univention.testing.udm as utu
 import univention.testing.strings as uts
+import univention.admin.uldap as udm_uldap
+import univention.admin.uexceptions as udm_errors
+from ldap import LDAPError
+from ucsschool.lib.models import School, User, Student, Teacher, TeachersAndStaff, Staff
+from ucsschool.lib.models.utils import add_stream_logger_to_schoollib
+
+add_stream_logger_to_schoollib()
+
 
 class UCSTestSchool_Exception(Exception):
 	pass
 class UCSTestSchool_MissingOU(UCSTestSchool_Exception):
 	pass
 class UCSTestSchool_OU_Name_Too_Short(UCSTestSchool_Exception):
+	pass
+class UCSTestSchool_LDAP_ConnectionError(UCSTestSchool_Exception):
 	pass
 
 
@@ -78,6 +93,35 @@ class UCSTestSchool(object):
 		if exc_type:
 			print '*** Cleanup after exception: %s %s' % (exc_type, exc_value)
 		self.cleanup()
+
+
+	def open_ldap_connection(self, binddn=None, bindpw=None, ldap_server=None, admin=False, machine=False):
+		'''Opens a new LDAP connection using the given user LDAP DN and
+		password. The connection is open to the given server or if None the
+		server defined by the UCR variable ldap/server/name is used.'''
+
+		assert(not(admin and machine))
+
+		if not binddn:
+			binddn = self._ucr.get('tests/domainadmin/account')
+		if not bindpw:
+			bindpw = self._ucr.get('tests/domainadmin/pwd')
+		if not ldap_server:
+			ldap_server = self._ucr.get('ldap/master')
+
+		try:
+			if admin:
+				lo = udm_uldap.getAdminConnection()[0]
+			elif machine:
+				lo = udm_uldap.getMachineConnection()[0]
+			else:
+				lo = udm_uldap.access(host=ldap_server, base=self._ucr.get('ldap/base'), binddn=binddn, bindpw=bindpw, start_tls=2)
+		except udm_errors.noObject:
+			raise
+		except LDAPError, e:
+			raise UCSTestSchool_LDAP_ConnectionError('Opening LDAP connection failed: %s' % (e,))
+
+		return lo
 
 
 	def _remove_udm_object(self, module, dn, raise_exceptions=False):
@@ -155,12 +199,16 @@ class UCSTestSchool(object):
 		print '*** Purging OU %s and related objects (%s): done' % (ou_name,oudn)
 
 
-	def create_ou(self, ou_name=None, name_edudc=None, displayName=''):
+	def create_ou(self, ou_name=None, name_edudc=None, name_admindc=None, displayName='', name_share_file_server=None, use_cli=False):
 		"""
 		Creates a new OU with random or specified name. The function may also set a specified
 		displayName. If "displayName" is None, a random displayName will be set. If "displayName"
 		equals to the empty string (''), the displayName won't be set. "name_edudc" may contain
-		the optional name for an educational dc slave.
+		the optional name for an educational dc slave. "name_admindc" may contain
+		the optional name for an administrative dc slave. If name_share_file_server is set, the
+		class share file server and the home share file server will be set.
+		If use_cli is set to True, the old CLI interface is used. Otherwise the UCS@school python
+		library is used.
 
 		Return value: (ou_name, ou_dn)
 			ou_name: name of the created OU
@@ -170,7 +218,6 @@ class UCSTestSchool(object):
 		charset = uts.STR_ALPHANUMDOTDASH + uts.STR_ALPHA.upper() + '()[]/,;:_#"+*@<>~ßöäüÖÄÜ$%&!     '
 		if displayName is None:
 			displayName = uts.random_string(length=random.randint(5, 50), charset=charset)
-			ou_displayName = displayName
 
 		# create random OU name
 		if not ou_name:
@@ -179,18 +226,37 @@ class UCSTestSchool(object):
 		# remember OU name for cleanup
 		self._cleanup_ou_names.add(ou_name)
 
-		# build command line
-		cmd = [self.PATH_CMD_CREATE_OU]
-		if displayName:
-			cmd += ['--displayName', ou_displayName]
-		cmd += [ou_name]
-		if name_edudc:
-			cmd += [name_edudc]
+		if not use_cli:
+			kwargs = {'name': ou_name,
+					  'dc_name': name_edudc
+					  }
+			if name_admindc:
+				kwargs['dc_name_administrative'] = name_admindc
+			if name_share_file_server:
+				kwargs['class_share_file_server'] = name_share_file_server
+				kwargs['home_share_file_server'] = name_share_file_server
+			if displayName:
+				kwargs['display_name'] = displayName
 
-		print '*** Calling following command: %r' % cmd
-		retval = subprocess.call(cmd)
-		if retval:
-			utils.fail('create_ou failed with exitcode %s' % retval)
+			print '*** Creating new OU %r' % (ou_name,)
+			lo = self.open_ldap_connection()
+			School.invalidate_all_caches()
+			School.init_udm_module(lo) # TODO FIXME has to be fixed in ucs-school-lib - should be done automatically
+			result = School(**kwargs).create(lo)
+			print '*** Result of School(...).create(): %r' % (result,)
+		else:
+			# build command line
+			cmd = [self.PATH_CMD_CREATE_OU]
+			if displayName:
+				cmd += ['--displayName', ou_displayName]
+			cmd += [ou_name]
+			if name_edudc:
+				cmd += [name_edudc]
+
+			print '*** Calling following command: %r' % cmd
+			retval = subprocess.call(cmd)
+			if retval:
+				utils.fail('create_ou failed with exitcode %s' % retval)
 
 		ou_dn = 'ou=%s,%s' % (ou_name, self.LDAP_BASE)
 		return ou_name, ou_dn
@@ -245,7 +311,7 @@ class UCSTestSchool(object):
 
 
 	def create_user(self, ou_name, username=None, firstname=None, lastname=None, classes=None,
-					mailaddress=None, is_teacher=False, is_staff=False, is_active=True, password='univention'):
+					mailaddress=None, is_teacher=False, is_staff=False, is_active=True, password='univention', use_cli=False):
 		"""
 		Create a user in specified OU with given attributes. If attributes are not specified, random
 		values will be used for username, firstname and lastname. If password is not None, the given
@@ -270,23 +336,46 @@ class UCSTestSchool(object):
 		if mailaddress is None:
 			mailaddress = ''
 
-		# create import file
-		line = 'A\t%s\t%s\t%s\t%s\t%s\t\t%s\t%d\t%d\t%d\n' % (username, lastname, firstname, ou_name, classes,
-															mailaddress, int(is_teacher), int(is_active), int(is_staff))
-		with tempfile.NamedTemporaryFile() as tmp_file:
-			tmp_file.write(line)
-			tmp_file.flush()
-
-			cmd = [self.PATH_CMD_IMPORT_USER, tmp_file.name]
-			print '*** Calling following command: %r' % cmd
-			retval = subprocess.call(cmd)
-			if retval:
-				utils.fail('create_ou failed with exitcode %s' % retval)
-
 		user_dn = 'uid=%s,%s' % (username, self.get_user_container(ou_name, is_teacher, is_staff))
+		if use_cli:
+			# create import file
+			line = 'A\t%s\t%s\t%s\t%s\t%s\t\t%s\t%d\t%d\t%d\n' % (username, lastname, firstname, ou_name, classes,
+																mailaddress, int(is_teacher), int(is_active), int(is_staff))
+			with tempfile.NamedTemporaryFile() as tmp_file:
+				tmp_file.write(line)
+				tmp_file.flush()
 
-		if password is not None:
-			self._set_password(user_dn, password)
+				cmd = [self.PATH_CMD_IMPORT_USER, tmp_file.name]
+				print '*** Calling following command: %r' % cmd
+				retval = subprocess.call(cmd)
+				if retval:
+					utils.fail('create_ou failed with exitcode %s' % retval)
+
+			if password is not None:
+				self._set_password(user_dn, password)
+		else:
+			kwargs = {
+				'school': ou_name,
+				'name': username,
+				'firstname': firstname,
+				'lastname': lastname,
+				'email': mailaddress,
+				'password': password,
+				'disabled': not(is_active),
+				}
+			print '*** Creating new user %r' % (username,)
+			lo = self.open_ldap_connection()
+			User.invalidate_all_caches()
+			User.init_udm_module(lo) # TODO FIXME has to be fixed in ucs-school-lib - should be done automatically
+			if is_teacher and is_staff:
+				result = TeachersAndStaff(**kwargs).create(lo)
+			elif is_teacher and not is_staff:
+				result = Teacher(**kwargs).create(lo)
+			elif not is_teacher and is_staff:
+				result = Staff(**kwargs).create(lo)
+			else:
+				result = Student(**kwargs).create(lo)
+			print '*** Result of User(...).create(): %r' % (result,)
 
 		return username, user_dn
 
