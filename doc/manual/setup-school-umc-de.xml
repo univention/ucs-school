@@ -440,21 +440,28 @@
 		<para>
 		  Sind mehrere Schulen in der &ucsUAS;-Umgebung eingerichtet, ist zunächst auszuwählen, in welcher Schule das Rechnerkonto
 		  angelegt werden soll. Wurde nur eine Schule eingerichtet, wird dieses Auswahlfeld automatisch
-		  ausgeblendet. Im Auswahlfeld <guimenu>Typ</guimenu> stehen drei Rechnertypen zur Auswahl:
+		  ausgeblendet. Im Auswahlfeld <guimenu>Typ</guimenu> stehen bis zu vier Rechnertypen zur Auswahl:
 		  <itemizedlist>
 			<listitem>
 			  <para>
-				<guimenu>Windows-System</guimenu> für Windows-Rechner ab Windows XP,
+				<guimenu>Windows-System</guimenu> für Windows-Rechner ab Windows XP
 			  </para>
 			</listitem>
 			<listitem>
 			  <para>
-				<guimenu>Mac OS X</guimenu> oder
+				<guimenu>Mac OS X</guimenu>
 			  </para>
 			</listitem>
 			<listitem>
 			  <para>
-				<guimenu>Gerät mit IP-Adresse</guimenu> für z.B. Netzwerkdrucker mit eigener IP-Adresse.
+				<guimenu>Gerät mit IP-Adresse</guimenu> für z.B. Netzwerkdrucker mit eigener IP-Adresse
+			  </para>
+			</listitem>
+			<listitem>
+			  <para>
+				<guimenu>Univention Corporate Client</guimenu> ist nur verfügbar, wenn über das
+				Univention App Center die Applikation <emphasis>Univention Corporate Client</emphasis> installiert
+				wurde - siehe dazu auch <xref linkend="school:ucc:general"/>.
 			  </para>
 			</listitem>
 		  </itemizedlist>
