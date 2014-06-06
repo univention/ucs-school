@@ -16,8 +16,9 @@
 		  LDAP-Verzeichnisdienstes - gespeichert (siehe auch <xref linkend="structure"/>).  Die Verwaltung der
 		  logischen Einheit <emphasis>Schule</emphasis> kann in der &ucsUMC; über das Modul
 		  <guimenu>Schulen</guimenu> erfolgen, welches sich in der Modulgruppe
-		  <emphasis>Schul-Administration</emphasis> befindet. Es ermöglicht das Suchen, Anlegen, Bearbeiten
-		  und Löschen von Schulen in der &ucsUAS;-Umgebung.
+			<emphasis>Schul-Administration</emphasis> befindet. Es ermöglicht das
+			Suchen nach, sowie das Anlegen, Bearbeiten und Löschen von Schulen in der
+			&ucsUAS;-Umgebung.
 		</para>
 		<section id="school:setup:umc:schools:create">
 		  <title>Anlegen von Schulen</title>
@@ -105,8 +106,9 @@
 	  <para>
 		Für die manuelle Pflege von einzelnen Benutzerkonten wird auf dem Domänencontroller Master
 		das UMC-Modul <guimenu>Benutzer (Schulen)</guimenu> bereitgestellt, welches sich in der
-		UMC-Modulgrippe <emphasis>Schul-Administration</emphasis> befindet. Es ermöglicht das Suchen,
-		Anlegen, Bearbeiten und Löschen von Schülern, Lehrern und Mitarbeitern in der &ucsUAS;-Umgebung.
+		UMC-Modulgrippe <emphasis>Schul-Administration</emphasis> befindet. Es ermöglicht das
+		Suchen nach, sowie das Anlegen, Bearbeiten und Löschen von Schülern, Lehrern und
+		Mitarbeitern in der &ucsUAS;-Umgebung.
 	  </para>
 	  <section id="school:setup:umc:user:create">
 		<title>Anlegen eines Benutzerkontos</title>
@@ -345,8 +347,8 @@
 		UMC-Modul <guimenu>Klassen (Schulen)</guimenu> erfolgen. Das Anlegen einer Schulklasse ist
 		erforderlich, bevor das erste Schüler-Benutzerkonto erstellt werden kann. Die eigentliche Zuordnung
 		von Schülern zu einer Klasse erfolgt über das UMC-Modul <guimenu>Benutzer (Schulen)</guimenu> am
-		Schüler-Benutzerobjekt oder während des CSV-Imports. Die Zuordnung von Lehrern zu Klassen muss über
-		das UMC-Modul <guimenu>Lehrer Klassen zuordnen</guimenu> erfolgen.
+		Schüler-Benutzerobjekt oder während des CSV-Imports. Die Zuordnung von Lehrern zu Klassen erfolgt über
+		das UMC-Modul <guimenu>Lehrer Klassen zuordnen</guimenu>.
 	  </para>
 	  <section id="school:setup:umc:classes:create">
 		<title>Anlegen von Schulklassen</title>
@@ -385,7 +387,7 @@
 		<title>Bearbeiten von Schulklassen</title>
 		<para>
 		  Zum Bearbeiten einer Klasse ist diese in der Tabelle auszuwählen und die Schaltfläche
-		  <guimenu>Bearbeiten</guimenu> anzuklicken. Im folgenden Dialog können die Name und Beschreibung der
+		  <guimenu>Bearbeiten</guimenu> anzuklicken. Im folgenden Dialog können Name und Beschreibung der
 		  Klasse bearbeitet werden.
 		</para>
 		<note>
@@ -397,8 +399,8 @@
 		  Sofern der angemeldete UMC-Benutzer die Rechte für das UMC-Modul
 		  <guimenu>Gruppen</guimenu> aus der Modulgruppe <emphasis>Domäne</emphasis> besitzt, wird zusätzlich
 		  die Schaltfläche <guimenu>Erweiterte Einstellungen</guimenu> angezeigt. Über sie kann das UMC-Modul
-		  <guimenu>Gruppen</guimenu> geöffnet werden, in dem viele erweiterte Einstellungen für das
-		  Benutzerkonto möglich sind.
+		  <guimenu>Gruppen</guimenu> geöffnet werden, in dem viele erweiterte Einstellungen für die
+		  Gruppe möglich sind.
 		</para>
 	  </section>
 	  <section id="school:setup:umc:classes:delete">
@@ -476,10 +478,10 @@
 		</para>
 		<para>
 		  Sofern der angemeldete UMC-Benutzer die Rechte für das UMC-Modul
-		  <guimenu>Gruppen</guimenu> aus der Modulgruppe <emphasis>Domäne</emphasis> besitzt, wird zusätzlich
+		  <guimenu>Rechner</guimenu> aus der Modulgruppe <emphasis>Domäne</emphasis> besitzt, wird zusätzlich
 		  die Schaltfläche <guimenu>Erweiterte Einstellungen</guimenu> angezeigt. Über sie kann das UMC-Modul
-		  <guimenu>Gruppen</guimenu> geöffnet werden, in dem viele erweiterte Einstellungen für das
-		  Benutzerkonto möglich sind.
+		  <guimenu>Rechner</guimenu> geöffnet werden, in dem viele erweiterte Einstellungen für das
+		  Rechnerkonto möglich sind.
 		</para>
 	  </section>
 	  <section id="school:setup:umc:computers:delete">
