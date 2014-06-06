@@ -1,6 +1,6 @@
 #!/usr/share/ucs-test/runner python
 ## desc: ucs-school-workinggroup-module-check
-## roles: [domaincontroller_master, domaincontroller_backup]
+## roles: [domaincontroller_master, domaincontroller_slave]
 ## tags: [apptest]
 ## exposure: dangerous
 ## packages: [ucs-school-umc-groups]
