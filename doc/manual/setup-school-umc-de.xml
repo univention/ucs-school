@@ -194,8 +194,8 @@
 		  UMC-Modulgruppe <guimenu>Schul-Administration</guimenu> geöffnet werden. Der Assistent sieht vor,
 		  dass durch eine CSV-Datei nur Benutzer einer bestimmten Benutzerrolle importiert werden können. Der
 		  gleichzeitige Import von z.B. Schülern und Lehrern durch den Import einer einzelnen CSV-Datei ist
-		  daher nicht möglich. Auf der ersten Seite des Assistenten ist daher die gewünschte Benutzerrolle
-		  auszuwählen (siehe <xref linkend="csvimport:userrole"/>. Sind mehrere Schulen in der
+		  also nicht möglich. Auf der ersten Seite des Assistenten ist daher die gewünschte Benutzerrolle
+		  auszuwählen (siehe <xref linkend="csvimport:userrole"/>). Sind mehrere Schulen in der
 		  &ucsUAS;-Umgebung eingerichtet, wird zusätzlich abgefragt, in welche Schule die CSV-Datei
 		  importiert werden soll.
 		  <figure id="csvimport:userrole">
@@ -217,7 +217,7 @@
 		<para>
 		  Liegt eine CSV-Datei mit allen gültigen Benutzern vor, kann alternativ der zweite
 		  Import-Modus verwendet werden. In diesem Modus werden (zusätzlich zum vorher beschriebenen
-		  Verhalten) alle Benutzerkonten gelöscht, die im Verzeichnisdienst aber nicht in der CSV-Datei
+		  Verhalten) alle Benutzerkonten gelöscht, die im Verzeichnisdienst, aber nicht in der CSV-Datei
 		  enthalten sind. Z.B. kann so zum Schuljahreswechsel ein CSV-Komplettexport der Schülerdatenbank aus
 		  der Schulverwaltungssoftware durchgeführt und die CSV-Datei in &ucsUAS; importiert werden: für neue
 		  Schüler werden Benutzerkonten erstellt, die Benutzerkonten von vorhandenen Schülern werden
@@ -244,7 +244,7 @@
 		  </itemizedlist>
 		  Für die einfachere Zuordnung zeigt der Assistent die ersten 10 Zeilen der CSV-Datei
 		  an. Mit einem Klick auf den Titel der jeweiligen Spalte kann die Zuordnung geändert
-		  werden (siehe <xref linkend="csvimport:assignment"/>.
+		  werden (siehe <xref linkend="csvimport:assignment"/>).
 		</para>
 		<para>
 		  Für den Import wird mindestens die Zuordnung der Benutzerattribute
@@ -252,8 +252,8 @@
 		  <emphasis>Benutzername</emphasis> keine Spalte aus der CSV-Datei zugeordnet, wird der Benutzername
 		  automatisch aus Vor- und Nachnamen generiert
 		  (<emphasis>&lt;Vorname&gt;.&lt;Nachname&gt;</emphasis>). Bei jedem weiteren Import wird der
-		  Benutzername erneut generiert und ggf. anhand von zusätzlich angebenen Attributen zu bestehenden
-		  Benutzerkonten zugeordnet.
+		  Benutzername erneut generiert und ggf. anhand von zusätzlich angebenen Attributen einem bestehenden
+		  Benutzerkonto zugeordnet.
 		</para>
 		<figure id="csvimport:assignment">
 		  <title>CSV-Import: Zuordnung der Benutzerattribute</title>
@@ -292,9 +292,9 @@
 			  <para>
 				Rot markierte Zellen enthalten ein gravierendes Problem, wie z.B. die doppelte
 				Vergabe eines Benutzernamens oder die ungültige Schreibweise eines Geburtsdatums. Probleme, die durch
-				die roten Zellen angezeigt werden, müssen korrigiert (siehe unten) werden, da ansonsten der Import
+				die roten Zellen angezeigt werden, müssen korrigiert werden (siehe unten), da ansonsten der Import
 				verweigert wird. Alternativ kann die betroffene Zeile markiert und über die Schaltfläche
-				<guimenu>Ignorieren</guimenu> ignoriert werden.
+				<guimenu>Ignorieren</guimenu> komplett ignoriert werden.
 			  </para>
 			</listitem>
 		  </itemizedlist>
