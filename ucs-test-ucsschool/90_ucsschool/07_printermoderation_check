@@ -1,6 +1,6 @@
 #!/usr/share/ucs-test/runner python
 ## desc: ucs-school-printermoderator-module-check
-## roles: [domaincontroller_master, domaincontroller_backup]
+## roles: [domaincontroller_master, domaincontroller_backup, domaincontroller_slave]
 ## tags: [apptest]
 ## exposure: dangerous
 ## packages: [ucs-school-umc-printermoderation]
