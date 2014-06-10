@@ -117,30 +117,21 @@ def checkModules(modules, userType, serverRole, singleMaster):
 			('lessontimes', None)
 			]
 	checks = {
-			('student', 'domaincontroller_master', None): [],
-			('student', 'domaincontroller_slave', None): [],
-			('staff', 'domaincontroller_master', None): [],
-			('teacher', 'domaincontroller_master', None): dc_teacher,
-			('teacher', 'domaincontroller_slave', None): dcs_teacher,
-			('schooladmin', 'domaincontroller_master', None): dc_schooladmin,
-			('schooladmin', 'domaincontroller_slave', None): dcs_schooladmin,
-			('domainadmin', 'domaincontroller_master', None): dc_domainadmin,
-			('domainadmin', 'domaincontroller_slave', None): dcs_domainadmin,
-			('student', 'domaincontroller_master', 'false'): [],
-			('student', 'domaincontroller_slave', 'false'): [],
-			('staff', 'domaincontroller_master', 'false'): [],
-			('teacher', 'domaincontroller_master', 'false'): dc_teacher,
-			('teacher', 'domaincontroller_slave', 'false'): dcs_teacher,
-			('schooladmin', 'domaincontroller_master', 'false'): dc_schooladmin,
-			('schooladmin', 'domaincontroller_slave', 'false'): dcs_schooladmin,
-			('domainadmin', 'domaincontroller_master', 'false'): dc_domainadmin,
-			('domainadmin', 'domaincontroller_slave', 'false'): dcs_domainadmin,
-			('student', 'domaincontroller_master', 'true'): [],
-			('student', 'domaincontroller_slave', 'true'): [],
-			('staff', 'domaincontroller_master', 'true'): [],
-			('teacher', 'domaincontroller_master', 'true'): listUnion(dc_teacher, dcs_teacher),
-			('schooladmin', 'domaincontroller_master', 'true'): listUnion(dc_schooladmin, dcs_schooladmin),
-			('domainadmin', 'domaincontroller_master', 'true'): listUnion(dc_domainadmin, dcs_domainadmin)
+			('student', 'domaincontroller_master', False): [],
+			('student', 'domaincontroller_slave', False): [],
+			('staff', 'domaincontroller_master', False): [],
+			('teacher', 'domaincontroller_master', False): dc_teacher,
+			('teacher', 'domaincontroller_slave', False): dcs_teacher,
+			('schooladmin', 'domaincontroller_master', False): dc_schooladmin,
+			('schooladmin', 'domaincontroller_slave', False): dcs_schooladmin,
+			('domainadmin', 'domaincontroller_master', False): dc_domainadmin,
+			('domainadmin', 'domaincontroller_slave', False): dcs_domainadmin,
+			('student', 'domaincontroller_master', True): [],
+			('student', 'domaincontroller_slave', True): [],
+			('staff', 'domaincontroller_master', True): [],
+			('teacher', 'domaincontroller_master', True): listUnion(dc_teacher, dcs_teacher),
+			('schooladmin', 'domaincontroller_master', True): listUnion(dc_schooladmin, dcs_schooladmin),
+			('domainadmin', 'domaincontroller_master', True): listUnion(dc_domainadmin, dcs_domainadmin)
 			}
 	modules = removeListFromOther(modules, ignoreList)
 	if userType != 'domainadmin':
@@ -161,10 +152,10 @@ def main():
 				con = UMCConnection(host)
 				serverRole = ucr.get('server/role')
 				print 'Role = ', serverRole
-				singleMaster = ucr.get('ucsschool/singlemaster')
+				singleMaster = ucr.is_true('ucsschool/singlemaster', False)
 
 				# Create ou, teacher, student, staff member, schooladmin, domainadmin
-				school, oudn = schoolenv.create_ou(displayName='')
+				school, oudn = schoolenv.create_ou(name_edudc=host)
 				tea, teadn = schoolenv.create_user(school, is_teacher=True)
 				staf, stafdn = schoolenv.create_user(school, is_staff=True)
 				stu, studn = schoolenv.create_user(school)
@@ -173,6 +164,7 @@ def main():
 				basedn = ucr.get('ldap/base')
 				position = 'cn=admins,cn=users,ou=%s,%s' % (school, basedn )
 				groups = ["cn=admins-%s,cn=ouadmins,cn=groups,%s" % (school, basedn)]
+				# import pdb; pdb.set_trace()
 				dn, schooladmin = udm.create_user(position=position, groups=groups)
 				groups = ["cn=Domain Admins,cn=groups,%s" % (basedn,)]
 				dn, domainadmin = udm.create_user(position=position, groups=groups)
