@@ -30,7 +30,7 @@ def main():
 			con = UMCConnection(host)
 
 			# Create ou, teacher, student, group
-			school, oudn = schoolenv.create_ou(displayName='')
+			school, oudn = schoolenv.create_ou(name_edudc=ucr.get('hostname'))
 			tea, teadn = schoolenv.create_user(school, is_teacher=True)
 			tea2, teadn2 = schoolenv.create_user(school, is_teacher=True)
 			stu, studn = schoolenv.create_user(school)
