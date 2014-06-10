@@ -49,7 +49,7 @@ def main():
 		handler_unset(['squid/ntlmauth/keepalive'])
 		subprocess.call(["/etc/init.d/squid3", "restart"])
 		with utu.UCSTestSchool()  as schoolenv:
-			school, oudn = schoolenv.create_ou()
+			school, oudn = schoolenv.create_ou(name_edudc=ucr.get('hostname'))
 			stu, studn = schoolenv.create_user(school)
 
 			# check auth with initial state

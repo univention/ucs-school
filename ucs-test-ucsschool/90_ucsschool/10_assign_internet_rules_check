@@ -2,8 +2,8 @@
 ## desc: ucs-school-assign-internet-rules-check
 ## roles: [domaincontroller_master, domaincontroller_backup, domaincontroller_slave, memberserver]
 ## tags: [apptest]
-## exposure: dangerous
-## packages: [ucs-school-umc-internetrules]
+## exposure: careful
+## packages:  [ucs-school-umc-internetrules]
 
 from essential.check import Check
 from essential.internetrule import InternetRule
@@ -33,7 +33,7 @@ def assignRulesToGroupsRandomly(groupList, ruleList, school, groupType):
 def main():
 	with utu.UCSTestSchool() as schoolenv:
 		with ucr_test.UCSTestConfigRegistry() as ucr:
-			school, oudn = schoolenv.create_ou()
+			school, oudn = schoolenv.create_ou(name_edudc=ucr.get('hostname'))
 
 			# Instantiate InternetRule instance
 			ruleIns = InternetRule(ucr=ucr)
