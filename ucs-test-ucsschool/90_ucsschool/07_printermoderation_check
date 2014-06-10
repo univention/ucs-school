@@ -1,9 +1,9 @@
 #!/usr/share/ucs-test/runner python
 ## desc: ucs-school-printermoderator-module-check
-## roles: [domaincontroller_master, domaincontroller_backup, domaincontroller_slave]
+## roles: [domaincontroller_master, domaincontroller_backup, domaincontroller_slave, memberserver]
 ## tags: [apptest]
 ## exposure: dangerous
-## packages: [ucs-school-umc-printermoderation]
+## packages:  [ucs-school-umc-printermoderation]
 
 from mimetypes import MimeTypes
 from univention.lib.umc_connection import UMCConnection
@@ -160,10 +160,12 @@ def main():
 		host = ucr.get('hostname')
 		domainname = ucr.get('domainname')
 		basedn = ucr.get('ldap/base')
-		schoolName, oudn = schoolenv.create_ou()
+		schoolName, oudn = schoolenv.create_ou(name_edudc=host)
 		tea, _ = schoolenv.create_user(schoolName, classes='1A', is_teacher=True)
 		stu1, _ = schoolenv.create_user(schoolName, classes='1A')
 		stu2, _ = schoolenv.create_user(schoolName, classes='2B')
+
+		utils.wait_for_replication_and_postrun()
 
 		co = UMCConnection(host)
 		co.auth(tea ,'univention')
