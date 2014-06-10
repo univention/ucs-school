@@ -1,0 +1,197 @@
+#!/usr/share/ucs-test/runner python
+## desc: check availability of umc modules
+## roles: [domaincontroller_master, domaincontroller_slave]
+## tags: [apptest]
+## exposure: dangerous
+## packages: [ucs-school-master|ucs-school-slave|ucs-school-singlemaster]
+
+from json import loads
+from univention.lib.umc_connection import UMCConnection
+import univention.testing.ucr as ucr_test
+import univention.testing.ucsschool as utu
+import univention.testing.udm as udm_test
+import univention.testing.utils as utils
+
+def listUnion(firstList, secondList):
+	return list(set(firstList).union(set(secondList)))
+
+def contains(big, small):
+	print 'small =', small
+	print 'big =', big
+	intersection = [x for x in small if x in big]
+	print 'intersect=', intersection
+	return sorted(intersection) == sorted(small)
+
+def listAllModules(con):
+	httpcon = con.get_connection()
+	data = con.build_data({}, None)
+	httpcon.request('POST', '/umcp/get/modules/list', data, headers=con._headers)
+	modules = loads(httpcon.getresponse().read())['modules']
+	modules_names = [(x['id'], x.get('flavor')) for x in modules]
+	print 'modules = ', modules_names
+	return modules_names
+
+def removeListFromOther(big, small):
+	big_copy = big[:]
+	for item in big_copy:
+		if item in small:
+			big.remove(item)
+	return big
+
+def checkModules(modules, userType, serverRole, singleMaster):
+	ignoreList = [
+			('lib', None)
+			]
+	# Anmeldung als Schuler auf DC Master
+	# Anmeldung als Schuler auf Schul-DC
+	# Anmeldung als Mitarbeiter auf DC Master
+	# Anmeldung als Mitarbeiter auf Schul-DC sollte nicht funktionieren
+
+	# Lehrer auf dem DC Master
+	dc_teacher = [
+			('schoolgroups', 'workgroup-admin'),
+			('schoolusers', 'student')
+			]
+	# Lehrer auf dem Schul-DC
+	dcs_teacher = [
+			('computerroom', None),
+			('distribution', 'teacher'),
+			('schoolexam', None),
+			('helpdesk', None),
+			('printermoderation', None),
+			('schoolgroups', 'workgroup-admin'),
+			('schoolusers', 'student')
+			]
+	# Schuladmin sollte auf dem DC Master
+	dc_schooladmin = [
+			('schoolusers', 'student'),
+			('schoolusers', 'teacher'),
+			('schoolrooms', None),
+			('schoolgroups', 'workgroup-admin'),
+			('schoolgroups', 'class')
+			]
+	# Schuladmin sollte auf dem Schul-DC
+	dcs_schooladmin = [
+			('computerroom', None),
+			('distribution', 'admin'),
+			('schoolexam', None),
+			('printermoderation', None),
+			('helpdesk', None),
+			('schoolusers', 'student'),
+			('schoolusers', 'teacher'),
+			('schoolrooms', None),
+			('schoolgroups', 'class'),
+			('schoolgroups', 'workgroup-admin'),
+			('internetrules', 'admin'),
+			('internetrules', 'assign'),
+			('lessontimes', None)
+			]
+	# Domanenadministrator auf dem DC Master
+	dc_domainadmin = [
+			('udm', 'users/user'),
+			('udm', 'groups/group'),
+			('udm', 'computers/computer'),
+			('schoolwizards', 'schoolwizards/schools'),
+			('schoolcsvimport', None),
+			('schoolusers', 'student'),
+			('schoolusers', 'teacher'),
+			('schoolrooms', None),
+			('schoolgroups', 'class'),
+			('schoolgroups', 'workgroup-admin'),
+			]
+	# Domanenadministrator auf dem Schul-DC
+	dcs_domainadmin = [
+			('computerroom', None),
+			('distribution', 'admin'),
+			('schoolexam', None),
+			('printermoderation', None),
+			('helpdesk', None),
+			('schoolinstaller', None),
+			('schoolusers', 'student'),
+			('schoolusers', 'teacher'),
+			('schoolrooms', None),
+			('schoolgroups', 'class'),
+			('schoolgroups', 'workgroup-admin'),
+			('internetrules', 'admin'),
+			('internetrules', 'assign'),
+			('lessontimes', None)
+			]
+	checks = {
+			('student', 'domaincontroller_master', None): [],
+			('student', 'domaincontroller_slave', None): [],
+			('staff', 'domaincontroller_master', None): [],
+			('teacher', 'domaincontroller_master', None): dc_teacher,
+			('teacher', 'domaincontroller_slave', None): dcs_teacher,
+			('schooladmin', 'domaincontroller_master', None): dc_schooladmin,
+			('schooladmin', 'domaincontroller_slave', None): dcs_schooladmin,
+			('domainadmin', 'domaincontroller_master', None): dc_domainadmin,
+			('domainadmin', 'domaincontroller_slave', None): dcs_domainadmin,
+			('student', 'domaincontroller_master', 'false'): [],
+			('student', 'domaincontroller_slave', 'false'): [],
+			('staff', 'domaincontroller_master', 'false'): [],
+			('teacher', 'domaincontroller_master', 'false'): dc_teacher,
+			('teacher', 'domaincontroller_slave', 'false'): dcs_teacher,
+			('schooladmin', 'domaincontroller_master', 'false'): dc_schooladmin,
+			('schooladmin', 'domaincontroller_slave', 'false'): dcs_schooladmin,
+			('domainadmin', 'domaincontroller_master', 'false'): dc_domainadmin,
+			('domainadmin', 'domaincontroller_slave', 'false'): dcs_domainadmin,
+			('student', 'domaincontroller_master', 'true'): [],
+			('student', 'domaincontroller_slave', 'true'): [],
+			('staff', 'domaincontroller_master', 'true'): [],
+			('teacher', 'domaincontroller_master', 'true'): listUnion(dc_teacher, dcs_teacher),
+			('schooladmin', 'domaincontroller_master', 'true'): listUnion(dc_schooladmin, dcs_schooladmin),
+			('domainadmin', 'domaincontroller_master', 'true'): listUnion(dc_domainadmin, dcs_domainadmin)
+			}
+	modules = removeListFromOther(modules, ignoreList)
+	if userType != 'domainadmin':
+		if sorted(modules) != sorted(checks[(userType, serverRole, singleMaster)]):
+			utils.fail('Modules (%r) for %s and %s are not correct' % (
+				modules, userType, serverRole))
+	else:
+		success = contains(modules, checks[(userType, serverRole, singleMaster)])
+		if not success:
+			utils.fail('Modules (%r) for %s and %s are not correct' % (
+				modules, userType, serverRole))
+
+def main():
+	with  utu.UCSTestSchool() as schoolenv:
+		with udm_test.UCSTestUDM() as udm:
+			with ucr_test.UCSTestConfigRegistry() as ucr:
+				host = ucr.get('hostname')
+				con = UMCConnection(host)
+				serverRole = ucr.get('server/role')
+				print 'Role = ', serverRole
+				singleMaster = ucr.get('ucsschool/singlemaster')
+
+				# Create ou, teacher, student, staff member, schooladmin, domainadmin
+				school, oudn = schoolenv.create_ou(displayName='')
+				tea, teadn = schoolenv.create_user(school, is_teacher=True)
+				staf, stafdn = schoolenv.create_user(school, is_staff=True)
+				stu, studn = schoolenv.create_user(school)
+				utils.wait_for_replication_and_postrun()
+
+				basedn = ucr.get('ldap/base')
+				position = 'cn=admins,cn=users,ou=%s,%s' % (school, basedn )
+				groups = ["cn=admins-%s,cn=ouadmins,cn=groups,%s" % (school, basedn)]
+				dn, schooladmin = udm.create_user(position=position, groups=groups)
+				groups = ["cn=Domain Admins,cn=groups,%s" % (basedn,)]
+				dn, domainadmin = udm.create_user(position=position, groups=groups)
+				utils.wait_for_replication_and_postrun()
+
+				users = [
+						(stu, 'student'),
+						(tea, 'teacher'),
+						(staf, 'staff'),
+						(schooladmin, 'schooladmin'),
+						(domainadmin, 'domainadmin')
+						]
+
+				for (user, userType) in users:
+					# staff is not able to login to dc-slave
+					if (userType != 'staff' and serverRole != 'domaincontroller_slave'):
+						con.auth(user, 'univention')
+						modules = listAllModules(con)
+						checkModules(modules, userType, serverRole, singleMaster)
+
+if __name__ == '__main__':
+	main()
