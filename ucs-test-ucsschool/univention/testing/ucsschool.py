@@ -97,25 +97,27 @@ class UCSTestSchool(object):
 
 	def open_ldap_connection(self, binddn=None, bindpw=None, ldap_server=None, admin=False, machine=False):
 		'''Opens a new LDAP connection using the given user LDAP DN and
-		password. The connection is open to the given server or if None the
-		server defined by the UCR variable ldap/server/name is used.'''
+		password. The connection is established to the given server or
+		(if None is given) to the server defined by the UCR variable
+		ldap/server/name is used.
+		If admin is set to True, a connection is setup by getAdminConnection().
+		If machine is set to True, a connection to the master is setup by getMachoneConnection().
+		'''
 
 		assert(not(admin and machine))
 
-		if not binddn:
-			binddn = self._ucr.get('tests/domainadmin/account')
-		if not bindpw:
-			bindpw = self._ucr.get('tests/domainadmin/pwd')
+		account = utils.UCSTestDomainAdminCredentials()
 		if not ldap_server:
 			ldap_server = self._ucr.get('ldap/master')
+		port = int(ucr.get('ldap/server/port', 7389))
 
 		try:
 			if admin:
 				lo = udm_uldap.getAdminConnection()[0]
 			elif machine:
-				lo = udm_uldap.getMachineConnection()[0]
+				lo = udm_uldap.getMachineConnection(ldap_master=True)[0]
 			else:
-				lo = udm_uldap.access(host=ldap_server, base=self._ucr.get('ldap/base'), binddn=binddn, bindpw=bindpw, start_tls=2)
+				lo = udm_uldap.access(host=ldap_server, port=port, base=self._ucr.get('ldap/base'), binddn=account.binddn, bindpw=account.bindpw, start_tls=2)
 		except udm_errors.noObject:
 			raise
 		except LDAPError, e:
