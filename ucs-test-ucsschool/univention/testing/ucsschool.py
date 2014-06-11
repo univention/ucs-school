@@ -109,7 +109,7 @@ class UCSTestSchool(object):
 		account = utils.UCSTestDomainAdminCredentials()
 		if not ldap_server:
 			ldap_server = self._ucr.get('ldap/master')
-		port = int(ucr.get('ldap/server/port', 7389))
+		port = int(self._ucr.get('ldap/server/port', 7389))
 
 		try:
 			if admin:

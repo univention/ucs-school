@@ -1,3 +1,9 @@
+ucs-test-ucsschool (1.0.67-3) unstable; urgency=low
+
+  * Bug #35098: fixed typo in open_ldap_connection()
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Wed, 11 Jun 2014 11:53:12 +0200
+
 ucs-test-ucsschool (1.0.67-2) unstable; urgency=low
 
   * Bug #35098: adapted open_ldap_connection() in ucsschool.py
