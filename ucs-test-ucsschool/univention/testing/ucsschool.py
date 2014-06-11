@@ -258,7 +258,7 @@ class UCSTestSchool(object):
 			# build command line
 			cmd = [self.PATH_CMD_CREATE_OU]
 			if displayName:
-				cmd += ['--displayName', ou_displayName]
+				cmd += ['--displayName', displayName]
 			cmd += [ou_name]
 			if name_edudc:
 				cmd += [name_edudc]
