@@ -168,14 +168,14 @@ class UCSTestSchool(object):
 		return msg
 
 
-	def cleanup(self):
+	def cleanup(self, wait_for_replication=True):
 		""" Cleanup all objects created by the UCS@school test environment """
 		for ou_name in self._cleanup_ou_names:
+			self.cleanup_ou(ou_name, wait_for_replication=False)
+		if wait_for_replication:
+			utils.wait_for_replication()
 
-			self.cleanup_ou(ou_name)
-
-
-	def cleanup_ou(self, ou_name):
+	def cleanup_ou(self, ou_name, wait_for_replication=True):
 		""" Removes the given school ou and all its corresponding objects like groups """
 
 		print '*** Purging OU %s and related objects' % ou_name
@@ -197,9 +197,12 @@ class UCSTestSchool(object):
 			oudn = 'ou=%(ou)s,%(basedn)s' % {'ou': ou_name, 'basedn': self._ucr.get('ldap/base')}
 		self._remove_udm_object('container/ou', oudn)
 		print '*** Purging OU %s and related objects (%s): done' % (ou_name,oudn)
+		if wait_for_replication:
+			utils.wait_for_replication()
 
 
-	def create_ou(self, ou_name=None, name_edudc=None, name_admindc=None, displayName='', name_share_file_server=None, use_cli=False):
+	def create_ou(self, ou_name=None, name_edudc=None, name_admindc=None, displayName='', name_share_file_server=None,
+				  use_cli=False, wait_for_replication=True):
 		"""
 		Creates a new OU with random or specified name. The function may also set a specified
 		displayName. If "displayName" is None, a random displayName will be set. If "displayName"
@@ -258,6 +261,9 @@ class UCSTestSchool(object):
 			if retval:
 				utils.fail('create_ou failed with exitcode %s' % retval)
 
+		if wait_for_replication:
+			utils.wait_for_replication()
+
 		ou_dn = 'ou=%s,%s' % (ou_name, self.LDAP_BASE)
 		return ou_name, ou_dn
 
@@ -311,7 +317,8 @@ class UCSTestSchool(object):
 
 
 	def create_user(self, ou_name, username=None, firstname=None, lastname=None, classes=None,
-					mailaddress=None, is_teacher=False, is_staff=False, is_active=True, password='univention', use_cli=False):
+					mailaddress=None, is_teacher=False, is_staff=False, is_active=True, password='univention',
+					use_cli=False, wait_for_replication=True):
 		"""
 		Create a user in specified OU with given attributes. If attributes are not specified, random
 		values will be used for username, firstname and lastname. If password is not None, the given
@@ -376,6 +383,9 @@ class UCSTestSchool(object):
 			else:
 				result = Student(**kwargs).create(lo)
 			print '*** Result of User(...).create(): %r' % (result,)
+
+		if wait_for_replication:
+			utils.wait_for_replication()
 
 		return username, user_dn
 

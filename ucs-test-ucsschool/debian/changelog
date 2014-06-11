@@ -1,3 +1,9 @@
+ucs-test-ucsschool (1.0.67-1) unstable; urgency=low
+
+  * Bug #34820: wait for replication and prevent problems during create_ou()
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Tue, 10 Jun 2014 11:36:10 +0200
+
 ucs-test-ucsschool (1.0.66-1) unstable; urgency=low
 
   * Bug #34958 Script added 'available_umc_modules
