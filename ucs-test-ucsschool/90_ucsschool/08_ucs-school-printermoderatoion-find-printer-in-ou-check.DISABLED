@@ -58,8 +58,8 @@ def main():
 			co.auth('Administrator' ,'univention')
 
 			# create more than one OU
-			schoolName, _ = schoolenv.create_ou()
-			schoolName2, _ = schoolenv.create_ou()
+			schoolName, _ = schoolenv.create_ou(name_edudc=host)
+			schoolName2, _ = schoolenv.create_ou(name_edudc=host)
 
 			# add new printer
 			doPrinter('A', newPrinterName, schoolName, host, domainname)
