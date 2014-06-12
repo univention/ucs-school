@@ -18,7 +18,6 @@ import univention.testing.ucsschool as utu
 import univention.testing.utils as utils
 
 def main():
-	subprocess.call(['/usr/bin/newaliases']) # Workaround for Bug #31837
 	# initializing mail data
 	message = time.time() * 1000
 	message = '%.30f' % message
