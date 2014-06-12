@@ -42,7 +42,7 @@ class Klasse():
 		else:
 			self.ucr = ucr_test.UCSTestConfigRegistry()
 			self.ucr.load()
-			host = self.ucr.get('hostname')
+			host = self.ucr.get('ldap/master')
 			self.umcConnection = UMCConnection(host)
 			self.umcConnection.auth('Administrator', 'univention')
 
