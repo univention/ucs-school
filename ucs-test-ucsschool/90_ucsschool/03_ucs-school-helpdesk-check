@@ -21,7 +21,6 @@ def main():
 	# initializing mail data
 	message = time.time() * 1000
 	message = '%.30f' % message
-	category = 'Sonstige'
 	with utu.UCSTestSchool()  as schoolenv:
 		with ucr_test.UCSTestConfigRegistry() as ucr:
 			with NetworkRedirector() as nethelper:
@@ -41,9 +40,10 @@ def main():
 				params = {
 					'username': tea,
 					'school': school,
-					'category': category,
+					'category': 'Sonstige',
 					'message': message
 					}
+				# Sending the mail message with the unique id
 				result = connection.request('helpdesk/send', params)
 				if not result:
 					utils.fail('Message was not sent successfully')
