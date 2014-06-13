@@ -164,7 +164,6 @@ def main():
 				basedn = ucr.get('ldap/base')
 				position = 'cn=admins,cn=users,ou=%s,%s' % (school, basedn )
 				groups = ["cn=admins-%s,cn=ouadmins,cn=groups,%s" % (school, basedn)]
-				# import pdb; pdb.set_trace()
 				dn, schooladmin = udm.create_user(position=position, groups=groups)
 				groups = ["cn=Domain Admins,cn=groups,%s" % (basedn,)]
 				dn, domainadmin = udm.create_user(position=position, groups=groups)
