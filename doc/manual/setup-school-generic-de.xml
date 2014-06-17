@@ -127,7 +127,7 @@
 			Für die Verwendung von Samba ist es notwendig, dass für jeden Benutzer ein UNC-Pfad für
 			das Windows-Benutzerprofil vorgegeben wird. In der Standardeinstellung von &ucsUAS; wird der
 			jeweilige Logonserver als Ablageort für das Benutzerprofil definiert
-			(<emphasis>\\%LOGONSERVER%\%USERNAME%\windows-profiles\default</emphasis>).  Falls die
+			(<emphasis>%LOGONSERVER%\%USERNAME%\windows-profiles\default</emphasis>).  Falls die
 			Benutzerprofile statt auf dem Logonserver auf einem anderen Dateiserver gespeichert werden sollen, kann in der
 			&ucsUMC; am Rechnerobjekt des gewünschten Dateiservers der Dienst <emphasis>Windows Profile
 			Server</emphasis> gesetzt werden. Es wird dann ein UNC-Pfad nach dem Schema
