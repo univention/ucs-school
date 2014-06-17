@@ -136,7 +136,7 @@
 		  <para>
 			Sofern DC Backup-Systeme in der UCS-Domäne vorhanden sind, muss dort ebenfalls &ucsUAS;
 			installiert und konfiguriert werden. Sollte dies nicht der Fall sein, kann es zu schweren
-			Replikationsproblemen auf den Schulservern kommen kommen.
+			Replikationsproblemen auf den Schulservern kommen.
 		  </para>
 		</caution>
 	  </section>
