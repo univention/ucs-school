@@ -134,6 +134,10 @@
 			<emphasis>\\DATEISERVERNAME\%USERNAME%\windows-profiles\default</emphasis> am Benutzerobjekt gespeichert.
 			<note>
 			  <para>
+				Falls ein alternativer Dateiserver für den Benutzerprofilpfad verwendet werden soll, muss das entsprechende 
+				Rechnerobjekt unterhalb der Schul-OU im LDAP-Verzeichnisdienst liegen.
+			  </para>
+			  <para>
 				Für den reibungslosen Betrieb darf der Dienst <emphasis>Windows Profile Server</emphasis> nur an einem Dateiserver pro OU
 				gesetzt werden. Weiterhin ist der Dienst <emphasis>Windows Profile Server</emphasis> veraltet und wird in
 				einer zukünftigen &ucsUAS;-Version entfernt bzw. durch einen äquivalenten Mechanismus ersetzt.
