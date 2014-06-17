@@ -49,7 +49,7 @@ def main():
 					utils.fail('Message was not sent successfully')
 				print 'Message sent.'
 				# time out for waiting for the message to be delivered	in seconds
-				timeOut = 600
+				timeOut = 60
 				print 'Waiting %ds for incoming mail...' % (timeOut,)
 				# periodically checking the receipt of the same sent mail
 				for i in xrange(timeOut, 0, -1):
