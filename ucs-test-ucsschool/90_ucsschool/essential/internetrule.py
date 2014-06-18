@@ -15,6 +15,7 @@ import univention.testing.strings as uts
 import univention.testing.ucr as ucr_test
 import univention.testing.utils as utils
 from univention.testing.ucsschool import UCSTestSchool
+import univention.testing.ucsschool as utu
 
 
 class InternetRule(object):
@@ -230,14 +231,15 @@ class InternetRule(object):
 		:type defalt: bool
 		"""
 		self.ucr.load()
-		basedn = self.ucr.get('ldap/base')
 		groupdn = ''
+		schoolenv = utu.UCSTestSchool()
+		school_basedn = schoolenv.get_ou_base_dn(school)
 		if groupType == 'workgroup':
 			ucsschool = UCSTestSchool()
 			groupdn = ucsschool.get_workinggroup_dn(school, groupName)
 		elif groupType == 'class':
-			groupdn = 'cn=%s-%s,cn=klassen,cn=schueler,cn=groups,ou=%s,%s' % (
-				school, groupName, school, basedn)
+			groupdn = 'cn=%s-%s,cn=klassen,cn=schueler,cn=groups,%s' % (
+				school, groupName, school_basedn)
 		if default:
 			name = '$default$'
 		else:
