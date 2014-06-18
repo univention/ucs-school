@@ -1,7 +1,7 @@
 #!/usr/share/ucs-test/runner python
 ## desc: Test roleshares creation
 ## roles: [domaincontroller_master]
-## tags: [apptest]
+## tags: [apptest,ucsschool]
 ## exposure: dangerous
 ## packages:
 ##    - ucs-school-import

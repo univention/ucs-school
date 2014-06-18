@@ -2,7 +2,7 @@
 # coding=utf-8
 ## desc: ucs-school-lessonstime-module-check
 ## roles: [domaincontroller_master, domaincontroller_backup, domaincontroller_slave]
-## tags: [apptest]
+## tags: [apptest,ucsschool]
 ## exposure: careful
 ## packages:
 ##    - ucs-school-umc-lessontimes

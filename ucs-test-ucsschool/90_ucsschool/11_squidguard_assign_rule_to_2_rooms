@@ -2,7 +2,7 @@
 ## desc: Check if an internet rule may be assigned to 2 rooms
 ## roles: [domaincontroller_master, domaincontroller_backup, domaincontroller_slave]
 ## bugs: [32544]
-## tags: [apptest]
+## tags: [apptest,ucsschool]
 ## exposure: dangerous
 ## packages:  [ucs-school-webproxy]
 

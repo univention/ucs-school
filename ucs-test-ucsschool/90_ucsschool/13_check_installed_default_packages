@@ -1,7 +1,7 @@
 #!/usr/share/ucs-test/runner python
 ## desc: Check if all required and recommended packages for UCS@school are installed
 ## roles: [domaincontroller_master, domaincontroller_backup, domaincontroller_slave]
-## tags: [apptest]
+## tags: [apptest,ucsschool]
 ## exposure: safe
 ## packages:
 ##    - ucs-school-master | ucs-school-singlemaster | ucs-school-slave

@@ -1,4 +1,7 @@
-#!/usr/share/ucs-test/runner python ## desc: http_proxy_auth_after_passwd_reset_check ## roles: [domaincontroller_master, domaincontroller_backup, domaincontroller_slave, memberserver] ## tags: [apptest]
+#!/usr/share/ucs-test/runner python
+## desc: http_proxy_auth_after_passwd_reset_check
+## roles: [domaincontroller_master, domaincontroller_backup, domaincontroller_slave, memberserver]
+## tags: [apptest,ucsschool]
 ## exposure: dangerous
 ## packages: [univention-samba4, ucs-school-webproxy]
 

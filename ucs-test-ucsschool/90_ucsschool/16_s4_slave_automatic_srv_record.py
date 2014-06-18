@@ -1,7 +1,7 @@
 #!/usr/share/ucs-test/runner python
 ## desc: Test S4 SRV record maintainance
 ## roles: [domaincontroller_slave]
-## tags: [apptest]
+## tags: [apptest,ucsschool]
 ## exposure: dangerous
 ## packages:
 ##    - ucs-school-slave | ucs-school-nonedu-slave

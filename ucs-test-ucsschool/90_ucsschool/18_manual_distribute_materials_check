@@ -1,7 +1,7 @@
 #!/usr/share/ucs-test/runner python
 ## desc: manual_distribute_materials_check
 ## roles: [domaincontroller_master, domaincontroller_backup, domaincontroller_slave, memberserver]
-## tags: [apptest]
+## tags: [apptest,ucsschool]
 ## exposure: dangerous
 ## packages: [ucs-school-umc-distribution]
 
