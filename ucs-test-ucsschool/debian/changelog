@@ -1,3 +1,9 @@
+ucs-test-ucsschool (1.0.67-4) unstable; urgency=low
+
+  * Bug #34281: also test pw reset on DC slave
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Wed, 18 Jun 2014 10:39:10 +0200
+
 ucs-test-ucsschool (1.0.67-3) unstable; urgency=low
 
   * Bug #35098: fixed typo in open_ldap_connection()
