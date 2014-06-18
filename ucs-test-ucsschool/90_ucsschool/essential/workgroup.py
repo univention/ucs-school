@@ -125,12 +125,7 @@ class Workgroup(object):
 	def remove(self, options=None):
 		"""Removing a Workgroup from ldap"""
 		print 'Removing group %s from ldap' % (self.name)
-		basedn = self.ucr.get('ldap/base')
-		groupdn = 'cn=%s-%s,cn=schueler,cn=groups,ou=%s,%s' % (
-				self.school,
-				self.name,
-				self.school,
-				basedn)
+		groupdn = self.dn()
 		flavor = 'workgroup-admin'
 		removingParam = [{"object":[groupdn],"options":options}]
 		requestResult = self.umcConnection.request(
@@ -149,12 +144,7 @@ class Workgroup(object):
 		"""
 		print 'Adding members  %r to group %s' % (memberListdn, self.name)
 		flavor = 'workgroup-admin'
-		basedn = self.ucr.get('ldap/base')
-		groupdn = 'cn=%s-%s,cn=schueler,cn=groups,ou=%s,%s' % (
-				self.school,
-				self.name,
-				self.school,
-				basedn)
+		groupdn = self.dn()
 		currentMembers = sorted(
 				self.ulConnection.getAttr(groupdn,'uniqueMember'))
 		for member in memberListdn:
@@ -190,12 +180,7 @@ class Workgroup(object):
 		"""
 		print 'Removing members  %r from group %s' % (memberListdn, self.name)
 		flavor = 'workgroup-admin'
-		basedn = self.ucr.get('ldap/base')
-		groupdn = 'cn=%s-%s,cn=schueler,cn=groups,ou=%s,%s' % (
-				self.school,
-				self.name,
-				self.school,
-				basedn)
+		groupdn = self.dn()
 		currentMembers = sorted(
 				self.ulConnection.getAttr(groupdn, 'uniqueMember'))
 		for member in memberListdn:
@@ -223,7 +208,6 @@ class Workgroup(object):
 	def checkAttr(self):
 		"""checking group attributes in ldap"""
 		print 'Checking the attributes for group %s in ldap' % (self.name)
-		basedn = self.ucr.get('ldap/base')
 		members = []
 		if self.members:
 			for member in self.members:
@@ -231,11 +215,7 @@ class Workgroup(object):
 				members.append(m)
 
 		utils.verify_ldap_object(
-				'cn=%s-%s,cn=schueler,cn=groups,ou=%s,%s' % (
-					self.school,
-					self.name,
-					self.school,
-					basedn),
+				self.dn(),
 				expected_attr = {
 					'memberUid': members,
 					'description': [self.description]
@@ -244,19 +224,13 @@ class Workgroup(object):
 	def checkExistance(self, expected_group_result, expected_share_result):
 		"""check for group and file share objects existance in ldap"""
 		print 'Checking if group %s and its share object exist in ldap' % (self.name)
-		basedn = self.ucr.get('ldap/base')
-		groupdn = 'cn=%s-%s,cn=schueler,cn=groups,ou=%s,%s' % (
-					self.school,
-					self.name,
-					self.school,
-					basedn)
+		groupdn = self.dn()
 		utils.verify_ldap_object(groupdn, should_exist=expected_group_result)
-
-		sharedn = 'cn=%s-%s,cn=shares,ou=%s,%s' % (
+		ucsschool = UCSTestSchool()
+		sharedn = 'cn=%s-%s,cn=shares,%s' % (
 					self.school,
 					self.name,
-					self.school,
-					basedn)
+					ucsschool.get_ou_base_dn(self.school))
 		utils.verify_ldap_object(sharedn, should_exist=expected_share_result)
 
 
