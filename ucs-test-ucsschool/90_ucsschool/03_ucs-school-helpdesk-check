@@ -33,7 +33,7 @@ def main():
 				connection.auth(tea, 'univention')
 				f = tempfile.NamedTemporaryFile(suffix='.eml', dir='/tmp')
 				print 'Creating temp mail file %s' % (f.name)
-				nethelper.add_redirection('0.0.0.0', 25, 60025)
+				nethelper.add_redirection('0.0.0.0/0', 25, 60025)
 				ms = MailSink('127.0.0.1', 60025, filename=f.name)
 				ms.start()
 				params = {
