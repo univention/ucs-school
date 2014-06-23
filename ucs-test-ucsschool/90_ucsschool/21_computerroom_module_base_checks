@@ -1,0 +1,107 @@
+#!/usr/share/ucs-test/runner python
+## desc: computerroom module base checks
+## roles: [domaincontroller_master, domaincontroller_slave]
+## tags: [apptest, ucsschool]
+## exposure: dangerous
+## packages: [ucs-school-umc-computerroom]
+
+from univention.lib.umc_connection import UMCConnection
+import essential.importcomputers as ic
+import essential.ucsschoo as utu
+import re
+import univention.testing.strings as uts
+import univention.testing.ucr as ucr_test
+import univention.testing.utils as utils
+
+def get_room_user(name, school, umc_connection):
+	print 'Executing command: computerroom/rooms in school:', school
+	reqResult = umc_connection.request('computerroom/rooms', {'school':school})
+	return [x.get('user') for x in reqResult if x['label']==name][0]
+
+def check_room_user(name, school, umc_connection, expected_user):
+	current_user = get_room_user(name, school, umc_connection)
+	print 'Room %s is in use by user %r' %(name, current_user)
+	if current_user:
+		user_id = re.search(r'\((\w+)\)', current_user).group(1)
+	else:
+		user_id = current_user
+	if expected_user != user_id:
+		utils.fail('Room in use by user %s, expected: %s' % (user_id, expected_user))
+
+def aquire_room(room_dn, umc_connection):
+	print 'Executing command: computerroom/room/acquire'
+	reqResult = umc_connection.request('computerroom/room/acquire', {'room':room_dn})
+	return reqResult
+
+def checK_room_aquire(room_dn, umc_connection, expected_answer):
+	answer = aquire_room(room_dn, umc_connection)['message']
+	if answer == expected_answer:
+		print 'Room %s is %s' %(room_dn, answer)
+	else:
+		utils.fail('Unexpected room aquire result: %s' % (answer,))
+
+def get_room_computers(room_dn, umc_connection):
+	print 'Executing command: computerroom/query'
+	reqResult = umc_connection.request('computerroom/query', {'reload':False})
+	return [x['name'] for x in reqResult]
+
+def check_room_computers(room_dn, umc_connection, expected_computer_list):
+	current_computers = get_room_computers(room_dn, umc_connection)
+	print 'Current computers in room %s are %r' % (room_dn, current_computers)
+	for i, computer in enumerate(sorted(current_computers)):
+		if computer not in sorted(expected_computer_list)[i]:
+			utils.fail('Computers found %r do not match the expected: %r' % (current_computers, expected_computer_list))
+
+
+def main():
+	with utu.UCSTestSchool() as schoolenv:
+		with ucr_test.UCSTestConfigRegistry() as ucr:
+			school, oudn = schoolenv.create_ou(name_edudc=ucr.get('hostname'))
+			tea1, tea1_dn = schoolenv.create_user(school, is_teacher=True)
+			tea2, tea2_dn = schoolenv.create_user(school, is_teacher=True)
+
+			# importing random 9 computers
+			created_computers_dn = ic.create_computers(False, True, school)
+
+			# creating an empty computer room
+			room1, room1_dn = schoolenv.create_computerroom(
+					school,
+					name=uts.random_name(),
+					description=uts.random_name(),
+					host_members=[]
+					)
+			# creating computer room contains some of the created computers
+			room2, room2_dn = schoolenv.create_computerroom(
+					school,
+					name=uts.random_name(),
+					description=uts.random_name(),
+					host_members=created_computers_dn[0:4]
+					)
+			# creating computer room contains some of the created computers
+			room3, room3_dn = schoolenv.create_computerroom(
+					school,
+					name=uts.random_name(),
+					description=uts.random_name(),
+					host_members=created_computers_dn[4:9]
+					)
+
+			# Checking empty room properties
+			umc_connection1 = UMCConnection(ucr.get('hostname'))
+			umc_connection1.auth(tea1, 'univention')
+			checK_room_aquire(room1_dn, umc_connection1, 'EMPTY_ROOM')
+			check_room_user(room1, school, umc_connection1, None)
+
+			# Checking non-empty room properties
+			umc_connection2 = UMCConnection(ucr.get('hostname'))
+			umc_connection2.auth(tea2, 'univention')
+			checK_room_aquire(room2_dn, umc_connection2, 'OK')
+			check_room_user(room2, school, umc_connection1, tea2)
+			check_room_computers(room2_dn, umc_connection2, created_computers_dn[0:4])
+
+			# switching room for tea2
+			checK_room_aquire(room3_dn, umc_connection2, 'OK')
+			check_room_user(room3, school, umc_connection1, tea2)
+			check_room_computers(room3_dn, umc_connection2, created_computers_dn[4:9])
+
+if __name__ == '__main__':
+	main()
