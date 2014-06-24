@@ -5,18 +5,17 @@
 ## exposure: dangerous
 ## packages: [ucs-school-umc-computerroom]
 
+from essential.importcomputers import ComputerImport as ComputerImportLib
+from essential.importcomputers import Windows, MacOS, IPManagedClient
+from ucsschool.lib.models import IPComputer as IPComputerLib
+from ucsschool.lib.models import MacComputer as MacComputerLib
+from ucsschool.lib.models import WindowsComputer as WindowsComputerLib
 from univention.lib.umc_connection import UMCConnection
-# import essential.importcomputers as ic
 import essential.ucsschoo as utu
 import re
 import univention.testing.strings as uts
 import univention.testing.ucr as ucr_test
 import univention.testing.utils as utils
-from ucsschool.lib.models import WindowsComputer as WindowsComputerLib
-from ucsschool.lib.models import MacComputer as MacComputerLib
-from ucsschool.lib.models import IPComputer as IPComputerLib
-from essential.importcomputers import Windows, MacOS, IPManagedClient
-from essential.importcomputers import ComputerImport as ComputerImportLib
 
 class ComputerImport(ComputerImportLib):
 	def __init__(self, school=None, nr_windows=0, nr_macos=0, nr_ipmanagedclient=0):
