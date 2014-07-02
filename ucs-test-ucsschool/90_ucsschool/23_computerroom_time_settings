@@ -1,0 +1,102 @@
+#!/usr/share/ucs-test/runner python
+## desc: computerroom module time settings
+## roles: [domaincontroller_master, domaincontroller_slave]
+## tags: [apptest, ucsschool]
+## exposure: dangerous
+## packages: [ucs-school-umc-computerroom]
+
+from essential.computerroom import Room, Computers
+from univention.lib.umc_connection import UMCConnection
+import datetime
+import time
+import univention.lib.atjobs as ula
+import univention.testing.ucr as ucr_test
+import univention.testing.ucsschool as utu
+import univention.testing.utils as utils
+
+
+def main():
+	with utu.UCSTestSchool() as schoolenv:
+		with ucr_test.UCSTestConfigRegistry() as ucr:
+			school, oudn = schoolenv.create_ou(name_edudc=ucr.get('hostname'))
+			tea, tea_dn = schoolenv.create_user(school, is_teacher=True)
+			open_ldap_co = schoolenv.open_ldap_connection()
+
+			# importing computers
+			computers = Computers(open_ldap_co, school, 3, 2, 2)
+			created_computers = computers.create()
+			computers_dns = computers.get_dns(created_computers)
+
+			# computer rooms contains the created computers
+			room1 = Room(school, host_members=computers_dns)
+			schoolenv.create_computerroom(
+					school,
+					name=room1.name,
+					description=room1.description,
+					host_members=room1.host_members
+					)
+			umc_connection = UMCConnection(ucr.get('hostname'))
+			umc_connection.auth(tea, 'univention')
+
+			room1.aquire_room(umc_connection)
+			settings = room1.get_room_settings(umc_connection)
+
+			deadline = datetime.time.strftime(
+					(datetime.datetime.now() + datetime.timedelta(0,120)).time(), '%H:%M')
+			new_settings = {
+					'customRule':	'',
+					'printMode':	'none',
+					'internetRule': 'none',
+					'shareMode':	'home',
+					'period':		deadline
+					}
+
+			ula_length = len(ula.list())
+			time_out = 30 # seconds
+			room1.set_room_settings(umc_connection, new_settings)
+			for i in xrange(time_out, 0, -1):
+				print i
+				if len(ula.list()) > ula_length:
+					break
+				else:
+					time.sleep(1)
+					continue
+			
+			# Checking Atjobs list
+			for item in ula.list():
+				if deadline == datetime.time.strftime(item.execTime.time(),'%H:%M'):
+					print 'Atjob is added at(%r)' % deadline
+					break
+			else:
+				utils.fail('No Atjob added at the specified time (%r)' % deadline)
+
+			# Checking displayed time see Bug #35195
+			displayed_deadline = room1.get_room_settings(umc_connection)['period'][0:-3]
+			if deadline == displayed_deadline:
+				print 'Time dsiplayed (%r) is same as time at Atjobs (%r)' % (
+					displayed_deadline, deadline)
+			else:
+				utils.fail('Time dsiplayed (%r) is different from time at Atjobs (%r)' % (
+					displayed_deadline, deadline))
+			
+			print '*** Waiting 2 mins .............'
+			time.sleep(2 * 60 + 2)
+			current_settings = room1.get_room_settings(umc_connection)
+
+			# Time field is not considered in the comparision
+			current_settings['period'] = settings['period'] 
+			if current_settings != settings:
+				utils.fail('Current settings (%r) are not reset back after the time out, expected (%r)' % (
+					current_settings, settings))
+
+			# Checking Atjobs list
+			for item in ula.list():
+				if deadline == datetime.time.strftime(item.execTime.time(),'%H:%M'):
+					utils.fail('Atjob is not removed at time = %r' % deadline)
+					break
+			else:
+				print 'Atjob at (%r) is removed'  % deadline
+
+
+if __name__ == '__main__':
+	main()

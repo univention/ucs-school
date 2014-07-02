@@ -1,0 +1,154 @@
+#!/usr/share/ucs-test/runner python
+## desc: computerroom module share access settings
+## roles: [domaincontroller_master, domaincontroller_slave]
+## tags: [apptest, ucsschool]
+## exposure: dangerous
+## packages: [ucs-school-umc-computerroom]
+
+from essential.computerroom import Room, Computers
+from univention.lib.umc_connection import UMCConnection
+from univention.testing.network import NetworkRedirector
+import copy
+import datetime
+import subprocess
+import tempfile
+import univention.testing.ucr as ucr_test
+import univention.testing.ucsschool as utu
+import univention.testing.utils as utils
+
+def run_commands(cmdlist, argdict):
+	"""
+	Start all commands in cmdlist and replace formatstrings with arguments in argdict.
+	run_commands([['/bin/echo', '%(msg)s'], ['/bin/echo', 'World']], {'msg': 'Hello'})
+	"""
+	result_list = []
+	for cmd in cmdlist:
+		cmd = copy.deepcopy(cmd)
+		for i, val in enumerate(cmd):
+			cmd[i] = val % argdict
+		print '*** %r' % cmd
+		result = subprocess.call(cmd)
+		result_list.append(result)
+	return result_list
+
+def restart_samba():
+	print '.... Restarting Samba ....'
+	cmd_restart_samba = ['/etc/init.d/samba', 'restart']
+	run_commands([cmd_restart_samba],{})
+
+def check_home_read(user, ip_address, passwd='univention', expected_result=0):
+	print '.... Check home read ....'
+	cmd_read_home = ['smbclient', '//%(ip)s/%(username)s', '-U', '%(user)s', '-c', 'dir']
+	read = run_commands(
+			[cmd_read_home],
+			{
+				'ip':		ip_address,
+				'username':	user,
+				'user':		'{0}%{1}'.format(user,passwd)
+				}
+			)
+	if read[0] != expected_result:
+		utils.fail('Read home directory result (%r), expected (%r)' % (read[0], expected_result))
+
+def check_home_write(user, ip_address, passwd='univention', expected_result=0):
+	print '.... Check home write ....'
+	f = tempfile.NamedTemporaryFile(dir='/tmp')
+	cmd_write_home = ['smbclient', '//%(ip)s/%(username)s', '-U', '%(user)s', '-c', 'put %(filename)s']
+	write = run_commands(
+			[cmd_write_home],
+			{
+				'ip':		ip_address,
+				'username':	user,
+				'user':		'{0}%{1}'.format(user,passwd),
+				'filename': '%s %s' % (f.name, f.name.split('/')[-1])
+				}
+			)
+	f.close()
+	if write[0] != expected_result:
+		utils.fail('Write to home directory result (%r), expected (%r)' % (write[0], expected_result))
+
+def check_marktplatz_read(user, ip_address, passwd='univention', expected_result=0):
+	print '.... Check Marktplatz read ....'
+	cmd_read_marktplatz = ['smbclient', '//%(ip)s/Marktplatz', '-U', '%(user)s', '-c', 'dir']
+	read = run_commands(
+			[cmd_read_marktplatz],
+			{
+				'ip':	ip_address,
+				'user':	'{0}%{1}'.format(user,passwd)
+				}
+			)
+	if read[0] != expected_result:
+		utils.fail('Read Marktplatz directory result (%r), expected (%r)' % (read[0], expected_result))
+
+def check_marktplatz_write(user, ip_address, passwd='univention', expected_result=0):
+	print '.... Check Marktplatz write ....'
+	f = tempfile.NamedTemporaryFile(dir='/tmp')
+	cmd_write_marktplatz = ['smbclient', '//%(ip)s/Marktplatz', '-U', '%(user)s', '-c', 'put %(filename)s']
+	write = run_commands(
+			[cmd_write_marktplatz],
+			{
+				'ip':		ip_address,
+				'user':		'{0}%{1}'.format(user,passwd),
+				'filename': '%s %s' % (f.name, f.name.split('/')[-1])
+				}
+			)
+	f.close()
+	if write[0] != expected_result:
+		utils.fail('Write to Marktplatz directory result (%r), expected (%r)' % (write[0], expected_result))
+
+def check_share_access(user, ip_address, expected_home_result, expected_marktplatz_result):
+	restart_samba()
+	check_home_read(user, ip_address, expected_result=expected_home_result)
+	check_home_write(user, ip_address, expected_result=expected_home_result)
+	check_marktplatz_read(user, ip_address, expected_result=expected_marktplatz_result)
+	check_marktplatz_write(user, ip_address, expected_result=expected_marktplatz_result)
+
+def main():
+	with utu.UCSTestSchool() as schoolenv:
+		with ucr_test.UCSTestConfigRegistry() as ucr:
+			with NetworkRedirector() as nethelper:
+				school, oudn = schoolenv.create_ou(name_edudc=ucr.get('hostname'))
+				tea, tea_dn = schoolenv.create_user(school, is_teacher=True)
+				open_ldap_co = schoolenv.open_ldap_connection()
+
+				# importing random 9 computers
+				computers = Computers(open_ldap_co, school, 3, 2, 2)
+				created_computers = computers.create()
+				computers_dns = computers.get_dns(created_computers)
+				computers_ips = computers.get_ips(created_computers)
+
+				# computer rooms contains the created computers
+				room1 = Room(school, host_members=computers_dns)
+				schoolenv.create_computerroom(
+						school,
+						name=room1.name,
+						description=room1.description,
+						host_members=room1.host_members
+						)
+				# preparing the network loop
+				nethelper.add_loop(computers_ips[0], computers_ips[1])
+
+				umc_connection = UMCConnection(ucr.get('hostname'))
+				umc_connection.auth(tea, 'univention')
+
+				room1.aquire_room(umc_connection)
+				print room1.get_room_settings(umc_connection)
+
+				check_share_access(tea, computers_ips[0], 0, 0)
+
+				deadline = datetime.time.strftime(
+					(datetime.datetime.now() + datetime.timedelta(0,120)).time(), '%H:%M')
+				new_settings = {
+						'customRule':	'',
+						'printMode':	'none',
+						'internetRule':	'none',
+						'shareMode':	'home',
+						'period':		deadline
+						}
+				room1.set_room_settings(umc_connection, new_settings)
+
+				check_share_access(tea, computers_ips[0], 0, 1)
+
+
+if __name__ == '__main__':
+	main()
