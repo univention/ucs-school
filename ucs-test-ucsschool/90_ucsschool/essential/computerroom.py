@@ -1,41 +1,29 @@
 
 from essential.importcomputers import Windows, MacOS, IPManagedClient
+from essential.internetrule import InternetRule
 from ucsschool.lib.models import IPComputer as IPComputerLib
 from ucsschool.lib.models import MacComputer as MacComputerLib
 from ucsschool.lib.models import WindowsComputer as WindowsComputerLib
+import essential.ucsschoo as utu
 import re
 import univention.testing.strings as uts
-import univention.testing.ucsschool as utu
 import univention.testing.utils as utils
 
 class ComputerImport(object):
-	def __init__(self, school=None, nr_windows=0, nr_macos=0, nr_ipmanagedclient=0):
-
+	def __init__(self, school=None, nr_windows=1, nr_macos=0, nr_ipmanagedclient=0):
 		self.school = school if school else uts.random_name()
-
 		self.windows = []
 		for i in range(0, nr_windows):
 			self.windows.append(Windows(self.school))
-		self.windows[1].set_inventorynumbers()
-		self.windows[2].set_zone_verwaltng()
-
 		self.memberservers = []
-
 		self.macos = []
 		for i in range(0, nr_macos):
 			self.macos.append(MacOS(self.school))
-		self.macos[0].set_inventorynumbers()
-		self.macos[1].set_zone_edukativ()
-
 		self.ipmanagedclients = []
 		for i in range(0, nr_ipmanagedclient):
 			self.ipmanagedclients.append(IPManagedClient(self.school))
-		self.ipmanagedclients[0].set_inventorynumbers()
-		self.ipmanagedclients[0].set_zone_edukativ()
-		self.ipmanagedclients[1].set_zone_edukativ()
 
 	def run_import(self, open_ldap_co):
-
 		def _set_kwargs(computer):
 			kwargs = {
 					'school': computer.school,
@@ -47,7 +35,6 @@ class ComputerImport(object):
 					'zone': computer.zone,
 			}
 			return kwargs
-
 		for computer in self.windows:
 			kwargs = _set_kwargs(computer)
 			WindowsComputerLib(**kwargs).create(open_ldap_co)
@@ -124,13 +111,36 @@ class Room(object):
 		return reqResult
 
 	def check_room_settings(self, umc_connection, expected_settings):
-		current_settings = self.get_settings(umc_connection)
-		if current_settings != expected_settings:
+		print 'Checking computerroom (%s) settings ...........' % self.name
+		current_settings = self.get_room_settings(umc_connection)
+		d = dict(expected_settings) # copy dictionary
+		d['period'] = current_settings['period']
+		if current_settings != d:
 			utils.fail('Current settings (%r) do not match expected ones (%r)' % (
-				current_settings, expected_settings))
+				current_settings, d))
+
+	def get_internetRules(self, umc_connection):
+		print 'Executing command: computerroom/internetrules'
+		reqResult = umc_connection.request('computerroom/internetrules')
+		return reqResult
+
+	def check_internetRules(self, umc_connection):
+		"""Check if the fetched internetrules match the already defined ones
+		in define internet module.
+		:param umc_connection: umc connection
+		:type umc_connection: UMCConnection(uce.get('hostname'))
+		"""
+		rule = InternetRule()
+		current_rules = rule.allRules()
+		internetRules = self.get_internetRules(umc_connection)
+		if (sorted(current_rules)!=sorted(internetRules)):
+			utils.fail('Fetched internetrules %r, do not match the existing ones %r' % (
+				internetRules, current_rules))
+
+
 
 class Computers(object):
-	def __init__(self, open_ldap_co, school, nr_windows=0, nr_macos=0, nr_ipmanagedclient=0):
+	def __init__(self, open_ldap_co, school, nr_windows=1, nr_macos=0, nr_ipmanagedclient=0):
 		self.open_ldap_co = open_ldap_co
 		self.school = school
 		self.nr_windows = nr_windows
@@ -138,7 +148,6 @@ class Computers(object):
 		self.nr_ipmanagedclient = nr_ipmanagedclient
 
 	def create(self):
-
 		computer_import = ComputerImport(
 				self.school,
 				nr_windows=self.nr_windows,
@@ -156,17 +165,17 @@ class Computers(object):
 		for computer in computer_import.ipmanagedclients:
 			created_computers.append(computer)
 
-		return created_computers
+		return sorted(created_computers)
 
 	def get_dns(self, computers):
 		dns = []
-		for computer in computers:
+		for computer in sorted(computers):
 			dns.append(computer.dn)
 		return dns
 
 	def get_ips(self, computers):
 		ips = []
-		for computer in computers:
+		for computer in sorted(computers):
 			ips.append(computer.ip)
 		return ips
 
