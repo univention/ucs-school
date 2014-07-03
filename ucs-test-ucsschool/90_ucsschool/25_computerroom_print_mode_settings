@@ -11,11 +11,11 @@ from univention.lib.umc_connection import UMCConnection
 from univention.testing.network import NetworkRedirector
 import copy
 import datetime
-import essential.ucsschoo as utu
 import subprocess
 import tempfile
 import univention.testing.strings as uts
 import univention.testing.ucr as ucr_test
+import univention.testing.ucsschool as utu
 import univention.testing.utils as utils
 
 def add_printer(name, school, hostname, domainname, ldap_base):
