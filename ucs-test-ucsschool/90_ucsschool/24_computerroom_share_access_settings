@@ -10,10 +10,10 @@ from univention.lib.umc_connection import UMCConnection
 from univention.testing.network import NetworkRedirector
 import copy
 import datetime
+import essential.ucsschoo as utu
 import subprocess
 import tempfile
 import univention.testing.ucr as ucr_test
-import univention.testing.ucsschool as utu
 import univention.testing.utils as utils
 
 def run_commands(cmdlist, argdict):
@@ -112,7 +112,7 @@ def main():
 				open_ldap_co = schoolenv.open_ldap_connection()
 
 				# importing random 9 computers
-				computers = Computers(open_ldap_co, school, 3, 2, 2)
+				computers = Computers(open_ldap_co, school, 2, 0, 0)
 				created_computers = computers.create()
 				computers_dns = computers.get_dns(created_computers)
 				computers_ips = computers.get_ips(created_computers)
