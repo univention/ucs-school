@@ -8,10 +8,10 @@
 from essential.computerroom import Room, Computers
 from univention.lib.umc_connection import UMCConnection
 import datetime
+import essential.ucsschoo as utu
 import time
 import univention.lib.atjobs as ula
 import univention.testing.ucr as ucr_test
-import univention.testing.ucsschool as utu
 import univention.testing.utils as utils
 
 
@@ -23,7 +23,7 @@ def main():
 			open_ldap_co = schoolenv.open_ldap_connection()
 
 			# importing computers
-			computers = Computers(open_ldap_co, school, 3, 2, 2)
+			computers = Computers(open_ldap_co, school, 2, 0, 0)
 			created_computers = computers.create()
 			computers_dns = computers.get_dns(created_computers)
 
@@ -70,7 +70,7 @@ def main():
 			else:
 				utils.fail('No Atjob added at the specified time (%r)' % deadline)
 
-			# Checking displayed time see Bug #35195
+			#TODO FAILS because of Bug #35195
 			displayed_deadline = room1.get_room_settings(umc_connection)['period'][0:-3]
 			if deadline == displayed_deadline:
 				print 'Time dsiplayed (%r) is same as time at Atjobs (%r)' % (
@@ -79,7 +79,7 @@ def main():
 				utils.fail('Time dsiplayed (%r) is different from time at Atjobs (%r)' % (
 					displayed_deadline, deadline))
 			
-			print '*** Waiting 2 mins .............'
+			print '*** Waiting 2 mins for settings to expire.............'
 			time.sleep(2 * 60 + 2)
 			current_settings = room1.get_room_settings(umc_connection)
 
