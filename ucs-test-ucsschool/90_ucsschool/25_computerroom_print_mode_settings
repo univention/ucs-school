@@ -1,0 +1,183 @@
+#!/usr/share/ucs-test/runner python
+# coding=utf-8
+## desc: computerroom module print mode settings
+## roles: [domaincontroller_master, domaincontroller_slave]
+## tags: [apptest, ucsschool]
+## exposure: dangerous
+## packages: [ucs-school-umc-computerroom]
+
+from essential.computerroom import Room, Computers
+from univention.lib.umc_connection import UMCConnection
+from univention.testing.network import NetworkRedirector
+import copy
+import datetime
+import essential.ucsschoo as utu
+import subprocess
+import tempfile
+import univention.testing.strings as uts
+import univention.testing.ucr as ucr_test
+import univention.testing.utils as utils
+
+def add_printer(name, school, hostname, domainname, ldap_base):
+	cmd_add_printer = [
+			'udm', 'shares/printer', 'create',
+			'--position', 'cn=printers,ou=%(school)s,%(ldap_base)s',
+			'--set', 'name=%(name)s',
+			'--set', 'spoolHost=%(hostname)s.%(domainname)s',
+			'--set', 'uri="file:// /tmp/%(name)s.printer"',
+			'--set', 'model=None',
+			'--binddn', 'uid=Administrator,cn=users,%(ldap_base)s',
+			'--bindpwd', 'univention'
+			]
+	print run_commands(
+			[cmd_add_printer],{
+				'name':	name,
+				'school': school,
+				'hostname':	hostname,
+				'domainname': domainname,
+				'ldap_base': ldap_base
+				}
+			)
+
+def remove_printer(name, school, ldap_base):
+	cmd_remove_printer = [
+			'udm', 'shares/printer', 'remove',
+			'--dn', 'cn=%(name)s,cn=printers,ou=%(school)s,%(ldap_base)s'
+			]
+	print run_commands(
+			[cmd_remove_printer],{
+				'name':	name,
+				'school': school,
+				'ldap_base': ldap_base
+				}
+			)
+
+def run_commands(cmdlist, argdict):
+	"""
+	Start all commands in cmdlist and replace formatstrings with arguments in argdict.
+	run_commands([['/bin/echo', '%(msg)s'], ['/bin/echo', 'World']], {'msg': 'Hello'})
+	"""
+	result_list = []
+	for cmd in cmdlist:
+		cmd = copy.deepcopy(cmd)
+		for i, val in enumerate(cmd):
+			cmd[i] = val % argdict
+		print '*** %r' % cmd
+		result = subprocess.call(cmd)
+		result_list.append(result)
+	return result_list
+
+def check_smb_print(ip, printer, user, expected_result):
+	print '-' * 60
+	f = tempfile.NamedTemporaryFile(dir='/tmp')
+	cmd_print = [
+			'smbclient', '//%(ip)s/%(printer)s',
+			'-U', '%(user)s',
+			'-c', 'print %(filename)s'
+			]
+	result = run_commands(
+			[cmd_print],{
+				'ip':ip,
+				'printer': printer,
+				'user':'{0}%{1}'.format(user, 'univention'),
+				'filename': f.name
+				}
+			)[0]
+	f.close()
+	if result != expected_result:
+		utils.fail('smbclient print result (%r), expected (%r)' % (result, expected_result))
+
+def restart_samba():
+	print '.... Restarting Samba ....'
+	cmd_restart_samba = ['/etc/init.d/samba', 'restart']
+	run_commands([cmd_restart_samba],{})
+
+
+def main():
+	with utu.UCSTestSchool() as schoolenv:
+		with ucr_test.UCSTestConfigRegistry() as ucr:
+			with NetworkRedirector() as nethelper:
+				school, oudn = schoolenv.create_ou(name_edudc=ucr.get('hostname'))
+				tea, tea_dn = schoolenv.create_user(school, is_teacher=True)
+				open_ldap_co = schoolenv.open_ldap_connection()
+				utils.wait_for_replication_and_postrun()
+
+				# importing computers
+				computers = Computers(open_ldap_co, school, 3, 2, 2)
+				created_computers = computers.create()
+				computers_dns = computers.get_dns(created_computers)
+				computers_ips = computers.get_ips(created_computers)
+
+				# computer rooms contains the created computers
+				room1 = Room(school, host_members=computers_dns)
+				schoolenv.create_computerroom(
+						school,
+						name=room1.name,
+						description=room1.description,
+						host_members=room1.host_members[1]
+						)
+				umc_connection = UMCConnection(ucr.get('hostname'))
+				umc_connection.auth(tea, 'univention')
+				room1.aquire_room(umc_connection)
+
+				# preparing the network loop
+				nethelper.add_loop(computers_ips[0], computers_ips[1])
+
+				printer = uts.random_string()
+				try:
+					add_printer(
+							printer,
+							school,
+							ucr.get('hostname'),
+							ucr.get('domainname'),
+							ucr.get('ldap/base')
+							)
+					deadline = datetime.time.strftime(
+						(datetime.datetime.now() + datetime.timedelta(0,120)).time(), '%H:%M')
+					new_settings = {
+							'customRule':	'',
+							'printMode':	'default',
+							'internetRule': 'Kein Internet',
+							'shareMode':	'all',
+							'period':		deadline
+							}
+					room1.set_room_settings(umc_connection, new_settings)
+					restart_samba()
+					check_smb_print(computers_ips[0], printer, tea, 1)
+					check_smb_print(computers_ips[0], 'PDFDrucker', tea, 0)
+					# import pdb; pdb.set_trace()
+
+					deadline = datetime.time.strftime(
+						(datetime.datetime.now() + datetime.timedelta(0,180)).time(), '%H:%M')
+					new_settings = {
+							'customRule':	'',
+							'printMode':	'all',
+							'internetRule': 'Unbeschränkt',
+							'shareMode':	'all',
+							'period':		deadline
+							}
+					room1.set_room_settings(umc_connection, new_settings)
+					restart_samba()
+					check_smb_print(computers_ips[0], printer, tea, 0)
+					check_smb_print(computers_ips[0], 'PDFDrucker', tea, 0)
+
+					deadline = datetime.time.strftime(
+						(datetime.datetime.now() + datetime.timedelta(0,240)).time(), '%H:%M')
+					new_settings = {
+							'customRule':	'',
+							'printMode':	'none',
+							'internetRule': 'Kein Internet',
+							'shareMode':	'all',
+							'period':		deadline
+							}
+					room1.set_room_settings(umc_connection, new_settings)
+					restart_samba()
+					check_smb_print(computers_ips[0], printer, tea, 1)
+					check_smb_print(computers_ips[0], 'PDFDrucker', tea, 1)
+
+				finally:
+					remove_printer(printer, school, ucr.get('ldap/base'))
+
+
+if __name__ == '__main__':
+	main()
