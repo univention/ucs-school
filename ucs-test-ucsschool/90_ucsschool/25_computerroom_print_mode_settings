@@ -137,7 +137,7 @@ def main():
 					new_settings = {
 							'customRule':	'',
 							'printMode':	'default',
-							'internetRule': 'Kein Internet',
+							'internetRule': 'Kein Internet', #TODO workaround for bug #34632
 							'shareMode':	'all',
 							'period':		deadline
 							}
@@ -152,7 +152,7 @@ def main():
 					new_settings = {
 							'customRule':	'',
 							'printMode':	'all',
-							'internetRule': 'Unbeschränkt',
+							'internetRule': 'Unbeschränkt', #TODO workaround for bug #34632
 							'shareMode':	'all',
 							'period':		deadline
 							}
@@ -166,7 +166,7 @@ def main():
 					new_settings = {
 							'customRule':	'',
 							'printMode':	'none',
-							'internetRule': 'Kein Internet',
+							'internetRule': 'Kein Internet', #TODO workaround for bug #34632
 							'shareMode':	'all',
 							'period':		deadline
 							}
