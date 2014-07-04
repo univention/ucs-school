@@ -1,0 +1,115 @@
+#!/usr/share/ucs-test/runner python
+# coding=utf-8
+## desc: computerroom module internetrules settings
+## roles: [domaincontroller_master, domaincontroller_slave]
+## tags: [apptest, ucsschool]
+## exposure: dangerous
+## packages: [ucs-school-umc-computerroom]
+
+from essential.computerroom import Room, Computers
+from essential.internetrule import InternetRule
+from essential.simplecurl import SimpleCurl
+from essential.workgroup import Workgroup
+from univention.lib.umc_connection import UMCConnection
+from univention.testing.network import NetworkRedirector
+import datetime
+import univention.testing.ucr as ucr_test
+import univention.testing.ucsschool as utu
+import univention.testing.utils as utils
+
+def checK_internetrules(ucr, user, proxy, custom_domain, global_domains, expected_rule):
+	# Getting the redirection page when blocked
+	banPage = get_banpage(ucr)
+	localCurl = SimpleCurl(proxy=proxy, username=user)
+
+	rule_in_control = None
+	if expected_rule=='Kein Internet' and localCurl.getPage('univention.de') == banPage:
+		rule_in_control = expected_rule
+	if expected_rule=='Unbeschränkt' and localCurl.getPage('gmx.de') != banPage:
+		rule_in_control = expected_rule
+	if expected_rule == 'custom' and localCurl.getPage(custom_domain) != banPage:
+		rule_in_control = expected_rule
+	if expected_rule == 'none':
+		if all(localCurl.getPage(dom) != banPage for dom in  global_domains):
+			rule_in_control = expected_rule
+
+	localCurl.close()
+	print 'RULE IN CONTROL = ', rule_in_control
+	if rule_in_control != expected_rule:
+		utils.fail('rule in control (%s) does not match the expected one (%s)' % (
+			rule_in_control, expected_rule))
+
+def get_banpage(ucr):
+	# Getting the redirection page when blocked
+	adminCurl = SimpleCurl(proxy=ucr.get('hostname'))
+	redirUri = ucr.get('proxy/filter/redirecttarget')
+	banPage = adminCurl.getPage(redirUri)
+	adminCurl.close()
+	return banPage
+
+def main():
+	with utu.UCSTestSchool() as schoolenv:
+		with ucr_test.UCSTestConfigRegistry() as ucr:
+			with NetworkRedirector() as nethelper:
+				school, oudn = schoolenv.create_ou(name_edudc=ucr.get('hostname'))
+				tea, tea_dn = schoolenv.create_user(school, is_teacher=True)
+				open_ldap_co = schoolenv.open_ldap_connection()
+				utils.wait_for_replication_and_postrun()
+
+				# importing computers
+				computers = Computers(open_ldap_co, school, 2, 0, 0)
+				created_computers = computers.create()
+				computers_dns = computers.get_dns(created_computers)
+				computers_ips = computers.get_ips(created_computers)
+
+				# computer rooms contains the created computers
+				room1 = Room(school, host_members=computers_dns)
+				schoolenv.create_computerroom(
+						school,
+						name=room1.name,
+						description=room1.description,
+						host_members=room1.host_members[1]
+						)
+				# preparing the network loop
+				nethelper.add_loop(computers_ips[0], computers_ips[1])
+
+				umc_connection = UMCConnection(ucr.get('hostname'))
+				umc_connection.auth(tea, 'univention')
+
+				# Create new workgroup and assign new internet rule to it
+				group = Workgroup(school, members=[tea_dn])
+				global_domains = ['univention.de', 'google.de']
+				rule = InternetRule(typ='whitelist',domains=global_domains)
+				rule.define()
+				rule.assign(school, group.name, 'workgroup')
+
+				room1.check_internetRules(umc_connection)
+				room1.aquire_room(umc_connection)
+
+				# testing loop
+				t = 120
+				rules = ['none', 'Kein Internet', 'Unbeschränkt', 'custom']
+				for rule in rules:
+					print '-' * 60
+					deadline = datetime.time.strftime(
+							(datetime.datetime.now() + datetime.timedelta(0,t)).time(), '%H:%M')
+					t += 60
+					new_settings = {
+							'customRule':	'univention.de',
+							'printMode':	'default',
+							'internetRule': rule,
+							'shareMode':	'all',
+							'period':	deadline
+							}
+					room1.set_room_settings(umc_connection, new_settings)
+					checK_internetrules(
+							ucr,
+							tea,
+							computers_ips[0],
+							'univention.de',
+							global_domains,
+							rule)
+
+
+if __name__ == '__main__':
+	main()
