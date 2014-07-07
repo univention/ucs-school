@@ -1,4 +1,5 @@
 
+## -*- coding: utf-8 -*-
 from essential.importcomputers import Windows, MacOS, IPManagedClient
 from essential.internetrule import InternetRule
 from ucsschool.lib.models import IPComputer as IPComputerLib
@@ -8,6 +9,15 @@ import essential.ucsschoo as utu
 import re
 import univention.testing.strings as uts
 import univention.testing.utils as utils
+import univention.lib.atjobs as ula
+import datetime
+import time
+import copy
+import subprocess
+import tempfile
+import univention.testing.ucr as ucr_test
+from essential.simplecurl import SimpleCurl
+from essential.workgroup import Workgroup
 
 class ComputerImport(object):
 	def __init__(self, school=None, nr_windows=1, nr_macos=0, nr_ipmanagedclient=0):
@@ -137,6 +147,361 @@ class Room(object):
 			utils.fail('Fetched internetrules %r, do not match the existing ones %r' % (
 				internetRules, current_rules))
 
+	def check_atjobs(self, period, expected_existance):
+		for item in ula.list():
+			if period == datetime.time.strftime(item.execTime.time(),'%H:%M'):
+				exist = True
+			else:
+				exist = False
+		if exist == expected_existance:
+			print 'Atjob result at(%r) existance is expected (%r)' % (period, exist)
+		else:
+			utils.fail('Atjob result at(%r) existance is not expected (%r)' % (period, exist))
+
+	def check_displayTime(self, umc_connection, period):
+		displayed_period = self.get_room_settings(umc_connection)['period'][0:-3]
+		if period == displayed_period:
+			print 'Time dsiplayed (%r) is same as time at Atjobs (%r)' % (
+				displayed_period, period)
+		else:
+			utils.fail('Time dsiplayed (%r) is different from time at Atjobs (%r)' % (
+				displayed_period, period))
+
+	def test_time_settings(self, umc_connection):
+		self.aquire_room(umc_connection)
+		settings = self.get_room_settings(umc_connection)
+		period = datetime.time.strftime(
+				(datetime.datetime.now() + datetime.timedelta(0,120)).time(), '%H:%M')
+		new_settings = {
+				'customRule':	'',
+				'printMode':	'none',
+				'internetRule': 'none',
+				'shareMode':	'home',
+				'period':		period
+				}
+
+		ula_length = len(ula.list())
+		time_out = 30 # seconds
+		self.set_room_settings(umc_connection, new_settings)
+		for i in xrange(time_out, 0, -1):
+			print i
+			if len(ula.list()) > ula_length:
+				break
+			else:
+				time.sleep(1)
+				continue
+
+		# Checking Atjobs list
+		self.check_atjobs(period, True)
+
+		#TODO FAILS because of Bug #35195
+		self.check_displayTime(umc_connection, period)
+
+		print '*** Waiting 2 mins for settings to expire.............'
+		time.sleep(2 * 60 + 2)
+		current_settings = self.get_room_settings(umc_connection)
+
+		# Time field is not considered in the comparision
+		current_settings['period'] = settings['period']
+		if current_settings != settings:
+			utils.fail('Current settings (%r) are not reset back after the time out, expected (%r)' % (
+				current_settings, settings))
+
+		# Checking Atjobs list
+		self.check_atjobs(period, False)
+
+
+	def check_home_read(self, user, ip_address, passwd='univention', expected_result=0):
+		print '.... Check home read ....'
+		cmd_read_home = ['smbclient', '//%(ip)s/%(username)s', '-U', '%(user)s', '-c', 'dir']
+		read = run_commands(
+				[cmd_read_home],
+				{
+					'ip':		ip_address,
+					'username':	user,
+					'user':		'{0}%{1}'.format(user,passwd)
+					}
+				)
+		if read[0] != expected_result:
+			utils.fail('Read home directory result (%r), expected (%r)' % (read[0], expected_result))
+
+	def check_home_write(self, user, ip_address, passwd='univention', expected_result=0):
+		print '.... Check home write ....'
+		f = tempfile.NamedTemporaryFile(dir='/tmp')
+		cmd_write_home = ['smbclient', '//%(ip)s/%(username)s', '-U', '%(user)s', '-c', 'put %(filename)s']
+		write = run_commands(
+				[cmd_write_home],
+				{
+					'ip':		ip_address,
+					'username':	user,
+					'user':		'{0}%{1}'.format(user,passwd),
+					'filename': '%s %s' % (f.name, f.name.split('/')[-1])
+					}
+				)
+		f.close()
+		if write[0] != expected_result:
+			utils.fail('Write to home directory result (%r), expected (%r)' % (write[0], expected_result))
+
+	def check_marktplatz_read(self, user, ip_address, passwd='univention', expected_result=0):
+		print '.... Check Marktplatz read ....'
+		cmd_read_marktplatz = ['smbclient', '//%(ip)s/Marktplatz', '-U', '%(user)s', '-c', 'dir']
+		read = run_commands(
+				[cmd_read_marktplatz],
+				{
+					'ip':	ip_address,
+					'user':	'{0}%{1}'.format(user,passwd)
+					}
+				)
+		if read[0] != expected_result:
+			utils.fail('Read Marktplatz directory result (%r), expected (%r)' % (read[0], expected_result))
+
+	def check_marktplatz_write(self, user, ip_address, passwd='univention', expected_result=0):
+		print '.... Check Marktplatz write ....'
+		f = tempfile.NamedTemporaryFile(dir='/tmp')
+		cmd_write_marktplatz = ['smbclient', '//%(ip)s/Marktplatz', '-U', '%(user)s', '-c', 'put %(filename)s']
+		write = run_commands(
+				[cmd_write_marktplatz],
+				{
+					'ip':		ip_address,
+					'user':		'{0}%{1}'.format(user,passwd),
+					'filename': '%s %s' % (f.name, f.name.split('/')[-1])
+					}
+				)
+		f.close()
+		if write[0] != expected_result:
+			utils.fail('Write to Marktplatz directory result (%r), expected (%r)' % (write[0], expected_result))
+
+	def check_share_access(self, user, ip_address, expected_home_result, expected_marktplatz_result):
+		restart_samba()
+		self.check_home_read(user, ip_address, expected_result=expected_home_result)
+		self.check_home_write(user, ip_address, expected_result=expected_home_result)
+		self.check_marktplatz_read(user, ip_address, expected_result=expected_marktplatz_result)
+		self.check_marktplatz_write(user, ip_address, expected_result=expected_marktplatz_result)
+
+	def test_share_access_settings(self, user, ip_address, umc_connection):
+		self.aquire_room(umc_connection)
+		print self.get_room_settings(umc_connection)
+
+		self.check_share_access(user, ip_address, 0, 0)
+
+		period = datetime.time.strftime(
+			(datetime.datetime.now() + datetime.timedelta(0,120)).time(), '%H:%M')
+		new_settings = {
+				'customRule':	'',
+				'printMode':	'none',
+				'internetRule':	'none',
+				'shareMode':	'home',
+				'period':	period
+				}
+		self.set_room_settings(umc_connection, new_settings)
+
+		self.check_share_access(user, ip_address, 0, 1)
+
+
+	def check_smb_print(self, ip, printer, user, expected_result):
+		print '-' * 60
+		f = tempfile.NamedTemporaryFile(dir='/tmp')
+		cmd_print = [
+				'smbclient', '//%(ip)s/%(printer)s',
+				'-U', '%(user)s',
+				'-c', 'print %(filename)s'
+				]
+		result = run_commands(
+				[cmd_print],{
+					'ip':ip,
+					'printer': printer,
+					'user':'{0}%{1}'.format(user, 'univention'),
+					'filename': f.name
+					}
+				)[0]
+		f.close()
+		if result != expected_result:
+			utils.fail('smbclient print result (%r), expected (%r)' % (result, expected_result))
+
+	def test_print_mode_settings(self, school, user, ip_address, umc_connection):
+		ucr = ucr_test.UCSTestConfigRegistry()
+		ucr.load()
+		self.aquire_room(umc_connection)
+
+		printer = uts.random_string()
+		try:
+			add_printer(
+					printer,
+					school,
+					ucr.get('hostname'),
+					ucr.get('domainname'),
+					ucr.get('ldap/base')
+					)
+			period = datetime.time.strftime(
+				(datetime.datetime.now() + datetime.timedelta(0,120)).time(), '%H:%M')
+			new_settings = {
+					'customRule':	'',
+					'printMode':	'default',
+					'internetRule': 'Kein Internet',
+					'shareMode':	'all',
+					'period':	period
+					}
+			self.set_room_settings(umc_connection, new_settings)
+			restart_samba()
+			self.check_smb_print(ip_address, printer, user, 1) #TODO FAILS because of Bug #35076
+			self.check_smb_print(ip_address, 'PDFDrucker', user, 0)
+
+			period = datetime.time.strftime(
+				(datetime.datetime.now() + datetime.timedelta(0,180)).time(), '%H:%M')
+			new_settings = {
+					'customRule':	'',
+					'printMode':	'all',
+					'internetRule': 'Unbeschränkt',
+					'shareMode':	'all',
+					'period':		period
+					}
+			self.set_room_settings(umc_connection, new_settings)
+			restart_samba()
+			self.check_smb_print(ip_address, printer, user, 0)
+			self.check_smb_print(ip_address, 'PDFDrucker', user, 0)
+
+			period = datetime.time.strftime(
+				(datetime.datetime.now() + datetime.timedelta(0,240)).time(), '%H:%M')
+			new_settings = {
+					'customRule':	'',
+					'printMode':	'none',
+					'internetRule': 'Kein Internet',
+					'shareMode':	'all',
+					'period':		period
+					}
+			self.set_room_settings(umc_connection, new_settings)
+			restart_samba()
+			self.check_smb_print(ip_address, printer, user, 1)
+			self.check_smb_print(ip_address, 'PDFDrucker', user, 1)
+
+		finally:
+			remove_printer(printer, school, ucr.get('ldap/base'))
+
+	def checK_internetrules(self, ucr, user, proxy, custom_domain, global_domains, expected_rule):
+		# Getting the redirection page when blocked
+		banPage = get_banpage(ucr)
+		localCurl = SimpleCurl(proxy=proxy, username=user)
+
+		rule_in_control = None
+		if expected_rule=='Kein Internet' and localCurl.getPage('univention.de') == banPage:
+			rule_in_control = expected_rule
+		if expected_rule=='Unbeschränkt' and localCurl.getPage('gmx.de') != banPage:
+			rule_in_control = expected_rule
+		if expected_rule == 'custom' and localCurl.getPage(custom_domain) != banPage:
+			rule_in_control = expected_rule
+		if expected_rule == 'none':
+			if all(localCurl.getPage(dom) != banPage for dom in  global_domains):
+				rule_in_control = expected_rule
+
+		localCurl.close()
+		print 'RULE IN CONTROL = ', rule_in_control
+		if rule_in_control != expected_rule:
+			utils.fail('rule in control (%s) does not match the expected one (%s)' % (
+				rule_in_control, expected_rule))
+
+	def test_internetrules_settings(self, school,user, user_dn, ip_address, ucr, umc_connection):
+		# Create new workgroup and assign new internet rule to it
+		group = Workgroup(school, members=[user_dn])
+		global_domains = ['univention.de', 'google.de']
+		rule = InternetRule(typ='whitelist',domains=global_domains)
+		rule.define()
+		rule.assign(school, group.name, 'workgroup')
+
+		self.check_internetRules(umc_connection)
+		self.aquire_room(umc_connection)
+
+		# testing loop
+		t = 120
+		rules = ['none', 'Kein Internet', 'Unbeschränkt', 'custom']
+		for rule in rules:
+			print '-' * 60
+			period = datetime.time.strftime(
+					(datetime.datetime.now() + datetime.timedelta(0,t)).time(), '%H:%M')
+			t += 60
+			new_settings = {
+					'customRule':	'univention.de',
+					'printMode':	'default',
+					'internetRule':	rule,
+					'shareMode':	'all',
+					'period':	period
+					}
+			self.set_room_settings(umc_connection, new_settings)
+			self.checK_internetrules(
+					ucr,
+					user,
+					ip_address,
+					'univention.de',
+					global_domains,
+					rule)
+		group.remove()
+
+	def test_all(self, school, user, user_dn, ip_address, ucr, umc_connection):
+		self.test_time_settings(umc_connection)
+		self.test_share_access_settings(user, ip_address, umc_connection)
+		self.test_print_mode_settings(school, user, ip_address, umc_connection)
+		self.test_internetrules_settings(school, user, user_dn, ip_address, ucr, umc_connection)
+
+def get_banpage(ucr):
+	# Getting the redirection page when blocked
+	adminCurl = SimpleCurl(proxy=ucr.get('hostname'))
+	redirUri = ucr.get('proxy/filter/redirecttarget')
+	banPage = adminCurl.getPage(redirUri)
+	adminCurl.close()
+	return banPage
+
+def run_commands(cmdlist, argdict):
+	"""
+	Start all commands in cmdlist and replace formatstrings with arguments in argdict.
+	run_commands([['/bin/echo', '%(msg)s'], ['/bin/echo', 'World']], {'msg': 'Hello'})
+	"""
+	result_list = []
+	for cmd in cmdlist:
+		cmd = copy.deepcopy(cmd)
+		for i, val in enumerate(cmd):
+			cmd[i] = val % argdict
+		print '*** %r' % cmd
+		result = subprocess.call(cmd)
+		result_list.append(result)
+	return result_list
+
+def restart_samba():
+	print '.... Restarting Samba ....'
+	cmd_restart_samba = ['/etc/init.d/samba', 'restart']
+	run_commands([cmd_restart_samba],{})
+
+def add_printer(name, school, hostname, domainname, ldap_base):
+	cmd_add_printer = [
+			'udm', 'shares/printer', 'create',
+			'--position', 'cn=printers,ou=%(school)s,%(ldap_base)s',
+			'--set', 'name=%(name)s',
+			'--set', 'spoolHost=%(hostname)s.%(domainname)s',
+			'--set', 'uri="file:// /tmp/%(name)s.printer"',
+			'--set', 'model=None',
+			'--binddn', 'uid=Administrator,cn=users,%(ldap_base)s',
+			'--bindpwd', 'univention'
+			]
+	print run_commands(
+			[cmd_add_printer],{
+				'name':	name,
+				'school': school,
+				'hostname':	hostname,
+				'domainname': domainname,
+				'ldap_base': ldap_base
+				}
+			)
+
+def remove_printer(name, school, ldap_base):
+	cmd_remove_printer = [
+			'udm', 'shares/printer', 'remove',
+			'--dn', 'cn=%(name)s,cn=printers,ou=%(school)s,%(ldap_base)s'
+			]
+	print run_commands(
+			[cmd_remove_printer],{
+				'name':	name,
+				'school': school,
+				'ldap_base': ldap_base
+				}
+			)
 
 
 class Computers(object):
