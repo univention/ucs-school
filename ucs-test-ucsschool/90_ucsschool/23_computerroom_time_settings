@@ -7,32 +7,8 @@
 
 from essential.computerroom import Room, Computers
 from univention.lib.umc_connection import UMCConnection
-import datetime
-import time
-import univention.lib.atjobs as ula
 import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool as utu
-import univention.testing.utils as utils
-
-def check_atjobs(period, expected_existance):
-	for item in ula.list():
-		if period == datetime.time.strftime(item.execTime.time(),'%H:%M'):
-			exist = True
-		else:
-			exist = False
-	if exist == expected_existance:
-		print 'Atjob result at(%r) existance is expected (%r)' % (period, exist)
-	else:
-		utils.fail('Atjob result at(%r) existance is not expected (%r)' % (period, exist))
-
-def check_displayTime(room, umc_connection, period):
-	displayed_period = room.get_room_settings(umc_connection)['period'][0:-3]
-	if period == displayed_period:
-		print 'Time dsiplayed (%r) is same as time at Atjobs (%r)' % (
-			displayed_period, period)
-	else:
-		utils.fail('Time dsiplayed (%r) is different from time at Atjobs (%r)' % (
-			displayed_period, period))
 
 
 def main():
@@ -48,58 +24,17 @@ def main():
 			computers_dns = computers.get_dns(created_computers)
 
 			# computer rooms contains the created computers
-			room1 = Room(school, host_members=computers_dns)
+			room = Room(school, host_members=computers_dns)
 			schoolenv.create_computerroom(
 					school,
-					name=room1.name,
-					description=room1.description,
-					host_members=room1.host_members
+					name=room.name,
+					description=room.description,
+					host_members=room.host_members
 					)
 			umc_connection = UMCConnection(ucr.get('hostname'))
 			umc_connection.auth(tea, 'univention')
 
-			room1.aquire_room(umc_connection)
-			settings = room1.get_room_settings(umc_connection)
-
-			period = datetime.time.strftime(
-					(datetime.datetime.now() + datetime.timedelta(0,120)).time(), '%H:%M')
-			new_settings = {
-					'customRule':	'',
-					'printMode':	'none',
-					'internetRule': 'none',
-					'shareMode':	'home',
-					'period':		period
-					}
-
-			ula_length = len(ula.list())
-			time_out = 30 # seconds
-			room1.set_room_settings(umc_connection, new_settings)
-			for i in xrange(time_out, 0, -1):
-				print i
-				if len(ula.list()) > ula_length:
-					break
-				else:
-					time.sleep(1)
-					continue
-			
-			# Checking Atjobs list
-			check_atjobs(period, True)
-
-			#TODO FAILS because of Bug #35195
-			check_displayTime(room1, umc_connection, period)
-			
-			print '*** Waiting 2 mins for settings to expire.............'
-			time.sleep(2 * 60 + 2)
-			current_settings = room1.get_room_settings(umc_connection)
-
-			# Time field is not considered in the comparision
-			current_settings['period'] = settings['period'] 
-			if current_settings != settings:
-				utils.fail('Current settings (%r) are not reset back after the time out, expected (%r)' % (
-					current_settings, settings))
-
-			# Checking Atjobs list
-			check_atjobs(period, False)
+			room.test_time_settings(umc_connection)
 
 
 if __name__ == '__main__':
