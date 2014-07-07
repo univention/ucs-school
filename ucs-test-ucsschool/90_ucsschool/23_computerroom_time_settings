@@ -14,6 +14,26 @@ import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool as utu
 import univention.testing.utils as utils
 
+def check_atjobs(period, expected_existance):
+	for item in ula.list():
+		if period == datetime.time.strftime(item.execTime.time(),'%H:%M'):
+			exist = True
+		else:
+			exist = False
+	if exist == expected_existance:
+		print 'Atjob result at(%r) existance is expected (%r)' % (period, exist)
+	else:
+		utils.fail('Atjob result at(%r) existance is not expected (%r)' % (period, exist))
+
+def check_displayTime(room, umc_connection, period):
+	displayed_period = room.get_room_settings(umc_connection)['period'][0:-3]
+	if period == displayed_period:
+		print 'Time dsiplayed (%r) is same as time at Atjobs (%r)' % (
+			displayed_period, period)
+	else:
+		utils.fail('Time dsiplayed (%r) is different from time at Atjobs (%r)' % (
+			displayed_period, period))
+
 
 def main():
 	with utu.UCSTestSchool() as schoolenv:
@@ -41,14 +61,14 @@ def main():
 			room1.aquire_room(umc_connection)
 			settings = room1.get_room_settings(umc_connection)
 
-			deadline = datetime.time.strftime(
+			period = datetime.time.strftime(
 					(datetime.datetime.now() + datetime.timedelta(0,120)).time(), '%H:%M')
 			new_settings = {
 					'customRule':	'',
 					'printMode':	'none',
 					'internetRule': 'none',
 					'shareMode':	'home',
-					'period':		deadline
+					'period':		period
 					}
 
 			ula_length = len(ula.list())
@@ -63,21 +83,10 @@ def main():
 					continue
 			
 			# Checking Atjobs list
-			for item in ula.list():
-				if deadline == datetime.time.strftime(item.execTime.time(),'%H:%M'):
-					print 'Atjob is added at(%r)' % deadline
-					break
-			else:
-				utils.fail('No Atjob added at the specified time (%r)' % deadline)
+			check_atjobs(period, True)
 
 			#TODO FAILS because of Bug #35195
-			displayed_deadline = room1.get_room_settings(umc_connection)['period'][0:-3]
-			if deadline == displayed_deadline:
-				print 'Time dsiplayed (%r) is same as time at Atjobs (%r)' % (
-					displayed_deadline, deadline)
-			else:
-				utils.fail('Time dsiplayed (%r) is different from time at Atjobs (%r)' % (
-					displayed_deadline, deadline))
+			check_displayTime(room1, umc_connection, period)
 			
 			print '*** Waiting 2 mins for settings to expire.............'
 			time.sleep(2 * 60 + 2)
@@ -90,12 +99,7 @@ def main():
 					current_settings, settings))
 
 			# Checking Atjobs list
-			for item in ula.list():
-				if deadline == datetime.time.strftime(item.execTime.time(),'%H:%M'):
-					utils.fail('Atjob is not removed at time = %r' % deadline)
-					break
-			else:
-				print 'Atjob at (%r) is removed'  % deadline
+			check_atjobs(period, False)
 
 
 if __name__ == '__main__':
