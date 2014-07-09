@@ -28,16 +28,14 @@ def main():
 				computers_ips = computers.get_ips(created_computers)
 
 				# setting computer rooms contains the created computers
-				room1 = Room(school, host_members=computers_dns[0])
-				room2 = Room(school, host_members=computers_dns[1])
+				room = Room(school, host_members=computers_dns[0])
 				# Creating the rooms
-				for room in [room1, room2]:
-					schoolenv.create_computerroom(
-							school,
-							name=room.name,
-							description=room.description,
-							host_members=room.host_members
-							)
+				schoolenv.create_computerroom(
+						school,
+						name=room.name,
+						description=room.description,
+						host_members=room.host_members
+						)
 
 				# preparing the network loop
 				nethelper.add_loop(computers_ips[0], computers_ips[1])
@@ -46,7 +44,7 @@ def main():
 				umc_connection.auth(tea, 'univention')
 
 				# the actual test
-				room1.test_settings(
+				room.test_settings(
 						school,
 						tea,
 						tea_dn,
