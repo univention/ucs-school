@@ -2,80 +2,57 @@
 ## -*- coding: utf-8 -*-
 ## desc: computerroom module settings checks
 ## roles: [domaincontroller_master, domaincontroller_slave]
-## tags: [apptest, ucsschool]
+## tags: [apptest]
 ## exposure: dangerous
 ## packages: [ucs-school-umc-computerroom]
 
 from essential.computerroom import Room, Computers
 from univention.lib.umc_connection import UMCConnection
-import datetime
-import itertools
+from univention.testing.network import NetworkRedirector
 import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool as utu
-import univention.testing.utils as utils
 	
-def check_get_values(umc_connection, room1, room2, expected_values):
-	room1.aquire_room(umc_connection)
-	current_settings = room1.get_room_settings(umc_connection)
-	expected_values['customRule'] = current_settings['customRule']
-	if current_settings != expected_values:
-		print 'current_settings = ', current_settings
-		print 'expected_values = ', expected_values
-		utils.fail('Changing settings in room (%s) affected settigns in room (%s)' % (
-			room1.name, room2.name))
-
 
 def main():
 	with utu.UCSTestSchool() as schoolenv:
 		with ucr_test.UCSTestConfigRegistry() as ucr:
-			school, oudn = schoolenv.create_ou(name_edudc=ucr.get('hostname'))
-			tea, tea_dn = schoolenv.create_user(school, is_teacher=True)
-			open_ldap_co = schoolenv.open_ldap_connection()
+			with NetworkRedirector() as nethelper:
+				school, oudn = schoolenv.create_ou(name_edudc=ucr.get('hostname'))
+				tea, tea_dn = schoolenv.create_user(school, is_teacher=True)
+				open_ldap_co = schoolenv.open_ldap_connection()
 
-			# importing random 2 computers
-			computers = Computers(open_ldap_co, school, 2, 0, 0)
-			created_computers = computers.create()
-			computers_dns = computers.get_dns(created_computers)
+				# importing random 2 computers
+				computers = Computers(open_ldap_co, school, 2, 0, 0)
+				created_computers = computers.create()
+				computers_dns = computers.get_dns(created_computers)
+				computers_ips = computers.get_ips(created_computers)
 
-			# setting computer rooms contains the created computers
-			room1 = Room(school, host_members=computers_dns[0])
-			room2 = Room(school, host_members=computers_dns[1])
-			# Creating the rooms
-			for room in [room1, room2]:
-				schoolenv.create_computerroom(
+				# setting computer rooms contains the created computers
+				room1 = Room(school, host_members=computers_dns[0])
+				room2 = Room(school, host_members=computers_dns[1])
+				# Creating the rooms
+				for room in [room1, room2]:
+					schoolenv.create_computerroom(
+							school,
+							name=room.name,
+							description=room.description,
+							host_members=room.host_members
+							)
+
+				# preparing the network loop
+				nethelper.add_loop(computers_ips[0], computers_ips[1])
+
+				umc_connection = UMCConnection(ucr.get('hostname'))
+				umc_connection.auth(tea, 'univention')
+
+				# the actual test
+				room1.test_settings(
 						school,
-						name=room.name,
-						description=room.description,
-						host_members=room.host_members
-						)
-
-			umc_connection = UMCConnection(ucr.get('hostname'))
-			umc_connection.auth(tea, 'univention')
-			t = 120
-			white_page = 'univention.de'
-			rules = ['none', 'Kein Internet', 'Unbeschränkt', 'custom']
-			printmodes = ['default', 'all', 'none']
-			sharemodes = ['all', 'home']
-			settings = itertools.product(rules, printmodes, sharemodes)
-
-			room1.aquire_room(umc_connection)
-			set1 =  room1.get_room_settings(umc_connection)
-			for i in xrange(24):
-				deadline = datetime.time.strftime(
-						(datetime.datetime.now() + datetime.timedelta(0,t)).time(), '%H:%M')
-				t += 60
-				rule, print_mode, share_mode = next(settings)
-				print '***', i, '- (',rule,',', print_mode,',', share_mode, ')', '-' * 10
-				new_settings = {
-						'customRule':	white_page,
-						'printMode':	print_mode,
-						'internetRule':	rule,
-						'shareMode':	share_mode,
-						'period':	deadline
-						}
-				room2.aquire_room(umc_connection)
-				room2.set_room_settings(umc_connection, new_settings)
-				check_get_values(umc_connection, room1, room2, set1)
+						tea,
+						tea_dn,
+						computers_ips[1],
+						ucr,
+						umc_connection)
 
 if __name__ == '__main__':
 	main()
