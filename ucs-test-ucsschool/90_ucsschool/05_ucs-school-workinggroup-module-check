@@ -42,7 +42,7 @@ def main():
 				expected_group_result=True,
 				expected_share_result=True)
 
-		# 4 checking if the atrriputes for the group is correct in ldap
+		# 4 checking if the attributes for the group is correct in ldap
 		group.checkAttr()
 
 		# 5 should fail: creating a new working group with a duplicate name
@@ -55,13 +55,13 @@ def main():
 		# 6 add members to group
 		emptyGroup.addMembers(memberListdn)
 
-		# 7 checking if the atrriputes for the emptygroup is correct in ldap
+		# 7 checking if the attributes for the emptygroup is correct in ldap
 		emptyGroup.checkAttr()
 
 		# 8 remove members from a group
 		group.removeMembers([memberListdn[0]])
 
-		# 9 checking if the atrriputes for the group is correct in ldap
+		# 9 checking if the attributes for the group is correct in ldap
 		group.checkAttr()
 
 		# 10 remove the group

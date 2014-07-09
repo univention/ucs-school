@@ -11,7 +11,7 @@ import univention.testing.utils as utils
 
 class Check(object):
 
-	"""Contains the needed functuality for checks related to internet rules
+	"""Contains the needed functionality for checks related to internet rules
      within groups/classes.\n
 	:param school: name of the ou
 	:type school: str

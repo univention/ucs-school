@@ -18,7 +18,7 @@ import univention.testing.utils as utils
 
 class Distribution(object):
 
-	"""Contains the needed functuality for Materials distribution.
+	"""Contains the needed functionality for Materials distribution.
 	By default the distribution is manual.\n
 	:param school: name of the ou
 	:type school: str

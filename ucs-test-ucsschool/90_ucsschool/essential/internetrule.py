@@ -20,7 +20,7 @@ import univention.testing.ucsschool as utu
 
 class InternetRule(object):
 
-	"""Contains the needed functuality for internet rules.
+	"""Contains the needed functionality for internet rules.
 	By default they are randomly formed\n
 	:param umcConnection:
 	:type umcConnection: UMC connection object
