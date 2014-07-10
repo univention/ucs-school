@@ -26,8 +26,5 @@ class RandomDomain(object):
 		:type count: int
 		:returns: [str] domains list
 		"""
-		domainList = []
-		for i in xrange(count):
-			dom = self.__class__()
-			domainList.append(getattr(dom, 'domain'))
-		return domainList
+		cls = type(self)
+		return [cls().domain for i in xrange(count)]
