@@ -69,6 +69,10 @@ class Distribution(object):
 			collectDate=None,
 			files=[],
 			recipients=[]):
+		account = utils.UCSTestDomainAdminCredentials()
+		admin = account.username
+		passwd = account.bindpw
+		self.umcConnection.auth(admin, passwd)
 		self.school = school
 		self.name = name if name else uts.random_string()
 		self.description = description if description else uts.random_string()
@@ -89,7 +93,7 @@ class Distribution(object):
 		self.files = files
 		self.recipients = recipients
 		self.ucr = ucr if ucr else ucr_test.UCSTestConfigRegistry()
-		self.sender = sender if sender else 'Administrator'
+		self.sender = sender if sender else admin
 		self.flavor = flavor if flavor else 'admin'
 		if umcConnection:
 			self.umcConnection = umcConnection
@@ -97,7 +101,7 @@ class Distribution(object):
 			self.ucr.load()
 			host = self.ucr.get('hostname')
 			self.umcConnection = UMCConnection(host)
-			self.umcConnection.auth(self.sender, 'univention')
+			self.umcConnection.auth(self.sender, passwd)
 
 	def query(self, filt='private', pattern=''):
 		"""Calles 'distribution/query'
