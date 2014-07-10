@@ -24,7 +24,10 @@ def resetPasswd(host, userdn, flavor, nextLogin):
 			'nextLogin': nextLogin
 			}
 	connection = UMCConnection(host)
-	connection.auth('Administrator', 'univention')
+	account = utils.UCSTestDomainAdminCredentials()
+	admin = account.username
+	passwd = account.bindpw
+	connection.auth(admin, passwd)
 	if connection.request('schoolusers/password/reset', options, flavor):
 		return newpassword
 	else:

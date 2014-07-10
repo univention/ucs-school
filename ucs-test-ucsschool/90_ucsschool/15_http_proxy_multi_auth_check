@@ -46,8 +46,10 @@ def checkGssnegotiate(host, passwd, url, http_code, expect_wrong_password):
 			proxy=host,
 			password=passwd,
 			auth=pycurl.HTTPAUTH_GSSNEGOTIATE)
+	account = utils.UCSTestDomainAdminCredentials()
+	admin = account.username
 	pop = subprocess.Popen(
-			["kinit", "--password-file=STDIN", "Administrator"],
+			["kinit", "--password-file=STDIN", admin],
 			stdin=subprocess.PIPE)
 	pop.communicate(passwd)
 	subprocess.call(["klist"])

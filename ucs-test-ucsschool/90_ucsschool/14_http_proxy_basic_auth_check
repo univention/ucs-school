@@ -63,7 +63,10 @@ def main():
 		with ucr_test.UCSTestConfigRegistry() as ucr:
 			host = ucr.get('hostname')
 			connection = UMCConnection(host)
-			connection.auth('Administrator', 'univention')
+			account = utils.UCSTestDomainAdminCredentials()
+			admin = account.username
+			passwd = account.bindpw
+			connection.auth(admin, passwd)
 
 			# create ou
 			school, oudn = schoolenv.create_ou(name_edudc=host)
