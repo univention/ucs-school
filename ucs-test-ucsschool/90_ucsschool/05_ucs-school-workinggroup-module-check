@@ -19,7 +19,11 @@ def main():
 	connection = UMCConnection(host)
 	with utu.UCSTestSchool()  as schoolenv:
 		schoolName, oudn = schoolenv.create_ou(name_edudc=host)
-		tea, teadn = schoolenv.create_user(schoolName, is_teacher=True)
+		tea, teadn = schoolenv.create_user(
+				schoolName,
+				is_teacher=True,
+				password=passwd
+				)
 		stu, studn = schoolenv.create_user(schoolName)
 		memberListdn = [studn]
 
@@ -28,7 +32,7 @@ def main():
 		passwd = account.bindpw
 		utils.wait_for_replication_and_postrun()
 
-		for user in [admin, tea]:
+		def test_as(user):
 			connection.auth(user, passwd)
 			# 1 creating empty workgroup
 			emptyGroup = Workgroup(schoolName, umcConnection=connection)
@@ -38,13 +42,15 @@ def main():
 			group = Workgroup(
 					schoolName,
 					umcConnection=connection,
-					members=memberListdn)
+					members=memberListdn
+					)
 			group.create()
 
 			# 3 checking the created workgroup and its file share object in ldap
 			group.checkExistance(
 					expected_group_result=True,
-					expected_share_result=True)
+					expected_share_result=True
+					)
 
 			# 4 checking if the attributes for the group is correct in ldap
 			group.checkAttr()
@@ -53,7 +59,8 @@ def main():
 			group2 = Workgroup(
 					schoolName, 
 					name = group.name,
-					umcConnection=connection)
+					umcConnection=connection
+					)
 			group2.create(doubleNameAllowed=True)
 
 			# 6 add members to group
@@ -74,7 +81,11 @@ def main():
 			# 11 check if the object is removed from ldap
 			group.checkExistance(
 					expected_group_result=False,
-					expected_share_result=False)
+					expected_share_result=False
+					)
+
+		for user in [admin, tea]:
+			test_as(user)
 
 
 if __name__ == '__main__':
