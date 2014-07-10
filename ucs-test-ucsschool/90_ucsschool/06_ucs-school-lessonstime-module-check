@@ -40,7 +40,10 @@ def main():
 	ucr.load()
 	host = ucr.get('hostname')
 	connection = UMCConnection(host)
-	connection.auth('Administrator' ,'univention')
+	account = utils.UCSTestDomainAdminCredentials()
+	admin = account.username
+	passwd = account.bindpw
+	connection.auth(admin, passwd)
 
 	# 1 adding a lesson
 	addLesson(connection, "99. Stunde", "00:00", "0:05")
