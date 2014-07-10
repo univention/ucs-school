@@ -55,7 +55,10 @@ def main():
 			host = ucr.get('hostname')
 			domainname = ucr.get('domainname')
 			co = UMCConnection(host)
-			co.auth('Administrator' ,'univention')
+			account = utils.UCSTestDomainAdminCredentials()
+			admin = account.username
+			passwd = account.bindpw
+			co.auth(admin, passwd)
 
 			# create more than one OU
 			schoolName, _ = schoolenv.create_ou(name_edudc=host)
