@@ -44,7 +44,10 @@ class Klasse():
 			self.ucr.load()
 			host = self.ucr.get('ldap/master')
 			self.umcConnection = UMCConnection(host)
-			self.umcConnection.auth('Administrator', 'univention')
+			account = utils.UCSTestDomainAdminCredentials()
+			admin = account.username
+			passwd = account.bindpw
+			self.umcConnection.auth(admin, passwd)
 
 	def __enter__(self):
 		return self
