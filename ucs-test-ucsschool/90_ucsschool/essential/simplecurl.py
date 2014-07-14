@@ -8,6 +8,7 @@ import pycurl
 import StringIO
 import time
 import os
+import univention.testing.utils as utils
 
 
 class SimpleCurl(object):
