@@ -34,8 +34,8 @@ class SimpleCurl(object):
 	def __init__(
 			self,
 			proxy,
-			username='Administrator',
-			password='univention',
+			username=None,
+			password=None,
 			bFollowLocation=1,
 			maxReDirs=5,
 			connectTimout=10,
@@ -52,6 +52,9 @@ class SimpleCurl(object):
 		self.curl.setopt(pycurl.PROXY, proxy)
 		self.curl.setopt(pycurl.PROXYPORT, port)
 		self.curl.setopt(pycurl.PROXYAUTH, auth)
+		account = utils.UCSTestDomainAdminCredentials()
+		username = username if username else account.username
+		password = password if password else account.bindpw
 		self.curl.setopt(pycurl.PROXYUSERPWD, "%s:%s" % (username, password))
 		self.cookieFilename = os.tempnam()
 		self.curl.setopt(pycurl.COOKIEJAR, self.cookieFilename)
