@@ -18,6 +18,7 @@ import tempfile
 import univention.testing.ucr as ucr_test
 from essential.simplecurl import SimpleCurl
 from essential.workgroup import Workgroup
+import itertools
 
 class ComputerImport(object):
 	def __init__(self, school=None, nr_windows=1, nr_macos=0, nr_ipmanagedclient=0):
@@ -125,6 +126,7 @@ class Room(object):
 		current_settings = self.get_room_settings(umc_connection)
 		d = dict(expected_settings) # copy dictionary
 		d['period'] = current_settings['period']
+		d['customRule'] = current_settings['customRule']   #TODO Bug 35258 remove
 		if current_settings != d:
 			utils.fail('Current settings (%r) do not match expected ones (%r)' % (
 				current_settings, d))
@@ -148,11 +150,11 @@ class Room(object):
 				internetRules, current_rules))
 
 	def check_atjobs(self, period, expected_existance):
+		exist = False
 		for item in ula.list():
 			if period == datetime.time.strftime(item.execTime.time(),'%H:%M'):
 				exist = True
-			else:
-				exist = False
+				break
 		if exist == expected_existance:
 			print 'Atjob result at(%r) existance is expected (%r)' % (period, exist)
 		else:
@@ -278,28 +280,50 @@ class Room(object):
 		self.check_marktplatz_read(user, ip_address, expected_result=expected_marktplatz_result)
 		self.check_marktplatz_write(user, ip_address, expected_result=expected_marktplatz_result)
 
+	def check_share_behavior(self, user, ip_address, shareMode):
+		if shareMode == 'all':
+			self.check_share_access(user, ip_address, 0, 0)
+		elif shareMode == 'home':
+			self.check_share_access(user, ip_address, 0, 1)
+		else:
+			utils.fail('shareMode invalid value = (%s)' % shareMode)
+
 	def test_share_access_settings(self, user, ip_address, umc_connection):
 		self.aquire_room(umc_connection)
 		print self.get_room_settings(umc_connection)
 
-		self.check_share_access(user, ip_address, 0, 0)
+		# generate all the possible combinations for (rule, printmode, sharemode)
+		white_page = 'univention.de'
+		rules = ['none', 'Kein Internet', 'Unbeschränkt', 'custom']
+		printmodes = ['default', 'all', 'none']
+		sharemodes = ['all', 'home']
+		settings = itertools.product(rules, printmodes, sharemodes)
+		t = 120
 
-		period = datetime.time.strftime(
-			(datetime.datetime.now() + datetime.timedelta(0,120)).time(), '%H:%M')
-		new_settings = {
-				'customRule':	'',
-				'printMode':	'none',
-				'internetRule':	'none',
-				'shareMode':	'home',
-				'period':	period
-				}
-		self.set_room_settings(umc_connection, new_settings)
-
-		self.check_share_access(user, ip_address, 0, 1)
-
+		# Testing loop
+		for i in xrange(24):
+			period = datetime.time.strftime(
+					(datetime.datetime.now() + datetime.timedelta(0,t)).time(), '%H:%M')
+			t += 60
+			rule, printMode, shareMode = next(settings)
+			print
+			print '***', i, '-(internetRule, printMode, shareMode) = (',\
+					rule,',', printMode,',', shareMode, ')', '-' * 10
+			new_settings = {
+					'customRule':	white_page,
+					'printMode':	printMode,
+					'internetRule':	rule,
+					'shareMode':	shareMode,
+					'period':	period
+					}
+			self.aquire_room(umc_connection)
+			self.set_room_settings(umc_connection, new_settings)
+			# check if displayed values match
+			self.check_room_settings(umc_connection, new_settings)
+			self.check_share_behavior(user, ip_address, shareMode)
 
 	def check_smb_print(self, ip, printer, user, expected_result):
-		print '-' * 60
+		print 'Checking print mode', '.' * 40
 		f = tempfile.NamedTemporaryFile(dir='/tmp')
 		cmd_print = [
 				'smbclient', '//%(ip)s/%(printer)s',
@@ -316,9 +340,23 @@ class Room(object):
 				)[0]
 		f.close()
 		if result != expected_result:
-			utils.fail('smbclient print result (%r), expected (%r)' % (result, expected_result))
+			print '\033[92mFAIL FAIL .... smbclient print result (%r), expected (%r)\033[0m' % (result, expected_result)
+			# utils.fail('smbclient print result (%r), expected (%r)' % (result, expected_result))
 
-	def test_print_mode_settings(self, school, user, ip_address, umc_connection):
+	def check_print_behavior(self, user, ip_address, printer, printMode):
+		if printMode == 'none':
+			self.check_smb_print(ip_address, printer, user, 1)
+			self.check_smb_print(ip_address, 'PDFDrucker', user, 1)
+		elif printMode == 'default':
+			self.check_smb_print(ip_address, printer, user, 0)
+			self.check_smb_print(ip_address, 'PDFDrucker', user, 0)
+		elif printMode == 'all':
+			self.check_smb_print(ip_address, printer, user, 0)
+			self.check_smb_print(ip_address, 'PDFDrucker', user, 0)
+		else:
+			utils.fail('printMode invalid value = (%s)' % printMode)
+
+	def test_printMode_settings(self, school, user, ip_address, umc_connection, ucr):
 		ucr = ucr_test.UCSTestConfigRegistry()
 		ucr.load()
 		self.aquire_room(umc_connection)
@@ -332,47 +370,35 @@ class Room(object):
 					ucr.get('domainname'),
 					ucr.get('ldap/base')
 					)
-			period = datetime.time.strftime(
-				(datetime.datetime.now() + datetime.timedelta(0,120)).time(), '%H:%M')
-			new_settings = {
-					'customRule':	'',
-					'printMode':	'default',
-					'internetRule': 'Kein Internet',
-					'shareMode':	'all',
-					'period':	period
-					}
-			self.set_room_settings(umc_connection, new_settings)
-			restart_samba()
-			self.check_smb_print(ip_address, printer, user, 1) #TODO FAILS because of Bug #35076
-			self.check_smb_print(ip_address, 'PDFDrucker', user, 0)
+			# generate all the possible combinations for (rule, printmode, sharemode)
+			white_page = 'univention.de'
+			rules = ['none', 'Kein Internet', 'Unbeschränkt', 'custom']
+			printmodes = ['default', 'all', 'none']
+			sharemodes = ['all', 'home']
+			settings = itertools.product(rules, printmodes, sharemodes)
 
-			period = datetime.time.strftime(
-				(datetime.datetime.now() + datetime.timedelta(0,180)).time(), '%H:%M')
-			new_settings = {
-					'customRule':	'',
-					'printMode':	'all',
-					'internetRule': 'Unbeschränkt',
-					'shareMode':	'all',
-					'period':		period
-					}
-			self.set_room_settings(umc_connection, new_settings)
-			restart_samba()
-			self.check_smb_print(ip_address, printer, user, 0)
-			self.check_smb_print(ip_address, 'PDFDrucker', user, 0)
-
-			period = datetime.time.strftime(
-				(datetime.datetime.now() + datetime.timedelta(0,240)).time(), '%H:%M')
-			new_settings = {
-					'customRule':	'',
-					'printMode':	'none',
-					'internetRule': 'Kein Internet',
-					'shareMode':	'all',
-					'period':		period
-					}
-			self.set_room_settings(umc_connection, new_settings)
-			restart_samba()
-			self.check_smb_print(ip_address, printer, user, 1)
-			self.check_smb_print(ip_address, 'PDFDrucker', user, 1)
+			t = 120
+			# Testing loop
+			for i in xrange(24):
+				period = datetime.time.strftime(
+						(datetime.datetime.now() + datetime.timedelta(0,t)).time(), '%H:%M')
+				t += 60
+				rule, printMode, shareMode = next(settings)
+				print
+				print '***', i, '-(internetRule, printMode, shareMode) = (',\
+						rule,',', printMode,',', shareMode, ')', '-' * 10
+				new_settings = {
+						'customRule':	white_page,
+						'printMode':	printMode,
+						'internetRule':	rule,
+						'shareMode':	shareMode,
+						'period':	period
+						}
+				self.aquire_room(umc_connection)
+				self.set_room_settings(umc_connection, new_settings)
+				# check if displayed values match
+				self.check_room_settings(umc_connection, new_settings)
+				self.check_print_behavior(user, ip_address, printer, printMode)
 
 		finally:
 			remove_printer(printer, school, ucr.get('ldap/base'))
@@ -400,46 +426,167 @@ class Room(object):
 				rule_in_control, expected_rule))
 
 	def test_internetrules_settings(self, school,user, user_dn, ip_address, ucr, umc_connection):
-		# Create new workgroup and assign new internet rule to it
-		group = Workgroup(school, members=[user_dn])
-		global_domains = ['univention.de', 'google.de']
-		rule = InternetRule(typ='whitelist',domains=global_domains)
-		rule.define()
-		rule.assign(school, group.name, 'workgroup')
+		try:
+			# Create new workgroup and assign new internet rule to it
+			group = Workgroup(school, members=[user_dn])
+			global_domains = ['univention.de', 'google.de']
+			rule = InternetRule(typ='whitelist',domains=global_domains)
+			rule.define()
+			rule.assign(school, group.name, 'workgroup')
 
-		self.check_internetRules(umc_connection)
-		self.aquire_room(umc_connection)
+			self.check_internetRules(umc_connection)
+			self.aquire_room(umc_connection)
 
-		# testing loop
-		t = 120
-		rules = ['none', 'Kein Internet', 'Unbeschränkt', 'custom']
-		for rule in rules:
-			print '-' * 60
-			period = datetime.time.strftime(
-					(datetime.datetime.now() + datetime.timedelta(0,t)).time(), '%H:%M')
-			t += 60
-			new_settings = {
-					'customRule':	'univention.de',
-					'printMode':	'default',
-					'internetRule':	rule,
-					'shareMode':	'all',
-					'period':	period
-					}
-			self.set_room_settings(umc_connection, new_settings)
-			self.checK_internetrules(
-					ucr,
-					user,
-					ip_address,
-					'univention.de',
-					global_domains,
-					rule)
-		group.remove()
+			# generate all the possible combinations for (rule, printmode, sharemode)
+			white_page = 'univention.de'
+			rules = ['none', 'Kein Internet', 'Unbeschränkt', 'custom']
+			printmodes = ['default', 'all', 'none']
+			sharemodes = ['all', 'home']
+			settings = itertools.product(rules, printmodes, sharemodes)
 
-	def test_all(self, school, user, user_dn, ip_address, ucr, umc_connection):
-		self.test_time_settings(umc_connection)
-		self.test_share_access_settings(user, ip_address, umc_connection)
-		self.test_print_mode_settings(school, user, ip_address, umc_connection)
-		self.test_internetrules_settings(school, user, user_dn, ip_address, ucr, umc_connection)
+			t = 120
+			# Testing loop
+			for i in xrange(24):
+				period = datetime.time.strftime(
+						(datetime.datetime.now() + datetime.timedelta(0,t)).time(), '%H:%M')
+				t += 60
+				rule, printMode, shareMode = next(settings)
+				print
+				print '***', i, '-(internetRule, printMode, shareMode) = (',\
+						rule,',', printMode,',', shareMode, ')', '-' * 10
+				new_settings = {
+						'customRule':	white_page,
+						'printMode':	printMode,
+						'internetRule':	rule,
+						'shareMode':	shareMode,
+						'period':	period
+						}
+				self.aquire_room(umc_connection)
+				self.set_room_settings(umc_connection, new_settings)
+				# check if displayed values match
+				self.check_room_settings(umc_connection, new_settings)
+				self.checK_internetrules(
+						ucr,
+						user,
+						ip_address,
+						'univention.de',
+						global_domains,
+						rule)
+		finally:
+			group.remove()
+
+	def test_settings(self, school, user, user_dn, ip_address, ucr, umc_connection):
+		printer = uts.random_string()
+		try:
+			# Create new workgroup and assign new internet rule to it
+			group = Workgroup(school, members=[user_dn])
+			global_domains = ['univention.de', 'google.de']
+			rule = InternetRule(typ='whitelist',domains=global_domains)
+			rule.define()
+			rule.assign(school, group.name, 'workgroup')
+
+			self.check_internetRules(umc_connection)
+
+			# Add new hardware printer
+			add_printer(
+					printer,
+					school,
+					ucr.get('hostname'),
+					ucr.get('domainname'),
+					ucr.get('ldap/base')
+					)
+
+			# generate all the possible combinations for (rule, printmode, sharemode)
+			white_page = 'univention.de'
+			rules = ['none', 'Kein Internet', 'Unbeschränkt', 'custom']
+			printmodes = ['default', 'all', 'none']
+			sharemodes = ['all', 'home']
+			settings = itertools.product(rules, printmodes, sharemodes)
+
+			t = 120
+			# Testing loop
+			for i in xrange(24):
+				period = datetime.time.strftime(
+						(datetime.datetime.now() + datetime.timedelta(0,t)).time(), '%H:%M')
+				t += 60
+				rule, printMode, shareMode = next(settings)
+				print
+				print '***', i, '-(internetRule, printMode, shareMode) = (',\
+						rule,',', printMode,',', shareMode, ')', '-' * 10
+				new_settings = {
+						'customRule':	white_page,
+						'printMode':	printMode,
+						'internetRule':	rule,
+						'shareMode':	shareMode,
+						'period':	period
+						}
+				self.aquire_room(umc_connection)
+				old_settings = self.get_room_settings(umc_connection)
+				self.set_room_settings(umc_connection, new_settings)
+				# check if displayed values match
+				self.check_room_settings(umc_connection, new_settings)
+				partial_old_settings = {
+						'printMode': old_settings['printMode'],
+						'shareMode': old_settings['shareMode'],
+						'internetRule': old_settings['internetRule']
+						}
+				self.check_behavior(
+						partial_old_settings,
+						new_settings,
+						user,
+						ip_address,
+						printer,
+						white_page,
+						global_domains,
+						ucr)
+		finally:
+			group.remove()
+			remove_printer(printer, school, ucr.get('ldap/base'))
+
+	def check_behavior(
+			self,
+			partial_old_settings,
+			new_settings,
+			user,
+			ip_address,
+			printer,
+			white_page,
+			global_domains,
+			ucr):
+		restart_samba()
+		# extract the new_settings
+		period = new_settings['period']
+		internetRule = new_settings['internetRule']
+		printMode = new_settings['printMode']
+		shareMode = new_settings['shareMode']
+
+		# check atjobs
+		partial_new_settings = {
+				'printMode': printMode,
+				'shareMode': shareMode,
+				'internetRule': internetRule
+				}
+		# if there is no change in settings, no atjob is added
+		if partial_old_settings == partial_new_settings:
+			self.check_atjobs(period, False)
+		else:
+			self.check_atjobs(period, True)
+
+		# check internetrules
+		self.checK_internetrules(
+				ucr,
+				user,
+				ip_address,
+				white_page,
+				global_domains,
+				internetRule)
+
+		# check share access
+		self.check_share_behavior(user, ip_address, shareMode)
+
+		# check print mode
+		self.check_print_behavior(user, ip_address, printer, printMode)
+
 
 def get_banpage(ucr):
 	# Getting the redirection page when blocked
