@@ -35,7 +35,7 @@ def main():
 			emptyGroup = Workgroup(schoolName, umcConnection=connection)
 			emptyGroup.create()
 			# 2 checking the created workgroup and its file share object in ldap
-			group.verify_exists(
+			emptyGroup.verify_exists(
 					group_should_exist=True,
 					share_should_exist=True)
 
