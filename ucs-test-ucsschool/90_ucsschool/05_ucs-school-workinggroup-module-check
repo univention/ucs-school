@@ -1,7 +1,7 @@
 #!/usr/share/ucs-test/runner python
 ## desc: ucs-school-workinggroup-module-check
 ## roles: [domaincontroller_master, domaincontroller_backup, domaincontroller_slave]
-## tags: [apptest,ucsschool]
+## tags: [apptest]
 ## exposure: dangerous
 ## packages: [ucs-school-umc-groups]
 
@@ -19,73 +19,68 @@ def main():
 	connection = UMCConnection(host)
 	with utu.UCSTestSchool()  as schoolenv:
 		schoolName, oudn = schoolenv.create_ou(name_edudc=host)
-		tea, teadn = schoolenv.create_user(
-				schoolName,
-				is_teacher=True,
-				password=passwd
-				)
+		tea, teadn = schoolenv.create_user(schoolName, is_teacher=True)
 		stu, studn = schoolenv.create_user(schoolName)
-		memberListdn = [studn]
+		memberListdn = [teadn, studn]
 
 		account = utils.UCSTestDomainAdminCredentials()
 		admin = account.username
-		passwd = account.bindpw
+		passwd = account.binddn
+
 		utils.wait_for_replication_and_postrun()
 
-		def test_as(user):
+		for user in [tea]:
 			connection.auth(user, passwd)
 			# 1 creating empty workgroup
 			emptyGroup = Workgroup(schoolName, umcConnection=connection)
 			emptyGroup.create()
+			# 2 checking the created workgroup and its file share object in ldap
+			group.verify_exists(
+					group_should_exist=True,
+					share_should_exist=True)
 
-			# 2 creating unempty workgroup
+
+			# 3 creating unempty workgroup
 			group = Workgroup(
 					schoolName,
 					umcConnection=connection,
-					members=memberListdn
-					)
+					members=memberListdn)
 			group.create()
 
-			# 3 checking the created workgroup and its file share object in ldap
-			group.checkExistance(
-					expected_group_result=True,
-					expected_share_result=True
-					)
+			# 4 checking the created workgroup and its file share object in ldap
+			group.verify_exists(
+					group_should_exist=True,
+					share_should_exist=True)
 
-			# 4 checking if the attributes for the group is correct in ldap
-			group.checkAttr()
+			# 5 checking if the atrriputes for the group is correct in ldap
+			group.verify_ldap_attributes()
 
-			# 5 should fail: creating a new working group with a duplicate name
+			# 6 should fail: creating a new working group with a duplicate name
 			group2 = Workgroup(
 					schoolName, 
 					name = group.name,
-					umcConnection=connection
-					)
-			group2.create(doubleNameAllowed=True)
+					umcConnection=connection)
+			group2.create(expect_creation_fails_due_to_duplicated_name=True)
 
-			# 6 add members to group
+			# 7 add members to group
 			emptyGroup.addMembers(memberListdn)
 
-			# 7 checking if the attributes for the emptygroup is correct in ldap
-			emptyGroup.checkAttr()
+			# 8 checking if the atrriputes for the emptygroup is correct in ldap
+			emptyGroup.verify_ldap_attributes()
 
-			# 8 remove members from a group
+			# 9 remove members from a group
 			group.removeMembers([memberListdn[0]])
 
-			# 9 checking if the attributes for the group is correct in ldap
-			group.checkAttr()
+			# 10 checking if the atrriputes for the group is correct in ldap
+			group.verify_ldap_attributes()
 
-			# 10 remove the group
+			# 11 remove the group
 			group.remove()
 
-			# 11 check if the object is removed from ldap
-			group.checkExistance(
-					expected_group_result=False,
-					expected_share_result=False
-					)
-
-		for user in [admin, tea]:
-			test_as(user)
+			# 12 check if the object is removed from ldap
+			group.verify_exists(
+					group_should_exist=False,
+					share_should_exist=False)
 
 
 if __name__ == '__main__':

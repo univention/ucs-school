@@ -15,7 +15,7 @@ from univention.testing.ucsschool import UCSTestSchool
 
 class Workgroup(object):
 
-	"""Contains the needed functionality for workgroups in an already created OU,
+	"""Contains the needed functuality for workgroups in an already created OU,
 	By default they are randomly formed except the OU, should be provided\n
 	:param school: name of the ou
 	:type school: str
@@ -55,10 +55,7 @@ class Workgroup(object):
 		else:
 			host = self.ucr.get('hostname')
 			self.umcConnection = UMCConnection(host)
-			account = utils.UCSTestDomainAdminCredentials()
-			admin = account.username
-			passwd = account.bindpw
-			self.umcConnection.auth(admin, passwd)
+			self.umcConnection.auth('Administrator', 'univention')
 
 	def __enter__(self):
 		return self
@@ -66,22 +63,22 @@ class Workgroup(object):
 	def __exit__(self, type, value, trace_back):
 		self.ucr.revert_to_original_registry()
 
-	def create(self, doubleNameAllowed=False):
+	def create(self, expect_creation_fails_due_to_duplicated_name=False):
 		"""Creates object workgroup\n
-		:param doubleNameAllowed: if user allow duplicate names no exception is
+		:param expect_creation_fails_due_to_duplicated_name: if user allow duplicate names no exception is
 		raised, no group is created either
-		:type doubleNameAllowed: bool
+		:type expect_creation_fails_due_to_duplicated_name: bool
 		"""
 		try:
 			createResult = self._create()
-			if createResult and doubleNameAllowed:
+			if createResult and expect_creation_fails_due_to_duplicated_name:
 				utils.fail('Group', self.name, 'created with a duplicate name')
 		except httplib.HTTPException as e:
 			 exception_strings = [
 					 'The groupname is already in use as groupname or as username',
 					 'Der Gruppenname wird bereits als Gruppenname oder als Benutzername verwendet']
 			 for entry in exception_strings:
-				 if doubleNameAllowed and entry in str(e):
+				 if expect_creation_fails_due_to_duplicated_name and entry in str(e):
 					 print('Fail : %s' % (e) )
 					 break
 			 else:
@@ -208,7 +205,7 @@ class Workgroup(object):
 		else:
 			self.members = currentMembers
 
-	def checkAttr(self):
+	def verify_ldap_attributes(self):
 		"""checking group attributes in ldap"""
 		print 'Checking the attributes for group %s in ldap' % (self.name)
 		members = []
@@ -224,17 +221,17 @@ class Workgroup(object):
 					'description': [self.description]
 					})
 
-	def checkExistance(self, expected_group_result, expected_share_result):
+	def verify_exists(self, group_should_exist, share_should_exist):
 		"""check for group and file share objects existance in ldap"""
 		print 'Checking if group %s and its share object exist in ldap' % (self.name)
 		groupdn = self.dn()
-		utils.verify_ldap_object(groupdn, should_exist=expected_group_result)
+		utils.verify_ldap_object(groupdn, should_exist=group_should_exist)
 		ucsschool = UCSTestSchool()
 		sharedn = 'cn=%s-%s,cn=shares,%s' % (
 					self.school,
 					self.name,
 					ucsschool.get_ou_base_dn(self.school))
-		utils.verify_ldap_object(sharedn, should_exist=expected_share_result)
+		utils.verify_ldap_object(sharedn, should_exist=share_should_exist)
 
 
 	def dn(self):
