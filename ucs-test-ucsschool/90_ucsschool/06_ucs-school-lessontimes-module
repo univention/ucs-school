@@ -1,0 +1,69 @@
+#!/usr/share/ucs-test/runner python
+# coding=utf-8
+## desc: ucs-school-lessontimes-module
+## roles: [domaincontroller_master, domaincontroller_backup, domaincontroller_slave]
+## tags: [apptest,ucsschool]
+## exposure: careful
+## packages:
+##    - ucs-school-umc-lessontimes
+
+
+from univention.lib.umc_connection import UMCConnection
+import sys
+import univention.testing.ucr as ucr_test
+import univention.testing.utils as utils
+
+def getLessons(connection):
+	return connection.request('lessontimes/get')
+
+def addLesson(connection, name, begin, end):
+	lesson = [name, begin, end]
+	lessonsList = getLessons(connection)
+	lessonsList.append(lesson)
+	param =  {
+			"lessons": lessonsList
+			}
+	return connection.request('lessontimes/set', param)
+
+def delLesson(connection, name, begin, end):
+	lessonsList = getLessons(connection)
+	for item in lessonsList:
+		if name in item:
+			lessonsList.remove(item)
+	param =  {
+			"lessons": lessonsList
+			}
+	return connection.request('lessontimes/set', param)
+
+def main():
+	ucr = ucr_test.UCSTestConfigRegistry()
+	ucr.load()
+	host = ucr.get('hostname')
+	connection = UMCConnection(host)
+	account = utils.UCSTestDomainAdminCredentials()
+	admin = account.username
+	passwd = account.bindpw
+	connection.auth(admin, passwd)
+
+	# 1 adding a lesson
+	addLesson(connection, "99. Stunde", "00:00", "0:05")
+
+	# 2 checking time format
+	if not 'invalid time format' in addLesson(connection, "98. Stunde", "40", "80")['message']:
+		utils.fail('invalid time format is not detected')
+
+	# 3 check overlapping in time
+	eng = 'Overlapping lessons are not allowed'
+	deu = 'Überlappende Schulstunden sind nicht erlaubt' 
+	if not (eng or deu  in addLesson(connection, "98. Stunde", "00:03", "0:06")['message']):
+		utils.fail('Overlapping lessons time is not detected')
+
+	# 4 check overlapping in names
+	if not (eng or deu in addLesson(connection, "99. Stunde", "00:06", "0:08")['message']):
+		utils.fail('Overlapping lessons names is not detected')
+
+	# 5 removing a lesson
+	delLesson(connection, "99. Stunde", "00:00", "1:00")
+
+if __name__ == '__main__':
+	sys.exit(main())
