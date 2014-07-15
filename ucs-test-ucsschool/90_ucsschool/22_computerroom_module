@@ -2,7 +2,7 @@
 ## -*- coding: utf-8 -*-
 ## desc: computerroom module settings checks
 ## roles: [domaincontroller_master, domaincontroller_slave]
-## tags: [apptest]
+## tags: [apptest,ucsschool]
 ## exposure: dangerous
 ## packages: [ucs-school-umc-computerroom]
 
