@@ -174,7 +174,7 @@ class InternetRule(object):
 			'internetrules/remove',
 			options)
 		if not reqResult[0]['success']:
-			utils.fail('Unable to remove rule (%r)' % (self.name))
+			utils.fail('Unable to remove rule (%r)' % (self.name,))
 
 	# Fetch the values from ucr and check if it matches
 	# the correct values for the rule
@@ -230,19 +230,21 @@ class InternetRule(object):
 		:type groupName: str
 		:param groupType: 'workgroup' or 'class'
 		:type groupType: str
-		:param defalt: if the groups is assigned to default values
-		:type defalt: bool
+		:param default: if the group is assigned to default values
+		:type default: bool
 		"""
 		self.ucr.load()
 		groupdn = ''
 		schoolenv = utu.UCSTestSchool()
 		school_basedn = schoolenv.get_ou_base_dn(school)
+
 		if groupType == 'workgroup':
 			ucsschool = UCSTestSchool()
 			groupdn = ucsschool.get_workinggroup_dn(school, groupName)
 		elif groupType == 'class':
 			groupdn = 'cn=%s-%s,cn=klassen,cn=schueler,cn=groups,%s' % (
 				school, groupName, school_basedn)
+
 		if default:
 			name = '$default$'
 		else:
