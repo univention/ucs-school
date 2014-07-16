@@ -1,7 +1,7 @@
-#!/usr/share/ucs-test/runner python
-## desc: http_proxy_auth_after_passwd_reset_check
-## roles: [domaincontroller_master, domaincontroller_backup, domaincontroller_slave, memberserver]
-## tags: [apptest,ucsschool]
+#!/usr/share/ucs-test/runner python 
+## desc: http_proxy_auth_after_passwd_reset_check 
+## roles: [domaincontroller_master, domaincontroller_backup, domaincontroller_slave, memberserver] 
+## tags: [apptest, ucsschool]
 ## exposure: dangerous
 ## packages: [univention-samba4, ucs-school-webproxy]
 
@@ -37,9 +37,10 @@ def authProxy(host,url, name, passwd, authTyp, expected_response):
 	print 'Performing auth %r check' % (authTyp,)
 	curl = SimpleCurl(proxy=host, username=name, password=passwd, auth=authTyp)
 	result = curl.response(url)
+	auth_text = 'basic authentication' if authTyp == 1 else 'NTLM authentication'
 	if result != expected_response:
-		utils.fail('Proxy auth %r returns %s, expected %s' % (
-			authTyp,
+		utils.fail('Proxy %s fails and returns %s, while expected  to return %s' % (
+			auth_text,
 			result,
 			expected_response))
 
