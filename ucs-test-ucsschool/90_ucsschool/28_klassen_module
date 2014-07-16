@@ -1,0 +1,41 @@
+#!/usr/share/ucs-test/runner python
+## -*- coding: utf-8 -*-
+## desc: Klassen module
+## roles: [domaincontroller_master, domaincontroller_slave]
+## tags: [apptest, ucsschool]
+## exposure: dangerous
+## packages: [ucs-school-umc-wizards]
+
+from essential.klasse import Klasse
+import essential.ucsschoo as utu
+import univention.testing.ucr as ucr_test
+
+def main():
+	with utu.UCSTestSchool() as schoolenv:
+		with ucr_test.UCSTestConfigRegistry() as ucr:
+			ou, oudn = schoolenv.create_ou(name_edudc=ucr.get('hostname'))
+			
+			class_01 = Klasse(school=ou)
+			class_02 = Klasse(school=ou)
+
+			class_01.create()
+			class_02.create()
+
+			class_01.check_existence(True)
+			class_02.check_existence(True)
+			
+			class_01.check_query([class_01.name, class_02.name])
+
+			new_attrs = {'name':'K4', 'description':'K4 desc'}
+			class_01.edit(new_attrs)
+			class_01.check_query(['K4', class_02.name])
+			class_01.check_existence(True)
+
+			class_01.remove()
+			class_01.check_existence(False)
+			class_02.remove()
+			class_02.check_existence(False)
+			
+
+if __name__ == '__main__':
+	main()
