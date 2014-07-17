@@ -1,0 +1,38 @@
+#!/usr/share/ucs-test/runner python
+## -*- coding: utf-8 -*-
+## desc: Schools module
+## roles: [domaincontroller_master, domaincontroller_slave]
+## tags: [apptest, ucsschool]
+## exposure: dangerous
+## packages: [ucs-school-umc-wizards]
+
+from essential.school import School
+import univention.testing.ucr as ucr_test
+
+def main():
+	with ucr_test.UCSTestConfigRegistry() as ucr:
+
+		school_01 = School()
+		school_02 = School()
+
+		school_01.create()
+		school_02.create()
+
+		school_01.check_existence(True)
+		school_02.check_existence(True)
+		
+		school_01.check_query([school_01.display_name, school_02.display_name])
+
+		new_attrs = {'display_name':'S4'}
+		school_01.edit(new_attrs)
+		school_01.check_query(['S4', school_02.display_name])
+		school_01.check_existence(True)
+
+		school_01.remove()
+		school_01.check_existence(False)
+		school_02.remove()
+		school_02.check_existence(False)
+			
+
+if __name__ == '__main__':
+	main()
