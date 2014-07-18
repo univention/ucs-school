@@ -14,27 +14,32 @@ def main():
 	with utu.UCSTestSchool() as schoolenv:
 		with ucr_test.UCSTestConfigRegistry() as ucr:
 			ou, oudn = schoolenv.create_ou(name_edudc=ucr.get('hostname'))
+			klassen = []
 			
-			class_01 = Klasse(school=ou)
-			class_02 = Klasse(school=ou)
+			for i in xrange(2):
+				klasse = Klasse(school=ou)
+				klasse.create()
+				klasse.check_existence(True)
+				klasse.check_get()
+				klassen.append(klasse)
 
-			class_01.create()
-			class_02.create()
 
-			class_01.check_existence(True)
-			class_02.check_existence(True)
-			
-			class_01.check_query([class_01.name, class_02.name])
+			# import pdb; pdb.set_trace()
+			klassen[0].check_query([klassen[0].name, klassen[1].name])
 
-			new_attrs = {'name':'K4', 'description':'K4 desc'}
-			class_01.edit(new_attrs)
-			class_01.check_query(['K4', class_02.name])
-			class_01.check_existence(True)
+			new_attrs = {'name':'K2', 'description':'K2 desc'}
+			klassen[0].edit(new_attrs)
+			new_attrs = {'name':'K3', 'description':'K3 desc'}
+			klassen[1].edit(new_attrs)
 
-			class_01.remove()
-			class_01.check_existence(False)
-			class_02.remove()
-			class_02.check_existence(False)
+			klassen[0].check_query(['K2', 'K3'])
+
+			for klasse in klassen:
+				klasse.check_get()
+				klasse.check_existence(True)
+
+				klasse.remove()
+				klasse.check_existence(False)
 			
 
 if __name__ == '__main__':
