@@ -1,14 +1,14 @@
 #!/usr/share/ucs-test/runner python
 ## -*- coding: utf-8 -*-
 ## desc: Klassen module
-## roles: [domaincontroller_master, domaincontroller_slave]
+## roles: [domaincontroller_master]
 ## tags: [apptest, ucsschool]
 ## exposure: dangerous
 ## packages: [ucs-school-umc-wizards]
 
 from essential.klasse import Klasse
-import essential.ucsschoo as utu
 import univention.testing.ucr as ucr_test
+import univention.testing.ucsschool as utu
 
 def main():
 	with utu.UCSTestSchool() as schoolenv:
