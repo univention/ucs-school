@@ -9,9 +9,28 @@ import univention.testing.utils as utils
 from univention.lib.umc_connection import UMCConnection
 import univention.testing.ucr as ucr_test
 from univention.testing.ucsschool import UCSTestSchool
+from essential.importou import verify_ou
+
+class GetFail(Exception):
+	pass
+
+class GetCheckFail(Exception):
+	pass
+
+class CreateFail(Exception):
+	pass
+
+class QueryCheckFail(Exception):
+	pass
+
+class RemoveFail(Exception):
+	pass
+
+class EditFail(Exception):
+	pass
 
 
-class School():
+class School(object):
 
 	"""Contains the needed functuality for schools in the UMC module schoolwizards/schools.
 	By default they are randomly formed.\n
@@ -29,11 +48,18 @@ class School():
 	def __init__(self,
 				 display_name=None,
 				 name=None,
+				 dc_name=None,
 				 ucr=None,
 				 umcConnection=None):
 		self.name = name if name else uts.random_string()
 		self.display_name = display_name if display_name else uts.random_string()
 		self.ucr = ucr if ucr else ucr_test.UCSTestConfigRegistry()
+		self.ucr.load()
+		singlemaster = self.ucr.is_true('ucsschool/singlemaster')
+		if singlemaster:
+			self.dc_name = None
+		else:
+			self.dc_name = dc_name if dc_name else uts.random_string()
 		if umcConnection:
 			self.umcConnection = umcConnection
 		else:
@@ -59,7 +85,7 @@ class School():
 				{
 					'object':{
 						'name': self.name,
-						'dc_name': '',
+						'dc_name': self.dc_name,
 						'display_name': self.display_name,
 						},
 					'options': None
@@ -72,7 +98,7 @@ class School():
 				param,
 				flavor)
 		if not reqResult[0]:
-			utils.fail('Unable to create school (%r)' % (param,))
+			raise CreateFail('Unable to create school (%r)' % (param,))
 
 	# create list of random schools returns list of school objects
 	def createList(self, count):
@@ -105,7 +131,7 @@ class School():
 		q = self.query()
 		k = [x['display_name'] for x in q]
 		if not set(schools).issubset(set(k)):
-			utils.fail('schools from query do not contain the existing schools, found (%r), expected (%r)' % (
+			raise QueryCheckFail('schools from query do not contain the existing schools, found (%r), expected (%r)' % (
 				k, schools))
 
 	def dn(self):
@@ -126,22 +152,30 @@ class School():
 		reqResult = self.umcConnection.request(
 				'schoolwizards/schools/remove',param,flavor)
 		if not reqResult[0]:
-			utils.fail('Unable to remove school (%s)' % self.name)
+			raise RemoveFail('Unable to remove school (%s)' % self.name)
 
 
 	def edit(self, new_attributes):
 		"""Edit object school"""
 		flavor = 'schoolwizards/schools'
-		if new_attributes.get('home_share_file_server'):
-			home_share = new_attributes['home_share_file_server']
+		if self.dc_name:
+			host = self.dc_name
+			home_share = 'cn=%s,cn=dc,cn=server,cn=computers,%s' % (
+					host, UCSTestSchool().get_ou_base_dn(self.name))
+			class_share = 'cn=%s,cn=dc,cn=server,cn=computers,%s' % (
+					host, UCSTestSchool().get_ou_base_dn(self.name))
 		else:
-			home_share = 'cn=%s,cn=dc,cn=computers,%s' % (
-					self.ucr.get('hostname'), self.ucr.get('ldap/base'))
-		if new_attributes.get('class_share_file_server'):
-			class_share = new_attributes['class_share_file_server']
-		else:
-			class_share = 'cn=%s,cn=dc,cn=computers,%s' % (
-					self.ucr.get('ldap/master'), self.ucr.get('ldap/base'))
+			host = self.ucr.get('hostname')
+			if new_attributes.get('home_share_file_server'):
+				home_share = new_attributes['home_share_file_server']
+			else:
+				home_share = 'cn=%s,cn=dc,cn=computers,%s' % (
+						host, self.ucr.get('ldap/base'))
+			if new_attributes.get('class_share_file_server'):
+				class_share = new_attributes['class_share_file_server']
+			else:
+				class_share = 'cn=%s,cn=dc,cn=computers,%s' % (
+						host, self.ucr.get('ldap/base'))
 		param =	[
 				{
 					'object':{
@@ -149,7 +183,7 @@ class School():
 						'name': self.name,
 						'home_share_file_server': home_share,
 						'class_share_file_server': class_share,
-						'dc_name': '',
+						'dc_name': self.dc_name,
 						'display_name': new_attributes['display_name']
 						},
 					'options': None
@@ -162,11 +196,12 @@ class School():
 				param,
 				flavor)
 		if not reqResult[0]:
-			utils.fail('Unable to edit school (%s) with the parameters (%r)' % (self.name , param))
+			raise EditFail('Unable to edit school (%s) with the parameters (%r)' % (self.name , param))
 		else:
 			self.home_share_file_server = home_share
 			self.class_share_file_server = class_share
 			self.display_name = new_attributes['display_name']
 
-	def check_existence(self, should_exist):
-		utils.verify_ldap_object(self.dn(), should_exist=should_exist)
+	def verify_ldap(self, should_exist):
+		verify_ou(self.name, self.dc_name, self.ucr, None, None, should_exist)
+

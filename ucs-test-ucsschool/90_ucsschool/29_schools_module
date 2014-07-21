@@ -1,38 +1,50 @@
 #!/usr/share/ucs-test/runner python
 ## -*- coding: utf-8 -*-
 ## desc: Schools module
-## roles: [domaincontroller_master, domaincontroller_slave]
+## roles: [domaincontroller_master]
 ## tags: [apptest, ucsschool]
 ## exposure: dangerous
 ## packages: [ucs-school-umc-wizards]
 
 from essential.school import School
 import univention.testing.ucr as ucr_test
+import univention.testing.strings as uts
+import univention.testing.utils as utils
 
 def main():
 	with ucr_test.UCSTestConfigRegistry() as ucr:
 
-		school_01 = School()
-		school_02 = School()
+		schools = []
+		singlemaster = ucr.is_true('ucsschool/singlemaster')
+		try:
+			for i in xrange(2):
+				if singlemaster:
+					slave_name = None
+				else:
+					slave_name = uts.random_string()
+				school = School(dc_name=slave_name)
+				school.create()
+				school.verify_ldap(True)
+				schools.append(school)
 
-		school_01.create()
-		school_02.create()
-
-		school_01.check_existence(True)
-		school_02.check_existence(True)
-		
-		school_01.check_query([school_01.display_name, school_02.display_name])
-
-		new_attrs = {'display_name':'S4'}
-		school_01.edit(new_attrs)
-		school_01.check_query(['S4', school_02.display_name])
-		school_01.check_existence(True)
-
-		school_01.remove()
-		school_01.check_existence(False)
-		school_02.remove()
-		school_02.check_existence(False)
 			
+			schools[0].check_query([schools[0].display_name, schools[1].display_name])
+
+			new_attrs = {'display_name':'S2'}
+			schools[0].edit(new_attrs)
+			new_attrs = {'display_name':'S3'}
+			schools[1].edit(new_attrs)
+			schools[0].check_query(['S2', 'S3'])
+
+			for school in reversed(schools):
+				school.verify_ldap(True)
+				school.remove()
+				school.verify_ldap(False)
+		finally:
+			if schools:
+				for school in schools:
+					school.remove()
+
 
 if __name__ == '__main__':
 	main()
