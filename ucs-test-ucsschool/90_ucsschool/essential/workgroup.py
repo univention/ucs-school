@@ -76,6 +76,7 @@ class Workgroup(object):
 			createResult = self._create()
 			if createResult and expect_creation_fails_due_to_duplicated_name:
 				utils.fail('Group', self.name, 'created with a duplicate name')
+			utils.wait_for_replication()
 		except httplib.HTTPException as e:
 			 exception_strings = [
 					 'The groupname is already in use as groupname or as username',
@@ -123,6 +124,7 @@ class Workgroup(object):
 			g = self.__class__(self.school)
 			g._create()
 			groupList.append(g)
+		utils.wait_for_replication()
 		return groupList
 
 	def remove(self, options=None):
@@ -137,6 +139,7 @@ class Workgroup(object):
 				flavor)
 		if not requestResult:
 			utils.fail('Group', self.name, 'failed to be removed')
+		utils.wait_for_replication()
 
 	def addMembers(self, memberListdn, options=None):
 		"""Add members to workgroup\n
@@ -173,6 +176,35 @@ class Workgroup(object):
 			utils.fail('Members', currentMembers, 'failed to be added')
 		else:
 			self.members = currentMembers
+		utils.wait_for_replication()
+
+	def set_members(self, new_members):
+		"""Set members for workgroup\n
+		:param new_members: list of the new members
+		:type new_members: list
+		"""
+		print 'Setting members  %r from group %s' % (new_members, self.name)
+		flavor = 'workgroup-admin'
+		groupdn = self.dn()
+		creationParam = [{
+			'object':{
+				'$dn$' :	groupdn,
+				'school':	self.school,
+				'name' :	self.name,
+				'description':	self.description,
+				'members':	new_members
+				},
+			'options':	None
+			}]
+		requestResult = self.umcConnection.request(
+				'schoolgroups/put',
+				creationParam,
+				flavor)
+		if not requestResult:
+			utils.fail('Members', new_members, 'failed to be set')
+		else:
+			self.members = new_members
+		utils.wait_for_replication()
 
 	def removeMembers(self, memberListdn, options=None):
 		"""Remove members from workgroup\n
@@ -207,6 +239,7 @@ class Workgroup(object):
 			utils.fail('Members', currentMembers, 'failed to be removed')
 		else:
 			self.members = currentMembers
+		utils.wait_for_replication()
 
 	def verify_ldap_attributes(self):
 		"""checking group attributes in ldap"""

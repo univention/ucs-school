@@ -25,7 +25,7 @@ def main():
 
 		account = utils.UCSTestDomainAdminCredentials()
 		admin = account.username
-		passwd = account.binddn
+		passwd = account.bindpw
 
 		utils.wait_for_replication_and_postrun()
 
@@ -35,6 +35,8 @@ def main():
 			emptyGroup = Workgroup(schoolName, umcConnection=connection)
 			emptyGroup.create()
 			# 2 checking the created workgroup and its file share object in ldap
+			# import pdb; pdb.set_trace()
+			utils.wait_for_replication()
 			emptyGroup.verify_exists(
 					group_should_exist=True,
 					share_should_exist=True)
@@ -74,10 +76,16 @@ def main():
 			# 10 checking if the atrriputes for the group is correct in ldap
 			group.verify_ldap_attributes()
 
-			# 11 remove the group
+			#11 Change the members of a group 
+			group.set_members([memberListdn[0]])
+
+			# 11 checking if the atrriputes for the group is correct in ldap
+			group.verify_ldap_attributes()
+
+			# 12 remove the group
 			group.remove()
 
-			# 12 check if the object is removed from ldap
+			# 13 check if the object is removed from ldap
 			group.verify_exists(
 					group_should_exist=False,
 					share_should_exist=False)
