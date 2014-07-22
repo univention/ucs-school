@@ -158,25 +158,7 @@ class Workgroup(object):
 				currentMembers.append(member)
 			else:
 				print('member', member, 'already exist in the group')
-		creationParam = [{
-			'object':{
-				'$dn$' : groupdn,
-				'school': self.school,
-				'name' : self.name,
-				'description': self.description,
-				'members': currentMembers
-				},
-			'options':options
-			}]
-		requestResult = self.umcConnection.request(
-				'schoolgroups/put',
-				creationParam ,
-				flavor)
-		if not requestResult:
-			utils.fail('Members', currentMembers, 'failed to be added')
-		else:
-			self.members = currentMembers
-		utils.wait_for_replication()
+		self.set_members(currentMembers)
 
 	def set_members(self, new_members):
 		"""Set members for workgroup\n
@@ -221,25 +203,7 @@ class Workgroup(object):
 		for member in memberListdn:
 			if member in currentMembers:
 				currentMembers.remove(member)
-		creationParam = [{
-			'object':{
-				'$dn$' : groupdn,
-				'school': self.school,
-				'name' : self.name,
-				'description': self.description,
-				'members': currentMembers
-				},
-			'options':options
-			}]
-		requestResult = self.umcConnection.request(
-				'schoolgroups/put',
-				creationParam,
-				flavor)
-		if not requestResult:
-			utils.fail('Members', currentMembers, 'failed to be removed')
-		else:
-			self.members = currentMembers
-		utils.wait_for_replication()
+		self.set_members(currentMembers)
 
 	def verify_ldap_attributes(self):
 		"""checking group attributes in ldap"""
