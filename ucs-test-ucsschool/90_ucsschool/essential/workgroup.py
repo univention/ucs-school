@@ -159,6 +159,22 @@ class Workgroup(object):
 				print('member', member, 'already exist in the group')
 		self.set_members(currentMembers)
 
+	def removeMembers(self, memberListdn, options=None):
+		"""Remove members from workgroup\n
+		:param memberListdn: list of the removed members
+		:type memberListdn: list
+		:param options:
+		:type options: None
+		"""
+		print 'Removing members  %r from group %s' % (memberListdn, self.name)
+		groupdn = self.dn()
+		currentMembers = sorted(
+				self.ulConnection.getAttr(groupdn, 'uniqueMember'))
+		for member in memberListdn:
+			if member in currentMembers:
+				currentMembers.remove(member)
+		self.set_members(currentMembers)
+
 	def set_members(self, new_members, options=None):
 		"""Set members for workgroup\n
 		:param new_members: list of the new members
@@ -186,22 +202,6 @@ class Workgroup(object):
 		else:
 			self.members = new_members
 		utils.wait_for_replication()
-
-	def removeMembers(self, memberListdn, options=None):
-		"""Remove members from workgroup\n
-		:param memberListdn: list of the removed members
-		:type memberListdn: list
-		:param options:
-		:type options: None
-		"""
-		print 'Removing members  %r from group %s' % (memberListdn, self.name)
-		groupdn = self.dn()
-		currentMembers = sorted(
-				self.ulConnection.getAttr(groupdn, 'uniqueMember'))
-		for member in memberListdn:
-			if member in currentMembers:
-				currentMembers.remove(member)
-		self.set_members(currentMembers)
 
 	def verify_ldap_attributes(self):
 		"""checking group attributes in ldap"""
