@@ -149,7 +149,6 @@ class Workgroup(object):
 		:type options: None
 		"""
 		print 'Adding members  %r to group %s' % (memberListdn, self.name)
-		flavor = 'workgroup-admin'
 		groupdn = self.dn()
 		currentMembers = sorted(
 				self.ulConnection.getAttr(groupdn,'uniqueMember'))
@@ -160,7 +159,7 @@ class Workgroup(object):
 				print('member', member, 'already exist in the group')
 		self.set_members(currentMembers)
 
-	def set_members(self, new_members):
+	def set_members(self, new_members, options=None):
 		"""Set members for workgroup\n
 		:param new_members: list of the new members
 		:type new_members: list
@@ -176,7 +175,7 @@ class Workgroup(object):
 				'description':	self.description,
 				'members':	new_members
 				},
-			'options':	None
+			'options':	options
 			}]
 		requestResult = self.umcConnection.request(
 				'schoolgroups/put',
@@ -196,7 +195,6 @@ class Workgroup(object):
 		:type options: None
 		"""
 		print 'Removing members  %r from group %s' % (memberListdn, self.name)
-		flavor = 'workgroup-admin'
 		groupdn = self.dn()
 		currentMembers = sorted(
 				self.ulConnection.getAttr(groupdn, 'uniqueMember'))
