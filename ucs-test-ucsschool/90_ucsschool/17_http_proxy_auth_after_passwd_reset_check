@@ -34,10 +34,10 @@ def resetPasswd(host, userdn, flavor, nextLogin):
 		utils.fail('Password reset for (%r) unsuccessful' % (userdn,))
 
 def authProxy(host,url, name, passwd, authTyp, expected_response):
-	print 'Performing auth %r check' % (authTyp,)
+	auth_text = 'basic authentication' if authTyp == 1 else 'NTLM authentication'
+	print 'Performing auth %r check' % (auth_text,)
 	curl = SimpleCurl(proxy=host, username=name, password=passwd, auth=authTyp)
 	result = curl.response(url)
-	auth_text = 'basic authentication' if authTyp == 1 else 'NTLM authentication'
 	if result != expected_response:
 		utils.fail('Proxy %s fails and returns %s, while expected  to return %s' % (
 			auth_text,
@@ -59,37 +59,37 @@ def main():
 			school, oudn = schoolenv.create_ou(name_edudc=ucr.get('hostname'))
 			stu, studn = schoolenv.create_user(school)
 
-			# check auth with initial state
+			print 'check student auth with initial state'
 			authProxy(host, url, stu, 'univention', pycurl.HTTPAUTH_BASIC, 200)
 			authProxy(host, url, stu, 'univention', pycurl.HTTPAUTH_NTLM, 200)
 
-			# resetting user password
+			print "resetting student user password"
 			newpasswd = resetPasswd(host, studn,'student', False) 
 			utils.wait_for_replication_and_postrun()
 			
-			# check auth with the old password
+			print "check student auth with the old password"
 			authProxy(host, url, stu, 'univention', pycurl.HTTPAUTH_BASIC, 407)
 			authProxy(host, url, stu, 'univention', pycurl.HTTPAUTH_NTLM, 407)
 
-			# check auth with the new password
+			print 'check student auth with the new password'
 			authProxy(host, url, stu, newpasswd, pycurl.HTTPAUTH_BASIC, 200)
 			authProxy(host, url, stu, newpasswd, pycurl.HTTPAUTH_NTLM, 200)
 			
 			tea, teadn = schoolenv.create_user(school, is_teacher=True)
 
-			# check auth with initial state
+			print 'check teacher auth with initial state'
 			authProxy(host, url, tea, 'univention', pycurl.HTTPAUTH_BASIC, 200)
 			authProxy(host, url, tea, 'univention', pycurl.HTTPAUTH_NTLM, 200)
 
-			# resetting user password
+			print 'resetting teacher user password'
 			newpasswd = resetPasswd(host, teadn,'teacher', False) 
 			utils.wait_for_replication_and_postrun()
 
-			# check auth with the old password
+			print 'check teacher auth with the old password'
 			authProxy(host, url, tea, 'univention', pycurl.HTTPAUTH_BASIC, 407)
 			authProxy(host, url, tea, 'univention', pycurl.HTTPAUTH_NTLM, 407)
 
-			# check auth with the new password
+			print 'check teacher auth with the new password'
 			authProxy(host, url, tea, newpasswd, pycurl.HTTPAUTH_BASIC, 200)
 			authProxy(host, url, tea, newpasswd, pycurl.HTTPAUTH_NTLM, 200)
 
