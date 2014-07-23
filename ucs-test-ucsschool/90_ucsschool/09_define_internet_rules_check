@@ -21,9 +21,9 @@ def main():
 		definedRules.append(rule.name)
 
 		# check internetrules/get
-		rule.get(expectedResult=True)
+		rule.get(should_exist=True)
 		# check ucr
-		rule.checkUcr(expectedResult=True)
+		rule.checkUcr(should_match=True)
 
 		# Fetch the currently existing internet rules
 		definedRules2 = rule.allRules()
@@ -45,18 +45,18 @@ def main():
 		rule.put(name, type, domains, wlan, priority)
 
 		# check internetrules/get
-		rule.get(expectedResult=True)
+		rule.get(should_exist=True)
 		# check ucr
-		rule.checkUcr(expectedResult=True)
+		rule.checkUcr(should_match=True)
 
 		# Removing the rule
 		rule.remove()
 		definedRules.remove(rule.name)
 
 		# check internetrules/get
-		rule.get(expectedResult=False)
+		rule.get(should_exist=False)
 		# check ucr
-		rule.checkUcr(expectedResult=False)
+		rule.checkUcr(should_match=False)
 
 		# Fetch the currently existing internet rules
 		definedRules2 = rule.allRules()

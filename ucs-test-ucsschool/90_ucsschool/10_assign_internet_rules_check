@@ -1,7 +1,7 @@
 #!/usr/share/ucs-test/runner python
 ## desc: ucs-school-assign-internet-rules-check
 ## roles: [domaincontroller_master, domaincontroller_backup, domaincontroller_slave, memberserver]
-## tags: [apptest,ucsschool]
+## tags: [apptest, ucsschool]
 ## exposure: careful
 ## packages:  [ucs-school-umc-internetrules]
 
@@ -43,7 +43,7 @@ def main():
 
 			# test get the created rules via umc
 			for rule in newRules:
-				rule.get(expectedResult=True)
+				rule.get(should_exist=True)
 
 			# Create random workgroups
 			groupIns = Workgroup(school, ucr=ucr)

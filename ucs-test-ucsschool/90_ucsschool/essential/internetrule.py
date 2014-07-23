@@ -97,16 +97,16 @@ class InternetRule(object):
 		if not reqResult[0]['success']:
 			utils.fail('Unable to define rule (%r)' % (param,))
 
-	def get(self, expectedResult):
+	def get(self, should_exist):
 		"""gets internet rule via UMCP\n
-		:param expectedResult: True if the rule is expected to be found
-		:type expectedResult: bool"""
+		:param should_exist: True if the rule is expected to be found
+		:type should_exist: bool"""
 		print 'Calling %s for %s' % (
 			'internetrules/get',
 			self.name)
 		reqResult = self.umcConnection.request(
 			'internetrules/get', [self.name])
-		if bool(reqResult) != expectedResult:
+		if bool(reqResult) != should_exist:
 			utils.fail(
 				'Unexpected fetching result for internet rule (%r)' %
 				(self.name))
@@ -178,12 +178,12 @@ class InternetRule(object):
 
 	# Fetch the values from ucr and check if it matches
 	# the correct values for the rule
-	def checkUcr(self, expectedResult):
+	def checkUcr(self, should_match):
 		"""check ucr for internet rule\n
 		Fetch the values from ucr and check if it matches
 		the correct values for the rule\n
-		:param expectedResult:
-		:type  expectedResult: bool
+		:param should_match:
+		:type  should_match: bool
 		"""
 		print 'Checking UCR for %s' % self.name
 		self.ucr.load()
@@ -191,11 +191,11 @@ class InternetRule(object):
 		exItems = dict([
 			(key.split('/')[-1], value)
 			for (key, value) in self.ucr.items() if self.name in key])
-		if bool(exItems) != expectedResult:
+		if bool(exItems) != should_match:
 			utils.fail(
-				'Unexpected registery items (expectedResult=%r items=%r)' %
-				(expectedResult, exItems))
-		elif expectedResult:
+				'Unexpected registery items (should_match=%r items=%r)' %
+				(should_match, exItems))
+		elif should_match:
 			wlan = str(self.wlan).lower()
 			typ = self.typ
 			if self.typ == "whitelist":
