@@ -1,0 +1,63 @@
+#!/usr/share/ucs-test/runner python
+## -*- coding: utf-8 -*-
+## desc: Users(schools) module
+## roles: [domaincontroller_master]
+## tags: [apptest, ucsschool]
+## exposure: dangerous
+## packages: [ucs-school-umc-wizards]
+
+from essential.klasse import Klasse
+from essential.user import User
+import univention.testing.strings as uts
+import univention.testing.ucr as ucr_test
+import univention.testing.ucsschool as utu
+
+def main():
+	with utu.UCSTestSchool() as schoolenv:
+		with ucr_test.UCSTestConfigRegistry() as ucr:
+			ou, oudn = schoolenv.create_ou(name_edudc=ucr.get('hostname'))
+			class_01 = Klasse(school=ou)
+			class_01.create()
+			class_02 = Klasse(school=ou)
+			class_02.create()
+			users = []
+			
+			for i in xrange(2):
+				user = User(school=ou, school_class=class_01.name)
+				user.create()
+				# import pdb; pdb.set_trace()
+				user.verify_ldap(True)
+				user.check_get()
+				users.append(user)
+
+
+			users[0].check_query([users[0].firstname, users[1].firstname])
+
+			new_attrs = {
+					'school_class': class_02.name,
+					'email': '%s@%s.de' % (uts.random_string(), uts.random_string()),
+					'firstname': 'first_name1',
+					'lastname': 'last_name1',
+					'password': uts.random_string(),
+					}
+			users[0].edit(new_attrs)
+			new_attrs = {
+					'school_class': class_02.name,
+					'email': '%s@%s.de' % (uts.random_string(), uts.random_string()),
+					'firstname': 'first_name2',
+					'lastname': 'last_name2',
+					'password': uts.random_string(),
+					}
+			users[1].edit(new_attrs)
+
+			users[0].check_query(['first_name1', 'first_name2'])
+
+			for user in users:
+				user.check_get()
+				user.verify_ldap(True)
+
+				user.remove()
+				user.verify_ldap(False)
+
+if __name__ == '__main__':
+	main()
