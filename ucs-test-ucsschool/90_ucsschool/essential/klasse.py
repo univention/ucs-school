@@ -166,7 +166,7 @@ class Klasse(object):
 		get_result = self.get()
 		if get_result != info:
 			raise GetCheckFail('Failed get request for class %s. Returned result: %r. Expected result: %r' % (
-				get_result, self.info))
+				self.name, get_result, info))
 
 	def remove(self):
 		"""Remove class"""
