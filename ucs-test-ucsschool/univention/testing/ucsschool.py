@@ -54,6 +54,7 @@ from ldap.dn import str2dn
 from ucsschool.lib.models.group import BasicGroup
 from ucsschool.lib.models.misc import OU, Container
 from ucsschool.lib.models.utils import ucr
+import univention.testing.udm as udm_test
 
 add_stream_logger_to_schoollib()
 
@@ -402,6 +403,27 @@ class UCSTestSchool(object):
 			utils.wait_for_replication()
 
 		return username, user_dn
+
+	def create_school_admin(self, ou_name):
+		position = 'cn=admins,cn=users,%s' % (self.get_ou_base_dn(ou_name))
+		groups = ["cn=admins-%s,cn=ouadmins,cn=groups,%s" % (ou_name, self.LDAP_BASE)]
+		udm = udm_test.UCSTestUDM()
+		dn, school_admin = udm.create_user(position=position, groups=groups)
+		return dn, school_admin
+
+	def create_domain_admin(self, ou_name):
+		position = 'cn=admins,cn=users,%s' % (self.get_ou_base_dn(ou_name))
+		groups = ["cn=Domain Admins,cn=groups,%s" % (self.LDAP_BASE,)]
+		udm = udm_test.UCSTestUDM()
+		dn, domain_admin = udm.create_user(position=position, groups=groups)
+		return dn, domain_admin
+
+	def create_global_user(self):
+		position = 'cn=users,%s' % (self.LDAP_BASE,)
+		# groups = ["cn=admins-%s,cn=ouadmins,cn=groups,%s" % (ou_name, self.LDAP_BASE)]
+		udm = udm_test.UCSTestUDM()
+		dn, global_user = udm.create_user(position=position, groups=[])
+		return dn, global_user
 
 	def create_computerroom(self, ou_name, name=None, description=None, host_members=[], wait_for_replication=True):
 		"""
