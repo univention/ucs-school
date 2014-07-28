@@ -43,7 +43,8 @@ class User(Person):
 
 	def __init__(self, school, role, school_class):
 		Person.__init__(self, school, role)
-		self.classes = [school_class]
+		self.classes = [school_class] if school_class else []
+		self.typ = 'teachersAndStaff' if self.role == 'teacher_staff' else self.role
 		self.school_class = school_class
 		self.ucr = ucr_test.UCSTestConfigRegistry()
 		self.ucr.load()
@@ -70,7 +71,7 @@ class User(Person):
 						'school_class': self.school_class,
 						'email': self.mail,
 						'name': self.username,
-						'type': self.role,
+						'type': self.typ,
 						'firstname': self.firstname,
 						'lastname': self.lastname,
 						'password': self.password
@@ -112,14 +113,19 @@ class User(Person):
 				'lastname': self.lastname,
 				'type_name': self.type_name(),
 				'school': self.school,
-				'school_class': self.school_class,
 				'disabled' : 'none',
 				'birthday': None,
 				'password': None,
-				'type': self.role,
+				'type': self.typ,
 				'email': self.mail,
 				'objectType': 'users/user'
 				}
+		if self.is_student():
+			info.update({'school_class': self.school_class})
+		if self.is_teacher():
+			info.update({'school_class': self.school_class})
+		if self.is_teacher_staff():
+			info.update({'school_class': self.school_class})
 		get_result = self.get()
 		# Type_name is only used for display, Ignored
 		info['type_name'] = get_result['type_name']
@@ -128,13 +134,13 @@ class User(Person):
 				self.username, get_result, info))
 
 	def type_name(self):
-		if self.role == 'student':
+		if self.typ == 'student':
 			return 'Student'
-		elif self.role == 'teacher':
+		elif self.typ == 'teacher':
 			return 'Teacher'
-		elif self.role == 'staff':
+		elif self.typ == 'staff':
 			return 'Staff'
-		elif self.role == 'teacherAndStaff':
+		elif self.typ == 'teacherAndStaff':
 			return 'Teacher and Staff'
 
 	def query(self):
@@ -187,7 +193,7 @@ class User(Person):
 						'school_class': new_attributes.get('school_class') if new_attributes.get('school_class') else self.school_class,
 						'email': new_attributes.get('email') if new_attributes.get('email') else self.mail,
 						'name': self.username,
-						'type': self.role,
+						'type': self.typ,
 						'firstname': new_attributes.get('firstname') if new_attributes.get('firstname') else self.firstname,
 						'lastname': new_attributes.get('lastname') if new_attributes.get('lastname') else self.lastname,
 						'password': new_attributes.get('password') if new_attributes.get('password') else self.password,

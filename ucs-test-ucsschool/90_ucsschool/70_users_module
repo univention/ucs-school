@@ -22,13 +22,21 @@ def main():
 			class_02.create()
 			users = []
 			
-			for i in xrange(2):
-				user = User(school=ou, role='student', school_class=class_01.name)
+			# creating students and teachers
+			for role in ['student', 'teacher']:
+				user = User(school=ou, role=role, school_class=class_01.name)
 				user.create()
 				user.verify()
 				user.check_get()
 				users.append(user)
 
+			# creating staff and teacher and staff members
+			for role in ['staff', 'teacher_staff']:
+				user = User(school=ou, role=role, school_class='')
+				user.create()
+				user.verify()
+				user.check_get()
+				users.append(user)
 
 			users[0].check_query([users[0].firstname, users[1].firstname])
 
