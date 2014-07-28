@@ -23,10 +23,9 @@ def main():
 			users = []
 			
 			for i in xrange(2):
-				user = User(school=ou, school_class=class_01.name)
+				user = User(school=ou, role='student', school_class=class_01.name)
 				user.create()
-				# import pdb; pdb.set_trace()
-				user.verify_ldap(True)
+				user.verify()
 				user.check_get()
 				users.append(user)
 
@@ -35,7 +34,7 @@ def main():
 
 			new_attrs = {
 					'school_class': class_02.name,
-					'email': '%s@%s.de' % (uts.random_string(), uts.random_string()),
+					'email': '%s@%s' % (uts.random_name(), ucr.get('domainname')),
 					'firstname': 'first_name1',
 					'lastname': 'last_name1',
 					'password': uts.random_string(),
@@ -43,7 +42,7 @@ def main():
 			users[0].edit(new_attrs)
 			new_attrs = {
 					'school_class': class_02.name,
-					'email': '%s@%s.de' % (uts.random_string(), uts.random_string()),
+					'email': '%s@%s' % (uts.random_name(), ucr.get('domainname')),
 					'firstname': 'first_name2',
 					'lastname': 'last_name2',
 					'password': uts.random_string(),
@@ -54,10 +53,9 @@ def main():
 
 			for user in users:
 				user.check_get()
-				user.verify_ldap(True)
-
+				user.verify()
 				user.remove()
-				user.verify_ldap(False)
+				user.verify()
 
 if __name__ == '__main__':
 	main()
