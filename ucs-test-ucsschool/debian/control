@@ -4,9 +4,9 @@ Priority: optional
 Maintainer: Univention GmbH <packages@univention.de>
 Build-Depends: debhelper (>= 8.0.0),
  ucslint,
- XS-Python-Version: 2.6,
  python-support
 Standards-Version: 3.6.1
+XS-Python-Version: 2.6
 
 Package: ucs-test-ucsschool
 Architecture: all
