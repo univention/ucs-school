@@ -120,12 +120,13 @@ class User(Person):
 				'email': self.mail,
 				'objectType': 'users/user'
 				}
-		if self.is_student():
-			info.update({'school_class': self.school_class})
-		if self.is_teacher():
-			info.update({'school_class': self.school_class})
-		if self.is_teacher_staff():
-			info.update({'school_class': self.school_class})
+		if self.is_student() or self.is_teacher() or self.is_teacher_staff():
+			if self.school_class:
+				# remove the ou- name prefix from the class-dn
+				info.update({'school_class': self.school_class.split('-')[1]})
+			else:
+				info.update({'school_class': self.school_class})
+
 		get_result = self.get()
 		# Type_name is only used for display, Ignored
 		info['type_name'] = get_result['type_name']
