@@ -1,11 +1,11 @@
 
 ## -*- coding: utf-8 -*-
-from essential.importcomputers import Windows, MacOS, IPManagedClient
+from essential.importcomputers import Windows, MacOS, IPManagedClient, random_mac, random_ip
 from essential.internetrule import InternetRule
 from ucsschool.lib.models import IPComputer as IPComputerLib
 from ucsschool.lib.models import MacComputer as MacComputerLib
 from ucsschool.lib.models import WindowsComputer as WindowsComputerLib
-import essential.ucsschoo as utu
+import univention.testing.ucsschool as utu
 import re
 import univention.testing.strings as uts
 import univention.testing.utils as utils
@@ -21,6 +21,25 @@ from essential.workgroup import Workgroup
 import itertools
 import os
 import httplib
+from univention.lib.umc_connection import UMCConnection
+
+class GetFail(Exception):
+	pass
+
+class GetCheckFail(Exception):
+	pass
+
+class CreateFail(Exception):
+	pass
+
+class QueryCheckFail(Exception):
+	pass
+
+class RemoveFail(Exception):
+	pass
+
+class EditFail(Exception):
+	pass
 
 class ComputerImport(object):
 	def __init__(self, school=None, nr_windows=1, nr_macos=0, nr_ipmanagedclient=0):
@@ -727,3 +746,182 @@ class Computers(object):
 			ips.append(computer.ip)
 		return ips
 
+
+class UmcComputer(object):
+
+	def __init__(
+			self,
+			school,
+			typ,
+			name=None,
+			ip_address=None,
+			subnet_mask=None,
+			mac_address=None,
+			inventory_number=None
+			):
+		self.school = school
+		self.typ = typ
+		self.name = name if name else uts.random_name()
+		self.ip_address = ip_address if ip_address else random_ip()
+		self.subnet_mask = subnet_mask if subnet_mask else '255.255.255.0'
+		self.mac_address = mac_address.lower() if mac_address else random_mac()
+		self.inventory_number = inventory_number if inventory_number else ''
+		self.ucr = ucr_test.UCSTestConfigRegistry()
+		self.ucr.load()
+		host = self.ucr.get('ldap/master')
+		self.umc_connection = UMCConnection(host)
+		account = utils.UCSTestDomainAdminCredentials()
+		admin = account.username
+		passwd = account.bindpw
+		self.umc_connection.auth(admin, passwd)
+
+	def create(self, should_succeed=True):
+		"""Creates object Computer"""
+		flavor = 'schoolwizards/computers'
+		param =	[
+				{
+					'object':{
+						'school': self.school,
+						'type': self.typ,
+						'name': self.name,
+						'ip_address': self.ip_address,
+						'mac_address': self.mac_address.lower(),
+						'subnet_mask': self.subnet_mask,
+						'inventory_number': self.inventory_number
+						},
+					'options': None
+					}
+				]
+		print 'Creating Computer %s' % (self.name,)
+		print 'param = %s' % (param,)
+		reqResult = self.umc_connection.request(
+				'schoolwizards/computers/add', param, flavor)
+		if reqResult[0] == should_succeed:
+			utils.wait_for_replication()
+		elif should_succeed in reqResult[0]['result']['message']:
+			print 'Expected creation fail for computer (%r)\nReturn Message: %r' % (self.name,reqResult[0]['result']['message'])
+		else:
+			raise CreateFail('Unable to create computer (%r)\nRequest Result: %r' % (param,reqResult))
+
+	def remove(self):
+		"""Remove computer"""
+		flavor = 'schoolwizards/computers'
+		param =	[
+				{
+					'object':{
+						'$dn$': self.dn(),
+						'school': self.school,
+						},
+					'options': None
+					}
+				]
+		reqResult = self.umc_connection.request(
+				'schoolwizards/computers/remove',param,flavor)
+		if not reqResult[0]:
+			raise RemoveFail('Unable to remove computer (%s)' % self.name)
+		else:
+			utils.wait_for_replication()
+
+	def dn(self):
+		return 'cn=%s,cn=computers,%s' % (self.name, utu.UCSTestSchool().get_ou_base_dn(self.school))
+
+	def get(self):
+		"""Get Computer"""
+		flavor = 'schoolwizards/computers'
+		param =	[
+				{
+					'object':{
+						'$dn$': self.dn(),
+						'school': self.school
+						}
+					}
+				]
+		reqResult = self.umc_connection.request(
+				'schoolwizards/computers/get',param,flavor)
+		if not reqResult[0]:
+			raise GetFail('Unable to get computer (%s)' % self.name)
+		else:
+			return reqResult[0]
+
+	def check_get(self):
+		info = {
+				'$dn$': self.dn(),
+				'school': self.school,
+				'type': self.typ,
+				'name': self.name,
+				'ip_address': [self.ip_address],
+				'mac_address': [self.mac_address.lower()],
+				'subnet_mask': self.subnet_mask,
+				'inventory_number': self.inventory_number,
+				'zone': None,
+				'type_name': self.type_name(),
+				'objectType': 'computers/%s' % self.typ
+				}
+		get_result = self.get()
+		if get_result != info:
+			diff = set(x for x in get_result if get_result[x] != info[x])
+			raise GetCheckFail(
+					'Failed get request for computer %s.\nReturned result: %r.\nExpected result: %r,\nDifference = %r' % (
+						self.name, get_result, info, diff))
+
+	def type_name(self):
+		if self.typ == 'windows':
+			return 'Windows-System'
+		elif self.typ == 'macos':
+			return 'Mac OS X'
+		elif self.typ == 'ipmanagedclient':
+			return 'Gerät mit IP-Adresse'
+
+	def edit(self, new_attributes):
+		"""Edit object computer"""
+		flavor = 'schoolwizards/computers'
+		param =	[
+				{
+					'object':{
+						'$dn$': self.dn(),
+						'name': self.name,
+						'school': self.school,
+						'type': self.typ,
+						'ip_address': new_attributes.get('ip_address') if new_attributes.get('ip_address') else self.ip_address,
+						'mac_address': new_attributes.get('mac_address').lower() if new_attributes.get('mac_address') else self.mac_address,
+						'subnet_mask': new_attributes.get('subnet_mask') if new_attributes.get('subnet_mask') else self.subnet_mask,
+						'inventory_number': new_attributes.get('inventory_number') if new_attributes.get('inventory_number') else self.inventory_number,
+						},
+					'options': None
+					}
+				]
+		print 'Editing computer %s' % (self.name,)
+		print 'param = %s' % (param,)
+		reqResult = self.umc_connection.request(
+				'schoolwizards/computers/put', param, flavor)
+		if not reqResult[0]:
+			raise EditFail('Unable to edit computer (%s) with the parameters (%r)' % (self.name , param))
+		else:
+			self.ip_address = new_attributes.get('ip_address')
+			self.mac_address = new_attributes.get('mac_address').lower()
+			self.subnet_mask = new_attributes.get('subnet_mask')
+			self.inventory_number = new_attributes.get('inventory_number')
+			utils.wait_for_replication()
+
+	def query(self):
+		"""get the list of existing computer in the school"""
+		flavor = 'schoolwizards/computers'
+		param =	{
+				'school': self.school,
+				'filter': "",
+				'type' : 'all'
+				}
+		reqResult = self.umc_connection.request(
+				'schoolwizards/computers/query',param,flavor)
+		return reqResult
+
+	def check_query(self, computers):
+		q = self.query()
+		k = [x['name'] for x in q]
+		if not set(computers).issubset(set(k)):
+			raise QueryCheckFail('computers from query do not contain the existing computers, found (%r), expected (%r)' % (
+				k, computers))
+
+	def verify_ldap(self, should_exist):
+		print 'verifying computer %s' % self.name
+		utils.verify_ldap_object(self.dn(), should_exist=should_exist)
