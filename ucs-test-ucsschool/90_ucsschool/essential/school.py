@@ -4,12 +4,12 @@
 
 .. moduleauthor:: Ammar Najjar <najjar@univention.de>
 """
-import univention.testing.strings as uts
-import univention.testing.utils as utils
-from univention.lib.umc_connection import UMCConnection
-import univention.testing.ucr as ucr_test
-from univention.testing.ucsschool import UCSTestSchool
 from essential.importou import verify_ou
+from univention.lib.umc_connection import UMCConnection
+from univention.testing.ucsschool import UCSTestSchool
+import univention.testing.strings as uts
+import univention.testing.ucr as ucr_test
+import univention.testing.utils as utils
 
 class GetFail(Exception):
 	pass
@@ -99,22 +99,8 @@ class School(object):
 				flavor)
 		if not reqResult[0]:
 			raise CreateFail('Unable to create school (%r)' % (param,))
-
-	# create list of random schools returns list of school objects
-	def createList(self, count):
-		"""Create a list of schools
-		with random names and display_name\n
-		:param count: number of wanted schools
-		:type count: int
-		:returns: [school_object]
-		"""
-		print 'Creating schoolsList'
-		cList = []
-		for i in xrange(count):
-			c = self.__school__(self.school, self.umcConnection, ucr=self.ucr)
-			c.create()
-			cList.append(c)
-		return cList
+		else:
+			utils.wait_for_replication()
 
 	def query(self):
 		"""get the list of existing schools in the school"""
@@ -153,7 +139,8 @@ class School(object):
 				'schoolwizards/schools/remove',param,flavor)
 		if not reqResult[0]:
 			raise RemoveFail('Unable to remove school (%s)' % self.name)
-
+		else:
+			utils.wait_for_replication()
 
 	def edit(self, new_attributes):
 		"""Edit object school"""
@@ -201,6 +188,7 @@ class School(object):
 			self.home_share_file_server = home_share
 			self.class_share_file_server = class_share
 			self.display_name = new_attributes['display_name']
+			utils.wait_for_replication()
 
 	def verify_ldap(self, should_exist):
 		verify_ou(self.name, self.dc_name, self.ucr, None, None, should_exist)
