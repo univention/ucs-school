@@ -290,7 +290,7 @@ def verify_ou(ou, dc, ucr, sharefileserver, dc_administrative, must_exist):
 	noneducational_create_objects = ucr.is_true('ucsschool/ldap/noneducational/create/objects')
 	district_enable = ucr.is_true('ucsschool/ldap/district/enable')
 	# default_dcs = ucr.get('ucsschool/ldap/default/dcs')
-	dhcp_dns_clearou = ucr.get('ucsschool/import/generate/policy/dhcp/dns/clearou')
+	dhcp_dns_clearou = ucr.is_true('ucsschool/import/generate/policy/dhcp/dns/clearou')
 	ou_base = get_ou_base(ou, district_enable)
 
 	# does dc exist?
