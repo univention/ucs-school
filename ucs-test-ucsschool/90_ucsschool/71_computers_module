@@ -15,7 +15,7 @@ def main():
 	with utu.UCSTestSchool() as schoolenv:
 		with ucr_test.UCSTestConfigRegistry() as ucr:
 			school, oudn = schoolenv.create_ou(name_edudc=ucr.get('hostname'))
-			import pdb; pdb.set_trace()
+
 			pcs = []
 			for computer_type in ['windows', 'macos', 'ipmanagedclient']:
 				pc = UmcComputer(school, computer_type)
@@ -37,10 +37,10 @@ def main():
 			computer_with_existing_name = UmcComputer(school, 'windows', name=pcs[0].name)
 			computer_with_existing_name.create(pcs[0].name)
 
-			computer_with_existing_ip = UmcComputer(school, 'windows', ip_address=pcs[0].ip_address)
+			computer_with_existing_ip = UmcComputer(school, 'macos', ip_address=pcs[0].ip_address)
 			computer_with_existing_ip.create('IP')
 
-			computer_with_existing_mac = UmcComputer(school, 'windows', mac_address=pcs[0].mac_address)
+			computer_with_existing_mac = UmcComputer(school, 'ipmanagedclient', mac_address=pcs[0].mac_address)
 			computer_with_existing_mac.create('MAC')
 
 			for pc in pcs:
