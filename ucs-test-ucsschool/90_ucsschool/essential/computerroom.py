@@ -2,26 +2,26 @@
 ## -*- coding: utf-8 -*-
 from essential.importcomputers import Windows, MacOS, IPManagedClient, random_mac, random_ip
 from essential.internetrule import InternetRule
+from essential.simplecurl import SimpleCurl
+from essential.workgroup import Workgroup
 from ucsschool.lib.models import IPComputer as IPComputerLib
 from ucsschool.lib.models import MacComputer as MacComputerLib
 from ucsschool.lib.models import WindowsComputer as WindowsComputerLib
-import univention.testing.ucsschool as utu
-import re
-import univention.testing.strings as uts
-import univention.testing.utils as utils
-import univention.lib.atjobs as ula
-import datetime
-import time
+from univention.lib.umc_connection import UMCConnection
 import copy
-import subprocess
-import tempfile
-import univention.testing.ucr as ucr_test
-from essential.simplecurl import SimpleCurl
-from essential.workgroup import Workgroup
+import datetime
+import httplib
 import itertools
 import os
-import httplib
-from univention.lib.umc_connection import UMCConnection
+import re
+import subprocess
+import tempfile
+import time
+import univention.lib.atjobs as ula
+import univention.testing.strings as uts
+import univention.testing.ucr as ucr_test
+import univention.testing.ucsschool as utu
+import univention.testing.utils as utils
 
 class GetFail(Exception):
 	pass
