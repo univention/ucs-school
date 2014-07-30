@@ -1,3 +1,9 @@
+ucs-test-ucsschool (1.0.71-1) unstable; urgency=low
+
+  * Bug #35317: test script "71_computers_module" is added.
+
+ -- Ammar Najjar <najjar@univention.de>  Wed, 30 Jul 2014 12:03:22 +0200
+
 ucs-test-ucsschool (1.0.70-1) unstable; urgency=low
 
   * Bug #35369: adding XS-Python-Version: 2.6 to Source Section in debian/control and removing it from Build-Depends Section
