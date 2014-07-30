@@ -6,8 +6,8 @@
 ## exposure: dangerous
 ## packages: [ucs-school-umc-wizards]
 
-from essential.importcomputers import random_ip, random_mac
 from essential.computerroom import UmcComputer
+from essential.importcomputers import random_ip, random_mac
 import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool as utu
 
@@ -21,18 +21,10 @@ def main():
 				pc = UmcComputer(school, computer_type)
 				pc.create()
 				pc.check_get()
+				pc.verify_ldap(True)
 				pcs.append(pc)
 
 			pcs[0].check_query([x.name for x in pcs])
-
-			new_attrs = {
-					'ip_address': random_ip(),
-					'mac_address': random_mac(),
-					'subnet_mask': '255.255.0.0',
-					'inventory_number': '5'
-					}
-			pcs[0].edit(new_attrs)
-			pcs[0].check_get()
 
 			computer_with_existing_name = UmcComputer(school, 'windows', name=pcs[0].name)
 			computer_with_existing_name.create(pcs[0].name)
@@ -42,6 +34,15 @@ def main():
 
 			computer_with_existing_mac = UmcComputer(school, 'ipmanagedclient', mac_address=pcs[0].mac_address)
 			computer_with_existing_mac.create('MAC')
+
+			new_attrs = {
+					'ip_address': random_ip(),
+					'mac_address': random_mac(),
+					'subnet_mask': '255.255.0.0',
+					'inventory_number': '5'
+					}
+			pcs[0].edit(new_attrs)
+			pcs[0].check_get()
 
 			for pc in pcs:
 				pc.verify_ldap(True)
