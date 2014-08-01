@@ -54,7 +54,10 @@ class InternetRule(object):
 			dom = RandomDomain()
 			domains = dom.getDomainList(random.randint(1, 10))
 			self.domains = sorted(domains)
-		self.wlan = wlan if wlan else random.choice([True, False])
+		if wlan==True or wlan==False:
+			self.wlan = wlan
+		else:
+			random.choice([True, False])
 		self.priority = priority if priority else random.randint(1, 10)
 		self.ucr = ucr if ucr else ucr_test.UCSTestConfigRegistry()
 		if umcConnection:
