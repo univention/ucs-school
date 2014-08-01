@@ -1,0 +1,82 @@
+#!/usr/share/ucs-test/runner python
+## -*- coding: utf-8 -*-
+## desc: Computers(schools) module
+## roles: [domaincontroller_master, domaincontroller_slave]
+## tags: [apptest, ucsschool]
+## exposure: dangerous
+## packages: [ucs-school-radius-802.1x]
+
+from essential.computerroom import run_commands
+from essential.internetrule import InternetRule
+from essential.workgroup import Workgroup
+import tempfile
+import univention.testing.ucr as ucr_test
+import univention.testing.ucsschool as utu
+import univention.testing.utils as utils
+from ucsschool.lib.models.group import BasicGroup, Group
+
+def write_peap_config_file(conf_file, username, password):
+	content = """network={
+	key_mgmt=WPA-EAP
+	eap=PEAP
+	identity="%s"
+	anonymous_identity="anonymous"
+	password="%s"
+	phase2="autheap=MSCHAPV2"\n}""" % (username, password)
+	conf_file.write(content)
+
+def peap_auth(username, password, radius_secret):
+	peap_conf_file = tempfile.NamedTemporaryFile(suffix='.conf', dir='/tmp')
+	print ' ** Creating temp config file %s' % peap_conf_file.name
+	write_peap_config_file(peap_conf_file, username, password)
+	peap_conf_file.flush()
+	peap_auth_cmd = ['eapol_test', '-c', '%(peap_conf_file)s', '-s', '%(radius_secret)s']
+	result = run_commands([peap_auth_cmd],{'peap_conf_file':peap_conf_file.name,'radius_secret':radius_secret})
+	return_value = True if result[0] == 0 else False
+	return return_value
+
+def test_peap_auth(username, password, radius_secret, should_succeed=True):
+	print '*** PEAP AUTH: user: %s, password: %s, should_succeed: %r' % (
+			username, password, should_succeed), '-' * 40
+	auth_result = peap_auth(username, password, radius_secret)
+	if auth_result != should_succeed:
+		utils.fail('PEAP authentication unexpected result (%r), while the expected is (%r)\nUser=%s' % (
+			auth_result, should_succeed, username))
+
+def main():
+	with utu.UCSTestSchool() as schoolenv:
+		with ucr_test.UCSTestConfigRegistry() as ucr:
+			school, oudn = schoolenv.create_ou(name_edudc=ucr.get('hostname'))
+
+			tea, tea_dn = schoolenv.create_user(school, is_teacher=True)
+			tea2, tea2_dn = schoolenv.create_user(school, is_teacher=True)
+			stu, stu_dn = schoolenv.create_user(school)
+			stu2, stu2_dn = schoolenv.create_user(school)
+
+			group = Workgroup(school, members=[tea_dn, stu_dn])
+			group.create()
+			rule = InternetRule(wlan=True)
+			rule.define()
+
+			group2 = Workgroup(school, members=[tea2_dn, stu2_dn])
+			group2.create()
+			rule2 = InternetRule(wlan=False)
+			rule2.define()
+
+			utils.wait_for_replication_and_postrun()
+
+			rule.assign(school, group.name, 'workgroup')
+			rule2.assign(school, group2.name, 'workgroup')
+
+			utils.wait_for_replication_and_postrun()
+
+			radius_secret = 'testing123' # parameter set in  /etc/freeradius/clients.conf
+			password = 'univention'
+			test_couples = [(tea, True), (stu, True), (tea2, False), (stu2, False)]
+
+			# Testing loop
+			for username, should_succeed in test_couples:
+				test_peap_auth(username, password, radius_secret, should_succeed=should_succeed)
+
+if __name__ == '__main__':
+	main()
