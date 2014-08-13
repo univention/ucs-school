@@ -9,6 +9,7 @@ import univention.testing.utils as utils
 from univention.lib.umc_connection import UMCConnection
 import univention.testing.ucr as ucr_test
 from univention.testing.ucsschool import UCSTestSchool
+from essential.importou import get_school_base
 from essential.importusers import Person
 
 class GetFail(Exception):
@@ -41,13 +42,72 @@ class User(Person):
 	:type school_class: str
 	"""
 
-	def __init__(self, school, role, school_class):
-		Person.__init__(self, school, role)
-		self.classes = [school_class] if school_class else []
-		self.typ = 'teachersAndStaff' if self.role == 'teacher_staff' else self.role
-		self.school_class = school_class
+	def __init__(
+			self,
+			school,
+			role,
+			school_class,
+			mode='A',
+			username=None,
+			firstname=None,
+			lastname=None,
+			password=None,
+			mail=None):
+
 		self.ucr = ucr_test.UCSTestConfigRegistry()
 		self.ucr.load()
+		cn_pupils = self.ucr.get('ucsschool/ldap/default/container/pupils', 'schueler')
+		cn_teachers = self.ucr.get('ucsschool/ldap/default/container/teachers', 'lehrer')
+		cn_teachers_staff = self.ucr.get('ucsschool/ldap/default/container/teachers-and-staff', 'lehrer und mitarbeiter')
+		cn_staff = self.ucr.get('ucsschool/ldap/default/container/staff', 'mitarbeiter')
+
+		grp_prefix_pupils = self.ucr.get('ucsschool/ldap/default/groupprefix/pupils', 'schueler-')
+		grp_prefix_teachers = self.ucr.get('ucsschool/ldap/default/groupprefix/teachers', 'lehrer-')
+		grp_prefix_admins = self.ucr.get('ucsschool/ldap/default/groupprefix/admins', 'admins-')
+		grp_prefix_staff = self.ucr.get('ucsschool/ldap/default/groupprefix/staff', 'mitarbeiter-')
+
+		self.firstname = uts.random_name()
+		self.lastname = uts.random_name()
+		self.username = uts.random_name()
+		if username:
+			self.username = username
+		if firstname:
+			self.firstname = firstname
+		if lastname:
+			self.lastname = lastname
+		self.school = school
+		self.role = role
+		# self.mail = '%s@%s' % (self.username, self.ucr.get('domainname'))
+		self.classes = []
+		if self.is_student():
+			self.cn = cn_pupils
+			self.grp_prefix = grp_prefix_pupils
+		elif self.is_teacher():
+			self.cn = cn_teachers
+			self.grp_prefix = grp_prefix_teachers
+		elif self.is_teacher_staff():
+			self.cn = cn_teachers_staff
+			self.grp_prefix = grp_prefix_teachers
+		elif self.is_staff():
+			self.cn = cn_staff
+			self.grp_prefix = grp_prefix_staff
+		utils.wait_for_replication()
+		self.mode = mode
+		self.active = True
+		self.password = None
+
+		self.school_base = get_school_base(self.school)
+
+		self.dn = 'uid=%s,cn=%s,cn=users,%s' % (self.username, self.cn, self.school_base)
+
+		if password:
+			self.password = password
+		self.mail = mail
+		self.classes = [school_class] if school_class else []
+
+		self.typ = 'teachersAndStaff' if self.role == 'teacher_staff' else self.role
+		self.school_class = school_class
+
 		host = self.ucr.get('ldap/master')
 		self.umc_connection = UMCConnection(host)
 		account = utils.UCSTestDomainAdminCredentials()
@@ -219,3 +279,4 @@ class User(Person):
 			self.firstname = new_attributes['firstname']
 			self.lastname = new_attributes['lastname']
 			self.password = new_attributes['password']
+
