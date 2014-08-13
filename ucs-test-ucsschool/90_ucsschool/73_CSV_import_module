@@ -1,0 +1,163 @@
+#!/usr/share/ucs-test/runner python
+## -*- coding: utf-8 -*-
+## desc: CSV import module
+## roles: [domaincontroller_master]
+## tags: [apptest, ucsschool]
+## exposure: dangerous
+## packages: [ucs-school-umc-csv-import]
+
+from essential.importcsv import update_persons, verify_persons, transform_usernames
+from essential.importcsv import stu_tea_file, staff_file, check_import_users
+import univention.testing.ucr as ucr_test
+import univention.testing.ucsschool as utu
+
+
+def main():
+	with utu.UCSTestSchool() as schoolenv:
+		with ucr_test.UCSTestConfigRegistry() as ucr:
+			school, oudn = schoolenv.create_ou(name_edudc=ucr.get('hostname'))
+
+			persons_list = []
+
+			# Check healthy import with healthy data
+			user_types = ['student', 'teacher', 'staff',  'teachersAndStaff']
+			nr_of_lines = 2
+			files_01 = [
+					stu_tea_file(nr_of_lines),
+					stu_tea_file(nr_of_lines),
+					staff_file(nr_of_lines),
+					stu_tea_file(nr_of_lines)
+					]
+			expected_upload_status = 200
+			delete_not_mentioned = False
+			users, errors, warnings = check_import_users(
+					school,
+					user_types,
+					files_01,
+					delete_not_mentioned,
+					expected_upload_status,
+					[],
+					[])
+			update_persons(school, persons_list, users)
+
+			nr_of_lines = 1
+			files_02 = [
+					stu_tea_file(nr_of_lines),
+					stu_tea_file(nr_of_lines),
+					staff_file(nr_of_lines),
+					stu_tea_file(nr_of_lines)
+					]
+			delete_not_mentioned = True
+			users, errors, warnings = check_import_users(
+					school,
+					user_types,
+					files_02,
+					delete_not_mentioned,
+					expected_upload_status,
+					[],
+					[]
+					)
+			update_persons(school, persons_list, users)
+
+			# Check warnings for changing firstname, lastname and birthday of an existing user
+			warnings_keys = [
+					'firstname', 'lastname', 'birthday',
+					'firstname', 'lastname', 'birthday',
+					'firstname', 'lastname', 'birthday',
+					'firstname', 'lastname', 'birthday'
+					]
+			nr_of_lines = 1
+
+			files_03 = [
+					stu_tea_file(nr_of_lines),
+					stu_tea_file(nr_of_lines),
+					staff_file(nr_of_lines),
+					stu_tea_file(nr_of_lines)
+					]
+			transform_usernames(files_02, files_03, nr_of_lines)
+			delete_not_mentioned = False
+			users, errors, warnings = check_import_users(
+					school,
+					user_types,
+					files_03,
+					delete_not_mentioned,
+					expected_upload_status,
+					[],
+					warnings_keys
+					)
+			update_persons(school, persons_list, users)
+
+			files_02 = [
+					stu_tea_file(nr_of_lines),
+					stu_tea_file(nr_of_lines),
+					staff_file(nr_of_lines),
+					stu_tea_file(nr_of_lines)
+					]
+			users, errors, warnings = check_import_users(
+					school,
+					user_types,
+					files_02,
+					delete_not_mentioned,
+					expected_upload_status,
+					[],
+					[])
+			update_persons(school, persons_list, users)
+
+			files_04 = [stu_tea_file(nr_of_lines),
+					stu_tea_file(nr_of_lines),
+					staff_file(nr_of_lines),
+					stu_tea_file(nr_of_lines)
+					]
+			transform_usernames(files_02, files_04, nr_of_lines)
+			delete_not_mentioned = True
+			users, errors, warnings = check_import_users(
+					school,
+					user_types,
+					files_04,
+					delete_not_mentioned,
+					expected_upload_status,
+					[],
+					warnings_keys)
+			update_persons(school, persons_list, users)
+
+			# Check errors when changing the role of an already existing users
+			user_types = ['teacher', 'teachersAndStaff', 'staff', 'student']
+			delete_not_mentioned = False
+			errors_keys = ['name', 'name', 'name']
+			users, errors, warnings = check_import_users(
+					school,
+					user_types,
+					files_04,
+					delete_not_mentioned,
+					expected_upload_status,
+					errors_keys,
+					[])
+
+			# Verify all users
+			verify_persons(persons_list)
+
+			# Check unacceptable data for staff users
+			user_types = ['staff']
+			files_05 = [stu_tea_file(2)]
+			expected_upload_status = 500
+			delete_not_mentioned = False
+			users, errors, warnings = check_import_users(
+					school,
+					user_types,
+					files_05,
+					delete_not_mentioned,
+					expected_upload_status,
+					[],
+					[])
+			delete_not_mentioned = True
+			users, errors, warnings = check_import_users(
+					school,
+					user_types,
+					files_05,
+					delete_not_mentioned,
+					expected_upload_status,
+					[],
+					[])
+
+if __name__ == '__main__':
+	main()
