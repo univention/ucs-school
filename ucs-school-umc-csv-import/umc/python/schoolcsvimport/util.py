@@ -266,6 +266,11 @@ class CSVTeacher(CSVUser, Teacher):
 class CSVStaff(CSVUser, Staff):
 	birthday = birthday_attr
 
+	@classmethod
+	def find_all_fields(cls):
+		# do not use school_class
+		return ['name', 'firstname', 'lastname', 'birthday', 'email', 'password']
+
 class CSVTeachersAndStaff(CSVUser, TeachersAndStaff):
 	birthday = birthday_attr
 

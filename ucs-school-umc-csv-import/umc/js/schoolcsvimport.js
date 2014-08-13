@@ -698,7 +698,7 @@ define([
 						if (action == 'ignore') {
 							return true;
 						} else {
-							return type.prototype.validate.apply(this, arguments);
+							return this.inherited('validate', arguments);
 						}
 					},
 					value: value
