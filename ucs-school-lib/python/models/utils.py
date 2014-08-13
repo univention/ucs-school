@@ -54,7 +54,7 @@ ucr.load()
 
 logger = Logger(logging.DEBUG)
 
-_module_logger_added = False
+_module_logger = None
 
 class ModuleLogger(object):
 	def handle(self, record):
@@ -83,16 +83,16 @@ def add_stream_logger_to_schoollib(level=logging.DEBUG, stream=None, log_format=
 	return stream_handler
 
 def add_module_logger_to_schoollib():
-	global _module_logger_added
-	if _module_logger_added:
+	global _module_logger
+	if _module_logger is None:
+		module_logger = ModuleLogger()
+		_module_logger = MemoryHandler(-1, flushLevel=logging.DEBUG, target=module_logger)
+		_module_logger.setLevel(logging.DEBUG)
+		logger.addHandler(_module_logger)
+	else:
 		MODULE.info('add_module_logger_to_schoollib() should only be called once! Skipping...')
-		return
-	module_logger = ModuleLogger()
-	memory_handler = MemoryHandler(-1, flushLevel=logging.DEBUG, target=module_logger)
-	memory_handler.setLevel(logging.DEBUG)
-	logger.addHandler(memory_handler)
-	_module_logger_added = True
-	return memory_handler
+	return _module_logger
+
 
 _pw_length_cache = {}
 def create_passwd(length=8, dn=None):

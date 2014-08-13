@@ -509,6 +509,7 @@ class UCSSchoolHelperAbstractClass(object):
 		if udm_obj:
 			try:
 				udm_obj.remove(remove_childs=True)
+				udm_objects.performCleanup(udm_obj)
 				self.set_dn(None)
 				logger.info('%r successfully removed' % self)
 				return True
