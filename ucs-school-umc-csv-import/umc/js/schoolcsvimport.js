@@ -188,7 +188,7 @@ define([
 				widgets: [{
 					type: Text,
 					name: 'errors',
-					content: _('No errors occurred during import.')
+					content: _('The import has been successfully completed.')
 				}]
 			}];
 		},

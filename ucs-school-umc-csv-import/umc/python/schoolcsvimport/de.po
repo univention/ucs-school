@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-csv-import\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2014-05-21 11:44+0200\n"
+"POT-Creation-Date: 2014-08-13 10:38+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: umc/python/schoolcsvimport/__init__.py:272
+#: umc/python/schoolcsvimport/__init__.py:277
 #, python-format
 msgid "%(username)s %(action)s"
 msgstr "%(username)s %(action)s"
@@ -40,15 +40,15 @@ msgstr "Aktion"
 msgid "Birthday"
 msgstr "Geburtstag"
 
-#: umc/python/schoolcsvimport/__init__.py:209
+#: umc/python/schoolcsvimport/__init__.py:214
 msgid "Checking users from CSV file"
 msgstr "Benutzer aus der CSV-Datei werden überprüft"
 
-#: umc/python/schoolcsvimport/__init__.py:241
+#: umc/python/schoolcsvimport/__init__.py:246
 msgid "Checking users from database"
 msgstr "Benutzer aus der Datenbank werden überprüft"
 
-#: umc/python/schoolcsvimport/util.py:347
+#: umc/python/schoolcsvimport/util.py:352
 msgid "Internal Error: License check failed."
 msgstr "Interner Fehler: Lizenzprüfung fehlgeschlagen."
 
@@ -56,7 +56,7 @@ msgstr "Interner Fehler: Lizenzprüfung fehlgeschlagen."
 msgid "Line"
 msgstr "Zeile"
 
-#: umc/python/schoolcsvimport/util.py:371
+#: umc/python/schoolcsvimport/util.py:376
 #, python-format
 msgid ""
 "Number of %(object_name)s after the import would be %(sum)s. This would "
@@ -65,7 +65,7 @@ msgstr ""
 "Anzahl der %(object_name)s nach dem Import wäre %(sum)s. Das übersteigt die "
 "Anzahl an lizenzierten Objekten (%(max)s)."
 
-#: umc/python/schoolcsvimport/__init__.py:272
+#: umc/python/schoolcsvimport/__init__.py:277
 #, python-format
 msgid "Processing %d user(s)"
 msgstr "Verarbeite %d Benutzer"
@@ -113,18 +113,18 @@ msgstr ""
 "wird. Bitte beachten Sie, dass diese Warnmeldung darauf basiert, dass alle "
 "Benutzer importiert werden. Sie können Zeilen im Folgenden auch ignorieren."
 
-#: umc/python/schoolcsvimport/__init__.py:284
+#: umc/python/schoolcsvimport/__init__.py:290
 msgid "created"
 msgstr "angelegt"
 
-#: umc/python/schoolcsvimport/__init__.py:288
+#: umc/python/schoolcsvimport/__init__.py:294
 msgid "deleted"
 msgstr "gelöscht"
 
-#: umc/python/schoolcsvimport/__init__.py:286
+#: umc/python/schoolcsvimport/__init__.py:292
 msgid "modified"
 msgstr "verändert"
 
-#: umc/python/schoolcsvimport/util.py:358
+#: umc/python/schoolcsvimport/util.py:363
 msgid "users"
 msgstr "Benutzer"

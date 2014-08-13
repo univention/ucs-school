@@ -1,3 +1,9 @@
+ucs-school-umc-csv-import (1.0.23-3) unstable; urgency=low
+
+  * Bug #35390: Wording when successfully completing the import
+
+ -- Dirk Wiesenthal <wiesenthal@univention.de>  Wed, 13 Aug 2014 10:39:44 +0200
+
 ucs-school-umc-csv-import (1.0.23-2) unstable; urgency=low
 
   * Bug #35181: Fix traceback when uploading certain staff CSV files
