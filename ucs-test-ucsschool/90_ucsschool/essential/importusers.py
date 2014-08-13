@@ -46,7 +46,6 @@ class Person:
 		self.firstname = uts.random_name()
 		self.lastname = uts.random_name()
 		self.username = uts.random_name()
-		self.username = uts.random_name()
 		self.school = school
 		self.role = role
 		self.mail = '%s@%s' % (self.username, configRegistry.get('domainname'))
@@ -152,8 +151,12 @@ class Person:
 		attr['uid'] = [self.username]
 		attr['givenName'] = [self.firstname]
 		attr['sn'] = [self.lastname]
-		attr['mailPrimaryAddress'] = [self.mail]
-		attr['mail'] = [self.mail]
+		if self.mail:
+			attr['mailPrimaryAddress'] = [self.mail]
+			attr['mail'] = [self.mail]
+		else:
+			attr['mailPrimaryAddress'] = []
+			attr['mail'] = []
 
 		subdir = ''
 		if configRegistry.is_true('ucsschool/import/roleshare', True):
@@ -184,7 +187,7 @@ class Person:
 			attr['sambaLogonScript'] = [configRegistry.get('ucsschool/import/set/netlogon/script/path')]
 		if configRegistry.get('ucsschool/import/set/homedrive'):
 			attr['sambaHomeDrive'] = [configRegistry.get('ucsschool/import/set/homedrive')]
-		
+
 		samba_home_path_server = self.get_samba_home_path_server()
 		if samba_home_path_server:
 			attr['sambaHomePath'] = ['\\\\%s\\%s' % (samba_home_path_server, self.username)]
@@ -242,7 +245,7 @@ class Person:
 
 		role_group_dn = 'cn=%s%s,cn=groups,%s' % (self.grp_prefix, self.school, self.school_base)
 		utils.verify_ldap_object(role_group_dn, expected_attr={'uniqueMember': [self.dn], 'memberUid': [self.username]}, strict=False, should_exist=True)
-		
+
 
 class Student(Person):
 	def __init__(self, school):
@@ -371,10 +374,10 @@ class UserHooks:
 	def __init__(self):
 		fd, self.pre_hook_result = tempfile.mkstemp()
 		os.close(fd)
-	
+
 		fd, self.post_hook_result = tempfile.mkstemp()
 		os.close(fd)
-		
+
 		self.pre_hooks = []
 		self.post_hooks = []
 
@@ -384,7 +387,7 @@ class UserHooks:
 		return open(self.pre_hook_result, 'r').read()
 	def get_post_result(self):
 		return open(self.post_hook_result, 'r').read()
-		
+
 	def create_hooks(self):
 		self.pre_hooks = [
 				os.path.join(os.path.join(HOOK_BASEDIR, 'user_create_pre.d'), uts.random_name()),
@@ -431,7 +434,7 @@ exit 0
 			os.remove(post_hook)
 		os.remove(self.pre_hook_result)
 		os.remove(self.post_hook_result)
-		
+
 class UserImport:
 	def __init__(self, school_name=None, nr_students=20, nr_teachers=10, nr_staff=5, nr_teacher_staff=3):
 		assert (nr_students > 2)
@@ -585,7 +588,7 @@ def import_users_basics(use_cli_api=True, use_python_api=False):
 				for home_server_at_ou in [None, 'generate']:
 					for windows_profile_server in [None, 'generate']:
 
-						
+
 						if samba_home_server == 'generate':
 							samba_home_server = uts.random_name()
 
