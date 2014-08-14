@@ -33,6 +33,8 @@
 from ipaddr import IPv4Network, AddressValueError, NetmaskValueError
 from ldap.filter import escape_filter_chars
 
+from univention.admin.uexceptions import nextFreeIp
+
 from ucsschool.lib.models.attributes import Groups, IPAddress, SubnetMask, MACAddress, InventoryNumber, Attribute
 from ucsschool.lib.models.base import UCSSchoolHelperAbstractClass, MultipleObjectsError
 
@@ -164,13 +166,28 @@ class SchoolComputer(UCSSchoolHelperAbstractClass):
 		return []
 
 	def _alter_udm_obj(self, udm_obj):
+		super(SchoolComputer, self)._alter_udm_obj(udm_obj)
 		inventory_numbers = self.get_inventory_numbers()
 		if inventory_numbers:
 			udm_obj['inventoryNumber'] = inventory_numbers
 		ipv4_network = self.get_ipv4_network()
-		if ipv4_network and ipv4_network.ip != ipv4_network.network:
-			udm_obj['ip'] = str(ipv4_network.ip)
-		return super(SchoolComputer, self)._alter_udm_obj(udm_obj)
+		if ipv4_network:
+			if self._ip_is_set_to_subnet(ipv4_network):
+				logger.warn('IP was set to subnet. Unsetting it on the computer so that UDM can do some magic: Assign next free IP!')
+				udm_obj['ip'] = ''
+			else:
+				udm_obj['ip'] = str(ipv4_network.ip)
+		# set network after ip. Otherwise UDM does not do any
+		#   nextIp magic...
+		network = self.get_network()
+		if network:
+			# reset network, so that next line triggers free ip
+			udm_obj.old_network = None
+			try:
+				udm_obj['network'] = network.dn
+			except nextFreeIp:
+				logger.error('Tried to set IP automatically, but failed! %r is full' % network)
+				raise nextFreeIp(_('There are not free addresses left in the subnet!'))
 
 	@classmethod
 	def get_container(cls, school):
@@ -185,23 +202,9 @@ class SchoolComputer(UCSSchoolHelperAbstractClass):
 		self.create_network(lo)
 		return super(SchoolComputer, self).create_without_hooks(lo, validate)
 
-	def do_create(self, udm_obj, lo):
-		network = self.get_network()
-		if network:
-			udm_obj['network'] = network.dn
-		# TODO: groups. for memberserver...
-		return super(SchoolComputer, self).do_create(udm_obj, lo)
-
 	def modify_without_hooks(self, lo, validate=True, move_if_necessary=None):
 		self.create_network(lo)
 		return super(SchoolComputer, self).modify_without_hooks(lo, validate, move_if_necessary)
-
-	def do_modify(self, udm_obj, lo):
-		network = self.get_network()
-		if network:
-			udm_obj['network'] = network.dn
-		# TODO: groups. for memberserver...
-		return super(SchoolComputer, self).do_modify(udm_obj, lo)
 
 	def get_ipv4_network(self):
 		if self.subnet_mask is not None:
@@ -212,6 +215,11 @@ class SchoolComputer(UCSSchoolHelperAbstractClass):
 			return IPv4Network(network_str)
 		except (AddressValueError, NetmaskValueError, ValueError):
 			logger.warning('Unparsable network: %r' % network_str)
+
+	def _ip_is_set_to_subnet(self, ipv4_network=None):
+		ipv4_network = ipv4_network or self.get_ipv4_network()
+		if ipv4_network:
+			return ipv4_network.ip == ipv4_network.network
 
 	def get_network(self):
 		ipv4_network = self.get_ipv4_network()

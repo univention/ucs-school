@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2014-05-22 14:42+0200\n"
+"POT-Creation-Date: 2014-08-14 16:57+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -11,12 +11,12 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: python/models/attributes.py:74
+#: python/models/attributes.py:79
 #, python-format
 msgid "\"%s\" is required. Please provide this information."
 msgstr "\"%s\" ist erforderlich. Bitte ergänzen Sie diese Information."
 
-#: python/models/attributes.py:132
+#: python/models/attributes.py:144
 msgid "A valid NetBIOS hostname can not be longer than 12 characters."
 msgstr ""
 "Ein gültiger NetBIOS Rechnername darf nicht länger als 12 Zeichen sein."
@@ -25,15 +25,15 @@ msgstr ""
 msgid "Birthday"
 msgstr "Geburtstag"
 
-#: python/models/network.py:43 python/models/dhcp.py:154
+#: python/models/network.py:43 python/models/dhcp.py:172
 msgid "Broadcast"
 msgstr "Broadcast"
 
-#: python/models/user.py:362 python/models/user.py:395
+#: python/models/user.py:369 python/models/user.py:402
 msgid "Class"
 msgstr "Klasse"
 
-#: python/models/computer.py:155
+#: python/models/computer.py:157
 msgid "Computer"
 msgstr "Rechner"
 
@@ -65,7 +65,7 @@ msgstr "DC Name administrativer Server"
 msgid "DHCP path"
 msgstr "Pfad für DHCP"
 
-#: python/models/dhcp.py:124 python/models/dhcp.py:155
+#: python/models/dhcp.py:142 python/models/dhcp.py:173
 msgid "DHCP service"
 msgstr "DHCP-Dienst"
 
@@ -73,7 +73,7 @@ msgstr "DHCP-Dienst"
 msgid "Description"
 msgstr "Beschreibung"
 
-#: python/models/computer.py:312
+#: python/models/computer.py:318
 msgid "Device with IP address"
 msgstr "Gerät mit IP-Adresse"
 
@@ -105,7 +105,7 @@ msgstr "Vorname"
 msgid "Group path"
 msgstr "Pfad für Gruppen"
 
-#: python/models/computer.py:74
+#: python/models/computer.py:76
 msgid "Groups"
 msgstr "Gruppen"
 
@@ -113,23 +113,23 @@ msgstr "Gruppen"
 msgid "Hostname"
 msgstr "Hostname"
 
-#: python/models/computer.py:149
+#: python/models/computer.py:151
 msgid "IP address"
 msgstr "IP-Adresse"
 
-#: python/models/attributes.py:129
+#: python/models/attributes.py:141
 msgid "Invalid Domain Controller name"
 msgstr "Ungültiger Domänencontrollername"
 
-#: python/models/attributes.py:121
+#: python/models/attributes.py:133
 msgid "Invalid school name"
 msgstr "Ungültiger Schulname"
 
-#: python/models/computer.py:152
+#: python/models/computer.py:154
 msgid "Inventory number"
 msgstr "Inventarnummer"
 
-#: python/models/user.py:241
+#: python/models/user.py:254
 #, python-format
 msgid ""
 "It is not supported to change the role of a user. %(old_role)s %(name)s "
@@ -148,28 +148,28 @@ msgstr ""
 "Keine Lizenz gefunden. Während dieser Sitzung ist das Hinzufügen und "
 "Bearbeiten von Objekten nicht möglich."
 
-#: python/models/computer.py:151
+#: python/models/computer.py:153
 msgid "MAC address"
 msgstr "MAC-Adresse"
 
-#: python/models/computer.py:305
+#: python/models/computer.py:311
 msgid "Mac OS X"
 msgstr "Mac OS X"
 
-#: python/models/attributes.py:87
+#: python/models/attributes.py:92
 msgid "May not contain special characters"
 msgstr "Darf keine besonderen Zeichen enthalten"
 
 #: python/models/share.py:41 python/models/base.py:158
-#: python/models/group.py:45
+#: python/models/group.py:45 python/models/group.py:135
 msgid "Name"
 msgstr "Name"
 
-#: python/models/attributes.py:62
+#: python/models/attributes.py:72
 msgid "Needs to be a list of values!"
 msgstr "Muss eine Liste von Werten sein!"
 
-#: python/models/network.py:41 python/models/dhcp.py:153
+#: python/models/network.py:41 python/models/dhcp.py:171
 msgid "Netmask"
 msgstr "Netzmaske"
 
@@ -217,7 +217,7 @@ msgstr "Server für Windows-Heimatverzeichnisse"
 msgid "Server for class shares"
 msgstr "Server für Klassenfreigaben"
 
-#: python/models/dhcp.py:123
+#: python/models/dhcp.py:141
 msgid "Server name"
 msgstr "Servername"
 
@@ -229,11 +229,11 @@ msgstr "Dienst"
 msgid "Share path"
 msgstr "Pfad für Freigaben"
 
-#: python/models/user.py:433
+#: python/models/user.py:440
 msgid "Staff"
 msgstr "Mitarbeiter"
 
-#: python/models/user.py:364
+#: python/models/user.py:371
 msgid "Student"
 msgstr "Schüler"
 
@@ -241,23 +241,23 @@ msgstr "Schüler"
 msgid "Subnet"
 msgstr "Subnetz"
 
-#: python/models/dhcp.py:152
+#: python/models/dhcp.py:170
 msgid "Subnet address"
 msgstr "Subnetz-Adresse"
 
-#: python/models/computer.py:150
+#: python/models/computer.py:152
 msgid "Subnet mask"
 msgstr "Subnetzmaske"
 
-#: python/models/user.py:397
+#: python/models/user.py:404
 msgid "Teacher"
 msgstr "Lehrer"
 
-#: python/models/user.py:446
+#: python/models/user.py:453
 msgid "Teacher and Staff"
 msgstr "Lehrer und Mitarbeiter"
 
-#: python/models/user.py:249
+#: python/models/user.py:262
 msgid ""
 "The email address is already taken by another user. Please change the email "
 "address."
@@ -265,7 +265,7 @@ msgstr ""
 "Die E-Mail-Adresse wird bereits von einem anderen Benutzer verwendet. Bitte "
 "ändern Sie die E-Mail-Adresse."
 
-#: python/models/computer.py:236
+#: python/models/computer.py:242
 msgid ""
 "The ip address is already taken by another computer. Please change the ip "
 "address."
@@ -273,12 +273,12 @@ msgstr ""
 "Die IP-Adresse wird bereits von einem anderen Rechner verwendet. Bitte "
 "ändern Sie die IP-Adresse."
 
-#: python/models/attributes.py:134
+#: python/models/attributes.py:146
 msgid ""
 "The length of fully qualified domain name is greater than 63 characters."
 msgstr "Die Länge von System- und Domänennamen ist größer als 63 Zeichen."
 
-#: python/models/computer.py:240
+#: python/models/computer.py:246
 msgid ""
 "The mac address is already taken by another computer. Please change the mac "
 "address."
@@ -307,7 +307,11 @@ msgstr ""
 msgid "The value changed from %(old)s. This seems unlikely."
 msgstr "Der Wert ist eigentlich %(old)s. Eine Änderung ist ungewöhnlich."
 
-#: python/models/computer.py:319
+#: python/models/computer.py:188
+msgid "There are not free addresses left in the subnet!"
+msgstr "Im Subnetz sind keine weiteren Adressen mehr frei!"
+
+#: python/models/computer.py:325
 msgid "Univention Corporate Client"
 msgstr "Univention Corporate Client"
 
@@ -319,7 +323,7 @@ msgstr "Pfad für Benutzer"
 msgid "Username"
 msgstr "Benutzername"
 
-#: python/models/computer.py:298
+#: python/models/computer.py:304
 msgid "Windows system"
 msgstr "Windows-System"
 
@@ -445,6 +449,6 @@ msgstr ""
 "Sie über eine Lizenz verfügen, wenden Sie sich bitte an Univention oder "
 "Ihren Univention Partner."
 
-#: python/models/computer.py:153
+#: python/models/computer.py:155
 msgid "Zone"
 msgstr "Zone"
