@@ -29,6 +29,12 @@ class FailRecheck(Exception):
 class FailSchools(Exception):
 	pass
 
+class FailErrors(Exception):
+	pass
+
+class FailWarnings(Exception):
+	pass
+
 
 class CSVImport(object):
 	"""CSVImport class, inclues all the needed operations to perform a user import"""
@@ -137,6 +143,7 @@ html5
 			response = httpcon.getresponse()
 			status = response.status
 			if status != expected_upload_status:
+				print "DEBUG: request response message = ", response.msg, response.reason, response.read()
 				raise FailHTTPStatus('Unexpected httpcon.response().status=%r' % status)
 			elif status == 200:
 				response_text = response.read()
@@ -153,13 +160,18 @@ html5
 		return status
 
 	def show(self):
-		param = {
-				'file_id' : self.file_id,
-				'columns': ["name","firstname","lastname","birthday"],
-				}
+		if self.user_type != 'staff':
+			param = {
+					'file_id' : self.file_id,
+					'columns': ["name","firstname","lastname","birthday","password","email","school_class" ],
+					}
+		else:
+			param = {
+					'file_id' : self.file_id,
+					'columns': ["name","firstname","lastname","birthday","password","email"],
+					}
 		try:
 			reqResult = self.umc_connection.request('schoolcsvimport/show', param)
-			# print 'SHOW RESULT = ', reqResult
 			self.id_nr = reqResult['id']
 		except FailShow:
 			raise
@@ -238,6 +250,7 @@ html5
 			print 'Importing users with parameters=', param
 			reqResult = self.umc_connection.request('schoolcsvimport/import', param)
 			self.id_nr = reqResult['id']
+			utils.wait_for_replication()
 		except FailImport:
 			raise
 
@@ -300,14 +313,14 @@ def random_line_stu_tea():
 			uts.random_int(0,0),
 			uts.random_int(1,9),
 			uts.random_int(1980,2014),
-			uts.random_string(),
 			uts.random_name(),
 			random_email(),
+			uts.random_string(),
 			)
 
 def random_line_staff():
 	"""create random line to import random staff"""
-	return '%s,%s,%s,%s%s.%s%s.%s,%s,%s\n' % (
+	return '%s,%s,%s,%s%s.%s%s.%s,%s\n' % (
 			uts.random_username(),
 			uts.random_name(),
 			uts.random_name(),
@@ -316,20 +329,19 @@ def random_line_staff():
 			uts.random_int(0,0),
 			uts.random_int(1,9),
 			uts.random_int(1980,2014),
-			uts.random_name(),
 			random_email()
 			)
 
 def staff_file(nr_of_lines):
 	"""Creates random contents of file ready to import staff"""
-	result = ['Username,First name,Last name,Birthday\n']
+	result = ['Username,First name,Last name,Birthday,Email\n']
 	for i in xrange(nr_of_lines):
 		result.append(random_line_staff())
 	return result
 
 def stu_tea_file(nr_of_lines):
 	"""Creates random contents of file ready to import student/teacher/teacher and staff"""
-	result = ['Username,First name,Last name,Birthday,Password,Class,Email\n']
+	result = ['Username,First name,Last name,Birthday,Password,Email,Class\n']
 	for i in xrange(nr_of_lines):
 		result.append(random_line_stu_tea())
 	return result
@@ -368,12 +380,12 @@ def check_import_users(school, user_types, files, delete_not_mentioned, expected
 	errors_keys = [k for x in errors for k,v in x.iteritems()]
 	print 'ERRORS_KEYS=', errors_keys
 	if sorted(expected_errors) != sorted(errors_keys):
-		print 'current error keys = %r, expected Errors = %r' % (errors_keys, expected_errors)
+		raise FailErrors('current error keys = %r, expected Errors = %r' % (errors_keys, expected_errors))
 	warnings = [x['warnings'] for y in users for x in y if x['warnings']]
 	warnings_keys = [k for x in warnings for k,v in x.iteritems()]
 	print 'WARNINGS_KEYS=', warnings_keys
 	if sorted(expected_warnings) != sorted(warnings_keys):
-		print 'current warning keys= %r, expected warnings = %r' % (warnings_keys, expected_warnings)
+		raise FailWarnings('current warning keys= %r, expected warnings = %r' % (warnings_keys, expected_warnings))
 	return users , errors, warnings
 
 def get_usernames(files):

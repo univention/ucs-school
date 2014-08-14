@@ -61,10 +61,10 @@ def main():
 
 			# Check warnings for changing firstname, lastname and birthday of an existing user
 			warnings_keys = [
-					'firstname', 'lastname', 'birthday',
-					'firstname', 'lastname', 'birthday',
-					'firstname', 'lastname', 'birthday',
-					'firstname', 'lastname', 'birthday'
+					'firstname', 'lastname', 'birthday', 'email',
+					'firstname', 'lastname', 'birthday', 'email',
+					'firstname', 'lastname', 'birthday', 'email',
+					'firstname', 'lastname', 'birthday', 'email'
 					]
 			nr_of_lines = 1
 
@@ -135,29 +135,6 @@ def main():
 
 			# Verify all users
 			verify_persons(persons_list)
-
-			# Check unacceptable data for staff users
-			user_types = ['staff']
-			files_05 = [stu_tea_file(2)]
-			expected_upload_status = 500
-			delete_not_mentioned = False
-			users, errors, warnings = check_import_users(
-					school,
-					user_types,
-					files_05,
-					delete_not_mentioned,
-					expected_upload_status,
-					[],
-					[])
-			delete_not_mentioned = True
-			users, errors, warnings = check_import_users(
-					school,
-					user_types,
-					files_05,
-					delete_not_mentioned,
-					expected_upload_status,
-					[],
-					[])
 
 if __name__ == '__main__':
 	main()
