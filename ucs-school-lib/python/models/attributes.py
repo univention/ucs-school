@@ -55,6 +55,16 @@ class Attribute(object):
 		self.internal = internal
 		self.udm_name = udm_name or self.udm_name
 
+	def _validate_syntax(self, values, syntax=None):
+		if syntax is None:
+			syntax = self.syntax
+		if syntax:
+			for val in values:
+				try:
+					syntax.parse(val)
+				except valueError as e:
+					raise ValueError(str(e))
+
 	def validate(self, value):
 		if value is not None:
 			if self.value_list:
@@ -63,12 +73,7 @@ class Attribute(object):
 				values = value
 			else:
 				values = [value]
-			if self.syntax:
-				for val in values:
-					try:
-						self.syntax.parse(val)
-					except valueError as e:
-						raise ValueError(str(e))
+			self._validate_syntax(values)
 		else:
 			if self.required:
 				raise ValueError(_('"%s" is required. Please provide this information.') % self.label)
@@ -98,6 +103,13 @@ class DHCPServiceName(CommonName):
 
 class GroupName(CommonName):
 	syntax = gid
+
+class SchoolClassName(GroupName):
+	def _validate_syntax(self, values, syntax=None):
+		super(SchoolClassName, self)._validate_syntax(values)
+		# needs to check ShareName.syntax, too: SchoolClass will
+		#   create a share with its own name
+		super(SchoolClassName, self)._validate_syntax(values, syntax=ShareName.syntax)
 
 class ShareName(CommonName):
 	syntax = string_numbers_letters_dots_spaces

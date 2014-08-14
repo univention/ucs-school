@@ -1,3 +1,10 @@
+ucs-school-lib (5.0.47-4) unstable; urgency=low
+
+  * Bug #34944: Validate school class name with respect to group name AND
+    share name
+
+ -- Dirk Wiesenthal <wiesenthal@univention.de>  Thu, 14 Aug 2014 12:04:30 +0200
+
 ucs-school-lib (5.0.47-3) unstable; urgency=low
 
   * Bug #34993: Search for displayName when searching for schools; fix

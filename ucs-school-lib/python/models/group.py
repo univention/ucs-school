@@ -34,7 +34,7 @@ from ldap.dn import str2dn
 
 from univention.admin.uexceptions import noObject
 
-from ucsschool.lib.models.attributes import GroupName, Description, Attribute
+from ucsschool.lib.models.attributes import GroupName, Description, Attribute, SchoolClassName
 from ucsschool.lib.models.base import UCSSchoolHelperAbstractClass
 from ucsschool.lib.models.misc import OU, Container
 from ucsschool.lib.models.share import ClassShare
@@ -132,6 +132,8 @@ class BasicGroup(Group):
 		return ucr.get('ldap/base')
 
 class SchoolClass(Group):
+	name = SchoolClassName(_('Name'))
+
 	def create_without_hooks(self, lo, validate):
 		super(SchoolClass, self).create_without_hooks(lo, validate) # success = ?
 		self.create_share(lo) # success = success and ?
