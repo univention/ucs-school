@@ -499,9 +499,13 @@ def userchange(dn, new, old):
 			writeMacLinkScripts(new['uid'][0], new['homeDirectory'][0], links)
 
 	elif old and not new:
-		for path in scriptpath:
-			if os.path.exists("%s/%s.vbs" % (path, old['uid'][0])):
-				os.remove("%s/%s.vbs" % (path, old['uid'][0]))
+		listener.setuid(0)
+		try:
+			for path in scriptpath:
+				if os.path.exists("%s/%s.vbs" % (path, old['uid'][0])):
+					os.remove("%s/%s.vbs" % (path, old['uid'][0]))
+		finally:
+			listener.unsetuid()
 
 
 def handler(dn, new, old):
