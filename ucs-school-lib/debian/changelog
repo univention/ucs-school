@@ -1,3 +1,10 @@
+ucs-school-lib (5.0.47-3) unstable; urgency=low
+
+  * Bug #34993: Search for displayName when searching for schools; fix
+    searching for schools while ucsschool/local/oulist is set
+
+ -- Dirk Wiesenthal <wiesenthal@univention.de>  Thu, 14 Aug 2014 11:44:40 +0200
+
 ucs-school-lib (5.0.47-2) unstable; urgency=low
 
   * Bug #35174: When deleting an object, also delete related objects 

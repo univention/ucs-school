@@ -656,15 +656,22 @@ class UCSSchoolHelperAbstractClass(object):
 		return ret
 
 	@classmethod
+	def _attrs_for_easy_filter(cls):
+		ret = []
+		module = udm_modules.get(cls._meta.udm_module)
+		for key, prop in module.property_descriptions.iteritems():
+			if prop.include_in_default_search:
+				ret.append(key)
+		return ret
+
+	@classmethod
 	def build_easy_filter(cls, filter_str):
 		if filter_str:
 			sanitizer = LDAPSearchSanitizer()
 			filter_str = sanitizer.sanitize('filter_str', {'filter_str' : filter_str})
 			expressions = []
-			module = udm_modules.get(cls._meta.udm_module)
-			for key, prop in module.property_descriptions.iteritems():
-				if prop.include_in_default_search:
-					expressions.append(expression(key, filter_str))
+			for key in cls._attrs_for_easy_filter():
+				expressions.append(expression(key, filter_str))
 			if expressions:
 				return conjunction('|', expressions)
 

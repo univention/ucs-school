@@ -397,9 +397,17 @@ class School(UCSSchoolHelperAbstractClass):
 		oulist = ucr.get('ucsschool/local/oulist')
 		if oulist and respect_local_oulist:
 			logger.debug('All Schools: Schools overridden by UCR variable ucsschool/local/oulist')
-			return cls.get_from_oulist(cls, lo, oulist)
+			schools = cls.get_from_oulist(lo, oulist)
+			if filter_str:
+				filtered_school_dns = [filtered_school.dn for filtered_school in cls.get_all(lo, filter_str, easy_filter, respect_local_oulist=False)]
+				schools = [school for school in schools if school.dn in filtered_school_dns]
+			return schools
 		else:
 			return super(School, cls).get_all(lo, school=None, filter_str=filter_str, easy_filter=easy_filter)
+
+	@classmethod
+	def _attrs_for_easy_filter(cls):
+		return super(cls, School)._attrs_for_easy_filter() + ['displayName']
 
 	@classmethod
 	def invalidate_cache(cls):
