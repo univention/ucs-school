@@ -18,6 +18,29 @@
   <itemizedlist>
 	<listitem>
 	  <simpara>
+		Via the new package <package>ucs-school-roleshares</package> it is possible to grant access
+		to the students' home directories by teachers. The setup of this feature is described in the
+		&ucsUAS; administrator manual in chapter <emphasis>Lehrerzugriff auf Benutzerfreigaben</emphasis>.
+	  </simpara>
+	  <simpara>
+		To support this feature the import scripts (and the UMC school wizards)
+		will use a new directory structure for home directories starting with &ucsUAS; 3.2 R2 on fresh
+		&ucsUAS; installations:
+		<itemizedlist>
+		  <listitem><simpara><emphasis>/home/OU/schueler/USERNAME</emphasis></simpara></listitem>
+		  <listitem><simpara><emphasis>/home/OU/lehrer/USERNAME</emphasis></simpara></listitem>
+		  <listitem><simpara><emphasis>/home/OU/mitarbeiter/USERNAME</emphasis></simpara></listitem>
+		</itemizedlist>
+		During the update of existing environments, which have been installed with &ucsUAS; prior to 3.2 R2,
+		this feature will be disabled automatically by setting a UCR policy at the LDAP base. The policy sets
+		the UCR variable <envar>ucsschool/import/roleshares</envar> to <emphasis>no</emphasis> which disables
+		the new directory structure on all UCS systems within the domain and forces them to use the old
+		structure (<emphasis>/home/USERNAME</emphasis>). A migration of the home directories and LDAP objects
+		is required, to use the role shares in such environments (<ulink url="&ucsbug;34335">Bug 34335</ulink>).
+	  </simpara>
+	</listitem>
+	<listitem>
+	  <simpara>
 		The import script <emphasis>create_ou</emphasis> now supports the new command line argument
 		<command>--displayname</command> for defining a display name for school OU objects (<ulink
 		url="&ucsbug;34173">Bug 34173</ulink>).  
