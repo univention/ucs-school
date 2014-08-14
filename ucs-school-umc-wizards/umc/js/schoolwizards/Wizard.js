@@ -59,6 +59,7 @@ define([
 		createModeDescriptionWithoutSchool: _('Create a new {itemType}'),
 		editModeDescription: _('{itemSchool}: edit {itemType} {itemName}'),
 		createModeDescription: _('{itemSchool}: create a new {itemType}'),
+		_skippedGeneralPage: false,
 
 		postMixInProperties: function() {
 			this.inherited(arguments);
@@ -124,6 +125,7 @@ define([
 				this.setHeader();
 				if (this.school && (!typeWidget || this.type)) {
 					// hack to go to the next page (itemPage)
+					this._skippedGeneralPage = true;
 					this._next(this.next(null));
 				}
 			}));
@@ -132,6 +134,10 @@ define([
 		hasPrevious: function() {
 			if (this.editMode) {
 				// make it impossible to show the general page
+				return false;
+			}
+			if (this._skippedGeneralPage) {
+				// general page was unnecessary: do not go back!
 				return false;
 			}
 			return this.inherited(arguments);
@@ -165,7 +171,13 @@ define([
 				}
 			}
 			tools.forIn(this._pages, function(name, page) {
-				page.set('headerText', header);
+				// general page has 'school' and 'type' widget.
+				// seems not appropriate to set header to:
+				// School: Create new Teacher although you can still
+				// change it
+				if (page.name != 'general') {
+					page.set('headerText', header);
+				}
 			});
 		},
 

@@ -40,6 +40,7 @@ define([
 ], function(declare, lang, TextBox, Text, HiddenInput, Wizard, _) {
 
 	return declare("umc.modules.schoolwizards.ClassWizard", [Wizard], {
+		description: _('Create a new class'),
 
 		getItemPage: function() {
 			return {

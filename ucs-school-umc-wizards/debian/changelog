@@ -1,3 +1,9 @@
+ucs-school-umc-wizards (4.0.31-2) unstable; urgency=low
+
+  * Bug #34997: Clarified grid columns, widget labels, etc.
+
+ -- Dirk Wiesenthal <wiesenthal@univention.de>  Thu, 14 Aug 2014 11:19:29 +0200
+
 ucs-school-umc-wizards (4.0.31-1) unstable; urgency=low
 
   * Bug #35032: fixed tooltip and regex for educational slave

@@ -39,7 +39,6 @@ define([
 ], function(declare, lang, TextBox, ComboBox, Wizard, _) {
 
 	return declare("umc.modules.schoolwizards.SchoolWizard", [Wizard], {
-
 		getGeneralPage: function() {
 			// no need for "school" and "type" widgets
 			return null;

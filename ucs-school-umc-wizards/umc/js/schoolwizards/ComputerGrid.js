@@ -56,7 +56,7 @@ define([
 				label: _('Name')
 			}, {
 				name: 'type_name',
-				label: _('Type')
+				label: _('Computer type')
 			}, {
 				name: 'ip_address',
 				label: _('IP address')
@@ -89,7 +89,7 @@ define([
 				type: ComboBox,
 				size: 'TwoThirds',
 				name: 'type',
-				label: _('Type'),
+				label: _('Computer type'),
 				dynamicValues: 'schoolwizards/computers/types',
 				umcpCommand: lang.hitch(this, function() {
 					return this.umcpCommand.apply(this.umcpCommand, arguments).then(function(response) {

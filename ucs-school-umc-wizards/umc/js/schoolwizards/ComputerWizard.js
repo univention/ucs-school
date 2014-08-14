@@ -42,13 +42,14 @@ define([
 ], function(declare, lang, tools, TextBox, Text, ComboBox, HiddenInput, Wizard, _) {
 
 	return declare("umc.modules.schoolwizards.ComputerWizard", [Wizard], {
+		description: _('Create a new computer'),
 
 		getGeneralPage: function() {
 			var page = this.inherited(arguments);
 			page.widgets.push({
 				type: ComboBox,
 				name: 'type',
-				label: _('Type'),
+				label: _('Computer type'),
 				dynamicValues: 'schoolwizards/computers/types',
 				umcpCommand: lang.hitch(this, 'umcpCommand'),
 				sortDynamicValues: false

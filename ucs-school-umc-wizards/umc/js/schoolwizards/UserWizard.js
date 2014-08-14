@@ -44,13 +44,14 @@ define([
 ], function(declare, lang, array, topic, tools, TextBox, Text, ComboBox, PasswordInputBox, Wizard, _) {
 
 	return declare("umc.modules.schoolwizards.UserWizard", [Wizard], {
+		description: _('Create a new user'),
 
 		getGeneralPage: function() {
 			var page = this.inherited(arguments);
 			page.widgets.push({
 				type: ComboBox,
 				name: 'type',
-				label: _('Type'),
+				label: _('Role'),
 				staticValues: [{
 					id: 'student',
 					label: _('Student')
