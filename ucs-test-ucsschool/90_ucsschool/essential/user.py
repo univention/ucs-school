@@ -103,10 +103,11 @@ class User(Person):
 		if password:
 			self.password = password
 		self.mail = mail
-		self.classes = [school_class] if school_class else []
-
 		self.typ = 'teachersAndStaff' if self.role == 'teacher_staff' else self.role
 		self.school_class = school_class
+
+		cl = '%s-%s' % (self.school, self.school_class)
+		self.classes = [cl] if school_class else []
 
 		host = self.ucr.get('ldap/master')
 		self.umc_connection = UMCConnection(host)
@@ -274,7 +275,8 @@ class User(Person):
 		else:
 			self.set_mode_to_modify()
 			self.school_class = new_attributes['school_class']
-			self.classes = [self.school_class]
+			cl = '%s-%s' % (self.school, self.school_class)
+			self.classes = [cl]
 			self.mail = new_attributes['email']
 			self.firstname = new_attributes['firstname']
 			self.lastname = new_attributes['lastname']
