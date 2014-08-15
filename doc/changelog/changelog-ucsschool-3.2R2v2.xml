@@ -13,7 +13,17 @@
 <section>
   <title>Import scripts</title>
   <itemizedlist>
-	If an OU name with uppercase characters was used, the path to the share <emphasis>Marktplatz</emphasis> contained the OU name in lowercase letters (e.g. <filename>/home/gsmitte/groups/Marktplatz/</filename>) whereas all other (class) shares used the mixed mode spelling (e.g. <filename>/home/GSMitte/groups/klassen/GSMitte-7B/</filename>). This behaviour has been fixed. New Marktplatz shares now also can contain uppercase letters in the OU name (e.g. <filename>/home/GSMitte/groups/Marktplatz/</filename>). Existing shares will not be converted automatically (<ulink url="&ucsbug;34941">Bug 34941</ulink>).
+	<listitem>
+	  <simpara>
+		If an OU name with uppercase characters was used, the path to the share
+		<emphasis>Marktplatz</emphasis> contained the OU name in lowercase letters
+		(e.g. <filename>/home/gsmitte/groups/Marktplatz/</filename>) whereas all other (class) shares used
+		the mixed mode spelling (e.g. <filename>/home/GSMitte/groups/klassen/GSMitte-7B/</filename>). This
+		behaviour has been fixed. New Marktplatz shares now also can contain uppercase letters in the OU
+		name (e.g. <filename>/home/GSMitte/groups/Marktplatz/</filename>). Existing shares will not be
+		converted automatically (<ulink url="&ucsbug;34941">Bug 34941</ulink>).
+	  </simpara>
+	</listitem>
   </itemizedlist>
 </section>
 
