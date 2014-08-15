@@ -123,6 +123,7 @@ define([
 				name: 'name',
 				label: this.moduleFlavor == 'class' ? _( 'Class' ) : _( 'Workgroup' ),
 				disabled: this.moduleFlavor != 'workgroup-admin',
+				regExp: '^[a-zA-Z0-9]([a-zA-Z0-9 _.-]*[a-zA-Z0-9])?$',
 				required: true
 			}, {
 				type: TextBox,
