@@ -131,7 +131,7 @@ define([
 				callback: lang.hitch(this, '_editObject')
 			}, {
 				name: 'distribute',
-				label: _('distribute'),
+				label: _('Distribute'),
 				description: _('Distribute project files to users'),
 				isStandardAction: true,
 				isMultiAction: false,
@@ -141,7 +141,7 @@ define([
 				callback: lang.hitch(this, '_distribute')
 			}, {
 				name: 'collect',
-				label: _('collect'),
+				label: _('Collect'),
 				description: _('Collect project files from users'),
 				isStandardAction: true,
 				isMultiAction: false,
@@ -151,7 +151,7 @@ define([
 				callback: lang.hitch(this, '_distribute')
 			}, {
 				name: 'adopt',
-				label: _('adopt'),
+				label: _('Adopt'),
 				canExecute: function(item) {
 					return item.sender != tools.status('username');
 				},

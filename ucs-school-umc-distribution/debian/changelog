@@ -1,3 +1,9 @@
+ucs-school-umc-distribution (11.0.3-2) unstable; urgency=low
+
+  * Bug #34077: Button labels were not capitalized
+
+ -- Dirk Wiesenthal <wiesenthal@univention.de>  Fri, 15 Aug 2014 11:21:58 +0200
+
 ucs-school-umc-distribution (11.0.3-1) unstable; urgency=low
 
   * Bug #31407: enable district mode
