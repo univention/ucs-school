@@ -461,7 +461,7 @@ msgstr ""
 
 #: umc/js/computerroom.js:351
 msgid "The selected computers are booting up."
-msgstr "Die ausgewählen Computer fahren hoch."
+msgstr "Die ausgewählten Computer fahren hoch."
 
 #: umc/js/computerroom.js:376
 msgid "The selected computers are rebooting."

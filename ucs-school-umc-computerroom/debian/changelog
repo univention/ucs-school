@@ -1,3 +1,9 @@
+ucs-school-umc-computerroom (5.0.5-2) unstable; urgency=low
+
+  * Bug #34949: Typo in German translation
+
+ -- Dirk Wiesenthal <wiesenthal@univention.de>  Fri, 15 Aug 2014 11:12:46 +0200
+
 ucs-school-umc-computerroom (5.0.5-1) unstable; urgency=low
 
   * Bug #34912: decreased loglevel of a specific message
