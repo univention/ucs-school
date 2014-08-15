@@ -46,7 +46,7 @@ if ! is_ucr_true "$ucsschool_import_generate_share_marktplatz" ; then
 	exit 0
 fi
 
-ou="$(awk -F '\t' '{print $1}' "$1" | tr '[:upper:]' '[:lower:]')"
+ou="$(awk -F '\t' '{print $1}' "$1")"
 if is_ucr_true "$ucsschool_ldap_district_enable" ; then
 	district=",ou=${ou:0:2}"
 fi
