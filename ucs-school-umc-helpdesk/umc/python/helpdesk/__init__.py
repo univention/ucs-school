@@ -30,37 +30,39 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-from univention.management.console.modules import Base
-
 from univention.management.console.log import MODULE
 from univention.management.console.config import ucr
+from univention.management.console.modules.decorators import simple_response
 
 from univention.lib.i18n import Translation
 
-from ucsschool.lib import LDAP_Connection, LDAP_ConnectionError, set_credentials, SchoolSearchBase, SchoolBaseModule
+from ucsschool.lib import LDAP_Connection, SchoolBaseModule
+from ucsschool.lib.models import School
 
 import notifier
 import notifier.popen
 
-import os, re
 import smtplib
 
 _ = Translation( 'ucs-school-umc-helpdesk' ).translate
 
 class Instance( SchoolBaseModule ):
+	@simple_response
 	@LDAP_Connection()
-	def configuration( self, request, ldap_user_read = None, ldap_position = None, search_base = None ):
-		MODULE.error( 'return configuration' )
+	def configuration( self, ldap_user_read = None, ldap_position = None, search_base = None ):
+		MODULE.process( 'return configuration' )
 		username = _( 'unknown' )
 		if self._username:
 			username = self._username
 
 		MODULE.info( 'username=%s  school=%s' % ( self._username, search_base.school ) )
 
-		self.finished( request.id, {
-			'username' : username,
-			'school' : search_base.school,
-			'recipient' : ucr.has_key( 'ucsschool/helpdesk/recipient' ) and ucr[ 'ucsschool/helpdesk/recipient' ] } )
+		school = School.from_dn(School(search_base.school).dn, None, ldap_user_read)
+		return {
+			'username': username,
+			'school': school.display_name,
+			'recipient': ucr.get('ucsschool/helpdesk/recipient')
+		}
 
 
 	def send( self, request ):
@@ -103,8 +105,8 @@ class Instance( SchoolBaseModule ):
 			if request.options[ key ]:
 				MODULE.info( 'send ' + key + '=' + request.options[ key ].replace('%','_') )
 
-		if ucr.has_key( 'ucsschool/helpdesk/recipient' ) and ucr[ 'ucsschool/helpdesk/recipient' ]:
-			if ucr.has_key( 'hostname' ) and ucr[ 'hostname' ] and ucr.has_key( 'domainname' ) and ucr[ 'domainname' ]:
+		if ucr.get('ucsschool/helpdesk/recipient'):
+			if ucr.get('hostname') and ucr.get('domainname'):
 				sender = 'ucsschool-helpdesk@%s.%s' % ( ucr[ 'hostname' ], ucr[ 'domainname' ] )
 			else:
 				sender = 'ucsschool-helpdesk@localhost'

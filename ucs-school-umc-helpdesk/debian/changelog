@@ -1,3 +1,10 @@
+ucs-school-umc-helpdesk (9.0.0-0) unstable; urgency=low
+
+  * Bug #34898: Show display_name of the school instead of internal name
+  * Version bump for UCS@school 3.2 R2
+
+ -- Dirk Wiesenthal <wiesenthal@univention.de>  Fri, 15 Aug 2014 11:08:34 +0200
+
 ucs-school-umc-helpdesk (8.0.0-2) unstable; urgency=low
 
   * Bug #30499: remove UCR subtemplate for LDAP schema integration
