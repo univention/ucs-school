@@ -168,7 +168,7 @@ html5
 		else:
 			param = {
 					'file_id' : self.file_id,
-					'columns': ["name","firstname","lastname","birthday","password","email"],
+					'columns': ["name","firstname","lastname","birthday","email"],
 					}
 		try:
 			reqResult = self.umc_connection.request('schoolcsvimport/show', param)
