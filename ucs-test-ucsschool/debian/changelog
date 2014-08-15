@@ -1,3 +1,10 @@
+ucs-test-ucsschool (1.0.72-1) unstable; urgency=low
+
+  * Bug #34225: 90_samba4_sysvol_replication: Test sysvol replication
+    with multi-school domain setup.
+
+ -- Dmitry Galkin <galkin@univention.de>  Fri, 15 Aug 2014 17:15:20 +0200
+
 ucs-test-ucsschool (1.0.71-1) unstable; urgency=low
 
   * Bug #35317: test script "71_computers_module" is added.
