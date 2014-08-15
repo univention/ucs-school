@@ -735,17 +735,19 @@ class Computers(object):
 		return sorted(created_computers)
 
 	def get_dns(self, computers):
-		dns = []
-		for computer in sorted(computers):
-			dns.append(computer.dn)
-		return dns
+		return [x.dn for x in computers]
 
 	def get_ips(self, computers):
-		ips = []
-		for computer in sorted(computers):
-			ips.append(computer.ip)
-		return ips
+		return [x.ip for x in computers]
 
+	def get_hostnames(self, computers):
+		return ['%s$' % x.name for x in computers]
+
+
+def set_windows_pc_password(dn, password):
+	cmd = ['udm', 'computers/windows', 'modify', '--dn' ,'%(dn)s', '--set', 'password=%(password)s']
+	read = run_commands([cmd], {'dn':dn, 'password':password})
+	return read
 
 class UmcComputer(object):
 

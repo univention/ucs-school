@@ -1,0 +1,60 @@
+#!/usr/share/ucs-test/runner python
+## -*- coding: utf-8 -*-
+## desc: Computers(schools) module
+## roles: [domaincontroller_master, domaincontroller_slave]
+## tags: [apptest, ucsschool]
+## exposure: dangerous
+## packages: [ucs-school-radius-802.1x]
+
+from essential.internetrule import InternetRule
+from essential.workgroup import Workgroup
+from essential.computerroom import Computers, set_windows_pc_password
+from essential.radius import test_peap_auth
+import univention.testing.ucr as ucr_test
+import univention.testing.ucsschool as utu
+import univention.testing.utils as utils
+
+def main():
+	with utu.UCSTestSchool() as schoolenv:
+		with ucr_test.UCSTestConfigRegistry() as ucr:
+			school, oudn = schoolenv.create_ou(name_edudc=ucr.get('hostname'))
+			open_ldap_co = schoolenv.open_ldap_connection()
+
+			radius_secret = 'testing123' # parameter set in  /etc/freeradius/clients.conf
+			password = 'univention'
+
+			# importing random 2 computers
+			computers = Computers(open_ldap_co, school, 2, 0, 0)
+			created_computers = computers.create()
+			for computer in created_computers:
+				set_windows_pc_password(computer.dn, password)
+			dns = computers.get_dns(created_computers)
+			hostnames = computers.get_hostnames(created_computers)
+
+			group = Workgroup(school, members=[dns[0]])
+			group.create()
+			rule = InternetRule(wlan=True)
+			rule.define()
+
+			group2 = Workgroup(school, members=[dns[1]])
+			group2.create()
+			rule2 = InternetRule(wlan=False)
+			rule2.define()
+
+			utils.wait_for_replication_and_postrun()
+
+			rule.assign(school, group.name, 'workgroup')
+			rule2.assign(school, group2.name, 'workgroup')
+
+			utils.wait_for_replication_and_postrun()
+
+			test_couples = [(hostnames[0], True), (hostnames[1], False)]
+
+			# Testing loop
+			for username, should_succeed in test_couples:
+				test_peap_auth(username, password, radius_secret, should_succeed=should_succeed)
+
+
+if __name__ == '__main__':
+	main()
+
