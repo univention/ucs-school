@@ -1,3 +1,9 @@
+ucs-school-umc-groups (2.0.5-3) unstable; urgency=low
+
+  * Bug #34859, Bug #35624: Fix assigning teachers to classes
+
+ -- Dirk Wiesenthal <wiesenthal@univention.de>  Fri, 15 Aug 2014 21:21:26 +0200
+
 ucs-school-umc-groups (2.0.5-2) unstable; urgency=low
 
   * Bug #35051: Do not allow certain characters as name. Those would break

@@ -31,7 +31,6 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-import copy
 import traceback
 import re
 import os
@@ -39,16 +38,16 @@ import os
 from univention.lib.i18n import Translation
 
 from univention.management.console.config import ucr
-from univention.management.console.modules import UMC_OptionTypeError, UMC_CommandError, Base
+from univention.management.console.modules import UMC_OptionTypeError, UMC_CommandError
 from univention.management.console.log import MODULE
-from univention.management.console.protocol.definitions import *
 
 import univention.admin.modules as udm_modules
 import univention.admin.objects as udm_objects
 import univention.admin.uexceptions as udm_exceptions
 import univention.admin.uldap as udm_uldap
 
-from ucsschool.lib.schoolldap import LDAP_Connection, LDAP_ConnectionError, set_credentials, SchoolSearchBase, SchoolBaseModule, LDAP_Filter, Display, USER_READ, USER_WRITE, MACHINE_WRITE
+from ucsschool.lib.schoolldap import LDAP_Connection, SchoolSearchBase, SchoolBaseModule, LDAP_Filter, Display, USER_READ, USER_WRITE, MACHINE_WRITE
+from ucsschool.lib.models import User
 
 _ = Translation( 'ucs-school-umc-groups' ).translate
 
@@ -150,18 +149,18 @@ class Instance( SchoolBaseModule ):
 		grp.open()
 		result = {}
 		result[ '$dn$' ] = grp.dn
-		result[ 'school' ] = SchoolSearchBase.getOU(grp.dn)
+		school = result[ 'school' ] = SchoolSearchBase.getOU(grp.dn)
 		name_pattern = re.compile('^%s-' % (re.escape(result['school'])), flags=re.I)
 		result[ 'name' ] = name_pattern.sub('', grp['name'])
 		result[ 'description' ] = grp[ 'description' ]
 
 		if request.flavor == 'class':
 			# members are teachers
-			memberDNs = [ usr for usr in grp[ 'users' ] if search_base.isTeacher(usr) ]
+			memberDNs = [usr for usr in grp['users'] if User.is_teacher(school, usr)]
 		elif request.flavor == 'workgroup-admin':
-			memberDNs = grp[ 'users' ]
+			memberDNs = grp['users']
 		else:
-			memberDNs = [ usr for usr in grp[ 'users' ] if search_base.isStudent(usr) ]
+			memberDNs = [usr for usr in grp['users'] if User.is_student(school, usr)]
 
 		# read members:
 		user_mod = udm_modules.get( 'users/user' )
@@ -175,10 +174,6 @@ class Instance( SchoolBaseModule ):
 		result[ 'members' ] = members
 
 		self.finished( request.id, [ result, ] )
-
-	def _remove_users_by_check( self, members, checkUser ):
-		"""Retain the LDAP objects from the given list of LDAP-DN that match the supplied function"""
-		return [ iuser for iuser in members if checkUser(iuser) ]
 
 	@LDAP_Connection( USER_READ, MACHINE_WRITE )
 	def put( self, request, search_base = None, ldap_machine_write = None, ldap_user_read = None, ldap_position = None ):
@@ -200,9 +195,10 @@ class Instance( SchoolBaseModule ):
 			grp.open()
 			MODULE.info('Modifying group "%s" with members: %s' % (grp.dn, grp['users']))
 			MODULE.info('New members: %s' % group['members'])
+			school = SchoolSearchBase.getOU(grp.dn)
 			if request.flavor == 'class':
 				# class -> update only the group's teachers (keep all non teachers)
-				grp[ 'users' ] = self._remove_users_by_check( grp[ 'users' ], lambda x: not search_base.isTeacher(x) ) + self._remove_users_by_check( group[ 'members' ], search_base.isTeacher )
+				grp[ 'users' ] = [usr for usr in grp['users'] if not User.is_teacher(school, usr)] + [usr for usr in group['members'] if User.is_teacher(school, usr)]
 			elif request.flavor == 'workgroup-admin':
 				# workgroup (admin view) -> update teachers and students
 				grp[ 'users' ] = group[ 'members' ]
@@ -212,9 +208,9 @@ class Instance( SchoolBaseModule ):
 			elif request.flavor == 'workgroup':
 				# workgroup (teacher view) -> update only the group's students
 				user_diff = set(group['members']) - set(grp['users'])
-				if [ dn for dn in user_diff if search_base.isTeacher(dn) ]:
+				if any(User.is_teacher(school, dn) for dn in user_diff):
 					raise UMC_CommandError( 'Adding teachers is not allowed' )
-				grp[ 'users' ] = self._remove_users_by_check( grp[ 'users' ], lambda x: not search_base.isStudent(x) ) + self._remove_users_by_check( group[ 'members' ], search_base.isStudent )
+				grp[ 'users' ] = [usr for usr in grp['users'] if not User.is_student(school, usr)] + [usr for usr in group['members'] if User.is_student(school, usr)]
 
 			grp.modify()
 			MODULE.info('Modified, group has now members: %s' % grp['users'])
@@ -321,10 +317,10 @@ class Instance( SchoolBaseModule ):
 		shareObj["directorymode"] = "0770"
 
 		try:
-			dn=shareObj.create()
+			shareObj.create()
 		except udm_exceptions.objectExists:
 			MODULE.warn('Tried to create share, but share already exists: %s' % shareDN)
-		except udm_exceptions.base, e:
+		except udm_exceptions.base:
 			strTraceback = traceback.format_exc()
 			MODULE.error('Failed to create share: %s\nTRACEBACK:%s' % (shareDN, strTraceback))
 
