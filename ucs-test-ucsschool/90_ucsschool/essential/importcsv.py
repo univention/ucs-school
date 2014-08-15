@@ -168,7 +168,7 @@ html5
 		else:
 			param = {
 					'file_id' : self.file_id,
-					'columns': ["name","firstname","lastname","birthday","email"],
+					'columns': ["name","firstname","lastname","birthday","email","Password"],
 					}
 		try:
 			reqResult = self.umc_connection.request('schoolcsvimport/show', param)
@@ -320,7 +320,7 @@ def random_line_stu_tea():
 
 def random_line_staff():
 	"""create random line to import random staff"""
-	return '%s,%s,%s,%s%s.%s%s.%s,%s\n' % (
+	return '%s,%s,%s,%s%s.%s%s.%s,%s,%s\n' % (
 			uts.random_username(),
 			uts.random_name(),
 			uts.random_name(),
@@ -329,12 +329,13 @@ def random_line_staff():
 			uts.random_int(0,0),
 			uts.random_int(1,9),
 			uts.random_int(1980,2014),
-			random_email()
+			random_email(),
+			uts.random_name(),
 			)
 
 def staff_file(nr_of_lines):
 	"""Creates random contents of file ready to import staff"""
-	result = ['Username,First name,Last name,Birthday,Email\n']
+	result = ['Username,First name,Last name,Birthday,Email,Password\n']
 	for i in xrange(nr_of_lines):
 		result.append(random_line_staff())
 	return result
