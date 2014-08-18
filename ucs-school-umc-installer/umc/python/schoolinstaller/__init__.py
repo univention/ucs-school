@@ -563,9 +563,10 @@ class Instance(Base):
 
 				for islave in slaves:
 					islave.open()
-					if searchBase.educationalDCGroup in islave['groups']:
+					# compare group DNs case insensitive
+					if searchBase.educationalDCGroup.lower() in [x.lower() for x in islave['groups']]:
 						values['educational_slaves'].append(islave['name'])
-					if searchBase.administrativeDCGroup in islave['groups']:
+					if searchBase.administrativeDCGroup.lower() in [x.lower() for x in islave['groups']]:
 						values['administrative_slaves'].append(islave['name'])
 		except univention.uldap.ldap.LDAPError as err:
 			MODULE.warn('LDAP connection to %s failed: %s' % (master, err))
