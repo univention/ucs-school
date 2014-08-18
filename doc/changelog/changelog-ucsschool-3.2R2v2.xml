@@ -130,14 +130,13 @@
   </section>
 </section>
 
-<!--
 <section>
   <title>Other changes</title>
   <itemizedlist>
 	<listitem>
 	  <simpara>
-	  </simpara>	
+	  	  The stopped_notifier() function has been enhanced to not crash in specific circumstances (<ulink url="&ucsbug;35003">Bug 35003</ulink>).
+	  </simpara>
 	</listitem>
   </itemizedlist>
 </section>
--->
