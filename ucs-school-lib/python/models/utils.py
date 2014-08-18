@@ -153,9 +153,12 @@ def stopped_notifier(strict=True):
 	notifier_running = False
 	logger.warning('Stopping %s' % service_name)
 	for process in process_iter():
-		if process.name == service_name:
-			notifier_running = True
-			break
+		try:
+			if process.name == service_name:
+				notifier_running = True
+				break
+		except IOError:
+			pass
 	if not notifier_running:
 		logger.warning('%s is not running! Skipping' % service_name)
 	else:
