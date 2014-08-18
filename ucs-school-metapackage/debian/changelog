@@ -1,3 +1,10 @@
+ucs-school-metapackage (6.0.8-8) unstable; urgency=low
+
+  * Bug #34831: Fix icon in ucs-overview
+  * Bug #35632: Remove legacy UCR variable regarding outdated repository
+
+ -- Dirk Wiesenthal <wiesenthal@univention.de>  Mon, 18 Aug 2014 11:58:15 +0200
+
 ucs-school-metapackage (6.0.8-7) unstable; urgency=medium
 
   * Enable sysvol-sync on ucs-school-master (Bug #34905)
