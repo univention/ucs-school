@@ -1,3 +1,9 @@
+ucs-school-umc-installer (2.0.17-5) unstable; urgency=low
+
+  * Bug #34902: Fixed infinite loading animation when giving wrong master FQDN
+
+ -- Dirk Wiesenthal <wiesenthal@univention.de>  Mon, 18 Aug 2014 14:30:38 +0200
+
 ucs-school-umc-installer (2.0.17-4) unstable; urgency=low
 
   * Bug #35623: fix lookup of existing edu slaves when installing a new

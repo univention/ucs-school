@@ -136,6 +136,7 @@ define([
 				}, {
 					type: TextBox,
 					required: true,
+					regExp: '^[a-z]([a-z0-9-]*[a-z0-9])*(\.([a-z0-9]([a-z0-9-]*[a-z0-9])*[.])*[a-z0-9]([a-z0-9-]*[a-z0-9])*)?$', // see __init__.py RE_HOSTNAME
 					name: 'master',
 					label: _('Fully qualified domain name of master domain controller (e.g. schoolmaster.example.com)')
 				}]
@@ -298,11 +299,8 @@ define([
 		},
 
 		_initialQuery: function() {
-			// initial standby animation
-			this.standby(true);
-
 			// query initial information
-			this._initialDeferred = tools.umcpCommand('schoolinstaller/query').then(lang.hitch(this, function(data) {
+			this._initialDeferred = this.standbyDuring(tools.umcpCommand('schoolinstaller/query').then(lang.hitch(this, function(data) {
 				this._serverRole = data.result.server_role;
 				this._hostname = data.result.hostname;
 				this._joined = data.result.joined;
@@ -318,13 +316,7 @@ define([
 					this.getWidget('samba', 'samba').set('value', this._samba);
 				}
 				this.getWidget('credentials', 'master').set('value', guessedMaster);
-
-				// switch off standby animation
-				this.standby(false);
-			}), lang.hitch(this, function() {
-				// switch off standby animation
-				this.standby(false);
-			}));
+			})));
 		},
 
 		_installationFinished: function(deferred) {
@@ -420,13 +412,11 @@ define([
 
 				// show managementsetup page only if no slave has been specified or OU does not exist yet
 				if (next == 'administrativesetup') {
-					this.standby(true);
 					var args = { schoolOU: this.getWidget('school', 'schoolOU').get('value'),
 							     username: this.getWidget('credentials', 'username').get('value'),
 							     password: this.getWidget('credentials', 'password').get('value'),
 							     master: this.getWidget('credentials', 'master').get('value')};
-					next = tools.umcpCommand('schoolinstaller/get/schoolinfo', args).then(lang.hitch(this, function(data) {
-						this.standby(false);
+					next = this.standbyDuring(tools.umcpCommand('schoolinstaller/get/schoolinfo', args).then(lang.hitch(this, function(data) {
 						// on error, stop here
 						if ((!(data.result.success)) && (data.result.error.length > 0)) {
 							return dialog.alert(data.result.error);
@@ -468,7 +458,7 @@ define([
 								}
 							}
 						}
-					}));
+					})));
 				}
 
 				// after the administrativesetup page, the installation begins
@@ -508,13 +498,12 @@ define([
 				if (install == 'cancel') {
 					return pageName;
 				}
-				this.standby(true);
 
 				// clear entered password and make sure that no error is indicated
 				this.getWidget('credentials', 'password').set('value', '');
 				this.getWidget('credentials', 'password').set('state', 'Incomplete');
 
-				return tools.umcpCommand('schoolinstaller/install', values).then(lang.hitch(this, function(result) {
+				return this.standbyDuring(tools.umcpCommand('schoolinstaller/install', values).then(lang.hitch(this, function(result) {
 					if (!result.result.success) {
 						this.getWidget('error', 'info').set('content', result.result.error);
 						return 'error';
@@ -522,7 +511,6 @@ define([
 
 					// show the progress bar
 					this._progressBar.reset(_('Starting the configuration process...' ));
-					this.standby(false);
 					this.standby(true, this._progressBar);
 					var deferred = new Deferred();
 					this._progressBar.auto(
@@ -538,7 +526,7 @@ define([
 					// an unexpected error occurred
 					this.getWidget('error', 'info').set('content', _('An unexpected error occurred.'));
 					return 'error';
-				}));
+				})));
 			}));
 
 			next.then(lang.hitch(this, function() {
