@@ -107,6 +107,26 @@
 		</listitem>
 	  </itemizedlist>
 	</section>
+	<section>
+	 <title>Computerroom</title>
+	 <itemizedlist>
+		<listitem>
+		 <simpara>
+			Some spelling mistakes have been fixed (<ulink url="&ucsbug;34949">Bug 34949</ulink>).
+		</simpara>
+		</listitem>
+		<listitem>
+		 <simpara>
+			 Usability has been enhanced when changing state of multiple computers (<ulink url="&ucsbug;34608">Bug 34608</ulink>).
+		</simpara>
+		</listitem>
+		<listitem>
+		 <simpara>
+			SMB connections are restarted after changing settings back to defaults (<ulink url="&ucsbug;34632">Bug 34632</ulink>).
+		</simpara>
+		</listitem>
+	</itemizedlist>
+	</section>
   </section>
 </section>
 
