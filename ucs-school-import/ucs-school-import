@@ -1477,15 +1477,17 @@ def create_user(person, baseDN, module, password, OUTFILE, line):
 	else:
 		object["disabled"]="all"
 
-	if UCRV_netlogon_script_path is not None:
-		object["scriptpath"] = UCRV_netlogon_script_path
-	if calculateSambahomePath(getDN(person.sNr, basedn=baseDN), object["username"]) is not None:
-		object["sambahome"] = calculateSambahomePath(getDN(person.sNr, basedn=baseDN), object["username"])
-	if UCRV_homedrive:
-		object["homedrive"] = UCRV_homedrive
-	profilePath = calculateProfilePath(getDN(person.sNr, basedn=baseDN))
-	if profilePath:
-		object["profilepath"] = profilePath
+	# Bug #34179: do not set sambaHomePath for staff users
+	if set(person.getRole()) != set([role_staff]):
+		if UCRV_netlogon_script_path is not None:
+			object["scriptpath"] = UCRV_netlogon_script_path
+		if calculateSambahomePath(getDN(person.sNr, basedn=baseDN), object["username"]) is not None:
+			object["sambahome"] = calculateSambahomePath(getDN(person.sNr, basedn=baseDN), object["username"])
+		if UCRV_homedrive:
+			object["homedrive"] = UCRV_homedrive
+		profilePath = calculateProfilePath(getDN(person.sNr, basedn=baseDN))
+		if profilePath:
+			object["profilepath"] = profilePath
 
 	try:
 		try:

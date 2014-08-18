@@ -70,6 +70,12 @@ class User(UCSSchoolHelperAbstractClass):
 		from ucsschool.lib.roleshares import roleshare_home_subdir
 		return roleshare_home_subdir(self.school, self.roles, ucr)
 
+	def get_samba_home_drive(self):
+		return ucr.get('ucsschool/import/set/homedrive')
+
+	def get_samba_netlogon_script_path(self):
+		return ucr.get('ucsschool/import/set/netlogon/script/path')
+
 	def get_samba_home_path(self, lo):
 		school = School.cache(self.school)
 		# if defined then use UCR value
@@ -172,10 +178,10 @@ class User(UCSSchoolHelperAbstractClass):
 		profile_path = self.get_profile_path(lo)
 		if profile_path:
 			udm_obj['profilepath'] = profile_path
-		home_drive = ucr.get('ucsschool/import/set/homedrive')
+		home_drive = self.get_samba_home_drive()
 		if home_drive is not None:
 			udm_obj['homedrive'] = home_drive
-		script_path = ucr.get('ucsschool/import/set/netlogon/script/path')
+		script_path = self.get_samba_netlogon_script_path()
 		if script_path is not None:
 			udm_obj['scriptpath'] = script_path
 		success = super(User, self).do_create(udm_obj, lo)
@@ -443,6 +449,22 @@ class Staff(User):
 	@classmethod
 	def get_container(cls, school):
 		return cls.get_search_base(school).staff
+
+	def get_samba_home_path(self, lo):
+		"""	Do not set sambaHomePath for staff users. """
+		return None
+
+	def get_samba_home_drive(self):
+		"""	Do not set sambaHomeDrive for staff users. """
+		return None
+
+	def get_samba_netlogon_script_path(self):
+		"""	Do not set sambaLogonScript for staff users. """
+		return None
+
+	def get_profile_path(self, lo):
+		"""	Do not set sambaProfilePath for staff users. """
+		return None
 
 	def get_specific_groups(self, lo):
 		groups = super(Staff, self).get_specific_groups(lo)

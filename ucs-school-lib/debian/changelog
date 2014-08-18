@@ -1,3 +1,10 @@
+ucs-school-lib (5.0.48-1) unstable; urgency=low
+
+  * Bug #34179: do not set samba attributes (home drive, home path,
+    profile path, logon script) for staff users
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 15 Aug 2014 15:41:08 +0200
+
 ucs-school-lib (5.0.47-5) unstable; urgency=low
 
   * Bug #35047: Auto assign next free IP if IP is set to computer's own subnet
