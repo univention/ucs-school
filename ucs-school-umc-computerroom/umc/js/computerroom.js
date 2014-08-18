@@ -259,6 +259,7 @@ define([
 				label: _('Logout user'),
 				isStandardAction: false,
 				isMultiAction: true,
+				enablingMode: "some",
 				canExecute: checkUCC('logout', function(item) {
 					return isConnected(item) && item.user[0];
 				}),
@@ -269,6 +270,7 @@ define([
 				label: _('Shutdown computer'),
 				isStandardAction: false,
 				isMultiAction: true,
+				enablingMode: "some",
 				canExecute: checkUCC('computerShutdown', function(item) { return isConnected(item); }),
 				callback: lang.hitch(this, '_computerChangeState', 'poweroff')
 			}, {
@@ -277,6 +279,7 @@ define([
 				label: _('Switch on computer'),
 				isStandardAction: false,
 				isMultiAction: true,
+				enablingMode: "some",
 				canExecute: checkUCC('computerStart', function(item) {
 					return (item.connection[0] == 'error' || item.connection[0] == 'autherror' || item.connection[0] == 'offline') && item.mac[0];
 				}),
@@ -287,6 +290,7 @@ define([
 				label: _('Restart computer'),
 				isStandardAction: false,
 				isMultiAction: true,
+				enablingMode: "some",
 				canExecute: checkUCC('computerRestart', function(item) { return isConnected(item); }),
 				callback: lang.hitch(this, '_computerChangeState', 'restart')
 			}, {
@@ -294,6 +298,7 @@ define([
 				label: _('Lock input devices'),
 				isStandardAction: false,
 				isMultiAction: true,
+				enablingMode: "some",
 				canExecute: checkUCC('lockInput', lang.hitch(this, function(item) {
 					return !this._demo.running && isConnected(item) && item.user && item.user[0] && (!item.teacher || item.teacher[0] === false) && item.InputLock;
 				})),
@@ -303,6 +308,7 @@ define([
 				label: _('Unlock input devices'),
 				isStandardAction: false,
 				isMultiAction: true,
+				enablingMode: "some",
 				canExecute: checkUCC('unlockInput', lang.hitch(this, function(item) {
 					return !this._demo.running && isConnected(item) && item.user && item.user[0] && (!item.teacher || item.teacher[0] === false) && item.InputLock;
 				})),
@@ -323,6 +329,7 @@ define([
 				label: _('Lock screen'),
 				isStandardAction: true,
 				isMultiAction: true,
+				enablingMode: "some",
 				canExecute: checkUCC('ScreenLock', lang.hitch(this, function(item) {
 					return !this._demo.running && isConnected(item) && item.user && item.user[0] && (!item.teacher || item.teacher[0] === false);
 				})),
@@ -333,6 +340,7 @@ define([
 				label: _('Unlock screen'),
 				isStandardAction: true,
 				isMultiAction: true,
+				enablingMode: "some",
 				canExecute: checkUCC('ScreenUnLock', lang.hitch(this, function(item) {
 					return !this._demo.running && isConnected(item) && item.user && item.user[0] && (!item.teacher || item.teacher[0] === false);
 				})),

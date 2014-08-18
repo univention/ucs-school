@@ -1,3 +1,12 @@
+ucs-school-umc-computerroom (5.0.6-1) unstable; urgency=low
+
+  * Bug #34608: enhanced usability when changing state of multiple computers
+  * Bug #34632: restart SMB connections after changing settings back to
+  	defaults
+  * Bug #35341: fix interferences when changing room settings between 2 or more computerrooms
+
+ -- Florian Best <best@univention.de>  Mon, 18 Aug 2014 12:09:33 +0200
+
 ucs-school-umc-computerroom (5.0.5-2) unstable; urgency=low
 
   * Bug #34949: Typo in German translation

@@ -629,6 +629,10 @@ class Instance(SchoolBaseModule):
 		if not self._italc.school or not self._italc.room:
 			raise UMC_CommandError('no room selected')
 
+		printMode = request.options['printMode']
+		shareMode = request.options['shareMode']
+		internetRule = request.options['internetRule']
+
 		# if the exam description has not been specified, try to load it from the room info file
 		roomInfo = _readRoomInfo(self._italc.roomDN) or dict()
 		examDescription = request.options.get('examDescription', roomInfo.get('examDescription', exam))
@@ -670,8 +674,9 @@ class Instance(SchoolBaseModule):
 			self.finished(request.id, True)
 
 		# do we need to setup a new at job with custom settings?
-		if request.options['internetRule'] == 'none' and request.options['shareMode'] == 'all' and request.options['printMode'] == 'default':
+		if internetRule == 'none' and shareMode == 'all' and printMode == 'default':
 			self._ruleEndAt = None
+			self.reset_smb_connections()
 			_finished()
 			return
 
@@ -684,20 +689,20 @@ class Instance(SchoolBaseModule):
 		hosts = self._italc.ipAddresses(students_only = True)
 
 		# print mode
-		if request.options['printMode'] in ('none', 'all'):
-			vextract.append('samba/printmode/hosts/%s' % request.options['printMode'])
+		if printMode in ('none', 'all'):
+			vextract.append('samba/printmode/hosts/%s' % printMode)
 			vappend[vextract[-1]] = hosts
-			vextract.append('cups/printmode/hosts/%s' % request.options['printMode'])
+			vextract.append('cups/printmode/hosts/%s' % printMode)
 			vappend[vextract[-1]] = hosts
 			vunset.append('samba/printmode/room/%s' % self._italc.room)
-			vset[vunset[-1]] = request.options['printMode']
+			vset[vunset[-1]] = printMode
 		else:
 			vunset_now.append('samba/printmode/room/%s' % self._italc.room)
 
 		# share mode
-		if request.options['shareMode'] == 'home':
+		if shareMode == 'home':
 			vunset.append('samba/sharemode/room/%s' % self._italc.room)
-			vset[vunset[-1]] = request.options['shareMode']
+			vset[vunset[-1]] = shareMode
 			vextract.append('samba/othershares/hosts/deny')
 			vappend[vextract[-1]] = hosts
 			vextract.append('samba/share/Marktplatz/hosts/deny')
@@ -706,10 +711,10 @@ class Instance(SchoolBaseModule):
 			vunset_now.append('samba/sharemode/room/%s' % self._italc.room)
 
 		# internet rule
-		if request.options['internetRule'] != 'none':
+		if internetRule != 'none':
 			vextract.append('proxy/filter/room/%s/ip' % self._italc.room)
 			vappend[vextract[-1]] = hosts
-			if request.options['internetRule'] == 'custom' and 'customRule' in request.options:
+			if internetRule == 'custom' and 'customRule' in request.options:
 				# remove old rules
 				i = 1
 				while True:
@@ -737,7 +742,7 @@ class Instance(SchoolBaseModule):
 						i += 1
 			else:
 				vunset.append('proxy/filter/room/%s/rule' % self._italc.room)
-				vset[vunset[-1]] = request.options['internetRule']
+				vset[vunset[-1]] = internetRule
 		else:
 			vunset_now.append('proxy/filter/room/%s/ip' % self._italc.room)
 			vunset_now.append('proxy/filter/room/%s/rule' % self._italc.room)
@@ -769,11 +774,13 @@ class Instance(SchoolBaseModule):
 		# if samba/printmode/hosts/none is not set but samba/printmode/hosts/all then all other hosts
 		# are unable to print on samba shares. Solution: set empty value for .../none if no host is on deny list.
 		varname = 'samba/printmode/hosts/none'
-		if not varname in vset:
-			vset[varname] = '""'
+		if varname not in vset:
+			ucr.load()
+			if not ucr.get(varname):
+				vset[varname] = '""'
 		else:
 			# remove empty items ('""') in list
-			vset[varname] = ' '.join([x for x in vset[varname].split(' ') if not x == '""'])
+			vset[varname] = ' '.join([x for x in vset[varname].split(' ') if x != '""'])
 		if varname in vunset:
 			del vunset[varname]
 
@@ -807,7 +814,10 @@ class Instance(SchoolBaseModule):
 			atjobs.add(cmd, starttime, { Instance.ATJOB_KEY: self._italc.room })
 			self._ruleEndAt = starttime
 
-		# reset SMB connections
+		self.reset_smb_connections()
+		_finished()
+
+	def reset_smb_connections(self):
 		smbstatus = SMB_Status()
 		italc_users = [x.lower() for x in self._italc.users if x]
 		MODULE.info('iTALC users: %s' % ', '.join(italc_users))
@@ -816,7 +826,6 @@ class Instance(SchoolBaseModule):
 			if process.username and process.username.lower() in italc_users:
 				MODULE.info('Kill SMB process %s' % process.pid)
 				os.kill(int(process.pid), signal.SIGTERM)
-		_finished()
 
 	@check_room_access
 	def demo_start(self, request):
