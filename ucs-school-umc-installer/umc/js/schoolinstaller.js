@@ -416,7 +416,7 @@ define([
 							     username: this.getWidget('credentials', 'username').get('value'),
 							     password: this.getWidget('credentials', 'password').get('value'),
 							     master: this.getWidget('credentials', 'master').get('value')};
-					next = this.standbyDuring(tools.umcpCommand('schoolinstaller/get/schoolinfo', args).then(lang.hitch(this, function(data) {
+					next = this.standbyDuring(tools.umcpCommand('schoolinstaller/get/schoolinfo', args)).then(lang.hitch(this, function(data) {
 						// on error, stop here
 						if ((!(data.result.success)) && (data.result.error.length > 0)) {
 							return dialog.alert(data.result.error);
@@ -458,7 +458,7 @@ define([
 								}
 							}
 						}
-					})));
+					}));
 				}
 
 				// after the administrativesetup page, the installation begins
@@ -499,19 +499,22 @@ define([
 					return pageName;
 				}
 
+				// show the progress bar
+				this._progressBar.reset(_('Starting the configuration process...' ));
+				this._progressBar._progressBar.set('value', Infinity); // TODO: Remove when this is done automatically by .reset()
+				this.standbyDuring(next, this._progressBar);
+
 				// clear entered password and make sure that no error is indicated
 				this.getWidget('credentials', 'password').set('value', '');
 				this.getWidget('credentials', 'password').set('state', 'Incomplete');
 
-				return this.standbyDuring(tools.umcpCommand('schoolinstaller/install', values).then(lang.hitch(this, function(result) {
+				return tools.umcpCommand('schoolinstaller/install', values).then(lang.hitch(this, function(result) {
 					if (!result.result.success) {
 						this.getWidget('error', 'info').set('content', result.result.error);
 						return 'error';
 					}
 
-					// show the progress bar
-					this._progressBar.reset(_('Starting the configuration process...' ));
-					this.standby(true, this._progressBar);
+					this._progressBar.setInfo(null, null, 0); // 0%
 					var deferred = new Deferred();
 					this._progressBar.auto(
 						'schoolinstaller/progress',
@@ -526,11 +529,7 @@ define([
 					// an unexpected error occurred
 					this.getWidget('error', 'info').set('content', _('An unexpected error occurred.'));
 					return 'error';
-				})));
-			}));
-
-			next.then(lang.hitch(this, function() {
-				this.standby(false);
+				}));
 			}));
 
 			return next;
