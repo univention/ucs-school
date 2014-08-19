@@ -53,7 +53,7 @@
 					Der Benutzertyp <emphasis>Mitarbeiter</emphasis> kommt häufig im Umfeld der
 					Schulverwaltung zum Einsatz. Er besitzt in der Standardeinstellung
 					ähnliche Zugriffsrechte wie ein Schülerkonto, kann jedoch mit
-					zusätzlichen Rechten ausgestattet werden.
+					zusätzlichen Rechten ausgestattet werden (siehe auch <xref linkend="structure:edunet-vs-adminnet"/>).
 				</simpara>
 			</listitem>
 			<listitem>
