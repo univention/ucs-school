@@ -52,17 +52,18 @@
 -->
 
 <section>
-  <!--
   <title>Domain services</title>
   <section>
 	<title>Samba4</title>
 	<itemizedlist>
 	  <listitem>
 		<simpara>
+			The listener module for the branch setup searches now also for the <emphasis>entryUUID</emphasis> attribute which is required since UCS 3.2-2 errata153 (<ulink url="&ucsbug;35628">Bug 35628</ulink>).
 		</simpara>
 	  </listitem>
 	</itemizedlist>
   </section>
+  <!--
 	  <section>
 	  <title>OpenLDAP</title>
 	  </section>
