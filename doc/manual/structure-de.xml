@@ -201,7 +201,7 @@
 	  <title>&ucsUAS;-Objekte im LDAP-Verzeichnisdienst</title>
 	  <para>
 		&ucsUAS; erstellt zur Verwaltung der schulspezifischen Erweiterungen zusätzliche Strukturen
-		im LDAP-Verzeichnisdienst. Im Folgenden werden einige Funktion dieser Container und Objekte genauer
+		im LDAP-Verzeichnisdienst. Im Folgenden werden einige Funktionen dieser Container und Objekte genauer
 		vorgestellt.
 	  </para>
 	  <para>
