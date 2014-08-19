@@ -161,5 +161,10 @@
 	  	  The stopped_notifier() function has been enhanced to not crash in specific circumstances (<ulink url="&ucsbug;35003">Bug 35003</ulink>).
 	  </simpara>
 	</listitem>
+	<listitem>
+	  <simpara>
+		An open file handle leak in the UCR module of <package>ucs-school-webproxy</package> has been fixed that could cause faulty behaviour of the computerroom module in very heavy use situations (<ulink url="&ucsbug;35408">Bug 35408</ulink>).
+	  </simpara>
+	</listitem>
   </itemizedlist>
 </section>
