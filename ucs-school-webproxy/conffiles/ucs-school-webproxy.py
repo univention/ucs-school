@@ -49,7 +49,6 @@
 # proxy/filter/setting/myprofile/url/whitelisted/1: http://www.allessupi.de/toll.html
 # proxy/filter/setting/myprofile/filtertype: whitelist-block ODER blacklist-pass ODER whitelist-blacklist-pass
 
-import errno
 import os
 import re
 import subprocess
@@ -98,7 +97,8 @@ def handler(configRegistry, changes):
 	DIR_TEMP = tempfile.mkdtemp(dir=DIR_DATA)
 
 	fn_config = os.path.join(DIR_ETC, FN_CONFIG)
-	(_, fn_temp_config, ) = tempfile.mkstemp(dir=DIR_ETC)
+	(fno, fn_temp_config) = tempfile.mkstemp(dir=DIR_ETC)
+	os.close(fno)
 
 	createTemporaryConfig(fn_temp_config, configRegistry, DIR_TEMP)
 	writeUsergroupMemberLists(configRegistry, DIR_TEMP)
