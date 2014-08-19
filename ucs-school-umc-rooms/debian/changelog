@@ -1,3 +1,10 @@
+ucs-school-umc-rooms (10.0.3-2) unstable; urgency=low
+
+  * Bug #35166: Fix problems with group names already taken by using
+    ucsschool.lib
+
+ -- Dirk Wiesenthal <wiesenthal@univention.de>  Tue, 19 Aug 2014 17:55:03 +0200
+
 ucs-school-umc-rooms (10.0.3-1) unstable; urgency=low
 
   * Bug #31663: fix typo

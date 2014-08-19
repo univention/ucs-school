@@ -110,7 +110,7 @@ define([
 				description: _('Verbose description of the current group')
 			}, {
 				type: MultiObjectSelect,
-				name: 'computers',
+				name: 'hosts',
 				label: _('Computers in the room'),
 				queryWidgets: [{
 					type: ComboBox,
@@ -149,7 +149,7 @@ define([
 				layout: [ 'school', 'name', 'description' ]
 			}, {
 				label: _('Computers'),
-				layout: [ 'computers' ]
+				layout: [ 'hosts' ]
 			}];
 
 			// create the form
@@ -164,9 +164,9 @@ define([
 			// an element gets added to the center region
 			this.addChild(this._form);
 
-        	this._form.getWidget( 'computers' ).on('ShowDialog', lang.hitch( this, function( _dialog ) {
-            	_dialog._form.getWidget( 'school' ).setInitialValue( this._form.getWidget( 'school' ).get( 'value' ), true );
-        	} ) );
+			this._form.getWidget( 'hosts' ).on('ShowDialog', lang.hitch( this, function( _dialog ) {
+				_dialog._form.getWidget( 'school' ).setInitialValue( this._form.getWidget( 'school' ).get( 'value' ), true );
+			} ) );
 
 			// hook to onSubmit event of the form
 			this._form.on('submit', lang.hitch(this, '_save'));
@@ -186,6 +186,12 @@ define([
 				deferred = this.moduleStore.put(values);
 			} else {
 				deferred = this.moduleStore.add(values);
+				// may return false in case room.name was already taken
+				deferred.then(lang.hitch(this, function(success) {
+					if (!success) {
+						this.addNotification(_('Room %s not created. It already exists.', values.name));
+					}
+				}));
 			}
 
 			deferred.then(lang.hitch(this, function() {

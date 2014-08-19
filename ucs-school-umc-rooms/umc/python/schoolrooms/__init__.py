@@ -33,22 +33,25 @@
 
 import re
 
-from univention.management.console.config import ucr
-
 from univention.lib.i18n import Translation
-from univention.management.console.modules import UMC_OptionTypeError, Base
+from univention.management.console.modules import UMC_CommandError
 from univention.management.console.log import MODULE
-from univention.management.console.protocol.definitions import *
 
 import univention.admin.modules as udm_modules
-import univention.admin.objects as udm_objects
 import univention.admin.uexceptions as udm_exceptions
 
-from ucsschool.lib.schoolldap import LDAP_Connection, LDAP_ConnectionError, set_credentials, SchoolSearchBase, SchoolBaseModule, LDAP_Filter, Display, USER_READ, USER_WRITE
+from ucsschool.lib.schoolldap import LDAP_Connection, SchoolBaseModule, LDAP_Filter, USER_READ, USER_WRITE
+
+from ucsschool.lib.models import ComputerRoom, School
+from ucsschool.lib.models.utils import add_module_logger_to_schoollib
 
 _ = Translation( 'ucs-school-umc-rooms' ).translate
 
 class Instance( SchoolBaseModule ):
+	def init(self):
+		super(Instance, self).init()
+		add_module_logger_to_schoollib()
+
 	@LDAP_Connection()
 	def computers( self, request, search_base = None, ldap_user_read = None, ldap_position = None ):
 		"""
@@ -104,23 +107,9 @@ class Instance( SchoolBaseModule ):
 		MODULE.info('schoolrooms.get: options: %s' % str(request.options))
 
 		# open the specified room
-		group_module = udm_modules.get('groups/group')
-		room_obj = group_module.object(None, ldap_user_read, None, request.options[0])
-		room_obj.open()
-
-		# get the school name
-		school = SchoolSearchBase.getOU(room_obj.dn)
-
-		# prepare the resulting structure
-		result = {}
-		result['$dn$'] = room_obj.dn
-		result['school'] = school
-		name_pattern = re.compile('^%s-' % (re.escape(search_base.school)), flags=re.I)
-		result['name'] = name_pattern.sub('', room_obj['name'])
-		result['description'] = room_obj['description']
-		result['computers'] = room_obj['hosts']
-
-		self.finished(request.id, [result,])
+		room = ComputerRoom.from_dn(request.options[0], None, ldap_user_read)
+		result = room.to_dict()
+		self.finished(request.id, [result])
 
 	@LDAP_Connection(USER_READ, USER_WRITE)
 	def add(self, request, search_base=None, ldap_user_write=None, ldap_user_read=None, ldap_position=None):
@@ -130,23 +119,16 @@ class Instance( SchoolBaseModule ):
 
 		return: True|<error message>
 		"""
-		MODULE.info('schoolrooms.add: object: %s' % str(request.options[0]))
 		if not request.options:
 			raise UMC_CommandError('Invalid arguments')
 
 		group_props = request.options[0].get('object', {})
-		search_base = SchoolSearchBase( search_base.availableSchools, group_props[ 'school' ] )
-		ldap_position.setDn(search_base.rooms)
-		group_obj = udm_modules.get('groups/group').object(None, ldap_user_write, ldap_position)
-		group_obj.open()
-
-		group_obj['name'] = '%(school)s-%(name)s' % group_props
-		group_obj['description'] = group_props['description']
-		group_obj['hosts'] = group_props['computers']
-
-		group_obj.create()
-
-		self.finished(request.id, True)
+		room = ComputerRoom(**group_props)
+		if room.get_relative_name() == room.name:
+			room.name = '%(school)s-%(name)s' % group_props
+			room.set_dn(room.dn)
+		success = room.create(ldap_user_write)
+		self.finished(request.id, [success])
 
 	@LDAP_Connection(USER_READ, USER_WRITE)
 	def put(self, request, search_base=None, ldap_user_write=None, ldap_user_read=None, ldap_position=None):
@@ -156,30 +138,18 @@ class Instance( SchoolBaseModule ):
 
 		return: True|<error message>
 		"""
-		MODULE.info('schoolrooms.put: object: %s' % str(request.options[0]))
 		if not request.options:
 			raise UMC_CommandError('Invalid arguments')
 
 		group_props = request.options[0].get('object', {})
 
-		group_obj = udm_objects.get(udm_modules.get('groups/group'), None, ldap_user_write, ldap_position, group_props['$dn$'])
-		if not group_obj:
-			raise UMC_OptionTypeError('unknown group object')
+		room = ComputerRoom(**group_props)
+		if room.get_relative_name() == room.name:
+			room.name = '%(school)s-%(name)s' % group_props
+		room.set_dn(group_props['$dn$'])
+		room.modify(ldap_user_write)
 
-		# apply changes
-		group_obj.open()
-		name_pattern = re.compile('^%s-' % (re.escape(group_props['school'])), re.I)
-		if name_pattern.match(group_obj['name']):
-			# room had previously a school prefix
-			group_obj['name'] = '%(school)s-%(name)s' % group_props
-		else:
-			# room did not have a school prefix
-			group_obj['name'] = '%(name)s' % group_props
-		group_obj['description'] = group_props['description']
-		group_obj['hosts'] = group_props['computers']
-		group_obj.modify()
-
-		self.finished(request.id, True)
+		self.finished(request.id, [True])
 
 	@LDAP_Connection(USER_READ, USER_WRITE)
 	def remove(self, request, search_base=None, ldap_user_write=None, ldap_user_read=None, ldap_position=None):
