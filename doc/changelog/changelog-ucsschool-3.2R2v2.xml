@@ -123,6 +123,11 @@
 			Some spelling mistakes have been fixed (<ulink url="&ucsbug;34988">Bug 34988</ulink>).
 		  </simpara>
 		</listitem>
+		<listitem>
+		  <simpara>
+			When installing an administrative slave for a school OU with mixed upper and lower case letters, the detection of the educational slave's name failed. This bug has been fixed (<ulink url="&ucsbug;35623">Bug 35623</ulink>).
+		  </simpara>
+		</listitem>
 	  </itemizedlist>
 	</section>
 	<section>
