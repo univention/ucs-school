@@ -179,7 +179,9 @@
 		  Auf den Schulservern des Verwaltungsnetzes werden keine speziellen Dienste oder UMC-Module
 		  angeboten. Sie dienen den Verwaltungsrechnern hauptsächlich als Anmelde-, Druck- und Dateiserver.
 		  Die Benutzerkonten mit der Benutzerrolle <emphasis>Mitarbeiter</emphasis> haben entsprechend keinen
-		  Zugriff auf die &ucsUAS;-spezifischen UMC-Module des edukativen Netzes.
+		  Zugriff auf die &ucsUAS;-spezifischen UMC-Module des edukativen Netzes. Im Gegensatz zu den
+		  Benutzern des edukativen Netzes werden für die Benutzer des Verwaltungsnetzes keine automatischen
+		  Einstellungen für Windows-Profilverzeichnis oder Windows-Heimatverzeichnis gesetzt.
 		</para>
 		<note>
 		  Die Einrichtung eines Verwaltungsnetzes ist in einer Single-Server-Umgebung nicht
