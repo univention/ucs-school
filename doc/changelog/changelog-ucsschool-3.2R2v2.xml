@@ -121,6 +121,11 @@
 		</listitem>
 		<listitem>
 		  <simpara>
+			The &ucsUAS; configuration does not accept anything other than a FQDN in the field for the master system any longer (<ulink url="&ucsbug;34902">Bug 34902</ulink>).
+		  </simpara>
+		</listitem>
+		<listitem>
+		  <simpara>
 			Some spelling mistakes have been fixed (<ulink url="&ucsbug;34988">Bug 34988</ulink>).
 		  </simpara>
 		</listitem>
@@ -132,11 +137,67 @@
 	  </itemizedlist>
 	</section>
 	<section>
+		<title>Wizards (Users/Classes/Computers/Schools)</title>
+	  <itemizedlist>
+		<listitem>
+		  <simpara>
+				Better wording for "Type" and other labels within the module (<ulink url="&ucsbug;34997">Bug 34997</ulink>).
+		  </simpara>
+		</listitem>
+		<listitem>
+		  <simpara>
+				Deleting an object now automatically deletes certain related objects. This affects DNS and DHCP settings when deleting a computer (<ulink url="&ucsbug;35174">Bug 35174</ulink>).
+		  </simpara>
+		</listitem>
+		<listitem>
+		  <simpara>
+				Setting the IP address of a computer to the subnet now automatically assigns the next free IP on that subnet (<ulink url="&ucsbug;35047">Bug 35047</ulink>).
+		  </simpara>
+		</listitem>
+		<listitem>
+		  <simpara>
+				Attempting to create a class with umlauts (and failing) is not possible anymore (<ulink url="&ucsbug;34944">Bug 34944</ulink>).
+		  </simpara>
+		</listitem>
+		<listitem>
+		  <simpara>
+				Searching for schools now also looks up the given displayName (<ulink url="&ucsbug;34993">Bug 34993</ulink>).
+		  </simpara>
+		</listitem>
+	  </itemizedlist>
+	</section>
+	<section>
+		<title>CSV Import</title>
+	  <itemizedlist>
+		<listitem>
+		  <simpara>
+				Reworded the sentence when the import was completed successfully (<ulink url="&ucsbug;35390">Bug 35390</ulink>).
+		  </simpara>
+		</listitem>
+		<listitem>
+		  <simpara>
+				Fixed an error when importing staff users and specifying a class in that file (<ulink url="&ucsbug;35181">Bug 35181</ulink>).
+		  </simpara>
+		</listitem>
+	  </itemizedlist>
+	</section>
+	<section>
+	<section>
 	 <title>Computerroom</title>
 	 <itemizedlist>
 		<listitem>
 		 <simpara>
 			Some spelling mistakes have been fixed (<ulink url="&ucsbug;34949">Bug 34949</ulink>).
+		</simpara>
+		</listitem>
+		<listitem>
+		 <simpara>
+			 Fixed an error when adding a new room with the name of an old room. Now a message is displayed explaining that the creation failed (<ulink url="&ucsbug;35278">Bug 35278</ulink>).
+		</simpara>
+		</listitem>
+		<listitem>
+		 <simpara>
+			 The module showed the room names with their internal name (with the school's name as prefix). This has been corrected (<ulink url="&ucsbug;35166">Bug 35166</ulink>).
 		</simpara>
 		</listitem>
 		<listitem>
@@ -150,6 +211,56 @@
 		</simpara>
 		</listitem>
 	</itemizedlist>
+	</section>
+	<section>
+		<title>Workgroups</title>
+	  <itemizedlist>
+		<listitem>
+		  <simpara>
+				Using the module as Administrator in a single master environment with multiple schools has been fixed (<ulink url="&ucsbug;35624">Bug 35624</ulink>).
+		  </simpara>
+		</listitem>
+		<listitem>
+		  <simpara>
+				Attempting to create a workgroup with umlauts (and failing) is not possible anymore (<ulink url="&ucsbug;35051">Bug 35051</ulink>).
+		  </simpara>
+		</listitem>
+	  </itemizedlist>
+	</section>
+	<section>
+		<title>Exam</title>
+	  <itemizedlist>
+		<listitem>
+		  <simpara>
+				Reworded the hint when about to restart the computers. It did not match the label of the button (<ulink url="&ucsbug;34951">Bug 34951</ulink>).
+		  </simpara>
+		</listitem>
+		<listitem>
+		  <simpara>
+				Starting an exam in a room without any computers is now prevented (<ulink url="&ucsbug;34980">Bug 34980</ulink>).
+		  </simpara>
+		</listitem>
+	  </itemizedlist>
+	</section>
+	<section>
+		<title>Distribution</title>
+	  <itemizedlist>
+		<listitem>
+		  <simpara>
+				Fixed inconsistencies in the spelling of button labels (<ulink url="&ucsbug;34077">Bug 34077</ulink>).
+		  </simpara>
+		</listitem>
+	  </itemizedlist>
+	</section>
+	<section>
+		<title>Helpdesk</title>
+	  <itemizedlist>
+		<listitem>
+		  <simpara>
+				The school is now shown as the display name of the school, not the internal name (<ulink url="&ucsbug;34898">Bug 34898</ulink>).
+		  </simpara>
+		</listitem>
+	  </itemizedlist>
 	</section>
   </section>
 </section>
@@ -170,6 +281,16 @@
 	<listitem>
 		<simpara>
 			Fixed DNS server after unistallation of &ucsUAS; in a single server environment (<ulink url="&ucsbug;35004">Bug 35004</ulink>).
+		</simpara>
+	</listitem>
+	<listitem>
+		<simpara>
+			The link to &ucsUAS; on the overview page now uses the correct &ucsUAS; logo (<ulink url="&ucsbug;34831">Bug 34831</ulink>).
+		</simpara>
+	</listitem>
+	<listitem>
+		<simpara>
+			Not setting an unneeded UCR variable anymore. This speeds up installation of &ucsUAS; (<ulink url="&ucsbug;35632">Bug 35632</ulink>).
 		</simpara>
 	</listitem>
   </itemizedlist>
