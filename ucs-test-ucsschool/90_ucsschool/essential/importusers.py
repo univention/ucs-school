@@ -183,18 +183,24 @@ class Person:
 		if self.password:
 			attr['sambaNTPassword'] = [smbpasswd.nthash(self.password)]
 
-		if configRegistry.get('ucsschool/import/set/netlogon/script/path'):
-			attr['sambaLogonScript'] = [configRegistry.get('ucsschool/import/set/netlogon/script/path')]
-		if configRegistry.get('ucsschool/import/set/homedrive'):
-			attr['sambaHomeDrive'] = [configRegistry.get('ucsschool/import/set/homedrive')]
+		if not self.is_staff():
+			if configRegistry.get('ucsschool/import/set/netlogon/script/path'):
+				attr['sambaLogonScript'] = [configRegistry.get('ucsschool/import/set/netlogon/script/path')]
+			if configRegistry.get('ucsschool/import/set/homedrive'):
+				attr['sambaHomeDrive'] = [configRegistry.get('ucsschool/import/set/homedrive')]
 
-		samba_home_path_server = self.get_samba_home_path_server()
-		if samba_home_path_server:
-			attr['sambaHomePath'] = ['\\\\%s\\%s' % (samba_home_path_server, self.username)]
+			samba_home_path_server = self.get_samba_home_path_server()
+			if samba_home_path_server:
+				attr['sambaHomePath'] = ['\\\\%s\\%s' % (samba_home_path_server, self.username)]
 
-		profile_path_server = self.get_profile_path_server()
-		if profile_path_server:
-			attr['sambaProfilePath'] = [profile_path_server]
+			profile_path_server = self.get_profile_path_server()
+			if profile_path_server:
+				attr['sambaProfilePath'] = [profile_path_server]
+		else:
+			attr['sambaLogonScript'] = []
+			attr['sambaHomeDrive'] = []
+			attr['sambaHomePath'] = []
+			attr['sambaProfilePath'] = []
 
 		return attr
 
@@ -234,7 +240,7 @@ class Person:
 			utils.verify_ldap_object(self.dn, should_exist=False)
 			return
 
-		utils.verify_ldap_object(self.dn, expected_attr=self.expected_attributes(), should_exist=True)
+		utils.verify_ldap_object(self.dn, expected_attr=self.expected_attributes(), strict=True, should_exist=True)
 
 		default_group_dn = 'cn=Domain Users %s,cn=groups,%s' % (self.school, self.school_base)
 		utils.verify_ldap_object(default_group_dn, expected_attr={'uniqueMember': [self.dn], 'memberUid': [self.username]}, strict=False, should_exist=True)

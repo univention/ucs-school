@@ -1,3 +1,10 @@
+ucs-test-ucsschool (1.0.73-1) unstable; urgency=low
+
+  * Bug #34179: updated essential/importuser.py: samba attributes are no
+    longer set for staff users
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Tue, 19 Aug 2014 10:29:32 +0200
+
 ucs-test-ucsschool (1.0.72-1) unstable; urgency=low
 
   * Bug #34225: 90_samba4_sysvol_replication: Test sysvol replication
