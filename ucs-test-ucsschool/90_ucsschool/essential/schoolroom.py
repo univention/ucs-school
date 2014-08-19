@@ -151,7 +151,8 @@ class SchoolRoom(object):
 		new_attributes.update({'school': self.school, '$dn$': self.dn()})
 		self.put(new_attributes)
 		current_attributes = self.get(True)
-		new_attributes.update({'name': '%s-%s' % (self.school, self.name), '$dn$': self.dn()}) #FIXME Bug #35618
+		new_attributes.update({'name': self.name, '$dn$': self.dn()})
+		# new_attributes.update({'name': '%s-%s' % (self.school, self.name), '$dn$': self.dn()}) #FIXME workaround for Bug #35618
 		if current_attributes != new_attributes:
 			raise FailCheckPut('Modifying room %s was not successful\ncurrent attributes= %r\nexpected attributes= %r' %(
 				self.name, current_attributes, new_attributes))
