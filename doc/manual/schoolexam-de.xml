@@ -189,13 +189,7 @@ eval "$(ucr shell)"
 						Dann die Schaltfläche <emphasis>Benutzer oder Gruppe hinzufügen</emphasis> betätigen.
 					</listitem>
 					<listitem>
-						Im neu geöffneten Dialog die Schaltfläche <emphasis>Durchsuchen</emphasis> betätigen.
-					</listitem>
-					<listitem>
-						In das Eingabefeld <emphasis>Geben Sie die zu verwendenden Objektnamen ein</emphasis> den Namen <emphasis>Administratoren</emphasis> eintragen und den Dialog mit <emphasis>OK</emphasis> schließen.
-					</listitem>
-					<listitem>
-						Den Dialog <emphasis>Benutzer oder Gruppe hinzufügen</emphasis> ebenfalls mit <emphasis>OK</emphasis> schließen.
+						In das Eingabefeld <emphasis>Benutzer und Gruppennamen</emphasis> den Namen <emphasis>Administratoren</emphasis> eintragen und den Dialog mit <emphasis>OK</emphasis> schließen.
 					</listitem>
 					<listitem>
 						Erneut die Schaltfläche <emphasis>Benutzer oder Gruppe hinzufügen</emphasis> betätigen.
