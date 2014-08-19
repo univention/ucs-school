@@ -220,7 +220,7 @@
 		  Liegt eine CSV-Datei mit allen gültigen Benutzern vor, kann alternativ der zweite
 		  Import-Modus verwendet werden. In diesem Modus werden (zusätzlich zum vorher beschriebenen
 		  Verhalten) alle Benutzerkonten gelöscht, die im Verzeichnisdienst, aber nicht in der CSV-Datei
-		  enthalten sind. Z.B. kann so zum Schuljahreswechsel ein CSV-Komplettexport der Schülerdatenbank aus
+		  enthalten sind. Zum Beispiel kann so zum Schuljahreswechsel ein CSV-Komplettexport der Schülerdatenbank aus
 		  der Schulverwaltungssoftware durchgeführt und die CSV-Datei in &ucsUAS; importiert werden: für neue
 		  Schüler werden Benutzerkonten erstellt, die Benutzerkonten von vorhandenen Schülern werden
 		  aktualisiert und die Benutzerkonten von abgegangenen Schülern werden gelöscht. Für den zweiten
@@ -252,7 +252,7 @@
 		  Für den Import wird mindestens die Zuordnung der Benutzerattribute
 		  <emphasis>Vorname</emphasis> und <emphasis>Nachname</emphasis> benötigt. Wurde dem Attribut
 		  <emphasis>Benutzername</emphasis> keine Spalte aus der CSV-Datei zugeordnet, wird der Benutzername
-		  automatisch aus Vor- und Nachnamen generiert
+		  automatisch aus dem Vornamen und dem Nachnamen generiert
 		  (<emphasis>&lt;Vorname&gt;.&lt;Nachname&gt;</emphasis>). Bei jedem weiteren Import wird der
 		  Benutzername erneut generiert und ggf. anhand von zusätzlich angebenen Attributen einem bestehenden
 		  Benutzerkonto zugeordnet.
@@ -280,7 +280,7 @@
 			<listitem><para>der Angabe der betreffenden Zeile in der CSV-Datei</para></listitem>
 		  </itemizedlist>
 		  
-		  Werden bei der automatischen Prüfung der CSV-Datei Unstimmingkeiten oder Probleme erkannt,
+		  Werden bei der automatischen Prüfung der CSV-Datei Unstimmigkeiten oder Probleme erkannt,
 		  werden die betreffenden Attributfelder farblich hervorgehoben:
 		  <itemizedlist>
 			<listitem>
@@ -322,7 +322,7 @@
 		</para>
 		<para>
 		  Nach Abschluss der manuellen Prüfung und möglicher Korrekturen kann über die Schaltfläche
-		  <guimenu>Weiter</guimenu> ein Zusammenfassung über die bevorstehenden Änderungen im
+		  <guimenu>Weiter</guimenu> eine Zusammenfassung über die bevorstehenden Änderungen im
 		  Verzeichnisdienst angezeigt werden (siehe Abbildung <xref linkend="csvimport:summary"/>). Nach der Bestätigung der bevorstehenden
 		  Änderungen werden diese in den Verzeichnisdienst eingepflegt. Je nach Menge der zu importierenden
 		  Daten kann dies einen Moment dauern. Ein Fortschrittsbalken informiert über den aktuellen
@@ -366,7 +366,7 @@
 		  Schaltfläche <guimenu>Speichern</guimenu> wird die neue Klasse im Verzeichnisdienst angelegt.
 		</para>
 		<para>
-		  Die Klassennamen in &ucsUAS; müssen schulübergreifend eindeutig sein müssen. Um trotzdem
+		  Die Klassennamen in &ucsUAS; müssen schulübergreifend eindeutig sein. Um trotzdem
 		  z.B. die Klasse <emphasis>7A</emphasis> in mehreren Schule verwenden zu können, wird dem
 		  Klassennamen im Verzeichnisdienst automatisch das jeweilige Schulkürzel als Präfix
 		  vorangestellt. Für die Klasse <emphasis>7A</emphasis> an der Schule mit dem Schulkürzel
@@ -501,3 +501,6 @@
 	  </section>
 	</section>
 </chapter>
+
+<!--  LocalWords:  Benutzerkonten
+-->
