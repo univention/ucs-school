@@ -24,6 +24,24 @@
 		converted automatically (<ulink url="&ucsbug;34941">Bug 34941</ulink>).
 	  </simpara>
 	</listitem>
+	<listitem>
+	  <simpara>
+		Up to this erratum, the Samba home share path of &ucsUAS; users has been configured to use a
+		share on the educational slave.  <emphasis>Staff</emphasis> users do not have access to the file
+		shares on the educational slave because the user account is not replicated to the educational slave
+		due to the selective LDAP replication of &ucsUAS;.  By installing this erratum, the following Samba
+		attributes are no longer set by the import script or the UMC modules for <emphasis>staff</emphasis>
+		users:
+		<itemizedlist>
+		  <listitem><simpara>sambaHomePath</simpara></listitem>
+		  <listitem><simpara>sambaHomeDrive</simpara></listitem>
+		  <listitem><simpara>sambaLogonScript</simpara></listitem>
+		  <listitem><simpara>sambaProfilePath</simpara></listitem>
+		</itemizedlist>
+		Existing <emphasis>staff</emphasis> users are not changed/updated by this erratum (<ulink
+		url="&ucsbug;34179">Bug 34179</ulink>).
+	  </simpara>
+	</listitem>
   </itemizedlist>
 </section>
 
