@@ -1,3 +1,11 @@
+ucs-school-s4-branch-site (1.0.3-1) unstable; urgency=medium
+
+  * ucsschool-s4-branch-site.py: also search for the + attributes, for
+    example entryUUID. This is needed by the S4 connector since
+    UCS 3.2-2 errata 153 (Bug #35628)
+
+ -- Stefan Gohmann <gohmann@univention.de>  Tue, 19 Aug 2014 16:34:40 +0200
+
 ucs-school-s4-branch-site (1.0.2-4) unstable; urgency=medium
 
   * Don't trigger S4 Connector if connector/s4/autostart has not been

@@ -289,7 +289,7 @@ def trigger_sync_ucs_to_s4(ldap_machine_read=None, ldap_position=None, search_ba
 		ldap_filter = '(&(univentionObjectType=dns/%s)(zoneName=%s)(relativeDomainName=%s))' % (_record_type, _local_domainname, relativeDomainName)
 		try:
 			ud.debug(ud.LISTENER, ud.PROCESS, '%s: trigger s4 connector: %s' % (name, relativeDomainName))
-			res = ldap_machine_read.search(base=ldap_position.getDn(), filter=ldap_filter)
+			res = ldap_machine_read.search(base=ldap_position.getDn(), filter=ldap_filter, attr=['*', '+'])
 			for (record_dn, obj) in res:
 				s4_connector_listener.handler(record_dn, obj, obj, 'm')
 				_relativeDomainName_trigger_set.remove(relativeDomainName)
