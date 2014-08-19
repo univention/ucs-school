@@ -577,7 +577,7 @@ class Instance(SchoolBaseModule):
 		# find AT jobs for the room and execute it to remove current settings
 		jobs = atjobs.list(extended = True)
 		for job in jobs:
-			if Instance.ATJOB_KEY in job.comments and job.comments[Instance.ATJOB_KEY] == self._italc.room:
+			if job.comments.get(Instance.ATJOB_KEY, False) == self._italc.room:
 				if job.execTime >= datetime.datetime.now():
 					self._ruleEndAt = job.execTime
 				break
@@ -641,10 +641,9 @@ class Instance(SchoolBaseModule):
 		# find AT jobs for the room and execute it to remove current settings
 		jobs = atjobs.list(extended = True)
 		for job in jobs:
-			if Instance.ATJOB_KEY in job.comments and job.comments[Instance.ATJOB_KEY] == self._italc.room:
+			if job.comments.get(Instance.ATJOB_KEY, False) == self._italc.room:
 				job.rm()
 				subprocess.call(shlex.split(job.command))
-				break
 
 		# for the exam mode, remove current settings before setting new ones
 		if roomInfo.get('exam') and roomInfo.get('cmd'):
@@ -657,6 +656,10 @@ class Instance(SchoolBaseModule):
 		# local helper function that writes an exam file
 		cmd = ''
 		def _finished():
+			self.reset_smb_connections()
+
+			self.reload_cups()
+
 			kwargs = dict(cmd=None, exam=None, examDescription=None, examEndTime=None)
 			if exam:
 				# a new exam has been indicated
@@ -664,19 +667,12 @@ class Instance(SchoolBaseModule):
 
 			MODULE.info('updating room info/lock file...')
 			
-			#reload cups
-			if os.path.exists('/etc/init.d/cups'):
-				MODULE.info('Restarting cups')
-				if subprocess.call(['/etc/init.d/cups', 'reload']) != 0:
-					MODULE.error('Failed to reload cups! Printer settings not applied.')
-			
 			_updateRoomInfo(self._italc.roomDN, user=self._user_dn, **kwargs)
 			self.finished(request.id, True)
 
 		# do we need to setup a new at job with custom settings?
 		if internetRule == 'none' and shareMode == 'all' and printMode == 'default':
 			self._ruleEndAt = None
-			self.reset_smb_connections()
 			_finished()
 			return
 
@@ -814,8 +810,13 @@ class Instance(SchoolBaseModule):
 			atjobs.add(cmd, starttime, { Instance.ATJOB_KEY: self._italc.room })
 			self._ruleEndAt = starttime
 
-		self.reset_smb_connections()
 		_finished()
+
+	def reload_cups(self):
+		if os.path.exists('/etc/init.d/cups'):
+			MODULE.info('Restarting cups')
+			if subprocess.call(['/etc/init.d/cups', 'reload']) != 0:
+				MODULE.error('Failed to reload cups! Printer settings not applied.')
 
 	def reset_smb_connections(self):
 		smbstatus = SMB_Status()

@@ -1,3 +1,9 @@
+ucs-school-umc-computerroom (5.0.7-1) unstable; urgency=low
+
+  * Bug #35341: remove all at jobs for the current room when changing settings
+
+ -- Florian Best <best@univention.de>  Tue, 19 Aug 2014 08:38:02 +0200
+
 ucs-school-umc-computerroom (5.0.6-1) unstable; urgency=low
 
   * Bug #34608: enhanced usability when changing state of multiple computers
