@@ -238,7 +238,7 @@ class UCSSchoolHelperAbstractClass(object):
 	def set_dn(self, dn):
 		'''Does not really set dn, as this is generated
 		on-the-fly. Instead, sets old_dn in case it was
-		misset in the beginning or after create/modify/remove
+		missed in the beginning or after create/modify/remove
 		Also resets cached udm_obj as it may point to somewhere else
 		'''
 		self._udm_obj_searched = False
@@ -738,6 +738,11 @@ class UCSSchoolHelperAbstractClass(object):
 		raises noObject if the udm_module does not match the dn
 		or dn is not found
 		'''
+		cls.init_udm_module(lo)
+		if school is None and cls.supports_school():
+			school = SchoolSearchBase.getOU(dn)
+			if school is None:
+				logger.warn('Unable to guess school from %r' % dn)
 		try:
 			logger.info('Looking up %s with dn %r' % (cls.__name__, dn))
 			udm_obj = udm_modules.lookup(cls._meta.udm_module, None, lo, filter=cls._meta.udm_filter, base=dn, scope='base', superordinate=superordinate)[0]

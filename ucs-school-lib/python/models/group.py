@@ -34,12 +34,19 @@ from ldap.dn import str2dn
 
 from univention.admin.uexceptions import noObject
 
-from ucsschool.lib.models.attributes import GroupName, Description, Attribute, SchoolClassName
+from ucsschool.lib.models.attributes import GroupName, Description, Attribute, SchoolClassName, Hosts
 from ucsschool.lib.models.base import UCSSchoolHelperAbstractClass
 from ucsschool.lib.models.misc import OU, Container
 from ucsschool.lib.models.share import ClassShare
 from ucsschool.lib.models.policy import UMCPolicy
 from ucsschool.lib.models.utils import ucr, _, logger
+
+class _MayHaveSchoolPrefix(object):
+	def get_relative_name(self):
+		# schoolname-1a => 1a
+		if self.name.startswith('%s-' % self.school):
+			return self.name[len(self.school) + 1:]
+		return self.name
 
 class Group(UCSSchoolHelperAbstractClass):
 	name = GroupName(_('Name'))
@@ -58,9 +65,15 @@ class Group(UCSSchoolHelperAbstractClass):
 		return cls.get_search_base(school).isClass(group_dn)
 
 	@classmethod
+	def is_computer_room(cls, school, group_dn):
+		return cls.get_search_base(school).isRoom(group_dn)
+
+	@classmethod
 	def get_class_for_udm_obj(cls, udm_obj, school):
 		if cls.is_school_class(school, udm_obj.dn):
 			return SchoolClass
+		elif cls.is_computer_room(school, udm_obj.dn):
+			return ComputerRoom
 		return cls
 
 	def add_umc_policy(self, policy_dn, lo):
@@ -131,7 +144,7 @@ class BasicGroup(Group):
 	def get_container(cls, school=None):
 		return ucr.get('ldap/base')
 
-class SchoolClass(Group):
+class SchoolClass(Group, _MayHaveSchoolPrefix):
 	name = SchoolClassName(_('Name'))
 
 	def create_without_hooks(self, lo, validate):
@@ -172,14 +185,20 @@ class SchoolClass(Group):
 	def get_container(cls, school):
 		return cls.get_search_base(school).classes
 
-	def get_relative_name(self):
-		# schoolname-1a => 1a
-		if self.name.startswith('%s-' % self.school):
-			return self.name[len(self.school) + 1:]
-		return self.name
-
 	def to_dict(self):
 		ret = super(SchoolClass, self).to_dict()
 		ret['name'] = self.get_relative_name()
 		return ret
+
+class ComputerRoom(Group, _MayHaveSchoolPrefix):
+	hosts = Hosts(_('Hosts'))
+
+	def to_dict(self):
+		ret = super(ComputerRoom, self).to_dict()
+		ret['name'] = self.get_relative_name()
+		return ret
+
+	@classmethod
+	def get_container(cls, school):
+		return cls.get_search_base(school).rooms
 

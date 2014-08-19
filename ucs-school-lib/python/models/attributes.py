@@ -239,3 +239,8 @@ class MACAddress(Attribute):
 class InventoryNumber(Attribute):
 	pass
 
+class Hosts(Attribute):
+	udm_name = 'hosts'
+	value_list = True
+	syntax = UDM_Objects
+
