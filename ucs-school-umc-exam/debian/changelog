@@ -1,3 +1,9 @@
+ucs-school-umc-exam (2.0.2-3) unstable; urgency=low
+
+  * Bug #34980: Do not allow starting exams in empty rooms
+
+ -- Dirk Wiesenthal <wiesenthal@univention.de>  Tue, 19 Aug 2014 13:31:05 +0200
+
 ucs-school-umc-exam (2.0.2-2) unstable; urgency=low
 
   * Bug #34951: Fixed description referencing wrong button label

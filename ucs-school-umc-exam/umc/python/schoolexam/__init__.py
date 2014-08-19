@@ -42,6 +42,7 @@ from univention.lib.i18n import Translation
 from ucsschool.lib.schoolldap import LDAP_Connection, LDAP_ConnectionError, SchoolBaseModule
 import ucsschool.lib.internetrules as internetrules
 from ucsschool.lib.schoollessons import SchoolLessons
+from ucsschool.lib.models import ComputerRoom
 
 import univention.admin.modules as udm_modules
 import univention.admin.uexceptions as udm_exceptions
@@ -362,6 +363,16 @@ class Instance( SchoolBaseModule ):
 		project.collect()
 
 		self.finished(request.id, True)
+
+	@LDAP_Connection()
+	def validate_room(self, request, ldap_user_read=None, ldap_position=None, search_base=None):
+		self.required_options(request, 'room')
+		error = None
+		dn = request.options.get('room')
+		room = ComputerRoom.from_dn(dn, None, ldap_user_read)
+		if not room.hosts:
+			error = _('Room %s does not contain any computers. Empty rooms may not be used to start an exam.') % room.get_relative_name()
+		self.finished(request.id, error)
 
 	def finish_exam(self, request):
 		self.required_options(request, 'exam', 'room')

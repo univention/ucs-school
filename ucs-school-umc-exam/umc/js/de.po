@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-exam\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2014-08-15 11:17+0200\n"
+"POT-Creation-Date: 2014-08-19 13:06+0200\n"
 "PO-Revision-Date: 2013-05-23 22:19+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -22,9 +22,9 @@ msgid ""
 msgstr ""
 "<p>Für die Funktion des Klassenarbeitsmodus ist es wichtig, dass alle "
 "Schülerrechner des Computerraums neu gestartet werden. Durch Drücken der "
-"Schaltfläche <i>Rechner neustarten</i> können die aufgelisteten Rechner automatisch neu "
-"gestartet werden.</p><p><b>Achtung:</b> Es erfolgt keine Warnung bei "
-"angemeldeten Benutzern! Der Neustart wird sofort ausgeführt!</p>"
+"Schaltfläche <i>Rechner neustarten</i> können die aufgelisteten Rechner "
+"automatisch neu gestartet werden.</p><p><b>Achtung:</b> Es erfolgt keine "
+"Warnung bei angemeldeten Benutzern! Der Neustart wird sofort ausgeführt!</p>"
 
 #: umc/js/schoolexam.js:264
 msgid ""
@@ -102,7 +102,7 @@ msgstr ""
 msgid "An error ocurred"
 msgstr "Ein Fehler trat auf"
 
-#: umc/js/schoolexam.js:634
+#: umc/js/schoolexam.js:640
 msgid "An unexpected error occurred."
 msgstr "Ein unerwarteter Fehler trat auf."
 
@@ -114,7 +114,7 @@ msgstr "Zuweisen von Klassen/Arbeitsgruppen"
 msgid "Assigned classes/workgroups"
 msgstr "Zugewiesene Klassen/Arbeitsgruppen"
 
-#: umc/js/schoolexam.js:607
+#: umc/js/schoolexam.js:606
 msgid "Cancel"
 msgstr "Abbrechen"
 
@@ -285,7 +285,7 @@ msgstr "Neustart notwendig"
 msgid "Reboot student computers"
 msgstr "Schülerrechner neustarten"
 
-#: umc/js/schoolexam.js:694
+#: umc/js/schoolexam.js:700
 msgid "Rebooting computers"
 msgstr "Rechner neustarten"
 
@@ -309,11 +309,11 @@ msgstr "Eine neue Klassenarbeit starten"
 msgid "Start exam"
 msgstr "Klassenarbeit starten"
 
-#: umc/js/schoolexam.js:641
+#: umc/js/schoolexam.js:647
 msgid "Starting the configuration process..."
 msgstr "Beginn des Konfigurationsprozesses..."
 
-#: umc/js/schoolexam.js:611
+#: umc/js/schoolexam.js:610
 msgid "Take over"
 msgstr "Übernehmen"
 
@@ -362,7 +362,7 @@ msgstr "Der Endzeitpunkt der Klassenarbeit"
 msgid "This computer room is currently in use by %s."
 msgstr "Dieser Computerraum wird derzeit verwendet von %s."
 
-#: umc/js/schoolexam.js:605
+#: umc/js/schoolexam.js:604
 #, python-format
 msgid ""
 "This computer room is currently in use by %s. You can take control over the "

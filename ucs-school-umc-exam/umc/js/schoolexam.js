@@ -599,8 +599,7 @@ define([
 					// block room if an exam is being written
 					dialog.alert(_('The room %s cannot be chosen as the exam "%s" is currently being conducted. Please make sure that the exam is finished via the module "Computer room" before a new exam can be started again.', room.label, room.examDescription));
 					nextPage = 'general';
-				}
-				else if (room.locked) {
+				} else if (room.locked) {
 					// room is in use -> ask user to confirm the choice
 					return dialog.confirm(_('This computer room is currently in use by %s. You can take control over the room, however, the current teacher will be prompted a notification and its session will be closed.', room.user), [{
 						name: 'cancel',
@@ -619,8 +618,15 @@ define([
 				}
 			}
 
-			this._gotoPage(nextPage);
-			return nextPage === null;
+			return this.standbyDuring(tools.umcpCommand('schoolexam/room/validate', {room: room.id})).then(lang.hitch(this, function(data) {
+				var error = data.result;
+				if (error) {
+					dialog.alert(error);
+					nextPage = 'general';
+				}
+				this._gotoPage(nextPage);
+				return nextPage === null;
+			}));
 		},
 
 		_startExam: function() {

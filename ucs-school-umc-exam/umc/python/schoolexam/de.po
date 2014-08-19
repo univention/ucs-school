@@ -85,6 +85,10 @@ msgid "Replication timeout: could not create all exam users"
 msgstr ""
 "Replikations-Timeout: Nicht alle Klassenarbeitskonten konnten erstellt werden"
 
+#: umc/python/schoolexam/__init__.py:372
+msgid "Room %s does not contain any computers. Empty rooms may not be used to start an exam."
+msgstr "Raum %s enthält keine Rechner. Klassenarbeiten können nicht in leeren Räumen gestartet werden."
+
 #: umc/python/schoolexam/__init__.py:329 umc/python/schoolexam/__init__.py:440
 msgid "finished..."
 msgstr "beendet..."
