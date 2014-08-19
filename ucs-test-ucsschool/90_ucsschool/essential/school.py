@@ -126,6 +126,7 @@ class School(object):
 
 	def remove(self):
 		"""Remove school"""
+		print 'Removing school: %s' % self.name
 		flavor = 'schoolwizards/schools'
 		param =	[
 				{
