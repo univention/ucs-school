@@ -1,9 +1,9 @@
 #!/bin/bash
 #
 # Univention LDB Modules
-#  join script
+#  unjoin script
 #
-# Copyright 2011-2014 Univention GmbH
+# Copyright 2014 Univention GmbH
 #
 # http://www.univention.de/
 #
@@ -42,46 +42,38 @@ NAME="Univention LDB Modules"
 
 sam_ldb=/var/lib/samba/private/sam.ldb
 
-if [ $JS_LAST_EXECUTED_VERSION -le 0 ]; then
+## check the samba4/ldb/sam/module/prepend list
+if [ -n "$samba4_ldb_sam_module_prepend" ]; then
+	for module in $samba4_ldb_sam_module_prepend; do
+		unregister_opts="$unregister_opts --remove $module"
+	done
+fi
 
-	## check if any of the relevant options are set
-	variables="$(univention-config-registry search --brief "^samba4/ldb/sam/module/")"
-	if [ -n "$variables" ]; then
+if [ -n "$unregister_opts" ]; then
+	## backup LDB file
+	tempfile="$(mktemp)"
+	cp "$sam_ldb" "$tempfile"
 
-		## check the samba4/ldb/sam/module/prepend list
-		if [ -n "$samba4_ldb_sam_module_prepend" ]; then
-			for module in $samba4_ldb_sam_module_prepend; do
-				register_opts="$register_opts --prepend $module"
-			done
-		fi
+	## Restart the S4 Connector to check samba4/ldb/sam/module/prepend and use the bypass_samaccountname_ldap_check control
+	if [ -x /etc/init.d/univention-s4-connector ]; then
+		invoke-rc.d univention-s4-connector crestart
+	fi
 
-		if [ -n "$register_opts" ]; then
-			## backup LDB file
-			tempfile="$(mktemp)"
-			cp "$sam_ldb" "$tempfile"
+	## Register the Module
+	/usr/share/univention-samba4/scripts/register_ldb_module.py -H "$sam_ldb" $unregister_opts
+	## check if ldb file is ok
+	if ldbsearch -H "$sam_ldb" -b '@MODULES' -s base  > /dev/null; then
+		rm "$tempfile"
+	else
+		echo "Restoring original sam.ldb"
+		mv "$tempfile" "$sam_ldb"
+	fi
 
-			## Restart the S4 Connector to check samba4/ldb/sam/module/prepend and use the bypass_samaccountname_ldap_check control
-			if [ -x /etc/init.d/univention-s4-connector ]; then
-				invoke-rc.d univention-s4-connector crestart
-			fi
-
-			## Register the Module
-			/usr/share/univention-samba4/scripts/register_ldb_module.py -H "$sam_ldb" --ignore-exists $register_opts
-			## check if ldb file is ok
-			if ldbsearch -H "$sam_ldb" -b '@MODULES' -s base  > /dev/null; then
-				rm "$tempfile"
-			else
-				echo "Restoring original sam.ldb"
-				mv "$tempfile" "$sam_ldb"
-			fi
-
-			if [ -x /etc/init.d/samba4 ]; then
-				invoke-rc.d samba4 restart
-			fi
-		fi
+	if [ -x /etc/init.d/samba4 ]; then
+		invoke-rc.d samba4 restart
 	fi
 fi
 
-joinscript_save_current_version
+joinscript_remove_script_from_status_file 97libunivention-ldb-modules
 
 exit 0

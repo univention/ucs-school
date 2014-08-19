@@ -1,3 +1,9 @@
+univention-ldb-modules (2.0.4-1) unstable; urgency=low
+
+  * Bug #35004: unregister ldb modules in unjoin script
+
+ -- Florian Best <best@univention.de>  Tue, 19 Aug 2014 15:03:25 +0200
+
 univention-ldb-modules (2.0.3-3) unstable; urgency=medium
 
   * New UCR variable samba4/addmachine (Bug #32187)
