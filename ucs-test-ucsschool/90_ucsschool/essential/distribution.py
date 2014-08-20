@@ -72,7 +72,6 @@ class Distribution(object):
 		account = utils.UCSTestDomainAdminCredentials()
 		admin = account.username
 		passwd = account.bindpw
-		self.umcConnection.auth(admin, passwd)
 		self.school = school
 		self.name = name if name else uts.random_string()
 		self.description = description if description else uts.random_string()
@@ -102,6 +101,7 @@ class Distribution(object):
 			host = self.ucr.get('hostname')
 			self.umcConnection = UMCConnection(host)
 			self.umcConnection.auth(self.sender, passwd)
+		self.umcConnection.auth(admin, passwd)
 
 	def query(self, filt='private', pattern=''):
 		"""Calles 'distribution/query'
