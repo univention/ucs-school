@@ -63,6 +63,18 @@
 	  </listitem>
 	</itemizedlist>
   </section>
+  <section>
+	<title>Windows Netlogon Scripts</title>
+	<itemizedlist>
+	  <listitem>
+		<simpara>
+		  A permission problem in the listener module
+		  <emphasis>ucs-school-user-logonscript</emphasis> has been fixed that prevented the module from
+		  removing outdated netlogon scripts (<ulink url="&ucsbug;31539">Bug 31539</ulink>).
+		</simpara>
+	  </listitem>
+	</itemizedlist>
+  </section>
   <!--
 	  <section>
 	  <title>OpenLDAP</title>
@@ -131,7 +143,9 @@
 		</listitem>
 		<listitem>
 		  <simpara>
-			When installing an administrative slave for a school OU with mixed upper and lower case letters, the detection of the educational slave's name failed. This bug has been fixed (<ulink url="&ucsbug;35623">Bug 35623</ulink>).
+			When installing an administrative slave for a school OU with mixed upper and lower case
+			letters, the detection of the educational slave's name failed. This bug has been fixed (<ulink
+			url="&ucsbug;35623">Bug 35623</ulink>).
 		  </simpara>
 		</listitem>
 	  </itemizedlist>
@@ -274,7 +288,9 @@
 	</listitem>
 	<listitem>
 	  <simpara>
-		An open file handle leak in the UCR module of <package>ucs-school-webproxy</package> has been fixed that could cause faulty behaviour of the computerroom module in very heavy use situations (<ulink url="&ucsbug;35408">Bug 35408</ulink>).
+		An open file handle leak in the UCR module of <package>ucs-school-webproxy</package> has
+		been fixed that could cause faulty behaviour of the computerroom module in very heavy use situations
+		(<ulink url="&ucsbug;35408">Bug 35408</ulink>).
 	  </simpara>
 	</listitem>
 	<listitem>
