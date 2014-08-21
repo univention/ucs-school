@@ -1,0 +1,116 @@
+#!/usr/share/ucs-test/runner python
+## -*- coding: utf-8 -*-
+## desc: computerroom two rooms settings
+## roles: [domaincontroller_master, domaincontroller_slave]
+## tags: [apptest, ucsschool]
+## exposure: dangerous
+## packages: [ucs-school-umc-computerroom]
+
+
+from essential.computerroom import Room, Computers, add_printer
+from univention.lib.umc_connection import UMCConnection
+import datetime
+import univention.testing.strings as uts
+import univention.testing.ucr as ucr_test
+import univention.testing.ucsschool as utu
+
+def main():
+	with utu.UCSTestSchool() as schoolenv:
+		with ucr_test.UCSTestConfigRegistry() as ucr:
+			school, oudn = schoolenv.create_ou(name_edudc=ucr.get('hostname'))
+			tea, tea_dn = schoolenv.create_user(school, is_teacher=True)
+			open_ldap_co = schoolenv.open_ldap_connection()
+
+			# importing random 3 computers
+			computers = Computers(open_ldap_co, school, 3, 0, 0)
+			created_computers = computers.create()
+			computers_dns = computers.get_dns(created_computers)
+
+			# setting computer rooms contains the created computers
+			room1 = Room(school, host_members=computers_dns[0])
+			room2 = Room(school, host_members=computers_dns[1])
+			room3 = Room(school, host_members=computers_dns[2])
+
+			# Creating the rooms
+			for room in [room1, room2, room3]:
+				schoolenv.create_computerroom(
+					school,
+					name=room.name,
+					description=room.description,
+					host_members=room.host_members
+					)
+
+			umc_connection = UMCConnection(ucr.get('hostname'))
+			umc_connection.auth(tea, 'univention')
+
+			# Add new hardware printer
+			printer_name = uts.random_string()
+			add_printer(
+				printer_name,
+				school,
+				ucr.get('hostname'),
+				ucr.get('domainname'),
+				ucr.get('ldap/base')
+				)
+
+			ucr = schoolenv._ucr
+
+			did_fail = False
+
+			def set_room_printmode(room, printmode):
+				room.aquire_room(umc_connection)
+				period = datetime.time.strftime((datetime.datetime.now() + datetime.timedelta(0,600)).time(), '%H:%M')
+				room.set_room_settings(umc_connection, {
+						'customRule':	'',
+						'printMode':	printmode,
+						'internetRule': 'none',
+						'shareMode':	'all',
+						'period':	period,
+						})
+
+			def ucr_check_both_values_set(printmodes):
+				ucr.load()
+				print '==> samba/printmode/hosts/all = %r' % ucr.get('samba/printmode/hosts/all')
+				print '==> samba/printmode/hosts/none = %r' % ucr.get('samba/printmode/hosts/none')
+
+				if all([(mode == 'default') for mode in printmodes]):
+					# special case, if everything is on default, then no variables is ok
+					if not ucr.get('samba/printmode/hosts/all') and not ucr.get('samba/printmode/hosts/none'):
+						print '---OK---'
+					else:
+						print '---FAIL---'
+						did_fail = True
+				else:
+					if not ucr.get('samba/printmode/hosts/all') or not ucr.get('samba/printmode/hosts/none'):
+						print '---FAIL---'
+						did_fail = True
+					else:
+						print '---OK---'
+
+			# test with 2 rooms
+			printmodes = ['default', 'all', 'none']
+			for printmode1 in printmodes:
+				set_room_printmode(room1, printmode1)
+				for printmode2 in printmodes:
+					print '---------------------------------------------'
+					set_room_printmode(room2, printmode2)
+					print 'Printmodes: %s, %s' % (printmode1, printmode2)
+					ucr_check_both_values_set([printmode1, printmode2])
+
+			# test with 3 rooms
+			for printmode1 in printmodes:
+				set_room_printmode(room1, printmode1)
+				for printmode2 in printmodes:
+					set_room_printmode(room2, printmode2)
+					for printmode3 in printmodes:
+						print '---------------------------------------------'
+						set_room_printmode(room3, printmode3)
+						print 'Printmodes: %s, %s, %s' % (printmode1, printmode2, printmode3)
+						ucr_check_both_values_set([printmode1, printmode2, printmode3])
+
+			if did_fail:
+				utils.fail('
+
+
+if __name__ == '__main__':
+	main()
