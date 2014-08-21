@@ -814,7 +814,7 @@ class Instance(SchoolBaseModule):
 
 	def reload_cups(self):
 		if os.path.exists('/etc/init.d/cups'):
-			MODULE.info('Restarting cups')
+			MODULE.info('Reloading cups')
 			if subprocess.call(['/etc/init.d/cups', 'reload']) != 0:
 				MODULE.error('Failed to reload cups! Printer settings not applied.')
 
