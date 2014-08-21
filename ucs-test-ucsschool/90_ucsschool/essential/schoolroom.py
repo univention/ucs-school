@@ -25,7 +25,7 @@ class FailCheckQuery(Exception):
 class FailRemove(Exception):
 	pass
 
-class SchoolRoom(object):
+class ComputerRoom(object):
 	def __init__(
 			self,
 			school,
@@ -49,7 +49,7 @@ class SchoolRoom(object):
 		return 'cn=%s-%s,cn=raeume,cn=groups,%s' % (
 				self.school, self.name, utu.UCSTestSchool().get_ou_base_dn(self.school))
 
-	def add(self, accept_doublicate_name=False):
+	def add(self, accept_duplicate_name=False):
 		param = [
 			{
 				'object':
@@ -72,7 +72,7 @@ class SchoolRoom(object):
 			if not reqResult:
 				raise FailAdd('Unable to add school room (%r)' % (param,))
 		except Exception as e:
-			if ('groupNameAlreadyUsed' in str(e)) and accept_doublicate_name:
+			if ('groupNameAlreadyUsed' in str(e)) and accept_duplicate_name:
 				print 'Cought an expected exception: %s' % str(e)
 			else:
 				raise

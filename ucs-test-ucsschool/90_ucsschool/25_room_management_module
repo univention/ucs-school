@@ -7,7 +7,7 @@
 ## packages: [ucs-school-umc-rooms]
 
 from essential.computerroom import Computers
-from essential.schoolroom import SchoolRoom
+from essential.schoolroom import ComputerRoom
 import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool as utu
 	
@@ -23,7 +23,7 @@ def main():
 			created_computers = computers.create()
 			computers_dns = computers.get_dns(created_computers)
 
-			room = SchoolRoom(school, host_members=[computers_dns[0]])
+			room = ComputerRoom(school, host_members=[computers_dns[0]])
 			room.add()
 			room.verify_ldap(must_exist=True)
 			room.get(should_exist=True)
@@ -38,8 +38,8 @@ def main():
 			room.check_put(new_attrs)
 
 			# Test creating new room with the same name
-			room2 = SchoolRoom(school, name=room.name, host_members=[computers_dns[1]])
-			room2.add(accept_doublicate_name=True)
+			room2 = ComputerRoom(school, name=room.name, host_members=[computers_dns[1]])
+			room2.add(accept_duplicate_name=True)
 
 			room.remove()
 			room.verify_ldap(must_exist=False)
