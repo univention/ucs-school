@@ -65,7 +65,7 @@ class Computer:
 	def set_inventorynumbers(self):
 		self.inventorynumbers.append(uts.random_name())
 		self.inventorynumbers.append(uts.random_name())
-	def set_zone_verwaltng(self):
+	def set_zone_verwaltung(self):
 		if self.ctype == 'memberserver':
 			self.zone = 'verwaltung'
 	def set_zone_edukativ(self):
@@ -304,14 +304,14 @@ class ComputerImport:
 		for i in range(0, nr_windows):
 			self.windows.append(Windows(self.school))
 		self.windows[1].set_inventorynumbers()
-		self.windows[2].set_zone_verwaltng()
+		self.windows[2].set_zone_verwaltung()
 
 		self.memberservers = []
 		for i in range(0, nr_memberserver):
 			self.memberservers.append(Memberserver(self.school))
 		if self.memberservers:
 			self.memberservers[2].set_inventorynumbers()
-			self.memberservers[0].set_zone_verwaltng()
+			self.memberservers[0].set_zone_verwaltung()
 
 		self.macos = []
 		for i in range(0, nr_macos):
