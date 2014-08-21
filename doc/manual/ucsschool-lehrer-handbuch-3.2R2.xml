@@ -736,11 +736,11 @@ feedback@univention.de
 		<para>
 		  Im Hauptmenü ist eine Liste aller Projekte zu sehen. Jedes Projekt ist einem Lehrer
 		  zugeordnet, der unter <guimenu>Eigentümer</guimenu> angezeigt wird. Über die Option
-		  <guimenu>Übernahme</guimenu> kann ein anderer Lehrer das Projekt übernehmen. Bestehende Projekte
+		  <mousebutton>Übernehmen</mousebutton> kann ein anderer Lehrer das Projekt übernehmen. Bestehende Projekte
 		  können außerdem bearbeitet oder gelöscht werden.
 		</para>
 		<para>
-		  Das <guimenu>einsammeln</guimenu> von Dateien ist in <xref
+		  Das <mousebutton>Einsammeln</mousebutton> von Dateien ist in <xref
 		  linkend="lehrerdoku:material:einsammeln"/> beschrieben.
 		</para>
 	  </section>

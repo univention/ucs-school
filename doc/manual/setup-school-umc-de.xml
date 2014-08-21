@@ -440,7 +440,7 @@
 		<para>
 		  Sind mehrere Schulen in der &ucsUAS;-Umgebung eingerichtet, ist zunächst auszuwählen, in welcher Schule das Rechnerkonto
 		  angelegt werden soll. Wurde nur eine Schule eingerichtet, wird dieses Auswahlfeld automatisch
-		  ausgeblendet. Im Auswahlfeld <guimenu>Typ</guimenu> stehen bis zu vier Rechnertypen zur Auswahl:
+		  ausgeblendet. Im Auswahlfeld <guimenu>Rechnertyp</guimenu> stehen bis zu vier Rechnertypen zur Auswahl:
 		  <itemizedlist>
 			<listitem>
 			  <para>
