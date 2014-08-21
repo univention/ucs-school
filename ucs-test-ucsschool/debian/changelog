@@ -1,3 +1,9 @@
+ucs-test-ucsschool (1.0.76-1) unstable; urgency=low
+
+  * Bug #34549: fixed wrong UCR variable name
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Thu, 21 Aug 2014 16:15:33 +0200
+
 ucs-test-ucsschool (1.0.75-1) unstable; urgency=low
 
   * Bug #34550: fixed typo

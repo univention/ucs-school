@@ -221,7 +221,7 @@ class Person:
 	def get_profile_path_server(self):
 		if configRegistry.get('ucsschool/import/set/serverprofile/path'):
 			print 'get_profile_path_server: UCR variable ucsschool/import/set/serverprofile/path is set'
-			return configRegistry.get('samba_home_path_server')
+			return configRegistry.get('ucsschool/import/set/serverprofile/path')
 		lo = univention.uldap.getMachineConnection()
 		result = lo.search(base=self.school_base, filter='univentionService=Windows Profile Server', attr=['cn'])
 		if result:
