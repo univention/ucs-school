@@ -371,7 +371,7 @@ class Instance( SchoolBaseModule ):
 		dn = request.options.get('room')
 		room = ComputerRoom.from_dn(dn, None, ldap_user_read)
 		if not room.hosts:
-			error = _('Room %s does not contain any computers. Empty rooms may not be used to start an exam.') % room.get_relative_name()
+			error = _('Room "%s" does not contain any computers. Empty rooms may not be used to start an exam.') % room.get_relative_name()
 		self.finished(request.id, error)
 
 	def finish_exam(self, request):
