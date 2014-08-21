@@ -124,6 +124,7 @@ define([
 				label: this.moduleFlavor == 'class' ? _( 'Class' ) : _( 'Workgroup' ),
 				disabled: this.moduleFlavor != 'workgroup-admin',
 				regExp: '^[a-zA-Z0-9]([a-zA-Z0-9 _.-]*[a-zA-Z0-9])?$',
+				description: _('May only consist of letters, digits, spaces, dots, hyphens, underscore. Has to start and to end with a letter or a digit.'),
 				required: true
 			}, {
 				type: TextBox,
