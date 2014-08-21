@@ -44,7 +44,7 @@ from ucsschool.lib.models.utils import ucr, _, logger
 class _MayHaveSchoolPrefix(object):
 	def get_relative_name(self):
 		# schoolname-1a => 1a
-		if self.name.startswith('%s-' % self.school):
+		if self.school and self.name.lower().startswith('%s-' % self.school.lower()):
 			return self.name[len(self.school) + 1:]
 		return self.name
 
