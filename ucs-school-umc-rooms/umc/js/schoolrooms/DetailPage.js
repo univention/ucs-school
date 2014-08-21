@@ -110,7 +110,7 @@ define([
 				description: _('Verbose description of the current group')
 			}, {
 				type: MultiObjectSelect,
-				name: 'hosts',
+				name: 'computers',
 				label: _('Computers in the room'),
 				queryWidgets: [{
 					type: ComboBox,
@@ -149,7 +149,7 @@ define([
 				layout: [ 'school', 'name', 'description' ]
 			}, {
 				label: _('Computers'),
-				layout: [ 'hosts' ]
+				layout: [ 'computers' ]
 			}];
 
 			// create the form
@@ -164,7 +164,7 @@ define([
 			// an element gets added to the center region
 			this.addChild(this._form);
 
-			this._form.getWidget( 'hosts' ).on('ShowDialog', lang.hitch( this, function( _dialog ) {
+			this._form.getWidget( 'computers' ).on('ShowDialog', lang.hitch( this, function( _dialog ) {
 				_dialog._form.getWidget( 'school' ).setInitialValue( this._form.getWidget( 'school' ).get( 'value' ), true );
 			} ) );
 

@@ -1,3 +1,9 @@
+ucs-school-umc-rooms (10.0.4-2) unstable; urgency=low
+
+  * Bug #35278: Compatibility issues
+
+ -- Dirk Wiesenthal <wiesenthal@univention.de>  Thu, 21 Aug 2014 11:13:27 +0200
+
 ucs-school-umc-rooms (10.0.4-1) unstable; urgency=low
 
   * Bug #35166: Fix problems with group names already taken by using

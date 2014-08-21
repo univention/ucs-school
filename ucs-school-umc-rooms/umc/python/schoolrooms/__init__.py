@@ -42,7 +42,7 @@ import univention.admin.uexceptions as udm_exceptions
 
 from ucsschool.lib.schoolldap import LDAP_Connection, SchoolBaseModule, LDAP_Filter, USER_READ, USER_WRITE
 
-from ucsschool.lib.models import ComputerRoom, School
+from ucsschool.lib.models import ComputerRoom
 from ucsschool.lib.models.utils import add_module_logger_to_schoollib
 
 _ = Translation( 'ucs-school-umc-rooms' ).translate
@@ -109,6 +109,7 @@ class Instance( SchoolBaseModule ):
 		# open the specified room
 		room = ComputerRoom.from_dn(request.options[0], None, ldap_user_read)
 		result = room.to_dict()
+		result['computers'] = result.get('hosts')
 		self.finished(request.id, [result])
 
 	@LDAP_Connection(USER_READ, USER_WRITE)
@@ -123,6 +124,7 @@ class Instance( SchoolBaseModule ):
 			raise UMC_CommandError('Invalid arguments')
 
 		group_props = request.options[0].get('object', {})
+		group_props['hosts'] = group_props.get('computers')
 		room = ComputerRoom(**group_props)
 		if room.get_relative_name() == room.name:
 			room.name = '%(school)s-%(name)s' % group_props
@@ -142,6 +144,7 @@ class Instance( SchoolBaseModule ):
 			raise UMC_CommandError('Invalid arguments')
 
 		group_props = request.options[0].get('object', {})
+		group_props['hosts'] = group_props.get('computers')
 
 		room = ComputerRoom(**group_props)
 		if room.get_relative_name() == room.name:
