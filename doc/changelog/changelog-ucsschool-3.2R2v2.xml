@@ -220,7 +220,7 @@
 		</listitem>
 		<listitem>
 		 <simpara>
-			SMB connections are restarted after changing settings back to defaults (<ulink url="&ucsbug;34632">Bug 34632</ulink>).
+			SMB connections are now restarted to enforce share permissions after changing room settings back to defaults (<ulink url="&ucsbug;34632">Bug 34632</ulink>).
 		</simpara>
 		</listitem>
 	</itemizedlist>
