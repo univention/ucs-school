@@ -136,7 +136,7 @@ define([
 				}, {
 					type: TextBox,
 					required: true,
-					regExp: '^[a-z]([a-z0-9-]*[a-z0-9])*(\.([a-z0-9]([a-z0-9-]*[a-z0-9])*[.])*[a-z0-9]([a-z0-9-]*[a-z0-9])*)?$', // see __init__.py RE_HOSTNAME
+					regExp: '^[a-z]([a-z0-9-]*[a-z0-9])*(\\.([a-z0-9]([a-z0-9-]*[a-z0-9])*[.])*[a-z0-9]([a-z0-9-]*[a-z0-9])*)?$', // see __init__.py RE_HOSTNAME
 					name: 'master',
 					label: _('Fully qualified domain name of master domain controller (e.g. schoolmaster.example.com)')
 				}]
@@ -435,7 +435,7 @@ define([
 								}));
 							} else {
 								// otherwise start installation
-								return this._start_installation();
+								return this._start_installation(pageName);
 							}
 						} else {
 							// check if there are other UCS@school slaves defined
@@ -452,7 +452,7 @@ define([
 								// otherwise ask for a name of the educational slave if none is already define; if defined, start the installation
 								if (data.result.schoolinfo.educational_slaves.length > 0) {
 									this.getWidget('administrativesetup', 'nameEduServer').set('value', data.result.schoolinfo.educational_slaves[0]);
-									return this._start_installation(); // Warning: the deferred object returns a deferred object!
+									return this._start_installation(pageName); // Warning: the deferred object returns a deferred object!
 								} else {
 									return 'administrativesetup';
 								}
@@ -468,7 +468,7 @@ define([
 
 				// installation
 				if (next == 'install') {
-					next = this._start_installation();
+					next = this._start_installation(pageName);
 				}
 
 				when(next, lang.hitch(this, function(next) {
@@ -483,11 +483,11 @@ define([
 			}));
 		},
 
-		_start_installation: function() {
+		_start_installation: function(pageName) {
 			var values = this.getValues();
 
 			// request installation
-			next = dialog.confirm('<div style="max-width: 500px">' + _('All necessary information for the installation of UCS@school on this system has been collected. Please confirm now to continue with the installation process.') + '</div>', [{
+			var next = dialog.confirm('<div style="max-width: 500px">' + _('All necessary information for the installation of UCS@school on this system has been collected. Please confirm now to continue with the installation process.') + '</div>', [{
 				name: 'cancel',
 				label: _('Cancel'),
 				'default': true
