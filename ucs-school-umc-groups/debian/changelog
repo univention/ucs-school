@@ -1,3 +1,9 @@
+ucs-school-umc-groups (2.0.5-5) unstable; urgency=low
+
+  * Bug #35051: Add tooltip explaining the new restrictions
+
+ -- Florian Best <best@univention.de>  Fri, 22 Aug 2014 07:36:37 +0200
+
 ucs-school-umc-groups (2.0.5-4) unstable; urgency=low
 
   * Bug #35051: Add tooltip explaining the new restrictions

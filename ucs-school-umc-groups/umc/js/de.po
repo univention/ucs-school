@@ -78,7 +78,7 @@ msgid ""
 "to start and to end with a letter or a digit."
 msgstr ""
 "Darf nur aus Buchstaben, Ziffern, Punkten, Bindestrichen, Unterstrichen "
-"bestehen. Muss mit einem Buchstaben oder einer Zahl beginnen und aufhören."
+"bestehen. Muss mit einem Buchstaben oder einer Zahl beginnen und enden."
 
 #: umc/js/schoolgroups/DetailPage.js:138 umc/js/schoolgroups/DetailPage.js:182
 msgid "Members"
