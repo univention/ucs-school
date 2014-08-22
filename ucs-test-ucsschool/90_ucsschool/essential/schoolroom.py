@@ -49,7 +49,7 @@ class ComputerRoom(object):
 		return 'cn=%s-%s,cn=raeume,cn=groups,%s' % (
 				self.school, self.name, utu.UCSTestSchool().get_ou_base_dn(self.school))
 
-	def add(self, accept_duplicate_name=False):
+	def add(self, accept_duplicated_name=False):
 		param = [
 			{
 				'object':
@@ -64,7 +64,7 @@ class ComputerRoom(object):
 			]
 		print 'Adding school room %s with UMCP:%s' % (
 			self.name,
-			'schoolrooms/put')
+			'schoolrooms/add')
 		print 'param = %r' % (param,)
 		try:
 			reqResult = self.umc_connection.request('schoolrooms/add', param)
@@ -72,7 +72,7 @@ class ComputerRoom(object):
 			if not reqResult:
 				raise FailAdd('Unable to add school room (%r)' % (param,))
 		except Exception as e:
-			if ('groupNameAlreadyUsed' in str(e)) and accept_duplicate_name:
+			if ('groupNameAlreadyUsed' in str(e)) and accept_duplicated_name:
 				print 'Cought an expected exception: %s' % str(e)
 			else:
 				raise
@@ -80,7 +80,7 @@ class ComputerRoom(object):
 	def verify_ldap(self, must_exist=True):
 		utils.verify_ldap_object(self.dn(), should_exist=must_exist)
 
-	def get(self, should_exist):
+	def get(self, should_exist=True):
 		"""gets school room via UMCP\n
 		:param should_exist: True if the school room is expected to be found
 		:type should_exist: bool"""
@@ -148,7 +148,7 @@ class ComputerRoom(object):
 			utils.wait_for_replication()
 
 	def check_put(self, new_attributes):
-		new_attributes.update({'school': self.school, '$dn$': self.dn()})
+		new_attributes.update({'school': self.school, '$dn$': self.dn(), 'objectType': 'groups/group', 'hosts': new_attributes.get('computers')})
 		self.put(new_attributes)
 		current_attributes = self.get(True)
 		new_attributes.update({'name': self.name, '$dn$': self.dn()})
@@ -162,7 +162,7 @@ class ComputerRoom(object):
 		print 'Calling %s for %s' % (
 			'schoolrooms/remove',
 			self.dn())
-		options = [{'object': [self.dn()]}]
+		options = [{'object': [self.dn()], 'options': None}]
 		reqResult = self.umc_connection.request(
 			'schoolrooms/remove',
 			options)

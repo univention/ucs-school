@@ -26,7 +26,7 @@ def main():
 			room = ComputerRoom(school, host_members=[computers_dns[0]])
 			room.add()
 			room.verify_ldap(must_exist=True)
-			room.get(should_exist=True)
+			room.get()
 
 			room.check_query(room.name)
 
@@ -39,11 +39,10 @@ def main():
 
 			# Test creating new room with the same name
 			room2 = ComputerRoom(school, name=room.name, host_members=[computers_dns[1]])
-			room2.add(accept_duplicate_name=True)
+			room2.add(accept_duplicated_name=True)
 
 			room.remove()
 			room.verify_ldap(must_exist=False)
-			room.get(should_exist=False)
 
 if __name__ == '__main__':
 	main()
