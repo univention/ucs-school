@@ -100,8 +100,7 @@ class Distribution(object):
 			self.ucr.load()
 			host = self.ucr.get('hostname')
 			self.umcConnection = UMCConnection(host)
-			self.umcConnection.auth(self.sender, passwd)
-		self.umcConnection.auth(admin, passwd)
+			self.umcConnection.auth(admin, passwd)
 
 	def query(self, filt='private', pattern=''):
 		"""Calles 'distribution/query'
