@@ -153,6 +153,11 @@ univention-directory-listener-ctrl resync ucsschool-s4-branch-site
 			url="&ucsbug;35623">Bug 35623</ulink>).
 		  </simpara>
 		</listitem>
+		<listitem>
+			<simpara>
+				Some Javascript typos have been fixed (<ulink url="&ucsbug;35692">Bug 35692</ulink>).
+			</simpara>
+		</listitem>
 	  </itemizedlist>
 	</section>
 	<section>
