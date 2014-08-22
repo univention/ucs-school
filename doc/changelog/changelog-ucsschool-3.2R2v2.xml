@@ -133,7 +133,7 @@ univention-directory-listener-ctrl resync ucsschool-s4-branch-site
 	  <itemizedlist>
 		<listitem>
 		  <simpara>
-			The &ucsUAS; configuration now accepts hyphens instead of underscores for the hostnames educational or administrative slaves (<ulink url="&ucsbug;35032">Bug 35032</ulink>).
+			The &ucsUAS; configuration now accepts hyphens instead of underscores for the hostnames of educational or administrative slaves (<ulink url="&ucsbug;35032">Bug 35032</ulink>).
 		  </simpara>
 		</listitem>
 		<listitem>
