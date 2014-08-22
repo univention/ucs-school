@@ -228,6 +228,12 @@ univention-directory-listener-ctrl resync ucsschool-s4-branch-site
 			SMB connections are now restarted to enforce share permissions after changing room settings back to defaults (<ulink url="&ucsbug;34632">Bug 34632</ulink>).
 		</simpara>
 		</listitem>
+		<listitem>
+		<simpara>
+			A logic bug has been fixed that may have caused a reset of the print mode settings of a computerroom if the settings of another computerroom were changed
+			(<ulink url="&ucsbug;35341">Bug 35341</ulink>).
+		</simpara>
+		</listitem>
 	</itemizedlist>
 	</section>
 	<section>
