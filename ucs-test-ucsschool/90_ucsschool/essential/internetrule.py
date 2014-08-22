@@ -57,7 +57,7 @@ class InternetRule(object):
 		if wlan==True or wlan==False:
 			self.wlan = wlan
 		else:
-			random.choice([True, False])
+			self.wlan = random.choice([True, False])
 		self.priority = priority if priority else random.randint(1, 10)
 		self.ucr = ucr if ucr else ucr_test.UCSTestConfigRegistry()
 		if umcConnection:
