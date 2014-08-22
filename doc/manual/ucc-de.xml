@@ -47,8 +47,8 @@
 	<itemizedlist>
 	  <listitem>
 		<simpara>
-		  Für die Integration von UCC-Desktop-Systemen in UCS@school ist die Verwendung von Samba 4
-		  auf dem UCS@school-Schulserver erforderlich.
+		  Für die Integration von UCC-Desktop-Systemen in &ucsUAS; ist die Verwendung von Samba 4
+		  auf dem &ucsUAS;-Schulserver erforderlich.
 		</simpara>
 	  </listitem>
 	  <listitem>
@@ -120,7 +120,7 @@
 			Die Installation von UCC erfolgt über das Univention App Center. Dafür muss auf dem
 			betreffenden System im Univention App Center die Applikation <emphasis>Univention Corporate
 			Client</emphasis> ausgewählt und installiert werden. Der
-			<emphasis>UCC-Setup</emphasis>-Assistent ist nicht für die Einrichtung von ucs@School geeignet!
+			<emphasis>UCC-Setup</emphasis>-Assistent ist nicht für die Einrichtung von &ucsUAS; geeignet!
 		  </simpara>
 		</listitem>
 		<listitem>
