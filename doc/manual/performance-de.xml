@@ -96,7 +96,7 @@
 	  der Domäne beitreten. Auf diesem sekundären Domänencontroller wird nicht die UCS@school App installiert.
   	</para>
   	<para>
-	  Zwischen dem Samba4 Verzeichnisdienst auf dem neuen UCS DC Slave und dem &ucsUAS;-Server wird
+	  Zwischen dem Samba4-Verzeichnisdienst auf dem neuen UCS DC Slave und dem &ucsUAS;-Server wird
 	  die DRS Replikation eingesetzt, die Samba 4 auch im Standard-UCS verwendet. Die für &ucsUAS;
 	  charakteristische selektive LDAP-Replikation von Verzeichnisdaten findet wie üblich weiter vom UCS
 	  DC Master zu den DC Slave-Systemen statt. Allerdings findet die Synchronisation mit dem

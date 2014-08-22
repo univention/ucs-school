@@ -197,7 +197,7 @@
 		  <listitem>
 			<simpara>
 			  Nach der Angabe des Schulnamens ist die Art des Schulservers anzugeben. Es kann
-			  zwischen einem Schulserver für das Edukativnetz (<guimenu>edukativer Schulserver</guimenu>) und
+			  zwischen einem Schulserver für das Edukativnetz (<guimenu>Edukativer Schulserver</guimenu>) und
 			  einem Schulserver für das Verwaltungsnetz (<guimenu>Verwaltungsserver</guimenu>) gewählt werden.
 			  Die Funktionen für den IT-gestützten Unterricht werden dabei nur von den Schulservern im
 			  Edukativnetz bereitgestellt.
