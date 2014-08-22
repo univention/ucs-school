@@ -1,3 +1,9 @@
+ucs-school-umc-installer (2.0.17-6) unstable; urgency=low
+
+  * Bug #35032: fiy typo in tooltip
+
+ -- Florian Best <best@univention.de>  Fri, 22 Aug 2014 13:21:14 +0200
+
 ucs-school-umc-installer (2.0.17-5) unstable; urgency=low
 
   * Bug #34902: Fixed infinite loading animation when giving wrong master FQDN

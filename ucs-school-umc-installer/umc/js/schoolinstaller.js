@@ -219,7 +219,7 @@ define([
 					type: TextBox,
 					name: 'nameEduServer',
 					label: _("Name of educational school server"),
-					description: _('Name of the educational domaincontroller slave for the new school. The server name may consist of the letters a-z, the digits 0-9 and hyphens. The name of the educational server may not be equal to the administrative server!'),
+					description: _('Name of the educational domaincontroller slave for the new school. The server name may consist of the letters a-z, the digits 0-9 and hyphens (-). The name of the educational server may not be equal to the administrative server!'),
 					regExp: '^[a-zA-Z0-9](([a-zA-Z0-9-]*)([a-zA-Z0-9]$))?$',
 					required: true
 				}]

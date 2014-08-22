@@ -252,7 +252,7 @@ msgstr "Name des Schulservers im Edukativnetz"
 #: umc/js/schoolinstaller.js:221
 msgid ""
 "Name of the educational domaincontroller slave for the new school. The "
-"server name may consist of the letters a-z, the digits 0-9 and hyphens. The "
+"server name may consist of the letters a-z, the digits 0-9 and hyphens (-). The "
 "name of the educational server may not be equal to the administrative server!"
 msgstr "Name des edukativen Schulservers der neuen Schule. Der Servername darf aus den Buchstaben a-z, den Ziffern 0-9 und dem Bindestrich (-) bestehen. Der Name des edukativen Schulservers darf nicht identisch mit dem Namen des Verwaltungsservers sein!"
 
