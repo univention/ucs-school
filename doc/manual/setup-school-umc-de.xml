@@ -474,6 +474,13 @@
 		  Voreinstellung belassen werden. Die MAC-Adresse wird unter anderem für die statische Vergabe der
 		  IP-Adressen per DHCP verwendet. Die Angabe der Inventarnummer ist optional.
 		</para>
+		<note>
+			<para>
+				Wenn die IP-Adresse auf die Adresse des Netzwerks zeigt, in dem sich das Rechnerkonto befindet
+				(also etwa 192.168.2.0 bei einer Subnetzmaske 255.255.255.0), dann wird automatisch die nächste
+				verfügbare IP-Adresse aus diesem Netzwerk gewählt (z.B. 192.168.2.20).
+			</para>
+		</note>
 	  </section>
 	  <section id="school:setup:umc:computers:modify">
 		<title>Bearbeiten von Rechnerkonten</title>
