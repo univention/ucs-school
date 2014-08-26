@@ -1,3 +1,16 @@
+ucs-test-ucsschool (1.0.78-1) unstable; urgency=low
+
+  * Bug #35106 three scripts were added 72_radius_authentication 72_radius_machine_authentication
+  * 74_radius_internetrules_priority
+  * Bug #34491 minor corrections
+  * Bug #35415 new test script 70_users_module
+  * Bug #35317 new test script 71_computers_module
+  * Bug #35316 new test script 29_schools_module
+  * Bug #35318 new test script 28_klassen_module
+  * Bug #35593 new test script 73_CSV_import_module
+
+ -- Ammar Najjar <najjar@univention.de>  Tue, 26 Aug 2014 09:15:47 +0200
+
 ucs-test-ucsschool (1.0.77-2) unstable; urgency=low
 
   * Bug #35341: updated test script 22_computerroom_test_printmode_ucr_variables
