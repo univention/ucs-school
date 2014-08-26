@@ -311,7 +311,7 @@ univention-directory-listener-ctrl resync ucsschool-s4-branch-site
 	</listitem>
 	<listitem>
 		<simpara>
-			Fixed DNS server after unistallation of &ucsUAS; in a single server environment (<ulink url="&ucsbug;35004">Bug 35004</ulink>).
+			Fixed DNS server after uninstallation of &ucsUAS; in a single server environment (<ulink url="&ucsbug;35004">Bug 35004</ulink>).
 		</simpara>
 	</listitem>
 	<listitem>
