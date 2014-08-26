@@ -1,3 +1,13 @@
+ucs-test-ucsschool (1.0.79-1) unstable; urgency=low
+
+  * Bug #34214 and #34216:
+    90_ucsschool/91_samba4_gpc_two_way_replication: test the GPC objects and 
+    links replication from DC-Master to DC-Slave or from DC-Slave to DC-Master;
+    90_ucsschool/essential/test_samba4.py: a helper class for Samba4 related
+    tests.
+
+ -- Dmitry Galkin <galkin@univention.de>  Tue, 26 Aug 2014 15:02:32 +0200
+
 ucs-test-ucsschool (1.0.78-1) unstable; urgency=low
 
   * Bug #35106 three scripts were added 72_radius_authentication 72_radius_machine_authentication
