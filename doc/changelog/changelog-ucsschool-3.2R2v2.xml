@@ -155,7 +155,7 @@ univention-directory-listener-ctrl resync ucsschool-s4-branch-site
 		</listitem>
 		<listitem>
 			<simpara>
-				Some Javascript typos have been fixed (<ulink url="&ucsbug;35692">Bug 35692</ulink>).
+				Fixed an error when cancelling installation confirmation which led to the wrong page afterwards (<ulink url="&ucsbug;35692">Bug 35692</ulink>).
 			</simpara>
 		</listitem>
 	  </itemizedlist>
