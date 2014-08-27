@@ -476,9 +476,9 @@
 		</para>
 		<note>
 			<para>
-				Wenn die IP-Adresse auf die Adresse des Netzwerks zeigt, in dem sich das Rechnerkonto befindet
-				(also etwa 192.168.2.0 bei einer Subnetzmaske 255.255.255.0), dann wird automatisch die nächste
-				verfügbare IP-Adresse aus diesem Netzwerk gewählt (z.B. 192.168.2.20).
+			  	Als IP-Adresse kann auch die Adresse des Subnetzes angegeben werden (z.B. 192.168.2.0 bei einer Subnetzmaske von 255.255.255.0).
+				Der Assistent wählt dann automatisch eine freie IP-Adresse aus dem angegebenen Subnetz aus (z.B. 192.168.2.20) und
+				weist sie dem neuen Rechnerkonto zu.
 			</para>
 		</note>
 	  </section>
