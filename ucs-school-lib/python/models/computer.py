@@ -173,7 +173,7 @@ class SchoolComputer(UCSSchoolHelperAbstractClass):
 		ipv4_network = self.get_ipv4_network()
 		if ipv4_network:
 			if self._ip_is_set_to_subnet(ipv4_network):
-				logger.warn('IP was set to subnet. Unsetting it on the computer so that UDM can do some magic: Assign next free IP!')
+				logger.info('IP was set to subnet. Unsetting it on the computer so that UDM can do some magic: Assign next free IP!')
 				udm_obj['ip'] = ''
 			else:
 				udm_obj['ip'] = str(ipv4_network.ip)
@@ -187,7 +187,7 @@ class SchoolComputer(UCSSchoolHelperAbstractClass):
 				udm_obj['network'] = network.dn
 			except nextFreeIp:
 				logger.error('Tried to set IP automatically, but failed! %r is full' % network)
-				raise nextFreeIp(_('There are not free addresses left in the subnet!'))
+				raise nextFreeIp(_('There are no free addresses left in the subnet!'))
 
 	@classmethod
 	def get_container(cls, school):

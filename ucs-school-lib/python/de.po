@@ -312,7 +312,7 @@ msgid "The value changed from %(old)s. This seems unlikely."
 msgstr "Der Wert ist eigentlich %(old)s. Eine Änderung ist ungewöhnlich."
 
 #: python/models/computer.py:190
-msgid "There are not free addresses left in the subnet!"
+msgid "There are no free addresses left in the subnet!"
 msgstr "Im Subnetz sind keine weiteren Adressen mehr frei!"
 
 #: python/models/computer.py:327
