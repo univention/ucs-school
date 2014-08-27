@@ -49,7 +49,7 @@
 				  Bezeichner (wie z.B. <emphasis>Gymnasium Mitte</emphasis>), der primär in den UMC-Modulen verwendet
 				  wird. Das ebenfalls abgefragte Schulkürzel entspricht dem eigentlichen Namen der
 				  Organisationseinheit, welche vom UMC-Modul im Zuge der Konfiguration automatisch angelegt
-				  wird. Das Schulkürzel sollte ausschließlich aus Buchstaben, Ziffern oder dem Bindestrich bestehen,
+				  wird. Das Schulkürzel sollte ausschließlich aus Buchstaben (a-z und A-Z), Ziffern (0-9) oder dem Bindestrich (-) bestehen,
 				  da es unter anderem die Grundlage für Gruppen-, Freigabe- und Rechnernamen bildet. Häufig kommen
 				  hier Schulnummern wie <emphasis>340</emphasis> oder zusammengesetzte Kürzel wie
 				  <emphasis>g123m</emphasis> oder <emphasis>gymmitte</emphasis> zum Einsatz.  Nach der Eingabe des

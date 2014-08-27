@@ -62,8 +62,8 @@
 		  </para>
 		  <note>
 			<para>
-			  Das Schulkürzel darf nur aus Groß- und Kleinbuchstaben sowie Ziffern und dem Unterstrich
-			  bestehen (A-Z, a-z, 0-9 und _) und nicht mit dem Unterstrich beginnen oder enden.
+			  Das Schulkürzel sollte ausschließlich aus Buchstaben (a-z und A-Z), Ziffern (0-9) oder dem Bindestrich (-) bestehen,
+			  da es unter anderem die Grundlage für Gruppen-, Freigabe- und Rechnernamen bildet.
 			</para>
 			<para>
 			  Der Name des Schulservers darf nur aus Kleinbuchstaben, Ziffern sowie dem Bindestrich
