@@ -59,7 +59,7 @@
 	  <listitem>
 		<simpara>
 			The listener module for the branch setup searches now also for the <emphasis>entryUUID</emphasis> attribute which is required since UCS 3.2-2 errata153 (<ulink url="&ucsbug;35628">Bug 35628</ulink>).
-			As an artifact of this bug, univention-s4connector-list-rejected may show rejects on school serves for several DNS service records (like <emphasis>_ldap._tcp</emphasis>). These rejects can be removed manually using the tool <filename>/usr/share/univention-s4-connector/remove_ucs_rejected.py</filename>. The synchronization of these objects should be re-initialized by running
+			As an artifact of this bug, univention-s4connector-list-rejected may show rejects on school servers for several DNS service records (like <emphasis>_ldap._tcp</emphasis>). These rejects can be removed manually using the tool <filename>/usr/share/univention-s4-connector/remove_ucs_rejected.py</filename>. The synchronization of these objects should be re-initialized by running
 			<programlisting language="sh">
 univention-directory-listener-ctrl resync ucsschool-s4-branch-site
 			</programlisting>
@@ -299,7 +299,7 @@ univention-directory-listener-ctrl resync ucsschool-s4-branch-site
   <itemizedlist>
 	<listitem>
 	  <simpara>
-	  	  The stopped_notifier() function has been enhanced to not crash in specific circumstances (<ulink url="&ucsbug;35003">Bug 35003</ulink>).
+		The stopped_notifier() function (e.g. in the CLI import tools) has been enhanced to not fail in specific circumstances (<ulink url="&ucsbug;35003">Bug 35003</ulink>).
 	  </simpara>
 	</listitem>
 	<listitem>
