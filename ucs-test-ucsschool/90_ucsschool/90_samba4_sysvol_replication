@@ -9,27 +9,16 @@
 from sys import exit
 from os import path
 from re import search, match, IGNORECASE
-from subprocess import Popen, PIPE
+from subprocess import PIPE
 from time import sleep
 
+from essential.test_samba4 import TestSamba4
+
 import univention.testing.utils as utils
-from univention.testing.codes import TestCodes
-from univention.config_registry import ConfigRegistry
 from univention.testing.strings import random_username
 
 
-class TestSYSVOLReplicationMultiSchool(object):
-
-    def __init__(self):
-        """
-        Test class constructor
-        """
-        self.UCR = ConfigRegistry()
-
-        self.admin_username = ''
-        self.admin_password = ''
-
-        self.gpo_reference = ''
+class TestSYSVOLReplicationMultiSchool(TestSamba4):
 
     def execute_cmd_on_host(self, host, command_line):
         """
@@ -41,19 +30,14 @@ class TestSYSVOLReplicationMultiSchool(object):
               "administrator credentials" % host)
 
         # '/dev/stdin' used to avoid creation of a file with a password:
-        proc = Popen(('univention-ssh',
-                      '-timeout',
-                      '120',
-                      '/dev/stdin',
-                      self.admin_username + '@' + host,
-                      command_line),
-                     stdin=PIPE,
-                     stdout=PIPE,
-                     stderr=PIPE)
+        cmd = ('univention-ssh', '-timeout', '120', '/dev/stdin',
+               self.admin_username + '@' + host, command_line)
 
-        stdout, stderr = proc.communicate(input=self.admin_password)
+        stdout, stderr = self.create_and_run_process(cmd,
+                                                     PIPE,
+                                                     self.admin_password)
         if stderr:
-            # ignore warnings (both lower/upper case)
+            # ignore warnings (both lower/UPPER case)
             # ("Permanently added to the list of known hosts", etc.):
             if bool(match('Warning|Warnung', stderr, IGNORECASE)):
                 print "Ignoring the following warning message:", stderr
@@ -115,18 +99,17 @@ class TestSYSVOLReplicationMultiSchool(object):
         """
         repl_script = '/usr/share/univention-samba4/scripts/sysvol-sync.sh'
 
-        print "\nExecuting the replication script '%s'" % repl_script
+        print "\nLocally executing the replication script '%s'" % repl_script
         if not path.exists(repl_script):
             utils.fail("The replication script '%s' file cannot be found."
                        % repl_script)
 
-        proc = Popen(repl_script, stderr=PIPE)
-        stdout, stderr = proc.communicate()
+        stdout, stderr = self.create_and_run_process(repl_script)
         if stderr:
             utils.fail("An error occured while running the replication script "
                        "'%s': '%s'" % (repl_script, stderr))
 
-    def process_ldap_search_results(self, search_results):
+    def get_slave_hostnames_from_search(self, search_results):
         """
         Removes the 'displayName' from 'search_results' and returns the
         list of slave hostnames in the domain except for the local hostname.
@@ -150,78 +133,37 @@ class TestSYSVOLReplicationMultiSchool(object):
         """
         print("\nGenerating the list of all other DCs in the domain "
               "to check the SYSVOL replication:")
+
         ldap_master = self.UCR.get('ldap/master')
         search_pattern = 'univentionServerRole=slave'
 
-        proc = Popen(("univention-ldapsearch",
-                      "-h",
-                      ldap_master,
-                      "-p",
-                      self.UCR.get('ldap/master/port'),
-                      "-D",
-                      self.UCR.get('tests/domainadmin/account'),
-                      "-w",
-                      self.admin_password,
-                      search_pattern),
-                     stdout=PIPE)
+        cmd = ("univention-ldapsearch", "-h", ldap_master,
+               "-p", self.UCR.get('ldap/master/port'),
+               "-D", self.UCR.get('tests/domainadmin/account'),
+               "-w", self.admin_password,
+               search_pattern)
 
-        # reduce the LDAP search results to 'displayName' fields:
-        grep_proc = Popen(("grep", "displayName"),
-                          stdin=proc.stdout,
-                          stdout=PIPE,
-                          stderr=PIPE)
-        proc.stdout.close()
-        stdout, stderr = grep_proc.communicate()
+        search_stdout, search_stderr = self.create_and_run_process(cmd)
+        if search_stderr:
+            print("An error message while executing 'univention-ldapsearch' on"
+                  " the '%s' with pattern '%s': '%s'"
+                  % (ldap_master, search_pattern, search_stderr))
+
+        # reduce the LDAP search results to only 'displayName' fields:
+        stdout, stderr = self.create_and_run_process(("grep", "displayName"),
+                                                     PIPE,
+                                                     search_stdout)
         if stderr:
             utils.fail("An error occured while trying to grep through the "
                        "LDAP search results from the DC-Master: '%s'" % stderr)
         if not stdout or stdout == '\n':
             utils.fail("No output from grep process, possibly an error "
                        "occured during the LDAP search on DC-Master or "
-                       "while trying to connect to DC-Master via ssh")
+                       "while trying to connect to DC-Master.")
 
-        hosts = [ldap_master] + self.process_ldap_search_results(stdout)
+        hosts = [ldap_master] + self.get_slave_hostnames_from_search(stdout)
         print "The following hosts will be checked:", hosts
         return hosts
-
-    def get_ucr_test_credentials(self):
-        """
-        Loads the UCR to get credentials for the test.
-        """
-        print("Obtatining Administrator username and password "
-              "for the test from the UCR")
-        try:
-            self.UCR.load()
-
-            self.admin_username = self.UCR['tests/domainadmin/account']
-            # extracting the 'uid' value of the administrator username string:
-            self.admin_username = self.admin_username.split(',')[0][len('uid='):]
-            self.admin_password = self.UCR['tests/domainadmin/pwd']
-        except KeyError as exc:
-            print("\nAn exception while trying to read data from the UCR for "
-                  "the test: '%s'. Skipping the test." % exc)
-            exit(TestCodes.REASON_INSTALL)
-
-    def delete_samba_gpo(self):
-        """
-        Deletes the Group Policy Object using the 'samba-tool gpo del'.
-        """
-        print("\nRemoving previously created Group Policy Object (GPO) with "
-              "a reference: %s" % self.gpo_reference)
-
-        proc = Popen(("samba-tool",
-                      "gpo",
-                      "del",
-                      self.gpo_reference,
-                      "--username=" + self.admin_username,
-                      "--password=" + self.admin_password),
-                     stdout=PIPE,
-                     stderr=PIPE)
-        stdout, stderr = proc.communicate()
-        if stderr:
-            utils.fail("An error occured while removing the GPO using "
-                       "'samba-tool': '%s'" % stderr)
-        print "\nSamba-tool produced the following output:", stdout
 
     def create_samba_gpo(self):
         """
@@ -233,15 +175,11 @@ class TestSYSVOLReplicationMultiSchool(object):
         print("\nCreating Group Policy Object (GPO) for the test with "
               "a name '%s' using 'samba-tool'" % display_name)
 
-        proc = Popen(("samba-tool",
-                      "gpo",
-                      "create",
-                      display_name,
-                      "--username=" + self.admin_username,
-                      "--password=" + self.admin_password),
-                     stdout=PIPE,
-                     stderr=PIPE)
-        stdout, stderr = proc.communicate()
+        cmd = ("samba-tool", "gpo", "create", display_name,
+               "--username=" + self.admin_username,
+               "--password=" + self.admin_password)
+
+        stdout, stderr = self.create_and_run_process(cmd)
         if stderr:
             utils.fail("An error occured while creating a GPO using "
                        "'samba-tool': '%s'" % stderr)
