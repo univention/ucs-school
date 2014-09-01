@@ -9,6 +9,7 @@
 
 import copy
 import subprocess
+from univention.uldap import getMachineConnection
 import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool as utu
 import univention.testing.strings as uts
@@ -289,6 +290,8 @@ class Acl(object):
 		self.assert_acl(temp_dn, access, attrs)
 		temp_dn = 'cn=mac,cn=temporary,cn=univention,%s' % base_dn
 		self.assert_acl(temp_dn, access, attrs)
+		temp_dn = 'cn=groupName,cn=temporary,cn=univention,%s' % base_dn
+		self.assert_acl(temp_dn, access, attrs)
 
 	def assert_gid_temps(self, access):
 		base_dn = self.ucr.get('ldap/base')
@@ -349,7 +352,100 @@ class Acl(object):
 			]
 		container_dn = 'cn=univention,%s' % base_dn
 		self.assert_acl(container_dn, access, attrs)
+		container_dn = 'cn=dns,%s' % base_dn
+		self.assert_acl(container_dn, access, attrs)
 		container_dn = 'cn=policies,%s' % base_dn
 		self.assert_acl(container_dn, access, attrs)
 		container_dn = 'cn=groups,%s' % base_dn
 		self.assert_acl(container_dn, access, attrs)
+
+	def assert_user(self, user_dn, access):
+		"""Mitglieder der lokalen Administratoren duerfen Passwoerter unterhalb
+		von cn=users aendern
+		"""
+		attrs = [
+				'krb5KeyVersionNumber',
+				'krb5KDCFlags',
+				'krb5Key',
+				'krb5PasswordEnd',
+				'sambaAcctFlags',
+				'sambaPwdLastSet',
+				'sambaLMPassword',
+				'sambaNTPassword',
+				'shadowLastChange',
+				'shadowMax',
+				'userPassword',
+				'pwhistory',
+				'sambaPwdCanChange',
+				'sambaPwdMustChange',
+				'sambaPasswordHistory',
+				'sambaBadPasswordCount'
+				]
+		self.assert_acl(user_dn, access, attrs)
+
+	def assert_computers(self, computer_dn, access):
+		"""Mitglieder der lokalen Administratoren duerfen MAC-Adressen
+		im Rechner- und DHCP-Objekt aendern
+		"""
+		attrs = [
+				'macAddress',
+				'sambaNTPassword'
+				]
+		self.assert_acl(computer_dn, access, attrs)
+
+	def assert_dhcp(self, client, access):
+		client_dhcp_dn = 'cn=%s,cn=%s,cn=dhcp,%s' % (
+				client, self.school, utu.UCSTestSchool().get_ou_base_dn(self.school))
+		attrs = [
+				'entry',
+				'children',
+				'objectClass',
+				'univentionObjectType',
+				'dhcpOption',
+				'cn',
+				'structuralObjectClass',
+				'entryUUID',
+				'creatorsName',
+				'createTimestamp',
+				'entryCSN',
+				'modifiersName',
+				'modifyTimestamp',
+				]
+		self.assert_acl(client_dhcp_dn, access, attrs)
+
+	def assert_member_server(self, access):
+		"""Mitglieder der lokalen Administratoren duerfen den DC-Slave und Memberserver
+		joinen (benoetigt Passwortaenderung)
+		"""
+		base_dn = self.ucr.get('ldap/base')
+		attrs = [
+				'krb5KeyVersionNumber',
+				'krb5KDCFlags',
+				'krb5Key',
+				'krb5PasswordEnd',
+				'sambaAcctFlags',
+				'sambaPwdLastSet',
+				'sambaLMPassword',
+				'sambaNTPassword',
+				'shadowLastChange',
+				'shadowMax',
+				'userPassword',
+				'pwhistory',
+				'sambaPwdCanChange',
+				'sambaPwdMustChange',
+				'sambaPasswordHistory',
+				]
+		singlemaster = self.ucr.is_true('ucsschool/singlemaster')
+		lo = getMachineConnection()
+		if not singlemaster:
+			slave_found= lo.search(filter="(|(univentionObjectType=computers/domaincontroller_slave)(univentionObjectType=computers/memberserver))", base=utu.UCSTestSchool().get_ou_base_dn(self.school))
+			if slave_found:
+				slave_dn = slave_found[0][0]
+				self.assert_acl(slave_dn, access, attrs)
+
+		attrs = ['sOARecord']
+		zoneName = lo.search(base='cn=dns,%s' % base_dn, scope='base+one',attr=['uid'])
+		for (target_dn, d) in zoneName:
+			if 'zoneName' in target_dn:
+				self.assert_acl(target_dn, access, attrs)
+				break
