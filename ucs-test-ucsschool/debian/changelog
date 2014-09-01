@@ -1,3 +1,11 @@
+ucs-test-ucsschool (1.0.80-1) unstable; urgency=low
+
+  * Bug #34217:
+    90_ucsschool/92_samba4_check_denied_user_creation: test user creation is
+    denied on S4 DC-Slave.
+
+ -- Dmitry Galkin <galkin@univention.de>  Mon, 01 Sep 2014 11:13:21 +0200
+
 ucs-test-ucsschool (1.0.79-1) unstable; urgency=low
 
   * Bug #34214 and #34216:
