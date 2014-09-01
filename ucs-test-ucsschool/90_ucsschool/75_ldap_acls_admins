@@ -1,0 +1,74 @@
+#!/usr/share/ucs-test/runner python
+# coding=utf-8
+## desc: ucs-school-ldap-acls-admins
+## roles: [domaincontroller_master]
+## tags: [apptest]
+## exposure: dangerous
+## packages: [ucs-school-ldap-acls-master]
+
+from essential.acl import Acl
+from essential.computerroom import Computers
+from essential.schoolroom import ComputerRoom
+import univention.testing.ucr as ucr_test
+import univention.testing.ucsschool as utu
+
+
+def main():
+	with utu.UCSTestSchool()  as schoolenv:
+		with ucr_test.UCSTestConfigRegistry() as ucr:
+			school, oudn = schoolenv.create_ou(name_edudc=ucr.get('hostname'))
+			school_admin_dn, school_admin = schoolenv.create_school_admin(school)
+
+			staff, staff_dn  = schoolenv.create_user(school, is_staff=True)
+			tea_staff, tea_staff_dn  = schoolenv.create_user(school, is_teacher=True, is_staff=True)
+			tea, tea_dn = schoolenv.create_user(school, is_teacher=True)
+			stu, stu_dn = schoolenv.create_user(school)
+
+			open_ldap_co = schoolenv.open_ldap_connection()
+			# importing 2 random computers
+			computers = Computers(open_ldap_co, school, 1, 0, 0)
+			created_computers = computers.create()
+			computers_dns = computers.get_dns(created_computers)
+			computers_hostnames = computers.get_hostnames(created_computers)
+			computers_hostnames = [x[:-1] for x in computers_hostnames]
+
+			room = ComputerRoom(school, host_members=computers_dns)
+			room.add()
+
+			acl = Acl(school, school_admin_dn, 'ALLOWED')
+
+			acl.assert_base_dn('read')
+
+			acl.assert_student(stu_dn, 'write')
+
+			acl.assert_room(room.dn(), 'write')
+
+			acl.assert_user(tea_dn, 'write')
+			acl.assert_user(staff_dn, 'write')
+			acl.assert_user(tea_staff_dn, 'write')
+
+			acl.assert_teacher_group('write')
+			acl.assert_student_group('write')
+
+			shares_dn = 'cn=shares,%s' % utu.UCSTestSchool().get_ou_base_dn(school)
+			acl.assert_shares(shares_dn, 'write')
+			shares_dn = 'cn=Marktplatz,cn=shares,%s' % utu.UCSTestSchool().get_ou_base_dn(school)
+			acl.assert_shares(shares_dn, 'write')
+			shares_dn = 'cn=klassen,cn=shares,%s' % utu.UCSTestSchool().get_ou_base_dn(school)
+			acl.assert_shares(shares_dn, 'read')
+
+			acl.assert_temps('write')
+			acl.assert_gid_temps('write')
+
+			acl.assert_computers(computers_dns[0], 'write')
+
+			acl.assert_dhcp(computers_hostnames[0], 'write')
+
+			acl.assert_member_server('write')
+
+			acl.assert_ou('read')
+
+			acl.assert_global_containers('read')
+
+if __name__ == '__main__':
+	main()
