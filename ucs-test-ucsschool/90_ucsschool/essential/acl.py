@@ -41,10 +41,39 @@ def create_group_in_container(container_dn):
 	:param container_dn: container dn to create the group in
 	:type container_dn: ldap object dn
 	"""
-	cmd = ['udm', 'groups/group', 'create', '--position', '%(container)s', '--set', 'name=%(group_name)s']
-	out , err = run_commands([cmd], {'container': container_dn, 'group_name': uts.random_name()})[0]
+	cmd = [
+			'udm', 'groups/group', 'create',
+			'--position', '%(container)s',
+			'--set', 'name=%(group_name)s'
+			]
+	out , err = run_commands(
+			[cmd], {
+				'container': container_dn,
+				'group_name': uts.random_name()
+				}
+			)[0]
 	if out:
-		return out.split(':')[1]
+		return out.split(': ')[1].strip()
+
+def create_dc_slave_in_container(container_dn):
+	"""Create random computer in a specific container:\n
+	:param container_dn: container dn to create the group in
+	:type container_dn: ldap object dn
+	"""
+	cmd = [
+			'udm', 'computers/domaincontroller_slave', 'create',
+			'--position', '%(container)s',
+			'--set', 'name=%(name)s'
+			]
+	out , err = run_commands(
+			[cmd], {
+				'container': container_dn,
+				'name': uts.random_name(),
+				'uidNumber': uts.random_int()
+				}
+			)[0]
+	if out:
+		return out.split(': ')[1].strip()
 
 def create_user_in_container(container_dn):
 	"""Create random user in a specific container:\n
@@ -69,7 +98,7 @@ def create_user_in_container(container_dn):
 				}
 			)[0]
 	if out:
-		return out.split(':')[1]
+		return out.split(': ')[1].strip()
 
 
 class Acl(object):
@@ -92,7 +121,7 @@ class Acl(object):
 		self.ucr = ucr_test.UCSTestConfigRegistry()
 		self.ucr.load()
 
-	def assert_acl(self, target_dn, access, attrs):
+	def assert_acl(self, target_dn, access, attrs, access_allowance=None):
 		"""Test ACL rule:\n
 		:param target_dn: Target dn to test access to
 		:type target_dn: ldap object dn
@@ -101,8 +130,9 @@ class Acl(object):
 		:param access: type of access
 		:type access: str='read' 'write' or 'none'
 		"""
+		access_allowance = access_allowance if access_allowance else self.access_allowance
 		print '\n * Targetdn = %s\n * Authdn = %s\n * Access = %s\n * Access allowance = %s\n' % (
-				target_dn, self.auth_dn, access, self.access_allowance)
+				target_dn, self.auth_dn, access, access_allowance)
 		cmd = [
 				'slapacl',
 				'-f',
@@ -121,7 +151,7 @@ class Acl(object):
 			if err:
 				result = [x for x in err.split('\n') if ('ALLOWED' in x or 'DENIED' in x)][0]
 				if result:
-					if self.access_allowance not in result:
+					if access_allowance not in result:
 						raise FailAcl('Access (%s) by (%s) to (%s) not expected %r' % (
 							access, self.auth_dn, target_dn, result))
 			else:
@@ -203,8 +233,9 @@ class Acl(object):
 				'modifiersName',
 				'modifyTimestamp',
 				]
-		self.access_allowance = 'ALLOWED'
 		self.assert_acl(room_dn, access, attrs)
+		target_dn = create_dc_slave_in_container(target_dn)
+		self.assert_acl(target_dn, access, attrs, access_allowance='DENIED')
 
 	def assert_teacher_group(self, access):
 		"""Lehrer, Mitarbeiter und Mitglieder der lokalen Administratoren
@@ -216,6 +247,8 @@ class Acl(object):
 				'entry',
 				]
 		self.assert_acl(group_dn, access, attrs)
+		target_dn = create_dc_slave_in_container(group_dn)
+		self.assert_acl(target_dn, access, attrs, access_allowance='DENIED')
 		group_dn = create_group_in_container(group_dn)
 		# access to dn.regex="^cn=([^,]+),(cn=lehrer,|cn=schueler,|)cn=groups,ou=([^,]+),dc=najjar,dc=am$$"
 		# filter="(&(!(|(uidNumber=*)(objectClass=SambaSamAccount)))(objectClass=univentionGroup))"
@@ -245,6 +278,8 @@ class Acl(object):
 				]
 		self.assert_acl(group_dn, access, attrs)
 
+		target_dn = create_dc_slave_in_container(group_dn)
+		self.assert_acl(target_dn, access, attrs, access_allowance='DENIED')
 		group_dn = create_group_in_container(group_dn)
 		attrs = [
 				'sambaGroupType',
@@ -273,6 +308,8 @@ class Acl(object):
 				'entry',
 				]
 		self.assert_acl(shares_dn, access, attrs)
+		target_dn = create_dc_slave_in_container(shares_dn)
+		self.assert_acl(target_dn, 'write', attrs, access_allowance='DENIED')
 
 	def assert_temps(self, access):
 		"""Mitglieder der lokalen Administratoren muessen einige temporaere
@@ -288,10 +325,16 @@ class Acl(object):
 		self.assert_acl(temp_dn, access, attrs)
 		temp_dn = 'cn=gid,cn=temporary,cn=univention,%s' % base_dn
 		self.assert_acl(temp_dn, access, attrs)
+		target_dn = create_dc_slave_in_container(temp_dn)
+		self.assert_acl(target_dn, access, attrs, access_allowance='DENIED')
 		temp_dn = 'cn=mac,cn=temporary,cn=univention,%s' % base_dn
 		self.assert_acl(temp_dn, access, attrs)
+		target_dn = create_dc_slave_in_container(temp_dn)
+		self.assert_acl(target_dn, access, attrs, access_allowance='DENIED')
 		temp_dn = 'cn=groupName,cn=temporary,cn=univention,%s' % base_dn
 		self.assert_acl(temp_dn, access, attrs)
+		target_dn = create_dc_slave_in_container(temp_dn)
+		self.assert_acl(target_dn, access, attrs, access_allowance='DENIED')
 
 	def assert_gid_temps(self, access):
 		base_dn = self.ucr.get('ldap/base')
@@ -302,6 +345,8 @@ class Acl(object):
 				'univentionLastUsedValue'
 				]
 		self.assert_acl(temp_dn, access, attrs)
+		target_dn = create_dc_slave_in_container(temp_dn)
+		self.assert_acl(target_dn, access, attrs, access_allowance='DENIED')
 
 	def assert_ou(self, access):
 		"""Slave-Controller duerfen Eintraege Ihrer ou lesen und schreiben
@@ -359,6 +404,16 @@ class Acl(object):
 		container_dn = 'cn=groups,%s' % base_dn
 		self.assert_acl(container_dn, access, attrs)
 
+	def assert_computers(self, computer_dn, access):
+		"""Mitglieder der lokalen Administratoren duerfen MAC-Adressen
+		im Rechner- und DHCP-Objekt aendern
+		"""
+		attrs = [
+				'macAddress',
+				'sambaNTPassword'
+				]
+		self.assert_acl(computer_dn, access, attrs)
+
 	def assert_user(self, user_dn, access):
 		"""Mitglieder der lokalen Administratoren duerfen Passwoerter unterhalb
 		von cn=users aendern
@@ -383,16 +438,6 @@ class Acl(object):
 				]
 		self.assert_acl(user_dn, access, attrs)
 
-	def assert_computers(self, computer_dn, access):
-		"""Mitglieder der lokalen Administratoren duerfen MAC-Adressen
-		im Rechner- und DHCP-Objekt aendern
-		"""
-		attrs = [
-				'macAddress',
-				'sambaNTPassword'
-				]
-		self.assert_acl(computer_dn, access, attrs)
-
 	def assert_dhcp(self, client, access):
 		client_dhcp_dn = 'cn=%s,cn=%s,cn=dhcp,%s' % (
 				client, self.school, utu.UCSTestSchool().get_ou_base_dn(self.school))
@@ -412,6 +457,8 @@ class Acl(object):
 				'modifyTimestamp',
 				]
 		self.assert_acl(client_dhcp_dn, access, attrs)
+		target_dn = create_dc_slave_in_container(client_dhcp_dn)
+		self.assert_acl(target_dn, access, attrs, access_allowance='DENIED')
 
 	def assert_member_server(self, access):
 		"""Mitglieder der lokalen Administratoren duerfen den DC-Slave und Memberserver
