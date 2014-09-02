@@ -32,6 +32,18 @@ class TestSamba4(object):
         proc = Popen(cmd, stdin=stdin, stdout=PIPE, stderr=PIPE)
         return proc.communicate(input=std_input)
 
+    def grep_for_key(self, grep_in, key):
+        """
+        Runs grep on given 'grep_in' with a given 'key'. Returns the output.
+        """
+        stdout, stderr = self.create_and_run_process(("grep", key),
+                                                     PIPE,
+                                                     grep_in)
+        if stderr:
+            utils.fail("An error occured while running a grep with a "
+                       "keyword '%s':\n'%s'" % (key, stderr))
+        return stdout
+
     def get_ucr_test_credentials(self):
         """
         Loads the UCR to get credentials for the test.
