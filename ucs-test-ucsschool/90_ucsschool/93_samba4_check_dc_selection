@@ -48,7 +48,7 @@ class TestS4DCLocatorDNS(TestSamba4):
         if not grep_stdout:
             utils.fail("Could not find the DC-Backup fully qualified domain "
                        "name in the output of %s" % cmd)
-        return grep_stdout
+        return grep_stdout.strip()
 
     def check_dc_on_slave(self, dc_name):
         """
