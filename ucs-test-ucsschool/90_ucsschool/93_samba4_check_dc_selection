@@ -1,0 +1,165 @@
+#!/usr/share/ucs-test/runner python
+## desc: Test the DC Locator (DNS) with Samba4.
+## bugs: [34223]
+## roles:
+##  - domaincontroller_master
+##  - domaincontroller_backup
+##  - domaincontroller_slave
+## packages: [univention-samba4]
+## tags: [apptest, ucsschool]
+## exposure: safe
+
+from sys import exit
+from subprocess import PIPE
+
+from essential.test_samba4 import TestSamba4
+
+import univention.testing.utils as utils
+
+
+class TestS4DCLocatorDNS(TestSamba4):
+
+    def __init__(self):
+        """
+        Test class constructor
+        """
+        super(TestS4DCLocatorDNS, self).__init__()
+
+        self.local_dc_name = ''
+        self.local_server_role = ''
+        self.ldap_master = ''
+
+    def get_backup_fqdn(self):
+        """
+        Runs the "udm computers/domaincontroller_backup list", greps the
+        results for 'fqdn' and returns it.
+        """
+        cmd = ("udm", "computers/domaincontroller_backup", "list")
+        stdout, stderr = self.create_and_run_process(cmd)
+
+        if stderr:
+            utils.fail("An error occured while running a '%s' command to "
+                       "find a DC-Backup in the domain:\n'%s'" % (cmd, stderr))
+
+        grep_stdout = self.grep_for_key(stdout, "fqdn:")
+
+        # remove the 'fqdn:' prefix:
+        grep_stdout = grep_stdout.replace('fqdn: ', '')
+        if not grep_stdout:
+            utils.fail("Could not find the DC-Backup fully qualified domain "
+                       "name in the output of %s" % cmd)
+        return grep_stdout
+
+    def check_dc_on_slave(self, dc_name):
+        """
+        Checks if located DC is the local DC itself.
+        """
+        if self.local_dc_name in dc_name:
+            print "\nThe DC '%s' was located correctly." % self.local_dc_name
+        else:
+            utils.fail("The DC was not located correctly, should be '%s', "
+                       "while in fact: '%s'" % (self.local_dc_name, dc_name))
+
+    def check_dc_on_master_or_backup(self, dc_name):
+        """
+        Checks if located DC is correct on DC-Backup or DC-Master.
+        """
+        if self.local_dc_name in dc_name:
+            print "\nThe DC '%s' was located correctly." % self.local_dc_name
+        else:
+            if self.local_server_role == 'domaincontroller_backup':
+                if self.ldap_master in dc_name:
+                    # on DC-Backup a DC-Master can also be located:
+                    print("\nFor current DC '%s' the DC-Master '%s' was "
+                          "located." % (self.local_dc_name, self.ldap_master))
+                else:
+                    utils.fail("Neither the '%s', nor the '%s' DC was located."
+                               % (self.local_dc_name, self.ldap_master))
+            else:
+                if self.get_backup_fqdn() in dc_name:
+                    # on DC-Master a DC-Backup can also be located:
+                    print("\nFor current DC '%s' the DC-Backup was located."
+                          % self.local_dc_name)
+                else:
+                    utils.fail("Neither the '%s', nor a DC-Backup was located."
+                               % self.local_dc_name)
+
+    def check_dc_amount_and_location(self, dc_names):
+        """
+        Checks the amount of DCs located (should be 1 only);
+        And checks whether the correct DC was located:
+         for DC-Slave -> itself only;
+         for DC-Backup -> itself or DC-Master;
+         for DC-Master -> itself or DC-Backup;
+        """
+        dcs_found = 0  # total amount of DCs found
+
+        for line in dc_names.splitlines():
+            if line.startswith("Domain Controller:"):
+                dc_name = line
+                dcs_found += 1
+
+        if dcs_found != 1:
+            utils.fail("The amount of DCs found is '%d', while should be "
+                       "1 only." % dcs_found)
+
+        print "\nThe located DC is '%s'" % dc_name
+        if self.local_server_role == 'domaincontroller_slave':
+            self.check_dc_on_slave(dc_name)
+        else:
+            self.check_dc_on_master_or_backup(dc_name)
+
+    def get_dc_names(self):
+        """
+        Uses 'net ads lookup' to find and return located DCs.
+        """
+        cmd = ("net", "ads", "lookup")
+        stdout, stderr = self.create_and_run_process(cmd)
+
+        if stderr:
+            print("\nAn error occured duriung %s command execution, STDERR: "
+                  "'%s'" % (cmd, stderr.rstrip()))
+        if not stdout or stdout == '\n':
+            utils.fail("The %s did not produce any output, while Domain "
+                       "Controller Location was expected" % cmd)
+
+        cmd = ("grep", "Domain Controller:")
+        grep_stdout, grep_stderr = self.create_and_run_process(cmd,
+                                                               PIPE,
+                                                               stdout)
+        if grep_stderr:
+            print("\nAn error occured duriung %s command execution, STDERR: "
+                  "'%s'" % (cmd, grep_stderr.rstrip()))
+        if not grep_stdout:
+            utils.fail("The 'Domain Controller:' line was not found in the "
+                       "output from 'net ads lookup', i.e. "
+                       "no Domain Controllers were located")
+
+        return grep_stdout
+
+    def get_ucr_settings(self):
+        """
+        Saves the respective UCR settings into self.local_dc_name,
+        self.local_server_role and self.ldap_master.
+        """
+        try:
+            self.local_dc_name = self.UCR['ldap/server/name']
+            self.local_server_role = self.UCR['server/role']
+            self.ldap_master = self.UCR['ldap/master']
+        except KeyError as exc:
+            print("\nAn error occured while trying to obtain UCR "
+                  "variables for the test: %r" % exc)
+            self.return_code_result_skip()
+
+    def main(self):
+        """
+        Tests the Domain Controller location process as done by net ads lookup.
+        """
+        self.get_ucr_test_credentials()
+        self.get_ucr_settings()
+        self.check_dc_amount_and_location(self.get_dc_names())
+
+
+if __name__ == '__main__':
+    TestDCLocatorDNS = TestS4DCLocatorDNS()
+    exit(TestDCLocatorDNS.main())

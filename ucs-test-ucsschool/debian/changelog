@@ -1,3 +1,10 @@
+ucs-test-ucsschool (1.0.81-1) unstable; urgency=low
+
+  * Bug #34223:
+    90_ucsschool/93_samba4_check_dc_selection: test the DC Locator (DNS) with Samba4.
+
+ -- Dmitry Galkin <galkin@univention.de>  Tue, 02 Sep 2014 15:30:20 +0200
+
 ucs-test-ucsschool (1.0.80-1) unstable; urgency=low
 
   * Bug #34217:
