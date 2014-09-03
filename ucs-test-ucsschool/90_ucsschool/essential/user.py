@@ -94,15 +94,12 @@ class User(Person):
 		utils.wait_for_replication()
 		self.mode = mode
 		self.active = True
-		self.password = None
 
 		self.school_base = get_school_base(self.school)
 
 		self.dn = 'uid=%s,cn=%s,cn=users,%s' % (self.username, self.cn, self.school_base)
-
-		if password:
-			self.password = password
 		self.mail = mail
+
 		self.typ = 'teachersAndStaff' if self.role == 'teacher_staff' else self.role
 		self.school_class = school_class
 
@@ -114,6 +111,7 @@ class User(Person):
 		account = utils.UCSTestDomainAdminCredentials()
 		admin = account.username
 		passwd = account.bindpw
+		self.password = password if password else passwd
 		self.umc_connection.auth(admin, passwd)
 
 	def __enter__(self):
@@ -146,6 +144,8 @@ class User(Person):
 				'schoolwizards/users/add', param, flavor)
 		if not reqResult[0]:
 			raise CreateFail('Unable to create user (%r)' % (param,))
+		else:
+			utils.wait_for_replication()
 
 	def get(self):
 		"""Get user"""
@@ -182,11 +182,7 @@ class User(Person):
 				'objectType': 'users/user'
 				}
 		if self.is_student() or self.is_teacher() or self.is_teacher_staff():
-			if self.school_class:
-				# remove the ou- name prefix from the class-dn
-				info.update({'school_class': self.school_class.split('-')[1]})
-			else:
-				info.update({'school_class': self.school_class})
+			info.update({'school_class': self.school_class})
 
 		get_result = self.get()
 		# Type_name is only used for display, Ignored
