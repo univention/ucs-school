@@ -148,37 +148,6 @@ class TestGPCReplicationTwoWays(TestSamba4):
 
         print "\nSamba-tool produced the following output:\n", stdout
 
-    def select_school_ou(self):
-        """
-        Selects the School OU that will be used as a container for GPO link.
-        """
-        print "\nSelecting the School OU to test the GPO links replication"
-
-        grep_stdout = self.grep_for_key(self.get_udm_list_dc_slaves(), "DN:")
-        if not grep_stdout:
-            utils.fail("Could not find the DN in the udm list output, thus "
-                       "cannot select the School OU to use as a container")
-
-        # remove the 'DN:' prefix:
-        grep_stdout = grep_stdout.replace('DN: ', '')
-        # select the first School as by default first Slave IP is selected:
-        slave_dn = grep_stdout.split()[0]
-        return slave_dn[slave_dn.find("ou="):]
-
-    def get_udm_list_dc_slaves(self):
-        """
-        Runs the "udm computers/domaincontroller_slave list" and returns the
-        output.
-        """
-        cmd = ("udm", "computers/domaincontroller_slave", "list")
-        stdout, stderr = self.create_and_run_process(cmd)
-
-        if stderr:
-            utils.fail("An error occured while running a '%s' command to "
-                       "find a DC-Slave in the domain:\n'%s'"
-                       % (cmd, stderr))
-        return stdout
-
     def find_slave_in_domain(self):
         """
         Using 'udm list' looks for any DC-Slave in the domain to test the

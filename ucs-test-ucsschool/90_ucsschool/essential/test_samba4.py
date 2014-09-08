@@ -44,6 +44,42 @@ class TestSamba4(object):
                        "keyword '%s':\n'%s'" % (key, stderr))
         return stdout
 
+    def get_udm_list_dc_slaves(self):
+        """
+        Runs the "udm computers/domaincontroller_slave list" and returns the
+        output.
+        """
+        cmd = ("udm", "computers/domaincontroller_slave", "list")
+        stdout, stderr = self.create_and_run_process(cmd)
+
+        if stderr:
+            utils.fail("An error occured while running a '%s' command to "
+                       "find a DC-Slave in the domain:\n'%s'"
+                       % (cmd, stderr))
+        return stdout
+
+    def select_school_ou(self, schoolname_only=False):
+        """
+        Returns the first found School OU from the list of DC-Slaves in domain.
+        """
+        print "\nSelecting the School OU for the test"
+
+        grep_stdout = self.grep_for_key(self.get_udm_list_dc_slaves(), "DN:")
+        if not grep_stdout:
+            utils.fail("Could not find the DN in the udm list output, thus "
+                       "cannot select the School OU to use as a container")
+        # remove the 'DN:' prefix:
+        grep_stdout = grep_stdout.replace('DN: ', '')
+        # select the first School:
+        slave_dn = grep_stdout.split()[0]
+
+        if schoolname_only:
+            # return only the ou='' section of the DN (i.e. school name):
+            return slave_dn[(slave_dn.find("ou=") + 3):slave_dn.find(",dc=")]
+
+        # return the full ou= (with dc):
+        return slave_dn[slave_dn.find("ou="):]
+
     def get_ucr_test_credentials(self):
         """
         Loads the UCR to get credentials for the test.
