@@ -1,0 +1,105 @@
+#!/usr/share/ucs-test/runner python
+## desc: Test the DC Locator Master shares access.
+## bugs: [34224]
+## roles:
+##  - domaincontroller_slave
+## packages: [univention-samba4]
+## tags: [apptest, ucsschool]
+## exposure: careful
+
+from sys import exit
+
+from essential.test_samba4 import TestSamba4
+
+import univention.testing.utils as utils
+from univention.testing.ucs_samba import wait_for_drs_replication
+from univention.testing.ucsschool import UCSTestSchool
+from univention.testing.strings import random_username
+
+
+class TestS4DCLocatorSharesAccess(TestSamba4):
+
+    def __init__(self):
+        """
+        Test class constructor.
+        """
+        super(TestS4DCLocatorSharesAccess, self).__init__()
+
+        self.TestSchool = UCSTestSchool()
+
+    def connect_to_master_sysvol_share(self, username, password,
+                                       use_kerberos=False):
+        """
+        Using 'smbclient' and given credentials executes the 'cmd' to list
+        the sysvol contents on the DC-Master. Tries to use Kerberos if
+        respective kwarg 'use_kerberos'==True.
+        """
+        domain_name = self.UCR.get('domainname')
+        cmd = ("smbclient", "//" + self.UCR.get('ldap/master') + "/sysvol",
+               "--user=" + username + "%" + password, "--timeout=120",
+                "--workgroup=" + domain_name.upper(), "--command=ls")
+
+        if use_kerberos:
+            print "\nKerberos authentication will be used:"
+            cmd = cmd + ("-k",)
+
+        print("\nTrying to connect to Sysvol on DC-Master and "
+              "list the contents using Samba client:")
+        print cmd
+
+        stdout, stderr = self.create_and_run_process(cmd)
+        if stderr:
+            print("\nThe Samba client produced the following output "
+                  "to STDERR:\n%s" % stderr)
+        if not stdout or stdout == '\n':
+            utils.fail("The Samba client did not produce any output to STDOUT,"
+                       " while DC-Master Sysvol contents were expected")
+
+        print("The Samba client produced the following output to STDOUT:\n%s"
+              % stdout)
+        if domain_name not in stdout:
+            utils.fail("The Samba client output of DC-Master Sysvol contents "
+                       "does not include folder with the domain name.")
+
+    def create_student(self):
+        """
+        Creates a student and returns username, dn and password used.
+        """
+        student_name = 'ucs_test_school_user_' + random_username(8)
+        student_password = 'Foo3' + random_username(8)
+
+        print("\nCreating a student for the test with a name '%s' "
+              "and a password '%s'" % (student_name, student_password))
+
+        student_dn = self.TestSchool.create_user(self.select_school_ou(True),
+                                                 username=student_name,
+                                                 password=student_password)[1]
+
+        wait_for_drs_replication("(sAMAccountName=%s)" % student_name,
+                                 attrs="objectSid")
+        return student_name, student_dn, student_password
+
+    def main(self):
+        """
+        Creates a user and tries to list the DC-Master Sysvol using smbclient.
+        (First with NTLM and after with Kerberos).
+        """
+        self.get_ucr_test_credentials()
+        try:
+            student_name, student_dn, student_password = self.create_student()
+
+            self.connect_to_master_sysvol_share(student_name, student_password)
+            # Kerberos case disabled, as will work only for local DC share
+            # Probably, due to Bug #31919:
+            #self.connect_to_master_sysvol_share(student_name,
+            #                                    student_password,
+            #                                    True)
+        finally:
+            if student_dn:
+                print "\nRemoving the test student user '%s':" % student_name
+                self.TestSchool._remove_udm_object('users/user', student_dn)
+
+
+if __name__ == '__main__':
+    TestDCLocatorShares = TestS4DCLocatorSharesAccess()
+    exit(TestDCLocatorShares.main())

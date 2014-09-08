@@ -1,3 +1,11 @@
+ucs-test-ucsschool (1.0.82-1) unstable; urgency=low
+
+  * Bug #34224:
+    90_ucsschool/94_samba4_check_shares_access: test the DC-Master shares
+    access from DC-Slave.
+
+ -- Dmitry Galkin <galkin@univention.de>  Mon, 08 Sep 2014 14:51:10 +0200
+
 ucs-test-ucsschool (1.0.81-1) unstable; urgency=low
 
   * Bug #34223:
