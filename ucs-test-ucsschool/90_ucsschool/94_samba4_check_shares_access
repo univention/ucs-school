@@ -1,5 +1,5 @@
 #!/usr/share/ucs-test/runner python
-## desc: Test the DC Locator Master shares access.
+## desc: Test the DC Locator Master shares access from DC-Slave.
 ## bugs: [34224]
 ## roles:
 ##  - domaincontroller_slave
