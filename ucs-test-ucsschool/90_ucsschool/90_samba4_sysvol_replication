@@ -114,7 +114,7 @@ class TestSYSVOLReplicationMultiSchool(TestSamba4):
         Removes the 'displayName' from 'search_results' and returns the
         list of slave hostnames in the domain except for the local hostname.
         """
-        search_results = search_results.replace('displayName: ', '')
+        search_results = search_results.replace('displayName: ', '', 1)
         try:
             slave_hostnames = search_results.split()
             slave_hostnames.remove(self.UCR['hostname'])
