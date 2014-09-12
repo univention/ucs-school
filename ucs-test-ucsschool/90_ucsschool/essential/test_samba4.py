@@ -111,6 +111,7 @@ class TestSamba4(object):
 
         stdout, stderr = self.create_and_run_process(cmd)
         if stderr:
+            print "\nExecuting cmd:", cmd
             print("\nAn error message while removing the GPO using "
                   "'samba-tool':\n%s" % stderr)
 

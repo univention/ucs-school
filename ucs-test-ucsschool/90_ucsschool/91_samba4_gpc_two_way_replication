@@ -41,6 +41,7 @@ class TestGPCReplicationTwoWays(TestSamba4):
         stdout, stderr = self.create_and_run_process(cmd)
 
         if stderr:
+            print "\nExecuting cmd:", cmd
             utils.fail("The 'samba-tool' produced the following output "
                        "to STDERR: '%s'" % stderr)
         if not stdout:
@@ -64,12 +65,13 @@ class TestGPCReplicationTwoWays(TestSamba4):
               % (self.remote_host, display_name))
 
         cmd = ("samba-tool", "gpo", "create", display_name,
-               self.host_or_ip, self.remote_host,
+               self.host_or_ip, self.remote_host, "-k", "no",
                "--username", self.admin_username,
                "--password", self.admin_password)
 
         stdout, stderr = self.create_and_run_process(cmd)
         if stderr:
+            print "\nExecuting cmd:", cmd
             print("\nAn error message while creating a GPO using 'samba-tool' "
                   "on the remote host '%s'. STDERR:\n%s"
                   % (self.remote_host, stderr))
@@ -97,12 +99,13 @@ class TestGPCReplicationTwoWays(TestSamba4):
               % (container_dn, self.gpo_reference, self.remote_host))
 
         cmd = ("samba-tool", "gpo", "setlink", container_dn, self.gpo_reference,
-               self.host_or_ip, self.remote_host,
+               self.host_or_ip, self.remote_host, "-k", "no",
                "--username", self.admin_username,
                "--password", self.admin_password)
 
         stdout, stderr = self.create_and_run_process(cmd)
         if stderr:
+            print "\nExecuting cmd:", cmd
             print("\nAn error message while creating a GPO link using "
                   "'samba-tool' on the remote host '%s'. STDERR:\n%s"
                   % (self.remote_host, stderr))
@@ -132,8 +135,9 @@ class TestGPCReplicationTwoWays(TestSamba4):
         stdout, stderr = self.create_and_run_process(cmd)
 
         if stderr:
+            print "\nExecuting cmd:", cmd
             utils.fail("An error occured while getting the GPO link using "
-                       "'samba-tool': '%s'" % stderr)
+                       "'samba-tool', STDERR: '%s'" % stderr)
         if not stdout:
             utils.fail("The 'samba-tool' did not produce any output to the "
                        "STDOUT, while GPO list was expected")
@@ -224,6 +228,7 @@ class TestGPCReplicationTwoWays(TestSamba4):
             self.check_gpo_link_replicated_locally(school_ou_dn)
         finally:
             if self.gpo_reference:
+                sleep(30)  # wait before deleting (for LDAP entries)
                 self.delete_samba_gpo()
 
 
