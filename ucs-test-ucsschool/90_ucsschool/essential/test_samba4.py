@@ -84,7 +84,7 @@ class TestSamba4(object):
         """
         Loads the UCR to get credentials for the test.
         """
-        print("\nObtatining Administrator username and password "
+        print("\nObtaining Administrator username and password "
               "for the test from the UCR")
         try:
             self.UCR.load()
