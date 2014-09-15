@@ -1,3 +1,12 @@
+ucs-test-ucsschool (1.0.83-1) unstable; urgency=low
+
+  * Bug #35746: add new test script for staff members
+  * Bug #35746: add new test script for staff,teacher, teacher and staff, 
+	admin users, this might be replaced by the first script after 
+	being generalized.
+
+ -- Ammar Najjar <najjar@univention.de>  Mon, 15 Sep 2014 12:53:05 +0200
+
 ucs-test-ucsschool (1.0.82-1) unstable; urgency=low
 
   * Bug #34224:

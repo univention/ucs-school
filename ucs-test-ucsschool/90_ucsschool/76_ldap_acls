@@ -1,0 +1,540 @@
+#!/usr/share/ucs-test/runner python
+# coding=utf-8
+## desc: ldap ACLs
+## roles: [domaincontroller_master, domaincontroller_backup, domaincontroller_slave]
+## tags: [apptest, ucsschool]
+## exposure: dangerous
+## packages: [ucs-school-ldap-acls-master]
+
+from essential.acl import run_commands
+from essential.computerroom import Computers
+from essential.schoolroom import ComputerRoom
+from univention.uldap import getMachineConnection
+import univention.testing.ucr as ucr_test
+import univention.testing.ucsschool as utu
+import univention.testing.utils as utils
+
+class FailAcl(Exception):
+	pass
+
+class FailCmd(Exception):
+	pass
+
+class Access(object): 
+	def __init__(self):
+		self.Read = 'read'
+		self.Write = 'write'
+		self.none = 'none'
+		self.Allowed = 'ALLOWED'
+		self.Denied = 'DENIED'
+
+class Attributes(object):
+	def __init__(self):
+		self.base = [
+				'entry',
+				'children',
+				'dc',
+				'univentionObjectType',
+				'krb5RealmName',
+				'nisDomain',
+				'associatedDomain',
+				'univentionPolicyReference',
+				'structuralObjectClass',
+				'entryUUID',
+				'creatorsName',
+				'createTimestamp',
+				'objectClass',
+				'msGPOLink',
+				'entryCSN',
+				'modifiersName',
+				'modifyTimestamp',
+				]
+		self.container = [
+				'children',
+				'entry',
+				]
+		self.room = [
+				'entry',
+				'children',
+				'sambaGroupType',
+				'cn',
+				'objectClass',
+				'univentionObjectType',
+				'gidNumber',
+				'sambaSID',
+				'univentionGroupType',
+				'structuralObjectClass',
+				'entryUUID',
+				'creatorsName',
+				'createTimestamp',
+				'entryCSN',
+				'modifiersName',
+				'modifyTimestamp',
+				'hasSubordinates',
+				'entryDN',
+				'subschemaSubentry',
+				]
+		self.tea_stu_groups = [
+				'objectClass',
+				'univentionObjectType',
+				'cn',
+				'structuralObjectClass',
+				'entryUUID',
+				'creatorsName',
+				'createTimestamp',
+				'entryCSN',
+				'modifiersName',
+				'modifyTimestamp',
+				]
+		self.tea_stu_groups_tree = [
+				'entry',
+				'children',
+				'objectClass',
+				'univentionObjectType',
+				'cn',
+				'structuralObjectClass',
+				'entryUUID',
+				'creatorsName',
+				'createTimestamp',
+				'entryCSN',
+				'modifiersName',
+				'modifyTimestamp',
+				]
+		self.tea_stu = [
+				'sambaGroupType',
+				'cn',
+				'description',
+				'objectClass',
+				'memberUid',
+				'univentionObjectType',
+				'gidNumber',
+				'sambaSID',
+				'uniqueMember',
+				'univentionGroupType',
+				]
+		self.gid_temp = [
+				'children',
+				'entry',
+				'univentionLastUsedValue'
+				]
+		self.temp_tree = [
+				'children',
+				'entry',
+				'structuralObjectClass',
+				'entryUUID',
+				'creatorsName',
+				'createTimestamp',
+				'entryCSN',
+				'modifiersName',
+				'modifyTimestamp',
+				'entryDN',
+				'subschemaSubentry',
+				'hasSubordinates'
+				]
+		self.temp = [
+				'structuralObjectClass',
+				'entryUUID',
+				'creatorsName',
+				'createTimestamp',
+				'entryCSN',
+				'modifiersName',
+				'modifyTimestamp',
+				'entryDN',
+				'subschemaSubentry',
+				'hasSubordinates'
+				]
+		self.ou = [
+				'entry',
+				'children',
+				'ou',
+				'displayName',
+				'univentionObjectType',
+				'structuralObjectClass',
+				'entryUUID',
+				'creatorsName',
+				'createTimestamp',
+				'ucsschoolHomeShareFileServer',
+				'ucsschoolClassShareFileServer',
+				'univentionPolicyReference',
+				'objectClass',
+				'entryCSN',
+				'modifiersName',
+				'modifyTimestamp',
+				]
+		self.global_containers = [
+				'objectClass',
+				'univentionObjectType',
+				'description',
+				'cn',
+				'structuralObjectClass',
+				'entryUUID',
+				'creatorsName',
+				'createTimestamp',
+				'entryCSN',
+				'modifiersName',
+				'modifyTimestamp',
+				]
+		self.global_containers_tree = [
+				'entry',
+				'children',
+				'objectClass',
+				'univentionObjectType',
+				'description',
+				'cn',
+				'structuralObjectClass',
+				'entryUUID',
+				'creatorsName',
+				'createTimestamp',
+				'entryCSN',
+				'modifiersName',
+				'modifyTimestamp',
+				]
+		self.computer = [
+				'macAddress',
+				'sambaNTPassword'
+				]
+		self.user = [
+				'krb5KeyVersionNumber',
+				'krb5KDCFlags',
+				'krb5Key',
+				'krb5PasswordEnd',
+				'sambaAcctFlags',
+				'sambaPwdLastSet',
+				'sambaLMPassword',
+				'sambaNTPassword',
+				'shadowLastChange',
+				'shadowMax',
+				'userPassword',
+				'pwhistory',
+				'sambaPwdCanChange',
+				'sambaPwdMustChange',
+				'sambaPasswordHistory',
+				'sambaBadPasswordCount'
+				]
+		self.shares = [
+				'objectClass',
+				'univentionObjectType',
+				'cn',
+				'structuralObjectClass',
+				'entryUUID',
+				'creatorsName',
+				'createTimestamp',
+				'entryCSN',
+				'modifiersName',
+				'modifyTimestamp'
+				]
+		self.dhcp = [
+				'entry',
+				'children',
+				'objectClass',
+				'univentionObjectType',
+				'dhcpOption',
+				'cn',
+				'structuralObjectClass',
+				'entryUUID',
+				'creatorsName',
+				'createTimestamp',
+				'entryCSN',
+				'modifiersName',
+				'modifyTimestamp',
+				]
+		self.member_server = [
+				'krb5KeyVersionNumber',
+				'krb5KDCFlags',
+				'krb5Key',
+				'krb5PasswordEnd',
+				'sambaAcctFlags',
+				'sambaPwdLastSet',
+				'sambaLMPassword',
+				'sambaNTPassword',
+				'shadowLastChange',
+				'shadowMax',
+				'userPassword',
+				'pwhistory',
+				'sambaPwdCanChange',
+				'sambaPwdMustChange',
+				'sambaPasswordHistory',
+				]
+
+
+class LDAPACLTestMatrix(object):
+	def __init__(self, auth_dn, default):
+		self.auth_dn = auth_dn
+		self.default = default
+		self.matrix = {}
+
+	def walkThrougContainer(self, base):
+		lo = getMachineConnection()
+		for container in lo.search(base=base, attr=['*', '+']):
+			yield container
+
+	def addDn(self, target_dn, attrs, access=Access().none):
+		print 'adding target_dn= %s' % (target_dn,)
+		for attr in attrs:
+			print '\tattr= %s,\taccess= %s' % (attr, access)
+			self.matrix.setdefault(target_dn, {})[attr] = access
+		print
+
+	def addSubtree(self, container, attrs, access=Access().none):
+		for target_dn, _ in self.walkThrougContainer(container):
+			self.addDn(target_dn, attrs, access)
+			# for attr in attrs:
+			# 	self.matrix.setdefault(container, {})[attr] = access
+
+	def run(self, base):
+		for target_dn, _ in self.walkThrougContainer(base):
+			attrs = self.get_all_attributes(base)[target_dn]
+			attrs.extend(('children', 'entry'))
+			for attr in attrs:
+				access = Access().none
+				if self.assert_acl(target_dn, Access().Read, attr):
+					access = Access().Read
+				if self.assert_acl(target_dn, Access().Write, attr):
+					access = Access().Write
+				expected_access = self.get_attribute_access(target_dn, attr)
+				if access != expected_access:
+					print '\nDIFFER= User="%s", tried to access Object="%s", Attr="%s", expected="%s", result="%s"' % (self.auth_dn, target_dn, attr, expected_access, access)
+				else:
+					print 'SAME= User="%s", tried to access Object="%s", Attr="%s", expected="%s", result="%s"' % (self.auth_dn, target_dn, attr, expected_access, access)
+
+
+	def get_attribute_access(self, target_dn, attr):
+		if target_dn in self.matrix:
+			return self.matrix[target_dn].get(attr, self.default)
+		else:
+			return self.default
+
+	def get_all_attributes(self, base):
+		"""
+		return dict = {
+			dn1:[attibute1,	attribute2, ..	],
+			dn2:[attibute1,	attribute2, ..	],
+			..
+			}
+		"""
+		containers = list(self.walkThrougContainer(base))
+		return dict([(y, [k for k in x]) for y,x in containers])
+
+	def assert_acl(self, target_dn, access, attr, access_allowance=None):
+		"""Test ACL rule:\n
+		:param target_dn: Target dn to test access to
+		:type target_dn: ldap object dn
+		:param attrs: names of the attributes to test acl against
+		:type attrs: list of str
+		:param access: type of access
+		:type access: str=Access().Read Access().Write or Access().none
+		"""
+		access_allowance = access_allowance if access_allowance else Access().Allowed
+		# print '\n * Authdn = %s\n * Targetdn = %s\n * Attribute = %s\n * Access = %s' % (
+		# 		self.auth_dn, target_dn, attr, access)
+		cmd = [
+				'slapacl',
+				'-f',
+				'/etc/ldap/slapd.conf',
+				'-D',
+				'%(auth_dn)s',
+				'-b',
+				'%(target_dn)s',
+				'%(attr)s/%(access)s',
+				'-d',
+				'0'
+				]
+		argdict = {'auth_dn': self.auth_dn, 'target_dn': target_dn, 'access': access, 'attr': attr}
+		out, err = run_commands([cmd], argdict)[0]
+		if err:
+			result = [x for x in err.split('\n') if (Access().Allowed in x or Access().Denied in x)][0]
+			if result:
+				if access_allowance not in result:
+					return False
+				else:
+					return True
+		else:
+			raise FailCmd('command %r was not executed successfully' % cmd)
+
+	def get_access_dict(auth_dn, target_dn):
+		"""
+		Returns dictionary of dictionaries with the formate:
+		{
+			dn1:{
+				attribute1: access1,
+				attribute2: access2
+				},
+			dn2:{
+				attribute1: access1,
+				attribute2: access2},
+				},
+		...}
+		some cases where special characters included in the attribute, the resulting access is set to None.
+		"""
+		cmd = ['slapacl', '-f', '/etc/ldap/slapd.conf', '-D', '%(auth_dn)s', '-b', '%(target_dn)s', '-d', '0']
+		argdict = {'auth_dn': auth_dn, 'target_dn': target_dn}
+		out, err = run_commands([cmd], argdict)[0]
+		if err:
+			return dict(
+					[
+						(err.split('\n')[0].split('"')[1],
+							dict(
+								[
+									(x.split(': ',1)[0].split('=',1)[0] if '=' in x else None,
+										x.split(': ',1)[1].split('(=',1)[0]  if ':' in x else None) for x in err.split('\n')[1:-1]
+									]
+								)
+							)
+						]
+					)
+			# return dict([(err.split('\n')[0].split('"')[1], dict([(x.split(': ',1)[0].split('=',1)[0] if '=' in x else None, x.split(': ',1)[1].split('(=',1)[0]  if ':' in x else None) for x in err.split('\n')[1:-1]]))])
+
+
+def main():
+	with utu.UCSTestSchool()  as schoolenv:
+		with ucr_test.UCSTestConfigRegistry() as ucr:
+			base_dn = ucr.get('ldap/base')
+			school, school_dn = schoolenv.create_ou(name_edudc=ucr.get('hostname'))
+
+			tea, tea_dn = schoolenv.create_user(school, is_teacher=True)
+			tea_staff, tea_staff_dn = schoolenv.create_user(school, is_teacher=True, is_staff=True)
+			staff, staff_dn = schoolenv.create_user(school, is_staff=True)
+			stu, stu_dn = schoolenv.create_user(school)
+			school_admin_dn, school_admin = schoolenv.create_school_admin(school)
+
+			open_ldap_co = schoolenv.open_ldap_connection()
+			# importing 2 random computers
+			computers = Computers(open_ldap_co, school, 1, 0, 0)
+			created_computers = computers.create()
+			computers_dns = computers.get_dns(created_computers)
+			computers_hostnames = computers.get_hostnames(created_computers)
+			computers_hostnames = [x[:-1] for x in computers_hostnames]
+			room = ComputerRoom(school, host_members=computers_dns)
+			room.add()
+
+			base = utu.UCSTestSchool().get_ou_base_dn(school)
+			room_container_dn = 'cn=raeume,cn=groups,%s' % base
+			shares_dn = 'cn=shares,%s' % base
+
+			teacher_group2_dn = 'cn=lehrer-%s,cn=groups,%s' % (school, base)
+			student_group2_dn = 'cn=schueler-%s,cn=groups,%s' % (school, base)
+
+			teacher_group_dn = 'cn=lehrer,cn=groups,%s' % base
+			student_group_dn = 'cn=schueler,cn=groups,%s' % base
+
+			gid_temp_dn = 'cn=gid,cn=temporary,cn=univention,%s' % base_dn
+			gidNumber_temp_dn = 'cn=gidNumber,cn=temporary,cn=univention,%s' % base_dn
+			sid_temp_dn = 'cn=sid,cn=temporary,cn=univention,%s' % base_dn
+			groupName_temp_dn = 'cn=groupName,cn=temporary,cn=univention,%s' % base_dn
+			mac_temp_dn = 'cn=mac,cn=temporary,cn=univention,%s' % base_dn
+
+			global_univention_dn = 'cn=univention,%s' % base_dn
+			global_policies_dn = 'cn=policies,%s' % base_dn
+			global_dns_dn = 'cn=dns,%s' % base_dn
+			global_groups_dn = 'cn=groups,%s' % base_dn
+
+			dhcp_dn = 'cn=%s,cn=%s,cn=dhcp,%s' % (computers_hostnames[0], school, base)
+
+			singlemaster = ucr.is_true('ucsschool/singlemaster')
+			lo = getMachineConnection()
+			if not singlemaster:
+				slave_found= lo.search(
+						filter="(|(univentionObjectType=computers/domaincontroller_slave)(univentionObjectType=computers/memberserver))",
+						base=base)
+				if slave_found:
+					member_server_dn = slave_found[0][0]
+
+			# lo = getMachineConnection()
+			# r = lo.search(base='cn=dns,dc=najjar,dc=am', scope='base+one',attr=['uid'])
+
+			def add_staff_target_dns(mat, attrs):
+				# mat.addDn(base_dn, attrs.base, Access().Read)
+				# mat.addSubtree(global_univention_dn, attrs.global_containers, Access().Read)
+				# mat.addSubtree(global_policies_dn, attrs.global_containers, Access().Read)
+				# mat.addSubtree(global_dns_dn, attrs.global_containers, Access().Read)
+				# mat.addSubtree(global_groups_dn, attrs.global_containers, Access().Read)
+				mat.addDn(stu_dn, attrs.user, Access().Write)
+				mat.addDn(room_container_dn, attrs.container, Access().Write)
+				mat.addDn(room.dn(), attrs.room, Access().Write)
+
+				mat.addSubtree(gid_temp_dn, attrs.temp_tree, Access().Write)
+				mat.addSubtree(gidNumber_temp_dn, attrs.temp_tree, Access().Write)
+				mat.addSubtree(sid_temp_dn, attrs.temp_tree, Access().Write)
+				mat.addSubtree(groupName_temp_dn, attrs.temp_tree, Access().Write)
+				mat.addSubtree(mac_temp_dn, attrs.temp_tree, Access().Write)
+
+				mat.addDn(gid_temp_dn, attrs.temp, Access().Read)
+				mat.addDn(gidNumber_temp_dn, attrs.temp, Access().Read)
+				mat.addDn(sid_temp_dn, attrs.temp, Access().Read)
+				mat.addDn(groupName_temp_dn, attrs.temp, Access().Read)
+				mat.addDn(mac_temp_dn, attrs.temp, Access().Read)
+
+				mat.addDn(gidNumber_temp_dn, attrs.gid_temp, Access().Write)
+
+				mat.addSubtree(global_univention_dn, attrs.global_containers, Access().Write)
+				mat.addSubtree(global_policies_dn, attrs.global_containers, Access().Write)
+				mat.addSubtree(global_dns_dn, attrs.global_containers, Access().Write)
+				mat.addSubtree(global_groups_dn, attrs.global_containers, Access().Write)
+
+				mat.addSubtree(global_univention_dn, attrs.global_containers, Access().Read)
+				mat.addSubtree(global_policies_dn, attrs.global_containers, Access().Read)
+				mat.addSubtree(global_dns_dn, attrs.global_containers, Access().Read)
+				mat.addSubtree(global_groups_dn, attrs.global_containers, Access().Read)
+
+			def add_teacher_target_dns(mat, attrs):
+				add_staff_target_dns(mat, attrs)
+
+				mat.addSubtree(shares_dn, attrs.container, Access().Write)
+				mat.addDn(shares_dn, attrs.shares, Access().Read)
+
+				mat.addSubtree(teacher_group_dn, attrs.tea_stu_groups_tree, Access().Write)
+				mat.addSubtree(student_group_dn, attrs.tea_stu_groups_tree, Access().Write)
+
+				mat.addDn(teacher_group_dn, attrs.tea_stu_groups, Access().Read)
+				mat.addDn(student_group_dn, attrs.tea_stu_groups, Access().Read)
+
+				mat.addDn(teacher_group2_dn, attrs.tea_stu_groups_tree, Access().Write)
+				mat.addDn(student_group2_dn, attrs.tea_stu_groups_tree, Access().Write)
+
+			def add_admin_target_dns(mat, attrs):
+				add_teacher_target_dns(mat, attrs)
+				mat.addDn(computers_dns[0], attrs.computer, Access().Write)
+				mat.addDn(dhcp_dn, attrs.dhcp, Access().Write)
+				mat.addDn(member_server_dn, attrs.member_server, Access().Write)
+
+			attrs = Attributes()
+
+			# staff_mat = LDAPACLTestMatrix(staff_dn, default=Access().Read)
+			# add_staff_target_dns(staff_mat, attrs)
+			# for test_base in [
+			# 		base, 
+			# 		global_univention_dn, 
+			# 		global_policies_dn, 
+			# 		global_dns_dn, 
+			# 		global_groups_dn, 
+			# 		gid_temp_dn,
+			# 		gidNumber_temp_dn,
+			# 		sid_temp_dn,
+			# 		groupName_temp_dn,
+			# 		mac_temp_dn,
+			# 		]:
+			# 	staff_mat.run(test_base)
+
+			tea_mat = LDAPACLTestMatrix(tea_dn, default=Access().Read)
+			add_teacher_target_dns(tea_mat, attrs)
+			for test_base in [
+					base, 
+					global_univention_dn, 
+					global_policies_dn, 
+					global_dns_dn, 
+					global_groups_dn, 
+					gid_temp_dn,
+					gidNumber_temp_dn,
+					sid_temp_dn,
+					groupName_temp_dn,
+					mac_temp_dn,
+					]:
+				tea_mat.run(test_base)
+
+				# import pdb; pdb.set_trace()
+
+			print '-' * 80, 'DONE'
+
+
+if __name__ == '__main__':
+	main()
