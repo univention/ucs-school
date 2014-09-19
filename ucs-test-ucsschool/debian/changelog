@@ -1,3 +1,11 @@
+ucs-test-ucsschool (1.0.84-1) unstable; urgency=low
+
+  * Bug #34219:
+    90_ucsschool/95_samba4_client_join_on_slave: test the Windows Client
+    join on S4-Slaves.
+
+ -- Dmitry Galkin <galkin@univention.de>  Fri, 19 Sep 2014 13:20:59 +0200
+
 ucs-test-ucsschool (1.0.83-1) unstable; urgency=low
 
   * Bug #35746: add new test script for staff members
