@@ -106,6 +106,7 @@ class Acl(object):
 	contains the basic functuality to test acls for the common container in ucsschool\n
 	may change with time.\n
 	"""
+
 	def __init__(self, school, auth_dn, access_allowance):
 		"""__init__():\n
 		:param school: school name
