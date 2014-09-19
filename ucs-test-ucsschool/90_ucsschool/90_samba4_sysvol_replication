@@ -1,7 +1,7 @@
 #!/usr/share/ucs-test/runner python
 ## desc: Test the Samba SYSVOL replication with multi-school domain setup
 ## bugs: [34225]
-## roles: [domaincontroller_slave]
+## roles: [domaincontroller_slave, domaincontroller_backup]
 ## packages: [univention-samba4]
 ## tags: [apptest, ucsschool]
 ## exposure: dangerous
@@ -51,22 +51,12 @@ class TestSYSVOLReplicationMultiSchool(TestSamba4):
                   "host '%s' is: '%s'" % (command_line, host, stdout))
             return stdout
 
-    def check_sysvol_replication(self, host, wait_sync):
+    def check_sysvol_replication(self, host):
         """
         Executes the command on the given 'host' to check the presence of
         a test GPO folder in Samba sysvol.
-        If 'wait_sync'=True: waits before the check to make sure that
-        a cron job running sysvol sync was executed at least once.
         """
         print "\nChecking SYSVOL replication to host '%s':" % host
-
-        # max time the replication can take is 5 (+1) mins (cron job schedule)
-        if wait_sync:
-            sync_time = 370
-            print("\nWaiting %d seconds to make sure that SYSVOL "
-                  "synchronisation script was run at least once on the '%s'"
-                  % (sync_time, host))
-            sleep(sync_time)
 
         # specifing the path to sysvol (with '\' before '{' and '}')
         sysvol_path = ("/var/lib/samba/sysvol/%s/Policies/\%s/"
@@ -77,7 +67,17 @@ class TestSYSVOLReplicationMultiSchool(TestSamba4):
         command_line = ("[ -d %s ] && echo 'True' || echo 'False'"
                         % sysvol_path)
 
-        remote_stdout = self.execute_cmd_on_host(host, command_line)
+        print "\nWaiting for SYSVOL synchronisation to happen (up to 370 sec.)"
+        remote_stdout = ''
+
+        for attempt in range(37):
+            remote_stdout = self.execute_cmd_on_host(host, command_line)
+            if remote_stdout == 'True':
+               # folder created, replication works
+               return
+            print "Waiting 10 more seconds before next check..."
+            sleep(10)  # wait up to 5 (+1) mins (cron job schedule)
+
         if not remote_stdout:
             utils.fail("The command '%s' executed on the remote host '%s' "
                        "produced no output to 'stdout'" % (command_line, host))
@@ -109,33 +109,43 @@ class TestSYSVOLReplicationMultiSchool(TestSamba4):
             utils.fail("An error occured while running the replication script "
                        "'%s': '%s'" % (repl_script, stderr))
 
-    def get_slave_hostnames_from_search(self, search_results):
+    def get_other_hostnames_from_search(self, search_results):
         """
-        Removes the 'displayName' from 'search_results' and returns the
-        list of slave hostnames in the domain except for the local hostname.
+        Removes the 'displayName' substring from 'search_results' and returns
+        the list of other hostnames in the domain except for the local hostname
+        and the DC-Master if they were present in the search_results.
         """
-        search_results = search_results.replace('displayName: ', '', 1)
+        search_results = search_results.replace('displayName: ', '')
+        sysvol_sync_host = self.UCR.get('samba4/sysvol/sync/host')
         try:
-            slave_hostnames = search_results.split()
-            slave_hostnames.remove(self.UCR['hostname'])
-        except (ValueError, KeyError) as exc:
-            utils.fail("An exception while trying to remove the local "
-                       "hostname from the list of all slave hostnames: "
-                       "%s" % exc)
-        return slave_hostnames
+            other_hostnames = search_results.split()
+
+            # DC-Master might not be in a list if it has no Samba4.
+            if sysvol_sync_host in other_hostnames:
+                # remove the DC Master as it is added to the first place:
+                other_hostnames.remove(sysvol_sync_host)
+
+            # remove local DC hostname:
+            other_hostnames.remove(self.UCR.get('hostname'))
+        except ValueError as exc:
+            utils.fail("An error occured while trying to remove local DC "
+                       "hostname from the list of DCs to be checked. "
+                       "Probably current DC was not in the search results "
+                       "of DCs with Samba-4. Exception: '%s'" % exc)
+        return other_hostnames
 
     def get_other_dc_hostnames(self):
         """
         Invokes the 'univention-ldapsearch' with 'ldap_master' as LDAP
-        server to get the hostnames of all DC-Slave instances in the domain;
-        Excludes the local hostname and returns the list with a DC-Master
-        hostname + all the rest DC-Slave hostnames in the domain.
+        server to get the hostnames of other DC instances in the domain that
+        have S4 running; Excludes the local hostname and returns the list with
+        a DC-Master hostname plus all other DC hostnames in the domain.
         """
-        print("\nGenerating the list of all other DCs in the domain "
-              "to check the SYSVOL replication:")
+        print("\nGenerating the list of other DCs in the domain to check "
+              "the SYSVOL replication:")
 
         ldap_master = self.UCR.get('ldap/master')
-        search_pattern = 'univentionServerRole=slave'
+        search_pattern = 'univentionService=Samba 4'  # pick those with Samba4
 
         cmd = ("univention-ldapsearch", "-h", ldap_master,
                "-p", self.UCR.get('ldap/master/port'),
@@ -161,7 +171,8 @@ class TestSYSVOLReplicationMultiSchool(TestSamba4):
                        "occured during the LDAP search on DC-Master or "
                        "while trying to connect to DC-Master.")
 
-        hosts = [ldap_master] + self.get_slave_hostnames_from_search(stdout)
+        # DC-Master should be the first node to check the replication to:
+        hosts = [ldap_master] + self.get_other_hostnames_from_search(stdout)
         print "The following hosts will be checked:", hosts
         return hosts
 
@@ -196,31 +207,20 @@ class TestSYSVOLReplicationMultiSchool(TestSamba4):
             utils.fail("Could not find the GPO reference in the stdout "
                        "'%s' of the 'samba-tool', error: '%s'" % (stdout, exc))
 
-    def check_remote_sysvol_replication(self):
-        """
-        Run replication checks on all other DCs in the domain.
-        """
-        for index, host in enumerate(self.get_other_dc_hostnames()):
-            if index >= 2:
-                # don't wait for sync as it already happened
-                # (cases after Master -> all Slaves synced):
-                self.check_sysvol_replication(host, False)
-            else:
-                # do check with waiting for syncronisation
-                # (cases Slave -> Master -> all other Slaves):
-                self.check_sysvol_replication(host, True)
-
     def main(self):
         """
         Tests the replication of the Samba SYSVOL with multi-school
-        domain setup (DC-Master + any number of Slaves).
+        domain setup (DC-Master + [optionally DC-Backup] +
+        any number of DC-Slaves).
         """
         try:
             self.get_ucr_test_credentials()
             self.create_samba_gpo()
 
             self.run_local_sysvol_replication()
-            self.check_remote_sysvol_replication()
+
+            for host in self.get_other_dc_hostnames():
+                self.check_sysvol_replication(host)  # check remote replication
         finally:
             if self.gpo_reference:
                 self.delete_samba_gpo()
