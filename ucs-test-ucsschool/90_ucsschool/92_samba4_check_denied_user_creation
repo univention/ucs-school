@@ -82,28 +82,8 @@ class TestS4SlaveUserCreationDenied(TestSamba4):
 
     def main(self):
         """
-        Test that user objects creation is blocked on S4 Slave
-        with any (local) options.
+        Test that user objects creation is blocked on S4 Slave.
         """
-        possible_options = ('--must-change-at-next-login',
-                            '--use-username-as-cn',
-                            '--surname=' + random_string(),
-                            '--given-name=' + random_string(),
-                            '--no-upn',
-                            #'--upn=' + random_string(),  # see Bug #35754
-                            '--initials=' + random_string(),
-                            '--profile-path=/tmp/',
-                            '--script-path=/tmp/',
-                            '--home-drive=' + random_string(6),
-                            '--home-directory=/home/',
-                            '--job-title=test_user',
-                            '--department=QA',
-                            '--company=' + random_string(),
-                            '--description=test_user',
-                            '--mail-address=test@univention.de',
-                            '--internet-address=univention.de',
-                            '--telephone-number=0123456789',
-                            '--physical-delivery-office=' + random_string())
         try:
             self.get_ucr_test_credentials()
             self.credentials = ["--username=" + self.admin_username,
@@ -111,10 +91,6 @@ class TestS4SlaveUserCreationDenied(TestSamba4):
 
             self.create_samba4_user(['Foo1' + random_string()])  # gen-d pass
             self.create_samba4_user(["--random-password"])  # tool's random
-
-            for option in possible_options:
-                self.create_samba4_user(["--random-password", option])
-
         finally:
             if self.remove_user:
                 self.delete_samba4_user()
