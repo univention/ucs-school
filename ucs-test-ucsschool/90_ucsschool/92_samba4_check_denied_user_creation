@@ -71,7 +71,7 @@ class TestS4SlaveUserCreationDenied(TestSamba4):
                 utils.fail("The creation of user '%s' succeded, while should "
                            "be disabled on DC-Slave with Samba4" % username)
 
-        if not stderr or stderr == '\n':
+        if not stderr.strip():
             utils.fail("Expecting the user creation to fail, however, the "
                        "'samba-tool' did not produce any output to STDERR.")
 

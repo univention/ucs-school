@@ -24,12 +24,16 @@ class TestSamba4(object):
         """
         exit(TestCodes.REASON_INSTALL)
 
-    def create_and_run_process(self, cmd, stdin=None, std_input=None):
+    def create_and_run_process(self, cmd,
+                               stdin=None, std_input=None, shell=False):
         """
         Creates a process as a Popen instance with a given 'cmd'
         and executes it. When stdin is needed, it can be provided with kwargs.
         """
-        proc = Popen(cmd, stdin=stdin, stdout=PIPE, stderr=PIPE)
+        proc = Popen(cmd,
+                     stdin=stdin, stdout=PIPE, stderr=PIPE,
+                     shell=shell, close_fds=True)
+
         return proc.communicate(input=std_input)
 
     def grep_for_key(self, grep_in, key):
@@ -44,12 +48,24 @@ class TestSamba4(object):
                        "keyword '%s':\n'%s'" % (key, stderr))
         return stdout
 
-    def get_udm_list_dc_slaves(self):
+    def sed_for_key(self, input, key):
         """
-        Runs the "udm computers/domaincontroller_slave list" and returns the
-        output.
+        Runs sed on given 'input' with a given 'key'. Returns the output.
         """
-        cmd = ("udm", "computers/domaincontroller_slave", "list")
+        cmd = ("sed", "-n", "s/%s//p" % (key,))
+        stdout, stderr = self.create_and_run_process(cmd, PIPE, input)
+        if stderr:
+            utils.fail("An error occured while running a sed command "
+                       "'%s':\n'%s'" % (" ".join(cmd), stderr))
+        return stdout
+
+    def get_udm_list_dc_slaves_with_samba4(self):
+        """
+        Runs the "udm computers/domaincontroller_slave list
+        --filter service=Samba 4" and returns the output.
+        """
+        cmd = ("udm", "computers/domaincontroller_slave", "list",
+               "--filter", "service=Samba 4")
         stdout, stderr = self.create_and_run_process(cmd)
 
         if stderr:
@@ -64,12 +80,11 @@ class TestSamba4(object):
         """
         print "\nSelecting the School OU for the test"
 
-        grep_stdout = self.grep_for_key(self.get_udm_list_dc_slaves(), "DN:")
+        grep_stdout = self.sed_for_key(self.get_udm_list_dc_slaves_with_samba4(),
+                                       "^DN: ")
         if not grep_stdout:
             utils.fail("Could not find the DN in the udm list output, thus "
                        "cannot select the School OU to use as a container")
-        # remove the 'DN:' prefix:
-        grep_stdout = grep_stdout.replace('DN: ', '')
         # select the first School:
         slave_dn = grep_stdout.split()[0]
 

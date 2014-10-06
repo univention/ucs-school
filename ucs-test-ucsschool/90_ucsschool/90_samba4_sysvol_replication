@@ -58,10 +58,9 @@ class TestSYSVOLReplicationMultiSchool(TestSamba4):
         """
         print "\nChecking SYSVOL replication to host '%s':" % host
 
-        # specifing the path to sysvol (with '\' before '{' and '}')
-        sysvol_path = ("/var/lib/samba/sysvol/%s/Policies/\%s/"
+        sysvol_path = ("/var/lib/samba/sysvol/%s/Policies/%s/"
                        % (self.UCR['domainname'],
-                          self.gpo_reference[:-1] + '\}'))
+                          self.gpo_reference))
 
         # command should return 'True' if folder exists and 'False' otherwise:
         command_line = ("[ -d %s ] && echo 'True' || echo 'False'"
@@ -73,8 +72,8 @@ class TestSYSVOLReplicationMultiSchool(TestSamba4):
         for attempt in range(37):
             remote_stdout = self.execute_cmd_on_host(host, command_line)
             if remote_stdout == 'True':
-               # folder created, replication works
-               return
+                # folder created, replication works
+                return
             print "Waiting 10 more seconds before next check..."
             sleep(10)  # wait up to 5 (+1) mins (cron job schedule)
 
@@ -111,11 +110,9 @@ class TestSYSVOLReplicationMultiSchool(TestSamba4):
 
     def get_other_hostnames_from_search(self, search_results):
         """
-        Removes the 'displayName' substring from 'search_results' and returns
-        the list of other hostnames in the domain except for the local hostname
-        and the DC-Master if they were present in the search_results.
+        Returns the list of other hostnames in search_results
+        except for the local hostname and the DC-Master.
         """
-        search_results = search_results.replace('displayName: ', '')
         sysvol_sync_host = self.UCR.get('samba4/sysvol/sync/host')
         try:
             other_hostnames = search_results.split()
@@ -146,12 +143,14 @@ class TestSYSVOLReplicationMultiSchool(TestSamba4):
 
         ldap_master = self.UCR.get('ldap/master')
         search_pattern = 'univentionService=Samba 4'  # pick those with Samba4
+        search_attribute = "displayName"
 
         cmd = ("univention-ldapsearch", "-h", ldap_master,
                "-p", self.UCR.get('ldap/master/port'),
                "-D", self.UCR.get('tests/domainadmin/account'),
                "-w", self.admin_password,
-               search_pattern)
+               search_pattern,
+               search_attribute)
 
         search_stdout, search_stderr = self.create_and_run_process(cmd)
         if search_stderr:
@@ -160,16 +159,19 @@ class TestSYSVOLReplicationMultiSchool(TestSamba4):
                   % (ldap_master, search_pattern, search_stderr))
 
         # reduce the LDAP search results to only 'displayName' fields:
-        stdout, stderr = self.create_and_run_process(("grep", "displayName"),
+        stdout, stderr = self.create_and_run_process(("sed", "-n", "s/^%s: //p"
+                                                      % search_attribute),
                                                      PIPE,
                                                      search_stdout)
         if stderr:
-            utils.fail("An error occured while trying to grep through the "
-                       "LDAP search results from the DC-Master: '%s'" % stderr)
-        if not stdout or stdout == '\n':
-            utils.fail("No output from grep process, possibly an error "
+            utils.fail("An error occured while trying to sed through the "
+                       "LDAP search results from the DC-Master: '%s'. "
+                       "sed input was: '%s'" % (stderr, search_stdout,))
+        if not stdout.strip():
+            utils.fail("No output from sed process, possibly an error "
                        "occured during the LDAP search on DC-Master or "
-                       "while trying to connect to DC-Master.")
+                       "while trying to connect to DC-Master. "
+                       "sed input was: '%s'" % (search_stdout,))
 
         # DC-Master should be the first node to check the replication to:
         hosts = [ldap_master] + self.get_other_hostnames_from_search(stdout)

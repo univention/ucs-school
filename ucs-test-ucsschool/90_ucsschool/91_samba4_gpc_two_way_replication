@@ -159,22 +159,20 @@ class TestGPCReplicationTwoWays(TestSamba4):
         """
         print("\nCurrent server role is DC-Master, trying to find a DC-Slave "
               "in the domain for the test")
-        udm_stdout = self.get_udm_list_dc_slaves()
+        udm_stdout = self.get_udm_list_dc_slaves_with_samba4()
 
-        if not udm_stdout or udm_stdout == '\n':
+        if not udm_stdout.strip():
             print("\nThe udm list to find DC-Slaves did not produce any "
                   "output to STDOUT, assuming there are no DC-Slave in the "
                   "domain. Skipping test...")
             self.return_code_result_skip()
         else:
-            grep_stdout = self.grep_for_key(udm_stdout, "ip:")
-            # remove the 'ip:' prefix:
-            grep_stdout = grep_stdout.replace('ip: ', '')
-            if not grep_stdout:
+            sed_stdout = self.sed_for_key(udm_stdout, "^  ip: ")
+            if not sed_stdout:
                 utils.fail("Could not find at least one IP address of the "
                            "DC-Slave in the output of the udm list command")
 
-            slave_ips = grep_stdout.split()
+            slave_ips = sed_stdout.split()
             print("\nThe DC-Slave(s) with the following IP address(-es) were "
                   "found in the domain: '%s'" % slave_ips)
             self.remote_host = slave_ips[0]

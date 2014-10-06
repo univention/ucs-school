@@ -50,7 +50,7 @@ class TestS4DCLocatorSharesAccess(TestSamba4):
         if stderr:
             print("\nThe Samba client produced the following output "
                   "to STDERR:\n%s" % stderr)
-        if not stdout or stdout == '\n':
+        if not stdout.strip():
             utils.fail("The Samba client did not produce any output to STDOUT,"
                        " while DC-Master Sysvol contents were expected")
 

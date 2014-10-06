@@ -143,7 +143,7 @@ class TestS4ClientJoinIntoSchool(TestSamba4):
         if stderr:
             utils.fail("An error occured while running the udm command. "
                        "STDERR: %s" % stderr)
-        if not stdout or stdout == '\n':
+        if not stdout.strip():
             utils.fail("The udm command did not produce any output to STDOUT,"
                        " while a computer with a name '%s' was expected "
                        "to be listed" % computer_name)
@@ -197,7 +197,7 @@ class TestS4ClientJoinIntoSchool(TestSamba4):
         if stderr:
             utils.fail("An error occured while creating computer in SamDB "
                        "using 'ldbadd' tool: '%s'" % stderr)
-        if not stdout or stdout == '\n':
+        if not stdout.strip():
             utils.fail("The 'ldbadd' tool did not produce any output to "
                        "STDOUT, while a confirmation of computer record "
                        "add was expected")
