@@ -1,8 +1,11 @@
 from sys import exit
+from time import sleep
+from httplib import HTTPException
 from subprocess import Popen, PIPE
 
 from univention.testing.codes import TestCodes
 from univention.config_registry import ConfigRegistry
+from univention.lib.umc_connection import UMCConnection
 
 
 class TestSamba4(object):
@@ -12,9 +15,12 @@ class TestSamba4(object):
         Test class constructor
         """
         self.UCR = ConfigRegistry()
+        self.UMCConnection = None
 
         self.admin_username = ''
         self.admin_password = ''
+
+        self.ldap_master = ''
 
         self.gpo_reference = ''
 
@@ -112,6 +118,27 @@ class TestSamba4(object):
             print("\nAn exception while trying to read data from the UCR for "
                   "the test: '%s'. Skipping the test." % exc)
             self.return_code_result_skip()
+
+    def create_umc_connection_authenticate(self):
+        """
+        Creates UMC connection and authenticates to DC-Master with the test
+        user credentials.
+        """
+        if not self.ldap_master:
+            self.ldap_master = self.UCR.get('ldap/master')
+
+        try:
+            self.UMCConnection = UMCConnection(self.ldap_master)
+            self.UMCConnection.auth(self.admin_username, self.admin_password)
+        except HTTPException as exc:
+            print("An HTTPException while trying to authenticate to UMC: %r"
+                  % exc)
+            print "Waiting 10 seconds and making another attempt"
+            sleep(10)
+            self.UMCConnection.auth(self.admin_username, self.admin_password)
+        except Exception as exc:
+            utils.fail("Failed to authenticate, hostname '%s' : %s" %
+                       (self.ldap_master, exc))
 
     def delete_samba_gpo(self):
         """
