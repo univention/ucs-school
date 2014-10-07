@@ -3,6 +3,8 @@ from time import sleep
 from httplib import HTTPException
 from subprocess import Popen, PIPE
 
+from ucsschool.lib import schoolldap
+
 from univention.testing.codes import TestCodes
 from univention.config_registry import ConfigRegistry
 from univention.lib.umc_connection import UMCConnection
@@ -42,6 +44,39 @@ class TestSamba4(object):
 
         return proc.communicate(input=std_input)
 
+    def start_stop_service(self, service, action):
+        """
+        Starts, stops or restarts the given 'service' depending on the given
+        'action' is 'start', 'stop', 'restart' respectively.
+        """
+        if action in ("start", "stop", "restart"):
+            cmd = ("service", service, action)
+            print "\nExecuting command:", cmd
+
+            stdout, stderr = self.create_and_run_process(cmd)
+            if stderr:
+                utils.fail("An error occured during %sing the '%s' service: %s"
+                           % (action, service, stderr))
+
+            stdout = stdout.strip()
+            if not stdout:
+                utils.fail("The %s command did not produce any output to "
+                           "stdout, while a confirmation was expected"
+                           % action)
+            print stdout
+        else:
+            print("\nUnknown state '%s' is given for the service "
+                  "'%s', accepted 'start' to start it 'stop' to stop or "
+                  "'restart' to restart" % (action, service))
+
+    def is_a_school_branch_site(self, host_dn):
+        """
+        Returns True if the given 'host_dn' is located in the
+        School branch site.
+        """
+        if schoolldap.SchoolSearchBase.getOU(host_dn):
+            return True
+
     def grep_for_key(self, grep_in, key):
         """
         Runs grep on given 'grep_in' with a given 'key'. Returns the output.
@@ -65,20 +100,35 @@ class TestSamba4(object):
                        "'%s':\n'%s'" % (" ".join(cmd), stderr))
         return stdout
 
-    def get_udm_list_dc_slaves_with_samba4(self):
+    def get_udm_list_dcs(self, dc_type, with_samba4=True):
         """
-        Runs the "udm computers/domaincontroller_slave list
-        --filter service=Samba 4" and returns the output.
+        Runs the "udm computers/'dc_type' list" and returns the output.
+        If 'with_samba4' is 'True' returns only those running Samba 4.
         """
-        cmd = ("udm", "computers/domaincontroller_slave", "list",
-               "--filter", "service=Samba 4")
-        stdout, stderr = self.create_and_run_process(cmd)
+        if dc_type not in ('domaincontroller_master',
+                           'domaincontroller_backup',
+                           'domaincontroller_slave'):
 
+            print "\nThe given DC type '%s' is unknown" % dc_type
+            self.return_code_result_skip()
+
+        cmd = ("udm", "computers/" + dc_type, "list")
+        if with_samba4:
+            cmd += ("--filter", "service=Samba 4")
+
+        stdout, stderr = self.create_and_run_process(cmd)
         if stderr:
             utils.fail("An error occured while running a '%s' command to "
-                       "find a DC-Slave in the domain:\n'%s'"
-                       % (cmd, stderr))
+                       "find all '%s' in the domain:\n'%s'"
+                       % (" ".join(cmd), dc_type, stderr))
         return stdout
+
+    def get_udm_list_dc_slaves_with_samba4(self):
+        """
+        Returns the output of "udm computers/domaincontroller_slave list
+        --filter service=Samba 4" command.
+        """
+        return self.get_udm_list_dcs("domaincontroller_slave")
 
     def select_school_ou(self, schoolname_only=False):
         """

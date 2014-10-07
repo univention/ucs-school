@@ -7,10 +7,10 @@
 ##  - domaincontroller_slave
 ## packages: [univention-samba4]
 ## tags: [apptest, ucsschool]
-## exposure: safe
+## exposure: careful
 
 from sys import exit
-from subprocess import PIPE
+from time import sleep
 
 from essential.test_samba4 import TestSamba4
 
@@ -25,135 +25,125 @@ class TestS4DCLocatorDNS(TestSamba4):
         """
         super(TestS4DCLocatorDNS, self).__init__()
 
-        self.local_dc_name = ''
-        self.local_server_role = ''
-        self.ldap_master = ''
+        self.site_dcs = []  # stores DCs located at the same school site/branch
 
-    def get_backup_fqdn(self):
+    def check_dc_location(self):
         """
-        Runs the "udm computers/domaincontroller_backup list", greps the
-        results for 'fqdn' and returns it.
+        Performs the lookup and checks results.
+        Possible fail cases:
+         No DCs located, but at least one correct option exists;
+         No correct options exist, but a DC was located;
+         Located DC does not fit the list of correct options.
+        Possible success cases:
+         No DCs located and no DC options are available;
+         Located DC is in the list of DC options.
         """
-        cmd = ("udm", "computers/domaincontroller_backup", "list")
-        stdout, stderr = self.create_and_run_process(cmd)
+        print("\nChecking if a right DC was located, correct options are: %s"
+              % self.site_dcs)
+        located_dc = self.get_dc_names()
 
-        if stderr:
-            utils.fail("An error occured while running a '%s' command to "
-                       "find a DC-Backup in the domain:\n'%s'" % (cmd, stderr))
+        if self.site_dcs and not located_dc:
+            utils.fail("No DCs were located while there is at least "
+                       "one correct option exists.")
 
-        sed_stdout = self.sed_for_key(stdout, "^  fqdn: ")
-        if not sed_stdout:
-            utils.fail("Could not find the DC-Backup fully qualified domain "
-                       "name in the output of %s" % cmd)
-        return sed_stdout.strip()
+        if not self.site_dcs and not located_dc:
+            print("\nNo DCs are in the list of correct options and "
+                  "no DCs were located.")
+            return
 
-    def check_dc_on_slave(self, dc_name):
-        """
-        Checks if located DC is the local DC itself.
-        """
-        if self.local_dc_name in dc_name:
-            print "\nThe DC '%s' was located correctly." % self.local_dc_name
-        else:
-            utils.fail("The DC was not located correctly, should be '%s', "
-                       "while in fact: '%s'" % (self.local_dc_name, dc_name))
+        for correct_dc in self.site_dcs:
+            if correct_dc in located_dc:
+                return
 
-    def check_dc_on_master_or_backup(self, dc_name):
-        """
-        Checks if located DC is correct on DC-Backup or DC-Master.
-        """
-        if self.local_dc_name in dc_name:
-            print "\nThe DC '%s' was located correctly." % self.local_dc_name
-        else:
-            if self.local_server_role == 'domaincontroller_backup':
-                if self.ldap_master in dc_name:
-                    # on DC-Backup a DC-Master can also be located:
-                    print("\nFor current DC '%s' the DC-Master '%s' was "
-                          "located." % (self.local_dc_name, self.ldap_master))
-                else:
-                    utils.fail("Neither the '%s', nor the '%s' DC was located."
-                               % (self.local_dc_name, self.ldap_master))
-            else:
-                if self.get_backup_fqdn() in dc_name:
-                    # on DC-Master a DC-Backup can also be located:
-                    print("\nFor current DC '%s' the DC-Backup was located."
-                          % self.local_dc_name)
-                else:
-                    utils.fail("Neither the '%s', nor a DC-Backup was located."
-                               % self.local_dc_name)
-
-    def check_dc_amount_and_location(self, dc_name):
-        """
-        Checks whether the correct DC was located:
-         for DC-Slave -> itself only;
-         for DC-Backup -> itself or DC-Master;
-         for DC-Master -> itself or DC-Backup;
-        """
-        print "\nThe located DC is '%s'" % dc_name
-        if self.local_server_role == 'domaincontroller_slave':
-            self.check_dc_on_slave(dc_name)
-        else:
-            self.check_dc_on_master_or_backup(dc_name)
+        utils.fail("None of the correct DC options were found "
+                   "among the located DC:\n%s" % located_dc.strip())
 
     def get_dc_names(self):
         """
-        Uses 'net ads lookup' to find and return located DCs.
+        Uses 'net ads lookup' to find and return located Domain Controller.
         """
         cmd = ("net", "ads", "lookup")
+
         stdout, stderr = self.create_and_run_process(cmd)
-
         if stderr:
-            print("\nAn error occured duriung %s command execution, STDERR: "
-                  "'%s'" % (cmd, stderr.rstrip()))
-        if not stdout.strip():
-            utils.fail("The %s did not produce any output, while Domain "
-                       "Controller Location was expected" % cmd)
+            print("\nThe following message occured during '%s' command "
+                  "execution, STDERR:\n%s" % (" ".join(cmd), stderr.strip()))
 
-        cmd = ("grep", "Domain Controller:")
-        grep_stdout, grep_stderr = self.create_and_run_process(cmd,
-                                                               PIPE,
-                                                               stdout)
-        if grep_stderr:
-            print("\nAn error occured duriung %s command execution, STDERR: "
-                  "'%s'" % (cmd, grep_stderr.rstrip()))
+        grep_stdout = self.grep_for_key(stdout, "Domain Controller:")
+        grep_stdout = grep_stdout.strip()
+
         if not grep_stdout:
-            utils.fail("The 'Domain Controller:' line was not found in the "
-                       "output from 'net ads lookup', i.e. "
-                       "no Domain Controllers were located")
-
-        dcs_found = 0  # total amount of DC lines found
-
-        for line in grep_stdout.splitlines():
-            if line.startswith("Domain Controller:"):
-                dc_name = line
-                dcs_found += 1
-
-        if dcs_found != 1:
-            utils.fail("The amount of DCs found is '%d', while should be "
-                       "1 only." % dcs_found)
-
+            print("The 'Domain Controller:' line was not found in the output "
+                  "from 'net ads lookup', i.e. no Domain Controllers "
+                  "were located.")
         return grep_stdout
 
-    def get_ucr_settings(self):
+    def populate_list_of_site_dcs(self):
         """
-        Saves the respective UCR settings into self.local_dc_name,
-        self.local_server_role and self.ldap_master.
+        Detects if current DC is in the School branch site or in the central
+        School department. Populates the list with all DCs running Samba 4
+        located in the branch or central department respectively via UDM list.
         """
-        try:
-            self.local_dc_name = self.UCR['ldap/server/name']
-            self.local_server_role = self.UCR['server/role']
-            self.ldap_master = self.UCR['ldap/master']
-        except KeyError as exc:
-            print("\nAn error occured while trying to obtain UCR "
-                  "variables for the test: %r" % exc)
-            self.return_code_result_skip()
+        if self.is_a_school_branch_site(self.UCR.get('ldap/hostdn')):
+            # in a branch site (looks for DC-Slaves)
+            branch_dcs = self.sed_for_key(self.get_udm_list_dc_slaves_with_samba4(),
+                                          "^  fqdn: ")
+
+            self.site_dcs.extend(branch_dcs.split())
+            print("\nThe following DCs are located in the current "
+                  "School branch site:\n%s" % branch_dcs)
+
+        else:
+            # in a central department site (looks for DC-Master and DC-Backup)
+            central_dcs = self.sed_for_key(self.get_udm_list_dcs(
+                                                    "domaincontroller_master"),
+                                           "^  fqdn: ")
+            central_dcs += self.sed_for_key(self.get_udm_list_dcs(
+                                                    "domaincontroller_backup"),
+                                            "^  fqdn: ")
+            self.site_dcs.extend(central_dcs.split())
+            print("\nThe following DCs are located in the current "
+                  "central School department:\n%s" % central_dcs)
 
     def main(self):
         """
-        Tests the Domain Controller location process as done by net ads lookup.
+        Tests the Domain Controller location process as done by the
+        'net ads lookup'.
+        Correct DC location behavior:
+         for DC-Slave -> itself or other DC-Slave within the same branch;
+         for DC-Backup -> itself or DC-Master in a central department;
+         for DC-Master -> itself or DC-Backup in a central department;
         """
-        self.get_ucr_test_credentials()
-        self.get_ucr_settings()
-        self.check_dc_amount_and_location(self.get_dc_names())
+        try:
+            self.UCR.load()
+            self.populate_list_of_site_dcs()  # get all site DCs with Samba4
+
+            # case 1: samba-ad-dc running and any current site DC can be
+            # located including the local (current) DC itself
+            print("\nForcing the 'samba-ad-dc' service start to "
+                                                            "ensure it runs:")
+            self.start_stop_service('samba-ad-dc', 'start')
+            sleep(30)  # wait to ensure that 'samba-ad-dc' works
+            self.check_dc_location()
+
+            # case 2: samba-ad-dc stopped and current DC should not be located,
+            # other DCs in a current site can be located (if there are any)
+            print("\nForcing the 'samba-ad-dc' service stop to "
+                                                       "ensure it is stopped:")
+            self.start_stop_service('samba-ad-dc', 'stop')
+            try:
+                self.site_dcs.remove(self.UCR.get('ldap/server/name'))
+            except ValueError as exc:
+                utils.fail("An error occured while trying to remove the "
+                           "current DC name from the list of site DCs that "
+                           "can be discovered: %r. Current DC should be "
+                           "present in this list." % exc)
+
+            self.check_dc_location()
+        finally:
+            print "\nForcing the 'samba-ad-dc' service (re-)start:"
+            self.start_stop_service('samba-ad-dc', 'restart')
+            sleep(30)  # wait to ensure that 'samba-ad-dc' works
 
 
 if __name__ == '__main__':
