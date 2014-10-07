@@ -1,3 +1,9 @@
+ucs-test-ucsschool (1.0.86-1) unstable; urgency=low
+
+  * Bug #35746: new script '76_ldap_acls'
+
+ -- Ammar Najjar <najjar@univention.de>  Fri, 26 Sep 2014 12:09:06 +0200
+
 ucs-test-ucsschool (1.0.85-1) unstable; urgency=low
 
   * Bug #34221:
@@ -16,8 +22,8 @@ ucs-test-ucsschool (1.0.84-1) unstable; urgency=low
 ucs-test-ucsschool (1.0.83-1) unstable; urgency=low
 
   * Bug #35746: add new test script for staff members
-  * Bug #35746: add new test script for staff,teacher, teacher and staff, 
-	admin users, this might be replaced by the first script after 
+  * Bug #35746: add new test script for staff,teacher, teacher and staff,
+	admin users, this might be replaced by the first script after
 	being generalized.
 
  -- Ammar Najjar <najjar@univention.de>  Mon, 15 Sep 2014 12:53:05 +0200
@@ -48,7 +54,7 @@ ucs-test-ucsschool (1.0.80-1) unstable; urgency=low
 ucs-test-ucsschool (1.0.79-1) unstable; urgency=low
 
   * Bug #34214 and #34216:
-    90_ucsschool/91_samba4_gpc_two_way_replication: test the GPC objects and 
+    90_ucsschool/91_samba4_gpc_two_way_replication: test the GPC objects and
     links replication from DC-Master to DC-Slave or from DC-Slave to DC-Master;
     90_ucsschool/essential/test_samba4.py: a helper class for Samba4 related
     tests.
@@ -188,7 +194,7 @@ ucs-test-ucsschool (1.0.64-1) unstable; urgency=low
 ucs-test-ucsschool (1.0.63-1) unstable; urgency=low
 
   * Bug #34491 fixing the issue of not assigning an internet rule to a workinggorup
-  * when district mode is enabled.	
+  * when district mode is enabled.
 
  -- Ammar Najjar <najjar@univention.de>  Wed, 28 May 2014 11:25:19 +0200
 
@@ -570,7 +576,7 @@ ucs-test-ucsschool (1.0.15-2) unstable; urgency=medium
 
 ucs-test-ucsschool (1.0.15-1) unstable; urgency=low
 
-  * Bug #34280 increasing timeout to 60secs 
+  * Bug #34280 increasing timeout to 60secs
         & adding printed message for final state
 
  -- Ammar Najjar <najjar@univention.de>  Wed, 23 Apr 2014 10:50:04 +0200
