@@ -1,3 +1,9 @@
+ucs-test-ucsschool (1.0.86-2) unstable; urgency=low
+
+  * Bug #35746: updated script "76_ldap_acls"
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Tue, 21 Oct 2014 21:22:49 +0200
+
 ucs-test-ucsschool (1.0.86-1) unstable; urgency=low
 
   * Bug #35746: new script '76_ldap_acls'
