@@ -4,12 +4,14 @@
 ## roles: [domaincontroller_master]
 ## tags: [apptest, ucsschool]
 ## exposure: dangerous
+## bugs: [36251]
 ## packages: [ucs-school-umc-computerroom, ucs-school-umc-exam]
 
 from datetime import datetime, timedelta
 from essential.computerroom import Room, Computers
 from essential.exam import Exam
 from essential.klasse import Klasse
+from univention.testing.ucs_samba import wait_for_s4connector
 import subprocess
 import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool as utu
@@ -31,12 +33,19 @@ def check_proof_uniqueMember():
 	if returncode != 0:
 		utils.fail('Proof unique members failed')
 
+
+def wait_replications_check_rejected_uniqueMember():
+	utils.wait_for_replication()
+	wait_for_s4connector()
+	check_s4_rejected()
+	check_proof_uniqueMember()
+
+
 def main():
 	with utu.UCSTestSchool() as schoolenv:
 		with ucr_test.UCSTestConfigRegistry() as ucr:
 
-			check_s4_rejected()
-			check_proof_uniqueMember()
+			wait_replications_check_rejected_uniqueMember()
 
 			school, oudn = schoolenv.create_ou(name_edudc=ucr.get('hostname'))
 			klasse = Klasse(school=school)
@@ -65,6 +74,9 @@ def main():
 
 			current_time = datetime.now()
 			chosen_time = current_time + timedelta(hours=2)
+
+			wait_replications_check_rejected_uniqueMember()
+
 			examEndTime = chosen_time.strftime("%H:%M")
 			exam = Exam(
 					school=school,
@@ -74,19 +86,10 @@ def main():
 					)
 
 			exam.start()
-
-			check_s4_rejected()
-			check_proof_uniqueMember()
-
-			utils.wait_for_replication_and_postrun()
-
-			check_s4_rejected()
-			check_proof_uniqueMember()
+			wait_replications_check_rejected_uniqueMember()
 
 			exam.finish()
-
-			check_s4_rejected()
-			check_proof_uniqueMember()
+			wait_replications_check_rejected_uniqueMember()
 
 
 if __name__ == '__main__':
