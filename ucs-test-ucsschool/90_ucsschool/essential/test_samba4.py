@@ -1,6 +1,8 @@
 from sys import exit
+from os import getenv
 from time import sleep
 from httplib import HTTPException
+from samba.param import LoadParm
 from subprocess import Popen, PIPE
 
 from ucsschool.lib import schoolldap
@@ -33,13 +35,15 @@ class TestSamba4(object):
         exit(TestCodes.REASON_INSTALL)
 
     def create_and_run_process(self, cmd,
-                               stdin=None, std_input=None, shell=False):
+                               stdin=None, std_input=None,
+                               shell=False, stdout=PIPE):
         """
         Creates a process as a Popen instance with a given 'cmd'
         and executes it. When stdin is needed, it can be provided with kwargs.
+        To write to a file an istance can be provided to stdout.
         """
         proc = Popen(cmd,
-                     stdin=stdin, stdout=PIPE, stderr=PIPE,
+                     stdin=stdin, stdout=stdout, stderr=PIPE,
                      shell=shell, close_fds=True)
 
         return proc.communicate(input=std_input)
@@ -152,6 +156,22 @@ class TestSamba4(object):
         # return the full ou= (with dc):
         return slave_dn[slave_dn.find("ou="):]
 
+    def get_samba_sam_ldb_path(self):
+        """
+        Returns the 'sam.ldb' path using samba conf or defaults.
+        """
+        print("\nObtaining the Samba configuration to determine "
+              "Samba private path")
+        smb_conf_path = getenv("SMB_CONF_PATH")
+        SambaLP = LoadParm()
+
+        if smb_conf_path:
+            SambaLP.load(smb_conf_path)
+        else:
+            SambaLP.load_default()
+
+        return SambaLP.private_path('sam.ldb')
+
     def get_ucr_test_credentials(self):
         """
         Loads the UCR to get credentials for the test.
@@ -182,8 +202,8 @@ class TestSamba4(object):
             self.UMCConnection = UMCConnection(self.ldap_master)
             self.UMCConnection.auth(self.admin_username, self.admin_password)
         except HTTPException as exc:
-            print("An HTTPException while trying to authenticate to UMC: %r"
-                  % exc)
+            print("An HTTPException occured while trying to authenticate "
+                  "to UMC: %r" % exc)
             print "Waiting 10 seconds and making another attempt"
             sleep(10)
             self.UMCConnection.auth(self.admin_username, self.admin_password)

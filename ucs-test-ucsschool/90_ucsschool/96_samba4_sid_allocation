@@ -13,7 +13,6 @@ from os import getenv
 from sys import exit
 from time import sleep
 from httplib import HTTPException
-from samba.param import LoadParm
 
 from essential.test_samba4 import TestSamba4
 
@@ -193,22 +192,6 @@ class TestS4SIDAllocation(TestSamba4):
         else:
             self.test_remotely = True
             self.create_umc_connection_authenticate()
-
-    def get_samba_sam_ldb_path(self):
-        """
-        Returns the 'sam.ldb' path using samba conf or defaults.
-        """
-        print("\nObtaining the Samba configuration to determine "
-              "Samba private path")
-        smb_conf_path = getenv("SMB_CONF_PATH")
-        SambaLP = LoadParm()
-
-        if smb_conf_path:
-            SambaLP.load(smb_conf_path)
-        else:
-            SambaLP.load_default()
-
-        return SambaLP.private_path('sam.ldb')
 
     def main(self):
         """
