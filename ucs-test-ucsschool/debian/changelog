@@ -1,3 +1,11 @@
+ucs-test-ucsschool (1.0.88-1) unstable; urgency=low
+
+  * Bug #34222:
+    90_ucsschool/97_samba4_dns_srv_replication: test the DNS SRV
+    records replication.
+
+ -- Dmitry Galkin <galkin@univention.de>  Mon, 27 Oct 2014 15:21:22 +0100
+
 ucs-test-ucsschool (1.0.87-1) unstable; urgency=low
 
   * Bug #36214: add new test script "101_exam_mode"
