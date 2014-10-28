@@ -246,6 +246,8 @@ class TestS4ClientJoinIntoSchool(TestSamba4):
                 sleep(30)  # wait for replication
 
             machine_password = self.join_a_computer(computer_name)
+            sleep(20)  # wait before performing checks
+
             self.check_computer_via_udm(computer_name)
             self.check_sysvol_access(computer_name, machine_password)
         finally:
@@ -269,7 +271,7 @@ if __name__ == '__main__':
           "of a computer account:")
     TestProcess = Process(target=TestWindowsClientJoin.main, args=(True,))
     TestProcess.start()
-    TestProcess.join(150)
+    TestProcess.join(200)
 
     if TestProcess.exitcode:
         utils.fail("There were errors during join with a pre-created computer "
@@ -280,7 +282,7 @@ if __name__ == '__main__':
           "account pre-created beforehand:")
     TestProcess = Process(target=TestWindowsClientJoin.main)
     TestProcess.start()
-    TestProcess.join(120)
+    TestProcess.join(170)
 
     if TestProcess.exitcode:
         utils.fail("There were errors during join without a pre-created "
