@@ -58,6 +58,8 @@
 		<itemizedlist>
 			<listitem>
 				<simpara>
+					Domain controllers and member servers have now the permission to create LDAP
+					objects for cloud connections (<ulink url="&ucsbug;36323">Bug 36323</ulink>).
 				</simpara>
 			</listitem>
 		</itemizedlist>

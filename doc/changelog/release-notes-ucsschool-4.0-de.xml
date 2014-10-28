@@ -122,19 +122,16 @@ feedback@univention.de
 			</para>
 			<itemizedlist>
 				<listitem>
-					<para>Chrome ab Version 14</para>
+					<para>Chrome ab Version 33</para>
 				</listitem>
 				<listitem>
-					<para>Firefox ab Version 10</para>
+					<para>Firefox ab Version 24</para>
 				</listitem>
 				<listitem>
 					<para>Internet Explorer ab Version 9 </para>
 				</listitem>
 				<listitem>
-					<para>Safari (auf dem iPad 2)</para>
-				</listitem>
-				<listitem>
-					<para>Android-Browser (ab Android 4.1)</para>
+					<para>Safari und Safari Mobile ab Version 7</para>
 				</listitem>
 			</itemizedlist>
 			<para>
