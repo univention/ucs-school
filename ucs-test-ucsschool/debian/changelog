@@ -1,3 +1,9 @@
+ucs-test-ucsschool (1.0.89-1) unstable; urgency=low
+
+  * Bug #35746: "disabled" 76_ldap_acls
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Mon, 03 Nov 2014 13:09:25 +0100
+
 ucs-test-ucsschool (1.0.88-1) unstable; urgency=low
 
   * Bug #34222:
