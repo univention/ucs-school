@@ -1,3 +1,9 @@
+italc-windows (2.0.0-1) unstable; urgency=medium
+
+  * Bug #35892: Start UCS 4.0 development
+
+ -- Florian Best <best@univention.de>  Wed, 05 Nov 2014 14:59:47 +0100
+
 italc-windows (1.0.1-2) unstable; urgency=low
 
   * readded binaries due to SVN mime-type problems (Bug #30329)

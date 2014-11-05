@@ -38,4 +38,4 @@ override_dh_auto_test:
 	ucslint
 
 %:
-	dh $@
+	dh $@ --with python_support

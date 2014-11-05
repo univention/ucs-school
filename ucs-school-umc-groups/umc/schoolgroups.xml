@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <umc version="2.0">
-	<module id="schoolgroups" icon="schoolgroups" version="1.0">
+	<module id="schoolgroups" version="1.0">
 	<categories>
 		<category name="ucs-school-admin"/>
 	</categories>
-	<flavor icon="schoolgroups-class" id="class" priority="21">
+	<flavor id="class" priority="21">
 	  <name>Assign teachers to classes</name>
 	  <description>Associate teachers with classes</description>
 	</flavor>
-	<flavor icon="schoolgroups-workgroup" id="workgroup" priority="20">
+	<flavor id="workgroup" priority="20">
 	  <name>Edit workgroups</name>
 	  <description>Edit members of workgroups</description>
 	</flavor>
-	<flavor icon="schoolgroups-workgroup" id="workgroup-admin" overwrites="workgroup"  priority="20">
+	<flavor id="workgroup-admin" overwrites="workgroup"  priority="20">
 	  <name>Administrate workgroups</name>
 	  <description>Add and modify workgroups</description>
 	</flavor>

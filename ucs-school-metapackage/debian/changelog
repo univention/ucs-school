@@ -1,3 +1,9 @@
+ucs-school-metapackage (7.0.0-1) unstable; urgency=medium
+
+  * Bug #35892: Start UCS 4.0 development
+
+ -- Florian Best <best@univention.de>  Wed, 05 Nov 2014 14:59:49 +0100
+
 ucs-school-metapackage (6.0.8-10) unstable; urgency=low
 
   * Bug #34831: Remove ucs-overview entry in postrm

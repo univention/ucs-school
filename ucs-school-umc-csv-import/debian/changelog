@@ -1,3 +1,9 @@
+ucs-school-umc-csv-import (2.0.0-1) unstable; urgency=medium
+
+  * Bug #35892: Start UCS 4.0 development
+
+ -- Florian Best <best@univention.de>  Wed, 05 Nov 2014 14:59:51 +0100
+
 ucs-school-umc-csv-import (1.0.23-3) unstable; urgency=low
 
   * Bug #35390: Wording when successfully completing the import

@@ -1,3 +1,9 @@
+ucs-school-webproxy (11.0.0-1) unstable; urgency=medium
+
+  * Bug #35892: Start UCS 4.0 development
+
+ -- Florian Best <best@univention.de>  Wed, 05 Nov 2014 14:59:53 +0100
+
 ucs-school-webproxy (10.0.4-1) unstable; urgency=low
 
   * Bug #35408: fixed open file handle leak

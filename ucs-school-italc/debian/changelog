@@ -1,3 +1,9 @@
+ucs-school-italc (9.0.0-1) unstable; urgency=medium
+
+  * Bug #35892: Start UCS 4.0 development
+
+ -- Florian Best <best@univention.de>  Wed, 05 Nov 2014 14:59:48 +0100
+
 ucs-school-italc (8.0.1-1) unstable; urgency=low
 
   * removed ItalcVncConnection::shutdownAndDestroyLater() (Bug #27534)

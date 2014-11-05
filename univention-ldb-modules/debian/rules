@@ -46,7 +46,7 @@ WAF=buildtools/bin/waf
 export PYTHON=$(shell which `pyversions -r`)
 
 %:
-	dh $@
+	dh $@ --with python_support
 
 override_dh_auto_configure:
 	dh_testdir

@@ -1,3 +1,9 @@
+ucs-school-ucc-integration (2.0.0-1) unstable; urgency=medium
+
+  * Bug #35892: Start UCS 4.0 development
+
+ -- Florian Best <best@univention.de>  Wed, 05 Nov 2014 14:59:50 +0100
+
 ucs-school-ucc-integration (1.0.6-1) unstable; urgency=low
 
   * do not set squid/krb5auth in ucc join script (Bug #31995) 

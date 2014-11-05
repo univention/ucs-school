@@ -1,3 +1,9 @@
+ucs-school-umc-computerroom (6.0.0-1) unstable; urgency=medium
+
+  * Bug #35892: Start UCS 4.0 development
+
+ -- Florian Best <best@univention.de>  Wed, 05 Nov 2014 14:59:51 +0100
+
 ucs-school-umc-computerroom (5.0.8-1) unstable; urgency=low
 
   * Bug #35341: fix log message

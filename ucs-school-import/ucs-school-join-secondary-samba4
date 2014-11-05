@@ -398,7 +398,7 @@ eval "$(univention-config-registry shell)"
 my_sid=$(univention-ldapsearch -x -b "$ldap_hostdn" sambaSID | sed -n 's/^sambaSID: //p')
 echo "Checking my SID '$my_sid' in the remote Samba4:"
 univention-ssh --no-split "$ROOTPWD" "root@${target_school_dc_ip}" \
-        'TMP_SCRIPT=$(mktemp) && trap "rm -f \"$TMP_SCRIPT\"" EXIT && cat >"$TMP_SCRIPT" && /usr/bin/python2.6 "$TMP_SCRIPT" && /etc/init.d/samba-ad-dc restart' \
+        'TMP_SCRIPT=$(mktemp) && trap "rm -f \"$TMP_SCRIPT\"" EXIT && cat >"$TMP_SCRIPT" && /usr/bin/python2.7 "$TMP_SCRIPT" && /etc/init.d/samba-ad-dc restart' \
 	<<%EOF
 #!/usr/bin/python
 import ldb

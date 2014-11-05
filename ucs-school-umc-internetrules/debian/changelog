@@ -1,3 +1,9 @@
+ucs-school-umc-internetrules (10.0.0-1) unstable; urgency=medium
+
+  * Bug #35892: Start UCS 4.0 development
+
+ -- Florian Best <best@univention.de>  Wed, 05 Nov 2014 14:59:52 +0100
+
 ucs-school-umc-internetrules (9.0.0-0) unstable; urgency=low
 
   * bumped version for UCS@school 3.1 R2

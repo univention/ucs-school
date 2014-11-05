@@ -3,7 +3,7 @@
 # UCS@School Helpdesk Module
 #  rules file for generating the deb package
 #
-# Copyright 2004-2013 Univention GmbH
+# Copyright 2004-2014 Univention GmbH
 #
 # http://www.univention.de/
 #
@@ -35,7 +35,7 @@ D=$(CURDIR)/debian/${PACKAGE_NAME}
 DM=$(CURDIR)/debian/${PACKAGE_NAME}-schema
 
 %:
-	dh $@
+	dh $@ --with python_support
 
 override_dh_auto_install:
 	dh_auto_install

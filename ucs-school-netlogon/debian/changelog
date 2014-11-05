@@ -1,3 +1,9 @@
+ucs-school-netlogon (5.0.0-1) unstable; urgency=medium
+
+  * Bug #35892: Start UCS 4.0 development
+
+ -- Florian Best <best@univention.de>  Wed, 05 Nov 2014 14:59:49 +0100
+
 ucs-school-netlogon (4.0.0-0) unstable; urgency=low
 
   * Bug #33918: create netlogon scripts with executable permissions for others

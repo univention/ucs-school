@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <umc version="2.0">
-	<module id="schoolwizards" icon="schoolwizards-school" version="1.0">
+	<module id="schoolwizards" version="1.0">
 		<categories>
 			<category name="ucs-school-admin"/>
 		</categories>
-		<flavor icon="schoolwizards-user" id="schoolwizards/users" priority="53">
+		<flavor id="schoolwizards/users" priority="53">
 			<name>Users (schools)</name>
 			<description>Management of users for schools (students, teachers, staff)</description>
 		</flavor>
-		<flavor icon="schoolwizards-class" id="schoolwizards/classes" priority="52">
+		<flavor id="schoolwizards/classes" priority="52">
 			<name>Classes (schools)</name>
 			<description>Management of classes for schools</description>
 		</flavor>
-		<flavor icon="schoolwizards-computer" id="schoolwizards/computers" priority="51">
+		<flavor id="schoolwizards/computers" priority="51">
 			<name>Computers (schools)</name>
 			<description>Management of computers for schools</description>
 		</flavor>
-		<flavor icon="schoolwizards-school" id="schoolwizards/schools" priority="50">
+		<flavor id="schoolwizards/schools" priority="50">
 			<name>Schools</name>
 			<description>Management of schools in the domain</description>
 		</flavor>

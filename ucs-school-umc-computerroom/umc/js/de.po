@@ -520,11 +520,11 @@ msgstr "UCC-Klienten können keine Präsentation halten."
 
 #: umc/js/computerroom.js:727
 msgid "Ubuntu"
-msgstr ""
+msgstr "Ubuntu"
 
 #: umc/js/computerroom.js:726
 msgid "Univention Corporate Client"
-msgstr ""
+msgstr "Univention Corporate Client"
 
 #: umc/js/computerroom.js:728
 msgid "Unknown"
@@ -568,7 +568,7 @@ msgstr "Welche Aktion soll auf die ausgewählten Computer angewendet werden?"
 
 #: umc/js/computerroom.js:725
 msgid "Windows"
-msgstr ""
+msgstr "Windows"
 
 #: umc/js/computerroom.js:774
 msgid "{0} computers are in this room"

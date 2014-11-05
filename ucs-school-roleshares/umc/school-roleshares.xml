@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <umc version="2.0">
-	<module id="school-roleshares" icon="school-roleshares" version="1.0">
+	<module id="school-roleshares" version="1.0">
 		<categories>
 			<category name="ucs-school-admin"/>
 		</categories>

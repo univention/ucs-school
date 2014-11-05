@@ -1,9 +1,9 @@
-#!/usr/bin/python2.6
+#!/usr/bin/python2.7
 #
 # Univention Management Console
 #  module: school accounts Module
 #
-# Copyright 2007-2013 Univention GmbH
+# Copyright 2007-2014 Univention GmbH
 #
 # http://www.univention.de/
 #

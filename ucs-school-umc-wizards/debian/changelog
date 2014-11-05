@@ -1,3 +1,9 @@
+ucs-school-umc-wizards (5.0.0-1) unstable; urgency=medium
+
+  * Bug #35892: Start UCS 4.0 development
+
+ -- Florian Best <best@univention.de>  Wed, 05 Nov 2014 14:59:53 +0100
+
 ucs-school-umc-wizards (4.0.31-2) unstable; urgency=low
 
   * Bug #34997: Clarified grid columns, widget labels, etc.

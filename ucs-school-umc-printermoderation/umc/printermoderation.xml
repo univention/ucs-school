@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <umc version="2.0">
-	<module id="printermoderation" icon="printermoderation" version="1.0" priority="5">
+	<module id="printermoderation" version="1.0" priority="5">
 	<name>Moderate printers</name>
 	<description>Moderate print jobs of students</description>
 	<categories>

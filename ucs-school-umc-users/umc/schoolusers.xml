@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <umc version="2.0">
-	<module id="schoolusers" icon="schoolusers" version="1.0">
-	<flavor icon="schoolusers-student" id="student" priority="41">
+	<module id="schoolusers" version="1.0">
+	<flavor id="student" priority="41">
 	  <name>Passwords (students)</name>
 	  <description>Reset passwords of student accounts</description>
 	</flavor>
-	<flavor icon="schoolusers-teacher" id="teacher" priority="40">
+	<flavor id="teacher" priority="40">
 	  <name>Passwords (teachers)</name>
 	  <description>Reset passwords of teacher accounts</description>
 	</flavor>

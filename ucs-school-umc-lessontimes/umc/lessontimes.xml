@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <umc version="2.0">
-  <module id="lessontimes" icon="lessontimes" version="1.0" priority="5">
+  <module id="lessontimes" version="1.0" priority="5">
 	<name>Lesson times</name>
 	<description>Configure default lesson times</description>
 	<categories>
