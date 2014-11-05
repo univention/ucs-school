@@ -1,3 +1,9 @@
+ucs-school-umc-common (5.0.2-1) unstable; urgency=medium
+
+  * Bug #35892: fixup
+
+ -- Florian Best <best@univention.de>  Wed, 05 Nov 2014 21:30:46 +0100
+
 ucs-school-umc-common (5.0.1-1) unstable; urgency=medium
 
   * Bug #35892: add category icons

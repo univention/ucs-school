@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <umc version="2.0">
 	<categories domain="ucs-school-common">
-		<category id="ucs-school-admin" icon="ucs-school-admin.svg" color="#ff8c0a" priority="110">
+		<category id="ucs-school-admin" icon="category-ucs-school-admin.svg" color="#ff8c0a" priority="110">
 			<name>School administration</name>
 		</category>
-		<category id="ucs-school-class" icon="ucs-school-class.svg" color="#00b4aa" priority="120">
+		<category id="ucs-school-class" icon="category-ucs-school-class.svg" color="#00b4aa" priority="120">
 			<name>Education</name>
 		</category>
 	</categories>
