@@ -1,3 +1,9 @@
+ucs-test-ucsschool (2.0.0-2) unstable; urgency=medium
+
+  * Bug #35892: adjust compat level
+
+ -- Florian Best <best@univention.de>  Wed, 05 Nov 2014 18:52:37 +0100
+
 ucs-test-ucsschool (2.0.0-1) unstable; urgency=medium
 
   * Bug #35892: Start UCS 4.0 development
