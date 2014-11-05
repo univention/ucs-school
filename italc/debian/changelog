@@ -1,3 +1,9 @@
+italc (2:2.0.19-2) unstable; urgency=medium
+
+  * Bug #35892: replace gcj as gcj-jdk build dependency
+
+ -- Florian Best <best@univention.de>  Wed, 05 Nov 2014 18:45:26 +0100
+
 italc (2:2.0.19-1) unstable; urgency=low
 
   * Bug #35892: Start UCS 4.0 development
