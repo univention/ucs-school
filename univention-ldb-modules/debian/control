@@ -11,10 +11,6 @@ Build-Depends: debhelper,
 	libunivention-policy-dev,
 	ldb-tools,
 	samba-dev,
-	libndr-standard-dev,
-	libndr-dev,
-	libsamba-util-dev,
-	libdcerpc-dev,
 	univention-config-dev
 Standards-Version: 3.9.1
 X-Python-Version: 2.6

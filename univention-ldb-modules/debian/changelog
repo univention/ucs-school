@@ -1,3 +1,9 @@
+univention-ldb-modules (3.0.0-2) unstable; urgency=medium
+
+  * Bug #35892: Fix build dependencies
+
+ -- Florian Best <best@univention.de>  Wed, 05 Nov 2014 22:12:55 +0100
+
 univention-ldb-modules (3.0.0-1) unstable; urgency=medium
 
   * Bug #35892: Start UCS 4.0 development
