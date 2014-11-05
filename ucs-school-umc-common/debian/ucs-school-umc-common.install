@@ -1,2 +1,3 @@
 data/ucs-school-common.xml usr/share/univention-management-console/categories/
+data/icon/*.svg usr/share/univention-management-console-frontend/js/dijit/themes/umc/icons/scalable
 ucs-school-common.mo usr/share/univention-management-console/i18n/de/
