@@ -1,3 +1,9 @@
+italc (2:2.0.21-1) unstable; urgency=medium
+
+  * Bug #35892: fix build process
+
+ -- Florian Best <best@univention.de>  Thu, 06 Nov 2014 11:00:11 +0100
+
 italc (2:2.0.20-1) unstable; urgency=medium
 
   * Free the framebuffer memory already while stopping the VNC
