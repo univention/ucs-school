@@ -1,4 +1,4 @@
-italc (2:2.0.19-1) unstable; urgency=medium
+italc (2:2.0.18-2) unstable; urgency=medium
 
   * Free the framebuffer memory already while stopping the VNC
     connection. This will reduce the memory usage of our python italc
