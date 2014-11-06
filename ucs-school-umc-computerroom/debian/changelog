@@ -1,3 +1,11 @@
+ucs-school-umc-computerroom (6.0.2-1) unstable; urgency=medium
+
+  * Stop, close and delete the computer connections before clearing the
+    dict. That should save memory and network connections (Bug #36469)
+    Pair-Programmed-With: Sönke Schwardt-Krummrich <schwardt@univention.de>
+
+ -- Stefan Gohmann <gohmann@univention.de>  Thu, 06 Nov 2014 17:27:17 +0100
+
 ucs-school-umc-computerroom (6.0.1-1) unstable; urgency=medium
 
   * Delete the old ItalcComputer objects in order to free the memory
