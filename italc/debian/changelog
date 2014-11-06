@@ -1,3 +1,11 @@
+italc (2:2.0.20-1) unstable; urgency=medium
+
+  * Free the framebuffer memory already while stopping the VNC
+    connection. This will reduce the memory usage of our python italc
+    interface (Bug #36469)
+
+ -- Stefan Gohmann <gohmann@univention.de>  Thu, 06 Nov 2014 07:43:27 +0100
+
 italc (2:2.0.19-2) unstable; urgency=medium
 
   * Bug #35892: replace gcj as gcj-jdk build dependency
