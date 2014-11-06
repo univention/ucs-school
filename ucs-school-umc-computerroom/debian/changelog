@@ -1,3 +1,10 @@
+ucs-school-umc-computerroom (5.0.8-2) unstable; urgency=medium
+
+  * Delete the old ItalcComputer objects in order to free the memory
+    (Bug #36469)
+
+ -- Stefan Gohmann <gohmann@univention.de>  Thu, 06 Nov 2014 07:41:26 +0100
+
 ucs-school-umc-computerroom (5.0.8-1) unstable; urgency=low
 
   * Bug #35341: fix log message
