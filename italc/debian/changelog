@@ -1,3 +1,9 @@
+italc (2:2.0.22-1) unstable; urgency=medium
+
+  * Bug #35892: fix amd64 lib path
+
+ -- Florian Best <best@univention.de>  Thu, 06 Nov 2014 14:14:19 +0100
+
 italc (2:2.0.21-1) unstable; urgency=medium
 
   * Bug #35892: fix build process
