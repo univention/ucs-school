@@ -59,7 +59,7 @@ define([
 	"umc/widgets/CheckBox",
 	"umc/widgets/Wizard",
 	"umc/modules/schoolcsvimport/DateBox",
-	"umc/modules/schoolcsvimport/Grid",
+	"umc/widgets/Grid",
 	"umc/widgets/Module",
 	"umc/modules/schoolcsvimport/User",
 	"umc/i18n!umc/modules/schoolcsvimport"
@@ -123,6 +123,7 @@ define([
 					type: Uploader,
 					name: 'file',
 					label: _('Upload file'),
+					labelPosition: 'right',
 					command: 'schoolcsvimport/save',
 					dynamicOptions: lang.hitch(this, 'getUploaderParams'),
 					onUploadStarted: lang.hitch(this, function() {
