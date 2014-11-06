@@ -44,18 +44,14 @@ define([
 ], function(declare, lang, topic, dialog, ContainerWidget, Form, Module, Page, MultiInput, TextBox, TimeBox, _) {
 
 	return declare("umc.modules.lessontimes", [ Module ], {
-		postMixInProperties: function() {
-			this.inherited(arguments);
-			this.standbyOpacity = 1;
-		},
+
+		standbyOpacity: 1,
 
 		buildRendering: function() {
 			this.inherited(arguments);
-			this.standby(true);
 
-			this.umcpCommand('lessontimes/get').then(lang.hitch(this, function(response) {
+			this.standbyDuring(this.umcpCommand('lessontimes/get')).then(lang.hitch(this, function(response) {
 				this.renderPage(response.result);
-				this.standby(false);
 			}));
 		},
 
@@ -67,18 +63,18 @@ define([
 				subtypes: [{
 					type: TextBox,
 					name: 'description',
-					size: 'TwoThirds', // resize the description a little bit because of Bug #29789, this can be removed in UCS 3.1-1
-					label: _('Description')
+					label: _('Description'),
+					size: 'TwoThirds'
 				}, {
 					type: TimeBox,
 					name: 'begin',
 					label: _('Start time'),
-					size: 'OneThird'
+					size: 'TwoThirds'
 				}, {
 					type: TimeBox,
 					name: 'end',
 					label: _('End time'),
-					size: 'OneThird'
+					size: 'TwoThirds'
 				}],
 				value: values
 			}];
@@ -139,13 +135,11 @@ define([
 		},
 
 		onSubmit: function(values) {
-			this.umcpCommand('lessontimes/set', values).then(
-				lang.hitch(this, function (response) {
-					if (response.result.message) {
-						dialog.alert(response.result.message);
-					}
+			this.standbyDuring(this.umcpCommand('lessontimes/set', values)).then(lang.hitch(this, function(response) {
+				if (response.result.message) {
+					dialog.alert(response.result.message);
+				}
 			}));
 		}
 	});
-
 });
