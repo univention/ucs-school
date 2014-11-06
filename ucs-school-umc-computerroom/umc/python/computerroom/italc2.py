@@ -595,8 +595,9 @@ class ITALC_Manager( dict, notifier.signals.Provider ):
 	def _clear( self ):
 		if ITALC_Manager.ROOM:
 			for name, computer in self.items():
-				if computer.connected:
-					computer.stop()
+				computer.stop()
+				computer.close()
+				del computer
 			self.clear()
 			ITALC_Manager.ROOM = None
 			ITALC_Manager.ROOM_DN = None
@@ -621,8 +622,6 @@ class ITALC_Manager( dict, notifier.signals.Provider ):
 		school_prefix = '%s-' % search_base.school
 		ITALC_Manager.ROOM = roomgrp[ 'name' ].lstrip()[ len( school_prefix ) : ]
 		ITALC_Manager.ROOM_DN = roomgrp.dn
-		for comp in self.values():
-			del comp
 
 		computers = filter( lambda host: host.endswith( search_base.computers ), roomgrp[ 'hosts' ] )
 		if not computers:
