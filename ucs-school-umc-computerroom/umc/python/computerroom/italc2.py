@@ -264,6 +264,7 @@ class ITALC_Computer( notifier.signals.Provider, QObject ):
 			self._core = None
 		elif self._vnc:
 			self._vnc.stop()
+		del self._vnc
 		self._vnc = None
 		self._state.set( ITALC_Computer.CONNECTION_STATES[ italc.ItalcVncConnection.Disconnected ] )
 
@@ -620,6 +621,9 @@ class ITALC_Manager( dict, notifier.signals.Provider ):
 		school_prefix = '%s-' % search_base.school
 		ITALC_Manager.ROOM = roomgrp[ 'name' ].lstrip()[ len( school_prefix ) : ]
 		ITALC_Manager.ROOM_DN = roomgrp.dn
+		for comp in self.values():
+			del comp
+
 		computers = filter( lambda host: host.endswith( search_base.computers ), roomgrp[ 'hosts' ] )
 		if not computers:
 			raise ITALC_Error( 'There are no computers in the selected room.' )
