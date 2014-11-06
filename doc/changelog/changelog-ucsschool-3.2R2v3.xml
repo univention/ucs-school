@@ -102,7 +102,7 @@
 		<listitem>
 		 <simpara>
 			A memory leak in the <package>computerroom</package> module has been fixed
-			(<ulink url="&ucsbug;34949">Bug 34949</ulink>).
+			(<ulink url="&ucsbug;36469">Bug 36469</ulink>).
 		</simpara>
 		</listitem>
 	</itemizedlist>
@@ -157,8 +157,8 @@
   <itemizedlist>
 	<listitem>
 	  <simpara>
-		A memory leak in <package>iTalc</package> has been fixed
-		(<ulink url="&ucsbug;34949">Bug 34949</ulink>).
+		A memory leak in <package>iTALC</package> has been fixed
+		(<ulink url="&ucsbug;36469">Bug 36469</ulink>).
 	  </simpara>
 	</listitem>
   </itemizedlist>
