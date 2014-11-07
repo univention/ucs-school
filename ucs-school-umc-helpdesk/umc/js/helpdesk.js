@@ -37,7 +37,6 @@ define([
 	"umc/dialog",
 	"umc/tools",
 	"umc/widgets/ComboBox",
-	"umc/widgets/ExpandingTitlePane",
 	"umc/widgets/Form",
 	"umc/widgets/Grid",
 	"umc/widgets/Module",
@@ -47,66 +46,51 @@ define([
 	"umc/widgets/TextBox",
 	"umc/i18n!umc/modules/helpdesk"
 ], function(declare, array, lang, on, topic, dialog, tools, ComboBox,
-            ExpandingTitlePane, Form, Grid, Module, Page, SearchForm, TextArea,
-            TextBox, _) {
+            Form, Grid, Module, Page, SearchForm, TextArea, TextBox, _) {
 	return declare("umc.modules.helpdesk", [ Module ], {
-		// summary:
-		//		Template module to ease the UMC module development.
-		// description:
-		//		This module is a template module in order to aid the development of
-		//		new modules for Univention Management Console.
 
-		postMixInProperties: function() {
-			// is called after all inherited properties/methods have been mixed
-			// into the object (originates from dijit._Widget)
-
-			// it is important to call the parent's postMixInProperties() method
-			this.inherited(arguments);
-
-			// Set the opacity for the standby animation to 100% in order to mask
-			// GUI changes when the module is opened. Call this.standby(true|false)
-			// to enabled/disable the animation.
-			this.standbyOpacity = 1;
-		},
+		standbyOpacity: 1,
 
 		buildRendering: function() {
-			// is called after all DOM nodes have been setup
-			// (originates from dijit._Widget)
-
-			// it is important to call the parent's buildRendering() method
 			this.inherited(arguments);
 
-			// start the standby animation in order prevent any interaction before the
-			// form values are loaded
 			this.standby(true);
-
-			// render the page containing search form and grid
-			this.umcpCommand('helpdesk/configuration').then(
-				lang.hitch(this, function(response) {
-					if (response.result.recipient) {
-						this.renderPage(response.result.username, response.result.school);
-						this.standby(false);
-					} else {
-						dialog.alert(_('The helpdesk module is not configured properly. The recipient email address is not set.'));
-						on.once(dialog._alertDialog, 'confirm', lang.hitch(this, function() {
-							topic.publish('/umc/tabs/close', this);
-						}));
-					}
-				})
-			);
+			this.umcpCommand('helpdesk/configuration').then(lang.hitch(this, function(response) {
+				if (response.result.recipient) {
+					this.renderPage(response.result.username, response.result.school);
+					this.standby(false);
+				} else {
+					dialog.alert(_('The helpdesk module is not configured properly. The recipient email address is not set.'));
+					on.once(dialog._alertDialog, 'confirm', lang.hitch(this, function() {
+						topic.publish('/umc/tabs/close', this);
+					}));
+				}
+			}));
 		},
 
 		renderPage: function(username, school) {
-			// ExpandingTitlePane is an extension of dijit.layout.BorderContainer
-			var titlePane = new ExpandingTitlePane({
-				title: _('Message to the helpdesk team')
-			} );
+			var buttons = [{
+				name: 'submit',
+				label: _('Send'),
+				'default': true,
+				callback: lang.hitch(this, function() {
+					var values = this._form.get('value');
+					if (values.message) {
+						this.onSubmit(this._form.get('value'));
+					} else {
+						dialog.alert(_('The required message is missing. Therefore, no report has been sent to the helpdesk team.'));
+					}
+				})
+			}];
 
-			//
-			// form
-			//
+			this._page = new Page({
+				headerText: this.description,
+//				headerTextRegion: 'main',
+				helpText: '',
+//				helpTextRegsion: 'main',
+				navButtons: buttons
+			});
 
-			// add remaining elements of the search form
 			var widgets = [{
 				type: TextBox,
 				name: 'username',
@@ -128,89 +112,35 @@ define([
 				type: TextArea,
 				name: 'message',
 				style: 'height: 200px;',
-				label: _('Message')
-			} ];
+				label: _('Message to the helpdesk team')
+			}];
 
-			// the layout is an 2D array that defines the organization of the form elements...
-			// here we arrange the form elements in one row and add the 'submit' button
 			var layout = [
-				'username',
-				'school',
+				['username', 'school'],
 				'category',
 				'message'
 			];
 
-			// generate the form
 			this._form = new Form({
-				// property that defines the widget's position in a dijit.layout.BorderContainer
-				region: 'top',
 				widgets: widgets,
 				layout: layout
 			});
+			this.standbyDuring(this._form.ready());
 
-			// turn off the standby animation as soon as all form values have been loaded
-			this._form.on('valuesInitialized', lang.hitch(this, function() {
-				this.standby(false);
-			}));
-
-			// add form to the title pane
-			titlePane.addChild(this._form);
-
-			// submit changes
-			var buttons = [{
-				name: 'submit',
-				label: _('Send'),
-				'default': true,
-				callback: lang.hitch(this, function() {
-					var values = this._form.get('value');
-					if (values.message) {
-						this.onSubmit(this._form.get('value'));
-					} else {
-						dialog.alert(_('The required message is missing. Therefore, no report has been sent to the helpdesk team.'));
-					}
-				})
-			}, {
-				name: 'close',
-				label: _('Close'),
-				callback: lang.hitch(this, function() {
-					var values = this._form.get('value');
-					if (values.message) {
-						dialog.confirm(_('Should the UMC module be closed? All unsaved modification will be lost.'), [{
-							label: _('Close'),
-							callback: lang.hitch(this, function() {
-								topic.publish('/umc/tabs/close', this);
-							})
-						}, {
-							label: _('Cancel'),
-							'default': true
-						}]);
-					} else {
-						topic.publish('/umc/tabs/close', this);
-					}
-				})
-			}];
-
-			this._page = new Page({
-				headerText: this.description,
-				helpText: '',
-				footerButtons: buttons
-			});
 
 			this.addChild(this._page);
-			this._page.addChild(titlePane);
+			this._page.addChild(this._form);
 		},
 
 		onSubmit: function(values) {
-			this.umcpCommand('helpdesk/send', values).then(
-				lang.hitch(this, function(response) {
-					if (response.result) {
-						dialog.alert(_('The report has been sent to the helpdesk team'));
-						this._form._widgets.message.set('value', '');
-					} else {
-						dialog.alert(_('The message could not be send to the helpdesk team: ') + response.message);
-					}
-				})
-			);
+			this.standbyDuring(this.umcpCommand('helpdesk/send', values)).then(lang.hitch(this, function(response) {
+				if (response.result) {
+					dialog.alert(_('The report has been sent to the helpdesk team'));
+					this._form._widgets.message.set('value', '');
+				} else {
+					dialog.alert(_('The message could not be send to the helpdesk team: ') + response.message);
+				}
+			}));
 		}
 	});
 });

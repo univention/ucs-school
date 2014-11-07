@@ -1,3 +1,9 @@
+ucs-school-umc-helpdesk (10.0.1-1) unstable; urgency=medium
+
+  * Bug #36479: design changes
+
+ -- Florian Best <best@univention.de>  Fri, 07 Nov 2014 16:02:50 +0100
+
 ucs-school-umc-helpdesk (10.0.0-2) unstable; urgency=medium
 
   * Bug #35892: adjust compat level
