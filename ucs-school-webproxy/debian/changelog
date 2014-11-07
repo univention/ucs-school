@@ -1,3 +1,9 @@
+ucs-school-webproxy (11.0.1-1) unstable; urgency=medium
+
+  * Bug #36465: fix path to squidguard config
+
+ -- Florian Best <best@univention.de>  Fri, 07 Nov 2014 15:23:44 +0100
+
 ucs-school-webproxy (11.0.0-1) unstable; urgency=medium
 
   * Bug #35892: Start UCS 4.0 development

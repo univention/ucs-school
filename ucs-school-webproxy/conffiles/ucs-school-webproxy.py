@@ -57,7 +57,7 @@ import time
 import shutil
 
 PATH_LOG = '/var/log/univention/ucs-school-webproxy.log'
-DIR_ETC = '/etc/squid'
+DIR_ETC = '/etc/squidguard'
 FN_CONFIG = 'squidGuard.conf'
 DIR_DATA = '/var/lib/ucs-school-webproxy'
 
@@ -360,7 +360,7 @@ def moveConfig(fn_temp_config, fn_config, FN_CONFIG, DIR_TEMP, DIR_DATA):
 		fnsrc = os.path.join(DIR_TEMP, fn)
 		fndst = os.path.join(DIR_DATA, fn)
 		move_file(fnsrc, fndst)
-	# move fixed config file to /etc/squid
+	# move fixed config file to /etc/squidguard
 	move_file(fn_temp_config, fn_config)
 
 def removeTempDirectory(DIR_TEMP):
