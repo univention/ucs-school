@@ -3,9 +3,6 @@
   <module id="schoolexam-master" version="1.0" priority="7">
 	<name>Start exam</name>
 	<description>Starts a new exam for a specified computer room</description>
-	<categories>
-	  <category name="ucs-school-class"/>
-	</categories>
 
 	<command name="schoolexam-master/create-exam-user" function="create_exam_user">
 		<attribute name="userdn" syntax="String"/>
