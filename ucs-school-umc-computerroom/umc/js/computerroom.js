@@ -46,7 +46,6 @@ define([
 	"umc/dialog",
 	"umc/tools",
 	"umc/app",
-	"umc/widgets/ExpandingTitlePane",
 	"umc/widgets/Grid",
 	"umc/widgets/Button",
 	"umc/widgets/Module",
@@ -60,7 +59,7 @@ define([
 	"umc/modules/computerroom/SettingsDialog",
 	"umc/i18n!umc/modules/computerroom"
 ], function(declare, lang, array, aspect, dom, Deferred, ItemFileWriteStore, DataStore, Memory, all, DijitProgressBar,
-            Dialog, Tooltip, styles, dialog, tools, app, ExpandingTitlePane, Grid, Button, Module, Page, Form,
+            Dialog, Tooltip, styles, dialog, tools, app, Grid, Button, Module, Page, Form,
             ContainerWidget, Text, ComboBox, ProgressBar, ScreenshotView, SettingsDialog, _) {
 
 	// prepare CSS rules for module
@@ -153,9 +152,6 @@ define([
 		// widget to stop presentation
 		// _presentationWidget: null,
 		// _presentationText: '',
-
-		// internal reference to the expanding title pane
-		_titlePane: null,
 
 		_progressBar: null,
 
@@ -479,6 +475,7 @@ define([
 				exam: false,
 				umcpCommand: lang.hitch(this, 'umcpCommand')
 			});
+			this.own(this._settingsDialog);
 
 			this.standbyDuring(this._setVncSettings()).then(
 				lang.hitch(this, '_renderPages'),
@@ -619,12 +616,6 @@ define([
 			// different pages (see also umc.widgets.TabbedModule)
 			this.addChild(this._searchPage);
 
-			// ExpandingTitlePane is an extension of dijit.layout.BorderContainer
-			this._titlePane = new ExpandingTitlePane({
-				title: _('Room administration')
-			});
-			this._searchPage.addChild(this._titlePane);
-
 			this._updateHeader();
 
 			//
@@ -678,6 +669,7 @@ define([
 						icon: icon,
 						value: value
 					}));
+					this.own(widget);
 
 					var computertype = {
 						'computers/windows': _('Windows'),
@@ -730,6 +722,7 @@ define([
 							this._screenshot([id], [item]);
 						})
 					});
+					this.own(widget);
 
 					var tooltip = new Tooltip({
 						'class': 'umcTooltip',
@@ -776,7 +769,7 @@ define([
 			});
 
 			// add the grid to the title pane
-			this._titlePane.addChild(this._grid);
+			this._searchPage.addChild(this._grid);
 
 			this.addHeaderContainer();
 			this._grid.watch('actions', lang.hitch(this, function() {
@@ -804,13 +797,16 @@ define([
 		addHeaderContainer: function() {
 			// add a toolbar for buttons above the grid
 			var _containerRight = new ContainerWidget({ style: 'float: right' });
+			this._grid.own(_containerRight);
 			var _containerTop = new ContainerWidget({ style: 'width: 100%; padding-bottom: 5px;' });
+			this._grid.own(_containerTop);
 			this._headButtons = {};
 
 			var addButtonTo = lang.hitch(this, function(container) {
 				return lang.hitch(this, function(button) {
 					var cls = button.type || Button;
 					container.addChild(this._headButtons[button.name] = new cls(button));
+					container.own(this._headButtons[button.name]);
 					if (button.name == 'settings') {
 						this._changeSettingsLabel = button.label;
 					}

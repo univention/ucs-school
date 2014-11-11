@@ -37,7 +37,6 @@ define([
 	"dojo/date/locale",
 	"umc/dialog",
 	"umc/tools",
-	"umc/widgets/ExpandingTitlePane",
 	"umc/widgets/Grid",
 	"umc/widgets/Module",
 	"umc/widgets/Page",
@@ -48,7 +47,7 @@ define([
 	"umc/widgets/ComboBox",
 	"umc/widgets/ProgressInfo",
 	"umc/i18n!umc/modules/printermoderation"
-], function(declare, lang, array, Deferred, Dialog, locale, dialog, tools, ExpandingTitlePane, Grid,
+], function(declare, lang, array, Deferred, Dialog, locale, dialog, tools, Grid,
             Module, Page, Form, SearchForm, TextBox, Text, ComboBox, ProgressInfo, _) {
 
 	return declare("umc.modules.printermoderation", [ Module ], {
@@ -57,59 +56,26 @@ define([
 		// description:
 		//		This module helps to control the print jobs of the students.
 
-		// the property field that acts as unique identifier for the object
 		idProperty: 'id',
 
-		// internal reference to the grid
 		_grid: null,
-
-		// internal reference to the search page
 		_searchPage: null,
-
-		// widget for displaying the progress of an operation
 		_progressInfo: null,
-
-		postMixInProperties: function() {
-			this.inherited(arguments);
-
-			this.standbyOpacity = 1;
-		},
+		standbyOpacity: 1,
 
 		buildRendering: function() {
 			this.inherited(arguments);
 
 			// setup a progress bar with some info text
-			this._progressInfo = new ProgressInfo( {
+			this._progressInfo = new ProgressInfo({
 				style: 'min-width: 400px;'
-			} );
+			});
+			this.own(this._progressInfo);
 
-			// start the standby animation in order prevent any interaction before the
-			// form values are loaded
-			this.standby(true);
-
-			// render the page containing search form and grid
-			this.renderSearchPage();
-		},
-
-		renderSearchPage: function(containers, superordinates) {
-			// render all GUI elements for the search formular and the grid
 			this._searchPage = new Page({
 				headerText: this.description,
 				helpText: ''
 			});
-
-			this.addChild(this._searchPage);
-
-			// umc.widgets.ExpandingTitlePane is an extension of dijit.layout.BorderContainer
-			var titlePane = new ExpandingTitlePane({
-				title: _('Search results')
-			});
-			this._searchPage.addChild(titlePane);
-
-
-			//
-			// data grid
-			//
 
 			// define grid actions
 			var actions = [{
@@ -164,25 +130,17 @@ define([
 				} )
 			}];
 
-			// generate the data grid
 			this._grid = new Grid({
 				actions: actions,
 				defaultAction: 'view',
 				columns: columns,
 				moduleStore: this.moduleStore,
 				sortIndex: -4,
-				// initial query
 				query: { 'class' : 'None', pattern: '' }
 			});
 
-			// add the grid to the title pane
-			titlePane.addChild(this._grid);
+			this._searchPage.addChild(this._grid);
 
-			//
-			// search form
-			//
-
-			// add remaining elements of the search form
 			var widgets = [{
 				type: ComboBox,
 				name: 'school',
@@ -214,26 +172,19 @@ define([
 				[ 'school', 'class', 'pattern', 'submit' ]
 			];
 
-			// generate the search form
 			this._searchForm = new SearchForm({
-				// property that defines the widget's position in a dijit.layout.BorderContainer
-				region: 'top',
+				region: 'nav',
 				widgets: widgets,
 				layout: layout,
 				onSearch: lang.hitch(this, function(values) {
-					// call the grid's filter function
 					this._grid.filter(values);
 				})
 			});
 
-			// turn off the standby animation as soon as all form values have been loaded
-			this._searchForm.on('ValuesInitialized', lang.hitch(this, function() {
-				this.standby(false);
-			}));
+			this.standbyDuring(this._searchForm.ready());
 
-			// add search form to the title pane
-			titlePane.addChild(this._searchForm);
-
+			this._searchPage.addChild(this._searchForm);
+			this.addChild(this._searchPage);
 			this._searchPage.startup();
 		},
 

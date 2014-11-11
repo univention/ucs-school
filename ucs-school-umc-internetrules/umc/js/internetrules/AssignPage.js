@@ -37,7 +37,6 @@ define([
 	"umc/store",
 	"umc/widgets/Page",
 	"umc/widgets/Form",
-	"umc/widgets/ExpandingTitlePane",
 	"umc/widgets/Grid",
 	"umc/widgets/TextBox",
 	"umc/widgets/Text",
@@ -45,7 +44,7 @@ define([
 	"umc/widgets/SearchForm",
 	"umc/widgets/StandbyMixin",
 	"umc/i18n!umc/modules/internetrules"
-], function(declare, lang, array, Dialog, tools, store, Page, Form, ExpandingTitlePane,
+], function(declare, lang, array, Dialog, tools, store, Page, Form,
             Grid, TextBox, Text, ComboBox, SearchForm, StandbyMixin, _) {
 
 // create helper class: combination of Form and StandbyMixin
@@ -72,12 +71,6 @@ var StandbyForm = declare("umc.modules.internetrules.StandbyForm", [ Form, Stand
 
 		buildRendering: function() {
 			this.inherited(arguments);
-
-			// umc.widgets.ExpandingTitlePane is an extension of dijit.layout.BorderContainer
-			var titlePane = new ExpandingTitlePane({
-				title: _('Search results')
-			});
-			this.addChild(titlePane);
 
 			//
 			// data grid
@@ -113,7 +106,7 @@ var StandbyForm = declare("umc.modules.internetrules.StandbyForm", [ Form, Stand
 			});
 
 			// add the grid to the title pane
-			titlePane.addChild(this._grid);
+			this.addChild(this._grid);
 
 			//
 			// search form
@@ -144,7 +137,7 @@ var StandbyForm = declare("umc.modules.internetrules.StandbyForm", [ Form, Stand
 			this._searchForm.on('valuesInitialized', lang.hitch(this, function() { this._searchForm.submit(); }));
 
 			// add search form to the title pane
-			titlePane.addChild(this._searchForm);
+			this.addChild(this._searchForm);
 		},
 
 		_assignRule: function(ids, items) {
@@ -247,6 +240,7 @@ var StandbyForm = declare("umc.modules.internetrules.StandbyForm", [ Form, Stand
 				'class' : 'umcPopup',
 				style: 'max-width: 400px;'
 			});
+			this.own(_dialog);
 			_dialog.show();
 		}
 	});

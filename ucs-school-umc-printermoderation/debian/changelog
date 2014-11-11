@@ -1,3 +1,9 @@
+ucs-school-umc-printermoderation (10.0.1-1) unstable; urgency=medium
+
+  * Bug #35892: fix some javascript memory leaks
+
+ -- Florian Best <best@univention.de>  Tue, 11 Nov 2014 15:35:17 +0100
+
 ucs-school-umc-printermoderation (10.0.0-1) unstable; urgency=medium
 
   * Bug #35892: Start UCS 4.0 development
