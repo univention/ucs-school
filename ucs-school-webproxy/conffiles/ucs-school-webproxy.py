@@ -119,7 +119,7 @@ def createTemporaryConfig(fn_temp_config, configRegistry, DIR_TEMP):
 
 	f = open( fn_temp_config, "w")
 
-	f.write('logdir /var/log/squid\n')
+	f.write('logdir /var/log/squidguard\n')
 	f.write('dbhome %s/\n\n' % DIR_TEMP)
 
 	keylist = configRegistry.keys()

@@ -1,3 +1,9 @@
+ucs-school-webproxy (11.0.2-1) unstable; urgency=medium
+
+  * Bug #36465: fix path to squidguard logfile
+
+ -- Florian Best <best@univention.de>  Tue, 18 Nov 2014 16:11:27 +0100
+
 ucs-school-webproxy (11.0.1-1) unstable; urgency=medium
 
   * Bug #36465: fix path to squidguard config
