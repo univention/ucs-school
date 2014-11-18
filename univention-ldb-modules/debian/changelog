@@ -1,3 +1,9 @@
+univention-ldb-modules (3.0.2-1) unstable; urgency=medium
+
+  * Bug #36811: Added multiarch support
+
+ -- Arvid Requate <requate@univention.de>  Tue, 18 Nov 2014 14:25:14 +0100
+
 univention-ldb-modules (3.0.1-1) unstable; urgency=medium
 
   * Depend on python-samba instead of python-samba4 (Bug #35892)
