@@ -1,3 +1,9 @@
+univention-ldb-modules (3.0.2-2) unstable; urgency=medium
+
+  * Bug #36811: Adjust installation directory
+
+ -- Arvid Requate <requate@univention.de>  Tue, 18 Nov 2014 14:49:45 +0100
+
 univention-ldb-modules (3.0.2-1) unstable; urgency=medium
 
   * Bug #36811: Added multiarch support
