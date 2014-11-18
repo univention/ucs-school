@@ -69,8 +69,8 @@ if [ -n "$unregister_opts" ]; then
 		mv "$tempfile" "$sam_ldb"
 	fi
 
-	if [ -x /etc/init.d/samba4 ]; then
-		invoke-rc.d samba4 restart
+	if [ -x /etc/init.d/samba ]; then
+		invoke-rc.d samba restart
 	fi
 fi
 

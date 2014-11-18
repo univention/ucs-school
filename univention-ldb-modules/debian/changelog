@@ -1,3 +1,9 @@
+univention-ldb-modules (3.0.3-1) unstable; urgency=medium
+
+  * Switch from samba4 init script to samba (Bug #36811)
+
+ -- Stefan Gohmann <gohmann@univention.de>  Tue, 18 Nov 2014 21:20:25 +0100
+
 univention-ldb-modules (3.0.2-2) unstable; urgency=medium
 
   * Bug #36811: Adjust installation directory

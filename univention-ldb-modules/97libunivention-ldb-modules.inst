@@ -75,8 +75,8 @@ if [ $JS_LAST_EXECUTED_VERSION -le 0 ]; then
 				mv "$tempfile" "$sam_ldb"
 			fi
 
-			if [ -x /etc/init.d/samba4 ]; then
-				invoke-rc.d samba4 restart
+			if [ -x /etc/init.d/samba ]; then
+				invoke-rc.d samba restart
 			fi
 		fi
 	fi
