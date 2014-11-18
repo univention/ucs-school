@@ -308,7 +308,6 @@ class Room(object):
 			# utils.fail('Write to Marktplatz directory result (%r), expected (%r)' % (write[0], expected_result))
 
 	def check_share_access(self, user, ip_address, expected_home_result, expected_marktplatz_result):
-		restart_samba()
 		self.check_home_read(user, ip_address, expected_result=expected_home_result)
 		self.check_home_write(user, ip_address, expected_result=expected_home_result)
 		self.check_marktplatz_read(user, ip_address, expected_result=expected_marktplatz_result)
@@ -590,7 +589,6 @@ class Room(object):
 			white_page,
 			global_domains,
 			ucr):
-		restart_samba()
 		# extract the new_settings
 		period = new_settings['period']
 		internetRule = new_settings['internetRule']

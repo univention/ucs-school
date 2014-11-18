@@ -50,13 +50,13 @@ def main():
 			umc_connection2.auth(tea2, 'univention')
 			room2.checK_room_aquire(umc_connection2, 'OK')
 			room2.check_room_user(umc_connection1, tea2)
-			room2.check_room_computers(umc_connection2,	created_computers_dn[0:4])
+			room2.check_room_computers(umc_connection2, created_computers_dn[0:4])
 
 
 			# switching room for tea2
 			room3.checK_room_aquire(umc_connection2, 'OK')
 			room3.check_room_user(umc_connection1, tea2)
-			room3.check_room_computers(umc_connection2,	created_computers_dn[4:9])
+			room3.check_room_computers(umc_connection2, created_computers_dn[4:9])
 
 if __name__ == '__main__':
 	main()
