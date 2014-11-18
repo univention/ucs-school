@@ -1,3 +1,9 @@
+ucs-school-lib (6.0.1-1) unstable; urgency=medium
+
+  * Bug #36800: fix parsing of smbstatus
+
+ -- Florian Best <best@univention.de>  Tue, 18 Nov 2014 12:33:38 +0100
+
 ucs-school-lib (6.0.0-1) unstable; urgency=medium
 
   * Bug #35892: Start UCS 4.0 development
