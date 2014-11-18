@@ -8,7 +8,7 @@
 ##   - ucs-school-import
 ##   - ucs-school-master
 
-from essential.importtest import *
+from essential.importou import *
 import subprocess
 
 class CreateDC(Exception):
