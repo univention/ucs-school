@@ -37,6 +37,8 @@
 	<itemizedlist>
 	  <listitem>
 		<simpara>
+			The LDB module for checking account uniqueness has been adjusted for
+			the new multiarch library paths (<ulink url="&ucsbug;36811">Bug 36811</ulink>).
 		</simpara>
 	  </listitem>
 	</itemizedlist>
