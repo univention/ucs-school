@@ -142,7 +142,7 @@ define([
 					name: 'school',
 					label: _( 'School' ),
 					dynamicValues: 'schoolgroups/schools',
-					umcpCommand: this.umcpCommand,
+					umcpCommand: lang.hitch(this, 'umcpCommand'),
 					autoHide: true
 				}, {
 					type: ComboBox,
@@ -151,7 +151,7 @@ define([
 					depends: 'school',
 					staticValues: groups,
 					dynamicValues: 'schoolgroups/classes',
-					umcpCommand: this.umcpCommand
+					umcpCommand: lang.hitch(this, 'umcpCommand')
 				}, {
 					type: TextBox,
 					name: 'pattern',

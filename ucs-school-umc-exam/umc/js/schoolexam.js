@@ -32,6 +32,7 @@ define([
 	"dojo/_base/declare",
 	"dojo/_base/lang",
 	"dojo/_base/array",
+	"dojo/aspect",
 	"dojo/dom-class",
 	"dojo/dom-style",
 	"dojo/on",
@@ -54,7 +55,7 @@ define([
 	"umc/widgets/StandbyMixin",
 	"umc/widgets/ProgressBar",
 	"umc/i18n!umc/modules/schoolexam"
-], function(declare, lang, array, domClass, domStyle, on, all, topic, Deferred, when, dialog, tools, RebootGrid, Wizard, Module,
+], function(declare, lang, array, aspect, domClass, domStyle, on, all, topic, Deferred, when, dialog, tools, RebootGrid, Wizard, Module,
 			TextBox, Text, TextArea, ComboBox, TimeBox, MultiObjectSelect, MultiUploader, StandbyMixin, ProgressBar, _) {
 	// helper function that sanitizes a given filename
 	var sanitizeFilename = function(name) {
@@ -194,7 +195,7 @@ define([
 						name: 'school',
 						label: _('School'),
 						dynamicValues: 'schoolexam/schools',
-						umcpCommand: this.umcpCommand,
+						umcpCommand: lang.hitch(this, 'umcpCommand'),
 						autoHide: true
 					}, {
 						type: TextBox,
@@ -369,7 +370,7 @@ define([
 			// create the grid for rebooting computers manually
 			var rebootPage = this.getPage('reboot');
 			this._grid = new RebootGrid({
-				umcpCommand: this.umcpCommand
+				umcpCommand: lang.hitch(this, 'umcpCommand')
 			});
 			rebootPage.addChild(this._grid);
 
@@ -418,7 +419,7 @@ define([
 			this.inherited(arguments);
 
 			// hook when reboot page is shown
-			this.getPage('reboot').on('show', lang.hitch(this, function() {
+			aspect.after(this.getPage('reboot'), '_onShow', lang.hitch(this, function() {
 				// find computers that need to be restarted
 				var values = this.getValues();
 				this._grid.monitorRoom(values.room);
@@ -435,7 +436,7 @@ define([
 			}));
 
 			// hook when success page is shown
-			this.getPage('success').on('show', lang.hitch(this, function() {
+			aspect.after(this.getPage('success'), '_onShow', lang.hitch(this, function() {
 				var values = this.getValues();
 				var html = '<table style="border-spacing:7px; border:none;">';
 				array.forEach(['name', 'room', 'examEndTime', 'recipients', 'directory', 'files', 'shareMode', 'internetRule'], lang.hitch(this, function(ikey) {
@@ -727,7 +728,7 @@ define([
 			this.inherited(arguments);
 
 			this._examWizard = new ExamWizard({
-				umcpCommand: this.umcpCommand
+				umcpCommand: lang.hitch(this, 'umcpCommand')
 			});
 			this.addChild(this._examWizard);
 

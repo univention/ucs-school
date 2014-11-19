@@ -1,3 +1,9 @@
+ucs-school-umc-groups (3.0.1-1) unstable; urgency=medium
+
+  * Bug #36761: fix references to this.umcpCommand
+
+ -- Florian Best <best@univention.de>  Wed, 19 Nov 2014 12:01:56 +0100
+
 ucs-school-umc-groups (3.0.0-1) unstable; urgency=medium
 
   * Bug #35892: Start UCS 4.0 development

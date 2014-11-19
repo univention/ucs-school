@@ -172,7 +172,7 @@ define([
 					name: 'school',
 					label: _('School'),
 					dynamicValues: 'distribution/schools',
-					umcpCommand: this.umcpCommand,
+					umcpCommand: lang.hitch(this, 'umcpCommand'),
 					autoHide: true
 				}, {
 					type: TextBox,

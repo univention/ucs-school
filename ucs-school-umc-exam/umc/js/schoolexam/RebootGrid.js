@@ -51,9 +51,6 @@ define([
 		_firstUpdate: 0,
 		_updateTimer: null,
 
-		style: 'height: 250px; width: 100%;',
-		cacheRowWidgets: false,
-
 		constructor: function() {
 			this.moduleStore = new Memory();
 			this.columns = [{

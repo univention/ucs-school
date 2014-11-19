@@ -1,3 +1,10 @@
+ucs-school-umc-exam (3.0.3-1) unstable; urgency=medium
+
+  * Bug #36761: fix computer entries in RebootGrid, fix references to
+    this.umcpCommand
+
+ -- Florian Best <best@univention.de>  Wed, 19 Nov 2014 12:01:44 +0100
+
 ucs-school-umc-exam (3.0.2-2) unstable; urgency=medium
 
   * Bug #35654: fix last commit, edited wrong XML file
