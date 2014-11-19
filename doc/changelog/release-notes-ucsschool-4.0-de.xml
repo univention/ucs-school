@@ -12,12 +12,12 @@
 <book lang="de" id="releasenotes-4.0-de">
 
 	<bookinfo>
- 		<title>UCS@school 4,0 Release Notes</title>
-		<subtitle>Release Notes für die Inbetriebnahme und Aktualisierung von UCS@school 4,0</subtitle>
+ 		<title>UCS@school 4.0 Release Notes</title>
+		<subtitle>Release Notes für die Inbetriebnahme und Aktualisierung von UCS@school 4.0</subtitle>
 		<legalnotice>
 			<literallayout>
-Version 3.2 R2 v2
-Stand: 27. August 2014
+Version 4.0 v1
+Stand: 19. November 2014
 			</literallayout>
 			<literallayout>
 Alle Rechte vorbehalten./ All rights reserved.
@@ -105,8 +105,8 @@ feedback@univention.de
 		  </listitem>
 		</itemizedlist>
 		<para>
-			Bei der Neuinstallation einer UCS@school 3.2 Domäne mit Samba 4 sollte nach Abschluss 
-			der Installation einmalig als Benutzer <emphasis>root</emphasis> das Kommando 
+			Bei der Neuinstallation einer UCS@school 4.0 Domäne mit Samba 4 sollte nach Abschluss
+			der Installation einmalig als Benutzer <emphasis>root</emphasis> das Kommando
 			<command>samba-tool ntacl sysvolreset</command> auf der Kommandozeile ausgeführt werden.
 		</para>
 	</chapter>
@@ -177,7 +177,7 @@ feedback@univention.de
 		<title>Changelog</title>
 		<para>
 		  Die Changelogs mit den detaillierten Änderungsinformationen werden nur in Englisch
-		  gepflegt. Aufgeführt sind die Änderungen zwischen den UCS@school-Versionen 3.2 R2 v1 und 3.2 R2 v2. Die
+		  gepflegt. Aufgeführt sind die Änderungen zwischen den UCS@school-Versionen 2.2 R2 v2 und 4.0 v1. Die
 		  Änderungsinformationen für vorherige Versionssprünge finden sich unter <ulink
 		  url="http://docs.univention.de/"/>.
 		</para>

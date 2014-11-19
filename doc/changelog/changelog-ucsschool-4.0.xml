@@ -8,7 +8,6 @@
 	</listitem>
   </itemizedlist>
 </section>
--->
 
 <section>
   <title>Import scripts</title>
@@ -23,15 +22,23 @@
 	</listitem>
   </itemizedlist>
 </section>
-
-<!--
-<section>
-<title>iTALC</title>
-</section>
 -->
 
 <section>
+  <title>iTALC</title>
+  <itemizedlist>
+	<listitem>
+	  <simpara>
+		A memory leak on the server side of iTALC has been fixed (<ulink url="&ucsbug;36469">Bug 36469</ulink>).
+	  </simpara>
+	</listitem>
+  </itemizedlist>
+</section>
+
+<!--
+<section>
   <title>Domain services</title>
+-->
   <section>
 	<title>Samba4</title>
 	<itemizedlist>
@@ -43,6 +50,8 @@
 	  </listitem>
 	</itemizedlist>
   </section>
+<!--
+</section>
   <section>
 	<title>Windows Netlogon Scripts</title>
 	<itemizedlist>
@@ -55,6 +64,7 @@
 	<section>
 		<title>OpenLDAP</title>
 	</section>
+-->
 	<section>
 		<title>LDAP ACL changes</title>
 		<itemizedlist>
@@ -66,6 +76,7 @@
 			</listitem>
 		</itemizedlist>
 	</section>
+<!--
 	<section>
 		<title>Listener/Notifier domain replication</title>
 	</section>
@@ -74,7 +85,6 @@
 	</section>
 
 
-  <!--
 	  <section>
 	  <title>Print services</title>
 	  </section>
@@ -97,7 +107,6 @@
 	  <section>
 	  <title>Univention Management Console web interface</title>
 	  </section>
-  -->
   <section>
 	<title>Univention Management Console modules</title>
 	<section>
@@ -264,3 +273,4 @@
 	</listitem>
   </itemizedlist>
 </section>
+  -->
