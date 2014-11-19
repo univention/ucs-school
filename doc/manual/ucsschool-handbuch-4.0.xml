@@ -21,7 +21,7 @@
 
 	  %entities;
 	  ]>
-<book lang="de" id="ucsschool-3.2R2-admin">
+<book lang="de" id="ucsschool-4.0-admin">
   <bookinfo>
     <title>
       &ucsUAS;
@@ -31,7 +31,7 @@
     </subtitle>
     <legalnotice>
       <literallayout>
-Version 3.2 R2
+Version 4.0
 Stand: 27. August 2014
       </literallayout>
 
