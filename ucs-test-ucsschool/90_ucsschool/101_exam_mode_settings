@@ -1,0 +1,132 @@
+#!/usr/share/ucs-test/runner python
+## -*- coding: utf-8 -*-
+## desc: Exam mode settings
+## roles: [domaincontroller_master]
+## tags: [apptest, ucsschool]
+## exposure: dangerous
+## bugs: [36251]
+## packages: [univention-samba4, ucs-school-umc-computerroom, ucs-school-umc-exam]
+
+from datetime import datetime, timedelta
+from essential.check import Check
+from essential.computerroom import Room, Computers
+from essential.exam import Exam
+from essential.internetrule import InternetRule
+from essential.klasse import Klasse
+from univention.testing.ucs_samba import wait_for_s4connector
+import os
+import random
+import subprocess
+import tempfile
+import univention.testing.strings as uts
+import univention.testing.ucr as ucr_test
+import univention.testing.ucsschool as utu
+import univention.testing.utils as utils
+
+def check_s4_rejected():
+	cmd = ['univention-s4connector-list-rejected']
+	out , err = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
+	fail = 'S4 Dn:' in out or 'UCS DN:' in out
+	if fail:
+		utils.fail('There is at least one rejected object')
+
+def check_proof_uniqueMember():
+	cmd = ['/usr/share/univention-directory-manager-tools/proof_uniqueMembers']
+	popen = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+	out, err = popen.communicate()
+	returncode = popen.returncode
+	print out, err, returncode
+	if returncode != 0:
+		utils.fail('Proof unique members failed')
+
+
+def wait_replications_check_rejected_uniqueMember():
+	utils.wait_for_replication()
+	wait_for_s4connector()
+	check_s4_rejected()
+	check_proof_uniqueMember()
+
+
+def main():
+	with utu.UCSTestSchool() as schoolenv:
+		with ucr_test.UCSTestConfigRegistry() as ucr:
+
+			wait_replications_check_rejected_uniqueMember()
+
+			school, oudn = schoolenv.create_ou(name_edudc=ucr.get('hostname'))
+			class_name = uts.random_name()
+			classdn = 'cn=%s,cn=klassen,cn=schueler,cn=groups,ou=%s,%s' % (class_name, school,ucr.get('ldap/base'))
+			tea, teadn = schoolenv.create_user(school, classes=class_name, is_teacher=True, use_cli=True)
+			stu, studn = schoolenv.create_user(school, classes=class_name, use_cli=True)
+			open_ldap_co = schoolenv.open_ldap_connection()
+
+			# importing random computers
+			computers = Computers(open_ldap_co, school, 2, 0, 0)
+			created_computers = computers.create()
+			created_computers_dn = computers.get_dns(created_computers)
+
+			# setting 2 computer rooms contain the created computers
+			room1 = Room(school, host_members=created_computers_dn[0])
+			room2 = Room(school, host_members=created_computers_dn[1])
+
+			# Creating the rooms
+			for room in [room1, room2]:
+				schoolenv.create_computerroom(
+						school,
+						name=room.name,
+						description=room.description,
+						host_members=room.host_members
+						)
+
+			# Defining internet rules
+			rule1 = InternetRule(ucr=ucr)
+			rule1.define()
+
+			# Preparing tempfile to upload
+			f = tempfile.NamedTemporaryFile(suffix='.exam')# , dir='/tmp')
+			print 'Tempfile created %s' % f.name
+			f.write('Temp exam file to upload')
+			f.flush()
+
+			current_time = datetime.now()
+			chosen_time = current_time + timedelta(hours=2)
+
+			wait_replications_check_rejected_uniqueMember()
+
+			examEndTime = chosen_time.strftime("%H:%M")
+			exam = Exam(
+					school=school,
+					room=room1.dn,				# room dn
+					files=[os.path.basename(f.name)],
+					examEndTime=examEndTime,	# in format "HH:mm"
+					recipients=[classdn]	# list of classes dns
+					)
+
+			exam.uploadFile(f.name) 
+			exam.check_upload()
+
+			exam.fetch_internetRule(rule1.name)
+			exam.fetch_groups(class_name)
+			exam.fetch_school(school)
+
+			share_modes = ['home', 'all']
+			current_internetRules = exam.get_internetRules()
+			exam.internetRule = random.choice(current_internetRules)
+			exam.shareMode = random.choice(share_modes)
+
+			exam.start()
+			wait_replications_check_rejected_uniqueMember()
+
+			exam.check_distribute()
+
+			exam.collect()
+			wait_replications_check_rejected_uniqueMember()
+			exam.check_collect()
+
+			f.close()
+			exam.finish()
+			wait_replications_check_rejected_uniqueMember()
+
+
+if __name__ == '__main__':
+	main()
