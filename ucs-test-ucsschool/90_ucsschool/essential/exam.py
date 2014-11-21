@@ -7,7 +7,10 @@
 
 .. moduleauthor:: Ammar Najjar <najjar@univention.de>
 """
+
 from univention.lib.umc_connection import UMCConnection
+import glob
+import os
 import univention.testing.strings as uts
 import univention.testing.ucr as ucr_test
 import univention.testing.utils as utils
@@ -19,8 +22,17 @@ class StartFail(Exception):
 class FinishFail(Exception):
 	pass
 
-class Exam(object):
+def get_dir_files(dir_path, recursive=True):
+	result = []
+	for f in glob.glob('%s/*' % dir_path):
+		if os.path.isfile(f):
+			result.append(os.path.basename(f))
+		if os.path.isdir(f) and	recursive:
+			result.extend(get_dir_files(f))
+	return result
 
+
+class Exam(object):
 	"""Contains the needed functionality for exam module.\n
 	:param school: name of the school
 	:type school: str
@@ -106,6 +118,7 @@ class Exam(object):
 				'schoolexam/exam/start',
 				param
 				)
+		print 'REQ RESULT = ', reqResult
 		if not reqResult['success']:
 			raise StartFail('Unable to start exam (%r)' % (param,))
 
@@ -124,6 +137,7 @@ class Exam(object):
 				'schoolexam/exam/finish',
 				param
 				)
+		print 'REQ RESULT = ', reqResult
 		if not reqResult['success']:
 			raise FinishFail('Unable to finish exam (%r)' % param)
 
@@ -136,6 +150,8 @@ class Exam(object):
 		:type content_type: str ('text/plain',..)
 		:param boundary: the boundary
 		:type boundary: str (-------123091)
+		:param flavor: flavor of the acting user
+		:type flavor: str
 		"""
 		with open(file_name, 'r') as f:
 			data = r"""--{0}
@@ -152,7 +168,7 @@ Content-Disposition: form-data; name="uploadType"
 
 html5
 --{0}--
-""".format(boundary, file_name, content_type, f.read())
+""".format(boundary, os.path.basename(file_name), content_type, f.read())
 		return data.replace("\n", "\r\n")
 
 	def uploadFile(self, file_name, content_type='application/octet-stream'):
@@ -160,10 +176,10 @@ html5
 		:param file_name: file name to be uploaded
 		:type file_name: str
 		:param content_type: type of the content of the file
-		:type content_type: str ('text/plain',..)
+		:type content_type: str ('application/octet-stream',..)
 		"""
 		print 'Uploading file %s' % file_name
-		boundary = '---------------------------103454444410473823401882756'
+		boundary = '---------------------------12558488471903363215512784168'
 		data = self.genData(file_name, content_type, boundary)
 		headers = dict(self.umcConnection._headers)  # copy headers!
 		httpcon = self.umcConnection.get_connection()
@@ -179,6 +195,7 @@ html5
 			data,
 			headers=headers)
 		r = httpcon.getresponse().status
+		print 'R=', r
 		if r != 200:
 			print 'httpcon.response().status=', r
 			utils.fail('Unable to upload the file.')
@@ -186,14 +203,24 @@ html5
 	def get_internetRules(self):
 		"""Get internet rules"""
 		reqResult = self.umcConnection.request('schoolexam/internetrules',{})
-		print 'Internet Rules = ', reqResult
+		print 'InternetRules = ', reqResult
 		return reqResult
+
+	def fetch_internetRule(self, internetRule_name):
+		if internetRule_name not in self.get_internetRules():
+			utils.fail('Exam %s was not able to fetch internet rule %s' % (self.name, internetRule_name))
 
 	def get_schools(self):
 		"""Get schools"""
 		reqResult = self.umcConnection.request('schoolexam/schools',{})
-		print 'Schools = ', reqResult
-		return reqResult
+		schools = [x['label'] for x in reqResult]
+		print 'Schools = ', schools
+		return schools
+
+
+	def fetch_school(self, school):
+		if school not in self.get_schools():
+			utils.fail('Exam %s was not able to fetch school %s' % (self.name, school))
 
 	def get_groups(self):
 		"""Get groups"""
@@ -204,12 +231,47 @@ html5
 					'pattern':''
 					}
 				)
-		print 'Groups = ', reqResult
-		return reqResult
+		groups = [x['label'] for x in reqResult]
+		print 'Groups = ', groups
+		return groups
 
+	def fetch_groups(self, group):
+		if group not in self.get_groups():
+			utils.fail('Exam %s was not able to fetch group %s' % (self.name, group))
 
 	def get_lessonEnd(self):
 		"""Get lessonEnd"""
 		reqResult = self.umcConnection.request('schoolexam/lesson_end',{})
 		print 'Lesson End = ', reqResult
 		return reqResult
+
+	def fetch_lessonEnd(self, lessonEnd):
+		if lessonEnd not in self.get_lessonEnd():
+			utils.fail('Exam %s was not able to fetch lessonEnd %s' % (self.name, lessonEnd))
+
+	def collect(self):
+		"""Collect results"""
+		reqResult = self.umcConnection.request('schoolexam/exam/collect',{'exam':self.name})
+		print 'Collect = ', reqResult
+		return reqResult
+
+	def check_collect(self):
+		account = utils.UCSTestDomainAdminCredentials()
+		admin = account.username
+		path = '/home/%s/Klassenarbeiten/%s' % (admin, self.name)
+		path_files = get_dir_files(path)
+		if not set(self.files).issubset(set(path_files)):
+			utils.fail('%r were not collected to %r' % (self.files, path))
+
+	def check_upload(self):
+		path = '/tmp/ucsschool-exam-upload*'
+		path_files = get_dir_files(path)
+		if not set(self.files).issubset(set(path_files)):
+			utils.fail('%r were not uploaded to %r' % (self.files, path))
+
+	def check_distribute(self):
+		path = '/home/%s/schueler' %  self.school
+		path_files = get_dir_files(path)
+		if not set(self.files).issubset(set(path_files)):
+			utils.fail('%r were not uploaded to %r' % (self.files, path))
+
