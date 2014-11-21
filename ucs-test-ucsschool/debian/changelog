@@ -1,3 +1,10 @@
+ucs-test-ucsschool (1.0.90-1) unstable; urgency=low
+
+  * Bug #36913: adding more functions for settings checks to Exam class
+  * Bug #36913: adding new test script "101_exam_mode_settings"
+
+ -- Ammar Najjar <najjar@univention.de>  Fri, 21 Nov 2014 10:39:17 +0100
+
 ucs-test-ucsschool (1.0.89-1) unstable; urgency=low
 
   * Bug #35746: "disabled" 76_ldap_acls
