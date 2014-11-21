@@ -1,3 +1,10 @@
+ucs-test-ucsschool (2.0.4-1) unstable; urgency=low
+
+  * Bug #36913: adding more functions for settings checks to Exam class
+  * Bug #36913: adding new test script "101_exam_mode_settings" 
+
+ -- Ammar Najjar <najjar@univention.de>  Fri, 21 Nov 2014 10:41:12 +0100
+
 ucs-test-ucsschool (2.0.3-1) unstable; urgency=medium
 
   * essential/computerroom.py: removed samba restart (Bug #35150)
