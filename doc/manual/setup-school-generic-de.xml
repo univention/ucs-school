@@ -233,7 +233,7 @@
 	  Heimatverzeichnisse der Benutzerkonten in entsprechend strukturierten Unterverzeichnissen
 	  angelegt wurden. Dies geschieht in Domänen die mit &ucsUAS; 3.2 R2 oder später installiert
 	  wurden automatisch. In älteren Umgebungen wird dies dadurch verhindert, dass dort &ucsUCRV;
-	  <envar>ucsschool/import/roleshares</envar> automatisch auf <emphasis>no</emphasis> gesetzt wurde.
+	  <envar>ucsschool/import/roleshare</envar> automatisch auf <emphasis>no</emphasis> gesetzt wurde.
 	  Dies gewährleistet eine einheitliche Anlage der Heimatverzeichnisse und sollte erst
 	  nach einer manuellen Migration der Heimatverzeichnisse geändert werden.
 	</para>
