@@ -3,8 +3,9 @@
 ## roles: [domaincontroller_master, domaincontroller_slave]
 ## tags: [apptest, ucsschool]
 ## exposure: dangerous
-## packages: []
+## packages: [ucs-school-import]
 
+from univention.uldap import getMachineConnection
 import glob
 import grp
 import os
@@ -15,8 +16,6 @@ import univention.testing.strings as uts
 import univention.testing.ucr as ucr_test 
 import univention.testing.ucsschool as utu 
 import univention.testing.utils as utils
-
-from univention.uldap import getMachineConnection
 
 BACKUP_PATH = '/home/backup/groups'
 
@@ -37,7 +36,7 @@ def ldap_info(cn):
 def check_backup(cn):
 	print '** Checking backup.. '
 	for _dir in glob.glob('%s/*' % BACKUP_PATH):
-		if os.path.isdir(_dir) and cn in _dir:
+		if os.path.exists(_dir) and cn in _dir:
 			utils.fail('%s was moved to backup' % cn)
 
 def check_ldap(school, old_name, new_name):
@@ -57,7 +56,9 @@ def class_dn(class_name, school):
 				class_name, school,ucr.get('ldap/base'))
 
 def share_path(class_name, school):
-	return '/home/%s/groups/klassen/%s' % (school, class_name)
+	path = '/home/%s/groups/klassen/%s' % (school, class_name)
+	if os.path.exists(path):
+		return path
 
 def permissions(dir_path):
 	"""Returns a tuple =
@@ -107,48 +108,74 @@ def check_permissions(old_dir, old_dir_permissions, new_dir, new_dir_permissions
 		utils.fail('Permissions are changed old= %r, new= %r' % (
 			old_dir_permissions[1], new_dir_permissions[1]))
 
+def test_rename_class(schoolenv, school, old_name, new_name, should_fail=False):
+	old_dir = share_path(old_name, school)
+
+	if old_dir:
+		f = tempfile.NamedTemporaryFile(suffix='.import', dir=old_dir)
+	else:
+		f = tempfile.NamedTemporaryFile(suffix='.import')
+	print 'Import tempfile created %s' % f.name
+	f.write('%s\t%s' % (old_name, new_name))
+	f.flush()
+
+	if old_dir:
+		old_dir_permissions = permissions(old_dir)
+		old_ldap_info = ldap_info(old_name)
+
+	# Rename the class
+	print '** renaming class %s to %s' % (old_name, new_name)
+	cmd = ['/usr/share/ucs-school-import/scripts/rename_class', f.name]
+	out, err = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
+	if 'ERROR' in out and not should_fail:
+		utils.fail('Error not detected:\n%s' % out)
+	elif 'ERROR' not in out:
+		utils.wait_for_replication_and_postrun()
+
+		# obvious check: old objects are renamed to new names in ldap
+		check_ldap(school, old_name, new_name)
+
+		# the share directory in file system should not be removed/moved to backup directory
+		check_backup(old_name)
+
+		# the share object should use the same uidNumber/gidNumber settings
+		# the renamed group object should use the same gidNumber
+		# the renamed group should still include the same users as before
+		new_ldap_info = ldap_info(new_name)
+		if old_ldap_info != new_ldap_info:
+			utils.fail('%s has changed after renaming the class' %
+					[x for x in old_ldap_info if old_ldap_info[x] != new_ldap_info[x]][0])
+
+		# the renamed share object should be still accessable
+		new_dir = share_path(new_name, school)
+		if new_dir:
+			new_dir_permissions = permissions(new_dir)
+			check_permissions(old_dir, old_dir_permissions, new_dir, new_dir_permissions)
+
+def create_two_users(schoolenv, school, class_name):
+	tea, teadn = schoolenv.create_user(
+			school, classes=class_name, is_teacher=True, use_cli=True)
+	stu, studn = schoolenv.create_user(
+			school, classes=class_name, use_cli=True)
+	return tea, stu
+
 def main():
 	with ucr_test.UCSTestConfigRegistry() as ucr:
 		with utu.UCSTestSchool() as schoolenv:
 			school, oudn = schoolenv.create_ou(name_edudc=ucr.get('hostname'))
-			class_name = '%s-%s' % (school, uts.random_name())
-			tea, teadn = schoolenv.create_user(
-					school, classes=class_name, is_teacher=True, use_cli=True)
-			stu, studn = schoolenv.create_user(
-					school, classes=class_name, use_cli=True)
-			new_class_name = '%s-%s' % (school, uts.random_name())
 
-			old_dir = share_path(class_name, school)
-			f = tempfile.NamedTemporaryFile(suffix='.import', dir=old_dir)
-			print 'Import tempfile created %s' % f.name
-			f.write('%s\t%s' % (class_name, new_class_name))
-			f.flush()
-			old_dir_permissions = permissions(old_dir)
-			old_ldap_info = ldap_info(class_name)
+			old_name = '%s-%s' % (school, uts.random_name())
+			new_name = '%s-%s' % (school, uts.random_name())
+			test_rename_class(schoolenv, school, old_name, new_name, should_fail=True)
+			
+			old_name = '%s-%s' % (school, uts.random_name())
+			new_name = '%s-%s' % (school, uts.random_name())
+			create_two_users(schoolenv, school, old_name)
+			test_rename_class(schoolenv, school, old_name, new_name)
 
-			# Rename the class
-			cmd = ['/usr/share/ucs-school-import/scripts/rename_class', f.name]
-			print subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
-			utils.wait_for_replication_and_postrun()
-
-			# obvious check: old objects are renamed to new names in ldap
-			check_ldap(school, class_name, new_class_name)
-
-			# the share directory in file system should not be removed/moved to backup directory
-			check_backup(class_name)
-
-			# the share object should use the same uidNumber/gidNumber settings
-			# the renamed group object should use the same gidNumber
-			# the renamed group should still include the same users as before
-			new_ldap_info = ldap_info(new_class_name)
-			if old_ldap_info != new_ldap_info:
-				utils.fail('%s has changed after renaming the class' %
-						[x for x in old_ldap_info if old_ldap_info[x] != new_ldap_info[x]][0])
-
-			# the renamed share object should be still accessable
-			new_dir = share_path(new_class_name, school)
-			new_dir_permissions = permissions(new_dir)
-			check_permissions(old_dir, old_dir_permissions, new_dir, new_dir_permissions)
+			old_name = '%s-%s' % (school, uts.random_name())
+			create_two_users(schoolenv, school, old_name)
+			test_rename_class(schoolenv, school, old_name, new_name, should_fail=True)
 
 
 if __name__ == '__main__':
