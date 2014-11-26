@@ -180,9 +180,6 @@ def main():
 			create_two_users(schoolenv, school, old_name)
 			test_rename_class(schoolenv, school, old_name, new_name, should_fail=True)
 
-			import pdb; pdb.set_trace()
-			print 'DONE'
-
 
 if __name__ == '__main__':
 	main()
