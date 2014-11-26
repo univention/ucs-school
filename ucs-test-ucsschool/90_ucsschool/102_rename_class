@@ -114,7 +114,10 @@ def test_rename_class(schoolenv, school, old_name, new_name, should_fail=False):
 	if old_dir:
 		f = tempfile.NamedTemporaryFile(suffix='.import', dir=old_dir)
 	else:
-		f = tempfile.NamedTemporaryFile(suffix='.import')
+		if should_fail:
+			f = tempfile.NamedTemporaryFile(suffix='.import')
+		else:
+			utils.fail('Share path does not exist: %s' % old_dir)
 	print 'Import tempfile created %s' % f.name
 	f.write('%s\t%s' % (old_name, new_name))
 	f.flush()
@@ -176,6 +179,9 @@ def main():
 			old_name = '%s-%s' % (school, uts.random_name())
 			create_two_users(schoolenv, school, old_name)
 			test_rename_class(schoolenv, school, old_name, new_name, should_fail=True)
+
+			import pdb; pdb.set_trace()
+			print 'DONE'
 
 
 if __name__ == '__main__':
