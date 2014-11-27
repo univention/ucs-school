@@ -233,9 +233,10 @@ class UCSTestSchool(object):
 			displayName = uts.random_string(length=random.randint(5, 50), charset=charset)
 
 		# it is not allowed to set the master as name_edudc ==> resetting name_edudc
-		if name_edudc.lower() == self._ucr.get('ldap/master', '').split('.',1)[0].lower():
-			print '*** It is not allowed to set the master as name_edudc ==> resetting name_edudc'
-			name_edudc = None
+		if isinstance(name_edudc, str):
+			if name_edudc.lower() == self._ucr.get('ldap/master', '').split('.',1)[0].lower():
+				print '*** It is not allowed to set the master as name_edudc ==> resetting name_edudc'
+				name_edudc = None
 
 		# create random OU name
 		if not ou_name:
