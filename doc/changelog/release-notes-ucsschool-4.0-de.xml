@@ -39,41 +39,86 @@ feedback@univention.de
 		</legalnotice>
 	</bookinfo>
 
-	<chapter>
-	  <title>Empfohlene Update-Reihenfolge für Umgebungen mit mehr als einem UCS-Server / Update von Systemen mit UCS-Komponenten</title>
-	  <para>
-		Für das Update von UCS-Umgebungen mit mehr als einem UCS-System wird
-		die nachfolgende Vorgehensreihenfolge empfohlen und muss beachtet werden:
-	  </para>
-	  <para>
-		Auf dem &ucsMaster; wird die maßgebliche (authoritative) Version des
-		LDAP-Verzeichnisdienstes vorgehalten, die an alle übrigen LDAP-Server der UCS-Domäne
-		repliziert wird. Da bei Updates Veränderungen an den LDAP-Schemata auftreten
-		können, muss der &ucsMaster; bei einem Update immer als erstes System aktualisiert werden.
-	  </para>
-	  <para>
-		Generell ist es empfehlenswert, alle UCS-Systeme möglichst in einem Wartungsfenster zu
-		aktualisieren.
-	  </para>
-	  <section>
-		<title>Hinweise zu Umgebungen mit anderer Dritt-Software</title>
-		<para>
-		  Bei der Verwendung von 3rd-Party-Software ist generell <emphasis>vor</emphasis> dem Update
-		  mit dem Hersteller/Vertriebspartner der Software zu klären, ob diese mit der neuen Version
-		  von Univention Corporate Server bzw. &ucsUAS; weiterhin uneingeschränkt einsetzbar ist. 
-		</para>
-		<para>
-		  Die Hersteller/Vertriebspartner von auf Univention Corporate Server basierenden Produkten
-		  sorgen eigenständig für die Veröffentlichung. Updates müssen daher von dort bezogen
-		  werden.
-		</para>
-		<para>
-		  Falls Ihnen von Univention angepasste Paketversionen bereitgestellt wurden, so sollte
-		  geprüft werden, ob durch die Aktualisierung angepasste Pakete überschrieben werden -
-		  vorzugsweise in einer Testumgebung. Sollten Sie hier Probleme feststellen, so wenden Sie
-		  sich bitte an Univention.
-		</para>
-	  </section>
+	<chapter id="relnotes:prepare">
+		<title>Hinweise zum Update</title>
+			<para>
+				Während der Aktualisierung kann es zu Ausfällen von Diensten innerhalb der Domäne
+				kommen. Aus diesem Grund sollte das Update innerhalb eines Wartungsfensters
+				erfolgen. Grundsätzlich wird empfohlen das Update zunächst in einer Testumgebung
+				einzuspielen und zu testen. Die Testumgebung sollte dabei identisch zur
+				Produktivumgebung sein. Je nach Systemgeschwindigkeit, Netzwerkanbindung und
+				installierter Software kann das Update zwischen dreißig Minuten und mehreren Stunden
+				dauern.
+			</para>
+
+		<section id="relnotes:order">
+			<title>Empfohlene Update-Reihenfolge</title>
+				<para>
+					In Umgebungen mit mehr als einem UCS-System muss die Update-Reihenfolge der
+					UCS-Systeme beachtet werden:
+				</para>
+
+				<para>
+					Auf dem &ucsMaster; wird die maßgebliche (authoritative) Version des
+					LDAP-Verzeichnisdienstes vorgehalten, die an alle übrigen LDAP-Server der
+					UCS-Domäne repliziert wird. Da bei Release-Updates Veränderungen an den
+					LDAP-Schemata auftreten können, muss der &ucsMaster; bei einem Release-Update immer
+					als erstes System aktualisiert werden.
+				</para>
+		</section>
+		<section id="relnotes:mix">
+			<title>Mischbetrieb mit älteren UCS-Systemen</title>
+				<para>
+					UCS 4.0 unterstützt den Mischbetrieb mit UCS 3.2-4 Systemen. Aus diesem Grund müssen
+					nicht alle UCS-Systeme in einem Wartungsfenster auf UCS 4.0 aktualisiert werden. Ein
+					Mischbetrieb mit älteren UCS-Versionen, bspw. UCS 3.1, wird nicht unterstützt.
+				</para>
+		</section>
+		<section id="relnotes:apps">
+			<title>Univention App Center</title>
+				<para>
+					Sofern Applikationen aus dem App Center installiert sind, ist das Update erst
+					dann möglich, wenn alle lokal installierten Applikationen im App Center
+					verfügbar sind. Einige Applikationen werden beim Update ebenfalls auf neuere
+					Versionen aktualisiert. Sollte eine Applikation noch nicht für UCS 4.0 verfügbar sein,
+					kann der Zeitpunkt der Veröffentlichung beim Applikationshersteller nachgefragt werden.
+				</para>
+				<para>
+					Falls &ucsUCC; 1.0 im Einsatz ist und ein Update auf &ucsUCC; 2.0 noch nicht
+					erfolgen soll, so sollte vor dem Update auf UCS 4.0 auf die letzte verfügbare
+					&ucsUCC; 1.0 Version aktualisiert werden. Dies kann mit dem folgenden Befehlen
+					durchgeführt werden:
+					<programlisting>
+eval "$(ucr shell version/version version/patchlevel)"
+univention-add-app ucc_20140115
+univention-upgrade --updateto $version_version-$version_patchlevel
+					</programlisting>
+					Eine detaillierte Übersicht zu den Änderungen ist in den UCC 1.0 rev3 Release
+					Notes beschrieben:
+					<ulink url="http://download.univention.de/doc/release-notes-ucc-1.0-rev3.pdf"/>.
+				</para>
+		</section>
+		<section id="relnotes:samba">
+			<title>Ablösung von Windows NT DC Funktionalität</title>
+				<para>
+					Die Verwendung von Windows NT Domänendiensten, die klassisch durch Samba 3
+					bereitgestellt wurden, wird mit UCS 4.0 nicht mehr empfohlen. Eine Auswahl der
+					Windows NT Domänendienste ist deshalb während der Installation von UCS und durch
+					das App Center nicht mehr vorgesehen. Es wird empfohlen auf die Active Directory
+					Domänendienste von UCS (Samba 4) zu migrieren. Die Migration ist im Univention
+					Wiki dokumentiert:
+					<ulink url="http://wiki.univention.de/index.php?title=Migration_from_Samba_3_to_Samba_4"/>.
+				</para>
+		</section>
+		<section id="relnotes:32bit">
+			<title>UCS-Installations-DVDs nur noch als 64-Bit-Variante</title>
+				<para>
+					UCS-Installations-DVSs werden ab UCS 4 nur noch für 64-Bit-Archtitekturen
+					bereitgestellt. Vorhandene 32-Bit UCS 3 Systeme können weiterhin über das Online
+					Repository oder über Update-DVDs auf UCS 4 aktualisiert werden. Die
+					32-Bit-Archtitektur wird für die gesamte UCS 4-Maintenance noch unterstützt.
+				</para>
+		</section>
 	</chapter>
 
 	<chapter>
@@ -83,6 +128,22 @@ feedback@univention.de
 		Standard-Installation benötigt min. 6 GB Speicherplatz. Das Update benötigt je nach Umfang
 		der vorhanden Installation mindestens 1 GB weiteren Speicherplatz zum Herunterladen und
 		Installieren der Pakete.
+	  </para>
+
+	  <para>
+		Für das Update sollte eine Anmeldung auf der lokalen Konsole des Systems mit dem Benutzer
+		<emphasis>root</emphasis> durchgeführt und das Update dort gestartet werden. Alternativ
+		kann das Update über &ucsUMC; durchgeführt werden.
+	  </para>
+
+	  <para>
+		Eine Remote-Aktualisierung über SSH wird nicht empfohlen, da dies beispielsweise bei
+		Unterbrechung der Netzverbindung zum Abbruch des Update-Vorgangs und zu einer
+		Beeinträchtigung des Systems führen kann. Sollte dennoch eine Aktualisierung über eine
+		Netzverbindung durchgeführt werden, ist sicherzustellen, dass das Update bei Unterbrechung
+		der Netzverbindung trotzdem weiterläuft. Hierfür können beispielsweise die Tools
+		<command>screen</command> oder <command>at</command> eingesetzt werden, die auf allen
+		Systemrollen installiert sind.
 	  </para>
 	</chapter>
 
@@ -112,9 +173,7 @@ feedback@univention.de
 	</chapter>
 
 	<chapter>
-		<title>Hinweise zum Einsatz einzelner Pakete</title>
-		<section>
-			<title>Zugriff auf die Univention Management Console</title>
+		<title>Hinweise zum Zugriff auf die Univention Management Console</title>
 			<para>
 				&ucsUMC; verwendet für die Darstellung der Web-Oberfläche zahlreiche Javascript- und
 				CSS-Funktionen. Cookies müssen im Browser zugelassen sein. Die folgenden Browser werden
@@ -135,42 +194,8 @@ feedback@univention.de
 				</listitem>
 			</itemizedlist>
 			<para>
-			  Auf älteren Browsern können Darstellungs- oder Performanceprobleme auftreten. 
+			  Auf älteren Browsern können Darstellungs- oder Performanceprobleme auftreten.
 			</para>
-		</section>
-
-		<section>
-			<title>Einschränkungen im Samba 4-Betrieb</title>
-			<para>
-				Die aktuell vom Samba-Projekt veröffentlichten Versionen von Samba 4 unterliegen in der
-				Weiterentwicklung noch stärkeren Änderungen als Samba 3. Einige Funktionalitäten stehen
-				daher noch nicht vollständig zur Verfügung:
-			</para>
-			<itemizedlist>
-				<listitem>
-					<para> 
-						Microsoft Windows Domänencontroller dürfen aktuell nicht in eine Samba 4-Domäne
-						gejoint werden.
-					</para>
-				</listitem>
-				<listitem>
-					<para>
-						Eine selektive Replikation ist mit Samba 4 nicht möglich, da diese durch Active
-						Directory prinzipiell nicht unterstützt wird (in UCS@school basiert die selektive
-						Replikation auf der Listener/Notifier-Replikation).
-					</para>
-				</listitem>
-				<listitem>
-					<para>Samba 4 unterstützt aktuell keine Forest-Domänen.</para>
-				</listitem>
-				<listitem>
-					<para>Samba 4 unterstützt aktuell keine Vertrauensstellungen.</para>
-				</listitem>
-			</itemizedlist>
-			<para>
-			  Weitere Hinweise finden sich in Kapitel 8 des UCS-Handbuchs <citation>UCS-Handbuch</citation>.
-			</para>
-		</section>
 	</chapter>
 
 	<chapter>
