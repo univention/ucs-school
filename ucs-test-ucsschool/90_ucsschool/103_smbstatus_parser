@@ -1,0 +1,45 @@
+#!/usr/share/ucs-test/runner python
+## desc: smbstatus parser
+## roles: [domaincontroller_master, domaincontroller_slave]
+## tags: [apptest, ucsschool]
+## exposure: dangerous
+## packages: [univention-samba4]
+
+from ucsschool.lib.smbstatus import SMB_Status
+import subprocess
+import time
+import univention.testing.ucr as ucr_test
+import univention.testing.utils as utils
+
+def check_attributes(_dict, _attrs):
+	for attr in _attrs:
+		try:
+			if not _dict.__getattribute__(attr):
+				utils.fail('Could not fetch the attribute %s' % attr)
+		except AttributeError:
+			if not _dict.get(attr):
+				utils.fail('Could not fetch the attribute %s' % attr)
+
+def main():
+	with ucr_test.UCSTestConfigRegistry() as ucr:
+		host = ucr.get('hostname')
+		pop1 = subprocess.Popen(['smbclient', '-U', 'Administrator%univention', '//%s/netlogon' % host], stdin = subprocess.PIPE)
+		pop2 = subprocess.Popen(['smbclient', '-U', 'Administrator%univention', '//%s/sysvol' % host], stdin = subprocess.PIPE)
+		pop3 = subprocess.Popen(['smbclient', '-U', 'Administrator%univention', '//%s/IPC$' % host], stdin = subprocess.PIPE)
+
+		# wait for the connections to establish
+		time.sleep(10)
+
+		# subprocess.Popen(['python', '/usr/share/pyshared/ucsschool/lib/smbstatus.py']).communicate()
+		status = SMB_Status()
+		print 'smbstatus = ', status
+		_attrs = ['pid', 'username', 'group', 'machine', 'services', 'ipaddress']
+		if status:
+			for process in status:
+				check_attributes(process, _attrs)
+		else:
+			utils.fail('smbclient was not able to open any connection to host (%s)' % host)
+
+
+if __name__ == '__main__':
+	main()
