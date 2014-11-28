@@ -6,19 +6,53 @@
 ## packages: [univention-samba4]
 
 from ucsschool.lib.smbstatus import SMB_Status
+import psutil
+import socket
 import subprocess
 import time
 import univention.testing.ucr as ucr_test
 import univention.testing.utils as utils
 
+PROCNAME = "smbd"
+
 def check_attributes(_dict, _attrs):
+	reference = {
+			'pid': get_pids(),
+			'username': ['Administrator'],
+			'services': [['netlogon'], ['sysvol'], ['IPC$']],
+			'ipaddress': [get_ipaddress()]
+			}
+
 	for attr in _attrs:
 		try:
-			if not _dict.__getattribute__(attr):
+			value = _dict.__getattribute__(attr)
+			if not value:
 				utils.fail('Could not fetch the attribute %s' % attr)
 		except AttributeError:
-			if not _dict.get(attr):
+			value = _dict.get(attr)
+			if not value:
 				utils.fail('Could not fetch the attribute %s' % attr)
+		if attr in [
+				'pid',
+				'username',
+				'services',
+				'ipaddress'
+				]:
+			if attr == 'ipaddress':
+				value = value.split(':',1)[0]
+			if not [key for key in reference if value in reference[key] and key == attr]:
+				utils.fail('Attribute (%s) is parsed wrong as (%s), expected in (%r)' % (
+					attr, value, reference[attr]))
+
+def get_pids():
+	result = []
+	for proc in psutil.process_iter():
+		if proc.name == PROCNAME:
+			result.append(str(proc.pid))
+	return result
+
+def get_ipaddress():
+	return socket.gethostbyname(socket.gethostname())
 
 def main():
 	with ucr_test.UCSTestConfigRegistry() as ucr:
@@ -33,12 +67,23 @@ def main():
 		# subprocess.Popen(['python', '/usr/share/pyshared/ucsschool/lib/smbstatus.py']).communicate()
 		status = SMB_Status()
 		print 'smbstatus = ', status
-		_attrs = ['pid', 'username', 'group', 'machine', 'services', 'ipaddress']
+		_attrs = [
+				'pid',
+				'username',
+				'group',
+				'machine',
+				'services',
+				'ipaddress',
+				]
 		if status:
 			for process in status:
 				check_attributes(process, _attrs)
 		else:
 			utils.fail('smbclient was not able to open any connection to host (%s)' % host)
+
+		pop1.terminate()
+		pop2.terminate()
+		pop3.terminate()
 
 
 if __name__ == '__main__':
