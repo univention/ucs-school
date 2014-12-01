@@ -16,9 +16,11 @@ import univention.testing.utils as utils
 PROCNAME = "smbd"
 
 def check_attributes(_dict, _attrs):
+	account = utils.UCSTestDomainAdminCredentials()
+	admin = account.username
 	reference = {
 			'pid': get_pids(),
-			'username': ['Administrator'],
+			'username': [admin],
 			'services': [['netlogon'], ['sysvol'], ['IPC$']],
 			'ipaddress': [get_ipaddress()]
 			}
@@ -56,10 +58,13 @@ def get_ipaddress():
 
 def main():
 	with ucr_test.UCSTestConfigRegistry() as ucr:
+		account = utils.UCSTestDomainAdminCredentials()
+		admin = account.username
+		passwd = account.bindpw
 		host = ucr.get('hostname')
-		pop1 = subprocess.Popen(['smbclient', '-U', 'Administrator%univention', '//%s/netlogon' % host], stdin = subprocess.PIPE)
-		pop2 = subprocess.Popen(['smbclient', '-U', 'Administrator%univention', '//%s/sysvol' % host], stdin = subprocess.PIPE)
-		pop3 = subprocess.Popen(['smbclient', '-U', 'Administrator%univention', '//%s/IPC$' % host], stdin = subprocess.PIPE)
+		pop1 = subprocess.Popen(['smbclient', '-U', admin + '%' + passwd, '//%s/netlogon' % host], stdin = subprocess.PIPE)
+		pop2 = subprocess.Popen(['smbclient', '-U', admin + '%' + passwd, '//%s/sysvol' % host], stdin = subprocess.PIPE)
+		pop3 = subprocess.Popen(['smbclient', '-U', admin + '%' + passwd, '//%s/IPC$' % host], stdin = subprocess.PIPE)
 
 		# wait for the connections to establish
 		time.sleep(10)
