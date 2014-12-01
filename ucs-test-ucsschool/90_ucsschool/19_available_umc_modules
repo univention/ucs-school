@@ -179,7 +179,7 @@ def main():
 
 				for (user, userType) in users:
 					# staff is not able to login to dc-slave
-					if (userType != 'staff' and serverRole != 'domaincontroller_slave'):
+					if (userType != 'staff' or serverRole != 'domaincontroller_slave'):
 						con.auth(user, 'univention')
 						modules = listAllModules(con)
 						checkModules(modules, userType, serverRole, singleMaster)
