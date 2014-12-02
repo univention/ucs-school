@@ -405,11 +405,31 @@ class UCSTestSchool(object):
 
 		return username, user_dn
 
-	def create_school_admin(self, ou_name):
+	def create_school_admin(self, ou_name, username=None, firstname=None, lastname=None,
+			mailaddress=None, is_active=True, password='univention', wait_for_replication=True):
 		position = 'cn=admins,cn=users,%s' % (self.get_ou_base_dn(ou_name))
 		groups = ["cn=admins-%s,cn=ouadmins,cn=groups,%s" % (ou_name, self.LDAP_BASE)]
+		if username is None:
+			username = uts.random_username()
+		if firstname is None:
+			firstname = uts.random_string(length=10, numeric=False)
+		if lastname is None:
+			lastname = uts.random_string(length=10, numeric=False)
+		if mailaddress is None:
+			mailaddress = ''
+		kwargs = {
+			'school': ou_name,
+			'name': username,
+			'firstname': firstname,
+			'lastname': lastname,
+			'email': mailaddress,
+			'password': password,
+			'disabled': not(is_active),
+			}
 		udm = udm_test.UCSTestUDM()
-		dn, school_admin = udm.create_user(position=position, groups=groups)
+		dn, school_admin = udm.create_user(position=position, groups=groups, **kwargs)
+		if wait_for_replication:
+			utils.wait_for_replication()
 		return dn, school_admin
 
 	def create_domain_admin(self, ou_name):
