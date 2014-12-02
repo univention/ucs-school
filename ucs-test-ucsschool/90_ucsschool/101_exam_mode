@@ -5,7 +5,7 @@
 ## tags: [apptest, ucsschool]
 ## exposure: dangerous
 ## bugs: [36251]
-## packages: [ucs-school-umc-computerroom, ucs-school-umc-exam]
+## packages: [univention-samba4, ucs-school-umc-computerroom, ucs-school-umc-exam]
 
 from datetime import datetime, timedelta
 from essential.computerroom import Room, Computers
