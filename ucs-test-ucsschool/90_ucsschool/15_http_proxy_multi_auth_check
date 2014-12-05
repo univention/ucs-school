@@ -85,7 +85,7 @@ def printHeader(state, passwd, expect_wrong_password):
 def main():
 	with ucr_test.UCSTestConfigRegistry() as ucr:
 		# url = ucr.get('proxy/filter/redirecttarget')
-		url = 'http://stackoverflow.com/'
+		url = 'http://download.univention.de/'
 		host = '%s.%s' % (ucr.get('hostname'), ucr.get('domainname'))
 
 		# list of tuples (passwd, expect_wrong_password) used in the test
