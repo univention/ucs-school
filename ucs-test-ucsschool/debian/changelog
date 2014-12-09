@@ -1,3 +1,10 @@
+ucs-test-ucsschool (2.0.8-1) unstable; urgency=low
+
+  * Bug #37173: classify tests into: before/after any change done to the system
+  * scripts moved to 00_checks are: 03_ucsschool_helpdesk_check, 13_ucsschool_check_installed_default_packages, 103_ucsschool_smbstatus_parser 
+
+ -- Ammar Najjar <najjar@univention.de>  Tue, 09 Dec 2014 12:32:00 +0100
+
 ucs-test-ucsschool (2.0.7-1) unstable; urgency=low
 
   * Bug #37011: 90_ucsschool/20_check_rejected: the test was moved to the new
