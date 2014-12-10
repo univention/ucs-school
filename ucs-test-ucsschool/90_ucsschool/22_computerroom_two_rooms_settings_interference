@@ -2,7 +2,7 @@
 ## -*- coding: utf-8 -*-
 ## desc: computerroom two rooms settings
 ## roles: [domaincontroller_master, domaincontroller_slave]
-## tags: [apptest, ucsschool]
+## tags: [apptest, ucsschool,longrunning]
 ## exposure: dangerous
 ## packages: [ucs-school-umc-computerroom]
 
@@ -153,7 +153,7 @@ def main():
 								else:
 									print("Exception: '%s' '%s' '%r'" % (str(e), type(e), e))
 									raise
-								
+
 				finally:
 					remove_printer(printer, school, ucr.get('ldap/base'))
 
