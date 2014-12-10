@@ -1,7 +1,7 @@
 #!/usr/share/ucs-test/runner python
 ## -*- coding: utf-8 -*-
 ## desc: Import OU via python API
-## tags: [apptest,ucsschool]
+## tags: [apptest,ucsschool,longrunning]
 ## roles: [domaincontroller_master]
 ## exposure: dangerous
 ## packages:
