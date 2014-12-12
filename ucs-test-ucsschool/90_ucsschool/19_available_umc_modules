@@ -84,7 +84,8 @@ def checkModules(modules, userType, serverRole, singleMaster):
 			('schoolgroups', 'workgroup-admin'),
 			('internetrules', 'admin'),
 			('internetrules', 'assign'),
-			('lessontimes', None)
+			('lessontimes', None),
+			('passwordchange', None)
 			]
 	# Domanenadministrator auf dem DC Master
 	dc_domainadmin = [
