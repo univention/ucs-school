@@ -2,6 +2,8 @@
 # coding=utf-8
 ## desc: ucs-school-ldap-acls
 ## roles: [domaincontroller_master]
+## versions:
+##  3.2-4: skip
 ## tags: [apptest, ucsschool]
 ## exposure: dangerous
 ## packages: [ucs-school-ldap-acls-master]
@@ -364,10 +366,6 @@ class LDAPACLTestMatrix(object):
 				self.addSubtree(dn, attrs, access)
 
 def main():
-	print "76_ldap_acls IS CURRENTLY DISABLED"
-	print >>sys.stderr, "76_ldap_acls IS CURRENTLY DISABLED"
-	sys.exit(0)
-
 	with utu.UCSTestSchool()  as schoolenv:
 		with ucr_test.UCSTestConfigRegistry() as ucr:
 			base_dn = ucr.get('ldap/base')
