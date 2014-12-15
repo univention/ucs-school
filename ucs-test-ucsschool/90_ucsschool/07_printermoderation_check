@@ -3,7 +3,7 @@
 ## roles: [domaincontroller_master, domaincontroller_backup, domaincontroller_slave, memberserver]
 ## tags: [apptest,ucsschool]
 ## exposure: dangerous
-## packages:  [ucs-school-umc-printermoderation]
+## packages:  [ucs-school-umc-printermoderation, ucs-school-import]
 
 from mimetypes import MimeTypes
 from univention.lib.umc_connection import UMCConnection
