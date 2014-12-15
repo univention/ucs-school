@@ -20,6 +20,7 @@ import univention.testing.utils as utils
 def check_s4_rejected():
 	cmd = ['univention-s4connector-list-rejected']
 	out , err = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
+	print 'rejected Objects:', out, err
 	fail = 'S4 Dn:' in out or 'UCS DN:' in out
 	if fail:
 		utils.fail('There is at least one rejected object')
