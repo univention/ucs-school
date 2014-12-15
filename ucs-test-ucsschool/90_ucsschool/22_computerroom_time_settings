@@ -1,6 +1,8 @@
 #!/usr/share/ucs-test/runner python
 ## desc: computerroom module time settings
 ## roles: [domaincontroller_master, domaincontroller_slave]
+## versions:
+##  4.0-0: skip
 ## tags: [apptest, ucsschool]
 ## exposure: dangerous
 ## packages: [ucs-school-umc-computerroom]
