@@ -1,3 +1,15 @@
+ucs-test-ucsschool (1.0.93-1) unstable; urgency=low
+
+  * Bug #34496: dependency to the package ucs-school-import is added.
+  * Bug #34491: test 17_http_proxy_auth_after_passwd_reset_check is disabled until the Bug #34206 is fixed.
+  * Bug #35151: test 22_computerroom_time_settings is disabled until the Bug #34206 is fixed.
+  * Bug #35746: skip tag added
+  * Bug #35448: skipping failing cases mentioned in Bug #35447
+  * Bug #36214: skip proof_uniquemember check until bug #36251 is fixed.
+  * Bug #36214: Rejected objects are now printed out.
+
+ -- Ammar Najjar <najjar@univention.de>  Tue, 16 Dec 2014 11:12:50 +0100
+
 ucs-test-ucsschool (1.0.92-1) unstable; urgency=low
 
   * Bug #35691: checks if "name_edudc" is a string before applying lower() on it. 
