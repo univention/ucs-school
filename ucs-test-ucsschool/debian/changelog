@@ -1,3 +1,9 @@
+ucs-test-ucsschool (2.0.12-1) unstable; urgency=low
+
+  * Bug #35448: removing extra spaces
+
+ -- Ammar Najjar <najjar@univention.de>  Thu, 18 Dec 2014 12:42:46 +0100
+
 ucs-test-ucsschool (2.0.11-1) unstable; urgency=low
 
   * Bug #34496: dependency to the package ucs-school-import is added.
