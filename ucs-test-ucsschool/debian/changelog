@@ -1,3 +1,10 @@
+ucs-test-ucsschool (1.0.96-1) unstable; urgency=low
+
+  * Bug #36804: improve the code and reorder the functions
+  * Bug #35665. correct pyflakes errors
+
+ -- Ammar Najjar <najjar@univention.de>  Fri, 16 Jan 2015 11:22:48 +0100
+
 ucs-test-ucsschool (1.0.95-1) unstable; urgency=low
 
   * 90_ucsschool/91_samba4_gpc_two_way_replication: check the udm output
