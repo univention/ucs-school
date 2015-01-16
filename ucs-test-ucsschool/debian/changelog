@@ -1,3 +1,10 @@
+ucs-test-ucsschool (2.0.13-1) unstable; urgency=low
+
+  * Bug #36804: improve the code and reorder the functions
+  * Bug #35665: correct pyflakes errors
+
+ -- Ammar Najjar <najjar@univention.de>  Fri, 16 Jan 2015 11:25:50 +0100
+
 ucs-test-ucsschool (2.0.12-1) unstable; urgency=low
 
   * Bug #35448: removing extra spaces
