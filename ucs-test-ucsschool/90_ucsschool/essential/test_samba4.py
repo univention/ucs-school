@@ -34,6 +34,14 @@ class TestSamba4(object):
         """
         exit(TestCodes.REASON_INSTALL)
 
+    def remove_samba_warnings(self, input_str):
+        """
+        Removes the Samba Warning/Note from the given input_str.
+        """
+        # ignoring following messages (Bug #37362):
+        input_str = input_str.replace('WARNING: No path in service IPC$ - making it unavailable!', '')
+        return input_str.replace('NOTE: Service IPC$ is flagged unavailable.', '').strip()
+
     def create_and_run_process(self, cmd,
                                stdin=None, std_input=None,
                                shell=False, stdout=PIPE):
@@ -46,7 +54,14 @@ class TestSamba4(object):
                      stdin=stdin, stdout=stdout, stderr=PIPE,
                      shell=shell, close_fds=True)
 
-        return proc.communicate(input=std_input)
+        stdout, stderr = proc.communicate(input=std_input)
+
+        if stderr:
+            stderr = self.remove_samba_warnings(stderr)
+        if stdout:
+            stdout = self.remove_samba_warnings(stdout)
+
+        return stdout, stderr
 
     def start_stop_service(self, service, action):
         """
