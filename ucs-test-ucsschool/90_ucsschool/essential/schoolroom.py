@@ -19,6 +19,9 @@ class FailAdd(Exception):
 class FailCheckPut(Exception):
 	pass
 
+class FailCheckGet(Exception):
+	pass
+
 class FailCheckQuery(Exception):
 	pass
 
@@ -66,16 +69,13 @@ class ComputerRoom(object):
 			self.name,
 			'schoolrooms/add')
 		print 'param = %r' % (param,)
-		try:
-			reqResult = self.umc_connection.request('schoolrooms/add', param)
-			utils.wait_for_replication()
-			if not reqResult:
+		reqResult = self.umc_connection.request('schoolrooms/add', param)
+		utils.wait_for_replication()
+		if not reqResult[0]:
+			if not accept_duplicated_name:
 				raise FailAdd('Unable to add school room (%r)' % (param,))
-		except Exception as e:
-			if ('groupNameAlreadyUsed' in str(e)) and accept_duplicated_name:
-				print 'Cought an expected exception: %s' % str(e)
 			else:
-				raise
+				print 'School room (%r) addition failed as expected.' % (self.name,)
 
 	def verify_ldap(self, must_exist=True):
 		utils.verify_ldap_object(self.dn(), should_exist=must_exist)
@@ -93,6 +93,15 @@ class ComputerRoom(object):
 			raise FailGet('Unexpected fetching result for school room (%r)' % (self.dn()))
 		else:
 			return reqResult[0]
+
+	def check_get(self, expected_attrs):
+		"""checks if the result of get command matches the
+		expected attributes.
+		"""
+		current_attrs = self.get()
+		if current_attrs != expected_attrs:
+			raise FailCheckGet('The current attrbutes (%r) do not match the expected ones (%r)' % (
+				current_attrs, expected_attrs))
 
 	def query(self):
 		"""Get all school rooms via UMCP\n
