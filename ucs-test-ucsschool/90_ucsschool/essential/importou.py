@@ -304,12 +304,11 @@ def verify_ou(ou, dc, ucr, sharefileserver, dc_administrative, must_exist):
 		dc_dn = 'cn=dc%s-01,cn=dc,cn=server,cn=computers,%s' % (ou, ou_base)
 		dc_name = 'dc%s-01' % ou
 
+	sharefileserver_dn = dc_dn
 	if sharefileserver:
 		result = lo.search(filter='(&(objectClass=univentionDomainController)(cn=%s))' % sharefileserver, base=base_dn, attr=['cn'])
 		if result:
 			sharefileserver_dn = result[0][0]
-	else:
-		sharefileserver_dn = dc_dn
 
 	utils.verify_ldap_object(ou_base, expected_attr={'ou': [ou], 'ucsschoolClassShareFileServer': [sharefileserver_dn], 'ucsschoolHomeShareFileServer': [sharefileserver_dn]}, should_exist=must_exist)
 
