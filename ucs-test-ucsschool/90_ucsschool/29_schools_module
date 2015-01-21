@@ -1,47 +1,63 @@
 #!/usr/share/ucs-test/runner python
 ## -*- coding: utf-8 -*-
 ## desc: Schools module
-## roles: [domaincontroller_master]
+## roles: [domaincontroller_master, domaincontroller_slave]
 ## tags: [apptest, ucsschool]
 ## exposure: dangerous
 ## packages: [ucs-school-umc-wizards]
 
-from essential.school import School
+from essential.school import School, create_dc_slave
+import univention.testing.udm as udm_test
 import univention.testing.ucr as ucr_test
 import univention.testing.strings as uts
 import univention.testing.utils as utils
 
 def main():
 	with ucr_test.UCSTestConfigRegistry() as ucr:
+		with udm_test.UCSTestUDM() as udm:
+			dc_slave1, dc_slave1_dn = create_dc_slave(udm)
+			dc_slave2 , dc_slave2_dn= create_dc_slave(udm)
+			schools = []
+			try:
+				for i in xrange(2):
+					school = School()
+					school.create()
+					school.verify_ldap(True)
+					schools.append(school)
 
-		schools = []
-		singlemaster = ucr.is_true('ucsschool/singlemaster')
-		try:
-			for i in xrange(2):
-				if singlemaster:
-					slave_name = None
-				else:
-					slave_name = uts.random_string()
-				school = School(dc_name=slave_name)
-				school.create()
-				school.verify_ldap(True)
-				schools.append(school)
+				schools[0].check_query([schools[0].name, schools[1].name])
 
-			
-			schools[0].check_query([schools[0].display_name, schools[1].display_name])
+				new_attrs = {
+					'display_name':'S2',
+					'home_share_file_server':dc_slave1,
+					'class_share_file_server':dc_slave2
+				}
+				schools[0].edit(new_attrs)
+				expected_attrs = {
+					'display_name':'S2',
+					'home_share_file_server':dc_slave1_dn,
+					'class_share_file_server':dc_slave2_dn
+				}
+				schools[0].check_get(expected_attrs)
 
-			new_attrs = {'display_name':'S2'}
-			schools[0].edit(new_attrs)
-			new_attrs = {'display_name':'S3'}
-			schools[1].edit(new_attrs)
-			schools[0].check_query(['S2', 'S3'])
+				new_attrs = {
+					'display_name':'S3',
+					'home_share_file_server':dc_slave2,
+					'class_share_file_server':dc_slave1
+				}
+				schools[1].edit(new_attrs)
+				expected_attrs = {
+					'display_name':'S3',
+					'home_share_file_server':dc_slave2_dn,
+					'class_share_file_server':dc_slave1_dn
+				}
+				schools[1].check_get(expected_attrs)
 
-			for school in reversed(schools):
-				school.verify_ldap(True)
-				school.remove()
-				school.verify_ldap(False)
-		finally:
-			if schools:
+				for school in schools:
+					school.verify_ldap(True)
+					school.remove()
+					school.verify_ldap(False)
+			finally:
 				for school in schools:
 					school.remove()
 
