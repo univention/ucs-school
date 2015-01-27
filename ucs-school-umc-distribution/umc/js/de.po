@@ -150,7 +150,7 @@ msgid "Error: No files have been assign to the project!"
 msgstr "Fehler: Keine Datei wurden dem Projekt hinzugefügt!"
 
 #: umc/js/distribution.js:287
-msgid "Error: No recipients have been assign to the project!"
+msgid "Error: No recipients have been assigned to the project!"
 msgstr "Fehler: Kein Empfänger wurde für das Projekt ausgewählt!"
 
 #: umc/js/distribution/DetailPage.js:159 umc/js/distribution/DetailPage.js:259

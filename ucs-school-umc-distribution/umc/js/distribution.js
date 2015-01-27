@@ -284,7 +284,7 @@ define([
 
 			if (!items[0].recipients) {
 				// no recipients have been added to project, abort
-				dialog.alert(_('Error: No recipients have been assign to the project!'));
+				dialog.alert(_('Error: No recipients have been assigned to the project!'));
 				return;
 			}
 
