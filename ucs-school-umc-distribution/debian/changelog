@@ -1,3 +1,10 @@
+ucs-school-umc-distribution (11.0.3-3) unstable; urgency=medium
+
+  * Bug #36848: show project name instead of path
+  * Bug #36849: fix typo
+
+ -- Florian Best <best@univention.de>  Tue, 27 Jan 2015 12:17:50 +0100
+
 ucs-school-umc-distribution (11.0.3-2) unstable; urgency=low
 
   * Bug #34077: Button labels were not capitalized
