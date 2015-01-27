@@ -39,7 +39,7 @@ msgstr ""
 
 #: umc/js/schoolexam.js:214
 msgid ""
-"<p>Please chosse a suiting directory name for the exam and upload all "
+"<p>Please choose a suiting directory name for the exam and upload all "
 "necessary files one by one.</p><p>These files will be distributed to all "
 "participating students. A copy of the original files will be stored in your "
 "home directory. At any moment during the exam, it is possible to collect the "

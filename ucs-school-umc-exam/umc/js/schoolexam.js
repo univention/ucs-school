@@ -212,7 +212,7 @@ define([
 			}, {
 				name: 'files',
 				headerText: _('Upload of exam files'),
-				helpText: _('<p>Please chosse a suiting directory name for the exam and upload all necessary files one by one.</p><p>These files will be distributed to all participating students. A copy of the original files will be stored in your home directory. At any moment during the exam, it is possible to collect the student files. The collected files will be stored in the exam directory of your home directory.</p>'),
+				helpText: _('<p>Please choose a suiting directory name for the exam and upload all necessary files one by one.</p><p>These files will be distributed to all participating students. A copy of the original files will be stored in your home directory. At any moment during the exam, it is possible to collect the student files. The collected files will be stored in the exam directory of your home directory.</p>'),
 				widgets: [{
 					name: 'directory',
 					type: TextBox,
