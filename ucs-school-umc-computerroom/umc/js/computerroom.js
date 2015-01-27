@@ -205,14 +205,10 @@ define([
 
 			// define actions above grid
 			this._headActionsTop = [{
-//				type: Text,
+				type: Text,
 				name: 'examEndTime',
-				'class': 'dijitButtonText',
-				disabled: true,
-				style: 'border: 0 none; color: inherit; background: none',
-				_setContentAttr: lang.hitch(this, function(content) {
-					this._headButtons.examEndTime.set('label', content);
-				}),
+				'class': 'dijitButtonText umcExamEndTimeButton',
+				style: 'display: inline-block; vertical-align: middle;',
 				visible: false
 			}, {
 				name: 'collect',
