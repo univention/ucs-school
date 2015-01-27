@@ -295,8 +295,8 @@ define([
 			}
 
 			var msg = items[0].isDistributed ?
-				_('Please confirm to collect the project: %s', items[0].name) :
-				_('Please confirm to distribute the project: %s', items[0].name);
+				_('Please confirm to collect the project: %s', items[0].description) :
+				_('Please confirm to distribute the project: %s', items[0].description);
 			dialog.confirm(msg, [{
 				label: _('Cancel'),
 				name: 'cancel'
@@ -404,7 +404,7 @@ define([
 				return;
 			}
 
-			dialog.confirm(_('Please confirm to remove the project: %s', items[0].name), [{
+			dialog.confirm(_('Please confirm to remove the project: %s', items[0].description), [{
 				label: _('Cancel'),
 				name: 'cancel',
 				'default': true
