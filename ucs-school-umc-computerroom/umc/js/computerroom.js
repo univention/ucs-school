@@ -34,6 +34,7 @@ define([
 	"dojo/_base/array",
 	"dojo/aspect",
 	"dojo/dom",
+	"dojo/dom-class",
 	"dojo/Deferred",
 	"dojo/data/ItemFileWriteStore",
 	"dojo/store/DataStore",
@@ -58,7 +59,7 @@ define([
 	"umc/modules/computerroom/ScreenshotView",
 	"umc/modules/computerroom/SettingsDialog",
 	"umc/i18n!umc/modules/computerroom"
-], function(declare, lang, array, aspect, dom, Deferred, ItemFileWriteStore, DataStore, Memory, all, DijitProgressBar,
+], function(declare, lang, array, aspect, dom, domClass, Deferred, ItemFileWriteStore, DataStore, Memory, all, DijitProgressBar,
             Dialog, Tooltip, styles, dialog, tools, app, Grid, Button, Module, Page, Form,
             ContainerWidget, Text, ComboBox, ProgressBar, ScreenshotView, SettingsDialog, _) {
 
@@ -67,6 +68,7 @@ define([
 	styles.insertCssRule('.umc .dojoxGridCell .dijitButtonText', 'text-decoration: none;');
 	styles.insertCssRule('.umcIconCollectFiles', lang.replace('background-image: url({path}/computerroom-icon-collect-files.png); width: 16px; height: 16px;', { path: iconPath }));
 	styles.insertCssRule('.umcIconFinishExam', lang.replace('background-image: url({path}/computerroom-icon-finish-exam.png); width: 16px; height: 16px;', { path: iconPath }));
+	styles.insertCssRule('.umcRedColor, .umcRedColor .dijitButtonText', 'color: red!important;');
 
 	// make sure that the computerroom can only be opened once
 	// TODO: This workaround should be undone with Bug #31442
@@ -1219,14 +1221,14 @@ define([
 					this._grid._updateFooterContent();
 				}
 
-				var settingColorStyle = 'color: inherit;';
+				var redColor = false;
 				if (response.result.settingEndsIn) {
 					var labelValidUntil = lang.replace('{label} (' + _('{time} minutes') + ')', {
 						time: response.result.settingEndsIn,
 						label: this._changeSettingsLabel
 					});
 					this._headButtons.settings.set('label', labelValidUntil);
-					settingColorStyle = (response.result.settingEndsIn <= 5) ? 'color: red;': 'color: inherit;';
+					redColor = (response.result.settingEndsIn <= 5);
 				} else {
 					if (this._headButtons.settings.get('label') != this._changeSettingsLabel) {
 						this._headButtons.settings.set('label', this._changeSettingsLabel);
@@ -1234,7 +1236,7 @@ define([
 					}
 				}
 				if (this._headButtons.settings.domNode) {
-					this._headButtons.settings.set('style', settingColorStyle);
+					domClass.toggle(this._headButtons.settings.domNode, 'umcRedColor', redColor);
 				}
 
 				var endTime = this.get('roomInfo').examEndTime;
@@ -1243,7 +1245,7 @@ define([
 					var now = new Date();
 					var delta = new Date(now.getFullYear(), now.getMonth(), now.getDate(), endTime[0], endTime[1], 0, 0) - now;
 					if (this._headButtons.examEndTime.domNode) {
-						this._headButtons.examEndTime.set('style', (delta < 5*1000*60) ? 'color: red;' : 'color: inherit;');
+						domClass.toggle(this._headButtons.examEndTime.domNode, 'umcRedColor', (delta < 5*1000*60));
 					}
 
 					var content = _('Time is up');
