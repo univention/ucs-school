@@ -1,0 +1,21 @@
+diff --git a/lib/src/ItalcVncConnection.cpp b/lib/src/ItalcVncConnection.cpp
+index 363b5ff..3ec6e62 100644
+--- a/lib/src/ItalcVncConnection.cpp
++++ b/lib/src/ItalcVncConnection.cpp
+@@ -118,6 +118,8 @@ rfbBool ItalcVncConnection::hookNewClient( rfbClient *cl )
+ 
+ 	const int size = (int) cl->width * cl->height *
+ 					( cl->format.bitsPerPixel / 8 );
++	if(t->m_image.width() != cl->width && t->m_image.height() != cl->height)
++	{
+ 	if( t->m_frameBuffer )
+ 	{
+ 		// do not leak if we get a new framebuffer size
+@@ -134,6 +136,7 @@ rfbBool ItalcVncConnection::hookNewClient( rfbClient *cl )
+ 	cl->format.redMax = 0xff;
+ 	cl->format.greenMax = 0xff;
+ 	cl->format.blueMax = 0xff;
++	}
+ 
+ 	// only use remote cursor for remote control
+ 	cl->appData.useRemoteCursor = false;
