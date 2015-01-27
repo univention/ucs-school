@@ -1,3 +1,11 @@
+ucs-school-umc-exam (3.0.3-2) unstable; urgency=medium
+
+  * Bug #36795: fix typo
+  * Bug #36760: adapt layout to UCS 4.0 design
+  * Bug #36796: fix label of upload button
+
+ -- Florian Best <best@univention.de>  Tue, 27 Jan 2015 11:00:50 +0100
+
 ucs-school-umc-exam (3.0.3-1) unstable; urgency=medium
 
   * Bug #36761: fix computer entries in RebootGrid, fix references to

@@ -1,3 +1,9 @@
+ucs-school-umc-groups (3.0.1-2) unstable; urgency=medium
+
+  * Bug #34970: catch exceptions when opening user objects
+
+ -- Florian Best <best@univention.de>  Tue, 27 Jan 2015 11:12:10 +0100
+
 ucs-school-umc-groups (3.0.1-1) unstable; urgency=medium
 
   * Bug #36761: fix references to this.umcpCommand

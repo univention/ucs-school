@@ -1,3 +1,11 @@
+ucs-school-umc-computerroom (6.0.3-2) unstable; urgency=medium
+
+  * Bug #36760: remove shadowed background of exam end time
+  * Bug #36828: display settings end time in red again if the time is
+  	smaller than 5 minutes
+
+ -- Florian Best <best@univention.de>  Tue, 27 Jan 2015 11:14:43 +0100
+
 ucs-school-umc-computerroom (6.0.3-1) unstable; urgency=medium
 
   * Bug #35892: fix some javascript memory leaks

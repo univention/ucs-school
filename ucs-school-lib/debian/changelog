@@ -1,3 +1,10 @@
+ucs-school-lib (6.0.1-2) unstable; urgency=medium
+
+  * Bug #34970: catch exceptions when opening user objects
+  * Bug #36034: fix regular expression for hostname validation
+
+ -- Florian Best <best@univention.de>  Tue, 27 Jan 2015 11:13:17 +0100
+
 ucs-school-lib (6.0.1-1) unstable; urgency=medium
 
   * Bug #36800: fix parsing of smbstatus

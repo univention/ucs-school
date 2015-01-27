@@ -1,3 +1,9 @@
+ucs-school-import (11.0.0-3) unstable; urgency=medium
+
+  * Bug #36034: fix regular expression for hostname validation
+
+ -- Florian Best <best@univention.de>  Tue, 27 Jan 2015 11:14:29 +0100
+
 ucs-school-import (11.0.0-2) unstable; urgency=medium
 
   * Bug #35892: adjust compat level
