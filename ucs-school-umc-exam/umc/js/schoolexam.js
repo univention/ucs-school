@@ -226,7 +226,8 @@ define([
 					type: MultiUploader,
 					name: 'files',
 					command: 'schoolexam/upload',
-					label: _('Files'),
+					label: ' ',
+					buttonLabel: _('Upload files'),
 					description: _('Files that are distributed along with this exam')
 					//canUpload: lang.hitch(this, '_checkFilenameUpload'),
 					//canRemove: lang.hitch(this, '_checkFilenamesRemove')

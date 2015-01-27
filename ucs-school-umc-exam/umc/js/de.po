@@ -163,8 +163,8 @@ msgid "Exam succesfully prepared"
 msgstr "Klassenarbeit erfolgreich angelegt"
 
 #: umc/js/schoolexam.js:228
-msgid "Files"
-msgstr "Dateien"
+msgid "Upload files"
+msgstr "Dateien hochladen"
 
 #: umc/js/schoolexam.js:229
 msgid "Files that are distributed along with this exam"
