@@ -169,7 +169,11 @@ class Instance( SchoolBaseModule ):
 			user = udm_objects.get( user_mod, None, ldap_user_read, ldap_position, member_dn )
 			if not user:
 				continue
-			user.open()
+			try:
+				user.open()
+			except udm_exceptions.base as exc:
+				MODULE.error('Failed to open user object %s: %s' % (member_dn, exc,))
+				continue
 			members.append( { 'id' : user.dn, 'label' : Display.user( user ) } )
 		result[ 'members' ] = members
 
