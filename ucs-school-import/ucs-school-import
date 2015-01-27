@@ -150,7 +150,7 @@ def is_valid_ou_name(name):
 
 def is_valid_hostname(name):
 	""" check if given hostname is valid """
-	return bool(re.match('^[a-zA-Z](([a-zA-Z0-9-_]*)([a-zA-Z0-9]$))?$', name))
+	return bool(re.match('^[a-zA-Z0-9](([a-zA-Z0-9-_]*)([a-zA-Z0-9]$))?$', name))
 
 
 # exception classes
