@@ -128,7 +128,7 @@ class SchoolName(CommonName):
 	def validate(self, value):
 		super(SchoolName, self).validate(value)
 		if ucr.is_true('ucsschool/singlemaster', False):
-			regex = re.compile('^[a-zA-Z0-9](([a-zA-Z0-9_]*)([a-zA-Z0-9]$))?$')
+			regex = re.compile('^[a-zA-Z0-9](([a-zA-Z0-9-]*)([a-zA-Z0-9]$))?$')
 			if not regex.match(value):
 				raise ValueError(_('Invalid school name'))
 
@@ -136,7 +136,7 @@ class DCName(Attribute):
 	def validate(self, value):
 		super(DCName, self).validate(value)
 		if value:
-			regex = re.compile('^[a-zA-Z0-9](([a-zA-Z0-9_]*)([a-zA-Z0-9]$))?$')
+			regex = re.compile('^[a-zA-Z0-9](([a-zA-Z0-9-]*)([a-zA-Z0-9]$))?$')
 			if not regex.match(value):
 				raise ValueError(_('Invalid Domain Controller name'))
 			if ucr.is_true('ucsschool/singlemaster', False):

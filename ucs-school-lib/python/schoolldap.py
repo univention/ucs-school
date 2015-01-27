@@ -634,7 +634,11 @@ class SchoolBaseModule( Base ):
 			for ibase in bases:
 				for idn in filter( lambda u: u.endswith( ibase ), groupObj['users'] ):
 					userObj = userModule.object(None, ldap_connection, None, idn)
-					userObj.open()
+					try:
+						userObj.open()
+					except udm_errors.base as exc:
+						MODULE.error('Failed to open user %s: %s' % (idn, exc))
+						userObj = None
 					if userObj:
 						userresult.append(userObj)
 		else:
