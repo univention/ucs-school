@@ -274,7 +274,9 @@ define([
 			}, {
 				name: 'error',
 				headerText: _('An error ocurred'),
+				headerTextRegion: 'main',
 				helpText: _('An error occurred during the preparation of the exam. The following information will show more details about the exact error. Please retry to start the exam.'),
+				helpTextRegion: 'main',
 				widgets: [{
 					type: Text,
 					name: 'info',
@@ -284,7 +286,9 @@ define([
 			}, {
 				name: 'success',
 				headerText: _('Exam succesfully prepared'),
+				headerTextRegion: 'main',
 				helpText: '...', // will be set dynamically after querying the exam prefix UCR variable
+				helpTextRegion: 'main',
 				widgets: [{
 					type: Text,
 					name: 'info',
@@ -297,7 +301,9 @@ define([
 			}, {
 				name: 'finished',
 				headerText: _('Preparation finished'),
-				helpText: _('The preparation of the exam has been finished successfully. Press the button "Open computer room" to finish this wizard and open selected computer room directly.')
+				headerTextRegion: 'main',
+				helpText: _('The preparation of the exam has been finished successfully. Press the button "Open computer room" to finish this wizard and open selected computer room directly.'),
+				helpTextRegion: 'main'
 			}];
 		},
 
