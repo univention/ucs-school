@@ -168,6 +168,12 @@ class School(UCSSchoolHelperAbstractClass):
 			group.create(lo)
 			group.add_umc_policy(self.get_umc_policy_dn('staff'), lo)
 
+		if ucr.is_true('ucsschool/import/attach/policy/umc', True):
+			# cn=Domain Users %s
+			group = Group.cache("Domain Users %s" % (self.name,), self.name)
+			group.create(lo)
+			group.add_umc_policy("cn=default-umc-users,cn=UMC,cn=policies,%s" % (ucr.get('ldap/base'),), lo)
+
 	def get_dc_name_fallback(self, administrative=False):
 		if administrative:
 			return 'dc%sv-01' % self.name.lower() # this is the naming convention, a trailing v for Verwaltungsnetz DCs
