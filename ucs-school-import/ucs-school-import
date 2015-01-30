@@ -627,7 +627,7 @@ def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None, ShareFileServer=None
 		groups.append(
 			 ( "cn=%s%s,cn=groups,%s" % (grp_prefix_staff, schoolNr.lower(), getDN(schoolNr)),	grp_policy_staff ),
 			 )
-	if configRegistry.is_true('ucsschool/import/attach/policy/umc', True):
+	if configRegistry.is_true('ucsschool/import/attach/policy/default-umc-users', True):
 		domain_users_school = "cn=Domain Users %s,cn=groups,%s" % (schoolNr.lower(), getDN(schoolNr))
 		groups.append((domain_users_school, "cn=default-umc-users,cn=UMC,cn=policies,%s" % (baseDN,)))
 

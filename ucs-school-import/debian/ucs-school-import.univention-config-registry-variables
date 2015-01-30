@@ -136,7 +136,7 @@ Description[en]=These variables allow definition of the subdirectory names used 
 Type=str
 Categories=ucsschool-base
 
-[ucsschool/import/attach/policy/umc]
+[ucsschool/import/attach/policy/default-umc-users]
 Description[de]=Falls auf true gesetzt, hängt beim Erstellen einer Schule die UMC-Richtlinie "default-umc-users" an die Gruppe "Domain Users $ou".
 Description[en]=If true attaches the default-umc-users UMC policy to the group "Domain Users $ou" when creating a school.
 Type=bool

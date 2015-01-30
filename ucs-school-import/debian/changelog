@@ -1,4 +1,4 @@
-ucs-school-import (11.0.0-4) unstable; urgency=medium
+ucs-school-import (11.0.0-5) unstable; urgency=medium
 
   * Bug #36537: add default-umc-users policy to "Domain Users $school-OU"
   	group

@@ -168,7 +168,7 @@ class School(UCSSchoolHelperAbstractClass):
 			group.create(lo)
 			group.add_umc_policy(self.get_umc_policy_dn('staff'), lo)
 
-		if ucr.is_true('ucsschool/import/attach/policy/umc', True):
+		if ucr.is_true('ucsschool/import/attach/policy/default-umc-users', True):
 			# cn=Domain Users %s
 			group = Group.cache("Domain Users %s" % (self.name,), self.name)
 			group.create(lo)
