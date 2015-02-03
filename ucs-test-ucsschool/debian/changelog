@@ -1,3 +1,9 @@
+ucs-test-ucsschool (2.0.15-1) unstable; urgency=low
+
+  * Bug #37655: adding new test scripts 110_*_default-umc-users
+
+ -- Ammar Najjar <najjar@univention.de>  Tue, 03 Feb 2015 10:55:52 +0100
+
 ucs-test-ucsschool (2.0.14-1) unstable; urgency=medium
 
   * Bug #37362: essential/test_samba4.py: ignore following Samba messages:
