@@ -41,6 +41,7 @@ from univention.lib.i18n import Translation
 from univention.management.console.log import MODULE
 from univention.management.console.modules.decorators import file_upload, simple_response, multi_response
 from univention.management.console.modules.mixins import ProgressMixin
+from univention.management.console.modules import UMC_Error
 from univention.config_registry import ConfigRegistry
 
 from ucsschool.lib.schoolldap import SchoolBaseModule, open_ldap_connection
@@ -52,6 +53,19 @@ _ = Translation('ucs-school-umc-csv-import').translate
 
 ucr = ConfigRegistry()
 ucr.load()
+
+
+class FileNotFound(UMC_Error):
+	def __init__(self):
+		super(FileNotFound, self).__init__(self.error_message, status=500)
+
+	@property
+	def error_message(self):
+		return '\n'.join(
+			_('The uploaded CSV file was not found on the server.'),
+			_('This may be caused by a recent restart of the Univention Management Console Server.'),
+			_('The import have to be restarted again.')
+		)
 
 def generate_random():
 	return create_passwd(length=30)
@@ -86,6 +100,12 @@ class Instance(SchoolBaseModule, ProgressMixin):
 		super(Instance, self).init()
 		add_module_logger_to_schoollib()
 		self.file_map = {}
+
+	def _get_info(self, file_id):
+		try:
+			return self.file_map[file_id]
+		except KeyError:
+			raise FileNotFound()
 
 	@file_upload
 	def save_csv(self, request):
@@ -212,7 +232,7 @@ class Instance(SchoolBaseModule, ProgressMixin):
 	def show(self, progress, file_id, columns):
 		result = {}
 		progress.title = _('Checking users from CSV file')
-		file_info = self.file_map[file_id]
+		file_info = self._get_info(file_id)
 		lo = open_ldap_connection(self._user_dn, self._password, ucr.get('ldap/server/name'))
 		with open(file_info.filename, 'rb') as f:
 			lines = f.readlines()
@@ -265,7 +285,7 @@ class Instance(SchoolBaseModule, ProgressMixin):
 
 	@simple_response
 	def recheck_users(self, file_id, user_attrs):
-		file_info = self.file_map[file_id]
+		file_info = self._get_info(file_id)
 		lo = open_ldap_connection(self._user_dn, self._password, ucr.get('ldap/server/name'))
 		users = []
 		for attrs in user_attrs:
@@ -282,7 +302,7 @@ class Instance(SchoolBaseModule, ProgressMixin):
 			CSVUser.invalidate_all_caches()
 			for file_id, attrs in iterator:
 				if file_info is None:
-					file_info = self.file_map[file_id]
+					file_info = self._get_info(file_id)
 				user = file_info.user_klass.from_frontend_attrs(attrs, file_info.school, file_info.date_format)
 				MODULE.process('Going to %s %s %s' % (user.action, file_info.user_klass.__name__, user.name))
 				action = user.action

@@ -1,3 +1,10 @@
+ucs-school-umc-csv-import (2.0.2-1) unstable; urgency=medium
+
+  * Bug #36922: display user friendly error message if module process stopped
+  	during csv file import
+
+ -- Florian Best <best@univention.de>  Wed, 04 Feb 2015 12:11:10 +0100
+
 ucs-school-umc-csv-import (2.0.1-1) unstable; urgency=medium
 
   * Bug #36479: fix problems with Grid after uploading files
