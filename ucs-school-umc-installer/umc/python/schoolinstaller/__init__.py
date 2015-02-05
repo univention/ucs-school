@@ -48,6 +48,7 @@ import filecmp
 import notifier
 import notifier.threads
 import dns.resolver
+import dns.exception
 import paramiko
 
 # univention
@@ -151,11 +152,19 @@ def get_master_dns_lookup():
 	# DNS lookup for the DC master entry
 	try:
 		query = '_domaincontroller_master._tcp.%s.' % ucr.get('domainname')
-		result = dns.resolver.query(query, 'SRV')
+		resolver = dns.resolver.Resolver()
+		resolver.lifetime = 3.0
+		result = resolver.query(query, 'SRV')
 		if result:
 			return result[0].target.canonicalize().split(1)[0].to_text()
 	except dns.resolver.NXDOMAIN:
-		MODULE.error('Error to perform a DNS query for service record: %s' % query)
+		MODULE.error('Error to perform a DNS query for service record: %s' % (query,))
+	except dns.resolver.NoAnswer:
+		MODULE.error('Got non authoritative answer in DNS query for service record: %s' % (query,))
+	except dns.resolver.Timeout:
+		MODULE.error('DNS query for service record of %s timed out.' % (query,))
+	except dns.exception.DNSException as exc:
+		MODULE.error('DNSException during query for %s: %s' % (query, exc))
 	return ''
 
 #def ou_exists(ou, username, password, master = None):
