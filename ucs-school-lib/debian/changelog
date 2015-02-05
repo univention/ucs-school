@@ -1,3 +1,9 @@
+ucs-school-lib (6.0.1-5) unstable; urgency=medium
+
+  * Bug #37668: catch errors if network object does not exists
+
+ -- Florian Best <best@univention.de>  Wed, 04 Feb 2015 13:00:59 +0100
+
 ucs-school-lib (6.0.1-4) unstable; urgency=medium
 
   * Bug #36537: add default-umc-users policy to "Domain Users $school-OU"
