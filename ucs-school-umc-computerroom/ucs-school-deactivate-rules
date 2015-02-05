@@ -52,7 +52,7 @@ if __name__ == '__main__':
 
 	# extract values
 	for variable in options.extract:
-		if ucr.has_key( variable ) and ucr[ variable ]:
+		if ucr.get(variable):
 			old = set( ucr[ variable ].split( ' ' ) )
 		else:
 			old = set()

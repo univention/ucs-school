@@ -70,39 +70,6 @@ define([
 	styles.insertCssRule('.umcIconFinishExam', lang.replace('background-image: url({path}/computerroom-icon-finish-exam.png); width: 16px; height: 16px;', { path: iconPath }));
 	styles.insertCssRule('.umcRedColor, .umcRedColor .dijitButtonText', 'color: red!important;');
 
-	// make sure that the computerroom can only be opened once
-	// TODO: This workaround should be undone with Bug #31442
-	aspect.before(app, 'openModule', function(module, flavor, props) {
-		if (typeof(module) == 'string') {
-			module = this.getModule(module, flavor);
-		}
-
-		if (!module || module.id != 'computerroom') {
-			// default behaviour for all modules except computerroom
-			return arguments;
-		}
-
-		// check whether a computerroom module has already been opened
-		var computerRoomModules = array.filter(app._tabContainer.getChildren(), function(i) {
-			return i.moduleID == 'computerroom';
-		});
-		if (!computerRoomModules.length) {
-			// a computer room is not open, open it
-			return arguments;
-		}
-
-		// a computer room module is already open
-		if (!props) {
-			// no class properties have been specified -> focus the tab
-			app._tabContainer.selectChild(computerRoomModules[0]);
-			return [];
-		}
-
-		// class properties have been specified -> close the current module and open a new one
-		app.closeTab(computerRoomModules[0]);
-		return arguments;
-	});
-
 	var isConnected = function(item) { return item.connection[0] == 'connected'; };
 	var isUCC = function(item) { return item.objectType[0] === 'computers/ucc'; };
 	var filterUCC = function(items) { return array.filter(items, function(item) { return !isUCC(item); }); };
@@ -131,6 +98,9 @@ define([
 		// description:
 		//		This module is a template module in order to aid the development of
 		//		new modules for Univention Management Console.
+
+		// make sure the computerroom module can only be opened once
+		unique: true,
 
 		// the property field that acts as unique identifier for the object
 		idProperty: '$dn$',
