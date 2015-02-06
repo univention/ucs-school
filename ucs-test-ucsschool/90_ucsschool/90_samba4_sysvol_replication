@@ -188,7 +188,11 @@ class TestSYSVOLReplicationMultiSchool(TestSamba4):
         print("\nCreating Group Policy Object (GPO) for the test with "
               "a name '%s' using 'samba-tool'" % display_name)
 
+        # define localhost explicitly:
+        host = 'ldap://' + self.UCR.get('hostname') + '.' + self.UCR.get('domainname')
+        
         cmd = ("samba-tool", "gpo", "create", display_name,
+               "-H", host,
                "--username=" + self.admin_username,
                "--password=" + self.admin_password)
 

@@ -1,3 +1,10 @@
+ucs-test-ucsschool (2.0.18-1) unstable; urgency=low
+
+  * 90_ucsschool/90_samba4_sysvol_replication:
+    specify host for samba-tool (Bug #34225).
+
+ -- Dmitry Galkin <galkin@univention.de>  Fri, 06 Feb 2015 14:44:07 +0100
+
 ucs-test-ucsschool (2.0.17-1) unstable; urgency=low
 
   * 90_ucsschool/94_samba4_check_shares_access: skip the test if there is no
