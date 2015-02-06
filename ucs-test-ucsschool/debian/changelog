@@ -1,3 +1,10 @@
+ucs-test-ucsschool (2.0.17-1) unstable; urgency=low
+
+  * 90_ucsschool/94_samba4_check_shares_access: skip the test if there is no
+    Samba4 on DC-Master; perform extra checks on smbclient stdout (Bug #34224).
+
+ -- Dmitry Galkin <galkin@univention.de>  Fri, 06 Feb 2015 12:10:30 +0100
+
 ucs-test-ucsschool (2.0.16-1) unstable; urgency=low
 
   * 90_ucsschool/91_samba4_gpc_two_way_replication and
