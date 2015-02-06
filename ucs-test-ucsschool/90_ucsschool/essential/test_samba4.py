@@ -88,6 +88,14 @@ class TestSamba4(object):
                   "'%s', accepted 'start' to start it 'stop' to stop or "
                   "'restart' to restart" % (action, service))
 
+    def dc_master_has_samba4(self):
+        """
+        Returns 'True' when DC-Master has Samba4 according to "service=Samba 4"
+        """
+        if self.ldap_master in self.get_udm_list_dcs('domaincontroller_master',
+                                                     with_samba4=True):
+            return True
+
     def is_a_school_branch_site(self, host_dn):
         """
         Returns True if the given 'host_dn' is located in the

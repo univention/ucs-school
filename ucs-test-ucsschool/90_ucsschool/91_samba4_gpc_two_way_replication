@@ -161,10 +161,10 @@ class TestGPCReplicationTwoWays(TestSamba4):
               "in the domain for the test")
         udm_stdout = self.get_udm_list_dc_slaves_with_samba4()
 
-        if not udm_stdout.strip():
-            print("\nThe udm list to find DC-Slaves did not produce any "
-                  "output to STDOUT, assuming there are no DC-Slave in the "
-                  "domain. Skipping test...")
+        if "serverRole: slave" not in udm_stdout.strip():
+            print("\nThe udm list to did not produce any ouptut with slave(s)"
+                  "to STDOUT, assuming there are no DC-Slave(s) in the domain."
+                  " Skipping test...")
             self.return_code_result_skip()
         else:
             sed_stdout = self.sed_for_key(udm_stdout, "^  ip: ")
@@ -183,9 +183,11 @@ class TestGPCReplicationTwoWays(TestSamba4):
         Depending on the current server role (DC-Master or DC-Slave) selects
         the remote server where from the GPC obj replication will be tested.
         (If test runs on DC-Slave the replication from the DC-Master will
-        be tested and v.v.) Test skipped if there are no DC-Slave found.
+        be tested and v.v.) Test skipped if there are no DC-Slave found or
+        when the DC-Master has no Samba4.
         """
         server_role = self.UCR.get('server/role')
+        self.ldap_master = self.UCR.get('ldap/master')
 
         if server_role == 'domaincontroller_master':
             self.find_slave_in_domain()
@@ -193,7 +195,13 @@ class TestGPCReplicationTwoWays(TestSamba4):
                   "remote host for the test" % self.remote_host)
 
         elif server_role == 'domaincontroller_slave':
-            self.remote_host = 'ldap://' + self.UCR.get('ldap/master')
+            # check first if DC-Master has Samba4:
+            if not self.dc_master_has_samba4():
+                print("The DC-Master '%s' has no Samba4, thus remote check not"
+                      " possible, skipping the test." % self.ldap_master)
+                self.return_code_result_skip()
+
+            self.remote_host = 'ldap://' + self.ldap_master
             self.host_or_ip = '-H'  # to use hostname as an arg for samba-tool
             print("\nCurrent server role is DC-Slave, the DC-Master '%s' "
                   "will be selected as the remote host for the test"

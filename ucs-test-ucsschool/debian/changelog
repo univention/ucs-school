@@ -1,3 +1,11 @@
+ucs-test-ucsschool (2.0.16-1) unstable; urgency=low
+
+  * 90_ucsschool/91_samba4_gpc_two_way_replication and
+    essential/test_samba4.py: applied missing changes
+    from ucs school 3.2r2 (Bug #34216).
+
+ -- Dmitry Galkin <galkin@univention.de>  Fri, 06 Feb 2015 11:31:47 +0100
+
 ucs-test-ucsschool (2.0.15-1) unstable; urgency=low
 
   * Bug #37655: adding new test scripts 110_*_default-umc-users
