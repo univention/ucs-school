@@ -41,10 +41,9 @@ def main():
 					'subnet_mask': '255.255.0.0',
 					'inventory_number': '5'
 					}
-			pcs[0].edit(new_attrs)
-			pcs[0].check_get()
-
 			for pc in pcs:
+				pc.edit(new_attrs)
+				pc.check_get()
 				pc.verify_ldap(True)
 				pc.remove()
 				pc.verify_ldap(False)
