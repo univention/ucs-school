@@ -165,7 +165,7 @@ class User(Person):
 		else:
 			return reqResult[0]
 
-	def check_get(self):
+	def check_get(self, expected_attrs={}):
 		info = {
 				'$dn$': self.dn,
 				'display_name': ' '.join([self.firstname,self.lastname]),
@@ -183,6 +183,9 @@ class User(Person):
 				}
 		if self.is_student() or self.is_teacher() or self.is_teacher_staff():
 			info.update({'school_class': self.school_class})
+
+		if expected_attrs:
+			info.update(expected_attrs)
 
 		get_result = self.get()
 		# Type_name is only used for display, Ignored
@@ -213,12 +216,12 @@ class User(Person):
 				'schoolwizards/users/query',param,flavor)
 		return reqResult
 
-	def check_query(self, users):
+	def check_query(self, users_dn):
 		q = self.query()
-		k = [x['firstname'] for x in q]
-		if not set(users).issubset(set(k)):
+		k = [x['$dn$'] for x in q]
+		if not set(users_dn).issubset(set(k)):
 			raise QueryCheckFail('users from query do not contain the existing users, found (%r), expected (%r)' % (
-				k, users))
+				k, users_dn))
 
 	def remove(self):
 		"""Remove user"""
@@ -270,11 +273,11 @@ class User(Person):
 			raise EditFail('Unable to edit user (%s) with the parameters (%r)' % (self.username , param))
 		else:
 			self.set_mode_to_modify()
-			self.school_class = new_attributes['school_class']
+			self.school_class = new_attributes.get('school_class') if new_attributes.get('school_class') else self.school_class
 			cl = '%s-%s' % (self.school, self.school_class)
 			self.classes = [cl]
-			self.mail = new_attributes['email']
-			self.firstname = new_attributes['firstname']
-			self.lastname = new_attributes['lastname']
-			self.password = new_attributes['password']
+			self.mail = new_attributes.get('email') if new_attributes.get('email') else self.mail
+			self.firstname = new_attributes.get('firstname') if new_attributes.get('firstname') else self.firstname
+			self.lastname = new_attributes.get('lastname') if new_attributes.get('lastname') else self.lastname
+			self.password = new_attributes.get('password') if new_attributes.get('password') else self.password
 
