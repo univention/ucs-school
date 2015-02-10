@@ -4,7 +4,7 @@
 # Univention Management Console module:
 #  UCS@school CSV Upload
 #
-# Copyright 2014 Univention GmbH
+# Copyright 2014-2015 Univention GmbH
 #
 # http://www.univention.de/
 #
