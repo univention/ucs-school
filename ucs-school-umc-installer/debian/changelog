@@ -1,3 +1,10 @@
+ucs-school-umc-installer (2.0.18-1) unstable; urgency=medium
+
+  * Bug #32050: failing DNS lookups of the DC master will not prevent opening
+  	the UCS@school installer module
+
+ -- Florian Best <best@univention.de>  Wed, 04 Feb 2015 11:02:52 +0100
+
 ucs-school-umc-installer (2.0.17-6) unstable; urgency=low
 
   * Bug #35692: fix javascript typos
