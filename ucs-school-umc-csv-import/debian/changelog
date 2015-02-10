@@ -1,3 +1,10 @@
+ucs-school-umc-csv-import (1.0.23-4) unstable; urgency=medium
+
+  * Bug #36922: display user friendly error message if module process stopped
+  	during csv file import
+
+ -- Florian Best <best@univention.de>  Tue, 10 Feb 2015 13:17:27 +0100
+
 ucs-school-umc-csv-import (1.0.23-3) unstable; urgency=low
 
   * Bug #35390: Wording when successfully completing the import

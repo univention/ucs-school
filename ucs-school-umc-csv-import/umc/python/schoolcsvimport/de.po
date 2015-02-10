@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-csv-import\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2014-08-13 10:38+0200\n"
+"POT-Creation-Date: 2015-02-04 12:07+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: umc/python/schoolcsvimport/__init__.py:277
+#: umc/python/schoolcsvimport/__init__.py:297
 #, python-format
 msgid "%(username)s %(action)s"
 msgstr "%(username)s %(action)s"
@@ -40,11 +40,11 @@ msgstr "Aktion"
 msgid "Birthday"
 msgstr "Geburtstag"
 
-#: umc/python/schoolcsvimport/__init__.py:214
+#: umc/python/schoolcsvimport/__init__.py:234
 msgid "Checking users from CSV file"
 msgstr "Benutzer aus der CSV-Datei werden überprüft"
 
-#: umc/python/schoolcsvimport/__init__.py:246
+#: umc/python/schoolcsvimport/__init__.py:266
 msgid "Checking users from database"
 msgstr "Benutzer aus der Datenbank werden überprüft"
 
@@ -65,10 +65,18 @@ msgstr ""
 "Anzahl der %(object_name)s nach dem Import wäre %(sum)s. Das übersteigt die "
 "Anzahl an lizenzierten Objekten (%(max)s)."
 
-#: umc/python/schoolcsvimport/__init__.py:277
+#: umc/python/schoolcsvimport/__init__.py:297
 #, python-format
 msgid "Processing %d user(s)"
 msgstr "Verarbeite %d Benutzer"
+
+#: umc/python/schoolcsvimport/__init__.py:67
+msgid "The import have to be restarted again."
+msgstr "Der Import muss erneut durchgeführt werden."
+
+#: umc/python/schoolcsvimport/__init__.py:65
+msgid "The uploaded CSV file was not found on the server."
+msgstr "Die hochgeladene CSV-Datei konnte nicht auf dem Server gefunden werden."
 
 #: umc/python/schoolcsvimport/util.py:224
 msgid ""
@@ -97,11 +105,17 @@ msgstr ""
 "ändern Sie den Benutzernamen zu einem bereits vergebenen oder ändern Sie die "
 "durchzuführende Aktion."
 
+#: umc/python/schoolcsvimport/__init__.py:66
+msgid ""
+"This may be caused by a recent restart of the Univention Management Console "
+"Server."
+msgstr "Dies liegt möglicherweise an einem kürzlichem Neustart der Univention Management Console."
+
 #: umc/python/schoolcsvimport/util.py:164
 msgid "Unused"
 msgstr "Unbenutzt"
 
-#: umc/python/schoolcsvimport/__init__.py:71
+#: umc/python/schoolcsvimport/__init__.py:85
 msgid ""
 "You may proceed with the import, but the domain management may be limited "
 "afterwards until a new UCS license is imported. Please note that this "
@@ -113,15 +127,15 @@ msgstr ""
 "wird. Bitte beachten Sie, dass diese Warnmeldung darauf basiert, dass alle "
 "Benutzer importiert werden. Sie können Zeilen im Folgenden auch ignorieren."
 
-#: umc/python/schoolcsvimport/__init__.py:290
+#: umc/python/schoolcsvimport/__init__.py:310
 msgid "created"
 msgstr "angelegt"
 
-#: umc/python/schoolcsvimport/__init__.py:294
+#: umc/python/schoolcsvimport/__init__.py:314
 msgid "deleted"
 msgstr "gelöscht"
 
-#: umc/python/schoolcsvimport/__init__.py:292
+#: umc/python/schoolcsvimport/__init__.py:312
 msgid "modified"
 msgstr "verändert"
 
