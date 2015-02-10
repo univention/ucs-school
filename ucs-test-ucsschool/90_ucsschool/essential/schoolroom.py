@@ -52,7 +52,7 @@ class ComputerRoom(object):
 		return 'cn=%s-%s,cn=raeume,cn=groups,%s' % (
 				self.school, self.name, utu.UCSTestSchool().get_ou_base_dn(self.school))
 
-	def add(self, accept_duplicated_name=False):
+	def add(self, should_fail=False):
 		param = [
 			{
 				'object':
@@ -72,10 +72,10 @@ class ComputerRoom(object):
 		reqResult = self.umc_connection.request('schoolrooms/add', param)
 		utils.wait_for_replication()
 		if not reqResult[0]:
-			if not accept_duplicated_name:
-				raise FailAdd('Unable to add school room (%r)' % (param,))
-			else:
+			if should_fail:
 				print 'School room (%r) addition failed as expected.' % (self.name,)
+			else:
+				raise FailAdd('Unable to add school room (%r)' % (param,))
 
 	def verify_ldap(self, must_exist=True):
 		utils.verify_ldap_object(self.dn(), should_exist=must_exist)
@@ -117,7 +117,7 @@ class ComputerRoom(object):
 
 	def check_query(self, rooms):
 		current_rooms = self.query()
-		if rooms not in current_rooms:
+		if not set(rooms).issubset(set(current_rooms)):
 			raise FailCheckQuery('Rooms query result: %r, expected to contain at least:%r' % (current_rooms, rooms))
 
 	def put(self, new_attributes):
