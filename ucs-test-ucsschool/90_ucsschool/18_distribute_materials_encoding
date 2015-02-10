@@ -1,5 +1,5 @@
 #!/usr/share/ucs-test/runner python
-# -*- coding: ISO8859-1 -*-
+# -*- coding: utf-8 -*-
 ## desc: distribute materials with encoding
 ## roles: [domaincontroller_master, domaincontroller_backup, domaincontroller_slave, memberserver]
 ## tags: [apptest,ucsschool]
