@@ -1,3 +1,9 @@
+ucs-school-lib (5.0.49-6) unstable; urgency=medium
+
+  * Bug #37668: catch errors if network object does not exists
+
+ -- Florian Best <best@univention.de>  Tue, 10 Feb 2015 13:13:51 +0100
+
 ucs-school-lib (5.0.49-5) unstable; urgency=medium
 
   * Bug #36034: fix regexp for hostnames

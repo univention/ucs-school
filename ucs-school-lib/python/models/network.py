@@ -32,6 +32,8 @@
 
 from ipaddr import IPv4Network, AddressValueError, NetmaskValueError
 
+from univention.admin.uexceptions import noObject
+
 from ucsschool.lib.models.attributes import Netmask, NetworkAttribute, NetworkBroadcastAddress, SubnetName
 from ucsschool.lib.models.base import UCSSchoolHelperAbstractClass
 from ucsschool.lib.models.dhcp import DHCPSubnet
@@ -105,7 +107,10 @@ class Network(UCSSchoolHelperAbstractClass):
 	@classmethod
 	def get_netmask(cls, dn, school, lo):
 		if dn not in cls._netmask_cache:
-			network = cls.from_dn(dn, school, lo)
+			try:
+				network = cls.from_dn(dn, school, lo)
+			except noObject:
+				return
 			netmask = network.netmask # e.g. '24'
 			network_str = '0.0.0.0/%s' % netmask
 			try:
