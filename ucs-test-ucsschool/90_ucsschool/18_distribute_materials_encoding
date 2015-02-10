@@ -1,10 +1,8 @@
 #!/usr/share/ucs-test/runner python
-# -*- coding: utf-8 -*-
+# -*- coding: ISO8859-1 -*-
 ## desc: distribute materials with encoding
 ## roles: [domaincontroller_master, domaincontroller_backup, domaincontroller_slave, memberserver]
 ## tags: [apptest,ucsschool]
-## versions:
-##  3.2-4: skip
 ## exposure: dangerous
 ## packages: [ucs-school-umc-distribution]
 
@@ -31,30 +29,35 @@ def main():
 			utils.wait_for_replication_and_postrun()
 
 			filename1 = "%s%s%s%s" % (
-					u'\\xc4'.encode('UTF-8'), # Ä
+					u'\xc4'.encode('UTF-8'), # Ä
 					uts.random_name_special_characters(3),
-					u'\\u2192'.encode('UTF-8'), # →
+					u'\u2192'.encode('UTF-8'), # →
 					uts.random_name_special_characters(3),
 					)
 			filename2 = "%s%s" % (
-					u'\\xc4'.encode('UTF-8') ,
+					u'\xc4'.encode('UTF-8') ,
 					uts.random_name_special_characters(6),
 					)
 			filename3 = "%s%s%s" % (
 					uts.random_name_special_characters(3),
-					u'\\xc4'.encode('ISO8859-1'),
+					u'\xc4'.encode('ISO8859-1'),
 					uts.random_name_special_characters(3),
 					)
 			filename4 = uts.random_name()
-			con.auth(tea, 'univention')
 
+			files = [(filename1,'utf-8')]
+			files.append((filename2,'utf-8'))
+			files.append((filename3,'iso8859-1'))
+			files.append((filename4,'utf-8'))
+
+			con.auth(tea, 'univention')
 			# Create new project
 			project = Distribution(
 					school,
 					sender=tea,
 					umcConnection=con,
+					files=files,
 					ucr=ucr,
-					files=[filename1, filename2, filename3, filename4],
 					recipients=[group],
 					flavor='teacher')
 			project.add()

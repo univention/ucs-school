@@ -204,7 +204,7 @@ html5
 		"""
 		# creatng and uploading the files
 		content_type = 'text/plain'
-		for filename in self.files:
+		for filename, encoding in self.files:
 			with open(filename, 'w') as g:
 				g.write('test_content')
 			self.uploadFile(filename, content_type)
@@ -214,6 +214,7 @@ html5
 		for item in self.recipients:
 			recipients.append(item.dn())
 		print 'recipients=', recipients
+		files = [file_name.decode(encoding).encode('UTF-8') for file_name, encoding in self.files]
 		param = [
 			{
 				'object': {
@@ -224,7 +225,7 @@ html5
 					'distributeDate': self.distributeDate,
 					'distributeTime': self.distributeTime,
 					'distributeType': self.distributeType,
-					'files': self.files,
+					'files': files,
 					'name': self.name,
 					'recipients': recipients
 					},
@@ -297,7 +298,7 @@ html5
 		collectType = collectType if collectType else self.collectType
 		collectTime = collectTime if collectTime else self.collectTime
 		collectDate = collectDate if collectDate else self.collectDate
-		files = files if files else self.files
+		files = files if files else [x for x,y in self.files]
 		recipients = recipients if recipients else self.recipients
 		new_recipients = []
 		for item in recipients:
@@ -335,7 +336,7 @@ html5
 			self.collectType = collectType
 			self.collectTime = collectTime
 			self.collectDate = collectDate
-			self.files = files
+			self.files = [(x, 'utf8') for x in files]
 			self.recipients = recipients
 
 	def check_put(self, previousGetResult):
@@ -369,7 +370,7 @@ html5
 		else:
 			dTime = '%s %s' % (self.collectDate, self.collectTime)
 		current = {
-			'files': self.files,
+			'files': [x for x, y in self.files],
 			'sender': self.sender,
 			'description': self.description,
 			'recipients': recips,
@@ -503,7 +504,8 @@ html5
 			print 'file_path=', path
 			existingFiles = self.idir(path)
 			print 'existingFiles=', existingFiles
-			if self.files != existingFiles:
+			files = [x for x,y in self.files]
+			if files != existingFiles:
 				utils.fail(
 					'Project files were not distributed for user %s' %
 					(user,))
@@ -531,7 +533,8 @@ html5
 			print 'file_path=', path
 			existingFiles = self.idir(path)
 			print 'existingFiles=', existingFiles
-			if self.files != existingFiles:
+			files = [x for x,y in self.files]
+			if files != existingFiles:
 				utils.fail(
 					'Project files were not collected for user %s' %
 					(user,))

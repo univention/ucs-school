@@ -1,7 +1,7 @@
 #!/usr/share/ucs-test/runner python
 ## desc: automatic_distribute_materials_check
 ## roles: [domaincontroller_master, domaincontroller_backup, domaincontroller_slave, memberserver]
-## tags: [apptest,ucsschool,longrunning]
+## tags: [apptest,ucsschool]
 ## exposure: dangerous
 ## packages: [ucs-school-umc-distribution]
 
@@ -53,7 +53,7 @@ def main():
 						sender=tea,
 						umcConnection=con,
 						ucr=ucr,
-						files=["file_name"],
+						files=[("file_name", 'utf8')],
 						recipients=[group],
 						distributeType='automatic',
 						distributeTime=distTime,

@@ -47,7 +47,7 @@ def main():
 					sender=tea,
 					umcConnection=con,
 					ucr=ucr,
-					files=[filename],
+					files=[(filename, 'utf8')],
 					recipients=[group],
 					flavor='teacher')
 			project.add()
@@ -67,7 +67,7 @@ def main():
 					sender=tea2,
 					umcConnection=con2,
 					ucr=ucr,
-					files=[filename],
+					files=[(filename, 'utf8')],
 					recipients=[group],
 					flavor='teacher')
 			project2.add()
