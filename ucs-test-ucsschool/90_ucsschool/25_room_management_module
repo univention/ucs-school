@@ -40,7 +40,7 @@ def main():
 			# Test creating new room with the same name
 			attrs = room.get()
 			room2 = ComputerRoom(school, name=room.name, host_members=[computers_dns[1]])
-			room2.add(should_fail=True)
+			room2.add(should_pass=False)
 
 			# Check if room attributes have changed after the last test
 			room.check_get(attrs)
