@@ -39,7 +39,7 @@ class ComputerRoom(object):
 		self.name = name if name else uts.random_name()
 		self.description = description if description else uts.random_name()
 		self.host_members = host_members if host_members else []
-		self.ucr =  ucr_test.UCSTestConfigRegistry()
+		self.ucr =	ucr_test.UCSTestConfigRegistry()
 		self.ucr.load()
 		host = self.ucr.get('hostname')
 		self.umc_connection = UMCConnection(host)
@@ -52,7 +52,7 @@ class ComputerRoom(object):
 		return 'cn=%s-%s,cn=raeume,cn=groups,%s' % (
 				self.school, self.name, utu.UCSTestSchool().get_ou_base_dn(self.school))
 
-	def add(self, should_fail=False):
+	def add(self, should_pass=True):
 		param = [
 			{
 				'object':
@@ -71,11 +71,13 @@ class ComputerRoom(object):
 		print 'param = %r' % (param,)
 		reqResult = self.umc_connection.request('schoolrooms/add', param)
 		utils.wait_for_replication()
-		if not reqResult[0]:
-			if should_fail:
-				print 'School room (%r) addition failed as expected.' % (self.name,)
-			else:
+		if reqResult[0] and should_pass:
+			print 'School room created successfully: %s' % (self.name,)
+		else:
+			if should_pass:
 				raise FailAdd('Unable to add school room (%r)' % (param,))
+			else:
+				print 'School room (%r) addition failed as expected.' % (self.name,)
 
 	def verify_ldap(self, must_exist=True):
 		utils.verify_ldap_object(self.dn(), should_exist=must_exist)
