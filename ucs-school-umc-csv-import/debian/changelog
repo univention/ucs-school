@@ -1,3 +1,10 @@
+ucs-school-umc-csv-import (2.0.4-1) unstable; urgency=low
+
+  * Bug #37154: limit length of usernames to prevent problems with windows
+    logins
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Wed, 11 Feb 2015 18:29:37 +0100
+
 ucs-school-umc-csv-import (2.0.3-2) unstable; urgency=low
 
   * Bug #37776: remove whitespace from birthday date strings
