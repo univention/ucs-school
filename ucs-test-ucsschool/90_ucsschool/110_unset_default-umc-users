@@ -7,6 +7,7 @@
 
 from univention.config_registry import handler_unset
 from univention.uldap import getMachineConnection
+import ldap
 import univention.testing.ucr as ucr_test
 import univention.testing.utils as utils
 
@@ -44,6 +45,8 @@ def main():
 				except IndexError:
 					utils.fail('Attribute %s was not found in ldap object %r' % (
 						'univentionPolicyReference', base))
+				except ldap.NO_SUCH_OBJECT as e:
+					utils.fail('Unexpected Exception: %r' % e)
 
 
 if __name__ == '__main__':

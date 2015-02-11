@@ -39,7 +39,8 @@ def main():
 							attr=['univentionPolicyReference']
 							)[0][1]['univentionPolicyReference']
 					if expected_attr in found_attr:
-						utils.fail('Incorrect attribute found: %r' % (expected_attr, ))
+						utils.fail('Incorrect attributes found: %r\nexpected: %r' % (
+							found_attr, expected_attr))
 				except IndexError:
 					utils.fail('Attribute %s was not found in ldap object %r' % (
 						'univentionPolicyReference', base))
