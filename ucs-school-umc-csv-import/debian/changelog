@@ -1,3 +1,9 @@
+ucs-school-umc-csv-import (2.0.3-2) unstable; urgency=low
+
+  * Bug #37776: remove whitespace from birthday date strings
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Wed, 11 Feb 2015 16:45:21 +0100
+
 ucs-school-umc-csv-import (2.0.3-1) unstable; urgency=low
 
   * Bug #37155: drop leading/trailing whitespaces from CSV cells to prevent simple

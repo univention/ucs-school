@@ -647,7 +647,7 @@ define([
 					return struct.field == 'birthday';
 				});
 				if (birthdayColumnExists) {
-					var birthday = item.birthday;
+					var birthday = item.birthday.replace(/\s+/g);
 					if (birthday) {
 						var parsedDate = dateLocaleModule.parse(birthday, dateConstraints);
 						if (!parsedDate) {

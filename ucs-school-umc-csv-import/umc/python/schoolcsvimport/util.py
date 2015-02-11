@@ -186,7 +186,7 @@ class CSVUser(User):
 		if format_birthday:
 			# force format of date as requested, not as seen in LDAP
 			try:
-				attrs['birthday'] = format_date(attrs['birthday'], format_birthday)
+				attrs['birthday'] = format_date(attrs['birthday'].replace(' ', ''), format_birthday)
 			except (TypeError, ValueError):
 				pass
 		attrs['errors'] = self.errors
