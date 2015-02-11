@@ -169,7 +169,8 @@ class Instance(SchoolBaseModule, ProgressMixin):
 				columns = [] # name,firstname,unused2
 				first_lines = []
 				for line in reader:
-					if not any(cell.strip() for cell in line):
+					line = [cell.strip() for cell in line]
+					if not any(line):
 						# empty line
 						continue
 					writer.writerow(line)

@@ -1,3 +1,10 @@
+ucs-school-umc-csv-import (1.0.24-1) unstable; urgency=low
+
+  * Bug #37027: drop leading/trailing whitespaces from CSV cells to prevent simple
+    syntax errors
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Wed, 11 Feb 2015 14:44:00 +0100
+
 ucs-school-umc-csv-import (1.0.23-4) unstable; urgency=medium
 
   * Bug #36922: display user friendly error message if module process stopped
