@@ -77,7 +77,7 @@ class Klasse(object):
 	def create(self):
 		"""Creates object class"""
 		flavor = 'schoolwizards/classes'
-		param =	[
+		param = [
 				{
 					'object':{
 						'name': self.name,
@@ -117,7 +117,7 @@ class Klasse(object):
 	def query(self):
 		"""get the list of existing classes in the school"""
 		flavor = 'schoolwizards/classes'
-		param =	{
+		param = {
 				'school': self.school,
 				'filter': ""
 				}
@@ -140,7 +140,7 @@ class Klasse(object):
 	def get(self):
 		"""Get class"""
 		flavor = 'schoolwizards/classes'
-		param =	[
+		param = [
 				{
 					'object':{
 						'$dn$': self.dn(),
@@ -171,7 +171,7 @@ class Klasse(object):
 	def remove(self):
 		"""Remove class"""
 		flavor = 'schoolwizards/classes'
-		param =	[
+		param = [
 				{
 					'object':{
 						'$dn$': self.dn(),
@@ -189,7 +189,7 @@ class Klasse(object):
 	def edit(self, new_attributes):
 		"""Edit object class"""
 		flavor = 'schoolwizards/classes'
-		param =	[
+		param = [
 				{
 					'object':{
 						'$dn$': self.dn(),

@@ -124,7 +124,7 @@ class School(object):
 	def create(self):
 		"""Creates object school"""
 		flavor = 'schoolwizards/schools'
-		param =	[
+		param = [
 				{
 					'object':{
 						'name': self.name,
@@ -148,7 +148,7 @@ class School(object):
 	def get(self):
 		"""get the list of existing schools in the school"""
 		flavor = 'schoolwizards/schools'
-		param =	[
+		param = [
 				{'object':
 					{
 						'$dn$': self.dn()
@@ -170,7 +170,7 @@ class School(object):
 	def query(self):
 		"""get the list of existing schools in the school"""
 		flavor = 'schoolwizards/schools'
-		param =	{
+		param = {
 				'school': 'undefined',
 				'filter': ""
 				}
@@ -192,7 +192,7 @@ class School(object):
 		"""Remove school"""
 		print 'Removing school: %s' % self.name
 		flavor = 'schoolwizards/schools'
-		param =	[
+		param = [
 				{
 					'object':{
 						'$dn$': self.dn(),
@@ -234,7 +234,7 @@ class School(object):
 				host = new_attributes['class_share_file_server']
 			class_share = 'cn=%s,cn=dc,cn=computers,%s' % (
 					host, self.ucr.get('ldap/base'))
-		param =	[
+		param = [
 				{
 					'object':{
 						'$dn$': self.dn(),

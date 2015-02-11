@@ -39,7 +39,7 @@ class ComputerRoom(object):
 		self.name = name if name else uts.random_name()
 		self.description = description if description else uts.random_name()
 		self.host_members = host_members if host_members else []
-		self.ucr =	ucr_test.UCSTestConfigRegistry()
+		self.ucr = ucr_test.UCSTestConfigRegistry()
 		self.ucr.load()
 		host = self.ucr.get('hostname')
 		self.umc_connection = UMCConnection(host)

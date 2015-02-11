@@ -778,7 +778,7 @@ class UmcComputer(object):
 	def create(self, should_succeed=True):
 		"""Creates object Computer"""
 		flavor = 'schoolwizards/computers'
-		param =	[
+		param = [
 				{
 					'object':{
 						'school': self.school,
@@ -806,7 +806,7 @@ class UmcComputer(object):
 	def remove(self):
 		"""Remove computer"""
 		flavor = 'schoolwizards/computers'
-		param =	[
+		param = [
 				{
 					'object':{
 						'$dn$': self.dn(),
@@ -828,7 +828,7 @@ class UmcComputer(object):
 	def get(self):
 		"""Get Computer"""
 		flavor = 'schoolwizards/computers'
-		param =	[
+		param = [
 				{
 					'object':{
 						'$dn$': self.dn(),
@@ -875,7 +875,7 @@ class UmcComputer(object):
 	def edit(self, new_attributes):
 		"""Edit object computer"""
 		flavor = 'schoolwizards/computers'
-		param =	[
+		param = [
 				{
 					'object':{
 						'$dn$': self.dn(),
@@ -906,7 +906,7 @@ class UmcComputer(object):
 	def query(self):
 		"""get the list of existing computer in the school"""
 		flavor = 'schoolwizards/computers'
-		param =	{
+		param = {
 				'school': self.school,
 				'filter': "",
 				'type' : 'all'

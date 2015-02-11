@@ -123,7 +123,7 @@ class User(Person):
 	def create(self):
 		"""Creates object user"""
 		flavor = 'schoolwizards/users'
-		param =	[
+		param = [
 				{
 					'object':{
 						'school': self.school,
@@ -150,7 +150,7 @@ class User(Person):
 	def get(self):
 		"""Get user"""
 		flavor = 'schoolwizards/users'
-		param =	[
+		param = [
 				{
 					'object':{
 						'$dn$': self.dn,
@@ -207,7 +207,7 @@ class User(Person):
 	def query(self):
 		"""get the list of existing users in the school"""
 		flavor = 'schoolwizards/users'
-		param =	{
+		param = {
 				'school': self.school,
 				'type': 'all',
 				'filter': ""
@@ -227,7 +227,7 @@ class User(Person):
 		"""Remove user"""
 		print 'Removing User (%s)' % self.username
 		flavor = 'schoolwizards/users'
-		param =	[
+		param = [
 				{
 					'object':{
 						'school': self.school,
@@ -247,7 +247,7 @@ class User(Person):
 	def edit(self, new_attributes):
 		"""Edit object user"""
 		flavor = 'schoolwizards/users'
-		param =	[
+		param = [
 				{
 					'object':{
 						'school': self.school,
