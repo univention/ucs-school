@@ -4,7 +4,7 @@
 
   <!ENTITY % entities SYSTEM "../stylesheets/macros-de.ent" >
   <!ENTITY bibliography SYSTEM "../stylesheets/bibliography-de.xml">
-  <!ENTITY changelog SYSTEM "changelog-ucsschool-4.0.xml">
+  <!ENTITY changelog SYSTEM "changelog-ucsschool-4.0v2.xml">
 
   %entities;
 ]>
@@ -12,16 +12,16 @@
 <book lang="de" id="releasenotes-4.0-de">
 
 	<bookinfo>
- 		<title>UCS@school 4.0 Release Notes</title>
-		<subtitle>Release Notes für die Inbetriebnahme und Aktualisierung von UCS@school 4.0</subtitle>
+ 		<title>UCS@school 4.0 v2 Release Notes</title>
+		<subtitle>Release Notes für die Inbetriebnahme und Aktualisierung von UCS@school 4.0 v2</subtitle>
 		<legalnotice>
 			<literallayout>
-Version 4.0 v1
-Stand: 27. November 2014
+Version 4.0 v2
+Stand: 16. Februar 2015
 			</literallayout>
 			<literallayout>
 Alle Rechte vorbehalten./ All rights reserved.
-(c) 2002-2014
+(c) 2002-2015
 Univention GmbH
 Mary-Somerville-Straße 1
 28359 Bremen
@@ -126,7 +126,7 @@ univention-upgrade --updateto $version_version-$version_patchlevel
 				"default-umc-users" an die Gruppe "Domain Users $OU" angehängt.
 				Diese Richtlinie ermöglicht Benutzern ihr eigenes Passwort über die UMC zu verändern sowie die
 				Single-Sign-On Technik von UMC zu benutzen.
-				Das Verhalten kann über die &ucsUCRV; <envvar>ucsschool/import/attach/policy/default-umc-users</envvar>
+				Das Verhalten kann über die &UCRV; <envvar>ucsschool/import/attach/policy/default-umc-users</envvar>
 				gesteuert werden.
 			</para>
 		</section>
@@ -213,7 +213,7 @@ univention-upgrade --updateto $version_version-$version_patchlevel
 		<title>Changelog</title>
 		<para>
 		  Die Changelogs mit den detaillierten Änderungsinformationen werden nur in Englisch
-		  gepflegt. Aufgeführt sind die Änderungen zwischen den UCS@school-Versionen 3.2 R2 v2 und 4.0 v1. Die
+		  gepflegt. Aufgeführt sind die Änderungen zwischen den UCS@school-Versionen 4.0 v1 und 4.0 v2. Die
 		  Änderungsinformationen für vorherige Versionssprünge finden sich unter <ulink
 		  url="http://docs.univention.de/"/>.
 		</para>
