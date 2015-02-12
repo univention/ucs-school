@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-wizards\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: Mon, 07 May 2012 12:11:25 +0200\n"
+"POT-Creation-Date: Thu, 12 Feb 2015 10:16:33 +0000\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Univention GmbH <packages@univention.de>\n"
 "Language-Team: Univention GmbH <packages@univention.de>\n"
@@ -18,15 +18,6 @@ msgstr "Klassen (Schulen)"
 msgid "Computers (schools)"
 msgstr "Rechner (Schulen)"
 
-msgid "Users (schools)"
-msgstr "Benutzer (Schulen)"
-
-msgid "Schools"
-msgstr "Schulen"
-
-msgid "Management of users for schools (students, teachers, staff)"
-msgstr "Benutzerverwaltung für Schulen (Schüler, Lehrer, Mitarbeiter)"
-
 msgid "Management of classes for schools"
 msgstr "Klassenverwaltung für Schulen"
 
@@ -35,3 +26,12 @@ msgstr "Rechnerverwaltung für Schulen"
 
 msgid "Management of schools in the domain"
 msgstr "Verwaltung von Schulen in der Domäne"
+
+msgid "Management of users for schools (students, teachers, staff)"
+msgstr "Benutzerverwaltung für Schulen (Schüler, Lehrer, Mitarbeiter)"
+
+msgid "Schools"
+msgstr "Schulen"
+
+msgid "Users (schools)"
+msgstr "Benutzer (Schulen)"

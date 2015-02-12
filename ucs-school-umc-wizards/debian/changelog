@@ -1,3 +1,9 @@
+ucs-school-umc-wizards (4.0.32-1) unstable; urgency=low
+
+  * Bug #36450: limit length of usernames to prevent windows logon errors
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Thu, 12 Feb 2015 16:30:29 +0100
+
 ucs-school-umc-wizards (4.0.31-2) unstable; urgency=low
 
   * Bug #34997: Clarified grid columns, widget labels, etc.
