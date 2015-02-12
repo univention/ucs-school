@@ -70,10 +70,6 @@
 	  <section>
 	  <title>Univention Management Console web interface</title>
 	  </section>
-  -->
-  <section>
-	<title>Univention Management Console modules</title>
-  <!--
 	<section>
 	  <title>UCS@school configuration</title>
 	  <itemizedlist>
@@ -99,7 +95,7 @@
 	<section>
 	<title>Univention Management Console modules</title>
 	<section>
-		<title>CSV Import</title>
+	  <title>CSV Import</title>
 	  <itemizedlist>
 		<listitem>
 		  <simpara>
