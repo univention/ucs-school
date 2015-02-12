@@ -86,17 +86,60 @@
 </section>
   -->
 
-  <!--
-	  <section>
-	  <title>Univention Management Console</title>
-	  <section>
+<section>
+  <title>Univention Management Console</title>
+<!--
+  <section>
 	  <title>Univention Management Console server</title>
 	  </section>
 	  <section>
 	  <title>Univention Management Console web interface</title>
 	  </section>
-  <section>
+-->
+	<section>
 	<title>Univention Management Console modules</title>
+	<section>
+		<title>CSV Import</title>
+	  <itemizedlist>
+		<listitem>
+		  <simpara>
+			To prevent problems with usernames that are too long for windows, the CSV import module
+			restricts the length of usernames (with default settings the limit is 15 characters).  Overlong
+			usernames will be highlighted with a red cell background
+			(<ulink url="&ucsbug;37154">Bug 37154</ulink>).
+		  </simpara>
+		</listitem>
+	  </itemizedlist>
+	</section>
+	<section>
+		<title>Wizards (Users/Classes/Computers/Schools)</title>
+	  <itemizedlist>
+		<listitem>
+		  <simpara>
+			To prevent problems with usernames that are too long for windows, the UMC module
+			<emphasis>Users (schools)</emphasis> restricts the length of usernames (with default settings the
+			limit is 15 characters). (<ulink url="&ucsbug;37154">Bug 37154</ulink>).
+		  </simpara>
+		</listitem>
+		<listitem>
+		  <simpara>
+		  </simpara>
+		</listitem>
+		<listitem>
+		  <simpara>
+		  </simpara>
+		</listitem>
+		<listitem>
+		  <simpara>
+		  </simpara>
+		</listitem>
+		<listitem>
+		  <simpara>
+		  </simpara>
+		</listitem>
+	  </itemizedlist>
+	</section>
+<!--
 	<section>
 	  <title>UCS@school configuration</title>
 	  <itemizedlist>
@@ -119,44 +162,6 @@
 		<listitem>
 			<simpara>
 			</simpara>
-		</listitem>
-	  </itemizedlist>
-	</section>
-	<section>
-		<title>Wizards (Users/Classes/Computers/Schools)</title>
-	  <itemizedlist>
-		<listitem>
-		  <simpara>
-		  </simpara>
-		</listitem>
-		<listitem>
-		  <simpara>
-		  </simpara>
-		</listitem>
-		<listitem>
-		  <simpara>
-		  </simpara>
-		</listitem>
-		<listitem>
-		  <simpara>
-		  </simpara>
-		</listitem>
-		<listitem>
-		  <simpara>
-		  </simpara>
-		</listitem>
-	  </itemizedlist>
-	</section>
-	<section>
-		<title>CSV Import</title>
-	  <itemizedlist>
-		<listitem>
-		  <simpara>
-		  </simpara>
-		</listitem>
-		<listitem>
-		  <simpara>
-		  </simpara>
 		</listitem>
 	  </itemizedlist>
 	</section>
