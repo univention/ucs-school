@@ -97,6 +97,33 @@
 	</section>
   -->
 	<section>
+	<title>Univention Management Console modules</title>
+	<section>
+		<title>CSV Import</title>
+	  <itemizedlist>
+		<listitem>
+		  <simpara>
+			To prevent problems with usernames that are too long for windows, the CSV import module
+			restricts the length of usernames (with default settings the limit is 15 characters).  Overlong
+			usernames will be highlighted with a red cell background
+			(<ulink url="&ucsbug;36450">Bug 36450</ulink>).
+		  </simpara>
+		</listitem>
+	  </itemizedlist>
+	</section>
+	<section>
+		<title>Wizards (Users/Classes/Computers/Schools)</title>
+	  <itemizedlist>
+		<listitem>
+		  <simpara>
+			To prevent problems with usernames that are too long for windows, the UMC module
+			<emphasis>Users (schools)</emphasis> restricts the length of usernames (with default settings the
+			limit is 15 characters). (<ulink url="&ucsbug;36450">Bug 36450</ulink>).
+		  </simpara>
+		</listitem>
+	  </itemizedlist>
+	</section>
+	<section>
 	 <title>Computerroom</title>
 	 <itemizedlist>
 		<listitem>
