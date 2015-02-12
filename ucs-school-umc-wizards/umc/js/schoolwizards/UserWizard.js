@@ -46,6 +46,19 @@ define([
 	return declare("umc.modules.schoolwizards.UserWizard", [Wizard], {
 		description: _('Create a new user'),
 
+		_examUserPrefix: 'exam-',
+		_maxUsernameLength: 15,
+
+		loadVariables: function() {
+			return tools.ucr([
+				'ucsschool/ldap/default/userprefix/exam'
+			]).then(lang.hitch(this, function(result) {
+				// cache the user prefix and update help text
+				this._examUserPrefix = result['ucsschool/ldap/default/userprefix/exam'] || 'exam-';
+				this._maxUsernameLength = 20 - this._examUserPrefix.length;
+			}));
+        },
+
 		getGeneralPage: function() {
 			var page = this.inherited(arguments);
 			page.widgets.push({
@@ -97,7 +110,15 @@ define([
 					name: 'name',
 					label: _('Username'),
 					disabled: this.editMode,
-					required: true
+					required: true,
+					validator: lang.hitch(this, function(value) {
+						widget = this.getWidget('item', 'name');
+						if (widget != undefined) {
+							widget.set('invalidMessage', _('The maximum length of usernames is limited to %s characters. Please choose a shorter username.', this._maxUsernameLength));
+						};
+						return value.length <= this._maxUsernameLength;
+					}),
+					invalidMessage: _('The maximum length of usernames is limited to %s characters. Please choose a shorter username.', this._maxUsernameLength)
 				}, {
 					type: ComboBox,
 					name: 'school_class',

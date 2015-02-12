@@ -91,9 +91,13 @@ define([
 			}
 		},
 
+		loadVariables: function() {
+            return null;
+        },
+
 		startup: function() {
 			this.inherited(arguments);
-			var loading = [this.loadValues()];
+			var loading = [this.loadValues(), this.loadVariables()];
 			tools.forIn(this._pages, function(name, page) {
 				if (page._form) {
 					loading.push(page._form.ready());

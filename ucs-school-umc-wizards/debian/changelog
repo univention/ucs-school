@@ -1,3 +1,9 @@
+ucs-school-umc-wizards (5.0.1-1) unstable; urgency=low
+
+  * Bug #37154: limit length of usernames to prevent windows logon errors
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Thu, 12 Feb 2015 16:30:29 +0100
+
 ucs-school-umc-wizards (5.0.0-1) unstable; urgency=medium
 
   * Bug #35892: Start UCS 4.0 development
