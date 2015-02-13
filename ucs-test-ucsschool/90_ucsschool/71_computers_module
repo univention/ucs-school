@@ -8,6 +8,7 @@
 
 from essential.computerroom import UmcComputer
 from essential.importcomputers import random_ip, random_mac
+import time
 import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool as utu
 
@@ -46,8 +47,18 @@ def main():
 				pc.check_get()
 				pc.verify_ldap(True)
 				pc.remove()
-				pc.verify_ldap(False)
+				for wait in xrange(30):
+					try:
+						pc.verify_ldap(False)
+					except Exception as e:
+						if pc.dn() in str(e):
+							print ':::::::%r::::::' % wait
+							print str(e)
+							time.sleep(1)
+						else:
+							raise
+					else:
+						break
 
 if __name__ == '__main__':
 	main()
-
