@@ -122,7 +122,9 @@
 	  <title>UCS@school configuration</title>
 	  <itemizedlist>
 		<listitem>
+		  <simpara>
 			DNS timeouts will not prevent opening the UCS@school configuration module anymore (<ulink url="&ucsbug;32050">Bug 32050</ulink>).
+		  </simpara>
 		</listitem>
 	  </itemizedlist>
 	</section>
