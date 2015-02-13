@@ -1,3 +1,10 @@
+ucs-test-ucsschool (2.0.20-1) unstable; urgency=low
+
+  * Bug #35317, and #35316: add waiting loop after removing object from ldap
+  * before verifying.
+
+ -- Ammar Najjar <najjar@univention.de>  Fri, 13 Feb 2015 09:30:18 +0100
+
 ucs-test-ucsschool (2.0.19-1) unstable; urgency=low
 
   * Bug #34958: add passwordchange module after bug #36537
