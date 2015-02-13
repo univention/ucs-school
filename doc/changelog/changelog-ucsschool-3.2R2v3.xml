@@ -1,14 +1,14 @@
-<!--
 <section>
-  <title>General</title>
-  <itemizedlist>
-	<listitem>
-	  <simpara>
-	  </simpara>
+	<title>General</title>
+	<itemizedlist>
+		<listitem>
+		<simpara>
+			The hyphen (-) character can be used in hostnames of schools
+			(<ulink url="&ucsbug;37770">Bug 37770</ulink>).
+		</simpara>
 	</listitem>
   </itemizedlist>
 </section>
--->
 
 
   <!--
@@ -47,7 +47,6 @@
 	  <title>Domain joins of UCS systems</title>
 	  </section>
 
-
 	  <section>
 	  <title>Print services</title>
 	  </section>
@@ -70,30 +69,20 @@
 	  <section>
 	  <title>Univention Management Console web interface</title>
 	  </section>
-	<section>
-	  <title>UCS@school configuration</title>
-	  <itemizedlist>
-		<listitem>
-		</listitem>
-	  </itemizedlist>
-	</section>
-	<section>
-		<title>Wizards (Users/Classes/Computers/Schools)</title>
-	  <itemizedlist>
-		<listitem>
-		</listitem>
-	  </itemizedlist>
-	</section>
-	<section>
-		<title>CSV Import</title>
-	  <itemizedlist>
-		<listitem>
-		</listitem>
-	  </itemizedlist>
-	</section>
   -->
-	<section>
 	<title>Univention Management Console modules</title>
+	<section>
+		<title>General</title>
+		<itemizedlist>
+			<listitem>
+				<simpara>
+					Error handling in various modules have been improoved.
+					Errors could happen in case of missing objects due to deletion or missing replication
+					(<ulink url="&ucsbug;37764">Bug 37764</ulink>), (<ulink url="&ucsbug;37769">Bug 37769</ulink>).
+				</simpara>
+			</listitem>
+		</itemizedlist>
+	</section>
 	<section>
 	  <title>CSV Import</title>
 	  <itemizedlist>
@@ -108,6 +97,11 @@
 			Whitespace characters in the birthday column of CSV files could lead to error messages or highlighted red cells during the CSV import.
 			The CSV import module now removed whitespace characters automatically from <emphasis>birthday</emphasis> column's values.
 			(<ulink url="&ucsbug;37027">Bug 37027</ulink>, <ulink url="&ucsbug;37777">Bug 37777</ulink>).
+		  </simpara>
+		</listitem>
+		<listitem>
+		  <simpara>
+			Improoved error handling in case the module process dies between uploading and importing of CSV files (<ulink url="&ucsbug;37762">Bug 37762</ulink>).
 		  </simpara>
 		</listitem>
 	  </itemizedlist>
@@ -125,12 +119,25 @@
 	  </itemizedlist>
 	</section>
 	<section>
-	 <title>Computerroom</title>
-	 <itemizedlist>
+	  <title>UCS@school configuration</title>
+	  <itemizedlist>
 		<listitem>
-		 <simpara>
+			DNS timeouts will not prevent opening the UCS@school configuration module anymore (<ulink url="&ucsbug;32050">Bug 32050</ulink>).
+		</listitem>
+	  </itemizedlist>
+	</section>
+	<section>
+	<title>Computerroom</title>
+	<itemizedlist>
+		<listitem>
+		<simpara>
 			A memory leak in the <package>computerroom</package> module has been fixed
 			(<ulink url="&ucsbug;36469">Bug 36469</ulink>).
+		</simpara>
+		</listitem>
+		<listitem>
+		<simpara>
+			 A segmentation fault in the libqjpeg library is now prevented when receiving screenshot information (<ulink url="&ucsbug;37768">Bug 37768</ulink>).
 		</simpara>
 		</listitem>
 	</itemizedlist>
@@ -143,9 +150,15 @@
 		</listitem>
 	  </itemizedlist>
 	</section>
+-->
 	<section>
 		<title>Exam</title>
 	  <itemizedlist>
+		<listitem>
+		<simpara>
+			A typo has been fixed (<ulink url="&ucsbug;37765">Bug 37765</ulink>).
+		</simpara>
+		</listitem>
 		<listitem>
 		</listitem>
 	  </itemizedlist>
@@ -154,9 +167,13 @@
 		<title>Distribution</title>
 	  <itemizedlist>
 		<listitem>
+		<simpara>
+			A typo has been fixed (<ulink url="&ucsbug;37767">Bug 37767</ulink>).
+		</simpara>
 		</listitem>
 	  </itemizedlist>
 	</section>
+<!--
 	<section>
 		<title>Helpdesk</title>
 	  <itemizedlist>
