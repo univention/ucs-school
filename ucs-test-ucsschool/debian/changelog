@@ -1,3 +1,10 @@
+ucs-test-ucsschool (1.0.97-1) unstable; urgency=low
+
+  * Bug #35317, and #35316: add waiting loop after removing object from ldap
+  * before verifying.
+
+ -- Ammar Najjar <najjar@univention.de>  Fri, 13 Feb 2015 09:32:25 +0100
+
 ucs-test-ucsschool (1.0.96-1) unstable; urgency=low
 
   * Bug #36804: improve the code and reorder the functions
@@ -32,14 +39,14 @@ ucs-test-ucsschool (1.0.93-1) unstable; urgency=low
 
 ucs-test-ucsschool (1.0.92-1) unstable; urgency=low
 
-  * Bug #35691: checks if "name_edudc" is a string before applying lower() on it. 
+  * Bug #35691: checks if "name_edudc" is a string before applying lower() on it.
   * Bug #36804: add new script "103_smbstatus_parser"
 
  -- Ammar Najjar <najjar@univention.de>  Thu, 27 Nov 2014 12:40:37 +0100
 
 ucs-test-ucsschool (1.0.91-1) unstable; urgency=low
 
-  * Bug #36784: add new script "102_rename_class" 
+  * Bug #36784: add new script "102_rename_class"
 
  -- Ammar Najjar <najjar@univention.de>  Wed, 26 Nov 2014 10:52:22 +0100
 
