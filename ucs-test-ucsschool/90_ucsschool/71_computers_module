@@ -8,6 +8,7 @@
 
 from essential.computerroom import UmcComputer
 from essential.importcomputers import random_ip, random_mac
+import time
 import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool as utu
 
