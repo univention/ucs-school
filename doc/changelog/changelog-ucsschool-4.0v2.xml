@@ -9,7 +9,7 @@
 	</listitem>
 	<listitem>
 	<simpara>
-		The dash (-) character can be used in hostnames of schools (<ulink url="&ucsbug;36034">Bug 36034</ulink>).
+		The hyphen (-) character can be used in hostnames of schools (<ulink url="&ucsbug;36034">Bug 36034</ulink>).
 	</simpara>
 	</listitem>
 </itemizedlist>
@@ -111,8 +111,8 @@
 			<listitem>
 				<simpara>
 					Error handling in various modules have been improoved.
-					Errors could happen in case of missing objects due to deletion or missing replication (<ulink url="&ucsbug;34970">Bug 34970</ulink>).
-					(<ulink url="&ucsbug;37668">Bug 37668</ulink>).
+					Errors could happen in case of missing objects due to deletion or missing replication
+					(<ulink url="&ucsbug;34970">Bug 34970</ulink>), (<ulink url="&ucsbug;37668">Bug 37668</ulink>).
 				</simpara>
 			</listitem>
 			<listitem>
