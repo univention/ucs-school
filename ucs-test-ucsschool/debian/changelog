@@ -1,3 +1,9 @@
+ucs-test-ucsschool (1.0.98-1) unstable; urgency=low
+
+  * Bug #37160: add waiting loop before verifying ldap object
+
+ -- Ammar Najjar <najjar@univention.de>  Fri, 13 Feb 2015 10:56:56 +0100
+
 ucs-test-ucsschool (1.0.97-1) unstable; urgency=low
 
   * Bug #35317, and #35316: add waiting loop after removing object from ldap
