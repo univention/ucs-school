@@ -10,6 +10,7 @@ from essential.school import School, create_dc_slave
 import univention.testing.udm as udm_test
 import univention.testing.ucr as ucr_test
 import univention.testing.strings as uts
+import time
 import univention.testing.utils as utils
 
 def main():
@@ -56,7 +57,20 @@ def main():
 				for school in schools:
 					school.verify_ldap(True)
 					school.remove()
-					school.verify_ldap(False)
+
+					for wait in xrange(30):
+						try:
+							school.verify_ldap(False)
+						except Exception as e:
+							if school.dn() in str(e):
+								print ':::::::%r::::::' % wait
+								print str(e)
+								time.sleep(1)
+							else:
+								raise
+						else:
+							break
+
 			finally:
 				for school in schools:
 					school.remove()
