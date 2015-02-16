@@ -42,15 +42,19 @@
 
 <section>
 <title>Domain services</title>
+-->
 <section>
 	<title>Samba4</title>
 	<itemizedlist>
 	<listitem>
 		<simpara>
+		The S4-Connector now synchronizes the ntSecurityDescriptor of groupPolicyContainer objects
+		 (<ulink url="&ucsbug;37350">Bug 37350</ulink>).
 		</simpara>
 	</listitem>
 	</itemizedlist>
 </section>
+<!--
 <section>
 	<title>Windows Netlogon Scripts</title>
 	<itemizedlist>
