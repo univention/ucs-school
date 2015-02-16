@@ -1,3 +1,9 @@
+ucs-school-umc-exam (3.0.3-3) unstable; urgency=medium
+
+  * Bug #36795: fix typo
+
+ -- Florian Best <best@univention.de>  Mon, 16 Feb 2015 12:46:36 +0100
+
 ucs-school-umc-exam (3.0.3-2) unstable; urgency=medium
 
   * Bug #36795: fix typo
