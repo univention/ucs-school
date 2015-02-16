@@ -40,6 +40,7 @@ univention-config-registry set \
 	samba4/sysvol/sync/setfacl/AU?false \
 	samba4/sysvol/sync/cron?"*/5 * * * *" \
 	connector/s4/mapping/wmifilter?yes \
+	connector/s4/mapping/gpo/ntsd?yes \
 	ucsschool/import/generate/policy/dhcp/dns/set_per_ou?true \
 	ucs/web/overview/entries/service/teacherconsole/icon?"/univention-management-console/js/dijit/themes/umc/icons/50x50/ucsschool.png" \
 	ucs/web/overview/entries/service/teacherconsole/label?"UCS@school" \
@@ -86,6 +87,14 @@ if [ "$1" = "configure" -a -n "$2" ]; then
 		univention-config-registry set \
 			ucsschool/import/roleshare=no \
 			update/reboot/required=yes
+	fi
+
+	if dpkg --compare-versions "$2" lt 7.0.0-2 && is_ucr_true connector/s4/mapping/gpo && is_ucr_true connector/s4/mapping/gpo/ntsd; then
+		## Write the GPO Security Descriptors from Samba 4 to UCS
+		if [ -x /usr/share/univention-s4-connector/resync_object_from_s4.py ]; then
+			/usr/share/univention-s4-connector/resync_object_from_s4.py \
+				--filter "(objectClass=groupPolicyContainer)"
+		fi
 	fi
 fi
 
