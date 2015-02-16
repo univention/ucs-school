@@ -124,7 +124,7 @@ define([
 			}, {
 				name: 'edit',
 				label: _('Edit'),
-				description: _('Edit the selected distribution project'),
+				description: _('Edit the selected distribution project.'),
 				iconClass: 'umcIconEdit',
 				isStandardAction: true,
 				isMultiAction: false,
@@ -132,7 +132,7 @@ define([
 			}, {
 				name: 'distribute',
 				label: _('Distribute'),
-				description: _('Distribute project files to users'),
+				description: _('Distribute project files to users.'),
 				isStandardAction: true,
 				isMultiAction: false,
 				canExecute: function(item) {
@@ -142,7 +142,7 @@ define([
 			}, {
 				name: 'collect',
 				label: _('Collect'),
-				description: _('Collect project files from users'),
+				description: _('Collect project files from users.'),
 				isStandardAction: true,
 				isMultiAction: false,
 				canExecute: function(item) {
@@ -162,7 +162,7 @@ define([
 			}, {
 				name: 'remove',
 				label: _('Remove'),
-				description: _('Removes the project from the internal database'),
+				description: _('Removes the project from the internal database.'),
 				isStandardAction: true,
 				isMultiAction: false,
 				iconClass: 'umcIconDelete',
@@ -226,7 +226,7 @@ define([
 			}, {
 				type: TextBox,
 				name: 'pattern',
-				description: _('Specifies the substring pattern which is searched for in the projects'),
+				description: _('Specifies the substring pattern which is searched for in the projects.'),
 				label: _('Search pattern')
 			}];
 
@@ -295,8 +295,8 @@ define([
 			}
 
 			var msg = items[0].isDistributed ?
-				_('Please confirm to collect the project: %s', items[0].description) :
-				_('Please confirm to distribute the project: %s', items[0].description);
+				_('Please confirm to collect the project <i>%s</i>.', items[0].description) :
+				_('Please confirm to distribute the project <i>%s</i>.', items[0].description);
 			dialog.confirm(msg, [{
 				label: _('Cancel'),
 				name: 'cancel'
@@ -363,7 +363,7 @@ define([
 				return;
 			}
 
-			dialog.confirm(_('Please confirm to transfer the ownership of the project "%s" to your account.', items[0].description), [{
+			dialog.confirm(_('Please confirm to transfer the ownership of the project <i>%s</i> to your account.', items[0].description), [{
 				label: _('Cancel'),
 				name: 'cancel',
 				'default': true
@@ -404,7 +404,7 @@ define([
 				return;
 			}
 
-			dialog.confirm(_('Please confirm to remove the project: %s', items[0].description), [{
+			dialog.confirm(_('Please confirm to remove the project <i>%s</i>.', items[0].description), [{
 				label: _('Cancel'),
 				name: 'cancel',
 				'default': true

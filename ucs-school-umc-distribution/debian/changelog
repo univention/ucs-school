@@ -1,3 +1,9 @@
+ucs-school-umc-distribution (11.0.3-4) unstable; urgency=medium
+
+  * Bug #36848: textual changes
+
+ -- Florian Best <best@univention.de>  Mon, 16 Feb 2015 16:46:10 +0100
+
 ucs-school-umc-distribution (11.0.3-3) unstable; urgency=medium
 
   * Bug #36848: show project name instead of path
