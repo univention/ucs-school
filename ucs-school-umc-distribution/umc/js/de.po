@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-distribution\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2014-08-15 11:21+0200\n"
+"POT-Creation-Date: 2015-02-16 16:40+0100\n"
 "PO-Revision-Date: 2012-05-14 11:48+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -70,8 +70,8 @@ msgid "Collect project"
 msgstr "Projekt einsammeln"
 
 #: umc/js/distribution.js:145
-msgid "Collect project files from users"
-msgstr "Projektdateien von Schüler einsammeln"
+msgid "Collect project files from users."
+msgstr "Projektdateien von Schüler einsammeln."
 
 #: umc/js/distribution/DetailPage.js:235
 msgid "Collection date"
@@ -118,8 +118,8 @@ msgid "Distribute project"
 msgstr "Projekt verteilen"
 
 #: umc/js/distribution.js:135
-msgid "Distribute project files to users"
-msgstr "Projektdateien an Schüler verteilen"
+msgid "Distribute project files to users."
+msgstr "Projektdateien an Schüler verteilen."
 
 #: umc/js/distribution/DetailPage.js:250
 msgid "Distribution and collection of project files"
@@ -142,8 +142,8 @@ msgid "Edit"
 msgstr "Bearbeiten"
 
 #: umc/js/distribution.js:127
-msgid "Edit the selected distribution project"
-msgstr "Das ausgewählte Verteilungsprojekt bearbeiten"
+msgid "Edit the selected distribution project."
+msgstr "Das ausgewählte Verteilungsprojekt bearbeiten."
 
 #: umc/js/distribution.js:293
 msgid "Error: No files have been assign to the project!"
@@ -210,29 +210,31 @@ msgstr "Eigentümer"
 
 #: umc/js/distribution.js:298
 #, python-format
-msgid "Please confirm to collect the project: %s"
+msgid "Please confirm to collect the project <i>%s</i>."
 msgstr ""
-"Bitte bestätigen Sie, um Dateien des ausgewählten Projektes einzusammeln: %s"
+"Bitte bestätigen Sie, um Dateien des ausgewählten Projektes <i>%s</i> "
+"einzusammeln."
 
 #: umc/js/distribution.js:299
 #, python-format
-msgid "Please confirm to distribute the project: %s"
+msgid "Please confirm to distribute the project <i>%s</i>."
 msgstr ""
-"Bitte bestätigen Sie, um Dateien des ausgewählten Projektes zu verteilen: %s"
+"Bitte bestätigen Sie, um Dateien des ausgewählten Projektes <i>%s</i> zu "
+"verteilen."
 
 #: umc/js/distribution.js:407
 #, python-format
-msgid "Please confirm to remove the project: %s"
-msgstr "Bitte bestätigen Sie, um das Projekt zu entfernen: %s"
+msgid "Please confirm to remove the project <i>%s</i>."
+msgstr "Bitte bestätigen Sie, um das Projekt <i>%s</i> zu entfernen."
 
 #: umc/js/distribution.js:366
 #, python-format
 msgid ""
-"Please confirm to transfer the ownership of the project \"%s\" to your "
+"Please confirm to transfer the ownership of the project <i>%s</i> to your "
 "account."
 msgstr ""
-"Bitte bestätigen sie, um das Eigentumsrecht des Projektes \"%s\" auf Ihren "
-"Account zu übertragen."
+"Bitte bestätigen Sie, um das Eigentumsrecht des Projektes <i>%s</i> auf "
+"Ihren Account zu übertragen."
 
 #: umc/js/distribution/DetailPage.js:78
 msgid "Project properties"
@@ -247,8 +249,8 @@ msgid "Remove project"
 msgstr "Projekt löschen"
 
 #: umc/js/distribution.js:165
-msgid "Removes the project from the internal database"
-msgstr "Löscht das Projekt aus der internen Datenbank"
+msgid "Removes the project from the internal database."
+msgstr "Löscht das Projekt aus der internen Datenbank."
 
 #: umc/js/distribution/DetailPage.js:84 umc/js/distribution/DetailPage.js:408
 msgid "Save changes"
@@ -271,9 +273,9 @@ msgid "Search results"
 msgstr "Suchergebnisse"
 
 #: umc/js/distribution.js:229
-msgid "Specifies the substring pattern which is searched for in the projects"
+msgid "Specifies the substring pattern which is searched for in the projects."
 msgstr ""
-"Gibt die Zeichenkette an, nach der in den Projektbeschreibungen gesucht wird"
+"Gibt die Zeichenkette an, nach der in den Projektbeschreibungen gesucht wird."
 
 #: umc/js/distribution/DetailPage.js:223
 msgid ""

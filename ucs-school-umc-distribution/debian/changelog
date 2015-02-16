@@ -1,3 +1,9 @@
+ucs-school-umc-distribution (12.0.1-3) unstable; urgency=medium
+
+  * Bug #36848: textual changes
+
+ -- Florian Best <best@univention.de>  Mon, 16 Feb 2015 15:18:11 +0100
+
 ucs-school-umc-distribution (12.0.1-2) unstable; urgency=medium
 
   * Bug #36849: fix typo
