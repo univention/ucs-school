@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-exam\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2014-08-19 13:06+0200\n"
+"POT-Creation-Date: 2015-02-16 12:48+0100\n"
 "PO-Revision-Date: 2013-05-23 22:19+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -39,7 +39,7 @@ msgstr ""
 
 #: umc/js/schoolexam.js:214
 msgid ""
-"<p>Please choose a suiting directory name for the exam and upload all "
+"<p>Please choose a appropriate directory name for the exam and upload all "
 "necessary files one by one.</p><p>These files will be distributed to all "
 "participating students. A copy of the original files will be stored in your "
 "home directory. At any moment during the exam, it is possible to collect the "
@@ -193,6 +193,7 @@ msgstr ""
 "In diesem Computerraum wird derzeit die Klassenarbeit \"%s\" durchgeführt."
 
 #: umc/js/schoolexam.js:261
+#, python-brace-format
 msgid "List of allowed web sites for \"{myRules}\""
 msgstr "Liste erlaubter Webseiten für \"{myRules}\""
 
