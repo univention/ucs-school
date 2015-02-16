@@ -96,7 +96,7 @@
 			</simpara>
 			<simpara>
 			Whitespace characters in the birthday column of CSV files could lead to error messages or highlighted red cells during the CSV import.
-			The CSV import module now removed whitespace characters automatically from <emphasis>birthday</emphasis> column's values.
+			The CSV import module now removes whitespace characters automatically from <emphasis>birthday</emphasis> column's values.
 			(<ulink url="&ucsbug;37027">Bug 37027</ulink>, <ulink url="&ucsbug;37777">Bug 37777</ulink>).
 			</simpara>
 		</listitem>
