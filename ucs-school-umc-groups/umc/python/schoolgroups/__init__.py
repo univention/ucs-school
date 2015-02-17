@@ -171,8 +171,8 @@ class Instance( SchoolBaseModule ):
 				continue
 			try:
 				user.open()
-			except udm_exceptions.base as exc:
-				MODULE.error('Failed to open user object %s: %s' % (member_dn, exc,))
+			except udm_exceptions.noObject as exc:
+				MODULE.process('Skipped foreign OU user %r' % (member_dn,))
 				continue
 			members.append( { 'id' : user.dn, 'label' : Display.user( user ) } )
 		result[ 'members' ] = members
