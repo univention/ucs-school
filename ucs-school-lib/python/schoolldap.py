@@ -636,8 +636,8 @@ class SchoolBaseModule( Base ):
 					userObj = userModule.object(None, ldap_connection, None, idn)
 					try:
 						userObj.open()
-					except udm_errors.base as exc:
-						MODULE.error('Failed to open user %s: %s' % (idn, exc))
+					except udm_errors.noObject as exc:
+						MODULE.process('Skipped foreign OU user %r' % (idn,))
 						userObj = None
 					if userObj:
 						userresult.append(userObj)
