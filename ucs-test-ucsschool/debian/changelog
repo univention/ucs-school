@@ -1,3 +1,14 @@
+ucs-test-ucsschool (2.0.23-1) unstable; urgency=low
+
+  *  90_ucsschool/95_samba4_client_join_on_slave,
+     90_ucsschool/93_samba4_check_dc_selection,
+     90_ucsschool/96_samba4_sid_allocation,
+     90_ucsschool/94_samba4_check_shares_access,
+     90_ucsschool/97_samba4_dns_srv_replication:
+     fixed retab for headers (Bug #34221).
+
+ -- Dmitry Galkin <galkin@univention.de>  Tue, 17 Feb 2015 15:55:10 +0100
+
 ucs-test-ucsschool (2.0.22-1) unstable; urgency=medium
 
   * retab (Bug #34221 etc)

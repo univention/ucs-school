@@ -2,8 +2,8 @@
 ## desc: Test the DNS SRV record replication.
 ## bugs: [34222]
 ## roles:
-##	- domaincontroller_master
-##	- domaincontroller_slave
+## - domaincontroller_master
+## - domaincontroller_slave
 ## packages: [univention-s4-connector, univention-samba4]
 ## tags: [apptest, ucsschool]
 ## exposure: dangerous

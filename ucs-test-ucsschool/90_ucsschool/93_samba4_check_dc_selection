@@ -2,9 +2,9 @@
 ## desc: Test the DC Locator (DNS) with Samba4.
 ## bugs: [34223]
 ## roles:
-##	- domaincontroller_master
-##	- domaincontroller_backup
-##	- domaincontroller_slave
+## - domaincontroller_master
+## - domaincontroller_backup
+## - domaincontroller_slave
 ## packages: [univention-samba4]
 ## tags: [apptest, ucsschool]
 ## exposure: careful

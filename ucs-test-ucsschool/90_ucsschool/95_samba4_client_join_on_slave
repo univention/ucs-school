@@ -2,7 +2,7 @@
 ## desc: Test Window client join into UCS@School S4-Slave.
 ## bugs: [34219]
 ## roles:
-##	- domaincontroller_slave
+## - domaincontroller_slave
 ## packages: [univention-samba4]
 ## tags: [apptest, ucsschool]
 ## exposure: dangerous

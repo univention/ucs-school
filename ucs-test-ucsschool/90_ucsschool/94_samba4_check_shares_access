@@ -2,7 +2,7 @@
 ## desc: Test the DC Locator Master shares access from DC-Slave.
 ## bugs: [34224]
 ## roles:
-##	- domaincontroller_slave
+## - domaincontroller_slave
 ## packages: [univention-samba4]
 ## tags: [apptest, ucsschool]
 ## exposure: careful
