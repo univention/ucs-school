@@ -105,14 +105,34 @@ class Instance( SchoolBaseModule ):
 			self._tmpDir = tempfile.mkdtemp(prefix='ucsschool-exam-upload-')
 			MODULE.info('Created temporary directory: %s' % self._tmpDir)
 
-		# we got an uploaded file with the following properties:
-		#   name, filename, tmpfile
-		destPath = os.path.join(self._tmpDir, file['filename'])
-		MODULE.info('Received file "%s", saving it to "%s"' % (file['tmpfile'], destPath))
+		filename = self.__workaround_filename_bug(file)
+		destPath = os.path.join(self._tmpDir, filename)
+		MODULE.info('Received file %r, saving it to %r' % (file['tmpfile'], destPath))
 		shutil.move(file['tmpfile'], destPath)
 
 		# done
 		self.finished( request.id, None )
+
+	def __workaround_filename_bug(file):
+		### the following code block is a heuristic to support both: fixed and unfixed Bug #37716
+		filename = file['filename']
+		try:
+			# The UMC-Webserver decodes filename in latin-1, need to revert
+			filename = filename.encode('ISO8859-1')
+		except UnicodeEncodeError:
+			# we got non-latin characters, Bug #37716 is fixed and string contains e.g. '→'
+			filename = file['filename'].encode('UTF-8')
+		else:
+			# the string contains at least no non-latin1 characters
+			try:
+				# try if the bytes could be UTF-8
+				# can't fail if Bug #37716 is fixed
+				filename.decode('UTF-8')
+			except UnicodeDecodeError:
+				filename = file['filename'].encode('UTF-8')  # Bug #37716 was fixed
+		MODULE.info('Detected filename %r as %r' % (file['filename'], filename))
+		### the code block can be removed and replaced by filename = file['filename'].encode('UTF-8') after Bug #37716
+		return filename
 
 	def internetrules( self, request ):
 		### copied from computerroom module
