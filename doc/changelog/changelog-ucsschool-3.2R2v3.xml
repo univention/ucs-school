@@ -163,6 +163,9 @@
 		</simpara>
 		</listitem>
 		<listitem>
+		<simpara>
+			Uploading files with umlauts in their name has been fixed (<ulink url="&ucsbug;37823">Bug 37823</ulink>).
+		</simpara>
 		</listitem>
 		</itemizedlist>
 	</section>
@@ -172,6 +175,11 @@
 		<listitem>
 		<simpara>
 			Various text changes have been done (<ulink url="&ucsbug;37767">Bug 37767</ulink>, <ulink url="&ucsbug;37766">Bug 37766</ulink>).
+		</simpara>
+		</listitem>
+		<listitem>
+		<simpara>
+			Uploading files with umlauts in their name has been fixed (<ulink url="&ucsbug;37823">Bug 37823</ulink>).
 		</simpara>
 		</listitem>
 		</itemizedlist>
