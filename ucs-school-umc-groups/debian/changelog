@@ -1,3 +1,9 @@
+ucs-school-umc-groups (3.0.1-3) unstable; urgency=medium
+
+  * Bug #34970: only catch noObject exceptions
+
+ -- Florian Best <best@univention.de>  Tue, 17 Feb 2015 10:45:52 +0100
+
 ucs-school-umc-groups (3.0.1-2) unstable; urgency=medium
 
   * Bug #34970: catch exceptions when opening user objects

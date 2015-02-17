@@ -1,3 +1,9 @@
+ucs-school-umc-exam (3.0.3-4) unstable; urgency=medium
+
+  * Bug #36846: fix uploading of files with umlauts in their names
+
+ -- Florian Best <best@univention.de>  Tue, 17 Feb 2015 11:32:01 +0100
+
 ucs-school-umc-exam (3.0.3-3) unstable; urgency=medium
 
   * Bug #36795: fix typo
