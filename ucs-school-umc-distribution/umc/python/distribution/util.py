@@ -403,9 +403,7 @@ class Project(_Dict):
 
 		# check whether a project directory with the given name exists in the
 		# recipients' home directories
-		l = [ iuser for iuser in self.getRecipients() if os.path.exists( self.user_projectdir( iuser ) ) ]
-
-		return len( l ) > 0
+		return any(iuser for iuser in self.getRecipients() if os.path.exists(self.user_projectdir(iuser)))
 
 	def save(self):
 		'''Save project data to disk and create job. In case of any errors, an IOError is raised.'''
