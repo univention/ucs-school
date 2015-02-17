@@ -1,3 +1,9 @@
+ucs-school-lib (5.0.49-7) unstable; urgency=medium
+
+  * Bug #34970: only catch noObject exceptions
+
+ -- Florian Best <best@univention.de>  Tue, 17 Feb 2015 10:54:42 +0100
+
 ucs-school-lib (5.0.49-6) unstable; urgency=medium
 
   * Bug #37668: catch errors if network object does not exists

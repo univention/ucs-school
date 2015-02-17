@@ -1,3 +1,9 @@
+ucs-school-umc-distribution (11.0.3-5) unstable; urgency=medium
+
+  * Bug #36846: fix uploading of files with umlauts in their names
+
+ -- Florian Best <best@univention.de>  Tue, 17 Feb 2015 11:31:34 +0100
+
 ucs-school-umc-distribution (11.0.3-4) unstable; urgency=medium
 
   * Bug #36848: textual changes
