@@ -12,10 +12,11 @@ import subprocess
 import time
 import univention.testing.strings as uts
 import univention.testing.ucr as ucr_test
-import univention.testing.utils as utils
 import univention.testing.ucsschool as utu
+import univention.testing.utils as utils
 
-INVALID_CHARS = ['ä', '_', 'ö', 'ü', 'ß', '%', '§' , '$', '!', '&', '[', ']', '{', '}', '<', '>', '^', '\\', '?', '~']
+INVALID_CHARS = ['ä', '_', 'ö', 'ü', 'ß', '%', '§' , '$', '!', '&',
+					'[', ']', '{', '}', '<', '>', '^', '\\', '?', '~']
 INVALID_STARTING_CHARS = INVALID_CHARS + ['-']
 INVALID_ENDING_CHARS = INVALID_STARTING_CHARS[:]
 
@@ -27,50 +28,94 @@ def main():
 				exit(0)
 
 			# Using ucs-school-lib
-			def process_school(school, dc_name):
+			def process_school(school, dc_name, should_fail=True):
 				try:
 					ou, oudn = schoolenv.create_ou(ou_name=school, name_edudc=dc_name)
-					utils.fail('Creating a school(%s) with dc_name=%s was unexpectedly successful' % (school, dc_name))
-				except ValidationError as ex:
-					if 'dc_name' in str(ex):
-						print 'Creating a school(%s) with dc_name=%s was expected to fail: %s)' % (school, dc_name, str(ex))
+					if should_fail:
+						print 'Creating a school(%s) with dc_name=%s was expected to fail)' % (
+								school, dc_name)
 					else:
-						utils.fail('Creating school(%s) with dc_name=%s fail unexpectedly: %s)' % (school, dc_name, str(ex)))
+						print 'Creating a school(%s) with dc_name=%s was expected to succeed' % (
+								school, dc_name)
+				except ValidationError as ex:
+					if should_fail and 'dc_name' in str(ex):
+						print 'Creating a school(%s) with dc_name=%s was expected to fail: %s)' % (
+								school, dc_name, str(ex))
+					else:
+						utils.fail(
+								'Creating school(%s) with dc_name=%s fail unexpectedly: %s)' % (
+									school, dc_name, str(ex))
+								)
 
 			# Using ucs-school-import
-			def process_school_cli(school, dc_name):
+			def process_school_cli(school, dc_name, should_fail=True):
 				cmd = ['/usr/share/ucs-school-import/scripts/create_ou', school, dc_name]
 				pop = subprocess.Popen(cmd, stdout=subprocess.PIPE)
 				err = pop.communicate()
 				if pop.returncode:
-					print 'Creating a school(%s) cli with dc_name=%s was expected to fail: %r)' % (school, dc_name, err)
+					if should_fail:
+						print 'Creating a school(%s) cli with dc_name=%s was expected to fail: %r)' % (
+								school, dc_name, err)
+					else:
+						utils.fail(
+								'Creating a school(%s) cli with dc_name=%s failed unexpectedly' % (
+									school, dc_name)
+								)
 				else:
-					utils.fail('Creating a school(%s) cli with dc_name=%s was unexpectedly successful' % (school, dc_name))
+					if should_fail:
+						utils.fail(
+								'Creating a school(%s) cli with dc_name=%s was unexpectedly successful' % (
+									school, dc_name)
+								)
+					else:
+						print 'Creating a school(%s) cli with dc_name=%s was expected to succeed: %r)' % (
+								school, dc_name, err)
 
 			# Using UMCP
-			def process_school_umcp(school, dc_name):
+			def process_school_umcp(school, dc_name, should_fail=True):
 				try:
 					school.create()
 					school.remove()
-					utils.fail('Creating a school(%s) with dc_name=%s was unexpectedly successful' % (school.name, dc_name))
-				except CreateFail as ex:
-					if 'DC Name:' in str(ex):
-						print 'Creating a school(%s) with dc_name=%s was expected to fail: %s)' % (school.name, dc_name, str(ex))
+					if should_fail:
+						utils.fail(
+								'Creating a school(%s) umcp with dc_name=%s was unexpectedly successful' % (
+									school.name, dc_name))
 					else:
-						utils.fail('Creating school(%s) with dc_name=%s fail unexpectedly: %s)' % (school.name, dc_name, str(ex)))
+						print 'Creating a school(%s) umcp with dc_name=%s was unexpectedly successful' % (
+								school.name, dc_name)
+				except CreateFail as ex:
+					if should_fail and 'DC Name:' in str(ex):
+						print 'Creating a school(%s) umcp with dc_name=%s was expected to fail: %s)' % (
+								school.name, dc_name, str(ex))
+					else:
+						utils.fail(
+								'Creating school(%s) umcp with dc_name=%s fail unexpectedly: %s)' % (
+									school.name, dc_name, str(ex))
+								)
+				finally:
+					time.sleep(3)
 
-			# Checking illegal char in the middle of the dc_name
-			for char in INVALID_CHARS:
-				dc_name='%s%s%s' % (uts.random_name(4), char, uts.random_name(3))
+			# Checking legal chars in dc_name
+			for count in xrange(5):
+				dc_name= uts.random_name()
+				school = uts.random_name()
+				process_school(school, dc_name, should_fail=False)
+				process_school_cli(school, dc_name, should_fail=False)
+				school = School(dc_name=dc_name,ucr=ucr)
+				process_school_umcp(school, dc_name, should_fail=False)
+
+			# Checking illegal char in the beginning of the dc_name
+			for char in INVALID_STARTING_CHARS:
+				dc_name='%s%s' % (char, uts.random_name(6))
 				school = uts.random_name()
 				process_school(school, dc_name)
 				process_school_cli(school, dc_name)
 				school = School(dc_name=dc_name,ucr=ucr)
 				process_school_umcp(school, dc_name)
 
-			# Checking illegal char in the beginning of the dc_name
-			for char in INVALID_STARTING_CHARS:
-				dc_name='%s%s' % (char, uts.random_name(6))
+			# Checking illegal char in the middle of the dc_name
+			for char in INVALID_CHARS:
+				dc_name='%s%s%s' % (uts.random_name(4), char, uts.random_name(3))
 				school = uts.random_name()
 				process_school(school, dc_name)
 				process_school_cli(school, dc_name)
