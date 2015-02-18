@@ -91,7 +91,7 @@ class Instance( SchoolBaseModule ):
 		# done
 		self.finished( request.id, None )
 
-	def __workaround_filename_bug(file):
+	def __workaround_filename_bug(self, file):
 		### the following code block is a heuristic to support both: fixed and unfixed Bug #37716
 		filename = file['filename']
 		try:
