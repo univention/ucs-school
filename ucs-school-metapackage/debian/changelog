@@ -1,3 +1,9 @@
+ucs-school-metapackage (7.0.1-3) unstable; urgency=medium
+
+  * Set connector/ldap/binddn=ldap/hostdn during *-slave join (Bug #37820)
+
+ -- Arvid Requate <requate@univention.de>  Wed, 18 Feb 2015 15:59:02 +0100
+
 ucs-school-metapackage (7.0.1-2) unstable; urgency=medium
 
   * Restart S4-Connector on update to synchronize the GPO NTSD
