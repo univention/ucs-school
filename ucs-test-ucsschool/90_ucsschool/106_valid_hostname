@@ -1,0 +1,91 @@
+#!/usr/share/ucs-test/runner python
+## -*- coding: utf-8 -*-
+## desc: valid hostname
+## roles: [domaincontroller_master]
+## tags: [apptest,ucsschool]
+## exposure: dangerous
+## packages: []
+
+from essential.school import School, CreateFail
+from ucsschool.lib.models.attributes import ValidationError
+import subprocess
+import time
+import univention.testing.strings as uts
+import univention.testing.ucr as ucr_test
+import univention.testing.utils as utils
+import univention.testing.ucsschool as utu
+
+INVALID_CHARS = ['ä', '_', 'ö', 'ü', 'ß', '%', '§' , '$', '!', '&', '[', ']', '{', '}', '<', '>', '^', '\\', '?', '~']
+INVALID_STARTING_CHARS = INVALID_CHARS + ['-']
+INVALID_ENDING_CHARS = INVALID_STARTING_CHARS[:]
+
+def main():
+	with ucr_test.UCSTestConfigRegistry() as ucr:
+		with utu.UCSTestSchool() as schoolenv:
+			if ucr.is_true('ucsschool/singlemaster'):
+				print "This test is only for Multi Server Environments"
+				exit(0)
+
+			# Using ucs-school-lib
+			def process_school(school, dc_name):
+				try:
+					ou, oudn = schoolenv.create_ou(ou_name=school, name_edudc=dc_name)
+					utils.fail('Creating a school(%s) with dc_name=%s was unexpectedly successful' % (school, dc_name))
+				except ValidationError as ex:
+					if 'dc_name' in str(ex):
+						print 'Creating a school(%s) with dc_name=%s was expected to fail: %s)' % (school, dc_name, str(ex))
+					else:
+						utils.fail('Creating school(%s) with dc_name=%s fail unexpectedly: %s)' % (school, dc_name, str(ex)))
+
+			# Using ucs-school-import
+			def process_school_cli(school, dc_name):
+				cmd = ['/usr/share/ucs-school-import/scripts/create_ou', school, dc_name]
+				pop = subprocess.Popen(cmd, stdout=subprocess.PIPE)
+				err = pop.communicate()
+				if pop.returncode:
+					print 'Creating a school(%s) cli with dc_name=%s was expected to fail: %r)' % (school, dc_name, err)
+				else:
+					utils.fail('Creating a school(%s) cli with dc_name=%s was unexpectedly successful' % (school, dc_name))
+
+			# Using UMCP
+			def process_school_umcp(school, dc_name):
+				try:
+					school.create()
+					school.remove()
+					utils.fail('Creating a school(%s) with dc_name=%s was unexpectedly successful' % (school.name, dc_name))
+				except CreateFail as ex:
+					if 'DC Name:' in str(ex):
+						print 'Creating a school(%s) with dc_name=%s was expected to fail: %s)' % (school.name, dc_name, str(ex))
+					else:
+						utils.fail('Creating school(%s) with dc_name=%s fail unexpectedly: %s)' % (school.name, dc_name, str(ex)))
+
+			# Checking illegal char in the middle of the dc_name
+			for char in INVALID_CHARS:
+				dc_name='%s%s%s' % (uts.random_name(4), char, uts.random_name(3))
+				school = uts.random_name()
+				process_school(school, dc_name)
+				process_school_cli(school, dc_name)
+				school = School(dc_name=dc_name,ucr=ucr)
+				process_school_umcp(school, dc_name)
+
+			# Checking illegal char in the beginning of the dc_name
+			for char in INVALID_STARTING_CHARS:
+				dc_name='%s%s' % (char, uts.random_name(6))
+				school = uts.random_name()
+				process_school(school, dc_name)
+				process_school_cli(school, dc_name)
+				school = School(dc_name=dc_name,ucr=ucr)
+				process_school_umcp(school, dc_name)
+
+			# Checking illegal char in the end of the dc_name
+			for char in INVALID_ENDING_CHARS:
+				dc_name='%s%s' % (uts.random_name(6), char)
+				school = uts.random_name()
+				process_school(school, dc_name)
+				process_school_cli(school, dc_name)
+				school = School(dc_name=dc_name,ucr=ucr)
+				process_school_umcp(school, dc_name)
+
+
+if __name__ == '__main__':
+	main()
