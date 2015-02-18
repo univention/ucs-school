@@ -1,3 +1,9 @@
+ucs-test-ucsschool (2.0.24-1) unstable; urgency=low
+
+  * Bug #37802: initial commit 106_valid_hostname
+
+ -- Ammar Najjar <najjar@univention.de>  Wed, 18 Feb 2015 09:24:57 +0100
+
 ucs-test-ucsschool (2.0.23-1) unstable; urgency=low
 
   *  90_ucsschool/95_samba4_client_join_on_slave,
