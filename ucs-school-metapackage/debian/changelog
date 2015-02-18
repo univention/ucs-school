@@ -1,3 +1,10 @@
+ucs-school-metapackage (7.0.1-2) unstable; urgency=medium
+
+  * Restart S4-Connector on update to synchronize the GPO NTSD
+    (Bug #37350)
+
+ -- Arvid Requate <requate@univention.de>  Wed, 18 Feb 2015 15:30:30 +0100
+
 ucs-school-metapackage (7.0.1-1) unstable; urgency=medium
 
   * Synchronize the ntSecurityDescriptor of groupPolicyContainer objects
