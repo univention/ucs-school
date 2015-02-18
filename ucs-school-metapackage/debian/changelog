@@ -1,3 +1,9 @@
+ucs-school-metapackage (6.0.8-11) unstable; urgency=medium
+
+  * Set connector/ldap/binddn=ldap/hostdn during *-slave join (Bug #37820)
+
+ -- Arvid Requate <requate@univention.de>  Wed, 18 Feb 2015 17:09:54 +0100
+
 ucs-school-metapackage (6.0.8-10) unstable; urgency=low
 
   * Bug #34831: Remove ucs-overview entry in postrm
