@@ -140,8 +140,8 @@ class School(object):
 				'schoolwizards/schools/add',
 				param,
 				flavor)
-		if not reqResult[0]:
-			raise CreateFail('Unable to create school (%r)' % (param,))
+		if reqResult[0] != True:
+			raise CreateFail('Unable to create school (%r)' % (reqResult,))
 		else:
 			utils.wait_for_replication()
 
