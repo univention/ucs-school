@@ -1,3 +1,10 @@
+ucs-test-ucsschool (2.0.27-1) unstable; urgency=low
+
+  * Bug #37802: using the same umc connection for all 106_valid_hostname
+  * Bug #35151: removing banpage parameter 22_computerroom_two_rooms_settings_interference
+
+ -- Ammar Najjar <najjar@univention.de>  Thu, 19 Feb 2015 12:24:07 +0100
+
 ucs-test-ucsschool (2.0.26-1) unstable; urgency=low
 
   * Bug #37802: using the same umc connection for all 106_valid_hostname
