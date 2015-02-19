@@ -46,6 +46,7 @@ from ldap import LDAPError
 
 from functools import wraps
 import re
+import traceback
 
 from univention.management.console.config import ucr
 from univention.management.console.log import MODULE
@@ -633,13 +634,18 @@ class SchoolBaseModule( Base ):
 			userresult = []
 			for ibase in bases:
 				for idn in filter( lambda u: u.endswith( ibase ), groupObj['users'] ):
-					userObj = userModule.object(None, ldap_connection, None, idn)
+					try:
+						userObj = udm_modules.lookup(userModule, None, ldap_connection, scope='base', base=idn)[0]
+					except udm_errors.noObject:
+						MODULE.process('_users(): skipped foreign OU user %r' % (idn,))
+						continue
 					try:
 						userObj.open()
-					except udm_errors.noObject as exc:
-						MODULE.process('Skipped foreign OU user %r' % (idn,))
-						userObj = None
-					if userObj:
+					except udm_errors.ldapError:
+						raise
+					except udm_errors.base:
+						MODULE.error('get(): failed to open user object: %r\n%s' % (idn, traceback.format_exc()))
+					else:
 						userresult.append(userObj)
 		else:
 			# get the LDAP filter
