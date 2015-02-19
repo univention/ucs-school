@@ -8,8 +8,8 @@
 
 from essential.school import School, CreateFail
 from ucsschool.lib.models.attributes import ValidationError
+from univention.lib.umc_connection import UMCConnection
 import subprocess
-import time
 import univention.testing.strings as uts
 import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool as utu
@@ -18,11 +18,17 @@ import univention.testing.utils as utils
 INVALID_CHARS = ['ä', '_', 'ö', 'ü', 'ß', '%', '§' , '$', '!', '&',
 					'[', ']', '{', '}', '<', '>', '^', '\\', '?', '~']
 INVALID_STARTING_CHARS = INVALID_CHARS + ['-']
-INVALID_ENDING_CHARS = INVALID_STARTING_CHARS[:]
+INVALID_ENDING_CHARS = INVALID_STARTING_CHARS
 
 def main():
 	with ucr_test.UCSTestConfigRegistry() as ucr:
 		with utu.UCSTestSchool() as schoolenv:
+			host = ucr.get('ldap/master')
+			umc_connection = UMCConnection(host)
+			account = utils.UCSTestDomainAdminCredentials()
+			admin = account.username
+			passwd = account.bindpw
+			umc_connection.auth(admin, passwd)
 			if ucr.is_true('ucsschool/singlemaster'):
 				print "This test is only for Multi Server Environments"
 				exit(0)
@@ -92,8 +98,6 @@ def main():
 								'Creating school(%s) umcp with dc_name=%s fail unexpectedly: %s)' % (
 									school.name, dc_name, str(ex))
 								)
-				finally:
-					time.sleep(3)
 
 			# Checking legal chars in dc_name
 			for count in xrange(5):
@@ -101,7 +105,7 @@ def main():
 				school = uts.random_name()
 				process_school(school, dc_name, should_fail=False)
 				process_school_cli(school, dc_name, should_fail=False)
-				school = School(dc_name=dc_name,ucr=ucr)
+				school = School(dc_name=dc_name,ucr=ucr, umcConnection=umc_connection)
 				process_school_umcp(school, dc_name, should_fail=False)
 
 			# Checking illegal char in the beginning of the dc_name
@@ -110,7 +114,7 @@ def main():
 				school = uts.random_name()
 				process_school(school, dc_name)
 				process_school_cli(school, dc_name)
-				school = School(dc_name=dc_name,ucr=ucr)
+				school = School(dc_name=dc_name,ucr=ucr, umcConnection=umc_connection)
 				process_school_umcp(school, dc_name)
 
 			# Checking illegal char in the middle of the dc_name
@@ -119,7 +123,7 @@ def main():
 				school = uts.random_name()
 				process_school(school, dc_name)
 				process_school_cli(school, dc_name)
-				school = School(dc_name=dc_name,ucr=ucr)
+				school = School(dc_name=dc_name,ucr=ucr, umcConnection=umc_connection)
 				process_school_umcp(school, dc_name)
 
 			# Checking illegal char in the end of the dc_name
@@ -128,7 +132,7 @@ def main():
 				school = uts.random_name()
 				process_school(school, dc_name)
 				process_school_cli(school, dc_name)
-				school = School(dc_name=dc_name,ucr=ucr)
+				school = School(dc_name=dc_name,ucr=ucr, umcConnection=umc_connection)
 				process_school_umcp(school, dc_name)
 
 
