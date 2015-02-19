@@ -166,13 +166,19 @@ class Instance( SchoolBaseModule ):
 		user_mod = udm_modules.get( 'users/user' )
 		members = []
 		for member_dn in memberDNs:
-			user = udm_objects.get( user_mod, None, ldap_user_read, ldap_position, member_dn )
+			try:
+				user = udm_modules.lookup(user_mod, None, ldap_user_read, scope='base', base=member_dn)[0]
+			except udm_exceptions.noObject:
+				MODULE.process('get(): skipped foreign OU user %r' % (member_dn,))
+				continue
 			if not user:
 				continue
 			try:
 				user.open()
-			except udm_exceptions.noObject as exc:
-				MODULE.process('Skipped foreign OU user %r' % (member_dn,))
+			except udm_exceptions.ldapError:
+				raise
+			except udm_exceptions.base:
+				MODULE.error('get(): failed to open user object: %r\n%s' % (member_dn, traceback.format_exc()))
 				continue
 			members.append( { 'id' : user.dn, 'label' : Display.user( user ) } )
 		result[ 'members' ] = members
