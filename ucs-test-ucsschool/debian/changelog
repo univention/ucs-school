@@ -1,3 +1,9 @@
+ucs-test-ucsschool (2.0.26-1) unstable; urgency=low
+
+  * Bug #37802: using the same umc connection for all 106_valid_hostname
+
+ -- Ammar Najjar <najjar@univention.de>  Thu, 19 Feb 2015 09:03:31 +0100
+
 ucs-test-ucsschool (2.0.25-1) unstable; urgency=low
 
   * Bug #37802: adding testing valid names 106_valid_hostname
