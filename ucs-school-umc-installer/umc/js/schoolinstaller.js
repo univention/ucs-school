@@ -117,6 +117,11 @@ define([
 					type: Text,
 					name: 'infoText',
 					content: ''
+				}, {
+					type: Text,
+					name: 'dnsLookupError',
+					content: '',
+					visible: false
 				}]
 			}, {
 				name: 'credentials',
@@ -316,6 +321,18 @@ define([
 					this.getWidget('samba', 'samba').set('value', this._samba);
 				}
 				this.getWidget('credentials', 'master').set('value', guessedMaster);
+				if (!guessedMaster) {
+					var networkLink = app.linkToModule('setup');
+					var widget = this.getWidget('setup', 'dnsLookupError');
+					var _warningMessage = lang.replace('<b>{0}</b> {1} {2} {3}', [
+						_('Warning:'),
+						this._serverRole !== 'domaincontroller_master' ? _('Could not find the DNS entry for the domaincontroller master.') : '',
+						_('There might be a problem with the configured DNS server. Make sure the DNS server is up and running or check the DNS settings.'),
+						networkLink ? _('The DNS settings can be adjusted in the %s.', networkLink) : ''
+					]);
+					widget.set('content', _warningMessage);
+					widget.set('visible', true);
+				}
 			})));
 		},
 

@@ -101,6 +101,8 @@ CERTIFICATE_PATH = '/etc/univention/ssl/ucsCA/CAcert.pem'
 class HostSanitizer(StringSanitizer):
 	def _sanitize(self, value, name, further_args):
 		value = super(HostSanitizer, self)._sanitize(value, name, further_args)
+		if not value:
+			return ''
 		try:
 			return socket.getfqdn(value)
 		except socket.gaierror:
@@ -495,7 +497,7 @@ class Instance(Base):
 		return self.progress_state.poll()
 
 	@sanitize(
-		master=HostSanitizer(required=True, regex_pattern=RE_HOSTNAME),
+		master=HostSanitizer(required=True, regex_pattern=RE_HOSTNAME_OR_EMPTY),
 		username=StringSanitizer(required=True),
 		password=StringSanitizer(required=True),
 		schoolOU=StringSanitizer(required=True),
@@ -587,7 +589,7 @@ class Instance(Base):
 	@sanitize(
 		username=StringSanitizer(required=True),
 		password=StringSanitizer(required=True),
-		master=HostSanitizer(required=True, regex_pattern=RE_HOSTNAME),
+		master=HostSanitizer(required=True, regex_pattern=RE_HOSTNAME_OR_EMPTY),
 		samba=ChoicesSanitizer(['3', '4']),
 		schoolOU=StringSanitizer(required=True),
 		setup=ChoicesSanitizer(['multiserver', 'singlemaster']),
