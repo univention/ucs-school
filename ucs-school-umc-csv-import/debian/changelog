@@ -1,3 +1,11 @@
+ucs-school-umc-csv-import (1.0.26-1) unstable; urgency=medium
+
+  * Bug #36922: fix typos
+  * Bug #37821: prevent creation of invalid usernames
+  * Bug #37776: fix error when no birthday is set
+
+ -- Florian Best <best@univention.de>  Thu, 19 Feb 2015 16:18:52 +0100
+
 ucs-school-umc-csv-import (1.0.25-1) unstable; urgency=low
 
   * Bug #37777: remove whitespace from birthday date strings

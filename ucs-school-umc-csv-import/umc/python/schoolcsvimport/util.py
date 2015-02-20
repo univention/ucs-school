@@ -31,6 +31,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+import re
 import csv
 from datetime import datetime, date
 from ldap.filter import escape_filter_chars
@@ -38,6 +39,7 @@ import traceback
 
 from univention.lib.i18n import Translation
 from univention.management.console.log import MODULE
+from univention.management.console.config import ucr
 from univention.admin.filter import conjunction, expression
 
 from ucsschool.lib.models import User, Student, Teacher, Staff, TeachersAndStaff, Attribute
@@ -67,6 +69,9 @@ class Birthday(Attribute):
 	# no syntax = iso8601Date, error message is misleading (some iso standard, not our python_format)
 
 class CSVUser(User):
+
+	RE_UID_INVALID = re.compile(r'[^\w \-\.]', re.UNICODE)
+
 	def __init__(self, **kwargs):
 		self._error_msg = None
 		self.action = None
@@ -92,13 +97,26 @@ class CSVUser(User):
 				return udm_obj['username']
 
 		# generate a reasonable one
-		firstname = ''
+		firstname = u''
 		if self.firstname:
-			firstname = self.firstname.split()[0].lower() + '.'
-		lastname = ''
+			firstname = u'%s' % (self.firstname.split()[0].lower(),)
+		lastname = u''
 		if self.lastname:
-			lastname = self.lastname.split()[-1].lower()
-		return firstname + lastname
+			lastname = u'%s' % (self.lastname.split()[-1].lower())
+
+		if ucr.is_true('ucsschool/csvimport/username/generation/firstname_lastname', False):
+			return firstname + (u'.' if firstname else u'') + lastname
+
+		firstname = self.RE_UID_INVALID.sub('', firstname)
+		lastname = self.RE_UID_INVALID.sub('', lastname)
+
+		if firstname:
+			firstname = firstname[:5] + '.'
+
+		username = firstname + lastname[:5]
+		maxlength = 20 - len(ucr.get('ucsschool/ldap/default/userprefix/exam', 'exam-'))
+		username = re.sub(r'^(?:[^\w]+)?(.*?)(?:[^\w]+)?$', r'\1', username, re.UNICODE)
+		return username[:maxlength]
 
 	@classmethod
 	def from_csv_line(cls, attrs, school, date_format, line_no, lo):
@@ -186,7 +204,9 @@ class CSVUser(User):
 		if format_birthday:
 			# force format of date as requested, not as seen in LDAP
 			try:
-				attrs['birthday'] = format_date(attrs['birthday'].replace(' ', ''), format_birthday)
+				if attrs['birthday']:
+					attrs['birthday'] = attrs['birthday'].replace(' ', '')
+				attrs['birthday'] = format_date(attrs['birthday'], format_birthday)
 			except (TypeError, ValueError):
 				pass
 		attrs['errors'] = self.errors
