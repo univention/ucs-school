@@ -44,6 +44,7 @@ define([
 	"dojo/dom-style",
 	"dojo/dom-attr",
 	"dojo/dom-geometry",
+	"dojo/dom-class",
 	"dojo/date/locale",
 	"dijit/Menu",
 	"dijit/CheckedMenuItem",
@@ -63,7 +64,7 @@ define([
 	"umc/widgets/Module",
 	"umc/modules/schoolcsvimport/User",
 	"umc/i18n!umc/modules/schoolcsvimport"
-], function(declare, lang, array, query, topic, when, on, Deferred, Memory, win, construct, style, attr, geometry, dateLocaleModule, Menu, CheckedMenuItem, timing, tools, dialog, Text, TextBox, Form, ProgressBar, ComboBox, Uploader, CheckBox, Wizard, DateBox, Grid, Module, User, _) {
+], function(declare, lang, array, query, topic, when, on, Deferred, Memory, win, construct, style, attr, geometry, domClass, dateLocaleModule, Menu, CheckedMenuItem, timing, tools, dialog, Text, TextBox, Form, ProgressBar, ComboBox, Uploader, CheckBox, Wizard, DateBox, Grid, Module, User, _) {
 	var UploadWizard = declare('umc.modules.schoolcsvimport.Wizard', Wizard, {
 		autoValidate: true,
 		_examUserPrefix: 'exam-',
@@ -589,6 +590,8 @@ define([
 				}],
 				columns: columns
 			});
+			domClass.remove(grid._grid.domNode, 'umcDynamicHeight');
+			domClass.add(grid._grid.domNode, 'umcDynamicHeight-55');
 			grid._grid.on('StyleRow', function(row) {
 				var item = this.getItem(row.index);
 				if (item) {

@@ -61,11 +61,11 @@ class FileNotFound(UMC_Error):
 
 	@property
 	def error_message(self):
-		return '\n'.join(
+		return '\n'.join([
 			_('The uploaded CSV file was not found on the server.'),
 			_('This may be caused by a recent restart of the Univention Management Console Server.'),
-			_('The import have to be restarted again.')
-		)
+			_('The import has to be restarted.')
+		])
 
 def generate_random():
 	return create_passwd(length=30)

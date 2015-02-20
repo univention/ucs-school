@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-csv-import\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2015-02-11 15:23+0000\n"
+"POT-Creation-Date: 2015-02-19 16:15+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -71,7 +71,7 @@ msgid "Processing %d user(s)"
 msgstr "Verarbeite %d Benutzer"
 
 #: umc/python/schoolcsvimport/__init__.py:67
-msgid "The import have to be restarted again."
+msgid "The import has to be restarted."
 msgstr "Der Import muss erneut durchgeführt werden."
 
 #: umc/python/schoolcsvimport/__init__.py:65
@@ -111,7 +111,7 @@ msgid ""
 "This may be caused by a recent restart of the Univention Management Console "
 "Server."
 msgstr ""
-"Dies liegt möglicherweise an einem kürzlichem Neustart der Univention "
+"Dies liegt möglicherweise an einem Neustart der Univention "
 "Management Console."
 
 #: umc/python/schoolcsvimport/util.py:164

@@ -1,3 +1,11 @@
+ucs-school-umc-csv-import (2.0.5-1) unstable; urgency=medium
+
+  * Bug #36922: fix typos, adjust grid height
+  * Bug #37821: prevent creation of invalid usernames
+  * Bug #37776: fix error when no birthday is set
+
+ -- Florian Best <best@univention.de>  Thu, 19 Feb 2015 16:16:24 +0100
+
 ucs-school-umc-csv-import (2.0.4-1) unstable; urgency=low
 
   * Bug #37154: limit length of usernames to prevent problems with windows
