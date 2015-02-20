@@ -1,6 +1,7 @@
 ucs-school-umc-csv-import (2.0.5-1) unstable; urgency=medium
 
   * Bug #36922: fix typos, adjust grid height
+  * Bug #37831: fix displaying of entried when scrolling in the grid
   * Bug #37821: prevent creation of invalid usernames
   * Bug #37776: fix error when no birthday is set
 

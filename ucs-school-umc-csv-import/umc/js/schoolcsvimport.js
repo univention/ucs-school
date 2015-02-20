@@ -49,6 +49,7 @@ define([
 	"dijit/Menu",
 	"dijit/CheckedMenuItem",
 	"dojox/timing/_base",
+	"dojox/grid/EnhancedGrid",
 	"umc/tools",
 	"umc/dialog",
 	"umc/widgets/Text",
@@ -64,7 +65,18 @@ define([
 	"umc/widgets/Module",
 	"umc/modules/schoolcsvimport/User",
 	"umc/i18n!umc/modules/schoolcsvimport"
-], function(declare, lang, array, query, topic, when, on, Deferred, Memory, win, construct, style, attr, geometry, domClass, dateLocaleModule, Menu, CheckedMenuItem, timing, tools, dialog, Text, TextBox, Form, ProgressBar, ComboBox, Uploader, CheckBox, Wizard, DateBox, Grid, Module, User, _) {
+], function(declare, lang, array, query, topic, when, on, Deferred, Memory, win, construct, style, attr, geometry, domClass, dateLocaleModule, Menu, CheckedMenuItem, timing, EnhancedGrid, tools, dialog, Text, TextBox, Form, ProgressBar, ComboBox, Uploader, CheckBox, Wizard, DateBox, _Grid, Module, User, _) {
+
+	var Grid = declare(_Grid, {
+		// Bug #37831 (Grid in combination with Memory store does not show more than 30 entries), (remove when Bug #37857 is fixed)
+		buildRendering: function() {
+			this.inherited(arguments);
+			this._grid._fetch = function() {
+				EnhancedGrid.prototype._fetch.apply(this, arguments);
+			}
+		}
+	});
+
 	var UploadWizard = declare('umc.modules.schoolcsvimport.Wizard', Wizard, {
 		autoValidate: true,
 		_examUserPrefix: 'exam-',
