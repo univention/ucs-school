@@ -51,10 +51,12 @@ define([
 
 		loadVariables: function() {
 			return tools.ucr([
-				'ucsschool/ldap/default/userprefix/exam'
+				'ucsschool/ldap/default/userprefix/exam',
+				'ucsschool/ldap/check/username/lengthlimit'
 			]).then(lang.hitch(this, function(result) {
 				// cache the user prefix and update help text
 				this._examUserPrefix = result['ucsschool/ldap/default/userprefix/exam'] || 'exam-';
+				this._checkMaxUsernameLength = result['ucsschool/ldap/check/username/lengthlimit'] || true;
 				this._maxUsernameLength = 20 - this._examUserPrefix.length;
 			}));
         },
@@ -112,13 +114,16 @@ define([
 					disabled: this.editMode,
 					required: true,
 					validator: lang.hitch(this, function(value) {
+						if (!this._checkMaxUsernameLength) {
+							return true;
+						}
 						widget = this.getWidget('item', 'name');
 						if (widget != undefined) {
-							widget.set('invalidMessage', _('The maximum length of usernames is limited to %s characters. Please choose a shorter username.', this._maxUsernameLength));
+							widget.set('invalidMessage', _('Microsoft Active Directory limits usernames to 20 characters. To prevent logon problems with exam user accounts, usernames should not be longer than %s characters. Please choose a shorter username.', this._maxUsernameLength));
 						};
 						return value.length <= this._maxUsernameLength;
 					}),
-					invalidMessage: _('The maximum length of usernames is limited to %s characters. Please choose a shorter username.', this._maxUsernameLength)
+					invalidMessage: _('Microsoft Active Directory limits usernames to 20 characters. To prevent logon problems with exam user accounts, usernames should not be longer than %s characters. Please choose a shorter username.', this._maxUsernameLength)
 				}, {
 					type: ComboBox,
 					name: 'school_class',

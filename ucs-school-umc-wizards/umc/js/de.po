@@ -3,8 +3,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-wizards\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2015-02-12 16:19+0100\n"
-"PO-Revision-Date: 2015-02-12 16:21+0100\n"
+"POT-Creation-Date: 2015-02-20 18:36+0100\n"
+"PO-Revision-Date: 2015-02-20 18:37+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
@@ -59,7 +59,7 @@ msgstr "Alle"
 msgid "Cancel"
 msgstr "Abbrechen"
 
-#: umc/js/schoolwizards/UserGrid.js:68 umc/js/schoolwizards/UserWizard.js:126
+#: umc/js/schoolwizards/UserGrid.js:68 umc/js/schoolwizards/UserWizard.js:131
 msgid "Class"
 msgstr "Klasse"
 
@@ -98,7 +98,7 @@ msgid "Create"
 msgstr "Erstellen"
 
 #: umc/js/schoolwizards/ClassWizard.js:43
-#: umc/js/schoolwizards/UserWizard.js:93
+#: umc/js/schoolwizards/UserWizard.js:95
 msgid "Create a new class"
 msgstr "Neue Klasse erstellen"
 
@@ -136,7 +136,7 @@ msgstr "Das Löschen der Schule wird ebenfalls alle Lehrer und Schüler löschen
 msgid "Description"
 msgstr "Beschreibung"
 
-#: umc/js/schoolwizards/UserWizard.js:130
+#: umc/js/schoolwizards/UserWizard.js:135
 msgid "E-Mail"
 msgstr "E-Mail"
 
@@ -171,7 +171,7 @@ msgstr "Geben Sie Detailinformationen der Klasse an."
 msgid "Enter details of the computer."
 msgstr "Geben Sie Detailinformationen des Computers an."
 
-#: umc/js/schoolwizards/UserWizard.js:90
+#: umc/js/schoolwizards/UserWizard.js:92
 msgid "Enter details of the user"
 msgstr "Geben Sie Detailinformationen des Benutzers an."
 
@@ -183,7 +183,7 @@ msgstr "Geben Sie Detailinformationen zum Anlegen einer neuen Klasse an."
 msgid "Enter details to create a new computer."
 msgstr "Geben Sie Detailinformationen zum Anlegen eines neuen Computers an."
 
-#: umc/js/schoolwizards/UserWizard.js:90
+#: umc/js/schoolwizards/UserWizard.js:92
 msgid "Enter details to create a new user"
 msgstr "Geben Sie Detailinformationen zum Anlegen eines neuen Benutzers an."
 
@@ -193,7 +193,7 @@ msgstr "Geben Sie Detailinformationen zum Anlegen eines neuen Benutzers an."
 msgid "Filter"
 msgstr "Filter"
 
-#: umc/js/schoolwizards/UserWizard.js:101
+#: umc/js/schoolwizards/UserWizard.js:103
 msgid "Firstname"
 msgstr "Vorname"
 
@@ -207,7 +207,7 @@ msgstr "IP-Adresse"
 msgid "Inventory number"
 msgstr "Inventarnummer"
 
-#: umc/js/schoolwizards/UserWizard.js:106
+#: umc/js/schoolwizards/UserWizard.js:108
 msgid "Lastname"
 msgstr "Nachname"
 
@@ -235,6 +235,15 @@ msgstr "Verwaltung von Schulbenutzern"
 #: umc/js/schoolwizards/SchoolGrid.js:48
 msgid "Management of schools"
 msgstr "Verwaltung von Schulen"
+
+#: umc/js/schoolwizards/UserWizard.js:122
+#: umc/js/schoolwizards/UserWizard.js:126
+#, python-format
+msgid ""
+"Microsoft Active Directory limits usernames to 20 characters. To prevent "
+"logon problems with exam user accounts, usernames should not be longer than "
+"%s characters. Please choose a shorter username."
+msgstr "Microsoft Active Directory begrenzt Benutzernamen auf 20 Zeichen. Um Anmeldeprobleme mit Prüfungsbenutzern zu vermeiten, sollten Benutzernamen nicht länger als %s Zeichen sein. Bitte wählen Sie einen kürzeren Benutzernamen."
 
 #: umc/js/schoolwizards/ClassGrid.js:56 umc/js/schoolwizards/ClassWizard.js:52
 #: umc/js/schoolwizards/ComputerGrid.js:56
@@ -297,7 +306,7 @@ msgstr ""
 msgid "No school found"
 msgstr "Es konnte keine Schule gefunden werden"
 
-#: umc/js/schoolwizards/UserWizard.js:134
+#: umc/js/schoolwizards/UserWizard.js:139
 msgid "Password"
 msgstr "Passwort"
 
@@ -322,7 +331,7 @@ msgstr ""
 "Bitte bestätigen Sie die Löschung der Schule \"%(displayName)s\" (%(name)s)."
 
 #: umc/js/schoolwizards/UserGrid.js:64 umc/js/schoolwizards/UserGrid.js:105
-#: umc/js/schoolwizards/UserWizard.js:67
+#: umc/js/schoolwizards/UserWizard.js:69
 msgid "Role"
 msgstr "Rolle"
 
@@ -367,11 +376,11 @@ msgstr "Server für Windows-Heimatverzeichnisse"
 msgid "Server for class shares"
 msgstr "Server für Klassenfreigaben"
 
-#: umc/js/schoolwizards/UserGrid.js:118 umc/js/schoolwizards/UserWizard.js:76
+#: umc/js/schoolwizards/UserGrid.js:118 umc/js/schoolwizards/UserWizard.js:78
 msgid "Staff"
 msgstr "Mitarbeiter"
 
-#: umc/js/schoolwizards/UserGrid.js:112 umc/js/schoolwizards/UserWizard.js:70
+#: umc/js/schoolwizards/UserGrid.js:112 umc/js/schoolwizards/UserWizard.js:72
 msgid "Student"
 msgstr "Schüler"
 
@@ -379,11 +388,11 @@ msgstr "Schüler"
 msgid "Subnet mask"
 msgstr "Subnetzmaske"
 
-#: umc/js/schoolwizards/UserGrid.js:115 umc/js/schoolwizards/UserWizard.js:73
+#: umc/js/schoolwizards/UserGrid.js:115 umc/js/schoolwizards/UserWizard.js:75
 msgid "Teacher"
 msgstr "Lehrer"
 
-#: umc/js/schoolwizards/UserGrid.js:121 umc/js/schoolwizards/UserWizard.js:79
+#: umc/js/schoolwizards/UserGrid.js:121 umc/js/schoolwizards/UserWizard.js:81
 msgid "Teachers and staff"
 msgstr "Lehrer und Mitarbeiter"
 
@@ -406,14 +415,6 @@ msgstr ""
 "dem Unterstrich bestehen. In der Regel kann der automatisch vorgeschlagene "
 "Wert unverändert übernommen werden."
 
-#: umc/js/schoolwizards/UserWizard.js:117
-#: umc/js/schoolwizards/UserWizard.js:121
-#, python-format
-msgid ""
-"The maximum length of usernames is limited to %s characters. Please choose a "
-"shorter username."
-msgstr "Die maximale Länge von Benutzernamen ist beschränkt auf %s Zeichen. Bitte wählen Sie einen kürzeren Benutzernamen."
-
 #: umc/js/schoolwizards.js:75
 msgid "The module for administrating schools will be opened."
 msgstr "Es wird daher jetzt das Modul zur Verwaltung von Schulen geöffnet."
@@ -432,7 +433,7 @@ msgstr ""
 msgid "This action is cannot be undone."
 msgstr "Diese Aktion kann nicht rückgängig gemacht werden."
 
-#: umc/js/schoolwizards/UserWizard.js:172
+#: umc/js/schoolwizards/UserWizard.js:177
 #, python-format
 msgid ""
 "User \"%s\" has been successfully created. Continue to create another user "
@@ -442,7 +443,7 @@ msgstr ""
 "Benutzer erstellt oder der Wizard über die Schaltfläche \"Abbrechen\" "
 "beendet werden."
 
-#: umc/js/schoolwizards/UserWizard.js:111
+#: umc/js/schoolwizards/UserWizard.js:113
 msgid "Username"
 msgstr "Benutzername"
 
@@ -522,6 +523,13 @@ msgstr "{itemSchool}: {itemType} {itemName} bearbeiten"
 #~ msgstr ""
 #~ "Der Rechnername muss ein gültiger NetBIOS-Rechnername sein. Das erfordert "
 #~ "eine maximale Länge von 12 Zeichen."
+
+#~ msgid ""
+#~ "The maximum length of usernames is limited to %s characters. Please "
+#~ "choose a shorter username."
+#~ msgstr ""
+#~ "Die maximale Länge von Benutzernamen ist beschränkt auf %s Zeichen. Bitte "
+#~ "wählen Sie einen kürzeren Benutzernamen."
 
 #~ msgid "Type"
 #~ msgstr "Typ"
