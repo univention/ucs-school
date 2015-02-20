@@ -73,7 +73,7 @@ define([
 			this.inherited(arguments);
 			this._grid._fetch = function() {
 				EnhancedGrid.prototype._fetch.apply(this, arguments);
-			}
+			};
 		}
 	});
 
@@ -214,7 +214,7 @@ define([
 			query('.umcLabelPaneLabeNodeRight', widget.$refLabel$.domNode).style('display', 'inline');
 			query(widget.$refLabel$.domNode).style({marginBottom: '1.5em', marginTop: '1.5em'});
 			var ucrDeferred = tools.ucr([
-				'ucsschool/ldap/default/userprefix/exam',
+				'ucsschool/ldap/default/userprefix/exam'
 			]).then(lang.hitch(this, function(result) {
 				// cache the user prefix and update help text
 				this._examUserPrefix = result['ucsschool/ldap/default/userprefix/exam'] || 'exam-';
@@ -698,7 +698,7 @@ define([
 				}
 			});
 			// Bug #36450/#37154: Windows limits the maximum length of usernames to 20 - otherwise logon problems
-			maxUsernameLength = 20 - this._examUserPrefix.length
+			var maxUsernameLength = 20 - this._examUserPrefix.length;
 			assertMaxLength(items, 'name', maxUsernameLength, _('The maximum length of usernames is limited to %s characters. Please choose a shorter username.', maxUsernameLength), grid._grid);
 
 			assertUniqueness(items, 'name', _('Username occurs multiple times in the file. Please change the usernames so that all are unique.'), grid._grid);
