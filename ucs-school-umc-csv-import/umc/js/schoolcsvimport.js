@@ -640,7 +640,7 @@ define([
 						return;
 					}
 					if (value.length > maxLength) {
-						item.setError(field, errorMessage, grid);
+						item.setWarning(field, errorMessage, grid);
 					}
 				});
 			};
@@ -699,7 +699,7 @@ define([
 			});
 			// Bug #36450/#37154: Windows limits the maximum length of usernames to 20 - otherwise logon problems
 			var maxUsernameLength = 20 - this._examUserPrefix.length;
-			assertMaxLength(items, 'name', maxUsernameLength, _('The maximum length of usernames is limited to %s characters. Please choose a shorter username.', maxUsernameLength), grid._grid);
+			assertMaxLength(items, 'name', maxUsernameLength, _('Microsoft Active Directory limits usernames to 20 characters. To prevent logon problems with exam user accounts, usernames should not be longer than %s characters. Please choose a shorter username.', maxUsernameLength), grid._grid);
 
 			assertUniqueness(items, 'name', _('Username occurs multiple times in the file. Please change the usernames so that all are unique.'), grid._grid);
 			assertUniqueness(items, 'email', _('Email address occurs multiple times in the file. Please change the email adresses so that all are unique.'), grid._grid);
