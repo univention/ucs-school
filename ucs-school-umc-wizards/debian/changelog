@@ -1,3 +1,10 @@
+ucs-school-umc-wizards (4.0.33-1) unstable; urgency=low
+
+  * Bug #36450: added UCR variable to disable length limit of usernames:
+    ucsschool/ldap/check/username/lengthlimit
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 20 Feb 2015 18:36:40 +0100
+
 ucs-school-umc-wizards (4.0.32-1) unstable; urgency=low
 
   * Bug #36450: limit length of usernames to prevent windows logon errors
