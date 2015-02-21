@@ -86,8 +86,8 @@
 		<itemizedlist>
 			<listitem>
 				<simpara>
-					Error handling in various modules have been improoved.
-					Errors could happen in case of missing objects due to deletion or missing replication
+					The error handling in various modules has been improved.
+					Errors could happen in case of missing user or network objects due to manual deletion or selective replication
 					(<ulink url="&ucsbug;37764">Bug 37764</ulink>), (<ulink url="&ucsbug;37769">Bug 37769</ulink>).
 				</simpara>
 			</listitem>
