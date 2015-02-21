@@ -3,8 +3,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-wizards\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2015-02-20 18:36+0100\n"
-"PO-Revision-Date: 2015-02-20 18:37+0100\n"
+"POT-Creation-Date: 2015-02-21 20:04+0000\n"
+"PO-Revision-Date: 2015-02-21 20:51+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
@@ -111,7 +111,6 @@ msgid "Create a new user"
 msgstr "Neuen Benutzer erstellen"
 
 #: umc/js/schoolwizards/Wizard.js:59
-#, python-brace-format
 msgid "Create a new {itemType}"
 msgstr "{itemType} erstellen"
 
@@ -159,7 +158,6 @@ msgid "Edit the %s."
 msgstr "%s bearbeiten."
 
 #: umc/js/schoolwizards/Wizard.js:58
-#, python-brace-format
 msgid "Edit {itemType} {itemName}"
 msgstr "{itemType} {itemName} bearbeiten"
 
@@ -236,14 +234,18 @@ msgstr "Verwaltung von Schulbenutzern"
 msgid "Management of schools"
 msgstr "Verwaltung von Schulen"
 
-#: umc/js/schoolwizards/UserWizard.js:122
+#: umc/js/schoolwizards/UserWizard.js:120
 #: umc/js/schoolwizards/UserWizard.js:126
 #, python-format
 msgid ""
 "Microsoft Active Directory limits usernames to 20 characters. To prevent "
 "logon problems with exam user accounts, usernames should not be longer than "
 "%s characters. Please choose a shorter username."
-msgstr "Microsoft Active Directory begrenzt Benutzernamen auf 20 Zeichen. Um Anmeldeprobleme mit Prüfungsbenutzern zu vermeiten, sollten Benutzernamen nicht länger als %s Zeichen sein. Bitte wählen Sie einen kürzeren Benutzernamen."
+msgstr ""
+"Microsoft Active Directory begrenzt Benutzernamen auf 20 Zeichen. Um "
+"Anmeldeprobleme mit Prüfungsbenutzern zu vermeiden, sollten Benutzernamen "
+"nicht länger als %s Zeichen sein. Bitte wählen Sie einen kürzeren "
+"Benutzernamen."
 
 #: umc/js/schoolwizards/ClassGrid.js:56 umc/js/schoolwizards/ClassWizard.js:52
 #: umc/js/schoolwizards/ComputerGrid.js:56
@@ -505,12 +507,10 @@ msgid "the first school user"
 msgstr "den ersten Schulbenutzer"
 
 #: umc/js/schoolwizards/Wizard.js:61
-#, python-brace-format
 msgid "{itemSchool}: create a new {itemType}"
 msgstr "{itemSchool}: {itemType} erstellen"
 
 #: umc/js/schoolwizards/Wizard.js:60
-#, python-brace-format
 msgid "{itemSchool}: edit {itemType} {itemName}"
 msgstr "{itemSchool}: {itemType} {itemName} bearbeiten"
 
