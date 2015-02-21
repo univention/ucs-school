@@ -66,6 +66,7 @@ define([
 ], function(declare, lang, array, query, topic, when, on, Deferred, Memory, win, construct, style, attr, geometry, dateLocaleModule, Menu, CheckedMenuItem, timing, tools, dialog, Text, TextBox, Form, ProgressBar, ComboBox, Uploader, CheckBox, Wizard, DateBox, Grid, Module, User, _) {
 	var UploadWizard = declare('umc.modules.schoolcsvimport.Wizard', Wizard, {
 		autoValidate: true,
+		_examUserPrefix: 'exam-',
 
 		postMixInProperties: function() {
 			this.inherited(arguments);
@@ -198,6 +199,12 @@ define([
 			var widget = this.getWidget('upload', 'delete_not_mentioned');
 			query('.umcLabelPaneLabeNodeRight', widget.$refLabel$.domNode).style('display', 'inline');
 			query(widget.$refLabel$.domNode).style({marginBottom: '1.5em', marginTop: '1.5em'});
+			var ucrDeferred = tools.ucr([
+				'ucsschool/ldap/default/userprefix/exam',
+			]).then(lang.hitch(this, function(result) {
+				// cache the user prefix and update help text
+				this._examUserPrefix = result['ucsschool/ldap/default/userprefix/exam'] || 'exam-';
+			}));
 		},
 
 		next: function(pageName) {
@@ -603,6 +610,25 @@ define([
 		},
 
 		checkThemAll: function(grid) {
+			var assertMaxLength = function(users, field, maxLength, errorMessage, grid) {
+				var column = grid.getCellByField(field);
+				if (!column) {
+					return;
+				}
+				array.forEach(users, function(item) {
+					if (item.action == 'ignore') {
+						return;
+					}
+					var value = item[field];
+					if (!value) {
+						return;
+					}
+					if (value.length > maxLength) {
+						item.setWarning(field, errorMessage, grid);
+					}
+				});
+			};
+
 			var assertUniqueness = function(users, field, errorMessage, grid) {
 				var column = grid.getCellByField(field);
 				if (!column) {
@@ -655,6 +681,10 @@ define([
 					}
 				}
 			});
+			// Bug #36450/#37154: Windows limits the maximum length of usernames to 20 - otherwise logon problems
+			var maxUsernameLength = 20 - this._examUserPrefix.length;
+			assertMaxLength(items, 'name', maxUsernameLength, _('Microsoft Active Directory limits usernames to 20 characters. To prevent logon problems with exam user accounts, usernames should not be longer than %s characters. Please choose a shorter username.', maxUsernameLength), grid._grid);
+
 			assertUniqueness(items, 'name', _('Username occurs multiple times in the file. Please change the usernames so that all are unique.'), grid._grid);
 			assertUniqueness(items, 'email', _('Email address occurs multiple times in the file. Please change the email adresses so that all are unique.'), grid._grid);
 			grid._grid.update();
