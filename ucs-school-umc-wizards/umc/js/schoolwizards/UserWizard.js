@@ -116,7 +116,7 @@ define([
 					required: true,
 					validator: lang.hitch(this, function(value) {
 						if (tools.isTrue(this._checkMaxUsernameLength)) {
-							widget = this.getWidget('item', 'name');
+							var widget = this.getWidget('item', 'name');
 							if (widget != undefined) {
 								widget.set('invalidMessage', _('Microsoft Active Directory limits usernames to 20 characters. To prevent logon problems with exam user accounts, usernames should not be longer than %s characters. Please choose a shorter username.', this._maxUsernameLength));
 							}
