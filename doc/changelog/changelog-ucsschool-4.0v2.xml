@@ -164,9 +164,11 @@
 	<itemizedlist>
 		<listitem>
 		<simpara>
-			To prevent problems with usernames that are too long for windows, the UMC module
-			<emphasis>Users (schools)</emphasis> restricts the length of usernames (with default settings the
-			limit is 15 characters). (<ulink url="&ucsbug;37154">Bug 37154</ulink>).
+		  To prevent problems with usernames that are too long for windows, the UMC module
+		  <emphasis>Users (schools)</emphasis> restricts the length of usernames (with default settings the
+		  limit is 15 characters). This limitation may be disabled by setting the UCR variable
+		  <envar>ucsschool/ldap/check/username/lengthlimit</envar> to <emphasis>false</emphasis>
+		  (<ulink url="&ucsbug;37154">Bug 37154</ulink>).
 		</simpara>
 		</listitem>
 	</itemizedlist>
