@@ -146,15 +146,26 @@
 			usernames will be highlighted with a red cell background
 			(<ulink url="&ucsbug;37154">Bug 37154</ulink>).
 		</simpara>
+	<listitem>
+	</listitem>
 		<simpara>
 			Whitespace characters in the birthday column of CSV files could lead to error messages or highlighted red cells during the CSV import.
 			The CSV import module now removes whitespace characters automatically from <emphasis>birthday</emphasis> column's values.
 			(<ulink url="&ucsbug;37155">Bug 37155</ulink>, <ulink url="&ucsbug;37776">Bug 37776</ulink>).
 		</simpara>
 	</listitem>
-		<listitem>
+	<listitem>
 		<simpara>
 			Improved error handling in case the module process dies between uploading and importing of CSV files (<ulink url="&ucsbug;36922">Bug 36922</ulink>).
+		</simpara>
+	</listitem>
+	<listitem>
+		<simpara>
+			Invalid characters in automatically generated usernames are now stripped.
+			For new installations of UCS@school the automatically generated usernames will consists of the first five characters of the firstname and the lastname each separated by a dot.
+			Systems which are upgraded keep the old behavior.
+			The new behavior can be enabled by setting the UCR variable <envar>ucsschool/csvimport/username/generation/firstname_lastname</envar> to <emphasis>false</emphasis>
+			(<ulink url="&ucsbug;37821">Bug 37821</ulink>).
 		</simpara>
 	</listitem>
 	</itemizedlist>

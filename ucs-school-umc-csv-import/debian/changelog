@@ -1,3 +1,9 @@
+ucs-school-umc-csv-import (2.0.7-1) unstable; urgency=medium
+
+  * Bug #37821: replace invalid chars of generated username in every case
+
+ -- Florian Best <best@univention.de>  Tue, 24 Feb 2015 08:48:33 +0100
+
 ucs-school-umc-csv-import (2.0.6-2) unstable; urgency=low
 
   * Bug #37154: fixed translation
