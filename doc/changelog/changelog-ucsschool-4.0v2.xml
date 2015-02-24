@@ -140,14 +140,14 @@
 		<title>CSV Import</title>
 	<itemizedlist>
 		<listitem>
-		<simpara>
+		  <simpara>
 			To prevent problems with usernames that are too long for windows, the CSV import module
-			restricts the length of usernames (with default settings the limit is 15 characters).Overlong
-			usernames will be highlighted with a red cell background
+			checks the length of usernames (with default settings the limit is 15 characters).Overlong
+			usernames will be highlighted with a yellow cell background
 			(<ulink url="&ucsbug;37154">Bug 37154</ulink>).
 		</simpara>
-	<listitem>
 	</listitem>
+	<listitem>
 		<simpara>
 			Whitespace characters in the birthday column of CSV files could lead to error messages or highlighted red cells during the CSV import.
 			The CSV import module now removes whitespace characters automatically from <emphasis>birthday</emphasis> column's values.
