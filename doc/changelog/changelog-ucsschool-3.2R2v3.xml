@@ -121,7 +121,7 @@
 				Invalid characters in automatically generated usernames are now stripped.
 				For new installations of UCS@school the automatically generated usernames will consists of the first five characters of the firstname and the lastname each separated by a dot.
 				Systems which are upgraded keep the old behavior.
-				The new behavior can be enabled by setting the UCR variable <envar>ucsschool/csvimport/username/generation/firstname_lastname</envvar> to <emphasis>false</emphasis>
+				The new behavior can be enabled by setting the UCR variable <envar>ucsschool/csvimport/username/generation/firstname_lastname</envar> to <emphasis>false</emphasis>
 				(<ulink url="&ucsbug;37821">Bug 37821</ulink>).
 			</simpara>
 		</listitem>
