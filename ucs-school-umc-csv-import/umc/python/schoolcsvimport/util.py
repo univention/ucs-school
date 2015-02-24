@@ -104,19 +104,21 @@ class CSVUser(User):
 		if self.lastname:
 			lastname = u'%s' % (self.lastname.split()[-1].lower())
 
-		if ucr.is_true('ucsschool/csvimport/username/generation/firstname_lastname', False):
-			return firstname + (u'.' if firstname else u'') + lastname
-
 		firstname = self.RE_UID_INVALID.sub('', firstname)
 		lastname = self.RE_UID_INVALID.sub('', lastname)
+
+		replace_invalid_chars = lambda u: re.sub(r'^(?:[^\w]+)?(.*?)(?:[^\w]+)?$', r'\1', u, re.UNICODE)
+
+		if ucr.is_true('ucsschool/csvimport/username/generation/firstname_lastname', False):
+			username = firstname + (u'.' if firstname else u'') + lastname
+			return replace_invalid_chars(username)
 
 		if firstname:
 			firstname = firstname[:5] + '.'
 
 		username = firstname + lastname[:5]
 		maxlength = 20 - len(ucr.get('ucsschool/ldap/default/userprefix/exam', 'exam-'))
-		username = re.sub(r'^(?:[^\w]+)?(.*?)(?:[^\w]+)?$', r'\1', username, re.UNICODE)
-		return username[:maxlength]
+		return replace_invalid_chars(username[:maxlength])
 
 	@classmethod
 	def from_csv_line(cls, attrs, school, date_format, line_no, lo):
