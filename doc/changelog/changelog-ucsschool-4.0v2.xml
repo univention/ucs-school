@@ -142,7 +142,7 @@
 		<listitem>
 		  <simpara>
 			To prevent problems with usernames that are too long for windows, the CSV import module
-			checks the length of usernames (with default settings the limit is 15 characters).Overlong
+			checks the length of usernames (with default settings the limit is 15 characters). Overlong
 			usernames will be highlighted with a yellow cell background
 			(<ulink url="&ucsbug;37154">Bug 37154</ulink>).
 		</simpara>
