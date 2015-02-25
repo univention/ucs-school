@@ -155,7 +155,7 @@ def get_master_dns_lookup():
 	try:
 		query = '_domaincontroller_master._tcp.%s.' % ucr.get('domainname')
 		resolver = dns.resolver.Resolver()
-		resolver.lifetime = 3.0
+		resolver.lifetime = 6.0
 		result = resolver.query(query, 'SRV')
 		if result:
 			return result[0].target.canonicalize().split(1)[0].to_text()
