@@ -69,10 +69,17 @@ feedback@univention.de
 		<section id="relnotes:mix">
 			<title>Mischbetrieb mit älteren UCS-Systemen</title>
 				<para>
-					UCS 4.0 unterstützt den Mischbetrieb mit UCS 3.2-4 Systemen. Aus diesem Grund müssen
+					UCS 4.0 unterstützt den Mischbetrieb mit UCS 3.2-4 bzw. UCS 3.2-5 Systemen. Aus diesem Grund müssen
 					nicht alle UCS-Systeme in einem Wartungsfenster auf UCS 4.0 aktualisiert werden. Ein
 					Mischbetrieb mit älteren UCS-Versionen, bspw. UCS 3.1, wird nicht unterstützt.
 				</para>
+		</section>
+		<section>
+		  <title>Hinweise zum UCS-Release-Update</title>
+		  <para>
+			Bei einem gleichzeitigen Release-Update von UCS 3.2 auf UCS 4.0 sollten auch die Release Notes von UCS 4.0-0 beachtet werden.
+			Diese sind unter der URL <ulink url="http://docs.univention.de/release-notes-4.0-0-de.html"/> abrufbar.
+		  </para>
 		</section>
 		<section id="relnotes:apps">
 			<title>Univention App Center</title>
@@ -123,9 +130,9 @@ univention-upgrade --updateto $version_version-$version_patchlevel
 			<title>UMC-Berechtigungen für UCS@school Benutzer</title>
 			<para>
 				Beim Anlegen von neuen Schulen wird nun automatisch die UMC-Richtlinie
-				"default-umc-users" an die Gruppe "Domain Users $OU" angehängt.
-				Diese Richtlinie ermöglicht Benutzern ihr eigenes Passwort über die UMC zu verändern sowie die
-				Single-Sign-On Technik von UMC zu benutzen.
+				"default-umc-users" an die Gruppe "Domain Users <emphasis>SCHULNAME</emphasis>" angehängt.
+				Diese Richtlinie ermöglicht Benutzern, ihr eigenes Passwort über die Univention Management Console (UMC) zu verändern sowie die
+				Single-Sign-On-Technik von UMC zu benutzen.
 				Das Verhalten kann über die &ucsUCRV; <envar>ucsschool/import/attach/policy/default-umc-users</envar>
 				gesteuert werden.
 			</para>
