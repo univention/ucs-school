@@ -130,7 +130,7 @@ univention-upgrade --updateto $version_version-$version_patchlevel
 			<title>UMC-Berechtigungen für UCS@school Benutzer</title>
 			<para>
 				Beim Anlegen von neuen Schulen wird nun automatisch die UMC-Richtlinie
-				"default-umc-users" an die Gruppe "Domain Users <emphasis>SCHULNAME</emphasis>" angehängt.
+				"default-umc-users" an die Gruppe "Domain Users <emphasis>OU-NAME</emphasis>" angehängt.
 				Diese Richtlinie ermöglicht Benutzern, ihr eigenes Passwort über die Univention Management Console (UMC) zu verändern sowie die
 				Single-Sign-On-Technik von UMC zu benutzen.
 				Das Verhalten kann über die &ucsUCRV; <envar>ucsschool/import/attach/policy/default-umc-users</envar>
