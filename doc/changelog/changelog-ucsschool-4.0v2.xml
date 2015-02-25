@@ -1,18 +1,18 @@
 <section>
-<title>General</title>
-<itemizedlist>
+  <title>General</title>
+  <itemizedlist>
 	<listitem>
-	<simpara>
+	  <simpara>
 		The UMC policy "default-umc-users" gets appended to the "Domain Users $SCHOOL" group when creating a new school.
 		This allows users to change their own password via UMC (<ulink url="&ucsbug;36537">Bug 36537</ulink>).
-	</simpara>
+	  </simpara>
 	</listitem>
 	<listitem>
-	<simpara>
+	  <simpara>
 		Some UMC modules prevented to use the hyphen (-) character in hostnames of school domaincontrollers. This has been fixed (<ulink url="&ucsbug;36034">Bug 36034</ulink>).
-	</simpara>
+	  </simpara>
 	</listitem>
-</itemizedlist>
+  </itemizedlist>
 </section>
 
 <!--
@@ -44,24 +44,24 @@
 <title>Domain services</title>
 -->
 <section>
-	<title>Samba4</title>
-	<itemizedlist>
+  <title>Samba4</title>
+  <itemizedlist>
 	<listitem>
-		<simpara>
+	  <simpara>
 		The S4-Connector now synchronizes the ntSecurityDescriptor of groupPolicyContainer objects
-		 (<ulink url="&ucsbug;37350">Bug 37350</ulink>).
-		</simpara>
+		(<ulink url="&ucsbug;37350">Bug 37350</ulink>).
+	  </simpara>
 	</listitem>
 	<listitem>
-		<simpara>
-			During Installation of UCS@school on a UCS DC Slave, the &ucsUCRV;
-			<envar>connector/ldap/binddn</envar> is now set explicitly to the
-			value of <envar>ldap/hostdn</envar>. This avoids problems in cases
-			where Samba/AD serivces had been installed on the Slave before
-			installing UCS@school (<ulink url="&ucsbug;35248">Bug 35248</ulink>).
-		</simpara>
+	  <simpara>
+		During Installation of UCS@school on a UCS DC Slave, the &ucsUCRV;
+		<envar>connector/ldap/binddn</envar> is now set explicitly to the
+		value of <envar>ldap/hostdn</envar>. This avoids problems in cases
+		where Samba/AD serivces had been installed on the Slave before
+		installing UCS@school (<ulink url="&ucsbug;35248">Bug 35248</ulink>).
+	  </simpara>
 	</listitem>
-	</itemizedlist>
+  </itemizedlist>
 </section>
 <!--
 <section>
@@ -107,117 +107,117 @@
 -->
 
 <section>
-<title>Univention Management Console</title>
-<!--
-<section>
-	<title>Univention Management Console server</title>
-	</section>
-	<section>
-	<title>Univention Management Console web interface</title>
-	</section>
--->
-	<section>
+  <title>Univention Management Console</title>
+  <!--
+	  <section>
+	  <title>Univention Management Console server</title>
+	  </section>
+	  <section>
+	  <title>Univention Management Console web interface</title>
+	  </section>
+  -->
+  <section>
 	<title>Univention Management Console modules</title>
 	<section>
-		<title>General</title>
-		<itemizedlist>
-			<listitem>
-				<simpara>
-					The error handling in various modules has been improved.
-					Errors could happen in case of missing user or network objects due to manual deletion or selective replication
-					(<ulink url="&ucsbug;34970">Bug 34970</ulink>), (<ulink url="&ucsbug;37668">Bug 37668</ulink>).
-				</simpara>
-			</listitem>
-			<listitem>
-				<simpara>
-					Design adaption regarding the new UCS 4.0 UMC design have been done in various UMC modules
-					(<ulink url="&ucsbug;36796">Bug 36796</ulink>), (<ulink url="&ucsbug;36760">Bug 36760</ulink>), (<ulink url="&ucsbug;36479">Bug 36479</ulink>).
-				</simpara>
-			</listitem>
-		</itemizedlist>
+	  <title>General</title>
+	  <itemizedlist>
+		<listitem>
+		  <simpara>
+			The error handling in various modules has been improved.
+			Errors could happen in case of missing user or network objects due to manual deletion or selective replication
+			(<ulink url="&ucsbug;34970">Bug 34970</ulink>), (<ulink url="&ucsbug;37668">Bug 37668</ulink>).
+		  </simpara>
+		</listitem>
+		<listitem>
+		  <simpara>
+			Design adaption regarding the new UCS 4.0 UMC design have been done in various UMC modules
+			(<ulink url="&ucsbug;36796">Bug 36796</ulink>), (<ulink url="&ucsbug;36760">Bug 36760</ulink>), (<ulink url="&ucsbug;36479">Bug 36479</ulink>).
+		  </simpara>
+		</listitem>
+	  </itemizedlist>
 	</section>
 	<section>
-		<title>CSV Import</title>
-	<itemizedlist>
+	  <title>CSV Import</title>
+	  <itemizedlist>
 		<listitem>
 		  <simpara>
 			To prevent problems with usernames that are too long for windows, the CSV import module
 			checks the length of usernames (with default settings the limit is 15 characters). Overlong
 			usernames will be highlighted with a yellow cell background
 			(<ulink url="&ucsbug;37154">Bug 37154</ulink>).
-		</simpara>
-	</listitem>
-	<listitem>
-		<simpara>
+		  </simpara>
+		</listitem>
+		<listitem>
+		  <simpara>
 			Whitespace characters in the birthday column of CSV files could lead to error messages or highlighted red cells during the CSV import.
 			The CSV import module now removes whitespace characters automatically from <emphasis>birthday</emphasis> column's values.
 			(<ulink url="&ucsbug;37155">Bug 37155</ulink>, <ulink url="&ucsbug;37776">Bug 37776</ulink>).
-		</simpara>
-	</listitem>
-	<listitem>
-		<simpara>
+		  </simpara>
+		</listitem>
+		<listitem>
+		  <simpara>
 			Improved error handling in case the module process dies between upload and import of CSV files (<ulink url="&ucsbug;36922">Bug 36922</ulink>).
-		</simpara>
-	</listitem>
-	<listitem>
-		<simpara>
+		  </simpara>
+		</listitem>
+		<listitem>
+		  <simpara>
 			Invalid characters in automatically generated usernames are now stripped.
 			For new installations of UCS@school the automatically generated usernames will consists of the first five characters of the firstname and the lastname each separated by a dot.
 			Systems which are upgraded keep the old behavior.
 			The new behavior can be enabled by setting the UCR variable <envar>ucsschool/csvimport/username/generation/firstname_lastname</envar> to <emphasis>false</emphasis>
 			(<ulink url="&ucsbug;37821">Bug 37821</ulink>).
-		</simpara>
-	</listitem>
-	<listitem>
-		<simpara>
+		  </simpara>
+		</listitem>
+		<listitem>
+		  <simpara>
 			Fix an error in the grid when more than 30 entries were shown (<ulink url="&ucsbug;37831">Bug 37831</ulink>).
-		</simpara>
-	</listitem>
-	</itemizedlist>
-	</section>
-	<section>
-		<title>Wizards (Users/Classes/Computers/Schools)</title>
-	<itemizedlist>
-		<listitem>
-		<simpara>
-		  To prevent problems with usernames that are too long for windows, the UMC module
-		  <emphasis>Users (schools)</emphasis> restricts the length of usernames (with default settings the
-		  limit is 15 characters). This limitation may be disabled by setting the UCR variable
-		  <envar>ucsschool/ldap/check/username/lengthlimit</envar> to <emphasis>false</emphasis>
-		  (<ulink url="&ucsbug;37154">Bug 37154</ulink>).
-		</simpara>
+		  </simpara>
 		</listitem>
-	</itemizedlist>
+	  </itemizedlist>
 	</section>
 	<section>
-	<title>UCS@school configuration</title>
-	<itemizedlist>
+	  <title>Wizards (Users/Classes/Computers/Schools)</title>
+	  <itemizedlist>
 		<listitem>
-		<simpara>
+		  <simpara>
+			To prevent problems with usernames that are too long for windows, the UMC module
+			<emphasis>Users (schools)</emphasis> restricts the length of usernames (with default settings the
+			limit is 15 characters). This limitation may be disabled by setting the UCR variable
+			<envar>ucsschool/ldap/check/username/lengthlimit</envar> to <emphasis>false</emphasis>
+			(<ulink url="&ucsbug;37154">Bug 37154</ulink>).
+		  </simpara>
+		</listitem>
+	  </itemizedlist>
+	</section>
+	<section>
+	  <title>UCS@school configuration</title>
+	  <itemizedlist>
+		<listitem>
+		  <simpara>
 			DNS timeouts will not prevent opening the UCS@school configuration module anymore (<ulink url="&ucsbug;37763">Bug 37763</ulink>).
-		</simpara>
+		  </simpara>
 		</listitem>
-	</itemizedlist>
+	  </itemizedlist>
 	</section>
 	<section>
-	<title>Computerroom</title>
-	<itemizedlist>
+	  <title>Computerroom</title>
+	  <itemizedlist>
 		<listitem>
-		<simpara>
+		  <simpara>
 			A segmentation fault in the libqjpeg library is now prevented when receiving screenshot information (<ulink url="&ucsbug;37269">Bug 37269</ulink>).
-		</simpara>
+		  </simpara>
 		</listitem>
 		<listitem>
-		<simpara>
+		  <simpara>
 			The end time of computerroom settings is displayed in red again (<ulink url="&ucsbug;36828">Bug 36828</ulink>).
-		</simpara>
+		  </simpara>
 		</listitem>
-	</itemizedlist>
+	  </itemizedlist>
 	</section>
-<!--
-	<section>
+	<!--
+		<section>
 		<title>Workgroups</title>
-	<itemizedlist>
+		<itemizedlist>
 		<listitem>
 		<simpara>
 		</simpara>
@@ -226,46 +226,48 @@
 		<simpara>
 		</simpara>
 		</listitem>
-	</itemizedlist>
-	</section>
--->
+		</itemizedlist>
+		</section>
+	-->
 	<section>
-		<title>Exam</title>
-	<itemizedlist>
+	  <title>Exam</title>
+	  <itemizedlist>
 		<listitem>
-		<simpara>
+		  <simpara>
 			A typo has been fixed (<ulink url="&ucsbug;36795">Bug 36795</ulink>).
-		</simpara>
+		  </simpara>
 		</listitem>
-	</itemizedlist>
+	  </itemizedlist>
 	</section>
 	<section>
-		<title>Distribution</title>
-	<itemizedlist>
+	  <title>Distribution</title>
+	  <itemizedlist>
 		<listitem>
-		<simpara>
+		  <simpara>
 			Various text changes have been done (<ulink url="&ucsbug;36849">Bug 36849</ulink>, <ulink url="&ucsbug;36848">Bug 36848</ulink>).
-		</simpara>
+		  </simpara>
 		</listitem>
 		<listitem>
-		<simpara>
+		  <simpara>
 			Uploading files with umlauts in their name has been fixed (<ulink url="&ucsbug;36846">Bug 36846</ulink>).
-		</simpara>
+		  </simpara>
 		</listitem>
-	</itemizedlist>
+	  </itemizedlist>
 	</section>
-<!--
-	<section>
+  </section>
+</section>
+	<!--
+		<section>
 		<title>Helpdesk</title>
-	<itemizedlist>
+		<itemizedlist>
 		<listitem>
 		<simpara>
 		</simpara>
 		</listitem>
-	</itemizedlist>
-	</section>
-</section>
-</section>
+		</itemizedlist>
+		</section>
+		</section>
+		</section>
 
 <section>
 <title>Other changes</title>
