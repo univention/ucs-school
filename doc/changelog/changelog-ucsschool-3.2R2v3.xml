@@ -3,8 +3,7 @@
 	<itemizedlist>
 		<listitem>
 		<simpara>
-			The hyphen (-) character can be used in hostnames of schools
-			(<ulink url="&ucsbug;37770">Bug 37770</ulink>).
+		  Some UMC modules prevented to use the hyphen (-) character in hostnames of school domaincontrollers. This has been fixed (<ulink url="&ucsbug;37770">Bug 37770</ulink>).
 		</simpara>
 	</listitem>
 	</itemizedlist>
