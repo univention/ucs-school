@@ -183,10 +183,16 @@
 		  Benutzern des edukativen Netzes werden für die Benutzer des Verwaltungsnetzes keine automatischen
 		  Einstellungen für Windows-Profilverzeichnis oder Windows-Heimatverzeichnis gesetzt.
 		</para>
+		<para>
+		  Die Installationsschritte für Schulserver des Edukativnetzes und des Verwaltungsnetzes sind sehr ähnlich.
+		  In <xref linkend="school:installation:slave" /> werden diese ausführlich beschrieben.
+		</para>
 		<note>
-		  Die Einrichtung eines Verwaltungsnetzes ist in einer Single-Server-Umgebung nicht
-		  möglich. Hier werden alle Benutzerkonten auf dem Domänencontroller Master
-		  vorgehalten.
+		  <para>
+			Die Einrichtung eines Verwaltungsnetzes ist in einer Single-Server-Umgebung nicht
+			möglich. Hier werden alle Benutzerkonten auf dem Domänencontroller Master
+			vorgehalten.
+		  </para>
 		</note>
 		<caution>
 		  <para>
@@ -297,9 +303,11 @@
 		</itemizedlist>
 
 		<note>
-		  &ucsUAS; unterstützt aktuell keine weitere Strukturierung der LDAP-Objekte durch
-		  Untercontainer oder Unter-OUs in den oben angegebenen Containern.
-		</note>		
+		  <para>
+			&ucsUAS; unterstützt aktuell keine weitere Strukturierung der LDAP-Objekte durch
+			Untercontainer oder Unter-OUs in den oben angegebenen Containern.
+		  </para>
+		</note>
 	  </section>
 
 	  <section id="structure:ldap:global">

@@ -141,7 +141,7 @@
 		</caution>
 	  </section>
 
-	  <section>
+	  <section id="school:installation:slave">
 		<title>Installation eines Schulservers</title>
 		<para>
 		  An jedem Schul-Standort muss ein Schulserver installiert werden.
