@@ -321,7 +321,7 @@ feedback@univention.de
 		<para>
 		  Durch Klick auf <guimenu>Bildschirm sperren</guimenu> kann die Bildschirmanzeige der zuvor
 		  markierten Schüler-PCs deaktiviert werden. Auf den Schüler-PCs wird dann nur ein grauer Hintergrund
-		  mit einem Schloss-Symbol angezeigt (siehe Abbildung <xref linkend="screenlock"/>). Ein Klick auf
+		  mit einem Schloss-Symbol angezeigt (siehe <xref linkend="screenlock"/>). Ein Klick auf
 		  <guimenu>Bildschirm entsperren</guimenu> gibt die ausgewählten Schüler-PCs wieder frei.
 		</para>
 		<para>
