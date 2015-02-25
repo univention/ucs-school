@@ -126,7 +126,7 @@ univention-upgrade --updateto $version_version-$version_patchlevel
 				"default-umc-users" an die Gruppe "Domain Users $OU" angehängt.
 				Diese Richtlinie ermöglicht Benutzern ihr eigenes Passwort über die UMC zu verändern sowie die
 				Single-Sign-On Technik von UMC zu benutzen.
-				Das Verhalten kann über die &UCRV; <envvar>ucsschool/import/attach/policy/default-umc-users</envvar>
+				Das Verhalten kann über die &UCRV; <envar>ucsschool/import/attach/policy/default-umc-users</envar>
 				gesteuert werden.
 			</para>
 		</section>

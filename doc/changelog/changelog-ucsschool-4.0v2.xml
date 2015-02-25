@@ -55,8 +55,8 @@
 	<listitem>
 		<simpara>
 			During Installation of UCS@school on a UCS DC Slave, the &ucsUCRV;
-			<envvar>connector/ldap/binddn</envvar> is now set explicitly to the
-			value of <envvar>ldap/hostdn</envvar>. This avoids problems in cases
+			<envar>connector/ldap/binddn</envar> is now set explicitly to the
+			value of <envar>ldap/hostdn</envar>. This avoids problems in cases
 			where Samba/AD serivces had been installed on the Slave before
 			installing UCS@school (<ulink url="&ucsbug;35248">Bug 35248</ulink>).
 		</simpara>
