@@ -323,7 +323,7 @@
 		<para>
 		  Nach Abschluss der manuellen Prüfung und möglicher Korrekturen kann über die Schaltfläche
 		  <guimenu>Weiter</guimenu> eine Zusammenfassung über die bevorstehenden Änderungen im
-		  Verzeichnisdienst angezeigt werden (siehe Abbildung <xref linkend="csvimport:summary"/>). Nach der Bestätigung der bevorstehenden
+		  Verzeichnisdienst angezeigt werden (siehe <xref linkend="csvimport:summary"/>). Nach der Bestätigung der bevorstehenden
 		  Änderungen werden diese in den Verzeichnisdienst eingepflegt. Je nach Menge der zu importierenden
 		  Daten kann dies einen Moment dauern. Ein Fortschrittsbalken informiert über den aktuellen
 		  Fortschritt.
