@@ -97,7 +97,7 @@
 		<itemizedlist>
 		<listitem>
 			<simpara>
-			To prevent problems with usernames that are too long for windows, the CSV import module
+			To prevent problems with usernames that are too long for Microsoft Windows systems, the CSV import module
 			checks the length of usernames (with default settings the limit is 15 characters). Overlong
 			usernames will be highlighted with a yellow cell background
 			(<ulink url="&ucsbug;36450">Bug 36450</ulink>).
@@ -118,9 +118,9 @@
 		<listitem>
 			<simpara>
 				Invalid characters in automatically generated usernames are now stripped.
-				For new installations of UCS@school the automatically generated usernames will consists of the first five characters of the firstname and the lastname each separated by a dot.
-				Systems which are upgraded keep the old behavior.
-				The new behavior can be enabled by setting the UCR variable <envar>ucsschool/csvimport/username/generation/firstname_lastname</envar> to <emphasis>false</emphasis>
+				For new installations of UCS@school the automatically generated usernames will consist of the first five characters of the firstname and the first five characters of the lastname separated by a dot.
+				Systems that are upgraded from an older version of UCS@school keep the old behavior.
+				The new behavior can be manually enabled by setting the UCR variable <envar>ucsschool/csvimport/username/generation/firstname_lastname</envar> to <emphasis>false</emphasis>
 				(<ulink url="&ucsbug;37822">Bug 37822</ulink>).
 			</simpara>
 		</listitem>
@@ -131,7 +131,7 @@
 		<itemizedlist>
 		<listitem>
 			<simpara>
-			  To prevent problems with usernames that are too long for windows, the UMC module
+			  To prevent problems with usernames that are too long for Microsoft Windows systems, the UMC module
 			  <emphasis>Users (schools)</emphasis> restricts the length of usernames (with default settings the
 			  limit is 15 characters). This limitation may be disabled by setting the UCR variable
 			  <envar>ucsschool/ldap/check/username/lengthlimit</envar> to <emphasis>false</emphasis>
@@ -145,7 +145,7 @@
 		<itemizedlist>
 		<listitem>
 			<simpara>
-				DNS timeouts will not prevent opening the UCS@school configuration module anymore (<ulink url="&ucsbug;32050">Bug 32050</ulink>).
+				DNS timeouts will not prevent the startup the UCS@school configuration module anymore (<ulink url="&ucsbug;32050">Bug 32050</ulink>).
 			</simpara>
 		</listitem>
 		</itemizedlist>
@@ -161,7 +161,7 @@
 		</listitem>
 		<listitem>
 		<simpara>
-			 A segmentation fault in the libqjpeg library is now prevented when receiving screenshot information (<ulink url="&ucsbug;37768">Bug 37768</ulink>).
+			 A segmentation fault in the libqjpeg library is now prevented when receiving screenshot information from iTALC (<ulink url="&ucsbug;37768">Bug 37768</ulink>).
 		</simpara>
 		</listitem>
 	</itemizedlist>
@@ -180,12 +180,12 @@
 		<itemizedlist>
 		<listitem>
 		<simpara>
-			A typo has been fixed (<ulink url="&ucsbug;37765">Bug 37765</ulink>).
+			Various text changes have been done (<ulink url="&ucsbug;37765">Bug 37765</ulink>).
 		</simpara>
 		</listitem>
 		<listitem>
 		<simpara>
-			Uploading files with umlauts in their name has been fixed (<ulink url="&ucsbug;37823">Bug 37823</ulink>).
+			Uploading files with umlauts within their name has been fixed (<ulink url="&ucsbug;37823">Bug 37823</ulink>).
 		</simpara>
 		</listitem>
 		</itemizedlist>
@@ -200,7 +200,7 @@
 		</listitem>
 		<listitem>
 		<simpara>
-			Uploading files with umlauts in their name has been fixed (<ulink url="&ucsbug;37823">Bug 37823</ulink>).
+			Uploading files with umlauts within their name has been fixed (<ulink url="&ucsbug;37823">Bug 37823</ulink>).
 		</simpara>
 		</listitem>
 		</itemizedlist>
@@ -234,7 +234,7 @@
 	<itemizedlist>
 	<listitem>
 		<simpara>
-		A memory leak in <package>iTALC</package> has been fixed
+		A memory leak in <emphasis>iTALC</emphasis> has been fixed
 		(<ulink url="&ucsbug;36469">Bug 36469</ulink>).
 		</simpara>
 	</listitem>
