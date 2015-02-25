@@ -168,6 +168,11 @@
 			(<ulink url="&ucsbug;37821">Bug 37821</ulink>).
 		</simpara>
 	</listitem>
+	<listitem>
+		<simpara>
+			Fix an error in the grid when more than 30 entries were shown (<ulink url="&ucsbug;37831">Bug 37831</ulink>).
+		</simpara>
+	</listitem>
 	</itemizedlist>
 	</section>
 	<section>
