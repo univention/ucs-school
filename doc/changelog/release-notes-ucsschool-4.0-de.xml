@@ -119,17 +119,6 @@ univention-upgrade --updateto $version_version-$version_patchlevel
 					32-Bit-Archtitektur wird für die gesamte UCS 4-Maintenance noch unterstützt.
 				</para>
 		</section>
-		<section id="relnotes:umc-policy">
-			<title>UMC-Berechtigungen für UCS@school Benutzer</title>
-			<para>
-				Beim Anlegen von neuen Schulen wird nun automatisch die UMC-Richtlinie
-				"default-umc-users" an die Gruppe "Domain Users $OU" angehängt.
-				Diese Richtlinie ermöglicht Benutzern ihr eigenes Passwort über die UMC zu verändern sowie die
-				Single-Sign-On Technik von UMC zu benutzen.
-				Das Verhalten kann über die &ucsUCRV; <envvar>ucsschool/import/attach/policy/default-umc-users</envvar>
-				gesteuert werden.
-			</para>
-		</section>
 	</chapter>
 
 	<chapter>
