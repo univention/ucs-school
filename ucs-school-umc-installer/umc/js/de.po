@@ -398,9 +398,9 @@ msgstr ""
 
 #: umc/js/schoolinstaller.js:330
 msgid ""
-"There might be a problem with the configured DNS server. Make sure the DNS "
+"Make sure the DNS "
 "server is up and running or check the DNS settings."
-msgstr "Es könnte ein Problem mit den konfigurierten DNS-Servern vorliegen. Bitte stellen Sie sicher, dass die DNS-Server erreichbar sind oder überprüfen Sie die DNS-Einstellungen."
+msgstr "Bitte stellen Sie sicher, dass die DNS-Server erreichbar sind oder überprüfen Sie die DNS-Einstellungen."
 
 #: umc/js/schoolinstaller.js:318
 msgid ""
