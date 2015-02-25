@@ -112,7 +112,7 @@
 		</listitem>
 		<listitem>
 			<simpara>
-			Improoved error handling in case the module process dies between uploading and importing of CSV files (<ulink url="&ucsbug;37762">Bug 37762</ulink>).
+			  Improved error handling in case the module process dies between upload and import of CSV files (<ulink url="&ucsbug;37762">Bug 37762</ulink>).
 			</simpara>
 		</listitem>
 		<listitem>
