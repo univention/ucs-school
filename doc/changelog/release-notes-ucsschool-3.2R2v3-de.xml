@@ -71,6 +71,52 @@ feedback@univention.de
 	  </section>
 	</chapter>
 
+	<chapter id="relnotes:prepare">
+		<title>Hinweise zum Update</title>
+			<para>
+				Während der Aktualisierung kann es zu Ausfällen von Diensten innerhalb der Domäne
+				kommen. Aus diesem Grund sollte das Update innerhalb eines Wartungsfensters
+				erfolgen. Grundsätzlich wird empfohlen das Update zunächst in einer Testumgebung
+				einzuspielen und zu testen. Die Testumgebung sollte dabei identisch zur
+				Produktivumgebung sein. Je nach Systemgeschwindigkeit, Netzwerkanbindung und
+				installierter Software kann das Update zwischen dreißig Minuten und mehreren Stunden
+				dauern.
+			</para>
+		<section id="relnotes:umc-policy">
+			<title>UMC-Berechtigungen für UCS@school Benutzer</title>
+			<para>
+				Beim Anlegen von neuen Schulen wird nun automatisch die UMC-Richtlinie
+				"default-umc-users" an die Gruppe "Domain Users <emphasis>OU-NAME</emphasis>" angehängt.
+				Diese Richtlinie ermöglicht Benutzern, ihr eigenes Passwort über die Univention Management Console (UMC) zu verändern sowie die
+				Single-Sign-On-Technik von UMC zu benutzen.
+				Das Verhalten kann über die &ucsUCRV; <envar>ucsschool/import/attach/policy/default-umc-users</envar>
+				gesteuert werden.
+			</para>
+		</section>
+		<section id="relnotes:usernamelength">
+		  <title>Benutzernamen</title>
+		  <para>
+			Microsoft Windows unterstützt Benutzernamen bis zu einer Länge von 20 Zeichen. Ist der
+			Benutzername länger, kann es zu Anmeldeproblemen an Windows-Systemen kommen.  Um diese Probleme zu
+			vermeiden, beschränken die UMC module <emphasis>Benutzer (Schulen)</emphasis> und
+			<emphasis>CSV-Import</emphasis> jetzt die maximale Länge von Benutzernamen.  Da für Prüfungsbenutzer
+			des Klassenarbeitsmodus ein Präfix (<emphasis>exam-</emphasis>) vor den eigentlichen Benutzernamen
+			angefügt wird, werden Benutzernamen in der Standardeinstellung auf 15 Zeichen limitiert.  Diese
+			Beschränkung kann über das Setzen der UCR-Variable
+			<envar>ucsschool/ldap/check/username/lengthlimit</envar> auf <emphasis>false</emphasis> deaktiviert
+			werden.
+		  </para>
+		  <para>
+			Auf Neuinstallationen werden ab sofort im UMC-Modul <emphasis>CSV-Import</emphasis>
+			automatisch generierte Benutzernamen aus den ersten 5 Zeichen des Vornamens und den ersten 5 Zeichen
+			des Nachnamens generiert, die durch einen Punkt getrennt sind. Das neue Verhalten kann auf
+			aktualisierten Systemen durch das manuelle Setzen der UCR-Variable
+			<envar>ucsschool/csvimport/username/generation/firstname_lastname</envar> auf
+			<emphasis>false</emphasis> aktiviert werden.
+		  </para>
+		</section>
+	</chapter>
+
 	<chapter>
 	  <title>Vorbereitung von Installation und Update</title>
 	  <para>
