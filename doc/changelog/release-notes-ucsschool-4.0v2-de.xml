@@ -137,6 +137,28 @@ univention-upgrade --updateto $version_version-$version_patchlevel
 				gesteuert werden.
 			</para>
 		</section>
+		<section id="relnotes:usernamelength">
+		  <title>Benutzernamen</title>
+		  <para>
+			Microsoft Windows unterstützt Benutzernamen bis zu einer Länge von 20 Zeichen. Ist der
+			Benutzername länger, kann es zu Anmeldeproblemen an Windows-Systemen kommen.  Um diese Probleme zu
+			vermeiden, beschränken die UMC module <emphasis>Benutzer (Schulen)</emphasis> und
+			<emphasis>CSV-Import</emphasis> jetzt die maximale Länge von Benutzernamen.  Da für Prüfungsbenutzer
+			des Klassenarbeitsmodus ein Präfix (<emphasis>exam-</emphasis>) vor den eigentlichen Benutzernamen
+			angefügt wird, werden Benutzernamen in der Standardeinstellung auf 15 Zeichen limitiert.  Diese
+			Beschränkung kann über das Setzen der UCR-Variable
+			<envar>ucsschool/ldap/check/username/lengthlimit</envar> auf <emphasis>false</emphasis> deaktiviert
+			werden.
+		  </para>
+		  <para>
+			Auf Neuinstallationen werden ab sofort im UMC-Modul <emphasis>CSV-Import</emphasis>
+			automatisch generierte Benutzernamen aus den ersten 5 Zeichen des Vornamens und den ersten 5 Zeichen
+			des Nachnamens generiert, die durch einen Punkt getrennt sind. Das neue Verhalten kann auf
+			aktualisierten Systemen durch das manuelle Setzen der UCR-Variable
+			<envar>ucsschool/csvimport/username/generation/firstname_lastname</envar> auf
+			<emphasis>false</emphasis> aktiviert werden.
+		  </para>
+		</section>
 	</chapter>
 
 	<chapter>
