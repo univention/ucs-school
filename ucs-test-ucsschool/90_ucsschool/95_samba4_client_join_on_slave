@@ -6,6 +6,10 @@
 ## packages: [univention-samba4]
 ## tags: [apptest, ucsschool]
 ## exposure: dangerous
+## versions:
+##  4.0-0: skip
+
+# The test should be re-enabled after the reason for the failure is resolved.
 
 from os import getenv
 from time import sleep

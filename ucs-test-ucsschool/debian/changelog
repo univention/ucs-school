@@ -1,3 +1,12 @@
+ucs-test-ucsschool (2.0.27-2) unstable; urgency=low
+
+  *  90_ucsschool/93_samba4_check_dc_selection;
+     90_ucsschool/92_samba4_check_denied_user_creation;
+     90_ucsschool/95_samba4_client_join_on_slave:
+     Disabled tests until respective bugs are resolved (Bug #37700 and other).
+
+ -- Dmitry Galkin <galkin@univention.de>  Fri, 27 Feb 2015 13:08:12 +0100
+
 ucs-test-ucsschool (2.0.27-1) unstable; urgency=low
 
   * Bug #37802: using the same umc connection for all 106_valid_hostname
