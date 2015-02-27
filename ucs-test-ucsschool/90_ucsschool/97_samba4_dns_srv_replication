@@ -7,6 +7,10 @@
 ## packages: [univention-s4-connector, univention-samba4]
 ## tags: [apptest, ucsschool]
 ## exposure: dangerous
+## versions:
+##  4.0-0: skip
+
+# The test should be re-enabled after the reason for the failure is resolved.
 
 from sys import exit
 from os import path

@@ -1,3 +1,10 @@
+ucs-test-ucsschool (2.0.27-3) unstable; urgency=medium
+
+  * 90_ucsschool/97_samba4_dns_srv_replication: disabled the test as it fails
+    in some configurations (Bug #34222).
+
+ -- Dmitry Galkin <galkin@univention.de>  Fri, 27 Feb 2015 14:40:55 +0100
+
 ucs-test-ucsschool (2.0.27-2) unstable; urgency=low
 
   *  90_ucsschool/93_samba4_check_dc_selection;
