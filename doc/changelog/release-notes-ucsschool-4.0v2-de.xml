@@ -19,7 +19,7 @@
 Version 4.0 v2
 Stand: 25. Februar 2015
 			</literallayout>
-			<literallayout>
+			<literallayout lang="">
 Alle Rechte vorbehalten./ All rights reserved.
 (c) 2002-2015
 Univention GmbH
@@ -32,7 +32,7 @@ feedback@univention.de
 				Jede aufgeführte Marke und jedes Warenzeichen steht im Eigentum ihrer jeweiligen eingetragenen Rechtsinhaber.
 				Linux ist ein eingetragenes Warenzeichen von Linus Torvalds.
 			</para>
-			<para>
+			<para lang="en">
 				The mentioned brand names and registered trademarks are owned by the respective legal owners in each case.
 				Linux is a registered trademark of Linus Torvalds.
 			</para>
@@ -95,7 +95,7 @@ feedback@univention.de
 					erfolgen soll, so sollte vor dem Update auf UCS 4.0 auf die letzte verfügbare
 					&ucsUCC; 1.0 Version aktualisiert werden. Dies kann mit dem folgenden Befehlen
 					durchgeführt werden:
-					<programlisting>
+					<programlisting language="sh">
 eval "$(ucr shell version/version version/patchlevel)"
 univention-add-app ucc_20140115
 univention-upgrade --updateto $version_version-$version_patchlevel
@@ -147,7 +147,7 @@ univention-upgrade --updateto $version_version-$version_patchlevel
 			des Klassenarbeitsmodus ein Präfix (<emphasis>exam-</emphasis>) vor den eigentlichen Benutzernamen
 			angefügt wird, werden Benutzernamen in der Standardeinstellung auf 15 Zeichen limitiert.  Diese
 			Beschränkung kann über das Setzen der UCR-Variable
-			<envar>ucsschool/ldap/check/username/lengthlimit</envar> auf <emphasis>false</emphasis> deaktiviert
+			<envar>ucsschool/ldap/check/username/lengthlimit</envar> auf <literal>false</literal> deaktiviert
 			werden.
 		  </para>
 		  <para>
@@ -156,7 +156,7 @@ univention-upgrade --updateto $version_version-$version_patchlevel
 			des Nachnamens generiert, die durch einen Punkt getrennt sind. Das neue Verhalten kann auf
 			aktualisierten Systemen durch das manuelle Setzen der UCR-Variable
 			<envar>ucsschool/csvimport/username/generation/firstname_lastname</envar> auf
-			<emphasis>false</emphasis> aktiviert werden.
+			<literal>false</literal> aktiviert werden.
 		  </para>
 		</section>
 	</chapter>

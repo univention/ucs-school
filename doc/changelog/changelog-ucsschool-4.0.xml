@@ -1,5 +1,5 @@
 <!--
-<section>
+<section lang="en">
   <title>General</title>
   <itemizedlist>
 	<listitem>
@@ -9,7 +9,7 @@
   </itemizedlist>
 </section>
 
-<section>
+<section lang="en">
   <title>Import scripts</title>
   <itemizedlist>
 	<listitem>
@@ -24,7 +24,7 @@
 </section>
 -->
 
-<section>
+<section lang="en">
   <title>iTALC</title>
   <itemizedlist>
 	<listitem>
@@ -36,10 +36,10 @@
 </section>
 
 <!--
-<section>
+<section lang="en">
   <title>Domain services</title>
 -->
-  <section>
+  <section lang="en">
 	<title>Samba4</title>
 	<itemizedlist>
 	  <listitem>
@@ -65,7 +65,7 @@
 		<title>OpenLDAP</title>
 	</section>
 -->
-	<section>
+	<section lang="en">
 		<title>LDAP ACL changes</title>
 		<itemizedlist>
 			<listitem>
@@ -89,11 +89,11 @@
 	  <title>Print services</title>
 	  </section>
 
-<section>
+<section lang="en">
 <title>RADIUS</title>
 </section>
 
-<section>
+<section lang="en">
 <title>Univention Directory Manager modules</title>
 </section>
   -->
@@ -248,7 +248,7 @@
   </section>
 </section>
 
-<section>
+<section lang="en">
   <title>Other changes</title>
   <itemizedlist>
 	<listitem>

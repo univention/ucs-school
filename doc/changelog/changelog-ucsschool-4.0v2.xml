@@ -1,4 +1,4 @@
-<section>
+<section lang="en">
   <title>General</title>
   <itemizedlist>
 	<listitem>
@@ -43,7 +43,7 @@
 <section>
 <title>Domain services</title>
 -->
-<section>
+<section lang="en">
   <title>Samba4</title>
   <itemizedlist>
 	<listitem>
@@ -106,7 +106,7 @@
 </section>
 -->
 
-<section>
+<section lang="en">
   <title>Univention Management Console</title>
   <!--
 	  <section>
@@ -162,8 +162,8 @@
 		  <simpara>
 			Invalid characters in automatically generated usernames are now stripped.
 			For new installations of UCS@school the automatically generated usernames will consist of the first five characters of the firstname and the first five characters of the lastname separated by a dot.
-			Systems that are upgraded from an older version of UCS@school keep the old behavior.
-			The new behavior can be manually enabled by setting the UCR variable <envar>ucsschool/csvimport/username/generation/firstname_lastname</envar> to <emphasis>false</emphasis>
+			Systems that are upgraded from an older version of UCS@school keep the old behaviour.
+			The new behaviour can be manually enabled by setting the UCR variable <envar>ucsschool/csvimport/username/generation/firstname_lastname</envar> to <literal>false</literal>
 			(<ulink url="&ucsbug;37821">Bug 37821</ulink>).
 		  </simpara>
 		</listitem>
@@ -203,7 +203,7 @@
 	  <itemizedlist>
 		<listitem>
 		  <simpara>
-			A segmentation fault in the libqjpeg library is now prevented when receiving screenshot information from iTALC (<ulink url="&ucsbug;37269">Bug 37269</ulink>).
+			A segmentation fault in the <systemitem class="library">libqjpeg</systemitem> library is now prevented when receiving screenshot information from iTALC (<ulink url="&ucsbug;37269">Bug 37269</ulink>).
 		  </simpara>
 		</listitem>
 		<listitem>
