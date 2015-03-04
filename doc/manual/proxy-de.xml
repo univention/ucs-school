@@ -2,7 +2,7 @@
   <title>Web-Proxy auf den Schulservern</title>
   <para>
 	In der Grundeinstellung läuft auf jedem Schulserver (bzw. im Single-Server-Betrieb auf dem
-	&ucsMaster;) ein Proxy-Server auf Basis von Squid in Zusammenspiel mit Squidguard. Der Proxy erlaubt
+	&ucsMaster;) ein Proxy-Server auf Basis von Squid in Zusammenspiel mit squidGuard. Der Proxy erlaubt
 	Lehrern in Schulstunden den Zugriff auf einzelne Webseiten zu beschränken oder auch generell
 	bestimmte Webseiten zu sperren. Dies ist in der &ucsUAS;-Lehrerdokumentation <biblioref
 	linkend="ucs-school-teacher"/> beschrieben.
@@ -20,7 +20,7 @@
 	<uri>http://<replaceable>schulserver.domaene.de</replaceable>/proxy.pac</uri>
   </para>
   <para>
-	Im Internet Exlorer 8 wird die PAC-Datei beispielsweise unter <guimenu>Internetoptionen
+	Im Internet Explorer 8 wird die PAC-Datei beispielsweise unter <guimenu>Internetoptionen
 	&ar; Reiter Verbindungen &ar; LAN-Einstellungen &ar; Automatisches
 	Konfigurationsskript verwendet</guimenu> zugewiesen.
   </para>

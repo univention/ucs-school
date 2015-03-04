@@ -18,7 +18,7 @@
 	sind nach dem gleichen Schema benannt: <filename><replaceable>&lt;Objekt&gt;</replaceable>_<replaceable>&lt;Operation&gt;</replaceable>_pre.d</filename>
 	für die Skripte, die <emphasis>vor</emphasis> einer Operation ausgeführt werden sollen
 	und <filename><replaceable>&lt;Objekt&gt;</replaceable>_<replaceable>&lt;Operation&gt;</replaceable>_post.d</filename> für die Skripte, die nach einer
-	Operation ausgeführt werden sollen. Das Paket <emphasis>ucs-school-import</emphasis>
+	Operation ausgeführt werden sollen. Das Paket <package>ucs-school-import</package>
 	bringt diese Verzeichnisse bereits mit. Skripte, die bei der Ausführung
 	berücksichtigt werden sollen, müssen zwei Bedingungen erfüllen. Der Name darf
 	nur aus Ziffern, Buchstaben und Unter- und Bindestrichen bestehen und die
@@ -26,11 +26,11 @@
 	diesen Verzeichnissen werden ignoriert.
   </para>
   <para>
-	Die Hook-Skripte werden derzeit für die Objekttypen <emphasis>ou</emphasis>, <emphasis>user</emphasis>,
-	<emphasis>group</emphasis>, <emphasis>printer</emphasis>, <emphasis>computer</emphasis>, <emphasis>network</emphasis> und <emphasis>router</emphasis>
-	für die Operationen <emphasis>create</emphasis>, <emphasis>modify</emphasis> und <emphasis>remove</emphasis> ausgeführt.
-	Dabei ist zu beachten, dass für Rechner (computer), Netzwerke, Router und Schul-OUs
-	nur die Operation zum Erzeugen (create) definiert ist und daher auch nur dafür
+	Die Hook-Skripte werden derzeit für die Objekttypen <classname>ou</classname>, <classname>user</classname>,
+	<classname>group</classname>, <classname>printer</classname>, <classname>computer</classname>, <classname>network</classname> und <classname>router</classname>
+	für die Operationen <option>create</option>, <option>modify</option> und <option>remove</option> ausgeführt.
+	Dabei ist zu beachten, dass für Rechner (<foreignphrase>computer</foreignphrase>), Netzwerke, Router und Schul-OUs
+	nur die Operation zum Erzeugen (<option>create</option>) definiert ist und daher auch nur dafür
 	Hook-Skripte definiert werden können.
   </para>
   <para>
@@ -45,12 +45,13 @@
   <para>
 	Das folgende Beispiel-Skript soll ausgeführt werden, nachdem eine neue
 	Schul-OU angelegt wurde. Dafür muss das Skript in das Verzeichnis
-	<filename>/usr/share/ucs-school-import/hooks/ou_create_post.d/</filename> kopiert
+	<filename class="directory">/usr/share/ucs-school-import/hooks/ou_create_post.d/</filename> kopiert
 	werden. Die Aufgabe des Skriptes soll es sein, die LDAP-Basis für den
 	DHCP-Server der Schule per &ucsUCR;-Richtlinie auf den Container
-	<emphasis>cn=dhcp</emphasis> unterhalb der LDAP-Basis der Schule zu setzen.
+	<uri>cn=dhcp</uri> unterhalb der LDAP-Basis der Schule zu setzen.
   </para>
-  <programlisting>#!/bin/sh
+  <programlisting language="sh">
+#!/bin/sh
 ldap_base="$(ucr get ldap/base)"
 # Auslesen der ersten Spalte (OU-name) der Importdatei
 ou="$(awk -F '\t' '{print $1}' "$1")"
@@ -84,7 +85,7 @@ echo "$(basename $0): Added policy dhcpd_ldap_base ."</programlisting>
 	  Adressinformationen oder eine Abteilung gespeichert werden. Die zusätzlichen
 	  Felder werden in den Importdateien jeweils hinten an die Zeilen getrennt durch
 	  einen Tabulator angehängt. Da die Hook-Skripte die komplette Zeile übergeben
-	  bekommen, kann ein Post-Hook Skript genutzt werden, um die neuen Felder auszulesen
+	  bekommen, kann ein Post-Hook-Skript genutzt werden, um die neuen Felder auszulesen
 	  und die Informationen z.B. an dem gerade erzeugten Benutzer zu ergänzen.
 	</para>
   </section>
@@ -97,11 +98,11 @@ echo "$(basename $0): Added policy dhcpd_ldap_base ."</programlisting>
 	  anzulegen, auf die alle Benutzer Zugriff erhalten.
 	</para>
 	<para>
-	  Das Hookskript <command>ou_create_post.d/52marktplatz_create</command> wird ab &ucsUAS;
+	  Das Hook-Skript <command>ou_create_post.d/52marktplatz_create</command> wird ab &ucsUAS;
 	  für UCS 2.4 mitgeliefert und legt beim Aufruf von <command>create_ou</command> die
 	  Freigabe ``Marktplatz'' automatisch an. Über
 	  die &ucsUCRV; <envar>ucsschool/import/generate/share/marktplatz</envar> kann der Hook
-	  de-/aktiviert werden, indem der Variable der Wert <emphasis>no</emphasis> bzw. <emphasis>yes</emphasis>
+	  de-/aktiviert werden, indem der Variable der Wert <literal>no</literal> bzw. <literal>yes</literal>
 	  zugeordnet wird.
 	</para>
 	<para>
@@ -115,7 +116,7 @@ echo "$(basename $0): Added policy dhcpd_ldap_base ."</programlisting>
 		  </para>
 		  <para>
 			Diese Variable definiert das Verzeichnis auf dem Server, welches als
-			Freigabe <emphasis>Marktplatz</emphasis> freigegeben wird. In der Standardeinstellung wird das Verzeichnis
+			Freigabe <systemitem class="resource">Marktplatz</systemitem> freigegeben wird. In der Standardeinstellung wird das Verzeichnis
 			<filename>/home/&lt;OU&gt;/groups/Marktplatz</filename> verwendet.
 		  </para>
 		</listitem>
@@ -126,8 +127,8 @@ echo "$(basename $0): Added policy dhcpd_ldap_base ."</programlisting>
 		  <para>
 			Beim Anlegen der Freigabe wird die in dieser Variable definierte Gruppe
 			als Gruppenbesitzer der Freigabe festgelegt. In der Standardeinstellung
-			ist	dies die Gruppe <emphasis>Domain Users</emphasis>. Es ist zu beachten, dass abweichend vom UCS-Standard
-			die über die Importskripte angelegten Benutzer nicht in der Gruppe <emphasis>Domain Users</emphasis> enthalten sind.
+			ist	dies die Gruppe <systemitem class="groupname">Domain Users</systemitem>. Es ist zu beachten, dass abweichend vom UCS-Standard
+			die über die Importskripte angelegten Benutzer nicht in der Gruppe <systemitem class="groupname">Domain Users</systemitem> enthalten sind.
 		  </para>
 		</listitem>
 		<listitem>
@@ -136,8 +137,8 @@ echo "$(basename $0): Added policy dhcpd_ldap_base ."</programlisting>
 		  </para>
 		  <para>
 			Die Zugriffsrechte der Freigabe sind in oktaler Schreibweise anzugeben
-			(z.B. 0777). In der Standardeinstellung erhalten der Benutzer <emphasis>root</emphasis>,
-			die vordefinierte Gruppe (z.B. <emphasis>Domain Users</emphasis>) sowie alle sonstigen Benutzer Lese- und
+			(z.B. 0777). In der Standardeinstellung erhalten der Benutzer <systemitem class="username">root</systemitem>,
+			die vordefinierte Gruppe (z.B. <systemitem class="groupname">Domain Users</systemitem>) sowie alle sonstigen Benutzer Lese- und
 			Schreibrechte (0777).
 		  </para>
 		</listitem>
@@ -152,8 +153,8 @@ echo "$(basename $0): Added policy dhcpd_ldap_base ."</programlisting>
 	  muss. Um das manuelle Setzen der UCR-Variable für jede neue OU bzw. jeden
 	  neuen Schul-DC zu vermeiden, wird über den Standard-Hook
 	  <command>ou_create_post.d/40dhcpsearchbase_create</command> automatisch beim Erstellen einer OU die
-	  UCR-Richtlinie <emphasis>ou-default-ucr-policy</emphasis> im Container
-	  <emphasis>cn=policies,ou=XXX,LDAPBASIS</emphasis> angelegt und anschließend mit dem OU-Objekt <emphasis>ou=XXX,LDAPBASIS</emphasis>
+	  UCR-Richtlinie <uri>ou-default-ucr-policy</uri> im Container
+	  <uri>cn=policies,ou=<replaceable>XXX</replaceable>,<replaceable>LDAPBASIS</replaceable></uri> angelegt und anschließend mit dem OU-Objekt <uri>ou=<replaceable>XXX</replaceable>,<replaceable>LDAPBASIS</replaceable></uri>
 	  verknüpft. Über die Richtlinie wird die &ucsUCRV; <envar>dhcpd/ldap/base</envar>
 	  entsprechend gesetzt. Dadurch wird sichergestellt, dass die in der Richtlinie
 	  gesetzten UCR-Variablen auf allen UCS-Systemen der OU

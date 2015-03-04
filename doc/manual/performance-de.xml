@@ -3,8 +3,8 @@
   <para>
 	Die Standardkonfiguration von &ucsUCS; und &ucsUAS; ist für Umgebungen mit bis zu 5.000
 	Benutzern optimiert worden. In größeren Umgebungen kann es notwendig werden, Anpassungen an der
-	Standardkonfiguration vorzunehmen. Die meisten Schritte werden bereits im <emphasis>UCS performance
-	guide</emphasis> <biblioref linkend="ucs-performance-guide"/> beschrieben.
+	Standardkonfiguration vorzunehmen. Die meisten Schritte werden bereits im <foreignphrase>UCS performance
+	guide</foreignphrase> <biblioref linkend="ucs-performance-guide"/> beschrieben.
   </para>
   <para>
 	Darüber hinaus sollten einige Punkte bereits bei der Planung und dem Aufbau einer &ucsUAS;-Umgebung beachtet werden:
@@ -22,16 +22,16 @@
 		<simpara>
 		  Gruppen mit einer großen Anzahl an Mitgliedern können negative Auswirkungen auf die
 		  Geschwindigkeit der &ucsUAS;-Systeme haben.  Es sollte daher beim Anlegen von Benutzern vermieden
-		  werden, dass alle Benutzer Mitglied einer bestimmten Gruppe (z.B. "Domain Users") werden.  Die
+		  werden, dass alle Benutzer Mitglied einer bestimmten Gruppe (z.B. <systemitem class="groupname">Domain Users</systemitem>) werden.  Die
 		  &ucsUAS;-Importskripte beachten dies bereits und legen pro Schul-OU eine eigene Gruppe
-		  <emphasis>Domain Users OUNAME</emphasis> an, die als primäre Gruppe für die Benutzerkonten verwendet
+		  <systemitem class="groupname">Domain Users OUNAME</systemitem> an, die als primäre Gruppe für die Benutzerkonten verwendet
 		  wird.
 		</simpara>
 		<simpara>
 		  Falls für die Rechteverwaltung eine Zusammenfassung der Benutzer notwendig ist, können
 		  mehrere dieser Gruppen über die <emphasis>Gruppen in Gruppen</emphasis>-Funktionalität
-		  zusammengeführt werden.  Die einzelnen <emphasis>Domain User OUNAME</emphasis>-Gruppen können dann
-		  bei Bedarf z.B. als Mitglied in der Gruppe <emphasis>Domain Users</emphasis> eingetragen werden.
+		  zusammengeführt werden.  Die einzelnen <systemitem class="groupname">Domain User <replaceable>OUNAME</replaceable></systemitem>-Gruppen können dann
+		  bei Bedarf z.B. als Mitglied in der Gruppe <systemitem class="groupname">Domain Users</systemitem> eingetragen werden.
 		</simpara>
 	  </listitem>
 	</itemizedlist>
@@ -52,29 +52,29 @@
   	  <itemizedlist>
   		<listitem>
   		  <simpara>
-			Für den neuen Memberserver muss im Container <emphasis>cn=computers</emphasis> der gewünschten Schul-OU ein
+			Für den neuen Memberserver muss im Container <uri>cn=computers</uri> der gewünschten Schul-OU ein
 			Rechnerobjekt angelegt werden. Der Name des Rechnerobjekts muss mit dem Hostnamen übereinstimmen, mit dem
 			der neue Memberserver installiert wurde.
   		  </simpara>
   		</listitem>
   		<listitem>
   		  <simpara>
-			Der Memberserver muss in die Gruppen <emphasis>Member-Edukativnetz</emphasis> und
-			<emphasis>OU&lt;OUNAME&gt;-Member-Edukativnetz</emphasis> aufgenommen werden.
+			Der Memberserver muss in die Gruppen <systemitem class="groupname">Member-Edukativnetz</systemitem> und
+			<systemitem class="groupname">OU&lt;OUNAME&gt;-Member-Edukativnetz</systemitem> aufgenommen werden.
   		  </simpara>
   		</listitem>
   		<listitem>
   		  <simpara>
-			Im &ucsUDM; sollte eine &ucsUCR; Richtlinie angelegt werden, die die UCR-Variable <emphasis>ldap/server/name</emphasis>
+			Im &ucsUDM; sollte eine &ucsUCR; Richtlinie angelegt werden, die die UCR-Variable <envar>ldap/server/name</envar>
 			auf den Namen des gewünschten Schulservers setzt. Diese &ucsUCR; Richtlinie sollte dann mit der gewünschten Schul-OU
 			oder mit dem Container verknüpft werden, in dem das Rechnerobjekt des Memberservers positioniert ist.
   		  </simpara>
   		</listitem>
   		<listitem>
   		  <simpara>
-			Auf dem Memberserver selbst muss vor dem Domänenbeitritt die UCR-Variable <emphasis>nameserver1</emphasis>
-			auf die IP-Adresse des Schulservers gesetzt werden. Die UCR-Variablen <emphasis>nameserver2</emphasis>
-			und <emphasis>nameserver3</emphasis> dürfen nicht gesetzt sein.
+			Auf dem Memberserver selbst muss vor dem Domänenbeitritt die UCR-Variable <envar>nameserver1</envar>
+			auf die IP-Adresse des Schulservers gesetzt werden. Die UCR-Variablen <envar>nameserver2</envar>
+			und <envar>nameserver3</envar> dürfen nicht gesetzt sein.
   		  </simpara>
   		</listitem>
   		<listitem>
@@ -119,11 +119,11 @@
   	<para>
   	  Um einen solchen sekundären Domänencontroller an einem Schulstandort zu installieren und in
 	  die Domäne aufzunehmen, müssen auf dem Master folgende vorbereitende Schritte als
-	  <emphasis>root</emphasis> durchgeführt werden:
+	  <systemitem class="username">root</systemitem> durchgeführt werden:
   	  <itemizedlist>
   		<listitem>
   		  <simpara>
-  			<programlisting>
+			<programlisting language="sh">
 /usr/share/ucs-school-import/scripts/create_ou \
     &lt;Schul-OU&gt; &lt;Name des neuen Schul-DCs&gt;
   			</programlisting>
@@ -131,7 +131,7 @@
   		</listitem>
   		<listitem>
   		  <simpara>
-  			<programlisting>
+			<programlisting language="sh">
 /usr/share/ucs-school-import/scripts/move_domaincontroller_to_ou \
     --ou &lt;Schul-OU&gt; --dcname &lt;Name des neuen Schul-DCs&gt;
   			</programlisting>
@@ -139,7 +139,7 @@
   		</listitem>
   		<listitem>
   		  <simpara>
-  			<programlisting>
+			<programlisting language="sh">
 cd /usr/share/ucs-school-import/scripts
 scp ucs-school-join-secondary-samba4 root@&lt;Name des neuen Schul-DCs&gt;:
   			</programlisting>
@@ -149,11 +149,11 @@ scp ucs-school-join-secondary-samba4 root@&lt;Name des neuen Schul-DCs&gt;:
   	</para>
   	<para>
 	  Danach muss auf dem neuen DC Slave für den Domänenbeitritt folgender Schritt als Benutzer
-	  <emphasis>root</emphasis> ausgeführt werden:
+	  <systemitem class="username">root</systemitem> ausgeführt werden:
   	  <itemizedlist>
   		<listitem>
   		  <simpara>
-  			<programlisting>
+			<programlisting language="sh">
 /root/ucs-school-join-secondary-samba4 &lt;IP des primären Schul-DCs&gt;
   			</programlisting>
   		  </simpara>

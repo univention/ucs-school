@@ -4,7 +4,7 @@
 		Der Klassenarbeitsmodus ermöglicht die gezielte Einschränkung der Computernutzung für Schüler einer Klasse.
 		Über das UMC-Modul für den Klassenarbeitsmodus kann ein Lehrer einen Klassenraum für die exklusive Nutzung durch bestimmte Gruppen konfigurieren.
 		Der Klassenarbeitsmodus bietet darüber hinaus auch einen direkten Zugriff auf die Funktionalitäten der Materialverteilung.
-		Hintergründe zur technischen Umsetzung werden in <xref linkend="school:exam:concept"/> und mögliche Konfigurationsschnittstellen in <xref linkend="school:exam:configuration"/> gennant.
+		Hintergründe zur technischen Umsetzung werden in <xref linkend="school:exam:concept"/> und mögliche Konfigurationsschnittstellen in <xref linkend="school:exam:configuration"/> genannt.
 	</para>
 	<para>
 		Für die Dauer des Klassenarbeitsmodus werden die ausgewählten Schüler und Räume in eine speziell benannte Gruppe aufgenommen.
@@ -39,12 +39,12 @@
 		</para>
 		<para>
 			Damit Schülern nicht die Möglichkeit gegeben wird, auf ihr bisheriges Heimatverzeichnis zuzugreifen, werden zum Zeitpunkt des Einrichtens der Klassenarbeit für die ausgewählten Schülerkonten spezielle Klassenarbeitskonten neu angelegt.
-			Der Loginname für das Klassenarbeitskonto setzt sich aus einem festgelegten Prefix (standardmäßig <emphasis>exam-</emphasis>) und dem normalen Benutzernamen zusammen.
-			Bspw. wird für den Benutzer <emphasis>anton123</emphasis> das Klassenarbeitskonto <emphasis>exam-anton123</emphasis> angelegt, mit dem er sich während der Klassenarbeit anmelden muss.
+			Der Loginname für das Klassenarbeitskonto setzt sich aus einem festgelegten Präfix (standardmäßig <literal>exam-</literal>) und dem normalen Benutzernamen zusammen.
+			Bspw. wird für den Benutzer <systemitem class="username">anton123</systemitem> das Klassenarbeitskonto <systemitem class="username">exam-anton123</systemitem> angelegt, mit dem er sich während der Klassenarbeit anmelden muss.
 			Für das Klassenarbeitskonto wird ein neues Heimatverzeichnis erzeugt, Passwörter und andere Konteneinstellungen werden jedoch aus dem ursprünglichen Benutzerkonto direkt übernommen.
 		</para>
 		<para>
-			Alle Klassenarbeitskonten der Schüler sowie alle Rechner des Computerraumes sind für den Zeitraum der Klassenarbeit Mitglieder der Gruppe <emphasis>OU&lt;OU-Name&gt;-Klassenarbeit</emphasis>.
+			Alle Klassenarbeitskonten der Schüler sowie alle Rechner des Computerraumes sind für den Zeitraum der Klassenarbeit Mitglieder der Gruppe <systemitem class="groupname">OU&lt;OU-Name&gt;-Klassenarbeit</systemitem>.
 			Durch diese Gruppe können spezifische Einschränkungen für Schüler und Rechner mit Hilfe von Windows-Gruppenrichtlinien vorgenommen werden (siehe <xref linkend="school:exam:gpo"/>).
 		</para>
 		<note>
@@ -70,13 +70,13 @@
 			Die nachfolgenden &ucsUCRV;n können geändert werden, um LDAP-Eigenschaften der Klassenarbeitskonten, -gruppen und -container anzupassen. Sofern diese Variablen manuell gesetzt werden, ist zu beachten, dass es sich dabei um globale Einstellungen handelt und diese Variablen sowohl auf dem &ucsMaster; als auch auf den Schulservern identische Werte aufweisen müssen.
 			<itemizedlist>
 				<listitem>
-					<envar>ucsschool/ldap/default/userprefix/exam</envar> gibt den Prefix an, der dem ursprünglichen Benutzernamen im Klassenarbeitskonto vorangestellt wird. Er ist standardmäßig auf <emphasis>exam-</emphasis> gesetzt.
+					<envar>ucsschool/ldap/default/userprefix/exam</envar> gibt den Präfix an, der dem ursprünglichen Benutzernamen im Klassenarbeitskonto vorangestellt wird. Er ist standardmäßig auf <literal>exam-</literal> gesetzt.
 				</listitem>
 				<listitem>
-					<envar>ucsschool/ldap/default/groupname/exam</envar> bezeichnet die Gruppe, der alle Klassenarbeitskonten sowie Klassenarbeitsrechner zugeordnet sind. Über diese Gruppe können spezifische Windows-Gruppenrichtlinien für den Klassenarbeitsmodus gesetzt werden. Der Standardname für diese Gruppe ist <emphasis>OU%(ou)s-Klassenarbeit</emphasis>, wobei <emphasis>%(ou)s</emphasis> vom System automatisch durch den Namen der OU ausgetauscht wird.
+					<envar>ucsschool/ldap/default/groupname/exam</envar> bezeichnet die Gruppe, der alle Klassenarbeitskonten sowie Klassenarbeitsrechner zugeordnet sind. Über diese Gruppe können spezifische Windows-Gruppenrichtlinien für den Klassenarbeitsmodus gesetzt werden. Der Standardname für diese Gruppe ist <systemitem class="groupname">OU%(ou)s-Klassenarbeit</systemitem>, wobei <literal>%(ou)s</literal> vom System automatisch durch den Namen der OU ausgetauscht wird.
 				</listitem>
 				<listitem>
-					<envar>ucsschool/ldap/default/container/exam</envar> ist der Name des Containers, unterhalb dem die Klassenarbeitskonten gespeichert werden. Standardmäßig ist der Name auf <emphasis>examusers</emphasis> gesetzt. Die LDAP-Position des Containers ist direkt unterhalb der Schul-OU.
+					<envar>ucsschool/ldap/default/container/exam</envar> ist der Name des Containers, unterhalb dem die Klassenarbeitskonten gespeichert werden. Standardmäßig ist der Name auf <literal>examusers</literal> gesetzt. Die LDAP-Position des Containers ist direkt unterhalb der Schul-OU.
 				</listitem>
 			</itemizedlist>
 		</para>
@@ -84,10 +84,10 @@
 			Das UMC-Modul zum Einrichten einer Klassenarbeit bietet die Möglichkeit bestimmte Standardwerte zu definieren, um das Starten einer Klassenarbeit zu vereinfachen; dazu gehören:
 			<itemizedlist>
 				<listitem>
-					<envar>ucsschool/exam/default/room</envar> definiert den vorausgewählten Raum für eine neue Klassenarbeit. Der Eintrag beinhaltet den LDAP-Namen des Raumes (inklusive des Schul-OU-Präfxies), also bspw. <emphasis>meineschule-PC Raum</emphasis>. Ist die Variable nicht gesetzt, wird standardmäßig der alphabetisch erste Raum ausgewählt.
+					<envar>ucsschool/exam/default/room</envar> definiert den vorausgewählten Raum für eine neue Klassenarbeit. Der Eintrag beinhaltet den LDAP-Namen des Raumes (inklusive des Schul-OU-Präfxies), also bspw. <userinput>meineschule-PC Raum</userinput>. Ist die Variable nicht gesetzt, wird standardmäßig der alphabetisch erste Raum ausgewählt.
 				</listitem>
 				<listitem>
-					<envar>ucsschool/exam/default/shares</envar> gibt den vorausgewählten Freigabezugriff für eine neue Klassenarbeit an. Mögliche Werte sind <emphasis>all</emphasis> für Zugriff auf alle Freigaben ohne Einschränkungen sowie <emphasis>home</emphasis> für eingeschränkten Zugriff auf lediglich das Heimatverzeichnis des (Klassenarbeits-)Benutzerkonto. Ist die Variable nicht gesetzt, wird standardmäßig nur der Zugriff auf das Homeverzeichnis freigegeben.
+					<envar>ucsschool/exam/default/shares</envar> gibt den vorausgewählten Freigabezugriff für eine neue Klassenarbeit an. Mögliche Werte sind <literal>all</literal> für Zugriff auf alle Freigaben ohne Einschränkungen sowie <literal>home</literal> für eingeschränkten Zugriff auf lediglich das Heimatverzeichnis des (Klassenarbeits-)Benutzerkonto. Ist die Variable nicht gesetzt, wird standardmäßig nur der Zugriff auf das Homeverzeichnis freigegeben.
 				</listitem>
 				<listitem>
 					<envar>ucsschool/exam/default/internet</envar> definiert die vorausgewählte Internetregel für eine neue Klassenarbeit. Mögliche Werte umfassen die Namen aller Internetregeln wie sie im UMC-Modul <guimenu>Internetregeln definieren</guimenu> angezeigt werden. Normalerweise werden die globalen Standardeinstellungen verwendet.
@@ -117,7 +117,7 @@ auf das Netzwerk warten</filename>. Diese Funktion ist in den Betriebssystemvers
 		  <title>Generelle Hinweise zu Gruppenrichtlinien und Administrativen Vorlagen</title>
 		  <para>
 			Auf dem Schulserver sollte das Verzeichnis
-			<filename>/var/lib/samba/sysvol/<emphasis>DomänenNameDerUCS@schoolUmgebung</emphasis>/Policies/PolicyDefinitions/</filename>
+			<filename>/var/lib/samba/sysvol/<replaceable>DomänenNameDerUCS@schoolUmgebung</replaceable>/Policies/PolicyDefinitions/</filename>
 			angelegt werden. Sobald dieses Verzeichnis angelegt ist, bevorzugt das Windows-Programm zur
 			Gruppenrichtlinienverwaltung die dort hinterlegten Administrativen Vorlagen im ADMX-Format vor den
 			lokal auf dem Windows 7 System installierten Administrativen Vorlagen.
@@ -126,7 +126,7 @@ auf das Netzwerk warten</filename>. Diese Funktion ist in den Betriebssystemvers
 			Da in den nachfolgenden Abschnitten zusätzliche Administrative Vorlagen verwendet
 			werden, die ebenfalls in dem oben genannten Verzeichnis abzulegen sind, wird empfohlen, nach dem
 			Erstellen des Verzeichnisses einmalig die lokal installierten Administrativen Vorlagen aus dem
-			Verzeichnis <filename>C:\Windows\PolicyDefinitions</filename> in das neue Verzeichnis zu
+			Verzeichnis <filename class="directory">C:\Windows\PolicyDefinitions</filename> in das neue Verzeichnis zu
 			kopieren. Da das Verzeichnis serverseitig unterhalb der <filename>SYSVOL</filename>-Freigabe liegt,
 			wird es per Voreinstellung auf alle Samba 4-Server der Domäne synchronisiert. Die Administrativen
 			Vorlagen sind an sich keine Gruppenrichtlinien, sie dienen nur zur Erweiterung der
@@ -135,8 +135,8 @@ auf das Netzwerk warten</filename>. Diese Funktion ist in den Betriebssystemvers
 			Microsoft aktualisierte Administrative Vorlagen zum Download zur Verfügung.
 		  </para>
 		  <para>
-			Grundsätzlich können Gruppenrichtlinien im Samba-Verzeichnisdienst mit Organisationseinheiten (OU) und der LDAP-Basis verknüpft werden. Im &ucsUAS;-Kontext werden jedoch nur Verknüpfungen unterhalb der Schul-OU auch automatisch in das OpenLDAP-Verzeichnis synchronisiert. Verknüpfungen mit der LDAP-Basis werden z.B. durch OpenLDAP-Zugriffsbeschränkungen blockiert, damit sich eine Anpassung der damit verknüpften Gruppenrichtlinien durch einen Schul-Administrator nicht auch auf alle anderen Schulen auswirkt. Eine solche Änderung wird im S4-Connector auf der Schule als Reject notiert. Wenn tatsächlich gewünscht ist, eine Änderung der Gruppenrichtlinienverknüpfung an der LDAP-Basis und unter <emphasis>OU=Domain Controllers</emphasis> auch in das OpenLDAP-Verzeichnis und damit an alle Schulen zu synchronisieren, kann auf dem Schulserver folgender Befehl mit dem zentralen Administrator-Passwort ausgeführt werden:
-			<programlisting>
+			Grundsätzlich können Gruppenrichtlinien im Samba-Verzeichnisdienst mit Organisationseinheiten (OU) und der LDAP-Basis verknüpft werden. Im &ucsUAS;-Kontext werden jedoch nur Verknüpfungen unterhalb der Schul-OU auch automatisch in das OpenLDAP-Verzeichnis synchronisiert. Verknüpfungen mit der LDAP-Basis werden z.B. durch OpenLDAP-Zugriffsbeschränkungen blockiert, damit sich eine Anpassung der damit verknüpften Gruppenrichtlinien durch einen Schul-Administrator nicht auch auf alle anderen Schulen auswirkt. Eine solche Änderung wird im S4-Connector auf der Schule als Reject notiert. Wenn tatsächlich gewünscht ist, eine Änderung der Gruppenrichtlinienverknüpfung an der LDAP-Basis und unter <uri>OU=Domain Controllers</uri> auch in das OpenLDAP-Verzeichnis und damit an alle Schulen zu synchronisieren, kann auf dem Schulserver folgender Befehl mit dem zentralen Administrator-Passwort ausgeführt werden:
+			<programlisting language="sh">
 eval "$(ucr shell)"
 /usr/share/univention-s4-connector/msgpo.py --write2ucs \
   --binddn "uid=Administrator,cn=users,$ldap_base" --bindpwd &lt;password&gt;</programlisting>
@@ -161,10 +161,10 @@ eval "$(ucr shell)"
 						Auf dem geöffneten Reiter <emphasis>Bereich</emphasis> im Abschnitt <emphasis>Sicherheitsfilterung</emphasis> die Schaltfläche <emphasis>Hinzufügen</emphasis> betätigen.
 					</listitem>
 					<listitem>
-						In das Eingabefeld <emphasis>Geben Sie die zu verwendenden Objektnamen ein</emphasis> den Namen der Klassenarbeitsgruppe (<filename>OU<emphasis>NameDerOU</emphasis>-Klassenarbeit</filename>, z.B. <emphasis>OUgym17-Klassenarbeit</emphasis>) eintragen und den Dialog mit <emphasis>OK</emphasis> schließen.
+						In das Eingabefeld <emphasis>Geben Sie die zu verwendenden Objektnamen ein</emphasis> den Namen der Klassenarbeitsgruppe (<systemitem class="groupname">OU<replaceable>NameDerOU</replaceable>-Klassenarbeit</systemitem>, z.B. <userinput>OUgym17-Klassenarbeit</userinput>) eintragen und den Dialog mit <emphasis>OK</emphasis> schließen.
 					</listitem>
 					<listitem>
-						Auf dem geöffneten Reiter <emphasis>Bereich</emphasis> im Abschnitt <emphasis>Sicherheitsfilterung</emphasis> die Gruppe <emphasis>Authenticated Users</emphasis> auswählen und die Schaltfläche <emphasis>Entfernen</emphasis> betätigen.
+						Auf dem geöffneten Reiter <emphasis>Bereich</emphasis> im Abschnitt <emphasis>Sicherheitsfilterung</emphasis> die Gruppe <emphasis lang="en">Authenticated Users</emphasis> auswählen und die Schaltfläche <emphasis>Entfernen</emphasis> betätigen.
 					</listitem>
 				</itemizedlist>
 			</section>
@@ -179,7 +179,7 @@ eval "$(ucr shell)"
 							Im neu geöffneten Gruppenrichtlinienverwaltungseditor den folgenden Zweig öffnen:
 						</simpara>
 						<simpara>
-							<filename>Computerkonfiguration > Richtlinien > Windows-Einstellungen > Sicherheitseinstellungen > Lokale Richtlinien > Zuweisen von Benutzerrechten</filename>
+							<guisubmenu>Computerkonfiguration</guisubmenu> &ar; <guisubmenu>Richtlinien</guisubmenu> &ar; <guisubmenu>Windows-Einstellungen</guisubmenu> &ar; <guisubmenu>Sicherheitseinstellungen</guisubmenu> &ar; <guisubmenu>Lokale Richtlinien</guisubmenu> &ar; <guisubmenu>Zuweisen von Benutzerrechten</guisubmenu>
 						</simpara>
 					</listitem>
 					<listitem>
@@ -189,7 +189,7 @@ eval "$(ucr shell)"
 						Dann die Schaltfläche <emphasis>Benutzer oder Gruppe hinzufügen</emphasis> betätigen.
 					</listitem>
 					<listitem>
-						In das Eingabefeld <emphasis>Benutzer und Gruppennamen</emphasis> den Namen <emphasis>Administratoren</emphasis> eintragen und den Dialog mit <emphasis>OK</emphasis> schließen.
+						In das Eingabefeld <emphasis>Benutzer und Gruppennamen</emphasis> den Namen <userinput>Administratoren</userinput> eintragen und den Dialog mit <emphasis>OK</emphasis> schließen.
 					</listitem>
 					<listitem>
 						Erneut die Schaltfläche <emphasis>Benutzer oder Gruppe hinzufügen</emphasis> betätigen.
@@ -198,7 +198,7 @@ eval "$(ucr shell)"
 						Im neu geöffneten Dialog die Schaltfläche <emphasis>Durchsuchen</emphasis> betätigen.
 					</listitem>
 					<listitem>
-						In das Eingabefeld <emphasis>Geben Sie die zu verwendenden Objektnamen ein</emphasis> den Namen der Klassenarbeitsgruppe (<filename>OU<emphasis>NameDerOU</emphasis>-Klassenarbeit</filename>, z.B. <emphasis>OUgym17-Klassenarbeit</emphasis>) eintragen und den Dialog mit <emphasis>OK</emphasis> schließen.
+						In das Eingabefeld <emphasis>Geben Sie die zu verwendenden Objektnamen ein</emphasis> den Namen der Klassenarbeitsgruppe (<systemitem class="groupname">OU<replaceable>NameDerOU</replaceable>-Klassenarbeit</systemitem>, z.B. <userinput>OUgym17-Klassenarbeit</userinput>) eintragen und den Dialog mit <emphasis>OK</emphasis> schließen.
 					</listitem>
 					<listitem>
 						Den Dialog <emphasis>Benutzer oder Gruppe hinzufügen</emphasis> ebenfalls mit <emphasis>OK</emphasis> schließen.
@@ -210,7 +210,7 @@ eval "$(ucr shell)"
 						Im neu geöffneten Dialog die Schaltfläche <emphasis>Durchsuchen</emphasis> betätigen.
 					</listitem>
 					<listitem>
-						In das Eingabefeld <emphasis>Geben Sie die zu verwendenden Objektnamen ein</emphasis> den Namen der Lehrergruppe (<filename>lehrer-<emphasis>NameDerOU</emphasis></filename>, z.B. <emphasis>lehrer-gym17</emphasis>) eintragen und den Dialog mit <emphasis>OK</emphasis> schließen.
+						In das Eingabefeld <emphasis>Geben Sie die zu verwendenden Objektnamen ein</emphasis> den Namen der Lehrergruppe (<systemitem class="groupname">lehrer-<replaceable>NameDerOU</replaceable></systemitem>, z.B. <userinput>lehrer-gym17</userinput>) eintragen und den Dialog mit <emphasis>OK</emphasis> schließen.
 					</listitem>
 					<listitem>
 						Den Dialog <emphasis>Benutzer oder Gruppe hinzufügen</emphasis> ebenfalls mit <emphasis>OK</emphasis> schließen.
@@ -260,7 +260,7 @@ eval "$(ucr shell)"
 							Im Gruppenrichtlinienverwaltungseditor den folgenden Zweig öffnen:
 						</simpara>
 						<simpara>
-							<filename>Computerkonfiguration > Richtlinien > Administrative Vorlagen > Spezielle Einstellungen > Treiber einschränken</filename>
+							<guisubmenu>Computerkonfiguration</guisubmenu> &ar; <guisubmenu>Richtlinien</guisubmenu> &ar; <guisubmenu>Administrative Vorlagen</guisubmenu> &ar; <guisubmenu>Spezielle Einstellungen</guisubmenu> &ar; <guisubmenu>Treiber einschränken</guisubmenu>
 						</simpara>
 					</listitem>
 					<listitem>
@@ -286,14 +286,14 @@ eval "$(ucr shell)"
 							Im Gruppenrichtlinienverwaltungseditor den folgenden Zweig öffnen:
 						</simpara>
 						<simpara>
-							<filename>Computerkonfiguration > Richtlinien > Windows-Einstellungen > Sicherheitseinstellungen > Dateisystem</filename>
+							<guisubmenu>Computerkonfiguration</guisubmenu> &ar; <guisubmenu>Richtlinien</guisubmenu> &ar; <guisubmenu>Windows-Einstellungen</guisubmenu> &ar; <guisubmenu>Sicherheitseinstellungen</guisubmenu> &ar; <guisubmenu>Dateisystem</guisubmenu>
 						</simpara>
 					</listitem>
 					<listitem>
 						Rechtsklick auf <emphasis>Datei hinzufügen...</emphasis>
 					</listitem>
 					<listitem>
-						Das Verzeichnis <filename>C:\Windows\Inf</filename> ansteuern und dort die Datei <filename>usbstor.inf</filename> auswählen und mit <emphasis>OK</emphasis> bestätigen (ggf. wird die Dateiendung <emphasis>.inf</emphasis> nicht mit angezeigt).
+						Das Verzeichnis <filename class="directory">C:\Windows\Inf</filename> ansteuern und dort die Datei <filename>usbstor.inf</filename> auswählen und mit <emphasis>OK</emphasis> bestätigen (ggf. wird die Dateiendung <filename class="extension">.inf</filename> nicht mit angezeigt).
 					</listitem>
 					<listitem>
 						In dem neu geöffneten Dialog <emphasis>Datenbanksicherheit für ...</emphasis>  in der oberen Liste <emphasis>Gruppen- oder Benutzernamen</emphasis> die Schaltfläche <emphasis>Hinzufügen</emphasis> betätigen und den Namen der Klassenarbeitsgruppe hinzufügen,
@@ -326,7 +326,7 @@ eval "$(ucr shell)"
 							Im Gruppenrichtlinienverwaltungseditor den folgenden Zweig öffnen:
 						</simpara>
 						<simpara>
-							<filename>Benutzerkonfiguration > Richtlinien > Administrative Vorlagen > System > Wechselmedienzugriff</filename>
+							<guisubmenu>Benutzerkonfiguration</guisubmenu> &ar; <guisubmenu>Richtlinien</guisubmenu> &ar; <guisubmenu>Administrative Vorlagen</guisubmenu> &ar; <guisubmenu>System</guisubmenu> &ar; <guisubmenu>Wechselmedienzugriff</guisubmenu>
 						</simpara>
 					</listitem>
 					<listitem>
@@ -351,7 +351,7 @@ eval "$(ucr shell)"
 							Im Gruppenrichtlinienverwaltungseditor den folgenden Zweig öffnen:
 						</simpara>
 						<simpara>
-							<filename>Computerkonfiguration > Richtlinien > Administrative Vorlagen > System > Geräteinstallation > Einschränkungen bei der Geräteinstallation</filename>
+							<guisubmenu>Computerkonfiguration</guisubmenu> &ar; <guisubmenu>Richtlinien</guisubmenu> &ar; <guisubmenu>Administrative Vorlagen</guisubmenu> &ar; <guisubmenu>System</guisubmenu> &ar; <guisubmenu>Geräteinstallation</guisubmenu> &ar; <guisubmenu>Einschränkungen bei der Geräteinstallation</guisubmenu>
 						</simpara>
 					</listitem>
 					<listitem>
@@ -390,7 +390,7 @@ eval "$(ucr shell)"
 							Im Gruppenrichtlinienverwaltungseditor den folgenden Zweig öffnen:
 						</simpara>
 						<simpara>
-							<filename>Benutzerkonfiguration > Richtlinien > Windows-Einstellungen > Internet Explorer-Wartung > Verbindung</filename>
+							<guisubmenu>Benutzerkonfiguration</guisubmenu> &ar; <guisubmenu>Richtlinien</guisubmenu> &ar; <guisubmenu>Windows-Einstellungen</guisubmenu> &ar; <guisubmenu>Internet Explorer-Wartung</guisubmenu> &ar; <guisubmenu>Verbindung</guisubmenu>
 						</simpara>
 					</listitem>
 					<listitem>
@@ -412,7 +412,7 @@ eval "$(ucr shell)"
 							Im Gruppenrichtlinienverwaltungseditor den folgenden Zweig öffnen:
 						</simpara>
 						<simpara>
-							<filename>Computerkonfiguration > Richtlinien > Administrative Vorlagen: Vom zentralen Computer abgerufene Richtliniendefinitionen (ADMX-Dateien) > Windows-Komponenten > Internet Explorer > Internetsystemsteuerung</filename>
+							<guisubmenu>Computerkonfiguration</guisubmenu> &ar; <guisubmenu>Richtlinien</guisubmenu> &ar; <guisubmenu>Administrative Vorlagen: Vom zentralen Computer abgerufene Richtliniendefinitionen (ADMX-Dateien)</guisubmenu> &ar; <guisubmenu>Windows-Komponenten</guisubmenu> &ar; <guisubmenu>Internet Explorer</guisubmenu> &ar; <guisubmenu>Internetsystemsteuerung</guisubmenu>
 						</simpara>
 					</listitem>
 					<listitem>
@@ -423,7 +423,7 @@ eval "$(ucr shell)"
 			<section>
 				<title>Proxy-Vorgabe für Google Chrome</title>
 				<para>
-					Die Administrativen Vorlagen für Google Chrome werden durch das Zip-Archiv <filename>policy_templates.zip</filename> des Chromium-Projekts bereitgestellt. Die entprechenden Dateien liegen unter <filename>/usr/share/doc/ucs-school-umc-exam/examples/GPO</filename>.  Der Inhalt des <filename>admx</filename>-Verzeichnisses sollte in das Verzeichnis <filename>PolicyDefinitions</filename> auf den Schulserver kopiert werden, so dass dort die Datei <filename>chrome.admx</filename> liegt. Die <filename>*.adml</filename>-Dateien aus den Unterverzeichnissen müssen in gleichnamige Unterverzeichnisse unter <filename>PolicyDefinitions</filename> kopiert werden.
+					Die Administrativen Vorlagen für Google Chrome werden durch das Zip-Archiv <filename>policy_templates.zip</filename> des Chromium-Projekts bereitgestellt. Die entsprechenden Dateien liegen unter <filename class="directory">/usr/share/doc/ucs-school-umc-exam/examples/GPO/</filename>.  Der Inhalt des <filename class="directory">admx</filename>-Verzeichnisses sollte in das Verzeichnis <filename>PolicyDefinitions</filename> auf den Schulserver kopiert werden, so dass dort die Datei <filename>chrome.admx</filename> liegt. Die <filename>*.adml</filename>-Dateien aus den Unterverzeichnissen müssen in gleichnamige Unterverzeichnisse unter <filename>PolicyDefinitions</filename> kopiert werden.
 				</para>
 				<itemizedlist>
 					<listitem>
@@ -434,7 +434,7 @@ eval "$(ucr shell)"
 							Im Gruppenrichtlinienverwaltungseditor den folgenden Zweig öffnen:
 						</simpara>
 						<simpara>
-							<filename>Computerkonfiguration > Richtlinien > Administrative Vorlagen: Vom zentralen Computer abgerufene Richtliniendefinitionen (ADMX-Dateien) > Google > Google Chrome > Proxy-Server</filename>
+							<guisubmenu>Computerkonfiguration</guisubmenu> &ar; <guisubmenu>Richtlinien</guisubmenu> &ar; <guisubmenu>Administrative Vorlagen: Vom zentralen Computer abgerufene Richtliniendefinitionen (ADMX-Dateien)</guisubmenu> &ar; <guisubmenu>Google</guisubmenu> &ar; <guisubmenu>Google Chrome</guisubmenu> &ar; <guisubmenu>Proxy-Server</guisubmenu>
 						</simpara>
 					</listitem>
 					<listitem>
@@ -462,30 +462,30 @@ eval "$(ucr shell)"
 							Im Gruppenrichtlinienverwaltungseditor den folgenden Zweig öffnen:
 						</simpara>
 						<simpara>
-							<filename>Computerkonfiguration > Richtlinien > Administrative Vorlagen: Vom zentralen Computer abgerufene Richtliniendefinitionen (ADMX-Dateien) > Mozilla Firefox Locked Settings > General</filename>
+							<guisubmenu>Computerkonfiguration</guisubmenu> &ar; <guisubmenu>Richtlinien</guisubmenu> &ar; <guisubmenu>Administrative Vorlagen: Vom zentralen Computer abgerufene Richtliniendefinitionen (ADMX-Dateien)</guisubmenu> &ar; <guisubmenu>Mozilla Firefox Locked Settings</guisubmenu> &ar; <guisubmenu>General</guisubmenu>
 						</simpara>
 					</listitem>
 					<listitem>
-						Richtlinie <emphasis>Proxy Settings</emphasis> öffnen und <emphasis>Aktiviert</emphasis> auswählen,
+						Richtlinie <emphasis lang="en">Proxy Settings</emphasis> öffnen und <emphasis>Aktiviert</emphasis> auswählen,
 					</listitem>
 					<listitem>
-						Im Dropdown <emphasis>Preference State</emphasis> die Einstellung <emphasis>Locked</emphasis> auswählen,
+						Im Dropdown <emphasis lang="en">Preference State</emphasis> die Einstellung <emphasis lang="en">Locked</emphasis> auswählen,
 					</listitem>
 					<listitem>
-						Im Dropdown <emphasis>Proxy Setting</emphasis> die Einstellung <emphasis>Manual Proxy Configuration</emphasis> auswählen,
+						Im Dropdown <emphasis lang="en">Proxy Setting</emphasis> die Einstellung <emphasis lang="en">Manual Proxy Configuration</emphasis> auswählen,
 					</listitem>
 					<listitem>
-						Im Feld <emphasis>Proxy Setting</emphasis> die Einstellung <emphasis>Manual Setting - HTTP Proxy</emphasis> eintragen,
+						Im Feld <emphasis lang="en">Proxy Setting</emphasis> die Einstellung <emphasis lang="en">Manual Setting - HTTP Proxy</emphasis> eintragen,
 					</listitem>
 					<listitem>
-						Im Feld <emphasis>HTTP Proxy Port</emphasis> den Proxy Port eintragen (Wert der &ucsUCRV; <envar>squid/httpport</envar>, Standard 3128)
+						Im Feld <emphasis lang="en">HTTP Proxy Port</emphasis> den Proxy Port eintragen (Wert der &ucsUCRV; <envar>squid/httpport</envar>, Standard 3128)
 					</listitem>
 					<listitem>
 						Den Dialog mit <emphasis>OK</emphasis> bestätigen.
 					</listitem>
 				</itemizedlist>
 				<para>
-					Da Mozilla Firefox bisher nicht selbständig die über die Administrativen Vorlagen definierten Einstellungen in der Windows-Registry berücksichtigt, ist es notwendig diese Einstellungen über ein Startup- bzw. Shutdown-Skript in Mozilla-Konfigurationsdateien übersetzen zu lassen. Das FirefoxADM-Projekt stellt diese Skripte in Form von zwei vbs-Dateien zur Verfügung. Deren Einbindung ist über die folgenden Schritt möglich.
+					Da Mozilla Firefox bisher nicht selbständig die über die Administrativen Vorlagen definierten Einstellungen in der Windows-Registry berücksichtigt, ist es notwendig diese Einstellungen über ein Startup- bzw. Shutdown-Skript in Mozilla-Konfigurationsdateien übersetzen zu lassen. Das <wordasword>FirefoxADM</wordasword>-Projekt stellt diese Skripte in Form von zwei <filename class="extension">vbs</filename>-Dateien zur Verfügung. Deren Einbindung ist über die folgenden Schritt möglich.
 				</para>
 				<itemizedlist>
 					<listitem>
@@ -493,7 +493,7 @@ eval "$(ucr shell)"
 							Im Gruppenrichtlinienverwaltungseditor den folgenden Zweig öffnen:
 						</simpara>
 						<simpara>
-							<filename>Computerkonfiguration > Windows-Einstellungen > Skripts (Start/Herunterfahren)</filename>
+							<guisubmenu>Computerkonfiguration</guisubmenu> &ar; <guisubmenu>Windows-Einstellungen</guisubmenu> &ar; <guisubmenu>Skripts (Start/Herunterfahren)</guisubmenu>
 						</simpara>
 					</listitem>
 					<listitem>
@@ -503,7 +503,7 @@ eval "$(ucr shell)"
 						Im Dialog <emphasis>Eigenschaften von Starten</emphasis> auf dem Reiter <emphasis>Skripts</emphasis> die Schaltfläche <emphasis>Dateien anzeigen</emphasis> betätigen,
 					</listitem>
 					<listitem>
-						In das vom automatisch geöffneten Windows Explorer angezeigte (leere) Verzeichnis (<filename>Machine\Scripts\Startup</filename> im betreffenden GPO-Verzeichis) die Datei <filename>firefox_startup.vbs</filename> kopieren und das Explorer-Fenster schließen.
+						In das vom automatisch geöffneten Windows Explorer angezeigte (leere) Verzeichnis (<filename>Machine\Scripts\Startup</filename> im betreffenden GPO-Verzeichnis) die Datei <filename>firefox_startup.vbs</filename> kopieren und das Explorer-Fenster schließen.
 					</listitem>
 					<listitem>
 						Im Dialog <emphasis>Eigenschaften von Starten</emphasis> die Schaltfläche <emphasis>Hinzufügen</emphasis> betätigen,
@@ -558,7 +558,7 @@ eval "$(ucr shell)"
 							Im Gruppenrichtlinienverwaltungseditor den folgenden Zweig öffnen:
 						</simpara>
 						<simpara>
-							<filename>Benutzerkonfiguration > Richtlinien > Administrative Vorlagen > System</filename>
+							<guisubmenu>Benutzerkonfiguration</guisubmenu> &ar; <guisubmenu>Richtlinien</guisubmenu> &ar; <guisubmenu>Administrative Vorlagen</guisubmenu> &ar; <guisubmenu>System</guisubmenu>
 						</simpara>
 					</listitem>
 					<listitem>
@@ -577,7 +577,7 @@ eval "$(ucr shell)"
 							Im Gruppenrichtlinienverwaltungseditor den folgenden Zweig öffnen:
 						</simpara>
 						<simpara>
-							<filename>Benutzerkonfiguration > Richtlinien > Administrative Vorlagen > System</filename>
+							<guisubmenu>Benutzerkonfiguration</guisubmenu> &ar; <guisubmenu>Richtlinien</guisubmenu> &ar; <guisubmenu>Administrative Vorlagen</guisubmenu> &ar; <guisubmenu>System</guisubmenu>
 						</simpara>
 					</listitem>
 					<listitem>
@@ -589,9 +589,9 @@ eval "$(ucr shell)"
 				</itemizedlist>
 			</section>
 			<section>
-				<title>Konfiguration von Software Restriction Policies (SRP)</title>
+				<title>Konfiguration von <foreignphrase>Software Restriction Policies</foreignphrase> (SRP)</title>
 				<para>
-					Aufgrund der Tiefe des Eingriffs der Software Restriction Policies ist zu empfehlen, diese zunächst in einer Testumgebung zu auszuprobieren. Bei der Analyse von Zugriffsfehlern kann die Ereignisanzeige des Windows-Clients helfen
+					Aufgrund der Tiefe des Eingriffs der <foreignphrase>Software Restriction Policies</foreignphrase> ist zu empfehlen, diese zunächst in einer Testumgebung zu auszuprobieren. Bei der Analyse von Zugriffsfehlern kann die Ereignisanzeige des Windows-Clients helfen
 					<footnote id="Application_Whitelisting_Using_SRP">
 						<para>
 							Weitere sinnvolle Hinweise zur Analyse und Pflege der Software Restriction Policies liefert z.B.
@@ -600,7 +600,7 @@ eval "$(ucr shell)"
 					</footnote>.
 				</para>
 				<para>
-					Die Software Restriction Policies greifen auch in die Bearbeitung von Login- und Logoff-Skripten ein. Alle dort verwendeten Programme bzw. Programmpfade sollten auf Ausführbarkeit getestet werden.
+					Die <foreignphrase>Software Restriction Policies</foreignphrase> greifen auch in die Bearbeitung von Login- und Logoff-Skripten ein. Alle dort verwendeten Programme bzw. Programmpfade sollten auf Ausführbarkeit getestet werden.
 				</para>
 				<note>
 					Die Liste der hier erwähnten Einstellungen erhebt nicht den Anspruch der Vollständigkeit. Es ist notwendig die Einstellungen entsprechend der lokalen Gegebenheiten zu testen. Insbesondere sollte folgende Microsoft-Dokumentation beachtet werden:
@@ -622,7 +622,7 @@ eval "$(ucr shell)"
 							Im Gruppenrichtlinienverwaltungseditor den folgenden Zweig öffnen:
 						</simpara>
 						<simpara>
-							<filename>Benutzerkonfiguration > Windows-Einstellungen > Sicherheitseinstellungen > Richtlinien für Softwareeinschränkung</filename>
+							<guisubmenu>Benutzerkonfiguration</guisubmenu> &ar; <guisubmenu>Windows-Einstellungen</guisubmenu> &ar; <guisubmenu>Sicherheitseinstellungen</guisubmenu> &ar; <guisubmenu>Richtlinien für Softwareeinschränkung</guisubmenu>
 						</simpara>
 					</listitem>
 					<listitem>
@@ -769,7 +769,7 @@ eval "$(ucr shell)"
 						</simpara>
 					</listitem>
 					<listitem>
-						Es sollte beachtet werden, dass schreibbare Verzeichnisse, auf die der Zugriff nicht per Software Restriction Policy eingeschänkt ist, Benutzern die Möglichkeit geben, Programmdateien dort abzulegen und so die definierten Regeln zu umgehen
+						Es sollte beachtet werden, dass schreibbare Verzeichnisse, auf die der Zugriff nicht per Software Restriction Policy eingeschränkt ist, Benutzern die Möglichkeit geben, Programmdateien dort abzulegen und so die definierten Regeln zu umgehen
 						<footnote id="Application_Whitelisting_Using_SRP2">
 							<para>
 								Weitere sinnvolle Hinweise zur Analyse und Pflege der Software Restriction Policies liefert z.B.

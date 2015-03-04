@@ -54,7 +54,7 @@
 	  <listitem>
 		<simpara>
 		  Die UCC-Systeme müssen mit dem offiziellen Desktop-Image (oder einem äquivalenten,
-		  selbsterstellten Image) installiert werden. UCC-ThinClient-Systeme bzw. UCC-Terminalserver werden in
+		  selbst erstellten Image) installiert werden. UCC-ThinClient-Systeme bzw. UCC-Terminalserver werden in
 		  Verbindung mit &ucsUAS; nicht unterstützt.
 		</simpara>
 	  </listitem>
@@ -118,16 +118,16 @@
 		<listitem>
 		  <simpara>
 			Die Installation von UCC erfolgt über das Univention App Center. Dafür muss auf dem
-			betreffenden System im Univention App Center die Applikation <emphasis>Univention Corporate
-			Client</emphasis> ausgewählt und installiert werden. Der
+			betreffenden System im Univention App Center die Applikation <application>Univention Corporate
+			Client</application> ausgewählt und installiert werden. Der
 			<emphasis>UCC-Setup</emphasis>-Assistent ist nicht für die Einrichtung von &ucsUAS; geeignet!
 		  </simpara>
 		</listitem>
 		<listitem>
 		  <simpara>
 			Nun muss das offizielle UCC-Desktop-Image installiert werden. Dazu wird das
-			&ucsUMC;-Modul <guimenu>UCC-Images</guimenu> geöffnet und <emphasis>UCC 2.0 desktop
-			image</emphasis> ausgewählt. Nach einem Klick auf <guimenu>Herunterladen</guimenu> wird
+			&ucsUMC;-Modul <guimenu>UCC-Images</guimenu> geöffnet und <guimenuitem>UCC 2.0 desktop
+			image</guimenuitem> ausgewählt. Nach einem Klick auf <guimenu>Herunterladen</guimenu> wird
 			das Image heruntergeladen.
 		  </simpara>
 		</listitem>
@@ -157,8 +157,8 @@
 	  Domänencontroller Master (nur bei Single-Server-Umgebungen!) bzw. den Domänencontroller Slave
 	  (Multi-Server-Umgebung) als DNS-Server verwenden. In der Standardeinstellung wird automatisch eine
 	  DHCP-DNS-Richtlinie
-	  <emphasis>cn=dhcp-dns-SCHULNAME,cn=policies,ou=SCHULNAME,dc=example,dc=com</emphasis> erstellt und
-	  mit dem Container <emphasis>cn=dhcp,ou=SCHULNAME,dc=example,dc=com</emphasis> verknüpft, die die
+	  <uri>cn=dhcp-dns-SCHULNAME,cn=policies,ou=SCHULNAME,dc=example,dc=com</uri> erstellt und
+	  mit dem Container <uri>cn=dhcp,ou=SCHULNAME,dc=example,dc=com</uri> verknüpft, die die
 	  IP-Adresse des Schulservers als DNS-Server über DHCP konfiguriert.  Das automatische Erstellen und
 	  Verknüpfen der DHCP-DNS-Richtlinie kann durch das Setzen der
 	  UCR-Variable <envar>ucsschool/import/generate/policy/dhcp/dns/set_per_ou=false</envar> auf
@@ -168,8 +168,8 @@
 	<para>
 	  Die Konfiguration der UCC-Systeme erfolgt in der Standardeinstellung über eine automatisch vom
 	  Schulserver generierte UCR-Richtlinie. Diese trägt den Namen
-	  <emphasis>ou-default-ucr-policy</emphasis> und wird für jede Schul-OU unter dem DN
-	  <emphasis>cn=ou-default-ucr-policy,cn=policies,ou=SCHULNAME,dc=example,dc=com</emphasis> im
+	  <uri>ou-default-ucr-policy</uri> und wird für jede Schul-OU unter dem DN
+	  <uri>cn=ou-default-ucr-policy,cn=policies,ou=SCHULNAME,dc=example,dc=com</uri> im
 	  LDAP-Verzeichnis abgelegt. Diese UCR-Richtlinie wird automatisch bei der Installation des
 	  Schulservers mit geeigneten Werten vordefiniert, welche nachfolgend beschrieben werden:
 	  <itemizedlist>
@@ -177,21 +177,21 @@
 		  <simpara>
 			Die UCR-Variable <envar>ucc/mount/cifshome/server</envar> definiert den Server, von dem
 			das Samba-Heimatverzeichnis des sich anmeldenden Benutzers gemountet wird. In der Variable ist der
-			FQDN anzugeben (Beispiel: <envar>ucc/mount/cifshome/server=schulserver1.example.com</envar>).
+			FQDN anzugeben (Beispiel: <userinput>ucc/mount/cifshome/server=schulserver1.example.com</userinput>).
 		  </simpara>
 		</listitem>
 		<listitem>
 		  <simpara>
 			Analog zur aus UCS bereits bekannten UCR-Variable <envar>proxy/http</envar> kann über
 			die Variable <envar>ucc/proxy/http</envar> der HTTP-Proxy für die UCC-Systeme definiert werden
-			(Beispiel: <envar>ucc/proxy/http=http://schulserver1.example.com:3128</envar>).
+			(Beispiel: <userinput>ucc/proxy/http=http://schulserver1.example.com:3128</userinput>).
 		  </simpara>
 		</listitem>
 		<listitem>
 		  <simpara>
 			Der CUPS-Druckserver für UCC-Systeme wird über die UCR-Variable
 			<envar>ucc/cups/server</envar> festgelegt. Auch hier ist der FQDN des Druckservers anzugeben
-			(Beispiel: <envar>ucc/cups/server=schulserver1.example.com</envar>).
+			(Beispiel: <userinput>ucc/cups/server=schulserver1.example.com</userinput>).
 		  </simpara>
 		</listitem>
 		<listitem>
@@ -201,24 +201,24 @@
 			eine Samba-Freigabe sowie den Dateinamen der iTALC-Schlüsseldatei, über die das UCC-System die
 			Schlüsseldatei beziehen kann: <envar>ucc/italc/key/sambasource</envar> und
 			<envar>ucc/italc/key/filename</envar>. In der Standardeinstellung wird der iTALC-Schlüssel auf der
-			<emphasis>netlogon</emphasis>-Freigabe des Schulservers abgelegt. Die Schlüsseldatei enthält dabei
+			<emphasis>NETLOGON</emphasis>-Freigabe des Schulservers abgelegt. Die Schlüsseldatei enthält dabei
 			den Namen des Schulservers (Beispiel:
-			<envar>ucc/italc/key/sambasource=\\schulserver1\netlogon</envar> und
-			<envar>ucc/italc/key/filename=italc-key_schulserver1.pub</envar>).
+			<userinput>ucc/italc/key/sambasource=\\schulserver1\netlogon</userinput> und
+			<userinput>ucc/italc/key/filename=italc-key_schulserver1.pub</userinput>).
 		  </simpara>
 		</listitem>
 	  </itemizedlist>
 	  Das automatische Erstellen und Verknüpfen der UCR-Richtlinie
-	  <emphasis>ou-default-ucr-policy</emphasis> kann durch das Setzen der UCR-Variable
+	  <uri>ou-default-ucr-policy</uri> kann durch das Setzen der UCR-Variable
 	  <envar>ucsschool/import/generate/policy/ucc/settings=false</envar> auf Domänencontroller Master-
 	  <emphasis>und</emphasis> Domänencontroller Slave-Systemen deaktiviert werden.
 	</para>
 	<para>
 	  Die UCC-Systeme können Kerberos als Authentifizierungsmethode für die transparente
-	  Authentifizierung gegenüber dem HTTP-Proxy (squid) des Schulservers verwenden. Diese
+	  Authentifizierung gegenüber dem HTTP-Proxy (Squid) des Schulservers verwenden. Diese
 	  Authentifizierungsmethode ist in der Standardeinstellung im HTTP-Proxy des Schulservers deaktiviert
 	  und muss manuell durch das Setzen der &ucsUCRV; <envar>squid/krb5auth=yes</envar> aktiviert
-	  werden. Anschließend ist auf dem Schulserver ein Neustart des Dienstes <emphasis>squid</emphasis>
+	  werden. Anschließend ist auf dem Schulserver ein Neustart des Dienstes <systemitem class="service">squid</systemitem>
 	  notwendig, der entweder über das UMC-Modul <emphasis>Systemdienste</emphasis> oder auf der
 	  Kommandozeile über das Kommando <command>invoke-rc.d squid3 restart</command> durchgeführt werden
 	  kann.
@@ -245,7 +245,7 @@
 			Modul <emphasis>Rechner (Schulen)</emphasis> oder auf der Kommandozeile über das
 			&ucsUAS;-Importskript <command>import_computer</command> angelegt werden. Bei beiden Varianten ist
 			darauf zu achten, dass als Rechnertyp <emphasis>Univention Corporate Client</emphasis>
-			bzw. <emphasis>ucc</emphasis> angegeben wird. Hinweise zum Importskript
+			bzw. <wordasword>ucc</wordasword> angegeben wird. Hinweise zum Importskript
 			<command>import_computer</command> finden sich in <xref
 			linkend="school:schoolcreate:computers:import"/>.
 		  </simpara>
@@ -266,7 +266,7 @@
 			Die Installation der notwendigen Integrationspakete auf dem UCC-System kann manuell auf
 			der Kommandozeile des UCC-Systems erfolgen (<command>apt-get install
 			univention-ucc-ucsschool-integration</command>). Sollen mehrere UCC-Systeme ausgerollt werden, wird
-			empfohlen, am Container <emphasis>cn=computers,ou=SCHULNAME,dc=example,dc=com</emphasis> eine neue
+			empfohlen, am Container <uri>cn=computers,ou=SCHULNAME,dc=example,dc=com</uri> eine neue
 			Richtlinie vom Typ <emphasis>UCC Software-Update-Einstellungen</emphasis> zu verknüpfen, über die
 			das Paket <package>univention-ucc-ucsschool-integration</package> automatisch beim Systemstart
 			installiert wird.

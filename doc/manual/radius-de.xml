@@ -6,7 +6,7 @@
 		Rechnern für den Wireless-LAN-Zugriff eingesetzt.
 	</para>
 	<para>
-		Der RADIUS-Server muss auf den Access Points konfiguriert werden.
+		Der RADIUS-Server muss auf den <foreignphrase>Access Points</foreignphrase> konfiguriert werden.
 		Die vom Client übertragenen Benutzerkennungen werden dann durch den
 		festgelegten RADIUS-Server geprüft, der wiederum für die Authentifizierung auf
 		den UCS-Verzeichnisdienst zugreift.
@@ -22,12 +22,12 @@
 			Schulserver installiert sein.
 		</para>
 		<para>
-			Nun müssen alle Access Points der Schule in der Konfigurationsdatei
-			<filename>/etc/freeradius/clients.conf</filename> registriert werden. Pro Access
-			Point sollte ein zufälliges Passwort erstellt werden. Dies kann
+			Nun müssen alle <foreignphrase>Access Points</foreignphrase> der Schule in der Konfigurationsdatei
+			<filename>/etc/freeradius/clients.conf</filename> registriert werden. Pro <foreignphrase>Access
+			Point</foreignphrase> sollte ein zufälliges Passwort erstellt werden. Dies kann
 			z.B. mit dem Befehl <command>makepasswd</command> geschehen. Die
 			Kurzbezeichnung ist frei wählbar. Ein Beispiel für einen solchen
-			Eintrag für einen Access Point:
+			Eintrag für einen <foreignphrase>Access Point</foreignphrase>:
 		</para>
 		<programlisting>
 client 192.168.100.101 {
@@ -38,9 +38,9 @@ client 192.168.100.101 {
 	</section>
 
 	<section>
-		<title>Konfiguration der Access Points</title>
+		<title>Konfiguration der <foreignphrase>Access Points</foreignphrase></title>
 		<para>
-			Nun müssen die Access Points konfiguriert werden. Die dafür nötigen
+			Nun müssen die <foreignphrase>Access Points</foreignphrase> konfiguriert werden. Die dafür nötigen
 			Schritte unterscheiden sich je nach Hardwaremodell, prinzipiell müssen
 			die folgenden vier Optionen konfiguriert werden:
 		</para>
@@ -48,7 +48,7 @@ client 192.168.100.101 {
 			<listitem>
 				<simpara>
 					Der Authentifizierungmodus muss auf RADIUS-Authentifzierung
-					umgestellt werden (diese Option wird oft auch als 'WPA Enterprise'
+					umgestellt werden (diese Option wird oft auch als <foreignphrase>WPA Enterprise</foreignphrase>
 					bezeichnet)
 				</simpara>
 			</listitem>
@@ -61,7 +61,7 @@ client 192.168.100.101 {
 			<listitem>
 				<simpara>
 					Der Radius-Port ist 1812 (sofern kein abweichender Port in
-					Freeradius konfiguriert wurde)
+					FreeRADIUS konfiguriert wurde)
 				</simpara>
 			</listitem>
 			<listitem>
@@ -90,12 +90,12 @@ client 192.168.100.101 {
 			</listitem>
 			<listitem>
 				<simpara>
-					PEAP und MSCHAPv2 als Authentifizierungsprotokoll
+					<systemitem class="protocol">PEAP</systemitem> und <systemitem class="protocol">MSCHAPv2</systemitem> als Authentifizierungsprotokoll
 				</simpara>
 			</listitem>
 		</itemizedlist>
 		<para>
-			Die Konfiguration unterscheidet sich je nach Betriebsystem des Clients. Im
+			Die Konfiguration unterscheidet sich je nach Betriebssystem des Clients. Im
 			Univention Wiki findet sich eine exemplarische
 			Schritt-für-Schritt-Anleitung für die Einrichtung unter Windows XP:
 			<ulink url="http://wiki.univention.de/index.php?title=Einrichtung-WLAN-Authentifizierung-WinXP"/>,
@@ -124,9 +124,9 @@ client 192.168.100.101 {
 		<para>
 			Im Fehlerfall sollte die
 			Logdatei <filename>/var/log/freeradius/radius.log</filename> geprüft
-			werden. Erfolgreiche Logins führen zu einem Logeintrag <emphasis>Auth:
-			Login OK</emphasis> und eine fehlgeschlagene Authentifizierung beispielsweise
-			zu <emphasis>Auth: Login incorrect</emphasis>.
+			werden. Erfolgreiche Logins führen zu einem Logeintrag <computeroutput>Auth:
+			Login OK</computeroutput> und eine fehlgeschlagene Authentifizierung beispielsweise
+			zu <computeroutput>Auth: Login incorrect</computeroutput>.
 		</para>
 	</section>
 </chapter>

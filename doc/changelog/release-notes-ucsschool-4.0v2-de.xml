@@ -130,7 +130,7 @@ univention-upgrade --updateto $version_version-$version_patchlevel
 			<title>UMC-Berechtigungen für UCS@school Benutzer</title>
 			<para>
 				Beim Anlegen von neuen Schulen wird nun automatisch die UMC-Richtlinie
-				"default-umc-users" an die Gruppe "Domain Users <emphasis>OU-NAME</emphasis>" angehängt.
+				<uri>default-umc-users</uri> an die Gruppe <systemitem class="groupname">Domain Users <replaceable>OU-NAME</replaceable></systemitem> angehängt.
 				Diese Richtlinie ermöglicht Benutzern, ihr eigenes Passwort über die Univention Management Console (UMC) zu verändern sowie die
 				Single-Sign-On-Technik von UMC zu benutzen.
 				Das Verhalten kann über die &ucsUCRV; <envar>ucsschool/import/attach/policy/default-umc-users</envar>
@@ -144,7 +144,7 @@ univention-upgrade --updateto $version_version-$version_patchlevel
 			Benutzername länger, kann es zu Anmeldeproblemen an Windows-Systemen kommen.  Um diese Probleme zu
 			vermeiden, beschränken die UMC-Module <emphasis>Benutzer (Schulen)</emphasis> und
 			<emphasis>CSV-Import</emphasis> jetzt die maximale Länge von Benutzernamen.  Da für Prüfungsbenutzer
-			des Klassenarbeitsmodus ein Präfix (<emphasis>exam-</emphasis>) vor den eigentlichen Benutzernamen
+			des Klassenarbeitsmodus ein Präfix (<literal>exam-</literal>) vor den eigentlichen Benutzernamen
 			angefügt wird, werden Benutzernamen in der Standardeinstellung auf 15 Zeichen limitiert.  Diese
 			Beschränkung kann über das Setzen der UCR-Variable
 			<envar>ucsschool/ldap/check/username/lengthlimit</envar> auf <literal>false</literal> deaktiviert

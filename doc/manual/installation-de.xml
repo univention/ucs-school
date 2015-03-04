@@ -52,7 +52,7 @@
 				  wird. Das Schulkürzel sollte ausschließlich aus Buchstaben (a-z und A-Z), Ziffern (0-9) oder dem Bindestrich (-) bestehen,
 				  da es unter anderem die Grundlage für Gruppen-, Freigabe- und Rechnernamen bildet. Häufig kommen
 				  hier Schulnummern wie <emphasis>340</emphasis> oder zusammengesetzte Kürzel wie
-				  <emphasis>g123m</emphasis> oder <emphasis>gymmitte</emphasis> zum Einsatz.  Nach der Eingabe des
+				  <wordasword>g123m</wordasword> oder <wordasword>gymmitte</wordasword> zum Einsatz.  Nach der Eingabe des
 				  Schulnamens wird automatisch ein Vorschlag für ein Schulkürzel gemacht, welcher jedoch manuell
 				  angepasst werden kann.
 				</simpara>
@@ -65,7 +65,7 @@
 		</para>
 		<para>
 		  Installation und Konfiguration von &ucsUAS; sollten mit einem Neustart des Systems
-		  abgeschlossen werden.  Im Anschluss kann die weitere Konfguration der Schule vorgenommen werden,
+		  abgeschlossen werden.  Im Anschluss kann die weitere Konfiguration der Schule vorgenommen werden,
 		  siehe <xref linkend="school:setup:umc"/> und <xref linkend="school:setup:cli"/>.
 		</para>
 		<figure id="install-via-appcenter">
@@ -165,11 +165,11 @@
 			<simpara>
 			  Nach der Konfiguration ist es erforderlich, dass der DC Slave erneut der Domäne
 			  beitritt. Im zweiten Schritt werden die für den erneuten Beitritt notwendigen Anmeldedaten
-			  (Benutzername, Passwort) abgefragt. Hier kann der Benutzer <emphasis>Administrator</emphasis> oder
-			  ein Mitglied der Gruppe <emphasis>Domain Admins</emphasis> angegeben werden. Der vollqualifizierte
+			  (Benutzername, Passwort) abgefragt. Hier kann der Benutzer <systemitem class="username">Administrator</systemitem> oder
+			  ein Mitglied der Gruppe <systemitem class="groupname">Domain Admins</systemitem> angegeben werden. Der vollqualifizierte
 			  Rechnername (FQDN) des DC Masters wird üblicherweise automatisch ermittelt und vorausgefüllt. Sollte
 			  dies nicht möglich sein, muss der vollständige Rechnername inkl. DNS-Domäne angegeben werden,
-			  z.B. master.example.com.
+			  z.B. <systemitem class="fqdomainname">master.example.com</systemitem>.
 			</simpara>
 		  </listitem>
 		  <listitem>
@@ -189,8 +189,8 @@
 			  vom UMC-Modul im Zuge der Konfiguration automatisch angelegt wird. Das Schulkürzel sollte
 			  ausschließlich aus Buchstaben, Ziffern oder dem Bindestrich bestehen, da es unter anderem die
 			  Grundlage für Gruppen-, Freigabe- und Rechnernamen bildet. Häufig kommen hier Schulnummern wie
-			  <emphasis>340</emphasis> oder zusammengesetzte Kürzel wie <emphasis>g123m</emphasis> oder
-			  <emphasis>gymmitte</emphasis> zum Einsatz.  Nach der Eingabe des Schulnamens wird automatisch ein
+			  <emphasis>340</emphasis> oder zusammengesetzte Kürzel wie <wordasword>g123m</wordasword> oder
+			  <wordasword>gymmitte</wordasword> zum Einsatz.  Nach der Eingabe des Schulnamens wird automatisch ein
 			  Vorschlag für ein Schulkürzel gemacht, welcher jedoch manuell angepasst werden kann.
 			</simpara>
 		  </listitem>
@@ -258,15 +258,15 @@
 	  </para>
 	  <para>
 		Der &ucsMaster; wird im Regelfall durch eine DNS-Abfrage ermittelt. Wenn das nicht möglich
-		sein sollte, kann der Rechnername des DC Master auch durch den Parameter <command>-dcname
-		<replaceable>HOSTNAME</replaceable></command> direkt angegeben werden. Der Rechnername muss dabei als vollqualifizierter Name
-		angegeben werden, also beispielsweise <emphasis>master.example.com</emphasis>.
+		sein sollte, kann der Rechnername des DC Master auch durch den Parameter <option>-dcname
+		<replaceable>HOSTNAME</replaceable></option> direkt angegeben werden. Der Rechnername muss dabei als vollqualifizierter Name
+		angegeben werden, also beispielsweise <systemitem class="fqdomainname">master.example.com</systemitem>.
 	  </para>
 	  <para>
 		Als Join-Account wird ein Benutzerkonto bezeichnet, das berechtigt ist, Systeme der UCS-Domäne
-		hinzuzufügen. Standardmäßig ist dies der Benutzer <emphasis>Administrator</emphasis> oder ein
-		Mitglied der Gruppe <emphasis>Domain Admins</emphasis>. Der Join-Account kann durch den Parameter
-		<command>-dcaccount <replaceable>ACCOUNTNAME</replaceable></command> an <command>univention-join</command> übergeben werden.
+		hinzuzufügen. Standardmäßig ist dies der Benutzer <systemitem class="username">Administrator</systemitem> oder ein
+		Mitglied der Gruppe <systemitem class="groupname">Domain Admins</systemitem>. Der Join-Account kann durch den Parameter
+		<option>-dcaccount <replaceable>ACCOUNTNAME</replaceable></option> an <command>univention-join</command> übergeben werden.
 	  </para>
 	  <note>
 		Der Name des Schulservers darf nur aus Kleinbuchstaben, Ziffern sowie dem Bindestrich
@@ -286,18 +286,18 @@
 	  <para>
 		Für die Umwandlung sind einige Befehle auf der Kommandozeile des DC Masters auszuführen, die
 		einen Austausch des &ucsUAS;-Metapakets sowie eine Konfigurationsänderung durchführen (Bitte das Minuszeichen hinter dem zweiten Paketnamen beachten):
-		<programlisting>
+		<programlisting language="sh">
 univention-install ucs-school-master ucs-school-singlemaster-
 ucr unset ucsschool/singlemaster
 		</programlisting>
 	  </para>
 	  <para>
-		Mit der Deinstallation des Pakets <emphasis>ucs-school-singlemaster</emphasis> werden die
+		Mit der Deinstallation des Pakets <package>ucs-school-singlemaster</package> werden die
 		nachfolgenden &ucsUAS;-spezifischen Pakete (z.B. UMC-Module), die normalerweise nicht auf einem DC Master
 		der Multi-Server-Umgebung installiert sind, automatisch zur Löschung vorgesehen. Die eigentliche
 		Löschung findet während des nächsten Updates oder durch den manuellen Aufruf von <command>apt-get
 		autoremove</command> statt. Dabei ist zu beachten, dass neben den genannten Paketen ggf. auch
-		ungenutze Paketabhängigkeiten entfernt werden.
+		ungenutzte Paketabhängigkeiten entfernt werden.
 		<programlisting>
 ucs-school-branding
 ucs-school-umc-computerroom
@@ -315,9 +315,9 @@ ucs-school-ucc-integration
 ucs-school-webproxy
 univention-squid-kerberos
 		</programlisting>
-		Um die Löschung einzelner Pakete zu vermeiden, kann der folgende Befehl verwendet werden, bei dem <command>PAKETNAME</command> durch den gewünschten Paketnamen auszutauschen ist:
-		<programlisting>
-apt-get unmarkauto <emphasis> PAKETNAME</emphasis>
+		Um die Löschung einzelner Pakete zu vermeiden, kann der folgende Befehl verwendet werden, bei dem <replaceable>PAKETNAME</replaceable> durch den gewünschten Paketnamen auszutauschen ist:
+		<programlisting language="sh">
+apt-get unmarkauto <replaceable>PAKETNAME</replaceable>
 		</programlisting>
 	  </para>
 	  <para>
@@ -325,7 +325,7 @@ apt-get unmarkauto <emphasis> PAKETNAME</emphasis>
 	  </para>
 	  <para>
 		Nachdem die oben genannten Schritte ausgeführt wurden, sollte abschließend der UMC-Server auf dem DC Master neu gestartet werden:
-		<programlisting>
+		<programlisting language="sh">
 invoke-rc.d univention-management-console-server restart
 		</programlisting>
 	  </para>

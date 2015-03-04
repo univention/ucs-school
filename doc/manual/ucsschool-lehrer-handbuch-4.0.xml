@@ -20,7 +20,7 @@ Version 4.0 v2
 Stand: 25. Februar 2015
       </literallayout>
 
-      <literallayout>
+      <literallayout lang="">
 Alle Rechte vorbehalten./ All rights reserved.
 (c) 2002-2015
 Univention GmbH
@@ -35,7 +35,7 @@ feedback@univention.de
 		Linux ist ein eingetragenes Warenzeichen von Linus Torvalds.
       </para>
 
-      <para>
+      <para lang="en">
 		The mentioned brand names and registered trademarks are owned by the respective legal owners in each case.
 		Linux is a registered trademark of Linus Torvalds.
       </para>
@@ -114,7 +114,7 @@ feedback@univention.de
 		</para>
 		<para>
 		  <figure id="ssl-warning">
-			<title>Sicherheitszertikatswarnung in Firefox</title>
+			<title>Sicherheitszertifikatswarnung in Firefox</title>
 			<graphic scalefit="1" width="80%" align="center" fileref="illustrations40/firefox_ssl_certificate.png"/>
 		  </figure>
 		</para>
@@ -419,8 +419,8 @@ feedback@univention.de
 			  <simpara>
 				Für den Zeitraum der Klassenarbeit wird pro Schüler ein spezielles Benutzerkonto angelegt.
 				Nur mit diesem speziellen Benutzerkonto kann ein Schüler an der Klassenarbeit teilnehmen.
-				Der Loginname für das Klassenarbeitskonto setzt sich aus einem festgelegten Prefix (in der Standardeinstellung <emphasis>exam-</emphasis>) und dem normalen Benutzernamen zusammen.
-				Somit meldet sich der Benutzer <emphasis>anton123</emphasis> für die Klassenarbeit als <emphasis>exam-anton123</emphasis> an.
+				Der Loginname für das Klassenarbeitskonto setzt sich aus einem festgelegten Präfix (in der Standardeinstellung <literal>exam-</literal>) und dem normalen Benutzernamen zusammen.
+				Somit meldet sich der Benutzer <systemitem class="username">anton123</systemitem> für die Klassenarbeit als <systemitem class="username">exam-anton123</systemitem> an.
 			  </simpara>
 			</listitem>
 			<listitem>
@@ -588,8 +588,8 @@ feedback@univention.de
 		</para>
 		<para>
 		  Über das Eingabefeld <guimenu>Suchmuster</guimenu> können die angezeigten Arbeitsgruppen
-		  eingeschränkt werden. Trägt man hier beispielsweise <emphasis>inf</emphasis> ein, werden nur
-		  Arbeitsgruppen angezeigt, die die Zeichenkette <emphasis>inf</emphasis> enthalten (z.B. die
+		  eingeschränkt werden. Trägt man hier beispielsweise <userinput>inf</userinput> ein, werden nur
+		  Arbeitsgruppen angezeigt, die die Zeichenkette <literal>inf</literal> enthalten (z.B. die
 		  Informatik-AG).
 		</para>
 		<para>
@@ -798,7 +798,7 @@ feedback@univention.de
 			</listitem>
 			<listitem>
 			  <simpara>
-				Ein Klick auf <guimenu>Projekt erstellen</guimenu> schliesst das Anlegen eines
+				Ein Klick auf <guimenu>Projekt erstellen</guimenu> schließt das Anlegen eines
 				Projekts ab.
 			  </simpara>
 			</listitem>
@@ -989,13 +989,13 @@ feedback@univention.de
 		</para>
 		<para>
 		  Unter <guimenu>Internet-Domänen</guimenu> kann eine Liste von Adressen angegeben werden,
-		  z.B. <emphasis>wikipedia.org</emphasis> oder <emphasis>facebook.com</emphasis>. Es wird empfohlen
-		  nur den Domänenanteil einer Adresse anzugeben, also statt www.wikipedia.org nur wikipedia.org.
+		  z.B. <uri>wikipedia.org</uri> oder <uri>facebook.com</uri>. Es wird empfohlen
+		  nur den Domänenanteil einer Adresse anzugeben, also statt <uri>www.wikipedia.org</uri> nur <uri>wikipedia.org</uri>.
 		</para>
 		<para>
 		  Ist die Option <guimenu>WLAN-Authentifizierung</guimenu> aktiviert,
 		  wird der Klasse oder Arbeitsgruppe, der die die Regel zugewiesen wird, der Zugriff auf ein
-		  ggf. vorhandenes Wireless LAN erlaubt, um beispielsweise mobilen Geräten wie Laptops den Zugriff auf
+		  ggf. vorhandenes <foreignphrase>Wireless LAN</foreignphrase> erlaubt, um beispielsweise mobilen Geräten wie Laptops den Zugriff auf
 		  das Internet zu erlauben.
 		</para>
 		<para>

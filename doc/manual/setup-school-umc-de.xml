@@ -46,7 +46,7 @@
 			unterschiedlichen Stellen wiederfindet. Es wird automatisch u.a. als Präfix für Gruppen- und
 			Freigabenamen verwendet. Darüber hinaus wird das Schulkürzel als Name für die Organisationseinheit
 			(OU) im Verzeichnisdienst verwendet. Häufig kommen hier Schulnummern wie <emphasis>340</emphasis>
-			oder zusammengesetzte Kürzel wie <emphasis>g123m</emphasis> oder <emphasis>gymmitte</emphasis> zum
+			oder zusammengesetzte Kürzel wie <wordasword>g123m</wordasword> oder <wordasword>gymmitte</wordasword> zum
 			Einsatz.
 		  </para>
 		  <para>
@@ -106,7 +106,7 @@
 	  <para>
 		Für die manuelle Pflege von einzelnen Benutzerkonten wird auf dem Domänencontroller Master
 		das UMC-Modul <guimenu>Benutzer (Schulen)</guimenu> bereitgestellt, welches sich in der
-		UMC-Modulgrippe <emphasis>Schul-Administration</emphasis> befindet. Es ermöglicht das
+		UMC-Modulgruppe <emphasis>Schul-Administration</emphasis> befindet. Es ermöglicht das
 		Suchen nach, sowie das Anlegen, Bearbeiten und Löschen von Schülern, Lehrern und
 		Mitarbeitern in der &ucsUAS;-Umgebung.
 	  </para>
@@ -210,7 +210,7 @@
 		  der Import-Modus auszuwählen sowie die CSV-Datei hochzuladen.
 		</para>
 		<para>
-		  In der Standardeinstellung werden die in der CSV-Datei angebenen Benutzerkonten
+		  In der Standardeinstellung werden die in der CSV-Datei angegebenen Benutzerkonten
 		  hinzugefügt. Sollten gleichlautende Benutzerkonten schon im Verzeichnisdienst existieren, werden sie
 		  entsprechend der CSV-Datei modifiziert. Dieser Import-Modus ist für den Erstimport von Benutzerkonten
 		  (z.B. ein einzelner Klassensatz) oder das nachträgliche Modifizieren einer Teilmenge der vorhandenen
@@ -254,7 +254,7 @@
 		  <emphasis>Benutzername</emphasis> keine Spalte aus der CSV-Datei zugeordnet, wird der Benutzername
 		  automatisch aus dem Vornamen und dem Nachnamen generiert
 		  (<emphasis>&lt;Vorname&gt;.&lt;Nachname&gt;</emphasis>). Bei jedem weiteren Import wird der
-		  Benutzername erneut generiert und ggf. anhand von zusätzlich angebenen Attributen einem bestehenden
+		  Benutzername erneut generiert und ggf. anhand von zusätzlich angegebenen Attributen einem bestehenden
 		  Benutzerkonto zugeordnet.
 		</para>
 		<figure id="csvimport:assignment">
@@ -361,23 +361,23 @@
 		</para>
 		<para>
 		  Anschließend wird für die neue Klasse ein Name sowie eine Beschreibung erfragt. Sprechende
-		  Namen, wie zum Beispiel <emphasis>Igel</emphasis> oder <emphasis>BiologieLK</emphasis> sind als
-		  Namen ebenso möglich wie Buchstaben-Ziffern-Kombinationen (<emphasis>10R</emphasis>). Über die
+		  Namen, wie zum Beispiel <emphasis>Igel</emphasis> oder <wordasword>BiologieLK</wordasword> sind als
+		  Namen ebenso möglich wie Buchstaben-Ziffern-Kombinationen (<wordasword>10R</wordasword>). Über die
 		  Schaltfläche <guimenu>Speichern</guimenu> wird die neue Klasse im Verzeichnisdienst angelegt.
 		</para>
 		<para>
 		  Die Klassennamen in &ucsUAS; müssen schulübergreifend eindeutig sein. Um trotzdem
-		  z.B. die Klasse <emphasis>7A</emphasis> in mehreren Schule verwenden zu können, wird dem
+		  z.B. die Klasse <wordasword>7A</wordasword> in mehreren Schule verwenden zu können, wird dem
 		  Klassennamen im Verzeichnisdienst automatisch das jeweilige Schulkürzel als Präfix
-		  vorangestellt. Für die Klasse <emphasis>7A</emphasis> an der Schule mit dem Schulkürzel
-		  <emphasis>gymmitte</emphasis> wird daher das Klassenobjekt <emphasis>gymmitte-7A</emphasis>
+		  vorangestellt. Für die Klasse <wordasword>7A</wordasword> an der Schule mit dem Schulkürzel
+		  <wordasword>gymmitte</wordasword> wird daher das Klassenobjekt <wordasword>gymmitte-7A</wordasword>
 		  erstellt. Dieser Name mit Präfix zeigt sich z.B. später bei der Administration von Datei- und
 		  Verzeichnisberechtigungen auf Windows-Rechnern.
 		</para>
 		<para>
 		  Um innerhalb einer Klasse den Austausch von Dokumenten zu vereinfachen, wird mit dem
 		  Anlegen einer neuen Klasse auch automatisch eine neue Freigabe erstellt, die den gleichen Namen
-		  trägt, wie das Klassenobjekt (z.B. <emphasis>gymmitte-7A</emphasis>). Die Freigabe wird auf dem
+		  trägt, wie das Klassenobjekt (z.B. <wordasword>gymmitte-7A</wordasword>). Die Freigabe wird auf dem
 		  Dateiserver angelegt, welcher an dem Schulobjekt unter <guimenu>Erweiterte Einstellungen</guimenu>
 		  als <guimenu>Server für Klassenfreigaben</guimenu> hinterlegt ist. Der Zugriff auf diese Freigabe
 		  ist auf die Benutzer der Klasse beschränkt.
@@ -413,7 +413,7 @@
 		<note>
 		  Mit dem Löschen der Klassen wird auch automatisch die jeweilige Klassenfreigabe entfernt. In der
 		  Standardkonfiguration von &ucsUAS; wird das Freigabeverzeichnis auf dem Dateiserver automatisch in das
-		  Backup-Verzeichnis <emphasis>/home/backup/groups/</emphasis> verschoben.
+		  Backup-Verzeichnis <filename class="directory">/home/backup/groups/</filename> verschoben.
 		</note>
 	  </section>
 	</section>
@@ -476,8 +476,8 @@
 		</para>
 		<note>
 			<para>
-			  	Als IP-Adresse kann auch die Adresse des Subnetzes angegeben werden (z.B. 192.168.2.0 bei einer Subnetzmaske von 255.255.255.0).
-				Der Assistent wählt dann automatisch eine freie IP-Adresse aus dem angegebenen Subnetz aus (z.B. 192.168.2.20) und
+				Als IP-Adresse kann auch die Adresse des Subnetzes angegeben werden (z.B. <systemitem class="ipaddress">192.168.2.0</systemitem> bei einer Subnetzmaske von <systemitem class="netmask">255.255.255.0</systemitem>).
+				Der Assistent wählt dann automatisch eine freie IP-Adresse aus dem angegebenen Subnetz aus (z.B. <systemitem class="ipaddress">192.168.2.20</systemitem>) und
 				weist sie dem neuen Rechnerkonto zu.
 			</para>
 		</note>

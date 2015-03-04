@@ -3,13 +3,13 @@
   <itemizedlist>
 	<listitem>
 	  <simpara>
-		The UMC policy "default-umc-users" gets appended to the "Domain Users <emphasis>OUNAME</emphasis>" group when creating a new school.
+		  The UMC policy <uri>default-umc-users</uri> gets appended to the <systemitem class="groupname">Domain Users <replaceable>OUNAME</replaceable></systemitem> group when creating a new school.
 		This allows users to change their own password via UMC (<ulink url="&ucsbug;36537">Bug 36537</ulink>).
 	  </simpara>
 	</listitem>
 	<listitem>
 	  <simpara>
-		Some UMC modules prevented to use the hyphen (-) character in hostnames of school domaincontrollers. This has been fixed (<ulink url="&ucsbug;36034">Bug 36034</ulink>).
+		Some UMC modules prevented to use the hyphen (-) character in hostnames of school Domaincontrollers. This has been fixed (<ulink url="&ucsbug;36034">Bug 36034</ulink>).
 	  </simpara>
 	</listitem>
   </itemizedlist>
@@ -48,7 +48,7 @@
   <itemizedlist>
 	<listitem>
 	  <simpara>
-		The S4-Connector now synchronizes the ntSecurityDescriptor of groupPolicyContainer objects
+		  The S4-Connector now synchronizes the <property>ntSecurityDescriptor</property> of <classname>groupPolicyContainer</classname> objects
 		(<ulink url="&ucsbug;37350">Bug 37350</ulink>).
 	  </simpara>
 	</listitem>
@@ -57,7 +57,7 @@
 		During Installation of UCS@school on a UCS DC slave, the &ucsUCRV;
 		<envar>connector/ldap/binddn</envar> is now set explicitly to the
 		value of <envar>ldap/hostdn</envar>. This avoids problems in cases
-		where Samba/AD services had been installed on the domaincontroller slave before
+		where Samba/AD services had been installed on the &ucsSlave; before
 		installing UCS@school (<ulink url="&ucsbug;35248">Bug 35248</ulink>).
 	  </simpara>
 	</listitem>
@@ -182,7 +182,7 @@
 			To prevent problems with usernames that are too long for Microsoft Windows systems, the UMC module
 			<emphasis>Users (schools)</emphasis> restricts the length of usernames (with default settings the
 			limit is 15 characters). This limitation may be disabled by setting the UCR variable
-			<envar>ucsschool/ldap/check/username/lengthlimit</envar> to <emphasis>false</emphasis>
+			<envar>ucsschool/ldap/check/username/lengthlimit</envar> to <literal>false</literal>
 			(<ulink url="&ucsbug;37154">Bug 37154</ulink>).
 		  </simpara>
 		</listitem>

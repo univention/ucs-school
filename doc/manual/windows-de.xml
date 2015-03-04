@@ -71,7 +71,7 @@
 			Setzen einer UCR-Variable auf dem Schulserver (bzw. dem Domänencontroller Master bei
 			Single-Server-Umgebungen) deaktiviert werden. Die folgende Variable muss vor der Installation von
 			&ucsUAS; oder dem Update des Systems gesetzt werden:
-			<programlisting>
+			<programlisting language="sh">
 ucr set ucsschool/import/generate/policy/dhcp/dns/set_per_ou=false
 			</programlisting>
 		  </para>
@@ -130,21 +130,21 @@ ucr set ucsschool/import/generate/policy/dhcp/dns/set_per_ou=false
 	  zu unterbinden, indem ein abweichendes Verzeichnis für die <filename>NETLOGON</filename>-Freigabe
 	  definiert wird. Das Verzeichnis darf dabei nicht unterhalb der
 	  <filename>SYSVOL</filename>-Dateifreigabe
-	  (<filename>/var/lib/samba/sysvol/<emphasis>REALM</emphasis>/</filename>) liegen.
+	  (<filename>/var/lib/samba/sysvol/<replaceable>REALM</replaceable>/</filename>) liegen.
 	</para>
 	<para>
 	  Das folgende Beispiel setzt das Verzeichnis der <filename>NETLOGON</filename>-Freigabe auf
 	  <filename>/var/lib/samba/netlogon/</filename> und passt ebenfalls das Verzeichnis für die automatisch
 	  generierten Benutzer-NETLOGON-Skripte an:
-	  <programlisting>
+	  <programlisting language="sh">
 ucr set samba/share/netlogon/path=/var/lib/samba/netlogon
 ucr set ucsschool/userlogon/netlogon/path=/var/lib/samba/netlogon/user
 	  </programlisting>
 	  Die zwei UCR-Variablen müssen auf allen Samba4-Domänencontrollern gesetzt werden. Dies kann
 	  z.B. in der UMC über eine UCR-Richtlinien global definiert werden. Nach der Änderung müssen die
-	  Dienste <emphasis>samba4</emphasis> und <emphasis>univention-directory-listener</emphasis> neu
+	  Dienste <systemitem class="service">samba4</systemitem> und <systemitem class="service">univention-directory-listener</systemitem> neu
 	  gestartet werden:
-	  <programlisting>
+	  <programlisting language="sh">
 invoke-rc.d samba4 restart
 invoke-rc.d univention-directory-listener restart
 	  </programlisting>
@@ -169,7 +169,7 @@ invoke-rc.d univention-directory-listener restart
 	  enthalten.  Die Binärpakete sind direkt über die Samba-Freigabe
 	  <emphasis>iTALC-Installation</emphasis> abruf- und installierbar. Alternativ finden sich die
 	  Installationdateien für 32- und 64bit-Versionen von iTALC auf dem Schulserver im Verzeichnis
-	  <filename>/usr/share/italc-windows/</filename>.  Interoperabilitätstests zwischen &ucsUAS; und iTALC
+	  <filename class="directory">/usr/share/italc-windows/</filename>.  Interoperabilitätstests zwischen &ucsUAS; und iTALC
 	  wurden ausschließlich mit der von &ucsUAS; mitgelieferten iTALC-Version unter Windows XP und Windows
 	  7 (32 und 64 Bit) durchgeführt.
 	</para>
@@ -196,7 +196,7 @@ invoke-rc.d univention-directory-listener restart
 	  Netlogon-Freigabe abgelegt). Der Dateiname der Schlüsseldatei enthält den Namen des Schulservers für
 	  den sie generiert wurde, um Namenskonflikte auf der SYSVOL-Freigabe bei der Verwendung von Samba 4
 	  zu vermeiden.  Damit der iTALC-Assistent die Schlüsseldatei selbständig erkennt, sollte die Datei
-	  <filename>italc-key_<emphasis>SERVERNAME</emphasis>.pub.key.txt</filename> verwendet werden.
+	  <filename>italc-key_<replaceable>SERVERNAME</replaceable>.pub.key.txt</filename> verwendet werden.
 	</para>
 	<para>
 	  Außerdem sollte auf den Windows-Clients sichergestellt werden, dass die installierte

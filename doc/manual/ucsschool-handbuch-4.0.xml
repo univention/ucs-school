@@ -35,7 +35,7 @@ Version 4.0 v2
 Stand: 25. Februar 2015
       </literallayout>
 
-      <literallayout>
+      <literallayout lang="">
 Alle Rechte vorbehalten./ All rights reserved.
 (c) 2002-2015
 Univention GmbH
@@ -50,7 +50,7 @@ feedback@univention.de
 	Linux ist ein eingetragenes Warenzeichen von Linus Torvalds.
       </para>
 
-      <para>
+      <para lang="en">
 	The mentioned brand names and registered trademarks are owned by the respective legal owners in each case.
 	Linux is a registered trademark of Linus Torvalds.
       </para>

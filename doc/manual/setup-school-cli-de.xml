@@ -38,7 +38,7 @@
 	<para>
 	  Der Import von Benutzern erfolgt über das
 	  Skript <command>/usr/share/ucs-school-import/scripts/import_user</command>,
-	  das auf dem &ucsMaster; als Benutzer <emphasis>root</emphasis> gestartet werden muss.
+	  das auf dem &ucsMaster; als Benutzer <systemitem class="username">root</systemitem> gestartet werden muss.
 	  Es erwartet den Namen einer CSV-Datei als ersten Parameter. Das Format
 	  der Eingabedatei ist wie folgt aufgebaut:
 	</para>
@@ -58,18 +58,18 @@
 		  </row>
 		</thead>
 		<tbody>
-		  <row><entry>Aktion</entry><entry>Art der Benutzermodifikation</entry><entry><emphasis>A</emphasis>=Hinzufügen, <emphasis>M</emphasis>=Modifizieren, <emphasis>D</emphasis>=Löschen</entry><entry>A</entry>
+		  <row><entry>Aktion</entry><entry>Art der Benutzermodifikation</entry><entry><literal>A</literal>=Hinzufügen, <literal>M</literal>=Modifizieren, <literal>D</literal>=Löschen</entry><entry><userinput>A</userinput></entry>
 		  </row>
-		  <row><entry>Benutzername</entry><entry>Der zum Login verwendete Benutzername</entry><entry>---</entry><entry>m.mustermann</entry></row>
-		  <row><entry>Nachname</entry><entry>Der Nachname des Benutzers</entry><entry>---</entry><entry>Mustermann</entry></row>
-		  <row><entry>Vorname</entry><entry>Der Vorname des Benutzers</entry><entry>---</entry><entry>Michael</entry></row>
-		  <row><entry>OU</entry><entry>Die OU, unter der der Benutzer angelegt werden soll</entry><entry>---</entry><entry>g123m</entry></row>
-		  <row><entry>Klasse</entry><entry>Name der Klasse des Benutzers; nur Lehrer können in mehreren Klassen vertreten sein!</entry><entry>---</entry><entry>g123m-1A,g123m-1B, g123m-2A,g123m-4C</entry></row>
+		  <row><entry>Benutzername</entry><entry>Der zum Login verwendete Benutzername</entry><entry>---</entry><entry><userinput>m.mustermann</userinput></entry></row>
+		  <row><entry>Nachname</entry><entry>Der Nachname des Benutzers</entry><entry>---</entry><entry><userinput>Mustermann</userinput></entry></row>
+		  <row><entry>Vorname</entry><entry>Der Vorname des Benutzers</entry><entry>---</entry><entry><userinput>Michael</userinput></entry></row>
+		  <row><entry>OU</entry><entry>Die OU, unter der der Benutzer angelegt werden soll</entry><entry>---</entry><entry><userinput>g123m</userinput></entry></row>
+		  <row><entry>Klasse</entry><entry>Name der Klasse des Benutzers; nur Lehrer können in mehreren Klassen vertreten sein!</entry><entry>---</entry><entry><userinput>g123m-1A,g123m-1B, g123m-2A,g123m-4C</userinput></entry></row>
 		  <row><entry>Rechte</entry><entry>derzeit ungenutzt; das Feld sollte leer bleiben, so dass 2 Tabulator-Zeichen aufeinander folgen</entry><entry>---</entry><entry></entry></row>
-		  <row><entry>Email-Adresse</entry><entry>Mailadresse des Benutzers</entry><entry>---</entry><entry>m.musterm@beispiel.edu</entry></row>
-		  <row><entry>(Lehrer)</entry><entry>Definiert, ob der Benutzer ein Lehrer ist</entry><entry><emphasis>0</emphasis>=Kein Lehrer, <emphasis>1</emphasis>=Lehrer</entry><entry>1</entry></row>
-		  <row><entry>(Aktiv)</entry><entry>Definiert, ob das Benutzerkonto beim Anlegen sofort aktiviert wird</entry><entry><emphasis>0</emphasis>=nicht aktivieren, <emphasis>1</emphasis>=aktivieren</entry><entry>1</entry></row>
-		  <row><entry>(Mitarbeiter)</entry><entry>Definiert, ob der Benutzer ein Mitarbeiter ist</entry><entry><emphasis>0</emphasis>=Kein Mitarbeiter, <emphasis>1</emphasis>=Mitarbeiter</entry><entry>0</entry></row>
+		  <row><entry>Email-Adresse</entry><entry>Mailadresse des Benutzers</entry><entry>---</entry><entry><userinput>m.musterm@beispiel.edu</userinput></entry></row>
+		  <row><entry>(Lehrer)</entry><entry>Definiert, ob der Benutzer ein Lehrer ist</entry><entry><literal>0</literal>=Kein Lehrer, <literal>1</literal>=Lehrer</entry><entry><userinput>1</userinput></entry></row>
+		  <row><entry>(Aktiv)</entry><entry>Definiert, ob das Benutzerkonto beim Anlegen sofort aktiviert wird</entry><entry><literal>0</literal>=nicht aktivieren, <literal>1</literal>=aktivieren</entry><entry><userinput>1</userinput></entry></row>
+		  <row><entry>(Mitarbeiter)</entry><entry>Definiert, ob der Benutzer ein Mitarbeiter ist</entry><entry><literal>0</literal>=Kein Mitarbeiter, <literal>1</literal>=Mitarbeiter</entry><entry><userinput>0</userinput></entry></row>
 		</tbody>
 	  </tgroup>
 	</table>
@@ -103,7 +103,7 @@ D  a.la  Lang   Anke    g123m  g123m-4C           a.la@schule.edu  1 1 1
 	  </tgroup>
 	</informaltable>
 	<para>
-	  Auch beim Löschen (Aktion <emphasis>D</emphasis>) müssen gültige Werte übergeben werden.
+	  Auch beim Löschen (Aktion <literal>D</literal>) müssen gültige Werte übergeben werden.
 	</para>
 	<para>
 	  Die Angabe von Klassen bezieht sich bei Schülern in der Regel auf eine
@@ -115,7 +115,7 @@ D  a.la  Lang   Anke    g123m  g123m-4C           a.la@schule.edu  1 1 1
 	</para>
 	<note>
 	  Bei der Angabe von Schulklassen ist zu beachten, dass die Klassennamen domänenweit eindeutig
-	  sein müssen. Das heißt, eine Klasse <emphasis>1A</emphasis> kann nicht in mehreren OUs verwendet
+	  sein müssen. Das heißt, eine Klasse <wordasword>1A</wordasword> kann nicht in mehreren OUs verwendet
 	  werden. Bei der Erstellung von Klassen über das UMC-Modul <emphasis>Klassen (Schulen)</emphasis>
 	  wird daher automatisch die OU und ein Bindestrich dem Klassennamen als Präfix vorangestellt. Dieses
 	  Vorgehen wird auch für den Import auf der Kommandozeile empfohlen.
@@ -136,8 +136,8 @@ D  a.la  Lang   Anke    g123m  g123m-4C           a.la@schule.edu  1 1 1
 	  Konten anschließend freischalten:
 	</para>
 	<itemizedlist>
-	  <listitem><simpara>Das Konto eines Schuladministrators kann durch Benutzer der Gruppe <emphasis>Domain Admins</emphasis> in der &ucsUMC; erstellt und modifiziert werden.</simpara></listitem>
-	  <listitem><simpara>Die Konten von Mitarbeitern können durch Benutzer der Gruppe <emphasis>Domain Admins</emphasis> in der &ucsUMC; durch die Vergabe eines Passworts freigeschaltet werden.</simpara></listitem>
+	  <listitem><simpara>Das Konto eines Schuladministrators kann durch Benutzer der Gruppe <systemitem class="groupname">Domain Admins</systemitem> in der &ucsUMC; erstellt und modifiziert werden.</simpara></listitem>
+	  <listitem><simpara>Die Konten von Mitarbeitern können durch Benutzer der Gruppe <systemitem class="groupname">Domain Admins</systemitem> in der &ucsUMC; durch die Vergabe eines Passworts freigeschaltet werden.</simpara></listitem>
 	  <listitem><simpara>Die Konten von Lehrern können durch den Schuladministrator über das Modul <guimenu>Passwörter (Schüler)</guimenu> durch die Vergabe eines Passworts freigeschaltet werden.</simpara></listitem>
 	  <listitem><simpara>Die Konten von Schülern können durch Lehrer über das Modul <guimenu>Passwörter (Lehrer)</guimenu> klassenweise durch die Vergabe eines Passworts freigeschaltet werden.</simpara></listitem>
 	</itemizedlist>
@@ -146,7 +146,7 @@ D  a.la  Lang   Anke    g123m  g123m-4C           a.la@schule.edu  1 1 1
 	  Schuladministratoren und Mitarbeiter eine UMC-Richtlinie zugewiesen
 	  werden, die festlegt, welche UMC-Module bei einer Anmeldung der
 	  entsprechenden Benutzergruppe angezeigt werden. Hierbei muss der LDAP-DN
-	  (Distinguished Name) der Richtlinie angegeben werden.
+	  (<foreignphrase>Distinguished Name</foreignphrase>) der Richtlinie angegeben werden.
 	</para>
 	<itemizedlist>
 	  <listitem><simpara><envar>ucsschool/ldap/default/policy/umc/pupils</envar> gilt für Anmeldungen von Schülern</simpara></listitem>
@@ -155,7 +155,7 @@ D  a.la  Lang   Anke    g123m  g123m-4C           a.la@schule.edu  1 1 1
 	  <listitem><simpara><envar>ucsschool/ldap/default/policy/umc/staff</envar> gilt für Anmeldungen von Mitarbeitern</simpara></listitem>
 	</itemizedlist>
 	<para>
-	  Wenn die UCR-Variablen auf den Wert <emphasis>None</emphasis> gesetzt sind, wird für den jeweiligen Benutzertyp keine Richtlinie
+	  Wenn die UCR-Variablen auf den Wert <literal>None</literal> gesetzt sind, wird für den jeweiligen Benutzertyp keine Richtlinie
 	  verknüpft. Es müssen dann eigene Richtlinien an die Container gebunden
 	  werden.
 	</para>
@@ -175,12 +175,12 @@ D  a.la  Lang   Anke    g123m  g123m-4C           a.la@schule.edu  1 1 1
 	<title>Import von Schulklassen</title>
 	<para>
 	  Beim Import schon Schulklassen ist zu beachten, dass die Klassennamen domänenweit eindeutig sein müssen. Das heißt, eine
-	  Klasse <emphasis>1A</emphasis> kann nicht in mehreren OUs verwendet werden. Daher sollte jedem
+	  Klasse <wordasword>1A</wordasword> kann nicht in mehreren OUs verwendet werden. Daher sollte jedem
 	  Klassennamen die OU und ein Bindestrich vorangestellt werden. Bei der Erstellung von Klassen über das UMC-Modul
 	  <emphasis>Klassen (Schulen)</emphasis> geschieht dies automatisch. Sprechende Namen, wie zum
-	  Beispiel <emphasis>Igel</emphasis> oder <emphasis>BiologieAG</emphasis>, sind für Klassennamen
-	  ebenso möglich wie Buchstaben-Ziffern-Kombinationen (<emphasis>10R</emphasis>). Beispiele für die
-	  Schule gym123:
+	  Beispiel <emphasis>Igel</emphasis> oder <wordasword>BiologieAG</wordasword>, sind für Klassennamen
+	  ebenso möglich wie Buchstaben-Ziffern-Kombinationen (<wordasword>10R</wordasword>). Beispiele für die
+	  Schule <wordasword>gym123</wordasword>:
 	</para>
 	<programlisting>gym123-1A
 gym123-1B
@@ -190,7 +190,7 @@ gym123-Igel</programlisting>
 	<para>
 	  Der Import von Benutzern erfolgt über das Skript
 	  <command>/usr/share/ucs-school-import/scripts/import_group</command>, das auf dem &ucsMaster; als
-	  Benutzer <emphasis>root</emphasis> gestartet werden muss.  Es erwartet den Namen einer CSV-Datei als
+	  Benutzer <systemitem class="username">root</systemitem> gestartet werden muss.  Es erwartet den Namen einer CSV-Datei als
 	  ersten Parameter. Das Dateiformat für die Gruppen-Importdatei ist wie folgt aufgebaut:
 	</para>
 	<table>
@@ -212,26 +212,26 @@ gym123-Igel</programlisting>
 		  <row>
 			<entry>Aktion</entry>
 			<entry>Art der Gruppenmodifikation</entry>
-			<entry><emphasis>A</emphasis>=Hinzufügen, <emphasis>M</emphasis>=Modifizieren, <emphasis>D</emphasis>=Löschen</entry>
-			<entry>A</entry>
+			<entry><literal>A</literal>=Hinzufügen, <literal>M</literal>=Modifizieren, <literal>D</literal>=Löschen</entry>
+			<entry><userinput>A</userinput></entry>
 		  </row>
 		  <row>
 			<entry>OU</entry>
 			<entry>OU, in der die Gruppe modifiziert werden soll</entry>
 			<entry>---</entry>
-			<entry>g123m</entry>
+			<entry><userinput>g123m</userinput></entry>
 		  </row>
 		  <row>
 			<entry>Gruppenname</entry>
 			<entry>Der Name der Gruppe</entry>
 			<entry>---</entry>
-			<entry>g123m-1A</entry>
+			<entry><userinput>g123m-1A</userinput></entry>
 		  </row>
 		  <row>
 			<entry>(Beschreibung)</entry>
 			<entry>Optionale Beschreibung der Gruppe</entry>
 			<entry>---</entry>
-			<entry>Klasse 1A</entry>
+			<entry><userinput>Klasse 1A</userinput></entry>
 		  </row>
 		</tbody>
 	  </tgroup>
@@ -278,7 +278,7 @@ D	  g123m		g123m-R12		 Klasse R12
 		  Die ältesten Klassen (die der Abgänger zum Schulende) müssen zuvor
 		  gelöscht werden. Die Umbenennung erfolgt über das
 		  Skript <command>/usr/share/ucs-school-import/scripts/rename_class</command>,
-		  das auf dem &ucsMaster; als Benutzer <emphasis>root</emphasis> aufgerufen werden
+		  das auf dem &ucsMaster; als Benutzer <systemitem class="username">root</systemitem> aufgerufen werden
 		  muss. Es erwartet den Namen einer tab-separierten CSV-Datei als ersten
 		  Parameter. Die CSV-Datei enthält dabei pro Zeile zuerst den alten und dann den
 		  neuen Klassennamen, z.B.
@@ -286,7 +286,7 @@ D	  g123m		g123m-R12		 Klasse R12
 		<programlisting>gymmitte-6B		gymmitte-7B
 gymmitte-5B		gymmitte-6B</programlisting>
 		<para>
-		  Die Reihenfolge der Unbenennung ist wichtig, da die Umbenennung
+		  Die Reihenfolge der Umbenennung ist wichtig, da die Umbenennung
 		  sequentiell erfolgt und der Zielname nicht existieren darf.
 		</para>
 		<note>
@@ -321,14 +321,14 @@ gymmitte-5B		gymmitte-6B</programlisting>
 	  IP-Adressen vergeben werden können.  
 	</para>
 	<para>
-	  Das Importieren von Subnetzen empfielt sich in größeren &ucsUAS;-Umgebungen. Kleinere
+	  Das Importieren von Subnetzen empfiehlt sich in größeren &ucsUAS;-Umgebungen. Kleinere
 	  Umgebungen können diesen Schritt häufig überspringen, da fehlende Netzwerke beim Import von
 	  Rechnerkonten automatisch angelegt werden.
 	</para>
 	<para>
 	  Netzwerke können derzeit nur auf der Kommandozeile über das Skript
 	  <command>/usr/share/ucs-school-import/scripts/import_networks</command> importiert werden. Das
-	  Skript muss auf dem &ucsMaster; als Benutzer <emphasis>root</emphasis> aufgerufen werden. Das Format
+	  Skript muss auf dem &ucsMaster; als Benutzer <systemitem class="username">root</systemitem> aufgerufen werden. Das Format
 	  der Import-Datei ist wie folgt aufgebaut:
 	</para>
 	<informaltable>
@@ -347,32 +347,32 @@ gymmitte-5B		gymmitte-6B</programlisting>
 		  <row>
 			<entry>OU</entry>
 			<entry>OU des zu modifizierenden Netzwerks</entry>
-			<entry>g123m</entry>
+			<entry><userinput>g123m</userinput></entry>
 		  </row>
 		  <row>
 			<entry>Netzwerk</entry>
 			<entry>Netzwerk und Subnetzmaske</entry>
-			<entry>10.0.5.0/255.255.255.0</entry>
+			<entry><userinput>10.0.5.0/&#8203;255.255.255.0</userinput></entry>
 		  </row>
 		  <row>
 			<entry>(IP-Adress-Bereich)</entry>
 			<entry>Bereich, aus dem IP-Adressen für neuangelegte Systeme automatisch vergeben werden</entry>
-			<entry>10.0.5.10-10.0.5.140</entry>
+			<entry><userinput>10.0.5.10-&#8203;10.0.5.140</userinput></entry>
 		  </row>
 		  <row>
 			<entry>(Router)</entry>
 			<entry>IP-Adresse des Routers</entry>
-			<entry>10.0.5.1</entry>
+			<entry><userinput>10.0.5.1</userinput></entry>
 		  </row>
 		  <row>
 			<entry>(DNS-Server)</entry>
 			<entry>IP-Adresse des DNS-Servers</entry>
-			<entry>10.0.5.2</entry>
+			<entry><userinput>10.0.5.2</userinput></entry>
 		  </row>
 		  <row>
 			<entry>(WINS-Server)</entry>
 			<entry>IP-Adresse des WINS-Servers</entry>
-			<entry>10.0.5.2</entry>
+			<entry><userinput>10.0.5.2</userinput></entry>
 		  </row>
 		</tbody>
 	  </tgroup>
@@ -386,9 +386,9 @@ g123m  10.0.6.0/25  10.0.6.5-10.0.6.120  10.0.6.1  10.0.6.2  10.0.6.15
 	</programlisting>
 	<para>
 	  Wird für das Feld <emphasis>Netzwerk</emphasis> keine Netzmaske angegeben, so wird
-	  automatisch die Netzmaske <emphasis>255.255.255.0</emphasis> verwendet. Sollte
+	  automatisch die Netzmaske <systemitem class="netmask">255.255.255.0</systemitem> verwendet. Sollte
 	  der <emphasis>IP-Adressbereich</emphasis> nicht explizit angegeben worden sein, wird der
-	  Bereich <emphasis>X.Y.Z.20-X.Y.Z.250</emphasis> verwendet.
+	  Bereich <wordasword>X.Y.Z.20-X.Y.Z.250</wordasword> verwendet.
 	</para>
 	<para>
 	  Zur Vereinfachung der Administration der Netzwerke steht zusätzlich das Skript
@@ -417,16 +417,16 @@ g123m  10.0.6.0/25  10.0.6.5-10.0.6.120  10.0.6.1  10.0.6.2  10.0.6.15
 	  <para>
 		Der Import mehrerer PCs erfolgt über das
 		Skript <command>/usr/share/ucs-school-import/scripts/import_computer</command>,
-		das auf dem &ucsMaster; als Benutzer <emphasis>root</emphasis> aufgerufen werden muss.
+		das auf dem &ucsMaster; als Benutzer <systemitem class="username">root</systemitem> aufgerufen werden muss.
 		Es erwartet den Namen einer CSV-Datei als ersten Parameter, die in
 		folgender Syntax definiert wird. Die einzelnen Felder sind durch ein
 		Tabulatorzeichen zu trennen.
 	  </para>
 	  <para>
 		Es ist zu beachten, dass Computernamen domänenweit eindeutig sein müssen. Das heißt, ein
-		Computer <emphasis>windows01</emphasis> kann nicht in mehreren OUs verwendet werden. Um die
+		Computer <systemitem class="systemname">windows01</systemitem> kann nicht in mehreren OUs verwendet werden. Um die
 		Eindeutigkeit zu gewährleisten, wird empfohlen, jedem Computernamen die OU voranzustellen oder zu
-		integrieren (z.B. <emphasis>340win01</emphasis> für Schule <emphasis>340</emphasis>).
+		integrieren (z.B. <wordasword>340win01</wordasword> für Schule <emphasis>340</emphasis>).
 	  </para>
 	  <informaltable>
 		<tgroup cols="4">
@@ -446,57 +446,57 @@ g123m  10.0.6.0/25  10.0.6.5-10.0.6.120  10.0.6.1  10.0.6.2  10.0.6.15
 			<row>
 			  <entry>Rechnertyp</entry>
 			  <entry>Typ des Rechnerobjektes</entry>
-			  <entry>ipmanagedclient, macos, ucc, windows</entry>
-			  <entry>windows</entry>
+			  <entry><literal>ipmanagedclient</literal>, <literal>macos</literal>, <literal>ucc</literal>, <literal>windows</literal></entry>
+			  <entry><userinput>windows</userinput></entry>
 			</row>
 			<row>
 			  <entry>Name</entry>
 			  <entry>Zu verwendender Rechnername</entry>
 			  <entry>---</entry>
-			  <entry>wing123m-01</entry>
+			  <entry><userinput>wing123m-01</userinput></entry>
 			</row>
 			<row>
 			  <entry>MAC-Adresse</entry>
 			  <entry>MAC-Adresse (wird für DHCP benötigt)</entry>
 			  <entry>---</entry>
-			  <entry>00:0c:29:12:23:34</entry>
+			  <entry><userinput>00:0c:29:12:23:34</userinput></entry>
 			</row>
 			<row>
 			  <entry>OU</entry>
 			  <entry>OU, in der das Rechnerobjekt modifiziert werden soll</entry>
 			  <entry>---</entry>
-			  <entry>g123m</entry>
+			  <entry><userinput>g123m</userinput></entry>
 			</row>
 			<row>
 			  <entry>IP-Adresse (/ Netzmaske) oder IP-Subnetz</entry>
 			  <entry>IP-Adresse des Rechnerobjektes und optional die passende Netzmaske; alternativ das Ziel-IP-Subnetz</entry>
 			  <entry>---</entry>
-			  <entry>10.0.5.45/255.255.255.0</entry>
+			  <entry><userinput>10.0.5.45/&#8203;255.255.255.0</userinput></entry>
 			</row>
 			<row>
-			  <entry>(Inventarnr.)</entry>
+			  <entry>(<abbrev>Inventarnr.</abbrev>)</entry>
 			  <entry>Optionale Inventarnummer</entry>
 			  <entry>---</entry>
-			  <entry>TR47110815-XA-3</entry>
+			  <entry><userinput>TR47110815-XA-3</userinput></entry>
 			</row>
 			<row>
 			  <entry>(Zone)</entry>
 			  <entry>Optionale Zone</entry>
-			  <entry>edukativ, verwaltung</entry>
-			  <entry>edukativ</entry>
+			  <entry><literal>edukativ</literal>, <literal>verwaltung</literal></entry>
+			  <entry><userinput>edukativ</userinput></entry>
 			</row>
 		  </tbody>
 		</tgroup>
 	  </informaltable>
 	  <para>
-		Die Subnetzmaske kann sowohl als Prefix (<emphasis>24</emphasis>) als auch in
-		Oktettschreibweise (<emphasis>255.255.255.0</emphasis>) angegeben werden. Die Angabe
+		Die Subnetzmaske kann sowohl als Präfix (<systemitem class="netmask">24</systemitem>) als auch in
+		Oktettschreibweise (<systemitem class="netmask">255.255.255.0</systemitem>) angegeben werden. Die Angabe
 		der Subnetzmaske ist optional. Wird sie weggelassen, wird die
-		Subnetzmaske 255.255.255.0 angenommen.
+		Subnetzmaske <systemitem class="netmask">255.255.255.0</systemitem> angenommen.
 	  </para>
 	  <para>
 		Wird im Feld <emphasis>IP-Adresse (/ Netzmaske)</emphasis> nur ein Subnetz angegeben
-		(z.B. 10.0.5.0), wird dem Computerobjekt automatisch die nächste freie
+		(z.B. <systemitem class="ipaddress">10.0.5.0</systemitem>), wird dem Computerobjekt automatisch die nächste freie
 		IP-Adresse aus diesem IP-Subnetz zugewiesen.
 	  </para>
 	  <para>
@@ -524,7 +524,7 @@ ucc              uccg123m-01      10:00:ee:ff:cd:e2  g123m  10.0.5.10
 	<para>
 	  Der Import der Drucker kann skriptbasiert über das
 	  Skript <command>/usr/share/ucs-school-import/scripts/import_printer</command> erfolgen,
-	  das auf dem &ucsMaster; als Benutzer <emphasis>root</emphasis> aufgerufen werden muss.
+	  das auf dem &ucsMaster; als Benutzer <systemitem class="username">root</systemitem> aufgerufen werden muss.
 	  Es erwartet den Namen einer CSV-Datei als ersten Parameter, die in
 	  folgender Syntax definiert wird. Die einzelnen Felder sind durch ein
 	  Tabulatorzeichen zu trennen.
@@ -547,32 +547,32 @@ ucc              uccg123m-01      10:00:ee:ff:cd:e2  g123m  10.0.5.10
 		  <row>
 			<entry>Aktion</entry>
 			<entry>Art der Druckermodifkation</entry>
-			<entry><emphasis>A</emphasis>=Hinzufügen, <emphasis>M</emphasis>=Modifizieren, <emphasis>D</emphasis>=Löschen</entry>
-			<entry>A</entry>
+			<entry><literal>A</literal>=Hinzufügen, <literal>M</literal>=Modifizieren, <literal>D</literal>=Löschen</entry>
+			<entry><userinput>A</userinput></entry>
 		  </row>
 		  <row>
 			<entry>OU</entry>
 			<entry>OU, in der das Druckerobjekt modifiziert werden soll</entry>
 			<entry>---</entry>
-			<entry>g123m</entry>
+			<entry><userinput>g123m</userinput></entry>
 		  </row>
 		  <row>
 			<entry>Druckserver</entry>
 			<entry>Name des zu verwendenden Druckservers</entry>
 			<entry>---</entry>
-			<entry>dcg123m-01</entry>
+			<entry><userinput>dcg123m-01</userinput></entry>
 		  </row>
 		  <row>
 			<entry>Name</entry>
 			<entry>Name der Druckerwarteschlange</entry>
 			<entry>---</entry>
-			<entry>laserdrucker</entry>
+			<entry><userinput>laserdrucker</userinput></entry>
 		  </row>
 		  <row>
 			<entry>URI</entry>
 			<entry>URI, unter dem der Drucker erreichbar ist</entry>
 			<entry>---</entry>
-			<entry>lpd://10.0.5.250</entry>
+			<entry><userinput>lpd://10.0.5.250</userinput></entry>
 		  </row>
 		</tbody>
 	  </tgroup>
