@@ -142,7 +142,7 @@ univention-upgrade --updateto $version_version-$version_patchlevel
 		  <para>
 			Microsoft Windows unterstützt Benutzernamen bis zu einer Länge von 20 Zeichen. Ist der
 			Benutzername länger, kann es zu Anmeldeproblemen an Windows-Systemen kommen.  Um diese Probleme zu
-			vermeiden, beschränken die UMC module <emphasis>Benutzer (Schulen)</emphasis> und
+			vermeiden, beschränken die UMC-Module <emphasis>Benutzer (Schulen)</emphasis> und
 			<emphasis>CSV-Import</emphasis> jetzt die maximale Länge von Benutzernamen.  Da für Prüfungsbenutzer
 			des Klassenarbeitsmodus ein Präfix (<emphasis>exam-</emphasis>) vor den eigentlichen Benutzernamen
 			angefügt wird, werden Benutzernamen in der Standardeinstellung auf 15 Zeichen limitiert.  Diese
