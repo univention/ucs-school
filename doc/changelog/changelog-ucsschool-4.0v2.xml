@@ -1,4 +1,12 @@
-<section lang="en">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+	"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+	<!ENTITY % entities SYSTEM "../../stylesheets/macros-en.ent" >
+	%entities;
+]>
+<chapter id="relnotes:changelog" lang="en">
+        <title>Changelog</title>
+<section>
   <title>General</title>
   <itemizedlist>
 	<listitem>
@@ -43,7 +51,7 @@
 <section>
 <title>Domain services</title>
 -->
-<section lang="en">
+<section>
   <title>Samba4</title>
   <itemizedlist>
 	<listitem>
@@ -106,7 +114,7 @@
 </section>
 -->
 
-<section lang="en">
+<section>
   <title>Univention Management Console</title>
   <!--
 	  <section>
@@ -294,3 +302,4 @@
 </itemizedlist>
 </section>
 -->
+</chapter>

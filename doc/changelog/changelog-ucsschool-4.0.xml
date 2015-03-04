@@ -1,5 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+	"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+	<!ENTITY % entities SYSTEM "../../stylesheets/macros-en.ent" >
+	%entities;
+]>
+<chapter id="relnotes:changelog" lang="en">
+        <title>Changelog</title>
 <!--
-<section lang="en">
+<section>
   <title>General</title>
   <itemizedlist>
 	<listitem>
@@ -9,7 +17,7 @@
   </itemizedlist>
 </section>
 
-<section lang="en">
+<section>
   <title>Import scripts</title>
   <itemizedlist>
 	<listitem>
@@ -24,7 +32,7 @@
 </section>
 -->
 
-<section lang="en">
+<section>
   <title>iTALC</title>
   <itemizedlist>
 	<listitem>
@@ -36,10 +44,10 @@
 </section>
 
 <!--
-<section lang="en">
+<section>
   <title>Domain services</title>
 -->
-  <section lang="en">
+  <section>
 	<title>Samba4</title>
 	<itemizedlist>
 	  <listitem>
@@ -65,7 +73,7 @@
 		<title>OpenLDAP</title>
 	</section>
 -->
-	<section lang="en">
+	<section>
 		<title>LDAP ACL changes</title>
 		<itemizedlist>
 			<listitem>
@@ -89,11 +97,11 @@
 	  <title>Print services</title>
 	  </section>
 
-<section lang="en">
+<section>
 <title>RADIUS</title>
 </section>
 
-<section lang="en">
+<section>
 <title>Univention Directory Manager modules</title>
 </section>
   -->
@@ -248,7 +256,7 @@
   </section>
 </section>
 
-<section lang="en">
+<section>
   <title>Other changes</title>
   <itemizedlist>
 	<listitem>
@@ -274,3 +282,4 @@
   </itemizedlist>
 </section>
   -->
+</chapter>

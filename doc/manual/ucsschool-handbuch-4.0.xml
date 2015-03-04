@@ -1,26 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
-	  "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd"[
-
-	  <!ENTITY introduction SYSTEM "introduction-de.xml">
-	  <!ENTITY structure SYSTEM "structure-de.xml">
-	  <!ENTITY installation SYSTEM "installation-de.xml">
-	  <!ENTITY module-overview SYSTEM "module-overview-de.xml">
-	  <!ENTITY setup-school-umc SYSTEM "setup-school-umc-de.xml">
-	  <!ENTITY setup-school-cli SYSTEM "setup-school-cli-de.xml">
-	  <!ENTITY setup-school-generic SYSTEM "setup-school-generic-de.xml">
-	  <!ENTITY windows SYSTEM "windows-de.xml">
-	  <!ENTITY proxy SYSTEM "proxy-de.xml">
-	  <!ENTITY radius SYSTEM "radius-de.xml">
-	  <!ENTITY import-hooks SYSTEM "import-hooks-de.xml">
-	  <!ENTITY schoolexam SYSTEM "schoolexam-de.xml">
-	  <!ENTITY ucc-integration SYSTEM "ucc-de.xml">
-	  <!ENTITY performance SYSTEM "performance-de.xml">
-
-	  <!ENTITY % entities SYSTEM "../stylesheets/macros-de.ent" >
-
-	  %entities;
-	  ]>
+	"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+	<!ENTITY % entities SYSTEM "../stylesheets/macros-de.ent" >
+	%entities;
+]>
 <book lang="de" id="ucsschool-4.0-admin">
   <bookinfo>
     <title>
@@ -57,20 +40,20 @@ feedback@univention.de
     </legalnotice>
   </bookinfo>
 
-  &introduction;
-  &structure;
-  &installation;
-  &setup-school-umc;
-  &setup-school-cli;
-  &setup-school-generic;
-  &windows;
-  &module-overview;
-  &proxy;
-  &radius;
-  &schoolexam;
-  &ucc-integration;
-  &import-hooks;
-  &performance;
+  <xi:include href="introduction-de.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+  <xi:include href="structure-de.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+  <xi:include href="installation-de.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+  <xi:include href="setup-school-umc-de.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+  <xi:include href="setup-school-cli-de.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+  <xi:include href="setup-school-generic-de.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+  <xi:include href="windows-de.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+  <xi:include href="module-overview-de.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+  <xi:include href="proxy-de.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+  <xi:include href="radius-de.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+  <xi:include href="schoolexam-de.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+  <xi:include href="ucc-de.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+  <xi:include href="import-hooks-de.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+  <xi:include href="performance-de.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
 
   <bibliography>
 	<bibliomixed id="ucs-handbuch"/>
