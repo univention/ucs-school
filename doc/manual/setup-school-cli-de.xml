@@ -8,9 +8,11 @@
 	Pflege der &ucsUAS;-Umgebung zulassen.
   </para>
   <caution>
+	<simpara>
 	Seit der &ucsUAS;-Version 3.2 R2 halten die kommandozeilenbasierten Importskripte zu Beginn
 	des jeweiligen Imports den &ucsUDN; auf dem Domänencontroller Master an. Nach Abschluss des Imports
 	wird der &ucsUDN; wieder gestartet.
+	</simpara>
   </caution>
 
   <section id="school:setup:cli:importusers">
@@ -114,11 +116,13 @@ D  a.la  Lang   Anke    g123m  g123m-4C           a.la@schule.edu  1 1 1
 	  der Klasse erhalten. Bei Mitarbeitern ist das Feld Klasse leer zu lassen.
 	</para>
 	<note>
+	  <simpara>
 	  Bei der Angabe von Schulklassen ist zu beachten, dass die Klassennamen domänenweit eindeutig
 	  sein müssen. Das heißt, eine Klasse <wordasword>1A</wordasword> kann nicht in mehreren OUs verwendet
 	  werden. Bei der Erstellung von Klassen über das UMC-Modul <emphasis>Klassen (Schulen)</emphasis>
 	  wird daher automatisch die OU und ein Bindestrich dem Klassennamen als Präfix vorangestellt. Dieses
 	  Vorgehen wird auch für den Import auf der Kommandozeile empfohlen.
+	  </simpara>
 	</note>
 	<para>
 	  Die optionalen Felder <emphasis>Lehrer</emphasis> und <emphasis>Mitarbeiter</emphasis> bestimmen die

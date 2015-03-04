@@ -82,6 +82,7 @@
 			  Alternativ kann das LDAP-Objekt im zuständigen Container für Druckerfreigaben der
 			  betreffenden OU (siehe oben) angelegt werden. Dabei müssen folgende Werte am Druckerfreigabe-Objekt
 			  gesetzt werden:
+			</simpara>
 			  <itemizedlist>
 				<listitem>
 				  <simpara>
@@ -109,7 +110,6 @@
 				  </simpara>
 				</listitem>
 			  </itemizedlist>
-			</simpara>
 		  </listitem>
 		</itemizedlist>
 	  </para>
@@ -132,6 +132,7 @@
 			&ucsUMC; am Rechnerobjekt des gewünschten Dateiservers der Dienst <emphasis>Windows Profile
 			Server</emphasis> gesetzt werden. Es wird dann ein UNC-Pfad nach dem Schema
 			<filename>\\DATEISERVERNAME\%USERNAME%\windows-profiles\default</filename> am Benutzerobjekt gespeichert.
+		  </simpara>
 			<note>
 			  <para>
 				Falls ein alternativer Dateiserver für den Benutzerprofilpfad verwendet werden soll, muss das entsprechende 
@@ -143,7 +144,6 @@
 				einer zukünftigen &ucsUAS;-Version entfernt bzw. durch einen äquivalenten Mechanismus ersetzt.
 			  </para>
 			</note>
-		  </simpara>
 		</listitem>
 		<listitem>
 		  <simpara>

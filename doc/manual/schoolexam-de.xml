@@ -19,16 +19,24 @@
 		    Zur Verwendung des Klassenarbeitsmodus sind folgende Voraussetzungen zu erfüllen:
 			<itemizedlist>
 			  <listitem>
+				<simpara>
 				Verwendung einer Samba 4-Domäne (AD-Domäne)
+				</simpara>
 			  </listitem>
 			  <listitem>
+				<simpara>
 				Einsatz von Windows XP oder höher auf den Prüfungscomputern
+				</simpara>
 			  </listitem>
 			  <listitem>
+				<simpara>
 				Import von Computerkonten und Zuordnung der Computer zu Computerräumen
+				</simpara>
 			  </listitem>
 			  <listitem>
+				<simpara>
 				Die Verwendung des UCS@school-HTTP-Proxys durch die Prüfungscomputer zur Filterung des Internetzugriffs
+				</simpara>
 			  </listitem>
 			</itemizedlist>
 		</para>
@@ -70,13 +78,19 @@
 			Die nachfolgenden &ucsUCRV;n können geändert werden, um LDAP-Eigenschaften der Klassenarbeitskonten, -gruppen und -container anzupassen. Sofern diese Variablen manuell gesetzt werden, ist zu beachten, dass es sich dabei um globale Einstellungen handelt und diese Variablen sowohl auf dem &ucsMaster; als auch auf den Schulservern identische Werte aufweisen müssen.
 			<itemizedlist>
 				<listitem>
+					<simpara>
 					<envar>ucsschool/ldap/default/userprefix/exam</envar> gibt den Präfix an, der dem ursprünglichen Benutzernamen im Klassenarbeitskonto vorangestellt wird. Er ist standardmäßig auf <literal>exam-</literal> gesetzt.
+					</simpara>
 				</listitem>
 				<listitem>
+					<simpara>
 					<envar>ucsschool/ldap/default/groupname/exam</envar> bezeichnet die Gruppe, der alle Klassenarbeitskonten sowie Klassenarbeitsrechner zugeordnet sind. Über diese Gruppe können spezifische Windows-Gruppenrichtlinien für den Klassenarbeitsmodus gesetzt werden. Der Standardname für diese Gruppe ist <systemitem class="groupname">OU%(ou)s-Klassenarbeit</systemitem>, wobei <literal>%(ou)s</literal> vom System automatisch durch den Namen der OU ausgetauscht wird.
+					</simpara>
 				</listitem>
 				<listitem>
+					<simpara>
 					<envar>ucsschool/ldap/default/container/exam</envar> ist der Name des Containers, unterhalb dem die Klassenarbeitskonten gespeichert werden. Standardmäßig ist der Name auf <literal>examusers</literal> gesetzt. Die LDAP-Position des Containers ist direkt unterhalb der Schul-OU.
+					</simpara>
 				</listitem>
 			</itemizedlist>
 		</para>
@@ -84,13 +98,19 @@
 			Das UMC-Modul zum Einrichten einer Klassenarbeit bietet die Möglichkeit bestimmte Standardwerte zu definieren, um das Starten einer Klassenarbeit zu vereinfachen; dazu gehören:
 			<itemizedlist>
 				<listitem>
+					<simpara>
 					<envar>ucsschool/exam/default/room</envar> definiert den vorausgewählten Raum für eine neue Klassenarbeit. Der Eintrag beinhaltet den LDAP-Namen des Raumes (inklusive des Schul-OU-Präfxies), also bspw. <userinput>meineschule-PC Raum</userinput>. Ist die Variable nicht gesetzt, wird standardmäßig der alphabetisch erste Raum ausgewählt.
+					</simpara>
 				</listitem>
 				<listitem>
+					<simpara>
 					<envar>ucsschool/exam/default/shares</envar> gibt den vorausgewählten Freigabezugriff für eine neue Klassenarbeit an. Mögliche Werte sind <literal>all</literal> für Zugriff auf alle Freigaben ohne Einschränkungen sowie <literal>home</literal> für eingeschränkten Zugriff auf lediglich das Heimatverzeichnis des (Klassenarbeits-)Benutzerkonto. Ist die Variable nicht gesetzt, wird standardmäßig nur der Zugriff auf das Homeverzeichnis freigegeben.
+					</simpara>
 				</listitem>
 				<listitem>
+					<simpara>
 					<envar>ucsschool/exam/default/internet</envar> definiert die vorausgewählte Internetregel für eine neue Klassenarbeit. Mögliche Werte umfassen die Namen aller Internetregeln wie sie im UMC-Modul <guimenu>Internetregeln definieren</guimenu> angezeigt werden. Normalerweise werden die globalen Standardeinstellungen verwendet.
+					</simpara>
 				</listitem>
 			</itemizedlist>
 		</para>
@@ -109,9 +129,11 @@
 			Einige der genannten Gruppenrichtlinien-Einstellungen beziehen sich auf den Bereich der Computerkonfiguration und werden nur beim Systemstart korrekt von den entsprechenden Windows-Komponenten ausgewertet. Für solche Einstellungen ist daher ein Neustart der Windows-Arbeitsplatzsysteme nach Aktivierung des Klassenarbeitsmodus notwendig.
 		</para>
 		<note>
+			<simpara>
 			Zu diesem Thema ist auch ein Hinweis von Microsoft zu Windows XP Systemen zu beachten: <quote>Jede Version von Windows XP Professional stellt eine Funktion zur Optimierung für schnelles Anmelden zur Verfügung. Computer mit diesen Betriebssystemen warten standardmäßig beim Starten nicht auf den Start des Netzwerks. Nach der Anmeldung werden die Richtlinien im Hintergrund verarbeitet, sobald das Netzwerk zur Verfügung steht. Dies bedeutet, dass der Computer bei der Anmeldung und beim Start weiterhin die älteren Richtlinieneinstellungen verwendet. Daher sind für Einstellungen, die nur beim Start oder bei der Anmeldung angewendet werden können (z. B. Softwareinstallation und Ordnerumleitung), möglicherweise nach dem Ausführen der ersten Änderung am Gruppenrichtlinienobjekt mehrere Anmeldungen durch den Benutzer erforderlich. Diese Richtlinie wird gesteuert durch die Einstellung in <filename>Computerkonfiguration\Administrative Vorlagen\System\Anmeldung\Beim Neustart des Computers und bei der Anmeldung immer 
 auf das Netzwerk warten</filename>. Diese Funktion ist in den Betriebssystemversionen von Windows 2000 oder Windows Server 2003 nicht verfügbar.</quote>
 			<footnote><para><ulink url="http://technet.microsoft.com/de-de/library/cc785665(v=ws.10).aspx"/></para></footnote>
+			</simpara>
 		</note>
 		<section id="school:exam:gpo:general">
 		  <title>Generelle Hinweise zu Gruppenrichtlinien und Administrativen Vorlagen</title>
@@ -146,25 +168,38 @@ eval "$(ucr shell)"
 		<section>
 			<title>Windows-Anmeldung im Prüfungsraum auf Mitglieder der Klassenarbeitsgruppe beschränken</title>
 			<para>
-				Da das im folgenden konfigurierte Gruppenrichtlinienobjekt je nach Verknüpfung im Samba-Verzeichnisdienst die Anmeldung an betroffenen Windows-Arbeitsplatzsystemen einschränkt, wird dringend empfohlen, als erstes die Anwendung der neuen Gruppenrichtlinie auf solche Windows-Arbeitsplatzsysteme einzuschränken, auf die sie sich später im Klassenarbeitsmodus auswirken soll. Dies geschieht am einfachsten über die Anpassung der Sicherheitsfilterung, die im Folgenden beschrieben ist:
+				Da das im folgenden konfigurierte Gruppenrichtlinienobjekt je nach Verknüpfung im Samba-Verzeichnisdienst die Anmeldung an betroffenen Windows-Arbeitsplatzsystemen einschränkt, wird dringend empfohlen, als erstes die Anwendung der neuen Gruppenrichtlinie auf solche Windows-Arbeitsplatzsysteme einzuschränken, auf die sie sich später im Klassenarbeitsmodus auswirken soll. Dies geschieht am einfachsten über die Anpassung der Sicherheitsfilterung, die im Folgenden beschrieben ist.
+			</para>
+			<para>
+			Damit die Gruppenrichtlinieneinstellungen von Windows-Arbeitsplatzrechnern ausgewertet werden, ist es notwendig, einen Bezug zwischen dem angelegten Gruppenrichtlinienobjekt und den Rechnerobjekten im Samba-Verzeichnisdienst herzustellen. Um dies zu erreichen kann das Gruppenrichtlinienobjekt mit einer Organisationseinheit (OU) verknüpft werden, die den Rechnerobjekten im Verzeichnisbaum übergeordnet ist, in der Regel mit der Schul-OU.
 			</para>
 			<section>
 				<title>Anwendungsbereich der GPO auf Klassenarbeitscomputer einschränken</title>
 				<itemizedlist>
 					<listitem>
+						<simpara>
 						In der Gruppenrichtlinienverwaltung ein neues Gruppenrichtlinienobjekt anlegen und/oder ein existierendes Gruppenrichtlinienobjekt zur Bearbeitung öffnen.
+						</simpara>
 					</listitem>
 					<listitem>
+						<simpara>
 						In der Baumdarstellung der Gruppenrichtlinienverwaltung die Gruppenrichtlinie anklicken.
+						</simpara>
 					</listitem>
 					<listitem>
+						<simpara>
 						Auf dem geöffneten Reiter <emphasis>Bereich</emphasis> im Abschnitt <emphasis>Sicherheitsfilterung</emphasis> die Schaltfläche <emphasis>Hinzufügen</emphasis> betätigen.
+						</simpara>
 					</listitem>
 					<listitem>
+						<simpara>
 						In das Eingabefeld <emphasis>Geben Sie die zu verwendenden Objektnamen ein</emphasis> den Namen der Klassenarbeitsgruppe (<systemitem class="groupname">OU<replaceable>NameDerOU</replaceable>-Klassenarbeit</systemitem>, z.B. <userinput>OUgym17-Klassenarbeit</userinput>) eintragen und den Dialog mit <emphasis>OK</emphasis> schließen.
+						</simpara>
 					</listitem>
 					<listitem>
+						<simpara>
 						Auf dem geöffneten Reiter <emphasis>Bereich</emphasis> im Abschnitt <emphasis>Sicherheitsfilterung</emphasis> die Gruppe <emphasis lang="en">Authenticated Users</emphasis> auswählen und die Schaltfläche <emphasis>Entfernen</emphasis> betätigen.
+						</simpara>
 					</listitem>
 				</itemizedlist>
 			</section>
@@ -172,7 +207,9 @@ eval "$(ucr shell)"
 				<title>Einschränkung der Windows-Anmeldung auf Klassenarbeitsbenutzerkonten und Lehrer</title>
 				<itemizedlist>
 					<listitem>
+						<simpara>
 						In der Gruppenrichtlinienverwaltung das Gruppenrichtlinienobjekt zur Bearbeitung öffnen (Kontextmenü des GPO in der Baumdarstellung).
+						</simpara>
 					</listitem>
 					<listitem>
 						<simpara>
@@ -183,46 +220,67 @@ eval "$(ucr shell)"
 						</simpara>
 					</listitem>
 					<listitem>
+						<simpara>
 						Im neu geöffneten Richtlinien-Dialog <emphasis>Eigenschaften von Lokal anmelden zulassen</emphasis> auf dem Reiter <emphasis>Sicherheitsrichtlinie</emphasis> die Option <emphasis>Diese Richtlinieneinstellung definieren</emphasis> aktivieren.
+						</simpara>
 					</listitem>
 					<listitem>
+						<simpara>
 						Dann die Schaltfläche <emphasis>Benutzer oder Gruppe hinzufügen</emphasis> betätigen.
+						</simpara>
 					</listitem>
 					<listitem>
+						<simpara>
 						In das Eingabefeld <emphasis>Benutzer und Gruppennamen</emphasis> den Namen <userinput>Administratoren</userinput> eintragen und den Dialog mit <emphasis>OK</emphasis> schließen.
+						</simpara>
 					</listitem>
 					<listitem>
+						<simpara>
 						Erneut die Schaltfläche <emphasis>Benutzer oder Gruppe hinzufügen</emphasis> betätigen.
+						</simpara>
 					</listitem>
 					<listitem>
+						<simpara>
 						Im neu geöffneten Dialog die Schaltfläche <emphasis>Durchsuchen</emphasis> betätigen.
+						</simpara>
 					</listitem>
 					<listitem>
+						<simpara>
 						In das Eingabefeld <emphasis>Geben Sie die zu verwendenden Objektnamen ein</emphasis> den Namen der Klassenarbeitsgruppe (<systemitem class="groupname">OU<replaceable>NameDerOU</replaceable>-Klassenarbeit</systemitem>, z.B. <userinput>OUgym17-Klassenarbeit</userinput>) eintragen und den Dialog mit <emphasis>OK</emphasis> schließen.
+						</simpara>
 					</listitem>
 					<listitem>
+						<simpara>
 						Den Dialog <emphasis>Benutzer oder Gruppe hinzufügen</emphasis> ebenfalls mit <emphasis>OK</emphasis> schließen.
+						</simpara>
 					</listitem>
 					<listitem>
+						<simpara>
 						Erneut die Schaltfläche <emphasis>Benutzer oder Gruppe hinzufügen</emphasis> betätigen.
+						</simpara>
 					</listitem>
 					<listitem>
+						<simpara>
 						Im neu geöffneten Dialog die Schaltfläche <emphasis>Durchsuchen</emphasis> betätigen.
+						</simpara>
 					</listitem>
 					<listitem>
+						<simpara>
 						In das Eingabefeld <emphasis>Geben Sie die zu verwendenden Objektnamen ein</emphasis> den Namen der Lehrergruppe (<systemitem class="groupname">lehrer-<replaceable>NameDerOU</replaceable></systemitem>, z.B. <userinput>lehrer-gym17</userinput>) eintragen und den Dialog mit <emphasis>OK</emphasis> schließen.
+						</simpara>
 					</listitem>
 					<listitem>
+						<simpara>
 						Den Dialog <emphasis>Benutzer oder Gruppe hinzufügen</emphasis> ebenfalls mit <emphasis>OK</emphasis> schließen.
+						</simpara>
 					</listitem>
 					<listitem>
+						<simpara>
 						Den Richtlinien-Dialog <emphasis>Eigenschaften von Lokal anmelden zulassen</emphasis> mit <emphasis>OK</emphasis> schließen.
+						</simpara>
 					</listitem>
 				</itemizedlist>
 			</section>
-			<para>
-			Damit die Gruppenrichtlinieneinstellungen von Windows-Arbeitsplatzrechnern ausgewertet werden, ist es notwendig, einen Bezug zwischen dem angelegten Gruppenrichtlinienobjekt und den Rechnerobjekten im Samba-Verzeichnisdienst herzustellen. Um dies zu erreichen kann das Gruppenrichtlinienobjekt mit einer Organisationseinheit (OU) verknüpft werden, die den Rechnerobjekten im Verzeichnisbaum übergeordnet ist, in der Regel mit der Schul-OU.
-			</para>
 		</section>
 
 
@@ -235,10 +293,14 @@ eval "$(ucr shell)"
 				Während für Windows XP beide Einschränkungen notwendig sind, bietet Windows 7 durch erweiterte Richtlinien vereinfachte und erweiterte Kontrollmöglichkeiten. In Mischumgebungen ist eine Kombination der skizzierten Einstellungen zu empfehlen.
 			</para>
 			<note>
+				<simpara>
 				Die Liste der hier erwähnten Einstellungen erhebt nicht den Anspruch auf Vollständigkeit. Es ist notwendig die Einstellungen entsprechend der lokalen Gegebenheiten zu testen. Insbesondere sollte folgende Microsoft-Dokumentation beachtet werden:
+				</simpara>
 				<itemizedlist>
 					<listitem>
+						<simpara>
 						<ulink url="http://technet.microsoft.com/de-de/library/hh125922%28v=ws.10%29.aspx"/>.
+						</simpara>
 					</listitem>
 				</itemizedlist>
 			</note>
@@ -253,7 +315,9 @@ eval "$(ucr shell)"
 				</para>
 				<itemizedlist>
 					<listitem>
+						<simpara>
 						In der Gruppenrichtlinienverwaltung ein neues Gruppenrichtlinienobjekt anlegen und/oder ein existierendes Gruppenrichtlinienobjekt zur Bearbeitung öffnen.
+						</simpara>
 					</listitem>
 					<listitem>
 						<simpara>
@@ -264,11 +328,15 @@ eval "$(ucr shell)"
 						</simpara>
 					</listitem>
 					<listitem>
+						<simpara>
 						Richtlinie <emphasis>USB Sperren</emphasis> öffnen, <emphasis>Aktiviert</emphasis> auswählen und mit <emphasis>OK</emphasis> bestätigen.
+						</simpara>
 					</listitem>
 				</itemizedlist>
 				<note>
+					<simpara>
 					Hier stehen auch weitere Gerätetypen zur Auswahl, z.B. CD-ROM-Laufwerke.
+					</simpara>
 				</note>
 			</section>
 			<section>
@@ -279,7 +347,9 @@ eval "$(ucr shell)"
 				</para>
 				<itemizedlist>
 					<listitem>
+						<simpara>
 						In der Gruppenrichtlinienverwaltung ein neues Gruppenrichtlinienobjekt anlegen und/oder ein existierendes Gruppenrichtlinienobjekt zur Bearbeitung öffnen.
+						</simpara>
 					</listitem>
 					<listitem>
 						<simpara>
@@ -290,28 +360,44 @@ eval "$(ucr shell)"
 						</simpara>
 					</listitem>
 					<listitem>
+						<simpara>
 						Rechtsklick auf <emphasis>Datei hinzufügen...</emphasis>
+						</simpara>
 					</listitem>
 					<listitem>
+						<simpara>
 						Das Verzeichnis <filename class="directory">C:\Windows\Inf</filename> ansteuern und dort die Datei <filename>usbstor.inf</filename> auswählen und mit <emphasis>OK</emphasis> bestätigen (ggf. wird die Dateiendung <filename class="extension">.inf</filename> nicht mit angezeigt).
+						</simpara>
 					</listitem>
 					<listitem>
+						<simpara>
 						In dem neu geöffneten Dialog <emphasis>Datenbanksicherheit für ...</emphasis>  in der oberen Liste <emphasis>Gruppen- oder Benutzernamen</emphasis> die Schaltfläche <emphasis>Hinzufügen</emphasis> betätigen und den Namen der Klassenarbeitsgruppe hinzufügen,
+						</simpara>
 					</listitem>
 					<listitem>
+						<simpara>
 						In der darunter angezeigten Liste <emphasis>Berechtigungen für ...</emphasis> in der Zeile <emphasis>Vollzugriff</emphasis>, Spalte <emphasis>Verweigern</emphasis> ein Häkchen setzen und mit <emphasis>OK</emphasis> bestätigen.
+						</simpara>
 					</listitem>
 					<listitem>
+						<simpara>
 						Den Dialog <emphasis>Datenbanksicherheit für ...</emphasis> mit <emphasis>OK</emphasis> schließen.
+						</simpara>
 					</listitem>
 					<listitem>
+						<simpara>
 						Das neue Dialogfenster <emphasis>Windows-Sicherheit</emphasis> mit <emphasis>Ja</emphasis> bestätigen.
+						</simpara>
 					</listitem>
 					<listitem>
+						<simpara>
 						Das neue Dialogfenster <emphasis>Objekt hinzufügen</emphasis> mit <emphasis>OK</emphasis> schließen.
+						</simpara>
 					</listitem>
 					<listitem>
+						<simpara>
 						Analog sollten Einstellungen für <filename>%SystemRoot%\inf\usbstor.pnf</filename> und <filename>%SystemRoot%\system32\drivers\usbstor.sys</filename> definiert werden.
+						</simpara>
 					</listitem>
 				</itemizedlist>
 			</section>
@@ -319,7 +405,9 @@ eval "$(ucr shell)"
 				<title>Zugriff auf USB-Speicher an Windows 7 einschränken</title>
 				<itemizedlist>
 					<listitem>
+						<simpara>
 						In der Gruppenrichtlinienverwaltung ein neues Gruppenrichtlinienobjekt anlegen und/oder ein existierendes Gruppenrichtlinienobjekt zur Bearbeitung öffnen.
+						</simpara>
 					</listitem>
 					<listitem>
 						<simpara>
@@ -330,11 +418,15 @@ eval "$(ucr shell)"
 						</simpara>
 					</listitem>
 					<listitem>
+						<simpara>
 						Z.B. Richtlinie <emphasis>Wechseldatenträger: Lesezugriff verweigern</emphasis> öffnen, <emphasis>Aktiviert</emphasis> auswählen und mit <emphasis>OK</emphasis> bestätigen.
+						</simpara>
 					</listitem>
 				</itemizedlist>
 				<note>
+					<simpara>
 					Weitere Informationen zu diesem Thema liefert z.B. <ulink url="http://technet.microsoft.com/de-de/library/cc771759%28v=ws.10%29.aspx"/>.
+					</simpara>
 				</note>
 			</section>
 			<section>
@@ -344,7 +436,9 @@ eval "$(ucr shell)"
 				</para>
 				<itemizedlist>
 					<listitem>
+						<simpara>
 						In der Gruppenrichtlinienverwaltung ein neues Gruppenrichtlinienobjekt anlegen und/oder ein existierendes Gruppenrichtlinienobjekt zur Bearbeitung öffnen.
+						</simpara>
 					</listitem>
 					<listitem>
 						<simpara>
@@ -355,21 +449,31 @@ eval "$(ucr shell)"
 						</simpara>
 					</listitem>
 					<listitem>
+						<simpara>
 						Hier kann die Installation von Treibern für bestimmte Geräteklassen, Geräte-IDs oder alle Wechselgeräte eingeschränkt werden.
+						</simpara>
 					</listitem>
 					<listitem>
+						<simpara>
 						Richtlinie <emphasis>Installation von Wechselgeräten verhindern</emphasis> öffnen, <emphasis>Aktiviert</emphasis> auswählen und mit <emphasis>OK</emphasis> bestätigen.
+						</simpara>
 					</listitem>
 					<listitem>
+						<simpara>
 						Die Richtlinie <emphasis>Administratoren das Außerkraftsetzen der Richtlinien unter ... erlauben</emphasis> erlaubt Mitgliedern der Administratorengruppe die getroffenen Einschränkungen zu umgehen.
+						</simpara>
 					</listitem>
 					<listitem>
+						<simpara>
 						Noch stärkere Restriktionen sind möglich, indem man die Ausschlusslogik auf Whitelisting umstellt. Dies kann über die Richtlinie <emphasis>Installation von Geräten verhindern, die nicht in anderen Richtlinien beschrieben sind</emphasis> erreicht werden.
+						</simpara>
 					</listitem>
 				</itemizedlist>
 
 				<note>
+					<simpara>
 					Weitere Informationen zu diesem Thema liefert z.B. <ulink url="http://technet.microsoft.com/de-de/library/cc731387%28v=ws.10%29.aspx"/>.
+					</simpara>
 				</note>
 			</section>
 		</section>
@@ -394,13 +498,19 @@ eval "$(ucr shell)"
 						</simpara>
 					</listitem>
 					<listitem>
+						<simpara>
 						Richtlinie <emphasis>Proxyeinstellungen</emphasis> öffnen, <emphasis>Aktiviert</emphasis> auswählen und bestätigen.
+						</simpara>
 					</listitem>
 					<listitem>
+						<simpara>
 						Proxyadresse für <emphasis>HTTP</emphasis> sowie <emphasis>Secure</emphasis> und das entsprechende <emphasis>Port</emphasis>-Feld ausfüllen (Wert der &ucsUCRV; <envar>squid/httpport</envar>, Standard 3128)
+						</simpara>
 					</listitem>
 					<listitem>
+						<simpara>
 						Ggf. <emphasis>Für alle Adressen denselben Proxyserver verwenden</emphasis> aktivieren.
+						</simpara>
 					</listitem>
 				</itemizedlist>
 			</section>
@@ -416,7 +526,9 @@ eval "$(ucr shell)"
 						</simpara>
 					</listitem>
 					<listitem>
+						<simpara>
 						Richtlinie <emphasis>Verbindungsseite deaktivieren</emphasis> öffnen und  <emphasis>Aktiviert</emphasis> auswählen und bestätigen.
+						</simpara>
 					</listitem>
 				</itemizedlist>
 			</section>
@@ -427,7 +539,9 @@ eval "$(ucr shell)"
 				</para>
 				<itemizedlist>
 					<listitem>
+						<simpara>
 						In der Gruppenrichtlinienverwaltung ein neues Gruppenrichtlinienobjekt anlegen und/oder ein existierendes Gruppenrichtlinienobjekt zur Bearbeitung öffnen.
+						</simpara>
 					</listitem>
 					<listitem>
 						<simpara>
@@ -438,10 +552,14 @@ eval "$(ucr shell)"
 						</simpara>
 					</listitem>
 					<listitem>
+						<simpara>
 						Richtlinie <emphasis>Auswählen, wie Proxy-Server-Einstellungen angegeben werden</emphasis> öffnen und <emphasis>Aktiviert</emphasis> auswählen,
+						</simpara>
 					</listitem>
 					<listitem>
+						<simpara>
 						Im Dropdown <emphasis>System-Proxy-Einstellungen verwenden</emphasis> auswählen und bestätigen.
+						</simpara>
 					</listitem>
 				</itemizedlist>
 			</section>
@@ -455,7 +573,9 @@ eval "$(ucr shell)"
 				</para>
 				<itemizedlist>
 					<listitem>
+						<simpara>
 						In der Gruppenrichtlinienverwaltung ein neues Gruppenrichtlinienobjekt anlegen und/oder ein existierendes Gruppenrichtlinienobjekt zur Bearbeitung öffnen.
+						</simpara>
 					</listitem>
 					<listitem>
 						<simpara>
@@ -466,22 +586,34 @@ eval "$(ucr shell)"
 						</simpara>
 					</listitem>
 					<listitem>
+						<simpara>
 						Richtlinie <emphasis lang="en">Proxy Settings</emphasis> öffnen und <emphasis>Aktiviert</emphasis> auswählen,
+						</simpara>
 					</listitem>
 					<listitem>
+						<simpara>
 						Im Dropdown <emphasis lang="en">Preference State</emphasis> die Einstellung <emphasis lang="en">Locked</emphasis> auswählen,
+						</simpara>
 					</listitem>
 					<listitem>
+						<simpara>
 						Im Dropdown <emphasis lang="en">Proxy Setting</emphasis> die Einstellung <emphasis lang="en">Manual Proxy Configuration</emphasis> auswählen,
+						</simpara>
 					</listitem>
 					<listitem>
+						<simpara>
 						Im Feld <emphasis lang="en">Proxy Setting</emphasis> die Einstellung <emphasis lang="en">Manual Setting - HTTP Proxy</emphasis> eintragen,
+						</simpara>
 					</listitem>
 					<listitem>
+						<simpara>
 						Im Feld <emphasis lang="en">HTTP Proxy Port</emphasis> den Proxy Port eintragen (Wert der &ucsUCRV; <envar>squid/httpport</envar>, Standard 3128)
+						</simpara>
 					</listitem>
 					<listitem>
+						<simpara>
 						Den Dialog mit <emphasis>OK</emphasis> bestätigen.
+						</simpara>
 					</listitem>
 				</itemizedlist>
 				<para>
@@ -497,37 +629,59 @@ eval "$(ucr shell)"
 						</simpara>
 					</listitem>
 					<listitem>
+						<simpara>
 						Richtlinie <emphasis>Starten</emphasis> öffnen,
+						</simpara>
 					</listitem>
 					<listitem>
+						<simpara>
 						Im Dialog <emphasis>Eigenschaften von Starten</emphasis> auf dem Reiter <emphasis>Skripts</emphasis> die Schaltfläche <emphasis>Dateien anzeigen</emphasis> betätigen,
+						</simpara>
 					</listitem>
 					<listitem>
+						<simpara>
 						In das vom automatisch geöffneten Windows Explorer angezeigte (leere) Verzeichnis (<filename>Machine\Scripts\Startup</filename> im betreffenden GPO-Verzeichnis) die Datei <filename>firefox_startup.vbs</filename> kopieren und das Explorer-Fenster schließen.
+						</simpara>
 					</listitem>
 					<listitem>
+						<simpara>
 						Im Dialog <emphasis>Eigenschaften von Starten</emphasis> die Schaltfläche <emphasis>Hinzufügen</emphasis> betätigen,
+						</simpara>
 					</listitem>
 					<listitem>
+						<simpara>
 						Im neu geöffneten Dialog <emphasis>Hinzufügen eines Skripts</emphasis> neben dem Feld <emphasis>Skriptname</emphasis> den Namen <filename>firefox_startup.vbs</filename> eintragen und Dialog mit <emphasis>OK</emphasis> bestätigen.
+						</simpara>
 					</listitem>
 					<listitem>
+						<simpara>
 						Im Dialog <emphasis>Eigenschaften von Starten</emphasis> den Dialog mit <emphasis>OK</emphasis> bestätigen.
+						</simpara>
 					</listitem>
 					<listitem>
+						<simpara>
 						Richtlinie <emphasis>Herunterfahren</emphasis> öffnen, und dort analog zu dem Vorgehen bei <emphasis>Starten</emphasis> das Skript <filename>firefox_shutdown.vbs</filename> eintragen. Im Detail also:
+						</simpara>
 					</listitem>
 					<listitem>
+						<simpara>
 						Im Dialog <emphasis>Eigenschaften von Herunterfahren</emphasis> die Schaltfläche <emphasis>Hinzufügen</emphasis> betätigen,
+						</simpara>
 					</listitem>
 					<listitem>
+						<simpara>
 						In das vom automatisch geöffneten Windows Explorer angezeigte (leere) Verzeichnis (<filename>Machine\Scripts\Shutdown</filename> im betreffenden GPO-Verzeichis) die Datei <filename>firefox_shutdown.vbs</filename> kopieren und das Explorer-Fenster schließen.
+						</simpara>
 					</listitem>
 					<listitem>
+						<simpara>
 						Im neu geöffneten Dialog <emphasis>Hinzufügen eines Skripts</emphasis> neben dem Feld <emphasis>Skriptname</emphasis> den Namen <filename>firefox_shutdown.vbs</filename> eintragen und Dialog mit <emphasis>OK</emphasis> bestätigen.
+						</simpara>
 					</listitem>
 					<listitem>
+						<simpara>
 						Im Dialog <emphasis>Eigenschaften von Herunterfahren</emphasis> den Dialog mit <emphasis>OK</emphasis> bestätigen.
+						</simpara>
 					</listitem>
 				</itemizedlist>
 			</section>
@@ -537,13 +691,19 @@ eval "$(ucr shell)"
 		<section>
 			<title>Zugriff auf bestimmte Programme einschränken</title>
 			<note>
+				<para>
 				Die Liste der hier erwähnten Einstellungen erhebt nicht den Anspruch der Vollständigkeit. Es ist notwendig die Einstellungen entsprechend der lokalen Gegebenheiten zu testen. Insbesondere sollten folgende Microsoft-Dokumentationen beachtet werden:
+				</para>
 				<itemizedlist>
 					<listitem>
+						<simpara>
 						<ulink url="http://technet.microsoft.com/en-us/library/bb457006.aspx#EGAA"/>.
+						</simpara>
 					</listitem>
 					<listitem>
+						<simpara>
 						<ulink url="http://technet.microsoft.com/en-us/library/hh994606.aspx"/>.
+						</simpara>
 					</listitem>
 				</itemizedlist>
 			</note>
@@ -551,7 +711,9 @@ eval "$(ucr shell)"
 				<title>Kommandoeingabeaufforderung deaktivieren</title>
 				<itemizedlist>
 					<listitem>
+						<simpara>
 						In der Gruppenrichtlinienverwaltung ein neues Gruppenrichtlinienobjekt anlegen und/oder ein existierendes Gruppenrichtlinienobjekt zur Bearbeitung öffnen.
+						</simpara>
 					</listitem>
 					<listitem>
 						<simpara>
@@ -562,7 +724,9 @@ eval "$(ucr shell)"
 						</simpara>
 					</listitem>
 					<listitem>
+						<simpara>
 						Richtlinie <emphasis>Zugriff auf Eingabeaufforderung verhindern</emphasis> öffnen und  <emphasis>Aktiviert</emphasis> auswählen und bestätigen.
+						</simpara>
 					</listitem>
 				</itemizedlist>
 			</section>
@@ -570,7 +734,9 @@ eval "$(ucr shell)"
 				<title>Zugriff auf Windows-Registry-Editor deaktivieren</title>
 				<itemizedlist>
 					<listitem>
+						<simpara>
 						In der Gruppenrichtlinienverwaltung ein neues Gruppenrichtlinienobjekt anlegen und/oder ein existierendes Gruppenrichtlinienobjekt zur Bearbeitung öffnen.
+						</simpara>
 					</listitem>
 					<listitem>
 						<simpara>
@@ -581,10 +747,14 @@ eval "$(ucr shell)"
 						</simpara>
 					</listitem>
 					<listitem>
+						<simpara>
 						Richtlinie <emphasis>Zugriff auf Programme zum Bearbeiten der Registrierung verhindern</emphasis> öffnen
+						</simpara>
 					</listitem>
 					<listitem>
+						<simpara>
 						<emphasis>Aktiviert</emphasis> auswählen und den Dialog mit <emphasis>OK</emphasis> bestätigen.
+						</simpara>
 					</listitem>
 				</itemizedlist>
 			</section>
@@ -603,19 +773,27 @@ eval "$(ucr shell)"
 					Die <foreignphrase>Software Restriction Policies</foreignphrase> greifen auch in die Bearbeitung von Login- und Logoff-Skripten ein. Alle dort verwendeten Programme bzw. Programmpfade sollten auf Ausführbarkeit getestet werden.
 				</para>
 				<note>
+					<simpara>
 					Die Liste der hier erwähnten Einstellungen erhebt nicht den Anspruch der Vollständigkeit. Es ist notwendig die Einstellungen entsprechend der lokalen Gegebenheiten zu testen. Insbesondere sollte folgende Microsoft-Dokumentation beachtet werden:
+					</simpara>
 					<itemizedlist>
 						<listitem>
+							<simpara>
 								<ulink url="http://technet.microsoft.com/en-us/library/bb457006.aspx#EGAA"/>.
+							</simpara>
 						</listitem>
 						<listitem>
+							<simpara>
 								<ulink url="http://technet.microsoft.com/en-us/library/hh994606.aspx"/>.
+							</simpara>
 						</listitem>
 					</itemizedlist>
 				</note>
 				<itemizedlist>
 					<listitem>
+						<simpara>
 						In der Gruppenrichtlinienverwaltung ein neues Gruppenrichtlinienobjekt anlegen und/oder ein existierendes Gruppenrichtlinienobjekt zur Bearbeitung öffnen.
+						</simpara>
 					</listitem>
 					<listitem>
 						<simpara>
@@ -626,37 +804,54 @@ eval "$(ucr shell)"
 						</simpara>
 					</listitem>
 					<listitem>
+						<simpara>
 						Rechtsklick auf <emphasis>Neue Richtlinien für Softwareeinschränkung erstellen</emphasis>
+						</simpara>
 					</listitem>
 					<listitem>
+						<simpara>
 						Im rechten Fensterteil <emphasis>Erzwingen</emphasis> öffnen,
+						</simpara>
 					</listitem>
 					<listitem>
+						<simpara>
 						Einstellung <emphasis>Alle Benutzer außer den lokalen Administratoren</emphasis> auswählen und mit <emphasis>OK</emphasis> bestätigen.
+						</simpara>
 					</listitem>
 					<listitem>
+						<simpara>
 						Im rechten Fensterteil <emphasis>Sicherheitsstufen</emphasis> öffnen.
+						</simpara>
 					</listitem>
 					<listitem>
+						<simpara>
 						<emphasis>Nicht erlaubt</emphasis> per Doppelklick öffnen.
+						</simpara>
 					</listitem>
 					<listitem>
+						<simpara>
 						<emphasis>Als Standard</emphasis> auswählen und mit <emphasis>OK</emphasis> bestätigen.
+						</simpara>
 					</listitem>
 					<listitem>
+						<simpara>
 						Im rechten Fensterteil <emphasis>Zusätzliche Regeln</emphasis> öffnen.
+						</simpara>
 					</listitem>
 					<listitem>
+						<simpara>
 						Rechtsklick auf <emphasis>Neue Pfadregel...</emphasis>
+						</simpara>
 					</listitem>
 					<listitem>
+						<simpara>
 						In das Eingabefeld <emphasis>Pfad</emphasis> den UNC-Pfad <filename>\\%USERDNSDOMAIN%\SysVol</filename> eingeben, damit Logon- und GPO-Skripte ausgeführt werden können.
+						</simpara>
 					</listitem>
 					<listitem>
 						<simpara>
 							In der Dropdown-Liste <emphasis>Nicht eingeschränkt</emphasis> auswählen und mit <emphasis>OK</emphasis> bestätigen.
 						</simpara>
-						<simpara>
 							<table>
 								<title>Beispiele für weitere Pfadregeln</title>
 								<tgroup cols="2">
@@ -712,13 +907,11 @@ eval "$(ucr shell)"
 									</tbody>
 								</tgroup>
 							</table>
-						</simpara>
 					</listitem>
 					<listitem>
 						<simpara>
 							Es kann sinnvoll sein zusätzlich Programm-Pfade als <emphasis>Nicht erlaubt</emphasis> einzustufen, z.B.:
 						</simpara>
-						<simpara>
 							<table>
 								<title>Beispiele für weitere Pfadregeln</title>
 								<tgroup cols="2">
@@ -766,9 +959,9 @@ eval "$(ucr shell)"
 									</tbody>
 								</tgroup>
 							</table>
-						</simpara>
 					</listitem>
 					<listitem>
+						<simpara>
 						Es sollte beachtet werden, dass schreibbare Verzeichnisse, auf die der Zugriff nicht per Software Restriction Policy eingeschränkt ist, Benutzern die Möglichkeit geben, Programmdateien dort abzulegen und so die definierten Regeln zu umgehen
 						<footnote id="Application_Whitelisting_Using_SRP2">
 							<para>
@@ -776,6 +969,7 @@ eval "$(ucr shell)"
 								<ulink url="http://www.nsa.gov/ia/_files/os/win2k/Application_Whitelisting_Using_SRP.pdf"/>
 							</para>
 						</footnote>.
+						</simpara>
 					</listitem>
 				</itemizedlist>
 			</section>

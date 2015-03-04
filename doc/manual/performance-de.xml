@@ -122,28 +122,22 @@
 	  <systemitem class="username">root</systemitem> durchgeführt werden:
   	  <itemizedlist>
   		<listitem>
-  		  <simpara>
 			<programlisting language="sh">
 /usr/share/ucs-school-import/scripts/create_ou \
     &lt;Schul-OU&gt; &lt;Name des neuen Schul-DCs&gt;
   			</programlisting>
-  		  </simpara>
   		</listitem>
   		<listitem>
-  		  <simpara>
 			<programlisting language="sh">
 /usr/share/ucs-school-import/scripts/move_domaincontroller_to_ou \
     --ou &lt;Schul-OU&gt; --dcname &lt;Name des neuen Schul-DCs&gt;
   			</programlisting>
-  		  </simpara>
   		</listitem>
   		<listitem>
-  		  <simpara>
 			<programlisting language="sh">
 cd /usr/share/ucs-school-import/scripts
 scp ucs-school-join-secondary-samba4 root@&lt;Name des neuen Schul-DCs&gt;:
   			</programlisting>
-  		  </simpara>
   		</listitem>
   	  </itemizedlist>
   	</para>
@@ -152,11 +146,9 @@ scp ucs-school-join-secondary-samba4 root@&lt;Name des neuen Schul-DCs&gt;:
 	  <systemitem class="username">root</systemitem> ausgeführt werden:
   	  <itemizedlist>
   		<listitem>
-  		  <simpara>
 			<programlisting language="sh">
 /root/ucs-school-join-secondary-samba4 &lt;IP des primären Schul-DCs&gt;
   			</programlisting>
-  		  </simpara>
   		</listitem>
   	  </itemizedlist>
   	</para>

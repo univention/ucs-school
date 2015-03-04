@@ -279,6 +279,7 @@
 			des UCC-Desktop-Images vorgenommen. Dabei werden vom UCC-System Informationen für den
 			Domänenbeitritt abgefragt. Sofern die oben genannte Richtlinie eingerichtet wurde, wird beim Starten
 			des UCC-Systems das Integrationspaket nachinstalliert.
+		  </simpara>
 			<caution>
 			  <para>
 				Für die Nachinstallation des Integrationspakets muss das UCC-System Zugriff auf die
@@ -286,7 +287,6 @@
 				DHCP-Routing-Einstellungen müssen ggf. vor dem ersten Bootvorgang eingerichtet werden.
 			  </para>
 			</caution>
-		  </simpara>
 		</listitem>
 		<listitem>
 		  <simpara>
