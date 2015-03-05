@@ -2,7 +2,7 @@
 ## -*- coding: utf-8 -*-
 ## desc: valid hostname
 ## roles: [domaincontroller_master]
-## tags: [apptest,ucsschool]
+## tags: [SKIP-UCSSCHOOL,apptest,ucsschool]
 ## exposure: dangerous
 ## packages: []
 
