@@ -35,43 +35,38 @@ def removeListFromOther(big, small):
 	big_copy = big[:]
 	for item in big_copy:
 		if item in small:
-			big.remove(item)
-	return big
+			big_copy.remove(item)
+	return big_copy
 
 def checkModules(modules, userType, serverRole, singleMaster):
-	ignoreList = [
-			('lib', None)
-			]
-	# Anmeldung als Schuler auf DC Master
-	# Anmeldung als Schuler auf Schul-DC
-	# Anmeldung als Mitarbeiter auf DC Master
-	# Anmeldung als Mitarbeiter auf Schul-DC sollte nicht funktionieren
+	defaultList = [('passwordchange', None)]
+	ignoreList = [('lib', None)]
 
 	# Lehrer auf dem DC Master
-	dc_teacher = [
+	dc_teacher = defaultList + [
 			('schoolgroups', 'workgroup-admin'),
 			('schoolusers', 'student')
 			]
 	# Lehrer auf dem Schul-DC
-	dcs_teacher = [
+	dcs_teacher = defaultList + [
 			('computerroom', None),
 			('distribution', 'teacher'),
 			('schoolexam', None),
 			('helpdesk', None),
 			('printermoderation', None),
 			('schoolgroups', 'workgroup-admin'),
-			('schoolusers', 'student')
+			('schoolusers', 'student'),
 			]
 	# Schuladmin sollte auf dem DC Master
-	dc_schooladmin = [
+	dc_schooladmin = defaultList + [
 			('schoolusers', 'student'),
 			('schoolusers', 'teacher'),
 			('schoolrooms', None),
 			('schoolgroups', 'workgroup-admin'),
-			('schoolgroups', 'class')
+			('schoolgroups', 'class'),
 			]
 	# Schuladmin sollte auf dem Schul-DC
-	dcs_schooladmin = [
+	dcs_schooladmin = defaultList + [
 			('computerroom', None),
 			('distribution', 'admin'),
 			('schoolexam', None),
@@ -84,10 +79,10 @@ def checkModules(modules, userType, serverRole, singleMaster):
 			('schoolgroups', 'workgroup-admin'),
 			('internetrules', 'admin'),
 			('internetrules', 'assign'),
-			('lessontimes', None)
+			('lessontimes', None),
 			]
 	# Domanenadministrator auf dem DC Master
-	dc_domainadmin = [
+	dc_domainadmin = defaultList + [
 			('udm', 'users/user'),
 			('udm', 'groups/group'),
 			('udm', 'computers/computer'),
@@ -100,7 +95,7 @@ def checkModules(modules, userType, serverRole, singleMaster):
 			('schoolgroups', 'workgroup-admin'),
 			]
 	# Domanenadministrator auf dem Schul-DC
-	dcs_domainadmin = [
+	dcs_domainadmin = defaultList + [
 			('computerroom', None),
 			('distribution', 'admin'),
 			('schoolexam', None),
@@ -114,21 +109,21 @@ def checkModules(modules, userType, serverRole, singleMaster):
 			('schoolgroups', 'workgroup-admin'),
 			('internetrules', 'admin'),
 			('internetrules', 'assign'),
-			('lessontimes', None)
+			('lessontimes', None),
 			]
 	checks = {
-			('student', 'domaincontroller_master', False): [],
-			('student', 'domaincontroller_slave', False): [],
-			('staff', 'domaincontroller_master', False): [],
+			('student', 'domaincontroller_master', False): defaultList,
+			('student', 'domaincontroller_slave', False): defaultList,
+			('staff', 'domaincontroller_master', False): defaultList,
 			('teacher', 'domaincontroller_master', False): dc_teacher,
 			('teacher', 'domaincontroller_slave', False): dcs_teacher,
 			('schooladmin', 'domaincontroller_master', False): dc_schooladmin,
 			('schooladmin', 'domaincontroller_slave', False): dcs_schooladmin,
 			('domainadmin', 'domaincontroller_master', False): dc_domainadmin,
 			('domainadmin', 'domaincontroller_slave', False): dcs_domainadmin,
-			('student', 'domaincontroller_master', True): [],
-			('student', 'domaincontroller_slave', True): [],
-			('staff', 'domaincontroller_master', True): [],
+			('student', 'domaincontroller_master', True): defaultList,
+			('student', 'domaincontroller_slave', True): defaultList,
+			('staff', 'domaincontroller_master', True): defaultList,
 			('teacher', 'domaincontroller_master', True): listUnion(dc_teacher, dcs_teacher),
 			('schooladmin', 'domaincontroller_master', True): listUnion(dc_schooladmin, dcs_schooladmin),
 			('domainadmin', 'domaincontroller_master', True): listUnion(dc_domainadmin, dcs_domainadmin)
@@ -181,6 +176,7 @@ def main():
 					# staff is not able to login to dc-slave
 					if (userType != 'staff' or serverRole != 'domaincontroller_slave'):
 						con.auth(user, 'univention')
+						print 'usertype=', userType
 						modules = listAllModules(con)
 						checkModules(modules, userType, serverRole, singleMaster)
 
