@@ -35,24 +35,20 @@ def removeListFromOther(big, small):
 	big_copy = big[:]
 	for item in big_copy:
 		if item in small:
-			big.remove(item)
-	return big
+			big_copy.remove(item)
+	return big_copy
 
 def checkModules(modules, userType, serverRole, singleMaster):
 	defaultList = [('passwordchange', None)]
 	ignoreList = [('lib', None)]
-	# Anmeldung als Schuler auf DC Master
-	# Anmeldung als Schuler auf Schul-DC
-	# Anmeldung als Mitarbeiter auf DC Master
-	# Anmeldung als Mitarbeiter auf Schul-DC sollte nicht funktionieren
 
 	# Lehrer auf dem DC Master
-	dc_teacher = [
+	dc_teacher = defaultList + [
 			('schoolgroups', 'workgroup-admin'),
 			('schoolusers', 'student')
 			]
 	# Lehrer auf dem Schul-DC
-	dcs_teacher = [
+	dcs_teacher = defaultList + [
 			('computerroom', None),
 			('distribution', 'teacher'),
 			('schoolexam', None),
@@ -60,10 +56,9 @@ def checkModules(modules, userType, serverRole, singleMaster):
 			('printermoderation', None),
 			('schoolgroups', 'workgroup-admin'),
 			('schoolusers', 'student'),
-			('passwordchange', None)
 			]
 	# Schuladmin sollte auf dem DC Master
-	dc_schooladmin = [
+	dc_schooladmin = defaultList + [
 			('schoolusers', 'student'),
 			('schoolusers', 'teacher'),
 			('schoolrooms', None),
@@ -71,7 +66,7 @@ def checkModules(modules, userType, serverRole, singleMaster):
 			('schoolgroups', 'class'),
 			]
 	# Schuladmin sollte auf dem Schul-DC
-	dcs_schooladmin = [
+	dcs_schooladmin = defaultList + [
 			('computerroom', None),
 			('distribution', 'admin'),
 			('schoolexam', None),
@@ -85,10 +80,9 @@ def checkModules(modules, userType, serverRole, singleMaster):
 			('internetrules', 'admin'),
 			('internetrules', 'assign'),
 			('lessontimes', None),
-			('passwordchange', None)
 			]
 	# Domanenadministrator auf dem DC Master
-	dc_domainadmin = [
+	dc_domainadmin = defaultList + [
 			('udm', 'users/user'),
 			('udm', 'groups/group'),
 			('udm', 'computers/computer'),
@@ -101,7 +95,7 @@ def checkModules(modules, userType, serverRole, singleMaster):
 			('schoolgroups', 'workgroup-admin'),
 			]
 	# Domanenadministrator auf dem Schul-DC
-	dcs_domainadmin = [
+	dcs_domainadmin = defaultList + [
 			('computerroom', None),
 			('distribution', 'admin'),
 			('schoolexam', None),
@@ -116,7 +110,6 @@ def checkModules(modules, userType, serverRole, singleMaster):
 			('internetrules', 'admin'),
 			('internetrules', 'assign'),
 			('lessontimes', None),
-			('passwordchange', None)
 			]
 	checks = {
 			('student', 'domaincontroller_master', False): defaultList,
