@@ -1,3 +1,9 @@
+ucs-test-ucsschool (1.0.104-1) unstable; urgency=low
+
+  * Bug #35316: dc_slave position differ between multiserver and singleserver
+
+ -- Ammar Najjar <najjar@univention.de>  Mon, 09 Mar 2015 11:44:03 +0100
+
 ucs-test-ucsschool (1.0.103-1) unstable; urgency=low
 
   * Bug #34958: add passwordchange module to some user types
