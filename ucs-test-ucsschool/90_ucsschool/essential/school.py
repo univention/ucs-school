@@ -32,7 +32,7 @@ class RemoveFail(Exception):
 class EditFail(Exception):
 	pass
 
-def create_dc_slave(udm):
+def create_dc_slave(udm, school=None):
 	with ucr_test.UCSTestConfigRegistry() as ucr:
 		account = utils.UCSTestDomainAdminCredentials()
 		admin = account.binddn
@@ -50,11 +50,14 @@ def create_dc_slave(udm):
 						'.'.join(reversed(ip.split('.')[:3])), ucr.get('ldap/base'))
 
 		print 'Creating DC Slave (%s)' % name
+		position = 'cn=dc,cn=computers,%s' % ldap_base
+		if not ucr.is_true('ucsschool/singlemaster', False):
+			position = 'cn=dc,cn=server,cn=computers,ou=%s,%s' % (school, ldap_base)
 		dn = udm.create_object(
 				'computers/domaincontroller_slave',
 				binddn = admin,
 				bindpwd = passwd,
-				position = 'cn=dc,cn=computers,%s' % ldap_base,
+				position = position,
 				ip = ip,
 				name = name,
 				options = [
