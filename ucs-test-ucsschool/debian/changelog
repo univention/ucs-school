@@ -1,3 +1,9 @@
+ucs-test-ucsschool (2.0.28-1) unstable; urgency=low
+
+  * Bug #34958: add passwordchange module to some user types
+
+ -- Ammar Najjar <najjar@univention.de>  Mon, 09 Mar 2015 09:53:17 +0100
+
 ucs-test-ucsschool (2.0.27-3) unstable; urgency=medium
 
   * 90_ucsschool/97_samba4_dns_srv_replication: disabled the test as it fails
