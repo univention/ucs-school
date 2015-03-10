@@ -3,7 +3,7 @@
 ## bugs: [34225]
 ## roles: [domaincontroller_slave, domaincontroller_backup]
 ## packages: [univention-samba4]
-## tags: [apptest, ucsschool]
+## tags: [SKIP-UCSSCHOOL,apptest, ucsschool]
 ## exposure: dangerous
 
 from sys import exit
@@ -190,7 +190,7 @@ class TestSYSVOLReplicationMultiSchool(TestSamba4):
 
 		# define localhost explicitly:
 		host = 'ldap://' + self.UCR.get('hostname') + '.' + self.UCR.get('domainname')
-		
+
 		cmd = ("samba-tool", "gpo", "create", display_name,
 			   "-H", host,
 			   "--username=" + self.admin_username,
