@@ -1,20 +1,20 @@
 #!/usr/share/ucs-test/runner python
 ## desc: Rename Class Function
 ## roles: [domaincontroller_master, domaincontroller_slave]
-## tags: [apptest, ucsschool]
+## tags: [SKIP-UCSSCHOOL,apptest, ucsschool]
 ## exposure: dangerous
-## packages: [ucs-school-import]
+## packages: [ucs-school-import, ucs-school-singlemaster]
 
 from univention.uldap import getMachineConnection
 import glob
 import grp
 import os
 import pwd
-import subprocess 
-import tempfile 
-import univention.testing.strings as uts 
-import univention.testing.ucr as ucr_test 
-import univention.testing.ucsschool as utu 
+import subprocess
+import tempfile
+import univention.testing.strings as uts
+import univention.testing.ucr as ucr_test
+import univention.testing.ucsschool as utu
 import univention.testing.utils as utils
 
 BACKUP_PATH = '/home/backup/groups'
@@ -170,7 +170,7 @@ def main():
 			old_name = '%s-%s' % (school, uts.random_name())
 			new_name = '%s-%s' % (school, uts.random_name())
 			test_rename_class(schoolenv, school, old_name, new_name, should_fail=True)
-			
+
 			old_name = '%s-%s' % (school, uts.random_name())
 			new_name = '%s-%s' % (school, uts.random_name())
 			create_two_users(schoolenv, school, old_name)
