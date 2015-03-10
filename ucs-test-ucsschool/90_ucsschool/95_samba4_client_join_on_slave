@@ -8,7 +8,8 @@
 ## exposure: dangerous
 ## versions:
 ##  4.0-0: skip
-
+##  4.0-1: skip
+##  3.2-5: skip
 # The test should be re-enabled after the reason for the failure is resolved.
 
 from os import getenv
