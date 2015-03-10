@@ -2,11 +2,11 @@
 ## desc: Test the Samba SID allocation.
 ## bugs: [34221]
 ## roles:
-##  - domaincontroller_master
-##  - domaincontroller_backup
-##  - domaincontroller_slave
+## - domaincontroller_master
+## - domaincontroller_backup
+## - domaincontroller_slave
 ## packages: [univention-s4-connector, univention-samba4]
-## tags: [apptest, ucsschool]
+## tags: [SKIP-UCSSCHOOL,apptest, ucsschool]
 ## exposure: dangerous
 
 from os import getenv
@@ -24,251 +24,251 @@ from univention.testing.strings import random_username
 
 class TestS4SIDAllocation(TestSamba4):
 
-    def __init__(self):
-        """
-        Test class constructor.
-        """
-        super(TestS4SIDAllocation, self).__init__()
+	def __init__(self):
+		"""
+		Test class constructor.
+		"""
+		super(TestS4SIDAllocation, self).__init__()
 
-        self.test_remotely = None
-        self.LdapConnection = getMachineConnection(ldap_master=False)
+		self.test_remotely = None
+		self.LdapConnection = getMachineConnection(ldap_master=False)
 
-    def start_stop_s4_connector_on_master(self, action):
-        """
-        Makes a UMC request to DC-Master to stop or start the S4-Connector.
-        """
-        print("\nMaking a UMC request to %s the S4-Connector service "
-              "on the DC-Master\n" % action)
-        try:
-            request_result = self.UMCConnection.request('services/' + action,
-                                                   ['univention-s4-connector'])
-            if not request_result:
-                utils.fail("Request 'services/%s' failed, no response "
-                           "from hostname '%s'" % (action, self.ldap_master))
-            if not request_result['success']:
-                utils.fail("Request 'services/%s' failed, no success in "
-                           "response. Hostname '%s', response '%s'" %
-                           (action, self.ldap_master, request_result))
-        except (HTTPException, NotImplementedError, KeyError) as exc:
-            utils.fail("Exception while making 'services/%s' UMC request: %s"
-                       % (action, exc))
+	def start_stop_s4_connector_on_master(self, action):
+		"""
+		Makes a UMC request to DC-Master to stop or start the S4-Connector.
+		"""
+		print("\nMaking a UMC request to %s the S4-Connector service "
+			  "on the DC-Master\n" % action)
+		try:
+			request_result = self.UMCConnection.request('services/' + action,
+												   ['univention-s4-connector'])
+			if not request_result:
+				utils.fail("Request 'services/%s' failed, no response "
+						   "from hostname '%s'" % (action, self.ldap_master))
+			if not request_result['success']:
+				utils.fail("Request 'services/%s' failed, no success in "
+						   "response. Hostname '%s', response '%s'" %
+						   (action, self.ldap_master, request_result))
+		except (HTTPException, NotImplementedError, KeyError) as exc:
+			utils.fail("Exception while making 'services/%s' UMC request: %s"
+					   % (action, exc))
 
-    def start_stop_s4_connector(self, connector_should_run):
-        """
-        Starts or stops the S4 connector depending on given arg (True or False)
-        also for the DC-Master via UMC if the 'self.test_remotely' is 'True'.
-        """
-        if connector_should_run is True:
-            if self.test_remotely:
-                # start the service on DC-Master
-                self.start_stop_s4_connector_on_master('start')
-            # start service locally
-            utils.start_s4connector()
+	def start_stop_s4_connector(self, connector_should_run):
+		"""
+		Starts or stops the S4 connector depending on given arg (True or False)
+		also for the DC-Master via UMC if the 'self.test_remotely' is 'True'.
+		"""
+		if connector_should_run is True:
+			if self.test_remotely:
+				# start the service on DC-Master
+				self.start_stop_s4_connector_on_master('start')
+			# start service locally
+			utils.start_s4connector()
 
-        elif connector_should_run is False:
-            if self.test_remotely:
-                # stop the service on DC-Master
-                self.start_stop_s4_connector_on_master('stop')
-            # stop service locally
-            utils.stop_s4connector()
+		elif connector_should_run is False:
+			if self.test_remotely:
+				# stop the service on DC-Master
+				self.start_stop_s4_connector_on_master('stop')
+			# stop service locally
+			utils.stop_s4connector()
 
-        else:
-            print("\nUnknown state '%s' is given for S4 connector, "
-                  "accepted 'True' to start or 'False' to stop."
-                  % connector_should_run)
+		else:
+			print("\nUnknown state '%s' is given for S4 connector, "
+				  "accepted 'True' to start or 'False' to stop."
+				  % connector_should_run)
 
-    def get_sid_via_ldbsearch(self, user_dn, ldburl):
-        """
-        Returns the 'objectSid' as stored in the given 'ldburl' for the given
-        'user_dn'.
-        """
-        user_dn = user_dn.replace('uid=', 'cn=', 1)
+	def get_sid_via_ldbsearch(self, user_dn, ldburl):
+		"""
+		Returns the 'objectSid' as stored in the given 'ldburl' for the given
+		'user_dn'.
+		"""
+		user_dn = user_dn.replace('uid=', 'cn=', 1)
 
-        print("\nSearching for the 'objectSid' of the user with DN: '%s' "
-              "in the database located at '%s' using 'ldbsearch'"
-              % (user_dn, ldburl))
+		print("\nSearching for the 'objectSid' of the user with DN: '%s' "
+			  "in the database located at '%s' using 'ldbsearch'"
+			  % (user_dn, ldburl))
 
-        cmd = ('ldbsearch', '-H', ldburl,
-               '--user=' + self.admin_username + '%' + self.admin_password,
-               '-b', user_dn)
+		cmd = ('ldbsearch', '-H', ldburl,
+			   '--user=' + self.admin_username + '%' + self.admin_password,
+			   '-b', user_dn)
 
-        print "Executing command:", cmd
-        stdout, stderr = self.create_and_run_process(cmd)
-        if stderr:
-            utils.fail("An error occured while performing a 'ldbsearch' for a "
-                       "user with DN '%s'. STDERR: '%s'"
-                       % (user_dn, stderr))
-        if not stdout.strip():
-            utils.fail("The 'ldbsearch' did not produce any output to the "
-                       "STDOUT, while an LDB entry was expected.")
+		print "Executing command:", cmd
+		stdout, stderr = self.create_and_run_process(cmd)
+		if stderr:
+			utils.fail("An error occured while performing a 'ldbsearch' for a "
+					   "user with DN '%s'. STDERR: '%s'"
+					   % (user_dn, stderr))
+		if not stdout.strip():
+			utils.fail("The 'ldbsearch' did not produce any output to the "
+					   "STDOUT, while an LDB entry was expected.")
 
-        sed_stdout = self.sed_for_key(stdout, "^objectSid: ")
-        sed_stdout = sed_stdout.strip()
-        if not sed_stdout:
-            utils.fail("The sed process did not return any output, while the "
-                       "'objectSid' was expected.")
-        return sed_stdout
+		sed_stdout = self.sed_for_key(stdout, "^objectSid: ")
+		sed_stdout = sed_stdout.strip()
+		if not sed_stdout:
+			utils.fail("The sed process did not return any output, while the "
+					   "'objectSid' was expected.")
+		return sed_stdout
 
-    def get_sid_from_ldap(self, user_dn):
-        """
-        Opens the uldap machine connection and returns the 'sambaSID' for the
-        user with a given 'user_dn'.
-        """
-        print("\nLooking for a 'sambaSID' of a user with a DN: '%s' "
-              "in the LDAP" % user_dn)
-        try:
-            samba_sid = self.LdapConnection.get(user_dn)['sambaSID'][0]
-            if not samba_sid:
-                utils.fail("The 'sambaSID' is empty in the LDAP.")
-        except (KeyError, IndexError) as exc:
-            utils.fail("An error occured while trying to get the 'sambaSID' "
-                       "for the user with a DN '%s' from the LDAP: '%s'"
-                       % (user_dn, exc))
+	def get_sid_from_ldap(self, user_dn):
+		"""
+		Opens the uldap machine connection and returns the 'sambaSID' for the
+		user with a given 'user_dn'.
+		"""
+		print("\nLooking for a 'sambaSID' of a user with a DN: '%s' "
+			  "in the LDAP" % user_dn)
+		try:
+			samba_sid = self.LdapConnection.get(user_dn)['sambaSID'][0]
+			if not samba_sid:
+				utils.fail("The 'sambaSID' is empty in the LDAP.")
+		except (KeyError, IndexError) as exc:
+			utils.fail("An error occured while trying to get the 'sambaSID' "
+					   "for the user with a DN '%s' from the LDAP: '%s'"
+					   % (user_dn, exc))
 
-        return samba_sid
+		return samba_sid
 
-    def get_samba_rid_via_udm(self, username):
-        """
-        Lists the 'username' user attributes using UDM and
-        returns the sambaRID out of them.
-        """
-        print "\nLooking for a 'sambaRID' of a user with a name: %s" % username
+	def get_samba_rid_via_udm(self, username):
+		"""
+		Lists the 'username' user attributes using UDM and
+		returns the sambaRID out of them.
+		"""
+		print "\nLooking for a 'sambaRID' of a user with a name: %s" % username
 
-        cmd = ('udm', 'users/user', 'list',
-               '--filter', 'username=%s' % username)
+		cmd = ('udm', 'users/user', 'list',
+			   '--filter', 'username=%s' % username)
 
-        print "Executing command:", cmd
-        stdout, stderr = self.create_and_run_process(cmd)
+		print "Executing command:", cmd
+		stdout, stderr = self.create_and_run_process(cmd)
 
-        if stderr:
-            utils.fail("An error occured while looking for a user '%s' "
-                       "via UDM" % username)
-        if not stdout.strip():
-            utils.fail("Executed UDM command did not produce any output, "
-                       "while '%s' user attributes were expected" % username)
+		if stderr:
+			utils.fail("An error occured while looking for a user '%s' "
+					   "via UDM" % username)
+		if not stdout.strip():
+			utils.fail("Executed UDM command did not produce any output, "
+					   "while '%s' user attributes were expected" % username)
 
-        sed_stdout = self.sed_for_key(stdout, "^  sambaRID: ")
-        sed_stdout = sed_stdout.strip()
-        if not sed_stdout:
-            utils.fail("The sed process did not return any output, while the "
-                       "'sambaRID' was expected.")
-        return sed_stdout
+		sed_stdout = self.sed_for_key(stdout, "^  sambaRID: ")
+		sed_stdout = sed_stdout.strip()
+		if not sed_stdout:
+			utils.fail("The sed process did not return any output, while the "
+					   "'sambaRID' was expected.")
+		return sed_stdout
 
-    def dc_master_has_s4(self):
-        """
-        Returns 'True' if the DC-Master has S4 running or False otherwise.
-        Looking in the LDAP for 'Samba 4' in DC-Master 'univentionService'-s.
-        """
-        try:
-            dc_master = self.ldap_master.replace(self.UCR['domainname'],
-                                                 '', 1)[:-1]
-            dc_master_dn = ("cn=%s,cn=dc,cn=computers,%s"
-                            % (dc_master, self.UCR.get('ldap/base')))
-            master_services = self.LdapConnection.get(
-                                             dc_master_dn)['univentionService']
+	def dc_master_has_s4(self):
+		"""
+		Returns 'True' if the DC-Master has S4 running or False otherwise.
+		Looking in the LDAP for 'Samba 4' in DC-Master 'univentionService'-s.
+		"""
+		try:
+			dc_master = self.ldap_master.replace(self.UCR['domainname'],
+												 '', 1)[:-1]
+			dc_master_dn = ("cn=%s,cn=dc,cn=computers,%s"
+							% (dc_master, self.UCR.get('ldap/base')))
+			master_services = self.LdapConnection.get(
+											 dc_master_dn)['univentionService']
 
-            if 'Samba 4' in master_services:
-                print("\nThe DC-Master has Samba4 running, the test will "
-                      "also check the SID for the test user on the DC-Master")
-                return True
+			if 'Samba 4' in master_services:
+				print("\nThe DC-Master has Samba4 running, the test will "
+					  "also check the SID for the test user on the DC-Master")
+				return True
 
-        except KeyError as exc:
-            utils.fail("An error occured while trying to get the DC-Master "
-                       "'univentionServices': '%s'" % exc)
+		except KeyError as exc:
+			utils.fail("An error occured while trying to get the DC-Master "
+					   "'univentionServices': '%s'" % exc)
 
-    def determine_test_scenario(self):
-        """
-        Determines if the test should perform checks only locally, or
-        if it should also check the 'SambaSID' on the remote DC.
-        Creates the UMC connection to DC-Master when checks should
-        also be performed there.
-        """
-        if self.UCR.get('server/role') == 'domaincontroller_master':
-            print "\nCurrent role is DC-Master, performing only local checks"
-            self.test_remotely = False
-        elif not self.dc_master_has_s4():
-            print "\nThe DC-Master has no Samba4, performing only local checks"
-            self.test_remotely = False
-        else:
-            self.test_remotely = True
-            self.create_umc_connection_authenticate()
+	def determine_test_scenario(self):
+		"""
+		Determines if the test should perform checks only locally, or
+		if it should also check the 'SambaSID' on the remote DC.
+		Creates the UMC connection to DC-Master when checks should
+		also be performed there.
+		"""
+		if self.UCR.get('server/role') == 'domaincontroller_master':
+			print "\nCurrent role is DC-Master, performing only local checks"
+			self.test_remotely = False
+		elif not self.dc_master_has_s4():
+			print "\nThe DC-Master has no Samba4, performing only local checks"
+			self.test_remotely = False
+		else:
+			self.test_remotely = True
+			self.create_umc_connection_authenticate()
 
-    def main(self):
-        """
-        Tests that SambaSID allocation is correct.
-        When run on DC-Master performs only local check;
-        When run on DC-Backup or DC-Slave also performs the remote
-        check on the DC-Master;
-        Also checks the 'NextRID' allocation.
-        """
-        self.get_ucr_test_credentials()
+	def main(self):
+		"""
+		Tests that SambaSID allocation is correct.
+		When run on DC-Master performs only local check;
+		When run on DC-Backup or DC-Slave also performs the remote
+		check on the DC-Master;
+		Also checks the 'NextRID' allocation.
+		"""
+		self.get_ucr_test_credentials()
 
-        UDM = UCSTestUDM()
+		UDM = UCSTestUDM()
 
-        test_username = 'ucs_school_test_user_' + random_username(8)
-        test_user_dn = ''
+		test_username = 'ucs_school_test_user_' + random_username(8)
+		test_user_dn = ''
 
-        try:
-            self.ldap_master = self.UCR.get('ldap/master')
-            sam_ldb_url = self.get_samba_sam_ldb_path()
+		try:
+			self.ldap_master = self.UCR.get('ldap/master')
+			sam_ldb_url = self.get_samba_sam_ldb_path()
 
-            # determine if test should take into account a remote DC
-            self.determine_test_scenario()
+			# determine if test should take into account a remote DC
+			self.determine_test_scenario()
 
-            # stop the S4-Connector
-            self.start_stop_s4_connector(False)
+			# stop the S4-Connector
+			self.start_stop_s4_connector(False)
 
-            # create regular user for the test
-            test_user_dn = UDM.create_user(password='univention',
-                                           username=test_username)[0]
+			# create regular user for the test
+			test_user_dn = UDM.create_user(password='univention',
+										   username=test_username)[0]
 
-            print("\nComparing the SID for test user as stored in LDAP "
-                  "and Samba4:")
-            # get SID from LDAP
-            ldap_sid = self.get_sid_from_ldap(test_user_dn)
+			print("\nComparing the SID for test user as stored in LDAP "
+				  "and Samba4:")
+			# get SID from LDAP
+			ldap_sid = self.get_sid_from_ldap(test_user_dn)
 
-            # start the S4-Connector
-            self.start_stop_s4_connector(True)
-            sleep(30)  # wait for replication
+			# start the S4-Connector
+			self.start_stop_s4_connector(True)
+			sleep(30)  # wait for replication
 
-            # get SID from Samba4
-            samba_sid = self.get_sid_via_ldbsearch(test_user_dn, sam_ldb_url)
+			# get SID from Samba4
+			samba_sid = self.get_sid_via_ldbsearch(test_user_dn, sam_ldb_url)
 
-            if ldap_sid != samba_sid:
-                utils.fail("The SID in the LDAP and Samba4 for the test user "
-                           "'%s' are different: '%s' vs. '%s' in Samba4 LDB."
-                           % (test_username, ldap_sid, samba_sid))
+			if ldap_sid != samba_sid:
+				utils.fail("The SID in the LDAP and Samba4 for the test user "
+						   "'%s' are different: '%s' vs. '%s' in Samba4 LDB."
+						   % (test_username, ldap_sid, samba_sid))
 
-            print "\nComparing the RID in Samba4 and UDM:"
-            udm_rid = self.get_samba_rid_via_udm(test_username)
-            next_rid = samba_sid.split('-')[-1]  # the last part of SID
+			print "\nComparing the RID in Samba4 and UDM:"
+			udm_rid = self.get_samba_rid_via_udm(test_username)
+			next_rid = samba_sid.split('-')[-1]  # the last part of SID
 
-            if udm_rid != next_rid:
-                utils.fail("The RID in the UDM and Samba4 for the test user "
-                           "'%s' are different: '%s' vs. '%s' in Samba4 LDB."
-                           % (test_username, udm_rid, next_rid))
+			if udm_rid != next_rid:
+				utils.fail("The RID in the UDM and Samba4 for the test user "
+						   "'%s' are different: '%s' vs. '%s' in Samba4 LDB."
+						   % (test_username, udm_rid, next_rid))
 
-            # perform remote check when needed
-            if self.test_remotely:
-                print "\nComparing the SID on DC-Master with the local one:"
-                samba_sid_master = self.get_sid_via_ldbsearch(test_user_dn,
-                                   'ldap://' + self.ldap_master + sam_ldb_url)
+			# perform remote check when needed
+			if self.test_remotely:
+				print "\nComparing the SID on DC-Master with the local one:"
+				samba_sid_master = self.get_sid_via_ldbsearch(test_user_dn,
+								   'ldap://' + self.ldap_master + sam_ldb_url)
 
-                # compare objectSid@locally vs. objectSid@Master
-                if ldap_sid != samba_sid_master:
-                    utils.fail("The SID in the LDAP and Samba4 on the "
-                               "DC-Master for the test user '%s' are "
-                               "different: '%s' vs. '%s' in Samba4 LDB."
-                               % (test_username, ldap_sid, samba_sid_master))
-        finally:
-            if test_user_dn:
-                print "\nRemoving the test user:", test_username
-                UDM.remove_object('users/user', dn=test_user_dn)
+				# compare objectSid@locally vs. objectSid@Master
+				if ldap_sid != samba_sid_master:
+					utils.fail("The SID in the LDAP and Samba4 on the "
+							   "DC-Master for the test user '%s' are "
+							   "different: '%s' vs. '%s' in Samba4 LDB."
+							   % (test_username, ldap_sid, samba_sid_master))
+		finally:
+			if test_user_dn:
+				print "\nRemoving the test user:", test_username
+				UDM.remove_object('users/user', dn=test_user_dn)
 
-            print "\nForcing S4 connector start to make sure it runs:"
-            self.start_stop_s4_connector(True)
+			print "\nForcing S4 connector start to make sure it runs:"
+			self.start_stop_s4_connector(True)
 
 
 if __name__ == '__main__':
-    TestSambaSIDAllocation = TestS4SIDAllocation()
-    exit(TestSambaSIDAllocation.main())
+	TestSambaSIDAllocation = TestS4SIDAllocation()
+	exit(TestSambaSIDAllocation.main())
