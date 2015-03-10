@@ -1,3 +1,17 @@
+ucs-test-ucsschool (2.0.30-1) unstable; urgency=low
+
+  * Bug #36784: script is restricted to run on a single server' 102_rename_class
+  * Bug #37974: test disabled temporarily 96_samba4_sid_allocation
+  * Bug #37700: disable the tests on 4.0-1 and 3.2-5 temporarily' 93_samba4_check_dc_selection 92_samba4_check_denied_user_creation 95_samba4_client_join_on_slave
+  * Bug #37977: disable the test temporarily 94_samba4_check_shares_access
+  * Bug #37978: disable the test temporarily 61_samba4_login
+  * Bug #37979: disable the test temporarily 90_samba4_sysvol_replication
+  * Bug #37981: disable the test temporarily 34_import-users_via_python_api
+  * Bug #37982: disable the test temporarily 34_import-users_via_cli
+  * Bug #37983: disable the test temporarily 16_s4_slave_automatic_srv_record.py
+
+ -- Ammar Najjar <najjar@univention.de>  Tue, 10 Mar 2015 12:03:30 +0100
+
 ucs-test-ucsschool (2.0.29-1) unstable; urgency=low
 
   * Bug #35316: dc_slave position differ between multiserver and singleserver
