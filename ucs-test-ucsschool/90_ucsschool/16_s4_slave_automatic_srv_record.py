@@ -1,7 +1,7 @@
 #!/usr/share/ucs-test/runner python
 ## desc: Test S4 SRV record maintainance
 ## roles: [domaincontroller_slave]
-## tags: [apptest,ucsschool]
+## tags: [SKIP-UCSSCHOOL,apptest,ucsschool]
 ## exposure: dangerous
 ## packages:
 ##    - ucs-school-slave | ucs-school-nonedu-slave
@@ -68,7 +68,7 @@ def postrun():
 '''
 
 class Test():
-	
+
 	@classmethod
 	def setup_hook_file(cls, filename, secret_str):
 		modulename = filename[:-3].replace('-', '_')
