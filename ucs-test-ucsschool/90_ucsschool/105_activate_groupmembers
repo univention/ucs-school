@@ -1,9 +1,9 @@
 #!/usr/share/ucs-test/runner python
 ## desc: Activate groupmembers
-## roles: [domaincontroller_master, domaincontroller_slave]
+## roles: [domaincontroller_master]
 ## tags: [apptest, ucsschool]
 ## exposure: dangerous
-## packages: [ucs-school-umc-groups]
+## packages: [ucs-school-umc-groups,ucs-school-import,ucs-school-singlemaster]
 
 from essential.workgroup import Workgroup
 from httplib import HTTPException
@@ -90,7 +90,7 @@ def main():
 					lastname=staff_lastname)
 			stu, stu_dn = schoolenv.create_user(school, lastname=stu_lastname)
 			school_admin_dn, school_admin = schoolenv.create_school_admin(
-					school, 
+					school,
 					lastname=school_admin_lastname)
 
 			users_dn = [tea_dn, tea_staff_dn, staff_dn, stu_dn, school_admin_dn]
