@@ -1,3 +1,11 @@
+ucs-test-ucsschool (2.0.31-1) unstable; urgency=low
+
+  * Bug #37120: restrict the script to run in a single server env 105_activate_groupmembers
+  * Bug #38003: disable the test temporarily 25_room_management_module
+  * Bug #38006: disable the test temporarily 103_ucsschool_smbstatus_parser
+
+ -- Ammar Najjar <najjar@univention.de>  Wed, 11 Mar 2015 11:14:53 +0100
+
 ucs-test-ucsschool (2.0.30-1) unstable; urgency=low
 
   * Bug #36784: script is restricted to run on a single server' 102_rename_class
