@@ -2,7 +2,7 @@
 ## -*- coding: utf-8 -*-
 ## desc: Schoolrooms management module
 ## roles: [domaincontroller_master, domaincontroller_slave]
-## tags: [apptest, ucsschool]
+## tags: [SKIP-UCSSCHOOL,apptest, ucsschool]
 ## exposure: dangerous
 ## packages: [ucs-school-umc-rooms]
 
@@ -10,7 +10,7 @@ from essential.computerroom import Computers
 from essential.schoolroom import ComputerRoom
 import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool as utu
-	
+
 
 def main():
 	with utu.UCSTestSchool() as schoolenv:
