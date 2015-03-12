@@ -1,7 +1,7 @@
 #!/usr/share/ucs-test/runner python
 ## desc: ucs-school-workinggroup-module-check
 ## roles: [domaincontroller_master, domaincontroller_backup, domaincontroller_slave]
-## tags: [apptest]
+## tags: [SKIP-UCSSCHOOL,apptest]
 ## exposure: dangerous
 ## packages: [ucs-school-umc-groups]
 
@@ -60,7 +60,7 @@ def main():
 
 			# 6 should fail: creating a new working group with a duplicate name
 			group2 = Workgroup(
-					schoolName, 
+					schoolName,
 					name = group.name,
 					umcConnection=connection)
 			group2.create(expect_creation_fails_due_to_duplicated_name=True)
@@ -88,7 +88,7 @@ def main():
 				else:
 					break
 
-			#11 Change the members of a group 
+			#11 Change the members of a group
 			group.set_members([memberListdn[0]])
 
 			# 11 checking if the atrriputes for the group is correct in ldap
