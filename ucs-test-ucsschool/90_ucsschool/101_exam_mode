@@ -2,7 +2,7 @@
 ## -*- coding: utf-8 -*-
 ## desc: Exam mode
 ## roles: [domaincontroller_master]
-## tags: [apptest, ucsschool]
+## tags: [SKIP-UCSSCHOOL,apptest, ucsschool]
 ## exposure: dangerous
 ## bugs: [36251]
 ## packages: [univention-samba4, ucs-school-umc-computerroom, ucs-school-umc-exam]
