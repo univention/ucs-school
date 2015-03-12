@@ -1,3 +1,11 @@
+ucs-test-ucsschool (2.0.32-1) unstable; urgency=low
+
+  * Bug #37160: disable the test temporarily 05_ucs-school-workinggroup-module-check
+  * Bug #38020: disable the test temporarily 101_exam_mode
+  *	Bug #38021: disable the test temporarily 101_exam_mode_settings
+
+ -- Ammar Najjar <najjar@univention.de>  Thu, 12 Mar 2015 10:46:27 +0100
+
 ucs-test-ucsschool (2.0.31-1) unstable; urgency=low
 
   * Bug #37120: restrict the script to run in a single server env 105_activate_groupmembers
