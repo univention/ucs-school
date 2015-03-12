@@ -2,7 +2,7 @@
 ## -*- coding: utf-8 -*-
 ## desc: Exam mode settings
 ## roles: [domaincontroller_master]
-## tags: [apptest, ucsschool]
+## tags: [SKIP-UCSSCHOOL,apptest, ucsschool]
 ## exposure: dangerous
 ## bugs: [36251]
 ## packages: [univention-samba4, ucs-school-umc-computerroom, ucs-school-umc-exam]
@@ -102,7 +102,7 @@ def main():
 					recipients=[classdn]	# list of classes dns
 					)
 
-			exam.uploadFile(f.name) 
+			exam.uploadFile(f.name)
 			exam.check_upload()
 
 			exam.fetch_internetRule(rule1.name)
