@@ -40,10 +40,12 @@ feedback@univention.de
     </legalnotice>
   </bookinfo>
 
-  <chapter>
+  <chapter id="introduction">
 	<title>Einführung</title>
-	  <section>
+	<!--
+	  <section id="introduction:intro">
 		<title>Was ist &ucsUAS;</title>
+	-->
 		<para>
 		  &ucsUAS; ist eine Komplettlösung für den schulinternen IT-Betrieb und IT-gestützten Unterricht.
 		</para>
@@ -95,12 +97,14 @@ feedback@univention.de
 		  Dieses Dokument richtet sich an Lehrer und Schuladministratoren. Die einzelnen Funktionen sind
 		  dahingehend unterteilt.
 		</para>
+	<!--
 	  </section>
+	-->
   </chapter>
 
-  <chapter>
+  <chapter id="umc">
 	<title>&ucsUMC; - Die Verwaltungsoberfläche</title>
-	  <section>
+	  <section id="umc:login">
 		<title>Anmeldung</title>
 		<para>
 		  Der IT-gestützte Unterricht wird mit einer Oberfläche verwaltet, der &ucsUMC; (UMC). Diese wird über
@@ -157,7 +161,7 @@ feedback@univention.de
 	  </section>
   </chapter>
 
-  <chapter>
+  <chapter id="lehrerdoku">
 	<title>Verwaltungsfunktionen für Lehrer</title>
 	  <section id="lehrerdoku:schuelerpasswort">
 		<title>Passwörter (Schüler)</title>
@@ -718,7 +722,7 @@ feedback@univention.de
 		  Durchsicht zur Verfügung.
 		</para>
 
-	  <section>
+	  <section id="lehrerdoku:material:project">
 		<title>Verwaltung von Projekten</title>
 		<para>
 		  Die Funktion kann über das Modul <guimenu>Materialien verteilen</guimenu> erreicht
@@ -831,7 +835,7 @@ feedback@univention.de
 	  </section>
   </chapter>
 
-  <chapter>
+  <chapter id="admindoku">
 	<title>Verwaltungsfunktionen für Schuladministratoren</title>
 	  <section id="admindoku:pwlehrer">
 		<title>Passwörter (Lehrer)</title>

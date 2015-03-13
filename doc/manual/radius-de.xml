@@ -4,7 +4,7 @@
 	<!ENTITY % entities SYSTEM "../../stylesheets/macros-de.ent" >
 	%entities;
 ]>
-<chapter>
+<chapter id="radius">
 	<title>Authentifizierung des WLAN-Zugriffs über RADIUS</title>
 	<para>
 		RADIUS ist ein Authentifizierungsprotokoll für Rechner in
@@ -18,7 +18,7 @@
 		den UCS-Verzeichnisdienst zugreift.
 	</para>
 
-	<section>
+	<section id="radius:install">
 		<title>Installation und Konfiguration des RADIUS-Servers</title>
 		<para>
 			Um RADIUS-Unterstützung einzurichten muss das Paket
@@ -43,7 +43,7 @@ client 192.168.100.101 {
 		</programlisting>
 	</section>
 
-	<section>
+	<section id="radius:config">
 		<title>Konfiguration der <foreignphrase>Access Points</foreignphrase></title>
 		<para>
 			Nun müssen die <foreignphrase>Access Points</foreignphrase> konfiguriert werden. Die dafür nötigen
@@ -79,7 +79,7 @@ client 192.168.100.101 {
 		</itemizedlist>
 	</section>
 
-	<section>
+	<section id="radius:client">
 		<title>Konfiguration der zugreifenden Clients</title>
 		<para>
 			Der zugreifende Client muss zunächst das UCS-Wurzelzertifikat importieren.
@@ -110,7 +110,7 @@ client 192.168.100.101 {
 		</para>
 	</section>
 
-	<section>
+	<section id="radius:wlan">
 		<title>Freigabe des WLAN-Zugriffs in der &ucsUMC;</title>
 		<para>
 			In der Grundeinstellung ist der WLAN-Zugriff nicht zugelassen. Um
@@ -125,7 +125,7 @@ client 192.168.100.101 {
 		</para>
 	</section>
 
-	<section>
+	<section id="radius:error">
 		<title>Fehlersuche</title>
 		<para>
 			Im Fehlerfall sollte die

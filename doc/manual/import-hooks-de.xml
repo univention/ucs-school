@@ -4,7 +4,7 @@
 	<!ENTITY % entities SYSTEM "../../stylesheets/macros-de.ent" >
 	%entities;
 ]>
-<chapter>
+<chapter id="import">
   <title>Pre- und Post-Hook-Skripte für den Import</title>
   <para>
 	Während des Datenimports kann es notwendig sein, dass in Abhängigkeit von der
@@ -80,7 +80,7 @@ echo "$(basename $0): Added policy dhcpd_ldap_base ."</programlisting>
 	Objekten können Hook-Skripte auf äquivalente Weise erstellt werden.
   </para>
 
-  <section>
+  <section id="import:extend">
 	<title>Erweiterung von Importdateien</title>
 	<para>
 	  Eine weitere Funktion von den Hook-Skripten ist die Möglichkeit mit
@@ -96,7 +96,7 @@ echo "$(basename $0): Added policy dhcpd_ldap_base ."</programlisting>
 	</para>
   </section>
 
-  <section>
+  <section id="import:marketplace">
 	<title>Beispiel-Hook-Skript: automatische Erstellung der Marktplatzfreigabe</title>
 	<para>
 	  Um den Austausch von Dokumenten zwischen Benutzern zu erleichtern, wird
@@ -151,7 +151,7 @@ echo "$(basename $0): Added policy dhcpd_ldap_base ."</programlisting>
 	  </itemizedlist>
   </section>
 
-  <section>
+  <section id="import:dhcp">
 	<title>Beispiel-Hook-Skript: Setzen des LDAP-Containers für DHCP-Objekte</title>
 	<para>
 	  Auf den Schul-DCs wird ein abweichender Container für DHCP-Objekte

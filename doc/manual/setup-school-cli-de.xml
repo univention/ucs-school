@@ -322,7 +322,7 @@ gymmitte-5B		gymmitte-6B</programlisting>
 	</orderedlist>
   </section>
 
-  <section>
+  <section id="school:schoolcreate:network:import">
 	<title>Skriptbasierter Import von Netzwerken</title>
 	<para>
 	  Durch den Import von Netzwerken können IP-Subnetze im LDAP angelegt werden und diverse

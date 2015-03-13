@@ -4,7 +4,7 @@
 	<!ENTITY % entities SYSTEM "../../stylesheets/macros-de.ent" >
 	%entities;
 ]>
-<chapter>
+<chapter id="installation">
   <title>Installation</title>
   <para>
 	&ucsUAS; basiert auf &ucsUCS; (UCS). &ucsUAS; wird dabei als
@@ -21,9 +21,9 @@
 	Multi-Server-Umgebung wird unterstützt und in <xref linkend="school:installation:migration-single2multi"/> genauer beschrieben.
   </para>
 
-  <section>
+  <section id="installation:single">
 	  <title>Installation einer Single-Server-Umgebung</title>
-	  <section>
+	  <section id="installation:single:master">
 		<title>Installation des DC Master</title>
 		<para>
 		  Bei der UCS-Installation muss die Systemrolle <emphasis>&ucsMaster;</emphasis> ausgewählt werden. Nach der
@@ -91,7 +91,7 @@
 
 	<section id="school:installation:master2">
 	  <title>Installation einer Multi-Server-Umgebung</title>
-	  <section>
+	  <section id="installation:multi:master">
 		<title>Installation des DC Master</title>
 		<para>
 		  Bei der UCS-Installation muss die Systemrolle <emphasis>&ucsMaster;</emphasis> ausgewählt werden. Nach der
@@ -124,7 +124,7 @@
 		</para>
 	  </section>
 
-	  <section>
+	  <section id="installation:multi:backup">
 		<title>Installation eines DC Backup (optional)</title>
 		<para>
 		  Auf Servern mit der Rolle <emphasis>&ucsBackup;</emphasis> (kurz DC Backup) werden alle Domänendaten und

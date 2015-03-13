@@ -4,7 +4,7 @@
 	<!ENTITY % entities SYSTEM "../../stylesheets/macros-de.ent" >
 	%entities;
 ]>
-<chapter>
+<chapter id="school:exam">
 	<title>Klassenarbeitsmodus</title>
 	<para>
 		Der Klassenarbeitsmodus ermöglicht die gezielte Einschränkung der Computernutzung für Schüler einer Klasse.
@@ -171,7 +171,7 @@ eval "$(ucr shell)"
 			Der S4-Connector erkennt eine kurze Zeit später bei dem nächsten Resync, dass der Reject aufgelöst wurde.
 		  </para>
 		</section>
-		<section>
+		<section id="school:exam:gpo:group">
 			<title>Windows-Anmeldung im Prüfungsraum auf Mitglieder der Klassenarbeitsgruppe beschränken</title>
 			<para>
 				Da das im folgenden konfigurierte Gruppenrichtlinienobjekt je nach Verknüpfung im Samba-Verzeichnisdienst die Anmeldung an betroffenen Windows-Arbeitsplatzsystemen einschränkt, wird dringend empfohlen, als erstes die Anwendung der neuen Gruppenrichtlinie auf solche Windows-Arbeitsplatzsysteme einzuschränken, auf die sie sich später im Klassenarbeitsmodus auswirken soll. Dies geschieht am einfachsten über die Anpassung der Sicherheitsfilterung, die im Folgenden beschrieben ist.
@@ -179,7 +179,7 @@ eval "$(ucr shell)"
 			<para>
 			Damit die Gruppenrichtlinieneinstellungen von Windows-Arbeitsplatzrechnern ausgewertet werden, ist es notwendig, einen Bezug zwischen dem angelegten Gruppenrichtlinienobjekt und den Rechnerobjekten im Samba-Verzeichnisdienst herzustellen. Um dies zu erreichen kann das Gruppenrichtlinienobjekt mit einer Organisationseinheit (OU) verknüpft werden, die den Rechnerobjekten im Verzeichnisbaum übergeordnet ist, in der Regel mit der Schul-OU.
 			</para>
-			<section>
+			<section id="school:exam:gpo:computer">
 				<title>Anwendungsbereich der GPO auf Klassenarbeitscomputer einschränken</title>
 				<itemizedlist>
 					<listitem>
@@ -209,7 +209,7 @@ eval "$(ucr shell)"
 					</listitem>
 				</itemizedlist>
 			</section>
-			<section>
+			<section id="school:exam:gpo:user">
 				<title>Einschränkung der Windows-Anmeldung auf Klassenarbeitsbenutzerkonten und Lehrer</title>
 				<itemizedlist>
 					<listitem>
@@ -290,7 +290,7 @@ eval "$(ucr shell)"
 		</section>
 
 
-		<section>
+		<section id="school:exam:gpo:usb">
 			<title>Zugriff auf USB-Speicher und Wechselmedien einschränken</title>
 			<para>
 				Zur Einschränkung des Zugriffs auf USB-Speicher und Wechselmedien sind je nach Windowsversion zwei Fälle zu beachten: einerseits die Einschränkung der Benutzung bereits installierter Gerätetreiber und andererseits die Einschränkung der Installation neuer Gerätetreiber.
@@ -310,7 +310,7 @@ eval "$(ucr shell)"
 					</listitem>
 				</itemizedlist>
 			</note>
-			<section>
+			<section id="school:exam:gpo:usb:xp">
 				<title>Zugriff auf USB-Speicher an Windows XP einschränken</title>
 				<para>
 					Diese Richtlinie wird über eine Administrative Vorlage (ADMX) definiert, die in Microsoft Knowledgebase Artikel 555324.
@@ -345,7 +345,7 @@ eval "$(ucr shell)"
 					</simpara>
 				</note>
 			</section>
-			<section>
+			<section id="school:exam:gpo:usb:xp:drivers">
 				<title>Installation neuer Gerätetreiber für USB-Speicher an Windows XP verbieten</title>
 				<para>
 					Diese Richtlinie definiert eingeschränkte Dateisystemberechtigungen gemäß Microsoft Knowledgebase Artikel 823732
@@ -407,7 +407,7 @@ eval "$(ucr shell)"
 					</listitem>
 				</itemizedlist>
 			</section>
-			<section>
+			<section id="school:exam:gpo:usb:w7">
 				<title>Zugriff auf USB-Speicher an Windows 7 einschränken</title>
 				<itemizedlist>
 					<listitem>
@@ -435,7 +435,7 @@ eval "$(ucr shell)"
 					</simpara>
 				</note>
 			</section>
-			<section>
+			<section id="school:exam:gpo:usb:w7:drivers">
 				<title>Installation neuer Gerätetreiber für USB-Speicher an Windows 7 Clients verbieten</title>
 				<para>
 					Zusätzliche Einschränkungen zur Installation von Gerätetreibern sind auch unter Windows 7 möglich. Die Einstellungsmöglichkeiten bieten eine größere Kontrolle, setzen aber auch konkrete Erfahrungen mit den im Einzelfall eingesetzten Geräten voraus. Daher ist dieser Abschnitt nur als Einstiegshilfe zu verstehen. Die folgende Einstellung würde die zusätzliche Installation jeglicher Treiber für Wechselgeräte deaktivieren. Es kann hier z.B. dann zusätzlich sinnvoll sein, Administratoren von dieser Einschränkung auszunehmen.
@@ -484,7 +484,7 @@ eval "$(ucr shell)"
 			</section>
 		</section>
 
-		<section>
+		<section id="school:exam:gpo:proxy">
 			<title>Vorgabe von Proxy-Einstellungen für den Internetzugriff</title>
 			<para>
 				Im Folgenden sind Vorgaben für Internet Explorer, Google Chrome und Mozilla Firefox beschrieben. Während Microsoft selbst Administrative Vorlagen mitliefert, sind für Google Chrome und Mozilla Firefox jeweils eigene Administrative Vorlagen notwendig.
@@ -492,7 +492,7 @@ eval "$(ucr shell)"
 			<para>
 				Zusätzlich zur Vorgabe einer Proxyeinstellung ist für den Klassenarbeitsmodus eine Sperrung des Benutzer-Zugriffs auf eben diese Einstellungen sinnvoll. Dazu gibt es zwei unterschiedliche Ansätze: Im Fall des Internet Explorers bietet die Administrative Vorlage die Möglichkeit, das entsprechende Einstellungsfenster zu sperren. Im Fall von Google Chrome und Mozilla Firefox werden hingegen die Proxy-Einstellungen per Gruppenrichtlinie für den Arbeitsplatzrechner vorgegeben, statt für den Benutzer, und sind dadurch z.B. für Schüler nicht mehr veränderbar. Für die beiden letztgenannten Browser ist es daher wichtig darauf zu achten, die Einstellungen, wo nötig, im Zweig <emphasis>Computerkonfiguration</emphasis> des Gruppenrichtlinieneditors statt im Zweig <emphasis>Benutzerkonfiguration</emphasis> zu treffen.
 			</para>
-			<section>
+			<section id="school:exam:gpo:proxy:ie">
 				<title>Proxy-Vorgabe für den Internet Explorer</title>
 				<itemizedlist>
 					<listitem>
@@ -520,7 +520,7 @@ eval "$(ucr shell)"
 					</listitem>
 				</itemizedlist>
 			</section>
-			<section>
+			<section id="school:exam:gpo:proxy:ie:lock">
 				<title>Sperrung der Proxyeinstellung für den Internet Explorer</title>
 				<itemizedlist>
 					<listitem>
@@ -538,7 +538,7 @@ eval "$(ucr shell)"
 					</listitem>
 				</itemizedlist>
 			</section>
-			<section>
+			<section id="school:exam:gpo:proxy:chrome">
 				<title>Proxy-Vorgabe für Google Chrome</title>
 				<para>
 					Die Administrativen Vorlagen für Google Chrome werden durch das Zip-Archiv <filename>policy_templates.zip</filename> des Chromium-Projekts bereitgestellt. Die entsprechenden Dateien liegen unter <filename class="directory">/usr/share/doc/ucs-school-umc-exam/examples/GPO/</filename>.  Der Inhalt des <filename class="directory">admx</filename>-Verzeichnisses sollte in das Verzeichnis <filename>PolicyDefinitions</filename> auf den Schulserver kopiert werden, so dass dort die Datei <filename>chrome.admx</filename> liegt. Die <filename>*.adml</filename>-Dateien aus den Unterverzeichnissen müssen in gleichnamige Unterverzeichnisse unter <filename>PolicyDefinitions</filename> kopiert werden.
@@ -569,7 +569,7 @@ eval "$(ucr shell)"
 					</listitem>
 				</itemizedlist>
 			</section>
-			<section>
+			<section id="school:exam:gpo:proxy:firefox">
 				<title>Proxy-Vorgabe für Mozilla Firefox</title>
 				<para>
 					Auf dem Schulserver sollte das Verzeichnis <filename>/var/lib/samba/sysvol/DomänenNameDerUCS@schoolUmgebung/Policies/PolicyDefinitions/</filename> angelegt werden. Nähere Informationen sind im Abschnitt zu Google Chrome zu finden.
@@ -694,7 +694,7 @@ eval "$(ucr shell)"
 		</section>
 
 
-		<section>
+		<section id="school:exam:gpo:cmd">
 			<title>Zugriff auf bestimmte Programme einschränken</title>
 			<note>
 				<para>
@@ -713,7 +713,7 @@ eval "$(ucr shell)"
 					</listitem>
 				</itemizedlist>
 			</note>
-			<section>
+			<section id="school:exam:gpo:cmd:cli">
 				<title>Kommandoeingabeaufforderung deaktivieren</title>
 				<itemizedlist>
 					<listitem>
@@ -736,7 +736,7 @@ eval "$(ucr shell)"
 					</listitem>
 				</itemizedlist>
 			</section>
-			<section>
+			<section  id="school:exam:gpo:cmd:regedit">
 				<title>Zugriff auf Windows-Registry-Editor deaktivieren</title>
 				<itemizedlist>
 					<listitem>
@@ -764,7 +764,7 @@ eval "$(ucr shell)"
 					</listitem>
 				</itemizedlist>
 			</section>
-			<section>
+			<section id="school:exam:gpo:cmd:srp">
 				<title>Konfiguration von <foreignphrase>Software Restriction Policies</foreignphrase> (SRP)</title>
 				<para>
 					Aufgrund der Tiefe des Eingriffs der <foreignphrase>Software Restriction Policies</foreignphrase> ist zu empfehlen, diese zunächst in einer Testumgebung zu auszuprobieren. Bei der Analyse von Zugriffsfehlern kann die Ereignisanzeige des Windows-Clients helfen

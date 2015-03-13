@@ -87,7 +87,7 @@
 		</para>
 	</section>
 
-	<section>
+	<section id="structure:distribution">
 		<title>Aufteilung von &ucsUAS;</title>
 		<para>
 		  Für den Betrieb von &ucsUAS; an einer einzelnen Schule reicht ein Serversystem aus
