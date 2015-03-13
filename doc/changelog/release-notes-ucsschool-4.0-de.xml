@@ -71,7 +71,7 @@ feedback@univention.de
 				</para>
 		</section>
 
-		<section>
+		<section id="relnotes:update">
 		  <title>Hinweise zum UCS-Release-Update</title>
 		  <para>
 			Bei einem gleichzeitigen Release-Update von UCS 3.2 auf UCS 4.0 sollten auch die Release Notes von UCS 4.0-0 beachtet werden.
@@ -126,7 +126,7 @@ univention-upgrade --updateto $version_version-$version_patchlevel
 		</section>
 	</chapter>
 
-	<chapter>
+	<chapter id="relnotes:preparations">
 	  <title>Vorbereitung von Installation und Update</title>
 	  <para>
 		Es sollte geprüft werden, ob ausreichend Festplattenplatz verfügbar ist. Eine
@@ -152,7 +152,7 @@ univention-upgrade --updateto $version_version-$version_patchlevel
 	  </para>
 	</chapter>
 
-	<chapter>
+	<chapter id="relnotes:post">
 		<title>Nachbereitung des Updates</title>
 		<para>
 			Nach dem Update müssen die neuen oder aktualisierten Join-Skripte ausgeführt werden. Dies
@@ -177,7 +177,7 @@ univention-upgrade --updateto $version_version-$version_patchlevel
 		</para>
 	</chapter>
 
-	<chapter>
+	<chapter id="relnotes:umc">
 		<title>Hinweise zum Zugriff auf die Univention Management Console</title>
 			<para>
 				&ucsUMC; verwendet für die Darstellung der Web-Oberfläche zahlreiche Javascript- und
@@ -203,7 +203,7 @@ univention-upgrade --updateto $version_version-$version_patchlevel
 			</para>
 	</chapter>
 
-	<chapter>
+	<chapter id="relnotes:changes">
 		<title>Changelog</title>
 		<para>
 		  Die Changelogs mit den detaillierten Änderungsinformationen werden nur in Englisch

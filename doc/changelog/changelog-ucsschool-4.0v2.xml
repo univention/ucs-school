@@ -6,7 +6,7 @@
 ]>
 <chapter id="relnotes:changelog" lang="en">
         <title>Changelog</title>
-<section>
+<section id="relnotes:changelog:general">
   <title>General</title>
   <itemizedlist>
 	<listitem>
@@ -24,7 +24,7 @@
 </section>
 
 <!--
-<section>
+<section id="relnotes:changelog:import">
 <title>Import scripts</title>
 <itemizedlist>
 	<listitem>
@@ -38,7 +38,7 @@
 </itemizedlist>
 </section>
 
-<section>
+<section id="relnotes:changelog:italc">
 <title>iTALC</title>
 <itemizedlist>
 	<listitem>
@@ -48,10 +48,10 @@
 </itemizedlist>
 </section>
 
-<section>
+<section id="relnotes:changelog:domain">
 <title>Domain services</title>
 -->
-<section>
+<section id="relnotes:changelog:samba4">
   <title>Samba4</title>
   <itemizedlist>
 	<listitem>
@@ -72,7 +72,7 @@
   </itemizedlist>
 </section>
 <!--
-<section>
+<section id="relnotes:changelog:netlogon">
 	<title>Windows Netlogon Scripts</title>
 	<itemizedlist>
 	<listitem>
@@ -81,10 +81,10 @@
 	</listitem>
 	</itemizedlist>
 </section>
-	<section>
+	<section id="relnotes:changelog:openldap">
 		<title>OpenLDAP</title>
 	</section>
-	<section>
+	<section id="relnotes:changelog:ldap-acl">
 		<title>LDAP ACL changes</title>
 		<itemizedlist>
 			<listitem>
@@ -93,40 +93,39 @@
 			</listitem>
 		</itemizedlist>
 	</section>
-	<section>
+	<section id="relnotes:changelog:listener">
 		<title>Listener/Notifier domain replication</title>
 	</section>
-	<section>
+	<section id="relnotes:changelog:join">
 		<title>Domain joins of UCS systems</title>
 	</section>
 
-
-	<section>
+	<section id="relnotes:changelog:print">
 	<title>Print services</title>
 	</section>
 
-<section>
+<section id="relnotes:changelog:radius">
 <title>RADIUS</title>
 </section>
 
-<section>
+<section id="relnotes:changelog:udm">
 <title>Univention Directory Manager modules</title>
 </section>
 -->
 
-<section>
+<section id="relnotes:changelog:umc">
   <title>Univention Management Console</title>
   <!--
-	  <section>
+	  <section id="relnotes:changelog:umc:server">
 	  <title>Univention Management Console server</title>
 	  </section>
-	  <section>
+	  <section id="relnotes:changelog:umc:web">
 	  <title>Univention Management Console web interface</title>
 	  </section>
   -->
-  <section>
+  <section id="relnotes:changelog:umc:modules">
 	<title>Univention Management Console modules</title>
-	<section>
+	<section id="relnotes:changelog:umc:modules:general">
 	  <title>General</title>
 	  <itemizedlist>
 		<listitem>
@@ -144,7 +143,7 @@
 		</listitem>
 	  </itemizedlist>
 	</section>
-	<section>
+	<section id="relnotes:changelog:umc:modules:csv">
 	  <title>CSV Import</title>
 	  <itemizedlist>
 		<listitem>
@@ -182,7 +181,7 @@
 		</listitem>
 	  </itemizedlist>
 	</section>
-	<section>
+	<section id="relnotes:changelog:umc:modules:wizards">
 	  <title>Wizards (Users/Classes/Computers/Schools)</title>
 	  <itemizedlist>
 		<listitem>
@@ -196,7 +195,7 @@
 		</listitem>
 	  </itemizedlist>
 	</section>
-	<section>
+	<section id="relnotes:changelog:umc:modules:school">
 	  <title>UCS@school configuration</title>
 	  <itemizedlist>
 		<listitem>
@@ -206,7 +205,7 @@
 		</listitem>
 	  </itemizedlist>
 	</section>
-	<section>
+	<section id="relnotes:changelog:umc:modules:computerroom">
 	  <title>Computerroom</title>
 	  <itemizedlist>
 		<listitem>
@@ -222,7 +221,7 @@
 	  </itemizedlist>
 	</section>
 	<!--
-		<section>
+		<section id="relnotes:changelog:umc:modules:workgroups">
 		<title>Workgroups</title>
 		<itemizedlist>
 		<listitem>
@@ -236,7 +235,7 @@
 		</itemizedlist>
 		</section>
 	-->
-	<section>
+	<section id="relnotes:changelog:umc:modules:exam">
 	  <title>Exam</title>
 	  <itemizedlist>
 		<listitem>
@@ -246,7 +245,7 @@
 		</listitem>
 	  </itemizedlist>
 	</section>
-	<section>
+	<section id="relnotes:changelog:umc:modules:distribution">
 	  <title>Distribution</title>
 	  <itemizedlist>
 		<listitem>
@@ -264,7 +263,7 @@
   </section>
 </section>
 	<!--
-		<section>
+		<section id="relnotes:changelog:umc:modules:helpdesk">
 		<title>Helpdesk</title>
 		<itemizedlist>
 		<listitem>
@@ -276,7 +275,7 @@
 		</section>
 		</section>
 
-<section>
+<section id="relnotes:changelog:other">
 <title>Other changes</title>
 <itemizedlist>
 	<listitem>
