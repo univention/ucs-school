@@ -1,3 +1,9 @@
+ucs-test-ucsschool (1.0.109-1) unstable; urgency=low
+
+  * Bug #38021: print the output of univention-s4connector-list-rejected 101_exam_mode_settings
+
+ -- Ammar Najjar <najjar@univention.de>  Mon, 16 Mar 2015 09:46:40 +0100
+
 ucs-test-ucsschool (1.0.108-1) unstable; urgency=low
 
   * Bug #36214: more debug output is added 101_exam_mode 101_exam_mode_settings
