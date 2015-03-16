@@ -2,7 +2,7 @@
 ## -*- coding: utf-8 -*-
 ## desc: Exam mode
 ## roles: [domaincontroller_master]
-## tags: [SKIP-UCSSCHOOL,apptest, ucsschool]
+## tags: [apptest, ucsschool]
 ## exposure: dangerous
 ## bugs: [36251]
 ## packages: [univention-samba4, ucs-school-umc-computerroom, ucs-school-umc-exam]
@@ -47,6 +47,7 @@ def main():
 	with utu.UCSTestSchool() as schoolenv:
 		with ucr_test.UCSTestConfigRegistry() as ucr:
 
+			print ' ** Initial Status'
 			wait_replications_check_rejected_uniqueMember()
 
 			school, oudn = schoolenv.create_ou(name_edudc=ucr.get('hostname'))
@@ -77,6 +78,7 @@ def main():
 			current_time = datetime.now()
 			chosen_time = current_time + timedelta(hours=2)
 
+			print ' ** After creating the rooms'
 			wait_replications_check_rejected_uniqueMember()
 
 			examEndTime = chosen_time.strftime("%H:%M")
@@ -88,9 +90,11 @@ def main():
 					)
 
 			exam.start()
+			print ' ** After starting the exam'
 			wait_replications_check_rejected_uniqueMember()
 
 			exam.finish()
+			print ' ** After finishing the exam'
 			wait_replications_check_rejected_uniqueMember()
 
 
