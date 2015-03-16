@@ -1,3 +1,9 @@
+ucs-test-ucsschool (1.0.108-1) unstable; urgency=low
+
+  * Bug #36214: more debug output is added 101_exam_mode 101_exam_mode_settings
+
+ -- Ammar Najjar <najjar@univention.de>  Mon, 16 Mar 2015 09:11:04 +0100
+
 ucs-test-ucsschool (1.0.107-1) unstable; urgency=low
 
   * Bug #37160: disable the test temporarily 05_ucs-school-workinggroup-module-check
