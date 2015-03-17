@@ -1,3 +1,10 @@
+ucs-test-ucsschool (2.0.37-1) unstable; urgency=low
+
+  * 96_samba4_sid_allocation: check that 'rIDNextRID' remains the
+    same in Samba after user creation (Bug #34221).
+
+ -- Dmitry Galkin <galkin@univention.de>  Tue, 17 Mar 2015 16:22:11 +0100
+
 ucs-test-ucsschool (2.0.36-1) unstable; urgency=low
 
   * 97_samba4_dns_srv_replication: changed list of test records (Bug #34222).

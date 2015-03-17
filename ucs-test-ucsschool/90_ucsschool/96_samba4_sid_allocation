@@ -77,7 +77,28 @@ class TestS4SIDAllocation(TestSamba4):
 				  "accepted 'True' to start or 'False' to stop."
 				  % connector_should_run)
 
-	def get_sid_via_ldbsearch(self, user_dn, ldburl):
+	def get_samba_rid(self):
+		"""
+		Returns the rIDNextRID of a rIDSet as found in Samba.
+                """
+		print "\nLooking for 'rIDNextRID' using univention-s4search."
+                cmd = ('univention-s4search', '(objectClass=rIDSet)', 'rIDNextRID')
+
+		print "Executing command:", cmd
+		stdout, stderr = self.create_and_run_process(cmd)
+		if stderr:
+			utils.fail("An error occured while running univention-s4search: %r" % stderr)
+		if not stdout.strip():
+			utils.fail("The 'univention-s4search' did not produce any output to the stdout.")
+
+		sed_stdout = self.sed_for_key(stdout, "^rIDNextRID: ")
+		sed_stdout = sed_stdout.strip()
+		if not sed_stdout:
+			utils.fail("The sed process did not return any output, while the "
+					   "'rIDNextRID' was expected.")
+		return sed_stdout
+
+        def get_sid_via_ldbsearch(self, user_dn, ldburl):
 		"""
 		Returns the 'objectSid' as stored in the given 'ldburl' for the given
 		'user_dn'.
@@ -212,17 +233,26 @@ class TestS4SIDAllocation(TestSamba4):
 			self.ldap_master = self.UCR.get('ldap/master')
 			sam_ldb_url = self.get_samba_sam_ldb_path()
 
-			# determine if test should take into account a remote DC
+			# determine if test should take into account a remote DC:
 			self.determine_test_scenario()
 
-			# stop the S4-Connector
+			# stop the S4-Connector:
 			self.start_stop_s4_connector(False)
+
+                        # get 'rIDNextRID' from Samba4 before user creation:
+			initial_next_rid = self.get_samba_rid()
 
 			# create regular user for the test
 			test_user_dn = UDM.create_user(password='univention',
 										   username=test_username)[0]
 
-			print("\nComparing the SID for test user as stored in LDAP "
+                        # get 'rIDNextRID' after user is created and replicated
+			new_next_rid = self.get_samba_rid()
+			if new_next_rid != initial_next_rid:
+				utils.fail("The 'rIDNextRID' changed after user creation. "
+						"Was: %s. Now: %s." % (initial_next_rid, new_next_rid))
+
+                        print("\nComparing the SID for test user as stored in LDAP "
 				  "and Samba4:")
 			# get SID from LDAP
 			ldap_sid = self.get_sid_from_ldap(test_user_dn)
