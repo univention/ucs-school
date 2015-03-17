@@ -418,18 +418,17 @@ class TestS4DNSSRVReplication(TestSamba4):
 		# DNS SRV records that have to be checked,
 		# (determined by the 'ucs-school-metapackage/*.inst' scripts)
 		dns_srv_records = (
-						   #'_ldap._tcp._msdcs',  # does not exist
+						   '_ldap._tcp',
 						   '_ldap._tcp.pdc._msdcs',
 						   '_ldap._tcp.dc._msdcs',
 						   '_ldap._tcp.gc._msdcs',
 						   '_gc._tcp',
 						   '_kerberos._tcp',
 						   '_kerberos._udp',
-						   #'_kerberos-adm._tcp',  # present hardcoded in Slave.inst
+						   '_kerberos-adm._tcp',
 						   '_kerberos._tcp.dc._msdcs',
 						   '_kpasswd._tcp',
 						   '_kpasswd._udp',
-						   #'_kerberos._tcp.Default-First-Site-Name._sites.gc._msdcs',	# does not exist
 						   '_kerberos._tcp.Default-First-Site-Name._sites.dc._msdcs',
 						   '_kerberos._tcp.Default-First-Site-Name._sites',
 						   #'_ldap._tcp.Default-First-Site-Name._sites.gc._msdcs',	# is not ignored by s4-connector
