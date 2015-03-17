@@ -1,10 +1,10 @@
 #!/usr/share/ucs-test/runner python
 ## desc: Test the DC Locator Master shares access from DC-Slave.
-## bugs: [34224]
+## bugs: [34224, 37977]
 ## roles:
 ## - domaincontroller_slave
 ## packages: [univention-samba4]
-## tags: [SKIP-UCSSCHOOL,apptest, ucsschool]
+## tags: [apptest, ucsschool]
 ## exposure: careful
 
 from sys import exit
@@ -92,6 +92,7 @@ class TestS4DCLocatorSharesAccess(TestSamba4):
 
 		# skip the test if DC-Master has no S4:
 		if not self.dc_master_has_samba4():
+			print "\nThe DC-Master has no S4, skipping test..."
 			self.return_code_result_skip()
 
 		try:

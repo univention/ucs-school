@@ -1,3 +1,11 @@
+ucs-test-ucsschool (2.0.35-1) unstable; urgency=low
+
+  * 90_ucsschool/essential/test_samba4.py: get 'self.ldap_master' if it is none
+    90_ucsschool/94_samba4_check_shares_access: added skip message,
+    bug reference, enabled the test (Bug #37977).
+
+ -- Dmitry Galkin <galkin@univention.de>  Tue, 17 Mar 2015 12:52:20 +0100
+
 ucs-test-ucsschool (2.0.34-1) unstable; urgency=low
 
   * Bug #38021: print the output of univention-s4connector-list-rejected 101_exam_mode_settings

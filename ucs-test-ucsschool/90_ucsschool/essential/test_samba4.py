@@ -92,6 +92,9 @@ class TestSamba4(object):
 		"""
 		Returns 'True' when DC-Master has Samba4 according to "service=Samba 4"
 		"""
+		if not self.ldap_master:
+			self.ldap_master = self.UCR.get('ldap/master')
+
 		if self.ldap_master in self.get_udm_list_dcs('domaincontroller_master',
 													 with_samba4=True):
 			return True
