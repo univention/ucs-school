@@ -37,7 +37,7 @@ def check_ldap(school, computers, should_exist):
 			if should_exist and not found:
 				utils.fail('Object not found:(%r) aRecord=%s' % (dns, computer.ip_address))
 			if not should_exist and found:
-				utils.fail('Object unexpectedly found:(%r)' % dns)
+				utils.fail('Object unexpectedly found:(%r)' % found)
 
 			computer_name = computer.name
 			if computer_name[-1] == '$':
@@ -48,7 +48,7 @@ def check_ldap(school, computers, should_exist):
 			if should_exist and not found:
 				utils.fail('Object not found:(%r), pTRRecord=%s.%s.' % (dns, computer_name, ucr.get('domainname')))
 			if not should_exist and found:
-				utils.fail('Object unexpectedly found:(%r)' % dns)
+				utils.fail('Object unexpectedly found:(%r)' % found)
 
 			# Check DHCP objects
 			dhcp = dhcp_dn(school, computer_name)
