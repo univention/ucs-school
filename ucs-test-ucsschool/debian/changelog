@@ -1,3 +1,11 @@
+ucs-test-ucsschool (1.0.110-1) unstable; urgency=low
+
+  * Bug #37982 & #37981: add wait_for_replication before verifying in ldap essential/importusers.py
+  * Bug #37981: enabling the test 34_import-users_via_python_api
+  * Bug #37982: enabling the test 34_import-users_via_cli
+
+ -- Ammar Najjar <najjar@univention.de>  Wed, 18 Mar 2015 09:03:55 +0100
+
 ucs-test-ucsschool (1.0.109-1) unstable; urgency=low
 
   * Bug #38021: print the output of univention-s4connector-list-rejected 101_exam_mode_settings
