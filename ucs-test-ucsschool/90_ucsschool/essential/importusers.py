@@ -565,6 +565,7 @@ def create_and_verify_users(use_cli_api=True, use_python_api=False, school_name=
 	print '********** Delete users'
 	user_import.delete()
 	import_file.run_import(user_import)
+	utils.wait_for_replication()
 	user_import.verify()
 
 def create_windows_profile_server(udm, ou, name):
