@@ -1,3 +1,9 @@
+ucs-test-ucsschool (1.0.112-1) unstable; urgency=low
+
+  * 'Bug #37982: use SetTimeout decorator for utils.verify_ldap_object essential/importusers.py
+
+ -- Ammar Najjar <najjar@univention.de>  Thu, 19 Mar 2015 10:45:32 +0100
+
 ucs-test-ucsschool (1.0.111-1) unstable; urgency=low
 
   * Bug #35665: correct the failing message for dns-forward & reverse zoneNames 104_delete_computers_delete_related_objects
