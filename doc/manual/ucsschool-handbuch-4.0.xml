@@ -55,7 +55,7 @@ feedback@univention.de
   <xi:include href="import-hooks-de.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
   <xi:include href="performance-de.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
 
-  <bibliography>
+  <bibliography id="bibliography">
 	<bibliomixed id="ucs-handbuch"/>
 	<bibliomixed id="ucc-handbuch"/>
 	<bibliomixed id="ucs-school-teacher"/>

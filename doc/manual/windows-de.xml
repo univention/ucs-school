@@ -179,12 +179,10 @@ invoke-rc.d univention-directory-listener restart
 	  wurden ausschließlich mit der von &ucsUAS; mitgelieferten iTALC-Version unter Windows XP und Windows
 	  7 (32 und 64 Bit) durchgeführt.
 	</para>
-	<para>
-	  <figure>
+	  <figure id="school:windows:italc:fig">
 		<title>iTALC-Installation: Auswahl der Komponenten</title>
 		<graphic scalefit="1" width="60%" align="center" fileref="illustrations40/italc1.png"/>
 	  </figure>
-	</para>
 	<para>
 	  iTALC bringt ein Installationsprogramm mit, das durch alle notwendigen Schritte führt. Während
 	  der Installation sollte nur der <emphasis>iTALC Service</emphasis> installiert und der
