@@ -2,7 +2,7 @@
 ## -*- coding: utf-8 -*-
 ## desc: Schoolrooms management module
 ## roles: [domaincontroller_master, domaincontroller_slave]
-## tags: [SKIP-UCSSCHOOL,apptest, ucsschool]
+## tags: [apptest, ucsschool]
 ## exposure: dangerous
 ## packages: [ucs-school-umc-rooms]
 
