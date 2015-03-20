@@ -1,3 +1,12 @@
+ucs-test-ucsschool (1.0.113-1) unstable; urgency=low
+
+  * Bug #38003: re-enable the test after bug 38072 is fixed 25_room_management_module
+  * Bug #35151: restrict ip address range to 120.x.x.x essential/importcomputers.py
+  * Bug #35620: test enabled 25_room_management_module
+  * Bug #37160: re-enable the test 05_ucs-school-workinggroup-module-check
+
+ -- Ammar Najjar <najjar@univention.de>  Fri, 20 Mar 2015 11:00:52 +0100
+
 ucs-test-ucsschool (1.0.112-1) unstable; urgency=low
 
   * 'Bug #37982: use SetTimeout decorator for utils.verify_ldap_object essential/importusers.py
