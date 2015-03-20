@@ -44,7 +44,7 @@ def random_mac():
 	return ':'.join(map(lambda x: "%02x" % x, mac))
 
 def random_ip():
-	return ".".join(map(str, (random.randint(1, 254) for _ in range(4))))
+	return "120." + ".".join(map(str, (random.randint(0, 254) for _ in xrange(3))))
 
 class Computer:
 	def __init__(self, school, ctype):
