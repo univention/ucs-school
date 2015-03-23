@@ -16,12 +16,12 @@
 	<listitem>
 	  <simpara>
 		  The UMC policy <uri>default-umc-users</uri> gets appended to the <systemitem class="groupname">Domain Users <replaceable>OUNAME</replaceable></systemitem> group when creating a new school.
-		This allows users to change their own password via UMC (<ulink url="&ucsbug;36537">Bug 36537</ulink>).
+		This allows users to change their own password via UMC (<u:bug>36537</u:bug>).
 	  </simpara>
 	</listitem>
 	<listitem>
 	  <simpara>
-		Some UMC modules prevented to use the hyphen (-) character in hostnames of school Domaincontrollers. This has been fixed (<ulink url="&ucsbug;36034">Bug 36034</ulink>).
+		Some UMC modules prevented to use the hyphen (-) character in hostnames of school Domaincontrollers. This has been fixed (<u:bug>36034</u:bug>).
 	  </simpara>
 	</listitem>
   </itemizedlist>
