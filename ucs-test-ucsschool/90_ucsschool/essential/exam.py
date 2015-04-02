@@ -66,8 +66,8 @@ class Exam(object):
 			name=None,
 			directory=None,
 			files=[],
-			shareMode='home',
-			internetRule=None,
+			shareMode="home",
+			internetRule="none",
 			customRule='',
 			umcConnection=None
 			):
@@ -88,7 +88,7 @@ class Exam(object):
 		else:
 			self.ucr = ucr_test.UCSTestConfigRegistry()
 			self.ucr.load()
-			host = self.ucr.get('ldap/master')
+			host = self.ucr.get('hostname')
 			self.umcConnection = UMCConnection(host)
 			account = utils.UCSTestDomainAdminCredentials()
 			admin = account.username
@@ -118,7 +118,7 @@ class Exam(object):
 				'schoolexam/exam/start',
 				param
 				)
-		print 'REQ RESULT = ', reqResult
+		print 'Start exam response = ', reqResult
 		if not reqResult['success']:
 			raise StartFail('Unable to start exam (%r)' % (param,))
 
@@ -137,7 +137,7 @@ class Exam(object):
 				'schoolexam/exam/finish',
 				param
 				)
-		print 'REQ RESULT = ', reqResult
+		print 'Finish exam response = ', reqResult
 		if not reqResult['success']:
 			raise FinishFail('Unable to finish exam (%r)' % param)
 
@@ -195,7 +195,7 @@ html5
 			data,
 			headers=headers)
 		r = httpcon.getresponse().status
-		print 'R=', r
+		print 'Uploading file response =', r
 		if r != 200:
 			print 'httpcon.response().status=', r
 			utils.fail('Unable to upload the file.')
@@ -217,20 +217,14 @@ html5
 		print 'Schools = ', schools
 		return schools
 
-
 	def fetch_school(self, school):
 		if school not in self.get_schools():
 			utils.fail('Exam %s was not able to fetch school %s' % (self.name, school))
 
 	def get_groups(self):
 		"""Get groups"""
-		reqResult = self.umcConnection.request(
-				'schoolexam/groups',
-				{
-					'school':self.school,
-					'pattern':''
-					}
-				)
+		reqResult = self.umcConnection.request('schoolexam/groups',	{'school':self.school,'pattern':"",	})
+		print 'Groups response = ', reqResult
 		groups = [x['label'] for x in reqResult]
 		print 'Groups = ', groups
 		return groups
@@ -252,7 +246,7 @@ html5
 	def collect(self):
 		"""Collect results"""
 		reqResult = self.umcConnection.request('schoolexam/exam/collect',{'exam':self.name})
-		print 'Collect = ', reqResult
+		print 'Collect respose = ', reqResult
 		return reqResult
 
 	def check_collect(self):
@@ -274,4 +268,3 @@ html5
 		path_files = get_dir_files(path)
 		if not set(self.files).issubset(set(path_files)):
 			utils.fail('%r were not uploaded to %r' % (self.files, path))
-

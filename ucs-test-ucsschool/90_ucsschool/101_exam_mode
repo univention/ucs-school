@@ -1,7 +1,7 @@
 #!/usr/share/ucs-test/runner python
 ## -*- coding: utf-8 -*-
 ## desc: Exam mode
-## roles: [domaincontroller_master]
+## roles: [domaincontroller_master, domaincontroller_slave]
 ## tags: [apptest, ucsschool]
 ## exposure: dangerous
 ## bugs: [36251]
@@ -12,18 +12,25 @@ from essential.computerroom import Room, Computers
 from essential.exam import Exam
 from essential.klasse import Klasse
 from univention.testing.ucs_samba import wait_for_s4connector
+import re
 import subprocess
 import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool as utu
+import univention.testing.udm
 import univention.testing.utils as utils
 
-def check_s4_rejected():
+def get_s4_rejected():
 	cmd = ['univention-s4connector-list-rejected']
 	out , err = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
 	print 'rejected Objects:', out, err
-	fail = 'S4 Dn:' in out or 'UCS DN:' in out
+	found = re.findall(r'DN:\s\w{3,4}=.*', out)
+	return set(found)
+
+def check_s4_rejected(existing_rejects):
+	new_rejects = get_s4_rejected()
+	fail = [x for x in new_rejects if x not in existing_rejects]
 	if fail:
-		utils.fail('There is at least one rejected object')
+		utils.fail('There is at least one new rejected object: %r' % fail)
 
 def check_proof_uniqueMember():
 	cmd = ['/usr/share/univention-directory-manager-tools/proof_uniqueMembers']
@@ -35,67 +42,78 @@ def check_proof_uniqueMember():
 		utils.fail('Proof unique members failed')
 
 
-def wait_replications_check_rejected_uniqueMember():
+def wait_replications_check_rejected_uniqueMember(existing_rejects):
 	utils.wait_for_replication()
 	wait_for_s4connector()
-	check_s4_rejected()
+	check_s4_rejected(existing_rejects)
 	#TODO uncomment next line after fixing bug #36251
 	# check_proof_uniqueMember()
 
 
 def main():
-	with utu.UCSTestSchool() as schoolenv:
-		with ucr_test.UCSTestConfigRegistry() as ucr:
+	with univention.testing.udm.UCSTestUDM() as udm:
+		with utu.UCSTestSchool() as schoolenv:
+			with ucr_test.UCSTestConfigRegistry() as ucr:
 
-			print ' ** Initial Status'
-			wait_replications_check_rejected_uniqueMember()
+				print ' ** Initial Status'
+				existing_rejects = get_s4_rejected()
 
-			school, oudn = schoolenv.create_ou(name_edudc=ucr.get('hostname'))
-			klasse = Klasse(school=school)
-			klasse.create()
-			tea, teadn = schoolenv.create_user(school, classes=klasse.name, is_teacher=True)
-			stu, studn = schoolenv.create_user(school, classes=klasse.name)
-			open_ldap_co = schoolenv.open_ldap_connection()
+				if ucr.is_true('ucsschool/singlemaster'):
+					edudc = None
+				else:
+					edudc = ucr.get('hostname')
+				school, oudn = schoolenv.create_ou(name_edudc=edudc)
+				klasse_dn = udm.create_object('groups/group',name='%s-AA1' % school, position="cn=klassen,cn=schueler,cn=groups,%s" % oudn)
 
-			# importing random computers
-			computers = Computers(open_ldap_co, school, 2, 0, 0)
-			created_computers = computers.create()
-			created_computers_dn = computers.get_dns(created_computers)
+				tea, teadn = schoolenv.create_user(school, is_teacher=True)
+				stu, studn = schoolenv.create_user(school)
 
-			# setting 2 computer rooms contain the created computers
-			room1 = Room(school, host_members=created_computers_dn[0])
-			room2 = Room(school, host_members=created_computers_dn[1])
+				udm.modify_object('groups/group', dn=klasse_dn, append={"users": [teadn] })
+				udm.modify_object('groups/group', dn=klasse_dn, append={"users": [studn] })
 
-			# Creating the rooms
-			for room in [room1, room2]:
-				schoolenv.create_computerroom(
-						school,
-						name=room.name,
-						description=room.description,
-						host_members=room.host_members
+				print ' ** After Creating users and classes'
+				wait_replications_check_rejected_uniqueMember(existing_rejects)
+
+				open_ldap_co = schoolenv.open_ldap_connection()
+
+				# importing random computers
+				computers = Computers(open_ldap_co, school, 2, 0, 0)
+				created_computers = computers.create()
+				created_computers_dn = computers.get_dns(created_computers)
+
+				# setting 2 computer rooms contain the created computers
+				room1 = Room(school, host_members=created_computers_dn[0])
+				room2 = Room(school, host_members=created_computers_dn[1])
+
+				# Creating the rooms
+				for room in [room1, room2]:
+					schoolenv.create_computerroom(
+							school,
+							name=room.name,
+							description=room.description,
+							host_members=room.host_members
+							)
+
+				current_time = datetime.now()
+				chosen_time = current_time + timedelta(hours=2)
+
+				print ' ** After creating the rooms'
+				wait_replications_check_rejected_uniqueMember(existing_rejects)
+
+				exam = Exam(
+						school=school,
+						room=room2.dn,				# room dn
+						examEndTime=chosen_time.strftime("%H:%M"),	# in format "HH:mm"
+						recipients=[klasse_dn]	# list of classes dns
 						)
 
-			current_time = datetime.now()
-			chosen_time = current_time + timedelta(hours=2)
+				exam.start()
+				print ' ** After starting the exam'
+				wait_replications_check_rejected_uniqueMember(existing_rejects)
 
-			print ' ** After creating the rooms'
-			wait_replications_check_rejected_uniqueMember()
-
-			examEndTime = chosen_time.strftime("%H:%M")
-			exam = Exam(
-					school=school,
-					room=room1.dn,				# room dn
-					examEndTime=examEndTime,	# in format "HH:mm"
-					recipients=[klasse.dn()]	# list of classes dns
-					)
-
-			exam.start()
-			print ' ** After starting the exam'
-			wait_replications_check_rejected_uniqueMember()
-
-			exam.finish()
-			print ' ** After finishing the exam'
-			wait_replications_check_rejected_uniqueMember()
+				exam.finish()
+				print ' ** After finishing the exam'
+				wait_replications_check_rejected_uniqueMember(existing_rejects)
 
 
 if __name__ == '__main__':
