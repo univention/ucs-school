@@ -1,3 +1,10 @@
+ucs-test-ucsschool (2.0.42-1) unstable; urgency=low
+
+  * Bug #38020 and #38021: compare rejected objects during the test instead of failing if one existed
+  * 101_exam_mode essential/exam.py 101_exam_mode_settings
+
+ -- Ammar Najjar <najjar@univention.de>  Thu, 02 Apr 2015 09:07:07 +0200
+
 ucs-test-ucsschool (2.0.41-1) unstable; urgency=low
 
   * Bug #38003: re-enable the test after bug 38072 is fixed 25_room_management_module
