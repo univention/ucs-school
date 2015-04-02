@@ -8,11 +8,6 @@ include $(COMMON_DIR)/Makefile
 
 OPTIONS += --stringparam front.cover "$(CURDIR)/illustrations/page-background-title-page-ucsschool.jpg"
 
-$(addsuffix .epub,$(MAIN)): %.epub: $(SOURCES)
-$(addsuffix .html,$(MAIN)): %.html: $(SOURCES)
-$(addsuffix .fo,$(MAIN)): %.fo: $(SOURCES)
-$(addsuffix .xml.err,$(MAIN)): %.xml.err: $(SOURCES)
-
 check:: $(addsuffix .xml,$(MAIN))
 	XML_CATALOG_FILES="$(subst $(SPACE),%20,$(XML_CATALOG_FILES))" \
 	xsltproc --xinclude "$(COMMON_DIR)/stylesheets/check-bug.xsl" $^
