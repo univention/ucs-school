@@ -43,8 +43,34 @@ def random_mac():
 
 	return ':'.join(map(lambda x: "%02x" % x, mac))
 
-def random_ip():
-	return "120." + ".".join(map(str, (random.randint(1, 254) for _ in xrange(3))))
+# Hot fix for bug #38191
+# Generate 110 different ip addresses in the range 11.x.x.x-120.x.x.x
+# so each lie in a different network prefix >= 8
+class IP_Iter(object):
+
+	def __init__(self):
+		self.max_range = 120
+		self.index = 11
+
+	def __iter__(self):
+		return self
+
+	def next(self):
+		if self.index < self.max_range:
+			ip_list = [
+					self.index,
+					random.randint(1, 254),
+					random.randint(1, 254),
+					random.randint(1, 254)
+					]
+			ip = ".".join(map(str, ip_list))
+			self.index += 1
+			return ip
+		else:
+			raise StopIteration()
+
+def random_ip(ip_iter=IP_Iter()):
+	return ip_iter.next()
 
 class Computer:
 	def __init__(self, school, ctype):
