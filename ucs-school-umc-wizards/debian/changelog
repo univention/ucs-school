@@ -1,3 +1,9 @@
+ucs-school-umc-wizards (6.0.0-1) unstable; urgency=medium
+
+  * Bug #36276: make it possible to delete multiple schools
+
+ -- Florian Best <best@univention.de>  Fri, 10 Apr 2015 13:13:42 +0200
+
 ucs-school-umc-wizards (5.0.1-4) unstable; urgency=low
 
   * Bug #37154: fixed js code
