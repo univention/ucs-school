@@ -399,8 +399,8 @@ class Instance( SchoolBaseModule ):
 		## Add all host members of room to examGroup
 		examGroup = self.examGroup
 		if examGroup:
-			host_uid_list = [ univention.admin.uldap.explodeDn(uniqueMember, 1)[0] for uniqueMember in room['hosts'] ]
-			examGroup.fast_member_add( room['hosts'], host_uid_list )	## adds any uniqueMember and member listed if not already present
+			host_uid_list = [univention.admin.uldap.explodeDn(uniqueMember, 1)[0] + '$' for uniqueMember in room['hosts']]
+			examGroup.fast_member_add(room['hosts'], host_uid_list)  # adds any uniqueMember and member listed if not already present
 		else:
 			return ## self.examGroup called finished in this case, so just return
 
