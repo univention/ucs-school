@@ -70,7 +70,21 @@ define([
 			}, {
 				name: 'name',
 				label: _('School abbreviation')
+			}, {
+				name: 'educational_servers',
+				label: _('Educational servers'),
+				formatter: lang.hitch(this, '_serverDnFormatter')
+			}, {
+				name: 'administrative_servers',
+				label: _('Administrative servers'),
+				formatter: lang.hitch(this, '_serverDnFormatter')
 			}];
+		},
+
+		_serverDnFormatter: function(dns) {
+			return array.map(dns, function(dn) {
+				return tools.explodeDn(dn, true)[0];
+			}).join(', ');
 		},
 
 		getObjectIdName: function(item) {

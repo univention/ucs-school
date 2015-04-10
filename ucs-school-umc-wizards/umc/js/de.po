@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-wizards\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2015-04-10 13:11+0200\n"
+"POT-Creation-Date: 2015-04-10 15:04+0200\n"
 "PO-Revision-Date: 2015-02-21 20:51+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -31,11 +31,15 @@ msgstr "Hinzufügen"
 msgid "Add a new %s"
 msgstr "%s hinzufügen"
 
+#: umc/js/schoolwizards/SchoolGrid.js:79
+msgid "Administrative servers"
+msgstr "Administrative Server"
+
 #: umc/js/schoolwizards/SchoolWizard.js:124 umc/js/schoolwizards/Wizard.js:84
 msgid "Advanced settings"
 msgstr "Erweiterte Einstellungen"
 
-#: umc/js/schoolwizards/SchoolGrid.js:130
+#: umc/js/schoolwizards/SchoolGrid.js:144
 msgid ""
 "After deleting a school it is recommended to start with a new session. A "
 "list of all schools was saved at the beginning in various places which is "
@@ -55,7 +59,7 @@ msgid "All"
 msgstr "Alle"
 
 #: umc/js/schoolwizards/Grid.js:237 umc/js/schoolwizards/Grid.js:340
-#: umc/js/schoolwizards/SchoolGrid.js:131
+#: umc/js/schoolwizards/SchoolGrid.js:145
 msgid "Cancel"
 msgstr "Abbrechen"
 
@@ -123,9 +127,10 @@ msgstr "Schule erstellen"
 msgid "Delete"
 msgstr "Löschen"
 
-#: umc/js/schoolwizards/SchoolGrid.js:116
+#: umc/js/schoolwizards/SchoolGrid.js:130
 msgid "Deleting schools will also delete every teacher and student."
-msgstr "Das Löschen von Schulen wird ebenfalls alle Lehrer und Schüler löschen."
+msgstr ""
+"Das Löschen von Schulen wird ebenfalls alle Lehrer und Schüler löschen."
 
 #: umc/js/schoolwizards/Grid.js:168
 #, python-format
@@ -163,6 +168,10 @@ msgstr "%s bearbeiten."
 msgid "Edit {itemType} {itemName}"
 msgstr "{itemType} {itemName} bearbeiten"
 
+#: umc/js/schoolwizards/SchoolGrid.js:75
+msgid "Educational servers"
+msgstr "Edukative Server"
+
 #: umc/js/schoolwizards/ClassWizard.js:48
 msgid "Enter details of the class."
 msgstr "Geben Sie Detailinformationen der Klasse an."
@@ -189,7 +198,7 @@ msgstr "Geben Sie Detailinformationen zum Anlegen eines neuen Benutzers an."
 
 #: umc/js/schoolwizards/ClassGrid.js:83
 #: umc/js/schoolwizards/ComputerGrid.js:108
-#: umc/js/schoolwizards/UserGrid.js:127 umc/js/schoolwizards/SchoolGrid.js:93
+#: umc/js/schoolwizards/UserGrid.js:127 umc/js/schoolwizards/SchoolGrid.js:107
 msgid "Filter"
 msgstr "Filter"
 
@@ -211,7 +220,7 @@ msgstr "Inventarnummer"
 msgid "Lastname"
 msgstr "Nachname"
 
-#: umc/js/schoolwizards/SchoolGrid.js:133
+#: umc/js/schoolwizards/SchoolGrid.js:147
 msgid "Logout"
 msgstr "Abmelden"
 
@@ -328,12 +337,11 @@ msgstr ""
 "Bitte bestätigen Sie die Löschung der %(num)d ausgewählten "
 "%(objectNamePlural)s."
 
-#: umc/js/schoolwizards/SchoolGrid.js:107
+#: umc/js/schoolwizards/SchoolGrid.js:121
 msgid "Please confirm to delete the following schools:"
-msgstr ""
-"Bitte bestätigen Sie die Löschung der folgenden Schulen:"
+msgstr "Bitte bestätigen Sie die Löschung der folgenden Schulen:"
 
-#: umc/js/schoolwizards/SchoolGrid.js:105
+#: umc/js/schoolwizards/SchoolGrid.js:119
 #, python-format
 msgid "Please confirm to delete the school \"%(displayName)s\" (%(name)s)."
 msgstr ""
@@ -438,7 +446,7 @@ msgstr ""
 "Schule erstellt oder der Wizard über die Schaltfläche \"Abbrechen\" beendet "
 "werden."
 
-#: umc/js/schoolwizards/SchoolGrid.js:116
+#: umc/js/schoolwizards/SchoolGrid.js:130
 msgid "This action is cannot be undone."
 msgstr "Diese Aktion kann nicht rückgängig gemacht werden."
 
@@ -456,7 +464,7 @@ msgstr ""
 msgid "Username"
 msgstr "Benutzername"
 
-#: umc/js/schoolwizards/SchoolGrid.js:115
+#: umc/js/schoolwizards/SchoolGrid.js:129
 msgid "Warning"
 msgstr "Warnung"
 

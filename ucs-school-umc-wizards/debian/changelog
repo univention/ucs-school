@@ -1,6 +1,7 @@
 ucs-school-umc-wizards (6.0.0-1) unstable; urgency=medium
 
   * Bug #36276: make it possible to delete multiple schools
+  * Bug #38200: show hostname of schools in the school overview
 
  -- Florian Best <best@univention.de>  Fri, 10 Apr 2015 13:13:42 +0200
 
