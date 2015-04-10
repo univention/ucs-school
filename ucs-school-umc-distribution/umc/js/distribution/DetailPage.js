@@ -157,6 +157,7 @@ define([
 				},
 				showClearButton: false,
 				label: _('Files'),
+				labelPosition: 'top',
 				description: _('Files that have been added to this teaching material project'),
 				maxSize: maxUploadSize * 1024, // conversion from kbyte to byte
 				canUpload: lang.hitch(this, '_checkFilenameUpload'),
