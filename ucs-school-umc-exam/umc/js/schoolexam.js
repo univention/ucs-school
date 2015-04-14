@@ -26,20 +26,16 @@
  * /usr/share/common-licenses/AGPL-3; if not, see
  * <http://www.gnu.org/licenses/>.
  */
-/*global define window*/
+/*global define,window*/
 
 define([
 	"dojo/_base/declare",
 	"dojo/_base/lang",
 	"dojo/_base/array",
 	"dojo/aspect",
-	"dojo/dom-class",
-	"dojo/dom-style",
-	"dojo/on",
 	"dojo/promise/all",
 	"dojo/topic",
 	"dojo/Deferred",
-	"dojo/when",
 	"umc/dialog",
 	"umc/tools",
 	"umc/modules/schoolexam/RebootGrid",
@@ -50,13 +46,14 @@ define([
 	"umc/widgets/TextArea",
 	"umc/widgets/ComboBox",
 	"umc/widgets/TimeBox",
+	"umc/widgets/CheckBox",
 	"umc/widgets/MultiObjectSelect",
 	"umc/widgets/MultiUploader",
 	"umc/widgets/StandbyMixin",
 	"umc/widgets/ProgressBar",
 	"umc/i18n!umc/modules/schoolexam"
-], function(declare, lang, array, aspect, domClass, domStyle, on, all, topic, Deferred, when, dialog, tools, RebootGrid, Wizard, Module,
-			TextBox, Text, TextArea, ComboBox, TimeBox, MultiObjectSelect, MultiUploader, StandbyMixin, ProgressBar, _) {
+], function(declare, lang, array, aspect, all, topic, Deferred, dialog, tools, RebootGrid, Wizard, Module,
+			TextBox, Text, TextArea, ComboBox, TimeBox, CheckBox, MultiObjectSelect, MultiUploader, StandbyMixin, ProgressBar, _) {
 	// helper function that sanitizes a given filename
 	var sanitizeFilename = function(name) {
 		array.forEach([/\//g, /\\/g, /\?/g, /%/g, /\*/g, /:/g, /\|/g, /"/g, /</g, />/g, /\$/g, /'/g], function(ichar) {
@@ -68,63 +65,64 @@ define([
 	};
 
 	var ExamWizard = declare("umc.modules.schoolexam.ExamWizard", [ Wizard, StandbyMixin ], {
+
 		umcpCommand: null,
 		autoValidate: true,
-
+		standbyOpacity: 1.0,
 		_progressBar: null,
-
 		_userPrefix: null,
-
 		_grid: null,
-
-		// helper function to get the currently selected room entry
-		_getCurrentRoom: function() {
-			// find correct room entry
-			var room = null;
-			var widget = this.getWidget('general', 'room');
-			var value = widget.get('value');
-			array.some(widget.getAllItems(), function(iitem) {
-				if (iitem.id == value) {
-					room = iitem;
-					return true;  // break loop
-				}
-			});
-			return room;
-		},
-
-		// helper function that returns the correct message for an locked room
-		_getRoomMessage: function(room) {
-			// display notification if necessary
-			var msg = '';
-			if (room && room.exam) {
-				if (room.locked) {
-					msg = _('In this computer room the exam "%s" is currently being executed by %s.', room.examDescription, room.user);
-				}
-				else {
-					msg = _('In this computer room the exam "%s" is currently being written.', room.examDescription);
-				}
-			} else if (room && room.locked) {
-				msg =  _('This computer room is currently in use by %s.', room.user);
-			}
-			return msg;
-		},
 
 		postMixInProperties: function() {
 			this.inherited(arguments);
 
-			this.standbyOpacity = 1.0;
-
-			var myRules = _( 'Personal internet rules' );
+			var myRules = _('Personal internet rules');
 
 			this.pages = [{
 				name: 'general',
 				headerText: _('Start a new exam'),
-				helpText: _('<p>The UCS@school exam mode allows one to perform an exam in a computer room. During the exam, access to internet as well as to shares can be restricted, the student home directories are not accessible, either.</p><p>Please enter a name for the new exam, specify its end time, and select classes or workgroups that shall participate in the exam.</p>'),
+				helpText: _('<p>The UCS@school exam mode allows one to perform an exam in a computer room. During the exam, access to internet as well as to shares can be restricted, the student home directories are not accessible, either.</p><p>Please enter a name for the new exam and specify its end time</p>'),
+//				layout: ['name', 'examEndTime'],
+				widgets: [{
+					name: 'name',
+					type: TextBox,
+					required: true,
+					label: _('Exam name'),
+					description: _('The name of the exam, e.g., "Math exam algrebra 02/2013".'),
+					onChange: lang.hitch(this, function() {
+						// update the directory name
+						var name = sanitizeFilename(this.getWidget('general', 'name').get('value'));
+						this.getWidget('files', 'directory').set('value', name);
+					})
+				}, {
+					name: 'examEndTime',
+					type: TimeBox,
+					label: _('End time'),
+					description: _('The time when the exam ends')
+				}, {
+					name: 'info',
+					type: Text,
+					content: _('Please select your further configuration steps:')
+				}, {
+					name: '_showFileUpload',
+					type: CheckBox,
+					label: _('Distribute materials')
+				} , {
+					name: '_showInternetSettings',
+					type: CheckBox,
+					label: _('Set up internet rules')
+				}, {
+					name: '_showShareSettings',
+					type: CheckBox,
+					label: _('Configure share access')
+				}]
+			}, {
+				name: 'advanced',
+				headerText: _('Select room and participients'),
+				helpText: _('<p>Please select the room in which the exam is written and select classes or workgroups that shall participate in the exam.</p>'),
 				layout: [
 					'school',
 					['room', 'info'],
-					'name',
-					'examEndTime',
 					'recipients'
 				],
 				widgets: [{
@@ -157,7 +155,7 @@ define([
 						}
 
 						// update content + visibilty of the widget
-						var infoWidget = this.getWidget('general', 'info');
+						var infoWidget = this.getWidget('advanced', 'info');
 						infoWidget.set('content', msg || '');
 						infoWidget.set('visible', Boolean(msg));
 					})
@@ -169,27 +167,21 @@ define([
 					'class': 'umcSize-One umcText',
 					style: 'padding-left: 0.4em;'
 				}, {
-					name: 'name',
-					type: TextBox,
-					required: true,
-					label: _('Exam name'),
-					description: _('The name of the exam, e.g., "Math exam algrebra 02/2013".'),
-					onChange: lang.hitch(this, function() {
-						// update the directory name
-						var name = sanitizeFilename(this.getWidget('general', 'name').get('value'));
-						this.getWidget('files', 'directory').set('value', name);
-					})
-				}, {
-					name: 'examEndTime',
-					type: TimeBox,
-					label: _('End time'),
-					description: _('The time when the exam ends')
-				}, {
 					type: MultiObjectSelect,
 					name: 'recipients',
 					required: true,
 					dialogTitle: _('Assign classes/workgroups'),
 					label: _('Assigned classes/workgroups'),
+					// FIXME: MultiObjectSelect is broken :( :/
+					//validator: lang.hitch(this, function(value) { return this.getWidget('advanced', 'recipients').get('value').length; }),
+					//invalidMessage: '',
+					validate: lang.hitch(this, function() {
+						var valid = this.getWidget('advanced', 'recipients').get('value').length;
+						if (!valid) {
+							dialog.alert(_('No class or workgroup has been selected for the exam. Please select at least one class or workgroup.'));
+						}
+						return valid;
+					}),
 					description: _('Groups that are participating in the exam'),
 					queryWidgets: [{
 						type: ComboBox,
@@ -234,45 +226,58 @@ define([
 					//canRemove: lang.hitch(this, '_checkFilenamesRemove')
 				}]
 			}, {
-				name: 'roomSettings',
+				name: 'proxy_settings',
 				headerText: _('Computer room settings'),
-				helpText: _('Please select the access restrictions to internet as well as to shares. These settings can also be adjusted during the exam via the room settings in the module <i>Computer room</i>. The participating students are not able to access the home directories during the exam.'),
+				helpText: _('Please select the access restrictions to internet. These settings can also be adjusted during the exam via the room settings in the module <i>Computer room</i>.'),
 				widgets: [{
-					type: ComboBox,
-					name: 'shareMode',
-					label: _('Share access'),
-					description: _( 'Defines restriction for the share access' ),
-					staticValues: [
-						{ id: 'home', label : _('Home directory only') },
-						{ id: 'all', label : _('No restrictions' ) }
-					]
-				}, {
 					type: ComboBox,
 					name: 'internetRule',
 					label: _('Web access profile'),
 					dynamicValues: 'schoolexam/internetrules',
 					staticValues: [
-						{ id: 'none', label: _( 'Default (global settings)' ) },
+						{ id: 'none', label: _('Default (global settings)') },
 						{ id: 'custom', label: myRules }
 					],
 					onChange: lang.hitch(this, function(value) {
-						this.getWidget('roomSettings', 'customRule').set( 'disabled', value != 'custom');
+						this.getWidget('proxy_settings', 'customRule').set('disabled', value != 'custom');
 					})
 				}, {
 					type: TextArea,
 					name: 'customRule',
-					label: lang.replace( _( 'List of allowed web sites for "{myRules}"' ), {
+					label: lang.replace(_('List of allowed web sites for "{myRules}"'), {
 						myRules: myRules
-					} ),
-					description: _( '<p>In this text box you can list web sites that are allowed to be used by the students. Each line should contain one web site. Example: </p><p style="font-family: monospace">univention.com<br/>wikipedia.org<br/></p>' ),
-					validate: lang.hitch( this, function() {
-						return !( this.getWidget( 'roomSettings', 'internetRule' ).get( 'value' ) == 'custom' && ! this.getWidget( 'roomSettings', 'customRule' ).get( 'value' ) );
-					} ),
+					}),
+					description: _('<p>In this text box you can list web sites that are allowed to be used by the students. Each line should contain one web site. Example: </p><p style="font-family: monospace">univention.com<br/>wikipedia.org<br/></p>'),
+					validate: lang.hitch(this, function() {
+						return !(this.getWidget('proxy_settings', 'internetRule' ).get('value') == 'custom' && !this.getWidget('proxy_settings', 'customRule').get('value'));
+					}),
 					onFocus: lang.hitch( this, function() {
-						//dijit.hideTooltip( this._form.getWidget( 'customRule' ).domNode ); // FIXME
-					} ),
+						//dijit.hideTooltip(this._form.getWidget('customRule').domNode); // FIXME
+					}),
 					disabled: true
 				}]
+			}, {
+				name: 'share_settings',
+				headerText: _('Computer room settings'),
+				helpText: _('Please select the access restrictions to shares. These settings can also be adjusted during the exam via the room settings in the module <i>Computer room</i>. The participating students are not able to access the home directories during the exam.'),
+				widgets: [{
+					type: ComboBox,
+					name: 'shareMode',
+					label: _('Share access'),
+					description: _( 'Defines restriction for the share access' ),
+					staticValues: [{
+						id: 'home',
+						label : _('Home directory only')
+					}, {
+						id: 'all',
+						label : _('No restrictions')
+					}]
+				}]
+			}, {
+				name: 'reboot',
+				headerText: _('Reboot student computers'),
+				helpText: _('<p>For the correct functioning of the exam mode, it is important that all student computers in the computer room are rebooted. The listed computers can be automatically rebooted by pressing the button <i>Reboot computers</i>.</p><p><b>Attention:</b> No warning will be displayed to currently logged in users! The reboot will be executed immediately.</p>'),
+				widgets: []
 			}, {
 				name: 'error',
 				headerText: _('An error ocurred'),
@@ -286,26 +291,16 @@ define([
 					content: ''
 				}]
 			}, {
-				name: 'success',
+				name: 'finished',
 				headerText: _('Exam succesfully prepared'),
 				headerTextRegion: 'main',
-				helpText: '...', // will be set dynamically after querying the exam prefix UCR variable
+				helpText: _('<p>The preparation of the exam was successful. A summary of the exam properties is displayed below.<p><p>Press the button "Open computer room" to finish this wizard and open selected computer room directly.</p><p><b>Attention:</b> For the exam, students are required to login with a special user account by adding <i>{prefix}</i> to their common username, e.g., <i>{prefix}joe123</i> instead of <i>joe123</i>.</p>'),
 				helpTextRegion: 'main',
 				widgets: [{
 					type: Text,
 					name: 'info',
 					content: ''
 				}]
-			}, {
-				name: 'reboot',
-				headerText: _('Reboot student computers'),
-				helpText: _('<p>For the correct functioning of the exam mode, it is important that all student computers in the computer room are rebooted. The listed computers can be automatically rebooted by pressing the button <i>Reboot computers</i>.</p><p><b>Attention:</b> No warning will be displayed to currently logged in users! The reboot will be executed immediately.</p>')
-			}, {
-				name: 'finished',
-				headerText: _('Preparation finished'),
-				headerTextRegion: 'main',
-				helpText: _('The preparation of the exam has been finished successfully. Press the button "Open computer room" to finish this wizard and open selected computer room directly.'),
-				helpTextRegion: 'main'
 			}];
 		},
 
@@ -342,27 +337,32 @@ define([
 				'ucsschool/exam/default/internet',
 				'ucsschool/exam/delay/min',
 				'ucsschool/exam/delay/max',
-				'ucsschool/exam/delay/offset'
+				'ucsschool/exam/delay/offset',
+				'ucsschool/exam/default/checkbox/*'
 			]).then(lang.hitch(this, function(result) {
 				// cache the user prefix and update help text
 				this._userPrefix = result['ucsschool/ldap/default/userprefix/exam'] || 'exam-';
-				this.getPage('success').set('helpText', _('<p>The preparation of the exam was successful. A summary of the exam properties is displayed below.<p><p>As next step, it is necessary to reboot computers in the room.</p><p><b>Attention:</b> For the exam, students are required to login with a special user account by adding <i>%(prefix)s</i> to their common username, e.g., <i>%(prefix)sjoe123</i> instead of <i>joe123</i>.</p>', { prefix: this._userPrefix })),
+				this.getPage('finished').set('helpText', lang.replace(this.getPage('finished').get('helpText'), {prefix: this._userPrefix}));
 
 				// max upload size and some form values
 				setMaxSize(result['umc/server/upload/max'] || 10240);
-				setValue('roomSettings', 'shareMode', result['ucsschool/exam/default/shares']);
-				setValue('roomSettings', 'internetRule', result['ucsschool/exam/default/internet']);
+				setValue('share_settings', 'shareMode', result['ucsschool/exam/default/shares']);
+				setValue('proxy_settings', 'internetRule', result['ucsschool/exam/default/internet']);
 
 				// save delay values for the grid
 				this._grid.set('minUpdateDelay', result['ucsschool/exam/delay/min'] || 30);
 				this._grid.set('maxUpdateDelay', result['ucsschool/exam/delay/max'] || 120);
 				this._grid.set('offsetUpdateDelay', result['ucsschool/exam/delay/offset'] || 20);
 
+				// default checkbox values
+				this.getWidget('general', '_showFileUpload').set('value', tools.isTrue(result['ucsschool/exam/default/checkbox/distribution']));
+				this.getWidget('general', '_showInternetSettings').set('value', tools.isTrue(result['ucsschool/exam/default/checkbox/proxysettings']));
+				this.getWidget('general', '_showShareSettings').set('value', tools.isTrue(result['ucsschool/exam/default/checkbox/sharesettings']));
+
 				// for the room, we need to match the given value against all available room DNs
-				var roomWidget = this.getWidget('general', 'room');
+				var roomWidget = this.getWidget('advanced', 'room');
 				var roomName = result['ucsschool/exam/default/room'];
 				roomWidget.ready().then(function() {
-					var roomDN = null;
 					array.forEach(roomWidget.getAllItems(), function(iitem) {
 						if (iitem.id.indexOf('cn=' + roomName) === 0) {
 							// we found the correct DN
@@ -407,13 +407,6 @@ define([
 				this.standby(false);
 			}));
 
-			// adjust the label of the 'finish' button + redirect the callback
-			array.forEach(['general', 'files', 'roomSettings'], lang.hitch(this, function(ipage) {
-				var ibutton = this.getPage(ipage)._footerButtons.finish;
-				ibutton.set('label', ipage == 'roomSettings' ? _('Start exam') : _('Quick start'));
-				ibutton.callback = lang.hitch(this, '_startExam');
-			}));
-
 			// disable the 'next' button on the reboot page
 			var button = this.getPage('reboot')._footerButtons.next;
 			button.set('disabled', true);
@@ -427,63 +420,10 @@ define([
 			this.inherited(arguments);
 
 			// hook when reboot page is shown
-			aspect.after(this.getPage('reboot'), '_onShow', lang.hitch(this, function() {
-				// find computers that need to be restarted
-				var values = this.getValues();
-				this._grid.monitorRoom(values.room);
-
-				// disable the next button and reset its label
-				var button = this.getPage('reboot')._footerButtons.next;
-				button.set('disabled', true);
-				button.set('label', _('Next'));
-
-				// call the grid's resize method (decoupled via setTimeout)
-				window.setTimeout(lang.hitch(this, function() {
-					this._grid.resize();
-				}, 0));
-			}));
+			aspect.after(this.getPage('reboot'), '_onShow', lang.hitch(this, '_onShowRebootPage'));
 
 			// hook when success page is shown
-			aspect.after(this.getPage('success'), '_onShow', lang.hitch(this, function() {
-				var values = this.getValues();
-				var html = '<table style="border-spacing:7px; border:none;">';
-				array.forEach(['name', 'room', 'examEndTime', 'recipients', 'directory', 'files', 'shareMode', 'internetRule'], lang.hitch(this, function(ikey) {
-					var widget = this.getWidget(ikey);
-					var value = values[ikey];
-
-					// convert all values to arrays (makes handling easier)
-					if (!(value instanceof Array)) {
-						value = [value];
-					}
-
-					// for ComboBoxes/MultiObjectSelect -> get the label of the chosen value 
-					var newValue = value;
-					if (widget.getAllItems) {
-						newValue = [];
-						newValue = array.map(value, function(ival) {
-							var jval = ival;
-							array.some(widget.getAllItems(), function(iitem) {
-								if (iitem.id == ival) {
-									// found correct match -> break loop
-									jval = iitem.label;
-									return true;
-								}
-							});
-							return jval;
-						});
-					}
-
-					// update HTML table for summary
-					html += lang.replace('<tr><td style="border:none; width:160px;"><b>{label}:</b></td><td style="border:none;">{value}</td></tr>',{
-						label: widget.get('label'),
-						value: newValue.join(', ')
-					});
-				}));
-				html += '</table>';
-
-				// view table
-				this.getWidget('success', 'info').set('content', html);
-			}));
+			aspect.after(this.getPage('finished'), '_onShow', lang.hitch(this, '_updateSuccessPage'));
 
 			// hook when monitoring of the computers has been finished
 			var button = this.getPage('reboot')._footerButtons.next;
@@ -500,32 +440,111 @@ define([
 			}));
 		},
 
-		_updateButtons: function(pageName) {
-			this.inherited(arguments);
+		isPageVisible: function(pageName) {
+			var visible = this.inherited(arguments);
+			if (pageName == 'files') {
+				visible = visible && this.getWidget('general', '_showFileUpload').get('value');
+			} else if (pageName == 'proxy_settings') {
+				visible = visible && this.getWidget('general', '_showInternetSettings').get('value');
+			} else if (pageName == 'share_settings') {
+				visible = visible && this.getWidget('general', '_showShareSettings').get('value');
+			}
+			return visible;
+		},
 
-			// make the 'finish' buttons visible on specific pages only
-			if (array.indexOf(['general', 'files', 'roomSettings'], pageName) < 0) {
-				return;
-			}
-			var buttons = this._pages[pageName]._footerButtons;
-			domClass.toggle(buttons.finish.domNode, 'dijitHidden', false);
-			if (this.hasNext(pageName)) {
-				// make sure that ther is a little space between the two buttons 'next' and 'finish'
-				domStyle.set(buttons.finish.domNode, { marginLeft: '5px' });
-			}
+		_updateSuccessPage: function() {
+			var values = this.getValues();
+			var html = '<table style="border-spacing: 7px; border: 0 none;">';
+			array.forEach(['name', 'room', 'examEndTime', 'recipients', 'directory', 'files', 'shareMode', 'internetRule'], lang.hitch(this, function(ikey) {
+				var widget = this.getWidget(ikey);
+				var value = values[ikey];
+
+				// convert all values to arrays (makes handling easier)
+				if (!(value instanceof Array)) {
+					value = [value];
+				}
+
+				var title = widget.get('label');
+				if (ikey == 'files') {
+					title = _('Distributed materials');
+				}
+
+				// for ComboBoxes/MultiObjectSelect -> get the label of the chosen value
+				var newValue = value;
+				if (widget.getAllItems) {
+					newValue = [];
+					newValue = array.map(value, function(ival) {
+						var jval = ival;
+						array.some(widget.getAllItems(), function(iitem) {
+							if (iitem.id == ival) {
+								// found correct match -> break loop
+								jval = iitem.label;
+								return true;
+							}
+						});
+						return jval;
+					});
+				}
+
+				if (!value.length) {
+					return;  // no files were uploaded
+				}
+
+				// update HTML table for summary
+				html += lang.replace('<tr><td style="border:none; width:160px;"><b>{label}:</b></td><td style="border:none;">{value}</td></tr>',{
+					label: title,
+					value: newValue.join(', ')
+				});
+			}));
+			html += '</table>';
+
+			// view table
+			this.getWidget('finished', 'info').set('content', html);
+		},
+
+		_onShowRebootPage: function() {
+			// find computers that need to be restarted
+			var values = this.getValues();
+			this._grid.monitorRoom(values.room);
+
+			// disable the next button and reset its label
+			var button = this.getPage('reboot')._footerButtons.next;
+			button.set('disabled', true);
+			button.set('label', _('Next'));
+
+			// call the grid's resize method (decoupled via setTimeout)
+			window.setTimeout(lang.hitch(this, function() {
+				this._grid.resize();
+			}, 0));
+		},
+
+		getFooterButtons: function(pageName) {
+			return array.map(this.inherited(arguments), function(button) {
+				if (button.name == 'finish') {
+					button.label = _('Start exam');
+				}
+				return button;
+			});
 		},
 
 		hasPrevious: function(pageName) {
-			return array.indexOf(['error', 'success', 'general', 'reboot'], pageName) < 0;
-		},
-
-		hasNext: function(pageName) {
-			return array.indexOf(['roomSettings', 'finished'], pageName) < 0;
+			return array.indexOf(['error', 'finished', 'general', 'reboot'], pageName) < 0;
 		},
 
 		next: function(pageName) {
 			var next = this.inherited(arguments);
-			if (pageName == 'error') {
+			if (next == 'reboot') {
+				next = new Deferred();
+
+				// validate the current values
+				this._validate().then(lang.hitch(this, function() {
+					this._startExam().then(function(nextPage) {
+						next.resolve(nextPage);
+					});
+				}), lang.hitch(this, function(nextPage) {
+					next.resolve(nextPage);
+				}));
+			} else if (pageName == 'error') {
 				next = 'general';
 			}
 			else if (pageName == 'reboot') {
@@ -560,122 +579,88 @@ define([
 		},
 
 		canCancel: function(pageName) {
-			return array.indexOf(['success', 'reboot', 'finished'], pageName) < 0;
-		},
-
-		_gotoPage: function(pageName) {
-			if (!this._pages[pageName]) {
-				// ignore invalid pages
-				return;
-			}
-			this._updateButtons(pageName);
-			this.selectChild(this._pages[pageName]);
+			return array.indexOf(['reboot', 'finished'], pageName) < 0;
 		},
 
 		_validate: function() {
-			// recipients
-			var values = this.getValues();
-			var nextPage = null;
-			if (!values.recipients.length) {
-				dialog.alert(_('No classes/workgroups have been selected for the exam.'));
-				nextPage = 'general';
-			}
-
-			// validate the page forms
-			array.forEach(['general', 'files', 'roomSettings'], function(ipage) {
-				var iform = this._pages[ipage]._form;
-				if (!iform.validate() && !nextPage) {
-					nextPage = ipage;
-					var jform = iform;
-					dialog.confirm(_('Please validate and correct your input data.'), [{
-						name: 'ok',
-						label: _('OK'),
-						'default': true
-					}]).then(lang.hitch(this, function() {
-						if (jform.getInvalidWidgets().length) {
-							// focus the first invalid widget
-							window.setTimeout(function() {
-								jform.getWidget(jform.getInvalidWidgets()[0]).focus();
-							}, 500);
-						}
-					}));
-				}
-			}, this);
+			var invalidNextPage = new Deferred();
 
 			var room = this._getCurrentRoom();
-			if (!nextPage && room) {
-				if (room.exam) {
-					// block room if an exam is being written
-					dialog.alert(_('The room %s cannot be chosen as the exam "%s" is currently being conducted. Please make sure that the exam is finished via the module "Computer room" before a new exam can be started again.', room.label, room.examDescription));
-					nextPage = 'general';
-				} else if (room.locked) {
-					// room is in use -> ask user to confirm the choice
-					return dialog.confirm(_('This computer room is currently in use by %s. You can take control over the room, however, the current teacher will be prompted a notification and its session will be closed.', room.user), [{
-						name: 'cancel',
-						label: _('Cancel'),
-						'default': true
-					}, {
-						name: 'takeover',
-						label: _('Take over')
-					}]).then(lang.hitch(this, function(response) {
-						if (response != 'takeover') {
-							this._gotoPage('general');
-							return false;
-						}
-						return true;
-					}));
-				}
+			if (room && room.exam) {
+				// block room if an exam is being written
+				dialog.alert(_('The room %s cannot be chosen as the exam "%s" is currently being conducted. Please make sure that the exam is finished via the module "Computer room" before a new exam can be started again.', room.label, room.examDescription));
+				invalidNextPage.reject('advanced');
+				return invalidNextPage;
 			}
 
-			return this.standbyDuring(tools.umcpCommand('schoolexam/room/validate', {room: room.id})).then(lang.hitch(this, function(data) {
-				var error = data.result;
-				if (error) {
-					dialog.alert(error);
-					nextPage = 'general';
-				}
-				this._gotoPage(nextPage);
-				return nextPage === null;
-			}));
+			var validateWithServer = lang.hitch(this, function() {
+				this.standbyDuring(this.umcpCommand('schoolexam/room/validate', {room: room.id})).then(lang.hitch(this, function(data) {
+					var error = data.result;
+					if (error) {
+						dialog.alert(error);
+						invalidNextPage.reject('general');
+						return;
+					}
+					invalidNextPage.resolve();
+				}));
+			});
+
+			if (room && room.locked) {
+				// room is in use -> ask user to confirm the choice
+				dialog.confirm(_('This computer room is currently in use by %s. You can take control over the room, however, the current teacher will be prompted a notification and its session will be closed.', room.user), [{
+					name: 'cancel',
+					label: _('Cancel'),
+					'default': true
+				}, {
+					name: 'takeover',
+					label: _('Take over')
+				}]).then(lang.hitch(this, function(response) {
+					if (response != 'takeover') {
+						invalidNextPage.reject('advanced');
+					}
+					validateWithServer();
+				}));
+			} else {
+				validateWithServer();
+			}
+
+			return invalidNextPage;
 		},
 
 		_startExam: function() {
-			when(this._validate(), lang.hitch(this, function(valid) {
-				// validate the current values
-				if (!valid) {
-					return;
-				}
+			var nextPage = new Deferred();
 
-				// set default error message
-				this.getWidget('error', 'info').set('content', _('An unexpected error occurred.'));
+			// set default error message
+			this.getWidget('error', 'info').set('content', _('An unexpected error occurred.'));
 
-				// start the exam
-				var values = this.getValues();
-				tools.umcpCommand('schoolexam/exam/start', values, false);
+			// start the exam
+			var values = this.getValues();
+			this.umcpCommand('schoolexam/exam/start', values, false);
 
-				// initiate the progress bar
-				this._progressBar.reset(_('Starting the configuration process...' ));
+			// initiate the progress bar
+			this._progressBar.reset(_('Starting the configuration process...' ));
+			this.standby(false);
+			this.standby(true, this._progressBar);
+			var preparationDeferred = new Deferred();
+			this._progressBar.auto(
+				'schoolexam/progress',
+				{},
+				lang.hitch(this, '_preparationFinished', preparationDeferred),
+				undefined,
+				undefined,
+				true
+			);
+
+			preparationDeferred.then(lang.hitch(this, function() {
+				// everything fine open the computerroom and close the exam wizard
 				this.standby(false);
-				this.standby(true, this._progressBar);
-				var preparationDeferred = new Deferred();
-				this._progressBar.auto(
-					'schoolexam/progress',
-					{},
-					lang.hitch(this, '_preparationFinished', preparationDeferred),
-					undefined,
-					undefined,
-					true
-				);
-
-				preparationDeferred.then(lang.hitch(this, function() {
-					// everything fine open the computerroom and close the exam wizard
-					this.standby(false);
-					this._gotoPage('success');
-				}), lang.hitch(this, function() {
-					// handle any kind of errors
-					this.standby(false);
-					this._gotoPage('error');
-				}));
+				nextPage.resolve('reboot');
+			}), lang.hitch(this, function() {
+				// handle any kind of errors
+				this.standby(false);
+				nextPage.resolve('error');
 			}));
+			return nextPage;
 		},
 
 		_preparationFinished: function(deferred) {
@@ -708,14 +693,8 @@ define([
 			var progressBar = new ProgressBar();
 			progressBar.reset(_('Rebooting computers'));
 			this.own(progressBar);
-			this.standby(true, progressBar);
-			return this._grid.reboot().then(lang.hitch(this, function() {
-				// reboot done
-				this.standby(false);
-			}), lang.hitch(this, function() {
-				// some error happened, probably an exception due to programming error
-				this.standby(false);
-			}), function(percentage, computer) {
+
+			return this.standbyDuring(this._grid.reboot(), progressBar).then(undefined, undefined, function(percentage, computer) {
 				progressBar.setInfo(null, computer, percentage);
 			});
 		},
@@ -725,6 +704,38 @@ define([
 			topic.publish('/umc/modules/open', 'computerroom', /*flavor*/ null, {
 				room: values.room
 			});
+		},
+
+		// helper function to get the currently selected room entry
+		_getCurrentRoom: function() {
+			// find correct room entry
+			var room = null;
+			var widget = this.getWidget('advanced', 'room');
+			var value = widget.get('value');
+			array.some(widget.getAllItems(), function(iitem) {
+				if (iitem.id == value) {
+					room = iitem;
+					return true;  // break loop
+				}
+			});
+			return room;
+		},
+
+		// helper function that returns the correct message for an locked room
+		_getRoomMessage: function(room) {
+			// display notification if necessary
+			var msg = '';
+			if (room && room.exam) {
+				if (room.locked) {
+					msg = _('In this computer room the exam "%s" is currently being executed by %s.', room.examDescription, room.user);
+				}
+				else {
+					msg = _('In this computer room the exam "%s" is currently being written.', room.examDescription);
+				}
+			} else if (room && room.locked) {
+				msg =  _('This computer room is currently in use by %s.', room.user);
+			}
+			return msg;
 		}
 	});
 

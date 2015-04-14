@@ -4,6 +4,8 @@ ucs-school-umc-exam (4.0.0-1) unstable; urgency=medium
   * Bug #37867: fix UCR variable description
   	ucsschool/ldap/default/groupname/exam
   * Bug #37992: add a direct validation when clicking on next
+  * Bug #38224: Improove usability by adding configuration checkboxes and
+  	reordering of pages.
 
  -- Florian Best <best@univention.de>  Fri, 10 Apr 2015 12:18:17 +0200
 
