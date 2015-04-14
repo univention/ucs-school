@@ -1,6 +1,12 @@
+ucs-school-umc-distribution (12.0.1-6) unstable; urgency=medium
+
+  * Bug #38159: fix position of file upload label
+
+ -- Florian Best <best@univention.de>  Fri, 10 Apr 2015 12:15:20 +0200
+
 ucs-school-umc-distribution (12.0.1-5) unstable; urgency=medium
 
-  *  Bug #36846: fix typ 
+  *  Bug #36846: fix typo
 
  -- Florian Best <best@univention.de>  Wed, 18 Feb 2015 12:57:54 +0100
 
