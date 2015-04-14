@@ -52,6 +52,7 @@ class Instance(SchoolBaseModule):
 	@simple_response
 	@LDAP_Connection()
 	def configuration(self, ldap_user_read=None, ldap_position=None, search_base=None):
+		ucr.load()
 		MODULE.process('return configuration')
 		username = _('unknown')
 		if self._username:
@@ -73,6 +74,7 @@ class Instance(SchoolBaseModule):
 			msg = u'From: ' + sender + u'\r\n'
 			msg += u'To: ' + (', '.join(recipients)) + u'\r\n'
 			msg += u'Subject: %s (%s: %s)\r\n' % (category, _('School'), school)
+			msg += u'Content-Type: text/plain; charset="UTF-8"\r\n'
 			msg += u'\r\n'
 			msg += u'%s: %s\r\n' % (_('Sender'), username)
 			msg += u'%s: %s\r\n' % (_('School'), school)
@@ -81,7 +83,7 @@ class Instance(SchoolBaseModule):
 			msg += message + u'\r\n'
 			msg += u'\r\n'
 
-			msg = msg.encode('latin1')
+			msg = msg.encode('UTF-8')
 
 			server = smtplib.SMTP('localhost')
 			server.set_debuglevel(0)
