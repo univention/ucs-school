@@ -70,21 +70,7 @@ define([
 			}, {
 				name: 'name',
 				label: _('School abbreviation')
-			}, {
-				name: 'educational_servers',
-				label: _('Educational servers'),
-				formatter: lang.hitch(this, '_serverDnFormatter')
-			}, {
-				name: 'administrative_servers',
-				label: _('Administrative servers'),
-				formatter: lang.hitch(this, '_serverDnFormatter')
 			}];
-		},
-
-		_serverDnFormatter: function(dns) {
-			return array.map(dns, function(dn) {
-				return tools.explodeDn(dn, true)[0];
-			}).join(', ');
 		},
 
 		getObjectIdName: function(item) {
@@ -100,6 +86,13 @@ define([
 			}));
 		},
 
+		getGridDeleteAction: function() {
+			// it is only possible to delete one OU-school at once
+			var action = this.inherited(arguments);
+			action.isMultiAction = false;
+			return action;
+		},
+
 		getSearchWidgets: function() {
 			return [{
 				type: TextBox,
@@ -113,21 +106,11 @@ define([
 		},
 
 		getDeleteConfirmMessage: function(objects) {
-			var msg;
-			if (objects.length === 1) {
-				var school = objects[0];
-				msg = _('Please confirm to delete the school "%(displayName)s" (%(name)s).', {displayName: school.display_name, name: school.name});
-			} else {
-				msg = _('Please confirm to delete the following schools:');
-				msg += '<ul>';
-				array.forEach(objects, function(school) {
-					msg += lang.replace('<li>"{displayName}" ({name})</li>', {displayName: school.display_name, name: school.name});
-				});
-				msg += '</ul>';
-			}
+			var school = objects[0];
+			var msg = _('Please confirm to delete the school "%(displayName)s" (%(name)s).', {displayName: school.display_name, name: school.name});
 			msg += '<br/><br/>';
 			msg += '<strong>' + _('Warning') + ':</strong> ';
-			msg += _('Deleting schools will also delete every teacher and student.') + '<br/>' + _('This action is cannot be undone.');
+			msg += _('Deleting this school will also delete every teacher and student.') + '<br/>' + _('This action is cannot be undone.');
 			return msg;
 		},
 
@@ -149,7 +132,7 @@ define([
 				callback: lang.hitch(this, function() {
 					topic.publish('/umc/actions', 'session', 'logout');
 					tools.closeSession();
-					window.location.reload(true);
+					window.location.reload();
 				})
 			}]);
 		}

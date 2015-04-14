@@ -249,8 +249,8 @@ class Instance( SchoolBaseModule ):
 							except ValueError as e:
 								raise ValueError(_('Could not set date for: %s') % jname)
 
-							# make sure the execution time lies sufficiently in the future
-							if getattr(project, jprop) - datetime.now() < timedelta(minutes=1):
+							# make sure the execution time lies sufficiently (5min) in the future
+							if getattr(project, jprop) - datetime.now() < timedelta(minutes=5):
 								raise ValueError(_('The specified time needs to lie in the future for: %s') % jname)
 						else:
 							# manual distribution/collection
@@ -258,7 +258,7 @@ class Instance( SchoolBaseModule ):
 
 				if project.starttime and project.deadline:
 					# make sure distributing happens before collecting
-					if project.deadline - project.starttime < timedelta(minutes=3):
+					if project.deadline - project.starttime < timedelta(minutes=10):
 						raise ValueError(_('Distributing the data needs to happen sufficiently long enough before collecting them'))
 
 				if 'recipients' in iprops:

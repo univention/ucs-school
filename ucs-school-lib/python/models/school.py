@@ -35,7 +35,7 @@ from ldap.filter import escape_filter_chars
 
 from univention.config_registry import handler_set
 
-from ucsschool.lib.models.attributes import Attribute, SchoolName, DCName, ShareFileServer, DisplayName
+from ucsschool.lib.models.attributes import SchoolName, DCName, ShareFileServer, DisplayName
 from ucsschool.lib.models.base import UCSSchoolHelperAbstractClass
 from ucsschool.lib.models.group import BasicGroup, Group
 from ucsschool.lib.models.dhcp import DHCPService
@@ -52,13 +52,10 @@ class School(UCSSchoolHelperAbstractClass):
 	home_share_file_server = ShareFileServer(_('Server for Windows home directories'), udm_name='ucsschoolHomeShareFileServer')
 	display_name = DisplayName(_('Display name'))
 	school = None
-	educational_servers = Attribute(_('Educational servers'), unlikely_to_change=True)
-	administrative_servers = Attribute(_('Administrative servers'), unlikely_to_change=True)
 
 	def __init__(self, name=None, school=None, **kwargs):
 		super(School, self).__init__(name=name, **kwargs)
 		self.display_name = self.display_name or self.name
-		self._set_server_names()
 
 	def build_hook_line(self, hook_time, func_name):
 		if func_name == 'create':
@@ -238,20 +235,6 @@ class School(UCSSchoolHelperAbstractClass):
 			return 'cn=%s,cn=ucsschool,cn=groups,%s' % (name, ucr.get('ldap/base'))
 		else:
 			return name
-
-	def _set_server_names(self):
-		import univention.admin.uldap
-		lo, po = univention.admin.uldap.getMachineConnection()
-		self.educational_servers = self.get_educational_server_names(lo)
-		self.administrative_servers = self.get_administrative_server_names(lo)
-
-	def get_administrative_server_names(self, lo):
-		dn = self.get_administrative_group_name('administrative', ou_specific=True, as_dn=True)
-		return lo.get(dn, ['uniqueMember']).get('uniqueMember', [])
-
-	def get_educational_server_names(self, lo):
-		dn = self.get_administrative_group_name('educational', ou_specific=True, as_dn=True)
-		return lo.get(dn, ['uniqueMember']).get('uniqueMember', [])
 
 	def add_host_to_dc_group(self, lo):
 		logger.info('School.add_host_to_dc_group(): ou_name=%r  dc_name=%r' % (self.name, self.dc_name))

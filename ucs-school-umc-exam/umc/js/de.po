@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-exam\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2015-04-13 19:07+0200\n"
+"POT-Creation-Date: 2015-02-16 12:46+0100\n"
 "PO-Revision-Date: 2013-05-23 22:19+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: umc/js/schoolexam.js:279
+#: umc/js/schoolexam.js:301
 msgid ""
 "<p>For the correct functioning of the exam mode, it is important that all "
 "student computers in the computer room are rebooted. The listed computers "
@@ -26,7 +26,7 @@ msgstr ""
 "automatisch neu gestartet werden.</p><p><b>Achtung:</b> Es erfolgt keine "
 "Warnung bei angemeldeten Benutzern! Der Neustart wird sofort ausgeführt!</p>"
 
-#: umc/js/schoolexam.js:250
+#: umc/js/schoolexam.js:266
 msgid ""
 "<p>In this text box you can list web sites that are allowed to be used by "
 "the students. Each line should contain one web site. Example: </p><p style="
@@ -37,7 +37,7 @@ msgstr ""
 "enthalten, bspw.: </p><p style=\"font-family: monospace\">univention.com<br/"
 ">wikipedia.org<br/></p>"
 
-#: umc/js/schoolexam.js:208
+#: umc/js/schoolexam.js:215
 msgid ""
 "<p>Please choose a appropriate directory name for the exam and upload all "
 "necessary files one by one.</p><p>These files will be distributed to all "
@@ -54,49 +54,41 @@ msgstr ""
 "Diese eingesammelten Dateien werden im Klassenarbeitsverzeichnis Ihres "
 "Heimatverzeichnisses gespeichert.</p>"
 
-#: umc/js/schoolexam.js:122
-msgid ""
-"<p>Please select the room in which the exam is written and select classes or "
-"workgroups that shall participate in the exam.</p>"
-msgstr ""
-"<p>Bitte wählen Sie den Raum, in dem die Klassenarbeit geschrieben wird und "
-"wählen Sie Klassen oder Arbeitsgruppen aus, die an der Klassenarbeit "
-"teilnehmen sollen.</p>"
-
-#: umc/js/schoolexam.js:84
+#: umc/js/schoolexam.js:121
 msgid ""
 "<p>The UCS@school exam mode allows one to perform an exam in a computer "
 "room. During the exam, access to internet as well as to shares can be "
 "restricted, the student home directories are not accessible, either.</"
-"p><p>Please enter a name for the new exam and specify its end time</p>"
+"p><p>Please enter a name for the new exam, specify its end time, and select "
+"classes or workgroups that shall participate in the exam.</p>"
 msgstr ""
 "<p>Der UCS@school-Klassenarbeitsmodus ermöglicht es, eine Klassenarbeit in "
 "einem Computerraum zu schreiben. Für den Zeitraum der Klassenarbeit kann der "
 "Zugang zum Internet sowie zu Freigaben eingeschränkt werden. Es wird "
 "sichergestellt, dass der Zugriff auf die Heimatverzeichnisse für die Schüler "
 "nicht möglich ist.</p><p>Bitte geben Sie den Namen der neuen Klassenarbeit "
-"an und definieren Sie eine Endzeit.</p>"
+"an, definieren Sie eine Endzeit und wählen Sie die Klassen oder "
+"Arbeitsgruppen, die an der Klassenarbeit teilnehmen sollen.</p>"
 
-#: umc/js/schoolexam.js:297
-#, python-brace-format
+#: umc/js/schoolexam.js:348
+#, python-format
 msgid ""
 "<p>The preparation of the exam was successful. A summary of the exam "
-"properties is displayed below.<p><p>Press the button \"Open computer room\" "
-"to finish this wizard and open selected computer room directly.</"
-"p><p><b>Attention:</b> For the exam, students are required to login with a "
-"special user account by adding <i>{prefix}</i> to their common username, e."
-"g., <i>{prefix}joe123</i> instead of <i>joe123</i>.</p>"
+"properties is displayed below.<p><p>As next step, it is necessary to reboot "
+"computers in the room.</p><p><b>Attention:</b> For the exam, students are "
+"required to login with a special user account by adding <i>%(prefix)s</i> to "
+"their common username, e.g., <i>%(prefix)sjoe123</i> instead of <i>joe123</"
+"i>.</p>"
 msgstr ""
 "<p>Die Vorbereitung der Klassenarbeit war erfolgreich. Eine Zusammenfassung "
-"aller Einstellungen wird unten stehend angezeigt.</p><p>Bitte drücken Sie "
-"die Schaltfläche \"Computerraum öffnen\", um den Assistenten zu beenden und "
-"den ausgewählten Computerraum direkt zu öffnen.</p><p><b>Achtung:</b> Für "
-"die Klassenarbeit müssen sich die Schüler mit einem speziellen Benutzernamen "
-"anmelden, indem sie <i>{prefix}</i> ihrem gewohnten Benutzernamen "
-"voranstellen, also bspw. <i>{prefix}santon123</i> anstelle von <i>anton123</"
-"i>.</p>"
+"aller Einstellungen wird unten stehend angezeigt.</p><p>Als nächster Schritt "
+"ist es notwendig die Rechner des Raumes neu zu starten.</p><p><b>Achtung:</"
+"b> Für die Klassenarbeit müssen sich die Schüler mit einem speziellen "
+"Benutzernamen anmelden, indem sie <i>%(prefix)s</i> ihrem gewohnten "
+"Benutzernamen voranstellen, also bspw. <i>%(prefix)santon123</i> anstelle "
+"von <i>anton123</i>.</p>"
 
-#: umc/js/schoolexam.js:285
+#: umc/js/schoolexam.js:279
 msgid ""
 "An error occurred during the preparation of the exam. The following "
 "information will show more details about the exact error. Please retry to "
@@ -106,95 +98,83 @@ msgstr ""
 "folgenden Informationen geben mehr Details über die genaue Art des Fehlers. "
 "Bitte versuchen Sie, die Klassenarbeit erneut zu starten."
 
-#: umc/js/schoolexam.js:283
+#: umc/js/schoolexam.js:277
 msgid "An error ocurred"
 msgstr "Ein Fehler trat auf"
 
-#: umc/js/schoolexam.js:634
+#: umc/js/schoolexam.js:648
 msgid "An unexpected error occurred."
 msgstr "Ein unerwarteter Fehler trat auf."
 
-#: umc/js/schoolexam.js:173
+#: umc/js/schoolexam.js:190
 msgid "Assign classes/workgroups"
 msgstr "Zuweisen von Klassen/Arbeitsgruppen"
 
-#: umc/js/schoolexam.js:174
+#: umc/js/schoolexam.js:191
 msgid "Assigned classes/workgroups"
 msgstr "Zugewiesene Klassen/Arbeitsgruppen"
 
-#: umc/js/schoolexam.js:612
+#: umc/js/schoolexam.js:614
 msgid "Cancel"
 msgstr "Abbrechen"
 
-#: umc/js/schoolexam.js:140
+#: umc/js/schoolexam.js:141
 msgid "Choose the computer room in which the exam will take place"
 msgstr "Auswahl des Computerraumes, in dem die Klassenarbeit statt finden wird"
 
-#: umc/js/schoolexam.js:131
+#: umc/js/schoolexam.js:132
 msgid "Choose the school"
 msgstr "Auswahl der Schule"
 
-#: umc/js/schoolexam.js:139
+#: umc/js/schoolexam.js:140
 msgid "Computer room"
 msgstr "Computerraum"
 
-#: umc/js/schoolexam.js:230 umc/js/schoolexam.js:261
+#: umc/js/schoolexam.js:237
 msgid "Computer room settings"
 msgstr "Einstellungen des Computerraums"
 
-#: umc/js/schoolexam.js:117
-msgid "Configure share access"
-msgstr "Freigabezugriff konfigurieren"
-
-#: umc/js/schoolexam.js:560
+#: umc/js/schoolexam.js:540
 msgid "Continue without reboot"
 msgstr "Weiter ohne Neustart"
 
-#: umc/js/schoolexam.js:238
+#: umc/js/schoolexam.js:254
 msgid "Default (global settings)"
 msgstr "Standard (globale Einstellungen)"
 
-#: umc/js/schoolexam.js:267
+#: umc/js/schoolexam.js:243
 msgid "Defines restriction for the share access"
 msgstr "Definiert Einschränkungen für den Zugriff auf Freigaben"
 
-#: umc/js/schoolexam.js:213
+#: umc/js/schoolexam.js:220
 msgid "Directory name"
 msgstr "Verzeichnisname"
 
-#: umc/js/schoolexam.js:109
-msgid "Distribute materials"
-msgstr "Materialien verteilen"
-
-#: umc/js/schoolexam.js:469
-msgid "Distributed materials"
-msgstr "Verteilte Materialien"
-
-#: umc/js/schoolexam.js:100
+#: umc/js/schoolexam.js:184
 msgid "End time"
 msgstr "Endzeit"
 
-#: umc/js/schoolexam.js:90
+#: umc/js/schoolexam.js:174
 msgid "Exam name"
 msgstr "Name der Klassenarbeit"
 
-#: umc/js/schoolexam.js:295
+#: umc/js/schoolexam.js:289
 msgid "Exam succesfully prepared"
 msgstr "Klassenarbeit erfolgreich angelegt"
 
-#: umc/js/schoolexam.js:224
+#: umc/js/schoolexam.js:231
 msgid "Files that are distributed along with this exam"
 msgstr "Diese Dateien werden für die Klassenarbeit an die Schüler verteilt"
 
-#: umc/js/schoolexam.js:185
+#: umc/js/schoolexam.js:192
 msgid "Groups that are participating in the exam"
 msgstr "Die an der Klassenarbeit teilnehmenden Gruppen"
 
-#: umc/js/schoolexam.js:270
+#: umc/js/schoolexam.js:245
 msgid "Home directory only"
 msgstr "Ausschließlich das Heimatverzeichnis"
 
-#: umc/js/schoolexam.js:730
+#: umc/js/schoolexam.js:100
 #, python-format
 msgid ""
 "In this computer room the exam \"%s\" is currently being executed by %s."
@@ -202,13 +182,13 @@ msgstr ""
 "In diesem Computerraum wird derzeit die Klassenarbeit \"%s\" von %s "
 "durchgeführt."
 
-#: umc/js/schoolexam.js:733
+#: umc/js/schoolexam.js:103
 #, python-format
 msgid "In this computer room the exam \"%s\" is currently being written."
 msgstr ""
 "In diesem Computerraum wird derzeit die Klassenarbeit \"%s\" durchgeführt."
 
-#: umc/js/schoolexam.js:247
+#: umc/js/schoolexam.js:263
 #, python-brace-format
 msgid "List of allowed web sites for \"{myRules}\""
 msgstr "Liste erlaubter Webseiten für \"{myRules}\""
@@ -217,23 +197,19 @@ msgstr "Liste erlaubter Webseiten für \"{myRules}\""
 msgid "Name"
 msgstr "Name"
 
-#: umc/js/schoolexam.js:437 umc/js/schoolexam.js:513
+#: umc/js/schoolexam.js:437 umc/js/schoolexam.js:496
 msgid "Next"
 msgstr "Weiter"
-
-#: umc/js/schoolexam.js:181
-msgid ""
-"No class or workgroup has been selected for the exam. Please select at least "
-"one class or workgroup."
-msgstr ""
-"Für die Klassenarbeit wurde keine Klasse oder Arbeitsgruppe ausgewählt. "
-"Bitte wählen Sie mindestens eine Klasse oder Arbeitsgruppe aus."
 
 #: umc/js/schoolexam/RebootGrid.js:80
 msgid "No reboot necessary"
 msgstr "Kein Neustart notwendig"
 
-#: umc/js/schoolexam.js:273
+#: umc/js/schoolexam.js:579
+msgid "No recipients have been selected for the exam."
+msgstr "Für die Klassenarbeit wurden keine Empfänger ausgewählt."
+
+#: umc/js/schoolexam.js:246
 msgid "No restrictions"
 msgstr "Keine Einschränkungen"
 
@@ -241,19 +217,23 @@ msgstr "Keine Einschränkungen"
 msgid "Not connected / powered down"
 msgstr "Nicht verbunden / ausgeschaltet"
 
-#: umc/js/schoolexam.js:152
+#: umc/js/schoolexam.js:153
 msgid "Note"
 msgstr "Hinweis"
 
-#: umc/js/schoolexam.js:416
+#: umc/js/schoolexam.js:591
+msgid "OK"
+msgstr "OK"
+
+#: umc/js/schoolexam.js:422
 msgid "Open computer room"
 msgstr "Computerraum öffnen"
 
-#: umc/js/schoolexam.js:79
+#: umc/js/schoolexam.js:116
 msgid "Personal internet rules"
 msgstr "Eigene Internetregeln"
 
-#: umc/js/schoolexam.js:558
+#: umc/js/schoolexam.js:538
 msgid ""
 "Please confirm to reboot all computers marked as <i>Reboot necessary</i> "
 "immedialtely."
@@ -261,38 +241,36 @@ msgstr ""
 "Bitte bestätigen Sie den umgehenden Neustart aller Rechner, die mit "
 "<i>Neustart notwendig</i> markiert sind."
 
-#: umc/js/schoolexam.js:231
+#: umc/js/schoolexam.js:238
 msgid ""
-"Please select the access restrictions to internet. These settings can also "
-"be adjusted during the exam via the room settings in the module <i>Computer "
-"room</i>."
+"Please select the access restrictions to internet as well as to shares. "
+"These settings can also be adjusted during the exam via the room settings in "
+"the module <i>Computer room</i>. The participating students are not able to "
+"access the home directories during the exam."
 msgstr ""
-"Bitte wählen Sie die Einschränkungen für den Zugang zum Internet. Diese "
-"Einstellungen können während der Klassenarbeit jederzeit über die "
-"Raumeinstellungen des Moduls <i>Computerraum</i> geändert werden. "
-
-#: umc/js/schoolexam.js:262
-msgid ""
-"Please select the access restrictions to shares. These settings can also be "
-"adjusted during the exam via the room settings in the module <i>Computer "
-"room</i>. The participating students are not able to access the home "
-"directories during the exam."
-msgstr ""
-"Bitte wählen Sie die Einschränkungen für den Zugang zu Freigaben. Diese "
-"Einstellungen können während der Klassenarbeit jederzeit über die "
-"Raumeinstellungen des Moduls <i>Computerraum</i> geändert werden. Die "
-"teilnehmenden Schüler können während der Klassenarbeit nicht auf ihre "
+"Bitte wählen Sie die Einschränkungen für den Zugang zum Internet und zu "
+"Freigaben. Diese Einstellungen können während der Klassenarbeit jederzeit "
+"über die Raumeinstellungen des Moduls <i>Computerraum</i> geändert werden. "
+"Die teilnehmenden Schüler können während der Klassenarbeit nicht auf ihre "
 "Heimatverzeichnisse zugreifen."
 
-#: umc/js/schoolexam.js:105
-msgid "Please select your further configuration steps:"
-msgstr "Wählen Sie Ihre weiteren Konfigurations-Schritte:"
+#: umc/js/schoolexam.js:589
+msgid "Please validate and correct your input data."
+msgstr "Bitte überprüfen und korrigieren Sie Ihre Eingabedaten."
+
+#: umc/js/schoolexam.js:304
+msgid "Preparation finished"
+msgstr "Vorbereitung abgeschlossen"
+
+#: umc/js/schoolexam.js:412
+msgid "Quick start"
+msgstr "Schnellstart"
 
 #: umc/js/schoolexam/RebootGrid.js:75
 msgid "Reboot"
 msgstr "Neustart"
 
-#: umc/js/schoolexam.js:434 umc/js/schoolexam.js:563
+#: umc/js/schoolexam.js:493 umc/js/schoolexam.js:543
 msgid "Reboot computers"
 msgstr "Rechner neustarten"
 
@@ -300,55 +278,47 @@ msgstr "Rechner neustarten"
 msgid "Reboot necessary"
 msgstr "Neustart notwendig"
 
-#: umc/js/schoolexam.js:278
+#: umc/js/schoolexam.js:300
 msgid "Reboot student computers"
 msgstr "Schülerrechner neustarten"
 
-#: umc/js/schoolexam.js:694
+#: umc/js/schoolexam.js:708
 msgid "Rebooting computers"
 msgstr "Rechner neustarten"
 
-#: umc/js/schoolexam.js:132 umc/js/schoolexam.js:189
+#: umc/js/schoolexam.js:133 umc/js/schoolexam.js:196
 msgid "School"
 msgstr "Schule"
 
-#: umc/js/schoolexam.js:196
+#: umc/js/schoolexam.js:203
 msgid "Search name"
 msgstr "Suchname"
 
-#: umc/js/schoolexam.js:121
-msgid "Select room and participients"
-msgstr "Raum und Teilnehmer auswählen"
-
-#: umc/js/schoolexam.js:113
-msgid "Set up internet rules"
-msgstr "Internetregeln definieren"
-
-#: umc/js/schoolexam.js:266
+#: umc/js/schoolexam.js:242
 msgid "Share access"
 msgstr "Freigabezugriff"
 
-#: umc/js/schoolexam.js:524
-msgid "Start exam"
-msgstr "Klassenarbeit starten"
-
-#: umc/js/schoolexam.js:83
+#: umc/js/schoolexam.js:120
 msgid "Start a new exam"
 msgstr "Eine neue Klassenarbeit starten"
 
-#: umc/js/schoolexam.js:641
+#: umc/js/schoolexam.js:412
+msgid "Start exam"
+msgstr "Klassenarbeit starten"
+
+#: umc/js/schoolexam.js:655
 msgid "Starting the configuration process..."
 msgstr "Beginn des Konfigurationsprozesses..."
 
-#: umc/js/schoolexam.js:616
+#: umc/js/schoolexam.js:618
 msgid "Take over"
 msgstr "Übernehmen"
 
-#: umc/js/schoolexam.js:91
+#: umc/js/schoolexam.js:175
 msgid "The name of the exam, e.g., \"Math exam algrebra 02/2013\"."
 msgstr "Der name der Klassenarbeit, bspw. \"Mathematik-Klausur 02-2013\"."
 
-#: umc/js/schoolexam.js:214
+#: umc/js/schoolexam.js:221
 msgid ""
 "The name of the project directory as it will be displayed in the file "
 "system. The following special characters are not allowed: \"/\", \"\\\", \"?"
@@ -358,7 +328,17 @@ msgstr ""
 "Die folgenden Sonderzeichen sind nicht erlaubt: \"/\", \"\\\", \"?\", \"%\", "
 "\"*\", \":\", \"|\", \"\"\", \"<\", \">\", \"$\", \"'\"."
 
-#: umc/js/schoolexam.js:591
+#: umc/js/schoolexam.js:306
+msgid ""
+"The preparation of the exam has been finished successfully. Press the button "
+"\"Open computer room\" to finish this wizard and open selected computer room "
+"directly."
+msgstr ""
+"Die Einrichtung der Klassenarbeit war erfolgreich. Bitte drücken Sie die "
+"Schaltfläche \"Computerraum öffnen\", um den Assistenten zu beenden und den "
+"ausgewählten Computerraum direkt zu öffnen."
+
+#: umc/js/schoolexam.js:608
 #, python-format
 msgid ""
 "The room %s cannot be chosen as the exam \"%s\" is currently being "
@@ -370,16 +350,16 @@ msgstr ""
 "Klassenarbeit zunächst über das Modul \"Computerraum\" beendet wird bevor "
 "eine neue Klassenarbeit gestartet wird."
 
-#: umc/js/schoolexam.js:101
+#: umc/js/schoolexam.js:185
 msgid "The time when the exam ends"
 msgstr "Der Endzeitpunkt der Klassenarbeit"
 
-#: umc/js/schoolexam.js:736
+#: umc/js/schoolexam.js:106
 #, python-format
 msgid "This computer room is currently in use by %s."
 msgstr "Dieser Computerraum wird derzeit verwendet von %s."
 
-#: umc/js/schoolexam.js:610
+#: umc/js/schoolexam.js:612
 #, python-format
 msgid ""
 "This computer room is currently in use by %s. You can take control over the "
@@ -390,11 +370,11 @@ msgstr ""
 "des Raums übernehmen, dazu wird dem momentanen Lehrer ein Hinweis angezeigt "
 "und seine Sitzung geschlossen."
 
-#: umc/js/schoolexam.js:223
+#: umc/js/schoolexam.js:230
 msgid "Upload files"
 msgstr "Dateien hochladen"
 
-#: umc/js/schoolexam.js:207
+#: umc/js/schoolexam.js:214
 msgid "Upload of exam files"
 msgstr "Hochladen von Klassenarbeitsdateien"
 
@@ -402,6 +382,24 @@ msgstr "Hochladen von Klassenarbeitsdateien"
 msgid "User"
 msgstr "Benutzer"
 
-#: umc/js/schoolexam.js:235
+#: umc/js/schoolexam.js:251
 msgid "Web access profile"
 msgstr "Internetregeln"
+
+#~ msgid ""
+#~ "<p>The preparation of the exam was successful.<p><p>As next step, it is "
+#~ "necessary to make sure that all student computers in the computer room "
+#~ "are rebooted if they are running. Only through a restart, exam specific "
+#~ "configurations for the computers themselves are activated.</p>"
+#~ msgstr ""
+#~ "<p>Die Vorbereitung der Klassenarbeit war erfolgreich.</p><p>Als nächster "
+#~ "Schritt is es notwendig sicherzustellen, dass alle Schülerrechner des "
+#~ "Computerraums neu gestartet werden, insofern sie eingeschaltet sind. Nur "
+#~ "durch einen Neustart kann sichergestellt werden, dass spezifische "
+#~ "Rechnereinstellungen für die Klassenarbeit aktiviert werden.</p>"
+
+#~ msgid "Connection"
+#~ msgstr "Verbindung"
+
+#~ msgid "Not connected"
+#~ msgstr "Nicht verbunden"

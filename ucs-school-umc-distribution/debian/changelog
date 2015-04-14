@@ -1,13 +1,6 @@
-ucs-school-umc-distribution (13.0.0-1) unstable; urgency=medium
-
-  * Bug #38159: fix position of file upload label
-  * Bug #38195: remove timedelta of 5 minutes for file collection
-
- -- Florian Best <best@univention.de>  Fri, 10 Apr 2015 12:15:20 +0200
-
 ucs-school-umc-distribution (12.0.1-5) unstable; urgency=medium
 
-  *  Bug #36846: fix typo
+  *  Bug #36846: fix typ 
 
  -- Florian Best <best@univention.de>  Wed, 18 Feb 2015 12:57:54 +0100
 
