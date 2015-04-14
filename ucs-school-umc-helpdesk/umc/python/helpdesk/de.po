@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-helpdesk\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2012-03-03 16:04+0100\n"
+"POT-Creation-Date: 2015-04-14 15:18+0200\n"
 "PO-Revision-Date: 2012-03-08 16:05+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -12,26 +12,30 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: umc/python/helpdesk/__init__.py:76
+#: umc/python/helpdesk/__init__.py:149
 msgid "Category"
 msgstr "Kategorie"
 
-#: umc/python/helpdesk/__init__.py:77
+#: umc/python/helpdesk/__init__.py:147
+msgid "Mail address"
+msgstr "E-Mail-Adresse"
+
+#: umc/python/helpdesk/__init__.py:150
 msgid "Message"
 msgstr "Nachricht"
 
-#: umc/python/helpdesk/__init__.py:72 umc/python/helpdesk/__init__.py:75
-msgid "School"
-msgstr ""
+#: umc/python/helpdesk/__init__.py:148
+msgid "Phone number"
+msgstr "Telefonnummer"
 
-#: umc/python/helpdesk/__init__.py:74
+#: umc/python/helpdesk/__init__.py:121 umc/python/helpdesk/__init__.py:146
+msgid "School"
+msgstr "Schule"
+
+#: umc/python/helpdesk/__init__.py:145
 msgid "Sender"
 msgstr "Absender"
 
-#: umc/python/helpdesk/__init__.py:122
+#: umc/python/helpdesk/__init__.py:162
 msgid "The email address for the helpdesk team is not configured."
 msgstr "Die E-Mail-Adresse für das Helpdesk-Team ist nicht konfiguriert."
-
-#: umc/python/helpdesk/__init__.py:54
-msgid "unknown"
-msgstr "unbekannt"

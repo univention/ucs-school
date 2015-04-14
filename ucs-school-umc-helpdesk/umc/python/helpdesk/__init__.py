@@ -32,9 +32,11 @@
 
 from univention.management.console.log import MODULE
 from univention.management.console.config import ucr
-from univention.management.console.modules.decorators import simple_response
+from univention.management.console.modules.decorators import simple_response, sanitize
+from univention.management.console.modules.sanitizers import StringSanitizer
 
 from univention.lib.i18n import Translation
+from univention.admin.handlers.users.user import object as User
 
 from ucsschool.lib import LDAP_Connection, SchoolBaseModule
 from ucsschool.lib.models import School
@@ -43,8 +45,15 @@ import notifier
 import notifier.popen
 
 import smtplib
+import ldap
 
 _ = Translation('ucs-school-umc-helpdesk').translate
+
+
+def sanitize_header(header):
+	for chr_ in '\x00\r\n':
+		header = header.replace(chr_, u'?')
+	return header
 
 
 class Instance(SchoolBaseModule):
@@ -54,11 +63,9 @@ class Instance(SchoolBaseModule):
 	def configuration(self, ldap_user_read=None, ldap_position=None, search_base=None):
 		ucr.load()
 		MODULE.process('return configuration')
-		username = _('unknown')
-		if self._username:
-			username = self._username
+		username = self._username
 
-		MODULE.info('username=%s  school=%s' % (self._username, search_base.school))
+		MODULE.info('username=%r school=%r' % (self._username, search_base.school))
 
 		school = School.from_dn(School(search_base.school).dn, None, ldap_user_read)
 		return {
@@ -67,22 +74,24 @@ class Instance(SchoolBaseModule):
 			'recipient': ucr.get('ucsschool/helpdesk/recipient')
 		}
 
-	def send(self, request):
-		def _send_thread(sender, recipients, username, school, category, message):
+	@sanitize(
+		username=StringSanitizer(required=True),
+		school=StringSanitizer(required=True),
+		message=StringSanitizer(required=True),
+		category=StringSanitizer(required=True),
+	)
+	@LDAP_Connection()
+	def send(self, request, ldap_user_read=None, ldap_position=None, search_base=None):
+		def _send_thread(sender, recipients, subject, message):
 			MODULE.info('sending mail: thread running')
 
-			msg = u'From: ' + sender + u'\r\n'
-			msg += u'To: ' + (', '.join(recipients)) + u'\r\n'
-			msg += u'Subject: %s (%s: %s)\r\n' % (category, _('School'), school)
+			msg = u'From: %s\r\n' % (sanitize_header(sender),)
+			msg += u'To: %s\r\n' % (sanitize_header(', '.join(recipients)),)
+			msg += u'Subject: =?UTF-8?Q?%s?=\r\n' % (sanitize_header(subject).encode('quopri'),)
 			msg += u'Content-Type: text/plain; charset="UTF-8"\r\n'
 			msg += u'\r\n'
-			msg += u'%s: %s\r\n' % (_('Sender'), username)
-			msg += u'%s: %s\r\n' % (_('School'), school)
-			msg += u'%s: %s\r\n' % (_('Category'), category)
-			msg += u'%s:\r\n' % _('Message')
-			msg += message + u'\r\n'
+			msg += message
 			msg += u'\r\n'
-
 			msg = msg.encode('UTF-8')
 
 			server = smtplib.SMTP('localhost')
@@ -97,26 +106,56 @@ class Instance(SchoolBaseModule):
 				MODULE.info('sending mail: completed successfully')
 				self.finished(request.id, True)
 			else:
-				msg = '%s\n%s: %s\n' % (''.join(traceback.format_tb(thread.exc_info[2])), thread.exc_info[0].__name__, str(thread.exc_info[1]))
-				MODULE.process('sending mail:An internal error occurred: %s' % msg)
-				self.finished(request.id, False, msg, False)
-
-		keys = ['username', 'school', 'category', 'message']
-		self.required_options(request, *keys)
-		for key in keys:
-			if request.options[key]:
-				MODULE.info('send ' + key + '=' + request.options[key].replace('%', '_'))
+				msg = ''.join(traceback.format_exception(*thread.exc_info))
+				MODULE.process('sending mail: An internal error occurred: %s' % (msg,))
+				self.finished(request.id, False, message=msg, status=500)
 
 		if ucr.get('ucsschool/helpdesk/recipient'):
-			if ucr.get('hostname') and ucr.get('domainname'):
-				sender = 'ucsschool-helpdesk@%s.%s' % (ucr['hostname'], ucr['domainname'])
-			else:
-				sender = 'ucsschool-helpdesk@localhost'
+			recipients = ucr['ucsschool/helpdesk/recipient'].split(' ')
+			username = request.options['username']
+			#username = self._username
+			school = request.options['school']
+			category = request.options['category']
+			message = request.options['message']
 
-			func = notifier.Callback(_send_thread, sender, ucr['ucsschool/helpdesk/recipient'].split(' '), request.options['username'], request.options['school'], request.options['category'], request.options['message'])
+			subject = u'%s (%s: %s)' % (category, _('School'), school)
+
+			try:
+				user = User(None, ldap_user_read, ldap_position, self._user_dn)
+				user.open()
+			except ldap.LDAPError:
+				MODULE.error('Errror receiving user information: %s' % (traceback.format_exception(),))
+				user = {
+					'displayName': username,
+					'mailPrimaryAddress': '',
+					'mailAlternativeAddress': [],
+					'e-mail': [],
+					'phone': []
+				}
+			mails = set([user['mailPrimaryAddress']]) | set(user['mailAlternativeAddress']) | set(user['e-mail'])
+
+			sender = user['mailPrimaryAddress']
+			if not sender:
+				if ucr.get('hostname') and ucr.get('domainname'):
+					sender = 'ucsschool-helpdesk@%s.%s' % (ucr['hostname'], ucr['domainname'])
+				else:
+					sender = 'ucsschool-helpdesk@localhost'
+
+			data = [
+				(_('Sender'), u'%s (%s)' % (user['displayName'], username)),
+				(_('School'), school),
+				(_('Mail address'), u', '.join(mails)),
+				(_('Phone number'), u', '.join(user['phone'])),
+				(_('Category'), category),
+				(_('Message'), u'\r\n%s' % (message,)),
+			]
+			msg = u'\r\n'.join(u'%s: %s' % (key, value) for key, value in data)
+
+			MODULE.info('sending message: %s' % ('\n'.join(map(lambda x: repr(x.strip()), msg.splitlines()))),)
+
+			func = notifier.Callback(_send_thread, sender, recipients, subject, msg)
 			MODULE.info('sending mail: starting thread')
-			cb = notifier.Callback(_send_return, request)
-			thread = notifier.threads.Simple('HelpdeskMessage', func, cb)
+			thread = notifier.threads.Simple('HelpdeskMessage', func, notifier.Callback(_send_return, request))
 			thread.run()
 		else:
 			MODULE.error('HELPDESK: cannot send mail - config-registry variable "ucsschool/helpdesk/recipient" is not set')

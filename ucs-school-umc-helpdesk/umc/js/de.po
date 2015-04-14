@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-helpdesk\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2012-03-03 16:04+0100\n"
+"POT-Creation-Date: 2015-04-14 15:18+0200\n"
 "PO-Revision-Date: 2012-01-31 08:17+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -12,57 +12,39 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: umc/js/helpdesk.js:172
-msgid "Cancel"
-msgstr "Abbrechen"
-
-#: umc/js/helpdesk.js:111
+#: umc/js/helpdesk.js:109
 msgid "Category"
 msgstr "Kategorie"
 
-#: umc/js/helpdesk.js:162 umc/js/helpdesk.js:167
-msgid "Close"
-msgstr "Schließen"
-
-#: umc/js/helpdesk.js:117
-msgid "Message"
-msgstr "Nachricht"
-
-#: umc/js/helpdesk.js:88
+#: umc/js/helpdesk.js:115
 msgid "Message to the helpdesk team"
 msgstr "Nachricht an das Helpdesk-Team"
 
-#: umc/js/helpdesk.js:105
+#: umc/js/helpdesk.js:103
 msgid "School"
 msgstr "Schule"
 
-#: umc/js/helpdesk.js:150
+#: umc/js/helpdesk.js:74
 msgid "Send"
 msgstr "Senden"
 
-#: umc/js/helpdesk.js:166
-msgid "Should the UMC module be closed? All unsaved modification will be lost."
-msgstr ""
-"Soll das UMC-Modul geschlossen werden? Alle nicht gespeicherten Änderungen "
-"gehen verloren."
-
-#: umc/js/helpdesk.js:79
+#: umc/js/helpdesk.js:63
 msgid ""
 "The helpdesk module is not configured properly. The recipient email address "
-"is not set."
+"is not set (UCR variable \"ucsschool/helpdesk/recipient\")."
 msgstr ""
 "Das Helpdesk-Modul ist nicht korrekt eingerichtet. Die Empfängeradresse ist "
-"nicht gesetzt."
+"nicht gesetzt (UCR-Variable \"ucsschool/helpdesk/recipient\")."
 
-#: umc/js/helpdesk.js:197
+#: umc/js/helpdesk.js:141
 msgid "The message could not be send to the helpdesk team: "
 msgstr "Die Nachricht konnte nicht an das Helpdesk-Team geschickt werden: "
 
-#: umc/js/helpdesk.js:194
+#: umc/js/helpdesk.js:138
 msgid "The report has been sent to the helpdesk team"
 msgstr "Die Nachricht wurde an das Helpdesk-Team gesendet"
 
-#: umc/js/helpdesk.js:157
+#: umc/js/helpdesk.js:81
 msgid ""
 "The required message is missing. Therefore, no report has been sent to the "
 "helpdesk team."
@@ -70,6 +52,6 @@ msgstr ""
 "Die benötigte Nachricht fehlt. Daher wurde kein Bericht an das Helpdesk-Team "
 "geschickt."
 
-#: umc/js/helpdesk.js:99
+#: umc/js/helpdesk.js:97
 msgid "User name"
 msgstr "Benutzername"

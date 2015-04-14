@@ -60,7 +60,7 @@ define([
 					this.renderPage(response.result.username, response.result.school);
 					this.standby(false);
 				} else {
-					dialog.alert(_('The helpdesk module is not configured properly. The recipient email address is not set.'));
+					dialog.alert(_('The helpdesk module is not configured properly. The recipient email address is not set (UCR variable "ucsschool/helpdesk/recipient").'));
 					on.once(dialog._alertDialog, 'confirm', lang.hitch(this, function() {
 						topic.publish('/umc/tabs/close', this);
 					}));
