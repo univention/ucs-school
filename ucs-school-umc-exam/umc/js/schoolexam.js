@@ -69,6 +69,7 @@ define([
 
 	var ExamWizard = declare("umc.modules.schoolexam.ExamWizard", [ Wizard, StandbyMixin ], {
 		umcpCommand: null,
+		autoValidate: true,
 
 		_progressBar: null,
 
@@ -576,7 +577,7 @@ define([
 			var values = this.getValues();
 			var nextPage = null;
 			if (!values.recipients.length) {
-				dialog.alert(_('No recipients have been selected for the exam.'));
+				dialog.alert(_('No classes/workgroups have been selected for the exam.'));
 				nextPage = 'general';
 			}
 

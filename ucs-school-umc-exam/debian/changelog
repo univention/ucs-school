@@ -3,6 +3,7 @@ ucs-school-umc-exam (4.0.0-1) unstable; urgency=medium
   * Bug #36251: fix adding of computers to exam group
   * Bug #37867: fix UCR variable description
   	ucsschool/ldap/default/groupname/exam
+  * Bug #37992: add a direct validation when clicking on next
 
  -- Florian Best <best@univention.de>  Fri, 10 Apr 2015 12:18:17 +0200
 

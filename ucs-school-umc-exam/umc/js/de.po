@@ -206,8 +206,8 @@ msgid "No reboot necessary"
 msgstr "Kein Neustart notwendig"
 
 #: umc/js/schoolexam.js:579
-msgid "No recipients have been selected for the exam."
-msgstr "Für die Klassenarbeit wurden keine Empfänger ausgewählt."
+msgid "No classes/workgroups have been selected for the exam."
+msgstr "Für die Klassenarbeit wurden keine Klassen/Arbeitsgruppen ausgewählt."
 
 #: umc/js/schoolexam.js:246
 msgid "No restrictions"
