@@ -191,20 +191,6 @@ define([
 		},
 
 		_updateRooms: function() {
-//			// get the current delays and see wether they are due
-//			var delayTotal = (new Date() - this._firstUpdate) / 1000.0;
-//			var offset = (new Date() - this._lastUpdate) / 1000.0;
-//			if (delayTotal > this.maxUpdateDelay) {
-//				// done :)
-//				this.onMonitoringDone();
-//				return;
-//			}
-//			if (offset > this.offsetUpdateDelay && delayTotal > this.minUpdateDelay) {
-//				// done :)
-//				this.onMonitoringDone();
-//				return;
-//			}
-
 			var update = function() {
 				this._updateTimer = window.setTimeout(lang.hitch(this, '_updateRooms'), 1000);
 			};

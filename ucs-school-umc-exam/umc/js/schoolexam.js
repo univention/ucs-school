@@ -335,9 +335,6 @@ define([
 				'ucsschool/exam/default/room',
 				'ucsschool/exam/default/shares',
 				'ucsschool/exam/default/internet',
-				'ucsschool/exam/delay/min',
-				'ucsschool/exam/delay/max',
-				'ucsschool/exam/delay/offset',
 				'ucsschool/exam/default/checkbox/*'
 			]).then(lang.hitch(this, function(result) {
 				// cache the user prefix and update help text
@@ -348,11 +345,6 @@ define([
 				setMaxSize(result['umc/server/upload/max'] || 10240);
 				setValue('share_settings', 'shareMode', result['ucsschool/exam/default/shares']);
 				setValue('proxy_settings', 'internetRule', result['ucsschool/exam/default/internet']);
-
-				// save delay values for the grid
-				this._grid.set('minUpdateDelay', result['ucsschool/exam/delay/min'] || 30);
-				this._grid.set('maxUpdateDelay', result['ucsschool/exam/delay/max'] || 120);
-				this._grid.set('offsetUpdateDelay', result['ucsschool/exam/delay/offset'] || 20);
 
 				// default checkbox values
 				this.getWidget('general', '_showFileUpload').set('value', tools.isTrue(result['ucsschool/exam/default/checkbox/distribution']));
