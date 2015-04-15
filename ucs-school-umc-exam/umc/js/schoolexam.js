@@ -276,7 +276,7 @@ define([
 			}, {
 				name: 'reboot',
 				headerText: _('Reboot student computers'),
-				helpText: _('<p>For the correct functioning of the exam mode, it is important that all student computers in the computer room are rebooted. The listed computers can be automatically rebooted by pressing the button <i>Reboot computers</i>.</p><p><b>Attention:</b> No warning will be displayed to currently logged in users! The reboot will be executed immediately.</p>'),
+				helpText: _('<p>For the correct functioning of the exam mode, it is important that all student computers in the computer room are rebooted. The listed computers can be automatically rebooted by pressing the button <i>Reboot students computers</i>. Alternatively multiple computers can be selected and manually rebooted by pressing the button <i>Reboot selected computers</i>.</p><p><b>Attention:</b> No warning will be displayed to currently logged in users! The reboot will be executed immediately.</p>'),
 				widgets: []
 			}, {
 				name: 'error',
@@ -410,6 +410,7 @@ define([
 			// disable the 'next' button on the reboot page
 			var button = this.getPage('reboot')._footerButtons.next;
 			button.set('disabled', true);
+			button.set('label', _('Start exam'));
 
 			// adjust the label of the 'finish' button on the 'finished' page
 			button = this.getPage('finished')._footerButtons.finish;
@@ -425,19 +426,7 @@ define([
 			// hook when success page is shown
 			aspect.after(this.getPage('finished'), '_onShow', lang.hitch(this, '_updateSuccessPage'));
 
-			// hook when monitoring of the computers has been finished
-			var button = this.getPage('reboot')._footerButtons.next;
-			this._grid.on('monitoringDone', lang.hitch(this, function() {
-				// adjust button label and enable it
-				var computers = this._grid.getComputersForReboot();
-				if (computers.length) {
-					button.set('label', _('Reboot computers'));
-				}
-				else {
-					button.set('label', _('Next'));
-				}
-				button.set('disabled', false);
-			}));
+			this._grid.on('reboot', lang.hitch(this, '_reboot'));
 		},
 
 		isPageVisible: function(pageName) {
@@ -510,21 +499,15 @@ define([
 			// disable the next button and reset its label
 			var button = this.getPage('reboot')._footerButtons.next;
 			button.set('disabled', true);
-			button.set('label', _('Next'));
+
+			this._grid.standbyDuring(tools.defer(function() {
+				button.set('disabled', false);
+			}, 5000));
 
 			// call the grid's resize method (decoupled via setTimeout)
 			window.setTimeout(lang.hitch(this, function() {
 				this._grid.resize();
 			}, 0));
-		},
-
-		getFooterButtons: function(pageName) {
-			return array.map(this.inherited(arguments), function(button) {
-				if (button.name == 'finish') {
-					button.label = _('Start exam');
-				}
-				return button;
-			});
 		},
 
 		hasPrevious: function(pageName) {
@@ -534,6 +517,7 @@ define([
 		next: function(pageName) {
 			var next = this.inherited(arguments);
 			if (next == 'reboot') {
+				// start exam before showing the reboot page
 				next = new Deferred();
 
 				// validate the current values
@@ -550,12 +534,12 @@ define([
 			else if (pageName == 'reboot') {
 				// only display a dialog in case there are computers that can be rebooted
 				var connectedComputers = this._grid.getComputersForReboot();
-				if (!connectedComputers.length) {
+				if (this._grid.get('computersWereRestarted') || !connectedComputers.length) {
 					return 'finished';
 				}
 
 				// ask user whether or not computers are rebooted
-				next = dialog.confirm(_('Please confirm to reboot all computers marked as <i>Reboot necessary</i> immedialtely.'), [{
+				next = dialog.confirm(_('Please confirm to reboot all computers marked as <i>Reboot necessary</i> immediately.'), [{
 					name: 'cancel',
 					label: _('Continue without reboot')
 				}, {
@@ -688,13 +672,13 @@ define([
 			}
 		},
 
-		_reboot: function() {
+		_reboot: function(computers) {
 			// show a progress bar for rebooting the computers
 			var progressBar = new ProgressBar();
 			progressBar.reset(_('Rebooting computers'));
 			this.own(progressBar);
 
-			return this.standbyDuring(this._grid.reboot(), progressBar).then(undefined, undefined, function(percentage, computer) {
+			return this.standbyDuring(this._grid.reboot(computers), progressBar).then(undefined, undefined, function(percentage, computer) {
 				progressBar.setInfo(null, computer, percentage);
 			});
 		},

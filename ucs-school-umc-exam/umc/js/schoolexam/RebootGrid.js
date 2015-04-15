@@ -53,6 +53,22 @@ define([
 
 		constructor: function() {
 			this.moduleStore = new Memory();
+			this.actions = [{
+				name: 'reboot_all',
+				label: _('Reboot student computers'),
+				isContextAction: false,
+				callback: lang.hitch(this, 'onReboot')
+			}, {
+				name: 'reboot',
+				label: _('Reboot selected computers'),
+				isMultiAction: true,
+				isStandardAction: true,
+				canExecute: function(item) {
+					return item.connection == 'connected'/* && !item.teacher*/;
+				},
+				enablingMode: 'some',
+				callback: lang.hitch(this, 'onReboot')
+			}];
 			this.columns = [{
 				name: 'name',
 				label: _('Name'),
@@ -97,22 +113,21 @@ define([
 			this.set('room', room);
 
 			// query new list of entries and populate store
-			tools.umcpCommand('computerroom/room/acquire', {
+			this.standbyDuring(tools.umcpCommand('computerroom/room/acquire', {
 				room: room
 			}).then(lang.hitch(this, function() {
-				this.umcpCommand('computerroom/query').then(lang.hitch(this, function(response) {
+				return this.umcpCommand('computerroom/query').then(lang.hitch(this, function(response) {
 					this._initGridData(response.result);
 					this._lastUpdate = new Date();
 					this._firstUpdate = new Date();
-					this.standby(true);
+//					this.standby(true);
 					this._updateRooms();
 				}));
-			}));
+			})));
 		},
 
-		onMonitoringDone: function() {
+		onReboot: function(computers) {
 			// event stub
-			this.standby(false);
 		},
 
 		getComputersForReboot: function() {
@@ -127,12 +142,15 @@ define([
 			return computers;
 		},
 
-		reboot: function() {
+		reboot: function(computers) {
 			// switch the computers on and update the progress of a Deferred
 			// do not reboot all computers at once, use an offset of 300ms
-			var computers = this.getComputersForReboot();
+			if (computers === undefined) {
+				var computers = this.getComputersForReboot();
+			}
 			var deferred = new Deferred();
 			var percentPerItem = 100.0 / (computers.length + 1);
+			this.computersWereRestarted = true;
 			array.forEach(computers, lang.hitch(this, function(iitem, idx) {
 				window.setTimeout(lang.hitch(this, function() {
 					// trigger reboot
@@ -173,19 +191,19 @@ define([
 		},
 
 		_updateRooms: function() {
-			// get the current delays and see wether they are due
-			var delayTotal = (new Date() - this._firstUpdate) / 1000.0;
-			var offset = (new Date() - this._lastUpdate) / 1000.0;
-			if (delayTotal > this.maxUpdateDelay) {
-				// done :)
-				this.onMonitoringDone();
-				return;
-			}
-			if (offset > this.offsetUpdateDelay && delayTotal > this.minUpdateDelay) {
-				// done :)
-				this.onMonitoringDone();
-				return;
-			}
+//			// get the current delays and see wether they are due
+//			var delayTotal = (new Date() - this._firstUpdate) / 1000.0;
+//			var offset = (new Date() - this._lastUpdate) / 1000.0;
+//			if (delayTotal > this.maxUpdateDelay) {
+//				// done :)
+//				this.onMonitoringDone();
+//				return;
+//			}
+//			if (offset > this.offsetUpdateDelay && delayTotal > this.minUpdateDelay) {
+//				// done :)
+//				this.onMonitoringDone();
+//				return;
+//			}
 
 			var update = function() {
 				this._updateTimer = window.setTimeout(lang.hitch(this, '_updateRooms'), 1000);
