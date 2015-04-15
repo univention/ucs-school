@@ -21,3 +21,9 @@ Description[en]=Specifies the preselected internet rule for a new exam. Possible
 Description[de]=Definiert die vorausgewählte Internetregel für eine neue Klassenarbeit. Mögliche Werte umfassen die Namen aller Internetregeln wie sie im UMC module "Internetregeln definieren" angezeigt werden.
 Type=str
 Categories=ucsschool-exam
+
+[ucsschool/exam/default/checkbox/*]
+Description[en]=Specified which checkboxes are preselected of the exam UMC module. Possible variables are "distribution", "proxysettings" and "sharesettings".
+Description[de]=Definiert die vorausgewählten Checkboxen im Klassenarbeitsmodus-UMC-Modul. Mögliche Variablen sind "distribution", "proxysettings" and "sharesettings".
+Type=bool
+Categories=ucsschool-exam
