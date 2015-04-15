@@ -33,22 +33,19 @@
 
 import datetime
 import glob
-import locale
 import os
-import shutil
 import stat
 import subprocess
-import uuid
 
 from univention.lib.i18n import Translation
 
-from univention.management.console.modules import UMC_OptionTypeError, Base
+from univention.management.console.modules import UMC_OptionTypeError
+from univention.management.console.modules.decorators import simple_response, sanitize
+from univention.management.console.modules.sanitizers import StringSanitizer
 from univention.management.console.log import MODULE
 from univention.management.console.config import ucr
-from univention.management.console.protocol.message import Response
-from univention.management.console.protocol.definitions import *
 
-from ucsschool.lib import LDAP_Connection, LDAP_ConnectionError, set_credentials, SchoolSearchBase, SchoolBaseModule, Display
+from ucsschool.lib import LDAP_Connection, SchoolBaseModule, Display
 
 import univention.admin.modules as udm_modules
 
@@ -69,21 +66,28 @@ udm_modules.update()
 
 class Instance(SchoolBaseModule):
 
-	def __init__(self):
+	def init(self):
 		global CUPSPDF_DIR, CUPSPDF_USERSUBDIR
-
-		SchoolBaseModule.__init__(self)
-
-		CUPSPDF_DIR, CUPSPDF_USERSUBDIR = os.path.normpath(ucr.get('cups/cups-pdf/directory')).split('%U')
+		SchoolBaseModule.init(self)
+		CUPSPDF_DIR, CUPSPDF_USERSUBDIR = os.path.normpath(ucr.get('cups/cups-pdf/directory', '/var/spool/cups-pdf/%U')).split('%U')
 		# create directory if it does not exist
 		try:
 			if not os.path.exists(CUPSPDF_DIR):
 				os.makedirs(DISTRIBUTION_DATA_PATH, 0o755)
-		except:
-			MODULE.error('error occured while creating %s' % CUPSPDF_DIR)
+		except (OSError, IOError) as exc:
+			MODULE.error('error occured while creating %s: %s' % (CUPSPDF_DIR, exc))
 
+	def _get_path(self, username, printjob):
+		printjob = printjob.replace('/', '')
+		username = username.replace('/', '').lower()
+		path = os.path.join(CUPSPDF_DIR, username, CUPSPDF_USERSUBDIR, printjob)
+		if not os.path.realpath(path).startswith(os.path.realpath(CUPSPDF_DIR)):
+			raise UMC_OptionTypeError('Invalid file')
+		return path
+
+	@simple_response
 	@LDAP_Connection()
-	def printers(self, request, ldap_user_read=None, ldap_position=None, search_base=None):
+	def printers(self, ldap_user_read=None, ldap_position=None, search_base=None):
 		"""List all available printers except PDF printers
 
 		requests.options = {}
@@ -102,8 +106,7 @@ class Instance(SchoolBaseModule):
 			name = prt.info['name']
 			spool_host = prt.info['spoolHost'][0]
 			result.append({'id': '%s://%s' % (spool_host, name), 'label': name})
-
-		self.finished(request.id, result)
+		return result
 
 	@LDAP_Connection()
 	def query(self, request, ldap_user_read=None, ldap_position=None, search_base=None):
@@ -127,55 +130,38 @@ class Instance(SchoolBaseModule):
 		printjoblist = []
 
 		for student in students:
-			user_path = os.path.join(CUPSPDF_DIR, student.info['username'], CUPSPDF_USERSUBDIR, '*.pdf')
-			for document in filter(lambda filename: os.path.isfile(filename), glob.glob(user_path)):
-				printjoblist.append(Printjob(student, document).json())
+			user_path = self._get_path(student.info['username'], '*.pdf')
+			printjoblist.extend(Printjob(student, document).json() for document in glob.glob(user_path) if os.path.isfile(document))
 
 		self.finished(request.id, printjoblist)
 
+	@sanitize(
+		username=StringSanitizer(required=True),
+		printjob=StringSanitizer(required=True),
+	)
 	def download(self, request):
 		"""Searches for print jobs
 
 		requests.options = {}
 		  'username' -- owner of the print job
-		  'filename' -- relative filename of the print job
+		  'printjob' -- relative filename of the print job
 
 		return: <PDF document>
 		"""
-		self.required_options(request, 'username', 'printjob')
-		response = Response(mime_type='application/pdf')
-		response.id = request.id
-		response.command = 'COMMAND'
-		if request.options['username'].find('/') > 0 or request.options['printjob'].find('/') > 0:
-			raise UMC_OptionTypeError('Invalid file')
-		path = os.path.join(CUPSPDF_DIR, request.options['username'], CUPSPDF_USERSUBDIR, request.options['printjob'])
+		path = self._get_path(request.options['username'], request.options['printjob'])
+
 		if not os.path.exists(path):
 			raise UMC_OptionTypeError('Invalid file')
-		fd = open(path)
-		response.body = fd.read()
-		fd.close()
-		self.finished(request.id, response)
 
-	def get(self, request):
-		"""Returns the objects for the given IDs
+		with open(path) as fd:
+			self.finished(request.id, fd.read(), mimetype='application/pdf')
 
-		requests.options = [ <ID>, ... ]
-
-		return: [ { 'id' : <unique identifier>, 'name' : <display name>, 'color' : <name of favorite color> }, ... ]
-		"""
-		MODULE.info('printermoderation.get: options: %s' % str(request.options))
-		ids = request.options
-		result = []
-		if isinstance(ids, (list, tuple)):
-			ids = set(ids)
-			result = filter(lambda x: x['id'] in ids, Instance.entries)
-		else:
-			MODULE.warn('printermoderation.get: wrong parameter, expected list of strings, but got: %s' % str(ids))
-			raise UMC_OptionTypeError('Expected list of strings, but got: %s' % str(ids))
-		MODULE.info('printermoderation.get: results: %s' % str(result))
-		self.finished(request.id, result)
-
-	def delete(self, request):
+	@sanitize(
+		username=StringSanitizer(required=True),
+		printjob=StringSanitizer(required=True),
+	)
+	@simple_response
+	def delete(self, username, printjob):
 		"""Delete a print job
 
 		requests.options = {}
@@ -184,22 +170,25 @@ class Instance(SchoolBaseModule):
 
 		return: <PDF document>
 		"""
-		self.required_options(request, 'username', 'printjob')
-		if request.options['username'].find('/') > 0 or request.options['printjob'].find('/') > 0:
-			raise UMC_OptionTypeError('Invalid file')
-		path = os.path.join(CUPSPDF_DIR, request.options['username'], CUPSPDF_USERSUBDIR, request.options['printjob'])
+		path = self._get_path(username, printjob)
+
 		success = True
 		if os.path.exists(path):
-			MODULE.info('Deleting print job "%s"' % path)
+			MODULE.info('Deleting print job %r' % (path,))
 			try:
 				os.unlink(path)
-			except OSError as e:
+			except OSError as exc:
 				success = False
-				MODULE.error('Error deleting print job: %s' % str(e))
+				MODULE.error('Error deleting print job: %s' % (exc,))
+		return success
 
-		self.finished(request.id, success)
-
-	def printit(self, request):
+	@sanitize(
+		username=StringSanitizer(required=True),
+		printjob=StringSanitizer(required=True),
+		printer=StringSanitizer(required=True),
+	)
+	@simple_response
+	def printit(self, username, printjob, printer):
 		"""Print a given document on the given printer
 
 		requests.options = {}
@@ -209,52 +198,40 @@ class Instance(SchoolBaseModule):
 
 		return: <PDF document>
 		"""
-		self.required_options(request, 'username', 'printjob', 'printer')
 
-		if request.options['username'].find('/') > 0 or request.options['printjob'].find('/') > 0:
-			raise UMC_OptionTypeError('Invalid file')
-		if request.options['printer'].find('://') < 1:
+		path = self._get_path(username, printjob)
+
+		try:
+			spoolhost, printer = printer.split('://', 1)
+		except ValueError:
 			raise UMC_OptionTypeError('Invalid printer URI')
 
-		spoolhost, printer = request.options['printer'].split('://', 1)
-		path = os.path.join(CUPSPDF_DIR, request.options['username'], CUPSPDF_USERSUBDIR, request.options['printjob'])
 		success = False
 		if os.path.exists(path):
-			MODULE.info('Deleting print job "%s"' % path)
-			MODULE.error('Printing: "%s"' % '" "'.join([
+			MODULE.info('Deleting print job %r' % (path,))
+			cmd = [
 				'lpr',
 				# specify printer
 				'-P', printer,
 				# print as alternate user
-				'-U', request.options['username'],
+				'-U', username,
 				# set job name
-				'-J', Printjob.filename2label(request.options['printjob']),
-				# delete file after printing
-				'-r',
-				# spool host
-				'-H', spoolhost,
-				# the file
-				path]))
-			success = subprocess.call([
-				'lpr',
-				# specify printer
-				'-P', printer,
-				# print as alternate user
-				'-U', request.options['username'],
-				# set job name
-				'-J', Printjob.filename2label(request.options['printjob']),
+				'-J', Printjob.filename2label(printjob),
 				# delete file after printing
 				'-r',
 				# the file
 				path,
 				# spool host
-				'-H', spoolhost]) == 0
+				'-H', spoolhost
+			]
+			MODULE.error('Printing: %r' % '" "'.join(cmd))
+			success = subprocess.call(cmd) == 0
 			if success:
 				MODULE.info('Printing was success')
 			else:
 				MODULE.error('Printing has failed')
 
-		self.finished(request.id, success)
+		return success
 
 
 class Printjob(object):
@@ -278,7 +255,7 @@ class Printjob(object):
 		if '-' in filename:
 			name = filename.split('-', 1)[1]
 			if name.endswith('.pdf'):
-				name = name[: -4]
+				name = name[:-4]
 		return name
 
 	def json(self):
