@@ -74,19 +74,20 @@ class Instance( SchoolBaseModule ):
 		# make sure that we got a list
 		if not isinstance(request.options, (tuple, list)):
 			raise UMC_OptionTypeError( 'Expected list of dicts, but got: %s' % str(request.options) )
-		file = request.options[0]
-		if not ('tmpfile' in file and 'filename' in file):
-			raise UMC_OptionTypeError( 'Invalid upload data, got: %s' % str(file) )
 
-		# create a temporary upload directory, if it does not already exist
-		if not self._tmpDir:
-			self._tmpDir = tempfile.mkdtemp(prefix='ucsschool-distribution-upload-')
-			MODULE.info('Created temporary directory: %s' % self._tmpDir)
+		for file in request.options:
+			if not ('tmpfile' in file and 'filename' in file):
+				raise UMC_OptionTypeError( 'Invalid upload data, got: %s' % str(file) )
 
-		filename = self.__workaround_filename_bug(file)
-		destPath = os.path.join(self._tmpDir, filename)
-		MODULE.info('Received file %r, saving it to %r' % (file['tmpfile'], destPath))
-		shutil.move(file['tmpfile'], destPath)
+			# create a temporary upload directory, if it does not already exist
+			if not self._tmpDir:
+				self._tmpDir = tempfile.mkdtemp(prefix='ucsschool-distribution-upload-')
+				MODULE.info('Created temporary directory: %s' % self._tmpDir)
+
+			filename = self.__workaround_filename_bug(file)
+			destPath = os.path.join(self._tmpDir, filename)
+			MODULE.info('Received file %r, saving it to %r' % (file['tmpfile'], destPath))
+			shutil.move(file['tmpfile'], destPath)
 
 		# done
 		self.finished( request.id, None )
@@ -135,6 +136,7 @@ class Instance( SchoolBaseModule ):
 		if request.options.get('project'):
 			project = util.Project.load(request.options.get('project'))
 
+
 		result = []
 		for ifile in request.options.get('filenames'):
 			ifile = ifile.encode('UTF-8')
@@ -148,9 +150,7 @@ class Instance( SchoolBaseModule ):
 			if project:
 				iresult['projectDuplicate'] = ifile in project.files
 				iresult['distributed'] = ifile in project.files and not os.path.exists(os.path.join(project.cachedir, ifile))
-
 			result.append(iresult)
-
 		# done :)
 		self.finished( request.id, result )
 

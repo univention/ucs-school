@@ -150,6 +150,7 @@ define([
 				})
 			}, {
 				type: MultiUploader,
+				multiFile: true,
 				name: 'files',
 				command: 'distribution/upload',
 				dynamicOptions: {
@@ -313,22 +314,52 @@ define([
 		},
 
 		_checkFilenameUpload: function(fileInfo) {
+			var filenames;
+			if ('name' in fileInfo){
+				filenames = [ fileInfo.name ];
+			}else{
+				if (fileInfo.length > 1) {
+					filenames = [];
+					fileInfo.forEach(function(ifile){
+						filenames.push(ifile.name);
+					});
+				}
+			}
 			var nameWidget = this._form.getWidget('name');
 			var isNewProject = !nameWidget.get('disabled');
+
 			return this.umcpCommand('distribution/checkfiles', {
 				project: isNewProject ? null : nameWidget.get('value'),
-				filenames: [ fileInfo.name ]
-			}).then(lang.hitch(this, function(response) {
-				var result = response.result[0];
-				if (result.distributed) {
+				filenames: filenames
+			}).then(function(response) {
+
+				var distributed = [];
+				var projectDuplicate = [];
+				var sessionDuplicate = [];
+				var result = response.result;
+
+				array.forEach(result, lang.hitch(this, function(ifile){
+					if (ifile.distributed){
+						distributed.push(ifile.filename);
+					}
+					if (ifile.projectDuplicate){
+						projectDuplicate.push(ifile.filename);
+					}
+					if (ifile.sessionDuplicate){
+						sessionDuplicate.push(ifile.filename);
+					}
+				}));
+
+				if (distributed.length > 0){
 					// do not allow the upload of an already distributed file
-					dialog.alert(_('The file "%s" cannot be uploaded as it has already been distributed.', fileInfo.name));
+					var files = distributed.join();
+					dialog.alert(_('The following files cannot be uploaded as they have already been distributed: %s','<ul><li>' + distributed.join('</li><li>') + '</li></ul>'));
 					return false;
 				}
 
-				if (result.projectDuplicate) {
-					// the file exists in the project, but has not been distributed yet
-					return dialog.confirm(_('The file "%s" has already been assigned to the project, please confirm to overwrite it.', fileInfo.name), [{
+				if (projectDuplicate.length > 0){
+					// a file exists in the project, but has not been distributed yet
+					return dialog.confirm(_('The following files have already been assigned to the project, please confirm to overwrite them: %s','<ul><li>' + projectDuplicate.join('</li><li>') + '</li></ul>'), [{
 						name: 'cancel',
 						label: _('Cancel upload')
 					}, {
@@ -340,9 +371,9 @@ define([
 					});
 				}
 
-				if (result.sessionDuplicate) {
+				if (sessionDuplicate.length > 0){
 					// a file with the same name has already been uploaded during this session
-					return dialog.confirm(_('The file "%s" has already been uploaded, please confirm to overwrite it.', fileInfo.name), [{
+					return dialog.confirm(_('The following files have already been uploaded, please confirm to overwrite them: %s', '<ul><li>' + sessionDuplicate.join('</li><li>') + '</li></ul>'), [{
 						name: 'cancel',
 						label: _('Cancel upload')
 					}, {
@@ -356,7 +387,8 @@ define([
 
 				// everything OK :)
 				return true;
-			}));
+			});
+
 		},
 
 		_resetForm: function() {
