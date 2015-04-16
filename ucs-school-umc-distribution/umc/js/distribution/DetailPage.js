@@ -316,8 +316,8 @@ define([
 		_checkFilenameUpload: function(fileInfo) {
 			var filenames;
 			if ('name' in fileInfo){
-				filenames = [ fileInfo.name ];
-			}else{
+				filenames = [fileInfo.name];
+			} else {
 				if (fileInfo.length > 1) {
 					filenames = [];
 					fileInfo.forEach(function(ifile){
@@ -338,28 +338,27 @@ define([
 				var sessionDuplicate = [];
 				var result = response.result;
 
-				array.forEach(result, lang.hitch(this, function(ifile){
-					if (ifile.distributed){
+				array.forEach(result, function(ifile) {
+					if (ifile.distributed) {
 						distributed.push(ifile.filename);
 					}
-					if (ifile.projectDuplicate){
+					if (ifile.projectDuplicate) {
 						projectDuplicate.push(ifile.filename);
 					}
-					if (ifile.sessionDuplicate){
+					if (ifile.sessionDuplicate) {
 						sessionDuplicate.push(ifile.filename);
 					}
-				}));
+				});
 
-				if (distributed.length > 0){
+				if (distributed.length > 0) {
 					// do not allow the upload of an already distributed file
-					var files = distributed.join();
-					dialog.alert(_('The following files cannot be uploaded as they have already been distributed: %s','<ul><li>' + distributed.join('</li><li>') + '</li></ul>'));
+					dialog.alert(_('The following files cannot be uploaded as they have already been distributed: %s', '<ul><li>' + distributed.join('</li><li>') + '</li></ul>'));
 					return false;
 				}
 
-				if (projectDuplicate.length > 0){
+				if (projectDuplicate.length > 0) {
 					// a file exists in the project, but has not been distributed yet
-					return dialog.confirm(_('The following files have already been assigned to the project, please confirm to overwrite them: %s','<ul><li>' + projectDuplicate.join('</li><li>') + '</li></ul>'), [{
+					return dialog.confirm(_('The following files have already been assigned to the project, please confirm to overwrite them: %s', '<ul><li>' + projectDuplicate.join('</li><li>') + '</li></ul>'), [{
 						name: 'cancel',
 						label: _('Cancel upload')
 					}, {
@@ -371,7 +370,7 @@ define([
 					});
 				}
 
-				if (sessionDuplicate.length > 0){
+				if (sessionDuplicate.length > 0) {
 					// a file with the same name has already been uploaded during this session
 					return dialog.confirm(_('The following files have already been uploaded, please confirm to overwrite them: %s', '<ul><li>' + sessionDuplicate.join('</li><li>') + '</li></ul>'), [{
 						name: 'cancel',
