@@ -58,7 +58,6 @@ class School(UCSSchoolHelperAbstractClass):
 	def __init__(self, name=None, school=None, **kwargs):
 		super(School, self).__init__(name=name, **kwargs)
 		self.display_name = self.display_name or self.name
-		self._set_server_names()
 
 	def build_hook_line(self, hook_time, func_name):
 		if func_name == 'create':
@@ -239,12 +238,6 @@ class School(UCSSchoolHelperAbstractClass):
 		else:
 			return name
 
-	def _set_server_names(self):
-		import univention.admin.uldap
-		lo, po = univention.admin.uldap.getMachineConnection()
-		self.educational_servers = self.get_educational_server_names(lo)
-		self.administrative_servers = self.get_administrative_server_names(lo)
-
 	def get_administrative_server_names(self, lo):
 		dn = self.get_administrative_group_name('administrative', ou_specific=True, as_dn=True)
 		return lo.get(dn, ['uniqueMember']).get('uniqueMember', [])
@@ -414,6 +407,13 @@ class School(UCSSchoolHelperAbstractClass):
 		else:
 			logger.warning('Schools from binddn: Unable to identify OU of this account - showing all OUs!')
 			return School.get_all(lo)
+
+	@classmethod
+	def from_udm_obj(cls, udm_obj, school, lo):
+		obj = super(School, cls).from_udm_obj(udm_obj, school, lo)
+		obj.educational_servers = obj.get_educational_server_names(lo)
+		obj.administrative_servers = obj.get_administrative_server_names(lo)
+		return obj
 
 	@classmethod
 	def get_all(cls, lo, filter_str=None, easy_filter=False, respect_local_oulist=True):
