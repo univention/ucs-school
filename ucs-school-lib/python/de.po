@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2014-08-15 13:19+0200\n"
+"POT-Creation-Date: 2015-04-17 13:47+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,15 +21,19 @@ msgid "A valid NetBIOS hostname can not be longer than 12 characters."
 msgstr ""
 "Ein gültiger NetBIOS Rechnername darf nicht länger als 12 Zeichen sein."
 
+#: python/models/school.py:56
+msgid "Administrative servers"
+msgstr "Administrative Server"
+
 #: python/models/user.py:51
 msgid "Birthday"
 msgstr "Geburtstag"
 
-#: python/models/network.py:43 python/models/dhcp.py:172
+#: python/models/dhcp.py:172 python/models/network.py:45
 msgid "Broadcast"
 msgstr "Broadcast"
 
-#: python/models/user.py:369 python/models/user.py:402
+#: python/models/user.py:375 python/models/user.py:408
 msgid "Class"
 msgstr "Klasse"
 
@@ -45,7 +49,7 @@ msgstr "Pfad für Rechner"
 msgid "Container"
 msgstr "Container"
 
-#: python/schoolldap.py:570
+#: python/schoolldap.py:571
 msgid ""
 "Could not find any school. You have to create a school before continuing. "
 "Use the 'Add school' UMC module to create one."
@@ -88,6 +92,10 @@ msgstr "Anzeigename"
 #: python/models/dhcp.py:42
 msgid "Domain"
 msgstr "Domäne"
+
+#: python/models/school.py:55
+msgid "Educational servers"
+msgstr "Edukative Schulserver"
 
 #: python/models/user.py:52
 msgid "Email"
@@ -133,7 +141,7 @@ msgstr "Ungültiger Schulname"
 msgid "Inventory number"
 msgstr "Inventarnummer"
 
-#: python/models/user.py:254
+#: python/models/user.py:260
 #, python-format
 msgid ""
 "It is not supported to change the role of a user. %(old_role)s %(name)s "
@@ -146,7 +154,7 @@ msgstr ""
 msgid "Last name"
 msgstr "Nachname"
 
-#: python/schoolldap.py:285
+#: python/schoolldap.py:286
 msgid "License not found. During this session add and modify are disabled."
 msgstr ""
 "Keine Lizenz gefunden. Während dieser Sitzung ist das Hinzufügen und "
@@ -164,8 +172,8 @@ msgstr "Mac OS X"
 msgid "May not contain special characters"
 msgstr "Darf keine besonderen Zeichen enthalten"
 
-#: python/models/share.py:41 python/models/base.py:158
-#: python/models/group.py:52 python/models/group.py:148
+#: python/models/base.py:158 python/models/group.py:52
+#: python/models/group.py:148 python/models/share.py:41
 msgid "Name"
 msgstr "Name"
 
@@ -173,11 +181,11 @@ msgstr "Name"
 msgid "Needs to be a list of values!"
 msgstr "Muss eine Liste von Werten sein!"
 
-#: python/models/network.py:41 python/models/dhcp.py:171
+#: python/models/dhcp.py:171 python/models/network.py:43
 msgid "Netmask"
 msgstr "Netzmaske"
 
-#: python/models/network.py:42
+#: python/models/network.py:44
 msgid "Network"
 msgstr "Netzwerk"
 
@@ -233,15 +241,15 @@ msgstr "Dienst"
 msgid "Share path"
 msgstr "Pfad für Freigaben"
 
-#: python/models/user.py:440
+#: python/models/user.py:446
 msgid "Staff"
 msgstr "Mitarbeiter"
 
-#: python/models/user.py:371
+#: python/models/user.py:377
 msgid "Student"
 msgstr "Schüler"
 
-#: python/models/network.py:125
+#: python/models/network.py:130
 msgid "Subnet"
 msgstr "Subnetz"
 
@@ -253,15 +261,15 @@ msgstr "Subnetz-Adresse"
 msgid "Subnet mask"
 msgstr "Subnetzmaske"
 
-#: python/models/user.py:404
+#: python/models/user.py:410
 msgid "Teacher"
 msgstr "Lehrer"
 
-#: python/models/user.py:453
+#: python/models/user.py:475
 msgid "Teacher and Staff"
 msgstr "Lehrer und Mitarbeiter"
 
-#: python/models/user.py:262
+#: python/models/user.py:268
 msgid ""
 "The email address is already taken by another user. Please change the email "
 "address."
@@ -331,7 +339,7 @@ msgstr "Benutzername"
 msgid "Windows system"
 msgstr "Windows-System"
 
-#: python/schoolldap.py:315
+#: python/schoolldap.py:316
 msgid ""
 "You are currently using the \"Free for personal use\" edition of Univention "
 "Corporate Server."
@@ -339,7 +347,7 @@ msgstr ""
 "Sie verwenden derzeit die \"Free for personal use\" Ausgabe von Univention "
 "Corporate Server."
 
-#: python/schoolldap.py:305
+#: python/schoolldap.py:306
 msgid ""
 "You have too many DVS client accounts for your license. During this session "
 "add and modify are disabled."
@@ -347,7 +355,7 @@ msgstr ""
 "Sie haben mehr DVS-Client-Konten, als Ihre Lizenz erlaubt. Während dieser "
 "Sitzung ist das Hinzufügen und Bearbeiten von Objekten nicht möglich."
 
-#: python/schoolldap.py:303
+#: python/schoolldap.py:304
 msgid ""
 "You have too many DVS user accounts for your license. During this session "
 "add and modify are disabled."
@@ -355,7 +363,7 @@ msgstr ""
 "Sie haben mehr DVS-Benutzerkonten, als Ihre Lizenz erlaubt. Während dieser "
 "Sitzung ist das Hinzufügen und Bearbeiten von Objekten nicht möglich."
 
-#: python/schoolldap.py:291
+#: python/schoolldap.py:292
 msgid ""
 "You have too many client accounts for your license. During this session add "
 "and modify are disabled."
@@ -363,7 +371,7 @@ msgstr ""
 "Sie haben mehr Benutzerkonten, als Ihre Lizenz erlaubt. Während dieser "
 "Sitzung ist das Hinzufügen und Bearbeiten von Objekten nicht möglich."
 
-#: python/schoolldap.py:297
+#: python/schoolldap.py:298
 msgid ""
 "You have too many corporate client accounts for your license. During this "
 "session add and modify are disabled."
@@ -372,7 +380,7 @@ msgstr ""
 "Während dieser Sitzung ist das Hinzufügen und Bearbeiten von Objekten nicht "
 "möglich."
 
-#: python/schoolldap.py:299
+#: python/schoolldap.py:300
 msgid ""
 "You have too many desktop accounts for your license. During this session add "
 "and modify are disabled."
@@ -380,7 +388,7 @@ msgstr ""
 "Sie haben mehr Desktop Rechner, als Ihre Lizenz erlaubt. Während dieser "
 "Sitzung ist das Hinzufügen und Bearbeiten von Objekten nicht möglich."
 
-#: python/schoolldap.py:301
+#: python/schoolldap.py:302
 msgid ""
 "You have too many groupware accounts for your license. During this session "
 "add and modify are disabled."
@@ -388,7 +396,7 @@ msgstr ""
 "Sie haben mehr Groupware Konten, als Ihre Lizenz erlaubt. Während dieser "
 "Sitzung ist das Hinzufügen und Bearbeiten von Objekten nicht möglich."
 
-#: python/schoolldap.py:295
+#: python/schoolldap.py:296
 msgid ""
 "You have too many managed client accounts for your license. During this "
 "session add and modify are disabled."
@@ -396,7 +404,7 @@ msgstr ""
 "Sie haben mehr Managed-Client-Konten, als Ihre Lizenz erlaubt. Während "
 "dieser Sitzung ist das Hinzufügen und Bearbeiten von Objekten nicht möglich."
 
-#: python/schoolldap.py:293
+#: python/schoolldap.py:294
 msgid ""
 "You have too many server accounts for your license. During this session add "
 "and modify are disabled."
@@ -404,7 +412,7 @@ msgstr ""
 "Sie haben mehr Server-Konten, als Ihre Lizenz erlaubt. Während dieser "
 "Sitzung ist das Hinzufügen und Bearbeiten von Objekten nicht möglich."
 
-#: python/schoolldap.py:287 python/schoolldap.py:289
+#: python/schoolldap.py:288 python/schoolldap.py:290
 msgid ""
 "You have too many user accounts for your license. During this session add "
 "and modify are disabled."
@@ -412,7 +420,7 @@ msgstr ""
 "Sie haben mehr Benutzerkonten, als Ihre Lizenz erlaubt. Während dieser "
 "Sitzung ist das Hinzufügen und Bearbeiten von Objekten nicht möglich."
 
-#: python/schoolldap.py:313
+#: python/schoolldap.py:314
 msgid ""
 "Your license does not allow modifications. During this session add and "
 "modify are disabled."
@@ -420,14 +428,14 @@ msgstr ""
 "Die installierte Lizenz erlaubt keine Änderungen. Während dieser Sitzung ist "
 "das Hinzufügen und Bearbeiten von Objekten nicht möglich."
 
-#: python/schoolldap.py:307
+#: python/schoolldap.py:308
 msgid ""
 "Your license is expired. During this session add and modify are disabled."
 msgstr ""
 "Die Lizenz ist abgelaufen. Während dieser Sitzung ist das Hinzufügen und "
 "Bearbeiten von Objekten nicht möglich."
 
-#: python/schoolldap.py:309
+#: python/schoolldap.py:310
 msgid ""
 "Your license is not valid for your LDAP-Base. During this session add and "
 "modify are disabled."
@@ -435,14 +443,14 @@ msgstr ""
 "Die installierte Linzenz wurde nicht für diese Basis-DN ausgestellt. Während "
 "dieser Sitzung ist das Hinzufügen und Bearbeiten von Objekten nicht möglich."
 
-#: python/schoolldap.py:311
+#: python/schoolldap.py:312
 msgid ""
 "Your license is not valid. During this session add and modify are disabled."
 msgstr ""
 "Ihre Lizenz ist nicht gültig. Während dieser Sitzung ist das Hinzufügen und "
 "Bearbeiten von Objekten nicht möglich."
 
-#: python/schoolldap.py:317
+#: python/schoolldap.py:318
 msgid ""
 "Your license status could not be validated. Thus, you are not eligible to "
 "support and maintenance. If you have bought a license, please contact "

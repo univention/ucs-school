@@ -1,3 +1,9 @@
+ucs-school-lib (7.0.0-2) unstable; urgency=medium
+
+  * Bug #38200: fix fuzzy entries
+
+ -- Florian Best <best@univention.de>  Fri, 17 Apr 2015 13:51:23 +0200
+
 ucs-school-lib (7.0.0-1) unstable; urgency=medium
 
   * Bug #38200: Add attributes for educational and administrative hosts to

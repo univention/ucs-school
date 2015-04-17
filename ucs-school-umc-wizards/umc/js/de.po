@@ -170,7 +170,7 @@ msgstr "{itemType} {itemName} bearbeiten"
 
 #: umc/js/schoolwizards/SchoolGrid.js:75
 msgid "Educational servers"
-msgstr "Edukative Server"
+msgstr "Edukative Schulserver"
 
 #: umc/js/schoolwizards/ClassWizard.js:48
 msgid "Enter details of the class."
