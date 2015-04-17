@@ -1,3 +1,10 @@
+ucs-test-ucsschool (2.0.45-1) unstable; urgency=low
+
+  * 90_ucsschool/91_samba4_gpc_two_way_replication: wait more for replication;
+    specify local ip and credentials when running local checks using samba-tool (Bug #34214).
+
+ -- Dmitry Galkin <galkin@univention.de>  Fri, 17 Apr 2015 11:48:01 +0200
+
 ucs-test-ucsschool (2.0.44-1) unstable; urgency=low
 
   * Bug #38191: hot fix, generate distinct random ip address from different networks essential/importcomputers.py
