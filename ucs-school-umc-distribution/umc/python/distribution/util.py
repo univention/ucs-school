@@ -446,22 +446,60 @@ class Project(_Dict):
 		'''Create cache directory.'''
 		# create project cache directory
 		MODULE.info( 'creating project cache dir: %s' % self.cachedir )
-		_create_dir( self.cachedir, owner=0, group=0 )
+		try:
+			os.makedirs(self.cachedir, 0700)
+			os.chown(self.cachedir, 0, 0)
+		except (OSError, IOError) as exc:
+			MODULE.error('Failed to create cachedir: %s' % (exc,))
 
 	def _createProjectDir(self):
 		'''Create project directory in the senders home.'''
+		if not self.sender:
+			return
 
-		# make sure that the sender homedir exists
-		if self.sender and self.sender.homedir and not os.path.exists( self.sender.homedir ):
-			MODULE.warn( 'recreate homedir: uidNumber=%s  gidNumber=%s' % (self.sender.uidNumber, self.sender.gidNumber) )
-			_create_dir( self.sender.homedir, owner=self.sender.uidNumber, group=self.sender.gidNumber )
+		self._create_project_dir(self.sender, self.sender_projectdir)
 
-		# create sender project directory
-		if self.sender_projectdir:
-			MODULE.info( 'creating project dir in sender\'s home: %s' % self.sender_projectdir )
-			_create_dir( self.sender_projectdir, homedir = self.sender.homedir, owner = self.sender.uidNumber, group = self.sender.gidNumber )
-		else:
+		if not self.sender_projectdir:
 			MODULE.error( 'ERROR: Sender information is not specified, cannot create project dir in the sender\'s home!' )
+
+	def _create_project_dir(self, user, projectdir=None):
+		umask = os.umask(0)  # set umask so that os.makedirs can set correct permissions
+		try:
+			owner = int(user.uidNumber)
+			group = int(user.gidNumber)
+			homedir = user.homedir
+
+			# create home directory with correct permissions if not yet exsists (e.g. user never logged in via samba)
+			if homedir and not os.path.exists(homedir):
+				MODULE.warn('recreate homedir %r uidNumber=%r gidNumber=%r' % (homedir, owner, group))
+				os.makedirs(homedir, 0711)
+				os.chmod(homedir, 0700)
+				os.chown(homedir, owner, group)
+
+			# create the project dir
+			if projectdir and not os.path.exists(projectdir):
+				MODULE.info("creating project dir in user's home: %s" % (projectdir,))
+				os.makedirs(projectdir, 0700)
+				os.chown(projectdir, owner, group)
+
+			# set owner and permission
+			if homedir and projectdir:
+				startdir = os.path.normpath(homedir).rstrip('/')
+				projectdir = os.path.normpath(projectdir).rstrip('/')
+				if not projectdir.startswith(startdir):
+					raise OSError('Projectdir is not underneath of homedir: %s %s' % (projectdir, startdir))
+				parts = projectdir[len(startdir):].lstrip('/').split('/')
+				for part in parts:
+					startdir = os.path.join(startdir, part)
+					if os.path.isdir(startdir):  # prevent race conditions with symlink attacs
+						os.chown(startdir, owner, group)
+
+		except (OSError, IOError) as exc:
+			import traceback
+			MODULE.error(traceback.format_exc())
+			MODULE.error('failed to create/chown %r: %s' % (projectdir, exc))
+		finally:
+			os.umask(umask)
 
 	def _register_at_jobs(self):
 		'''Registers at-jobs for distributing and collecting files.'''
@@ -532,7 +570,7 @@ class Project(_Dict):
 		for user in self.getRecipients() + [ self.sender ]:
 			# create user project directory
 			MODULE.info( 'recipient: uid=%s' % user.username )
-			_create_dir( self.user_projectdir(user), homedir = user.homedir, owner = user.uidNumber, group = user.gidNumber )
+			self._create_project_dir(user, self.user_projectdir(user))
 
 			# copy files from cache to recipient
 			for fn in files:
@@ -708,40 +746,6 @@ def initPaths():
 		os.chown( DISTRIBUTION_DATA_PATH, 0, 0 )
 	except:
 		MODULE.error( 'error occured while fixing permissions of %s' % DISTRIBUTION_DATA_PATH )
-
-def _create_dir( targetdir, homedir=None, permissions=0700, owner=0, group=0 ):
-	# does target dir already exist?
-	try:
-		# parse strings
-		owner = int(owner)
-		group = int(group)
-
-		if not os.path.exists( targetdir ):
-			# create targetdir
-			os.makedirs( targetdir, permissions )
-
-			# if homedir is not set, then only chown target dir
-			if homedir:
-				tmpdir = homedir
-				targetdir = '/%s' % targetdir.strip('/')
-				if len(targetdir[ len(homedir) : ].strip('/')) > 0:
-					for dirpart in targetdir[ len(homedir) : ].strip('/').split('/'):
-						tmpdir = os.path.join( tmpdir, dirpart )
-						os.chown( tmpdir, owner, group )
-				os.chown( homedir, owner, group )
-
-		# chown target dir
-		if os.path.exists( targetdir ):
-			os.chown( targetdir, owner, group )
-		else:
-			MODULE.error( '%s does not exist - creation failed' % (targetdir) )
-			return False
-	except (OSError, IOError) as e:
-		MODULE.error( 'failed to create/chown "%s": %s' % (targetdir, str(e)))
-		return False
-
-	# operation successful
-	return True
 
 
 if __name__ == '__main__':

@@ -1,3 +1,10 @@
+ucs-school-umc-distribution (13.0.1-1) unstable; urgency=medium
+
+  * Bug #37854: fix permission of home directory if the user never has been
+  	logged on before
+
+ -- Florian Best <best@univention.de>  Fri, 17 Apr 2015 11:23:42 +0200
+
 ucs-school-umc-distribution (13.0.0-2) unstable; urgency=low
 
   * Bug #32888: added possibility to upload several files at once
