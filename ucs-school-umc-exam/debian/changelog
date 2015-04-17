@@ -1,3 +1,9 @@
+ucs-school-umc-exam (4.0.0-2) unstable; urgency=medium
+
+  * Bug #38224: text changes
+
+ -- Florian Best <best@univention.de>  Fri, 17 Apr 2015 15:25:29 +0200
+
 ucs-school-umc-exam (4.0.0-1) unstable; urgency=medium
 
   * Bug #36251: fix adding of computers to exam group

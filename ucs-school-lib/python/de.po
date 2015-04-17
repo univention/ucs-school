@@ -23,7 +23,7 @@ msgstr ""
 
 #: python/models/school.py:56
 msgid "Administrative servers"
-msgstr "Administrative Server"
+msgstr "Verwaltungsserver"
 
 #: python/models/user.py:51
 msgid "Birthday"

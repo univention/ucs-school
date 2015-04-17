@@ -36,6 +36,7 @@ define([
 	"dojo/promise/all",
 	"dojo/topic",
 	"dojo/Deferred",
+	"dojo/dom-class",
 	"umc/dialog",
 	"umc/tools",
 	"umc/modules/schoolexam/RebootGrid",
@@ -52,7 +53,7 @@ define([
 	"umc/widgets/StandbyMixin",
 	"umc/widgets/ProgressBar",
 	"umc/i18n!umc/modules/schoolexam"
-], function(declare, lang, array, aspect, all, topic, Deferred, dialog, tools, RebootGrid, Wizard, Module,
+], function(declare, lang, array, aspect, all, topic, Deferred, domClass, dialog, tools, RebootGrid, Wizard, Module,
 			TextBox, Text, TextArea, ComboBox, TimeBox, CheckBox, MultiObjectSelect, MultiUploader, StandbyMixin, ProgressBar, _) {
 	// helper function that sanitizes a given filename
 	var sanitizeFilename = function(name) {
@@ -227,7 +228,7 @@ define([
 				}]
 			}, {
 				name: 'proxy_settings',
-				headerText: _('Computer room settings'),
+				headerText: _('Assign internet rules'),
 				helpText: _('Please select the access restrictions to internet. These settings can also be adjusted during the exam via the room settings in the module <i>Computer room</i>.'),
 				widgets: [{
 					type: ComboBox,
@@ -258,7 +259,7 @@ define([
 				}]
 			}, {
 				name: 'share_settings',
-				headerText: _('Computer room settings'),
+				headerText: _('Regulate share access'),
 				helpText: _('Please select the access restrictions to shares. These settings can also be adjusted during the exam via the room settings in the module <i>Computer room</i>. The participating students are not able to access the home directories during the exam.'),
 				widgets: [{
 					type: ComboBox,
@@ -373,6 +374,8 @@ define([
 				umcpCommand: lang.hitch(this, 'umcpCommand')
 			});
 			rebootPage.addChild(this._grid);
+			domClass.remove(this._grid._grid.domNode, 'umcDynamicHeight');
+			domClass.add(this._grid._grid.domNode, 'umcDynamicHeight-55');
 
 			// get value for lesson end time
 			var endTimeDeferred = this.umcpCommand('schoolexam/lesson_end');

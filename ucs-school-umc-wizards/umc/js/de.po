@@ -33,7 +33,7 @@ msgstr "%s hinzufügen"
 
 #: umc/js/schoolwizards/SchoolGrid.js:79
 msgid "Administrative servers"
-msgstr "Administrative Server"
+msgstr "Verwaltungsserver"
 
 #: umc/js/schoolwizards/SchoolWizard.js:124 umc/js/schoolwizards/Wizard.js:84
 msgid "Advanced settings"
