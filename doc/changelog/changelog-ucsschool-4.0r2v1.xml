@@ -120,6 +120,7 @@
 		-->
 		<section id="relnotes:changelog:umc:modules">
 			<title>Univention Management Console modules</title>
+			<!--
 			<section id="relnotes:changelog:umc:modules:general">
 				<title>General</title>
 				<itemizedlist>
@@ -158,15 +159,23 @@
 					</listitem>
 				</itemizedlist>
 			</section>
+			-->
 			<section id="relnotes:changelog:umc:modules:wizards">
 				<title>Wizards (Users/Classes/Computers/Schools)</title>
 				<itemizedlist>
 					<listitem>
 						<simpara>
+							It is now possible to delete more than one school at once (<u:bug>36276</u:bug>).
+						</simpara>
+					</listitem>
+					<listitem>
+						<simpara>
+							The administrative and educational school servers are now shown in the table view of the <emphasis>Schools</emphasis> module (<u:bug>38200</u:bug>).
 						</simpara>
 					</listitem>
 				</itemizedlist>
 			</section>
+			<!--
 			<section id="relnotes:changelog:umc:modules:school">
 				<title>UCS@school configuration</title>
 				<itemizedlist>
@@ -189,7 +198,6 @@
 					</listitem>
 				</itemizedlist>
 			</section>
-			<!--
 				<section id="relnotes:changelog:umc:modules:workgroups">
 				<title>Workgroups</title>
 				<itemizedlist>
@@ -209,6 +217,27 @@
 				<itemizedlist>
 					<listitem>
 						<simpara>
+							The workflow of starting an exam has been revised (<u:bug>38224</u:bug>).
+						</simpara>
+					</listitem>
+					<listitem>
+						<simpara>
+							It is now possible to select single computers for reboot when starting a exam (<u:bug>38004</u:bug>).
+						</simpara>
+					</listitem>
+					<listitem>
+						<simpara>
+							Invalid input is now validated when switching to the next page (<u:bug>37992</u:bug>).
+						</simpara>
+					</listitem>
+					<listitem>
+						<simpara>
+							The description of the &ucsUCRV; <envar>ucsschool/ldap/default/groupname/exam</envar> has been fixed (<u:bug>37867</u:bug>).
+						</simpara>
+					</listitem>
+					<listitem>
+						<simpara>
+							Offline clients don't block the start of an exam anymore (<u:bug>37268</u:bug>).
 						</simpara>
 					</listitem>
 				</itemizedlist>
@@ -218,10 +247,58 @@
 				<itemizedlist>
 					<listitem>
 						<simpara>
+							The start time for automatic distribution of a project don't have to be in the future anymore (<u:bug>38195</u:bug>).
 						</simpara>
 					</listitem>
 					<listitem>
 						<simpara>
+							The read permissions of students home directories have been fixed <u:bug>37854</u:bug>, <u:bug>38196</u:bug>).
+						</simpara>
+					</listitem>
+					<listitem>
+						<simpara>
+							The position of the file upload label has been adjusted (<u:bug>38159</u:bug>).
+						</simpara>
+					</listitem>
+				</itemizedlist>
+			</section>
+			<section id="relnotes:changelog:umc:modules:helpdesk">
+				<title>Helpdesk</title>
+				<itemizedlist>
+					<listitem>
+						<simpara>
+							The format of mails which are send to the helpdesk team have been adapted.
+							It not contains the full username and contact details (<u:bug>38198</u:bug>.
+						</simpara>
+					</listitem>
+					<listitem>
+						<simpara>
+							The users primary mail address is now used as sender address of helpdesk mails (<u:bug>37593</u:bug>).
+						</simpara>
+					</listitem>
+					<listitem>
+						<simpara>
+							The encoding of helpdesk mails have been set to UTF-8 to support unicode characters (<u:bug>36739</u:bug>).
+						</simpara>
+					</listitem>
+					<listitem>
+						<simpara>
+							Newline characters are now properly escaped in email headers (<u:bug>29975</u:bug>).
+						</simpara>
+					</listitem>
+				</itemizedlist>
+			</section>
+			<section id="relnotes:changelog:umc:modules:printermoderation">
+				<title>Printermoderation</title>
+				<itemizedlist>
+					<listitem>
+						<simpara>
+							Printjobs from users with uppercase characters in their username are now correctly shown (<u:bug>34934</u:bug>).
+						</simpara>
+					</listitem>
+					<listitem>
+						<simpara>
+							A basedir restriction to the configured printer directory has been added (<u:bug>38270</u:bug>).
 						</simpara>
 					</listitem>
 				</itemizedlist>
@@ -229,17 +306,6 @@
 		</section>
 	</section>
 	<!--
-		<section id="relnotes:changelog:umc:modules:helpdesk">
-		<title>Helpdesk</title>
-		<itemizedlist>
-		<listitem>
-		<simpara>
-		</simpara>
-		</listitem>
-		</itemizedlist>
-		</section>
-		</section>
-		</section>
 
 <section id="relnotes:changelog:other">
 <title>Other changes</title>
