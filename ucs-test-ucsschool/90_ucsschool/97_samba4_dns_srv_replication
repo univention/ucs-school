@@ -369,7 +369,7 @@ class TestS4DNSSRVReplication(TestSamba4):
 		if self.server_role == 'domaincontroller_master':
 			dc_slaves = self.sed_for_key(
 									self.get_udm_list_dc_slaves_with_samba4(),
-									"^	name: ").split()
+									"^  name: ").split()
 
 			if dc_slaves:
 				# multi-school domain with DC-Slave(s), no replication

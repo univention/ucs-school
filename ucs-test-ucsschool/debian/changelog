@@ -1,3 +1,10 @@
+ucs-test-ucsschool (2.0.47-1) unstable; urgency=low
+
+  * 90_ucsschool/97_samba4_dns_srv_replication: fix regular expression
+    after retab (Bug #34222).
+
+ -- Dmitry Galkin <galkin@univention.de>  Mon, 20 Apr 2015 16:50:40 +0200
+
 ucs-test-ucsschool (2.0.46-1) unstable; urgency=low
 
   * 90_ucsschool/97_samba4_dns_srv_replication: workaround for (Bug #38064).
