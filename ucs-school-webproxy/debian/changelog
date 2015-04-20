@@ -1,7 +1,8 @@
 ucs-school-webproxy (11.0.3-1) unstable; urgency=medium
 
   * Add Windows Updater exception ACL (Bug #37541)
-  * Add script to enable Java Updater exception ACLs
+  * Add script to enable Java Updater exception ACLs (Bug #37541)
+  * Add script to enable Java Applet exception ACLs (Bug #37542)
 
  -- Janek Walkenhorst <walkenhorst@univention.de>  Mon, 20 Apr 2015 17:51:24 +0200
 
