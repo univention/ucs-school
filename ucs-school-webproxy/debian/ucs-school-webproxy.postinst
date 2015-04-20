@@ -42,6 +42,8 @@ case "$1" in
 		# set correct permissions
 		dpkg-statoverride --update --force --add root proxy 2770 /var/lib/ucs-school-webproxy/ || true
 
+		univention-config-registry set 'squid/acl/windowsupdater/allow/dstdomain-i/regex=^(.*\.update\.microsoft|download.windowsupdate)\.com$'
+
 		# init squidguard db
 		touch /var/lib/ucs-school-webproxy/whitelisted-domain || true
 		touch /var/lib/ucs-school-webproxy/whitelisted-url || true
