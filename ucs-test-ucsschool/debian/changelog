@@ -1,3 +1,9 @@
+ucs-test-ucsschool (2.0.46-1) unstable; urgency=low
+
+  * 90_ucsschool/97_samba4_dns_srv_replication: workaround for (Bug #38064).
+
+ -- Dmitry Galkin <galkin@univention.de>  Mon, 20 Apr 2015 16:09:55 +0200
+
 ucs-test-ucsschool (2.0.45-1) unstable; urgency=low
 
   * 90_ucsschool/91_samba4_gpc_two_way_replication: missing commit (Bug #34214).
