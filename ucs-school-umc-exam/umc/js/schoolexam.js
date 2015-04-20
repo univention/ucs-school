@@ -382,6 +382,11 @@ define([
 			domClass.remove(this._grid._grid.domNode, 'umcDynamicHeight');
 			domClass.add(this._grid._grid.domNode, 'umcDynamicHeight-55');
 
+			var getIP = this.umcpCommand('get/ipaddress', undefined, false, null);
+			getIP.then(lang.hitch(this, function(ipaddresses) {
+				this._grid.set('teacherIPs', ipaddresses);
+			}));
+
 			// get value for lesson end time
 			var endTimeDeferred = this.umcpCommand('schoolexam/lesson_end');
 			endTimeDeferred.then(lang.hitch(this, function(data) {
@@ -403,6 +408,7 @@ define([
 			}));
 			allReady.push(ucrDeferred);
 			allReady.push(endTimeDeferred);
+			allReady.push(getIP);
 			all(allReady).then(lang.hitch(this, function() {
 				this.standby(false);
 			}));

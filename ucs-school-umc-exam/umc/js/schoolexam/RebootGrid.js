@@ -50,9 +50,11 @@ define([
 		_lastUpdate: 0,
 		_firstUpdate: 0,
 		_updateTimer: null,
+		teacherIPs: null,
 
 		constructor: function() {
 			this.moduleStore = new Memory();
+			this.teacherIPs = [];
 			this.actions = [{
 				name: 'reboot_all',
 				label: _('Reboot student computers'),
@@ -91,8 +93,9 @@ define([
 				label: _('Reboot'),
 				formatter: lang.hitch(this, function(value, rowIndex) {
 					var item = this._grid.getItem(rowIndex);
-					if (item.teacher[0]) {
+					if (this.teacherIPs.indexOf(item.ip[0]) !== -1 || item.teacher[0]) {
 						// indicate that a reboot is not necessary for teacher computers
+						// or computers with IP of the current UMC session
 						return _('No reboot necessary');
 					}
 					if (value == 'connected') {
@@ -135,7 +138,7 @@ define([
 			var computers = [];
 			this.moduleStore.query().forEach(function(iitem) {
 				// only take connected computers and computers where no teacher is logged in
-				if (iitem.connection == 'connected' && !iitem.teacher) {
+				if (iitem.connection == 'connected' && !iitem.teacher && this.teacherIPs.indexOf(item.ip) !== -1) {
 					computers.push(iitem);
 				}
 			});

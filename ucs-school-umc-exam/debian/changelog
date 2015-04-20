@@ -1,6 +1,8 @@
 ucs-school-umc-exam (4.0.1-1) unstable; urgency=medium
 
   * Bug #38224: text changes
+  * Bug #38004: don't automatically reboot computers with the IP address of
+  	the current logged in UMC session
 
  -- Florian Best <best@univention.de>  Fri, 17 Apr 2015 15:25:29 +0200
 
