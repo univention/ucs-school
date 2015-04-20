@@ -59,7 +59,7 @@ class OU(UCSSchoolHelperAbstractClass):
 		udm_obj.open()
 		udm_obj['name'] = self.name
 		try:
-			udm_obj.create()
+			self.do_create(udm_obj, lo)
 		except objectExists as e:
 			return str(e)
 		else:
