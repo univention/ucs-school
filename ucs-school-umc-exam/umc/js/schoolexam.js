@@ -98,7 +98,7 @@ define([
 				}, {
 					name: 'examEndTime',
 					type: TimeBox,
-					label: _('End time'),
+					label: _('Planned end of exam'),
 					description: _('The time when the exam ends')
 				}, {
 					name: 'info',
@@ -171,8 +171,8 @@ define([
 					type: MultiObjectSelect,
 					name: 'recipients',
 					required: true,
-					dialogTitle: _('Assign classes/workgroups'),
-					label: _('Assigned classes/workgroups'),
+					dialogTitle: _('Participating classes/workgroups'),
+					label: _('Participating classes/workgroups'),
 					// FIXME: MultiObjectSelect is broken :( :/
 					//validator: lang.hitch(this, function(value) { return this.getWidget('advanced', 'recipients').get('value').length; }),
 					//invalidMessage: '',
@@ -234,6 +234,7 @@ define([
 					type: ComboBox,
 					name: 'internetRule',
 					label: _('Web access profile'),
+					description: _('Select a predefined internet rule. Alternatively <i>Personal internet rules</i> can be defined or the standard internet rules of the school administrator can be used.'),
 					dynamicValues: 'schoolexam/internetrules',
 					staticValues: [
 						{ id: 'none', label: _('Default (global settings)') },
@@ -245,12 +246,16 @@ define([
 				}, {
 					type: TextArea,
 					name: 'customRule',
-					label: lang.replace(_('List of allowed web sites for "{myRules}"'), {
+					label: lang.replace(_('List of allowed websites for "{myRules}"'), {
 						myRules: myRules
 					}),
-					description: _('<p>In this text box you can list web sites that are allowed to be used by the students. Each line should contain one web site. Example: </p><p style="font-family: monospace">univention.com<br/>wikipedia.org<br/></p>'),
+					description: _('<p>In this text box you can list websites that are allowed to be used by the students. Each line should contain one website. Example: </p><p style="font-family: monospace">univention.com<br/>wikipedia.org<br/></p>'),
 					validate: lang.hitch(this, function() {
-						return !(this.getWidget('proxy_settings', 'internetRule' ).get('value') == 'custom' && !this.getWidget('proxy_settings', 'customRule').get('value'));
+						var valid = !(this.getWidget('proxy_settings', 'internetRule' ).get('value') == 'custom' && !this.getWidget('proxy_settings', 'customRule').get('value'));
+						if (!valid) {
+							dialog.alert(_('Please specify at least one allowed website or select a different internet rule.'));
+						}
+						return valid;
 					}),
 					onFocus: lang.hitch( this, function() {
 						//dijit.hideTooltip(this._form.getWidget('customRule').domNode); // FIXME
@@ -264,14 +269,14 @@ define([
 				widgets: [{
 					type: ComboBox,
 					name: 'shareMode',
-					label: _('Share access'),
+					label: _('Access permissions for shares'),
 					description: _( 'Defines restriction for the share access' ),
 					staticValues: [{
 						id: 'home',
-						label : _('Home directory only')
+						label : _('Restrict access to home directory')
 					}, {
 						id: 'all',
-						label : _('No restrictions')
+						label : _('Allow access to all shares')
 					}]
 				}]
 			}, {
@@ -405,7 +410,6 @@ define([
 			// disable the 'next' button on the reboot page
 			var button = this.getPage('reboot')._footerButtons.next;
 			button.set('disabled', true);
-			button.set('label', _('Start exam'));
 
 			// adjust the label of the 'finish' button on the 'finished' page
 			button = this.getPage('finished')._footerButtons.finish;
@@ -434,6 +438,19 @@ define([
 				visible = visible && this.getWidget('general', '_showShareSettings').get('value');
 			}
 			return visible;
+		},
+
+		_updateButtons: function(pageName) {
+			this.inherited(arguments);
+			var pages = ['advanced', 'files', 'proxy_settings', 'share_settings'];
+			if (pages.indexOf(pageName) !== -1) {
+				var label = _('Next');
+				var nextPages = array.indexOf(pages, pageName) === pages.length-1 ? [] : pages.slice(array.indexOf(pages, pageName) + 1);
+				if (!nextPages.length || array.every(nextPages, lang.hitch(this, function(_page) { return !this.isPageVisible(_page); }))) {
+					label = _('Start exam');
+				}
+				this._pages[pageName]._footerButtons.next.set('label', label);
+			}
 		},
 
 		_updateSuccessPage: function() {
