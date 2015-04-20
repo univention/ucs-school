@@ -3,7 +3,7 @@
 ## bugs: [34214, 34216]
 ## roles: [domaincontroller_master, domaincontroller_slave]
 ## packages: [univention-samba4]
-## tags: [SKIP-UCSSCHOOL, apptest, ucsschool]
+## tags: [apptest, ucsschool]
 ## exposure: dangerous
 
 from sys import exit
@@ -27,6 +27,7 @@ class TestGPCReplicationTwoWays(TestSamba4):
 
 		self.host_or_ip = ''
 		self.remote_host = ''
+                self.local_ip = ''
 
 	def check_gpo_replicated_locally(self):
 		"""
@@ -35,9 +36,12 @@ class TestGPCReplicationTwoWays(TestSamba4):
 		"""
 		print("\nChecking if GPO '%s' was replicated to the current DC"
 			  % self.gpo_reference)
-		sleep(20)  # wait for replication to happen
+		sleep(30)  # wait for replication to happen
 
-		cmd = ("samba-tool", "gpo", "show", self.gpo_reference)
+		cmd = ("samba-tool", "gpo", "show", self.gpo_reference,
+                       "--ipaddress=" + self.local_ip,
+                       "--username", self.admin_username,
+                       "--password", self.admin_password)
 		stdout, stderr = self.create_and_run_process(cmd)
 
 		if stderr:
@@ -129,9 +133,12 @@ class TestGPCReplicationTwoWays(TestSamba4):
 		"""
 		print("\nChecking the GPO links for the container '%s' using "
 			  "'samba-tool' locally" % container_dn)
-		sleep(20)  # wait for replication to happen
+		sleep(30)  # wait for replication to happen
 
-		cmd = ("samba-tool", "gpo", "getlink", container_dn)
+		cmd = ("samba-tool", "gpo", "getlink", container_dn,
+                       "--ipaddress=" + self.local_ip,
+                       "--username", self.admin_username,
+                       "--password", self.admin_password)
 		stdout, stderr = self.create_and_run_process(cmd)
 
 		if stderr:
@@ -223,6 +230,7 @@ class TestGPCReplicationTwoWays(TestSamba4):
 			# Get UCR vars, select the test case (replication direction):
 			self.get_ucr_test_credentials()
 			self.select_remote_host()
+                        self.local_ip = self.UCR.get('interfaces/eth0/address')
 
 			# Create GPO remotely and check replication:
 			self.create_gpo_on_remote_host()
