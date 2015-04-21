@@ -83,10 +83,12 @@ if [ $? -eq 0 -o $? -eq 2 ]; then
 			remove=true
 		fi
 		# wait for printer
+		echo "Setting windows printer driver for PDFDrucker ..."
 		for i in $(seq 1 300); do
-			echo "Setting windows printer driver for PDFDrucker ..."
 			sleep 1
-			rpcclient -P -c "setdriver PDFDrucker '$ucsschool_printermoderation_windows_driver_name'" $hostname && break
+			if rpcclient -P -c 'enumprinters' $hostname | grep -q "\\\\PDFDrucker"; then
+				rpcclient -P -c "setdriver PDFDrucker '$ucsschool_printermoderation_windows_driver_name'" $hostname && break
+			fi
 		done
 		# remove machine account from printer group 
 		if [ "true" = "$remove" ]; then
