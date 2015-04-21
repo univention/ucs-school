@@ -4,6 +4,7 @@ ucs-school-umc-helpdesk (11.0.0-1) unstable; urgency=medium
   * Bug #37593: use mailPrimaryAddress as sender address
   * Bug #38198: display more information like mail addresses and phone numbers
   * Bug #29975: don't allow to inject email headers
+  * Bug #38310: fixed FTBFS problem with debian/rules file
 
  -- Florian Best <best@univention.de>  Tue, 14 Apr 2015 12:12:25 +0200
 

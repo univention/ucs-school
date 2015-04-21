@@ -48,15 +48,14 @@ override_dh_auto_build:
 	dh-umc-module-build
 	dh_auto_build
 
-binary:
-	dh binary --until dh_installdirs
+override_dh_installdirs:
+	dh_installdirs
 	make PACKAGE=${PACKAGE_NAME} install-admin-modules
 	make PACKAGE=${PACKAGE_NAME} LANGUAGE='de' install-locales-admin
 	install -m 0755 38ucs-school-umc-helpdesk.inst ${D}/usr/lib/univention-install/
 	install -m 644 umc-helpdesk.schema ${DM}/usr/share/univention-ldap/schema
-	dh binary --until dh_pysupport --after dh_installdirs
+
+override_dh_pysupport:
 	univention-install-config-registry
 	dh-umc-module-install
-	@rm debian/ucs-school-umc-helpdesk/usr/share/python-support/ucs-school-umc-helpdesk.public
 	dh_pysupport --noscripts
-	dh binary --after dh_pysupport
