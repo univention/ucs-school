@@ -1,6 +1,6 @@
 #!/usr/share/ucs-test/runner python
 ## desc: Test the DNS SRV record replication.
-## bugs: [34222]
+## bugs: [34222, 38064]
 ## roles:
 ## - domaincontroller_master
 ## - domaincontroller_slave
@@ -8,8 +8,6 @@
 ## tags: [apptest, ucsschool]
 ## exposure: dangerous
 ## versions:
-##  4.0-0: skip
-##  4.0-1: skip
 ##  3.2-5: skip
 # The test should be re-enabled after the reason for the failure is resolved.
 
@@ -161,20 +159,18 @@ class TestS4DNSSRVReplication(TestSamba4):
 		RecordBuffer = StringIO(samba_record)
 
 		# extract the decrypted 'priority' values:
-		priority = self.sed_for_key(RecordBuffer.getvalue(),
-									"^# .* wPriority .* (").replace(")",
-																	"").split()
-		# extract the decrypted 'weight' values:
-		weight = self.sed_for_key(RecordBuffer.getvalue(),
-								  "^# .* wWeight .* (").replace(")",
-																"").split()
-		# extract the decrypted 'port' values:
-		port = self.sed_for_key(RecordBuffer.getvalue(),
-								"^# .* wPort .* (").replace(")", "").split()
-		# extract the decrypted 'hostname' values:
-		host = self.sed_for_key(RecordBuffer.getvalue(),
-								"^# .* nameTarget .* : ").split()
-		RecordBuffer.close()
+		priority = self.sed_for_key(RecordBuffer.getvalue(), "^# .* wPriority .* (").replace(")","").split()
+
+                # extract the decrypted 'weight' values:
+		weight = self.sed_for_key(RecordBuffer.getvalue(), "^# .* wWeight .* (").replace(")","").split()
+
+                # extract the decrypted 'port' values:
+		port = self.sed_for_key(RecordBuffer.getvalue(), "^# .* wPort .* (").replace(")", "").split()
+
+                # extract the decrypted 'hostname' values:
+		host = self.sed_for_key(RecordBuffer.getvalue(), "^# .* nameTarget .* : ").split()
+
+                RecordBuffer.close()
 
 		if not all((priority, weight, port, host)):
 			utils.fail("Could not determine at least one of the location "
@@ -203,8 +199,7 @@ class TestS4DNSSRVReplication(TestSamba4):
 			utils.fail("An error occured while looking for "
 					   "'univention-dnsedit'. STDERR: '%s'" % stderr)
 
-		dns_edit_path = self.sed_for_key(stdout,
-							 '^univention-directory-manager-tools: ').strip()
+		dns_edit_path = self.sed_for_key(stdout, '^univention-directory-manager-tools: ').strip()
 		dns_edit_path += '/univention-dnsedit'
 
 		if not path.exists(dns_edit_path):
@@ -251,7 +246,10 @@ class TestS4DNSSRVReplication(TestSamba4):
 			record_cmd = tuple(record)
 			record_cmd += test_location
 
-			stdout, stderr = self.create_and_run_process(cmd + record_cmd)
+			try:
+                        	stdout, stderr = self.create_and_run_process(cmd + record_cmd)
+			except IndexError as exc:  # some records in some setups do not exist 
+                        	pass  # workaround for Bug #38064
 			if stderr:
 				# ignore the 'Does not exist' messages
 				if 'Does not exist' not in stderr:
@@ -361,12 +359,9 @@ class TestS4DNSSRVReplication(TestSamba4):
 		 - if current role is DC-Slave: (multi-school): no way should work.
 		"""
 		self.server_role = self.UCR.get('server/role')
-		print("\nDetermining the test scenario, current DC role is '%s'"
-															% self.server_role)
+		print("\nDetermining the test scenario, current DC role is '%s'" % self.server_role)
 		if self.server_role == 'domaincontroller_master':
-			dc_slaves = self.sed_for_key(
-									self.get_udm_list_dc_slaves_with_samba4(),
-									"^	name: ").split()
+			dc_slaves = self.sed_for_key(self.get_udm_list_dc_slaves_with_samba4(),	"^  name: ").split()
 
 			if dc_slaves:
 				# multi-school domain with DC-Slave(s), no replication
@@ -444,8 +439,7 @@ class TestS4DNSSRVReplication(TestSamba4):
 			# case 1: modify values in openLDAP and check the state in Samba:
 			print("\n\nTest case 1: adding new DNS SRV record attribute "
 				  "values in openLDAP, checking their values in Samba:")
-			self.add_remove_record_location_via_dns_edit(dns_srv_records,
-														 'add')
+			self.add_remove_record_location_via_dns_edit(dns_srv_records, 'add')
 			utils.wait_for_connector_replication()
 
 			print("\nChecking if test values of the SRV records "
@@ -454,8 +448,7 @@ class TestS4DNSSRVReplication(TestSamba4):
 				self.check_test_srv_record_replicated(srv_record, True)
 
 			# restore to previous state in openLDAP by removing the test record
-			self.add_remove_record_location_via_dns_edit(dns_srv_records,
-														 'remove')
+			self.add_remove_record_location_via_dns_edit(dns_srv_records, 'remove')
 			utils.wait_for_connector_replication()
 
 			# check that SRV record values are the same in openLDAP/Samba
@@ -466,8 +459,7 @@ class TestS4DNSSRVReplication(TestSamba4):
 			print("\n\nTest case 2: adding new DNS SRV record attribute "
 				  "values in Samba, checking their values in openLDAP:")
 			for srv_record in dns_srv_records:
-				self.add_remove_srv_record_location_via_ldbmodify(srv_record,
-																  'add')
+				self.add_remove_srv_record_location_via_ldbmodify(srv_record, 'add')
 			utils.wait_for_connector_replication()
 
 			print("\nChecking if test values of the SRV records "
@@ -477,13 +469,11 @@ class TestS4DNSSRVReplication(TestSamba4):
 
 		finally:
 			print "\nPerforming clean-up after the test:"  # in openldap
-			self.add_remove_record_location_via_dns_edit(dns_srv_records,
-														 'remove')
+			self.add_remove_record_location_via_dns_edit(dns_srv_records, 'remove')
 			utils.wait_for_connector_replication()
 
 			for srv_record in dns_srv_records:	# and in samba
-				self.add_remove_srv_record_location_via_ldbmodify(srv_record,
-																  'delete')
+				self.add_remove_srv_record_location_via_ldbmodify(srv_record, 'delete')
 			utils.wait_for_connector_replication()
 
 			# check that SRV record values are the same after the clean-up:
