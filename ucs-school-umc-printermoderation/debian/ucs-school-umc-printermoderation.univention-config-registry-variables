@@ -1,0 +1,13 @@
+[ucsschool/printermoderation/windows/driver/assign]
+Description[de]=Definiert, ob das Join-Skript am PDF Drucker den Windows Druckertreiber setzen soll.
+Description[en]=Defines whether the join script should assign the windows printer driver to the pdf printer.
+Type=bool
+Categories=ucsschool-printermoderation
+
+[ucsschool/printermoderation/windows/driver/name]
+Description[de]=Name des Windows Druckertreiber für den PDF Drucker.
+Description[en]=Name of the windows printer driver for the pdf printer.
+Type=str
+Categories=ucsschool-printermoderation
+
+

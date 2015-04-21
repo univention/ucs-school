@@ -33,6 +33,7 @@
 
 VERSION=3
 
+. /usr/share/univention-lib/all.sh
 . /usr/share/univention-join/joinscripthelper.lib
 . /usr/share/univention-lib/umc.sh
 . /usr/share/ucs-school-lib/umc.sh
@@ -45,8 +46,6 @@ umc_init
 umc_operation_create "printermoderation-all" "Printer moderation" "" "printermoderation/*"
 ucs_school_policies_create
 ucs_school_policies_append "printermoderation-all"
-
-joinscript_save_current_version
 
 # create default PDF printer
 position="cn=printers,$ldap_base"
@@ -61,6 +60,43 @@ udm shares/printer create "$@" --ignore_exists \
 	--set description="Moderierter PDF-Drucker" \
 	--set model="None"
 
+# set default windows driver for pdf printer
+# is_ucr_true 
+#  -> 0 if true
+#  -> 1 if false
+#  -> 2 is unset
+is_ucr_true "ucsschool/printermoderation/windows/driver/assign"
+if [ $? -eq 0 -o $? -eq 2 ]; then 
+	if [ -n "$ucsschool_printermoderation_windows_driver_name" ]; then
+		# check if machine account is in printer group
+		group="Printer-Admins"
+		remove=false
+		if [ -n "$groups_default_printoperators" ]; then
+			group="$groups_default_printoperators"
+		fi
+		if ! univention-ldapsearch cn="$group" | ldapsearch-wrapper| grep -q "memberUid: $hostname\\$"; then
+			# add machine account to printer group
+			udm groups/group modify "$@" --ignore_exists \
+				--dn "cn=$group,cn=groups,$ldap_base" \
+				--append hosts="$ldap_hostdn"
+			test -x /etc/init.d/nscd && invoke-rc.d nscd restart
+			remove=true
+		fi
+		# wait for printer
+		for i in $(seq 1 300); do
+			echo "Setting windows printer driver for PDFDrucker ..."
+			sleep 1
+			rpcclient -P -c "setdriver PDFDrucker '$ucsschool_printermoderation_windows_driver_name'" $hostname && break
+		done
+		# remove machine account from printer group 
+		if [ "true" = "$remove" ]; then
+			udm groups/group modify "$@" --ignore_exists \
+				--dn "cn=$group,cn=groups,$ldap_base" \
+				--remove hosts="$ldap_hostdn"
+		fi
+	fi
+fi 
+
+joinscript_save_current_version
+
 exit 0
-
-
