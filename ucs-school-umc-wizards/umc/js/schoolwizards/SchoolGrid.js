@@ -127,7 +127,7 @@ define([
 			}
 			msg += '<br/><br/>';
 			msg += '<strong>' + _('Warning') + ':</strong> ';
-			msg += _('Deleting schools will also delete every teacher and student.') + '<br/>' + _('This action is cannot be undone.');
+			msg += _('Deleting schools will also delete every teacher and student.') + '<br/>' + _('This action cannot be undone.');
 			return msg;
 		},
 

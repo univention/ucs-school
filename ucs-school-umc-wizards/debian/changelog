@@ -1,3 +1,9 @@
+ucs-school-umc-wizards (6.0.1-2) unstable; urgency=medium
+
+  * Bug #36276: fix translation
+
+ -- Florian Best <best@univention.de>  Tue, 21 Apr 2015 12:01:06 +0200
+
 ucs-school-umc-wizards (6.0.1-1) unstable; urgency=medium
 
   * Bug #38200: adapt translation
