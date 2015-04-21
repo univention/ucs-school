@@ -36,3 +36,5 @@ eval "$(univention-config-registry shell)"
 
 ucr set \
 	ucsschool/printermoderation/windows/driver/name?'MS Publisher Color Printer'
+
+exit 0
