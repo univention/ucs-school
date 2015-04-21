@@ -68,19 +68,35 @@ udm shares/printer create "$@" --ignore_exists \
 is_ucr_true "ucsschool/printermoderation/windows/driver/assign"
 if [ $? -eq 0 -o $? -eq 2 ]; then 
 	if [ -n "$ucsschool_printermoderation_windows_driver_name" ]; then
-		# check if machine account is in printer group
-		group="Printer-Admins"
-		remove=false
-		if [ -n "$groups_default_printoperators" ]; then
-			group="$groups_default_printoperators"
-		fi
-		if ! univention-ldapsearch cn="$group" | ldapsearch-wrapper| grep -q "memberUid: $hostname\\$"; then
-			# add machine account to printer group
-			udm groups/group modify "$@" --ignore_exists \
-				--dn "cn=$group,cn=groups,$ldap_base" \
-				--append hosts="$ldap_hostdn"
-			test -x /etc/init.d/nscd && invoke-rc.d nscd restart
-			remove=true
+		remove=""
+		ldb="/var/lib/samba/private/sam.ldb"
+		if [ -f "$ldb" ]; then
+			# samba4 -> add to samba4 Print Operators
+			if ! ldbsearch -H "$ldb" cn="Print Operators" | grep -iq  "member: cn=$hostname,"; then
+				s4_host_dn="$(univention-s4search cn="$hostname" dn |sed -n 's/^dn: //p')"
+				ldbmodify -H "$ldb" <<-%EOF
+dn: CN=Print Operators,CN=Builtin,$samba4_ldap_base
+changetype: modify
+add: member
+member: $s4_host_dn
+-
+%EOF
+				remove="$s4_host_dn"
+			fi
+		else
+			# samba3 -> check if machine account is in printer group
+			group="Printer-Admins"
+			if [ -n "$groups_default_printoperators" ]; then
+				group="$groups_default_printoperators"
+			fi
+			if ! univention-ldapsearch cn="$group" | ldapsearch-wrapper| grep -q "memberUid: $hostname\\$"; then
+				# add machine account to printer group
+				udm groups/group modify "$@" --ignore_exists \
+					--dn "cn=$group,cn=groups,$ldap_base" \
+					--append hosts="$ldap_hostdn"
+				test -x /etc/init.d/nscd && invoke-rc.d nscd restart
+				remove="$group"
+			fi
 		fi
 		# wait for printer
 		echo "Setting windows printer driver for PDFDrucker ..."
@@ -91,10 +107,20 @@ if [ $? -eq 0 -o $? -eq 2 ]; then
 			fi
 		done
 		# remove machine account from printer group 
-		if [ "true" = "$remove" ]; then
-			udm groups/group modify "$@" --ignore_exists \
-				--dn "cn=$group,cn=groups,$ldap_base" \
-				--remove hosts="$ldap_hostdn"
+		if [ -n "$remove" ]; then
+			if [ -f "$ldb" ]; then
+				ldbmodify -H "$ldb" <<-%EOF
+dn: CN=Print Operators,CN=Builtin,$samba4_ldap_base
+changetype: modify
+delete: member
+member: $remove
+-
+%EOF
+			else
+				udm groups/group modify "$@" --ignore_exists \
+					--dn "cn=$remove,cn=groups,$ldap_base" \
+					--remove hosts="$ldap_hostdn"
+			fi
 		fi
 	fi
 fi 
