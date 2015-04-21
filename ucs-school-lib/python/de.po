@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2015-04-17 13:47+0200\n"
+"POT-Creation-Date: 2015-04-21 16:35+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -45,7 +45,7 @@ msgstr "Rechner"
 msgid "Computer path"
 msgstr "Pfad für Rechner"
 
-#: python/models/group.py:116
+#: python/models/group.py:120
 msgid "Container"
 msgstr "Container"
 
@@ -121,7 +121,7 @@ msgstr "Gruppen"
 msgid "Hostname"
 msgstr "Hostname"
 
-#: python/models/group.py:194
+#: python/models/group.py:214
 msgid "Hosts"
 msgstr "Hosts"
 
@@ -172,8 +172,8 @@ msgstr "Mac OS X"
 msgid "May not contain special characters"
 msgstr "Darf keine besonderen Zeichen enthalten"
 
-#: python/models/base.py:158 python/models/group.py:52
-#: python/models/group.py:148 python/models/share.py:41
+#: python/models/base.py:158 python/models/share.py:41
+#: python/models/group.py:52 python/models/group.py:152
 msgid "Name"
 msgstr "Name"
 
@@ -334,6 +334,10 @@ msgstr "Pfad für Benutzer"
 #: python/models/user.py:48
 msgid "Username"
 msgstr "Benutzername"
+
+#: python/models/group.py:153
+msgid "Users"
+msgstr "Benutzer"
 
 #: python/models/computer.py:306
 msgid "Windows system"

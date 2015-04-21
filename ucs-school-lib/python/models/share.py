@@ -37,25 +37,23 @@ from ucsschool.lib.models.base import UCSSchoolHelperAbstractClass
 
 from ucsschool.lib.models.utils import ucr, _, logger
 
-class ClassShare(UCSSchoolHelperAbstractClass):
+class Share(UCSSchoolHelperAbstractClass):
 	name = ShareName(_('Name'))
-	school_class = SchoolClassAttribute(_('School class'), required=True, internal=True)
+	school_group = SchoolClassAttribute(_('School class'), required=True, internal=True)
 
 	@classmethod
-	def from_school_class(cls, school_class):
-		return cls(name=school_class.name, school=school_class.school, school_class=school_class)
+	def from_school_group(cls, school_group):
+		return cls(name=school_group.name, school=school_group.school, school_group=school_group)
+	from_school_class = from_school_group  # legacy
 
 	@classmethod
 	def get_container(cls, school):
-		return cls.get_search_base(school).classShares
+		return cls.get_search_base(school).shares
 
 	def do_create(self, udm_obj, lo):
-		gid = self.school_class.get_udm_object(lo)['gidNumber']
+		gid = self.school_group.get_udm_object(lo)['gidNumber']
 		udm_obj['host'] = self.get_server_fqdn(lo)
-		if ucr.is_true('ucsschool/import/roleshare', True):
-			udm_obj['path'] = '/home/%s/groups/klassen/%s' % (self.school_class.school, self.name)
-		else:
-			udm_obj['path'] = '/home/groups/klassen/%s' % self.name
+		udm_obj['path'] = self.get_share_path()
 		udm_obj['writeable'] = '1'
 		udm_obj['sambaWriteable'] = '1'
 		udm_obj['sambaBrowseable'] = '1'
@@ -66,7 +64,13 @@ class ClassShare(UCSSchoolHelperAbstractClass):
 		udm_obj['group'] = gid
 		udm_obj['directorymode'] = '0770'
 		logger.info('Creating share on "%s"' % udm_obj['host'])
-		return super(ClassShare, self).do_create(udm_obj, lo)
+		return super(Share, self).do_create(udm_obj, lo)
+
+	def get_share_path(self):
+		if ucr.is_true('ucsschool/import/roleshare', True):
+			return '/home/%s/groups/%s' % (self.school_group.school, self.name)
+		else:
+			return '/home/groups/%s' % self.name
 
 	def do_modify(self, udm_obj, lo):
 		old_name = self.get_name_from_dn(self.old_dn)
@@ -78,7 +82,7 @@ class ClassShare(UCSSchoolHelperAbstractClass):
 				udm_obj['sambaName'] = self.name
 			if udm_obj['sambaForceGroup'] == '+%s' % old_name:
 				udm_obj['sambaForceGroup'] = '+%s' % self.name
-		return super(ClassShare, self).do_modify(udm_obj, lo)
+		return super(Share, self).do_modify(udm_obj, lo)
 
 	def get_server_fqdn(self, lo):
 		domainname = ucr.get('domainname')
@@ -120,3 +124,15 @@ class ClassShare(UCSSchoolHelperAbstractClass):
 	class Meta:
 		udm_module = 'shares/share'
 
+
+class ClassShare(Share):
+
+	@classmethod
+	def get_container(cls, school):
+		return cls.get_search_base(school).classShares
+
+	def get_share_path(self):
+		if ucr.is_true('ucsschool/import/roleshare', True):
+			return '/home/%s/groups/klassen/%s' % (self.school_group.school, self.name)
+		else:
+			return '/home/groups/klassen/%s' % self.name

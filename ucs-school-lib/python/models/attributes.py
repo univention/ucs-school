@@ -33,7 +33,7 @@
 import re
 from ldap.dn import escape_dn_chars
 
-from univention.admin.syntax import gid, string_numbers_letters_dots_spaces, uid_umlauts, iso8601Date, primaryEmailAddressValidDomain, boolean, GroupDN, ipAddress, MAC_Address, disabled, reverseLookupSubnet, ipv4Address, v4netmask, netmask, UDM_Objects
+from univention.admin.syntax import gid, string_numbers_letters_dots_spaces, uid_umlauts, iso8601Date, primaryEmailAddressValidDomain, boolean, UserDN, GroupDN, ipAddress, MAC_Address, disabled, reverseLookupSubnet, ipv4Address, v4netmask, netmask, UDM_Objects
 from univention.admin.uexceptions import valueError
 
 from ucsschool.lib.models.utils import ucr, _
@@ -201,6 +201,11 @@ class ShareFileServer(Attribute):
 
 class Groups(Attribute):
 	syntax = GroupDN
+	value_list = True
+
+class Users(Attribute):
+	udm_name = 'users'
+	syntax = UserDN
 	value_list = True
 
 class IPAddress(Attribute):

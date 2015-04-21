@@ -34,10 +34,10 @@ from ldap.dn import str2dn
 
 from univention.admin.uexceptions import noObject
 
-from ucsschool.lib.models.attributes import GroupName, Description, Attribute, SchoolClassName, Hosts
+from ucsschool.lib.models.attributes import GroupName, Description, Attribute, SchoolClassName, Hosts, Users
 from ucsschool.lib.models.base import UCSSchoolHelperAbstractClass
 from ucsschool.lib.models.misc import OU, Container
-from ucsschool.lib.models.share import ClassShare
+from ucsschool.lib.models.share import Share, ClassShare
 from ucsschool.lib.models.policy import UMCPolicy
 from ucsschool.lib.models.utils import ucr, _, logger
 
@@ -59,6 +59,10 @@ class Group(UCSSchoolHelperAbstractClass):
 	@classmethod
 	def is_school_group(cls, school, group_dn):
 		return cls.get_search_base(school).isGroup(group_dn)
+
+	@classmethod
+	def is_school_workgroup(cls, school, group_dn):
+		return cls.get_search_base(school).isWorkgroup(group_dn)
 
 	@classmethod
 	def is_school_class(cls, school, group_dn):
@@ -146,6 +150,9 @@ class BasicGroup(Group):
 
 class SchoolClass(Group, _MayHaveSchoolPrefix):
 	name = SchoolClassName(_('Name'))
+	users = Users(_('Users'))
+
+	ShareClass = ClassShare
 
 	def create_without_hooks(self, lo, validate):
 		super(SchoolClass, self).create_without_hooks(lo, validate) # success = ?
@@ -153,19 +160,19 @@ class SchoolClass(Group, _MayHaveSchoolPrefix):
 		return True # success?
 
 	def create_share(self, lo):
-		share = ClassShare.from_school_class(self)
+		share = self.ShareClass.from_school_group(self)
 		return share.create(lo)
 
 	def modify_without_hooks(self, lo, validate=True, move_if_necessary=None):
-		share = ClassShare.from_school_class(self)
+		share = self.ShareClass.from_school_group(self)
 		if self.old_dn:
 			old_name = self.get_name_from_dn(self.old_dn)
 			if old_name != self.name:
 				# recreate the share.
 				# if the name changed
-				# from_school_class will have initialized
+				# from_school_group will have initialized
 				# share.old_dn incorrectly
-				share = ClassShare(name=old_name, school=self.school, school_class=self)
+				share = self.ShareClass(name=old_name, school=self.school, school_class=self)
 				share.name = self.name
 		success = super(SchoolClass, self).modify_without_hooks(lo, validate, move_if_necessary)
 		if success:
@@ -177,7 +184,7 @@ class SchoolClass(Group, _MayHaveSchoolPrefix):
 
 	def remove_without_hooks(self, lo):
 		success = super(SchoolClass, self).remove_without_hooks(lo)
-		share = ClassShare.from_school_class(self)
+		share = self.ShareClass.from_school_group(self)
 		success = success and share.remove(lo)
 		return success
 
@@ -189,6 +196,19 @@ class SchoolClass(Group, _MayHaveSchoolPrefix):
 		ret = super(SchoolClass, self).to_dict()
 		ret['name'] = self.get_relative_name()
 		return ret
+
+
+class WorkGroup(SchoolClass):
+
+	ShareClass = Share
+
+	@classmethod
+	def get_container(cls, school):
+		return cls.get_search_base(school).workgroups
+
+	def build_hook_line(self, hook_time, func_name):
+		return None
+
 
 class ComputerRoom(Group, _MayHaveSchoolPrefix):
 	hosts = Hosts(_('Hosts'))
