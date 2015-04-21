@@ -2,7 +2,7 @@
 ## -*- coding: utf-8 -*-
 ## desc: Simple exam group memberUid & uniqueMember check
 ## roles: [domaincontroller_master, domaincontroller_slave]
-## tags: [SKIP-UCSSCHOOL, apptest, ucsschool]
+## tags: [apptest, ucsschool]
 ## exposure: dangerous
 ## bugs: [36251]
 ## packages: [univention-samba4, ucs-school-umc-computerroom, ucs-school-umc-exam]
