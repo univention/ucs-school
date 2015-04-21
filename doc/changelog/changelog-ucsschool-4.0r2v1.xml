@@ -324,6 +324,15 @@
 							A basedir restriction to the configured printer directory has been added (<u:bug>38270</u:bug>).
 						</simpara>
 					</listitem>
+					<listitem>
+						<simpara>
+							The windows printer driver for the PDF printer is now set to
+							<emphasis>MS Publisher Color Printer</emphasis> by default. This driver
+							is pre-installed on many versions of the windows operating system
+							(win7, win8.1, ...) and therefore no driver download is necessary
+							when connecting to the printer from a windows client (<u:bug>38201</u:bug>). 
+						</simpara>
+					</listitem>
 				</itemizedlist>
 			</section>
 		</section>
