@@ -270,7 +270,7 @@
 				<itemizedlist>
 					<listitem>
 						<simpara>
-							The start time for automatic distribution of a project don't have to be in the future anymore (<u:bug>38195</u:bug>).
+							The first possible start times for automatic distribution and collection have been adjusted. (<u:bug>38195</u:bug>).
 						</simpara>
 					</listitem>
 					<listitem>
