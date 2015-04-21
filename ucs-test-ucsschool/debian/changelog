@@ -1,3 +1,10 @@
+ucs-test-ucsschool (2.0.48-1) unstable; urgency=low
+
+  * 90_ucsschool/97_samba4_dns_srv_replication: some 'style' changes;
+    enabled the test (Bug #34222).
+
+ -- Dmitry Galkin <galkin@univention.de>  Tue, 21 Apr 2015 10:59:11 +0200
+
 ucs-test-ucsschool (2.0.47-1) unstable; urgency=low
 
   * 90_ucsschool/97_samba4_dns_srv_replication: fix regular expression
