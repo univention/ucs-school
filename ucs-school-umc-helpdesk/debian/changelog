@@ -1,6 +1,7 @@
 ucs-school-umc-helpdesk (11.0.0-2) unstable; urgency=low
 
   * Bug #38310: fixed FTBFS problem with debian/rules file
+  * Bug #38198: fixed missing import
 
  -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Tue, 21 Apr 2015 21:39:25 +0200
 

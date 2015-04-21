@@ -41,6 +41,7 @@ from univention.admin.handlers.users.user import object as User
 from ucsschool.lib import LDAP_Connection, SchoolBaseModule
 from ucsschool.lib.models import School
 
+import traceback
 import notifier
 import notifier.popen
 
