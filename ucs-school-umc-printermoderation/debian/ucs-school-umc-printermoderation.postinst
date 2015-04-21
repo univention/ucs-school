@@ -30,11 +30,8 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+ucr set ucsschool/printermoderation/windows/driver/name?'MS Publisher Color Printer'
+
 #DEBHELPER#
-
-eval "$(univention-config-registry shell)"
-
-ucr set \
-	ucsschool/printermoderation/windows/driver/name?'MS Publisher Color Printer'
 
 exit 0
