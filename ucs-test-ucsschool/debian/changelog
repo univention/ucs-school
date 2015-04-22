@@ -1,3 +1,10 @@
+ucs-test-ucsschool (2.0.49-1) unstable; urgency=low
+
+  * Bug #38201: added 
+    00_checks/15_ucsschool_check_windows_printer_driver_for_pdf_printer 
+
+ -- Felix Botner <botner@univention.de>  Wed, 22 Apr 2015 09:57:08 +0200
+
 ucs-test-ucsschool (2.0.48-1) unstable; urgency=low
 
   * 90_ucsschool/97_samba4_dns_srv_replication: some 'style' changes;
