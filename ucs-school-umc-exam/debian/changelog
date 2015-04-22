@@ -1,3 +1,9 @@
+ucs-school-umc-exam (4.0.1-2) unstable; urgency=low
+
+  * Bug #32331 : added support for uploading multiple files at once
+
+ -- Drees Dormann <dormann@univention.de>  Wed, 22 Apr 2015 13:14:06 +0200
+
 ucs-school-umc-exam (4.0.1-1) unstable; urgency=medium
 
   * Bug #38224: text changes

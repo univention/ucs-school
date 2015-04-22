@@ -220,6 +220,7 @@ define([
 					type: MultiUploader,
 					name: 'files',
 					command: 'schoolexam/upload',
+					multiFile: true,
 					label: ' ',
 					buttonLabel: _('Upload files'),
 					description: _('Files that are distributed along with this exam')

@@ -1,4 +1,5 @@
 #!/usr/bin/python2.7
+# -*- coding: utf-8 -*-
 #
 # Univention Management Console
 #  Starts a new exam for a specified computer room
@@ -96,19 +97,20 @@ class Instance( SchoolBaseModule ):
 		# make sure that we got a list
 		if not isinstance(request.options, (tuple, list)):
 			raise UMC_OptionTypeError( 'Expected list of dicts, but got: %s' % str(request.options) )
-		file = request.options[0]
-		if not ('tmpfile' in file and 'filename' in file):
-			raise UMC_OptionTypeError( 'Invalid upload data, got: %s' % str(file) )
 
-		# create a temporary upload directory, if it does not already exist
-		if not self._tmpDir:
-			self._tmpDir = tempfile.mkdtemp(prefix='ucsschool-exam-upload-')
-			MODULE.info('Created temporary directory: %s' % self._tmpDir)
+		for file in request.options:
+			if not ('tmpfile' in file and 'filename' in file):
+				raise UMC_OptionTypeError( 'Invalid upload data, got: %s' % str(file) )
 
-		filename = self.__workaround_filename_bug(file)
-		destPath = os.path.join(self._tmpDir, filename)
-		MODULE.info('Received file %r, saving it to %r' % (file['tmpfile'], destPath))
-		shutil.move(file['tmpfile'], destPath)
+			# create a temporary upload directory, if it does not already exist
+			if not self._tmpDir:
+				self._tmpDir = tempfile.mkdtemp(prefix='ucsschool-exam-upload-')
+				MODULE.info('Created temporary directory: %s' % self._tmpDir)
+
+			filename = self.__workaround_filename_bug(file)
+			destPath = os.path.join(self._tmpDir, filename)
+			MODULE.info('Received file %r, saving it to %r' % (file['tmpfile'], destPath))
+			shutil.move(file['tmpfile'], destPath)
 
 		# done
 		self.finished( request.id, None )
