@@ -58,4 +58,4 @@ override_dh_installdirs:
 override_dh_pysupport:
 	univention-install-config-registry
 	dh-umc-module-install
-	dh_pysupport --noscripts
+	dh_pysupport
