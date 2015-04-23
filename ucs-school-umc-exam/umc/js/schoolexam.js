@@ -107,7 +107,7 @@ define([
 				}, {
 					name: '_showFileUpload',
 					type: CheckBox,
-					label: _('Distribute materials')
+					label: _('Distribute teaching materials')
 				} , {
 					name: '_showInternetSettings',
 					type: CheckBox,
@@ -474,7 +474,7 @@ define([
 
 				var title = widget.get('label');
 				if (ikey == 'files') {
-					title = _('Distributed materials');
+					title = _('Distributed teaching materials');
 				}
 
 				// for ComboBoxes/MultiObjectSelect -> get the label of the chosen value

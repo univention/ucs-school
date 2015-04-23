@@ -22,8 +22,20 @@ Description[de]=Definiert die vorausgewählte Internetregel für eine neue Klass
 Type=str
 Categories=ucsschool-exam
 
-[ucsschool/exam/default/checkbox/*]
-Description[en]=Specified which checkboxes are preselected of the exam UMC module. Possible variables are "distribution", "proxysettings" and "sharesettings".
-Description[de]=Definiert die vorausgewählten Checkboxen im Klassenarbeitsmodus-UMC-Modul. Mögliche Variablen sind "distribution", "proxysettings" and "sharesettings".
+[ucsschool/exam/default/checkbox/distribution]
+Description[en]=Specifies that the checkbox "Distribute teaching materials" is preselected in the "Start exam" UMC module. The value "true" activates the checkbox. Otherwise the value "false" has to be entered.
+Description[de]=Definiert, ob die Checkbox "Unterrichtsmaterial verteilen" im UMC-Modul "Klassenarbeit starten" automatisch vorausgewählt ist. Der Wert "true" aktiviert diese Checkbox automatisch. Andernfalls ist der Wert "false" einzutragen.
+Type=bool
+Categories=ucsschool-exam
+
+[ucsschool/exam/default/checkbox/proxysettings]
+Description[en]=Specifies that the checkbox "Set up internet rules" is preselected in the "Start exam" UMC module. The value "true" activates the checkbox. Otherwise the value "false" has to be entered.
+Description[de]=Definiert, ob die Checkbox "Internetregeln definieren" im UMC-Modul "Klassenarbeit starten" automatisch vorausgewählt ist. Der Wert "true" aktiviert diese Checkbox automatisch. Andernfalls ist der Wert "false" einzutragen.
+Type=bool
+Categories=ucsschool-exam
+
+[ucsschool/exam/default/checkbox/sharesettings]
+Description[en]=Specifies that the checkbox "Configure share access" is preselected in the "Start exam" UMC module. The value "true" activates the checkbox. Otherwise the value "false" has to be entered.
+Description[de]=Definiert, ob die Checkbox "Freigabezugriff konfigurieren" im UMC-Modul "Klassenarbeit starten" automatisch vorausgewählt ist. Der Wert "true" aktiviert diese Checkbox automatisch. Andernfalls ist der Wert "false" einzutragen.
 Type=bool
 Categories=ucsschool-exam

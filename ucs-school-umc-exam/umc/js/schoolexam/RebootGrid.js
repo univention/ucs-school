@@ -59,7 +59,9 @@ define([
 				name: 'reboot_all',
 				label: _('Reboot student computers'),
 				isContextAction: false,
-				callback: lang.hitch(this, 'onReboot')
+				callback: lang.hitch(this, function() {
+					this.onReboot(undefined);
+				})
 			}, {
 				name: 'reboot',
 				label: _('Reboot selected computers'),
@@ -136,12 +138,12 @@ define([
 		getComputersForReboot: function() {
 			// get all connected computers
 			var computers = [];
-			this.moduleStore.query().forEach(function(iitem) {
+			this.moduleStore.query().forEach(lang.hitch(this, function(iitem) {
 				// only take connected computers and computers where no teacher is logged in
-				if (iitem.connection == 'connected' && !iitem.teacher && this.teacherIPs.indexOf(item.ip) !== -1) {
+				if (iitem.connection == 'connected' && !iitem.teacher && this.teacherIPs.indexOf(iitem.ip) === -1) {
 					computers.push(iitem);
 				}
-			});
+			}));
 			return computers;
 		},
 
