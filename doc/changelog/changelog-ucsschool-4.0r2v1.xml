@@ -109,17 +109,17 @@
 	<itemizedlist>
 		<listitem>
 			<simpara>
-				A Squid ACL exception, to allow Windows Update to function with proxy authentication, is added during installation of ucs-school-webproxy (<u:bug>37541</u:bug>).
+				A Squid ACL exception, to allow Windows Update to function with proxy authentication, is added during installation of <package>ucs-school-webproxy</package> (<u:bug>37541</u:bug>).
 			</simpara>
 		</listitem>
 		<listitem>
 			<simpara>
-				ucs-school-webproxy contains the scripts /usr/share/ucs-school-webproxy/set-java-updater-acl-exception and /usr/share/ucs-school-webproxy/remove-java-updater-acl-exception, to add/remove HTTP-User-Agent-header based filters, to allow the Java Updater to function with proxy authentication. (<u:bug>37541</u:bug>).
+				<package>ucs-school-webproxy</package> contains the scripts <filename>/usr/share/ucs-school-webproxy/set-java-updater-acl-exception</filename> and <filename>/usr/share/ucs-school-webproxy/remove-java-updater-acl-exception</filename>, to add/remove HTTP-User-Agent-header based filters, to allow the Java Updater to function with proxy authentication. (<u:bug>37541</u:bug>).
 			</simpara>
 		</listitem>
 		<listitem>
 			<simpara>
-				ucs-school-webproxy contains the scripts /usr/share/ucs-school-webproxy/set-java-applet-acl-exception and /usr/share/ucs-school-webproxy/remove-java-applet-acl-exception, to add/remove HTTP-User-Agent-header based filters, to allow Java Applets to function with proxy authentication. (<u:bug>37542</u:bug>).
+
 			</simpara>
 		</listitem>
 	</itemizedlist>
@@ -317,24 +317,24 @@
 				</itemizedlist>
 			</section>
 			<section id="relnotes:changelog:umc:modules:printermoderation">
-				<title>Printermoderation</title>
+				<title>Printer moderation</title>
 				<itemizedlist>
 					<listitem>
 						<simpara>
-							Printjobs from users with uppercase characters in their username are now correctly shown (<u:bug>34934</u:bug>).
+							Print jobs from users with uppercase characters in their username are now correctly shown (<u:bug>34934</u:bug>).
 						</simpara>
 					</listitem>
 					<listitem>
 						<simpara>
-							A basedir restriction to the configured printer directory has been added (<u:bug>38270</u:bug>).
+							A base directory restriction to the configured printer directory has been added (<u:bug>38270</u:bug>).
 						</simpara>
 					</listitem>
 					<listitem>
 						<simpara>
 							The windows printer driver for the PDF printer is now set to
-							<emphasis>MS Publisher Color Printer</emphasis> by default. This driver
+							<wordasword>MS Publisher Color Printer</wordasword> by default. This driver
 							is pre-installed on many versions of the windows operating system
-							(win7, win8.1, ...) and therefore no driver download is necessary
+							(<systemitem class="osname">win7</systemitem>, <systemitem class="osname">win8.1</systemitem>, ...) and therefore no driver download is necessary
 							when connecting to the printer from a windows client (<u:bug>38201</u:bug>). 
 						</simpara>
 					</listitem>
