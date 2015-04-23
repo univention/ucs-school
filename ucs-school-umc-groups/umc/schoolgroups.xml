@@ -5,8 +5,12 @@
 		<category name="ucs-school-admin"/>
 	</categories>
 	<flavor id="class" priority="21">
-	  <name>Assign teachers to classes</name>
-	  <description>Associate teachers with classes</description>
+	  <name>Assigning teachers</name>
+	  <description>Associate teachers with a class</description>
+	</flavor>
+	<flavor id="teacher" priority="21">
+	  <name>Assigning classes</name>
+	  <description>Associate classes with a teacher</description>
 	</flavor>
 	<flavor id="workgroup" priority="20">
 	  <name>Edit workgroups</name>

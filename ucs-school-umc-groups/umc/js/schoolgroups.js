@@ -38,77 +38,35 @@ define([
 	"umc/widgets/TextBox",
 	"umc/widgets/ComboBox",
 	"umc/widgets/SearchForm",
-	"umc/modules/schoolgroups/DetailPage",
+	"umc/modules/schoolgroups/WorkgroupDetailPage",
+	"umc/modules/schoolgroups/ClassDetailPage",
+	"umc/modules/schoolgroups/TeacherDetailPage",
 	"umc/i18n!umc/modules/schoolgroups"
-], function(declare, lang, dialog, Module, Grid, Page, TextBox, ComboBox, SearchForm, DetailPage, _) {
-
-	return declare("umc.modules.schoolgroups", [Module], {
+], function(declare, lang, dialog, Module, Grid, Page, TextBox, ComboBox, SearchForm, WorkgroupDetailPage, ClassDetailPage, TeacherDetailPage, _) {
+	var ModuleBase = declare("umc.modules.schoolgroups", [Module], {
 		idProperty: '$dn$',
 		_grid: null,
 		_searchPage: null,
 		_detailPage: null,
 		standbyOpacity: 1,
+		helpText: '',
+		DetailPage: null,
 
 		buildRendering: function() {
 			this.inherited(arguments);
 
-			this.standby(true);
-
 			this._searchPage = new Page({
 				headerText: this.description,
-				helpText: ''
+				helpText: this.helpText
 			});
 
 			this.addChild(this._searchPage);
 
-			var actions = [{
-				name: 'edit',
-				label: _('Edit'),
-				description: _('Edit the selected object'),
-				iconClass: 'umcIconEdit',
-				isStandardAction: true,
-				isMultiAction: false,
-				callback: lang.hitch(this, '_editObject')
-			}];
-
-			// only workgroups can be deleted or added
-			if (this.moduleFlavor == 'workgroup-admin') {
-				actions.push({
-					name: 'add',
-					label: _('Add workgroup'),
-					description: _('Create a new workgroup'),
-					iconClass: 'umcIconAdd',
-					isContextAction: false,
-					isStandardAction: true,
-					callback: lang.hitch(this, '_addObject')
-				});
-				actions.push({
-					name: 'delete',
-					label: _('Delete'),
-					description: _('Deleting the selected objects.'),
-					isStandardAction: true,
-					isMultiAction: false,
-					iconClass: 'umcIconDelete',
-					callback: lang.hitch(this, '_deleteObjects')
-				});
-			}
-
-			var columns = [{
-				name: 'name',
-				label: _('Name'),
-				width: '20%'
-			}, {
-				name: 'description',
-				label: _('Description'),
-				width: 'auto'
-			}];
-
 			this._grid = new Grid({
-				actions: actions,
-				columns: columns,
+				actions: this.getGridActions(),
+				columns: this.getGridColumns(),
 				moduleStore: this.moduleStore
 			});
-
 			this._searchPage.addChild(this._grid);
 
 			var widgets = [{
@@ -118,9 +76,6 @@ define([
 				label: _('School'),
 				size: 'TwoThirds',
 				umcpCommand: lang.hitch(this, 'umcpCommand'),
-				onDynamicValuesLoaded: lang.hitch(this, function(result) {
-					this._detailPage.set('schools', result);
-				}),
 				autoHide: true
 			}, {
 				type: TextBox,
@@ -142,7 +97,6 @@ define([
 					}
 				}),
 				onValuesInitialized: lang.hitch(this, function() {
-					this.standby(false);
 					this.standbyOpacity = 0.75;
 					var values = this._searchForm.get('value');
 					if (values.school) {
@@ -150,53 +104,150 @@ define([
 					}
 			 	 })
 			});
+			this.standbyDuring(this._searchForm.ready());
 
 			this._searchPage.addChild(this._searchForm);
-
 			this._searchPage.startup();
+		},
 
-			this._detailPage = new DetailPage({
+		createDetailPage: function() {
+			var detailPage = new this.DetailPage({
 				moduleStore: this.moduleStore,
-				moduleFlavor: this.moduleFlavor
+				moduleFlavor: this.moduleFlavor,
+				headerText: this.detailPageHeaderText,
+				helpText: this.detailPageHelpText,
+				schools: this._searchForm.getWidget('school').getAllItems(),
+				umcpCommand: lang.hitch(this.moduleStore, 'umcpCommand')
 			});
-			this.addChild(this._detailPage);
+			this.addChild(detailPage);
 
 			// connect to the onClose event of the detail page... we need to manage
 			// visibility of sub pages here
-			this._detailPage.on('close', lang.hitch(this, function() {
+			detailPage.on('close', lang.hitch(this, function() {
 				this.selectChild(this._searchPage);
+				this.removeChild(detailPage);
 			}));
+			this.own(detailPage);
+			return detailPage;
 		},
 
-		_addObject: function() {
-			this._detailPage._form.clearFormValues();
+		getGridActions: function() {
+			return [{
+				name: 'edit',
+				label: _('Edit'),
+				description: _('Edit the selected object'),
+				iconClass: 'umcIconEdit',
+				isStandardAction: true,
+				isMultiAction: false,
+				callback: lang.hitch(this, '_editObject')
+			}];
+		},
 
-			this._detailPage.set('headerText', _('Add workgroup'));
-			this._detailPage.set('school', this._searchForm.getWidget('school').get('value'));
-			this._detailPage.disableFields(false);
-			this.selectChild(this._detailPage);
+		/*abstract*/getGridColumns: function() {
+			return [];
 		},
 
 		_editObject: function(ids, items) {
-			if (ids.length != 1) {
-				// should not happen
-				return;
-			}
+			var detailPage = this.createDetailPage();
+			detailPage.disableFields(true);
+			this.selectChild(detailPage);
+			detailPage.load(ids[0]);
+		}
+	});
 
-			this._detailPage.disableFields(true);
-			if (this.moduleFlavor === 'class') {
-				this._detailPage.set('headerText', _('Edit class'));
-			} else {
-				this._detailPage.set('headerText', _('Edit workgroup'));
-			}
-			this.selectChild(this._detailPage);
-			this._detailPage.load(ids[0]);
+	var Class = declare([ModuleBase], {
+		DetailPage: ClassDetailPage,
+		helpText: _('This module allows the maintenance of the membership of class groups. Teachers can be assigned or removed as group members.'),
+		detailPageHeaderText: _('Edit class'),
+		detailPageHelpText: _('This module allows the maintenance of the membership of class groups. Teachers can be assigned or removed as group members.'),
+		getGridColumns: function() {
+			return [{
+				name: 'name',
+				label: _('Name')
+			}, {
+				name: 'school_class',
+				label: _('Class')
+			}];
+		}
+	});
+
+	var Teacher = declare([Class], {
+		DetailPage: TeacherDetailPage,
+		helpText: _('This module allows the maintenance of class memberships of teachers. The selected teacher can be added to one or multiple classes.'),
+		detailPageHeaderText: _('Assigning of classes to a teacher'),
+		detailPageHelpText: _('This module allows the maintenance of class memberships of teachers. The selected teacher can be added to one or multiple classes.'),
+		getGridColumns: function() {
+			return [{
+				name: 'display_name',
+				label: _('Name'),
+				formatter: lang.hitch(this, function(nothing, id) {
+					var item = this._grid.getRowValues(id);
+					return '' + item.display_name + ' (' + item.name + ')';
+				})
+			}, {
+				name: 'school_class',
+				label: _('Class')
+			}];
+		}
+
+	});
+
+	var WorkGroup = declare([ModuleBase], {
+		DetailPage: WorkgroupDetailPage,
+		helpText: _('This module allows to modify class comprehensive workgroups. Arbitrary students and teacher of the school can be selected as group members.'),
+		detailPageHeaderText: _('Edit workgroup'),
+		detailPageHelpText: _('This module allows to modify class comprehensive workgroups. Arbitrary students and teacher of the school can be selected as group members.'),
+		getGridColumns: function() {
+			return [{
+				name: 'name',
+				label: _('Name')
+			}, {
+				name: 'description',
+				label: _('Description')
+			}];
+		}
+	});
+
+	var WorkgroupAdmin = declare([WorkGroup], {
+		helpText: _('This module allows to create, modify and delete class comprehensive workgroups. Arbitrary students and teacher of the school can be selected as group members.'),
+		getGridActions: function() {
+			var actions = this.inherited(arguments);
+
+			actions.push({
+				name: 'add',
+				label: _('Add workgroup'),
+				description: _('Create a new workgroup'),
+				iconClass: 'umcIconAdd',
+				isContextAction: false,
+				isStandardAction: true,
+				callback: lang.hitch(this, '_addObject')
+			});
+			actions.push({
+				name: 'delete',
+				label: _('Delete'),
+				description: _('Deleting the selected objects.'),
+				isStandardAction: true,
+				isMultiAction: false,
+				iconClass: 'umcIconDelete',
+				callback: lang.hitch(this, '_deleteObjects')
+			});
+			return actions;
+		},
+
+		_addObject: function() {
+			var detailPage = this.createDetailPage();
+			detailPage._form.clearFormValues();
+
+			detailPage.set('headerText', _('Add workgroup'));
+			detailPage.set('school', this._searchForm.getWidget('school').get('value'));
+			detailPage.disableFields(false);
+			this.selectChild(detailPage);
 		},
 
 		_deleteObjects: function(ids, items) {
 			dialog.confirm(lang.replace(_('Should the workgroup {name} be deleted?'), items[0]), [{
 				name: 'cancel',
-				'default' : true,
+				'default': true,
 				label: _('Cancel')
 			}, {
 				name: 'delete',
@@ -216,4 +267,15 @@ define([
 			}));
 		}
 	});
+
+	return {
+		load: function (flavor, req, load, config) {
+			load({
+				'class': Class,
+				'teacher': Teacher,
+				'workgroup': WorkGroup,
+				'workgroup-admin': WorkgroupAdmin
+			}[flavor]);
+		}
+	};
 });

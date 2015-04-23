@@ -31,6 +31,7 @@
 define([
 	"dojo/_base/declare",
 	"dojo/_base/lang",
+	"dojo/_base/array",
 	"umc/widgets/Page",
 	"umc/widgets/Form",
 	"umc/widgets/StandbyMixin",
@@ -38,7 +39,7 @@ define([
 	"umc/widgets/ComboBox",
 	"umc/widgets/MultiObjectSelect",
 	"umc/i18n!umc/modules/schoolgroups"
-], function(declare, lang, Page, Form, StandbyMixin, TextBox, ComboBox, MultiObjectSelect, _) {
+], function(declare, lang, array, Page, Form, StandbyMixin, TextBox, ComboBox, MultiObjectSelect, _) {
 
 	return declare("umc.modules.schoolgroups.DetailPage", [ Page, StandbyMixin ], {
 		moduleStore: null,
@@ -47,16 +48,10 @@ define([
 		_form: null,
 		standbyOpacity: 1,
 
+		multiWidgetName: 'members',
+
 		postMixInProperties: function() {
 			this.inherited(arguments);
-
-			this.umcpCommand = this.moduleStore.umcpCommand;
-
-			// set the page header
-			this.headerText = this.moduleFlavor == 'class' ? _('Edit class') : _('Edit workgroup');
-			this.helpText = this.moduleFlavor == 'class' ? 
-				_('This page allows to specify teachers who are associated with the class') :
-				_('This page allows to edit workgroup settings and to administrate which teachers/students belong to the group.');
 
 			// configure buttons for the footer of the detail page
 			this.footerButtons = [{
@@ -73,98 +68,58 @@ define([
 		buildRendering: function() {
 			this.inherited(arguments);
 
-			var groups = [];
-			if (this.moduleFlavor == 'workgroup-admin') {
-				groups.push({id: 'None', label: _('All users')});
-			}
-			if (this.moduleFlavor == 'class' || this.moduleFlavor == 'workgroup-admin') {
-				groups.push({id: 'teacher', label: _('All teachers')});
-			}
-			if (this.moduleFlavor == 'workgroup' || this.moduleFlavor == 'workgroup-admin') {
-				groups.push({id: 'student', label: _('All students')});
-			}
+			this._form = new Form({
+				widgets: this.getWidgets(),
+				moduleStore: this.moduleStore
+			});
+			this.addChild(this._form);
 
-			var widgets = [{
-				type: ComboBox,
-				name: 'school',
-				label: _('School'),
-				staticValues: []
-			}, {
-				type: TextBox,
-				name: 'name',
-				label: this.moduleFlavor == 'class' ? _('Class') : _('Workgroup'),
-				disabled: this.moduleFlavor != 'workgroup-admin',
-				regExp: '^[a-zA-Z0-9]([a-zA-Z0-9 _.-]*[a-zA-Z0-9])?$',
-				description: _('May only consist of letters, digits, spaces, dots, hyphens, underscore. Has to start and to end with a letter or a digit.'),
-				required: true
-			}, {
-				type: TextBox,
-				name: 'description',
-				label: _('Description'),
-				description: _('Verbose description of the group'),
-				disabled: this.moduleFlavor != 'workgroup-admin'
-			}, {
+			this._form.getWidget(this.multiWidgetName).on('ShowDialog', lang.hitch(this, function(_dialog) {
+				_dialog._form.getWidget('school').setInitialValue(this._form.getWidget('school').get('value'), true);
+			}));
+
+			this._form.on('submit', lang.hitch(this, '_save'));
+		},
+
+		getWidgets: function() {
+			return [];
+		},
+
+		getMultiSelectWidget: function() {
+			return {
 				type: MultiObjectSelect,
-				name: 'members',
-				label: this.moduleFlavor == 'class' ? _('Teachers') : this.moduleFlavor == 'workgroup' ? _('Students') : _('Members'),
-				description: this.moduleFlavor == 'class' ? _('Teachers of the specified class') : _('Teachers and students that belong to the current workgroup'),
-				queryWidgets: [{
+				name: this.multiWidgetName,
+				queryWidgets: array.filter([{
 					type: ComboBox,
 					name: 'school',
 					label: _('School'),
 					dynamicValues: 'schoolgroups/schools',
 					umcpCommand: lang.hitch(this, 'umcpCommand'),
 					autoHide: true
-				}, {
-					type: ComboBox,
-					name: 'group',
-					label: _('User group or class'),
-					depends: 'school',
-					staticValues: groups,
-					dynamicValues: 'schoolgroups/classes',
-					umcpCommand: lang.hitch(this, 'umcpCommand')
-				}, {
+				}, this.getMultiSelectGroup(), {
 					type: TextBox,
 					name: 'pattern',
 					label: _('Name')
-				}],
+				}], function(i) { return i; }),
 				queryCommand: lang.hitch(this, function(options) {
 					return this.umcpCommand('schoolgroups/users', options).then(function(data) {
 						return data.result;
 					});
 				}),
-				queryOptions: lang.hitch( this, function() {
-					if (this.moduleFlavor == 'class') {
-						return { group: 'teacher' };
-					} else if (this.moduleFlavor == 'workgroup') {
-						return { group: 'student' };
-					}
-					return {};
-				} ),
+				queryOptions: function() { return {}; },
 				autoSearch: false
-			}];
+			};
+		},
 
-			var layout = [{
-				label: _('Properties'),
-				layout: ['school', 'name', 'description']
-			}, {
-				label: _('Members'),
-				layout: ['members']
-			}];
-
-			this._form = new Form({
-				widgets: widgets,
-				layout: layout,
-				moduleStore: this.moduleStore,
-				scrollable: true
-			});
-			this.addChild(this._form);
-
-			this._form.getWidget('members').on('ShowDialog', lang.hitch(this, function(_dialog) {
-				_dialog._form.getWidget('school').setInitialValue(this._form.getWidget('school').get('value'), true);
-			}));
-
-			this._form.on('submit', lang.hitch(this, '_save'));
+		getMultiSelectGroup: function() {
+			return {
+				type: ComboBox,
+				name: 'group',
+				label: _('User group or class'),
+				depends: 'school',
+				dynamicValues: 'schoolgroups/classes',
+				umcpCommand: lang.hitch(this, 'umcpCommand')
+			};
 		},
 
 		_save: function() {
@@ -177,7 +132,7 @@ define([
 				return;
 			}
 
-			if ( values.$dn$ ) {
+			if (values.$dn$) {
 				deferred = this.moduleStore.put(values);
 			} else {
 				deferred = this.moduleStore.add(values);
@@ -204,14 +159,12 @@ define([
 		},
 
 		load: function(id) {
-			this.standby(true);
-
 			// this._form.getWidget('name').setValid(null);
 			this.standbyDuring(this._form.load(id));
 		},
 
 		onClose: function(dn, objectType) {
-			// event stub 
+			// event stub
 		}
 	});
 

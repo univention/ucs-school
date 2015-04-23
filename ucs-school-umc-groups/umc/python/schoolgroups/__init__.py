@@ -41,7 +41,7 @@ from univention.management.console.log import MODULE
 import univention.admin.uexceptions as udm_exceptions
 
 from ucsschool.lib.schoolldap import LDAP_Connection, SchoolBaseModule, Display, USER_READ, USER_WRITE, MACHINE_WRITE
-from ucsschool.lib.models import User, SchoolClass, WorkGroup
+from ucsschool.lib.models import User, Teacher, SchoolClass, WorkGroup
 
 _ = Translation('ucs-school-umc-groups').translate
 
@@ -57,6 +57,8 @@ def only_workgroup_admin(func):
 def get_group_class(request):
 	if request.flavor in ('workgroup', 'workgroup-admin'):
 		return WorkGroup
+	elif request.flavor == 'teacher':
+		return Teacher
 	return SchoolClass
 
 
@@ -98,10 +100,14 @@ class Instance(SchoolBaseModule):
 			try:
 				group = klass.from_dn(group_dn, None, ldap_user_read)
 			except udm_exceptions.noObject:
-				raise UMC_OptionTypeError('unknown group object')
+				raise UMC_OptionTypeError('unknown object')
 
 			school = group.school
 			result = group.to_dict()
+			
+			if request.flavor == 'teacher':
+				self.finished(request.id, [result])
+				return
 
 			if request.flavor == 'class':
 				# members are teachers
@@ -136,6 +142,10 @@ class Instance(SchoolBaseModule):
 
 		return: True|<error message>
 		"""
+
+		if request.flavor == 'teacher':
+			request.options = request.options[0]['object']
+			return self.add_teacher_to_classes(request)
 
 		klass = get_group_class(request)
 		for group in request.options:
@@ -220,3 +230,31 @@ class Instance(SchoolBaseModule):
 
 			self.finished(request.id, [{'success': success}])
 			return
+
+	@sanitize(**{
+		'$dn$': StringSanitizer(required=True),
+		'members': ListSanitizer(StringSanitizer(required=True), min_elements=1)
+	})
+	@LDAP_Connection(USER_READ, USER_WRITE)
+	def add_teacher_to_classes(self, request, search_base=None, ldap_user_write=None, ldap_user_read=None, ldap_position=None):
+		teacher = request.options['$dn$']
+		classes = request.options['members']
+		teacher = Teacher.from_dn(teacher, None, ldap_user_read)
+		if not teacher.self_is_teacher():
+			raise UMC_OptionTypeError('The user is not a teacher.')
+		failed = []
+		for class_ in classes:
+			try:
+				class_ = SchoolClass.from_dn(class_, teacher.school, ldap_user_write)
+			except udm_exceptions.noObject:
+				failed.append(class_)
+				continue
+			if teacher.dn not in class_.users:
+				class_.users.append(teacher.dn)
+			try:
+				if not class_.modify(ldap_user_write):
+					failed.append(class_.dn)
+			except udm_exceptions.base as exc:
+				MODULE.error('Could not add teacher %s to class %s: %s' % (teacher.dn, class_.dn, exc))
+				failed.append(class_.dn)
+		self.finished(request.id, not any(failed))

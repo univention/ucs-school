@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-groups\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: Wed, 16 May 2012 11:33:26 +0200\n"
+"POT-Creation-Date: 2015-04-23 22:39+0200\n"
 "PO-Revision-Date: 2012-05-18 11:32+0200\n"
 "Last-Translator: Univention GmbH <packages@univention.de>\n"
 "Language-Team: Univention GmbH <packages@univention.de>\n"
@@ -18,14 +18,20 @@ msgstr "Anlegen und Bearbeiten von Arbeitsgruppen"
 msgid "Administrate workgroups"
 msgstr "Arbeitsgruppen verwalten"
 
-msgid "Assign teachers to classes"
-msgstr "Lehrer Klassen zuordnen"
-
-msgid "Associate teachers with classes"
-msgstr "Lehrer den Klassen zuordnen"
-
 msgid "Edit members of workgroups"
 msgstr "Bearbeiten der Mitglieder einer Arbeitsgruppe"
 
 msgid "Edit workgroups"
 msgstr "Arbeitsgruppen bearbeiten"
+
+msgid "Assigning teachers"
+msgstr "Lehrer zuordnen"
+
+msgid "Associate teachers with a class"
+msgstr "Zuweisen von Lehrern zu einer Klasse"
+
+msgid "Assigning classes"
+msgstr "Klassen zuordnen"
+
+msgid "Associate classes with a teacher"
+msgstr "Zuweisen von Klassen zu einem Lehrer"

@@ -1,3 +1,9 @@
+ucs-school-umc-groups (4.0.0-2) unstable; urgency=medium
+
+  * Bug #32332: add flavor to assign classes to a single teacher
+
+ -- Florian Best <best@univention.de>  Thu, 23 Apr 2015 22:56:54 +0200
+
 ucs-school-umc-groups (4.0.0-1) unstable; urgency=medium
 
   * Bug #32332: rewrite module to use ucsschool.lib.models

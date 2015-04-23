@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-groups\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2015-04-21 16:32+0200\n"
+"POT-Creation-Date: 2015-04-23 22:39+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -12,12 +12,12 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: umc/python/schoolgroups/__init__.py:197
+#: umc/python/schoolgroups/__init__.py:207
 #, python-format
 msgid "Failed to create group (%s)."
 msgstr "Die Gruppe konnte nicht erstellt werden (%s)."
 
-#: umc/python/schoolgroups/__init__.py:174
+#: umc/python/schoolgroups/__init__.py:184
 #, python-format
 msgid "Failed to modify group (%s)."
 msgstr "Die Gruppe konnte nicht bearbeitet werden (%s)."
