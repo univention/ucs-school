@@ -520,8 +520,9 @@ class SchoolSearchBase(object):
 
 	def isWorkgroup(self, groupDN):
 		# a workgroup cannot lie in a sub directory
-		cnPart = groupDN[:-len(self.workgroups)-1]
-		return cnPart.find(',') < 0
+		if not groupDN.endswith(self.workgroups):
+			return False
+		return len(univention.uldap.explodeDn(groupDN)) - len(univention.uldap.explodeDn(self.workgroups)) == 1
 
 	def isGroup(self, groupDN):
 		return groupDN.endswith(self.groups)

@@ -78,6 +78,8 @@ class Group(UCSSchoolHelperAbstractClass):
 			return SchoolClass
 		elif cls.is_computer_room(school, udm_obj.dn):
 			return ComputerRoom
+		elif cls.is_school_workgroup(school, udm_obj.dn):
+			return WorkGroup
 		return cls
 
 	def add_umc_policy(self, policy_dn, lo):
@@ -208,6 +210,12 @@ class WorkGroup(SchoolClass):
 
 	def build_hook_line(self, hook_time, func_name):
 		return None
+
+	@classmethod
+	def get_class_for_udm_obj(cls, udm_obj, school):
+		if not cls.is_school_workgroup(school, udm_obj.dn):
+			return
+		return cls
 
 
 class ComputerRoom(Group, _MayHaveSchoolPrefix):

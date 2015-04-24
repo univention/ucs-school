@@ -1,3 +1,9 @@
+ucs-school-lib (7.0.4-1) unstable; urgency=medium
+
+  * Bug #32332: fix workgroup detection
+
+ -- Florian Best <best@univention.de>  Fri, 24 Apr 2015 13:33:26 +0200
+
 ucs-school-lib (7.0.3-1) unstable; urgency=medium
 
   * Bug #32332: add model abstraction for WorkGroups
