@@ -260,7 +260,6 @@ class Instance(SchoolBaseModule):
 				class_.users.append(teacher.dn)
 			elif classdn in classes_to_remove and teacher.dn in class_.users:
 				class_.users.remove(teacher.dn)
-			class_.users = list(class_.users)  # reference must change so that saving works
 			try:
 				if not class_.modify(ldap_user_write):
 					failed.append(classdn)

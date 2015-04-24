@@ -1,6 +1,7 @@
 ucs-school-umc-groups (4.0.0-3) unstable; urgency=medium
 
   * Bug #32332: make removal of teachers possible
+  * Bug #32332: remove workaround for a fix in lib.models.base
 
  -- Florian Best <best@univention.de>  Fri, 24 Apr 2015 15:59:05 +0200
 
