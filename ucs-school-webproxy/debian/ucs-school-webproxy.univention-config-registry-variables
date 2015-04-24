@@ -1,0 +1,11 @@
+[proxy/filter/global/blacklists/domains]
+Description[de]=Leerzeichenseparierte Liste mit Textdateien, die als Blacklist für Domänen in die UCS@school-Proxy-Konfiguration eingebunden werden sollen.
+Description[en]=Space separated list of text files that will be included as blacklist for domains within the UCS@school proxy configuration.
+Type=str
+Categories=ucsschool-base
+
+[proxy/filter/global/blacklists/urls]
+Description[de]=Leerzeichenseparierte Liste mit Textdateien, die als Blacklist für URLs in die UCS@school-Proxy-Konfiguration eingebunden werden sollen.
+Description[en]=Space separated list of text files that will be included as blacklist for URLs within the UCS@school proxy configuration.
+Type=str
+Categories=ucsschool-base
