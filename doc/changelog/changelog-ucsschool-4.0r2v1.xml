@@ -119,7 +119,7 @@
 		</listitem>
 		<listitem>
 			<simpara>
-				External blacklists (e.g. for filtering adult content) may now be included in the squidguard/squid configuration. These blacklists have to be placed as text file within the directory <filename class="directory">/var/lib/ucs-school-webproxy/</filename> or any subdirectory. They may be included via the UCR variables <envar>proxy/filter/global/blacklists/domains</envar> and <envar>proxy/filter/global/blacklists/urls</envar> (<u:bug>30184</u:bug>).
+				External blacklists (e.g. for filtering adult content) may now be included in the squidGuard/squid configuration. These blacklists have to be placed as text file within the directory <filename class="directory">/var/lib/ucs-school-webproxy/</filename> or any subdirectory. They may be included via the UCR variables <envar>proxy/filter/global/blacklists/domains</envar> and <envar>proxy/filter/global/blacklists/urls</envar> (<u:bug>30184</u:bug>).
 			</simpara>
 		</listitem>
 	</itemizedlist>
@@ -270,7 +270,7 @@
 					</listitem>
 					<listitem>
 						<simpara>
-							The memberUid attribute for computers at the exam group <emphasis>OU${OU}-Klassenarbeit</emphasis> is now handled correctly (<u:bug>36251</u:bug>).
+							The  attribute <property>memberUid</property> for computers at the exam group <systemitem class="groupname">OU${OU}-Klassenarbeit</systemitem> is now handled correctly (<u:bug>36251</u:bug>).
 						</simpara>
 					</listitem>
 				</itemizedlist>
