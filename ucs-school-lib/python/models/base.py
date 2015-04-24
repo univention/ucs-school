@@ -696,7 +696,7 @@ class UCSSchoolHelperAbstractClass(object):
 				if udm_value == '':
 					udm_value = None
 				attrs[name] = udm_value
-		obj = cls(**attrs)
+		obj = cls(**deepcopy(attrs))
 		obj.set_dn(udm_obj.dn)
 		obj._udm_obj_searched = True
 		obj._udm_obj = udm_obj
