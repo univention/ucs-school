@@ -1,3 +1,11 @@
+ucs-school-webproxy (11.0.3-2) unstable; urgency=low
+
+  * Bug #30184: added support for global blacklists:
+    - proxy/filter/global/blacklists/domains="dir1/file1 dir2/file2 file5"
+    - proxy/filter/global/blacklists/urls="dir3/file3 file4"
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 24 Apr 2015 12:38:03 +0200
+
 ucs-school-webproxy (11.0.3-1) unstable; urgency=medium
 
   * Add Windows Updater exception ACL (Bug #37541)

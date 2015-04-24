@@ -60,6 +60,8 @@ PATH_LOG = '/var/log/univention/ucs-school-webproxy.log'
 DIR_ETC = '/etc/squidguard'
 FN_CONFIG = 'squidGuard.conf'
 DIR_DATA = '/var/lib/ucs-school-webproxy'
+FN_GLOBAL_BLACKLIST_PREFIX = 'global-blacklist'
+TXT_GLOBAL_BLACKLIST_COMMENT = '###GLOBAL-BLACKLIST-COMMENT###'
 
 def logerror(msg):
 	logfd = open( PATH_LOG, 'a+')
@@ -100,7 +102,9 @@ def handler(configRegistry, changes):
 	(fno, fn_temp_config) = tempfile.mkstemp(dir=DIR_ETC)
 	os.close(fno)
 
-	createTemporaryConfig(fn_temp_config, configRegistry, DIR_TEMP)
+	checkGlobalBlacklist(configRegistry, DIR_DATA, changes)
+	createTemporaryConfig(fn_temp_config, configRegistry, DIR_TEMP, changes)
+	writeGlobalBlacklist(configRegistry, DIR_TEMP, changes)
 	writeUsergroupMemberLists(configRegistry, DIR_TEMP)
 	writeBlackWhiteLists(configRegistry, DIR_TEMP)
 	writeSettinglist(configRegistry, DIR_TEMP)
@@ -109,7 +113,7 @@ def handler(configRegistry, changes):
 	removeTempDirectory(DIR_TEMP)
 	subprocess.call(('/etc/init.d/squid3', 'reload', ))
 
-def createTemporaryConfig(fn_temp_config, configRegistry, DIR_TEMP):
+def createTemporaryConfig(fn_temp_config, configRegistry, DIR_TEMP, changes):
 	# create config in temporary directory with temporary "dbhome" setting
 	touchfnlist = []
 	if 'proxy/filter/redirecttarget' in configRegistry:
@@ -214,6 +218,18 @@ def createTemporaryConfig(fn_temp_config, configRegistry, DIR_TEMP):
 							 'whitelisted-url-%s' % proxy_setting,
 							 ] )
 
+	# disable the domainlist/urllist within the temporary config file - processing the global blacklists
+	# may take several seconds (depending on their size). The entry is reenabled when copied to target
+	# config directory.
+	f.write('dest global-blacklist {\n')
+	if not 'proxy/filter/global/blacklists/domains' in changes:
+		f.write(TXT_GLOBAL_BLACKLIST_COMMENT)
+	f.write(' 	 domainlist %s-domains\n' % (FN_GLOBAL_BLACKLIST_PREFIX,))
+	if not 'proxy/filter/global/blacklists/urls' in changes:
+		f.write(TXT_GLOBAL_BLACKLIST_COMMENT)
+	f.write(' 	 urllist    %s-urls\n' % (FN_GLOBAL_BLACKLIST_PREFIX,))
+	f.write('}\n\n')
+
 	f.write('acl {\n')
 	for room in roomlist:
 		f.write('	 %s {\n' % quote(room))
@@ -241,7 +257,7 @@ def createTemporaryConfig(fn_temp_config, configRegistry, DIR_TEMP):
 				continue
 			if filtertype in RULES:
 				f.write('	room-%s {\n' % (quote(room), ))
-				f.write('		pass %s\n' % (RULES[filtertype] % {'username': quoted_username, }))
+				f.write('		pass global-blacklist %s\n' % (RULES[filtertype] % {'username': quoted_username, }))
 				f.write('		redirect %s\n' % default_redirect)
 				f.write('	}\n')
 
@@ -250,23 +266,23 @@ def createTemporaryConfig(fn_temp_config, configRegistry, DIR_TEMP):
 		filtertype = configRegistry.get('proxy/filter/setting/%s/filtertype' % proxy_setting, 'whitelist-blacklist-pass')
 		if filtertype == 'whitelist-blacklist-pass':
 			f.write('	 usergroup-%s {\n' % quote(usergroupname))
-			f.write('		 pass whitelist-%s !blacklist-%s all\n' % (quote(proxy_setting), quote(proxy_setting)) )
+			f.write('		 pass global-blacklist whitelist-%s !blacklist-%s all\n' % (quote(proxy_setting), quote(proxy_setting)))
 			f.write('		 redirect %s\n' % default_redirect)
 			f.write('	 }\n\n')
 		elif filtertype == 'whitelist-block':
 			f.write('	 usergroup-%s {\n' % quote(usergroupname))
-			f.write('		 pass whitelist-%s none\n' % quote(proxy_setting) )
-			f.write('		 redirect %s\n' % default_redirect)
+			f.write('		 pass global-blacklist whitelist-%s none\n' % (quote(proxy_setting),))
+			f.write('		 redirect %s\n' % (default_redirect,))
 			f.write('	 }\n\n')
 		elif filtertype == 'blacklist-pass':
 			f.write('	 usergroup-%s {\n' % quote(usergroupname))
-			f.write('		 pass !blacklist-%s all\n' % quote(proxy_setting) )
-			f.write('		 redirect %s\n' % default_redirect)
+			f.write('		 pass global-blacklist !blacklist-%s all\n' % (quote(proxy_setting),))
+			f.write('		 redirect %s\n' % (default_redirect,))
 			f.write('	 }\n\n')
 
 	f.write('	 default {\n')
-	f.write('		  pass whitelist !blacklist all\n')
-	f.write('		  redirect %s\n' % default_redirect)
+	f.write('		  pass global-blacklist whitelist !blacklist all\n')
+	f.write('		  redirect %s\n' % (default_redirect,))
 	f.write('	 }\n')
 	f.write('}\n')
 
@@ -276,6 +292,35 @@ def createTemporaryConfig(fn_temp_config, configRegistry, DIR_TEMP):
 	#       from shutting down due to missing files
 	for fn in touchfnlist:
 		tmp = open( os.path.join(DIR_TEMP, fn), 'a+')
+
+
+def checkGlobalBlacklist(configRegistry, DIR_DATA, changes):
+	for listtype in ('domains', 'urls'):
+		dst_fn = os.path.join(DIR_DATA, '%s-%s' % (FN_GLOBAL_BLACKLIST_PREFIX, listtype))
+		if not 'proxy/filter/global/blacklists/%s' % (listtype,) in changes:
+			if not os.path.exists(dst_fn):
+				# the database file does not exist in final data directory, so a recreation is triggered
+				changes['proxy/filter/global/blacklists/%s' % (listtype,)] = ''
+
+
+def writeGlobalBlacklist(configRegistry, DIR_TEMP, changes):
+	for listtype in ('domains', 'urls'):
+		dst_fn = os.path.join(DIR_TEMP, '%s-%s' % (FN_GLOBAL_BLACKLIST_PREFIX, listtype))
+		# recreate the blacklist db file only if the corresponding UCR variable has been changed/set
+		# larger blacklists take several seconds to be converted into a db file
+		if not 'proxy/filter/global/blacklists/%s' % (listtype,) in changes:
+			continue
+		with open(dst_fn, 'w') as fout:
+			for fn in set([name.strip() for name in configRegistry.get('proxy/filter/global/blacklists/%s' % (listtype,), '').split(' ') if name.strip()]):
+				src_fn = os.path.join(DIR_DATA, fn)
+				if os.path.exists(src_fn):
+					# merge all given sub-blacklist files into one global blacklist file
+					try:
+						content = open(src_fn, 'r').read().strip()
+					except (IOError, OSError) as ex:
+						logerror('Cannot read %r: %s' % (src_fn, ex))
+						continue
+					fout.write(content)
 
 def writeSettinglist(configRegistry, DIR_TEMP):
 	proxy_settinglist = set()
@@ -348,6 +393,7 @@ def finalizeConfig(fn_temp_config, DIR_TEMP, DIR_DATA):
 	# fix squidguard config (replace DIR_TEMP with DIR_DATA)
 	content = open( fn_temp_config, "r").read()
 	content = content.replace('\ndbhome %s/\n' % DIR_TEMP, '\ndbhome %s/\n' % DIR_DATA)
+	content = content.replace(TXT_GLOBAL_BLACKLIST_COMMENT, '')  # reenable global blacklist entries
 	tempConfig = open(fn_temp_config, "w")
 	tempConfig.write(content)
 	tempConfig.close()
