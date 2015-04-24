@@ -71,7 +71,15 @@ define([
 					return item.connection == 'connected'/* && !item.teacher*/;
 				},
 				enablingMode: 'some',
-				callback: lang.hitch(this, 'onReboot')
+				callback: lang.hitch(this, function(ids, items) {
+					this.moduleStore.query().then(lang.hitch(this, function(i) {
+						this.onReboot(array.filter(i, function(c) {
+							if (ids.indexOf(c.id) !== -1) {
+								return true;
+							}
+						}));
+					}));
+				})
 			}];
 			this.columns = [{
 				name: 'name',
