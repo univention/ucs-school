@@ -1,3 +1,9 @@
+ucs-test-ucsschool (2.0.50-1) unstable; urgency=low
+
+  * Bug #38347: disabled 72_radius_authentication temporarily
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 24 Apr 2015 11:36:38 +0200
+
 ucs-test-ucsschool (2.0.49-1) unstable; urgency=low
 
   * Bug #38201: added 

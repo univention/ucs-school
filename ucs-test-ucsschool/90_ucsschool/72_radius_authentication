@@ -2,7 +2,7 @@
 ## -*- coding: utf-8 -*-
 ## desc: Computers(schools) module
 ## roles: [domaincontroller_master, domaincontroller_slave]
-## tags: [apptest, ucsschool]
+## tags: [apptest, ucsschool, SKIP]
 ## exposure: dangerous
 ## packages: [ucs-school-radius-802.1x]
 
