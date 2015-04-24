@@ -88,9 +88,8 @@ class Instance(SchoolBaseModule):
 	@LDAP_Connection()
 	def query(self, request, search_base=None, ldap_user_read=None, ldap_position=None):
 		klass = get_group_class(request)
-
 		groups = klass.get_all(ldap_user_read, request.options['school'], filter_str=request.options['pattern'], easy_filter=True)
-		self.finished(request.id, [group.to_dict() for group in groups if type(group) is klass])  # yes, "type() is"(!)
+		self.finished(request.id, [group.to_dict() for group in groups])
 
 	@sanitize(StringSanitizer(required=True))
 	@LDAP_Connection()
@@ -106,6 +105,8 @@ class Instance(SchoolBaseModule):
 			result = group.to_dict()
 			
 			if request.flavor == 'teacher':
+				classes = SchoolClass.get_all(ldap_user_read, school, filter_str='uniqueMember=%s' % (group_dn,))
+				result['classes'] = [{'id': class_.dn, 'label': class_.name} for class_ in classes]
 				self.finished(request.id, [result])
 				return
 
@@ -233,28 +234,37 @@ class Instance(SchoolBaseModule):
 
 	@sanitize(**{
 		'$dn$': StringSanitizer(required=True),
-		'members': ListSanitizer(StringSanitizer(required=True), min_elements=1)
+		'classes': ListSanitizer(StringSanitizer(required=True), min_elements=1, required=True)
 	})
 	@LDAP_Connection(USER_READ, USER_WRITE)
 	def add_teacher_to_classes(self, request, search_base=None, ldap_user_write=None, ldap_user_read=None, ldap_position=None):
 		teacher = request.options['$dn$']
-		classes = request.options['members']
+		classes = set(request.options['classes'])
 		teacher = Teacher.from_dn(teacher, None, ldap_user_read)
 		if not teacher.self_is_teacher():
 			raise UMC_OptionTypeError('The user is not a teacher.')
+
+		original_classes = set([dn for dn in ldap_user_read.searchDn('uniqueMember=%s' % (teacher.dn,)) if search_base.isClass(dn)])
+		classes_to_remove = original_classes - classes
+		classes_to_add = classes - original_classes
+
 		failed = []
-		for class_ in classes:
+		for classdn in (classes_to_add | classes_to_remove):
 			try:
-				class_ = SchoolClass.from_dn(class_, teacher.school, ldap_user_write)
+				class_ = SchoolClass.from_dn(classdn, teacher.school, ldap_user_write)
 			except udm_exceptions.noObject:
-				failed.append(class_)
+				failed.append(classdn)
 				continue
-			if teacher.dn not in class_.users:
+
+			if classdn in classes_to_add and teacher.dn not in class_.users:
 				class_.users.append(teacher.dn)
+			elif classdn in classes_to_remove and teacher.dn in class_.users:
+				class_.users.remove(teacher.dn)
+			class_.users = list(class_.users)  # reference must change so that saving works
 			try:
 				if not class_.modify(ldap_user_write):
-					failed.append(class_.dn)
+					failed.append(classdn)
 			except udm_exceptions.base as exc:
-				MODULE.error('Could not add teacher %s to class %s: %s' % (teacher.dn, class_.dn, exc))
-				failed.append(class_.dn)
+				MODULE.error('Could not add teacher %s to class %s: %s' % (teacher.dn, classdn, exc))
+				failed.append(classdn)
 		self.finished(request.id, not any(failed))

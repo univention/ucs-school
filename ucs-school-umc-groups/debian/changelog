@@ -1,3 +1,9 @@
+ucs-school-umc-groups (4.0.0-3) unstable; urgency=medium
+
+  * Bug #32332: make removal of teachers possible
+
+ -- Florian Best <best@univention.de>  Fri, 24 Apr 2015 15:59:05 +0200
+
 ucs-school-umc-groups (4.0.0-2) unstable; urgency=medium
 
   * Bug #32332: add flavor to assign classes to a single teacher
