@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-groups\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2015-04-23 22:39+0200\n"
+"POT-Creation-Date: 2015-04-27 12:28+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -12,12 +12,17 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: umc/python/schoolgroups/__init__.py:207
+#: umc/python/schoolgroups/__init__.py:210
 #, python-format
 msgid "Failed to create group (%s)."
 msgstr "Die Gruppe konnte nicht erstellt werden (%s)."
 
-#: umc/python/schoolgroups/__init__.py:184
+#: umc/python/schoolgroups/__init__.py:185
 #, python-format
 msgid "Failed to modify group (%s)."
 msgstr "Die Gruppe konnte nicht bearbeitet werden (%s)."
+
+#: umc/python/schoolgroups/__init__.py:207
+#, python-format
+msgid "The workgroup %r already exists!"
+msgstr "Die Arbeitsgruppe %r existiert bereits!"

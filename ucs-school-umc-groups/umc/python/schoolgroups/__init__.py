@@ -203,6 +203,8 @@ class Instance(SchoolBaseModule):
 				grp = WorkGroup(**grp)
 
 				success = grp.create(ldap_user_write)
+				if not success and grp.exists(ldap_user_read):
+					raise UMC_CommandError(_('The workgroup %r already exists!') % grp.name)
 			except udm_exceptions.base as exc:
 				MODULE.process('An error occurred while creating the group "%s": %s' % (group['name'], exc.message))
 				raise UMC_CommandError(_('Failed to create group (%s).') % exc.message)

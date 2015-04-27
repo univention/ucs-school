@@ -1,3 +1,9 @@
+ucs-school-umc-groups (4.0.0-4) unstable; urgency=medium
+
+  * Bug #32332: Add error message if group already exists
+
+ -- Florian Best <best@univention.de>  Mon, 27 Apr 2015 12:30:18 +0200
+
 ucs-school-umc-groups (4.0.0-3) unstable; urgency=medium
 
   * Bug #32332: make removal of teachers possible

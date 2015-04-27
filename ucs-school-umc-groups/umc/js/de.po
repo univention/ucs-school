@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-groups\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2015-04-23 22:39+0200\n"
+"POT-Creation-Date: 2015-04-27 12:28+0200\n"
 "PO-Revision-Date: 2012-05-08 15:54+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: umc/js/schoolgroups.js:209 umc/js/schoolgroups.js:232
+#: umc/js/schoolgroups.js:218 umc/js/schoolgroups.js:241
 msgid "Add workgroup"
 msgstr "Arbeitsgruppe hinzufügen"
 
@@ -29,7 +29,7 @@ msgstr "Alle Lehrer"
 msgid "All users"
 msgstr "Alle Benutzer"
 
-#: umc/js/schoolgroups.js:181
+#: umc/js/schoolgroups.js:177
 msgid "Assigning of classes to a teacher"
 msgstr "Zuweisen von Klassen zu einem Lehrer"
 
@@ -37,11 +37,12 @@ msgstr "Zuweisen von Klassen zu einem Lehrer"
 msgid "Back to overview"
 msgstr "Zurück zur Übersicht"
 
-#: umc/js/schoolgroups.js:242
+#: umc/js/schoolgroups.js:251
 msgid "Cancel"
 msgstr "Abbrechen"
 
-#: umc/js/schoolgroups/ClassDetailPage.js:51 umc/js/schoolgroups.js:173
+#: umc/js/schoolgroups/ClassDetailPage.js:51 umc/js/schoolgroups.js:169
+#: umc/js/schoolgroups.js:189
 msgid "Class"
 msgstr "Klasse"
 
@@ -53,20 +54,20 @@ msgstr "Klassen"
 msgid "Classes of the specified school"
 msgstr "Klassen der angegebenen Schule"
 
-#: umc/js/schoolgroups.js:210
+#: umc/js/schoolgroups.js:219
 msgid "Create a new workgroup"
 msgstr "Erstellen einer neuen Arbeitsgruppe"
 
-#: umc/js/schoolgroups.js:218 umc/js/schoolgroups.js:245
+#: umc/js/schoolgroups.js:227 umc/js/schoolgroups.js:254
 msgid "Delete"
 msgstr "Löschen"
 
-#: umc/js/schoolgroups.js:219
+#: umc/js/schoolgroups.js:228
 msgid "Deleting the selected objects."
 msgstr "Löschen der ausgewählten Objekte"
 
 #: umc/js/schoolgroups/WorkgroupDetailPage.js:59
-#: umc/js/schoolgroups/ClassDetailPage.js:56 umc/js/schoolgroups.js:197
+#: umc/js/schoolgroups/ClassDetailPage.js:56 umc/js/schoolgroups.js:206
 msgid "Description"
 msgstr "Beschreibung"
 
@@ -82,7 +83,7 @@ msgstr "Klasse bearbeiten"
 msgid "Edit the selected object"
 msgstr "Bearbeiten des ausgewählten Objektes"
 
-#: umc/js/schoolgroups.js:189
+#: umc/js/schoolgroups.js:198
 msgid "Edit workgroup"
 msgstr "Arbeitsgruppe bearbeiten"
 
@@ -103,7 +104,7 @@ msgid "Members"
 msgstr "Mitglieder"
 
 #: umc/js/schoolgroups/DetailPage.js:102 umc/js/schoolgroups.js:166
-#: umc/js/schoolgroups.js:194
+#: umc/js/schoolgroups.js:182 umc/js/schoolgroups.js:203
 msgid "Name"
 msgstr "Name"
 
@@ -122,7 +123,7 @@ msgstr "Schule"
 msgid "Search pattern"
 msgstr "Suchmuster"
 
-#: umc/js/schoolgroups.js:239
+#: umc/js/schoolgroups.js:248
 #, python-brace-format
 msgid "Should the workgroup {name} be deleted?"
 msgstr "Soll die Arbeitsgruppe {name} gelöscht werden?"
@@ -149,39 +150,49 @@ msgstr "Lehrer"
 msgid "Teachers and students that belong to the current workgroup"
 msgstr "Lehrer und Schüler, die zu der aktuellen Arbeitsgruppe gehören"
 
-#: umc/js/schoolgroups.js:255
+#: umc/js/schoolgroups.js:264
 #, python-brace-format
 msgid "The workgroup could not be deleted ({message})"
 msgstr "Die Arbeitsgruppe konnte nicht gelöscht werden ({message})"
 
-#: umc/js/schoolgroups.js:253
+#: umc/js/schoolgroups.js:262
 msgid "The workgroup has been deleted successfully"
 msgstr "Die Arbeitsgruppe wurde erfolgreich gelöscht"
 
-#: umc/js/schoolgroups.js:180 umc/js/schoolgroups.js:182
+#: umc/js/schoolgroups.js:176 umc/js/schoolgroups.js:178
 msgid ""
 "This module allows the maintenance of class memberships of teachers. The "
 "selected teacher can be added to one or multiple classes."
-msgstr "Dieses Modul erlaubt die Pflege der Klassenmitgliedschaften von Lehrern. Der ausgewählte Lehrer kann zu einer oder mehreren Klassen hinzugefügt werden."
+msgstr ""
+"Dieses Modul erlaubt die Pflege der Klassenmitgliedschaften von Lehrern. Der "
+"ausgewählte Lehrer kann zu einer oder mehreren Klassen hinzugefügt werden."
 
 #: umc/js/schoolgroups.js:160 umc/js/schoolgroups.js:162
 msgid ""
 "This module allows the maintenance of the membership of class groups. "
 "Teachers can be assigned or removed as group members."
-msgstr "Dieses Modul erlaubt die Pflege der Mitgliedschaften von Klassengruppen. Lehrer können als Gruppenmitglieder hinzugefügt oder entfernt werden."
+msgstr ""
+"Dieses Modul erlaubt die Pflege der Mitgliedschaften von Klassengruppen. "
+"Lehrer können als Gruppenmitglieder hinzugefügt oder entfernt werden."
 
-#: umc/js/schoolgroups.js:203
+#: umc/js/schoolgroups.js:212
 msgid ""
 "This module allows to create, modify and delete class comprehensive "
 "workgroups. Arbitrary students and teacher of the school can be selected as "
 "group members."
-msgstr "Dieses Modul erlaubt das Erstellen, Bearbeiten und Löschen von klassenübergreifenden Arbeitsgruppen. Als Gruppenmitglieder können beliebige Schüler und Lehrer der Schule ausgewählt werden."
+msgstr ""
+"Dieses Modul erlaubt das Erstellen, Bearbeiten und Löschen von "
+"klassenübergreifenden Arbeitsgruppen. Als Gruppenmitglieder können beliebige "
+"Schüler und Lehrer der Schule ausgewählt werden."
 
-#: umc/js/schoolgroups.js:188 umc/js/schoolgroups.js:190
+#: umc/js/schoolgroups.js:197 umc/js/schoolgroups.js:199
 msgid ""
 "This module allows to modify class comprehensive workgroups. Arbitrary "
 "students and teacher of the school can be selected as group members."
-msgstr "Dieses Modul erlaubt das Bearbeiten von klassenübergreifenden Arbeitsgruppen. Als Gruppenmitglieder können beliebige Schüler und Lehrer der Schule ausgewählt werden."
+msgstr ""
+"Dieses Modul erlaubt das Bearbeiten von klassenübergreifenden "
+"Arbeitsgruppen. Als Gruppenmitglieder können beliebige Schüler und Lehrer "
+"der Schule ausgewählt werden."
 
 #: umc/js/schoolgroups/DetailPage.js:118
 msgid "User group or class"
