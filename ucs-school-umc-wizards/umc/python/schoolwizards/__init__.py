@@ -108,6 +108,9 @@ def iter_objects_in_request(request):
 		if 'name' not in obj_props:
 			# important for get_school in district_mode!
 			obj_props['name'] = klass.get_name_from_dn(dn)
+		if issubclass(klass, SchoolClass):
+			# workaround to be able to reuse this function everywhere
+			obj_props['name'] = '%s-%s' % (obj_props['school'], obj_props['name'])
 		obj = klass(**obj_props)
 		if dn:
 			obj.old_dn = dn
@@ -184,13 +187,11 @@ class Instance(SchoolBaseModule, SchoolImport):
 	                 ldap_user_read=None, ldap_user_write=None, ldap_position=None):
 		ret = []
 		for obj in iter_objects_in_request(request):
-			if isinstance(obj, SchoolClass):
-				# workaround to be able to reuse this function everywhere
-				obj.name = '%s-%s' % (obj.school, obj.name)
-			MODULE.process('Creating %r' % (obj))
+			MODULE.process('Creating %r' % (obj,))
 			obj.validate(ldap_user_read)
 			if obj.errors:
 				ret.append({'result' : {'message' : obj.get_error_msg()}})
+				MODULE.process('Validation failed %r' % (ret[-1],))
 				continue
 			try:
 				if obj.create(ldap_user_write, validate=False):
@@ -199,6 +200,7 @@ class Instance(SchoolBaseModule, SchoolImport):
 					ret.append({'result' : {'message' : _('"%s" already exists!') % obj.name}})
 			except uldapBaseException as exc:
 				ret.append({'result' : {'message' : get_exception_msg(exc)}})
+				MODULE.process('Creation failed %r' % (ret[-1],))
 		return ret
 
 	@LDAP_Connection( USER_READ, USER_WRITE )
@@ -207,9 +209,6 @@ class Instance(SchoolBaseModule, SchoolImport):
 	                 ldap_user_read=None, ldap_user_write=None, ldap_position=None):
 		ret = []
 		for obj in iter_objects_in_request(request):
-			if isinstance(obj, SchoolClass):
-				# workaround to be able to reuse this function everywhere
-				obj.name = '%s-%s' % (obj.school, obj.name)
 			MODULE.process('Modifying %r' % (obj))
 			obj.validate(ldap_user_read)
 			if obj.errors:
