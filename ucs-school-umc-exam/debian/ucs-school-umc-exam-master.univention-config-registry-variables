@@ -12,8 +12,8 @@ Categories=ucsschool-base
 
 [ucsschool/ldap/default/groupname/exam]
 default="OU% (ou)s-Klassenarbeit"
-Description[de]=Standard-Gruppenname fbest2 für den Klassenarbeitsmodus (in Python string syntax, Vorgabe: %(default)s)
-Description[en]=Default group name fbest3 for the exam mode (in Python string syntax, default: %(default)s)
+Description[de]=Standard-Gruppenname für den Klassenarbeitsmodus (in Python string syntax, Vorgabe: %(default)s)
+Description[en]=Default group name for the exam mode (in Python string syntax, default: %(default)s)
 Type=str
 Categories=ucsschool-base
 

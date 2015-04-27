@@ -1,4 +1,4 @@
-ucs-school-umc-exam (4.0.1-5) unstable; urgency=medium
+ucs-school-umc-exam (4.0.2-1) unstable; urgency=medium
 
   * Bug #37867: use a backspace to fix '%' in ucr variable description
 
