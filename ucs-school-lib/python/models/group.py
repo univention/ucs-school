@@ -157,13 +157,14 @@ class SchoolClass(Group, _MayHaveSchoolPrefix):
 	ShareClass = ClassShare
 
 	def create_without_hooks(self, lo, validate):
-		super(SchoolClass, self).create_without_hooks(lo, validate) # success = ?
-		self.create_share(lo) # success = success and ?
-		return True # success?
+		success = super(SchoolClass, self).create_without_hooks(lo, validate)
+		if self.exists(lo):
+			success = success and self.create_share(lo)
+		return success
 
 	def create_share(self, lo):
 		share = self.ShareClass.from_school_group(self)
-		return share.create(lo)
+		return share.exists(lo) or share.create(lo)
 
 	def modify_without_hooks(self, lo, validate=True, move_if_necessary=None):
 		share = self.ShareClass.from_school_group(self)
