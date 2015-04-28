@@ -125,19 +125,19 @@
 				<listitem>
 					<simpara>
 						<envar>ucsschool/exam/default/checkbox/distribution</envar>
-						definiert, ob die Checkbox "Unterrichtsmaterial verteilen" automatisch vorausgewählt ist. Der Wert "true" aktiviert diese Checkbox automatisch. Andernfalls ist der Wert "false" einzutragen.
+						definiert, ob das Auswahlkästchen <literal>Unterrichtsmaterial verteilen</literal> automatisch vorausgewählt ist. Der Wert <literal>true</literal> aktiviert dieses Auswahlkästchen automatisch. Andernfalls ist der Wert <literal>false</literal> einzutragen.
 					</simpara>
 				</listitem>
 				<listitem>
 					<simpara>
 						<envar>ucsschool/exam/default/checkbox/proxysettings</envar>
-						definiert, ob die Checkbox "Internetregeln definieren" automatisch vorausgewählt ist.
+						definiert, ob das Auswahlkästchen <literal>Internetregeln definieren</literal> automatisch vorausgewählt ist.
 					</simpara>
 				</listitem>
 				<listitem>
 					<simpara>
 						<envar>ucsschool/exam/default/checkbox/sharesettings</envar>
-						definiert, ob die Checkbox "Freigabezugriff konfigurieren" automatisch vorausgewählt ist.
+						definiert, ob das Auswahlkästchen <literal>Freigabezugriff konfigurieren</literal> automatisch vorausgewählt ist.
 					</simpara>
 				</listitem>
 			</itemizedlist>
