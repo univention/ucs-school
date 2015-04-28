@@ -1,3 +1,9 @@
+ucs-school-umc-groups (4.0.0-5) unstable; urgency=medium
+
+  * Bug #32332: fix grid column header
+
+ -- Florian Best <best@univention.de>  Tue, 28 Apr 2015 13:09:55 +0200
+
 ucs-school-umc-groups (4.0.0-4) unstable; urgency=medium
 
   * Bug #32332: Add error message if group already exists

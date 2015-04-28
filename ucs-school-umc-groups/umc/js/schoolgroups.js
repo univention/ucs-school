@@ -165,8 +165,8 @@ define([
 				name: 'name',
 				label: _('Name')
 			}, {
-				name: 'school_class',
-				label: _('Class')
+				name: 'description',
+				label: _('Description')
 			}];
 		}
 	});
