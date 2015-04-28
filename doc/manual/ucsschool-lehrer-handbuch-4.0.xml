@@ -290,9 +290,7 @@ feedback@univention.de
 		<para>
 		  Unter <guimenu>mehr</guimenu> können die Schüler-PCs über
 		  die Option <guimenu>Computer einschalten</guimenu> über das Netzwerk eingeschaltet werden. Die
-		  Computer müssen dafür entsprechend konfiguriert worden sein. Dort findet sich außerdem die Option
-		  <guimenu>Beaufsichtigung reinitialisieren</guimenu>. Diese kann verwendet werden, um erneut zu
-		  prüfen, ob die iTALC-Software auf dem PC erreicht werden kann.
+		  Computer müssen dafür entsprechend konfiguriert worden sein.
 		</para>
 		<para>
 		  Lehrer können benutzerdefinierte Einstellungen für den
@@ -452,31 +450,39 @@ feedback@univention.de
 		  </itemizedlist>
 		</para>
 		<para>
-		  Im Folgenden werden die einzelnen Schritte zum Erstellen einer Klassenarbeit kurz beschreiben.
+		  Im Folgenden werden die einzelnen Schritte zum Erstellen einer Klassenarbeit kurz beschrieben.
 		</para>
 		<section id="lehrerdoku:klassenarbeit:start">
 		  <title>Einrichten einer Klassenarbeit</title>
 		  <para>
 			Eine neue Klassenarbeit kann über das &ucsUMC; Modul <guimenu>Klassenarbeit starten</guimenu> eingerichtet werden.
-			In drei Schritten werden alle Einstellungen für die Klassenarbeit festgelegt.
+			In mehreren Schritten werden alle Einstellungen für die Klassenarbeit festgelegt.
 		  </para>
 		  <orderedlist>
 			<listitem>
 			  <simpara>
-				Alle notwendigen Einstellungen werden in dem ersten Schritt angegeben (in den weiteren Schritten können optionale Einstellungen vorgenommen werden).
-				Zu den notwendigen Einstellungen gehören Name der Klassenarbeit sowie der Computerraum in dem die Arbeit geschrieben werden soll.
-				Desweiteren muss mindestens eine teilnehmende Klasse bzw. Arbeitsgruppe angegeben werden.
+				Alle notwendigen Einstellungen werden in den ersten beiden Schritten angegeben. Dazu ist es notwendig einen Namen für die Klassenarbeit zu definieren.
 			  </simpara>
 			  <simpara>
-				Als Endzeit wird das Ende der laufenden Stunde vorgeschlagen, sie kann jedoch nach Belieben angepasst werden.
+				Als Endzeit wird das Ende der laufenden Schulstunde vorgeschlagen, sie kann jedoch nach Belieben angepasst werden.
 				Für die Klassenarbeit ist die Endzeit nicht verbindlich, sondern wird lediglich genutzt, um über die verbleibende Zeit zu informieren.
 				Mit Erreichen der vorgesehenen Endzeit wird ein Erinnerungsdialog eingeblendet.
 				Die Klassenarbeit kann ohne weiteres auch über das vorgesehene Ende hinaus weitergeführt werden.
 			  </simpara>
+			  <simpara>
+				Durch aktivieren der Checkboxen kann eingestellt werden, welche weiteren Einstellungsmöglichkeiten in den nächsten Schritten abgefragt werden.
+				Dazu gehören das Verteilen von Unterrichtsmaterialien sowie das Festlegen von Einschränkungen für den Zugang zum Internet und zu Freigaben.
+			  </simpara>
+			</listitem>
+			<listitem>
+				<simpara>
+					Im zweiten Schritt muss der Computerraum in dem die Arbeit geschrieben werden soll sowie mindestens eine teilnehmende Klasse bzw. Arbeitsgruppe angegeben werden.
+					Falls weitere Einstellungsmöglichkeiten aktiviert worden sind werden diese auf den folgenden Seiten angezeigt.
+				</simpara>
 			</listitem>
 			<listitem>
 			  <simpara>
-				In diesem Schritt kann ein passender Verzeichnisname für die Klassenarbeit ausgewählt und alle benötigten Klassenarbeitsdateien nacheinander hochgeladen werden.
+				Im nächsten optionalen Schritt kann ein passender Verzeichnisname für die Klassenarbeit ausgewählt und alle benötigten Klassenarbeitsdateien nacheinander hochgeladen werden.
 				Diese Klassenarbeitsdateien werden an alle teilnehmenden Schüler ausgeteilt; eine Kopie der Originaldateien wird im Heimatverzeichnis des Lehrers abgelegt, der die Klassenarbeit erstellt hat.
 				Die Dateien werden im Heimatverzeichnis der Schüler unterhalb des Ordners <filename>Klassenarbeiten</filename> und dem angegebenen Verzeichnisnamen abgelegt.
 			  </simpara>
@@ -496,7 +502,7 @@ feedback@univention.de
 			</listitem>
 		  </orderedlist>
 		  <para>
-			Durch Drücken der Schaltfläche <guimenu>Klassenarbeit starten</guimenu>, bzw. durch vorzeitiges Drücken der Schaltfläche <guimenu>Schnellstart</guimenu>, werden die notwendigen Klassenarbeitskonten für die Schüler angelegt, die Klassenarbeitsdateien verteilt und die Raumeinstellungen gesetzt.
+			Durch Drücken der Schaltfläche <guimenu>Klassenarbeit starten</guimenu> werden die notwendigen Klassenarbeitskonten für die Schüler angelegt, die Klassenarbeitsdateien verteilt und die Raumeinstellungen gesetzt.
 		  </para>
 		</section>
 		<section id="lehrerdoku:klassenarbeit:neustart">
@@ -511,10 +517,9 @@ feedback@univention.de
 		  </para>
 		  <para>
 			Das Klassenarbeitsmodul bietet eine Hilfsfunktion an, so dass dieser Vorgang weitgehend automatisiert durchgeführt werden kann.
-			Dabei wird eine Verbindung zu allen eingeschalteten Rechnern aufgebaut.
-			Dieser Vorgang kann zwischen 30 Sekunden und 2 Minuten dauern.
-			Abschließend werden alle eingeschaltete Rechner aufgelistet, wie in <xref linkend="fig:klassenarbeit:neustart"/> dargestellt.
-			Die aufgelisteten Rechner können durch Klick auf die Schaltfläche <guimenu>Rechner neustarten</guimenu> und durch anschließende Bestätigung automatisch neu gestartet werden.
+			Dabei wird eine Verbindung zu allen eingeschalteten Rechnern aufgebaut und alle eingeschaltete Rechner werden aufgelistet, wie in <xref linkend="fig:klassenarbeit:neustart"/> dargestellt.
+			Die aufgelisteten Rechner können durch Klick auf die Schaltfläche <guimenu>Schülerrechner neustarten</guimenu> und durch anschließende Bestätigung automatisch neu gestartet werden.
+			Zusätzlich können einzelne Rechner ausgewählt werden und über die Schaltfläche <guimenu>Ausgewählte Rechner neustarten</guimenu> neu gestartet werden.
 		  </para>
 		  <note>
 			<para>
@@ -923,9 +928,12 @@ feedback@univention.de
 		  </figure>
 		</para>
 		<para>
-		  Dies erfolgt über die Funktion <guimenu>Lehrer Klassen zuordnen</guimenu>. Es wird eine
+		  Dies erfolgt über das Modul <guimenu>Lehrer zuordnen</guimenu>. Es wird eine
 		  Liste von Klassen angezeigt. Ein Klick auf <guimenu>Bearbeiten</guimenu> zeigt eine Auswahlliste, in
 		  der Lehrer hinzugefügt werden können.
+		</para>
+		<para>
+			Das Modul <guimenu>Klassen zuordnen</guimenu> bietet die Möglichkeit einen bestimmten Lehrer zu mehreren Klassen hinzuzufügen.
 		</para>
 		<para>
 		  <figure id="assign-teacher">

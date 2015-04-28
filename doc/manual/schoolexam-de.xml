@@ -122,6 +122,24 @@
 					<envar>ucsschool/exam/default/internet</envar> definiert die vorausgewählte Internetregel für eine neue Klassenarbeit. Mögliche Werte umfassen die Namen aller Internetregeln wie sie im UMC-Modul <guimenu>Internetregeln definieren</guimenu> angezeigt werden. Normalerweise werden die globalen Standardeinstellungen verwendet.
 					</simpara>
 				</listitem>
+				<listitem>
+					<simpara>
+						<envar>ucsschool/exam/default/checkbox/distribution</envar>
+						definiert, ob die Checkbox "Unterrichtsmaterial verteilen" automatisch vorausgewählt ist. Der Wert "true" aktiviert diese Checkbox automatisch. Andernfalls ist der Wert "false" einzutragen.
+					</simpara>
+				</listitem>
+				<listitem>
+					<simpara>
+						<envar>ucsschool/exam/default/checkbox/proxysettings</envar>
+						definiert, ob die Checkbox "Internetregeln definieren" automatisch vorausgewählt ist.
+					</simpara>
+				</listitem>
+				<listitem>
+					<simpara>
+						<envar>ucsschool/exam/default/checkbox/sharesettings</envar>
+						definiert, ob die Checkbox "Freigabezugriff konfigurieren" automatisch vorausgewählt ist.
+					</simpara>
+				</listitem>
 			</itemizedlist>
 		</para>
 	</section>
