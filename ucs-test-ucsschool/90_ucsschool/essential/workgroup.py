@@ -75,7 +75,7 @@ class Workgroup(object):
 		try:
 			createResult = self._create()
 			if createResult and expect_creation_fails_due_to_duplicated_name:
-				utils.fail('Group', self.name, 'created with a duplicate name')
+				utils.fail('Workgroup %s already exists, though a new workgroup is created with a the same name' % self.name )
 			utils.wait_for_replication()
 		except httplib.HTTPException as e:
 			 exception_strings = [
@@ -138,7 +138,7 @@ class Workgroup(object):
 				removingParam,
 				flavor)
 		if not requestResult:
-			utils.fail('Group', self.name, 'failed to be removed')
+			utils.fail('Group %s failed to be removed' % self.name)
 		utils.wait_for_replication()
 
 	def addMembers(self, memberListdn, options=None):
@@ -198,7 +198,7 @@ class Workgroup(object):
 				creationParam,
 				flavor)
 		if not requestResult:
-			utils.fail('Members', new_members, 'failed to be set')
+			utils.fail('Members %s failed to be set' % new_members)
 		else:
 			self.members = new_members
 		utils.wait_for_replication()
