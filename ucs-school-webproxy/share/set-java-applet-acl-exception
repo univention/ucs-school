@@ -29,3 +29,6 @@
 
 univention-config-registry set \
 	'squid/acl/java_applet/allow/browser/regex=^.*Java/1\.[56789]\.[0-9]_[0-9][0-9].*$'
+
+echo >/dev/stderr 'To activate the new configuration a restart of squid is required. e.g.'
+echo >/dev/stderr ' invoke-rc.d squid3 restart'

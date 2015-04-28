@@ -29,3 +29,6 @@
 
 univention-config-registry unset \
 	'squid/acl/java_applet/allow/browser/regex'
+
+echo >/dev/stderr 'To activate the new configuration a restart of squid is required. e.g.'
+echo >/dev/stderr ' invoke-rc.d squid3 restart'

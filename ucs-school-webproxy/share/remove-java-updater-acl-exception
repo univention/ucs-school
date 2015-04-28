@@ -34,3 +34,6 @@ univention-config-registry unset \
    'squid/acl/java_updater4/allow/browser/string' \
    'squid/acl/java_installer1/allow/browser/string' \
    'squid/acl/java_installer2/allow/browser/string'
+
+echo >/dev/stderr 'To activate the new configuration a restart of squid is required. e.g.'
+echo >/dev/stderr ' invoke-rc.d squid3 restart'
