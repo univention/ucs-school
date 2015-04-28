@@ -75,7 +75,7 @@ class Workgroup(object):
 		try:
 			createResult = self._create()
 			if createResult and expect_creation_fails_due_to_duplicated_name:
-				utils.fail('Group %s created with a duplicate name' % self.name )
+				utils.fail('Workgroup %s already exists, though a new workgroup is created with a the same name' % self.name )
 			utils.wait_for_replication()
 		except httplib.HTTPException as e:
 			 exception_strings = [
