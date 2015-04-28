@@ -1,3 +1,9 @@
+ucs-school-umc-exam (4.0.2-2) unstable; urgency=medium
+
+  * Bug #38224: activate distribute materials checkbox by default
+
+ -- Florian Best <best@univention.de>  Tue, 28 Apr 2015 14:12:52 +0200
+
 ucs-school-umc-exam (4.0.2-1) unstable; urgency=medium
 
   * Bug #37867: use a backspace to fix '%' in ucr variable description
