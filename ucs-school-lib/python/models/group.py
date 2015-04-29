@@ -201,7 +201,7 @@ class SchoolClass(Group, _MayHaveSchoolPrefix):
 		return ret
 
 
-class WorkGroup(SchoolClass):
+class WorkGroup(SchoolClass, _MayHaveSchoolPrefix):
 
 	ShareClass = Share
 

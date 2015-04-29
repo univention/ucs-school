@@ -57,7 +57,7 @@ define([
 		getMultiSelectWidget: function() {
 			return lang.mixin(this.inherited(arguments), {
 				label: _('Classes'),
-				description: _('Classes of the specified school'),
+				description: _('List of classes which the selected teacher is member of'),
 				queryCommand: lang.hitch(this, function(options) {
 					return this.umcpCommand('schoolgroups/classes', options).then(function(data) {
 						return data.result;

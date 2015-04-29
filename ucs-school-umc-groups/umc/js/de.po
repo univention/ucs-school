@@ -51,8 +51,8 @@ msgid "Classes"
 msgstr "Klassen"
 
 #: umc/js/schoolgroups/TeacherDetailPage.js:60
-msgid "Classes of the specified school"
-msgstr "Klassen der angegebenen Schule"
+msgid "List of classes which the selected teacher is member of"
+msgstr "Liste der Klassen, in denen der ausgewählte Lehrer Mitglied ist"
 
 #: umc/js/schoolgroups.js:219
 msgid "Create a new workgroup"
@@ -132,7 +132,7 @@ msgstr "Soll die Arbeitsgruppe {name} gelöscht werden?"
 msgid ""
 "Specifies the substring pattern which is searched for in the displayed name"
 msgstr ""
-"Legt die Zeichenketten die in dem angezeigten Namen gesucht werden soll fest "
+"Nach dieser Zeichenkette soll in den angezeigten Namen gesucht werden"
 
 #: umc/js/schoolgroups/WorkgroupDetailPage.js:67
 msgid "Students"

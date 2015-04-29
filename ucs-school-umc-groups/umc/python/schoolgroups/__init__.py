@@ -236,7 +236,7 @@ class Instance(SchoolBaseModule):
 
 	@sanitize(**{
 		'$dn$': StringSanitizer(required=True),
-		'classes': ListSanitizer(StringSanitizer(required=True), min_elements=1, required=True)
+		'classes': ListSanitizer(StringSanitizer(required=True), required=True)
 	})
 	@LDAP_Connection(USER_READ, USER_WRITE)
 	def add_teacher_to_classes(self, request, search_base=None, ldap_user_write=None, ldap_user_read=None, ldap_position=None):
