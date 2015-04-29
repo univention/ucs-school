@@ -1,3 +1,10 @@
+ucs-school-umc-distribution (13.0.1-2) unstable; urgency=low
+
+  * Bug #32331: changed check if returned fileInfo from webserver is 
+    an array or not
+
+ -- Drees Dormann <dormann@univention.de>  Wed, 29 Apr 2015 12:24:33 +0200
+
 ucs-school-umc-distribution (13.0.1-1) unstable; urgency=medium
 
   * Bug #37854: fix permission of home directory if the user never has been

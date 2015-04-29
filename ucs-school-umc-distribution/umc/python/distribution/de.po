@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-distribution\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2015-04-15 13:54+0200\n"
+"POT-Creation-Date: 2015-04-29 12:46+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,7 +16,7 @@ msgstr ""
 msgid "A valid project owner needs to be specified."
 msgstr "Für ein gültiges Projekt muss ein Besitzer definiert sein."
 
-#: umc/python/distribution/__init__.py:197
+#: umc/python/distribution/__init__.py:194
 #, python-format
 msgid "Could not authenticate user \"%s\"!"
 msgstr "Der Benutzer konnte nicht authentifizieren werden: \"%s\"!"
@@ -26,12 +26,12 @@ msgstr "Der Benutzer konnte nicht authentifizieren werden: \"%s\"!"
 msgid "Could not save project file: %s (%s)"
 msgstr "Das Projekt konnte nicht gespeichert werden: %s (%s)"
 
-#: umc/python/distribution/__init__.py:253
+#: umc/python/distribution/__init__.py:250
 #, python-format
 msgid "Could not set date for: %s"
 msgstr "Die Zeit konnte nicht gesetzt werden: %s"
 
-#: umc/python/distribution/__init__.py:265
+#: umc/python/distribution/__init__.py:262
 msgid ""
 "Distributing the data needs to happen sufficiently long enough before "
 "collecting them"
@@ -39,34 +39,34 @@ msgstr ""
 "Die Verteilung der Daten muss ausreichend lange vor ihrem Einsammeln "
 "geschehen"
 
-#: umc/python/distribution/__init__.py:195
+#: umc/python/distribution/__init__.py:192
 #, python-format
 msgid "Failed to load user information: %s"
 msgstr "Das Laden der Benutzerinformationen schlug fehl: %s"
 
-#: umc/python/distribution/__init__.py:584
+#: umc/python/distribution/__init__.py:581
 msgid "Only the owner himself or an administrator may delete a project."
 msgstr ""
 "Nur der Eigentümer selbst oder ein Administrator können ein Projekt löschen."
 
-#: umc/python/distribution/__init__.py:453
+#: umc/python/distribution/__init__.py:450
 msgid "Only the owner himself or an administrator may distribute a project."
 msgstr ""
 "Nur der Eigentümer selbst oder ein Administrator können ein Projekt "
 "austeilen."
 
-#: umc/python/distribution/__init__.py:448
-#: umc/python/distribution/__init__.py:500
-#: umc/python/distribution/__init__.py:547
+#: umc/python/distribution/__init__.py:445
+#: umc/python/distribution/__init__.py:497
+#: umc/python/distribution/__init__.py:544
 #, python-format
 msgid "Project \"%s\" could not be loaded"
 msgstr "Das Projekt \"%s\" konnte nicht geladen werden"
 
-#: umc/python/distribution/__init__.py:242
+#: umc/python/distribution/__init__.py:239
 msgid "Project collection"
 msgstr "Projekteinsammlung"
 
-#: umc/python/distribution/__init__.py:392
+#: umc/python/distribution/__init__.py:389
 msgid ""
 "Project details are only visible to the project owner himself or an "
 "administrator."
@@ -74,11 +74,11 @@ msgstr ""
 "Projekteigenschaften sind nur sichtbar für den Eigentümer selbst oder einen "
 "Administrator."
 
-#: umc/python/distribution/__init__.py:242
+#: umc/python/distribution/__init__.py:239
 msgid "Project distribution"
 msgstr "Projektverteilung"
 
-#: umc/python/distribution/__init__.py:513
+#: umc/python/distribution/__init__.py:510
 #, python-format
 msgid "The following user directories could not been collected: %s"
 msgstr ""
@@ -92,12 +92,12 @@ msgstr "Die angegebene Projektbeschreibung darf nicht leer sein."
 msgid "The given project directory name must be non-empty."
 msgstr "Das angegebene Projektverzeichnis darf nicht leer sein."
 
-#: umc/python/distribution/__init__.py:239
+#: umc/python/distribution/__init__.py:236
 msgid "The project can only be modified by the owner himself"
 msgstr "Ein Projekt kann nur durch den Eigentümer selbst bearbeitet werden"
 
-#: umc/python/distribution/__init__.py:317
-#: umc/python/distribution/__init__.py:463
+#: umc/python/distribution/__init__.py:314
+#: umc/python/distribution/__init__.py:460
 #, python-format
 msgid "The project could not distributed to the following users: %s"
 msgstr ""
@@ -131,19 +131,19 @@ msgid ""
 msgstr ""
 "Das angegebene Projektverzeichnis muss verschieden sein von \".\" and \"..\"."
 
-#: umc/python/distribution/__init__.py:284
+#: umc/python/distribution/__init__.py:281
 #, python-format
 msgid ""
 "The specified project directory name \"%s\" is already in use by a different "
 "project."
 msgstr "Das angegebene Projektverzeichnis \"%s\" wird bereits verwendet."
 
-#: umc/python/distribution/__init__.py:228
+#: umc/python/distribution/__init__.py:225
 #, python-format
 msgid "The specified project does not exist: %s"
 msgstr "Das angegebene Projekt existiert nicht: %s"
 
-#: umc/python/distribution/__init__.py:257
+#: umc/python/distribution/__init__.py:254
 #, python-format
 msgid "The specified time needs to lie in the future for: %s"
 msgstr "Die angegebene Zeit muss in der Zukunft liegen: %s"

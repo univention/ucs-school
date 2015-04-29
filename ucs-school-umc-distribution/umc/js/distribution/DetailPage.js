@@ -315,15 +315,13 @@ define([
 
 		_checkFilenameUpload: function(fileInfo) {
 			var filenames;
-			if ('name' in fileInfo){
+			if (!(fileInfo instanceof Array)) {
 				filenames = [fileInfo.name];
 			} else {
-				if (fileInfo.length > 1) {
-					filenames = [];
-					fileInfo.forEach(function(ifile){
-						filenames.push(ifile.name);
-					});
-				}
+				filenames = [];
+				fileInfo.forEach(function(ifile){
+					filenames.push(ifile.name);
+				});
 			}
 			var nameWidget = this._form.getWidget('name');
 			var isNewProject = !nameWidget.get('disabled');

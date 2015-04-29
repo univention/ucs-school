@@ -75,14 +75,14 @@ class Instance( SchoolBaseModule ):
 		if not isinstance(request.options, (tuple, list)):
 			raise UMC_OptionTypeError( 'Expected list of dicts, but got: %s' % str(request.options) )
 
+		# create a temporary upload directory, if it does not already exist
+		if not self._tmpDir:
+			self._tmpDir = tempfile.mkdtemp(prefix='ucsschool-distribution-upload-')
+			MODULE.info('Created temporary directory: %s' % self._tmpDir)
+
 		for file in request.options:
 			if not ('tmpfile' in file and 'filename' in file):
 				raise UMC_OptionTypeError( 'Invalid upload data, got: %s' % str(file) )
-
-			# create a temporary upload directory, if it does not already exist
-			if not self._tmpDir:
-				self._tmpDir = tempfile.mkdtemp(prefix='ucsschool-distribution-upload-')
-				MODULE.info('Created temporary directory: %s' % self._tmpDir)
 
 			filename = self.__workaround_filename_bug(file)
 			destPath = os.path.join(self._tmpDir, filename)
