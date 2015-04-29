@@ -78,16 +78,19 @@ class Workgroup(object):
 				utils.fail('Workgroup %s already exists, though a new workgroup is created with a the same name' % self.name )
 			utils.wait_for_replication()
 		except httplib.HTTPException as e:
-			 exception_strings = [
-					 'The groupname is already in use as groupname or as username',
-					 'Der Gruppenname wird bereits als Gruppenname oder als Benutzername verwendet']
-			 for entry in exception_strings:
-				 if expect_creation_fails_due_to_duplicated_name and entry in str(e):
-					 print('Fail : %s' % (e) )
-					 break
-			 else:
-				 print("Exception: '%s' '%s' '%r'" % (str(e), type(e), e))
-				 raise
+			group_fullname = '%s-%s' % (self.school, self.name)
+			exception_strings = [
+					'The groupname is already in use as groupname or as username',
+					'Der Gruppenname wird bereits als Gruppenname oder als Benutzername verwendet',
+					'Die Arbeitsgruppe \'%s\' existiert bereits!' % group_fullname,
+					'The workgroup \'%s\' already exists!' % group_fullname]
+			for entry in exception_strings:
+				if expect_creation_fails_due_to_duplicated_name and entry in str(e):
+					print('Fail : %s' % (e) )
+					break
+			else:
+				print("Exception: '%s' '%s' '%r'" % (str(e), type(e), e))
+				raise
 
 	def _create(self):
 		print 'Creating workgroup %s in school %s' % (
@@ -95,15 +98,15 @@ class Workgroup(object):
 			self.school)
 		flavor = 'workgroup-admin'
 		param = [
-			{
-				'object': {
-					'name': self.name,
-					'school': self.school,
-					'members': self.members,
-					'description': self.description
+				{
+					'object': {
+						'name': self.name,
+						'school': self.school,
+						'members': self.members,
+						'description': self.description
+						}
 					}
-				}
-			]
+				]
 		requestResult = self.umcConnection.request(
 				'schoolgroups/add',
 				param,
@@ -180,7 +183,7 @@ class Workgroup(object):
 		:param new_members: list of the new members
 		:type new_members: list
 		"""
-		print 'Setting members  %r from group %s' % (new_members, self.name)
+		print 'Setting members	%r from group %s' % (new_members, self.name)
 		flavor = 'workgroup-admin'
 		groupdn = self.dn()
 		creationParam = [{
