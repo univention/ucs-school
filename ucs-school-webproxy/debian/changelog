@@ -1,3 +1,9 @@
+ucs-school-webproxy (11.0.6-1) unstable; urgency=medium
+
+  * Fix Windows Updater exception ACL (Bug #37541)
+
+ -- Janek Walkenhorst <walkenhorst@univention.de>  Wed, 29 Apr 2015 13:55:54 +0200
+
 ucs-school-webproxy (11.0.5-1) unstable; urgency=low
 
   * Bug #30184: fixed logic error in ACL list
