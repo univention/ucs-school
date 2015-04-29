@@ -265,7 +265,7 @@
 					</listitem>
 					<listitem>
 						<simpara>
-							The description of the &ucsUCRV; <envar>ucsschool/ldap/default/groupname/exam</envar> has been fixed (<u:bug>37867</u:bug>).
+							A displaying error in the description of the &ucsUCRV; <envar>ucsschool/ldap/default/groupname/exam</envar> has been fixed (<u:bug>37867</u:bug>).
 						</simpara>
 					</listitem>
 					<listitem>
