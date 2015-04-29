@@ -123,7 +123,7 @@ def downloadPrintJobs(connection, userName, printJob):
 	except Exception as e:
 		ex_en = 'No JSON object could be decoded'
 		if not ex_en in e:
-			utils.fail('Enexpected exception:', e)
+			utils.fail('Enexpected exception: %r' % e)
 
 # get print jobs for a specific user
 def getPrintJobs(alljobs, userName):
