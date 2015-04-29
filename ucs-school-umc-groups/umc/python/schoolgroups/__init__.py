@@ -106,7 +106,7 @@ class Instance(SchoolBaseModule):
 			
 			if request.flavor == 'teacher':
 				classes = SchoolClass.get_all(ldap_user_read, school, filter_str='uniqueMember=%s' % (group_dn,))
-				result['classes'] = [{'id': class_.dn, 'label': class_.name} for class_ in classes]
+				result['classes'] = [{'id': class_.dn, 'label': class_.get_relative_name()} for class_ in classes]
 				self.finished(request.id, [result])
 				return
 
