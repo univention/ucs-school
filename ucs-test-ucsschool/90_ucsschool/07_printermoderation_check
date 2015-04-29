@@ -10,7 +10,6 @@ from univention.lib.umc_connection import UMCConnection
 import os
 import socket
 import subprocess
-import sys
 import tempfile
 import time
 import univention.testing.strings as uts
@@ -116,7 +115,7 @@ def checkPrintJobs(printJobs):
 def downloadPrintJobs(connection, userName, printJob):
 	param = {
 			'username': userName,
-			'printjob': printJob
+			'printjob': os.path.basename(printJob)
 			}
 	try:
 		connection.request('printermoderation/download', param)
@@ -224,4 +223,4 @@ def main():
 		doPrinter('D', newPrinterName, schoolName, host, domainname)
 
 if __name__ == '__main__':
-	sys.exit(main())
+	main()
