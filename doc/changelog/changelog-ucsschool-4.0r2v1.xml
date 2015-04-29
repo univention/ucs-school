@@ -294,7 +294,7 @@
 						</simpara>
 					</listitem>
 					<listitem>
-						Uploading of several files at once is now possible when using UCS-4.0-1 with webserver version >= 4.1.106-60.1044.201504231500 (<u:bug>32331</u:bug>).
+						Uploading of several files at once is now possible when using UCS-4.0-1 with webserver version greater or equal 4.1.106-60 (<u:bug>32331</u:bug>).
 					</listitem>
 				</itemizedlist>
 			</section>
