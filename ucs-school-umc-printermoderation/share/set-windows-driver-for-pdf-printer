@@ -64,6 +64,12 @@ member: $s4_host_dn
 			fi
 		else
 			# samba3 -> check if machine account is in printer group
+			# check if credentials are passed
+			ucs_parseCredentials "$@"
+			if [ -z "$binddn" ] || [ -z "$bindpwd" -a -z "$bindpwdfile" ]; then
+				echo "usage: $0 --binddn DN --bindpwd Password or --bindpwdfile FILE"
+				exit 2
+			fi
 			group="Printer-Admins"
 			if [ -n "$groups_default_printoperators" ]; then
 				group="$groups_default_printoperators"
@@ -72,7 +78,7 @@ member: $s4_host_dn
 				# add machine account to printer group
 				udm groups/group modify "$@" --ignore_exists \
 					--dn "cn=$group,cn=groups,$ldap_base" \
-					--append hosts="$ldap_hostdn"
+					--append hosts="$ldap_hostdn" || exit $?
 				test -x /etc/init.d/nscd && invoke-rc.d nscd restart
 				remove="$group"
 			fi

@@ -1,3 +1,9 @@
+ucs-school-umc-printermoderation (11.0.1-8) unstable; urgency=low
+
+  * Bug #38201: set default windows driver for pdf printer 
+
+ -- Felix Botner <botner@univention.de>  Thu, 30 Apr 2015 13:54:38 +0200
+
 ucs-school-umc-printermoderation (11.0.1-7) unstable; urgency=low
 
   * Bug #38201: set default windows driver for pdf printer 
