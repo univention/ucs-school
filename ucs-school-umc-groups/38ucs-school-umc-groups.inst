@@ -31,7 +31,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-VERSION=2
+VERSION=3
 
 . /usr/share/univention-join/joinscripthelper.lib
 . /usr/share/univention-lib/umc.sh
@@ -46,6 +46,7 @@ umc_init
 umc_operation_create "schoolgroups-all" "Group administration" "" "schoolgroups/*"
 umc_operation_create "schoolgroups-workgroup-admin" "Workgroup administration" "workgroup-admin" "schoolgroups/*"
 umc_operation_create "schoolgroups-class" "Class administration" "class" "schoolgroups/*"
+umc_operation_create "schoolgroups-teacher" "Teacher administration" "teacher" "schoolgroups/*"
 umc_operation_create "schoolgroups-workgroup" "Workgroup editing" "workgroup" "schoolgroups/query" "schoolgroups/classes" "schoolgroups/users" "schoolgroups/schools" "schoolgroups/put" "schoolgroups/get"
 
 # create empty UMC access policies
@@ -53,12 +54,10 @@ ucs_school_policies_create
 
 umc_policy_append "default-umc-all" "schoolgroups-all"
 # policy for school admins (not allowed to teachers)
-umc_policy_append "ucsschool-umc-admins-default" "schoolgroups-workgroup-admin" "schoolgroups-class"
+umc_policy_append "ucsschool-umc-admins-default" "schoolgroups-workgroup-admin" "schoolgroups-class" "schoolgroups-teacher"
 # policy for teachers
 umc_policy_append "ucsschool-umc-teachers-default" "schoolgroups-workgroup" "schoolgroups-workgroup-admin"
 
 joinscript_save_current_version
 
 exit 0
-
-

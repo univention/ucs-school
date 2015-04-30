@@ -1,3 +1,9 @@
+ucs-school-umc-groups (4.0.0-8) unstable; urgency=medium
+
+  * Bug #32332: adapt ACL's for school amdins to allow the new module
+
+ -- Florian Best <best@univention.de>  Thu, 30 Apr 2015 11:58:36 +0200
+
 ucs-school-umc-groups (4.0.0-7) unstable; urgency=medium
 
   * Bug #32332: remove class prefix from workgroup names
