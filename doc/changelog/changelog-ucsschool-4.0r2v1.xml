@@ -208,23 +208,20 @@
 					</listitem>
 				</itemizedlist>
 			</section>
-			<!--
-			<section id="relnotes:changelog:umc:modules:school">
-				<title>UCS@school configuration</title>
-				<itemizedlist>
-					<listitem>
-						<simpara>
-						</simpara>
-					</listitem>
-				</itemizedlist>
-			</section>
 			<section id="relnotes:changelog:umc:modules:computerroom">
 				<title>Computerroom</title>
 				<itemizedlist>
 					<listitem>
 						<simpara>
+							A racing condition in libitalc has been fixed that could lead to faulty behaviour of the UMC modules <emphasis>Computer room</emphasis> and <emphasis>Start exam</emphasis> (<u:bug>38413</u:bug>).
 						</simpara>
 					</listitem>
+				</itemizedlist>
+			</section>
+			<!--
+			<section id="relnotes:changelog:umc:modules:school">
+				<title>UCS@school configuration</title>
+				<itemizedlist>
 					<listitem>
 						<simpara>
 						</simpara>
