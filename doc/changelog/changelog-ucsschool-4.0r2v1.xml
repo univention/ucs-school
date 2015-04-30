@@ -213,7 +213,8 @@
 				<itemizedlist>
 					<listitem>
 						<simpara>
-							A racing condition in libitalc has been fixed that could lead to faulty behaviour of the UMC modules <emphasis>Computer room</emphasis> and <emphasis>Start exam</emphasis> (<u:bug>38413</u:bug>).
+							A racing condition in <package>libitalc</package> has been fixed that could lead to faulty behaviour of the UMC modules
+							<emphasis>Computer room</emphasis> and <emphasis>Start exam</emphasis> (<u:bug>38413</u:bug>).
 						</simpara>
 					</listitem>
 				</itemizedlist>
