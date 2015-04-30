@@ -347,10 +347,18 @@
 					<listitem>
 						<simpara>
 							The windows printer driver for the PDF printer is now set to
-							<wordasword>MS Publisher Color Printer</wordasword> by default. This driver
-							is pre-installed on many versions of the windows operating system
-							(<systemitem class="osname">win7</systemitem>, <systemitem class="osname">win8.1</systemitem>, ...) and therefore no driver download is necessary
-							when connecting to the printer from a windows client (<u:bug>38201</u:bug>). 
+							<wordasword>MS Publisher Color Printer</wordasword> by default
+							(&ucsUCRV; <envar>ucsschool/printermoderation/windows/driver/name</envar>).
+							This driver is pre-installed on many versions of the windows operating system
+							(<systemitem class="osname">win7</systemitem>, <systemitem class="osname">win8.1</systemitem>, ...)
+							and therefore no driver download is necessary when connecting to the printer
+							from a windows client (<u:bug>38201</u:bug>).
+						</simpara>
+						<simpara>
+							The PDF printer windows driver is only set during the first
+							join of the printer moderation module. This can also be done
+							manually by executing the script
+							<filename>/usr/share/ucs-school-umc-printermoderation/set-windows-driver-for-pdf-printer</filename>.
 						</simpara>
 					</listitem>
 				</itemizedlist>
