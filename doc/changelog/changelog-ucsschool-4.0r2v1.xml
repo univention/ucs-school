@@ -251,7 +251,7 @@
 					<listitem>
 						<simpara>
 							A new module <emphasis>Assign classes</emphasis> has been added which can be used to assign one teacher to multiple classes.
-							The module <emphasis>Assign teachers to classes</emphasis> has therefor been renamed into <emphasis>Assign teachers</emphasis> (<u:bug>32332</u:bug>).
+							The module <emphasis>Assign teachers to classes</emphasis> has therefore been renamed into <emphasis>Assign teachers</emphasis> (<u:bug>32332</u:bug>).
 						</simpara>
 					</listitem>
 				</itemizedlist>
