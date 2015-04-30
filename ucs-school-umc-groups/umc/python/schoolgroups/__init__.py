@@ -41,7 +41,7 @@ from univention.management.console.log import MODULE
 import univention.admin.uexceptions as udm_exceptions
 
 from ucsschool.lib.schoolldap import LDAP_Connection, SchoolBaseModule, Display, USER_READ, USER_WRITE, MACHINE_WRITE
-from ucsschool.lib.models import User, Teacher, SchoolClass, WorkGroup
+from ucsschool.lib.models import User, Teacher, TeachersAndStaff, SchoolClass, WorkGroup
 
 _ = Translation('ucs-school-umc-groups').translate
 
@@ -87,8 +87,12 @@ class Instance(SchoolBaseModule):
 	)
 	@LDAP_Connection()
 	def query(self, request, search_base=None, ldap_user_read=None, ldap_position=None):
-		klass = get_group_class(request)
-		groups = klass.get_all(ldap_user_read, request.options['school'], filter_str=request.options['pattern'], easy_filter=True)
+		klasses = [get_group_class(request)]
+		if klasses[0] is Teacher:
+			klasses.append(TeachersAndStaff)
+		groups = []
+		for klass in klasses:
+			groups.extend(klass.get_all(ldap_user_read, request.options['school'], filter_str=request.options['pattern'], easy_filter=True))
 		self.finished(request.id, [group.to_dict() for group in groups])
 
 	@sanitize(StringSanitizer(required=True))

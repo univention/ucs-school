@@ -1,3 +1,9 @@
+ucs-school-umc-groups (4.0.0-9) unstable; urgency=medium
+
+  * Bug #32332: list also TeachersAndStaff users in the grid
+
+ -- Florian Best <best@univention.de>  Thu, 30 Apr 2015 16:49:48 +0200
+
 ucs-school-umc-groups (4.0.0-8) unstable; urgency=medium
 
   * Bug #32332: adapt ACL's for school amdins to allow the new module
