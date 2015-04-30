@@ -1,3 +1,10 @@
+ucs-school-umc-distribution (13.0.2-1) unstable; urgency=medium
+
+  * Bug #32331: fix typo in translation which caused error message not to be
+  	shown
+
+ -- Florian Best <best@univention.de>  Thu, 30 Apr 2015 18:00:51 +0200
+
 ucs-school-umc-distribution (13.0.1-2) unstable; urgency=low
 
   * Bug #32331: changed check if returned fileInfo from webserver is 

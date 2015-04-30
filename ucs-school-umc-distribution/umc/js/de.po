@@ -307,7 +307,7 @@ msgid ""
 "%s"
 msgstr ""
 "Die folgenden Dateien können nicht entfernt werden, da sie bereits verteilt "
-"wurden."
+"wurden: %s"
 
 #: umc/js/distribution/DetailPage.js:353
 #, python-format
@@ -374,40 +374,3 @@ msgstr ""
 #: umc/js/distribution.js:186
 msgid "distributed"
 msgstr "ausgeteilt"
-
-#~ msgid "#Users"
-#~ msgstr "#Benutzer"
-
-#~ msgid "Adoption"
-#~ msgstr "Übernahme&nbsp;&nbsp;"
-
-#~ msgid "All pupils"
-#~ msgstr "Alle Schüler"
-
-#~ msgid "All students"
-#~ msgstr "Alle Schüler"
-
-#~ msgid "All teachers"
-#~ msgstr "Alle Lehrer"
-
-#~ msgid "Distribution"
-#~ msgstr "Verteilen&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
-
-#~ msgid "Pupils"
-#~ msgstr "Schüler"
-
-#~ msgid "Save"
-#~ msgstr "Speichern"
-
-#~ msgid ""
-#~ "The file \"%s\" cannot be uploaded as it has already been distributed."
-#~ msgstr ""
-#~ "Die Datei \"%s\" kann nicht übertragen werden, da sie bereits verteilt "
-#~ "wurde"
-
-#~ msgid ""
-#~ "This page demonstrates how object properties can be viewed for editing."
-#~ msgstr "Diese "
-
-#~ msgid "User group / class"
-#~ msgstr "Benutzergruppen / Klassen"
