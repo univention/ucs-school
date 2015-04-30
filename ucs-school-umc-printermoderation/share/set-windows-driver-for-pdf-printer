@@ -1,0 +1,111 @@
+#!/bin/sh
+#
+# Univention Management Console Module printermoderation
+#
+# Copyright 2015 Univention GmbH
+#
+# http://www.univention.de/
+#
+# All rights reserved.
+#
+# The source code of this program is made available
+# under the terms of the GNU Affero General Public License version 3
+# (GNU AGPL V3) as published by the Free Software Foundation.
+#
+# Binary versions of this program provided by Univention to you as
+# well as other copyrighted, protected or trademarked materials like
+# Logos, graphics, fonts, specific documentations and configurations,
+# cryptographic keys etc. are subject to a license agreement between
+# you and Univention and not subject to the GNU AGPL V3.
+#
+# In the case you use this program under the terms of the GNU AGPL V3,
+# the program is provided in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public
+# License with the Debian GNU/Linux or Univention distribution in file
+# /usr/share/common-licenses/AGPL-3; if not, see
+# <http://www.gnu.org/licenses/>.
+
+VERSION=3
+
+. /usr/share/univention-lib/all.sh
+
+eval "$(ucr shell)"
+
+# set default windows driver for pdf printer
+# is_ucr_true 
+#  -> 0 if true
+#  -> 1 if false
+#  -> 2 is unset
+ret=0
+is_ucr_true "ucsschool/printermoderation/windows/driver/assign"
+if [ $? -eq 0 -o $? -eq 2 ]; then 
+	if [ -n "$ucsschool_printermoderation_windows_driver_name" ]; then
+		# once Bug #24075 is fixed, we can remove this update group
+		# stuff here, instead we can simply add the samba printer privileges
+		# to the machine account
+		remove=""
+		ldb="/var/lib/samba/private/sam.ldb"
+		if [ -f "$ldb" ]; then
+			# samba4 -> add to samba4 Print Operators
+			if ! ldbsearch -H "$ldb" cn="Print Operators" | grep -iq  "member: cn=$hostname,"; then
+				s4_host_dn="$(univention-s4search cn="$hostname" dn |sed -n 's/^dn: //p')"
+				ldbmodify -H "$ldb" <<-%EOF
+dn: CN=Print Operators,CN=Builtin,$samba4_ldap_base
+changetype: modify
+add: member
+member: $s4_host_dn
+-
+%EOF
+				remove="$s4_host_dn"
+			fi
+		else
+			# samba3 -> check if machine account is in printer group
+			group="Printer-Admins"
+			if [ -n "$groups_default_printoperators" ]; then
+				group="$groups_default_printoperators"
+			fi
+			if ! univention-ldapsearch cn="$group" | ldapsearch-wrapper| grep -q "memberUid: $hostname\\$"; then
+				# add machine account to printer group
+				udm groups/group modify "$@" --ignore_exists \
+					--dn "cn=$group,cn=groups,$ldap_base" \
+					--append hosts="$ldap_hostdn"
+				test -x /etc/init.d/nscd && invoke-rc.d nscd restart
+				remove="$group"
+			fi
+		fi
+		# wait for printer
+		echo "Setting windows printer driver for PDFDrucker ..."
+		for i in $(seq 1 300); do
+			sleep 1
+			if rpcclient -P -c 'enumprinters' $hostname | grep -q "\\\\PDFDrucker"; then
+				rpcclient -P -c "setdriver PDFDrucker '$ucsschool_printermoderation_windows_driver_name'" $hostname
+				ret=$?
+				if [ "$ret" -eq 0 ]; then
+					break
+				fi
+			fi
+		done
+		# remove machine account from printer group 
+		if [ -n "$remove" ]; then
+			if [ -f "$ldb" ]; then
+				ldbmodify -H "$ldb" <<-%EOF
+dn: CN=Print Operators,CN=Builtin,$samba4_ldap_base
+changetype: modify
+delete: member
+member: $remove
+-
+%EOF
+			else
+				udm groups/group modify "$@" --ignore_exists \
+					--dn "cn=$remove,cn=groups,$ldap_base" \
+					--remove hosts="$ldap_hostdn"
+			fi
+		fi
+	fi
+fi
+
+exit $ret
