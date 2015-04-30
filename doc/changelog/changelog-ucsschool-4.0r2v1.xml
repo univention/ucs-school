@@ -300,7 +300,7 @@
 					</listitem>
 					<listitem>
 						<simpara>
-							Uploading of several files at once is now possible when using UCS-4.0-1 with webserver version greater or equal 4.1.106-60 (<u:bug>32331</u:bug>).
+							It is now possible to upload several files at once when distributing teaching materials. This requires erratum 162 of UCS 4.0-1 to be installed (<u:bug>32331</u:bug>).
 						</simpara>
 					</listitem>
 				</itemizedlist>
