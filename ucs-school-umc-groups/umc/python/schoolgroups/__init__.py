@@ -242,8 +242,8 @@ class Instance(SchoolBaseModule):
 		'$dn$': StringSanitizer(required=True),
 		'classes': ListSanitizer(StringSanitizer(required=True), required=True)
 	})
-	@LDAP_Connection(USER_READ, USER_WRITE)
-	def add_teacher_to_classes(self, request, search_base=None, ldap_user_write=None, ldap_user_read=None, ldap_position=None):
+	@LDAP_Connection(USER_READ, MACHINE_WRITE)
+	def add_teacher_to_classes(self, request, search_base=None, ldap_machine_write=None, ldap_user_read=None, ldap_position=None):
 		teacher = request.options['$dn$']
 		classes = set(request.options['classes'])
 		teacher = Teacher.from_dn(teacher, None, ldap_user_read)
@@ -257,7 +257,7 @@ class Instance(SchoolBaseModule):
 		failed = []
 		for classdn in (classes_to_add | classes_to_remove):
 			try:
-				class_ = SchoolClass.from_dn(classdn, teacher.school, ldap_user_write)
+				class_ = SchoolClass.from_dn(classdn, teacher.school, ldap_machine_write)
 			except udm_exceptions.noObject:
 				failed.append(classdn)
 				continue
@@ -267,7 +267,7 @@ class Instance(SchoolBaseModule):
 			elif classdn in classes_to_remove and teacher.dn in class_.users:
 				class_.users.remove(teacher.dn)
 			try:
-				if not class_.modify(ldap_user_write):
+				if not class_.modify(ldap_machine_write):
 					failed.append(classdn)
 			except udm_exceptions.base as exc:
 				MODULE.error('Could not add teacher %s to class %s: %s' % (teacher.dn, classdn, exc))

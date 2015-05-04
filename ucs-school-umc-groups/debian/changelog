@@ -1,3 +1,9 @@
+ucs-school-umc-groups (4.0.0-10) unstable; urgency=medium
+
+  * Bug #32332: use machine account to write teacher changes
+
+ -- Florian Best <best@univention.de>  Mon, 04 May 2015 11:54:18 +0200
+
 ucs-school-umc-groups (4.0.0-9) unstable; urgency=medium
 
   * Bug #32332: list also TeachersAndStaff users in the grid
