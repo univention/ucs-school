@@ -43,4 +43,47 @@
 	Bei Einsatz von Samba 4 kann die Proxy-Konfiguration alternativ auch über Gruppenrichtlinien
 	zugewiesen werden.
   </para>
+  <section id="school:proxy:blacklists">
+	<title>Einbindung von externen Blacklisten</title>
+	<para>
+	  Der Proxy von &ucsUAS; unterstützt die Einbindung von externen Blacklisten, welche als Textdateien vorliegen müssen. Sie werden vom Proxy vorrangig ausgewertet, d.h. sie können nicht durch Schuladministratoren oder Lehrer in der UMC umgangen oder zeitweilig deaktiviert werden.
+	</para>
+	<para>
+	  Die Textdateien dürfen jeweils nur Domänennamen oder URLs enthalten. Pro Zeile darf nur ein Eintrag (Domänenname/URL) enthalten sein.
+	  Die Textdateien müssen unterhalb des Verzeichnisses <filename class="directory">/var/lib/ucs-school-webproxy/</filename> abgelegt werden. Die Verwendung von weiteren Unterverzeichnissen ist möglich.
+	</para>
+	<para>
+	  Eingebunden werden die Blacklisten über das Setzen von zwei UCR-Variablen: <envar>proxy/filter/global/blacklists/domains</envar> und <envar>proxy/filter/global/blacklists/urls</envar>.
+	  Diese Variablen enthalten die Dateinamen der Domänen-Blacklisten bzw. URL-Blacklisten. Die Dateinamen sind relativ zum Verzeichnis <filename class="directory">/var/lib/ucs-school-webproxy</filename> anzugeben und müssen durch Leerzeichen voneinander getrennt werden.
+	</para>
+	<para>
+	  Die Einbindung der folgenden, exemplarischen Blacklist-Dateien
+	  <programlisting>
+/var/lib/ucs-school-webproxy/extblacklist1/domains
+/var/lib/ucs-school-webproxy/extblacklist1/urls
+/var/lib/ucs-school-webproxy/bl2/list-domains
+/var/lib/ucs-school-webproxy/bl2/list-urls
+/var/lib/ucs-school-webproxy/bl3-dom
+/var/lib/ucs-school-webproxy/bl3-urls
+	  </programlisting>
+	  kann über die nachfolgenden <command>ucr set</command>-Befehle erreicht werden:
+	  <programlisting>
+ucr set proxy/filter/global/blacklists/domains=\
+     "extblacklist1/domains bl2/list-domains bl3-dom"
+ucr set proxy/filter/global/blacklists/urls=\
+     "extblacklist1/urls bl2/list-urls bl3-urls"
+	  </programlisting>
+	</para>
+	<note>
+	  <para>
+		Es ist zu beachten, dass bei einer Aktualisierung der Blacklist-Textdateien die internen Filterdatenbanken des Proxys nicht ebenfalls automatisch aktualisiert werden.
+		Um dies zu erreichen, müssen die beiden UCR-Variablen erneut gesetzt werden.
+	  </para>
+	</note>
+	<note>
+	  <para>
+		Abhängig von der Anzahl der Einträge in den eingebundenen Blacklisten, kann die Aktualisierung der internen Filterdatenbanken beim Setzen der UCR-Variablen mehrere Sekunden benötigen.
+	  </para>
+	</note>
+  </section>
 </chapter>
