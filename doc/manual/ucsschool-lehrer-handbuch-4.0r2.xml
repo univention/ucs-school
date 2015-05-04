@@ -455,7 +455,7 @@ feedback@univention.de
 		<section id="lehrerdoku:klassenarbeit:start">
 		  <title>Einrichten einer Klassenarbeit</title>
 		  <para>
-			Eine neue Klassenarbeit kann über das &ucsUMC; Modul <guimenu>Klassenarbeit starten</guimenu> eingerichtet werden.
+			Eine neue Klassenarbeit kann über das &ucsUMC;-Modul <guimenu>Klassenarbeit starten</guimenu> eingerichtet werden.
 			In mehreren Schritten werden alle Einstellungen für die Klassenarbeit festgelegt.
 		  </para>
 		  <orderedlist>
@@ -466,18 +466,18 @@ feedback@univention.de
 			  <simpara>
 				Als Endzeit wird das Ende der laufenden Schulstunde vorgeschlagen, sie kann jedoch nach Belieben angepasst werden.
 				Für die Klassenarbeit ist die Endzeit nicht verbindlich, sondern wird lediglich genutzt, um über die verbleibende Zeit zu informieren.
-				Mit Erreichen der vorgesehenen Endzeit wird ein Erinnerungsdialog eingeblendet.
+				Mit Erreichen der vorgesehenen Endzeit wird ein Erinnerungsdialog im Modul <guimenu>Computerraum</guimenu> eingeblendet.
 				Die Klassenarbeit kann ohne weiteres auch über das vorgesehene Ende hinaus weitergeführt werden.
 			  </simpara>
 			  <simpara>
-				Durch aktivieren der Auswahlkästchen kann eingestellt werden, welche weiteren Einstellungsmöglichkeiten in den nächsten Schritten abgefragt werden.
-				Dazu gehören das Verteilen von Unterrichtsmaterialien sowie das Festlegen von Einschränkungen für den Zugang zum Internet und zu Freigaben.
+				Über die auf der Seite enthaltenen Auswahlkästchen kann eingestellt werden, welche weiteren Einstellungsmöglichkeiten in den nächsten Schritten des Assistenten abgefragt werden.
+				Dazu gehört das Verteilen von Unterrichtsmaterialien, das Festlegen von Einschränkungen für den Zugang zum Internet sowie die Zugriffssteuerung auf Freigaben.
 			  </simpara>
 			</listitem>
 			<listitem>
 				<simpara>
 					Im zweiten Schritt muss der Computerraum in dem die Arbeit geschrieben werden soll sowie mindestens eine teilnehmende Klasse bzw. Arbeitsgruppe angegeben werden.
-					Falls weitere Einstellungsmöglichkeiten aktiviert worden sind werden diese auf den folgenden Seiten angezeigt.
+					Falls weitere Einstellungsmöglichkeiten aktiviert wurden, werden diese auf den folgenden Seiten des Assistenten angezeigt.
 				</simpara>
 			</listitem>
 			<listitem>
@@ -495,7 +495,7 @@ feedback@univention.de
 			</listitem>
 			<listitem>
 			  <simpara>
-				Zuletzt können Einschränkungen für den Zugang zum Internet und zu Freigaben festgelegt werden.
+				Zuletzt können optional Einschränkungen für den Zugang zum Internet und den Zugriff auf Freigaben festgelegt werden.
 				Diese Einstellungen können jederzeit während einer laufenden Klassenarbeit über die Raumeinstellungen des Moduls <guimenu>Computerraum</guimenu> angepasst werden.
 				Die einzelnen Einstellungsmöglichkeiten werden auch unter <xref linkend="lehrerdoku:computerraum"/> beschrieben.
 			  </simpara>
@@ -518,20 +518,21 @@ feedback@univention.de
 		  <para>
 			Das Klassenarbeitsmodul bietet eine Hilfsfunktion an, so dass dieser Vorgang weitgehend automatisiert durchgeführt werden kann.
 			Dabei wird eine Verbindung zu allen eingeschalteten Rechnern aufgebaut und alle eingeschaltete Rechner werden aufgelistet, wie in <xref linkend="fig:klassenarbeit:neustart"/> dargestellt.
-			Die aufgelisteten Rechner können durch Klick auf die Schaltfläche <guimenu>Schülerrechner neustarten</guimenu> und durch anschließende Bestätigung automatisch neu gestartet werden.
-			Zusätzlich können einzelne Rechner ausgewählt werden und über die Schaltfläche <guimenu>Ausgewählte Rechner neustarten</guimenu> neu gestartet werden.
+			Die aufgelisteten Rechner können durch Klick auf die Schaltfläche <guimenu>Schülerrechner neustarten</guimenu> automatisch neu gestartet werden.
+			Rechner, an denen Lehrer angemeldet sind, werden bei dieser Aktion automatisch ausgelassen. Voraussetzung hierfür ist, dass die Lehrerbenutzer korrekt erkannt wurden (siehe auch Spalte <guimenu>Benutzer</guimenu> in der Tabelle).
+			Zusätzlich können einzelne Rechner ausgewählt und über die Schaltfläche <guimenu>Ausgewählte Rechner neustarten</guimenu> neu gestartet werden. Hierbei werden die Rechner ungeachtet des angemeldeten Benutzers (auch bei Lehrerbenutzern!) neu gestartet.
 		  </para>
+		  <caution>
+			<para>
+			  Nach der Bestätigung wird der Neustart der Rechner sofort ausgeführt!
+			  Es erfolgt dabei keine Warnung bei angemeldeten Benutzern.
+			  Daher können auf diesen Rechnern ggf. noch nicht gesicherte Daten verloren gehen.
+			</para>
 		  <note>
 			<para>
 			  Bitte stellen Sie zusätzlich sicher, dass eingeschaltete Rechner manuell neu gestartet werden, sollten dies nicht automatisch durchgeführt worden sein.
 			</para>
 		  </note>
-		  <caution>
-			<para>
-			  Nach der Bestätigung wird der Neustart der Rechner sofort ausgeführt!
-			  Es erfolgt dabei keine Warnung bei angemeldeten Benutzern.
-			  Daher können nicht gesicherte Daten ggf. verloren gehen.
-			</para>
 		  </caution>
 		</section>
 		<section id="lehrerdoku:klassenarbeit:verwalten">
