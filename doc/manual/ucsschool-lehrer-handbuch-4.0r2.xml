@@ -920,7 +920,7 @@ feedback@univention.de
 		<title>Lehrer Klassen zuordnen</title>
 		<para>
 		  Für jede Klasse gibt es einen gemeinsamen Datenbereich. Damit Lehrer auf diesen Datenbereich
-		  zugreifen können, müssen sie der Klasse zugewiesen werden.
+		  zugreifen können, müssen sie der Klasse zugewiesen werden und somit Mitglied der Klasse werden.
 		</para>
 		<para>
 		  <figure id="liste-klassen">
@@ -929,12 +929,19 @@ feedback@univention.de
 		  </figure>
 		</para>
 		<para>
-		  Dies erfolgt über das Modul <guimenu>Lehrer zuordnen</guimenu>. Es wird eine
-		  Liste von Klassen angezeigt. Ein Klick auf <guimenu>Bearbeiten</guimenu> zeigt eine Auswahlliste, in
-		  der Lehrer hinzugefügt werden können.
+			Die Zuweisung kann über zwei Module erfolgen: <guimenu>Lehrer zuordnen</guimenu> und <guimenu>Klassen zuordnen</guimenu>.
 		</para>
 		<para>
-			Das Modul <guimenu>Klassen zuordnen</guimenu> bietet die Möglichkeit einen bestimmten Lehrer zu mehreren Klassen hinzuzufügen.
+			Das Modul <guimenu>Lehrer zuordnen</guimenu> erlaubt es, einer ausgewählten Klasse mehrere Lehrer zuzuordnen. Nach dem Öffnen des Moduls
+			wird eine Liste von Klassen angezeigt. Nach der Auswahl einer Klasse und einem Klick auf <guimenu>Bearbeiten</guimenu> wird eine Auswahlliste
+			angezeigt, in der Lehrer hinzugefügt oder entfernt werden können. Dieses Modul wird üblicherweise nach der Einrichtung neuer Klassen verwendet,
+			um ihnen erstmals die entsprechenden Lehrer zuzuordnen.
+		</para>
+		<para>
+			Daneben erlaubt es das Modul <guimenu>Klassen zuordnen</guimenu>, einen bestimmten Lehrer zu mehreren Klassen hinzuzufügen.
+			Nach dem Öffnen des Moduls wird eine Liste von Lehrern angezeigt. Nach der Auswahl eines Lehrers und einem Klick auf <guimenu>Bearbeiten</guimenu>
+			wird eine Auswahlliste angezeigt, in der Klassen hinzugefügt oder entfernt werden können. Dieses Modul wird üblicherweise nach einem Neuzugang im Kollegium verwendet,
+			um den neuen Lehrer seinen Klassen zuzuweisen.
 		</para>
 		<para>
 		  <figure id="assign-teacher">
