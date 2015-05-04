@@ -125,19 +125,19 @@
 				<listitem>
 					<simpara>
 						<envar>ucsschool/exam/default/checkbox/distribution</envar>
-						definiert, ob das Auswahlkästchen <literal>Unterrichtsmaterial verteilen</literal> automatisch vorausgewählt ist. Der Wert <literal>true</literal> aktiviert dieses Auswahlkästchen automatisch. Andernfalls ist der Wert <literal>false</literal> einzutragen.
+						definiert, ob beim Starten des Klassenarbeitsmodus das Auswahlkästchen <guimenu>Unterrichtsmaterial verteilen</guimenu> automatisch vorausgewählt ist. Mögliche Werte sind <literal>true</literal> (Auswahlkästchen vorausgewählt) oder <literal>false</literal> (Auswahlkästchen nicht vorausgewählt).
 					</simpara>
 				</listitem>
 				<listitem>
 					<simpara>
 						<envar>ucsschool/exam/default/checkbox/proxysettings</envar>
-						definiert, ob das Auswahlkästchen <literal>Internetregeln definieren</literal> automatisch vorausgewählt ist.
+						definiert, ob beim Starten des Klassenarbeitsmodus das Auswahlkästchen <guimenu>Internetregeln definieren</guimenu> automatisch vorausgewählt ist. Mögliche Werte sind <literal>true</literal> (Auswahlkästchen vorausgewählt) oder <literal>false</literal> (Auswahlkästchen nicht vorausgewählt).
 					</simpara>
 				</listitem>
 				<listitem>
 					<simpara>
 						<envar>ucsschool/exam/default/checkbox/sharesettings</envar>
-						definiert, ob das Auswahlkästchen <literal>Freigabezugriff konfigurieren</literal> automatisch vorausgewählt ist.
+						definiert, ob beim Starten des Klassenarbeitsmodus das Auswahlkästchen <guimenu>Freigabezugriff konfigurieren</guimenu> automatisch vorausgewählt ist. Mögliche Werte sind <literal>true</literal> (Auswahlkästchen vorausgewählt) oder <literal>false</literal> (Auswahlkästchen nicht vorausgewählt).
 					</simpara>
 				</listitem>
 			</itemizedlist>
