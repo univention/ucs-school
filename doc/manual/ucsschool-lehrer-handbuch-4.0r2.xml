@@ -528,12 +528,12 @@ feedback@univention.de
 			  Es erfolgt dabei keine Warnung bei angemeldeten Benutzern.
 			  Daher können auf diesen Rechnern ggf. noch nicht gesicherte Daten verloren gehen.
 			</para>
+		  </caution>
 		  <note>
 			<para>
 			  Bitte stellen Sie zusätzlich sicher, dass eingeschaltete Rechner manuell neu gestartet werden, sollten dies nicht automatisch durchgeführt worden sein.
 			</para>
 		  </note>
-		  </caution>
 		</section>
 		<section id="lehrerdoku:klassenarbeit:verwalten">
 		  <title>Verwaltung und Abschluss der Klassenarbeit</title>
