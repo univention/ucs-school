@@ -167,10 +167,11 @@ scp ucs-school-join-secondary-samba4 root@&lt;Name des neuen Schul-DCs&gt;:
   <section id="school:performance:backup-share">
 	<title>Verzeichnisfreigabe für backup-Heimatverzeichnisse</title>
 	<section>
-		Gelöschte Benutzerprofile werden standardmäßig unterhalb von <emphasis>/home/backup/</emphasis> gesichert.
-		Um eine Administration des Verzeichnisses zu ermöglichen wird empfohlen eine Verzeichnisfreigabe für Schuladministratoren zu erstellen.
-		Im folgendem Beispiel wird eine Freigabe für die Schule <replaceable>OUNAME</replaceable> angelegt.
-		Dazu müssen als root auf dem entsprechenden Schulserver folgende Befehle ausgeführt werden:
+		<para>
+			Gelöschte Benutzerprofile werden standardmäßig unterhalb von <emphasis>/home/backup/</emphasis> gesichert.
+			Um eine Administration des Verzeichnisses zu ermöglichen wird empfohlen eine Verzeichnisfreigabe für Schuladministratoren zu erstellen.
+			Im folgendem Beispiel wird eine Freigabe für die Schule <replaceable>OUNAME</replaceable> angelegt.
+			Dazu müssen als root auf dem entsprechenden Schulserver folgende Befehle ausgeführt werden:
 
 		<programlisting language="sh">
 eval "$(ucr shell)"
@@ -185,6 +186,7 @@ udm shares/share create \
     --set sambaWriteList="@admins-<replaceable>OUNAME</replaceable>" \
     --set sambaValidUsers="@admins-<replaceable>OUNAME</replaceable>"
 		</programlisting>
+	</para>
 	</section>
   </section>
 </chapter>
