@@ -10,20 +10,26 @@ from univention.lib.umc_connection import UMCConnection
 import univention.testing.ucr as ucr_test
 from univention.testing.ucsschool import UCSTestSchool
 
+
 class GetFail(Exception):
 	pass
+
 
 class GetCheckFail(Exception):
 	pass
 
+
 class CreateFail(Exception):
 	pass
+
 
 class QueryCheckFail(Exception):
 	pass
 
+
 class RemoveFail(Exception):
 	pass
+
 
 class EditFail(Exception):
 	pass
@@ -45,14 +51,15 @@ class Klasse(object):
 	:type description: str
 	"""
 
-	# Initialization (Random by default)
 	def __init__(self,
 				 school,
 				 umcConnection=None,
 				 ucr=None,
 				 name=None,
+				 users=None,
 				 description=None):
 		self.school = school
+		self.users = users or []
 		self.name = name if name else uts.random_string()
 		self.description = description if description else uts.random_string()
 		self.ucr = ucr if ucr else ucr_test.UCSTestConfigRegistry()
@@ -77,24 +84,21 @@ class Klasse(object):
 	def create(self):
 		"""Creates object class"""
 		flavor = 'schoolwizards/classes'
-		param = [
-				{
-					'object':{
-						'name': self.name,
-						'school': self.school,
-						'description': self.description,
-						},
-					'options': None
-					}
-				]
+		param = [{'object':
+				  {'name': self.name,
+				   'school': self.school,
+				   'description': self.description,
+				   },
+				  'options': None
+				  }]
 		print 'Creating class %s in school %s' % (
-				self.name,
-				self.school)
+			self.name,
+			self.school)
 		print 'param = %s' % (param,)
 		reqResult = self.umcConnection.request(
-				'schoolwizards/classes/add',
-				param,
-				flavor)
+			'schoolwizards/classes/add',
+			param,
+			flavor)
 		if not reqResult[0]:
 			raise CreateFail('Unable to create class (%r)' % (param,))
 
@@ -118,49 +122,47 @@ class Klasse(object):
 		"""get the list of existing classes in the school"""
 		flavor = 'schoolwizards/classes'
 		param = {
-				'school': self.school,
-				'filter': ""
-				}
+			'school': self.school,
+			'filter': ""
+		}
 		reqResult = self.umcConnection.request(
-				'schoolwizards/classes/query',param,flavor)
+			'schoolwizards/classes/query', param, flavor)
 		return reqResult
 
 	def check_query(self, classes_names):
 		q = self.query()
 		k = [x['name'] for x in q]
 		if set(classes_names) != set(k):
-			raise QueryCheckFail('Classes from query do not match the existing classes, found (%r), expected (%r)' % (
-				k, classes_names))
+			raise QueryCheckFail(
+				'Classes from query do not match existing ones\nfound (%r)\nexpected (%r)' % (
+					k, classes_names))
 
 	def dn(self):
-		 return 'cn=%s-%s,cn=klassen,cn=schueler,cn=groups,%s' % (
-				 self.school, self.name, UCSTestSchool().get_ou_base_dn(self.school))
-
+		return 'cn=%s-%s,cn=klassen,cn=schueler,cn=groups,%s' % (
+			self.school, self.name, UCSTestSchool().get_ou_base_dn(self.school)
+		)
 
 	def get(self):
 		"""Get class"""
 		flavor = 'schoolwizards/classes'
-		param = [
-				{
-					'object':{
-						'$dn$': self.dn(),
-						'school': self.school
-						}
-					}
-				]
+		param = [{'object':
+				  {'$dn$': self.dn(),
+				   'school': self.school
+				   }
+				  }]
 		reqResult = self.umcConnection.request(
-				'schoolwizards/classes/get',param,flavor)
+			'schoolwizards/classes/get', param, flavor)
 		if not reqResult[0]:
 			raise GetFail('Unable to get class (%s)' % self.name)
 		else:
 			return reqResult[0]
 
 	def check_get(self):
-		info = {
-				'$dn$': self.dn(),
+		info = {'$dn$': self.dn(),
 				'school': self.school,
 				'description': self.description,
 				'name': self.name,
+				'users': self.users,
 				'objectType': 'groups/group'
 				}
 		get_result = self.get()
@@ -171,45 +173,39 @@ class Klasse(object):
 	def remove(self):
 		"""Remove class"""
 		flavor = 'schoolwizards/classes'
-		param = [
-				{
-					'object':{
-						'$dn$': self.dn(),
-						'school': self.school
-						},
-					'options': None
-					}
-				]
+		param = [{'object':
+				  {'$dn$': self.dn(),
+				   'school': self.school
+				   },
+				  'options': None
+				  }]
 		reqResult = self.umcConnection.request(
-				'schoolwizards/classes/remove',param,flavor)
+			'schoolwizards/classes/remove', param, flavor)
+
 		if not reqResult[0]:
 			raise RemoveFail('Unable to remove class (%s)' % self.name)
-
 
 	def edit(self, new_attributes):
 		"""Edit object class"""
 		flavor = 'schoolwizards/classes'
-		param = [
-				{
-					'object':{
-						'$dn$': self.dn(),
-						'name': new_attributes['name'],
-						'school': self.school,
-						'description': new_attributes['description']
-						},
-					'options': None
-					}
-				]
+		param = [{'object':
+				  {'$dn$': self.dn(),
+				   'name': new_attributes['name'],
+				   'school': self.school,
+				   'description': new_attributes['description']
+				   },
+				  'options': None
+				  }]
 		print 'Editing class %s in school %s' % (
-				self.name,
-				self.school)
+			self.name,
+			self.school)
 		print 'param = %s' % (param,)
 		reqResult = self.umcConnection.request(
-				'schoolwizards/classes/put',
-				param,
-				flavor)
+			'schoolwizards/classes/put',
+			param,
+			flavor)
 		if not reqResult[0]:
-			raise EditFail('Unable to edit class (%s) with the parameters (%r)' % (self.name , param))
+			raise EditFail('Unable to edit class (%s) with the parameters (%r)' % (self.name, param))
 		else:
 			self.name = new_attributes['name']
 			self.description = new_attributes['description']
