@@ -1,3 +1,12 @@
+ucs-school-umc-printermoderation (9.0.2-1) unstable; urgency=medium
+
+  * Bug #38230: fix detection of printjobs for users with differing
+  	lower/uppercase in their username
+  * Bug #38441: fix vulnerability which allowed to download, remove and print
+  	various files
+
+ -- Florian Best <best@univention.de>  Tue, 05 May 2015 13:06:41 +0200
+
 ucs-school-umc-printermoderation (9.0.1-2) unstable; urgency=low
 
   * version bump (Bug #30930)
