@@ -938,7 +938,7 @@ feedback@univention.de
 			um ihnen erstmals die entsprechenden Lehrer zuzuordnen.
 		</para>
 		<para>
-			Daneben erlaubt es das Modul <guimenu>Klassen zuordnen</guimenu>, einen bestimmten Lehrer zu mehreren Klassen hinzuzufügen.
+			Daneben erlaubt das Modul <guimenu>Klassen zuordnen</guimenu>, einen bestimmten Lehrer zu mehreren Klassen hinzuzufügen.
 			Nach dem Öffnen des Moduls wird eine Liste von Lehrern angezeigt. Nach der Auswahl eines Lehrers und einem Klick auf <guimenu>Bearbeiten</guimenu>
 			wird eine Auswahlliste angezeigt, in der Klassen hinzugefügt oder entfernt werden können. Dieses Modul wird üblicherweise nach einem Neuzugang im Kollegium verwendet,
 			um den neuen Lehrer seinen Klassen zuzuweisen.
