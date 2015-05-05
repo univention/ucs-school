@@ -1,3 +1,10 @@
+ucs-school-umc-printermoderation (11.0.2-1) unstable; urgency=medium
+
+  * Bug #38423: fix detection of printjobs for users with differing
+  	lower/uppercase in their username
+
+ -- Florian Best <best@univention.de>  Tue, 05 May 2015 14:02:11 +0200
+
 ucs-school-umc-printermoderation (11.0.1-8) unstable; urgency=low
 
   * Bug #38201: set default windows driver for pdf printer 

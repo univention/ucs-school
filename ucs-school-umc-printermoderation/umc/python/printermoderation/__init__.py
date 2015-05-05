@@ -79,7 +79,7 @@ class Instance(SchoolBaseModule):
 
 	def _get_path(self, username, printjob):
 		printjob = printjob.replace('/', '')
-		username = username.replace('/', '').lower()
+		username = username.replace('/', '')
 		path = os.path.join(CUPSPDF_DIR, username, CUPSPDF_USERSUBDIR, printjob)
 		if not os.path.realpath(path).startswith(os.path.realpath(CUPSPDF_DIR)):
 			raise UMC_OptionTypeError('Invalid file')
@@ -130,8 +130,10 @@ class Instance(SchoolBaseModule):
 		printjoblist = []
 
 		for student in students:
-			user_path = self._get_path(student.info['username'], '*.pdf')
-			printjoblist.extend(Printjob(student, document).json() for document in glob.glob(user_path) if os.path.isfile(document))
+			username = student.info['username']
+			path_username = dict((self._get_path(username, ''), username) for username in (username, username.lower(), username.upper()))
+			for user_path, username in path_username.iteritems():
+				printjoblist.extend(Printjob(student, username, document).json() for document in glob.glob(os.path.join(user_path, '*.pdf')) if os.path.isfile(document))
 
 		self.finished(request.id, printjoblist)
 
@@ -237,8 +239,9 @@ class Instance(SchoolBaseModule):
 class Printjob(object):
 	pdf_cache = {}
 
-	def __init__(self, owner, fullfilename):
+	def __init__(self, owner, username, fullfilename):
 		self.owner = owner  # got univention.admin.modules here
+		self.username = username  # username w.r.t. case sensitivity
 		self.fullfilename = os.path.normpath(fullfilename)
 		self.filename = os.path.basename(self.fullfilename)
 		self.tmpfilename = None
@@ -261,7 +264,7 @@ class Printjob(object):
 	def json(self):
 		return {
 			'id': self.fullfilename,
-			'username': self.owner['username'],
+			'username': self.username,
 			'user': Display.user(self.owner),
 			'printjob': self.name,
 			'filename': self.filename,
