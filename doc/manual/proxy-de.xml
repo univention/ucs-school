@@ -46,7 +46,7 @@
   <section id="school:proxy:blacklists">
 	<title>Einbindung von externen Blacklisten</title>
 	<para>
-	  Der Proxy von &ucsUAS; unterstützt die Einbindung von externen Blacklisten, welche als Textdateien vorliegen müssen. Sie werden vom Proxy vorrangig ausgewertet, d.h. sie können nicht durch Schuladministratoren oder Lehrer in der UMC umgangen oder zeitweilig deaktiviert werden.
+	  Der Proxy von &ucsUAS; unterstützt (ab &ucsUAS; 4.0 R2 und mindestens UCS 4.0 Erratum 163) die Einbindung von externen Blacklisten, welche als Textdateien vorliegen müssen. Sie werden vom Proxy vorrangig ausgewertet, d.h. sie können nicht durch Schuladministratoren oder Lehrer in der UMC umgangen oder zeitweilig deaktiviert werden.
 	</para>
 	<para>
 	  Die Textdateien dürfen jeweils nur Domänennamen oder URLs enthalten. Pro Zeile darf nur ein Eintrag (Domänenname/URL) enthalten sein.
