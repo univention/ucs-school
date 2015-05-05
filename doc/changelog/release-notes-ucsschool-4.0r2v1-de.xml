@@ -72,7 +72,7 @@ feedback@univention.de
 				</para>
 		</section>
 		<section id="relnotes:printermoderation">
-			<title>Default-Druckertreiber für PDF-Drucker</title>
+			<title>Standard-Druckertreiber für PDF-Drucker</title>
 			<para>
 				Ab &ucsUAS; 4.0 R2 wird während einer Neuinstallation beim Anlegen des PDF-Druckers für die Druckmoderation
 				automatisch der Windows-Druckertreiber <wordasword>MS Publisher Color Printer</wordasword> mit der Druckerfreigabe verknüpft.
