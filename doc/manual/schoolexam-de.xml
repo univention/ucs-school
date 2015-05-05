@@ -1002,5 +1002,36 @@ eval "$(ucr shell)"
 				</itemizedlist>
 			</section>
 		</section>
+		<section id="school:exam:gpo:profiles">
+			<title>Verwendung temporärer Benutzerprofil-Kopien</title>
+			<para>
+				Bei der Verwendung von UCS@school werden serverseitige Profile verwendet, die bei der Anmeldung eines Benutzers auf den jeweiligen Windows-Rechner kopiert werden.
+				In der Standardeinstellung von Windows wird bei der Abmeldung des Benutzers das Profil nicht gelöscht und eine lokale Kopie vorgehalten.
+				Gerade in Verbindung mit dem Klassenarbeitsmodus führt dies zu einer unnötigen Auslastung der lokalen Festplatte.
+			</para>
+			<para>
+				Über eine Richtlinie kann Windows angewiesen werden, die lokale Profil-Kopie nach der Abmeldung des Benutzers wieder zu verwerfen.
+			</para>
+			<itemizedlist>
+				<listitem>
+					<simpara>
+						In der Gruppenrichtlinienverwaltung ein neues Gruppenrichtlinienobjekt anlegen und/oder ein existierendes Gruppenrichtlinienobjekt zur Bearbeitung öffnen.
+					</simpara>
+				</listitem>
+				<listitem>
+					<simpara>
+						Im Gruppenrichtlinienverwaltungseditor den folgenden Zweig öffnen:
+					</simpara>
+					<simpara>
+						<guisubmenu>Computerkonfiguration</guisubmenu> &ar; <guisubmenu>Richtlinien</guisubmenu> &ar; <guisubmenu>Administrative Vorlagen</guisubmenu> &ar; <guisubmenu>System</guisubmenu> &ar; <guisubmenu>Benutzerprofile</guisubmenu>
+					</simpara>
+				</listitem>
+				<listitem>
+					<simpara>
+						Richtlinie <emphasis>Zwischengespeicherte Kopien von servergespeicherten Profilen löschen</emphasis> öffnen und  <emphasis>Aktiviert</emphasis> auswählen und bestätigen.
+					</simpara>
+				</listitem>
+			</itemizedlist>
+		</section>
 	</section>
 </chapter>
