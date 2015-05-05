@@ -39,7 +39,8 @@ def removeListFromOther(big, small):
 	return big_copy
 
 def checkModules(modules, userType, serverRole, singleMaster):
-	defaultList = [('passwordchange', None)]
+	defaultList = [('passwordchange', None),
+                ]
 	ignoreList = [('lib', None)]
 
 	# Lehrer auf dem DC Master
@@ -64,6 +65,7 @@ def checkModules(modules, userType, serverRole, singleMaster):
 			('schoolrooms', None),
 			('schoolgroups', 'workgroup-admin'),
 			('schoolgroups', 'class'),
+			('schoolgroups', 'teacher'),
 			]
 	# Schuladmin sollte auf dem Schul-DC
 	dcs_schooladmin = defaultList + [
@@ -76,6 +78,7 @@ def checkModules(modules, userType, serverRole, singleMaster):
 			('schoolusers', 'teacher'),
 			('schoolrooms', None),
 			('schoolgroups', 'class'),
+			('schoolgroups', 'teacher'),
 			('schoolgroups', 'workgroup-admin'),
 			('internetrules', 'admin'),
 			('internetrules', 'assign'),
@@ -92,6 +95,7 @@ def checkModules(modules, userType, serverRole, singleMaster):
 			('schoolusers', 'teacher'),
 			('schoolrooms', None),
 			('schoolgroups', 'class'),
+			('schoolgroups', 'teacher'),
 			('schoolgroups', 'workgroup-admin'),
 			]
 	# Domanenadministrator auf dem Schul-DC
@@ -106,6 +110,7 @@ def checkModules(modules, userType, serverRole, singleMaster):
 			('schoolusers', 'teacher'),
 			('schoolrooms', None),
 			('schoolgroups', 'class'),
+			('schoolgroups', 'teacher'),
 			('schoolgroups', 'workgroup-admin'),
 			('internetrules', 'admin'),
 			('internetrules', 'assign'),
