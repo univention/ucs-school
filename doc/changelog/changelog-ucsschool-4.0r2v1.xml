@@ -11,6 +11,7 @@
 <chapter id="relnotes:changelog" lang="en">
 	<title>Changelog</title>
 
+	<!--
 	<section id="relnotes:changelog:general">
 		<title>General</title>
 		<itemizedlist>
@@ -25,7 +26,6 @@
 		</itemizedlist>
 	</section>
 
-	<!--
 		<section id="relnotes:changelog:import">
 		<title>Import scripts</title>
 		<itemizedlist>
@@ -52,7 +52,6 @@
 
 <section id="relnotes:changelog:domain">
 <title>Domain services</title>
-	-->
 	<section id="relnotes:changelog:samba4">
 		<title>Samba4</title>
 		<itemizedlist>
@@ -66,7 +65,6 @@
 			</listitem>
 		</itemizedlist>
 	</section>
-	<!--
 		<section id="relnotes:changelog:netlogon">
 		<title>Windows Netlogon Scripts</title>
 		<itemizedlist>
@@ -124,7 +122,7 @@
 		</listitem>
 		<listitem>
 			<simpara>
-				External blacklists (e.g. for filtering adult content) may now be included in the squidGuard/squid configuration. These blacklists have to be placed as text file within the directory <filename class="directory">/var/lib/ucs-school-webproxy/</filename> or any subdirectory. They may be included via the UCR variables <envar>proxy/filter/global/blacklists/domains</envar> and <envar>proxy/filter/global/blacklists/urls</envar> (<u:bug>30184</u:bug>).
+				External blacklists (e.g. for blocking adult content) may now be included in the squidGuard/squid configuration. These blacklists have to be placed as text file within the directory <filename class="directory">/var/lib/ucs-school-webproxy/</filename> or any subdirectory. They may be included via the UCR variables <envar>proxy/filter/global/blacklists/domains</envar> and <envar>proxy/filter/global/blacklists/urls</envar> (<u:bug>30184</u:bug>).
 			</simpara>
 		</listitem>
 	</itemizedlist>
@@ -145,10 +143,9 @@
 			<section id="relnotes:changelog:umc:web">
 			<title>Univention Management Console web interface</title>
 			</section>
-		-->
+
 		<section id="relnotes:changelog:umc:modules">
 			<title>Univention Management Console modules</title>
-			<!--
 			<section id="relnotes:changelog:umc:modules:general">
 				<title>General</title>
 				<itemizedlist>
@@ -198,12 +195,12 @@
 					</listitem>
 					<listitem>
 						<simpara>
-							The administrative and educational school servers are now shown in the table view of the <emphasis>Schools</emphasis> module (<u:bug>38200</u:bug>).
+							The administrative and educational school servers are now shown in the table view of the <guimenu>Schools</guimenu> module (<u:bug>38200</u:bug>).
 						</simpara>
 					</listitem>
 					<listitem>
 						<simpara>
-							Containers which are generated during school creation are now added to the default containers (<u:bug>35272</u:bug>).
+							Containers, that are generated during school creation, are now added automatically to the list of default containers (<u:bug>35272</u:bug>).
 						</simpara>
 					</listitem>
 				</itemizedlist>
@@ -279,12 +276,12 @@
 					</listitem>
 					<listitem>
 						<simpara>
-							Offline clients don't block the start of an exam anymore (<u:bug>37268</u:bug>).
+							Offline clients do not block the start of an exam anymore (<u:bug>37268</u:bug>).
 						</simpara>
 					</listitem>
 					<listitem>
 						<simpara>
-							The  attribute <property>memberUid</property> for computers at the exam group <systemitem class="groupname">OU${OU}-Klassenarbeit</systemitem> is now handled correctly (<u:bug>36251</u:bug>).
+							The attribute <property>memberUid</property> for computers at the exam group <systemitem class="groupname">OU${OU}-Klassenarbeit</systemitem> is now handled correctly (<u:bug>36251</u:bug>).
 						</simpara>
 					</listitem>
 				</itemizedlist>
@@ -294,12 +291,12 @@
 				<itemizedlist>
 					<listitem>
 						<simpara>
-							The first possible start times for automatic distribution and collection have been adjusted. (<u:bug>38195</u:bug>).
+							The first possible start times for automatic distribution and collection have been adjusted. Start times now have to be at least 1 minute in the future (before: 5 minutes). (<u:bug>38195</u:bug>).
 						</simpara>
 					</listitem>
 					<listitem>
 						<simpara>
-							The read permissions of students home directories have been fixed <u:bug>37854</u:bug>, <u:bug>38196</u:bug>).
+							The read permissions of students' home directories have been fixed (<u:bug>37854</u:bug>, <u:bug>38196</u:bug>).
 						</simpara>
 					</listitem>
 					<listitem>
@@ -319,8 +316,8 @@
 				<itemizedlist>
 					<listitem>
 						<simpara>
-							The format of mails which are send to the helpdesk team have been adapted.
-							It not contains the full username and contact details (<u:bug>38198</u:bug>.
+							The format of mails that are sent to the helpdesk team have been adapted.
+							It now contains the full username and contact details (<u:bug>38198</u:bug>).
 						</simpara>
 					</listitem>
 					<listitem>
@@ -373,33 +370,20 @@
 				</itemizedlist>
 			</section>
 		</section>
-	</section>
-	<!--
 
-<section id="relnotes:changelog:other">
-<title>Other changes</title>
-<itemizedlist>
-<listitem>
-<simpara>
-</simpara>
-</listitem>
-<listitem>
-<simpara>
-</simpara>
-</listitem>
-<listitem>
-<simpara>
-</simpara>
-</listitem>
-<listitem>
-<simpara>
-</simpara>
-</listitem>
-<listitem>
-<simpara>
-</simpara>
-</listitem>
-</itemizedlist>
-</section>
-	-->
+	<section id="relnotes:changelog:other">
+		<title>Other changes</title>
+		<itemizedlist>
+			<listitem>
+				<simpara>
+					Several updates have been performed in the &ucsUAS; administrator manual and in the &ucsUAS; teacher manual (<u:bug>38294</u:bug>, <u:bug>38363</u:bug>, <u:bug>38436</u:bug>).
+				</simpara>
+			</listitem>
+			<listitem>
+				<simpara>
+					Three new &ucsUAS; related SDB articles have been published: <u:sdb>1325</u:sdb>, <u:sdb>1326</u:sdb> and <u:sdb>1327</u:sdb> (<u:bug>38197</u:bug>, <u:bug>38390</u:bug>).
+				</simpara>
+			</listitem>
+		</itemizedlist>
+	</section>
 </chapter>

@@ -50,60 +50,6 @@ feedback@univention.de
 				dauern.
 			</para>
 
-		<section id="relnotes:order">
-			<title>Empfohlene Update-Reihenfolge</title>
-				<para>
-					In Umgebungen mit mehr als einem UCS-System muss die Update-Reihenfolge der
-					UCS-Systeme beachtet werden:
-				</para>
-
-				<para>
-					Auf dem &ucsMaster; wird die maßgebliche (authoritative) Version des
-					LDAP-Verzeichnisdienstes vorgehalten, die an alle übrigen LDAP-Server der
-					UCS-Domäne repliziert wird. Da bei Release-Updates Veränderungen an den
-					LDAP-Schemata auftreten können, muss der &ucsMaster; bei einem Release-Update immer
-					als erstes System aktualisiert werden.
-				</para>
-		</section>
-		<section id="relnotes:mix">
-			<title>Mischbetrieb mit älteren UCS-Systemen</title>
-				<para>
-					UCS 4.0 unterstützt den Mischbetrieb mit UCS 3.2-4 bzw. UCS 3.2-5 Systemen. Aus diesem Grund müssen
-					nicht alle UCS-Systeme in einem Wartungsfenster auf UCS 4.0 aktualisiert werden. Ein
-					Mischbetrieb mit älteren UCS-Versionen, bspw. UCS 3.1, wird nicht unterstützt.
-				</para>
-		</section>
-		<section id="relnotes:update">
-		  <title>Hinweise zum UCS-Release-Update</title>
-		  <para>
-			Bei einem gleichzeitigen Release-Update von UCS 3.2 auf UCS 4.0 sollten auch die Release Notes von UCS 4.0-0 beachtet werden.
-			Diese sind unter der URL <ulink url="http://docs.univention.de/release-notes-4.0-0-de.html"/> abrufbar.
-		  </para>
-		</section>
-		<section id="relnotes:apps">
-			<title>Univention App Center</title>
-				<para>
-					Sofern Applikationen aus dem App Center installiert sind, ist das Update erst
-					dann möglich, wenn alle lokal installierten Applikationen im App Center
-					verfügbar sind. Einige Applikationen werden beim Update ebenfalls auf neuere
-					Versionen aktualisiert. Sollte eine Applikation noch nicht für UCS 4.0 verfügbar sein,
-					kann der Zeitpunkt der Veröffentlichung beim Applikationshersteller nachgefragt werden.
-				</para>
-				<para>
-					Falls &ucsUCC; 1.0 im Einsatz ist und ein Update auf &ucsUCC; 2.0 noch nicht
-					erfolgen soll, so sollte vor dem Update auf UCS 4.0 auf die letzte verfügbare
-					&ucsUCC; 1.0 Version aktualisiert werden. Dies kann mit dem folgenden Befehlen
-					durchgeführt werden:
-					<programlisting language="sh">
-eval "$(ucr shell version/version version/patchlevel)"
-univention-add-app ucc_20140115
-univention-upgrade --updateto $version_version-$version_patchlevel
-					</programlisting>
-					Eine detaillierte Übersicht zu den Änderungen ist in den UCC 1.0 rev3 Release
-					Notes beschrieben:
-					<ulink url="http://download.univention.de/doc/release-notes-ucc-1.0-rev3.pdf"/>.
-				</para>
-		</section>
 		<section id="relnotes:samba">
 			<title>Ablösung von Windows NT DC Funktionalität</title>
 				<para>
@@ -125,38 +71,32 @@ univention-upgrade --updateto $version_version-$version_patchlevel
 					32-Bit-Archtitektur wird für die gesamte UCS 4-Maintenance noch unterstützt.
 				</para>
 		</section>
-		<section id="relnotes:umc-policy">
-			<title>UMC-Berechtigungen für UCS@school Benutzer</title>
+		<section id="relnotes:printermoderation">
+			<title>Default-Druckertreiber für PDF-Drucker</title>
 			<para>
-				Beim Anlegen von neuen Schulen wird nun automatisch die UMC-Richtlinie
-				<uri>default-umc-users</uri> an die Gruppe <systemitem class="groupname">Domain Users <replaceable>OU-NAME</replaceable></systemitem> angehängt.
-				Diese Richtlinie ermöglicht Benutzern, ihr eigenes Passwort über die Univention Management Console (UMC) zu verändern sowie die
-				Single-Sign-On-Technik von UMC zu benutzen.
-				Das Verhalten kann über die &ucsUCRV; <envar>ucsschool/import/attach/policy/default-umc-users</envar>
-				gesteuert werden.
+				Ab &ucsUAS; 4.0 R2 wird während einer Neuinstallation beim Anlegen des PDF-Druckers für die Druckmoderation
+				automatisch der Windows-Druckertreiber <wordasword>MS Publisher Color Printer</wordasword> mit der Druckerfreigabe verknüpft.
+				Dieser Treiber ist bei vielen Windows-Versionen bereits vorinstalliert (<systemitem class="osname">win7</systemitem>, <systemitem class="osname">win8.1</systemitem>, ...)
+				und vermeidet so das unnötige Herunterladen und Installieren von Druckertreibern beim Verbinden mit der Druckerfreigabe.
+				Falls ein abweichender Treiber gewünscht ist, kann dieser über die &ucsUCRV; <envar>ucsschool/printermoderation/windows/driver/name</envar>
+				angegeben werden.
+			</para>
+			<para>
+				Auf &ucsUAS;-Systemen, die auf Version 4.0 R2 aktualisiert werden, wird der Druckertreiber nicht automatisch gesetzt.
+				Falls auf einzelnen Systemen die Treiberzuordnung nachträglich ausgeführt werden soll, kann das Skript
+				<filename>/usr/share/ucs-school-umc-printermoderation/set-windows-driver-for-pdf-printer</filename>
+				auf dem jeweiligen System als Benutzer <systemitem class="username">root</systemitem> ausgeführt werden.
 			</para>
 		</section>
-		<section id="relnotes:usernamelength">
-		  <title>Benutzernamen</title>
-		  <para>
-			Microsoft Windows unterstützt Benutzernamen bis zu einer Länge von 20 Zeichen. Ist der
-			Benutzername länger, kann es zu Anmeldeproblemen an Windows-Systemen kommen.  Um diese Probleme zu
-			vermeiden, beschränken die UMC-Module <emphasis>Benutzer (Schulen)</emphasis> und
-			<emphasis>CSV-Import</emphasis> jetzt die maximale Länge von Benutzernamen.  Da für Prüfungsbenutzer
-			des Klassenarbeitsmodus ein Präfix (<literal>exam-</literal>) vor den eigentlichen Benutzernamen
-			angefügt wird, werden Benutzernamen in der Standardeinstellung auf 15 Zeichen limitiert.  Diese
-			Beschränkung kann über das Setzen der UCR-Variable
-			<envar>ucsschool/ldap/check/username/lengthlimit</envar> auf <literal>false</literal> deaktiviert
-			werden.
-		  </para>
-		  <para>
-			Auf Neuinstallationen werden ab sofort im UMC-Modul <emphasis>CSV-Import</emphasis>
-			automatisch generierte Benutzernamen aus den ersten 5 Zeichen des Vornamens und den ersten 5 Zeichen
-			des Nachnamens generiert, die durch einen Punkt getrennt sind. Das neue Verhalten kann auf
-			aktualisierten Systemen durch das manuelle Setzen der UCR-Variable
-			<envar>ucsschool/csvimport/username/generation/firstname_lastname</envar> auf
-			<literal>false</literal> aktiviert werden.
-		  </para>
+		<section id="relnotes:multiupload">
+			<title>Gleichzeitiges Hochladen mehrerer Dateien</title>
+			<para>
+				&ucsUAS; unterstützt ab UCS 4.0 Errata-Stand 162 das gleichzeitige Hochladen von
+				mehreren Dateien in den UMC-Modulen <guimenu>Klassenarbeit starten</guimenu> und <guimenu>Material
+				verteilen</guimenu>, sofern dies auch vom verwendeten Browser unterstützt wird. Der Benutzer kann
+				nun im Dateiauswahldialog seines verwendeten Browsers mehrere oder alle Dateien eines Verzeichnisses
+				auswählen und diese in einem Schritt hochladen.
+			</para>
 		</section>
 	</chapter>
 
