@@ -474,6 +474,7 @@ class Room(object):
 		try:
 			# Create new workgroup and assign new internet rule to it
 			group = Workgroup(school, members=[user_dn])
+			group.create()
 			global_domains = ['univention.de', 'google.de']
 			rule = InternetRule(typ='whitelist', domains=global_domains)
 			rule.define()
@@ -526,6 +527,7 @@ class Room(object):
 		try:
 			# Create new workgroup and assign new internet rule to it
 			group = Workgroup(school, members=[user_dn])
+			group.create()
 			global_domains = ['univention.de', 'google.de']
 			rule = InternetRule(typ='whitelist', domains=global_domains)
 			rule.define()
