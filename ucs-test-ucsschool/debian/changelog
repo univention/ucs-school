@@ -1,3 +1,10 @@
+ucs-test-ucsschool (2.0.51-1) unstable; urgency=low
+
+  * Bug# 34496: use lpr and smbclient
+  * Bug #35318: change in the test script according to change in the API
+
+ -- Ammar Najjar <najjar@univention.de>  Thu, 07 May 2015 11:54:50 +0200
+
 ucs-test-ucsschool (2.0.50-1) unstable; urgency=low
 
   * Bug #38347: disabled 72_radius_authentication temporarily
