@@ -13,5 +13,5 @@ $(addsuffix .html,$(MAIN)): %.html: $(SOURCES)
 $(addsuffix .fo,$(MAIN)): %.fo: $(SOURCES)
 
 check:: $(addsuffix .xml,$(MAIN))
-        XML_CATALOG_FILES="$(COMMON_DIR)/catalog.xml" \
-        xsltproc --xinclude $(COMMON_DIR)/stylesheets/check-bug.xsl $^
+	XML_CATALOG_FILES="$(COMMON_DIR)/catalog.xml" \
+	xsltproc --xinclude $(COMMON_DIR)/stylesheets/check-bug.xsl $^
