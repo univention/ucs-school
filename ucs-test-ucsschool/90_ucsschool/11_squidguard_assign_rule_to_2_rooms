@@ -69,7 +69,7 @@ def test_ruleset(ucr, test_settings):
 		expected_strings = [
 			'\ndest blacklist-%s {\ndomainlist blacklisted-domain-%s\nurllist blacklisted-url-%s' % (quote(rule), quote(rule), quote(rule)),
 			'\ndest whitelist-%s {\ndomainlist whitelisted-domain-%s\nurllist whitelisted-url-%s' % (quote(rule), quote(rule), quote(rule)),
-			'\nroom-%s {\npass whitelist-%s none' % (quote(room), quote(rule)),
+			'\nroom-%s {\npass !global-blacklist whitelist-%s none' % (quote(room), quote(rule)),
 			]
 
 		addr_list = ucr.get('proxy/filter/room/%s/ip' % room).split()
