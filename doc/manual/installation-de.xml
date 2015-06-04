@@ -254,30 +254,42 @@
 	<section id="school:installation:domjoin">
 	  <title>(Erneuter) Domänenbeitritt eines Schulservers</title>
 	  <para>
-	    Die Einrichtung eines Schulservers ist auch ohne das oben beschriebene UMC-Konfigurationsmodul möglich,
+	    Die Einrichtung eines Schulservers ist auch ohne das oben beschriebene UMC-Konfigurationsmodul möglich
 		bzw. notwendig, wenn während des Konfigrationsprozesses Probleme auftreten sollten.
-		Dazu müssen die in diesem Abschnitt beschriebenen Schritte manuell durchgeführt werden.
+		Nur in einem solchen Szenario müssen die in diesem Abschnitt beschriebenen Schritte manuell durchgeführt werden:
 	  </para>
-	  <para>
-		Vor dem Domänenbeitritt des Schulservers muss die Schule (OU) des Schulservers in der
-		&ucsUMC; des DC Masters angelegt werden (siehe <xref linkend="school:setup:umc:schools"/>).
-	  </para>
-	  <para>
-		Anschließend muss das System erneut der Domäne beitreten. Dies erfolgt auf der Kommandozeile
-		durch Aufruf des Befehls <command>univention-join</command>.
-	  </para>
-	  <para>
-		Der &ucsMaster; wird im Regelfall durch eine DNS-Abfrage ermittelt. Wenn das nicht möglich
-		sein sollte, kann der Rechnername des DC Master auch durch den Parameter <option>-dcname
-		<replaceable>HOSTNAME</replaceable></option> direkt angegeben werden. Der Rechnername muss dabei als vollqualifizierter Name
-		angegeben werden, also beispielsweise <systemitem class="fqdomainname">master.example.com</systemitem>.
-	  </para>
-	  <para>
-		Als Join-Account wird ein Benutzerkonto bezeichnet, das berechtigt ist, Systeme der UCS-Domäne
-		hinzuzufügen. Standardmäßig ist dies der Benutzer <systemitem class="username">Administrator</systemitem> oder ein
-		Mitglied der Gruppe <systemitem class="groupname">Domain Admins</systemitem>. Der Join-Account kann durch den Parameter
-		<option>-dcaccount <replaceable>ACCOUNTNAME</replaceable></option> an <command>univention-join</command> übergeben werden.
-	  </para>
+	  <itemizedlist>
+		<listitem>
+		  <simpara>
+			Vor dem Domänenbeitritt des Schulservers muss die Schule (OU) des Schulservers in der
+			&ucsUMC; des DC Masters angelegt werden (siehe <xref linkend="school:setup:umc:schools"/>).
+			Das Anlegen der Schule (OU) erfolgt üblicherweise automatisch durch das UMC-Konfigurationsmodul
+			und muss nur dann manuell durchgeführt werden, wenn die Schule (OU) im LDAP-Verzeichnis noch fehlt.
+		  </simpara>
+		</listitem>
+		<listitem>
+		  <simpara>
+			Anschließend muss das System erneut der Domäne beitreten. Dies erfolgt auf der Kommandozeile
+			durch Aufruf des Befehls <command>univention-join</command>.
+		  </simpara>
+		</listitem>
+		<listitem>
+		  <simpara>
+			Der &ucsMaster; wird im Regelfall durch eine DNS-Abfrage ermittelt. Wenn das nicht möglich
+			sein sollte, kann der Rechnername des DC Master auch durch den Parameter <option>-dcname
+			<replaceable>HOSTNAME</replaceable></option> direkt angegeben werden. Der Rechnername muss dabei als vollqualifizierter Name
+			angegeben werden, also beispielsweise <systemitem class="fqdomainname">master.example.com</systemitem>.
+		  </simpara>
+		</listitem>
+		<listitem>
+		  <simpara>
+			Als Join-Account wird ein Benutzerkonto bezeichnet, das berechtigt ist, Systeme der UCS-Domäne
+			hinzuzufügen. Standardmäßig ist dies der Benutzer <systemitem class="username">Administrator</systemitem> oder ein
+			Mitglied der Gruppe <systemitem class="groupname">Domain Admins</systemitem>. Der Join-Account kann durch den Parameter
+			<option>-dcaccount <replaceable>ACCOUNTNAME</replaceable></option> an <command>univention-join</command> übergeben werden.
+		  </simpara>
+		</listitem>
+	  </itemizedlist>
 	  <note>
 		<simpara>
 		Der Name des Schulservers darf nur aus Kleinbuchstaben, Ziffern sowie dem Bindestrich
