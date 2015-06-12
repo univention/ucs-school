@@ -1,0 +1,17 @@
+Backported fragment from latest iTALCs libvncclient library. A debugged core dump revealed
+that client->frameBuffer was NULL and therefore the COPY_RECT created a SEGFAULT.
+Have a look at bug #38413 for details.
+
+--- italc-2.0.0.ORIG/ica/x11/libvncclient/rfbproto.c	2011-08-03 23:18:00.000000000 +0200
++++ italc-2.0.0/ica/x11/libvncclient/rfbproto.c	2015-04-30 21:59:35.308228967 +0200
+@@ -157,6 +157,10 @@
+ static void CopyRectangle(rfbClient* client, uint8_t* buffer, int x, int y, int w, int h) {
+   int j;
+ 
++  if (client->frameBuffer == NULL) {
++	return;
++  }
++
+ #define COPY_RECT(BPP) \
+   { \
+     int rs = w * BPP / 8, rs2 = client->width * BPP / 8; \
