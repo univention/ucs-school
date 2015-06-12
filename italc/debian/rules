@@ -2,7 +2,7 @@
 #
 # Univention UCS@school italc postinst
 #
-# Copyright 2012-2013 Univention GmbH
+# Copyright 2012-2015 Univention GmbH
 #
 # http://www.univention.de/
 #
@@ -44,8 +44,8 @@ override_dh_clean:
 	for fn in patches/*.patch ; do patch -p1 -i $$fn ; done
 	dh_clean
 
-override_dh_install:                                                                                                                                                                                            
-	dh_install --sourcedir=debian/tmp                                                                                                                                                                       
+override_dh_install:
+	dh_install --sourcedir=debian/tmp
 	install -D -m 755 99ucsschool-italc-key.inst debian/italc-client/usr/lib/univention-install
 	install -D -m 644 obj-*/rfb/rfbconfig.h debian/libitalc-dev/usr/include/libitalc/rfb/
 	install -D -m 644 obj-*/italcconfig.h debian/libitalc-dev/usr/include/libitalc/
