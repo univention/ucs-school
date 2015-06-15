@@ -66,9 +66,11 @@ member: $s4_host_dn
 			# samba3 -> check if machine account is in printer group
 			# check if credentials are passed
 			ucs_parseCredentials "$@"
-			if [ -z "$binddn" ] || [ -z "$bindpwd" -a -z "$bindpwdfile" ]; then
-				echo "usage: $0 --binddn DN --bindpwd Password or --bindpwdfile FILE"
-				exit 2
+			if [ "$server_role" = "domaincontroller_slave" ] ; then
+				if [ -z "$binddn" ] || [ -z "$bindpwd" -a -z "$bindpwdfile" ]; then
+					echo "usage: $0 --binddn DN --bindpwd Password or --bindpwdfile FILE"
+					exit 2
+				fi
 			fi
 			group="Printer-Admins"
 			if [ -n "$groups_default_printoperators" ]; then
