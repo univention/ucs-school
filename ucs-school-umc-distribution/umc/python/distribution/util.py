@@ -577,6 +577,8 @@ class Project(_Dict):
 				src = str( os.path.join( self.cachedir, fn ) )
 				target = str( os.path.join( self.user_projectdir(user), fn ) )
 				try:
+					if os.path.islink(src):
+						raise IOError('Symlinks are not allowed')
 					shutil.copyfile( src, target )
 				except (OSError, IOError) as e:
 					MODULE.error( 'failed to copy "%s" to "%s": %s' % (src, target, str(e)))
@@ -624,7 +626,11 @@ class Project(_Dict):
 			else:
 				try:
 					# copy dir
-					shutil.copytree( srcdir, targetdir )
+					def ignore(src, names):
+						# !important" don't let symlinks be copied (e.g. /etc/shadow).
+						# don't use shutil.copytree(symlinks=True) for this as it changes the owner + mode + flags of the symlinks afterwards
+						return [name for name in names if os.path.islink(os.path.join(src, name))]
+					shutil.copytree(srcdir, targetdir, ignore=ignore)
 
 					# fix permission
 					os.chown(targetdir, int(self.sender.uidNumber), int(self.sender.gidNumber))
