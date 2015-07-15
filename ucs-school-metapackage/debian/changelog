@@ -1,3 +1,9 @@
+ucs-school-metapackage (6.0.8-12) unstable; urgency=low
+
+  * Bumped version to avoid problems with app center (Bug #38923)
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Wed, 15 Jul 2015 14:01:14 +0200
+
 ucs-school-metapackage (6.0.8-11) unstable; urgency=medium
 
   * Set connector/ldap/binddn=ldap/hostdn during *-slave join (Bug #37820)
