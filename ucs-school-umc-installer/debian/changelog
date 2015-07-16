@@ -1,3 +1,9 @@
+ucs-school-umc-installer (2.0.20-2) unstable; urgency=low
+
+  * Bumped version to avoid problems with app center (Bug #38923)
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Thu, 16 Jul 2015 12:35:54 +0200
+
 ucs-school-umc-installer (2.0.20-1) unstable; urgency=medium
 
   * Bug #37763: fix error message
