@@ -161,10 +161,6 @@ define([
 		},
 
 		postMixInProperties: function() {
-			// is called after all inherited properties/methods have been mixed
-			// into the object (originates from dijit._Widget)
-
-			// it is important to call the parent's postMixInProperties() method
 			this.inherited(arguments);
 
 			// status of demo/presentation
@@ -312,6 +308,35 @@ define([
 			}];
 		},
 
+		_loadPlugins: function() {
+			return this.umcpCommand('computerroom/plugins/load').then(lang.hitch(this, function(response) {
+				array.forEach(response.result.buttons, lang.hitch(this, function(plugin) {
+					this._actions.push(lang.mixin({
+						isMultiAction: true,
+						isStandardAction: false,
+						enablingMode: 'some',
+						callback: lang.hitch(this, '_executePlugin', plugin)
+					}, plugin));
+				}));
+			}));
+		},
+
+		_executePlugin: function(plugin, ids, items) {
+			if (items.length === 0) {
+				dialog.alert(_('No computers were selected. Please select computers.'));
+				return;
+			}
+			array.forEach(items, function(item) {
+				this.umcpCommand('computerroom/plugins/execute', {
+					plugin: plugin.name,
+					computer: item.id[0]
+				});
+			}, this);
+			if (plugin.state_message) {
+				this.addNotification(plugin.state_message);
+			}
+		},
+
 		// grid actions:
 
 		_screenshot: function(ids, items) {
@@ -445,7 +470,7 @@ define([
 			});
 			this.own(this._settingsDialog);
 
-			this.standbyDuring(this._setVncSettings()).then(
+			this.standbyDuring(this._preRendering()).then(
 				lang.hitch(this, '_renderPages'),
 				lang.hitch(this, '_renderPages')
 			);
@@ -453,6 +478,13 @@ define([
 			// initiate a progress bar widget
 			this._progressBar = new ProgressBar();
 			this.own(this._progressBar);
+		},
+
+		_preRendering: function() {
+			return all([
+				this._setVncSettings(),
+				this._loadPlugins()
+			]);
 		},
 
 		_renderPages: function() {

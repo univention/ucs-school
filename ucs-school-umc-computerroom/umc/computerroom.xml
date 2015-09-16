@@ -23,5 +23,7 @@
 	<command name="computerroom/user/logout" function="user_logout"/>
 	<command name="computerroom/room/acquire" function="room_acquire"/>
 	<command name="computerroom/room/guess" function="guess_room"/>
+	<command name="computerroom/plugins/load" function="plugins_load"/>
+	<command name="computerroom/plugins/execute" function="plugins_execute"/>
 	</module>
 </umc>

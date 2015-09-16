@@ -41,6 +41,9 @@ import fcntl
 from random import Random
 import urlparse
 import psutil
+import importlib
+import traceback
+import inspect
 from ipaddr import IPAddress
 from ldap.filter import escape_filter_chars
 
@@ -51,9 +54,9 @@ from univention.config_registry import handler_set, handler_unset
 from univention.lib.i18n import Translation
 import univention.lib.atjobs as atjobs
 
-from univention.management.console.modules.sanitizers import ListSanitizer, Sanitizer
+from univention.management.console.modules.sanitizers import ListSanitizer, Sanitizer, StringSanitizer
 from univention.management.console.modules.decorators import sanitize, simple_response
-from univention.management.console.modules import UMC_OptionTypeError, UMC_CommandError
+from univention.management.console.modules import UMC_OptionTypeError, UMC_CommandError, UMC_Error
 from univention.management.console.log import MODULE
 from univention.management.console.protocol import MIMETYPE_JPEG, Response
 
@@ -222,6 +225,23 @@ class IPAddressSanitizer(Sanitizer):
 			self.raise_validation_error('%s' % (exc,))
 
 
+class Plugin(object):
+
+	gettext_domain = 'ucs-school-umc-computerroom'
+
+	def __init__(self, computerroom, italc):
+		self.computerroom = computerroom
+		self.italc = italc
+		self._ = Translation(self.gettext_domain).translate
+
+	@property
+	def name(self):
+		return type(self).__name__
+
+	def button(self):
+		return {'name': self.name}
+
+
 class Instance(SchoolBaseModule):
 	ATJOB_KEY = 'UMC-computerroom'
 
@@ -232,6 +252,23 @@ class Instance(SchoolBaseModule):
 		self._random.seed()
 		self._lessons = SchoolLessons()
 		self._ruleEndAt = None
+		self._load_plugins()
+
+	def _load_plugins(self):
+		self._plugins = {}
+		for module in os.listdir(os.path.join(os.path.dirname(__file__), 'plugins')):
+			if module.endswith('.py'):
+				try:
+					module = importlib.import_module('univention.management.console.modules.computerroom.plugins.%s' % (module[:-3],))
+				except ImportError:
+					MODULE.error(traceback.format_exc())
+				for name, plugin in inspect.getmembers(module, inspect.isclass):
+					if not name.startswith('_') and plugin is not Plugin and issubclass(plugin, Plugin):
+						try:
+							plugin = plugin(self, self._italc)
+						except Exception:
+							MODULE.error(traceback.format_exc())
+						self._plugins[plugin.name] = plugin
 
 	def destroy(self):
 		'''Remove lock file when UMC module exists'''
@@ -897,3 +934,22 @@ class Instance(SchoolBaseModule):
 		computer.logOut()
 
 		self.finished(request.id, True)
+
+	@simple_response
+	def plugins_load(self):
+		plugins = {'buttons': []}
+		for plugin in self._plugins.values():
+			plugins['buttons'].append(plugin.button())
+		return plugins
+
+	@check_room_access
+	@sanitize(
+		plugin=StringSanitizer(required=True),
+		computer=StringSanitizer(required=True),
+	)
+	def plugins_execute(self, request):
+		plugin = self._plugins.get(request.options['plugin'])
+		if not plugin:
+			raise UMC_Error('Plugin not found.')
+		result = plugin.execute(request.options['computer'])
+		self.finished(request.id, result)

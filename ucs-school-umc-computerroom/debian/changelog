@@ -1,3 +1,9 @@
+ucs-school-umc-computerroom (6.0.4-1) unstable; urgency=medium
+
+  * Bug #39318: add interface for computerroom plugins
+
+ -- Florian Best <best@univention.de>  Wed, 16 Sep 2015 18:28:36 +0200
+
 ucs-school-umc-computerroom (6.0.3-3) unstable; urgency=medium
 
   * Bug #36760: fix some ucslint warnings and deprecated UMC module loading

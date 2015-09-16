@@ -34,7 +34,6 @@
 import copy
 import re
 import subprocess
-import sys
 import tempfile
 import threading
 import time
@@ -48,7 +47,7 @@ import univention.admin.modules as udm_modules
 import univention.admin.objects as udm_objects
 import univention.admin.uldap as udm_uldap
 
-from ucsschool.lib.schoolldap import LDAP_Connection, LDAP_ConnectionError, set_credentials, SchoolSearchBase, SchoolBaseModule, LDAP_Filter, Display
+from ucsschool.lib.schoolldap import LDAP_Connection, SchoolSearchBase
 
 import notifier
 import notifier.signals
