@@ -78,7 +78,7 @@ ucr set proxy/filter/global/blacklists/urls=\
 		Die Blacklisten werden vom Proxy in der Standardeinstellung mit niedriger Priorität
 		ausgewertet, d.h. (temporäre) Whitelisten von Schuladministratoren und Lehrern haben Vorrang.  Um
 		die globalen Blacklisten vorrangig auszuwerten, kann die UCR-Variable
-		<envar>proxy/filter/global/blacklists/forced</envar> auf den Wert <emphasis>yes</emphasis> gesetzt
+		<envar>proxy/filter/global/blacklists/forced</envar> auf den Wert <literal>yes</literal> gesetzt
 		werden. Die Blacklisten können anschließend nicht mehr durch Schuladministratoren oder Lehrer in der
 		UMC umgangen bzw. zeitweilig deaktiviert werden.
 	</para>
