@@ -12,7 +12,7 @@
   <title>Web-Proxy auf den Schulservern</title>
   <para>
 	In der Grundeinstellung läuft auf jedem Schulserver (bzw. im Single-Server-Betrieb auf dem
-	&ucsMaster;) ein Proxy-Server auf Basis von Squid in Zusammenspiel mit squidGuard. Der Proxy erlaubt
+	&ucsMaster;) ein Proxy-Server auf Basis von Squid im Zusammenspiel mit squidGuard. Der Proxy erlaubt
 	Lehrern in Schulstunden den Zugriff auf einzelne Webseiten zu beschränken oder auch generell
 	bestimmte Webseiten zu sperren. Dies ist in der &ucsUAS;-Lehrerdokumentation <biblioref
 	linkend="ucs-school-teacher"/> beschrieben.
@@ -46,7 +46,7 @@
   <section id="school:proxy:blacklists">
 	<title>Einbindung von externen Blacklisten</title>
 	<para>
-	  Der Proxy von &ucsUAS; unterstützt (ab &ucsUAS; 4.0 R2 und mindestens UCS 4.0 Erratum 163) die Einbindung von externen Blacklisten, welche als Textdateien vorliegen müssen. Sie werden vom Proxy vorrangig ausgewertet, d.h. sie können nicht durch Schuladministratoren oder Lehrer in der UMC umgangen oder zeitweilig deaktiviert werden.
+		Der Proxy von &ucsUAS; unterstützt (ab &ucsUAS; 4.0 R2 und mindestens UCS 4.0 Erratum 163) die Einbindung von externen Blacklisten, welche als Textdateien vorliegen müssen.
 	</para>
 	<para>
 	  Die Textdateien dürfen jeweils nur Domänennamen oder URLs enthalten. Pro Zeile darf nur ein Eintrag (Domänenname/URL) enthalten sein.
@@ -73,6 +73,14 @@ ucr set proxy/filter/global/blacklists/domains=\
 ucr set proxy/filter/global/blacklists/urls=\
      "extblacklist1/urls bl2/list-urls bl3-urls"
 	  </programlisting>
+	</para>
+	<para>
+		Die Blacklisten werden vom Proxy in der Standardeinstellung mit niedriger Priorität
+		ausgewertet, d.h. (temporäre) Whitelisten von Schuladministratoren und Lehrern haben Vorrang.  Um
+		die globalen Blacklisten vorrangig auszuwerten, kann die UCR-Variable
+		<envar>proxy/filter/global/blacklists/forced</envar> auf den Wert <emphasis>yes</emphasis> gesetzt
+		werden. Die Blacklisten können anschließend nicht mehr durch Schuladministratoren oder Lehrer in der
+		UMC umgangen bzw. zeitweilig deaktiviert werden.
 	</para>
 	<note>
 	  <para>
