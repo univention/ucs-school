@@ -62,6 +62,7 @@ FN_CONFIG = 'squidGuard.conf'
 DIR_DATA = '/var/lib/ucs-school-webproxy'
 FN_GLOBAL_BLACKLIST_PREFIX = 'global-blacklist'
 TXT_GLOBAL_BLACKLIST_COMMENT = '###GLOBAL-BLACKLIST-COMMENT###'
+UCR_FORCED_GLOBAL_BLACKLIST = 'proxy/filter/global/blacklists/forced'
 
 def logerror(msg):
 	logfd = open( PATH_LOG, 'a+')
@@ -237,14 +238,21 @@ def createTemporaryConfig(fn_temp_config, configRegistry, DIR_TEMP, changes):
 		f.write('		 redirect %s\n' % default_redirect)
 		f.write('	 }\n\n')
 
+	forced_blacklist = ''
+	normal_blacklist = '!global-blacklist'
+	if configRegistry.is_true(UCR_FORCED_GLOBAL_BLACKLIST, False):
+		forced_blacklist = '!global-blacklist'
+		normal_blacklist = ''
+
 	RULES = {
 		'whitelist-blacklist-pass':
-			'whitelist-%(username)s !blacklist-%(username)s all\n',
+			'%s whitelist-%(username)s !blacklist-%(username)s %s all\n' % (forced_blacklist, normal_blacklist),
 		'whitelist-block':
-			'whitelist-%(username)s none\n',
+			'%s whitelist-%(username)s none\n' % (forced_blacklist,),
 		'blacklist-pass':
-			'!blacklist-%(username)s all\n',
+			'!blacklist-%(username)s !global-blacklist all\n',
 		}
+
 	for (username, rooms, ) in roomRule.items():
 		for room in rooms:
 			if username in roomRules:
@@ -257,7 +265,7 @@ def createTemporaryConfig(fn_temp_config, configRegistry, DIR_TEMP, changes):
 				continue
 			if filtertype in RULES:
 				f.write('	room-%s {\n' % (quote(room), ))
-				f.write('		pass !global-blacklist %s\n' % (RULES[filtertype] % {'username': quoted_username, }))
+				f.write('		pass %s\n' % (RULES[filtertype] % {'username': quoted_username, },))
 				f.write('		redirect %s\n' % default_redirect)
 				f.write('	}\n')
 
@@ -266,12 +274,12 @@ def createTemporaryConfig(fn_temp_config, configRegistry, DIR_TEMP, changes):
 		filtertype = configRegistry.get('proxy/filter/setting/%s/filtertype' % proxy_setting, 'whitelist-blacklist-pass')
 		if filtertype == 'whitelist-blacklist-pass':
 			f.write('	 usergroup-%s {\n' % quote(usergroupname))
-			f.write('		 pass !global-blacklist whitelist-%s !blacklist-%s all\n' % (quote(proxy_setting), quote(proxy_setting)))
+			f.write('		 pass %s whitelist-%s !blacklist-%s %s all\n' % (forced_blacklist, quote(proxy_setting), quote(proxy_setting), normal_blacklist))
 			f.write('		 redirect %s\n' % default_redirect)
 			f.write('	 }\n\n')
 		elif filtertype == 'whitelist-block':
 			f.write('	 usergroup-%s {\n' % quote(usergroupname))
-			f.write('		 pass !global-blacklist whitelist-%s none\n' % (quote(proxy_setting),))
+			f.write('		 pass %s whitelist-%s none\n' % (forced_blacklist, quote(proxy_setting),))
 			f.write('		 redirect %s\n' % (default_redirect,))
 			f.write('	 }\n\n')
 		elif filtertype == 'blacklist-pass':
@@ -281,7 +289,7 @@ def createTemporaryConfig(fn_temp_config, configRegistry, DIR_TEMP, changes):
 			f.write('	 }\n\n')
 
 	f.write('	 default {\n')
-	f.write('		  pass !global-blacklist whitelist !blacklist all\n')
+	f.write('		  pass %s whitelist !blacklist %s all\n' % (forced_blacklist, normal_blacklist))
 	f.write('		  redirect %s\n' % (default_redirect,))
 	f.write('	 }\n')
 	f.write('}\n')

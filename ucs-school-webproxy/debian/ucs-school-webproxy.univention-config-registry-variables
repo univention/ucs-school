@@ -1,3 +1,9 @@
+[proxy/filter/global/blacklists/forced]
+Description[de]=Um die globalen Blacklisten vorrangig vor allen anderen Whitelists auszuwerten, ist diese Variable auf "yes" zu setzen (Standard: no)
+Description[en]=If this variable is set to "yes", global blacklists have higher priority than any whitelist (default: no)
+Type=bool
+Categories=ucsschool-base
+
 [proxy/filter/global/blacklists/domains]
 Description[de]=Leerzeichenseparierte Liste mit Textdateien, die als Blacklist für Domänen in die UCS@school-Proxy-Konfiguration eingebunden werden sollen.
 Description[en]=Space separated list of text files that will be included as blacklist for domains within the UCS@school proxy configuration.

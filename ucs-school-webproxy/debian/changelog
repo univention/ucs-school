@@ -1,3 +1,9 @@
+ucs-school-webproxy (11.0.7-1) unstable; urgency=low
+
+  * Bug #39061: add configuration option for evaluation order of global blacklist
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Mon, 14 Sep 2015 12:33:49 +0200
+
 ucs-school-webproxy (11.0.6-1) unstable; urgency=medium
 
   * Fix Windows Updater exception ACL (Bug #37541)
