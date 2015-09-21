@@ -1,3 +1,9 @@
+ucs-school-webproxy (11.0.8-1) unstable; urgency=low
+
+  * Bug #39061: fixed format strings
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Mon, 21 Sep 2015 13:06:01 +0200
+
 ucs-school-webproxy (11.0.7-1) unstable; urgency=low
 
   * Bug #39061: add configuration option for evaluation order of global blacklist
