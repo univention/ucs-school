@@ -1,3 +1,10 @@
+ucs-school-netlogon-user-logonscripts (11.0.1-1) unstable; urgency=low
+
+  * Bug #38754: catch LDAP errors / fail fast if LDAP connection fails due
+    to invalid credentials
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Thu, 01 Oct 2015 22:37:53 +0200
+
 ucs-school-netlogon-user-logonscripts (11.0.0-1) unstable; urgency=medium
 
   * Bug #35892: Start UCS 4.0 development
