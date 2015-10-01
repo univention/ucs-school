@@ -107,24 +107,24 @@ def getGlobalLinks():
 	share_keys = []
 	univention.debug.debug(univention.debug.LISTENER, univention.debug.INFO, "ucsschool-user-logonscripts: search for global links")
 	if listener.baseConfig.has_key('ucsschool/userlogon/commonshares') and listener.baseConfig['ucsschool/userlogon/commonshares']:
-		l = getConnection()
-		share_keys = listener.baseConfig['ucsschool/userlogon/commonshares'].split(',')
-		for key in share_keys:
-			# check if share exists
-			res_shares = []
-			try:
-				res_shares = l.search(scope="sub", filter='(&(objectClass=univentionShareSamba)(|(cn=%s)(univentionShareSambaName=%s)))' % (key,key), attr=['cn'])
-			except:
-				pass
-			if len(res_shares) > 0:
-				univention.debug.debug(univention.debug.LISTENER, univention.debug.INFO, "ucsschool-user-logonscripts: search global links for %s" % key)
-				if listener.baseConfig.has_key('ucsschool/userlogon/commonshares/server/%s' % key):
-					server = listener.baseConfig['ucsschool/userlogon/commonshares/server/%s' % key]
-					if listener.baseConfig.has_key('ucsschool/userlogon/commonshares/letter/%s' % key):
-						letter = listener.baseConfig['ucsschool/userlogon/commonshares/letter/%s' % key].replace(':','')
-						globalLinks[key] = {'server':server,'letter':letter}
-					else:
-						globalLinks[key] = {'server':server}
+		with LDAPConnection() as l:
+			share_keys = listener.baseConfig['ucsschool/userlogon/commonshares'].split(',')
+			for key in share_keys:
+				# check if share exists
+				res_shares = []
+				try:
+					res_shares = l.search(scope="sub", filter='(&(objectClass=univentionShareSamba)(|(cn=%s)(univentionShareSambaName=%s)))' % (key,key), attr=['cn'])
+				except:
+					pass
+				if len(res_shares) > 0:
+					univention.debug.debug(univention.debug.LISTENER, univention.debug.INFO, "ucsschool-user-logonscripts: search global links for %s" % key)
+					if listener.baseConfig.has_key('ucsschool/userlogon/commonshares/server/%s' % key):
+						server = listener.baseConfig['ucsschool/userlogon/commonshares/server/%s' % key]
+						if listener.baseConfig.has_key('ucsschool/userlogon/commonshares/letter/%s' % key):
+							letter = listener.baseConfig['ucsschool/userlogon/commonshares/letter/%s' % key].replace(':','')
+							globalLinks[key] = {'server':server,'letter':letter}
+						else:
+							globalLinks[key] = {'server':server}
 	univention.debug.debug(univention.debug.LISTENER, univention.debug.INFO, "ucsschool-user-logonscripts: got global links %s" % globalLinks)
 
 
@@ -339,25 +339,37 @@ def writeWindowsLinkSkripts(uid, links, mappings, dn):
 		finally:
 			listener.unsetuid()
 
-def getConnection():
-	if getConnection.connection is not None:
-		return getConnection.connection
-	connect_count = 0
-	while connect_count < 31:
-		try:
-			getConnection.connection = connect()
-			return getConnection.connection
-		except ldap.LDAPError, msg:
-			univention.debug.debug(univention.debug.LISTENER, univention.debug.WARN, 'ucsschool-user-logonscripts: %s: failed to connect to ldap-server, wait..., ' % msg[0]['desc'])
-			connect_count = connect_count+1
-			if connect_count >= 30:
-				univention.debug.debug(univention.debug.LISTENER, univention.debug.ERROR, 'ucsschool-user-logonscripts: %s: failed to connect to ldap-server, ' % msg[0]['desc'])
-				raise
-			else:
-				univention.debug.debug(univention.debug.LISTENER, univention.debug.WARN, 'ucsschool-user-logonscripts: Can not connect LDAP Server (%s), retry in 10 seconds' % msg[0]['desc'])
-				time.sleep(10)
-getConnection.connection = None
+class LDAPConnection(object):
+	lo = None
 
+	def __enter__(self):
+		if self.lo is not None:
+			return LDAPConnection.lo
+
+		connect_count = 0
+		while connect_count < 31:
+			try:
+				LDAPConnection.lo = connect()
+				return LDAPConnection.lo
+			except ldap.LDAPError, ex:
+				univention.debug.debug(univention.debug.LISTENER, univention.debug.WARN, 'ucsschool-user-logonscripts: %s: failed to connect to LDAP server' % (ex[0]['desc'],))
+				connect_count = connect_count+1
+				if isinstance(ex, ldap.INVALID_CREDENTIALS):
+					# this case may happen on rejoin during listener init; to shorten module init time, simply raise an exception
+					univention.debug.debug(univention.debug.LISTENER, univention.debug.ERROR, 'ucsschool-user-logonscripts: %s: giving up creating a new LDAP connection' % (ex[0]['desc'],))
+					raise
+				# in all other cases wait up to 300 seconds
+				if connect_count >= 30:
+					univention.debug.debug(univention.debug.LISTENER, univention.debug.ERROR, 'ucsschool-user-logonscripts: %s: failed to connect to LDAP server' % (ex[0]['desc'],))
+					raise
+				else:
+					univention.debug.debug(univention.debug.LISTENER, univention.debug.WARN, 'ucsschool-user-logonscripts: unable to connect to LDAP server (%s), retrying in 10 seconds' % (ex[0]['desc'],))
+					time.sleep(10)
+
+	def __exit__(self, exc_type, exc_value, traceback):
+		if exc_type is not None and isinstance(exc_type, type(ldap.LDAPError)):
+			LDAPConnection.lo = None
+			univention.debug.debug(univention.debug.LISTENER, univention.debug.ERROR, 'ucsschool-user-logonscripts: a LDAP error occurred - invalidating LDAP connection - error=%r' % (exc_value[0]['desc'],))
 
 def groupchange(dn, new, old):
 	univention.debug.debug(univention.debug.LISTENER, univention.debug.INFO, 'ucsschool-user-logonscripts: sync by group')
@@ -382,20 +394,26 @@ def sharechange(dn, new, old):
 	else:
 		return
 
-	l = getConnection()
-
-	res = l.search(scope="sub", filter='(&(objectClass=posixGroup)(gidNumber=%s))' % use['univentionShareGid'][0])
-	if len(res) > 0:
-		dn = res[0][0]
-		group = res[0][1]
-		groupchange(dn, group, None)
+	try:
+		with LDAPConnection() as l:
+			res = l.search(scope="sub", filter='(&(objectClass=posixGroup)(gidNumber=%s))' % (use['univentionShareGid'][0],))
+			if len(res) > 0:
+				dn = res[0][0]
+				group = res[0][1]
+				groupchange(dn, group, None)
+	except ldap.LDAPError, msg:
+		univention.debug.debug(
+			univention.debug.LISTENER,
+			univention.debug.ERROR,
+			"ucsschool-user-logonscripts: ldap search for group object with gidNumber=%r failed in sharechange(%s) (%s)" % (use['univentionShareGid'][0], dn, msg))
+		raise
 
 def userGids(dn):
 
-	l = getConnection()
 	try:
-		res = l.search(scope="sub", filter="(&(objectClass=posixGroup)(uniqueMember=%s))" % dn, attr=["gidNumber"])
-		return frozenset([attributes['gidNumber'][0] for (dn_, attributes, ) in res])
+		with LDAPConnection() as l:
+			res = l.search(scope="sub", filter="(&(objectClass=posixGroup)(uniqueMember=%s))" % dn, attr=["gidNumber"])
+			return frozenset([attributes['gidNumber'][0] for (dn_, attributes, ) in res])
 	except ldap.LDAPError, msg:
 		univention.debug.debug(
 			univention.debug.LISTENER,
@@ -405,106 +423,108 @@ def userGids(dn):
 
 def gidShares(gid):
 	try:
-		return getConnection().search(scope="sub", filter='(&(objectClass=univentionShareSamba)(univentionShareGid=%s))' % gid, attr=['cn','univentionShareHost','univentionShareSambaName'])
-	except:
+		with LDAPConnection() as l:
+			return l.search(scope="sub", filter='(&(objectClass=univentionShareSamba)(univentionShareGid=%s))' % gid, attr=['cn','univentionShareHost','univentionShareSambaName'])
+	except ldap.LDAPError, msg:
 		univention.debug.debug(univention.debug.LISTENER, univention.debug.WARN,
-			'ucsschool-user-logonscripts: LDAP-search failed for shares with gid %s' % (gid))
+			'ucsschool-user-logonscripts: LDAP-search failed for shares with gid %s: %r' % (gid, msg))
 		return ()
 
 def userchange(dn, new, old):
 	univention.debug.debug(univention.debug.LISTENER, univention.debug.INFO, 'ucsschool-user-logonscripts: sync by user')
 
 	global scriptpath
-	l = getConnection()
 
-	if new:
+	with LDAPConnection() as l:
 
-		try:
-			if new['uid'][0][-1] == "$": # machine account
-				return
-		except:
-			pass
-		ldapbase = listener.baseConfig['ldap/base']
-		membershipIDs = set()
+		if new:
 
-		if new == 'search': # called from groupchange
 			try:
-				univention.debug.debug(univention.debug.LISTENER, univention.debug.INFO, 'ucsschool-user-logonscripts: got to search %s' % dn)
-				res = l.search(base=dn, scope="base", filter='objectClass=*')
-				if len(res) > 0:
-					new = res[0][1]
-					# get groups we are member of:
-					membershipIDs.add(new['gidNumber'][0])
+				if new['uid'][0][-1] == "$": # machine account
+					return
 			except:
-				univention.debug.debug(univention.debug.LISTENER, univention.debug.INFO, 'ucsschool-user-logonscripts: LDAP-search failed for user %s' % (dn))
-				return
-		else:
-			membershipIDs.add(new['gidNumber'][0])
+				pass
+			ldapbase = listener.baseConfig['ldap/base']
+			membershipIDs = set()
 
-		if old and \
-			    new.get('uid') == old.get('uid') and \
-			    new.get('gidNumber') == old.get('gidNumber') and \
-			    new.get('homeDirectory') == old.get('homeDirectory'):
-			return # skip unused attributes
+			if new == 'search': # called from groupchange
+				try:
+					univention.debug.debug(univention.debug.LISTENER, univention.debug.INFO, 'ucsschool-user-logonscripts: got to search %s' % dn)
+					res = l.search(base=dn, scope="base", filter='objectClass=*')
+					if len(res) > 0:
+						new = res[0][1]
+						# get groups we are member of:
+						membershipIDs.add(new['gidNumber'][0])
+				except:
+					univention.debug.debug(univention.debug.LISTENER, univention.debug.INFO, 'ucsschool-user-logonscripts: LDAP-search failed for user %s in userchange()' % (dn))
+					raise
+			else:
+				membershipIDs.add(new['gidNumber'][0])
 
-		# Gruppen suchen mit uniqueMember=dn
-		# shares suchen mit GID wie Gruppe
-		univention.debug.debug(univention.debug.LISTENER, univention.debug.INFO, 'ucsschool-user-logonscripts: handle user %s' % dn)
-		membershipIDs.update(userGids(dn))
+			if old and \
+					new.get('uid') == old.get('uid') and \
+					new.get('gidNumber') == old.get('gidNumber') and \
+					new.get('homeDirectory') == old.get('homeDirectory'):
+				return # skip unused attributes
 
-		univention.debug.debug(univention.debug.LISTENER, univention.debug.INFO, 'ucsschool-user-logonscripts: groups are %s' % membershipIDs)
+			# Gruppen suchen mit uniqueMember=dn
+			# shares suchen mit GID wie Gruppe
+			univention.debug.debug(univention.debug.LISTENER, univention.debug.INFO, 'ucsschool-user-logonscripts: handle user %s' % dn)
+			membershipIDs.update(userGids(dn))
+
+			univention.debug.debug(univention.debug.LISTENER, univention.debug.INFO, 'ucsschool-user-logonscripts: groups are %s' % membershipIDs)
 
 
-		mappings = {}
-		classre = re.compile ('^cn=([^,]*),cn=klassen,cn=shares,ou=([^,]*),(?:ou=[^,]+,)?%s$' % ldapbase)
-		links = {}
-		validservers = frozenset(listener.baseConfig.get('ucsschool/userlogon/shares/validservers', listener.baseConfig.get('hostname') ).split(','))
+			mappings = {}
+			classre = re.compile ('^cn=([^,]*),cn=klassen,cn=shares,ou=([^,]*),(?:ou=[^,]+,)?%s$' % ldapbase)
+			links = {}
+			validservers = frozenset(listener.baseConfig.get('ucsschool/userlogon/shares/validservers', listener.baseConfig.get('hostname') ).split(','))
 
-		# get global links
-		for name in globalLinks.keys():
-			if globalLinks[name].get("server"):
-				links[name] = globalLinks[name]["server"]
-				if globalLinks[name].get("letter"):
-					mappings[name] = {'server': globalLinks[name]["server"], 'letter': globalLinks[name]["letter"]}
+			# get global links
+			for name in globalLinks.keys():
+				if globalLinks[name].get("server"):
+					links[name] = globalLinks[name]["server"]
+					if globalLinks[name].get("letter"):
+						mappings[name] = {'server': globalLinks[name]["server"], 'letter': globalLinks[name]["letter"]}
 
-		classShareLetter = listener.baseConfig.get('ucsschool/userlogon/classshareletter', 'K').replace(':', '')
-		for ID in membershipIDs:
-			for share in gidShares(ID):
-				# linkname is identical to the sharename
-				linkname = share[1]['cn'][0]
-				if share[1].has_key('univentionShareSambaName'):
-					linkname = share[1]['univentionShareSambaName'][0]
+			classShareLetter = listener.baseConfig.get('ucsschool/userlogon/classshareletter', 'K').replace(':', '')
+			for ID in membershipIDs:
+				for share in gidShares(ID):
+					# linkname is identical to the sharename
+					linkname = share[1]['cn'][0]
+					if share[1].has_key('univentionShareSambaName'):
+						linkname = share[1]['univentionShareSambaName'][0]
 
-				# ignore link if already in global links
-				if links.get(linkname):
-					continue
+					# ignore link if already in global links
+					if links.get(linkname):
+						continue
 
-				# hostname is either an IP or an FQDN
-				hostname = share[1]['univentionShareHost'][0]
-				if hostname.strip('012456789.'): # no IP-Address
-					hostname = hostname.split('.', 1)[0]
+					# hostname is either an IP or an FQDN
+					hostname = share[1]['univentionShareHost'][0]
+					if hostname.strip('012456789.'): # no IP-Address
+						hostname = hostname.split('.', 1)[0]
 
-				# save link and mapping
-				if hostname in validservers or '*' in validservers:
-					links[linkname] = hostname
-					classmatches = classre.match(share[0])
-					if classmatches and len(classmatches.groups()) == 2:
-						mappings[linkname] = {'server': hostname, 'letter': classShareLetter}
+					# save link and mapping
+					if hostname in validservers or '*' in validservers:
+						links[linkname] = hostname
+						classmatches = classre.match(share[0])
+						if classmatches and len(classmatches.groups()) == 2:
+							mappings[linkname] = {'server': hostname, 'letter': classShareLetter}
 
-		univention.debug.debug(univention.debug.LISTENER, univention.debug.INFO, "ucsschool-user-logonscripts: links %s" % links)
+			univention.debug.debug(univention.debug.LISTENER, univention.debug.INFO, "ucsschool-user-logonscripts: links %s" % links)
 
-		writeWindowsLinkSkripts(new['uid'][0], links, mappings, dn)
-		if listener.baseConfig.is_true("ucsschool/userlogon/mac"):
-			writeMacLinkScripts(new['uid'][0], new['homeDirectory'][0], links)
+			writeWindowsLinkSkripts(new['uid'][0], links, mappings, dn)
+			if listener.baseConfig.is_true("ucsschool/userlogon/mac"):
+				writeMacLinkScripts(new['uid'][0], new['homeDirectory'][0], links)
 
-	elif old and not new:
-		listener.setuid(0)
-		try:
-			for path in scriptpath:
-				if os.path.exists("%s/%s.vbs" % (path, old['uid'][0])):
-					os.remove("%s/%s.vbs" % (path, old['uid'][0]))
-		finally:
-			listener.unsetuid()
+		elif old and not new:
+			listener.setuid(0)
+			try:
+				for path in scriptpath:
+					if os.path.exists("%s/%s.vbs" % (path, old['uid'][0])):
+						os.remove("%s/%s.vbs" % (path, old['uid'][0]))
+			finally:
+				listener.unsetuid()
 
 
 def handler(dn, new, old):
@@ -540,4 +560,4 @@ def clean():
 		listener.unsetuid()
 
 def postrun():
-	getConnection.connection = None
+	LDAPConnection.lo = None
