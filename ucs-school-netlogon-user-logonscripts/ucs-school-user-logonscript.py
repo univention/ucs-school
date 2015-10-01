@@ -46,6 +46,7 @@ atributes=[]
 
 scriptpath = []
 desktopFolderName = "Eigene Shares"
+desktopFolderNameMacOS = listener.configRegistry.get('ucsschool/userlogon/mac/foldername', desktopFolderName)
 globalLinks = {}
 
 strTeacher = listener.baseConfig.get('ucsschool/ldap/default/container/teachers', 'lehrer')
@@ -129,13 +130,11 @@ def getGlobalLinks():
 
 
 def generateMacScript(uid, name, host):
-	return '''#!/bin/sh # generated script for accessing a samba share
-/usr/bin/osascript <<EOF
+	return '''#!/usr/bin/osascript
 tell application "Finder"
  open location "smb://%s@%s/%s"
  activate
 end tell
-EOF
 ''' % (uid, host, name)
 
 def writeMacLinkScripts(uid, homepath, links):
@@ -151,31 +150,37 @@ def writeMacLinkScripts(uid, homepath, links):
 			except:
 				pass
 
-			if not os.path.exists(os.path.join(homepath, "Desktop", desktopFolderName)):
+			if not os.path.exists(os.path.join(homepath, "Desktop", desktopFolderNameMacOS)):
 				if not os.path.exists(homepath):
 					os.mkdir(homepath, 0700)
 					os.chown(homepath, uidnumber, gidnumber)
 
-				for path in [os.path.join(homepath, "Desktop"), os.path.join(homepath, "Desktop", desktopFolderName)]:
+				for path in [os.path.join(homepath, "Desktop"), os.path.join(homepath, "Desktop", desktopFolderNameMacOS)]:
 					if not os.path.exists(path):
 						os.mkdir(path)
 						os.chown(path, uidnumber, gidnumber)
 
 			# remove old scripts
-			for file in os.listdir(os.path.join(homepath, "Desktop", desktopFolderName)):
+			for file in os.listdir(os.path.join(homepath, "Desktop", desktopFolderNameMacOS)):
 				try:
-					os.remove(os.path.join(homepath, "Desktop", desktopFolderName,file))
+					if os.path.isdir(os.path.join(homepath, "Desktop", desktopFolderNameMacOS, file)):
+						shutil.rmtree(os.path.join(homepath, "Desktop", desktopFolderNameMacOS, file))
+					else:
+						os.remove(os.path.join(homepath, "Desktop", desktopFolderNameMacOS, file))
 				except:
 					univention.debug.debug(univention.debug.LISTENER, univention.debug.ERROR, "ucsschool-user-logonscripts: failed to remove %s" % file)
 					raise
 
 			for name in links:
-				macscriptpath = os.path.join(homepath, "Desktop", desktopFolderName, "%s.app" % name)
-				fp = open(macscriptpath ,'w')
-				fp.write(generateMacScript(uid, name, links[name]).replace('\n','\r\n'))
-				fp.close()
-				os.chmod(macscriptpath, 0500)
+				macscriptpath = os.path.join(homepath, "Desktop", desktopFolderNameMacOS, "%s.app" % name)
+				os.mkdir(macscriptpath)
 				os.chown(macscriptpath, uidnumber, gidnumber)
+				macscriptfile = os.path.join(macscriptpath, name)
+				fp = open(macscriptfile ,'w')
+				fp.write(generateMacScript(uid, name, links[name]))
+				fp.close()
+				os.chmod(macscriptfile, 0700)
+				os.chown(macscriptfile, uidnumber, gidnumber)
 	finally:
 			listener.unsetuid()
 

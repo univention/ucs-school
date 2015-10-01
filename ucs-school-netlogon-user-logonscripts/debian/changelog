@@ -1,3 +1,9 @@
+ucs-school-netlogon-user-logonscripts (11.0.2-1) unstable; urgency=low
+
+  * Bug #39403: update OS X logon scripts for newer versions (10.6 - 10.10)
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Thu, 01 Oct 2015 22:40:43 +0200
+
 ucs-school-netlogon-user-logonscripts (11.0.1-1) unstable; urgency=low
 
   * Bug #38754: catch LDAP errors / fail fast if LDAP connection fails due
