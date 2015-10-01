@@ -33,7 +33,7 @@ import univention.config_registry
 import univention.debug
 import univention.utf8
 
-import os, pwd, types, ldap, ldap.schema, re, time, copy, codecs, base64, shutil
+import os, pwd, ldap, ldap.schema, re, time, shutil
 
 hostname=listener.baseConfig['hostname']
 domainname=listener.baseConfig['domainname']
@@ -110,7 +110,6 @@ def getGlobalLinks():
 	univention.debug.debug(univention.debug.LISTENER, univention.debug.INFO, "ucsschool-user-logonscripts: search for global links")
 	if listener.baseConfig.has_key('ucsschool/userlogon/commonshares') and listener.baseConfig['ucsschool/userlogon/commonshares']:
 		l = getConnection()
-		ldapbase = listener.baseConfig['ldap/base']
 		share_keys = listener.baseConfig['ucsschool/userlogon/commonshares'].split(',')
 		for key in share_keys:
 			# check if share exists
