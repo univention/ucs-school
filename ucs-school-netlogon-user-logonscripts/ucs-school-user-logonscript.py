@@ -93,14 +93,12 @@ def getCommandOutput(command):
 	return data
 
 def connect():
-
-	connection = False
+	connection = None
 	listener.setuid(0)
 	try:
 		connection = univention.uldap.getMachineConnection(ldap_master = False)
 	finally:
-			listener.unsetuid()
-
+		listener.unsetuid()
 	return connection
 
 
