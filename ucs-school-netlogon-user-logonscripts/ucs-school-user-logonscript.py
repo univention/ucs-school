@@ -348,8 +348,8 @@ def getConnection():
 			getConnection.connection = connect()
 			return getConnection.connection
 		except ldap.LDAPError, msg:
-			univention.debug.debug(univention.debug.LISTENER, univention.debug.INFO, 'ucsschool-user-logonscripts: %s: failed to connect to ldap-server, wait..., ' % msg[0]['desc'])
-			connect_count=connect_count+1
+			univention.debug.debug(univention.debug.LISTENER, univention.debug.WARN, 'ucsschool-user-logonscripts: %s: failed to connect to ldap-server, wait..., ' % msg[0]['desc'])
+			connect_count = connect_count+1
 			if connect_count >= 30:
 				univention.debug.debug(univention.debug.LISTENER, univention.debug.ERROR, 'ucsschool-user-logonscripts: %s: failed to connect to ldap-server, ' % msg[0]['desc'])
 				raise
