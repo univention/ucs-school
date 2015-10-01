@@ -304,6 +304,8 @@ Function MapDrive(Drive,Share)
 	for key in mappings.keys():
 		if mappings[key].get('letter'):
 			if lettersinuse.get(mappings[key]['letter']):
+				if lettersinuse[mappings[key]['letter']] == mappings[key]['server']:
+					continue
 				msg  = name + ": " + "the assigned letter "
 				msg += "%s for share %s " % (mappings[key]['letter'], mappings[key]['server'])
 				msg += "is already in use by share %s" % lettersinuse[mappings[key]['letter']]
