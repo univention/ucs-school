@@ -307,8 +307,8 @@ Function MapDrive(Drive,Share)
 				if lettersinuse[mappings[key]['letter']] == mappings[key]['server']:
 					continue
 				msg  = name + ": " + "the assigned letter "
-				msg += "%s for share %s " % (mappings[key]['letter'], mappings[key]['server'])
-				msg += "is already in use by share %s" % lettersinuse[mappings[key]['letter']]
+				msg += "%r for share \\%s\%s " % (mappings[key]['letter'], mappings[key]['server'], key)
+				msg += "is already in use by server %r" % (lettersinuse[mappings[key]['letter']],)
 				univention.debug.debug(univention.debug.LISTENER, univention.debug.WARN, msg)
 			else:
 				skript = skript + 'MapDrive "%s:","\\\\%s\\%s"\n' % (mappings[key]['letter'],mappings[key]['server'], key)
