@@ -395,7 +395,7 @@ def userGids(dn):
 	l = getConnection()
 	try:
 		res = l.search(scope="sub", filter="(&(objectClass=posixGroup)(uniqueMember=%s))" % dn, attr=["gidNumber"])
-		return frozenset([attributes['gidNumber'][0] for (dn, attributes, ) in res])
+		return frozenset([attributes['gidNumber'][0] for (dn_, attributes, ) in res])
 	except ldap.LDAPError, msg:
 		univention.debug.debug(
 			univention.debug.LISTENER,
