@@ -31,22 +31,10 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-import threading
 import traceback
-import time
-import notifier
-import notifier.threads
-import re
-import string
-import csv
-import univention.info_tools as uit
-from univention.lib.i18n import Translation
-import univention.management.console.modules as umcm
-import os
-import copy
-import locale
-import ldap
 import base64
+
+from univention.lib.i18n import Translation
 import univention.config_registry
 import univention.admin.config
 import univention.admin.modules
@@ -61,9 +49,8 @@ univention.admin.modules.update()
 univention.admin.syntax.update_choices()
 
 from univention.management.console.log import MODULE
-from univention.management.console.protocol.definitions import *
-from univention.management.console.modules import UMC_CommandError
-from ucsschool.lib.schoolldap import LDAP_Connection, LDAP_ConnectionError, SchoolSearchBase, SchoolBaseModule, ADMIN_WRITE, USER_READ
+from univention.management.console.modules import UMC_Error
+from ucsschool.lib.schoolldap import LDAP_Connection, SchoolBaseModule, ADMIN_WRITE, USER_READ
 
 from univention.management.console.config import ucr
 
@@ -72,12 +59,7 @@ _ = Translation( 'univention-management-console-selective-udm' ).translate
 class CreationDenied(Exception):
 	pass
 
-class Instance( SchoolBaseModule ):
-	def __init__( self ):
-		SchoolBaseModule.__init__(self)
-
-	def init(self):
-		SchoolBaseModule.init(self)
+class Instance(SchoolBaseModule):
 
 	def _check_usersid_join_permissions(self, lo, usersid):
 
@@ -106,7 +88,7 @@ class Instance( SchoolBaseModule ):
 		self.required_options(request, 'name')
 
 		if not search_base.school:
-			raise UMC_CommandError( _('Could not determine schoolOU') )
+			raise UMC_Error( _('Could not determine schoolOU') )
 
 		try:
 			# Set new position

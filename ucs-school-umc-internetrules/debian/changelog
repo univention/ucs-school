@@ -1,3 +1,9 @@
+ucs-school-umc-internetrules (10.0.2-1) unstable; urgency=medium
+
+  * Bug #39230: remove unused imports
+
+ -- Florian Best <best@univention.de>  Tue, 13 Oct 2015 15:37:09 +0200
+
 ucs-school-umc-internetrules (10.0.1-1) unstable; urgency=medium
 
   * Bug #35892: fix some javascript memory leaks

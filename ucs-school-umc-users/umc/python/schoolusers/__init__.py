@@ -31,8 +31,7 @@
 # <http://www.gnu.org/licenses/>.
 
 from univention.management.console.log import MODULE
-from univention.management.console.config import ucr
-from univention.management.console.modules import UMC_CommandError, UMC_OptionTypeError
+from univention.management.console.modules import UMC_Error
 
 import univention.admin.modules as udm_modules
 import univention.admin.uexceptions as udm_exceptions
@@ -41,7 +40,7 @@ import univention.admin.uldap as udm_uldap
 
 from univention.lib.i18n import Translation
 
-from ucsschool.lib import LDAP_Connection, LDAP_ConnectionError, set_credentials, SchoolSearchBase, SchoolBaseModule, Display, USER_READ, USER_WRITE
+from ucsschool.lib import LDAP_Connection, SchoolBaseModule, Display, USER_READ, USER_WRITE
 
 import notifier
 import notifier.popen
@@ -118,6 +117,6 @@ class Instance( SchoolBaseModule ):
 		if request.options.get( 'newPassword' ):
 			result = self._reset_passwords( request.options[ 'userDN' ], request.options[ 'newPassword' ], ldap_user_write, pwdChangeNextLogin = request.options.get( 'nextLogin', True ) )
 		else:
-			raise UMC_OptionTypeError( _( 'No passwords changed, need a new password.') )
+			raise UMC_Error(_('No passwords changed, need a new password.'))
 
 		self.finished( request.id, result )

@@ -31,18 +31,16 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-from univention.management.console.config import ucr
 import univention.config_registry
 
 from univention.lib.i18n import Translation
-from univention.management.console.modules import UMC_OptionTypeError, UMC_CommandError, Base
+from univention.management.console.modules import UMC_OptionTypeError, UMC_CommandError
 from univention.management.console.log import MODULE
-from univention.management.console.protocol.definitions import *
 
 import univention.admin.modules as udm_modules
 import univention.admin.objects as udm_objects
 
-from ucsschool.lib.schoolldap import LDAP_Connection, LDAP_ConnectionError, set_credentials, SchoolSearchBase, SchoolBaseModule, LDAP_Filter, Display
+from ucsschool.lib.schoolldap import LDAP_Connection, SchoolBaseModule, LDAP_Filter
 
 import ucsschool.lib.internetrules as rules
 
@@ -57,12 +55,6 @@ _filterTypes = dict(
 _filterTypesInv = dict([ (_i[1], _i[0]) for _i in _filterTypes.iteritems() ])
 
 class Instance( SchoolBaseModule ):
-	def __init__( self ):
-		# initiate list of internal variables
-		SchoolBaseModule.__init__(self)
-
-	def init(self):
-		SchoolBaseModule.init(self)
 
 	def query( self, request ):
 		"""Searches for internet filter rules
