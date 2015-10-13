@@ -73,7 +73,7 @@ class ImageViewer(QtGui.QMainWindow):
 		self.setWindowTitle("Image Viewer")
 		self.resize(500, 400)
 
-		self.italcManager = italc2.ITALC_Manager( options.username, options.password )
+		self.italcManager = italc2.ITALC_Manager()
 		self.italcManager.school = options.school
 		self.italcManager.room = options.room
 		self.computer = self.italcManager[ options.computer ]
