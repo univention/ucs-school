@@ -39,12 +39,13 @@ import locale
 
 from univention.lib.i18n import Translation
 from univention.management.console.log import MODULE
+from univention.management.console.ldap import get_user_connection
 from univention.management.console.modules.decorators import file_upload, simple_response, multi_response
 from univention.management.console.modules.mixins import ProgressMixin
 from univention.management.console.modules import UMC_Error
 from univention.config_registry import ConfigRegistry
 
-from ucsschool.lib.schoolldap import SchoolBaseModule, open_ldap_connection
+from ucsschool.lib.schoolldap import SchoolBaseModule
 from ucsschool.lib.models.utils import create_passwd, add_module_logger_to_schoollib, stopped_notifier
 
 from univention.management.console.modules.schoolcsvimport.util import CSVUser, CSVStudent, CSVTeacher, CSVStaff, CSVTeachersAndStaff, UCS_License_detection, LicenseInsufficient
@@ -96,6 +97,7 @@ class FileInfo(object):
 		self.columns = columns
 
 class Instance(SchoolBaseModule, ProgressMixin):
+
 	def init(self):
 		super(Instance, self).init()
 		add_module_logger_to_schoollib()
@@ -234,7 +236,7 @@ class Instance(SchoolBaseModule, ProgressMixin):
 		result = {}
 		progress.title = _('Checking users from CSV file')
 		file_info = self._get_info(file_id)
-		lo = open_ldap_connection(self._user_dn, self._password, ucr.get('ldap/server/name'))
+		lo, po = get_user_connection(bind=self.bind_user_connection, write=False)
 		with open(file_info.filename, 'rb') as f:
 			lines = f.readlines()
 			if file_info.has_header:
@@ -287,7 +289,7 @@ class Instance(SchoolBaseModule, ProgressMixin):
 	@simple_response
 	def recheck_users(self, file_id, user_attrs):
 		file_info = self._get_info(file_id)
-		lo = open_ldap_connection(self._user_dn, self._password, ucr.get('ldap/server/name'))
+		lo, po = get_user_connection(bind=self.bind_user_connection, write=False)
 		users = []
 		for attrs in user_attrs:
 			user = file_info.user_klass.from_frontend_attrs(attrs, file_info.school, file_info.date_format)
@@ -297,7 +299,7 @@ class Instance(SchoolBaseModule, ProgressMixin):
 
 	@multi_response(progress=[_('Processing %d user(s)'), _('%(username)s %(action)s')])
 	def import_users(self, iterator, file_id, attrs):
-		lo = open_ldap_connection(self._user_dn, self._password, ucr.get('ldap/server/name'))
+		lo, po = get_user_connection(bind=self.bind_user_connection, write=False)
 		file_info = None
 		with stopped_notifier():
 			CSVUser.invalidate_all_caches()
