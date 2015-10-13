@@ -40,7 +40,7 @@ from univention.management.console.modules.decorators import simple_response, fi
 
 from univention.lib.i18n import Translation
 
-from ucsschool.lib.schoolldap import LDAP_Connection, LDAP_ConnectionError, SchoolBaseModule
+from ucsschool.lib.schoolldap import LDAP_Connection, SchoolBaseModule
 import ucsschool.lib.internetrules as internetrules
 from ucsschool.lib.schoollessons import SchoolLessons
 from ucsschool.lib.models import ComputerRoom
@@ -286,11 +286,9 @@ class Instance( SchoolBaseModule ):
 							usersReplicated.add(idn)
 							progress.info('%s, %s (%s)' % (iuser.lastname, iuser.firstname, iuser.username))
 							progress.add_steps(percentPerUser)
-					except udm_exceptions.noObject as e:
+					except udm_exceptions.noObject:
 						# access failed
 						pass
-					except LDAP_ConnectionError as e:
-						MODULE.error('Could not open object DN: %s (%s)' % (idn, e))
 
 				# wait a second
 				time.sleep(1)

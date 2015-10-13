@@ -40,7 +40,7 @@ import univention.lib.atjobs as atjobs
 import univention.admin.modules as udm_modules
 import univention.admin.uexceptions as udm_exceptions
 
-from ucsschool.lib.schoolldap import LDAP_ConnectionError, SchoolSearchBase
+from ucsschool.lib.schoolldap import SchoolSearchBase
 
 #import notifier
 #import notifier.popen
@@ -257,8 +257,6 @@ def openRecipients(entryDN, ldap_connection, search_base):
 			return group
 	except udm_exceptions.noObject as e:
 		MODULE.error('Could not find object DN: %s' % entryDN)
-	except LDAP_ConnectionError as e:
-		MODULE.error('Could not open object DN: %s (%s)' % (entryDN, e))
 	return None
 
 class Project(_Dict):

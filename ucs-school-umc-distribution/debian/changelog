@@ -1,3 +1,9 @@
+ucs-school-umc-distribution (14.0.0-1) unstable; urgency=medium
+
+  * Bug #39230: remove dead/impossible code
+
+ -- Florian Best <best@univention.de>  Tue, 13 Oct 2015 18:14:56 +0200
+
 ucs-school-umc-distribution (13.0.2-2) unstable; urgency=medium
 
   * Bug #38291: don't copy content of symlinks when collecting projects
