@@ -247,7 +247,7 @@ class Instance(SchoolBaseModule):
 
 	def init(self):
 		SchoolBaseModule.init(self)
-		self._italc = ITALC_Manager(self._username, self._password)
+		self._italc = ITALC_Manager()
 		self._random = Random()
 		self._random.seed()
 		self._lessons = SchoolLessons()

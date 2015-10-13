@@ -548,16 +548,14 @@ class ITALC_Computer( notifier.signals.Provider, QObject ):
 			self._core.logoutUser()
 
 
-class ITALC_Manager( dict, notifier.signals.Provider ):
+class ITALC_Manager(dict, notifier.signals.Provider):
 	SCHOOL = None
 	ROOM = None
 	ROOM_DN = None
 
-	def __init__( self, username, password ):
-		dict.__init__( self )
-		notifier.signals.Provider.__init__( self )
-		italc.ItalcCore.authenticationCredentials.setLogonUsername( username )
-		italc.ItalcCore.authenticationCredentials.setLogonPassword( password )
+	def __init__(self):
+		dict.__init__(self)
+		notifier.signals.Provider.__init__(self)
 
 	@property
 	def room( self ):

@@ -1,3 +1,9 @@
+ucs-school-umc-computerroom (7.0.0-1) unstable; urgency=medium
+
+  * Bug #39228: don't set credentials in italc due to SAML login
+
+ -- Florian Best <best@univention.de>  Tue, 13 Oct 2015 15:30:58 +0200
+
 ucs-school-umc-computerroom (6.0.4-1) unstable; urgency=medium
 
   * Bug #39318: add interface for computerroom plugins
