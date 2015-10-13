@@ -1,3 +1,10 @@
+ucs-school-lib (8.0.0-1) unstable; urgency=medium
+
+  * Bug #39230: adapt module base to use SAML ldap authentication
+  * removed unused code
+
+ -- Florian Best <best@univention.de>  Tue, 13 Oct 2015 18:18:03 +0200
+
 ucs-school-lib (7.0.6-1) unstable; urgency=medium
 
   * Bug #32332: remove school prefix from workgroup names

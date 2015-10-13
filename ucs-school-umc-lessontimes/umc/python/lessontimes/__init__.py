@@ -33,7 +33,6 @@
 from univention.management.console.log import MODULE
 
 from univention.lib.i18n import Translation
-from univention.lib.locking import *
 
 from ucsschool.lib.schoolldap import SchoolBaseModule
 from ucsschool.lib.schoollessons import SchoolLessons

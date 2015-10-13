@@ -42,56 +42,30 @@ from univention.management.console.protocol.message import Message
 
 from univention.lib.i18n import Translation
 
-from ldap import LDAPError
-
 from functools import wraps
 import re
 import traceback
 
 from univention.management.console.config import ucr
 from univention.management.console.log import MODULE
+from univention.management.console.ldap import get_machine_connection, get_admin_connection, get_user_connection
 from univention.management.console.modules import Base
 from univention.management.console.protocol.definitions import MODULE_ERR
 
 # load UDM modules
 udm_modules.update()
 
-# current user
-_user_dn = None
-_password = None
+__bind_callback = None
+_search_base = None
 
 _ = Translation('python-ucs-school').translate
 
-try:
-	import univention.admin.license
-	GPLversion=False
-except:
-	GPLversion=True
+def set_bind_function(bind_callback):
+	global __bind_callback
+	__bind_callback = bind_callback
 
-
-def set_credentials( dn, passwd ):
-	global _user_dn, _password
-
-	# the DN is None if we have a local user (e.g., root)
-	if not dn:
-		# try to get machine account password
-		try:
-			_password = open('/etc/machine.secret','r').read().strip()
-			_user_dn = ucr.get('ldap/hostdn')
-			MODULE.warn( 'Using machine account for local user: %s' % _user_dn )
-		except IOError, e:
-			_password = None
-			_user_dn = None
-			MODULE.warn( 'Cannot read /etc/machine.secret: %s' % e)
-	else:
-		_password = passwd
-		_user_dn = dn
-		MODULE.info( 'Saved LDAP DN for user %s' % _user_dn )
-
-
-# decorator for LDAP connections
-_ldap_connections = {}
-_search_base = None
+def set_credentials(dn, passwd):
+	set_bind_function(lambda lo: lo.lo.bind(dn, passwd))
 
 USER_READ = 'ldap_user_read'
 USER_WRITE = 'ldap_user_write'
@@ -99,133 +73,75 @@ MACHINE_READ = 'ldap_machine_read'
 MACHINE_WRITE = 'ldap_machine_write'
 ADMIN_WRITE = 'ldap_admin_write'
 
-class LDAP_ConnectionError( Exception ):
-	pass
 
-def open_ldap_connection( binddn, bindpw, ldap_server ):
-	'''Opens a new LDAP connection using the given user LDAP DN and
-	password. The connection is open to the given server or if None the
-	server defined by the UCR variable ldap/server/name is used.'''
-
-	try:
-		lo = udm_uldap.access( host = ldap_server, base = ucr.get( 'ldap/base' ), binddn = binddn, bindpw = bindpw, start_tls = 2 )
-	except udm_errors.noObject:
-		raise
-	except LDAPError, e:
-		raise LDAP_ConnectionError( 'Opening LDAP connection failed: %s' % str( e ) )
-
-	return lo
-
-def get_ldap_connections( connection_types, force = False ):
-	global _ldap_connections, _user_dn, _password
-
-	connections = {}
-	read_server = ucr.get( 'ldap/server/name' )
-	write_server = ucr.get( 'ldap/master' )
-
-	for conn in connection_types:
-		if _ldap_connections.get( conn ) and not force:
-			connections[ conn ] = _ldap_connections[ conn ]
-			continue
-		if conn == USER_READ:
-			lo = open_ldap_connection( _user_dn, _password, read_server )
-		elif conn == USER_WRITE:
-			lo = open_ldap_connection( _user_dn, _password, write_server )
-		elif conn == MACHINE_READ:
-			lo, pos = udm_uldap.getMachineConnection( ldap_master = False )
-		elif conn == MACHINE_WRITE:
-			lo, pos = udm_uldap.getMachineConnection( ldap_master = True )
-		elif conn == ADMIN_WRITE:
-			lo, pos = udm_uldap.getAdminConnection()
-
-		connections[ conn ] = lo
-		_ldap_connections[ conn ] = lo
-
-	return connections
-
-def LDAP_Connection( *connection_types ):
+def LDAP_Connection(*connection_types):
 	"""This decorator function provides an open LDAP connection that can
 	be accessed via the variable ldap_connection and a valid position
 	within the LDAP directory in the variable ldap_position. It reuses
-	an already open connection or creates a new one. If the function
-	fails with an LDAP error, the decorators tries to reopen the LDAP
-	connection and invokes the function again. if it still fails an
-	LDAP_ConnectionError is raised.
+	an already open connection or creates a new one.
 
-	The LDAP connection is opened to ldap/server/name with the current 
+	The LDAP connection is opened to ldap/server/name with the current
 	user DN or the host DN in case of a local user. This connection is intended
 	only for read access. In order to write changes to the LDAP master, an
 	additional, temporary connection needs to be opened explicitly.
 
 	Information for available OUs is initiated from LDAP, as well.
 
-	This decorator can only be used after set_credentials() has been executed.
+	This decorator can only be used after set_bind_function() has been executed.
 
 	When using the decorator the method adds three additional keyword arguments.
 
 	example:
-	  @LDAP_Connection( USER_READ, USER_WRITE )
-	  def do_ldap_stuff(arg1, arg2, ldap_user_write = None, ldap_user_read = None, ldap_position = None, search_base = None ):
+	  @LDAP_Connection(USER_READ, USER_WRITE)
+	  def do_ldap_stuff(arg1, arg2, ldap_user_write=None, ldap_user_read=None, ldap_position=None, search_base=None):
 		  ...
-		  ldap_connection.searchDn( ..., position = ldap_position )
+		  ldap_user_read.searchDn(..., position=ldap_position)
 		  ...
 	"""
 
-	if connection_types and not USER_READ in connection_types and not MACHINE_READ in connection_types:
+	if connection_types and USER_READ not in connection_types and MACHINE_READ not in connection_types:
 		raise AttributeError( 'At least one read-only connection is required' )
 	elif not connection_types:
-		_connection_types = ( USER_READ, )
+		_connection_types = (USER_READ,)
 	else:
 		_connection_types = connection_types
 
-	def inner_wrapper( func ):
-		def wrapper_func( *args, **kwargs ):
-			global _licenseCheck, _search_base
-
+	def inner_wrapper(func):
+		def wrapper_func(*args, **kwargs):
 			# set LDAP keyword arguments
-			connections = get_ldap_connections( _connection_types )
-			read_connection = connections.get( USER_READ ) or connections.get( MACHINE_READ )
-			kwargs.update( connections )
-			kwargs[ 'ldap_position' ] = udm_uldap.position( read_connection.base )
+			connections = {}
+			if USER_READ in _connection_types:
+				connections[USER_READ], po = get_user_connection(bind=__bind_callback, write=False)
+			if USER_WRITE in _connection_types:
+				connections[USER_WRITE], po = get_user_connection(bind=__bind_callback, write=True)
+			if MACHINE_READ in _connection_types:
+				connections[MACHINE_READ], po = get_machine_connection(write=False)
+			if MACHINE_WRITE in _connection_types:
+				connections[MACHINE_WRITE], po = get_machine_connection(write=True)
+			if ADMIN_WRITE in _connection_types:
+				connections[ADMIN_WRITE], po = get_admin_connection()
+
+			read_connection = connections.get(USER_READ) or connections.get(MACHINE_READ)
+			kwargs.update(connections)
+			kwargs['ldap_position'] = udm_uldap.position(read_connection.base)
 
 			# set keyword argument for search base
-			_init_search_base( read_connection )
+			_init_search_base(read_connection)
 			if not kwargs.get('search_base'):
 				# search_base is not set manually
 				kwargs['search_base'] = _search_base
 				if len(args) > 1 and isinstance(args[1], Message):
 					# we have a Message instance (i.e. a request), try to set the search_base
 					# according to the specified option 'school'
-					school = isinstance( args[1].options, dict ) and args[1].options.get('school') or None
+					school = isinstance(args[1].options, dict) and args[1].options.get('school') or None
 					if school:
-						kwargs[ 'search_base' ] = SchoolSearchBase( _search_base.availableSchools, school )
+						kwargs['search_base'] = SchoolSearchBase(_search_base.availableSchools, school)
 
-			# try to execute the method with the given connection
-			# in case of an error, re-open a new LDAP connection and try again
-			return func( *args, **kwargs )
-			try:
-				return func( *args, **kwargs )
-			except ( LDAPError, udm_errors.base ):
-				MODULE.info( 'LDAP operation has failed' )
-				connections = get_ldap_connections( _connection_types, force = True )
+			return func(*args, **kwargs)
 
-				kwargs.update( connections )
-				try:
-					return func( *args, **kwargs )
-				except udm_errors.base, ex:
-					if hasattr(ex, "message"):
-						msg = "%s: %s" % (ex.message, str(ex))
-					else:
-						msg = str(ex)
-					raise LDAP_ConnectionError( msg )
-
-			return []
-
-		return wraps( func )( wrapper_func )
+		return wraps(func)(wrapper_func)
 	return inner_wrapper
 
-class LicenseError( Exception ):
-	pass
 
 @LDAP_Connection(MACHINE_READ)
 def get_all_local_searchbases(ldap_machine_read=None, ldap_position=None, search_base=None):
@@ -233,89 +149,11 @@ def get_all_local_searchbases(ldap_machine_read=None, ldap_position=None, search
 	schools = School.get_all(ldap_machine_read)
 	oulist = map(lambda school: school.name, schools)
 	if not oulist:
-		raise LDAP_ConnectionError('LDAP_Connection: ERROR, COULD NOT FIND ANY OU!!!')
+		raise ValueError('LDAP_Connection: ERROR, COULD NOT FIND ANY OU!!!')
 
 	accessible_searchbases = map(lambda school: SchoolSearchBase(oulist, school), oulist)
 	return accessible_searchbases
 
-@LDAP_Connection(MACHINE_READ, MACHINE_WRITE)
-def check_license(ldap_machine_read = None, ldap_machine_write = None, ldap_position = None, search_base = None ):
-	"""Checks the license cases and throws exceptions accordingly. The logic is copied from the UDM UMC module."""
-	global GPLversion
-	ldap_connection = ldap_machine_write
-
-	# license check (see also univention.admin.uldap.access.bind())
-	_licenseCheck = 0
-	if not GPLversion:
-		_licenseCheck = univention.admin.license.init_select(ldap_connection, 'admin')
-
-	# in case of errors, raise an exception with user friendly message
-	try:
-		if GPLversion:
-			return  # don't raise exception here
-			#raise udm_errors.licenseGPLversion
-		ldap_connection._validateLicense()  # throws more exceptions in case the license could not be found
-		MODULE.info('_validateLicense result=%s' % _licenseCheck)
-		if _licenseCheck == 0:
-			return
-		elif _licenseCheck == 1:
-			raise udm_errors.licenseClients
-		elif _licenseCheck == 2:
-			raise udm_errors.licenseAccounts
-		elif _licenseCheck == 3:
-			raise udm_errors.licenseDesktops
-		elif _licenseCheck == 4:
-			raise udm_errors.licenseGroupware
-		#elif _licenseCheck == 5:
-		#   # Free for personal use edition
-		#   raise udm_errors.freeForPersonalUse
-		# License Version 2:
-		elif _licenseCheck == 6:
-			raise udm_errors.licenseUsers
-		elif _licenseCheck == 7:
-			raise udm_errors.licenseServers
-		elif _licenseCheck == 8:
-			raise udm_errors.licenseManagedClients
-		elif _licenseCheck == 9:
-			raise udm_errors.licenseCorporateClients
-		elif _licenseCheck == 10:
-			raise udm_errors.licenseDVSUsers
-		elif _licenseCheck == 11:
-			raise udm_errors.licenseDVSClients
-	except udm_errors.licenseNotFound:
-		raise LicenseError(_('License not found. During this session add and modify are disabled.'))
-	except udm_errors.licenseAccounts: #UCS license v1
-		raise LicenseError(_('You have too many user accounts for your license. During this session add and modify are disabled.'))
-	except udm_errors.licenseUsers: #UCS license v2
-		raise LicenseError(_('You have too many user accounts for your license. During this session add and modify are disabled.'))
-	except udm_errors.licenseClients: # UCS license v1
-		raise LicenseError(_('You have too many client accounts for your license. During this session add and modify are disabled.'))
-	except udm_errors.licenseServers: # UCS license v2
-		raise LicenseError(_('You have too many server accounts for your license. During this session add and modify are disabled.'))
-	except udm_errors.licenseManagedClients: # UCS license v2
-		raise LicenseError(_('You have too many managed client accounts for your license. During this session add and modify are disabled.'))
-	except udm_errors.licenseCorporateClients: # UCS license v2
-		raise LicenseError(_('You have too many corporate client accounts for your license. During this session add and modify are disabled.'))
-	except udm_errors.licenseDesktops: # UCS license v1
-		raise LicenseError(_('You have too many desktop accounts for your license. During this session add and modify are disabled.'))
-	except udm_errors.licenseGroupware: # UCS license v1
-		raise LicenseError(_('You have too many groupware accounts for your license. During this session add and modify are disabled.'))
-	except udm_errors.licenseDVSUsers: # UCS license v2
-		raise LicenseError(_('You have too many DVS user accounts for your license. During this session add and modify are disabled.'))
-	except udm_errors.licenseDVSClients: # UCS license v2
-		raise LicenseError(_('You have too many DVS client accounts for your license. During this session add and modify are disabled.'))
-	except udm_errors.licenseExpired:
-		raise LicenseError(_('Your license is expired. During this session add and modify are disabled.'))
-	except udm_errors.licenseWrongBaseDn:
-		raise LicenseError(_('Your license is not valid for your LDAP-Base. During this session add and modify are disabled.'))
-	except udm_errors.licenseInvalid:
-		raise LicenseError(_('Your license is not valid. During this session add and modify are disabled.'))
-	except udm_errors.licenseDisableModify:
-		raise LicenseError(_('Your license does not allow modifications. During this session add and modify are disabled.'))
-	except udm_errors.freeForPersonalUse:
-		raise LicenseError(_('You are currently using the "Free for personal use" edition of Univention Corporate Server.'))
-	except udm_errors.licenseGPLversion:
-		raise LicenseError(_('Your license status could not be validated. Thus, you are not eligible to support and maintenance. If you have bought a license, please contact Univention or your Univention partner.'))
 
 def _init_search_base(ldap_connection, force=False):
 	global _search_base
@@ -333,6 +171,7 @@ def _init_search_base(ldap_connection, force=False):
 	else:
 		MODULE.info('All Schools: school_names=%s' % school_names)
 		_search_base = SchoolSearchBase(school_names)
+
 
 class SchoolSearchBase(object):
 	"""This class serves a wrapper for all the different search bases (users,
@@ -534,15 +373,15 @@ class SchoolSearchBase(object):
 		return groupDN.endswith(self.rooms)
 
 
-class SchoolBaseModule( Base ):
+class SchoolBaseModule(Base):
 	"""This classe serves as base class for UCS@school UMC modules that need
 	LDAP access. It initiates the list of availabe OUs (self.availableSchools) and
-	initiates the search bases (self.searchBase). set_credentials() is called
+	initiates the search bases (self.searchBase). set_bind_function() is called
 	automatically to allow LDAP connections. In order to integrate this class
 	into a module, use the following paradigm:
 
-	class Instance( SchoolBaseModule ):
-		def __init__( self ):
+	class Instance(SchoolBaseModule):
+		def __init__(self):
 			# initiate list of internal variables
 			SchoolBaseModule.__init__(self)
 			# ... custom code
@@ -552,9 +391,25 @@ class SchoolBaseModule( Base ):
 			# ... custom code
 	"""
 	def init(self):
-		'''Initialize the module. Invoked when ACLs, commands and
-		credentials are available'''
-		set_credentials( self._user_dn, self._password )
+		set_bind_function(self.bind_user_connection)
+
+	def bind_user_connection(self, lo):
+		if not self.user_dn:  # ... backwards compatibility
+			# the DN is None if we have a local user (e.g., root)
+			# FIXME: the statement above is not completely true, user_dn is None also if the UMC server could not detect it (for whatever reason)
+			# therefore this workaround is a security whole which allows to executed ldap operations as machine account
+			try:  # to get machine account password
+				MODULE.warn('Using machine account for local user: %s' % self.username)
+				with open('/etc/machine.secret', 'rb') as fd:
+					password = fd.read().strip()
+				user_dn = ucr.get('ldap/hostdn')
+			except IOError as exc:
+				password = None
+				user_dn = None
+				MODULE.warn('Cannot read /etc/machine.secret: %s' % (exc,))
+			lo.lo.bind(user_dn, password)
+			return
+		return super(SchoolBaseModule, self).bind_user_connection(lo)
 
 	@LDAP_Connection()
 	def schools( self, request, ldap_user_read = None, ldap_position = None, search_base = None ):
@@ -668,6 +523,7 @@ class SchoolBaseModule( Base ):
 
 		return userresult
 
+
 class LDAP_Filter:
 
 	@staticmethod
@@ -705,6 +561,7 @@ class LDAP_Filter:
 			expressions.append('(|%s)' % ''.join(subexpr))
 
 		return '(&%s)' % ''.join( expressions )
+
 
 class Display:
 	@staticmethod
