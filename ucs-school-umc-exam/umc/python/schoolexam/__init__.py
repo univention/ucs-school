@@ -36,7 +36,7 @@ import notifier
 from univention.management.console.modules import UMC_CommandError, UMC_OptionTypeError
 from univention.management.console.log import MODULE
 from univention.management.console.config import ucr
-from univention.management.console.modules.decorators import simple_response, file_upload
+from univention.management.console.modules.decorators import simple_response, file_upload, require_password
 
 from univention.lib.i18n import Translation
 
@@ -152,6 +152,7 @@ class Instance( SchoolBaseModule ):
 	def progress(self):
 		return self._progress_state.poll()
 
+	@require_password
 	@LDAP_Connection()
 	def start_exam(self, request, ldap_user_read = None, ldap_position = None, search_base = None):
 		self.required_options(request, 'recipients', 'room', 'internetRule', 'shareMode', 'name', 'directory', 'examEndTime')
@@ -327,7 +328,7 @@ class Instance( SchoolBaseModule ):
 			#   first step: acquire room
 			#   second step: adjust room settings
 			progress.component(_('Prepare room settings'))
-			userConnection = UMCConnection('localhost', username=self._username, password=self._password)
+			userConnection = UMCConnection('localhost', username=self.username, password=self.password)
 			if not userConnection:
 				MODULE.error('Could not connect to UMC on local server: %s' % e)
 				raise UMC_CommandError(_('Could not connect to local UMC server.'))
