@@ -511,8 +511,9 @@ class Instance(Base):
 		serverRole = ucr.get('server/role')
 		if serverRole != 'domaincontroller_slave':
 			# use the credentials of the currently authenticated user on a master/backup system
-			username = self._username
-			password = self._password
+			self.require_password()
+			username = self.username
+			password = self.password
 			master = '%s.%s' % (ucr.get('hostname'), ucr.get('domainname'))
 		if serverRole == 'domaincontroller_backup':
 			master = ucr.get('ldap/master')
@@ -612,8 +613,9 @@ class Instance(Base):
 
 		if serverRole != 'domaincontroller_slave':
 			# use the credentials of the currently authenticated user on a master/backup system
-			username = self._username
-			password = self._password
+			self.require_password()
+			username = self.username
+			password = self.password
 			master = '%s.%s' % (ucr.get('hostname'), ucr.get('domainname'))
 		if serverRole == 'domaincontroller_backup':
 			master = ucr.get('ldap/master')

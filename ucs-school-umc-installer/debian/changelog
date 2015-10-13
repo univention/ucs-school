@@ -1,3 +1,9 @@
+ucs-school-umc-installer (4.0.0-1) unstable; urgency=medium
+
+  * Bug #39232: ask for password if logged in via SAML
+
+ -- Florian Best <best@univention.de>  Tue, 13 Oct 2015 15:32:36 +0200
+
 ucs-school-umc-installer (3.0.3-1) unstable; urgency=medium
 
   * Bug #37763: fix error message
