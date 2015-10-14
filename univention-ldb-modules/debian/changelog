@@ -1,3 +1,9 @@
+univention-ldb-modules (4.0.0-1) unstable; urgency=medium
+
+  * Bug #39534: Start UCS@school 4.1 development
+
+ -- Florian Best <best@univention.de>  Wed, 14 Oct 2015 15:30:00 +0200
+
 univention-ldb-modules (3.0.3-1) unstable; urgency=medium
 
   * Switch from samba4 init script to samba (Bug #36811)

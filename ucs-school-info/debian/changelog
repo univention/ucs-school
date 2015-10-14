@@ -1,3 +1,9 @@
+ucs-school-info (6.0.0-1) unstable; urgency=medium
+
+  * Bug #39534: Start UCS@school 4.1 development
+
+ -- Florian Best <best@univention.de>  Wed, 14 Oct 2015 15:29:54 +0200
+
 ucs-school-info (5.0.0-2) unstable; urgency=medium
 
   * Bug #35892: adjust compat level

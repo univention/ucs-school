@@ -1,3 +1,9 @@
+ucs-test-ucsschool (3.0.0-1) unstable; urgency=medium
+
+  * Bug #39534: Start UCS@school 4.1 development
+
+ -- Florian Best <best@univention.de>  Wed, 14 Oct 2015 15:30:00 +0200
+
 ucs-test-ucsschool (2.0.53-1) unstable; urgency=low
 
   * Bug #39061: updated 11_squidguard_assign_rule_to_2_rooms due to

@@ -1,3 +1,9 @@
+ucs-school-metapackage (8.0.0-1) unstable; urgency=medium
+
+  * Bug #39534: Start UCS@school 4.1 development
+
+ -- Florian Best <best@univention.de>  Wed, 14 Oct 2015 15:29:55 +0200
+
 ucs-school-metapackage (7.0.2-1) unstable; urgency=low
 
   * Bug #39061: bumped version to prevent UMC update problems on DC master systems

@@ -1,3 +1,9 @@
+ucs-school-radius-802.1x (5.0.0-1) unstable; urgency=medium
+
+  * Bug #39534: Start UCS@school 4.1 development
+
+ -- Florian Best <best@univention.de>  Wed, 14 Oct 2015 15:29:56 +0200
+
 ucs-school-radius-802.1x (4.0.0-1) unstable; urgency=medium
 
   * Bug #35892: Start UCS 4.0 development
