@@ -1,3 +1,9 @@
+ucs-school-umc-computerroom (6.0.4-2) unstable; urgency=medium
+
+  * Bug #39318: install missing files
+
+ -- Florian Best <best@univention.de>  Wed, 14 Oct 2015 17:29:57 +0200
+
 ucs-school-umc-computerroom (6.0.4-1) unstable; urgency=medium
 
   * Bug #39318: add interface for computerroom plugins
