@@ -1,4 +1,4 @@
-ucs-school-umc-internetrules (10.0.2-1) unstable; urgency=medium
+ucs-school-umc-internetrules (11.0.0-1) unstable; urgency=medium
 
   * Bug #39230: remove unused imports
 
