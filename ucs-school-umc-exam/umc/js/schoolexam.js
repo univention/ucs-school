@@ -638,20 +638,23 @@ define([
 
 			// start the exam
 			var values = this.getValues();
-			this.umcpCommand('schoolexam/exam/start', values, false);
+			var preparationDeferred = new Deferred();
+			this.umcpCommand('schoolexam/exam/start', values).then(undefined, function() {
+				preparationDeferred.cancel();
+			});
 
 			// initiate the progress bar
 			this._progressBar.reset(_('Starting the configuration process...' ));
 			this.standby(false);
 			this.standby(true, this._progressBar);
-			var preparationDeferred = new Deferred();
 			this._progressBar.auto(
 				'schoolexam/progress',
 				{},
 				lang.hitch(this, '_preparationFinished', preparationDeferred),
 				undefined,
 				undefined,
-				true
+				true,
+				preparationDeferred
 			);
 
 			preparationDeferred.then(lang.hitch(this, function() {
