@@ -190,7 +190,7 @@ html5
 		headers['Accept'] = 'application/json'
 		httpcon.request(
 			"POST",
-			'/umcp/upload/distribution/upload',
+			'/univention-management-console/upload/distribution/upload',
 			data,
 			headers=headers)
 		r = httpcon.getresponse().status

@@ -30,11 +30,6 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-# related third party
-from httplib import HTTPSConnection, HTTPException
-from simplejson import loads, dumps
-from socket import error as SocketError
-
 # univention
 from univention.management.console.log import MODULE
 from univention.management.console.config import ucr
@@ -83,87 +78,3 @@ class Progress(object):
 
 	def add_steps(self, steps = 1):
 		self._steps += steps
-
-### mostly copied from app_center/util.py -> should be refactored, see Bug #31059
-class UMCConnection(object):
-	def __init__(self, host, username=None, password=None):
-		self._host = host
-		self._headers = {
-			'Content-Type' : 'application/json; charset=UTF-8'
-		}
-		if username is not None:
-			self.auth(username, password)
-
-	### new method that was not in app_center/util.py
-	@staticmethod
-	def get_machine_connection():
-		# open a new connection to the master UMC
-		username = '%s$' % ucr.get('hostname')
-		password = ''
-		try:
-			with open('/etc/machine.secret') as machineFile:
-				password = machineFile.readline().strip()
-		except (OSError, IOError) as e:
-			MODULE.error('Could not read /etc/machine.secret: %s' % e)
-		try:
-			connection = UMCConnection(ucr.get('ldap/master'))
-			connection.auth(username, password)
-			return connection
-		except (HTTPException, SocketError) as e:
-			MODULE.error('Could not connect to UMC on %s: %s' % (ucr.get('ldap/master'), e))
-		return None
-
-	def get_connection(self):
-		# once keep-alive is over, the socket closes
-		#   so create a new connection on every request
-		return HTTPSConnection(self._host)
-
-	def auth(self, username, password):
-		data = self.build_data({'username' : username, 'password' : password})
-		con = self.get_connection()
-		try:
-			con.request('POST', '/umcp/auth', data)
-		except Exception as e:
-			# probably unreachable
-			MODULE.warn(str(e))
-			error_message = '%s: Authentication failed while contacting: %s' % (self._host, e)
-			raise HTTPException(error_message)
-		else:
-			try:
-				response = con.getresponse()
-				cookie = response.getheader('set-cookie')
-				if cookie is None:
-					raise ValueError('No cookie')
-				self._headers['Cookie'] = cookie
-			except Exception as e:
-				MODULE.warn(str(e))
-				error_message = '%s: Authentication failed: %s' % (self._host, response.read())
-				raise HTTPException(error_message)
-
-	def build_data(self, data, flavor=None):
-		data = {'options' : data}
-		if flavor:
-			data['flavor'] = flavor
-		return dumps(data)
-
-	def request(self, url, data=None, flavor=None):
-		if data is None:
-			data = {}
-		data = self.build_data(data, flavor)
-		con = self.get_connection()
-		con.request('POST', '/umcp/command/%s' % url, data, headers=self._headers)
-		response = con.getresponse()
-		if response.status != 200:
-			error_message = '%s on %s (%s): %s' % (response.status, self._host, url, response.read())
-			if response.status == 403:
-				# 403 is either command is unknown
-				#   or command is known but forbidden
-				# as the user was allowed to invoke the same command
-				# on the local host, it means that the command
-				# is unknown (older app center)
-				MODULE.warn(error_message)
-				raise NotImplementedError('command forbidden: %s' % url)
-			raise HTTPException(error_message)
-		content = response.read()
-		return loads(content)['result']
-

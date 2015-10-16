@@ -1,3 +1,9 @@
+ucs-school-umc-computerroom (7.0.1-1) unstable; urgency=medium
+
+  * Bug #39573: Adjust /umcp/ to /univention-management-console/
+
+ -- Florian Best <best@univention.de>  Fri, 16 Oct 2015 12:56:25 +0200
+
 ucs-school-umc-computerroom (7.0.0-2) unstable; urgency=medium
 
   * Bug #39318: install missing files

@@ -39,6 +39,7 @@ from univention.management.console.config import ucr
 from univention.management.console.modules.decorators import simple_response, file_upload, require_password
 
 from univention.lib.i18n import Translation
+from univention.lib.umc_connection import UMCConnection
 
 from ucsschool.lib.schoolldap import LDAP_Connection, SchoolBaseModule
 import ucsschool.lib.internetrules as internetrules
@@ -59,7 +60,7 @@ from httplib import HTTPException
 from socket import error as SocketError
 
 import util
-from util import UMCConnection, Progress
+from util import Progress
 
 udm_modules.update()
 

@@ -87,7 +87,7 @@ define([
 				callback: lang.hitch( this, function( ids, items ) {
 					array.forEach( items, lang.hitch( this, function ( item ) {
 						// document.location.host + '//' + document.location.host +
-						var url = lang.replace( '/umcp/command/printermoderation/download?username={0}&printjob={1}', [ item.username, item.filename ] );
+						var url = lang.replace( '/univention-management-console/command/printermoderation/download?username={0}&printjob={1}', [ item.username, item.filename ] );
 						window.open( url );
 					} ) );
 				} )

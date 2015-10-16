@@ -137,7 +137,7 @@ html5
 		try:
 			httpcon.request(
 				"POST",
-				'/umcp/upload/schoolcsvimport/save',
+				'/univention-management-console/upload/schoolcsvimport/save',
 				data,
 				headers=headers)
 			response = httpcon.getresponse()

@@ -25,7 +25,7 @@ def contains(big, small):
 def listAllModules(con):
 	httpcon = con.get_connection()
 	data = con.build_data({}, None)
-	httpcon.request('POST', '/umcp/get/modules/list', data, headers=con._headers)
+	httpcon.request('POST', '/univention-management-console/get/modules/list', data, headers=con._headers)
 	modules = loads(httpcon.getresponse().read())['modules']
 	modules_names = [(x['id'], x.get('flavor')) for x in modules]
 	print 'modules = ', modules_names

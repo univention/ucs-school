@@ -64,7 +64,7 @@ define([
 	// 	random: null,
 
 	// 	// pattern for the image URI
-	// 	_pattern: '/umcp/command/computerroom/screenshot?computer={computer}&random={random}',
+	// 	_pattern: '/univention-management-console/command/computerroom/screenshot?computer={computer}&random={random}',
 
 	// 	// tiemr to update the iamges
 	// 	_timer: null,
@@ -134,7 +134,7 @@ define([
 		style: 'float: left; padding: 8px; position: relative;',
 
 		// pattern for the image URI
-		_pattern: '/umcp/command/computerroom/screenshot?computer={computer}&random={random}',
+		_pattern: '/univention-management-console/command/computerroom/screenshot?computer={computer}&random={random}',
 
 		// tiemr to update the iamges
 		_timer: null,
