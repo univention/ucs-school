@@ -183,7 +183,7 @@ feedback@univention.de
 		  Die Changelogs mit den detaillierten Änderungsinformationen werden nur in Englisch
 		  gepflegt. Aufgeführt sind die Änderungen zwischen den UCS@school-Versionen 4.0 v2 und 4.0 R2 v1. Die
 		  Änderungsinformationen für vorherige Versionssprünge finden sich unter <ulink
-		  url="http://docs.univention.de/"/>.
+		  url="https://docs.software-univention.de/"/>.
 		</para>
 		<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="changelog-ucsschool-4.0r2v1.xml" xpointer="xpointer(/chapter/section)"/>
 	</chapter>
