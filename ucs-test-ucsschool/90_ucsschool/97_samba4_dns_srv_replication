@@ -113,9 +113,14 @@ class TestS4DNSSRVReplication(TestSamba4):
 					   "'ldbmodify', only 'add' or 'delete' are allowed."
 					   % action)
 
-		# DNS SRV record DN in a format as stored in Samba4:
-		samba_record_dn = ("DC=%s,DC=%s,CN=MicrosoftDNS,CN=System,%s"
-						   % (record_name, self.domainname, self.ldap_base))
+		if self.UCR.get('connector/s4/mapping/dns/position','').lower() == 'legacy':
+			# DNS SRV record DN in a format as stored in Samba4:
+			samba_record_dn = "DC=%s,DC=%s,CN=MicrosoftDNS,CN=System,%s" % (
+				record_name, self.domainname, self.ldap_base)
+		else:
+			# DNS SRV record DN in a format as stored in Samba4:
+			samba_record_dn = "DC=%s,DC=%s,CN=MicrosoftDNS,CN=System,DC=DomainDnsZones,%s" % (
+				record_name, self.domainname, self.ldap_base))
 
 		# prepare an LDIF to add/remove a test value to/from the SRV record:
 		LDIFRecord = StringIO()
@@ -171,7 +176,7 @@ class TestS4DNSSRVReplication(TestSamba4):
                 # extract the decrypted 'hostname' values:
 		host = self.sed_for_key(RecordBuffer.getvalue(), "^# .* nameTarget .* : ").split()
 
-                RecordBuffer.close()
+		RecordBuffer.close()
 
 		if not all((priority, weight, port, host)):
 			utils.fail("Could not determine at least one of the location "
@@ -248,9 +253,9 @@ class TestS4DNSSRVReplication(TestSamba4):
 			record_cmd += test_location
 
 			try:
-                        	stdout, stderr = self.create_and_run_process(cmd + record_cmd)
+				stdout, stderr = self.create_and_run_process(cmd + record_cmd)
 			except IndexError as exc:  # some records in some setups do not exist 
-                        	pass  # workaround for Bug #38064
+				pass  # workaround for Bug #38064
 			if stderr:
 				# ignore the 'Does not exist' messages
 				if 'Does not exist' not in stderr:

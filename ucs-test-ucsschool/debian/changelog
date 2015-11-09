@@ -1,3 +1,10 @@
+ucs-test-ucsschool (3.0.2-1) unstable; urgency=low
+
+  * Bug #34222: fixed 97_samba4_dns_srv_replication due to Bug #39040 and
+    Bug #34184
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Mon, 09 Nov 2015 12:29:37 +0100
+
 ucs-test-ucsschool (3.0.1-1) unstable; urgency=medium
 
   * Bug #39573: Adjust /umcp/ to /univention-management-console/
