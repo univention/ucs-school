@@ -85,6 +85,15 @@ class Instance(SchoolBaseModule):
 			raise UMC_OptionTypeError('Invalid file')
 		return path
 
+	def _get_all_username_variants(self, username):
+		"""
+		Checks for print job directories for the given username regardless of
+		the case of the directory name.
+		"""
+		username = username.replace('/', '')
+		all_user_dirs = os.walk(CUPSPDF_DIR).next()[1]
+		return [x for x in all_user_dirs if x.lower() == username.lower()]
+
 	@simple_response
 	@LDAP_Connection()
 	def printers(self, ldap_user_read=None, ldap_position=None, search_base=None):
@@ -131,7 +140,7 @@ class Instance(SchoolBaseModule):
 
 		for student in students:
 			username = student.info['username']
-			path_username = dict((self._get_path(username, ''), username) for username in (username, username.lower(), username.upper()))
+			path_username = dict((self._get_path(username, ''), username) for username in self._get_all_username_variants(username))
 			for user_path, username in path_username.iteritems():
 				printjoblist.extend(Printjob(student, username, document).json() for document in glob.glob(os.path.join(user_path, '*.pdf')) if os.path.isfile(document))
 
