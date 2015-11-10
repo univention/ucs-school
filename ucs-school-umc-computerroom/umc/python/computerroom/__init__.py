@@ -263,12 +263,14 @@ class Instance(SchoolBaseModule):
 				except ImportError:
 					MODULE.error(traceback.format_exc())
 				for name, plugin in inspect.getmembers(module, inspect.isclass):
+					MODULE.info('Loading plugin %r from module %r' % (plugin, module,))
 					if not name.startswith('_') and plugin is not Plugin and issubclass(plugin, Plugin):
 						try:
 							plugin = plugin(self, self._italc)
 						except Exception:
 							MODULE.error(traceback.format_exc())
-						self._plugins[plugin.name] = plugin
+						else:
+							self._plugins[plugin.name] = plugin
 
 	def destroy(self):
 		'''Remove lock file when UMC module exists'''
