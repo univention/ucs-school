@@ -1,3 +1,10 @@
+ucs-school-umc-printermoderation (12.0.2-1) unstable; urgency=low
+
+  * Bug #38423: fix detection of printjobs for users with differing
+    lower/uppercase in their username
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Tue, 10 Nov 2015 13:04:44 +0100
+
 ucs-school-umc-printermoderation (12.0.1-1) unstable; urgency=medium
 
   * Bug #39573: Adjust /umcp/ to /univention-management-console/
