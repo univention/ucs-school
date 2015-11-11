@@ -120,7 +120,7 @@ class TestS4DNSSRVReplication(TestSamba4):
 		else:
 			# DNS SRV record DN in a format as stored in Samba4:
 			samba_record_dn = "DC=%s,DC=%s,CN=MicrosoftDNS,CN=System,DC=DomainDnsZones,%s" % (
-				record_name, self.domainname, self.ldap_base))
+				record_name, self.domainname, self.ldap_base)
 
 		# prepare an LDIF to add/remove a test value to/from the SRV record:
 		LDIFRecord = StringIO()
