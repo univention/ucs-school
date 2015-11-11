@@ -1,3 +1,10 @@
+ucs-test-ucsschool (3.0.3-1) unstable; urgency=low
+
+  * Bug #39534: check result of getacl()
+  * Bug #39534: stop UDM CLI after adding new mail domain
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Wed, 11 Nov 2015 12:00:04 +0100
+
 ucs-test-ucsschool (3.0.2-1) unstable; urgency=low
 
   * Bug #34222: fixed 97_samba4_dns_srv_replication due to Bug #39040 and
