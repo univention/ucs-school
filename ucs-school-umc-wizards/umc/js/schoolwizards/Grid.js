@@ -226,6 +226,9 @@ define([
 			if (this.autoSearch) {
 				this._searchForm.ready().then(lang.hitch(this, function() {
 					this.filter({type: 'all'});
+					if (!this.schools.length) {
+						return;
+					}
 					var handler = aspect.before(this._grid._grid, '_onFetchComplete', lang.hitch(this, function(items) {
 						handler.remove();
 						if (items.length === 0) {

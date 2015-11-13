@@ -66,6 +66,7 @@ define([
 					}));
 				}),
 				lang.hitch(this, function() {
+					this.schools = [];
 					// error. most probably no schools found
 					if (this.moduleFlavor == 'schoolwizards/schools') {
 						// goto school grid. no need for error message

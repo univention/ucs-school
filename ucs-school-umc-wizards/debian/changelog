@@ -1,3 +1,10 @@
+ucs-school-umc-wizards (7.0.1-1) unstable; urgency=medium
+
+  * Bug #39928: fix rendering of Users/Classes/ComputerGrid if no school is
+  	set up yet
+
+ -- Florian Best <best@univention.de>  Fri, 13 Nov 2015 13:04:10 +0100
+
 ucs-school-umc-wizards (7.0.0-1) unstable; urgency=medium
 
   * Bug #39534: Start UCS@school 4.1 development
