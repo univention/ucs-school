@@ -8,15 +8,15 @@
 	%DocBookDTD;
 	%entities;
 ]>
-<book lang="de" id="releasenotes-4.0-de">
+<book lang="de" id="releasenotes-4.1-de">
 
 	<bookinfo>
- 		<title>UCS@school 4.0 R2 v1 Release Notes</title>
-		<subtitle>Release Notes für die Inbetriebnahme und Aktualisierung von UCS@school 4.0 R2 v1</subtitle>
+ 		<title>UCS@school 4.1 v1 Release Notes</title>
+		<subtitle>Release Notes für die Inbetriebnahme und Aktualisierung von UCS@school 4.1 v1</subtitle>
 		<legalnotice>
 			<literallayout>
-Version 4.0 R2 v1
-Stand: 05. Mai 2015
+Version 4.1 v1
+Stand: 17. November 2015
 			</literallayout>
 			<literallayout lang="">
 Alle Rechte vorbehalten./ All rights reserved.
@@ -40,63 +40,35 @@ feedback@univention.de
 
 	<chapter id="relnotes:prepare">
 		<title>Hinweise zum Update</title>
-			<para>
-				Während der Aktualisierung kann es zu Ausfällen von Diensten innerhalb der Domäne
-				kommen. Aus diesem Grund sollte das Update innerhalb eines Wartungsfensters
-				erfolgen. Grundsätzlich wird empfohlen das Update zunächst in einer Testumgebung
-				einzuspielen und zu testen. Die Testumgebung sollte dabei identisch zur
-				Produktivumgebung sein. Je nach Systemgeschwindigkeit, Netzwerkanbindung und
-				installierter Software kann das Update zwischen dreißig Minuten und mehreren Stunden
-				dauern.
-			</para>
+		<para>
+			Während der Aktualisierung kann es zu Ausfällen von Diensten innerhalb der Domäne
+			kommen. Aus diesem Grund sollte das Update innerhalb eines Wartungsfensters
+			erfolgen. Grundsätzlich wird empfohlen das Update zunächst in einer Testumgebung
+			einzuspielen und zu testen. Die Testumgebung sollte dabei identisch zur
+			Produktivumgebung sein. Je nach Systemgeschwindigkeit, Netzwerkanbindung und
+			installierter Software kann das Update zwischen dreißig Minuten und mehreren Stunden
+			dauern.
+		</para>
 
 		<section id="relnotes:samba">
 			<title>Ablösung von Windows NT DC Funktionalität</title>
 				<para>
-					Die Verwendung von Windows NT Domänendiensten, die klassisch durch Samba 3
-					bereitgestellt wurden, wird mit UCS 4.0 nicht mehr empfohlen. Eine Auswahl der
-					Windows NT Domänendienste ist deshalb während der Installation von UCS und durch
-					das App Center nicht mehr vorgesehen. Es wird empfohlen auf die Active Directory
-					Domänendienste von UCS (Samba 4) zu migrieren. Die Migration ist im Univention
-					Wiki dokumentiert:
+					Die Verwendung von Windows NT-Domänendiensten, die klassisch durch Samba 3
+					bereitgestellt wurden, wird seit UCS 4.0 nicht mehr empfohlen. Eine Auswahl der
+					Windows NT-Domänendienste ist deshalb während der Installation von UCS und durch
+					das App Center nicht mehr vorgesehen. Es wird empfohlen auf die Active Directory-Domänendienste
+					von UCS (Samba 4) zu migrieren. Die Migration ist im Univention	Wiki dokumentiert:
 					<ulink url="http://wiki.univention.de/index.php?title=Migration_from_Samba_3_to_Samba_4"/>.
 				</para>
 		</section>
 		<section id="relnotes:32bit">
 			<title>UCS-Installations-DVDs nur noch als 64-Bit-Variante</title>
 				<para>
-					UCS-Installations-DVSs werden ab UCS 4 nur noch für 64-Bit-Archtitekturen
+					UCS-Installations-DVDs werden ab UCS 4 nur noch für 64-Bit-Archtitekturen
 					bereitgestellt. Vorhandene 32-Bit UCS 3 Systeme können weiterhin über das Online
 					Repository oder über Update-DVDs auf UCS 4 aktualisiert werden. Die
-					32-Bit-Archtitektur wird für die gesamte UCS 4-Maintenance noch unterstützt.
+					32-Bit-Archtitektur wird für die gesamte UCS 4-Maintenance weiterhin unterstützt.
 				</para>
-		</section>
-		<section id="relnotes:printermoderation">
-			<title>Standard-Druckertreiber für PDF-Drucker</title>
-			<para>
-				Ab &ucsUAS; 4.0 R2 wird während einer Neuinstallation beim Anlegen des PDF-Druckers für die Druckmoderation
-				automatisch der Windows-Druckertreiber <wordasword>MS Publisher Color Printer</wordasword> mit der Druckerfreigabe verknüpft.
-				Dieser Treiber ist bei vielen Windows-Versionen bereits vorinstalliert (<systemitem class="osname">win7</systemitem>, <systemitem class="osname">win8.1</systemitem>, ...)
-				und vermeidet so das unnötige Herunterladen und Installieren von Druckertreibern beim Verbinden mit der Druckerfreigabe.
-				Falls ein abweichender Treiber gewünscht ist, kann dieser über die &ucsUCRV; <envar>ucsschool/printermoderation/windows/driver/name</envar>
-				angegeben werden.
-			</para>
-			<para>
-				Auf &ucsUAS;-Systemen, die auf Version 4.0 R2 aktualisiert werden, wird der Druckertreiber nicht automatisch gesetzt.
-				Falls auf einzelnen Systemen die Treiberzuordnung nachträglich ausgeführt werden soll, kann das Skript
-				<filename>/usr/share/ucs-school-umc-printermoderation/set-windows-driver-for-pdf-printer</filename>
-				auf dem jeweiligen System als Benutzer <systemitem class="username">root</systemitem> ausgeführt werden.
-			</para>
-		</section>
-		<section id="relnotes:multiupload">
-			<title>Gleichzeitiges Hochladen mehrerer Dateien</title>
-			<para>
-				&ucsUAS; unterstützt ab UCS 4.0 Errata-Stand 162 das gleichzeitige Hochladen von
-				mehreren Dateien in den UMC-Modulen <guimenu>Klassenarbeit starten</guimenu> und <guimenu>Material
-				verteilen</guimenu>, sofern dies auch vom verwendeten Browser unterstützt wird. Der Benutzer kann
-				nun im Dateiauswahldialog seines verwendeten Browsers mehrere oder alle Dateien eines Verzeichnisses
-				auswählen und diese in einem Schritt hochladen.
-			</para>
 		</section>
 	</chapter>
 
@@ -145,7 +117,7 @@ feedback@univention.de
 		  </listitem>
 		</itemizedlist>
 		<para>
-			Bei der Neuinstallation einer UCS@school 4.0 Domäne mit Samba 4 sollte nach Abschluss
+			Bei der Neuinstallation einer UCS@school 4.1-Domäne mit Samba 4 sollte nach Abschluss
 			der Installation einmalig als Benutzer <emphasis>root</emphasis> das Kommando
 			<command>samba-tool ntacl sysvolreset</command> auf der Kommandozeile ausgeführt werden.
 		</para>
@@ -181,11 +153,11 @@ feedback@univention.de
 		<title>Changelog</title>
 		<para>
 		  Die Changelogs mit den detaillierten Änderungsinformationen werden nur in Englisch
-		  gepflegt. Aufgeführt sind die Änderungen zwischen den UCS@school-Versionen 4.0 v2 und 4.0 R2 v1. Die
+		  gepflegt. Aufgeführt sind die Änderungen zwischen den UCS@school-Versionen 4.0 R2 v3 und 4.1 v1. Die
 		  Änderungsinformationen für vorherige Versionssprünge finden sich unter <ulink
 		  url="https://docs.software-univention.de/"/>.
 		</para>
-		<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="changelog-ucsschool-4.0r2v1.xml" xpointer="xpointer(/chapter/section)"/>
+		<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="changelog-ucsschool-4.1v1.xml" xpointer="xpointer(/chapter/section)"/>
 	</chapter>
 
 	<?dbhtml-include href="../stylesheets/piwik.html"?>

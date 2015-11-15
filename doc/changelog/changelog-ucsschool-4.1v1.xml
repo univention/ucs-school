@@ -1,0 +1,296 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE chapter [
+<!ENTITY % extensions SYSTEM "../stylesheets/macros.ent" >
+<!ENTITY % DocBookDTD PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<!ENTITY % entities SYSTEM "../stylesheets/macros-en.ent" >
+%extensions;
+%DocBookDTD;
+%entities;
+]>
+<chapter id="relnotes:changelog" lang="en">
+	<title>Changelog</title>
+
+	<!--
+	<section id="relnotes:changelog:general">
+		<title>General</title>
+		<itemizedlist>
+			<listitem>
+				<simpara>
+				</simpara>
+			</listitem>
+			<listitem>
+				<simpara>
+				</simpara>
+			</listitem>
+		</itemizedlist>
+	</section>
+
+		<section id="relnotes:changelog:import">
+		<title>Import scripts</title>
+		<itemizedlist>
+		<listitem>
+		<simpara>
+		</simpara>
+		</listitem>
+		<listitem>
+		<simpara>
+		</simpara>
+		</listitem>
+		</itemizedlist>
+		</section>
+
+<section id="relnotes:changelog:italc">
+<title>iTALC</title>
+<itemizedlist>
+<listitem>
+<simpara>
+</simpara>
+</listitem>
+</itemizedlist>
+</section>
+
+-->
+<section id="relnotes:changelog:domain">
+	<title>Domain services</title>
+	<!--
+	<section id="relnotes:changelog:samba4">
+		<title>Samba4</title>
+		<itemizedlist>
+			<listitem>
+				<simpara>
+				</simpara>
+			</listitem>
+			<listitem>
+				<simpara>
+				</simpara>
+			</listitem>
+		</itemizedlist>
+		</section>
+		-->
+	<section id="relnotes:changelog:netlogon">
+		<title>Windows Netlogon Scripts</title>
+		<itemizedlist>
+			<listitem>
+				<simpara>
+					The listener module for generating logon scripts has been updated and supports now newer versions of Mac OS X (<u:bug>39403</u:bug>).
+				</simpara>
+			</listitem>
+			<listitem>
+				<simpara>
+					A deadlock scenario during (re)join of a school slave has been fixed caused by an infinite loop within the logon script generation (<u:bug>38754</u:bug>).
+				</simpara>
+			</listitem>
+		</itemizedlist>
+	</section>
+<!--
+	<section id="relnotes:changelog:openldap">
+		<title>OpenLDAP</title>
+		</section>
+		<section id="relnotes:changelog:ldap-acl">
+		<title>LDAP ACL changes</title>
+		<itemizedlist>
+		<listitem>
+		<simpara>
+		</simpara>
+		</listitem>
+		</itemizedlist>
+		</section>
+		<section id="relnotes:changelog:listener">
+		<title>Listener/Notifier domain replication</title>
+		</section>
+		<section id="relnotes:changelog:join">
+		<title>Domain joins of UCS systems</title>
+		</section>
+
+<section id="relnotes:changelog:print">
+<title>Print services</title>
+</section>
+
+<section id="relnotes:changelog:radius">
+<title>RADIUS</title>
+</section>
+-->
+
+<!--
+<section id="relnotes:changelog:squid">
+<title>Squid</title>
+	<itemizedlist>
+		<listitem>
+			<simpara>
+			...
+			</simpara>
+		</listitem>
+	</itemizedlist>
+</section>
+-->
+<!--
+<section id="relnotes:changelog:udm">
+<title>Univention Directory Manager modules</title>
+</section>
+	-->
+
+	<section id="relnotes:changelog:umc">
+		<title>Univention Management Console</title>
+		<listitem>
+			<simpara>
+				Several internal changes have been made to &ucsUAS; UMC modules to work properly if SAML authentication has been used (<u:bug>39573</u:bug>, <u:bug>39229</u:bug>, <u:bug>39228</u:bug>, <u:bug>39230</u:bug>, <u:bug>39231</u:bug>, <u:bug>39232</u:bug>).
+			</simpara>
+		</listitem>
+
+		<!--
+			<section id="relnotes:changelog:umc:server">
+			<title>Univention Management Console server</title>
+			</section>
+			<section id="relnotes:changelog:umc:web">
+			<title>Univention Management Console web interface</title>
+			</section>
+
+		<section id="relnotes:changelog:umc:modules">
+			<title>Univention Management Console modules</title>
+			<section id="relnotes:changelog:umc:modules:general">
+				<title>General</title>
+				<itemizedlist>
+					<listitem>
+						<simpara>
+						</simpara>
+					</listitem>
+					<listitem>
+						<simpara>
+						</simpara>
+					</listitem>
+				</itemizedlist>
+			</section>
+			<section id="relnotes:changelog:umc:modules:csv">
+				<title>CSV Import</title>
+				<itemizedlist>
+					<listitem>
+						<simpara>
+						</simpara>
+					</listitem>
+					<listitem>
+						<simpara>
+						</simpara>
+					</listitem>
+					<listitem>
+						<simpara>
+						</simpara>
+					</listitem>
+					<listitem>
+						<simpara>
+						</simpara>
+					</listitem>
+					<listitem>
+						<simpara>
+						</simpara>
+					</listitem>
+				</itemizedlist>
+			</section>
+			-->
+			<section id="relnotes:changelog:umc:modules:wizards">
+				<title>Wizards (Users/Classes/Computers/Schools)</title>
+				<itemizedlist>
+					<listitem>
+						<simpara>
+							A javascript problem has been fixed in the school wizard that could lead to a unresponsive UMC module. This was the case in a multi server environment on the master domaincontroller if no school at all has been set up in LDAP (<u:bug>39928</u:bug>).
+						</simpara>
+					</listitem>
+				</itemizedlist>
+			</section>
+			<section id="relnotes:changelog:umc:modules:computerroom">
+				<title>Computerroom</title>
+				<itemizedlist>
+					<listitem>
+						<simpara>
+							 An new internal API has been added to the computerroom module. This gives external developers the ability to add functionality to the computerroom module (<u:bug>39318</u:bug>).
+						</simpara>
+					</listitem>
+				</itemizedlist>
+			</section>
+			<!--
+			<section id="relnotes:changelog:umc:modules:school">
+				<title>UCS@school configuration</title>
+				<itemizedlist>
+					<listitem>
+						<simpara>
+						</simpara>
+					</listitem>
+				</itemizedlist>
+			</section>
+				<section id="relnotes:changelog:umc:modules:workgroups">
+				<title>Workgroups</title>
+				<itemizedlist>
+				<listitem>
+				<simpara>
+				</simpara>
+				</listitem>
+				<listitem>
+				<simpara>
+				</simpara>
+				</listitem>
+				</itemizedlist>
+				</section>
+			<section id="relnotes:changelog:umc:modules:assign-classes">
+				<title>Assign classes</title>
+				<itemizedlist>
+					<listitem>
+						<simpara>
+						</simpara>
+					</listitem>
+				</itemizedlist>
+			</section>
+			-->
+			<section id="relnotes:changelog:umc:modules:exam">
+				<title>Exam</title>
+				<itemizedlist>
+					<listitem>
+						<simpara>
+							The error handling of the exam mode has been improved. Errors are now shown properly to the user (<u:bug>39547</u:bug>).
+						</simpara>
+					</listitem>
+				</itemizedlist>
+			</section>
+			<section id="relnotes:changelog:umc:modules:distribution">
+				<title>Distribution</title>
+				<itemizedlist>
+					<listitem>
+						<simpara>
+							A possible security risk during file collection has been removed (<u:bug>38291</u:bug>).
+						</simpara>
+					</listitem>
+				</itemizedlist>
+			</section>
+			<!--
+			<section id="relnotes:changelog:umc:modules:helpdesk">
+				<title>Helpdesk</title>
+				<itemizedlist>
+					<listitem>
+						<simpara>
+						</simpara>
+					</listitem>
+				</itemizedlist>
+			</section>
+			-->
+			<section id="relnotes:changelog:umc:modules:printermoderation">
+				<title>Printer moderation</title>
+				<itemizedlist>
+					<listitem>
+						<simpara>
+							Not all print job were shown within the printer moderation module. This problem has been fixed and it was dependent on the case of the username and/or the used print client. (<u:bug>38423</u:bug>).
+						</simpara>
+					</listitem>
+				</itemizedlist>
+			</section>
+		</section>
+
+	<section id="relnotes:changelog:other">
+		<title>Other changes</title>
+		<itemizedlist>
+			<listitem>
+				<simpara>
+					The evaluation order of the new global proxy blacklist is now adjustable. By default the global blacklist has the lowest priority. By setting the &ucsUCRV; <envar>proxy/filter/global/blacklists/forced</envar> to <literal>yes</literal> the global blacklist gains highest priority and overrules all other proxy rules (<u:bug>39061</u:bug>).
+				</simpara>
+			</listitem>
+		</itemizedlist>
+	</section>
+</chapter>
