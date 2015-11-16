@@ -17,7 +17,6 @@ def main():
 	ucr = ucr_test.UCSTestConfigRegistry()
 	ucr.load()
 	host = ucr.get('hostname')
-	connection = UMCConnection(host)
 	with utu.UCSTestSchool()  as schoolenv:
 		schoolName, oudn = schoolenv.create_ou(name_edudc=host)
 		tea, teadn = schoolenv.create_user(schoolName, is_teacher=True)
@@ -31,6 +30,7 @@ def main():
 		utils.wait_for_replication_and_postrun()
 
 		for user in [tea]:
+			connection = UMCConnection(host)
 			connection.auth(user, passwd)
 			# 1 creating empty workgroup
 			emptyGroup = Workgroup(schoolName, umcConnection=connection)
