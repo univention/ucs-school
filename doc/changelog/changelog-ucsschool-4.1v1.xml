@@ -87,15 +87,19 @@
 		<section id="relnotes:changelog:openldap">
 			<title>OpenLDAP</title>
 		</section>
+-->
 		<section id="relnotes:changelog:ldap-acl">
 			<title>LDAP ACL changes</title>
 			<itemizedlist>
 				<listitem>
 					<simpara>
+						The attribute <property>uidNumber</property> can be accessed by teachers, staff and school administrators in temporary objects now.
+						This is required to create working groups (<u:bug>39967</u:bug>).
 					</simpara>
 				</listitem>
 			</itemizedlist>
 		</section>
+<!--
 		<section id="relnotes:changelog:listener">
 			<title>Listener/Notifier domain replication</title>
 		</section>
