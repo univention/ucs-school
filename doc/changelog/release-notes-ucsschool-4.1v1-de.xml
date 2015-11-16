@@ -53,7 +53,7 @@ feedback@univention.de
 		<section id="relnotes:samba">
 			<title>Ablösung von Windows NT DC Funktionalität</title>
 				<para>
-					Die Verwendung von Windows NT-Domänendiensten, die klassisch durch Samba 3
+					Die Verwendung der Windows NT-Domänendienste, die klassisch durch Samba 3
 					bereitgestellt wurden, wird seit UCS 4.0 nicht mehr empfohlen. Eine Auswahl der
 					Windows NT-Domänendienste ist deshalb während der Installation von UCS und durch
 					das App Center nicht mehr vorgesehen. Es wird empfohlen auf die Active Directory-Domänendienste

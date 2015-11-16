@@ -69,7 +69,7 @@
 		</section>
 -->
 		<section id="relnotes:changelog:netlogon">
-			<title>Windows Netlogon Scripts</title>
+			<title>Windows NETLOGON Scripts</title>
 			<itemizedlist>
 				<listitem>
 					<simpara>
@@ -165,7 +165,7 @@
 					<itemizedlist>
 						<listitem>
 							<simpara>
-								A javascript problem has been fixed in the school wizard that could lead to a unresponsive UMC module. This was the case in a multi server environment on the master domaincontroller if no school at all has been set up in LDAP (<u:bug>39928</u:bug>).
+								A JavaScript problem has been fixed in the school wizard that could lead to a unresponsive UMC module. This was the case in a multi server environment on the master Domaincontroller if no school at all has been set up in LDAP (<u:bug>39928</u:bug>).
 							</simpara>
 						</listitem>
 					</itemizedlist>
