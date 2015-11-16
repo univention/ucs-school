@@ -149,7 +149,6 @@ def main():
 		with udm_test.UCSTestUDM() as udm:
 			with ucr_test.UCSTestConfigRegistry() as ucr:
 				host = ucr.get('hostname')
-				con = UMCConnection(host)
 				serverRole = ucr.get('server/role')
 				print 'Role = ', serverRole
 				singleMaster = ucr.is_true('ucsschool/singlemaster', False)
@@ -180,6 +179,7 @@ def main():
 				for (user, userType) in users:
 					# staff is not able to login to dc-slave
 					if (userType != 'staff' or serverRole != 'domaincontroller_slave'):
+						con = UMCConnection(host)
 						con.auth(user, 'univention')
 						print 'usertype=', userType
 						modules = listAllModules(con)

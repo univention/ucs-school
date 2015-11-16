@@ -1,6 +1,7 @@
 ucs-test-ucsschool (3.0.4-1) unstable; urgency=medium
 
   * Bug #39230: adjust tests for SAML changes
+  * Bug #39965: fix misuage of UMCConnection
 
  -- Florian Best <best@univention.de>  Mon, 16 Nov 2015 09:23:00 +0100
 
