@@ -125,12 +125,13 @@
 			<title>Univention Directory Manager modules</title>
 		</section>
 -->
+	</section>
 		<section id="relnotes:changelog:umc">
 			<title>Univention Management Console</title>
 			<itemizedlist>
 				<listitem>
 					<simpara>
-						Several internal changes have been made to &ucsUAS; UMC modules to work properly if SAML authentication has been used (<u:bug>39573</u:bug>, <u:bug>39228</u:bug>, <u:bug>39229</u:bug>, <u:bug>39230</u:bug>, <u:bug>39231</u:bug>, <u:bug>39232</u:bug>).
+						Several internal changes have been made to &ucsUAS; UMC modules to work properly if SAML authentication has been used (<u:bug>39228</u:bug>, <u:bug>39229</u:bug>, <u:bug>39230</u:bug>, <u:bug>39231</u:bug>, <u:bug>39232</u:bug>, <u:bug>39573</u:bug>).
 					</simpara>
 				</listitem>
 			</itemizedlist>
@@ -169,7 +170,7 @@
 					<itemizedlist>
 						<listitem>
 							<simpara>
-								A JavaScript problem has been fixed in the school wizard that could lead to a unresponsive UMC module. This was the case in a multi server environment on the master Domaincontroller if no school at all has been set up in LDAP (<u:bug>39928</u:bug>).
+								A JavaScript problem has been fixed in the school wizard that could lead to a unresponsive UMC module. This was the case in a multi server environment on the master domaincontroller if no school at all has been set up in LDAP (<u:bug>39928</u:bug>).
 							</simpara>
 						</listitem>
 					</itemizedlist>
@@ -249,14 +250,13 @@
 					<itemizedlist>
 						<listitem>
 							<simpara>
-								Not all print job were shown within the printer moderation module. This problem has been fixed and it was dependent on the case of the username and/or the used print client. (<u:bug>38423</u:bug>).
+								Not all print jobs were shown within the printer moderation module. This problem has been fixed and was dependent on the case of the username and/or the used print client. (<u:bug>38423</u:bug>).
 							</simpara>
 						</listitem>
 					</itemizedlist>
 				</section>
 			</section>
 		</section>
-	</section>
 
 	<section id="relnotes:changelog:other">
 		<title>Other changes</title>

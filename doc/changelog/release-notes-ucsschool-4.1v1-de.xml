@@ -64,9 +64,9 @@ feedback@univention.de
 		<section id="relnotes:32bit">
 			<title>UCS-Installations-DVDs nur noch als 64-Bit-Variante</title>
 				<para>
-					UCS-Installations-DVDs werden ab UCS 4 nur noch für 64-Bit-Archtitekturen
-					bereitgestellt. Vorhandene 32-Bit UCS 3 Systeme können weiterhin über das Online
-					Repository oder über Update-DVDs auf UCS 4 aktualisiert werden. Die
+					Die UCS-Installations-DVD wird ab UCS 4 nur noch für die 64-Bit-Archtitektur
+					bereitgestellt. Vorhandene 32-Bit-UCS 3-Systeme können weiterhin über das Online-Repository
+					oder über Update-DVDs auf UCS 4 aktualisiert werden. Die
 					32-Bit-Archtitektur wird für die gesamte UCS 4-Maintenance weiterhin unterstützt.
 				</para>
 		</section>
@@ -77,21 +77,21 @@ feedback@univention.de
 	  <para>
 		Es sollte geprüft werden, ob ausreichend Festplattenplatz verfügbar ist. Eine
 		Standard-Installation benötigt min. 6 GB Speicherplatz. Das Update benötigt je nach Umfang
-		der vorhanden Installation mindestens 1 GB weiteren Speicherplatz zum Herunterladen und
+		der vorhanden Installation mindestens 1,5 GB weiteren Speicherplatz zum Herunterladen und
 		Installieren der Pakete.
 	  </para>
 
 	  <para>
 		Für das Update sollte eine Anmeldung auf der lokalen Konsole des Systems mit dem Benutzer
 		<emphasis>root</emphasis> durchgeführt und das Update dort gestartet werden. Alternativ
-		kann das Update über &ucsUMC; durchgeführt werden.
+		kann das Update über die &ucsUMC; durchgeführt werden.
 	  </para>
 
 	  <para>
 		Eine Remote-Aktualisierung über SSH wird nicht empfohlen, da dies beispielsweise bei
 		Unterbrechung der Netzverbindung zum Abbruch des Update-Vorgangs und zu einer
 		Beeinträchtigung des Systems führen kann. Sollte dennoch eine Aktualisierung über eine
-		Netzverbindung durchgeführt werden, ist sicherzustellen, dass das Update bei Unterbrechung
+		Netzverbindung durchgeführt werden, ist sicherzustellen, dass das Update bei einer Unterbrechung
 		der Netzverbindung trotzdem weiterläuft. Hierfür können beispielsweise die Tools
 		<command>screen</command> oder <command>at</command> eingesetzt werden, die auf allen
 		Systemrollen installiert sind.
@@ -116,11 +116,6 @@ feedback@univention.de
 			</para>
 		  </listitem>
 		</itemizedlist>
-		<para>
-			Bei der Neuinstallation einer UCS@school 4.1-Domäne mit Samba 4 sollte nach Abschluss
-			der Installation einmalig als Benutzer <emphasis>root</emphasis> das Kommando
-			<command>samba-tool ntacl sysvolreset</command> auf der Kommandozeile ausgeführt werden.
-		</para>
 	</chapter>
 
 	<chapter id="relnotes:umc">
@@ -153,7 +148,7 @@ feedback@univention.de
 		<title>Changelog</title>
 		<para>
 		  Die Changelogs mit den detaillierten Änderungsinformationen werden nur in Englisch
-		  gepflegt. Aufgeführt sind die Änderungen zwischen den UCS@school-Versionen 4.0 R2 v3 und 4.1 v1. Die
+		  gepflegt. Aufgeführt sind die Änderungen zwischen den UCS@school-Versionen 4.0 R2 v1 und 4.1 v1. Die
 		  Änderungsinformationen für vorherige Versionssprünge finden sich unter <ulink
 		  url="https://docs.software-univention.de/"/>.
 		</para>
