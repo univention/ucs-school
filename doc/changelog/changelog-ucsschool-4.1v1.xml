@@ -93,7 +93,7 @@
 			<itemizedlist>
 				<listitem>
 					<simpara>
-						The attribute <property>uidNumber</property> can be accessed by teachers, staff and school administrators in temporary objects now.
+						The attribute <property>uidNumber</property> can now be accessed by teachers, staff and school administrators in temporary objects container.
 						This is required to create working groups (<u:bug>39967</u:bug>).
 					</simpara>
 				</listitem>
@@ -130,7 +130,7 @@
 			<itemizedlist>
 				<listitem>
 					<simpara>
-						Several internal changes have been made to &ucsUAS; UMC modules to work properly if SAML authentication has been used (<u:bug>39573</u:bug>, <u:bug>39229</u:bug>, <u:bug>39228</u:bug>, <u:bug>39230</u:bug>, <u:bug>39231</u:bug>, <u:bug>39232</u:bug>).
+						Several internal changes have been made to &ucsUAS; UMC modules to work properly if SAML authentication has been used (<u:bug>39573</u:bug>, <u:bug>39228</u:bug>, <u:bug>39229</u:bug>, <u:bug>39230</u:bug>, <u:bug>39231</u:bug>, <u:bug>39232</u:bug>).
 					</simpara>
 				</listitem>
 			</itemizedlist>
