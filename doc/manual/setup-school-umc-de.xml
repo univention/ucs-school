@@ -215,7 +215,7 @@
 		  importiert werden soll.
 		  <figure id="csvimport:userrole">
 			<title>CSV-Import: Auswahl der Benutzerrolle</title>
-			<graphic scalefit="1" width="97%" align="center" fileref="illustrations40/csvimport-userrole_40.png"/>
+			<graphic scalefit="1" width="97%" align="center" fileref="illustrations41/csvimport-userrole_41.png"/>
 		  </figure>
 		</para>
 		<para>
@@ -241,7 +241,7 @@
 		  Benutzerrolle durch die Benutzer der CSV-Datei</guimenu> zu aktivieren.
 		  <figure id="csvimport:upload">
 			<title>CSV-Import: Upload der CSV-Datei</title>
-			<graphic scalefit="1" width="97%" align="center" fileref="illustrations40/csvimport-upload_40.png"/>
+			<graphic scalefit="1" width="97%" align="center" fileref="illustrations41/csvimport-upload_41.png"/>
 		  </figure>
 		</para>
 		<para>
@@ -272,7 +272,7 @@
 		</para>
 		<figure id="csvimport:assignment">
 		  <title>CSV-Import: Zuordnung der Benutzerattribute</title>
-		  <graphic scalefit="1" width="97%" align="center" fileref="illustrations40/csvimport-assignment_40.png"/>
+		  <graphic scalefit="1" width="97%" align="center" fileref="illustrations41/csvimport-assignment_41.png"/>
 		</figure>
 		<para>
 		  Auf der letzten Seite des Assistenten werden zur Prüfung alle vorgesehenen
@@ -319,7 +319,7 @@
 		  beschränkt werden.
 		  <figure id="csvimport:check">
 			<title>CSV-Import: Überprüfung der bevorstehenden Änderungen</title>
-			<graphic scalefit="1" width="97%" align="center" fileref="illustrations40/csvimport-check_40.png"/>
+			<graphic scalefit="1" width="97%" align="center" fileref="illustrations41/csvimport-check_41.png"/>
 		  </figure>
 		</para>
 		<para>
@@ -342,7 +342,7 @@
 		  Fortschritt.
 		  <figure id="csvimport:summary">
 			<title>CSV-Import: Abschließende Zusammenfassung</title>
-			<graphic scalefit="1" width="37%" align="center" fileref="illustrations40/csvimport-summary_40.png"/>
+			<graphic scalefit="1" width="37%" align="center" fileref="illustrations41/csvimport-summary_41.png"/>
 		  </figure>
 		</para>
 		<para>

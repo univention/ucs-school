@@ -185,7 +185,7 @@ invoke-rc.d univention-directory-listener restart
 	</para>
 	  <figure id="school:windows:italc:fig">
 		<title>iTALC-Installation: Auswahl der Komponenten</title>
-		<graphic scalefit="1" width="60%" align="center" fileref="illustrations40/italc1.png"/>
+		<graphic scalefit="1" width="60%" align="center" fileref="illustrations41/italc1.png"/>
 	  </figure>
 	<para>
 	  iTALC bringt ein Installationsprogramm mit, das durch alle notwendigen Schritte führt. Während
