@@ -51,12 +51,14 @@ LESSONS_BACKUP = '/var/lib/ucs-school-lib/lessons.bak'
 
 _ = Translation('python-ucs-school').translate
 
-class Lesson( object ):
-	TIME_REGEX = re.compile( r'^([01][0-9]|2[0-3]|[0-9]):([0-5][0-9])' )
-	def __init__( self, name, begin, end ):
+
+class Lesson(object):
+	TIME_REGEX = re.compile(r'^([01][0-9]|2[0-3]|[0-9]):([0-5][0-9])')
+
+	def __init__(self, name, begin, end):
 		self._name = self._check_name(name)
-		self._begin = self._parse_time( begin )
-		self._end = self._parse_time( end )
+		self._begin = self._parse_time(begin)
+		self._end = self._parse_time(end)
 		if self._end <= self._begin:
 			raise AttributeError(_('Overlapping lessons are not allowed'))
 
@@ -65,80 +67,82 @@ class Lesson( object ):
 			raise TypeError('string expected')
 		return string
 
-	def _parse_time( self, string ):
-		if not isinstance( string, basestring ):
-			raise TypeError( 'string expected' )
-		m = Lesson.TIME_REGEX.match( string )
+	def _parse_time(self, string):
+		if not isinstance(string, basestring):
+			raise TypeError('string expected')
+		m = Lesson.TIME_REGEX.match(string)
 		if not m:
-			raise AttributeError( 'invalid time format: %s' % string )
-		return datetime.time( *map( int, m.groups() ) )
+			raise AttributeError('invalid time format: %s' % string)
+		return datetime.time(*map(int, m.groups()))
 
 	@property
-	def name( self ):
+	def name(self):
 		return self._name
 
 	@property
-	def begin( self ):
+	def begin(self):
 		return self._begin
 
 	@property
-	def end( self ):
+	def end(self):
 		return self._end
 
-	def __cmp__( self, other ):
+	def __cmp__(self, other):
 		if other.end < self.begin:
 			return 1
 		if other.begin > self.end:
 			return -1
 		return 0
 
-	def intersect( self, lesson ):
-		return self.__cmp__( lesson ) == 0
+	def intersect(self, lesson):
+		return self.__cmp__(lesson) == 0
 
-	def __str__( self ):
-		return '%s: %s - %s' % ( self._name, self._begin, self._end )
+	def __str__(self):
+		return '%s: %s - %s' % (self._name, self._begin, self._end)
 
-class SchoolLessons( ConfigParser.ConfigParser ):
-	def __init__( self, filename = LESSONS_FILE ):
-		ConfigParser.ConfigParser.__init__( self )
+
+class SchoolLessons(ConfigParser.ConfigParser):
+
+	def __init__(self, filename=LESSONS_FILE):
+		ConfigParser.ConfigParser.__init__(self)
 		self._lessons = []
-		self.read( filename )
+		self.read(filename)
 		self.init()
 
-	def init( self ):
+	def init(self):
 		for sec in self.sections():
 			try:
-				l = Lesson( sec, self.get( sec, 'begin' ), self.get( sec, 'end' ) )
+				l = Lesson(sec, self.get(sec, 'begin'), self.get(sec, 'end'))
 				self.add(l)
-			except ( AttributeError, TypeError ), e:
-				MODULE.warn( 'Lesson %s could not be added: %s' % ( sec, str( e ) ) )
+			except (AttributeError, TypeError), e:
+				MODULE.warn('Lesson %s could not be added: %s' % (sec, str(e)))
 
-	def remove( self, lesson ):
-		if isinstance( lesson, Lesson ):
+	def remove(self, lesson):
+		if isinstance(lesson, Lesson):
 			lesson = lesson.name
 
 		self._lessons[:] = [l for l in self._lessons if l.name != lesson]
 
-	def add( self, lesson, begin = None, end = None ):
-		if isinstance( lesson, basestring ):
-			lesson = Lesson( lesson, begin, end )
+	def add(self, lesson, begin=None, end=None):
+		if isinstance(lesson, basestring):
+			lesson = Lesson(lesson, begin, end)
 
 		# ensure there is no intersection between the lessons
 		for item in self._lessons:
 			if lesson.intersect(item) or lesson.name == item.name:
 				raise AttributeError(_('Overlapping lessons are not allowed'))
 
-		self._lessons.append( lesson )
+		self._lessons.append(lesson)
 
-	def save( self ):
+	def save(self):
 		# remove all sections
 		for sec in self.sections():
-			self.remove_section( sec )
+			self.remove_section(sec)
 
 		for lesson in self.lessons:
-			self.add_section( lesson.name )
-			self.set( lesson.name, 'begin', str( lesson.begin ) )
-			self.set( lesson.name, 'end', str( lesson.end ) )
+			self.add_section(lesson.name)
+			self.set(lesson.name, 'begin', str(lesson.begin))
+			self.set(lesson.name, 'end', str(lesson.end))
 
 		lock = locking.get_lock('ucs-school-lib-schoollessons')
 		fd = open(LESSONS_FILE, 'w')
@@ -148,12 +152,12 @@ class SchoolLessons( ConfigParser.ConfigParser ):
 		locking.release_lock(lock)
 
 	@property
-	def lessons( self ):
+	def lessons(self):
 		self._lessons.sort()
 		return list(self._lessons)
 
 	@property
-	def current( self ):
+	def current(self):
 		now = datetime.datetime.now().time()
 
 		# currently active lesson
@@ -164,7 +168,7 @@ class SchoolLessons( ConfigParser.ConfigParser ):
 		return None
 
 	@property
-	def next( self ):
+	def next(self):
 		now = datetime.datetime.now().time()
 
 		# currently active lesson
@@ -175,10 +179,10 @@ class SchoolLessons( ConfigParser.ConfigParser ):
 		return None
 
 	@property
-	def previous( self ):
+	def previous(self):
 		now = datetime.datetime.now().time()
 
-		self._lessons.sort( reverse = True )
+		self._lessons.sort(reverse=True)
 		# currently active lesson
 		for lesson in self._lessons:
 			if now > lesson.end:
