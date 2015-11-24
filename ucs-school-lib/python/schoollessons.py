@@ -53,6 +53,7 @@ _ = Translation('python-ucs-school').translate
 
 
 class Lesson(object):
+
 	TIME_REGEX = re.compile(r'^([01][0-9]|2[0-3]|[0-9]):([0-5][0-9])')
 
 	def __init__(self, name, begin, end):
@@ -65,6 +66,8 @@ class Lesson(object):
 	def _check_name(self, string):
 		if not isinstance(string, basestring):
 			raise TypeError('string expected')
+		for char in '\x00\x01\x02\x03\x04\x05\x06\x07\x08\t\n\x0b\x0c\r\x0e\x0f\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f[]\x7f':
+			string = string.replace(char, '')
 		return string
 
 	def _parse_time(self, string):
@@ -145,10 +148,9 @@ class SchoolLessons(ConfigParser.ConfigParser):
 			self.set(lesson.name, 'end', str(lesson.end))
 
 		lock = locking.get_lock('ucs-school-lib-schoollessons')
-		fd = open(LESSONS_FILE, 'w')
-		shutil.copyfile(LESSONS_FILE, LESSONS_BACKUP)
-		self.write(fd)
-		fd.close()
+		with open(LESSONS_FILE, 'w') as fd:
+			shutil.copyfile(LESSONS_FILE, LESSONS_BACKUP)
+			self.write(fd)
 		locking.release_lock(lock)
 
 	@property

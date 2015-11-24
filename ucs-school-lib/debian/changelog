@@ -1,3 +1,9 @@
+ucs-school-lib (8.0.1-1) unstable; urgency=medium
+
+  * Bug #38449: validate name of school lessons
+
+ -- Florian Best <best@univention.de>  Tue, 24 Nov 2015 13:54:23 +0100
+
 ucs-school-lib (8.0.0-1) unstable; urgency=medium
 
   * Bug #39230: adapt module base to use SAML ldap authentication
