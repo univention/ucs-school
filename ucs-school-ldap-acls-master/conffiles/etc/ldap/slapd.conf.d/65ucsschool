@@ -187,15 +187,19 @@ access to dn.regex="^cn=([^,]+),cn=shares,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@
 
 # Mitglieder der lokalen Administratoren muessen einige temporaere Objekte schreiben duerfen
 # da keine regulaeren Ausdruecke auf Gruppenmitgliedschaften moeglich sind wird dies allen Lehrern erlaubt
-access to dn.regex="^cn=([^,]+),cn=(groupName|sid|gid|gidNumber|mac),cn=temporary,cn=univention,@%@ldap/base@%@$$" filter="(&(objectClass=lock)(!(|(uidNumber=*)(objectClass=SambaSamAccount))))"
+access to dn.regex="^cn=([^,]+),cn=(groupName|sid|gid|gidNumber|mac|uidNumber),cn=temporary,cn=univention,@%@ldap/base@%@$$" filter="(&(objectClass=lock)(!(|(uidNumber=*)(objectClass=SambaSamAccount))))"
 	by dn.regex="^uid=([^,]+),cn=(@$@TEACHERS@$@|@$@TEACHERS-STAFF@$@|@$@STAFF@$@|@$@ADMINS@$@),cn=users,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" write
 	by * none break
 
-access to dn.regex="^cn=(groupName|sid|gid|gidNumber|mac),cn=temporary,cn=univention,@%@ldap/base@%@$$" attrs=children,entry
+access to dn.regex="^cn=(groupName|sid|gid|gidNumber|mac|uidNumber),cn=temporary,cn=univention,@%@ldap/base@%@$$" attrs=children,entry
 	by dn.regex="^uid=([^,]+),cn=(@$@TEACHERS@$@|@$@TEACHERS-STAFF@$@|@$@STAFF@$@|@$@ADMINS@$@),cn=users,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" write
 	by * none break
 
 access to dn.base="cn=gidNumber,cn=temporary,cn=univention,@%@ldap/base@%@" attrs=univentionLastUsedValue
+	by dn.regex="^uid=([^,]+),cn=(@$@TEACHERS@$@|@$@TEACHERS-STAFF@$@|@$@STAFF@$@|@$@ADMINS@$@),cn=users,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" write
+	by * none break
+
+access to dn.base="cn=uidNumber,cn=temporary,cn=univention,@%@ldap/base@%@" attrs=univentionLastUsedValue
 	by dn.regex="^uid=([^,]+),cn=(@$@TEACHERS@$@|@$@TEACHERS-STAFF@$@|@$@STAFF@$@|@$@ADMINS@$@),cn=users,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" write
 	by * none break
 

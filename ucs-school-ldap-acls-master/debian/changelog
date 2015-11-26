@@ -1,3 +1,10 @@
+ucs-school-ldap-acls-master (12.0.0-2) unstable; urgency=medium
+
+  * Bug #39984: adjust LDAP ACL's for creating temporary objects which need to
+  	read/write uidNumber
+
+ -- Florian Best <best@univention.de>  Mon, 16 Nov 2015 13:14:51 +0100
+
 ucs-school-ldap-acls-master (12.0.0-1) unstable; urgency=medium
 
   * Bug #35892: Start UCS 4.0 development
