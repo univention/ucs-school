@@ -21,4 +21,17 @@
 				</listitem>
 			</itemizedlist>
 		</section>
+		<section id="relnotes:changelog:proxy">
+			<title>Proxy changes</title>
+			<itemizedlist>
+				<listitem>
+					<simpara>
+						The number of squid's helper processes (basic auth, NTLM auth, krb5 auth)
+						has been increased to 50 if the UCR value has not been changed manually. Additionally the number of
+						rewrite processes will be increased to 20. This is done by changing the UCR variables
+						<envar>squid/.../children</envar> (<ulink url="&ucsbug;40091">Bug 40091</ulink>).
+					</simpara>
+				</listitem>
+			</itemizedlist>
+		</section>
 </chapter>

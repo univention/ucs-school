@@ -1,3 +1,9 @@
+ucs-school-webproxy (11.0.8-2) unstable; urgency=low
+
+  * Bug #40091: increased number of squid helper processes
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Thu, 26 Nov 2015 14:44:08 +0100
+
 ucs-school-webproxy (11.0.8-1) unstable; urgency=low
 
   * Bug #39061: fixed format strings
