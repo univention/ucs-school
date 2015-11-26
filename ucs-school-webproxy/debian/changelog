@@ -1,3 +1,9 @@
+ucs-school-webproxy (12.0.1-1) unstable; urgency=low
+
+  * Bug #40092: increased number of squid helper processes
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Thu, 26 Nov 2015 15:50:57 +0100
+
 ucs-school-webproxy (12.0.0-1) unstable; urgency=medium
 
   * Bug #39534: Start UCS@school 4.1 development
