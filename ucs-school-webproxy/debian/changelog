@@ -1,3 +1,9 @@
+ucs-school-webproxy (10.0.5-1) unstable; urgency=low
+
+  * Bug #34045: increase number of squid helper processes
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Tue, 24 Nov 2015 22:14:57 +0100
+
 ucs-school-webproxy (10.0.4-1) unstable; urgency=low
 
   * Bug #35408: fixed open file handle leak

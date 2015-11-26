@@ -56,6 +56,13 @@ if [ "$1" = configure -a -n "$2" ] && dpkg --compare-versions "$2" lt 8.0.0-1; t
 
 fi
 
+# Bug #34045 - increase number of helper processes if still on default
+if [ "$1" = configure -a -n "$2" ] && dpkg --compare-versions "$2" lt 10.0.5-1; then
+	if [ "$squid_ntlmauth_children" = "10" ] ; then
+		ucr set squid/ntlmauth/children=50
+	fi
+fi
+
 # defaults (set them before univention-squid!)
 univention-config-registry set \
 	squid/redirect?squidguard \
@@ -63,7 +70,10 @@ univention-config-registry set \
 	squid/ntlmauth?yes \
 	squid/basicauth?yes \
 	squid/auth/groups?no \
-	squid/ntlmauth/children?10 \
+	squid/rewrite/children?20 \
+	squid/basicauth/children?50 \
+	squid/ntlmauth/children?50 \
+	squid/krb5auth/children?50 \
 	squid/ntlmauth/keepalive?yes \
 	proxy/filter/redirecttarget?"http://$hostname.$domainname/blocked-by-squid.html" \
 	proxy/filter/domain/whitelisted/1?"www.univention.de" \
