@@ -34,28 +34,6 @@
 
 eval "$(univention-config-registry shell)"
 
-# update to 3.0-0 cleanup Bug #25700
-if [ "$1" = configure -a -n "$2" ] && dpkg --compare-versions "$2" lt 8.0.0-1; then
-
-	# convert proxy/.* vars to squid/*
-	if [ -n "$proxy_redirect" ]; then univention-config-registry set squid/redirect="$proxy_redirect"; fi
-	if [ -n "$proxy_force" ]; then univention-config-registry set squid/transparentproxy="$proxy_force"; fi
-	if [ -n "$proxy_ntlmauth" ]; then univention-config-registry set squid/ntlmauth="$proxy_ntlmauth"; fi
-	if [ -n "$proxy_ntlmauth_children" ]; then univention-config-registry set squid/ntlmauth/children="$proxy_ntlmauth_children"; fi
-	if [ -n "$proxy_ntlmauth_keepalive" ]; then univention-config-registry set squid/ntlmauth/keepalive="$proxy_ntlmauth_keepalive"; fi
-	if [ -n "$proxy_basicauth" ]; then univention-config-registry set squid/basicauth="$proxy_basicauth"; fi
-	if [ -n "$proxy_allow_localnet" ]; then univention-config-registry set squid/allow/localnet="$proxy_allow_localnet"; fi
-	if [ -n "$proxy_parent_host" ]; then univention-config-registry set squid/parent/host="$proxy_parent_host"; fi
-	if [ -n "$proxy_parent_port" ]; then univention-config-registry set squid/parent/port="$proxy_parent_port"; fi
-
-	# remove unused var
-	univention-config-registry unset proxy/clamav proxy/redirect proxy/force \
-	proxy/ntlmauth proxy/ntlmauth/children proxy/ntlmauth/keepalive \
-	proxy/basicauth proxy/allow/localnet proxy/parent/host proxy/parent/port \
-	proxy/ipauth/allow proxy/ipauth/deny proxy/ipauth/ttl 
-
-fi
-
 # Bug #40091 - increase number of helper processes if still on default
 if [ "$1" = upgrade -a -n "$2" ] && dpkg --compare-versions "$2" lt 11.0.8-3; then
 	if [ "$squid_ntlmauth_children" = "10" ] ; then
