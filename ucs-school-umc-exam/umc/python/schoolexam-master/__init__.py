@@ -443,7 +443,7 @@ class Instance( SchoolBaseModule ):
 		## Remove all host members of room from examGroup
 		examGroup = self.examGroup
 		if examGroup:
-			host_uid_list = [ univention.admin.uldap.explodeDn(uniqueMember, 1)[0] for uniqueMember in room['hosts'] ]
+			host_uid_list = [ univention.admin.uldap.explodeDn(uniqueMember, 1)[0] + '$' for uniqueMember in room['hosts'] ]
 			examGroup.fast_member_remove( room['hosts'], host_uid_list )	## removes any uniqueMember and member listed if still present
 
 		self.finished(request.id, {}, success=True)

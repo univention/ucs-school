@@ -10,28 +10,41 @@
 ]>
 <chapter id="relnotes:changelog" lang="en">
 	<title>Changelog</title>
-		<section id="relnotes:changelog:ldap-acl">
-			<title>LDAP ACL changes</title>
+	<section id="relnotes:changelog:ldap-acl">
+		<title>LDAP ACL changes</title>
+		<itemizedlist>
+			<listitem>
+				<simpara>
+					The attribute <property>uidNumber</property> can now be accessed by teachers, staff and school administrators in temporary objects container.
+					This is required to create working groups (<u:bug>39967</u:bug>).
+				</simpara>
+			</listitem>
+		</itemizedlist>
+	</section>
+	<section id="relnotes:changelog:proxy">
+		<title>Proxy changes</title>
+		<itemizedlist>
+			<listitem>
+				<simpara>
+					The number of squid's helper processes (basic auth, NTLM auth, krb5 auth)
+					has been increased to 50 if the UCR value has not been changed manually. Additionally the number of
+					rewrite processes will be increased to 20. This is done by changing the UCR variables
+					<envar>squid/.../children</envar> (<ulink url="&ucsbug;40091">Bug 40091</ulink>).
+				</simpara>
+			</listitem>
+		</itemizedlist>
+	</section>
+	<section id="relnotes:changelog:umc">
+		<title>Univention Management Console</title>
+		<section id="relnotes:changelog:umc:modules:exam">
+			<title>Exam</title>
 			<itemizedlist>
 				<listitem>
 					<simpara>
-						The attribute <property>uidNumber</property> can now be accessed by teachers, staff and school administrators in temporary objects container.
-						This is required to create working groups (<u:bug>39967</u:bug>).
+						When stopping the exam mode, the attribute <property>memberUid</property> for computers at the exam group <systemitem class="groupname">OU${OU}-Klassenarbeit</systemitem> is now handled correctly (<u:bug>39600</u:bug>).
 					</simpara>
 				</listitem>
 			</itemizedlist>
 		</section>
-		<section id="relnotes:changelog:proxy">
-			<title>Proxy changes</title>
-			<itemizedlist>
-				<listitem>
-					<simpara>
-						The number of squid's helper processes (basic auth, NTLM auth, krb5 auth)
-						has been increased to 50 if the UCR value has not been changed manually. Additionally the number of
-						rewrite processes will be increased to 20. This is done by changing the UCR variables
-						<envar>squid/.../children</envar> (<ulink url="&ucsbug;40091">Bug 40091</ulink>).
-					</simpara>
-				</listitem>
-			</itemizedlist>
-		</section>
+	</section>
 </chapter>

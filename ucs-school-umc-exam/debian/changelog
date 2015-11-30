@@ -1,3 +1,9 @@
+ucs-school-umc-exam (4.0.2-3) unstable; urgency=low
+
+  * fix removing of computers to exam group (Bug #39600)
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 30 Nov 2015 12:04:54 +0100
+
 ucs-school-umc-exam (4.0.2-2) unstable; urgency=medium
 
   * Bug #38224: activate distribute materials checkbox by default
