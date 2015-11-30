@@ -57,9 +57,9 @@ if [ "$1" = configure -a -n "$2" ] && dpkg --compare-versions "$2" lt 8.0.0-1; t
 fi
 
 # Bug #40092 - increase number of helper processes if still on default
-if [ "$1" = configure -a -n "$2" ] && dpkg --compare-versions "$2" lt 12.0.1-1; then
+if [ "$1" = upgrade -a -n "$2" ] && dpkg --compare-versions "$2" lt 12.0.1-2; then
 	if [ "$squid_ntlmauth_children" = "10" ] ; then
-		ucr set squid/ntlmauth/children=50
+		ucr set squid/ntlmauth/children	=50
 	fi
 fi
 
