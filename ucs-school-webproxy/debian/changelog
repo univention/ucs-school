@@ -1,3 +1,9 @@
+ucs-school-webproxy (11.0.8-3) unstable; urgency=low
+
+  * Bug #40091: automatically raise default of squid/ntlmauth/children to 50
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Mon, 30 Nov 2015 12:02:09 +0100
+
 ucs-school-webproxy (11.0.8-2) unstable; urgency=low
 
   * Bug #40091: increased number of squid helper processes
