@@ -16,7 +16,10 @@
 			<listitem>
 				<simpara>
 					The attribute <property>uidNumber</property> can now be accessed by teachers, staff and school administrators in temporary objects container.
-					This is required to create working groups (<u:bug>39967</u:bug>).
+					This is required to create working groups (<u:bug>39984</u:bug>).
+				</simpara>
+				<simpara>
+					LDAP ACLs are now installed domain wide using the LDAP ACLs extensions mechanism. DC backups will now use them without installing and configuring the UCS@school app (<u:bug>40124</u:bug>).
 				</simpara>
 			</listitem>
 		</itemizedlist>

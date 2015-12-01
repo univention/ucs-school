@@ -1,3 +1,9 @@
+ucs-school-ldap-acls-master (12.0.1-1) unstable; urgency=low
+
+  * register LDAP ACLs domain wide using ucs_registerLDAPExtension (Bug #40124)
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 01 Dec 2015 14:04:16 +0100
+
 ucs-school-ldap-acls-master (12.0.0-2) unstable; urgency=medium
 
   * Bug #39984: adjust LDAP ACL's for creating temporary objects which need to
