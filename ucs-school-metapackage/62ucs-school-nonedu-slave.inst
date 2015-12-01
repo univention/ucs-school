@@ -154,6 +154,10 @@ else
 	done
 fi
 
+# remove schoolslave as dns server from forward lookup zone
+zone="$(udm dns/forward_zone list "$@" --filter "(&(zone=$domainname)(nameserver=${hostname}.${domainname}.))"  | sed -ne 's|DN: ||p')"
+udm dns/forward_zone modify "$@" --dn "$zone" --remove nameserver="${hostname}.${domainname}."
+
 ucs_addServiceToLocalhost 'UCS@school' "$@"
 ucs_addServiceToLocalhost 'UCS@school Administration' "$@"
 univention-directory-listener-ctrl resync ucsschool-s4-branch-site
