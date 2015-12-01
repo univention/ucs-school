@@ -1,3 +1,10 @@
+ucs-school-metapackage (8.0.0-2) unstable; urgency=low
+
+  * Remove schoolslaves as nameservers for the forward lookup zone
+    (Bug #40139).
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 01 Dec 2015 15:31:22 +0100
+
 ucs-school-metapackage (8.0.0-1) unstable; urgency=medium
 
   * Bug #39534: Start UCS@school 4.1 development

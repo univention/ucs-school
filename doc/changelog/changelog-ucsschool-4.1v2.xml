@@ -11,21 +11,18 @@
 <chapter id="relnotes:changelog" lang="en">
 	<title>Changelog</title>
 
-<!--
 	<section id="relnotes:changelog:general">
 		<title>General</title>
 		<itemizedlist>
 			<listitem>
 				<simpara>
-				</simpara>
-			</listitem>
-			<listitem>
-				<simpara>
+					Domain controller slaves do not configure themselfs as DNS servers anymore (<u:bug>39384</u:bug>).
 				</simpara>
 			</listitem>
 		</itemizedlist>
 	</section>
 
+<!--
 	<section id="relnotes:changelog:import">
 		<title>Import scripts</title>
 		<itemizedlist>
