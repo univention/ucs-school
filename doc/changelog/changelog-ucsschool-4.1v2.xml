@@ -93,15 +93,18 @@
 		<section id="relnotes:changelog:openldap">
 			<title>OpenLDAP</title>
 		</section>
+-->
 		<section id="relnotes:changelog:ldap-acl">
 			<title>LDAP ACL changes</title>
 			<itemizedlist>
 				<listitem>
 					<simpara>
+						LDAP ACLs are now installed domain wide using the LDAP ACLs extensions mechanism. DC backups will now use them without installing and configuring the UCS@school app (<u:bug>40123</u:bug>).
 					</simpara>
 				</listitem>
 			</itemizedlist>
 		</section>
+<!--
 		<section id="relnotes:changelog:listener">
 			<title>Listener/Notifier domain replication</title>
 		</section>
