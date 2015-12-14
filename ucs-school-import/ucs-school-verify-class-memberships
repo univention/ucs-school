@@ -1,0 +1,158 @@
+#!/usr/bin/python2.7
+# -*- coding: utf-8 -*-
+#
+# Univention UCS@School
+#
+# Copyright 2007-2015 Univention GmbH
+#
+# http://www.univention.de/
+#
+# All rights reserved.
+#
+# The source code of this program is made available
+# under the terms of the GNU Affero General Public License version 3
+# (GNU AGPL V3) as published by the Free Software Foundation.
+#
+# Binary versions of this program provided by Univention to you as
+# well as other copyrighted, protected or trademarked materials like
+# Logos, graphics, fonts, specific documentations and configurations,
+# cryptographic keys etc. are subject to a license agreement between
+# you and Univention and not subject to the GNU AGPL V3.
+#
+# In the case you use this program under the terms of the GNU AGPL V3,
+# the program is provided in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public
+# License with the Debian GNU/Linux or Univention distribution in file
+# /usr/share/common-licenses/AGPL-3; if not, see
+# <http://www.gnu.org/licenses/>.
+
+import re
+import sys
+import csv
+import ldap
+from argparse import ArgumentParser, RawDescriptionHelpFormatter
+from ldap.filter import filter_format
+from univention.admin.uldap import getMachineConnection, getAdminConnection
+from univention.admin.uexceptions import base as UDMError, noObject
+from univention.management.console.config import ucr
+
+
+class InvalidGroupDetected(Exception): pass
+class StudentIsInAnotherSchool(Exception): pass
+class StudentDoesNotExists(Exception): pass
+class StudentIsInAnotherClassInAnotherSchool(Exception): pass
+
+
+def msg(*a):
+	sys.stdout.flush()
+	sys.stderr.write('%s\n' % a)
+	sys.stderr.flush()
+
+
+def main():
+	description = '''ucs-school-verify-class-memberships checks the class group membership of
+students object in LDAP against the memberships defined in a specified CSV
+import file. Found differences are printed to stderr. Progress information
+is printed to stdout. The script does not alter the LDAP - the test is
+performed read-only.
+
+Example for showing only errors:
+   ucs-school-verify-class-memberships students.csv > /dev/null'''
+	parser = ArgumentParser(description=description, formatter_class=RawDescriptionHelpFormatter)
+	parser.add_argument('-l', '--csv-line', dest='columns', help='Defines the fields of the CSV-file (Default: %(default)s)', default='action,name,firstname,lastname,school,school_class')
+	parser.add_argument(dest='filename', help='Specifies the path of the CSV file')
+	ns = parser.parse_args()
+
+	try:
+		try:
+			lo, _ = getAdminConnection()
+		except(ldap.LDAPError, UDMError, IOError): # pylint: disable=E1101
+			lo, _ = getMachineConnection()
+	except (ldap.LDAPError, UDMError, IOError) as exc: # pylint: disable=E1101
+		msg('LDAP Error: %s' % (exc,))
+		sys.exit(2)
+
+	columns = ns.columns.split(',')
+	try:
+		with open(ns.filename, 'rb') as fd:
+			lines = fd.readlines()  # drop header, doesn't matter for one user if not exists
+	except (IOError, OSError) as exc:
+		msg('Could not open file %r: %s' % (ns.filename, exc,))
+		sys.exit(2)
+	else:
+		parse(lo, lines, columns)
+
+
+def parse(lo, lines, columns):
+	reader = csv.DictReader(lines, columns, delimiter='\t')
+	code = 0
+	for line in reader:
+		try:
+			try:
+				parse_line(lo, line)
+			except:
+				code = 1
+				raise
+		except StudentDoesNotExists as exc:
+			msg('ERROR: User %r was not found.' % (exc.args[0],))
+		except StudentIsInAnotherSchool as exc:
+			msg('ERROR: User %r is not in school %s. DN: %s' % (exc.args[0], line['school'], exc.args[1]))
+		except StudentIsInAnotherClassInAnotherSchool as exc:
+			msg('ERROR: User %r (%s) is group member in another school: %s' % exc.args)
+		except InvalidGroupDetected as exc:
+			correct, invalid_groups = exc.args
+			if not correct:
+				msg('ERROR: User %r is not a member of class %s' % (line['name'], line['school_class']))
+			for gdn in invalid_groups:
+				msg('ERROR: User %r is unexpected member of %s' % (line['name'], gdn))
+		except (ldap.LDAPError, UDMError) as exc: # pylint: disable=E1101
+			msg('LDAP Error: %s: %s' % (type(exc), exc))
+			code = 2
+	sys.exit(code)
+
+
+def parse_line(lo, line):
+	oubase = 'ou=%s,%s' % (line['school'], ucr['ldap/base'],)
+	uid = line['name']
+	try:
+		dn = lo.search(filter_format('uid=%s', (uid,)), oubase, unique=True)[0][0]
+	except (IndexError, noObject):
+		try:
+			dn = lo.search(filter_format('uid=%s', (uid,)), ucr['ldap/base'], unique=True)[0][0]
+		except (IndexError, noObject):
+			if line['action'].upper() == 'D':
+				return
+			raise StudentDoesNotExists(uid)
+		else:
+			raise StudentIsInAnotherSchool(uid, dn)
+	if not dn.endswith(',cn=schueler,cn=users,%s' % (oubase,)):
+		if not dn.endswith(',cn=lehrer,cn=users,%s' % (oubase,)) or not dn.endswith(',cn=mitarbeiter,cn=users,%s' % (oubase,)):
+			print('Ignoring teacher/staff %r' % (uid,))
+			return
+		msg('ERROR: %s (%s %s) is not a student/teacher/staff.' % (uid, line['firstname'], line['lastname']))
+		return
+	if line['action'].upper() == 'D':
+		msg('ERROR: User %r (%s) should not exist (but does).' % (uid, dn))
+	print('Found user %s as %s ' % (uid, dn))
+	groups = lo.search(filter_format('uniqueMember=%s', (dn,)), ucr['ldap/base'])
+	correct = False
+	invalid_groups = set()
+	for gdn, group in groups: # pylint: disable=W0612
+		if not gdn.endswith(',cn=klassen,cn=schueler,cn=groups,%s' % (oubase,)):
+			if not gdn.endswith(oubase) and re.search(',ou=[^,]+,%s$' % (ucr['ldap/base'],), gdn, re.I):
+				raise StudentIsInAnotherClassInAnotherSchool(uid, dn, gdn)
+			continue  # ignore workgroups / Domain Users
+		if gdn.startswith('cn=%s,' % (line['school_class'],)):
+			correct = True
+		else:
+			invalid_groups.add(gdn)
+	if not correct or invalid_groups:
+		raise InvalidGroupDetected(correct, invalid_groups)
+
+
+if __name__ == '__main__':
+	main()

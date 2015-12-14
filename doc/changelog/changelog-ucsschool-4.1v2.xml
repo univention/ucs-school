@@ -22,21 +22,21 @@
 		</itemizedlist>
 	</section>
 
-<!--
 	<section id="relnotes:changelog:import">
 		<title>Import scripts</title>
 		<itemizedlist>
 			<listitem>
 				<simpara>
-				</simpara>
-			</listitem>
-			<listitem>
-				<simpara>
+					A new check script
+					<filename>/usr/share/ucs-school-import/scripts/ucs-school-verify-class-memberships</filename> has
+					been added to the package <package>ucs-school-import</package>. It verifies that the the class group membership of the LDAP objects matches
+					with a specified CSV file. The script performs a read-only check and does not alter any LDAP data (<u:bug>40215</u:bug>).
 				</simpara>
 			</listitem>
 		</itemizedlist>
 	</section>
 
+<!--
 	<section id="relnotes:changelog:italc">
 		<title>iTALC</title>
 		<itemizedlist>
