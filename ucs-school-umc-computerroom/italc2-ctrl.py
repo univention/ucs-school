@@ -37,9 +37,11 @@ import sys
 import notifier
 import notifier.signals
 import optparse
+import getpass
 
 script_dir = os.path.abspath( os.path.dirname( inspect.getfile(inspect.currentframe() ) ) )
 sys.path.insert( 0, os.path.join( script_dir, 'umc/python/computerroom' ) )
+sys.path.insert( 0, '/usr/share/pyshared/univention/management/console/modules/computerroom' )
 
 import italc2
 import ucsschool.lib.schoolldap as usl
@@ -119,7 +121,11 @@ if __name__ == '__main__':
 
 	parser.add_option( '-u', '--username', dest = 'username', default = 'Administrator' )
 	parser.add_option( '-p', '--password', dest = 'password', default = 'univention' )
+	parser.add_option( '-P', '--askpass', dest = 'askpass', default = False, action = 'store_true' )
 	options, args = parser.parse_args()
+
+	if options.askpass:
+		options.password = getpass.getpass('password> ')
 
 	usl.set_credentials( 'uid=%s,cn=users,%s' % ( options.username, config.get( 'ldap/base' ) ), options.password )
 
