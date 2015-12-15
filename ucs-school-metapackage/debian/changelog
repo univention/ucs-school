@@ -1,5 +1,11 @@
 ucs-school-metapackage (8.0.0-4) unstable; urgency=low
 
+  * move UCRV setting from join script to postinst (Bug #40139)
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 15 Dec 2015 15:38:45 +0100
+
+ucs-school-metapackage (8.0.0-4) unstable; urgency=low
+
   * set UCRVs for slaves (Bug #40139)
 
  -- Daniel Troeder <troeder@univention.de>  Tue, 15 Dec 2015 13:28:51 +0100
