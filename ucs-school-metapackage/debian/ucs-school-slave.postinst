@@ -57,7 +57,9 @@ univention-config-registry set \
 	ucs/web/overview/entries/service/teacherconsole/description?"Access to the UCS@school modules in the Univention Management Console" \
 	ucs/web/overview/entries/service/teacherconsole/description/de?"Zugriff auf die UCS@school Module in der Univention Management Console" \
 	ucs/web/overview/entries/service/teacherconsole/link?"/univention-management-console" \
-	ucs/web/overview/entries/service/teacherconsole/priority?"10"
+	ucs/web/overview/entries/service/teacherconsole/priority?"10" \
+	dns/nameserver/registration/forward_zone?no \
+	dns/nameserver/registration/reverse_zone?no
 
 if dpkg --compare-versions "$2" lt 6.0.8-8 ; then
 	# Bug #34831
