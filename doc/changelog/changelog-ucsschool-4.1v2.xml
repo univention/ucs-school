@@ -16,7 +16,7 @@
 		<itemizedlist>
 			<listitem>
 				<simpara>
-					Domain controller slaves do not configure themselfs as DNS servers anymore (<u:bug>39384</u:bug>).
+					Domain controller slaves are not registered as authoritative DNS servers for their DNS forward/reverse zones anymore. They are still valid DNS resolvers for clients. This greatly reduced the response size of queries for authoritative DNS servers (<u:bug>40139</u:bug>).
 				</simpara>
 			</listitem>
 		</itemizedlist>

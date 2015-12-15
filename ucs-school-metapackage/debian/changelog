@@ -1,3 +1,10 @@
+ucs-school-metapackage (8.0.0-3) unstable; urgency=low
+
+  * use UCRV for check if nameserver should be unregistered (Bug #40139)
+  * also remove reverse zone
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 15 Dec 2015 12:43:16 +0100
+
 ucs-school-metapackage (8.0.0-2) unstable; urgency=low
 
   * Remove schoolslaves as nameservers for the forward lookup zone
