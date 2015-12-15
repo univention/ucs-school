@@ -35,6 +35,7 @@ univention-config-registry set \
 	directory/manager/samba3/legacy?yes \
 	connector/s4/mapping/sid_to_ucs?no \
 	connector/s4/mapping/sid_to_s4?yes \
+	connector/s4/mapping/group/syncmode?write \
 	listener/shares/rename?yes \
 	samba4/join/dnsupdate?true \
 	samba4/sysvol/sync/setfacl/AU?false \

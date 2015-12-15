@@ -1,3 +1,10 @@
+ucs-school-metapackage (8.0.1-1) unstable; urgency=low
+
+  * Bug #33883: set connector/s4/mapping/group/syncmode=write to prevent
+    data loss at group objects if more than one S4 connector is used
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Tue, 15 Dec 2015 15:40:39 +0100
+
 ucs-school-metapackage (8.0.0-4) unstable; urgency=low
 
   * move UCRV setting from join script to postinst (Bug #40139)

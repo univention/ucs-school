@@ -36,6 +36,7 @@ univention-config-registry set \
 	directory/manager/samba3/legacy?yes \
 	connector/s4/mapping/sid_to_ucs?no \
 	connector/s4/mapping/sid_to_s4?yes \
+	connector/s4/mapping/group/syncmode?write \
 	connector/s4/allow/secondary?true \
 	samba4/service/drepl?false \
 	samba4/provision/secondary=yes \
