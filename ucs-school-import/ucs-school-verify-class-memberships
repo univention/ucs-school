@@ -3,7 +3,7 @@
 #
 # Univention UCS@School
 #
-# Copyright 2007-2015 Univention GmbH
+# Copyright 2015 Univention GmbH
 #
 # http://www.univention.de/
 #
@@ -79,7 +79,7 @@ Example for showing only errors:
 	columns = ns.columns.split(',')
 	try:
 		with open(ns.filename, 'rb') as fd:
-			lines = fd.readlines()  # drop header, doesn't matter for one user if not exists
+			lines = fd.readlines()
 	except (IOError, OSError) as exc:
 		msg('Could not open file %r: %s' % (ns.filename, exc,))
 		sys.exit(2)
