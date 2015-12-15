@@ -50,8 +50,8 @@ for grp in "DC-Verwaltungsnetz" "Member-Verwaltungsnetz" "DC-Edukativnetz" "Memb
 		--set name="$grp"
 done
 
-ucs_registerLDAPExtension "$@" --acl 61ucsschool_presettings
-ucs_registerLDAPExtension "$@" --acl 65ucsschool
+ucs_registerLDAPExtension "$@" --acl /usr/share/ucs-school-ldap-acls-master/61ucsschool_presettings
+ucs_registerLDAPExtension "$@" --acl /usr/share/ucs-school-ldap-acls-master/65ucsschool
 
 joinscript_save_current_version
 

@@ -1,1 +1,3 @@
+61ucsschool_presettings usr/share/ucs-school-ldap-acls-master/
+65ucsschool usr/share/ucs-school-ldap-acls-master/
 70ucsschool-ldap-acls-master.inst usr/lib/univention-install/
