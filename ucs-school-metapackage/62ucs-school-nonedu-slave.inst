@@ -154,6 +154,10 @@ else
 	done
 fi
 
+univention-config-registry set \
+	dns/nameserver/registration/forward_zone?no \
+	dns/nameserver/registration/reverse_zone?no
+
 # remove schoolslave as dns server from forward lookup zone
 eval "$(ucr shell dns/nameserver/registration/forward_zone)"
 if ! ([ -z "$dns_nameserver_registration_forward_zone" ] || is_ucr_true dns/nameserver/registration/forward_zone); then
