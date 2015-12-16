@@ -202,13 +202,22 @@ fi
 
 # remove schoolslave as dns server from forward lookup zone (Bug #40139)
 if is_ucr_false dns/nameserver/registration/forward_zone; then
-	zone="$(udm dns/forward_zone list "$@" --filter "(&(zone=$domainname)(nameserver=${hostname}.${domainname}.))"  | sed -ne 's|DN: ||p')"
-	udm dns/forward_zone modify "$@" --dn "$zone" --remove nameserver="${hostname}.${domainname}."
+    zone="$(udm dns/forward_zone list "$@" --filter "(&(zone=$domainname)(nameserver=${hostname}.${domainname}.))"  | sed -ne 's|DN: ||p')"
+    if [ -n "$zone" ]; then
+        udm dns/forward_zone modify "$@" --dn "$zone" --remove nameserver="${hostname}.${domainname}."
+    fi
 fi
 # remove schoolslave as dns server from reverse lookup zone (Bug #40139)
 if is_ucr_false dns/nameserver/registration/reverse_zone; then
-	zone="$(udm dns/reverse_zone list "$@" --filter "(&(zone=$domainname)(nameserver=${hostname}.${domainname}.))"  | sed -ne 's|DN: ||p')"
-	udm dns/reverse_zone modify "$@" --dn "$zone" --remove nameserver="${hostname}.${domainname}."
+    IP="$(get_default_ip_address)"
+    NETMASK="$(get_default_netmask)"
+    reversezone=$(univention-ipcalc6 --netmask "$NETMASK" --ip "$IP" --output reverse --calcdns)
+    if [ -n "$reversezone" ]; then
+        zone="$(udm dns/reverse_zone list "$@" --filter "(&(subnet=$reversezone)(nameserver=${hostname}.${domainname}.))" | sed -ne 's|DN: ||p')"
+        if [ -n "$zone" ]; then
+            udm dns/reverse_zone modify "$@" --dn "$zone" --remove nameserver="${hostname}.${domainname}."
+        fi
+    fi
 fi
 
 ucs_addServiceToLocalhost 'UCS@school' "$@"
