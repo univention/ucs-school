@@ -76,10 +76,6 @@
 						and dataloss may occur for group memberships (<u:bug>33883</u:bug>).
 					</simpara>
 				</listitem>
-				<listitem>
-					<simpara>
-					</simpara>
-				</listitem>
 			</itemizedlist>
 		</section>
 <!--
