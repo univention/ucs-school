@@ -125,6 +125,11 @@ if [ "$1" = "configure" ] ; then
 	fi
 fi
 
+# Bug 33883: restart S4 connector during *update* if installed to activate connector/s4/mapping/group/syncmode change
+if [ "$1" = configure ] && dpkg --compare-versions "$2" lt-nl 8.0.1-2; then
+	[ -x /etc/init.d/univention-s4-connector ] && invoke-rc.d univention-s4-connector crestart
+fi
+
 /etc/init.d/univention-directory-listener crestart
 
 call_joinscript 00ucs-school-slave-check-ou.inst
