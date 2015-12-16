@@ -36,6 +36,7 @@ univention-config-registry set \
 	directory/manager/samba3/legacy?yes \
 	connector/s4/mapping/sid_to_ucs?no \
 	connector/s4/mapping/sid_to_s4?yes \
+	connector/s4/mapping/group/syncmode?write \
 	connector/s4/allow/secondary?true \
 	samba4/service/drepl?false \
 	samba4/provision/secondary=yes \
@@ -74,6 +75,11 @@ if [ "$1" = "configure" ] ; then
 			fi
 		fi
 	fi
+fi
+
+# Bug 40206: restart S4 connector during *update* if installed to activate connector/s4/mapping/group/syncmode change
+if [ "$1" = configure ] && dpkg --compare-versions "$2" lt-nl 7.0.3-2; then
+	[ -x /etc/init.d/univention-s4-connector ] && invoke-rc.d univention-s4-connector crestart
 fi
 
 call_joinscript 62ucs-school-nonedu-slave.inst

@@ -1,3 +1,17 @@
+ucs-school-metapackage (7.0.3-2) unstable; urgency=low
+
+  * Bug #40206/#33883: restart univention-s4-connector (if installed) to activate
+    S4 connector config changes
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Wed, 16 Dec 2015 11:59:47 +0100
+
+ucs-school-metapackage (7.0.3-1) unstable; urgency=low
+
+  * Bug #40206/33883: set connector/s4/mapping/group/syncmode=write to prevent
+    data loss at group objects if more than one S4 connector is used
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Tue, 15 Dec 2015 15:40:39 +0100
+
 ucs-school-metapackage (7.0.2-5) unstable; urgency=low
 
   * move UCRV setting from join script to postinst (Bug #39384)
