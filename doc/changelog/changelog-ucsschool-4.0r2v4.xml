@@ -34,6 +34,19 @@
 			</listitem>
 		</itemizedlist>
 	</section>
+		<section id="relnotes:changelog:samba4">
+			<title>Samba4</title>
+			<itemizedlist>
+				<listitem>
+					<simpara>
+						During the update and on new installations the Samba4 Connector will be
+						configured to sync group objects unidirectional from LDAP to Samba4 by setting the UCR variable
+						<env>connector/s4/mapping/group/syncmode=write</env>. Otherwise in some situations inconsistencies
+						and dataloss may occur for group memberships (<u:bug>40206</u:bug>).
+					</simpara>
+				</listitem>
+			</itemizedlist>
+		</section>
 	<section id="relnotes:changelog:proxy">
 		<title>Proxy changes</title>
 		<itemizedlist>
