@@ -200,17 +200,34 @@ if is_ucr_true "ucsschool/import/generate/policy/dhcp/dns/set_per_ou" ; then
 	done
 fi
 
+is_ucr_false () { # test if UCS variable is "false"
+        local value
+        value="$(/usr/sbin/univention-config-registry get "$1")"
+        case "$(echo -n "$value" | tr [:upper:] [:lower:])" in
+                1|yes|on|true|enable|enabled) return 1 ;;
+                0|no|off|false|disable|disabled) return 0 ;;
+                *) return 2 ;;
+        esac
+}
+
 # remove schoolslave as dns server from forward lookup zone (Bug #39384)
-eval "$(ucr shell dns/nameserver/registration/forward_zone)"
-if ! ([ -z "$dns_nameserver_registration_forward_zone" ] || is_ucr_true dns/nameserver/registration/forward_zone); then
-	zone="$(udm dns/forward_zone list "$@" --filter "(&(zone=$domainname)(nameserver=${hostname}.${domainname}.))"  | sed -ne 's|DN: ||p')"
-	udm dns/forward_zone modify "$@" --dn "$zone" --remove nameserver="${hostname}.${domainname}."
+if is_ucr_false dns/nameserver/registration/forward_zone; then
+    zone="$(udm dns/forward_zone list "$@" --filter "(&(zone=$domainname)(nameserver=${hostname}.${domainname}.))"  | sed -ne 's|DN: ||p')"
+    if [ -n "$zone" ]; then
+        udm dns/forward_zone modify "$@" --dn "$zone" --remove nameserver="${hostname}.${domainname}."
+    fi
 fi
 # remove schoolslave as dns server from reverse lookup zone (Bug #39384)
-eval "$(ucr shell dns/nameserver/registration/reverse_zone)"
-if ! ([ -z "$dns_nameserver_registration_reverse_zone" ] || is_ucr_true dns/nameserver/registration/reverse_zone); then
-	zone="$(udm dns/reverse_zone list "$@" --filter "(&(zone=$domainname)(nameserver=${hostname}.${domainname}.))"  | sed -ne 's|DN: ||p')"
-	udm dns/reverse_zone modify "$@" --dn "$zone" --remove nameserver="${hostname}.${domainname}."
+if is_ucr_false dns/nameserver/registration/reverse_zone; then
+    IP="$(get_default_ip_address)"
+    NETMASK="$(get_default_netmask)"
+    reversezone=$(univention-ipcalc6 --netmask "$NETMASK" --ip "$IP" --output reverse --calcdns)
+    if [ -n "$reversezone" ]; then
+        zone="$(udm dns/reverse_zone list "$@" --filter "(&(subnet=$reversezone)(nameserver=${hostname}.${domainname}.))" | sed -ne 's|DN: ||p')"
+        if [ -n "$zone" ]; then
+            udm dns/reverse_zone modify "$@" --dn "$zone" --remove nameserver="${hostname}.${domainname}."
+        fi
+    fi
 fi
 
 ucs_addServiceToLocalhost 'UCS@school' "$@"
