@@ -55,7 +55,7 @@
 			<itemizedlist>
 				<listitem>
 					<simpara>
-						The number of squid's helper processes (basic auth, NTLM auth, krb5 auth)
+						The number of squid's helper processes (<literal>basic auth</literal>, <literal>NTLM auth</literal>, <literal>krb5 auth</literal>)
 						has been increased to 50 if the UCR value has not been changed manually. Additionally the number of
 						rewrite processes will be increased to 20. This is done by changing the UCR variables
 						<envar>squid/.../children</envar> (<u:bug>40092</u:bug>).
