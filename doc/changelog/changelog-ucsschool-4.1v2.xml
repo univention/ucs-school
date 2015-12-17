@@ -253,7 +253,7 @@
 					<itemizedlist>
 						<listitem>
 							<simpara>
-								Invalid characters are now stripped from the lesson names when saving <u:bug>38449</u:bug>.
+								Invalid characters are now stripped from the lesson names when saving (<u:bug>38449</u:bug>).
 							</simpara>
 						</listitem>
 					</itemizedlist>
