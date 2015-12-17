@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE book [
+	<!ENTITY % extensions SYSTEM "../stylesheets/macros.ent" >
+	<!ENTITY % DocBookDTD PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+	"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+	<!ENTITY % entities SYSTEM "../stylesheets/macros-de.ent" >
+	%extensions;
+	%DocBookDTD;
+	%entities;
+]>
+<book lang="de" id="releasenotes-4.0-de">
+
+	<bookinfo>
+ 		<title>UCS@school 4.0 R2 v4 Release Notes</title>
+		<subtitle>Release Notes für die Inbetriebnahme und Aktualisierung von UCS@school 4.0 R2 v4</subtitle>
+		<legalnotice>
+			<literallayout>
+Version 4.0 R2 v4
+Stand: 17. Dezember 2015
+			</literallayout>
+			<literallayout lang="">
+Alle Rechte vorbehalten./ All rights reserved.
+(c) 2002-2015
+Univention GmbH
+Mary-Somerville-Straße 1
+28359 Bremen
+Deutschland
+feedback@univention.de
+			</literallayout>
+			<para>
+				Jede aufgeführte Marke und jedes Warenzeichen steht im Eigentum ihrer jeweiligen eingetragenen Rechtsinhaber.
+				Linux ist ein eingetragenes Warenzeichen von Linus Torvalds.
+			</para>
+			<para lang="en">
+				The mentioned brand names and registered trademarks are owned by the respective legal owners in each case.
+				Linux is a registered trademark of Linus Torvalds.
+			</para>
+		</legalnotice>
+	</bookinfo>
+
+	<chapter id="relnotes:prepare">
+		<title>Hinweise zum Update</title>
+			<para>
+				Während der Aktualisierung kann es zu Ausfällen von Diensten innerhalb der Domäne
+				kommen. Aus diesem Grund sollte das Update innerhalb eines Wartungsfensters
+				erfolgen. Grundsätzlich wird empfohlen das Update zunächst in einer Testumgebung
+				einzuspielen und zu testen. Die Testumgebung sollte dabei identisch zur
+				Produktivumgebung sein. Je nach Systemgeschwindigkeit, Netzwerkanbindung und
+				installierter Software kann das Update zwischen dreißig Minuten und mehreren Stunden
+				dauern.
+			</para>
+
+		<section id="relnotes:samba">
+			<title>Ablösung von Windows NT DC Funktionalität</title>
+				<para>
+					Die Verwendung von Windows NT Domänendiensten, die klassisch durch Samba 3
+					bereitgestellt wurden, wird mit UCS 4.0 nicht mehr empfohlen. Eine Auswahl der
+					Windows NT Domänendienste ist deshalb während der Installation von UCS und durch
+					das App Center nicht mehr vorgesehen. Es wird empfohlen auf die Active Directory
+					Domänendienste von UCS (Samba 4) zu migrieren. Die Migration ist im Univention
+					Wiki dokumentiert:
+					<ulink url="http://wiki.univention.de/index.php?title=Migration_from_Samba_3_to_Samba_4"/>.
+				</para>
+		</section>
+		<section id="relnotes:32bit">
+			<title>UCS-Installations-DVDs nur noch als 64-Bit-Variante</title>
+				<para>
+					UCS-Installations-DVSs werden ab UCS 4 nur noch für 64-Bit-Archtitekturen
+					bereitgestellt. Vorhandene 32-Bit UCS 3 Systeme können weiterhin über das Online
+					Repository oder über Update-DVDs auf UCS 4 aktualisiert werden. Die
+					32-Bit-Archtitektur wird für die gesamte UCS 4-Maintenance noch unterstützt.
+				</para>
+		</section>
+		<section id="relnotes:printermoderation">
+			<title>Standard-Druckertreiber für PDF-Drucker</title>
+			<para>
+				Ab &ucsUAS; 4.0 R2 wird während einer Neuinstallation beim Anlegen des PDF-Druckers für die Druckmoderation
+				automatisch der Windows-Druckertreiber <wordasword>MS Publisher Color Printer</wordasword> mit der Druckerfreigabe verknüpft.
+				Dieser Treiber ist bei vielen Windows-Versionen bereits vorinstalliert (<systemitem class="osname">win7</systemitem>, <systemitem class="osname">win8.1</systemitem>, ...)
+				und vermeidet so das unnötige Herunterladen und Installieren von Druckertreibern beim Verbinden mit der Druckerfreigabe.
+				Falls ein abweichender Treiber gewünscht ist, kann dieser über die &ucsUCRV; <envar>ucsschool/printermoderation/windows/driver/name</envar>
+				angegeben werden.
+			</para>
+			<para>
+				Auf &ucsUAS;-Systemen, die auf Version 4.0 R2 aktualisiert werden, wird der Druckertreiber nicht automatisch gesetzt.
+				Falls auf einzelnen Systemen die Treiberzuordnung nachträglich ausgeführt werden soll, kann das Skript
+				<filename>/usr/share/ucs-school-umc-printermoderation/set-windows-driver-for-pdf-printer</filename>
+				auf dem jeweiligen System als Benutzer <systemitem class="username">root</systemitem> ausgeführt werden.
+			</para>
+		</section>
+		<section id="relnotes:multiupload">
+			<title>Gleichzeitiges Hochladen mehrerer Dateien</title>
+			<para>
+				&ucsUAS; unterstützt ab UCS 4.0 Errata-Stand 162 das gleichzeitige Hochladen von
+				mehreren Dateien in den UMC-Modulen <guimenu>Klassenarbeit starten</guimenu> und <guimenu>Material
+				verteilen</guimenu>, sofern dies auch vom verwendeten Browser unterstützt wird. Der Benutzer kann
+				nun im Dateiauswahldialog seines verwendeten Browsers mehrere oder alle Dateien eines Verzeichnisses
+				auswählen und diese in einem Schritt hochladen.
+			</para>
+		</section>
+	</chapter>
+
+	<chapter id="relnotes:preparations">
+	  <title>Vorbereitung von Installation und Update</title>
+	  <para>
+		Es sollte geprüft werden, ob ausreichend Festplattenplatz verfügbar ist. Eine
+		Standard-Installation benötigt min. 6 GB Speicherplatz. Das Update benötigt je nach Umfang
+		der vorhanden Installation mindestens 1 GB weiteren Speicherplatz zum Herunterladen und
+		Installieren der Pakete.
+	  </para>
+
+	  <para>
+		Für das Update sollte eine Anmeldung auf der lokalen Konsole des Systems mit dem Benutzer
+		<emphasis>root</emphasis> durchgeführt und das Update dort gestartet werden. Alternativ
+		kann das Update über &ucsUMC; durchgeführt werden.
+	  </para>
+
+	  <para>
+		Eine Remote-Aktualisierung über SSH wird nicht empfohlen, da dies beispielsweise bei
+		Unterbrechung der Netzverbindung zum Abbruch des Update-Vorgangs und zu einer
+		Beeinträchtigung des Systems führen kann. Sollte dennoch eine Aktualisierung über eine
+		Netzverbindung durchgeführt werden, ist sicherzustellen, dass das Update bei Unterbrechung
+		der Netzverbindung trotzdem weiterläuft. Hierfür können beispielsweise die Tools
+		<command>screen</command> oder <command>at</command> eingesetzt werden, die auf allen
+		Systemrollen installiert sind.
+	  </para>
+	</chapter>
+
+	<chapter id="relnotes:post">
+		<title>Nachbereitung des Updates</title>
+		<para>
+			Nach dem Update müssen die neuen oder aktualisierten Join-Skripte ausgeführt werden. Dies
+			kann auf zwei Wegen erfolgen: 
+		</para>
+		<itemizedlist>
+		  <listitem>
+			<para>
+			  über das UMC-Modul <guimenu>Domänenbeitritt</guimenu> oder
+			</para>
+		  </listitem>
+		  <listitem>
+			<para>
+			  durch Aufruf des Befehls <command>univention-run-join-scripts</command> als Benutzer <emphasis>root</emphasis>.
+			</para>
+		  </listitem>
+		</itemizedlist>
+		<para>
+			Bei der Neuinstallation einer UCS@school 4.0 Domäne mit Samba 4 sollte nach Abschluss
+			der Installation einmalig als Benutzer <emphasis>root</emphasis> das Kommando
+			<command>samba-tool ntacl sysvolreset</command> auf der Kommandozeile ausgeführt werden.
+		</para>
+	</chapter>
+
+	<chapter id="relnotes:umc">
+		<title>Hinweise zum Zugriff auf die Univention Management Console</title>
+			<para>
+				&ucsUMC; verwendet für die Darstellung der Web-Oberfläche zahlreiche Javascript- und
+				CSS-Funktionen. Cookies müssen im Browser zugelassen sein. Die folgenden Browser werden
+				empfohlen:
+			</para>
+			<itemizedlist>
+				<listitem>
+					<para>Chrome ab Version 33</para>
+				</listitem>
+				<listitem>
+					<para>Firefox ab Version 24</para>
+				</listitem>
+				<listitem>
+					<para>Internet Explorer ab Version 9 </para>
+				</listitem>
+				<listitem>
+					<para>Safari und Safari Mobile ab Version 7</para>
+				</listitem>
+			</itemizedlist>
+			<para>
+			  Auf älteren Browsern können Darstellungs- oder Performanceprobleme auftreten.
+			</para>
+	</chapter>
+
+	<chapter id="relnotes:changes">
+		<title>Changelog</title>
+		<para>
+		  Die Changelogs mit den detaillierten Änderungsinformationen werden nur in Englisch
+		  gepflegt. Aufgeführt sind die Änderungen zwischen den UCS@school-Versionen 4.0 v3 und 4.0 R2 v4. Die
+		  Änderungsinformationen für vorherige Versionssprünge finden sich unter <ulink
+		  url="http://docs.univention.de/"/>.
+		</para>
+		<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="changelog-ucsschool-4.0r2v4.xml" xpointer="xpointer(/chapter/section)"/>
+	</chapter>
+
+	<?dbhtml-include href="../stylesheets/piwik.html"?>
+</book>
