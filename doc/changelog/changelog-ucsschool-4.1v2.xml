@@ -73,7 +73,7 @@
 						During the update and on new installations the Samba4 Connector will be
 						configured to sync group objects unidirectional from LDAP to Samba4 by setting the UCR variable
 						<envar>connector/s4/mapping/group/syncmode=write</envar>. Otherwise in some situations inconsistencies
-						and dataloss may occur for group memberships (<u:bug>33883</u:bug>).
+						and data loss may occur for group memberships (<u:bug>33883</u:bug>).
 					</simpara>
 				</listitem>
 			</itemizedlist>
@@ -97,7 +97,7 @@
 			<itemizedlist>
 				<listitem>
 					<simpara>
-						LDAP ACLs are now installed domain wide using the LDAP ACL extension mechanism. Backup domaincontrollers will now use the registered ACLs without having the UCS@school app installed (<u:bug>40123</u:bug>).
+						LDAP ACLs are now installed domain wide using the LDAP ACL extension mechanism. Backup domain controllers will now use the registered ACLs without having the UCS@school app installed (<u:bug>40123</u:bug>).
 					</simpara>
 				</listitem>
 			</itemizedlist>
