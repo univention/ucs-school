@@ -29,7 +29,7 @@
 					This is required to create working groups (<u:bug>39984</u:bug>).
 				</simpara>
 				<simpara>
-					LDAP ACLs are now installed domain wide using the LDAP ACLs extensions mechanism. DC backups will now use them without installing and configuring the UCS@school app (<u:bug>40124</u:bug>).
+					LDAP ACLs are now installed domain wide using the LDAP ACL extension mechanism. Backup domaincontrollers will now use the registered ACLs without having the UCS@school app installed (<u:bug>40124</u:bug>).
 				</simpara>
 			</listitem>
 		</itemizedlist>
