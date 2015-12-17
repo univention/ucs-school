@@ -29,7 +29,7 @@
 					This is required to create working groups (<u:bug>39984</u:bug>).
 				</simpara>
 				<simpara>
-					LDAP ACLs are now installed domain wide using the LDAP ACL extension mechanism. Backup domaincontrollers will now use the registered ACLs without having the UCS@school app installed (<u:bug>40124</u:bug>).
+					LDAP ACLs are now installed domain wide using the LDAP ACL extension mechanism. Backup domain controllers will now use the registered ACLs without having the UCS@school app installed (<u:bug>40124</u:bug>).
 				</simpara>
 			</listitem>
 		</itemizedlist>
@@ -42,7 +42,7 @@
 						During the update and on new installations the Samba4 Connector will be
 						configured to sync group objects unidirectional from LDAP to Samba4 by setting the UCR variable
 						<envar>connector/s4/mapping/group/syncmode=write</envar>. Otherwise in some situations inconsistencies
-						and dataloss may occur for group memberships (<u:bug>40206</u:bug>).
+						and data loss may occur for group memberships (<u:bug>40206</u:bug>).
 					</simpara>
 				</listitem>
 			</itemizedlist>
@@ -52,7 +52,7 @@
 		<itemizedlist>
 			<listitem>
 				<simpara>
-					The number of squid's helper processes (basic auth, NTLM auth, krb5 auth)
+					The number of squid's helper processes (<literal>basic auth</literal>, <literal>NTLM auth</literal>, <literal>krb5 auth</literal>)
 					has been increased to 50 if the UCR value has not been changed manually. Additionally the number of
 					rewrite processes will be increased to 20. This is done by changing the UCR variables
 					<envar>squid/.../children</envar> (<ulink url="&ucsbug;40091">Bug 40091</ulink>).
