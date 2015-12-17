@@ -58,7 +58,7 @@
 						The number of squid's helper processes (basic auth, NTLM auth, krb5 auth)
 						has been increased to 50 if the UCR value has not been changed manually. Additionally the number of
 						rewrite processes will be increased to 20. This is done by changing the UCR variables
-						<envar>squid/.../children</envar> (<ulink url="&ucsbug;40092">Bug 40092</ulink>).
+						<envar>squid/.../children</envar> (<u:bug>40092</u:bug>).
 					</simpara>
 				</listitem>
 			</itemizedlist>
@@ -72,7 +72,7 @@
 					<simpara>
 						During the update and on new installations the Samba4 Connector will be
 						configured to sync group objects unidirectional from LDAP to Samba4 by setting the UCR variable
-						<env>connector/s4/mapping/group/syncmode=write</env>. Otherwise in some situations inconsistencies
+						<envar>connector/s4/mapping/group/syncmode=write</envar>. Otherwise in some situations inconsistencies
 						and dataloss may occur for group memberships (<u:bug>33883</u:bug>).
 					</simpara>
 				</listitem>
