@@ -1,3 +1,9 @@
+ucs-school-metapackage (8.0.1-4) unstable; urgency=low
+
+  * set connector/s4/mapping/msprintconnectionpolicy?yes (Bug #32041)
+
+ -- Felix Botner <botner@univention.de>  Fri, 18 Dec 2015 15:49:58 +0100
+
 ucs-school-metapackage (8.0.1-3) unstable; urgency=low
 
   * Bug #40139: do not print error message if slave has already been
