@@ -1,3 +1,9 @@
+ucs-school-ldap-acls-master (13.0.2-3) unstable; urgency=low
+
+  * allow slaves to write msPrintConnectionPolicy objects (Bug #32041) 
+
+ -- Felix Botner <botner@univention.de>  Fri, 18 Dec 2015 15:36:15 +0100
+
 ucs-school-ldap-acls-master (13.0.2-2) unstable; urgency=low
 
   * fix packaging (Bug #40123)

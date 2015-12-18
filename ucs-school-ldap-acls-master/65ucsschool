@@ -127,8 +127,8 @@ access to dn.base="cn=system,@%@ldap/base@%@"
     by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" read
     by * none break
 
-# Slave DCs can read and write policy containers for MS GPOs
-access to dn.subtree="cn=policies,cn=system,@%@ldap/base@%@" filter="(|(objectClass=msGPOContainer)(objectClass=organizationalRole))"
+# Slave DCs can read and write policy containers for MS GPOs and msPrintConnectionPolicy objects
+access to dn.subtree="cn=policies,cn=system,@%@ldap/base@%@" filter="(|(objectClass=msGPOContainer)(objectClass=organizationalRole)(objectClass=msPrintConnectionPolicy))"
     by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
     by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
     by * none break
