@@ -146,7 +146,7 @@
 		  möglich, direkt in das UMC-Modul <guimenu>Klassen (Schule)</guimenu> zu wechseln, um dort eine
 		  weitere Schulklasse anlegen zu können. Die Angabe von E-Mail-Adresse und Passwort ist optional. Ist
 		  kein Passwort vergeben, muss das Passwort vom Administrator (oder Lehrer) zurückgesetzt werden,
-		  bevor das Benutzerkonto vom Benutzer erstmalig verwendet werden kann.
+		  bevor das Benutzerkonto vom Benutzer erstmals verwendet werden kann.
 		</para>
 		<para>
 		  Nach dem Anklicken der Schaltfläche <guimenu>Speichern</guimenu> wird das Benutzerkonto im
