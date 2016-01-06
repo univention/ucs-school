@@ -1,3 +1,9 @@
+ucs-school-umc-computerroom (7.0.3-1) unstable; urgency=medium
+
+  * Bug #40354: fix code execution vulnerability
+
+ -- Florian Best <best@univention.de>  Wed, 06 Jan 2016 14:38:54 +0100
+
 ucs-school-umc-computerroom (7.0.2-1) unstable; urgency=medium
 
   * Bug #39318: add more log output

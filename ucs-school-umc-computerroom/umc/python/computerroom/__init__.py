@@ -39,6 +39,7 @@ import signal
 import subprocess
 import fcntl
 from random import Random
+from pipes import quote
 import urlparse
 import psutil
 import importlib
@@ -825,12 +826,12 @@ class Instance(SchoolBaseModule):
 		handler_set(ucr_vars)
 
 		# create at job to remove settings
-		unset_vars = map(lambda x: '-r "%s"' % x, vunset)
+		unset_vars = ['-r %s' % quote(x) for x in vunset]
 		MODULE.info('Will remove: %s' % ' '.join(unset_vars))
-		extract_vars = map(lambda x: '-e "%s"' % x, vextract)
+		extract_vars = ['-e %s' % quote(x) for x in vextract]
 		MODULE.info('Will extract: %s' % ' '.join(extract_vars))
 
-		cmd = '/usr/share/ucs-school-umc-computerroom/ucs-school-deactivate-rules %s %s %s' % (' '.join(unset_vars), ' '.join(extract_vars), ' '.join(hosts))
+		cmd = '/usr/share/ucs-school-umc-computerroom/ucs-school-deactivate-rules %s %s %s' % (' '.join(unset_vars), ' '.join(extract_vars), ' '.join(quote(x) for x in hosts))
 		MODULE.info('command for reinitialization is: %s' % cmd)
 
 		if not exam:
