@@ -154,6 +154,4 @@ feedback@univention.de
 		</para>
 		<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="changelog-ucsschool-4.1v2.xml" xpointer="xpointer(/chapter/section)"/>
 	</chapter>
-
-	<?dbhtml-include href="../stylesheets/piwik.html"?>
 </book>

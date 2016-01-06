@@ -65,6 +65,4 @@ feedback@univention.de
 	<bibliomixed id="ucs-school-teacher"/>
 	<bibliomixed id="ucs-performance-guide"/>
   </bibliography>
-
-  <?dbhtml-include href="../stylesheets/piwik.html"?>
 </book>

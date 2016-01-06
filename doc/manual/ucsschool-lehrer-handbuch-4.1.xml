@@ -1027,6 +1027,4 @@ feedback@univention.de
 		</para>
 	  </section>
   </chapter>
-
-  <?dbhtml-include href="../stylesheets/piwik.html"?>
 </book>
