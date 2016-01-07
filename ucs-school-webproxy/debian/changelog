@@ -1,3 +1,9 @@
+ucs-school-webproxy (12.0.1-4) unstable; urgency=low
+
+  * Bug #40082: fixed typo in squidGuard.conf
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Thu, 07 Jan 2016 21:43:54 +0100
+
 ucs-school-webproxy (12.0.1-3) unstable; urgency=low
 
   * Bug #40092: fixed typo

@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE book [
+	<!ENTITY % extensions SYSTEM "../stylesheets/macros.ent" >
+	<!ENTITY % DocBookDTD PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+	"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+	<!ENTITY % entities SYSTEM "../stylesheets/macros-de.ent" >
+	%extensions;
+	%DocBookDTD;
+	%entities;
+]>
+<book lang="de" id="releasenotes-4.1-de">
+
+	<bookinfo>
+ 		<title>UCS@school 4.1 v3 Release Notes</title>
+		<subtitle>Release Notes für die Inbetriebnahme und Aktualisierung von UCS@school 4.1 v3</subtitle>
+		<legalnotice>
+			<literallayout>
+Version 4.1 v3
+Stand: 08. Januar 2016
+			</literallayout>
+			<literallayout lang="">
+Alle Rechte vorbehalten./ All rights reserved.
+(c) 2002-2016
+Univention GmbH
+Mary-Somerville-Straße 1
+28359 Bremen
+Deutschland
+feedback@univention.de
+			</literallayout>
+			<para>
+				Jede aufgeführte Marke und jedes Warenzeichen steht im Eigentum ihrer jeweiligen eingetragenen Rechtsinhaber.
+				Linux ist ein eingetragenes Warenzeichen von Linus Torvalds.
+			</para>
+			<para lang="en">
+				The mentioned brand names and registered trademarks are owned by the respective legal owners in each case.
+				Linux is a registered trademark of Linus Torvalds.
+			</para>
+		</legalnotice>
+	</bookinfo>
+
+	<chapter id="relnotes:prepare">
+		<title>Hinweise zum Update</title>
+		<para>
+			Während der Aktualisierung kann es zu Ausfällen von Diensten innerhalb der Domäne
+			kommen. Aus diesem Grund sollte das Update innerhalb eines Wartungsfensters
+			erfolgen. Grundsätzlich wird empfohlen das Update zunächst in einer Testumgebung
+			einzuspielen und zu testen. Die Testumgebung sollte dabei identisch zur
+			Produktivumgebung sein. Je nach Systemgeschwindigkeit, Netzwerkanbindung und
+			installierter Software kann das Update zwischen dreißig Minuten und mehreren Stunden
+			dauern.
+		</para>
+
+		<section id="relnotes:samba">
+			<title>Ablösung von Windows NT DC Funktionalität</title>
+				<para>
+					Die Verwendung der Windows NT-Domänendienste, die klassisch durch Samba 3
+					bereitgestellt wurden, wird seit UCS 4.0 nicht mehr empfohlen. Eine Auswahl der
+					Windows NT-Domänendienste ist deshalb während der Installation von UCS und durch
+					das App Center nicht mehr vorgesehen. Es wird empfohlen auf die Active Directory-Domänendienste
+					von UCS (Samba 4) zu migrieren. Die Migration ist im Univention	Wiki dokumentiert:
+					<ulink url="http://wiki.univention.de/index.php?title=Migration_from_Samba_3_to_Samba_4"/>.
+				</para>
+		</section>
+		<section id="relnotes:32bit">
+			<title>UCS-Installations-DVDs nur noch als 64-Bit-Variante</title>
+				<para>
+					Die UCS-Installations-DVD wird ab UCS 4 nur noch für die 64-Bit-Archtitektur
+					bereitgestellt. Vorhandene 32-Bit-UCS 3-Systeme können weiterhin über das Online-Repository
+					oder über Update-DVDs auf UCS 4 aktualisiert werden. Die
+					32-Bit-Archtitektur wird für die gesamte UCS 4-Maintenance weiterhin unterstützt.
+				</para>
+		</section>
+	</chapter>
+
+	<chapter id="relnotes:preparations">
+	  <title>Vorbereitung von Installation und Update</title>
+	  <para>
+		Es sollte geprüft werden, ob ausreichend Festplattenplatz verfügbar ist. Eine
+		Standard-Installation benötigt min. 6 GB Speicherplatz. Das Update benötigt je nach Umfang
+		der vorhanden Installation mindestens 1,5 GB weiteren Speicherplatz zum Herunterladen und
+		Installieren der Pakete.
+	  </para>
+
+	  <para>
+		Für das Update sollte eine Anmeldung auf der lokalen Konsole des Systems mit dem Benutzer
+		<emphasis>root</emphasis> durchgeführt und das Update dort gestartet werden. Alternativ
+		kann das Update über die &ucsUMC; durchgeführt werden.
+	  </para>
+
+	  <para>
+		Eine Remote-Aktualisierung über SSH wird nicht empfohlen, da dies beispielsweise bei
+		Unterbrechung der Netzverbindung zum Abbruch des Update-Vorgangs und zu einer
+		Beeinträchtigung des Systems führen kann. Sollte dennoch eine Aktualisierung über eine
+		Netzverbindung durchgeführt werden, ist sicherzustellen, dass das Update bei einer Unterbrechung
+		der Netzverbindung trotzdem weiterläuft. Hierfür können beispielsweise die Tools
+		<command>screen</command> oder <command>at</command> eingesetzt werden, die auf allen
+		Systemrollen installiert sind.
+	  </para>
+	</chapter>
+
+	<chapter id="relnotes:post">
+		<title>Nachbereitung des Updates</title>
+		<para>
+			Nach dem Update müssen die neuen oder aktualisierten Join-Skripte ausgeführt werden. Dies
+			kann auf zwei Wegen erfolgen: 
+		</para>
+		<itemizedlist>
+		  <listitem>
+			<para>
+			  über das UMC-Modul <guimenu>Domänenbeitritt</guimenu> oder
+			</para>
+		  </listitem>
+		  <listitem>
+			<para>
+			  durch Aufruf des Befehls <command>univention-run-join-scripts</command> als Benutzer <emphasis>root</emphasis>.
+			</para>
+		  </listitem>
+		</itemizedlist>
+	</chapter>
+
+	<chapter id="relnotes:umc">
+		<title>Hinweise zum Zugriff auf die Univention Management Console</title>
+			<para>
+				&ucsUMC; verwendet für die Darstellung der Web-Oberfläche zahlreiche Javascript- und
+				CSS-Funktionen. Cookies müssen im Browser zugelassen sein. Die folgenden Browser werden
+				empfohlen:
+			</para>
+			<itemizedlist>
+				<listitem>
+					<para>Chrome ab Version 33</para>
+				</listitem>
+				<listitem>
+					<para>Firefox ab Version 24</para>
+				</listitem>
+				<listitem>
+					<para>Internet Explorer ab Version 9 </para>
+				</listitem>
+				<listitem>
+					<para>Safari und Safari Mobile ab Version 7</para>
+				</listitem>
+			</itemizedlist>
+			<para>
+			  Auf älteren Browsern können Darstellungs- oder Performanceprobleme auftreten.
+			</para>
+	</chapter>
+
+	<chapter id="relnotes:changes">
+		<title>Changelog</title>
+		<para>
+		  Die Changelogs mit den detaillierten Änderungsinformationen werden nur in Englisch
+		  gepflegt. Aufgeführt sind die Änderungen zwischen den UCS@school-Versionen 4.1 v2 und 4.1 v3. Die
+		  Änderungsinformationen für vorherige Versionssprünge finden sich unter <ulink
+		  url="https://docs.software-univention.de/"/>.
+		</para>
+		<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="changelog-ucsschool-4.1v3.xml" xpointer="xpointer(/chapter/section)"/>
+	</chapter>
+</book>
