@@ -3,7 +3,7 @@
 # UCS@School UMC module schoolexam-master
 #  UMC module delivering backend services for ucs-school-umc-exam
 #
-# Copyright 2013-2015 Univention GmbH
+# Copyright 2013-2016 Univention GmbH
 #
 # http://www.univention.de/
 #
