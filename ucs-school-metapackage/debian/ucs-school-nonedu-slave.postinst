@@ -45,6 +45,7 @@ univention-config-registry set \
 	samba4/join/dnsupdate?true \
 	samba4/sysvol/sync/setfacl/AU?false \
 	connector/s4/mapping/wmifilter?yes \
+	connector/s4/mapping/msprintconnectionpolicy?yes \
 	connector/s4/mapping/gpo/ntsd?yes \
 	dns/nameserver/registration/forward_zone?no \
 	dns/nameserver/registration/reverse_zone?no

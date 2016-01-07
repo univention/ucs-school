@@ -50,6 +50,7 @@ univention-config-registry set \
 	samba4/join/dnsupdate?true \
 	samba4/sysvol/sync/setfacl/AU?false \
 	connector/s4/mapping/wmifilter?yes \
+	connector/s4/mapping/msprintconnectionpolicy?yes \
 	connector/s4/mapping/gpo/ntsd?yes \
 	ucsschool/import/generate/policy/dhcp/dns/set_per_ou?true \
 	ucs/web/overview/entries/service/teacherconsole/icon?"/univention-management-console/js/dijit/themes/umc/icons/50x50/ucsschol.png" \
