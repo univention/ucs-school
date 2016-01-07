@@ -11,16 +11,16 @@
 <book lang="de" id="releasenotes-4.0-de">
 
 	<bookinfo>
- 		<title>UCS@school 4.0 R2 v4 Release Notes</title>
-		<subtitle>Release Notes für die Inbetriebnahme und Aktualisierung von UCS@school 4.0 R2 v4</subtitle>
+ 		<title>UCS@school 4.0 R2 v5 Release Notes</title>
+		<subtitle>Release Notes für die Inbetriebnahme und Aktualisierung von UCS@school 4.0 R2 v5</subtitle>
 		<legalnotice>
 			<literallayout>
-Version 4.0 R2 v4
-Stand: 17. Dezember 2015
+Version 4.0 R2 v5
+Stand: 08. Januar 2016
 			</literallayout>
 			<literallayout lang="">
 Alle Rechte vorbehalten./ All rights reserved.
-(c) 2002-2015
+(c) 2002-2016
 Univention GmbH
 Mary-Somerville-Straße 1
 28359 Bremen
@@ -181,11 +181,11 @@ feedback@univention.de
 		<title>Changelog</title>
 		<para>
 		  Die Changelogs mit den detaillierten Änderungsinformationen werden nur in Englisch
-		  gepflegt. Aufgeführt sind die Änderungen zwischen den UCS@school-Versionen 4.0 R2 v3 und 4.0 R2 v4. Die
+		  gepflegt. Aufgeführt sind die Änderungen zwischen den UCS@school-Versionen 4.0 R2 v4 und 4.0 R2 v5. Die
 		  Änderungsinformationen für vorherige Versionssprünge finden sich unter <ulink
 		  url="http://docs.univention.de/"/>.
 		</para>
-		<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="changelog-ucsschool-4.0r2v4.xml" xpointer="xpointer(/chapter/section)"/>
+		<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="changelog-ucsschool-4.0r2v5.xml" xpointer="xpointer(/chapter/section)"/>
 	</chapter>
 
 	<?dbhtml-include href="../stylesheets/piwik.html"?>

@@ -1,5 +1,5 @@
 #!/usr/bin/make -f
-MAIN := release-notes-ucsschool-4.0r2v1-de release-notes-ucsschool-4.0r2v4-de
+MAIN := release-notes-ucsschool-4.0r2v1-de release-notes-ucsschool-4.0r2v4-de release-notes-ucsschool-4.0r2v5-de
 STYLESHEET := univention_extdocs
 OPTIONS += --stringparam ulink.show 0
 
