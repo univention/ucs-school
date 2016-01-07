@@ -34,10 +34,7 @@
 
 [ $# -ne 2 ] && echo "USAGE: $(basename $0) FILE DN" && exit 1
 
-is_ucr_true() {
-	local val="$(echo $1 | tr [:upper:] [:lower:])"
-	[ "$val" = "yes" -o "$val" = "true" -o "$val" = "1" -o "$val" = "enabled" ]
-}
+. /usr/share/univention-lib/ucr.sh
 
 eval "$(ucr shell)"
 

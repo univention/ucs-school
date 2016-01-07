@@ -15,6 +15,7 @@ Depends: univention-directory-manager,
  univention-policy-tools (>= 5.0.8),
  shell-ucs-school (>= 5.0.38),
  python-ucs-school (>= 5.0.3-18),
+ shell-univention-lib,
  univention-config,
 Description: UCS@school: Importing objects like users and computers
  This package provides scripts for importing objects like users, groups,

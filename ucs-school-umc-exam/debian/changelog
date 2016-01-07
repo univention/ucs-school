@@ -1,3 +1,9 @@
+ucs-school-umc-exam (5.0.3-1) unstable; urgency=medium
+
+  * Bug #40384: use univention-shell-lib
+
+ -- Florian Best <best@univention.de>  Thu, 07 Jan 2016 12:43:24 +0100
+
 ucs-school-umc-exam (5.0.2-1) unstable; urgency=medium
 
   * Bug #39573: Adjust /umcp/ to /univention-management-console/
