@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE chapter [
+<!ENTITY % extensions SYSTEM "../stylesheets/macros.ent" >
+<!ENTITY % DocBookDTD PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<!ENTITY % entities SYSTEM "../stylesheets/macros-en.ent" >
+%extensions;
+%DocBookDTD;
+%entities;
+]>
+<chapter id="relnotes:changelog" lang="en">
+	<title>Changelog</title>
+<!--
+	<section id="relnotes:changelog:general">
+		<title>General</title>
+		<itemizedlist>
+			<listitem>
+				<simpara>
+				</simpara>
+			</listitem>
+		</itemizedlist>
+	</section>
+	<section id="relnotes:changelog:ldap-acl">
+		<title>LDAP ACL changes</title>
+		<itemizedlist>
+			<listitem>
+				<simpara>
+				</simpara>
+			</listitem>
+		</itemizedlist>
+	</section>
+		<section id="relnotes:changelog:samba4">
+			<title>Samba4</title>
+			<itemizedlist>
+				<listitem>
+					<simpara>
+					</simpara>
+				</listitem>
+			</itemizedlist>
+		</section>
+-->
+	<section id="relnotes:changelog:proxy">
+		<title>Proxy changes</title>
+		<itemizedlist>
+			<listitem>
+				<simpara>
+					A typo within the automatically created
+					<filename>/etc/squid/squidGuard.conf</filename> prevented school slaves from rejoining into the
+					domain or prevented <literal>squidguard</literal> from running. This problem only occurred if blacklists have been
+					configured in &ucsUMC; (<u:bug>40388</u:bug>).
+				</simpara>
+			</listitem>
+		</itemizedlist>
+	</section>
+<!--
+	<section id="relnotes:changelog:umc">
+		<title>Univention Management Console</title>
+		<section id="relnotes:changelog:umc:modules:exam">
+			<title>Exam</title>
+			<itemizedlist>
+				<listitem>
+					<simpara>
+					</simpara>
+				</listitem>
+			</itemizedlist>
+		</section>
+	</section>
+-->
+</chapter>

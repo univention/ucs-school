@@ -1,3 +1,9 @@
+ucs-school-webproxy (11.0.8-4) unstable; urgency=low
+
+  * Bug #40388: fixed typo in squidGuard.conf
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Thu, 07 Jan 2016 21:25:41 +0100
+
 ucs-school-webproxy (11.0.8-3) unstable; urgency=low
 
   * Bug #40091: automatically raise default of squid/ntlmauth/children to 50
