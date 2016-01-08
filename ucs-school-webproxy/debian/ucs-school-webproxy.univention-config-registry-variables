@@ -15,3 +15,63 @@ Description[de]=Leerzeichenseparierte Liste mit Textdateien, die als Blacklist f
 Description[en]=Space separated list of text files that will be included as blacklist for URLs within the UCS@school proxy configuration.
 Type=str
 Categories=ucsschool-base
+
+[proxy/pac/exclude/localhost]
+Description[de]=Um Zugriffe auf "localhost" nicht über den Proxy zu leiten, ist diese Variable auf "yes" zu setzen (Standard: no)
+Description[en]=If this variable is set to "yes", requests for "localhost" are not sent via proxy (default: no)
+Type=boolean
+Categories=ucsschool-base
+
+[proxy/pac/exclude/networks/enabled]
+Description[de]=Um Zugriffe auf bestimmte Subnetze nicht über den Proxy zu leiten, ist diese Variable auf "yes" zu setzen (Standard: no)
+Description[en]=If this variable is set to "yes", requests for a defined list of subnets are not sent via proxy (default: no)
+Type=boolean
+Categories=ucsschool-base
+
+[proxy/pac/exclude/networks/networklist]
+Description[de]=Leerzeichen-separierte Liste mit IP-Subnetzen (inkl. Subnetzmasken), die direkt und nicht über den Proxy angesprochen werden sollen (Beispiel: "10.0.0.0/255.0.0.0 192.168.0.0/255.255.255.0")
+Description[en]=Whitespace separated list of IP subnets (incl. netmask) that have to be accessed directly (and not via proxy) (example: "10.0.0.0/255.0.0.0 192.168.0.0/255.255.255.0")
+Type=str
+Categories=ucsschool-base
+
+[proxy/pac/exclude/networks/parentproxy/enabled]
+Description[de]=Ist diese Variable auf "yes" gesetzt, werden Anfragen an die angegebenen Subnetze nicht direkt sondern über den Parent-Proxy gesendet (Standard: no)
+Description[en]=If this variable is set to "yes", requests for the given list of subnets are not performed directly but via the parent proxy (default: no)
+Type=boolean
+Categories=ucsschool-base
+
+[proxy/pac/exclude/domains/enabled]
+Description[de]=Um Zugriffe auf bestimmte Domänennamen nicht über den Proxy zu leiten, ist diese Variable auf "yes" zu setzen (Standard: no)
+Description[en]=If this variable is set to "yes", requests for a defined list of domain names are not sent via proxy (default: no)
+Type=boolean
+Categories=ucsschool-base
+
+[proxy/pac/exclude/domains/dnsnames]
+Description[de]=Leerzeichen-separierte Liste mit Domänennamen, die direkt und nicht über den Proxy angesprochen werden sollen (Beispiel: ".univention.de .software-univention.de")
+Description[en]=Whitespace separated list of domain names that have to be accessed directly (and not via proxy) (example: ".univention.de .software-univention.de")
+Type=str
+Categories=ucsschool-base
+
+[proxy/pac/exclude/domains/parentproxy/enabled]
+Description[de]=Ist diese Variable auf "yes" gesetzt, werden Anfragen an die angegebenen Domänennamen nicht direkt sondern über den Parent-Proxy gesendet (Standard: no)
+Description[en]=If this variable is set to "yes", requests for the given list of domain names are not performed directly but via the parent proxy (default: no)
+Type=boolean
+Categories=ucsschool-base
+
+[proxy/pac/exclude/expressions/enabled]
+Description[de]=Um Zugriffe auf bestimmte URLs nicht über den Proxy zu leiten, ist diese Variable auf "yes" zu setzen (Standard: no)
+Description[en]=If this variable is set to "yes", requests for a defined list of URLs are not sent via proxy (default: no)
+Type=boolean
+Categories=ucsschool-base
+
+[proxy/pac/exclude/expressions/expressionlist]
+Description[de]=Leerzeichen-separierte Liste mit URL-Mustern, deren zutreffende URLs direkt und nicht über den Proxy angesprochen werden sollen (Beispiel: "*.example.com/subfolder/*")
+Description[en]=Whitespace separated list of URL expressions that defined URLs which have to be accessed directly (and not via proxy) (example: "*.example.com/subfolder/*")
+Type=str
+Categories=ucsschool-base
+
+[proxy/pac/exclude/expressions/parentproxy/enabled]
+Description[de]=Ist diese Variable auf "yes" gesetzt, werden Anfragen, auf die die URL-Muster zutreffen, nicht direkt sondern über den Parent-Proxy gesendet (Standard: no)
+Description[en]=If this variable is set to "yes", requests matching to the URL expressions are not performed directly but via the parent proxy (default: no)
+Type=boolean
+Categories=ucsschool-base
