@@ -12,7 +12,7 @@ Depends: univention-squid (>= 5.0.8),
  squidguard,
  univention-config-registry,
  ucs-school-umc-internetrules
-Description: meta package for UCS@School webproxy
+Description: meta package for UCS@school webproxy
  This meta package installs and configures squid and squidguard
  as HTTP proxy with transparent NTLM authentication.
  .
