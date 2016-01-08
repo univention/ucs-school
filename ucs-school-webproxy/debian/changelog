@@ -1,3 +1,9 @@
+ucs-school-webproxy (11.0.8-6) unstable; urgency=low
+
+  * Bug #35219/40403: added additional UCR variables for proxy.pac configuration
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 08 Jan 2016 14:54:11 +0100
+
 ucs-school-webproxy (11.0.8-5) unstable; urgency=low
 
   * Bug #40398: prevent squidGuard from hanging in emergency mode

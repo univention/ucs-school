@@ -10,6 +10,9 @@ File: var/www/proxy.pac
 Variables: squid/httpport
 Variables: hostname
 Variables: domainname
+Variables: proxy/pac/exclude/.*
+Variables: squid/parent/host
+Variables: squid/parent/port
 
 Type: file
 File: etc/apache2/sites-available/wpad-config
