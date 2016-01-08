@@ -34,7 +34,7 @@ if configRegistry.is_true('proxy/pac/exclude/domains/enabled', False):
 if configRegistry.is_true('proxy/pac/exclude/expressions/enabled', False):
 	print '        // If the requested shell expression matches, send "DIRECT" (no proxy is used) or use parent proxy:'
 	for shExp in configRegistry.get('proxy/pac/exclude/expressions/expressionlist', '').split(" "):
-		print '        if (shExpMatch(host, "%s"))' % (shExp, )
+		print '        if (shExpMatch(url, "%s"))' % (shExp, )
 		if configRegistry.is_true('proxy/pac/exclude/expressions/parentproxy/enabled', False):
 			print '            return "PROXY %s:%s";' % (configRegistry.get('squid/parent/host'), configRegistry.get('squid/parent/port'))
 		else:

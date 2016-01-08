@@ -65,8 +65,8 @@ Type=boolean
 Categories=ucsschool-base
 
 [proxy/pac/exclude/expressions/expressionlist]
-Description[de]=Leerzeichen-separierte Liste mit URL-Mustern, deren zutreffende URLs direkt und nicht über den Proxy angesprochen werden sollen (Beispiel: "*.example.com/subfolder/*")
-Description[en]=Whitespace separated list of URL expressions that defined URLs which have to be accessed directly (and not via proxy) (example: "*.example.com/subfolder/*")
+Description[de]=Leerzeichen-separierte Liste mit URL-Mustern, deren zutreffende URLs direkt und nicht über den Proxy angesprochen werden sollen (Beispiel: "*://(www|ftp).example.com/subfolder/*")
+Description[en]=Whitespace separated list of URL expressions that defined URLs which have to be accessed directly (and not via proxy) (example: "*://(www|ftp).example.com/subfolder/*")
 Type=str
 Categories=ucsschool-base
 

@@ -1,3 +1,9 @@
+ucs-school-webproxy (11.0.8-7) unstable; urgency=low
+
+  * Bug #35219/40403: fixed proxy.pac and updated UCR variable descriptions
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 08 Jan 2016 16:39:44 +0100
+
 ucs-school-webproxy (11.0.8-6) unstable; urgency=low
 
   * Bug #35219/40403: added additional UCR variables for proxy.pac configuration
