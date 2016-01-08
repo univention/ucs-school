@@ -1,0 +1,3 @@
+0004-16: conffiles/var/www/proxy.pac
+0004-16: conffiles/etc/apache2/sites-available/wpad-config
+0004-56: conffiles/etc/apache2/sites-available/wpad-config
