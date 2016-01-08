@@ -1,3 +1,9 @@
+ucs-school-webproxy (12.0.2-1) unstable; urgency=low
+
+  * Bug #35219: fix possible attack vector due to unescaped UCR variables
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 08 Jan 2016 17:42:38 +0100
+
 ucs-school-webproxy (12.0.1-8) unstable; urgency=low
 
   * Bug #35219: updated UCR variable descriptions
