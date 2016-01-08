@@ -394,7 +394,7 @@ def writeUsergroupMemberLists(configRegistry, DIR_TEMP):
 
 def finalizeConfig(fn_temp_config, DIR_TEMP, DIR_DATA):
 	# create all db files
-	subprocess.call(('squidGuard', '-c', fn_temp_config, '-C', 'all', ))
+	subprocess.call(('squidGuard', '-c', fn_temp_config, '-C', 'all', ), stdin=open('/dev/null', 'r'))
 	# fix permissions
 	subprocess.call(('chmod', '-R', 'a=,ug+rw',   DIR_TEMP, fn_temp_config, ))
 	subprocess.call(('chown', '-R', 'root:proxy', DIR_TEMP, fn_temp_config, ))
