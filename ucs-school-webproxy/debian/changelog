@@ -1,3 +1,9 @@
+ucs-school-webproxy (11.0.8-5) unstable; urgency=low
+
+  * Bug #40398: prevent squidGuard from hanging in emergency mode
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 08 Jan 2016 12:54:22 +0100
+
 ucs-school-webproxy (11.0.8-4) unstable; urgency=low
 
   * Bug #40388: fixed typo in squidGuard.conf
