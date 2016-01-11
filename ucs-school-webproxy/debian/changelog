@@ -1,3 +1,10 @@
+ucs-school-webproxy (11.0.11-1) unstable; urgency=low
+
+  * Bug #35219/40403: make proxy.pac more javascript conform
+  * Bug #35219/40403: prevent hanging postinst during update
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Mon, 11 Jan 2016 11:26:57 +0100
+
 ucs-school-webproxy (11.0.10-1) unstable; urgency=low
 
   * Bug #35219/40403: fix possible attack vector due to unescaped UCR variables
