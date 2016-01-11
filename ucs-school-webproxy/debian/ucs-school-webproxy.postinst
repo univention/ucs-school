@@ -53,7 +53,7 @@ case "$1" in
 		touch /var/lib/ucs-school-webproxy/blacklisted-domain || true
 		touch /var/lib/ucs-school-webproxy/blacklisted-url || true
 		chown root:proxy /var/lib/ucs-school-webproxy/*listed-* || true
-		/usr/bin/squidGuard -C all || true
+		/usr/bin/squidGuard -C all < /dev/null || true
 		chmod ug+rw /var/lib/ucs-school-webproxy/*listed-* || true
 
 		if [ -x /etc/init.d/samba ]; then
