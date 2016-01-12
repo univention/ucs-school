@@ -1,3 +1,9 @@
+ucs-school-metapackage (7.0.3-5) unstable; urgency=low
+
+  * resync msprintconnectionpolicy objects (Bug #32041) 
+
+ -- Felix Botner <botner@univention.de>  Tue, 12 Jan 2016 14:38:49 +0100
+
 ucs-school-metapackage (7.0.3-4) unstable; urgency=low
 
   * set connector/s4/mapping/msprintconnectionpolicy?yes (Bug #32041) 
