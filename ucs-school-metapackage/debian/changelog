@@ -1,3 +1,9 @@
+ucs-school-metapackage (8.0.1-5) unstable; urgency=medium
+
+  * Bug #40392: crestart samba in 62ucs-school-*slave.inst
+
+ -- Arvid Requate <requate@univention.de>  Tue, 12 Jan 2016 16:24:16 +0100
+
 ucs-school-metapackage (8.0.1-4) unstable; urgency=low
 
   * set connector/s4/mapping/msprintconnectionpolicy?yes (Bug #32041)

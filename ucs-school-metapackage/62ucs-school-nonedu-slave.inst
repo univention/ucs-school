@@ -63,7 +63,7 @@ if [ $JS_LAST_EXECUTED_VERSION -lt 1 ]; then
 		ucr set "connector/s4/mapping/dns/forward_zone/$domainname/static/ipv6?$ipv6"
 	fi
 
-	test -x /etc/init.d/samba && /etc/init.d/samba restart
+	test -x /etc/init.d/samba && /etc/init.d/samba status >/dev/null && /etc/init.d/samba restart
 
 	if [ "$server_role" = "domaincontroller_slave" ]; then
 		site=$(school_ou)
