@@ -1,3 +1,9 @@
+ucs-school-metapackage (8.0.1-6) unstable; urgency=low
+
+  * resync msprintconnectionpolicy objects (Bug #32041) 
+
+ -- Felix Botner <botner@univention.de>  Wed, 13 Jan 2016 15:12:37 +0100
+
 ucs-school-metapackage (8.0.1-5) unstable; urgency=medium
 
   * Bug #40392: crestart samba in 62ucs-school-*slave.inst
