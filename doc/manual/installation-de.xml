@@ -173,8 +173,8 @@
 		  </listitem>
 		  <listitem>
 			<simpara>
-			  Nach der Konfiguration ist es erforderlich, dass der DC Slave erneut der Domäne
-			  beitritt. Im zweiten Schritt werden die für den erneuten Beitritt notwendigen Anmeldedaten
+			  Nach der Konfiguration über das Konfigurationsmodul tritt der DC Slave automatisch der Domäne erneut bei.
+			  Im zweiten Schritt werden die für den erneuten Beitritt notwendigen Anmeldedaten
 			  (Benutzername, Passwort) abgefragt. Hier kann der Benutzer <systemitem class="username">Administrator</systemitem> oder
 			  ein Mitglied der Gruppe <systemitem class="groupname">Domain Admins</systemitem> angegeben werden. Der vollqualifizierte
 			  Rechnername (FQDN) des DC Masters wird üblicherweise automatisch ermittelt und vorausgefüllt. Sollte
