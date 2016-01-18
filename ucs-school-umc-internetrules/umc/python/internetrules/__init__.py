@@ -34,7 +34,9 @@
 import univention.config_registry
 
 from univention.lib.i18n import Translation
-from univention.management.console.modules import UMC_OptionTypeError, UMC_CommandError
+from univention.management.console.modules import UMC_Error
+from univention.management.console.modules.decorators import sanitize
+from univention.management.console.modules.sanitizers import StringSanitizer, DictSanitizer, ListSanitizer, ChoicesSanitizer, IntegerSanitizer, BooleanSanitizer
 from univention.management.console.log import MODULE
 
 import univention.admin.modules as udm_modules
@@ -56,6 +58,7 @@ _filterTypesInv = dict([(_i[1], _i[0]) for _i in _filterTypes.iteritems()])
 
 
 class Instance(SchoolBaseModule):
+
 	def query(self, request):
 		"""Searches for internet filter rules
 		requests.options = {}
@@ -81,48 +84,40 @@ class Instance(SchoolBaseModule):
 		MODULE.info('internetrules.query: results: %s' % str(result))
 		self.finished(request.id, result)
 
+	@sanitize(StringSanitizer())
 	def get(self, request):
 		"""Returns the specified rules
 		requests.options = [ <ruleName>, ... ]
 		"""
 		MODULE.info('internetrules.get: options: %s' % str(request.options))
-		names = request.options
 		result = []
-		if isinstance(names, (list, tuple)):
-			# fetch all rules with the given names (we need to make sure that "name" is UTF8)
-			names = set(iname.encode('utf8') for iname in names)
-			result = [dict(
-				name=irule.name,
-				type=_filterTypesInv[irule.type],
-				domains=irule.domains,
-				priority=irule.priority,
-				wlan=irule.wlan,
-			) for irule in rules.list() if irule.name in names]
-		else:
-			MODULE.warn('internetrules.get: wrong parameter, expected list of strings, but got: %s' % str(names))
-			raise UMC_OptionTypeError('Expected list of strings, but got: %s' % str(names))
+		# fetch all rules with the given names (we need to make sure that "name" is UTF8)
+		names = set(iname.encode('utf8') for iname in request.options)
+		result = [dict(
+			name=irule.name,
+			type=_filterTypesInv[irule.type],
+			domains=irule.domains,
+			priority=irule.priority,
+			wlan=irule.wlan,
+		) for irule in rules.list() if irule.name in names]
 
 		MODULE.info('internetrules.get: results: %s' % str(result))
 		self.finished(request.id, result)
 
+	@sanitize(DictSanitizer(dict(object=StringSanitizer()), required=True))
 	def remove(self, request):
 		"""Removes the specified rules
 		requests.options = [ { "object": <ruleName> }, ... ]
 		"""
 		MODULE.info('internetrules.remove: options: %s' % str(request.options))
-		names = request.options
 		result = []
-		if isinstance(names, (list, tuple)):
-			# fetch all rules with the given names
-			for ientry in names:
-				iname = ientry.get('object')
-				success = False
-				if iname:
-					success = rules.remove(iname)
-				result.append(dict(name=iname, success=success))
-		else:
-			MODULE.warn('internetrules.get: wrong parameter, expected list of strings, but got: %s' % str(names))
-			raise UMC_OptionTypeError('Expected list of strings, but got: %s' % str(names))
+		# fetch all rules with the given names
+		for ientry in request.options:
+			iname = ientry['object']
+			success = False
+			if iname:
+				success = rules.remove(iname)
+			result.append(dict(name=iname, success=success))
 
 		MODULE.info('internetrules.remove: results: %s' % str(result))
 		self.finished(request.id, result)
@@ -185,6 +180,13 @@ class Instance(SchoolBaseModule):
 
 		return iprops
 
+	@sanitize(DictSanitizer(dict(object=DictSanitizer(dict(
+		name=StringSanitizer(required=True),
+		type=ChoicesSanitizer(list(_filterTypes.keys()), required=True),
+		wlan=BooleanSanitizer(required=True),
+		priority=IntegerSanitizer(required=True),
+		domains=ListSanitizer(StringSanitizer(required=True), required=True),
+	), required=True)), required=True))
 	def add(self, request):
 		"""Add the specified new rules:
 		requests.options = [ {
@@ -197,20 +199,17 @@ class Instance(SchoolBaseModule):
 			}
 		}, ... ]
 		"""
-		# make sure that we got a list
-		if not isinstance(request.options, (tuple, list)):
-			raise UMC_OptionTypeError('Expected list of strings, but got: %s' % str(request.options))
 
 		# try to create all specified projects
 		result = []
 		for ientry in request.options:
+			iprops = ientry['object']
 			try:
-				iprops = ientry.get('object', {})
 
 				# make sure that the rule does not already exist
-				irule = rules.load(iprops.get('name', ''))
+				irule = rules.load(iprops['name'])
 				if irule:
-					raise ValueError(_('A rule with the same name does already exist: %s') % iprops.get('name', ''))
+					raise ValueError(_('A rule with the same name does already exist: %s') % iprops['name'])
 
 				# parse the properties
 				parsedProps = self._parseRule(iprops, True)
@@ -245,6 +244,18 @@ class Instance(SchoolBaseModule):
 		# return the results
 		self.finished(request.id, result)
 
+	@sanitize(DictSanitizer(dict(
+		object=DictSanitizer(dict(
+			name=StringSanitizer(required=True),
+			type=ChoicesSanitizer(list(_filterTypes.keys()), required=True),
+			wlan=BooleanSanitizer(required=True),
+			priority=IntegerSanitizer(required=True),
+			domains=ListSanitizer(StringSanitizer(required=True), required=True),
+		), required=True),
+		options=DictSanitizer(dict(
+			name=StringSanitizer()
+		), required=True),
+	), required=True))
 	def put(self, request):
 		"""Modify an existing rules:
 		requests.options = [ {
@@ -260,16 +271,13 @@ class Instance(SchoolBaseModule):
 			}
 		}, ... ]
 		"""
-		# make sure that we got a list
-		if not isinstance(request.options, (tuple, list)):
-			raise UMC_OptionTypeError('Expected list of strings, but got: %s' % str(request.options))
 
 		# try to create all specified projects
 		result = []
 		for ientry in request.options:
 			try:
 				# get properties and options from entry
-				iprops = ientry.get('object', {})
+				iprops = ientry['object']
 				iname = None
 				ioptions = ientry.get('options')
 				if ioptions:
@@ -362,6 +370,10 @@ class Instance(SchoolBaseModule):
 		MODULE.info('internetrules.groups_query: result: %s' % str(result))
 		self.finished(request.id, result)
 
+	@sanitize(DictSanitizer(dict(
+		group=StringSanitizer(required=True),
+		rule=StringSanitizer(required=True),
+	)))
 	@LDAP_Connection()
 	def groups_assign(self, request, search_base=None, ldap_user_read=None, ldap_position=None):
 		"""Assigns default rules to groups:
@@ -369,26 +381,18 @@ class Instance(SchoolBaseModule):
 		"""
 		MODULE.info('internetrules.groups_assign: options: %s' % str(request.options))
 
-		# make sure that we got a list
-		if not isinstance(request.options, (tuple, list)):
-			raise UMC_OptionTypeError('Expected list of dicts, but got: %s' % str(request.options))
-
 		# try to load all group rules
 		newRules = {}
 		rmRules = []
 		for ientry in request.options:
-			# make sure we got a dict
-			if not isinstance(ientry, dict):
-				raise UMC_OptionTypeError('Expected dict, but got: %s' % str(ientry))
-
 			# make sure the group exists
-			igrp = udm_objects.get(udm_modules.get('groups/group'), None, ldap_user_read, ldap_position, ientry.get('group'))
+			igrp = udm_objects.get(udm_modules.get('groups/group'), None, ldap_user_read, ldap_position, ientry['group'])
 			if not igrp:
-				raise UMC_OptionTypeError('unknown group object')
+				raise UMC_Error('unknown group object')
 			igrp.open()
 
 			# check the rule name
-			irule = ientry.get('rule')
+			irule = ientry['rule']
 			if irule == '$default$':
 				# remove the rule
 				rmRules.append(igrp['name'])
@@ -396,8 +400,8 @@ class Instance(SchoolBaseModule):
 				try:
 					# make sure the rule name is valid
 					self._parseRule(dict(name=irule))
-				except ValueError as e:
-					raise UMC_CommandError(str(e))
+				except ValueError as exc:
+					raise UMC_Error(str(exc))
 
 				# add new rule
 				newRules[igrp['name']] = irule
