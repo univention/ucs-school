@@ -1,3 +1,10 @@
+ucs-school-umc-internetrules (11.0.0-2) unstable; urgency=low
+
+  * Text for default settings for internet rules expresses that for the user
+    it's the same as "unrestricted" (Bug #27236).
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 18 Jan 2016 11:42:00 +0100
+
 ucs-school-umc-internetrules (11.0.0-1) unstable; urgency=medium
 
   * Bug #39230: remove unused imports

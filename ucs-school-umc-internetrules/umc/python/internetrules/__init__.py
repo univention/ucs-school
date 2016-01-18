@@ -4,7 +4,7 @@
 # Univention Management Console module:
 #   Defines and manages internet rules
 #
-# Copyright 2012-2015 Univention GmbH
+# Copyright 2012-2016 Univention GmbH
 #
 # http://www.univention.de/
 #
@@ -355,7 +355,7 @@ class Instance(SchoolBaseModule):
 		result = [{
 			'name': i['name'].replace('%s-' % search_base.school, '', 1).replace('-%s' % search_base.school, '', 1),
 			'$dn$': i.dn,
-			'rule': allRules.get(i['name'], 'default') or _('-- default settings --')
+			'rule': allRules.get(i['name'], 'default') or _('-- Default (unrestricted) --')
 		} for i in groupresult if not search_base.isRoom(i.dn)]
 		result.sort(cmp=lambda x, y: cmp(x.lower(), y.lower()), key=lambda x: x['name'])
 
