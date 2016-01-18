@@ -99,8 +99,8 @@ class Instance( SchoolBaseModule ):
 				wlan=irule.wlan,
 			) for irule in rules.list() if irule.name in names ]
 		else:
-			MODULE.warn( 'internetrules.get: wrong parameter, expected list of strings, but got: %s' % str( ids ) )
-			raise UMC_OptionTypeError( 'Expected list of strings, but got: %s' % str(ids) )
+			MODULE.warn( 'internetrules.get: wrong parameter, expected list of strings, but got: %s' % str( names ) )
+			raise UMC_OptionTypeError( 'Expected list of strings, but got: %s' % str(names) )
 
 		MODULE.info( 'internetrules.get: results: %s' % str( result ) )
 		self.finished( request.id, result )
@@ -121,8 +121,8 @@ class Instance( SchoolBaseModule ):
 					success = rules.remove(iname)
 				result.append(dict(name = iname, success = success))
 		else:
-			MODULE.warn( 'internetrules.get: wrong parameter, expected list of strings, but got: %s' % str( ids ) )
-			raise UMC_OptionTypeError( 'Expected list of strings, but got: %s' % str(ids) )
+			MODULE.warn( 'internetrules.get: wrong parameter, expected list of strings, but got: %s' % str( names ) )
+			raise UMC_OptionTypeError( 'Expected list of strings, but got: %s' % str(names) )
 
 		MODULE.info( 'internetrules.remove: results: %s' % str( result ) )
 		self.finished( request.id, result )
@@ -199,7 +199,7 @@ class Instance( SchoolBaseModule ):
 		"""
 		# make sure that we got a list
 		if not isinstance(request.options, (tuple, list)):
-			raise UMC_OptionTypeError( 'Expected list of strings, but got: %s' % str(ids) )
+			raise UMC_OptionTypeError( 'Expected list of strings, but got: %s' % str(request.options) )
 
 		# try to create all specified projects
 		result = []
@@ -263,7 +263,7 @@ class Instance( SchoolBaseModule ):
 		"""
 		# make sure that we got a list
 		if not isinstance(request.options, (tuple, list)):
-			raise UMC_OptionTypeError( 'Expected list of strings, but got: %s' % str(ids) )
+			raise UMC_OptionTypeError( 'Expected list of strings, but got: %s' % str(request.options) )
 
 		# try to create all specified projects
 		result = []
@@ -372,7 +372,7 @@ class Instance( SchoolBaseModule ):
 
 		# make sure that we got a list
 		if not isinstance(request.options, (tuple, list)):
-			raise UMC_OptionTypeError( 'Expected list of dicts, but got: %s' % str(ids) )
+			raise UMC_OptionTypeError( 'Expected list of dicts, but got: %s' % str(request.options) )
 
 		# try to load all group rules
 		newRules = {}
@@ -380,7 +380,7 @@ class Instance( SchoolBaseModule ):
 		for ientry in request.options:
 			# make sure we got a dict
 			if not isinstance(ientry, dict):
-				raise UMC_OptionTypeError( 'Expected list of dicts, but got: %s' % str(ids) )
+				raise UMC_OptionTypeError( 'Expected dict, but got: %s' % str(ientry) )
 
 			# make sure the group exists
 			igrp = udm_objects.get( udm_modules.get( 'groups/group' ), None, ldap_user_read, ldap_position, ientry.get('group') )
