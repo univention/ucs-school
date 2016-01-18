@@ -1,3 +1,10 @@
+ucs-test-ucsschool (3.0.5-4) unstable; urgency=low
+
+  * fix non-ASCII character in file without encoding info (PEP263)
+    (Bug #27236)
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 18 Jan 2016 12:08:57 +0100
+
 ucs-test-ucsschool (3.0.5-3) unstable; urgency=low
 
   * adapt internet default setting string to change in r66838 (Bug #27236)
