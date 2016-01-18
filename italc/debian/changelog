@@ -1,3 +1,9 @@
+italc (2:2.0.25-2) unstable; urgency=medium
+
+  * Bug #38213: Add build dependency libpng12-dev
+
+ -- Florian Best <best@univention.de>  Mon, 18 Jan 2016 16:23:58 +0100
+
 italc (2:2.0.25-1) unstable; urgency=medium
 
   * Bug #38213: update to iTalc 2.0-2
