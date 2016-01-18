@@ -1,3 +1,9 @@
+italc (2:2.0.25-1) unstable; urgency=medium
+
+  * Bug #38213: update to iTalc 2.0-2
+
+ -- Florian Best <best@univention.de>  Mon, 18 Jan 2016 15:35:17 +0100
+
 italc (2:2.0.24-1) unstable; urgency=medium
 
   * Bug #39534: Start UCS@school 4.1 development
