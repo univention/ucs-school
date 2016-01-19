@@ -1,0 +1,194 @@
+commit 3bc52b3a0bb06d995267227942189ea46a10e524
+Author: Tobias Doerffel <tobias.doerffel@gmail.com>
+Date:   Mon Aug 18 19:27:51 2014 +0200
+
+    ICA/libvncclient/libvncserver: updated to current Git HEAD
+    
+    Updated libvncclient/libvncserver to up to commit
+    7c9ef6372d3ce2942fe78e853c611e269f68eb69
+    
+    Amandeep Singh (2):
+          Fix crash in krfb
+          allow rfbInitSockets with non-ready states.
+    
+    Johannes Schindelin (10):
+          libvncclient: If we have TLS support, enable VeNCrypt by default
+    
+    Matthias Treydte (2):
+          Initialize padding in SetFormatAndEncodings' rfbSetPixelFormatMsg.
+    
+    Will Thompson (2):
+          x11vnc: fix double X_UNLOCK on xrandr events
+    
+    dextero (1):
+          x11vnc: adjust blackout region coordinates to the clipping region
+    
+    newsoft (2):
+          Fix integer overflow in MallocFrameBuffer()
+          Check for MallocFrameBuffer() return value
+
+diff --git a/ica/x11/libvncclient/rfbproto.c b/ica/x11/libvncclient/rfbproto.c
+index db793a2..cf4733a 100644
+--- a/ica/x11/libvncclient/rfbproto.c
++++ b/ica/x11/libvncclient/rfbproto.c
+@@ -582,6 +582,9 @@ ReadSupportedSecurityType(rfbClient* client, uint32_t *result, rfbBool subAuth)
+         if (tAuth[loop]==rfbVncAuth || tAuth[loop]==rfbNoAuth ||
+ 			( tAuth[loop] == rfbUltraVNC_MsLogonIIAuth && isLogonAuthenticationEnabled( client ) ) ||
+ 			tAuth[loop] == rfbSecTypeItalc ||
++#if defined(LIBVNCSERVER_HAVE_GNUTLS) || defined(LIBVNCSERVER_HAVE_LIBSSL)
++			tAuth[loop]==rfbVeNCrypt ||
++#endif
+             (tAuth[loop]==rfbARD && client->GetCredential) ||
+             (!subAuth && (tAuth[loop]==rfbTLS || (tAuth[loop]==rfbVeNCrypt && client->GetCredential))))
+         {
+@@ -1299,6 +1302,8 @@ SetFormatAndEncodings(rfbClient* client)
+   if (!SupportsClient2Server(client, rfbSetPixelFormat)) return TRUE;
+ 
+   spf.type = rfbSetPixelFormat;
++  spf.pad1 = 0;
++  spf.pad2 = 0;
+   spf.format = client->format;
+   spf.format.redMax = rfbClientSwap16IfLE(spf.format.redMax);
+   spf.format.greenMax = rfbClientSwap16IfLE(spf.format.greenMax);
+@@ -1845,7 +1850,8 @@ HandleRFBServerMessage(rfbClient* client)
+ 	client->updateRect.x = client->updateRect.y = 0;
+ 	client->updateRect.w = client->width;
+ 	client->updateRect.h = client->height;
+-	client->MallocFrameBuffer(client);
++	if (!client->MallocFrameBuffer(client))
++	  return FALSE;
+ 	SendFramebufferUpdateRequest(client, 0, 0, rect.r.w, rect.r.h, FALSE);
+ 	rfbClientLog("Got new framebuffer size: %dx%d\n", rect.r.w, rect.r.h);
+ 	continue;
+@@ -2306,7 +2312,9 @@ HandleRFBServerMessage(rfbClient* client)
+     client->updateRect.x = client->updateRect.y = 0;
+     client->updateRect.w = client->width;
+     client->updateRect.h = client->height;
+-    client->MallocFrameBuffer(client);
++    if (!client->MallocFrameBuffer(client))
++      return FALSE;
++
+     SendFramebufferUpdateRequest(client, 0, 0, client->width, client->height, FALSE);
+     rfbClientLog("Got new framebuffer size: %dx%d\n", client->width, client->height);
+     break;
+@@ -2322,7 +2330,8 @@ HandleRFBServerMessage(rfbClient* client)
+     client->updateRect.x = client->updateRect.y = 0;
+     client->updateRect.w = client->width;
+     client->updateRect.h = client->height;
+-    client->MallocFrameBuffer(client);
++    if (!client->MallocFrameBuffer(client))
++      return FALSE;
+     SendFramebufferUpdateRequest(client, 0, 0, client->width, client->height, FALSE);
+     rfbClientLog("Got new framebuffer size: %dx%d\n", client->width, client->height);
+     break;
+diff --git a/ica/x11/libvncclient/vncviewer.c b/ica/x11/libvncclient/vncviewer.c
+index 3b16a6f..8237254 100644
+--- a/ica/x11/libvncclient/vncviewer.c
++++ b/ica/x11/libvncclient/vncviewer.c
+@@ -82,9 +82,27 @@ static char* ReadPassword(rfbClient* client) {
+ #endif
+ }
+ static rfbBool MallocFrameBuffer(rfbClient* client) {
++  uint64_t allocSize;
++
+   if(client->frameBuffer)
+     free(client->frameBuffer);
+-  client->frameBuffer=malloc(client->width*client->height*client->format.bitsPerPixel/8);
++
++  /* SECURITY: promote 'width' into uint64_t so that the multiplication does not overflow
++     'width' and 'height' are 16-bit integers per RFB protocol design
++     SIZE_MAX is the maximum value that can fit into size_t
++  */
++  allocSize = (uint64_t)client->width * client->height * client->format.bitsPerPixel/8;
++
++  if (allocSize >= SIZE_MAX) {
++    rfbClientErr("CRITICAL: cannot allocate frameBuffer, requested size is too large\n");
++    return FALSE;
++  }
++
++  client->frameBuffer=malloc( (size_t)allocSize );
++
++  if (client->frameBuffer == NULL)
++    rfbClientErr("CRITICAL: frameBuffer allocation failed, requested size too large or not enough memory?\n");
++
+   return client->frameBuffer?TRUE:FALSE;
+ }
+ 
+@@ -232,7 +250,8 @@ static rfbBool rfbInitConnection(rfbClient* client)
+ 
+   client->width=client->si.framebufferWidth;
+   client->height=client->si.framebufferHeight;
+-  client->MallocFrameBuffer(client);
++  if (!client->MallocFrameBuffer(client))
++    return FALSE;
+ 
+   if (!SetFormatAndEncodings(client))
+     return FALSE;
+diff --git a/ica/x11/libvncserver/main.c b/ica/x11/libvncserver/main.c
+index 4cb18ac..b8cdde1 100644
+--- a/ica/x11/libvncserver/main.c
++++ b/ica/x11/libvncserver/main.c
+@@ -1061,10 +1061,13 @@ void rfbShutdownServer(rfbScreenInfoPtr screen,rfbBool disconnectClients) {
+   if(disconnectClients) {
+     rfbClientPtr cl;
+     rfbClientIteratorPtr iter = rfbGetClientIterator(screen);
+-    while( (cl = rfbClientIteratorNext(iter)) )
+-      if (cl->sock > -1)
+-	/* we don't care about maxfd here, because the server goes away */
+-	rfbCloseClient(cl);
++    while( (cl = rfbClientIteratorNext(iter)) ) {
++      if (cl->sock > -1) {
++       /* we don't care about maxfd here, because the server goes away */
++       rfbCloseClient(cl);
++       rfbClientConnectionGone(cl);
++      }
++    }
+     rfbReleaseClientIterator(iter);
+   }
+ 
+diff --git a/ica/x11/libvncserver/sockets.c b/ica/x11/libvncserver/sockets.c
+index 4acdd72..e09b0cb 100644
+--- a/ica/x11/libvncserver/sockets.c
++++ b/ica/x11/libvncserver/sockets.c
+@@ -126,8 +126,9 @@ rfbInitSockets(rfbScreenInfoPtr rfbScreen)
+ {
+     in_addr_t iface = rfbScreen->listenInterface;
+ 
+-    if (rfbScreen->socketState!=RFB_SOCKET_INIT)
+-	return;
++    if (rfbScreen->socketState == RFB_SOCKET_READY) {
++        return;
++    }
+ 
+     rfbScreen->socketState = RFB_SOCKET_READY;
+ 
+diff --git a/ica/x11/x11vnc/xinerama.c b/ica/x11/x11vnc/xinerama.c
+index 001e2ca..0d2ca71 100644
+--- a/ica/x11/x11vnc/xinerama.c
++++ b/ica/x11/x11vnc/xinerama.c
+@@ -98,6 +98,13 @@ static void initialize_blackouts(char *list) {
+ 		if (y > Y) {
+ 			t = Y; Y = y; y = t;
+ 		}
++
++		/* take clipping region into account */
++		x = nfix(x - coff_x, wdpy_x);
++		X = nfix(X - coff_x, wdpy_x);
++		y = nfix(y - coff_y, wdpy_y);
++		Y = nfix(Y - coff_y, wdpy_y);
++
+ 		if (x < 0 || x > dpy_x || y < 0 || y > dpy_y ||
+ 		    X < 0 || X > dpy_x || Y < 0 || Y > dpy_y ||
+ 		    x == X || y == Y) {
+diff --git a/ica/x11/x11vnc/xrandr.c b/ica/x11/x11vnc/xrandr.c
+index d0d68e1..f2fb5ea 100644
+--- a/ica/x11/x11vnc/xrandr.c
++++ b/ica/x11/x11vnc/xrandr.c
+@@ -268,6 +268,7 @@ int check_xrandr_event(char *msg) {
+ 			/* under do_change caller normally returns before its X_UNLOCK */
+ 			X_UNLOCK;
+ 			handle_xrandr_change(rev->width, rev->height);
++			X_LOCK;
+ 		}
+ 		if (qout) {
+ 			return do_change;

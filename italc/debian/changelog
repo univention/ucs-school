@@ -1,3 +1,9 @@
+italc (2:2.0.25-4) unstable; urgency=medium
+
+  * Bug #38213: integrate upstream patches
+
+ -- Florian Best <best@univention.de>  Tue, 19 Jan 2016 15:03:42 +0100
+
 italc (2:2.0.25-3) unstable; urgency=medium
 
   * Bug #39593: fix build

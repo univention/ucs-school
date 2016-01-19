@@ -1,0 +1,40 @@
+commit 12b0e775107863bbecfb156a5e381e5082a3017c
+Author: Ryan Tandy <rtandy@sd63.bc.ca>
+Date:   Wed Sep 24 10:17:10 2014 -0700
+
+    Don't start a demo client or lock screen on master
+    
+    If a demo server is running, probably the management interface is as
+    well. Avoid starting a demo or locking the screen in that case.
+
+diff --git a/ica/src/ItalcSlaveManager.cpp b/ica/src/ItalcSlaveManager.cpp
+index 265a848..63d7a12 100644
+--- a/ica/src/ItalcSlaveManager.cpp
++++ b/ica/src/ItalcSlaveManager.cpp
+@@ -92,6 +92,14 @@ ItalcSlaveManager::~ItalcSlaveManager()
+ 
+ void ItalcSlaveManager::startDemo( const QString &masterHost, bool fullscreen )
+ {
++	// if a demo-server is started, it's likely that the demo was started
++	// on master-computer as well therefore we deny starting a demo on
++	// hosts on which a demo-server is running
++	if( isSlaveRunning( IdDemoServer ) )
++	{
++		return;
++	}
++
+ 	Ipc::SlaveLauncher *slaveLauncher = NULL;
+ 	if( fullscreen && ItalcCore::config->lockWithDesktopSwitching() )
+ 	{
+@@ -117,6 +125,11 @@ void ItalcSlaveManager::stopDemo()
+ 
+ void ItalcSlaveManager::lockScreen()
+ {
++	if( isSlaveRunning( IdDemoServer ) )
++	{
++		return;
++	}
++
+ 	Ipc::SlaveLauncher *slaveLauncher = NULL;
+ 	if( ItalcCore::config->lockWithDesktopSwitching() )
+ 	{
