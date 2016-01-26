@@ -2,7 +2,7 @@
  * DemoServerMaster.cpp - class for controlling the VNC reflector slave process
  *
  * Copyright (c) 2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>
- * Copyright (c) 2010-2014 Univention GmbH
+ * Copyright (c) 2010 Univention GmbH
  *
  * This file is part of iTALC - http://italc.sourceforge.net
  *

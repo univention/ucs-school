@@ -2,7 +2,7 @@
  * SystemTrayIconSlave.h - an IcaSlave providing the system tray icon
  *
  * Copyright (c) 2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>
- * Copyright (c) 2010-2014 Univention GmbH
+ * Copyright (c) 2010 Univention GmbH
  *
  * This file is part of iTALC - http://italc.sourceforge.net
  *
@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef _SYSTEM_TRAY_ICON_SLAVE_H
-#define _SYSTEM_TRAY_ICON_SLAVE_H
+#ifndef SYSTEM_TRAY_ICON_SLAVE_H
+#define SYSTEM_TRAY_ICON_SLAVE_H
 
 #include <QtGui/QSystemTrayIcon>
 

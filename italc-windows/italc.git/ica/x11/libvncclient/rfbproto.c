@@ -26,6 +26,7 @@
 #ifdef __STRICT_ANSI__
 #define _BSD_SOURCE
 #define _POSIX_SOURCE
+#define _XOPEN_SOURCE 600
 #endif
 #ifndef WIN32
 #include <unistd.h>
@@ -35,6 +36,10 @@
 #endif
 #include <errno.h>
 #include <rfb/rfbclient.h>
+#ifdef WIN32
+#undef SOCKET
+#undef socklen_t
+#endif
 #ifdef LIBVNCSERVER_HAVE_LIBZ
 #include <zlib.h>
 #ifdef __CHECKER__
@@ -48,14 +53,11 @@
 #endif
 #include <jpeglib.h>
 #endif
+#include <strings.h>
 #include <stdarg.h>
 #include <time.h>
 
 #ifdef LIBVNCSERVER_WITH_CLIENT_GCRYPT
-#ifdef WIN32
-#undef SOCKET
-#undef socklen_t
-#endif
 #include <gcrypt.h>
 #endif
 
@@ -158,6 +160,10 @@ static void FillRectangle(rfbClient* client, int x, int y, int w, int h, uint32_
 static void CopyRectangle(rfbClient* client, uint8_t* buffer, int x, int y, int w, int h) {
   int j;
 
+  if (client->frameBuffer == NULL) {
+      return;
+  }
+
 #define COPY_RECT(BPP) \
   { \
     int rs = w * BPP / 8, rs2 = client->width * BPP / 8; \
@@ -259,6 +265,9 @@ static rfbBool HandleZRLE24(rfbClient* client, int rx, int ry, int rw, int rh);
 static rfbBool HandleZRLE24Up(rfbClient* client, int rx, int ry, int rw, int rh);
 static rfbBool HandleZRLE24Down(rfbClient* client, int rx, int ry, int rw, int rh);
 static rfbBool HandleZRLE32(rfbClient* client, int rx, int ry, int rw, int rh);
+#endif
+#ifdef LIBVNCSERVER_CONFIG_LIBVA
+static rfbBool HandleH264 (rfbClient* client, int rx, int ry, int rw, int rh);
 #endif
 
 /*
@@ -389,8 +398,8 @@ ConnectToRFBServer(rfbClient* client,const char *hostname, int port)
       return FALSE;
     }
     setbuf(rec->file,NULL);
-    fread(buffer,1,strlen(magic),rec->file);
-    if (strncmp(buffer,magic,strlen(magic))) {
+
+    if (fread(buffer,1,strlen(magic),rec->file) != strlen(magic) || strncmp(buffer,magic,strlen(magic))) {
       rfbClientLog("File %s was not recorded by vncrec.\n",client->serverHost);
       fclose(rec->file);
       return FALSE;
@@ -573,6 +582,9 @@ ReadSupportedSecurityType(rfbClient* client, uint32_t *result, rfbBool subAuth)
         if (tAuth[loop]==rfbVncAuth || tAuth[loop]==rfbNoAuth ||
 			( tAuth[loop] == rfbUltraVNC_MsLogonIIAuth && isLogonAuthenticationEnabled( client ) ) ||
 			tAuth[loop] == rfbSecTypeItalc ||
+#if defined(LIBVNCSERVER_HAVE_GNUTLS) || defined(LIBVNCSERVER_HAVE_LIBSSL)
+			tAuth[loop]==rfbVeNCrypt ||
+#endif
             (tAuth[loop]==rfbARD && client->GetCredential) ||
             (!subAuth && (tAuth[loop]==rfbTLS || (tAuth[loop]==rfbVeNCrypt && client->GetCredential))))
         {
@@ -665,7 +677,6 @@ FreeUserCredential(rfbCredential *cred)
   free(cred);
 }
 
-#ifdef LIBVNCSERVER_WITH_CLIENT_TLS
 static rfbBool
 HandlePlainAuth(rfbClient *client)
 {
@@ -719,7 +730,6 @@ HandlePlainAuth(rfbClient *client)
 
   return TRUE;
 }
-#endif
 
 /* Simple 64bit big integer arithmetic implementation */
 /* (x + y) % m, works even if (x + y) > 64bit */
@@ -1046,9 +1056,7 @@ InitialiseRFBConnection(rfbClient* client)
   rfbProtocolVersionMsg pv;
   int major,minor;
   uint32_t authScheme;
-#ifdef LIBVNCSERVER_WITH_CLIENT_TLS
   uint32_t subAuthScheme;
-#endif
   rfbClientInitMsg ci;
 
   /* if the connection is immediately closed, don't report anything, so
@@ -1082,6 +1090,14 @@ InitialiseRFBConnection(rfbClient* client)
   if (major==3 && (minor==4 || minor==6)) {
       rfbClientLog("UltraVNC server detected, enabling UltraVNC specific messages\n",pv);
       DefaultSupportedMessagesUltraVNC(client);
+  }
+
+  /* UltraVNC Single Click uses minor codes 14 and 16 for the server */
+  if (major==3 && (minor==14 || minor==16)) {
+     minor = minor - 10;
+     client->minor = minor;
+     rfbClientLog("UltraVNC Single Click server detected, enabling UltraVNC specific messages\n",pv);
+     DefaultSupportedMessagesUltraVNC(client);
   }
 
   /* TightVNC uses minor codes 5 for the server */
@@ -1152,10 +1168,6 @@ InitialiseRFBConnection(rfbClient* client)
     break;
 
   case rfbTLS:
-#ifndef LIBVNCSERVER_WITH_CLIENT_TLS
-    rfbClientLog("TLS support was not compiled in\n");
-    return FALSE;
-#else
     if (!HandleAnonTLSAuth(client)) return FALSE;
     /* After the TLS session is established, sub auth types are expected.
      * Note that all following reading/writing are through the TLS session from here.
@@ -1185,15 +1197,10 @@ InitialiseRFBConnection(rfbClient* client)
             (int)subAuthScheme);
         return FALSE;
     }
-#endif
 
     break;
 
   case rfbVeNCrypt:
-#ifndef LIBVNCSERVER_WITH_CLIENT_TLS
-    rfbClientLog("TLS support was not compiled in\n");
-    return FALSE;
-#else
     if (!HandleVeNCryptAuth(client)) return FALSE;
 
     switch (client->subAuthScheme) {
@@ -1219,7 +1226,7 @@ InitialiseRFBConnection(rfbClient* client)
             client->subAuthScheme);
         return FALSE;
     }
-#endif
+
     break;
 
   case rfbSecTypeItalc:
@@ -1295,6 +1302,8 @@ SetFormatAndEncodings(rfbClient* client)
   if (!SupportsClient2Server(client, rfbSetPixelFormat)) return TRUE;
 
   spf.type = rfbSetPixelFormat;
+  spf.pad1 = 0;
+  spf.pad2 = 0;
   spf.format = client->format;
   spf.format.redMax = rfbClientSwap16IfLE(spf.format.redMax);
   spf.format.greenMax = rfbClientSwap16IfLE(spf.format.greenMax);
@@ -1361,6 +1370,10 @@ SetFormatAndEncodings(rfbClient* client)
 	encs[se->nEncodings++] = rfbClientSwap32IfLE(rfbEncodingCoRRE);
       } else if (strncasecmp(encStr,"rre",encStrLen) == 0) {
 	encs[se->nEncodings++] = rfbClientSwap32IfLE(rfbEncodingRRE);
+#ifdef LIBVNCSERVER_CONFIG_LIBVA
+      } else if (strncasecmp(encStr,"h264",encStrLen) == 0) {
+	encs[se->nEncodings++] = rfbClientSwap32IfLE(rfbEncodingH264);
+#endif
       } else {
 	rfbClientLog("Unknown encoding '%.*s'\n",encStrLen,encStr);
       }
@@ -1429,6 +1442,10 @@ SetFormatAndEncodings(rfbClient* client)
       encs[se->nEncodings++] = rfbClientSwap32IfLE(client->appData.qualityLevel +
 					  rfbEncodingQualityLevel0);
     }
+#ifdef LIBVNCSERVER_CONFIG_LIBVA
+    encs[se->nEncodings++] = rfbClientSwap32IfLE(rfbEncodingH264);
+    rfbClientLog("h264 encoding added\n");
+#endif
   }
 
 
@@ -1713,7 +1730,7 @@ SendKeyEvent(rfbClient* client, uint32_t key, rfbBool down)
  */
 
 rfbBool
-SendClientCutText(rfbClient* client, char *str, int len)
+SendClientCutText(rfbClient* client, const char *str, int len)
 {
   rfbClientCutTextMsg cct;
 
@@ -1833,7 +1850,8 @@ HandleRFBServerMessage(rfbClient* client)
 	client->updateRect.x = client->updateRect.y = 0;
 	client->updateRect.w = client->width;
 	client->updateRect.h = client->height;
-	client->MallocFrameBuffer(client);
+	if (!client->MallocFrameBuffer(client))
+	  return FALSE;
 	SendFramebufferUpdateRequest(client, 0, 0, rect.r.w, rect.r.h, FALSE);
 	rfbClientLog("Got new framebuffer size: %dx%d\n", rect.r.w, rect.r.h);
 	continue;
@@ -2152,6 +2170,14 @@ HandleRFBServerMessage(rfbClient* client)
      }
 
 #endif
+#ifdef LIBVNCSERVER_CONFIG_LIBVA
+      case rfbEncodingH264:
+      {
+	if (!HandleH264(client, rect.r.x, rect.r.y, rect.r.w, rect.r.h))
+	  return FALSE;
+	break;
+      }
+#endif
 
       default:
 	 {
@@ -2286,7 +2312,9 @@ HandleRFBServerMessage(rfbClient* client)
     client->updateRect.x = client->updateRect.y = 0;
     client->updateRect.w = client->width;
     client->updateRect.h = client->height;
-    client->MallocFrameBuffer(client);
+    if (!client->MallocFrameBuffer(client))
+      return FALSE;
+
     SendFramebufferUpdateRequest(client, 0, 0, client->width, client->height, FALSE);
     rfbClientLog("Got new framebuffer size: %dx%d\n", client->width, client->height);
     break;
@@ -2302,7 +2330,8 @@ HandleRFBServerMessage(rfbClient* client)
     client->updateRect.x = client->updateRect.y = 0;
     client->updateRect.w = client->width;
     client->updateRect.h = client->height;
-    client->MallocFrameBuffer(client);
+    if (!client->MallocFrameBuffer(client))
+      return FALSE;
     SendFramebufferUpdateRequest(client, 0, 0, client->width, client->height, FALSE);
     rfbClientLog("Got new framebuffer size: %dx%d\n", client->width, client->height);
     break;
@@ -2385,6 +2414,7 @@ HandleRFBServerMessage(rfbClient* client)
 #define UNCOMP -8
 #include "zrle.c"
 #undef BPP
+#include "h264.c"
 
 
 /*

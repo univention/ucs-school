@@ -1,7 +1,7 @@
 /*
  * FastQImage.h - class FastQImage providing fast inline-QImage-manips
  *
- * Copyright (c) 2006-2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>
+ * Copyright (c) 2006-2013 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>
  *
  * This file is part of iTALC - http://italc.sourceforge.net
  *
@@ -22,8 +22,8 @@
  *
  */
 
-#ifndef _FAST_QIMAGE_H
-#define _FAST_QIMAGE_H
+#ifndef FAST_QIMAGE_H
+#define FAST_QIMAGE_H
 
 #include <stdint.h>
 
@@ -120,7 +120,8 @@ public:
 									const
 	{
 		if( tm == Qt::SmoothTransformation &&
-						arm == Qt::IgnoreAspectRatio )
+			arm == Qt::IgnoreAspectRatio &&
+			size.isEmpty() == false )
 		{
 			QImage tmp( size, format() );
 			scaleTo( tmp );

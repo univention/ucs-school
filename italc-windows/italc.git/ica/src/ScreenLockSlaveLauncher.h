@@ -2,7 +2,7 @@
  * ScreenLockSlaveLauncher.h - a SlaveLauncher for the ScreenLockSlave
  *
  * Copyright (c) 2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>
- * Copyright (c) 2010-2014 Univention GmbH
+ * Copyright (c) 2010 Univention GmbH
  *
  * This file is part of iTALC - http://italc.sourceforge.net
  *
@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef _SCREEN_LOCK_SLAVE_LAUNCHER_H
-#define _SCREEN_LOCK_SLAVE_LAUNCHER_H
+#ifndef SCREEN_LOCK_SLAVE_LAUNCHER_H
+#define SCREEN_LOCK_SLAVE_LAUNCHER_H
 
 #include <italcconfig.h>
 

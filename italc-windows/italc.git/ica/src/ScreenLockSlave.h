@@ -2,7 +2,7 @@
  * ScreenLockSlave.h - an IcaSlave providing the screen lock functionality
  *
  * Copyright (c) 2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>
- * Copyright (c) 2010-2014 Univention GmbH
+ * Copyright (c) 2010 Univention GmbH
  *
  * This file is part of iTALC - http://italc.sourceforge.net
  *
@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef _SCREEN_LOCK_SLAVE_H
-#define _SCREEN_LOCK_SLAVE_H
+#ifndef SCREEN_LOCK_SLAVE_H
+#define SCREEN_LOCK_SLAVE_H
 
 #include "IcaSlave.h"
 
