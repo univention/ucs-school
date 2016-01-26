@@ -1,5 +1,6 @@
 italc-windows (3.0.1-1) unstable; urgency=medium
 
+  * Bug #38415: update iTALC to 2.0.2
   * Bug #38221: Remove iTALC Master from installer
 
  -- Florian Best <best@univention.de>  Tue, 26 Jan 2016 13:46:37 +0100
