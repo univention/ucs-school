@@ -1,3 +1,5 @@
+Prevent a segfault if during copying the screenshot the connection closes.
+Bug #37269
 diff --git a/lib/src/ItalcVncConnection.cpp b/lib/src/ItalcVncConnection.cpp
 index 363b5ff..3ec6e62 100644
 --- a/lib/src/ItalcVncConnection.cpp

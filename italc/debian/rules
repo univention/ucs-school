@@ -41,7 +41,7 @@ override_dh_strip:
 
 override_dh_clean:
 	tar xvfj italc-2.0.2.tar.bz2 --strip-components=1
-	for fn in patches/*.patch ; do echo "Applying $$fn"; patch -p1 -i $$fn ; echo "Exitcode: $$?" ; done
+	for fn in patches/*.patch; do echo "Applying $$fn"; patch -p1 -i $$fn || exit 1; done
 	dh_clean
 
 override_dh_install:
