@@ -36,7 +36,7 @@
 REPOUSER=""
 REPODIR="/root/mingw-repo"
 BUILDDIR="/root/src/italc"
-CROSSCOMPILER="192.168.0.10:/var/univention/buildsystem2/contrib/iTALC-mingw/*/*.deb"
+CROSSCOMPILER="192.168.0.10:/var/univention/buildsystem2/contrib/iTALC-mingw-trusty/*/*.deb"
 SVN_ITALC="192.168.0.3/var/svn/dev/branches/ucs-4.1/ucs-school-4.1/italc-windows"
 TIMESERVER="192.168.0.3"
 
@@ -70,7 +70,7 @@ fi
 # prepare build environment
 #
 apt-get update
-apt-get install -y --force-yes git subversion cmake nsis tofrodos mingw32-x-gcc mingw32-x-qt mingw32-x-zlib mingw32-x-openssl mingw32-x-libjpeg mingw32-x-pthreads mingw64-x-gcc mingw64-x-qt mingw64-x-zlib mingw64-x-openssl mingw64-x-libjpeg  mingw64-x-pthreads gcj-jdk make
+apt-get install -y --force-yes git subversion cmake nsis tofrodos mingw32-x-gcc mingw32-x-qt mingw32-x-zlib mingw32-x-openssl mingw32-x-libjpeg mingw32-x-runtime mingw64-x-gcc mingw64-x-qt mingw64-x-zlib mingw64-x-openssl mingw64-x-libjpeg  mingw64-x-runtime gcj-jdk make
 
 #
 # get source
