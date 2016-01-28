@@ -1,3 +1,9 @@
+ucs-test-ucsschool (3.0.5-5) unstable; urgency=medium
+
+  * Bug #40527: fix failing tests
+
+ -- Florian Best <best@univention.de>  Thu, 28 Jan 2016 14:00:27 +0100
+
 ucs-test-ucsschool (3.0.5-4) unstable; urgency=low
 
   * fix non-ASCII character in file without encoding info (PEP263)
