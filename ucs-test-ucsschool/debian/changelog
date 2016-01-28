@@ -1,4 +1,4 @@
-ucs-test-ucsschool (3.0.5-6) unstable; urgency=medium
+ucs-test-ucsschool (3.0.5-7) unstable; urgency=medium
 
   * Bug #40529: remove meta attributes from LDAP ACL checks
 
