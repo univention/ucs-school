@@ -164,11 +164,10 @@ class Room(object):
 			# utils.fail('Current settings (%r) do not match expected ones (%r)' % (
 				# current_settings, d))
 		except httplib.HTTPException as e:
-			if '[Errno 4] Unterbrechung' in str(e):
+			if '[Errno 4] ' in str(e):
 				print 'failed to check room (%s) settings, exception [Errno4]' % self.name
-			else:
-				print("Exception: '%s' '%s' '%r'" % (str(e), type(e), e))
-				raise
+			print("Exception: '%s' '%s' '%r'" % (str(e), type(e), e))
+			raise
 
 	def get_internetRules(self, umc_connection):
 		print 'Executing command: computerroom/internetrules'
@@ -405,14 +404,14 @@ class Room(object):
 		self.aquire_room(umc_connection)
 
 		printer = uts.random_string()
+		add_printer(
+			printer,
+			school,
+			ucr.get('hostname'),
+			ucr.get('domainname'),
+			ucr.get('ldap/base')
+		)
 		try:
-			add_printer(
-				printer,
-				school,
-				ucr.get('hostname'),
-				ucr.get('domainname'),
-				ucr.get('ldap/base')
-			)
 			# generate all the possible combinations for (rule, printmode, sharemode)
 			white_page = 'univention.de'
 			rules = ['none', 'Kein Internet', 'Unbeschränkt', 'custom']
@@ -471,10 +470,10 @@ class Room(object):
 			print 'FAIL: rule in control (%s) does not match the expected one (%s)' % (rule_in_control, expected_rule)
 
 	def test_internetrules_settings(self, school, user, user_dn, ip_address, ucr, umc_connection):
+		# Create new workgroup and assign new internet rule to it
+		group = Workgroup(school, members=[user_dn])
+		group.create()
 		try:
-			# Create new workgroup and assign new internet rule to it
-			group = Workgroup(school, members=[user_dn])
-			group.create()
 			global_domains = ['univention.de', 'google.de']
 			rule = InternetRule(typ='whitelist', domains=global_domains)
 			rule.define()
@@ -524,10 +523,10 @@ class Room(object):
 
 	def test_settings(self, school, user, user_dn, ip_address, ucr, umc_connection):
 		printer = uts.random_string()
+		# Create new workgroup and assign new internet rule to it
+		group = Workgroup(school, members=[user_dn])
+		group.create()
 		try:
-			# Create new workgroup and assign new internet rule to it
-			group = Workgroup(school, members=[user_dn])
-			group.create()
 			global_domains = ['univention.de', 'google.de']
 			rule = InternetRule(typ='whitelist', domains=global_domains)
 			rule.define()
