@@ -150,11 +150,13 @@ class Acl(object):
 			argdict = {'self.auth_dn': self.auth_dn, 'target_dn': target_dn, 'access': access, 'attr': attr}
 			out, err = run_commands([cmd], argdict)[0]
 			if err:
-				result = [x for x in err.split('\n') if ('ALLOWED' in x or 'DENIED' in x)][0]
-				if result:
-					if access_allowance not in result:
-						raise FailAcl('Access (%s) by (%s) to (%s) not expected %r' % (
-							access, self.auth_dn, target_dn, result))
+				try:
+					result = [x for x in err.split('\n') if ('ALLOWED' in x or 'DENIED' in x)][0]
+				except IndexError:
+					result = None
+					print 'Failed to parse slapacl output:', attr, err
+				if result and access_allowance not in result:
+					raise FailAcl('Access (%s) by (%s) to (%s) not expected %r' % (access, self.auth_dn, target_dn, result))
 			else:
 				raise FailCmd('command %r was not executed successfully' % cmd)
 
@@ -170,15 +172,7 @@ class Acl(object):
 				'nisDomain',
 				'associatedDomain',
 				'univentionPolicyReference',
-				'structuralObjectClass',
-				'entryUUID',
-				'creatorsName',
-				'createTimestamp',
-				'objectClass',
 				'msGPOLink',
-				'entryCSN',
-				'modifiersName',
-				'modifyTimestamp',
 				]
 		self.assert_acl(base_dn, access, attrs)
 
@@ -226,13 +220,6 @@ class Acl(object):
 				'gidNumber',
 				'sambaSID',
 				'univentionGroupType',
-				'structuralObjectClass',
-				'entryUUID',
-				'creatorsName',
-				'createTimestamp',
-				'entryCSN',
-				'modifiersName',
-				'modifyTimestamp',
 				]
 		self.assert_acl(room_dn, access, attrs)
 		target_dn = create_dc_slave_in_container(target_dn)
@@ -361,17 +348,10 @@ class Acl(object):
 			'ou',
 			'displayName',
 			'univentionObjectType',
-			'structuralObjectClass',
-			'entryUUID',
-			'creatorsName',
-			'createTimestamp',
 			'ucsschoolHomeShareFileServer',
 			'ucsschoolClassShareFileServer',
 			'univentionPolicyReference',
 			'objectClass',
-			'entryCSN',
-			'modifiersName',
-			'modifyTimestamp',
 			]
 		target_dn = utu.UCSTestSchool().get_ou_base_dn(self.school)
 		self.assert_acl(target_dn, access, attrs)
@@ -388,13 +368,6 @@ class Acl(object):
 			'univentionObjectType',
 			'description',
 			'cn',
-			'structuralObjectClass',
-			'entryUUID',
-			'creatorsName',
-			'createTimestamp',
-			'entryCSN',
-			'modifiersName',
-			'modifyTimestamp',
 			]
 		container_dn = 'cn=univention,%s' % base_dn
 		self.assert_acl(container_dn, access, attrs)
@@ -449,13 +422,6 @@ class Acl(object):
 				'univentionObjectType',
 				'dhcpOption',
 				'cn',
-				'structuralObjectClass',
-				'entryUUID',
-				'creatorsName',
-				'createTimestamp',
-				'entryCSN',
-				'modifiersName',
-				'modifyTimestamp',
 				]
 		self.assert_acl(client_dhcp_dn, access, attrs)
 		target_dn = create_dc_slave_in_container(client_dhcp_dn)
