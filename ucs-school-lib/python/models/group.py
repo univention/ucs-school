@@ -175,7 +175,7 @@ class SchoolClass(Group, _MayHaveSchoolPrefix):
 				# if the name changed
 				# from_school_group will have initialized
 				# share.old_dn incorrectly
-				share = self.ShareClass(name=old_name, school=self.school, school_class=self)
+				share = self.ShareClass(name=old_name, school=self.school, school_group=self)
 				share.name = self.name
 		success = super(SchoolClass, self).modify_without_hooks(lo, validate, move_if_necessary)
 		if success:
