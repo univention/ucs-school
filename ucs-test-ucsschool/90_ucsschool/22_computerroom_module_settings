@@ -14,43 +14,39 @@ import univention.testing.ucsschool as utu
 
 
 def main():
-	with utu.UCSTestSchool() as schoolenv:
-		with ucr_test.UCSTestConfigRegistry() as ucr:
-			with NetworkRedirector() as nethelper:
-				school, oudn = schoolenv.create_ou()
-				tea, tea_dn = schoolenv.create_user(school, is_teacher=True)
-				open_ldap_co = schoolenv.open_ldap_connection()
+	with utu.UCSTestSchool() as schoolenv, ucr_test.UCSTestConfigRegistry() as ucr, NetworkRedirector() as nethelper:
+		school, oudn = schoolenv.create_ou()
+		teacher, teacher_dn = schoolenv.create_user(school, is_teacher=True)
+		open_ldap_co = schoolenv.open_ldap_connection()
 
-				# importing random 2 computers
-				computers = Computers(open_ldap_co, school, 2, 0, 0)
-				created_computers = computers.create()
+		# importing random 2 computers
+		computers = Computers(open_ldap_co, school, 2, 0, 0)
+		created_computers = computers.create()
 
-				# setting computer rooms contains the created computers
-				room = Room(school, host_members=created_computers[0].dn)
-				# Creating the rooms
-				schoolenv.create_computerroom(
-					school,
-					name=room.name,
-					description=room.description,
-					host_members=room.host_members
-					)
+		# setting computer rooms contains the created computers
+		room = Room(school, host_members=created_computers[0].dn)
+		# Creating the rooms
+		schoolenv.create_computerroom(
+			school,
+			name=room.name,
+			description=room.description,
+			host_members=room.host_members
+			)
 
-				# preparing the network loop
-				nethelper.add_loop(
-					created_computers[0].ip,
-					created_computers[1].ip)
+		umc_connection = UMCConnection(ucr.get('hostname'))
+		umc_connection.auth(teacher, 'univention')
 
-				umc_connection = UMCConnection(ucr.get('hostname'))
-				umc_connection.auth(tea, 'univention')
+		# preparing the network loop
+		nethelper.add_loop(created_computers[0].ip, created_computers[1].ip)
 
-				# the actual test
-				room.test_settings(
-					school,
-					tea,
-					tea_dn,
-					created_computers[1].ip,
-					ucr,
-					umc_connection)
+		# the actual test
+		room.test_settings(
+			school,
+			teacher,
+			teacher_dn,
+			created_computers[1].ip,
+			ucr,
+			umc_connection)
 
 
 if __name__ == '__main__':
