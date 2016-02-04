@@ -7,10 +7,37 @@
 ## packages: [ucs-school-umc-computerroom]
 
 from essential.computerroom import Room, Computers
-from univention.lib.umc_connection import UMCConnection
+from univention.lib.umc_connection import UMCConnection as OrgUMCConnection
 from univention.testing.network import NetworkRedirector
 import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool as utu
+from univention.testing import utils
+from httplib import HTTPException
+
+
+class UMCConnection(OrgUMCConnection):
+	"""Reauthenticates if ran into session timeout."""
+
+	def __init__(self, *args, **kwargs):
+		self.__username = None
+		self.__password = None
+		super(UMCConnection, self).__init__(*args, **kwargs)
+
+	def auth(self, username, password, *args, **kwargs):
+		self.__username = username
+		self.__password = password
+		print 'UMCConnection: authenticate with %r %r' % (username, password)
+		super(UMCConnection, self).auth(username, password, *args, **kwargs)
+
+	def request(self, *args, **kwargs):
+		try:
+			return super(UMCConnection, self).request(*args, **kwargs)
+		except HTTPException as exc:
+			if not str(exc).startswith('401') or not self.__password:
+				raise
+			print '#### FAILED request due to session timeout: %s; args=%r' % (exc, (args, kwargs))
+			self.auth(self.__username, self.__password)
+			return super(UMCConnection, self).request(*args, **kwargs)
 
 
 def main():
@@ -33,6 +60,7 @@ def main():
 			host_members=room.host_members
 			)
 
+		utils.wait_for_replication_and_postrun()
 		umc_connection = UMCConnection(ucr.get('hostname'))
 		umc_connection.auth(teacher, 'univention')
 
