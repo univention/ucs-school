@@ -9,6 +9,7 @@
 from essential.computerroom import Room, Computers
 from univention.lib.umc_connection import UMCConnection as OrgUMCConnection
 from univention.testing.network import NetworkRedirector
+from univention.testing.ucs_samba import wait_for_s4connector
 import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool as utu
 from univention.testing import utils
@@ -61,6 +62,8 @@ def main():
 			)
 
 		utils.wait_for_replication_and_postrun()
+		if utils.package_installed('univention-s4-connector'):
+			wait_for_s4connector()
 		umc_connection = UMCConnection(ucr.get('hostname'))
 		umc_connection.auth(teacher, 'univention')
 
