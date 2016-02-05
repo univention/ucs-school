@@ -41,6 +41,7 @@ case "$1" in
 
 		# set correct permissions
 		dpkg-statoverride --update --force --add root proxy 2770 /var/lib/ucs-school-webproxy/ || true
+		dpkg-statoverride --update --force --add root proxy 2770 /var/lib/ucs-school-webproxy/bdbtemp || true
 
 		if dpkg --compare-versions "$2" lt 11.0.6-1
 		then

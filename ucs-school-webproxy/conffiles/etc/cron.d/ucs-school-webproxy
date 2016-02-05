@@ -1,0 +1,6 @@
+@%@UCRWARNING=# @%@
+
+# cleanup outdated BDB files of squidGuard
+@!@
+print '%s root /usr/share/ucs-school-webproxy/purge_outdated_squidguard_bdb_files' % (configRegistry.get('proxy/squidguard/cron/cleanup_bdb_tempfiles', '12,42 * * * *'),)
+@!@

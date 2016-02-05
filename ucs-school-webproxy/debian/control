@@ -9,7 +9,7 @@ Package: ucs-school-webproxy
 Architecture: all
 Pre-Depends: univention-config
 Depends: univention-squid (>= 5.0.8),
- squidguard,
+ squidguard (>= 1.5-1.23),
  univention-config-registry,
  ucs-school-umc-internetrules
 Description: meta package for UCS@school webproxy

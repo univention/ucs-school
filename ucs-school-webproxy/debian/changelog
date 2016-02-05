@@ -1,3 +1,10 @@
+ucs-school-webproxy (11.0.12-1) unstable; urgency=low
+
+  * Bug #40541: use new squidguard option "dbtemp"
+  * Bug #40541: regulary purge outdated BDB* files
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 05 Feb 2016 15:46:57 +0100
+
 ucs-school-webproxy (11.0.11-1) unstable; urgency=low
 
   * Bug #35219/40403: make proxy.pac more javascript conform
