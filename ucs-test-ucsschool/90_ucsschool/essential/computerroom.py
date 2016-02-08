@@ -524,7 +524,7 @@ class Room(object):
 	def test_settings(self, school, user, user_dn, ip_address, ucr, umc_connection):
 		printer = uts.random_string()
 		# Create new workgroup and assign new internet rule to it
-		group = Workgroup(school, members=[user_dn])
+		group = Workgroup(school, umc_connection, members=[user_dn])
 		group.create()
 		try:
 			global_domains = ['univention.de', 'google.de']

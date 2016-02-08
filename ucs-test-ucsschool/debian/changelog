@@ -1,3 +1,9 @@
+ucs-test-ucsschool (3.0.5-12) unstable; urgency=medium
+
+  * Bug #39966: don't use machine account for UMC operations
+
+ -- Florian Best <best@univention.de>  Mon, 08 Feb 2016 15:56:14 +0100
+
 ucs-test-ucsschool (3.0.5-11) unstable; urgency=low
 
   * Bug #40541: added 11_squidguard_test_dbtemp_option
