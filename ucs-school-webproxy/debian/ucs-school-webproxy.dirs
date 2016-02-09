@@ -1,6 +1,6 @@
 etc/squid
 var/www
-var/lib/ucs-school-webproxy
+var/lib/ucs-school-webproxy/bdbtemp
 etc/logcollector.d
 usr/lib/univention-install
 usr/lib/univention-directory-listener/system

@@ -16,3 +16,7 @@ Variables: squid/parent/port
 
 Type: file
 File: etc/apache2/sites-available/wpad-config
+
+Type: file
+File: etc/cron.d/ucs-school-webproxy
+Variables: proxy/squidguard/cron/cleanup_bdb_tempfiles

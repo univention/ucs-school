@@ -125,7 +125,8 @@ def createTemporaryConfig(fn_temp_config, configRegistry, DIR_TEMP, changes):
 	f = open( fn_temp_config, "w")
 
 	f.write('logdir /var/log/squidguard\n')
-	f.write('dbhome %s/\n\n' % DIR_TEMP)
+	f.write('dbhome %s/\n' % DIR_TEMP)
+	f.write('dbtemp /var/lib/ucs-school-webproxy/bdbtemp\n\n')
 
 	keylist = configRegistry.keys()
 
