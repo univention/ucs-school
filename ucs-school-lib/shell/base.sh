@@ -1,6 +1,6 @@
 # UCS@school Common Shell Library
 #
-# Copyright 2011-2015 Univention GmbH
+# Copyright 2011-2016 Univention GmbH
 #
 # http://www.univention.de/
 #

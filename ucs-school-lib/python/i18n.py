@@ -4,7 +4,7 @@
 # UCS@school lib
 #  module: UCS@school i18n
 #
-# Copyright 2014-2015 Univention GmbH
+# Copyright 2014-2016 Univention GmbH
 #
 # http://www.univention.de/
 #

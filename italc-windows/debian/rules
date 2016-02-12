@@ -2,7 +2,7 @@
 #
 # Univention UCS@school italc-windows
 #
-# Copyright 2013-2014 Univention GmbH
+# Copyright 2013-2016 Univention GmbH
 #
 # http://www.univention.de/
 #
