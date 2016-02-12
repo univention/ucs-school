@@ -43,7 +43,7 @@ class UMCConnection(OrgUMCConnection):
 
 def main():
 	with utu.UCSTestSchool() as schoolenv, ucr_test.UCSTestConfigRegistry() as ucr, NetworkRedirector() as nethelper:
-		school, oudn = schoolenv.create_ou()
+		school, oudn = schoolenv.create_ou(name_edudc=ucr.get('hostname'))
 		teacher, teacher_dn = schoolenv.create_user(school, is_teacher=True)
 		open_ldap_co = schoolenv.open_ldap_connection()
 
@@ -60,13 +60,6 @@ def main():
 			description=room.description,
 			host_members=room.host_members
 			)
-
-		utils.wait_for_replication_and_postrun()
-		if utils.package_installed('univention-s4-connector'):
-			wait_for_s4connector()
-
-		print 'SLEEPING 60 seconds'
-		from time import sleep; sleep(60)
 
 		umc_connection = UMCConnection(ucr.get('hostname'))
 		umc_connection.auth(teacher, 'univention')
