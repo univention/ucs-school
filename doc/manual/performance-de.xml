@@ -170,15 +170,15 @@ scp ucs-school-join-secondary-samba4 root@&lt;Name des neuen Schul-DCs&gt;:
     		Je nach Größe der Umgebung kann das sehr lange dauern, wenn kein Suchfilter angegeben wird.
     		Dieses Verhalten kann durch setzen der folgenden Univention Configuration Registry-Variablen für die jeweiligen Module deaktiviert werden.
     		<itemizedlist>
-				<listitem>Passwörter (Schüler), Passwörter (Lehrer): ucsschool/passwordreset/autosearch</listitem>
-				<listitem>Lehrer zuordnen: ucsschool/assign-teacher/autosearch</listitem>
-				<listitem>Klassen zuordnen: ucsschool/assign-classes/autosearch</listitem>
-				<listitem>Arbeitsgruppen verwalten: ucsschool/workgroups/autosearch</listitem>
-				<listitem>Benutzer: ucsschool/wizards/schoolwizards/users/autosearch</listitem>
-				<listitem>Klassen: ucsschool/wizards/schoolwizards/classes/autosearch</listitem>
-				<listitem>Rechner: ucsschool/wizards/schoolwizards/computers/autosearch</listitem>
-				<listitem>Schulen: ucsschool/wizards/schoolwizards/schools/autosearch</listitem>
-				<listitem>Benutzer/Klassen/Rechner/Schulen: ucsschool/wizards/autosearch</listitem>
+				<listitem><simpara>Passwörter (Schüler), Passwörter (Lehrer): ucsschool/passwordreset/autosearch</simpara></listitem>
+				<listitem><simpara>Lehrer zuordnen: ucsschool/assign-teacher/autosearch</simpara></listitem>
+				<listitem><simpara>Klassen zuordnen: ucsschool/assign-classes/autosearch</simpara></listitem>
+				<listitem><simpara>Arbeitsgruppen verwalten: ucsschool/workgroups/autosearch</simpara></listitem>
+				<listitem><simpara>Benutzer: ucsschool/wizards/schoolwizards/users/autosearch</simpara></listitem>
+				<listitem><simpara>Klassen: ucsschool/wizards/schoolwizards/classes/autosearch</simpara></listitem>
+				<listitem><simpara>Rechner: ucsschool/wizards/schoolwizards/computers/autosearch</simpara></listitem>
+				<listitem><simpara>Schulen: ucsschool/wizards/schoolwizards/schools/autosearch</simpara></listitem>
+				<listitem><simpara>Benutzer/Klassen/Rechner/Schulen: ucsschool/wizards/autosearch</simpara></listitem>
     		</itemizedlist>
     	</para>
     </section>
