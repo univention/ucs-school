@@ -163,5 +163,24 @@ scp ucs-school-join-secondary-samba4 root@&lt;Name des neuen Schul-DCs&gt;:
   	  </itemizedlist>
   	</para>
     </section>
+    <section id="school:performance:autosearch">
+    	<title>Automatische Suche deaktivieren</title>
+		<para>
+    		Standardmäßig wird beim Öffnen von Modulen der Univention Management Console eine Suche nach allen Objekten durchgeführt.
+    		Je nach Größe der Umgebung kann das sehr lange dauern, wenn kein Suchfilter angegeben wird.
+    		Dieses Verhalten kann durch setzen der folgenden Univention Configuration Registry-Variablen für die jeweiligen Module deaktiviert werden.
+    		<itemizedlist>
+				<listitem>Passwörter (Schüler), Passwörter (Lehrer): ucsschool/passwordreset/autosearch</listitem>
+				<listitem>Lehrer zuordnen: ucsschool/assign-teacher/autosearch</listitem>
+				<listitem>Klassen zuordnen: ucsschool/assign-classes/autosearch</listitem>
+				<listitem>Arbeitsgruppen verwalten: ucsschool/workgroups/autosearch</listitem>
+				<listitem>Benutzer: ucsschool/wizards/schoolwizards/users/autosearch</listitem>
+				<listitem>Klassen: ucsschool/wizards/schoolwizards/classes/autosearch</listitem>
+				<listitem>Rechner: ucsschool/wizards/schoolwizards/computers/autosearch</listitem>
+				<listitem>Schulen: ucsschool/wizards/schoolwizards/schools/autosearch</listitem>
+				<listitem>Benutzer/Klassen/Rechner/Schulen: ucsschool/wizards/autosearch</listitem>
+    		</itemizedlist>
+    	</para>
+    </section>
   </section>
 </chapter>

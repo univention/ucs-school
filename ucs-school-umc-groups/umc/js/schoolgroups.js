@@ -31,6 +31,7 @@
 define([
 	"dojo/_base/declare",
 	"dojo/_base/lang",
+	"umc/tools",
 	"umc/dialog",
 	"umc/widgets/Module",
 	"umc/widgets/Grid",
@@ -42,7 +43,7 @@ define([
 	"umc/modules/schoolgroups/ClassDetailPage",
 	"umc/modules/schoolgroups/TeacherDetailPage",
 	"umc/i18n!umc/modules/schoolgroups"
-], function(declare, lang, dialog, Module, Grid, Page, TextBox, ComboBox, SearchForm, WorkgroupDetailPage, ClassDetailPage, TeacherDetailPage, _) {
+], function(declare, lang, tools, dialog, Module, Grid, Page, TextBox, ComboBox, SearchForm, WorkgroupDetailPage, ClassDetailPage, TeacherDetailPage, _) {
 	var ModuleBase = declare("umc.modules.schoolgroups", [Module], {
 		idProperty: '$dn$',
 		_grid: null,
@@ -50,10 +51,20 @@ define([
 		_detailPage: null,
 		standbyOpacity: 1,
 		helpText: '',
+		autosearchVariable: '',
+		autoSearch: true,
 		DetailPage: null,
 
 		buildRendering: function() {
 			this.inherited(arguments);
+
+			this.standbyDuring(tools.ucr([this.autosearchVariable])).then(lang.hitch(this, function(vars) {
+				this.autoSearch = tools.isTrue(vars[this.autosearchVariable] || this.autoSearch);
+				this.renderSearchForm();
+			}));
+		},
+
+		renderSearchForm: function() {
 
 			this._searchPage = new Page({
 				headerText: this.description,
@@ -99,7 +110,7 @@ define([
 				onValuesInitialized: lang.hitch(this, function() {
 					this.standbyOpacity = 0.75;
 					var values = this._searchForm.get('value');
-					if (values.school) {
+					if (values.school && this.autoSearch) {
 						this._grid.filter(values);
 					}
 			 	 })
@@ -156,6 +167,7 @@ define([
 	});
 
 	var Class = declare([ModuleBase], {
+		autosearchVariable: 'ucsschool/assign-teachers/autosearch',
 		DetailPage: ClassDetailPage,
 		helpText: _('This module allows the maintenance of the membership of class groups. Teachers can be assigned or removed as group members.'),
 		detailPageHeaderText: _('Edit class'),
@@ -172,6 +184,7 @@ define([
 	});
 
 	var Teacher = declare([Class], {
+		autosearchVariable: 'ucsschool/assign-classes/autosearch',
 		DetailPage: TeacherDetailPage,
 		helpText: _('This module allows the maintenance of class memberships of teachers. The selected teacher can be added to one or multiple classes.'),
 		detailPageHeaderText: _('Assigning of classes to a teacher'),
@@ -193,6 +206,7 @@ define([
 	});
 
 	var WorkGroup = declare([ModuleBase], {
+		autosearchVariable: 'ucsschool/workgroups/autosearch',
 		DetailPage: WorkgroupDetailPage,
 		helpText: _('This module allows to modify class comprehensive workgroups. Arbitrary students and teacher of the school can be selected as group members.'),
 		detailPageHeaderText: _('Edit workgroup'),

@@ -1,0 +1,5 @@
+[ucsschool/passwordreset/autosearch]
+Description[de]=Deaktiviert die automatische Suche beim öffnen des Modul "Passwörter (Schüler/Lehrer)".
+Description[en]=Deactivates the automatic search when opening the module "Passwords (students/teacher)".
+Type=bool
+Categories=management-umc

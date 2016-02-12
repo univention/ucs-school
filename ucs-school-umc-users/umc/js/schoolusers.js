@@ -224,10 +224,8 @@ define([
 
 			this._searchPage.startup();
 
-			tools.ucr(['directory/manager/web/modules/users/user/search/autosearch', 'directory/manager/web/modules/autosearch']).then(lang.hitch(this, function(ucr) {
-				var autoSearch = ucr['directory/manager/web/modules/users/user/search/autosearch'] || 
-					ucr['directory/manager/web/modules/autosearch'];
-				if (tools.isTrue(autoSearch)) {
+			tools.ucr(['ucsschool/passwordreset/autosearch']).then(lang.hitch(this, function(ucr) {
+				if (tools.isTrue(ucr['ucsschool/passwordreset/autosearch'] || true)) {
 					deferred.then(lang.hitch(this, function() {
 						this._grid.filter(this._searchForm.get('value'));
 					}));

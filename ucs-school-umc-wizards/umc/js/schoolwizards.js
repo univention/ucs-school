@@ -103,7 +103,7 @@ define([
 			return new Grid({
 				description: this.description,
 				schools: this.schools,
-			        udmLinkEnabled: this.udmLinkEnabled,
+				udmLinkEnabled: this.udmLinkEnabled,
 				autoSearch: this.autoSearch,
 				umcpCommand: lang.hitch(this, 'umcpCommand'),
 				moduleFlavor: this.moduleFlavor,

@@ -1,0 +1,17 @@
+[ucsschool/assign-classes/autosearch]
+Description[de]=Deaktiviert die automatische Suche beim öffnen des Modul "Klassen zuordnen".
+Description[en]=Deactivates the automatic search when opening the module "Assign classes".
+Type=bool
+Categories=management-umc
+
+[ucsschool/assign-teachers/autosearch]
+Description[de]=Deaktiviert die automatische Suche beim öffnen des Modul "Lehrer zuordnen".
+Description[en]=Deactivates the automatic search when opening the module "Assign teachers".
+Type=bool
+Categories=management-umc
+
+[ucsschool/workgroups/autosearch]
+Description[de]=Deaktiviert die automatische Suche beim öffnen des Modul "Arbeitsgruppen Verwalten".
+Description[en]=Deactivates the automatic search when opening the module "Manage workgroups".
+Type=bool
+Categories=management-umc
