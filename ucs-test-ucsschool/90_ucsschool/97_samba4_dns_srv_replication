@@ -1,11 +1,11 @@
 #!/usr/share/ucs-test/runner python
 ## desc: Test the DNS SRV record replication.
-## bugs: [34222, 38064]
+## bugs: [34222, 38064, 39964]
 ## roles:
 ## - domaincontroller_master
 ## - domaincontroller_slave
 ## packages: [univention-s4-connector, univention-samba4]
-## tags: [apptest, ucsschool]
+## tags: [SKIP-UCSSCHOOL,apptest, ucsschool]
 ## exposure: dangerous
 ## versions:
 ##  3.2-5: skip
