@@ -161,8 +161,7 @@ class Room(object):
 			d['customRule'] = current_settings['customRule']  # TODO Bug 35258 remove
 			if current_settings != d:
 				print 'FAIL: Current settings (%r) do not match expected ones (%r)' % (current_settings, d)
-			# utils.fail('Current settings (%r) do not match expected ones (%r)' % (
-				# current_settings, d))
+			utils.fail('Current settings (%r) do not match expected ones (%r)' % (current_settings, d))
 		except httplib.HTTPException as e:
 			if '[Errno 4] ' in str(e):
 				print 'failed to check room (%s) settings, exception [Errno4]' % self.name
@@ -197,7 +196,7 @@ class Room(object):
 			print 'Atjob result at(%r) existance is expected (%r)' % (period, exist)
 		else:
 			print 'FAIL: Atjob result at(%r) existance is not expected (%r)' % (period, exist)
-			# utils.fail('Atjob result at(%r) existance is not expected (%r)' % (period, exist))
+			utils.fail('Atjob result at(%r) existance is not expected (%r)' % (period, exist))
 
 	def check_displayTime(self, umc_connection, period):
 		displayed_period = self.get_room_settings(umc_connection)['period'][0:-3]
@@ -264,7 +263,7 @@ class Room(object):
 		)
 		if read[0] != expected_result:
 			print 'FAIL .. Read home directory result (%r), expected (%r)' % (read[0], expected_result)
-			# utils.fail('Read home directory result (%r), expected (%r)' % (read[0], expected_result))
+			utils.fail('Read home directory result (%r), expected (%r)' % (read[0], expected_result))
 
 	def check_home_write(self, user, ip_address, passwd='univention', expected_result=0):
 		print '.... Check home write ....'
@@ -282,7 +281,7 @@ class Room(object):
 		f.close()
 		if write[0] != expected_result:
 			print 'FAIL .. Write to home directory result (%r), expected (%r)' % (write[0], expected_result)
-			# utils.fail('Write to home directory result (%r), expected (%r)' % (write[0], expected_result))
+			utils.fail('Write to home directory result (%r), expected (%r)' % (write[0], expected_result))
 
 	def check_marktplatz_read(self, user, ip_address, passwd='univention', expected_result=0):
 		print '.... Check Marktplatz read ....'
@@ -296,7 +295,7 @@ class Room(object):
 		)
 		if read[0] != expected_result:
 			print 'FAIL .. Read Marktplatz directory result (%r), expected (%r)' % (read[0], expected_result)
-			# utils.fail('Read Marktplatz directory result (%r), expected (%r)' % (read[0], expected_result))
+			utils.fail('Read Marktplatz directory result (%r), expected (%r)' % (read[0], expected_result))
 
 	def check_marktplatz_write(self, user, ip_address, passwd='univention', expected_result=0):
 		print '.... Check Marktplatz write ....'
@@ -313,7 +312,7 @@ class Room(object):
 		f.close()
 		if write[0] != expected_result:
 			print 'FAIL .. Write to Marktplatz directory result (%r), expected (%r)' % (write[0], expected_result)
-			# utils.fail('Write to Marktplatz directory result (%r), expected (%r)' % (write[0], expected_result))
+			utils.fail('Write to Marktplatz directory result (%r), expected (%r)' % (write[0], expected_result))
 
 	def check_share_access(self, user, ip_address, expected_home_result, expected_marktplatz_result):
 		self.check_home_read(user, ip_address, expected_result=expected_home_result)
@@ -383,7 +382,7 @@ class Room(object):
 		f.close()
 		if result != expected_result:
 			print 'FAIL .... smbclient print result (%r), expected (%r)' % (result, expected_result)
-			# utils.fail('smbclient print result (%r), expected (%r)' % (result, expected_result))
+			utils.fail('smbclient print result (%r), expected (%r)' % (result, expected_result))
 
 	def check_print_behavior(self, user, ip_address, printer, printMode):
 		if printMode == 'none':
@@ -465,8 +464,7 @@ class Room(object):
 		localCurl.close()
 		print 'RULE IN CONTROL = ', rule_in_control
 		if rule_in_control != expected_rule:
-			# utils.fail('rule in control (%s) does not match the expected one (%s)' % (
-			#	rule_in_control, expected_rule))
+			utils.fail('rule in control (%s) does not match the expected one (%s)' % (rule_in_control, expected_rule))
 			print 'FAIL: rule in control (%s) does not match the expected one (%s)' % (rule_in_control, expected_rule)
 
 	def test_internetrules_settings(self, school, user, user_dn, ip_address, ucr, umc_connection):
