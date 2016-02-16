@@ -451,7 +451,7 @@ class Room(object):
 		localCurl = SimpleCurl(proxy=proxy, username=user)
 
 		rule_in_control = None
-		if expected_rule == 'Kein Internet' and localCurl.getPage('univention.de') == banPage:
+		if expected_rule == 'Kein Internet' and localCurl.getPage('web.de') == banPage:
 			rule_in_control = expected_rule
 		if expected_rule == 'Unbeschränkt' and localCurl.getPage('gmx.de') != banPage:
 			rule_in_control = expected_rule
@@ -609,20 +609,19 @@ class Room(object):
 
 		# check atjobs
 		partial_new_settings = {
-			'period': period,
+#			'period': period,
 			'printMode': printMode,
 			'shareMode': shareMode,
 			'internetRule': internetRule
 			}
+		partial_old_settings = partial_old_settings.copy()
+		partial_old_settings.pop('period')
 		# if there is no change in settings, no atjob is added
 		print
 		print '----------DEBUG-----------'
 		print 'old=', partial_old_settings
 		print 'new=', partial_new_settings
-		if partial_old_settings != partial_new_settings:
-			self.check_atjobs(period, True)
-		else:
-			self.check_atjobs(period, False)
+		self.check_atjobs(period, partial_old_settings != partial_new_settings)
 
 		# check internetrules
 		self.checK_internetrules(
