@@ -161,7 +161,7 @@ class Room(object):
 			d['customRule'] = current_settings['customRule']  # TODO Bug 35258 remove
 			if current_settings != d:
 				print 'FAIL: Current settings (%r) do not match expected ones (%r)' % (current_settings, d)
-			utils.fail('Current settings (%r) do not match expected ones (%r)' % (current_settings, d))
+				utils.fail('Current settings (%r) do not match expected ones (%r)' % (current_settings, d))
 		except httplib.HTTPException as e:
 			if '[Errno 4] ' in str(e):
 				print 'failed to check room (%s) settings, exception [Errno4]' % self.name
