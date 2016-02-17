@@ -22,6 +22,7 @@ import univention.testing.strings as uts
 import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool as utu
 import univention.testing.utils as utils
+from univention.testing.ucs_samba import wait_for_s4connector
 
 
 class GetFail(Exception):
@@ -451,7 +452,7 @@ class Room(object):
 		localCurl = SimpleCurl(proxy=proxy, username=user)
 
 		rule_in_control = None
-		if expected_rule == 'Kein Internet' and localCurl.getPage('web.de') == banPage:
+		if expected_rule == 'Kein Internet' and localCurl.getPage('univention.de') == banPage:
 			rule_in_control = expected_rule
 		if expected_rule == 'Unbeschränkt' and localCurl.getPage('gmx.de') != banPage:
 			rule_in_control = expected_rule
@@ -465,7 +466,6 @@ class Room(object):
 		print 'RULE IN CONTROL = ', rule_in_control
 		if rule_in_control != expected_rule:
 			utils.fail('rule in control (%s) does not match the expected one (%s)' % (rule_in_control, expected_rule))
-			print 'FAIL: rule in control (%s) does not match the expected one (%s)' % (rule_in_control, expected_rule)
 
 	def test_internetrules_settings(self, school, user, user_dn, ip_address, ucr, umc_connection):
 		# Create new workgroup and assign new internet rule to it
@@ -549,6 +549,9 @@ class Room(object):
 			settings = itertools.product(rules, printmodes, sharemodes)
 			settings_len = len(printmodes) * len(sharemodes) * len(rules)
 			t = 120
+
+			utils.wait_for_replication_and_postrun()
+			wait_for_s4connector()
 
 			# Testing loop
 			for i in xrange(settings_len):
