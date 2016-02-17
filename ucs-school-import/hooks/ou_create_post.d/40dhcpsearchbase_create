@@ -38,13 +38,13 @@
 
 eval "$(ucr shell)"
 
-if ! is_ucr_true "$ucsschool_import_generate_policy_dhcp_searchbase" ; then
+if ! is_ucr_true "ucsschool/import/generate/policy/dhcp/searchbase" ; then
 	echo "$(basename $0): creation of UCR policy for DHCP searchbase has been disabled by ucsschool/import/generate/policy/dhcp/searchbase"
 	exit 0
 fi
 
 ou="$(awk -F '\t' '{print $1}' "$1" | tr '[:upper:]' '[:lower:]')"
-if is_ucr_true "$ucsschool_ldap_district_enable" ; then
+if is_ucr_true "ucsschool/ldap/district/enable" ; then
 	district=",ou=${ou:0:2}"
 fi
 

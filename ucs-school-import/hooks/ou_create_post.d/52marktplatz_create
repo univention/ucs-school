@@ -44,7 +44,7 @@ if ! is_ucr_true "$ucsschool_import_generate_share_marktplatz" ; then
 fi
 
 ou="$(awk -F '\t' '{print $1}' "$1")"
-if is_ucr_true "$ucsschool_ldap_district_enable" ; then
+if is_ucr_true "ucsschool/ldap/district/enable" ; then
 	district=",ou=${ou:0:2}"
 fi
 
@@ -57,7 +57,7 @@ fi
 
 sharepath="$ucsschool_import_generate_share_marktplatz_sharepath"
 if [ -z "$sharepath" ] ; then
-	if [ -z "$ucsschool_import_roleshare" ] || is_ucr_true "$ucsschool_import_roleshare"; then
+	if [ -z "$ucsschool_import_roleshare" ] || is_ucr_true "ucsschool/import/roleshare"; then
 		sharepath="/home/$ou/groups/Marktplatz"
 	else
 		sharepath="/home/groups/Marktplatz"

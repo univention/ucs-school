@@ -39,7 +39,7 @@
 eval "$(ucr shell)"
 
 ou="$(awk -F '\t' '{print $1}' "$1" | tr '[:upper:]' '[:lower:]')"
-if is_ucr_true "$ucsschool_ldap_district_enable" ; then
+if is_ucr_true "ucsschool/ldap/district/enable" ; then
 	district=",ou=${ou:0:2}"
 fi
 

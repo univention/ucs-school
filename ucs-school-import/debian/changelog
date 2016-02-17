@@ -1,3 +1,9 @@
+ucs-school-import (12.0.3-1) unstable; urgency=medium
+
+  * Bug #40712: fix last commit
+
+ -- Florian Best <best@univention.de>  Wed, 17 Feb 2016 14:00:06 +0100
+
 ucs-school-import (12.0.2-1) unstable; urgency=medium
 
   * Bug #40384: use univention-shell-lib

@@ -1,3 +1,9 @@
+ucs-school-umc-exam (5.0.4-1) unstable; urgency=medium
+
+  * Bug #40712: fix last commit
+
+ -- Florian Best <best@univention.de>  Wed, 17 Feb 2016 14:02:54 +0100
+
 ucs-school-umc-exam (5.0.3-1) unstable; urgency=medium
 
   * Bug #40384: use univention-shell-lib
