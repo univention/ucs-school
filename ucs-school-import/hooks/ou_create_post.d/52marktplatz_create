@@ -38,8 +38,8 @@
 
 eval "$(ucr shell)"
 
-if ! is_ucr_true "$ucsschool_import_generate_share_marktplatz" ; then
-	echo "$(basename $0): creation of share 'Marktplatz' has been disabled by ucsschool/import/generate/marktplatz"
+if ! is_ucr_true "ucsschool/import/generate/share/marktplatz" ; then
+	echo "$(basename $0): creation of share 'Marktplatz' has been disabled by ucsschool/import/generate/share/marktplatz"
 	exit 0
 fi
 
