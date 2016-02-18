@@ -11,7 +11,7 @@ from essential.radius import test_peap_auth
 from essential.workgroup import Workgroup
 import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool as utu
-import univention.testing.utils as utils
+from univention.testing import utils, ucs_samba
 
 
 def main():
@@ -49,6 +49,7 @@ def main():
 				groups.append(group)
 
 			utils.wait_for_replication_and_postrun()
+			ucs_samba.wait_for_s4connector()
 
 			for (rule, group) in zip(rules, groups):
 				rule.assign(school, group.name, 'workgroup')

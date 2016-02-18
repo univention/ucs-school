@@ -1,3 +1,9 @@
+ucs-test-ucsschool (3.0.5-18) unstable; urgency=medium
+
+  * Bug #40727: fix 74_radius_internetrules_priority
+
+ -- Florian Best <best@univention.de>  Thu, 18 Feb 2016 12:14:50 +0100
+
 ucs-test-ucsschool (3.0.5-17) unstable; urgency=medium
 
   * Bug #40655: wait for shares to be created
