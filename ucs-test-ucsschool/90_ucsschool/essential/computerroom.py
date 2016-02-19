@@ -550,8 +550,7 @@ class Room(object):
 			settings_len = len(printmodes) * len(sharemodes) * len(rules)
 			t = 120
 
-			utils.wait_for_replication_and_postrun()
-			wait_for_s4connector()
+			utils.wait_for_replication()
 
 			# Testing loop
 			for i in xrange(settings_len):
@@ -571,6 +570,10 @@ class Room(object):
 				self.aquire_room(umc_connection)
 				old_settings = self.get_room_settings(umc_connection)
 				self.set_room_settings(umc_connection, new_settings)
+
+				utils.wait_for_replication_and_postrun()
+				wait_for_s4connector()
+
 				# check if displayed values match
 				self.check_room_settings(umc_connection, new_settings)
 				# old_period = old_settings['period']
