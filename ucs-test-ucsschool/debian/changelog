@@ -1,3 +1,9 @@
+ucs-test-ucsschool (3.0.5-20) unstable; urgency=medium
+
+  * Bug #40736: sleep longer...
+
+ -- Florian Best <best@univention.de>  Tue, 23 Feb 2016 10:03:05 +0100
+
 ucs-test-ucsschool (3.0.5-19) unstable; urgency=medium
 
   * Bug #40736: add 41_create_marktplatz_share
