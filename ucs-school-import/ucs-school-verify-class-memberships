@@ -39,12 +39,62 @@ from ldap.filter import filter_format
 from univention.admin.uldap import getMachineConnection, getAdminConnection
 from univention.admin.uexceptions import base as UDMError, noObject
 from univention.management.console.config import ucr
+import univention.admin.handlers.groups.group
+import univention.admin.handlers.users.user
+import univention.admin.objects
 
 
-class InvalidGroupDetected(Exception): pass
-class StudentIsInAnotherSchool(Exception): pass
-class StudentDoesNotExists(Exception): pass
-class StudentIsInAnotherClassInAnotherSchool(Exception): pass
+class Problem(Exception):
+
+	def __init__(self, line, *args, **kwargs):
+		self.line = line
+		super(Problem, self).__init__(*args, **kwargs)
+
+	def fix(self, lo, po):
+		pass
+
+
+class InvalidGroupDetected(Problem):
+
+	def __str__(self):
+		correct, invalid_groups = self.args
+		lines = []
+		if not correct:
+			lines.append('ERROR: User %r is not a member of class %s' % (self.line['name'], self.line['school_class']))
+		for gdn in invalid_groups:
+			lines.append('ERROR: User %r is unexpected member of %s' % (self.line['name'], gdn))
+		return '\n'.join(lines)
+
+	def fix(self, lo, po):
+		username = self.line['name']
+		user = univention.admin.handlers.users.user.lookup(None, lo, 'uid=%s' % (ldap.filter.escape_filter_chars(username),))[0]
+		for group_dn in self.args[1]:
+			group = univention.admin.objects.get(univention.admin.handlers.groups.group, None, lo, po, group_dn)
+			group.open()
+			if user.dn not in group['users']:
+				msg('ERROR: cannot remove %r from %r' % (user.dn, group.dn))
+				continue
+			group['users'].remove(user.dn)
+			group.modify()
+			msg('FIXED: removed %r from %r' % (user.dn, group.dn))
+
+
+
+class StudentIsInAnotherSchool(Problem):
+	def __str__(self):
+		return 'ERROR: User %r is not in school %s. DN: %s' % (self.args[0], self.line['school'], self.args[1])
+
+
+class StudentDoesNotExists(Problem):
+
+	def __str__(self):
+		return 'ERROR: User %r was not found.' % (self.args[0],)
+
+
+class StudentIsInAnotherClassInAnotherSchool(Problem):
+
+	def __str__(self):
+		return 'ERROR: User %r (%s) is group member in another school: %s' % self.args
 
 
 def msg(*a):
@@ -64,55 +114,49 @@ Example for showing only errors:
    ucs-school-verify-class-memberships students.csv > /dev/null'''
 	parser = ArgumentParser(description=description, formatter_class=RawDescriptionHelpFormatter)
 	parser.add_argument('-l', '--csv-line', dest='columns', help='Defines the fields of the CSV-file (Default: %(default)s)', default='action,name,firstname,lastname,school,school_class')
+	parser.add_argument('--fix', action='store_true', help='Automatically repair the found problems.')
 	parser.add_argument(dest='filename', help='Specifies the path of the CSV file')
 	ns = parser.parse_args()
 
 	try:
 		try:
-			lo, _ = getAdminConnection()
+			lo, po = getAdminConnection()
 		except(ldap.LDAPError, UDMError, IOError): # pylint: disable=E1101
-			lo, _ = getMachineConnection()
+			lo, po = getMachineConnection()
 	except (ldap.LDAPError, UDMError, IOError) as exc: # pylint: disable=E1101
 		msg('LDAP Error: %s' % (exc,))
 		sys.exit(2)
 
+	code = 0
 	columns = ns.columns.split(',')
 	try:
 		with open(ns.filename, 'rb') as fd:
 			lines = fd.readlines()
 	except (IOError, OSError) as exc:
 		msg('Could not open file %r: %s' % (ns.filename, exc,))
-		sys.exit(2)
+		code = 2
 	else:
-		parse(lo, lines, columns)
+		for problem in parse(lo, lines, columns):
+			code = 1
+			msg(str(problem))
+			if not ns.fix:
+				continue
+			try:
+				problem.fix(lo, po)
+			except (ldap.LDAPError, UDMError) as exc: # pylint: disable=E1101
+				msg('LDAP Error: %s: %s' % (type(exc), exc))
+	sys.exit(code)
 
 
 def parse(lo, lines, columns):
 	reader = csv.DictReader(lines, columns, delimiter='\t')
-	code = 0
 	for line in reader:
 		try:
-			try:
-				parse_line(lo, line)
-			except:
-				code = 1
-				raise
-		except StudentDoesNotExists as exc:
-			msg('ERROR: User %r was not found.' % (exc.args[0],))
-		except StudentIsInAnotherSchool as exc:
-			msg('ERROR: User %r is not in school %s. DN: %s' % (exc.args[0], line['school'], exc.args[1]))
-		except StudentIsInAnotherClassInAnotherSchool as exc:
-			msg('ERROR: User %r (%s) is group member in another school: %s' % exc.args)
-		except InvalidGroupDetected as exc:
-			correct, invalid_groups = exc.args
-			if not correct:
-				msg('ERROR: User %r is not a member of class %s' % (line['name'], line['school_class']))
-			for gdn in invalid_groups:
-				msg('ERROR: User %r is unexpected member of %s' % (line['name'], gdn))
+			parse_line(lo, line)
 		except (ldap.LDAPError, UDMError) as exc: # pylint: disable=E1101
 			msg('LDAP Error: %s: %s' % (type(exc), exc))
-			code = 2
-	sys.exit(code)
+		except Problem as exc:
+			yield exc
 
 
 def parse_line(lo, line):
@@ -126,9 +170,9 @@ def parse_line(lo, line):
 		except (IndexError, noObject):
 			if line['action'].upper() == 'D':
 				return
-			raise StudentDoesNotExists(uid)
+			raise StudentDoesNotExists(line, uid)
 		else:
-			raise StudentIsInAnotherSchool(uid, dn)
+			raise StudentIsInAnotherSchool(line, uid, dn)
 	if not dn.endswith(',cn=schueler,cn=users,%s' % (oubase,)):
 		if not dn.endswith(',cn=lehrer,cn=users,%s' % (oubase,)) or not dn.endswith(',cn=mitarbeiter,cn=users,%s' % (oubase,)):
 			print('Ignoring teacher/staff %r' % (uid,))
@@ -144,14 +188,14 @@ def parse_line(lo, line):
 	for gdn, group in groups: # pylint: disable=W0612
 		if not gdn.endswith(',cn=klassen,cn=schueler,cn=groups,%s' % (oubase,)):
 			if not gdn.endswith(oubase) and re.search(',ou=[^,]+,%s$' % (ucr['ldap/base'],), gdn, re.I):
-				raise StudentIsInAnotherClassInAnotherSchool(uid, dn, gdn)
+				raise StudentIsInAnotherClassInAnotherSchool(line, uid, dn, gdn)
 			continue  # ignore workgroups / Domain Users
 		if gdn.startswith('cn=%s,' % (line['school_class'],)):
 			correct = True
 		else:
 			invalid_groups.add(gdn)
 	if not correct or invalid_groups:
-		raise InvalidGroupDetected(correct, invalid_groups)
+		raise InvalidGroupDetected(line, correct, invalid_groups)
 
 
 if __name__ == '__main__':
