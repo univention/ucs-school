@@ -35,7 +35,7 @@ import sys
 import csv
 import ldap
 from argparse import ArgumentParser, RawDescriptionHelpFormatter
-from ldap.filter import filter_format
+from ldap.filter import filter_format, escape_filter_chars
 from univention.admin.uldap import getMachineConnection, getAdminConnection
 from univention.admin.uexceptions import base as UDMError, noObject
 from univention.management.console.config import ucr
@@ -67,7 +67,7 @@ class InvalidGroupDetected(Problem):
 
 	def fix(self, lo, po):
 		username = self.line['name']
-		user = univention.admin.handlers.users.user.lookup(None, lo, 'uid=%s' % (ldap.filter.escape_filter_chars(username),))[0]
+		user = univention.admin.handlers.users.user.lookup(None, lo, 'uid=%s' % (escape_filter_chars(username),), required=True)[0]
 		for group_dn in self.args[1]:
 			group = univention.admin.objects.get(univention.admin.handlers.groups.group, None, lo, po, group_dn)
 			group.open()
