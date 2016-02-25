@@ -1,3 +1,9 @@
+ucs-school-umc-computerroom (5.0.9-1) unstable; urgency=medium
+
+  * Bug #40777: fixed logic of menu item "switch on computer"
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Thu, 25 Feb 2016 14:19:50 +0100
+
 ucs-school-umc-computerroom (5.0.8-3) unstable; urgency=medium
 
   * Stop, close and delete the computer connections before clearing the
