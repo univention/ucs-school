@@ -1,7 +1,7 @@
 #!/usr/share/ucs-test/runner python
 ## desc: Test S4 SRV record maintainance
 ## roles: [domaincontroller_slave]
-## tags: [SKIP-UCSSCHOOL,apptest,ucsschool]
+## tags: [apptest,ucsschool]
 ## exposure: dangerous
 ## packages:
 ##    - ucs-school-slave | ucs-school-nonedu-slave
@@ -157,6 +157,9 @@ class Test():
 				testing_utils.wait_for_replication_and_postrun()
 				wait_for_drs_replication("(sAMAccountName=%s)" % (dummy_username,), attrs="sAMAccountName")
 
+				# The replication in a multi shool environment need more time
+				time.sleep(15)
+
 				## verify that the positive test DC is present in the UCR variables
 				ucr2 = univention.config_registry.ConfigRegistry()
 				ucr2.load()
@@ -195,6 +198,8 @@ class Test():
 			dummy_user_dn = udm.create_user(username=dummy_username, password=dummy_password)
 			testing_utils.wait_for_replication_and_postrun()
 			wait_for_drs_replication("(sAMAccountName=%s)" % (dummy_username,), attrs="sAMAccountName")
+		# The replication in a multi shool environment need more time
+		time.sleep(15)
 
 		## verify that the postitive test DCs are removed from DNS/Samba4
 		p1 = subprocess.Popen(['host', '-t', 'srv', '_kerberos._tcp'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
