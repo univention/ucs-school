@@ -241,7 +241,7 @@ define([
 				isMultiAction: true,
 				enablingMode: "some",
 				canExecute: checkUCC('computerStart', function(item) {
-					return (item.connection[0] == 'error' || item.connection[0] == 'autherror' || item.connection[0] == 'offline') && item.mac[0];
+					return (item.connection[0] == 'disconnected' || item.connection[0] == 'error' || item.connection[0] == 'autherror' || item.connection[0] == 'offline') && item.mac[0];
 				}),
 				callback: lang.hitch(this, '_computerStart')
 			}, {

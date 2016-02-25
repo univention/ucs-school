@@ -1,3 +1,9 @@
+ucs-school-umc-computerroom (7.0.4-1) unstable; urgency=low
+
+  * Bug #40778: fixed logic of menu item "switch on computer"
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Thu, 25 Feb 2016 14:19:50 +0100
+
 ucs-school-umc-computerroom (7.0.3-2) unstable; urgency=medium
 
   * Bug #40316: prevent segfault
