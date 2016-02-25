@@ -1,3 +1,10 @@
+ucs-test-ucsschool (3.0.5-21) unstable; urgency=medium
+
+  * Rename 16_s4_slave_automatic_srv_record.py to
+    16_s4_slave_automatic_srv_record (Bug #37697)
+
+ -- Stefan Gohmann <gohmann@univention.de>  Thu, 25 Feb 2016 06:55:14 +0100
+
 ucs-test-ucsschool (3.0.5-20) unstable; urgency=medium
 
   * Bug #40736: sleep longer...
