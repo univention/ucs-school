@@ -1,3 +1,9 @@
+ucs-school-import (12.0.4-1) unstable; urgency=low
+
+  * Bug #40780: fix traceback if users are modified via CLI import script
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 26 Feb 2016 22:01:27 +0100
+
 ucs-school-import (12.0.3-2) unstable; urgency=medium
 
   * Bug #40712: fix last commit

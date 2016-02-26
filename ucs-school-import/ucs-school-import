@@ -1316,9 +1316,9 @@ def modify_user(person, module, co, lo):
 
 	try:
 		object.modify()
-		o_sNr=lo.search(base=person.getDN(), scope='base', attr=['departmentNumber'])
-		if not o_sNr == person.allsNrs:
-			lo.modify(person.getDN(),[("departmentNumber",o_sNr,person.allsNrs)])
+		o_sNr = lo.get(person.getDN(), attr=['departmentNumber']).get('departmentNumber',[])
+		if not set(o_sNr) == set(person.allsNrs):
+			lo.modify(person.getDN(),[("departmentNumber", o_sNr, person.allsNrs)])
 		print "modified:",person.getDN()
 	except:
 		print "ERROR:", sys.exc_info()[0], sys.exc_info()[1]
@@ -1593,7 +1593,7 @@ def import_user():
 					if not dn:
 						dn = person.getDN()
 			elif main_person.modtype in ["M","D"]:
-				# look if there are exsiting persons in other ou's remaining, this will fail if the users's departmentNumbers
+				# look if there are existing persons in other ou's remaining, this will fail if the users's departmentNumbers
 				# are changed manually
 				filter = univention.admin.filter.conjunction(
 					"|",[univention.admin.filter.expression('uid',"%s_*"%main_person.login),
