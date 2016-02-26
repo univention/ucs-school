@@ -192,6 +192,8 @@ class Hooks( object ):
 		if 'dn' in kwargs:
 			command.extend( ( '--arg', kwargs[ 'dn' ] ) )
 
+		sys.stdout.flush()
+		sys.stderr.flush()
 		ret_code = subprocess.call( command )
 
 		# close temporary file (also deletes the file)
