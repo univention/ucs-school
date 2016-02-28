@@ -1,6 +1,7 @@
 ucs-school-import (11.0.0-6) unstable; urgency=low
 
   * Bug #40788: flush stdout and stderr before calling hook scripts
+  * Bug #40789: write debug output of rename_class to /var/log/univention/ucs-school-import.log
 
  -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 26 Feb 2016 22:01:27 +0100
 
