@@ -65,7 +65,8 @@ import time
 import traceback
 
 import univention.debug
-univention.debug.init('/var/log/univention/admin-cmd.log', 1, 0)
+univention.debug.init('/var/log/univention/ucs-school-import.log', 1, 0)
+univention.debug.set_level(univention.debug.MAIN, 4)
 
 import ldap
 import univention.admin.uldap
@@ -2717,7 +2718,7 @@ def rename_class():
 	else:
 		parser.print_help()
 		print "must have one Argument for infile"
-		sys.exit()
+		sys.exit(1)
 
 	# get all groups and shares
 	myGroups = {}
@@ -2766,6 +2767,7 @@ def rename_class():
 		newName = i.get("newName")
 		line = i.get("line")
 		lineCounter = i.get("lineCounter")
+		univention.debug.debug(univention.debug.MAIN, univention.debug.PROCESS, 'Checking line %s: %r to %r' % (lineCounter, oldName, newName))
 
 		# groups
 		if not myGroups.get(oldName):
@@ -2786,10 +2788,13 @@ def rename_class():
 			myShares[newName] = 1
 
 		if error:
+			univention.debug.debug(univention.debug.MAIN, univention.debug.ERROR, '%s (line %s: %s)' % (error, lineCounter, line))
+			univention.debug.debug(univention.debug.MAIN, univention.debug.ERROR, 'Stopping here')
 			print "ERROR: %s (line %s: %s)" % (error, lineCounter, line)
 			print "do nothing"
-			sys.exit(0)
+			sys.exit(1)
 
+	univention.debug.debug(univention.debug.MAIN, univention.debug.PROCESS, 'Stopping notifier')
 	with stopped_notifier():
 		# do it, rename groups and shares and modify share path
 		messages = []
@@ -2799,7 +2804,9 @@ def rename_class():
 			newName = i.get("newName")
 			oldName = i.get("oldName")
 			line = i.get("line")
+			lineCounter = i.get("lineCounter")
 			if groupObject and shareObject and newName and oldName:
+				univention.debug.debug(univention.debug.MAIN, univention.debug.PROCESS, 'Processing line %s: renaming %r to %r' % (lineCounter, oldName, newName))
 
 				success = True
 
@@ -2810,11 +2817,12 @@ def rename_class():
 				groupObject.open()
 				groupObject['name'] = newName
 				try:
+					univention.debug.debug(univention.debug.MAIN, univention.debug.PROCESS, 'Renaming of group %r to %r' % (oldName, newName))
 					groupObject.modify()
-					messages.append("Renaming of group %s to %s successfully" % (oldName, newName))
+					messages.append((False, "Renaming of group %s to %s successfully" % (oldName, newName)))
 				except Exception, e:
 					success = False
-					messages.append("Renaming of group %s to %s failed: %s" % (oldName, newName, str(e)))
+					messages.append((True, "Renaming of group %s to %s failed: %s" % (oldName, newName, str(e))))
 
 				if success:
 					# rename share and share path
@@ -2828,20 +2836,29 @@ def rename_class():
 						shareObject['sambaForceGroup'] = '+%s' % (newName, )
 					shareObject['path'] = os.path.sep.join(path)	
 					try:
+						univention.debug.debug(univention.debug.MAIN, univention.debug.PROCESS, 'Renaming of share %r to %r' % (oldName, newName))
 						shareObject.modify()
-						messages.append("Renaming of share %s to %s successfully" % (oldName, newName))
+						messages.append((False, "Renaming of share %s to %s successfully" % (oldName, newName)))
 					except Exception, e:
 						success = False
-						messages.append("Renaming of share %s to %s failed: %s" % (oldName, newName, str(e)))
+						messages.append((True, "Renaming of share %s to %s failed: %s" % (oldName, newName, str(e))))
 
 				# group post mod hook
 				if success:
+					univention.debug.debug(univention.debug.MAIN, univention.debug.PROCESS, 'Calling group post-modify hooks')
 					hooks.post('group', "M", dn=groupObject.dn, line=line)
-
+	univention.debug.debug(univention.debug.MAIN, univention.debug.PROCESS, 'Resuming notifier')
 
 	# print warnings
-	for msg in messages:
+	for isError, msg in messages:
+		level = {
+			False: univention.debug.PROCESS,
+			True: univention.debug.ERROR,
+			}[isError]
+		univention.debug.debug(univention.debug.MAIN, level, msg)
 		print msg
+
+	univention.debug.debug(univention.debug.MAIN, univention.debug.PROCESS, 'rename_class finished')
 
 	return
 
@@ -3044,7 +3061,7 @@ try:
 		host=configRegistry['ldap/master'], base=baseDN,
 		binddn=binddn, bindpw=bindpwd, start_tls=tls)
 except Exception, e:
-	univention.debug.debug(univention.debug.ADMIN, univention.debug.WARN, 'authentication error: %s' % str(e))
+	univention.debug.debug(univention.debug.MAIN, univention.debug.WARN, 'authentication error: %s' % str(e))
 	print 'ERROR: authentication error: %s' % str(e)
 	sys.exit(1)
 
@@ -3108,6 +3125,8 @@ for object in univention.admin.modules.lookup(setting_module, co, lo, scope='sub
 	if object.has_key("defaultGroup"):
 		default_group=object["defaultGroup"]
 	else: print "WARNING, no default group found"
+
+univention.debug.debug(univention.debug.MAIN, univention.debug.PROCESS, 'Starting %s %s' % (os.path.basename(sys.argv[0]), ' '.join([repr(x) for x in sys.argv[1:]])))
 
 # select action
 if sys.argv[0].endswith("import_user") or sys.argv[0].endswith("ucs-school-import"):

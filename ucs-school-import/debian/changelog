@@ -2,6 +2,7 @@ ucs-school-import (12.0.4-1) unstable; urgency=low
 
   * Bug #40780: fix traceback if users are modified via CLI import script
   * Bug #40166: flush stdout and stderr before calling hook scripts
+  * Bug #40039: write debug output of rename_class to /var/log/univention/ucs-school-import.log
 
  -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 26 Feb 2016 22:01:27 +0100
 
