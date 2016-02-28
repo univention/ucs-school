@@ -1,3 +1,9 @@
+ucs-school-import (11.0.0-6) unstable; urgency=low
+
+  * Bug #40788: flush stdout and stderr before calling hook scripts
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 26 Feb 2016 22:01:27 +0100
+
 ucs-school-import (11.0.0-5) unstable; urgency=medium
 
   * Bug #36537: add default-umc-users policy to "Domain Users $school-OU"
