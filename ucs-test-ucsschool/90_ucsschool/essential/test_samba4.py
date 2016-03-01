@@ -6,6 +6,7 @@ from samba.param import LoadParm
 from subprocess import Popen, PIPE
 
 from ucsschool.lib import schoolldap
+from univention.testing import utils
 
 from univention.testing.codes import TestCodes
 from univention.config_registry import ConfigRegistry
