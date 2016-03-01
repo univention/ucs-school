@@ -1,3 +1,9 @@
+ucs-test-ucsschool (3.0.5-24) unstable; urgency=medium
+
+  * Bug #40809: fix DN detection
+
+ -- Florian Best <best@univention.de>  Tue, 01 Mar 2016 14:31:09 +0100
+
 ucs-test-ucsschool (3.0.5-23) unstable; urgency=medium
 
   * Bug #40736: don't execute test on DC Slave due to Bug #40785

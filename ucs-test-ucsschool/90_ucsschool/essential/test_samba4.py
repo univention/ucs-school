@@ -166,21 +166,17 @@ class TestSamba4(object):
 		"""
 		print "\nSelecting the School OU for the test"
 
-		sed_stdout = self.sed_for_key(self.get_udm_list_dc_slaves_with_samba4(),
-									  "^DN: ")
+		sed_stdout = self.sed_for_key(self.get_udm_list_dc_slaves_with_samba4(), "^DN: ")
 		if not sed_stdout:
 			utils.fail("Could not find the DN in the udm list output, thus "
 					   "cannot select the School OU to use as a container")
 
 		# select the first School:
-		slave_dn = sed_stdout.split()[0]
-
-		if schoolname_only:
-			# return only the ou='' section of the DN (i.e. school name):
-			return slave_dn[(slave_dn.find("ou=") + 3):slave_dn.find(",dc=")]
-
-		# return the full ou= (with dc):
-		return slave_dn[slave_dn.find("ou="):]
+		ous = [schoolldap.SchoolSearchBase.getOU(x) if schoolname_only else schoolldap.SchoolSearchBase.getOUDN(x) for x in sed_stdout.split()]
+		try:
+			return ous[0]
+		except IndexError:
+			raise ValueError('Could not find OU in list of DNs %r' % (sed_stdout,))
 
 	def get_samba_sam_ldb_path(self):
 		"""
