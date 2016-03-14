@@ -1,3 +1,9 @@
+ucs-school-umc-installer (4.0.0-2) unstable; urgency=medium
+
+  * Bug #40892: fix SSL problems during contacting the DC master
+
+ -- Florian Best <best@univention.de>  Mon, 14 Mar 2016 07:15:26 +0100
+
 ucs-school-umc-installer (3.0.3-1) unstable; urgency=medium
 
   * Bug #37763: fix error message
