@@ -39,7 +39,7 @@ feedback@univention.de
 	</bookinfo>
 
 	<chapter id="changelog:main">
-		<title>&ucsUAS;-Update</title>
+		<title>&ucsUAS; Update</title>
 		<para>
 			Dieses Dokument enthält die Changelogs mit den detaillierten Änderungsinformationen zum Update von &ucsUAS; von Version 4.1 v4 nach 4.1 v5.
 			Sofern notwendig, werden wichtige Hinweise zum Update in einem separaten Abschnitt behandelt. Die Changelogs werden nur in Englisch
