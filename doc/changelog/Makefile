@@ -1,5 +1,5 @@
 #!/usr/bin/make -f
-MAIN := skeleton-errata-changelog
+MAIN := changelog-ucsschool-4.1v5
 STYLESHEET := univention_extdocs
 OPTIONS += --stringparam ulink.show 0
 

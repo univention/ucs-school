@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE book [
+	<!ENTITY % extensions SYSTEM "../stylesheets/macros.ent" >
+	<!ENTITY % DocBookDTD PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+	"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+	<!ENTITY % entities SYSTEM "../stylesheets/macros-de.ent" >
+	%extensions;
+	%DocBookDTD;
+	%entities;
+]>
+<book lang="de" id="errata-changelog-4.1-de">
+
+	<bookinfo>
+ 		<title>UCS@school 4.1 v5 Changelog</title>
+		<subtitle>Changelog für das Update von UCS@school 4.1 v4 nach v5</subtitle>
+		<legalnotice>
+			<literallayout>
+Version 4.1 v5
+Stand: 14. März 2016
+			</literallayout>
+			<literallayout lang="">
+Alle Rechte vorbehalten./ All rights reserved.
+(c) 2002-2016
+Univention GmbH
+Mary-Somerville-Straße 1
+28359 Bremen
+Deutschland
+feedback@univention.de
+			</literallayout>
+			<para>
+				Jede aufgeführte Marke und jedes Warenzeichen steht im Eigentum ihrer jeweiligen eingetragenen Rechtsinhaber.
+				Linux ist ein eingetragenes Warenzeichen von Linus Torvalds.
+			</para>
+			<para lang="en">
+				The mentioned brand names and registered trademarks are owned by the respective legal owners in each case.
+				Linux is a registered trademark of Linus Torvalds.
+			</para>
+		</legalnotice>
+	</bookinfo>
+
+	<chapter id="changelog:main">
+		<title>&ucsUAS;-Update</title>
+		<para>
+			Dieses Dokument enthält die Changelogs mit den detaillierten Änderungsinformationen zum Update von &ucsUAS; von Version 4.1 v4 nach 4.1 v5.
+			Sofern notwendig, werden wichtige Hinweise zum Update in einem separaten Abschnitt behandelt. Die Changelogs werden nur in Englisch
+			gepflegt. Die Änderungsinformationen für vorherige Versionssprünge finden sich unter <ulink	url="https://docs.software-univention.de/"/>.
+		</para>
+
+		<section id="changelog:prepare">
+			<title>Generelle Hinweise zum Update</title>
+			<para>
+				Während der Aktualisierung kann es zu Ausfällen von Diensten innerhalb der Domäne
+				kommen. Aus diesem Grund sollte das Update innerhalb eines Wartungsfensters
+				erfolgen. Grundsätzlich wird empfohlen das Update zunächst in einer Testumgebung
+				einzuspielen und zu testen. Die Testumgebung sollte dabei identisch zur
+				Produktivumgebung sein.
+			</para>
+		</section>
+
+		<section id="changelog:changelogs">
+			<title>Changelog</title>
+
+			<section id="changelog:changelogs:import">
+				<title>Import scripts</title>
+				<itemizedlist>
+					<listitem>
+						<simpara>
+							The script
+							<filename>/usr/share/ucs-school-import/scripts/rename_class</filename> now writes logs the performed actions
+							to the file <filename>/var/log/univention/ucs-school-import.log</filename> (<u:bug>40039</u:bug>)
+						</simpara>
+					</listitem>
+					<listitem>
+						<simpara>
+							The import scripts in <filename
+							class="directory">/usr/share/ucs-school-import/scripts/</filename> are now flushing the output of
+							stdout and stderr before calling hook scripts. This way an interleaved output of the import script
+							and called hook scripts is prevented (<u:bug>40166</u:bug>).
+						</simpara>
+					</listitem>
+					<listitem>
+						<simpara>
+							Starting with erratum 68 for UCS 4.1 the import script
+							<filename>/usr/share/ucs-school-import/scripts/import_user</filename> throwed an exception during
+							user modification. The erratum brought a non-critical code error to light that has been hidden
+							before (<u:bug>40780</u:bug>).
+						</simpara>
+					</listitem>
+				</itemizedlist>
+			</section>
+			<section id="changelog:changelogs:computerroom">
+				<title>UMC computerroom module</title>
+				<itemizedlist>
+					<listitem>
+						<simpara>
+							The action <guimenu>switch on computer</guimenu> was not available if
+							the internal state of at least one selected computer was <emphasis>disconnected</emphasis>. The
+							internal logic has been changed so the action should be available again (<u:bug>40778</u:bug>).
+						</simpara>
+					</listitem>
+					<listitem>
+						<simpara>
+							The internal handling of at jobs has been improved to remove a code
+							execution vulnerability (<u:bug>40354</u:bug>).
+						</simpara>
+					</listitem>
+					<listitem>
+						<simpara>
+							A racing codition has been fixed that could lead to a traceback in the
+							computerroom module (<u:bug>40316</u:bug>).
+						</simpara>
+					</listitem>
+				</itemizedlist>
+			</section>
+			<section id="changelog:changelogs:webproxy">
+				<title>HTTP proxy</title>
+				<itemizedlist>
+					<listitem>
+						<simpara>
+							If the internal in-memory database structures of squidguard get too
+							large, they are backed by files in <filename class="directory">/var/tmp/</filename>. These temporary
+							files were generated quite often and not automatically cleaned up. <package>squidguard</package> and
+							<package>ucs-school-webproxy</package> have been modified, so backing files are now placed in a
+							special directory and cleaned up automatically (<u:bug>40595</u:bug>).
+						</simpara>
+					</listitem>
+				</itemizedlist>
+			</section>
+		</section>
+	</chapter>
+</book>
