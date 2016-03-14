@@ -40,9 +40,9 @@ import tempfile
 import glob
 import subprocess
 import traceback
-import ast
 import urllib
 import filecmp
+from httplib import HTTPException
 
 # related third party
 import notifier
@@ -54,6 +54,7 @@ import paramiko
 # univention
 #from univention.lib import escape_value
 from univention.lib.package_manager import PackageManager
+from univention.lib.umc_connection import UMCConnection
 from univention.management.console.modules import Base
 from univention.management.console.log import MODULE
 from univention.management.console.config import ucr
@@ -119,7 +120,7 @@ def get_ssh_connection(username, password, host):
 def move_slave_into_ou(master, username, password, ou, slave):
 	'''Make sure that the slave object exists in the right OU.'''
 	MODULE.info('Trying to move the slave entry in the right OU structure...''')
-	result = umc(username, password, master, ['schoolwizards/schools/move_dc', '-o', 'schooldc=%s' % slave , '-o', 'schoolou=%s' % ou, '-f', 'schoolwizards/schools'])
+	result = umc(username, password, master, 'schoolwizards/schools/move_dc', {'schooldc': slave , 'schoolou': ou}, 'schoolwizards/schools')
 	if not result.get('success'):
 		MODULE.warn('Could not successfully move the slave DC into its correct OU structure:\n%s' % result.get('message'))
 		return False
@@ -200,38 +201,19 @@ def get_master_dns_lookup():
 
 regUMCResult = re.compile(r'.*^\s*RESULT\s*:\s*(?P<result>.*)', re.MULTILINE | re.DOTALL)
 
-def umc(username, password, master, options = [], requestType='command'):
-	with tempfile.NamedTemporaryFile() as passwordFile:
-		# write password to temp file
-		passwordFile.write('%s' % password)
-		passwordFile.flush()
-
-		# UMC call
-		cmd = ['/usr/sbin/umc-%s' % requestType, '-U', username, '-y', passwordFile.name, '-s', master]
-		cmd += options
-		MODULE.info('Executing: %s' % ' '.join(cmd))
-		process = subprocess.Popen(cmd, shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-		stdout, stderr = process.communicate()
-
-		# parse output
-		match = regUMCResult.match(stdout)
-
-		# check for errors
-		if process.returncode != 0 or not match:
-			# error case... should not happen
-			MODULE.error('Failed to launch UMC query: %s\n%s%s' % (cmd, stderr, stdout))
-			raise RuntimeError(_('Cannot connect to UMC server %s.') % master)
-
-		# parse the result and filter for exact matches (UMC search for '*pattern*')
-		return ast.literal_eval(match.groupdict().get('result'))
+def umc(username, password, master, path='', options=None, flavor=None, command='command'):
+	connection = UMCConnection(master, username, password, error_handler=MODULE.warn)
+	MODULE.info('Executing on %r: %r %r flavor=%r options=%r' % (master, command, path, flavor, options))
+	return connection.request(path or '', options, flavor, command=command)
 
 def get_user_dn(username, password, master):
 	"""Get the LDAP DN for the given username."""
-	result = umc(username, password, master, ['-f', 'users/user', 'udm/query', '-o', 'objectProperty=username', '-o', 'objectPropertyValue=%s' % username ])
-	result = [ ientry for ientry in result if ientry.get('username') == username ]
-	if not result:
-		return None
-	return result[0].get('$dn$')
+	result = umc(username, password, master, 'udm/query', {"objectProperty": "username", "objectPropertyValue": username}, 'users/user')
+	result = [ientry.get('$dn$') for ientry in result if ientry.get('username') == username]
+	try:
+		return result[0]
+	except IndexError:
+		pass
 
 def create_ou_local(ou, displayName):
 	'''Calls create_ou locally as user root (only on master).'''
@@ -254,21 +236,15 @@ def create_ou_local(ou, displayName):
 
 def create_ou_remote(master, username, password, ou, display_name, educational_slave, administrative_slave=None):
 	"""Create a school OU via the UMC interface."""
+	options = {'name' : ou, 'display_name' : display_name, 'dc_name' : educational_slave}
+	if administrative_slave:
+		options['dc_name_administrative'] = administrative_slave
 	try:
-		opts = [{'object' : {'name' : ou, 'display_name' : display_name, 'dc_name' : educational_slave}}]
-		if administrative_slave:
-			opts[0]['object']['dc_name_administrative'] = administrative_slave
-		umc(username, password, master, ['schoolwizards/schools/create', '-e', '-o', repr(opts), '-f', 'schoolwizards/schools'])
-	except RuntimeError:
+		umc(username, password, master, 'schoolwizards/schools/create', [{'object': options}], 'schoolwizards/schools')
+	except (EnvironmentError, HTTPException) as exc:
+		MODULE.error('Failed creating OU: %s' % (exc,))
 		return False
 	return True
-
-def get_ucr_master(username, password, master, *ucrVariables):
-	'''Read the LDAP base from the master system via UMC.'''
-	options = ['ucr', '-l']
-	for ivar in ucrVariables:
-		options += ['-o', ivar]
-	return umc(username, password, master, options, 'get')
 
 def restoreOrigCertificate(certOrigFile):
 	# try to restore the original certificate file
@@ -534,10 +510,10 @@ class Instance(Base):
 
 		# try to query the LDAP base of the master
 		try:
-			ucrMaster = get_ucr_master(username, password, master, 'ldap/base', 'ldap/master/port')
-		except RuntimeError as err:
-			MODULE.warn('Could not query the LDAP base of the master system %s.' % master)
-			return {'success': False, 'error': str(err)}
+			ucrMaster = umc(username, password, master, 'ucr', ['ldap/base', 'ldap/master/port'], command='get')
+		except (EnvironmentError, HTTPException) as exc:
+			MODULE.warn('Could not query the LDAP base of the master system %s: %s' % (master, exc))
+			return {'success': False, 'error': str(exc)}
 
 		values = {'exists': False,
 				  'school': schoolOU,
