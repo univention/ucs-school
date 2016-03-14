@@ -74,14 +74,14 @@ feedback@univention.de
 						<simpara>
 							The import scripts in <filename
 							class="directory">/usr/share/ucs-school-import/scripts/</filename> are now flushing the output of
-							stdout and stderr before calling hook scripts. This way an interleaved output of the import script
-							and called hook scripts is prevented (<u:bug>40166</u:bug>).
+							<literal>stdout</literal> and <literal>stderr</literal> before calling hook scripts. This way an
+							interleaved output of the import script and called hook scripts is prevented (<u:bug>40166</u:bug>).
 						</simpara>
 					</listitem>
 					<listitem>
 						<simpara>
 							Starting with erratum 68 for UCS 4.1 the import script
-							<filename>/usr/share/ucs-school-import/scripts/import_user</filename> throwed an exception during
+							<filename>/usr/share/ucs-school-import/scripts/import_user</filename> threw an exception during
 							user modification. The erratum brought a non-critical code error to light that has been hidden
 							before (<u:bug>40780</u:bug>).
 						</simpara>
@@ -106,7 +106,7 @@ feedback@univention.de
 					</listitem>
 					<listitem>
 						<simpara>
-							A racing codition has been fixed that could lead to a traceback in the
+							A racing condition has been fixed that could lead to a traceback in the
 							computerroom module (<u:bug>40316</u:bug>).
 						</simpara>
 					</listitem>
@@ -117,7 +117,7 @@ feedback@univention.de
 				<itemizedlist>
 					<listitem>
 						<simpara>
-							If the internal in-memory database structures of squidguard get too
+							If the internal in-memory database structures of <package>squidguard</package> get too
 							large, they are backed by files in <filename class="directory">/var/tmp/</filename>. These temporary
 							files were generated quite often and not automatically cleaned up. <package>squidguard</package> and
 							<package>ucs-school-webproxy</package> have been modified, so backing files are now placed in a
