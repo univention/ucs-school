@@ -1,4 +1,4 @@
-ucs-school-umc-installer (4.0.0-2) unstable; urgency=medium
+ucs-school-umc-installer (3.0.3-2) unstable; urgency=medium
 
   * Bug #40892: fix SSL problems during contacting the DC master
 
