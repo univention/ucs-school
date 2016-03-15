@@ -104,12 +104,6 @@ feedback@univention.de
 							execution vulnerability (<u:bug>40354</u:bug>).
 						</simpara>
 					</listitem>
-					<listitem>
-						<simpara>
-							A racing condition has been fixed that could lead to a traceback in the
-							computerroom module (<u:bug>40316</u:bug>).
-						</simpara>
-					</listitem>
 				</itemizedlist>
 			</section>
 			<section id="changelog:changelogs:webproxy">
