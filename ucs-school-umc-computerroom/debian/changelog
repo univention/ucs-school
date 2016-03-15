@@ -1,3 +1,10 @@
+ucs-school-umc-computerroom (7.0.5-1) unstable; urgency=low
+
+  * revert of "Bug #40316: prevent segfault" as it caused segfaults during
+    computerroom/room/acquire
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Tue, 15 Mar 2016 14:56:18 +0100
+
 ucs-school-umc-computerroom (7.0.4-1) unstable; urgency=low
 
   * Bug #40778: fixed logic of menu item "switch on computer"

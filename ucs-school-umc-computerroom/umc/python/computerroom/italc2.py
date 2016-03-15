@@ -37,7 +37,6 @@ import subprocess
 import tempfile
 import threading
 import time
-import ldap.filter
 
 from univention.management.console.config import ucr
 
@@ -111,7 +110,7 @@ class UserMap( dict ):
 		# create search base for current school
 		search_base = SchoolSearchBase( search_base.availableSchools, ITALC_Manager.SCHOOL )
 
-		result = udm_modules.lookup( UserMap.UDM_USERS, None, ldap_user_read, filter = 'uid=%s' % ldap.filter.escape_filter_chars(username), scope = 'sub', base = search_base.users )
+		result = udm_modules.lookup( UserMap.UDM_USERS, None, ldap_user_read, filter = 'uid=%s' % username, scope = 'sub', base = search_base.users )
 		if not result:
 			MODULE.info( 'Unknown user "%s"' % username )
 			dict.__setitem__( self, userstr, UserInfo( '', '' ) )
@@ -196,6 +195,7 @@ class ITALC_Computer( notifier.signals.Provider, QObject ):
 
 	def __init__( self, ldap_dn = None ):
 		QObject.__init__( self )
+		# notifier.threads.Enhanced.__init__( self, None, None )
 		notifier.signals.Provider.__init__( self )
 
 		self.signal_new( 'connected' )
@@ -317,10 +317,6 @@ class ITALC_Computer( notifier.signals.Provider, QObject ):
 		self._emit_flag( diff, italc.ItalcCore.SystemTrayIconRunning, 'system-tray-icon' )
 
 	def update( self ):
-		if self._timer is None or self._vnc is None:
-			# when switching rooms very fast and a old timer still exists but the connection is
-			# no anymore established this function will end in a segfault; Bug #40316
-			return
 		if self._state.current != 'connected':
 			MODULE.info( '%s is currently not connected' % self.ipAddress )
 			return True
@@ -343,7 +339,6 @@ class ITALC_Computer( notifier.signals.Provider, QObject ):
 	def start( self ):
 		self.stop()
 		self._resetUserInfoTimeout()
-		self._timer = 1  # dummy value for update()
 		self.update()
 		self._timer = notifier.timer_add( ITALC_CORE_UPDATE * 1000, self.update )
 

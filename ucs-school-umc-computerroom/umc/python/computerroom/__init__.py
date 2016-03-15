@@ -342,7 +342,6 @@ class Instance(SchoolBaseModule):
 			success = False
 			message = 'WRONG_SCHOOL'
 			_finished()
-			return
 
 		# set room and school
 		if self._italc.school != school:
