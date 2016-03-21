@@ -1,0 +1,10 @@
+product: ucsschool
+release: "3.2"
+version: [r2]
+scope: ucs_3.2-0-ucs-school-3.2r2
+src: 
+fix: 
+desc: |
+ This update addresses the following issue(s):
+ * 
+bug: []
