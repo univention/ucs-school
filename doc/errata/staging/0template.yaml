@@ -1,0 +1,10 @@
+product: ucsschool
+release: "4.0"
+version: [r2]
+scope: ucs_4.0-0-ucs-school-4.0r2
+src: 
+fix: 
+desc: |
+ This update addresses the following issue(s):
+ * 
+bug: []
