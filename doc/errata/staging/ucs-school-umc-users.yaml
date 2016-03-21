@@ -1,0 +1,11 @@
+product: ucsschool
+release: "4.1"
+version: [1]
+scope: ucs_4.1-0-ucs-school-4.1
+src: ucs-school-umc-users
+fix: 11.0.2-1.33.201602121458
+desc: |
+ This update addresses the following issue(s):
+ * The autosearch can now be disabled via the UCR variable
+   ucsschool/passwordreset/autosearch.
+bug: [36031]

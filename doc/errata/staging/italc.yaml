@@ -1,0 +1,11 @@
+product: ucsschool
+release: "4.1"
+version: [1]
+scope: ucs_4.1-0-ucs-school-4.1
+src: italc
+fix: 2:2.0.25-5.84.201601261449
+desc: |
+ This update addresses the following issue(s):
+ * iTalc has been updated to 2.0-2.
+ * The build dependencies have been adjusted.
+bug: [38213, 39593]

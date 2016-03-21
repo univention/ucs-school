@@ -1,0 +1,13 @@
+product: ucsschool
+release: "4.1"
+version: [1]
+scope: ucs_4.1-0-ucs-school-4.1
+src: ucs-school-umc-groups
+fix: 5.0.1-1.75.201602121459
+desc: |
+ This update addresses the following issue(s):
+ * The autosearch can now be disabled via the UCR variables
+   ucsschool/assign-teacher/autosearch,
+   ucsschool/assign-classes/autosearch and
+   ucsschool/workgroups/autosearch.
+bug: [36031]

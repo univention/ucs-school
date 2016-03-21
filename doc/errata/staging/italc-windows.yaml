@@ -1,0 +1,12 @@
+product: ucsschool
+release: "4.1"
+version: [1]
+scope: ucs_4.1-0-ucs-school-4.1
+src: italc-windows
+fix: 3.0.0-1.4.201510141539
+desc: |
+ This update addresses the following issue(s):
+ * iTalc has been updated to 2.0-2.
+ * The iTalc installer doesn't show an option to install the iTalc Master GUI
+   anymore.
+bug: [38415, 38221]
