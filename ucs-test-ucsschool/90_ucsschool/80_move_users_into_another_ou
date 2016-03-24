@@ -1,0 +1,54 @@
+#!/usr/share/ucs-test/runner python
+## desc: move user into another school
+## roles: [domaincontroller_master, domaincontroller_slave]
+## tags: [apptest, ucsschool]
+## exposure: dangerous
+
+from univention.testing.ucsschool import UCSTestSchool
+from univention.testing.ucr import UCSTestConfigRegistry
+from univention.testing import utils
+from ucsschool.lib.models import User
+
+
+def main():
+	with UCSTestSchool() as env, UCSTestConfigRegistry() as ucr:
+		a, a_dn = env.create_ou(name_edudc=ucr.get('hostname'))
+		b, b_dn = env.create_ou(name_edudc=ucr.get('hostname'))
+
+		# TODO: create some classes, workgroups, put into one global group, add exam user
+		# TODO: create classes which doesn't exists on school b
+		# TODO: change school and uid at once!
+		# TODO: user without classes
+
+		cn_pupils = ucr.get('ucsschool/ldap/default/container/pupils', 'schueler')
+		cn_teachers = ucr.get('ucsschool/ldap/default/container/teachers', 'lehrer')
+		#cn_teachers_staff = ucr.get('ucsschool/ldap/default/container/teachers-and-staff', 'lehrer und mitarbeiter')
+		#cn_admins = ucr.get('ucsschool/ldap/default/container/admins', 'admins')
+		cn_staff = ucr.get('ucsschool/ldap/default/container/staff', 'mitarbeiter')
+
+		users = [
+			(env.create_user(a), cn_pupils), # student
+			(env.create_user(a), cn_pupils), # student with exam
+			(env.create_user(a, is_teacher=True), cn_teachers),
+			(env.create_user(a, is_staff=True), cn_staff),
+			(env.create_user(a, is_teacher=True, is_staff=True), cn_teachers),
+		]
+		lo = env.open_ldap_connection()
+		for (user, dn), roleshare_path, in users:
+			user = User.from_dn(dn, a, lo)
+			user.custom_dn = None
+			user.school = b
+			user.move(lo)
+			assert user.dn != dn
+			assert b in user.dn
+			attrs = {
+				'homeDirectory': ['/home/%s/%s/%s' % (b, roleshare_path, user.name)],
+				'departmentNumber': [b],
+				# TODO: add sambaHomeDrive sambaHomePath sambaLogonScript sambaProfilePath
+			}
+			utils.verify_ldap_object(user.dn, expected_attr=attrs, strict=True, should_exist=True)
+			# TODO: check groups, workgroups, classes
+
+
+if __name__ == '__main__':
+	main()

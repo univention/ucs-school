@@ -1,3 +1,9 @@
+ucs-test-ucsschool (3.0.5-25) unstable; urgency=medium
+
+  * Bug #40870: add skeleton 80_move_users_into_another_ou
+
+ -- Florian Best <best@univention.de>  Thu, 24 Mar 2016 09:12:43 +0100
+
 ucs-test-ucsschool (3.0.5-24) unstable; urgency=medium
 
   * Bug #40809: fix DN detection
