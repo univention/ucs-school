@@ -31,6 +31,7 @@
 # <http://www.gnu.org/licenses/>.
 
 import os.path
+import re
 
 from ldap.filter import escape_filter_chars
 
@@ -39,10 +40,14 @@ from ucsschool.lib.models.utils import create_passwd
 from ucsschool.lib.models.attributes import Username, Firstname, Lastname, Birthday, Email, Password, Disabled, SchoolClassStringAttribute
 from ucsschool.lib.models.base import UCSSchoolHelperAbstractClass
 from ucsschool.lib.models.school import School
-from ucsschool.lib.models.group import Group, SchoolClass
+from ucsschool.lib.models.group import Group, BasicGroup, SchoolClass, WorkGroup
 from ucsschool.lib.models.computer import AnyComputer
 from ucsschool.lib.models.misc import MailDomain
 from ucsschool.lib.models.utils import ucr, _, logger
+
+from univention.admin.uexceptions import noObject
+from ldap.dn import escape_dn_chars, explode_dn
+
 
 class User(UCSSchoolHelperAbstractClass):
 	name = Username(_('Username'), aka=['Username', 'Benutzername'])
@@ -225,6 +230,74 @@ class User(UCSSchoolHelperAbstractClass):
 				udm_obj['groups'].append(group_dn)
 		return super(User, self).do_modify(udm_obj, lo)
 
+	def do_school_change(self, udm_obj, lo, old_school):
+		super(User, self).do_school_change(udm_obj, lo, old_school)
+		school = self.school
+
+		schoolprefix = re.compile('^%s-' % (re.escape(old_school),))
+
+		for groupdn in udm_obj['groups'][:]:
+			cls = None
+			if Group.is_school_class(old_school, groupdn):
+				cls = SchoolClass
+			elif Group.is_school_workgroup(old_school, groupdn):
+				cls = WorkGroup
+			elif Group.is_school_group(old_school, groupdn):
+				cls = BasicGroup
+			if cls is None:
+				logger.info('Not touching group %r' % (groupdn,))
+				continue
+			# create the class/workgroup in the other school if not exists. put user into it.
+			oldgroup = cls.from_dn(groupdn, old_school, lo)
+			oldgroup.school = school
+			if cls is SchoolClass:
+				oldgroup.name = schoolprefix.sub('%s-' % school, oldgroup.name)
+			oldgroup.custom_dn = None  # FIXME: remove when from_dn() is fixed
+			try:
+				group = cls.from_dn(oldgroup.dn, school, lo)
+			except noObject:
+				logger.info('No group %r found.' % (oldgroup.dn,))
+				group = cls(oldgroup.name, school, users=[self.dn])
+				group.create(lo)
+			else:
+				logger.info('Appending %r to %r' % (self.dn, group.dn))
+				group.users.append(self.dn)
+				group.modify(lo)
+
+			# remove this user from the classes/workgroups of the old school
+			oldgroup = cls.from_dn(groupdn, old_school, lo)
+			if self.dn in oldgroup.users:
+				logger.info('Removing %r from %r' % (self.dn, oldgroup.dn))
+				oldgroup.users.remove(self.dn)
+				oldgroup.modify(lo)
+
+		self._udm_obj_searched = False
+		if self.school_class:
+			self.school_class = ','.join(schoolprefix.sub('%s-' % school, x) for x in self.school_class.split(','))
+		udm_obj = self.get_udm_object(lo)
+		udm_obj['primaryGroup'] = self.primary_group_dn(lo)
+		groups = set(udm_obj['groups'])
+		at_least_groups = set(self.groups_used(lo))
+		if (groups | at_least_groups) != groups:
+			udm_obj['groups'] = list(groups | at_least_groups)
+		subdir = self.get_roleshare_home_subdir()
+		udm_obj['unixhome'] = '/home/' + os.path.join(subdir, self.name)
+		samba_home = self.get_samba_home_path(lo)
+		if samba_home:
+			udm_obj['sambahome'] = samba_home
+		profile_path = self.get_profile_path(lo)
+		if profile_path:
+			udm_obj['profilepath'] = profile_path
+		home_drive = self.get_samba_home_drive()
+		if home_drive is not None:
+			udm_obj['homedrive'] = home_drive
+		script_path = self.get_samba_netlogon_script_path()
+		if script_path is not None:
+			udm_obj['scriptpath'] = script_path
+		if udm_obj['departmentNumber'] == old_school:
+			udm_obj['departmentNumber'] = school
+		udm_obj.modify(ignore_license=True)
+
 	def _alter_udm_obj(self, udm_obj):
 		if self.email is not None:
 			udm_obj['e-mail'] = self.email
@@ -369,13 +442,26 @@ class User(UCSSchoolHelperAbstractClass):
 	class Meta:
 		udm_module = 'users/user'
 		name_is_unique = True
-		allow_school_change = False # code _should_ be able to handle it
+		allow_school_change = True
 
 class Student(User):
 	school_class = SchoolClassStringAttribute(_('Class'), aka=['Class', 'Klasse'])
 
 	type_name = _('Student')
 	roles = [role_pupil]
+
+	def do_school_change(self, udm_obj, lo, old_school):
+		examUserPrefix = ucr.get('ucsschool/ldap/default/userprefix/exam', 'exam-')
+		dn = 'uid=%s%s,%s' % (escape_dn_chars(examUserPrefix), explode_dn(self.old_dn, True)[0], self.get_exam_container(old_school))
+		try:
+			exam = User.from_dn(dn, old_school, lo)
+		except noObject:
+			logger.info('No exam user %r found' % (dn,))
+		else:
+			logger.info('Removing exam user %r' % (dn,))
+			exam.remove(lo)
+
+		super(Student, self).do_school_change(udm_obj, lo, old_school)
 
 	@classmethod
 	def from_udm_obj(cls, udm_obj, school, lo):
@@ -393,6 +479,10 @@ class Student(User):
 	@classmethod
 	def get_container(cls, school):
 		return cls.get_search_base(school).students
+
+	@classmethod
+	def get_exam_container(cls, school):
+		return cls.get_search_base(school).examUsers
 
 	def get_specific_groups(self, lo):
 		groups = super(Student, self).get_specific_groups(lo)

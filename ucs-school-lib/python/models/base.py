@@ -138,11 +138,11 @@ class UCSSchoolHelperAbstractClass(object):
 	    for the instance's name before continuing.
 	    validate() can be further customized.
 	  * Hooks:
-	    Before create, modify and remove, hooks are called if build_hook_line()
+	    Before create, modify, move and remove, hooks are called if build_hook_line()
 	    returns something. If the operation was successful, another set of hooks
 	    are called.
 	    All scripts in
-	    /usr/share/ucs-school-import/hooks/%(module)s_{create|modify|remove}_{pre|post}.d/
+	    /usr/share/ucs-school-import/hooks/%(module)s_{create|modify|move|remove}_{pre|post}.d/
 	    are called with the name of a temporary file containing the hook_line via run-parts.
 	    %(module)s is 'ucc' for cls._meta.udm_module == 'computers/ucc' by default and
 	    can be explicitely set with
@@ -288,6 +288,8 @@ class UCSSchoolHelperAbstractClass(object):
 		return self.get_udm_object(lo) is not None
 
 	def exists_outside_school(self, lo):
+		if not self.supports_school():
+			return False
 		from ucsschool.lib.models.school import School
 		udm_obj = self.get_udm_object(lo)
 		if udm_obj is None:
@@ -448,7 +450,7 @@ class UCSSchoolHelperAbstractClass(object):
 			same = old_attrs == udm_obj.info
 			if move_if_necessary:
 				if udm_obj.dn != self.dn:
-					if self.move(lo, udm_obj, force=True):
+					if self.move_without_hooks(lo, udm_obj, force=True):
 						same = False
 			if same:
 				logger.info('%r not modified. Nothing changed' % self)
@@ -470,24 +472,43 @@ class UCSSchoolHelperAbstractClass(object):
 		udm_obj.modify(ignore_license=1)
 
 	def move(self, lo, udm_obj=None, force=False):
+		self.call_hooks('pre', 'move')
+		success = self.move_without_hooks(lo, udm_obj, force)
+		if success:
+			self.call_hooks('post', 'move')
+		return success
+
+	def move_without_hooks(self, lo, udm_obj, force=False):
 		if udm_obj is None:
 			udm_obj = self.get_udm_object(lo)
 		if udm_obj is None:
 			logger.warning('No UDM object found to move from (%r)' % self)
 			return False
+		if self.supports_school() and self.get_school_obj(lo) is None:
+			logger.warn('%r wants to move itself to a not existing school' % (self,))
+			return False
 		logger.info('Moving %r to %r' % (udm_obj.dn, self))
 		if udm_obj.dn == self.dn:
-			logger.warning('%r wants to move to its own DN!' % self)
+			logger.warning('%r wants to move to its own DN!' % (self,))
 			return False
 		if force or self._meta.allow_school_change:
 			try:
-				udm_obj.move(self.dn, ignore_license=1)
+				self.do_move(udm_obj, lo)
 			finally:
 				self.invalidate_cache()
-			return True
 		else:
 			logger.warning('Would like to move %s to %r. But it is not allowed!' % (udm_obj.dn, self))
 			return False
+		return True
+
+	def do_move(self, udm_obj, lo):
+		udm_obj.move(self.dn, ignore_license=1)
+		old_school, new_school = SchoolSearchBase.getOU(self.old_dn), SchoolSearchBase.getOU(self.dn)
+		if self.supports_school() and old_school and old_school != new_school:
+			self.do_school_change(udm_obj, lo, old_school)
+
+	def do_school_change(self, udm_obj, lo, old_school):
+		logger.info('Going to move %r from school %r to %r' % (self.old_dn, self.school, old_school))
 
 	def remove(self, lo):
 		'''
@@ -603,7 +624,7 @@ class UCSSchoolHelperAbstractClass(object):
 	def get_container(cls, school):
 		'''raises NotImplementedError by default. Needs to be overridden!
 		'''
-		raise NotImplementedError()
+		raise NotImplementedError('%s.get_container()' % (cls.__name__,))
 
 	@classmethod
 	def get_search_base(cls, school_name):
@@ -751,7 +772,7 @@ class UCSSchoolHelperAbstractClass(object):
 			raise noObject('Wrong objectClass')
 		obj = cls.from_udm_obj(udm_obj, school, lo)
 		if obj:
-			obj.custom_dn = dn
+			obj.custom_dn = dn  # FIXME: this breaks some things. we better have to set old_dn!
 			return obj
 
 	@classmethod
@@ -810,6 +831,8 @@ class UCSSchoolHelperAbstractClass(object):
 			return 'M'
 		elif func_name == 'remove':
 			return 'D'
+		elif func_name == 'move':
+			return 'MV'
 
 	def _build_hook_line(self, *args):
 		attrs = []

@@ -120,6 +120,7 @@ class Group(UCSSchoolHelperAbstractClass):
 class BasicGroup(Group):
 	school = None
 	container = Attribute(_('Container'), required=True)
+	users = Users(_('Users'))
 
 	def __init__(self, name=None, school=None, **kwargs):
 		if 'container' not in kwargs:
@@ -203,6 +204,7 @@ class SchoolClass(Group, _MayHaveSchoolPrefix):
 
 class WorkGroup(SchoolClass, _MayHaveSchoolPrefix):
 
+	users = Users(_('Users'))
 	ShareClass = Share
 
 	@classmethod

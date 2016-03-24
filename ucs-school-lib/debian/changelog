@@ -1,3 +1,9 @@
+ucs-school-lib (8.0.3-1) unstable; urgency=medium
+
+  * Bug #40870: support to change the school of a user
+
+ -- Florian Best <best@univention.de>  Thu, 24 Mar 2016 08:59:27 +0100
+
 ucs-school-lib (8.0.2-1) unstable; urgency=medium
 
   * Bug #40537: fix renaming of class share when renaming a school class

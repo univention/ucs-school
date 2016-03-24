@@ -88,7 +88,7 @@ class SchoolDCSlave(SchoolDC):
 					udm_obj['groups'].append(group)
 		return super(SchoolDCSlave, self)._alter_udm_obj(udm_obj)
 
-	def move(self, lo, udm_obj=None, force=False):
+	def move_without_hooks(self, lo, udm_obj=None, force=False):
 		try:
 			if udm_obj is None:
 				try:
@@ -141,6 +141,7 @@ class SchoolDCSlave(SchoolDC):
 			logger.warning('The DC Slave has to be rejoined into the domain!')
 		finally:
 			self.invalidate_cache()
+		return True
 
 	class Meta:
 		udm_module = 'computers/domaincontroller_slave'
