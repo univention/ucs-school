@@ -38,15 +38,13 @@ eval "$(ucr shell)"
 
 if [ $JS_LAST_EXECUTED_VERSION -lt 1 ]; then
 	# create policy container if missing
-	univention-directory-manager container/cn create "$@" --ignore_exists --position "cn=policies,$ldap_base" --set name=UMC --set policyPath=1
-	if [ $? != 0 ]; then exit 1; fi
+	univention-directory-manager container/cn create "$@" --ignore_exists --position "cn=policies,$ldap_base" --set name=UMC --set policyPath=1 || die
 
 	# create empty UMC access policies if missing
 	for policyname in ucsschool-umc-pupils-default ucsschool-umc-teachers-default ucsschool-umc-staff-default ucsschool-umc-admins-default ; do
 	 	univention-directory-manager policies/umc create "$@" --ignore_exists \
 	 			--position cn=UMC,cn=policies,"$ldap_base" \
-	 			--set name="${policyname}"
-	 	if [ $? != 0 ]; then exit 1; fi
+	 			--set name="${policyname}" || die
 	done
 fi
 
@@ -58,8 +56,7 @@ univention-directory-manager settings/service  create "$@" --ignore_exists --set
 univention-directory-manager container/cn create "$@" --ignore_exists \
 	--position="cn=custom attributes,cn=univention,$ldap_base" \
 	--set name="UCSschool" \
-	--set description="Attributes for UCS@school configuration"
-if [ $? != 0 ]; then exit 1; fi
+	--set description="Attributes for UCS@school configuration" || die
 
 univention-directory-manager settings/extended_options create "$@" --ignore_exists \
 	--position "cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
@@ -71,8 +68,7 @@ univention-directory-manager settings/extended_options create "$@" --ignore_exis
 	--set shortDescription="UCS@school Organizational Unit" \
 	--set longDescription="Specifies that this Organizational Unit is a UCS@school OU" \
 	--set translationShortDescription='"de_DE" "UCS@school Organisationseinheit"' \
-	--set translationLongDescription='"de_DE" "Spezifiziert, dass die Organisationseinheit eine UCS@school OU ist"'
-if [ $? != 0 ]; then exit 1; fi
+	--set translationLongDescription='"de_DE" "Spezifiziert, dass die Organisationseinheit eine UCS@school OU ist"' || die
 
 univention-directory-manager settings/extended_attribute create "$@" --ignore_exists \
 	--position "cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
@@ -94,8 +90,7 @@ univention-directory-manager settings/extended_attribute create "$@" --ignore_ex
 	--set syntax=UCSSchool_Server_DN \
 	--set mayChange=1 \
 	--set ldapMapping=ucsschoolHomeShareFileServer \
-	--set multivalue=0
-if [ $? != 0 ]; then exit 1; fi
+	--set multivalue=0 || die
 
 univention-directory-manager settings/extended_attribute create "$@" --ignore_exists \
 	--position "cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
@@ -117,8 +112,7 @@ univention-directory-manager settings/extended_attribute create "$@" --ignore_ex
 	--set syntax=UCSSchool_Server_DN \
 	--set mayChange=1 \
 	--set ldapMapping=ucsschoolClassShareFileServer \
-	--set multivalue=0
-if [ $? != 0 ]; then exit 1; fi
+	--set multivalue=0 || die
 
 univention-directory-manager settings/extended_attribute create "$@" --ignore_exists \
 	--position "cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
@@ -139,8 +133,84 @@ univention-directory-manager settings/extended_attribute create "$@" --ignore_ex
 	--set syntax=string \
 	--set mayChange=1 \
 	--set ldapMapping=displayName \
-	--set multivalue=0
-if [ $? != 0 ]; then exit 1; fi
+	--set multivalue=0 || die
+
+univention-directory-manager settings/extended_options create "$@" --ignore_exists \
+	--position "cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
+	--set name="ucsschoolStudent" \
+	--append module=users/user \
+	--append module=settings/usertemplate \
+	--set objectClass=ucsschoolStudent \
+	--set default=0 \
+	--set editable=1 \
+	--set shortDescription="UCS@school Student" \
+	--set longDescription="Specifies that this user is a UCS@school student" \
+	--set translationShortDescription='"de_DE" "UCS@school Schüler"' \
+	--set translationLongDescription='"de_DE" "Spezifiziert, dass dieser Benutzer ein UCS@school Schüler ist"' || die
+
+univention-directory-manager settings/extended_options create "$@" --ignore_exists \
+	--position "cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
+	--set name="ucsschoolTeacher" \
+	--append module=users/user \
+	--append module=settings/usertemplate \
+	--set objectClass=ucsschoolTeacher \
+	--set default=0 \
+	--set editable=1 \
+	--set shortDescription="UCS@school Teacher" \
+	--set longDescription="Specifies that this user is a UCS@school teacher" \
+	--set translationShortDescription='"de_DE" "UCS@school Lehrer"' \
+	--set translationLongDescription='"de_DE" "Spezifiziert, dass dieser Benutzer ein UCS@school Lehrer ist"' || die
+
+univention-directory-manager settings/extended_options create "$@" --ignore_exists \
+	--position "cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
+	--set name="ucsschoolStaff" \
+	--append module=users/user \
+	--append module=settings/usertemplate \
+	--set objectClass=ucsschoolStaff \
+	--set default=0 \
+	--set editable=1 \
+	--set shortDescription="UCS@school Staff" \
+	--set longDescription="Specifies that this user is a UCS@school staff" \
+	--set translationShortDescription='"de_DE" "UCS@school Mitarbeiter"' \
+	--set translationLongDescription='"de_DE" "Spezifiziert, dass dieser Benutzer ein UCS@school Mitarbeiter ist"' || die
+
+univention-directory-manager settings/extended_options create "$@" --ignore_exists \
+	--position "cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
+	--set name="ucsschoolAdministrator" \
+	--append module=users/user \
+	--append module=settings/usertemplate \
+	--set objectClass=ucsschoolAdministrator \
+	--set default=0 \
+	--set editable=1 \
+	--set shortDescription="UCS@school Administrator" \
+	--set longDescription="Specifies that this user is a UCS@school Administrator" \
+	--set translationShortDescription='"de_DE" "UCS@school Administrator"' \
+	--set translationLongDescription='"de_DE" "Spezifiziert, dass dieser Benutzer ein UCS@school Administrator ist"' || die
+
+univention-directory-manager settings/extended_attribute create "$@" --ignore_exists \
+	--position "cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
+	--set name="UCSschool-Schools" \
+	--append module=users/user \
+	--append module=settings/usertemplate \
+	--append options="ucsschoolStudent" \
+	--append options="ucsschoolTeacher" \
+	--append options="ucsschoolStaff" \
+	--append options="ucsschoolAdministrator" \
+	--set tabName="UCS@school" \
+	--set tabPosition=4 \
+	--set groupName="General" \
+	--set groupPosition="1" \
+	--set translationGroupName='"de_DE" "Allgemein"' \
+	--set shortDescription="Schools" \
+	--set longDescription="List of school OU names that this user belongs to." \
+	--set translationShortDescription='"de_DE" "Schulen"' \
+	--set translationLongDescription='"de_DE" "Liste der zugehörigen Schul-OU-Namen dieses Benutzers."' \
+	--set CLIName="school" \
+	--set objectClass=ucsschoolUser \
+	--set ldapMapping=ucsschoolSchool \
+	--set syntax=string \
+	--set mayChange=1 \
+	--set multivalue=1 || die
 
 if [ $JS_LAST_EXECUTED_VERSION -lt 6 ]; then
 	# append UCSschool-School-OU option to Home/ClassShareServer
@@ -149,8 +219,7 @@ if [ $JS_LAST_EXECUTED_VERSION -lt 6 ]; then
 		univention-directory-manager settings/extended_attribute modify "$@" \
 			--dn "$dn" \
 			--set hook="schoolOU" \
-			--append options="UCSschool-School-OU"
-		if [ $? != 0 ]; then exit 1; fi
+			--append options="UCSschool-School-OU" || die
 	done
 fi
 
@@ -160,8 +229,7 @@ if [ $JS_LAST_EXECUTED_VERSION -lt 7 ] ; then
 		"cn=UCSschool-School-ClassShareFileServer,cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base"; do
 		univention-directory-manager settings/extended_attribute modify "$@" \
 			--dn "$dn" \
-			--set groupPosition="2"
-		if [ $? != 0 ]; then exit 1; fi
+			--set groupPosition="2" || die
 	done
 fi
 

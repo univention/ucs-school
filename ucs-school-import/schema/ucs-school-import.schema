@@ -6,6 +6,35 @@
 #
 # Univention UCS@School Import OID Prefix: 1.3.6.1.4.1.10176.4000.2
 #
+objectIdentifier univentionSchool 1.3.6.1.4.1.10176.4000.2
+
+attributetype ( univentionSchool:53.0
+        NAME 'ucsschoolSchool'
+        DESC 'school OUs the user belongs to'
+        EQUALITY caseIgnoreMatch
+        SUBSTR caseIgnoreSubstringsMatch
+        SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+
+objectclass ( univentionSchool:53 NAME 'ucsschoolType'
+       DESC 'Role of user or object in UCS@school context'
+       ABSTRACT
+       MAY ( ucsschoolSchool ) )
+
+objectclass ( univentionSchool:53.1 NAME 'ucsschoolTeacher'
+        DESC 'auxiliary class for teachers'
+        SUP ucsschoolType AUXILIARY )
+
+objectclass ( univentionSchool:53.2 NAME 'ucsschoolStudent'
+        DESC 'auxiliary class for students'
+        SUP ucsschoolType AUXILIARY )
+
+objectclass ( univentionSchool:53.3 NAME 'ucsschoolAdministrator'
+        DESC 'auxiliary class for administrators'
+        SUP ucsschoolType AUXILIARY )
+
+objectclass ( univentionSchool:53.4 NAME 'ucsschoolStaff'
+        DESC 'auxiliary class for staff users'
+        SUP ucsschoolType AUXILIARY )
 
 attributetype ( 1.3.6.1.4.1.10176.99999.2.5001
         NAME 'univentionAbordnungMasterDn'
@@ -20,25 +49,25 @@ objectclass ( 1.3.6.1.4.1.10176.99999.2.50 NAME 'univentionAbordnung'
         SUP top AUXILIARY
         MAY ( univentionAbordnungMasterDn ) )
 
-attributetype ( 1.3.6.1.4.1.10176.4000.2.5101
+attributetype ( univentionSchool:5101
         NAME 'ucsschoolRole'
         DESC 'Role of user in ucs@school context (e.g. teacher, administration)'
         EQUALITY caseIgnoreMatch
         SUBSTR caseIgnoreSubstringsMatch
         SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
 
-objectclass ( 1.3.6.1.4.1.10176.4000.2.51 NAME 'univentionUcsSchoolUser'
+objectclass ( univentionSchool:51 NAME 'univentionUcsSchoolUser'
         DESC 'Role of user in ucs@school context (e.g. teacher, administration)'
         SUP top AUXILIARY
         MAY ( ucsschoolRole ) )
 
-attributetype ( 1.3.6.1.4.1.10176.4000.2.5201 NAME 'ucsschoolClassShareFileServer'
+attributetype ( univentionSchool:5201 NAME 'ucsschoolClassShareFileServer'
         DESC 'designated fileserver for class shares'
         EQUALITY distinguishedNameMatch
         SUBSTR caseIgnoreSubstringsMatch
         SYNTAX 1.3.6.1.4.1.1466.115.121.1.12 )
 
-attributetype ( 1.3.6.1.4.1.10176.4000.2.5202 NAME 'ucsschoolHomeShareFileServer'
+attributetype ( univentionSchool:5202 NAME 'ucsschoolHomeShareFileServer'
         DESC 'designated fileserver for home shares'
         EQUALITY caseIgnoreMatch
         SUBSTR caseIgnoreSubstringsMatch
@@ -46,8 +75,7 @@ attributetype ( 1.3.6.1.4.1.10176.4000.2.5202 NAME 'ucsschoolHomeShareFileServer
 
 # SUP organizationalUnit
 
-objectclass ( 1.3.6.1.4.1.10176.4000.2.52 NAME 'ucsschoolOrganizationalUnit'
+objectclass ( univentionSchool:52 NAME 'ucsschoolOrganizationalUnit'
         DESC 'auxiliary class for class shares'
         AUXILIARY
         MAY ( ucsschoolClassShareFileServer $ ucsschoolHomeShareFileServer $ displayName ) )
-
