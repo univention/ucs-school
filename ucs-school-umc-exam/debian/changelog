@@ -1,3 +1,9 @@
+ucs-school-umc-exam (6.0.0-1) unstable; urgency=medium
+
+  * Bug #41112: remove exam computers from exam group
+
+ -- Florian Best <best@univention.de>  Tue, 26 Apr 2016 10:42:04 +0200
+
 ucs-school-umc-exam (5.0.4-1) unstable; urgency=medium
 
   * Bug #40712: fix last commit

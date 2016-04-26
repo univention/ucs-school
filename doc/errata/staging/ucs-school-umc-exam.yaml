@@ -8,4 +8,5 @@ desc: |
  This update addresses the following issue(s):
  * A regression (due to Bug #40712) during evaluating boolean UCR variables has
    been fixed.
-bug: [40712]
+ * Computers are removed from group object after stopping an exam.
+bug: [40712, 41112]
