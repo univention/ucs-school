@@ -38,16 +38,15 @@ import tempfile
 import threading
 import time
 
-from univention.management.console.config import ucr
-
 from univention.lib.i18n import Translation
 from univention.management.console.log import MODULE
+from univention.management.console.config import ucr
 
-import univention.admin.modules as udm_modules
-import univention.admin.objects as udm_objects
-import univention.admin.uldap as udm_uldap
+from univention.admin.uldap import explodeDn
+from univention.admin.uexceptions import noObject
 
-from ucsschool.lib.schoolldap import LDAP_Connection, SchoolSearchBase
+from ucsschool.lib.schoolldap import LDAP_Connection
+from ucsschool.lib.models import User, Group, ComputerRoom, SchoolComputer, MultipleObjectsError
 
 import notifier
 import notifier.signals
@@ -57,7 +56,9 @@ from PyQt4.QtCore import QObject, pyqtSlot
 from PyQt4.QtGui import QImageWriter
 
 import italc
+import ldap
 import sip
+from ldap.filter import filter_format
 
 _ = Translation('ucs-school-umc-computerroom').translate
 
@@ -85,49 +86,53 @@ class ITALC_Error(Exception):
 
 class UserInfo(object):
 
-	def __init__(self, ldap_dn, username, school_class=None, workgroups=[]):
+	def __init__(self, ldap_dn, username, school_class=None, workgroups=None, isTeacher=False):
 		self.dn = ldap_dn
 		self.school_class = school_class
-		self.workgroups = workgroups
-		self.isTeacher = False
+		self.workgroups = workgroups if workgroups is not None else []
+		self.isTeacher = isTeacher
 		self.username = username
 
 
 class UserMap(dict):
+
 	USER_REGEX = re.compile(r'(?P<username>[^(]*)( \((?P<realname>[^)]*)\))?$')
-	UDM_USERS = udm_modules.get('users/user')
 
 	def __getitem__(self, user):
-		if not user in self:
+		if user not in self:
 			self._read_user(user)
-
 		return dict.__getitem__(self, user)
 
 	@LDAP_Connection()
 	def _read_user(self, userstr, ldap_user_read=None, ldap_position=None, search_base=None):
-		match = UserMap.USER_REGEX.match(userstr)
+		match = self.USER_REGEX.match(userstr)
 		if not match or not userstr:
 			raise AttributeError('invalid key "%s"' % userstr)
 		username = match.groupdict()['username']
 		if not username:
 			raise AttributeError('username missing: %s' % userstr)
-		# create search base for current school
-		search_base = SchoolSearchBase(search_base.availableSchools, ITALC_Manager.SCHOOL)
 
-		result = udm_modules.lookup(UserMap.UDM_USERS, None, ldap_user_read, filter='uid=%s' % username, scope='sub', base=search_base.users)
-		if not result:
+		lo = ldap_user_read
+		# create search base for current school
+		try:
+			user = User.from_udm_obj(User.get_only_udm_obj(lo, filter_format('uid=%s', username), None, lo))
+		except (noObject, MultipleObjectsError):
 			MODULE.info('Unknown user "%s"' % username)
 			dict.__setitem__(self, userstr, UserInfo('', ''))
-		else:
-			userobj = UserInfo(result[0].dn, username)
-			for grp in result[0]['groups']:
-				if grp.endswith(search_base.workgroups):
-					userobj.workgroups.append(udm_uldap.explodeDn(grp, True)[0])
-				elif grp.endswith(search_base.classes):
-					userobj.school_class = udm_uldap.explodeDn(grp, True)[0]
-			userobj.isTeacher = search_base.isTeacher(userobj.dn)
-			dict.__setitem__(self, userstr, userobj)
+			return
 
+		userobj = UserInfo(user.dn, username, isTeacher=user.self_is_teacher())
+		for groupdn in user.groups:
+			try:
+				group = Group.from_dn(groupdn, None, lo)
+			except noObject:
+				continue
+			if group.self_is_workgroup():
+				userobj.workgroups.append(explodeDn(groupdn, True)[0])
+			elif group.self_is_class():
+				# TODO: concatenate if user is in multiple classes
+				userobj.school_class = explodeDn(groupdn, True)[0]
+		dict.__setitem__(self, userstr, userobj)
 _usermap = UserMap()
 
 
@@ -204,7 +209,6 @@ class ITALC_Computer(notifier.signals.Provider, QObject):
 
 	def __init__(self, ldap_dn=None):
 		QObject.__init__(self)
-		# notifier.threads.Enhanced.__init__( self, None, None )
 		notifier.signals.Provider.__init__(self)
 
 		self.signal_new('connected')
@@ -233,21 +237,15 @@ class ITALC_Computer(notifier.signals.Provider, QObject):
 		self.objectType = self.get_object_type()
 
 	def get_object_type(self):
-		#return self._computer.lo.get(self._dn)['univentionObjectType'][0]
 		return self._computer.module
 
 	@LDAP_Connection()
 	def readLDAP(self, ldap_user_read=None, ldap_position=None, search_base=None):
-		attrs = ldap_user_read.lo.get(self._dn)
-		modules = udm_modules.identify(self._dn, attrs, module_base='computers/')
-		if len(modules) != 1:
-			MODULE.warn('LDAP object %s could not be identified (found %d modules)' % (self._dn, len(modules)))
+		try:
+			self._computer = SchoolComputer.from_dn(self._dn, None, ldap_user_read).get_udm_object(ldap_user_read)
+		except noObject as exc:
+			MODULE.info('Could not find computer %s: %s' % (self._dn, exc))
 			raise ITALC_Error('Unknown computer type')
-		self._computer = udm_objects.get(modules[0], None, ldap_user_read, ldap_position, self._dn, attributes=attrs)
-		if not self._computer:
-			raise ITALC_Error('Could not find the computer %s' % self._dn)
-
-		self._computer.open()
 
 	def open(self):
 		MODULE.info('Opening VNC connection to %s' % (self.ipAddress))
@@ -393,7 +391,6 @@ class ITALC_Computer(notifier.signals.Provider, QObject):
 
 	@property
 	def isTeacher(self):
-		global _usermap
 		try:
 			return _usermap[str(self._username.current)].isTeacher
 		except AttributeError:
@@ -589,13 +586,14 @@ class ITALC_Manager(dict, notifier.signals.Provider):
 
 	@property
 	def users(self):
-		return map(lambda x: _usermap[x.user.current].username, filter(lambda comp: comp.user.current and comp.connected, self.values()))
+		return [_usermap[x.user.current].username for x in self.values() if x.user.current and x.connected]
 
 	def ipAddresses(self, students_only=True):
+		values = self.values()
 		if students_only:
-			return map(lambda x: x.ipAddress, filter(lambda x: not x.isTeacher, self.values()))
+			values = [x for x in values if not x.isTeacher]
 
-		return map(lambda x: x.ipAddress, self.values())
+		return [x.ipAddress for x in values]
 
 	def _clear(self):
 		if ITALC_Manager.ROOM:
@@ -609,26 +607,28 @@ class ITALC_Manager(dict, notifier.signals.Provider):
 
 	@LDAP_Connection()
 	def _set(self, room, ldap_user_read=None, ldap_position=None, search_base=None):
-		grp_module = udm_modules.get('groups/group')
-		if not grp_module:
+		lo = ldap_user_read
+
+		room_dn = room
+		try:  # room DN
+			ldap.dn.str2dn(room)
+		except ldap.DECODING_ERROR:  # room name
+			room_dn = None # got a name instead of a DN
+
+		try:
+			if room_dn:
+				computerroom = ComputerRoom.from_dn(room, ITALC_Manager.SCHOOL, lo)
+			else:
+				computerroom = ComputerRoom.from_udm_obj(ComputerRoom.get_only_udm_obj(lo, filter_format('cn=%s-%s', (ITALC_Manager.SCHOOL, room)), ITALC_Manager.SCHOOL, lo))
+		except noObject:
 			raise ITALC_Error('Unknown computer room')
-		# create search base for current school
-		search_base = SchoolSearchBase(search_base.availableSchools, ITALC_Manager.SCHOOL)
+		except MultipleObjectsError as exc:
+			raise ITALC_Error('Did not find exactly 1 group for the room (count: %d)' % len(exc.objs))
 
-		if room.startswith('cn='):
-			groupresult = [udm_objects.get(grp_module, None, ldap_user_read, ldap_position, room)]
-		else:
-			groupresult = udm_modules.lookup(grp_module, None, ldap_user_read, filter='cn=%s-%s' % (search_base.school, room), scope='one', base=search_base.rooms)
-		if len(groupresult) != 1:
-			raise ITALC_Error('Did not find exactly 1 group for the room (count: %d)' % len(groupresult))
+		ITALC_Manager.ROOM = computerroom.get_relative_name()
+		ITALC_Manager.ROOM_DN = computerroom.dn
 
-		roomgrp = groupresult[0]
-		roomgrp.open()
-		school_prefix = '%s-' % search_base.school
-		ITALC_Manager.ROOM = roomgrp['name'].lstrip()[len(school_prefix):]
-		ITALC_Manager.ROOM_DN = roomgrp.dn
-
-		computers = filter(lambda host: host.endswith(search_base.computers), roomgrp['hosts'])
+		computers = list(computerroom.get_computers(lo))
 		if not computers:
 			raise ITALC_Error('There are no computers in the selected room.')
 
@@ -636,55 +636,46 @@ class ITALC_Manager(dict, notifier.signals.Provider):
 			try:
 				comp = ITALC_Computer(dn)
 				self.__setitem__(comp.name, comp)
-			except ITALC_Error as e:
-				MODULE.warn('Computer could not be added: %s' % str(e))
+			except ITALC_Error as exc:
+				MODULE.warn('Computer could not be added: %s' % (exc,))
 
 	@property
 	def isDemoActive(self):
-		return filter(lambda comp: comp.demoServer or comp.demoClient, self.values()) > 0
+		return any(comp for comp in self.values() if comp.demoServer or comp.demoClient)
 
 	@property
 	def demoServer(self):
 		for comp in self.values():
 			if comp.demoServer:
 				return comp
-		return None
 
 	@property
 	def demoClients(self):
-		return filter(lambda comp: comp.demoClient, self.values())
+		return [comp for comp in self.values() if comp.demoClient]
 
-	@LDAP_Connection()
-	def startDemo(self, demo_server, fullscreen=True, ldap_user_read=None, ldap_position=None, search_base=None):
-		global _usermap
-
-		# create search base for current school
-		search_base = SchoolSearchBase(search_base.availableSchools, ITALC_Manager.SCHOOL)
-
+	def startDemo(self, demo_server, fullscreen=True):
 		if self.isDemoActive:
 			self.stopDemo()
+
 		server = self.get(demo_server)
 		if server is None:
 			raise AttributeError('unknown system %s' % demo_server)
 
 		# start demo server
-		MODULE.info('Demo server is %s' % demo_server)
 		clients = [comp for comp in self.values() if comp.name != demo_server and comp.connected and comp.objectType != 'computers/ucc']
-		MODULE.info('Demo clients: %s' % ', '.join(map(lambda x: x.name, clients)))
-		MODULE.info('Demo LDAP base teachers: %s' % search_base.teachers)
-		MODULE.info('Demo client users: %s' % ', '.join(map(lambda x: str(x.user.current), clients)))
+		MODULE.info('Demo server is %s' % (demo_server,))
+		MODULE.info('Demo clients: %s' % ', '.join(x.name for x in clients))
+		MODULE.info('Demo client users: %s' % ', '.join(str(x.user.current) for x in clients))
 		try:
-			teachers = map(lambda x: x.name, filter(lambda comp: not comp.user.current or _usermap[str(comp.user.current)].isTeacher, clients))
-		except AttributeError as e:
-			MODULE.error('Could not determine the list of teachers: %s' % str(e))
+			teachers = [x.name for x in clients if not x.user.current or _usermap[str(x.user.current)].isTeacher]
+		except AttributeError as exc:
+			MODULE.error('Could not determine the list of teachers: %s' % (exc,))
 			return False
+
 		MODULE.info('Demo clients (teachers): %s' % ', '.join(teachers))
 		server.startDemoServer(clients)
 		for client in clients:
-			if client.name in teachers:
-				client.startDemoClient(server, False)
-			else:
-				client.startDemoClient(server, fullscreen)
+			client.startDemoClient(server, fullscreen=False if client.name in teachers else fullscreen)
 
 	def stopDemo(self):
 		if self.demoServer is not None:
