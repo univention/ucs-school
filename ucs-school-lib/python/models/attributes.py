@@ -249,3 +249,7 @@ class Hosts(Attribute):
 	value_list = True
 	syntax = UDM_Objects
 
+class Schools(Attribute):
+	udm_name = 'ucsschoolSchool'
+	value_list = True
+	syntax = None  # TODO

@@ -72,6 +72,15 @@ class Group(UCSSchoolHelperAbstractClass):
 	def is_computer_room(cls, school, group_dn):
 		return cls.get_search_base(school).isRoom(group_dn)
 
+	def self_is_workgroup(self):
+		return self.is_school_workgroup(self.school, self.dn)
+
+	def self_is_class(self):
+		return self.is_school_class(self.school, self.dn)
+
+	def self_is_computerroom(self):
+		return self.is_computer_room(self.school, self.dn)
+
 	@classmethod
 	def get_class_for_udm_obj(cls, udm_obj, school):
 		if cls.is_school_class(school, udm_obj.dn):
@@ -233,3 +242,9 @@ class ComputerRoom(Group, _MayHaveSchoolPrefix):
 	def get_container(cls, school):
 		return cls.get_search_base(school).rooms
 
+	def get_computers(self, ldap_connection):
+		for host in self.hosts:
+			try:
+				yield SchoolComputer.from_dn(host, self.school, ldap_connection)
+			except noObject:
+				continue

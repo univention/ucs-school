@@ -1,3 +1,11 @@
+ucs-school-lib (9.0.0-1) unstable; urgency=medium
+
+  * Bug #41117: add some helper functions
+  * add Schools Attribute
+  * enhance LDAP_Connection decorator
+
+ -- Florian Best <best@univention.de>  Thu, 28 Apr 2016 16:30:28 +0200
+
 ucs-school-lib (8.0.3-1) unstable; urgency=medium
 
   * Bug #40870: support to change the school of a user

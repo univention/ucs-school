@@ -37,7 +37,7 @@ from ldap.filter import escape_filter_chars
 
 from ucsschool.lib.roles import role_pupil, role_teacher, role_staff
 from ucsschool.lib.models.utils import create_passwd
-from ucsschool.lib.models.attributes import Username, Firstname, Lastname, Birthday, Email, Password, Disabled, SchoolClassStringAttribute
+from ucsschool.lib.models.attributes import Username, Firstname, Lastname, Birthday, Email, Password, Disabled, SchoolClassStringAttribute, Schools
 from ucsschool.lib.models.base import UCSSchoolHelperAbstractClass
 from ucsschool.lib.models.school import School
 from ucsschool.lib.models.group import Group, BasicGroup, SchoolClass, WorkGroup
@@ -51,6 +51,7 @@ from ldap.dn import escape_dn_chars, explode_dn
 
 class User(UCSSchoolHelperAbstractClass):
 	name = Username(_('Username'), aka=['Username', 'Benutzername'])
+	schools = Schools(_('Schools'))
 	firstname = Firstname(_('First name'), aka=['First name', 'Vorname'], required=True, unlikely_to_change=True)
 	lastname = Lastname(_('Last name'), aka=['Last name', 'Nachname'], required=True, unlikely_to_change=True)
 	birthday = Birthday(_('Birthday'), aka=['Birthday', 'Geburtstag'], unlikely_to_change=True)

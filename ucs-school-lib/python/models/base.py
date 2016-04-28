@@ -802,8 +802,8 @@ class UCSSchoolHelperAbstractClass(object):
 		'''
 		try:
 			return cls.get_only_udm_obj(lo, filter_str, superordinate)
-		except MultipleObjectsError as e:
-			obj = e.objs[0]
+		except MultipleObjectsError as exc:
+			obj = exc.objs[0]
 			obj.open()
 			return obj
 
