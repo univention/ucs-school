@@ -99,35 +99,36 @@ def LDAP_Connection(*connection_types):
 		  ...
 	"""
 
-	if connection_types and USER_READ not in connection_types and MACHINE_READ not in connection_types:
-		raise AttributeError( 'At least one read-only connection is required' )
-	elif not connection_types:
-		_connection_types = (USER_READ,)
-	else:
-		_connection_types = connection_types
+	if not connection_types:
+		connection_types = (USER_READ,)
 
 	def inner_wrapper(func):
+		argspec = inspect.getargspec(func)
+		add_search_base = 'search_base' in argspec.args or argspec.keywords is not None
+		add_position = 'ldap_position' in argspec.args or argspec.keywords is not None
+
 		def wrapper_func(*args, **kwargs):
 			# set LDAP keyword arguments
 			connections = {}
-			if USER_READ in _connection_types:
+			if USER_READ in connection_types:
 				connections[USER_READ], po = get_user_connection(bind=__bind_callback, write=False)
-			if USER_WRITE in _connection_types:
+			if USER_WRITE in connection_types:
 				connections[USER_WRITE], po = get_user_connection(bind=__bind_callback, write=True)
-			if MACHINE_READ in _connection_types:
+			if MACHINE_READ in connection_types:
 				connections[MACHINE_READ], po = get_machine_connection(write=False)
-			if MACHINE_WRITE in _connection_types:
+			if MACHINE_WRITE in connection_types:
 				connections[MACHINE_WRITE], po = get_machine_connection(write=True)
-			if ADMIN_WRITE in _connection_types:
+			if ADMIN_WRITE in connection_types:
 				connections[ADMIN_WRITE], po = get_admin_connection()
 
-			read_connection = connections.get(USER_READ) or connections.get(MACHINE_READ)
 			kwargs.update(connections)
-			kwargs['ldap_position'] = udm_uldap.position(read_connection.base)
+			read_connection = connections.get(USER_READ) or connections.get(MACHINE_READ)
+			if add_position:
+				kwargs['ldap_position'] = udm_uldap.position(read_connection.base)
 
 			# set keyword argument for search base
-			_init_search_base(read_connection)
-			if not kwargs.get('search_base'):
+			if not kwargs.get('search_base') and add_search_base:
+				_init_search_base(read_connection)
 				# search_base is not set manually
 				kwargs['search_base'] = _search_base
 				if len(args) > 1 and isinstance(args[1], Message):
@@ -147,7 +148,7 @@ def LDAP_Connection(*connection_types):
 def get_all_local_searchbases(ldap_machine_read=None, ldap_position=None, search_base=None):
 	from ucsschool.lib.models import School
 	schools = School.get_all(ldap_machine_read)
-	oulist = map(lambda school: school.name, schools)
+	oulist = [school.name for school in schools]
 	if not oulist:
 		raise ValueError('LDAP_Connection: ERROR, COULD NOT FIND ANY OU!!!')
 
@@ -164,7 +165,7 @@ def _init_search_base(ldap_connection, force=False):
 
 	from ucsschool.lib.models import School
 	schools = School.from_binddn(ldap_connection)
-	school_names = map(lambda school: school.name, schools)
+	school_names = [school.name for school in schools]
 	if not school_names:
 		MODULE.warn('All Schools: ERROR, COULD NOT FIND ANY OU!!!')
 		_search_base = SchoolSearchBase([''])
