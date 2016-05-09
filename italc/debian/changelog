@@ -1,3 +1,9 @@
+italc (2:2.0.18-103) unstable; urgency=medium
+
+  * Bug #35892: fix i386/amd64 lib path
+
+ -- Florian Best <best@univention.de>  Thu, 06 Nov 2014 18:03:31 +0100
+
 italc (2:2.0.18-102) unstable; urgency=medium
 
   * Bug #35892: fix amd64 lib path
