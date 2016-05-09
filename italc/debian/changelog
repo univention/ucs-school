@@ -1,3 +1,9 @@
+italc (2:2.0.18-101) unstable; urgency=medium
+
+  * Bug #35892: fix build process
+
+ -- Florian Best <best@univention.de>  Thu, 06 Nov 2014 11:00:11 +0100
+
 italc (2:2.0.18-100) unstable; urgency=medium
 
   * Bug #35892: replace gcj as gcj-jdk build dependency
