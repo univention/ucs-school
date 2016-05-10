@@ -39,65 +39,16 @@ def replace_ucr_variables(template):
 	return template
 
 
-
-if configRegistry.get('ucsschool/ldap/district/enable','no').lower() in ( 'yes', 'true', '1' ):
-   aclset += """
-# DCs und Memberserver erhalten Lesezugriff auf das OU-Objekt selbst (im DISTRICT-Mode notwendig)
-access to dn.regex="^ou=([^,]+),@%@ldap/base@%@$$"
-	by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" +r
-	by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" +r
-	by group/univentionGroup/uniqueMember="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" +r
-	by group/univentionGroup/uniqueMember="cn=Member-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" +r
-	by * +0 break
-
-"""
-
-
-
 aclset += """
 # TODO: the following rule can be removed as we removed the "access to * by * none" rule
 access to dn="cn=Subschema"
 	by * +r
-
-# Slave controller and memberservers may replicate the Virtual Machine Manager container
-#access to dn.subtree="cn=Virtual Machine Manager,@%@ldap/base@%@"
-#   by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" +r
-#   by group/univentionGroup/uniqueMember="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" +r
-#   by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" +r
-#   by group/univentionGroup/uniqueMember="cn=Member-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" +r
-#   by * +0 break
-
-# Slave controller and memberservers may replicate the mail container
-#access to dn.subtree="cn=mail,@%@ldap/base@%@"
-#   by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" +r
-#   by group/univentionGroup/uniqueMember="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" +r
-#   by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" +r
-#   by group/univentionGroup/uniqueMember="cn=Member-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" +r
-#   by * +r break
-
-#access to dn="@%@ldap/base@%@"
-#	by dn.regex="^uid=([^,]+),cn=(@$@TEACHERS@$@|@$@TEACHERS-STAFF@$@|@$@STAFF@$@|@$@ADMINS@$@),cn=users,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" +r
-#	by * none break
 
 # DC Slaves need write access to the members of the group Domain Computers
 access to dn.exact="cn=Domain Computers,cn=groups,@%@ldap/base@%@" attrs="uniqueMember,memberUid"
     by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
     by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
     by * +0 break
-
-# Slave-Controller und Memberserver duerfen globale Container groups, computers, shares, dns, dhcp, kerberos und policies sowie Benutzer lesen
-#access to dn.regex="(^(.+,)?cn=(groups|dns|dhcp|policies|computers|kerberos|shares),|^(uid=[^,]+,|)cn=users,|^)@%@ldap/base@%@$$"
-#	by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" +r
-#	by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" +r
-#	by group/univentionGroup/uniqueMember="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" +r
-#	by group/univentionGroup/uniqueMember="cn=Member-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" +r
-#	by * +0 break
-
-# Slave DCs can read MS system container
-#access to dn.base="cn=system,@%@ldap/base@%@"
-#    by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" +r
-#    by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" +r
-#    by * +0 break
 
 # Slave DCs can read and write policy containers for MS GPOs and msPrintConnectionPolicy objects
 access to dn.subtree="cn=policies,cn=system,@%@ldap/base@%@" filter="(|(objectClass=msGPOContainer)(objectClass=organizationalRole)(objectClass=msPrintConnectionPolicy))"
@@ -137,7 +88,7 @@ access to dn.regex="cn=.*,cn=server,cn=computers,ou=([^,]+),@$@DISTRICT@$@@%@lda
    by self write
    by * +0 break
 
-# OU-Admins duerfen Passwoerter unterhalb von cn=users,ou=... aendern
+# OU-Admins duerfen Passwoerter unterhalb von ...,cn=users,ou=... aendern
 access to dn.regex="^uid=(.+),cn=users,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" attrs=krb5KeyVersionNumber,krb5KDCFlags,krb5Key,krb5PasswordEnd,sambaAcctFlags,sambaPwdLastSet,sambaLMPassword,sambaNTPassword,shadowLastChange,shadowMax,userPassword,pwhistory,sambaPwdCanChange,sambaPwdMustChange,sambaPasswordHistory,sambaBadPasswordCount
 	by group/univentionGroup/uniqueMember.expand="cn=@$@GRPADMINS@$@$2,cn=ouadmins,cn=groups,@%@ldap/base@%@" write
 	by * +0 break
@@ -237,14 +188,6 @@ access to filter="(&(objectClass=ucsschoolStaff)(!(objectClass=ucsschoolTeacher)
 	by group/univentionGroup/uniqueMember="cn=Member-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" none
 	by * +0 break
 
-## domaincontroller slaves and memberservers may replicate the OU "domain controllers"
-#access to dn.subtree="ou=domain controllers,@%@ldap/base@%@"
-#   by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" +r
-#   by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" +r
-#   by group/univentionGroup/uniqueMember="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" +r
-#   by group/univentionGroup/uniqueMember="cn=Member-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" +r
-#   by * +0 break
-
 # FIXME: this rule allows to read all passwords underneath of all OU's instead of only the password belonging to the OU
 # Memberserver duerfen Passwoerter ihrer Schule lesen
 access to dn.regex="^(.+,)?ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" attrs=userPassword,krb5Key,krb5KDCFlags,sambaNTPassword,sambaLMPassword,shadowLastChange,sambaPwdLastSet,pwhistory,krb5KeyVersionNumber,univentionWindowsReinstall,sambaPwdCanChange,sambaPwdMustChange
@@ -295,29 +238,6 @@ access to dn.regex="^cn=([^,]+),cn=klassen,cn=@$@PUPILS@$@,cn=groups,ou=([^,]+),
 	by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
 	by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
 	by * +0 break
-
-# Slave-Controller duerfen nagios-Container und Inhalt replizieren
-#access to dn.subtree="cn=nagios,@%@ldap/base@%@"
-#	by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" +r
-#	by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" +r
-#	by group/univentionGroup/uniqueMember="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" +r
-#	by group/univentionGroup/uniqueMember="cn=Member-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" +r
-#	by * +0 break
-
-# Schüler, Lehrer, Mitarbeiter und OU-Admins duerfen globale Container univention, policies, groups und dns lesen
-# (werden bei Schuelern/Rechnern angezeigt)
-#access to dn.regex="(^(.+,)?cn=(univention|policies|dns|groups),|^)@%@ldap/base@%@$$"
-#	by dn.regex="^uid=([^,]+),cn=(@$@TEACHERS@$@|@$@TEACHERS-STAFF@$@|@$@STAFF@$@|@$@ADMINS@$@),cn=users,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" +r
-#    by * +0 break
-
-# Slave-Controller und normale Lehrer duerfen sonst nichts lesen, Schueler sowieso nicht
-#access to *
-#	by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" none
-#	by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" none
-#	by group/univentionGroup/uniqueMember="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" none
-#	by group/univentionGroup/uniqueMember="cn=Member-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" none
-#	by * none break
-
 """
 
 print replace_ucr_variables(aclset)
