@@ -146,6 +146,13 @@ access to dn.base="cn=uidNumber,cn=temporary,cn=univention,@%@ldap/base@%@" attr
 @$@# old rule@$@	by dn.regex="^uid=([^,]+),cn=(@$@TEACHERS@$@|@$@TEACHERS-STAFF@$@|@$@STAFF@$@|@$@ADMINS@$@),cn=users,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" write
 	by * +0 break
 
+access to dn.subtree="cn=temporary,cn=univention,@%@ldap/base@%@"
+	by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" none
+	by group/univentionGroup/uniqueMember="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" none
+	by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" none
+	by group/univentionGroup/uniqueMember="cn=Member-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" none
+	by * +0 break
+
 # TODO: explain why sambaNTPassword ? this doesn't fit to the description below
 # OU-Admins duerfen MAC-Adressen im Rechner- und DHCP-Objekt aendern
 access to dn.regex="^cn=([^,]+),cn=computers,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" attrs=macAddress,sambaNTPassword
@@ -195,12 +202,16 @@ access to dn.regex="^(.+,)?ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" attrs=use
 	by group/univentionGroup/uniqueMember="cn=Member-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" +rscxd
 	by * +0 break
 
-# Alle DC-Slaves muessen alle Benutzercontainer jeder Schule lesen koennen
+# Alle DC-Slaves muessen alle Benutzercontainer und Gruppen jeder Schule lesen koennen
 access to dn.regex="^ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" filter="objectClass=ucsschoolOrganizationalUnit"
 	by dn.regex="^cn=.*,cn=server,cn=computers,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" +rscxd
 	by * +0 break
 
-access to dn.regex="^cn=users,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$"
+access to dn.regex="^cn=(users|groups),ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$"
+	by dn.regex="^cn=.*,cn=server,cn=computers,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" +rscxd
+	by * +0 break
+
+access to dn.regex="^([^,]+),cn=groups,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$"
 	by dn.regex="^cn=.*,cn=server,cn=computers,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" +rscxd
 	by * +0 break
 
@@ -210,7 +221,7 @@ access to dn.regex="^cn=(@$@PUPILS@$@|@$@TEACHERS@$@|@$@TEACHERS-STAFF@$@|@$@STA
 
 # DC-Slaves muessen die Benutzer ihrer Schule lesen und schreiben duerfen
 access to dn.regex="^uid=([^,]+),cn=(@$@PUPILS@$@|@$@TEACHERS@$@|@$@TEACHERS-STAFF@$@|@$@STAFF@$@|@$@ADMINS@$@),cn=users,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$"
-	by set="this/ucsschoolSchool & ([ldap:///@%@ldap/base@%@?ou?sub?ucsschoolHomeShareFileServer%3D]+user/entryDN)/ou" write
+	by set="([cn=OU]+this/ucsschoolSchool+[-DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@])/uniqueMember & user" write
 	by * +0 break
 
 # Schul-Slave-Server duerfen nur Eintraege ihrer OU lesen und schreiben (Passwortaenderungen etc.)
