@@ -55,7 +55,7 @@ access to dn="cn=(Information|CloudConnection),cn=Virtual Machine Manager,@%@lda
 	by * +0 break
 
 # Slave-Controller und Member-Server benoetigen idmap-Container
-access to dn.base="cn=idmap,cn=univention,@%@ldap/base@%@"
+access to dn.base="cn=idmap,cn=univention,@%@ldap/base@%@" attrs=children,entry
    by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
    by group/univentionGroup/uniqueMember="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
    by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
