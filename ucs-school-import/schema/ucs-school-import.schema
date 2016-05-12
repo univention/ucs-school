@@ -36,31 +36,6 @@ objectclass ( univentionSchool:53.4 NAME 'ucsschoolStaff'
         DESC 'auxiliary class for staff users'
         SUP ucsschoolType AUXILIARY )
 
-attributetype ( 1.3.6.1.4.1.10176.99999.2.5001
-        NAME 'univentionAbordnungMasterDn'
-        DESC 'dn of the master object (Abordnung)'
-        EQUALITY distinguishedNameMatch
-        SUBSTR caseIgnoreSubstringsMatch
-        SYNTAX 1.3.6.1.4.1.1466.115.121.1.12
-        SINGLE-VALUE )
-
-objectclass ( 1.3.6.1.4.1.10176.99999.2.50 NAME 'univentionAbordnung'
-        DESC 'dn of the master object (Abordnung)'
-        SUP top AUXILIARY
-        MAY ( univentionAbordnungMasterDn ) )
-
-attributetype ( univentionSchool:5101
-        NAME 'ucsschoolRole'
-        DESC 'Role of user in ucs@school context (e.g. teacher, administration)'
-        EQUALITY caseIgnoreMatch
-        SUBSTR caseIgnoreSubstringsMatch
-        SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
-
-objectclass ( univentionSchool:51 NAME 'univentionUcsSchoolUser'
-        DESC 'Role of user in ucs@school context (e.g. teacher, administration)'
-        SUP top AUXILIARY
-        MAY ( ucsschoolRole ) )
-
 attributetype ( univentionSchool:5201 NAME 'ucsschoolClassShareFileServer'
         DESC 'designated fileserver for class shares'
         EQUALITY distinguishedNameMatch
@@ -79,3 +54,32 @@ objectclass ( univentionSchool:52 NAME 'ucsschoolOrganizationalUnit'
         DESC 'auxiliary class for class shares'
         AUXILIARY
         MAY ( ucsschoolClassShareFileServer $ ucsschoolHomeShareFileServer $ displayName ) )
+
+# obsolete!
+attributetype ( 1.3.6.1.4.1.10176.99999.2.5001
+        NAME 'univentionAbordnungMasterDn'
+        DESC 'dn of the master object (Abordnung)'
+        EQUALITY distinguishedNameMatch
+        SUBSTR caseIgnoreSubstringsMatch
+        SYNTAX 1.3.6.1.4.1.1466.115.121.1.12
+        SINGLE-VALUE )
+
+# obsolete!
+objectclass ( 1.3.6.1.4.1.10176.99999.2.50 NAME 'univentionAbordnung'
+        DESC 'dn of the master object (Abordnung)'
+        SUP top AUXILIARY
+        MAY ( univentionAbordnungMasterDn ) )
+
+# obsolete!
+attributetype ( univentionSchool:5101
+        NAME 'ucsschoolRole'
+        DESC 'Role of user in ucs@school context (e.g. teacher, administration)'
+        EQUALITY caseIgnoreMatch
+        SUBSTR caseIgnoreSubstringsMatch
+        SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+
+# obsolete!
+objectclass ( univentionSchool:51 NAME 'univentionUcsSchoolUser'
+        DESC 'Role of user in ucs@school context (e.g. teacher, administration)'
+        SUP top AUXILIARY
+        MAY ( ucsschoolRole ) )
