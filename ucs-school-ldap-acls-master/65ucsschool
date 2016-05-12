@@ -204,18 +204,26 @@ access to dn.regex="^(.+,)?ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" attrs=use
 
 # Alle DC-Slaves muessen alle Benutzercontainer und Gruppen jeder Schule lesen koennen
 access to dn.regex="^ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" filter="objectClass=ucsschoolOrganizationalUnit"
+	by group/univentionGroup/uniqueMember.expand="cn=OU$1-DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
+	by group/univentionGroup/uniqueMember.expand="cn=OU$1-DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
 	by dn.regex="^cn=.*,cn=server,cn=computers,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" +rscxd
 	by * +0 break
 
 access to dn.regex="^cn=(users|groups),ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$"
+	by group/univentionGroup/uniqueMember.expand="cn=OU$2-DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
+	by group/univentionGroup/uniqueMember.expand="cn=OU$2-DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
 	by dn.regex="^cn=.*,cn=server,cn=computers,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" +rscxd
 	by * +0 break
 
 access to dn.regex="^([^,]+),cn=groups,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$"
+	by group/univentionGroup/uniqueMember.expand="cn=OU$2-DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
+	by group/univentionGroup/uniqueMember.expand="cn=OU$2-DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
 	by dn.regex="^cn=.*,cn=server,cn=computers,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" +rscxd
 	by * +0 break
 
 access to dn.regex="^cn=(@$@PUPILS@$@|@$@TEACHERS@$@|@$@TEACHERS-STAFF@$@|@$@STAFF@$@|@$@ADMINS@$@),cn=users,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$"
+	by group/univentionGroup/uniqueMember.expand="cn=OU$2-DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
+	by group/univentionGroup/uniqueMember.expand="cn=OU$2-DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
 	by dn.regex="^cn=.*,cn=server,cn=computers,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" +rscxd
 	by * +0 break
 
