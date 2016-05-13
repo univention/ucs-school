@@ -23,6 +23,7 @@ def replace_ucr_variables(template):
 	dir_ucsschool[ 'TEACHERS-STAFF' ] = configRegistry.get('ucsschool/ldap/default/container/teachers-and-staff', 'lehrer und mitarbeiter')
 	dir_ucsschool[ 'ADMINS' ] =	  configRegistry.get('ucsschool/ldap/default/container/admins', 'admins')
 	dir_ucsschool[ 'GRPADMINS' ] =	  configRegistry.get('ucsschool/ldap/default/groupprefix/admins', 'admins-')
+	dir_ucsschool[ 'EXAM' ] = configRegistry.get('ucsschool/ldap/default/container/exam', 'examusers')
 
 
 	while 1:
@@ -80,7 +81,8 @@ access to dn.regex="^cn=([^,]+),cn=raeume,cn=groups,ou=([^,]+),@$@DISTRICT@$@@%@
 	by * +0 break
 
 # Rechner duerfen ihr Passwort aendern
-access to dn.regex="cn=.*,cn=server,cn=computers,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" attrs=userPassword,krb5Key,krb5KDCFlags,sambaNTPassword,sambaLMPassword,shadowLastChange,sambaPwdLastSet,pwhistory,krb5KeyVersionNumber,univentionWindowsReinstall,sambaPwdCanChange,sambaPwdMustChange
+# TODO: are the following attributes missing here?: 'sambaBadPasswordCount', 'krb5PasswordEnd', 'shadowMax', 'sambaAcctFlags', 'sambaPasswordHistory'
+access to dn.regex="cn=.*,cn=server,cn=computers,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" attrs=userPassword,krb5Key,krb5KDCFlags,sambaNTPassword,sambaLMPassword,shadowLastChange,sambaPwdLastSet,pwhistory,krb5KeyVersionNumber,sambaPwdCanChange,sambaPwdMustChange
    by self write
    by * +0 break
 
@@ -160,7 +162,7 @@ access to dn.regex="(^cn=([^,]+),|^)cn=([^,]+),cn=dhcp,ou=([^,]+),@$@DISTRICT@$@
 	by * +0 break
 
 # OU-Admins duerfen den DC-Slave und Memberserver joinen (benoetigt Passwortaenderung)
-access to dn.regex="^cn=.*,cn=server,cn=computers,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" attrs=krb5KeyVersionNumber,krb5KDCFlags,krb5Key,krb5PasswordEnd,sambaAcctFlags,sambaPwdLastSet,sambaLMPassword,sambaNTPassword,shadowLastChange,shadowMax,userPassword,pwhistory,sambaPwdCanChange,sambaPwdMustChange,sambaPasswordHistory
+access to dn.regex="^cn=.*,cn=server,cn=computers,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" attrs=krb5KeyVersionNumber,krb5KDCFlags,krb5Key,krb5PasswordEnd,sambaAcctFlags,sambaPwdLastSet,sambaLMPassword,sambaNTPassword,shadowLastChange,shadowMax,userPassword,pwhistory,sambaPwdCanChange,sambaPwdMustChange,sambaPasswordHistory,sambaBadPasswordCount
 	by group/univentionGroup/uniqueMember.expand="cn=@$@GRPADMINS@$@$1,cn=ouadmins,cn=groups,@%@ldap/base@%@" write
 	by * +0 break
 
@@ -191,8 +193,9 @@ access to filter="(&(objectClass=ucsschoolStaff)(!(objectClass=ucsschoolTeacher)
 	by * +0 break
 
 # FIXME: this rule allows to read all passwords underneath of all OU's instead of only the password belonging to the OU; explain why or fix it
+# TODO: are the following attributes missing here?: 'sambaBadPasswordCount', 'krb5PasswordEnd', 'shadowMax', 'sambaAcctFlags', 'sambaPasswordHistory'
 # Memberserver duerfen Passwoerter aller Objekte unterhalb einer Schule lesen
-access to dn.regex="^(.+,)?ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" attrs=userPassword,krb5Key,krb5KDCFlags,sambaNTPassword,sambaLMPassword,shadowLastChange,sambaPwdLastSet,pwhistory,krb5KeyVersionNumber,univentionWindowsReinstall,sambaPwdCanChange,sambaPwdMustChange
+access to dn.regex="^(.+,)?ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" attrs=userPassword,krb5Key,krb5KDCFlags,sambaNTPassword,sambaLMPassword,shadowLastChange,sambaPwdLastSet,pwhistory,krb5KeyVersionNumber,sambaPwdCanChange,sambaPwdMustChange
 	by group/univentionGroup/uniqueMember="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" +rscxd
 	by group/univentionGroup/uniqueMember="cn=Member-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" +rscxd
 	by * +0 break
@@ -204,7 +207,7 @@ access to dn.regex="^ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" filter="objectC
 	by dn.regex="^cn=.*,cn=server,cn=computers,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" +rscxd
 	by * +0 break
 
-access to dn.regex="^cn=(users|groups),ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$"
+access to dn.regex="^cn=(users|groups|@$@EXAM@$@),ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$"
 	by group/univentionGroup/uniqueMember.expand="cn=OU$2-DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
 	by group/univentionGroup/uniqueMember.expand="cn=OU$2-DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
 	by dn.regex="^cn=.*,cn=server,cn=computers,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" +rscxd
@@ -224,6 +227,9 @@ access to dn.regex="^cn=(@$@PUPILS@$@|@$@TEACHERS@$@|@$@TEACHERS-STAFF@$@|@$@STA
 
 # DC-Slaves muessen die Benutzer ihrer Schule lesen und schreiben duerfen
 access to dn.regex="^uid=([^,]+),cn=(@$@PUPILS@$@|@$@TEACHERS@$@|@$@TEACHERS-STAFF@$@|@$@STAFF@$@|@$@ADMINS@$@),cn=users,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$"
+	by set="([cn=OU]+this/ucsschoolSchool+[-DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@])/uniqueMember & user" write
+	by * +0 break
+access to dn.regex="^uid=([^,]+),cn=@$@EXAM@$@,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$"
 	by set="([cn=OU]+this/ucsschoolSchool+[-DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@])/uniqueMember & user" write
 	by * +0 break
 
@@ -251,6 +257,14 @@ access to dn.regex="^cn=klassen,cn=@$@PUPILS@$@,cn=groups,ou=([^,]+),@$@DISTRICT
 access to dn.regex="^cn=([^,]+),cn=klassen,cn=@$@PUPILS@$@,cn=groups,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" filter="(&(!(|(uidNumber=*)(objectClass=SambaSamAccount)))(objectClass=univentionGroup))"
 	by group/univentionGroup/uniqueMember.expand="cn=OU$2-DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
 	by group/univentionGroup/uniqueMember.expand="cn=OU$2-DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
+	by * +0 break
+
+# Schulserver duerfen die Passwoerter aller globalen Objekte replizieren
+access to dn.regex="^(.+,)?cn=(users|kerberos|computers),@%@ldap/base@%@$$"
+	by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" +rscxd
+	by group/univentionGroup/uniqueMember="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" +rscxd
+	by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" +rscxd
+	by group/univentionGroup/uniqueMember="cn=Member-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" +rscxd
 	by * +0 break
 """
 
