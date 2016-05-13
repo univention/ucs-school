@@ -620,11 +620,13 @@ class Room(object):
 			'shareMode': shareMode,
 			'internetRule': internetRule
 			}
+		print
+		print '----------DEBUG-----------'
+		print 'old_period = %r' % (partial_old_settings.get('period'), )
+		print 'new_period = %r' % (period, )
 		partial_old_settings = partial_old_settings.copy()
 		partial_old_settings.pop('period')
 		# if there is no change in settings, no atjob is added
-		print
-		print '----------DEBUG-----------'
 		print 'old=', partial_old_settings
 		print 'new=', partial_new_settings
 		self.check_atjobs(period, partial_old_settings != partial_new_settings)
