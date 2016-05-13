@@ -1,5 +1,7 @@
 ucs-school-ldap-acls-master (14.0.0-1) unstable; urgency=medium
 
+  * Bug #41273: allow read access to cn=default,cn=univention for school
+  	server
   * Bug #41115: adjust LDAP ACL for new school structure
 
  -- Florian Best <best@univention.de>  Mon, 25 Apr 2016 16:58:08 +0200
