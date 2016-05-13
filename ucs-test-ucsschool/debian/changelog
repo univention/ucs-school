@@ -1,3 +1,12 @@
+ucs-test-ucsschool (3.0.5-27) unstable; urgency=low
+
+  * Bug #41278: 90_ucsschool/essential/computerroom.py
+    - added additional debug output
+    - use enumerate
+    - show found atjobs
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 13 May 2016 17:23:18 +0200
+
 ucs-test-ucsschool (3.0.5-26) unstable; urgency=low
 
   * Bug #40870: fail fast in 80_move_users_into_another_ou if move
