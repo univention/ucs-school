@@ -196,8 +196,11 @@ class Room(object):
 		if exist == expected_existance:
 			print 'Atjob result at(%r) existance is expected (%r)' % (period, exist)
 		else:
-			print 'FAIL: Atjob result at(%r) existance is not expected (%r)' % (period, exist)
-			utils.fail('Atjob result at(%r) existance is not expected (%r)' % (period, exist))
+			print 'FAIL: Atjob result at(%r) is unexpected (should_exist=%r  exists=%r)' % (period, expected_existance, exist)
+			print 'Found the following atjobs:'
+			for i, item in enumerate(ula.list()):
+				print 'Job %s: %s  owner=%s\n%s' % (i, item, item.owner, item.command)
+			utils.fail('Atjob result at(%r) is unexpected (should_exist=%r  exists=%r)' % (period, expected_existance, exist))
 
 	def check_displayTime(self, umc_connection, period):
 		displayed_period = self.get_room_settings(umc_connection)['period'][0:-3]
