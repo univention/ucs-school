@@ -342,7 +342,6 @@ class Room(object):
 		printmodes = ['default', 'all', 'none']
 		sharemodes = ['all', 'home']
 		settings = itertools.product(rules, printmodes, sharemodes)
-		settings_len = len(printmodes) * len(sharemodes) * len(rules)
 		t = 120
 
 		# Testing loop
@@ -352,7 +351,7 @@ class Room(object):
 			t += 60
 			print
 			print '*** %d -(internetRule, printMode, shareMode) = (%r, %r, %r) ----------' % (
-				rule, printMode, shareMode)
+				i, rule, printMode, shareMode)
 			new_settings = {
 				'customRule':	white_page,
 				'printMode':	printMode,
@@ -559,7 +558,7 @@ class Room(object):
 					(datetime.datetime.now() + datetime.timedelta(0, t)).time(), '%H:%M')
 				print
 				print '*** %d -(internetRule, printMode, shareMode, period) = (%r, %r, %r, %r) ----------' % (
-					rule, printMode, shareMode, period)
+					i, rule, printMode, shareMode, period)
 				new_settings = {
 					'customRule':	white_page,
 					'printMode':	printMode,
