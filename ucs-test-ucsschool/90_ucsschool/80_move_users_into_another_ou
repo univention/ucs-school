@@ -2,6 +2,7 @@
 ## desc: move user into another school
 ## roles: [domaincontroller_master, domaincontroller_slave]
 ## tags: [apptest, ucsschool]
+## bugs: [40870]
 ## exposure: dangerous
 
 from univention.testing.ucsschool import UCSTestSchool
@@ -11,6 +12,9 @@ from ucsschool.lib.models import User
 
 
 def main():
+	if not User.Meta.allow_school_change:
+		utils.fail('ERROR: moving users to another school OU is not supported by ucs-school-lib')
+
 	with UCSTestSchool() as env, UCSTestConfigRegistry() as ucr:
 		a, a_dn = env.create_ou(name_edudc=ucr.get('hostname'))
 		b, b_dn = env.create_ou(name_edudc=ucr.get('hostname'))

@@ -1,3 +1,10 @@
+ucs-test-ucsschool (3.0.5-26) unstable; urgency=low
+
+  * Bug #40870: fail fast in 80_move_users_into_another_ou if move
+    feature is not supported by ucs-school-lib
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 13 May 2016 16:32:13 +0200
+
 ucs-test-ucsschool (3.0.5-25) unstable; urgency=medium
 
   * Bug #40870: add skeleton 80_move_users_into_another_ou
