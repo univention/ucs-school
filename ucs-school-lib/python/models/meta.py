@@ -68,7 +68,7 @@ class UCSSchoolHelperOptions(object):
 			ldap_unmap_function = partial(module.mapping.unmapValue, module.mapping.mapName(udm_name))
 			self.ldap_unmap_function = ldap_unmap_function
 		else:
-			# this is to not let models fail on obj.dn
+			# this is to not let models fail when accessing obj.dn
 			#   note that without an udm_module it is not possible
 			#   to save an object
 			self.ldap_name_part = 'cn'
@@ -76,10 +76,7 @@ class UCSSchoolHelperOptions(object):
 			self.ldap_unmap_function = lambda name: name
 
 	def set_from_meta_object(self, meta, name, default):
-		value = default
-		if hasattr(meta, name):
-			value = getattr(meta, name)
-		setattr(self, name, value)
+		setattr(self, name, getattr(meta, name, default))
 
 class UCSSchoolHelperMetaClass(type):
 	def __new__(mcs, cls_name, bases, attrs):

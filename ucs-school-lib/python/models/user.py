@@ -51,7 +51,7 @@ from ldap.dn import escape_dn_chars, explode_dn
 
 class User(UCSSchoolHelperAbstractClass):
 	name = Username(_('Username'), aka=['Username', 'Benutzername'])
-	schools = Schools(_('Schools'))
+#	schools = Schools(_('Schools'))  # FIXME: extended attributes can't be used without module initilization
 	firstname = Firstname(_('First name'), aka=['First name', 'Vorname'], required=True, unlikely_to_change=True)
 	lastname = Lastname(_('Last name'), aka=['Last name', 'Nachname'], required=True, unlikely_to_change=True)
 	birthday = Birthday(_('Birthday'), aka=['Birthday', 'Geburtstag'], unlikely_to_change=True)

@@ -769,7 +769,7 @@ class UCSSchoolHelperAbstractClass(object):
 			udm_obj = udm_modules.lookup(cls._meta.udm_module, None, lo, filter=cls._meta.udm_filter, base=dn, scope='base', superordinate=superordinate)[0]
 		except IndexError:
 			# happens when cls._meta.udm_module does not "match" the dn
-			raise noObject('Wrong objectClass')
+			raise noObject('Wrong objectClass: %r is not a %r.' % (dn, cls.__name__))
 		obj = cls.from_udm_obj(udm_obj, school, lo)
 		if obj:
 			obj.custom_dn = dn  # FIXME: this breaks some things. we better have to set old_dn!

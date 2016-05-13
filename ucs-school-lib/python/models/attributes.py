@@ -250,6 +250,6 @@ class Hosts(Attribute):
 	syntax = UDM_Objects
 
 class Schools(Attribute):
-	udm_name = 'ucsschoolSchool'
+	udm_name = 'school'
 	value_list = True
 	syntax = None  # TODO
