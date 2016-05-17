@@ -37,7 +37,7 @@ from ldap.filter import escape_filter_chars
 
 from ucsschool.lib.roles import role_pupil, role_teacher, role_staff
 from ucsschool.lib.models.utils import create_passwd
-from ucsschool.lib.models.attributes import Username, Firstname, Lastname, Birthday, Email, Password, Disabled, SchoolClassStringAttribute, Schools
+from ucsschool.lib.models.attributes import Username, Firstname, Lastname, Birthday, Email, Password, Disabled, SchoolClassStringAttribute, Schools, RecordUID, SourceUID
 from ucsschool.lib.models.base import UCSSchoolHelperAbstractClass
 from ucsschool.lib.models.school import School
 from ucsschool.lib.models.group import Group, BasicGroup, SchoolClass, WorkGroup
@@ -59,6 +59,8 @@ class User(UCSSchoolHelperAbstractClass):
 	password = Password(_('Password'), aka=['Password', 'Passwort'])
 	disabled = Disabled(_('Disabled'), aka=['Disabled', 'Gesperrt'])
 	school_class = None # not defined by default (Staff)
+	source_uid = SourceUID(_('SourceUID'))
+	record_uid = RecordUID(_('RecordUID'))
 
 	type_name = None
 
@@ -176,7 +178,7 @@ class User(UCSSchoolHelperAbstractClass):
 		udm_obj['overridePWLength'] = '1'
 		if self.disabled is None:
 			udm_obj['disabled'] = 'none'
-		if udm_obj.has_key('mailbox'):
+		if 'mailbox' in udm_obj:
 			udm_obj['mailbox'] = '/var/spool/%s/' % self.name
 		samba_home = self.get_samba_home_path(lo)
 		if samba_home:
@@ -439,6 +441,24 @@ class User(UCSSchoolHelperAbstractClass):
 	@classmethod
 	def get_container(cls, school):
 		return cls.get_search_base(school).users
+
+	@classmethod
+	def get_by_import_id(cls, connection, source_uid, record_uid):
+		"""
+		Wraps around get_all(), does not need a school name.
+
+		:param connection: the uldap connection
+		:return: object of current class or noObject or RuntimeError
+		"""
+		filter_s = "(&(objectclass=ucsschoolType)(ucsschoolSourceUID={})(ucsschoolRecordUID={}))".format(
+			source_uid, record_uid)
+		objs = connection.search(filter=filter_s)
+		if not objs:
+			raise noObject("No user with source_uid={} and record_uid={} found.".format(source_uid, record_uid))
+		elif len(objs) > 1:
+			raise RuntimeError("Got more than one user for source_uid={} and record_uid={}, got: {}.".format(
+				source_uid, record_uid, objs))
+		return cls.get_all(connection, objs[0][1]["ucsschoolSchool"][0], filter_s)[0]
 
 	class Meta:
 		udm_module = 'users/user'

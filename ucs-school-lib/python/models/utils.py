@@ -52,7 +52,8 @@ _ = Translation('python-ucs-school').translate
 ucr = ConfigRegistry()
 ucr.load()
 
-logger = Logger(logging.DEBUG)
+logger = logging.getLogger("ucsschool")
+logger.setLevel(logging.DEBUG)
 
 _module_logger = None
 

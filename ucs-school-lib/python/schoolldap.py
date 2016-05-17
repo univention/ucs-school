@@ -45,6 +45,7 @@ from univention.lib.i18n import Translation
 from functools import wraps
 import re
 import traceback
+import inspect
 
 from univention.management.console.config import ucr
 from univention.management.console.log import MODULE

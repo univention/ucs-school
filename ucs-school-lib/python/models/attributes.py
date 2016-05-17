@@ -33,7 +33,7 @@
 import re
 from ldap.dn import escape_dn_chars
 
-from univention.admin.syntax import gid, string_numbers_letters_dots_spaces, uid_umlauts, iso8601Date, primaryEmailAddressValidDomain, boolean, UserDN, GroupDN, ipAddress, MAC_Address, disabled, reverseLookupSubnet, ipv4Address, v4netmask, netmask, UDM_Objects
+from univention.admin.syntax import gid, string_numbers_letters_dots_spaces, uid_umlauts, iso8601Date, primaryEmailAddressValidDomain, boolean, UserDN, GroupDN, ipAddress, MAC_Address, disabled, reverseLookupSubnet, ipv4Address, v4netmask, netmask, UDM_Objects, string
 from univention.admin.uexceptions import valueError
 
 from ucsschool.lib.models.utils import ucr, _
@@ -253,3 +253,13 @@ class Schools(Attribute):
 	udm_name = 'school'
 	value_list = True
 	syntax = None  # TODO
+
+class RecordUID(Attribute):
+	udm_name = 'ucsschoolRecordUID'
+	syntax = string
+	extended = True
+
+class SourceUID(Attribute):
+	udm_name = 'ucsschoolSourceUID'
+	syntax = string
+	extended = True

@@ -1,12 +1,12 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: ucs-school-lib\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2015-04-21 16:35+0200\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
+"POT-Creation-Date: 2016-05-17 11:20+0200\n"
+"PO-Revision-Date: 2016-05-17 11:20+0200\n"
+"Last-Translator: Univention GmbH <packages@univention.de>\n"
+"Language-Team: Univention GmbH <packages@univention.de>\n"
+"Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -25,7 +25,7 @@ msgstr ""
 msgid "Administrative servers"
 msgstr "Verwaltungsserver"
 
-#: python/models/user.py:51
+#: python/models/user.py:57
 msgid "Birthday"
 msgstr "Geburtstag"
 
@@ -33,11 +33,11 @@ msgstr "Geburtstag"
 msgid "Broadcast"
 msgstr "Broadcast"
 
-#: python/models/user.py:375 python/models/user.py:408
+#: python/models/user.py:469 python/models/user.py:519
 msgid "Class"
 msgstr "Klasse"
 
-#: python/models/computer.py:157
+#: python/models/computer.py:158
 msgid "Computer"
 msgstr "Rechner"
 
@@ -45,11 +45,11 @@ msgstr "Rechner"
 msgid "Computer path"
 msgstr "Pfad für Rechner"
 
-#: python/models/group.py:120
+#: python/models/group.py:131
 msgid "Container"
 msgstr "Container"
 
-#: python/schoolldap.py:571
+#: python/schoolldap.py:429
 msgid ""
 "Could not find any school. You have to create a school before continuing. "
 "Use the 'Add school' UMC module to create one."
@@ -77,11 +77,11 @@ msgstr "DHCP-Dienst"
 msgid "Description"
 msgstr "Beschreibung"
 
-#: python/models/computer.py:320
+#: python/models/computer.py:321
 msgid "Device with IP address"
 msgstr "Gerät mit IP-Adresse"
 
-#: python/models/user.py:54
+#: python/models/user.py:60
 msgid "Disabled"
 msgstr "Deaktiviert"
 
@@ -97,7 +97,7 @@ msgstr "Domäne"
 msgid "Educational servers"
 msgstr "Edukative Schulserver"
 
-#: python/models/user.py:52
+#: python/models/user.py:58
 msgid "Email"
 msgstr "E-Mail"
 
@@ -105,7 +105,7 @@ msgstr "E-Mail"
 msgid "Empty attributes"
 msgstr "Leere Attribute"
 
-#: python/models/user.py:49
+#: python/models/user.py:55
 msgid "First name"
 msgstr "Vorname"
 
@@ -121,11 +121,11 @@ msgstr "Gruppen"
 msgid "Hostname"
 msgstr "Hostname"
 
-#: python/models/group.py:214
+#: python/models/group.py:234
 msgid "Hosts"
 msgstr "Hosts"
 
-#: python/models/computer.py:151
+#: python/models/computer.py:152
 msgid "IP address"
 msgstr "IP-Adresse"
 
@@ -137,11 +137,11 @@ msgstr "Ungültiger Domänencontrollername"
 msgid "Invalid school name"
 msgstr "Ungültiger Schulname"
 
-#: python/models/computer.py:154
+#: python/models/computer.py:155
 msgid "Inventory number"
 msgstr "Inventarnummer"
 
-#: python/models/user.py:260
+#: python/models/user.py:336
 #, python-format
 msgid ""
 "It is not supported to change the role of a user. %(old_role)s %(name)s "
@@ -150,21 +150,15 @@ msgstr ""
 "Ein Wechsel der Benutzerrolle wird nicht unterstützt. %(old_role)s %(name)s "
 "kann kein %(new_role)s werden."
 
-#: python/models/user.py:50
+#: python/models/user.py:56
 msgid "Last name"
 msgstr "Nachname"
 
-#: python/schoolldap.py:286
-msgid "License not found. During this session add and modify are disabled."
-msgstr ""
-"Keine Lizenz gefunden. Während dieser Sitzung ist das Hinzufügen und "
-"Bearbeiten von Objekten nicht möglich."
-
-#: python/models/computer.py:153
+#: python/models/computer.py:154
 msgid "MAC address"
 msgstr "MAC-Adresse"
 
-#: python/models/computer.py:313
+#: python/models/computer.py:314
 msgid "Mac OS X"
 msgstr "Mac OS X"
 
@@ -173,7 +167,7 @@ msgid "May not contain special characters"
 msgstr "Darf keine besonderen Zeichen enthalten"
 
 #: python/models/base.py:158 python/models/share.py:41
-#: python/models/group.py:52 python/models/group.py:152
+#: python/models/group.py:52 python/models/group.py:164
 msgid "Name"
 msgstr "Name"
 
@@ -193,11 +187,11 @@ msgstr "Netzwerk"
 msgid "Network path"
 msgstr "Pfad für Netzwerk"
 
-#: python/schoollessons.py:61 python/schoollessons.py:129
+#: python/schoollessons.py:64 python/schoollessons.py:136
 msgid "Overlapping lessons are not allowed"
 msgstr "Überlappende Schulstunden sind nicht erlaubt"
 
-#: python/models/user.py:53
+#: python/models/user.py:59
 msgid "Password"
 msgstr "Passwort"
 
@@ -208,6 +202,10 @@ msgstr "Pfad für Richtlinien"
 #: python/models/misc.py:96
 msgid "Printer path"
 msgstr "Pfad für Drucker"
+
+#: python/models/user.py:63
+msgid "RecordUID"
+msgstr "RecordUID"
 
 #: python/models/base.py:159
 msgid "School"
@@ -220,6 +218,10 @@ msgstr "Schulklasse"
 #: python/models/school.py:48
 msgid "School name"
 msgstr "Schulname"
+
+#: python/models/user.py:54
+msgid "Schools"
+msgstr "Schulen"
 
 #: python/models/school.py:52
 msgid "Server for Windows home directories"
@@ -241,11 +243,15 @@ msgstr "Dienst"
 msgid "Share path"
 msgstr "Pfad für Freigaben"
 
-#: python/models/user.py:446
+#: python/models/user.py:62
+msgid "SourceUID"
+msgstr "SourceUID"
+
+#: python/models/user.py:557
 msgid "Staff"
 msgstr "Mitarbeiter"
 
-#: python/models/user.py:377
+#: python/models/user.py:471
 msgid "Student"
 msgstr "Schüler"
 
@@ -257,19 +263,19 @@ msgstr "Subnetz"
 msgid "Subnet address"
 msgstr "Subnetz-Adresse"
 
-#: python/models/computer.py:152
+#: python/models/computer.py:153
 msgid "Subnet mask"
 msgstr "Subnetzmaske"
 
-#: python/models/user.py:410
+#: python/models/user.py:521
 msgid "Teacher"
 msgstr "Lehrer"
 
-#: python/models/user.py:475
+#: python/models/user.py:586
 msgid "Teacher and Staff"
 msgstr "Lehrer und Mitarbeiter"
 
-#: python/models/user.py:268
+#: python/models/user.py:344
 msgid ""
 "The email address is already taken by another user. Please change the email "
 "address."
@@ -277,7 +283,7 @@ msgstr ""
 "Die E-Mail-Adresse wird bereits von einem anderen Benutzer verwendet. Bitte "
 "ändern Sie die E-Mail-Adresse."
 
-#: python/models/computer.py:244
+#: python/models/computer.py:245
 msgid ""
 "The ip address is already taken by another computer. Please change the ip "
 "address."
@@ -290,7 +296,7 @@ msgid ""
 "The length of fully qualified domain name is greater than 63 characters."
 msgstr "Die Länge von System- und Domänennamen ist größer als 63 Zeichen."
 
-#: python/models/computer.py:248
+#: python/models/computer.py:249
 msgid ""
 "The mac address is already taken by another computer. Please change the mac "
 "address."
@@ -319,11 +325,11 @@ msgstr ""
 msgid "The value changed from %(old)s. This seems unlikely."
 msgstr "Der Wert ist eigentlich %(old)s. Eine Änderung ist ungewöhnlich."
 
-#: python/models/computer.py:190
+#: python/models/computer.py:191
 msgid "There are no free addresses left in the subnet!"
 msgstr "Im Subnetz sind keine weiteren Adressen mehr frei!"
 
-#: python/models/computer.py:327
+#: python/models/computer.py:328
 msgid "Univention Corporate Client"
 msgstr "Univention Corporate Client"
 
@@ -331,140 +337,19 @@ msgstr "Univention Corporate Client"
 msgid "User path"
 msgstr "Pfad für Benutzer"
 
-#: python/models/user.py:48
+#: python/models/user.py:53
 msgid "Username"
 msgstr "Benutzername"
 
-#: python/models/group.py:153
+#: python/models/group.py:132 python/models/group.py:165
+#: python/models/group.py:216
 msgid "Users"
 msgstr "Benutzer"
 
-#: python/models/computer.py:306
+#: python/models/computer.py:307
 msgid "Windows system"
 msgstr "Windows-System"
 
-#: python/schoolldap.py:316
-msgid ""
-"You are currently using the \"Free for personal use\" edition of Univention "
-"Corporate Server."
-msgstr ""
-"Sie verwenden derzeit die \"Free for personal use\" Ausgabe von Univention "
-"Corporate Server."
-
-#: python/schoolldap.py:306
-msgid ""
-"You have too many DVS client accounts for your license. During this session "
-"add and modify are disabled."
-msgstr ""
-"Sie haben mehr DVS-Client-Konten, als Ihre Lizenz erlaubt. Während dieser "
-"Sitzung ist das Hinzufügen und Bearbeiten von Objekten nicht möglich."
-
-#: python/schoolldap.py:304
-msgid ""
-"You have too many DVS user accounts for your license. During this session "
-"add and modify are disabled."
-msgstr ""
-"Sie haben mehr DVS-Benutzerkonten, als Ihre Lizenz erlaubt. Während dieser "
-"Sitzung ist das Hinzufügen und Bearbeiten von Objekten nicht möglich."
-
-#: python/schoolldap.py:292
-msgid ""
-"You have too many client accounts for your license. During this session add "
-"and modify are disabled."
-msgstr ""
-"Sie haben mehr Benutzerkonten, als Ihre Lizenz erlaubt. Während dieser "
-"Sitzung ist das Hinzufügen und Bearbeiten von Objekten nicht möglich."
-
-#: python/schoolldap.py:298
-msgid ""
-"You have too many corporate client accounts for your license. During this "
-"session add and modify are disabled."
-msgstr ""
-"Sie haben mehr Univention-Corporate-Client-Konten, als Ihre Lizenz erlaubt. "
-"Während dieser Sitzung ist das Hinzufügen und Bearbeiten von Objekten nicht "
-"möglich."
-
-#: python/schoolldap.py:300
-msgid ""
-"You have too many desktop accounts for your license. During this session add "
-"and modify are disabled."
-msgstr ""
-"Sie haben mehr Desktop Rechner, als Ihre Lizenz erlaubt. Während dieser "
-"Sitzung ist das Hinzufügen und Bearbeiten von Objekten nicht möglich."
-
-#: python/schoolldap.py:302
-msgid ""
-"You have too many groupware accounts for your license. During this session "
-"add and modify are disabled."
-msgstr ""
-"Sie haben mehr Groupware Konten, als Ihre Lizenz erlaubt. Während dieser "
-"Sitzung ist das Hinzufügen und Bearbeiten von Objekten nicht möglich."
-
-#: python/schoolldap.py:296
-msgid ""
-"You have too many managed client accounts for your license. During this "
-"session add and modify are disabled."
-msgstr ""
-"Sie haben mehr Managed-Client-Konten, als Ihre Lizenz erlaubt. Während "
-"dieser Sitzung ist das Hinzufügen und Bearbeiten von Objekten nicht möglich."
-
-#: python/schoolldap.py:294
-msgid ""
-"You have too many server accounts for your license. During this session add "
-"and modify are disabled."
-msgstr ""
-"Sie haben mehr Server-Konten, als Ihre Lizenz erlaubt. Während dieser "
-"Sitzung ist das Hinzufügen und Bearbeiten von Objekten nicht möglich."
-
-#: python/schoolldap.py:288 python/schoolldap.py:290
-msgid ""
-"You have too many user accounts for your license. During this session add "
-"and modify are disabled."
-msgstr ""
-"Sie haben mehr Benutzerkonten, als Ihre Lizenz erlaubt. Während dieser "
-"Sitzung ist das Hinzufügen und Bearbeiten von Objekten nicht möglich."
-
-#: python/schoolldap.py:314
-msgid ""
-"Your license does not allow modifications. During this session add and "
-"modify are disabled."
-msgstr ""
-"Die installierte Lizenz erlaubt keine Änderungen. Während dieser Sitzung ist "
-"das Hinzufügen und Bearbeiten von Objekten nicht möglich."
-
-#: python/schoolldap.py:308
-msgid ""
-"Your license is expired. During this session add and modify are disabled."
-msgstr ""
-"Die Lizenz ist abgelaufen. Während dieser Sitzung ist das Hinzufügen und "
-"Bearbeiten von Objekten nicht möglich."
-
-#: python/schoolldap.py:310
-msgid ""
-"Your license is not valid for your LDAP-Base. During this session add and "
-"modify are disabled."
-msgstr ""
-"Die installierte Linzenz wurde nicht für diese Basis-DN ausgestellt. Während "
-"dieser Sitzung ist das Hinzufügen und Bearbeiten von Objekten nicht möglich."
-
-#: python/schoolldap.py:312
-msgid ""
-"Your license is not valid. During this session add and modify are disabled."
-msgstr ""
-"Ihre Lizenz ist nicht gültig. Während dieser Sitzung ist das Hinzufügen und "
-"Bearbeiten von Objekten nicht möglich."
-
-#: python/schoolldap.py:318
-msgid ""
-"Your license status could not be validated. Thus, you are not eligible to "
-"support and maintenance. If you have bought a license, please contact "
-"Univention or your Univention partner."
-msgstr ""
-"Der Lizenzstatus konnte nicht validiert werden, Sie verwenden zur Zeit eine "
-"Version ohne Support oder Maintenance-Unterstützung durch Univention. Wenn "
-"Sie über eine Lizenz verfügen, wenden Sie sich bitte an Univention oder "
-"Ihren Univention Partner."
-
-#: python/models/computer.py:155
+#: python/models/computer.py:156
 msgid "Zone"
 msgstr "Zone"
