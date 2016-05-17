@@ -52,6 +52,4 @@ if [ "$server_role" = "domaincontroller_master" ] || [ "$server_role" = "domainc
         /etc/init.d/slapd crestart
 fi
 
-ucs_registerLDAPSchema /usr/share/univention-ldap/schema/ucs-school-import.schema
-
 exit 0
