@@ -15,10 +15,24 @@ attributetype ( univentionSchool:53.0
         SUBSTR caseIgnoreSubstringsMatch
         SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
 
+attributetype ( univentionSchool:53.5
+        NAME 'ucsschoolSourceUID'
+        DESC 'Identifier of external database from which the user was imported.'
+        EQUALITY caseIgnoreMatch
+        SUBSTR caseIgnoreSubstringsMatch
+        SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
+attributetype ( univentionSchool:53.6
+        NAME 'ucsschoolRecordUID'
+        DESC 'Primary key in the external database from which the user was imported.'
+        EQUALITY caseIgnoreMatch
+        SUBSTR caseIgnoreSubstringsMatch
+        SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+
 objectclass ( univentionSchool:53 NAME 'ucsschoolType'
        DESC 'Role of user or object in UCS@school context'
        ABSTRACT
-       MAY ( ucsschoolSchool ) )
+       MAY ( ucsschoolSchool $ ucsschoolSourceUID $ ucsschoolRecordUID ) )
 
 objectclass ( univentionSchool:53.1 NAME 'ucsschoolTeacher'
         DESC 'auxiliary class for teachers'

@@ -1,3 +1,10 @@
+ucs-school-import (13.0.0-2) unstable; urgency=low
+
+  * install LDAP schema domain wide (Bug #41239)
+  * add extended attributes ucsschool{SourceUID, RecordUID} for new import tool
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 17 May 2016 10:16:26 +0200
+
 ucs-school-import (13.0.0-1) unstable; urgency=medium
 
   * Bug #41008: add object classes for user roles

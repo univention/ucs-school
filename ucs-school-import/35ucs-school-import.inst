@@ -30,8 +30,9 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-VERSION=8
+VERSION=9
 . /usr/share/univention-join/joinscripthelper.lib
+. /usr/share/univention-lib/ldap.sh
 joinscript_init
 
 eval "$(ucr shell)"
@@ -51,6 +52,8 @@ fi
 univention-directory-manager container/cn      create "$@" --ignore_exists --set name="services" --position "cn=univention,$ldap_base"
 univention-directory-manager settings/service  create "$@" --ignore_exists --set name="Windows Home Server"  --position "cn=services,cn=univention,$ldap_base"
 univention-directory-manager settings/service  create "$@" --ignore_exists --set name="Windows Profile Server"  --position "cn=services,cn=univention,$ldap_base"
+
+ucs_registerLDAPExtension "$@" --schema /usr/share/ucs-school-import/schema/ucs-school-import.schema || die
 
 # create extended attributes for UCS@school container if missing
 univention-directory-manager container/cn create "$@" --ignore_exists \
@@ -211,6 +214,49 @@ univention-directory-manager settings/extended_attribute create "$@" --ignore_ex
 	--set syntax=string \
 	--set mayChange=1 \
 	--set multivalue=1 || die
+
+univention-directory-manager settings/extended_attribute create "$@" --ignore_exists \
+	--position "cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
+	--set name="ucsschoolSourceUID" \
+	--set module="users/user" \
+	--append options="ucsschoolStudent" \
+	--append options="ucsschoolTeacher" \
+	--append options="ucsschoolStaff" \
+	--append options="ucsschoolAdministrator" \
+	--set tabName="UCS@school" \
+	--set shortDescription="External database identifier." \
+	--set longDescription="Identifier of external database from which the user was imported." \
+	--set translationShortDescription='"de_DE" "Externe Datenbank ID."' \
+	--set translationLongDescription='"de_DE" "ID der externen Datenbank von welcher der Benutzer importiert wurde."' \
+	--set CLIName="ucsschoolSourceUID" \
+	--set objectClass="ucsschoolType" \
+	--set ldapMapping="ucsschoolSourceUID" \
+	--set syntax="string" \
+	--set mayChange="1" \
+	--set multivalue="0" \
+	--set disableUDMWeb=1 || die
+
+univention-directory-manager settings/extended_attribute create "$@" --ignore_exists \
+	--position "cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
+	--set name="ucsschoolRecordUID" \
+	--set module="users/user" \
+	--append options="ucsschoolStudent" \
+	--append options="ucsschoolTeacher" \
+	--append options="ucsschoolStaff" \
+	--append options="ucsschoolAdministrator" \
+	--set tabName="UCS@school" \
+	--set shortDescription="External database primary key." \
+	--set longDescription="Primary key of the external database from which the user was imported." \
+	--set translationShortDescription='"de_DE" "Primärer Schlüssel in externer Datenbank."' \
+	--set translationLongDescription='"de_DE" "Primärer Schlüssel in der externen Datenbank von welcher der Benutzer importiert wurde."' \
+	--set CLIName="ucsschoolRecordUID" \
+	--set objectClass="ucsschoolType" \
+	--set ldapMapping="ucsschoolRecordUID" \
+	--set syntax="string" \
+	--set mayChange="1" \
+	--set multivalue="0" \
+	--set disableUDMWeb=1 || die
+
 
 if [ $JS_LAST_EXECUTED_VERSION -lt 6 ]; then
 	# append UCSschool-School-OU option to Home/ClassShareServer
