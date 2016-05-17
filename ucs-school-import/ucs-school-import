@@ -90,7 +90,7 @@ domainname=configRegistry['domainname']
 emptyLineRe = re.compile(r'^\W*$')
 
 district_enabled = False
-if configRegistry['ucsschool/ldap/district/enable'].lower () in ('1', 'yes', 'true'):
+if configRegistry.is_true('ucsschool/ldap/district/enable'):
 	district_enabled = True
 
 # create edukativ DC by default
@@ -124,7 +124,7 @@ UCRV_sambahome = configRegistry.get('ucsschool/import/set/sambahome', None)
 UCRV_homedrive = configRegistry.get('ucsschool/import/set/homedrive')
 UCRV_create_mail_domain = configRegistry.is_true("ucsschool/import/generate/mail/domain")
 
-generate_logins = configRegistry.get('ucsschool/import/generate/logins', 'no').lower() in ( 'yes', 'true', '1' )
+generate_logins = configRegistry.is_true('ucsschool/import/generate/logins')
 
 TYPE_DC_ADMINISTRATIVE = 'administrative'
 TYPE_DC_EDUCATIONAL = 'educational'
@@ -1277,7 +1277,7 @@ def modify_user(person, module, co, lo):
 	object["firstname"]=person.name
 	object["lastname"]=person.sname
 	object["e-mail"]=person.mail
-	if object.has_key('mailPrimaryAddress'):
+	if 'mailPrimaryAddress' in object:
 		object['mailPrimaryAddress']=person.mail
 		verifyMailDomain(person.mail)
 	if person.isActive == "1":
@@ -1468,7 +1468,7 @@ def create_user(person, baseDN, module, password, OUTFILE, line):
 		object["groups"]=groups[1:]
 	subdir = roleshare_home_subdir(person.sNr, person.getRole(), configRegistry)
 	object["unixhome"]="/home/" + os.path.join(subdir, person.login)
-	if object.has_key('mailbox'):
+	if 'mailbox' in object:
 		object["mailbox"]="/var/spool/%s/"%person.login
 	object["password"]=password
 	object['overridePWHistory'] = '1'
@@ -1476,7 +1476,7 @@ def create_user(person, baseDN, module, password, OUTFILE, line):
 	object["firstname"]=person.name
 	object["lastname"]=person.sname
 	object["e-mail"]=person.mail
-	if object.has_key('mailPrimaryAddress'):
+	if 'mailPrimaryAddress' in object:
 		object['mailPrimaryAddress']=person.mail
 		verifyMailDomain(person.mail)
 	if person.isActive == "1":
@@ -2644,11 +2644,11 @@ def export_computer():
 		inventoryNumber = ''
 		ip = ''
 		mac = ''
-		if host.has_key('inventoryNumber') and host['inventoryNumber']:
+		if host.get('inventoryNumber'):
 			inventoryNumber = host['inventoryNumber'][0]
-		if host.has_key('ip') and host['ip']:
+		if host.get('ip'):
 			ip = host['ip'][0]
-		if host.has_key('mac') and host['mac']:
+		if host.get('mac'):
 			mac = host['mac'][0]
 #		Name,OU,1.Zeile Inventar-Nr.,IP-Adresse
 		outf.write(out_line % (host['name'], ou, inventoryNumber, ip, mac))
@@ -3122,7 +3122,7 @@ for result in lo.search(base=baseDN, filter="(objectClass=univentionMailDomainna
 # get default group
 default_group = "cn=Domain Users,cn=groups,%s"%baseDN # fallback
 for object in univention.admin.modules.lookup(setting_module, co, lo, scope='sub', superordinate=superordinate, base='', filter=''):
-	if object.has_key("defaultGroup"):
+	if "defaultGroup" in object:
 		default_group=object["defaultGroup"]
 	else: print "WARNING, no default group found"
 
