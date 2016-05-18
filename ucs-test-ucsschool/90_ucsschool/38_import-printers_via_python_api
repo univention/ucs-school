@@ -4,6 +4,7 @@
 ## tags: [apptest,ucsschool]
 ## roles: [domaincontroller_master]
 ## exposure: dangerous
+## timeout: 14400
 ## packages:
 ##   - ucs-school-import
 

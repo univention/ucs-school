@@ -3,6 +3,7 @@
 ## desc: Import OU via CLI
 ## tags: [apptest,ucsschool,longrunning]
 ## roles: [domaincontroller_master]
+## timeout: 14400
 ## exposure: dangerous
 ## packages:
 ##   - ucs-school-import

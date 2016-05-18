@@ -1,3 +1,9 @@
+ucs-test-ucsschool (3.0.5-28) unstable; urgency=low
+
+  * Bug #41282: increase max timeout
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Tue, 17 May 2016 14:56:48 +0200
+
 ucs-test-ucsschool (3.0.5-27) unstable; urgency=low
 
   * Bug #41278: 90_ucsschool/essential/computerroom.py
