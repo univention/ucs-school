@@ -1277,7 +1277,7 @@ def modify_user(person, module, co, lo):
 	object["firstname"]=person.name
 	object["lastname"]=person.sname
 	object["e-mail"]=person.mail
-	if 'mailPrimaryAddress' in object:
+	if object.has_key('mailPrimaryAddress'):
 		object['mailPrimaryAddress']=person.mail
 		verifyMailDomain(person.mail)
 	if person.isActive == "1":
@@ -1468,7 +1468,7 @@ def create_user(person, baseDN, module, password, OUTFILE, line):
 		object["groups"]=groups[1:]
 	subdir = roleshare_home_subdir(person.sNr, person.getRole(), configRegistry)
 	object["unixhome"]="/home/" + os.path.join(subdir, person.login)
-	if 'mailbox' in object:
+	if object.has_key('mailbox'):
 		object["mailbox"]="/var/spool/%s/"%person.login
 	object["password"]=password
 	object['overridePWHistory'] = '1'
@@ -1476,7 +1476,7 @@ def create_user(person, baseDN, module, password, OUTFILE, line):
 	object["firstname"]=person.name
 	object["lastname"]=person.sname
 	object["e-mail"]=person.mail
-	if 'mailPrimaryAddress' in object:
+	if object.has_key('mailPrimaryAddress'):
 		object['mailPrimaryAddress']=person.mail
 		verifyMailDomain(person.mail)
 	if person.isActive == "1":
@@ -3122,7 +3122,7 @@ for result in lo.search(base=baseDN, filter="(objectClass=univentionMailDomainna
 # get default group
 default_group = "cn=Domain Users,cn=groups,%s"%baseDN # fallback
 for object in univention.admin.modules.lookup(setting_module, co, lo, scope='sub', superordinate=superordinate, base='', filter=''):
-	if "defaultGroup" in object:
+	if object.has_key("defaultGroup"):
 		default_group=object["defaultGroup"]
 	else: print "WARNING, no default group found"
 
