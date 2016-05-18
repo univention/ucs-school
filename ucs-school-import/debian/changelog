@@ -1,3 +1,9 @@
+ucs-school-import (13.0.0-3) unstable; urgency=medium
+
+  * Bug #41014: add syntax class for ucsschoolSchools
+
+ -- Florian Best <best@univention.de>  Wed, 18 May 2016 13:35:38 +0200
+
 ucs-school-import (13.0.0-2) unstable; urgency=low
 
   * install LDAP schema domain wide (Bug #41239)

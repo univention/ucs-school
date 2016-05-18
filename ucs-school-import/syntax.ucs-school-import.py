@@ -3,3 +3,10 @@ class UCSSchool_Server_DN( UDM_Objects ):
 	label = '%(fqdn)s'
 	empty_value = False
 	simple = True
+
+
+class Schools(UDM_Attribute):
+	udm_module = 'container/ou'
+	udm_filter = 'objectClass=ucsschoolOrganizationalUnit'
+	attribute = 'name'
+	label_format = '%(displayName)s'

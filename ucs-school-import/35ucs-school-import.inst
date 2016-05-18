@@ -211,7 +211,7 @@ univention-directory-manager settings/extended_attribute create "$@" --ignore_ex
 	--set CLIName="school" \
 	--set objectClass=ucsschoolType \
 	--set ldapMapping=ucsschoolSchool \
-	--set syntax=string \
+	--set syntax=Schools \
 	--set mayChange=1 \
 	--set multivalue=1 || die
 
