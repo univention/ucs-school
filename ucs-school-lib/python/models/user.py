@@ -38,7 +38,7 @@ from ldap.filter import escape_filter_chars
 from ucsschool.lib.roles import role_pupil, role_teacher, role_staff
 from ucsschool.lib.models.utils import create_passwd
 from ucsschool.lib.models.attributes import Username, Firstname, Lastname, Birthday, Email, Password, Disabled, SchoolClassStringAttribute, Schools, RecordUID, SourceUID
-from ucsschool.lib.models.base import UCSSchoolHelperAbstractClass
+from ucsschool.lib.models.base import UCSSchoolHelperAbstractClass, MultipleObjectsError
 from ucsschool.lib.models.school import School
 from ucsschool.lib.models.group import Group, BasicGroup, SchoolClass, WorkGroup
 from ucsschool.lib.models.computer import AnyComputer
@@ -448,7 +448,7 @@ class User(UCSSchoolHelperAbstractClass):
 		Wraps around get_all(), does not need a school name.
 
 		:param connection: the uldap connection
-		:return: object of current class or noObject or RuntimeError
+		:return: object of current class or raises noObject or MultipleObjectsError
 		"""
 		filter_s = "(&(objectclass=ucsschoolType)(ucsschoolSourceUID={})(ucsschoolRecordUID={}))".format(
 			source_uid, record_uid)
@@ -456,8 +456,8 @@ class User(UCSSchoolHelperAbstractClass):
 		if not objs:
 			raise noObject("No user with source_uid={} and record_uid={} found.".format(source_uid, record_uid))
 		elif len(objs) > 1:
-			raise RuntimeError("Got more than one user for source_uid={} and record_uid={}, got: {}.".format(
-				source_uid, record_uid, objs))
+			raise MultipleObjectsError(objs, "Found more than one user with source_uid='{}' and record_uid='{}'.".format(
+				source_uid, record_uid))
 		return cls.get_all(connection, objs[0][1]["ucsschoolSchool"][0], filter_s)[0]
 
 	class Meta:

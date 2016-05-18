@@ -55,7 +55,8 @@ HOOK_SEP_CHAR = '\t'
 HOOK_PATH = '/usr/share/ucs-school-import/hooks/'
 
 class MultipleObjectsError(Exception):
-	def __init__(self, objs):
+	def __init__(self, objs, *args, **kwargs):
+		super(MultipleObjectsError, self).__init__(*args, **kwargs)
 		self.objs = objs
 
 class UCSSchoolHelperAbstractClass(object):
