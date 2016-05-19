@@ -395,7 +395,13 @@ class School(UCSSchoolHelperAbstractClass):
 	@classmethod
 	def from_binddn(cls, lo):
 		logger.debug('All Schools: Showing all OUs which DN %s can read.' % lo.binddn)
+		# get all schools of the user
+		schools = lo.search(base=lo.binddn, scope='base', attr=['ucsschoolSchool'])[0][1].get('ucsschoolSchool', [])
+		if schools:
+			return [cls.from_dn(cls(name=ou).dn, lo) for ou in schools]
+
 		if lo.binddn.find('ou=') > 0:
+			# user has no ucsschoolSchool attribute (not migrated yet)
 			# we got an OU in the user DN -> school teacher or assistent
 			# restrict the visibility to current school
 			# (note that there can be schools with a DN such as ou=25g18,ou=25,dc=...)
@@ -404,9 +410,9 @@ class School(UCSSchoolHelperAbstractClass):
 			school = cls.from_dn(school_dn, None, lo)
 			logger.debug('Schools from binddn: Found school: %r' % school)
 			return [school]
-		else:
-			logger.warning('Schools from binddn: Unable to identify OU of this account - showing all OUs!')
-			return School.get_all(lo)
+
+		logger.warning('Schools from binddn: Unable to identify OU of this account - showing all OUs!')
+		return School.get_all(lo)
 
 	@classmethod
 	def from_udm_obj(cls, udm_obj, school, lo):

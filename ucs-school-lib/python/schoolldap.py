@@ -46,6 +46,7 @@ from functools import wraps
 import re
 import traceback
 import inspect
+from ldap.filter import escape_filter_chars
 
 from univention.management.console.config import ucr
 from univention.management.console.log import MODULE
@@ -399,7 +400,7 @@ class SchoolBaseModule(Base):
 		if not self.user_dn:  # ... backwards compatibility
 			# the DN is None if we have a local user (e.g., root)
 			# FIXME: the statement above is not completely true, user_dn is None also if the UMC server could not detect it (for whatever reason)
-			# therefore this workaround is a security whole which allows to executed ldap operations as machine account
+			# therefore this workaround is a security whole which allows to execute ldap operations as machine account
 			try:  # to get machine account password
 				MODULE.warn('Using machine account for local user: %s' % self.username)
 				with open('/etc/machine.secret', 'rb') as fd:
@@ -469,12 +470,17 @@ class SchoolBaseModule(Base):
 
 	def _users( self, ldap_connection, search_base, group = None, user_type = None, pattern = '' ):
 		"""Returns a list of all users given 'pattern', 'school' (search base) and 'group'"""
-		# get the correct base
-		bases = [ search_base.users ]
-		if user_type and user_type.lower() in ('teacher', 'teachers'):
-			bases = [ search_base.teachers, search_base.teachersAndStaff, search_base.admins ]
-		elif user_type and user_type.lower() in ('student', 'students', 'pupil', 'pupils'):
-			bases = [ search_base.students ]
+		# TODO/FIXME: support also the legacy container-based search
+		# TODO: just use User.get_all()
+		ocs = {
+			'teachers': ('ucsschoolTeacher', 'ucsschoolAdministrator'),
+			'teacher': ('ucsschoolTeacher', 'ucsschoolAdministrator'),
+			'student': ('ucsschoolStudent',),
+			'students': ('ucsschoolStudent',),
+			'pupil': ('ucsschoolStudent',),
+			'pupils': ('ucsschoolStudent',),
+		}.get(user_type and user_type.lower(), ('ucsschoolStudent', 'ucsschoolTeacher', 'ucsschoolStaff', 'ucsschoolAdministrator'))
+		ocs = '(|(objectClass=%s))' % ')(objectClass='.join(ocs)
 
 		# open the group
 		groupObj = None
@@ -483,47 +489,24 @@ class SchoolBaseModule(Base):
 			groupObj = groupModule.object(None, ldap_connection, None, group)
 			groupObj.open()
 
-		# query the users
-		userresult = []
-		if not pattern and groupObj:
-			# special case: no filter is given and a group is selected
-			# in this case, it is more efficient to get all users from the group directly
-			userModule = udm_modules.get('users/user')
-			userresult = []
-			for ibase in bases:
-				for idn in filter( lambda u: u.endswith( ibase ), groupObj['users'] ):
-					try:
-						userObj = udm_modules.lookup(userModule, None, ldap_connection, scope='base', base=idn)[0]
-					except udm_errors.noObject:
-						MODULE.process('_users(): skipped foreign OU user %r' % (idn,))
-						continue
-					try:
-						userObj.open()
-					except udm_errors.ldapError:
-						raise
-					except udm_errors.base:
-						MODULE.error('get(): failed to open user object: %r\n%s' % (idn, traceback.format_exc()))
-					else:
-						userresult.append(userObj)
-		else:
-			# get the LDAP filter
-			ldapFilter = LDAP_Filter.forUsers( pattern )
+		filter_s = '(&(ucsschoolSchool=%s)%s%s)' % (escape_filter_chars(search_base.school), LDAP_Filter.forUsers(pattern), ocs)
+		users = udm_modules.lookup('users/user', None, ldap_connection, scope='sub', filter=filter_s)
+		if groupObj:
+			# filter users to be members of the specified group
+			users = [i for i in users if i.dn in set(groupObj['users'])]
 
-			# search for all users
-			for ibase in bases:
-				try:
-					userresult.extend(udm_modules.lookup( 'users/user', None, ldap_connection,
-							scope = 'sub', base = ibase, filter = ldapFilter))
-				except udm_errors.noObject:
-					# the ldap base does not exists
-					pass
+		# TODO: why do we open the user?
+		result = []
+		for user in users:
+			try:
+				user.open()
+				result.append(user)
+			except udm_errors.ldapError:
+				raise
+			except udm_errors.base:
+				MODULE.error('get(): failed to open user object: %r\n%s' % (user.dn, traceback.format_exc()))
 
-			if groupObj:
-				# filter users to be members of the specified group
-				groupUserDNs = set(groupObj['users'])
-				userresult = [ i for i in userresult if i.dn in groupUserDNs ]
-
-		return userresult
+		return result
 
 
 class LDAP_Filter:
@@ -549,6 +532,7 @@ class LDAP_Filter:
 			# evaluate the subexpression (search word over different attributes)
 			subexpr = []
 			# all expressions for a full string match
+			iword = escape_filter_chars(iword)
 			if iword:
 				subexpr += [ '(%s=%s)' % ( jattr, iword ) for jattr in fullMatch ]
 
