@@ -51,7 +51,7 @@ from ldap.dn import escape_dn_chars, explode_dn
 
 class User(UCSSchoolHelperAbstractClass):
 	name = Username(_('Username'), aka=['Username', 'Benutzername'])
-#	schools = Schools(_('Schools'))  # FIXME: extended attributes can't be used without module initilization
+	schools = Schools(_('Schools'))
 	firstname = Firstname(_('First name'), aka=['First name', 'Vorname'], required=True, unlikely_to_change=True)
 	lastname = Lastname(_('Last name'), aka=['Last name', 'Nachname'], required=True, unlikely_to_change=True)
 	birthday = Birthday(_('Birthday'), aka=['Birthday', 'Geburtstag'], unlikely_to_change=True)
@@ -131,6 +131,9 @@ class User(UCSSchoolHelperAbstractClass):
 	def self_is_staff(self):
 		return self.is_staff(self.school, self.dn)
 
+	def self_is_administrator(self):
+		return self.is_admininstrator(self.school, self.dn)
+
 	@classmethod
 	def is_student(cls, school, dn):
 		return cls.get_search_base(school).isStudent(dn)
@@ -142,6 +145,10 @@ class User(UCSSchoolHelperAbstractClass):
 	@classmethod
 	def is_staff(cls, school, dn):
 		return cls.get_search_base(school).isStaff(dn)
+
+	@classmethod
+	def is_admininstrator(cls, school, dn):
+		return cls.get_search_base(school).isAdmin(dn)
 
 	@classmethod
 	def get_class_for_udm_obj(cls, udm_obj, school):
@@ -164,6 +171,7 @@ class User(UCSSchoolHelperAbstractClass):
 
 	def do_create(self, udm_obj, lo):
 		self.create_mail_domain(lo)
+		self.adjust_options(udm_obj)
 		password_created = False
 		if not self.password:
 			logger.debug('No password given. Generating random one')
@@ -200,6 +208,7 @@ class User(UCSSchoolHelperAbstractClass):
 
 	def do_modify(self, udm_obj, lo):
 		self.create_mail_domain(lo)
+		self.adjust_options(udm_obj)
 		self.password = self.password or None
 		mandatory_groups = self.groups_used(lo)
 		all_schools = School.get_all(lo, respect_local_oulist=False)
@@ -232,6 +241,20 @@ class User(UCSSchoolHelperAbstractClass):
 				logger.debug('Group is not yet part of the user. Adding...')
 				udm_obj['groups'].append(group_dn)
 		return super(User, self).do_modify(udm_obj, lo)
+
+	def adjust_options(self, udm_obj):
+		options = []
+		if self.self_is_student():
+			options.append('ucsschoolStudent')
+		if self.self_is_teacher():
+			options.append('ucsschoolTeacher')
+		if self.self_is_staff():
+			options.append('ucsschoolStaff')
+		if self.self_is_administrator():
+			options.append('ucsschoolAdministrator')
+		for option in options:
+			if option not in udm_obj.options:
+				udm_obj.options.append(option)
 
 	def do_school_change(self, udm_obj, lo, old_school):
 		super(User, self).do_school_change(udm_obj, lo, old_school)
