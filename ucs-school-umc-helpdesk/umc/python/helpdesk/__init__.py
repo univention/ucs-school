@@ -32,7 +32,8 @@
 
 from univention.management.console.log import MODULE
 from univention.management.console.config import ucr
-from univention.management.console.modules.decorators import simple_response, sanitize
+from univention.management.console.modules import UMC_Error
+from univention.management.console.modules.decorators import sanitize
 from univention.management.console.modules.sanitizers import StringSanitizer
 
 from univention.lib.i18n import Translation
@@ -59,30 +60,17 @@ def sanitize_header(header):
 
 class Instance(SchoolBaseModule):
 
-	@simple_response
-	@LDAP_Connection()
-	def configuration(self, ldap_user_read=None, ldap_position=None, search_base=None):
-		ucr.load()
-		MODULE.process('return configuration')
-		username = self._username
-
-		MODULE.info('username=%r school=%r' % (self._username, search_base.school))
-
-		school = School.from_dn(School(search_base.school).dn, None, ldap_user_read)
-		return {
-			'username': username,
-			'school': school.display_name,
-			'recipient': ucr.get('ucsschool/helpdesk/recipient')
-		}
-
 	@sanitize(
-		username=StringSanitizer(required=True),
 		school=StringSanitizer(required=True),
 		message=StringSanitizer(required=True),
 		category=StringSanitizer(required=True),
 	)
 	@LDAP_Connection()
 	def send(self, request, ldap_user_read=None, ldap_position=None, search_base=None):
+		ucr.load()
+		if not ucr.get('ucsschool/helpdesk/recipient'):
+			raise UMC_Error(_('The message could not be send to the helpdesk team: The email address for the helpdesk team is not configured. It must be configured by an administrator via the UCR variable "ucsschool/helpdesk/recipient".'), status=500)
+
 		def _send_thread(sender, recipients, subject, message):
 			MODULE.info('sending mail: thread running')
 
@@ -99,68 +87,52 @@ class Instance(SchoolBaseModule):
 			server.set_debuglevel(0)
 			server.sendmail(sender, recipients, msg)
 			server.quit()
+			return True
 
-		def _send_return(thread, result, request):
-			import traceback
+		recipients = ucr['ucsschool/helpdesk/recipient'].split(' ')
+		school = School.from_dn(School(name=request.options['school']).dn, None, ldap_user_read).display_name
+		category = request.options['category']
+		message = request.options['message']
 
-			if not isinstance(result, BaseException):
-				MODULE.info('sending mail: completed successfully')
-				self.finished(request.id, True)
+		subject = u'%s (%s: %s)' % (category, _('School'), school)
+
+		try:
+			user = User(None, ldap_user_read, ldap_position, self.user_dn)
+			user.open()
+		except ldap.LDAPError:
+			MODULE.error('Errror receiving user information: %s' % (traceback.format_exception(),))
+			user = {
+				'displayName': self.username,
+				'mailPrimaryAddress': '',
+				'mailAlternativeAddress': [],
+				'e-mail': [],
+				'phone': []
+			}
+		mails = set([user['mailPrimaryAddress']]) | set(user['mailAlternativeAddress']) | set(user['e-mail'])
+
+		sender = user['mailPrimaryAddress']
+		if not sender:
+			if ucr.get('hostname') and ucr.get('domainname'):
+				sender = 'ucsschool-helpdesk@%s.%s' % (ucr['hostname'], ucr['domainname'])
 			else:
-				msg = ''.join(traceback.format_exception(*thread.exc_info))
-				MODULE.process('sending mail: An internal error occurred: %s' % (msg,))
-				self.finished(request.id, False, message=msg, status=500)
+				sender = 'ucsschool-helpdesk@localhost'
 
-		if ucr.get('ucsschool/helpdesk/recipient'):
-			recipients = ucr['ucsschool/helpdesk/recipient'].split(' ')
-			username = request.options['username']
-			#username = self._username
-			school = request.options['school']
-			category = request.options['category']
-			message = request.options['message']
+		data = [
+			(_('Sender'), u'%s (%s)' % (user['displayName'], self.username)),
+			(_('School'), school),
+			(_('Mail address'), u', '.join(mails)),
+			(_('Phone number'), u', '.join(user['phone'])),
+			(_('Category'), category),
+			(_('Message'), u'\r\n%s' % (message,)),
+		]
+		msg = u'\r\n'.join(u'%s: %s' % (key, value) for key, value in data)
 
-			subject = u'%s (%s: %s)' % (category, _('School'), school)
+		MODULE.info('sending message: %s' % ('\n'.join(map(lambda x: repr(x.strip()), msg.splitlines()))),)
 
-			try:
-				user = User(None, ldap_user_read, ldap_position, self._user_dn)
-				user.open()
-			except ldap.LDAPError:
-				MODULE.error('Errror receiving user information: %s' % (traceback.format_exception(),))
-				user = {
-					'displayName': username,
-					'mailPrimaryAddress': '',
-					'mailAlternativeAddress': [],
-					'e-mail': [],
-					'phone': []
-				}
-			mails = set([user['mailPrimaryAddress']]) | set(user['mailAlternativeAddress']) | set(user['e-mail'])
-
-			sender = user['mailPrimaryAddress']
-			if not sender:
-				if ucr.get('hostname') and ucr.get('domainname'):
-					sender = 'ucsschool-helpdesk@%s.%s' % (ucr['hostname'], ucr['domainname'])
-				else:
-					sender = 'ucsschool-helpdesk@localhost'
-
-			data = [
-				(_('Sender'), u'%s (%s)' % (user['displayName'], username)),
-				(_('School'), school),
-				(_('Mail address'), u', '.join(mails)),
-				(_('Phone number'), u', '.join(user['phone'])),
-				(_('Category'), category),
-				(_('Message'), u'\r\n%s' % (message,)),
-			]
-			msg = u'\r\n'.join(u'%s: %s' % (key, value) for key, value in data)
-
-			MODULE.info('sending message: %s' % ('\n'.join(map(lambda x: repr(x.strip()), msg.splitlines()))),)
-
-			func = notifier.Callback(_send_thread, sender, recipients, subject, msg)
-			MODULE.info('sending mail: starting thread')
-			thread = notifier.threads.Simple('HelpdeskMessage', func, notifier.Callback(_send_return, request))
-			thread.run()
-		else:
-			MODULE.error('HELPDESK: cannot send mail - config-registry variable "ucsschool/helpdesk/recipient" is not set')
-			self.finished(request.id, False, _('The email address for the helpdesk team is not configured.'))
+		func = notifier.Callback(_send_thread, sender, recipients, subject, msg)
+		MODULE.info('sending mail: starting thread')
+		thread = notifier.threads.Simple('HelpdeskMessage', func, notifier.Callback(self.thread_finished_callback, request))
+		thread.run()
 
 	@LDAP_Connection()
 	def categories(self, request, ldap_user_read=None, ldap_position=None, search_base=None):

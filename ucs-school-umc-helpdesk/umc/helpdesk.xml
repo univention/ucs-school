@@ -6,11 +6,8 @@
 	<categories>
 	  <category name="ucs-school-class"/>
 	</categories>
-	<command name="helpdesk/configuration" function="configuration">
-	</command>
-	<command name="helpdesk/send" function="send">
-	</command>
-	<command name="helpdesk/categories" function="categories">
-	</command>
+	<command name="helpdesk/schools" function="schools"/>
+	<command name="helpdesk/send" function="send"/>
+	<command name="helpdesk/categories" function="categories"/>
   </module>
 </umc>
