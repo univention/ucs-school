@@ -43,6 +43,7 @@ import traceback
 import urllib
 import filecmp
 from httplib import HTTPException
+from ldap.filter import filter_format
 
 # related third party
 import notifier
@@ -554,7 +555,7 @@ class Instance(Base):
 				udm_modules.init(lo, position, module)
 
 			# check if the OU already exists
-			result = udm_modules.lookup('container/ou', None, lo, base=ucrMaster.get('ldap/base'), scope='sub', filter='(&(objectClass=ucsschoolOrganizationalUnit)(name=%s))' % schoolOU)
+			result = udm_modules.lookup('container/ou', None, lo, base=ucrMaster.get('ldap/base'), scope='sub', filter=filter_format('(&(objectClass=ucsschoolOrganizationalUnit)(name=%s))', (schoolOU,)))
 			if result:
 				# OU already exists...
 				values['exists'] = True

@@ -1,3 +1,9 @@
+ucs-school-umc-installer (4.0.0-3) unstable; urgency=medium
+
+  * Bug #41126: fix an ldap filter
+
+ -- Florian Best <best@univention.de>  Fri, 20 May 2016 09:02:15 +0200
+
 ucs-school-umc-installer (4.0.0-2) unstable; urgency=medium
 
   * Bug #37484: fix SSL problems during contacting the DC master
