@@ -126,6 +126,7 @@ class CSVUser(User):
 		user = cls(**attrs)
 		user.name = user.guess_username(lo, date_format)
 		user.school = school
+		user.schools = [school]
 		if user.birthday:
 			try:
 				user.birthday = unformat_date(user.birthday, date_format)
@@ -142,6 +143,7 @@ class CSVUser(User):
 	@classmethod
 	def from_frontend_attrs(cls, attrs, school, date_format):
 		attrs['school'] = school
+		attrs['schools'] = [school]
 		if 'birthday' in attrs:
 			attrs['birthday'] = unformat_date(attrs['birthday'], date_format)
 		user = cls(**attrs)

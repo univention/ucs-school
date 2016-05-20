@@ -308,13 +308,11 @@ class Instance(SchoolBaseModule, ProgressMixin):
 					file_info = self._get_info(file_id)
 				user = file_info.user_klass.from_frontend_attrs(attrs, file_info.school, file_info.date_format)
 				MODULE.process('Going to %s %s %s' % (user.action, file_info.user_klass.__name__, user.name))
-				action = user.action
-				if action == 'create':
-					action = _('created')
-				elif action == 'modify':
-					action = _('modified')
-				if action == 'delete':
-					action = _('deleted')
+				action = {
+					'create': _('created'),
+					'modify': _('modified'),
+					'delete': _('deleted'),
+				}.get(user.action, user.action)
 				if user.commit(lo):
 					yield {'username' : user.name, 'action' : action, 'success' : True}
 				else:
