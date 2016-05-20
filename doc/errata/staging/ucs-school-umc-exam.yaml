@@ -6,7 +6,5 @@ src: ucs-school-umc-exam
 fix: 5.0.2-1.96.201510161301
 desc: |
  This update addresses the following issue(s):
- * A regression (due to Bug #40712) during evaluating boolean UCR variables has
-   been fixed.
  * Computers are removed from group object after stopping an exam.
-bug: [40712, 41112]
+bug: [41112]
