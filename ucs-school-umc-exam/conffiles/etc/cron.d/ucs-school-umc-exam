@@ -1,0 +1,8 @@
+@%@UCRWARNING=# @%@
+
+# if enabled, all running exams are stopped and exam/room settings are cleaned up
+@!@
+timestamp = configRegistry.get('ucsschool/exam/cron/cleanup', '# 30 2 * * *')
+options = configRegistry.get('ucsschool/exam/cron/cleanup/options', '')
+print '%s root /usr/share/ucs-school-exam/exam-and-room-cleanup %s' % (timestamp, options)
+@!@

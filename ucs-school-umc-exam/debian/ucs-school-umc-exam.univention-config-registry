@@ -1,0 +1,4 @@
+Type: file
+File: etc/cron.d/ucs-school-umc-exam
+Variables: ucsschool/exam/cron/cleanup
+Variables: ucsschool/exam/cron/cleanup/options
