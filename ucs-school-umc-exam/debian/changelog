@@ -1,3 +1,9 @@
+ucs-school-umc-exam (5.0.5-1) unstable; urgency=low
+
+  * Bug #40213: added exam-and-room-cleanup script
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 20 May 2016 15:33:33 +0200
+
 ucs-school-umc-exam (5.0.4-1) unstable; urgency=medium
 
   * Bug #40712: fix last commit

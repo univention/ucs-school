@@ -1,0 +1,238 @@
+#!/usr/bin/python2.7 -u
+#
+# Copyright 2016 Univention GmbH
+#
+# http://www.univention.de/
+#
+# All rights reserved.
+#
+# The source code of this program is made available
+# under the terms of the GNU Affero General Public License version 3
+# (GNU AGPL V3) as published by the Free Software Foundation.
+#
+# Binary versions of this program provided by Univention to you as
+# well as other copyrighted, protected or trademarked materials like
+# Logos, graphics, fonts, specific documentations and configurations,
+# cryptographic keys etc. are subject to a license agreement between
+# you and Univention and not subject to the GNU AGPL V3.
+#
+# In the case you use this program under the terms of the GNU AGPL V3,
+# the program is provided in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public
+# License with the Debian GNU/Linux or Univention distribution in file
+# /usr/share/common-licenses/AGPL-3; if not, see
+# <http://www.gnu.org/licenses/>.
+#
+
+import sys
+import os
+import shutil
+import traceback
+import httplib
+import optparse
+import univention.debug as ud
+import univention.config_registry
+import univention.uldap
+import univention.admin.uldap
+from univention.lib.umc_connection import UMCConnection
+
+
+LOGFILE = '/var/log/univention/ucs-school-exam-cleanup.log'
+
+
+class ExamCleanupHelper(object):
+	def __init__(self, options):
+		self.options = options
+		self.ucr = univention.config_registry.ConfigRegistry()
+		self.ucr.load()
+		self.hostname = self.ucr.get('hostname')
+		self.umcp = self.get_UMCP_connection()
+		self.lo = self.get_LDAP_connection()
+		self.exam_prefix = self.ucr.get('ucsschool/ldap/default/userprefix/exam', 'exam-')
+		self.DIR_ROOMS = '/var/cache/ucs-school-umc-computerroom'
+		self.DIR_EXAMS = self.ucr.get('ucsschool/exam/cache', '/var/lib/ucs-school-umc-schoolexam')
+
+	def get_LDAP_connection(self):
+		ud.debug(ud.MAIN, ud.INFO, 'Opening LDAP connection')
+		return univention.uldap.getMachineConnection(ldap_master=False)
+
+	def get_UMCP_connection(self):
+		ud.debug(ud.MAIN, ud.INFO, 'Opening UMCP connection to %s with machine account' % (self.hostname,))
+		return UMCConnection(self.hostname).get_machine_connection()
+
+	def running_exam_iter(self):
+		ou_list = self.lo.search(filter='(objectClass=ucsschoolOrganizationalUnit)')
+		for ou_dn, ou_attrs in ou_list:
+			ou_name = ou_attrs.get('ou')[0]
+			try:
+				room_list = self.umcp.request('computerroom/rooms', {'school': ou_name})
+			except httplib.HTTPException, ex:
+				ud.debug(ud.MAIN, ud.ERROR, 'Cannot get room list for OU %r:\n%s' % (ou_name, ex))
+				continue
+			for room in room_list:
+				ud.debug(ud.MAIN, ud.INFO, '%s: %r' % (ou_name, room))
+				if room.get('exam'):
+					ud.debug(ud.MAIN, ud.INFO, 'Running exam found')
+					yield room
+
+	def stop_running_exams(self):
+		if self.options.skip_stop_running_exams:
+			ud.debug(ud.MAIN, ud.INFO, 'Skipping shutdown of running exams as requested')
+			return
+
+		for room in self.running_exam_iter():
+			ud.debug(ud.MAIN, ud.PROCESS, 'Stopping exam %r in room %r (%r)' % (
+				room.get('exam'), room.get('label'), room.get('id')))
+			if self.options.dryrun:
+				ud.debug(ud.MAIN, ud.PROCESS, 'dry-run: skipping stop of exam')
+				continue
+
+			try:
+				result = self.umcp.request(
+					'schoolexam/exam/finish',
+					{'exam': room.get('exam'), 'room': room.get('id')})
+				ud.debug(ud.MAIN, ud.INFO, 'result of schoolexam/exam/finish: %r' % (result,))
+			except httplib.HTTPException, ex:
+				ud.debug(
+					ud.MAIN, ud.ERROR,
+					'Cannot stop exam %r in room %r:\n%s' % (room.get('exam'), room.get('id'), ex))
+				continue
+
+	def remove_exam_user(self):
+		if self.ucr.get('server/role') not in ('domaincontroller_master', 'domaincontroller_backup',):
+			ud.debug(ud.MAIN, ud.INFO, 'Skipping remove_exam_user: system/role does not match')
+			return
+		if self.options.skip_exam_user_removal:
+			ud.debug(ud.MAIN, ud.INFO, 'Skipping removal of exam user as requested')
+			return
+
+		try:
+			lo, position = univention.admin.uldap.getAdminConnection()
+
+			univention.admin.modules.update()
+			mod_user = univention.admin.modules.get("users/user")
+			univention.admin.modules.init(lo, position, mod_user)
+
+			ou_list = self.lo.searchDn(filter='(objectClass=ucsschoolOrganizationalUnit)')
+			for ou_dn in ou_list:
+				userlist = mod_user.lookup({}, lo, 'uid=%s*' % (self.exam_prefix,), base='cn=examusers,%s' % (ou_dn,))
+				for user in userlist:
+					ud.debug(ud.MAIN, ud.PROCESS, 'Removing exam user %r' % (user.dn,))
+					if self.options.dryrun:
+						ud.debug(ud.MAIN, ud.PROCESS, 'dry-run: skipping removal')
+						continue
+					user.open()
+					user.remove()
+		except Exception:
+			ud.debug(ud.MAIN, ud.ERROR, 'Removing remaining exam user failed with traceback:\n%s' % (traceback.format_exc(), ))
+
+	def remove_ucr_debris(self):
+		if self.options.skip_remove_ucr_debris:
+			ud.debug(ud.MAIN, ud.INFO, 'Skipping UCR cleanup as requested')
+			return
+
+		remove_list = []
+		for key in self.ucr.keys():
+			if key in (
+					'samba/othershares/hosts/deny',
+					'samba/othershares/hosts/none',
+					'samba/printmode/hosts/none',
+					'samba/printmode/hosts/all',
+					'cups/printmode/hosts/none',
+					'cups/printmode/hosts/all'):
+				remove_list.append(key)
+			elif key.startswith('proxy/filter/room/') and (key.endswith('/ip') or key.endswith('/rule')):
+				remove_list.append(key)
+			elif key.startswith('samba/share/') and key.endswith('/hosts/deny'):
+				remove_list.append(key)
+			elif key.startswith('samba/sharemode/room/'):
+				remove_list.append(key)
+			elif key.startswith('samba/printmode/room/'):
+				remove_list.append(key)
+			elif key.startswith('proxy/filter/setting-user/'):
+				remove_list.append(key)
+		if remove_list:
+			ud.debug(ud.MAIN, ud.PROCESS, 'Removing following UCR variables:\n- %s' % ('\n- '.join(remove_list),))
+			if self.options.dryrun:
+				ud.debug(ud.MAIN, ud.PROCESS, 'dry-run: leaving UCR variables untouched')
+			else:
+				univention.config_registry.handler_unset(remove_list)
+
+	def remove_exam_file_debris(self):
+		if self.options.skip_remove_exam_file_debris:
+			ud.debug(ud.MAIN, ud.INFO, 'Skipping cleanup of exam metadata/data files as requested')
+			return
+
+		for entry in os.listdir(self.DIR_EXAMS):
+			fn = os.path.join(self.DIR_EXAMS, entry)
+			ud.debug(ud.MAIN, ud.PROCESS, 'Removing %r' % (fn,))
+			if not self.options.dryrun:
+				try:
+					if os.path.isdir(fn):
+						shutil.rmtree(fn, ignore_errors=False)
+					else:
+						os.remove(fn)
+				except (IOError, OSError), ex:
+					ud.debug(ud.MAIN, ud.ERROR, 'Unable to remove %r: %s' % (fn, ex))
+			else:
+				ud.debug(ud.MAIN, ud.PROCESS, 'dry-run: leaving file/directory untouched')
+
+	def remove_room_debris(self):
+		if self.options.skip_remove_room_debris:
+			ud.debug(ud.MAIN, ud.INFO, 'Skipping cleanup of room metadata files as requested')
+			return
+
+		for entry in os.listdir(self.DIR_ROOMS):
+			fn = os.path.join(self.DIR_ROOMS, entry)
+			ud.debug(ud.MAIN, ud.PROCESS, 'Removing %r' % (fn,))
+			if not self.options.dryrun:
+				try:
+					os.remove(fn)
+				except (IOError, OSError), ex:
+					ud.debug(ud.MAIN, ud.ERROR, 'Unable to remove %r: %s' % (fn, ex))
+			else:
+				ud.debug(ud.MAIN, ud.PROCESS, 'dry-run: leaving file untouched')
+
+	def cleanup(self):
+		self.stop_running_exams()
+		self.remove_exam_user()
+		self.remove_ucr_debris()
+		self.remove_exam_file_debris()
+		self.remove_room_debris()
+
+
+def main():
+	description = '''This script stops currently running exams and purges all remaining settings for exams and computer rooms.
+WARNING: if a running exam cannot be shutdown cleanly, data in the home directory may be lost.
+This script redirects all output to /var/log/univention/ucs-school-exam-cleanup.log.'''
+	parser = optparse.OptionParser(description=description)
+	parser.add_option('-n', '--dry-run', dest='dryrun', default=False, action='store_true', help='do not change anything')
+	parser.add_option('-d', '--debug', dest='debug', default=False, action='store_true', help='write additional debug output to logfile')
+	parser.add_option('--skip-exam-shutdown', dest='skip_stop_running_exams', default=False, action='store_true',
+					  help='do not try to shutdown running exams gracefully')
+	parser.add_option('--skip-exam-user-removal', dest='skip_exam_user_removal', default=False, action='store_true',
+					  help='do not remove all existing exam users (only on DC master / DC backup)')
+	parser.add_option('--skip-ucr-cleanup', dest='skip_remove_ucr_debris', default=False, action='store_true',
+					  help='do not purge exam/room related UCR variables')
+	parser.add_option('--skip-exam-cleanup', dest='skip_remove_exam_file_debris', default=False, action='store_true',
+					  help='do not purge exam data/metadata files')
+	parser.add_option('--skip-room-cleanup', dest='skip_remove_room_debris', default=False, action='store_true',
+					  help='do not purge room metadata files')
+	(options, _) = parser.parse_args()
+
+	debug_level = ud.ALL if options.debug else ud.PROCESS
+	ud.init(LOGFILE, ud.FLUSH, ud.NO_FUNCTION)
+	ud.set_level(ud.MAIN, debug_level)
+
+	sys.stdout = open(LOGFILE, 'a+')
+	sys.stderr = open(LOGFILE, 'a+')
+
+	helper = ExamCleanupHelper(options)
+	helper.cleanup()
+
+if __name__ == '__main__':
+	main()
