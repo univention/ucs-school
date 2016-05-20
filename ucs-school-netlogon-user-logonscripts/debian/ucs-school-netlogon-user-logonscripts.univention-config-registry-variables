@@ -53,8 +53,14 @@ Type=str
 Categories=ucsschool-netlogon
 
 [ucsschool/userlogon/umclink/re]
-Description[de]=Regulärer Ausdruck auf die LDAP-DN der Benutzer. Trifft dieser zu, wird der UMC-Link auf dem Windows Desktop der Benutzer durch das netlogon Skript angelegt (default: nur Lehrer).
-Description[en]=Regular expression on the LDAP-DN of users. If this expression matches, the netlogon Skript creates an UMC-Link on the users windows desktop (default: only teachers).
+Description[de]=Regulärer Ausdruck auf die LDAP-DN der Benutzer. Trifft dieser zu, wird der UMC-Link auf dem Windows Desktop der Benutzer durch das netlogon Skript angelegt (default: nur Lehrer und Mitarbeiter).
+Description[en]=Regular expression on the LDAP-DN of users. If this expression matches, the netlogon Skript creates an UMC-Link on the users windows desktop (default: only teachers and staff).
+Type=str
+Categories=ucsschool-netlogon
+
+[ucsschool/userlogon/umclink/filter]
+Description[de]=LDAP Filter zur Suche nach Benutzern. Trifft dieser zu, wird der UMC-Link auf dem Windows Desktop der Benutzer durch das netlogon Skript angelegt (default: nur Lehrer und Mitarbeiter).
+Description[en]=LDAP filter for search of users. If this expression matches, the netlogon Skript creates an UMC-Link on the users windows desktop (default: only teachers and staff).
 Type=str
 Categories=ucsschool-netlogon
 

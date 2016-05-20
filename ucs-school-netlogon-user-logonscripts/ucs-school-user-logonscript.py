@@ -29,11 +29,16 @@
 
 __package__=''  # workaround for PEP 366
 import listener
-import univention.config_registry
 import univention.debug
-import univention.utf8
+import univention.uldap
 
-import os, pwd, ldap, ldap.schema, re, time, shutil
+import os
+import pwd
+import re
+import time
+import shutil
+import ldap
+from ldap.filter import filter_format
 
 hostname=listener.baseConfig['hostname']
 domainname=listener.baseConfig['domainname']
@@ -53,7 +58,8 @@ strTeacher = listener.baseConfig.get('ucsschool/ldap/default/container/teachers'
 strStaff = listener.baseConfig.get('ucsschool/ldap/default/container/teachers-and-staff', 'lehrer und mitarbeiter')
 ldapbase = listener.baseConfig.get('ldap/base', '')
 umcLink = listener.baseConfig.get('ucsschool/userlogon/umclink/link', 'http://%s.%s/univention-management-console' % (hostname, domainname))
-reTeacher = re.compile(listener.baseConfig.get('ucsschool/userlogon/umclink/re', '^(.*),cn=(%s|%s),cn=users,ou=([^,]+),(?:ou=[^,]+,)?%s$' % (strTeacher, strStaff, ldapbase)))
+reTeacher = re.compile(listener.baseConfig.get('ucsschool/userlogon/umclink/re', '^(.*),cn=(%s|%s),cn=users,ou=([^,]+),(?:ou=[^,]+,)?%s$' % (re.escape(strTeacher), re.escape(strStaff), re.escape(ldapbase))))
+filterTeacher = listener.baseConfig.get('ucsschool/userlogon/umclink/filter', '(|(objectClass=ucsschoolTeacher)(objectClass=ucsschoolStaff))')
 
 # create netlogon scripts for samba3 and samba4
 def getScriptPath():
@@ -114,7 +120,7 @@ def getGlobalLinks():
 				# check if share exists
 				res_shares = []
 				try:
-					res_shares = l.search(scope="sub", filter='(&(objectClass=univentionShareSamba)(|(cn=%s)(univentionShareSambaName=%s)))' % (key,key), attr=['cn'])
+					res_shares = l.search(scope="sub", filter=filter_format('(&(objectClass=univentionShareSamba)(|(cn=%s)(univentionShareSambaName=%s)))', (key, key)), attr=['cn'])
 				except:
 					pass
 				if len(res_shares) > 0:
@@ -288,7 +294,14 @@ Function MapDrive(Drive,Share)
 		skript += 'oLink.Save\n\n'
 
 	# create shortcut to umc for teachers
-	if reTeacher.match(dn):
+	is_teacher = reTeacher.match(dn)
+	if not is_teacher:
+		with LDAPConnection() as l:
+			try:
+				is_teacher = bool(l.search(base=dn, scope='base', filter=filterTeacher)[0])
+			except (ldap.NO_SUCH_OBJECT, IndexError):
+				pass
+	if is_teacher:
 		skript += 'Set WshShell = CreateObject("WScript.Shell")\n'
 		skript += 'Set objFSO = CreateObject("Scripting.FileSystemObject")\n'
 		skript += 'strLinkPath = WshShell.SpecialFolders("Desktop") & "\Univention Management Console.URL"\n'
@@ -401,7 +414,7 @@ def sharechange(dn, new, old):
 
 	try:
 		with LDAPConnection() as l:
-			res = l.search(scope="sub", filter='(&(objectClass=posixGroup)(gidNumber=%s))' % (use['univentionShareGid'][0],))
+			res = l.search(scope="sub", filter=filter_format('(&(objectClass=posixGroup)(gidNumber=%s))', (use['univentionShareGid'][0],)))
 			if len(res) > 0:
 				dn = res[0][0]
 				group = res[0][1]
@@ -417,7 +430,7 @@ def userGids(dn):
 
 	try:
 		with LDAPConnection() as l:
-			res = l.search(scope="sub", filter="(&(objectClass=posixGroup)(uniqueMember=%s))" % dn, attr=["gidNumber"])
+			res = l.search(scope="sub", filter=filter_format("(&(objectClass=posixGroup)(uniqueMember=%s))", (dn,)), attr=["gidNumber"])
 			return frozenset([attributes['gidNumber'][0] for (dn_, attributes, ) in res])
 	except ldap.LDAPError, msg:
 		univention.debug.debug(
@@ -429,7 +442,7 @@ def userGids(dn):
 def gidShares(gid):
 	try:
 		with LDAPConnection() as l:
-			return l.search(scope="sub", filter='(&(objectClass=univentionShareSamba)(univentionShareGid=%s))' % gid, attr=['cn','univentionShareHost','univentionShareSambaName'])
+			return l.search(scope="sub", filter=filter_format('(&(objectClass=univentionShareSamba)(univentionShareGid=%s))', (gid,)), attr=['cn','univentionShareHost','univentionShareSambaName'])
 	except ldap.LDAPError, msg:
 		univention.debug.debug(univention.debug.LISTENER, univention.debug.WARN,
 			'ucsschool-user-logonscripts: LDAP-search failed for shares with gid %s: %r' % (gid, msg))
