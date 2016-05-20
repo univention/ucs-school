@@ -1,3 +1,9 @@
+ucs-test-ucsschool (3.0.5-29) unstable; urgency=low
+
+  * Bug #40870: make sure that non-edu containers are created during test
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Wed, 18 May 2016 12:29:23 +0200
+
 ucs-test-ucsschool (3.0.5-28) unstable; urgency=low
 
   * Bug #41282: increase max timeout

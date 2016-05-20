@@ -16,6 +16,9 @@ def main():
 		utils.fail('ERROR: moving users to another school OU is not supported by ucs-school-lib')
 
 	with UCSTestSchool() as env, UCSTestConfigRegistry() as ucr:
+		# make sure that nonedu containers are created
+		ucr.handler_set('ucsschool/ldap/noneducational/create/objects=yes')
+
 		a, a_dn = env.create_ou(name_edudc=ucr.get('hostname'))
 		b, b_dn = env.create_ou(name_edudc=ucr.get('hostname'))
 
