@@ -3,9 +3,12 @@ release: "4.1"
 version: [1]
 scope: ucs_4.1-0-ucs-school-4.1
 src: ucs-school-umc-exam
-fix: 5.0.2-1.96.201510161301
+fix: 
 desc: |
  This update addresses the following issue(s):
  * A regression (due to Bug #40712) during evaluating boolean UCR variables has
    been fixed.
-bug: [40712]
+ * Added a new cron job that calls the new script exam-and-room-cleanup. The
+   script stops all running exams (if possible). Afterwards all remains of
+   (broken) exams and room settings are removed.
+bug: [40712,40213]
