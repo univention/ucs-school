@@ -126,7 +126,6 @@ class CSVUser(User):
 		user = cls(**attrs)
 		user.name = user.guess_username(lo, date_format)
 		user.school = school
-		user.schools = [school]
 		if user.birthday:
 			try:
 				user.birthday = unformat_date(user.birthday, date_format)
@@ -135,6 +134,7 @@ class CSVUser(User):
 
 		if user.exists(lo):
 			user.action = 'modify'
+			#maybe: user.schools.append(school) ?
 		else:
 			user.action = 'create'
 		user.line = line_no
@@ -143,7 +143,6 @@ class CSVUser(User):
 	@classmethod
 	def from_frontend_attrs(cls, attrs, school, date_format):
 		attrs['school'] = school
-		attrs['schools'] = [school]
 		if 'birthday' in attrs:
 			attrs['birthday'] = unformat_date(attrs['birthday'], date_format)
 		user = cls(**attrs)
@@ -231,7 +230,7 @@ class CSVUser(User):
 			if self.action == 'create':
 				self.create(lo, validate=False)
 			elif self.action == 'modify':
-				self.modify(lo, validate=False)
+				self.modify(lo, validate=False, move_if_necessary=False)
 			elif self.action == 'delete':
 				self.remove(lo)
 		except Exception as exc:
