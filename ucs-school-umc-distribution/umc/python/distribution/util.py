@@ -730,15 +730,3 @@ def initPaths():
 		os.chown(DISTRIBUTION_DATA_PATH, 0, 0)
 	except:
 		MODULE.error('error occured while fixing permissions of %s' % DISTRIBUTION_DATA_PATH)
-
-
-if __name__ == '__main__':
-	g = Group()
-	g.dn = 'bla'
-	g.members.append(User())
-	g.members.append(User())
-	g.members.append(User())
-	j = jsonEncode(g)
-	print j
-	d = jsonDecode(j)
-	print jsonEncode(d)

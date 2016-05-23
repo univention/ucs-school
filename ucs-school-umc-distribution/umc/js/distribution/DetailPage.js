@@ -96,21 +96,14 @@ define([
 		},
 
 		buildRendering: function() {
-			// is called after all DOM nodes have been setup
-			// (originates from dijit._Widget)
-
-			// it is important to call the parent's postMixInProperties() method
 			this.inherited(arguments);
-			this.standby(true);
 
 			// query max upload size via UCR
-			tools.ucr('umc/server/upload/max').then(lang.hitch(this, function(result) {
-				this.standby(false);
+			this.standbyDuring(tools.ucr('umc/server/upload/max')).then(lang.hitch(this, function(result) {
 				var maxSize = result['umc/server/upload/max'] || 10240;
 				this.renderDetailPage(maxSize);
 			}), lang.hitch(this, function() {
 				// some error occurred :/ ... take a default value
-				this.standby(false);
 				this.renderDetailPage(10240);
 			}));
 		},
@@ -414,25 +407,13 @@ define([
 				return false;
 			}
 
-			this.standby(true);
-			this._form.save().then(lang.hitch(this, function(result) {
-				this.standby(false);
-				if (result && !result.success) {
-					// display error message
-					dialog.alert(result.details);
-					return;
-				}
+			this.standbyDuring(this._form.save()).then(lang.hitch(this, function() {
 				this.onClose();
-				return;
-			}), lang.hitch(this, function(error) {
-				// server error
-				this.standby(false);
 			}));
 		},
 
 		load: function(id) {
 			// during loading show the standby animation
-			this.standby(true);
 			this._resetForm();
 
 			this._footerButtons.submit.set('label', _('Save changes'));
@@ -440,16 +421,7 @@ define([
 			// the project directory name cannot be modified
 			this._form.getWidget('name').set('disabled', true);
 
-			// load the object into the form... the load method returns a
-			// Deferred object in order to handel asynchronity
-			this._form.load(id).then(lang.hitch(this, function() {
-				// done, switch of the standby animation
-				this.standby(false);
-			}), lang.hitch(this, function() {
-				// error handler: switch of the standby animation
-				// error messages will be displayed automatically
-				this.standby(false);
-			}));
+			this.standbyDuring(this._form.load(id));
 		},
 
 		newObject: function() {
