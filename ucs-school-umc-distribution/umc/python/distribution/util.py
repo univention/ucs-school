@@ -31,40 +31,26 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-from univention.management.console.config import ucr
-
-from univention.lib.i18n import Translation
-from univention.management.console.log import MODULE
-import univention.lib.atjobs as atjobs
-
-import univention.admin.modules as udm_modules
-import univention.admin.uexceptions as udm_exceptions
-
-from ucsschool.lib.schoolldap import SchoolSearchBase
-
-#import notifier
-#import notifier.popen
-
 import os
-import shutil
+import re
 import json
+import shutil
 import traceback
-
+from pipes import quote
 from datetime import datetime
 
-from pipes import quote
+from univention.lib import atjobs
+from univention.lib.i18n import Translation
+from univention.management.console.log import MODULE
+from univention.management.console.config import ucr
 
-import re
+#import univention.admin.modules as udm_modules
+import univention.admin.uexceptions as udm_exceptions
 
-_ = Translation( 'ucs-school-umc-distribution' ).translate
+from ucsschool.lib.models.group import WorkGroup, SchoolClass
+import ucsschool.lib.models
 
-# projectname = umc.String( _( 'Project Name' ), regex = '^[A-Za-zöäüÖÄÜß0-9_\.\+\-]+$' )
-# description = umc.String( _( 'Description' ), required = False )
-# groupdn = umc.String( _( 'Group DN' ) )
-# userdnlist = umc.ObjectDNList( _( 'Select Attendees:' ) )
-# # '^[ ]*(20|21|22|23|[01]\d):[0-5]\d (30|31|[012]\d)\.(10|11|12|0\d)\.20\d\d[ ]*$'
-# deadline = umc.String( _( 'Deadline (e.g. 03/24/2008 08:05)' ), required = False, regex = _('^[ ]*(10|11|12|0\d)/(30|31|[012]\d)/20\d\d (20|21|22|23|[01]\d):[0-5]\d[ ]*$') )
-# fileupload = umc.FileUploader( _( 'Upload Files' ), required = True )
+_ = Translation('ucs-school-umc-distribution').translate
 
 DISTRIBUTION_CMD = '/usr/lib/ucs-school-umc-distribution/umc-distribution'
 DISTRIBUTION_DATA_PATH = ucr.get('ucsschool/datadistribution/cache', '/var/lib/ucs-school-umc-distribution')
@@ -182,8 +168,7 @@ class User(_Dict):
 		# update specified entries
 		if len(args):
 			self.update(args[0])
-		else:
-			self.update(_props)
+		self.update(_props)
 
 	# shortcut :)
 	@property
@@ -200,64 +185,42 @@ class Group( _Dict ):
 		# update specified entries
 		if len(args):
 			self.update(args[0])
-		else:
-			self.update(_props)
+		self.update(_props)
 
 def openRecipients(entryDN, ldap_connection, search_base):
 	try:
-		# try to load the UDM user/group object given its DN
-		attrs = ldap_connection.get( entryDN )
-		if not attrs:
-			MODULE.process( 'Object does not exist: %s' % entryDN )
-			return None
-		obj_types = udm_modules.objectType( None, ldap_connection, entryDN, attr = attrs )
-		if not obj_types:
-			MODULE.warn( 'Ignoring the recipient %s' % entryDN )
-			return None
-		udmModule = udm_modules.get( obj_types[ 0 ] )
-		entryObj = udmModule.object( None, ldap_connection, None, entryDN, attributes = attrs )
-		entryObj.open()
-
-		if obj_types[ 0 ] == 'users/user':
-			# create a new User object, it will only remember its relevant information
-			user = User(entryObj.info)
-			user.dn = entryObj.dn
-			return user
-		elif obj_types[ 0 ] == 'groups/group':
-			# initiate a new search base using the ou in the group
-			schoolDN = SchoolSearchBase.getOUDN(entryObj.dn)
-			school = SchoolSearchBase.getOU(entryObj.dn)
-			_search_base = SchoolSearchBase([school], school, schoolDN)
-
-			# open group object
-			name_pattern = re.compile('^%s-' % (re.escape(_search_base.school)), flags=re.I)
-			group = Group( entryObj.info )
+		group_ = ucsschool.lib.models.Group.from_dn(entryDN, None, ldap_connection)
+	except udm_exceptions.noObject:  # either not existant or not a groups/group object
+		try:
+			user = ucsschool.lib.models.User.from_dn(entryDN, None, ldap_connection)
+		except udm_exceptions.noObject as exc:
+			MODULE.error('%s is neither a group nor a user: %s' % (entryDN, exc))
+			return  # neither a user nor a group. probably object doesn't exists
+		return User(user.get_udm_object(ldap_connection).info, dn=user.dn)
+	else:
+		if not isinstance(group_, (SchoolClass, WorkGroup)):
+			MODULE.error('%s is not a school class or workgroup but %r' % (group_.dn, type(group_).__name__))
+			return
+		group = Group(group_.get_udm_object(ldap_connection).info, dn=group_.dn)
+		if group_.school:
+			name_pattern = re.compile('^%s-' % (re.escape(group_.school)), flags=re.I)
 			group.name = name_pattern.sub('', group.name)
-			group.dn = entryObj.dn
+		for userdn in group_.users:
+			try:
+				user = ucsschool.lib.models.User.from_dn(userdn, None, ldap_connection)
+			except udm_exceptions.noObject as exc:
+				MODULE.warn('User %r does not exists: %s' % (userdn, exc))
+				continue  # no user or doesn't exists
+			except udm_exceptions.base as exc:
+				MODULE.error('Cannot open user %r: %s' % (userdn, exc))
+				continue
 
-			userModul = udm_modules.get( 'users/user' )
-			for userdn in entryObj[ 'users' ]:
-				# only remember students and exam users
-				if _search_base.isTeacher(userdn) or _search_base.isAdmin(userdn) or _search_base.isStaff(userdn):
-					MODULE.info('Ignoring non-student: %s' % userdn)
-					continue
+			if not user.self_is_student():  # FIXME: or exam user, previously not (_search_base.isTeacher(userdn) or _search_base.isAdmin(userdn) or _search_base.isStaff(userdn))
+				MODULE.info('ignoring non student %r' % (userdn,))
 
-				# open the user
-				try:
-					userobj = userModul.object( None, ldap_connection, None, userdn )
-					userobj.open()
-				except udm_exceptions.base as e:
-					MODULE.warn('Could not open user object %s ... ignoring:\n%s' % (userdn, e))
-					continue
+			group.members.append(User(user.get_udm_object(ldap_connection).info, dn=user.dn))
+		return group
 
-				# save user information, only its relevant information will be kept
-				user = User( userobj.info )
-				user.dn = userobj.dn
-				group.members.append( user )
-			return group
-	except udm_exceptions.noObject as e:
-		MODULE.error('Could not find object DN: %s' % entryDN)
-	return None
 
 class Project(_Dict):
 	def __init__(self, *args, **_props):

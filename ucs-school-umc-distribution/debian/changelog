@@ -1,3 +1,9 @@
+ucs-school-umc-distribution (14.0.1-1) unstable; urgency=medium
+
+  * Bug #41122: support school spanning users
+
+ -- Florian Best <best@univention.de>  Fri, 20 May 2016 12:59:09 +0200
+
 ucs-school-umc-distribution (14.0.0-1) unstable; urgency=medium
 
   * Bug #39230: remove dead/impossible code

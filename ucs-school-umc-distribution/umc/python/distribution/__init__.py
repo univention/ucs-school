@@ -31,6 +31,12 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+import os
+import util
+import tempfile
+import shutil
+from datetime import datetime, timedelta
+
 from univention.lib.i18n import Translation
 from univention.management.console.modules import UMC_OptionTypeError, UMC_CommandError
 from univention.management.console.modules.decorators import file_upload
@@ -38,19 +44,15 @@ from univention.management.console.log import MODULE
 
 import univention.admin.modules as udm_modules
 import univention.admin.uexceptions as udm_exceptions
-import os
-from datetime import datetime, timedelta
 
 from ucsschool.lib.schoolldap import LDAP_Connection, SchoolBaseModule, Display
 
-import util
-import tempfile
-import shutil
+_ = Translation('ucs-school-umc-distribution').translate
 
-_ = Translation( 'ucs-school-umc-distribution' ).translate
 
-class Instance( SchoolBaseModule ):
-	def __init__( self ):
+class Instance(SchoolBaseModule):
+
+	def __init__(self):
 		SchoolBaseModule.__init__(self)
 		self._tmpDir = None
 
@@ -263,9 +265,9 @@ class Instance( SchoolBaseModule ):
 
 				if 'recipients' in iprops:
 					# lookup the users in LDAP and save them to the project
-					users = [ientry for ientry in [ util.openRecipients(idn, ldap_user_read, search_base) for idn in iprops.get('recipients', []) ] if ientry ]
-					project.recipients = users
-					MODULE.info('recipients: %s' % users)
+					project.recipients = [util.openRecipients(idn, ldap_user_read, search_base) for idn in iprops.get('recipients', [])]
+					project.recipients = [x for x in project.recipients if x]
+					MODULE.info('recipients: %s' % (project.recipients,))
 
 				if not doUpdate:
 					# set the sender (i.e., owner) of the project
