@@ -407,8 +407,10 @@ define([
 				return false;
 			}
 
-			this.standbyDuring(this._form.save()).then(lang.hitch(this, function() {
-				this.onClose();
+			this.standbyDuring(this._form.save()).then(lang.hitch(this, function(result) {
+				if (result && result.success) {
+					this.onClose();
+				}
 			}));
 		},
 
