@@ -61,18 +61,23 @@ TYPE_USER = 'USER'
 TYPE_GROUP = 'GROUP'
 TYPE_PROJECT = 'PROJECT'
 
+
 class DistributionException(Exception):
 	pass
+
+
 class InvalidProjectFilename(DistributionException):
 	pass
 
+
 class _Dict(object):
+
 	'''Custom dict-like class. The initial set of keyword arguments is stored
 	in an internal dict. Entries of this intial set can be accessed directly
 	on the object (myDict.myentry = ...).'''
 
 	def __init__(self, type, **initDict):
-		initDict[ '__type__' ] = type
+		initDict['__type__'] = type
 		object.__setattr__(self, '_dict', initDict)
 
 	# overwrite __setattr__ such that, e.g., project.cachedir can be called directly
@@ -124,46 +129,53 @@ class _Dict(object):
 		return self._dict
 
 	@property
-	def type( self ):
+	def type(self):
 		return self.__type__
 
+
 class _DictEncoder(json.JSONEncoder):
+
 	'''A custom JSONEncoder class that can encode _Dict objects.'''
+
 	def default(self, obj):
 		if isinstance(obj, _Dict):
 			return obj.dict
 		return json.JSONEncoder.default(self, obj)
 
+
 def jsonEncode(val):
 	'''Encode to JSON using the custom _Dict encoder.'''
-	return _DictEncoder(indent = 2).encode(val)
+	return _DictEncoder(indent=2).encode(val)
+
 
 def jsonDecode(val):
 	'''Decode a JSON string and replace dict types with _Dict.'''
-	def _dict_type( x ):
-		if x[ '__type__' ] == TYPE_USER:
-			return User( **x )
-		elif x[ '__type__' ] == TYPE_GROUP:
-			return Group( **x )
-		elif x[ '__type__' ] == TYPE_PROJECT:
-			return Project( **x )
+	def _dict_type(x):
+		if x['__type__'] == TYPE_USER:
+			return User(**x)
+		elif x['__type__'] == TYPE_GROUP:
+			return Group(**x)
+		elif x['__type__'] == TYPE_PROJECT:
+			return Project(**x)
 		else:
-			return _Dict( **x )
+			return _Dict(**x)
 
-	return json.loads(val, object_hook = _dict_type )
+	return json.loads(val, object_hook=_dict_type)
+
 
 class User(_Dict):
+
 	def __init__(self, *args, **_props):
 		# init empty project dict
-		_Dict.__init__( self, TYPE_USER,
-			unixhome = '',
-			username = '',
-			uidNumber = '',
-			gidNumber = '',
-			firstname = '',
-			lastname = '',
-			dn = ''
-		)
+		_Dict.__init__(self, TYPE_USER,
+			unixhome='',
+			username='',
+			uidNumber='',
+			gidNumber='',
+			firstname='',
+			lastname='',
+			dn=''
+                 )
 
 		# update specified entries
 		if len(args):
@@ -175,17 +187,20 @@ class User(_Dict):
 	def homedir(self):
 		return self.unixhome
 
-class Group( _Dict ):
-	def __init__( self, *args, **_props ):
-		_Dict.__init__( self, TYPE_GROUP,
-						dn = '',
-						name = '',
-						members = []
+
+class Group(_Dict):
+
+	def __init__(self, *args, **_props):
+		_Dict.__init__(self, TYPE_GROUP,
+						dn='',
+						name='',
+						members=[]
 						)
 		# update specified entries
 		if len(args):
 			self.update(args[0])
 		self.update(_props)
+
 
 def openRecipients(entryDN, ldap_connection, search_base):
 	try:
@@ -223,18 +238,19 @@ def openRecipients(entryDN, ldap_connection, search_base):
 
 
 class Project(_Dict):
+
 	def __init__(self, *args, **_props):
 		# init empty project dict
-		_Dict.__init__(self, TYPE_PROJECT, 
-			name = None,
-			description = None,
-			files = [],
-			starttime = None,  # str
-			deadline = None,  # str
-			atJobNumDistribute = None,  # int
-			atJobNumCollect = None,  # int
-			sender = None,  # User
-			recipients = [],  # [ (User|Group) , ...]
+		_Dict.__init__(self, TYPE_PROJECT,
+			name=None,
+			description=None,
+			files=[],
+			starttime=None,  # str
+			deadline=None,  # str
+			atJobNumDistribute=None,  # int
+			atJobNumCollect=None,  # int
+			sender=None,  # User
+			recipients=[],  # [ (User|Group) , ...]
 		)
 
 		# update specified entries
@@ -246,18 +262,18 @@ class Project(_Dict):
 	@property
 	def projectfile(self):
 		'''The absolute project path to the project file.'''
-		return os.path.join( DISTRIBUTION_DATA_PATH, self.name )
+		return os.path.join(DISTRIBUTION_DATA_PATH, self.name)
 
 	@property
 	def cachedir(self):
 		'''The absolute path of the project cache directory.'''
-		return os.path.join( DISTRIBUTION_DATA_PATH, '%s.data' % self.name )
+		return os.path.join(DISTRIBUTION_DATA_PATH, '%s.data' % self.name)
 
 	@property
 	def sender_projectdir(self):
 		'''The absolute path of the project directory in the senders home.'''
 		if self.sender and self.sender.homedir:
-			return os.path.join( self.sender.homedir, POSTFIX_DATADIR_SENDER, self.name )
+			return os.path.join(self.sender.homedir, POSTFIX_DATADIR_SENDER, self.name)
 		return None
 
 	@property
@@ -270,7 +286,7 @@ class Project(_Dict):
 
 	def user_projectdir(self, user):
 		'''Return the absolute path of the project dir for the specified user.'''
-		return os.path.join( user.homedir, POSTFIX_DATADIR_RECIPIENT, self.name )
+		return os.path.join(user.homedir, POSTFIX_DATADIR_RECIPIENT, self.name)
 
 	@property
 	def isDistributed(self):
@@ -279,7 +295,7 @@ class Project(_Dict):
 		# however, upon distribution they are removed from the cache directory;
 		# thus, if one of the specified files does not exist, the project has
 		# already been distributed
-		files = [ ifn for ifn in self.files if os.path.exists(os.path.join(self.cachedir, ifn)) ]
+		files = [ifn for ifn in self.files if os.path.exists(os.path.join(self.cachedir, ifn))]
 		return len(files) != len(self.files)
 
 	def _convStr2Time(self, key):
@@ -406,9 +422,9 @@ class Project(_Dict):
 	def _createCacheDir(self):
 		'''Create cache directory.'''
 		# create project cache directory
-		MODULE.info( 'creating project cache dir: %s' % self.cachedir )
+		MODULE.info('creating project cache dir: %s' % self.cachedir)
 		try:
-			os.makedirs(self.cachedir, 0700)
+			os.makedirs(self.cachedir, 0o700)
 			os.chown(self.cachedir, 0, 0)
 		except (OSError, IOError) as exc:
 			MODULE.error('Failed to create cachedir: %s' % (exc,))
@@ -421,7 +437,7 @@ class Project(_Dict):
 		self._create_project_dir(self.sender, self.sender_projectdir)
 
 		if not self.sender_projectdir:
-			MODULE.error( 'ERROR: Sender information is not specified, cannot create project dir in the sender\'s home!' )
+			MODULE.error('ERROR: Sender information is not specified, cannot create project dir in the sender\'s home!')
 
 	def _create_project_dir(self, user, projectdir=None):
 		umask = os.umask(0)  # set umask so that os.makedirs can set correct permissions
@@ -433,14 +449,14 @@ class Project(_Dict):
 			# create home directory with correct permissions if not yet exsists (e.g. user never logged in via samba)
 			if homedir and not os.path.exists(homedir):
 				MODULE.warn('recreate homedir %r uidNumber=%r gidNumber=%r' % (homedir, owner, group))
-				os.makedirs(homedir, 0711)
-				os.chmod(homedir, 0700)
+				os.makedirs(homedir, 0o711)
+				os.chmod(homedir, 0o700)
 				os.chown(homedir, owner, group)
 
 			# create the project dir
 			if projectdir and not os.path.exists(projectdir):
 				MODULE.info("creating project dir in user's home: %s" % (projectdir,))
-				os.makedirs(projectdir, 0700)
+				os.makedirs(projectdir, 0o700)
 				os.chown(projectdir, owner, group)
 
 			# set owner and permission
@@ -468,46 +484,46 @@ class Project(_Dict):
 		# register the starting job
 		# make sure that the startime, if given, lies in the future
 		if self.starttime and self.starttime > datetime.now():
-			MODULE.info( 'register at-jobs: starttime = %s' % self.starttime )
+			MODULE.info('register at-jobs: starttime = %s' % self.starttime)
 			cmd = """'%s' --distribute %s""" % (DISTRIBUTION_CMD, quote(self.projectfile))
 			print 'register at-jobs: starttime = %s  cmd = %s' % (self.starttime, cmd)
 			atJob = atjobs.add(cmd, self.starttime)
 			if atJob and self.starttime:
 				self.atJobNumDistribute = atJob.nr
 			if not atJob:
-				MODULE.warn( 'registration of at-job failed' )
+				MODULE.warn('registration of at-job failed')
 				print 'registration of at-job failed'
 
 		# register the collecting job, only if a deadline is given
 		if self.deadline and self.deadline > datetime.now():
-			MODULE.info( 'register at-jobs: deadline = %s' % self.deadline )
+			MODULE.info('register at-jobs: deadline = %s' % self.deadline)
 			print 'register at-jobs: deadline = %s' % self.deadline
 			cmd = """'%s' --collect %s""" % (DISTRIBUTION_CMD, quote(self.projectfile))
 			atJob = atjobs.add(cmd, self.deadline)
 			if atJob:
 				self.atJobNumCollect = atJob.nr
 			else:
-				MODULE.warn( 'registration of at-job failed' )
-				print 'registration of at-job failed' 
+				MODULE.warn('registration of at-job failed')
+				print 'registration of at-job failed'
 
 	def _unregister_at_jobs(self):
 		# remove at-jobs
-		for inr in [ self.atJobNumDistribute, self.atJobNumCollect ]:
+		for inr in [self.atJobNumDistribute, self.atJobNumCollect]:
 			ijob = atjobs.load(inr)
 			if ijob:
 				ijob.rm()
 
-	def getRecipients( self ):
+	def getRecipients(self):
 		users = []
 		for item in self.recipients:
 			if item.type == TYPE_USER:
-				users.append( item )
+				users.append(item)
 			elif item.type == TYPE_GROUP:
-				users.extend( item.members )
+				users.extend(item.members)
 
 		return users
 
-	def distribute( self, usersFailed = None):
+	def distribute(self, usersFailed=None):
 		'''Distribute the project data to all registrated receivers.'''
 
 		if not isinstance(usersFailed, list):
@@ -516,7 +532,7 @@ class Project(_Dict):
 		# determine which files shall be distributed
 		# note: already distributed files will be removed from the cache directory,
 		#       yet they are still kept in the internal list of files
-		files = [ ifn for ifn in self.files if os.path.exists(os.path.join(self.cachedir, ifn)) ]
+		files = [ifn for ifn in self.files if os.path.exists(os.path.join(self.cachedir, ifn))]
 
 		if not files:
 			# no files to distribute
@@ -528,26 +544,26 @@ class Project(_Dict):
 
 		# iterate over all recipients
 		MODULE.info('Distributing project "%s" with files: %s' % (self.name, ", ".join(files)))
-		for user in self.getRecipients() + [ self.sender ]:
+		for user in self.getRecipients() + [self.sender]:
 			# create user project directory
-			MODULE.info( 'recipient: uid=%s' % user.username )
+			MODULE.info('recipient: uid=%s' % user.username)
 			self._create_project_dir(user, self.user_projectdir(user))
 
 			# copy files from cache to recipient
 			for fn in files:
-				src = str( os.path.join( self.cachedir, fn ) )
-				target = str( os.path.join( self.user_projectdir(user), fn ) )
+				src = str(os.path.join(self.cachedir, fn))
+				target = str(os.path.join(self.user_projectdir(user), fn))
 				try:
 					if os.path.islink(src):
 						raise IOError('Symlinks are not allowed')
-					shutil.copyfile( src, target )
+					shutil.copyfile(src, target)
 				except (OSError, IOError) as e:
-					MODULE.error( 'failed to copy "%s" to "%s": %s' % (src, target, str(e)))
+					MODULE.error('failed to copy "%s" to "%s": %s' % (src, target, str(e)))
 					usersFailed.append(user)
 				try:
-					os.chown( target, int(user.uidNumber), int(user.gidNumber) )
+					os.chown(target, int(user.uidNumber), int(user.gidNumber))
 				except (OSError, IOError) as e:
-					MODULE.error( 'failed to chown "%s": %s' % (target, str(e)))
+					MODULE.error('failed to chown "%s": %s' % (target, str(e)))
 					usersFailed.append(user)
 
 		# remove cached files
@@ -557,13 +573,13 @@ class Project(_Dict):
 				if os.path.exists(src):
 					os.remove(src)
 				else:
-					MODULE.info( 'file has already been distributed: %s' % src )
+					MODULE.info('file has already been distributed: %s' % src)
 			except (OSError, IOError) as e:
-				MODULE.error( 'failed to remove file: %s [%s]' % (src, e) )
+				MODULE.error('failed to remove file: %s [%s]' % (src, e))
 
 		return len(usersFailed) == 0
 
-	def collect(self, dirsFailed = None):
+	def collect(self, dirsFailed=None):
 		if not isinstance(dirsFailed, list):
 			dirsFailed = []
 
@@ -574,13 +590,13 @@ class Project(_Dict):
 		for recipient in self.getRecipients():
 			# guess a proper directory name (in case with " versionX" suffix)
 			dirVersion = 1
-			targetdir = os.path.join( self.sender_projectdir, recipient.username )
+			targetdir = os.path.join(self.sender_projectdir, recipient.username)
 			while os.path.exists(targetdir):
 				dirVersion += 1
-				targetdir = os.path.join( self.sender_projectdir, '%s version%d' % (recipient.username, dirVersion) )
+				targetdir = os.path.join(self.sender_projectdir, '%s version%d' % (recipient.username, dirVersion))
 
 			# copy entire directory of the recipient
-			srcdir = os.path.join( self.user_projectdir(recipient) )
+			srcdir = os.path.join(self.user_projectdir(recipient))
 			MODULE.info('collecting data for user "%s" from %s to %s' % (recipient.username, srcdir, targetdir))
 			if not os.path.isdir(srcdir):
 				MODULE.info('Source directory does not exist (no files distributed?)')
@@ -608,7 +624,7 @@ class Project(_Dict):
 
 	def purge(self):
 		"""Remove project's cache directory, project file, and at job registrations."""
-		if not self.projectfile or not os.path.exists( self.projectfile ):
+		if not self.projectfile or not os.path.exists(self.projectfile):
 			MODULE.error('cannot remove empty or non existing projectfile: %s' % self.projectfile)
 			return
 
@@ -616,15 +632,15 @@ class Project(_Dict):
 
 		# remove cachedir
 		MODULE.info('trying to purge projectfile [%s] and cachedir [%s]' % (self.projectfile, self.cachedir))
-		if self.cachedir and os.path.exists( self.cachedir ):
+		if self.cachedir and os.path.exists(self.cachedir):
 			try:
-				shutil.rmtree( self.cachedir )
+				shutil.rmtree(self.cachedir)
 			except (OSError, IOError) as e:
 				MODULE.error('failed to cleanup cache directory: %s [%s]' % (self.cachedir, str(e)))
 
 		# remove projectfile
 		try:
-			os.remove( self.projectfile )
+			os.remove(self.projectfile)
 		except (OSError, IOError) as e:
 			MODULE.error('cannot remove projectfile: %s [%s]' % (self.projectfile, str(e)))
 
@@ -684,8 +700,8 @@ class Project(_Dict):
 
 	@staticmethod
 	def list():
-		fn_projectlist = os.listdir( DISTRIBUTION_DATA_PATH )
-		MODULE.info( 'distribution_search: WALK = %s' % fn_projectlist )
+		fn_projectlist = os.listdir(DISTRIBUTION_DATA_PATH)
+		MODULE.info('distribution_search: WALK = %s' % fn_projectlist)
 		projectlist = []
 		for fn_project in fn_projectlist:
 			# make sure the entry is a file
@@ -699,29 +715,30 @@ class Project(_Dict):
 				projectlist.append(project)
 
 		# sort final result
-		projectlist.sort( cmp = lambda x, y: cmp( x.name.lower(), y.name.lower()) )
+		projectlist.sort(cmp=lambda x, y: cmp(x.name.lower(), y.name.lower()))
 		return projectlist
+
 
 def initPaths():
 	try:
-		if not os.path.exists( DISTRIBUTION_DATA_PATH ):
-			os.makedirs( DISTRIBUTION_DATA_PATH, 0700 )
+		if not os.path.exists(DISTRIBUTION_DATA_PATH):
+			os.makedirs(DISTRIBUTION_DATA_PATH, 0o700)
 	except:
-		MODULE.error( 'error occured while creating %s' % DISTRIBUTION_DATA_PATH )
+		MODULE.error('error occured while creating %s' % DISTRIBUTION_DATA_PATH)
 	try:
-		os.chmod( DISTRIBUTION_DATA_PATH, 0700 )
-		os.chown( DISTRIBUTION_DATA_PATH, 0, 0 )
+		os.chmod(DISTRIBUTION_DATA_PATH, 0o700)
+		os.chown(DISTRIBUTION_DATA_PATH, 0, 0)
 	except:
-		MODULE.error( 'error occured while fixing permissions of %s' % DISTRIBUTION_DATA_PATH )
+		MODULE.error('error occured while fixing permissions of %s' % DISTRIBUTION_DATA_PATH)
 
 
 if __name__ == '__main__':
 	g = Group()
 	g.dn = 'bla'
-	g.members.append( User() )
-	g.members.append( User() )
-	g.members.append( User() )
-	j = jsonEncode( g )
+	g.members.append(User())
+	g.members.append(User())
+	g.members.append(User())
+	j = jsonEncode(g)
 	print j
-	d = jsonDecode( j )
-	print jsonEncode( d )
+	d = jsonDecode(j)
+	print jsonEncode(d)

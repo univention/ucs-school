@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # Univention Management Console module:
-#   
+#
 #
 # Copyright 2012-2016 Univention GmbH
 #
@@ -46,6 +46,7 @@ import univention.admin.modules as udm_modules
 import univention.admin.uexceptions as udm_exceptions
 
 from ucsschool.lib.schoolldap import LDAP_Connection, SchoolBaseModule, Display
+from functools import reduce
 
 _ = Translation('ucs-school-umc-distribution').translate
 
@@ -75,7 +76,7 @@ class Instance(SchoolBaseModule):
 	def upload(self, request):
 		# make sure that we got a list
 		if not isinstance(request.options, (tuple, list)):
-			raise UMC_OptionTypeError( 'Expected list of dicts, but got: %s' % str(request.options) )
+			raise UMC_OptionTypeError('Expected list of dicts, but got: %s' % str(request.options))
 
 		# create a temporary upload directory, if it does not already exist
 		if not self._tmpDir:
@@ -84,7 +85,7 @@ class Instance(SchoolBaseModule):
 
 		for file in request.options:
 			if not ('tmpfile' in file and 'filename' in file):
-				raise UMC_OptionTypeError( 'Invalid upload data, got: %s' % str(file) )
+				raise UMC_OptionTypeError('Invalid upload data, got: %s' % str(file))
 
 			filename = self.__workaround_filename_bug(file)
 			destPath = os.path.join(self._tmpDir, filename)
@@ -92,7 +93,7 @@ class Instance(SchoolBaseModule):
 			shutil.move(file['tmpfile'], destPath)
 
 		# done
-		self.finished( request.id, None )
+		self.finished(request.id, None)
 
 	def __workaround_filename_bug(self, file):
 		### the following code block is a heuristic to support both: fixed and unfixed Bug #37716
@@ -129,21 +130,20 @@ class Instance(SchoolBaseModule):
 		'''
 
 		if not 'filenames' in request.options or not 'project' in request.options:
-			raise UMC_OptionTypeError( 'Expected dict with entries "filenames" and "project", but got: %s' % request.options )
+			raise UMC_OptionTypeError('Expected dict with entries "filenames" and "project", but got: %s' % request.options)
 		if not isinstance(request.options.get('filenames'), (tuple, list)):
-			raise UMC_OptionTypeError( 'The entry "filenames" is expected to be an array, but got: %s' % request.options.get('filenames') )
+			raise UMC_OptionTypeError('The entry "filenames" is expected to be an array, but got: %s' % request.options.get('filenames'))
 
 		# load project
 		project = None
 		if request.options.get('project'):
 			project = util.Project.load(request.options.get('project'))
 
-
 		result = []
 		for ifile in request.options.get('filenames'):
 			ifile = ifile.encode('UTF-8')
 			# check whether file has already been upload in this session
-			iresult = dict(sessionDuplicate = False, projectDuplicate = False, distributed = False)
+			iresult = dict(sessionDuplicate=False, projectDuplicate=False, distributed=False)
 			iresult['filename'] = ifile
 			iresult['sessionDuplicate'] = self._tmpDir != None and os.path.exists(os.path.join(self._tmpDir, ifile))
 
@@ -154,31 +154,31 @@ class Instance(SchoolBaseModule):
 				iresult['distributed'] = ifile in project.files and not os.path.exists(os.path.join(project.cachedir, ifile))
 			result.append(iresult)
 		# done :)
-		self.finished( request.id, result )
+		self.finished(request.id, result)
 
-	def query( self, request ):
-		MODULE.info( 'distribution.query: options: %s' % str( request.options ) )
+	def query(self, request):
+		MODULE.info('distribution.query: options: %s' % str(request.options))
 		pattern = request.options.get('pattern', '').lower()
 		filter = request.options.get('filter', 'private').lower()
-		result = [ dict(
+		result = [dict(
 				# only show necessary information
-				description = i.description,
-				name = i.name,
-				sender = i.sender.username,
-				recipients = len(i.recipients),
-				files = len(i.files),
-				isDistributed = i.isDistributed
+				description=i.description,
+				name=i.name,
+				sender=i.sender.username,
+				recipients=len(i.recipients),
+				files=len(i.files),
+				isDistributed=i.isDistributed
 			) for i in util.Project.list()
 			# match the pattern
 			if (i.name.lower().find(pattern) >= 0 or i.description.lower().find(pattern) >= 0)
 			# match also the category
 			and (filter == 'all' or i.sender.dn == self._user_dn)
 		]
-		MODULE.info( 'distribution.query: results: %s' % str( result ) )
-		self.finished( request.id, result )
+		MODULE.info('distribution.query: results: %s' % str(result))
+		self.finished(request.id, result)
 
 	@LDAP_Connection()
-	def _get_sender( self, request, ldap_user_read = None, ldap_position = None, search_base = None ):
+	def _get_sender(self, request, ldap_user_read=None, ldap_position=None, search_base=None):
 		'''Return a User instance of the currently logged in user.'''
 		sender = None
 		try:
@@ -193,14 +193,14 @@ class Instance(SchoolBaseModule):
 		except udm_exceptions.base as e:
 			self.finished(request.id, None, _('Failed to load user information: %s') % e, False)
 			MODULE.error('Could not find user DN: %s' % self._user_dn)
-			raise UMC_CommandError( _('Could not authenticate user "%s"!') % self._user_dn )
+			raise UMC_CommandError(_('Could not authenticate user "%s"!') % self._user_dn)
 		return sender
 
 	@LDAP_Connection()
-	def _save( self, request, doUpdate = True, ldap_user_read = None, ldap_position = None, search_base = None ):
+	def _save(self, request, doUpdate=True, ldap_user_read=None, ldap_position=None, search_base=None):
 		# make sure that we got a list
 		if not isinstance(request.options, (tuple, list)):
-			raise UMC_OptionTypeError( 'Expected list of strings, but got: %s' % (type(request.options),) )
+			raise UMC_OptionTypeError('Expected list of strings, but got: %s' % (type(request.options),))
 
 		# try to open the UDM user object of the current user
 		sender = self._get_sender(request)
@@ -292,8 +292,8 @@ class Instance(SchoolBaseModule):
 						itarget = os.path.join(project.cachedir, ifile)
 						if os.path.exists(isrc):
 							# mv file to cachedir
-							shutil.move( isrc, itarget )
-							os.chown( itarget, 0, 0 )
+							shutil.move(isrc, itarget)
+							os.chown(itarget, 0, 0)
 
 				# remove files that have been marked for removal
 				if doUpdate:
@@ -312,21 +312,21 @@ class Instance(SchoolBaseModule):
 					if usersFailed:
 						# not all files could be distributed
 						MODULE.info('Failed processing the following users: %s' % usersFailed)
-						usersStr = ', '.join([ Display.user(i) for i in usersFailed ])
+						usersStr = ', '.join([Display.user(i) for i in usersFailed])
 						raise IOError(_('The project could not distributed to the following users: %s') % usersStr)
 
 				# everything ok
 				result.append(dict(
-					name = iprops.get('name'),
-					success = True
+					name=iprops.get('name'),
+					success=True
 				))
 			except (ValueError, IOError, OSError) as e:
 				# data not valid... create error info
 				MODULE.info('data for project "%s" is not valid: %s' % (iprops.get('name'), e))
 				result.append(dict(
-					name = iprops.get('name'),
-					success = False,
-					details = str(e)
+					name=iprops.get('name'),
+					success=False,
+					details=str(e)
 				))
 
 				if not doUpdate:
@@ -341,45 +341,45 @@ class Instance(SchoolBaseModule):
 						except (IOError, OSError) as e:
 							pass
 
-		if len(result) and reduce(lambda x, y: x and y, [ i['success'] for i in result ]):
+		if len(result) and reduce(lambda x, y: x and y, [i['success'] for i in result]):
 			# clean temporary upload directory if everything went well
 			self._cleanTmpDir()
 
 		# return the results
 		self.finished(request.id, result)
 
-	def put( self, request ):
+	def put(self, request):
 		"""Modify an existing project, expects:
 
 		request.options = [ { object: ..., options: ... }, ... ]
 		"""
-		MODULE.info( 'distribution.put: options: %s' % str( request.options ) )
+		MODULE.info('distribution.put: options: %s' % str(request.options))
 		self._save(request, True)
 
-	def add( self, request ):
+	def add(self, request):
 		"""Add a new project, expects:
 
 		request.options = [ { object: ..., options: ... }, ... ]
 		"""
-		MODULE.info( 'distribution.add: options: %s' % str( request.options ) )
+		MODULE.info('distribution.add: options: %s' % str(request.options))
 		self._save(request, False)
 
 	@LDAP_Connection()
-	def get( self, request, search_base = None, ldap_user_read = None, ldap_position = None ):
+	def get(self, request, search_base=None, ldap_user_read=None, ldap_position=None):
 		"""Returns the objects for the given IDs
 
 		requests.options = [ <ID>, ... ]
 
 		return: [ { ... }, ... ]
 		"""
-		MODULE.info( 'distribution.get: options: %s' % str( request.options ) )
+		MODULE.info('distribution.get: options: %s' % str(request.options))
 
 		# try to load all given projects
 		ids = request.options
 		result = []
-		if isinstance( ids, ( list, tuple ) ):
+		if isinstance(ids, (list, tuple)):
 			# list of all project properties (dicts) or None if project is not valid
-			for iproject in [ util.Project.load(iid) for iid in ids ]:
+			for iproject in [util.Project.load(iid) for iid in ids]:
 				# make sure that project could be loaded
 				if not iproject:
 					result.append(None)
@@ -410,10 +410,10 @@ class Instance(SchoolBaseModule):
 				props['sender'] = props['sender'].username
 				recipients = []
 				for recip in props['recipients']:
-					recipients.append( {
-						'id' : recip.dn,
-						'label' : recip.type == util.TYPE_USER and Display.user( recip.dict ) or recip.name
-						} )
+					recipients.append({
+						'id': recip.dn,
+						'label': recip.type == util.TYPE_USER and Display.user(recip.dict) or recip.name
+					})
 				props['recipients'] = recipients
 
 				# append final dict to result list
@@ -421,30 +421,30 @@ class Instance(SchoolBaseModule):
 				result.append(props)
 
 		else:
-			MODULE.warn( 'distribution.get: wrong parameter, expected list of strings, but got: %s' % str( ids ) )
-			raise UMC_OptionTypeError( 'Expected list of strings, but got: %s' % str(ids) )
+			MODULE.warn('distribution.get: wrong parameter, expected list of strings, but got: %s' % str(ids))
+			raise UMC_OptionTypeError('Expected list of strings, but got: %s' % str(ids))
 
 		# return the results
-		MODULE.info( 'distribution.get: results: %s' % str( result ) )
-		self.finished( request.id, result )
+		MODULE.info('distribution.get: results: %s' % str(result))
+		self.finished(request.id, result)
 
-	def distribute( self, request ):
-		MODULE.info( 'distribution.distribute: options: %s' % str( request.options ) )
+	def distribute(self, request):
+		MODULE.info('distribution.distribute: options: %s' % str(request.options))
 
 		# make sure that we got a list
 		if not isinstance(request.options, (tuple, list)):
-			raise UMC_OptionTypeError( 'Expected list of strings, but got: %s' % type(request.options) )
+			raise UMC_OptionTypeError('Expected list of strings, but got: %s' % type(request.options))
 
 		# update the sender information of the selected projects
 		ids = request.options
 		result = []
 		for iid in ids:
-			MODULE.info( 'Distribute project: %s' % iid )
+			MODULE.info('Distribute project: %s' % iid)
 			try:
 				# make sure that project could be loaded
 				iproject = util.Project.load(iid)
 				if not iproject:
-					raise IOError( _('Project "%s" could not be loaded') % iid )
+					raise IOError(_('Project "%s" could not be loaded') % iid)
 
 				# make sure that only the project owner himself (or an admin) is able
 				# to distribute a project
@@ -458,31 +458,31 @@ class Instance(SchoolBaseModule):
 				# raise an error in case distribution failed for some users
 				if usersFailed:
 					MODULE.info('Failed processing the following users: %s' % usersFailed)
-					usersStr = ', '.join([ Display.user(i) for i in usersFailed ])
+					usersStr = ', '.join([Display.user(i) for i in usersFailed])
 					raise IOError(_('The project could not distributed to the following users: %s') % usersStr)
 
 				# save result
 				result.append(dict(
-					name = iid,
-					success = True
+					name=iid,
+					success=True
 				))
 			except (ValueError, IOError) as e:
 				result.append(dict(
-					name = iid,
-					success = False,
-					details = str(e)
+					name=iid,
+					success=False,
+					details=str(e)
 				))
 
 		# return the results
 		self.finished(request.id, result)
-		MODULE.info( 'distribution.distribute: results: %s' % str( result ) )
+		MODULE.info('distribution.distribute: results: %s' % str(result))
 
-	def collect( self, request ):
-		MODULE.info( 'distribution.collect: options: %s' % str( request.options ) )
+	def collect(self, request):
+		MODULE.info('distribution.collect: options: %s' % str(request.options))
 
 		# make sure that we got a list
 		if not isinstance(request.options, (tuple, list)):
-			raise UMC_OptionTypeError( 'Expected list of strings, but got: %s' % (type(request.options),) )
+			raise UMC_OptionTypeError('Expected list of strings, but got: %s' % (type(request.options),))
 
 		# try to open the UDM user object of the current user
 		sender = self._get_sender(request)
@@ -491,12 +491,12 @@ class Instance(SchoolBaseModule):
 		ids = request.options
 		result = []
 		for iid in ids:
-			MODULE.info( 'Collect project: %s' % iid )
+			MODULE.info('Collect project: %s' % iid)
 			try:
 				# make sure that project could be loaded
 				iproject = util.Project.load(iid)
 				if not iproject:
-					raise IOError( _('Project "%s" could not be loaded') % iid )
+					raise IOError(_('Project "%s" could not be loaded') % iid)
 
 				# replace the projects sender with the current logged in user
 				iproject.sender = sender
@@ -513,24 +513,24 @@ class Instance(SchoolBaseModule):
 
 				# save result
 				result.append(dict(
-					name = iid,
-					success = True
+					name=iid,
+					success=True
 				))
 			except (ValueError, IOError) as e:
 				result.append(dict(
-					name = iid,
-					success = False,
-					details = str(e)
+					name=iid,
+					success=False,
+					details=str(e)
 				))
 
 		# return the results
 		self.finished(request.id, result)
-		MODULE.info( 'distribution.collect: results: %s' % str( result ) )
+		MODULE.info('distribution.collect: results: %s' % str(result))
 
-	def adopt( self, request ):
+	def adopt(self, request):
 		# make sure that we got a list
 		if not isinstance(request.options, (tuple, list)):
-			raise UMC_OptionTypeError( 'Expected list of strings, but got: %s' % (type(request.options),) )
+			raise UMC_OptionTypeError('Expected list of strings, but got: %s' % (type(request.options),))
 
 		# try to open the UDM user object of the current user
 		sender = self._get_sender(request)
@@ -543,36 +543,36 @@ class Instance(SchoolBaseModule):
 				# make sure that project could be loaded
 				iproject = util.Project.load(iid)
 				if not iproject:
-					raise IOError( _('Project "%s" could not be loaded') % iid )
+					raise IOError(_('Project "%s" could not be loaded') % iid)
 
 				# project was loaded successfully
 				iproject.sender = sender
 				iproject.save()
 			except (ValueError, IOError) as e:
 				result.append(dict(
-					name = iid,
-					success = False,
-					details = str(e)
+					name=iid,
+					success=False,
+					details=str(e)
 				))
 
 		# return the results
 		self.finished(request.id, result)
 
-	def remove( self, request ):
+	def remove(self, request):
 		"""Removes the specified projects
 
 		requests.options = [ <name>, ... ]
 
 		"""
-		MODULE.info( 'distribution.remove: options: %s' % str( request.options ) )
+		MODULE.info('distribution.remove: options: %s' % str(request.options))
 
 		ids = request.options
-		if not isinstance( ids, ( list, tuple ) ):
-			MODULE.warn( 'distribution.remove: wrong parameter, expected list of strings, but got: %s' % str( ids ) )
-			raise UMC_OptionTypeError( 'Expected list of strings, but got: %s' % str(ids) )
+		if not isinstance(ids, (list, tuple)):
+			MODULE.warn('distribution.remove: wrong parameter, expected list of strings, but got: %s' % str(ids))
+			raise UMC_OptionTypeError('Expected list of strings, but got: %s' % str(ids))
 
 		# list of all project properties (dicts) or None if project is not valid
-		for iproject in [ util.Project.load(ientry.get('object')) for ientry in ids ]:
+		for iproject in [util.Project.load(ientry.get('object')) for ientry in ids]:
 			# make sure that project could be loaded
 			if not iproject:
 				continue
@@ -585,5 +585,4 @@ class Instance(SchoolBaseModule):
 			# purge the project
 			iproject.purge()
 
-		self.finished( request.id, None )
-
+		self.finished(request.id, None)
