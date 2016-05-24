@@ -1,0 +1,89 @@
+#!/usr/bin/python2.7
+# -*- coding: utf-8 -*-
+#
+# Univention UCS@School
+"""
+ucs@school import tool.
+"""
+# Copyright 2016 Univention GmbH
+#
+# http://www.univention.de/
+#
+# All rights reserved.
+#
+# The source code of this program is made available
+# under the terms of the GNU Affero General Public License version 3
+# (GNU AGPL V3) as published by the Free Software Foundation.
+#
+# Binary versions of this program provided by Univention to you as
+# well as other copyrighted, protected or trademarked materials like
+# Logos, graphics, fonts, specific documentations and configurations,
+# cryptographic keys etc. are subject to a license agreement between
+# you and Univention and not subject to the GNU AGPL V3.
+#
+# In the case you use this program under the terms of the GNU AGPL V3,
+# the program is provided in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public
+# License with the Debian GNU/Linux or Univention distribution in file
+# /usr/share/common-licenses/AGPL-3; if not, see
+# <http://www.gnu.org/licenses/>.
+
+import sys
+import pprint
+
+from ucsschool.importer.utils.logging2udebug import get_logger, add_stdout_handler, add_file_handler
+from ucsschool.importer.frontend.cmdline import Cmdline
+from ucsschool.importer.configuration import setup_configuration
+from ucsschool.importer.factory import setup_factory
+from ucsschool.importer.exceptions import ToManyErrors, UcsSchoolImportFatalError
+
+
+def main():
+	try:
+		ui = Cmdline()
+		args = ui.parse_cmdline()
+
+		logger = get_logger()
+		if args.verbose:
+			add_stdout_handler(logger)
+		if args.logfile:
+			add_file_handler(logger, args.logfile)
+		logger.info("--- ucs@school import tool starting ---")
+
+		config = setup_configuration(args.conffile, **args.settings)
+		if config["verbose"] and not args.verbose:
+			add_stdout_handler(logger)
+		if config["logfile"] and not args.logfile:
+			add_file_handler(logger, config["logfile"])
+
+		logger.info("------ ucs@school import tool configured ------")
+		logger.info("Using configuration file %s.", args.conffile)
+		logger.info("Using command line arguments: %r", args.settings)
+		logger.info("Configuration is:\n%s", pprint.pformat(config))
+
+		factory = setup_factory(config["factory"])
+		importer = factory.make_mass_importer(config["dry_run"])
+
+		logger.info("------ ucs@school import tool starting mass import ------")
+		importer.mass_import()
+		logger.info("------ ucs@school import tool finished ------")
+	except ToManyErrors as tme:
+		logger.error("%s Exiting. Errors:", tme)
+		for error in tme.errors:
+			logger.error("%d: %s", error.entry, error)
+		return 1
+	except UcsSchoolImportFatalError as exc:
+		logger.exception("Fatal error:  %s.", exc)
+		return 2
+	except Exception as exc:
+		# This should not happen - it's probably a bug.
+		logger.exception("Outer Exception catcher: %r", exc)
+		return 3
+
+
+if __name__ == "__main__":
+	sys.exit(main())

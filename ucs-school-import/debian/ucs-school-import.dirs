@@ -1,5 +1,4 @@
 usr/share/ucs-school-import/scripts
-usr/share/ucs-school-import/scripts
 var/lib/ucs-school-import
 usr/lib/univention-install
 usr/share/ucs-school-import/hooks/user_create_pre.d

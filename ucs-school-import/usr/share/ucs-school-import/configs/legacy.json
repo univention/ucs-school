@@ -1,0 +1,38 @@
+{
+	"factory": "ucsschool.importer.legacy.legacy_csv_factory.LegacyCsvFactory",
+	"input": {
+		"type": "csv",
+		"filename": "/var/lib/ucs-school-import/legacy-format-userimport.csv"
+	},
+	"csv": {
+		"header_lines": 0,
+		"mapping": {
+			"0": "__action",
+			"1": "name",
+			"2": "lastname",
+			"3": "firstname",
+			"4": "school",
+			"5": "school_class",
+			"6": "__ignore",
+			"7": "email",
+			"8": "__is_teacher",
+			"9": "__activate",
+			"10": "__is_staff"
+		}
+	},
+	"scheme": {
+		"email": "<email>",
+		"rid": "<name>",
+		"username": {
+			"default": "<name>[COUNTER2]"
+		}
+	},
+	"no_delete": false,
+	"outdated_users": {
+		"delete": false,
+		"deactivate": false,
+		"waiting_period": 45
+	},
+	"sourceUID": "LegacyDB",
+	"tolerate_errors": 4
+}

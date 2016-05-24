@@ -1,0 +1,34 @@
+{
+	"factory": "ucsschool.importer.default_factory.DefaultFactory",
+	"input": {
+		"type": "csv",
+		"filename": "/var/lib/ucs-school-import/new-format-userimport.csv"
+	},
+	"csv": {
+		"header_lines": 1,
+		"mapping": {
+			"Schule": "school",
+			"Vorname": "firstname",
+			"Nachname": "lastname",
+			"Klassen": "school_class",
+			"Mailadresse": "email",
+			"description": "description",
+			"phone": "phone"
+		}
+	},
+	"activate_new_users": {
+		"default": true,
+		"student": false
+	},
+	"scheme": {
+		"email": "<firstname>[0].<lastname>@<maildomain>",
+		"rid": "<firstname>-<lastname>-<email>",
+		"username": {
+			"allow_rename": false,
+			"default": "<:umlauts><firstname>[0].[ALWAYSCOUNTER]<lastname>",
+			"teacher_and_staff": "<:umlauts><firstname>[2:4][COUNTER2]<lastname>"
+		}
+	},
+	"maildomain": "uni.dtr",
+	"tolerate_errors": 1
+}

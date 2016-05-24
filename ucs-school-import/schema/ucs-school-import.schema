@@ -97,3 +97,16 @@ objectclass ( univentionSchool:51 NAME 'univentionUcsSchoolUser'
         DESC 'Role of user in ucs@school context (e.g. teacher, administration)'
         SUP top AUXILIARY
         MAY ( ucsschoolRole ) )
+
+attributetype ( univentionSchool:54.0
+	NAME 'ucsschoolUsernameNextNumber'
+	DESC 'Number of next free appendix for username.'
+	SINGLE-VALUE
+	EQUALITY integerMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.27 )
+
+objectclass ( univentionSchool:54
+	NAME 'ucsschoolUsername'
+	DESC 'Saves the last used postfix for the username.'
+	MUST ( cn )
+	MAY ( ucsschoolUsernameNextNumber ) )

@@ -4,6 +4,7 @@ Priority: optional
 Maintainer: Univention GmbH <packages@univention.de>
 Build-Depends: debhelper (>> 3.0.0), univention-config-dev, ucslint
 Standards-Version: 3.8.2
+XS-Python-Version: 2.7
 
 Package: ucs-school-import
 Architecture: all
@@ -42,3 +43,25 @@ Description: UCS@school: LDAP import schema and custom attributes
  an integrated, directory driven solution for managing
  corporate environments. For more information about UCS,
  refer to: http://www.univention.de/
+
+Package: ucs-school-import2
+Architecture: all
+Depends: ${misc:Depends},
+ python2.7-dev,
+ univention-config,
+ python-univention,
+ python-univention-lib,
+ python-ucs-school,
+ shell-univention-lib,
+ univention-join,
+ python-univention-directory-manager,
+ ucs-school-import,
+ ucs-school-import-schema (>= 13.0.0-2),
+Description: Import students and teachers into UCS.
+ Import students and teachers from school management software into UCS.
+ .
+ This package is part of Univention Corporate Server (UCS),
+ an integrated, directory driven solution for managing
+ corporate environments. For more information about UCS,
+ refer to: http://www.univention.de/
+Homepage: https://www.univention.de/produkte/ucsschool/

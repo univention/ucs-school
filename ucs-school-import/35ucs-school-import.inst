@@ -52,6 +52,8 @@ fi
 univention-directory-manager container/cn      create "$@" --ignore_exists --set name="services" --position "cn=univention,$ldap_base"
 univention-directory-manager settings/service  create "$@" --ignore_exists --set name="Windows Home Server"  --position "cn=services,cn=univention,$ldap_base"
 univention-directory-manager settings/service  create "$@" --ignore_exists --set name="Windows Profile Server"  --position "cn=services,cn=univention,$ldap_base"
+univention-directory-manager container/cn      create "$@" --ignore_exists --set name="ucsschool" --position "cn=univention,$ldap_base"
+univention-directory-manager container/cn      create "$@" --ignore_exists --set name="unique-usernames" --position "cn=ucsschool,cn=univention,$ldap_base"
 
 ucs_registerLDAPExtension "$@" --schema /usr/share/ucs-school-import/schema/ucs-school-import.schema || die
 
@@ -218,7 +220,8 @@ univention-directory-manager settings/extended_attribute create "$@" --ignore_ex
 univention-directory-manager settings/extended_attribute create "$@" --ignore_exists \
 	--position "cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
 	--set name="ucsschoolSourceUID" \
-	--set module="users/user" \
+	--append module="users/user" \
+	--append module=settings/usertemplate \
 	--append options="ucsschoolStudent" \
 	--append options="ucsschoolTeacher" \
 	--append options="ucsschoolStaff" \
@@ -239,7 +242,8 @@ univention-directory-manager settings/extended_attribute create "$@" --ignore_ex
 univention-directory-manager settings/extended_attribute create "$@" --ignore_exists \
 	--position "cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
 	--set name="ucsschoolRecordUID" \
-	--set module="users/user" \
+	--append module="users/user" \
+	--append module=settings/usertemplate \
 	--append options="ucsschoolStudent" \
 	--append options="ucsschoolTeacher" \
 	--append options="ucsschoolStaff" \
@@ -278,6 +282,9 @@ if [ $JS_LAST_EXECUTED_VERSION -lt 7 ] ; then
 			--set groupPosition="2" || die
 	done
 fi
+
+univention-config-registry set \
+	ucsschool/import/debug/werror?no || die
 
 joinscript_save_current_version
 
