@@ -51,11 +51,12 @@ class LegacyImportUser(ImportUser):
 		"""
 		super(LegacyImportUser, self).make_classes()
 		prefix_len = len("{}-".format(self.school))
-		self.school_class = ",".join([c[prefix_len:] for c in self.school_class])
+		# FIXME when/if self.school_class becomes a list instead of a string
+		self.school_class = ",".join([c[prefix_len:] for c in self.school_class.split(",")])
 
-	def run_checks(self):
+	def run_checks(self, check_username=False):
 		"""
-		Run some self-tests.
+		Action must already be configured in CSV.
 		"""
 		super(LegacyImportUser, self).run_checks()
 

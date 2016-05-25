@@ -110,21 +110,28 @@ def make_logger(logger_name, short_name=None, udebug_facility=ud.LISTENER):
 
 
 def add_stdout_handler(logger):
-	handler = make_handler_verbose(logging.StreamHandler(sys.stdout))
+	handler = set_handler_formatting(logging.StreamHandler(sys.stdout), "DEBUG")
 	logger.addHandler(handler)
 	return logger
 
 
 def add_file_handler(logger, filename):
 	handler = logging.handlers.TimedRotatingFileHandler(filename, when="D", backupCount=10)
-	handler = make_handler_verbose(handler)
+	handler = set_handler_formatting(handler, "DEBUG")
+	logger.addHandler(handler)
+	if filename.endswith(".log"):
+		info_filename = "{}.info".format(filename[:-4])
+	else:
+		info_filename = "{}.info".format(filename)
+	handler = logging.handlers.TimedRotatingFileHandler(info_filename, when="D", backupCount=10)
+	handler = set_handler_formatting(handler, "INFO")
 	logger.addHandler(handler)
 	return logger
 
 
-def make_handler_verbose(handler):
-	handler.setLevel(logging.DEBUG)
-	fmt = "%(asctime)s %(levelname)-5s {}".format(LOG_FORMATS["DEBUG"])
+def set_handler_formatting(handler, level):
+	handler.setLevel(getattr(logging, level))
+	fmt = "%(asctime)s %(levelname)-5s {}".format(LOG_FORMATS[level])
 	handler.setFormatter(logging.Formatter(fmt=fmt, datefmt=LOG_DATETIME_FORMAT))
 	return handler
 

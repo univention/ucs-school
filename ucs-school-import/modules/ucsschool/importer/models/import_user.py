@@ -116,6 +116,7 @@ class ImportUser(User):
 		"""
 		Create classes.
 		"""
+		# FIXME when/if self.school_class becomes a list instead of a string
 		# if self.school_class and isinstance(self.school_class, basestring):
 		# 	self.school_class = [c.strip() for c in self.school_class.split(",")]
 		pass
@@ -359,6 +360,8 @@ class ImportUser(User):
 			if k == "name" and v is None:
 				continue
 			setattr(self, k, v)
+		self.action = other.action
+		self.entry_count = other.entry_count
 		self.udm_properties.update(other.udm_properties)
 
 

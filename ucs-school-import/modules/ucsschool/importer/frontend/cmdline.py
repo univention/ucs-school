@@ -96,10 +96,7 @@ class Cmdline(object):
 				except ValueError:
 					self.parser.error("Invalid setting '{}'.".format(setting))
 				start, symb, end = k.rpartition(":")
-				while symb:
-					k = start
-					v = {end: v}
-					start, symb, end = start.rpartition(":")
+				# try to convert to correct type
 				if v.lower() == "true":
 					v = True
 				elif v.lower() == "false":
@@ -109,6 +106,11 @@ class Cmdline(object):
 						v = int(v)
 					except ValueError:
 						pass
+				# support nested settings
+				while symb:
+					k = start
+					v = {end: v}
+					start, symb, end = start.rpartition(":")
 				settings[k] = v
 		self.args.settings = settings
 

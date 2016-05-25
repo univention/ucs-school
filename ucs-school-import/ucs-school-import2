@@ -34,6 +34,8 @@ ucs@school import tool.
 
 import sys
 import pprint
+from logging import StreamHandler, handlers
+import traceback
 
 from ucsschool.importer.utils.logging2udebug import get_logger, add_stdout_handler, add_file_handler
 from ucsschool.importer.frontend.cmdline import Cmdline
@@ -43,16 +45,16 @@ from ucsschool.importer.exceptions import ToManyErrors, UcsSchoolImportFatalErro
 
 
 def main():
+	logger = get_logger()
 	try:
 		ui = Cmdline()
 		args = ui.parse_cmdline()
 
-		logger = get_logger()
 		if args.verbose:
 			add_stdout_handler(logger)
 		if args.logfile:
 			add_file_handler(logger, args.logfile)
-		logger.info("--- ucs@school import tool starting ---")
+		logger.info("------ ucs@school import tool starting ------")
 
 		config = setup_configuration(args.conffile, **args.settings)
 		if config["verbose"] and not args.verbose:
@@ -68,9 +70,9 @@ def main():
 		factory = setup_factory(config["factory"])
 		importer = factory.make_mass_importer(config["dry_run"])
 
-		logger.info("------ ucs@school import tool starting mass import ------")
+		logger.info("------ Starting mass import... ------")
 		importer.mass_import()
-		logger.info("------ ucs@school import tool finished ------")
+		logger.info("------ Mass import finished. ------")
 	except ToManyErrors as tme:
 		logger.error("%s Exiting. Errors:", tme)
 		for error in tme.errors:
@@ -82,6 +84,10 @@ def main():
 	except Exception as exc:
 		# This should not happen - it's probably a bug.
 		logger.exception("Outer Exception catcher: %r", exc)
+		if not any(map(lambda x: isinstance(x, StreamHandler), logger.handlers)):
+			# verbose=False, but this is probably a crash -> show on terminal anyway
+			exc_type, exc_value, exc_traceback = sys.exc_info()
+			traceback.print_exception(exc_type, exc_value, exc_traceback, file=sys.stderr)
 		return 3
 
 
