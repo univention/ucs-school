@@ -155,6 +155,7 @@ class UCSSchoolHelperAbstractClass(object):
 
 	_search_base_cache = {}
 	_initialized_udm_modules = []
+	_empty_hook_paths = set()
 
 	name = CommonName(_('Name'), aka=['Name'])
 	school = SchoolAttribute(_('School'), aka=['School'])
@@ -311,10 +312,13 @@ class UCSSchoolHelperAbstractClass(object):
 		# verify path
 		hook_path = self._meta.hook_path
 		path = os.path.join(HOOK_PATH, '%s_%s_%s.d' % (hook_path, func_name, hook_time))
-		logger.debug('%s shall be executed' % path)
-		if not os.path.isdir(path) or not os.listdir(path):
-			logger.debug('%s not found or empty' % path)
+		if path in self._empty_hook_paths:
 			return None
+		if not os.path.isdir(path) or not os.listdir(path):
+			logger.debug('%s not found or empty.', path)
+			self._empty_hook_paths.add(path)
+			return None
+		logger.debug('%s shall be executed', path)
 
 		dn = None
 		if hook_time == 'post':
