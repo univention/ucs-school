@@ -152,7 +152,7 @@ def stopped_notifier(strict=True):
 		return process.returncode == 0
 
 	notifier_running = False
-	logger.warning('Stopping %s' % service_name)
+	logger.warning('Stopping %s', service_name)
 	for process in process_iter():
 		try:
 			if process.name == service_name:
@@ -161,12 +161,12 @@ def stopped_notifier(strict=True):
 		except IOError:
 			pass
 	if not notifier_running:
-		logger.warning('%s is not running! Skipping' % service_name)
+		logger.warning('%s is not running! Skipping', service_name)
 	else:
 		if _run(['/etc/init.d/%s' % service_name, 'stop']):
-			logger.info('%s stopped' % service_name)
+			logger.info('%s stopped', service_name)
 		else:
-			logger.error('Failed to stop %s...' % service_name)
+			logger.error('Failed to stop %s...', service_name)
 			if strict:
 				raise RuntimeError('Failed to stop %s, but this seems to be very important (strict=True was specified)' % service_name)
 			else:
@@ -174,14 +174,14 @@ def stopped_notifier(strict=True):
 	try:
 		yield
 	finally:
-		logger.warning('Starting %s' % service_name)
+		logger.warning('Starting %s', service_name)
 		if not notifier_running:
 			logger.warning('Notifier was not running! Skipping')
 		else:
 			start_disabled = ucr.is_false('notifier/autostart', False)
 			command = ['/etc/init.d/%s' % service_name, 'start']
 			if not start_disabled and _run(command):
-				logger.info('%s started' % service_name)
+				logger.info('%s started', service_name)
 			else:
-				logger.error('Failed to start %s... Bad news! Better run "%s" manually!' % (service_name, ' '.join(command))) # correct: shlex... unnecessary
+				logger.error('Failed to start %s... Bad news! Better run "%s" manually!', service_name, ' '.join(command)) # correct: shlex... unnecessary
 

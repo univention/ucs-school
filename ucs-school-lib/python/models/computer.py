@@ -94,27 +94,27 @@ class SchoolDCSlave(SchoolDC):
 				try:
 					udm_obj = self.get_only_udm_obj(lo, 'cn=%s' % escape_filter_chars(self.name))
 				except MultipleObjectsError:
-					logger.error('Found more than one DC Slave with hostname "%s"' % self.name)
+					logger.error('Found more than one DC Slave with hostname "%s"', self.name)
 					return False
 				if udm_obj is None:
-					logger.error('Cannot find DC Slave with hostname "%s"' % self.name)
+					logger.error('Cannot find DC Slave with hostname "%s"', self.name)
 					return False
 			old_dn = udm_obj.dn
 			school = self.get_school_obj(lo)
 			group_dn = school.get_administrative_group_name('educational', ou_specific=True, as_dn=True)
 			if group_dn not in udm_obj['groups']:
-				logger.error('%r has no LDAP access to %r' % (self, school))
+				logger.error('%r has no LDAP access to %r', self, school)
 				return False
 			if old_dn == self.dn:
-				logger.info('DC Slave "%s" is already located in "%s" - stopping here' % (self.name, self.school))
+				logger.info('DC Slave "%s" is already located in "%s" - stopping here', self.name, self.school)
 			self.set_dn(old_dn)
 			if self.exists_outside_school(lo):
 				if not force:
-					logger.error('DC Slave "%s" is located in another OU - %s' % (self.name, udm_obj.dn))
+					logger.error('DC Slave "%s" is located in another OU - %s', self.name, udm_obj.dn)
 					logger.error('Use force=True to override')
 					return False
 			if school is None:
-				logger.error('Cannot move DC Slave object - School does not exist: %r' % school)
+				logger.error('Cannot move DC Slave object - School does not exist: %r', school)
 				return False
 			self.modify_without_hooks(lo)
 			if school.class_share_file_server == old_dn:
@@ -187,7 +187,7 @@ class SchoolComputer(UCSSchoolHelperAbstractClass):
 			try:
 				udm_obj['network'] = network.dn
 			except nextFreeIp:
-				logger.error('Tried to set IP automatically, but failed! %r is full' % network)
+				logger.error('Tried to set IP automatically, but failed! %r is full', network)
 				raise nextFreeIp(_('There are no free addresses left in the subnet!'))
 
 	@classmethod
@@ -215,7 +215,7 @@ class SchoolComputer(UCSSchoolHelperAbstractClass):
 		try:
 			return IPv4Network(network_str)
 		except (AddressValueError, NetmaskValueError, ValueError):
-			logger.warning('Unparsable network: %r' % network_str)
+			logger.warning('Unparsable network: %r', network_str)
 
 	def _ip_is_set_to_subnet(self, ipv4_network=None):
 		ipv4_network = ipv4_network or self.get_ipv4_network()

@@ -209,7 +209,7 @@ class School(UCSSchoolHelperAbstractClass):
 		if host:
 			return host.dn
 		else:
-			logger.warning('Could not find %s. Using this host as ShareFileServer ("%s").' % (hostname, ucr.get('hostname')))
+			logger.warning('Could not find %s. Using this host as ShareFileServer ("%s").', hostname, ucr.get('hostname'))
 			return ucr.get('ldap/hostdn')
 
 	def get_class_share_file_server(self, lo):
@@ -247,7 +247,7 @@ class School(UCSSchoolHelperAbstractClass):
 		return lo.get(dn, ['uniqueMember']).get('uniqueMember', [])
 
 	def add_host_to_dc_group(self, lo):
-		logger.info('School.add_host_to_dc_group(): ou_name=%r  dc_name=%r' % (self.name, self.dc_name))
+		logger.info('School.add_host_to_dc_group(): ou_name=%r  dc_name=%r', self.name, self.dc_name)
 		if self.dc_name:
 			dc = SchoolDCSlave(name=self.dc_name, school=self.name)
 			dc.create(lo)
@@ -263,37 +263,37 @@ class School(UCSSchoolHelperAbstractClass):
 
 	def create_dc_slave(self, lo, name, administrative=False):
 		if administrative and not self.shall_create_administrative_objects():
-			logger.warning('Not creating %s: An administrative DC shall not be created as by UCR variable %r' % (name, 'ucsschool/ldap/noneducational/create/objects'))
+			logger.warning('Not creating %s: An administrative DC shall not be created as by UCR variable %r', name, 'ucsschool/ldap/noneducational/create/objects')
 			return False
 		if not self.exists(lo):
-			logger.error('%r does not exist. Cannot create %s' % (self, name))
+			logger.error('%r does not exist. Cannot create %s', self, name)
 			return False
 		if administrative:
 			groups = self.get_administrative_group_name('administrative', ou_specific='both', as_dn=True)
 		else:
 			groups = self.get_administrative_group_name('educational', ou_specific='both', as_dn=True)
-		logger.debug('DC shall become member of %r' % groups)
+		logger.debug('DC shall become member of %r', groups)
 
 		dc = SchoolDCSlave(name=name, school=self.name, groups=groups)
 		if dc.exists(lo):
-			logger.info('%r exists. Setting groups, do not move to %r!' % (dc, self))
+			logger.info('%r exists. Setting groups, do not move to %r!', dc, self)
 			# call dc.move() if really necessary to move
 			return dc.modify(lo, move_if_necessary=False)
 		else:
 			existing_host = AnyComputer.get_first_udm_obj(lo, 'cn=%s' % escape_filter_chars(name))
 			if existing_host:
-				logger.error('Given host name "%s" is already in use and no domaincontroller slave system. Please choose another name.' % name)
+				logger.error('Given host name "%s" is already in use and no domaincontroller slave system. Please choose another name.', name)
 				return False
 			return dc.create(lo)
 
 	def add_domain_controllers(self, lo):
-		logger.info('School.add_domain_controllers(): ou_name=%r' % self.name)
+		logger.info('School.add_domain_controllers(): ou_name=%r', self.name)
 		school_dcs = ucr.get('ucsschool/ldap/default/dcs', 'edukativ').split()
 		for dc in school_dcs:
 			administrative = dc == 'verwaltung'
 			dc_name = self.get_dc_name(administrative=administrative)
 			server = AnyComputer.get_first_udm_obj(lo, 'cn=%s' % escape_filter_chars(dc_name))
-			logger.info('School.add_domain_controllers(): administrative=%r  dc_name=%s  self.dc_name=%r  server=%r' % (administrative, dc_name, self.dc_name, server))
+			logger.info('School.add_domain_controllers(): administrative=%r  dc_name=%s  self.dc_name=%r  server=%r', administrative, dc_name, self.dc_name, server)
 			if not server and not self.dc_name:
 				if administrative:
 					administrative_type = 'administrative'
@@ -305,7 +305,7 @@ class School(UCSSchoolHelperAbstractClass):
 				except ldap.NO_SUCH_OBJECT:
 					hostlist = []
 				except Exception, e:
-					logger.error('cannot read %s: %s' % (group_dn, e))
+					logger.error('cannot read %s: %s', group_dn, e)
 					return
 
 				if hostlist:
@@ -341,7 +341,7 @@ class School(UCSSchoolHelperAbstractClass):
 		try:
 			success = super(School, self).create_without_hooks(lo, validate)
 			if not success:
-				logger.warning('Creating %r failed (maybe it already exists?)! Trying to set it up nonetheless')
+				logger.warning('Creating %r failed (maybe it already exists?)! Trying to set it up nonetheless', self)
 				self.modify_without_hooks(lo)
 
 			# In a single server environment the default DHCP container must
@@ -360,12 +360,12 @@ class School(UCSSchoolHelperAbstractClass):
 			if self.dc_name_administrative:
 				self.create_dc_slave(lo, self.dc_name_administrative, administrative=True)
 		finally:
-			logger.debug('Resetting share file servers from None to %r and %r' % (saved_home_share_file_server, saved_class_share_file_server))
+			logger.debug('Resetting share file servers from None to %r and %r', saved_home_share_file_server, saved_class_share_file_server)
 			self.class_share_file_server = saved_class_share_file_server
 			self.home_share_file_server = saved_home_share_file_server
 		self.class_share_file_server = self.get_class_share_file_server(lo)
 		self.home_share_file_server = self.get_home_share_file_server(lo)
-		logger.debug('Now it is %r and %r - %r should be modified accordingly' % (self.home_share_file_server, self.class_share_file_server, self))
+		logger.debug('Now it is %r and %r - %r should be modified accordingly', self.home_share_file_server, self.class_share_file_server, self)
 		self.modify_without_hooks(lo)
 
 		# if requested, then create dhcp_dns policy that clears univentionDhcpDomainNameServers at OU level
@@ -386,15 +386,15 @@ class School(UCSSchoolHelperAbstractClass):
 		ous = [x.strip() for x in oulist.split(',')]
 		schools = []
 		for ou in ous:
-			logger.debug('All Schools: Getting OU %s' % ou)
+			logger.debug('All Schools: Getting OU %s', ou)
 			school = cls.from_dn(cls(name=ou).dn, None, lo)
-			logger.debug('All Schools: Found school: %r' % school)
+			logger.debug('All Schools: Found school: %r', school)
 			schools.append(school)
 		return schools
 
 	@classmethod
 	def from_binddn(cls, lo):
-		logger.debug('All Schools: Showing all OUs which DN %s can read.' % lo.binddn)
+		logger.debug('All Schools: Showing all OUs which DN %s can read.', lo.binddn)
 		# get all schools of the user
 		schools = lo.search(base=lo.binddn, scope='base', attr=['ucsschoolSchool'])[0][1].get('ucsschoolSchool', [])
 		if schools:
@@ -406,9 +406,9 @@ class School(UCSSchoolHelperAbstractClass):
 			# restrict the visibility to current school
 			# (note that there can be schools with a DN such as ou=25g18,ou=25,dc=...)
 			school_dn = lo.binddn[lo.binddn.find('ou='):]
-			logger.debug('Schools from binddn: Found an OU in the LDAP binddn. Restricting schools to only show %s' % school_dn)
+			logger.debug('Schools from binddn: Found an OU in the LDAP binddn. Restricting schools to only show %s', school_dn)
 			school = cls.from_dn(school_dn, None, lo)
-			logger.debug('Schools from binddn: Found school: %r' % school)
+			logger.debug('Schools from binddn: Found school: %r', school)
 			return [school]
 
 		logger.warning('Schools from binddn: Unable to identify OU of this account - showing all OUs!')

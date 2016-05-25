@@ -172,6 +172,8 @@ class User(UCSSchoolHelperAbstractClass):
 	def do_create(self, udm_obj, lo):
 		self.create_mail_domain(lo)
 		self.adjust_options(udm_obj)
+		if not self.schools:
+			self.schools = [self.school]
 		password_created = False
 		if not self.password:
 			logger.debug('No password given. Generating random one')
@@ -213,12 +215,12 @@ class User(UCSSchoolHelperAbstractClass):
 		mandatory_groups = self.groups_used(lo)
 		all_schools = School.get_all(lo, respect_local_oulist=False)
 		for group_dn in udm_obj['groups'][:]:
-			logger.debug('Checking group %s for removal' % group_dn)
+			logger.debug('Checking group %s for removal', group_dn)
 			if group_dn not in mandatory_groups:
 				logger.debug('Group not mandatory! Part of a school?')
 				for school in all_schools:
 					if Group.is_school_group(school.name, group_dn):
-						logger.debug('Yes, part of %s!' % school)
+						logger.debug('Yes, part of %s!', school)
 						# Okay. What now?
 						#   -> "Foreign school"? -> remove
 						#   -> "My school"?
@@ -236,7 +238,7 @@ class User(UCSSchoolHelperAbstractClass):
 				else:
 					logger.debug('No. Leaving it alone...')
 		for group_dn in mandatory_groups:
-			logger.debug('Checking group %s for adding' % group_dn)
+			logger.debug('Checking group %s for adding', group_dn)
 			if group_dn not in udm_obj['groups']:
 				logger.debug('Group is not yet part of the user. Adding...')
 				udm_obj['groups'].append(group_dn)
@@ -271,7 +273,7 @@ class User(UCSSchoolHelperAbstractClass):
 			elif Group.is_school_group(old_school, groupdn):
 				cls = BasicGroup
 			if cls is None:
-				logger.info('Not touching group %r' % (groupdn,))
+				logger.info('Not touching group %r', groupdn)
 				continue
 			# create the class/workgroup in the other school if not exists. put user into it.
 			oldgroup = cls.from_dn(groupdn, old_school, lo)
@@ -282,18 +284,18 @@ class User(UCSSchoolHelperAbstractClass):
 			try:
 				group = cls.from_dn(oldgroup.dn, school, lo)
 			except noObject:
-				logger.info('No group %r found.' % (oldgroup.dn,))
+				logger.info('No group %r found.', oldgroup.dn)
 				group = cls(oldgroup.name, school, users=[self.dn])
 				group.create(lo)
 			else:
-				logger.info('Appending %r to %r' % (self.dn, group.dn))
+				logger.info('Appending %r to %r', self.dn, group.dn)
 				group.users.append(self.dn)
 				group.modify(lo)
 
 			# remove this user from the classes/workgroups of the old school
 			oldgroup = cls.from_dn(groupdn, old_school, lo)
 			if self.dn in oldgroup.users:
-				logger.info('Removing %r from %r' % (self.dn, oldgroup.dn))
+				logger.info('Removing %r from %r', self.dn, oldgroup.dn)
 				oldgroup.users.remove(self.dn)
 				oldgroup.modify(lo)
 
@@ -342,7 +344,7 @@ class User(UCSSchoolHelperAbstractClass):
 			if self.shall_create_mail_domain():
 				mail_domain.create(lo)
 			else:
-				logger.warning('Not allowed to create %r.' % mail_domain)
+				logger.warning('Not allowed to create %r.', mail_domain)
 
 	def get_specific_groups(self, lo):
 		groups = []
@@ -500,9 +502,9 @@ class Student(User):
 		try:
 			exam = User.from_dn(dn, old_school, lo)
 		except noObject:
-			logger.info('No exam user %r found' % (dn,))
+			logger.info('No exam user %r found', dn)
 		else:
-			logger.info('Removing exam user %r' % (dn,))
+			logger.info('Removing exam user %r', dn)
 			exam.remove(lo)
 
 		super(Student, self).do_school_change(udm_obj, lo, old_school)

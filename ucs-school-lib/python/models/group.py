@@ -93,12 +93,12 @@ class Group(UCSSchoolHelperAbstractClass):
 
 	def add_umc_policy(self, policy_dn, lo):
 		if not policy_dn or policy_dn.lower() == 'none':
-			logger.warning('No policy added to %r' % self)
+			logger.warning('No policy added to %r', self)
 			return
 		try:
 			policy = UMCPolicy.from_dn(policy_dn, self.school, lo)
 		except noObject:
-			logger.warning('Object to be referenced does not exist (or is no UMC-Policy): %s' % policy_dn)
+			logger.warning('Object to be referenced does not exist (or is no UMC-Policy): %s', policy_dn)
 		else:
 			policy.attach(self, lo)
 

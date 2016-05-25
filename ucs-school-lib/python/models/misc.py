@@ -52,7 +52,7 @@ class MailDomain(UCSSchoolHelperAbstractClass):
 class OU(UCSSchoolHelperAbstractClass):
 	def create_in_container(self, container, lo):
 		self.fake_dn(container)
-		logger.info('Creating %r' % self)
+		logger.info('Creating %r', self)
 		pos = udm_uldap.position(ucr.get('ldap/base'))
 		pos.setDn(container)
 		udm_obj = udm_modules.get(self._meta.udm_module).object(None, lo, pos)
