@@ -33,12 +33,13 @@
 import os.path
 import re
 
-from ldap.filter import escape_filter_chars
+from ldap.dn import escape_dn_chars, explode_dn
+from ldap.filter import escape_filter_chars, filter_format
 
 from ucsschool.lib.roles import role_pupil, role_teacher, role_staff
 from ucsschool.lib.models.utils import create_passwd
 from ucsschool.lib.models.attributes import Username, Firstname, Lastname, Birthday, Email, Password, Disabled, SchoolClassStringAttribute, Schools, RecordUID, SourceUID
-from ucsschool.lib.models.base import UCSSchoolHelperAbstractClass, MultipleObjectsError
+from ucsschool.lib.models.base import UCSSchoolHelperAbstractClass
 from ucsschool.lib.models.school import School
 from ucsschool.lib.models.group import Group, BasicGroup, SchoolClass, WorkGroup
 from ucsschool.lib.models.computer import AnyComputer
@@ -46,7 +47,8 @@ from ucsschool.lib.models.misc import MailDomain
 from ucsschool.lib.models.utils import ucr, _, logger
 
 from univention.admin.uexceptions import noObject
-from ldap.dn import escape_dn_chars, explode_dn
+from univention.admin.filter import conjunction, parse
+import univention.admin.modules as udm_modules
 
 
 class User(UCSSchoolHelperAbstractClass):
@@ -63,6 +65,7 @@ class User(UCSSchoolHelperAbstractClass):
 	record_uid = RecordUID(_('RecordUID'))
 
 	type_name = None
+	type_filter = '(|(objectClass=ucsschoolTeacher)(objectClass=ucsschoolStaff)(objectClass=ucsschoolStudent))'
 
 	_profile_path_cache = {}
 	_samba_home_path_cache = {}
@@ -170,10 +173,10 @@ class User(UCSSchoolHelperAbstractClass):
 			return obj
 
 	def do_create(self, udm_obj, lo):
-		self.create_mail_domain(lo)
-		self.adjust_options(udm_obj)
 		if not self.schools:
 			self.schools = [self.school]
+		self.create_mail_domain(lo)
+		self.adjust_options(udm_obj)
 		password_created = False
 		if not self.password:
 			logger.debug('No password given. Generating random one')
@@ -468,22 +471,21 @@ class User(UCSSchoolHelperAbstractClass):
 		return cls.get_search_base(school).users
 
 	@classmethod
-	def get_by_import_id(cls, connection, source_uid, record_uid):
-		"""
-		Wraps around get_all(), does not need a school name.
+	def get_by_import_id(cls, lo, source_uid, record_uid, superordinate=None):
+		filter_s = filter_format('(&(objectClass=ucsschoolType)(ucsschoolSourceUID=%s)(ucsschoolRecordUID=%s))', (source_uid, record_uid))
+		obj = cls.get_only_udm_obj(lo, filter_s, superordinate=superordinate)
+		if not obj:
+			raise noObject(_('No user with source_uid={0} and record_uid={1} found.').format(source_uid, record_uid))
+		return cls.from_udm_obj(obj, None, lo)
 
-		:param connection: the uldap connection
-		:return: object of current class or raises noObject or MultipleObjectsError
-		"""
-		filter_s = "(&(objectclass=ucsschoolType)(ucsschoolSourceUID={})(ucsschoolRecordUID={}))".format(
-			source_uid, record_uid)
-		objs = connection.search(filter=filter_s)
-		if not objs:
-			raise noObject("No user with source_uid={} and record_uid={} found.".format(source_uid, record_uid))
-		elif len(objs) > 1:
-			raise MultipleObjectsError(objs, "Found more than one user with source_uid='{}' and record_uid='{}'.".format(
-				source_uid, record_uid))
-		return cls.get_all(connection, objs[0][1]["ucsschoolSchool"][0], filter_s)[0]
+	@classmethod
+	def lookup(cls, lo, school, filter_s='', superordinate=None):
+		filter_object_type = conjunction('&', [parse(cls.type_filter), parse(filter_format('ucsschoolSchool=%s', [school]))])
+		if filter_s:
+			filter_object_type = conjunction('&', [filter_object_type, parse(filter_s)])
+		objects = udm_modules.lookup(cls._meta.udm_module, None, lo, filter=unicode(filter_object_type), scope='sub', superordinate=superordinate)
+		objects.extend(obj for obj in super(User, cls).lookup(lo, school, filter_s, superordinate=superordinate) if not any(obj.dn == x.dn for x in objects))
+		return objects
 
 	class Meta:
 		udm_module = 'users/user'
@@ -494,6 +496,7 @@ class Student(User):
 	school_class = SchoolClassStringAttribute(_('Class'), aka=['Class', 'Klasse'])
 
 	type_name = _('Student')
+	type_filter = 'objectClass=ucsschoolStudent'
 	roles = [role_pupil]
 
 	def do_school_change(self, udm_obj, lo, old_school):
@@ -544,6 +547,7 @@ class Teacher(User):
 	school_class = SchoolClassStringAttribute(_('Class'), aka=['Class', 'Klasse'])
 
 	type_name = _('Teacher')
+	type_filter = '(&(objectClass=ucsschoolTeacher)(!(objectClass=ucsschoolStaff)))'
 	roles = [role_teacher]
 
 	@classmethod
@@ -581,6 +585,7 @@ class Teacher(User):
 class Staff(User):
 	type_name = _('Staff')
 	roles = [role_staff]
+	type_filter = 'objectClass=ucsschoolStaff'
 
 	@classmethod
 	def get_container(cls, school):
@@ -609,6 +614,7 @@ class Staff(User):
 
 class TeachersAndStaff(Teacher):
 	type_name = _('Teacher and Staff')
+	type_filter = '(&(objectClass=ucsschoolStaff)(objectClass=ucsschoolTeacher))'
 	roles = [role_teacher, role_staff]
 
 	@classmethod

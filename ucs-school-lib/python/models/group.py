@@ -243,6 +243,7 @@ class ComputerRoom(Group, _MayHaveSchoolPrefix):
 		return cls.get_search_base(school).rooms
 
 	def get_computers(self, ldap_connection):
+		from ucsschool.lib.models.computer import SchoolComputer
 		for host in self.hosts:
 			try:
 				yield SchoolComputer.from_dn(host, self.school, ldap_connection)

@@ -666,18 +666,21 @@ class UCSSchoolHelperAbstractClass(object):
 				complete_filter = filter_from_filter_str
 		complete_filter = str(complete_filter)
 		logger.debug('Getting all %s of %s with filter %r', cls.__name__, school, complete_filter)
-		try:
-			udm_objs = udm_modules.lookup(cls._meta.udm_module, None, lo, filter=complete_filter, base=cls.get_container(school), scope='sub', superordinate=superordinate)
-		except noObject:
-			logger.warning('Error while getting all %s of %s: %r does not exist!', cls.__name__, school, cls.get_container(school))
-			return []
 		ret = []
-		for udm_obj in udm_objs:
+		for udm_obj in cls.lookup(lo, school, complete_filter, superordinate=superordinate):
 			udm_obj.open()
 			obj = cls.from_udm_obj(udm_obj, school, lo)
 			if obj:
 				ret.append(obj)
 		return ret
+
+	@classmethod
+	def lookup(cls, lo, school, filter_s='', superordinate=None):
+		try:
+			return udm_modules.lookup(cls._meta.udm_module, None, lo, filter=filter_s, base=cls.get_container(school), scope='sub', superordinate=superordinate)
+		except noObject:
+			logger.warning('Error while getting all %s of %s: probably %r does not exist!', cls.__name__, school, cls.get_container(school))
+			return []
 
 	@classmethod
 	def _attrs_for_easy_filter(cls):
@@ -713,7 +716,7 @@ class UCSSchoolHelperAbstractClass(object):
 			logger.info('UDM object %s is not %s, but actually %s', udm_obj.dn, cls.__name__, klass.__name__)
 			return klass.from_udm_obj(udm_obj, school, lo)
 		udm_obj.open()
-		attrs = {'school' : school}
+		attrs = {'school' : SchoolSearchBase.getOU(udm_obj.dn) or school}  # TODO: is this adjustment okay?
 		for name, attr in cls._attributes.iteritems():
 			if attr.udm_name:
 				udm_value = udm_obj[attr.udm_name]

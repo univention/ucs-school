@@ -1,3 +1,10 @@
+ucs-school-lib (9.0.1-1) unstable; urgency=medium
+
+  * Bug #41117: adjust User.get_all() to also find school users in diferrent
+  	OU's
+
+ -- Florian Best <best@univention.de>  Thu, 26 May 2016 14:59:13 +0200
+
 ucs-school-lib (9.0.0-4) unstable; urgency=medium
 
   * Bug #41117: search for users everywhere using the new attributes
