@@ -43,7 +43,7 @@ from ucsschool.lib.roles import role_pupil, role_teacher, role_staff
 from ucsschool.lib.models import Staff, Student, Teacher, TeachersAndStaff, User
 from ucsschool.importer.configuration import Configuration
 from ucsschool.importer.factory import Factory
-from ucsschool.importer.exceptions import BadPassword, FormatError, InvalidBirthday, InvalidEmail, MissingMailDomain, MissingMandatoryAttribute, MissingSchoolName, NoUsername, NoUsernameAtAll, UniqueIdError, UnkownDisabledSetting, UsernameToLong
+from ucsschool.importer.exceptions import BadPassword, FormatError, InvalidBirthday, InvalidEmail, MissingMailDomain, MissingMandatoryAttribute, MissingSchoolName, NoUsername, NoUsernameAtAll, UniqueIdError, UnkownDisabledSetting, UnknownProperty, UsernameToLong
 
 
 class ImportUser(User):
@@ -64,24 +64,19 @@ class ImportUser(User):
 	config = None
 	username_max_length = 15
 	_unique_ids = defaultdict(set)
+	factory = None
+	ucr = None
+	username_handler = None
 
 	def __init__(self, name=None, school=None, **kwargs):
-		self.config = Configuration()
 		self.action = None
 		self.entry_count = -1
 		self.udm_properties = dict()
-		self.factory = Factory()
-		self.ucr = self.factory.make_ucr()
-		self.username_handler = None
+		if not self.factory:
+			self.factory = Factory()
+			self.ucr = self.factory.make_ucr()
+			self.config = Configuration()
 		super(ImportUser, self).__init__(name, school, **kwargs)
-
-	# def __str__(self):
-	# 	return self.__unicode__().encode("ascii", "replace")
-	#
-	# def __unicode__(self):
-	# 	return (u"name:{name}, school:{school}, action:{action} disabled:{disabled} entry_count:{entry_count}, dn:{DN}, "
-	# 		"record_uid:{record_uid}, school_class:{school_class}, udm_properties:{udm_properties}".format(
-	# 		DN=self.custom_dn or self.old_dn, **self.__dict__))
 
 	def prepare_uids(self):
 		"""
@@ -90,31 +85,35 @@ class ImportUser(User):
 		self.make_rid()
 		self.make_sid()
 
-	def prepare_properties(self, make_username=False):
+	def prepare_properties(self, new_user=False):
 		"""
-		Necessary preparation to modify a user in UCS. Does not create a
-		new username!
+		Necessary preparation to modify a user in UCS.
+
+		:param new_user: bool: if new_user() should run
 		"""
 		self.prepare_uids()
-		if make_username:
+		if new_user:
 			self.make_username()
+			self.make_password()
 		self.make_school()
 		self.make_classes()
-		self.make_email()
+		self.make_email(make_username=new_user)
 		self.make_firstname()
 		self.make_lastname()
 		self.make_birthday()
 		self.make_disabled()
-		self.normalize_udm_properties()
-		self.make_password()
-		self.run_checks(check_username=make_username)
+		# self.normalize_udm_properties()
+		self.run_checks(check_username=new_user)
 
 	def make_birthday(self):
+		"""
+		Set User.birthday attribute.
+		"""
 		pass
 
 	def make_classes(self):
 		"""
-		Create classes.
+		Create school classes.
 		"""
 		# FIXME when/if self.school_class becomes a list instead of a string
 		# if self.school_class and isinstance(self.school_class, basestring):
@@ -122,6 +121,9 @@ class ImportUser(User):
 		pass
 
 	def make_disabled(self):
+		"""
+		Set User.disabled attribute.
+		"""
 		if self.disabled is not None:
 			return
 
@@ -136,16 +138,24 @@ class ImportUser(User):
 		self.disabled = not activate
 
 	def make_firstname(self):
-		pass
+		"""
+		Normalize given name.
+		"""
+		self.firstname = self.normalize(self.firstname or "")
 
 	def make_lastname(self):
-		pass
+		"""
+		Normalize family name.
+		"""
+		self.lastname = self.normalize(self.lastname or "")
 
-	def make_email(self):
+	def make_email(self, make_username=False):
 		"""
 		Create email (if not already set).
+
+		:param make_username: bool: if make_username() should run
 		"""
-		if True or not self.email:  # FIXME: forcing format_from_scheme() for testing purposes
+		if not self.email:
 			maildomain = self.config.get("maildomain")
 			if not maildomain:
 				try:
@@ -153,6 +163,13 @@ class ImportUser(User):
 				except (AttributeError, IndexError):
 					raise MissingMailDomain("Could not retrieve mail domain from configuration nor from UCRV "
 						"mail/hosteddomains.", entry=self.entry_count, import_user=self)
+			if "<firstname>" in self.config["scheme"]["email"]:
+				self.make_firstname()
+			if "<lastname>" in self.config["scheme"]["email"]:
+				self.make_lastname()
+			if make_username and ("<username>" in self.config["scheme"]["email"] or
+				"<name>" in self.config["scheme"]["email"]):
+					self.make_username()
 			self.email = self.format_from_scheme("email", self.config["scheme"]["email"], maildomain=maildomain).lower()
 
 	def make_password(self):
@@ -221,11 +238,9 @@ class ImportUser(User):
 		:return: str: normalized s
 		"""
 		if isinstance(s, basestring):
-			for umlaut, code in uadmin_property.UMLAUTS.items():
-				s = s.replace(umlaut, code)
-			return s.encode("ascii", "replace")
-		else:
-			return s
+			prop = uadmin_property("_replace")
+			s = prop._replace("<:umlauts>{}".format(s), {})
+		return s
 
 	def normalize_udm_properties(self):
 		"""
@@ -249,6 +264,8 @@ class ImportUser(User):
 	def run_checks(self, check_username=False):
 		"""
 		Run some self-tests.
+
+		:param check_username: bool: if username and password checks should run
 		"""
 		try:
 			[self.udm_properties.get(ma) or getattr(self, ma) for ma in self.config["mandatory_attributes"]]
@@ -256,26 +273,28 @@ class ImportUser(User):
 			raise MissingMandatoryAttribute("A mandatory attribute was not set: {}.".format(exc),
 				self.config["mandatory_attributes"], entry=self.entry_count, import_user=self)
 
-		if len(self.password) < self.config["password_length"]:
-			raise BadPassword("Password is shorter than {} characters.".format(self.config["password_length"]),
-				entry=self.entry_count, import_user=self)
 
 		if self.record_uid in self._unique_ids["rid"]:
 			raise UniqueIdError("RecordUID '{}' has already been used in this import.".format(self.record_uid),
 				entry=self.entry_count, import_user=self)
 		self._unique_ids["rid"].add(self.record_uid)
 
-		if check_username and not self.name:
-			raise NoUsername("No username was created.", entry=self.entry_count, import_user=self)
+		if check_username:
+			if not self.name:
+				raise NoUsername("No username was created.", entry=self.entry_count, import_user=self)
 
-		if check_username and len(self.name) > self.username_max_length:
-			raise UsernameToLong("Username '{}' is longer than allowed.".format(self.name),
-				entry=self.entry_count, import_user=self)
+			if len(self.name) > self.username_max_length:
+				raise UsernameToLong("Username '{}' is longer than allowed.".format(self.name),
+					entry=self.entry_count, import_user=self)
 
-		if check_username and self.name in self._unique_ids["name"]:
-			raise UniqueIdError("Username '{}' has already been used in this import.".format(self.name),
-				entry=self.entry_count, import_user=self)
-		self._unique_ids["name"].add(self.name)
+			if self.name in self._unique_ids["name"]:
+				raise UniqueIdError("Username '{}' has already been used in this import.".format(self.name),
+					entry=self.entry_count, import_user=self)
+			self._unique_ids["name"].add(self.name)
+
+			if len(self.password) < self.config["password_length"]:
+				raise BadPassword("Password is shorter than {} characters.".format(self.config["password_length"]),
+					entry=self.entry_count, import_user=self)
 
 		if self.email:
 			# email_pattern:
@@ -285,7 +304,7 @@ class ImportUser(User):
 			# * all characters are allowed (international domains)
 			email_pattern = r"[^@]+@.+\..+"
 			if not re.match(email_pattern, self.email):
-				raise InvalidEmail("Email adderss '{}' has invalid format.".format(self.email), entry=self.entry_count,
+				raise InvalidEmail("Email address '{}' has invalid format.".format(self.email), entry=self.entry_count,
 					import_user=self)
 
 			if self.email in self._unique_ids["email"]:
@@ -302,6 +321,11 @@ class ImportUser(User):
 
 	@property
 	def role_sting(self):
+		"""
+		Mapping from self.roles to string used in configuration.
+
+		:return: str: one of staff, student, teacher, teacher_and_staff
+		"""
 		if role_pupil in self.roles:
 			return "student"
 		elif role_teacher in self.roles:
@@ -327,7 +351,8 @@ class ImportUser(User):
 			except KeyError:
 				raise NoUsernameAtAll("Cannot find scheme to create username for role '{}' or 'default'.".format(
 					self.role_sting), self.entry_count, import_user=self)
-		return scheme
+		# force transcription of german umlauts
+		return "<:umlauts>{}".format(scheme)
 
 	def format_from_scheme(self, prop_name, scheme, **kwargs):
 		"""
@@ -355,7 +380,38 @@ class ImportUser(User):
 	def get_class_for_udm_obj(cls, udm_obj, school):
 		raise NotImplementedError()
 
+	def create_without_hooks(self, lo, validate):
+		success = super(ImportUser, self).create_without_hooks(lo, validate)
+		self.store_udm_properties(lo)
+		return success
+
+	def modify_without_hooks(self, lo, validate=True, move_if_necessary=None):
+		success = super(ImportUser, self).modify_without_hooks(lo, validate, move_if_necessary)
+		self.store_udm_properties(lo)
+		return success
+
+	def store_udm_properties(self, connection):
+		"""
+		Copy data from self.udm_properties into UDM object of this user.
+
+		:param connection: LDAP connection
+		"""
+		udm_obj = self.get_udm_object(connection)
+		udm_obj.info.update(self.udm_properties)
+		try:
+			udm_obj.modify()
+		except KeyError as exc:
+			raise UnknownProperty("UDM properties could not be set. Unknown property: '{}'".format(exc),
+				entry=self.entry_count, import_user=self)
+
 	def update(self, other):
+		"""
+		Copy attributes of other ImportUser into this one.
+
+		IMPLEMENTME if you subclass and add attributes that are not
+		ucsschool.lib.models.attributes.
+		:param other: ImportUser: data source
+		"""
 		for k, v in other.to_dict().items():
 			if k == "name" and v is None:
 				continue

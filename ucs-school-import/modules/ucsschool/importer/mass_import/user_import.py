@@ -37,7 +37,7 @@ from collections import defaultdict
 from univention.admin.uexceptions import noObject
 from ucsschool.lib.models.attributes import ValidationError
 from ucsschool.lib.roles import role_pupil, role_teacher, role_staff
-from ucsschool.importer.exceptions import UcsSchoolImportError, CreationError, DeletionError, LookupError, ModificationError, ToManyErrors, UnkownAction, UserValidationError
+from ucsschool.importer.exceptions import UcsSchoolImportError, CreationError, DeletionError, ModificationError, ToManyErrors, UnkownAction, UserValidationError
 from ucsschool.importer.factory import Factory
 from ucsschool.importer.configuration import Configuration
 from ucsschool.importer.utils.logging2udebug import get_logger
@@ -120,6 +120,7 @@ class UserImport(object):
 					self.logger.info("%s %s (source_uid:%s record_uid:%s)...", action_str, user,
 						user.source_uid, user.record_uid)
 
+				self.create_and_modify_hook(user, "pre")
 				try:
 					if user.action == "A":
 						err = CreationError
@@ -145,6 +146,14 @@ class UserImport(object):
 					raise err("Error {} {} (source_uid:{} record_uid: {}), does probably {}exist.".format(
 						action_str.lower(), user, user.source_uid, user.record_uid,
 						"not " if user.action == "M" else "already "), entry=user.entry_count, import_user=user)
+
+				if user.action == "A":
+					# load user from LDAP for create_and_modify_hook(post)
+					user = imported_user.get_by_import_id(self.connection, imported_user.source_uid,
+						imported_user.record_uid)
+				# user.store_udm_properties(self.connection)
+				self.create_and_modify_hook(user, "post")
+
 			except (CreationError, ModificationError) as exc:
 				self.logger.error("Entry #%d: %s",  exc.entry, exc)  # traceback useless
 				self._add_error(exc)
@@ -165,38 +174,16 @@ class UserImport(object):
 		:return: ImportUser: ImportUser with action set and possibly fetched
 		from LDAP
 		"""
-		if imported_user.action:
-			if imported_user.action == "A":
-				imported_user.prepare_properties(make_username=True)
-				user = imported_user
-			elif imported_user.action == "M":
-				try:
-					imported_user.prepare_properties(make_username=False)
-					user = imported_user.get_by_import_id(self.connection, imported_user.source_uid,
-						imported_user.record_uid)
-					user.update(imported_user)
-				except noObject:
-					raise LookupError("{} '{}' (source_uid:{} record_uid: {}) has action=M in input, but does "
-						"not exist in LDAP.".format(imported_user.__class__.__name__, imported_user.name,
-						imported_user.source_uid, imported_user.record_uid), entry=imported_user.entry_count,
-						import_user=imported_user)
-			elif imported_user.action == "D":
-				user = imported_user
-			else:
-				raise UnkownAction("{} (source_uid:{} record_uid: {}) has unknown action '{}'.".format(
-					imported_user, imported_user.source_uid, imported_user.record_uid, imported_user.action),
-					entry=imported_user.entry_count, import_user=imported_user)
-		else:
-			try:
-				imported_user.prepare_properties(make_username=False)
-				user = imported_user.get_by_import_id(self.connection, imported_user.source_uid,
-					imported_user.record_uid)
-				user.update(imported_user)
-				user.action = "M"
-			except noObject:
-				imported_user.prepare_properties(make_username=True)
-				user = imported_user
-				user.action = "A"
+		try:
+			user = imported_user.get_by_import_id(self.connection, imported_user.source_uid,
+				imported_user.record_uid)
+			imported_user.prepare_properties(new_user=False)
+			user.update(imported_user)
+			user.action = "M"
+		except noObject:
+			imported_user.prepare_properties(new_user=True)
+			user = imported_user
+			user.action = "A"
 		return user
 
 	def detect_users_to_delete(self):
@@ -278,6 +265,7 @@ class UserImport(object):
 		self.logger.info("Deleting %d users...", len(users))
 		for user in users:
 			try:
+				self.delete_hook(user, "pre")
 				success = user.remove(self.connection)
 				if success:
 					self.logger.info("Success deleting user %r (source_uid:%s record_uid: %s).", user.name, user.source_uid,
@@ -286,6 +274,7 @@ class UserImport(object):
 				else:
 					raise DeletionError("Error deleting user '{}' (source_uid:{} record_uid: {}).".format(user.name,
 						user.source_uid, user.record_uid), entry=user.entry_count, import_user=user)
+				self.delete_hook(user, "post")
 			except UcsSchoolImportError as exc:
 				self.logger.exception("Error in entry #%d: %s",  exc.entry, exc)
 				self._add_error(exc)
@@ -297,7 +286,7 @@ class UserImport(object):
 		Log statistics about read, created, modified and deleted users.
 		"""
 		self.logger.info("------ User import statistics ------")
-		self.logger.info("Successfully read %d users from input data.", len(self.imported_users))
+		self.logger.info("Read users from input data: %d", len(self.imported_users))
 		cls_names = self.added_users.keys()
 		cls_names.extend(self.modified_users.keys())
 		cls_names.extend(self.deleted_users.keys())
@@ -306,19 +295,58 @@ class UserImport(object):
 		for cls_name in sorted(cls_names):
 			self.logger.debug("Created %s: %d", cls_name, len(self.added_users.get(cls_name, [])))
 			for i in range(0, len(self.added_users[cls_name]), columns):
-				self.logger.debug("    %s", [iu.name for iu in self.added_users[cls_name][i:i+columns]])
+				self.logger.debug("  %s", [iu.name for iu in self.added_users[cls_name][i:i+columns]])
 			self.logger.debug("Modified %s: %d", cls_name, len(self.modified_users.get(cls_name, [])))
 			for i in range(0, len(self.modified_users[cls_name]), columns):
-				self.logger.debug("    %s", [iu.name for iu in self.modified_users[cls_name][i:i+columns]])
+				self.logger.debug("  %s", [iu.name for iu in self.modified_users[cls_name][i:i+columns]])
 			self.logger.debug("Deleted %s: %d", cls_name, len(self.deleted_users.get(cls_name, [])))
 			for i in range(0, len(self.deleted_users[cls_name]), columns):
-				self.logger.debug("    %s", [iu.name for iu in self.deleted_users[cls_name][i:i+columns]])
+				self.logger.debug("  %s", [iu.name for iu in self.deleted_users[cls_name][i:i+columns]])
 		self.logger.info("Errors: %d", len(self.errors))
 		if self.errors:
 			self.logger.info("Entry #: Error description")
 		for error in self.errors:
-			self.logger.info("     %d: %s", error.entry, error)
+			self.logger.info("  %d: %s: %s", error.entry, error.import_user.name if error.import_user else "NoName",
+				error)
 		self.logger.info("------ End of user import statistics ------")
+
+	def create_and_modify_hook(self, user, hook_time):
+		"""
+		Run code before or after creating or modifying a user.
+
+		IMPLEMENT ME if you want to use a hook. You'll have full access to the
+		data being saved to LDAP. It is much faster than running executables
+		from /usr/share/ucs-school-import/hooks/*.
+
+		* See user.action to know which action it is ("A" or "M").
+		* With action=A, if hook_time=pre the ImportUser does not exist in
+		LDAP, yet. user.dn will be None. If hook_time=post user will be a
+		opened ImportUser, loaded from LDAP.
+		* With action=M, user is always a opened ImportUser, loaded from LDAP.
+		* Use self.connection if you need a LDAP connection.
+
+		:param user: ImportUser
+		:param hook_time: str: either "pre" or "post"
+		:return: None
+		"""
+		pass
+
+	def delete_hook(self, user, hook_time):
+		"""
+		Run code before or after deleting a user.
+
+		IMPLEMENT ME if you want to use a hook. You'll have full access to the
+		data being saved to LDAP. It is much faster than running executables
+		from /usr/share/ucs-school-import/hooks/*.
+
+		* user is a opened ImportUser, loaded from LDAP.
+		* Use self.connection if you need a LDAP connection.
+
+		:param user: ImportUser
+		:param hook_time: str: either "pre" or "post"
+		:return: None
+		"""
+		pass
 
 	def _add_error(self, err):
 		self.errors.append(err)

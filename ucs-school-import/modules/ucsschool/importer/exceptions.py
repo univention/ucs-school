@@ -126,6 +126,10 @@ class UnkownDisabledSetting(UcsSchoolImportError):
 	pass
 
 
+class UnknownProperty(UcsSchoolImportError):
+	pass
+
+
 class UnkownRole(UcsSchoolImportError):
 	pass
 

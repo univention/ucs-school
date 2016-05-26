@@ -1,3 +1,14 @@
+ucs-school-import (14.0.0-3) unstable; urgency=low
+
+  * support arbitrary UDM properties in import data (Bug #41346)
+  * enabled run_checks() again (fixed adding of users for new csv format)
+  * move legacy specific code from user_import.determine_add_modify_action()
+    to legacy_user_import.determine_add_modify_action()
+  * normalize firstname, lastname, email address and username (Bug #41243)
+  * add missing doc strings
+
+ -- Daniel Troeder <troeder@univention.de>  Thu, 26 May 2016 12:06:09 +0200
+
 ucs-school-import (14.0.0-2) unstable; urgency=medium
 
   * Bug #41014: register syntax class in LDAP; rename into ucsschoolSchools

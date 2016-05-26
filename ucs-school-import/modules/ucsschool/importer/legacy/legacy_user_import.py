@@ -33,7 +33,7 @@ Legacy mass import class.
 
 from univention.admin.uexceptions import noObject
 from ucsschool.importer.mass_import.user_import import UserImport
-
+from ucsschool.importer.exceptions import UnkownAction
 
 class LegacyUserImport(UserImport):
 	def detect_users_to_delete(self):
@@ -45,12 +45,30 @@ class LegacyUserImport(UserImport):
 
 	def determine_add_modify_action(self, imported_user):
 		"""
-		If action == "M" but user does not exist, change to "A".
+		Determine what to do with the ImportUser. Should set attribute "action"
+		to either "A" or "M". If set to "M" the returned user must be a opened
+		ImportUser from LDAP.
+
+		:param imported_user: ImportUser from input
+		:return: ImportUser: ImportUser with action set and possibly fetched
+		from LDAP
 		"""
-		if imported_user.action == "M":
+		if imported_user.action == "A":
+			imported_user.prepare_properties(new_user=True)
+			user = imported_user
+		elif imported_user.action == "M":
 			try:
-				# just test if it exists in LDAP
-				imported_user.get_by_import_id(self.connection, imported_user.source_uid, imported_user.record_uid)
+				user = imported_user.get_by_import_id(self.connection, imported_user.source_uid,
+					imported_user.record_uid)
+				imported_user.prepare_properties(new_user=False)
+				user.update(imported_user)
 			except noObject:
-				imported_user.action = "A"
-		return super(LegacyUserImport, self).determine_add_modify_action(imported_user)
+				user = imported_user
+				user.action = "A"
+		elif imported_user.action == "D":
+			user = imported_user
+		else:
+			raise UnkownAction("{} (source_uid:{} record_uid: {}) has unknown action '{}'.".format(
+				imported_user, imported_user.source_uid, imported_user.record_uid, imported_user.action),
+				entry=imported_user.entry_count, import_user=imported_user)
+		return user

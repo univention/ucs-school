@@ -136,12 +136,11 @@ class CsvReader(BaseReader):
 				continue
 			if v in attrib_names:
 				# it is an Attribute
-				# self.logger.debug("k=%r v=%r setattr(import_user, %r, %r)", k, v, v, input_data[k])
 				setattr(import_user, v, input_data[k])
 			else:
 				# must be a UDM property
-				# self.logger.debug("k=%r v=%r import_user.udm_properties[v] = %r", k, v, input_data[k])
 				import_user.udm_properties[v] = input_data[k]
+		self.logger.debug("import_user.udm_properties=%r", import_user.udm_properties)
 		return import_user
 
 	@classmethod

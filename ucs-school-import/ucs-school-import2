@@ -34,7 +34,7 @@ ucs@school import tool.
 
 import sys
 import pprint
-from logging import StreamHandler, handlers
+from logging import StreamHandler
 import traceback
 
 from ucsschool.importer.utils.logging2udebug import get_logger, add_stdout_handler, add_file_handler
