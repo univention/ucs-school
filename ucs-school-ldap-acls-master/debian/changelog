@@ -1,3 +1,9 @@
+ucs-school-ldap-acls-master (14.0.0-2) unstable; urgency=medium
+
+  * Bug #41115: revert regression which caused failed.ldif during join
+
+ -- Florian Best <best@univention.de>  Thu, 26 May 2016 16:56:49 +0200
+
 ucs-school-ldap-acls-master (14.0.0-1) unstable; urgency=medium
 
   * Bug #41273: allow read access to cn=default,cn=univention for school
