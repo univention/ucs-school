@@ -60,9 +60,12 @@ class MassImport(object):
 
 	def import_users(self):
 		user_import = self.factory.make_user_importer(self.dry_run)
-		imported_users = user_import.import_users()
+		imported_users = user_import.read_input()
 		user_import.create_and_modify_users(imported_users)
-		users_to_delete = user_import.detect_users_to_delete()
-		user_import.delete_users(users_to_delete)
+		if self.config["no_delete"]:
+			self.logger.info("------ Skipping user deletion (no_delete=%r) ------", self.config["no_delete"])
+		else:
+			users_to_delete = user_import.detect_users_to_delete()
+			user_import.delete_users(users_to_delete)
 		user_import.log_stats()
 		self.writer.output(imported_users, user_import.deleted_users)

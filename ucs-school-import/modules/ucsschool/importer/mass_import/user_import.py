@@ -61,7 +61,7 @@ class UserImport(object):
 		self.factory = Factory()
 		self.reader = self.factory.make_reader()
 
-	def import_users(self):
+	def read_input(self):
 		"""
 		Read users from input data.
 		* UcsSchoolImportErrors are stored in in self.errors (with input entry
@@ -293,15 +293,15 @@ class UserImport(object):
 		cls_names = set(cls_names)
 		columns = 4
 		for cls_name in sorted(cls_names):
-			self.logger.debug("Created %s: %d", cls_name, len(self.added_users.get(cls_name, [])))
+			self.logger.info("Created %s: %d", cls_name, len(self.added_users.get(cls_name, [])))
 			for i in range(0, len(self.added_users[cls_name]), columns):
-				self.logger.debug("  %s", [iu.name for iu in self.added_users[cls_name][i:i+columns]])
-			self.logger.debug("Modified %s: %d", cls_name, len(self.modified_users.get(cls_name, [])))
+				self.logger.info("  %s", [iu.name for iu in self.added_users[cls_name][i:i+columns]])
+			self.logger.info("Modified %s: %d", cls_name, len(self.modified_users.get(cls_name, [])))
 			for i in range(0, len(self.modified_users[cls_name]), columns):
-				self.logger.debug("  %s", [iu.name for iu in self.modified_users[cls_name][i:i+columns]])
-			self.logger.debug("Deleted %s: %d", cls_name, len(self.deleted_users.get(cls_name, [])))
+				self.logger.info("  %s", [iu.name for iu in self.modified_users[cls_name][i:i+columns]])
+			self.logger.info("Deleted %s: %d", cls_name, len(self.deleted_users.get(cls_name, [])))
 			for i in range(0, len(self.deleted_users[cls_name]), columns):
-				self.logger.debug("  %s", [iu.name for iu in self.deleted_users[cls_name][i:i+columns]])
+				self.logger.info("  %s", [iu.name for iu in self.deleted_users[cls_name][i:i+columns]])
 		self.logger.info("Errors: %d", len(self.errors))
 		if self.errors:
 			self.logger.info("Entry #: Error description")

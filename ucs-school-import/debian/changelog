@@ -1,3 +1,10 @@
+ucs-school-import (14.0.0-4) unstable; urgency=low
+
+  * support add/modify-only import job (Bug #41350)
+  * rename functions, fix log level in statistics output
+
+ -- Daniel Troeder <troeder@univention.de>  Thu, 26 May 2016 16:09:45 +0200
+
 ucs-school-import (14.0.0-3) unstable; urgency=low
 
   * support arbitrary UDM properties in import data (Bug #41346)
