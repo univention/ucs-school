@@ -1,3 +1,9 @@
+ucs-school-metapackage (9.0.0-1) unstable; urgency=medium
+
+  * Bug #41359: enhance check if OU belongs to this host
+
+ -- Florian Best <best@univention.de>  Thu, 26 May 2016 15:53:28 +0200
+
 ucs-school-metapackage (8.0.1-6) unstable; urgency=low
 
   * resync msprintconnectionpolicy objects (Bug #32041) 
