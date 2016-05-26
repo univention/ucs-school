@@ -29,28 +29,23 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-VERSION=3
+VERSION=4
 . /usr/share/univention-join/joinscripthelper.lib
+./usr/share/univention-lib/all.sh
+
 joinscript_init
 
 eval "$(ucr shell)"
 
-# removing old extended attribute (Bug #26021)
-extattrdn="cn=ucsschool-user-role,cn=ucsschool,cn=custom attributes,cn=univention,$ldap_base"
-if udm settings/extended_attribute list "$@" | grep -q "^DN: $extattrdn" ; then
-	echo "Removing deprecated extended attribute ucsschool-user-role..."
-	univention-directory-manager settings/extended_attribute remove "$@" --dn "$extattrdn"
-fi
-
 # create service type "Windows Profile Server"
 univention-directory-manager container/cn create "$@" --ignore_exists \
 	--position "cn=univention,$ldap_base" \
-	--set name="services"
-if [ $? != 0 ]; then exit 1; fi
+	--set name="services" || die
 univention-directory-manager settings/service create "$@" --ignore_exists \
 	--position "cn=services,cn=univention,$ldap_base" \
-	--set name="Windows Profile Server"
-if [ $? != 0 ]; then exit 1; fi
+	--set name="Windows Profile Server" || die
+
+ucs_registerLDAPExtension "$@" --udm_syntax /usr/share/ucs-school-import/schema/syntax.ucs-school-import.py || die
 
 joinscript_save_current_version
 

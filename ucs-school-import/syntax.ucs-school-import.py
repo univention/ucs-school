@@ -5,7 +5,7 @@ class UCSSchool_Server_DN( UDM_Objects ):
 	simple = True
 
 
-class Schools(UDM_Attribute):
+class ucsschoolSchools(UDM_Attribute):
 	udm_module = 'container/ou'
 	udm_filter = 'objectClass=ucsschoolOrganizationalUnit'
 	attribute = 'name'
