@@ -37,14 +37,12 @@ import univention.admin.modules
 
 import univention.admin.modules as udm_modules
 import univention.admin.uldap as udm_uldap
-import univention.admin.uexceptions as udm_errors
 from univention.management.console.protocol.message import Message
 
 from univention.lib.i18n import Translation
 
 from functools import wraps
 import re
-import traceback
 import inspect
 from ldap.filter import escape_filter_chars
 
@@ -470,17 +468,15 @@ class SchoolBaseModule(Base):
 
 	def _users( self, ldap_connection, search_base, group = None, user_type = None, pattern = '' ):
 		"""Returns a list of all users given 'pattern', 'school' (search base) and 'group'"""
-		# TODO/FIXME: support also the legacy container-based search
-		# TODO: just use User.get_all()
-		ocs = {
-			'teachers': ('ucsschoolTeacher', 'ucsschoolAdministrator'),
-			'teacher': ('ucsschoolTeacher', 'ucsschoolAdministrator'),
-			'student': ('ucsschoolStudent',),
-			'students': ('ucsschoolStudent',),
-			'pupil': ('ucsschoolStudent',),
-			'pupils': ('ucsschoolStudent',),
-		}.get(user_type and user_type.lower(), ('ucsschoolStudent', 'ucsschoolTeacher', 'ucsschoolStaff', 'ucsschoolAdministrator'))
-		ocs = '(|(objectClass=%s))' % ')(objectClass='.join(ocs)
+		import ucsschool.lib.models
+		if not user_type:
+			cls = ucsschool.lib.models.User
+		elif user_type.lower() in ('teachers', 'teacher'):
+			cls = ucsschool.lib.models.Teacher
+		elif user_type.lower() in ('student', 'students', 'pupil', 'pupils'):
+			cls = ucsschool.lib.models.Student
+		else:
+			raise TypeError('user_type %r unknown.' % (user_type,))
 
 		# open the group
 		groupObj = None
@@ -489,24 +485,12 @@ class SchoolBaseModule(Base):
 			groupObj = groupModule.object(None, ldap_connection, None, group)
 			groupObj.open()
 
-		filter_s = '(&(ucsschoolSchool=%s)%s%s)' % (escape_filter_chars(search_base.school), LDAP_Filter.forUsers(pattern), ocs)
-		users = udm_modules.lookup('users/user', None, ldap_connection, scope='sub', filter=filter_s)
+		users = cls.get_all(ldap_connection, search_base.school, LDAP_Filter.forUsers(pattern))
+		users = [user.get_udm_object(ldap_connection) for user in users]
 		if groupObj:
 			# filter users to be members of the specified group
 			users = [i for i in users if i.dn in set(groupObj['users'])]
-
-		# TODO: why do we open the user?
-		result = []
-		for user in users:
-			try:
-				user.open()
-				result.append(user)
-			except udm_errors.ldapError:
-				raise
-			except udm_errors.base:
-				MODULE.error('get(): failed to open user object: %r\n%s' % (user.dn, traceback.format_exc()))
-
-		return result
+		return users
 
 
 class LDAP_Filter:

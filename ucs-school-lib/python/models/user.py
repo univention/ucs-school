@@ -585,7 +585,7 @@ class Teacher(User):
 class Staff(User):
 	type_name = _('Staff')
 	roles = [role_staff]
-	type_filter = 'objectClass=ucsschoolStaff'
+	type_filter = '(&(!(objectClass=ucsschoolTeacher))(objectClass=ucsschoolStaff)))'
 
 	@classmethod
 	def get_container(cls, school):
