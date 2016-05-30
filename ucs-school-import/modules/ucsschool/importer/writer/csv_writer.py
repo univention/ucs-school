@@ -31,14 +31,12 @@ Write the result of a user import job to a CSV file.
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-from csv import DictWriter
+from csv import DictWriter, excel, QUOTE_ALL
 
-from ucsschool.importer.configuration import Configuration
-from ucsschool.importer.factory import Factory
-from ucsschool.importer.writer.writer import Writer
+from ucsschool.importer.writer.base_writer import BaseWriter
 
 
-class CsvUserWriter(Writer):
+class CsvWriter(BaseWriter):
 	def __init__(self, field_names, dialect=None):
 		"""
 		Create a CSV file writer.
@@ -47,20 +45,15 @@ class CsvUserWriter(Writer):
 		:param dialect: csv.dialect: If unset will try to detect
 		dialect of input file or fall back to "excel".
 		"""
-		super(CsvUserWriter, self).__init__()
+		super(CsvWriter, self).__init__()
 		self.field_names = field_names
 		self.dialect = dialect
 
 		if not self.dialect:
-			# try to use the same dialect as was used by the import - if it
-			# was a CSV import
-			config = Configuration()
-			if config["input"]["type"] == "csv":
-				reader = Factory().make_reader()
-				with open(config["input"]["filename"], "rb") as fp:
-					self.dialect = reader.get_dialect(fp)
-			else:
-				self.dialect = "excel"
+			self.dialect = excel
+			self.dialect.doublequote = True
+			self.dialect.quoting = QUOTE_ALL
+
 		self.writer = None
 
 	def open(self, filename, mode="wb"):

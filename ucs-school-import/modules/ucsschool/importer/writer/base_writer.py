@@ -32,7 +32,7 @@ Base class for output writers.
 # <http://www.gnu.org/licenses/>.
 
 
-class Writer(object):
+class BaseWriter(object):
 	"""
 	Abstraction of a data dump mechanism like CSV, JSON, XML, sockets etc.
 	"""

@@ -37,7 +37,7 @@ from ucsschool.lib.roles import role_pupil, role_teacher, role_staff
 
 from ucsschool.importer.reader.csv_reader import CsvReader
 from ucsschool.importer.writer.csv_result_exporter import CsvResultExporter
-from ucsschool.importer.writer.csv_user_writer import CsvUserWriter
+from ucsschool.importer.writer.csv_writer import CsvWriter
 from ucsschool.importer.configuration import Configuration
 from ucsschool.importer.mass_import.mass_import import MassImport
 from ucsschool.importer.models.import_user import ImportStaff, ImportStudent, ImportTeacher, ImportTeachersAndStaff
@@ -141,6 +141,6 @@ class DefaultFactory(object):
 
 		:param arg: list: passed to constructor of created class
 		:param kwarg: dict: passed to constructor of created class
-		:return: ucsschool.importer.writer.Writer object
+		:return: ucsschool.importer.writer.BaseWriter object
 		"""
-		return CsvUserWriter(*arg, **kwargs)
+		return CsvWriter(*arg, **kwargs)
