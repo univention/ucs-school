@@ -321,7 +321,8 @@ class UserImport(object):
 		It is much faster than running executables from
 		/usr/share/ucs-school-import/hooks/*.
 
-		* The ImportUser does not exist in LDAP, yet. user.dn will be None.
+		* The ImportUser does not exist in LDAP, yet. user.dn will be the DN
+		of the user, if username and school does not change.
 		* Use self.connection if you need a LDAP connection.
 
 		:param user: ImportUser
@@ -377,7 +378,7 @@ class UserImport(object):
 		"""
 		pass
 
-	def pre_delete_hook(self, user, hook_time):
+	def pre_delete_hook(self, user):
 		"""
 		Run code before deleting a user.
 
