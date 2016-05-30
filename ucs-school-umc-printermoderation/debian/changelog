@@ -1,3 +1,9 @@
+ucs-school-umc-printermoderation (13.0.0-1) unstable; urgency=medium
+
+  * Bug #41129: fix detection of printers for school overlapping users
+
+ -- Florian Best <best@univention.de>  Mon, 30 May 2016 17:41:32 +0200
+
 ucs-school-umc-printermoderation (12.0.2-1) unstable; urgency=low
 
   * Bug #38423: fix detection of printjobs for users with differing

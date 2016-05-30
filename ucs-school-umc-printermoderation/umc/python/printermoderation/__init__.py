@@ -60,7 +60,7 @@ CUPSPDF_USERSUBDIR = None
 
 _ = Translation('ucs-school-umc-printermoderation').translate
 
-# read list of UDM mdules
+# read list of UDM modules
 udm_modules.update()
 
 
@@ -94,9 +94,8 @@ class Instance(SchoolBaseModule):
 		all_user_dirs = os.walk(CUPSPDF_DIR).next()[1]
 		return [x for x in all_user_dirs if x.lower() == username.lower()]
 
-	@simple_response
 	@LDAP_Connection()
-	def printers(self, ldap_user_read=None, ldap_position=None, search_base=None):
+	def printers(self, request, ldap_user_read=None, ldap_position=None, search_base=None):
 		"""List all available printers except PDF printers
 
 		requests.options = {}
@@ -115,7 +114,7 @@ class Instance(SchoolBaseModule):
 			name = prt.info['name']
 			spool_host = prt.info['spoolHost'][0]
 			result.append({'id': '%s://%s' % (spool_host, name), 'label': name})
-		return result
+		self.finished(request.id, result)
 
 	@LDAP_Connection()
 	def query(self, request, ldap_user_read=None, ldap_position=None, search_base=None):
