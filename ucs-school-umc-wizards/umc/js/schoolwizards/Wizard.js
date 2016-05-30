@@ -92,8 +92,8 @@ define([
 		},
 
 		loadVariables: function() {
-            return null;
-        },
+			return null;
+		},
 
 		startup: function() {
 			this.inherited(arguments);

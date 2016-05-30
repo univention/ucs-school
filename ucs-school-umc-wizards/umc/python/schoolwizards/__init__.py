@@ -32,6 +32,7 @@
 # <http://www.gnu.org/licenses/>.
 
 import re
+import functools
 
 from univention.lib.i18n import Translation
 from univention.management.console.log import MODULE
@@ -117,6 +118,7 @@ def iter_objects_in_request(request):
 		yield obj
 
 def response(func):
+	@functools.wraps(func)
 	def _decorated(self, request, *a, **kw):
 		ret = func(self, request, *a, **kw)
 		self.finished(request.id, ret)
@@ -150,10 +152,9 @@ class Instance(SchoolBaseModule, SchoolImport):
 		computer_types = [WindowsComputer, MacComputer, IPComputer]
 		try:
 			import univention.admin.handlers.computers.ucc as ucc
-			ucc_available = bool(ucc)
 		except ImportError:
-			ucc_available = False
-		if ucc_available:
+			pass
+		else:
 			computer_types.insert(1, UCCComputer)
 		for computer_type in computer_types:
 			ret.append({'id': computer_type._meta.udm_module_short, 'label': computer_type.type_name})

@@ -1,3 +1,10 @@
+ucs-school-umc-wizards (8.0.0-1) unstable; urgency=medium
+
+  * Bug #41132: preserve functions arguments in decorator (e.g. to keep the
+  	search_base)
+
+ -- Florian Best <best@univention.de>  Mon, 30 May 2016 20:25:55 +0200
+
 ucs-school-umc-wizards (7.0.1-1) unstable; urgency=medium
 
   * Bug #39928: fix rendering of Users/Classes/ComputerGrid if no school is
