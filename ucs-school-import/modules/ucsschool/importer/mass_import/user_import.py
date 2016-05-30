@@ -120,13 +120,14 @@ class UserImport(object):
 					self.logger.info("%s %s (source_uid:%s record_uid:%s)...", action_str, user,
 						user.source_uid, user.record_uid)
 
-				self.create_and_modify_hook(user, "pre")
 				try:
 					if user.action == "A":
+						self.pre_create_hook(user)
 						err = CreationError
 						store = self.added_users[cls_name]
 						success = user.create(lo=self.connection)
 					elif user.action == "M":
+						self.pre_modify_hook(user)
 						err = ModificationError
 						store = self.modified_users[cls_name]
 						success = user.modify(lo=self.connection)
@@ -151,8 +152,9 @@ class UserImport(object):
 					# load user from LDAP for create_and_modify_hook(post)
 					user = imported_user.get_by_import_id(self.connection, imported_user.source_uid,
 						imported_user.record_uid)
-				# user.store_udm_properties(self.connection)
-				self.create_and_modify_hook(user, "post")
+					self.post_create_hook(user)
+				elif user.action == "M":
+					self.post_modify_hook(user)
 
 			except (CreationError, ModificationError) as exc:
 				self.logger.error("Entry #%d: %s",  exc.entry, exc)  # traceback useless
@@ -265,7 +267,7 @@ class UserImport(object):
 		self.logger.info("Deleting %d users...", len(users))
 		for user in users:
 			try:
-				self.delete_hook(user, "pre")
+				self.pre_delete_hook(user)
 				success = user.remove(self.connection)
 				if success:
 					self.logger.info("Success deleting user %r (source_uid:%s record_uid: %s).", user.name, user.source_uid,
@@ -274,7 +276,7 @@ class UserImport(object):
 				else:
 					raise DeletionError("Error deleting user '{}' (source_uid:{} record_uid: {}).".format(user.name,
 						user.source_uid, user.record_uid), entry=user.entry_count, import_user=user)
-				self.delete_hook(user, "post")
+				self.post_delete_hook(user)
 			except UcsSchoolImportError as exc:
 				self.logger.exception("Error in entry #%d: %s",  exc.entry, exc)
 				self._add_error(exc)
@@ -310,40 +312,102 @@ class UserImport(object):
 				error)
 		self.logger.info("------ End of user import statistics ------")
 
-	def create_and_modify_hook(self, user, hook_time):
+	def pre_create_hook(self, user):
 		"""
-		Run code before or after creating or modifying a user.
+		Run code before creating a user.
 
-		IMPLEMENT ME if you want to use a hook. You'll have full access to the
-		data being saved to LDAP. It is much faster than running executables
-		from /usr/share/ucs-school-import/hooks/*.
+		IMPLEMENT ME if you want to do something before creating a user.
+		You'll have full access to the data being saved to LDAP.
+		It is much faster than running executables from
+		/usr/share/ucs-school-import/hooks/*.
 
-		* See user.action to know which action it is ("A" or "M").
-		* With action=A, if hook_time=pre the ImportUser does not exist in
-		LDAP, yet. user.dn will be None. If hook_time=post user will be a
-		opened ImportUser, loaded from LDAP.
-		* With action=M, user is always a opened ImportUser, loaded from LDAP.
+		* The ImportUser does not exist in LDAP, yet. user.dn will be None.
 		* Use self.connection if you need a LDAP connection.
 
 		:param user: ImportUser
-		:param hook_time: str: either "pre" or "post"
 		:return: None
 		"""
 		pass
 
-	def delete_hook(self, user, hook_time):
+	def post_create_hook(self, user):
 		"""
-		Run code before or after deleting a user.
+		Run code after creating a user.
 
-		IMPLEMENT ME if you want to use a hook. You'll have full access to the
-		data being saved to LDAP. It is much faster than running executables
-		from /usr/share/ucs-school-import/hooks/*.
+		IMPLEMENT ME if you want to do something after creating a user.
+		It is much faster than running executables from
+		/usr/share/ucs-school-import/hooks/*.
+
+		* The user will be a opened ImportUser, loaded from LDAP.
+		* Use self.connection if you need a LDAP connection.
+
+		:param user: ImportUser
+		:return: None
+		"""
+		pass
+
+	def pre_modify_hook(self, user):
+		"""
+		Run code before modifying a user.
+
+		IMPLEMENT ME if you want to do something before modifying a user.
+		It is much faster than running executables from
+		/usr/share/ucs-school-import/hooks/*.
+
+		* The user will be a opened ImportUser, loaded from LDAP.
+		* Use self.connection if you need a LDAP connection.
+
+		:param user: ImportUser
+		:return: None
+		"""
+		pass
+
+	def post_modify_hook(self, user):
+		"""
+		Run code after modifying a user.
+
+		IMPLEMENT ME if you want to do something after modifying a user.
+		It is much faster than running executables from
+		/usr/share/ucs-school-import/hooks/*.
+
+		* The user will be a opened ImportUser, loaded from LDAP.
+		* Use self.connection if you need a LDAP connection.
+
+		:param user: ImportUser
+		:return: None
+		"""
+		pass
+
+	def pre_delete_hook(self, user, hook_time):
+		"""
+		Run code before deleting a user.
+
+		IMPLEMENT ME if you want to do something before deleting a user.
+		You'll have full access to the data still saved in LDAP.
+		It is much faster than running executables from
+		/usr/share/ucs-school-import/hooks/*.
 
 		* user is a opened ImportUser, loaded from LDAP.
 		* Use self.connection if you need a LDAP connection.
 
 		:param user: ImportUser
-		:param hook_time: str: either "pre" or "post"
+		:return: None
+		"""
+		pass
+
+	def post_delete_hook(self, user):
+		"""
+		Run code after deleting a user.
+
+		IMPLEMENT ME if you want to do something after deleting a user.
+		You'll have full access to the data that does not exist in LDAP
+		anymore.
+		It is much faster than running executables from
+		/usr/share/ucs-school-import/hooks/*.
+
+		* user is a opened ImportUser, loaded from LDAP.
+		* Use self.connection if you need a LDAP connection.
+
+		:param user: ImportUser
 		:return: None
 		"""
 		pass
