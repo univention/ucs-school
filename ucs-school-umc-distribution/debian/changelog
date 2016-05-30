@@ -1,3 +1,9 @@
+ucs-school-umc-distribution (14.0.1-2) unstable; urgency=medium
+
+  * Bug #41122: don't use isinstance checks.
+
+ -- Florian Best <best@univention.de>  Mon, 30 May 2016 20:07:20 +0200
+
 ucs-school-umc-distribution (14.0.1-1) unstable; urgency=medium
 
   * Bug #41122: support school spanning users

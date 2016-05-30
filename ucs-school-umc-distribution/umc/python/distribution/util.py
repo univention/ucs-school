@@ -213,7 +213,7 @@ def openRecipients(entryDN, ldap_connection, search_base):
 			return  # neither a user nor a group. probably object doesn't exists
 		return User(user.get_udm_object(ldap_connection).info, dn=user.dn)
 	else:
-		if not isinstance(group_, (SchoolClass, WorkGroup)):
+		if not group_.self_is_workgroup() and not group_.self_is_class():
 			MODULE.error('%s is not a school class or workgroup but %r' % (group_.dn, type(group_).__name__))
 			return
 		group = Group(group_.get_udm_object(ldap_connection).info, dn=group_.dn)
@@ -230,7 +230,7 @@ def openRecipients(entryDN, ldap_connection, search_base):
 				MODULE.error('Cannot open user %r: %s' % (userdn, exc))
 				continue
 
-			if not user.self_is_student():  # FIXME: or exam user, previously not (_search_base.isTeacher(userdn) or _search_base.isAdmin(userdn) or _search_base.isStaff(userdn))
+			if user.self_is_teacher() or user.self_is_staff() or user.self_is_administrator():
 				MODULE.info('ignoring non student %r' % (userdn,))
 
 			group.members.append(User(user.get_udm_object(ldap_connection).info, dn=user.dn))
