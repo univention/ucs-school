@@ -1,3 +1,9 @@
+ucs-school-import (14.0.0-6) unstable; urgency=low
+
+  * Bug #41345: create CSV file with the result of the import job
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 30 May 2016 13:19:51 +0200
+
 ucs-school-import (14.0.0-5) unstable; urgency=medium
 
   * Bug #41014: fix typo, rename extended attribute

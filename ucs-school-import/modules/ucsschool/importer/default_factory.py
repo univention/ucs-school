@@ -36,7 +36,8 @@ from ucsschool.lib.models.utils import ucr
 from ucsschool.lib.roles import role_pupil, role_teacher, role_staff
 
 from ucsschool.importer.reader.csv_reader import CsvReader
-from ucsschool.importer.writer.csv_writer import CsvWriter
+from ucsschool.importer.writer.csv_result_exporter import CsvResultExporter
+from ucsschool.importer.writer.csv_user_writer import CsvUserWriter
 from ucsschool.importer.configuration import Configuration
 from ucsschool.importer.mass_import.mass_import import MassImport
 from ucsschool.importer.models.import_user import ImportStaff, ImportStudent, ImportTeacher, ImportTeachersAndStaff
@@ -97,6 +98,16 @@ class DefaultFactory(object):
 		"""
 		return MassImport(dry_run=dry_run)
 
+	def make_result_exporter(self, *arg, **kwargs):
+		"""
+		Creates a ResultExporter object.
+
+		:param arg: list: passed to constructor of created class
+		:param kwarg: dict: passed to constructor of created class
+		:return: ucsschool.importer.writer.result_exporter.ResultExporter object
+		"""
+		return CsvResultExporter(*arg, **kwargs)
+
 	def make_user_importer(self, dry_run=True):
 		"""
 		Creates a user importer.
@@ -116,21 +127,20 @@ class DefaultFactory(object):
 
 	def make_username_handler(self, username_max_length):
 		"""
-		Get a UsernameHndler instance.
+		Get a UsernameHandler instance.
 
 		:param username_max_length: int: created usernames must not be longer
 		than this
-		:return: UsernameHndler object
+		:return: UsernameHandler object
 		"""
 		return UsernameHandler(username_max_length)
 
-	def make_writer(self, filename, *arg, **kwargs):
+	def make_user_writer(self, *arg, **kwargs):
 		"""
-		Creates a writer object.
+		Creates a user writer object.
 
-		:param filename: str: name of file to write output into
 		:param arg: list: passed to constructor of created class
 		:param kwarg: dict: passed to constructor of created class
 		:return: ucsschool.importer.writer.Writer object
 		"""
-		return CsvWriter(filename, *arg, **kwargs)
+		return CsvUserWriter(*arg, **kwargs)

@@ -50,7 +50,7 @@ class MassImport(object):
 		self.config = Configuration()
 		self.logger = get_logger()
 		self.factory = Factory()
-		self.writer = self.factory.make_writer(self.config["csv_output"])
+		self.result_exporter = self.factory.make_result_exporter()
 
 	def mass_import(self):
 		self.logger.info("------ Importing users... ------")
@@ -68,4 +68,4 @@ class MassImport(object):
 			users_to_delete = user_import.detect_users_to_delete()
 			user_import.delete_users(users_to_delete)
 		user_import.log_stats()
-		self.writer.output(imported_users, user_import.deleted_users)
+		self.result_exporter.dump(user_import, self.config["csv_output"])

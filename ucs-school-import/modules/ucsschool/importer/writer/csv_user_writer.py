@@ -2,7 +2,7 @@
 #
 # Univention UCS@School
 """
-Base class for output writers.
+Write the result of a user import job to a CSV file.
 """
 # Copyright 2016 Univention GmbH
 #
@@ -31,58 +31,64 @@ Base class for output writers.
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+from csv import DictWriter
 
-class Writer(object):
-	"""
-	Abstraction of a data dump mechanism like CSV, JSON, XML, sockets etc.
-	"""
-	def __init__(self, *arg, **kwargs):
-		"""
-		Create a writer.
+from ucsschool.importer.configuration import Configuration
+from ucsschool.importer.factory import Factory
+from ucsschool.importer.writer.writer import Writer
 
-		:param arg: list
-		:param kwargs: dict
+
+class CsvUserWriter(Writer):
+	def __init__(self, field_names, dialect=None):
 		"""
-		pass
+		Create a CSV file writer.
+
+		:param field_names: list: names of the columns
+		:param dialect: csv.dialect: If unset will try to detect
+		dialect of input file or fall back to "excel".
+		"""
+		super(CsvUserWriter, self).__init__()
+		self.field_names = field_names
+		self.dialect = dialect
+
+		if not self.dialect:
+			# try to use the same dialect as was used by the import - if it
+			# was a CSV import
+			config = Configuration()
+			if config["input"]["type"] == "csv":
+				reader = Factory().make_reader()
+				with open(config["input"]["filename"], "rb") as fp:
+					self.dialect = reader.get_dialect(fp)
+			else:
+				self.dialect = "excel"
+		self.writer = None
 
 	def open(self, filename, mode="wb"):
 		"""
-		Get a handle on the output file or something similar to be used as a
-		context manager.
-		IMPLEMENTME with the method appropriate for the output type.
+		Open the output file.
 
-		:param filename: str: filename to write data to
+		:param filename:  str: filename to write data to
 		:param mode: str: passed to used open() method
-		:return: a context manager
+		:return: DictWriter
 		"""
-		raise NotImplementedError()
+		fp = open(filename, mode)
+		self.writer = DictWriter(fp, fieldnames=self.field_names, dialect=self.dialect)
+		return fp
 
 	def write_header(self, header):
 		"""
-		Write an optional header (line) before the main data.
-		IMPLEMENTME if you wish to write a header line.
+		Write a header line before the main data.
 
-		:param header: object to write as header
+		:param header: object to write as header (ignored)
 		:return: None
 		"""
-		pass
-
-	def write_footer(self, footer):
-		"""
-		Write a optional footer (line) after the main data.
-		IMPLEMENTME if you wish to write a footer.
-
-		:param footer: object to write as footer
-		:return: None
-		"""
-		pass
+		self.writer.writeheader()
 
 	def write_obj(self, obj):
 		"""
 		Write object to output.
-		IMPLEMENTME if it's not just outfile.write(obj).
 
-		:param obj: object or error to write
-		:return: result of write operation, if any
+		:param obj: dict: data to write
+		:return: None
 		"""
-		raise NotImplementedError()
+		return self.writer.writerow(obj)
