@@ -1,3 +1,9 @@
+ucs-school-lib (9.0.2-2) unstable; urgency=medium
+
+  * Bug #41117: fix fuzzy
+
+ -- Florian Best <best@univention.de>  Mon, 30 May 2016 20:39:45 +0200
+
 ucs-school-lib (9.0.2-1) unstable; urgency=medium
 
   * Bug #41117: filter out non-local schools
