@@ -703,7 +703,7 @@ class UCSSchoolHelperAbstractClass(object):
 				return conjunction('|', expressions)
 
 	@classmethod
-	def from_udm_obj(cls, udm_obj, school, lo):
+	def from_udm_obj(cls, udm_obj, school, lo):  # Design fault. school is part of the DN or the ucsschoolSchool attribute.
 		'''Creates a new instance with attributes of the udm_obj.
 		Uses get_class_for_udm_obj()
 		'''
@@ -725,6 +725,7 @@ class UCSSchoolHelperAbstractClass(object):
 				attrs[name] = udm_value
 		obj = cls(**deepcopy(attrs))
 		obj.set_dn(udm_obj.dn)
+		obj.custom_dn = udm_obj.dn  # FIXME: Bug #40940: setting this causes the object to not being moveable; not setting this causes e.g. objects underneath of a different position than self.get_container() to break
 		obj._udm_obj_searched = True
 		obj._udm_obj = udm_obj
 		return obj
@@ -776,10 +777,7 @@ class UCSSchoolHelperAbstractClass(object):
 		except IndexError:
 			# happens when cls._meta.udm_module does not "match" the dn
 			raise noObject('Wrong objectClass: %r is not a %r.' % (dn, cls.__name__))
-		obj = cls.from_udm_obj(udm_obj, school, lo)
-		if obj:
-			obj.custom_dn = dn  # FIXME: this breaks some things. we better have to set old_dn!
-			return obj
+		return cls.from_udm_obj(udm_obj, school, lo)
 
 	@classmethod
 	def get_only_udm_obj(cls, lo, filter_str, superordinate=None):

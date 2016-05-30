@@ -128,6 +128,9 @@ class User(UCSSchoolHelperAbstractClass):
 	def self_is_student(self):
 		return self.is_student(self.school, self.dn)
 
+	def self_is_exam_student(self):
+		return self.is_exam_student(self.school, self.dn)
+
 	def self_is_teacher(self):
 		return self.is_teacher(self.school, self.dn)
 
@@ -140,6 +143,10 @@ class User(UCSSchoolHelperAbstractClass):
 	@classmethod
 	def is_student(cls, school, dn):
 		return cls.get_search_base(school).isStudent(dn)
+
+	@classmethod
+	def is_exam_student(cls, school, dn):
+		return cls.get_search_base(school).isExamUser(dn)
 
 	@classmethod
 	def is_teacher(cls, school, dn):
@@ -163,6 +170,8 @@ class User(UCSSchoolHelperAbstractClass):
 			return Teacher
 		if cls.is_staff(school, udm_obj.dn):
 			return Staff
+		if cls.is_exam_student(school, udm_obj.dn):
+			return ExamStudent
 		return cls
 
 	@classmethod
@@ -500,15 +509,13 @@ class Student(User):
 	roles = [role_pupil]
 
 	def do_school_change(self, udm_obj, lo, old_school):
-		examUserPrefix = ucr.get('ucsschool/ldap/default/userprefix/exam', 'exam-')
-		dn = 'uid=%s%s,%s' % (escape_dn_chars(examUserPrefix), explode_dn(self.old_dn, True)[0], self.get_exam_container(old_school))
 		try:
-			exam = User.from_dn(dn, old_school, lo)
+			exam_user = ExamStudent.from_student_dn(lo, old_school, self.old_dn)
 		except noObject:
 			logger.info('No exam user %r found', dn)
 		else:
 			logger.info('Removing exam user %r', dn)
-			exam.remove(lo)
+			exam_user.remove(lo)
 
 		super(Student, self).do_school_change(udm_obj, lo, old_school)
 
@@ -626,3 +633,16 @@ class TeachersAndStaff(Teacher):
 		groups.append(self.get_staff_group_dn())
 		return groups
 
+
+class ExamStudent(Student):
+	type_name = _('Exam student')
+
+	@classmethod
+	def get_container(cls, school):
+		return cls.get_search_base(school).examUsers
+
+	@classmethod
+	def from_student_dn(cls, lo, school, dn)
+		examUserPrefix = ucr.get('ucsschool/ldap/default/userprefix/exam', 'exam-')
+		dn = 'uid=%s%s,%s' % (escape_dn_chars(examUserPrefix), explode_dn(dn, True)[0], self.get_container(school))
+		return cls.from_dn(dn, school, lo)

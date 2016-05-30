@@ -395,10 +395,13 @@ class School(UCSSchoolHelperAbstractClass):
 	@classmethod
 	def from_binddn(cls, lo):
 		logger.debug('All Schools: Showing all OUs which DN %s can read.', lo.binddn)
-		# get all schools of the user
+		# get all schools of the user which are present on this server
 		schools = lo.search(base=lo.binddn, scope='base', attr=['ucsschoolSchool'])[0][1].get('ucsschoolSchool', [])
 		if schools:
-			return [cls.from_dn(cls(name=ou).dn, lo) for ou in schools]
+			schools = [cls.from_dn(cls(name=ou).dn, lo) for ou in schools]
+			if ucr.get('ucsschool/local/oulist'):
+				[school for school in schools if school.name in ucr['ucsschool/local/oulist'].split(',')]
+			return schools
 
 		if lo.binddn.find('ou=') > 0:
 			# user has no ucsschoolSchool attribute (not migrated yet)

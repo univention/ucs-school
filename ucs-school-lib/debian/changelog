@@ -1,3 +1,14 @@
+ucs-school-lib (9.0.2-1) unstable; urgency=medium
+
+  * Bug #41117: filter out non-local schools
+  * Added ExamStudent model
+  * LDAP_Connection now uses argument inspect to identify the required
+  	connections / search bases
+  * move setting of custom_dn one level higher (as it applies not only to
+  	from_dn() but also to from_udm_obj()
+
+ -- Florian Best <best@univention.de>  Mon, 30 May 2016 20:29:59 +0200
+
 ucs-school-lib (9.0.1-2) unstable; urgency=medium
 
   * Bug #41117: user User.get_all() to search for users
