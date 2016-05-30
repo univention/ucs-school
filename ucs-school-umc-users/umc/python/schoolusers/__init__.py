@@ -32,57 +32,65 @@
 
 from univention.management.console.log import MODULE
 from univention.management.console.modules import UMC_Error
+from univention.management.console.modules.decorators import sanitize
+from univention.management.console.modules.sanitizers import StringSanitizer, BooleanSanitizer
 
 import univention.admin.modules as udm_modules
 import univention.admin.uexceptions as udm_exceptions
 import univention.admin.objects as udm_objects
-import univention.admin.uldap as udm_uldap
 
 from univention.lib.i18n import Translation
 
-from ucsschool.lib import LDAP_Connection, SchoolBaseModule, Display, USER_READ, USER_WRITE
+from ucsschool.lib import LDAP_Connection, SchoolBaseModule, Display, USER_WRITE
 
-import notifier
-import notifier.popen
 
 _ = Translation('ucs-school-umc-schoolusers').translate
 
-## FIXME: remove in UCS@school 3.2, replace by str(e): Bug #27940, 30089, 30088
 
-
-def get_exception_msg(e):
-	msg = getattr(e, 'message', '')
-	if e.args:
-		if e.args[0] != msg or len(e.args) != 1:
-			for arg in e.args:
-				msg += ' %s' % (arg)
+def get_exception_msg(exc):  # TODO: str(exc) would be nicer, Bug #27940, 30089, 30088
+	msg = getattr(exc, 'message', '')
+	for arg in exc.args:
+		if isinstance(arg, unicode):
+			arg = arg.encode('utf-8')
+		if str(arg) not in msg:
+			msg = '%s %s' % (msg, arg)
 	return msg
 
 
 class Instance(SchoolBaseModule):
 
+	@sanitize(**{
+		'class': StringSanitizer(required=True), # allow_none=True
+		'pattern': StringSanitizer(required=True),
+	})
 	@LDAP_Connection()
 	def query(self, request, ldap_user_read=None, ldap_position=None, search_base=None):
-		"""Searches for students
-
-		requests.options = {}
-		  'school' -- school OU (optiona)
-		  'class' -- if not  set to 'all' the print jobs of the given class are listed only
-		  'pattern' -- search pattern that must match the name or username of the students
-
-		return: [ { 'id' : <unique identifier>, 'name' : <display name>, 'color' : <name of favorite color> }, ... ]
-		"""
-		self.required_options(request, 'class', 'pattern')
+		"""Searches for students"""
 
 		klass = request.options.get('class')
 		if klass in (None, 'None'):
 			klass = None
-		result = self._users(ldap_user_read, search_base, group=klass, user_type=request.flavor, pattern=request.options.get('pattern', ''))
-		self.finished(request.id, map(lambda usr: {'id': usr.dn, 'name': Display.user(usr), 'passwordexpiry': usr.get('passwordexpiry', '')}, result))
+		result = [{
+			'id': usr.dn,
+			'name': Display.user(usr),
+			'passwordexpiry': usr.get('passwordexpiry', '')
+		} for usr in self._users(ldap_user_read, search_base, group=klass, user_type=request.flavor, pattern=request.options.get('pattern', ''))]
+		self.finished(request.id, result)
 
-	def _reset_passwords(self, userdn, newPassword, lo, pwdChangeNextLogin=True):
-		'''helper function for resetting passwords of one or many accounts'''
+	@sanitize(
+		userDN=StringSanitizer(required=True),
+		newPassword=StringSanitizer(required=True, minimum=1),
+		nextLogin=BooleanSanitizer(default=True),
+	)
+	@LDAP_Connection(USER_WRITE)
+	def password_reset(self, request, ldap_user_write=None):
+		'''Reset the password of the user'''  # TODO: instead of error-indicating strings we should raise UMC_Error
+		userdn = request.options['userDN']
+		pwdChangeNextLogin = request.options['nextLogin']
+		newPassword = request.options['newPassword']
+		self.finished(request.id, self._reset_password(ldap_user_write, userdn, newPassword, pwdChangeNextLogin))
 
+	def _reset_password(self, lo, userdn, newPassword, pwdChangeNextLogin=True):
 		try:
 			user_module = udm_modules.get('users/user')
 			ur = udm_objects.get(user_module, None, lo, None, userdn)
@@ -97,30 +105,15 @@ class Instance(SchoolBaseModule):
 
 			ur = udm_objects.get(user_module, None, lo, None, dn)
 			ur.open()
-			if pwdChangeNextLogin:
-				ur['pwdChangeNextLogin'] = '1'
-			else:
-				ur['pwdChangeNextLogin'] = '0'
+			ur['pwdChangeNextLogin'] = '1' if pwdChangeNextLogin else '0'
 			dn = ur.modify()
 			return True
 		except udm_exceptions.permissionDenied as e:
-			MODULE.process('_reset_passwords: dn=%s' % ur.dn)
-			MODULE.process('_reset_passwords: exception=%s' % str(e.__class__))
+			MODULE.process('dn=%r' % ur.dn)
+			MODULE.process('exception=%s' % str(e.__class__))
 			return _('permission denied')
 		except udm_exceptions.base as e:
-			MODULE.process('_reset_passwords: dn=%s' % ur.dn)
-			MODULE.process('_reset_passwords: exception=%s' % str(e.__class__))
-			MODULE.process('_reset_passwords: exception=%s' % str(e.message))
+			MODULE.process('dn=%r' % ur.dn)
+			MODULE.process('exception=%s' % str(e.__class__))
+			MODULE.process('exception=%s' % str(e.message))
 			return '%s' % (get_exception_msg(e))
-
-	@LDAP_Connection(USER_READ, USER_WRITE)
-	def password_reset(self, request, ldap_user_read=None, ldap_user_write=None, ldap_position=None, search_base=None):
-		'''reset passwords of selected users'''
-		self.required_options(request, 'userDN', 'newPassword')
-
-		if request.options.get('newPassword'):
-			result = self._reset_passwords(request.options['userDN'], request.options['newPassword'], ldap_user_write, pwdChangeNextLogin=request.options.get('nextLogin', True))
-		else:
-			raise UMC_Error(_('No passwords changed, need a new password.'))
-
-		self.finished(request.id, result)
