@@ -33,6 +33,7 @@ CSV reader for CSV files using the new import format.
 
 
 import csv
+import codecs
 
 from ucsschool.importer.reader.base_reader import BaseReader
 from ucsschool.importer.exceptions import UnkownRole
@@ -41,6 +42,7 @@ from ucsschool.lib.roles import role_pupil, role_teacher, role_staff
 
 class CsvReader(BaseReader):
 	_attrib_names = dict()  # cache for Attribute names
+	encoding = "utf-8"
 
 	@staticmethod
 	def get_dialect(fp):
@@ -70,13 +72,16 @@ class CsvReader(BaseReader):
 					fp.readline()
 				start = fp.tell()
 				# no header names, detect number of rows
-				reader = csv.reader(fp, dialect=dialect)
+
+				fpu = UTF8Recoder(fp, self.encoding)
+				reader = csv.reader(fpu, dialect=dialect)
 				line = reader.next()
 				fp.seek(start)
 				header = map(str, range(len(line)))
 			csv_reader_args = dict(fieldnames=header, dialect=dialect)
 			csv_reader_args.update(kwargs.get("csv_reader_args", {}))
-			reader = csv.DictReader(fp, **csv_reader_args)
+			fpu = UTF8Recoder(fp, self.encoding)
+			reader = csv.DictReader(fpu, **csv_reader_args)
 			for row in reader:
 				yield {unicode(key, 'utf-8'): unicode(value, 'utf-8') for key, value in row.iteritems()}
 
@@ -155,3 +160,18 @@ class CsvReader(BaseReader):
 		if cls_name not in cls._attrib_names:
 			cls._attrib_names[cls_name] = import_user.to_dict().keys()
 		return cls._attrib_names[cls_name]
+
+
+class UTF8Recoder(object):
+	"""
+	Iterator that reads an encoded stream and reencodes the input to UTF-8.
+	Blatantly copied from docs.python.org/2/library/csv.html
+	"""
+	def __init__(self, f, encoding):
+		self.reader = codecs.getreader(encoding)(f)
+
+	def __iter__(self):
+		return self
+
+	def next(self):
+		return self.reader.next().encode("utf-8")
