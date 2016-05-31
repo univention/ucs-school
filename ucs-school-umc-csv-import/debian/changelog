@@ -1,3 +1,9 @@
+ucs-school-umc-csv-import (3.0.2-1) unstable; urgency=medium
+
+  * Bug #41121: detect python model class without additional checks
+
+ -- Florian Best <best@univention.de>  Tue, 31 May 2016 16:50:37 +0200
+
 ucs-school-umc-csv-import (3.0.1-1) unstable; urgency=medium
 
   * Bug #41121: set schools attribute of user

@@ -265,14 +265,16 @@ class CSVUser(User):
 
 	@classmethod
 	def get_class_for_udm_obj(cls, udm_obj, school):
-		if cls.is_student(school, udm_obj.dn):
+		model = super(CSVUser, cls).get_class_for_udm_obj(udm_obj, school)
+		if model is Student:
 			return CSVStudent
-		if cls.is_teacher(school, udm_obj.dn):
-			if cls.is_staff(school, udm_obj.dn):
-				return CSVTeachersAndStaff
+		if model is Teacher:
 			return CSVTeacher
-		if cls.is_staff(school, udm_obj.dn):
+		if model is TeachersAndStaff:
+			return CSVTeachersAndStaff
+		if model is Staff:
 			return CSVStaff
+		MODULE.warn('No mapping for %r, using %r' % (model.__name__, cls.__name__))
 		return cls
 
 # same as normal but without syntax validation (done by our validate function)
