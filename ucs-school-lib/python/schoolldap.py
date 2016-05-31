@@ -75,7 +75,7 @@ MACHINE_WRITE = 'ldap_machine_write'
 ADMIN_WRITE = 'ldap_admin_write'
 
 
-def LDAP_Connection(*deprecated):
+def LDAP_Connection(*connection_types):
 	"""This decorator function provides access to internally cached LDAP connections that can
 	be accessed via adding specific keyword arguments to the function.
 
@@ -98,23 +98,27 @@ def LDAP_Connection(*deprecated):
 		  ...
 	"""
 
+	if not connection_types:  # TODO: remove. We still need this for backwards compatibility with other broken decorators
+		connection_types = (USER_READ,)
+
 	def inner_wrapper(func):
 		argspec = inspect.getargspec(func)
+		argnames = set(argspec.args) | set(connection_types)
 		add_search_base = 'search_base' in argspec.args or argspec.keywords is not None
 		add_position = 'ldap_position' in argspec.args or argspec.keywords is not None
 
 		def wrapper_func(*args, **kwargs):
 			# set LDAP keyword arguments
 			po = None
-			if ADMIN_WRITE in argspec.args:
+			if ADMIN_WRITE in argnames:
 				kwargs[ADMIN_WRITE], po = get_admin_connection()
-			if MACHINE_WRITE in argspec.args:
+			if MACHINE_WRITE in argnames:
 				kwargs[MACHINE_WRITE], po = get_machine_connection(write=True)
-			if MACHINE_READ in argspec.args:
+			if MACHINE_READ in argnames:
 				kwargs[MACHINE_READ], po = get_machine_connection(write=False)
-			if USER_WRITE in argspec.args:
+			if USER_WRITE in argnames:
 				kwargs[USER_WRITE], po = get_user_connection(bind=__bind_callback, write=True)
-			if USER_READ in argspec.args:
+			if USER_READ in argnames:
 				kwargs[USER_READ], po = get_user_connection(bind=__bind_callback, write=False)
 			if add_position:
 				kwargs['ldap_position'] = po

@@ -1,3 +1,9 @@
+ucs-school-lib (9.0.2-3) unstable; urgency=medium
+
+  * Bug #41117: fix typos in last commit
+
+ -- Florian Best <best@univention.de>  Tue, 31 May 2016 12:32:52 +0200
+
 ucs-school-lib (9.0.2-2) unstable; urgency=medium
 
   * Bug #41117: fix fuzzy

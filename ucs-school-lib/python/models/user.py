@@ -511,10 +511,10 @@ class Student(User):
 	def do_school_change(self, udm_obj, lo, old_school):
 		try:
 			exam_user = ExamStudent.from_student_dn(lo, old_school, self.old_dn)
-		except noObject:
-			logger.info('No exam user %r found', dn)
+		except noObject as exc:
+			logger.info('No exam user for %r found: %s', (self.old_dn, exc))
 		else:
-			logger.info('Removing exam user %r', dn)
+			logger.info('Removing exam user %r', exam_user.dn)
 			exam_user.remove(lo)
 
 		super(Student, self).do_school_change(udm_obj, lo, old_school)
@@ -642,7 +642,7 @@ class ExamStudent(Student):
 		return cls.get_search_base(school).examUsers
 
 	@classmethod
-	def from_student_dn(cls, lo, school, dn)
+	def from_student_dn(cls, lo, school, dn):
 		examUserPrefix = ucr.get('ucsschool/ldap/default/userprefix/exam', 'exam-')
-		dn = 'uid=%s%s,%s' % (escape_dn_chars(examUserPrefix), explode_dn(dn, True)[0], self.get_container(school))
+		dn = 'uid=%s%s,%s' % (escape_dn_chars(examUserPrefix), explode_dn(dn, True)[0], cls.get_container(school))
 		return cls.from_dn(dn, school, lo)
