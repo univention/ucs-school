@@ -375,7 +375,7 @@ def main():
 			tea_staff, tea_staff_dn = schoolenv.create_user(school, is_teacher=True, is_staff=True)
 			staff, staff_dn = schoolenv.create_user(school, is_staff=True)
 			stu, stu_dn = schoolenv.create_user(school)
-			school_admin_dn, school_admin = schoolenv.create_school_admin(school)
+			school_admin, school_admin_dn = schoolenv.create_school_admin(school)
 
 			open_ldap_co = schoolenv.open_ldap_connection()
 			# importing 2 random computers

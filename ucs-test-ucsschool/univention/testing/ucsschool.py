@@ -430,21 +430,21 @@ class UCSTestSchool(object):
 		dn, school_admin = udm.create_user(position=position, groups=groups, **kwargs)
 		if wait_for_replication:
 			utils.wait_for_replication()
-		return dn, school_admin
+		return school_admin, dn
 
 	def create_domain_admin(self, ou_name):
 		position = 'cn=admins,cn=users,%s' % (self.get_ou_base_dn(ou_name))
 		groups = ["cn=Domain Admins,cn=groups,%s" % (self.LDAP_BASE,)]
 		udm = udm_test.UCSTestUDM()
 		dn, domain_admin = udm.create_user(position=position, groups=groups)
-		return dn, domain_admin
+		return domain_admin, dn
 
 	def create_global_user(self):
 		position = 'cn=users,%s' % (self.LDAP_BASE,)
 		# groups = ["cn=admins-%s,cn=ouadmins,cn=groups,%s" % (ou_name, self.LDAP_BASE)]
 		udm = udm_test.UCSTestUDM()
 		dn, global_user = udm.create_user(position=position, groups=[])
-		return dn, global_user
+		return global_user, dn
 
 	def create_computerroom(self, ou_name, name=None, description=None, host_members=[], wait_for_replication=True):
 		"""
