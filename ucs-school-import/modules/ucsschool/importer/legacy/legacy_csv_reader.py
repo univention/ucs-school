@@ -46,7 +46,10 @@ class LegacyCsvReader(CsvReader):
 		if mapping_value in ["__is_staff", "__is_teacher"]:
 			return True
 		elif mapping_value == "__activate":
-			import_user.disabled = not bool(int(csv_value))
+			if csv_value == "0":
+				import_user.disabled = "all"
+			else:
+				import_user.disabled = "none"
 			return True
 		return super(LegacyCsvReader, self).handle_input(mapping_key, mapping_value, csv_value, import_user)
 

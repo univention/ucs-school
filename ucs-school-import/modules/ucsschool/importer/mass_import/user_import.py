@@ -95,6 +95,7 @@ class UserImport(object):
 		object in error.import_user).
 
 		:param imported_users: list: ImportUser objects
+		:return tuple: (self.errors, self.added_users, self.modified_users)
 		"""
 		if self.dry_run:
 			self.logger.info("------ Dry run - not creating / modifying users. ------ ")
@@ -166,6 +167,7 @@ class UserImport(object):
 		num_added_users = sum(map(len, self.added_users.values()))
 		num_modified_users = sum(map(len, self.modified_users.values()))
 		self.logger.info("------ Created %d users, modified %d users. ------", num_added_users, num_modified_users)
+		return self.errors, self.added_users, self.modified_users
 
 	def determine_add_modify_action(self, imported_user):
 		"""
@@ -251,7 +253,7 @@ class UserImport(object):
 		* To add or change a deletion strategy overwrite do_delete().
 
 		:param users: list: ImportUsers with record_uid and source_uid set.
-		:return: list: deleted ImportUsers
+		:return: tuple: (self.errors, self.deleted_users)
 		"""
 		if self.dry_run:
 			self.logger.info("------ Dry run - not deleting users. ------")
@@ -282,7 +284,7 @@ class UserImport(object):
 				self.logger.exception("Error in entry #%d: %s",  exc.entry, exc)
 				self._add_error(exc)
 		self.logger.info("------ Deleted %d users. ------", len(self.deleted_users))
-		return self.deleted_users
+		return self.errors, self.deleted_users
 
 	def do_delete(self, user):
 		"""

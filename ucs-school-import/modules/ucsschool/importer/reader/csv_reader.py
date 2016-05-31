@@ -86,7 +86,7 @@ class CsvReader(BaseReader):
 			fpu = UTF8Recoder(fp, self.encoding)
 			reader = csv.DictReader(fpu, **csv_reader_args)
 			for row in reader:
-				yield {unicode(key, 'utf-8'): unicode(value, 'utf-8') for key, value in row.iteritems()}
+				yield {unicode(key, 'utf-8'): unicode(value or "", 'utf-8') for key, value in row.iteritems()}
 
 	def handle_input(self, mapping_key, mapping_value, csv_value, import_user):
 		"""
