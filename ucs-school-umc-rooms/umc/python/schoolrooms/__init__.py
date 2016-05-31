@@ -31,79 +31,58 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-import re
-
 from univention.lib.i18n import Translation
 from univention.management.console.modules import UMC_CommandError
+from univention.management.console.modules.sanitizers import StringSanitizer
+from univention.management.console.modules.decorators import sanitize
 from univention.management.console.log import MODULE
 
 import univention.admin.modules as udm_modules
 import univention.admin.uexceptions as udm_exceptions
 
 from ucsschool.lib.schoolldap import LDAP_Connection, SchoolBaseModule, LDAP_Filter, USER_READ, USER_WRITE
-
-from ucsschool.lib.models import ComputerRoom
+from ucsschool.lib.models import ComputerRoom, SchoolComputer
 from ucsschool.lib.models.utils import add_module_logger_to_schoollib
 
-_ = Translation( 'ucs-school-umc-rooms' ).translate
+_ = Translation('ucs-school-umc-rooms').translate
 
-class Instance( SchoolBaseModule ):
+
+class Instance(SchoolBaseModule):
+
 	def init(self):
 		super(Instance, self).init()
 		add_module_logger_to_schoollib()
 
+	@sanitize(school=StringSanitizer(required=True), pattern=StringSanitizer(default=''))
 	@LDAP_Connection()
-	def computers( self, request, search_base = None, ldap_user_read = None, ldap_position = None ):
-		"""
-		requests.options = {}
-		  'pattern' -- search pattern for name (default: '')
-		  'school'
-		"""
-		MODULE.info( 'schoolrooms.query: options: %s' % str( request.options ) )
-		pattern = request.options.get('pattern', '')
-		ldapFilter = LDAP_Filter.forComputers(pattern)
+	def computers(self, request, ldap_user_read=None, ldap_position=None):
+		pattern = LDAP_Filter.forComputers(request.options.get('pattern', ''))
 
-		objs = udm_modules.lookup( 'computers/computer', None, ldap_user_read, scope = 'one', base = search_base.computers, filter = ldapFilter)
-		result = [ {
-			'label': i['name'],
-			'id': i.dn
-		} for i in objs ]
-		result = sorted( result, cmp = lambda x, y: cmp( x.lower(), y.lower() ), key = lambda x: x[ 'label' ] )
+		result = [{
+			'label': x.name,
+			'id': x.dn
+		} for x in SchoolComputer.get_all(ldap_user_read, request.options['school'], pattern)]
+		result = sorted(result, cmp=lambda x, y: cmp(x.lower(), y.lower()), key=lambda x: x['label'])  # TODO: still necessary?
 
-		MODULE.info( 'schoolrooms.query: results: %s' % str( result ) )
-		self.finished( request.id, result )
+		self.finished(request.id, result)
 
+	@sanitize(school=StringSanitizer(required=True), pattern=StringSanitizer(default=''))
 	@LDAP_Connection()
-	def query( self, request, search_base = None, ldap_user_read = None, ldap_position = None ):
-		"""
-		requests.options = {}
-		  'name' -- search pattern for name or description (default: '')
-		  'school'
-		"""
-		MODULE.info( 'schoolrooms.query: options: %s' % str( request.options ) )
-		pattern = request.options.get('pattern', '')
-		ldapFilter = LDAP_Filter.forGroups(pattern, search_base.school)
+	def query(self, request, ldap_user_read=None, ldap_position=None):
+		school = request.options['school']
+		pattern = LDAP_Filter.forGroups(request.options.get('pattern', ''), school)
 
-		objs = udm_modules.lookup( 'groups/group', None, ldap_user_read, scope = 'one', base = search_base.rooms, filter = ldapFilter)
-		name_pattern = re.compile('^%s-' % (re.escape(search_base.school)), flags=re.I)
-		result = [ {
-			'name': name_pattern.sub('', i['name']),
-			'description': i.oldinfo.get('description',''),
-			'$dn$': i.dn
-		} for i in objs ]
-		result = sorted( result, cmp = lambda x, y: cmp( x.lower(), y.lower() ), key = lambda x: x[ 'name' ] )
+		result = [{
+			'name': x.get_relative_name(),
+			'description': x.description or '',
+			'$dn$': x.dn,
+		} for x in ComputerRoom.get_all(ldap_user_read, school, pattern)]
+		result = sorted(result, cmp=lambda x, y: cmp(x.lower(), y.lower()), key=lambda x: x['name'])  # TODO: still necessary?
 
-		MODULE.info( 'schoolrooms.query: results: %s' % str( result ) )
-		self.finished( request.id, result )
+		self.finished(request.id, result)
 
 	@LDAP_Connection()
-	def get(self, request, search_base=None, ldap_user_read=None, ldap_position=None):
-		"""Returns the objects for the given IDs
-
-		requests.options = [ <ID>, ... ]
-
-		return: [ { 'id' : <unique identifier>, 'name' : <display name>, 'color' : <name of favorite color> }, ... ]
-		"""
+	def get(self, request, ldap_user_read=None, ldap_position=None):
 		MODULE.info('schoolrooms.get: options: %s' % str(request.options))
 
 		# open the specified room
@@ -113,7 +92,7 @@ class Instance( SchoolBaseModule ):
 		self.finished(request.id, [result])
 
 	@LDAP_Connection(USER_READ, USER_WRITE)
-	def add(self, request, search_base=None, ldap_user_write=None, ldap_user_read=None, ldap_position=None):
+	def add(self, request, ldap_user_write=None, ldap_user_read=None, ldap_position=None):
 		"""Adds a new room
 
 		requests.options = [ { $dn$ : ..., }, ... ]
@@ -133,7 +112,7 @@ class Instance( SchoolBaseModule ):
 		self.finished(request.id, [success])
 
 	@LDAP_Connection(USER_READ, USER_WRITE)
-	def put(self, request, search_base=None, ldap_user_write=None, ldap_user_read=None, ldap_position=None):
+	def put(self, request, ldap_user_write=None, ldap_user_read=None, ldap_position=None):
 		"""Modify an existing room
 
 		requests.options = [ { object : ..., options : ... }, ... ]
@@ -155,7 +134,7 @@ class Instance( SchoolBaseModule ):
 		self.finished(request.id, [True])
 
 	@LDAP_Connection(USER_READ, USER_WRITE)
-	def remove(self, request, search_base=None, ldap_user_write=None, ldap_user_read=None, ldap_position=None):
+	def remove(self, request, ldap_user_write=None, ldap_user_read=None, ldap_position=None):
 		"""Deletes a room
 
 		requests.options = [ <LDAP DN>, ... ]
@@ -172,7 +151,6 @@ class Instance( SchoolBaseModule ):
 		try:
 			room_obj.remove()
 		except udm_exceptions.base as e:
-			self.finished(request.id, [{'success' : False, 'message' : str(e)}])
+			self.finished(request.id, [{'success': False, 'message': str(e)}])
 
-		self.finished(request.id, [{'success' : True}])
-
+		self.finished(request.id, [{'success': True}])
