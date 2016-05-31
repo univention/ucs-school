@@ -3,6 +3,7 @@ ucs-test-ucsschool (3.0.5-30) unstable; urgency=low
   * Bug #41116: switched order of return values to provide a consistent API
   * Bug #41116: fixed username passing to create_school_admin,
     create_domain_admin, create_global_user
+  * Bug #37173: moving "03_ucsschool_helpdesk_check" back to 90_ucsschool
 
  -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Tue, 31 May 2016 22:29:12 +0200
 
