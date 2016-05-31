@@ -31,6 +31,8 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+import re
+from urlparse import urlparse
 import univention.config_registry
 
 from univention.lib.i18n import Translation
@@ -43,10 +45,8 @@ import univention.admin.modules as udm_modules
 import univention.admin.objects as udm_objects
 
 from ucsschool.lib.schoolldap import LDAP_Connection, SchoolBaseModule, LDAP_Filter
-
+from ucsschool.lib.models import Group
 import ucsschool.lib.internetrules as rules
-
-from urlparse import urlparse
 
 _ = Translation('ucs-school-umc-internetrules').translate
 
@@ -338,36 +338,23 @@ class Instance(SchoolBaseModule):
 		# return the results
 		self.finished(request.id, result)
 
+	@sanitize(school=StringSanitizer(required=True), pattern=StringSanitizer(default=''))
 	@LDAP_Connection()
-	def groups_query(self, request, search_base=None, ldap_user_read=None, ldap_position=None):
-		"""Searches for entries:
+	def groups_query(self, request, ldap_user_read=None, ldap_position=None):
+		"""List all groups (classes, workgroups) and their assigned internet rule"""
+		pattern = LDAP_Filter.forAll(request.options.get('pattern', ''), ['name', 'description'])
+		school = request.options['school']
+		groups = [x for x in Group.get_all(ldap_user_read, school, pattern) if not x.self_is_computerroom()]
 
-		requests.options = {}
-		  'pattern' -- search pattern (default: '')
-		  'school' -- particular school name as internal base for the search parameters
-		  		  (default: automatically chosen search base in LDAP_Connection)
-
-		return: [ { '$dn$' : <LDAP DN>, 'name': '...', 'description': '...' }, ... ]
-		"""
-		MODULE.info('internetrules.groups_query: options: %s' % str(request.options))
-
-		# LDAP search for groups
-		base = search_base.groups
-		ldapFilter = LDAP_Filter.forAll(request.options.get('pattern', ''), ['name', 'description'])
-		groupresult = udm_modules.lookup('groups/group', None, ldap_user_read, scope='sub', base=base, filter=ldapFilter)
-
-		# try to load all group rules
-		allRules = rules.getGroupRuleName([i['name'] for i in groupresult])
-
-		# prepare final list of dicts
+		internet_rules = rules.getGroupRuleName([i.name for i in groups])
+		name = re.compile('-%s$' % (re.escape(school)), flags=re.I)
 		result = [{
-			'name': i['name'].replace('%s-' % search_base.school, '', 1).replace('-%s' % search_base.school, '', 1),
+			'name': i.get_relative_name() if hasattr(i, 'get_relative_name') else name.sub('', i.name),
 			'$dn$': i.dn,
-			'rule': allRules.get(i['name'], 'default') or _('-- Default (unrestricted) --')
-		} for i in groupresult if not search_base.isRoom(i.dn)]
+			'rule': internet_rules.get(i.name, 'default') or _('-- Default (unrestricted) --')
+		} for i in groups]
 		result.sort(cmp=lambda x, y: cmp(x.lower(), y.lower()), key=lambda x: x['name'])
 
-		MODULE.info('internetrules.groups_query: result: %s' % str(result))
 		self.finished(request.id, result)
 
 	@sanitize(DictSanitizer(dict(
@@ -375,7 +362,7 @@ class Instance(SchoolBaseModule):
 		rule=StringSanitizer(required=True),
 	)))
 	@LDAP_Connection()
-	def groups_assign(self, request, search_base=None, ldap_user_read=None, ldap_position=None):
+	def groups_assign(self, request, ldap_user_read=None, ldap_position=None):
 		"""Assigns default rules to groups:
 		request.options = [ { 'group': <groupDN>, 'rule': <ruleName> }, ... ]
 		"""
