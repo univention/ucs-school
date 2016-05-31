@@ -31,9 +31,10 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+from ldap.filter import filter_format
 from univention.lib.i18n import Translation
 
-from univention.management.console.modules import UMC_OptionTypeError, UMC_CommandError
+from univention.management.console.modules import UMC_Error
 from univention.management.console.modules.decorators import sanitize
 from univention.management.console.modules.sanitizers import ListSanitizer, DictSanitizer, StringSanitizer
 from univention.management.console.log import MODULE
@@ -49,7 +50,7 @@ _ = Translation('ucs-school-umc-groups').translate
 def only_workgroup_admin(func):
 	def _decorated(self, request, *args, **kwargs):
 		if request.flavor != 'workgroup-admin':
-			raise UMC_CommandError('not supported')
+			raise UMC_Error('not supported')
 		return func(self, request, *args, **kwargs)
 	return _decorated
 
@@ -86,7 +87,7 @@ class Instance(SchoolBaseModule):
 		school=StringSanitizer()
 	)
 	@LDAP_Connection()
-	def query(self, request, search_base=None, ldap_user_read=None, ldap_position=None):
+	def query(self, request, ldap_user_read=None, ldap_position=None):
 		klasses = [get_group_class(request)]
 		if klasses[0] is Teacher:
 			klasses.append(TeachersAndStaff)
@@ -97,50 +98,44 @@ class Instance(SchoolBaseModule):
 
 	@sanitize(StringSanitizer(required=True))
 	@LDAP_Connection()
-	def get(self, request, search_base=None, ldap_user_read=None, ldap_position=None):
+	def get(self, request, ldap_user_read=None, ldap_position=None):
 		klass = get_group_class(request)
 		for group_dn in request.options:
-			try:
-				group = klass.from_dn(group_dn, None, ldap_user_read)
-			except udm_exceptions.noObject:
-				raise UMC_OptionTypeError('unknown object')
+			break
+		try:
+			group = klass.from_dn(group_dn, None, ldap_user_read)
+		except udm_exceptions.noObject:
+			raise UMC_Error('unknown object')
 
-			school = group.school
-			result = group.to_dict()
-			
-			if request.flavor == 'teacher':
-				classes = SchoolClass.get_all(ldap_user_read, school, filter_str='uniqueMember=%s' % (group_dn,))
-				result['classes'] = [{'id': class_.dn, 'label': class_.get_relative_name()} for class_ in classes]
-				self.finished(request.id, [result])
-				return
+		school = group.school
+		result = group.to_dict()
 
-			if request.flavor == 'class':
-				# members are teachers
-				memberDNs = [usr for usr in result['users'] if User.is_teacher(school, usr)]
-			elif request.flavor == 'workgroup-admin':
-				memberDNs = result['users']
-			else:
-				memberDNs = [usr for usr in result['users'] if User.is_student(school, usr)]
-
-			result.pop('users', None)
-
-			# read members:
-			members = []
-			for member_dn in memberDNs:
-				try:
-					user = User.from_dn(member_dn, None, ldap_user_read)
-				except udm_exceptions.noObject:
-					MODULE.process('get(): skipped foreign OU user %r' % (member_dn,))
-					continue
-				members.append({'id': user.dn, 'label': Display.user(user.get_udm_object(ldap_user_read))})
-			result['members'] = members
-
-			self.finished(request.id, [result,])
+		if request.flavor == 'teacher':
+			classes = SchoolClass.get_all(ldap_user_read, school, filter_str=filter_format('uniqueMember=%s', (group_dn,)))
+			result['classes'] = [{'id': class_.dn, 'label': class_.get_relative_name()} for class_ in classes]
+			self.finished(request.id, [result])
 			return
+
+		members = []
+		for member_dn in result.pop('users', []):
+			try:
+				user = User.from_dn(member_dn, None, ldap_user_read)
+			except udm_exceptions.noObject:
+				MODULE.process('Could not open (foreign) user %r: no permissions/does not exists/not a user' % (member_dn,))
+				members.append({'id': member_dn, 'label': member_dn})  # add entry so it doesn't get removed when modifying via 'workgroup-admin'
+				continue
+			if request.flavor == 'class' and not user.self_is_teacher():
+				continue  # only display teachers
+			elif request.flavor == 'workgroup' and not self.self_is_student():
+				continue  # only display students
+			members.append({'id': user.dn, 'label': Display.user(user.get_udm_object(ldap_user_read))})
+		result['members'] = members
+
+		self.finished(request.id, [result,])
 
 	@sanitize(DictSanitizer(dict(object=DictSanitizer({}, required=True))))
 	@LDAP_Connection(USER_READ, MACHINE_WRITE)
-	def put(self, request, search_base=None, ldap_machine_write=None, ldap_user_read=None, ldap_position=None):
+	def put(self, request, ldap_machine_write=None, ldap_user_read=None, ldap_position=None):
 		"""Returns the objects for the given IDs
 
 		requests.options = [ { object : ..., options : ... }, ... ]
@@ -156,101 +151,130 @@ class Instance(SchoolBaseModule):
 		for group in request.options:
 			group = group['object']
 			group_dn = group['$dn$']
-			try:
-				grp = klass.from_dn(group_dn, None, ldap_machine_write)
-			except udm_exceptions.noObject:
-				raise UMC_OptionTypeError('unknown group object')
+			break
 
-			MODULE.info('Modifying group "%s" with members: %s' % (grp.dn, grp.users))
-			MODULE.info('New members: %s' % group['members'])
+		try:
+			grp = klass.from_dn(group_dn, None, ldap_machine_write)
+		except udm_exceptions.noObject:
+			raise UMC_Error('unknown group object')
 
-			school = grp.school
-			if request.flavor == 'class':
-				# class -> update only the group's teachers (keep all non teachers)
-				grp.users = [usr for usr in grp.users if not User.is_teacher(school, usr)] + [usr for usr in group['members'] if User.is_teacher(school, usr)]
-			elif request.flavor == 'workgroup-admin':
-				# workgroup (admin view) -> update teachers and students
-				grp.users = group['members']
-				grp.description = group['description']
-				# do not allow groups to be renamed in order to avoid conflicts with shares
-				# grp.name = '%(school)s-%(name)s' % group
-			elif request.flavor == 'workgroup':
-				# workgroup (teacher view) -> update only the group's students
-				user_diff = set(group['members']) - set(grp.users)
-				if any(User.is_teacher(school, dn) for dn in user_diff):
-					raise UMC_CommandError('Adding teachers is not allowed')
-				grp.users = [usr for usr in grp.users if not User.is_student(school, usr)] + [usr for usr in group['members'] if User.is_student(school, usr)]
+		MODULE.info('Modifying group "%s" with members: %s' % (grp.dn, grp.users))
+		MODULE.info('New members: %s' % group['members'])
 
-			try:
-				success = grp.modify(ldap_machine_write)
-				MODULE.info('Modified, group has now members: %s' % (grp.users,))
-			except udm_exceptions.base as exc:
-				MODULE.process('An error occurred while modifying "%s": %s' % (group['$dn$'], exc.message))
-				raise UMC_CommandError(_('Failed to modify group (%s).') % exc.message)
+		if request.flavor == 'workgroup-admin':
+			# do not allow groups to be renamed in order to avoid conflicts with shares
+			# grp.name = '%(school)s-%(name)s' % group
+			grp.description = group['description']
 
-			self.finished(request.id, success)
-			return
+		# Workgroup admin view → update teachers and students
+		# Class view → update only the group's teachers (keep all non teachers)
+		# Workgroup teacher view → update only the group's students
+		# FIXME: teachers are allowed to add users from e.g. completly foreign schools to this group.
+		# FIXME: restrict workgroup-admin to only be able to add students or teachers (users). forbid e.g. computer accounts
+
+		users = []
+		if request.flavor == 'workgroup-admin':
+			users = group['members']
+		else:
+			# keep specific users from the group
+			for userdn in grp.users:
+				try:
+					user = User.from_dn(userdn, None, ldap_machine_write)
+				except udm_exceptions.noObject:  # no permissions/is not a user/does not exists → keep the old value
+					users.append(userdn)
+					continue
+				if request.flavor == 'class' and not user.self_is_teacher():
+					users.append(userdn)
+				if request.flavor == 'workgroup' and not user.self_is_student():
+					user.append(userdn)
+			# add only certain users to the group
+			for userdn in group['members']:
+				try:
+					user = User.from_dn(userdn, None, ldap_machine_write)
+				except udm_exceptions.noObject as exc:
+					MODULE.error('Not adding not existing user %r to group: %r.' % (userdn, exc))
+					continue
+				if request.flavor == 'class' and user.self_is_teacher():
+					users.append(user.dn)
+				elif request.flavor == 'workgroup' and user.self_is_student():
+					users.append(user.dn)
+				else:
+					MODULE.error('Attempted to add illegal user %r into %r.' % (user.dn, grp.dn))
+
+		grp.users = list(set(users))
+		try:
+			success = grp.modify(ldap_machine_write)
+			MODULE.info('Modified, group has now members: %s' % (grp.users,))
+		except udm_exceptions.base as exc:
+			MODULE.process('An error occurred while modifying "%s": %s' % (group['$dn$'], exc.message))
+			raise UMC_Error(_('Failed to modify group (%s).') % exc.message)
+
+		self.finished(request.id, success)
 
 	@sanitize(DictSanitizer(dict(object=DictSanitizer({}, required=True))))
 	@only_workgroup_admin
 	@LDAP_Connection(USER_READ, USER_WRITE)
-	def add(self, request, search_base=None, ldap_user_write=None, ldap_user_read=None, ldap_position=None):
+	def add(self, request, ldap_user_write=None, ldap_user_read=None, ldap_position=None):
 		for group in request.options:
 			group = group['object']
-			try:
-				grp = {}
-				grp['school'] = group['school']
-				grp['name'] = '%(school)s-%(name)s' % group
-				grp['description'] = group['description']
-				grp['users'] = group['members']
+			break
+		try:
+			grp = {}
+			grp['school'] = group['school']
+			grp['name'] = '%(school)s-%(name)s' % group
+			grp['description'] = group['description']
+			grp['users'] = group['members']
 
-				grp = WorkGroup(**grp)
+			grp = WorkGroup(**grp)
 
-				success = grp.create(ldap_user_write)
-				if not success and grp.exists(ldap_user_read):
-					raise UMC_CommandError(_('The workgroup %r already exists!') % grp.name)
-			except udm_exceptions.base as exc:
-				MODULE.process('An error occurred while creating the group "%s": %s' % (group['name'], exc.message))
-				raise UMC_CommandError(_('Failed to create group (%s).') % exc.message)
+			success = grp.create(ldap_user_write)
+			if not success and grp.exists(ldap_user_read):
+				raise UMC_Error(_('The workgroup %r already exists!') % grp.name)
+		except udm_exceptions.base as exc:
+			MODULE.process('An error occurred while creating the group "%s": %s' % (group['name'], exc.message))
+			raise UMC_Error(_('Failed to create group (%s).') % exc.message)
 
-			self.finished(request.id, success)
-			return
+		self.finished(request.id, success)
 
 	@sanitize(DictSanitizer(dict(object=ListSanitizer(min_elements=1))))
 	@only_workgroup_admin
 	@LDAP_Connection(USER_READ, USER_WRITE)
-	def remove(self, request, search_base=None, ldap_user_write=None, ldap_user_read=None, ldap_position=None):
+	def remove(self, request, ldap_user_write=None, ldap_user_read=None, ldap_position=None):
 		"""Deletes a workgroup"""
 		for group_dn in request.options:
 			group_dn = group_dn['object'][0]
+			break
 
-			group = WorkGroup.from_dn(group_dn, None, ldap_user_write)
-			if not group.school:
-				raise UMC_CommandError('Group must within the scope of a school OU: %s' % group_dn)
+		group = WorkGroup.from_dn(group_dn, None, ldap_user_write)
+		if not group.school:
+			raise UMC_Error('Group must within the scope of a school OU: %s' % group_dn)
 
-			try:
-				success = group.remove(ldap_user_write)
-			except udm_exceptions.base as exc:
-				MODULE.error('Could not remove group "%s": %s' % (group.dn, exc))
-				self.finished(request.id, [{'success': False, 'message': str(exc)}])
-				return
-
-			self.finished(request.id, [{'success': success}])
+		try:
+			success = group.remove(ldap_user_write)
+		except udm_exceptions.base as exc:
+			MODULE.error('Could not remove group "%s": %s' % (group.dn, exc))
+			self.finished(request.id, [{'success': False, 'message': str(exc)}])
 			return
+
+		self.finished(request.id, [{'success': success}])
 
 	@sanitize(**{
 		'$dn$': StringSanitizer(required=True),
-		'classes': ListSanitizer(StringSanitizer(required=True), required=True)
+		'classes': ListSanitizer(StringSanitizer(required=True), required=True),
+		'school': StringSanitizer(required=True),
 	})
 	@LDAP_Connection(USER_READ, MACHINE_WRITE)
-	def add_teacher_to_classes(self, request, search_base=None, ldap_machine_write=None, ldap_user_read=None, ldap_position=None):
+	def add_teacher_to_classes(self, request, ldap_machine_write=None, ldap_user_read=None, ldap_position=None):
 		teacher = request.options['$dn$']
 		classes = set(request.options['classes'])
-		teacher = Teacher.from_dn(teacher, None, ldap_user_read)
-		if not teacher.self_is_teacher():
-			raise UMC_OptionTypeError('The user is not a teacher.')
+		try:
+			teacher = Teacher.from_dn(teacher, None, ldap_machine_write)
+			if not teacher.self_is_teacher():
+				raise udm_exceptions.noObject()
+		except udm_exceptions.noObject:
+			raise UMC_Error('The user is not a teacher.')
 
-		original_classes = set([dn for dn in ldap_user_read.searchDn('uniqueMember=%s' % (teacher.dn,)) if search_base.isClass(dn)])
+		original_classes = set([x.dn for x in SchoolClass.get_all(ldap_machine_write, request.options['school'], filter_format('uniqueMember=%s', (teacher.dn,)))])
 		classes_to_remove = original_classes - classes
 		classes_to_add = classes - original_classes
 
