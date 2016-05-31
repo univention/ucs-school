@@ -33,7 +33,9 @@ Legacy mass import class.
 
 from univention.admin.uexceptions import noObject
 from ucsschool.importer.mass_import.user_import import UserImport
-from ucsschool.importer.exceptions import UnkownAction
+from ucsschool.importer.exceptions import CreationError, UnkownAction, UnkownRole
+from ucsschool.lib.roles import role_pupil, role_teacher, role_staff
+
 
 class LegacyUserImport(UserImport):
 	def detect_users_to_delete(self):
@@ -41,7 +43,31 @@ class LegacyUserImport(UserImport):
 		No need to compare input and LDAP. Action was written in the CSV file
 		and is already stored in user.action.
 		"""
-		return [user for user in self.imported_users if user.action == "D"]
+		# We need those to fetch the correct type from LDAP.
+		a_student = self.factory.make_import_user([role_pupil])
+		a_staff = self.factory.make_import_user([role_staff])
+		a_teacher = self.factory.make_import_user([role_teacher])
+		a_staff_teacher = self.factory.make_import_user([role_staff, role_teacher])
+
+		users_to_delete = list()
+		for user in self.imported_users:
+			if user.action == "D":
+				if user.is_student(user.school, user.dn):
+					obj = a_student
+				elif user.is_admininstrator(user.school, user.dn):  # attention: is_* are not mutually exclusive
+					obj = a_staff_teacher
+				elif user.is_teacher(user.school, user.dn):
+					obj = a_teacher
+				elif user.is_staff(user.school, user.dn):
+					obj = a_staff
+				else:
+					raise UnkownRole("Cannot determine role of user with source_uid={} and user.record_uid={}.".format(
+						user.source_uid, user.record_uid))
+				try:
+					users_to_delete.append(obj.get_by_import_id(self.connection, user.source_uid, user.record_uid))
+				except noObject as exc:
+					self.logger.error(exc)
+		return users_to_delete
 
 	def determine_add_modify_action(self, imported_user):
 		"""
@@ -54,12 +80,30 @@ class LegacyUserImport(UserImport):
 		from LDAP
 		"""
 		if imported_user.action == "A":
-			imported_user.prepare_properties(new_user=True)
-			user = imported_user
+			try:
+				user = imported_user.get_by_import_id(self.connection, imported_user.source_uid,
+					imported_user.record_uid)
+				if user.disabled != "none" or user.has_expiry(self.connection):
+					self.logger.info("Found deactivated user %r, reactivating.", user)
+					user.reactivate(self.connection)
+					imported_user.prepare_properties(new_user=False)
+					user.update(imported_user)
+					user.action = "M"
+				else:
+					raise CreationError("User {} (source_uid:{} record_uid: {}) exist, but input demands 'A'.".format(
+						imported_user, imported_user.source_uid, imported_user.record_uid),
+						entry=imported_user.entry_count, import_user=imported_user)
+			except noObject:
+				# this is expected
+				imported_user.prepare_properties(new_user=True)
+				user = imported_user
 		elif imported_user.action == "M":
 			try:
 				user = imported_user.get_by_import_id(self.connection, imported_user.source_uid,
 					imported_user.record_uid)
+				if user.disabled != "none" or user.has_expiry(self.connection):
+					self.logger.info("Found deactivated user %r, reactivating.", user)
+					user.reactivate(self.connection)
 				imported_user.prepare_properties(new_user=False)
 				user.update(imported_user)
 			except noObject:

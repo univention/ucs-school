@@ -78,6 +78,51 @@ class ImportUser(User):
 			self.config = Configuration()
 		super(ImportUser, self).__init__(name, school, **kwargs)
 
+	def deactivate(self):
+		"""
+		Deactive user account.
+		"""
+		self.disabled = "all"
+
+	def expire(self, connection, expiry):
+		"""
+		Set the account expiration date.
+
+		:param connection: uldap connection object
+		:param expiry: str: expire date "%Y-%m-%d" or ""
+		"""
+		user_udm = self.get_udm_object(connection)
+		user_udm["userexpiry"] = expiry
+		user_udm.modify()
+		# This operation partly invalidates the cached ucsschool.lib User:
+		# setting the 'disabled' attribute after this would raise an ldapError.
+		# Invalidating cache:
+		self._udm_obj_searched = False
+
+	def has_expired(self, connection):
+		"""
+		Check if the user account has expired.
+
+		:param connection: uldap connection object
+		:return: bool: whether the user account has expired
+		"""
+		user_udm = self.get_udm_object(connection)
+		if not user_udm["userexpiry"]:
+			return False
+		expiry = datetime.datetime.strptime(user_udm["userexpiry"], "%Y-%m-%d")
+		return datetime.datetime.now() > expiry
+
+	def has_expiry(self, connection):
+		"""
+		Check if the user account has an expiry date set (regardless if it is
+		in the future or past).
+
+		:param connection: uldap connection object
+		:return: bool: whether the user account has an expiry date set
+		"""
+		user_udm = self.get_udm_object(connection)
+		return bool(user_udm["userexpiry"])
+
 	def prepare_uids(self):
 		"""
 		Necessary preparation to detect if user exists in UCS.
@@ -96,6 +141,7 @@ class ImportUser(User):
 			self.make_username()
 			self.make_password()
 		self.make_school()
+		self.make_schools()
 		self.make_classes()
 		self.make_email(make_username=new_user)
 		self.make_firstname()
@@ -118,7 +164,8 @@ class ImportUser(User):
 		# FIXME when/if self.school_class becomes a list instead of a string
 		# if self.school_class and isinstance(self.school_class, basestring):
 		# 	self.school_class = [c.strip() for c in self.school_class.split(",")]
-		pass
+		if isinstance(self, Staff):
+			return
 
 	def make_disabled(self):
 		"""
@@ -135,7 +182,7 @@ class ImportUser(User):
 			except KeyError:
 				raise UnkownDisabledSetting("Cannot find 'disabled' ('activate_new_users') setting for role '{}' or "
 					"'default'.".format(self.role_sting), self.entry_count, import_user=self)
-		self.disabled = not activate
+		self.disabled = "none" if activate else "all"
 
 	def make_firstname(self):
 		"""
@@ -201,15 +248,27 @@ class ImportUser(User):
 
 	def make_school(self):
 		"""
-		Create school name.
+		Create 'school' attribute - the position of the object in LDAP.
 		"""
-		# TODO: support multiple schools, once implemented in lib
+		if self.school:
+			return
 		if self.config.get("school"):
 			self.school = self.config["school"]
 		else:
-			if not self.school:
-				raise MissingSchoolName("School name was not set on the cmdline or in the configuration file and was "
-					"not found in the source data.", entry=self.entry_count, import_user=self)
+			raise MissingSchoolName("School name was not set on the cmdline or in the configuration file and was not "
+				"found in the source data.", entry=self.entry_count, import_user=self)
+
+	def make_schools(self):
+		"""
+		Create list of schools this user is in.
+		This should run after make_school()
+		"""
+		if not self.school:
+			self.make_school()
+		if not isinstance(self.schools, list):
+			self.schools = list()
+		if self.school not in self.schools:
+			self.schools.append(self.school)
 
 	def make_username(self):
 		"""
@@ -260,6 +319,16 @@ class ImportUser(User):
 
 		for k, v in self.udm_properties.items():
 			self.udm_properties[k] = normalize_recursive(v)
+
+	def reactivate(self, connection):
+		"""
+		Reactivate a deactivated user account and reset the account expiry
+		setting. Run this only on existing users fetched from LDAP.
+
+		:param connection: uldap connection object
+		"""
+		self.expire(connection, "")
+		self.disabled = "none"
 
 	def run_checks(self, check_username=False):
 		"""
@@ -396,6 +465,8 @@ class ImportUser(User):
 
 		:param connection: LDAP connection
 		"""
+		if not self.udm_properties:
+			return
 		udm_obj = self.get_udm_object(connection)
 		udm_obj.info.update(self.udm_properties)
 		try:

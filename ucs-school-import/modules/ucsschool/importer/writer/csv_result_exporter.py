@@ -35,6 +35,7 @@ from ucsschool.importer.factory import Factory
 from ucsschool.importer.models.import_user import ImportUser
 from ucsschool.importer.exceptions import UcsSchoolImportError
 from ucsschool.importer.writer.result_exporter import ResultExporter
+from ucsschool.lib.roles import role_pupil
 
 
 class CsvResultExporter(ResultExporter):
@@ -51,6 +52,7 @@ class CsvResultExporter(ResultExporter):
 		dialect of input file or fall back to "excel".
 		"""
 		super(CsvResultExporter, self).__init__(*arg, **kwargs)
+		self.factory = Factory()
 
 	def get_iter(self, user_import):
 		"""
@@ -72,7 +74,7 @@ class CsvResultExporter(ResultExporter):
 
 		:return: an object that knows how to write data
 		"""
-		return Factory().make_user_writer(field_names=self.field_names)
+		return self.factory.make_user_writer(field_names=self.field_names)
 
 	def serialize(self, obj):
 		"""
@@ -88,21 +90,25 @@ class CsvResultExporter(ResultExporter):
 			user = obj.import_user
 		else:
 			raise TypeError("Expected ImportUser or UcsSchoolImportError, got {}. Repr: {}".format(type(obj), repr(obj)))
+		if not user:
+			# error during reading of input data
+			user = self.factory.make_import_user([role_pupil])  # set some role
+			user.roles = []  # remove role
 
 		return dict(
-			line=max(user.entry_count, getattr(user, "entry", -1)),
+			line=max(getattr(user, "entry_count", -1), getattr(obj, "entry", -1)),
 			success=int(bool(isinstance(obj, ImportUser))),
 			error=int(bool(isinstance(obj, UcsSchoolImportError))),
 			action=user.action,
-			role=user.role_sting,
+			role=user.role_sting if user.roles else "",
 			username=user.name,
 			schools=" ".join(user.schools) if user.schools else user.school,
 			firstname=user.firstname,
 			lastname=user.lastname,
 			birthday=user.birthday,
 			email=user.email,
-			disabled=user.disabled,
-			classes=user.school_class,
+			disabled="0" if user.disabled == "none" else "1",
+			classes=getattr(user, "school_class", ""),
 			source_uid=user.source_uid,
 			record_uid=user.record_uid,
 			error_msg=str(obj) if isinstance(obj, UcsSchoolImportError) else ""

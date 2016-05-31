@@ -50,6 +50,8 @@ class LegacyImportUser(ImportUser):
 		Remove school name prefix from class names.
 		"""
 		super(LegacyImportUser, self).make_classes()
+		if isinstance(self, ImportStaff):
+			return
 		prefix_len = len("{}-".format(self.school))
 		# FIXME when/if self.school_class becomes a list instead of a string
 		self.school_class = ",".join([c[prefix_len:] for c in self.school_class.split(",")])

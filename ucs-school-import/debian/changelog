@@ -1,3 +1,16 @@
+ucs-school-import (14.0.0-7) unstable; urgency=low
+
+  * Bug #41344: support deletion of users in different ways
+  * API: add do_delete() to allow to add or change a deletion variant
+  * Configuration: add "user_deletion" option
+  * Bug #41345: add pre/post create/modify/delete hooks
+  * legacy import: fix deletion, support reactivation of deactivated users
+  * fix Staff import (ignore csv classes column)
+  * make csv reader utf-8 safe
+  * fix result CSV generation after errors during reading of input data
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 31 May 2016 10:30:47 +0200
+
 ucs-school-import (14.0.0-6) unstable; urgency=low
 
   * Bug #41345: create CSV file with the result of the import job

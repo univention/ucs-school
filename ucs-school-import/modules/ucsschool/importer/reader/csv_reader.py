@@ -38,6 +38,7 @@ import codecs
 from ucsschool.importer.reader.base_reader import BaseReader
 from ucsschool.importer.exceptions import UnkownRole
 from ucsschool.lib.roles import role_pupil, role_teacher, role_staff
+from ucsschool.lib.models.user import Staff
 
 
 class CsvReader(BaseReader):
@@ -48,6 +49,7 @@ class CsvReader(BaseReader):
 	def get_dialect(fp):
 		"""
 		Overwrite me to force a certain CSV dialect.
+
 		:param fp: open file to read from
 		:return: csv.dialect
 		"""
@@ -56,6 +58,7 @@ class CsvReader(BaseReader):
 	def read(self, *args, **kwargs):
 		"""
 		Generate dicts from a CSV file.
+
 		:param args: ignored
 		:param kwargs: dict: if it has a dict "csv_reader_args", that will be
 		used as additional arguments for the DictReader constructor.
@@ -87,10 +90,9 @@ class CsvReader(BaseReader):
 
 	def handle_input(self, mapping_key, mapping_value, csv_value, import_user):
 		"""
+		This is a hook into map().
 		IMPLEMENT ME if you wish to handle certain columns from the CSV file
 		yourself.
-		This is a hook into map().
-		It is always called if a mapped value starts with "__".
 
 		:param mapping_key: str: the key in config["csv"]["mapping"]
 		:param mapping_value: str: the value in config["csv"]["mapping"]
@@ -103,6 +105,9 @@ class CsvReader(BaseReader):
 			return True
 		elif mapping_value == "__action":
 			import_user.action = csv_value
+			return True
+		elif mapping_value == "school_class" and isinstance(import_user, Staff):
+			# ignore column
 			return True
 		return False
 
@@ -129,6 +134,7 @@ class CsvReader(BaseReader):
 		"""
 		Creates a ImportUser object from a users dict. Data will not be
 		modified, just copied.
+
 		:param input_data: dict: user from read()
 		:param cur_user_roles: list: [ucsschool.lib.roles, ..]
 		:return: ImportUser
@@ -145,7 +151,7 @@ class CsvReader(BaseReader):
 			else:
 				# must be a UDM property
 				import_user.udm_properties[v] = input_data[k]
-		self.logger.debug("import_user.udm_properties=%r", import_user.udm_properties)
+		self.logger.debug("%s udm_properties=%r", import_user, import_user.udm_properties)
 		return import_user
 
 	@classmethod

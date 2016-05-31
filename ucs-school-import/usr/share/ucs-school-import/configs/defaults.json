@@ -28,5 +28,9 @@
 	"school": null,
 	"sourceUID": null,
 	"tolerate_errors": 0,
+	"user_deletion": {
+		"delete": true,
+		"expiration": 0
+	},
 	"user_role": null
 }

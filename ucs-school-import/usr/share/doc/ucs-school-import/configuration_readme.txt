@@ -57,5 +57,9 @@ All options can be set from the command line using "--set <option>".
 "school": str: name (abbreviation) of school this import is for, if not available from input
 "sourceUID": str [1]: UID of source database
 "tolerate_errors": int [1]: number of non-fatal UcsSchoolImportErrors to tolerate before aborting
+"user_deletion": {
+	"delete":	bool: if the user should be deleted (false -> it will be deactivated)
+	"expiration": int: number of days before the account will be deleted or deactivated
+	}
 "user_role": str: if set, all new users from input will have that role (student|staff|teacher|teacher_and_staff)
 }

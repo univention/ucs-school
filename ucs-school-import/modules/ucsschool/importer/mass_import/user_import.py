@@ -33,11 +33,12 @@ Default mass import class.
 
 import sys
 from collections import defaultdict
+import datetime
 
 from univention.admin.uexceptions import noObject
 from ucsschool.lib.models.attributes import ValidationError
 from ucsschool.lib.roles import role_pupil, role_teacher, role_staff
-from ucsschool.importer.exceptions import UcsSchoolImportError, CreationError, DeletionError, ModificationError, ToManyErrors, UnkownAction, UserValidationError
+from ucsschool.importer.exceptions import UcsSchoolImportError, CreationError, DeletionError, ModificationError, ToManyErrors, UnkownAction, UnknownDeleteSetting, UserValidationError
 from ucsschool.importer.factory import Factory
 from ucsschool.importer.configuration import Configuration
 from ucsschool.importer.utils.logging2udebug import get_logger
@@ -181,6 +182,9 @@ class UserImport(object):
 				imported_user.record_uid)
 			imported_user.prepare_properties(new_user=False)
 			user.update(imported_user)
+			if user.disabled != "none" or user.has_expiry(self.connection):
+				self.logger.info("Found deactivated user %r, reactivating.", user)
+				user.reactivate(self.connection)
 			user.action = "M"
 		except noObject:
 			imported_user.prepare_properties(new_user=True)
@@ -209,11 +213,6 @@ class UserImport(object):
 		teachers_in_ucs = self.connection.search(teacher_filter_s, attr=attr)
 		teachers_staff_in_ucs = self.connection.search(teacher_staff_filter_s, attr=attr)
 
-		self.logger.debug("students_in_ucs=%r", students_in_ucs)
-		self.logger.debug("staff_in_ucs=%r", staff_in_ucs)
-		self.logger.debug("teachers_in_ucs=%r", teachers_in_ucs)
-		self.logger.debug("teachers_staff_in_ucs=%r", teachers_staff_in_ucs)
-
 		# Find all users that exist in UCS but not in input.
 		imported_users = set([(iu.source_uid, iu.record_uid) for iu in self.imported_users])
 		ucs_students = set([(iu[1]["ucsschoolSourceUID"][0], iu[1]["ucsschoolRecordUID"][0]) for iu in students_in_ucs])
@@ -228,7 +227,7 @@ class UserImport(object):
 		a_teacher = self.factory.make_import_user([role_teacher])
 		a_staff_teacher = self.factory.make_import_user([role_staff, role_teacher])
 
-		# collect ucschool objects for those users to in imported_users
+		# collect ucschool objects for those users to delete in imported_users
 		users_to_delete = list()
 		for user in (ucs_students - imported_users):
 			users_to_delete.append(a_student.get_by_import_id(self.connection, user[0], user[1]))
@@ -249,6 +248,7 @@ class UserImport(object):
 		* self.deleted_users will hold objects of deleted ImportUsers.
 		* UcsSchoolImportErrors are stored in self.errors (with failed ImportUser
 		object in error.import_user).
+		* To add or change a deletion strategy overwrite do_delete().
 
 		:param users: list: ImportUsers with record_uid and source_uid set.
 		:return: list: deleted ImportUsers
@@ -268,20 +268,57 @@ class UserImport(object):
 		for user in users:
 			try:
 				self.pre_delete_hook(user)
-				success = user.remove(self.connection)
+				success = self.do_delete(user)
 				if success:
-					self.logger.info("Success deleting user %r (source_uid:%s record_uid: %s).", user.name, user.source_uid,
-						user.record_uid)
-					self.deleted_users[user.__class__.__name__].append(user)
+					self.logger.info("Success deleting user %r (source_uid:%s record_uid: %s).", user.name,
+						user.source_uid, user.record_uid)
 				else:
-					raise DeletionError("Error deleting user '{}' (source_uid:{} record_uid: {}).".format(user.name,
-						user.source_uid, user.record_uid), entry=user.entry_count, import_user=user)
+					raise DeletionError("Error deleting user '{}' (source_uid:{} record_uid: {}), has probably already "
+						"been deleted.".format(user.name, user.source_uid, user.record_uid), entry=user.entry_count,
+						import_user=user)
+				self.deleted_users[user.__class__.__name__].append(user)
 				self.post_delete_hook(user)
 			except UcsSchoolImportError as exc:
 				self.logger.exception("Error in entry #%d: %s",  exc.entry, exc)
 				self._add_error(exc)
 		self.logger.info("------ Deleted %d users. ------", len(self.deleted_users))
 		return self.deleted_users
+
+	def do_delete(self, user):
+		"""
+		Delete or deactivate a user.
+		IMPLEMENTME to add or change a deletion variant.
+
+		:param user: ImportUser
+		:return bool: whether the deletion worked
+		"""
+		user_udm = user.get_udm_object(self.connection)
+		if self.config["user_deletion"]["delete"] and not self.config["user_deletion"]["expiration"]:
+			# delete user right now
+			self.logger.info("Deleting user %s...", user)
+			success = user.remove(self.connection)
+		elif self.config["user_deletion"]["delete"] and self.config["user_deletion"]["expiration"]:
+			# set expiration date, don't delete, don't deactivate
+			expiry = datetime.datetime.now() + datetime.timedelta(days=self.config["user_deletion"]["expiration"])
+			expiry_str = expiry.strftime("%Y-%m-%d")
+			self.logger.info("Setting account expiration date of %s to %s...", user, expiry_str)
+			user.expire(self.connection, expiry_str)
+			success = True
+		elif not self.config["user_deletion"]["delete"] and self.config["user_deletion"]["expiration"]:
+			# don't delete but deactivate with an expiration data
+			expiry = datetime.datetime.now() + datetime.timedelta(days=self.config["user_deletion"]["expiration"])
+			expiry_str = expiry.strftime("%Y-%m-%d")
+			self.logger.info("Setting account expiration date of %s to %s...", user, expiry_str)
+			user.expire(self.connection, expiry_str)
+			self.logger.info("Deactivating user %s...", user)
+			user.deactivate()
+			user.modify()
+			success = True
+		else:
+			raise UnknownDeleteSetting("Don't know what to do with user_deletion=%r and expiration=%r.".format(
+				self.config["user_deletion"]["delete"], self.config["user_deletion"]["expiration"]),
+				entry=user.entry_count, import_user=user)
+		return success
 
 	def log_stats(self):
 		"""
@@ -338,6 +375,7 @@ class UserImport(object):
 		It is much faster than running executables from
 		/usr/share/ucs-school-import/hooks/*.
 
+		* The hook is only executed if adding the user succeeded.
 		* The user will be a opened ImportUser, loaded from LDAP.
 		* Use self.connection if you need a LDAP connection.
 
@@ -370,6 +408,7 @@ class UserImport(object):
 		It is much faster than running executables from
 		/usr/share/ucs-school-import/hooks/*.
 
+		* The hook is only executed if modifying the user succeeded.
 		* The user will be a opened ImportUser, loaded from LDAP.
 		* Use self.connection if you need a LDAP connection.
 
@@ -405,7 +444,11 @@ class UserImport(object):
 		It is much faster than running executables from
 		/usr/share/ucs-school-import/hooks/*.
 
+		* The hook is only executed if the deleting the user succeeded.
 		* user is a opened ImportUser, loaded from LDAP.
+		* Depending on self.config["user_deletion"]["delete"] and
+		self.config["user_deletion"]["expiration"] the user may not have been
+		deleted, but merely deactivated.
 		* Use self.connection if you need a LDAP connection.
 
 		:param user: ImportUser
