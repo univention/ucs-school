@@ -175,7 +175,7 @@ class Instance(SchoolBaseModule):
 		return result
 
 	@LDAP_Connection()
-	def _get_sender(self, ldap_user_read=None, ldap_position=None, search_base=None):
+	def _get_sender(self, ldap_user_read=None, ldap_position=None):
 		'''Return a User instance of the currently logged in user.'''
 		try:
 			user = User.from_dn(self.user_dn, None, ldap_user_read)
@@ -197,7 +197,7 @@ class Instance(SchoolBaseModule):
 		self.finished(request.id, result)
 
 	@LDAP_Connection()
-	def _save(self, iprops, doUpdate=True, ldap_user_read=None, ldap_position=None, search_base=None):
+	def _save(self, iprops, doUpdate=True, ldap_user_read=None, ldap_position=None):
 		# try to open the UDM user object of the current user
 		sender = self._get_sender()
 
@@ -257,7 +257,7 @@ class Instance(SchoolBaseModule):
 
 			if 'recipients' in iprops:
 				# lookup the users in LDAP and save them to the project
-				project.recipients = [util.openRecipients(idn, ldap_user_read, search_base) for idn in iprops.get('recipients', [])]
+				project.recipients = [util.openRecipients(idn, ldap_user_read) for idn in iprops.get('recipients', [])]
 				project.recipients = [x for x in project.recipients if x]
 				MODULE.info('recipients: %s' % (project.recipients,))
 
@@ -328,7 +328,7 @@ class Instance(SchoolBaseModule):
 
 	@sanitize(StringSanitizer(required=True))
 	@LDAP_Connection()
-	def get(self, request, search_base=None, ldap_user_read=None, ldap_position=None):
+	def get(self, request, ldap_user_read=None, ldap_position=None):
 		"""Returns the objects for the given IDs
 
 		requests.options = [ <ID>, ... ]

@@ -202,7 +202,7 @@ class Group(_Dict):
 		self.update(_props)
 
 
-def openRecipients(entryDN, ldap_connection, search_base):
+def openRecipients(entryDN, ldap_connection):
 	try:
 		group_ = ucsschool.lib.models.Group.from_dn(entryDN, None, ldap_connection)
 	except udm_exceptions.noObject:  # either not existant or not a groups/group object
