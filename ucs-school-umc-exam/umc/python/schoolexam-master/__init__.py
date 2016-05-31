@@ -35,16 +35,16 @@ UCS@School UMC module schoolexam-master
 '''
 
 import os.path
+import traceback
 import re
+
 from univention.management.console.config import ucr
 from univention.management.console.log import MODULE
-from univention.management.console.modules import UMC_CommandError, UMC_OptionTypeError
+from univention.management.console.modules import UMC_CommandError, UMC_OptionTypeError, UMC_Error
 from ucsschool.lib.schoolldap import LDAP_Connection, SchoolSearchBase, SchoolBaseModule, ADMIN_WRITE, USER_READ
 
 import univention.admin.modules
 univention.admin.modules.update()
-
-import traceback
 
 from univention.lib.i18n import Translation
 _ = Translation('ucs-school-umc-exam-master').translate
@@ -66,9 +66,6 @@ class Instance(SchoolBaseModule):
 		self._ldap_user_read = None
 		self._ldap_position = None
 		self._search_base = None
-
-	def init(self):
-		SchoolBaseModule.init(self)
 
 	@property
 	def examGroup(self):
@@ -140,7 +137,7 @@ class Instance(SchoolBaseModule):
 		### get search base for OU of given user dn
 		school = SchoolSearchBase.getOU(userdn)
 		if not school:
-			raise UMC_CommandError(_('User is not below a school OU: %s') % userdn)
+			raise UMC_Error(_('User is not below a school OU: %s') % userdn)
 		search_base = SchoolSearchBase(search_base.availableSchools, school)
 
 		## store the ldap related objects for calls to the examGroup property
@@ -167,12 +164,9 @@ class Instance(SchoolBaseModule):
 		exam_user_dn = "uid=%s,%s" % (exam_user_uid, self.examUserContainerDN)
 
 		### Check if it's blacklisted
-		prohibited_objects = univention.admin.handlers.settings.prohibited_username.lookup(None, ldap_admin_write, '')
-		if prohibited_objects and len(prohibited_objects) > 0:
-			for i in range(0, len(prohibited_objects)):
-				if exam_user_uid in prohibited_objects[i]['usernames']:
-					message = _('Requested exam username %s is not allowed according to settings/prohibited_username object %s') % (exam_user_uid, prohibited_objects[i]['name'])
-					raise UMC_CommandError(message)
+		for prohibited_object in univention.admin.handlers.settings.prohibited_username.lookup(None, ldap_admin_write, '')
+			if exam_user_uid in prohibited_object['usernames']:
+				raise UMC_Error(_('Requested exam username %s is not allowed according to settings/prohibited_username object %s') % (exam_user_uid, prohibited_object['name']))
 
 		### Allocate new uid
 		alloc = []
@@ -256,7 +250,7 @@ class Instance(SchoolBaseModule):
 					if len(_tmp_split_path) != 2:
 						english_error_detail = "Failed parsing homeDirectory of original user: %s" % (user_orig_homeDirectory,)
 						message = _('ERROR: Creation of exam user account failed\n%s') % (english_error_detail,)
-						raise UMC_CommandError(message)
+						raise UMC_Error(message)
 					value = [os.path.join(_tmp_split_path[0], exam_user_uid)]
 				elif key == 'sambaHomePath':
 					user_orig_sambaHomePath = value[0]
@@ -293,7 +287,7 @@ class Instance(SchoolBaseModule):
 				univention.admin.allocators.release(ldap_admin_write, ldap_position, i, j)
 
 			message = _('ERROR: Creation of exam user account failed\n%s') % traceback.format_exc()
-			raise UMC_CommandError(message)
+			raise UMC_Error(message)
 
 		## Add exam_user to groups
 		if 'groups/group' in self._udm_modules:
@@ -362,7 +356,6 @@ class Instance(SchoolBaseModule):
 			raise UMC_CommandError(message)
 
 		self.finished(request.id, {}, success=True)
-		return
 
 	@LDAP_Connection(USER_READ, ADMIN_WRITE)
 	def set_computerroom_exammode(self, request, ldap_user_read=None, ldap_admin_write=None, ldap_position=None, search_base=None):
@@ -406,7 +399,6 @@ class Instance(SchoolBaseModule):
 			return  # self.examGroup called finished in this case, so just return
 
 		self.finished(request.id, {}, success=True)
-		return
 
 	@LDAP_Connection(USER_READ, ADMIN_WRITE)
 	def unset_computerroom_exammode(self, request, ldap_user_read=None, ldap_admin_write=None, ldap_position=None, search_base=None):
@@ -448,4 +440,3 @@ class Instance(SchoolBaseModule):
 			examGroup.fast_member_remove(room['hosts'], host_uid_list)  # removes any uniqueMember and member listed if still present
 
 		self.finished(request.id, {}, success=True)
-		return

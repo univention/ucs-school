@@ -181,7 +181,7 @@ class Instance(SchoolBaseModule):
 		# create a User object for the teacher
 		# perform this LDAP operation outside the thread, to avoid tracebacks
 		# in case of an LDAP timeout
-		sender = util.distribution.openRecipients(self._user_dn, ldap_user_read, search_base)
+		sender = util.distribution.openRecipients(self._user_dn, ldap_user_read)
 
 		def _thread():
 			if not sender:
@@ -229,7 +229,7 @@ class Instance(SchoolBaseModule):
 			progress.add_steps(5)
 
 			# read all recipients and fetch all user objects
-			entries = [ientry for ientry in [util.distribution.openRecipients(idn, ldap_user_read, search_base) for idn in request.options.get('recipients', [])] if ientry]
+			entries = [ientry for ientry in [util.distribution.openRecipients(idn, ldap_user_read) for idn in request.options.get('recipients', [])] if ientry]
 			users = []
 			for ientry in entries:
 				# recipients can in theory be users or groups
@@ -239,7 +239,7 @@ class Instance(SchoolBaseModule):
 					users.extend(ientry.members)
 
 			# ignore exam users
-			users = [iuser for iuser in users if not search_base.isExamUser(iuser.dn)]
+			users = [iuser for iuser in users if not search_base.isExamUser(iuser.dn)]  # FIXME: check is broken nowerdays
 
 			# start to create exam user accounts
 			progress.component(_('Preparing exam accounts'))
@@ -272,7 +272,7 @@ class Instance(SchoolBaseModule):
 				for idn in examUsers - usersReplicated:
 					try:
 						# try to open the user
-						iuser = util.distribution.openRecipients(idn, ldap_user_read, search_base)
+						iuser = util.distribution.openRecipients(idn, ldap_user_read)
 						if iuser:
 							MODULE.info('user has been replicated: %s' % idn)
 
@@ -389,7 +389,7 @@ class Instance(SchoolBaseModule):
 		self.finished(request.id, True)
 
 	@LDAP_Connection()
-	def validate_room(self, request, ldap_user_read=None, ldap_position=None, search_base=None):
+	def validate_room(self, request, ldap_user_read=None, ldap_position=None):
 		self.required_options(request, 'room')
 		error = None
 		dn = request.options.get('room')
