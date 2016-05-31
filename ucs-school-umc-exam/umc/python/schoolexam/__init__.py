@@ -64,12 +64,14 @@ from util import Progress
 
 udm_modules.update()
 
-_ = Translation( 'ucs-school-umc-exam' ).translate
+_ = Translation('ucs-school-umc-exam').translate
 
 CREATE_USER_POST_HOOK_DIR = '/usr/share/ucs-school-exam/hooks/create_exam_user_post.d/'
 
-class Instance( SchoolBaseModule ):
-	def __init__( self ):
+
+class Instance(SchoolBaseModule):
+
+	def __init__(self):
 		SchoolBaseModule.__init__(self)
 		self._tmpDir = None
 		self._progress_state = Progress()
@@ -97,11 +99,11 @@ class Instance( SchoolBaseModule ):
 		### copied from distribution module
 		# make sure that we got a list
 		if not isinstance(request.options, (tuple, list)):
-			raise UMC_OptionTypeError( 'Expected list of dicts, but got: %s' % str(request.options) )
+			raise UMC_OptionTypeError('Expected list of dicts, but got: %s' % str(request.options))
 
 		for file in request.options:
 			if not ('tmpfile' in file and 'filename' in file):
-				raise UMC_OptionTypeError( 'Invalid upload data, got: %s' % str(file) )
+				raise UMC_OptionTypeError('Invalid upload data, got: %s' % str(file))
 
 			# create a temporary upload directory, if it does not already exist
 			if not self._tmpDir:
@@ -114,7 +116,7 @@ class Instance( SchoolBaseModule ):
 			shutil.move(file['tmpfile'], destPath)
 
 		# done
-		self.finished( request.id, None )
+		self.finished(request.id, None)
 
 	def __workaround_filename_bug(self, file):
 		### the following code block is a heuristic to support both: fixed and unfixed Bug #37716
@@ -137,10 +139,10 @@ class Instance( SchoolBaseModule ):
 		### the code block can be removed and replaced by filename = file['filename'].encode('UTF-8') after Bug #37716
 		return filename
 
-	def internetrules( self, request ):
+	def internetrules(self, request):
 		### copied from computerroom module
 		"""Returns a list of available internet rules"""
-		self.finished( request.id, map( lambda x: x.name, internetrules.list() ) )
+		self.finished(request.id, map(lambda x: x.name, internetrules.list()))
 
 	@simple_response
 	def lesson_end(self):
@@ -155,7 +157,7 @@ class Instance( SchoolBaseModule ):
 
 	@require_password
 	@LDAP_Connection()
-	def start_exam(self, request, ldap_user_read = None, ldap_position = None, search_base = None):
+	def start_exam(self, request, ldap_user_read=None, ldap_position=None, search_base=None):
 		self.required_options(request, 'recipients', 'room', 'internetRule', 'shareMode', 'name', 'directory', 'examEndTime')
 
 		# reset the current progress state
@@ -184,7 +186,7 @@ class Instance( SchoolBaseModule ):
 		def _thread():
 			if not sender:
 				MODULE.error('Could not find user DN: %s' % self._user_dn)
-				raise RuntimeError( _('Could not authenticate user "%s"!') % self._user_dn )
+				raise RuntimeError(_('Could not authenticate user "%s"!') % self._user_dn)
 
 			# make sure that a project with the same name does not exist
 			opts = request.options
@@ -210,8 +212,8 @@ class Instance( SchoolBaseModule ):
 					itarget = os.path.join(my.project.cachedir, ifile)
 					if os.path.exists(isrc):
 						# copy file to cachedir
-						shutil.move( isrc, itarget )
-						os.chown( itarget, 0, 0 )
+						shutil.move(isrc, itarget)
+						os.chown(itarget, 0, 0)
 
 			# open a new connection to the master UMC
 			connection = UMCConnection.get_machine_connection()
@@ -227,7 +229,7 @@ class Instance( SchoolBaseModule ):
 			progress.add_steps(5)
 
 			# read all recipients and fetch all user objects
-			entries = [ientry for ientry in [ util.distribution.openRecipients(idn, ldap_user_read, search_base) for idn in request.options.get('recipients', []) ] if ientry ]
+			entries = [ientry for ientry in [util.distribution.openRecipients(idn, ldap_user_read, search_base) for idn in request.options.get('recipients', [])] if ientry]
 			users = []
 			for ientry in entries:
 				# recipients can in theory be users or groups
@@ -237,7 +239,7 @@ class Instance( SchoolBaseModule ):
 					users.extend(ientry.members)
 
 			# ignore exam users
-			users = [ iuser for iuser in users if not search_base.isExamUser(iuser.dn) ]
+			users = [iuser for iuser in users if not search_base.isExamUser(iuser.dn)]
 
 			# start to create exam user accounts
 			progress.component(_('Preparing exam accounts'))
@@ -336,7 +338,7 @@ class Instance( SchoolBaseModule ):
 				room=opts.get('room')
 			))
 			progress.add_steps(5)
-			MODULE.info('Adjust room settings:\n%s' % '\n'.join([ '  %s=%s' % (k, v) for k, v in opts.iteritems() ]))
+			MODULE.info('Adjust room settings:\n%s' % '\n'.join(['  %s=%s' % (k, v) for k, v in opts.iteritems()]))
 			userConnection.request('computerroom/settings/set', dict(
 				internetRule=opts.get('internetRule'),
 				customRule=opts.get('customRule'),
@@ -356,7 +358,7 @@ class Instance( SchoolBaseModule ):
 			# finish the request at the end in order to force the module to keep
 			# running until all actions have been completed
 			if isinstance(result, BaseException):
-				msg = '%s\n%s: %s\n' % ( ''.join( traceback.format_tb( thread.exc_info[ 2 ] ) ), thread.exc_info[ 0 ].__name__, str( thread.exc_info[ 1 ] ) )
+				msg = '%s\n%s: %s\n' % (''.join(traceback.format_tb(thread.exc_info[2])), thread.exc_info[0].__name__, str(thread.exc_info[1]))
 				MODULE.error('Exception during start_exam: %s' % msg)
 				self.finished(request.id, dict(success=False))
 				progress.error(_('An unexpected error occurred during the preparation: %s') % result)
@@ -476,7 +478,7 @@ class Instance( SchoolBaseModule ):
 
 			# running until all actions have been completed
 			if isinstance(result, BaseException):
-				msg = '%s\n%s: %s\n' % ( ''.join( traceback.format_tb( thread.exc_info[ 2 ] ) ), thread.exc_info[ 0 ].__name__, str( thread.exc_info[ 1 ] ) )
+				msg = '%s\n%s: %s\n' % (''.join(traceback.format_tb(thread.exc_info[2])), thread.exc_info[0].__name__, str(thread.exc_info[1]))
 				MODULE.error('Exception during exam_finish: %s' % msg)
 				self.finished(request.id, dict(success=False))
 				progress.error(_('An unexpected error occurred during the preparation: %s') % result)
@@ -492,5 +494,3 @@ class Instance( SchoolBaseModule ):
 
 		thread = notifier.threads.Simple('start_exam', _thread, _finished)
 		thread.run()
-
-

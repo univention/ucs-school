@@ -47,10 +47,12 @@ univention.admin.modules.update()
 import traceback
 
 from univention.lib.i18n import Translation
-_ = Translation( 'ucs-school-umc-exam-master' ).translate
+_ = Translation('ucs-school-umc-exam-master').translate
 
-class Instance( SchoolBaseModule ):
-	def __init__( self ):
+
+class Instance(SchoolBaseModule):
+
+	def __init__(self):
 		SchoolBaseModule.__init__(self)
 
 		self._examUserPrefix = ucr.get('ucsschool/ldap/default/userprefix/exam', 'exam-')
@@ -59,7 +61,7 @@ class Instance( SchoolBaseModule ):
 		self._udm_modules = dict()
 		self._examGroup = None
 		self._examUserContainerDN = None
-		
+
 		## Context for @property examGroup
 		self._ldap_user_read = None
 		self._ldap_position = None
@@ -67,6 +69,7 @@ class Instance( SchoolBaseModule ):
 
 	def init(self):
 		SchoolBaseModule.init(self)
+
 	@property
 	def examGroup(self):
 		'''fetch the examGroup object, create it if missing'''
@@ -94,7 +97,7 @@ class Instance( SchoolBaseModule ):
 					self._examGroup.create()
 				except univention.admin.uexceptions.base:
 					message = _('Failed to create exam group\n%s') % traceback.format_exc()
-					raise UMC_CommandError( message )
+					raise UMC_CommandError(message)
 
 		return self._examGroup
 
@@ -117,14 +120,14 @@ class Instance( SchoolBaseModule ):
 					exam_user_container.create()
 				except univention.admin.uexceptions.base:
 					message = _('Failed to create exam container\n%s') % traceback.format_exc()
-					raise UMC_CommandError( message )
+					raise UMC_CommandError(message)
 
 			self._examUserContainerDN = self._search_base.examUsers
 
 		return self._examUserContainerDN
 
 	@LDAP_Connection(USER_READ, ADMIN_WRITE)
-	def create_exam_user(self, request, ldap_user_read = None, ldap_admin_write = None, ldap_position = None, search_base = None):
+	def create_exam_user(self, request, ldap_user_read=None, ldap_admin_write=None, ldap_position=None, search_base=None):
 		'''Create an exam account cloned from a given user account.
 		   The exam account is added to a special exam group to allow GPOs and other restrictions
 		   to be enforced via the name of this group.
@@ -137,7 +140,7 @@ class Instance( SchoolBaseModule ):
 		### get search base for OU of given user dn
 		school = SchoolSearchBase.getOU(userdn)
 		if not school:
-			raise UMC_CommandError( _('User is not below a school OU: %s') % userdn )
+			raise UMC_CommandError(_('User is not below a school OU: %s') % userdn)
 		search_base = SchoolSearchBase(search_base.availableSchools, school)
 
 		## store the ldap related objects for calls to the examGroup property
@@ -157,10 +160,10 @@ class Instance( SchoolBaseModule ):
 			user_orig = module_users_user.object(None, ldap_admin_write, ldap_position, userdn)
 			user_orig.open()
 		except univention.admin.uexceptions.ldapError:
-			raise UMC_OptionTypeError( _('Invalid username (%s)') % userdn )
+			raise UMC_OptionTypeError(_('Invalid username (%s)') % userdn)
 
 		### uid and DN of exam_user
-		exam_user_uid = "".join( (self._examUserPrefix, user_orig['username']) )
+		exam_user_uid = "".join((self._examUserPrefix, user_orig['username']))
 		exam_user_dn = "uid=%s,%s" % (exam_user_uid, self.examUserContainerDN)
 
 		### Check if it's blacklisted
@@ -168,8 +171,8 @@ class Instance( SchoolBaseModule ):
 		if prohibited_objects and len(prohibited_objects) > 0:
 			for i in range(0, len(prohibited_objects)):
 				if exam_user_uid in prohibited_objects[i]['usernames']:
-					message = _('Requested exam username %s is not allowed according to settings/prohibited_username object %s') % ( exam_user_uid, prohibited_objects[i]['name'])
-					raise UMC_CommandError( message )
+					message = _('Requested exam username %s is not allowed according to settings/prohibited_username object %s') % (exam_user_uid, prohibited_objects[i]['name'])
+					raise UMC_CommandError(message)
 
 		### Allocate new uid
 		alloc = []
@@ -178,14 +181,13 @@ class Instance( SchoolBaseModule ):
 			alloc.append(('uid', uid))
 		except univention.admin.uexceptions.noLock:
 			univention.admin.allocators.release(ldap_admin_write, ldap_position, 'uid', exam_user_uid)
-			MODULE.warn( _('The exam account does already exist for: %s') % exam_user_uid )
+			MODULE.warn(_('The exam account does already exist for: %s') % exam_user_uid)
 			self.finished(request.id, dict(
 				success=True,
 				userdn=userdn,
 				examuserdn=exam_user_dn,
 			), success=True)
 			return
-
 
 		### Ok, we have a valid target uid, so start cloning the user
 		## deepcopy(user_orig) soes not help much, as we cannot use users.user.object.create()
@@ -212,13 +214,12 @@ class Instance( SchoolBaseModule ):
 				if not userSid or userSid == 'None':
 					num = uidNum
 					while not userSid or userSid == 'None':
-						num = str(int(num)+1)
+						num = str(int(num) + 1)
 						try:
 							userSid = univention.admin.allocators.requestUserSid(ldap_admin_write, ldap_position, num)
 						except univention.admin.uexceptions.noLock:
-							num = str(int(num)+1)
+							num = str(int(num) + 1)
 					alloc.append(('sid', userSid))
-
 
 			## Determine description attribute for exam_user
 			exam_user_description = request.options.get('description')
@@ -230,7 +231,7 @@ class Instance( SchoolBaseModule ):
 				>>> set([ x.replace('||','|') for x in re.split('(?<![|])[|](?![|])', '|My|new|Value|with|Pipe||symbol') if x ])
 				set(['with', 'new', 'My', 'Value', 'Pipe|symbol'])
 				"""
-				return set([ x.replace('||','|') for x in re.split('(?<![|])[|](?![|])', ucr.get(ucrvar, '')) if x ])
+				return set([x.replace('||', '|') for x in re.split('(?<![|])[|](?![|])', ucr.get(ucrvar, '')) if x])
 
 			blacklisted_attributes = getBlacklistSet('ucsschool/exam/user/ldap/blacklist')
 
@@ -243,7 +244,7 @@ class Instance( SchoolBaseModule ):
 					continue
 				# ignore blacklisted attribute values
 				keyBlacklist = getBlacklistSet('ucsschool/exam/user/ldap/blacklist/%s' % key)
-				value = [ x for x in value if x not in keyBlacklist ]
+				value = [x for x in value if x not in keyBlacklist]
 				if not value:
 					continue
 				# handle special cases
@@ -269,7 +270,7 @@ class Instance( SchoolBaseModule ):
 					value = [userSid]
 				elif key == 'description':
 					value = [exam_user_description]
-					exam_user_description = None	## that's done
+					exam_user_description = None  # that's done
 				elif key == 'univentionObjectFlag':
 					foundUniventionObjectFlag = True
 					if not 'temporary' in value:
@@ -292,7 +293,7 @@ class Instance( SchoolBaseModule ):
 				univention.admin.allocators.release(ldap_admin_write, ldap_position, i, j)
 
 			message = _('ERROR: Creation of exam user account failed\n%s') % traceback.format_exc()
-			raise UMC_CommandError( message )
+			raise UMC_CommandError(message)
 
 		## Add exam_user to groups
 		if 'groups/group' in self._udm_modules:
@@ -304,14 +305,14 @@ class Instance( SchoolBaseModule ):
 
 		if 'posix' in user_orig.options:
 			grpobj = module_groups_group.object(None, ldap_admin_write, ldap_position, user_orig['primaryGroup'])
-			grpobj.fast_member_add( [ exam_user_dn ], [ exam_user_uid ] )
+			grpobj.fast_member_add([exam_user_dn], [exam_user_uid])
 
 			for group in user_orig.info.get('groups', []):
 				grpobj = module_groups_group.object(None, ldap_admin_write, ldap_position, group)
-				grpobj.fast_member_add( [ exam_user_dn ], [ exam_user_uid ] )
+				grpobj.fast_member_add([exam_user_dn], [exam_user_uid])
 
 		## Add exam_user to examGroup
-		self.examGroup.fast_member_add( [ exam_user_dn ], [ exam_user_uid ] )
+		self.examGroup.fast_member_add([exam_user_dn], [exam_user_uid])
 
 		## finally confirm allocated IDs
 		univention.admin.allocators.confirm(ldap_admin_write, ldap_position, 'uid', exam_user_uid)
@@ -327,7 +328,7 @@ class Instance( SchoolBaseModule ):
 		), success=True)
 
 	@LDAP_Connection(USER_READ, ADMIN_WRITE)
-	def remove_exam_user(self, request, ldap_user_read = None, ldap_admin_write = None, ldap_position = None, search_base = None):
+	def remove_exam_user(self, request, ldap_user_read=None, ldap_admin_write=None, ldap_position=None, search_base=None):
 		'''Remove an exam account cloned from a given user account.
 		   The exam account is removed from the special exam group.'''
 
@@ -338,7 +339,7 @@ class Instance( SchoolBaseModule ):
 		### get search base for OU of given user dn
 		school = SchoolSearchBase.getOU(userdn)
 		if not school:
-			raise UMC_CommandError( _('User is not below a school OU: %s') % userdn )
+			raise UMC_CommandError(_('User is not below a school OU: %s') % userdn)
 		search_base = SchoolSearchBase(search_base.availableSchools, school)
 
 		### uid and DN of exam_user
@@ -356,15 +357,15 @@ class Instance( SchoolBaseModule ):
 		try:
 			user_orig = module_users_user.object(None, ldap_admin_write, ldap_position, userdn)
 			user_orig.remove()
-		except univention.admin.uexceptions.ldapError, e:
+		except univention.admin.uexceptions.ldapError as e:
 			message = _('Could not remove exam user: %s') % e
-			raise UMC_CommandError( message )
+			raise UMC_CommandError(message)
 
 		self.finished(request.id, {}, success=True)
 		return
 
 	@LDAP_Connection(USER_READ, ADMIN_WRITE)
-	def set_computerroom_exammode(self, request, ldap_user_read = None, ldap_admin_write = None, ldap_position = None, search_base = None):
+	def set_computerroom_exammode(self, request, ldap_user_read=None, ldap_admin_write=None, ldap_position=None, search_base=None):
 		'''Add all member hosts of a given computer room to the special exam group.'''
 
 		### get parameters
@@ -374,7 +375,7 @@ class Instance( SchoolBaseModule ):
 		### get search base for OU of given room DN
 		school = SchoolSearchBase.getOU(roomdn)
 		if not school:
-			raise UMC_CommandError( _('Room is not below a school OU: %s') % roomdn )
+			raise UMC_CommandError(_('Room is not below a school OU: %s') % roomdn)
 		search_base = SchoolSearchBase(search_base.availableSchools, school)
 
 		## store the ldap related objects for calls to the examGroup property
@@ -394,7 +395,7 @@ class Instance( SchoolBaseModule ):
 			room = module_groups_group.object(None, ldap_admin_write, ldap_position, roomdn)
 			room.open()
 		except univention.admin.uexceptions.ldapError:
-			raise UMC_OptionTypeError( _('Invalid Room DN') )
+			raise UMC_OptionTypeError(_('Invalid Room DN'))
 
 		## Add all host members of room to examGroup
 		examGroup = self.examGroup
@@ -402,13 +403,13 @@ class Instance( SchoolBaseModule ):
 			host_uid_list = [univention.admin.uldap.explodeDn(uniqueMember, 1)[0] + '$' for uniqueMember in room['hosts']]
 			examGroup.fast_member_add(room['hosts'], host_uid_list)  # adds any uniqueMember and member listed if not already present
 		else:
-			return ## self.examGroup called finished in this case, so just return
+			return  # self.examGroup called finished in this case, so just return
 
 		self.finished(request.id, {}, success=True)
 		return
 
 	@LDAP_Connection(USER_READ, ADMIN_WRITE)
-	def unset_computerroom_exammode(self, request, ldap_user_read = None, ldap_admin_write = None, ldap_position = None, search_base = None):
+	def unset_computerroom_exammode(self, request, ldap_user_read=None, ldap_admin_write=None, ldap_position=None, search_base=None):
 		'''Remove all member hosts of a given computer room from the special exam group.'''
 
 		### get parameters
@@ -418,7 +419,7 @@ class Instance( SchoolBaseModule ):
 		### get search base for OU of given room DN
 		school = SchoolSearchBase.getOU(roomdn)
 		if not school:
-			raise UMC_CommandError( _('Room is not below a school OU: %s') % roomdn )
+			raise UMC_CommandError(_('Room is not below a school OU: %s') % roomdn)
 		search_base = SchoolSearchBase(search_base.availableSchools, school)
 
 		## store the ldap related objects for calls to the examGroup property
@@ -438,14 +439,13 @@ class Instance( SchoolBaseModule ):
 			room = module_groups_group.object(None, ldap_admin_write, ldap_position, roomdn)
 			room.open()
 		except univention.admin.uexceptions.ldapError:
-			raise UMC_OptionTypeError( 'Invalid Room DN' )
+			raise UMC_OptionTypeError('Invalid Room DN')
 
 		## Remove all host members of room from examGroup
 		examGroup = self.examGroup
 		if examGroup:
-			host_uid_list = [ univention.admin.uldap.explodeDn(uniqueMember, 1)[0] + '$' for uniqueMember in room['hosts'] ]
-			examGroup.fast_member_remove( room['hosts'], host_uid_list )	## removes any uniqueMember and member listed if still present
+			host_uid_list = [univention.admin.uldap.explodeDn(uniqueMember, 1)[0] + '$' for uniqueMember in room['hosts']]
+			examGroup.fast_member_remove(room['hosts'], host_uid_list)  # removes any uniqueMember and member listed if still present
 
 		self.finished(request.id, {}, success=True)
 		return
-
