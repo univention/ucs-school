@@ -246,6 +246,8 @@ class ComputerRoom(Group, _MayHaveSchoolPrefix):
 		from ucsschool.lib.models.computer import SchoolComputer
 		for host in self.hosts:
 			try:
-				yield SchoolComputer.from_dn(host, self.school, ldap_connection)
+				computer = SchoolComputer.from_dn(host, self.school, ldap_connection)
+				if computer is not None:
+					yield computer
 			except noObject:
 				continue
