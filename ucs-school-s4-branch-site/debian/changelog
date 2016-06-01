@@ -1,3 +1,9 @@
+ucs-school-s4-branch-site (4.0.0-1) unstable; urgency=medium
+
+  * Bug #41117: remove unnecessary use of search_base
+
+ -- Florian Best <best@univention.de>  Wed, 01 Jun 2016 20:08:03 +0200
+
 ucs-school-s4-branch-site (3.0.0-1) unstable; urgency=medium
 
   * Bug #39534: Start UCS@school 4.1 development

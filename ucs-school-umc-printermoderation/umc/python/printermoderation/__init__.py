@@ -116,24 +116,19 @@ class Instance(SchoolBaseModule):
 			result.append({'id': '%s://%s' % (spool_host, name), 'label': name})
 		self.finished(request.id, result)
 
+	@sanitize(**{
+		'school': StringSanitizer(required=True),
+		'class': StringSanitizer(required=True), # allow_none=True
+		'pattern': StringSanitizer(required=True),
+	})
 	@LDAP_Connection()
-	def query(self, request, ldap_user_read=None, ldap_position=None, search_base=None):
-		"""Searches for print jobs
-
-		requests.options = {}
-		  'school' -- school OU (optional)
-		  'class' -- if not  set to 'all' the print jobs of the given class are listed only
-		  'pattern' -- search pattern that must match the name or username of the students
-
-		return: [ { 'id' : <unique identifier>, 'name' : <display name>, 'color' : <name of favorite color> }, ... ]
-		"""
-		MODULE.error('query')
-		self.required_options(request, 'class')
+	def query(self, request, ldap_user_read=None, ldap_position=None):
+		"""Searches for print jobs"""
 
 		klass = request.options.get('class')
 		if klass in (None, 'None'):
 			klass = None
-		students = self._users(ldap_user_read, search_base, group=klass, user_type='student', pattern=request.options.get('pattern', ''))
+		students = self._users(ldap_user_read, request.options['school'], group=klass, user_type='student', pattern=request.options.get('pattern', ''))
 
 		printjoblist = []
 

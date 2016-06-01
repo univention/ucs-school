@@ -66,7 +66,7 @@ class Instance(SchoolBaseModule):
 		category=StringSanitizer(required=True),
 	)
 	@LDAP_Connection()
-	def send(self, request, ldap_user_read=None, ldap_position=None, search_base=None):
+	def send(self, request, ldap_user_read=None, ldap_position=None):
 		ucr.load()
 		if not ucr.get('ucsschool/helpdesk/recipient'):
 			raise UMC_Error(_('The message could not be send to the helpdesk team: The email address for the helpdesk team is not configured. It must be configured by an administrator via the UCR variable "ucsschool/helpdesk/recipient".'), status=500)
@@ -135,7 +135,7 @@ class Instance(SchoolBaseModule):
 		thread.run()
 
 	@LDAP_Connection()
-	def categories(self, request, ldap_user_read=None, ldap_position=None, search_base=None):
+	def categories(self, request, ldap_user_read=None, ldap_position=None):
 		categories = []
 		res = ldap_user_read.searchDn(filter='objectClass=univentionUMCHelpdeskClass', base=ldap_position.getBase())
 		# use only first object found

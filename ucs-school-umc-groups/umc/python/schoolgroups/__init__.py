@@ -65,8 +65,12 @@ def get_group_class(request):
 
 class Instance(SchoolBaseModule):
 
+	@sanitize(
+		school=StringSanitizer(required=True),
+		pattern=StringSanitizer(default=''),
+	)
 	@LDAP_Connection()
-	def users(self, request, search_base=None, ldap_user_read=None, ldap_position=None):
+	def users(self, request, ldap_user_read=None, ldap_position=None):
 		# parse group parameter
 		group = request.options.get('group')
 		user_type = None
@@ -79,7 +83,7 @@ class Instance(SchoolBaseModule):
 		result = [{
 			'id': i.dn,
 			'label': Display.user(i)
-		} for i in self._users(ldap_user_read, search_base, group=group, user_type=user_type, pattern=request.options.get('pattern'))]
+		} for i in self._users(ldap_user_read, request.options['school'], group=group, user_type=user_type, pattern=request.options['pattern'])]
 		self.finished(request.id, result)
 
 	@sanitize(

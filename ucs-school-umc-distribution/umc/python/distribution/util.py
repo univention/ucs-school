@@ -47,7 +47,6 @@ from univention.management.console.config import ucr
 #import univention.admin.modules as udm_modules
 import univention.admin.uexceptions as udm_exceptions
 
-from ucsschool.lib.models.group import WorkGroup, SchoolClass
 import ucsschool.lib.models
 
 _ = Translation('ucs-school-umc-distribution').translate

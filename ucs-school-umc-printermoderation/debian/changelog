@@ -1,3 +1,9 @@
+ucs-school-umc-printermoderation (13.0.1-1) unstable; urgency=medium
+
+  * Bug #41117: remove unnecessary use of search_base
+
+ -- Florian Best <best@univention.de>  Wed, 01 Jun 2016 20:10:19 +0200
+
 ucs-school-umc-printermoderation (13.0.0-1) unstable; urgency=medium
 
   * Bug #41129: fix detection of printers for school overlapping users

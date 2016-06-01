@@ -160,9 +160,9 @@ class Instance(SchoolBaseModule, SchoolImport):
 			ret.append({'id': computer_type._meta.udm_module_short, 'label': computer_type.type_name})
 		return ret
 
-	@LDAP_Connection()
 	@response
-	def share_servers(self, request, search_base=None, ldap_user_read=None, ldap_position=None):
+	@LDAP_Connection()
+	def share_servers(self, request, ldap_user_read=None):
 		# udm/syntax/choices UCSSchool_Server_DN
 		ret = [{'id' : '', 'label' : ''}]
 		for module in ['computers/domaincontroller_master', 'computers/domaincontroller_backup', 'computers/domaincontroller_slave', 'computers/memberserver']:
@@ -171,10 +171,9 @@ class Instance(SchoolBaseModule, SchoolImport):
 				ret.append({'id' : obj.dn, 'label' : obj.info.get('fqdn', obj.info['name'])})
 		return ret
 
-	@LDAP_Connection()
 	@response
-	def _get_obj(self, request, search_base=None,
-	                 ldap_user_read=None, ldap_position=None):
+	@LDAP_Connection()
+	def _get_obj(self, request, ldap_user_read=None):
 		ret = []
 		for obj in iter_objects_in_request(request):
 			MODULE.process('Getting %r' % (obj))
@@ -182,10 +181,9 @@ class Instance(SchoolBaseModule, SchoolImport):
 			ret.append(obj.to_dict())
 		return ret
 
-	@LDAP_Connection( USER_READ, USER_WRITE )
 	@response
-	def _create_obj(self, request, search_base=None,
-	                 ldap_user_read=None, ldap_user_write=None, ldap_position=None):
+	@LDAP_Connection( USER_READ, USER_WRITE )
+	def _create_obj(self, request, ldap_user_read=None, ldap_user_write=None):
 		ret = []
 		for obj in iter_objects_in_request(request):
 			MODULE.process('Creating %r' % (obj,))
@@ -204,10 +202,9 @@ class Instance(SchoolBaseModule, SchoolImport):
 				MODULE.process('Creation failed %r' % (ret[-1],))
 		return ret
 
-	@LDAP_Connection( USER_READ, USER_WRITE )
 	@response
-	def _modify_obj(self, request, search_base=None,
-	                 ldap_user_read=None, ldap_user_write=None, ldap_position=None):
+	@LDAP_Connection( USER_READ, USER_WRITE )
+	def _modify_obj(self, request, ldap_user_read=None, ldap_user_write=None):
 		ret = []
 		for obj in iter_objects_in_request(request):
 			MODULE.process('Modifying %r' % (obj))
@@ -223,9 +220,9 @@ class Instance(SchoolBaseModule, SchoolImport):
 				ret.append(True) # no changes? who cares?
 		return ret
 
-	@LDAP_Connection( USER_READ, USER_WRITE )
 	@response
-	def _delete_obj(self, request, search_base=None, ldap_user_read=None, ldap_user_write=None, ldap_position=None):
+	@LDAP_Connection( USER_READ, USER_WRITE )
+	def _delete_obj(self, request, ldap_user_read=None, ldap_user_write=None):
 		ret = []
 		for obj in iter_objects_in_request(request):
 			obj.name = obj.get_name_from_dn(obj.old_dn)
@@ -246,9 +243,9 @@ class Instance(SchoolBaseModule, SchoolImport):
 			objs.extend(klass.get_all(lo, school.name, filter_str=filter_str, easy_filter=True))
 		return [obj.to_dict() for obj in objs]
 
-	@LDAP_Connection()
 	@response
-	def get_users(self, request, search_base=None, ldap_user_read=None, ldap_position=None):
+	@LDAP_Connection()
+	def get_users(self, request, ldap_user_read=None):
 		school = request.options['school']
 		user_class = get_user_class(request.options['type'])
 		return self._get_all(user_class, school, request.options.get('filter'), ldap_user_read)
@@ -261,9 +258,9 @@ class Instance(SchoolBaseModule, SchoolImport):
 
 	delete_user = _delete_obj
 
-	@LDAP_Connection()
 	@response
-	def get_computers(self, request, search_base=None, ldap_user_read=None, ldap_position=None):
+	@LDAP_Connection()
+	def get_computers(self, request, ldap_user_read=None):
 		school = request.options['school']
 		computer_class = get_computer_class(request.options['type'])
 		return self._get_all(computer_class, school, request.options.get('filter'), ldap_user_read)
@@ -276,9 +273,9 @@ class Instance(SchoolBaseModule, SchoolImport):
 
 	delete_computer = _delete_obj
 
-	@LDAP_Connection()
 	@response
-	def get_classes(self, request, search_base=None, ldap_user_read=None, ldap_position=None):
+	@LDAP_Connection()
+	def get_classes(self, request, ldap_user_read=None):
 		school = request.options['school']
 		return self._get_all(SchoolClass, school, request.options.get('filter'), ldap_user_read)
 
@@ -290,9 +287,9 @@ class Instance(SchoolBaseModule, SchoolImport):
 
 	delete_class = _delete_obj
 
-	@LDAP_Connection()
 	@response
-	def get_schools(self, request, search_base=None, ldap_user_read=None, ldap_position=None):
+	@LDAP_Connection()
+	def get_schools(self, request, ldap_user_read=None):
 		schools = School.get_all(ldap_user_read, filter_str=request.options.get('filter'), easy_filter=True)
 		return [school.to_dict() for school in schools]
 

@@ -135,8 +135,7 @@ define([
 				defaultAction: 'view',
 				columns: columns,
 				moduleStore: this.moduleStore,
-				sortIndex: -4,
-				query: { 'class' : 'None', pattern: '' }
+				sortIndex: -4
 			});
 
 			this._searchPage.addChild(this._grid);
@@ -180,8 +179,9 @@ define([
 					this._grid.filter(values);
 				})
 			});
-
-			this.standbyDuring(this._searchForm.ready());
+			this.standbyDuring(this._searchForm.ready()).then(lang.hitch(this, function() {
+				this._grid.filter(this._searchForm.get('value'));
+			}));
 
 			this._searchPage.addChild(this._searchForm);
 			this.addChild(this._searchPage);

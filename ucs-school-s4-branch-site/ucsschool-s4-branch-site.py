@@ -46,7 +46,7 @@ sys.dont_write_bytecode = True
 import imp
 s4_connector_listener_path = '/usr/lib/univention-directory-listener/system/s4-connector.py'
 s4_connector_listener = imp.load_source('s4_connector', s4_connector_listener_path)
-from ucsschool.lib.schoolldap import LDAP_Connection, MACHINE_READ
+from ucsschool.lib.schoolldap import LDAP_Connection, MACHINE_READ, SchoolSearchBase
 import traceback
 import subprocess
 
@@ -103,7 +103,7 @@ _ldap_hostdn = listener.configRegistry.get('ldap/hostdn')
 _hooks = []
 
 @LDAP_Connection(MACHINE_READ)
-def on_load(ldap_machine_read=None, ldap_position=None, search_base=None):
+def on_load(ldap_machine_read=None, ldap_position=None):
 	global _ldap_hostdn
 	global _hooks
 	_hooks = load_hooks()
@@ -181,7 +181,7 @@ STD_S4_SRV_RECORDS = {
 
 ### Listener code
 @LDAP_Connection(MACHINE_READ)
-def visible_samba4_school_dcs(excludeDN=None, ldap_machine_read=None, ldap_position=None, search_base=None):
+def visible_samba4_school_dcs(excludeDN=None, ldap_machine_read=None, ldap_position=None):
 	global filter
 	_visible_samba4_school_dcs = []
 	try:
@@ -190,7 +190,7 @@ def visible_samba4_school_dcs(excludeDN=None, ldap_machine_read=None, ldap_posit
 			attr=['cn', 'associatedDomain'])
 		for (record_dn, obj) in res:
 			## select only school branches and exclude a modrdn 'r' phase DN which still exists
-			if search_base.getOU(record_dn) and record_dn != excludeDN:
+			if SchoolSearchBase.getOU(record_dn) and record_dn != excludeDN:
 				if 'associatedDomain' in obj:
 					domainname = obj['associatedDomain'][0]
 				else:
@@ -279,7 +279,7 @@ def update_ucr_overrides(excludeDN=None):
 		_s4_connector_restart = True
 
 @LDAP_Connection(MACHINE_READ)
-def trigger_sync_ucs_to_s4(ldap_machine_read=None, ldap_position=None, search_base=None):
+def trigger_sync_ucs_to_s4(ldap_machine_read=None, ldap_position=None):
 	global _record_type
 	global _local_domainname
 	global _relativeDomainName_trigger_set

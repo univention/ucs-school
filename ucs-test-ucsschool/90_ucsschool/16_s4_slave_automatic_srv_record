@@ -90,7 +90,7 @@ class Test():
 		p1.wait()
 
 	@LDAP_Connection(MACHINE_READ)
-	def run(self, ldap_machine_read=None, ldap_position=None, search_base=None):
+	def run(self, ldap_machine_read=None, ldap_position=None):
 		status = 100
 		positive_test_fqdn_list = []
 		negative_test_fqdn_list = []

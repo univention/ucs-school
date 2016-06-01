@@ -31,7 +31,6 @@
 # <http://www.gnu.org/licenses/>.
 
 from univention.management.console.log import MODULE
-from univention.management.console.modules import UMC_Error
 from univention.management.console.modules.decorators import sanitize
 from univention.management.console.modules.sanitizers import StringSanitizer, BooleanSanitizer
 
@@ -60,11 +59,12 @@ def get_exception_msg(exc):  # TODO: str(exc) would be nicer, Bug #27940, 30089,
 class Instance(SchoolBaseModule):
 
 	@sanitize(**{
+		'school': StringSanitizer(required=True),
 		'class': StringSanitizer(required=True), # allow_none=True
 		'pattern': StringSanitizer(required=True),
 	})
 	@LDAP_Connection()
-	def query(self, request, ldap_user_read=None, ldap_position=None, search_base=None):
+	def query(self, request, ldap_user_read=None, ldap_position=None):
 		"""Searches for students"""
 
 		klass = request.options.get('class')
@@ -74,7 +74,7 @@ class Instance(SchoolBaseModule):
 			'id': usr.dn,
 			'name': Display.user(usr),
 			'passwordexpiry': usr.get('passwordexpiry', '')
-		} for usr in self._users(ldap_user_read, search_base, group=klass, user_type=request.flavor, pattern=request.options.get('pattern', ''))]
+		} for usr in self._users(ldap_user_read, request.options['school'], group=klass, user_type=request.flavor, pattern=request.options.get('pattern', ''))]
 		self.finished(request.id, result)
 
 	@sanitize(
