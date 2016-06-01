@@ -91,8 +91,9 @@ LOGGING_TO_SYSLOG = dict(
 
 ucr = ConfigRegistry()
 ucr.load()
-_werror = ucr.is_true("ucsschool/debug/werror", False)
-
+_werror = ucr.is_true("ucsschool/import/debug/werror", False)
+_has_stdout_handler = False
+_has_file_handler = False
 
 def get_logger():
 	return make_logger("ucsschool.import", "ucsimport")
@@ -110,22 +111,28 @@ def make_logger(logger_name, short_name=None, udebug_facility=ud.LISTENER):
 
 
 def add_stdout_handler(logger):
-	handler = set_handler_formatting(logging.StreamHandler(sys.stdout), "DEBUG")
-	logger.addHandler(handler)
+	global _has_stdout_handler
+	if not _has_stdout_handler:
+		handler = set_handler_formatting(logging.StreamHandler(sys.stdout), "DEBUG")
+		logger.addHandler(handler)
+		_has_stdout_handler = True
 	return logger
 
 
 def add_file_handler(logger, filename):
-	handler = logging.handlers.TimedRotatingFileHandler(filename, when="D", backupCount=10)
-	handler = set_handler_formatting(handler, "DEBUG")
-	logger.addHandler(handler)
-	if filename.endswith(".log"):
-		info_filename = "{}.info".format(filename[:-4])
-	else:
-		info_filename = "{}.info".format(filename)
-	handler = logging.handlers.TimedRotatingFileHandler(info_filename, when="D", backupCount=10)
-	handler = set_handler_formatting(handler, "INFO")
-	logger.addHandler(handler)
+	global _has_file_handler
+	if not _has_file_handler:
+		handler = logging.handlers.TimedRotatingFileHandler(filename, when="D", backupCount=10)
+		handler = set_handler_formatting(handler, "DEBUG")
+		logger.addHandler(handler)
+		if filename.endswith(".log"):
+			info_filename = "{}.info".format(filename[:-4])
+		else:
+			info_filename = "{}.info".format(filename)
+		handler = logging.handlers.TimedRotatingFileHandler(info_filename, when="D", backupCount=10)
+		handler = set_handler_formatting(handler, "INFO")
+		logger.addHandler(handler)
+		_has_file_handler = True
 	return logger
 
 

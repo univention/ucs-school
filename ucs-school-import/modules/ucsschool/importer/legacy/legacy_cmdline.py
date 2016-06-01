@@ -3,7 +3,7 @@
 #
 # Univention UCS@School
 """
-ucs@school import tool.
+ucs@school legacy import tool cmdline frontend.
 """
 # Copyright 2016 Univention GmbH
 #
@@ -32,14 +32,15 @@ ucs@school import tool.
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-import sys
-
 from ucsschool.importer.frontend.cmdline import CommandLine
+from ucsschool.importer.legacy.legacy_parse_cmdline import LegacyParseCmdline
 
 
-def main():
-	ui = CommandLine()
-	ui.main()
+class LegacyCommandLine(CommandLine):
+	def parse_cmdline(self):
+		parser = LegacyParseCmdline()
+		self.args = parser.parse_cmdline()
 
-if __name__ == "__main__":
-	sys.exit(main())
+	def do_import(self):
+		importer = self.factory.make_mass_importer(self.config["dry_run"])
+		importer.import_users()

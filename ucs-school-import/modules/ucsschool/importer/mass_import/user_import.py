@@ -240,6 +240,10 @@ class UserImport(object):
 		for user in (ucs_teachers_staff - imported_users):
 			users_to_delete.append(a_staff_teacher.get_by_import_id(self.connection, user[0], user[1]))
 
+		for user in users_to_delete:
+			# mark for logging/csv-output purposes
+			user.action = "D"
+
 		self.logger.debug("users_to_delete=%r", users_to_delete)
 		return users_to_delete
 

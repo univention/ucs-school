@@ -223,14 +223,15 @@ class ImportUser(User):
 		"""
 		Create random password.
 		"""
-		pw = list(random.choice(string.lowercase))
-		pw.append(random.choice(string.uppercase))
-		pw.append(random.choice(string.digits))
-		pw.append(random.choice(u"@#$%^&*-_+=[]{}|\:,.?/`~();"))
-		pw.extend(random.choice(string.ascii_letters + string.digits + u"@#$%^&*-_+=[]{}|\:,.?/`~();")
-			for _ in range(self.config["password_length"] - 4))
-		random.shuffle(pw)
-		self.password = u"".join(pw)
+		if not self.password:
+			pw = list(random.choice(string.lowercase))
+			pw.append(random.choice(string.uppercase))
+			pw.append(random.choice(string.digits))
+			pw.append(random.choice(u"@#$%^&*-_+=[]{}|\:,.?/`~();"))
+			pw.extend(random.choice(string.ascii_letters + string.digits + u"@#$%^&*-_+=[]{}|\:,.?/`~();")
+				for _ in range(self.config["password_length"] - 4))
+			random.shuffle(pw)
+			self.password = u"".join(pw)
 
 	def make_rid(self):
 		"""

@@ -31,6 +31,7 @@ CSV reader for CSV files using the legacy import format.
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+import csv
 
 from ucsschool.importer.reader.csv_reader import CsvReader
 from ucsschool.importer.exceptions import UnkownRole
@@ -38,6 +39,13 @@ from ucsschool.lib.roles import role_pupil, role_teacher, role_staff
 
 
 class LegacyCsvReader(CsvReader):
+	@classmethod
+	def get_dialect(cls, fp):
+		if cls.config.get("ucs_test"):
+			return csv.excel_tab()
+		else:
+			return super(LegacyCsvReader, cls).get_dialect(fp)
+
 	def handle_input(self, mapping_key, mapping_value, csv_value, import_user):
 		"""
 		Mark __is_staff and __is_teacher as already handled (in get_roles()).

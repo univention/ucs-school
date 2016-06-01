@@ -20,6 +20,7 @@
 			"10": "__is_staff"
 		}
 	},
+	"dry_run": false,
 	"scheme": {
 		"email": "<email>",
 		"rid": "<name>",
@@ -33,6 +34,7 @@
 		"deactivate": false,
 		"waiting_period": 45
 	},
+	"password_length": 8,
 	"sourceUID": "LegacyDB",
-	"tolerate_errors": 4
+	"tolerate_errors": 0
 }

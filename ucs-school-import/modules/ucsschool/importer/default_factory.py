@@ -36,8 +36,9 @@ from ucsschool.lib.models.utils import ucr
 from ucsschool.lib.roles import role_pupil, role_teacher, role_staff
 
 from ucsschool.importer.reader.csv_reader import CsvReader
-from ucsschool.importer.writer.csv_result_exporter import CsvResultExporter
+from ucsschool.importer.writer.user_import_csv_result_exporter import UserImportCsvResultExporter
 from ucsschool.importer.writer.csv_writer import CsvWriter
+from ucsschool.importer.writer.new_user_password_csv_exporter import NewUserPasswordCsvExporter
 from ucsschool.importer.configuration import Configuration
 from ucsschool.importer.mass_import.mass_import import MassImport
 from ucsschool.importer.models.import_user import ImportStaff, ImportStudent, ImportTeacher, ImportTeachersAndStaff
@@ -98,6 +99,17 @@ class DefaultFactory(object):
 		"""
 		return MassImport(dry_run=dry_run)
 
+	def make_password_exporter(self, *arg, **kwargs):
+		"""
+		Creates a ResultExporter object that can dump passwords to disk.
+
+		:param arg: list: passed to constructor of created class
+		:param kwarg: dict: passed to constructor of created class
+		:return: ucsschool.importer.writer.result_exporter.ResultExporter object
+		"""
+		# TODO
+		return NewUserPasswordCsvExporter(*arg, **kwargs)
+
 	def make_result_exporter(self, *arg, **kwargs):
 		"""
 		Creates a ResultExporter object.
@@ -106,7 +118,7 @@ class DefaultFactory(object):
 		:param kwarg: dict: passed to constructor of created class
 		:return: ucsschool.importer.writer.result_exporter.ResultExporter object
 		"""
-		return CsvResultExporter(*arg, **kwargs)
+		return UserImportCsvResultExporter(*arg, **kwargs)
 
 	def make_user_importer(self, dry_run=True):
 		"""

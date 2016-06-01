@@ -107,6 +107,7 @@ class LegacyUserImport(UserImport):
 				imported_user.prepare_properties(new_user=False)
 				user.update(imported_user)
 			except noObject:
+				imported_user.prepare_properties(new_user=True)
 				user = imported_user
 				user.action = "A"
 		elif imported_user.action == "D":

@@ -37,6 +37,7 @@ from ucsschool.importer.legacy.legacy_csv_reader import LegacyCsvReader
 from ucsschool.importer.legacy.legacy_import_user import LegacyImportStaff, LegacyImportStudent,\
 	LegacyImportTeacher, LegacyImportTeachersAndStaff
 from ucsschool.importer.legacy.legacy_user_import import LegacyUserImport
+from ucsschool.importer.legacy.legacy_new_user_password_csv_exporter import LegacyNewUserPasswordCsvExporter
 from ucsschool.lib.roles import role_pupil, role_teacher, role_staff
 
 
@@ -71,6 +72,16 @@ class LegacyCsvFactory(DefaultFactory):
 				return LegacyImportTeacher(*arg, **kwargs)
 		else:
 			return LegacyImportStaff(*arg, **kwargs)
+
+	def make_password_exporter(self, *arg, **kwargs):
+		"""
+		Creates a ResultExporter object that can dump passwords to disk.
+
+		:param arg: list: passed to constructor of created class
+		:param kwarg: dict: passed to constructor of created class
+		:return: ucsschool.importer.writer.result_exporter.ResultExporter object
+		"""
+		return LegacyNewUserPasswordCsvExporter(*arg, **kwargs)
 
 	def make_user_importer(self, dry_run=True):
 		"""

@@ -24,6 +24,9 @@
 		"deactivate": false,
 		"waiting_period": 0
 	},
+	"output": {
+		"passwords": "/var/lib/ucs-school-import/new_user_passwords.csv"
+	},
 	"password_length": 15,
 	"school": null,
 	"sourceUID": null,
@@ -32,5 +35,6 @@
 		"delete": true,
 		"expiration": 0
 	},
-	"user_role": null
+	"user_role": null,
+	"verbose": true
 }

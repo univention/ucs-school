@@ -1,3 +1,16 @@
+ucs-school-import (14.0.0-9) unstable; urgency=low
+
+  * Bug #41242: create legacy import script drop-in replacement
+  * refactor command line tool creation for easier customer adaption
+  * export new users passwords
+  * fix legacy user creation in case of action=M but non-existent user
+  * create ucs-test mode, as ucs-test does not create valid (legacy) csv
+  * packaging changes (UCR, copy configs)
+  * make sure logging handlers are not added twice
+  * sort result csv by input order (but errors first)
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 01 Jun 2016 15:56:06 +0200
+
 ucs-school-import (14.0.0-8) unstable; urgency=low
 
   * Bug #41014: updated extended attribute translations

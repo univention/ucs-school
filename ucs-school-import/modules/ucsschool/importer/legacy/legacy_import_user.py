@@ -56,6 +56,11 @@ class LegacyImportUser(ImportUser):
 		# FIXME when/if self.school_class becomes a list instead of a string
 		self.school_class = ",".join([c[prefix_len:] for c in self.school_class.split(",")])
 
+	def make_username(self):
+		super(LegacyImportUser, self).make_username()
+		self.old_name = self.name  # for LegacyNewUserPasswordCsvExporter.serialize()
+		self.name = self.name.lower()
+
 	def run_checks(self, check_username=False):
 		"""
 		Action must already be configured in CSV.

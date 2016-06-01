@@ -51,14 +51,14 @@ class MassImport(object):
 		self.logger = get_logger()
 		self.factory = Factory()
 		self.result_exporter = self.factory.make_result_exporter()
+		self.password_exporter = self.factory.make_password_exporter()
 
 	def mass_import(self):
-		self.logger.info("------ Importing users... ------")
 		self.import_users()
-		self.logger.info("------ Importing users done. ------")
 		# TODO: support import of other objects
 
 	def import_users(self):
+		self.logger.info("------ Importing users... ------")
 		user_import = self.factory.make_user_importer(self.dry_run)
 		imported_users = user_import.read_input()
 		user_import.create_and_modify_users(imported_users)
@@ -68,4 +68,10 @@ class MassImport(object):
 			users_to_delete = user_import.detect_users_to_delete()
 			user_import.delete_users(users_to_delete)
 		user_import.log_stats()
-		self.result_exporter.dump(user_import, self.config["csv_output"])
+		if self.config["output"]["passwords"]:
+			self.logger.info("------ Writing new users passwords to %s... ------", self.config["output"]["passwords"])
+			self.password_exporter.dump(user_import, self.config["output"]["passwords"])
+		if self.config["csv_output"]:
+			self.logger.info("------ Writing user import summary to %s... ------", self.config["csv_output"])
+			self.result_exporter.dump(user_import, self.config["csv_output"])
+		self.logger.info("------ Importing users done. ------")

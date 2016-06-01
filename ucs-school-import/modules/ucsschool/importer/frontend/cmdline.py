@@ -1,8 +1,9 @@
+#!/usr/bin/python2.7
 # -*- coding: utf-8 -*-
 #
 # Univention UCS@School
 """
-Default command line frontend for import.
+ucs@school import tool cmdline frontend.
 """
 # Copyright 2016 Univention GmbH
 #
@@ -31,91 +32,78 @@ Default command line frontend for import.
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-from argparse import ArgumentParser
-from ucsschool.importer.utils.logging2udebug import get_logger
+import sys
+import pprint
+from logging import StreamHandler
+import traceback
+
+from ucsschool.importer.utils.logging2udebug import get_logger, add_stdout_handler, add_file_handler
+from ucsschool.importer.frontend.parse_cmdline import ParseCmdline
+from ucsschool.importer.configuration import setup_configuration
+from ucsschool.importer.factory import setup_factory
+from ucsschool.importer.exceptions import ToManyErrors, UcsSchoolImportFatalError
 
 
-class Cmdline(object):
-	"""
-	Setup a command line frontend.
-	"""
+class CommandLine(object):
 	def __init__(self):
-		"""
-		Setup the parser. Override to add more arguments or change the defaults.
-		"""
-		self.args = None
 		self.logger = get_logger()
-		# TODO: read defaults from defaults.json
-		self.defaults = dict(
-			dry_run=True,
-			logfile=None,
-			no_delete=False,
-			school=None,
-			sourceUID=None,
-			user_role=None,
-			verbose=False
-		)
-		self.parser = ArgumentParser(description="ucs@school import tool")
-		self.parser.add_argument('conffile', help="Configuration file  to use [mandatory].")
-		self.parser.add_argument('-l', '--logfile',
-			help="Write to additional logfile (shortcut for --set logfile=...).")
-		self.parser.add_argument("--set", dest="settings", metavar="KEY=VALUE", nargs='*',
-			help="Overwrite setting(s) from the configuration file. Use ':' in key to set nested values "
-			"(e.g. 'scheme:email=...').")
-		self.parser.add_argument("-m", "--no-delete", dest="no_delete", action="store_true",
-			help="Only add/modify given user objects. User objects not mentioned within input files are not "
-				"deleted/deactived (shortcut for --set no_delete=...) [default: %(default)s].")
-		self.parser.add_argument("-n", "--dry-run", dest="dry_run", action="store_true",
-			help="Dry run - don't actually commit changes to LDAP (shortcut for --set dry_run=...) "
-				"[default: %(default)s].")
-		self.parser.add_argument("--sourceUID", help="The ID of the source database (shortcut for --set sourceUID=...) "
-			"[mandatory either here or in the configuration file].")
-		self.parser.add_argument("-s", "--school", help="Name of school. Set only, if the source data does not contain "
-			"the name of the school and all users are from one school (shortcut for --set school=...) "
-			"[default: %(default)s].")
-		self.parser.add_argument("-u", "--user_role", help="Set this, if the source data contains users with only one "
-			"role <student|staff|teacher|teacher_and_staff> (shortcut for --set user_role=...) [default: %(default)s].")
-		self.parser.add_argument("-v", "--verbose", action="store_true",
-			help="Enable debugging output on the console [default: %(default)s].")
-		self.parser.set_defaults(**self.defaults)
+		self.args = None
+		self.config = None
+		self.factory = None
 
 	def parse_cmdline(self):
-		"""
-		Parse the command line.
+		parser = ParseCmdline()
+		self.args = parser.parse_cmdline()
 
-		:return: argparse.Namespace: the object with the parsed arguments
-		assigned to attributes
-		"""
-		self.args = self.parser.parse_args()
+	def setup_logging(self, stdout=False, files=None):
+		if stdout:
+			add_stdout_handler(self.logger)
+		if files:
+			add_file_handler(self.logger, files)
 
-		settings = dict()
-		if self.args.settings:
-			for setting in self.args.settings:
-				try:
-					k, v = setting.split("=")
-				except ValueError:
-					self.parser.error("Invalid setting '{}'.".format(setting))
-				start, symb, end = k.rpartition(":")
-				# try to convert to correct type
-				if v.lower() == "true":
-					v = True
-				elif v.lower() == "false":
-					v = False
-				else:
-					try:
-						v = int(v)
-					except ValueError:
-						pass
-				# support nested settings
-				while symb:
-					k = start
-					v = {end: v}
-					start, symb, end = start.rpartition(":")
-				settings[k] = v
-		self.args.settings = settings
+	def setup_config(self):
+		self.config = setup_configuration(self.args.conffile, **self.args.settings)
 
-		# only set shortcuts if they were set by the user
-		for k, v in self.defaults.items():
-			if getattr(self.args, k) != v:
-				self.args.settings[k] = getattr(self.args, k)
-		return self.args
+	def do_import(self):
+		importer = self.factory.make_mass_importer(self.config["dry_run"])
+
+		self.logger.info("------ Starting mass import... ------")
+		importer.mass_import()
+		self.logger.info("------ Mass import finished. ------")
+
+	def main(self):
+		try:
+			self.parse_cmdline()
+			# early logging configured by cmdline
+			self.setup_logging(self.args.verbose, self.args.logfile)
+
+			self.logger.info("------ ucs@school import tool starting ------")
+	
+			self.setup_config()
+			# logging configured by config file
+			self.setup_logging(self.config["verbose"], self.config["logfile"])
+
+			self.logger.info("------ ucs@school import tool configured ------")
+			self.logger.info("Using configuration file %s.", self.args.conffile)
+			self.logger.info("Using command line arguments: %r", self.args.settings)
+			self.logger.info("Configuration is:\n%s", pprint.pformat(self.config))
+	
+			self.factory = setup_factory(self.config["factory"])
+			self.do_import()
+
+		except ToManyErrors as tme:
+			self.logger.error("%s Exiting. Errors:", tme)
+			for error in tme.errors:
+				self.logger.error("%d: %s", error.entry, error)
+			return 1
+		except UcsSchoolImportFatalError as exc:
+			self.logger.exception("Fatal error:  %s.", exc)
+			return 2
+		except Exception as exc:
+			# This should not happen - it's probably a bug.
+			self.logger.exception("Outer Exception catcher: %r", exc)
+			if not any(map(lambda x: isinstance(x, StreamHandler), self.logger.handlers)):
+				# verbose=False, but this is probably a crash -> show on terminal anyway
+				exc_type, exc_value, exc_traceback = sys.exc_info()
+				traceback.print_exception(exc_type, exc_value, exc_traceback, file=sys.stderr)
+			return 3

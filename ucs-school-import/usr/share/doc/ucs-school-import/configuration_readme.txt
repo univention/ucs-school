@@ -42,7 +42,7 @@ All options can be set from the command line using "--set <option>".
 		"teacher_and_staff": str [3]:                     always replaced by numbers starting from 1.
 	}
 },
-"csv_output":  str: path to the csv output file (for dry_run)
+"csv_output":  str: path to the import job result file
 "dry_run": bool: set to False if changes should be commited to LDAP
 "logfile": str: path to additional logfile
 "maildomain": str: value of 'maildomain' variable that can be used in scheme->email. If unset will try to find one in system.
@@ -52,6 +52,9 @@ All options can be set from the command line using "--set <option>".
 	"delete": bool:
 	"deactivate": bool:
 	"waiting_period": int:
+},
+"output": {
+	"passwords": str: path to the new users passwords file
 },
 "password_length": int [1]: length of the random password generated for new users
 "school": str: name (abbreviation) of school this import is for, if not available from input

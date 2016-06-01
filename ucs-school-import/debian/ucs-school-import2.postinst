@@ -1,10 +1,8 @@
-#!/usr/bin/python2.7
-# -*- coding: utf-8 -*-
+#!/bin/bash
 #
-# Univention UCS@School
-"""
-ucs@school import tool.
-"""
+# UCS@School
+#  postinst script for the debian package
+#
 # Copyright 2016 Univention GmbH
 #
 # http://www.univention.de/
@@ -32,14 +30,19 @@ ucs@school import tool.
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-import sys
+#DEBHELPER#
 
-from ucsschool.importer.frontend.cmdline import CommandLine
+if [ "$1" = "configure" ]; then
+	# Do not copy defaults.json. We want to be able to add defaults in future
+	# updates.
+	for FILE in new.json legacy.json; do
+		if ! [ -e /var/lib/ucs-school-import/configs/$FILE ]; then
+			cp /usr/share/ucs-school-import/configs/$FILE /var/lib/ucs-school-import/configs
+		fi
+	done
 
+	univention-config-registry set \
+		ucsschool/import/debug/werror?no || die
+fi
 
-def main():
-	ui = CommandLine()
-	ui.main()
-
-if __name__ == "__main__":
-	sys.exit(main())
+exit 0

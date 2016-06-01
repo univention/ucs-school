@@ -3,7 +3,7 @@
 #
 # Univention UCS@School
 """
-ucs@school import tool.
+ucs@school import tool for legacy csv format.
 """
 # Copyright 2016 Univention GmbH
 #
@@ -34,11 +34,11 @@ ucs@school import tool.
 
 import sys
 
-from ucsschool.importer.frontend.cmdline import CommandLine
+from ucsschool.importer.legacy.legacy_cmdline import LegacyCommandLine
 
 
 def main():
-	ui = CommandLine()
+	ui = LegacyCommandLine()
 	ui.main()
 
 if __name__ == "__main__":

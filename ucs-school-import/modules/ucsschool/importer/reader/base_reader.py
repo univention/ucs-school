@@ -69,7 +69,7 @@ class BaseReader(object):
 		"""
 		self.entry_count += 1
 		input_data = self.import_users.next()
-		self.logger.debug("Input: %r", input_data)
+		self.logger.debug("Input %d: %r", self.entry_count, input_data)
 		cur_user_roles = self.get_roles(input_data)
 		cur_import_user = self.map(input_data, cur_user_roles)
 		cur_import_user.entry_count = self.entry_count

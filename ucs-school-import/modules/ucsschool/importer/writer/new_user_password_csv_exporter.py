@@ -1,9 +1,8 @@
-#!/usr/bin/python2.7
 # -*- coding: utf-8 -*-
 #
 # Univention UCS@School
 """
-ucs@school import tool.
+Write the passwords of newly created users to a CSV file.
 """
 # Copyright 2016 Univention GmbH
 #
@@ -32,14 +31,42 @@ ucs@school import tool.
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-import sys
+from ucsschool.importer.factory import Factory
+from ucsschool.importer.writer.result_exporter import ResultExporter
 
-from ucsschool.importer.frontend.cmdline import CommandLine
 
+class NewUserPasswordCsvExporter(ResultExporter):
+	"""
+	Export passwords of new users to a CSV file.
+	"""
+	field_names = ("username", "password", "role", "lastname", "firstname", "schools", "classes")
 
-def main():
-	ui = CommandLine()
-	ui.main()
+	def __init__(self, *arg, **kwargs):
+		super(NewUserPasswordCsvExporter, self).__init__(*arg, **kwargs)
+		self.factory = Factory()
 
-if __name__ == "__main__":
-	sys.exit(main())
+	def get_iter(self, user_import):
+		"""
+		Return only the new users.
+		"""
+		li = list()
+		map(li.extend, user_import.added_users.values())
+		li.sort(key=lambda x: x.entry_count)
+		return li
+
+	def get_writer(self):
+		"""
+		Use the user result csv writer.
+		"""
+		return self.factory.make_user_writer(field_names=self.field_names)
+
+	def serialize(self, user):
+		return dict(
+			username=user.name,
+			password=user.password,
+			role=user.role_sting,
+			lastname=user.lastname,
+			firstname=user.firstname,
+			schools=", ".join(user.schools) if user.schools else user.school,
+			classes=getattr(user, "school_class") or "",
+		)

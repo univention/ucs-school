@@ -85,10 +85,13 @@ class ReadOnlyDict(dict):
 			else:
 				# Try to use any other type than str (when overwriting
 				# configuration from cmdline).
-				t = type(v)
-				if t == str and a.get(k):
-					t = type(a[k])
-				a[k] = t(b[k])
+				if v is None:
+					a[k] = b[k]
+				else:
+					t = type(v)
+					if t == str and a.get(k):
+						t = type(a[k])
+					a[k] = t(b[k])
 		return a
 
 	def update(self, E=None, **F):
@@ -120,7 +123,7 @@ class Configuration(object):
 			except ValueError as ve:
 				raise InitialisationError("Error in configuration file '{}': {}.".format(filename, ve))
 			except IOError as exc:
-				raise InitialisationError("Error reading from configuration file '{}': {}.".format(filename, exc))
+				raise InitialisationError("Error reading configuration file {}.".format(exc))
 
 	_instance = None
 

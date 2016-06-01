@@ -45,8 +45,8 @@ class CsvReader(BaseReader):
 	_attrib_names = dict()  # cache for Attribute names
 	encoding = "utf-8"
 
-	@staticmethod
-	def get_dialect(fp):
+	@classmethod
+	def get_dialect(cls, fp):
 		"""
 		Overwrite me to force a certain CSV dialect.
 

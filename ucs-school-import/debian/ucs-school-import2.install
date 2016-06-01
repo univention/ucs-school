@@ -2,3 +2,4 @@ usr/share/ucs-school-import/configs/*.json                  usr/share/ucs-school
 usr/share/doc/ucs-school-import/configuration_readme.txt    usr/share/doc/ucs-school-import/
 modules/ucsschool                                           usr/share/pyshared/
 ucs-school-import2                                          usr/share/ucs-school-import/scripts/
+legacy_import_user                                          usr/share/ucs-school-import/scripts/import_user

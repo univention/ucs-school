@@ -283,9 +283,6 @@ if [ $JS_LAST_EXECUTED_VERSION -lt 7 ] ; then
 	done
 fi
 
-univention-config-registry set \
-	ucsschool/import/debug/werror?no || die
-
 joinscript_save_current_version
 
 exit 0

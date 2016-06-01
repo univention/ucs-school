@@ -38,20 +38,19 @@ from ucsschool.importer.writer.result_exporter import ResultExporter
 from ucsschool.lib.roles import role_pupil
 
 
-class CsvResultExporter(ResultExporter):
+class UserImportCsvResultExporter(ResultExporter):
+	"""
+	Export the results of the user import to a CSV file.
+	"""
 	field_names = ("line", "success", "error", "action", "role", "username", "schools", "firstname", "lastname",
 		"birthday", "email", "disabled", "classes", "source_uid", "record_uid", "error_msg")
 
 	def __init__(self, *arg, **kwargs):
 		"""
-		Create a CSV file writer.
-
 		:param arg: list: ignored
-		:param kwargs: dict: set "dialect" to the desired CSV dialect (as
-		supported by the Python CSV library). If unset will try to detect
-		dialect of input file or fall back to "excel".
+		:param kwargs: dict: ignored
 		"""
-		super(CsvResultExporter, self).__init__(*arg, **kwargs)
+		super(UserImportCsvResultExporter, self).__init__(*arg, **kwargs)
 		self.factory = Factory()
 
 	def get_iter(self, user_import):
@@ -62,10 +61,18 @@ class CsvResultExporter(ResultExporter):
 		:param user_import: UserImport object used for the import
 		:return: iterator: both ImportUsers and UcsSchoolImportError objects
 		"""
-		li = user_import.errors
-		map(li.extend, user_import.added_users.values())
-		map(li.extend, user_import.modified_users.values())
-		map(li.extend, user_import.deleted_users.values())
+		def exc_count(exc):
+			if exc.import_user:
+				entry_count = exc.import_user.entry_count
+			else:
+				entry_count = -1
+			return max(exc.entry, entry_count)
+
+		li = sorted(user_import.errors, key=exc_count)
+		for users in [user_import.added_users, user_import.modified_users, user_import.deleted_users]:
+			tmp = list()
+			map(tmp.extend, [u for u in users.values() if u])
+			li.extend(sorted(tmp, key=lambda x: x.entry_count))
 		return li
 
 	def get_writer(self):

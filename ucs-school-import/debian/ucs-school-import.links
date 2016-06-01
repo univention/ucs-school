@@ -6,7 +6,6 @@ usr/share/ucs-school-import/scripts/ucs-school-import       usr/share/ucs-school
 usr/share/ucs-school-import/scripts/ucs-school-import       usr/share/ucs-school-import/scripts/import_networks
 usr/share/ucs-school-import/scripts/ucs-school-import       usr/share/ucs-school-import/scripts/import_printer
 usr/share/ucs-school-import/scripts/ucs-school-import       usr/share/ucs-school-import/scripts/import_router
-usr/share/ucs-school-import/scripts/ucs-school-import       usr/share/ucs-school-import/scripts/import_user
 usr/share/ucs-school-import/scripts/ucs-school-import       usr/share/ucs-school-import/scripts/activate_groupmembers
 usr/share/ucs-school-import/scripts/ucs-school-import       usr/share/ucs-school-import/scripts/export_computer
 usr/share/ucs-school-import/scripts/ucs-school-import       usr/share/ucs-school-import/scripts/set_ou_sharefileserver
