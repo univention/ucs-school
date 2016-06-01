@@ -73,7 +73,7 @@ univention-directory-manager settings/extended_options create "$@" --ignore_exis
 	--set shortDescription="UCS@school Organizational Unit" \
 	--set longDescription="Specifies that this Organizational Unit is a UCS@school OU" \
 	--set translationShortDescription='"de_DE" "UCS@school Organisationseinheit"' \
-	--set translationLongDescription='"de_DE" "Spezifiziert, dass die Organisationseinheit eine UCS@school OU ist"' || die
+	--set translationLongDescription='"de_DE" "Spezifiziert, dass die Organisationseinheit eine UCS@school-Schule ist"' || die
 
 univention-directory-manager settings/extended_attribute create "$@" --ignore_exists \
 	--position "cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
@@ -150,8 +150,8 @@ univention-directory-manager settings/extended_options create "$@" --ignore_exis
 	--set editable=0 \
 	--set shortDescription="UCS@school Student" \
 	--set longDescription="Specifies that this user is a UCS@school student" \
-	--set translationShortDescription='"de_DE" "UCS@school Schüler"' \
-	--set translationLongDescription='"de_DE" "Spezifiziert, dass dieser Benutzer ein UCS@school Schüler ist"' || die
+	--set translationShortDescription='"de_DE" "UCS@school-Schüler"' \
+	--set translationLongDescription='"de_DE" "Spezifiziert, dass dieser Benutzer ein UCS@school-Schüler ist"' || die
 
 univention-directory-manager settings/extended_options create "$@" --ignore_exists \
 	--position "cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
@@ -163,8 +163,8 @@ univention-directory-manager settings/extended_options create "$@" --ignore_exis
 	--set editable=0 \
 	--set shortDescription="UCS@school Teacher" \
 	--set longDescription="Specifies that this user is a UCS@school teacher" \
-	--set translationShortDescription='"de_DE" "UCS@school Lehrer"' \
-	--set translationLongDescription='"de_DE" "Spezifiziert, dass dieser Benutzer ein UCS@school Lehrer ist"' || die
+	--set translationShortDescription='"de_DE" "UCS@school-Lehrer"' \
+	--set translationLongDescription='"de_DE" "Spezifiziert, dass dieser Benutzer ein UCS@school-Lehrer ist"' || die
 
 univention-directory-manager settings/extended_options create "$@" --ignore_exists \
 	--position "cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
@@ -176,8 +176,8 @@ univention-directory-manager settings/extended_options create "$@" --ignore_exis
 	--set editable=0 \
 	--set shortDescription="UCS@school Staff" \
 	--set longDescription="Specifies that this user is a UCS@school staff" \
-	--set translationShortDescription='"de_DE" "UCS@school Mitarbeiter"' \
-	--set translationLongDescription='"de_DE" "Spezifiziert, dass dieser Benutzer ein UCS@school Mitarbeiter ist"' || die
+	--set translationShortDescription='"de_DE" "UCS@school-Mitarbeiter"' \
+	--set translationLongDescription='"de_DE" "Spezifiziert, dass dieser Benutzer ein UCS@school-Mitarbeiter ist"' || die
 
 univention-directory-manager settings/extended_options create "$@" --ignore_exists \
 	--position "cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
@@ -189,8 +189,8 @@ univention-directory-manager settings/extended_options create "$@" --ignore_exis
 	--set editable=0 \
 	--set shortDescription="UCS@school Administrator" \
 	--set longDescription="Specifies that this user is a UCS@school Administrator" \
-	--set translationShortDescription='"de_DE" "UCS@school Administrator"' \
-	--set translationLongDescription='"de_DE" "Spezifiziert, dass dieser Benutzer ein UCS@school Administrator ist"' || die
+	--set translationShortDescription='"de_DE" "UCS@school-Administrator"' \
+	--set translationLongDescription='"de_DE" "Spezifiziert, dass dieser Benutzer ein UCS@school-Administrator ist"' || die
 
 univention-directory-manager settings/extended_attribute create "$@" --ignore_exists \
 	--position "cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
