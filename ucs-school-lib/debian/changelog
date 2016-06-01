@@ -1,3 +1,9 @@
+ucs-school-lib (9.0.3-1) unstable; urgency=medium
+
+  * Bug #41117: detect User class depending on objectClass
+
+ -- Florian Best <best@univention.de>  Wed, 01 Jun 2016 19:59:01 +0200
+
 ucs-school-lib (9.0.2-3) unstable; urgency=medium
 
   * Bug #41117: fix typos in last commit

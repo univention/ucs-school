@@ -142,26 +142,44 @@ class User(UCSSchoolHelperAbstractClass):
 
 	@classmethod
 	def is_student(cls, school, dn):
+		logger.warning('Using deprecated method is_student()')
 		return cls.get_search_base(school).isStudent(dn)
 
 	@classmethod
 	def is_exam_student(cls, school, dn):
+		logger.warning('Using deprecated method is_exam_student()')
 		return cls.get_search_base(school).isExamUser(dn)
 
 	@classmethod
 	def is_teacher(cls, school, dn):
+		logger.warning('Using deprecated method is_teacher()')
 		return cls.get_search_base(school).isTeacher(dn)
 
 	@classmethod
 	def is_staff(cls, school, dn):
+		logger.warning('Using deprecated method is_staff()')
 		return cls.get_search_base(school).isStaff(dn)
 
 	@classmethod
 	def is_admininstrator(cls, school, dn):
+		logger.warning('Using deprecated method is_admininstrator()')
 		return cls.get_search_base(school).isAdmin(dn)
 
 	@classmethod
 	def get_class_for_udm_obj(cls, udm_obj, school):
+		ocs = set(udm_obj.oldattr.get('objectClass', []))
+		if ocs & set(['ucsschoolTeacher', 'ucsschoolStaff']):
+			return TeachersAndStaff
+		if 'ucsschoolExam' in ocs:
+			return ExamStudent
+		if 'ucsschoolTeacher' in ocs:
+			return Teacher
+		if 'ucsschoolStaff' in ocs:
+			return Staff
+		if 'ucsschoolStudent' in ocs:
+			return Student
+
+		# legacy DN based checks
 		if cls.is_student(school, udm_obj.dn):
 			return Student
 		if cls.is_teacher(school, udm_obj.dn):

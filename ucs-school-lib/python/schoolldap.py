@@ -228,12 +228,6 @@ class SchoolSearchBase(object):
 		return self._availableSchools
 
 	@property
-	def allSchoolBases(self):
-		availableSchools = self.availableSchools
-		for school in availableSchools:
-			yield self.__class__(availableSchools, school, None, self._ldapBase)
-
-	@property
 	def dhcp(self):
 		return "cn=dhcp,%s" % self.schoolDN
 
@@ -409,7 +403,7 @@ class SchoolBaseModule(Base):
 		return super(SchoolBaseModule, self).bind_user_connection(lo)
 
 	@LDAP_Connection()
-	def schools(self, request, ldap_user_read=None, ldap_position=None, search_base=None):
+	def schools(self, request, ldap_user_read=None):
 		"""Returns a list of all available school"""
 		from ucsschool.lib.models import School
 		schools = School.from_binddn(ldap_user_read)
@@ -429,21 +423,21 @@ class SchoolBaseModule(Base):
 
 	@sanitize(school=StringSanitizer(required=True), pattern=StringSanitizer(default=''))
 	@LDAP_Connection()
-	def classes(self, request, ldap_user_read=None, ldap_position=None, search_base=None):
+	def classes(self, request, ldap_user_read=None, search_base=None):
 		"""Returns a list of all classes of the given school"""
 		pattern = request.options['pattern']
 		self.finished(request.id, self._groups(ldap_user_read, search_base.school, search_base.classes, pattern))
 
 	@sanitize(school=StringSanitizer(required=True), pattern=StringSanitizer(default=''))
 	@LDAP_Connection()
-	def workgroups(self, request, ldap_user_read=None, ldap_position=None, search_base=None):
+	def workgroups(self, request, ldap_user_read=None, search_base=None):
 		"""Returns a list of all working groups of the given school"""
 		pattern = request.options['pattern']
 		self.finished(request.id, self._groups(ldap_user_read, search_base.school, search_base.workgroups, pattern, 'one'))
 
 	@sanitize(school=StringSanitizer(required=True), pattern=StringSanitizer(default=''))
 	@LDAP_Connection()
-	def groups(self, request, ldap_user_read=None, ldap_position=None, search_base=None):
+	def groups(self, request, ldap_user_read=None, search_base=None):
 		"""Returns a list of all groups (classes and workgroups) of the given school"""
 		# use as base the path for 'workgroups', as it incorporates workgroups and classes
 		# when searching with scope 'sub'
@@ -452,12 +446,12 @@ class SchoolBaseModule(Base):
 
 	@sanitize(school=StringSanitizer(required=True), pattern=StringSanitizer(default=''))
 	@LDAP_Connection()
-	def rooms(self, request, ldap_user_read=None, ldap_position=None, search_base=None):
+	def rooms(self, request, ldap_user_read=None, search_base=None):
 		"""Returns a list of all available school"""
 		pattern = request.options['pattern']
 		self.finished(request.id, self._groups(ldap_user_read, search_base.school, search_base.rooms, pattern))
 
-	def _users(self, ldap_connection, search_base, group=None, user_type=None, pattern=''):
+	def _users(self, ldap_connection, school, group=None, user_type=None, pattern=''):
 		"""Returns a list of all users given 'pattern', 'school' (search base) and 'group'"""
 		import ucsschool.lib.models
 		if not user_type:
@@ -476,7 +470,7 @@ class SchoolBaseModule(Base):
 			groupObj = groupModule.object(None, ldap_connection, None, group)
 			groupObj.open()
 
-		users = cls.get_all(ldap_connection, search_base.school, LDAP_Filter.forUsers(pattern))
+		users = cls.get_all(ldap_connection, school, LDAP_Filter.forUsers(pattern))
 		users = [user.get_udm_object(ldap_connection) for user in users]
 		if groupObj:
 			# filter users to be members of the specified group
