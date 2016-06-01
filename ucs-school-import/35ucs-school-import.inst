@@ -227,10 +227,10 @@ univention-directory-manager settings/extended_attribute create "$@" --ignore_ex
 	--append options="ucsschoolStaff" \
 	--append options="ucsschoolAdministrator" \
 	--set tabName="UCS@school" \
-	--set shortDescription="External database identifier." \
+	--set shortDescription="External database identifier" \
 	--set longDescription="Identifier of external database from which the user was imported." \
-	--set translationShortDescription='"de_DE" "Externe Datenbank ID."' \
-	--set translationLongDescription='"de_DE" "ID der externen Datenbank von welcher der Benutzer importiert wurde."' \
+	--set translationShortDescription='"de_DE" "Externe Datenbank ID"' \
+	--set translationLongDescription='"de_DE" "ID der externen Datenbank, von welcher der Benutzer importiert wurde."' \
 	--set CLIName="ucsschoolSourceUID" \
 	--set objectClass="ucsschoolType" \
 	--set ldapMapping="ucsschoolSourceUID" \
@@ -251,8 +251,8 @@ univention-directory-manager settings/extended_attribute create "$@" --ignore_ex
 	--set tabName="UCS@school" \
 	--set shortDescription="External database primary key." \
 	--set longDescription="Primary key of the external database from which the user was imported." \
-	--set translationShortDescription='"de_DE" "Primärer Schlüssel in externer Datenbank."' \
-	--set translationLongDescription='"de_DE" "Primärer Schlüssel in der externen Datenbank von welcher der Benutzer importiert wurde."' \
+	--set translationShortDescription='"de_DE" "Primärer Schlüssel in externer Datenbank"' \
+	--set translationLongDescription='"de_DE" "Primärer Schlüssel in der externen Datenbank, von welcher der Benutzer importiert wurde."' \
 	--set CLIName="ucsschoolRecordUID" \
 	--set objectClass="ucsschoolType" \
 	--set ldapMapping="ucsschoolRecordUID" \

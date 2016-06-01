@@ -1,6 +1,7 @@
 ucs-school-import (14.0.0-8) unstable; urgency=low
 
   * Bug #41014: updated extended attribute translations
+  * Bug #41239: updated extended attribute translations
 
  -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Wed, 01 Jun 2016 16:01:19 +0200
 
