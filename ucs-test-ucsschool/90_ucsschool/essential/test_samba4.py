@@ -51,6 +51,7 @@ class TestSamba4(object):
 		and executes it. When stdin is needed, it can be provided with kwargs.
 		To write to a file an istance can be provided to stdout.
 		"""
+		print '\n create_and_run_process(%r, shell=%r)' % (cmd, shell)
 		proc = Popen(cmd,
 					 stdin=stdin, stdout=stdout, stderr=PIPE,
 					 shell=shell, close_fds=True)
