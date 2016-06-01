@@ -127,7 +127,7 @@ class User(Person):
 				{
 					'object':{
 						'school': self.school,
-						'school_class': self.school_class,
+						'school_class': {self.school: [self.school_class]},
 						'email': self.mail,
 						'name': self.username,
 						'type': self.typ,
@@ -173,16 +173,18 @@ class User(Person):
 				'firstname': self.firstname,
 				'lastname': self.lastname,
 				'type_name': self.type_name(),
-				'school': self.school,
+				'school': [self.school],
 				'disabled' : 'none',
 				'birthday': None,
 				'password': None,
 				'type': self.typ,
 				'email': self.mail,
-				'objectType': 'users/user'
+				'objectType': 'users/user',
+				'record_uid': None,
+				'source_uid': None,
 				}
 		if self.is_student() or self.is_teacher() or self.is_teacher_staff():
-			info.update({'school_class': self.school_class})
+			info.update({'school_class': [self.school_class]})
 
 		if expected_attrs:
 			info.update(expected_attrs)

@@ -1,3 +1,10 @@
+ucs-test-ucsschool (3.0.5-33) unstable; urgency=low
+
+  * Bug #41408: updated script 70_users_module due to changes for import
+    tools and ou-overlapping users
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Wed, 01 Jun 2016 15:57:38 +0200
+
 ucs-test-ucsschool (3.0.5-32) unstable; urgency=low
 
   * Bug #40870: fixed traceback in 80_move_users_into_another_ou
