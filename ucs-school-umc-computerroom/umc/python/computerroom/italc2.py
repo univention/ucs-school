@@ -46,7 +46,7 @@ from univention.admin.uldap import explodeDn
 from univention.admin.uexceptions import noObject
 
 from ucsschool.lib.schoolldap import LDAP_Connection
-from ucsschool.lib.models import User, Group, ComputerRoom, SchoolComputer, MultipleObjectsError
+from ucsschool.lib.models import User, Group, ComputerRoom, MultipleObjectsError
 
 import notifier
 import notifier.signals
@@ -104,7 +104,7 @@ class UserMap(dict):
 		return dict.__getitem__(self, user)
 
 	@LDAP_Connection()
-	def _read_user(self, userstr, ldap_user_read=None, ldap_position=None, search_base=None):
+	def _read_user(self, userstr, ldap_user_read=None):
 		match = self.USER_REGEX.match(userstr)
 		if not match or not userstr:
 			raise AttributeError('invalid key "%s"' % userstr)
@@ -113,9 +113,8 @@ class UserMap(dict):
 			raise AttributeError('username missing: %s' % userstr)
 
 		lo = ldap_user_read
-		# create search base for current school
 		try:
-			user = User.from_udm_obj(User.get_only_udm_obj(lo, filter_format('uid=%s', username), None, lo))
+			user = User.from_udm_obj(User.get_only_udm_obj(lo, filter_format('uid=%s', (username,))), None, lo)
 		except (noObject, MultipleObjectsError):
 			MODULE.info('Unknown user "%s"' % username)
 			dict.__setitem__(self, userstr, UserInfo('', ''))
@@ -207,7 +206,7 @@ class ITALC_Computer(notifier.signals.Provider, QObject):
 		italc.ItalcVncConnection.HostUnreachable: 'offline'
 	}
 
-	def __init__(self, ldap_dn=None):
+	def __init__(self, computer):
 		QObject.__init__(self)
 		notifier.signals.Provider.__init__(self)
 
@@ -221,8 +220,9 @@ class ITALC_Computer(notifier.signals.Provider, QObject):
 		self.signal_new('system-tray-icon')
 		self._vnc = None
 		self._core = None
-		self._dn = ldap_dn
-		self._computer = None
+		self._computer = computer
+		self._dn = self._computer.dn
+		self.objectType = self._computer.module
 		self._timer = None
 		self._resetUserInfoTimeout()
 		self._username = LockableAttribute()
@@ -231,21 +231,7 @@ class ITALC_Computer(notifier.signals.Provider, QObject):
 		self._state = LockableAttribute(initial_value='disconnected')
 		self._teacher = LockableAttribute(initial_value=False)
 		self._allowedClients = []
-		self.readLDAP()
 		self.open()
-
-		self.objectType = self.get_object_type()
-
-	def get_object_type(self):
-		return self._computer.module
-
-	@LDAP_Connection()
-	def readLDAP(self, ldap_user_read=None, ldap_position=None, search_base=None):
-		try:
-			self._computer = SchoolComputer.from_dn(self._dn, None, ldap_user_read).get_udm_object(ldap_user_read)
-		except noObject as exc:
-			MODULE.info('Could not find computer %s: %s' % (self._dn, exc))
-			raise ITALC_Error('Unknown computer type')
 
 	def open(self):
 		MODULE.info('Opening VNC connection to %s' % (self.ipAddress))
@@ -606,7 +592,7 @@ class ITALC_Manager(dict, notifier.signals.Provider):
 			ITALC_Manager.ROOM_DN = None
 
 	@LDAP_Connection()
-	def _set(self, room, ldap_user_read=None, ldap_position=None, search_base=None):
+	def _set(self, room, ldap_user_read=None):
 		lo = ldap_user_read
 
 		room_dn = room
@@ -632,9 +618,9 @@ class ITALC_Manager(dict, notifier.signals.Provider):
 		if not computers:
 			raise ITALC_Error('There are no computers in the selected room.')
 
-		for dn in computers:
+		for computer in computers:
 			try:
-				comp = ITALC_Computer(dn)
+				comp = ITALC_Computer(computer.get_udm_object(lo))
 				self.__setitem__(comp.name, comp)
 			except ITALC_Error as exc:
 				MODULE.warn('Computer could not be added: %s' % (exc,))

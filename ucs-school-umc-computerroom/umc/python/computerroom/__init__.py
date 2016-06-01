@@ -70,7 +70,7 @@ from ucsschool.lib.schoolldap import LDAP_Connection, SchoolBaseModule, Display
 from ucsschool.lib.schoollessons import SchoolLessons
 from ucsschool.lib.smbstatus import SMB_Status
 import ucsschool.lib.internetrules as internetrules
-from ucsschool.lib.models import School
+from ucsschool.lib.models import School, ComputerRoom, User
 
 #import univention.management.console.modules.schoolexam.util as exam_util
 
@@ -306,7 +306,7 @@ class Instance(SchoolBaseModule):
 		self.finished(request.id, map(lambda x: x.name, internetrules.list()))
 
 	@LDAP_Connection()
-	def room_acquire(self, request, ldap_user_read=None, ldap_position=None, search_base=None):
+	def room_acquire(self, request, ldap_user_read=None):
 		"""Acquires the specified computerroom:
 		requests.options = { 'room': <roomDN> }
 		"""
@@ -335,14 +335,15 @@ class Instance(SchoolBaseModule):
 
 		# match the corresponding school OU
 		school = None
-		for ischool in School.get_all(ldap_user_read):
+		schools = School.get_all(ldap_user_read)
+		for ischool in schools:
 			pattern = re.compile('.*%s$' % (re.escape(ischool.dn)), re.I)
 			if pattern.match(roomDN):
 				school = ischool.name
 				break
 		else:
 			# no match found
-			MODULE.error('Failed to find corresponding school OU for room "%s" in list of schools (%s)' % (roomDN, search_base.availableSchools))
+			MODULE.error('Failed to find corresponding school OU for room "%s" in list of schools (%s)' % (roomDN, [x.name for x in schools]))
 			success = False
 			message = 'WRONG_SCHOOL'
 			_finished()
@@ -366,63 +367,48 @@ class Instance(SchoolBaseModule):
 
 		_finished()
 
+	@sanitize(school=StringSanitizer(required=True))
 	@LDAP_Connection()
-	def rooms(self, request, ldap_user_read=None, ldap_position=None, search_base=None):
+	def rooms(self, request, ldap_user_read=None):
 		"""Returns a list of all available rooms"""
-		self.required_options(request, 'school')
 		rooms = []
-		userModule = udm_modules.get('users/user')
 		# create search base for current school
-		for iroom in self._groups(ldap_user_read, search_base.school, search_base.rooms):
-			# add room status information
-			roomInfo = _readRoomInfo(iroom['id']) or dict()
-			userDN = roomInfo.get('user')
-			if userDN and userDN != self._user_dn and ('pid' in roomInfo or 'exam' in roomInfo):
-				# the room is currently locked by another user
-				iroom['locked'] = True
+		for room in ComputerRoom.get_all(ldap_user_read, request.options['school']):
+			room_info = _readRoomInfo(room.dn) or dict()
+			user_dn = room_info.get('user')
+			locked = user_dn and user_dn != self._user_dn and ('pid' in room_info or 'exam' in room_info)
+			if locked:
 				try:
 					# open the corresponding UDM object to get a displayable user name
-					userObj = userModule.object(None, ldap_user_read, None, userDN)
-					userObj.open()
-					iroom['user'] = Display.user(userObj)
+					user_dn = Display.user(User.from_dn(user_dn, None, ldap_user_read).get_udm_object(ldap_user_read))
 				except udm_exceptions.base as exc:
-					# something went wrong, save the user DN
-					iroom['user'] = userDN
-					MODULE.warn('Cannot open LDAP information for user "%s": %s' % (userDN, exc))
-			else:
-				# the room is not locked :)
-				iroom['locked'] = False
-
-			# check for exam mode
-			iroom['exam'] = roomInfo.get('exam')
-			iroom['examDescription'] = roomInfo.get('examDescription')
-			iroom['examEndTime'] = roomInfo.get('examEndTime')
-
-			rooms.append(iroom)
+					MODULE.warn('Cannot open LDAP information for user %r: %s' % (user_dn, exc))
+			rooms.append({
+				'id': room.dn,
+				'label': room.get_relative_name(),
+				'user': user_dn,
+				'locked': locked,
+				'exam': room_info.get('exam'),
+				'examDescription': room_info.get('examDescription'),
+				'examEndTime': room_info.get('examEndTime'),
+			})
 
 		self.finished(request.id, rooms)
 
 	@sanitize(ipaddress=ListSanitizer(required=True, sanitizer=IPAddressSanitizer(), min_elements=1, max_elements=10))
 	@LDAP_Connection()
-	def guess_room(self, request, ldap_user_read=None, ldap_position=None, search_base=None):
+	def guess_room(self, request, ldap_user_read=None):
 		ipaddress = request.options['ipaddress']
-		self.finished(request.id, self._guess_room(ipaddress, ldap_user_read, search_base))
-
-	def _guess_room(self, ipaddress, lo, search_base):
 		host_filter = self._get_host_filter(ipaddress)
-		computers = lo.searchDn(host_filter)
+		computers = ldap_user_read.searchDn(host_filter)
 		if computers:
 			room_filter = self._get_room_filter(computers)
-			rooms = lo.searchDn(room_filter)
-
-			for school in search_base.allSchoolBases:
-				for roomdn in rooms:
-					if school.isRoom(roomdn):
-						return dict(
-							room=roomdn,
-							school=school.getOU(roomdn)
-						)
-		return dict(school=None, room=None)
+			for school in School.get_all(ldap_user_read):
+				school = school.name
+				for room in ComputerRoom.get_all(ldap_user_read, school, room_filter):
+					self.finished(request.id, dict(school=school, room=room.dn))
+					return
+		self.finished(request.id, dict(school=None, room=None))
 
 	def _get_room_filter(self, computers):
 		return '(|(%s))' % ')('.join(filter_format('uniqueMember=%s', (computer,)) for computer in computers)
@@ -442,7 +428,7 @@ class Instance(SchoolBaseModule):
 			raise UMC_Error(_('A different user is already running a computerroom session.'))
 
 	@LDAP_Connection()
-	def query(self, request, search_base=None, ldap_user_read=None, ldap_position=None):
+	def query(self, request, ldap_user_read=None):
 		"""Searches for entries. This is not allowed if the room could not be acquired.
 
 		requests.options = {}
@@ -464,7 +450,7 @@ class Instance(SchoolBaseModule):
 		self.finished(request.id, result)
 
 	@LDAP_Connection()
-	def update(self, request, search_base=None, ldap_user_read=None, ldap_position=None):
+	def update(self, request, ldap_user_read=None):
 		"""Returns an update for the computers in the selected
 		room. Just attributes that have changed since the last call will
 		be included in the result
