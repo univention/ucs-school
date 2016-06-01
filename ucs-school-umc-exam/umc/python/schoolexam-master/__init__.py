@@ -40,9 +40,13 @@ import re
 
 from univention.management.console.config import ucr
 from univention.management.console.log import MODULE
-from univention.management.console.modules import UMC_CommandError, UMC_OptionTypeError, UMC_Error
+from univention.management.console.modules import UMC_Error
+from univention.management.console.modules.decorators import sanitize
+from univention.management.console.modules.sanitizers import StringSanitizer
 from ucsschool.lib.schoolldap import LDAP_Connection, SchoolSearchBase, SchoolBaseModule, ADMIN_WRITE, USER_READ
+from ucsschool.lib.models import ComputerRoom, Student, ExamStudent
 
+import univention.admin.uexceptions
 import univention.admin.modules
 univention.admin.modules.update()
 
@@ -62,109 +66,87 @@ class Instance(SchoolBaseModule):
 		self._examGroup = None
 		self._examUserContainerDN = None
 
-		## Context for @property examGroup
-		self._ldap_user_read = None
-		self._ldap_position = None
-		self._search_base = None
-
-	@property
-	def examGroup(self):
+	def examGroup(self, ldap_admin_write, ldap_position, school):
 		'''fetch the examGroup object, create it if missing'''
 		if not self._examGroup:
+			search_base = SchoolSearchBase([school], school)
+			examGroup = search_base.examGroup
+			examGroupName = search_base.examGroupName
 			if 'groups/group' in self._udm_modules:
 				module_groups_group = self._udm_modules['groups/group']
 			else:
-				univention.admin.modules.init(self._ldap_admin_write, self._ldap_position, module_groups_group)
+				univention.admin.modules.init(ldap_admin_write, ldap_position, module_groups_group)
 				self._udm_modules['groups/group'] = module_groups_group
 
 			## Determine exam_group_dn
 			try:
 				ldap_filter = '(objectClass=univentionGroup)'
-				exam_group_dn = self._ldap_admin_write.searchDn(ldap_filter, self._search_base.examGroup, scope='base')
-				self._examGroup = module_groups_group.object(None, self._ldap_admin_write, self._ldap_position, self._search_base.examGroup)
+				ldap_admin_write.searchDn(ldap_filter, examGroup, scope='base')
+				self._examGroup = module_groups_group.object(None, ldap_admin_write, ldap_position, examGroup)
 				## self._examGroup.create() # currently not necessary
 			except univention.admin.uexceptions.noObject:
 				try:
-					position = univention.admin.uldap.position(self._search_base._ldapBase)
-					position.setDn(self._ldap_admin_write.parentDn(self._search_base.examGroup))
-					self._examGroup = module_groups_group.object(None, self._ldap_admin_write, position, self._search_base.examGroup)
+					position = univention.admin.uldap.position(ldap_position.getBase())
+					position.setDn(ldap_admin_write.parentDn(examGroup))
+					self._examGroup = module_groups_group.object(None, ldap_admin_write, position, examGroup)
 					self._examGroup.open()
-					self._examGroup['name'] = self._search_base.examGroupName
+					self._examGroup['name'] = examGroupName
 					self._examGroup['sambaGroupType'] = self._examGroup.descriptions['sambaGroupType'].base_default[0]
 					self._examGroup.create()
 				except univention.admin.uexceptions.base:
-					message = _('Failed to create exam group\n%s') % traceback.format_exc()
-					raise UMC_CommandError(message)
+					raise UMC_Error(_('Failed to create exam group\n%s') % traceback.format_exc())
 
 		return self._examGroup
 
-	@property
-	def examUserContainerDN(self):
+	def examUserContainerDN(self, ldap_admin_write, ldap_position, school):
 		'''lookup examUserContainerDN, create it if missing'''
 		if not self._examUserContainerDN:
+			search_base = SchoolSearchBase([school], school)
+			examUsers = search_base.examUsers
+			examUserContainerName = search_base._examUserContainerName
 			try:
-				ldap_filter = '(objectClass=organizationalRole)'
-				exam_user_container_dn = self._ldap_admin_write.searchDn(ldap_filter, self._search_base.examUsers, scope='base')
+				ldap_admin_write.searchDn('(objectClass=organizationalRole)', examUsers, scope='base')
 			except univention.admin.uexceptions.noObject:
 				try:
 					module_containers_cn = univention.admin.modules.get('container/cn')
-					univention.admin.modules.init(self._ldap_admin_write, self._ldap_position, module_containers_cn)
-					position = univention.admin.uldap.position(self._search_base._ldapBase)
-					position.setDn(self._ldap_admin_write.parentDn(self._search_base.examUsers))
-					exam_user_container = module_containers_cn.object(None, self._ldap_admin_write, position, self._search_base.examUsers)
+					univention.admin.modules.init(ldap_admin_write, ldap_position, module_containers_cn)
+					position = univention.admin.uldap.position(ldap_position.getBase())
+					position.setDn(ldap_admin_write.parentDn(examUsers))
+					exam_user_container = module_containers_cn.object(None, ldap_admin_write, position, examUsers)
 					exam_user_container.open()
-					exam_user_container['name'] = self._search_base._examUserContainerName
+					exam_user_container['name'] = examUserContainerName
 					exam_user_container.create()
 				except univention.admin.uexceptions.base:
-					message = _('Failed to create exam container\n%s') % traceback.format_exc()
-					raise UMC_CommandError(message)
+					raise UMC_Error(_('Failed to create exam container\n%s') % traceback.format_exc())
 
-			self._examUserContainerDN = self._search_base.examUsers
+			self._examUserContainerDN = examUsers
 
 		return self._examUserContainerDN
 
+	@sanitize(userdn=StringSanitizer(required=True), description=StringSanitizer(default=''))
 	@LDAP_Connection(USER_READ, ADMIN_WRITE)
-	def create_exam_user(self, request, ldap_user_read=None, ldap_admin_write=None, ldap_position=None, search_base=None):
+	def create_exam_user(self, request, ldap_user_read=None, ldap_admin_write=None, ldap_position=None):
 		'''Create an exam account cloned from a given user account.
 		   The exam account is added to a special exam group to allow GPOs and other restrictions
 		   to be enforced via the name of this group.
 		   The group has to be created earlier, e.g. by create_ou (ucs-school-import).'''
 
-		### Origin user
-		self.required_options(request, 'userdn')
-		userdn = request.options.get('userdn')
-
-		### get search base for OU of given user dn
-		school = SchoolSearchBase.getOU(userdn)
-		if not school:
-			raise UMC_Error(_('User is not below a school OU: %s') % userdn)
-		search_base = SchoolSearchBase(search_base.availableSchools, school)
-
-		## store the ldap related objects for calls to the examGroup property
-		self._ldap_admin_write = ldap_admin_write
-		self._ldap_position = ldap_position
-		self._search_base = search_base
-
-		## Try to open the object
-		if 'users/user' in self._udm_modules:
-			module_users_user = self._udm_modules['users/user']
-		else:
-			module_users_user = univention.admin.modules.get('users/user')
-			univention.admin.modules.init(ldap_admin_write, ldap_position, module_users_user)
-			self._udm_modules['users/user'] = module_users_user
-
+		userdn = request.options['userdn']
 		try:
-			user_orig = module_users_user.object(None, ldap_admin_write, ldap_position, userdn)
-			user_orig.open()
+			user = Student.from_dn(userdn, None, ldap_admin_write)
+		except univention.admin.uexceptions.noObject:
+			raise UMC_Error(_('Student %r not found.') % (userdn,))
 		except univention.admin.uexceptions.ldapError:
-			raise UMC_OptionTypeError(_('Invalid username (%s)') % userdn)
+			raise
+
+		user_orig = user.get_udm_object(ldap_admin_write)
 
 		### uid and DN of exam_user
 		exam_user_uid = "".join((self._examUserPrefix, user_orig['username']))
-		exam_user_dn = "uid=%s,%s" % (exam_user_uid, self.examUserContainerDN)
+		exam_user_dn = "uid=%s,%s" % (exam_user_uid, self.examUserContainerDN(ldap_admin_write, ldap_position, self._search_base))
 
 		### Check if it's blacklisted
-		for prohibited_object in univention.admin.handlers.settings.prohibited_username.lookup(None, ldap_admin_write, '')
+		for prohibited_object in univention.admin.handlers.settings.prohibited_username.lookup(None, ldap_admin_write, ''):
 			if exam_user_uid in prohibited_object['usernames']:
 				raise UMC_Error(_('Requested exam username %s is not allowed according to settings/prohibited_username object %s') % (exam_user_uid, prohibited_object['name']))
 
@@ -285,9 +267,8 @@ class Instance(SchoolBaseModule):
 		except:
 			for i, j in alloc:
 				univention.admin.allocators.release(ldap_admin_write, ldap_position, i, j)
-
-			message = _('ERROR: Creation of exam user account failed\n%s') % traceback.format_exc()
-			raise UMC_Error(message)
+			MODULE.error('Creation of exam user account failed: %s' % (traceback.format_exc(),))
+			raise
 
 		## Add exam_user to groups
 		if 'groups/group' in self._udm_modules:
@@ -306,7 +287,8 @@ class Instance(SchoolBaseModule):
 				grpobj.fast_member_add([exam_user_dn], [exam_user_uid])
 
 		## Add exam_user to examGroup
-		self.examGroup.fast_member_add([exam_user_dn], [exam_user_uid])
+		examGroup = self.examGroup(ldap_admin_write, ldap_position, user.school)
+		examGroup.fast_member_add([exam_user_dn], [exam_user_uid])
 
 		## finally confirm allocated IDs
 		univention.admin.allocators.confirm(ldap_admin_write, ldap_position, 'uid', exam_user_uid)
@@ -321,122 +303,63 @@ class Instance(SchoolBaseModule):
 			examuserdn=exam_user_dn,
 		), success=True)
 
+	@sanitize(userdn=StringSanitizer(required=True))
 	@LDAP_Connection(USER_READ, ADMIN_WRITE)
-	def remove_exam_user(self, request, ldap_user_read=None, ldap_admin_write=None, ldap_position=None, search_base=None):
+	def remove_exam_user(self, request, ldap_user_read=None, ldap_admin_write=None):
 		'''Remove an exam account cloned from a given user account.
 		   The exam account is removed from the special exam group.'''
 
-		### Origin user
-		self.required_options(request, 'userdn')
-		userdn = request.options.get('userdn')
-
-		### get search base for OU of given user dn
-		school = SchoolSearchBase.getOU(userdn)
-		if not school:
-			raise UMC_CommandError(_('User is not below a school OU: %s') % userdn)
-		search_base = SchoolSearchBase(search_base.availableSchools, school)
-
-		### uid and DN of exam_user
-		exam_user_uid = univention.admin.uldap.explodeDn(userdn, 1)[0]
-
-		### open the users module
-		if 'users/user' in self._udm_modules:
-			module_users_user = self._udm_modules['users/user']
-		else:
-			module_users_user = univention.admin.modules.get('users/user')
-			univention.admin.modules.init(ldap_admin_write, ldap_position, module_users_user)
-			self._udm_modules['users/user'] = module_users_user
-
-		### try to remove object
+		userdn = request.options['userdn']
 		try:
-			user_orig = module_users_user.object(None, ldap_admin_write, ldap_position, userdn)
-			user_orig.remove()
-		except univention.admin.uexceptions.ldapError as e:
-			message = _('Could not remove exam user: %s') % e
-			raise UMC_CommandError(message)
+			user = ExamStudent.from_dn(userdn, None, ldap_user_read)
+		except univention.admin.uexceptions.noObject:
+			raise UMC_Error(_('Exam student %r not found.') % (userdn,))
+		except univention.admin.uexceptions.ldapError:
+			raise
+
+		try:
+			user.remove(ldap_admin_write)
+		except univention.admin.uexceptions.ldapError as exc:
+			raise UMC_Error(_('Could not remove exam user %r: %s') % (userdn, exc,))
 
 		self.finished(request.id, {}, success=True)
 
+	@sanitize(roomdn=StringSanitizer(required=True))
 	@LDAP_Connection(USER_READ, ADMIN_WRITE)
-	def set_computerroom_exammode(self, request, ldap_user_read=None, ldap_admin_write=None, ldap_position=None, search_base=None):
+	def set_computerroom_exammode(self, request, ldap_user_read=None, ldap_admin_write=None, ldap_position=None):
 		'''Add all member hosts of a given computer room to the special exam group.'''
 
-		### get parameters
-		self.required_options(request, 'roomdn')
-		roomdn = request.options.get('roomdn')
-
-		### get search base for OU of given room DN
-		school = SchoolSearchBase.getOU(roomdn)
-		if not school:
-			raise UMC_CommandError(_('Room is not below a school OU: %s') % roomdn)
-		search_base = SchoolSearchBase(search_base.availableSchools, school)
-
-		## store the ldap related objects for calls to the examGroup property
-		self._ldap_admin_write = ldap_admin_write
-		self._ldap_position = ldap_position
-		self._search_base = search_base
-
-		### Try to open the room
-		if 'groups/group' in self._udm_modules:
-			module_groups_group = self._udm_modules['groups/group']
-		else:
-			module_groups_group = univention.admin.modules.get('groups/group')
-			univention.admin.modules.init(ldap_admin_write, ldap_position, module_groups_group)
-			self._udm_modules['groups/group'] = module_groups_group
-
+		roomdn = request.options['roomdn']
 		try:
-			room = module_groups_group.object(None, ldap_admin_write, ldap_position, roomdn)
-			room.open()
+			room = ComputerRoom.from_dn(roomdn, None, ldap_user_read)
+		except univention.admin.uexceptions.noObject:
+			raise UMC_Error('Room %r not found.' % (roomdn,))
 		except univention.admin.uexceptions.ldapError:
-			raise UMC_OptionTypeError(_('Invalid Room DN'))
+			raise
 
 		## Add all host members of room to examGroup
-		examGroup = self.examGroup
-		if examGroup:
-			host_uid_list = [univention.admin.uldap.explodeDn(uniqueMember, 1)[0] + '$' for uniqueMember in room['hosts']]
-			examGroup.fast_member_add(room['hosts'], host_uid_list)  # adds any uniqueMember and member listed if not already present
-		else:
-			return  # self.examGroup called finished in this case, so just return
+		host_uid_list = [univention.admin.uldap.explodeDn(uniqueMember, 1)[0] + '$' for uniqueMember in room.hosts]
+		examGroup = self.examGroup(ldap_admin_write, ldap_position, room.school)
+		examGroup.fast_member_add(room.hosts, host_uid_list)  # adds any uniqueMember and member listed if not already present
 
 		self.finished(request.id, {}, success=True)
 
+	@sanitize(roomdn=StringSanitizer(required=True))
 	@LDAP_Connection(USER_READ, ADMIN_WRITE)
-	def unset_computerroom_exammode(self, request, ldap_user_read=None, ldap_admin_write=None, ldap_position=None, search_base=None):
+	def unset_computerroom_exammode(self, request, ldap_user_read=None, ldap_admin_write=None, ldap_position=None):
 		'''Remove all member hosts of a given computer room from the special exam group.'''
 
-		### get parameters
-		self.required_options(request, 'roomdn')
-		roomdn = request.options.get('roomdn')
-
-		### get search base for OU of given room DN
-		school = SchoolSearchBase.getOU(roomdn)
-		if not school:
-			raise UMC_CommandError(_('Room is not below a school OU: %s') % roomdn)
-		search_base = SchoolSearchBase(search_base.availableSchools, school)
-
-		## store the ldap related objects for calls to the examGroup property
-		self._ldap_admin_write = ldap_admin_write
-		self._ldap_position = ldap_position
-		self._search_base = search_base
-
-		### Try to open the room
-		if 'groups/group' in self._udm_modules:
-			module_groups_group = self._udm_modules['groups/group']
-		else:
-			module_groups_group = univention.admin.modules.get('groups/group')
-			univention.admin.modules.init(ldap_admin_write, ldap_position, module_groups_group)
-			self._udm_modules['groups/group'] = module_groups_group
-
+		roomdn = request.options['roomdn']
 		try:
-			room = module_groups_group.object(None, ldap_admin_write, ldap_position, roomdn)
-			room.open()
+			room = ComputerRoom.from_dn(roomdn, None, ldap_user_read)
+		except univention.admin.uexceptions.noObject:
+			raise UMC_Error('Room %r not found.' % (roomdn,))
 		except univention.admin.uexceptions.ldapError:
-			raise UMC_OptionTypeError('Invalid Room DN')
+			raise
 
 		## Remove all host members of room from examGroup
-		examGroup = self.examGroup
-		if examGroup:
-			host_uid_list = [univention.admin.uldap.explodeDn(uniqueMember, 1)[0] + '$' for uniqueMember in room['hosts']]
-			examGroup.fast_member_remove(room['hosts'], host_uid_list)  # removes any uniqueMember and member listed if still present
+		host_uid_list = [univention.admin.uldap.explodeDn(uniqueMember, 1)[0] + '$' for uniqueMember in room.hosts]
+		examGroup = self.examGroup(ldap_admin_write, ldap_position, room.school)
+		examGroup.fast_member_remove(room.hosts, host_uid_list)  # removes any uniqueMember and member listed if still present
 
 		self.finished(request.id, {}, success=True)

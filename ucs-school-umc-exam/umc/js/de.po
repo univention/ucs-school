@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-exam\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2015-04-23 12:12+0200\n"
+"POT-Creation-Date: 2016-06-01 19:52+0200\n"
 "PO-Revision-Date: 2013-05-23 22:19+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -24,8 +24,8 @@ msgid ""
 msgstr ""
 "<p>Für die Funktion des Klassenarbeitsmodus ist es wichtig, dass alle "
 "Schülerrechner des Computerraums neu gestartet werden. Durch Drücken der "
-"Schaltfläche <i>Schülerrechner neustarten</i> können die aufgelisteten Rechner "
-"automatisch neu gestartet werden. Alternativ können mehrere Computer "
+"Schaltfläche <i>Schülerrechner neustarten</i> können die aufgelisteten "
+"Rechner automatisch neu gestartet werden. Alternativ können mehrere Computer "
 "ausgewählt und manuell durch Drücken der Schaltfläche <i>Ausgewählte "
 "Computer neustarten</i> neu gestartet werden.</p><p><b>Achtung:</b> Es "
 "erfolgt keine Warnung bei angemeldeten Benutzern! Der Neustart wird sofort "
@@ -191,7 +191,7 @@ msgstr "Diese Dateien werden für die Klassenarbeit an die Schüler verteilt"
 msgid "Groups that are participating in the exam"
 msgstr "Die an der Klassenarbeit teilnehmenden Gruppen"
 
-#: umc/js/schoolexam.js:733
+#: umc/js/schoolexam.js:736
 #, python-format
 msgid ""
 "In this computer room the exam \"%s\" is currently being executed by %s."
@@ -199,7 +199,7 @@ msgstr ""
 "In diesem Computerraum wird derzeit die Klassenarbeit \"%s\" von %s "
 "durchgeführt."
 
-#: umc/js/schoolexam.js:736
+#: umc/js/schoolexam.js:739
 #, python-format
 msgid "In this computer room the exam \"%s\" is currently being written."
 msgstr ""
@@ -210,7 +210,7 @@ msgstr ""
 msgid "List of allowed websites for \"{myRules}\""
 msgstr "Liste erlaubter Webseiten für \"{myRules}\""
 
-#: umc/js/schoolexam/RebootGrid.js:78
+#: umc/js/schoolexam/RebootGrid.js:86
 msgid "Name"
 msgstr "Name"
 
@@ -226,11 +226,11 @@ msgstr ""
 "Für die Klassenarbeit wurde keine Klasse oder Arbeitsgruppe ausgewählt. "
 "Bitte wählen Sie mindestens eine Klasse oder Arbeitsgruppe aus."
 
-#: umc/js/schoolexam/RebootGrid.js:101
+#: umc/js/schoolexam/RebootGrid.js:109
 msgid "No reboot necessary"
 msgstr "Kein Neustart notwendig"
 
-#: umc/js/schoolexam/RebootGrid.js:108
+#: umc/js/schoolexam/RebootGrid.js:116
 msgid "Not connected / powered down"
 msgstr "Nicht verbunden / ausgeschaltet"
 
@@ -297,7 +297,7 @@ msgstr ""
 "Bitte definieren Sie mindestens eine erlaubte Webseite oder wählen Sie eine "
 "andere Internetregel."
 
-#: umc/js/schoolexam/RebootGrid.js:95
+#: umc/js/schoolexam/RebootGrid.js:103
 msgid "Reboot"
 msgstr "Neustart"
 
@@ -305,7 +305,7 @@ msgstr "Neustart"
 msgid "Reboot computers"
 msgstr "Rechner neustarten"
 
-#: umc/js/schoolexam/RebootGrid.js:105
+#: umc/js/schoolexam/RebootGrid.js:113
 msgid "Reboot necessary"
 msgstr "Neustart notwendig"
 
@@ -313,11 +313,11 @@ msgstr "Neustart notwendig"
 msgid "Reboot selected computers"
 msgstr "Ausgewählte Rechner neustarten"
 
-#: umc/js/schoolexam/RebootGrid.js:60 umc/js/schoolexam.js:285
+#: umc/js/schoolexam.js:285 umc/js/schoolexam/RebootGrid.js:60
 msgid "Reboot student computers"
 msgstr "Schülerrechner neustarten"
 
-#: umc/js/schoolexam.js:697
+#: umc/js/schoolexam.js:700
 msgid "Rebooting computers"
 msgstr "Rechner neustarten"
 
@@ -363,7 +363,7 @@ msgstr "Eine neue Klassenarbeit starten"
 msgid "Start exam"
 msgstr "Klassenarbeit starten"
 
-#: umc/js/schoolexam.js:644
+#: umc/js/schoolexam.js:647
 msgid "Starting the configuration process..."
 msgstr "Beginn des Konfigurationsprozesses..."
 
@@ -401,7 +401,7 @@ msgstr ""
 msgid "The time when the exam ends"
 msgstr "Der Endzeitpunkt der Klassenarbeit"
 
-#: umc/js/schoolexam.js:739
+#: umc/js/schoolexam.js:742
 #, python-format
 msgid "This computer room is currently in use by %s."
 msgstr "Dieser Computerraum wird derzeit verwendet von %s."
@@ -425,7 +425,7 @@ msgstr "Dateien hochladen"
 msgid "Upload of exam files"
 msgstr "Hochladen von Klassenarbeitsdateien"
 
-#: umc/js/schoolexam/RebootGrid.js:112
+#: umc/js/schoolexam/RebootGrid.js:120
 msgid "User"
 msgstr "Benutzer"
 
