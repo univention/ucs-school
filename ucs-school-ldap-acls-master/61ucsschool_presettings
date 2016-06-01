@@ -1,5 +1,15 @@
 # start 61ucsschool_presettings
 
+# revert rule from UCS; Bug #41402
+access to attrs=entry,objectClass,uniqueMember,ou,uid,loginShell,homeDirectory,uidNumber,gidNumber,sn,cn,gecos,description,memberUid
+	by dn.sub="cn=computers,ou=([^,]+),(ou=[^,]+,)?@%@ldap/base@%@" none break
+	by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,dc=school,dc=local" none break
+	by group/univentionGroup/uniqueMember="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,dc=school,dc=local" none break
+	by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,dc=school,dc=local" none break
+	by group/univentionGroup/uniqueMember="cn=Member-Edukativnetz,cn=ucsschool,cn=groups,dc=school,dc=local" none break
+	by set="user/objectClass & ([ucsschoolStudent] | [ucsschoolTeacher] | [ucsschoolStaff] | [ucsschoolAdministrator])" none break
+	by * +0 break
+
 # Slave-Controller und Member-Server duerfen Samba-Domaenenobjekt(e) modifizieren
 access to filter="(objectClass=sambaDomain)"
    by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
