@@ -1,3 +1,9 @@
+ucs-school-ldap-acls-master (14.0.1-2) unstable; urgency=medium
+
+  * Bug #41115: fix typo in last commit
+
+ -- Florian Best <best@univention.de>  Wed, 01 Jun 2016 13:13:30 +0200
+
 ucs-school-ldap-acls-master (14.0.1-1) unstable; urgency=medium
 
   * Bug #41115: prevent read access to every object by all school objects
