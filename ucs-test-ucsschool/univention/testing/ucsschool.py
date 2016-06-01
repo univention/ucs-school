@@ -436,6 +436,8 @@ class UCSTestSchool(object):
 		position = 'cn=admins,cn=users,%s' % (self.get_ou_base_dn(ou_name))
 		groups = ["cn=Domain Admins,cn=groups,%s" % (self.LDAP_BASE,)]
 		udm = udm_test.UCSTestUDM()
+		if username is None:
+			username = uts.random_username()
 		kwargs = {
 			'school': ou_name,
 			'username': username,
@@ -447,6 +449,8 @@ class UCSTestSchool(object):
 	def create_global_user(self, username=None, password='univention'):
 		position = 'cn=users,%s' % (self.LDAP_BASE,)
 		udm = udm_test.UCSTestUDM()
+		if username is None:
+			username = uts.random_username()
 		kwargs = {
 			'username': username,
 			'password': password,
