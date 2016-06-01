@@ -9,6 +9,7 @@ from univention.testing.ucsschool import UCSTestSchool
 from univention.testing.ucr import UCSTestConfigRegistry
 from univention.testing import utils
 from ucsschool.lib.models import User
+import univention.config_registry
 
 
 def main():
@@ -17,7 +18,7 @@ def main():
 
 	with UCSTestSchool() as env, UCSTestConfigRegistry() as ucr:
 		# make sure that nonedu containers are created
-		ucr.handler_set('ucsschool/ldap/noneducational/create/objects=yes')
+		univention.config_registry.handler_set('ucsschool/ldap/noneducational/create/objects=yes')
 
 		a, a_dn = env.create_ou(name_edudc=ucr.get('hostname'))
 		b, b_dn = env.create_ou(name_edudc=ucr.get('hostname'))
