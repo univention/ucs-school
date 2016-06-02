@@ -64,7 +64,9 @@ class LegacyUserImport(UserImport):
 					raise UnkownRole("Cannot determine role of user with source_uid={} and user.record_uid={}.".format(
 						user.source_uid, user.record_uid))
 				try:
-					users_to_delete.append(obj.get_by_import_id(self.connection, user.source_uid, user.record_uid))
+					ldap_user = obj.get_by_import_id(self.connection, user.source_uid, user.record_uid)
+					ldap_user.update(user)  # need user.input_data for hooks
+					users_to_delete.append(ldap_user)
 				except noObject as exc:
 					self.logger.error(exc)
 		return users_to_delete

@@ -69,18 +69,29 @@ class ImportUser(User):
 	username_handler = None
 
 	def __init__(self, name=None, school=None, **kwargs):
-		self.action = None
-		self.entry_count = -1
-		self.udm_properties = dict()
+		self.action = None            # "A", "D" or "M"
+		self.entry_count = 0          # line/node number of input data
+		self.udm_properties = dict()  # UDM properties that are not stored in Attributes
+		self.input_data = None        # raw input data created by SomeReader.read()
 		if not self.factory:
 			self.factory = Factory()
 			self.ucr = self.factory.make_ucr()
 			self.config = Configuration()
 		super(ImportUser, self).__init__(name, school, **kwargs)
 
+	def build_hook_line(self, hook_time, func_name):
+		"""
+		Recreate original input data for hook creation.
+
+		IMPLEMENTME if the Reader class in use does not put a list with the
+		original input text in self.input_data. return _build_hook_line() with
+		a list as argument.
+		"""
+		return self._build_hook_line(*self.input_data)
+
 	def deactivate(self):
 		"""
-		Deactive user account.
+		Deactivate user account. Caller must run modify().
 		"""
 		self.disabled = "all"
 
@@ -491,6 +502,7 @@ class ImportUser(User):
 		self.action = other.action
 		self.entry_count = other.entry_count
 		self.udm_properties.update(other.udm_properties)
+		self.input_data = other.input_data
 
 
 class ImportStaff(ImportUser, Staff):

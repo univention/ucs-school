@@ -231,18 +231,13 @@ class UserImport(object):
 
 		# collect ucschool objects for those users to delete in imported_users
 		users_to_delete = list()
-		for user in (ucs_students - imported_users):
-			users_to_delete.append(a_student.get_by_import_id(self.connection, user[0], user[1]))
-		for user in (ucs_staff - imported_users):
-			users_to_delete.append(a_staff.get_by_import_id(self.connection, user[0], user[1]))
-		for user in (ucs_teachers - imported_users):
-			users_to_delete.append(a_teacher.get_by_import_id(self.connection, user[0], user[1]))
-		for user in (ucs_teachers_staff - imported_users):
-			users_to_delete.append(a_staff_teacher.get_by_import_id(self.connection, user[0], user[1]))
-
-		for user in users_to_delete:
-			# mark for logging/csv-output purposes
-			user.action = "D"
+		for ucs_users, a_type in [(ucs_students, a_student), (ucs_staff, a_staff), (ucs_teachers, a_teacher),
+			(ucs_teachers_staff, a_staff_teacher)]:
+			for ucs_user_not_in_import in (ucs_users - imported_users):
+				ldap_user = a_type.get_by_import_id(self.connection, ucs_user_not_in_import[0], ucs_user_not_in_import[1])
+				ldap_user.update(ucs_user_not_in_import)  # need user.input_data for hooks
+				ldap_user.action = "D"  # mark for logging/csv-output purposes
+				users_to_delete.append(ldap_user)
 
 		self.logger.debug("users_to_delete=%r", users_to_delete)
 		return users_to_delete

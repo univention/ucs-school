@@ -1,3 +1,15 @@
+ucs-school-import (14.0.1-2) unstable; urgency=low
+
+  * Bug #41242: fork csv.DictReader to access the underlying csv.reader
+    instance
+  * store (almost) raw input data in ImportUser.input_data
+  * use underlying Readers line/entry count as line reference
+  * Bug #41242: password and hook export functions now produce the exact same
+    output as the legacy script
+  * add more quirks for ucs-tests csv
+
+ -- Daniel Troeder <troeder@univention.de>  Thu, 02 Jun 2016 15:27:52 +0200
+
 ucs-school-import (14.0.1-1) unstable; urgency=medium
 
   * Bug #41123: add ucsschoolExam object class

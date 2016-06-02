@@ -34,7 +34,7 @@ Write the passwords of newly created users to a CSV file.
 from csv import excel_tab
 
 from ucsschool.importer.writer.new_user_password_csv_exporter import NewUserPasswordCsvExporter
-from ucsschool.importer.models.import_user import ImportStaff, ImportTeacher, ImportTeachersAndStaff
+from ucsschool.importer.configuration import Configuration
 
 
 class LegacyNewUserPasswordCsvExporter(NewUserPasswordCsvExporter):
@@ -47,34 +47,25 @@ class LegacyNewUserPasswordCsvExporter(NewUserPasswordCsvExporter):
 	field_names = ("username", "password", "action", "name", "lastname", "firstname", "school", "school_class",
 		"ignore", "email", "is_teacher", "activate", "is_staff")
 
+	def __init__(self, *arg, **kwargs):
+		super(LegacyNewUserPasswordCsvExporter, self).__init__(*arg, **kwargs)
+		self.config = Configuration()
+
 	def get_writer(self):
 		"""
 		Change to CSV dialect with tabs and don't write a header line.
 		"""
+		if self.config["ucs_test"]:
+			self.field_names = self.field_names + ("pw", )
 		writer = self.factory.make_user_writer(field_names=self.field_names, dialect=excel_tab)
 		writer.write_header = lambda x: None  # no header line
 		return writer
 
 	def serialize(self, user):
-		try:
-			sc = user.school_class or ""
-			scs = ["{}-{}".format(user.school, cl) for cl in sc.split(",") if cl]
-			school_classes = ",".join(scs)
-		except AttributeError:
-			school_classes = ""
-
-		return dict(
-			username=user.name,
-			password=user.password,
-			action=user.action,
-			name=user.old_name,
-			lastname=user.lastname,
-			firstname=user.firstname,
-			school=user.school,
-			school_class=school_classes,
-			ignore="",
-			email=user.email,
-			is_teacher=str(int(isinstance(user, ImportTeacher) or isinstance(user, ImportTeachersAndStaff))),
-			activate="1" if user.disabled == "none" else "0",
-			is_staff=str(int(isinstance(user, ImportStaff) or isinstance(user, ImportTeachersAndStaff)))
-		)
+		res = dict(username=user.name, password=user.password)
+		input_data = list(user.input_data)
+		if self.config["ucs_test"] and len(input_data) < len(self.field_names[2:]):
+			input_data.append("")
+		line = zip(self.field_names[2:], input_data)
+		res.update(line)
+		return res

@@ -65,7 +65,7 @@ class UserImportCsvResultExporter(ResultExporter):
 			if exc.import_user:
 				entry_count = exc.import_user.entry_count
 			else:
-				entry_count = -1
+				entry_count = 0
 			return max(exc.entry, entry_count)
 
 		li = sorted(user_import.errors, key=exc_count)
@@ -103,7 +103,7 @@ class UserImportCsvResultExporter(ResultExporter):
 			user.roles = []  # remove role
 
 		return dict(
-			line=max(getattr(user, "entry_count", -1), getattr(obj, "entry", -1)),
+			line=max(getattr(user, "entry_count", 0), getattr(obj, "entry", 0)),
 			success=int(bool(isinstance(obj, ImportUser))),
 			error=int(bool(isinstance(obj, UcsSchoolImportError))),
 			action=user.action,

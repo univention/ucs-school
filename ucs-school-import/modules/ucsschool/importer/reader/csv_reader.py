@@ -31,10 +31,10 @@ CSV reader for CSV files using the new import format.
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-
-import csv
+from csv import reader as csv_reader, Sniffer
 import codecs
 
+from ucsschool.importer.contrib.csv import DictReader
 from ucsschool.importer.reader.base_reader import BaseReader
 from ucsschool.importer.exceptions import UnkownRole
 from ucsschool.lib.roles import role_pupil, role_teacher, role_staff
@@ -53,7 +53,7 @@ class CsvReader(BaseReader):
 		:param fp: open file to read from
 		:return: csv.dialect
 		"""
-		return csv.Sniffer().sniff(fp.read(1024))
+		return Sniffer().sniff(fp.read(1024))
 
 	def read(self, *args, **kwargs):
 		"""
@@ -77,15 +77,17 @@ class CsvReader(BaseReader):
 				# no header names, detect number of rows
 
 				fpu = UTF8Recoder(fp, self.encoding)
-				reader = csv.reader(fpu, dialect=dialect)
+				reader = csv_reader(fpu, dialect=dialect)
 				line = reader.next()
 				fp.seek(start)
 				header = map(str, range(len(line)))
 			csv_reader_args = dict(fieldnames=header, dialect=dialect)
 			csv_reader_args.update(kwargs.get("csv_reader_args", {}))
 			fpu = UTF8Recoder(fp, self.encoding)
-			reader = csv.DictReader(fpu, **csv_reader_args)
+			reader = DictReader(fpu, **csv_reader_args)
 			for row in reader:
+				self.entry_count = reader.line_num
+				self.input_data = reader.row
 				yield {unicode(key, 'utf-8'): unicode(value or "", 'utf-8') for key, value in row.iteritems()}
 
 	def handle_input(self, mapping_key, mapping_value, csv_value, import_user):

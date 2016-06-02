@@ -57,7 +57,8 @@ class BaseReader(object):
 		self.import_users = self.read()
 		self.factory = Factory()
 		self.ucr = self.factory.make_ucr()
-		self.entry_count = 0
+		self.entry_count = 0    # line/node in input data
+		self.input_data = None  # input data, as raw as possible/sensible
 
 	def __iter__(self):
 		return self
@@ -65,14 +66,15 @@ class BaseReader(object):
 	def next(self):
 		"""
 		Generates ImportUsers from input data.
+
 		:return: ImportUser
 		"""
-		self.entry_count += 1
-		input_data = self.import_users.next()
-		self.logger.debug("Input %d: %r", self.entry_count, input_data)
-		cur_user_roles = self.get_roles(input_data)
-		cur_import_user = self.map(input_data, cur_user_roles)
+		input_dict = self.import_users.next()
+		self.logger.debug("Input %d: %r -> %r", self.entry_count, self.input_data, input_dict)
+		cur_user_roles = self.get_roles(input_dict)
+		cur_import_user = self.map(input_dict, cur_user_roles)
 		cur_import_user.entry_count = self.entry_count
+		cur_import_user.input_data = self.input_data
 		cur_import_user.prepare_uids()
 		return cur_import_user
 
@@ -91,6 +93,7 @@ class BaseReader(object):
 		IMPLEMENT ME
 		Creates a ImportUser object from a users dict (self.cur_entry). Data
 		will not be	modified, just copied.
+
 		:param input_data: dict: user from read()
 		:param cur_user_roles: list: [ucsschool.lib.roles, ..]
 		:return: ImportUser
@@ -101,6 +104,8 @@ class BaseReader(object):
 		"""
 		IMPLEMENT ME
 		Generator that returns dicts of read users
+		Sets self.entry_count and self.input_data on each read.
+
 		:param args: list
 		:param kwargs: dict
 		:return: iter([user, ...])
