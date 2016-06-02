@@ -31,24 +31,6 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-import notifier
-
-from univention.management.console.modules import UMC_CommandError, UMC_OptionTypeError
-from univention.management.console.log import MODULE
-from univention.management.console.config import ucr
-from univention.management.console.modules.decorators import simple_response, file_upload, require_password
-
-from univention.lib.i18n import Translation
-from univention.lib.umc_connection import UMCConnection
-
-from ucsschool.lib.schoolldap import LDAP_Connection, SchoolBaseModule
-import ucsschool.lib.internetrules as internetrules
-from ucsschool.lib.schoollessons import SchoolLessons
-from ucsschool.lib.models import ComputerRoom
-
-import univention.admin.modules as udm_modules
-import univention.admin.uexceptions as udm_exceptions
-
 import os
 import tempfile
 import shutil
@@ -59,8 +41,25 @@ import datetime
 from httplib import HTTPException
 from socket import error as SocketError
 
-import util
-from util import Progress
+import notifier
+
+from univention.management.console.config import ucr
+from univention.management.console.log import MODULE
+from univention.management.console.modules import UMC_Error
+from univention.management.console.modules.decorators import simple_response, file_upload, require_password, sanitize
+from univention.management.console.modules.sanitizers import StringSanitizer, DictSanitizer, ListSanitizer
+from univention.management.console.modules.schoolexam import util
+
+from univention.lib.i18n import Translation
+from univention.lib.umc_connection import UMCConnection
+
+from ucsschool.lib.schoolldap import LDAP_Connection, SchoolBaseModule, SchoolSearchBase
+from ucsschool.lib import internetrules
+from ucsschool.lib.schoollessons import SchoolLessons
+from ucsschool.lib.models import ComputerRoom
+
+import univention.admin.modules as udm_modules
+import univention.admin.uexceptions as udm_exceptions
 
 udm_modules.update()
 
@@ -74,7 +73,7 @@ class Instance(SchoolBaseModule):
 	def __init__(self):
 		SchoolBaseModule.__init__(self)
 		self._tmpDir = None
-		self._progress_state = Progress()
+		self._progress_state = util.Progress()
 		self._lessons = SchoolLessons()
 
 	def init(self):
@@ -95,27 +94,23 @@ class Instance(SchoolBaseModule):
 			self._tmpDir = None
 
 	@file_upload
+	@sanitize(DictSanitizer(dict(
+		filename=StringSanitizer(required=True),
+		tmpfile=StringSanitizer(required=True),
+	), required=True))
 	def upload(self, request):
 		### copied from distribution module
-		# make sure that we got a list
-		if not isinstance(request.options, (tuple, list)):
-			raise UMC_OptionTypeError('Expected list of dicts, but got: %s' % str(request.options))
+		# create a temporary upload directory, if it does not already exist
+		if not self._tmpDir:
+			self._tmpDir = tempfile.mkdtemp(prefix='ucsschool-distribution-upload-')
+			MODULE.info('Created temporary directory: %s' % self._tmpDir)
 
 		for file in request.options:
-			if not ('tmpfile' in file and 'filename' in file):
-				raise UMC_OptionTypeError('Invalid upload data, got: %s' % str(file))
-
-			# create a temporary upload directory, if it does not already exist
-			if not self._tmpDir:
-				self._tmpDir = tempfile.mkdtemp(prefix='ucsschool-exam-upload-')
-				MODULE.info('Created temporary directory: %s' % self._tmpDir)
-
 			filename = self.__workaround_filename_bug(file)
 			destPath = os.path.join(self._tmpDir, filename)
 			MODULE.info('Received file %r, saving it to %r' % (file['tmpfile'], destPath))
 			shutil.move(file['tmpfile'], destPath)
 
-		# done
 		self.finished(request.id, None)
 
 	def __workaround_filename_bug(self, file):
@@ -139,10 +134,11 @@ class Instance(SchoolBaseModule):
 		### the code block can be removed and replaced by filename = file['filename'].encode('UTF-8') after Bug #37716
 		return filename
 
-	def internetrules(self, request):
+	@simple_response
+	def internetrules(self):
 		### copied from computerroom module
 		"""Returns a list of available internet rules"""
-		self.finished(request.id, map(lambda x: x.name, internetrules.list()))
+		return [x.name for x in internetrules.list()]
 
 	@simple_response
 	def lesson_end(self):
@@ -155,11 +151,20 @@ class Instance(SchoolBaseModule):
 	def progress(self):
 		return self._progress_state.poll()
 
+	@sanitize(
+		name=StringSanitizer(required=True),
+		room=StringSanitizer(required=True),
+		school=StringSanitizer(required=True),
+		directory=StringSanitizer(required=True),
+		shareMode=StringSanitizer(required=True),
+		internetRule=StringSanitizer(required=True),
+		examEndTime=StringSanitizer(required=True),
+		recipients=ListSanitizer(StringSanitizer(minimum=1), required=True),
+		files=ListSanitizer(StringSanitizer()),
+	)
 	@require_password
 	@LDAP_Connection()
 	def start_exam(self, request, ldap_user_read=None, ldap_position=None, search_base=None):
-		self.required_options(request, 'recipients', 'room', 'internetRule', 'shareMode', 'name', 'directory', 'examEndTime')
-
 		# reset the current progress state
 		# steps:
 		#   5  -> for preparing exam room
@@ -193,7 +198,7 @@ class Instance(SchoolBaseModule):
 			# get absolute path of project file and test for existance
 			fn_test_project = util.distribution.Project.sanitize_project_filename(opts.get('directory'))
 			if os.path.exists(fn_test_project):
-				raise UMC_CommandError(_('An exam with the name "%s" already exists. Please choose a different name for the exam.') % opts.get('directory'))
+				raise UMC_Error(_('An exam with the name "%s" already exists. Please choose a different name for the exam.') % opts.get('directory'))
 
 			# validate the project data and save project
 			my.project = util.distribution.Project(dict(
@@ -219,12 +224,13 @@ class Instance(SchoolBaseModule):
 			connection = UMCConnection.get_machine_connection()
 			if not connection:
 				MODULE.error('Could not connect to UMC on %s' % (ucr.get('ldap/master')))
-				raise UMC_CommandError(_('Could not connect to master server %s.') % ucr.get('ldap/master'))
+				raise UMC_Error(_('Could not connect to master server %s.') % ucr.get('ldap/master'))
 
 			# mark the computer room for exam mode
 			progress.component(_('Preparing the computer room for exam mode...'))
-			res = connection.request('schoolexam-master/set-computerroom-exammode', dict(
-				roomdn=request.options.get('room')
+			connection.request('schoolexam-master/set-computerroom-exammode', dict(
+				school=request.options['school'],
+				roomdn=request.options['room'],
 			))
 			progress.add_steps(5)
 
@@ -250,6 +256,7 @@ class Instance(SchoolBaseModule):
 				progress.info('%s, %s (%s)' % (iuser.lastname, iuser.firstname, iuser.username))
 				try:
 					ires = connection.request('schoolexam-master/create-exam-user', dict(
+						school=request.options['school'],
 						userdn=iuser.dn
 					))
 					examUsers.add(ires.get('examuserdn'))
@@ -302,7 +309,7 @@ class Instance(SchoolBaseModule):
 				MODULE.error('replication timeout - %s user objects missing: %r ' % ((len(examUsers) - len(usersReplicated)), (examUsers - usersReplicated)))
 				msg = _('Replication timeout: could not create all exam users')
 				MODULE.error(msg)
-				raise UMC_CommandError(msg)
+				raise UMC_Error(msg)
 
 			# update the final list of recipients
 			my.project.recipients = recipients
@@ -332,7 +339,7 @@ class Instance(SchoolBaseModule):
 			userConnection = UMCConnection('localhost', username=self.username, password=self.password)
 			if not userConnection:
 				MODULE.error('Could not connect to UMC on local server: %s' % e)
-				raise UMC_CommandError(_('Could not connect to local UMC server.'))
+				raise UMC_Error(_('Could not connect to local UMC server.'))
 			MODULE.info('Acquire room: %(room)s' % opts)
 			userConnection.request('computerroom/room/acquire', dict(
 				room=opts.get('room')
@@ -381,7 +388,7 @@ class Instance(SchoolBaseModule):
 		# try to open project file
 		project = util.distribution.Project.load(request.options.get('exam'))
 		if not project:
-			raise UMC_CommandError(_('No files have been distributed'))
+			raise UMC_Error(_('No files have been distributed'))
 
 		# collect files
 		project.collect()
@@ -398,9 +405,11 @@ class Instance(SchoolBaseModule):
 			error = _('Room "%s" does not contain any computers. Empty rooms may not be used to start an exam.') % room.get_relative_name()
 		self.finished(request.id, error)
 
+	@sanitize(
+		room=StringSanitizer(required=True),
+		exam=StringSanitizer(required=True),
+	)
 	def finish_exam(self, request):
-		self.required_options(request, 'exam', 'room')
-
 		# reset the current progress state
 		# steps:
 		#   10 -> collecting exam files
@@ -428,12 +437,15 @@ class Instance(SchoolBaseModule):
 			connection = UMCConnection.get_machine_connection()
 			if not connection:
 				MODULE.error('Could not connect to UMC on %s' % (ucr.get('ldap/master')))
-				raise UMC_CommandError(_('Could not connect to master server %s.') % ucr.get('ldap/master'))
+				raise UMC_Error(_('Could not connect to master server %s.') % ucr.get('ldap/master'))
+
+			school = SchoolSearchBase.getOU(request.options['room'])
 
 			# unset exam mode for the given computer room
 			progress.component(_('Configuring the computer room...'))
-			res = connection.request('schoolexam-master/unset-computerroom-exammode', dict(
-				roomdn=request.options.get('room')
+			connection.request('schoolexam-master/unset-computerroom-exammode', dict(
+				roomdn=request.options['room'],
+				school=school,
 			))
 			progress.add_steps(5)
 
@@ -457,8 +469,9 @@ class Instance(SchoolBaseModule):
 							shutil.rmtree(iuser.unixhome, ignore_errors=True)
 
 							# remove LDAP user entry
-							ires = connection.request('schoolexam-master/remove-exam-user', dict(
-								userdn=iuser.dn
+							connection.request('schoolexam-master/remove-exam-user', dict(
+								userdn=iuser.dn,
+								school=school,
 							))
 							MODULE.info('Exam user has been removed: %s' % iuser.dn)
 						else:
@@ -466,7 +479,7 @@ class Instance(SchoolBaseModule):
 					except (HTTPException, SocketError) as e:
 						MODULE.warn('Could not remove exam user account %s: %s' % (iuser.dn, e))
 
-					# indicate the the user has been processed
+					# indicate the user has been processed
 					progress.add_steps(percentPerUser)
 
 				progress.add_steps(percentPerUser)
@@ -486,7 +499,7 @@ class Instance(SchoolBaseModule):
 				self.finished(request.id, dict(success=True))
 
 				if project:
-					# pruge project
+					# purge project
 					project.purge()
 
 				# remove uploaded files from cache

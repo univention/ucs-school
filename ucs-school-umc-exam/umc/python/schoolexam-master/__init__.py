@@ -75,6 +75,7 @@ class Instance(SchoolBaseModule):
 			if 'groups/group' in self._udm_modules:
 				module_groups_group = self._udm_modules['groups/group']
 			else:
+				module_groups_group = univention.admin.modules.get('groups/group')
 				univention.admin.modules.init(ldap_admin_write, ldap_position, module_groups_group)
 				self._udm_modules['groups/group'] = module_groups_group
 
@@ -123,7 +124,11 @@ class Instance(SchoolBaseModule):
 
 		return self._examUserContainerDN
 
-	@sanitize(userdn=StringSanitizer(required=True), description=StringSanitizer(default=''))
+	@sanitize(
+		userdn=StringSanitizer(required=True),
+		description=StringSanitizer(default=''),
+		school=StringSanitizer(default='')
+	)
 	@LDAP_Connection(USER_READ, ADMIN_WRITE)
 	def create_exam_user(self, request, ldap_user_read=None, ldap_admin_write=None, ldap_position=None):
 		'''Create an exam account cloned from a given user account.
@@ -131,6 +136,7 @@ class Instance(SchoolBaseModule):
 		   to be enforced via the name of this group.
 		   The group has to be created earlier, e.g. by create_ou (ucs-school-import).'''
 
+		school = request.options['school']
 		userdn = request.options['userdn']
 		try:
 			user = Student.from_dn(userdn, None, ldap_admin_write)
@@ -143,7 +149,7 @@ class Instance(SchoolBaseModule):
 
 		### uid and DN of exam_user
 		exam_user_uid = "".join((self._examUserPrefix, user_orig['username']))
-		exam_user_dn = "uid=%s,%s" % (exam_user_uid, self.examUserContainerDN(ldap_admin_write, ldap_position, self._search_base))
+		exam_user_dn = "uid=%s,%s" % (exam_user_uid, self.examUserContainerDN(ldap_admin_write, ldap_position, user.school))
 
 		### Check if it's blacklisted
 		for prohibited_object in univention.admin.handlers.settings.prohibited_username.lookup(None, ldap_admin_write, ''):
@@ -226,6 +232,10 @@ class Instance(SchoolBaseModule):
 				# handle special cases
 				if key == 'uid':
 					value = [exam_user_uid]
+				elif key == 'objectClass':
+					value += ['ucsschoolExam']
+				elif key == 'ucsschoolSchool' and school:  # for backwards compatibility with UCS@school < 4.1R2 school might not be set
+					value = [school]
 				elif key == 'homeDirectory':
 					user_orig_homeDirectory = value[0]
 					_tmp_split_path = user_orig_homeDirectory.rsplit(os.path.sep, 1)
@@ -303,13 +313,17 @@ class Instance(SchoolBaseModule):
 			examuserdn=exam_user_dn,
 		), success=True)
 
-	@sanitize(userdn=StringSanitizer(required=True))
+	@sanitize(
+		userdn=StringSanitizer(required=True),
+		school=StringSanitizer(default=''),
+	)
 	@LDAP_Connection(USER_READ, ADMIN_WRITE)
 	def remove_exam_user(self, request, ldap_user_read=None, ldap_admin_write=None):
 		'''Remove an exam account cloned from a given user account.
 		   The exam account is removed from the special exam group.'''
 
 		userdn = request.options['userdn']
+		school = request.options['school']
 		try:
 			user = ExamStudent.from_dn(userdn, None, ldap_user_read)
 		except univention.admin.uexceptions.noObject:
@@ -318,13 +332,24 @@ class Instance(SchoolBaseModule):
 			raise
 
 		try:
-			user.remove(ldap_admin_write)
+			schools = None
+			if school:
+				schools = list(set(user.schools) - set([school]))
+			if schools:
+				MODULE.warn('User %s will not be removed as he currently participates in another exam.' % (user.dn,))
+				user.schools = schools
+				user.modify(ldap_admin_write)
+			else:
+				user.remove(ldap_admin_write)
 		except univention.admin.uexceptions.ldapError as exc:
 			raise UMC_Error(_('Could not remove exam user %r: %s') % (userdn, exc,))
 
 		self.finished(request.id, {}, success=True)
 
-	@sanitize(roomdn=StringSanitizer(required=True))
+	@sanitize(
+		roomdn=StringSanitizer(required=True),
+		school=StringSanitizer(default=''),
+	)
 	@LDAP_Connection(USER_READ, ADMIN_WRITE)
 	def set_computerroom_exammode(self, request, ldap_user_read=None, ldap_admin_write=None, ldap_position=None):
 		'''Add all member hosts of a given computer room to the special exam group.'''
@@ -344,7 +369,10 @@ class Instance(SchoolBaseModule):
 
 		self.finished(request.id, {}, success=True)
 
-	@sanitize(roomdn=StringSanitizer(required=True))
+	@sanitize(
+		roomdn=StringSanitizer(required=True),
+		school=StringSanitizer(default=''),
+	)
 	@LDAP_Connection(USER_READ, ADMIN_WRITE)
 	def unset_computerroom_exammode(self, request, ldap_user_read=None, ldap_admin_write=None, ldap_position=None):
 		'''Remove all member hosts of a given computer room from the special exam group.'''
