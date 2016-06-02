@@ -54,6 +54,16 @@ from ucsschool.lib.models.utils import ucr, _, logger
 HOOK_SEP_CHAR = '\t'
 HOOK_PATH = '/usr/share/ucs-school-import/hooks/'
 
+
+class UnknownModel(noObject):
+	pass
+
+class WrongModel(noObject):
+	pass
+
+class WrongObjectType(noObject):
+	pass
+
 class MultipleObjectsError(Exception):
 	def __init__(self, objs, *args, **kwargs):
 		super(MultipleObjectsError, self).__init__(*args, **kwargs)
@@ -711,9 +721,15 @@ class UCSSchoolHelperAbstractClass(object):
 		klass = cls.get_class_for_udm_obj(udm_obj, school)
 		if klass is None:
 			logger.warning('UDM object %s does not correspond to a class in UCS school lib!', udm_obj.dn)
-			return None
+			raise UnknownModel('No python class: %r is not a %s' % (udm_obj.dn, cls.__name__))
 		if klass is not cls:
 			logger.info('UDM object %s is not %s, but actually %s', udm_obj.dn, cls.__name__, klass.__name__)
+			if not issubclass(klass, cls):
+				# security!
+				# ExamStudent must not be converted into Teacher/Student/etc.,
+				# SchoolClass must not be converted into ComputerRoom
+				# while Group must be converted into ComputerRoom, etc. and User must be converted into Student, etc.
+				raise WrongModel('Wrong python class: %r is not a %r but a %r' % (udm_obj.dn, cls.__name__, klass.__name__))
 			return klass.from_udm_obj(udm_obj, school, lo)
 		udm_obj.open()
 		attrs = {'school' : SchoolSearchBase.getOU(udm_obj.dn) or school}  # TODO: is this adjustment okay?
@@ -776,7 +792,7 @@ class UCSSchoolHelperAbstractClass(object):
 			udm_obj = udm_modules.lookup(cls._meta.udm_module, None, lo, filter=cls._meta.udm_filter, base=dn, scope='base', superordinate=superordinate)[0]
 		except IndexError:
 			# happens when cls._meta.udm_module does not "match" the dn
-			raise noObject('Wrong objectClass: %r is not a %r.' % (dn, cls.__name__))
+			raise WrongObjectType('Wrong objectClass: %r is not a %r.' % (dn, cls.__name__))
 		return cls.from_udm_obj(udm_obj, school, lo)
 
 	@classmethod
