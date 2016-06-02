@@ -1,6 +1,8 @@
 usr/share/ucs-school-import/scripts
 var/lib/ucs-school-import
+var/lib/ucs-school-import/configs
 usr/lib/univention-install
+usr/share/ucs-school-import/configs
 usr/share/ucs-school-import/hooks/user_create_pre.d
 usr/share/ucs-school-import/hooks/user_modify_pre.d
 usr/share/ucs-school-import/hooks/user_remove_pre.d

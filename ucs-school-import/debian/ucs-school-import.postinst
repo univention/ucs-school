@@ -46,7 +46,8 @@ univention-config-registry set \
 	ucsschool/ldap/default/dcs?"edukativ" \
 	ucsschool/ldap/noneducational/create/objects?"true" \
 	ucsschool/update/user/role?yes \
-	ucsschool/import/generate/mail/domain?yes
+	ucsschool/import/generate/mail/domain?yes \
+	ucsschool/import/debug/werror?no || die
 
 eval "$(univention-config-registry shell)"
 
@@ -69,6 +70,14 @@ then
 	fi
 	univention-config-registry set "ucsschool/import/set/homedrive?$letter"
 	univention-config-registry set 'ucsschool/import/set/netlogon/script/path?ucs-school-logon.vbs'
+
+	# Do not copy defaults.json. We want to be able to add defaults in future
+	# updates.
+	for FILE in new.json legacy.json; do
+		if ! [ -e /var/lib/ucs-school-import/configs/$FILE ]; then
+			cp /usr/share/ucs-school-import/configs/$FILE /var/lib/ucs-school-import/configs
+		fi
+	done
 fi
 univention-config-registry set \
 	"ucsschool/import/generate/policy/dhcp/searchbase?${use_dhcpsearchbase}" \

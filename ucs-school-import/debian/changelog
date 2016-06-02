@@ -1,3 +1,11 @@
+ucs-school-import (14.0.0-10) unstable; urgency=low
+
+  * Bug #41239: merge ucs-school-import and ucs-school-import2
+  * cleanup source package layout
+  * replace import_user symlink with new import_user script
+
+ -- Daniel Troeder <troeder@univention.de>  Thu, 02 Jun 2016 08:41:25 +0200
+
 ucs-school-import (14.0.0-9) unstable; urgency=low
 
   * Bug #41242: create legacy import script drop-in replacement
