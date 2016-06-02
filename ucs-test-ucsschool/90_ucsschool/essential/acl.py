@@ -384,7 +384,6 @@ class Acl(object):
 		"""
 		attrs = [
 				'macAddress',
-				'sambaNTPassword'
 				]
 		self.assert_acl(computer_dn, access, attrs)
 

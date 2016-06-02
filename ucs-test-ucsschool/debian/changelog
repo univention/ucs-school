@@ -1,3 +1,9 @@
+ucs-test-ucsschool (3.0.5-38) unstable; urgency=low
+
+  * Bug #41407: removed ACL test for sambaNTPassword from 75_ldap_acls_admins
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Thu, 02 Jun 2016 17:31:49 +0200
+
 ucs-test-ucsschool (3.0.5-37) unstable; urgency=medium
 
   * Bug #41411: fix 105_activate_groupmembers
