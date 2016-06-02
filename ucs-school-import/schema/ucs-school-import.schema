@@ -50,6 +50,10 @@ objectclass ( univentionSchool:53.4 NAME 'ucsschoolStaff'
         DESC 'auxiliary class for staff users'
         SUP ucsschoolType AUXILIARY )
 
+objectclass ( univentionSchool:53.5 NAME 'ucsschoolExam'
+        DESC 'auxiliary class for exam users'
+        SUP ucsschoolType AUXILIARY )
+
 attributetype ( univentionSchool:5201 NAME 'ucsschoolClassShareFileServer'
         DESC 'designated fileserver for class shares'
         EQUALITY distinguishedNameMatch

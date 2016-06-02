@@ -30,7 +30,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-VERSION=9
+VERSION=10
 . /usr/share/univention-join/joinscripthelper.lib
 . /usr/share/univention-lib/ldap.sh
 joinscript_init
