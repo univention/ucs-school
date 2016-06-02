@@ -1,5 +1,6 @@
 ucs-test-ucsschool (3.0.5-37) unstable; urgency=medium
 
+  * Bug #41411: fix 105_activate_groupmembers
   * Bug #40870: fix variable setting
 
  -- Florian Best <best@univention.de>  Thu, 02 Jun 2016 12:23:59 +0200

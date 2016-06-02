@@ -89,7 +89,7 @@ def main():
 					is_staff=True,
 					lastname=staff_lastname)
 			stu, stu_dn = schoolenv.create_user(school, lastname=stu_lastname)
-			school_admin_dn, school_admin = schoolenv.create_school_admin(
+			school_admin, school_admin_dn = schoolenv.create_school_admin(
 					school,
 					lastname=school_admin_lastname)
 
