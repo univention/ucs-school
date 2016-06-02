@@ -127,7 +127,7 @@ class User(Person):
 				{
 					'object':{
 						'school': self.school,
-						'school_class': self.school_class},
+						'school_class': self.school_class,
 #						'school_classes': {self.school: [self.school_class]},
 						'email': self.mail,
 						'name': self.username,
