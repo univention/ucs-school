@@ -15,7 +15,8 @@ import univention.testing.utils as utils
 import univention.testing.ucr as testing_ucr
 import univention.testing.ucsschool as testing_ucsschool
 from univention.admin.uldap import explodeDn
-from ucsschool.lib.schoolldap import get_all_local_searchbases, set_credentials
+from ucsschool.lib.schoolldap import LDAP_Connection, set_credentials
+from ucsschool.lib.models import School
 import ucsschool.lib.roleshares as roleshares
 from ucsschool.lib.roles import role_pupil
 try:
@@ -149,14 +150,15 @@ def prepare_fileservers(school_id):
 	return tested_servers
 
 
-def main():
+@LDAP_Connection
+def main(ldap_machine_read=None):
 	status = 100
 
 	if not ucr.is_true('ucsschool/import/roleshare', True):
 		utils.fail(log_message="ucsschool/import/roleshare has been deactivated, skipping test", returncode=TestCodes.REASON_SKIP)
 
 	all_available_servers = []
-	all_visible_schools = [searchbase.school for searchbase in get_all_local_searchbases()]
+	all_visible_schools = [x.name for x in School.get_all(ldap_machine_read)]
 	with testing_ucsschool.UCSTestSchool() as schoolenv:
 		for school_id in all_visible_schools:
 			available_servers = prepare_fileservers(school_id)

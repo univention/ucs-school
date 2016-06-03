@@ -1,3 +1,10 @@
+ucs-school-lib (9.0.5-1) unstable; urgency=medium
+
+  * Bug #41117: remove unnecessary use of search_base
+  * fix escaping of special chars in DN's
+
+ -- Florian Best <best@univention.de>  Fri, 03 Jun 2016 02:37:37 +0200
+
 ucs-school-lib (9.0.4-1) unstable; urgency=medium
 
   * Bug #41425: disallow to switch python subclasses

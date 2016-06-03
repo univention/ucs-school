@@ -36,7 +36,6 @@ import univention.admin.config
 import univention.admin.modules
 
 import univention.admin.modules as udm_modules
-import univention.admin.uldap as udm_uldap
 from univention.management.console.protocol.message import Message
 
 from univention.lib.i18n import Translation
@@ -48,7 +47,7 @@ from ldap.filter import escape_filter_chars
 
 from univention.management.console.config import ucr
 from univention.management.console.log import MODULE
-from univention.management.console.ldap import get_machine_connection, get_admin_connection, get_user_connection
+from univention.management.console.ldap import get_machine_connection, get_admin_connection, get_user_connection#, reset_cache as reset_connection_cache
 from univention.management.console.modules import Base, UMC_Error
 from univention.management.console.modules.decorators import sanitize
 from univention.management.console.modules.sanitizers import StringSanitizer
@@ -57,7 +56,6 @@ from univention.management.console.modules.sanitizers import StringSanitizer
 udm_modules.update()
 
 __bind_callback = None
-_search_base = None
 
 _ = Translation('python-ucs-school').translate
 
@@ -81,18 +79,18 @@ def LDAP_Connection(*connection_types):
 
 	The function which uses this decorator may specify the following additional keyword arguments:
 	ldap_position: a univention.admin.uldap.position instance valid ldap position.
-	search_base: a SchoolSearchBase instance which is bound to the schools of the user.
 	ldap_user_read: a read only LDAP connection to the local LDAP server authenticated with the currently used user
 	ldap_user_write: a read/write LDAP connection to the master LDAP server authenticated with the currently used user
 	ldap_machine_read: a read only LDAP connection to the local LDAP server authenticated with the machine account
 	ldap_machine_write: a read/write LDAP connection to the master LDAP server authenticated with the machine account
 	ldap_admin_write: a read/write LDAP connection to the master LDAP server authenticated with cn=admin account
+	(deprecated!) search_base: a SchoolSearchBase instance which is bound to the school of the user or machine.
 
 	This decorator can only be used after set_bind_function() has been executed.
 
 	example:
 	  @LDAP_Connection()
-	  def do_ldap_stuff(arg1, arg2, ldap_user_write=None, ldap_user_read=None, ldap_position=None, search_base=None):
+	  def do_ldap_stuff(arg1, arg2, ldap_user_write=None, ldap_user_read=None, ldap_position=None):
 		  ...
 		  ldap_user_read.searchDn(..., position=ldap_position)
 		  ...
@@ -122,68 +120,42 @@ def LDAP_Connection(*connection_types):
 				kwargs[USER_READ], po = get_user_connection(bind=__bind_callback, write=False)
 			if add_position:
 				kwargs['ldap_position'] = po
-
-			# set keyword argument for search base
-			if not kwargs.get('search_base') and add_search_base:
-				_init_search_base(kwargs.get(USER_READ) or kwargs.get(USER_WRITE) or kwargs.get(MACHINE_READ) or kwargs.get(MACHINE_WRITE) or kwargs.get(ADMIN_WRITE))
-				# search_base is not set manually
-				kwargs['search_base'] = _search_base
-				if len(args) > 1 and isinstance(args[1], Message):
-					# we have a Message instance (i.e. a request), try to set the search_base
-					# according to the specified option 'school'
-					school = isinstance(args[1].options, dict) and args[1].options.get('school') or None
-					if school:
-						kwargs['search_base'] = SchoolSearchBase(_search_base.availableSchools, school)
-
+			if add_search_base:
+				MODULE.warn('Using deprecated LDAP_Connection.search_base parameter.')
+				from ucsschool.lib.models import School
+				if len(args) > 1 and isinstance(args[1], Message) and isinstance(args[1].options, dict) and args[1].options.get('school'):
+					school = args[1].options['school']
+				elif LDAP_Connection._school is None:
+					lo = kwargs.get(USER_READ) or kwargs.get(USER_WRITE) or kwargs.get(MACHINE_READ) or kwargs.get(MACHINE_WRITE) or kwargs.get(ADMIN_WRITE)
+					try:
+						school = School.from_binddn(lo)[0]
+						MODULE.info('Found school %r as ldap school base' % (school,))
+					except IndexError:
+						MODULE.warn('All Schools: ERROR, COULD NOT FIND ANY OU!!!')
+						school = ''
+					LDAP_Connection._school = school
+				else:
+					school = LDAP_Connection._school
+				kwargs['search_base'] = School.get_search_base(school)
 			return func(*args, **kwargs)
-
 		return wraps(func)(wrapper_func)
+#		def decorated(*args, **kwargs):
+#			try:
+#				return wrapper_func(*args, **kwargs)
+#			except ldap.INVALID_CREDENTIALS:
+#				reset_connection_cache()
+#				return wrapper_func(*args, **kwargs)
+#		return wraps(func)(decorated)
 	return inner_wrapper
-
-
-@LDAP_Connection(MACHINE_READ)
-def get_all_local_searchbases(ldap_machine_read=None, ldap_position=None, search_base=None):
-	from ucsschool.lib.models import School
-	schools = School.get_all(ldap_machine_read)
-	oulist = [school.name for school in schools]
-	if not oulist:
-		raise ValueError('LDAP_Connection: ERROR, COULD NOT FIND ANY OU!!!')
-
-	return [SchoolSearchBase(oulist, school) for school in oulist]
-
-
-def _init_search_base(ldap_connection, force=False):
-	global _search_base
-
-	if _search_base and not force:
-		# search base has already been initiated... we are done
-		return
-
-	from ucsschool.lib.models import School
-	schools = School.from_binddn(ldap_connection)
-	school_names = [school.name for school in schools]
-	if not school_names:
-		MODULE.warn('All Schools: ERROR, COULD NOT FIND ANY OU!!!')
-		_search_base = SchoolSearchBase([''])
-	else:
-		MODULE.info('All Schools: school_names=%s' % school_names)
-		_search_base = SchoolSearchBase(school_names)
+LDAP_Connection._school = None
 
 
 class SchoolSearchBase(object):
-	"""This class serves a wrapper for all the different search bases (users,
-	groups, students, teachers etc.). It is initiated with a particular ou.
-	The class is inteded for read access only, instead of switching the
-	search base, a new instance can simply be created.
-	"""
-	def __init__( self, availableSchools, school = None, dn = None, ldapBase = None ):
-		if ldapBase:
-			self._ldapBase = ldapBase
-		else:
-			self._ldapBase = ucr.get('ldap/base')
+	"""Deprecated utility class that generates DNs of common school containers for a OU"""
+	def __init__(self, availableSchools, school=None, dn=None, ldapBase=None):
+		self._ldapBase = ldapBase or ucr.get('ldap/base')
 
 		from ucsschool.lib.models import School
-		self._availableSchools = availableSchools
 		self._school = school or availableSchools[0]
 		self._schoolDN = dn or School.cache(self.school).dn
 
@@ -222,10 +194,6 @@ class SchoolSearchBase(object):
 		if match:
 			return match.group(1)
 	_RE_OUDN = re.compile('(?:^|,)(ou=.*)$', re.I)
-
-	@property
-	def availableSchools(self):
-		return self._availableSchools
 
 	@property
 	def dhcp(self):
@@ -333,21 +301,6 @@ class SchoolSearchBase(object):
 	def examGroup(self):
 		return "cn=%s,cn=ucsschool,cn=groups,%s" % (self.examGroupName, self._ldapBase)
 
-	def isStudent(self, userDN):
-		return userDN.endswith(self.students)
-
-	def isTeacher(self, userDN):
-		return userDN.endswith(self.teachers) or userDN.endswith(self.teachersAndStaff) or userDN.endswith(self.admins)
-
-	def isStaff(self, userDN):
-		return userDN.endswith(self.staff) or userDN.endswith(self.teachersAndStaff)
-
-	def isAdmin(self, userDN):
-		return userDN.endswith(self.admins)
-
-	def isExamUser(self, userDN):
-		return userDN.endswith(self.examUsers)
-
 	def isWorkgroup(self, groupDN):
 		# a workgroup cannot lie in a sub directory
 		if not groupDN.endswith(self.workgroups):
@@ -423,33 +376,37 @@ class SchoolBaseModule(Base):
 
 	@sanitize(school=StringSanitizer(required=True), pattern=StringSanitizer(default=''))
 	@LDAP_Connection()
-	def classes(self, request, ldap_user_read=None, search_base=None):
+	def classes(self, request, ldap_user_read=None):
 		"""Returns a list of all classes of the given school"""
-		pattern = request.options['pattern']
-		self.finished(request.id, self._groups(ldap_user_read, search_base.school, search_base.classes, pattern))
+		school = request.options['school']
+		from ucsschool.lib.models import SchoolClass
+		self.finished(request.id, self._groups(ldap_user_read, school, SchoolClass.get_container(school), request.options['pattern']))
 
 	@sanitize(school=StringSanitizer(required=True), pattern=StringSanitizer(default=''))
 	@LDAP_Connection()
-	def workgroups(self, request, ldap_user_read=None, search_base=None):
+	def workgroups(self, request, ldap_user_read=None):
 		"""Returns a list of all working groups of the given school"""
-		pattern = request.options['pattern']
-		self.finished(request.id, self._groups(ldap_user_read, search_base.school, search_base.workgroups, pattern, 'one'))
+		school = request.options['school']
+		from ucsschool.lib.models import WorkGroup
+		self.finished(request.id, self._groups(ldap_user_read, school, WorkGroup.get_container(school), request.options['pattern'], 'one'))
 
 	@sanitize(school=StringSanitizer(required=True), pattern=StringSanitizer(default=''))
 	@LDAP_Connection()
-	def groups(self, request, ldap_user_read=None, search_base=None):
+	def groups(self, request, ldap_user_read=None):
 		"""Returns a list of all groups (classes and workgroups) of the given school"""
 		# use as base the path for 'workgroups', as it incorporates workgroups and classes
 		# when searching with scope 'sub'
-		pattern = request.options['pattern']
-		self.finished(request.id, self._groups(ldap_user_read, search_base.school, search_base.workgroups, pattern))
+		school = request.options['school']
+		from ucsschool.lib.models import WorkGroup
+		self.finished(request.id, self._groups(ldap_user_read, school, WorkGroup.get_container(school), request.options['pattern']))
 
 	@sanitize(school=StringSanitizer(required=True), pattern=StringSanitizer(default=''))
 	@LDAP_Connection()
-	def rooms(self, request, ldap_user_read=None, search_base=None):
+	def rooms(self, request, ldap_user_read=None):
 		"""Returns a list of all available school"""
-		pattern = request.options['pattern']
-		self.finished(request.id, self._groups(ldap_user_read, search_base.school, search_base.rooms, pattern))
+		school = request.options['school']
+		from ucsschool.lib.models import ComputerRoom
+		self.finished(request.id, self._groups(ldap_user_read, school, ComputerRoom.get_container(school), request.options['pattern']))
 
 	def _users(self, ldap_connection, school, group=None, user_type=None, pattern=''):
 		"""Returns a list of all users given 'pattern', 'school' (search base) and 'group'"""

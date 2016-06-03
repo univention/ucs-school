@@ -30,19 +30,13 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-import univention.debug as ud
-import univention.config_registry
-import univention.lib.locking as locking
+from univention.lib import locking
 
-from univention.management.console.config import ucr
 from univention.management.console.log import MODULE
-from univention.management.console.modules import Base
 from univention.lib.i18n import Translation
 
 import ConfigParser
 import datetime
-import fcntl
-import os
 import re
 import shutil
 

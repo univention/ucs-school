@@ -37,7 +37,7 @@ import univention.config_registry
 from ucsschool.lib.roles import role_pupil, role_teacher, role_staff
 from ucsschool.lib.i18n import ucs_school_name_i18n
 from ucsschool.lib.models import Group, School
-from ucsschool.lib.schoolldap import get_all_local_searchbases, LDAP_Connection, USER_READ, USER_WRITE, MACHINE_READ
+from ucsschool.lib.schoolldap import LDAP_Connection, USER_READ, USER_WRITE, MACHINE_READ
 import univention.admin.uexceptions
 import univention.admin.uldap as udm_uldap
 from univention.admincli.admin import _2utf8
@@ -72,7 +72,7 @@ def roleshare_home_subdir(school_ou, roles, ucr=None):
 
 
 @LDAP_Connection(USER_READ, USER_WRITE)
-def create_roleshare_on_server(role, school_ou, share_container_dn, serverfqdn, teacher_group=None, ucr=None, ldap_user_read=None, ldap_user_write=None, ldap_position=None, search_base=None):
+def create_roleshare_on_server(role, school_ou, share_container_dn, serverfqdn, teacher_group=None, ucr=None, ldap_user_read=None, ldap_user_write=None, ldap_position=None):
 	if not ucr:
 		ucr = univention.config_registry.ConfigRegistry()
 		ucr.load()
@@ -109,7 +109,7 @@ def create_roleshare_on_server(role, school_ou, share_container_dn, serverfqdn, 
 		print 'Object created: %s' % _2utf8( udm_obj.dn )
 
 @LDAP_Connection(MACHINE_READ)
-def fqdn_from_serverdn(server_dn, ldap_machine_read=None, ldap_position=None, search_base=None):
+def fqdn_from_serverdn(server_dn, ldap_machine_read=None, ldap_position=None):
 	fqdn = None
 	try:
 		dn, ldap_obj = ldap_machine_read.search(base=server_dn, scope='base', attr=['cn', 'associatedDomain'])[0]
@@ -120,7 +120,7 @@ def fqdn_from_serverdn(server_dn, ldap_machine_read=None, ldap_position=None, se
 	return fqdn
 
 @LDAP_Connection(MACHINE_READ)
-def fileservers_for_school(school_id, ldap_machine_read=None, ldap_position=None, search_base=None):
+def fileservers_for_school(school_id, ldap_machine_read=None, ldap_position=None):
 	school_obj = School(name=school_id).get_udm_object(ldap_machine_read)
 
 	server_dn_list = []
@@ -140,14 +140,14 @@ def fileservers_for_school(school_id, ldap_machine_read=None, ldap_position=None
 	return set(server_list)
 
 
-@LDAP_Connection(USER_READ)
-def create_roleshare_for_searchbase(role, target_searchbase, ucr=None, ldap_user_read=None, ldap_position=None, search_base=None):
+@LDAP_Connection()
+def create_roleshare_for_searchbase(role, school, ucr=None, ldap_user_read=None):
 	if not ucr:
 		ucr = univention.config_registry.ConfigRegistry()
 		ucr.load()
 		
-	school_ou = target_searchbase.school
-	share_container_dn = target_searchbase.shares
+	school_ou = school.name
+	share_container_dn = school.get_search_base(school.name).shares
 
 	teacher_groupname = '-'.join((ucs_school_name_i18n(role_teacher), school_ou))
 	teacher_group = Group(name=teacher_groupname, school=school_ou).get_udm_object(ldap_user_read)
@@ -158,7 +158,8 @@ def create_roleshare_for_searchbase(role, target_searchbase, ucr=None, ldap_user
 		create_roleshare_on_server(role, school_ou, share_container_dn, serverfqdn, teacher_group, ucr)
 
 
-def create_roleshares(role_list, school_list=None, ucr=None):
+@LDAP_Connection()
+def create_roleshares(role_list, school_list=None, ucr=None, ldap_machine_read=None):
 	if not ucr:
 		ucr = univention.config_registry.ConfigRegistry()
 		ucr.load()
@@ -175,19 +176,18 @@ def create_roleshares(role_list, school_list=None, ucr=None):
 			sys.exit(1)
 		roles.append(name)
 
-	all_visible_searchbases = get_all_local_searchbases()
+	schools = School.get_all(ldap_machine_read)
 
 	if not school_list:
 		school_list = []
 
-	all_visible_schools = [searchbase.school for searchbase in all_visible_searchbases]
+	all_visible_schools = [x.name for x in schools]
 	for school_ou in school_list:
 		if school_ou not in all_visible_schools:
 			print 'School not found: %s' (school_ou,)
 
-	for searchbase in all_visible_searchbases:
-		school_ou = searchbase.school
-		if school_list and school_ou not in school_list:
+	for school in schools:
+		if school_list and school.name not in school_list:
 			continue
 		for role in roles:
-			create_roleshare_for_searchbase(role, searchbase, ucr)
+			create_roleshare_for_searchbase(role, school, ucr)

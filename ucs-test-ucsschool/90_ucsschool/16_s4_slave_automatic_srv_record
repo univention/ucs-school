@@ -19,8 +19,8 @@ from univention import testing
 import univention.testing.ucr as testing_ucr
 import univention.testing.udm as testing_udm
 from univention.admin.uldap import explodeDn
-from ucsschool.lib.schoolldap import get_all_local_searchbases, set_credentials
-from ucsschool.lib.schoolldap import LDAP_Connection, MACHINE_READ
+from ucsschool.lib.schoolldap import set_credentials, LDAP_Connection, MACHINE_READ
+from ucsschool.lib.models import School
 import univention.admin.uexceptions as udm_errors
 import univention.testing.strings as uts
 import univention.config_registry
@@ -126,11 +126,11 @@ class Test():
 				negative_test_fqdn_list.append(".".join((obj['cn'][0], domainname)))
 
 		with testing_udm.UCSTestUDM() as udm:
-			for searchbase in get_all_local_searchbases():
+			for school in School.get_all(ldap_machine_read):
 				positive_test_hostname = uts.random_name()
 				dn = udm.create_object("computers/domaincontroller_slave",
 					name = positive_test_hostname,
-					position = "cn=dc,cn=server,cn=computers,%s" % (searchbase.schoolDN,),
+					position = "cn=dc,cn=server,cn=computers,%s" % (school.dn,),
 					domain = ucr.get('domainname'),
 					service = ("S4 SlavePDC", _local_ucsschool_service),
 					groups = ("cn=DC-Edukativnetz,cn=ucsschool,cn=groups,%(ldap/base)s" % ucr)
@@ -142,7 +142,7 @@ class Test():
 				negative_test_hostname = uts.random_name()
 				dn = udm.create_object("computers/domaincontroller_slave",
 					name = negative_test_hostname,
-					position = "cn=dc,cn=server,cn=computers,%s" % (searchbase.schoolDN,),
+					position = "cn=dc,cn=server,cn=computers,%s" % (school.dn,),
 					domain = ucr.get('domainname'),
 					service = ("S4 SlavePDC", _not_local_ucsschool_service),
 					groups = ("cn=DC-Edukativnetz,cn=ucsschool,cn=groups,%(ldap/base)s" % ucr)

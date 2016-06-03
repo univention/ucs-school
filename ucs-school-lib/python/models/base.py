@@ -38,6 +38,7 @@ import subprocess
 import ldap
 from ldap import explode_dn
 from ldap.filter import escape_filter_chars
+from ldap.dn import escape_dn_chars
 
 import univention.admin.uldap as udm_uldap
 from univention.admin.uexceptions import noObject
@@ -245,7 +246,7 @@ class UCSSchoolHelperAbstractClass(object):
 		container = self.get_own_container()
 		if self.name and container:
 			name = self._meta.ldap_map_function(self.name)
-			return '%s=%s,%s' % (self._meta.ldap_name_part, name, container)
+			return '%s=%s,%s' % (self._meta.ldap_name_part, escape_dn_chars(name), container)
 
 	def set_dn(self, dn):
 		'''Does not really set dn, as this is generated

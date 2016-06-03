@@ -32,6 +32,7 @@
 
 import ldap
 from ldap.filter import escape_filter_chars
+from ldap.dn import escape_dn_chars
 
 from univention.config_registry import handler_set
 
@@ -70,7 +71,7 @@ class School(UCSSchoolHelperAbstractClass):
 	def get_own_container(self):
 		district = self.get_district()
 		if district:
-			return 'ou=%s,%s' % (district, self.get_container())
+			return 'ou=%s,%s' % (escape_dn_chars(district), self.get_container())
 		return self.get_container()
 
 	@classmethod

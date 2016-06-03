@@ -562,19 +562,19 @@ class Instance(Base):
 				values['classShareServer'] = result[0].get('ucsschoolClassShareFileServer')
 				values['homeShareServer'] = result[0].get('ucsschoolHomeShareFileServer')
 				# ...find all joined slave systems in the ou
-				searchBase = SchoolSearchBase([schoolOU], ldapBase=ucrMaster.get('ldap/base'))
+				search_base = SchoolSearchBase([schoolOU], ldapBase=ucrMaster.get('ldap/base'))
 				try:
-					slaves = udm_modules.lookup('computers/domaincontroller_slave', None, lo, base=searchBase.computers, scope='sub')
+					slaves = udm_modules.lookup('computers/domaincontroller_slave', None, lo, base=search_base.computers, scope='sub')
 				except univention.admin.uexceptions.noObject:
 					slaves = []
-					MODULE.warn('School OU %r seems to be inconsistent! Container %r is missing!' % (schoolOU, searchBase.computers))
+					MODULE.warn('School OU %r seems to be inconsistent! Container %r is missing!' % (schoolOU, search_base.computers))
 
 				for islave in slaves:
 					islave.open()
 					# compare group DNs case insensitive
-					if searchBase.educationalDCGroup.lower() in [x.lower() for x in islave['groups']]:
+					if search_base.educationalDCGroup.lower() in [x.lower() for x in islave['groups']]:
 						values['educational_slaves'].append(islave['name'])
-					if searchBase.administrativeDCGroup.lower() in [x.lower() for x in islave['groups']]:
+					if search_base.administrativeDCGroup.lower() in [x.lower() for x in islave['groups']]:
 						values['administrative_slaves'].append(islave['name'])
 		except univention.uldap.ldap.LDAPError as err:
 			MODULE.warn('LDAP connection to %s failed: %s' % (master, err))

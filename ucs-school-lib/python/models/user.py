@@ -143,27 +143,29 @@ class User(UCSSchoolHelperAbstractClass):
 	@classmethod
 	def is_student(cls, school, dn):
 		logger.warning('Using deprecated method is_student()')
-		return cls.get_search_base(school).isStudent(dn)
+		return dn.endswith(cls.get_search_base(school).students)
 
 	@classmethod
 	def is_exam_student(cls, school, dn):
 		logger.warning('Using deprecated method is_exam_student()')
-		return cls.get_search_base(school).isExamUser(dn)
+		return dn.endswith(cls.get_search_base(school).examUsers)
 
 	@classmethod
 	def is_teacher(cls, school, dn):
 		logger.warning('Using deprecated method is_teacher()')
-		return cls.get_search_base(school).isTeacher(dn)
+		search_base = cls.get_search_base(school)
+		return dn.endswith(search_base.teachers) or dn.endswith(search_base.teachersAndStaff) or dn.endswith(search_base.admins)
 
 	@classmethod
 	def is_staff(cls, school, dn):
 		logger.warning('Using deprecated method is_staff()')
-		return cls.get_search_base(school).isStaff(dn)
+		search_base = cls.get_search_base(school)
+		return dn.endswith(search_base.staff) or dn.endswith(search_base.teachersAndStaff)
 
 	@classmethod
 	def is_admininstrator(cls, school, dn):
 		logger.warning('Using deprecated method is_admininstrator()')
-		return cls.get_search_base(school).isAdmin(dn)
+		return dn.endswith(cls.get_search_base(school).admins)
 
 	@classmethod
 	def get_class_for_udm_obj(cls, udm_obj, school):
