@@ -28,18 +28,11 @@ def main():
 		# TODO: change school and uid at once!
 		# TODO: user without classes
 
-		cn_pupils = ucr.get('ucsschool/ldap/default/container/pupils', 'schueler')
-		cn_teachers = ucr.get('ucsschool/ldap/default/container/teachers', 'lehrer')
-		#cn_teachers_staff = ucr.get('ucsschool/ldap/default/container/teachers-and-staff', 'lehrer und mitarbeiter')
-		#cn_admins = ucr.get('ucsschool/ldap/default/container/admins', 'admins')
-		cn_staff = ucr.get('ucsschool/ldap/default/container/staff', 'mitarbeiter')
-
 		users = [
-			(env.create_user(a), cn_pupils), # student
-			(env.create_user(a), cn_pupils), # student with exam
-			(env.create_user(a, is_teacher=True), cn_teachers),
-			(env.create_user(a, is_staff=True), cn_staff),
-			(env.create_user(a, is_teacher=True, is_staff=True), cn_teachers),
+			(env.create_user(a), 'schueler'), # student
+			(env.create_user(a, is_teacher=True), 'lehrer'),
+			(env.create_user(a, is_staff=True), 'mitarbeiter'),
+			(env.create_user(a, is_teacher=True, is_staff=True), 'lehrer'),
 		]
 		lo = env.open_ldap_connection()
 		for (user, dn), roleshare_path, in users:
