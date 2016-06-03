@@ -1,3 +1,9 @@
+ucs-school-lib (9.0.7-1) unstable; urgency=medium
+
+  * Bug #41425: support API change in get_all()
+
+ -- Florian Best <best@univention.de>  Fri, 03 Jun 2016 14:55:31 +0200
+
 ucs-school-lib (9.0.6-1) unstable; urgency=medium
 
   * Bug #41445: fix logic error / typo

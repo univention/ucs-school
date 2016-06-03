@@ -680,9 +680,10 @@ class UCSSchoolHelperAbstractClass(object):
 		ret = []
 		for udm_obj in cls.lookup(lo, school, complete_filter, superordinate=superordinate):
 			udm_obj.open()
-			obj = cls.from_udm_obj(udm_obj, school, lo)
-			if obj:
-				ret.append(obj)
+			try:
+				ret.append(cls.from_udm_obj(udm_obj, school, lo))
+			except UnknownModel:
+				continue
 		return ret
 
 	@classmethod

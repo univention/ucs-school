@@ -128,7 +128,7 @@ def LDAP_Connection(*connection_types):
 				elif LDAP_Connection._school is None:
 					lo = kwargs.get(USER_READ) or kwargs.get(USER_WRITE) or kwargs.get(MACHINE_READ) or kwargs.get(MACHINE_WRITE) or kwargs.get(ADMIN_WRITE)
 					try:
-						school = School.from_binddn(lo)[0]
+						school = School.from_binddn(lo)[0].name
 						MODULE.info('Found school %r as ldap school base' % (school,))
 					except IndexError:
 						MODULE.warn('All Schools: ERROR, COULD NOT FIND ANY OU!!!')
