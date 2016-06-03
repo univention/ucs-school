@@ -1,3 +1,9 @@
+ucs-school-umc-exam (6.0.3-1) unstable; urgency=medium
+
+  * Bug #41123: correctly detect (and ignore) exam users
+
+ -- Florian Best <best@univention.de>  Fri, 03 Jun 2016 02:54:00 +0200
+
 ucs-school-umc-exam (6.0.2-1) unstable; urgency=medium
 
   * Bug #41123: make schoolexam users possible

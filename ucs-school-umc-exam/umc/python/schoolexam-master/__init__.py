@@ -43,8 +43,8 @@ from univention.management.console.log import MODULE
 from univention.management.console.modules import UMC_Error
 from univention.management.console.modules.decorators import sanitize
 from univention.management.console.modules.sanitizers import StringSanitizer
-from ucsschool.lib.schoolldap import LDAP_Connection, SchoolSearchBase, SchoolBaseModule, ADMIN_WRITE, USER_READ
-from ucsschool.lib.models import ComputerRoom, Student, ExamStudent
+from ucsschool.lib.schoolldap import LDAP_Connection, SchoolBaseModule, ADMIN_WRITE, USER_READ
+from ucsschool.lib.models import School, ComputerRoom, Student, ExamStudent
 
 import univention.admin.uexceptions
 import univention.admin.modules
@@ -69,7 +69,7 @@ class Instance(SchoolBaseModule):
 	def examGroup(self, ldap_admin_write, ldap_position, school):
 		'''fetch the examGroup object, create it if missing'''
 		if not self._examGroup:
-			search_base = SchoolSearchBase([school], school)
+			search_base = School.get_search_base(school)
 			examGroup = search_base.examGroup
 			examGroupName = search_base.examGroupName
 			if 'groups/group' in self._udm_modules:
@@ -102,7 +102,7 @@ class Instance(SchoolBaseModule):
 	def examUserContainerDN(self, ldap_admin_write, ldap_position, school):
 		'''lookup examUserContainerDN, create it if missing'''
 		if not self._examUserContainerDN:
-			search_base = SchoolSearchBase([school], school)
+			search_base = School.get_search_base(school)
 			examUsers = search_base.examUsers
 			examUserContainerName = search_base._examUserContainerName
 			try:

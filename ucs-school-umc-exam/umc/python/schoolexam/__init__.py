@@ -56,7 +56,7 @@ from univention.lib.umc_connection import UMCConnection
 from ucsschool.lib.schoolldap import LDAP_Connection, SchoolBaseModule, SchoolSearchBase
 from ucsschool.lib import internetrules
 from ucsschool.lib.schoollessons import SchoolLessons
-from ucsschool.lib.models import ComputerRoom
+from ucsschool.lib.models import ComputerRoom, User
 
 import univention.admin.modules as udm_modules
 import univention.admin.uexceptions as udm_exceptions
@@ -164,7 +164,7 @@ class Instance(SchoolBaseModule):
 	)
 	@require_password
 	@LDAP_Connection()
-	def start_exam(self, request, ldap_user_read=None, ldap_position=None, search_base=None):
+	def start_exam(self, request, ldap_user_read=None, ldap_position=None):
 		# reset the current progress state
 		# steps:
 		#   5  -> for preparing exam room
@@ -235,17 +235,22 @@ class Instance(SchoolBaseModule):
 			progress.add_steps(5)
 
 			# read all recipients and fetch all user objects
-			entries = [ientry for ientry in [util.distribution.openRecipients(idn, ldap_user_read) for idn in request.options.get('recipients', [])] if ientry]
 			users = []
-			for ientry in entries:
+			for idn in request.options['recipients']:
+				ientry = util.distribution.openRecipients(idn, ldap_user_read)
+				if not ientry:
+					continue
 				# recipients can in theory be users or groups
+				members = []
 				if isinstance(ientry, util.distribution.User):
-					users.append(ientry)
+					members = [ientry]
 				elif isinstance(ientry, util.distribution.Group):
-					users.extend(ientry.members)
-
-			# ignore exam users
-			users = [iuser for iuser in users if not search_base.isExamUser(iuser.dn)]  # FIXME: check is broken nowerdays
+					members = ientry.members
+				for entry in members:
+					# ignore exam users
+					user = User.from_dn(entry.dn, None, ldap_user_read)
+					if not user.self_is_exam_student():
+						users.append(entry)
 
 			# start to create exam user accounts
 			progress.component(_('Preparing exam accounts'))
