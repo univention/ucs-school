@@ -41,6 +41,7 @@ from collections import defaultdict
 from univention.admin import property as uadmin_property
 from ucsschool.lib.roles import role_pupil, role_teacher, role_staff
 from ucsschool.lib.models import Staff, Student, Teacher, TeachersAndStaff, User
+from ucsschool.lib.models.base import UnknownModel
 from ucsschool.importer.configuration import Configuration
 from ucsschool.importer.factory import Factory
 from ucsschool.importer.exceptions import BadPassword, FormatError, InvalidBirthday, InvalidEmail, MissingMailDomain, MissingMandatoryAttribute, MissingSchoolName, NoUsername, NoUsernameAtAll, UniqueIdError, UnkownDisabledSetting, UnknownProperty, UsernameToLong
@@ -459,7 +460,17 @@ class ImportUser(User):
 
 	@classmethod
 	def get_class_for_udm_obj(cls, udm_obj, school):
-		raise NotImplementedError()
+		klass = super(ImportUser, cls).get_class_for_udm_obj(udm_obj, school)
+		if issubclass(klass, TeachersAndStaff):
+			return ImportTeachersAndStaff
+		elif issubclass(klass, Teacher):
+			return ImportTeacher
+		elif issubclass(klass, Staff):
+			return ImportStaff
+		elif issubclass(klass, Student):
+			return ImportStudent
+		else:
+			raise UnknownModel("Don't know what to do with '{}'.".format(klass))
 
 	def create_without_hooks(self, lo, validate):
 		success = super(ImportUser, self).create_without_hooks(lo, validate)

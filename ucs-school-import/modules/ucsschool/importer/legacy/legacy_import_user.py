@@ -32,9 +32,11 @@ ImportUser subclass for import using legacy CSV format.
 # <http://www.gnu.org/licenses/>.
 
 
+from ucsschool.lib.models import Staff, Student, Teacher, TeachersAndStaff
 from ucsschool.importer.models.import_user import ImportStaff, ImportStudent, ImportTeacher,\
 	ImportTeachersAndStaff, ImportUser
 from ucsschool.importer.exceptions import UnkownAction
+from ucsschool.lib.models.base import UnknownModel
 
 
 class LegacyImportUser(ImportUser):
@@ -69,6 +71,20 @@ class LegacyImportUser(ImportUser):
 
 		if self.action and self.action not in ["A", "D", "M"]:
 			raise UnkownAction("Unknown action '{}'.".format(self.action))
+
+	@classmethod
+	def get_class_for_udm_obj(cls, udm_obj, school):
+		klass = super(LegacyImportUser, cls).get_class_for_udm_obj(udm_obj, school)
+		if issubclass(klass, TeachersAndStaff):
+			return LegacyImportTeachersAndStaff
+		elif issubclass(klass, Teacher):
+			return LegacyImportTeacher
+		elif issubclass(klass, Staff):
+			return LegacyImportStaff
+		elif issubclass(klass, Student):
+			return LegacyImportStudent
+		else:
+			raise UnknownModel("Don't know what to do with '{}'.".format(klass))
 
 
 class LegacyImportStudent(LegacyImportUser, ImportStudent):
