@@ -44,6 +44,9 @@ from ucsschool.importer.mass_import.mass_import import MassImport
 from ucsschool.importer.models.import_user import ImportStaff, ImportStudent, ImportTeacher, ImportTeachersAndStaff
 from ucsschool.importer.mass_import.user_import import UserImport
 from ucsschool.importer.utils.username_handler import UsernameHandler
+from ucsschool.importer.utils.logging2udebug import get_logger
+from ucsschool.importer.factory import load_class
+from ucsschool.importer.exceptions import InitialisationError
 
 
 class DefaultFactory(object):
@@ -55,6 +58,78 @@ class DefaultFactory(object):
 	"""
 	def __init__(self):
 		self.config = Configuration()
+		self.logger = get_logger()
+		self.load_methods_from_config()
+
+	def load_methods_from_config(self):
+		"""
+		Overwrite the methods in this class with constructors or methods from
+		the configuration file.
+
+		* Configuration keys in the configuration "classes" dict are the names
+		of the methods here without the prepended 'make_'.
+		* It will be checked if the configured classes are really subclasses as
+		described in the documentation
+		(/usr/share/doc/ucs-school-import/configuration_readme.txt).
+		* Please update the documentation if classes/methods are added.
+		* Take care to honor the signature of the methods, this cannot be
+		checked.
+		"""
+		classes = {
+			"reader": "ucsschool.importer.reader.base_reader.BaseReader",
+			"mass_importer": "ucsschool.importer.mass_import.mass_import.MassImport",
+			"password_exporter": "ucsschool.importer.writer.result_exporter.ResultExporter",
+			"result_exporter": "ucsschool.importer.writer.result_exporter.ResultExporter",
+			"user_importer": "ucsschool.importer.mass_import.user_import.UserImport",
+			"username_handler": "ucsschool.importer.utils.username_handler.UsernameHandler",
+			"user_writer": "ucsschool.importer.writer.base_writer.BaseWriter"
+		}
+		methods = ["import_user"]
+
+		for k, v in classes.items():
+			if k not in self.config["classes"]:
+				continue
+			make_name = "make_{}".format(k)
+			if not hasattr(self, make_name):
+				self.logger.error("Configuration key 'classes'->%r not supported, ignoring.", k)
+				continue
+			try:
+				klass = load_class(self.config["classes"][k])
+			except (AttributeError, ImportError, ValueError) as exc:
+				self.logger.exception("Cannot load class %r, ignoring: %s", self.config["classes"][k], exc)
+				continue
+			try:
+				super_klass = load_class(v)
+			except (AttributeError, ImportError, ValueError) as exc:
+				self.logger.exception("Loading super class %r: %s", v, exc)
+				raise InitialisationError("Cannot load super class '{}'.".format(v))
+			if not issubclass(klass, super_klass):
+				self.logger.error("Class %s.%s is not a subclass of %s.%s, ignoring.",
+					klass.__module__, klass.__name__, super_klass.__module__, super_klass.__name__)
+				continue
+			setattr(self, make_name, klass)
+			self.logger.info("%s.%s is now %s.", self.__class__.__name__, make_name, klass)
+
+		for k in methods:
+			if k not in self.config["classes"]:
+				continue
+			make_name = "make_{}".format(k)
+			if not hasattr(self, make_name):
+				self.logger.error("Configuration key 'classes'->%r not supported, ignoring.", k)
+				continue
+			try:
+				kla, dot, meth = self.config["classes"][k].rpartition(".")
+				klass = load_class(kla)
+			except (AttributeError, ImportError, ValueError) as exc:
+				self.logger.exception("Cannot load class %r, ignoring: %s", self.config["classes"][k], exc)
+				continue
+			try:
+				method = getattr(klass, meth)
+			except AttributeError as exc:
+				self.logger.exception("Class %r has no method %r, ignoring: %s", klass, meth, exc)
+				continue
+			setattr(self, make_name, method)
+			self.logger.info("%s.%s is now %s.%s", self.__class__.__name__, make_name, klass, meth)
 
 	def make_reader(self, **kwargs):
 		"""
@@ -107,7 +182,6 @@ class DefaultFactory(object):
 		:param kwarg: dict: passed to constructor of created class
 		:return: ucsschool.importer.writer.result_exporter.ResultExporter object
 		"""
-		# TODO
 		return NewUserPasswordCsvExporter(*arg, **kwargs)
 
 	def make_result_exporter(self, *arg, **kwargs):

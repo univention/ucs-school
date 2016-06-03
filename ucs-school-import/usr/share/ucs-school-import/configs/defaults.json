@@ -1,5 +1,6 @@
 {
 	"factory": "ucsschool.importer.default_factory.DefaultFactory",
+	"classes": {},
 	"input": {
 		"type": null
 	},

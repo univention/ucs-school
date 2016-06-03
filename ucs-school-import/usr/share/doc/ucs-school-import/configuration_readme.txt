@@ -9,6 +9,16 @@ All options can be set from the command line using "--set <option>".
 
 
 "factory": str: fully dotted path to (a subclass of) ucsschool.importer.default_factory.DefaultFactory
+"classes": {
+	"reader": str: fully dotted path to a subclass of BaseReader e.g. "ucsschool.importer.reader.csv_reader.CsvReader"
+	"import_user":  str: fully dotted path to a *function* that returns an object of the appropriate subclass of ImportUser
+	"mass_importer":  str: fully dotted path to a subclass of ucsschool.importer.mass_import.mass_import.MassImport
+	"password_exporter":  str: fully dotted path to a subclass of ucsschool.importer.writer.result_exporter.ResultExporter
+	"result_exporter":  str: fully dotted path to a subclass of ucsschool.importer.writer.result_exporter.ResultExporter
+	"user_importer":  str: fully dotted path to a subclass of ucsschool.importer.mass_import.user_import.UserImport
+	"username_handler":  str: fully dotted path to a subclass of ucsschool.importer.utils.username_handler.UsernameHandler
+	"user_writer":  str: fully dotted path to a subclass of ucsschool.importer.writer.base_writer.BaseWriter
+},
 "input": {
 	"type": str [1]: "csv", "json", "socket" etc
 	"filename": str: path to the input file (csv etc)
