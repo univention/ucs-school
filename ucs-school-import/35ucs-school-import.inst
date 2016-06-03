@@ -192,6 +192,19 @@ univention-directory-manager settings/extended_options create "$@" --ignore_exis
 	--set translationShortDescription='"de_DE" "UCS@school-Administrator"' \
 	--set translationLongDescription='"de_DE" "Spezifiziert, dass dieser Benutzer ein UCS@school-Administrator ist"' || die
 
+univention-directory-manager settings/extended_options create "$@" --ignore_exists \
+	--position "cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
+	--set name="ucsschoolExam" \
+	--append module=users/user \
+	--append module=settings/usertemplate \
+	--set objectClass=ucsschoolExam \
+	--set default=0 \
+	--set editable=0 \
+	--set shortDescription="UCS@school Examuser" \
+	--set longDescription="Specifies that this user is a UCS@school Examuser" \
+	--set translationShortDescription='"de_DE" "UCS@school-Klassenarbeitsbenutzer"' \
+	--set translationLongDescription='"de_DE" "Spezifiziert, dass dieser Benutzer ein UCS@school-Klassenarbeitsbenutzer ist"' || die
+
 univention-directory-manager settings/extended_attribute create "$@" --ignore_exists \
 	--position "cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
 	--set name="ucsschoolSchool" \

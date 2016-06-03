@@ -1,3 +1,10 @@
+ucs-school-import (14.0.2-1) unstable; urgency=medium
+
+  * Bug #41123: add ucsschoolExam extended option (not needed but who knows
+  	for the future)
+
+ -- Florian Best <best@univention.de>  Fri, 03 Jun 2016 17:11:22 +0200
+
 ucs-school-import (14.0.1-3) unstable; urgency=low
 
   * Bug #41239: add support to overwrite factory methods in the configuration
