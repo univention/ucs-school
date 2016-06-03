@@ -1,3 +1,10 @@
+ucs-school-lib (9.0.5-2) unstable; urgency=low
+
+  * Bug #41239: remove source_uid and record_uid from models.User (moved to
+    ImportUser in ucs-school-import)
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 03 Jun 2016 12:42:04 +0200
+
 ucs-school-lib (9.0.5-1) unstable; urgency=medium
 
   * Bug #41117: remove unnecessary use of search_base

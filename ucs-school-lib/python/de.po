@@ -191,11 +191,6 @@ msgstr "Netzwerk"
 msgid "Network path"
 msgstr "Pfad für Netzwerk"
 
-#: python/models/user.py:487
-#, python-brace-format
-msgid "No user with source_uid={0} and record_uid={1} found."
-msgstr ""
-
 #: python/schoollessons.py:64 python/schoollessons.py:136
 msgid "Overlapping lessons are not allowed"
 msgstr "Überlappende Schulstunden sind nicht erlaubt"
@@ -211,10 +206,6 @@ msgstr "Pfad für Richtlinien"
 #: python/models/misc.py:96
 msgid "Printer path"
 msgstr "Pfad für Drucker"
-
-#: python/models/user.py:65
-msgid "RecordUID"
-msgstr "RecordUID"
 
 #: python/models/base.py:161
 msgid "School"
@@ -251,10 +242,6 @@ msgstr "Dienst"
 #: python/models/misc.py:95
 msgid "Share path"
 msgstr "Pfad für Freigaben"
-
-#: python/models/user.py:64
-msgid "SourceUID"
-msgstr "SourceUID"
 
 #: python/models/user.py:593
 msgid "Staff"

@@ -38,7 +38,7 @@ from ldap.filter import escape_filter_chars, filter_format
 
 from ucsschool.lib.roles import role_pupil, role_teacher, role_staff
 from ucsschool.lib.models.utils import create_passwd
-from ucsschool.lib.models.attributes import Username, Firstname, Lastname, Birthday, Email, Password, Disabled, SchoolClassStringAttribute, Schools, RecordUID, SourceUID
+from ucsschool.lib.models.attributes import Username, Firstname, Lastname, Birthday, Email, Password, Disabled, SchoolClassStringAttribute, Schools
 from ucsschool.lib.models.base import UCSSchoolHelperAbstractClass
 from ucsschool.lib.models.school import School
 from ucsschool.lib.models.group import Group, BasicGroup, SchoolClass, WorkGroup
@@ -61,8 +61,6 @@ class User(UCSSchoolHelperAbstractClass):
 	password = Password(_('Password'), aka=['Password', 'Passwort'])
 	disabled = Disabled(_('Disabled'), aka=['Disabled', 'Gesperrt'])
 	school_class = None # not defined by default (Staff)
-	source_uid = SourceUID(_('SourceUID'))
-	record_uid = RecordUID(_('RecordUID'))
 
 	type_name = None
 	type_filter = '(|(objectClass=ucsschoolTeacher)(objectClass=ucsschoolStaff)(objectClass=ucsschoolStudent))'
@@ -498,14 +496,6 @@ class User(UCSSchoolHelperAbstractClass):
 	@classmethod
 	def get_container(cls, school):
 		return cls.get_search_base(school).users
-
-	@classmethod
-	def get_by_import_id(cls, lo, source_uid, record_uid, superordinate=None):
-		filter_s = filter_format('(&(objectClass=ucsschoolType)(ucsschoolSourceUID=%s)(ucsschoolRecordUID=%s))', (source_uid, record_uid))
-		obj = cls.get_only_udm_obj(lo, filter_s, superordinate=superordinate)
-		if not obj:
-			raise noObject(_('No user with source_uid={0} and record_uid={1} found.').format(source_uid, record_uid))
-		return cls.from_udm_obj(obj, None, lo)
 
 	@classmethod
 	def lookup(cls, lo, school, filter_s='', superordinate=None):
