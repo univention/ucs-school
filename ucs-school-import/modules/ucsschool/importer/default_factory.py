@@ -41,7 +41,7 @@ from ucsschool.importer.writer.csv_writer import CsvWriter
 from ucsschool.importer.writer.new_user_password_csv_exporter import NewUserPasswordCsvExporter
 from ucsschool.importer.configuration import Configuration
 from ucsschool.importer.mass_import.mass_import import MassImport
-from ucsschool.importer.models.import_user import ImportStaff, ImportStudent, ImportTeacher, ImportTeachersAndStaff
+from ucsschool.importer.models.import_user import ImportStaff, ImportStudent, ImportTeacher, ImportTeachersAndStaff, ImportUser
 from ucsschool.importer.mass_import.user_import import UserImport
 from ucsschool.importer.utils.username_handler import UsernameHandler
 from ucsschool.importer.utils.logging2udebug import get_logger
@@ -148,13 +148,16 @@ class DefaultFactory(object):
 
 	def make_import_user(self, cur_user_roles, *arg, **kwargs):
 		"""
-		Creates a ImportUser of specific type, depending on its roles.
+		Creates a ImportUser [of specific type], depending on its roles.
 
 		:param cur_user_roles: list: [ucsschool.lib.roles, ..]
 		:param arg: list: passed to constructor of created class
 		:param kwarg: dict: passed to constructor of created class
-		:return: ImportUser: object of ImportUser subclass
+		:return: ImportUser: object of ImportUser subclass or ImportUser if
+		cur_user_roles was empty
 		"""
+		if not cur_user_roles:
+			return ImportUser(*arg, **kwargs)
 		if role_pupil in cur_user_roles:
 			return ImportStudent(*arg, **kwargs)
 		if role_teacher in cur_user_roles:

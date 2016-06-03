@@ -86,12 +86,12 @@ class ReadOnlyDict(dict):
 				# Try to use any other type than str (when overwriting
 				# configuration from cmdline).
 				if v is None:
-					a[k] = b[k]
+					a[k] = v
 				else:
 					t = type(v)
-					if t == str and a.get(k):
+					if isinstance(t, basestring) and a.get(k):
 						t = type(a[k])
-					a[k] = t(b[k])
+					a[k] = t(v)
 		return a
 
 	def update(self, E=None, **F):

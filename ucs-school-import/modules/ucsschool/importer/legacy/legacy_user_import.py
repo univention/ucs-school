@@ -33,8 +33,7 @@ Legacy mass import class.
 
 from univention.admin.uexceptions import noObject
 from ucsschool.importer.mass_import.user_import import UserImport
-from ucsschool.importer.exceptions import CreationError, UnkownAction, UnkownRole
-from ucsschool.lib.roles import role_pupil, role_teacher, role_staff
+from ucsschool.importer.exceptions import CreationError, UnkownAction
 
 
 class LegacyUserImport(UserImport):
@@ -43,28 +42,12 @@ class LegacyUserImport(UserImport):
 		No need to compare input and LDAP. Action was written in the CSV file
 		and is already stored in user.action.
 		"""
-		# We need those to fetch the correct type from LDAP.
-		a_student = self.factory.make_import_user([role_pupil])
-		a_staff = self.factory.make_import_user([role_staff])
-		a_teacher = self.factory.make_import_user([role_teacher])
-		a_staff_teacher = self.factory.make_import_user([role_staff, role_teacher])
-
+		a_user = self.factory.make_import_user([])
 		users_to_delete = list()
 		for user in self.imported_users:
 			if user.action == "D":
-				if user.is_student(user.school, user.dn):
-					obj = a_student
-				elif user.is_admininstrator(user.school, user.dn):  # attention: is_* are not mutually exclusive
-					obj = a_staff_teacher
-				elif user.is_teacher(user.school, user.dn):
-					obj = a_teacher
-				elif user.is_staff(user.school, user.dn):
-					obj = a_staff
-				else:
-					raise UnkownRole("Cannot determine role of user with source_uid={} and user.record_uid={}.".format(
-						user.source_uid, user.record_uid))
 				try:
-					ldap_user = obj.get_by_import_id(self.connection, user.source_uid, user.record_uid)
+					ldap_user = a_user.get_by_import_id(self.connection, user.source_uid, user.record_uid)
 					ldap_user.update(user)  # need user.input_data for hooks
 					users_to_delete.append(ldap_user)
 				except noObject as exc:

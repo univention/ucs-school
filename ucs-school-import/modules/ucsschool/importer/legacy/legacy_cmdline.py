@@ -34,6 +34,7 @@ ucs@school legacy import tool cmdline frontend.
 
 from ucsschool.importer.frontend.cmdline import CommandLine
 from ucsschool.importer.legacy.legacy_parse_cmdline import LegacyParseCmdline
+from ucsschool.lib.models.utils import stopped_notifier
 
 
 class LegacyCommandLine(CommandLine):
@@ -43,4 +44,5 @@ class LegacyCommandLine(CommandLine):
 
 	def do_import(self):
 		importer = self.factory.make_mass_importer(self.config["dry_run"])
-		importer.import_users()
+		with stopped_notifier():
+			importer.import_users()

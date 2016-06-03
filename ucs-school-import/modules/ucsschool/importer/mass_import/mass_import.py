@@ -34,6 +34,7 @@ Default mass import class.
 from ucsschool.importer.factory import Factory
 from ucsschool.importer.configuration import Configuration
 from ucsschool.importer.utils.logging2udebug import get_logger
+from ucsschool.lib.models.utils import stopped_notifier
 
 
 class MassImport(object):
@@ -54,8 +55,36 @@ class MassImport(object):
 		self.password_exporter = self.factory.make_password_exporter()
 
 	def mass_import(self):
-		self.import_users()
-		# TODO: support import of other objects
+		with stopped_notifier():
+			self.import_computers()
+			self.import_groups()
+			self.import_inventory_numbers()
+			self.import_networks()
+			self.import_ous()
+			self.import_printers()
+			self.import_routers()
+			self.import_users()
+
+	def import_computers(self):
+		pass
+
+	def import_groups(self):
+		pass
+
+	def import_inventory_numbers(self):
+		pass
+
+	def import_networks(self):
+		pass
+
+	def import_ous(self):
+		pass
+
+	def import_printers(self):
+		pass
+
+	def import_routers(self):
+		pass
 
 	def import_users(self):
 		self.logger.info("------ Importing users... ------")

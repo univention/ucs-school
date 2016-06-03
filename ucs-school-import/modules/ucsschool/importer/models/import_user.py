@@ -45,7 +45,7 @@ from ucsschool.lib.models import Staff, Student, Teacher, TeachersAndStaff, User
 from ucsschool.lib.models.attributes import RecordUID, SourceUID
 from ucsschool.importer.configuration import Configuration
 from ucsschool.importer.factory import Factory
-from ucsschool.importer.exceptions import BadPassword, FormatError, InvalidBirthday, InvalidEmail, MissingMailDomain, MissingMandatoryAttribute, MissingSchoolName, NoUsername, NoUsernameAtAll, UniqueIdError, UnkownDisabledSetting, UnknownProperty, UsernameToLong
+from ucsschool.importer.exceptions import BadPassword, FormatError, InvalidBirthday, InvalidEmail, MissingMailDomain, MissingMandatoryAttribute, MissingSchoolName, NotSupportedError, NoUsername, NoUsernameAtAll, UniqueIdError, UnkownDisabledSetting, UnknownProperty, UsernameToLong
 
 
 class ImportUser(User):
@@ -95,13 +95,22 @@ class ImportUser(User):
 		return self._build_hook_line(*self.input_data)
 
 	@classmethod
-	def get_by_import_id(cls, lo, source_uid, record_uid, superordinate=None):
+	def get_by_import_id(cls, connection, source_uid, record_uid, superordinate=None):
+		"""
+		Retrieve an ImportUser.
+
+		:param connection: uldap object
+		:param source_uid: str: source DB identifier
+		:param record_uid: str: source record identifier
+		:param superordinate: str: superordinate
+		:return: object of ImportUser subclass from LDAP or raises noObject
+		"""
 		filter_s = filter_format("(&(objectClass=ucsschoolType)(ucsschoolSourceUID=%s)(ucsschoolRecordUID=%s))",
 			(source_uid, record_uid))
-		obj = cls.get_only_udm_obj(lo, filter_s, superordinate=superordinate)
+		obj = cls.get_only_udm_obj(connection, filter_s, superordinate=superordinate)
 		if not obj:
 			raise noObject("No user with source_uid={0} and record_uid={1} found.".format(source_uid, record_uid))
-		return cls.from_udm_obj(obj, None, lo)
+		return cls.from_udm_obj(obj, None, connection)
 
 	def deactivate(self):
 		"""
@@ -269,7 +278,11 @@ class ImportUser(User):
 		"""
 		Set the ucsschoolSourceUID (sid)
 		"""
-		if not self.source_uid:
+		if self.source_uid:
+			if self.source_uid != self.config["sourceUID"]:
+				raise NotSupportedError("Source_uid '{}' differs to configured source_uid '{}'.".format(
+					self.source_uid, self.config["sourceUID"]))
+		else:
 			self.source_uid = self.config["sourceUID"]
 
 	def make_school(self):
@@ -473,6 +486,9 @@ class ImportUser(User):
 
 	@classmethod
 	def get_class_for_udm_obj(cls, udm_obj, school):
+		"""
+		IMPLEMENTME if you subclass!
+		"""
 		klass = super(ImportUser, cls).get_class_for_udm_obj(udm_obj, school)
 		if issubclass(klass, TeachersAndStaff):
 			return ImportTeachersAndStaff
@@ -483,7 +499,7 @@ class ImportUser(User):
 		elif issubclass(klass, Student):
 			return ImportStudent
 		else:
-			None
+			return None
 
 	def create_without_hooks(self, lo, validate):
 		success = super(ImportUser, self).create_without_hooks(lo, validate)
@@ -530,24 +546,16 @@ class ImportUser(User):
 
 
 class ImportStaff(ImportUser, Staff):
-	@classmethod
-	def get_class_for_udm_obj(cls, udm_obj, school):
-		return cls
+	pass
 
 
 class ImportStudent(ImportUser, Student):
-	@classmethod
-	def get_class_for_udm_obj(cls, udm_obj, school):
-		return cls
+	pass
 
 
 class ImportTeacher(ImportUser, Teacher):
-	@classmethod
-	def get_class_for_udm_obj(cls, udm_obj, school):
-		return cls
+	pass
 
 
 class ImportTeachersAndStaff(ImportUser, TeachersAndStaff):
-	@classmethod
-	def get_class_for_udm_obj(cls, udm_obj, school):
-		return cls
+	pass

@@ -36,7 +36,6 @@ from ucsschool.lib.models import Staff, Student, Teacher, TeachersAndStaff
 from ucsschool.importer.models.import_user import ImportStaff, ImportStudent, ImportTeacher,\
 	ImportTeachersAndStaff, ImportUser
 from ucsschool.importer.exceptions import UnkownAction
-from ucsschool.lib.models.base import UnknownModel
 
 
 class LegacyImportUser(ImportUser):
@@ -74,6 +73,9 @@ class LegacyImportUser(ImportUser):
 
 	@classmethod
 	def get_class_for_udm_obj(cls, udm_obj, school):
+		"""
+		IMPLEMENTME if you subclass!
+		"""
 		klass = super(LegacyImportUser, cls).get_class_for_udm_obj(udm_obj, school)
 		if issubclass(klass, TeachersAndStaff):
 			return LegacyImportTeachersAndStaff
@@ -84,7 +86,7 @@ class LegacyImportUser(ImportUser):
 		elif issubclass(klass, Student):
 			return LegacyImportStudent
 		else:
-			raise UnknownModel("Don't know what to do with '{}'.".format(klass))
+			return None
 
 
 class LegacyImportStudent(LegacyImportUser, ImportStudent):

@@ -35,7 +35,7 @@ Factory implementation for import using CSV in legacy format.
 from ucsschool.importer.default_factory import DefaultFactory
 from ucsschool.importer.legacy.legacy_csv_reader import LegacyCsvReader
 from ucsschool.importer.legacy.legacy_import_user import LegacyImportStaff, LegacyImportStudent,\
-	LegacyImportTeacher, LegacyImportTeachersAndStaff
+	LegacyImportTeacher, LegacyImportTeachersAndStaff, LegacyImportUser
 from ucsschool.importer.legacy.legacy_user_import import LegacyUserImport
 from ucsschool.importer.legacy.legacy_new_user_password_csv_exporter import LegacyNewUserPasswordCsvExporter
 from ucsschool.lib.roles import role_pupil, role_teacher, role_staff
@@ -63,6 +63,8 @@ class LegacyCsvFactory(DefaultFactory):
 		:param kwarg: dict: passed to constructor of created class
 		:return: LegacyImportUser: object of LegacyImportUser subclass
 		"""
+		if not cur_user_roles:
+			return LegacyImportUser(*arg, **kwargs)
 		if role_pupil in cur_user_roles:
 			return LegacyImportStudent(*arg, **kwargs)
 		if role_teacher in cur_user_roles:

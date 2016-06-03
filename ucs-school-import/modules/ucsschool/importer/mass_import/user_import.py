@@ -198,46 +198,34 @@ class UserImport(object):
 		"""
 		Find difference between source database and UCS user database.
 
-		:return list: ImportUsers to delete with record_uid and source_uid set
+		:return list: ImportUsers to delete (objects loaded from LDAP)
 		"""
 		self.logger.info("------ Detecting which users to delete... ------")
+		source_uid = self.config["sourceUID"]
 		attr = ["ucsschoolSourceUID", "ucsschoolRecordUID"]
-		filter_s = "(&{}(ucsschoolSourceUID=*)(ucsschoolRecordUID=*))"
-		student_filter_s = filter_s.format("(objectclass=ucsschoolStudent)")
-		staff_filter_s = "(&(!(objectclass=ucsschoolTeacher)){})".format(
-			filter_s.format("(objectclass=ucsschoolStaff)"))
-		teacher_filter_s = "(&(!(objectclass=ucsschoolStaff)){})".format(
-			filter_s.format("(objectclass=ucsschoolTeacher)"))
-		teacher_staff_filter_s = filter_s.format("(objectclass=ucsschoolTeacher)(objectclass=ucsschoolStaff)")
+		filter_s = "(&(ucsschoolSourceUID={})(ucsschoolRecordUID=*))".format(source_uid)
 
-		students_in_ucs = self.connection.search(student_filter_s, attr=attr)
-		staff_in_ucs = self.connection.search(staff_filter_s, attr=attr)
-		teachers_in_ucs = self.connection.search(teacher_filter_s, attr=attr)
-		teachers_staff_in_ucs = self.connection.search(teacher_staff_filter_s, attr=attr)
+		id2imported_user = dict()  # for fast access later
+		for iu in self.imported_users:
+			id2imported_user[(iu.source_uid, iu.record_uid)] = iu
+		imported_user_ids = set(id2imported_user.keys())
 
 		# Find all users that exist in UCS but not in input.
-		imported_users = set([(iu.source_uid, iu.record_uid) for iu in self.imported_users])
-		ucs_students = set([(iu[1]["ucsschoolSourceUID"][0], iu[1]["ucsschoolRecordUID"][0]) for iu in students_in_ucs])
-		ucs_staff = set([(iu[1]["ucsschoolSourceUID"][0], iu[1]["ucsschoolRecordUID"][0]) for iu in staff_in_ucs])
-		ucs_teachers = set([(iu[1]["ucsschoolSourceUID"][0], iu[1]["ucsschoolRecordUID"][0]) for iu in teachers_in_ucs])
-		ucs_teachers_staff = set([(iu[1]["ucsschoolSourceUID"][0], iu[1]["ucsschoolRecordUID"][0])
-			for iu in teachers_staff_in_ucs])
+		ucs_ldap_users = self.connection.search(filter_s, attr=attr)
+		ucs_user_ids = set([(lu[1]["ucsschoolSourceUID"][0], lu[1]["ucsschoolRecordUID"][0]) for lu in ucs_ldap_users])
 
-		# We need those to fetch the correct type from LDAP.
-		a_student = self.factory.make_import_user([role_pupil])
-		a_staff = self.factory.make_import_user([role_staff])
-		a_teacher = self.factory.make_import_user([role_teacher])
-		a_staff_teacher = self.factory.make_import_user([role_staff, role_teacher])
+		a_user = self.factory.make_import_user([])
 
 		# collect ucschool objects for those users to delete in imported_users
 		users_to_delete = list()
-		for ucs_users, a_type in [(ucs_students, a_student), (ucs_staff, a_staff), (ucs_teachers, a_teacher),
-			(ucs_teachers_staff, a_staff_teacher)]:
-			for ucs_user_not_in_import in (ucs_users - imported_users):
-				ldap_user = a_type.get_by_import_id(self.connection, ucs_user_not_in_import[0], ucs_user_not_in_import[1])
-				ldap_user.update(ucs_user_not_in_import)  # need user.input_data for hooks
+		for ucs_id_not_in_import in (ucs_user_ids - imported_user_ids):
+			try:
+				ldap_user = a_user.get_by_import_id(self.connection, ucs_id_not_in_import[0], ucs_id_not_in_import[1])
 				ldap_user.action = "D"  # mark for logging/csv-output purposes
 				users_to_delete.append(ldap_user)
+			except noObject as exc:
+				self.logger.error("Cannot delete non existing user with source_uid=%r, record_uid=%r: %s",
+					ucs_id_not_in_import[0], ucs_id_not_in_import[1], exc)
 
 		self.logger.debug("users_to_delete=%r", users_to_delete)
 		return users_to_delete

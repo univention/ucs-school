@@ -99,6 +99,10 @@ class ModificationError(UcsSchoolImportError):
 	pass
 
 
+class NotSupportedError(UcsSchoolImportError):
+	pass
+
+
 class NoUsername(UcsSchoolImportError):
 	pass
 
