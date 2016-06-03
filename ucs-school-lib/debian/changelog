@@ -1,3 +1,10 @@
+ucs-school-lib (9.0.9-1) unstable; urgency=medium
+
+  * Bug #41117: adjust is_(student|teacher|administrator|staff) for
+    school overlapping users
+
+ -- Florian Best <best@univention.de>  Fri, 03 Jun 2016 16:24:58 +0200
+
 ucs-school-lib (9.0.8-1) unstable; urgency=medium
 
   * Bug #41117: adjust is_(student|teacher|administrator|staff) for

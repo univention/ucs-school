@@ -186,6 +186,8 @@ class User(UCSSchoolHelperAbstractClass):
 			return Staff
 		if 'ucsschoolStudent' in ocs:
 			return Student
+		if 'ucsschoolAdministrator' in ocs:
+			return Teacher  # we have no class for a school administrator
 
 		# legacy DN based checks
 		if cls._legacy_is_student(school, udm_obj.dn):
@@ -210,8 +212,8 @@ class User(UCSSchoolHelperAbstractClass):
 	def do_create(self, udm_obj, lo):
 		if not self.schools:
 			self.schools = [self.school]
+		self.set_default_options(udm_obj)
 		self.create_mail_domain(lo)
-		self.adjust_options(udm_obj)
 		password_created = False
 		if not self.password:
 			logger.debug('No password given. Generating random one')
@@ -248,7 +250,6 @@ class User(UCSSchoolHelperAbstractClass):
 
 	def do_modify(self, udm_obj, lo):
 		self.create_mail_domain(lo)
-		self.adjust_options(udm_obj)
 		self.password = self.password or None
 		mandatory_groups = self.groups_used(lo)
 		all_schools = School.get_all(lo, respect_local_oulist=False)
@@ -281,20 +282,6 @@ class User(UCSSchoolHelperAbstractClass):
 				logger.debug('Group is not yet part of the user. Adding...')
 				udm_obj['groups'].append(group_dn)
 		return super(User, self).do_modify(udm_obj, lo)
-
-	def adjust_options(self, udm_obj):
-		options = []
-		if self.self_is_student():
-			options.append('ucsschoolStudent')
-		if self.self_is_teacher():
-			options.append('ucsschoolTeacher')
-		if self.self_is_staff():
-			options.append('ucsschoolStaff')
-		if self.self_is_administrator():
-			options.append('ucsschoolAdministrator')
-		for option in options:
-			if option not in udm_obj.options:
-				udm_obj.options.append(option)
 
 	def do_school_change(self, udm_obj, lo, old_school):
 		super(User, self).do_school_change(udm_obj, lo, old_school)
@@ -384,6 +371,14 @@ class User(UCSSchoolHelperAbstractClass):
 			else:
 				logger.warning('Not allowed to create %r.', mail_domain)
 
+	def set_default_options(self):
+		for option in self.get_default_options():
+			if option not in udm_obj.options:
+				udm_obj.options.append(option)
+
+	def get_default_options(self):
+		return []
+
 	def get_specific_groups(self, lo):
 		groups = []
 		for school_class in self.get_school_class_objs():
@@ -465,6 +460,8 @@ class User(UCSSchoolHelperAbstractClass):
 
 	def build_hook_line(self, hook_time, func_name):
 		code = self._map_func_name_to_code(func_name)
+		is_teacher = isinstance(self, Teacher) or isinstance(self, TeachersAndStaff)
+		is_staff = isinstance(self, Staff) or isinstance(self, TeachersAndStaff)
 		return self._build_hook_line(
 				code,
 				self.name,
@@ -474,9 +471,9 @@ class User(UCSSchoolHelperAbstractClass):
 				self.school_class,
 				'', # TODO: rights?
 				self.email,
-				self.self_is_teacher(),
+				is_teacher,
 				self.is_active(),
-				self.self_is_staff(),
+				is_staff,
 				self.password,
 			)
 
@@ -525,6 +522,9 @@ class Student(User):
 	type_name = _('Student')
 	type_filter = 'objectClass=ucsschoolStudent'
 	roles = [role_pupil]
+
+	def get_default_options(self):
+		return super(Student, self).get_default_options() + ['ucsschoolStudent']
 
 	def do_school_change(self, udm_obj, lo, old_school):
 		try:
@@ -575,6 +575,9 @@ class Teacher(User):
 	type_filter = '(&(objectClass=ucsschoolTeacher)(!(objectClass=ucsschoolStaff)))'
 	roles = [role_teacher]
 
+	def get_default_options(self):
+		return super(Teacher, self).get_default_options() + ['ucsschoolTeacher']
+
 	@classmethod
 	def from_udm_obj(cls, udm_obj, school, lo):
 		obj = super(Teacher, cls).from_udm_obj(udm_obj, school, lo)
@@ -612,6 +615,9 @@ class Staff(User):
 	roles = [role_staff]
 	type_filter = '(&(!(objectClass=ucsschoolTeacher))(objectClass=ucsschoolStaff)))'
 
+	def get_default_options(self):
+		return super(Staff, self).get_default_options() + ['ucsschoolStaff']
+
 	@classmethod
 	def get_container(cls, school):
 		return cls.get_search_base(school).staff
@@ -642,6 +648,9 @@ class TeachersAndStaff(Teacher):
 	type_filter = '(&(objectClass=ucsschoolStaff)(objectClass=ucsschoolTeacher))'
 	roles = [role_teacher, role_staff]
 
+	def get_default_options(self):
+		return super(TeachersAndStaff, self).get_default_options() + ['ucsschoolStaff']
+
 	@classmethod
 	def get_container(cls, school):
 		return cls.get_search_base(school).teachersAndStaff
@@ -654,6 +663,9 @@ class TeachersAndStaff(Teacher):
 
 class ExamStudent(Student):
 	type_name = _('Exam student')
+
+	def get_default_options(self):
+		return super(ExamStudent, self).get_default_options() + ['ucsschoolExam']
 
 	@classmethod
 	def get_container(cls, school):

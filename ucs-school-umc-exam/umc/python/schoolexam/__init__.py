@@ -249,7 +249,7 @@ class Instance(SchoolBaseModule):
 				for entry in members:
 					# ignore exam users
 					user = User.from_dn(entry.dn, None, ldap_user_read)
-					if not user.self_is_exam_student():
+					if not user.is_exam_student(ldap_user_read):
 						users.append(entry)
 
 			# start to create exam user accounts
