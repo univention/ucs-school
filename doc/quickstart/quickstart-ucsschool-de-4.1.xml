@@ -1,0 +1,537 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE book [
+	<!ENTITY % extensions SYSTEM "../stylesheets/macros.ent" >
+	<!ENTITY % DocBookDTD PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+	"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+	<!ENTITY % entities SYSTEM "../stylesheets/macros-de.ent" >
+	%extensions;
+	%DocBookDTD;
+	%entities;
+]>
+<book lang="de" id="quickstart-ucsschool-de-4.1">
+<bookinfo>
+  <title>&ucsUAS;</title>
+  <subtitle>Quickstart Guide für &ucsUAS;</subtitle>
+    <legalnotice>
+      <literallayout>
+Version 4.1 v1
+Stand: 09. Oktober 2015
+      </literallayout>
+      <literallayout lang="">
+Alle Rechte vorbehalten./ All rights reserved.
+(c) 2002-2015
+Univention GmbH
+Mary-Somerville-Straße 1
+28359 Bremen
+Deutschland
+feedback@univention.de
+      </literallayout>
+      <para>
+        Jede aufgeführte Marke und jedes Warenzeichen steht im Eigentum ihrer jeweiligen
+        eingetragenen Rechtsinhaber.
+	    Linux ist ein eingetragenes Warenzeichen von Linus Torvalds.
+      </para>
+      <para lang="en">
+        The mentioned brand names and registered trademarks are owned by the respective
+        legal owners in each case.
+	    Linux is a registered trademark of Linus Torvalds.
+      </para>
+    </legalnotice>
+</bookinfo>
+
+<chapter id="quickstart:intro">
+  <title>Einleitung</title>
+
+  <para>
+    &ucsUAS; ist eine Erweiterung für Univention Corporate Server (UCS).
+    Die Installation besteht aus zwei Schritten:
+    <itemizedlist>
+      <listitem><simpara>Installation von UCS</simpara></listitem>
+      <listitem><simpara>Installation der Erweiterung &ucsUAS;</simpara></listitem>
+    </itemizedlist>
+    Dieser Quickstart Guide beschreibt die Installation und Einrichtung von &ucsUAS;
+    in einer Schritt-für-Schritt-Anleitung.
+  </para>
+</chapter>
+
+<chapter id="quickstart:installation">
+  <title>Installation von UCS</title>
+
+  <para>
+    &ucsUAS; kann in zwei Varianten installiert werden:
+    <itemizedlist>
+      <listitem><simpara>
+        Als <emphasis>Single-Server-Umgebung</emphasis> für Installationen an einzelnen Schulen
+      </simpara></listitem>
+      <listitem><simpara>
+        Als <emphasis>Multi-Server-Umgebung</emphasis> für Umgebungen mit mehreren Schulen
+      </simpara></listitem>
+    </itemizedlist>
+    Dieser Quickstart Guide beschreibt die Installation als Single-Server-Umgebung.
+    Weiterführende Hinweise zu Multi-Server-Umgebungen finden sich in
+    <xref linkend="quickstart:ucsschool-multi-server"/> sowie im &ucsUAS;-Handbuch
+    <biblioref linkend="ucsschool-multi-server"/>. 
+  </para>
+
+  <para>
+    UCS steht als 32 und 64 Bit-Variante zur Verfügung. Für die Installation auf aktueller Hardware
+    wird die Verwendung eines 64 Bit-Systems (amd64) empfohlen. Die Software steht kostenlos in unserem
+    Download-Bereich (<ulink url="https://www.univention.de/download/ucs-download/"/>) zur Verfügung.
+  </para>
+
+  <para>
+    Alternativ kann UCS auch in der Amazon EC2 Cloud installiert <biblioref linkend="ec2-quickstart"/> und
+    für &ucsUAS; verwendet werden. Des Weiteren kann für die Installation von &ucsUAS; auch das VMware-Image
+    für UCS verwendet <biblioref linkend="ucs-vm-images"/> und darin die Erweiterung
+    <emphasis>&ucsUAS;</emphasis> installiert werden. Auch hierfür gelten die als nächstes beschriebenen
+    abweichenden Einstellungen.
+  </para>
+
+  <para>
+    Wählen Sie für die Installation folgende abweichende Einstellungen vom UCS Quickstart Guide
+    <biblioref linkend="ucs-quickstart"/>, um &ucsUAS; zu installieren:
+    <variablelist>
+      <varlistentry>
+        <term>Systemrolle</term>
+        <listitem><simpara>&ucsMaster;</simpara></listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>Software-Auswahl</term>
+        <listitem><simpara>
+          Hier können alle Auswahlkomponenten entfernt werden. Die spätere Installation der
+          &ucsUAS;-Erweiterung installiert alle notwendigen Abhängigkeiten automatisch mit. 
+        </simpara></listitem>
+      </varlistentry>
+    </variablelist>
+  </para>
+
+</chapter>
+
+<chapter id="quickstart:ucsschoolinstalation">
+  <title>Installation der &ucsUAS;-Erweiterung</title>
+
+  <para>
+    Der folgende Abschnitt beschreibt die Installation der Erweiterung &ucsUAS; auf einem UCS-System
+    über Univention App Center <biblioref linkend="ucs-app-center"/>. Dazu muss eine Anmeldung mit dem
+    Administrator-Konto (Benutzername: <systemitem class="username">Administrator</systemitem>) an der
+    Univention Management Console (<uri>https://<replaceable>server_ip</replaceable>/umc</uri> oder
+    <uri>http://<replaceable>server_ip</replaceable>/umc</uri>) erfolgen.
+  </para>
+
+  <para>
+    Bei der ersten Anmeldung erscheint ein Dialog, mit dem die UCS-Lizenz für das Univention App Center
+    freigeschaltet werden kann. Es muss dazu eine E-Mail-Adresse angegeben werden, an die der freigeschaltete
+    Lizenzschlüssel dann geschickt wird.
+  </para>
+
+  <para>
+    Der freigeschaltete Lizenzschlüssel kann über die UMC importiert werden, indem in der oberen rechte
+    Bildschirmzeile auf das Pfeil-Symbol neben dem Benutzernamen geklickt wird. Es muss der Menüpunkt
+    <guimenu>Lizenz -> Neue Lizenz einspielen</guimenu> ausgewählt werden. Nach dem Import des Lizenzschlüssels
+    kann das Univention App Center verwendet werden.
+  </para>
+
+  <figure id="install-via-appcenter">
+    <title>Installation der &ucsUAS;-Erweiterung über Univention App Center</title>
+	<graphic scalefit="1" width="80%" align="center" fileref="illustrations41/appcenter-de.png"/>
+  </figure>
+
+  <para>
+    Im UMC-Modul App Center ist die Applikation <emphasis>&ucsUAS;</emphasis> auszuwählen und anschließend
+    auf <guimenu>Installieren</guimenu> zu klicken. Nach Abschluss der Installation von &ucsUAS; kann in der
+    Univention Management Console das neue Modul &ucsUAS;-Konfigurations-Assistent aufgerufen werden.
+  </para>
+
+  <para>
+    Der Assistent begleitet die notwendigen Konfigurationsschritte für &ucsUAS;:
+    <itemizedlist>
+      <listitem><simpara>
+        Im ersten Schritt wird die Option <guimenu>Single-Server-Umgebung</guimenu> ausgewählt.
+      </simpara></listitem>
+      <listitem><simpara>
+        Wenn Samba nicht bereits installiert ist, kann im nächsten Schritt die zu installierende
+        Samba-Version festgelegt werden (Samba4 ist die empfohlene Version).
+      </simpara></listitem>
+      <listitem><simpara>
+        Zuletzt wird der Name der Schule und ein Schulkürzel festgelegt (z.B.
+        <emphasis>Gesamtschule Nord</emphasis> und <emphasis>gsnord</emphasis>). 
+      </simpara></listitem>
+    </itemizedlist>
+    Mit der Bestätigung der Einstellungen wird das System konfiguriert und benötigte Pakete automatisch
+    mitinstalliert. Der Frage nach dem Neustart der UMC sollte zugestimmt werden, damit die
+    &ucsUAS;-Module sofort verfügbar sind. Nach Abschluss der Konfiguration ist die Installation von
+    &ucsUAS; abgeschlossen.
+  </para>
+</chapter>
+
+<chapter id="quickstart:user-management">
+  <title>Verwaltung der Schüler- und Lehrerdaten</title>
+
+  <para>
+    In einer Standard-UCS-Installation sind alle Benutzerkonten vom selben Typ und unterscheiden sich nur
+    anhand ihrer Gruppenmitgliedschaften. In einer &ucsUAS;-Umgebung ist jeder Benutzer einer Rolle
+    zugeordnet, aus der sich Berechtigungen in der &ucsUAS;-Verwaltung ergeben:
+    <itemizedlist>
+      <listitem><simpara>
+        <emphasis>Schülern</emphasis> wird in der Standardeinstellung kein Zugriff auf die
+        Administrationsoberflächen gewährt.
+        Sie können sich mit ihren Benutzerkonten nur an Windows-Clients anmelden und die für sie freigegebenen
+        Dateifreigaben und Drucker verwenden.
+      </simpara></listitem>
+      <listitem><simpara>
+        <emphasis>Lehrer</emphasis> erhalten gegenüber Schülern zusätzliche Rechte, um z.B. auf UMC-Module
+        zugreifen zu können, die das Zurücksetzen von Schülerpasswörtern oder das Auswählen von
+        Internetfiltern ermöglichen.
+        Die zugriffsberechtigten Module können individuell definiert werden. Lehrer erhalten in der Regel
+        aber nur Zugriff auf einen Teil der von der Univention Management Console bereitgestellten Funktionen.
+      </simpara></listitem>
+      <listitem><simpara>
+        Vollen Zugriff auf die Schulverwaltungsfunktionen von &ucsUAS; erhalten die
+        <emphasis>Schuladministratoren</emphasis>.
+        Sie können z.B. Computer zu Rechnergruppen zusammenfassen, neue Internetfilter definieren oder auch
+        Lehrerpasswörter zurücksetzen.
+      </simpara></listitem>
+    </itemizedlist>
+  </para>
+  
+  <para>
+    Bei der Konfiguration über den Assistenten wurde bereits ein Schulname konfiguriert.
+  </para>
+
+  <para>
+    Als nächstes muss eine Schulklasse erstellt werden. In der Univention Management Console kann mit
+    <guimenu>Klassen (Schulen)</guimenu> aus dem Abschnitt Schul-Administration eine Schulklasse definiert
+    werden, z.B. <emphasis>1a</emphasis>.
+  </para>
+
+  <para>
+    Nun werden über das Modul <guimenu>Benutzer (Schulen)</guimenu> zwei Schüler und ein Lehrerkonto angelegt.
+    Beiden Schülerkonten sollte die gerade angelegte Klasse zugewiesen werden. Abschließend wird das
+    angelegte Lehrerkonto mit <guimenu>Lehrer Klassen zuordnen</guimenu> der Klasse zugeordnet.
+  </para>
+
+  <figure id="student-management">
+	<title>Anlegen eines Schülers</title>
+	<graphic scalefit="1" width="80%" align="center" fileref="illustrations41/student-modify-de.png"/>
+  </figure>
+
+  <para>
+    Das oben beschriebene Anlegen der Benutzer erfolgt in den meisten &ucsUAS;-Installationen z.B. durch
+    automatisierte Import-Skripte: Die primäre Verwaltung der Schülerdaten erfolgt üblicherweise weiterhin
+    in der vom jeweiligen Schulträger eingesetzten Schulverwaltungssoftware. Benutzerdaten der Schüler und
+    Lehrer werden dabei aus der Schulverwaltungssoftware exportiert und über mitgelieferte Import-Skripte
+    in &ucsUAS; importiert (typischerweise zum Schuljahreswechsel). Über diese Import-Skripte lassen sich
+    auch Rechnerkonten und Drucker importieren.
+  </para>
+
+  <para>
+    Die Pflege der Benutzer kann alternativ auch über das Modul <emphasis>CSV-Import</emphasis> erfolgen, über
+    das Benutzerlisten in Form von CSV-Dateien in &ucsUAS; importiert werden können.
+  </para>
+  
+</chapter>
+
+<chapter id="quickstart:module">
+  <title>Module</title>
+
+  <para>
+    &ucsUAS; stellt eine Reihe von Modulen für die Univention Management Console bereit, die für den
+    IT-gestützten Unterricht verwendet werden können. Im Folgenden werden die Module kurz beschrieben.
+    Eine ausführliche Beschreibung der Verwendung der Module findet sich im Handbuch für Lehrer
+    <biblioref linkend="ucsschool-teacher"/>.
+  </para>
+
+  <para>
+    Einige Module stehen Lehrern und Schuladministratoren zur Verfügung und einige Module nur
+    Schuladministratoren. Je nachdem, ob die Anmeldung mit einem der oben angelegten Lehrer oder dem
+    Administrator erfolgt, erscheint nur eine Auswahl der Module. Schüler erhalten keinen Zugriff auf
+    die Module.
+  </para>
+
+  <figure id="ucsschool-module">
+	<title>Modulübersicht &ucsUAS; 4.1</title>
+	<graphic scalefit="1" width="80%" align="center" fileref="illustrations41/ucsschool-modules-de.png"/>
+  </figure>
+
+  <para>
+    <itemizedlist>
+      <listitem><simpara>
+        <guimenu>Passwörter (Schüler)</guimenu> erlaubt Lehrern das Zurücksetzen von Schüler-Passwörtern.
+        Die bestehenden Schüler-Passwörter können aus Sicherheitsgründen nicht ausgelesen werden;
+        wenn Schüler ihr Passwort vergessen, muss ein neues Passwort vergeben werden. Schuladministratoren
+        dürfen außerdem die Passwörter von Lehrern zurücksetzen.
+      </simpara></listitem>
+      <listitem><simpara>
+        Das Modul <guimenu>Computerraum</guimenu> erlaubt die Kontrolle der Schüler-PCs und des Internetzugangs
+        während einer Unterrichtsstunde. Der Internetzugang kann gesperrt und freigegeben werden und einzelne
+        Internetseiten können gezielt freigegeben werden. Wenn eine entsprechende Software (iTALC) auf den
+        Schüler-PCs installiert ist, besteht auch die Möglichkeit diese PCs zu steuern. So kann der Bildschirm
+        gesperrt werden, so dass beispielweise in einer Chemie-Stunde die ungeteilte Aufmerksamkeit auf ein
+        Experiment gelenkt werden kann. Außerdem kann der Bildschiminhalt eines PCs auf andere Systeme
+        übertragen werden.
+        Dies erlaubt es Lehrern, auch ohne einen Beamer Präsentationen durchzuführen.
+      </simpara></listitem>
+      <listitem><simpara>
+        Mit dem Modul <guimenu>Computerräume verwalten</guimenu> werden Computer einer Schule einem
+        Computerraum zugeordnet.
+        Diese Computerräume können von den Lehrern dann zentral verwaltet werden, etwa in dem der
+        Internetzugang freigegeben wird.
+      </simpara></listitem>
+      <listitem><simpara>
+        Jede Schule wird durch einen Helpdesk betreut, der in der Regel vom Schulträger bereitgestellt wird.
+        Über das Modul <guimenu>Helpdesk kontaktieren</guimenu> können Lehrer und Schuladministratoren eine
+        Anfrage stellen.
+      </simpara></listitem>
+      <listitem><simpara>
+        Jeder Schüler ist Mitglied seiner Klasse. Darüber hinaus gibt es die Möglichkeit mit dem Modul
+        <guimenu>Arbeitsgruppen bearbeiten</guimenu> Schüler in klassenübergreifende Arbeitsgruppen
+        einzuordnen. Das Anlegen einer Arbeitsgruppe legt automatisch einen Datenbereich auf dem
+        Schulserver an, auf den alle Mitglieder der Arbeitsgruppe Zugriff haben. Lehrer können Schüler zu
+        Arbeitsgruppen hinzufügen oder entfernen, aber keine neuen Arbeitsgruppen anlegen. Dies muss von
+        einem Schuladministrator vorgenommen werden. Das Modul <guimenu>Arbeitsgruppen bearbeiten</guimenu>
+        erlaubt Schuladministratoren neue Arbeitsgruppen anzulegen und diesen neben Schülern auch Lehrer
+        zuzuweisen.
+      </simpara></listitem>
+      <listitem><simpara>
+        Mit dem Modul <guimenu>Drucker moderieren</guimenu> können Ausdrucke der Schüler geprüft werden.
+        Die anstehenden Druckaufträge können vom Lehrer betrachtet und entweder verworfen oder an den Drucker
+        weitergereicht werden. Dadurch werden unnötige oder fehlerhafte Ausdrucke vermieden.
+      </simpara></listitem>
+      <listitem><simpara>
+        Das Modul <guimenu>Materialien verteilen</guimenu> vereinfacht das Verteilen und Einsammeln von
+        Unterrichtsmaterial an einzelne Schüler, Klassen oder Arbeitsgruppen. Optional kann eine Frist
+        festgelegt werden. So ist es möglich, Aufgaben zu verteilen, die bis zum Ende der Unterrichtsstunde
+        zu bearbeiten sind. Nach Ablauf der Frist werden die verteilten Materialien dann automatisch wieder
+        eingesammelt und im Heimatverzeichnis des Lehrers abgelegt.
+      </simpara></listitem>
+      <listitem><simpara>
+        Das Modul <guimenu>Unterrichtszeiten</guimenu> erlaubt es Schuladministratoren, die Zeiträume der
+        jeweiligen Unterrichtsstunde pro Schule zu definieren.
+      </simpara></listitem>
+      <listitem><simpara>
+        Für jede Klasse gibt es einen gemeinsamen Datenbereich. Damit Lehrer auf diesen Datenbereich zugreifen
+        können, müssen sie mit dem Modul <guimenu>Lehrer Klassen zuordnen</guimenu> der Klasse zugewiesen werden.
+      </simpara></listitem>
+      <listitem><simpara>
+        Für die Filterung des Internetzugriffs wird ein Proxy-Server eingesetzt, der bei dem Abruf einer
+        Internetseite prüft, ob der Zugriff auf diese Seite erlaubt ist. Ist das nicht der Fall, wird eine
+        Informationsseite angezeigt. Wenn Schüler beispielsweise in einer Unterrichtsstunde in der Wikipedia
+        recherchieren sollen, kann eine Regelliste definiert werden, die Zugriffe auf alle anderen
+        Internetseiten unterbindet. Diese Regelliste kann dann vom Lehrer zugewiesen werden. Mit der Funktion
+        <guimenu>Internetregeln definieren</guimenu> können die Regeln verwaltet werden.
+      </simpara></listitem>
+    </itemizedlist>
+  </para>
+</chapter>
+<chapter id="quickstart:domain-join">
+  <title>Domänenbeitritt eines Microsoft Windows 7-Clients</title>
+
+  <para>
+    Microsoft Windows-Clients werden mithilfe von Samba integriert und verwaltet. Die Windows-Clients
+    authentifizieren sich dabei gegen den Samba-Server. Auch Datei- und Druckdienste werden für die
+    Windows-Clients über Samba bereitgestellt. &ucsUAS; integriert Samba 4, die nächste Generation der
+    Samba-Suite. Es unterstützt Domänen-, Verzeichnis- und Authentifizierungsdiensten, die kompatibel zu
+    Microsoft Active Directory sind. Dies ermöglicht die Verwendung der von Microsoft bereit gestellten
+    Werkzeuge für die Verwaltung von Benutzern oder Gruppenrichtlinien (GPOs). Optional kann auch weiterhin
+    Samba 3 eingesetzt werden.
+  </para>
+
+  <para>
+    Zuerst muss der PC in der Univention Management Console registriert werden. Dort muss in der Modulgruppe
+    <emphasis>&ucsUAS; Administration</emphasis> das Modul <guimenu>Computer hinzufügen</guimenu> aufgerufen
+    werden. Als <guimenu>Computer-Typ</guimenu> ist <emphasis>Windows-System</emphasis> auszuwählen.
+    Die Angabe von <guimenu>Name</guimenu>, <guimenu>IP-Adresse</guimenu> und <guimenu>MAC-Adresse</guimenu>
+    ist verpflichtend. Die <guimenu>Subnetzmaske</guimenu> kann in den meisten Fällen auf der Voreinstellung
+    belassen werden.
+  </para>
+
+  <para>
+    Nun tritt der Microsoft Windows-Client der Domäne bei (in diesem Quickstart Guide auf Basis von Windows 7).
+    Der Beitritt kann nur mit einer domänenfähigen Version durchgeführt, d.h. nicht mit
+    Microsoft Windows 7 Home. Die Vorgehensweise gilt analog auch für Microsoft Windows 8.
+  </para>
+
+  <para>
+    Der Windows-Client muss DNS-Einträge aus der DNS-Zone der UCS-Domäne auflösen können, d.h. der Schulserver
+    sollte in den Netzwerkeinstellungen des Windows-Clients als DNS-Server eingetragen werden.
+  </para>
+
+  <para>
+    Auf dem Windows-System muss die aktuelle Zeit konfiguriert werden. Wenn mit Virtualisierung gearbeitet wird,
+    muss beachtet werden, dass Suspend/Resume-Zyklen zu inkorrekten Systemuhren führen können.
+  </para>
+
+  <para>
+    Über <guimenu>Start -> Systemsteuerung -> System und Sicherheit -> System</guimenu> kann der
+    Basiskonfigurationsdialog erreicht werden. Nun muss <guimenu>Einstellungen ändern</guimenu> gewählt und auf
+    <guimenu>Ändern</guimenu> geklickt werden. 
+  </para>
+
+  <figure id="join-win7">
+	<title>Basisinformationen über den Computer</title>
+	<graphic scalefit="1" width="80%" align="center" fileref="illustrations41/join-win7-de.png"/>
+  </figure>
+
+  <para>
+    Für den Domänenbeitritt muss unter <guimenu>Domäne</guimenu> der Domänenname der Schule verwendet werden,
+    der bei der Installation gewählt wurde. Nach einem Klick auf die Schaltfläche <guimenu>OK</guimenu> muss in
+    das Eingabefeld <guimenu>Ändern des Computernamens, bzw. der Domäne</guimenu> unter <guimenu>Name</guimenu>
+    der <systemitem class="username">Administrator</systemitem> und in das Eingabefeld
+    <guimenu>Kennwort</guimenu> das bei der Einrichtung des DC Masters verwendete Administrator-Kennwort
+    eingetragen werden. Nun kann der Domänenbeitritt mit einem Klick auf <guimenu>OK</guimenu> gestartet werden.
+  </para>
+
+  <para>
+    Abschließend sollte der Client neu gestartet werden.
+  </para>
+
+  <para>
+    Durch den Domänenbeitritt wird für den Microsoft Windows-Client automatisch ein Eintrag in der
+    Rechnerverwaltung und DNS-Einträge angelegt. Weitere Hinweise finden sich im UCS-Handbuch im Kapitel
+    Rechnerverwaltung <biblioref linkend="ucs-computer-management"/>.
+  </para>
+</chapter>
+
+<chapter id="quickstart:manage-win-clients">
+  <title>Management von Microsoft Windows-Clients</title>
+
+  <para>
+    Die Netzkonfiguration der Microsoft Windows-Clients wird über in UCS integrierte DNS- und DHCP-Dienste
+    durchgeführt. Die MAC- und IP-Adressen werden beim Import direkt zugewiesen. Weiterführende Hinweise
+    finden sich im &ucsUAS;-Handbuch im Abschnitt Import der Rechnerkonten für die Windows-PCs
+    <biblioref linkend="ucsschool-computer-import"/>.
+  </para>
+
+  <para>
+    Die Windows-PCs der Schüler und Lehrer können über Gruppenrichtlinien konfiguriert werden und ist im
+    Windows-Kapitel des UCS-Handbuchs <biblioref linkend="ucs-computer-windows"/> beschrieben.
+  </para>
+
+  <para>
+    Auf den Windows-Clients der Schüler kann die Software iTALC installiert werden. Sie wird vom UMC-Modul
+    Computerraumverwaltung verwendet und erlaubt Lehrern den Desktop der Schüler einzuschränken und z.B.
+    Bildschirme und Eingabegeräte zu sperren. Außerdem kann ein Übertragungsmodus aktiviert werden, der die
+    Bildschirmausgabe des Desktops des Lehrers auf die Schülerbildschirme überträgt. iTALC wird im
+    &ucsUAS;-Handbuch <biblioref linkend="ucsschool-italk"/> weitergehend dokumentiert.
+  </para>
+
+</chapter>
+
+<chapter id="quickstart:ucsschool-multi-server">
+  <title>Installation von &ucsUAS; in einer Multi-Server-Umgebung</title>
+
+  <para>
+    Bei der Installation von &ucsUAS; in einer Multi-Server-Umgebung gibt es einen zentralen Server in der
+    Schulverwaltung und an jeder Schule einen lokalen Schulserver. Auf diesem Schulserver laufen alle Dienste
+    wie z.B. die Freigaben für die Heimatverzeichnisse der Schüler, der Proxyserver oder die Druckdienste.
+    Es erfolgt dabei eine selektive Replikation der LDAP-Daten, d.h. auf den einzelnen Schulservern sind nur
+    die Daten der jeweiligen Schule gespeichert.
+  </para>
+
+  <para>
+    Die in diesem Quickstart Guide beschriebene Installation kann durch die Installation weiterer Schulserver
+    zu einer Multi-Server-Umgebung ausgebaut werden. Die dazu nötigen Schritte sind im Installationskapitel
+    des &ucsUAS;-Handbuch <biblioref linkend="ucsschool-multi-server"/> beschrieben.
+  </para>
+
+</chapter>
+
+<chapter id="quickstart:furtherinfo">
+  <title>Weiterführende Informationen</title>
+
+  <para>
+    <itemizedlist>
+      <listitem><simpara>
+        Ausführliche Beschreibungen zum Konzept und zur Administration von &ucsUAS; können dem
+        &ucsUAS;-Handbuch für Administratoren <biblioref linkend="ucsschool-admin"/> entnommen werden.
+      </simpara></listitem>
+
+      <listitem><simpara>
+        Für Lehrer existiert darüberhinaus eine gesonderte Dokumentation
+        <biblioref linkend="ucsschool-teacher"/>, die die Verwendung der webbasierten
+        Administrationsschnittstellen dokumentiert.
+      </simpara></listitem>
+	  
+	  <listitem><simpara>
+	    Im Univention Wiki (<ulink url="http://wiki.univention.de/"/>) finden sich u.a. verschiedene
+	    HOWTOs und Praxis-Tipps.
+	  </simpara></listitem>
+
+	  <listitem><simpara>
+	    Antworten auf häufig gestellte Fragen gibt es in der Support und Knowledge Base (SDB) zu
+	    finden (<ulink url="http://sdb.univention.de/"/>).
+	  </simpara></listitem>
+
+	  <listitem><simpara>
+	    Fragen zu UCS können auch im Univention-Forum <ulink url="http://forum.univention.de/"/>
+	    gestellt werden.
+	  </simpara></listitem>
+      <listitem><simpara>
+          UCS Quickstart Guide <biblioref linkend="ucs-quickstart"/>
+      </simpara></listitem>
+    </itemizedlist>
+  </para>
+
+</chapter>
+
+<bibliography id="bibliography">
+  <biblioentry id="ucsschool-multi-server">
+    <publishername>Univention GmbH</publishername>
+    <pubdate>2015</pubdate>
+    <title>&ucsUAS; in einer Multi-Server-Umgebung installieren</title>
+    <releaseinfo><ulink url="https://docs.software-univention.de/ucsschool-handbuch-4.1.html#school:installation:master2"/></releaseinfo>
+  </biblioentry>
+  <biblioentry id="ucs-vm-images">
+    <publishername>Univention GmbH</publishername>
+    <pubdate>2015</pubdate>
+    <title>Inbetriebnahme und Konfiguration des Demosystems in VMware oder VirtualBox</title>
+    <releaseinfo><ulink url="http://wiki.univention.de/index.php?title=Inbetriebnahme_und_Konfiguration_des_Demosystems_in_VMware_oder_VirtualBox"/></releaseinfo>
+  </biblioentry>
+  <biblioentry id="ucs-app-center">
+    <publishername>Univention GmbH</publishername>
+    <pubdate>2015</pubdate>
+    <title>App Center</title>
+    <releaseinfo><ulink url="http://wiki.univention.de/index.php?title=UCS@school_4.1_Quickstart#Installation_von_UCS.40school_in_einer_Multi-Server-Umgebung"/></releaseinfo>
+  </biblioentry>
+  <biblioentry id="ucsschool-teacher">
+    <publishername>Univention GmbH</publishername>
+    <pubdate>2012</pubdate>
+    <title>&ucsUAS; - Handbuch für Lehrkräfte und Schuladministratoren</title>
+    <releaseinfo><ulink url="https://docs.univention.de/ucsschool-lehrer-handbuch-4.1.html"/></releaseinfo>
+  </biblioentry>
+  <biblioentry id="ucsschool-admin">
+    <publishername>Univention GmbH</publishername>
+    <pubdate>2012</pubdate>
+    <title>&ucsUAS; - Handbuch für Administratoren</title>
+    <releaseinfo><ulink url="http://docs.software-univention.de/ucsschool-handbuch-4.1.html"/></releaseinfo>
+  </biblioentry>
+  <biblioentry id="ucs-computer-management">
+    <publishername>Univention GmbH</publishername>
+    <pubdate>2015</pubdate>
+    <title>Rechnerverwaltung</title>
+    <releaseinfo><ulink url="https://docs.software-univention.de/handbuch-4.1.html#computers:general"/></releaseinfo>
+  </biblioentry>
+  <biblioentry id="ucsschool-computer-import">
+    <publishername>Univention GmbH</publishername>
+    <pubdate>2015</pubdate>
+    <title>Import von Rechnerkonten für Windows-PCs</title>
+    <releaseinfo><ulink url="https://docs.software-univention.de/ucsschool-handbuch-4.1.html#school:schoolcreate:computers"/></releaseinfo>
+  </biblioentry>
+  <biblioentry id="ucs-computer-windows">
+    <publishername>Univention GmbH</publishername>
+    <pubdate>2015</pubdate>
+    <title>Konfiguration und Management von Windows-Desktops</title>
+    <releaseinfo><ulink url="https://docs.software-univention.de/handbuch-4.1.html#windows:samba4:desktopmanagement"/></releaseinfo>
+  </biblioentry>
+  <biblioentry id="ucsschool-italk">
+    <publishername>Univention GmbH</publishername>
+    <pubdate>2015</pubdate>
+    <title>iTALC-Installation auf Windows-Clients</title>
+    <releaseinfo><ulink url="https://docs.software-univention.de/ucsschool-handbuch-4.1.html#school:windows:italc"/></releaseinfo>
+  </biblioentry>
+
+  <bibliomixed id="ec2-quickstart"/>
+  <bibliomixed id="ucs-quickstart"/>
+</bibliography>
+
+</book>
