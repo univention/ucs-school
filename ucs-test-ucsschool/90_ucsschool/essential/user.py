@@ -182,8 +182,6 @@ class User(Person):
 				'type': self.typ,
 				'email': self.mail,
 				'objectType': 'users/user',
-				'record_uid': None,
-				'source_uid': None,
 				}
 		if self.is_student() or self.is_teacher() or self.is_teacher_staff():
 			info.update({'school_class': [self.school_class]})
