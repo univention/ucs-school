@@ -120,7 +120,7 @@ class UserMap(dict):
 			dict.__setitem__(self, userstr, UserInfo('', ''))
 			return
 
-		userobj = UserInfo(user.dn, username, isTeacher=user.self_is_teacher())
+		userobj = UserInfo(user.dn, username, isTeacher=user.is_teacher(lo))
 		for groupdn in user.groups:
 			try:
 				group = Group.from_dn(groupdn, None, lo)

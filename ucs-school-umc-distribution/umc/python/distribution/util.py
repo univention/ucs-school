@@ -229,7 +229,8 @@ def openRecipients(entryDN, ldap_connection):
 				MODULE.error('Cannot open user %r: %s' % (userdn, exc))
 				continue
 
-			if user.self_is_teacher() or user.self_is_staff() or user.self_is_administrator():
+			if not user.is_student(ldap_connection):
+				# only add students and exam students
 				MODULE.info('ignoring non student %r' % (userdn,))
 
 			group.members.append(User(user.get_udm_object(ldap_connection).info, dn=user.dn))

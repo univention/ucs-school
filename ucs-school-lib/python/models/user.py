@@ -123,47 +123,55 @@ class User(UCSSchoolHelperAbstractClass):
 			self._profile_path_cache[school.dn] = profile_path
 		return self._profile_path_cache[school.dn]
 
-	def self_is_student(self):
-		return self.is_student(self.school, self.dn)
+	def is_student(self, lo):
+		return self.__check_object_class(lo, 'ucsschoolStudent', self._legacy_is_student)
 
-	def self_is_exam_student(self):
-		return self.is_exam_student(self.school, self.dn)
+	def is_exam_student(self, lo):
+		return self.__check_object_class(lo, 'ucsschoolExam', self._legacy_is_exam_student)
 
-	def self_is_teacher(self):
-		return self.is_teacher(self.school, self.dn)
+	def is_teacher(self, lo):
+		return self.__check_object_class(lo, 'ucsschoolTeacher', self._legacy_is_teacher)
 
-	def self_is_staff(self):
-		return self.is_staff(self.school, self.dn)
+	def is_staff(self, lo):
+		return self.__check_object_class(lo, 'ucsschoolStaff', self._legacy_is_staff)
 
-	def self_is_administrator(self):
-		return self.is_admininstrator(self.school, self.dn)
+	def is_administrator(self, lo):
+		return self.__check_object_class(lo, 'ucsschoolAdministrator', self._legacy_is_admininstrator)
 
 	@classmethod
-	def is_student(cls, school, dn):
+	def _legacy_is_student(cls, school, dn):
 		logger.warning('Using deprecated method is_student()')
 		return dn.endswith(cls.get_search_base(school).students)
 
 	@classmethod
-	def is_exam_student(cls, school, dn):
+	def _legacy_is_exam_student(cls, school, dn):
 		logger.warning('Using deprecated method is_exam_student()')
 		return dn.endswith(cls.get_search_base(school).examUsers)
 
 	@classmethod
-	def is_teacher(cls, school, dn):
+	def _legacy_is_teacher(cls, school, dn):
 		logger.warning('Using deprecated method is_teacher()')
 		search_base = cls.get_search_base(school)
 		return dn.endswith(search_base.teachers) or dn.endswith(search_base.teachersAndStaff) or dn.endswith(search_base.admins)
 
 	@classmethod
-	def is_staff(cls, school, dn):
+	def _legacy_is_staff(cls, school, dn):
 		logger.warning('Using deprecated method is_staff()')
 		search_base = cls.get_search_base(school)
 		return dn.endswith(search_base.staff) or dn.endswith(search_base.teachersAndStaff)
 
 	@classmethod
-	def is_admininstrator(cls, school, dn):
+	def _legacy_is_admininstrator(cls, school, dn):
 		logger.warning('Using deprecated method is_admininstrator()')
 		return dn.endswith(cls.get_search_base(school).admins)
+
+	def __check_object_class(self, lo, object_class, fallback):
+		obj = self.get_udm_object(lo)
+		if not obj:
+			raise noObject('Could not read %r' % (self.dn,))
+		if 'ucsschoolSchool' in obj.oldattr:
+			return object_class in obj.oldattr.get('objectClass', [])
+		return fallback(self.school, self.dn)
 
 	@classmethod
 	def get_class_for_udm_obj(cls, udm_obj, school):
@@ -180,15 +188,15 @@ class User(UCSSchoolHelperAbstractClass):
 			return Student
 
 		# legacy DN based checks
-		if cls.is_student(school, udm_obj.dn):
+		if cls._legacy_is_student(school, udm_obj.dn):
 			return Student
-		if cls.is_teacher(school, udm_obj.dn):
-			if cls.is_staff(school, udm_obj.dn):
+		if cls._legacy_is_teacher(school, udm_obj.dn):
+			if cls._legacy_is_staff(school, udm_obj.dn):
 				return TeachersAndStaff
 			return Teacher
-		if cls.is_staff(school, udm_obj.dn):
+		if cls._legacy_is_staff(school, udm_obj.dn):
 			return Staff
-		if cls.is_exam_student(school, udm_obj.dn):
+		if cls._legacy_is_exam_student(school, udm_obj.dn):
 			return ExamStudent
 		return cls
 

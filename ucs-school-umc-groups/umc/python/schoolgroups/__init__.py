@@ -128,9 +128,9 @@ class Instance(SchoolBaseModule):
 				MODULE.process('Could not open (foreign) user %r: no permissions/does not exists/not a user' % (member_dn,))
 				members.append({'id': member_dn, 'label': member_dn})  # add entry so it doesn't get removed when modifying via 'workgroup-admin'
 				continue
-			if request.flavor == 'class' and not user.self_is_teacher():
+			if request.flavor == 'class' and not user.is_teacher(ldap_user_read):
 				continue  # only display teachers
-			elif request.flavor == 'workgroup' and not self.self_is_student():
+			elif request.flavor == 'workgroup' and not user.is_student(ldap_user_read):
 				continue  # only display students
 			members.append({'id': user.dn, 'label': Display.user(user.get_udm_object(ldap_user_read))})
 		result['members'] = members
@@ -187,9 +187,9 @@ class Instance(SchoolBaseModule):
 				except udm_exceptions.noObject:  # no permissions/is not a user/does not exists → keep the old value
 					users.append(userdn)
 					continue
-				if request.flavor == 'class' and not user.self_is_teacher():
+				if request.flavor == 'class' and not user.is_teacher(ldap_machine_write):
 					users.append(userdn)
-				if request.flavor == 'workgroup' and not user.self_is_student():
+				if request.flavor == 'workgroup' and not user.is_student(ldap_machine_write):
 					user.append(userdn)
 			# add only certain users to the group
 			for userdn in group['members']:
@@ -198,9 +198,9 @@ class Instance(SchoolBaseModule):
 				except udm_exceptions.noObject as exc:
 					MODULE.error('Not adding not existing user %r to group: %r.' % (userdn, exc))
 					continue
-				if request.flavor == 'class' and user.self_is_teacher():
+				if request.flavor == 'class' and user.is_teacher(ldap_machine_write):
 					users.append(user.dn)
-				elif request.flavor == 'workgroup' and user.self_is_student():
+				elif request.flavor == 'workgroup' and user.is_student(ldap_machine_write):
 					users.append(user.dn)
 				else:
 					MODULE.error('Attempted to add illegal user %r into %r.' % (user.dn, grp.dn))
@@ -273,7 +273,7 @@ class Instance(SchoolBaseModule):
 		classes = set(request.options['classes'])
 		try:
 			teacher = Teacher.from_dn(teacher, None, ldap_machine_write)
-			if not teacher.self_is_teacher():
+			if not teacher.is_teacher(ldap_machine_write):
 				raise udm_exceptions.noObject()
 		except udm_exceptions.noObject:
 			raise UMC_Error('The user is not a teacher.')
