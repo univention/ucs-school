@@ -35,9 +35,9 @@ import sys
 from collections import defaultdict
 import datetime
 
+from ldap.filter import filter_format
 from univention.admin.uexceptions import noObject
 from ucsschool.lib.models.attributes import ValidationError
-from ucsschool.lib.roles import role_pupil, role_teacher, role_staff
 from ucsschool.importer.exceptions import UcsSchoolImportError, CreationError, DeletionError, ModificationError, ToManyErrors, UnkownAction, UnknownDeleteSetting, UserValidationError
 from ucsschool.importer.factory import Factory
 from ucsschool.importer.configuration import Configuration
@@ -203,7 +203,7 @@ class UserImport(object):
 		self.logger.info("------ Detecting which users to delete... ------")
 		source_uid = self.config["sourceUID"]
 		attr = ["ucsschoolSourceUID", "ucsschoolRecordUID"]
-		filter_s = "(&(ucsschoolSourceUID={})(ucsschoolRecordUID=*))".format(source_uid)
+		filter_s = filter_format("(&(ucsschoolSourceUID=%s)(ucsschoolRecordUID=*))", source_uid)
 
 		id2imported_user = dict()  # for fast access later
 		for iu in self.imported_users:
