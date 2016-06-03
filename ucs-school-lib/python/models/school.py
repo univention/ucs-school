@@ -401,7 +401,7 @@ class School(UCSSchoolHelperAbstractClass):
 		if schools:
 			schools = [cls.from_dn(cls(name=ou).dn, lo) for ou in schools]
 			if ucr.get('ucsschool/local/oulist'):
-				[school for school in schools if school.name in ucr['ucsschool/local/oulist'].split(',')]
+				schools = [school for school in schools if school.name in ucr['ucsschool/local/oulist'].split(',')]
 			return schools
 
 		if lo.binddn.find('ou=') > 0:
@@ -434,9 +434,11 @@ class School(UCSSchoolHelperAbstractClass):
 			if filter_str:
 				filtered_school_dns = [filtered_school.dn for filtered_school in cls.get_all(lo, filter_str, easy_filter, respect_local_oulist=False)]
 				schools = [school for school in schools if school.dn in filtered_school_dns]
-			return schools
 		else:
-			return super(School, cls).get_all(lo, school=None, filter_str=filter_str, easy_filter=easy_filter)
+			schools = super(School, cls).get_all(lo, school=None, filter_str=filter_str, easy_filter=easy_filter)
+		if respect_local_oulist and ucr.get('server/role') == 'domaincontroller_slave':
+			school = [school for school in schools if ucr.get('ldap/hostdn') in school.get_administrative_server_names()]
+		return schools
 
 	@classmethod
 	def _attrs_for_easy_filter(cls):
