@@ -1,3 +1,9 @@
+ucs-school-lib (9.0.6-1) unstable; urgency=medium
+
+  * Bug #41445: fix logic error / typo
+
+ -- Florian Best <best@univention.de>  Fri, 03 Jun 2016 14:16:19 +0200
+
 ucs-school-lib (9.0.5-2) unstable; urgency=low
 
   * Bug #41239: remove source_uid and record_uid from models.User (moved to

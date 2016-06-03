@@ -168,7 +168,7 @@ class User(UCSSchoolHelperAbstractClass):
 	@classmethod
 	def get_class_for_udm_obj(cls, udm_obj, school):
 		ocs = set(udm_obj.oldattr.get('objectClass', []))
-		if ocs & set(['ucsschoolTeacher', 'ucsschoolStaff']):
+		if ocs >= set(['ucsschoolTeacher', 'ucsschoolStaff']):
 			return TeachersAndStaff
 		if 'ucsschoolExam' in ocs:
 			return ExamStudent

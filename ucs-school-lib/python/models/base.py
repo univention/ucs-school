@@ -522,7 +522,7 @@ class UCSSchoolHelperAbstractClass(object):
 			self.do_school_change(udm_obj, lo, old_school)
 
 	def do_school_change(self, udm_obj, lo, old_school):
-		logger.info('Going to move %r from school %r to %r', self.old_dn, self.school, old_school)
+		logger.info('Going to move %r from school %r to %r', self.old_dn, old_school, self.school)
 
 	def remove(self, lo):
 		'''
