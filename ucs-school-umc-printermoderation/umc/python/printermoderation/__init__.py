@@ -46,8 +46,10 @@ from univention.management.console.log import MODULE
 from univention.management.console.config import ucr
 
 from ucsschool.lib import LDAP_Connection, SchoolBaseModule, Display
+from ucsschool.lib.models import School
 
 import univention.admin.modules as udm_modules
+import univention.admin.uexceptions as udm_errors
 
 DISTRIBUTION_DATA_PATH = '/var/lib/ucs-school-umc-distribution'
 DISTRIBUTION_CMD = '/usr/lib/ucs-school-umc-distribution/umc-distribution'
@@ -94,16 +96,18 @@ class Instance(SchoolBaseModule):
 		all_user_dirs = os.walk(CUPSPDF_DIR).next()[1]
 		return [x for x in all_user_dirs if x.lower() == username.lower()]
 
+	@sanitize(
+		school=StringSanitizer(required=True),
+	)
 	@LDAP_Connection()
-	def printers(self, request, ldap_user_read=None, ldap_position=None, search_base=None):
+	def printers(self, request, ldap_user_read=None):
 		"""List all available printers except PDF printers
-
-		requests.options = {}
-		  'school' -- school OU (optional)
-
-		return: [ { 'id' : <spool host>://<printer name>, 'label' : <display name> }, ... ]
+		return: [{'id': <spool host>://<printer name>, 'label': <display name>}, ...]
 		"""
-		printers = udm_modules.lookup('shares/printer', None, ldap_user_read, scope='sub', base=search_base.printers)
+		try:
+			printers = udm_modules.lookup('shares/printer', None, ldap_user_read, scope='sub', base=School.get_search_base(request.options['school']).printers)
+		except udm_errors.noObject:
+			printers = []
 
 		result = []
 		for prt in printers:

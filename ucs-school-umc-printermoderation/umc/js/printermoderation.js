@@ -272,9 +272,17 @@ define([
 					content: message
 				},{
 					type: ComboBox,
+					name: 'school',
+					label: _('School'),
+					autoHide: true,
+					value: this._searchForm.getWidget('school').get('value'),
+					dynamicValues: 'printermoderation/schools'
+				},{
+					type: ComboBox,
 					name: 'printer',
 					dynamicValues: 'printermoderation/printers',
-					label: _( 'Printer' )
+					depends: 'school',
+					label: _('Printer')
 				} ],
 				buttons: [ {
 					name: 'submit',
@@ -290,7 +298,7 @@ define([
 					label: _( 'Cancel' ),
 					callback: _cleanup
 				}],
-				layout: [ 'info', 'printer' ]
+				layout: [ 'info', 'school', 'printer' ]
 			});
 
 			_dialog = new Dialog( {
