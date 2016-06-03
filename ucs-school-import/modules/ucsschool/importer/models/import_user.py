@@ -31,17 +31,18 @@ Representation of a user read from a file.
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-
 import random
 import re
 import string
 import datetime
 from collections import defaultdict
+from ldap.filter import filter_format
 
+from univention.admin.uexceptions import noObject
 from univention.admin import property as uadmin_property
 from ucsschool.lib.roles import role_pupil, role_teacher, role_staff
 from ucsschool.lib.models import Staff, Student, Teacher, TeachersAndStaff, User
-from ucsschool.lib.models.base import UnknownModel
+from ucsschool.lib.models.attributes import RecordUID, SourceUID
 from ucsschool.importer.configuration import Configuration
 from ucsschool.importer.factory import Factory
 from ucsschool.importer.exceptions import BadPassword, FormatError, InvalidBirthday, InvalidEmail, MissingMailDomain, MissingMandatoryAttribute, MissingSchoolName, NoUsername, NoUsernameAtAll, UniqueIdError, UnkownDisabledSetting, UnknownProperty, UsernameToLong
@@ -62,6 +63,9 @@ class ImportUser(User):
 	factory = Factory(fac_class())
 	user = factory.make_import_user(roles)
 	"""
+	source_uid = SourceUID("SourceUID")
+	record_uid = RecordUID("RecordUID")
+
 	config = None
 	username_max_length = 15
 	_unique_ids = defaultdict(set)
@@ -89,6 +93,15 @@ class ImportUser(User):
 		a list as argument.
 		"""
 		return self._build_hook_line(*self.input_data)
+
+	@classmethod
+	def get_by_import_id(cls, lo, source_uid, record_uid, superordinate=None):
+		filter_s = filter_format("(&(objectClass=ucsschoolType)(ucsschoolSourceUID=%s)(ucsschoolRecordUID=%s))",
+			(source_uid, record_uid))
+		obj = cls.get_only_udm_obj(lo, filter_s, superordinate=superordinate)
+		if not obj:
+			raise noObject("No user with source_uid={0} and record_uid={1} found.".format(source_uid, record_uid))
+		return cls.from_udm_obj(obj, None, lo)
 
 	def deactivate(self):
 		"""
@@ -470,7 +483,7 @@ class ImportUser(User):
 		elif issubclass(klass, Student):
 			return ImportStudent
 		else:
-			raise UnknownModel("Don't know what to do with '{}'.".format(klass))
+			None
 
 	def create_without_hooks(self, lo, validate):
 		success = super(ImportUser, self).create_without_hooks(lo, validate)
