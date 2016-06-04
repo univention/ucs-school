@@ -1,3 +1,9 @@
+ucs-school-lib (9.0.9-2) unstable; urgency=medium
+
+  * Bug #41117: fix typo in last commit
+
+ -- Florian Best <best@univention.de>  Sat, 04 Jun 2016 22:36:52 +0200
+
 ucs-school-lib (9.0.9-1) unstable; urgency=medium
 
   * Bug #41117: adjust is_(student|teacher|administrator|staff) for

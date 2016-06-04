@@ -371,7 +371,7 @@ class User(UCSSchoolHelperAbstractClass):
 			else:
 				logger.warning('Not allowed to create %r.', mail_domain)
 
-	def set_default_options(self):
+	def set_default_options(self, udm_obj):
 		for option in self.get_default_options():
 			if option not in udm_obj.options:
 				udm_obj.options.append(option)
