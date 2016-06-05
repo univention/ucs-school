@@ -36,9 +36,13 @@ def main():
 		]
 		lo = env.open_ldap_connection()
 		for (user, dn), roleshare_path, in users:
+			print '################################'
+			print '#### moving user at', dn
+			print '################################'
 			user = User.from_dn(dn, a, lo)
 			user.custom_dn = None
 			user.school = b
+			user.schools = [b]
 			user.move(lo)
 			assert user.dn != dn
 			assert b in user.dn
@@ -47,7 +51,13 @@ def main():
 				'departmentNumber': [b],
 				# TODO: add sambaHomeDrive sambaHomePath sambaLogonScript sambaProfilePath
 			}
-			utils.verify_ldap_object(user.dn, expected_attr=attrs, strict=True, should_exist=True)
+			oldinfo = user.get_udm_object(lo).info
+			try:
+				utils.verify_ldap_object(user.dn, expected_attr=attrs, strict=True, should_exist=True)
+			except utils.LDAPObjectValueMissing:
+				info = user.get_udm_object(lo).info
+				print 'Object moving failed: %r;\noldinfo=%r\ninfo=%r' % (user.dn, oldinfo, info)
+				raise
 			# TODO: check groups, workgroups, classes
 
 

@@ -1,3 +1,9 @@
+ucs-test-ucsschool (3.0.5-42) unstable; urgency=medium
+
+  * Bug #41445: be more verbose
+
+ -- Florian Best <best@univention.de>  Sun, 05 Jun 2016 10:50:39 +0200
+
 ucs-test-ucsschool (3.0.5-41) unstable; urgency=medium
 
   * Bug #41408: source_id and record_id has been moved into ImportUser
