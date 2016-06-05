@@ -437,7 +437,7 @@ class School(UCSSchoolHelperAbstractClass):
 		else:
 			schools = super(School, cls).get_all(lo, school=None, filter_str=filter_str, easy_filter=easy_filter)
 		if respect_local_oulist and ucr.get('server/role') == 'domaincontroller_slave':
-			school = [school for school in schools if ucr.get('ldap/hostdn') in school.get_administrative_server_names()]
+			school = [school for school in schools if ucr.get('ldap/hostdn') in school.get_administrative_server_names(lo)]
 		return schools
 
 	@classmethod
