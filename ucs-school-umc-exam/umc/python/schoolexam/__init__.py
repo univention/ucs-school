@@ -102,7 +102,7 @@ class Instance(SchoolBaseModule):
 		### copied from distribution module
 		# create a temporary upload directory, if it does not already exist
 		if not self._tmpDir:
-			self._tmpDir = tempfile.mkdtemp(prefix='ucsschool-distribution-upload-')
+			self._tmpDir = tempfile.mkdtemp(prefix='ucsschool-exam-upload-')
 			MODULE.info('Created temporary directory: %s' % self._tmpDir)
 
 		for file in request.options:

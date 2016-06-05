@@ -1,3 +1,9 @@
+ucs-school-umc-exam (6.0.5-1) unstable; urgency=medium
+
+  * Bug #41123: fix typo in svn r69774
+
+ -- Florian Best <best@univention.de>  Sun, 05 Jun 2016 10:27:57 +0200
+
 ucs-school-umc-exam (6.0.4-1) unstable; urgency=medium
 
   * Bug #41117: adjust is_(student|teacher|administrator|staff) API
