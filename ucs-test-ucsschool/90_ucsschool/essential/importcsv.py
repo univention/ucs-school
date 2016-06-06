@@ -6,6 +6,7 @@ import univention.testing.strings as uts
 import univention.testing.utils as utils
 import tempfile
 import re
+from pprint import pprint
 from essential.user import User
 
 class FailHTTPStatus(Exception):
@@ -247,7 +248,7 @@ html5
 			line_nr += 1
 			param.append(options)
 		try:
-			print 'Importing users with parameters=', param
+			pprint(('Importing users with parameters=', param))
 			reqResult = self.umc_connection.request('schoolcsvimport/import', param)
 			self.id_nr = reqResult['id']
 			utils.wait_for_replication()
@@ -377,7 +378,7 @@ def check_import_users(school, user_types, files, delete_not_mentioned, expected
 					break
 			f.close()
 	users = [[x for x in y] for y in users]
-	print 'Users = ', users
+	pprint(('Users = ', users))
 	errors = [x['errors'] for y in users for x in y if x['errors']]
 	errors_keys = [k for x in errors for k,v in x.iteritems()]
 	print 'ERRORS_KEYS=', errors_keys

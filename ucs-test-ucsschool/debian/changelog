@@ -1,3 +1,9 @@
+ucs-test-ucsschool (3.0.5-43) unstable; urgency=medium
+
+  * Bug #41451: prettify debug output
+
+ -- Florian Best <best@univention.de>  Mon, 06 Jun 2016 13:42:57 +0200
+
 ucs-test-ucsschool (3.0.5-42) unstable; urgency=medium
 
   * Bug #41445: be more verbose
