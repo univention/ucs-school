@@ -1,3 +1,9 @@
+ucs-school-import (14.0.3-1) unstable; urgency=low
+
+  * Bug #41162: added user migration script ucs-school-migrate-users-to-4.1R2
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Mon, 06 Jun 2016 23:09:17 +0200
+
 ucs-school-import (14.0.2-2) unstable; urgency=low
 
   * Bug #41239: find, load and run Python based hooks

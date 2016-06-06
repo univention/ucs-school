@@ -32,7 +32,7 @@
 
 VERSION=10
 . /usr/share/univention-join/joinscripthelper.lib
-. /usr/share/univention-lib/ldap.sh
+. /usr/share/univention-lib/all.sh
 joinscript_init
 
 eval "$(ucr shell)"
@@ -294,6 +294,21 @@ if [ $JS_LAST_EXECUTED_VERSION -lt 7 ] ; then
 			--dn "$dn" \
 			--set groupPosition="2" || die
 	done
+fi
+
+if [ $JS_LAST_EXECUTED_VERSION -lt 10 ] ; then
+	# convert existing UCS@school user objects to new LDAP structure
+	LOGFILE="/var/log/univention/ucs-school-migrate-users-to-4.1R2.log"
+	if is_ucr_false ucsschool/update/users/41R2; then
+		echo "$(date)" | tee -a "$LOGFILE"
+		echo "Automatic update of user objects to new LDAP structure of UCS@school 4.1 R2" | tee -a "$LOGFILE"
+		echo "has been disabled via UCR variable 'ucsschool/update/users/41R2'. Make sure" | tee -a "$LOGFILE"
+		echo "that this required step is performed manually afterwards." | tee -a "$LOGFILE"
+	else
+		echo "START: $(date)" | tee -a "$LOGFILE"
+		/usr/share/ucs-school-import/scripts/ucs-school-migrate-users-to-4.1R2 2>&1 | tee -a "$LOGFILE"
+		echo "FINISHED: $(date)" | tee -a "$LOGFILE"
+	fi
 fi
 
 joinscript_save_current_version
