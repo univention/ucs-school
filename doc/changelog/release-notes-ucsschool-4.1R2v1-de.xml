@@ -49,6 +49,33 @@ feedback@univention.de
 			installierter Software kann das Update zwischen dreißig Minuten und mehreren Stunden
 			dauern.
 		</para>
+		<chapter id="relnote:prepare:ouspanningusers">
+			<title>Schulübergreifende Benutzerkonten</title>
+			<para>
+				Ein neues Kernfeature von &ucsUAS; 4.1 R2 ist die Unterstützung von schulübergreifenden
+				Benutzerkonten. Schulübergreifende Benutzerkonten werden an mehrere, vordefinierte Schulen
+				repliziert und können in diversen Szenarien multiple Benutzerkonten ersetzen (z.B. bei Lehrern war
+				zuvor häufig ein Benutzerkonto pro Schule notwendig). Die schulübergreifenden Benutzerkonten
+				erfordern u.a. die Installation neuer LDAP-ACLs (LDAP-Zugriffsregeln), was bei der Installation
+				bzw. dem Update von UCs@school 4.1 R2 automatisch passiert.
+			</para>
+			<para>
+				Neben den neuen LDAP-ACLs ist auch eine Anpassung der Benutzerobjekte im
+				LDAP-Verzeichnis notwendig, die unterhalb der OU-Objekte für die Schulen liegen. Während des Updates
+				von UCS@school 4.1 R2 wird auf dem &ucsMaster; automatisch bei der Ausführung des Joinskriptes
+				<filename>35ucs-school-import.inst</filename> die Anpassung der UCS@school-Benutzerobjekte
+				vorgenommen. Dies kann je nach Umgebungsgröße einige Zeit beanspruchen und führt während der
+				Anpassungen zu einer erhöhten Last bei LDAP-Servern und LDAP-Replikation.
+			</para>
+			<para>
+				Um die automatische Anpassung zu verhindern, kann VOR dem Update auf UCS@school 4.1 R2
+				die &ucsUCRV; <envar>ucsschool/update/users/41R2</envar> auf den Wert <literal>false</literal>
+				gesetzt werden. Die Anpassung der Benutzerobjekte muss dann für die korrekte Funktion der
+				UCS@school-Umgebung manuell nachgeholt werden. Dafür muss das folgende Kommando als Benutzer
+				<systemitem class="username">root</systemitem> auf dem &ucsMaster; ausgeführt werden:
+				<command>/usr/share/ucs-school-import/scripts/ucs-school-migrate-users-to-4.1R2</command>.
+			</para>
+		</chapter>
 	</chapter>
 
 	<chapter id="relnotes:preparations">
