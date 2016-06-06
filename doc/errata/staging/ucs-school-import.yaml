@@ -1,11 +1,17 @@
 product: ucsschool
 release: "4.1"
-version: [1]
-scope: ucs_4.1-0-ucs-school-4.1
+version: [2]
+scope: ucs_4.1-0-ucs-school-4.1r2
 src: ucs-school-import
 fix: 12.0.3-2.237.201602171421
 desc: |
  This update addresses the following issue(s):
  * A regression (due to Bug #40712) during evaluating boolean UCR variables has
    been fixed.
-bug: [40712]
+ * Added migration script ucs-school-migrate-users-to-4.1R2 to convert user
+   objects to LDAP structure of UCS@school 4.1 R2. By default, this script is
+   automatically called by the join script 35ucs-school-import. The automatic
+   execution may be disabled by setting the UCR variable
+   "ucsschool/update/users/41R2" to the value "false" *PRIOR* to the update
+   (Bug #41162).
+bug: [40712,41162]
