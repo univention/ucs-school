@@ -1,3 +1,9 @@
+ucs-school-import (14.0.2-2) unstable; urgency=low
+
+  * Bug #41239: find, load and run Python based hooks
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 06 Jun 2016 13:59:45 +0200
+
 ucs-school-import (14.0.2-1) unstable; urgency=medium
 
   * Bug #41123: add ucsschoolExam extended option (not needed but who knows

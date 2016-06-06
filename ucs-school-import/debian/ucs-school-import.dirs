@@ -29,3 +29,9 @@ usr/share/ucs-school-import/hooks/computer_create_post.d
 usr/share/ucs-school-import/hooks/network_create_post.d
 usr/share/ucs-school-import/hooks/router_create_post.d
 usr/share/ucs-school-import/hooks/ou_create_post.d
+usr/share/ucs-school-import/pyhooks/user_create_pre.d
+usr/share/ucs-school-import/pyhooks/user_modify_pre.d
+usr/share/ucs-school-import/pyhooks/user_remove_pre.d
+usr/share/ucs-school-import/pyhooks/user_create_post.d
+usr/share/ucs-school-import/pyhooks/user_modify_post.d
+usr/share/ucs-school-import/pyhooks/user_remove_post.d

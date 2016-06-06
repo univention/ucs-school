@@ -43,6 +43,10 @@ from ucsschool.importer.factory import Factory
 from ucsschool.importer.configuration import Configuration
 from ucsschool.importer.utils.logging2udebug import get_logger
 from ucsschool.importer.utils.ldap_connection import get_admin_connection
+from ucsschool.importer.utils.pyhooks_loader import PyHooksLoader
+
+
+PLUGINS_BASE_PATH = "/usr/share/ucs-school-import/pyhooks"
 
 
 class UserImport(object):
@@ -61,6 +65,7 @@ class UserImport(object):
 		self.connection, self.position = get_admin_connection()
 		self.factory = Factory()
 		self.reader = self.factory.make_reader()
+		self.pyhooks = PyHooksLoader(PLUGINS_BASE_PATH).get_plugins()
 
 	def read_input(self):
 		"""
@@ -125,11 +130,13 @@ class UserImport(object):
 				try:
 					if user.action == "A":
 						self.pre_create_hook(user)
+						self._run_pyhooks("user", "create", "pre", user)
 						err = CreationError
 						store = self.added_users[cls_name]
 						success = user.create(lo=self.connection)
 					elif user.action == "M":
 						self.pre_modify_hook(user)
+						self._run_pyhooks("user", "modify", "pre", user)
 						err = ModificationError
 						store = self.modified_users[cls_name]
 						success = user.modify(lo=self.connection)
@@ -154,8 +161,10 @@ class UserImport(object):
 					# load user from LDAP for create_and_modify_hook(post)
 					user = imported_user.get_by_import_id(self.connection, imported_user.source_uid,
 						imported_user.record_uid)
+					self._run_pyhooks("user", "create", "post", user)
 					self.post_create_hook(user)
 				elif user.action == "M":
+					self._run_pyhooks("user", "modify", "post", user)
 					self.post_modify_hook(user)
 
 			except (CreationError, ModificationError) as exc:
@@ -257,6 +266,7 @@ class UserImport(object):
 		for user in users:
 			try:
 				self.pre_delete_hook(user)
+				self._run_pyhooks("user", "remove", "pre", user)
 				success = self.do_delete(user)
 				if success:
 					self.logger.info("Success deleting user %r (source_uid:%s record_uid: %s).", user.name,
@@ -266,6 +276,7 @@ class UserImport(object):
 						"been deleted.".format(user.name, user.source_uid, user.record_uid), entry=user.entry_count,
 						import_user=user)
 				self.deleted_users[user.__class__.__name__].append(user)
+				self._run_pyhooks("user", "remove", "post", user)
 				self.post_delete_hook(user)
 			except UcsSchoolImportError as exc:
 				self.logger.exception("Error in entry #%d: %s",  exc.entry, exc)
@@ -346,6 +357,9 @@ class UserImport(object):
 		You'll have full access to the data being saved to LDAP.
 		It is much faster than running executables from
 		/usr/share/ucs-school-import/hooks/*.
+		Performance wise it is the same as installing a PyHook in
+		PLUGINS_BASE_PATH/user/create/pre.de, but this method will be called
+		before the plugins.
 
 		* The ImportUser does not exist in LDAP, yet. user.dn will be the DN
 		of the user, if username and school does not change.
@@ -363,6 +377,9 @@ class UserImport(object):
 		IMPLEMENT ME if you want to do something after creating a user.
 		It is much faster than running executables from
 		/usr/share/ucs-school-import/hooks/*.
+		Performance wise it is the same as installing a PyHook in
+		PLUGINS_BASE_PATH/user/create/post.d, but this method will be called
+		after the plugins.
 
 		* The hook is only executed if adding the user succeeded.
 		* The user will be a opened ImportUser, loaded from LDAP.
@@ -380,6 +397,9 @@ class UserImport(object):
 		IMPLEMENT ME if you want to do something before modifying a user.
 		It is much faster than running executables from
 		/usr/share/ucs-school-import/hooks/*.
+		Performance wise it is the same as installing a PyHook in
+		PLUGINS_BASE_PATH/user/modify/pre.d, but this method will be called
+		before the plugins.
 
 		* The user will be a opened ImportUser, loaded from LDAP.
 		* Use self.connection if you need a LDAP connection.
@@ -396,6 +416,9 @@ class UserImport(object):
 		IMPLEMENT ME if you want to do something after modifying a user.
 		It is much faster than running executables from
 		/usr/share/ucs-school-import/hooks/*.
+		Performance wise it is the same as installing a PyHook in
+		PLUGINS_BASE_PATH/user/modify/post.d, but this method will be called
+		after the plugins.
 
 		* The hook is only executed if modifying the user succeeded.
 		* The user will be a opened ImportUser, loaded from LDAP.
@@ -414,6 +437,9 @@ class UserImport(object):
 		You'll have full access to the data still saved in LDAP.
 		It is much faster than running executables from
 		/usr/share/ucs-school-import/hooks/*.
+		Performance wise it is the same as installing a PyHook in
+		PLUGINS_BASE_PATH/user/remove/pre.d, but this method will be called
+		before the plugins.
 
 		* user is a opened ImportUser, loaded from LDAP.
 		* Use self.connection if you need a LDAP connection.
@@ -432,6 +458,9 @@ class UserImport(object):
 		anymore.
 		It is much faster than running executables from
 		/usr/share/ucs-school-import/hooks/*.
+		Performance wise it is the same as installing a PyHook in
+		PLUGINS_BASE_PATH/user/remove/post.d, but this method will be called
+		after the plugins.
 
 		* The hook is only executed if the deleting the user succeeded.
 		* user is a opened ImportUser, loaded from LDAP.
@@ -449,3 +478,9 @@ class UserImport(object):
 		self.errors.append(err)
 		if len(self.errors) > self.config["tolerate_errors"]:
 			raise ToManyErrors("More than {} errors.".format(self.config["tolerate_errors"]), self.errors)
+
+	def _run_pyhooks(self, obj, action, when, import_user):
+		for pyhook_cls in self.pyhooks.get(obj, {}).get(action, {}).get(when, []):
+			self.logger.info("Running %s/%s/%s hook %r for %s...", obj, action, when, pyhook_cls.__name__, import_user)
+			pyhook = pyhook_cls(import_user)
+			pyhook.run()
