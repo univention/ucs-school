@@ -545,6 +545,10 @@ class UCSSchoolHelperAbstractClass(object):
 		if self.supports_school() and old_school and old_school != new_school:
 			self.do_school_change(udm_obj, lo, old_school)
 
+	def change_school(self, school, lo):
+		self.school = school
+		return self.move(lo, force=True)
+
 	def do_school_change(self, udm_obj, lo, old_school):
 		logger.info('Going to move %r from school %r to %r', self.old_dn, old_school, self.school)
 

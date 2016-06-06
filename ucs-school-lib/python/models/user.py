@@ -31,7 +31,6 @@
 # <http://www.gnu.org/licenses/>.
 
 import os.path
-import re
 
 from ldap.dn import escape_dn_chars, explode_dn
 from ldap.filter import escape_filter_chars, filter_format
@@ -41,12 +40,12 @@ from ucsschool.lib.models.utils import create_passwd
 from ucsschool.lib.models.attributes import Username, Firstname, Lastname, Birthday, Email, Password, Disabled, SchoolClassStringAttribute, Schools
 from ucsschool.lib.models.base import UCSSchoolHelperAbstractClass, UnknownModel, WrongModel
 from ucsschool.lib.models.school import School
-from ucsschool.lib.models.group import Group, BasicGroup, SchoolClass, WorkGroup
+from ucsschool.lib.models.group import Group, BasicGroup, SchoolClass, ComputerRoom, _MayHaveSchoolPrefix, _MayHaveSchoolSuffix
 from ucsschool.lib.models.computer import AnyComputer
 from ucsschool.lib.models.misc import MailDomain
 from ucsschool.lib.models.utils import ucr, _, logger
 
-from univention.admin.uexceptions import noObject
+from univention.admin.uexceptions import noObject, ldapError
 from univention.admin.filter import conjunction, parse
 import univention.admin.modules as udm_modules
 
@@ -287,46 +286,50 @@ class User(UCSSchoolHelperAbstractClass):
 		super(User, self).do_school_change(udm_obj, lo, old_school)
 		school = self.school
 
-		schoolprefix = re.compile('^%s-' % (re.escape(old_school),))
-
+		logger.info('User is part of the following groups: %r', udm_obj['groups'])
 		for groupdn in udm_obj['groups'][:]:
-			cls = None
-			if Group.is_school_class(old_school, groupdn):
-				cls = SchoolClass
-			elif Group.is_school_workgroup(old_school, groupdn):
-				cls = WorkGroup
-			elif Group.is_school_group(old_school, groupdn):
-				cls = BasicGroup
-			if cls is None:
-				logger.info('Not touching group %r', groupdn)
+			oldgroup = Group.from_dn(groupdn, old_school, lo)
+			if isinstance(oldgroup, (ComputerRoom, BasicGroup)):
+				logger.info('Group %r is not a school class/work group/regular group. Ignoring.', groupdn)
 				continue
-			# create the class/workgroup in the other school if not exists. put user into it.
-			oldgroup = cls.from_dn(groupdn, old_school, lo)
-			oldgroup.school = school
-			if cls is SchoolClass:
-				oldgroup.name = schoolprefix.sub('%s-' % school, oldgroup.name)
-			oldgroup.custom_dn = None  # FIXME: remove when from_dn() is fixed
-			try:
-				group = cls.from_dn(oldgroup.dn, school, lo)
-			except noObject:
-				logger.info('No group %r found.', oldgroup.dn)
-				group = cls(oldgroup.name, school, users=[self.dn])
-				group.create(lo)
-			else:
-				logger.info('Appending %r to %r', self.dn, group.dn)
-				group.users.append(self.dn)
-				group.modify(lo)
 
-			# remove this user from the classes/workgroups of the old school
-			oldgroup = cls.from_dn(groupdn, old_school, lo)
+			# remove this user from the groups of the old school
 			if self.dn in oldgroup.users:
-				logger.info('Removing %r from %r', self.dn, oldgroup.dn)
+				logger.info('Removing %r from group %r of old school.', self.dn, oldgroup.dn)
 				oldgroup.users.remove(self.dn)
-				oldgroup.modify(lo)
+				try:
+					oldgroup.modify(lo)
+				except ldapError as exc:
+					logger.error('Could not remove user from group %r: %s', oldgroup.dn, exc)
+					raise  # TODO: ignore?
+
+			# create the groups in the other school if not exists. put user into it.
+			newgroup = Group.from_dn(groupdn, old_school, lo)
+			if isinstance(newgroup, (_MayHaveSchoolPrefix, _MayHaveSchoolSuffix)):
+				newgroup.name = newgroup.get_replaced_name(school)
+			newgroup.school = school
+			newgroup.custom_dn = None  # FIXME: remove when from_dn() is fixed
+			cls = type(newgroup)
+			try:
+				group = cls.from_dn(newgroup.dn, school, lo)
+			except noObject:
+				logger.info('There is no group %r at %r. Creating it.', newgroup.dn, school)
+				group = cls(name=newgroup.name, school=school, users=[self.dn])
+				try:
+					group.create(lo)
+				except ldapError as exc:
+					logger.error('Could not create group %r: %s', group.dn, exc)
+					raise  # TODO: ignore
+			else:
+				logger.info('Appending %r to group %r of school %r', self.dn, group.dn, school)
+				group.users.append(self.dn)
+				try:
+					group.modify(lo)
+				except ldapError as exc:
+					logger.error('Could not add user to group %r: %s', group.dn, exc)
+					raise  # TODO: ignore
 
 		self._udm_obj_searched = False
-		if self.school_class:
-			self.school_class = ','.join(schoolprefix.sub('%s-' % school, x) for x in self.school_class.split(','))
 		udm_obj = self.get_udm_object(lo)
 		udm_obj['primaryGroup'] = self.primary_group_dn(lo)
 		groups = set(udm_obj['groups'])
@@ -349,6 +352,10 @@ class User(UCSSchoolHelperAbstractClass):
 			udm_obj['scriptpath'] = script_path
 		if udm_obj['departmentNumber'] == old_school:
 			udm_obj['departmentNumber'] = school
+		if school not in udm_obj['school']:
+			udm_obj['school'].append(school)
+		if old_school in udm_obj['school']:
+			udm_obj['school'].remove(old_school)
 		udm_obj.modify(ignore_license=True)
 
 	def _alter_udm_obj(self, udm_obj):
@@ -524,7 +531,7 @@ class User(UCSSchoolHelperAbstractClass):
 	class Meta:
 		udm_module = 'users/user'
 		name_is_unique = True
-		allow_school_change = True
+		allow_school_change = False
 
 class Student(User):
 	school_class = SchoolClassStringAttribute(_('Class'), aka=['Class', 'Klasse'])
@@ -540,7 +547,7 @@ class Student(User):
 		try:
 			exam_user = ExamStudent.from_student_dn(lo, old_school, self.old_dn)
 		except noObject as exc:
-			logger.info('No exam user for %r found: %s', (self.old_dn, exc))
+			logger.info('No exam user for %r found: %s', self.old_dn, exc)
 		else:
 			logger.info('Removing exam user %r', exam_user.dn)
 			exam_user.remove(lo)

@@ -41,16 +41,39 @@ from ucsschool.lib.models.share import Share, ClassShare
 from ucsschool.lib.models.policy import UMCPolicy
 from ucsschool.lib.models.utils import ucr, _, logger
 
+
 class _MayHaveSchoolPrefix(object):
+
 	def get_relative_name(self):
 		# schoolname-1a => 1a
 		if self.school and self.name.lower().startswith('%s-' % self.school.lower()):
 			return self.name[len(self.school) + 1:]
 		return self.name
 
+	def get_replaced_name(self, school):
+		if self.name != self.get_relative_name():
+			return '%s-%s' % (school, self.get_relative_name())
+		return self.name
+
+class _MayHaveSchoolSuffix(object):
+
+	def get_relative_name(self):
+		# schoolname-1a => 1a
+		if self.school and self.name.lower().endswith('-%s' % self.school.lower()) or self.name.lower().endswith(' %s' % self.school.lower()):
+			return self.name[:-(len(self.school) + 1)]
+		return self.name
+
+	def get_replaced_name(self, school):
+		if self.name != self.get_relative_name():
+			delim = self.name[len(self.get_relative_name())]
+			return '%s%s%s' % (self.get_relative_name(), delim, school)
+		return self.name
+
+
 class Group(UCSSchoolHelperAbstractClass):
 	name = GroupName(_('Name'))
 	description = Description(_('Description'))
+	users = Users(_('Users'))
 
 	@classmethod
 	def get_container(cls, school):
@@ -89,6 +112,8 @@ class Group(UCSSchoolHelperAbstractClass):
 			return ComputerRoom
 		elif cls.is_school_workgroup(school, udm_obj.dn):
 			return WorkGroup
+		elif cls.is_school_group(school, udm_obj.dn):
+			return SchoolGroup
 		return cls
 
 	def add_umc_policy(self, policy_dn, lo):
@@ -126,10 +151,10 @@ class Group(UCSSchoolHelperAbstractClass):
 		udm_module = 'groups/group'
 		name_is_unique = True
 
+
 class BasicGroup(Group):
 	school = None
 	container = Attribute(_('Container'), required=True)
-	users = Users(_('Users'))
 
 	def __init__(self, name=None, school=None, **kwargs):
 		if 'container' not in kwargs:
@@ -160,9 +185,13 @@ class BasicGroup(Group):
 	def get_container(cls, school=None):
 		return ucr.get('ldap/base')
 
+
+class SchoolGroup(Group, _MayHaveSchoolSuffix):
+	pass
+
+
 class SchoolClass(Group, _MayHaveSchoolPrefix):
 	name = SchoolClassName(_('Name'))
-	users = Users(_('Users'))
 
 	ShareClass = ClassShare
 
@@ -213,7 +242,6 @@ class SchoolClass(Group, _MayHaveSchoolPrefix):
 
 class WorkGroup(SchoolClass, _MayHaveSchoolPrefix):
 
-	users = Users(_('Users'))
 	ShareClass = Share
 
 	@classmethod
@@ -232,6 +260,7 @@ class WorkGroup(SchoolClass, _MayHaveSchoolPrefix):
 
 class ComputerRoom(Group, _MayHaveSchoolPrefix):
 	hosts = Hosts(_('Hosts'))
+	users = None
 
 	def to_dict(self):
 		ret = super(ComputerRoom, self).to_dict()
