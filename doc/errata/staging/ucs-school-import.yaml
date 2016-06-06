@@ -3,7 +3,7 @@ release: "4.1"
 version: [2]
 scope: ucs_4.1-0-ucs-school-4.1r2
 src: ucs-school-import
-fix: 12.0.3-2.237.201602171421
+fix: 14.0.3-1.250.201606062330
 desc: |
  This update addresses the following issue(s):
  * A regression (due to Bug #40712) during evaluating boolean UCR variables has
