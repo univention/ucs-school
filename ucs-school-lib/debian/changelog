@@ -1,3 +1,9 @@
+ucs-school-lib (9.0.11-1) unstable; urgency=medium
+
+  * Bug #41425: handle UnknownModel and WrongModel in User.validate()
+
+ -- Florian Best <best@univention.de>  Mon, 06 Jun 2016 13:50:31 +0200
+
 ucs-school-lib (9.0.10-1) unstable; urgency=medium
 
   * Bug #41468: don't cache udm_object when ldap binddn changes

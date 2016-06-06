@@ -39,7 +39,7 @@ from ldap.filter import escape_filter_chars, filter_format
 from ucsschool.lib.roles import role_pupil, role_teacher, role_staff
 from ucsschool.lib.models.utils import create_passwd
 from ucsschool.lib.models.attributes import Username, Firstname, Lastname, Birthday, Email, Password, Disabled, SchoolClassStringAttribute, Schools
-from ucsschool.lib.models.base import UCSSchoolHelperAbstractClass
+from ucsschool.lib.models.base import UCSSchoolHelperAbstractClass, UnknownModel, WrongModel
 from ucsschool.lib.models.school import School
 from ucsschool.lib.models.group import Group, BasicGroup, SchoolClass, WorkGroup
 from ucsschool.lib.models.computer import AnyComputer
@@ -387,7 +387,17 @@ class User(UCSSchoolHelperAbstractClass):
 
 	def validate(self, lo, validate_unlikely_changes=False):
 		super(User, self).validate(lo, validate_unlikely_changes)
-		udm_obj = self.get_udm_object(lo)
+		try:
+			udm_obj = self.get_udm_object(lo)
+		except UnknownModel:
+			udm_obj = None
+		except WrongModel as exc:
+			udm_obj = None
+			self.add_error('name', _('It is not supported to change the role of a user. %(old_role)s %(name)s cannot become a %(new_role)s.') % {
+				'old_role' : exc.model.type_name,
+				'name' : self.name,
+				'new_role' : self.type_name
+			})
 		if udm_obj:
 			original_class = self.get_class_for_udm_obj(udm_obj, self.school)
 			if original_class is not self.__class__:
