@@ -173,8 +173,12 @@ class TestSamba4(object):
 			utils.fail("Could not find the DN in the udm list output, thus "
 					   "cannot select the School OU to use as a container")
 
+		print "\nselect_school_ou: UDM returned %s" % (sed_stdout,)
+		print "\nselect_school_ou: split: %s" % (sed_stdout.split(),)
+
 		# select the first School:
 		ous = [schoolldap.SchoolSearchBase.getOU(x) if schoolname_only else schoolldap.SchoolSearchBase.getOUDN(x) for x in sed_stdout.split()]
+		print "\nselect_school_ou: SchoolSearchBase found these OUs: %s" % (ous,)
 		try:
 			return ous[0]
 		except IndexError:
