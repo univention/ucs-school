@@ -1,3 +1,9 @@
+ucs-school-lib (9.0.10-1) unstable; urgency=medium
+
+  * Bug #41468: don't cache udm_object when ldap binddn changes
+
+ -- Florian Best <best@univention.de>  Mon, 06 Jun 2016 12:04:35 +0200
+
 ucs-school-lib (9.0.9-3) unstable; urgency=medium
 
   * Bug #41117: fix typo

@@ -591,7 +591,7 @@ class UCSSchoolHelperAbstractClass(object):
 		  self._udm_obj_searched = False
 		'''
 		self.init_udm_module(lo)
-		if self._udm_obj_searched is False:
+		if self._udm_obj_searched is False or (self._udm_obj and self._udm_obj.lo.binddn != lo.binddn):
 			dn = self.old_dn or self.dn
 			superordinate = self.get_superordinate()
 			if dn is None:
