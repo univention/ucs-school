@@ -13,7 +13,7 @@ import univention.config_registry
 
 
 def main():
-	if not User.Meta.allow_school_change:
+	if not hasattr(User, 'change_school'):
 		utils.fail('ERROR: moving users to another school OU is not supported by ucs-school-lib')
 
 	with UCSTestSchool() as env, UCSTestConfigRegistry() as ucr:
@@ -28,26 +28,29 @@ def main():
 		# TODO: change school and uid at once!
 		# TODO: user without classes
 
+		domain_users_school = 'cn=Domain Users %s,cn=groups,ou=%s,dc=school,dc=local' % (b, b)
+		teacher_group = 'cn=lehrer-%s,cn=groups,ou=%s,dc=school,dc=local' % (b, b)
+		staff_group = 'cn=mitarbeiter-%s,cn=groups,ou=%s,dc=school,dc=local' % (b, b)
+
 		users = [
-			(env.create_user(a), 'schueler'), # student
-			(env.create_user(a, is_teacher=True), 'lehrer'),
-			(env.create_user(a, is_staff=True), 'mitarbeiter'),
-			(env.create_user(a, is_teacher=True, is_staff=True), 'lehrer'),
+			(env.create_user(a), 'schueler', ['cn=schueler-%s,cn=groups,ou=%s,dc=school,dc=local' % (b, b), domain_users_school]),
+			(env.create_user(a, is_teacher=True), 'lehrer', [domain_users_school, teacher_group]),
+			(env.create_user(a, is_staff=True), 'mitarbeiter', [domain_users_school, staff_group]),
+			(env.create_user(a, is_teacher=True, is_staff=True), 'lehrer', [domain_users_school, teacher_group, staff_group]),
 		]
 		lo = env.open_ldap_connection()
-		for (user, dn), roleshare_path, in users:
+		for (user, dn,), roleshare_path, groups in users:
 			print '################################'
-			print '#### moving user at', dn
+			print '#### moving user at', dn, 'to', b
 			print '################################'
 			user = User.from_dn(dn, a, lo)
 			user.custom_dn = None
-			user.school = b
-			user.schools = [b]
-			user.move(lo)
+			user.change_school(b, lo)
 			assert user.dn != dn
 			assert b in user.dn
 			attrs = {
 				'homeDirectory': ['/home/%s/%s/%s' % (b, roleshare_path, user.name)],
+				'ucsschoolSchool': [b],
 				'departmentNumber': [b],
 				# TODO: add sambaHomeDrive sambaHomePath sambaLogonScript sambaProfilePath
 			}
@@ -58,7 +61,8 @@ def main():
 				info = user.get_udm_object(lo).info
 				print 'Object moving failed: %r;\noldinfo=%r\ninfo=%r' % (user.dn, oldinfo, info)
 				raise
-			# TODO: check groups, workgroups, classes
+
+			assert set(groups) == set(user.get_udm_object(lo)['groups']), 'Moving the user failed... Expected groups %r != %r' % (groups, user.get_udm_object(lo)['groups'])
 
 
 if __name__ == '__main__':

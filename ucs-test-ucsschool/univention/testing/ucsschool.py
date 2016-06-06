@@ -50,9 +50,7 @@ from ldap import LDAPError
 from ucsschool.lib.models import School, User, Student, Teacher, TeachersAndStaff, Staff
 from ucsschool.lib.models.utils import add_stream_logger_to_schoollib
 
-from ldap.dn import str2dn
-from ucsschool.lib.models.group import BasicGroup
-from ucsschool.lib.models.misc import OU, Container
+from ucsschool.lib.models.group import ComputerRoom
 from ucsschool.lib.models.utils import ucr
 import univention.testing.udm as udm_test
 
@@ -458,7 +456,7 @@ class UCSTestSchool(object):
 		dn, global_user = udm.create_user(position=position, **kwargs)
 		return global_user, dn
 
-	def create_computerroom(self, ou_name, name=None, description=None, host_members=[], wait_for_replication=True):
+	def create_computerroom(self, ou_name, name=None, description=None, host_members=None, wait_for_replication=True):
 		"""
 		Create a room in specified OU with given attributes. If attributes are not specified, random
 		values will be used for roomname and description.
@@ -479,49 +477,17 @@ class UCSTestSchool(object):
 		kwargs = {
 			'school': ou_name,
 			'name': name,
-			'description': description
+			'description': description,
+			'hosts': host_members or [],
 			}
 		print '*** Creating new room %r' % (name,)
 		lo = self.open_ldap_connection()
 		obj = ComputerRoom(**kwargs)
 		result = obj.create(lo)
 		print '*** Result of ComputerRoom(...).create(): %r' % (result,)
-		udm_obj = obj.get_udm_object(lo)
-		udm_obj['hosts'] = host_members
-		result = udm_obj.modify()
-		print '*** Result of ComputerRoom(...).modify(): %r' % (result,)
 		if wait_for_replication:
 			utils.wait_for_replication()
 		return name, result
-
-
-class ComputerRoom(BasicGroup):
-
-	def __init__(self, name=None, school=None, **kwargs):
-		self.ou = school
-		self.name = name
-		if 'container' not in kwargs:
-			kwargs['container'] = 'cn=raeume,cn=groups,%s' % UCSTestSchool().get_ou_base_dn(self.ou)
-		# super(ComputerRoom, self).__init__(name=self.name, school=self.ou, **kwargs)
-		super(ComputerRoom, self).__init__(name='%s-%s' % (self.ou,name), school=self.ou, **kwargs)
-
-	def create_without_hooks(self, lo, validate):
-		# prepare LDAP: create containers where this basic group lives if necessary
-		container_dn = self.get_own_container()[:-len(ucr.get('ldap/base'))-1]
-		containers = str2dn(container_dn)
-		super_container_dn = ucr.get('ldap/base')
-		for container_info in reversed(containers):
-			dn_part, cn = container_info[0][0:2]
-			if dn_part.lower() == 'ou':
-				container = OU(name=cn)
-			else:
-				container = Container(name=cn, school=self.ou, group_path='1')
-			super_container_dn = container.create_in_container(super_container_dn, lo)
-		return super(ComputerRoom, self).create_without_hooks(lo, validate)
-
-	def create(self, lo):
-		self.create_without_hooks(lo, True)
-		return 'cn=%s,%s' % (self.name, self.get_own_container())
 
 
 if __name__ == '__main__':
