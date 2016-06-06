@@ -298,8 +298,11 @@ class UCSSchoolHelperAbstractClass(object):
 		if validate_unlikely_changes:
 			if self.exists(lo):
 				udm_obj = self.get_udm_object(lo)
-				original_self = self.from_udm_obj(udm_obj, self.school, lo)
-				if original_self:
+				try:
+					original_self = self.from_udm_obj(udm_obj, self.school, lo)
+				except (UnknownModel, WrongModel):
+					pass
+				else:
 					for name, attr in self._attributes.iteritems():
 						if attr.unlikely_to_change:
 							new_value = getattr(self, name)

@@ -1,3 +1,9 @@
+ucs-school-lib (9.0.12-1) unstable; urgency=medium
+
+  * Bug #41425: handle UnknownModel and WrongModel in Base.validate()
+
+ -- Florian Best <best@univention.de>  Mon, 06 Jun 2016 14:58:43 +0200
+
 ucs-school-lib (9.0.11-1) unstable; urgency=medium
 
   * Bug #41425: handle UnknownModel and WrongModel in User.validate()
