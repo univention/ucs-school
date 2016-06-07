@@ -474,12 +474,15 @@ class UCSTestSchool(object):
 		if description is None:
 			description = uts.random_string(length=10, numeric=False)
 
+		host_members = host_members or []
+		if not isinstance(host_members, (list, tuple)):
+			host_members = [host_members]
 		kwargs = {
 			'school': ou_name,
 			'name': name,
 			'description': description,
-			'hosts': host_members or [],
-			}
+			'hosts': host_members,
+		}
 		print '*** Creating new room %r' % (name,)
 		lo = self.open_ldap_connection()
 		obj = ComputerRoom(**kwargs)
