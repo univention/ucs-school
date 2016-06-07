@@ -57,12 +57,14 @@ class LegacyParseCmdline(ParseCmdline):
 
 			super(LegacyParseCmdline, self).parse_cmdline()
 
+			# legacy cmdline tool output emulation
 			print("infile is: {}".format(self.args.importFile))
-			if os.path.exists(self.args.outfile):
-				print("ERROR: outfile exists, will not overwrite existing file.")
-				sys.exit(1)
-			else:
-				print("outfile is: {}".format(self.args.importFile))
+			if self.args.outfile:
+				if os.path.exists(self.args.outfile):
+					print("ERROR: outfile exists, will not overwrite existing file.")
+					sys.exit(1)
+				else:
+					print("outfile is: {}".format(self.args.importFile))
 
 			if ucs_test:
 				self.args.settings["csv"] = {"mapping": {"11": "password"}}
@@ -70,6 +72,6 @@ class LegacyParseCmdline(ParseCmdline):
 			self.args.settings["input"] = dict(filename=self.args.importFile)
 			self.args.settings["output"] = dict(passwords=self.args.outfile)
 			self.args.verbose = True
-			self.args.logfile = ""
+			self.args.logfile = "/var/log/univention/ucsschool-import.log"
 			self.args.conffile = "/var/lib/ucs-school-import/configs/legacy.json"
 			return self.args
