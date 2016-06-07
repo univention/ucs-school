@@ -181,7 +181,7 @@ define([
 					label: _('School')
 				});
 			}
-			columns = columns.concat(this.getGridColumns());
+			columns = this.getGridColumns().concat(columns);
 			return columns;
 		},
 

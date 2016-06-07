@@ -32,14 +32,13 @@
 define([
 	"dojo/_base/declare",
 	"dojo/_base/lang",
-	"dojo/_base/array",
-	"dojo/topic",
+	"dojo/string",
 	"umc/widgets/TextBox",
 	"umc/widgets/ComboBox",
 	"umc/modules/schoolwizards/UserWizard",
 	"umc/modules/schoolwizards/Grid",
 	"umc/i18n!umc/modules/schoolwizards"
-], function(declare, lang, array, topic, TextBox, ComboBox, UserWizard, Grid, _) {
+], function(declare, lang, string, TextBox, ComboBox, UserWizard, Grid, _) {
 
 	return declare("umc.modules.schoolwizards.UserGrid", [Grid], {
 
@@ -49,6 +48,11 @@ define([
 		objectNameSingular: _('school user'),
 		firstObject: _('the first school user'),
 		createObjectWizard: UserWizard,
+		sortFields: ['display_name'],
+
+		getGridColumnsWithSchool: function() {
+			return this.getGridColumns();
+		},
 
 		getGridColumns: function() {
 			return [{

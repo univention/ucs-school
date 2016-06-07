@@ -37,14 +37,15 @@ define([
 	"umc/tools",
 	"umc/dialog",
 	"umc/widgets/Module",
+	"umc/modules/schoolwizards/UserGridChooseSchool",
 	"umc/modules/schoolwizards/UserGrid",
 	"umc/modules/schoolwizards/ClassGrid",
 	"umc/modules/schoolwizards/ComputerGrid",
 	"umc/modules/schoolwizards/SchoolGrid",
 	"umc/i18n!umc/modules/schoolwizards"
-], function(declare, lang, all, topic, tools, dialog, Module, UserGrid, ClassGrid, ComputerGrid, SchoolGrid, _) {
+], function(declare, lang, all, topic, tools, dialog, Module, UserGridChooseSchool, UserGrid, ClassGrid, ComputerGrid, SchoolGrid, _) {
 	var grids = {
-		'schoolwizards/users': UserGrid,
+		'schoolwizards/users': UserGridChooseSchool,
 		'schoolwizards/classes': ClassGrid,
 		'schoolwizards/computers': ComputerGrid,
 		'schoolwizards/schools': SchoolGrid
@@ -99,7 +100,6 @@ define([
 
 		_getGrid: function() {
 			var Grid = grids[this.moduleFlavor];
-
 			return new Grid({
 				description: this.description,
 				schools: this.schools,

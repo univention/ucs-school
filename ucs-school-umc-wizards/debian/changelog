@@ -1,3 +1,9 @@
+ucs-school-umc-wizards (8.0.0-2) unstable; urgency=medium
+
+  * Bug #41293: adjust user wizard for school overlapping users
+
+ -- Florian Best <best@univention.de>  Tue, 07 Jun 2016 12:40:08 +0200
+
 ucs-school-umc-wizards (8.0.0-1) unstable; urgency=medium
 
   * Bug #41132: preserve functions arguments in decorator (e.g. to keep the

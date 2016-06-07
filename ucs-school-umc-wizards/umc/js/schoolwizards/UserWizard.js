@@ -36,12 +36,11 @@ define([
 	"dojo/topic",
 	"umc/tools",
 	"umc/widgets/TextBox",
-	"umc/widgets/Text",
 	"umc/widgets/ComboBox",
 	"umc/widgets/PasswordInputBox",
 	"umc/modules/schoolwizards/Wizard",
 	"umc/i18n!umc/modules/schoolwizards"
-], function(declare, lang, array, topic, tools, TextBox, Text, ComboBox, PasswordInputBox, Wizard, _) {
+], function(declare, lang, array, topic, tools, TextBox, ComboBox, PasswordInputBox, Wizard, _) {
 
 	return declare("umc.modules.schoolwizards.UserWizard", [Wizard], {
 		description: _('Create a new user'),
@@ -117,11 +116,11 @@ define([
 					validator: lang.hitch(this, function(value) {
 						if (tools.isTrue(this._checkMaxUsernameLength)) {
 							var widget = this.getWidget('item', 'name');
-							if (widget != undefined) {
+							if (widget) {
 								widget.set('invalidMessage', _('Microsoft Active Directory limits usernames to 20 characters. To prevent logon problems with exam user accounts, usernames should not be longer than %s characters. Please choose a shorter username.', this._maxUsernameLength));
 							}
 							return value.length <= this._maxUsernameLength;
-						};
+						}
 						return true;
 					}),
 					invalidMessage: _('Microsoft Active Directory limits usernames to 20 characters. To prevent logon problems with exam user accounts, usernames should not be longer than %s characters. Please choose a shorter username.', this._maxUsernameLength)
