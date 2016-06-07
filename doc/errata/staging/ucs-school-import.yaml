@@ -14,4 +14,7 @@ desc: |
    execution may be disabled by setting the UCR variable
    "ucsschool/update/users/41R2" to the value "false" *PRIOR* to the update
    (Bug #41162).
-bug: [40712,41162]
+ * The the LDAP attributes "ucsschoolSchool", "ucsschoolRecordUID" and
+   "ucsschoolSourceUID" are added automatically to the LDAP indices during
+   the update to UCS@school 4.1 R2 (Bug #41297).
+bug: [40712,41162,41297]
