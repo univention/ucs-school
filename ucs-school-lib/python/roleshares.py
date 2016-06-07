@@ -158,7 +158,7 @@ def create_roleshare_for_searchbase(role, school, ucr=None, ldap_user_read=None)
 		create_roleshare_on_server(role, school_ou, share_container_dn, serverfqdn, teacher_group, ucr)
 
 
-@LDAP_Connection()
+@LDAP_Connection(MACHINE_READ)
 def create_roleshares(role_list, school_list=None, ucr=None, ldap_machine_read=None):
 	if not ucr:
 		ucr = univention.config_registry.ConfigRegistry()
