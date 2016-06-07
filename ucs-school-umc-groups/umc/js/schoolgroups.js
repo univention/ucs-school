@@ -31,6 +31,7 @@
 define([
 	"dojo/_base/declare",
 	"dojo/_base/lang",
+	"dojo/_base/array",
 	"umc/tools",
 	"umc/dialog",
 	"umc/widgets/Module",
@@ -43,7 +44,7 @@ define([
 	"umc/modules/schoolgroups/ClassDetailPage",
 	"umc/modules/schoolgroups/TeacherDetailPage",
 	"umc/i18n!umc/modules/schoolgroups"
-], function(declare, lang, tools, dialog, Module, Grid, Page, TextBox, ComboBox, SearchForm, WorkgroupDetailPage, ClassDetailPage, TeacherDetailPage, _) {
+], function(declare, lang, array, tools, dialog, Module, Grid, Page, TextBox, ComboBox, SearchForm, WorkgroupDetailPage, ClassDetailPage, TeacherDetailPage, _) {
 	var ModuleBase = declare("umc.modules.schoolgroups", [Module], {
 		idProperty: '$dn$',
 		_grid: null,
@@ -198,8 +199,15 @@ define([
 					return '' + item.display_name + ' (' + item.name + ')';
 				})
 			}, {
-				name: 'school_class',
-				label: _('Class')
+				name: 'school_classes',
+				label: _('Class'),
+				formatter: lang.hitch(this, function(values, id, all_values) {
+					var classes = [];
+					tools.forIn(values, function(school, school_classes) {
+						classes = classes.concat(array.map(school_classes, function(value) { return value.indexOf(school + '-') === -1 ? value : value.slice(school.length + 1); }));
+					});
+					return classes.join(', ');
+				})
 			}];
 		}
 
