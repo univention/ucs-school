@@ -32,6 +32,7 @@ Legacy command line frontend for user import.
 # <http://www.gnu.org/licenses/>.
 
 import sys
+import os.path
 from argparse import ArgumentParser
 
 from ucsschool.importer.frontend.parse_cmdline import ParseCmdline
@@ -55,6 +56,13 @@ class LegacyParseCmdline(ParseCmdline):
 				ucs_test = False
 
 			super(LegacyParseCmdline, self).parse_cmdline()
+
+			print("infile is: {}".format(self.args.importFile))
+			if os.path.exists(self.args.outfile):
+				print("ERROR: outfile exists, will not overwrite existing file.")
+				sys.exit(1)
+			else:
+				print("outfile is: {}".format(self.args.importFile))
 
 			if ucs_test:
 				self.args.settings["csv"] = {"mapping": {"11": "password"}}
