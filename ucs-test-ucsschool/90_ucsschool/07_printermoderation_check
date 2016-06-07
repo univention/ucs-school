@@ -94,7 +94,7 @@ def doPrinter(operation, printer_name, school, spool_host, domainname):
 
 # check the existance of the created printer
 def printerExist(connection, printerName, school):
-	requestResult = connection.request('printermoderation/printers', {school: school})
+	requestResult = connection.request('printermoderation/printers', {"school": school})
 	return any(d for d in requestResult if d['label'] == printerName)
 
 
