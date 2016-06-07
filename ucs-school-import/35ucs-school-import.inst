@@ -57,6 +57,32 @@ univention-directory-manager container/cn      create "$@" --ignore_exists --set
 
 ucs_registerLDAPExtension "$@" --schema /usr/share/ucs-school-import/schema/ucs-school-import.schema || die
 
+if [ $JS_LAST_EXECUTED_VERSION -lt 10 ] ; then
+	if [ -x /etc/init.d/slapd ] &&
+		   [ -x /usr/share/univention-ldap/ldap_setup_index ] &&
+		   [ -e /var/univention-join/joined ] &&
+		   univention-ldapsearch -LLL -o ldif-wrap=no -b cn=Subschema -s base attributeTypes | grep -Fq "NAME 'ucsschoolSchool'" &&
+		   univention-ldapsearch -LLL -o ldif-wrap=no -b cn=Subschema -s base attributeTypes | grep -Fq "NAME 'ucsschoolSourceUID'" &&
+		   univention-ldapsearch -LLL -o ldif-wrap=no -b cn=Subschema -s base attributeTypes | grep -Fq "NAME 'ucsschoolRecordUID'"
+	then
+		echo "Updating LDAP indices..."
+		if pidof slapd >/dev/null 2>/dev/null
+		then
+			invoke-rc.d slapd stop
+			/usr/share/univention-ldap/ldap_setup_index \
+				--verbose \
+				--add-eq ucsschoolSchool --add-eq ucsschoolSourceUID --add-eq ucsschoolRecordUID \
+				--add-pres ucsschoolSchool --add-pres ucsschoolSourceUID --add-pres ucsschoolRecordUID \
+				--add-sub ucsschoolRecordUID || die
+			invoke-rc.d slapd start
+		else
+			/usr/share/univention-ldap/ldap_setup_index --add-eq univentionAppID
+		fi
+	else
+		echo "Skipping update of LDAP indices..."
+	fi
+fi
+
 # create extended attributes for UCS@school container if missing
 univention-directory-manager container/cn create "$@" --ignore_exists \
 	--position="cn=custom attributes,cn=univention,$ldap_base" \
