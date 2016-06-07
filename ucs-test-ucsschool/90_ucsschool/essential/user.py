@@ -38,15 +38,15 @@ class User(Person):
 	:type school: str
 	:param role: role of the user
 	:type role: str ['student', 'teacher', 'staff', 'teacherAndStaff']
-	:param school_class: name of the class which contain the user
-	:type school_class: str
+	:param school_classes: dictionary of school -> list of names of the class which contain the user
+	:type school_classes: dict
 	"""
 
 	def __init__(
 			self,
 			school,
 			role,
-			school_class,
+			school_classes,
 			mode='A',
 			username=None,
 			firstname=None,
@@ -101,10 +101,9 @@ class User(Person):
 		self.mail = mail
 
 		self.typ = 'teachersAndStaff' if self.role == 'teacher_staff' else self.role
-		self.school_class = school_class
+		self.school_classes = school_classes or {}
 
-		cl = '%s-%s' % (self.school, self.school_class)
-		self.classes = [cl] if school_class else []
+		self.classes = [x for school_, classes in self.school_classes.iteritems() for x in classes]
 
 		host = self.ucr.get('ldap/master')
 		self.umc_connection = UMCConnection(host)
@@ -127,8 +126,7 @@ class User(Person):
 				{
 					'object':{
 						'school': self.school,
-						'school_class': self.school_class,
-#						'school_classes': {self.school: [self.school_class]},
+						'school_classes': self.school_classes,
 						'email': self.mail,
 						'name': self.username,
 						'type': self.typ,
@@ -182,10 +180,10 @@ class User(Person):
 				'type': self.typ,
 				'email': self.mail,
 				'objectType': 'users/user',
+				'school_classes': {},
 				}
 		if self.is_student() or self.is_teacher() or self.is_teacher_staff():
-			info.update({'school_class': [self.school_class]})
-#			info.update({'school_classes': {self.school: [self.school_class]}})
+			info.update({'school_classes': self.school_classes})
 
 		if expected_attrs:
 			info.update(expected_attrs)
@@ -194,8 +192,11 @@ class User(Person):
 		# Type_name is only used for display, Ignored
 		info['type_name'] = get_result['type_name']
 		if get_result != info:
-			raise GetCheckFail('Failed get request for user %s. Returned result: %r. Expected result: %r' % (
-				self.username, get_result, info))
+			diff = []
+			for key in (set(get_result.keys()) | set(info.keys())):
+				if get_result.get(key) != info.get(key):
+					diff.append('%s: Got: %r; expected: %r' % (key, get_result.get(key), info.get(key)))
+			raise GetCheckFail('Failed get request for user %s:\n%s' % (self.username, '\n'.join(diff)))
 
 	def type_name(self):
 		if self.typ == 'student':
@@ -255,10 +256,7 @@ class User(Person):
 					'object':{
 						'school': self.school,
 						'schools': [self.school],
-						'school_class': self.school_class,
-#						'school_classes': {
-#							self.school: [new_attributes.get('school_class') if new_attributes.get('school_class') else self.school_class],
-#						},
+						'school_classes': new_attributes.get('school_classes', self.school_classes),
 						'email': new_attributes.get('email') if new_attributes.get('email') else self.mail,
 						'name': self.username,
 						'type': self.typ,
@@ -280,9 +278,8 @@ class User(Person):
 			raise EditFail('Unable to edit user (%s) with the parameters (%r)' % (self.username , param))
 		else:
 			self.set_mode_to_modify()
-			self.school_class = new_attributes.get('school_class') if new_attributes.get('school_class') else self.school_class
-			cl = '%s-%s' % (self.school, self.school_class)
-			self.classes = [cl]
+			self.school_classes = new_attributes.get('school_classes', self.school_classes)
+			self.classes = [x for school_, classes in self.school_classes.iteritems() for x in classes]
 			self.mail = new_attributes.get('email') if new_attributes.get('email') else self.mail
 			self.firstname = new_attributes.get('firstname') if new_attributes.get('firstname') else self.firstname
 			self.lastname = new_attributes.get('lastname') if new_attributes.get('lastname') else self.lastname

@@ -24,7 +24,7 @@ def main():
 			
 			# creating students and teachers
 			for role in ['student', 'teacher']:
-				user = User(school=ou, role=role, school_class=class_01.name)
+				user = User(school=ou, role=role, school_classes={ou: ['%s-%s' % (ou, class_01.name)]})
 				user.create()
 				user.verify()
 				user.check_get()
@@ -32,7 +32,7 @@ def main():
 
 			# creating staff and teacher and staff members
 			for role in ['staff', 'teacher_staff']:
-				user = User(school=ou, role=role, school_class='')
+				user = User(school=ou, role=role, school_classes={})
 				user.create()
 				user.verify()
 				user.check_get()
