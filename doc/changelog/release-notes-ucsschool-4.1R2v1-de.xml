@@ -49,6 +49,10 @@ feedback@univention.de
 			installierter Software kann das Update zwischen dreißig Minuten und mehreren Stunden
 			dauern.
 		</para>
+		<para>
+			Das Update von UCS@school muss zunächst auf dem Domaincontroller Master durchgeführt
+			werden, bevor das Update auf den übrigen UCS@school-Systemen der Domäne gestartet werden kann.
+		</para>
 		<chapter id="relnote:prepare:ouspanningusers">
 			<title>Schulübergreifende Benutzerkonten</title>
 			<para>
