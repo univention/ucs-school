@@ -68,7 +68,7 @@ define([
 				label: _('Role'),
 				description: _('Role of the %s.', this.objectNameSingular)
 			}, {
-				name: 'school_class',
+				name: 'school_classes',
 				label: _('Class'),
 				description: _('Class of the %s.', this.objectNameSingular)
 //			}, {

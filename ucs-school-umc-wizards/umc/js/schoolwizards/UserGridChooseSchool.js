@@ -94,7 +94,7 @@ define([
 
 		buildGrid: function() {
 			var selectedSchool = array.filter(this.schools, lang.hitch(this, function(school) {
-				return school.id === this._form.getWidget('schools').getValue();
+				return school.id === this._form.getWidget('schools').get('value');
 			}))[0];
 			var _backToSchool = new Button({
 				name: 'back',

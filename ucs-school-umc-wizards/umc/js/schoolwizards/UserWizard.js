@@ -126,7 +126,7 @@ define([
 					invalidMessage: _('Microsoft Active Directory limits usernames to 20 characters. To prevent logon problems with exam user accounts, usernames should not be longer than %s characters. Please choose a shorter username.', this._maxUsernameLength)
 				}, {
 					type: ComboBox,
-					name: 'school_class',
+					name: 'school_classes',
 					sortStaticValues: true,
 					label: _('Class')
 				}, {
@@ -154,7 +154,7 @@ define([
 				layout: [
 					['firstname', 'lastname'],
 					['name'],
-					['school_class', 'newClass'],
+					['school_classes', 'newClass'],
 					['email'],
 					['password']
 				]
@@ -165,7 +165,7 @@ define([
 			tools.forIn(this.getPage('item')._form._widgets, function(iname, iwidget) {
 				if (iname === 'password') {
 					iwidget._setValueAttr(null);
-				} else if (iname !== 'school_class') {
+				} else if (iname !== 'school_classes') {
 					iwidget.reset();
 				}
 			});
@@ -181,7 +181,7 @@ define([
 
 		updateWidgets: function(/*String*/ currentPage) {
 			if (currentPage === 'general') {
-				var classBox = this.getWidget('item', 'school_class');
+				var classBox = this.getWidget('item', 'school_classes');
 				var newClassButton = this.getPage('item')._form.getButton('newClass');
 				if (!this.hasClassWidget()) {
 					classBox.set('value', null);
@@ -209,7 +209,7 @@ define([
 		getValues: function() {
 			var values = this.inherited(arguments);
 			if (!this.hasClassWidget()) {
-				delete values.school_class;
+				delete values.school_classes;
 			}
 			return values;
 		},
@@ -222,11 +222,11 @@ define([
 						var classes = array.map(response.result, function(item) {
 							return item.label;
 						});
-						var widget = this.getWidget('item', 'school_class');
+						var widget = this.getWidget('item', 'school_classes');
 						widget.set('staticValues', classes);
-						if (this.loadedValues && this.loadedValues.school_class) {
+						if (this.loadedValues && this.loadedValues.school_classes) {
 							if (this.hasClassWidget()) {
-								widget.set('value', this.loadedValues.school_class);
+								widget.set('value', this.loadedValues.school_classes);
 							}
 						}
 					})
