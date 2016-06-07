@@ -199,7 +199,8 @@ class User(UCSSchoolHelperAbstractClass):
 			return Staff
 		if cls._legacy_is_exam_student(school, udm_obj.dn):
 			return ExamStudent
-		return cls
+
+		return User
 
 	@classmethod
 	def from_udm_obj(cls, udm_obj, school, lo):
@@ -547,7 +548,7 @@ class User(UCSSchoolHelperAbstractClass):
 
 class Student(User):
 	type_name = _('Student')
-	type_filter = 'objectClass=ucsschoolStudent'
+	type_filter = '(&(objectClass=ucsschoolStudent)(!(objectClass=ucsschoolExam)))'
 	roles = [role_pupil]
 
 	def get_default_options(self):
