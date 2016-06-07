@@ -50,7 +50,8 @@ All options can be set from the command line using "--set <option>".
 		"staff":             str [3]:                     plus [COUNTER2] which is replaced by numbers
 		"teacher":           str [3]:                     starting from 2 or [ALWAYSCOUNTER] which is
 		"teacher_and_staff": str [3]:                     always replaced by numbers starting from 1.
-	}
+	},
+	<udm attribute name>:	str: scheme (manual-4.1:users:templates) to create a UDM attribute from
 },
 "csv_output":  str: path to the import job result file
 "dry_run": bool: set to False if changes should be commited to LDAP

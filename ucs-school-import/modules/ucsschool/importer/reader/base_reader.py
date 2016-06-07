@@ -111,3 +111,16 @@ class BaseReader(object):
 		:return: iter([user, ...])
 		"""
 		raise NotImplementedError()
+
+	def get_data_mapping(self, input_data):
+		"""
+		IMPLEMENT ME
+		Create a mapping from the configured input mapping to the actual
+		input data. This is configuration and input format specific. See
+		csv_reader for an example.
+		Used by ImportUser.format_from_scheme().
+
+		:param input_data: raw input data as stored in ImportUser.input_data
+		:return: dict: key->input_data-value mapping
+		"""
+		return {}

@@ -191,14 +191,14 @@ class UserImport(object):
 		try:
 			user = imported_user.get_by_import_id(self.connection, imported_user.source_uid,
 				imported_user.record_uid)
-			imported_user.prepare_properties(new_user=False)
+			imported_user.prepare_all(new_user=False)
 			user.update(imported_user)
 			if user.disabled != "none" or user.has_expiry(self.connection):
 				self.logger.info("Found deactivated user %r, reactivating.", user)
 				user.reactivate(self.connection)
 			user.action = "M"
 		except noObject:
-			imported_user.prepare_properties(new_user=True)
+			imported_user.prepare_all(new_user=True)
 			user = imported_user
 			user.action = "A"
 		return user

@@ -72,6 +72,7 @@ class ImportUser(User):
 	factory = None
 	ucr = None
 	username_handler = None
+	reader = None
 
 	def __init__(self, name=None, school=None, **kwargs):
 		self.action = None            # "A", "D" or "M"
@@ -82,6 +83,7 @@ class ImportUser(User):
 			self.factory = Factory()
 			self.ucr = self.factory.make_ucr()
 			self.config = Configuration()
+			self.reader = self.factory.make_reader()
 		super(ImportUser, self).__init__(name, school, **kwargs)
 
 	def build_hook_line(self, hook_time, func_name):
@@ -157,39 +159,68 @@ class ImportUser(User):
 		user_udm = self.get_udm_object(connection)
 		return bool(user_udm["userexpiry"])
 
-	def prepare_uids(self):
-		"""
-		Necessary preparation to detect if user exists in UCS.
-		"""
-		self.make_rid()
-		self.make_sid()
-
-	def prepare_properties(self, new_user=False):
+	def prepare_all(self, new_user=False):
 		"""
 		Necessary preparation to modify a user in UCS.
+		Runs all make_* functions.
 
-		:param new_user: bool: if new_user() should run
+		:param new_user: bool: if username and password should be created
 		"""
 		self.prepare_uids()
+		self.prepare_udm_properties()
+		self.prepare_attributes(new_user)
+		self.run_checks(check_username=new_user)
+
+	def prepare_attributes(self, new_user=False):
+		"""
+		Run make_* functions for all Attributes of ucsschool.lib.models.user.User.
+		:param new_user:
+		:return:
+		"""
+		self.make_firstname()
+		self.make_lastname()
+		self.make_school()
+		self.make_schools()
 		if new_user:
 			self.make_username()
 			self.make_password()
-		self.make_school()
-		self.make_schools()
 		self.make_classes()
-		self.make_email(make_username=new_user)
-		self.make_firstname()
-		self.make_lastname()
 		self.make_birthday()
 		self.make_disabled()
-		# self.normalize_udm_properties()
-		self.run_checks(check_username=new_user)
+		self.make_email()
+
+	def prepare_udm_properties(self):
+		"""
+		Create self.udm_properties from schemes configured in config["scheme"].
+		Existing entries will be overwritten!
+
+		* Attributes (email, rid, [user]name etc.) are ignored, as they are
+		processed separately in make_*.
+		* See /usr/share/doc/ucs-school-import/configuration_readme.txt.gz
+		section "scheme" for details on the configuration.
+		"""
+		attr_keys = self.to_dict().keys()
+		attr_keys.extend(["mailPrimaryAddress", "rid", "username"])
+		for k, v in self.config["scheme"].items():
+			if k in attr_keys:
+				continue
+			self.udm_properties[k] = self.format_from_scheme(k, v)
+
+	def prepare_uids(self):
+		"""
+		Necessary preparation to detect if user exists in UCS.
+		Runs make_* functions for record_uid and source_uid Attributes of
+		ImportUser.
+		"""
+		self.make_rid()
+		self.make_sid()
 
 	def make_birthday(self):
 		"""
 		Set User.birthday attribute.
 		"""
-		pass
+		if "birthday" in self.config["scheme"]:
+			self.birthday = self.format_from_scheme("birthday", self.config["scheme"]["birthday"])
 
 	def make_classes(self):
 		"""
@@ -220,42 +251,53 @@ class ImportUser(User):
 
 	def make_firstname(self):
 		"""
-		Normalize given name.
+		Normalize given name if set from import data or create from scheme.
 		"""
-		self.firstname = self.normalize(self.firstname or "")
+		if self.firstname:
+			self.firstname = self.normalize(self.firstname)
+		elif "firstname" in self.config["scheme"]:
+			self.firstname = self.format_from_scheme("firstname", self.config["scheme"]["firstname"])
+		else:
+			self.firstname = ""
 
 	def make_lastname(self):
 		"""
-		Normalize family name.
+		Normalize family name if set from import data or create from scheme.
 		"""
-		self.lastname = self.normalize(self.lastname or "")
+		if self.lastname:
+			self.lastname = self.normalize(self.lastname)
+		elif "lastname" in self.config["scheme"]:
+			self.lastname = self.format_from_scheme("lastname", self.config["scheme"]["lastname"])
+		else:
+			self.lastname = ""
 
-	def make_email(self, make_username=False):
+	def make_email(self):
 		"""
-		Create email (if not already set).
+		Create email from scheme (if not already set).
 
-		:param make_username: bool: if make_username() should run
+		If any of the other attributes is used in the format scheme of the
+		email address, its make_* function should have run before this!
 		"""
-		if not self.email:
-			maildomain = self.config.get("maildomain")
-			if not maildomain:
-				try:
-					maildomain = self.ucr["mail/hosteddomains"].split()[0]
-				except (AttributeError, IndexError):
-					raise MissingMailDomain("Could not retrieve mail domain from configuration nor from UCRV "
-						"mail/hosteddomains.", entry=self.entry_count, import_user=self)
-			if "<firstname>" in self.config["scheme"]["email"]:
-				self.make_firstname()
-			if "<lastname>" in self.config["scheme"]["email"]:
-				self.make_lastname()
-			if make_username and ("<username>" in self.config["scheme"]["email"] or
-				"<name>" in self.config["scheme"]["email"]):
-					self.make_username()
-			self.email = self.format_from_scheme("email", self.config["scheme"]["email"], maildomain=maildomain).lower()
+		if self.email:
+			return
+		try:
+			self.email = self.udm_properties.pop("mailPrimaryAddress")
+			return
+		except KeyError:
+			pass
+
+		maildomain = self.config.get("maildomain")
+		if not maildomain:
+			try:
+				maildomain = self.ucr["mail/hosteddomains"].split()[0]
+			except (AttributeError, IndexError):
+				raise MissingMailDomain("Could not retrieve mail domain from configuration nor from UCRV "
+					"mail/hosteddomains.", entry=self.entry_count, import_user=self)
+		self.email = self.format_from_scheme("email", self.config["scheme"]["email"], maildomain=maildomain).lower()
 
 	def make_password(self):
 		"""
-		Create random password.
+		Create random password (if not already set).
 		"""
 		if not self.password:
 			pw = list(random.choice(string.lowercase))
@@ -269,14 +311,14 @@ class ImportUser(User):
 
 	def make_rid(self):
 		"""
-		Create ucsschoolRecordUID (rid).
+		Create ucsschoolRecordUID (rid) (if not already set).
 		"""
 		if not self.record_uid:
 			self.record_uid = self.format_from_scheme("rid", self.config["scheme"]["rid"])
 
 	def make_sid(self):
 		"""
-		Set the ucsschoolSourceUID (sid)
+		Set the ucsschoolSourceUID (sid) (if not already set).
 		"""
 		if self.source_uid:
 			if self.source_uid != self.config["sourceUID"]:
@@ -287,7 +329,7 @@ class ImportUser(User):
 
 	def make_school(self):
 		"""
-		Create 'school' attribute - the position of the object in LDAP.
+		Create 'school' attribute - the position of the object in LDAP (if not already set).
 		"""
 		if self.school:
 			return
@@ -311,17 +353,18 @@ class ImportUser(User):
 
 	def make_username(self):
 		"""
-		Create username.
+		Create username if not already set in self.name or self.udm_properties["username"].
 		[ALWAYSCOUNTER] and [COUNTER2] are supported, but only one may be used
 		per name.
 		"""
 		if self.name:
 			return
 		try:
-			self.name = self.udm_properties["username"]
+			self.name = self.udm_properties.pop("username")
 			return
 		except KeyError:
 			pass
+
 		self.name = self.format_from_scheme("username", self.username_scheme)
 		if not self.username_handler:
 			self.username_handler = self.factory.make_username_handler(self.username_max_length)
@@ -467,21 +510,29 @@ class ImportUser(User):
 		Format property with scheme for current import_user.
 		* Uses the replacement code from users:templates.
 		* This does not do the counter variable replacements for username.
+		* Replacement <variables> are filled in the following oder (later
+		additions overwriting previous ones):
+		- from raw input data
+		- from Attributes of self (ImportUser & ucsschool.lib.models.user.User)
+		- from self.udm_properties
+		- from kwargs
 
 		:param prop_name: str: name of property (for error logging)
 		:param scheme: str: scheme to use
 		:param kwargs: dict: additional data to use for formatting
 		:return: str: formatted string
 		"""
-		all_fields = self.to_dict().copy()
+		all_fields = self.reader.get_data_mapping(self.input_data)
+		all_fields.update(self.to_dict().copy())
 		all_fields.update(self.udm_properties)
 		all_fields.update(kwargs)
 
 		prop = uadmin_property("_replace")
 		res = prop._replace(scheme, all_fields)
 		if not res:
-			raise FormatError("Could not create {prop_name} from scheme and input data. ".format(prop_name=prop_name),
-				scheme=scheme, data=all_fields, entry=self.entry_count, import_user=self)
+			raise FormatError("Could not create '{prop_name}' from scheme '{scheme}' and input data {data}. ".format(
+				prop_name=prop_name, scheme=scheme, data=all_fields), scheme=scheme, data=all_fields,
+				entry=self.entry_count,	import_user=self)
 		return res
 
 	@classmethod

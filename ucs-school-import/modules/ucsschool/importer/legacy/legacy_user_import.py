@@ -71,7 +71,7 @@ class LegacyUserImport(UserImport):
 				if user.disabled != "none" or user.has_expiry(self.connection):
 					self.logger.info("Found deactivated user %r, reactivating.", user)
 					user.reactivate(self.connection)
-					imported_user.prepare_properties(new_user=False)
+					imported_user.prepare_all(new_user=False)
 					user.update(imported_user)
 					user.action = "M"
 				else:
@@ -80,7 +80,7 @@ class LegacyUserImport(UserImport):
 						entry=imported_user.entry_count, import_user=imported_user)
 			except noObject:
 				# this is expected
-				imported_user.prepare_properties(new_user=True)
+				imported_user.prepare_all(new_user=True)
 				user = imported_user
 		elif imported_user.action == "M":
 			try:
@@ -89,10 +89,10 @@ class LegacyUserImport(UserImport):
 				if user.disabled != "none" or user.has_expiry(self.connection):
 					self.logger.info("Found deactivated user %r, reactivating.", user)
 					user.reactivate(self.connection)
-				imported_user.prepare_properties(new_user=False)
+				imported_user.prepare_all(new_user=False)
 				user.update(imported_user)
 			except noObject:
-				imported_user.prepare_properties(new_user=True)
+				imported_user.prepare_all(new_user=True)
 				user = imported_user
 				user.action = "A"
 		elif imported_user.action == "D":

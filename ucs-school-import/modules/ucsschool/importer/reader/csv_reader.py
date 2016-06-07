@@ -37,6 +37,7 @@ import codecs
 from ucsschool.importer.contrib.csv import DictReader
 from ucsschool.importer.reader.base_reader import BaseReader
 from ucsschool.importer.exceptions import UnkownRole
+from ucsschool.importer.configuration import Configuration
 from ucsschool.lib.roles import role_pupil, role_teacher, role_staff
 from ucsschool.lib.models.user import Staff
 
@@ -44,6 +45,11 @@ from ucsschool.lib.models.user import Staff
 class CsvReader(BaseReader):
 	_attrib_names = dict()  # cache for Attribute names
 	encoding = "utf-8"
+
+	def __init__(self, filename, header_lines=0, **kwargs):
+		super(CsvReader, self).__init__(filename, header_lines=0, **kwargs)
+		self.config = Configuration()
+		self.fieldnames = None
 
 	@classmethod
 	def get_dialect(cls, fp):
@@ -68,6 +74,7 @@ class CsvReader(BaseReader):
 			dialect = self.get_dialect(fp)
 			fp.seek(0)
 			if self.header_lines == 1:
+				# let DictReader figure it out itself
 				header = None
 			else:
 				# skip header_lines
@@ -85,6 +92,7 @@ class CsvReader(BaseReader):
 			csv_reader_args.update(kwargs.get("csv_reader_args", {}))
 			fpu = UTF8Recoder(fp, self.encoding)
 			reader = DictReader(fpu, **csv_reader_args)
+			self.fieldnames = reader.fieldnames
 			for row in reader:
 				self.entry_count = reader.line_num
 				self.input_data = reader.row
@@ -155,6 +163,26 @@ class CsvReader(BaseReader):
 				import_user.udm_properties[v] = input_data[k]
 		self.logger.debug("%s udm_properties=%r", import_user, import_user.udm_properties)
 		return import_user
+
+	def get_data_mapping(self, input_data):
+		"""
+		Create a mapping from the configured input mapping to the actual
+		input data.
+		Used by ImportUser.format_from_scheme().
+
+		:param input_data: "raw" input data as stored in ImportUser.input_data
+		:return: dict: key->input_data-value mapping
+		"""
+		if not self.fieldnames:
+			self.read().next()
+		dict_reader_mapping = dict(zip(self.fieldnames, input_data))
+		res = dict()
+		for k, v in self.config["csv"]["mapping"].items():
+			try:
+				res[v] = dict_reader_mapping[k]
+			except KeyError:
+				pass
+		return res
 
 	@classmethod
 	def _get_attrib_name(cls, import_user):
