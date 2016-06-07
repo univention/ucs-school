@@ -1,3 +1,9 @@
+ucs-test-ucsschool (3.0.7-1) unstable; urgency=low
+
+  * Bug #41297: check if UCS@school LDAP indices are correctly set up
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Tue, 07 Jun 2016 23:28:19 +0200
+
 ucs-test-ucsschool (3.0.6-7) unstable; urgency=medium
 
   * Bug #41413: fix OU detection
