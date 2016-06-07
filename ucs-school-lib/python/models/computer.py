@@ -265,21 +265,20 @@ class SchoolComputer(UCSSchoolHelperAbstractClass):
 	def from_udm_obj(cls, udm_obj, school, lo):
 		from ucsschool.lib.models.school import School
 		obj = super(SchoolComputer, cls).from_udm_obj(udm_obj, school, lo)
-		if obj:
-			obj.ip_address = udm_obj['ip']
-			school_obj = School.cache(obj.school)
-			edukativnetz_group = school_obj.get_administrative_group_name('educational', domain_controller=False, as_dn=True)
-			if edukativnetz_group in udm_obj['groups']:
-				obj.zone = 'edukativ'
-			verwaltungsnetz_group = school_obj.get_administrative_group_name('administrative', domain_controller=False, as_dn=True)
-			if verwaltungsnetz_group in udm_obj['groups']:
-				obj.zone = 'verwaltung'
-			network_dn = udm_obj['network']
-			if network_dn:
-				netmask = Network.get_netmask(network_dn, school, lo)
-				obj.subnet_mask = netmask
-			obj.inventory_number = ', '.join(udm_obj['inventoryNumber'])
-			return obj
+		obj.ip_address = udm_obj['ip']
+		school_obj = School.cache(obj.school)
+		edukativnetz_group = school_obj.get_administrative_group_name('educational', domain_controller=False, as_dn=True)
+		if edukativnetz_group in udm_obj['groups']:
+			obj.zone = 'edukativ'
+		verwaltungsnetz_group = school_obj.get_administrative_group_name('administrative', domain_controller=False, as_dn=True)
+		if verwaltungsnetz_group in udm_obj['groups']:
+			obj.zone = 'verwaltung'
+		network_dn = udm_obj['network']
+		if network_dn:
+			netmask = Network.get_netmask(network_dn, school, lo)
+			obj.subnet_mask = netmask
+		obj.inventory_number = ', '.join(udm_obj['inventoryNumber'])
+		return obj
 
 	def build_hook_line(self, hook_time, func_name):
 		module_part = self._meta.udm_module.split('/')[1]

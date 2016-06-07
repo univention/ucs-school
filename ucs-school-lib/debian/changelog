@@ -1,3 +1,10 @@
+ucs-school-lib (9.0.15-1) unstable; urgency=medium
+
+  * Bug #41132: rename user attribute school_class → school_classes
+  	which contains a dict of schools → list of class names
+
+ -- Florian Best <best@univention.de>  Tue, 07 Jun 2016 14:57:56 +0200
+
 ucs-school-lib (9.0.14-1) unstable; urgency=medium
 
   * Bug #41117: fixup typo in svn r69778

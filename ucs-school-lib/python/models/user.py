@@ -37,7 +37,7 @@ from ldap.filter import escape_filter_chars, filter_format
 
 from ucsschool.lib.roles import role_pupil, role_teacher, role_staff
 from ucsschool.lib.models.utils import create_passwd
-from ucsschool.lib.models.attributes import Username, Firstname, Lastname, Birthday, Email, Password, Disabled, SchoolClassStringAttribute, Schools
+from ucsschool.lib.models.attributes import Username, Firstname, Lastname, Birthday, Email, Password, Disabled, SchoolClassesAttribute, Schools
 from ucsschool.lib.models.base import UCSSchoolHelperAbstractClass, UnknownModel, WrongModel
 from ucsschool.lib.models.school import School
 from ucsschool.lib.models.group import Group, BasicGroup, SchoolClass, ComputerRoom, _MayHaveSchoolPrefix, _MayHaveSchoolSuffix
@@ -59,7 +59,7 @@ class User(UCSSchoolHelperAbstractClass):
 	email = Email(_('Email'), aka=['Email', 'E-Mail'], unlikely_to_change=True)
 	password = Password(_('Password'), aka=['Password', 'Passwort'])
 	disabled = Disabled(_('Disabled'), aka=['Disabled', 'Gesperrt'])
-	school_class = None # not defined by default (Staff)
+	school_classes = SchoolClassesAttribute(_('Class'), aka=['Class', 'Klasse'])
 
 	type_name = None
 	type_filter = '(|(objectClass=ucsschoolTeacher)(objectClass=ucsschoolStaff)(objectClass=ucsschoolStudent))'
@@ -177,7 +177,7 @@ class User(UCSSchoolHelperAbstractClass):
 		ocs = set(udm_obj.oldattr.get('objectClass', []))
 		if ocs >= set(['ucsschoolTeacher', 'ucsschoolStaff']):
 			return TeachersAndStaff
-		if 'ucsschoolExam' in ocs:
+		if ocs >= set(['ucsschoolExam', 'ucsschoolStudent']):
 			return ExamStudent
 		if 'ucsschoolTeacher' in ocs:
 			return Teacher
@@ -204,9 +204,11 @@ class User(UCSSchoolHelperAbstractClass):
 	@classmethod
 	def from_udm_obj(cls, udm_obj, school, lo):
 		obj = super(User, cls).from_udm_obj(udm_obj, school, lo)
-		if obj:
-			obj.password = None
-			return obj
+		obj.password = None
+		obj.school_classes = cls.get_school_classes(udm_obj, obj)
+		if obj.school_classes is None:
+			del obj.school_classes
+		return obj
 
 	def do_create(self, udm_obj, lo):
 		if not self.schools:
@@ -251,30 +253,25 @@ class User(UCSSchoolHelperAbstractClass):
 		self.create_mail_domain(lo)
 		self.password = self.password or None
 		mandatory_groups = self.groups_used(lo)
-		all_schools = School.get_all(lo, respect_local_oulist=False)
 		for group_dn in udm_obj['groups'][:]:
 			logger.debug('Checking group %s for removal', group_dn)
 			if group_dn not in mandatory_groups:
 				logger.debug('Group not mandatory! Part of a school?')
-				for school in all_schools:
-					if Group.is_school_group(school.name, group_dn):
-						logger.debug('Yes, part of %s!', school)
-						# Okay. What now?
-						#   -> "Foreign school"? -> remove
-						#   -> "My school"?
-						#      -> is_no_school_class (e.g. working group)? -> stay
-						#      -> is_school_class and self defined its own classes? -> remove as not in mandatory
-						remove = school.name != self.school
-						if not remove:
-							remove = self.school_class is not None and Group.is_school_class(school.name, group_dn)
-						if remove:
-							logger.debug('Removing it!')
-							udm_obj['groups'].remove(group_dn)
-						else:
-							logger.debug('Leaving it alone: Part of own school and either non-school class or new school classes were not defined at all')
-						break
-				else:
+				try:
+					school_class = SchoolClass.from_dn(group_dn, None, lo)
+				except noObject:
 					logger.debug('No. Leaving it alone...')
+					continue
+				logger.debug('Yes, part of %s!', school_class.school)
+				if school_class.school not in self.school_classes:
+					continue  # if the key isn't set we don't change anything to the groups. to remove the groups it has to be an empty list
+				classes = self.school_classes[school_class.school]
+				remove = school_class.name not in classes and school_class.get_relative_name() not in classes
+				if remove:
+					logger.debug('Removing it!')
+					udm_obj['groups'].remove(group_dn)
+				else:
+					logger.debug('Leaving it alone: Part of own school and either non-school class or new school classes were not defined at all')
 		for group_dn in mandatory_groups:
 			logger.debug('Checking group %s for adding', group_dn)
 			if group_dn not in udm_obj['groups']:
@@ -389,7 +386,7 @@ class User(UCSSchoolHelperAbstractClass):
 	def get_specific_groups(self, lo):
 		groups = []
 		for school_class in self.get_school_class_objs():
-			groups.append(self.get_class_dn(school_class.name, lo))
+			groups.append(self.get_class_dn(school_class.name, school_class.school, lo))
 		return groups
 
 	def validate(self, lo, validate_unlikely_changes=False):
@@ -424,14 +421,14 @@ class User(UCSSchoolHelperAbstractClass):
 	def get_group_dn(self, group_name):
 		return Group.cache(group_name, self.school).dn
 
-	def get_class_dn(self, class_name, lo):
+	def get_class_dn(self, class_name, school, lo):
 		# Bug #32337: check if the class exists without OU prefix
 		# if it does not exist the class name with OU prefix is used
-		school_class = SchoolClass.cache(class_name, self.school)
+		school_class = SchoolClass.cache(class_name, school)
 		if school_class.get_relative_name() == school_class.name:
 			if not school_class.exists(lo):
-				class_name = '%s-%s' % (self.school, class_name)
-				school_class = SchoolClass.cache(class_name, self.school)
+				class_name = '%s-%s' % (school, class_name)
+				school_class = SchoolClass.cache(class_name, school)
 		return school_class.dn
 
 	def primary_group_dn(self, lo):
@@ -479,13 +476,14 @@ class User(UCSSchoolHelperAbstractClass):
 		code = self._map_func_name_to_code(func_name)
 		is_teacher = isinstance(self, Teacher) or isinstance(self, TeachersAndStaff)
 		is_staff = isinstance(self, Staff) or isinstance(self, TeachersAndStaff)
+		school_class = ','.join(self.school_classes.get(self.school, []))  # legacy format: only classes of the primary school
 		return self._build_hook_line(
 				code,
 				self.name,
 				self.lastname,
 				self.firstname,
 				self.school,
-				self.school_class,
+				school_class,
 				'', # TODO: rights?
 				self.email,
 				is_teacher,
@@ -502,18 +500,31 @@ class User(UCSSchoolHelperAbstractClass):
 		if self.lastname:
 			display_name.append(self.lastname)
 		ret['display_name'] = ' '.join(display_name)
-		school_classes = []
+		school_classes = {}
 		for school_class in self.get_school_class_objs():
-			school_classes.append(school_class.get_relative_name())
-		if school_classes:
-			ret['school_class'] = ', '.join(school_classes)
+			school_classes.setdefault(school_class.school, []).append(school_class.name)
+		ret['school_classes'] = school_classes
 		ret['type_name'] = self.type_name
 		ret['type'] = self.__class__.__name__
 		ret['type'] = ret['type'][0].lower() + ret['type'][1:]
 		return ret
 
 	def get_school_class_objs(self):
-		return []
+		ret = []
+		for school, classes in self.school_classes.iteritems():
+			for school_class in classes:
+				ret.append(SchoolClass.cache(school_class, school))
+		return ret
+
+	@classmethod
+	def get_school_classes(cls, udm_obj, obj):
+		school_classes = {}
+		for group in udm_obj['groups']:
+			for school in obj.schools:
+				if Group.is_school_class(school, group):
+					school_class_name = cls.get_name_from_dn(group)
+					school_classes.setdefault(school, []).append(school_class_name)
+		return school_classes
 
 	@classmethod
 	def get_container(cls, school):
@@ -533,9 +544,8 @@ class User(UCSSchoolHelperAbstractClass):
 		name_is_unique = True
 		allow_school_change = False
 
-class Student(User):
-	school_class = SchoolClassStringAttribute(_('Class'), aka=['Class', 'Klasse'])
 
+class Student(User):
 	type_name = _('Student')
 	type_filter = 'objectClass=ucsschoolStudent'
 	roles = [role_pupil]
@@ -555,19 +565,6 @@ class Student(User):
 		super(Student, self).do_school_change(udm_obj, lo, old_school)
 
 	@classmethod
-	def from_udm_obj(cls, udm_obj, school, lo):
-		obj = super(Student, cls).from_udm_obj(udm_obj, school, lo)
-		if obj:
-			school_class = None
-			for group in udm_obj['groups']:
-				if Group.is_school_class(school, group):
-					school_class_name = cls.get_name_from_dn(group)
-					school_class = school_class_name
-					break
-			obj.school_class = school_class
-			return obj
-
-	@classmethod
 	def get_container(cls, school):
 		return cls.get_search_base(school).students
 
@@ -580,35 +577,14 @@ class Student(User):
 		groups.append(self.get_students_group_dn())
 		return groups
 
-	def get_school_class_objs(self):
-		if self.school_class:
-			return [SchoolClass.cache(self.school_class, self.school)]
-		return []
 
 class Teacher(User):
-	school_class = SchoolClassStringAttribute(_('Class'), aka=['Class', 'Klasse'])
-
 	type_name = _('Teacher')
 	type_filter = '(&(objectClass=ucsschoolTeacher)(!(objectClass=ucsschoolStaff)))'
 	roles = [role_teacher]
 
 	def get_default_options(self):
 		return super(Teacher, self).get_default_options() + ['ucsschoolTeacher']
-
-	@classmethod
-	def from_udm_obj(cls, udm_obj, school, lo):
-		obj = super(Teacher, cls).from_udm_obj(udm_obj, school, lo)
-		if obj:
-			school_class = None
-			school_classes = []
-			for group in udm_obj['groups']:
-				if Group.is_school_class(school, group):
-					school_class_name = cls.get_name_from_dn(group)
-					school_class = school_class_name
-					school_classes.append(school_class)
-				school_class = ','.join(school_classes)
-			obj.school_class = school_class
-			return obj
 
 	@classmethod
 	def get_container(cls, school):
@@ -619,15 +595,9 @@ class Teacher(User):
 		groups.append(self.get_teachers_group_dn())
 		return groups
 
-	def get_school_class_objs(self):
-		ret = []
-		if self.school_class:
-			for school_class in self.school_class.split(','):
-				school_class = school_class.strip()
-				ret.append(SchoolClass.cache(school_class, self.school))
-		return ret
 
 class Staff(User):
+	school_classes = None
 	type_name = _('Staff')
 	roles = [role_staff]
 	type_filter = '(&(!(objectClass=ucsschoolTeacher))(objectClass=ucsschoolStaff)))'
@@ -655,10 +625,18 @@ class Staff(User):
 		"""	Do not set sambaProfilePath for staff users. """
 		return None
 
+	def get_school_class_objs(self):
+		return []
+
+	@classmethod
+	def get_school_classes(cls, udm_obj, obj):
+		return None
+
 	def get_specific_groups(self, lo):
 		groups = super(Staff, self).get_specific_groups(lo)
 		groups.append(self.get_staff_group_dn())
 		return groups
+
 
 class TeachersAndStaff(Teacher):
 	type_name = _('Teacher and Staff')
@@ -680,6 +658,7 @@ class TeachersAndStaff(Teacher):
 
 class ExamStudent(Student):
 	type_name = _('Exam student')
+	type_filter = '(&(objectClass=ucsschoolStudent)(objectClass=ucsschoolExam))'
 
 	def get_default_options(self):
 		return super(ExamStudent, self).get_default_options() + ['ucsschoolExam']

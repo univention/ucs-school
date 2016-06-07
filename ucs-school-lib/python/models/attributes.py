@@ -50,6 +50,7 @@ class Attribute(object):
 	syntax = None
 	extended = False
 	value_list = False
+	value_dict = False
 
 	def __init__(self, label, aka=None, udm_name=None, required=False, unlikely_to_change=False, internal=False):
 		self.label = label
@@ -74,6 +75,10 @@ class Attribute(object):
 			if self.value_list:
 				if not isinstance(value, (list, tuple)):
 					raise ValueError(_('Needs to be a list of values!'))
+				values = value
+			elif self.value_dict:
+				if not isinstance(value, dict):
+					raise ValueError(_('Needs to be a dict!'))
 				values = value
 			else:
 				values = [value]
@@ -178,8 +183,8 @@ class Disabled(Attribute):
 class SchoolAttribute(CommonName):
 	udm_name = None
 
-class SchoolClassStringAttribute(Attribute):
-	pass
+class SchoolClassesAttribute(Attribute):
+	value_dict = True
 
 class SchoolClassAttribute(Attribute):
 	pass
