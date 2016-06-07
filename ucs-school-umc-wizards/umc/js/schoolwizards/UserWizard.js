@@ -37,10 +37,11 @@ define([
 	"umc/tools",
 	"umc/widgets/TextBox",
 	"umc/widgets/ComboBox",
+	"umc/widgets/MultiInput",
 	"umc/widgets/PasswordInputBox",
 	"umc/modules/schoolwizards/Wizard",
 	"umc/i18n!umc/modules/schoolwizards"
-], function(declare, lang, array, topic, tools, TextBox, ComboBox, PasswordInputBox, Wizard, _) {
+], function(declare, lang, array, topic, tools, TextBox, ComboBox, MultiInput, PasswordInputBox, Wizard, _) {
 
 	return declare("umc.modules.schoolwizards.UserWizard", [Wizard], {
 		description: _('Create a new user'),
@@ -210,28 +211,40 @@ define([
 			var values = this.inherited(arguments);
 			if (!this.hasClassWidget()) {
 				delete values.school_classes;
+			} else {
+				var school_class = values.school_classes;
+				if (this.loadedValues) {
+					values.school_classes = this.loadedValues.school_classes;
+				} else {
+					values.school_classes = {};
+				}
+				if (!values.school_classes[this.school]) {
+					values.school_classes[this.school] = [null];
+				}
+				values.school_classes[this.school][0] = school_class;
 			}
 			return values;
 		},
 
 		reloadClasses: function() {
-			var schoolName = this.getWidget('general', 'school').get('value');
-			if (schoolName) {
-				this.umcpCommand('schoolwizards/classes', {'school': schoolName}).then(
-					lang.hitch(this, function(response) {
-						var classes = array.map(response.result, function(item) {
-							return item.label;
-						});
-						var widget = this.getWidget('item', 'school_classes');
-						widget.set('staticValues', classes);
-						if (this.loadedValues && this.loadedValues.school_classes) {
-							if (this.hasClassWidget()) {
-								widget.set('value', this.loadedValues.school_classes);
-							}
-						}
-					})
-				);
+			var school = this.getWidget('general', 'school').get('value');
+			if (!school || !this.hasClassWidget()) {
+				return;
 			}
+			this.umcpCommand('schoolwizards/classes', {'school': school}).then(lang.hitch(this, function(response) {
+				var classes = array.map(response.result, function(item) {
+					return item.label;
+				});
+				var widget = this.getWidget('item', 'school_classes');
+				widget.set('staticValues', classes);
+				if (this.loadedValues) {
+					var value = (this.loadedValues.school_classes[school] || [null])[0];
+					if (value) {
+						value = value.indexOf(this.school + '-') === -1 ? value : value.slice(this.school.length + 1);
+					}
+					widget.set('value', value);
+				}
+			}));
 		}
 	});
 });

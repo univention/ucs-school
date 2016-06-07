@@ -32,13 +32,13 @@
 define([
 	"dojo/_base/declare",
 	"dojo/_base/lang",
-	"dojo/string",
+	"dojo/_base/array",
 	"umc/widgets/TextBox",
 	"umc/widgets/ComboBox",
 	"umc/modules/schoolwizards/UserWizard",
 	"umc/modules/schoolwizards/Grid",
 	"umc/i18n!umc/modules/schoolwizards"
-], function(declare, lang, string, TextBox, ComboBox, UserWizard, Grid, _) {
+], function(declare, lang, array, TextBox, ComboBox, UserWizard, Grid, _) {
 
 	return declare("umc.modules.schoolwizards.UserGrid", [Grid], {
 
@@ -70,7 +70,12 @@ define([
 			}, {
 				name: 'school_classes',
 				label: _('Class'),
-				description: _('Class of the %s.', this.objectNameSingular)
+				description: _('Class of the %s.', this.objectNameSingular),
+				formatter: lang.hitch(this, function(values) {
+					return array.map(values[this.school], lang.hitch(this, function(value) {
+						return value.indexOf(this.school + '-') === -1 ? value : value.slice(this.school.length + 1);
+					})).join(', ');
+				})
 //			}, {
 //				name: 'mailPrimaryAddress',
 //				label: _('E-Mail address'),

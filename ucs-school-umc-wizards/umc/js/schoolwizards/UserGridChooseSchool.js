@@ -105,6 +105,7 @@ define([
 			var userGrid = new UserGrid({
 				description: this.description,
 				schools: [selectedSchool],
+				school: selectedSchool.id,
 				udmLinkEnabled: this.udmLinkEnabled,
 				autoSearch: this.autoSearch,
 				umcpCommand: lang.hitch(this, 'umcpCommand'),
