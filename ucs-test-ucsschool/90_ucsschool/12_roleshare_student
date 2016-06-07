@@ -150,7 +150,7 @@ def prepare_fileservers(school_id):
 	return tested_servers
 
 
-@LDAP_Connection
+@LDAP_Connection()
 def main(ldap_machine_read=None):
 	status = 100
 

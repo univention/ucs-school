@@ -93,13 +93,9 @@ def doPrinter(operation, printer_name, school, spool_host, domainname):
 
 
 # check the existance of the created printer
-def printerExist(connection, printerName):
-	requestResult = connection.request('printermoderation/printers')
-	printerFound = [d for d in requestResult if d['label'] == printerName]
-	if printerFound:
-		return True
-	else:
-		return False
+def printerExist(connection, printerName, school):
+	requestResult = connection.request('printermoderation/printers', {school: school})
+	return any(d for d in requestResult if d['label'] == printerName)
 
 
 # get the current printed jobs
@@ -254,7 +250,7 @@ def main():
 				doPrinter('A', newPrinterName, school, host, domainname)
 
 				# check if the printer exists
-				if not printerExist(co, newPrinterName):
+				if not printerExist(co, newPrinterName, school):
 					utils.fail('Printer not found')
 
 				# order print jobs
