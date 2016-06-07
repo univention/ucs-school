@@ -76,6 +76,17 @@ feedback@univention.de
 				<command>/usr/share/ucs-school-import/scripts/ucs-school-migrate-users-to-4.1R2</command>.
 			</para>
 		</chapter>
+		<chapter id="relnote:prepare:ldapindices">
+			<title>LDAP-Indizes</title>
+			<para>
+				Während des Updates auf UCS@school 4.1 R2 werden auf den Systemrollen
+				Domaincontroller Master, Domaincontroller Backup und Domaincontroller Slave die LDAP-Indizes um die
+				Attribute <literal>ucsschoolSchool</literal>, <literal>ucsschoolSourceUID</literal> und
+				<literal>ucsschoolRecordUID</literal> erweitert und die Index-Dateien automatisch
+				aktualisiert. Diese Anpassung bzw. Aktualisierung kann je nach Umfang des LDAP-Verzeichnisdienstes
+				einige Minuten in Anspruch nehmen.
+			</para>
+		</chapter>
 	</chapter>
 
 	<chapter id="relnotes:preparations">
