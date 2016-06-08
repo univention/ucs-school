@@ -8,13 +8,14 @@ desc: |
  This update addresses the following issue(s):
  * A regression (due to Bug #40712) during evaluating boolean UCR variables has
    been fixed.
- * Added migration script ucs-school-migrate-users-to-4.1R2 to convert user
-   objects to LDAP structure of UCS@school 4.1 R2. By default, this script is
-   automatically called by the join script 35ucs-school-import. The automatic
-   execution may be disabled by setting the UCR variable
-   "ucsschool/update/users/41R2" to the value "false" *PRIOR* to the update
-   (Bug #41162).
+ * Added migration script ucs-school-migrate-objects-to-4.1R2 to convert user
+   objects and admin group objects to LDAP structure of UCS@school 4.1 R2. By
+   default, this script is automatically called by the join script
+   "35ucs-school-import". The automatic execution may be disabled by setting
+   the UCR variable "ucsschool/update/ldap/41R2" to the value "false" *PRIOR*
+   to the update (Bug #41162, #41494).
  * The the LDAP attributes "ucsschoolSchool", "ucsschoolRecordUID" and
    "ucsschoolSourceUID" are added automatically to the LDAP indices during
    the update to UCS@school 4.1 R2 (Bug #41297).
-bug: [40712,41162,41297]
+ * 
+bug: [40712,41162,41297,41494]
