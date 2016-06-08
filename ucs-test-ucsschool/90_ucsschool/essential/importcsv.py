@@ -161,16 +161,12 @@ html5
 		return status
 
 	def show(self):
-		if self.user_type != 'staff':
-			param = {
-					'file_id' : self.file_id,
-					'columns': ["name","firstname","lastname","birthday","password","email","school_class" ],
-					}
-		else:
-			param = {
-					'file_id' : self.file_id,
-					'columns': ["name","firstname","lastname","birthday","password","email"],
-					}
+		param = {
+			'file_id' : self.file_id,
+			'columns': ["name","firstname","lastname","birthday","password","email","school_classes" ],
+		}
+		if self.user_type == 'staff':
+			param['columns'].pop('school_classes')
 		try:
 			reqResult = self.umc_connection.request('schoolcsvimport/show', param)
 			self.id_nr = reqResult['id']
@@ -281,7 +277,7 @@ def update_persons(school, persons_list, users):
 		person = User(
 				school,
 				role=get_role(user['type']),
-				school_class=user.get('school_class'),
+				school_classes=user.get('school_classes', {}),
 				mode=get_mode(user['action']),
 				username=user['name'],
 				firstname=user['firstname'],

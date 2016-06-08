@@ -336,7 +336,7 @@ class ImportFile:
 				'name': user.username,
 				'firstname': user.firstname,
 				'lastname': user.lastname,
-				'school_class': ','.join(user.classes),
+				'school_classes': {user.school: user.classes},
 				'email': user.mail,
 				'password': user.password,
 				'disabled': 'none' if user.active else 'all',
