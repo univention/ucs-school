@@ -1,6 +1,12 @@
 ucs-school-import (14.0.6-1) unstable; urgency=low
 
-  * Bug #41494: added new objectclass for UCS@school admin groups
+  * Bug #41494:
+    - added new objectclass for UCS@school admin groups
+    - made UDM options for users/user editable after creation
+      (required to convert user into a UCS@school administrator)
+    - added extended attribute to groups/group
+    - renamed script ucs-school-migrate-users-to-4.1R2 into
+      ucs-school-migrate-objects-to-4.1R2
 
  -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Wed, 08 Jun 2016 16:27:04 +0200
 
