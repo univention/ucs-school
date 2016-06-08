@@ -31,13 +31,18 @@ All options can be set from the command line using "--set <option>".
 	"teacher_and_staff": bool [3]: if the new user should be activated
 },
 "csv": {
+	"delimiter": str: character that separates the cells of two columns (defaults to ',')
 	"header_lines": int: how many line to skip, if 1, first line will be used to create keys for dict
-		"mapping": {
-			key: value -> str: str
-			           -> 'value' must be either the name of an Attribute as supported by the ImportUser class
-			              or it will used as a key in a dict 'udm_attribute'. Data from  'udm_attribute' will
-			              be written to the underlying UDM object.
-		}
+	"incell-delimiter": {
+		"default":               str [2]: multi-value field separator symbol, separates two values inside a cell
+    	<udm attribute name>:    str [3]:                (not between columns like "delimiter", defaults to ',')
+	}
+	"mapping": {
+		key: value -> str: str
+		           -> 'value' must be either the name of an Attribute as supported by the ImportUser class
+		              or it will used as a key in a dict 'udm_attribute'. Data from  'udm_attribute' will
+		              be written to the underlying UDM object.
+	}
 },
 "scheme" [1]: {
 	"email": str: schema of email address, variables may be used as described in manual-4.1:users:templates

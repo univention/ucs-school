@@ -45,7 +45,7 @@ from ucsschool.lib.models import Staff, Student, Teacher, TeachersAndStaff, User
 from ucsschool.lib.models.attributes import RecordUID, SourceUID
 from ucsschool.importer.configuration import Configuration
 from ucsschool.importer.factory import Factory
-from ucsschool.importer.exceptions import BadPassword, FormatError, InvalidBirthday, InvalidEmail, MissingMailDomain, MissingMandatoryAttribute, MissingSchoolName, NotSupportedError, NoUsername, NoUsernameAtAll, UniqueIdError, UnkownDisabledSetting, UnknownProperty, UsernameToLong
+from ucsschool.importer.exceptions import BadPassword, FormatError, InvalidBirthday, InvalidClassName, InvalidEmail, MissingMailDomain, MissingMandatoryAttribute, MissingSchoolName, NotSupportedError, NoUsername, NoUsernameAtAll, UniqueIdError, UnkownDisabledSetting, UnknownProperty, UsernameToLong
 
 
 class ImportUser(User):
@@ -199,10 +199,10 @@ class ImportUser(User):
 		* See /usr/share/doc/ucs-school-import/configuration_readme.txt.gz
 		section "scheme" for details on the configuration.
 		"""
-		attr_keys = self.to_dict().keys()
-		attr_keys.extend(["mailPrimaryAddress", "rid", "username"])
+		ignore_keys = self.to_dict().keys()
+		ignore_keys.extend(["mailPrimaryAddress", "rid", "username"])
 		for k, v in self.config["scheme"].items():
-			if k in attr_keys:
+			if k in ignore_keys:
 				continue
 			self.udm_properties[k] = self.format_from_scheme(k, v)
 
@@ -225,12 +225,34 @@ class ImportUser(User):
 	def make_classes(self):
 		"""
 		Create school classes.
+
+		* This should run after make_school().
+		* If attribute already exists as a dict, it is not changed.
+		* Attribute is only written if it is set to a string like
+		'school1-cls2,school3-cls4'.
 		"""
-		# FIXME when/if self.school_class becomes a list instead of a string
-		# if self.school_class and isinstance(self.school_class, basestring):
-		# 	self.school_class = [c.strip() for c in self.school_class.split(",")]
 		if isinstance(self, Staff):
+			self.school_classes = dict()
+		elif self.school_classes and isinstance(self.school_classes, dict):
 			return
+		elif self.school_classes and isinstance(self.school_classes, basestring):
+			res = defaultdict(list)
+			for a_class in self.school_classes.strip(",").split(","):
+				school, sep, cls_name = a_class.partition("-")
+				if sep and not cls_name:
+					raise InvalidClassName("Empty class name.")
+				if not sep:
+					# no school prefix
+					if not self.school:
+						self.make_school()
+					cls_name = school
+					school = self.school
+				cls_name = self.normalize(cls_name)
+				school = self.normalize(school)
+				res[school].append("{}-{}".format(school, cls_name))
+			self.school_classes = dict(res)
+		else:
+			raise RuntimeError("Unknown data in attribute 'school_classes': '{}'".format(self.school_classes))
 
 	def make_disabled(self):
 		"""
@@ -330,26 +352,52 @@ class ImportUser(User):
 	def make_school(self):
 		"""
 		Create 'school' attribute - the position of the object in LDAP (if not already set).
+
+		Order of detection:
+		* already set (object creation or reading from input)
+		* from configuration (file or cmdline)
+		* first (alphanum-sorted) school in attribute schools
 		"""
 		if self.school:
-			return
-		if self.config.get("school"):
+			self.school = self.normalize(self.school)
+		elif self.config.get("school"):
 			self.school = self.config["school"]
+		elif self.schools and isinstance(self.schools, list):
+			self.school = self.normalize(sorted(self.schools)[0])
+		elif self.schools and isinstance(self.schools, basestring):
+			self.make_schools()  # this will recurse back, but schools will be a list then
 		else:
-			raise MissingSchoolName("School name was not set on the cmdline or in the configuration file and was not "
-				"found in the source data.", entry=self.entry_count, import_user=self)
+			raise MissingSchoolName("Primary school name (ou) was not set on the cmdline or in the configuration file "
+				"and was not found in the input data.", entry=self.entry_count, import_user=self)
 
 	def make_schools(self):
 		"""
 		Create list of schools this user is in.
-		This should run after make_school()
+		If possible, this should run after make_school()
+
+		* If empty, it is set to self.school.
+		* If it is a string like 'school1,school2,school3' the attribute is
+		created from it.
 		"""
+		if self.schools and isinstance(self.schools, list):
+			pass
+		elif not self.schools:
+			if not self.school:
+				self.make_school()
+			self.schools = [self.school]
+		elif isinstance(self.schools, basestring):
+			self.schools = self.schools.strip(",").split(",")
+			self.schools = sorted([self.normalize(s.strip()) for s in self.schools])
+		else:
+			raise RuntimeError("Unknown data in attribute 'schools': '{}'".format(self.schools))
+
 		if not self.school:
 			self.make_school()
-		if not isinstance(self.schools, list):
-			self.schools = list()
 		if self.school not in self.schools:
-			self.schools.append(self.school)
+			if not self.schools:
+				self.schools = [self.school]
+			else:
+				self.school = sorted(self.schools)[0]
 
 	def make_username(self):
 		"""
@@ -551,6 +599,12 @@ class ImportUser(User):
 			return ImportStudent
 		else:
 			return None
+
+	def get_school_class_objs(self):
+		if isinstance(self.school_classes, basestring):
+			# school_classes was set from input data
+			self.make_classes()
+		return super(ImportUser, self).get_school_class_objs()
 
 	def create_without_hooks(self, lo, validate):
 		success = super(ImportUser, self).create_without_hooks(lo, validate)

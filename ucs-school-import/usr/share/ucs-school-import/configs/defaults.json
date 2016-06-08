@@ -14,7 +14,6 @@
 			"default": "<:umlauts><firstname>[0].<lastname>[COUNTER2]"
 		}
 	},
-	"csv_output": "/tmp/out.csv",
 	"dry_run": true,
 	"logfile": "/var/log/univention/ucsschool-import.log",
 	"maildomain": null,
@@ -26,7 +25,8 @@
 		"waiting_period": 0
 	},
 	"output": {
-		"passwords": "/var/lib/ucs-school-import/new_user_passwords.csv"
+		"new_user_passwords": "/var/lib/ucs-school-import/new_user_passwords.csv",
+		"user_import_summary": "/var/lib/ucs-school-import/user_import_summary.csv"
 	},
 	"password_length": 15,
 	"school": null,

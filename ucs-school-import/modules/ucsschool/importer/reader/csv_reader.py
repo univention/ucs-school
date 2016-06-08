@@ -40,6 +40,8 @@ from ucsschool.importer.exceptions import UnkownRole
 from ucsschool.importer.configuration import Configuration
 from ucsschool.lib.roles import role_pupil, role_teacher, role_staff
 from ucsschool.lib.models.user import Staff
+import univention.admin.handlers.users.user as udm_user_module
+from ucsschool.importer.exceptions import UnknownProperty
 
 
 class CsvReader(BaseReader):
@@ -47,19 +49,23 @@ class CsvReader(BaseReader):
 	encoding = "utf-8"
 
 	def __init__(self, filename, header_lines=0, **kwargs):
-		super(CsvReader, self).__init__(filename, header_lines=0, **kwargs)
+		super(CsvReader, self).__init__(filename, header_lines, **kwargs)
 		self.config = Configuration()
 		self.fieldnames = None
 
-	@classmethod
-	def get_dialect(cls, fp):
+	def get_dialect(self, fp):
 		"""
 		Overwrite me to force a certain CSV dialect.
 
 		:param fp: open file to read from
 		:return: csv.dialect
 		"""
-		return Sniffer().sniff(fp.read(1024))
+		delimiter = self.config.get("csv", {}).get("delimiter")
+		if delimiter:
+			delimiters = [delimiter]
+		else:
+			delimiters = None
+		return Sniffer().sniff(fp.read(1024), delimiters=delimiters)
 
 	def read(self, *args, **kwargs):
 		"""
@@ -160,7 +166,19 @@ class CsvReader(BaseReader):
 				setattr(import_user, v, input_data[k])
 			else:
 				# must be a UDM property
-				import_user.udm_properties[v] = input_data[k]
+				try:
+					prop_desc = udm_user_module.property_descriptions[v]
+				except KeyError:
+					raise UnknownProperty("Unknown UDM property: '{}'.".format(v), entry=self.entry_count,
+						import_user=import_user)
+				if prop_desc.multivalue:
+					try:
+						delimiter = self.config["csv"]["incell-delimiter"][k]
+					except KeyError:
+						delimiter = self.config["csv"].get("incell-delimiter", {}).get("default", ",")
+					import_user.udm_properties[v] = input_data[k].split(delimiter)
+				else:
+					import_user.udm_properties[v] = input_data[k]
 		self.logger.debug("%s udm_properties=%r", import_user, import_user.udm_properties)
 		return import_user
 

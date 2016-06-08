@@ -61,12 +61,19 @@ class NewUserPasswordCsvExporter(ResultExporter):
 		return self.factory.make_user_writer(field_names=self.field_names)
 
 	def serialize(self, user):
+		school_classes = getattr(user, "school_classes", "")
+		if school_classes:
+			sc = ""
+			for school, classes in school_classes.items():
+				sc = ",".join([sc, ",".join(["{}-{}".format(school, cls) for cls in classes])])
+			school_classes = sc.strip(",")
+
 		return dict(
 			username=user.name,
 			password=user.password,
 			role=user.role_sting,
 			lastname=user.lastname,
 			firstname=user.firstname,
-			schools=", ".join(user.schools) if user.schools else user.school,
-			classes=getattr(user, "school_class") or "",
+			schools=",".join(user.schools),
+			classes=school_classes,
 		)

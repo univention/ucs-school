@@ -97,10 +97,10 @@ class MassImport(object):
 			users_to_delete = user_import.detect_users_to_delete()
 			user_import.delete_users(users_to_delete)
 		user_import.log_stats()
-		if self.config["output"]["passwords"]:
-			self.logger.info("------ Writing new users passwords to %s... ------", self.config["output"]["passwords"])
-			self.password_exporter.dump(user_import, self.config["output"]["passwords"])
-		if self.config["csv_output"]:
-			self.logger.info("------ Writing user import summary to %s... ------", self.config["csv_output"])
-			self.result_exporter.dump(user_import, self.config["csv_output"])
+		if self.config["output"]["new_user_passwords"]:
+			self.logger.info("------ Writing new users passwords to %s... ------", self.config["output"]["new_user_passwords"])
+			self.password_exporter.dump(user_import, self.config["output"]["new_user_passwords"])
+		if self.config["output"]["user_import_summary"]:
+			self.logger.info("------ Writing user import summary to %s... ------", self.config["output"]["user_import_summary"])
+			self.result_exporter.dump(user_import, self.config["output"]["user_import_summary"])
 		self.logger.info("------ Importing users done. ------")

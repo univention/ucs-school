@@ -212,7 +212,7 @@ class UserImport(object):
 		self.logger.info("------ Detecting which users to delete... ------")
 		source_uid = self.config["sourceUID"]
 		attr = ["ucsschoolSourceUID", "ucsschoolRecordUID"]
-		filter_s = filter_format("(&(ucsschoolSourceUID=%s)(ucsschoolRecordUID=*))", source_uid)
+		filter_s = filter_format("(&(ucsschoolSourceUID=%s)(ucsschoolRecordUID=*))", (source_uid, ))
 
 		id2imported_user = dict()  # for fast access later
 		for iu in self.imported_users:

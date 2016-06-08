@@ -6,11 +6,14 @@
 	},
 	"csv": {
 		"header_lines": 1,
+		"incell-delimiter": {
+			"default": ","
+		},
 		"mapping": {
-			"Schule": "school",
+			"Schulen": "schools",
 			"Vorname": "firstname",
 			"Nachname": "lastname",
-			"Klassen": "school_class",
+			"Klassen": "school_classes",
 			"Mailadresse": "email",
 			"description": "description",
 			"phone": "phone"

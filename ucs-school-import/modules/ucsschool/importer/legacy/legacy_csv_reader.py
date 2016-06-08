@@ -39,12 +39,11 @@ from ucsschool.lib.roles import role_pupil, role_teacher, role_staff
 
 
 class LegacyCsvReader(CsvReader):
-	@classmethod
-	def get_dialect(cls, fp):
-		if cls.config.get("ucs_test"):
+	def get_dialect(self, fp):
+		if self.config.get("ucs_test"):
 			return csv.excel_tab()
 		else:
-			return super(LegacyCsvReader, cls).get_dialect(fp)
+			return super(LegacyCsvReader, self).get_dialect(fp)
 
 	def handle_input(self, mapping_key, mapping_value, csv_value, import_user):
 		"""

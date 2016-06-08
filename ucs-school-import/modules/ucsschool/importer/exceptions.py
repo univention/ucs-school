@@ -73,6 +73,10 @@ class InvalidBirthday(UcsSchoolImportError):
 	pass
 
 
+class InvalidClassName(UcsSchoolImportError):
+	pass
+
+
 class InvalidEmail(UcsSchoolImportError):
 	pass
 
