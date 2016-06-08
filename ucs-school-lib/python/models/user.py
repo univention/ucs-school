@@ -512,9 +512,10 @@ class User(UCSSchoolHelperAbstractClass):
 
 	def get_school_class_objs(self):
 		ret = []
-		for school, classes in self.school_classes.iteritems():
-			for school_class in classes:
-				ret.append(SchoolClass.cache(school_class, school))
+		if self.school_classes:
+			for school, classes in self.school_classes.iteritems():
+				for school_class in classes:
+					ret.append(SchoolClass.cache(school_class, school))
 		return ret
 
 	@classmethod
