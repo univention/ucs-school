@@ -62,7 +62,6 @@ access to dn.subtree="cn=WMIPolicy,cn=system,@%@ldap/base@%@" filter="(|(objectC
 # Lehrer, Mitarbeiter und OU-Admins duerfen Schueler-Passwoerter aendern
 access to filter="objectClass=ucsschoolStudent" attrs=krb5KeyVersionNumber,krb5KDCFlags,krb5Key,krb5PasswordEnd,sambaAcctFlags,sambaPwdLastSet,sambaLMPassword,sambaNTPassword,shadowLastChange,shadowMax,userPassword,pwhistory,sambaPwdCanChange,sambaPwdMustChange,sambaPasswordHistory,sambaBadPasswordCount
 	by set="this/ucsschoolSchool & ([ldap:///]+user/entryDN+[?entryDN?base?%28%7C%28objectClass%3DucsschoolTeacher%29%28objectClass%3DucsschoolAdministrator%29%28objectClass%3DucsschoolStaff%29%29])/ucsschoolSchool" write
-	by set="this/ucsschoolSchool & ([ldap:///@%@ldap/base@%@?entryDN?sub?(&(objectClass=ucsschoolAdminGroup)(uniqueMember=]+user/entryDN+[)])/ucsschoolSchool" write
 	by * +0 break
 
 @$@# old rule for unmigrated systems@$@
@@ -94,6 +93,7 @@ access to dn.regex="^uid=(.+),cn=users,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$
 
 # OU-Admins duerfen Passwoerter von Schülern, Lehrern und Mitarbeitern (mit Position ausserhalb der OU) aendern
 access to filter="(|(objectClass=ucsschoolTeacher)(objectClass=ucsschoolStudent)(objectClass=ucsschoolStaff))" attrs=krb5KeyVersionNumber,krb5KDCFlags,krb5Key,krb5PasswordEnd,sambaAcctFlags,sambaPwdLastSet,sambaLMPassword,sambaNTPassword,shadowLastChange,shadowMax,userPassword,pwhistory,sambaPwdCanChange,sambaPwdMustChange,sambaPasswordHistory,sambaBadPasswordCount
+	by set="this/ucsschoolSchool & ([ldap:///@%@ldap/base@%@?entryDN?sub?%28%26%28objectClass%3DucsschoolAdministratorGroup%29%28uniqueMember%3D]+user/entryDN+[%29])/ucsschoolSchool" write
 	by set="this/ucsschoolSchool & ([ldap:///]+user/entryDN+[?entryDN?base?objectClass%3DucsschoolAdministrator])/ucsschoolSchool" write
 	by * +0 break
 

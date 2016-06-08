@@ -1,3 +1,9 @@
+ucs-school-ldap-acls-master (14.0.1-3) unstable; urgency=low
+
+  * Bug #41494: fixed ACL for OU admin groups
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Wed, 08 Jun 2016 23:48:38 +0200
+
 ucs-school-ldap-acls-master (14.0.1-2) unstable; urgency=medium
 
   * Bug #41115: fix typo in last commit
