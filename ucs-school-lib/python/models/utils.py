@@ -42,8 +42,8 @@ from psutil import process_iter
 from univention.lib.policy_result import policy_result
 from univention.lib.i18n import Translation
 from univention.config_registry import ConfigRegistry
+import univention.debug as ud
 
-from univention.management.console.log import MODULE
 
 # "global" translation for ucsschool.lib.models
 _ = Translation('python-ucs-school').translate
@@ -55,18 +55,31 @@ ucr.load()
 logger = logging.getLogger("ucsschool")
 logger.setLevel(logging.DEBUG)
 
-_module_logger = None
+_module_handler = None
 
-class ModuleLogger(object):
-	def handle(self, record):
-		if record.levelno <= logging.DEBUG:
-			MODULE.info(record.msg)
-		elif record.levelno <= logging.INFO:
-			MODULE.process(record.msg)
-		elif record.levelno <= logging.WARN:
-			MODULE.warn(record.msg)
-		else:
-			MODULE.error(record.msg)
+
+class ModuleHandler(logging.Handler):
+	LOGGING_TO_UDEBUG = dict(
+		CRITICAL=ud.ERROR,
+		ERROR=ud.ERROR,
+		WARN=ud.WARN,
+		WARNING=ud.WARN,
+		INFO=ud.PROCESS,
+		DEBUG=ud.INFO,
+		NOTSET=ud.INFO
+	)
+
+	def __init__(self, level=logging.NOTSET, udebug_facility=ud.LISTENER):
+		self._udebug_facility = udebug_facility
+		super(ModuleHandler, self).__init__(level)
+
+	def emit(self, record):
+		msg = self.format(record)
+		if isinstance(msg, unicode):
+			msg = msg.encode("utf-8")
+			udebug_level = self.LOGGING_TO_UDEBUG[record.levelname]
+			ud.debug(self._udebug_facility, udebug_level, msg)
+
 
 def add_stream_logger_to_schoollib(level=logging.DEBUG, stream=None, log_format=None):
 	'''Outputs all log messages of the models code to a stream (default: sys.stderr)
@@ -84,15 +97,15 @@ def add_stream_logger_to_schoollib(level=logging.DEBUG, stream=None, log_format=
 	return stream_handler
 
 def add_module_logger_to_schoollib():
-	global _module_logger
-	if _module_logger is None:
-		module_logger = ModuleLogger()
-		_module_logger = MemoryHandler(-1, flushLevel=logging.DEBUG, target=module_logger)
-		_module_logger.setLevel(logging.DEBUG)
-		logger.addHandler(_module_logger)
+	global _module_handler
+	if _module_handler is None:
+		module_handler = ModuleHandler(udebug_facility=ud.MODULE)
+		_module_handler = MemoryHandler(-1, flushLevel=logging.DEBUG, target=module_handler)
+		_module_handler.setLevel(logging.DEBUG)
+		logger.addHandler(_module_handler)
 	else:
 		MODULE.info('add_module_logger_to_schoollib() should only be called once! Skipping...')
-	return _module_logger
+	return _module_handler
 
 
 _pw_length_cache = {}
