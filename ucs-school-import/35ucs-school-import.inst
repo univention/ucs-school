@@ -171,7 +171,7 @@ univention-directory-manager settings/extended_options create "$@" --ignore_exis
 	--append module=settings/usertemplate \
 	--set objectClass=ucsschoolStudent \
 	--set default=0 \
-	--set editable=0 \
+	--set editable=1 \
 	--set shortDescription="UCS@school Student" \
 	--set longDescription="Specifies that this user is a UCS@school student" \
 	--set translationShortDescription='"de_DE" "UCS@school-Schüler"' \
@@ -184,7 +184,7 @@ univention-directory-manager settings/extended_options create "$@" --ignore_exis
 	--append module=settings/usertemplate \
 	--set objectClass=ucsschoolTeacher \
 	--set default=0 \
-	--set editable=0 \
+	--set editable=1 \
 	--set shortDescription="UCS@school Teacher" \
 	--set longDescription="Specifies that this user is a UCS@school teacher" \
 	--set translationShortDescription='"de_DE" "UCS@school-Lehrer"' \
@@ -197,7 +197,7 @@ univention-directory-manager settings/extended_options create "$@" --ignore_exis
 	--append module=settings/usertemplate \
 	--set objectClass=ucsschoolStaff \
 	--set default=0 \
-	--set editable=0 \
+	--set editable=1 \
 	--set shortDescription="UCS@school Staff" \
 	--set longDescription="Specifies that this user is a UCS@school staff" \
 	--set translationShortDescription='"de_DE" "UCS@school-Mitarbeiter"' \
@@ -210,7 +210,7 @@ univention-directory-manager settings/extended_options create "$@" --ignore_exis
 	--append module=settings/usertemplate \
 	--set objectClass=ucsschoolAdministrator \
 	--set default=0 \
-	--set editable=0 \
+	--set editable=1 \
 	--set shortDescription="UCS@school Administrator" \
 	--set longDescription="Specifies that this user is a UCS@school Administrator" \
 	--set translationShortDescription='"de_DE" "UCS@school-Administrator"' \
@@ -223,7 +223,7 @@ univention-directory-manager settings/extended_options create "$@" --ignore_exis
 	--append module=settings/usertemplate \
 	--set objectClass=ucsschoolExam \
 	--set default=0 \
-	--set editable=0 \
+	--set editable=1 \
 	--set shortDescription="UCS@school Examuser" \
 	--set longDescription="Specifies that this user is a UCS@school Examuser" \
 	--set translationShortDescription='"de_DE" "UCS@school-Klassenarbeitsbenutzer"' \
