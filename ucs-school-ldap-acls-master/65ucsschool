@@ -94,7 +94,6 @@ access to dn.regex="^uid=(.+),cn=users,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$
 # OU-Admins duerfen Passwoerter von Schülern, Lehrern und Mitarbeitern (mit Position ausserhalb der OU) aendern
 access to filter="(|(objectClass=ucsschoolTeacher)(objectClass=ucsschoolStudent)(objectClass=ucsschoolStaff))" attrs=krb5KeyVersionNumber,krb5KDCFlags,krb5Key,krb5PasswordEnd,sambaAcctFlags,sambaPwdLastSet,sambaLMPassword,sambaNTPassword,shadowLastChange,shadowMax,userPassword,pwhistory,sambaPwdCanChange,sambaPwdMustChange,sambaPasswordHistory,sambaBadPasswordCount
 	by set="this/ucsschoolSchool & ([ldap:///@%@ldap/base@%@?entryDN?sub?%28%26%28objectClass%3DucsschoolAdministratorGroup%29%28uniqueMember%3D]+user/entryDN+[%29])/ucsschoolSchool" write
-	by set="this/ucsschoolSchool & ([ldap:///]+user/entryDN+[?entryDN?base?objectClass%3DucsschoolAdministrator])/ucsschoolSchool" write
 	by * +0 break
 
 # Lehrer, Mitarbeiter und OU-Admins duerfen Arbeitsgruppen anlegen und aendern
