@@ -298,6 +298,26 @@ univention-directory-manager settings/extended_attribute create "$@" --ignore_ex
 	--set multivalue="0" \
 	--set disableUDMWeb=1 || die
 
+univention-directory-manager settings/extended_attribute create "$@" --ignore_exists \
+	--position "cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
+	--set name="ucsschoolSchool-AdministratorGroup" \
+	--append module=groups/group \
+	--set tabName="UCS@school" \
+	--set tabPosition=1 \
+	--set groupName="General" \
+	--set groupPosition="1" \
+	--set translationGroupName='"de_DE" "Allgemein"' \
+	--set shortDescription="Schools" \
+	--set longDescription="List of school OU names that this group belongs to" \
+	--set translationShortDescription='"de_DE" "Schulen"' \
+	--set translationLongDescription='"de_DE" "Liste der zugehörigen Schul-OU-Namen dieser Gruppe"' \
+	--set CLIName="school" \
+	--set objectClass=ucsschoolAdministratorGroup \
+	--set ldapMapping=ucsschoolSchool \
+	--set syntax=ucsschoolSchools \
+	--set mayChange=1 \
+	--set deleteObjectClass=1 \
+	--set multivalue=1 || die
 
 if [ $JS_LAST_EXECUTED_VERSION -lt 6 ]; then
 	# append UCSschool-School-OU option to Home/ClassShareServer
