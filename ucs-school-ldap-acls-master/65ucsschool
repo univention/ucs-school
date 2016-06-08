@@ -62,6 +62,7 @@ access to dn.subtree="cn=WMIPolicy,cn=system,@%@ldap/base@%@" filter="(|(objectC
 # Lehrer, Mitarbeiter und OU-Admins duerfen Schueler-Passwoerter aendern
 access to filter="objectClass=ucsschoolStudent" attrs=krb5KeyVersionNumber,krb5KDCFlags,krb5Key,krb5PasswordEnd,sambaAcctFlags,sambaPwdLastSet,sambaLMPassword,sambaNTPassword,shadowLastChange,shadowMax,userPassword,pwhistory,sambaPwdCanChange,sambaPwdMustChange,sambaPasswordHistory,sambaBadPasswordCount
 	by set="this/ucsschoolSchool & ([ldap:///]+user/entryDN+[?entryDN?base?%28%7C%28objectClass%3DucsschoolTeacher%29%28objectClass%3DucsschoolAdministrator%29%28objectClass%3DucsschoolStaff%29%29])/ucsschoolSchool" write
+	by set="this/ucsschoolSchool & ([ldap:///@%@ldap/base@%@?entryDN?sub?(&(objectClass=ucsschoolAdminGroup)(uniqueMember=]+user/entryDN+[)])/ucsschoolSchool" write
 	by * +0 break
 
 @$@# old rule for unmigrated systems@$@
