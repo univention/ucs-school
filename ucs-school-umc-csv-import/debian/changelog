@@ -1,3 +1,9 @@
+ucs-school-umc-csv-import (3.0.3-1) unstable; urgency=medium
+
+  * Bug #41121: respect school_classes API change
+
+ -- Florian Best <best@univention.de>  Wed, 08 Jun 2016 18:47:13 +0200
+
 ucs-school-umc-csv-import (3.0.2-1) unstable; urgency=medium
 
   * Bug #41121: detect python model class without additional checks

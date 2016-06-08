@@ -131,12 +131,10 @@ class CSVUser(User):
 				user.birthday = unformat_date(user.birthday, date_format)
 			except (TypeError, ValueError):
 				pass
+		if user.school_classes is not None:
+			user.school_classes = {school: user.school_classes.split(',')}
 
-		if user.exists(lo):
-			user.action = 'modify'
-			#maybe: user.schools.append(school) ?
-		else:
-			user.action = 'create'
+		user.action = 'modify' if user.exists(lo) else 'create'
 		user.line = line_no
 		return user
 
@@ -166,7 +164,7 @@ class CSVUser(User):
 
 	@classmethod
 	def find_all_fields(cls):
-		return ['name', 'firstname', 'lastname', 'birthday', 'email', 'school_class', 'password']
+		return ['name', 'firstname', 'lastname', 'birthday', 'email', 'school_classes', 'password']
 
 	@classmethod
 	def find_field_name_from_label(cls, label, i):
@@ -293,8 +291,9 @@ class CSVStaff(CSVUser, Staff):
 
 	@classmethod
 	def find_all_fields(cls):
-		# do not use school_class
-		return ['name', 'firstname', 'lastname', 'birthday', 'email', 'password']
+		fields = super(CSVStaff, cls).find_all_fields()
+		fields.remove('school_classes')
+		return fields
 
 class CSVTeachersAndStaff(CSVUser, TeachersAndStaff):
 	birthday = birthday_attr
