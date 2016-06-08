@@ -350,7 +350,7 @@ if [ $JS_LAST_EXECUTED_VERSION -lt 10 ] ; then
 		echo "that this required step is performed manually afterwards." | tee -a "$LOGFILE"
 	else
 		echo "START: $(date)" | tee -a "$LOGFILE"
-		/usr/share/ucs-school-import/scripts/ucs-school-migrate-users-to-4.1R2 2>&1 | tee -a "$LOGFILE"
+		/usr/share/ucs-school-import/scripts/ucs-school-migrate-objects-to-4.1R2 --migrate-users --migrate-admin-groups 2>&1 | tee -a "$LOGFILE"
 		echo "FINISHED: $(date)" | tee -a "$LOGFILE"
 	fi
 fi
