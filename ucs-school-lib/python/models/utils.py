@@ -77,8 +77,8 @@ class ModuleHandler(logging.Handler):
 		msg = self.format(record)
 		if isinstance(msg, unicode):
 			msg = msg.encode("utf-8")
-			udebug_level = self.LOGGING_TO_UDEBUG[record.levelname]
-			ud.debug(self._udebug_facility, udebug_level, msg)
+		udebug_level = self.LOGGING_TO_UDEBUG[record.levelname]
+		ud.debug(self._udebug_facility, udebug_level, msg)
 
 
 def add_stream_logger_to_schoollib(level=logging.DEBUG, stream=None, log_format=None):
