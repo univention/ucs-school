@@ -32,9 +32,10 @@ def main():
 		domain_users_school = 'cn=Domain Users %s,cn=groups,ou=%s,%s' % (b, b, base)
 		teacher_group = 'cn=lehrer-%s,cn=groups,ou=%s,%s' % (b, b, base)
 		staff_group = 'cn=mitarbeiter-%s,cn=groups,ou=%s,%s' % (b, b, base)
+		students_group = 'cn=schueler-%s,cn=groups,ou=%s,%s' % (b, b, base)
 
 		users = [
-			(env.create_user(a), 'schueler', ['cn=schueler-%s,cn=groups,ou=%s,%s' % (b, b), domain_users_school, base]),
+			(env.create_user(a), 'schueler', [students_group, domain_users_school]),
 			(env.create_user(a, is_teacher=True), 'lehrer', [domain_users_school, teacher_group]),
 			(env.create_user(a, is_staff=True), 'mitarbeiter', [domain_users_school, staff_group]),
 			(env.create_user(a, is_teacher=True, is_staff=True), 'lehrer', [domain_users_school, teacher_group, staff_group]),
