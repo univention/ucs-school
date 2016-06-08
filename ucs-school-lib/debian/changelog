@@ -1,3 +1,9 @@
+ucs-school-lib (9.0.16-3) unstable; urgency=medium
+
+  * Bug #41132: fixed exception due to unexpected None type
+
+ -- Florian Best <best@univention.de>  Wed, 08 Jun 2016 16:01:24 +0200
+
 ucs-school-lib (9.0.16-2) unstable; urgency=low
 
   * Bug #41132: fixed exception due to unexpected None type

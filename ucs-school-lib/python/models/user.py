@@ -477,7 +477,9 @@ class User(UCSSchoolHelperAbstractClass):
 		code = self._map_func_name_to_code(func_name)
 		is_teacher = isinstance(self, Teacher) or isinstance(self, TeachersAndStaff)
 		is_staff = isinstance(self, Staff) or isinstance(self, TeachersAndStaff)
-		school_class = ','.join(self.school_classes.get(self.school, []))  # legacy format: only classes of the primary school
+		school_class = ''
+		if self.school_classes:
+			school_class = ','.join(self.school_classes.get(self.school, []))  # legacy format: only classes of the primary school
 		return self._build_hook_line(
 				code,
 				self.name,
