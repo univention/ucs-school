@@ -170,6 +170,11 @@ class SchoolSearchBase(object):
 		self._examUserContainerName = ucr.get('ucsschool/ldap/default/container/exam', 'examusers')
 		self._examGroupNameTemplate = ucr.get('ucsschool/ldap/default/groupname/exam', 'OU%(ou)s-Klassenarbeit')
 
+		self.group_prefix_students = ucr.get('ucsschool/ldap/default/groupprefix/pupils', 'schueler-')
+		self.group_prefix_teachers = ucr.get('ucsschool/ldap/default/groupprefix/teachers', 'lehrer-')
+		self.group_prefix_admins = ucr.get('ucsschool/ldap/default/groupprefix/admins', 'admins-')
+		self.group_prefix_staff = ucr.get('ucsschool/ldap/default/groupprefix/staff', 'mitarbeiter-')
+
 	@classmethod
 	def getOU(cls, dn):
 		"""Return the school OU for a given DN.
@@ -274,6 +279,10 @@ class SchoolSearchBase(object):
 	@property
 	def examUsers(self):
 		return "cn=%s,%s" % (self._examUserContainerName, self.schoolDN)
+
+	@property
+	def globalGroupContainer(self):
+		return "cn=ouadmins,cn=groups,%s" % (self._ldapBase,)
 
 	@property
 	def educationalDCGroup(self):
