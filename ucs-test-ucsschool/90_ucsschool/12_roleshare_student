@@ -15,7 +15,7 @@ import univention.testing.utils as utils
 import univention.testing.ucr as testing_ucr
 import univention.testing.ucsschool as testing_ucsschool
 from univention.admin.uldap import explodeDn
-from ucsschool.lib.schoolldap import LDAP_Connection, set_credentials
+from ucsschool.lib.schoolldap import LDAP_Connection, set_credentials, MACHINE_READ
 from ucsschool.lib.models import School
 import ucsschool.lib.roleshares as roleshares
 from ucsschool.lib.roles import role_pupil
@@ -150,7 +150,7 @@ def prepare_fileservers(school_id):
 	return tested_servers
 
 
-@LDAP_Connection()
+@LDAP_Connection(MACHINE_READ)
 def main(ldap_machine_read=None):
 	status = 100
 
