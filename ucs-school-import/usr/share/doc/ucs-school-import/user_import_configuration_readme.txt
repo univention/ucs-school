@@ -70,7 +70,6 @@ After that follow
 	},
 	<udm attribute name>:	str: scheme (manual-4.1:users:templates) to create a UDM attribute from
 },
-"csv_output":  str: path to the import job result file
 "maildomain": str: value of 'maildomain' variable that can be used in scheme->email. If unset will try to find one in system.
 "mandatory_attributes": list: list of UDM attribute names that must be set by the import
 "no_delete": bool: if set to True, users missing in the input will not be deleted in LDAP.
@@ -80,7 +79,8 @@ After that follow
 	"waiting_period": int:
 },
 "output": {
-	"passwords": str: path to the new users passwords file
+	"new_user_passwords": str: path to the new users passwords file
+	"user_import_summary": str: path to a file to write the summary in CSV fomat to
 },
 "password_length": int [1]: length of the random password generated for new users
 "school": str: name (abbreviation) of school this import is for, if not available from input
