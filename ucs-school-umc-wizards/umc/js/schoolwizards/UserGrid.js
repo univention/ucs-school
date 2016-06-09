@@ -96,6 +96,14 @@ define([
 			return [['school', 'type', 'filter', 'submit']];
 		},
 
+		getDeleteConfirmMessage: function(objects) {
+			var msg = _('Please confirm to delete the %(num)d selected %(objectNamePlural)s from school %(school)s.', {num: objects.length, objectNamePlural: this.objectNamePlural, school: this.schoolLabel});
+			if (objects.length == 1) {
+				msg = _('Please confirm to delete %(objectNameSingular)s "%(objectName)s" from school %(school)s.', {objectNameSingular: this.objectNameSingular, objectName: this.getObjectIdName(objects[0]), school: this.schoolLabel});
+			}
+			return msg;
+		},
+
 		getSearchWidgets: function() {
 			var schools = lang.clone(this.schools);
 			if (schools.length > 1) {

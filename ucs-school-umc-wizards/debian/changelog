@@ -1,3 +1,9 @@
+ucs-school-umc-wizards (8.0.0-4) unstable; urgency=medium
+
+  * Bug #41293: adapt confirm delete user dialog
+
+ -- Jürn Brodersen <brodersen@univention.de>  Thu, 09 Jun 2016 09:39:32 +0200
+
 ucs-school-umc-wizards (8.0.0-3) unstable; urgency=medium
 
   * Bug #41293: support school_class → school_classes API change

@@ -66,9 +66,9 @@ define([
 		},
 
 		createHeader: function() {
-			var headerText = _("Select a school on which you like to work on");
+			var headerText = _("Please select a school");
 			return new Text({
-				content: _('<h1>' + headerText + '<h1>'),
+				content: '<h1>' + headerText + '<h1>',
 				'class': 'umcPageHeader'
 			});
 		},
@@ -106,6 +106,7 @@ define([
 				description: this.description,
 				schools: [selectedSchool],
 				school: selectedSchool.id,
+				schoolLabel: selectedSchool.label,
 				udmLinkEnabled: this.udmLinkEnabled,
 				autoSearch: this.autoSearch,
 				umcpCommand: lang.hitch(this, 'umcpCommand'),
