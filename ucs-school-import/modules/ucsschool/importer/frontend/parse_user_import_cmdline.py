@@ -34,7 +34,7 @@ Default command line frontend for import.
 from argparse import ArgumentParser
 
 
-class ParseCmdline(object):
+class ParseUserImportCmdline(object):
 	"""
 	Setup a command line frontend.
 	"""
@@ -43,7 +43,7 @@ class ParseCmdline(object):
 		Setup the parser. Override to add more arguments or change the defaults.
 		"""
 		self.args = None
-		# TODO: read defaults from defaults.json
+		# TODO: read defaults from user_import_defaults.json
 		self.defaults = dict(
 			dry_run=True,
 			logfile=None,
@@ -54,7 +54,8 @@ class ParseCmdline(object):
 			verbose=False
 		)
 		self.parser = ArgumentParser(description="ucs@school import tool")
-		self.parser.add_argument('conffile', help="Configuration file  to use (e.g. /var/lib/ucs-school-import/configs/defaults.json) [mandatory].")
+		self.parser.add_argument('-c', '--conffile', help="Configuration file to use (e.g. "
+			"/var/lib/ucs-school-import/configs/user_import.json).")
 		self.parser.add_argument('-l', '--logfile',
 			help="Write to additional logfile (shortcut for --set logfile=...).")
 		self.parser.add_argument("--set", dest="settings", metavar="KEY=VALUE", nargs='*',

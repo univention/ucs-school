@@ -32,15 +32,27 @@ ucs@school legacy import tool cmdline frontend.
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-from ucsschool.importer.frontend.cmdline import CommandLine
-from ucsschool.importer.legacy.legacy_parse_cmdline import LegacyParseCmdline
+from ucsschool.importer.frontend.user_import_cmdline import UserImportCommandLine
+from ucsschool.importer.legacy.legacy_user_import_parse_cmdline import LegacyUserImportParseUserImportCmdline
 from ucsschool.lib.models.utils import stopped_notifier
 
 
-class LegacyCommandLine(CommandLine):
+class LegacyUserImportCommandLine(UserImportCommandLine):
 	def parse_cmdline(self):
-		parser = LegacyParseCmdline()
+		parser = LegacyUserImportParseUserImportCmdline()
 		self.args = parser.parse_cmdline()
+
+	@property
+	def configuration_files(self):
+		"""
+		Add legacy user import specific configuration files.
+
+		:return: list: list of filenames
+		"""
+		res = super(LegacyUserImportCommandLine, self).configuration_files
+		res.append("/usr/share/ucs-school-import/configs/user_import_legacy_defaults.json")
+		res.append("/var/lib/ucs-school-import/configs/user_import_legacy.json")
+		return res
 
 	def do_import(self):
 		importer = self.factory.make_mass_importer(self.config["dry_run"])

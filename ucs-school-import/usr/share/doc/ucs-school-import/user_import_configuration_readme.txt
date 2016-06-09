@@ -1,14 +1,26 @@
-JSON configuration file reference
-=================================
+User import configuration file reference
+========================================
 
-All options can be set from the command line using "--set <option>".
+Configuration files are interpreted in a hierarchical way.
+*Please read global_configuration_readme.txt first!*
 
-[1]: mandatory (probably much more than is marked)
+After reading the global configuration options (1. and 2.), module specific
+configuration is read. In case of the user import, those are:
+
+3. /usr/share/ucs-school-import/configs/user_import_defaults.json (do not edit)
+4. /var/lib/ucs-school-import/configs/user_import.json (edit this)
+
+After that follow
+5. Configuration file set on the command line.
+6. Options set on the command line by --set and its aliases.
+
+
+[1]: mandatory
 [2]: default value for [3]
 [3]: if this is not set, fall back to [2]
 
 
-"factory": str: fully dotted path to (a subclass of) ucsschool.importer.default_factory.DefaultFactory
+"factory": str: fully dotted path to (a subclass of) ucsschool.importer.default_user_import_factory.DefaultUserImportFactory
 "classes": {
 	"reader": str: fully dotted path to a subclass of BaseReader e.g. "ucsschool.importer.reader.csv_reader.CsvReader"
 	"import_user":  str: fully dotted path to a *function* that returns an object of the appropriate subclass of ImportUser
@@ -22,7 +34,7 @@ All options can be set from the command line using "--set <option>".
 "input": {
 	"type": str [1]: "csv", "json", "socket" etc
 	"filename": str: path to the input file (csv etc)
-}
+},
 "activate_new_users": {
 	"default":           bool [2]: if the new user should be activated
 	"student":           bool [3]: if the new user should be activated
@@ -59,8 +71,6 @@ All options can be set from the command line using "--set <option>".
 	<udm attribute name>:	str: scheme (manual-4.1:users:templates) to create a UDM attribute from
 },
 "csv_output":  str: path to the import job result file
-"dry_run": bool: set to False if changes should be commited to LDAP
-"logfile": str: path to additional logfile
 "maildomain": str: value of 'maildomain' variable that can be used in scheme->email. If unset will try to find one in system.
 "mandatory_attributes": list: list of UDM attribute names that must be set by the import
 "no_delete": bool: if set to True, users missing in the input will not be deleted in LDAP.
@@ -79,6 +89,5 @@ All options can be set from the command line using "--set <option>".
 "user_deletion": {
 	"delete":	bool: if the user should be deleted (false -> it will be deactivated)
 	"expiration": int: number of days before the account will be deleted or deactivated
-	}
+},
 "user_role": str: if set, all new users from input will have that role (student|staff|teacher|teacher_and_staff)
-}

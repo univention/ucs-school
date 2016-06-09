@@ -1,0 +1,21 @@
+{
+	"factory": "ucsschool.importer.default_user_import_factory.DefaultUserImportFactory",
+	"classes": {},
+	"input": {
+		"type": "csv",
+		"filename": "/var/lib/ucs-school-import/new-format-userimport.csv"
+	},
+	"csv": {
+		"mapping": {
+			"Schulen": "schools",
+			"Vorname": "firstname",
+			"Nachname": "lastname",
+			"Klassen": "school_classes",
+			"Mailadresse": "email",
+			"description": "description",
+			"phone": "phone"
+		}
+	},
+	"sourceUID": "NewDB",
+	"user_role": "student"
+}

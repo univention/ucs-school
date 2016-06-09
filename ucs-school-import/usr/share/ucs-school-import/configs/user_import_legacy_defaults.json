@@ -1,5 +1,6 @@
 {
-	"factory": "ucsschool.importer.legacy.legacy_csv_factory.LegacyCsvFactory",
+	"factory": "ucsschool.importer.legacy.legacy_csv_user_import_factory.LegacyCsvUserImportFactory",
+	"classes": {},
 	"input": {
 		"type": "csv",
 		"filename": "/var/lib/ucs-school-import/legacy-format-userimport.csv"
@@ -20,7 +21,6 @@
 			"10": "__is_staff"
 		}
 	},
-	"dry_run": false,
 	"scheme": {
 		"email": "<email>",
 		"rid": "<name>",

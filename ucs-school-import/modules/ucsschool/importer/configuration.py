@@ -37,13 +37,11 @@ import json
 from ucsschool.importer.exceptions import InitialisationError, ReadOnlyConfiguration
 from ucsschool.importer.utils.logging2udebug import get_logger
 
-DEFAULTS_FILE = "/usr/share/ucs-school-import/configs/defaults.json"
-
 logger = get_logger()
 
 
-def setup_configuration(conffile, **kwargs):
-	config = Configuration(conffile)
+def setup_configuration(conffiles, **kwargs):
+	config = Configuration(conffiles)
 	config.update(kwargs)
 	config.close()
 	if not config.get("sourceUID"):
@@ -112,18 +110,24 @@ class Configuration(object):
 	Singleton to the global configuration object.
 	"""
 	class __SingleConf:
-		def __init__(self, filename):
-			if not filename:
+		conffiles = list()
+		def __init__(self, filenames):
+			if not filenames:
 				raise InitialisationError("Configuration not yet loaded.")
-			try:
-				cf = ConfigurationFile(DEFAULTS_FILE)
-				self.config = ReadOnlyDict(cf.read())
-				cf = ConfigurationFile(filename)
-				self.config.update(cf.read())
-			except ValueError as ve:
-				raise InitialisationError("Error in configuration file '{}': {}.".format(filename, ve))
-			except IOError as exc:
-				raise InitialisationError("Error reading configuration file {}.".format(exc))
+			self.config = None
+			for filename in filenames:
+				try:
+					cf = ConfigurationFile(filename)
+					if self.config:
+						self.config.update(cf.read())
+					else:
+						self.config = ReadOnlyDict(cf.read())
+					self.conffiles.append(filename)
+				except ValueError as ve:
+					raise InitialisationError("Error in configuration file '{}': {}.".format(filename, ve))
+				except IOError as exc:
+					raise InitialisationError("Error reading configuration file {}.".format(exc))
+			self.config.conffiles = self.conffiles
 
 	_instance = None
 

@@ -71,14 +71,14 @@ then
 	univention-config-registry set "ucsschool/import/set/homedrive?$letter"
 	univention-config-registry set 'ucsschool/import/set/netlogon/script/path?ucs-school-logon.vbs'
 
-	# Do not copy defaults.json. We want to be able to add defaults in future
-	# updates.
-	for FILE in new.json legacy.json; do
-		if ! [ -e /var/lib/ucs-school-import/configs/$FILE ]; then
-			cp /usr/share/ucs-school-import/configs/$FILE /var/lib/ucs-school-import/configs
+	# copy defaults files to /var, for users to modify
+	for FILE in global user_import user_import_legacy; do
+		if ! [ -e /var/lib/ucs-school-import/configs/${FILE}.json ]; then
+			cp /usr/share/ucs-school-import/configs/${FILE}_defaults.json /var/lib/ucs-school-import/configs/${FILE}.json
 		fi
 	done
 fi
+
 univention-config-registry set \
 	"ucsschool/import/generate/policy/dhcp/searchbase?${use_dhcpsearchbase}" \
 	"ucsschool/import/generate/share/marktplatz?${use_marktplatz}" \

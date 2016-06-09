@@ -35,15 +35,17 @@ import sys
 import os.path
 from argparse import ArgumentParser
 
-from ucsschool.importer.frontend.parse_cmdline import ParseCmdline
+from ucsschool.importer.frontend.parse_user_import_cmdline import ParseUserImportCmdline
 
 
-class LegacyParseCmdline(ParseCmdline):
+class LegacyUserImportParseUserImportCmdline(ParseUserImportCmdline):
 		def __init__(self):
 			self.defaults = dict()
 			self.parser = ArgumentParser(description="Create/modify/delete user accounts according to import file for "
 				"ucs@school.")
 			self.parser.add_argument('importFile', help="CSV file with users to import [mandatory].")
+			self.parser.add_argument('-c', '--conffile', help="Configuration file to use (e.g. "
+				"/var/lib/ucs-school-import/configs/user_import_legacy.json).")
 			self.parser.add_argument("-o", "--outfile", dest="outfile", help="File to write passwords of created users "
 				"to.")
 
@@ -55,7 +57,7 @@ class LegacyParseCmdline(ParseCmdline):
 			else:
 				ucs_test = False
 
-			super(LegacyParseCmdline, self).parse_cmdline()
+			super(LegacyUserImportParseUserImportCmdline, self).parse_cmdline()
 
 			# legacy cmdline tool output emulation
 			print("infile is: {}".format(self.args.importFile))
@@ -72,6 +74,7 @@ class LegacyParseCmdline(ParseCmdline):
 			self.args.settings["input"] = dict(filename=self.args.importFile)
 			self.args.settings["output"] = dict(passwords=self.args.outfile)
 			self.args.verbose = True
+			# adding "logfile" early makes early logging possible
 			self.args.logfile = "/var/log/univention/ucsschool-import.log"
-			self.args.conffile = "/var/lib/ucs-school-import/configs/legacy.json"
+			# self.args.conffile = "/var/lib/ucs-school-import/configs/user_import_legacy.json"
 			return self.args

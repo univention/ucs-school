@@ -1,3 +1,14 @@
+ucs-school-import (14.0.7-1) unstable; urgency=low
+
+  * Bug #41239: rename user import specific classes and files to prevent name
+    clashes with future additions of imports of other object types
+  * Configuration files are now read in a hierarchical way, from global
+    configuration options being overwritten by job specific ones.
+    Overwrite CommandLine.configuration_files() to integrate job specific
+    configuration files.
+
+ -- Daniel Troeder <troeder@univention.de>  Thu, 09 Jun 2016 10:13:30 +0200
+
 ucs-school-import (14.0.6-1) unstable; urgency=low
 
   * Bug #41494:

@@ -1,21 +1,28 @@
 {
-	"factory": "ucsschool.importer.default_factory.DefaultFactory",
+	"factory": "ucsschool.importer.default_user_import_factory.DefaultUserImportFactory",
 	"classes": {},
 	"input": {
-		"type": null
+		"type": "csv",
+		"filename": "/var/lib/ucs-school-import/new-format-userimport.csv"
+	},
+	"csv": {
+		"header_lines": 1,
+		"incell-delimiter": {
+			"default": ","
+		},
+		"mapping": {}
 	},
 	"activate_new_users": {
 		"default": true
 	},
 	"scheme": {
 		"email": "<firstname>[0].<lastname>[COUNTER2]@<maildomain>",
-		"rid": "<username>",
+		"rid": "<email>",
 		"username": {
+			"allow_rename": false,
 			"default": "<:umlauts><firstname>[0].<lastname>[COUNTER2]"
 		}
 	},
-	"dry_run": true,
-	"logfile": "/var/log/univention/ucsschool-import.log",
 	"maildomain": null,
 	"mandatory_attributes": ["firstname", "lastname", "name", "school"],
 	"no_delete": false,
@@ -36,6 +43,5 @@
 		"delete": true,
 		"expiration": 0
 	},
-	"user_role": null,
-	"verbose": true
+	"user_role": null
 }

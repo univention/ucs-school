@@ -3,7 +3,7 @@
 #
 # Univention UCS@School
 """
-ucs@school import tool cmdline frontend.
+Base class for ucs@school import tool cmdline frontends.
 """
 # Copyright 2016 Univention GmbH
 #
@@ -38,7 +38,7 @@ from logging import StreamHandler
 import traceback
 
 from ucsschool.importer.utils.logging2udebug import get_logger, add_stdout_handler, add_file_handler
-from ucsschool.importer.frontend.parse_cmdline import ParseCmdline
+from ucsschool.importer.frontend.parse_user_import_cmdline import ParseUserImportCmdline
 from ucsschool.importer.configuration import setup_configuration
 from ucsschool.importer.factory import setup_factory
 from ucsschool.importer.exceptions import ToManyErrors, UcsSchoolImportFatalError
@@ -52,8 +52,9 @@ class CommandLine(object):
 		self.factory = None
 
 	def parse_cmdline(self):
-		parser = ParseCmdline()
+		parser = ParseUserImportCmdline()
 		self.args = parser.parse_cmdline()
+		return self.args
 
 	def setup_logging(self, stdout=False, files=None):
 		if stdout:
@@ -62,7 +63,26 @@ class CommandLine(object):
 			add_file_handler(self.logger, files)
 
 	def setup_config(self):
-		self.config = setup_configuration(self.args.conffile, **self.args.settings)
+		configs = self.configuration_files
+		if self.args.conffile:
+			configs.append(self.args.conffile)
+		self.config = setup_configuration(configs, **self.args.settings)
+		return self.config
+
+	@property
+	def configuration_files(self):
+		"""
+		IMPLEMENTME to add module specific configuration files:
+		res = super(YouClass, self).configuration_files
+		res.append("/your/config.json")
+		return res
+
+		:return: list: list of filenames
+		"""
+		return [
+			"/usr/share/ucs-school-import/configs/global_defaults.json",
+			"/var/lib/ucs-school-import/configs/global.json"
+		]
 
 	def do_import(self):
 		importer = self.factory.make_mass_importer(self.config["dry_run"])
@@ -84,7 +104,7 @@ class CommandLine(object):
 			self.setup_logging(self.config["verbose"], self.config["logfile"])
 
 			self.logger.info("------ ucs@school import tool configured ------")
-			self.logger.info("Using configuration file %s.", self.args.conffile)
+			self.logger.info("Used configuration files: %s.", self.config.conffiles)
 			self.logger.info("Using command line arguments: %r", self.args.settings)
 			self.logger.info("Configuration is:\n%s", pprint.pformat(self.config))
 	

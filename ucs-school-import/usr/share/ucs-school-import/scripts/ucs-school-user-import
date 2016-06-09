@@ -34,11 +34,11 @@ ucs@school import tool.
 
 import sys
 
-from ucsschool.importer.frontend.cmdline import CommandLine
+from ucsschool.importer.frontend.user_import_cmdline import UserImportCommandLine
 
 
 def main():
-	ui = CommandLine()
+	ui = UserImportCommandLine()
 	ui.main()
 
 if __name__ == "__main__":

@@ -3,7 +3,7 @@
 #
 # Univention UCS@School
 """
-ucs@school import tool for legacy csv format.
+ucs@school new import tool cmdline frontend.
 """
 # Copyright 2016 Univention GmbH
 #
@@ -32,14 +32,18 @@ ucs@school import tool for legacy csv format.
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-import sys
-
-from ucsschool.importer.legacy.legacy_user_import_cmdline import LegacyUserImportCommandLine
+from ucsschool.importer.frontend.cmdline import CommandLine
 
 
-def main():
-	ui = LegacyUserImportCommandLine()
-	ui.main()
+class UserImportCommandLine(CommandLine):
+	@property
+	def configuration_files(self):
+		"""
+		Add new user import specific configuration files.
 
-if __name__ == "__main__":
-	sys.exit(main())
+		:return: list: list of filenames
+		"""
+		res = super(UserImportCommandLine, self).configuration_files
+		res.append("/usr/share/ucs-school-import/configs/user_import_defaults.json")
+		res.append("/var/lib/ucs-school-import/configs/user_import.json")
+		return res

@@ -32,7 +32,7 @@ Factory implementation for import using CSV in legacy format.
 # <http://www.gnu.org/licenses/>.
 
 
-from ucsschool.importer.default_factory import DefaultFactory
+from ucsschool.importer.default_user_import_factory import DefaultUserImportFactory
 from ucsschool.importer.legacy.legacy_csv_reader import LegacyCsvReader
 from ucsschool.importer.legacy.legacy_import_user import LegacyImportStaff, LegacyImportStudent,\
 	LegacyImportTeacher, LegacyImportTeachersAndStaff, LegacyImportUser
@@ -41,7 +41,7 @@ from ucsschool.importer.legacy.legacy_new_user_password_csv_exporter import Lega
 from ucsschool.lib.roles import role_pupil, role_teacher, role_staff
 
 
-class LegacyCsvFactory(DefaultFactory):
+class LegacyCsvUserImportFactory(DefaultUserImportFactory):
 	def make_reader(self, **kwargs):
 		"""
 		Creates a reader for legacy CSV files.

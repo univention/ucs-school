@@ -196,7 +196,7 @@ class ImportUser(User):
 
 		* Attributes (email, rid, [user]name etc.) are ignored, as they are
 		processed separately in make_*.
-		* See /usr/share/doc/ucs-school-import/configuration_readme.txt.gz
+		* See /usr/share/doc/ucs-school-import/user_import_configuration_readme.txt.gz
 		section "scheme" for details on the configuration.
 		"""
 		ignore_keys = self.to_dict().keys()

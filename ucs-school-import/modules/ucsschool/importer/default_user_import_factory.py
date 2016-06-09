@@ -49,7 +49,7 @@ from ucsschool.importer.factory import load_class
 from ucsschool.importer.exceptions import InitialisationError
 
 
-class DefaultFactory(object):
+class DefaultUserImportFactory(object):
 	"""
 	Default implementation of the Abstract Factory.
 
@@ -70,7 +70,7 @@ class DefaultFactory(object):
 		of the methods here without the prepended 'make_'.
 		* It will be checked if the configured classes are really subclasses as
 		described in the documentation
-		(/usr/share/doc/ucs-school-import/configuration_readme.txt).
+		(/usr/share/doc/ucs-school-import/user_import_configuration_readme.txt).
 		* Please update the documentation if classes/methods are added.
 		* Take care to honor the signature of the methods, this cannot be
 		checked.
