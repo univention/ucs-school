@@ -30,7 +30,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-VERSION=6
+VERSION=7
 . /usr/share/univention-join/joinscripthelper.lib
 joinscript_init
 
@@ -142,6 +142,30 @@ if [ $JS_LAST_EXECUTED_VERSION -lt 4 ]; then
 									dns/register/srv_records/gc?false \
 									dns/register/srv_records/pdc?false \
 									samba4/dns/domain/register?false
+fi
+
+if [ $JS_LAST_EXECUTED_VERSION -lt 7 ] ; then
+	if [ -x /etc/init.d/slapd ] &&
+		   [ -x /usr/share/univention-ldap/ldap_setup_index ] &&
+		   [ -e /var/univention-join/joined ] &&
+		   univention-ldapsearch -LLL -o ldif-wrap=no -b cn=Subschema -s base attributeTypes | grep -Fq "NAME 'ucsschoolSchool'" &&
+		   univention-ldapsearch -LLL -o ldif-wrap=no -b cn=Subschema -s base attributeTypes | grep -Fq "NAME 'ucsschoolSourceUID'" &&
+		   univention-ldapsearch -LLL -o ldif-wrap=no -b cn=Subschema -s base attributeTypes | grep -Fq "NAME 'ucsschoolRecordUID'"
+	then
+		echo "Updating LDAP indices..."
+		unset stop_and_start_slapd
+		pidof slapd >/dev/null 2>/dev/null && stop_and_start_slapd=yes
+		[ -n "$stop_and_start_slapd" ] && invoke-rc.d slapd stop
+		/usr/share/univention-ldap/ldap_setup_index \
+			--verbose \
+			--add-eq ucsschoolSchool --add-eq ucsschoolSourceUID --add-eq ucsschoolRecordUID \
+			--add-pres ucsschoolSchool --add-pres ucsschoolSourceUID --add-pres ucsschoolRecordUID \
+			--add-sub ucsschoolRecordUID || die
+		[ -n "$stop_and_start_slapd" ] && invoke-rc.d slapd start
+	else
+		echo "ERROR: cannot update LDAP indices (ldap server not running?) - stopping here"
+		exit 1
+	fi
 fi
 
 ignore_user ()
