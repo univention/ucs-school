@@ -3,7 +3,7 @@ release: "4.1"
 version: [2]
 scope: ucs_4.1-0-ucs-school-4.1r2
 src: ucs-school-import
-fix: 14.0.4-1.251.201606072340
+fix: 14.0.7-1.253.201606091024
 desc: |
  This update addresses the following issue(s):
  * A regression (due to Bug #40712) during evaluating boolean UCR variables has
@@ -17,5 +17,10 @@ desc: |
  * The the LDAP attributes "ucsschoolSchool", "ucsschoolRecordUID" and
    "ucsschoolSourceUID" are added automatically to the LDAP indices during
    the update to UCS@school 4.1 R2 (Bug #41297).
- * 
-bug: [40712,41162,41297,41494]
+ * The "import_user" script has been rewritten from scratch, with a focus on
+   extensibility. Additionally to the existing hooks in
+   /usr/share/ucs-school-import/hooks/user_* Python-based hooks can now be
+   placed in /usr/share/ucs-school-import/pyhooks/user_*. Documentation on
+   configuration files is available at /usr/share/doc/ucs-school-import
+   (Bug #41239).
+bug: [40712,41162,41297,41494,41239]
