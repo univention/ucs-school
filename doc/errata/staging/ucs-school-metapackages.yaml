@@ -1,0 +1,12 @@
+product: ucsschool
+release: "4.1"
+version: [2]
+scope: ucs_4.1-0-ucs-school-4.1r2
+src: ucs-school-metapackages
+fix:
+desc: |
+ This update addresses the following issue(s):
+ * The the LDAP attributes "ucsschoolSchool", "ucsschoolRecordUID" and
+   "ucsschoolSourceUID" are added automatically to the LDAP indices during
+   the update to UCS@school 4.1 R2 (Bug #41297).
+bug: [41297]
