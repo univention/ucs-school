@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-wizards\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2015-04-21 12:00+0200\n"
+"POT-Creation-Date: 2016-06-08 17:57+0200\n"
 "PO-Revision-Date: 2015-02-21 20:51+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -51,19 +51,22 @@ msgstr ""
 "Stellen gespeichert wurde, ist jetzt überholt. Das kann zu (harmlosen, aber "
 "störenden) Fehlermeldungen führen. Möchten Sie sich abmelden?"
 
-#: umc/js/schoolwizards/ClassGrid.js:70
 #: umc/js/schoolwizards/ComputerGrid.js:79
-#: umc/js/schoolwizards/ComputerGrid.js:98 umc/js/schoolwizards/UserGrid.js:93
-#: umc/js/schoolwizards/UserGrid.js:109
+#: umc/js/schoolwizards/ComputerGrid.js:98 umc/js/schoolwizards/ClassGrid.js:70
+#: umc/js/schoolwizards/UserGrid.js:110 umc/js/schoolwizards/UserGrid.js:126
 msgid "All"
 msgstr "Alle"
 
-#: umc/js/schoolwizards/Grid.js:237 umc/js/schoolwizards/Grid.js:340
+#: umc/js/schoolwizards/UserGridChooseSchool.js:101
+msgid "Back"
+msgstr "Zurück"
+
+#: umc/js/schoolwizards/Grid.js:240 umc/js/schoolwizards/Grid.js:343
 #: umc/js/schoolwizards/SchoolGrid.js:145
 msgid "Cancel"
 msgstr "Abbrechen"
 
-#: umc/js/schoolwizards/UserGrid.js:68 umc/js/schoolwizards/UserWizard.js:132
+#: umc/js/schoolwizards/UserGrid.js:72 umc/js/schoolwizards/UserWizard.js:132
 msgid "Class"
 msgstr "Klasse"
 
@@ -76,7 +79,7 @@ msgstr ""
 "Klasse \"%s\" wurde erfolgreich erstellt. Es kann nun eine weitere Klasse "
 "erstellt oder der Wizard über die Schaltfläche \"Abbrechen\" beendet werden."
 
-#: umc/js/schoolwizards/UserGrid.js:69
+#: umc/js/schoolwizards/UserGrid.js:73
 #, python-format
 msgid "Class of the %s."
 msgstr "Klasse des %ss."
@@ -97,12 +100,11 @@ msgstr ""
 msgid "Computer type"
 msgstr "Rechnertyp"
 
-#: umc/js/schoolwizards/Grid.js:241
+#: umc/js/schoolwizards/Grid.js:244
 msgid "Create"
 msgstr "Erstellen"
 
-#: umc/js/schoolwizards/ClassWizard.js:43
-#: umc/js/schoolwizards/UserWizard.js:96
+#: umc/js/schoolwizards/ClassWizard.js:43 umc/js/schoolwizards/UserWizard.js:96
 msgid "Create a new class"
 msgstr "Neue Klasse erstellen"
 
@@ -119,11 +121,11 @@ msgstr "Neuen Benutzer erstellen"
 msgid "Create a new {itemType}"
 msgstr "{itemType} erstellen"
 
-#: umc/js/schoolwizards.js:79
+#: umc/js/schoolwizards.js:81
 msgid "Create school"
 msgstr "Schule erstellen"
 
-#: umc/js/schoolwizards/Grid.js:167 umc/js/schoolwizards/Grid.js:343
+#: umc/js/schoolwizards/Grid.js:167 umc/js/schoolwizards/Grid.js:346
 msgid "Delete"
 msgstr "Löschen"
 
@@ -145,11 +147,11 @@ msgstr "Beschreibung"
 msgid "E-Mail"
 msgstr "E-Mail"
 
-#: umc/js/schoolwizards/UserGrid.js:72
+#: umc/js/schoolwizards/UserGrid.js:81
 msgid "E-Mail address"
 msgstr "E-Mail Adresse"
 
-#: umc/js/schoolwizards/UserGrid.js:73
+#: umc/js/schoolwizards/UserGrid.js:82
 #, python-format
 msgid "E-Mail address of the %s."
 msgstr "E-Mail Adresse des %s."
@@ -196,9 +198,9 @@ msgstr "Geben Sie Detailinformationen zum Anlegen eines neuen Computers an."
 msgid "Enter details to create a new user"
 msgstr "Geben Sie Detailinformationen zum Anlegen eines neuen Benutzers an."
 
-#: umc/js/schoolwizards/ClassGrid.js:83
 #: umc/js/schoolwizards/ComputerGrid.js:108
-#: umc/js/schoolwizards/UserGrid.js:127 umc/js/schoolwizards/SchoolGrid.js:107
+#: umc/js/schoolwizards/ClassGrid.js:83 umc/js/schoolwizards/UserGrid.js:144
+#: umc/js/schoolwizards/SchoolGrid.js:107
 msgid "Filter"
 msgstr "Filter"
 
@@ -237,7 +239,7 @@ msgstr "Verwaltung von Schulklassen"
 msgid "Management of school computers"
 msgstr "Verwaltung von Schulrechnern"
 
-#: umc/js/schoolwizards/UserGrid.js:46
+#: umc/js/schoolwizards/UserGrid.js:45
 msgid "Management of school users"
 msgstr "Verwaltung von Schulbenutzern"
 
@@ -258,10 +260,9 @@ msgstr ""
 "nicht länger als %s Zeichen sein. Bitte wählen Sie einen kürzeren "
 "Benutzernamen."
 
-#: umc/js/schoolwizards/ClassGrid.js:56 umc/js/schoolwizards/ClassWizard.js:52
-#: umc/js/schoolwizards/ComputerGrid.js:56
+#: umc/js/schoolwizards/ComputerGrid.js:56 umc/js/schoolwizards/ClassGrid.js:56
+#: umc/js/schoolwizards/ClassWizard.js:52 umc/js/schoolwizards/UserGrid.js:60
 #: umc/js/schoolwizards/ComputerWizard.js:69
-#: umc/js/schoolwizards/UserGrid.js:56
 msgid "Name"
 msgstr "Name"
 
@@ -269,7 +270,7 @@ msgstr "Name"
 msgid "Name of educational school server"
 msgstr "Name des Schulservers im Edukativnetz"
 
-#: umc/js/schoolwizards/UserGrid.js:61
+#: umc/js/schoolwizards/UserGrid.js:65
 #, python-format
 msgid "Name of the %s."
 msgstr "Name des %s."
@@ -291,22 +292,26 @@ msgstr ""
 msgid "Name of the school"
 msgstr "Name der Schule"
 
+#: umc/js/schoolwizards/UserGridChooseSchool.js:87
+msgid "Next"
+msgstr "Weiter"
+
 #: umc/js/schoolwizards/Grid.js:206
 #, python-format
 msgid "No %(objPlural)s could be found"
 msgstr "Es konnten keine %(objPlural)s gefunden werden"
 
-#: umc/js/schoolwizards/Grid.js:232
+#: umc/js/schoolwizards/Grid.js:235
 #, python-format
 msgid "No %(objectNamePlural)s found"
 msgstr "Keine %(objectNamePlural)s gefunden"
 
-#: umc/js/schoolwizards/Grid.js:233
+#: umc/js/schoolwizards/Grid.js:236
 #, python-format
 msgid "No %(objectNamePlural)s were found."
 msgstr "Es wurden keine %(objectNamePlural)s gefunden."
 
-#: umc/js/schoolwizards.js:74
+#: umc/js/schoolwizards.js:76
 msgid ""
 "No school could be found within the domain. Before students, classes, and "
 "computers can be administrated, at least one school has to be created."
@@ -315,7 +320,7 @@ msgstr ""
 "Rechner verwaltet werden können, muss mindestens eine Schule eingerichtet "
 "werden."
 
-#: umc/js/schoolwizards.js:80
+#: umc/js/schoolwizards.js:82
 msgid "No school found"
 msgstr "Es konnte keine Schule gefunden werden"
 
@@ -323,14 +328,32 @@ msgstr "Es konnte keine Schule gefunden werden"
 msgid "Password"
 msgstr "Passwort"
 
-#: umc/js/schoolwizards/Grid.js:330
+#: umc/js/schoolwizards/UserGrid.js:102
+#, python-format
+msgid ""
+"Please confirm to delete %(objectNameSingular)s \"%(objectName)s\" from "
+"school %(school)s."
+msgstr ""
+"Bitte bestätigen, dass %(objectNameSingular)s \"%(objectName)s\" aus Schule "
+"\"%(school)s\" gelöscht werden soll."
+
+#: umc/js/schoolwizards/Grid.js:333
 #, python-format
 msgid "Please confirm to delete %(objectNameSingular)s \"%(objectName)s\"."
 msgstr ""
 "Bitte bestätigen, dass %(objectNameSingular)s \"%(objectName)s\" gelöscht "
 "werden soll."
 
-#: umc/js/schoolwizards/Grid.js:328
+#: umc/js/schoolwizards/UserGrid.js:100
+#, python-format
+msgid ""
+"Please confirm to delete the %(num)d selected %(objectNamePlural)s from "
+"school %(school)s."
+msgstr ""
+"Bitte bestätigen Sie die Löschung der %(num)d ausgewählten "
+"%(objectNamePlural)s aus Schule \"%(school)s\"."
+
+#: umc/js/schoolwizards/Grid.js:331
 #, python-format
 msgid "Please confirm to delete the %(num)d selected %(objectNamePlural)s."
 msgstr ""
@@ -347,12 +370,12 @@ msgid "Please confirm to delete the school \"%(displayName)s\" (%(name)s)."
 msgstr ""
 "Bitte bestätigen Sie die Löschung der Schule \"%(displayName)s\" (%(name)s)."
 
-#: umc/js/schoolwizards/UserGrid.js:64 umc/js/schoolwizards/UserGrid.js:105
+#: umc/js/schoolwizards/UserGrid.js:68 umc/js/schoolwizards/UserGrid.js:122
 #: umc/js/schoolwizards/UserWizard.js:70
 msgid "Role"
 msgstr "Rolle"
 
-#: umc/js/schoolwizards/UserGrid.js:65
+#: umc/js/schoolwizards/UserGrid.js:69
 #, python-format
 msgid "Role of the %s."
 msgstr "Rolle des %s."
@@ -361,9 +384,10 @@ msgstr "Rolle des %s."
 msgid "Save"
 msgstr "Speichern"
 
+#: umc/js/schoolwizards/Grid.js:181 umc/js/schoolwizards/ComputerGrid.js:85
 #: umc/js/schoolwizards/ClassGrid.js:76
-#: umc/js/schoolwizards/ComputerGrid.js:85 umc/js/schoolwizards/Grid.js:181
-#: umc/js/schoolwizards/UserGrid.js:98 umc/js/schoolwizards/Wizard.js:194
+#: umc/js/schoolwizards/UserGridChooseSchool.js:81
+#: umc/js/schoolwizards/UserGrid.js:115 umc/js/schoolwizards/Wizard.js:194
 msgid "School"
 msgstr "Schule"
 
@@ -376,7 +400,7 @@ msgstr "Schulkürzel"
 msgid "School information"
 msgstr "Schulinformationen"
 
-#: umc/js/schoolwizards/Grid.js:257
+#: umc/js/schoolwizards/Grid.js:260
 msgid "Search"
 msgstr "Suchen"
 
@@ -384,6 +408,10 @@ msgstr "Suchen"
 #, python-format
 msgid "Search for %s"
 msgstr "%s suchen"
+
+#: umc/js/schoolwizards/UserGridChooseSchool.js:69
+msgid "Please select a school"
+msgstr "Bitte eine Schule auswählen"
 
 #: umc/js/schoolwizards/SchoolWizard.js:87
 msgid "Server for Windows home directories"
@@ -393,11 +421,11 @@ msgstr "Server für Windows-Heimatverzeichnisse"
 msgid "Server for class shares"
 msgstr "Server für Klassenfreigaben"
 
-#: umc/js/schoolwizards/UserGrid.js:118 umc/js/schoolwizards/UserWizard.js:79
+#: umc/js/schoolwizards/UserGrid.js:135 umc/js/schoolwizards/UserWizard.js:79
 msgid "Staff"
 msgstr "Mitarbeiter"
 
-#: umc/js/schoolwizards/UserGrid.js:112 umc/js/schoolwizards/UserWizard.js:73
+#: umc/js/schoolwizards/UserGrid.js:129 umc/js/schoolwizards/UserWizard.js:73
 msgid "Student"
 msgstr "Schüler"
 
@@ -405,11 +433,11 @@ msgstr "Schüler"
 msgid "Subnet mask"
 msgstr "Subnetzmaske"
 
-#: umc/js/schoolwizards/UserGrid.js:115 umc/js/schoolwizards/UserWizard.js:76
+#: umc/js/schoolwizards/UserGrid.js:132 umc/js/schoolwizards/UserWizard.js:76
 msgid "Teacher"
 msgstr "Lehrer"
 
-#: umc/js/schoolwizards/UserGrid.js:121 umc/js/schoolwizards/UserWizard.js:82
+#: umc/js/schoolwizards/UserGrid.js:138 umc/js/schoolwizards/UserWizard.js:82
 msgid "Teachers and staff"
 msgstr "Lehrer und Mitarbeiter"
 
@@ -432,7 +460,7 @@ msgstr ""
 "dem Unterstrich bestehen. In der Regel kann der automatisch vorgeschlagene "
 "Wert unverändert übernommen werden."
 
-#: umc/js/schoolwizards.js:75
+#: umc/js/schoolwizards.js:77
 msgid "The module for administrating schools will be opened."
 msgstr "Es wird daher jetzt das Modul zur Verwaltung von Schulen geöffnet."
 
@@ -468,7 +496,7 @@ msgstr "Benutzername"
 msgid "Warning"
 msgstr "Warnung"
 
-#: umc/js/schoolwizards/Grid.js:234
+#: umc/js/schoolwizards/Grid.js:237
 #, python-format
 msgid "Would you like to create %(firstObject)s now?"
 msgstr "Möchten Sie jetzt %(firstObject)s anlegen?"
@@ -493,11 +521,11 @@ msgstr "Rechner"
 msgid "school"
 msgstr "Schule"
 
-#: umc/js/schoolwizards/UserGrid.js:49
+#: umc/js/schoolwizards/UserGrid.js:48
 msgid "school user"
 msgstr "Schulbenutzer"
 
-#: umc/js/schoolwizards/UserGrid.js:48
+#: umc/js/schoolwizards/UserGrid.js:47
 msgid "school users"
 msgstr "Schulbenutzer"
 
@@ -517,7 +545,7 @@ msgstr "den ersten Rechner"
 msgid "the first school"
 msgstr "die erste Schule"
 
-#: umc/js/schoolwizards/UserGrid.js:50
+#: umc/js/schoolwizards/UserGrid.js:49
 msgid "the first school user"
 msgstr "den ersten Schulbenutzer"
 

@@ -1,3 +1,9 @@
+ucs-school-umc-wizards (8.0.0-5) unstable; urgency=medium
+
+  * Bug #41293: adapt translation
+
+ -- Jürn Brodersen <brodersen@univention.de>  Thu, 09 Jun 2016 09:51:42 +0200
+
 ucs-school-umc-wizards (8.0.0-4) unstable; urgency=medium
 
   * Bug #41293: adapt confirm delete user dialog
