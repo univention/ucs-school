@@ -166,7 +166,7 @@ html5
 			'columns': ["name","firstname","lastname","birthday","password","email","school_classes" ],
 		}
 		if self.user_type == 'staff':
-			param['columns'].pop('school_classes')
+			param['columns'].remove('school_classes')
 		try:
 			reqResult = self.umc_connection.request('schoolcsvimport/show', param)
 			self.id_nr = reqResult['id']
