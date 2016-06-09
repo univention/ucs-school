@@ -4,13 +4,12 @@
 
 .. moduleauthor:: Ammar Najjar <najjar@univention.de>
 """
-from univention.lib.umc_connection import UMCConnection
 import httplib
 import univention.testing.strings as uts
 import univention.testing.ucr as ucr_test
 import univention.testing.utils as utils
 import univention.uldap as uu
-from univention.testing.ucsschool import UCSTestSchool
+from univention.testing.ucsschool import UCSTestSchool, UMCConnection
 
 
 class Workgroup(object):

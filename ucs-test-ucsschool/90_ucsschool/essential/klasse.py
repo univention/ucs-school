@@ -6,7 +6,7 @@
 """
 import univention.testing.strings as uts
 import univention.testing.utils as utils
-from univention.lib.umc_connection import UMCConnection
+from univention.testing.ucsschool import UMCConnection
 import univention.testing.ucr as ucr_test
 from univention.testing.ucsschool import UCSTestSchool
 

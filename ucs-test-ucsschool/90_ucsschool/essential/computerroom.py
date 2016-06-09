@@ -7,7 +7,7 @@ from essential.workgroup import Workgroup
 from ucsschool.lib.models import IPComputer as IPComputerLib
 from ucsschool.lib.models import MacComputer as MacComputerLib
 from ucsschool.lib.models import WindowsComputer as WindowsComputerLib
-from univention.lib.umc_connection import UMCConnection
+from univention.testing.ucsschool import UMCConnection
 import copy
 import datetime
 import httplib
@@ -116,9 +116,7 @@ class Room(object):
 
 	def aquire_room(self, umc_connection):
 		print 'Executing command: computerroom/room/acquire'
-		reqResult = umc_connection.request(
-			'computerroom/room/acquire', {'room': self.dn})
-		return reqResult
+		return umc_connection.request('computerroom/room/acquire', {'room': self.dn})
 
 	def checK_room_aquire(self, umc_connection, expected_answer):
 		print 'Checking room aquire... (%s)' % self.name

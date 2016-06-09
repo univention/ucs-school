@@ -10,7 +10,7 @@ from univention.testing import utils
 
 from univention.testing.codes import TestCodes
 from univention.config_registry import ConfigRegistry
-from univention.lib.umc_connection import UMCConnection
+from univention.testing.ucsschool import UMCConnection
 
 
 class TestSamba4(object):

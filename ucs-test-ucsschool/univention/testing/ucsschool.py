@@ -36,34 +36,37 @@ API for testing UCS@school and cleaning up after performed tests
 # is obviously wrong in this case.
 from __future__ import absolute_import
 
-import tempfile
+import sys
 import ldap
 import random
+import tempfile
 import subprocess
+import pprint
+from ldap import LDAPError
+
 import univention.testing.utils as utils
 import univention.testing.ucr
 import univention.testing.udm as utu
 import univention.testing.strings as uts
+import univention.testing.udm as udm_test
+
 import univention.admin.uldap as udm_uldap
 import univention.admin.uexceptions as udm_errors
-from ldap import LDAPError
+from univention.lib.umc_connection import UMCConnection as _UMCConnection
+
 from ucsschool.lib.models import School, User, Student, Teacher, TeachersAndStaff, Staff
 from ucsschool.lib.models.utils import add_stream_logger_to_schoollib
-
 from ucsschool.lib.models.group import ComputerRoom
-from ucsschool.lib.models.utils import ucr
-import univention.testing.udm as udm_test
 
 add_stream_logger_to_schoollib()
 
 
-class UCSTestSchool_Exception(Exception):
+class SchoolError(Exception):
 	pass
-class UCSTestSchool_MissingOU(UCSTestSchool_Exception):
+
+class SchoolMissingOU(SchoolError):
 	pass
-class UCSTestSchool_OU_Name_Too_Short(UCSTestSchool_Exception):
-	pass
-class UCSTestSchool_LDAP_ConnectionError(UCSTestSchool_Exception):
+class SchoolLDAPError(SchoolError):
 	pass
 
 
@@ -84,20 +87,20 @@ class UCSTestSchool(object):
 	CN_ADMINS = _ucr.get('ucsschool/ldap/default/container/admins', 'admins')
 	CN_STAFF = _ucr.get('ucsschool/ldap/default/container/staff', 'mitarbeiter')
 
-
 	def __init__(self):
 		self._cleanup_ou_names = set()
-
 
 	def __enter__(self):
 		return self
 
-
 	def __exit__(self, exc_type, exc_value, traceback):
 		if exc_type:
 			print '*** Cleanup after exception: %s %s' % (exc_type, exc_value)
-		self.cleanup()
-
+		try:
+			self.cleanup()
+		except:
+			print ''.join(traceback.format_exception(exc_type, exc_value, traceback))
+			raise
 
 	def open_ldap_connection(self, binddn=None, bindpw=None, ldap_server=None, admin=False, machine=False):
 		'''Opens a new LDAP connection using the given user LDAP DN and
@@ -108,7 +111,7 @@ class UCSTestSchool(object):
 		If machine is set to True, a connection to the master is setup by getMachoneConnection().
 		'''
 
-		assert(not(admin and machine))
+		assert not (admin and machine)
 
 		account = utils.UCSTestDomainAdminCredentials()
 		if not ldap_server:
@@ -124,11 +127,10 @@ class UCSTestSchool(object):
 				lo = udm_uldap.access(host=ldap_server, port=port, base=self._ucr.get('ldap/base'), binddn=account.binddn, bindpw=account.bindpw, start_tls=2)
 		except udm_errors.noObject:
 			raise
-		except LDAPError, e:
-			raise UCSTestSchool_LDAP_ConnectionError('Opening LDAP connection failed: %s' % (e,))
+		except LDAPError as exc:
+			raise SchoolLDAPError('Opening LDAP connection failed: %s' % (exc,))
 
 		return lo
-
 
 	def _remove_udm_object(self, module, dn, raise_exceptions=False):
 		"""
@@ -151,7 +153,6 @@ class UCSTestSchool(object):
 			print msg
 		return msg
 
-
 	def _set_password(self, userdn, password, raise_exceptions=False):
 		"""
 			Tries to set a password for the given user.
@@ -173,7 +174,6 @@ class UCSTestSchool(object):
 			print msg
 		return msg
 
-
 	def cleanup(self, wait_for_replication=True):
 		""" Cleanup all objects created by the UCS@school test environment """
 		for ou_name in self._cleanup_ou_names:
@@ -184,6 +184,7 @@ class UCSTestSchool(object):
 	def cleanup_ou(self, ou_name, wait_for_replication=True):
 		""" Removes the given school ou and all its corresponding objects like groups """
 
+		print ''
 		print '*** Purging OU %s and related objects' % ou_name
 		# remove OU specific groups
 		for grpdn in ('cn=OU%(ou)s-Member-Verwaltungsnetz,cn=ucsschool,cn=groups,%(basedn)s',
@@ -202,10 +203,9 @@ class UCSTestSchool(object):
 		else:
 			oudn = 'ou=%(ou)s,%(basedn)s' % {'ou': ou_name, 'basedn': self._ucr.get('ldap/base')}
 		self._remove_udm_object('container/ou', oudn)
-		print '*** Purging OU %s and related objects (%s): done' % (ou_name,oudn)
+		print '*** Purging OU %s and related objects (%s): done\n\n' % (ou_name, oudn)
 		if wait_for_replication:
 			utils.wait_for_replication()
-
 
 	def create_ou(self, ou_name=None, name_edudc=None, name_admindc=None, displayName='', name_share_file_server=None,
 				  use_cli=False, wait_for_replication=True):
@@ -232,7 +232,7 @@ class UCSTestSchool(object):
 
 		# it is not allowed to set the master as name_edudc ==> resetting name_edudc
 		if isinstance(name_edudc, str):
-			if name_edudc.lower() == self._ucr.get('ldap/master', '').split('.',1)[0].lower():
+			if name_edudc.lower() == self._ucr.get('ldap/master', '').split('.', 1)[0].lower():
 				print '*** It is not allowed to set the master as name_edudc ==> resetting name_edudc'
 				name_edudc = None
 
@@ -244,9 +244,10 @@ class UCSTestSchool(object):
 		self._cleanup_ou_names.add(ou_name)
 
 		if not use_cli:
-			kwargs = {'name': ou_name,
-					  'dc_name': name_edudc
-					  }
+			kwargs = {
+				'name': ou_name,
+				'dc_name': name_edudc
+			}
 			if name_admindc:
 				kwargs['dc_name_administrative'] = name_admindc
 			if name_share_file_server:
@@ -255,12 +256,14 @@ class UCSTestSchool(object):
 			if displayName:
 				kwargs['display_name'] = displayName
 
+			print ''
 			print '*** Creating new OU %r' % (ou_name,)
 			lo = self.open_ldap_connection()
 			School.invalidate_all_caches()
 			School.init_udm_module(lo) # TODO FIXME has to be fixed in ucs-school-lib - should be done automatically
 			result = School(**kwargs).create(lo)
 			print '*** Result of School(...).create(): %r' % (result,)
+			print '\n\n'
 		else:
 			# build command line
 			cmd = [self.PATH_CMD_CREATE_OU]
@@ -281,27 +284,21 @@ class UCSTestSchool(object):
 		ou_dn = 'ou=%s,%s' % (ou_name, self.LDAP_BASE)
 		return ou_name, ou_dn
 
-
 	def get_district(self, ou_name):
 		try:
 			return ou_name[:2]
 		except IndexError:
-			raise UCSTestSchool_OU_Name_Too_Short('The OU name "%s" is too short for district mode' % ou_name)
-
+			raise SchoolError('The OU name "%s" is too short for district mode' % ou_name)
 
 	def get_ou_base_dn(self, ou_name):
 		"""
 		Returns the LDAP DN for the given school OU name (the district mode will be considered).
 		"""
-		dn = '%(school)s,%(district)s%(basedn)s'
-		values = {'school':'ou=%s' % ou_name,
-				  'district':'',
-				  'basedn': self.LDAP_BASE,
-				  }
-		if self._ucr.is_true('ucsschool/ldap/district/enable'):
-			values['district'] = 'ou=%s,' % self.get_district(ou_name)
-		return dn % values
-
+		return '%(school)s,%(district)s%(basedn)s' % {
+			'school':'ou=%s' % ou_name,
+			'basedn': self.LDAP_BASE,
+			'district': 'ou=%s,' % self.get_district(ou_name) if self._ucr.is_true('ucsschool/ldap/district/enable') else ''
+		}
 
 	def get_user_container(self, ou_name, is_teacher=False, is_staff=False):
 		"""
@@ -315,19 +312,32 @@ class UCSTestSchool(object):
 			return 'cn=%s,cn=users,%s' % (self.CN_STAFF, self.get_ou_base_dn(ou_name))
 		return 'cn=%s,cn=users,%s' % (self.CN_STUDENT, self.get_ou_base_dn(ou_name))
 
-
 	def get_workinggroup_dn(self, ou_name, group_name):
 		"""
 		Return the DN of the specified working group.
 		"""
 		return 'cn=%s-%s,cn=schueler,cn=groups,%s' % (ou_name, group_name, self.get_ou_base_dn(ou_name))
 
-
 	def get_workinggroup_share_dn(self, ou_name, group_name):
 		"""
 		Return the DN of the share object for the specified working group.
 		"""
 		return 'cn=%s-%s,cn=shares,%s' % (ou_name, group_name, self.get_ou_base_dn(ou_name))
+
+	def create_teacher(self, *args, **kwargs):
+		return self.create_user(*args, is_teacher=True, is_staff=False, **kwargs)
+
+	def create_student(self, *args, **kwargs):
+		return self.create_user(*args, is_teacher=False, is_staff=False, **kwargs)
+
+	def create_exam_student(self, *args, **kwargs):
+		pass
+
+	def create_staff(self, *args, **kwargs):
+		return self.create_user(*args, is_staff=True, is_teacher=False, **kwargs)
+
+	def create_teacher_and_staff(self, *args, **kwargs):
+		return self.create_user(*args, is_staff=True, is_teacher=True, **kwargs)
 
 
 	def create_user(self, ou_name, username=None, firstname=None, lastname=None, classes=None,
@@ -343,7 +353,7 @@ class UCSTestSchool(object):
 			user_dn:   DN of the created user object
 		"""
 		if not ou_name:
-			raise UCSTestSchool_MissingOU('No OU name specified')
+			raise SchoolMissingOU('No OU name specified')
 
 		# set default values
 		if username is None:
@@ -423,7 +433,7 @@ class UCSTestSchool(object):
 			'email': mailaddress,
 			'password': password,
 			'disabled': not(is_active),
-			}
+		}
 		udm = udm_test.UCSTestUDM()
 		dn, school_admin = udm.create_user(position=position, groups=groups, **kwargs)
 		if wait_for_replication:
@@ -440,7 +450,7 @@ class UCSTestSchool(object):
 			'school': ou_name,
 			'username': username,
 			'password': password,
-			}
+		}
 		dn, domain_admin = udm.create_user(position=position, groups=groups, **kwargs)
 		return domain_admin, dn
 
@@ -452,9 +462,15 @@ class UCSTestSchool(object):
 		kwargs = {
 			'username': username,
 			'password': password,
-			}
+		}
 		dn, global_user = udm.create_user(position=position, **kwargs)
 		return global_user, dn
+
+	def create_school_class(self, *args, **kwargs):
+		pass
+
+	def create_workgroup(self, *args, **kwargs):
+		pass
 
 	def create_computerroom(self, ou_name, name=None, description=None, host_members=None, wait_for_replication=True):
 		"""
@@ -466,7 +482,7 @@ class UCSTestSchool(object):
 			room_dn:   DN of the created room object
 		"""
 		if not ou_name:
-			raise UCSTestSchool_MissingOU('No OU name specified')
+			raise SchoolMissingOU('No OU name specified')
 
 		# set default values
 		if name is None:
@@ -491,6 +507,37 @@ class UCSTestSchool(object):
 		if wait_for_replication:
 			utils.wait_for_replication()
 		return name, result
+
+	def create_windows(self):
+		pass
+
+	def create_mac(self):
+		pass
+
+	def create_ucc(self):
+		pass
+
+	def create_ip_managed_client(self):
+		pass
+
+	def create_school_dc_slave(self):
+		pass
+
+
+class UMCConnection(_UMCConnection):
+
+	def request(self, url, data=None, flavor=None, command='command'):
+		print ''
+		print '*** UMC request: "%s/%s" %s \ndata = %s' % (command, url, '(%s)' % (flavor,) if flavor else '', pprint.pformat(data))
+		try:
+			response = super(UMCConnection, self).request(url, data, flavor, command)
+		except:
+			print 'UMC request failed: %s' % (sys.exc_info()[1],)
+			print ''
+			raise
+		print '*** UMC response: %s' % (pprint.pformat(response),)
+		print ''
+		return response
 
 
 if __name__ == '__main__':

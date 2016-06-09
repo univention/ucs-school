@@ -8,7 +8,7 @@
 .. moduleauthor:: Ammar Najjar <najjar@univention.de>
 """
 
-from univention.lib.umc_connection import UMCConnection
+from univention.testing.ucsschool import UMCConnection
 import os
 import time
 import univention.testing.strings as uts

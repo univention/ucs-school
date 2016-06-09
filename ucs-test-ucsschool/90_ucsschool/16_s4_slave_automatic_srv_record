@@ -13,9 +13,7 @@ import sys
 sys.dont_write_bytecode = True
 import subprocess
 import time
-from univention.testing.codes import TestCodes
 import univention.testing.utils as testing_utils
-from univention import testing
 import univention.testing.ucr as testing_ucr
 import univention.testing.udm as testing_udm
 from univention.admin.uldap import explodeDn
@@ -128,7 +126,7 @@ class Test():
 		with testing_udm.UCSTestUDM() as udm:
 			for school in School.get_all(ldap_machine_read):
 				positive_test_hostname = uts.random_name()
-				dn = udm.create_object("computers/domaincontroller_slave",
+				udm.create_object("computers/domaincontroller_slave",
 					name = positive_test_hostname,
 					position = "cn=dc,cn=server,cn=computers,%s" % (school.dn,),
 					domain = ucr.get('domainname'),
@@ -140,7 +138,7 @@ class Test():
 				positive_test_fqdn_list.append(positive_test_fqdn)
 
 				negative_test_hostname = uts.random_name()
-				dn = udm.create_object("computers/domaincontroller_slave",
+				udm.create_object("computers/domaincontroller_slave",
 					name = negative_test_hostname,
 					position = "cn=dc,cn=server,cn=computers,%s" % (school.dn,),
 					domain = ucr.get('domainname'),
@@ -153,7 +151,7 @@ class Test():
 				## wait for postrun and S4 Connector, check by creating a dummy user and waiting for that object to appear
 				dummy_username = uts.random_username()
 				dummy_password = uts.random_string()
-				dummy_user_dn = udm.create_user(username=dummy_username, password=dummy_password)
+				udm.create_user(username=dummy_username, password=dummy_password)
 				testing_utils.wait_for_replication_and_postrun()
 				wait_for_drs_replication("(sAMAccountName=%s)" % (dummy_username,), attrs="sAMAccountName")
 
@@ -195,7 +193,7 @@ class Test():
 		with testing_udm.UCSTestUDM() as udm:
 			dummy_username = uts.random_username()
 			dummy_password = uts.random_string()
-			dummy_user_dn = udm.create_user(username=dummy_username, password=dummy_password)
+			udm.create_user(username=dummy_username, password=dummy_password)
 			testing_utils.wait_for_replication_and_postrun()
 			wait_for_drs_replication("(sAMAccountName=%s)" % (dummy_username,), attrs="sAMAccountName")
 		# The replication in a multi shool environment need more time

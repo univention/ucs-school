@@ -8,7 +8,8 @@
 ##   - ucs-school-import
 ##   - ucs-school-master
 
-from essential.importou import *
+from essential.importou import TYPE_DC_EDUCATIONAL, TYPE_DC_ADMINISTRATIVE, remove_ou, create_ou_cli
+import univention.testing.strings as uts
 import subprocess
 
 class CreateDC(Exception):

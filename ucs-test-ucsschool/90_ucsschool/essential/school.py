@@ -7,7 +7,7 @@
 from essential.importcomputers import random_ip
 from essential.importou import DCNotFound, DCMembership, DhcpdLDAPBase, TYPE_DC_ADMINISTRATIVE
 from essential.importou import get_ou_base, verify_dc, get_school_ou_from_dn, TYPE_DC_EDUCATIONAL
-from univention.lib.umc_connection import UMCConnection
+from univention.testing.ucsschool import UMCConnection
 from univention.testing.ucsschool import UCSTestSchool
 import univention.testing.strings as uts
 import univention.testing.ucr as ucr_test

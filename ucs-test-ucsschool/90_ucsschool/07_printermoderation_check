@@ -10,7 +10,6 @@
 ## packages:  [ucs-school-umc-printermoderation, ucs-school-import]
 
 from mimetypes import MimeTypes
-from univention.lib.umc_connection import UMCConnection
 import os
 import socket
 import subprocess
@@ -21,6 +20,7 @@ import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool as utu
 import univention.testing.udm
 import univention.testing.utils as utils
+from univention.testing.ucsschool import UMCConnection
 
 
 def _dir(userName):

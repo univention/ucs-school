@@ -6,7 +6,7 @@
 ## packages: [ucs-school-master|ucs-school-slave|ucs-school-singlemaster]
 
 from json import loads
-from univention.lib.umc_connection import UMCConnection
+from univention.testing.ucsschool import UMCConnection
 import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool as utu
 import univention.testing.udm as udm_test

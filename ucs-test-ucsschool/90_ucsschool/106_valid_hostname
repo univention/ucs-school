@@ -8,12 +8,12 @@
 
 from essential.school import School, CreateFail
 from ucsschool.lib.models.attributes import ValidationError
-from univention.lib.umc_connection import UMCConnection
 import subprocess
 import univention.testing.strings as uts
 import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool as utu
 import univention.testing.utils as utils
+from univention.testing.ucsschool import UMCConnection
 
 INVALID_CHARS_CLI = ['ä', 'ö', 'ü', 'ß', '%', '§' , '$', '!', '&',
 					'[', ']', '{', '}', '<', '>', '^', '\\', '?', '~']

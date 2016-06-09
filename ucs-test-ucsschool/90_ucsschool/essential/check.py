@@ -5,7 +5,7 @@
 
 .. moduleauthor:: Ammar Najjar <najjar@univention.de>
 """
-from univention.lib.umc_connection import UMCConnection
+from univention.testing.ucsschool import UMCConnection
 import univention.testing.ucr as ucr_test
 import univention.testing.utils as utils
 

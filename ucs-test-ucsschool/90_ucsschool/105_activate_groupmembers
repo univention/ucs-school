@@ -7,7 +7,6 @@
 
 from essential.workgroup import Workgroup
 from httplib import HTTPException
-from univention.lib.umc_connection import UMCConnection
 import itertools
 import re
 import subprocess
@@ -15,6 +14,7 @@ import univention.testing.strings as uts
 import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool as utu
 import univention.testing.utils as utils
+from univention.testing.ucsschool import UMCConnection
 
 def activate_groupmembers(group_name, newStatus, change_passwd):
 	# [0|1] optional: deactivate     | activate

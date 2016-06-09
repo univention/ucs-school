@@ -8,7 +8,7 @@
 .. moduleauthor:: Ammar Najjar <najjar@univention.de>
 """
 
-from univention.lib.umc_connection import UMCConnection
+from univention.testing.ucsschool import UMCConnection
 from univention.testing.ucs_samba import wait_for_s4connector
 import glob
 import os

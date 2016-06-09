@@ -9,7 +9,6 @@
 ## exposure: dangerous
 ## packages: [ucs-school-umc-printermoderation]
 
-from univention.lib.umc_connection import UMCConnection
 import socket
 import subprocess
 import tempfile
@@ -17,6 +16,7 @@ import univention.testing.strings as uts
 import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool as utu
 import univention.testing.utils as utils
+from univention.testing.ucsschool import UMCConnection
 
 
 # add / del / modify Printer

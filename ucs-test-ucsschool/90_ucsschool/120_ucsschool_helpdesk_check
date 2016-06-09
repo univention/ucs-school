@@ -5,16 +5,16 @@
 ## exposure: dangerous
 ## packages: [ucs-school-umc-helpdesk]
 
-from univention.config_registry import handler_set
-from univention.lib.umc_connection import UMCConnection
-from univention.testing.mail import MailSink
-from univention.testing.network import NetworkRedirector
 import sys
 import tempfile
 import time
 import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool as utu
 import univention.testing.utils as utils
+from univention.config_registry import handler_set
+from univention.testing.ucsschool import UMCConnection
+from univention.testing.mail import MailSink
+from univention.testing.network import NetworkRedirector
 
 def main():
 	# initializing mail data

@@ -87,7 +87,7 @@ class SimpleCurl(object):
 			try:
 				self.curl.perform()
 				break
-			except Exception as e:
+			except Exception:
 				time.sleep(1)
 				print '.'
 				if i == 59:

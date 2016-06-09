@@ -7,12 +7,11 @@
 ## packages: [ucs-school-umc-computerroom]
 
 from essential.computerroom import Room, Computers
-from univention.lib.umc_connection import UMCConnection as OrgUMCConnection
+from univention.testing.ucsschool import UMCConnection as OrgUMCConnection
 from univention.testing.network import NetworkRedirector
 from univention.testing.ucs_samba import wait_for_s4connector
 import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool as utu
-from univention.testing import utils
 from httplib import HTTPException
 
 

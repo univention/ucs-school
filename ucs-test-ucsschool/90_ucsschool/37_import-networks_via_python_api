@@ -7,7 +7,7 @@
 ## packages:
 ##   - ucs-school-import
 
-from essential.importnetworks import *
+from essential.importnetworks import import_networks_basics
 import sys
 
 if __name__ == '__main__':
@@ -15,4 +15,3 @@ if __name__ == '__main__':
 	sys.exit(137)
 
 	import_networks_basics(use_cli_api=False, use_python_api=True)
-

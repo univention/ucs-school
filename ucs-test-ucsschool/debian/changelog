@@ -1,3 +1,9 @@
+ucs-test-ucsschool (3.0.8-1) unstable; urgency=medium
+
+  * Bug #40870: enhance debug output
+
+ -- Florian Best <best@univention.de>  Thu, 09 Jun 2016 15:39:51 +0200
+
 ucs-test-ucsschool (3.0.7-4) unstable; urgency=medium
 
   * Bug #41121: fixup typo
