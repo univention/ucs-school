@@ -1,3 +1,9 @@
+ucs-school-umc-wizards (8.0.0-7) unstable; urgency=medium
+
+  * Bug #41293: set the correct school in the User grid
+
+ -- Florian Best <best@univention.de>  Thu, 09 Jun 2016 14:47:41 +0200
+
 ucs-school-umc-wizards (8.0.0-6) unstable; urgency=medium
 
   * Bug #41293: send the currently selected school when deleting a user 

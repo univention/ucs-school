@@ -124,10 +124,10 @@ define([
 				var schoolWidget = this.getWidget('general', 'school');
 				var nameWidget = this.getWidget('item', 'name');
 				_setHandlerAndValue(typeWidget, this.type);
-				_setHandlerAndValue(schoolWidget, this.school);
+				_setHandlerAndValue(schoolWidget, this.selectedSchool);
 				_setHandlerAndValue(nameWidget, name);
 				this.setHeader();
-				if (this.school && (!typeWidget || this.type)) {
+				if (this.selectedSchool && (!typeWidget || this.type)) {
 					// hack to go to the next page (itemPage)
 					this._skippedGeneralPage = true;
 					this._next(this.next(null));
@@ -194,7 +194,7 @@ define([
 					label: _('School'),
 					type: ComboBox,
 					staticValues: this.schools,
-					value: this.school,
+					value: this.selectedSchool,
 					autoHide: true
 				}],
 				layout: ['school']
@@ -258,6 +258,7 @@ define([
 		finishEditMode: function(currentPage) {
 			var values = this.getValues();
 			values.$dn$ = this.$dn$;
+			values.school = this.school;
 			return this.standbyDuring(this.store.put(values)).then(lang.hitch(this, function(response) {
 				if (response.result) {
 					dialog.alert(response.result.message);

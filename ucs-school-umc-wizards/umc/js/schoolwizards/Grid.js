@@ -280,6 +280,7 @@ define([
 				editMode: false,
 				$dn$: null,
 				school: this.getSelectedSchool(),
+				selectedSchool: this.getSelectedSchool(),
 				type: this.getSelectedType(),
 				itemType: tools.capitalize(this.objectNameSingular),
 				objectType: null
@@ -292,6 +293,7 @@ define([
 				editMode: true,
 				$dn$: item.$dn$,
 				school: item.school,
+				selectedSchool: item.schools ? this.getSelectedSchool(): item.school,  // User with multiple schools must have the view of the currently selected school!
 				type: item.type,
 				itemType: tools.capitalize(this.objectNameSingular),
 				objectType: item.objectType

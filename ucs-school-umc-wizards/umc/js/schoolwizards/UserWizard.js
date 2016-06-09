@@ -209,6 +209,7 @@ define([
 
 		getValues: function() {
 			var values = this.inherited(arguments);
+			var school = this.selectedSchool;
 			if (!this.hasClassWidget()) {
 				delete values.school_classes;
 			} else {
@@ -218,16 +219,16 @@ define([
 				} else {
 					values.school_classes = {};
 				}
-				if (!values.school_classes[this.school]) {
-					values.school_classes[this.school] = [null];
+				if (!values.school_classes[school]) {
+					values.school_classes[school] = [null];
 				}
-				values.school_classes[this.school][0] = school_class;
+				values.school_classes[school][0] = school_class;
 			}
 			return values;
 		},
 
 		reloadClasses: function() {
-			var school = this.getWidget('general', 'school').get('value');
+			var school = this.selectedSchool;
 			if (!school || !this.hasClassWidget()) {
 				return;
 			}
@@ -240,7 +241,7 @@ define([
 				if (this.loadedValues) {
 					var value = (this.loadedValues.school_classes[school] || [null])[0];
 					if (value) {
-						value = value.indexOf(this.school + '-') === -1 ? value : value.slice(this.school.length + 1);
+						value = value.indexOf(school + '-') === -1 ? value : value.slice(school.length + 1);
 					}
 					widget.set('value', value);
 				}
