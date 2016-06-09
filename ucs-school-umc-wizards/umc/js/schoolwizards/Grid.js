@@ -356,7 +356,7 @@ define([
 			array.forEach(objects, function(object) {
 				this._grid.moduleStore.remove({
 					$dn$: object.$dn$,
-					school: object.school
+					school: this.school ? this.school : object.school
 				});
 			}, this);
 			return this.standbyDuring(transaction.commit()).then(
