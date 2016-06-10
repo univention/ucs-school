@@ -1,3 +1,10 @@
+ucs-test-ucsschool (3.0.8-5) unstable; urgency=low
+
+  * Bug #41242: revert r69740 / 3.0.5-36. New user import script now handles
+    ucs-test csv without modification.
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 10 Jun 2016 12:00:50 +0200
+
 ucs-test-ucsschool (3.0.8-4) unstable; urgency=medium
 
   * Bug #40870: readd school prefix, fixup svn r69856

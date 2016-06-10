@@ -309,7 +309,7 @@ class ImportFile:
 				print 'WARNING: %s not removed. %s' % (self.import_file, e)
 
 	def _run_import_via_cli(self):
-		cmd_block = ['/usr/share/ucs-school-import/scripts/import_user', self.import_file, "ucs-test"]
+		cmd_block = ['/usr/share/ucs-school-import/scripts/import_user', self.import_file]
 
 		print 'cmd_block: %r' % cmd_block
 		retcode = subprocess.call(cmd_block, shell=False)
