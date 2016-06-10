@@ -1,3 +1,9 @@
+ucs-school-umc-computerroom (8.0.2-2) unstable; urgency=medium
+
+  * Bug #41120: use ucsschool.lib
+
+ -- Florian Best <best@univention.de>  Fri, 10 Jun 2016 10:42:06 +0200
+
 ucs-school-umc-computerroom (8.0.2-1) unstable; urgency=medium
 
   * Bug #41117: adjust is_(student|teacher|administrator|staff) API

@@ -305,58 +305,34 @@ class Instance(SchoolBaseModule):
 		"""Returns a list of available internet rules"""
 		self.finished(request.id, map(lambda x: x.name, internetrules.list()))
 
+	@sanitize(room=StringSanitizer(required=True))
 	@LDAP_Connection()
 	def room_acquire(self, request, ldap_user_read=None):
 		"""Acquires the specified computerroom:
 		requests.options = { 'room': <roomDN> }
 		"""
-		self.required_options(request, 'room')
-
-		roomDN = request.options.get('room')
+		roomDN = request.options['room']
 
 		success = True
 		message = 'OK'
 
-		def _finished():
-			info = dict()
-			if success:
-				info = _readRoomInfo(roomDN)
-			self.finished(request.id, dict(
-				success=success,
-				message=message,
-				info=dict(
-					exam=info.get('exam'),
-					examDescription=info.get('examDescription'),
-					examEndTime=info.get('examEndTime'),
-					room=info.get('room'),
-					user=info.get('user'),
-				)
-			))
-
 		# match the corresponding school OU
-		school = None
-		schools = School.get_all(ldap_user_read)
-		for ischool in schools:
-			pattern = re.compile('.*%s$' % (re.escape(ischool.dn)), re.I)
-			if pattern.match(roomDN):
-				school = ischool.name
-				break
-		else:
-			# no match found
-			MODULE.error('Failed to find corresponding school OU for room "%s" in list of schools (%s)' % (roomDN, [x.name for x in schools]))
+		try:
+			room = ComputerRoom.from_dn(roomDN, None, ldap_user_read)
+			school = room.school
+		except udm_exceptions.noObject:
 			success = False
-			message = 'WRONG_SCHOOL'
-			_finished()
-
-		# set room and school
-		if self._italc.school != school:
-			self._italc.school = school
-		if self._italc.room != request.options['room']:
-			try:
-				self._italc.room = request.options['room']
-			except ITALC_Error:
-				success = False
-				message = 'EMPTY_ROOM'
+			message = 'UNKNOWN_ROOM'
+		else:
+			# set room and school
+			if self._italc.school != school:
+				self._italc.school = school
+			if self._italc.room != roomDN:
+				try:
+					self._italc.room = roomDN
+				except ITALC_Error:
+					success = False
+					message = 'EMPTY_ROOM'
 
 		# update the room info file
 		if success:
@@ -365,7 +341,20 @@ class Instance(SchoolBaseModule):
 				success = False
 				message = 'ALREADY_LOCKED'
 
-		_finished()
+		info = dict()
+		if success:
+			info = _readRoomInfo(roomDN)
+		self.finished(request.id, dict(
+			success=success,
+			message=message,
+			info=dict(
+				exam=info.get('exam'),
+				examDescription=info.get('examDescription'),
+				examEndTime=info.get('examEndTime'),
+				room=info.get('room'),
+				user=info.get('user'),
+			)
+		))
 
 	@sanitize(school=StringSanitizer(required=True))
 	@LDAP_Connection()
