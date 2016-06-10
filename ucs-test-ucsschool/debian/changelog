@@ -1,3 +1,9 @@
+ucs-test-ucsschool (3.0.8-4) unstable; urgency=medium
+
+  * Bug #40870: readd school prefix, fixup svn r69856
+
+ -- Florian Best <best@univention.de>  Fri, 10 Jun 2016 10:40:42 +0200
+
 ucs-test-ucsschool (3.0.8-3) unstable; urgency=medium
 
   * Bug #41117: fixup svn r69871

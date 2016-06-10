@@ -495,7 +495,7 @@ class UCSTestSchool(object):
 			host_members = [host_members]
 		kwargs = {
 			'school': ou_name,
-			'name': name,
+			'name': '%s-%s' % (ou_name, name),
 			'description': description,
 			'hosts': host_members,
 		}
