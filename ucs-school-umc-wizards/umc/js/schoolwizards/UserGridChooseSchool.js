@@ -61,7 +61,7 @@ define([
 			this.addChild(headerTextWidget);
 			this.addChild(this._form);
 			if (this.schools.length <= 1) {
-				this.buildGrid();
+				this._form.ready().then(lang.hitch(this, 'buildGrid'));
 			}
 		},
 

@@ -63,48 +63,37 @@ def get_exception_msg(e):
 	return msg
 
 def get_user_class(user_type):
-	if user_type == 'student':
-		return Student
-	if user_type == 'teacher':
-		return Teacher
-	if user_type == 'staff':
-		return Staff
-	if user_type == 'teachersAndStaff':
-		return TeachersAndStaff
-	return User
+	return {
+		'student': Student,
+		'teacher': Teacher,
+		'staff': Staff,
+		'teachersAndStaff': TeachersAndStaff,
+	}.get(user_type, User)
 
 def get_computer_class(computer_type):
-	if computer_type == 'windows':
-		return WindowsComputer
-	if computer_type == 'macos':
-		return MacComputer
-	if computer_type == 'ucc':
-		return UCCComputer
-	if computer_type == 'ipmanagedclient':
-		return IPComputer
-	return SchoolComputer
+	return {
+		'windows': WindowsComputer,
+		'macos': MacComputer,
+		'ucc': UCCComputer,
+		'ipmanagedclient': IPComputer,
+	}.get(computer_type, SchoolComputer)
 
 def iter_objects_in_request(request):
-	flavor = request.flavor
-	if flavor == 'schoolwizards/schools':
-		klass = School
-	elif flavor == 'schoolwizards/users':
-		klass = User
-	elif flavor == 'schoolwizards/computers':
-		klass = SchoolComputer
-	elif flavor == 'schoolwizards/classes':
-		klass = SchoolClass
-	for properties in request.options:
-		obj_props = properties['object']
+	klass = {
+		'schoolwizards/schools': School,
+		'schoolwizards/users': User,
+		'schoolwizards/computers': SchoolComputer,
+		'schoolwizards/classes': SchoolClass,
+	}[request.flavor]
+	for obj_props in request.options:
+		obj_props = obj_props['object']
 		for key, value in obj_props.iteritems():
 			if isinstance(value, basestring):
 				obj_props[key] = value.strip()
 		if issubclass(klass, User):
-			if 'type' in obj_props:
-				klass = get_user_class(obj_props['type'])
-		if issubclass(klass, SchoolComputer):
-			if 'type' in obj_props:
-				klass = get_computer_class(obj_props['type'])
+			klass = get_user_class(obj_props.get('type'))
+		elif issubclass(klass, SchoolComputer):
+			klass = get_computer_class(obj_props.get('type'))
 		dn = obj_props.get('$dn$')
 		if 'name' not in obj_props:
 			# important for get_school in district_mode!
@@ -126,8 +115,7 @@ def response(func):
 
 
 class Instance(SchoolBaseModule, SchoolImport):
-	"""Base class for the schoolwizards UMC module.
-	"""
+
 	def init(self):
 		super(Instance, self).init()
 		add_module_logger_to_schoollib()
@@ -221,7 +209,7 @@ class Instance(SchoolBaseModule, SchoolImport):
 		return ret
 
 	@response
-	@LDAP_Connection( USER_READ, USER_WRITE )
+	@LDAP_Connection(USER_READ, USER_WRITE)
 	def _delete_obj(self, request, ldap_user_read=None, ldap_user_write=None):
 		ret = []
 		for obj in iter_objects_in_request(request):
@@ -251,12 +239,21 @@ class Instance(SchoolBaseModule, SchoolImport):
 		return self._get_all(user_class, school, request.options.get('filter'), ldap_user_read)
 
 	get_user = _get_obj
-
 	modify_user = _modify_obj
-
 	create_user = _create_obj
 
-	delete_user = _delete_obj
+	@response
+	@LDAP_Connection(USER_READ, USER_WRITE)
+	def delete_user(self, request, ldap_user_read=None, ldap_user_write=None):
+		ret = []
+		for i, obj in enumerate(iter_objects_in_request(request)):
+			school = request.options[i]['object']['school']
+			obj = obj.from_dn(obj.old_dn, obj.school, ldap_user_write)
+			success = obj.remove_from_school(school, ldap_user_write)
+			if not success:
+				success = {'result' : {'message' : _('Failed to remove user from school.')}}
+			ret.append(success)
+		return ret
 
 	@response
 	@LDAP_Connection()
@@ -266,11 +263,8 @@ class Instance(SchoolBaseModule, SchoolImport):
 		return self._get_all(computer_class, school, request.options.get('filter'), ldap_user_read)
 
 	get_computer = _get_obj
-
 	modify_computer = _modify_obj
-
 	create_computer = _create_obj
-
 	delete_computer = _delete_obj
 
 	@response
@@ -280,11 +274,8 @@ class Instance(SchoolBaseModule, SchoolImport):
 		return self._get_all(SchoolClass, school, request.options.get('filter'), ldap_user_read)
 
 	get_class = _get_obj
-
 	modify_class = _modify_obj
-
 	create_class = _create_obj
-
 	delete_class = _delete_obj
 
 	@response
@@ -294,10 +285,6 @@ class Instance(SchoolBaseModule, SchoolImport):
 		return [school.to_dict() for school in schools]
 
 	get_school = _get_obj
-
 	modify_school = _modify_obj
-
 	create_school = _create_obj
-
 	delete_school = _delete_obj
-
