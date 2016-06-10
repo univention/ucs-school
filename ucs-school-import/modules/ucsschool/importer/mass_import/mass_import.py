@@ -55,6 +55,7 @@ class MassImport(object):
 		self.factory = Factory()
 		self.result_exporter = self.factory.make_result_exporter()
 		self.password_exporter = self.factory.make_password_exporter()
+		self.errors = list()
 
 	def mass_import(self):
 		with stopped_notifier():
@@ -98,6 +99,7 @@ class MassImport(object):
 		else:
 			users_to_delete = user_import.detect_users_to_delete()
 			user_import.delete_users(users_to_delete)
+		self.errors.extend(user_import.errors)
 		user_import.log_stats()
 		if self.config["output"]["new_user_passwords"]:
 			nup = datetime.datetime.now().strftime(self.config["output"]["new_user_passwords"])

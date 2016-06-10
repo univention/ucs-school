@@ -1,3 +1,10 @@
+ucs-school-import (14.0.8-4) unstable; urgency=low
+
+  * Bug #41242: exit code is 0 if all went well, 1 if a fatel error occured,
+    2 if at least one non-fatal error occured
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 10 Jun 2016 14:11:44 +0200
+
 ucs-school-import (14.0.8-3) unstable; urgency=low
 
   * Bug #41242: remove new_user_passwords from defaults

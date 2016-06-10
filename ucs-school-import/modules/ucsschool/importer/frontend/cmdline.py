@@ -50,6 +50,7 @@ class CommandLine(object):
 		self.args = None
 		self.config = None
 		self.factory = None
+		self.errors = list()
 
 	def parse_cmdline(self):
 		parser = ParseUserImportCmdline()
@@ -89,6 +90,7 @@ class CommandLine(object):
 
 		self.logger.info("------ Starting mass import... ------")
 		importer.mass_import()
+		self.errors = importer.errors
 		self.logger.info("------ Mass import finished. ------")
 
 	def main(self):
@@ -110,7 +112,9 @@ class CommandLine(object):
 	
 			self.factory = setup_factory(self.config["factory"])
 			self.do_import()
-
+			if self.errors:
+				# at least one non-fatal error
+				return 2
 		except ToManyErrors as tme:
 			self.logger.error("%s Exiting. Errors:", tme)
 			for error in tme.errors:
@@ -120,16 +124,16 @@ class CommandLine(object):
 		except InitialisationError as exc:
 			print("InitialisationError: {}".format(exc))
 			self.logger.exception("InitialisationError: %r", exc)
-			return 2
+			return 1
 		except UcsSchoolImportFatalError as exc:
 			self.logger.exception("Fatal error:  %s.", exc)
 			self._fatal()
-			return 2
+			return 1
 		except Exception as exc:
 			# This should not happen - it's probably a bug.
 			self.logger.exception("Outer Exception catcher: %r", exc)
 			self._fatal()
-			return 3
+			return 1
 
 	def _fatal(self):
 		if not any(map(lambda x: isinstance(x, StreamHandler), self.logger.handlers)):

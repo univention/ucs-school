@@ -60,3 +60,4 @@ class LegacyUserImportCommandLine(UserImportCommandLine):
 		importer = self.factory.make_mass_importer(self.config["dry_run"])
 		with stopped_notifier():
 			importer.import_users()
+		self.errors = importer.errors

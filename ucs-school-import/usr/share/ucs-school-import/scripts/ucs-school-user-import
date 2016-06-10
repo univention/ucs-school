@@ -39,7 +39,7 @@ from ucsschool.importer.frontend.user_import_cmdline import UserImportCommandLin
 
 def main():
 	ui = UserImportCommandLine()
-	ui.main()
+	return ui.main()
 
 if __name__ == "__main__":
 	sys.exit(main())
