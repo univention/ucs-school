@@ -55,8 +55,6 @@ class LegacyNewUserPasswordCsvExporter(NewUserPasswordCsvExporter):
 		"""
 		Change to CSV dialect with tabs and don't write a header line.
 		"""
-		if self.config.get("ucs_test", False):
-			self.field_names = self.field_names + ("pw", )
 		writer = self.factory.make_user_writer(field_names=self.field_names, dialect=excel_tab)
 		writer.write_header = lambda x: None  # no header line
 		return writer
@@ -64,8 +62,6 @@ class LegacyNewUserPasswordCsvExporter(NewUserPasswordCsvExporter):
 	def serialize(self, user):
 		res = dict(username=user.name, password=user.password)
 		input_data = list(user.input_data)
-		if self.config.get("ucs_test", False) and len(input_data) < len(self.field_names[2:]):
-			input_data.append("")
 		line = zip(self.field_names[2:], input_data)
 		res.update(line)
 		return res

@@ -18,7 +18,8 @@
 			"7": "email",
 			"8": "__is_teacher",
 			"9": "__activate",
-			"10": "__is_staff"
+			"10": "__is_staff",
+			"11": "password"
 		}
 	},
 	"scheme": {
@@ -36,5 +37,5 @@
 	},
 	"password_length": 8,
 	"sourceUID": "LegacyDB",
-	"tolerate_errors": 0
+	"tolerate_errors": -1
 }

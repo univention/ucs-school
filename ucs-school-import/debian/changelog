@@ -1,3 +1,19 @@
+ucs-school-import (14.0.8-2) unstable; urgency=low
+
+  * Bug #41242: remove special handling of ucs-test
+  * use the same logfile as the legacy import script
+  * wording: replace "ucs@school" with "UCS@school"
+  * tolerate_errors = -1 allows unlimited non-fatal errors, default for legacy
+    user import
+  * allow running new import script ("ucs-school-user-import") without any
+    command line options (using only configuration files in predefined
+    locations)
+  * always ignore password history and length
+  * fix make_username() not being called for existing users, and thus
+    usernames not being lower()ed in legacy import
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 10 Jun 2016 10:00:16 +0200
+
 ucs-school-import (14.0.8-1) unstable; urgency=low
 
   * Bug #31297: moved registration of LDAP indices to UCS@school metapackages

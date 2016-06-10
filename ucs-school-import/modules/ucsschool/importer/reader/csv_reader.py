@@ -65,7 +65,7 @@ class CsvReader(BaseReader):
 			delimiters = [delimiter]
 		else:
 			delimiters = None
-		return Sniffer().sniff(fp.read(1024), delimiters=delimiters)
+		return Sniffer().sniff(fp.readline(), delimiters=delimiters)
 
 	def read(self, *args, **kwargs):
 		"""
@@ -158,6 +158,9 @@ class CsvReader(BaseReader):
 		import_user = self.factory.make_import_user(cur_user_roles)
 		attrib_names = self._get_attrib_name(import_user)
 		for k, v in self.config["csv"]["mapping"].items():
+			if k not in input_data:
+				# broken CSV or mapping
+				continue
 			if self.handle_input(k, v, input_data[k], import_user):
 				# has been handled
 				continue
@@ -179,7 +182,8 @@ class CsvReader(BaseReader):
 					import_user.udm_properties[v] = input_data[k].split(delimiter)
 				else:
 					import_user.udm_properties[v] = input_data[k]
-		self.logger.debug("%s udm_properties=%r", import_user, import_user.udm_properties)
+		self.logger.debug("%s attributes=%r udm_properties=%r", import_user, import_user.to_dict(),
+			import_user.udm_properties)
 		return import_user
 
 	def get_data_mapping(self, input_data):

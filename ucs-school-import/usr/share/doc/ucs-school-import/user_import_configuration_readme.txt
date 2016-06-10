@@ -85,7 +85,7 @@ After that follow
 "password_length": int [1]: length of the random password generated for new users
 "school": str: name (abbreviation) of school this import is for, if not available from input
 "sourceUID": str [1]: UID of source database
-"tolerate_errors": int [1]: number of non-fatal UcsSchoolImportErrors to tolerate before aborting
+"tolerate_errors": int [1]: number of non-fatal UcsSchoolImportErrors to tolerate before aborting, -1 means unlimited
 "user_deletion": {
 	"delete":	bool: if the user should be deleted (false -> it will be deactivated)
 	"expiration": int: number of days before the account will be deleted or deactivated

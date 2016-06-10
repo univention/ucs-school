@@ -3,7 +3,7 @@
 #
 # Univention UCS@School
 """
-ucs@school legacy import tool cmdline frontend.
+UCS@school legacy import tool cmdline frontend.
 """
 # Copyright 2016 Univention GmbH
 #
@@ -52,6 +52,8 @@ class LegacyUserImportCommandLine(UserImportCommandLine):
 		res = super(LegacyUserImportCommandLine, self).configuration_files
 		res.append("/usr/share/ucs-school-import/configs/user_import_legacy_defaults.json")
 		res.append("/var/lib/ucs-school-import/configs/user_import_legacy.json")
+		if self.args.conffile:
+			res.append(self.args.conffile)
 		return res
 
 	def do_import(self):

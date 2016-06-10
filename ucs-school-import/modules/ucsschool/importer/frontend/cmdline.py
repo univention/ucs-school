@@ -3,7 +3,7 @@
 #
 # Univention UCS@School
 """
-Base class for ucs@school import tool cmdline frontends.
+Base class for UCS@school import tool cmdline frontends.
 """
 # Copyright 2016 Univention GmbH
 #
@@ -41,7 +41,7 @@ from ucsschool.importer.utils.logging2udebug import get_logger, add_stdout_handl
 from ucsschool.importer.frontend.parse_user_import_cmdline import ParseUserImportCmdline
 from ucsschool.importer.configuration import setup_configuration
 from ucsschool.importer.factory import setup_factory
-from ucsschool.importer.exceptions import ToManyErrors, UcsSchoolImportFatalError
+from ucsschool.importer.exceptions import InitialisationError, ToManyErrors, UcsSchoolImportFatalError
 
 
 class CommandLine(object):
@@ -64,7 +64,7 @@ class CommandLine(object):
 
 	def setup_config(self):
 		configs = self.configuration_files
-		if self.args.conffile:
+		if self.args.conffile and self.args.conffile not in configs:
 			configs.append(self.args.conffile)
 		self.config = setup_configuration(configs, **self.args.settings)
 		return self.config
@@ -97,13 +97,13 @@ class CommandLine(object):
 			# early logging configured by cmdline
 			self.setup_logging(self.args.verbose, self.args.logfile)
 
-			self.logger.info("------ ucs@school import tool starting ------")
+			self.logger.info("------ UCS@school import tool starting ------")
 	
 			self.setup_config()
 			# logging configured by config file
 			self.setup_logging(self.config["verbose"], self.config["logfile"])
 
-			self.logger.info("------ ucs@school import tool configured ------")
+			self.logger.info("------ UCS@school import tool configured ------")
 			self.logger.info("Used configuration files: %s.", self.config.conffiles)
 			self.logger.info("Using command line arguments: %r", self.args.settings)
 			self.logger.info("Configuration is:\n%s", pprint.pformat(self.config))
@@ -115,15 +115,24 @@ class CommandLine(object):
 			self.logger.error("%s Exiting. Errors:", tme)
 			for error in tme.errors:
 				self.logger.error("%d: %s", error.entry, error)
+			self._fatal()
 			return 1
+		except InitialisationError as exc:
+			print("InitialisationError: {}".format(exc))
+			self.logger.exception("InitialisationError: %r", exc)
+			return 2
 		except UcsSchoolImportFatalError as exc:
 			self.logger.exception("Fatal error:  %s.", exc)
+			self._fatal()
 			return 2
 		except Exception as exc:
 			# This should not happen - it's probably a bug.
 			self.logger.exception("Outer Exception catcher: %r", exc)
-			if not any(map(lambda x: isinstance(x, StreamHandler), self.logger.handlers)):
-				# verbose=False, but this is probably a crash -> show on terminal anyway
-				exc_type, exc_value, exc_traceback = sys.exc_info()
-				traceback.print_exception(exc_type, exc_value, exc_traceback, file=sys.stderr)
+			self._fatal()
 			return 3
+
+	def _fatal(self):
+		if not any(map(lambda x: isinstance(x, StreamHandler), self.logger.handlers)):
+			# verbose=False, but show on terminal anyway
+			exc_type, exc_value, exc_traceback = sys.exc_info()
+			traceback.print_exception(exc_type, exc_value, exc_traceback, file=sys.stderr)

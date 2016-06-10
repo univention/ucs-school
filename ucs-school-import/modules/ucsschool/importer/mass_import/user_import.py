@@ -124,8 +124,8 @@ class UserImport(object):
 						user, user.source_uid, user.record_uid, user.action), entry=user.entry_count, import_user=user)
 
 				if user.action in ["A", "M"]:
-					self.logger.info("%s %s (source_uid:%s record_uid:%s)...", action_str, user,
-						user.source_uid, user.record_uid)
+					self.logger.info("%s %s (source_uid:%s record_uid:%s) attributes=%r udm_properties=%r...", action_str, user,
+						user.source_uid, user.record_uid, user.to_dict(), user.udm_properties)
 
 				try:
 					if user.action == "A":
@@ -476,7 +476,7 @@ class UserImport(object):
 
 	def _add_error(self, err):
 		self.errors.append(err)
-		if len(self.errors) > self.config["tolerate_errors"]:
+		if -1 < self.config["tolerate_errors"] < len(self.errors):
 			raise ToManyErrors("More than {} errors.".format(self.config["tolerate_errors"]), self.errors)
 
 	def _run_pyhooks(self, obj, action, when, import_user):

@@ -1,5 +1,5 @@
 {
 	"dry_run": false,
-	"logfile": "/var/log/univention/ucsschool-import.log",
+	"logfile": "/var/log/univention/ucs-school-import.log",
 	"verbose": true
 }

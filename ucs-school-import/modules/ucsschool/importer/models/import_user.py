@@ -181,9 +181,12 @@ class ImportUser(User):
 		self.make_lastname()
 		self.make_school()
 		self.make_schools()
+		self.make_username()
 		if new_user:
-			self.make_username()
 			self.make_password()
+		if self.password:
+			self.udm_properties["overridePWHistory"] = "1"
+			self.udm_properties["overridePWLength"] = "1"
 		self.make_classes()
 		self.make_birthday()
 		self.make_disabled()
@@ -612,8 +615,10 @@ class ImportUser(User):
 		return success
 
 	def modify_without_hooks(self, lo, validate=True, move_if_necessary=None):
-		success = super(ImportUser, self).modify_without_hooks(lo, validate, move_if_necessary)
+		# must set udm_properties first, as they contain overridePWHistory and
+		# overridePWLength
 		self.store_udm_properties(lo)
+		success = super(ImportUser, self).modify_without_hooks(lo, validate, move_if_necessary)
 		return success
 
 	def store_udm_properties(self, connection):

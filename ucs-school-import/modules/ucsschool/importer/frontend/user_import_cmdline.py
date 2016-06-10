@@ -3,7 +3,7 @@
 #
 # Univention UCS@School
 """
-ucs@school new import tool cmdline frontend.
+UCS@school new import tool cmdline frontend.
 """
 # Copyright 2016 Univention GmbH
 #

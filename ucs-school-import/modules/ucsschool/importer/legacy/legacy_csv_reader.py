@@ -39,12 +39,6 @@ from ucsschool.lib.roles import role_pupil, role_teacher, role_staff
 
 
 class LegacyCsvReader(CsvReader):
-	def get_dialect(self, fp):
-		if self.config.get("ucs_test"):
-			return csv.excel_tab()
-		else:
-			return super(LegacyCsvReader, self).get_dialect(fp)
-
 	def handle_input(self, mapping_key, mapping_value, csv_value, import_user):
 		"""
 		Mark __is_staff and __is_teacher as already handled (in get_roles()).

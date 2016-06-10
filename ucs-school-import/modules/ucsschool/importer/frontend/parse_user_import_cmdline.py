@@ -46,6 +46,7 @@ class ParseUserImportCmdline(object):
 		# TODO: read defaults from user_import_defaults.json
 		self.defaults = dict(
 			dry_run=True,
+			infile="/var/lib/ucs-school-import/new-format-userimport.csv",
 			logfile=None,
 			no_delete=False,
 			school=None,
@@ -53,9 +54,10 @@ class ParseUserImportCmdline(object):
 			user_role=None,
 			verbose=False
 		)
-		self.parser = ArgumentParser(description="ucs@school import tool")
-		self.parser.add_argument('-c', '--conffile', help="Configuration file to use (e.g. "
-			"/var/lib/ucs-school-import/configs/user_import.json).")
+		self.parser = ArgumentParser(description="UCS@school import tool")
+		self.parser.add_argument('-c', '--conffile', help="Configuration file to use (see "
+			"/usr/share/doc/ucs-school-import for an explanation on configuration file stacking).")
+		self.parser.add_argument('-i', '--infile', dest="infile", help="CSV file with users to import (shortcut for --set input:filename=...) [default: %(default)s].")
 		self.parser.add_argument('-l', '--logfile',
 			help="Write to additional logfile (shortcut for --set logfile=...).")
 		self.parser.add_argument("--set", dest="settings", metavar="KEY=VALUE", nargs='*',
@@ -88,6 +90,9 @@ class ParseUserImportCmdline(object):
 		self.args = self.parser.parse_args()
 
 		settings = dict()
+		if hasattr(self.args, "infile") and self.args.infile:
+			settings["input"] = {"filename": self.args.infile}
+
 		if hasattr(self.args, "settings") and self.args.settings:
 			for setting in self.args.settings:
 				try:
