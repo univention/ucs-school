@@ -1,3 +1,11 @@
+ucs-school-import (14.0.8-3) unstable; urgency=low
+
+  * Bug #41242: remove new_user_passwords from defaults
+  * apply datetime.strftime() to new_user_passwords and user_import_summary
+  * set safe permissions on new_user_passwords and user_import_summary
+
+ -- Daniel Troeder <troeder@univention.de>  Fri, 10 Jun 2016 11:56:59 +0200
+
 ucs-school-import (14.0.8-2) unstable; urgency=low
 
   * Bug #41242: remove special handling of ucs-test

@@ -32,8 +32,8 @@
 		"waiting_period": 0
 	},
 	"output": {
-		"new_user_passwords": "/var/lib/ucs-school-import/new_user_passwords.csv",
-		"user_import_summary": "/var/lib/ucs-school-import/user_import_summary.csv"
+		"new_user_passwords": null,
+		"user_import_summary": "/var/lib/ucs-school-import/user_import_summary_%Y-%m-%d_%H:%M:%S.csv"
 	},
 	"password_length": 15,
 	"school": null,

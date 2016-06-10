@@ -32,6 +32,8 @@ Write the result of a user import job to a CSV file.
 # <http://www.gnu.org/licenses/>.
 
 from csv import DictWriter, excel, QUOTE_ALL
+import os
+from stat import S_IRUSR, S_IWUSR
 
 from ucsschool.importer.writer.base_writer import BaseWriter
 
@@ -64,6 +66,8 @@ class CsvWriter(BaseWriter):
 		:param mode: str: passed to used open() method
 		:return: DictWriter
 		"""
+		open(filename, "w").close()  # touch
+		os.chmod(filename, S_IRUSR | S_IWUSR)  # chmod 600
 		fp = open(filename, mode)
 		self.writer = DictWriter(fp, fieldnames=self.field_names, dialect=self.dialect)
 		return fp

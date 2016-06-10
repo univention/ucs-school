@@ -31,6 +31,8 @@ Default mass import class.
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+import datetime
+
 from ucsschool.importer.factory import Factory
 from ucsschool.importer.configuration import Configuration
 from ucsschool.importer.utils.logging2udebug import get_logger
@@ -98,9 +100,11 @@ class MassImport(object):
 			user_import.delete_users(users_to_delete)
 		user_import.log_stats()
 		if self.config["output"]["new_user_passwords"]:
-			self.logger.info("------ Writing new users passwords to %s... ------", self.config["output"]["new_user_passwords"])
-			self.password_exporter.dump(user_import, self.config["output"]["new_user_passwords"])
+			nup = datetime.datetime.now().strftime(self.config["output"]["new_user_passwords"])
+			self.logger.info("------ Writing new users passwords to %s... ------", nup)
+			self.password_exporter.dump(user_import, nup)
 		if self.config["output"]["user_import_summary"]:
-			self.logger.info("------ Writing user import summary to %s... ------", self.config["output"]["user_import_summary"])
-			self.result_exporter.dump(user_import, self.config["output"]["user_import_summary"])
+			uis = datetime.datetime.now().strftime(self.config["output"]["user_import_summary"])
+			self.logger.info("------ Writing user import summary to %s... ------", uis)
+			self.result_exporter.dump(user_import, uis)
 		self.logger.info("------ Importing users done. ------")

@@ -79,8 +79,9 @@ After that follow
 	"waiting_period": int:
 },
 "output": {
-	"new_user_passwords": str: path to the new users passwords file
-	"user_import_summary": str: path to a file to write the summary in CSV fomat to
+	"new_user_passwords": str: path to the new users passwords file, datetime.strftime() will be used on
+	                           it to format any time format strings
+	"user_import_summary": str: path to a file to write the summary in CSV fomat to, datetime.strftime() will be applied
 },
 "password_length": int [1]: length of the random password generated for new users
 "school": str: name (abbreviation) of school this import is for, if not available from input
