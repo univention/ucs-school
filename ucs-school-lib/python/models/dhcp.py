@@ -30,6 +30,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+import ldap
 import ipaddr
 
 from ucsschool.lib.models.attributes import DHCPServiceName, Attribute, DHCPSubnetName, DHCPSubnetMask, BroadcastAddress, DHCPServiceAttribute, DHCPServerName
@@ -103,7 +104,6 @@ class DHCPService(UCSSchoolHelperAbstractClass):
 				subnet = dhcp_subnet.get_ipv4_subnet()
 				if subnet in interfaces: # subnet matches any local subnet
 					logger.info('Creating new DHCPSubnet from %s', subnet_dn)
-					dhcp_subnet.custom_dn = None
 					dhcp_subnet.dhcp_service = self
 					dhcp_subnet.set_dn(dhcp_subnet.dn)
 					dhcp_subnet.create(lo)
@@ -131,12 +131,15 @@ class AnyDHCPService(DHCPService):
 		return ucr.get('ldap/base')
 
 	def get_servers(self, lo):
-		old_custom_dn = self.custom_dn
-		self.custom_dn = self.old_dn or self.dn
+		old_name = self.name
+		old_position = self.position
+		self.position = ldap.dn.dn2str(ldap.dn.str2dn(self.old_dn or self.dn)[1:])
+		self.name = ldap.dn.dn2str(ldap.dn.str2dn(self.old_dn or self.dn)[0]).split('=', 1)[-1]
 		try:
 			return super(AnyDHCPService, self).get_servers(lo)
 		finally:
-			self.custom_dn = old_custom_dn
+			self.position = old_position
+			self.name = old_name
 
 class DHCPServer(UCSSchoolHelperAbstractClass):
 	name = DHCPServerName(_('Server name'))

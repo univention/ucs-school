@@ -172,7 +172,8 @@ class BasicGroup(Group):
 				container = OU(name=cn)
 			else:
 				container = Container(name=cn, school='', group_path='1')
-			super_container_dn = container.create_in_container(super_container_dn, lo)
+			container.position = super_container_dn
+			super_container_dn = container.create(lo, False)
 		return super(BasicGroup, self).create_without_hooks(lo, validate)
 
 	def get_own_container(self):

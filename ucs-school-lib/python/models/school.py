@@ -116,7 +116,8 @@ class School(UCSSchoolHelperAbstractClass):
 			else:
 				container = Container(name=name, school=self.name)
 				setattr(container, path, '1')
-				last_dn = container.create_in_container(base_dn, lo)
+				container.position = base_dn
+				last_dn = container.create(lo, False)
 			return last_dn
 
 		last_dn = self.dn
@@ -327,7 +328,8 @@ class School(UCSSchoolHelperAbstractClass):
 		district = self.get_district()
 		if district:
 			ou = OU(name=district)
-			ou.create_in_container(ucr.get('ldap/base'), lo)
+			ou.position = ucr.get('ldap/base')
+			ou.create(lo, False)
 
 		# setting class_share_file_server and home_share_file_server:
 		# 1. set to None

@@ -306,6 +306,7 @@ class User(UCSSchoolHelperAbstractClass):
 			if isinstance(newgroup, (_MayHaveSchoolPrefix, _MayHaveSchoolSuffix)):
 				newgroup.name = newgroup.get_replaced_name(school)
 			newgroup.school = school
+			newgroup.position = newgroup.get_own_container()
 			newgroup.custom_dn = None  # FIXME: remove when from_dn() is fixed
 			cls = type(newgroup)
 			try:
@@ -418,6 +419,22 @@ class User(UCSSchoolHelperAbstractClass):
 			# mail_domain = self.get_mail_domain(lo)
 			# if not mail_domain.exists(lo) and not self.shall_create_mail_domain():
 			# 	self.add_error('email', _('The mail domain is unknown. Please change the email address or create the mail domain "%s" using the Univention Directory Manager.') % mail_domain.name)
+
+	def remove_from_school(self, school, lo):
+		if not self.exists(lo):
+			logger.warning('User does not exists, not going to remove.')
+			return False
+		try:
+			(self.schools or [school]).remove(school)
+		except IndexError:
+			logger.warning('User is not part of school %r. Not removing.', school)
+			return False
+		if not self.schools:
+			return self.remove(lo)
+		if self.school == school:
+			if not self.change_school(self.schools[0], lo):
+				return False
+		return self.modify(lo)
 
 	def get_group_dn(self, group_name):
 		return Group.cache(group_name, self.school).dn

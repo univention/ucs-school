@@ -50,11 +50,11 @@ class MailDomain(UCSSchoolHelperAbstractClass):
 		udm_module = 'mail/domain'
 
 class OU(UCSSchoolHelperAbstractClass):
-	def create_in_container(self, container, lo):
-		self.fake_dn(container)
+
+	def create(self, lo, validate=True):
 		logger.info('Creating %r', self)
 		pos = udm_uldap.position(ucr.get('ldap/base'))
-		pos.setDn(container)
+		pos.setDn(self.position)
 		udm_obj = udm_modules.get(self._meta.udm_module).object(None, lo, pos)
 		udm_obj.open()
 		udm_obj['name'] = self.name
@@ -65,9 +65,6 @@ class OU(UCSSchoolHelperAbstractClass):
 		else:
 			return udm_obj.dn
 
-	def create(self, lo, validate=True):
-		raise NotImplementedError()
-
 	def modify(self, lo, validate=True, move_if_necessary=None):
 		raise NotImplementedError()
 
@@ -77,10 +74,6 @@ class OU(UCSSchoolHelperAbstractClass):
 	@classmethod
 	def get_container(cls, school):
 		return cls.get_search_base(school).schoolDN
-
-	def fake_dn(self, container):
-		# set custom_dn just for log
-		self.custom_dn = 'ou=%s,%s' % (self.name, container)
 
 	class Meta:
 		udm_module = 'container/ou'
@@ -94,9 +87,6 @@ class Container(OU):
 	policy_path = ContainerPath(_('Policy path'), udm_name='policyPath')
 	share_path = ContainerPath(_('Share path'), udm_name='sharePath')
 	printer_path = ContainerPath(_('Printer path'), udm_name='printerPath')
-
-	def fake_dn(self, container):
-		self.custom_dn = 'cn=%s,%s' % (self.name, container)
 
 	class Meta:
 		udm_module = 'container/cn'

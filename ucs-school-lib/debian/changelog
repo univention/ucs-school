@@ -1,3 +1,9 @@
+ucs-school-lib (9.0.18-1) unstable; urgency=medium
+
+  * Bug #41293: support removal from a specific school (move if necessary)
+
+ -- Florian Best <best@univention.de>  Fri, 10 Jun 2016 16:03:38 +0200
+
 ucs-school-lib (9.0.17-2) unstable; urgency=medium
 
   * Bug #41117: restrict to local OUs

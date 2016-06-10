@@ -251,10 +251,22 @@ class UCSSchoolHelperAbstractClass(object):
 		kwargs['school'] = school
 		for key in self._attributes:
 			setattr(self, key, kwargs.get(key))
-		self.custom_dn = None
+		self.__position = None
+		self.old_dn = None
 		self.old_dn = self.dn
 		self.errors = {}
 		self.warnings = {}
+
+	@property
+	def position(self):
+		if self.__position is None:
+			return self.get_own_container()
+		return self.__position
+
+	@position.setter
+	def position(self, position):
+		if self.position != position:  # allow dynamic school changes until creation
+			self.__position = position
 
 	@property
 	def dn(self):
@@ -262,21 +274,19 @@ class UCSSchoolHelperAbstractClass(object):
 		instance to be. Changing name or school of self will most
 		likely change the outcome of self.dn as well
 		'''
-		if self.custom_dn:
-			return self.custom_dn
-		container = self.get_own_container()
-		if self.name and container:
+		if self.name and self.position:
 			name = self._meta.ldap_map_function(self.name)
-			return '%s=%s,%s' % (self._meta.ldap_name_part, escape_dn_chars(name), container)
+			return '%s=%s,%s' % (self._meta.ldap_name_part, escape_dn_chars(name), self.position)
+		return self.old_dn
 
 	def set_dn(self, dn):
 		'''Does not really set dn, as this is generated
 		on-the-fly. Instead, sets old_dn in case it was
-		missed in the beginning or after create/modify/remove
+		missed in the beginning or after create/modify/remove/move
 		Also resets cached udm_obj as it may point to somewhere else
 		'''
 		self._udm_obj_searched = False
-		self.custom_dn = None
+		self.position = ldap.dn.dn2str(ldap.dn.str2dn(dn)[1:])
 		self.old_dn = dn
 
 	def validate(self, lo, validate_unlikely_changes=False):
@@ -420,7 +430,7 @@ class UCSSchoolHelperAbstractClass(object):
 				raise ValidationError(self.errors.copy())
 
 		pos = udm_uldap.position(ucr.get('ldap/base'))
-		container = self.get_own_container()
+		container = self.position
 		if not container:
 			logger.error('%r cannot determine a container. Unable to create!', self)
 			return False
@@ -534,19 +544,21 @@ class UCSSchoolHelperAbstractClass(object):
 				self.do_move(udm_obj, lo)
 			finally:
 				self.invalidate_cache()
+			self.set_dn(self.dn)
 		else:
 			logger.warning('Would like to move %s to %r. But it is not allowed!', udm_obj.dn, self)
 			return False
 		return True
 
 	def do_move(self, udm_obj, lo):
-		udm_obj.move(self.dn, ignore_license=1)
 		old_school, new_school = SchoolSearchBase.getOU(self.old_dn), SchoolSearchBase.getOU(self.dn)
+		udm_obj.move(self.dn, ignore_license=1)
 		if self.supports_school() and old_school and old_school != new_school:
 			self.do_school_change(udm_obj, lo, old_school)
 
 	def change_school(self, school, lo):
 		self.school = school
+		self.position = self.get_own_container()
 		return self.move(lo, force=True)
 
 	def do_school_change(self, udm_obj, lo, old_school):
@@ -771,7 +783,6 @@ class UCSSchoolHelperAbstractClass(object):
 				attrs[name] = udm_value
 		obj = cls(**deepcopy(attrs))
 		obj.set_dn(udm_obj.dn)
-		obj.custom_dn = udm_obj.dn  # FIXME: Bug #40940: setting this causes the object to not being moveable; not setting this causes e.g. objects underneath of a different position than self.get_container() to break
 		obj._udm_obj_searched = True
 		obj._udm_obj = udm_obj
 		return obj
@@ -798,10 +809,12 @@ class UCSSchoolHelperAbstractClass(object):
 		return cls
 
 	def __repr__(self):
+		dn = self.dn
+		dn = '%r, old_dn=%r' % (dn, self.old_dn) if dn != self.old_dn else repr(dn)
 		if self.supports_school():
-			return '%s(name=%r, school=%r, dn=%r)' % (self.__class__.__name__, self.name, self.school, self.custom_dn or self.old_dn)
+			return '%s(name=%r, school=%r, dn=%s)' % (self.__class__.__name__, self.name, self.school, dn)
 		else:
-			return '%s(name=%r, dn=%r)' % (self.__class__.__name__, self.name, self.custom_dn or self.old_dn)
+			return '%s(name=%r, dn=%s)' % (self.__class__.__name__, self.name, dn)
 
 	def __lt__(self, other):
 		return self.name < other.name
