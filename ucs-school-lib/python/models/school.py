@@ -35,6 +35,7 @@ from ldap.filter import escape_filter_chars
 from ldap.dn import escape_dn_chars
 
 from univention.config_registry import handler_set
+from univention.admin.uexceptions import noObject
 
 from ucsschool.lib.models.attributes import Attribute, SchoolName, DCName, ShareFileServer, DisplayName
 from ucsschool.lib.models.base import UCSSchoolHelperAbstractClass
@@ -383,28 +384,20 @@ class School(UCSSchoolHelperAbstractClass):
 		return super(School, self)._alter_udm_obj(udm_obj)
 
 	@classmethod
-	def get_from_oulist(cls, lo, oulist):
-		ous = [x.strip() for x in oulist.split(',')]
-		schools = []
-		for ou in ous:
-			logger.debug('All Schools: Getting OU %s', ou)
-			school = cls.from_dn(cls(name=ou).dn, None, lo)
-			logger.debug('All Schools: Found school: %r', school)
-			schools.append(school)
-		return schools
-
-	@classmethod
 	def from_binddn(cls, lo):
-		logger.debug('All Schools: Showing all OUs which DN %s can read.', lo.binddn)
+		logger.debug('All local schools: Showing all OUs which DN %s can read.', lo.binddn)
 		# get all schools of the user which are present on this server
-		schools = lo.search(base=lo.binddn, scope='base', attr=['ucsschoolSchool'])[0][1].get('ucsschoolSchool', [])
-		if schools:
-			schools = [cls.from_dn(cls(name=ou).dn, lo) for ou in schools]
-			if ucr.get('ucsschool/local/oulist'):
-				schools = [school for school in schools if school.name in ucr['ucsschool/local/oulist'].split(',')]
-			return schools
+		user_schools = lo.search(base=lo.binddn, scope='base', attr=['ucsschoolSchool'])[0][1].get('ucsschoolSchool', [])
+		if user_schools:
+			schools = []
+			for ou in user_schools:
+				try:
+					schools.append(cls.from_dn(cls(name=ou).dn, lo))
+				except noObject:
+					pass
+			return cls._filter_local_schools(schools)
 
-		if lo.binddn.find('ou=') > 0:
+		if 'ou=' in lo.binddn:
 			# user has no ucsschoolSchool attribute (not migrated yet)
 			# we got an OU in the user DN -> school teacher or assistent
 			# restrict the visibility to current school
@@ -413,9 +406,9 @@ class School(UCSSchoolHelperAbstractClass):
 			logger.debug('Schools from binddn: Found an OU in the LDAP binddn. Restricting schools to only show %s', school_dn)
 			school = cls.from_dn(school_dn, None, lo)
 			logger.debug('Schools from binddn: Found school: %r', school)
-			return [school]
+			return cls._filter_local_schools([school])
 
-		logger.warning('Schools from binddn: Unable to identify OU of this account - showing all OUs!')
+		logger.warning('Schools from binddn: Unable to identify OU of this account - showing all local OUs!')
 		return School.get_all(lo)
 
 	@classmethod
@@ -427,18 +420,19 @@ class School(UCSSchoolHelperAbstractClass):
 
 	@classmethod
 	def get_all(cls, lo, filter_str=None, easy_filter=False, respect_local_oulist=True):
+		schools = super(School, cls).get_all(lo, school=None, filter_str=filter_str, easy_filter=easy_filter)
 		oulist = ucr.get('ucsschool/local/oulist')
 		if oulist and respect_local_oulist:
 			logger.debug('All Schools: Schools overridden by UCR variable ucsschool/local/oulist')
-			schools = cls.get_from_oulist(lo, oulist)
-			if filter_str:
-				filtered_school_dns = [filtered_school.dn for filtered_school in cls.get_all(lo, filter_str, easy_filter, respect_local_oulist=False)]
-				schools = [school for school in schools if school.dn in filtered_school_dns]
-		else:
-			schools = super(School, cls).get_all(lo, school=None, filter_str=filter_str, easy_filter=easy_filter)
-		if respect_local_oulist and ucr.get('server/role') == 'domaincontroller_slave':
-			school = [school for school in schools if ucr.get('ldap/hostdn') in school.get_administrative_server_names(lo)]
-		return schools
+			ous = [x.strip() for x in oulist.split(',')]
+			schools = [school for school in schools if school.name in ous]
+		return cls._filter_local_schools(schools, lo)
+
+	@classmethod
+	def _filter_local_schools(cls, schools, lo):
+		if ucr.get('server/role') == 'domaincontroller_master':
+			return schools
+		return [school for school in schools if any(ucr.get('ldap/hostdn', '').lower() == x.lower() for x in school.get_administrative_server_names(lo) + school.get_educational_server_names(lo))]
 
 	@classmethod
 	def _attrs_for_easy_filter(cls):
