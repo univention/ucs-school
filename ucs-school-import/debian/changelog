@@ -1,3 +1,11 @@
+ucs-school-import (14.0.9-1) unstable; urgency=low
+
+  * Bug #41494: also add objectclass "ucsschoolType" to old objects in
+    ucs-school-migrate-objects-to-4.1R2, otherwise at least password
+    resets will fail
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 10 Jun 2016 17:11:26 +0200
+
 ucs-school-import (14.0.8-4) unstable; urgency=low
 
   * Bug #41242: exit code is 0 if all went well, 1 if a fatel error occured,

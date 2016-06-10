@@ -73,11 +73,11 @@ def migrate_users(lo, options):
 		base = SchoolSearchBase([school], dn=dn)
 
 		mapping = [
-			(base.students, 'ucsschoolStudent'),
-			(base.teachers, 'ucsschoolTeacher'),
-			(base.teachersAndStaff, ('ucsschoolTeacher', 'ucsschoolStaff')),
-			(base.staff, 'ucsschoolStaff'),
-			(base.admins, 'ucsschoolAdministrator'),
+			(base.students, ('ucsschoolType', 'ucsschoolStudent')),
+			(base.teachers, ('ucsschoolType', 'ucsschoolTeacher')),
+			(base.teachersAndStaff, ('ucsschoolType', 'ucsschoolTeacher', 'ucsschoolStaff')),
+			(base.staff, ('ucsschoolType', 'ucsschoolStaff')),
+			(base.admins, ('ucsschoolType', 'ucsschoolAdministrator')),
 		]
 		for container, object_classes in mapping:
 			yield '\nMigrating users underneath of %r' % (container,)
@@ -146,7 +146,7 @@ def migrate_admin_groups(lo, options):
 		old_schools = object_attrs.get('ucsschoolSchool', [])
 		old_object_classes = object_attrs.get('objectClass', [])
 		new_schools = set(old_schools) | set([school])
-		new_object_classes = set(old_object_classes) | set(['ucsschoolAdministratorGroup'])
+		new_object_classes = set(old_object_classes) | set(['ucsschoolType', 'ucsschoolAdministratorGroup'])
 		if (set(old_schools) == set(new_schools) and
 			set(old_object_classes) == set(new_object_classes)):
 			yield '%r has already been converted.' % (object_dn,)
