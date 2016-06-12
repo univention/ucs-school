@@ -46,10 +46,6 @@ def main():
 			print '#### moving user at', dn, 'to', b
 			print '################################'
 			user = User.from_dn(dn, a, lo)
-			user.custom_dn = None
-			user.change_school(b, lo)
-			assert user.dn != dn
-			assert b in user.dn
 			attrs = {
 				'homeDirectory': ['/home/%s/%s/%s' % (b, roleshare_path, user.name)],
 				'ucsschoolSchool': [b],
@@ -57,11 +53,16 @@ def main():
 				# TODO: add sambaHomeDrive sambaHomePath sambaLogonScript sambaProfilePath
 			}
 			oldinfo = user.get_udm_object(lo).info
+			if oldinfo.get('departmentNumber') != a:
+				attrs.pop('departmentNumber')
+			user.change_school(b, lo)
+			assert user.dn != dn
+			assert b in user.dn
 			try:
 				utils.verify_ldap_object(user.dn, expected_attr=attrs, strict=True, should_exist=True)
 			except utils.LDAPObjectValueMissing:
 				info = user.get_udm_object(lo).info
-				print 'Object moving failed: %r;\noldinfo=%r\ninfo=%r' % (user.dn, oldinfo, info)
+				print 'FAIl: %r;\noldinfo=%r\ninfo=%r' % (user.dn, oldinfo, info)
 				raise
 
 			assert set(groups) == set(user.get_udm_object(lo)['groups']), 'Moving the user failed... Expected groups %r != %r' % (groups, user.get_udm_object(lo)['groups'])
