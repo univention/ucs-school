@@ -52,7 +52,7 @@ class Person:
 		self.school = school
 		self.role = role
 		self.mail = '%s@%s' % (self.username, configRegistry.get('domainname'))
-		self.classes = []
+		self.school_classes = {}
 		if self.is_student():
 			self.append_random_class()
 			self.append_random_working_group()
@@ -107,7 +107,7 @@ class Person:
 		line += delimiter
 		line += self.school
 		line += delimiter
-		line += ','.join(self.classes)
+		line += ','.join([x for school_, classes in self.school_classes.iteritems() for x in classes])
 		line += delimiter
 		line += ''
 		line += delimiter
@@ -130,12 +130,12 @@ class Person:
 		return line
 
 	def append_random_class(self):
-		self.classes.append('%s-%s%s' % (self.school, uts.random_int(), uts.random_string(length=1, alpha=True, numeric=False)))
+		self.school_classes.setdefault(self.school, []).append('%s-%s%s' % (self.school, uts.random_int(), uts.random_string(length=1, alpha=True, numeric=False)))
 
 	def append_random_working_group(self):
 		return
 		# working groups cannot be specified, neither in file for CLI nor by API in Python
-		self.classes.append('%s-%s' % (self.school, uts.random_string(length=9, alpha=True, numeric=False)))
+		self.school_classes.setdefault(self.school, []).append('%s-%s' % (self.school, uts.random_string(length=9, alpha=True, numeric=False)))
 
 	def is_student(self):
 		return self.role == 'student'
@@ -248,9 +248,10 @@ class Person:
 		default_group_dn = 'cn=Domain Users %s,cn=groups,%s' % (self.school, self.school_base)
 		utils.verify_ldap_object(default_group_dn, expected_attr={'uniqueMember': [self.dn], 'memberUid': [self.username]}, strict=False, should_exist=True)
 
-		for cl in self.classes:
-			cl_group_dn = 'cn=%s,cn=klassen,cn=%s,cn=groups,%s' % (cl, cn_pupils, self.school_base)
-			utils.verify_ldap_object(cl_group_dn, expected_attr={'uniqueMember': [self.dn], 'memberUid': [self.username]}, strict=False, should_exist=True)
+		for school, classes in self.school_classes.iteritems():
+			for cl in classes:
+				cl_group_dn = 'cn=%s,cn=klassen,cn=%s,cn=groups,%s' % (cl, cn_pupils, get_school_base(school))
+				utils.verify_ldap_object(cl_group_dn, expected_attr={'uniqueMember': [self.dn], 'memberUid': [self.username]}, strict=False, should_exist=True)
 
 		role_group_dn = 'cn=%s%s,cn=groups,%s' % (self.grp_prefix, self.school, self.school_base)
 		utils.verify_ldap_object(role_group_dn, expected_attr={'uniqueMember': [self.dn], 'memberUid': [self.username]}, strict=False, should_exist=True)
@@ -336,7 +337,7 @@ class ImportFile:
 				'name': user.username,
 				'firstname': user.firstname,
 				'lastname': user.lastname,
-				'school_classes': {user.school: user.classes},
+				'school_classes': user.school_classes,
 				'email': user.mail,
 				'password': user.password,
 				'disabled': 'none' if user.active else 'all',

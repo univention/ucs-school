@@ -77,7 +77,6 @@ class User(Person):
 		self.school = school
 		self.role = role
 		# self.mail = '%s@%s' % (self.username, self.ucr.get('domainname'))
-		self.classes = []
 		if self.is_student():
 			self.cn = cn_pupils
 			self.grp_prefix = grp_prefix_pupils
@@ -101,8 +100,6 @@ class User(Person):
 
 		self.typ = 'teachersAndStaff' if self.role == 'teacher_staff' else self.role
 		self.school_classes = school_classes or {}
-
-		self.classes = [x for school_, classes in self.school_classes.iteritems() for x in classes]
 
 		host = self.ucr.get('ldap/master')
 		self.umc_connection = UMCConnection(host)
@@ -278,7 +275,6 @@ class User(Person):
 		else:
 			self.set_mode_to_modify()
 			self.school_classes = new_attributes.get('school_classes', self.school_classes)
-			self.classes = [x for school_, classes in self.school_classes.iteritems() for x in classes]
 			self.mail = new_attributes.get('email') if new_attributes.get('email') else self.mail
 			self.firstname = new_attributes.get('firstname') if new_attributes.get('firstname') else self.firstname
 			self.lastname = new_attributes.get('lastname') if new_attributes.get('lastname') else self.lastname
