@@ -1,3 +1,9 @@
+ucs-school-import (14.0.9-6) unstable; urgency=low
+
+  * Bug #41239: fix AttributeError, empty user-editable config files
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 13 Jun 2016 16:22:55 +0200
+
 ucs-school-import (14.0.9-5) unstable; urgency=low
 
   * Bug #41239: remove invalid variable COUNTER2 from default configuration

@@ -71,10 +71,10 @@ then
 	univention-config-registry set "ucsschool/import/set/homedrive?$letter"
 	univention-config-registry set 'ucsschool/import/set/netlogon/script/path?ucs-school-logon.vbs'
 
-	# copy defaults files to /var, for users to modify
+	# create empty configuration files to /var, for users to modify
 	for FILE in global user_import user_import_legacy; do
 		if ! [ -e /var/lib/ucs-school-import/configs/${FILE}.json ]; then
-			cp /usr/share/ucs-school-import/configs/${FILE}_defaults.json /var/lib/ucs-school-import/configs/${FILE}.json
+			echo '{}' > /var/lib/ucs-school-import/configs/${FILE}.json
 		fi
 	done
 fi
