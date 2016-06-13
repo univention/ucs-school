@@ -1,5 +1,6 @@
 import re
 
+from ldap.filter import escape_filter_chars, filter_format
 from univention.admin.uexceptions import noObject
 from ucsschool.importer.utils.ldap_connection import get_admin_connection
 from ucsschool.importer.exceptions import FormatError
@@ -15,24 +16,34 @@ class UsernameHandler(object):
 		self.connection, self.position = get_admin_connection()
 
 	def add_to_ldap(self, username, first_number):
+		assert isinstance(username, basestring)
+		assert isinstance(first_number, basestring)
 		self.connection.add(
-			"cn={},cn=unique-usernames,cn=ucsschool,cn=univention,dc=uni,dc=dtr".format(username),
-			[("objectClass", "ucsschoolUsername"), ("ucsschoolUsernameNextNumber", str(first_number))]
+			filter_format("cn=%s,cn=unique-usernames,cn=ucsschool,cn=univention,%s", (username,
+				self.connection.base)),
+			[
+				("objectClass", "ucsschoolUsername"),
+				("ucsschoolUsernameNextNumber", escape_filter_chars(first_number))
+			]
 		)
 
 	def get_next_number(self, username):
+		assert isinstance(username, basestring)
 		try:
 			return self.connection.get(
-				"cn={},cn=unique-usernames,cn=ucsschool,cn=univention,dc=uni,dc=dtr".format(username),
+				filter_format("cn=%s,cn=unique-usernames,cn=ucsschool,cn=univention,%s", (username,
+					self.connection.base)),
 				attr=["ucsschoolUsernameNextNumber"])["ucsschoolUsernameNextNumber"][0]
 		except KeyError:
 			raise noObject("Username '{}' not found.".format(username))
 
 	def get_and_raise_number(self, username):
+		assert isinstance(username, basestring)
 		cur = self.get_next_number(username)
 		next = int(cur) + 1
 		self.connection.modify(
-			"cn={},cn=unique-usernames,cn=ucsschool,cn=univention,dc=uni,dc=dtr".format(username),
+			filter_format("cn=%s,cn=unique-usernames,cn=ucsschool,cn=univention,%s", (username,
+				self.connection.base)),
 			[("ucsschoolUsernameNextNumber", cur, str(next))]
 		)
 		return cur
@@ -52,6 +63,7 @@ class UsernameHandler(object):
 		:param name: str: username, possibly a template
 		:return: str: unique username
 		"""
+		assert isinstance(name, basestring)
 		res = name
 		cut_pos = self.username_max_length - 3  # numbers >999 are not supported
 		match = self.username_pattern.search(name)
@@ -69,8 +81,11 @@ class UsernameHandler(object):
 		if len(self.username_pattern.split(name)) > 2:
 			raise FormatError("More than one counter variable found in username scheme '{}'.".format(name), name, name)
 
+		if start == 0 and end == len(name):
+			raise FormatError("No username in '{}'.".format(name), name, name)
+
 		try:
-			func = getattr(self, self.username_patterns[variable])
+			func = self.username_patterns[variable]
 		except KeyError as exc:
 			raise FormatError("Unknown variable name '{}' in username scheme '{}': {}".format(variable, name, exc),
 				variable, name)
@@ -102,11 +117,11 @@ class UsernameHandler(object):
 		Variables have to start with '[' and end with ']'.
 		Methods will be found with getattr(self, "method name").
 
-		:return: dict: variable name -> method name
+		:return: dict: variable name -> function
 		"""
 		return {
-			"[ALWAYSCOUNTER]": "always_counter",
-			"[COUNTER2]": "counter2"
+			"[ALWAYSCOUNTER]": self.always_counter,
+			"[COUNTER2]": self.counter2
 		}
 
 	def always_counter(self, name_base):

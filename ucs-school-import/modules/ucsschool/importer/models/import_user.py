@@ -417,6 +417,8 @@ class ImportUser(User):
 			pass
 
 		self.name = self.format_from_scheme("username", self.username_scheme)
+		if not self.name:
+			raise FormatError("No username was created from scheme '{}'.".format(self.username_scheme))
 		if not self.username_handler:
 			self.username_handler = self.factory.make_username_handler(self.username_max_length)
 		self.name = self.username_handler.format_username(self.name)
@@ -573,7 +575,10 @@ class ImportUser(User):
 		:param kwargs: dict: additional data to use for formatting
 		:return: str: formatted string
 		"""
-		all_fields = self.reader.get_data_mapping(self.input_data)
+		if self.input_data:
+			all_fields = self.reader.get_data_mapping(self.input_data)
+		else:
+			all_fields = dict()
 		all_fields.update(self.to_dict().copy())
 		all_fields.update(self.udm_properties)
 		all_fields.update(kwargs)

@@ -122,14 +122,14 @@ def add_stdout_handler(logger):
 def add_file_handler(logger, filename):
 	global _has_file_handler
 	if not _has_file_handler:
-		handler = logging.handlers.TimedRotatingFileHandler(filename, when="D", backupCount=10)
+		handler = logging.handlers.TimedRotatingFileHandler(filename, when="D", backupCount=10000000)
 		handler = set_handler_formatting(handler, "DEBUG")
 		logger.addHandler(handler)
 		if filename.endswith(".log"):
 			info_filename = "{}.info".format(filename[:-4])
 		else:
 			info_filename = "{}.info".format(filename)
-		handler = logging.handlers.TimedRotatingFileHandler(info_filename, when="D", backupCount=10)
+		handler = logging.handlers.TimedRotatingFileHandler(info_filename, when="D", backupCount=10000000)
 		handler = set_handler_formatting(handler, "INFO")
 		logger.addHandler(handler)
 		_has_file_handler = True
