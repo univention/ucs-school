@@ -1,3 +1,9 @@
+ucs-school-lib (9.0.18-3) unstable; urgency=low
+
+  * Bug #41493: fix typo
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 13 Jun 2016 12:14:46 +0200
+
 ucs-school-lib (9.0.18-2) unstable; urgency=medium
 
   * Bug #41534: fixup svn r70089

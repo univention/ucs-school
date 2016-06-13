@@ -104,7 +104,7 @@ def add_module_logger_to_schoollib():
 		_module_handler.setLevel(logging.DEBUG)
 		logger.addHandler(_module_handler)
 	else:
-		MODULE.info('add_module_logger_to_schoollib() should only be called once! Skipping...')
+		logger.info('add_module_logger_to_schoollib() should only be called once! Skipping...')
 	return _module_handler
 
 
