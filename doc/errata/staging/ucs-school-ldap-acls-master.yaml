@@ -1,0 +1,13 @@
+product: ucsschool
+release: "4.1"
+version: [1]
+scope: ucs_4.1-0-ucs-school-4.1
+src: ucs-school-ldap-acls-master
+fix: 
+desc: |
+ This update addresses the following issue(s):
+ * The LDAP ACL's have been adjusted to allow access based on the newly
+   introduced object classes (Bug #41115).
+ * School Administrators may no longer alter the password of computers
+   (Bug #41407).
+bug: [41115,41407]

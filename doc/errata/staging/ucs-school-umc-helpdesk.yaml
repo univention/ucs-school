@@ -1,0 +1,10 @@
+product: ucsschool
+release: "4.1"
+version: [1]
+scope: ucs_4.1-0-ucs-school-4.1
+src: ucs-school-umc-helpdesk
+fix: 
+desc: |
+ This update addresses the following issue(s):
+ * Adjustments for school overlapping users have been implemented (Bug #41117, Bug #41125).
+bug: [41117,41125]

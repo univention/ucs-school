@@ -6,5 +6,6 @@ src: ucs-school-umc-installer
 fix: 4.0.0-2.74.201603140735
 desc: |
  This update addresses the following issue(s):
- * SSL problems during joining a UCS@school slave have been resolved.
-bug: [37484]
+ * SSL problems during joining a UCS@school slave have been resolved (Bug #37484).
+ * Adjustments for school overlapping users have been implemented (Bug #41117, 41126).
+bug: [37484, 41117, 41126]

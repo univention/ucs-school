@@ -11,7 +11,8 @@ desc: |
    ucsschool/wizards/schoolwizards/classes/autosearch,
    ucsschool/wizards/schoolwizards/computers/autosearch,
    ucsschool/wizards/schoolwizards/schools/autosearch and
-   ucsschool/wizards/autosearch.
+   ucsschool/wizards/autosearch (Bug #36031).
  * Renaming a school class does not cause an error anymore when trying to
-   rename the related class share.
-bug: [36031, 40537]
+   rename the related class share (Bug #40537).
+ * Adjustments for school overlapping users have been implemented (Bug #41117, 41132).
+bug: [36031, 40537, 41117, 41132]

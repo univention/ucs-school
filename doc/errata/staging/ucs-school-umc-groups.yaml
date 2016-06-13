@@ -9,5 +9,6 @@ desc: |
  * The autosearch can now be disabled via the UCR variables
    ucsschool/assign-teacher/autosearch,
    ucsschool/assign-classes/autosearch and
-   ucsschool/workgroups/autosearch.
-bug: [36031]
+   ucsschool/workgroups/autosearch (Bug #36031).
+ * Adjustments for school overlapping users have been implemented (Bug #41117, Bug #41124).
+bug: [36031,41117,41124]
