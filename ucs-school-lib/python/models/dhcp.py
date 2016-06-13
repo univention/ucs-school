@@ -105,6 +105,7 @@ class DHCPService(UCSSchoolHelperAbstractClass):
 				if subnet in interfaces: # subnet matches any local subnet
 					logger.info('Creating new DHCPSubnet from %s', subnet_dn)
 					dhcp_subnet.dhcp_service = self
+					dhcp_subnet.position = dhcp_subnet.get_own_container()
 					dhcp_subnet.set_dn(dhcp_subnet.dn)
 					dhcp_subnet.create(lo)
 				else:
@@ -133,8 +134,9 @@ class AnyDHCPService(DHCPService):
 	def get_servers(self, lo):
 		old_name = self.name
 		old_position = self.position
-		self.position = ldap.dn.dn2str(ldap.dn.str2dn(self.old_dn or self.dn)[1:])
-		self.name = ldap.dn.dn2str(ldap.dn.str2dn(self.old_dn or self.dn)[0]).split('=', 1)[-1]
+		old_dn = ldap.dn.str2dn(self.old_dn or self.dn)
+		self.position = ldap.dn.dn2str(old_dn[1:])
+		self.name = ldap.dn.dn2str(old_dn[0]).split('=', 1)[-1]
 		try:
 			return super(AnyDHCPService, self).get_servers(lo)
 		finally:

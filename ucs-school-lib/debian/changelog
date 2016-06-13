@@ -1,3 +1,9 @@
+ucs-school-lib (9.0.18-2) unstable; urgency=medium
+
+  * Bug #41534: fixup svn r70089
+
+ -- Florian Best <best@univention.de>  Mon, 13 Jun 2016 09:03:20 +0200
+
 ucs-school-lib (9.0.18-1) unstable; urgency=medium
 
   * Bug #41293: support removal from a specific school (move if necessary)
