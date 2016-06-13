@@ -38,7 +38,7 @@ import datetime
 from ldap.filter import filter_format
 from univention.admin.uexceptions import noObject
 from ucsschool.lib.models.attributes import ValidationError
-from ucsschool.importer.exceptions import UcsSchoolImportError, CreationError, DeletionError, ModificationError, ToManyErrors, UnkownAction, UnknownDeleteSetting, UserValidationError
+from ucsschool.importer.exceptions import UcsSchoolImportError, CreationError, DeletionError, ModificationError, MoveError, ToManyErrors, UnkownAction, UnknownDeleteSetting, UserValidationError
 from ucsschool.importer.factory import Factory
 from ucsschool.importer.configuration import Configuration
 from ucsschool.importer.utils.logging2udebug import get_logger
@@ -294,9 +294,11 @@ class UserImport(object):
 		:param user: existing User with old school
 		:return: ImportUser: user in new position, freshly fetched from LDAP
 		"""
-		self.logger.info("Moving %s from school %r to %r...", imported_user, user.school, imported_user.school)
-		user.school = imported_user.school
-		user.change_school(imported_user.school, self.connection)
+		self.logger.info("Moving %s from school %r to %r...", user, user.school, imported_user.school)
+		res = user.change_school(imported_user.school, self.connection)
+		if not res:
+			raise MoveError("Error moving {} from school '{}' to '{}'.".format(user, user.school, imported_user.school),
+				entry=imported_user.entry_count, import_user=imported_user)
 		# refetch user from LDAP
 		user = imported_user.get_by_import_id(self.connection, imported_user.source_uid,
 			imported_user.record_uid)

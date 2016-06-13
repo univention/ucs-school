@@ -50,10 +50,10 @@ class LegacyUserImport(UserImport):
 					ldap_user = a_user.get_by_import_id(self.connection, user.source_uid, user.record_uid)
 					ldap_user.update(user)  # need user.input_data for hooks
 					users_to_delete.append(ldap_user)
-				except noObject as exc:
-					self.logger.error(exc)
-					self.errors.append(DeletionError("User to delete not found in LDAP: {}.".format(user),
-						entry=user.entry_count, import_user=user))
+				except noObject:
+					msg = "User to delete not found in LDAP: {}.".format(user)
+					self.logger.error(msg)
+					self._add_error(DeletionError(msg, entry=user.entry_count, import_user=user))
 		return users_to_delete
 
 	def determine_add_modify_action(self, imported_user):

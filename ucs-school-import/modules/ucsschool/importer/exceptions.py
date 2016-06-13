@@ -103,6 +103,10 @@ class ModificationError(UcsSchoolImportError):
 	pass
 
 
+class MoveError(UcsSchoolImportError):
+	pass
+
+
 class NotSupportedError(UcsSchoolImportError):
 	pass
 
