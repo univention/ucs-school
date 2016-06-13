@@ -1,3 +1,10 @@
+ucs-school-import (14.0.9-4) unstable; urgency=low
+
+  * Bug #41242: support changing Users primary school (position)
+  * log deletion errors in legacy import
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 13 Jun 2016 14:25:00 +0200
+
 ucs-school-import (14.0.9-3) unstable; urgency=low
 
   * Bug #41242: change format error in scheme formatting to warning

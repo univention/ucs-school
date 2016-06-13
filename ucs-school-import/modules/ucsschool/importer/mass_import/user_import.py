@@ -124,8 +124,8 @@ class UserImport(object):
 						user, user.source_uid, user.record_uid, user.action), entry=user.entry_count, import_user=user)
 
 				if user.action in ["A", "M"]:
-					self.logger.info("%s %s (source_uid:%s record_uid:%s) attributes=%r udm_properties=%r...", action_str, user,
-						user.source_uid, user.record_uid, user.to_dict(), user.udm_properties)
+					self.logger.info("%s %s (source_uid:%s record_uid:%s) attributes=%r udm_properties=%r...",
+						action_str, user, user.source_uid, user.record_uid, user.to_dict(), user.udm_properties)
 
 				try:
 					if user.action == "A":
@@ -192,6 +192,8 @@ class UserImport(object):
 			user = imported_user.get_by_import_id(self.connection, imported_user.source_uid,
 				imported_user.record_uid)
 			imported_user.prepare_all(new_user=False)
+			if user.school != imported_user.school:
+				user = self.do_school_move(imported_user, user)
 			user.update(imported_user)
 			if user.disabled != "none" or user.has_expiry(self.connection):
 				self.logger.info("Found deactivated user %r, reactivating.", user)
@@ -283,6 +285,22 @@ class UserImport(object):
 				self._add_error(exc)
 		self.logger.info("------ Deleted %d users. ------", len(self.deleted_users))
 		return self.errors, self.deleted_users
+
+	def do_school_move(self, imported_user, user):
+		"""
+		Change users primary school.
+
+		:param imported_user: User from input with target school
+		:param user: existing User with old school
+		:return: ImportUser: user in new position, freshly fetched from LDAP
+		"""
+		self.logger.info("Moving %s from school %r to %r...", imported_user, user.school, imported_user.school)
+		user.school = imported_user.school
+		user.change_school(imported_user.school, self.connection)
+		# refetch user from LDAP
+		user = imported_user.get_by_import_id(self.connection, imported_user.source_uid,
+			imported_user.record_uid)
+		return user
 
 	def do_delete(self, user):
 		"""

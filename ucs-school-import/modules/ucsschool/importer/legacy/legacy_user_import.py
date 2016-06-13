@@ -33,7 +33,7 @@ Legacy mass import class.
 
 from univention.admin.uexceptions import noObject
 from ucsschool.importer.mass_import.user_import import UserImport
-from ucsschool.importer.exceptions import CreationError, UnkownAction
+from ucsschool.importer.exceptions import CreationError, DeletionError, UnkownAction
 
 
 class LegacyUserImport(UserImport):
@@ -52,6 +52,8 @@ class LegacyUserImport(UserImport):
 					users_to_delete.append(ldap_user)
 				except noObject as exc:
 					self.logger.error(exc)
+					self.errors.append(DeletionError("User to delete not found in LDAP: {}.".format(user),
+						entry=user.entry_count, import_user=user))
 		return users_to_delete
 
 	def determine_add_modify_action(self, imported_user):
@@ -70,8 +72,11 @@ class LegacyUserImport(UserImport):
 					imported_user.record_uid)
 				if user.disabled != "none" or user.has_expiry(self.connection):
 					self.logger.info("Found deactivated user %r, reactivating.", user)
-					user.reactivate(self.connection)
 					imported_user.prepare_all(new_user=False)
+					# make school move first, reactivate freshly fetched user
+					if user.school != imported_user.school:
+						user = self.do_school_move(imported_user, user)
+					user.reactivate(self.connection)
 					user.update(imported_user)
 					user.action = "M"
 				else:
@@ -86,10 +91,12 @@ class LegacyUserImport(UserImport):
 			try:
 				user = imported_user.get_by_import_id(self.connection, imported_user.source_uid,
 					imported_user.record_uid)
+				imported_user.prepare_all(new_user=False)
+				if user.school != imported_user.school:
+					user = self.do_school_move(imported_user, user)
 				if user.disabled != "none" or user.has_expiry(self.connection):
 					self.logger.info("Found deactivated user %r, reactivating.", user)
 					user.reactivate(self.connection)
-				imported_user.prepare_all(new_user=False)
 				user.update(imported_user)
 			except noObject:
 				imported_user.prepare_all(new_user=True)
