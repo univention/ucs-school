@@ -84,13 +84,13 @@ class Klasse(object):
 	def create(self):
 		"""Creates object class"""
 		flavor = 'schoolwizards/classes'
-		param = [{'object':
-				  {'name': self.name,
-				   'school': self.school,
-				   'description': self.description,
-				   },
-				  'options': None
-				  }]
+		param = [{'object': {
+			'name': self.name,
+			'school': self.school,
+			'description': self.description,
+			},
+			'options': None
+		}]
 		print 'Creating class %s in school %s' % (
 			self.name,
 			self.school)
@@ -145,11 +145,10 @@ class Klasse(object):
 	def get(self):
 		"""Get class"""
 		flavor = 'schoolwizards/classes'
-		param = [{'object':
-				  {'$dn$': self.dn(),
-				   'school': self.school
-				   }
-				  }]
+		param = [{'object': {
+			'$dn$': self.dn(),
+			'school': self.school
+		}}]
 		reqResult = self.umcConnection.request(
 			'schoolwizards/classes/get', param, flavor)
 		if not reqResult[0]:
@@ -159,12 +158,12 @@ class Klasse(object):
 
 	def check_get(self):
 		info = {'$dn$': self.dn(),
-				'school': self.school,
-				'description': self.description,
-				'name': self.name,
-				'users': self.users,
-				'objectType': 'groups/group'
-				}
+			'school': self.school,
+			'description': self.description,
+			'name': self.name,
+			'users': self.users,
+			'objectType': 'groups/group'
+		}
 		get_result = self.get()
 		if get_result != info:
 			raise GetCheckFail('Failed get request for class %s. Returned result: %r. Expected result: %r' % (
@@ -173,12 +172,12 @@ class Klasse(object):
 	def remove(self):
 		"""Remove class"""
 		flavor = 'schoolwizards/classes'
-		param = [{'object':
-				  {'$dn$': self.dn(),
-				   'school': self.school
-				   },
-				  'options': None
-				  }]
+		param = [{'object': {
+			'$dn$': self.dn(),
+			'school': self.school
+			},
+			'options': None
+		}]
 		reqResult = self.umcConnection.request(
 			'schoolwizards/classes/remove', param, flavor)
 
@@ -188,14 +187,14 @@ class Klasse(object):
 	def edit(self, new_attributes):
 		"""Edit object class"""
 		flavor = 'schoolwizards/classes'
-		param = [{'object':
-				  {'$dn$': self.dn(),
-				   'name': new_attributes['name'],
-				   'school': self.school,
-				   'description': new_attributes['description']
-				   },
-				  'options': None
-				  }]
+		param = [{'object': {
+			'$dn$': self.dn(),
+			'name': new_attributes['name'],
+			'school': self.school,
+			'description': new_attributes['description']
+			},
+			'options': None
+		}]
 		print 'Editing class %s in school %s' % (
 			self.name,
 			self.school)

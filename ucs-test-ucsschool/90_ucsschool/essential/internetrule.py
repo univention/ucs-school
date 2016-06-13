@@ -37,6 +37,7 @@ class InternetRule(object):
 	:param priority: priority of the internet rule [1,10]
 	:type priority: [int]
 	"""
+
 	def __init__(
 			self,
 			umcConnection=None,
@@ -54,7 +55,7 @@ class InternetRule(object):
 			dom = RandomDomain()
 			domains = dom.getDomainList(random.randint(1, 10))
 			self.domains = sorted(domains)
-		if wlan==True or wlan==False:
+		if wlan == True or wlan == False:
 			self.wlan = wlan
 		else:
 			self.wlan = random.choice([True, False])
@@ -80,18 +81,15 @@ class InternetRule(object):
 	# define the rule umcp
 	def define(self):
 		"""Define internet rule via UMCP"""
-		param = [
-			{
-				'object':
-				{
-					'name': self.name,
-					'type': self.typ,
-					'domains': self.domains,
-					'wlan': self.wlan,
-					'priority': self.priority
-					}
-				}
-			]
+		param = [{
+			'object': {
+				'name': self.name,
+				'type': self.typ,
+				'domains': self.domains,
+				'wlan': self.wlan,
+				'priority': self.priority
+			}
+		}]
 		print 'defining rule %s with UMCP:%s' % (
 			self.name,
 			'internetrules/add')
@@ -140,19 +138,16 @@ class InternetRule(object):
 		new_wlan = new_wlan if new_wlan else self.wlan
 		new_priority = new_priority if new_priority else self.priority
 
-		param = [
-			{
-				'object':
-				{
-					'name': new_name,
-					'type': new_type,
-					'domains': new_domains,
-					'wlan': new_wlan,
-					'priority': new_priority
-					},
-				'options': {'name': self.name}
-				}
-			]
+		param = [{
+			'object': {
+				'name': new_name,
+				'type': new_type,
+				'domains': new_domains,
+				'wlan': new_wlan,
+				'priority': new_priority
+			},
+			'options': {'name': self.name}
+		}]
 		print 'Modifying rule %s with UMCP:%s' % (
 			self.name,
 			'internetrules/put')
@@ -252,12 +247,10 @@ class InternetRule(object):
 			name = '$default$'
 		else:
 			name = self.name
-		param = [
-			{
-				'group': groupdn,
-				'rule': name
-				}
-			]
+		param = [{
+			'group': groupdn,
+			'rule': name
+		}]
 		print 'Assigning rule %s to %s: %s' % (
 			self.name,
 			groupType,

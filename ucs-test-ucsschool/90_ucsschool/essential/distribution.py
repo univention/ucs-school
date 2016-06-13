@@ -111,7 +111,7 @@ class Distribution(object):
 		param = {
 			'filter': filt,
 			'pattern': pattern
-			}
+		}
 		reqResult = self.umcConnection.request(
 			'distribution/query',
 			param,
@@ -228,10 +228,10 @@ html5
 					'files': files,
 					'name': self.name,
 					'recipients': recipients
-					},
+    },
 				'options': None
-				}
-			]
+   }
+		]
 		print 'param=', param
 		reqResult = self.umcConnection.request(
 			'distribution/add',
@@ -298,29 +298,27 @@ html5
 		collectType = collectType if collectType else self.collectType
 		collectTime = collectTime if collectTime else self.collectTime
 		collectDate = collectDate if collectDate else self.collectDate
-		files = files if files else [x for x,y in self.files]
+		files = files if files else [x for x, y in self.files]
 		recipients = recipients if recipients else self.recipients
 		new_recipients = []
 		for item in recipients:
 			new_recipients.append(item.dn())
 		flavor = self.flavor
-		param = [
-			{
-				'object': {
-					'collectDate': collectDate,
-					'collectTime': collectTime,
-					'collectType': collectType,
-					'description': description,
-					'distributeDate': distributeDate,
-					'distributeTime': distributeTime,
-					'distributeType': distributeType,
-					'files': files,
-					'name': self.name,
-					'recipients': new_recipients
-					},
-				'options': None
-				}
-			]
+		param = [{
+			'object': {
+				'collectDate': collectDate,
+				'collectTime': collectTime,
+				'collectType': collectType,
+				'description': description,
+				'distributeDate': distributeDate,
+				'distributeTime': distributeTime,
+				'distributeType': distributeType,
+				'files': files,
+				'name': self.name,
+				'recipients': new_recipients
+			},
+			'options': None
+		}]
 		reqResult = self.umcConnection.request(
 			'distribution/put',
 			param,
@@ -358,8 +356,8 @@ html5
 			'name': found['name'],
 			'starttime': found['starttime'],
 			'deadline': found['deadline']
-			}
-		recips = [{'id':y.dn(),'label':y.name} for y in self.recipients]
+		}
+		recips = [{'id': y.dn(), 'label': y.name} for y in self.recipients]
 
 		if self.distributeType != 'automatic':
 			sTime = None
@@ -380,7 +378,7 @@ html5
 			'name': self.name,
 			'starttime': sTime,
 			'deadline': dTime,
-			}
+		}
 		print 'supposed = ', supposed
 		print 'current = ', current
 
@@ -504,7 +502,7 @@ html5
 			print 'file_path=', path
 			existingFiles = self.idir(path)
 			print 'existingFiles=', existingFiles
-			files = [x for x,y in self.files]
+			files = [x for x, y in self.files]
 			if files != existingFiles:
 				utils.fail(
 					'Project files were not distributed for user %s' %
@@ -533,7 +531,7 @@ html5
 			print 'file_path=', path
 			existingFiles = self.idir(path)
 			print 'existingFiles=', existingFiles
-			files = [x for x,y in self.files]
+			files = [x for x, y in self.files]
 			if files != existingFiles:
 				utils.fail(
 					'Project files were not collected for user %s' %
@@ -543,12 +541,10 @@ html5
 		"""Calls 'distribution/remove'"""
 		print 'Removing Project %s' % (self.name)
 		flavor = self.flavor
-		param = [
-			{
-				'object': self.name,
-				'options': None
-				}
-			]
+		param = [{
+			'object': self.name,
+			'options': None
+		}]
 		reqResult = self.umcConnection.request(
 			'distribution/remove',
 			param,
@@ -574,14 +570,13 @@ html5
 		param = {
 			'project': self.name,
 			'filenames': files
-			}
+		}
 		reqResult = self.umcConnection.request(
 			'distribution/checkfiles',
 			param,
 			flavor)
 		if reqResult:
 			utils.fail('Unable to chack files for project (%r)' % (param,))
-
 
 	def adopt(self, project_name):
 		"""Calls 'distribute/adopt'"""
@@ -601,7 +596,6 @@ html5
 			utils.fail(
 				'Project %s was not adopted successfully' %
 				(project_name,))
-
 
 	def getUserFilesPath(self, user, purpose='distribute'):
 		"""Gets the correct files path for a specific user depending on
@@ -635,4 +629,3 @@ html5
 					self.name,
 					user)
 		return path
-

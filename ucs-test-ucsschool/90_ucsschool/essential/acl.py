@@ -14,11 +14,14 @@ import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool as utu
 import univention.testing.strings as uts
 
+
 class FailAcl(Exception):
 	pass
 
+
 class FailCmd(Exception):
 	pass
+
 
 def run_commands(cmdlist, argdict):
 	"""
@@ -32,9 +35,10 @@ def run_commands(cmdlist, argdict):
 		for i, val in enumerate(cmd):
 			cmd[i] = val % argdict
 		print '*** %r' % cmd
-		out , err = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
-		result_list.append((out,err))
+		out, err = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
+		result_list.append((out, err))
 	return result_list
+
 
 def create_group_in_container(container_dn):
 	"""Create random group in a specific container:\n
@@ -42,18 +46,17 @@ def create_group_in_container(container_dn):
 	:type container_dn: ldap object dn
 	"""
 	cmd = [
-			'udm', 'groups/group', 'create',
-			'--position', '%(container)s',
-			'--set', 'name=%(group_name)s'
-			]
-	out , err = run_commands(
-			[cmd], {
-				'container': container_dn,
-				'group_name': uts.random_name()
-				}
-			)[0]
+		'udm', 'groups/group', 'create',
+		'--position', '%(container)s',
+		'--set', 'name=%(group_name)s'
+	]
+	out, err = run_commands([cmd], {
+		'container': container_dn,
+		'group_name': uts.random_name()
+	})[0]
 	if out:
 		return out.split(': ')[1].strip()
+
 
 def create_dc_slave_in_container(container_dn):
 	"""Create random computer in a specific container:\n
@@ -61,19 +64,18 @@ def create_dc_slave_in_container(container_dn):
 	:type container_dn: ldap object dn
 	"""
 	cmd = [
-			'udm', 'computers/domaincontroller_slave', 'create',
-			'--position', '%(container)s',
-			'--set', 'name=%(name)s'
-			]
-	out , err = run_commands(
-			[cmd], {
-				'container': container_dn,
-				'name': uts.random_name(),
-				'uidNumber': uts.random_int()
-				}
-			)[0]
+		'udm', 'computers/domaincontroller_slave', 'create',
+		'--position', '%(container)s',
+		'--set', 'name=%(name)s'
+	]
+	out, err = run_commands([cmd], {
+		'container': container_dn,
+		'name': uts.random_name(),
+		'uidNumber': uts.random_int()
+	})[0]
 	if out:
 		return out.split(': ')[1].strip()
+
 
 def create_user_in_container(container_dn):
 	"""Create random user in a specific container:\n
@@ -81,27 +83,26 @@ def create_user_in_container(container_dn):
 	:type container_dn: ldap object dn
 	"""
 	cmd = [
-			'udm', 'users/user', 'create',
-			'--position', '%(container)s',
-			'--set', 'username=%(username)s',
-			'--set', 'firstname=%(firstname)s',
-			'--set','lastname=%(lastname)s',
-			'--set', 'password=%(password)s',
-			]
-	out , err = run_commands([cmd],
-			{
-				'container': container_dn,
-				'username': uts.random_name(),
-				'firstname': uts.random_name(),
-				'lastname': uts.random_name(),
-				'password': uts.random_string(),
-				}
-			)[0]
+		'udm', 'users/user', 'create',
+		'--position', '%(container)s',
+		'--set', 'username=%(username)s',
+		'--set', 'firstname=%(firstname)s',
+		'--set', 'lastname=%(lastname)s',
+		'--set', 'password=%(password)s',
+	]
+	out, err = run_commands([cmd], {
+		'container': container_dn,
+		'username': uts.random_name(),
+		'firstname': uts.random_name(),
+		'lastname': uts.random_name(),
+		'password': uts.random_string(),
+	})[0]
 	if out:
 		return out.split(': ')[1].strip()
 
 
 class Acl(object):
+
 	"""Acl class\n
 	contains the basic functuality to test acls for the common container in ucsschool\n
 	may change with time.\n
@@ -135,17 +136,17 @@ class Acl(object):
 		print '\n * Targetdn = %s\n * Authdn = %s\n * Access = %s\n * Access allowance = %s\n' % (
 				target_dn, self.auth_dn, access, access_allowance)
 		cmd = [
-				'slapacl',
-				'-f',
-				'/etc/ldap/slapd.conf',
-				'-D',
-				'%(self.auth_dn)s',
-				'-b',
-				'%(target_dn)s',
-				'%(attr)s/%(access)s',
-				'-d',
-				'0'
-				]
+			'slapacl',
+			'-f',
+			'/etc/ldap/slapd.conf',
+			'-D',
+			'%(self.auth_dn)s',
+			'-b',
+			'%(target_dn)s',
+			'%(attr)s/%(access)s',
+			'-d',
+			'0'
+		]
 		for attr in attrs:
 			argdict = {'self.auth_dn': self.auth_dn, 'target_dn': target_dn, 'access': access, 'attr': attr}
 			out, err = run_commands([cmd], argdict)[0]
@@ -164,39 +165,39 @@ class Acl(object):
 		"""General acces rule = all read"""
 		base_dn = self.ucr.get('ldap/base')
 		attrs = [
-				'entry',
-				'children',
-				'dc',
-				'univentionObjectType',
-				'krb5RealmName',
-				'nisDomain',
-				'associatedDomain',
-				'univentionPolicyReference',
-				'msGPOLink',
-				]
+			'entry',
+			'children',
+			'dc',
+			'univentionObjectType',
+			'krb5RealmName',
+			'nisDomain',
+			'associatedDomain',
+			'univentionPolicyReference',
+			'msGPOLink',
+		]
 		self.assert_acl(base_dn, access, attrs)
 
 	def assert_student(self, stu_dn, access):
 		"""Lehrer, Mitarbeiter und OU-Admins duerfen Schueler-Passwoerter aendern
 		"""
 		attrs = [
-				'krb5KeyVersionNumber',
-				'krb5KDCFlags',
-				'krb5Key',
-				'krb5PasswordEnd',
-				'sambaAcctFlags',
-				'sambaPwdLastSet',
-				'sambaLMPassword',
-				'sambaNTPassword',
-				'shadowLastChange',
-				'shadowMax',
-				'userPassword',
-				'pwhistory',
-				'sambaPwdCanChange',
-				'sambaPwdMustChange',
-				'sambaPasswordHistory',
-				'sambaBadPasswordCount'
-				]
+			'krb5KeyVersionNumber',
+			'krb5KDCFlags',
+			'krb5Key',
+			'krb5PasswordEnd',
+			'sambaAcctFlags',
+			'sambaPwdLastSet',
+			'sambaLMPassword',
+			'sambaNTPassword',
+			'shadowLastChange',
+			'shadowMax',
+			'userPassword',
+			'pwhistory',
+			'sambaPwdCanChange',
+			'sambaPwdMustChange',
+			'sambaPasswordHistory',
+			'sambaBadPasswordCount'
+		]
 		self.assert_acl(stu_dn, access, attrs)
 
 	def assert_room(self, room_dn, access):
@@ -204,23 +205,23 @@ class Acl(object):
 		"""
 		target_dn = 'cn=raeume,cn=groups,%s' % utu.UCSTestSchool().get_ou_base_dn(self.school)
 		attrs = [
-				'children',
-				'entry',
-				]
+			'children',
+			'entry',
+		]
 		self.assert_acl(target_dn, access, attrs)
 		# access to dn.regex="^cn=([^,]+),cn=raeume,cn=groups,ou=([^,]+),dc=najjar,dc=am$$"
 		# filter="(&(!(|(uidNumber=*)(objectClass=SambaSamAccount)))(objectClass=univentionGroup))"
 		attrs = [
-				'entry',
-				'children',
-				'sambaGroupType',
-				'cn',
-				'objectClass',
-				'univentionObjectType',
-				'gidNumber',
-				'sambaSID',
-				'univentionGroupType',
-				]
+			'entry',
+			'children',
+			'sambaGroupType',
+			'cn',
+			'objectClass',
+			'univentionObjectType',
+			'gidNumber',
+			'sambaSID',
+			'univentionGroupType',
+		]
 		self.assert_acl(room_dn, access, attrs)
 		target_dn = create_dc_slave_in_container(target_dn)
 		self.assert_acl(target_dn, access, attrs, access_allowance='DENIED')
@@ -231,9 +232,9 @@ class Acl(object):
 		"""
 		group_dn = 'cn=lehrer,cn=groups,%s' % utu.UCSTestSchool().get_ou_base_dn(self.school)
 		attrs = [
-				'children',
-				'entry',
-				]
+			'children',
+			'entry',
+		]
 		self.assert_acl(group_dn, access, attrs)
 		target_dn = create_dc_slave_in_container(group_dn)
 		self.assert_acl(target_dn, access, attrs, access_allowance='DENIED')
@@ -241,50 +242,50 @@ class Acl(object):
 		# access to dn.regex="^cn=([^,]+),(cn=lehrer,|cn=schueler,|)cn=groups,ou=([^,]+),dc=najjar,dc=am$$"
 		# filter="(&(!(|(uidNumber=*)(objectClass=SambaSamAccount)))(objectClass=univentionGroup))"
 		attrs = [
-				'sambaGroupType',
-				'cn',
-				'description',
-				'objectClass',
-				'objectClass',
-				'objectClass',
-				'objectClass',
-				'objectClass',
-				'memberUid',
-				'univentionObjectType',
-				'gidNumber',
-				'sambaSID',
-				'uniqueMember',
-				'univentionGroupType',
-				]
+			'sambaGroupType',
+			'cn',
+			'description',
+			'objectClass',
+			'objectClass',
+			'objectClass',
+			'objectClass',
+			'objectClass',
+			'memberUid',
+			'univentionObjectType',
+			'gidNumber',
+			'sambaSID',
+			'uniqueMember',
+			'univentionGroupType',
+		]
 		self.assert_acl(group_dn, access, attrs)
 
 	def assert_student_group(self, access):
 		group_dn = 'cn=schueler,cn=groups,%s' % utu.UCSTestSchool().get_ou_base_dn(self.school)
 		attrs = [
-				'children',
-				'entry',
-				]
+			'children',
+			'entry',
+		]
 		self.assert_acl(group_dn, access, attrs)
 
 		target_dn = create_dc_slave_in_container(group_dn)
 		self.assert_acl(target_dn, access, attrs, access_allowance='DENIED')
 		group_dn = create_group_in_container(group_dn)
 		attrs = [
-				'sambaGroupType',
-				'cn',
-				'description',
-				'objectClass',
-				'objectClass',
-				'objectClass',
-				'objectClass',
-				'objectClass',
-				'memberUid',
-				'univentionObjectType',
-				'gidNumber',
-				'sambaSID',
-				'uniqueMember',
-				'univentionGroupType',
-				]
+			'sambaGroupType',
+			'cn',
+			'description',
+			'objectClass',
+			'objectClass',
+			'objectClass',
+			'objectClass',
+			'objectClass',
+			'memberUid',
+			'univentionObjectType',
+			'gidNumber',
+			'sambaSID',
+			'uniqueMember',
+			'univentionGroupType',
+		]
 		self.assert_acl(group_dn, access, attrs)
 
 	def assert_shares(self, shares_dn, access):
@@ -292,9 +293,9 @@ class Acl(object):
 		Klassenshares aber nicht aendern
 		"""
 		attrs = [
-				'children',
-				'entry',
-				]
+			'children',
+			'entry',
+		]
 		self.assert_acl(shares_dn, access, attrs)
 		target_dn = create_dc_slave_in_container(shares_dn)
 		self.assert_acl(target_dn, 'write', attrs, access_allowance='DENIED')
@@ -307,9 +308,9 @@ class Acl(object):
 		base_dn = self.ucr.get('ldap/base')
 		temp_dn = 'cn=sid,cn=temporary,cn=univention,%s' % base_dn
 		attrs = [
-				'children',
-				'entry',
-				]
+			'children',
+			'entry',
+		]
 		self.assert_acl(temp_dn, access, attrs)
 		temp_dn = 'cn=gid,cn=temporary,cn=univention,%s' % base_dn
 		self.assert_acl(temp_dn, access, attrs)
@@ -328,10 +329,10 @@ class Acl(object):
 		base_dn = self.ucr.get('ldap/base')
 		temp_dn = 'cn=gidNumber,cn=temporary,cn=univention,%s' % base_dn
 		attrs = [
-				'children',
-				'entry',
-				'univentionLastUsedValue'
-				]
+			'children',
+			'entry',
+			'univentionLastUsedValue'
+		]
 		self.assert_acl(temp_dn, access, attrs)
 		target_dn = create_dc_slave_in_container(temp_dn)
 		self.assert_acl(target_dn, access, attrs, access_allowance='DENIED')
@@ -352,7 +353,7 @@ class Acl(object):
 			'ucsschoolClassShareFileServer',
 			'univentionPolicyReference',
 			'objectClass',
-			]
+		]
 		target_dn = utu.UCSTestSchool().get_ou_base_dn(self.school)
 		self.assert_acl(target_dn, access, attrs)
 
@@ -368,7 +369,7 @@ class Acl(object):
 			'univentionObjectType',
 			'description',
 			'cn',
-			]
+		]
 		container_dn = 'cn=univention,%s' % base_dn
 		self.assert_acl(container_dn, access, attrs)
 		container_dn = 'cn=dns,%s' % base_dn
@@ -383,8 +384,8 @@ class Acl(object):
 		im Rechner- und DHCP-Objekt aendern
 		"""
 		attrs = [
-				'macAddress',
-				]
+			'macAddress',
+		]
 		self.assert_acl(computer_dn, access, attrs)
 
 	def assert_user(self, user_dn, access):
@@ -392,36 +393,36 @@ class Acl(object):
 		von cn=users aendern
 		"""
 		attrs = [
-				'krb5KeyVersionNumber',
-				'krb5KDCFlags',
-				'krb5Key',
-				'krb5PasswordEnd',
-				'sambaAcctFlags',
-				'sambaPwdLastSet',
-				'sambaLMPassword',
-				'sambaNTPassword',
-				'shadowLastChange',
-				'shadowMax',
-				'userPassword',
-				'pwhistory',
-				'sambaPwdCanChange',
-				'sambaPwdMustChange',
-				'sambaPasswordHistory',
-				'sambaBadPasswordCount'
-				]
+			'krb5KeyVersionNumber',
+			'krb5KDCFlags',
+			'krb5Key',
+			'krb5PasswordEnd',
+			'sambaAcctFlags',
+			'sambaPwdLastSet',
+			'sambaLMPassword',
+			'sambaNTPassword',
+			'shadowLastChange',
+			'shadowMax',
+			'userPassword',
+			'pwhistory',
+			'sambaPwdCanChange',
+			'sambaPwdMustChange',
+			'sambaPasswordHistory',
+			'sambaBadPasswordCount'
+		]
 		self.assert_acl(user_dn, access, attrs)
 
 	def assert_dhcp(self, client, access):
 		client_dhcp_dn = 'cn=%s,cn=%s,cn=dhcp,%s' % (
 				client, self.school, utu.UCSTestSchool().get_ou_base_dn(self.school))
 		attrs = [
-				'entry',
-				'children',
-				'objectClass',
-				'univentionObjectType',
-				'dhcpOption',
-				'cn',
-				]
+			'entry',
+			'children',
+			'objectClass',
+			'univentionObjectType',
+			'dhcpOption',
+			'cn',
+		]
 		self.assert_acl(client_dhcp_dn, access, attrs)
 		target_dn = create_dc_slave_in_container(client_dhcp_dn)
 		self.assert_acl(target_dn, access, attrs, access_allowance='DENIED')
@@ -432,32 +433,32 @@ class Acl(object):
 		"""
 		base_dn = self.ucr.get('ldap/base')
 		attrs = [
-				'krb5KeyVersionNumber',
-				'krb5KDCFlags',
-				'krb5Key',
-				'krb5PasswordEnd',
-				'sambaAcctFlags',
-				'sambaPwdLastSet',
-				'sambaLMPassword',
-				'sambaNTPassword',
-				'shadowLastChange',
-				'shadowMax',
-				'userPassword',
-				'pwhistory',
-				'sambaPwdCanChange',
-				'sambaPwdMustChange',
-				'sambaPasswordHistory',
-				]
+			'krb5KeyVersionNumber',
+			'krb5KDCFlags',
+			'krb5Key',
+			'krb5PasswordEnd',
+			'sambaAcctFlags',
+			'sambaPwdLastSet',
+			'sambaLMPassword',
+			'sambaNTPassword',
+			'shadowLastChange',
+			'shadowMax',
+			'userPassword',
+			'pwhistory',
+			'sambaPwdCanChange',
+			'sambaPwdMustChange',
+			'sambaPasswordHistory',
+		]
 		singlemaster = self.ucr.is_true('ucsschool/singlemaster')
 		lo = getMachineConnection()
 		if not singlemaster:
-			slave_found= lo.search(filter="(|(univentionObjectType=computers/domaincontroller_slave)(univentionObjectType=computers/memberserver))", base=utu.UCSTestSchool().get_ou_base_dn(self.school))
+			slave_found = lo.search(filter="(|(univentionObjectType=computers/domaincontroller_slave)(univentionObjectType=computers/memberserver))", base=utu.UCSTestSchool().get_ou_base_dn(self.school))
 			if slave_found:
 				slave_dn = slave_found[0][0]
 				self.assert_acl(slave_dn, access, attrs)
 
 		attrs = ['sOARecord']
-		zoneName = lo.search(base='cn=dns,%s' % base_dn, scope='base+one',attr=['uid'])
+		zoneName = lo.search(base='cn=dns,%s' % base_dn, scope='base+one', attr=['uid'])
 		for (target_dn, d) in zoneName:
 			if 'zoneName' in target_dn:
 				self.assert_acl(target_dn, access, attrs)

@@ -14,23 +14,30 @@ import univention.testing.ucr as ucr_test
 import univention.testing.utils as utils
 import univention.uldap
 
+
 class GetFail(Exception):
 	pass
+
 
 class GetCheckFail(Exception):
 	pass
 
+
 class CreateFail(Exception):
 	pass
+
 
 class QueryCheckFail(Exception):
 	pass
 
+
 class RemoveFail(Exception):
 	pass
 
+
 class EditFail(Exception):
 	pass
+
 
 def create_dc_slave(udm, school=None):
 	with ucr_test.UCSTestConfigRegistry() as ucr:
@@ -55,23 +62,22 @@ def create_dc_slave(udm, school=None):
 			position = 'cn=dc,cn=server,cn=computers,ou=%s,%s' % (school, ldap_base)
 		dn = udm.create_object(
 				'computers/domaincontroller_slave',
-				binddn = admin,
-				bindpwd = passwd,
-				position = position,
-				ip = ip,
-				name = name,
-				options = [
+				binddn=admin,
+				bindpwd=passwd,
+				position=position,
+				ip=ip,
+				name=name,
+				options=[
 					"samba=True",
 					"kerberos=True",
 					"posix=True",
 					"nagios=False",
-					]
-				)
+    ]
+		)
 		if dn:
 			return name, dn
 		else:
 			utils.fail('Could not create a DC Slave via udm')
-
 
 
 class School(object):
@@ -89,6 +95,7 @@ class School(object):
 	"""
 
 	# Initialization (Random by default)
+
 	def __init__(self,
 				 display_name=None,
 				 name=None,
@@ -127,16 +134,14 @@ class School(object):
 	def create(self):
 		"""Creates object school"""
 		flavor = 'schoolwizards/schools'
-		param = [
-				{
-					'object':{
-						'name': self.name,
-						'dc_name': self.dc_name,
-						'display_name': self.display_name,
-						},
-					'options': None
-					}
-				]
+		param = [{
+			'object': {
+				'name': self.name,
+				'dc_name': self.dc_name,
+				'display_name': self.display_name,
+			},
+			'options': None
+		}]
 		print 'Creating school %s' % (self.name,)
 		print 'param = %s' % (param,)
 		reqResult = self.umcConnection.request(
@@ -151,15 +156,11 @@ class School(object):
 	def get(self):
 		"""get the list of existing schools in the school"""
 		flavor = 'schoolwizards/schools'
-		param = [
-				{'object':
-					{
-						'$dn$': self.dn()
-						}
-					}
-				]
+		param = [{'object': {
+			'$dn$': self.dn()
+		}}]
 		reqResult = self.umcConnection.request(
-				'schoolwizards/schools/get',param,flavor)
+				'schoolwizards/schools/get', param, flavor)
 		return reqResult
 
 	def check_get(self, attrs):
@@ -174,11 +175,11 @@ class School(object):
 		"""get the list of existing schools in the school"""
 		flavor = 'schoolwizards/schools'
 		param = {
-				'school': 'undefined',
-				'filter': ""
-				}
+			'school': 'undefined',
+			'filter': ""
+		}
 		reqResult = self.umcConnection.request(
-				'schoolwizards/schools/query',param,flavor)
+				'schoolwizards/schools/query', param, flavor)
 		return reqResult
 
 	def check_query(self, names):
@@ -195,16 +196,14 @@ class School(object):
 		"""Remove school"""
 		print 'Removing school: %s' % self.name
 		flavor = 'schoolwizards/schools'
-		param = [
-				{
-					'object':{
-						'$dn$': self.dn(),
-						},
-					'options': None
-					}
-				]
+		param = [{
+			'object': {
+				'$dn$': self.dn(),
+			},
+			'options': None
+		}]
 		reqResult = self.umcConnection.request(
-				'schoolwizards/schools/remove',param,flavor)
+				'schoolwizards/schools/remove', param, flavor)
 		if not reqResult[0]:
 			raise RemoveFail('Unable to remove school (%s)' % self.name)
 		else:
@@ -237,19 +236,17 @@ class School(object):
 				host = new_attributes['class_share_file_server']
 			class_share = 'cn=%s,cn=dc,cn=computers,%s' % (
 					host, self.ucr.get('ldap/base'))
-		param = [
-				{
-					'object':{
-						'$dn$': self.dn(),
-						'name': self.name,
-						'home_share_file_server': home_share,
-						'class_share_file_server': class_share,
-						'dc_name': self.dc_name,
-						'display_name': new_attributes['display_name']
-						},
-					'options': None
-					}
-				]
+		param = [{
+			'object': {
+				'$dn$': self.dn(),
+				'name': self.name,
+				'home_share_file_server': home_share,
+				'class_share_file_server': class_share,
+				'dc_name': self.dc_name,
+				'display_name': new_attributes['display_name']
+			},
+			'options': None
+		}]
 		print 'Editing school %s' % (self.name,)
 		print 'param = %s' % (param,)
 		reqResult = self.umcConnection.request(
@@ -257,7 +254,7 @@ class School(object):
 				param,
 				flavor)
 		if not reqResult[0]:
-			raise EditFail('Unable to edit school (%s) with the parameters (%r)' % (self.name , param))
+			raise EditFail('Unable to edit school (%s) with the parameters (%r)' % (self.name, param))
 		else:
 			self.home_share_file_server = home_share
 			self.class_share_file_server = class_share
@@ -321,7 +318,7 @@ class School(object):
 		utils.verify_ldap_object(ou_base, expected_attr={'ou': [ou], 'ucsschoolClassShareFileServer': [classsharefileserver_dn], 'ucsschoolHomeShareFileServer': [homesharefileserver_dn]}, should_exist=must_exist)
 
 		utils.verify_ldap_object('cn=printers,%s' % ou_base, expected_attr={'cn': ['printers']}, should_exist=must_exist)
-		utils.verify_ldap_object('cn=users,%s'% ou_base, expected_attr={'cn': ['users']}, should_exist=must_exist)
+		utils.verify_ldap_object('cn=users,%s' % ou_base, expected_attr={'cn': ['users']}, should_exist=must_exist)
 		utils.verify_ldap_object('cn=%s,cn=users,%s' % (cn_pupils, ou_base), expected_attr={'cn': [cn_pupils]}, should_exist=must_exist)
 		utils.verify_ldap_object('cn=%s,cn=users,%s' % (cn_teachers, ou_base), expected_attr={'cn': [cn_teachers]}, should_exist=must_exist)
 		utils.verify_ldap_object('cn=%s,cn=users,%s' % (cn_admins, ou_base), expected_attr={'cn': [cn_admins]}, should_exist=must_exist)
@@ -364,7 +361,6 @@ class School(object):
 		#	utils.verify_ldap_object('cn=OU%s-DC-Verwaltungsnetz,cn=ucsschool,cn=groups,%s' % (ou, base_dn), should_exist=False)
 		#	utils.verify_ldap_object('cn=OU%s-Member-Verwaltungsnetz,cn=ucsschool,cn=groups,%s' % (ou, base_dn), should_exist=False)
 
-
 		if not singlemaster:
 			verify_dc(ou, dc_name, TYPE_DC_EDUCATIONAL, base_dn, must_exist)
 
@@ -382,7 +378,7 @@ class School(object):
 		grp_policy_staff = ucr.get('ucsschool/ldap/default/policy/umc/staff', 'cn=ucsschool-umc-staff-default,cn=UMC,cn=policies,%s' % base_dn)
 
 		utils.verify_ldap_object("cn=%s%s,cn=ouadmins,cn=groups,%s" % (grp_prefix_admins, ou, base_dn), expected_attr={'univentionPolicyReference': [grp_policy_admins]}, should_exist=True)
-		utils.verify_ldap_object("cn=%s%s,cn=groups,%s" % (grp_prefix_pupils, ou, ou_base),	expected_attr={'univentionPolicyReference': [grp_policy_pupils]}, should_exist=must_exist)
+		utils.verify_ldap_object("cn=%s%s,cn=groups,%s" % (grp_prefix_pupils, ou, ou_base), expected_attr={'univentionPolicyReference': [grp_policy_pupils]}, should_exist=must_exist)
 		utils.verify_ldap_object("cn=%s%s,cn=groups,%s" % (grp_prefix_teachers, ou, ou_base), expected_attr={'univentionPolicyReference': [grp_policy_teachers]}, should_exist=must_exist)
 
 		if noneducational_create_objects:
@@ -432,7 +428,6 @@ class School(object):
 			elif not is_master_or_backup and not membership:
 				raise DCMembership()
 
-
 		ucr.load()
 		if not singlemaster:
 			# in multiserver setups all dhcp settings have to be checked
@@ -461,7 +456,6 @@ class School(object):
 		if must_exist:
 			utils.verify_ldap_object(dhcp_service_dn, expected_attr={'dhcpOption': ['wpad "http://%s.%s/proxy.pac"' % (dc_name, ucr.get('domainname'))]}, should_exist=True)
 			utils.verify_ldap_object(dhcp_server_dn, should_exist=True)
-
 
 		dhcp_dns_clearou_dn = 'cn=dhcp-dns-clear,cn=policies,%s' % ou_base
 		if dhcp_dns_clearou:

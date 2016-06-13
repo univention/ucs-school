@@ -9,36 +9,47 @@ import re
 from pprint import pprint
 from essential.user import User
 
+
 class FailHTTPStatus(Exception):
 	pass
+
 
 class FailShow(Exception):
 	pass
 
+
 class FailProgress(Exception):
 	pass
+
 
 class FailImport(Exception):
 	pass
 
+
 class FailUploadFile(Exception):
 	pass
+
 
 class FailRecheck(Exception):
 	pass
 
+
 class FailSchools(Exception):
 	pass
 
+
 class FailErrors(Exception):
 	pass
+
 
 class FailWarnings(Exception):
 	pass
 
 
 class CSVImport(object):
+
 	"""CSVImport class, inclues all the needed operations to perform a user import"""
+
 	def __init__(self, school, user_type):
 		self.school = school
 		self.user_type = user_type
@@ -149,7 +160,7 @@ html5
 			elif status == 200:
 				response_text = response.read()
 				# replace some string values with other types
-				rep = {'null':'None', 'true':'True'}
+				rep = {'null': 'None', 'true': 'True'}
 				pattern = re.compile("|".join(rep.keys()))
 				response_dict = eval(pattern.sub(lambda m: rep[re.escape(m.group(0))], response_text))
 				self.file_id = response_dict['result'][0]['file_id']
@@ -162,8 +173,8 @@ html5
 
 	def show(self):
 		param = {
-			'file_id' : self.file_id,
-			'columns': ["name","firstname","lastname","birthday","password","email","school_classes" ],
+			'file_id': self.file_id,
+			'columns': ["name", "firstname", "lastname", "birthday", "password", "email", "school_classes"],
 		}
 		if self.user_type == 'staff':
 			param['columns'].remove('school_classes')
@@ -175,8 +186,8 @@ html5
 
 	def progress(self):
 		param = {
-				'progress_id' : self.id_nr
-				}
+			'progress_id': self.id_nr
+		}
 		try:
 			reqResult = self.umc_connection.request('schoolcsvimport/progress', param)
 		except FailProgress:
@@ -185,9 +196,9 @@ html5
 
 	def recheck(self, user):
 		param = {
-				'file_id' : self.file_id,
-				'user_attrs': [user]
-				}
+			'file_id': self.file_id,
+			'user_attrs': [user]
+		}
 		try:
 			reqResult = self.umc_connection.request('schoolcsvimport/recheck', param)
 			print 'RECHECK RESULT = ', reqResult
@@ -225,6 +236,7 @@ html5
 	def import_users(self, users):
 		line_nr = 1
 		param = []
+
 		def get_type_name(typ):
 			if typ == 'cSVStudent':
 				return 'Student'
@@ -235,12 +247,12 @@ html5
 			elif typ == 'cSVTeachersAndStaff':
 				return 'Teacher and Staff'
 		for user in users:
-			user.update({'line':line_nr})
-			user.update({'type_name':get_type_name(user['type'])})
+			user.update({'line': line_nr})
+			user.update({'type_name': get_type_name(user['type'])})
 			options = {
-					'file_id' : self.file_id,
-					'attrs': user
-					}
+				'file_id': self.file_id,
+				'attrs': user
+			}
 			line_nr += 1
 			param.append(options)
 		try:
@@ -251,9 +263,11 @@ html5
 		except FailImport:
 			raise
 
+
 def verify_persons(persons_list):
 	for person in persons_list:
 		person.verify()
+
 
 def update_persons(school, persons_list, users):
 	def get_role(typ):
@@ -265,6 +279,7 @@ def update_persons(school, persons_list, users):
 			return 'staff'
 		elif typ == 'cSVTeachersAndStaff':
 			return 'teacher_staff'
+
 	def get_mode(action):
 		if action == 'delete':
 			return 'D'
@@ -275,16 +290,16 @@ def update_persons(school, persons_list, users):
 	users = [x for y in users for x in y]
 	for user in users:
 		person = User(
-				school,
-				role=get_role(user['type']),
-				school_classes=user.get('school_classes', {}),
-				mode=get_mode(user['action']),
-				username=user['name'],
-				firstname=user['firstname'],
-				lastname=user['lastname'],
-				password=user['password'],
-				mail=user.get('email'),
-				)
+			school,
+			role=get_role(user['type']),
+			school_classes=user.get('school_classes', {}),
+			mode=get_mode(user['action']),
+			username=user['name'],
+			firstname=user['firstname'],
+			lastname=user['lastname'],
+			password=user['password'],
+			mail=user.get('email'),
+		)
 		person_old_version = [x for x in persons_list if x.username == person.username]
 		if person_old_version:
 			persons_list.remove(person_old_version[0])
@@ -299,21 +314,23 @@ def random_email():
 	ucr.load()
 	return '%s@%s' % (uts.random_name(), ucr.get('domainname'))
 
+
 def random_line_stu_tea():
 	"""create random line to import random student/teacher/teacher and staff"""
 	return '%s,%s,%s,%s%s.%s%s.%s,%s,%s,%s\n' % (
 			uts.random_username(),
 			uts.random_name(),
 			uts.random_name(),
-			uts.random_int(1,2),
-			uts.random_int(1,8),
-			uts.random_int(0,0),
-			uts.random_int(1,9),
-			uts.random_int(1980,2014),
+			uts.random_int(1, 2),
+			uts.random_int(1, 8),
+			uts.random_int(0, 0),
+			uts.random_int(1, 9),
+			uts.random_int(1980, 2014),
 			uts.random_name(),
 			random_email(),
 			uts.random_string(),
-			)
+	)
+
 
 def random_line_staff():
 	"""create random line to import random staff"""
@@ -321,14 +338,15 @@ def random_line_staff():
 			uts.random_username(),
 			uts.random_name(),
 			uts.random_name(),
-			uts.random_int(0,2),
-			uts.random_int(1,8),
-			uts.random_int(0,0),
-			uts.random_int(1,9),
-			uts.random_int(1980,2014),
+			uts.random_int(0, 2),
+			uts.random_int(1, 8),
+			uts.random_int(0, 0),
+			uts.random_int(1, 9),
+			uts.random_int(1980, 2014),
 			uts.random_name(),
 			random_email(),
-			)
+	)
+
 
 def staff_file(nr_of_lines):
 	"""Creates random contents of file ready to import staff"""
@@ -337,12 +355,14 @@ def staff_file(nr_of_lines):
 		result.append(random_line_staff())
 	return result
 
+
 def stu_tea_file(nr_of_lines):
 	"""Creates random contents of file ready to import student/teacher/teacher and staff"""
 	result = ['Username,First name,Last name,Birthday,Password,Email,Class\n']
 	for i in xrange(nr_of_lines):
 		result.append(random_line_stu_tea())
 	return result
+
 
 def check_import_users(school, user_types, files, delete_not_mentioned, expected_upload_status, expected_errors, expected_warnings):
 	"""Import users from the passed files and check the returned errors and warnings"""
@@ -376,20 +396,22 @@ def check_import_users(school, user_types, files, delete_not_mentioned, expected
 	users = [[x for x in y] for y in users]
 	pprint(('Users = ', users))
 	errors = [x['errors'] for y in users for x in y if x['errors']]
-	errors_keys = [k for x in errors for k,v in x.iteritems()]
+	errors_keys = [k for x in errors for k, v in x.iteritems()]
 	print 'ERRORS_KEYS=', errors_keys
 	if sorted(expected_errors) != sorted(errors_keys):
 		raise FailErrors('current error keys = %r, expected Errors = %r' % (errors_keys, expected_errors))
 	warnings = [x['warnings'] for y in users for x in y if x['warnings']]
-	warnings_keys = [k for x in warnings for k,v in x.iteritems()]
+	warnings_keys = [k for x in warnings for k, v in x.iteritems()]
 	print 'WARNINGS_KEYS=', warnings_keys
 	if sorted(expected_warnings) != sorted(warnings_keys):
 		raise FailWarnings('current warning keys= %r, expected warnings = %r' % (warnings_keys, expected_warnings))
-	return users , errors, warnings
+	return users, errors, warnings
+
 
 def get_usernames(files):
 	"""retrieve usernames from an import file"""
 	return [x.split(',')[0] for x in files if x.split(',')[0] != 'Username']
+
 
 def transform_usernames(files_01, files_02, nr_of_lines):
 	"""Assign the usernames from files_01 to users from files_02"""

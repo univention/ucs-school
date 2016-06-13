@@ -28,20 +28,35 @@ HOOK_BASEDIR = '/usr/share/ucs-school-import/hooks'
 TYPE_DC_ADMINISTRATIVE = 'administrative'
 TYPE_DC_EDUCATIONAL = 'educational'
 
+
 class CreateOU(Exception):
 	pass
+
+
 class MoveDCToOU(Exception):
 	pass
+
+
 class DCNotFound(Exception):
 	pass
+
+
 class DCMembership(Exception):
 	pass
+
+
 class DCisMemberOfGroup(Exception):
 	pass
+
+
 class DhcpdLDAPBase(Exception):
 	pass
+
+
 class PreHookFailed(Exception):
 	pass
+
+
 class PostHookFailed(Exception):
 	pass
 
@@ -52,6 +67,7 @@ def remove_ou(ou_name):
 	schoolenv._ucr.load()
 	schoolenv.cleanup_ou(ou_name)
 
+
 def get_school_base(ou):
 	configRegistry = univention.config_registry.ConfigRegistry()
 	configRegistry.load()
@@ -61,6 +77,7 @@ def get_school_base(ou):
 	else:
 		return 'ou=%(ou)s,%(basedn)s' % {'ou': ou, 'basedn': configRegistry.get('ldap/base')}
 
+
 def get_school_ou_from_dn(dn, ucr=None):
 	if not ucr:
 		ucr = univention.config_registry.ConfigRegistry()
@@ -69,6 +86,7 @@ def get_school_ou_from_dn(dn, ucr=None):
 	if ucr.is_true('ucsschool/ldap/district/enable'):
 		return oulist[-2]
 	return oulist[-1]
+
 
 def create_ou_cli(ou, dc=None, dc_administrative=None, sharefileserver=None, ou_displayname=None):
 	cmd_block = ['/usr/share/ucs-school-import/scripts/create_ou', ou]
@@ -85,6 +103,7 @@ def create_ou_cli(ou, dc=None, dc_administrative=None, sharefileserver=None, ou_
 	retcode = subprocess.call(cmd_block, shell=False)
 	if retcode:
 		raise CreateOU('Failed to execute "%s". Return code: %d.' % (string.join(cmd_block), retcode))
+
 
 def create_ou_python_api(ou, dc, dc_administrative, sharefileserver, ou_displayname):
 	kwargs = {'name': ou, 'dc_name': dc}
@@ -116,6 +135,7 @@ def move_domaincontroller_to_ou_cli(dc_name, ou):
 	if retcode:
 		raise MoveDCToOU('Failed to execute "%s". Return code: %d.' % (string.join(cmd_block), retcode))
 
+
 def import_ou_create_pre_hook(ou, ou_base, dc, singlemaster):
 	pre_hook_base = os.path.join(HOOK_BASEDIR, 'ou_create_pre.d')
 	pre_hook = os.path.join(pre_hook_base, uts.random_name())
@@ -139,7 +159,7 @@ univention-ldapsearch -b "%(ou_base)s" >/dev/null && exit 1
 	pre_hook_fd.write('touch "%s"' % successful_file)
 
 	pre_hook_fd.close()
-	os.chmod(pre_hook, 0755)
+	os.chmod(pre_hook, 0o755)
 
 	return (pre_hook, successful_file)
 
@@ -168,7 +188,7 @@ univention-ldapsearch -b "$2" >/dev/null || exit 1
 	post_hook_fd.write('touch "%s"' % successful_file)
 
 	post_hook_fd.close()
-	os.chmod(post_hook, 0755)
+	os.chmod(post_hook, 0o755)
 
 	return (post_hook, successful_file)
 
@@ -265,11 +285,11 @@ def create_and_verify_ou(ucr, ou, dc, sharefileserver, dc_administrative=None, o
 	else:
 		raise PostHookFailed()
 
-
 	verify_ou(ou, dc, ucr, sharefileserver, dc_administrative, must_exist=True)
 
 	if do_cleanup:
 		remove_ou(ou)
+
 
 def verify_ou(ou, dc, ucr, sharefileserver, dc_administrative, must_exist):
 	print '*** Verifying OU (%s) ... ' % ou
@@ -313,7 +333,7 @@ def verify_ou(ou, dc, ucr, sharefileserver, dc_administrative, must_exist):
 	utils.verify_ldap_object(ou_base, expected_attr={'ou': [ou], 'ucsschoolClassShareFileServer': [sharefileserver_dn], 'ucsschoolHomeShareFileServer': [sharefileserver_dn]}, should_exist=must_exist)
 
 	utils.verify_ldap_object('cn=printers,%s' % ou_base, expected_attr={'cn': ['printers']}, should_exist=must_exist)
-	utils.verify_ldap_object('cn=users,%s'% ou_base, expected_attr={'cn': ['users']}, should_exist=must_exist)
+	utils.verify_ldap_object('cn=users,%s' % ou_base, expected_attr={'cn': ['users']}, should_exist=must_exist)
 	utils.verify_ldap_object('cn=%s,cn=users,%s' % (cn_pupils, ou_base), expected_attr={'cn': [cn_pupils]}, should_exist=must_exist)
 	utils.verify_ldap_object('cn=%s,cn=users,%s' % (cn_teachers, ou_base), expected_attr={'cn': [cn_teachers]}, should_exist=must_exist)
 	utils.verify_ldap_object('cn=%s,cn=users,%s' % (cn_admins, ou_base), expected_attr={'cn': [cn_admins]}, should_exist=must_exist)
@@ -356,7 +376,6 @@ def verify_ou(ou, dc, ucr, sharefileserver, dc_administrative, must_exist):
 	#	utils.verify_ldap_object('cn=OU%s-DC-Verwaltungsnetz,cn=ucsschool,cn=groups,%s' % (ou, base_dn), should_exist=False)
 	#	utils.verify_ldap_object('cn=OU%s-Member-Verwaltungsnetz,cn=ucsschool,cn=groups,%s' % (ou, base_dn), should_exist=False)
 
-
 	if not singlemaster:
 		verify_dc(ou, dc_name, TYPE_DC_EDUCATIONAL, base_dn, must_exist)
 
@@ -374,7 +393,7 @@ def verify_ou(ou, dc, ucr, sharefileserver, dc_administrative, must_exist):
 	grp_policy_staff = ucr.get('ucsschool/ldap/default/policy/umc/staff', 'cn=ucsschool-umc-staff-default,cn=UMC,cn=policies,%s' % base_dn)
 
 	utils.verify_ldap_object("cn=%s%s,cn=ouadmins,cn=groups,%s" % (grp_prefix_admins, ou, base_dn), expected_attr={'univentionPolicyReference': [grp_policy_admins]}, should_exist=True)
-	utils.verify_ldap_object("cn=%s%s,cn=groups,%s" % (grp_prefix_pupils, ou, ou_base),	expected_attr={'univentionPolicyReference': [grp_policy_pupils]}, should_exist=must_exist)
+	utils.verify_ldap_object("cn=%s%s,cn=groups,%s" % (grp_prefix_pupils, ou, ou_base), expected_attr={'univentionPolicyReference': [grp_policy_pupils]}, should_exist=must_exist)
 	utils.verify_ldap_object("cn=%s%s,cn=groups,%s" % (grp_prefix_teachers, ou, ou_base), expected_attr={'univentionPolicyReference': [grp_policy_teachers]}, should_exist=must_exist)
 
 	if noneducational_create_objects:
@@ -424,7 +443,6 @@ def verify_ou(ou, dc, ucr, sharefileserver, dc_administrative, must_exist):
 		elif not is_master_or_backup and not membership:
 			raise DCMembership()
 
-
 	ucr.load()
 	if not singlemaster:
 		# in multiserver setups all dhcp settings have to be checked
@@ -453,7 +471,6 @@ def verify_ou(ou, dc, ucr, sharefileserver, dc_administrative, must_exist):
 	if must_exist:
 		utils.verify_ldap_object(dhcp_service_dn, expected_attr={'dhcpOption': ['wpad "http://%s.%s/proxy.pac"' % (dc_name, ucr.get('domainname'))]}, should_exist=True)
 		utils.verify_ldap_object(dhcp_server_dn, should_exist=True)
-
 
 	dhcp_dns_clearou_dn = 'cn=dhcp-dns-clear,cn=policies,%s' % ou_base
 	if dhcp_dns_clearou:
@@ -493,21 +510,21 @@ def verify_dc(ou, dc_name, dc_type, base_dn=None, must_exist=True):
 			(False, 'cn=DC-Edukativnetz,cn=ucsschool,cn=groups,%s' % (base_dn, )),
 			(False, 'cn=Member-Edukativnetz,cn=ucsschool,cn=groups,%s' % base_dn),
 			(False, 'cn=OU%s-Member-Edukativnetz,cn=ucsschool,cn=groups,%s' % (ou, base_dn)),
-			]
+		]
 	else:
 		group_dn_list += [
 			(True, 'cn=OU%s-DC-Edukativnetz,cn=ucsschool,cn=groups,%s' % (ou.lower(), base_dn)),
 			(True, 'cn=DC-Edukativnetz,cn=ucsschool,cn=groups,%s' % (base_dn, )),
 			(False, 'cn=Member-Edukativnetz,cn=ucsschool,cn=groups,%s' % base_dn),
 			(False, 'cn=OU%s-Member-Edukativnetz,cn=ucsschool,cn=groups,%s' % (ou, base_dn)),
-			]
+		]
 		if ucr.is_true('ucsschool/ldap/noneducational/create/objects', must_exist):
 			group_dn_list += [
 				(False, 'cn=OU%s-DC-Verwaltungsnetz,cn=ucsschool,cn=groups,%s' % (ou.lower(), base_dn)),
 				(False, 'cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,%s' % (base_dn, )),
 				(False, 'cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,%s' % base_dn),
 				(False, 'cn=OU%s-Member-Verwaltungsnetz,cn=ucsschool,cn=groups,%s' % (ou, base_dn)),
-				]
+			]
 
 	utils.verify_ldap_object(dc_dn, should_exist=must_exist)
 
@@ -568,6 +585,7 @@ def import_ou_basics(use_cli_api=True, use_python_api=False):
 												remove_ou(ou_name)
 		utils.wait_for_replication()
 
+
 def import_ou_with_existing_dc(use_cli_api=True, use_python_api=False):
 	with univention.testing.ucr.UCSTestConfigRegistry() as ucr:
 		with univention.testing.udm.UCSTestUDM() as udm:
@@ -597,20 +615,20 @@ def import_ou_with_existing_dc(use_cli_api=True, use_python_api=False):
 			# creatd dc
 			try:
 				create_and_verify_ou(
-											ucr,
-											ou=ou_name,
-											ou_displayname=None,
-											dc=dc_name,
-											dc_administrative=None,
-											sharefileserver=None,
-											singlemaster=False,
-											noneducational_create_objects=True,
-											district_enable=False,
-											default_dcs=None,
-											dhcp_dns_clearou=False,
-											do_cleanup=False,
-											use_cli_api=use_cli_api,
-											use_python_api=use_python_api,
+					ucr,
+					ou=ou_name,
+					ou_displayname=None,
+					dc=dc_name,
+					dc_administrative=None,
+					sharefileserver=None,
+					singlemaster=False,
+					noneducational_create_objects=True,
+					district_enable=False,
+					default_dcs=None,
+					dhcp_dns_clearou=False,
+					do_cleanup=False,
+					use_cli_api=use_cli_api,
+					use_python_api=use_python_api,
 				)
 
 				utils.verify_ldap_object(dhcp_subnet1, should_exist=True)
@@ -668,7 +686,7 @@ def import_3_ou_in_a_row(use_cli_api=True, use_python_api=False):
 							do_cleanup=False,
 							use_cli_api=use_cli_api,
 							use_python_api=use_python_api,
-							)
+						)
 				finally:
 					for ou_name in cleanup_ou_list:
 						remove_ou(ou_name)

@@ -4,31 +4,41 @@ import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool as utu
 import univention.testing.utils as utils
 
+
 class FailQuery(Exception):
 	pass
+
 
 class FailPut(Exception):
 	pass
 
+
 class FailGet(Exception):
 	pass
+
 
 class FailAdd(Exception):
 	pass
 
+
 class FailCheckPut(Exception):
 	pass
+
 
 class FailCheckGet(Exception):
 	pass
 
+
 class FailCheckQuery(Exception):
 	pass
+
 
 class FailRemove(Exception):
 	pass
 
+
 class ComputerRoom(object):
+
 	def __init__(
 			self,
 			school,
@@ -53,18 +63,15 @@ class ComputerRoom(object):
 				self.school, self.name, utu.UCSTestSchool().get_ou_base_dn(self.school))
 
 	def add(self, should_pass=True):
-		param = [
-			{
-				'object':
-				{
-					'school': self.school,
-					'name': self.name,
-					'description': self.description,
-					'computers': self.host_members,
-					},
-				'options': None
-				}
-			]
+		param = [{
+			'object': {
+				'school': self.school,
+				'name': self.name,
+				'description': self.description,
+				'computers': self.host_members,
+			},
+			'options': None
+		}]
 		print 'Adding school room %s with UMCP:%s' % (
 			self.name,
 			'schoolrooms/add')
@@ -132,19 +139,16 @@ class ComputerRoom(object):
 		new_description = new_attributes.get('description') if new_attributes.get('description') else self.description
 		new_host_members = new_attributes.get('computers') if new_attributes.get('computers') else self.host_members
 
-		param = [
-			{
-				'object':
-				{
-					'school': self.school,
-					'name': new_name,
-					'description': new_description,
-					'computers': new_host_members,
-					'$dn$': self.dn(),
-					},
-				'options': None
-				}
-			]
+		param = [{
+			'object': {
+				'school': self.school,
+				'name': new_name,
+				'description': new_description,
+				'computers': new_host_members,
+				'$dn$': self.dn(),
+			},
+			'options': None
+		}]
 		print 'Modifying school room %s with UMCP:%s' % (
 			self.dn(),
 			'schoolrooms/put')
@@ -165,7 +169,7 @@ class ComputerRoom(object):
 		new_attributes.update({'name': self.name, '$dn$': self.dn()})
 		# new_attributes.update({'name': '%s-%s' % (self.school, self.name), '$dn$': self.dn()}) #FIXME workaround for Bug #35618
 		if current_attributes != new_attributes:
-			raise FailCheckPut('Modifying room %s was not successful\ncurrent attributes= %r\nexpected attributes= %r' %(
+			raise FailCheckPut('Modifying room %s was not successful\ncurrent attributes= %r\nexpected attributes= %r' % (
 				self.name, current_attributes, new_attributes))
 
 	def remove(self):

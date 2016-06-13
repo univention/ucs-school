@@ -34,7 +34,7 @@ class Workgroup(object):
 			self,
 			school,
 			umcConnection=None,
-			ulConnection =None,
+			ulConnection=None,
 			ucr=None,
 			name=None,
 			description=None,
@@ -74,7 +74,7 @@ class Workgroup(object):
 		try:
 			createResult = self._create()
 			if createResult and expect_creation_fails_due_to_duplicated_name:
-				utils.fail('Workgroup %s already exists, though a new workgroup is created with a the same name' % self.name )
+				utils.fail('Workgroup %s already exists, though a new workgroup is created with a the same name' % self.name)
 			utils.wait_for_replication()
 		except httplib.HTTPException as e:
 			group_fullname = '%s-%s' % (self.school, self.name)
@@ -85,7 +85,7 @@ class Workgroup(object):
 					'The workgroup \'%s\' already exists!' % group_fullname]
 			for entry in exception_strings:
 				if expect_creation_fails_due_to_duplicated_name and entry in str(e):
-					print('Fail : %s' % (e) )
+					print('Fail : %s' % (e))
 					break
 			else:
 				print("Exception: '%s' '%s' '%r'" % (str(e), type(e), e))
@@ -96,16 +96,13 @@ class Workgroup(object):
 			self.name,
 			self.school)
 		flavor = 'workgroup-admin'
-		param = [
-				{
-					'object': {
-						'name': self.name,
-						'school': self.school,
-						'members': self.members,
-						'description': self.description
-						}
-					}
-				]
+		param = [{
+			'object': {
+				'name': self.name,
+				'school': self.school,
+				'members': self.members,
+				'description': self.description
+		}}]
 		requestResult = self.umcConnection.request(
 				'schoolgroups/add',
 				param,
@@ -134,7 +131,7 @@ class Workgroup(object):
 		print 'Removing group %s from ldap' % (self.name)
 		groupdn = self.dn()
 		flavor = 'workgroup-admin'
-		removingParam = [{"object":[groupdn],"options":options}]
+		removingParam = [{"object": [groupdn], "options":options}]
 		requestResult = self.umcConnection.request(
 				'schoolgroups/remove',
 				removingParam,
@@ -153,7 +150,7 @@ class Workgroup(object):
 		print 'Adding members  %r to group %s' % (memberListdn, self.name)
 		groupdn = self.dn()
 		currentMembers = sorted(
-				self.ulConnection.getAttr(groupdn,'uniqueMember'))
+				self.ulConnection.getAttr(groupdn, 'uniqueMember'))
 		for member in memberListdn:
 			if member not in currentMembers:
 				currentMembers.append(member)
@@ -186,15 +183,15 @@ class Workgroup(object):
 		flavor = 'workgroup-admin'
 		groupdn = self.dn()
 		creationParam = [{
-			'object':{
-				'$dn$' :	groupdn,
-				'school':	self.school,
-				'name' :	self.name,
-				'description':	self.description,
-				'members':	new_members
-				},
-			'options':	options
-			}]
+			'object': {
+				'$dn$': groupdn,
+				'school': self.school,
+				'name': self.name,
+				'description': self.description,
+				'members': new_members
+			},
+			'options': options
+		}]
 		requestResult = self.umcConnection.request(
 				'schoolgroups/put',
 				creationParam,
@@ -214,12 +211,10 @@ class Workgroup(object):
 				m = member.split(',')[0][4:]
 				members.append(m)
 
-		utils.verify_ldap_object(
-				self.dn(),
-				expected_attr = {
-					'memberUid': members,
-					'description': [self.description]
-					})
+		utils.verify_ldap_object(self.dn(), expected_attr={
+			'memberUid': members,
+			'description': [self.description]
+		})
 
 	def verify_exists(self, group_should_exist, share_should_exist):
 		"""check for group and file share objects existance in ldap"""
@@ -232,7 +227,6 @@ class Workgroup(object):
 					self.name,
 					ucsschool.get_ou_base_dn(self.school))
 		utils.verify_ldap_object(sharedn, should_exist=share_should_exist)
-
 
 	def dn(self):
 		ucsschool = UCSTestSchool()

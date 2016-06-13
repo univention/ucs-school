@@ -11,20 +11,26 @@ import univention.testing.ucr as ucr_test
 from essential.importou import get_school_base
 from essential.importusers import Person
 
+
 class GetFail(Exception):
 	pass
+
 
 class GetCheckFail(Exception):
 	pass
 
+
 class CreateFail(Exception):
 	pass
+
 
 class QueryCheckFail(Exception):
 	pass
 
+
 class RemoveFail(Exception):
 	pass
+
 
 class EditFail(Exception):
 	pass
@@ -118,21 +124,19 @@ class User(Person):
 	def create(self):
 		"""Creates object user"""
 		flavor = 'schoolwizards/users'
-		param = [
-				{
-					'object':{
-						'school': self.school,
-						'school_classes': self.school_classes,
-						'email': self.mail,
-						'name': self.username,
-						'type': self.typ,
-						'firstname': self.firstname,
-						'lastname': self.lastname,
-						'password': self.password
-						},
-					'options': None
-					}
-				]
+		param = [{
+			'object': {
+				'school': self.school,
+				'school_classes': self.school_classes,
+				'email': self.mail,
+				'name': self.username,
+				'type': self.typ,
+				'firstname': self.firstname,
+				'lastname': self.lastname,
+				'password': self.password
+			},
+			'options': None
+		}]
 		print 'Creating user %s' % (self.username,)
 		print 'param = %s' % (param,)
 		reqResult = self.umc_connection.request(
@@ -145,16 +149,13 @@ class User(Person):
 	def get(self):
 		"""Get user"""
 		flavor = 'schoolwizards/users'
-		param = [
-				{
-					'object':{
-						'$dn$': self.dn,
-						'school': self.school
-						}
-					}
-				]
+		param = [{
+			'object': {
+				'$dn$': self.dn,
+				'school': self.school
+		}}]
 		reqResult = self.umc_connection.request(
-				'schoolwizards/users/get',param,flavor)
+				'schoolwizards/users/get', param, flavor)
 		if not reqResult[0]:
 			raise GetFail('Unable to get user (%s)' % self.username)
 		else:
@@ -163,21 +164,21 @@ class User(Person):
 	def check_get(self, expected_attrs={}):
 		info = {
 				'$dn$': self.dn,
-				'display_name': ' '.join([self.firstname,self.lastname]),
+				'display_name': ' '.join([self.firstname, self.lastname]),
 				'name': self.username,
 				'firstname': self.firstname,
 				'lastname': self.lastname,
 				'type_name': self.type_name(),
 				'school': self.school,
 				'schools': [self.school],
-				'disabled' : 'none',
+				'disabled': 'none',
 				'birthday': None,
 				'password': None,
 				'type': self.typ,
 				'email': self.mail,
 				'objectType': 'users/user',
 				'school_classes': {},
-				}
+		}
 		if self.is_student() or self.is_teacher() or self.is_teacher_staff():
 			info.update({'school_classes': self.school_classes})
 
@@ -208,12 +209,12 @@ class User(Person):
 		"""get the list of existing users in the school"""
 		flavor = 'schoolwizards/users'
 		param = {
-				'school': self.school,
-				'type': 'all',
-				'filter': ""
-				}
+			'school': self.school,
+			'type': 'all',
+			'filter': ""
+		}
 		reqResult = self.umc_connection.request(
-				'schoolwizards/users/query',param,flavor)
+				'schoolwizards/users/query', param, flavor)
 		return reqResult
 
 	def check_query(self, users_dn):
@@ -227,43 +228,38 @@ class User(Person):
 		"""Remove user"""
 		print 'Removing User (%s)' % self.username
 		flavor = 'schoolwizards/users'
-		param = [
-				{
-					'object':{
-						'school': self.school,
-						'$dn$': self.dn,
-						},
-					'options': None
-					}
-				]
+		param = [{
+			'object': {
+				'school': self.school,
+				'$dn$': self.dn,
+			},
+			'options': None
+		}]
 		reqResult = self.umc_connection.request(
-				'schoolwizards/users/remove',param,flavor)
+				'schoolwizards/users/remove', param, flavor)
 		if not reqResult[0]:
 			raise RemoveFail('Unable to remove user (%s)' % self.username)
 		else:
 			self.set_mode_to_delete()
 
-
 	def edit(self, new_attributes):
 		"""Edit object user"""
 		flavor = 'schoolwizards/users'
-		param = [
-				{
-					'object':{
-						'school': self.school,
-						'schools': [self.school],
-						'school_classes': new_attributes.get('school_classes', self.school_classes),
-						'email': new_attributes.get('email') if new_attributes.get('email') else self.mail,
-						'name': self.username,
-						'type': self.typ,
-						'firstname': new_attributes.get('firstname') if new_attributes.get('firstname') else self.firstname,
-						'lastname': new_attributes.get('lastname') if new_attributes.get('lastname') else self.lastname,
-						'password': new_attributes.get('password') if new_attributes.get('password') else self.password,
-						'$dn$':  self.dn,
-						},
-					'options': None
-					}
-				]
+		param = [{
+			'object': {
+				'school': self.school,
+				'schools': [self.school],
+				'school_classes': new_attributes.get('school_classes', self.school_classes),
+				'email': new_attributes.get('email') if new_attributes.get('email') else self.mail,
+				'name': self.username,
+				'type': self.typ,
+				'firstname': new_attributes.get('firstname') if new_attributes.get('firstname') else self.firstname,
+				'lastname': new_attributes.get('lastname') if new_attributes.get('lastname') else self.lastname,
+				'password': new_attributes.get('password') if new_attributes.get('password') else self.password,
+				'$dn$': self.dn,
+			},
+			'options': None
+		}]
 		print 'Editing user %s' % (self.username,)
 		print 'param = %s' % (param,)
 		reqResult = self.umc_connection.request(
@@ -271,7 +267,7 @@ class User(Person):
 				param,
 				flavor)
 		if not reqResult[0]:
-			raise EditFail('Unable to edit user (%s) with the parameters (%r)' % (self.username , param))
+			raise EditFail('Unable to edit user (%s) with the parameters (%r)' % (self.username, param))
 		else:
 			self.set_mode_to_modify()
 			self.school_classes = new_attributes.get('school_classes', self.school_classes)
@@ -279,4 +275,3 @@ class User(Person):
 			self.firstname = new_attributes.get('firstname') if new_attributes.get('firstname') else self.firstname
 			self.lastname = new_attributes.get('lastname') if new_attributes.get('lastname') else self.lastname
 			self.password = new_attributes.get('password') if new_attributes.get('password') else self.password
-

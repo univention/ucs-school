@@ -215,11 +215,11 @@ class Room(object):
 		period = datetime.time.strftime(
 			(datetime.datetime.now() + datetime.timedelta(0, 120)).time(), '%H:%M')
 		new_settings = {
-			'customRule':	'',
-			'printMode':	'none',
+			'customRule': '',
+			'printMode': 'none',
 			'internetRule': 'none',
-			'shareMode':	'home',
-			'period':		period
+			'shareMode': 'home',
+			'period': period
 		}
 
 		ula_length = len(ula.list())
@@ -258,9 +258,9 @@ class Room(object):
 		read = run_commands(
 			[cmd_read_home],
 			{
-				'ip':		ip_address,
+				'ip': ip_address,
 				'username': user,
-				'user':		'{0}%{1}'.format(user, passwd)
+				'user': '{0}%{1}'.format(user, passwd)
 			}
 		)
 		if read[0] != expected_result:
@@ -274,9 +274,9 @@ class Room(object):
 		write = run_commands(
 			[cmd_write_home],
 			{
-				'ip':		ip_address,
+				'ip': ip_address,
 				'username': user,
-				'user':		'{0}%{1}'.format(user, passwd),
+				'user': '{0}%{1}'.format(user, passwd),
 				'filename': '%s %s' % (f.name, f.name.split('/')[-1])
 			}
 		)
@@ -291,7 +291,7 @@ class Room(object):
 		read = run_commands(
 			[cmd_read_marktplatz],
 			{
-				'ip':	ip_address,
+				'ip': ip_address,
 				'user': '{0}%{1}'.format(user, passwd)
 			}
 		)
@@ -306,8 +306,8 @@ class Room(object):
 		write = run_commands(
 			[cmd_write_marktplatz],
 			{
-				'ip':		ip_address,
-				'user':		'{0}%{1}'.format(user, passwd),
+				'ip': ip_address,
+				'user': '{0}%{1}'.format(user, passwd),
 				'filename': '%s %s' % (f.name, f.name.split('/')[-1])
 			}
 		)
@@ -351,11 +351,11 @@ class Room(object):
 			print '*** %d -(internetRule, printMode, shareMode) = (%r, %r, %r) ----------' % (
 				i, rule, printMode, shareMode)
 			new_settings = {
-				'customRule':	white_page,
-				'printMode':	printMode,
+				'customRule': white_page,
+				'printMode': printMode,
 				'internetRule': rule,
-				'shareMode':	shareMode,
-				'period':	period
+				'shareMode': shareMode,
+				'period': period
 			}
 			self.aquire_room(umc_connection)
 			self.set_room_settings(umc_connection, new_settings)
@@ -430,11 +430,11 @@ class Room(object):
 				print '***', i, '-(internetRule, printMode, shareMode) = (',\
 					rule, ',', printMode, ',', shareMode, ')', '-' * 10
 				new_settings = {
-					'customRule':	white_page,
-					'printMode':	printMode,
+					'customRule': white_page,
+					'printMode': printMode,
 					'internetRule': rule,
-					'shareMode':	shareMode,
-					'period':	period
+					'shareMode': shareMode,
+					'period': period
 				}
 				self.aquire_room(umc_connection)
 				self.set_room_settings(umc_connection, new_settings)
@@ -498,12 +498,12 @@ class Room(object):
 				print '***', i, '-(internetRule, printMode, shareMode) = (',\
 					rule, ',', printMode, ',', shareMode, ')', '-' * 10
 				new_settings = {
-					'customRule':	white_page,
-					'printMode':	printMode,
+					'customRule': white_page,
+					'printMode': printMode,
 					'internetRule': rule,
-					'shareMode':	shareMode,
-					'period':	period
-					}
+					'shareMode': shareMode,
+					'period': period
+				}
 				self.aquire_room(umc_connection)
 				self.set_room_settings(umc_connection, new_settings)
 				# check if displayed values match
@@ -558,11 +558,11 @@ class Room(object):
 				print '*** %d -(internetRule, printMode, shareMode, period) = (%r, %r, %r, %r) ----------' % (
 					i, rule, printMode, shareMode, period)
 				new_settings = {
-					'customRule':	white_page,
-					'printMode':	printMode,
+					'customRule': white_page,
+					'printMode': printMode,
 					'internetRule': rule,
-					'shareMode':	shareMode,
-					'period':	period
+					'shareMode': shareMode,
+					'period': period
 				}
 				self.aquire_room(umc_connection)
 				old_settings = self.get_room_settings(umc_connection)
@@ -579,7 +579,7 @@ class Room(object):
 					'printMode': old_settings['printMode'],
 					'shareMode': old_settings['shareMode'],
 					'internetRule': old_settings['internetRule']
-					}
+				}
 				self.check_behavior(
 					partial_old_settings,
 					new_settings,
@@ -612,11 +612,11 @@ class Room(object):
 
 		# check atjobs
 		partial_new_settings = {
-#			'period': period,
+      #			'period': period,
 			'printMode': printMode,
 			'shareMode': shareMode,
 			'internetRule': internetRule
-			}
+		}
 		print
 		print '----------DEBUG-----------'
 		print 'old_period = %r' % (partial_old_settings.get('period'), )
@@ -693,7 +693,7 @@ def add_printer(name, school, hostname, domainname, ldap_base):
 		'--set', 'model=None',
 		'--binddn', 'uid=Administrator,cn=users,%(ldap_base)s',
 		'--bindpwd', 'univention'
-		]
+	]
 	print run_commands(
 		[cmd_add_printer], {
 			'name': name,
@@ -708,7 +708,7 @@ def remove_printer(name, school, ldap_base):
 	cmd_remove_printer = [
 		'udm', 'shares/printer', 'remove',
 		'--dn', 'cn=%(name)s,cn=printers,ou=%(school)s,%(ldap_base)s'
-		]
+	]
 	print run_commands(
 		[cmd_remove_printer], {
 			'name': name,
@@ -774,7 +774,7 @@ class UmcComputer(object):
 			subnet_mask=None,
 			mac_address=None,
 			inventory_number=None
-			):
+	):
 		self.school = school
 		self.typ = typ
 		self.name = name if name else uts.random_name()
@@ -866,7 +866,7 @@ class UmcComputer(object):
 			'zone': None,
 			'type_name': self.type_name(),
 			'objectType': 'computers/%s' % self.typ
-			}
+		}
 		get_result = self.get()
 		if get_result != info:
 			diff = set(x for x in get_result if get_result[x] != info[x])
@@ -918,7 +918,7 @@ class UmcComputer(object):
 			'school': self.school,
 			'filter': "",
 			'type': 'all'
-			}
+		}
 		reqResult = self.umc_connection.request(
 			'schoolwizards/computers/query', param, flavor)
 		return reqResult

@@ -25,8 +25,11 @@ utils.verify_ldap_object = SetTimeout(utils.verify_ldap_object)
 
 HOOK_BASEDIR = '/usr/share/ucs-school-import/hooks'
 
+
 class ImportUser(Exception):
 	pass
+
+
 class UserHookResult(Exception):
 	pass
 
@@ -44,7 +47,9 @@ grp_prefix_teachers = configRegistry.get('ucsschool/ldap/default/groupprefix/tea
 grp_prefix_admins = configRegistry.get('ucsschool/ldap/default/groupprefix/admins', 'admins-')
 grp_prefix_staff = configRegistry.get('ucsschool/ldap/default/groupprefix/staff', 'mitarbeiter-')
 
+
 class Person:
+
 	def __init__(self, school, role):
 		self.firstname = uts.random_name()
 		self.lastname = uts.random_name()
@@ -85,13 +90,16 @@ class Person:
 
 	def set_mode_to_modify(self):
 		self.mode = 'M'
+
 	def set_mode_to_delete(self):
 		self.mode = 'D'
 
 	def set_active(self):
 		self.active = True
+
 	def set_inactive(self):
 		self.active = False
+
 	def is_active(self):
 		return self.active
 
@@ -232,7 +240,7 @@ class Person:
 		else:
 			server = '%LOGONSERVER%'
 
-		return server+'\\%USERNAME%\\windows-profiles\\default'
+		return server + '\\%USERNAME%\\windows-profiles\\default'
 
 	def verify(self):
 		print 'verify person: %s' % self.username
@@ -258,22 +266,31 @@ class Person:
 
 
 class Student(Person):
+
 	def __init__(self, school):
 		Person.__init__(self, school, 'student')
 
+
 class Teacher(Person):
+
 	def __init__(self, school):
 		Person.__init__(self, school, 'teacher')
 
+
 class Staff(Person):
+
 	def __init__(self, school):
 		Person.__init__(self, school, 'staff')
 
+
 class TeacherStaff(Person):
+
 	def __init__(self, school):
 		Person.__init__(self, school, 'teacher_staff')
 
+
 class ImportFile:
+
 	def __init__(self, use_cli_api, use_python_api):
 		self.use_cli_api = use_cli_api
 		self.use_python_api = use_python_api
@@ -282,7 +299,7 @@ class ImportFile:
 		self.user_import = None
 
 	def write_import(self):
-		self.import_fd = os.open(self.import_file, os.O_RDWR|os.O_CREAT)
+		self.import_fd = os.open(self.import_file, os.O_RDWR | os.O_CREAT)
 		os.write(self.import_fd, str(self.user_import))
 		os.close(self.import_fd)
 
@@ -380,7 +397,9 @@ class ImportFile:
 			elif user.mode == 'D':
 				TeachersAndStaffLib(**kwargs).remove(lo)
 
+
 class UserHooks:
+
 	def __init__(self):
 		fd, self.pre_hook_result = tempfile.mkstemp()
 		os.close(fd)
@@ -395,6 +414,7 @@ class UserHooks:
 
 	def get_pre_result(self):
 		return open(self.pre_hook_result, 'r').read()
+
 	def get_post_result(self):
 		return open(self.post_hook_result, 'r').read()
 
@@ -419,7 +439,7 @@ test $# = 1 || exit 1
 cat $1 >>%(pre_hook_result)s
 exit 0
 ''' % {'pre_hook_result': self.pre_hook_result})
-			os.chmod(pre_hook, 0755)
+			os.chmod(pre_hook, 0o755)
 
 		for post_hook in self.post_hooks:
 			with open(post_hook, 'w+') as fd:
@@ -435,7 +455,7 @@ fi
 cat $1 >>%(post_hook_result)s
 exit 0
 ''' % {'post_hook_result': self.post_hook_result})
-			os.chmod(post_hook, 0755)
+			os.chmod(post_hook, 0o755)
 
 	def cleanup(self):
 		for pre_hook in self.pre_hooks:
@@ -445,7 +465,9 @@ exit 0
 		os.remove(self.pre_hook_result)
 		os.remove(self.post_hook_result)
 
+
 class UserImport:
+
 	def __init__(self, school_name=None, nr_students=20, nr_teachers=10, nr_staff=5, nr_teacher_staff=3):
 		assert (nr_students > 2)
 		assert (nr_teachers > 2)
@@ -571,6 +593,7 @@ def create_and_verify_users(use_cli_api=True, use_python_api=False, school_name=
 	import_file.run_import(user_import)
 	user_import.verify()
 
+
 def create_windows_profile_server(udm, ou, name):
 	properties = {
 		'name': name,
@@ -580,11 +603,13 @@ def create_windows_profile_server(udm, ou, name):
 
 	udm.create_object('computers/memberserver', position=school_base, **properties)
 
+
 def create_home_server(udm, name):
 	properties = {
 		'name': name,
 	}
 	udm.create_object('computers/memberserver', **properties)
+
 
 def import_users_basics(use_cli_api=True, use_python_api=False):
 	ucr = univention.testing.ucr.UCSTestConfigRegistry()
@@ -597,7 +622,6 @@ def import_users_basics(use_cli_api=True, use_python_api=False):
 			for profile_path_server in [None, 'generate']:
 				for home_server_at_ou in [None, 'generate']:
 					for windows_profile_server in [None, 'generate']:
-
 
 						if samba_home_server == 'generate':
 							samba_home_server = uts.random_name()
@@ -648,4 +672,3 @@ def import_users_basics(use_cli_api=True, use_python_api=False):
 							remove_ou(school_name)
 
 	utils.wait_for_replication()
-

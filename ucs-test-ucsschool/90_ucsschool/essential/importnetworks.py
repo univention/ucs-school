@@ -14,14 +14,18 @@ from essential.importcomputers import random_ip
 
 HOOK_BASEDIR = '/usr/share/ucs-school-import/hooks'
 
+
 class ImportNetwork(Exception):
 	pass
+
+
 class NetworkHookResult(Exception):
 	pass
 
 import univention.config_registry
 configRegistry = univention.config_registry.ConfigRegistry()
 configRegistry.load()
+
 
 def get_reverse_net(network, netmask):
 	p = subprocess.Popen(['/usr/bin/univention-ipcalc', '--ip', network,
@@ -35,17 +39,19 @@ def get_reverse_net(network, netmask):
 
 	return '.'.join(output)
 
+
 class Network:
+
 	def __init__(self, school, prefixlen):
 		assert (prefixlen > 7)
 		assert (prefixlen < 25)
 
 		self._net = ipaddr.IPv4Network('%s/%s' % (random_ip(), prefixlen))
 		self.network = '%s/%s' % (self._net.network, prefixlen)
-		self.iprange = '%s-%s' % (self._net.network+1, self._net.network+10)
-		self.defaultrouter = self._net.network+1
-		self.nameserver = self._net.network+2
-		self.netbiosserver = self._net.network+8
+		self.iprange = '%s-%s' % (self._net.network + 1, self._net.network + 10)
+		self.defaultrouter = self._net.network + 1
+		self.nameserver = self._net.network + 2
+		self.netbiosserver = self._net.network + 8
 
 		self.router_mode = False
 		self.school = school
@@ -102,16 +108,16 @@ class Network:
 		if self.defaultrouter:
 			defaultrouter_policy_dn = 'cn=%s,cn=routing,cn=dhcp,cn=policies,%s' % (self.name, self.school_base)
 			utils.verify_ldap_object(defaultrouter_policy_dn, expected_attr={'univentionDhcpRouters': [str(self.defaultrouter)]}, should_exist=True)
-			utils.verify_ldap_object(subnet_dn, expected_attr={'univentionPolicyReference': [defaultrouter_policy_dn]}, \
+			utils.verify_ldap_object(subnet_dn, expected_attr={'univentionPolicyReference': [defaultrouter_policy_dn]},
 								strict=False, should_exist=True)
 		if self.nameserver and not self.router_mode:
 			nameserver_policy_dn = 'cn=%s,cn=dns,cn=dhcp,cn=policies,%s' % (self.name, self.school_base)
-			utils.verify_ldap_object(nameserver_policy_dn, expected_attr={'univentionDhcpDomainName': [configRegistry.get('domainname')], \
+			utils.verify_ldap_object(nameserver_policy_dn, expected_attr={'univentionDhcpDomainName': [configRegistry.get('domainname')],
 								'univentionDhcpDomainNameServers': [str(self.nameserver)]}, should_exist=True)
 			utils.verify_ldap_object(subnet_dn, expected_attr={'univentionPolicyReference': [nameserver_policy_dn]}, strict=False, should_exist=True)
 		if self.netbiosserver and not self.router_mode:
 			netbios_policy_dn = "cn=%s,cn=netbios,cn=dhcp,cn=policies,%s" % (self.name, self.school_base)
-			utils.verify_ldap_object(netbios_policy_dn, expected_attr={'univentionDhcpNetbiosNodeType': ['8'], \
+			utils.verify_ldap_object(netbios_policy_dn, expected_attr={'univentionDhcpNetbiosNodeType': ['8'],
 								'univentionDhcpNetbiosNameServers': [str(self.netbiosserver)]}, should_exist=True)
 			utils.verify_ldap_object(subnet_dn, expected_attr={'univentionPolicyReference': [netbios_policy_dn]}, strict=False, should_exist=True)
 
@@ -120,6 +126,7 @@ class Network:
 
 
 class ImportFile:
+
 	def __init__(self, use_cli_api, use_python_api):
 		self.router_mode = False
 		self.use_cli_api = use_cli_api
@@ -128,7 +135,7 @@ class ImportFile:
 		os.close(self.import_fd)
 
 	def write_import(self, data):
-		self.import_fd = os.open(self.import_file, os.O_RDWR|os.O_CREAT)
+		self.import_fd = os.open(self.import_file, os.O_RDWR | os.O_CREAT)
 		os.write(self.import_fd, data)
 		os.close(self.import_fd)
 
@@ -168,7 +175,9 @@ class ImportFile:
 	def set_mode_to_router(self):
 		self.router_mode = True
 
+
 class NetworkHooks:
+
 	def __init__(self, router_mode):
 		fd, self.pre_hook_result = tempfile.mkstemp()
 		os.close(fd)
@@ -184,18 +193,19 @@ class NetworkHooks:
 
 	def get_pre_result(self):
 		return open(self.pre_hook_result, 'r').read()
+
 	def get_post_result(self):
 		return open(self.post_hook_result, 'r').read()
 
 	def create_hooks(self):
 		self.pre_hooks = [
-				os.path.join(os.path.join(HOOK_BASEDIR, 'network_create_pre.d'), uts.random_name()),
-				os.path.join(os.path.join(HOOK_BASEDIR, 'router_create_pre.d'), uts.random_name()),
+			os.path.join(os.path.join(HOOK_BASEDIR, 'network_create_pre.d'), uts.random_name()),
+			os.path.join(os.path.join(HOOK_BASEDIR, 'router_create_pre.d'), uts.random_name()),
 		]
 
 		self.post_hooks = [
-				os.path.join(os.path.join(HOOK_BASEDIR, 'network_create_post.d'), uts.random_name()),
-				os.path.join(os.path.join(HOOK_BASEDIR, 'router_create_post.d'), uts.random_name()),
+			os.path.join(os.path.join(HOOK_BASEDIR, 'network_create_post.d'), uts.random_name()),
+			os.path.join(os.path.join(HOOK_BASEDIR, 'router_create_post.d'), uts.random_name()),
 		]
 
 		if self.router_mode:
@@ -211,7 +221,7 @@ test $# = 1 || exit 1
 cat $1 >>%(pre_hook_result)s
 exit 0
 ''' % {'pre_hook_result': self.pre_hook_result})
-			os.chmod(pre_hook, 0755)
+			os.chmod(pre_hook, 0o755)
 
 		for post_hook in self.post_hooks:
 			with open(post_hook, 'w+') as fd:
@@ -225,7 +235,7 @@ test "$dn" = "$ldap_dn" || exit 1
 cat $1 >>%(post_hook_result)s
 exit 0
 ''' % {'post_hook_result': self.post_hook_result, 'search_object_class': search_object_class})
-			os.chmod(post_hook, 0755)
+			os.chmod(post_hook, 0o755)
 
 	def cleanup(self):
 		for pre_hook in self.pre_hooks:
@@ -235,7 +245,9 @@ exit 0
 		os.remove(self.pre_hook_result)
 		os.remove(self.post_hook_result)
 
+
 class NetworkImport:
+
 	def __init__(self, nr_networks=5):
 		assert (nr_networks > 3)
 
@@ -297,4 +309,3 @@ def create_and_verify_networks(use_cli_api=True, use_python_api=False, nr_networ
 
 def import_networks_basics(use_cli_api=True, use_python_api=False):
 	create_and_verify_networks(use_cli_api, use_python_api, 10)
-

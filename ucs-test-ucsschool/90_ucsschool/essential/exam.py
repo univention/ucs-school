@@ -22,30 +22,35 @@ import univention.testing.utils as utils
 class StartFail(Exception):
 	pass
 
+
 class FinishFail(Exception):
 	pass
+
 
 def get_dir_files(dir_path, recursive=True):
 	result = []
 	for f in glob.glob('%s/*' % dir_path):
 		if os.path.isfile(f):
 			result.append(os.path.basename(f))
-		if os.path.isdir(f) and	recursive:
+		if os.path.isdir(f) and recursive:
 			result.extend(get_dir_files(f))
 	return result
 
+
 def get_s4_rejected():
 	cmd = ['univention-s4connector-list-rejected']
-	out , err = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
+	out, err = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
 	print 'rejected Objects:', out, err
 	found = re.findall(r'DN:\s\w{2,4}=.*', out)
 	return set(found)
+
 
 def check_s4_rejected(existing_rejects):
 	new_rejects = get_s4_rejected()
 	fail = [x for x in new_rejects if x not in existing_rejects]
 	if fail:
 		utils.fail('There is at least one new rejected object: %r' % fail)
+
 
 def check_proof_uniqueMember():
 	cmd = ['/usr/share/univention-directory-manager-tools/proof_uniqueMembers']
@@ -56,6 +61,7 @@ def check_proof_uniqueMember():
 	if returncode != 0:
 		utils.fail('Proof unique members failed')
 
+
 def wait_replications_check_rejected_uniqueMember(existing_rejects):
 	utils.wait_for_replication()
 	wait_for_s4connector()
@@ -65,6 +71,7 @@ def wait_replications_check_rejected_uniqueMember(existing_rejects):
 
 
 class Exam(object):
+
 	"""Contains the needed functionality for exam module.\n
 	:param school: name of the school
 	:type school: str
@@ -89,6 +96,7 @@ class Exam(object):
 	:param umcConnection:
 	:type umcConnection: UMC connection object
 	"""
+
 	def __init__(
 			self,
 			school,
@@ -102,7 +110,7 @@ class Exam(object):
 			internetRule="none",
 			customRule='',
 			umcConnection=None
-			):
+	):
 		self.school = school
 		self.room = room
 		self.examEndTime = examEndTime
@@ -140,16 +148,16 @@ class Exam(object):
 				'shareMode': self.shareMode,
 				'internetRule': self.internetRule,
 				'customRule': self.customRule
-				}
+		}
 		print 'Starting exam %s in room %s' % (
 				self.name,
 				self.room
-				)
+		)
 		print 'param = %s' % param
 		reqResult = self.umcConnection.request(
 				'schoolexam/exam/start',
 				param
-				)
+		)
 		print 'Start exam response = ', reqResult
 		if not reqResult['success']:
 			raise StartFail('Unable to start exam (%r)' % (param,))
@@ -159,20 +167,19 @@ class Exam(object):
 		param = {
 				'exam': self.name,
 				'room': self.room
-				}
+		}
 		print 'Finishing exam %s in room %s' % (
 				self.name,
 				self.room
-				)
+		)
 		print 'param = %s' % param
 		reqResult = self.umcConnection.request(
 				'schoolexam/exam/finish',
 				param
-				)
+		)
 		print 'Finish exam response = ', reqResult
 		if not reqResult['success']:
 			raise FinishFail('Unable to finish exam (%r)' % param)
-
 
 	def genData(self, file_name, content_type, boundary):
 		"""Generates data in the form to be sent via http POST request.\n
@@ -234,7 +241,7 @@ html5
 
 	def get_internetRules(self):
 		"""Get internet rules"""
-		reqResult = self.umcConnection.request('schoolexam/internetrules',{})
+		reqResult = self.umcConnection.request('schoolexam/internetrules', {})
 		print 'InternetRules = ', reqResult
 		return reqResult
 
@@ -244,7 +251,7 @@ html5
 
 	def get_schools(self):
 		"""Get schools"""
-		reqResult = self.umcConnection.request('schoolexam/schools',{})
+		reqResult = self.umcConnection.request('schoolexam/schools', {})
 		schools = [x['label'] for x in reqResult]
 		print 'Schools = ', schools
 		return schools
@@ -255,7 +262,7 @@ html5
 
 	def get_groups(self):
 		"""Get groups"""
-		reqResult = self.umcConnection.request('schoolexam/groups',	{'school':self.school,'pattern':"",	})
+		reqResult = self.umcConnection.request('schoolexam/groups', {'school': self.school, 'pattern': "", })
 		print 'Groups response = ', reqResult
 		groups = [x['label'] for x in reqResult]
 		print 'Groups = ', groups
@@ -267,7 +274,7 @@ html5
 
 	def get_lessonEnd(self):
 		"""Get lessonEnd"""
-		reqResult = self.umcConnection.request('schoolexam/lesson_end',{})
+		reqResult = self.umcConnection.request('schoolexam/lesson_end', {})
 		print 'Lesson End = ', reqResult
 		return reqResult
 
@@ -277,7 +284,7 @@ html5
 
 	def collect(self):
 		"""Collect results"""
-		reqResult = self.umcConnection.request('schoolexam/exam/collect',{'exam':self.name})
+		reqResult = self.umcConnection.request('schoolexam/exam/collect', {'exam': self.name})
 		print 'Collect respose = ', reqResult
 		return reqResult
 
@@ -296,7 +303,7 @@ html5
 			utils.fail('%r were not uploaded to %r' % (self.files, path))
 
 	def check_distribute(self):
-		path = '/home/%s/schueler' %  self.school
+		path = '/home/%s/schueler' % self.school
 		path_files = get_dir_files(path)
 		if not set(self.files).issubset(set(path_files)):
 			utils.fail('%r were not uploaded to %r' % (self.files, path))

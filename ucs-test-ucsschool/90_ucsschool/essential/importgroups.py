@@ -14,8 +14,11 @@ from essential.importou import remove_ou, get_school_base
 
 HOOK_BASEDIR = '/usr/share/ucs-school-import/hooks'
 
+
 class ImportGroup(Exception):
 	pass
+
+
 class GroupHookResult(Exception):
 	pass
 
@@ -25,7 +28,9 @@ configRegistry.load()
 
 cn_pupils = configRegistry.get('ucsschool/ldap/default/container/pupils', 'schueler')
 
+
 class Group:
+
 	def __init__(self, school):
 		self.name = uts.random_name()
 		self.description = uts.random_name()
@@ -39,6 +44,7 @@ class Group:
 
 	def set_mode_to_modify(self):
 		self.mode = 'M'
+
 	def set_mode_to_delete(self):
 		self.mode = 'D'
 
@@ -72,6 +78,7 @@ class Group:
 
 
 class ImportFile:
+
 	def __init__(self, use_cli_api, use_python_api):
 		self.use_cli_api = use_cli_api
 		self.use_python_api = use_python_api
@@ -80,7 +87,7 @@ class ImportFile:
 		self.group_import = None
 
 	def write_import(self):
-		self.import_fd = os.open(self.import_file, os.O_RDWR|os.O_CREAT)
+		self.import_fd = os.open(self.import_file, os.O_RDWR | os.O_CREAT)
 		os.write(self.import_fd, str(self.group_import))
 		os.close(self.import_fd)
 
@@ -116,7 +123,7 @@ class ImportFile:
 			raise ImportGroup('Failed to execute "%s". Return code: %d.' % (string.join(cmd_block), retcode))
 
 	def _run_import_via_python_api(self):
-		
+
 		# reload UCR
 		ucsschool.lib.models.utils.ucr.load()
 
@@ -139,7 +146,9 @@ class ImportFile:
 			elif grp.mode == 'D':
 				GroupLib(**kwargs).remove(lo)
 
+
 class GroupHooks:
+
 	def __init__(self):
 		fd, self.pre_hook_result = tempfile.mkstemp()
 		os.close(fd)
@@ -151,20 +160,21 @@ class GroupHooks:
 
 	def get_pre_result(self):
 		return open(self.pre_hook_result, 'r').read()
+
 	def get_post_result(self):
 		return open(self.post_hook_result, 'r').read()
 
 	def create_hooks(self):
 		self.pre_hooks = [
-				os.path.join(os.path.join(HOOK_BASEDIR, 'group_create_pre.d'), uts.random_name()),
-				os.path.join(os.path.join(HOOK_BASEDIR, 'group_remove_pre.d'), uts.random_name()),
-				os.path.join(os.path.join(HOOK_BASEDIR, 'group_modify_pre.d'), uts.random_name()),
+			os.path.join(os.path.join(HOOK_BASEDIR, 'group_create_pre.d'), uts.random_name()),
+			os.path.join(os.path.join(HOOK_BASEDIR, 'group_remove_pre.d'), uts.random_name()),
+			os.path.join(os.path.join(HOOK_BASEDIR, 'group_modify_pre.d'), uts.random_name()),
 		]
 
 		self.post_hooks = [
-				os.path.join(os.path.join(HOOK_BASEDIR, 'group_create_post.d'), uts.random_name()),
-				os.path.join(os.path.join(HOOK_BASEDIR, 'group_modify_post.d'), uts.random_name()),
-				os.path.join(os.path.join(HOOK_BASEDIR, 'group_remove_post.d'), uts.random_name()),
+			os.path.join(os.path.join(HOOK_BASEDIR, 'group_create_post.d'), uts.random_name()),
+			os.path.join(os.path.join(HOOK_BASEDIR, 'group_modify_post.d'), uts.random_name()),
+			os.path.join(os.path.join(HOOK_BASEDIR, 'group_remove_post.d'), uts.random_name()),
 		]
 
 		for pre_hook in self.pre_hooks:
@@ -175,7 +185,7 @@ test $# = 1 || exit 1
 cat $1 >>%(pre_hook_result)s
 exit 0
 ''' % {'pre_hook_result': self.pre_hook_result})
-			os.chmod(pre_hook, 0755)
+			os.chmod(pre_hook, 0o755)
 
 		for post_hook in self.post_hooks:
 			with open(post_hook, 'w+') as fd:
@@ -191,7 +201,7 @@ fi
 cat $1 >>%(post_hook_result)s
 exit 0
 ''' % {'post_hook_result': self.post_hook_result})
-			os.chmod(post_hook, 0755)
+			os.chmod(post_hook, 0o755)
 
 	def cleanup(self):
 		for pre_hook in self.pre_hooks:
@@ -201,7 +211,9 @@ exit 0
 		os.remove(self.pre_hook_result)
 		os.remove(self.post_hook_result)
 
+
 class GroupImport:
+
 	def __init__(self, nr_groups=20):
 		assert (nr_groups > 3)
 
@@ -233,6 +245,7 @@ class GroupImport:
 		for group in self.groups:
 			group.set_mode_to_delete()
 
+
 def create_and_verify_groups(use_cli_api=True, use_python_api=False, nr_groups=5):
 	assert(use_cli_api != use_python_api)
 
@@ -263,4 +276,3 @@ def create_and_verify_groups(use_cli_api=True, use_python_api=False, nr_groups=5
 
 def import_groups_basics(use_cli_api=True, use_python_api=False):
 	create_and_verify_groups(use_cli_api, use_python_api, 10)
-

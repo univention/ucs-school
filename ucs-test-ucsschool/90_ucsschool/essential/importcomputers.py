@@ -19,10 +19,15 @@ from essential.importou import remove_ou, get_school_base
 
 HOOK_BASEDIR = '/usr/share/ucs-school-import/hooks'
 
+
 class ImportComputer(Exception):
 	pass
+
+
 class ComputerHookResult(Exception):
 	pass
+
+
 class WrongMembership(Exception):
 	pass
 
@@ -46,6 +51,8 @@ def random_mac():
 # Hot fix for bug #38191
 # Generate 110 different ip addresses in the range 11.x.x.x-120.x.x.x
 # so each lie in a different network prefix >= 8
+
+
 class IP_Iter(object):
 
 	def __init__(self):
@@ -58,21 +65,24 @@ class IP_Iter(object):
 	def next(self):
 		if self.index < self.max_range:
 			ip_list = [
-					self.index,
-					random.randint(1, 254),
-					random.randint(1, 254),
-					random.randint(1, 254)
-					]
+				self.index,
+				random.randint(1, 254),
+				random.randint(1, 254),
+				random.randint(1, 254)
+			]
 			ip = ".".join(map(str, ip_list))
 			self.index += 1
 			return ip
 		else:
 			raise StopIteration()
 
+
 def random_ip(ip_iter=IP_Iter()):
 	return ip_iter.next()
 
+
 class Computer:
+
 	def __init__(self, school, ctype):
 		self.name = uts.random_name()
 		self.mac = random_mac()
@@ -87,13 +97,14 @@ class Computer:
 
 		self.dn = 'cn=%s,cn=computers,%s' % (self.name, self.school_base)
 
-
 	def set_inventorynumbers(self):
 		self.inventorynumbers.append(uts.random_name())
 		self.inventorynumbers.append(uts.random_name())
+
 	def set_zone_verwaltung(self):
 		if self.ctype == 'memberserver':
 			self.zone = 'verwaltung'
+
 	def set_zone_edukativ(self):
 		if self.ctype == 'memberserver':
 			self.zone = 'edukativ'
@@ -161,22 +172,31 @@ class Computer:
 
 
 class Windows(Computer):
+
 	def __init__(self, school):
 		Computer.__init__(self, school, 'windows')
 
+
 class Memberserver(Computer):
+
 	def __init__(self, school):
 		Computer.__init__(self, school, 'memberserver')
 
+
 class MacOS(Computer):
+
 	def __init__(self, school):
 		Computer.__init__(self, school, 'macos')
 
+
 class IPManagedClient(Computer):
+
 	def __init__(self, school):
 		Computer.__init__(self, school, 'ipmanagedclient')
 
+
 class ImportFile:
+
 	def __init__(self, use_cli_api, use_python_api):
 		self.use_cli_api = use_cli_api
 		self.use_python_api = use_python_api
@@ -185,7 +205,7 @@ class ImportFile:
 		self.computer_import = None
 
 	def write_import(self):
-		self.import_fd = os.open(self.import_file, os.O_RDWR|os.O_CREAT)
+		self.import_fd = os.open(self.import_file, os.O_RDWR | os.O_CREAT)
 		os.write(self.import_fd, str(self.computer_import))
 		os.close(self.import_fd)
 
@@ -236,13 +256,13 @@ class ImportFile:
 
 		def _set_kwargs(computer):
 			kwargs = {
-					'school': computer.school,
-					'name': computer.name,
-					'ip_address': computer.ip,
-					'mac_address': computer.mac,
-					'type_name': computer.ctype,
-					'inventory_number': computer.inventorynumbers,
-					'zone': computer.zone,
+				'school': computer.school,
+				'name': computer.name,
+				'ip_address': computer.ip,
+				'mac_address': computer.mac,
+				'type_name': computer.ctype,
+				'inventory_number': computer.inventorynumbers,
+				'zone': computer.zone,
 			}
 			return kwargs
 
@@ -259,7 +279,9 @@ class ImportFile:
 			kwargs = _set_kwargs(computer)
 			IPComputerLib(**kwargs).create(lo)
 
+
 class ComputerHooks:
+
 	def __init__(self):
 		fd, self.pre_hook_result = tempfile.mkstemp()
 		os.close(fd)
@@ -274,16 +296,17 @@ class ComputerHooks:
 
 	def get_pre_result(self):
 		return open(self.pre_hook_result, 'r').read()
+
 	def get_post_result(self):
 		return open(self.post_hook_result, 'r').read()
 
 	def create_hooks(self):
 		self.pre_hooks = [
-				os.path.join(os.path.join(HOOK_BASEDIR, 'computer_create_pre.d'), uts.random_name()),
+			os.path.join(os.path.join(HOOK_BASEDIR, 'computer_create_pre.d'), uts.random_name()),
 		]
 
 		self.post_hooks = [
-				os.path.join(os.path.join(HOOK_BASEDIR, 'computer_create_post.d'), uts.random_name()),
+			os.path.join(os.path.join(HOOK_BASEDIR, 'computer_create_post.d'), uts.random_name()),
 		]
 
 		for pre_hook in self.pre_hooks:
@@ -294,7 +317,7 @@ test $# = 1 || exit 1
 cat $1 >>%(pre_hook_result)s
 exit 0
 ''' % {'pre_hook_result': self.pre_hook_result})
-			os.chmod(pre_hook, 0755)
+			os.chmod(pre_hook, 0o755)
 
 		for post_hook in self.post_hooks:
 			with open(post_hook, 'w+') as fd:
@@ -308,7 +331,7 @@ test "$dn" = "$ldap_dn" || exit 1
 cat $1 >>%(post_hook_result)s
 exit 0
 ''' % {'post_hook_result': self.post_hook_result})
-			os.chmod(post_hook, 0755)
+			os.chmod(post_hook, 0o755)
 
 	def cleanup(self):
 		for pre_hook in self.pre_hooks:
@@ -318,7 +341,9 @@ exit 0
 		os.remove(self.pre_hook_result)
 		os.remove(self.post_hook_result)
 
+
 class ComputerImport:
+
 	def __init__(self, nr_windows=20, nr_memberserver=10, nr_macos=5, nr_ipmanagedclient=3):
 		assert (nr_windows > 2)
 		assert (nr_macos > 2)
@@ -403,4 +428,3 @@ def create_and_verify_computers(use_cli_api=True, use_python_api=False, nr_windo
 
 def import_computers_basics(use_cli_api=True, use_python_api=False, nr_memberserver=4):
 	create_and_verify_computers(use_cli_api, use_python_api, 5, nr_memberserver, 3, 3)
-

@@ -119,7 +119,6 @@ class SimpleCurl(object):
 		"""Close the curl connection"""
 		self.curl.close()
 
-
 	def __del__(self):
 		self.curl.close()
 		if os.path.exists(self.cookieFilename):

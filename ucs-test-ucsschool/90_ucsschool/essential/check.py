@@ -57,9 +57,9 @@ class Check(object):
 			param = {
 				'school': self.school,
 				'pattern': groupName
-				}
+			}
 			if ruleName is None:
-				ruleName = ['-- Default (unrestricted) --' , '-- Voreinstellungen (Unbeschränkt) --']
+				ruleName = ['-- Default (unrestricted) --', '-- Voreinstellungen (Unbeschränkt) --']
 			result = self.umcConnection.request(
 				'internetrules/groups/query',
 				param)[0]['rule']
