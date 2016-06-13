@@ -16,7 +16,7 @@
 		"default": true
 	},
 	"scheme": {
-		"email": "<firstname>[0].<lastname>[COUNTER2]@<maildomain>",
+		"email": "<firstname>[0].<lastname>@<maildomain>",
 		"rid": "<email>",
 		"username": {
 			"allow_rename": false,
