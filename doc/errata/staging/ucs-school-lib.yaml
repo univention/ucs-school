@@ -8,9 +8,10 @@ desc: |
  This update addresses the following issue(s):
  * It is now possible to move users (students, teachers, staff) into another
    school OU (Bug #40870).
- * Adjustments for school overlapping users have been implemented (Bug #41117, Bug #41118, 41132).
+ * Adjustments for school overlapping users have been implemented (Bug #41117,
+   Bug #41118, Bug #41132, Bug #41293).
  * The python model classes now raise an exception if they don't match the
    opened object (Bug #41425).
  * A caching bug which resulted in operations were done with a wrong ldap
    connection has been fixed (Bug #41468).
-bug: [40870, 41117, 41118, 41132, 41425, 41468]
+bug: [40870, 41117, 41118, 41132, 41425, 41468, 41293]
