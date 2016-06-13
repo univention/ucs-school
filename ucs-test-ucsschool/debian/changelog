@@ -1,3 +1,9 @@
+ucs-test-ucsschool (3.0.10-1) unstable; urgency=low
+
+  * Bug #41541: increased timeout of 22_computerroom_two_rooms_settings_interference
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Mon, 13 Jun 2016 10:37:19 +0200
+
 ucs-test-ucsschool (3.0.9-2) unstable; urgency=medium
 
   * Bug #41399: fix class detection
