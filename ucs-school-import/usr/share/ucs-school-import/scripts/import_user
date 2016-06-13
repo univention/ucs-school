@@ -1,9 +1,9 @@
 #!/usr/bin/python2.7
 # -*- coding: utf-8 -*-
 #
-# Univention UCS@School
+# Univention UCS@school
 """
-ucs@school import tool for legacy csv format.
+UCS@school import tool for legacy csv format.
 """
 # Copyright 2016 Univention GmbH
 #

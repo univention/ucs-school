@@ -3,7 +3,7 @@ Paket ucs-school-import Kurzdoku
 Ziel:
 
 Die in diesem Paket enthaltenen Skripte dienen der spezifischen Administration
-einer ucs@school-Domäne, genauer dem import von Bentzern (Schüler/Lehrer),
+einer UCS@school-Domäne, genauer dem import von Bentzern (Schüler/Lehrer),
 Netzwerken und Rechnern.
 
 Skripte:

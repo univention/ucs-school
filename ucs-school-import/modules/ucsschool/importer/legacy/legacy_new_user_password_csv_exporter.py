@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Univention UCS@School
+# Univention UCS@school
 """
 Write the passwords of newly created users to a CSV file.
 """

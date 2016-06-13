@@ -34,7 +34,7 @@ ucs-school-import (14.0.8-2) unstable; urgency=low
 
   * Bug #41242: remove special handling of ucs-test
   * use the same logfile as the legacy import script
-  * wording: replace "ucs@school" with "UCS@school"
+  * wording: replace "UCS@school" with "UCS@school"
   * tolerate_errors = -1 allows unlimited non-fatal errors, default for legacy
     user import
   * allow running new import script ("ucs-school-user-import") without any
@@ -232,7 +232,7 @@ ucs-school-import (14.0.0-2) unstable; urgency=medium
 
 ucs-school-import (14.0.0-1) unstable; urgency=low
 
-  * Bug #41239: create new ucs@school import tool
+  * Bug #41239: create new UCS@school import tool
 
  -- Daniel Troeder <troeder@univention.de>  Tue, 24 May 2016 18:44:40 +0200
 
@@ -1265,7 +1265,7 @@ ucs-school-import (8.0.4-1) unstable; urgency=low
 
 ucs-school-import (8.0.3-1) unstable; urgency=low
 
-  * added -h/--help for ucs@school import tools (Bug #15657) 
+  * added -h/--help for UCS@school import tools (Bug #15657) 
 
  -- Felix Botner <botner@univention.de>  Thu, 19 Jan 2012 12:01:19 +0100
 
@@ -1481,7 +1481,7 @@ ucs-school-import (6.0.1-1) unstable; urgency=low
 
 ucs-school-import (6.0.0-1) unstable; urgency=low
 
-  * bump version for UCS 2.4 ucs@school
+  * bump version for UCS 2.4 UCS@school
   * implement pre and post hook scripts for import script; Bug #18981
 
  -- Andreas Büsching <buesching@univention.de>  Tue, 13 Jul 2010 19:14:30 +0200
@@ -1790,7 +1790,7 @@ ucs-school-import (4.0.0-16) unstable; urgency=low
 
   * added proper initialization of UDM modules
   * fixed a syntax issue in attribute definition for ucsschoolRole
-  * removed @ from tabName ucs@school
+  * removed @ from tabName UCS@school
   * ucsschoolRole attribute is now set for all imported users
   * fixed an issue with import_router method that caused only the first router
     to be processed
@@ -1889,7 +1889,7 @@ ucs-school-import (4.0.0-8) unstable; urgency=low
 
 ucs-school-import (4.0.0-7) unstable; urgency=low
 
-  * changed OIDs of extended attributes to the ucs@school OIDs. Ticket #2009060410000116
+  * changed OIDs of extended attributes to the UCS@school OIDs. Ticket #2009060410000116
 
  -- Jan Christoph Ebersbach <ebersbach@univention.de>  Mon,  8 Jun 2009 15:02:49 +0200
 

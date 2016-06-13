@@ -1,7 +1,7 @@
 #!/usr/bin/python2.7
 # -*- coding: utf-8 -*-
 #
-# Univention UCS@School
+# Univention UCS@school
 """
 Base class for UCS@school import tool cmdline frontends.
 """

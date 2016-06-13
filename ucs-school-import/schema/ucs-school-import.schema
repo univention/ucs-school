@@ -4,7 +4,7 @@
 # univention owns the namespace 10176.
 #
 #
-# Univention UCS@School Import OID Prefix: 1.3.6.1.4.1.10176.4000.2
+# Univention UCS@school Import OID Prefix: 1.3.6.1.4.1.10176.4000.2
 #
 objectIdentifier univentionSchool 1.3.6.1.4.1.10176.4000.2
 
@@ -95,14 +95,14 @@ objectclass ( 1.3.6.1.4.1.10176.99999.2.50 NAME 'univentionAbordnung'
 # obsolete!
 attributetype ( univentionSchool:5101
         NAME 'ucsschoolRole'
-        DESC 'Role of user in ucs@school context (e.g. teacher, administration)'
+        DESC 'Role of user in UCS@school context (e.g. teacher, administration)'
         EQUALITY caseIgnoreMatch
         SUBSTR caseIgnoreSubstringsMatch
         SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
 
 # obsolete!
 objectclass ( univentionSchool:51 NAME 'univentionUcsSchoolUser'
-        DESC 'Role of user in ucs@school context (e.g. teacher, administration)'
+        DESC 'Role of user in UCS@school context (e.g. teacher, administration)'
         SUP top AUXILIARY
         MAY ( ucsschoolRole ) )
 

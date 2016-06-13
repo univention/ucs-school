@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Univention UCS@School
+# Univention UCS@school
 """
 Singleton to the factory currently in use.
 """

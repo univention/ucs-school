@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Univention UCS@School
+# Univention UCS@school
 """
 Write the result of a user import job to a CSV file.
 """

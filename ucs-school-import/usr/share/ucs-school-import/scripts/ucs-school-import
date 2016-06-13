@@ -1,7 +1,7 @@
 #!/usr/bin/python2.7 -OO
 # -*- coding: utf-8 -*-
 #
-# Univention UCS@School
+# Univention UCS@school
 #
 # Copyright 2007-2016 Univention GmbH
 #
@@ -1520,7 +1520,7 @@ def import_user():
 
 	# usage
 	usage  = "%prog [options] <importFile>\n"
-	usage += "  creates/modifies/deletes user accounts according to import file for ucs@school\n\n"
+	usage += "  creates/modifies/deletes user accounts according to import file for UCS@school\n\n"
 	usage += "Arguments:\n"
 	usage += "  <importFile> user import file"
 	parser = optparse.OptionParser(usage=usage)
@@ -1845,9 +1845,9 @@ def import_networks(router_only=False):
 	# usage
 	usage = "%prog [options] <importFile>\n"
 	if router_only:
-		usage += "  modifies default routers according to import file for ucs@school\n\n"
+		usage += "  modifies default routers according to import file for UCS@school\n\n"
 	else:
-		usage += "  creates network objects according to import file for ucs@school\n\n"
+		usage += "  creates network objects according to import file for UCS@school\n\n"
 	usage += "Arguments:\n"
 	usage += "  <importFile> network import file"
 	parser = optparse.OptionParser(usage=usage)
@@ -1996,7 +1996,7 @@ def set_inventory_number_for_computer():
 
 	# usage
 	usage = "%prog [options] <importFile>\n"
-	usage += "  modifies computer inventory number according to import file for ucs@school\n\n"
+	usage += "  modifies computer inventory number according to import file for UCS@school\n\n"
 	usage += "Arguments:\n"
 	usage += "  <importFile> computer import file"
 	parser = optparse.OptionParser(usage=usage)
@@ -2176,7 +2176,7 @@ def import_computer():
 
 	# usage
 	usage = "%prog [options] <importFile>\n"
-	usage += "  creates computer objects according to import file for ucs@school\n\n"
+	usage += "  creates computer objects according to import file for UCS@school\n\n"
 	usage += "Arguments:\n"
 	usage += "  <importFile> computer import file"
 	parser = optparse.OptionParser(usage=usage)
@@ -2310,7 +2310,7 @@ def import_group():
 
 	# usage
 	usage = "%prog [options] <importFile>\n"
-	usage += "  creates/modifies/deletes group objects accoring to import file for ucs@school\n\n"
+	usage += "  creates/modifies/deletes group objects accoring to import file for UCS@school\n\n"
 	usage += "Arguments:\n"
 	usage += "  <importFile> group import file"
 	parser = optparse.OptionParser(usage=usage)
@@ -2388,7 +2388,7 @@ def import_printer():
 
 	# usage
 	usage = "%prog [options] <importFile>\n"
-	usage += "  creates/modifies/deletes printer objects according to import file for ucs@school\n\n"
+	usage += "  creates/modifies/deletes printer objects according to import file for UCS@school\n\n"
 	usage += "Arguments:\n"
 	usage += "  <importFile> printer import file"
 	parser = optparse.OptionParser(usage=usage)
@@ -2495,7 +2495,7 @@ def activate_groupmembers():
 
 	# usage
 	usage  = "%prog [options] <groupName> <newStatus> <changePassword>\n"
-	usage += "  (de)activates group members for ucs@school\n\n"
+	usage += "  (de)activates group members for UCS@school\n\n"
 	usage += "Arguments:\n"
 	usage += "  <groupName>      group that shall be dis-/enabled\n"
 	usage += "  <newStatus>      0=disabled, 1=enabled\n"
@@ -2611,7 +2611,7 @@ def export_computer():
 
 	# usage
 	usage = "%prog [options] <ouName> <fileName>\n"
-	usage += "  export computer for specified ou in ucs@school\n\n"
+	usage += "  export computer for specified ou in UCS@school\n\n"
 	usage += "Arguments:\n"
 	usage += "  <ouName>         name of the ou from which the computers shall be exported\n"
 	usage += "  <fileName>       export file"
@@ -2658,7 +2658,7 @@ def set_ou_sharefileserver():
 
 	# usage
 	usage = "%prog [options] <ouName> <shareFileServer>\n"
-	usage += "  sets shareFileServer for ou in ucs@school\n\n"
+	usage += "  sets shareFileServer for ou in UCS@school\n\n"
 	usage += "Arguments:\n"
 	usage += "  <ouName>          name of the ou\n"
 	usage += "  <shareFileServer> name of the shareFileServer"
@@ -2706,7 +2706,7 @@ def rename_class():
 
 	# usage
 	usage = "%prog [options] <importFile>\n"
-	usage += "  renames class groups and shares according to import file for ucs@school\n\n"
+	usage += "  renames class groups and shares according to import file for UCS@school\n\n"
 	usage += "Arguments:\n"
 	usage += "  <importFile> rename class import file"
 	parser = optparse.OptionParser(usage=usage)

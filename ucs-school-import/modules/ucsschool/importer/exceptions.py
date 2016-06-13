@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Univention UCS@School
+# Univention UCS@school
 """
 All exceptions raise by code in ucsschool.importer.
 """

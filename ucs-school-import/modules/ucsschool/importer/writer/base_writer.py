@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Univention UCS@School
+# Univention UCS@school
 """
 Base class for output writers.
 """
