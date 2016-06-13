@@ -6,6 +6,7 @@
 		"filename": "/var/lib/ucs-school-import/legacy-format-userimport.csv"
 	},
 	"csv": {
+		"delimiter": "\t",
 		"header_lines": 0,
 		"mapping": {
 			"0": "__action",

@@ -1,3 +1,13 @@
+ucs-school-import (14.0.9-3) unstable; urgency=low
+
+  * Bug #41242: change format error in scheme formatting to warning
+  * set csv column delimiter to tab
+  * changed dry-run to be the same by default on the cmdline as it is in the
+    configuration file (False)
+  * calculate username_max_length from the length of the exam user prefix
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 13 Jun 2016 11:44:41 +0200
+
 ucs-school-import (14.0.9-2) unstable; urgency=low
 
   * Bug #41239: fix copy & paste error of base dn

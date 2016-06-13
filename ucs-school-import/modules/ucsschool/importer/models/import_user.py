@@ -46,6 +46,7 @@ from ucsschool.lib.models.attributes import RecordUID, SourceUID
 from ucsschool.importer.configuration import Configuration
 from ucsschool.importer.factory import Factory
 from ucsschool.importer.exceptions import BadPassword, FormatError, InvalidBirthday, InvalidClassName, InvalidEmail, MissingMailDomain, MissingMandatoryAttribute, MissingSchoolName, NotSupportedError, NoUsername, NoUsernameAtAll, UniqueIdError, UnkownDisabledSetting, UnknownProperty, UsernameToLong
+from ucsschool.importer.utils.logging2udebug import get_logger
 
 
 class ImportUser(User):
@@ -73,6 +74,7 @@ class ImportUser(User):
 	ucr = None
 	username_handler = None
 	reader = None
+	logger = None
 
 	def __init__(self, name=None, school=None, **kwargs):
 		self.action = None            # "A", "D" or "M"
@@ -84,6 +86,8 @@ class ImportUser(User):
 			self.ucr = self.factory.make_ucr()
 			self.config = Configuration()
 			self.reader = self.factory.make_reader()
+			self.logger = get_logger()
+			self.username_max_length = 20 - len(self.ucr.get("ucsschool/ldap/default/userprefix/exam", "exam-"))
 		super(ImportUser, self).__init__(name, school, **kwargs)
 
 	def build_hook_line(self, hook_time, func_name):
@@ -586,9 +590,8 @@ class ImportUser(User):
 		prop = uadmin_property("_replace")
 		res = prop._replace(scheme, all_fields)
 		if not res:
-			raise FormatError("Could not create '{prop_name}' from scheme '{scheme}' and input data {data}. ".format(
-				prop_name=prop_name, scheme=scheme, data=all_fields), scheme=scheme, data=all_fields,
-				entry=self.entry_count,	import_user=self)
+			self.logger.warn("Created empty '{prop_name}' from scheme '{scheme}' and input data {data}. ".format(
+				prop_name=prop_name, scheme=scheme, data=all_fields))
 		return res
 
 	@classmethod

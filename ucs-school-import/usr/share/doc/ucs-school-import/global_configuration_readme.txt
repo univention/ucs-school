@@ -16,6 +16,6 @@ configuration files overwrite settings from prior ones. The order is:
 6. Options set on the command line by --set and its aliases.
 
 
-"dry_run": bool: set to False if changes should be commited to LDAP
+"dry_run": bool: set to False if changes should be committed to LDAP
 "logfile": str: path to additional logfile
 "verbose": bool: if enabled, log output of level DEBUG will be send to the command line (stdout)

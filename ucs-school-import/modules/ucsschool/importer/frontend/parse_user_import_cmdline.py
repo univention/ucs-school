@@ -45,7 +45,7 @@ class ParseUserImportCmdline(object):
 		self.args = None
 		# TODO: read defaults from user_import_defaults.json
 		self.defaults = dict(
-			dry_run=True,
+			dry_run=False,
 			infile="/var/lib/ucs-school-import/new-format-userimport.csv",
 			logfile=None,
 			no_delete=False,
