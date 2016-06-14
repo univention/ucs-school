@@ -36,10 +36,11 @@ from ucsschool.importer.configuration import Configuration
 
 
 class PyHook(object):
-	def __init__(self, import_user):
+	def __init__(self, import_user, lo):
 		self.logger = get_logger()
 		self.config = Configuration()
 		self.import_user = import_user
+		self.lo = lo
 
 	def run(self):
 		raise NotImplementedError()

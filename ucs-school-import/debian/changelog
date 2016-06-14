@@ -1,3 +1,9 @@
+ucs-school-import (14.0.9-10) unstable; urgency=low
+
+  * Bug #41239: supply PyHook with a LDAP connection
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 14 Jun 2016 16:30:12 +0200
+
 ucs-school-import (14.0.9-9) unstable; urgency=low
 
   * Bug #41239: bump, less escaping
