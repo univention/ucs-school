@@ -1,3 +1,9 @@
+ucs-school-import (14.0.9-9) unstable; urgency=low
+
+  * Bug #41239: bump, less escaping
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 14 Jun 2016 15:49:03 +0200
+
 ucs-school-import (14.0.9-8) unstable; urgency=low
 
   * Bug #41239: use username from LDAP when modifying and input data does not
