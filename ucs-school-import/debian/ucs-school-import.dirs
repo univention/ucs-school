@@ -5,6 +5,7 @@ usr/lib/univention-install
 usr/share/ucs-school-import/configs
 usr/share/ucs-school-import/hooks/user_create_pre.d
 usr/share/ucs-school-import/hooks/user_modify_pre.d
+usr/share/ucs-school-import/hooks/user_move_pre.d
 usr/share/ucs-school-import/hooks/user_remove_pre.d
 usr/share/ucs-school-import/hooks/group_create_pre.d
 usr/share/ucs-school-import/hooks/group_modify_pre.d
@@ -18,6 +19,7 @@ usr/share/ucs-school-import/hooks/router_create_pre.d
 usr/share/ucs-school-import/hooks/ou_create_pre.d
 usr/share/ucs-school-import/hooks/user_create_post.d
 usr/share/ucs-school-import/hooks/user_modify_post.d
+usr/share/ucs-school-import/hooks/user_move_post.d
 usr/share/ucs-school-import/hooks/user_remove_post.d
 usr/share/ucs-school-import/hooks/group_create_post.d
 usr/share/ucs-school-import/hooks/group_modify_post.d
@@ -31,7 +33,9 @@ usr/share/ucs-school-import/hooks/router_create_post.d
 usr/share/ucs-school-import/hooks/ou_create_post.d
 usr/share/ucs-school-import/pyhooks/user_create_pre.d
 usr/share/ucs-school-import/pyhooks/user_modify_pre.d
+usr/share/ucs-school-import/pyhooks/user_move_pre.d
 usr/share/ucs-school-import/pyhooks/user_remove_pre.d
 usr/share/ucs-school-import/pyhooks/user_create_post.d
 usr/share/ucs-school-import/pyhooks/user_modify_post.d
+usr/share/ucs-school-import/pyhooks/user_move_post.d
 usr/share/ucs-school-import/pyhooks/user_remove_post.d

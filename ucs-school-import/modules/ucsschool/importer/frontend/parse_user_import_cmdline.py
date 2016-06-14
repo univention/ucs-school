@@ -88,7 +88,7 @@ class ParseUserImportCmdline(object):
 		"""
 		self.args = self.parser.parse_args()
 
-		if (hasattr(self.args, "user_role") and
+		if (hasattr(self.args, "user_role") and self.args.user_role and
 			self.args.user_role not in ["student", "staff", "teacher", "teacher_and_staff"]):
 				self.parser.error("Invalid user role. Must be one of student, staff, teacher, teacher_and_staff.")
 

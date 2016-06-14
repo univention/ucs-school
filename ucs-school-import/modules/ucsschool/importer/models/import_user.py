@@ -81,6 +81,7 @@ class ImportUser(User):
 		self.entry_count = 0          # line/node number of input data
 		self.udm_properties = dict()  # UDM properties that are not stored in Attributes
 		self.input_data = None        # raw input data created by SomeReader.read()
+		self.old_user = None          # user in LDAP, when modifying
 		if not self.factory:
 			self.factory = Factory()
 			self.ucr = self.factory.make_ucr()
@@ -419,6 +420,9 @@ class ImportUser(User):
 			return
 		except KeyError:
 			pass
+		if self.old_user:
+			self.name = self.old_user.name
+			return
 
 		self.name = self.format_from_scheme("username", self.username_scheme)
 		if not self.name:

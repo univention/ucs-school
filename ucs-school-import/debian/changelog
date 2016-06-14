@@ -1,3 +1,13 @@
+ucs-school-import (14.0.9-8) unstable; urgency=low
+
+  * Bug #41239: use username from LDAP when modifying and input data does not
+    contain username
+  * add Python hooks for school move operation
+  * fix bad str formatting
+  * add Python hook example
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 14 Jun 2016 12:16:50 +0200
+
 ucs-school-import (14.0.9-7) unstable; urgency=low
 
   * Bug #41239: remove default "infile" cmdline argument

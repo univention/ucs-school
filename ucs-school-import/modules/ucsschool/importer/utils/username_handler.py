@@ -19,7 +19,7 @@ class UsernameHandler(object):
 		assert isinstance(username, basestring)
 		assert isinstance(first_number, basestring)
 		self.connection.add(
-			"cn=%s,cn=unique-usernames,cn=ucsschool,cn=univention,%s".format(
+			"cn={},cn=unique-usernames,cn=ucsschool,cn=univention,{}".format(
 				escape_dn_chars(username), escape_dn_chars(self.connection.base)),
 			[
 				("objectClass", "ucsschoolUsername"),
@@ -31,7 +31,7 @@ class UsernameHandler(object):
 		assert isinstance(username, basestring)
 		try:
 			return self.connection.get(
-				"cn=%s,cn=unique-usernames,cn=ucsschool,cn=univention,%s".format(
+				"cn={},cn=unique-usernames,cn=ucsschool,cn=univention,{}".format(
 					escape_dn_chars(username), escape_dn_chars(self.connection.base)),
 				attr=["ucsschoolUsernameNextNumber"])["ucsschoolUsernameNextNumber"][0]
 		except KeyError:
@@ -42,7 +42,7 @@ class UsernameHandler(object):
 		cur = self.get_next_number(username)
 		next = int(cur) + 1
 		self.connection.modify(
-			"cn=%s,cn=unique-usernames,cn=ucsschool,cn=univention,%s".format(
+			"cn={},cn=unique-usernames,cn=ucsschool,cn=univention,{}".format(
 				escape_dn_chars(username), escape_dn_chars(self.connection.base)),
 			[("ucsschoolUsernameNextNumber", cur, str(next))]
 		)

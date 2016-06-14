@@ -183,6 +183,7 @@ class UserImport(object):
 		Determine what to do with the ImportUser. Should set attribute "action"
 		to either "A" or "M". If set to "M" the returned user must be a opened
 		ImportUser from LDAP.
+		Run modify preparations here, like school-move etc.
 
 		:param imported_user: ImportUser from input
 		:return: ImportUser: ImportUser with action set and possibly fetched
@@ -191,9 +192,10 @@ class UserImport(object):
 		try:
 			user = imported_user.get_by_import_id(self.connection, imported_user.source_uid,
 				imported_user.record_uid)
+			imported_user.old_user = user
 			imported_user.prepare_all(new_user=False)
 			if user.school != imported_user.school:
-				user = self.do_school_move(imported_user, user)
+				user = self.school_move(imported_user, user)
 			user.update(imported_user)
 			if user.disabled != "none" or user.has_expiry(self.connection):
 				self.logger.info("Found deactivated user %r, reactivating.", user)
@@ -286,7 +288,7 @@ class UserImport(object):
 		self.logger.info("------ Deleted %d users. ------", len(self.deleted_users))
 		return self.errors, self.deleted_users
 
-	def do_school_move(self, imported_user, user):
+	def school_move(self, imported_user, user):
 		"""
 		Change users primary school.
 
@@ -295,6 +297,18 @@ class UserImport(object):
 		:return: ImportUser: user in new position, freshly fetched from LDAP
 		"""
 		self.logger.info("Moving %s from school %r to %r...", user, user.school, imported_user.school)
+		self.pre_move_hook(imported_user)
+		self._run_pyhooks("user", "move", "pre", user)
+		user = self.do_school_move(imported_user, user)
+		self._run_pyhooks("user", "move", "post", user)
+		self.post_move_hook(user)
+		return user
+
+	def do_school_move(self, imported_user, user):
+		"""
+		Change users primary school - school_move() without calling Python
+		hooks (ucsschool lib calls executables anyway).
+		"""
 		res = user.change_school(imported_user.school, self.connection)
 		if not res:
 			raise MoveError("Error moving {} from school '{}' to '{}'.".format(user, user.school, imported_user.school),
@@ -438,6 +452,45 @@ class UserImport(object):
 		/usr/share/ucs-school-import/hooks/*.
 		Performance wise it is the same as installing a PyHook in
 		PLUGINS_BASE_PATH/user/modify/post.d, but this method will be called
+		after the plugins.
+
+		* The hook is only executed if modifying the user succeeded.
+		* The user will be a opened ImportUser, loaded from LDAP.
+		* Use self.connection if you need a LDAP connection.
+
+		:param user: ImportUser
+		:return: None
+		"""
+		pass
+
+	def pre_move_hook(self, user):
+		"""
+		Run code before changing a users primary school (position).
+
+		IMPLEMENT ME if you want to do something before modifying a user.
+		It is much faster than running executables from
+		/usr/share/ucs-school-import/hooks/user_move_pre.d.
+		Performance wise it is the same as installing a PyHook in
+		PLUGINS_BASE_PATH/user/move/pre.d, but this method will be called
+		before the plugins.
+
+		* The user will be a opened ImportUser, loaded from LDAP.
+		* Use self.connection if you need a LDAP connection.
+
+		:param user: ImportUser
+		:return: None
+		"""
+		pass
+
+	def post_move_hook(self, user):
+		"""
+		Run code after changing a users primary school (position).
+
+		IMPLEMENT ME if you want to do something after modifying a user.
+		It is much faster than running executables from
+		/usr/share/ucs-school-import/hooks/user_move_post.d.
+		Performance wise it is the same as installing a PyHook in
+		PLUGINS_BASE_PATH/user/move/post.d, but this method will be called
 		after the plugins.
 
 		* The hook is only executed if modifying the user succeeded.

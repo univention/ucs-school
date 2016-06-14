@@ -61,6 +61,7 @@ class LegacyUserImport(UserImport):
 		Determine what to do with the ImportUser. Should set attribute "action"
 		to either "A" or "M". If set to "M" the returned user must be a opened
 		ImportUser from LDAP.
+		Run modify preparations here, like school-move etc.
 
 		:param imported_user: ImportUser from input
 		:return: ImportUser: ImportUser with action set and possibly fetched
@@ -72,10 +73,11 @@ class LegacyUserImport(UserImport):
 					imported_user.record_uid)
 				if user.disabled != "none" or user.has_expiry(self.connection):
 					self.logger.info("Found deactivated user %r, reactivating.", user)
+					imported_user.old_user = user
 					imported_user.prepare_all(new_user=False)
 					# make school move first, reactivate freshly fetched user
 					if user.school != imported_user.school:
-						user = self.do_school_move(imported_user, user)
+						user = self.school_move(imported_user, user)
 					user.reactivate(self.connection)
 					user.update(imported_user)
 					user.action = "M"
@@ -91,9 +93,10 @@ class LegacyUserImport(UserImport):
 			try:
 				user = imported_user.get_by_import_id(self.connection, imported_user.source_uid,
 					imported_user.record_uid)
+				imported_user.old_user = user
 				imported_user.prepare_all(new_user=False)
 				if user.school != imported_user.school:
-					user = self.do_school_move(imported_user, user)
+					user = self.school_move(imported_user, user)
 				if user.disabled != "none" or user.has_expiry(self.connection):
 					self.logger.info("Found deactivated user %r, reactivating.", user)
 					user.reactivate(self.connection)
