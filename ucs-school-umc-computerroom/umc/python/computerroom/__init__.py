@@ -33,7 +33,6 @@
 
 import datetime
 import os
-import re
 import shlex
 import signal
 import subprocess
@@ -361,8 +360,11 @@ class Instance(SchoolBaseModule):
 	def rooms(self, request, ldap_user_read=None):
 		"""Returns a list of all available rooms"""
 		rooms = []
-		# create search base for current school
-		for room in ComputerRoom.get_all(ldap_user_read, request.options['school']):
+		try:
+			all_rooms = ComputerRoom.get_all(ldap_user_read, request.options['school'])
+		except udm_exceptions.noObject:
+			all_rooms = []
+		for room in all_rooms:
 			room_info = _readRoomInfo(room.dn) or dict()
 			user_dn = room_info.get('user')
 			locked = user_dn and user_dn != self._user_dn and ('pid' in room_info or 'exam' in room_info)

@@ -42,11 +42,10 @@ from univention.lib.i18n import Translation
 from univention.management.console.log import MODULE
 from univention.management.console.config import ucr
 
-from univention.admin.uldap import explodeDn
 from univention.admin.uexceptions import noObject
 
 from ucsschool.lib.schoolldap import LDAP_Connection
-from ucsschool.lib.models import User, Group, ComputerRoom, MultipleObjectsError
+from ucsschool.lib.models import User, ComputerRoom, MultipleObjectsError
 
 import notifier
 import notifier.signals
@@ -86,10 +85,8 @@ class ITALC_Error(Exception):
 
 class UserInfo(object):
 
-	def __init__(self, ldap_dn, username, school_class=None, workgroups=None, isTeacher=False):
+	def __init__(self, ldap_dn, username, isTeacher=False):
 		self.dn = ldap_dn
-		self.school_class = school_class
-		self.workgroups = workgroups if workgroups is not None else []
 		self.isTeacher = isTeacher
 		self.username = username
 
@@ -123,18 +120,7 @@ class UserMap(dict):
 			dict.__setitem__(self, userstr, UserInfo('', ''))
 			return
 
-		userobj = UserInfo(user.dn, username, isTeacher=user.is_teacher(lo))
-		for groupdn in user.groups:
-			try:
-				group = Group.from_dn(groupdn, None, lo)
-			except noObject:
-				continue
-			if group.self_is_workgroup():
-				userobj.workgroups.append(explodeDn(groupdn, True)[0])
-			elif group.self_is_class():
-				# TODO: concatenate if user is in multiple classes
-				userobj.school_class = explodeDn(groupdn, True)[0]
-		dict.__setitem__(self, userstr, userobj)
+		dict.__setitem__(self, userstr, UserInfo(user.dn, username, isTeacher=user.is_teacher(lo)))
 _usermap = UserMap()
 
 
