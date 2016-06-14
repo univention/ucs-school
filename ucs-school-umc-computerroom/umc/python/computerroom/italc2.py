@@ -114,7 +114,10 @@ class UserMap(dict):
 
 		lo = ldap_user_read
 		try:
-			user = User.from_udm_obj(User.get_only_udm_obj(lo, filter_format('uid=%s', (username,))), None, lo)
+			user = User.get_only_udm_obj(lo, filter_format('uid=%s', (username,)))
+			if user is None:
+				raise noObject(username)
+			user = User.from_udm_obj(user, None, lo)
 		except (noObject, MultipleObjectsError):
 			MODULE.info('Unknown user "%s"' % username)
 			dict.__setitem__(self, userstr, UserInfo('', ''))
@@ -605,7 +608,10 @@ class ITALC_Manager(dict, notifier.signals.Provider):
 			if room_dn:
 				computerroom = ComputerRoom.from_dn(room, ITALC_Manager.SCHOOL, lo)
 			else:
-				computerroom = ComputerRoom.from_udm_obj(ComputerRoom.get_only_udm_obj(lo, filter_format('cn=%s-%s', (ITALC_Manager.SCHOOL, room)), ITALC_Manager.SCHOOL, lo))
+				computerroom = ComputerRoom.get_only_udm_obj(lo, filter_format('cn=%s-%s', (ITALC_Manager.SCHOOL, room)))
+				if computerroom is None:
+					raise noObject(computerroom)
+				computerroom = ComputerRoom.from_udm_obj(computerroom, ITALC_Manager.SCHOOL, lo)
 		except noObject:
 			raise ITALC_Error('Unknown computer room')
 		except MultipleObjectsError as exc:
