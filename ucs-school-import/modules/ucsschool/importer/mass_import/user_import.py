@@ -161,6 +161,9 @@ class UserImport(object):
 					# load user from LDAP for create_and_modify_hook(post)
 					user = imported_user.get_by_import_id(self.connection, imported_user.source_uid,
 						imported_user.record_uid)
+					user_udm = user.get_udm_object(self.connection)
+					for k, v in imported_user.udm_properties.items():
+						user.udm_properties[k] = user_udm[k]
 					self._run_pyhooks("user", "create", "post", user)
 					self.post_create_hook(user)
 				elif user.action == "M":
@@ -553,7 +556,11 @@ class UserImport(object):
 			raise ToManyErrors("More than {} errors.".format(self.config["tolerate_errors"]), self.errors)
 
 	def _run_pyhooks(self, obj, action, when, import_user):
-		for pyhook_cls in self.pyhooks.get(obj, {}).get(action, {}).get(when, []):
-			self.logger.info("Running %s/%s/%s hook %r for %s...", obj, action, when, pyhook_cls.__name__, import_user)
-			pyhook = pyhook_cls(import_user, self.connection)
-			pyhook.run()
+		import_user.in_hook = True
+		try:
+			for pyhook_cls in self.pyhooks.get(obj, {}).get(action, {}).get(when, []):
+				self.logger.info("Running %s/%s/%s hook %r for %s...", obj, action, when, pyhook_cls.__name__, import_user)
+				pyhook = pyhook_cls(import_user, self.connection)
+				pyhook.run()
+		finally:
+			import_user.in_hook = False

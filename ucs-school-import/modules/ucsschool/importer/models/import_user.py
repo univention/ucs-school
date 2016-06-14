@@ -82,6 +82,7 @@ class ImportUser(User):
 		self.udm_properties = dict()  # UDM properties that are not stored in Attributes
 		self.input_data = None        # raw input data created by SomeReader.read()
 		self.old_user = None          # user in LDAP, when modifying
+		self.in_hook = False          # if a hook is currently running
 		if not self.factory:
 			self.factory = Factory()
 			self.ucr = self.factory.make_ucr()
@@ -417,7 +418,8 @@ class ImportUser(User):
 			return
 		try:
 			self.name = self.udm_properties.pop("username")
-			return
+			if self.name:
+				return
 		except KeyError:
 			pass
 		if self.old_user:
@@ -621,10 +623,24 @@ class ImportUser(User):
 			self.make_classes()
 		return super(ImportUser, self).get_school_class_objs()
 
+	def create(self, lo, validate=True):
+		if self.in_hook:
+			# prevent recursion
+			return self.create_without_hooks(lo, validate)
+		else:
+			return super(ImportUser, self).create(lo, validate)
+
 	def create_without_hooks(self, lo, validate):
 		success = super(ImportUser, self).create_without_hooks(lo, validate)
 		self.store_udm_properties(lo)
 		return success
+
+	def modify(self, lo, validate=True, move_if_necessary=None):
+		if self.in_hook:
+			# prevent recursion
+			return self.modify_without_hooks(lo, validate, move_if_necessary)
+		else:
+			return super(ImportUser, self).modify(lo, validate, move_if_necessary)
 
 	def modify_without_hooks(self, lo, validate=True, move_if_necessary=None):
 		# must set udm_properties first, as they contain overridePWHistory and
