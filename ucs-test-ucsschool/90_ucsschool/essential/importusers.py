@@ -56,6 +56,9 @@ class Person:
 		self.username = uts.random_name()
 		self.school = school
 		self.role = role
+		self.record_uid = None
+		self.source_uid = None
+		self.description = None
 		self.mail = '%s@%s' % (self.username, configRegistry.get('domainname'))
 		self.school_classes = {}
 		if self.is_student():
@@ -102,6 +105,33 @@ class Person:
 
 	def is_active(self):
 		return self.active
+
+	def update(self, **kwargs):
+		for key in kwargs:
+			if key == 'dn':
+				self.username = ldap.explode_rdn(kwargs[key], notypes=1)[0]
+				self.dn = kwargs[key]
+			elif hasattr(self, key):
+				setattr(self, key, kwargs[key])
+			else:
+				print 'ERROR: cannot update Person(): unknown option %r=%r' % (key, kwargs[key])
+
+	def map_to_dict(self, value_map):
+		result = {
+			value_map.get('firstname', '__EMPTY__'): self.firstname,
+			value_map.get('lastname', '__EMPTY__'): self.lastname,
+			value_map.get('username', '__EMPTY__'): self.username,
+			value_map.get('schools', '__EMPTY__'): self.school,
+			value_map.get('role', '__EMPTY__'): self.role,
+			value_map.get('record_uid', '__EMPTY__'): self.record_uid,
+			value_map.get('source_uid', '__EMPTY__'): self.source_uid,
+			value_map.get('description', '__EMPTY__'): self.description,
+			value_map.get('school_classes', '__EMPTY__'): ','.join([x for school_, classes in self.school_classes.iteritems() for x in classes]),
+			value_map.get('email', '__EMPTY__'): self.mail,
+		}
+		if '__EMPTY__' in result.keys():
+			del result['__EMPTY__']
+		return result
 
 	def __str__(self):
 		delimiter = '\t'
@@ -155,7 +185,7 @@ class Person:
 		return self.role == 'staff'
 
 	def is_teacher_staff(self):
-		return self.role == 'teacher_staff'
+		return self.role in ('teacher_staff', 'teacher_and_staff')
 
 	def expected_attributes(self):
 		attr = {}
@@ -168,6 +198,13 @@ class Person:
 		else:
 			attr['mailPrimaryAddress'] = []
 			attr['mail'] = []
+
+		if self.source_uid:
+			attr['ucsschoolSourceUID'] = [self.source_uid]
+		if self.record_uid:
+			attr['ucsschoolRecordUID'] = [self.record_uid]
+		if self.description:
+			attr['description'] = [self.description]
 
 		subdir = ''
 		if configRegistry.is_true('ucsschool/import/roleshare', True):
