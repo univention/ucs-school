@@ -248,33 +248,33 @@ class MyHook(PyHook):
 			# DEACTIVATED DUE TO BUG (AT LEAST IN MAIL VERIFICATION)
 			#########################################################
 
-# 			self.log.info('*** Modifying a single user with role %r', role)
+			self.log.info('*** Modifying a single user with role %r', role)
 
-# 			if role == 'student':
-# 				person.school_classes = {}
-# 			if role in ('student', 'teacher', 'teacher_and_staff'):
-# 				person.append_random_class()
+			if role == 'student':
+				person.school_classes = {}
+			if role in ('student', 'teacher', 'teacher_and_staff'):
+				person.append_random_class()
 
-# 			self.create_csv_file(person_list=[person], fn_csv=fn_csv)
-# 			fn_config = self.create_config_json(values=config)
-# 			# save ldap state for later comparison
-# 			self.save_ldap_status()
+			self.create_csv_file(person_list=[person], fn_csv=fn_csv)
+			fn_config = self.create_config_json(values=config)
+			# save ldap state for later comparison
+			self.save_ldap_status()
 
-# 			# start import
-# 			self.run_import(['-c', fn_config, '-i', fn_csv])   # BUG workaround: "-i $CSV" can be removed hopefully later on
+			# start import
+			self.run_import(['-c', fn_config, '-i', fn_csv])   # BUG workaround: "-i $CSV" can be removed hopefully later on
 
-# 			# check for new users in LDAP
-# 			new_users = [x for x in self.diff_ldap_status().new if x.startswith('uid=')]
-# 			if new_users:
-# 				self.log.error('Invalid number of new users! Found new objects: %r', new_users)
-# 				utils.fail('Stopping here')
-# 			removed_users = [x for x in self.diff_ldap_status().removed if x.startswith('uid=')]
-# 			if removed_users:
-# 				self.log.error('Invalid number of removed users! Removed objects: %r', removed_users)
-# 				utils.fail('Stopping here')
+			# check for new users in LDAP
+			new_users = [x for x in self.diff_ldap_status().new if x.startswith('uid=')]
+			if new_users:
+				self.log.error('Invalid number of new users! Found new objects: %r', new_users)
+				utils.fail('Stopping here')
+			removed_users = [x for x in self.diff_ldap_status().removed if x.startswith('uid=')]
+			if removed_users:
+				self.log.error('Invalid number of removed users! Removed objects: %r', removed_users)
+				utils.fail('Stopping here')
 
-# 			# verify LDAP attributes
-# 			person.verify()
+			# verify LDAP attributes
+			person.verify()
 
 			self.log.info('*** Remove a single user with role %r', role)
 

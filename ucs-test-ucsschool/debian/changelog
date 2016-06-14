@@ -1,3 +1,9 @@
+ucs-test-ucsschool (3.0.11-3) unstable; urgency=low
+
+  * Bug #41239: reenabled modification test in 34_import-users_via_cli_v2
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Tue, 14 Jun 2016 12:18:22 +0200
+
 ucs-test-ucsschool (3.0.11-2) unstable; urgency=low
 
   * Bug #41425: added 107_user_model_change
@@ -6,7 +12,7 @@ ucs-test-ucsschool (3.0.11-2) unstable; urgency=low
 
 ucs-test-ucsschool (3.0.11-1) unstable; urgency=low
 
-  * Bug 41239: added 34_import-users_via_cli_v2
+  * Bug #41239: added 34_import-users_via_cli_v2
 
  -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Tue, 14 Jun 2016 03:28:02 +0200
 
