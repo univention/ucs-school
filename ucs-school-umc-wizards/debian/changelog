@@ -1,3 +1,10 @@
+ucs-school-umc-wizards (8.0.0-9) unstable; urgency=medium
+
+  * Bug #41293: enhance check for school (so that further adaptions doesn't
+  	fail without noticing)
+
+ -- Florian Best <best@univention.de>  Tue, 14 Jun 2016 18:45:54 +0200
+
 ucs-school-umc-wizards (8.0.0-8) unstable; urgency=medium
 
   * Bug #41293: fix race condition if only one school exists
