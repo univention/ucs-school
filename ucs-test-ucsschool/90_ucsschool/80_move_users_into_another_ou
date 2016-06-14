@@ -58,6 +58,7 @@ def main():
 			user.change_school(b, lo)
 			assert user.dn != dn
 			assert b in user.dn
+			utils.wait_for_replication()
 			try:
 				utils.verify_ldap_object(user.dn, expected_attr=attrs, strict=True, should_exist=True)
 			except utils.LDAPObjectValueMissing:
