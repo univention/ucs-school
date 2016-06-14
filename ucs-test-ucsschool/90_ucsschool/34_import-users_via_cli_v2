@@ -55,6 +55,47 @@ class ConfigDict(dict):
 			del items[0]
 
 
+class PyHooks(object):
+	def __init__(self, hook_basedir=None):
+		self.hook_basedir = hook_basedir if hook_basedir else '/usr/share/ucs-school-import/pyhooks'
+		self.cleanup_files = set()
+		self.log = logging.getLogger('PyHooks')
+
+	def create_hook(self, action, pre_post, fn):
+		"""
+		"""
+		data = '''from ucsschool.importer.utils.pyhook import PyHook
+
+class MyHook(PyHook):
+	def run(self):
+		self.logger.info("***** Running %(pre_post)s %(action)s hook for user {}.".format(self.import_user))
+		if %(pre_post)r == 'pre':
+			self.import_user.udm_properties['organisation'] = self.import_user.udm_properties.get('organisation','') + ',%(pre_post)s-%(action)s'
+		else:
+			obj = self.import_user.get_udm_object(self.lo)
+			obj['organisation'] = obj.info.get('organisation','') + ',%(pre_post)s-%(action)s'
+			obj.modify(self.lo)
+''' % {'pre_post': pre_post, 'action': action}
+
+		fn = os.path.join(self.hook_basedir, 'user_%s_%s.d' % (action, pre_post), fn)
+		self.cleanup_files.add(fn)
+		with open(fn, 'w') as fd:
+			fd.write(data)
+		self.log.info('Created hook %r', fn)
+
+	def create_hooks(self):
+		for action in ('create', 'modify', 'remove'):
+			for pre_post in ('pre', 'post'):
+				self.create_hook(action, pre_post, '%s-%s-%s.py' % (action, pre_post, uts.random_name()))
+
+	def cleanup(self):
+		for fn in self.cleanup_files:
+			try:
+				os.remove(fn)
+			except (IOError, OSError):
+				self.log.warning('Failed to remove %r' % (fn,))
+
+
 class CLI_Import_v2_Tester(object):
 	def __init__(self):
 		self.tmpdir = tempfile.mkdtemp(prefix='34_import-users_via_cli_v2.', dir='/tmp/')
@@ -83,7 +124,7 @@ class CLI_Import_v2_Tester(object):
 			},
 			"scheme": {
 				"email": "<firstname>[0].<lastname>@<maildomain>",
-				"rid": "<firstname>;<lastname>;<email>",
+				"recordUID": "<firstname>;<lastname>;<email>",
 				"username": {
 					"allow_rename": False,
 					"default": "<:umlauts><firstname>[0].<lastname>[COUNTER2]"
@@ -244,10 +285,6 @@ class MyHook(PyHook):
 			person.verify()
 
 
-			#########################################################
-			# DEACTIVATED DUE TO BUG (AT LEAST IN MAIL VERIFICATION)
-			#########################################################
-
 			self.log.info('*** Modifying a single user with role %r', role)
 
 			if role == 'student':
@@ -311,109 +348,105 @@ class MyHook(PyHook):
 			import user with role <role> and given username
 			remove user with role <role> and given username
 		"""
-		for role in ('student', 'teacher', 'staff', 'teacher_and_staff'):
-			self.log.info('*** Importing a new single user with role %r and username and recordUID', role)
+		hooks = PyHooks()
+		hooks.create_hooks()
+		try:
+			for role in ('student', 'teacher', 'staff', 'teacher_and_staff'):
+				self.log.info('*** Importing a new single user with role %r and username and recordUID', role)
 
-			source_uid = 'sourceUID-%s' % (uts.random_string(),)
-			record_uid_A = uts.random_name()
-			record_uid_B = uts.random_name()
+				source_uid = 'sourceUID-%s' % (uts.random_string(),)
+				record_uid_A = uts.random_name()
+				record_uid_B = uts.random_name()
 
-			config = copy.copy(self.default_config)
-			config.update_entry('sourceUID', source_uid)
-			config.update_entry('csv:mapping:Benutzername', 'username')
-			config.update_entry('csv:mapping:DBID', 'record_uid')
-			config.update_entry('scheme:rid', '<record_uid>')
-			config.update_entry('user_role', role)
+				config = copy.copy(self.default_config)
+				config.update_entry('sourceUID', source_uid)
+				config.update_entry('csv:mapping:Benutzername', 'username')
+				config.update_entry('csv:mapping:DBID', 'record_uid')
+				config.update_entry('scheme:recordUID', '<record_uid>')
+				config.update_entry('user_role', role)
 
-			person_list = [Person(self.ou_A.name, role), Person(self.ou_A.name, role)]
-			person_list[0].update(record_uid=record_uid_A, source_uid=source_uid, description=uts.random_name())
-			person_list[1].update(record_uid=record_uid_B, source_uid=source_uid, description=uts.random_name())
-			fn_csv = self.create_csv_file(person_list=person_list, mapping=config['csv']['mapping'])
-			config.update_entry('input:filename', fn_csv)
-			fn_config = self.create_config_json(config=config)
-			# save ldap state for later comparison
-			self.save_ldap_status()
+				person_list = [Person(self.ou_A.name, role), Person(self.ou_A.name, role)]
+				person_list[0].update(record_uid=record_uid_A, source_uid=source_uid, description=uts.random_name())
+				person_list[1].update(record_uid=record_uid_B, source_uid=source_uid, description=uts.random_name())
+				fn_csv = self.create_csv_file(person_list=person_list, mapping=config['csv']['mapping'])
+				config.update_entry('input:filename', fn_csv)
+				fn_config = self.create_config_json(config=config)
+				# save ldap state for later comparison
+				self.save_ldap_status()
 
-			self.create_pyhook(
-				'user_create_post.d/check_username.py',
-				'''print 'PYHOOK: %%r' %% (self.import_user,)
-assert self.import_user.username in (%r, %r)
-self.import_user.description = 'Special Comment'
-''' % (person_list[0].username, person_list[1].username))
-			# add comment to verification object
-			for person in person_list:
-				person.update(description='Special Comment')
+				# start import
+				self.run_import(['-c', fn_config, '-i', fn_csv])   # BUG workaround: "-i $CSV" can be removed hopefully later on
 
-			# start import
-			self.run_import(['-c', fn_config, '-i', fn_csv])   # BUG workaround: "-i $CSV" can be removed hopefully later on
+				# check for new users in LDAP
+				new_users = [x for x in self.diff_ldap_status().new if x.startswith('uid=')]
+				if len(new_users) != 2:
+					self.log.error('Invalid number of new users! Found new objects: %r', new_users)
+					utils.fail('Stopping here')
+				removed_users = [x for x in self.diff_ldap_status().removed if x.startswith('uid=')]
+				if removed_users:
+					self.log.error('Invalid number of removed users! Removed objects: %r', removed_users)
+					utils.fail('Stopping here')
 
-			# check for new users in LDAP
-			new_users = [x for x in self.diff_ldap_status().new if x.startswith('uid=')]
-			if len(new_users) != 2:
-				self.log.error('Invalid number of new users! Found new objects: %r', new_users)
-				utils.fail('Stopping here')
-			removed_users = [x for x in self.diff_ldap_status().removed if x.startswith('uid=')]
-			if removed_users:
-				self.log.error('Invalid number of removed users! Removed objects: %r', removed_users)
-				utils.fail('Stopping here')
+				# update dn+username of person and verify LDAP attributes
+				for person in person_list:
+					person.verify()
+				utils.verify_ldap_object(person.dn, expected_attr={'o': [',pre-create,post-create']}, strict=True, should_exist=True)
 
-			# update dn+username of person and verify LDAP attributes
-			for person in person_list:
-				person.verify()
+				self.log.info('*** Modifying a single user with role %r and username and recordUID', role)
 
+				person_list[0].firstname = uts.random_name()
+				person_list[1].lastname = uts.random_name()
+				self.create_csv_file(person_list=person_list, fn_csv=fn_csv)
+				fn_config = self.create_config_json(values=config)
+				# save ldap state for later comparison
+				self.save_ldap_status()
+				# start import
+				self.run_import(['-c', fn_config, '-i', fn_csv])   # BUG workaround: "-i $CSV" can be removed hopefully later on
+				# check for new users in LDAP
+				new_users = [x for x in self.diff_ldap_status().new if x.startswith('uid=')]
+				if new_users:
+					self.log.error('Invalid number of new users! Found new objects: %r', new_users)
+					utils.fail('Stopping here')
+				removed_users = [x for x in self.diff_ldap_status().removed if x.startswith('uid=')]
+				if removed_users:
+					self.log.error('Invalid number of removed users! Removed objects: %r', removed_users)
+					utils.fail('Stopping here')
 
-			self.log.info('*** Modifying a single user with role %r and username and recordUID', role)
-
-			person_list[0].firstname = uts.random_name()
-			person_list[1].lastname = uts.random_name()
-			self.create_csv_file(person_list=person_list, fn_csv=fn_csv)
-			fn_config = self.create_config_json(values=config)
-			# save ldap state for later comparison
-			self.save_ldap_status()
-			# start import
-			self.run_import(['-c', fn_config, '-i', fn_csv])   # BUG workaround: "-i $CSV" can be removed hopefully later on
-			# check for new users in LDAP
-			new_users = [x for x in self.diff_ldap_status().new if x.startswith('uid=')]
-			if new_users:
-				self.log.error('Invalid number of new users! Found new objects: %r', new_users)
-				utils.fail('Stopping here')
-			removed_users = [x for x in self.diff_ldap_status().removed if x.startswith('uid=')]
-			if removed_users:
-				self.log.error('Invalid number of removed users! Removed objects: %r', removed_users)
-				utils.fail('Stopping here')
-
-			# verify LDAP attributes
-			for person in person_list:
-				person.verify()
+				# verify LDAP attributes
+				for person in person_list:
+					person.verify()
+				utils.verify_ldap_object(person.dn, expected_attr={'o': [',pre-create,post-create,pre-modify,post-modify']}, strict=True, should_exist=True)
 
 
-			self.log.info('*** Remove a single user with role %r and username and recordUID', role)
+				self.log.info('*** Remove a single user with role %r and username and recordUID', role)
 
-			# mark first person as removed
-			person_list[0].set_mode_to_delete()
-			self.create_csv_file(person_list=[person_list[1]], fn_csv=fn_csv)
-			fn_config = self.create_config_json(values=config)
-			# save ldap state for later comparison
-			self.save_ldap_status()
+				# mark first person as removed
+				person_list[0].set_mode_to_delete()
+				self.create_csv_file(person_list=[person_list[1]], fn_csv=fn_csv)
+				fn_config = self.create_config_json(values=config)
+				# save ldap state for later comparison
+				self.save_ldap_status()
 
-			# start import
-			self.run_import(['-c', fn_config, '-i', fn_csv])   # BUG workaround: "-i $CSV" can be removed hopefully later on
+				# start import
+				self.run_import(['-c', fn_config, '-i', fn_csv])   # BUG workaround: "-i $CSV" can be removed hopefully later on
 
-			# check for new users in LDAP
-			new_users = [x for x in self.diff_ldap_status().new if x.startswith('uid=')]
-			if new_users:
-				self.log.error('Invalid number of new users! Found new objects: %r', new_users)
-				utils.fail('Stopping here')
-			removed_users = [x for x in self.diff_ldap_status().removed if x.startswith('uid=')]
-			if len(removed_users) != 1:
-				self.log.error('Invalid number of removed users! Removed objects: %r', removed_users)
-				utils.fail('Stopping here')
+				# check for new users in LDAP
+				new_users = [x for x in self.diff_ldap_status().new if x.startswith('uid=')]
+				if new_users:
+					self.log.error('Invalid number of new users! Found new objects: %r', new_users)
+					utils.fail('Stopping here')
+				removed_users = [x for x in self.diff_ldap_status().removed if x.startswith('uid=')]
+				if len(removed_users) != 1:
+					self.log.error('Invalid number of removed users! Removed objects: %r', removed_users)
+					utils.fail('Stopping here')
 
-			# verify LDAP attributes
-			for person in person_list:
-				person.verify()
+				# verify LDAP attributes
+				for person in person_list:
+					person.verify()
 
-		self.log.info('Creating, modifying, removing user with role %r and username/recordUID was successful', role)
+			self.log.info('Creating, modifying, removing user with role %r and username/recordUID was successful', role)
+		finally:
+			hooks.cleanup()
 
 
 	def test_create_with_username_scheme(self):
@@ -430,7 +463,7 @@ self.import_user.description = 'Special Comment'
 			config = copy.copy(self.default_config)
 			config.update_entry('sourceUID', source_uid)
 			config.update_entry('csv:mapping:DBID', 'record_uid')
-			config.update_entry('scheme:rid', '<record_uid>')
+			config.update_entry('scheme:recordUID', '<record_uid>')
 			config.update_entry('user_role', role)
 			config.update_entry('scheme:username:default', "<:umlauts>user-<firstname>[0].<lastname>[0][ALWAYSCOUNTER]")
 
