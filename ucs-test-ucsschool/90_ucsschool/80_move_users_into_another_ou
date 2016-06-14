@@ -62,7 +62,8 @@ def main():
 				utils.verify_ldap_object(user.dn, expected_attr=attrs, strict=True, should_exist=True)
 			except utils.LDAPObjectValueMissing:
 				info = user.get_udm_object(lo).info
-				print 'FAIl: %r;\noldinfo=%r\ninfo=%r' % (user.dn, oldinfo, info)
+				print 'FAIL1: %r;\noldinfo=%r\ninfo=%r' % (user.dn, oldinfo, info)
+				print 'FAIL2: %r; attrs=%r' % (user.dn, lo.get(user.dn))
 				raise
 
 			assert set(groups) == set(user.get_udm_object(lo)['groups']), 'Moving the user failed... Expected groups %r != %r' % (groups, user.get_udm_object(lo)['groups'])
