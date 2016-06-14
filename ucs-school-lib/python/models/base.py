@@ -787,6 +787,7 @@ class UCSSchoolHelperAbstractClass(object):
 			filter_str = '(&(%s)(%s))' % (cls._meta.udm_filter, filter_str)
 		logger.debug('Getting %s UDM object by filter: %s' % (cls.__name__, filter_str))
 		objs = udm_modules.lookup(cls._meta.udm_module, None, lo, scope='sub', base=ucr.get('ldap/base'), filter=str(filter_str), superordinate=superordinate)
+		logger.debug('Found the following objects: %r', [x.dn for x in objs])
 		if len(objs) == 0:
 			return None
 		if len(objs) > 1:

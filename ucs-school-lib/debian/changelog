@@ -1,3 +1,9 @@
+ucs-school-lib (8.0.3-2) unstable; urgency=low
+
+  * Bug #41239: added new debug output
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Tue, 14 Jun 2016 12:17:16 +0200
+
 ucs-school-lib (8.0.3-1) unstable; urgency=medium
 
   * Bug #40870: support to change the school of a user
