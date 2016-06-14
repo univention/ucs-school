@@ -69,12 +69,14 @@ class PyHooks(object):
 class MyHook(PyHook):
 	def run(self):
 		self.logger.info("***** Running %(pre_post)s %(action)s hook for user {}.".format(self.import_user))
-		if %(pre_post)r == 'pre':
-			self.import_user.udm_properties['organisation'] = self.import_user.udm_properties.get('organisation','') + ',%(pre_post)s-%(action)s'
-		else:
+		# udm_properties[k] is only filled from LDAP, if k was in the input
+		# don't try to get_udm_object() on a user not {anymore, yet} in ldap
+		if not self.import_user.udm_properties.get('organisation') and not ((%(action)r == 'create' and %(pre_post)r == 'pre') or (%(action)r == 'remove' and %(pre_post)r == 'post')):
 			obj = self.import_user.get_udm_object(self.lo)
-			obj['organisation'] = obj.info.get('organisation','') + ',%(pre_post)s-%(action)s'
-			obj.modify(self.lo)
+			self.import_user.udm_properties['organisation'] = obj.info.get('organisation', '')
+		self.import_user.udm_properties['organisation'] = self.import_user.udm_properties.get('organisation', '') + ',%(pre_post)s-%(action)s'
+		if %(pre_post)r == 'post' and %(action)r != 'remove':
+			self.import_user.modify(self.lo)
 ''' % {'pre_post': pre_post, 'action': action}
 
 		fn = os.path.join(self.hook_basedir, 'user_%s_%s.d' % (action, pre_post), fn)
@@ -94,6 +96,10 @@ class MyHook(PyHook):
 				os.remove(fn)
 			except (IOError, OSError):
 				self.log.warning('Failed to remove %r' % (fn,))
+			try:
+				os.remove('%sc' % fn)
+			except (IOError, OSError):
+				pass
 
 
 class CLI_Import_v2_Tester(object):
@@ -468,7 +474,7 @@ class MyHook(PyHook):
 			config.update_entry('scheme:username:default', "<:umlauts>user-<firstname>[0].<lastname>[0][ALWAYSCOUNTER]")
 
 			person = Person(self.ou_A.name, role)
-			person.update(record_uid=record_uid, source_uid=source_uid)
+			person.update(record_uid=record_uid, source_uid=source_uid, username=None)
 			fn_csv = self.create_csv_file(person_list=[person], mapping=config['csv']['mapping'])
 			config.update_entry('input:filename', fn_csv)
 			fn_config = self.create_config_json(config=config)
@@ -499,7 +505,7 @@ class MyHook(PyHook):
 
 			# check if username history object exists
 			self.log.info('Checking for unique-usernames object...')
-			dn = 'cn=%s,cn=unique-usernames,cn=ucsschool,cn=univention,dc=nstx,dc=local' % (username_prefix,)
+			dn = 'cn=%s,cn=unique-usernames,cn=ucsschool,cn=univention,%s' % (username_prefix, self.lo.base)
 			attrs = {
 				'objectClass': ['ucsschoolUsername'],
 				'ucsschoolUsernameNextNumber': ['2'],
