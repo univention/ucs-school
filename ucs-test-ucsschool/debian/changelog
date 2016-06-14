@@ -1,3 +1,9 @@
+ucs-test-ucsschool (3.0.11-2) unstable; urgency=low
+
+  * Bug #41425: added 107_user_model_change
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 14 Jun 2016 10:33:27 +0200
+
 ucs-test-ucsschool (3.0.11-1) unstable; urgency=low
 
   * Bug 41239: added 34_import-users_via_cli_v2

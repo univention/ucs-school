@@ -1,0 +1,45 @@
+#!/usr/share/ucs-test/runner python
+## -*- coding: utf-8 -*-
+## desc: Check that models of users cannot be changed.
+## roles: [domaincontroller_master]
+## tags: [apptest, ucsschool]
+## exposure: dangerous
+## packages: [python-ucs-school]
+
+import univention.testing.strings as uts
+import univention.testing.ucr as ucr_test
+import univention.testing.ucsschool as utu
+import univention.testing.utils as utils
+from ucsschool.lib.models import Staff, Student, Teacher, TeachersAndStaff, User
+from ucsschool.lib.models.base import WrongModel
+
+
+def main():
+	with utu.UCSTestSchool() as schoolenv:
+		with ucr_test.UCSTestConfigRegistry() as ucr:
+			ou, oudn = schoolenv.create_ou(name_edudc=ucr.get('hostname'))
+			print("*** Created school environment. ou='{}' oudn='{}'.".format(ou, oudn))
+
+			lo = schoolenv.open_ldap_connection()
+			users = dict()
+			for cls in [Staff, Student, Teacher, TeachersAndStaff]:
+				print("*** Creating a {}...".format(cls))
+				user = cls(school=ou, name=uts.random_name(), firstname=uts.random_name(), lastname=uts.random_name())
+				user.create(lo)
+				users[cls] = user
+
+			for cls in [User, Staff, Student, Teacher, TeachersAndStaff]:
+				print("*** Testing {}.from_dn()...".format(cls.__name__))
+				for users_cls, user in users.items():
+					try:
+						ucs_user = cls.from_dn(user.dn, ou, lo)
+						if users_cls != ucs_user.__class__:
+							utils.fail("{} should be of class {}.".format(ucs_user, users_cls))
+					except WrongModel as exc:
+						if users_cls == cls:
+							utils.fail("User of type {} should have been found.".format(cls))
+
+			print("*** All tests succeeded.")
+
+if __name__ == '__main__':
+	main()
