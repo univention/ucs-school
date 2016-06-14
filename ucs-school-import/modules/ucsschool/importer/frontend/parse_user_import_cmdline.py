@@ -46,7 +46,6 @@ class ParseUserImportCmdline(object):
 		# TODO: read defaults from user_import_defaults.json
 		self.defaults = dict(
 			dry_run=False,
-			infile="/var/lib/ucs-school-import/new-format-userimport.csv",
 			logfile=None,
 			no_delete=False,
 			school=None,
@@ -57,7 +56,7 @@ class ParseUserImportCmdline(object):
 		self.parser = ArgumentParser(description="UCS@school import tool")
 		self.parser.add_argument('-c', '--conffile', help="Configuration file to use (see "
 			"/usr/share/doc/ucs-school-import for an explanation on configuration file stacking).")
-		self.parser.add_argument('-i', '--infile', dest="infile", help="CSV file with users to import (shortcut for --set input:filename=...) [default: %(default)s].")
+		self.parser.add_argument('-i', '--infile', dest="infile", help="CSV file with users to import (shortcut for --set input:filename=...).")
 		self.parser.add_argument('-l', '--logfile',
 			help="Write to additional logfile (shortcut for --set logfile=...).")
 		self.parser.add_argument("--set", dest="settings", metavar="KEY=VALUE", nargs='*',

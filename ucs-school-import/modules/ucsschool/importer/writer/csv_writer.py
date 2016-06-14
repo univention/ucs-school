@@ -66,8 +66,8 @@ class CsvWriter(BaseWriter):
 		:param mode: str: passed to used open() method
 		:return: DictWriter
 		"""
-		open(filename, "w").close()  # touch
-		os.chmod(filename, S_IRUSR | S_IWUSR)  # chmod 600
+		with open(filename, mode) as fd:
+			os.fchmod(fd.fileno(), S_IRUSR | S_IWUSR)
 		fp = open(filename, mode)
 		self.writer = DictWriter(fp, fieldnames=self.field_names, dialect=self.dialect)
 		return fp

@@ -17,7 +17,7 @@
 	},
 	"scheme": {
 		"email": "<firstname>[0].<lastname>@<maildomain>",
-		"rid": "<email>",
+		"recordUID": "<email>",
 		"username": {
 			"allow_rename": false,
 			"default": "<:umlauts><firstname>[0].<lastname>[COUNTER2]"

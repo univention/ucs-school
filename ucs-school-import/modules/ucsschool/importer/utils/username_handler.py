@@ -1,6 +1,6 @@
 import re
 
-from ldap.filter import escape_filter_chars, filter_format
+from ldap.dn import escape_dn_chars
 from univention.admin.uexceptions import noObject
 from ucsschool.importer.utils.ldap_connection import get_admin_connection
 from ucsschool.importer.exceptions import FormatError
@@ -19,11 +19,11 @@ class UsernameHandler(object):
 		assert isinstance(username, basestring)
 		assert isinstance(first_number, basestring)
 		self.connection.add(
-			filter_format("cn=%s,cn=unique-usernames,cn=ucsschool,cn=univention,%s", (username,
-				self.connection.base)),
+			"cn=%s,cn=unique-usernames,cn=ucsschool,cn=univention,%s".format(
+				escape_dn_chars(username), escape_dn_chars(self.connection.base)),
 			[
 				("objectClass", "ucsschoolUsername"),
-				("ucsschoolUsernameNextNumber", escape_filter_chars(first_number))
+				("ucsschoolUsernameNextNumber", first_number)
 			]
 		)
 
@@ -31,8 +31,8 @@ class UsernameHandler(object):
 		assert isinstance(username, basestring)
 		try:
 			return self.connection.get(
-				filter_format("cn=%s,cn=unique-usernames,cn=ucsschool,cn=univention,%s", (username,
-					self.connection.base)),
+				"cn=%s,cn=unique-usernames,cn=ucsschool,cn=univention,%s".format(
+					escape_dn_chars(username), escape_dn_chars(self.connection.base)),
 				attr=["ucsschoolUsernameNextNumber"])["ucsschoolUsernameNextNumber"][0]
 		except KeyError:
 			raise noObject("Username '{}' not found.".format(username))
@@ -42,8 +42,8 @@ class UsernameHandler(object):
 		cur = self.get_next_number(username)
 		next = int(cur) + 1
 		self.connection.modify(
-			filter_format("cn=%s,cn=unique-usernames,cn=ucsschool,cn=univention,%s", (username,
-				self.connection.base)),
+			"cn=%s,cn=unique-usernames,cn=ucsschool,cn=univention,%s".format(
+				escape_dn_chars(username), escape_dn_chars(self.connection.base)),
 			[("ucsschoolUsernameNextNumber", cur, str(next))]
 		)
 		return cur

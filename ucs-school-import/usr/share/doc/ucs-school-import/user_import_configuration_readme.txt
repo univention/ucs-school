@@ -58,10 +58,10 @@ After that follow
 },
 "scheme" [1]: {
 	"email": str: schema of email address, variables may be used as described in manual-4.1:users:templates
-	"rid": str [1]: schema of RecordUID, variables may be used as described in manual-4.1:users:templates
+	"recordUID": str [1]: schema of RecordUID, variables may be used as described in manual-4.1:users:templates
 	"username" [1]: {
 		"allow_rename":      bool: whether changing usernames should be allowed (currently not supported,
-		                           in the future may only work if scheme->rid does not contain the username)
+		                           in the future may only work if scheme->recordUID does not contain the username)
 		"default":           str [2]: schema of username, variables may be used
 		"student":           str [3]:                     as described in manual-4.1:users:templates
 		"staff":             str [3]:                     plus [COUNTER2] which is replaced by numbers

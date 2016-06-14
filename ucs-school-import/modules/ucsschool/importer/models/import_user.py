@@ -201,13 +201,13 @@ class ImportUser(User):
 		Create self.udm_properties from schemes configured in config["scheme"].
 		Existing entries will be overwritten!
 
-		* Attributes (email, rid, [user]name etc.) are ignored, as they are
+		* Attributes (email, record_uid, [user]name etc.) are ignored, as they are
 		processed separately in make_*.
 		* See /usr/share/doc/ucs-school-import/user_import_configuration_readme.txt.gz
 		section "scheme" for details on the configuration.
 		"""
 		ignore_keys = self.to_dict().keys()
-		ignore_keys.extend(["mailPrimaryAddress", "rid", "username"])
+		ignore_keys.extend(["mailPrimaryAddress", "recordUID", "username"])
 		for k, v in self.config["scheme"].items():
 			if k in ignore_keys:
 				continue
@@ -219,8 +219,8 @@ class ImportUser(User):
 		Runs make_* functions for record_uid and source_uid Attributes of
 		ImportUser.
 		"""
-		self.make_rid()
-		self.make_sid()
+		self.make_recordUID()
+		self.make_sourceUID()
 
 	def make_birthday(self):
 		"""
@@ -338,16 +338,16 @@ class ImportUser(User):
 			random.shuffle(pw)
 			self.password = u"".join(pw)
 
-	def make_rid(self):
+	def make_recordUID(self):
 		"""
-		Create ucsschoolRecordUID (rid) (if not already set).
+		Create ucsschoolRecordUID (recordUID) (if not already set).
 		"""
 		if not self.record_uid:
-			self.record_uid = self.format_from_scheme("rid", self.config["scheme"]["rid"])
+			self.record_uid = self.format_from_scheme("recordUID", self.config["scheme"]["recordUID"])
 
-	def make_sid(self):
+	def make_sourceUID(self):
 		"""
-		Set the ucsschoolSourceUID (sid) (if not already set).
+		Set the ucsschoolSourceUID (sourceUID) (if not already set).
 		"""
 		if self.source_uid:
 			if self.source_uid != self.config["sourceUID"]:
@@ -482,10 +482,10 @@ class ImportUser(User):
 				self.config["mandatory_attributes"], entry=self.entry_count, import_user=self)
 
 
-		if self.record_uid in self._unique_ids["rid"]:
+		if self.record_uid in self._unique_ids["recordUID"]:
 			raise UniqueIdError("RecordUID '{}' has already been used in this import.".format(self.record_uid),
 				entry=self.entry_count, import_user=self)
-		self._unique_ids["rid"].add(self.record_uid)
+		self._unique_ids["recordUID"].add(self.record_uid)
 
 		if check_username:
 			if not self.name:

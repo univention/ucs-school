@@ -1,3 +1,12 @@
+ucs-school-import (14.0.9-7) unstable; urgency=low
+
+  * Bug #41239: remove default "infile" cmdline argument
+  * rename all occurences of "sid" to "sourceUID" and of "rid" to "recordUID"
+  * fix escaping of DNs
+  * safer touch-chmod order when opening CSV output files
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 14 Jun 2016 09:41:43 +0200
+
 ucs-school-import (14.0.9-6) unstable; urgency=low
 
   * Bug #41239: fix AttributeError, empty user-editable config files
