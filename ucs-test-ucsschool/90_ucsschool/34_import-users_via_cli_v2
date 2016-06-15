@@ -263,7 +263,7 @@ class CLI_Import_v2_Tester(object):
 			self.save_ldap_status()
 
 			# start import
-			self.run_import(['-c', fn_config, '-i', fn_csv])   # BUG workaround: "-i $CSV" can be removed hopefully later on
+			self.run_import(['-c', fn_config])
 
 			# check for new users in LDAP
 			new_users = [x for x in self.diff_ldap_status().new if x.startswith('uid=')]
@@ -293,7 +293,7 @@ class CLI_Import_v2_Tester(object):
 			self.save_ldap_status()
 
 			# start import
-			self.run_import(['-c', fn_config, '-i', fn_csv])   # BUG workaround: "-i $CSV" can be removed hopefully later on
+			self.run_import(['-c', fn_config])
 
 			# check for new users in LDAP
 			new_users = [x for x in self.diff_ldap_status().new if x.startswith('uid=')]
@@ -318,7 +318,7 @@ class CLI_Import_v2_Tester(object):
 			self.save_ldap_status()
 
 			# start import
-			self.run_import(['-c', fn_config, '-i', fn_csv])   # BUG workaround: "-i $CSV" can be removed hopefully later on
+			self.run_import(['-c', fn_config])
 
 			# check for new users in LDAP
 			new_users = [x for x in self.diff_ldap_status().new if x.startswith('uid=')]
@@ -370,7 +370,7 @@ class CLI_Import_v2_Tester(object):
 				self.save_ldap_status()
 
 				# start import
-				self.run_import(['-c', fn_config, '-i', fn_csv])   # BUG workaround: "-i $CSV" can be removed hopefully later on
+				self.run_import(['-c', fn_config, '-i', fn_csv])
 
 				# check for new users in LDAP
 				new_users = [x for x in self.diff_ldap_status().new if x.startswith('uid=')]
@@ -406,7 +406,7 @@ class CLI_Import_v2_Tester(object):
 				# save ldap state for later comparison
 				self.save_ldap_status()
 				# start import
-				self.run_import(['-c', fn_config, '-i', fn_csv])   # BUG workaround: "-i $CSV" can be removed hopefully later on
+				self.run_import(['-c', fn_config, '-i', fn_csv])
 				# check for new users in LDAP
 				new_users = [x for x in self.diff_ldap_status().new if x.startswith('uid=')]
 				if new_users:
@@ -437,7 +437,7 @@ class CLI_Import_v2_Tester(object):
 				self.save_ldap_status()
 
 				# start import
-				self.run_import(['-c', fn_config, '-i', fn_csv])   # BUG workaround: "-i $CSV" can be removed hopefully later on
+				self.run_import(['-c', fn_config, '-i', fn_csv])
 
 				# check for new users in LDAP
 				new_users = [x for x in self.diff_ldap_status().new if x.startswith('uid=')]
@@ -487,7 +487,7 @@ class CLI_Import_v2_Tester(object):
 			self.save_ldap_status()
 
 			# start import
-			self.run_import(['-c', fn_config, '-i', fn_csv])   # BUG workaround: "-i $CSV" can be removed hopefully later on
+			self.run_import(['-c', fn_config, '-i', fn_csv])
 
 			# check for new users in LDAP
 			new_users = [x for x in self.diff_ldap_status().new if x.startswith('uid=')]
