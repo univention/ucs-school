@@ -1,3 +1,9 @@
+ucs-school-import (14.0.10-2.1) unstable; urgency=low
+
+  * Bug #41239: run a "dry-run" as close as possible to a real import job
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 15 Jun 2016 14:48:33 +0200
+
 ucs-school-import (14.0.10-2) unstable; urgency=low
 
   * Bug #41494: automatically add ucsschoolSchool attribute to OU admin groups

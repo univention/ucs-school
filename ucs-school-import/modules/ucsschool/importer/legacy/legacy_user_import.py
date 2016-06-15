@@ -42,6 +42,7 @@ class LegacyUserImport(UserImport):
 		No need to compare input and LDAP. Action was written in the CSV file
 		and is already stored in user.action.
 		"""
+		self.logger.info("------ Detecting which users to delete... ------")
 		a_user = self.factory.make_import_user([])
 		users_to_delete = list()
 		for user in self.imported_users:
@@ -78,7 +79,10 @@ class LegacyUserImport(UserImport):
 					# make school move first, reactivate freshly fetched user
 					if user.school != imported_user.school:
 						user = self.school_move(imported_user, user)
-					user.reactivate(self.connection)
+					if self.dry_run:
+						self.logger.info("Dry run - not reactivating.")
+					else:
+						user.reactivate(self.connection)
 					user.update(imported_user)
 					user.action = "M"
 				else:
@@ -99,7 +103,10 @@ class LegacyUserImport(UserImport):
 					user = self.school_move(imported_user, user)
 				if user.disabled != "none" or user.has_expiry(self.connection):
 					self.logger.info("Found deactivated user %r, reactivating.", user)
-					user.reactivate(self.connection)
+					if self.dry_run:
+						self.logger.info("Dry run - not reactivating.")
+					else:
+						user.reactivate(self.connection)
 				user.update(imported_user)
 			except noObject:
 				imported_user.prepare_all(new_user=True)

@@ -102,12 +102,10 @@ class UserImport(object):
 		:param imported_users: list: ImportUser objects
 		:return tuple: (self.errors, self.added_users, self.modified_users)
 		"""
-		if self.dry_run:
-			self.logger.info("------ Dry run - not creating / modifying users. ------ ")
-			return
-
 		self.logger.info("------ Creating / modifying users... ------")
 		for imported_user in imported_users:
+			if imported_user.action == "D":
+				continue
 			try:
 				self.logger.debug("Creating / modifying user %s...", imported_user)
 				user = self.determine_add_modify_action(imported_user)
@@ -133,13 +131,21 @@ class UserImport(object):
 						self._run_pyhooks("user", "create", "pre", user)
 						err = CreationError
 						store = self.added_users[cls_name]
-						success = user.create(lo=self.connection)
+						if self.dry_run:
+							self.logger.info("Dry run: would create %s now.", user)
+							success = True
+						else:
+							success = user.create(lo=self.connection)
 					elif user.action == "M":
 						self.pre_modify_hook(user)
 						self._run_pyhooks("user", "modify", "pre", user)
 						err = ModificationError
 						store = self.modified_users[cls_name]
-						success = user.modify(lo=self.connection)
+						if self.dry_run:
+							self.logger.info("Dry run: would modify %s now.", user)
+							success = True
+						else:
+							success = user.modify(lo=self.connection)
 					else:
 						# delete
 						continue
@@ -159,11 +165,12 @@ class UserImport(object):
 
 				if user.action == "A":
 					# load user from LDAP for create_and_modify_hook(post)
-					user = imported_user.get_by_import_id(self.connection, imported_user.source_uid,
-						imported_user.record_uid)
-					user_udm = user.get_udm_object(self.connection)
-					for k, v in imported_user.udm_properties.items():
-						user.udm_properties[k] = user_udm[k]
+					if not self.dry_run:
+						user = imported_user.get_by_import_id(self.connection, imported_user.source_uid,
+							imported_user.record_uid)
+						user_udm = user.get_udm_object(self.connection)
+						for k, v in imported_user.udm_properties.items():
+							user.udm_properties[k] = user_udm[k]
 					self._run_pyhooks("user", "create", "post", user)
 					self.post_create_hook(user)
 				elif user.action == "M":
@@ -202,7 +209,10 @@ class UserImport(object):
 			user.update(imported_user)
 			if user.disabled != "none" or user.has_expiry(self.connection):
 				self.logger.info("Found deactivated user %r, reactivating.", user)
-				user.reactivate(self.connection)
+				if self.dry_run:
+					self.logger.info("Dry run - not reactivating.")
+				else:
+					user.reactivate(self.connection)
 			user.action = "M"
 		except noObject:
 			imported_user.prepare_all(new_user=True)
@@ -258,9 +268,6 @@ class UserImport(object):
 		:param users: list: ImportUsers with record_uid and source_uid set.
 		:return: tuple: (self.errors, self.deleted_users)
 		"""
-		if self.dry_run:
-			self.logger.info("------ Dry run - not deleting users. ------")
-			return
 		self.logger.info("------ Deleting users... ------")
 
 		if self.config["no_delete"]:
@@ -312,7 +319,11 @@ class UserImport(object):
 		Change users primary school - school_move() without calling Python
 		hooks (ucsschool lib calls executables anyway).
 		"""
-		res = user.change_school(imported_user.school, self.connection)
+		if self.dry_run:
+			self.logger.info("Dry run - not doing the school move.")
+			res = True
+		else:
+			res = user.change_school(imported_user.school, self.connection)
 		if not res:
 			raise MoveError("Error moving {} from school '{}' to '{}'.".format(user, user.school, imported_user.school),
 				entry=imported_user.entry_count, import_user=imported_user)
@@ -329,27 +340,40 @@ class UserImport(object):
 		:param user: ImportUser
 		:return bool: whether the deletion worked
 		"""
-		user_udm = user.get_udm_object(self.connection)
 		if self.config["user_deletion"]["delete"] and not self.config["user_deletion"]["expiration"]:
 			# delete user right now
 			self.logger.info("Deleting user %s...", user)
-			success = user.remove(self.connection)
+			if self.dry_run:
+				self.logger.info("Dry run - not removing the user.")
+				success = True
+			else:
+				success = user.remove(self.connection)
 		elif self.config["user_deletion"]["delete"] and self.config["user_deletion"]["expiration"]:
 			# set expiration date, don't delete, don't deactivate
 			expiry = datetime.datetime.now() + datetime.timedelta(days=self.config["user_deletion"]["expiration"])
 			expiry_str = expiry.strftime("%Y-%m-%d")
 			self.logger.info("Setting account expiration date of %s to %s...", user, expiry_str)
-			user.expire(self.connection, expiry_str)
-			success = True
+			if self.dry_run:
+				self.logger.info("Dry run - not expiring the user.")
+				success = True
+			else:
+				user.expire(self.connection, expiry_str)
+				success = True
 		elif not self.config["user_deletion"]["delete"] and self.config["user_deletion"]["expiration"]:
 			# don't delete but deactivate with an expiration data
 			expiry = datetime.datetime.now() + datetime.timedelta(days=self.config["user_deletion"]["expiration"])
 			expiry_str = expiry.strftime("%Y-%m-%d")
 			self.logger.info("Setting account expiration date of %s to %s...", user, expiry_str)
-			user.expire(self.connection, expiry_str)
+			if self.dry_run:
+				self.logger.info("Dry run - not expiring the user.")
+			else:
+				user.expire(self.connection, expiry_str)
 			self.logger.info("Deactivating user %s...", user)
-			user.deactivate()
-			user.modify()
+			if self.dry_run:
+				self.logger.info("Dry run - not deactivating the user.")
+			else:
+				user.deactivate()
+				user.modify()
 			success = True
 		else:
 			raise UnknownDeleteSetting("Don't know what to do with user_deletion=%r and expiration=%r.".format(
@@ -561,6 +585,9 @@ class UserImport(object):
 			for pyhook_cls in self.pyhooks.get(obj, {}).get(action, {}).get(when, []):
 				self.logger.info("Running %s/%s/%s hook %r for %s...", obj, action, when, pyhook_cls.__name__, import_user)
 				pyhook = pyhook_cls(import_user, self.connection, when, action)
-				pyhook.run()
+				if self.dry_run:
+					self.logger.info("Dry run - not running the hook.")
+				else:
+					pyhook.run()
 		finally:
 			import_user.in_hook = False
