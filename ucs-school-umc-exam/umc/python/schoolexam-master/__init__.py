@@ -37,6 +37,7 @@ UCS@School UMC module schoolexam-master
 import os.path
 import traceback
 import re
+from ldap.filter import filter_format
 
 from univention.management.console.config import ucr
 from univention.management.console.log import MODULE
@@ -44,7 +45,7 @@ from univention.management.console.modules import UMC_Error
 from univention.management.console.modules.decorators import sanitize
 from univention.management.console.modules.sanitizers import StringSanitizer
 from ucsschool.lib.schoolldap import LDAP_Connection, SchoolBaseModule, ADMIN_WRITE, USER_READ
-from ucsschool.lib.models import School, ComputerRoom, Student, ExamStudent
+from ucsschool.lib.models import School, ComputerRoom, Student, ExamStudent, MultipleObjectsError
 
 import univention.admin.uexceptions
 import univention.admin.modules
@@ -150,6 +151,25 @@ class Instance(SchoolBaseModule):
 		### uid and DN of exam_user
 		exam_user_uid = "".join((self._examUserPrefix, user_orig['username']))
 		exam_user_dn = "uid=%s,%s" % (exam_user_uid, self.examUserContainerDN(ldap_admin_write, ldap_position, user.school))
+
+		try:
+			exam_user = ExamStudent.get_only_udm_obj(ldap_admin_write, filter_format('uid=%s', (exam_user_uid,)))
+			if exam_user is None:
+				raise univention.admin.uexceptions.noObject(exam_user_uid)
+			exam_user = ExamStudent.from_udm_obj(exam_user, None, ldap_admin_write)
+		except (univention.admin.uexceptions.noObject, MultipleObjectsError):
+			pass  # we need to create the exam user
+		else:
+			if school not in exam_user.schools:
+				exam_user.schools.append(school)
+				exam_user.modify(ldap_admin_write)
+			MODULE.warn(_('The exam account does already exist for: %s') % exam_user_uid)
+			self.finished(request.id, dict(
+				success=True,
+				userdn=userdn,
+				examuserdn=exam_user.dn,
+			))
+			return
 
 		### Check if it's blacklisted
 		for prohibited_object in univention.admin.handlers.settings.prohibited_username.lookup(None, ldap_admin_write, ''):
