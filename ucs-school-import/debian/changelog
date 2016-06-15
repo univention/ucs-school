@@ -1,3 +1,9 @@
+ucs-school-import (14.0.11-2) unstable; urgency=low
+
+  * Bug #41162: add ucsschoolTeacher class to OU admins in ucs-school-migrate-objects-to-4.1R2
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Wed, 15 Jun 2016 22:30:18 +0200
+
 ucs-school-import (14.0.11-1) unstable; urgency=low
 
   * Bug #41583:

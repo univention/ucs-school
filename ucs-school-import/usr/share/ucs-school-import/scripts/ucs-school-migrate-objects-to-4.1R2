@@ -77,7 +77,7 @@ def migrate_users(lo, options):
 			(base.teachers, ('ucsschoolType', 'ucsschoolTeacher')),
 			(base.teachersAndStaff, ('ucsschoolType', 'ucsschoolTeacher', 'ucsschoolStaff')),
 			(base.staff, ('ucsschoolType', 'ucsschoolStaff')),
-			(base.admins, ('ucsschoolType', 'ucsschoolAdministrator')),
+			(base.admins, ('ucsschoolType', 'ucsschoolAdministrator', 'ucsschoolTeacher')),
 		]
 		for container, object_classes in mapping:
 			yield '\nMigrating users underneath of %r' % (container,)
