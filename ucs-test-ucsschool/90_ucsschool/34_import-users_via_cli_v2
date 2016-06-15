@@ -58,13 +58,16 @@ class ConfigDict(dict):
 class PyHooks(object):
 	def __init__(self, hook_basedir=None):
 		self.hook_basedir = hook_basedir if hook_basedir else '/usr/share/ucs-school-import/pyhooks'
+		self.tmpdir = tempfile.mkdtemp(prefix='pyhook.', dir='/tmp')
 		self.cleanup_files = set()
 		self.log = logging.getLogger('PyHooks')
 
 	def create_hook(self, action, pre_post, fn):
 		"""
 		"""
+		fn_touchfile = os.path.join(self.tmpdir, '%s-%s' % (pre_post, action))
 		data = '''from ucsschool.importer.utils.pyhook import PyHook
+import os
 
 class MyHook(PyHook):
 	def run(self):
@@ -77,7 +80,8 @@ class MyHook(PyHook):
 		self.import_user.udm_properties['organisation'] = self.import_user.udm_properties.get('organisation', '') + ',%(pre_post)s-%(action)s'
 		if %(pre_post)r == 'post' and %(action)r != 'remove':
 			self.import_user.modify(self.lo)
-''' % {'pre_post': pre_post, 'action': action}
+		open(%(fn_touchfile)r, 'w').write('EXECUTED\\n')
+''' % {'pre_post': pre_post, 'action': action, 'fn_touchfile': fn_touchfile}
 
 		fn = os.path.join(self.hook_basedir, 'user_%s_%s.d' % (action, pre_post), fn)
 		self.cleanup_files.add(fn)
@@ -91,6 +95,7 @@ class MyHook(PyHook):
 				self.create_hook(action, pre_post, '%s-%s-%s.py' % (action, pre_post, uts.random_name()))
 
 	def cleanup(self):
+		shutil.rmtree(self.tmpdir, ignore_errors=True)
 		for fn in self.cleanup_files:
 			try:
 				os.remove(fn)
@@ -233,22 +238,6 @@ class CLI_Import_v2_Tester(object):
 			raise ImportException('Non-zero exit code %r' % (exitcode,))
 		return exitcode
 
-	def create_pyhook(self, filename, code):
-		"""
-		>>> create_pyhook('user_create_post.d/static_birthday.py', 'self.import_user.birthday = "1999-01-23"')
-		>>>
-		"""
-		data = '''from ucsschool.importer.utils.pyhook import PyHook
-
-class MyHook(PyHook):
-  def run(self):
-    %s
-''' % ('\n    '.join(code.split('\n')),)
-		fn = os.path.join('/usr/share/ucs-school-import/pyhooks', filename)
-		with open(fn, 'w') as fd:
-			fd.write(data)
-		self.hook_fn_set.add(fn)
-
 
 	def test_create_modify_delete_user(self):
 		"""
@@ -354,10 +343,10 @@ class MyHook(PyHook):
 			import user with role <role> and given username
 			remove user with role <role> and given username
 		"""
-		hooks = PyHooks()
-		hooks.create_hooks()
-		try:
-			for role in ('student', 'teacher', 'staff', 'teacher_and_staff'):
+		for role in ('student', 'teacher', 'staff', 'teacher_and_staff'):
+			hooks = PyHooks()
+			hooks.create_hooks()
+			try:
 				self.log.info('*** Importing a new single user with role %r and username and recordUID', role)
 
 				source_uid = 'sourceUID-%s' % (uts.random_string(),)
@@ -398,6 +387,16 @@ class MyHook(PyHook):
 					person.verify()
 				utils.verify_ldap_object(person.dn, expected_attr={'o': [',pre-create,post-create']}, strict=True, should_exist=True)
 
+				def assert_and_print(exists, fn):
+					status = os.path.exists(os.path.join(hooks.tmpdir, fn))
+					self.log.debug('Hook touch file %r exists = %r' % (fn, status))
+					assert exists == status, 'Unexpected status of hook touch file: exists=%s  expected=%s' % (status, exists)
+
+				for fn in ('pre-create', 'post-create'):
+					assert_and_print(True, fn)
+				for fn in ('pre-modify', 'post-modify', 'pre-remove', 'post-remove'):
+					assert_and_print(False, fn)
+
 				self.log.info('*** Modifying a single user with role %r and username and recordUID', role)
 
 				person_list[0].firstname = uts.random_name()
@@ -422,6 +421,10 @@ class MyHook(PyHook):
 				for person in person_list:
 					person.verify()
 				utils.verify_ldap_object(person.dn, expected_attr={'o': [',pre-create,post-create,pre-modify,post-modify']}, strict=True, should_exist=True)
+				for fn in ('pre-create', 'post-create', 'pre-modify', 'post-modify'):
+					assert_and_print(True, fn)
+				for fn in ('pre-remove', 'post-remove'):
+					assert_and_print(False, fn)
 
 
 				self.log.info('*** Remove a single user with role %r and username and recordUID', role)
@@ -449,10 +452,12 @@ class MyHook(PyHook):
 				# verify LDAP attributes
 				for person in person_list:
 					person.verify()
+				for fn in ('pre-create', 'post-create', 'pre-modify', 'post-modify', 'pre-remove', 'post-remove'):
+					assert_and_print(True, fn)
 
-			self.log.info('Creating, modifying, removing user with role %r and username/recordUID was successful', role)
-		finally:
-			hooks.cleanup()
+			finally:
+				hooks.cleanup()
+		self.log.info('Creating, modifying, removing user with role %r and username/recordUID was successful', role)
 
 
 	def test_create_with_username_scheme(self):
@@ -526,9 +531,9 @@ class MyHook(PyHook):
 #				self.ou_B.name, self.ou_B.dn = schoolenv.create_ou(name_edudc=ucr.get('hostname'))
 				self.lo = schoolenv.open_ldap_connection(admin=True)
 
-				self.test_create_modify_delete_user()
+#				self.test_create_modify_delete_user()
 				self.test_create_modify_delete_user_with_username_and_recordUID_and_UDM_property()
-				self.test_create_with_username_scheme()
+#				self.test_create_with_username_scheme()
 		finally:
 			self.cleanup()
 

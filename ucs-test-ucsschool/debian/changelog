@@ -1,3 +1,9 @@
+ucs-test-ucsschool (3.0.12-1) unstable; urgency=low
+
+  * Bug #41239: updated tests for PyHooks in 34_import-users_via_cli_v2
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Wed, 15 Jun 2016 12:06:33 +0200
+
 ucs-test-ucsschool (3.0.11-9) unstable; urgency=low
 
   * Bug #41118: add test for UDM options.
@@ -26,7 +32,7 @@ ucs-test-ucsschool (3.0.11-6) unstable; urgency=low
 
 ucs-test-ucsschool (3.0.11-5) unstable; urgency=low
 
-  * Bug 41239: added tests for PyHooks in 34_import-users_via_cli_v2
+  * Bug #41239: added tests for PyHooks in 34_import-users_via_cli_v2
 
  -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Tue, 14 Jun 2016 18:07:15 +0200
 
