@@ -3,7 +3,7 @@ release: "4.1"
 version: [2]
 scope: ucs_4.1-0-ucs-school-4.1r2
 src: ucs-school-import
-fix: 14.0.7-1.253.201606091024
+fix: 14.0.9-12.263.201606151226
 desc: |
  This update addresses the following issue(s):
  * A regression (due to Bug #40712) during evaluating boolean UCR variables has
@@ -18,12 +18,12 @@ desc: |
    extensibility. Additionally to the existing hooks in
    /usr/share/ucs-school-import/hooks/user_* Python-based hooks can now be
    placed in /usr/share/ucs-school-import/pyhooks/user_*. Documentation on
-   configuration files is available at /usr/share/doc/ucs-school-import
-   (Bug #41239).
+   configuration files and an example of a Python based hook is available at
+   /usr/share/doc/ucs-school-import (Bug #41239, #41242).
  * The object classes ucsschoolStudent, ucsschoolTeacher, ucsschoolStaff,
    ucsschoolAdministrator and the LDAP attribute uscschoolSchool have been
    added (Bug #41008).
  * The extended attributes and extended options for the UCS@school user roles
    have been added (Bug #41014).
  * The object class ucsschoolExam has been added (Bug #41123).
-bug: [40712,41162,41494,41239,41008,41014,41123]
+bug: [40712,41162,41494,41239,41008,41014,41123,41242]
