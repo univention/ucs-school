@@ -1,3 +1,9 @@
+ucs-school-import (14.0.10-2) unstable; urgency=low
+
+  * Bug #41494: automatically add ucsschoolSchool attribute to OU admin groups
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Wed, 15 Jun 2016 14:33:38 +0200
+
 ucs-school-import (14.0.10-1) unstable; urgency=low
 
   * Bug #41494: fixed OID of ucsschoolAdministratorGroup

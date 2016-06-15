@@ -70,6 +70,7 @@ univention.debug.set_level(univention.debug.MAIN, 4)
 
 import ldap
 import univention.admin.uldap
+import univention.admin.uexceptions
 import univention.admin.modules
 import univention.admin.objects
 import univention.admin.config
@@ -78,6 +79,8 @@ import univention.lib.policy_result
 from ucsschool.lib.roles import role_pupil, role_teacher, role_staff
 from ucsschool.lib.roleshares import roleshare_home_subdir
 from ucsschool.lib.models.utils import stopped_notifier, add_stream_logger_to_schoollib
+
+ldap_errors = (ldap.LDAPError, univention.admin.uexceptions.base,)
 
 configRegistry=univention.config_registry.ConfigRegistry()
 configRegistry.load()
@@ -479,6 +482,7 @@ def object_exists(module, co, lo, scope, superordinate, base, filter, dn):
 	
 	return None
 
+
 def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None, ShareFileServer=None, displayName=None):
 	global problem_hints
 
@@ -622,10 +626,12 @@ def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None, ShareFileServer=None
 			verify_container('%s,%s'%(dn,ou_base),cn_module, co, lo, superordinate, baseDN, path=path[1:])
 
 	# create groups if not existant
-	groups=[ ( "cn=%s%s,cn=ouadmins,cn=groups,%s" % (grp_prefix_admins, schoolNr.lower(), baseDN), grp_policy_admins ),
+	grp_ouadmins = "cn=%s%s,cn=ouadmins,cn=groups,%s" % (grp_prefix_admins, schoolNr.lower(), baseDN)
+	groups=[ ( grp_ouadmins, grp_policy_admins ),
 			 ( "cn=%s%s,cn=groups,%s" % (grp_prefix_pupils, schoolNr.lower(), getDN(schoolNr)),	grp_policy_pupils ),
 			 ( "cn=%s%s,cn=groups,%s" % (grp_prefix_teachers, schoolNr.lower(), getDN(schoolNr)),	grp_policy_teachers ),
 		 ]
+
 	if configRegistry.is_true('ucsschool/ldap/noneducational/create/objects', True):
 		groups.append(
 			 ( "cn=%s%s,cn=groups,%s" % (grp_prefix_staff, schoolNr.lower(), getDN(schoolNr)),	grp_policy_staff ),
@@ -638,6 +644,12 @@ def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None, ShareFileServer=None
 		verify_group(group, co, lo, superordinate, baseDN)
 		if grppolicy and grppolicy.lower() != 'none':
 			verify_policy(group, schoolNr, [ grppolicy ])
+
+	# verify that ouadmin group contains correct OU
+	obj = univention.admin.objects.get(group_module, co, lo, position='', dn=grp_ouadmins)
+	obj.open()
+	obj['school'] = schoolNr
+	obj.modify()
 
 	# In a single server environment the default DHCP container must
 	# be set to the DHCP container in the school ou. Otherwise newly
