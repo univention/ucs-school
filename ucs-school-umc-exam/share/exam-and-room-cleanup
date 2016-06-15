@@ -30,6 +30,7 @@
 
 import sys
 import os
+import grp
 import shutil
 import traceback
 import httplib
@@ -38,7 +39,9 @@ import univention.debug as ud
 import univention.config_registry
 import univention.uldap
 import univention.admin.uldap
+from ucsschool.lib.schoolldap import SchoolSearchBase
 from univention.lib.umc_connection import UMCConnection
+from ldap.filter import escape_filter_chars
 
 
 LOGFILE = '/var/log/univention/ucs-school-exam-cleanup.log'
@@ -62,7 +65,7 @@ class ExamCleanupHelper(object):
 
 	def get_UMCP_connection(self):
 		ud.debug(ud.MAIN, ud.INFO, 'Opening UMCP connection to %s with machine account' % (self.hostname,))
-		return UMCConnection(self.hostname).get_machine_connection()
+		return UMCConnection.get_machine_connection()
 
 	def running_exam_iter(self):
 		ou_list = self.lo.search(filter='(objectClass=ucsschoolOrganizationalUnit)')
@@ -117,9 +120,11 @@ class ExamCleanupHelper(object):
 			mod_user = univention.admin.modules.get("users/user")
 			univention.admin.modules.init(lo, position, mod_user)
 
-			ou_list = self.lo.searchDn(filter='(objectClass=ucsschoolOrganizationalUnit)')
-			for ou_dn in ou_list:
-				userlist = mod_user.lookup({}, lo, 'uid=%s*' % (self.exam_prefix,), base='cn=examusers,%s' % (ou_dn,))
+			ou_list = self.lo.search(filter='(objectClass=ucsschoolOrganizationalUnit)')
+			for ou_dn, ou_attrs in ou_list:
+				ou_name = ou_attrs['ou'][0]
+				searchbase = SchoolSearchBase([ou_name], dn=ou_dn)
+				userlist = mod_user.lookup({}, lo, 'uid=%s*' % (escape_filter_chars(self.exam_prefix),), base=searchbase.examUsers)
 				for user in userlist:
 					ud.debug(ud.MAIN, ud.PROCESS, 'Removing exam user %r' % (user.dn,))
 					if self.options.dryrun:
@@ -226,6 +231,9 @@ This script redirects all output to /var/log/univention/ucs-school-exam-cleanup.
 
 	debug_level = ud.ALL if options.debug else ud.PROCESS
 	ud.init(LOGFILE, ud.FLUSH, ud.NO_FUNCTION)
+	adm = grp.getgrnam('adm')
+	os.chown(LOGFILE, 0, adm.gr_gid)
+	os.chmod(LOGFILE, 0o640)
 	ud.set_level(ud.MAIN, debug_level)
 
 	sys.stdout = open(LOGFILE, 'a+')

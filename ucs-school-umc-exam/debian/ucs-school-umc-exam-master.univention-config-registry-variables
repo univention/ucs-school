@@ -28,3 +28,15 @@ Description[de]=Pipe-separierte (|) Liste mit Attributwerten, die aus dem spezif
 Description[en]=Pipe-separated (|) blacklist of attribute values, that are stripped from specified LDAP attribute of exam user
 Type=str
 Categories=ucsschool-base
+
+[ucsschool/exam/cron/cleanup-master]
+Description[en]=Specifies the point in time when the script exam-and-room-cleanup is called by cron (disabled by default; example: "30 3 * * *")
+Description[de]=Definiert den Zeitpunkt, an dem das Skript exam-and-room-cleanup automatisch durch cron gestartet wird (standardmäßig deaktiviert; Beispiel: "30 3 * * *")
+Type=string
+Categories=ucsschool-exam
+
+[ucsschool/exam/cron/cleanup-master/options]
+Description[en]=Specifies additional options for the script exam-and-room-cleanup (no additional options by default)
+Description[de]=Definiert zusätzliche Optionen für das Skript exam-and-room-cleanup (standardmäßig keine zusätzlichen Optionen)
+Type=string
+Categories=ucsschool-exam

@@ -1,3 +1,9 @@
+ucs-school-umc-exam (6.0.6-1) unstable; urgency=low
+
+  * Bug #40213: some fixes for exam-and-room-cleanup
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Wed, 15 Jun 2016 13:36:19 +0200
+
 ucs-school-umc-exam (6.0.5-1) unstable; urgency=medium
 
   * Bug #41123: fix typo in svn r69774
