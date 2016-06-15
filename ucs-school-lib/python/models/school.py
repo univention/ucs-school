@@ -156,6 +156,9 @@ class School(UCSSchoolHelperAbstractClass):
 		group = BasicGroup.cache(self.group_name('admins', 'admins-'), container=admin_group_container)
 		group.create(lo)
 		group.add_umc_policy(self.get_umc_policy_dn('admins'), lo)
+		udm_obj = group.get_udm_object(lo)
+		udm_obj['school'] = self.name
+		udm_obj.modify()
 
 		# cn=schueler
 		group = Group.cache(self.group_name('pupils', 'schueler-'), self.name)

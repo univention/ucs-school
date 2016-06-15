@@ -1,3 +1,9 @@
+ucs-school-lib (9.0.19-1) unstable; urgency=low
+
+  * Bug #41494: automatically add ucsschoolSchool attribute to OU admin groups
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Wed, 15 Jun 2016 14:35:59 +0200
+
 ucs-school-lib (9.0.18-3) unstable; urgency=low
 
   * Bug #41493: fix typo
