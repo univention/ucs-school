@@ -41,6 +41,7 @@ import ldap
 import random
 import tempfile
 import subprocess
+import traceback
 import pprint
 from ldap import LDAPError
 
@@ -93,13 +94,13 @@ class UCSTestSchool(object):
 	def __enter__(self):
 		return self
 
-	def __exit__(self, exc_type, exc_value, traceback):
+	def __exit__(self, exc_type, exc_value, etraceback):
 		if exc_type:
 			print '*** Cleanup after exception: %s %s' % (exc_type, exc_value)
 		try:
 			self.cleanup()
 		except:
-			print ''.join(traceback.format_exception(exc_type, exc_value, traceback))
+			print ''.join(traceback.format_exception(exc_type, exc_value, etraceback))
 			raise
 
 	def open_ldap_connection(self, binddn=None, bindpw=None, ldap_server=None, admin=False, machine=False):
