@@ -79,7 +79,7 @@ class ImportUser(User):
 	def __init__(self, name=None, school=None, **kwargs):
 		self.action = None            # "A", "D" or "M"
 		self.entry_count = 0          # line/node number of input data
-		self.udm_properties = dict()  # UDM properties that are not stored in Attributes
+		self.udm_properties = dict()  # UDM properties from input, that are not stored in Attributes
 		self.input_data = None        # raw input data created by SomeReader.read()
 		self.old_user = None          # user in LDAP, when modifying
 		self.in_hook = False          # if a hook is currently running

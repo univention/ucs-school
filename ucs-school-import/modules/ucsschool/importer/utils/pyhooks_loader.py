@@ -33,50 +33,30 @@ Loader for Python based hooks.
 
 import imp
 import inspect
+from os import listdir
 import os.path
-import re
 
 from ucsschool.importer.utils.logging2udebug import get_logger
-from ucsschool.importer.utils.pyhook import PyHook
 
 
 class PyHooksLoader(object):
-	_plugins = None
-
-	def __init__(self, base_dir):
+	def __init__(self, base_dir, base_class):
 		self.base_dir = base_dir
+		self.base_class = base_class
 		self.logger = get_logger()
+		self._plugins = None
 
 	def get_plugins(self):
 		if self._plugins:
 			return self._plugins
 		self.logger.info("Searching for plugins in: %s...", self.base_dir)
-		self._plugins = dict()
-		for dirpath, dirnames, filenames in os.walk(self.base_dir):
-			if dirpath == self.base_dir:
-				continue  # ignore files here
-			if filenames:
-				m = re.match(r".*/(.+?)_(.+?)_(.+?)\.d", dirpath)
-				if not m:
-					self.logger.error("Ignoring badly named directory %r.", dirpath)
-					continue
-				obj, action, hook_time = m.groups()
-				for filename in sorted(filenames):
-					if filename.endswith(".py") and os.path.isfile(os.path.join(dirpath, filename)):
-						info = imp.find_module(filename[:-3], [dirpath])
-						plugin = self._load_plugin(filename[:-3], info, PyHook)
-						if plugin:
-							# so annoying that dict.update is not recursive
-							if obj in self._plugins:
-								if action in self._plugins[obj]:
-									try:
-										self._plugins[obj][action][hook_time].append(plugin)
-									except KeyError:
-										self._plugins[obj][action][hook_time] = [plugin]
-								else:
-									self._plugins[obj][action] = {hook_time: [plugin]}
-							else:
-								self._plugins[obj] = {action: {hook_time: [plugin]}}
+		self._plugins = list()
+		for filename in listdir(self.base_dir):
+			if filename.endswith(".py") and os.path.isfile(os.path.join(self.base_dir, filename)):
+				info = imp.find_module(filename[:-3], [self.base_dir])
+				plugin = self._load_plugin(filename[:-3], info, self.base_class)
+				if plugin:
+					self._plugins.append(plugin)
 		self.logger.info("Found plugins: %r", self._plugins)
 		return self._plugins
 
