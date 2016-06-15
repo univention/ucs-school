@@ -237,6 +237,14 @@
 						<simpara>Computers are removed from group object after stopping an exam.
 						</simpara>
 					</listitem>
+					<listitem>
+						<simpara>
+							A new cron job has been added that calls the new script
+							<filename>/usr/share/ucs-school-umc-exam-master/exam-and-room-cleanup</filename>. The script stops
+							all running exams (if possible). Afterwards all remains of (broken) exams and room settings are
+							removed (<u:bug>40213</u:bug>).
+						</simpara>
+					</listitem>
 				</itemizedlist>
 			</section>
 <!--

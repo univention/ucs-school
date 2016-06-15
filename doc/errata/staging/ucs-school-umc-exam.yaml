@@ -8,4 +8,7 @@ desc: |
  This update addresses the following issue(s):
  * Computers are removed from group object after stopping an exam (Bug #41112).
  * Adjustments for school overlapping users have been implemented (Bug #41117, Bug #41123).
-bug: [41112,41117,41123]
+ * A new cron job has been added that calls the new script exam-and-room-cleanup. The
+   script stops all running exams (if possible). Afterwards all remains of
+   (broken) exams and room settings are removed.
+bug: [41112,41117,41123,40213]
