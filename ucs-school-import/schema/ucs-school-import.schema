@@ -54,7 +54,7 @@ objectclass ( univentionSchool:53.5 NAME 'ucsschoolExam'
         DESC 'auxiliary class for exam users'
         SUP ucsschoolType AUXILIARY )
 
-objectclass ( univentionSchool:53.6 NAME 'ucsschoolAdministratorGroup'
+objectclass ( univentionSchool:53.7 NAME 'ucsschoolAdministratorGroup'
         DESC 'auxiliary class for UCS@school admin groups'
         SUP ucsschoolType AUXILIARY )
 
