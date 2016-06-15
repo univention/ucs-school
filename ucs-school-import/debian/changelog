@@ -1,3 +1,13 @@
+ucs-school-import (14.0.11-1) unstable; urgency=low
+
+  * Bug #41583:
+    - displayName is now required for OUs
+    - ucs-school-migrate-objects-to-4.1R2 now adds an displayName if
+      missing
+    - create_ou now uses the OU name as fallback displayName
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Wed, 15 Jun 2016 16:36:02 +0200
+
 ucs-school-import (14.0.10-2.1) unstable; urgency=low
 
   * Bug #41239: run a "dry-run" as close as possible to a real import job

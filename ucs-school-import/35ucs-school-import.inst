@@ -137,6 +137,7 @@ univention-directory-manager settings/extended_attribute create "$@" --ignore_ex
 	--set objectClass=ucsschoolOrganizationalUnit \
 	--set syntax=string \
 	--set mayChange=1 \
+	--set valueRequired=1 \
 	--set ldapMapping=displayName \
 	--set multivalue=0 || die
 
@@ -318,6 +319,10 @@ fi
 
 if [ $JS_LAST_EXECUTED_VERSION -lt 10 ] ; then
 	# convert existing UCS@school user objects to new LDAP structure
+	univention-directory-manager settings/extended_attribute modify "$@" \
+		  --dn "cn=UCSschool-School-displayName,cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
+		  --set valueRequired=1 || die
+
 	LOGFILE="/var/log/univention/ucs-school-migrate-users-to-4.1R2.log"
 	if is_ucr_false ucsschool/update/ldap/41R2; then
 		echo "$(date)" | tee -a "$LOGFILE"
@@ -326,7 +331,7 @@ if [ $JS_LAST_EXECUTED_VERSION -lt 10 ] ; then
 		echo "that this required step is performed manually afterwards." | tee -a "$LOGFILE"
 	else
 		echo "START: $(date)" | tee -a "$LOGFILE"
-		/usr/share/ucs-school-import/scripts/ucs-school-migrate-objects-to-4.1R2 --migrate-users --migrate-admin-groups 2>&1 | tee -a "$LOGFILE"
+		/usr/share/ucs-school-import/scripts/ucs-school-migrate-objects-to-4.1R2 --migrate-ous --migrate-users --migrate-admin-groups 2>&1 | tee -a "$LOGFILE"
 		echo "FINISHED: $(date)" | tee -a "$LOGFILE"
 	fi
 fi

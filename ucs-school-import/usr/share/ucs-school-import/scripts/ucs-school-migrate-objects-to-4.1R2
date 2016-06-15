@@ -172,6 +172,35 @@ def migrate_admin_groups(lo, options):
 	if errors:
 		raise MigrationFailed(errors)
 
+def migrate_ous(lo, options):
+	errors = []
+	try:
+		schools = lo.search('objectClass=ucsschoolOrganizationalUnit', attr=['ou', 'displayName'])
+	except ldap_errors:
+		errors.append((sys.exc_info(), None))
+		raise MigrationFailed(errors)
+
+	for dn, attrs in schools:
+		ou_name = attrs['ou'][0]
+		if attrs.get('displayName',[''])[0]:
+			yield '%r has already been converted' % (dn,)
+		else:
+			modlist = [('displayName', [], [ou_name])]
+			if options.dryrun:
+				if options.verbose:
+					yield 'DRYRUN: DN=%r   modlist=%s' % (dn, pprint.PrettyPrinter(indent=3).pformat(modlist))
+				else:
+					yield 'DRYRUN: doing nothing'
+			else:
+				if options.verbose:
+					yield 'DN=%r   modlist=%s' % (dn, pprint.PrettyPrinter(indent=3).pformat(modlist))
+				try:
+					lo.modify(dn, modlist)
+				except ldap_errors:
+					errors.append((sys.exc_info(), dn))
+	if errors:
+		raise MigrationFailed(errors)
+
 
 def main():
 	parser = optparse.OptionParser()
@@ -179,6 +208,7 @@ def main():
 	parser.add_option("-v", "--verbose", dest="verbose", default=False, action="store_true", help="show LDAP modlist")
 	parser.add_option("--migrate-users", dest="migrate_users", default=False, action="store_true", help="migrate user objects")
 	parser.add_option("--migrate-admin-groups", dest="migrate_admin_groups", default=False, action="store_true", help="migrate OU admin group objects")
+	parser.add_option("--migrate-ous", dest="migrate_ous", default=False, action="store_true", help="migrate OU objects")
 	(options, _) = parser.parse_args()
 
 	try:
@@ -186,6 +216,9 @@ def main():
 	except IOError:
 		raise SystemExit('This script must be executed on a DC Master.')
 	try:
+		if options.migrate_ous:
+			for message in migrate_ous(lo, options):
+				print message
 		if options.migrate_users:
 			for message in migrate_users(lo, options):
 				print message

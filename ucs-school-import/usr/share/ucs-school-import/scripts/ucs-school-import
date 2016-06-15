@@ -3212,6 +3212,10 @@ Arguments:
 		if not dcNameEducational and configRegistry.is_true('ucsschool/singlemaster', False):
 			dcNameEducational = configRegistry.get('hostname')
 
+		# if no displayName has been set, use the OU name
+		if options.displayName is None:
+			options.displayName = ouname
+
 		with stopped_notifier():
 			verify_school_ou(ouname, co, lo, baseDN, dcName=dcNameEducational, ShareFileServer=options.ShareFileServer, displayName=options.displayName)
 			if dcNameAdministrative:
