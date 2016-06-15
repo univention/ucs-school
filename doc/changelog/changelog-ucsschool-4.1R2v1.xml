@@ -29,12 +29,21 @@
 		<title>Import scripts</title>
 		<itemizedlist>
 			<listitem>
-				<simpara>A migration script <filename>ucs-school-migrate-objects-to-4.1R2</filename> was added to convert user objects and admin group objects to the LDAP structure of UCS@school 4.1 R2.
-				By default, this script is automatically called by the join script <filename>35ucs-school-import</filename>.
-				The automatic execution may be disabled by setting the &ucsUCRV; <envar>ucsschool/update/ldap/41R2</envar> to the value <literal>false</literal> <emphasis>PRIOR</emphasis> to the update.</simpara>
+				<simpara>
+					The migration script <filename>ucs-school-migrate-objects-to-4.1R2</filename> was added to convert user objects, admin group objects and school OU objects to the LDAP structure of UCS@school 4.1 R2.
+					By default, this script is automatically called by the join script <filename>35ucs-school-import</filename>.
+					The automatic execution may be disabled by setting the &ucsUCRV; <envar>ucsschool/update/ldap/41R2</envar> to the value <literal>false</literal> <emphasis>PRIOR</emphasis> to the update.
+				</simpara>
 			</listitem>
 			<listitem>
-				<simpara>The <filename>import_user</filename> script has been rewritten from scratch, with a focus on    extensibility.
+				<simpara>
+					The display name of school OU objects is now mandatory and has to be specified
+					for each OU. If missing, the migration script sets the current OU's name as display name. The import
+					script <filename>create_ou</filename> has been adjusted accordingly (<u:bug>41583</u:bug>).
+				</simpara>
+			</listitem>
+			<listitem>
+				<simpara>The <filename>import_user</filename> script has been rewritten from scratch, with a focus on extensibility.
 				Additionally to the existing hooks in <filename>/usr/share/ucs-school-import/hooks/user_*</filename> Python-based hooks can now be placed in <filename>/usr/share/ucs-school-import/pyhooks/user_*</filename>.
 				Documentation on configuration files and an example of a Python based hook is available at <filename>/usr/share/doc/ucs-school-import<filename>.
 				</simpara>
@@ -42,20 +51,20 @@
 		</itemizedlist>
 	</section>
 
+<!--
 	<section id="relnotes:changelog:italc">
 		<title>iTALC</title>
 		<itemizedlist>
 			<listitem>
-				<simpara>iTalc has been updated to 2.0-2.
+				<simpara>
 				</simpara>
 			</listitem>
 			<listitem>
-				<simpara>The iTalc installer doesn't show an option to install the <literal>iTalc</literal> Master GUI anymore.
+				<simpara>
 				</simpara>
 			</listitem>
 		</itemizedlist>
 	</section>
-<!--
 	<section id="relnotes:changelog:domain">
 		<title>Domain services</title>
 		<section id="relnotes:changelog:samba4">

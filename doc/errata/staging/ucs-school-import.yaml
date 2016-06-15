@@ -9,11 +9,13 @@ desc: |
  * A regression (due to Bug #40712) during evaluating boolean UCR variables has
    been fixed.
  * Added migration script ucs-school-migrate-objects-to-4.1R2 to convert user
-   objects and admin group objects to LDAP structure of UCS@school 4.1 R2. By
-   default, this script is automatically called by the join script
+   objects, admin group objects and OU objects to LDAP structure of UCS@school
+   4.1 R2. By default, this script is automatically called by the join script
    "35ucs-school-import". The automatic execution may be disabled by setting
    the UCR variable "ucsschool/update/ldap/41R2" to the value "false" *PRIOR*
-   to the update (Bug #41162, #41494).
+   to the update (Bug #41162, #41494, #41583).
+ * The display name of school OUs is now mandatory. During the update the
+   migration script sets the OU name as display name if missing (#41583).
  * The "import_user" script has been rewritten from scratch, with a focus on
    extensibility. Additionally to the existing hooks in
    /usr/share/ucs-school-import/hooks/user_* Python-based hooks can now be
@@ -26,4 +28,4 @@ desc: |
  * The extended attributes and extended options for the UCS@school user roles
    have been added (Bug #41014).
  * The object class ucsschoolExam has been added (Bug #41123).
-bug: [40712,41162,41494,41239,41008,41014,41123,41242]
+bug: [40712,41162,41494,41239,41008,41014,41123,41242,41583]
