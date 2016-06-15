@@ -21,6 +21,13 @@ cls_role_map = dict(
 	TeachersAndStaff=["is_staff", "is_teacher"]
 )
 role_funcs = ["is_staff", "is_student", "is_teacher", "is_administrator"]
+cls_options_map = dict(
+	Staff=["ucsschoolStaff"],
+	Student=["ucsschoolStudent"],
+	Teacher=["ucsschoolTeacher"],
+	TeachersAndStaff=["ucsschoolStaff", "ucsschoolTeacher"]
+)
+options = ["ucsschoolStaff", "ucsschoolStudent", "ucsschoolTeacher"]
 
 
 def main():
@@ -45,6 +52,16 @@ def main():
 						utils.fail("Got True from {}() on {}.".format(func, user))
 					if not res and func in cls_role_map[user.__class__.__name__]:
 						utils.fail("Got False from {}() on {}.".format(func, user))
+
+			print("*** Testing options...")
+			for user in users.values():
+				udm_obj = user.get_udm_object(lo)
+				for opt in options:
+					if (opt in udm_obj.options and opt not in cls_options_map[user.__class__.__name__]) or \
+						(opt not in udm_obj.options and opt in cls_options_map[user.__class__.__name__]):
+							utils.fail("UDM object of user {} has options {}, but should have {}.\n"
+								"(Ignoring non-ucsschool* options.)".format(user, udm_obj.options,
+								cls_options_map[user.__class__.__name__]))
 
 			for cls in [User, Staff, Student, Teacher, TeachersAndStaff]:
 				print("*** Testing {}.from_dn()...".format(cls.__name__))

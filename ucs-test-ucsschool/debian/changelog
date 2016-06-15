@@ -1,3 +1,9 @@
+ucs-test-ucsschool (3.0.11-9) unstable; urgency=low
+
+  * Bug #41118: add test for UDM options.
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 15 Jun 2016 10:24:42 +0200
+
 ucs-test-ucsschool (3.0.11-8) unstable; urgency=low
 
   * Bug #41117: add test for is_*() methods to 107_user_model_change
