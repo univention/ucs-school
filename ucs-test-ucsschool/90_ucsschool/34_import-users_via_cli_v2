@@ -641,7 +641,7 @@ class CLI_Import_v2_Tester(object):
         - mailAlternativeAddress is filled with multiple strings
 		"""
 		for role in ('student', 'teacher', 'staff', 'teacher_and_staff'):
-			self.log.info('*** Importing a new single user with role %r from templates', role)
+			self.log.info('*** Importing a new single user with role %r with multivalue attributes', role)
 
 			source_uid = 'sourceUID-%s' % (uts.random_string(),)
 
@@ -692,6 +692,53 @@ class CLI_Import_v2_Tester(object):
 			person.verify()
 			self.log.info('Test was successful.')
 
+	def test_school_change(self):
+		"""
+		Create/modify a new user for each role:
+        - mailAlternativeAddress is filled with multiple strings
+		"""
+		for role in ('student', 'teacher', 'staff', 'teacher_and_staff'):
+			self.log.info('*** Importing a new single user with role %r and change school afterwards', role)
+
+			source_uid = 'sourceUID-%s' % (uts.random_string(),)
+
+			config = copy.copy(self.default_config)
+			config.update_entry('sourceUID', source_uid)
+			config.update_entry('csv:mapping:Benutzername', 'username')
+			config.update_entry('csv:mapping:recordUID', 'record_uid')
+			config.update_entry('scheme:recordUID', '<username>')
+			config.update_entry('sourceUID', source_uid)
+			config.update_entry('user_role', role)
+
+			# create person in school A
+			person = Person(self.ou_A.name, role)
+			person.update(record_uid=person.username, source_uid=source_uid)
+			fn_csv = self.create_csv_file(person_list=[person], mapping=config['csv']['mapping'])
+			fn_config = self.create_config_json(config=config)
+			# start import
+			self.run_import(['-c', fn_config, '-i', fn_csv])
+
+			self.log.debug('User object %r:\n%s', person.dn, pprint.PrettyPrinter(indent=2).pformat(self.lo.get(person.dn)))
+			person.verify()
+
+			# move person to school B
+			person.update(school=self.ou_B.name)
+			fn_csv = self.create_csv_file(person_list=[person], mapping=config['csv']['mapping'])
+			fn_config = self.create_config_json(config=config)
+			# start import
+			self.run_import(['-c', fn_config, '-i', fn_csv])
+
+			userlist = self.lo.searchDn('uid=%s' % (person.username,))
+			if len(userlist) != 1:
+				self.log.error('Invalid number of user objects for user %r! Found new objects: %r', username, userlist)
+				utils.fail('Stopping here')
+
+			person.update(dn=userlist[0])
+			self.log.debug('User object %r:\n%s', person.dn, pprint.PrettyPrinter(indent=2).pformat(self.lo.get(person.dn)))
+			person.verify()
+
+			self.log.info('Test was successful.')
+
 
 	def run(self):
 		try:
@@ -700,7 +747,7 @@ class CLI_Import_v2_Tester(object):
 
 			with utu.UCSTestSchool() as schoolenv:
 				self.ou_A.name, self.ou_A.dn = schoolenv.create_ou(name_edudc=ucr.get('hostname'))
-#				self.ou_B.name, self.ou_B.dn = schoolenv.create_ou(name_edudc=ucr.get('hostname'))
+				self.ou_B.name, self.ou_B.dn = schoolenv.create_ou(name_edudc=ucr.get('hostname'))
 				self.lo = schoolenv.open_ldap_connection(admin=True)
 
 				self.test_create_modify_delete_user()
@@ -709,6 +756,7 @@ class CLI_Import_v2_Tester(object):
 				self.test_create_modify_only()
 				self.test_create_with_attribute_schemes()
 				self.test_multivalue_attributes()
+				self.test_school_change()
 		finally:
 			self.cleanup()
 

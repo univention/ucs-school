@@ -1,3 +1,9 @@
+ucs-test-ucsschool (3.0.12-6) unstable; urgency=low
+
+  * Bug #41349: added test for school change in 34_import-users_via_cli_v2
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Wed, 15 Jun 2016 23:44:48 +0200
+
 ucs-test-ucsschool (3.0.12-5) unstable; urgency=low
 
   * Bug #41471: added test for multi value fields in 34_import-users_via_cli_v2

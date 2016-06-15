@@ -111,6 +111,9 @@ class Person:
 			if key == 'dn':
 				self.username = ldap.explode_rdn(kwargs[key], notypes=1)[0]
 				self.dn = kwargs[key]
+			elif key == 'school':
+				self.school = kwargs[key]
+				self.school_base = get_school_base(self.school)
 			elif hasattr(self, key):
 				setattr(self, key, kwargs[key])
 			else:
