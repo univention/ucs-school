@@ -54,6 +54,10 @@ define([
 			tools.forIn(this._initialValues, lang.hitch(this, function(k) {
 				if (k in this) {
 					obj[k] = this[k];
+					if (k == 'school_classes' && typeof this[k] != 'object') {
+						obj[k] = {}
+						obj[k][this.school] = this[k].split(',');
+					}
 				}
 			}));
 			return obj;
@@ -61,6 +65,15 @@ define([
 
 		setValues: function(values) {
 			tools.forIn(values, lang.hitch(this, function(k, v) {
+				if (k == 'school_classes' && typeof v == 'object') {
+					var val = [];
+					tools.forIn(v, function(school, classes) {
+						array.forEach(classes, function(school_class) {
+							val.push(school_class);
+						});
+					});
+					v = val.join(',');
+				}
 				this[k] = v;
 			}));
 		},

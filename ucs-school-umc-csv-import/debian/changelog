@@ -1,3 +1,10 @@
+ucs-school-umc-csv-import (3.0.4-1) unstable; urgency=medium
+
+  * Bug #41588: fix unserializing when modifying class inline
+  * fix display error in firefox
+
+ -- Florian Best <best@univention.de>  Wed, 15 Jun 2016 23:34:02 +0200
+
 ucs-school-umc-csv-import (3.0.3-1) unstable; urgency=medium
 
   * Bug #41121: respect school_classes API change

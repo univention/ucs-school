@@ -538,14 +538,6 @@ define([
 						};
 						return actionMap[value];
 					};
-				} else if (column.name == 'school_classes') {
-					column.formatter = lang.hitch(this, function(values) {
-						var classes = [];
-						tools.forIn(values, function(school, school_classes) {
-							classes = classes.concat(array.map(school_classes, function(value) { return value.indexOf(school + '-') === -1 ? value : value.slice(school.length + 1); }));
-						});
-						return classes.join(', ');
-					});
 				}
 			}));
 			users = array.map(users, function(user) {
