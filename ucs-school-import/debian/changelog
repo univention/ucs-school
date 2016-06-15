@@ -1,3 +1,9 @@
+ucs-school-import (14.0.11-4) unstable; urgency=low
+
+  * Bug #41239: added missing file for PyHooks
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Thu, 16 Jun 2016 01:10:37 +0200
+
 ucs-school-import (14.0.11-3) unstable; urgency=low
 
   * Bug #41239: PyHooks are now not distributed in a directory tree, but are
