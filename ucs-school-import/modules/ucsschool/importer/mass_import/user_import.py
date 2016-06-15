@@ -560,7 +560,7 @@ class UserImport(object):
 		try:
 			for pyhook_cls in self.pyhooks.get(obj, {}).get(action, {}).get(when, []):
 				self.logger.info("Running %s/%s/%s hook %r for %s...", obj, action, when, pyhook_cls.__name__, import_user)
-				pyhook = pyhook_cls(import_user, self.connection)
+				pyhook = pyhook_cls(import_user, self.connection, when, action)
 				pyhook.run()
 		finally:
 			import_user.in_hook = False

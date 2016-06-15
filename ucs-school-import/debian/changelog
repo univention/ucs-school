@@ -1,3 +1,9 @@
+ucs-school-import (14.0.9-12) unstable; urgency=low
+
+  * Bug #41239: API change: rename and add attributes of PyHook base class
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 15 Jun 2016 12:05:22 +0200
+
 ucs-school-import (14.0.9-11) unstable; urgency=low
 
   * Bug #41239: set and load UDM properties for pyhooks
