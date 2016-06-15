@@ -1,3 +1,9 @@
+ucs-test-ucsschool (3.0.12-4) unstable; urgency=low
+
+  * Bug #41472: added test for auto-generated attribute values in 34_import-users_via_cli_v2
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Wed, 15 Jun 2016 17:44:57 +0200
+
 ucs-test-ucsschool (3.0.12-3) unstable; urgency=low
 
   * Bug #41239/#31350: added check for --no-delete in 34_import-users_via_cli_v2
