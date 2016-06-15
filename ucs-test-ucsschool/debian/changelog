@@ -1,3 +1,11 @@
+ucs-test-ucsschool (3.0.11-8) unstable; urgency=low
+
+  * Bug #41117: add test for is_*() methods to 107_user_model_change
+  * Bug #41239: hotfix for essential/User.init() not calling
+    super().__init__() so 70_users_module runs
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 15 Jun 2016 09:56:13 +0200
+
 ucs-test-ucsschool (3.0.11-7) unstable; urgency=medium
 
   * Bug #40870: fixup svn r70039

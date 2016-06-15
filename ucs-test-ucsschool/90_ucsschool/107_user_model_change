@@ -14,6 +14,15 @@ from ucsschool.lib.models import Staff, Student, Teacher, TeachersAndStaff, User
 from ucsschool.lib.models.base import WrongModel
 
 
+cls_role_map = dict(
+	Staff=["is_staff"],
+	Student=["is_student"],
+	Teacher=["is_teacher"],
+	TeachersAndStaff=["is_staff", "is_teacher"]
+)
+role_funcs = ["is_staff", "is_student", "is_teacher", "is_administrator"]
+
+
 def main():
 	with utu.UCSTestSchool() as schoolenv:
 		with ucr_test.UCSTestConfigRegistry() as ucr:
@@ -27,6 +36,15 @@ def main():
 				user = cls(school=ou, name=uts.random_name(), firstname=uts.random_name(), lastname=uts.random_name())
 				user.create(lo)
 				users[cls] = user
+
+			print("*** Testing *.is_*()...")
+			for user in users.values():
+				for func in role_funcs:
+					res = getattr(user, func)(lo)
+					if res and func not in cls_role_map[user.__class__.__name__]:
+						utils.fail("Got True from {}() on {}.".format(func, user))
+					if not res and func in cls_role_map[user.__class__.__name__]:
+						utils.fail("Got False from {}() on {}.".format(func, user))
 
 			for cls in [User, Staff, Student, Teacher, TeachersAndStaff]:
 				print("*** Testing {}.from_dn()...".format(cls.__name__))

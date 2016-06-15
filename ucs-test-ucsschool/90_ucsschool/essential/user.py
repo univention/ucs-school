@@ -58,7 +58,7 @@ class User(Person):
 			lastname=None,
 			password=None,
 			mail=None):
-
+		# TODO: merge with super.__init__
 		self.ucr = ucr_test.UCSTestConfigRegistry()
 		self.ucr.load()
 		cn_pupils = self.ucr.get('ucsschool/ldap/default/container/pupils', 'schueler')
@@ -113,6 +113,9 @@ class User(Person):
 		admin = account.username
 		passwd = account.bindpw
 		self.password = password if password else passwd
+		self.source_uid = None
+		self.record_uid = None
+		self.description = None
 		self.umc_connection.auth(admin, passwd)
 
 	def __enter__(self):
