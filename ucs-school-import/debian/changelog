@@ -1,3 +1,10 @@
+ucs-school-import (14.0.12-1) unstable; urgency=low
+
+  * Bug #41239: reraise CSV reader error as application error
+  * add example for extending by subclassing
+
+ -- Daniel Troeder <troeder@univention.de>  Thu, 16 Jun 2016 12:23:59 +0200
+
 ucs-school-import (14.0.11-7) unstable; urgency=medium
 
   * Bug #41494: add hook for extended attribute to add option
