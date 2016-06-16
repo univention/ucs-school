@@ -44,10 +44,10 @@ feedback@univention.de
 			Mit dem &ucsUAS;-Release 4.1 R2 wurden zwei grundlegende Erweiterungen vorgenommen, die von vielen Kunden gewünscht wurden:
 			<itemizedlist>
 				<listitem>
-					<para>
+					<simpara>
 						Unterstützung von schulübergreifenden Benutzerkonten für Schüler, Lehrkräfte und Mitarbeiter
-					</para>
-					<para>
+					</simpara>
+					<simpara>
 						Das Identitäts- und Berechtigungsmanagement von &ucsUAS; wurde erweitert, so
 						dass Benutzerkonten für Schüler, Lehrkräfte und Mitarbeiter zukünftig schulübergreifend verwendet
 						werden können. Schulübergreifende Benutzerkonten werden an mehrere, vordefinierte Schulen
@@ -57,19 +57,19 @@ feedback@univention.de
 						Arbeit an den Systemen der Domäne vereinfacht und auch Vorteile bei z.B. angebundenen Cloud-Diensten
 						mit sich bringt. Hinweise zur Verwendung der schulübergreifenden Benutzerkonto finden sich im
 						&ucsUAS;-Handbuch.
-					</para>
+					</simpara>
 				</listitem>
 				<listitem>
-					<para>
+					<simpara>
 						Vereinfachung der Automatisierung und Pflege von Benutzerkonten
-					</para>
-					<para>
+					</simpara>
+					<simpara>
 						Schulen und Schulträger sind von ihrer Größe mit mittleren und großen
 						Unternehmen zu vergleichen, jedoch mit dem Unterschied, dass sich die gesamte
 						"Belegschaft" jährlich verändert. Die Automatisierung der Benutzerkontenpflege ist
 						deshalb unerlässlich. 
-					</para>
-					<para>
+					</simpara>
+					<simpara>
 						Univention hat mit &ucsUAS; 4.1 R2 die Automatisierungsmöglichkeiten stark
 						erweitert, um wichtige Zusatzinformationen, wie Benutzernamen und E-Mailadressen, automatisiert und
 						nach den Vorgaben der Kunden generieren zu können. Damit entfällt der Aufwand eigene Lösungen zur
@@ -78,12 +78,12 @@ feedback@univention.de
 						wie XML, JSON und CSV.  Die neue Schnittstelle zur Benutzerkontenpflege ermöglicht es, viele
 						Funktionen wie z.B. Lifecycle-Management, Testläufe für den Import und das automatisierte
 						Deaktivieren und Löschen von nicht mehr benötigten Nutzerkonten, umzusetzen.
-					</para>
-					<para>
+					</simpara>
+					<simpara>
 						Durch die Einführung einer neuen Schnittstelle zur Ausführung von
 						Python-Hooks können die Mechanismen zur Benutzerpflege noch einfacher, flexibler und umfangreicher
 						angepasst werden.
-					</para>
+					</simpara>
 				</listitem>
 			</itemizedlist>
 		</para>
@@ -111,32 +111,32 @@ feedback@univention.de
 				Für die Umsetzung der schulübergreifenden Benutzerkonten wurden umfangreiche Änderungen am LDAP-Verzeichnisdienst notwendig:
 				<itemizedlist>
 					<listitem>
-						<para>
+						<simpara>
 							Während des Updates des Domaincontroller Master werden automatisch neue
 							LDAP-Schemata für &ucsUAS; installiert und neue LDAP-Indizes für die Attribute
 							<literal>ucsschoolSchool</literal>, <literal>ucsschoolSourceUID</literal> und
 							<literal>ucsschoolRecordUID</literal> ergänzt. Die Index-Dateien werden in der Standardeinstellung
 							automatisch aktualisiert. Je nach Umfang des LDAP-Verzeichnisdienstes kann der Aufbau der
 							LDAP-Indizes einige Minuten in Anspruch nehmen.
-						</para>
+						</simpara>
 					</listitem>
 					<listitem>
-						<para>
+						<simpara>
 							Mit der Installation neuer &ucsUAS;-LDAP-ACLs ändert sich das Verhalten
 							der selektiven Replikation auf die Schulserver. Während bisher die Teilbäume der jeweiligen
 							Schule/OU nur auf dem zugeordneten Schulserver repliziert wurde, werden jetzt auch die OUs und
 							Container anderer Schulen auf alle Schulserver repliziert. Speziell handelt es sich dabei um die
 							Container <literal>cn=users,ou=...,LDAP-BASIS</literal> und
 							<literal>cn=groups,ou=...,LDAP-BASIS</literal>, die teilweise übertragen werden.
-						</para>
-						<para>
+						</simpara>
+						<simpara>
 							Direkt nach dem Update auf &ucsUAS; 4.1 R2 müssen noch nicht alle
 							genannten Objekte und Container auf allen Systemen vorhanden sein. Dies erfolgt bei "Bedarf" sobald
 							eines der betroffenen Objekte im LDAP-Verzeichnis modifiziert wird.
-						</para>
+						</simpara>
 					</listitem>
 					<listitem>
-						<para>
+						<simpara>
 							Neben den neuen LDAP-ACLs ist auch eine Anpassung der
 							&ucsUAS;-Benutzerobjekte, der &ucsUAS;-Administrator-Gruppen und der Schul-OU-Objekte im
 							LDAP-Verzeichnisdienst notwendig, die unterhalb der Schul-OU-Objekte bzw. in dem zentralen Container
@@ -145,15 +145,15 @@ feedback@univention.de
 							<filename>35ucs-school-import.inst</filename> die Anpassung der &ucsUAS;-Benutzerobjekte und
 							-Gruppenobjekte vorgenommen. Dies kann je nach Umgebungsgröße einige Zeit beanspruchen und führt
 							während der Anpassungen zu einer erhöhten Last bei LDAP-Servern und LDAP-Replikation.
-						</para>
-						<para>
+						</simpara>
+						<simpara>
 							Um die automatische Anpassung zu verhindern, kann <emphasis>VOR</emphasis> dem Update auf &ucsUAS; 4.1 R2
 							die &ucsUCRV; <envar>ucsschool/update/ldap/41R2</envar> auf den Wert <literal>false</literal>
 							gesetzt werden. Die Anpassung der Objekte muss dann für die korrekte Funktion der
 							&ucsUAS;-Umgebung manuell nachgeholt werden. Dafür muss das folgende Kommando als Benutzer
 							<systemitem class="username">root</systemitem> auf dem &ucsMaster; ausgeführt werden:
 							<command>/usr/share/ucs-school-import/scripts/ucs-school-migrate-objects-to-4.1R2</command>.
-						</para>
+						</simpara>
 					</listitem>
 				</itemizedlist>
 			</para>
@@ -165,35 +165,35 @@ feedback@univention.de
 				Dies bringt die folgenden Verhaltensänderungen mit sich:
 				<itemizedlist>
 					<listitem>
-						<para>
+						<simpara>
 							Die Ausgaben des Skriptes haben sich geändert und sind jetzt wesentlich ausführlicher. Wurden die Ausgaben automatisiert ausgewertet, sind hier ggf. Anpassungen notwendig.
-						</para>
+						</simpara>
 					</listitem>
 					<listitem>
-						<para>
+						<simpara>
 							In der Datei <filename>/var/log/univention/ucs-school-import.log</filename> werden die Ausgaben des Skriptes fortlaufend gesammelt.
-						</para>
+						</simpara>
 					</listitem>
 					<listitem>
-						<para>
+						<simpara>
 							Wurde für einen Benutzer die OU geändert, wurde in vorherigen
 							&ucsUAS;-Versionen der Benutzer in der alten Schule/OU gelöscht und in der neuen Schule/OU neu
 							angelegt. Jetzt wird der Benutzer im LDAP-Verzeichnis verschoben und Gruppenmitgliedschaften
 							bzw. Benutzerattribute entsprechend angepasst. Dies führt dazu, dass der Benutzer beim Verschieben
 							z.B. seine Benutzernummer (uidNumber) oder Windows-Security-ID (sambaSID) beibehält.
-						</para>
+						</simpara>
 					</listitem>
 					<listitem>
-						<para>
+						<simpara>
 							Die Import-Hooks unterhalb von
 							<filename>/usr/share/ucs-school-import/hooks/</filename> werden ab diesem Release als veraltet
 							betrachtet und mit einem zukünftigen &ucsUAS;-Release nicht mehr unterstützt.  Es wird empfohlen,
 							die Import-Hooks auf die neuen Python-basierten Import-Hooks umzustellen, da diese u.a. eine bessere
 							Performance liefern.
-						</para>
+						</simpara>
 					</listitem>
 					<listitem>
-						<para>
+						<simpara>
 							Bei der Angabe von Klassennamen für kommandozeilenbasierte Importskripte
 							(<filename>import_user</filename>, <filename>import_groups</filename> und
 							<filename>ucs-school-user-import</filename>) ist jetzt immer die Angabe der Schule als Präfix
@@ -201,19 +201,16 @@ feedback@univention.de
 							<literal>gsmitte</literal>. Sind im LDAP-Verzeichnis Klassennamen noch ohne Schul-Präfix vorhanden,
 							sollten diese über das Skript <filename>rename_class</filename> entsprechend umbenannt werden, um
 							Probleme mit den Importskripten zu vermeiden.
-						</para>
-						<para>
+						</simpara>
+						<simpara>
 							Die UMC-Module sind von dieser neuen Anforderung nicht betroffen. Hier
 							wird der Schul-Präfix bei der Anzeige automatisch entfernt und nach Benutzereingaben automatisch
 							hinzugefügt. D.h. in den UMC-Modulen <guimenu>Benutzer (Schulen)</guimenu> und
 							<guimenu>CSV-Import</guimenu> reicht die Angabe des Klassennamens (z.B. <literal>1B</literal>) aus.
-						</para>
+						</simpara>
 					</listitem>
 				</itemizedlist>
 			</para>
-		</section>
-		<section id="relnote:prepare:ldapindices">
-			<title>LDAP-Indizes</title>
 		</section>
 	</chapter>
 
