@@ -35,17 +35,6 @@ from ucsschool.lib.models.utils import logger
 
 
 class PyHook(object):
-	def __init__(self, user, lo, when, action):
-		self.user = user      # the ImportUser
+	def __init__(self, lo):
 		self.lo = lo          # LDAP object
 		self.logger = logger  # Python logging instance
-		self.when = when      # either 'pre' or 'post'
-		self.action = action  # one of 'create', 'modify', 'move' or 'remove'
-
-	def run(self):
-		"""
-		Overwrite this method with the code you wish to run.
-
-		:return: None
-		"""
-		raise NotImplementedError()

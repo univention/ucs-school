@@ -55,8 +55,8 @@ class UserPyHook(PyHook):
 		"post_modify": None,
 		"pre_move": None,
 		"post_move": None,
-		"pre_delete": None,
-		"post_delete": None,
+		"pre_remove": None,
+		"post_remove": None,
 	}
 
 	def pre_create(self, user):
@@ -144,28 +144,28 @@ class UserPyHook(PyHook):
 		"""
 		pass
 
-	def pre_delete(self, user):
+	def pre_remove(self, user):
 		"""
 		Run code before deleting a user.
 
 		* "user" will be an ImportUser, loaded from LDAP.
-		* set priority["pre_delete"] to an int, to enable this method
+		* set priority["pre_remove"] to an int, to enable this method
 
 		:param user: User (or a subclass of it, eg. ImportUser)
 		:return: None
 		"""
 		pass
 
-	def post_delete(self, user):
+	def post_remove(self, user):
 		"""
 		Run code after deleting a user.
 
 		* The hook is only executed if the deleting the user succeeded.
 		* "user" will be an ImportUser, loaded from LDAP.
-		* If running in an import job, the user may not have been deleted,
+		* If running in an import job, the user may not have been removed,
 		but merely deactivated. Search using user.dn to find out.
-		* If the user was deleted, do not modify() it.
-		* set priority["post_delete"] to an int, to enable this method
+		* If the user was removed, do not modify() it.
+		* set priority["post_remove"] to an int, to enable this method
 
 		:param user: User (or a subclass of it, eg. ImportUser)
 		:return: None

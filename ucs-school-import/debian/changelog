@@ -1,3 +1,9 @@
+ucs-school-import (14.0.11-5) unstable; urgency=low
+
+  * Bug #41239: fixed API of PyHooks
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Thu, 16 Jun 2016 02:28:47 +0200
+
 ucs-school-import (14.0.11-4) unstable; urgency=low
 
   * Bug #41239: added missing file for PyHooks
