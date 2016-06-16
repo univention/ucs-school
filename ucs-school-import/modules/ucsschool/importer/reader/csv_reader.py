@@ -31,12 +31,13 @@ CSV reader for CSV files using the new import format.
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-from csv import reader as csv_reader, Sniffer
+from csv import reader as csv_reader, Sniffer, Error as CsvError
 import codecs
+import sys
 
 from ucsschool.importer.contrib.csv import DictReader
 from ucsschool.importer.reader.base_reader import BaseReader
-from ucsschool.importer.exceptions import UnkownRole
+from ucsschool.importer.exceptions import InitialisationError, UnkownRole
 from ucsschool.importer.configuration import Configuration
 from ucsschool.lib.roles import role_pupil, role_teacher, role_staff
 from ucsschool.lib.models.user import Staff
@@ -77,7 +78,11 @@ class CsvReader(BaseReader):
 		:return: iter(dict)
 		"""
 		with open(self.filename, "rb") as fp:
-			dialect = self.get_dialect(fp)
+			try:
+				dialect = self.get_dialect(fp)
+			except CsvError as exc:
+				raise InitialisationError, InitialisationError("Could not determine CSV dialect. Try setting the "
+					"csv:delimiter configuration. Error: {}".format(exc)), sys.exc_info()[2]
 			fp.seek(0)
 			if self.header_lines == 1:
 				# let DictReader figure it out itself

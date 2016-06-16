@@ -31,8 +31,6 @@ CSV reader for CSV files using the legacy import format.
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-import csv
-
 from ucsschool.importer.reader.csv_reader import CsvReader
 from ucsschool.importer.exceptions import UnkownRole
 from ucsschool.lib.roles import role_pupil, role_teacher, role_staff
