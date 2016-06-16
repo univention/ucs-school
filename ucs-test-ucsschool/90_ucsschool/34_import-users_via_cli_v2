@@ -63,37 +63,76 @@ class PyHooks(object):
 		self.cleanup_files = set()
 		self.log = logging.getLogger('PyHooks')
 
-	def create_hook(self, action, pre_post, fn):
+	def create_hooks(self):
 		"""
 		"""
-		fn_touchfile = os.path.join(self.tmpdir, '%s-%s' % (pre_post, action))
-		data = '''from ucsschool.importer.utils.pyhook import PyHook
+		fn = '%s.py' % (uts.random_name(),)
+		data = '''from ucsschool.importer.utils.user_pyhook import UserPyHook
 import os
 
-class MyHook(PyHook):
-	def run(self):
-		self.logger.info("***** Running {} {} hook for user {}.".format(self.when, self.action, self.user))
+class MyHook(UserPyHook):
+	priority = {
+			"pre_create": 1,
+			"post_create": 1,
+			"pre_modify": 1,
+			"post_modify": 1,
+			"pre_move": 1,
+			"post_move": 1,
+			"pre_remove": 1,
+			"post_remove": 1
+	}
+
+	def pre_create(self, user):
+			self.logger.info("Running a pre_create hook for %%s.", user)
+			self.run(user, 'create', 'pre')
+
+	def post_create(self, user):
+			self.logger.info("Running a post_create hook for %%s.", user)
+			self.run(user, 'create', 'post')
+
+	def pre_modify(self, user):
+			self.logger.info("Running a pre_modify hook for %%s.", user)
+			self.run(user, 'modify', 'pre')
+
+	def post_modify(self, user):
+			self.logger.info("Running a post_modify hook for %%s.", user)
+			self.run(user, 'modify', 'post')
+
+	def pre_move(self, user):
+			self.logger.info("Running a pre_move hook for %%s.", user)
+			self.run(user, 'move', 'pre')
+
+	def post_move(self, user):
+			self.logger.info("Running a post_move hook for %%s.", user)
+			self.run(user, 'move', 'post')
+
+	def pre_remove(self, user):
+			self.logger.info("Running a pre_remove hook for %%s.", user)
+			self.run(user, 'remove', 'pre')
+
+	def post_remove(self, user):
+			self.logger.info("Running a post_remove hook for %%s.", user)
+			self.run(user, 'remove', 'post')
+
+	def run(self, user, action, when):
+		self.logger.info("***** Running {} {} hook for user {}.".format(when, action, user))
 		# udm_properties[k] is only filled from LDAP, if k was in the input
 		# don't try to get_udm_object() on a user not {anymore, yet} in ldap
-		if not self.user.udm_properties.get('organisation') and not ((self.action == 'create' and self.when == 'pre') or (self.action == 'remove' and self.when == 'post')):
-			obj = self.user.get_udm_object(self.lo)
-			self.user.udm_properties['organisation'] = obj.info.get('organisation', '')
-		self.user.udm_properties['organisation'] = self.user.udm_properties.get('organisation', '') + ',{}-{}'.format(self.when, self.action)
-		if self.when == 'post' and self.action != 'remove':
-			self.user.modify(self.lo)
-		open(%(fn_touchfile)r, 'w').write('EXECUTED\\n')
-''' % {'fn_touchfile': fn_touchfile}
+		if not user.udm_properties.get('organisation') and not ((action == 'create' and when == 'pre') or (action == 'remove' and when == 'post')):
+			obj = user.get_udm_object(self.lo)
+			user.udm_properties['organisation'] = obj.info.get('organisation', '')
+		user.udm_properties['organisation'] = user.udm_properties.get('organisation', '') + ',{}-{}'.format(when, action)
+		if when == 'post' and action != 'remove':
+			user.modify(self.lo)
+		fn_touchfile = os.path.join(%(tmpdir)r, '%%s-%%s' %% (when, action))
+		open(fn_touchfile, 'w').write('EXECUTED\\n')
+''' % { 'tmpdir': self.tmpdir }
 
-		fn = os.path.join(self.hook_basedir, 'user_%s_%s.d' % (action, pre_post), fn)
+		fn = os.path.join(self.hook_basedir, fn)
 		self.cleanup_files.add(fn)
 		with open(fn, 'w') as fd:
 			fd.write(data)
 		self.log.info('Created hook %r', fn)
-
-	def create_hooks(self):
-		for action in ('create', 'modify', 'remove'):
-			for pre_post in ('pre', 'post'):
-				self.create_hook(action, pre_post, '%s-%s-%s.py' % (action, pre_post, uts.random_name()))
 
 	def cleanup(self):
 		shutil.rmtree(self.tmpdir, ignore_errors=True)
