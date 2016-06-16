@@ -4,7 +4,6 @@
 	<!ENTITY % extensions SYSTEM "../stylesheets/macros.ent" >
 	<!ENTITY % entities SYSTEM "../stylesheets/macros-de.ent" >
 	%extensions;
-	%DocBookDTD;
 	%entities;
 ]>
 <book lang="de" id="releasenotes-4.1R2-de">
@@ -162,7 +161,7 @@ feedback@univention.de
 			</para>
 		</section>
 		<section id="relnote:prepare:legacyimport">
-			<title>Importskript import_user</title>
+			<title>Importskript <filename>import_user</filename></title>
 			<para>
 				Das Importskript <filename>import_user</filename> wurde vollständig überarbeitet und verwendet jetzt die neue Schnittstelle für die Benutzerpflege.
 				Dies bringt die folgenden Verhaltensänderungen mit sich:
@@ -183,7 +182,7 @@ feedback@univention.de
 							&ucsUAS;-Versionen der Benutzer in der alten Schule/OU gelöscht und in der neuen Schule/OU neu
 							angelegt. Jetzt wird der Benutzer im LDAP-Verzeichnis verschoben und Gruppenmitgliedschaften
 							bzw. Benutzerattribute entsprechend angepasst. Dies führt dazu, dass der Benutzer beim Verschieben
-							z.B. seine Benutzernummer (uidNumber) oder Windows-Security-ID (sambaSID) beibehält.
+							z.B. seine Benutzernummer (<property>uidNumber</property>) oder Windows-Security-ID (<property>sambaSID</property>) beibehält.
 						</para>
 					</listitem>
 					<listitem>

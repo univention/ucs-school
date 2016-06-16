@@ -29,7 +29,7 @@
 				</simpara>
 			</listitem>
 			<listitem>
-				<simpara>A caching bug which resulted in operations beeing done with a wrong ldap connection has been fixed (<u:bug>41468</u:bug>).
+				<simpara>A caching bug which resulted in operations being done with a wrong LDAP connection has been fixed (<u:bug>41468</u:bug>).
 				</simpara>
 			</listitem>
 		</itemizedlist>
@@ -60,7 +60,7 @@
 				</simpara>
 			</listitem>
 			<listitem>
-				<simpara>The object classes ucsschoolStudent, ucsschoolTeacher, ucsschoolStaff, ucsschoolAdministrator and the LDAP attribute uscschoolSchool have been added (<u:bug>41008</u:bug>).
+				<simpara>The object classes <classname>ucsschoolStudent</classname>, <classname>ucsschoolTeacher</classname>, <classname>ucsschoolStaff</classname>, <classname>ucsschoolAdministrator</classname> and the LDAP attribute <property>uscschoolSchool</property> have been added (<u:bug>41008</u:bug>).
 				</simpara>
 			</listitem>
 			<listitem>
@@ -68,7 +68,7 @@
 				</simpara>
 			</listitem>
 			<listitem>
-				<simpara>The object class ucsschoolExam has been added (<u:bug>41123</u:bug>).
+				<simpara>The object class <classname>ucsschoolExam</classname> has been added (<u:bug>41123</u:bug>).
 				</simpara>
 			</listitem>
 			<listitem>
@@ -85,13 +85,13 @@
 		<title>iTALC</title>
 		<itemizedlist>
 			<listitem>
-				<simpara>iTalc has been updated to 2.0-2 (<u:bug>38213</u:bug>, <u:bug>38415</u:bug>).
+				<simpara><package>iTalc</package> has been updated to 2.0-2 (<u:bug>38213</u:bug>, <u:bug>38415</u:bug>).
 				</simpara>
 			</listitem>
 			<listitem>
 				<simpara>The build dependencies have been adjusted for building on UCS 4.1 (<u:bug>39593</u:bug>).
 				</simpara>
-				<simpara>The iTalc installer doesn't show an option to install the iTalc Master GUI anymore (<u:bug>38221</u:bug>).
+				<simpara>The <package>iTalc</package> installer doesn't show an option to install the <package>iTalc</package> Master GUI anymore (<u:bug>38221</u:bug>).
 				</simpara>
 			</listitem>
 		</itemizedlist>
@@ -118,7 +118,7 @@
 			<itemizedlist>
 				<listitem>
 					<simpara>The users where the link to the school console (UMC) is shown are not detected by their position in the LDAP directory anymore but by an LDAP filter.
-						The new &ucsUCRV; <envar>ucsschool/userlogon/umclink/filter</envar> defines this LDAP filter which by default detecs teacher and staff users.
+						The new &ucsUCRV; <envar>ucsschool/userlogon/umclink/filter</envar> defines this LDAP filter which by default detects teacher and staff users.
 						The old &ucsUCRV; <envar>ucsschool/userlogon/umclink/re</envar> is only evaluated if the user has no UCS@school object class (<u:bug>41304</u:bug>).
 					</simpara>
 				</listitem>
@@ -128,7 +128,7 @@
 			<title>OpenLDAP</title>
 			<itemizedlist>
 				<listitem>
-					<simpara>The LDAP attributes <literal>ucsschoolSchool</literal>, <literal>ucsschoolRecordUID</literal> and <literal>ucsschoolSourceUID</literal> are added automatically to the LDAP indices during the update to UCS@school 4.1 R2 (<u:bug>41297</u:bug>).
+					<simpara>The LDAP attributes <literal>ucsschoolSchool</literal>, <literal>ucsschoolRecordUID</literal> and <literal>ucsschoolSourceUID</literal> are added automatically to the LDAP indexes during the update to UCS@school 4.1 R2 (<u:bug>41297</u:bug>).
 					</simpara>
 				</listitem>
 			</itemizedlist>
@@ -139,7 +139,7 @@
 				<listitem>
 					<simpara>School Administrators may no longer alter the password of computers (<u:bug>41407</u:bug>).
 					</simpara>
-					<simpara>The LDAP ACL's have been adjusted to allow access based on the newly introduced object classes (<u:bug>41115</u:bug>).
+					<simpara>The LDAP ACLs have been adjusted to allow access based on the newly introduced object classes (<u:bug>41115</u:bug>).
 					</simpara>
 				</listitem>
 			</itemizedlist>
@@ -195,7 +195,7 @@
 					<listitem>
 						<para>In large environments it took a long time to open some UMC modules.
 							The initial, unrestrained search to populate the list views lasts long, if there are a lot of objects.
-							This "autosearch" can now be disabled via the &ucsUCR; variables:
+							This <wordasword>autosearch</wordasword> can now be disabled via the &ucsUCR; variables:
 							<itemizedlist>
 								<listitem><simpara><envar>ucsschool/workgroups/autosearch</envar></simpara></listitem>
 								<listitem><simpara><envar>ucsschool/assign-classes/autosearch</envar></simpara></listitem>
