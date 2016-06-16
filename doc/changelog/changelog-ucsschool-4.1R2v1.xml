@@ -15,11 +15,21 @@
 		<title>General</title>
 		<itemizedlist>
 			<listitem>
-				<simpara>It is now possible to move users (students, teachers, staff) into another school OU without loosing the account.
+				<simpara>It is now possible to move users (students, teachers, staff) into another school OU without loosing the account (<u:bug>40870</u:bug>).
 				</simpara>
 			</listitem>
 			<listitem>
 				<simpara>Users (students, teachers, staff) can now exist in multiple schools, making multiple accounts for the same person unnecessary.
+					Adjustments for school overlapping users have been implemented in multiple UMC packages
+					(<u:bug>41117</u:bug>, <u:bug>41118</u:bug>, <u:bug>41120</u:bug>, <u:bug>41121</u:bug>, <u:bug>41122</u:bug>, <u:bug>41123</u:bug>, <u:bug>41124</u:bug>, <u:bug>41125</u:bug>, <u:bug>41126</u:bug>, <u:bug>41127</u:bug>, <u:bug>41129</u:bug>, <u:bug>41130</u:bug>, <u:bug>41131</u:bug>, <u:bug>41132</u:bug>, <u:bug>41293</u:bug>).
+				</simpara>
+			</listitem>
+			<listitem>
+				<simpara>The python model classes now raise an exception if they don't match the opened object (<u:bug>41425</u:bug>).
+				</simpara>
+			</listitem>
+			<listitem>
+				<simpara>A caching bug which resulted in operations beeing done with a wrong ldap connection has been fixed (<u:bug>41468</u:bug>).
 				</simpara>
 			</listitem>
 		</itemizedlist>
@@ -32,7 +42,7 @@
 				<simpara>
 					The migration script <filename>ucs-school-migrate-objects-to-4.1R2</filename> was added to convert user objects, admin group objects and school OU objects to the LDAP structure of UCS@school 4.1 R2.
 					By default, this script is automatically called by the join script <filename>35ucs-school-import</filename>.
-					The automatic execution may be disabled by setting the &ucsUCRV; <envar>ucsschool/update/ldap/41R2</envar> to the value <literal>false</literal> <emphasis>PRIOR</emphasis> to the update.
+					The automatic execution may be disabled by setting the &ucsUCRV; <envar>ucsschool/update/ldap/41R2</envar> to the value <literal>false</literal> <emphasis>PRIOR</emphasis> to the update (<u:bug>41162</u:bug>, <u:bug>41494</u:bug>, <u:bug>41583</u:bug>).
 				</simpara>
 			</listitem>
 			<listitem>
@@ -46,26 +56,47 @@
 				<simpara>
 					The <filename>import_user</filename> script has been rewritten from scratch, with a focus on extensibility.
 					Additionally to the existing hooks in <filename>/usr/share/ucs-school-import/hooks/user_*</filename> Python-based hooks can now be placed in <filename>/usr/share/ucs-school-import/pyhooks/user_*</filename>.
-					Documentation on configuration files and an example of a Python based hook is available at <filename>/usr/share/doc/ucs-school-import</filename>.
+					Documentation on configuration files and an example of a Python based hook is available at <filename>/usr/share/doc/ucs-school-import</filename> (<u:bug>41239</u:bug>, <u:bug>41242</u:bug>).
 				</simpara>
-			</listitem>	
+			</listitem>
+			<listitem>
+				<simpara>The object classes ucsschoolStudent, ucsschoolTeacher, ucsschoolStaff, ucsschoolAdministrator and the LDAP attribute uscschoolSchool have been added (<u:bug>41008</u:bug>).
+				</simpara>
+			</listitem>
+			<listitem>
+				<simpara>The extended attributes and extended options for the UCS@school user roles have been added (<u:bug>41014</u:bug>).
+				</simpara>
+			</listitem>
+			<listitem>
+				<simpara>The object class ucsschoolExam has been added (<u:bug>41123</u:bug>).
+				</simpara>
+			</listitem>
+			<listitem>
+				<simpara>A regression during evaluation of boolean &ucsUCR; variables has been fixed (<u:bug>40712</u:bug>).
+				</simpara>
+			</listitem>
+			<listitem>
+				<simpara>
+				</simpara>
+			</listitem>
 		</itemizedlist>
 	</section>
-
-<!--
 	<section id="relnotes:changelog:italc">
 		<title>iTALC</title>
 		<itemizedlist>
 			<listitem>
-				<simpara>
+				<simpara>iTalc has been updated to 2.0-2 (<u:bug>38213</u:bug>, <u:bug>38415</u:bug>).
 				</simpara>
 			</listitem>
 			<listitem>
-				<simpara>
+				<simpara>The build dependencies have been adjusted for building on UCS 4.1 (<u:bug>39593</u:bug>).
+				</simpara>
+				<simpara>The iTalc installer doesn't show an option to install the iTalc Master GUI anymore (<u:bug>38221</u:bug>).
 				</simpara>
 			</listitem>
 		</itemizedlist>
 	</section>
+<!--
 	<section id="relnotes:changelog:domain">
 		<title>Domain services</title>
 		<section id="relnotes:changelog:samba4">
@@ -81,28 +112,33 @@
 				</listitem>
 			</itemizedlist>
 		</section>
+-->
 		<section id="relnotes:changelog:netlogon">
 			<title>Windows NETLOGON Scripts</title>
 			<itemizedlist>
 				<listitem>
-					<simpara>
-					</simpara>
-				</listitem>
-				<listitem>
-					<simpara>
+					<simpara>The users where the link to the school console (UMC) is shown are not detected by their position in the LDAP directory anymore but by an LDAP filter.
+						The new &ucsUCRV; <envar>ucsschool/userlogon/umclink/filter</envar> defines this LDAP filter which by default detecs teacher and staff users.
+						The old &ucsUCRV; <envar>ucsschool/userlogon/umclink/re</envar> is only evaluated if the user has no UCS@school object class (<u:bug>41304</u:bug>).
 					</simpara>
 				</listitem>
 			</itemizedlist>
 		</section>
 		<section id="relnotes:changelog:openldap">
 			<title>OpenLDAP</title>
+			<itemizedlist>
+				<listitem>
+					<simpara>The LDAP attributes </literal>ucsschoolSchool<literal>, <literal>ucsschoolRecordUID</literal> and <literal>ucsschoolSourceUID</literal> are added automatically to the LDAP indices during the update to UCS@school 4.1 R2 (<u:bug>41297</u:bug>).
+					</simpara>
+				</listitem>
 		</section>
--->
 		<section id="relnotes:changelog:ldap-acl">
 			<title>LDAP ACL changes</title>
 			<itemizedlist>
 				<listitem>
-					<simpara>School Administrators may no longer alter the password of computers.
+					<simpara>School Administrators may no longer alter the password of computers (<u:bug>41407</u:bug>).
+					</simpara>
+					<simpara>The LDAP ACL's have been adjusted to allow access based on the newly introduced object classes (<u:bug>41115</u:bug>).
 					</simpara>
 				</listitem>
 			</itemizedlist>
@@ -157,8 +193,8 @@
 				<itemizedlist>
 					<listitem>
 						<simpara>In large environments it took a long time to open some UMC modules.
-						The initial, unrestrained search to populate the list views lasts long, if there are a lot of objects.
-						This "autosearch" can now be disabled via the UCR variables
+							The initial, unrestrained search to populate the list views lasts long, if there are a lot of objects.
+							This "autosearch" can now be disabled via the &ucsUCR; variables:
 							<itemizedlist>
 								<listitem><envar>ucsschool/workgroups/autosearch</envar></listitem>
 								<listitem><envar>ucsschool/assign-classes/autosearch</envar></listitem>
@@ -170,6 +206,7 @@
 								<listitem><envar>ucsschool/wizards/schoolwizards/schools/autosearch</envar></listitem>
 								<listitem><envar>ucsschool/wizards/autosearch</envar></listitem>
 							</itemizedlist>
+							(<u:bug>36031</u:bug>)
 						</simpara>
 					</listitem>
 				</itemizedlist>
@@ -226,7 +263,7 @@
 				<itemizedlist>
 					<listitem>
 						<simpara>Renaming a school class does not cause an error anymore when trying to
-   rename the related class share.
+   rename the related class share (<u:bug>40537</u:bug>).
 						</simpara>
 					</listitem>
 				</itemizedlist>
@@ -235,7 +272,7 @@
 				<title>Exam</title>
 				<itemizedlist>
 					<listitem>
-						<simpara>Computers are removed from group object after stopping an exam.
+						<simpara>Computers are removed from group object after stopping an exam (<u:bug>41112</u:bug>).
 						</simpara>
 					</listitem>
 					<listitem>
@@ -293,8 +330,10 @@
 		<title>Other changes</title>
 		<itemizedlist>
 			<listitem>
-				<simpara>SSL problems during joining a UCS@school slave have been resolved.
+				<simpara>SSL problems during joining a UCS@school slave have been resolved (<u:bug>37484</u:bug>).
 				</simpara>
+				<simpara>The detection of local schools during installation (in join scripts) have been adjusted to only detect schools of the educational or administrative group (<u:bug>41359</u:bug>).
+   				</simpara>
 			</listitem>
 		</itemizedlist>
 	</section>
