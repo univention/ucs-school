@@ -769,7 +769,7 @@ class CLI_Import_v2_Tester(object):
 
 			userlist = self.lo.searchDn('uid=%s' % (person.username,))
 			if len(userlist) != 1:
-				self.log.error('Invalid number of user objects for user %r! Found new objects: %r', username, userlist)
+				self.log.error('Invalid number of user objects for user %r! Found new objects: %r', person.username, userlist)
 				utils.fail('Stopping here')
 
 			person.update(dn=userlist[0])
