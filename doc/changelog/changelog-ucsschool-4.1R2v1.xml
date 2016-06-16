@@ -43,11 +43,12 @@
 				</simpara>
 			</listitem>
 			<listitem>
-				<simpara>The <filename>import_user</filename> script has been rewritten from scratch, with a focus on extensibility.
-				Additionally to the existing hooks in <filename>/usr/share/ucs-school-import/hooks/user_*</filename> Python-based hooks can now be placed in <filename>/usr/share/ucs-school-import/pyhooks/user_*</filename>.
-				Documentation on configuration files and an example of a Python based hook is available at <filename>/usr/share/doc/ucs-school-import<filename>.
+				<simpara>
+					The <filename>import_user</filename> script has been rewritten from scratch, with a focus on extensibility.
+					Additionally to the existing hooks in <filename>/usr/share/ucs-school-import/hooks/user_*</filename> Python-based hooks can now be placed in <filename>/usr/share/ucs-school-import/pyhooks/user_*</filename>.
+					Documentation on configuration files and an example of a Python based hook is available at <filename>/usr/share/doc/ucs-school-import</filename>.
 				</simpara>
-			</listitem>		
+			</listitem>	
 		</itemizedlist>
 	</section>
 
