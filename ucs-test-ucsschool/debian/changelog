@@ -1,3 +1,9 @@
+ucs-test-ucsschool (3.0.12-8) unstable; urgency=low
+
+  * Bug #41472: use longer usernames to prevent naming conflicts
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Thu, 16 Jun 2016 02:53:00 +0200
+
 ucs-test-ucsschool (3.0.12-7) unstable; urgency=low
 
   * Bug #41239: updated 34_import-users_via_cli_v2 due to PyHook changes
