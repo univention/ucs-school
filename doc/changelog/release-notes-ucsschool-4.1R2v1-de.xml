@@ -51,10 +51,10 @@ feedback@univention.de
 						Das Identitäts- und Berechtigungsmanagement von &ucsUAS; wurde erweitert, so
 						dass Benutzerkonten für Schüler, Lehrkräfte und Mitarbeiter zukünftig schulübergreifend verwendet
 						werden können. Schulübergreifende Benutzerkonten werden an mehrere, vordefinierte Schulen
-						repliziert und können in diversen Szenarien multiple Benutzerkonten ersetzen (z.B. bei Lehrern war
-						zuvor häufig ein Benutzerkonto pro Schule notwendig).
-						Benutzer können das gleiche Benutzerkonto an mehreren Schulen verwenden, was die
-						Arbeit an den Systemen der Domäne vereinfacht und auch Vorteile bei z.B. angebundenen Cloud-Diensten
+						repliziert und können in diversen Szenarien multiple Benutzerkonten ersetzen (z.B. bei Lehrern, die an mehreren Schulen tätig sind, war
+						zuvor häufig ein separates Benutzerkonto pro Schule notwendig).
+						Benutzer können jetzt das gleiche Benutzerkonto an mehreren Schulen verwenden, was die
+						Arbeit an den Systemen der Domäne vereinfacht und z.B. auch Vorteile bei angebundenen Cloud-Diensten
 						mit sich bringt. Hinweise zur Verwendung der schulübergreifenden Benutzerkonto finden sich im
 						&ucsUAS;-Handbuch.
 					</para>
@@ -72,7 +72,7 @@ feedback@univention.de
 					<para>
 						Univention hat mit &ucsUAS; 4.1 R2 die Automatisierungsmöglichkeiten stark
 						erweitert, um wichtige Zusatzinformationen, wie Benutzernamen und E-Mailadressen, automatisiert und
-						nach den Vorgaben der Kunden generieren zu können. Damit entfällt der Aufwand eigene Lösungen zur
+						nach den Vorgaben des Kunden generieren zu können. Damit entfällt der Aufwand eigene Lösungen zur
 						Benutzerkontenpflege zu entwickeln. Darüber hinaus haben wir Schnittstellen in &ucsUAS; geschaffen,
 						über die zusätzliche Datenformate für bestehende Schulverwaltungssysteme integriert werden können,
 						wie XML, JSON und CSV.  Die neue Schnittstelle zur Benutzerkontenpflege ermöglicht es, viele
@@ -127,7 +127,10 @@ feedback@univention.de
 							Schule/OU nur auf dem zugeordneten Schulserver repliziert wurde, werden jetzt auch die OUs und
 							Container anderer Schulen auf alle Schulserver repliziert. Speziell handelt es sich dabei um die
 							Container <literal>cn=users,ou=...,LDAP-BASIS</literal> und
-							<literal>cn=groups,ou=...,LDAP-BASIS</literal>, die teilweise übertragen werden.
+							<literal>cn=groups,ou=...,LDAP-BASIS</literal>, die teilweise übertragen werden. Benutzerkonten
+							werden hingegen nur übertragen, wenn diese explizit für die jeweilige Schule freigeschaltet
+							sind. Einige Schul-Gruppen (<literal>schueler-...</literal>, <literal>lehrer-</literal>,
+							<literal>Domain Users ...</literal>) werden generell auf alle Schulserver übertragen.
 						</para>
 						<para>
 							Direkt nach dem Update auf &ucsUAS; 4.1 R2 müssen noch nicht alle
