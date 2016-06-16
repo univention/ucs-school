@@ -40,7 +40,7 @@ from ucsschool.lib.models.utils import create_passwd
 from ucsschool.lib.models.attributes import Username, Firstname, Lastname, Birthday, Email, Password, Disabled, SchoolClassesAttribute, Schools
 from ucsschool.lib.models.base import UCSSchoolHelperAbstractClass, UnknownModel, WrongModel
 from ucsschool.lib.models.school import School
-from ucsschool.lib.models.group import Group, BasicGroup, SchoolClass, ComputerRoom, _MayHaveSchoolPrefix, _MayHaveSchoolSuffix
+from ucsschool.lib.models.group import Group, BasicGroup, SchoolClass, WorkGroup, SchoolGroup, ComputerRoom, _MayHaveSchoolPrefix, _MayHaveSchoolSuffix
 from ucsschool.lib.models.computer import AnyComputer
 from ucsschool.lib.models.misc import MailDomain
 from ucsschool.lib.models.utils import ucr, _, logger
@@ -329,6 +329,7 @@ class User(UCSSchoolHelperAbstractClass):
 					raise  # TODO: ignore
 
 		self._udm_obj_searched = False
+		self.school_classes.pop(old_school, None)
 		udm_obj = self.get_udm_object(lo)
 		udm_obj['primaryGroup'] = self.primary_group_dn(lo)
 		groups = set(udm_obj['groups'])
@@ -434,6 +435,17 @@ class User(UCSSchoolHelperAbstractClass):
 		if self.school == school:
 			if not self.change_school(self.schools[0], lo):
 				return False
+		else:
+			for cls in (SchoolClass, WorkGroup, SchoolGroup):
+				for group in cls.get_all(lo, school, filter_format('uniqueMember=%s', (self.dn,))):
+					try:
+						group.users.remove(self.dn)
+					except ValueError:
+						pass
+					else:
+						logger.info('Removing %r from group %r of old school.', self.dn, group.dn)
+						group.modify(lo)
+		self.school_classes.pop(school, None)
 		return self.modify(lo)
 
 	def get_group_dn(self, group_name):

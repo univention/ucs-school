@@ -1,3 +1,10 @@
+ucs-school-lib (9.0.20-1) unstable; urgency=medium
+
+  * Bug #41293: correctly remove user from school groups when changing
+  	school/deleting from school
+
+ -- Florian Best <best@univention.de>  Thu, 16 Jun 2016 14:12:49 +0200
+
 ucs-school-lib (9.0.19-3) unstable; urgency=low
 
   * Bug #41494: add option for groups/group - adjusted ucs-school-lib accordingly
