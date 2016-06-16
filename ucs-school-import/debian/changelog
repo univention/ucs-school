@@ -1,3 +1,10 @@
+ucs-school-import (14.0.13-1) unstable; urgency=low
+
+  * Bug #41242: add additional dummy columns in config for legacy hooks
+    during legacy import
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Thu, 16 Jun 2016 13:39:39 +0200
+
 ucs-school-import (14.0.12-1) unstable; urgency=low
 
   * Bug #41239: reraise CSV reader error as application error
