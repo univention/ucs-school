@@ -85,13 +85,13 @@
 		<title>iTALC</title>
 		<itemizedlist>
 			<listitem>
-				<simpara><package>iTalc</package> has been updated to 2.0-2 (<u:bug>38213</u:bug>, <u:bug>38415</u:bug>).
+				<simpara><application>iTALC</application> has been updated to 2.0-2 (<u:bug>38213</u:bug>, <u:bug>38415</u:bug>).
 				</simpara>
 			</listitem>
 			<listitem>
 				<simpara>The build dependencies have been adjusted for building on UCS 4.1 (<u:bug>39593</u:bug>).
 				</simpara>
-				<simpara>The <package>iTalc</package> installer doesn't show an option to install the <package>iTalc</package> Master GUI anymore (<u:bug>38221</u:bug>).
+				<simpara>The <application>iTALC</application> installer doesn't show an option to install the <application>iTALC</application> Master GUI anymore (<u:bug>38221</u:bug>).
 				</simpara>
 			</listitem>
 		</itemizedlist>

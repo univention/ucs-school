@@ -8,7 +8,7 @@
 	%DocBookDTD;
 	%entities;
 ]>
-<book lang="de" id="ucsschool-4.0r2-teacher">
+<book lang="de" id="ucsschool-4.1r2-teacher">
   <bookinfo>
     <title>
       &ucsUAS;
@@ -18,13 +18,13 @@
     </subtitle>
     <legalnotice>
       <literallayout>
-Version 4.1 v1
-Stand: 17. November 2015
+Version 4.1 R2 v1
+Stand: 16. Juni 2016
       </literallayout>
 
       <literallayout lang="">
 Alle Rechte vorbehalten./ All rights reserved.
-(c) 2002-2015
+(c) 2002-2016
 Univention GmbH
 Mary-Somerville-Straße 1
 28359 Bremen
@@ -129,10 +129,10 @@ feedback@univention.de
 		  Versionen:
 		</para>
 		  <itemizedlist>
-			<listitem><simpara>Google Chrome ab Version 14</simpara></listitem>
-			<listitem><simpara>Mozilla Firefox ab Version 10</simpara></listitem>
-			<listitem><simpara>Microsoft Internet Explorer ab Version 9</simpara></listitem>
-			<listitem><simpara>Safari (auf dem iPad 2)</simpara></listitem>
+			<listitem><simpara>Google Chrome ab Version 37</simpara></listitem>
+			<listitem><simpara>Mozilla Firefox ab Version 38</simpara></listitem>
+			<listitem><simpara>Microsoft Internet Explorer ab Version 11</simpara></listitem>
+			<listitem><simpara>Safari (auf dem iPad 2) ab Version 9</simpara></listitem>
 		  </itemizedlist>
 		<para>
 		  Wird kein unterstützter Browser vorgefunden, wird eine Warnung ausgegeben und es können
