@@ -197,15 +197,15 @@
 							The initial, unrestrained search to populate the list views lasts long, if there are a lot of objects.
 							This "autosearch" can now be disabled via the &ucsUCR; variables:
 							<itemizedlist>
-								<listitem><envar>ucsschool/workgroups/autosearch</envar></listitem>
-								<listitem><envar>ucsschool/assign-classes/autosearch</envar></listitem>
-								<listitem><envar>ucsschool/assign-teacher/autosearch</envar></listitem>
-								<listitem><envar>ucsschool/passwordreset/autosearch</envar></listitem>
-								<listitem><envar>ucsschool/wizards/schoolwizards/users/autosearch</envar></listitem>
-								<listitem><envar>ucsschool/wizards/schoolwizards/classes/autosearch</envar></listitem>
-								<listitem><envar>ucsschool/wizards/schoolwizards/computers/autosearch</envar></listitem>
-								<listitem><envar>ucsschool/wizards/schoolwizards/schools/autosearch</envar></listitem>
-								<listitem><envar>ucsschool/wizards/autosearch</envar></listitem>
+								<listitem><simpara><envar>ucsschool/workgroups/autosearch</envar></simpara></listitem>
+								<listitem><simpara><envar>ucsschool/assign-classes/autosearch</envar></simpara></listitem>
+								<listitem><simpara><envar>ucsschool/assign-teacher/autosearch</envar></simpara></listitem>
+								<listitem><simpara><envar>ucsschool/passwordreset/autosearch</envar></simpara></listitem>
+								<listitem><simpara><envar>ucsschool/wizards/schoolwizards/users/autosearch</envar></simpara></listitem>
+								<listitem><simpara><envar>ucsschool/wizards/schoolwizards/classes/autosearch</envar></simpara></listitem>
+								<listitem><simpara><envar>ucsschool/wizards/schoolwizards/computers/autosearch</envar></simpara></listitem>
+								<listitem><simpara><envar>ucsschool/wizards/schoolwizards/schools/autosearch</envar></simpara></listitem>
+								<listitem><simpara><envar>ucsschool/wizards/autosearch</envar></simpara></listitem>
 							</itemizedlist>
 							(<u:bug>36031</u:bug>)
 						</para>
