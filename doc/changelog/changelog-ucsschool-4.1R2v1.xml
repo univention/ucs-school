@@ -193,7 +193,7 @@
 				<title>General</title>
 				<itemizedlist>
 					<listitem>
-						<simpara>In large environments it took a long time to open some UMC modules.
+						<para>In large environments it took a long time to open some UMC modules.
 							The initial, unrestrained search to populate the list views lasts long, if there are a lot of objects.
 							This "autosearch" can now be disabled via the &ucsUCR; variables:
 							<itemizedlist>
@@ -208,7 +208,7 @@
 								<listitem><envar>ucsschool/wizards/autosearch</envar></listitem>
 							</itemizedlist>
 							(<u:bug>36031</u:bug>)
-						</simpara>
+						</para>
 					</listitem>
 				</itemizedlist>
 			</section>
