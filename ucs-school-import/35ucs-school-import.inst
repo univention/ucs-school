@@ -292,6 +292,7 @@ univention-directory-manager settings/extended_attribute create "$@" --ignore_ex
 	--set name="ucsschoolSchool-AdministratorGroup" \
 	--append module=groups/group \
 	--append options="ucsschoolAdministratorGroup" \
+	--set hook="schoolAdminGroup" \
 	--set tabName="UCS@school" \
 	--set tabPosition=1 \
 	--set groupName="General" \

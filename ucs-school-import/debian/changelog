@@ -1,3 +1,9 @@
+ucs-school-import (14.0.11-7) unstable; urgency=medium
+
+  * Bug #41494: add hook for extended attribute to add option
+
+ -- Florian Best <best@univention.de>  Thu, 16 Jun 2016 04:30:13 +0200
+
 ucs-school-import (14.0.11-6) unstable; urgency=low
 
   * Bug #41494: add option for groups/group - adjusted create_ou accordingly
