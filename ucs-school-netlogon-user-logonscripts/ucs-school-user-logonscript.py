@@ -38,6 +38,7 @@ import re
 import time
 import shutil
 import ldap
+import traceback
 from ldap.filter import filter_format
 
 hostname = listener.baseConfig['hostname']
@@ -300,7 +301,7 @@ Function MapDrive(Drive,Share)
 		try:
 			is_teacher = bool(lo.search(base=dn, scope='base', filter=filterTeacher)[0])
 		except (ldap.NO_SUCH_OBJECT, IndexError):
-			pass
+			is_teacher = False
 		if not is_teacher:
 			is_teacher = reTeacher.match(dn)  # old format before migration
 	if is_teacher:
@@ -388,10 +389,13 @@ class LDAPConnection(object):
 					univention.debug.debug(univention.debug.LISTENER, univention.debug.WARN, 'ucsschool-user-logonscripts: unable to connect to LDAP server (%s), retrying in 10 seconds' % (ex[0]['desc'],))
 					time.sleep(10)
 
-	def __exit__(self, exc_type, exc_value, traceback):
-		if exc_type is not None and isinstance(exc_type, type(ldap.LDAPError)):
+	def __exit__(self, exc_type, exc_value, etraceback):
+		if exc_type is None:
+			return
+		if isinstance(exc_value, ldap.LDAPError):
 			LDAPConnection.lo = None
-			univention.debug.debug(univention.debug.LISTENER, univention.debug.ERROR, 'ucsschool-user-logonscripts: a LDAP error occurred - invalidating LDAP connection - error=%r' % (exc_value[0]['desc'],))
+		univention.debug.debug(univention.debug.LISTENER, univention.debug.ERROR, 'ucsschool-user-logonscripts: error=%r' % (exc_value,))
+		univention.debug.debug(univention.debug.LISTENER, univention.debug.ERROR, ''.join(traceback.format_exception(exc_type, exc_value, etraceback)))
 
 
 def groupchange(dn, new, old):
