@@ -131,6 +131,7 @@
 					<simpara>The LDAP attributes <literal>ucsschoolSchool</literal>, <literal>ucsschoolRecordUID</literal> and <literal>ucsschoolSourceUID</literal> are added automatically to the LDAP indices during the update to UCS@school 4.1 R2 (<u:bug>41297</u:bug>).
 					</simpara>
 				</listitem>
+			</itemizedlist>
 		</section>
 		<section id="relnotes:changelog:ldap-acl">
 			<title>LDAP ACL changes</title>
