@@ -648,6 +648,9 @@ def verify_school_ou(schoolNr, co, lo, baseDN, dcName=None, ShareFileServer=None
 	# verify that ouadmin group contains correct OU
 	obj = univention.admin.objects.get(group_module, co, lo, position='', dn=grp_ouadmins)
 	obj.open()
+	admin_option = 'ucsschoolAdministratorGroup'
+	if not admin_option in obj.options:
+		obj.options.append(admin_option)
 	obj['school'] = schoolNr
 	obj.modify()
 

@@ -275,10 +275,23 @@ univention-directory-manager settings/extended_attribute create "$@" --ignore_ex
 	--set multivalue="0" \
 	--set disableUDMWeb=1 || die
 
+univention-directory-manager settings/extended_options create "$@" --ignore_exists \
+	--position "cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
+	--set name="ucsschoolAdministratorGroup" \
+	--append module=groups/group \
+	--set objectClass=ucsschoolAdministratorGroup \
+	--set default=0 \
+	--set editable=1 \
+	--set shortDescription="UCS@school Administrator Group" \
+	--set longDescription="Specifies that this group contains UCS@school school admins for the related school" \
+	--set translationShortDescription='"de_DE" "UCS@school-Administrator-Gruppe"' \
+	--set translationLongDescription='"de_DE" "Spezifiziert, dass diese Gruppe ein UCS@school-Schul-Administratoren für die betreffende Schule enthält"' || die
+
 univention-directory-manager settings/extended_attribute create "$@" --ignore_exists \
 	--position "cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
 	--set name="ucsschoolSchool-AdministratorGroup" \
 	--append module=groups/group \
+	--append options="ucsschoolAdministratorGroup" \
 	--set tabName="UCS@school" \
 	--set tabPosition=1 \
 	--set groupName="General" \

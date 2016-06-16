@@ -161,6 +161,9 @@ class School(UCSSchoolHelperAbstractClass):
 		except noObject:
 			logger.error('Could not load OU admin group %r for adding "school" value', group.dn)
 		else:
+			admin_option = 'ucsschoolAdministratorGroup'
+			if not admin_option in udm_obj.options:
+				udm_obj.options.append(admin_option)
 			udm_obj['school'] = [self.name]
 			udm_obj.modify()
 

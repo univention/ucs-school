@@ -1,3 +1,9 @@
+ucs-school-lib (9.0.19-3) unstable; urgency=low
+
+  * Bug #41494: add option for groups/group - adjusted ucs-school-lib accordingly
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Thu, 16 Jun 2016 02:31:51 +0200
+
 ucs-school-lib (9.0.19-2) unstable; urgency=low
 
   * Bug #41494: automatically add ucsschoolSchool attribute to OU admin groups
