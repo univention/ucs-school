@@ -6,5 +6,10 @@ src: ucs-school-netlogon-user-logonscripts
 fix: 
 desc: |
  This update addresses the following issue(s):
- * Adjustments for school overlapping users have been implemented (Bug #41304).
+ * The users where the link to the school console (UMC) is shown are not
+   detected by their position in the LDAP directory anymore but by an LDAP
+   filter. The new UCR variable "ucsschool/userlogon/umclink/filter" defines
+   this LDAP filter which by default detecs teacher and staff users. The
+   old UCR variable "ucsschool/userlogon/umclink/re" is only evaluated if
+   the user has no UCS@school object class (Bug #41304).
 bug: [41304]
