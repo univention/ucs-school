@@ -296,13 +296,13 @@ Function MapDrive(Drive,Share)
 		skript += 'oLink.Save\n\n'
 
 	# create shortcut to umc for teachers
-	is_teacher = reTeacher.match(dn)
-	if not is_teacher:
-		with LDAPConnection() as lo:
-			try:
-				is_teacher = bool(lo.search(base=dn, scope='base', filter=filterTeacher)[0])
-			except (ldap.NO_SUCH_OBJECT, IndexError):
-				pass
+	with LDAPConnection() as lo:
+		try:
+			is_teacher = bool(lo.search(base=dn, scope='base', filter=filterTeacher)[0])
+		except (ldap.NO_SUCH_OBJECT, IndexError):
+			pass
+		if not is_teacher:
+			is_teacher = reTeacher.match(dn)  # old format before migration
 	if is_teacher:
 		skript += 'Set WshShell = CreateObject("WScript.Shell")\n'
 		skript += 'Set objFSO = CreateObject("Scripting.FileSystemObject")\n'
