@@ -516,7 +516,7 @@ class CLI_Import_v2_Tester(object):
 			config.update_entry('csv:mapping:DBID', 'record_uid')
 			config.update_entry('scheme:recordUID', '<record_uid>')
 			config.update_entry('user_role', role)
-			config.update_entry('scheme:username:default', "<:umlauts>user-<firstname>[0].<lastname>[0][ALWAYSCOUNTER]")
+			config.update_entry('scheme:username:default', "<:umlauts>user-<firstname>[0:2].<lastname>[0:2][ALWAYSCOUNTER]")
 
 			person = Person(self.ou_A.name, role)
 			person.update(record_uid=record_uid, source_uid=source_uid, username=None)
@@ -543,7 +543,7 @@ class CLI_Import_v2_Tester(object):
 			person.update(dn=new_users[0], record_uid=record_uid, source_uid=source_uid)
 			person.verify()
 
-			username_prefix = 'user-%s.%s' % (person.firstname[0], person.lastname[0])
+			username_prefix = 'user-%s.%s' % (person.firstname[0:2], person.lastname[0:2])
 			if person.username.rstrip('0123456789') != username_prefix:
 				utils.fail('username %r does not start with expected string %r' % (person.username, username_prefix))
 			self.log.info('Username %r starts as expected with string %r' % (person.username, username_prefix))
@@ -636,7 +636,7 @@ class CLI_Import_v2_Tester(object):
 			config.update_entry('csv:mapping:DBID', 'record_uid')
 			config.update_entry('scheme:recordUID', '<record_uid>')
 			config.update_entry('user_role', role)
-			config.update_entry('scheme:username:default', "<:umlauts>user-<firstname>[0].<lastname>[0][ALWAYSCOUNTER]")
+			config.update_entry('scheme:username:default', "<:umlauts>user-<firstname>[0:2].<lastname>[0:2][ALWAYSCOUNTER]")
 			config.update_entry('scheme:email', "<:umlauts><firstname:lower>[0:3].<lastname:lower>[2:5]@example.com")
 			config.update_entry('scheme:employeeNumber', "The user's name is <firstname:upper> <lastname> <description>")
 
@@ -661,7 +661,7 @@ class CLI_Import_v2_Tester(object):
 			person.update(dn=new_users[0], record_uid=record_uid, source_uid=source_uid, mail=mail)
 			person.verify()
 
-			username_prefix = 'user-%s.%s' % (person.firstname[0], person.lastname[0])
+			username_prefix = 'user-%s.%s' % (person.firstname[0:2], person.lastname[0:2])
 			if person.username.rstrip('0123456789') != username_prefix:
 				utils.fail('username %r does not start with expected string %r' % (person.username, username_prefix))
 			self.log.info('Username %r starts as expected with string %r' % (person.username, username_prefix))
