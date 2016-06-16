@@ -33,8 +33,17 @@ Base class for all Python based hooks.
 
 from ucsschool.lib.models.utils import logger
 
+#
+# Do not use this class directly, use one of its subclasses like UserPyHook.
+#
+
 
 class PyHook(object):
+
+	# If multiple hook classes are found, hook functions with higher
+	# priorities run before those with lower priorities.
+	priority = {}
+
 	def __init__(self, lo):
 		self.lo = lo          # LDAP object
 		self.logger = logger  # Python logging instance
