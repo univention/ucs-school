@@ -128,7 +128,7 @@
 			<title>OpenLDAP</title>
 			<itemizedlist>
 				<listitem>
-					<simpara>The LDAP attributes </literal>ucsschoolSchool<literal>, <literal>ucsschoolRecordUID</literal> and <literal>ucsschoolSourceUID</literal> are added automatically to the LDAP indices during the update to UCS@school 4.1 R2 (<u:bug>41297</u:bug>).
+					<simpara>The LDAP attributes <literal>ucsschoolSchool</literal>, <literal>ucsschoolRecordUID</literal> and <literal>ucsschoolSourceUID</literal> are added automatically to the LDAP indices during the update to UCS@school 4.1 R2 (<u:bug>41297</u:bug>).
 					</simpara>
 				</listitem>
 		</section>
