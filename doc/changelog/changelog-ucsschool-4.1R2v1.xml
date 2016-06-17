@@ -75,10 +75,6 @@
 				<simpara>A regression during evaluation of boolean &ucsUCR; variables has been fixed (<u:bug>40712</u:bug>).
 				</simpara>
 			</listitem>
-			<listitem>
-				<simpara>
-				</simpara>
-			</listitem>
 		</itemizedlist>
 	</section>
 <!--
@@ -124,6 +120,10 @@
 				<listitem>
 					<simpara>School Administrators may no longer alter the password of computers (<u:bug>41407</u:bug>).
 					</simpara>
+				</listitem>
+			</itemizedlist>
+			<itemizedlist>
+				<listitem>
 					<simpara>The LDAP ACLs have been adjusted to allow access based on the newly introduced object classes (<u:bug>41115</u:bug>).
 					</simpara>
 				</listitem>
@@ -318,6 +318,10 @@
 			<listitem>
 				<simpara>SSL problems during joining a UCS@school slave have been resolved (<u:bug>37484</u:bug>).
 				</simpara>
+			</listitem>
+		</itemizedlist>
+		<itemizedlist>
+			<listitem>
 				<simpara>The detection of local schools during installation (in join scripts) have been adjusted to only detect schools of the educational or administrative group (<u:bug>41359</u:bug>).
    				</simpara>
 			</listitem>
