@@ -1,3 +1,10 @@
+ucs-school-lib (9.0.20-2) unstable; urgency=low
+
+  * Bug #41609: don't try to remove classes from Staff when moving to another
+    school
+
+ -- Daniel Troeder <troeder@univention.de>  Mon, 20 Jun 2016 13:35:52 +0200
+
 ucs-school-lib (9.0.20-1) unstable; urgency=medium
 
   * Bug #41293: correctly remove user from school groups when changing

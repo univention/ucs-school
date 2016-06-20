@@ -329,7 +329,8 @@ class User(UCSSchoolHelperAbstractClass):
 					raise  # TODO: ignore
 
 		self._udm_obj_searched = False
-		self.school_classes.pop(old_school, None)
+		if self.school_classes:
+			self.school_classes.pop(old_school, None)
 		udm_obj = self.get_udm_object(lo)
 		udm_obj['primaryGroup'] = self.primary_group_dn(lo)
 		groups = set(udm_obj['groups'])
