@@ -24,10 +24,10 @@ def main():
 			nr_of_lines = 2 # number of users to import for each type
 			print 'Generate import files ; staff does not have class attr'
 			files_01 = [
-					stu_tea_file(nr_of_lines),
-					stu_tea_file(nr_of_lines),
+					stu_tea_file(nr_of_lines, school),
+					stu_tea_file(nr_of_lines, school),
 					staff_file(nr_of_lines),
-					stu_tea_file(nr_of_lines)
+					stu_tea_file(nr_of_lines, school)
 					]
 			expected_upload_status = 200
 			delete_not_mentioned = False
@@ -48,10 +48,10 @@ def main():
 			print 'do the same steps with delete_not_mentioned=True'
 			nr_of_lines = 1
 			files_02 = [
-					stu_tea_file(nr_of_lines),
-					stu_tea_file(nr_of_lines),
+					stu_tea_file(nr_of_lines, school),
+					stu_tea_file(nr_of_lines, school),
 					staff_file(nr_of_lines),
-					stu_tea_file(nr_of_lines)
+					stu_tea_file(nr_of_lines, school)
 					]
 			delete_not_mentioned = True
 			users, errors, warnings = check_import_users(
@@ -75,10 +75,10 @@ def main():
 					]
 			nr_of_lines = 1
 			files_03 = [
-					stu_tea_file(nr_of_lines),
-					stu_tea_file(nr_of_lines),
+					stu_tea_file(nr_of_lines, school),
+					stu_tea_file(nr_of_lines, school),
 					staff_file(nr_of_lines),
-					stu_tea_file(nr_of_lines)
+					stu_tea_file(nr_of_lines, school)
 					]
 			print 'Assign the same usernames of users in files_02 to users in files_03'
 			transform_usernames(files_02, files_03, nr_of_lines)
@@ -99,10 +99,10 @@ def main():
 
 			print 'import new users with delete_not_mentioned=False'
 			files_02 = [
-					stu_tea_file(nr_of_lines),
-					stu_tea_file(nr_of_lines),
+					stu_tea_file(nr_of_lines, school),
+					stu_tea_file(nr_of_lines, school),
 					staff_file(nr_of_lines),
-					stu_tea_file(nr_of_lines)
+					stu_tea_file(nr_of_lines, school)
 					]
 			users, errors, warnings = check_import_users(
 					school,
@@ -115,10 +115,10 @@ def main():
 			update_persons(school, persons_list, users)
 			verify_persons(persons_list)
 
-			files_04 = [stu_tea_file(nr_of_lines),
-					stu_tea_file(nr_of_lines),
+			files_04 = [stu_tea_file(nr_of_lines, school),
+					stu_tea_file(nr_of_lines, school),
 					staff_file(nr_of_lines),
-					stu_tea_file(nr_of_lines)
+					stu_tea_file(nr_of_lines, school)
 					]
 			print 'Assign the same usernames of users in files_02 to users in files_04'
 			transform_usernames(files_02, files_04, nr_of_lines)

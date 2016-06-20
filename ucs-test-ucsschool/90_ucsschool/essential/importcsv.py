@@ -315,7 +315,7 @@ def random_email():
 	return '%s@%s' % (uts.random_name(), ucr.get('domainname'))
 
 
-def random_line_stu_tea():
+def random_line_stu_tea(school):
 	"""create random line to import random student/teacher/teacher and staff"""
 	return '%s,%s,%s,%s%s.%s%s.%s,%s,%s,%s\n' % (
 			uts.random_username(),
@@ -328,7 +328,7 @@ def random_line_stu_tea():
 			uts.random_int(1980, 2014),
 			uts.random_name(),
 			random_email(),
-			uts.random_string(),
+			"{}-{}".format(school, uts.random_string()),
 	)
 
 
@@ -356,11 +356,11 @@ def staff_file(nr_of_lines):
 	return result
 
 
-def stu_tea_file(nr_of_lines):
+def stu_tea_file(nr_of_lines, school):
 	"""Creates random contents of file ready to import student/teacher/teacher and staff"""
 	result = ['Username,First name,Last name,Birthday,Password,Email,Class\n']
 	for i in xrange(nr_of_lines):
-		result.append(random_line_stu_tea())
+		result.append(random_line_stu_tea(school))
 	return result
 
 
