@@ -1,0 +1,11 @@
+product: ucsschool
+release: "4.1"
+version: [1]
+scope: ucs_4.1-0-ucs-school-4.1
+src: ucs-school-lib
+fix: 9.0.20-2.225.201606201338
+desc: |
+ This update addresses the following issue(s):
+ * A bug was fixed, that prevented staff users from being moved from one
+   school to another (Bug #41609)
+bug: [41609]
