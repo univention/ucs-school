@@ -264,7 +264,7 @@ class User(UCSSchoolHelperAbstractClass):
 					logger.debug('No. Leaving it alone...')
 					continue
 				logger.debug('Yes, part of %s!', school_class.school)
-				if school_class.school not in self.school_classes:
+				if school_class.school not in (self.school_classes or {}):
 					continue  # if the key isn't set we don't change anything to the groups. to remove the groups it has to be an empty list
 				classes = self.school_classes[school_class.school]
 				remove = school_class.name not in classes and school_class.get_relative_name() not in classes
@@ -446,7 +446,8 @@ class User(UCSSchoolHelperAbstractClass):
 					else:
 						logger.info('Removing %r from group %r of old school.', self.dn, group.dn)
 						group.modify(lo)
-		self.school_classes.pop(school, None)
+		if self.school_classes:
+			self.school_classes.pop(school, None)
 		return self.modify(lo)
 
 	def get_group_dn(self, group_name):
