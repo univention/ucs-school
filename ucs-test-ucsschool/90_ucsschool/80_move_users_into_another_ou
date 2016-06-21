@@ -35,16 +35,14 @@ def main():
 		students_group = 'cn=schueler-%s,cn=groups,ou=%s,%s' % (b, b, base)
 		grp1_name = uts.random_username()
 		grp2_name = uts.random_username()
-		kl2_group = 'cn=%s-%s,cn=klassen,cn=schueler,cn=groups,ou=%s,%s' % (b, grp2_name, b, base)
+		two_klasses = '{0}-{1},{0}-{2}'.format(a, grp1_name, grp2_name)
 
-		twokl = '{0}-{1},{0}-{2}'.format(a, grp1_name, grp2_name)
 		users = [
-			(env.create_user(a, classes=twokl), 'schueler', [students_group, domain_users_school, kl2_group]),
-			(env.create_user(a, is_teacher=True, classes=twokl), 'lehrer', [domain_users_school, teacher_group, kl2_group]),
+			(env.create_user(a, classes=two_klasses), 'schueler', [students_group, domain_users_school]),
+			(env.create_user(a, is_teacher=True, classes=two_klasses), 'lehrer', [domain_users_school, teacher_group]),
 			(env.create_user(a, is_staff=True), 'mitarbeiter', [domain_users_school, staff_group]),
-			(env.create_user(a, is_teacher=True, is_staff=True, classes=twokl), 'lehrer', [domain_users_school, teacher_group, staff_group, kl2_group]),
+			(env.create_user(a, is_teacher=True, is_staff=True, classes=two_klasses), 'lehrer', [domain_users_school, teacher_group, staff_group]),
 		]
-		env.create_school_class(b, class_name=grp2_name, users=[users[0][0][1], users[1][0][1], users[3][0][1]])
 		lo = env.open_ldap_connection()
 
 		for (user, dn,), roleshare_path, groups in users:
@@ -75,6 +73,7 @@ def main():
 
 			assert set(groups) == set(user.get_udm_object(lo)['groups']), 'Moving the user failed... Expected groups %r != %r' % (groups, user.get_udm_object(lo)['groups'])
 			assert '{}-{}'.format(b, grp1_name) not in [sc.name for sc in SchoolClass.get_all(lo, b)], 'Old school class "{}" was created in target school.'.format(grp1_name)
+			assert '{}-{}'.format(b, grp2_name) not in [sc.name for sc in SchoolClass.get_all(lo, b)], 'Old school class "{}" was created in target school.'.format(grp2_name)
 
 if __name__ == '__main__':
 	main()

@@ -1,3 +1,9 @@
+ucs-test-ucsschool (3.0.12-12) unstable; urgency=low
+
+  * Bug #41620: fix test (was adding users to school Bs class before the move)
+
+ -- Daniel Troeder <troeder@univention.de>  Tue, 21 Jun 2016 17:14:54 +0200
+
 ucs-test-ucsschool (3.0.12-11) unstable; urgency=low
 
   * Bug #41620: add test that when a user is moved to a new school, only those
