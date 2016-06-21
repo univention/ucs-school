@@ -44,6 +44,7 @@ import subprocess
 import traceback
 import pprint
 from ldap import LDAPError
+from collections import defaultdict
 
 import univention.testing.utils as utils
 import univention.testing.ucr
@@ -55,7 +56,7 @@ import univention.admin.uldap as udm_uldap
 import univention.admin.uexceptions as udm_errors
 from univention.lib.umc_connection import UMCConnection as _UMCConnection
 
-from ucsschool.lib.models import School, User, Student, Teacher, TeachersAndStaff, Staff
+from ucsschool.lib.models import School, User, Student, Teacher, TeachersAndStaff, Staff, SchoolClass
 from ucsschool.lib.models.utils import add_stream_logger_to_schoollib
 from ucsschool.lib.models.group import ComputerRoom
 
@@ -80,8 +81,8 @@ class UCSTestSchool(object):
 
 	PATH_CMD_BASE = '/usr/share/ucs-school-import/scripts'
 	PATH_CMD_CREATE_OU = PATH_CMD_BASE + '/create_ou'
-	PATH_CMD_IMPORT_USER = PATH_CMD_BASE + '/import_user'
 
+	PATH_CMD_IMPORT_USER = PATH_CMD_BASE + '/import_user'
 	CN_STUDENT = _ucr.get('ucsschool/ldap/default/container/pupils', 'schueler')
 	CN_TEACHERS = _ucr.get('ucsschool/ldap/default/container/teachers', 'lehrer')
 	CN_TEACHERS_STAFF = _ucr.get('ucsschool/ldap/default/container/teachers-and-staff', 'lehrer und mitarbeiter')
@@ -386,6 +387,9 @@ class UCSTestSchool(object):
 			if password is not None:
 				self._set_password(user_dn, password)
 		else:
+			school_classes = defaultdict(list)
+			for kls in classes.split(','):
+				school_classes[kls.partition('-')[0]].append(kls)
 			kwargs = {
 				'school': ou_name,
 				'name': username,
@@ -393,7 +397,8 @@ class UCSTestSchool(object):
 				'lastname': lastname,
 				'email': mailaddress,
 				'password': password,
-				'disabled': not(is_active),
+				'disabled': not is_active,
+				"school_classes": dict(school_classes)
 				}
 			print '*** Creating new user %r' % (username,)
 			lo = self.open_ldap_connection()
@@ -467,8 +472,29 @@ class UCSTestSchool(object):
 		dn, global_user = udm.create_user(position=position, **kwargs)
 		return global_user, dn
 
-	def create_school_class(self, *args, **kwargs):
-		pass
+	def create_school_class(self, ou_name, class_name=None, description=None, users=None, wait_for_replication=True):
+		if class_name is None:
+			class_name = uts.random_username()
+		if not class_name.startswith('{}-'.format(ou_name)):
+			class_name = '{}-{}'.format(ou_name, class_name)
+		grp_dn = 'cn={},cn=klassen,cn=schueler,cn=groups,ou={},{}'.format(class_name, ou_name, self.LDAP_BASE)
+		kwargs = {
+			'school': ou_name,
+			'name': class_name,
+			'description': description,
+			'users': users or [],
+		}
+		print('*** Creating new school class "{}" with {}...'.format(class_name, kwargs))
+		lo = self.open_ldap_connection()
+		SchoolClass.invalidate_all_caches()
+		SchoolClass.init_udm_module(lo)
+		result = SchoolClass(**kwargs).create(lo)
+		print('*** Result of SchoolClass(...).create(): {}'.format(result))
+
+		if wait_for_replication:
+			utils.wait_for_replication()
+
+		return class_name, grp_dn
 
 	def create_workgroup(self, *args, **kwargs):
 		pass
