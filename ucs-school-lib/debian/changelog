@@ -1,3 +1,9 @@
+ucs-school-lib (9.0.20-4) unstable; urgency=medium
+
+  * Bug #41620: don't put user into same school classes afer school move
+
+ -- Florian Best <best@univention.de>  Tue, 21 Jun 2016 11:01:15 +0200
+
 ucs-school-lib (9.0.20-3) unstable; urgency=low
 
   * Bug #41609: don't try to remove classes from Staff when removing from a

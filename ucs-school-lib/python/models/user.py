@@ -40,12 +40,12 @@ from ucsschool.lib.models.utils import create_passwd
 from ucsschool.lib.models.attributes import Username, Firstname, Lastname, Birthday, Email, Password, Disabled, SchoolClassesAttribute, Schools
 from ucsschool.lib.models.base import UCSSchoolHelperAbstractClass, UnknownModel, WrongModel
 from ucsschool.lib.models.school import School
-from ucsschool.lib.models.group import Group, BasicGroup, SchoolClass, WorkGroup, SchoolGroup, ComputerRoom, _MayHaveSchoolPrefix, _MayHaveSchoolSuffix
+from ucsschool.lib.models.group import Group, SchoolClass, WorkGroup, SchoolGroup
 from ucsschool.lib.models.computer import AnyComputer
 from ucsschool.lib.models.misc import MailDomain
 from ucsschool.lib.models.utils import ucr, _, logger
 
-from univention.admin.uexceptions import noObject, ldapError
+from univention.admin.uexceptions import noObject
 from univention.admin.filter import conjunction, parse
 import univention.admin.modules as udm_modules
 
@@ -285,49 +285,7 @@ class User(UCSSchoolHelperAbstractClass):
 		school = self.school
 
 		logger.info('User is part of the following groups: %r', udm_obj['groups'])
-		for groupdn in udm_obj['groups'][:]:
-			oldgroup = Group.from_dn(groupdn, old_school, lo)
-			if isinstance(oldgroup, (ComputerRoom, BasicGroup)):
-				logger.info('Group %r is not a school class/work group/regular group. Ignoring.', groupdn)
-				continue
-
-			# remove this user from the groups of the old school
-			if self.dn in oldgroup.users:
-				logger.info('Removing %r from group %r of old school.', self.dn, oldgroup.dn)
-				oldgroup.users.remove(self.dn)
-				try:
-					oldgroup.modify(lo)
-				except ldapError as exc:
-					logger.error('Could not remove user from group %r: %s', oldgroup.dn, exc)
-					raise  # TODO: ignore?
-
-			# create the groups in the other school if not exists. put user into it.
-			newgroup = Group.from_dn(groupdn, old_school, lo)
-			if isinstance(newgroup, (_MayHaveSchoolPrefix, _MayHaveSchoolSuffix)):
-				newgroup.name = newgroup.get_replaced_name(school)
-			newgroup.school = school
-			newgroup.position = newgroup.get_own_container()
-			newgroup.custom_dn = None  # FIXME: remove when from_dn() is fixed
-			cls = type(newgroup)
-			try:
-				group = cls.from_dn(newgroup.dn, school, lo)
-			except noObject:
-				logger.info('There is no group %r at %r. Creating it.', newgroup.dn, school)
-				group = cls(name=newgroup.name, school=school, users=[self.dn])
-				try:
-					group.create(lo)
-				except ldapError as exc:
-					logger.error('Could not create group %r: %s', group.dn, exc)
-					raise  # TODO: ignore
-			else:
-				logger.info('Appending %r to group %r of school %r', self.dn, group.dn, school)
-				group.users.append(self.dn)
-				try:
-					group.modify(lo)
-				except ldapError as exc:
-					logger.error('Could not add user to group %r: %s', group.dn, exc)
-					raise  # TODO: ignore
-
+		self.remove_from_groups_of_school(old_school, lo)
 		self._udm_obj_searched = False
 		if self.school_classes:
 			self.school_classes.pop(old_school, None)
@@ -437,18 +395,21 @@ class User(UCSSchoolHelperAbstractClass):
 			if not self.change_school(self.schools[0], lo):
 				return False
 		else:
-			for cls in (SchoolClass, WorkGroup, SchoolGroup):
-				for group in cls.get_all(lo, school, filter_format('uniqueMember=%s', (self.dn,))):
-					try:
-						group.users.remove(self.dn)
-					except ValueError:
-						pass
-					else:
-						logger.info('Removing %r from group %r of old school.', self.dn, group.dn)
-						group.modify(lo)
+			self.remove_from_groups_of_school(school, lo)
 		if self.school_classes:
 			self.school_classes.pop(school, None)
 		return self.modify(lo)
+
+	def remove_from_groups_of_school(self, school, lo):
+		for cls in (SchoolClass, WorkGroup, SchoolGroup):
+			for group in cls.get_all(lo, school, filter_format('uniqueMember=%s', (self.dn,))):
+				try:
+					group.users.remove(self.dn)
+				except ValueError:
+					pass
+				else:
+					logger.info('Removing %r from group %r of old school.', self.dn, group.dn)
+					group.modify(lo)
 
 	def get_group_dn(self, group_name):
 		return Group.cache(group_name, self.school).dn

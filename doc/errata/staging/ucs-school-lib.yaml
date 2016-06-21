@@ -3,9 +3,11 @@ release: "4.1"
 version: [1]
 scope: ucs_4.1-0-ucs-school-4.1
 src: ucs-school-lib
-fix: 9.0.20-3.226.201606201350
+fix: 
 desc: |
  This update addresses the following issue(s):
  * A bug was fixed, that prevented staff users from being moved from one
    school to another (Bug #41609)
-bug: [41609]
+ * When moving a user from a school the the user is not put into the school
+   classes of the old school.
+bug: [41609, 41620]
