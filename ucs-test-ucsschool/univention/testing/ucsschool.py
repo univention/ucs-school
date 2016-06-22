@@ -364,13 +364,16 @@ class UCSTestSchool(object):
 			firstname = uts.random_string(length=10, numeric=False)
 		if lastname is None:
 			lastname = uts.random_string(length=10, numeric=False)
-		if classes is None:
-			classes = ''
 		if mailaddress is None:
 			mailaddress = ''
 
 		user_dn = 'uid=%s,%s' % (username, self.get_user_container(ou_name, is_teacher, is_staff))
 		if use_cli:
+			if classes is None:
+				classes = ''
+			if classes:
+				if not all(["-" in c for c in classes.split(',')]):
+					utils.fail('*** Class names must be <school-ou>-<class-name>.')
 			# create import file
 			line = 'A\t%s\t%s\t%s\t%s\t%s\t\t%s\t%d\t%d\t%d\n' % (username, lastname, firstname, ou_name, classes,
 																mailaddress, int(is_teacher), int(is_active), int(is_staff))
@@ -388,8 +391,9 @@ class UCSTestSchool(object):
 				self._set_password(user_dn, password)
 		else:
 			school_classes = defaultdict(list)
-			for kls in classes.split(','):
-				school_classes[kls.partition('-')[0]].append(kls)
+			if classes:
+				for kls in classes.split(','):
+					school_classes[kls.partition('-')[0]].append(kls)
 			kwargs = {
 				'school': ou_name,
 				'name': username,
@@ -399,8 +403,8 @@ class UCSTestSchool(object):
 				'password': password,
 				'disabled': not is_active,
 				"school_classes": dict(school_classes)
-				}
-			print '*** Creating new user %r' % (username,)
+			}
+			print '*** Creating new user %r with %r.' % (username, kwargs)
 			lo = self.open_ldap_connection()
 			User.invalidate_all_caches()
 			User.init_udm_module(lo) # TODO FIXME has to be fixed in ucs-school-lib - should be done automatically

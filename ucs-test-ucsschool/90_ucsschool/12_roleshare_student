@@ -169,10 +169,11 @@ def main(ldap_machine_read=None):
 				continue
 
 			# create test users
-			tea1, teadn1 = schoolenv.create_user(school_id, classes='1A', is_teacher=True)
-			teastaff1, teastaffdn1 = schoolenv.create_user(school_id, classes='1A', is_teacher=True, is_staff=True)
-			staff1, staffdn1 = schoolenv.create_user(school_id, classes='1A', is_staff=True)
-			stu1, stu1dn = schoolenv.create_user(school_id, classes='1A')
+			classes = '{}-1A'.format(school_id)
+			tea1, teadn1 = schoolenv.create_user(school_id, classes=classes, is_teacher=True)
+			teastaff1, teastaffdn1 = schoolenv.create_user(school_id, classes=classes, is_teacher=True, is_staff=True)
+			staff1, staffdn1 = schoolenv.create_user(school_id, classes=classes, is_staff=True)
+			stu1, stu1dn = schoolenv.create_user(school_id, classes=classes)
 
 			utils.wait_for_replication_and_postrun()
 			print "Waiting for DRS replication..."
