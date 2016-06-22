@@ -60,7 +60,6 @@ from univention.management.console.modules import UMC_OptionTypeError, UMC_Error
 from univention.management.console.log import MODULE
 from univention.management.console.protocol import MIMETYPE_JPEG, Response
 
-import univention.admin.modules as udm_modules
 import univention.admin.uexceptions as udm_exceptions
 
 from univention.uldap import explodeDn
@@ -461,10 +460,7 @@ class Instance(SchoolBaseModule):
 			result['locked'] = True
 			try:
 				# open the corresponding UDM object to get a displayable user name
-				userModule = udm_modules.get('users/user')
-				userObj = userModule.object(None, ldap_user_read, None, userDN)
-				userObj.open()
-				result['user'] = Display.user(userObj)
+				result['user'] = Display.user(User.from_dn(userDN, None, ldap_user_read).get_udm_object(ldap_user_read))
 			except udm_exceptions.base as exc:
 				# could not oben the LDAP object, show the DN
 				result['user'] = userDN
