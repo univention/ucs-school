@@ -1,0 +1,11 @@
+product: ucsschool
+release: "4.1"
+version: [1]
+scope: ucs_4.1-0-ucs-school-4.1
+src: ucs-school-ldap-acls-master
+fix: 14.0.1-4.73.201606221442
+desc: |
+ This update addresses the following issue(s):
+ * A regression that computer objects couldn't read entries at their own school
+   has been fixed.
+bug: [41636]
