@@ -242,10 +242,11 @@ access to dn.regex="^(.+,)?ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$"
 	by group/univentionLDAPACL/univentionLDAPAccessWrite.expand="ou=$2,@$@DISTRICT@$@@%@ldap/base@%@" write
 	by dn.regex="^uid=([^,]+),cn=(@$@TEACHERS@$@|@$@TEACHERS-STAFF@$@|@$@STAFF@$@|@$@ADMINS@$@),cn=users,ou=$2,@$@DISTRICT@$@@%@ldap/base@%@$$" +rscxd continue
 	by set.expand="[$2] & ([ldap:///]+user/entryDN+[?entryDN?base?%28%7C%28objectClass%3DucsschoolTeacher%29%28objectClass%3DucsschoolAdministrator%29%28objectClass%3DucsschoolStaff%29%29])/ucsschoolSchool" +rscxd continue
-	by dn.regex="^.*,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" +0 stop
 	by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" +0 stop
 	by group/univentionGroup/uniqueMember="cn=DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" +0 stop
 	by set.expand="([ldap:///]+user/entryDN+[?entryDN?base?%28%7C%28objectClass%3DucsschoolTeacher%29%28objectClass%3DucsschoolAdministrator%29%28objectClass%3DucsschoolStaff%29%29])/ucsschoolSchool" +0 stop
+	by dn.regex="^.*,ou=$2,@$@DISTRICT@$@@%@ldap/base@%@$$" +rscxd break
+	by dn.regex="^.*,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" +0 stop
 	by * +0 break
 
 # Slave-Controller duerfen Klassen-Gruppen bearbeiten (AUSNAHME! Wird fuer Lehrerzuordnung in UMC benoetigt!)
