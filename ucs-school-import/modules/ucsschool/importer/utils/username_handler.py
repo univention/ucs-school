@@ -85,7 +85,7 @@ class UsernameHandler(object):
 			raise FormatError("No username in '{}'.".format(name), name, name)
 
 		try:
-			func = self.username_patterns[variable]
+			func = self.username_patterns[variable.upper()]
 		except KeyError as exc:
 			raise FormatError("Unknown variable name '{}' in username scheme '{}': {}".format(variable, name, exc),
 				variable, name)
@@ -114,8 +114,8 @@ class UsernameHandler(object):
 		Subclass->override this to support other variables than [ALWAYSCOUNTER]
 		and [COUNTER2] or change their meaning. Add/Modify corresponding
 		methods in your subclass.
-		Variables have to start with '[' and end with ']'.
-		Methods will be found with getattr(self, "method name").
+		Variables have to start with '[', end with ']' and must be all
+		upper case.
 
 		:return: dict: variable name -> function
 		"""
