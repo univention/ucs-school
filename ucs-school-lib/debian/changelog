@@ -1,3 +1,9 @@
+ucs-school-lib (9.0.20-5) unstable; urgency=medium
+
+  * Bug #41601: add user to groups groups of all schools where he is member of
+
+ -- Florian Best <best@univention.de>  Thu, 23 Jun 2016 10:05:05 +0200
+
 ucs-school-lib (9.0.20-4) unstable; urgency=medium
 
   * Bug #41620: don't put user into same school classes afer school move

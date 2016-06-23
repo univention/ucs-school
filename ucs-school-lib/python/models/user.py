@@ -346,7 +346,7 @@ class User(UCSSchoolHelperAbstractClass):
 		return []
 
 	def get_specific_groups(self, lo):
-		groups = []
+		groups = self.get_domain_users_groups()
 		for school_class in self.get_school_class_objs():
 			groups.append(self.get_class_dn(school_class.name, school_class.school, lo))
 		return groups
@@ -411,8 +411,8 @@ class User(UCSSchoolHelperAbstractClass):
 					logger.info('Removing %r from group %r of old school.', self.dn, group.dn)
 					group.modify(lo)
 
-	def get_group_dn(self, group_name):
-		return Group.cache(group_name, self.school).dn
+	def get_group_dn(self, group_name, school):
+		return Group.cache(group_name, school).dn
 
 	def get_class_dn(self, class_name, school, lo):
 		# Bug #32337: check if the class exists without OU prefix
@@ -425,34 +425,36 @@ class User(UCSSchoolHelperAbstractClass):
 		return school_class.dn
 
 	def primary_group_dn(self, lo):
-		dn = self.get_group_dn('Domain Users %s' % self.school)
-		return self.get_or_create_group_udm_object(dn, lo, self.school).dn
+		dn = self.get_group_dn('Domain Users %s' % self.school, self.school)
+		return self.get_or_create_group_udm_object(dn, lo).dn
 
-	def get_students_group_dn(self):
+	def get_domain_users_groups(self):
+		return [self.get_group_dn('Domain Users %s' % school, school) for school in self.schools]
+
+	def get_students_groups(self):
 		prefix = ucr.get('ucsschool/ldap/default/groupprefix/pupils', 'schueler-')
-		return self.get_group_dn('%s%s' % (prefix, self.school))
+		return [self.get_group_dn('%s%s' % (prefix, school), school) for school in self.schools]
 
-	def get_teachers_group_dn(self):
+	def get_teachers_groups(self):
 		prefix = ucr.get('ucsschool/ldap/default/groupprefix/teachers', 'lehrer-')
-		return self.get_group_dn('%s%s' % (prefix, self.school))
+		return [self.get_group_dn('%s%s' % (prefix, school), school) for school in self.schools]
 
-	def get_staff_group_dn(self):
+	def get_staff_groups(self):
 		prefix = ucr.get('ucsschool/ldap/default/groupprefix/staff', 'mitarbeiter-')
-		return self.get_group_dn('%s%s' % (prefix, self.school))
+		return [self.get_group_dn('%s%s' % (prefix, school), school) for school in self.schools]
 
 	def groups_used(self, lo):
-		group_dns = []
-		group_dns.append(self.primary_group_dn(lo))
-		group_dns.extend(self.get_specific_groups(lo))
+		group_dns = self.get_specific_groups(lo)
 
 		for group_dn in group_dns:
-			self.get_or_create_group_udm_object(group_dn, lo, self.school)
+			self.get_or_create_group_udm_object(group_dn, lo)
 
 		return group_dns
 
 	@classmethod
-	def get_or_create_group_udm_object(cls, group_dn, lo, school, fresh=False):
+	def get_or_create_group_udm_object(cls, group_dn, lo, fresh=False):
 		name = cls.get_name_from_dn(group_dn)
+		school = cls.get_school_from_dn(group_dn)
 		if Group.is_school_class(school, group_dn):
 			group = SchoolClass.cache(name, school)
 		else:
@@ -570,7 +572,7 @@ class Student(User):
 
 	def get_specific_groups(self, lo):
 		groups = super(Student, self).get_specific_groups(lo)
-		groups.append(self.get_students_group_dn())
+		groups.extend(self.get_students_groups())
 		return groups
 
 
@@ -588,7 +590,7 @@ class Teacher(User):
 
 	def get_specific_groups(self, lo):
 		groups = super(Teacher, self).get_specific_groups(lo)
-		groups.append(self.get_teachers_group_dn())
+		groups.extend(self.get_teachers_groups())
 		return groups
 
 
@@ -630,7 +632,7 @@ class Staff(User):
 
 	def get_specific_groups(self, lo):
 		groups = super(Staff, self).get_specific_groups(lo)
-		groups.append(self.get_staff_group_dn())
+		groups.extend(self.get_staff_groups())
 		return groups
 
 
@@ -648,7 +650,7 @@ class TeachersAndStaff(Teacher):
 
 	def get_specific_groups(self, lo):
 		groups = super(TeachersAndStaff, self).get_specific_groups(lo)
-		groups.append(self.get_staff_group_dn())
+		groups.extend(self.get_staff_groups())
 		return groups
 
 

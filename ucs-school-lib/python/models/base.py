@@ -551,7 +551,7 @@ class UCSSchoolHelperAbstractClass(object):
 		return True
 
 	def do_move(self, udm_obj, lo):
-		old_school, new_school = SchoolSearchBase.getOU(self.old_dn), SchoolSearchBase.getOU(self.dn)
+		old_school, new_school = self.get_school_from_dn(self.old_dn), self.get_school_from_dn(self.dn)
 		udm_obj.move(self.dn, ignore_license=1)
 		if self.supports_school() and old_school and old_school != new_school:
 			self.do_school_change(udm_obj, lo, old_school)
@@ -603,6 +603,10 @@ class UCSSchoolHelperAbstractClass(object):
 			except ldap.DECODING_ERROR:
 				name = ''
 			return cls._meta.ldap_unmap_function([name])
+
+	@classmethod
+	def get_school_from_dn(cls, dn):
+		return SchoolSearchBase.getOU(dn)
 
 	@classmethod
 	def find_field_label_from_name(cls, field):
@@ -776,7 +780,7 @@ class UCSSchoolHelperAbstractClass(object):
 				raise WrongModel(udm_obj.dn, klass, cls)
 			return klass.from_udm_obj(udm_obj, school, lo)
 		udm_obj.open()
-		attrs = {'school' : SchoolSearchBase.getOU(udm_obj.dn) or school}  # TODO: is this adjustment okay?
+		attrs = {'school' : cls.get_school_from_dn(udm_obj.dn) or school}  # TODO: is this adjustment okay?
 		for name, attr in cls._attributes.iteritems():
 			if attr.udm_name:
 				udm_value = udm_obj[attr.udm_name]
@@ -829,7 +833,7 @@ class UCSSchoolHelperAbstractClass(object):
 		'''
 		cls.init_udm_module(lo)
 		if school is None and cls.supports_school():
-			school = SchoolSearchBase.getOU(dn)
+			school = cls.get_school_from_dn(dn)
 			if school is None:
 				logger.warn('Unable to guess school from %r', dn)
 		try:
