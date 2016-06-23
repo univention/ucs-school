@@ -11,4 +11,7 @@ desc: |
  * The function to append unique, continuous numbers to usernames was
    incompatible with the "lower case" function of the username templates
    (Bug 41645).
-bug: [41642, 41645]
+ * A missing UDM hook prevented the creation of OU objects on DC slaves. In
+   some situations, this prevented the creation of important Samba4 LDAP
+   objects (Bug 41653)
+bug: [41642, 41645, 41653]
