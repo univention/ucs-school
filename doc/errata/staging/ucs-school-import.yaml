@@ -3,8 +3,12 @@ release: "4.1"
 version: [1]
 scope: ucs_4.1-0-ucs-school-4.1
 src: ucs-school-import
-fix: 14.0.13-2.275.201606230833
+fix: 14.0.13-3.276.201606230856
 desc: |
  This update addresses the following issue(s):
- * A validation error was preventing the import of users with birthday data.
-bug: [41642]
+ * A validation error was preventing the import of users with birthday data
+   (Bug 41642).
+ * The function to append unique, continuous numbers to usernames was
+   incompatible with the "lower case" function of the username templates
+   (Bug 41645).
+bug: [41642, 41645]
