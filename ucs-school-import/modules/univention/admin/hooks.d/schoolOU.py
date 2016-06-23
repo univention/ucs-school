@@ -33,6 +33,7 @@ import univention.debug as ud
 
 OBJECTCLASS_SCHOOLOU = 'ucsschoolOrganizationalUnit'
 OPTION_SCHOOLOU = 'UCSschool-School-OU'
+ATTRIBUTE_LIST = ('ucsschoolHomeShareFileServer', 'ucsschoolClassShareFileServer', 'displayName')
 
 
 class schoolOU(simpleHook):
@@ -49,9 +50,12 @@ class schoolOU(simpleHook):
 		if OBJECTCLASS_SCHOOLOU in objectClass and OPTION_SCHOOLOU not in module.options:
 			module.options.append(OPTION_SCHOOLOU)
 
-	def hook_ldap_modlist(self, module, ml=[]):
+	def hook_ldap_modlist(self, module, ml=None):
 		"""Add or remove objectClass ucsschoolOrganizationalUnit when UCSschool-School-OU is enabled or disabled."""
 		ud.debug(ud.ADMIN, ud.ALL, 'admin.hook.schoolOU.modlist called')
+
+		if ml is None:
+			ml = []
 
 		# compute new accumulated objectClass
 		old_ocs = module.oldattr.get('objectClass', [])
@@ -74,14 +78,14 @@ class schoolOU(simpleHook):
 
 				ml.remove(modification)
 
-			elif not is_school and attr in ('ucsschoolHomeShareFileServer', 'ucsschoolClassShareFileServer'):
+			elif not is_school and attr in ATTRIBUTE_LIST:
 				ml.remove(modification)
 
 		if is_school:
 			ocs.add(OBJECTCLASS_SCHOOLOU)
 		else:
 			ocs.discard(OBJECTCLASS_SCHOOLOU)
-			for attr in ('ucsschoolHomeShareFileServer', 'ucsschoolClassShareFileServer'):
+			for attr in ATTRIBUTE_LIST:
 				ml.append((attr, module.oldattr.get(attr, ''), ''))
 
 		ml.append(('objectClass', old_ocs, list(ocs)))

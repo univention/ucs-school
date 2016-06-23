@@ -1,3 +1,9 @@
+ucs-school-import (14.0.14-1) unstable; urgency=low
+
+  * Bug #41653: register UDM hook for container/ou in LDAP
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Thu, 23 Jun 2016 14:38:38 +0200
+
 ucs-school-import (14.0.13-3) unstable; urgency=low
 
   * Bug #41645: fix username handler not handling lower cased variables

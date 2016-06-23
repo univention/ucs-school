@@ -1,4 +1,4 @@
 usr
 modules/ucsschool                                           usr/share/pyshared/
-modules/univention/admin/hooks.d/*.py                       usr/share/pyshared/univention/admin/hooks.d/
+modules/univention/admin/hooks.d/*.py                       usr/share/ucs-school-import/hooks.d/
 35ucs-school-import.inst                                    usr/lib/univention-install/

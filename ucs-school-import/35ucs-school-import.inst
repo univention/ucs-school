@@ -30,7 +30,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-VERSION=10
+VERSION=11
 . /usr/share/univention-join/joinscripthelper.lib
 . /usr/share/univention-lib/all.sh
 joinscript_init
@@ -56,6 +56,8 @@ univention-directory-manager container/cn      create "$@" --ignore_exists --set
 univention-directory-manager container/cn      create "$@" --ignore_exists --set name="unique-usernames" --position "cn=ucsschool,cn=univention,$ldap_base"
 
 ucs_registerLDAPExtension "$@" --schema /usr/share/ucs-school-import/schema/ucs-school-import.schema || die
+ucs_registerLDAPExtension "$@" --udm_hook /usr/share/ucs-school-import/hooks.d/schoolOU.py || die
+ucs_registerLDAPExtension "$@" --udm_hook /usr/share/ucs-school-import/hooks.d/schoolAdminGroup.py || die
 
 # create extended attributes for UCS@school container if missing
 univention-directory-manager container/cn create "$@" --ignore_exists \
