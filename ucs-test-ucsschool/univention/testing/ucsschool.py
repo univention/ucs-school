@@ -342,7 +342,7 @@ class UCSTestSchool(object):
 		return self.create_user(*args, is_staff=True, is_teacher=True, **kwargs)
 
 
-	def create_user(self, ou_name, username=None, firstname=None, lastname=None, classes=None,
+	def create_user(self, ou_name, schools=None, username=None, firstname=None, lastname=None, classes=None,
 					mailaddress=None, is_teacher=False, is_staff=False, is_active=True, password='univention',
 					use_cli=False, wait_for_replication=True):
 		"""
@@ -366,6 +366,8 @@ class UCSTestSchool(object):
 			lastname = uts.random_string(length=10, numeric=False)
 		if mailaddress is None:
 			mailaddress = ''
+		if schools is None:
+			schools = [ou_name]
 
 		user_dn = 'uid=%s,%s' % (username, self.get_user_container(ou_name, is_teacher, is_staff))
 		if use_cli:
@@ -396,6 +398,7 @@ class UCSTestSchool(object):
 					school_classes[kls.partition('-')[0]].append(kls)
 			kwargs = {
 				'school': ou_name,
+				'schools': schools,
 				'name': username,
 				'firstname': firstname,
 				'lastname': lastname,
@@ -423,7 +426,7 @@ class UCSTestSchool(object):
 
 		return username, user_dn
 
-	def create_school_admin(self, ou_name, username=None, firstname=None, lastname=None,
+	def create_school_admin(self, ou_name, username=None, schools=None, firstname=None, lastname=None,
 			mailaddress=None, is_active=True, password='univention', wait_for_replication=True):
 		position = 'cn=admins,cn=users,%s' % (self.get_ou_base_dn(ou_name))
 		groups = ["cn=admins-%s,cn=ouadmins,cn=groups,%s" % (ou_name, self.LDAP_BASE)]
@@ -437,6 +440,7 @@ class UCSTestSchool(object):
 			mailaddress = ''
 		kwargs = {
 			'school': ou_name,
+			'schools': schools,
 			'username': username,
 			'firstname': firstname,
 			'lastname': lastname,
