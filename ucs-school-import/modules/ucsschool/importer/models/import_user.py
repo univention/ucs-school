@@ -80,7 +80,7 @@ class ImportUser(User):
 		self.action = None            # "A", "D" or "M"
 		self.entry_count = 0          # line/node number of input data
 		self.udm_properties = dict()  # UDM properties from input, that are not stored in Attributes
-		self.input_data = None        # raw input data created by SomeReader.read()
+		self.input_data = list()      # raw input data created by SomeReader.read()
 		self.old_user = None          # user in LDAP, when modifying
 		self.in_hook = False          # if a hook is currently running
 		if not self.factory:
@@ -243,7 +243,7 @@ class ImportUser(User):
 		if isinstance(self, Staff):
 			self.school_classes = dict()
 		elif self.school_classes and isinstance(self.school_classes, dict):
-			return
+			pass
 		elif self.school_classes and isinstance(self.school_classes, basestring):
 			res = defaultdict(list)
 			for a_class in self.school_classes.strip(",").split(","):
@@ -260,6 +260,8 @@ class ImportUser(User):
 				school = self.normalize(school)
 				res[school].append("{}-{}".format(school, cls_name))
 			self.school_classes = dict(res)
+		elif self.school_classes is None:
+			pass
 		else:
 			raise RuntimeError("Unknown data in attribute 'school_classes': '{}'".format(self.school_classes))
 
@@ -528,7 +530,7 @@ class ImportUser(User):
 
 		if self.birthday:
 			try:
-				self.birthday = datetime.datetime.strptime(self.birthday, "%Y-%m-%d").isoformat()
+				datetime.datetime.strptime(self.birthday, "%Y-%m-%d")
 			except ValueError as exc:
 				raise InvalidBirthday("Birthday has invalid format: {}.".format(exc), entry=self.entry_count,
 					import_user=self)

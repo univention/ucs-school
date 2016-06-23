@@ -1,3 +1,10 @@
+ucs-school-import (14.0.13-2) unstable; urgency=low
+
+  * Bug #41642: fix birthday validation
+  * tweak ImportUser to work better as standalone class - without an import job
+
+ -- Daniel Troeder <troeder@univention.de>  Thu, 23 Jun 2016 08:30:22 +0200
+
 ucs-school-import (14.0.13-1) unstable; urgency=low
 
   * Bug #41242: add additional dummy columns in config for legacy hooks
