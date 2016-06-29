@@ -374,6 +374,7 @@ class CLI_Import_v2_Tester(object):
 			person.verify()
 
 		self.log.info('Creating, modifying, removing user with role %r was successful', role)
+		self.log.info('Test was successful.\n\n\n')
 
 
 
@@ -498,6 +499,7 @@ class CLI_Import_v2_Tester(object):
 			finally:
 				hooks.cleanup()
 		self.log.info('Creating, modifying, removing user with role %r and username/recordUID was successful', role)
+		self.log.info('Test was successful.\n\n\n')
 
 
 	def test_create_with_username_scheme(self):
@@ -559,6 +561,7 @@ class CLI_Import_v2_Tester(object):
 			utils.verify_ldap_object(dn, expected_attr=attrs, strict=True, should_exist=True)
 			self.log.debug('User object %r:\n%s', dn, pprint.PrettyPrinter(indent=2).pformat(self.lo.get(dn)))
 			self.log.info('unique-usernames object has been found.')
+			self.log.info('Test was successful.\n\n\n')
 
 	def test_create_modify_only(self):
 		"""
@@ -615,6 +618,7 @@ class CLI_Import_v2_Tester(object):
 					utils.fail('Stopping here')
 			personA.verify()
 			personB.verify()
+		self.log.info('Test was successful.\n\n\n')
 
 	def test_create_with_attribute_schemes(self):
 		"""
@@ -672,7 +676,8 @@ class CLI_Import_v2_Tester(object):
 			}
 			utils.verify_ldap_object(person.dn, expected_attr=values, strict=True, should_exist=True)
 			self.log.debug('User object %r:\n%s', person.dn, pprint.PrettyPrinter(indent=2).pformat(self.lo.get(person.dn)))
-			self.log.info('Test was successful.')
+		self.log.info('Test was successful.\n\n\n')
+
 
 	def test_multivalue_attributes(self):
 		"""
@@ -729,7 +734,7 @@ class CLI_Import_v2_Tester(object):
 
 			self.log.debug('User object %r:\n%s', person.dn, pprint.PrettyPrinter(indent=2).pformat(self.lo.get(person.dn)))
 			person.verify()
-			self.log.info('Test was successful.')
+		self.log.info('Test was successful.\n\n\n')
 
 	def test_school_change(self):
 		"""
@@ -776,7 +781,7 @@ class CLI_Import_v2_Tester(object):
 			self.log.debug('User object %r:\n%s', person.dn, pprint.PrettyPrinter(indent=2).pformat(self.lo.get(person.dn)))
 			person.verify()
 
-			self.log.info('Test was successful.')
+		self.log.info('Test was successful.\n\n\n')
 
 
 	def run(self):
