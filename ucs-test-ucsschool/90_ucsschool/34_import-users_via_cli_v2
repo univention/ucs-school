@@ -208,7 +208,7 @@ class CLI_Import_v2_Tester(object):
 		"""
 		fn = tempfile.mkstemp(prefix='config.', dir=self.tmpdir)[1]
 		if not config:
-			config = copy.copy(self.default_config)
+			config = copy.deepcopy(self.default_config)
 		if values:
 			for config_option, value in values.iteritems():
 				config.update_entry(config_option, value)
@@ -393,7 +393,7 @@ class CLI_Import_v2_Tester(object):
 				record_uid_A = uts.random_name()
 				record_uid_B = uts.random_name()
 
-				config = copy.copy(self.default_config)
+				config = copy.deepcopy(self.default_config)
 				config.update_entry('sourceUID', source_uid)
 				config.update_entry('csv:mapping:Benutzername', 'username')
 				config.update_entry('csv:mapping:DBID', 'record_uid')
@@ -511,7 +511,7 @@ class CLI_Import_v2_Tester(object):
 			source_uid = 'sourceUID-%s' % (uts.random_string(),)
 			record_uid = uts.random_name()
 
-			config = copy.copy(self.default_config)
+			config = copy.deepcopy(self.default_config)
 			config.update_entry('sourceUID', source_uid)
 			config.update_entry('csv:mapping:DBID', 'record_uid')
 			config.update_entry('scheme:recordUID', '<record_uid>')
@@ -568,7 +568,7 @@ class CLI_Import_v2_Tester(object):
 			self.log.info('*** Add/modify without delete with role %r', role)
 
 			source_uid = 'sourceUID-%s' % (uts.random_string(),)
-			config = copy.copy(self.default_config)
+			config = copy.deepcopy(self.default_config)
 			config.update_entry('csv:mapping:Benutzername', 'username')
 			config.update_entry('scheme:recordUID', '<username>')
 			config.update_entry('sourceUID', source_uid)
@@ -630,7 +630,7 @@ class CLI_Import_v2_Tester(object):
 			source_uid = 'sourceUID-%s' % (uts.random_string(),)
 			record_uid = uts.random_name()
 
-			config = copy.copy(self.default_config)
+			config = copy.deepcopy(self.default_config)
 			config.update_entry('sourceUID', source_uid)
 			config.update_entry('csv:mapping:employeeNumber', 'employeeNumber')
 			config.update_entry('csv:mapping:DBID', 'record_uid')
@@ -684,7 +684,7 @@ class CLI_Import_v2_Tester(object):
 
 			source_uid = 'sourceUID-%s' % (uts.random_string(),)
 
-			config = copy.copy(self.default_config)
+			config = copy.deepcopy(self.default_config)
 			config.update_entry('sourceUID', source_uid)
 			config.update_entry('csv:incell-delimiter:default', ';')
 			config.update_entry('csv:mapping:Benutzername', 'username')
@@ -741,7 +741,7 @@ class CLI_Import_v2_Tester(object):
 
 			source_uid = 'sourceUID-%s' % (uts.random_string(),)
 
-			config = copy.copy(self.default_config)
+			config = copy.deepcopy(self.default_config)
 			config.update_entry('sourceUID', source_uid)
 			config.update_entry('csv:mapping:Benutzername', 'username')
 			config.update_entry('csv:mapping:recordUID', 'record_uid')
