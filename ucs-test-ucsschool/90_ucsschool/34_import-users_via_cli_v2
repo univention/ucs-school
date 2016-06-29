@@ -141,10 +141,11 @@ class MyHook(UserPyHook):
 				os.remove(fn)
 			except (IOError, OSError):
 				self.log.warning('Failed to remove %r' % (fn,))
-			try:
-				os.remove('%sc' % fn)
-			except (IOError, OSError):
-				pass
+			if fn.endswith('.py'):
+				try:
+					os.remove('%sc' % (fn,))  # also remove .pyc files
+				except (IOError, OSError):
+					pass
 
 
 class CLI_Import_v2_Tester(object):
@@ -398,7 +399,6 @@ class CLI_Import_v2_Tester(object):
 				config.update_entry('sourceUID', source_uid)
 				config.update_entry('csv:mapping:Benutzername', 'username')
 				config.update_entry('csv:mapping:DBID', 'record_uid')
-				config.update_entry('scheme:recordUID', '<record_uid>')
 				config.update_entry('user_role', role)
 
 				person_list = [Person(self.ou_A.name, role), Person(self.ou_A.name, role)]
