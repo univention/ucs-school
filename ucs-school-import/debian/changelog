@@ -1,3 +1,9 @@
+ucs-school-import (14.0.15-1) unstable; urgency=low
+
+  * Bug #41707: added support for extended attributes in csv_reader
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Wed, 29 Jun 2016 18:18:42 +0200
+
 ucs-school-import (14.0.14-1) unstable; urgency=low
 
   * Bug #41653: register UDM hook for container/ou in LDAP

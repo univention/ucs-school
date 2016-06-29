@@ -43,7 +43,8 @@ from ucsschool.lib.roles import role_pupil, role_teacher, role_staff
 from ucsschool.lib.models.user import Staff
 import univention.admin.handlers.users.user as udm_user_module
 from ucsschool.importer.exceptions import UnknownProperty
-
+from ucsschool.importer.utils.ldap_connection import get_admin_connection
+import univention.admin.modules
 
 class CsvReader(BaseReader):
 	_attrib_names = dict()  # cache for Attribute names
@@ -53,6 +54,9 @@ class CsvReader(BaseReader):
 		super(CsvReader, self).__init__(filename, header_lines, **kwargs)
 		self.config = Configuration()
 		self.fieldnames = None
+		usersmod = univention.admin.modules.get("users/user")
+		lo, position = get_admin_connection()
+		univention.admin.modules.init(lo, position, usersmod)
 
 	def get_dialect(self, fp):
 		"""

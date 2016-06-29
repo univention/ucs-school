@@ -14,4 +14,6 @@ desc: |
  * A missing UDM hook prevented the creation of OU objects on DC slaves. In
    some situations, this prevented the creation of important Samba4 LDAP
    objects (Bug 41653)
-bug: [41642, 41645, 41653]
+ * ucs-school-user-import is now able to store user import data in extended
+   attributes (Bug 41707).
+bug: [41642, 41645, 41653, 41707]
