@@ -784,6 +784,61 @@ class CLI_Import_v2_Tester(object):
 
 		self.log.info('Test was successful.\n\n\n')
 
+	def test_lowercase_username_with_counter(self):
+		"""
+		Bug #41645: a username scheme with <:lower> and [COUNTER2]
+		"""
+
+		for role in ('student', 'teacher', 'staff', 'teacher_and_staff'):
+			self.log.info('*** Importing a new single user with role %r from templates', role)
+
+			source_uid = 'sourceUID-%s' % (uts.random_string(),)
+			record_uid = uts.random_name()
+
+			config = copy.deepcopy(self.default_config)
+			config.update_entry('sourceUID', source_uid)
+			config.update_entry('csv:mapping:employeeNumber', 'employeeNumber')
+			config.update_entry('csv:mapping:DBID', 'record_uid')
+			config.update_entry('scheme:recordUID', '<record_uid>')
+			config.update_entry('user_role', role)
+			config.update_entry('scheme:username:default', "<:lower><:umlauts><firstname>[0:6].<lastname>[0:3]a[COUNTER2]")
+			config.update_entry('scheme:email', "<:umlauts><firstname:lower>.<lastname:lower>@example.com")
+			config.update_entry('scheme:employeeNumber', "The user's name is <firstname:upper> <lastname> <description>")
+
+			person = Person(self.ou_A.name, role)
+			person.update(record_uid=record_uid, source_uid=source_uid, username=None, mail=None, description=uts.random_name())
+			fn_csv = self.create_csv_file(person_list=[person], mapping=config['csv']['mapping'])
+			fn_config = self.create_config_json(config=config)
+			# save ldap state for later comparison
+			self.save_ldap_status()
+
+			# start import
+			self.run_import(['-c', fn_config, '-i', fn_csv])
+
+			# check for new users in LDAP
+			new_users = [x for x in self.diff_ldap_status().new if x.startswith('uid=')]
+			if len(new_users) != 1:
+				self.log.error('Invalid number of new users! Found new objects: %r', new_users)
+				utils.fail('Stopping here')
+
+			# update dn+username of person and verify LDAP attributes
+			mail = '%s.%s@example.com' % (person.firstname.lower(), person.lastname.lower())
+			person.update(dn=new_users[0], record_uid=record_uid, source_uid=source_uid, mail=mail)
+			person.verify()
+
+			username_prefix = '%s.%sa' % (person.firstname[0:6], person.lastname[0:3])
+			if person.username.rstrip('0123456789') != username_prefix:
+				utils.fail('username %r does not start with expected string %r' % (person.username, username_prefix))
+			self.log.info('Username %r starts as expected with string %r' % (person.username, username_prefix))
+
+			self.log.info('Testing mailPrimaryAddress and description...')
+			values = {
+				'employeeNumber': ["The user's name is %s %s %s" % (person.firstname.upper(), person.lastname, person.description)],
+			}
+			utils.verify_ldap_object(person.dn, expected_attr=values, strict=True, should_exist=True)
+			self.log.debug('User object %r:\n%s', person.dn, pprint.PrettyPrinter(indent=2).pformat(self.lo.get(person.dn)))
+		self.log.info('Test was successful.\n\n\n')
+
 
 	def run(self):
 		try:
@@ -803,6 +858,7 @@ class CLI_Import_v2_Tester(object):
 					self.test_create_with_attribute_schemes()
 					self.test_multivalue_attributes()
 					self.test_school_change()
+					self.test_lowercase_username_with_counter()
 		finally:
 			self.cleanup()
 
