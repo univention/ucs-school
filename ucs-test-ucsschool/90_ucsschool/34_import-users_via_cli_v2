@@ -442,7 +442,7 @@ class CLI_Import_v2_Tester(object):
 
 				person_list[0].firstname = uts.random_name()
 				person_list[1].lastname = uts.random_name()
-				self.create_csv_file(person_list=person_list, fn_csv=fn_csv)
+				self.create_csv_file(person_list=person_list, mapping=config['csv']['mapping'], fn_csv=fn_csv)
 				fn_config = self.create_config_json(values=config)
 				# save ldap state for later comparison
 				self.save_ldap_status()
@@ -472,7 +472,7 @@ class CLI_Import_v2_Tester(object):
 
 				# mark first person as removed
 				person_list[0].set_mode_to_delete()
-				self.create_csv_file(person_list=[person_list[1]], fn_csv=fn_csv)
+				self.create_csv_file(person_list=[person_list[1]], mapping=config['csv']['mapping'], fn_csv=fn_csv)
 				fn_config = self.create_config_json(values=config)
 				# save ldap state for later comparison
 				self.save_ldap_status()
@@ -580,7 +580,7 @@ class CLI_Import_v2_Tester(object):
 			personB = Person(self.ou_A.name, role)
 
 			self.log.info('Adding user A %r with role %r', personA.username, role)
-			fn_csv = self.create_csv_file(person_list=[personA])
+			fn_csv = self.create_csv_file(person_list=[personA], mapping=config['csv']['mapping'])
 			fn_config = self.create_config_json(values=config)
 			# start import
 			self.run_import(['-c', fn_config, '-i', fn_csv, '--no-delete'])
@@ -592,7 +592,7 @@ class CLI_Import_v2_Tester(object):
 			personA.verify()
 
 			self.log.info('Adding user B %r with role %r', personB.username, role)
-			fn_csv = self.create_csv_file(person_list=[personB])
+			fn_csv = self.create_csv_file(person_list=[personB], mapping=config['csv']['mapping'])
 			fn_config = self.create_config_json(values=config)
 			self.run_import(['-c', fn_config, '-i', fn_csv, '--no-delete'])
 
@@ -607,7 +607,7 @@ class CLI_Import_v2_Tester(object):
 			self.log.info('Modifying user A %r with role %r', personA.username, role)
 			personA.lastname = uts.random_name()
 			config.update_entry('no_delete', 'True')
-			fn_csv = self.create_csv_file(person_list=[personA])
+			fn_csv = self.create_csv_file(person_list=[personA], mapping=config['csv']['mapping'])
 			fn_config = self.create_config_json(values=config)
 			self.run_import(['-c', fn_config, '-i', fn_csv])  #  '--no-delete'  is not specified on purpose -> using config option "no_delete"
 
