@@ -21,6 +21,7 @@ import pprint
 import subprocess
 from essential.importusers import Person
 import univention.testing.ucr
+import univention.testing.udm
 import univention.testing.strings as uts
 import univention.testing.ucsschool as utu
 import univention.testing.utils as utils
@@ -789,18 +790,19 @@ class CLI_Import_v2_Tester(object):
 			ucr = univention.testing.ucr.UCSTestConfigRegistry()
 			ucr.load()
 
-			with utu.UCSTestSchool() as schoolenv:
-				self.ou_A.name, self.ou_A.dn = schoolenv.create_ou(name_edudc=ucr.get('hostname'))
-				self.ou_B.name, self.ou_B.dn = schoolenv.create_ou(name_edudc=ucr.get('hostname'))
-				self.lo = schoolenv.open_ldap_connection(admin=True)
+			with univention.testing.udm.UCSTestUDM() as udm:
+				with utu.UCSTestSchool() as schoolenv:
+					self.ou_A.name, self.ou_A.dn = schoolenv.create_ou(name_edudc=ucr.get('hostname'))
+					self.ou_B.name, self.ou_B.dn = schoolenv.create_ou(name_edudc=ucr.get('hostname'))
+					self.lo = schoolenv.open_ldap_connection(admin=True)
 
-				self.test_create_modify_delete_user()
-				self.test_create_modify_delete_user_with_username_and_recordUID_and_UDM_property()
-				self.test_create_with_username_scheme()
-				self.test_create_modify_only()
-				self.test_create_with_attribute_schemes()
-				self.test_multivalue_attributes()
-				self.test_school_change()
+					self.test_create_modify_delete_user()
+					self.test_create_modify_delete_user_with_username_and_recordUID_and_UDM_property()
+					self.test_create_with_username_scheme()
+					self.test_create_modify_only()
+					self.test_create_with_attribute_schemes()
+					self.test_multivalue_attributes()
+					self.test_school_change()
 		finally:
 			self.cleanup()
 
