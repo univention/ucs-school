@@ -896,6 +896,75 @@ class CLI_Import_v2_Tester(object):
 		self.log.info('Test was successful.\n\n\n')
 
 
+	def test_create_modify_with_extended_attribute(self, udm):
+		"""
+		Bug #41707: set values in extended attribute
+		"""
+
+		ext_attr_name = uts.random_name()
+		properties = {
+			'position': udm.UNIVENTION_CONTAINER,
+			'name': uts.random_name(),
+			'shortDescription': uts.random_string(),
+			'CLIName': ext_attr_name,
+			'module': 'users/user',
+			'objectClass': 'univentionFreeAttributes',
+			'ldapMapping': 'univentionFreeAttribute15'
+		}
+		extended_attribute = udm.create_object('settings/extended_attribute', **properties)
+
+		for role in ('student', 'teacher', 'staff', 'teacher_and_staff'):
+			self.log.info('*** Importing a new single user with role %r with ', role)
+
+			source_uid = 'sourceUID-%s' % (uts.random_string(),)
+
+			config = copy.deepcopy(self.default_config)
+			config.update_entry('sourceUID', source_uid)
+			config.update_entry('csv:mapping:extattr', ext_attr_name)
+			config.update_entry('csv:mapping:Benutzername', 'username')
+			config.update_entry('csv:mapping:recordUID', 'record_uid')
+			config.update_entry('scheme:recordUID', '<username>')
+			config.update_entry('scheme:%s' % (ext_attr_name,), "<firstname:upper> <lastname> <description>")
+			config.update_entry('sourceUID', source_uid)
+			config.update_entry('user_role', role)
+
+			class ExtAttrPerson(Person):
+				def __init__(self, school, role):
+					Person.__init__(self, school, role)
+					self.extattr = time.strftime('%Y-%m-%d')
+
+				def map_to_dict(self, value_map):
+					result = Person.map_to_dict(self, value_map)
+					result[value_map.get(ext_attr_name, '__EMPTY__')] = self.extattr
+					return result
+
+				def expected_attributes(self):
+					result = Person.expected_attributes(self)
+					result['univentionFreeAttributes15'] = [self.extattr]
+
+			# create person with extended attribute (today)
+			person = ExtAttrPerson(self.ou_A.name, role)
+			person.update(record_uid=person.username, source_uid=source_uid)
+			fn_csv = self.create_csv_file(person_list=[person], mapping=config['csv']['mapping'])
+			fn_config = self.create_config_json(config=config)
+			# start import
+			self.run_import(['-c', fn_config, '-i', fn_csv])
+
+			self.log.debug('User object %r:\n%s', person.dn, pprint.PrettyPrinter(indent=2).pformat(self.lo.get(person.dn)))
+			person.verify()
+
+			# modify person and set ext_attr to random value
+			person.update(extattr=uts.random_string())
+			fn_csv = self.create_csv_file(person_list=[person], mapping=config['csv']['mapping'])
+			fn_config = self.create_config_json(config=config)
+			# start import
+			self.run_import(['-c', fn_config, '-i', fn_csv])
+
+			self.log.debug('User object %r:\n%s', person.dn, pprint.PrettyPrinter(indent=2).pformat(self.lo.get(person.dn)))
+			person.verify()
+		self.log.info('Test was successful.\n\n\n')
+
+
 	def run(self):
 		try:
 			ucr = univention.testing.ucr.UCSTestConfigRegistry()
@@ -916,6 +985,7 @@ class CLI_Import_v2_Tester(object):
 					self.test_school_change()
 					self.test_iso_birthday()
 					self.test_lowercase_username_with_counter()
+					self.test_create_modify_with_extended_attribute(udm)
 		finally:
 			self.cleanup()
 
