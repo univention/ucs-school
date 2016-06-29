@@ -58,10 +58,7 @@ from ucsschool.lib import internetrules
 from ucsschool.lib.schoollessons import SchoolLessons
 from ucsschool.lib.models import ComputerRoom, User
 
-import univention.admin.modules as udm_modules
 import univention.admin.uexceptions as udm_exceptions
-
-udm_modules.update()
 
 _ = Translation('ucs-school-umc-exam').translate
 

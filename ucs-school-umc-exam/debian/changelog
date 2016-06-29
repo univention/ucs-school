@@ -1,3 +1,9 @@
+ucs-school-umc-exam (6.0.7-2) unstable; urgency=medium
+
+  * Bug #41699: remove dead code
+
+ -- Florian Best <best@univention.de>  Wed, 29 Jun 2016 15:34:28 +0200
+
 ucs-school-umc-exam (6.0.7-1) unstable; urgency=medium
 
   * Bug #41577: fix multiple concurrent exams at different schools
