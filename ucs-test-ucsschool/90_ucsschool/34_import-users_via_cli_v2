@@ -19,6 +19,7 @@ import csv
 import os
 import pprint
 import subprocess
+import time
 from essential.importusers import Person
 import univention.testing.ucr
 import univention.testing.udm
