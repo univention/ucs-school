@@ -10,5 +10,5 @@ desc: |
    school to another (Bug #41609)
  * When moving a user from a school the the user is not put into the school
    classes of the old school (Bug #41620).
- * Users are now added to groups of all schools where he/she is member of (Bug #41601).
+ * Users are now added to groups of all schools they belong to (Bug #41601).
 bug: [41609, 41620, 41601]
