@@ -131,7 +131,7 @@ D  a.la  Lang   Anke    g123m  g123m-4C           a.la@schule.edu  1 1 1
 	  sein müssen. Das heißt, eine Klasse <wordasword>1A</wordasword> kann nicht in mehreren OUs verwendet
 	  werden. Bei der Erstellung von Klassen über das UMC-Modul <emphasis>Klassen (Schulen)</emphasis>
 	  wird daher automatisch die OU und ein Bindestrich dem Klassennamen als Präfix vorangestellt. Dieses
-	  Vorgehen wird auch für den Import auf der Kommandozeile empfohlen.
+	  Format muss auch beim Import auf der Kommandozeile eingehalten werden (siehe Beispiel oben).
 	  </simpara>
 	</note>
 	<para>
