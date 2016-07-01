@@ -52,8 +52,9 @@
 			</listitem>
 			<listitem>
 				<simpara>
-					Vollen Zugriff auf die Administrationsfunktionen von &ucsUAS;
-					erhalten die <emphasis>Schuladministratoren</emphasis>. Sie können z.B. Computer zu
+					<emphasis>Schuladministratoren</emphasis> erhalten, auf den Servern ihrer jeweiligen
+					Schule, vollen Zugriff auf die UMC-Module mit den Administrationsfunktionen von &ucsUAS;.
+					Sie können z.B. Computer zu
 					Rechnergruppen zusammenfassen, neue Internetfilter definieren oder
 					auch Lehrerpasswörter zurücksetzen.
 				</simpara>
