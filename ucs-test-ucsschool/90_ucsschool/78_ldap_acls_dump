@@ -3,6 +3,7 @@
 ## desc: Dump access to all available objects
 ## roles: [domaincontroller_master]
 ## tags: [ucsschool]
+## timeout: 28800
 ## exposure: dangerous
 ## packages: [ucs-school-ldap-acls-master]
 

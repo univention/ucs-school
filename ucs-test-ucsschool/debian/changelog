@@ -1,3 +1,9 @@
+ucs-test-ucsschool (3.0.13-2) unstable; urgency=low
+
+  * Bug #41115/#41116: adjusted timeout for 78_ldap_acls_dump
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Sun, 03 Jul 2016 23:16:07 +0200
+
 ucs-test-ucsschool (3.0.13-1) unstable; urgency=low
 
   * Bug #41115: added 78_ldap_acls_dump
