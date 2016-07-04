@@ -1,9 +1,3 @@
-italc (2:2.0.25-3) unstable; urgency=medium
-
-  * Bug #39593: fix build
-
- -- Florian Best <best@univention.de>  Mon, 18 Jan 2016 17:37:07 +0100
-
 italc (2:2.0.25-2) unstable; urgency=medium
 
   * Bug #38213: Add build dependency libpng12-dev
