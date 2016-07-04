@@ -1,0 +1,93 @@
+commit 45980510be3c77de7880170787d89d8664b5fe50
+Author: Tobias Doerffel <tobias.doerffel@gmail.com>
+Date:   Wed May 8 00:10:51 2013 +0200
+
+    ItalcCore/ItalcVncConnection: do not race in hookOutputHandler()
+    
+    In hookOutputHandler() we modified a static global QString object without
+    any protection from concurrent accesses. This causes a serious race
+    condition and leads to crashes, especially if there are many unreachable
+    clients.
+    
+    Closes #3473398.
+
+diff --git a/lib/include/ItalcVncConnection.h b/lib/include/ItalcVncConnection.h
+index 2addd46..5a523cb 100644
+--- italc-2.0.0.ORIG/lib/include/ItalcVncConnection.h
++++ italc-2.0.0/lib/include/ItalcVncConnection.h
+@@ -1,7 +1,7 @@
+ /*
+  * ItalcVncConnection.h - declaration of ItalcVncConnection class
+  *
+- * Copyright (c) 2008-2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>
++ * Copyright (c) 2008-2013 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>
+  *
+  * This file is part of iTALC - http://italc.sourceforge.net
+  *
+@@ -238,9 +238,6 @@ private:
+ 	volatile bool m_stopped;
+ 
+ 
+-private slots:
+-	void checkOutputErrorMessage();
+-
+ } ;
+ 
+ #endif
+diff --git a/lib/src/ItalcVncConnection.cpp b/lib/src/ItalcVncConnection.cpp
+index 9e6c500..d722194 100644
+--- italc-2.0.0.ORIG/lib/src/ItalcVncConnection.cpp
++++ italc-2.0.0/lib/src/ItalcVncConnection.cpp
+@@ -1,7 +1,7 @@
+ /*
+  * ItalcVncConnection.cpp - implementation of ItalcVncConnection class
+  *
+- * Copyright (c) 2008-2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>
++ * Copyright (c) 2008-2013 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>
+  *
+  * This file is part of iTALC - http://italc.sourceforge.net
+  *
+@@ -42,8 +42,6 @@
+ extern "C" void rfbClientEncryptBytes2( unsigned char *where, const int length, unsigned char *key );
+ 
+ 
+-static QString outputErrorMessageString;
+-
+ 
+ 
+ class KeyClientEvent : public ClientEvent
+@@ -297,6 +295,7 @@ void ItalcVncConnection::hookOutputHandler( const char *format, ... )
+ 	message = message.trimmed();
+ 	ilog( Warning, "ItalcVncConnection: " + message );
+ 
++#if 0
+ 	if( ( message.contains( "Couldn't convert " ) ) ||
+ 		( message.contains( "Unable to connect to VNC server" ) ) )
+ 	{
+@@ -321,6 +320,7 @@ void ItalcVncConnection::hookOutputHandler( const char *format, ... )
+ 	// internal messages, not displayed to user
+ 	if (message.contains("VNC server supports protocol version 3.889")) // see http://bugs.kde.org/162640
+ 		outputErrorMessageString = "INTERNAL:APPLE_VNC_COMPATIBILTY";
++#endif
+ }
+ 
+ 
+@@ -356,18 +356,6 @@ ItalcVncConnection::~ItalcVncConnection()
+ 
+ 
+ 
+-void ItalcVncConnection::checkOutputErrorMessage()
+-{
+-	if( !outputErrorMessageString.isEmpty() )
+-	{
+-//		QString errorMessage = outputErrorMessageString;
+-		outputErrorMessageString.clear();
+-	}
+-}
+-
+-
+-
+-
+ void ItalcVncConnection::stop()
+ {
+ 	if( isRunning() )

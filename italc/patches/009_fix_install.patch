@@ -1,0 +1,19 @@
+commit b08880dc8260efa91f59c5aca3b3eb0b6d69b7c9
+Author: Florian Best <best@univention.de>
+Date:   Thu Nov 6 13:45:37 2014 +0100
+
+    Bug #36475: fix lib path for amd64
+
+diff --git a/cmake/modules/DetectMachine.cmake b/cmake/modules/DetectMachine.cmake
+index e0d4586..ab5166d 100644
+--- a/cmake/modules/DetectMachine.cmake
++++ b/cmake/modules/DetectMachine.cmake
+@@ -36,7 +36,7 @@ IF(CMAKE_INSTALL_LIBDIR)
+     SET(LIB_DIR "${CMAKE_INSTALL_LIBDIR}")
+ ELSE(CMAKE_INSTALL_LIBDIR)
+     IF(ITALC_HOST_X86_64)
+-        SET(LIB_DIR lib64)
++        SET(LIB_DIR lib/x86_64)
+     ELSE(ITALC_HOST_X86_64)
+         SET(LIB_DIR lib)
+     ENDIF(ITALC_HOST_X86_64)
