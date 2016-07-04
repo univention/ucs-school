@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE book [
+	<!ENTITY % extensions SYSTEM "../stylesheets/macros.ent" >
+	<!ENTITY % DocBookDTD PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+	"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+	<!ENTITY % entities SYSTEM "../stylesheets/macros-de.ent" >
+	%extensions;
+	%DocBookDTD;
+	%entities;
+]>
+<book lang="de" id="errata-changelog-4.1-de">
+
+	<bookinfo>
+ 		<title>UCS@school 4.1 R2 v2 Changelog</title>
+		<subtitle>Changelog für das Update von UCS@school 4.1 R2 v1 nach v2</subtitle>
+		<legalnotice>
+			<literallayout>
+Version 4.1 R2 v2
+Stand: 04. Juli 2016
+			</literallayout>
+			<literallayout lang="">
+Alle Rechte vorbehalten./ All rights reserved.
+(c) 2002-2016
+Univention GmbH
+Mary-Somerville-Straße 1
+28359 Bremen
+Deutschland
+feedback@univention.de
+			</literallayout>
+			<para>
+				Jede aufgeführte Marke und jedes Warenzeichen steht im Eigentum ihrer jeweiligen eingetragenen Rechtsinhaber.
+				Linux ist ein eingetragenes Warenzeichen von Linus Torvalds.
+			</para>
+			<para lang="en">
+				The mentioned brand names and registered trademarks are owned by the respective legal owners in each case.
+				Linux is a registered trademark of Linus Torvalds.
+			</para>
+		</legalnotice>
+	</bookinfo>
+
+	<chapter id="changelog:main">
+		<title>&ucsUAS; Update</title>
+		<para>
+			Dieses Dokument enthält die Changelogs mit den detaillierten Änderungsinformationen zum Update von &ucsUAS; von Version 4.1 R2 v1 nach 4.1 R2 v2.
+			Sofern notwendig, werden wichtige Hinweise zum Update in einem separaten Abschnitt behandelt. Die Changelogs werden nur in Englisch
+			gepflegt. Die Änderungsinformationen für vorherige Versionssprünge finden sich unter <ulink	url="https://docs.software-univention.de/"/>.
+		</para>
+
+		<section id="changelog:prepare">
+			<title>Generelle Hinweise zum Update</title>
+			<para>
+				Während der Aktualisierung kann es zu Ausfällen von Diensten innerhalb der Domäne
+				kommen. Aus diesem Grund sollte das Update innerhalb eines Wartungsfensters
+				erfolgen. Grundsätzlich wird empfohlen das Update zunächst in einer Testumgebung
+				einzuspielen und zu testen. Die Testumgebung sollte dabei identisch zur
+				Produktivumgebung sein.
+			</para>
+		</section>
+
+		<section id="changelog:changelogs" lang="en">
+			<title>Changelog</title>
+
+			<section id="changelog:changelogs:import">
+				<title>Import script</title>
+				<itemizedlist>
+					<listitem>
+						<simpara>
+							A validation error was raised by
+							<filename>ucs-school-user-import</filename> and prevented the import of users with a specified
+							birthday.  This issue has been fixed. (<u:bug>41642</u:bug>)
+						</simpara>
+					</listitem>
+					<listitem>
+						<simpara>
+							The function to create unique usernames by appending continuous number
+							to usernames (<literal>[ALWAYSCOUNTER]</literal> or <literal>[COUNTER2]</literal>) was incompatible
+							with the "lower case" keyword <literal>&lt;:lower&gt;</literal> of the username templates. This
+							incompatibility has been removed (<u:bug>41645</u:bug>).
+						</simpara>
+					</listitem>
+					<listitem>
+						<simpara>
+							A missing UDM hook prevented the creation of OU objects on DC slaves. In
+							some situations, this prevented the creation of important Samba4 LDAP objects. The missing UDM hook
+							will be now automatically registered in and distributed via LDAP to all UCS systems
+							(<u:bug>41653</u:bug>).
+						</simpara>
+					</listitem>
+					<listitem>
+						<simpara>
+							<filename>ucs-school-user-import</filename> is now able to store import
+							data in extended attributes of an UDM user object (<u:bug>41707</u:bug>).
+						</simpara>
+					</listitem>
+				</itemizedlist>
+			</section>
+			<section id="changelog:changelogs:ldapacls">
+				<title>LDAP ACLs</title>
+				<itemizedlist>
+					<listitem>
+						<simpara>
+							A regression has been fixed that prevented computer objects (especially
+							UCC clients) to read LDAP entries of their "own" school (<u:bug>41636</u:bug>).
+						</simpara>
+					</listitem>
+				</itemizedlist>
+			</section>
+		</section>
+	</chapter>
+</book>
