@@ -1,3 +1,9 @@
+ucs-school-ldap-acls-master (14.0.1-6) unstable; urgency=medium
+
+  * Bug #41720: adjust joinscript version
+
+ -- Florian Best <best@univention.de>  Mon, 04 Jul 2016 12:25:32 +0200
+
 ucs-school-ldap-acls-master (14.0.1-5) unstable; urgency=medium
 
   * Bug #41720: staff only users should not be able to modify shares
