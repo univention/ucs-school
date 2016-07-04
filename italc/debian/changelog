@@ -1,9 +1,3 @@
-italc (2:2.0.25-5) unstable; urgency=medium
-
-  * Bug #38213: fail if applying patches goes wrong
-
- -- Florian Best <best@univention.de>  Tue, 26 Jan 2016 14:27:24 +0100
-
 italc (2:2.0.25-4) unstable; urgency=medium
 
   * Bug #38213: integrate upstream patches
