@@ -2,7 +2,7 @@
  * ItalcVncServer.cpp - implementation of ItalcVncServer, a VNC-server-
  *                      abstraction for platform independent VNC-server-usage
  *
- * Copyright (c) 2006-2013 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>
+ * Copyright (c) 2006-2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>
  *
  * This file is part of iTALC - http://italc.sourceforge.net
  *
@@ -251,7 +251,7 @@ static void runX11vnc( QStringList cmdline, int port, bool plainVnc )
 	// workaround for x11vnc when running in an NX session
 	foreach( const QString &s, QProcess::systemEnvironment() )
 	{
-		if( s.startsWith( "NXSESSIONID=" ) || s.startsWith( "X2GO_SESSION=" ) )
+		if( s.startsWith( "NXSESSIONID=" ) )
 		{
 			cmdline << "-noxdamage";
 		}
@@ -270,37 +270,34 @@ static void runX11vnc( QStringList cmdline, int port, bool plainVnc )
 		strcpy( argv[argc], it->toUtf8().constData() );
 	}
 
-	static bool firstTime = true;
-
-	if( firstTime )
+	if( plainVnc == false )
 	{
-		if( plainVnc == false )
-		{
-			// register iTALC protocol extension
-			static rfbProtocolExtension pe;
+		// register iTALC protocol extension
+		rfbProtocolExtension pe;
+		pe.newClient = italcCoreNewClient;
+		pe.init = NULL;
+		pe.enablePseudoEncoding = NULL;
+		pe.pseudoEncodings = NULL;
+		pe.handleMessage = lvs_italcHandleMessage;
+		pe.close = NULL;
+		pe.usage = NULL;
+		pe.processArgument = NULL;
+		pe.next = NULL;
+		rfbRegisterProtocolExtension( &pe );
+	}
 
-			// initialize all pointers inside the struct to NULL
-			memset( &pe, 0, sizeof( pe ) );
-
-			// register our own handlers
-			pe.newClient = italcCoreNewClient;
-			pe.handleMessage = lvs_italcHandleMessage;
-
-			rfbRegisterProtocolExtension( &pe );
-		}
-
-		// register handler for iTALC's security-type
-		static rfbSecurityHandler shi = { rfbSecTypeItalc, lvs_italcSecurityHandler, NULL };
-		rfbRegisterSecurityHandler( &shi );
+	// register handler for iTALC's security-type
+	rfbSecurityHandler shi = { rfbSecTypeItalc, lvs_italcSecurityHandler, NULL };
+	rfbRegisterSecurityHandler( &shi );
 
 #ifndef ITALC_BUILD_WIN32
-		// register handler for MS Logon II security type
-		static rfbSecurityHandler shmsl = { rfbUltraVNC_MsLogonIIAuth, lvs_msLogonIISecurityHandler, NULL };
-		rfbRegisterSecurityHandler( &shmsl );
-#endif
+	// register handler for MS Logon II security type
+	rfbSecurityHandler shmsl = { rfbUltraVNC_MsLogonIIAuth, lvs_msLogonIISecurityHandler, NULL };
+	rfbRegisterSecurityHandler( &shmsl );
 
-		firstTime = false;
-	}
+	rfbSecurityHandler shmsl_legacy = { rfbMSLogon, lvs_msLogonIISecurityHandler, NULL };
+	rfbRegisterSecurityHandler( &shmsl_legacy );
+#endif
 
 	// run x11vnc-server
 	x11vnc_main( argc, argv );
@@ -311,6 +308,11 @@ static void runX11vnc( QStringList cmdline, int port, bool plainVnc )
 
 void ItalcVncServer::runVncReflector( int srcPort, int dstPort )
 {
+#ifdef ITALC_BUILD_WIN32
+	pthread_win32_process_attach_np();
+	pthread_win32_thread_attach_np();
+#endif
+
 	QStringList args;
 	args << "-viewonly"
 		<< "-reflect"
@@ -324,6 +326,11 @@ void ItalcVncServer::runVncReflector( int srcPort, int dstPort )
 	{
 		runX11vnc( args, dstPort, true );
 	}
+
+#ifdef ITALC_BUILD_WIN32
+	pthread_win32_thread_detach_np();
+	pthread_win32_process_detach_np();
+#endif
 }
 
 

@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef SYSTEM_KEY_TRAPPER_H
-#define SYSTEM_KEY_TRAPPER_H
+#ifndef _SYSTEM_KEY_TRAPPER_H
+#define _SYSTEM_KEY_TRAPPER_H
 
 #include <italcconfig.h>
 

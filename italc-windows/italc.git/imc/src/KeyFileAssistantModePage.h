@@ -22,8 +22,8 @@
  *
  */
 
-#ifndef KEY_FILE_ASSISTANT_MODE_PAGE_H
-#define KEY_FILE_ASSISTANT_MODE_PAGE_H
+#ifndef _KEY_FILE_ASSISTANT_MODE_PAGE_H
+#define _KEY_FILE_ASSISTANT_MODE_PAGE_H
 
 #include <QtGui/QWizardPage>
 

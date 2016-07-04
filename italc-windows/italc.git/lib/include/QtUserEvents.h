@@ -1,7 +1,7 @@
 /*
- * Configuration/XmlStore.h - XmlStore class
+ * QtUserEvents.h - user-defined Qt-events
  *
- * Copyright (c) 2009-2010 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>
+ * Copyright (c) 2006-2009 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>
  *
  * This file is part of iTALC - http://italc.sourceforge.net
  *
@@ -22,32 +22,34 @@
  *
  */
 
-#ifndef _CONFIGURATION_XML_STORE_H
-#define _CONFIGURATION_XML_STORE_H
 
-#include "Configuration/Store.h"
+#ifndef _QT_USER_EVENTS_H
+#define _QT_USER_EVENTS_H
+
+#include <QtCore/QEvent>
+#include <QtGui/QRegion>
 
 
-namespace Configuration
-{
-
-class XmlStore : public Store
+class RegionChangedEvent : public QEvent
 {
 public:
-	XmlStore( Scope scope, const QString & file = QString() );
+	RegionChangedEvent( const QRegion & _r = QRegion() ) :
+		QEvent( static_cast<QEvent::Type>( QEvent::User+385 ) ),
+		m_changedRegion( _r )
+	{
+	}
 
-	virtual void load( Object *obj );
-	virtual void flush( Object *obj );
-	virtual bool isWritable() const;
+	const QRegion & changedRegion( void ) const
+	{
+		return m_changedRegion;
+	}
 
 
 private:
-	QString configurationFilePath() const;
-
-	QString m_file;
+	QRegion m_changedRegion;
 
 } ;
 
-}
 
 #endif
+

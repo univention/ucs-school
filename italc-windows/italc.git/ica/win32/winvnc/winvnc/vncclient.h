@@ -91,7 +91,7 @@ class vncClient
 public:
 	// Constructor/destructor
 	vncClient();
-	virtual ~vncClient();
+	~vncClient();
 
 	// Allow the client thread to see inside the client object
 	friend class vncClientThread;

@@ -1,7 +1,7 @@
 /*
  * ItalcVncConnection.cpp - implementation of ItalcVncConnection class
  *
- * Copyright (c) 2008-2014 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>
+ * Copyright (c) 2008-2013 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>
  *
  * This file is part of iTALC - http://italc.sourceforge.net
  *
@@ -91,18 +91,18 @@ private:
 class ClientCutEvent : public ClientEvent
 {
 public:
-	ClientCutEvent( const QString& text ) :
-		m_text( text.toUtf8() )
+	ClientCutEvent( char *text ) :
+		m_text( text )
 	{
 	}
 
 	virtual void fire( rfbClient *cl )
 	{
-		SendClientCutText( cl, m_text.constData(), m_text.size() );
+		SendClientCutText( cl, m_text, qstrlen( m_text ) );
 	}
 
 private:
-	QByteArray m_text;
+	char * m_text;
 } ;
 
 
@@ -244,7 +244,8 @@ rfbBool ItalcVncConnection::hookHandleCursorPos( rfbClient *cl, int x, int y )
 
 
 
-void ItalcVncConnection::hookCursorShape( rfbClient *cl, int xh, int yh, int w, int h, int bpp )
+void ItalcVncConnection::hookCursorShape( rfbClient *cl, int xh, int yh,
+											int w, int h, int bpp )
 {
 	for( int i = 0; i < w*h;++i )
 	{
@@ -255,10 +256,12 @@ void ItalcVncConnection::hookCursorShape( rfbClient *cl, int xh, int yh, int w, 
 	}
 	QImage alpha( cl->rcMask, w, h, QImage::Format_Indexed8 );
 
-	QImage cursorShape = QImage( cl->rcSource, w, h, QImage::Format_RGB32 ).convertToFormat( QImage::Format_ARGB32 );
+	QImage cursorShape = QImage( cl->rcSource, w, h, QImage::Format_RGB32 );
+	cursorShape.convertToFormat( QImage::Format_ARGB32 );
 	cursorShape.setAlphaChannel( alpha );
 
-	ItalcVncConnection* t = (ItalcVncConnection *) rfbClientGetClientData( cl, 0 );
+	ItalcVncConnection * t = (ItalcVncConnection *)
+					rfbClientGetClientData( cl, 0 );
 	t->cursorShapeUpdated( cursorShape, xh, yh );
 }
 
@@ -364,11 +367,6 @@ void ItalcVncConnection::stop()
 		{
 			qWarning( "ItalcVncConnection::stop(): terminating thread" );
 			terminate();
-
-			while( !wait( 1000 ) )
-			{
-				qWarning( "ItalcVncConnection::stop(): terminated thread is still alive!" );
-			}
 		}
 	}
 }
@@ -727,7 +725,7 @@ void ItalcVncConnection::keyEvent( unsigned int key, bool pressed )
 
 void ItalcVncConnection::clientCut( const QString &text )
 {
-	enqueueEvent( new ClientCutEvent( text ) );
+	enqueueEvent( new ClientCutEvent( strdup( text.toUtf8() ) ) );
 }
 
 

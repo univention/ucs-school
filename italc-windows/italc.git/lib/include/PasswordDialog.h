@@ -22,8 +22,8 @@
  *
  */
 
-#ifndef PASSWORD_DIALOG_H
-#define PASSWORD_DIALOG_H
+#ifndef _PASSWORD_DIALOG_H
+#define _PASSWORD_DIALOG_H
 
 #include "AuthenticationCredentials.h"
 

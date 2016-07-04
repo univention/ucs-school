@@ -617,6 +617,7 @@ VIDEODRIVER::Mirror_driver_detach_XP()
 							}
 					}
 
+        INT code =
         ChangeDisplaySettingsEx(deviceName,
                                 &devmode, 
                                 NULL,
@@ -626,7 +627,7 @@ VIDEODRIVER::Mirror_driver_detach_XP()
     
 //        GetDispCode(code);
 
-        ChangeDisplaySettingsEx(deviceName,
+        code = ChangeDisplaySettingsEx(deviceName,
                                 &devmode, 
                                 NULL,
                                 0,
@@ -955,9 +956,10 @@ BOOL
 VIDEODRIVER:: HardwareCursor()
 {
 	HDC gdc;
+	int returnvalue;
 	gdc = GetDC(NULL);
-	ExtEscape(gdc, MAP1, 0, NULL, 0, NULL);
-	ExtEscape(gdc, CURSOREN, 0, NULL, 0, NULL);
+	returnvalue= ExtEscape(gdc, MAP1, 0, NULL, 0, NULL);
+	returnvalue= ExtEscape(gdc, CURSOREN, 0, NULL, 0, NULL);
 	ReleaseDC(NULL,gdc);
 	return true;
 }
@@ -966,8 +968,9 @@ BOOL
 VIDEODRIVER:: NoHardwareCursor()
 {
 	HDC gdc;
+	int returnvalue;
 	gdc = GetDC(NULL);
-	ExtEscape(gdc, CURSORDIS, 0, NULL, 0, NULL);
+	returnvalue= ExtEscape(gdc, CURSORDIS, 0, NULL, 0, NULL);
 	ReleaseDC(NULL,gdc);
 	return true;
 }

@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef RFB_LZO_RLE_H
-#define RFB_LZO_RLE_H
+#ifndef _RFB_LZO_RLE_H
+#define _RFB_LZO_RLE_H
 
 #include <stdint.h>
 

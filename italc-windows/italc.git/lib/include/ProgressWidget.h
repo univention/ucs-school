@@ -22,8 +22,8 @@
  */
 
 
-#ifndef PROGRESS_WIDGET_H
-#define PROGRESS_WIDGET_H
+#ifndef _PROGRESS_WIDGET_H
+#define _PROGRESS_WIDGET_H
 
 #include <QtCore/QVector>
 #include <QtGui/QPixmap>

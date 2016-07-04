@@ -21,8 +21,8 @@
  * USA.
  */
 
-#ifndef MAIN_TOOL_BAR_H
-#define MAIN_TOOL_BAR_H
+#ifndef _MAIN_TOOL_BAR_H
+#define _MAIN_TOOL_BAR_H
 
 #include <QtGui/QToolBar>
 

@@ -1,7 +1,7 @@
 /*
  *  RemoteControlWidget.cpp - widget containing a VNC-view and controls for it
  *
- *  Copyright (c) 2006-2013 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>
+ *  Copyright (c) 2006-2011 Tobias Doerffel <tobydox/at/users/dot/sf/dot/net>
  *
  *  This file is part of iTALC - http://italc.sourceforge.net
  *
@@ -257,8 +257,6 @@ void RemoteControlWidgetToolBar::startConnection()
 
 void RemoteControlWidgetToolBar::connectionEstablished()
 {
-	m_parent->m_coreConnection->sendGetUserInformationRequest();
-
 	m_connecting = false;
 	m_iconStateTimeLine.stop();
 	QTimer::singleShot( 3000, this, SLOT( disappear() ) );
@@ -326,10 +324,7 @@ void RemoteControlWidget::updateWindowTitle()
 	}
 	else
 	{
-		if( u.contains( '(' ) && u.contains( ')' ) )
-		{
-			u = u.section( '(', 1 ).section( ')', 0, 0 );
-		}
+		u = u.section( '(', 1 ).section( ')', 0, 0 );
 	}
 	setWindowTitle( s.arg( u ).arg( host() ) );
 }

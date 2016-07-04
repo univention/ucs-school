@@ -22,8 +22,8 @@
  *
  */
 
-#ifndef LOGON_AUTHENTICATION_H
-#define LOGON_AUTHENTICATION_H
+#ifndef _LOGON_AUTHENTICATION_H
+#define _LOGON_AUTHENTICATION_H
 
 #include "AuthenticationCredentials.h"
 

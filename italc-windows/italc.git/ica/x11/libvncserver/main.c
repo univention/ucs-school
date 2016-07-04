@@ -569,37 +569,21 @@ listenerRun(void *data)
 {
     rfbScreenInfoPtr screen=(rfbScreenInfoPtr)data;
     int client_fd;
-    struct sockaddr_storage peer;
-    rfbClientPtr cl = NULL;
+    struct sockaddr_in peer;
+    rfbClientPtr cl;
     socklen_t len;
-    fd_set listen_fds;  /* temp file descriptor list for select() */
+
+    len = sizeof(peer);
 
     /* TODO: this thread wont die by restarting the server */
     /* TODO: HTTP is not handled */
-    while (1) {
-        client_fd = -1;
-        FD_ZERO(&listen_fds);
-	if(screen->listenSock >= 0) 
-	  FD_SET(screen->listenSock, &listen_fds);
-	if(screen->listen6Sock >= 0) 
-	  FD_SET(screen->listen6Sock, &listen_fds);
+    while ((client_fd = accept(screen->listenSock, 
+                               (struct sockaddr*)&peer, &len)) >= 0) {
+        cl = rfbNewClient(screen,client_fd);
+        len = sizeof(peer);
 
-        if (select(screen->maxFd+1, &listen_fds, NULL, NULL, NULL) == -1) {
-            rfbLogPerror("listenerRun: error in select");
-            return NULL;
-        }
-	
-	/* there is something on the listening sockets, handle new connections */
-	len = sizeof (peer);
-	if (FD_ISSET(screen->listenSock, &listen_fds)) 
-	    client_fd = accept(screen->listenSock, (struct sockaddr*)&peer, &len);
-	else if (FD_ISSET(screen->listen6Sock, &listen_fds))
-	    client_fd = accept(screen->listen6Sock, (struct sockaddr*)&peer, &len);
-
-	if(client_fd >= 0)
-	  cl = rfbNewClient(screen,client_fd);
 	if (cl && !cl->onHold )
-	  rfbStartOnHoldClient(cl);
+		rfbStartOnHoldClient(cl);
     }
     return(NULL);
 }
@@ -825,7 +809,6 @@ rfbScreenInfoPtr rfbGetScreen(int* argc,char** argv,
    screen->clientHead=NULL;
    screen->pointerClient=NULL;
    screen->port=5900;
-   screen->ipv6port=5900;
    screen->socketState=RFB_SOCKET_INIT;
 
    screen->inetdInitDone = FALSE;
@@ -838,15 +821,12 @@ rfbScreenInfoPtr rfbGetScreen(int* argc,char** argv,
 
    screen->maxFd=0;
    screen->listenSock=-1;
-   screen->listen6Sock=-1;
 
    screen->httpInitDone=FALSE;
    screen->httpEnableProxyConnect=FALSE;
    screen->httpPort=0;
-   screen->http6Port=0;
    screen->httpDir=NULL;
    screen->httpListenSock=-1;
-   screen->httpListen6Sock=-1;
    screen->httpSock=-1;
 
    screen->desktopName = "LibVNCServer";
@@ -1061,13 +1041,10 @@ void rfbShutdownServer(rfbScreenInfoPtr screen,rfbBool disconnectClients) {
   if(disconnectClients) {
     rfbClientPtr cl;
     rfbClientIteratorPtr iter = rfbGetClientIterator(screen);
-    while( (cl = rfbClientIteratorNext(iter)) ) {
-      if (cl->sock > -1) {
-       /* we don't care about maxfd here, because the server goes away */
-       rfbCloseClient(cl);
-       rfbClientConnectionGone(cl);
-      }
-    }
+    while( (cl = rfbClientIteratorNext(iter)) )
+      if (cl->sock > -1)
+	/* we don't care about maxfd here, because the server goes away */
+	rfbCloseClient(cl);
     rfbReleaseClientIterator(iter);
   }
 

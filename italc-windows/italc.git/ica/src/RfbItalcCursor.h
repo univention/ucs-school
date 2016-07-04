@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef RFB_ITALC_CURSOR_H
-#define RFB_ITALC_CURSOR_H
+#ifndef _RFB_ITALC_CURSOR_H
+#define _RFB_ITALC_CURSOR_H
 
 #define rfbEncodingItalcCursor 31
 

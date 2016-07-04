@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef DEMO_SERVER_H
-#define DEMO_SERVER_H
+#ifndef _DEMO_SERVER_H
+#define _DEMO_SERVER_H
 
 #include <QtCore/QPair>
 #include <QtCore/QReadWriteLock>

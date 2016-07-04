@@ -82,38 +82,16 @@ static char* ReadPassword(rfbClient* client) {
 #endif
 }
 static rfbBool MallocFrameBuffer(rfbClient* client) {
-  uint64_t allocSize;
-
   if(client->frameBuffer)
     free(client->frameBuffer);
-
-  /* SECURITY: promote 'width' into uint64_t so that the multiplication does not overflow
-     'width' and 'height' are 16-bit integers per RFB protocol design
-     SIZE_MAX is the maximum value that can fit into size_t
-  */
-  allocSize = (uint64_t)client->width * client->height * client->format.bitsPerPixel/8;
-
-  if (allocSize >= SIZE_MAX) {
-    rfbClientErr("CRITICAL: cannot allocate frameBuffer, requested size is too large\n");
-    return FALSE;
-  }
-
-  client->frameBuffer=malloc( (size_t)allocSize );
-
-  if (client->frameBuffer == NULL)
-    rfbClientErr("CRITICAL: frameBuffer allocation failed, requested size too large or not enough memory?\n");
-
+  client->frameBuffer=malloc(client->width*client->height*client->format.bitsPerPixel/8);
   return client->frameBuffer?TRUE:FALSE;
 }
 
 static void initAppData(AppData* data) {
 	data->shareDesktop=TRUE;
 	data->viewOnly=FALSE;
-#ifdef LIBVNCSERVER_CONFIG_LIBVA
-	data->encodingsString="h264 tight zrle ultra copyrect hextile zlib corre rre raw";
-#else
 	data->encodingsString="tight zrle ultra copyrect hextile zlib corre rre raw";
-#endif
 	data->useBGR233=FALSE;
 	data->nColours=0;
 	data->forceOwnCmap=FALSE;
@@ -150,9 +128,6 @@ rfbClient* rfbGetClient(int bitsPerSample,int samplesPerPixel,
 
   /* default: use complete frame buffer */ 
   client->updateRect.x = -1;
- 
-  client->frameBuffer = NULL;
-  client->outputWindow = 0;
  
   client->format.bitsPerPixel = bytesPerPixel*8;
   client->format.depth = bitsPerSample*samplesPerPixel;
@@ -216,12 +191,11 @@ rfbClient* rfbGetClient(int bitsPerSample,int samplesPerPixel,
   client->authScheme = 0;
   client->subAuthScheme = 0;
   client->GetCredential = NULL;
+#ifdef LIBVNCSERVER_WITH_CLIENT_TLS
   client->tlsSession = NULL;
+#endif
   client->sock = -1;
   client->listenSock = -1;
-  client->listenAddress = NULL;
-  client->listen6Sock = -1;
-  client->listen6Address = NULL;
   client->clientAuthSchemes = NULL;
   return client;
 }
@@ -250,8 +224,7 @@ static rfbBool rfbInitConnection(rfbClient* client)
 
   client->width=client->si.framebufferWidth;
   client->height=client->si.framebufferHeight;
-  if (!client->MallocFrameBuffer(client))
-    return FALSE;
+  client->MallocFrameBuffer(client);
 
   if (!SetFormatAndEncodings(client))
     return FALSE;
@@ -389,14 +362,9 @@ void rfbClientCleanup(rfbClient* client) {
 #endif
 #endif
 
+#ifdef LIBVNCSERVER_WITH_CLIENT_TLS
   FreeTLS(client);
-
-  while (client->clientData) {
-    rfbClientData* next = client->clientData->next;
-    free(client->clientData);
-    client->clientData = next;
-  }
-
+#endif
   if (client->sock >= 0)
     close(client->sock);
   if (client->listenSock >= 0)

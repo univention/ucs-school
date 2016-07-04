@@ -76,7 +76,7 @@ AUTH_METHOD_ITEM socks5_auth_table[] = {
     { "gssapi", SOCKS5_AUTH_GSSAPI },
     { "userpass", SOCKS5_AUTH_USERPASS },
     { "chap", SOCKS5_AUTH_CHAP },
-    { NULL, (unsigned char) -1 },
+    { NULL, -1 },
 };
 
 const char *digits    = "0123456789";
@@ -1393,6 +1393,7 @@ httpconnect::Get_https_socket(char *port, char *host)
 	TCHAR proxy[512];
 	memset (proxy,0,sizeof(proxy));
 	TCHAR * pch=NULL;
+	long ProxyEnable=0;
 	pfnWinHttpGetIEProxyConfig pWHGIEPC = NULL;
 	HMODULE hModWH=NULL;
 	//New function, ask current user proxy
@@ -1402,7 +1403,12 @@ httpconnect::Get_https_socket(char *port, char *host)
 	WINHTTP_CURRENT_USER_IE_PROXY_CONFIG MyProxyConfig;
 	if(!pWHGIEPC(&MyProxyConfig))
 	{
+		ProxyEnable=false;
 		return 0;
+	}
+	else
+	{
+		ProxyEnable=true;
 	}
 	if (hModWH) FreeLibrary(hModWH);
 	if(NULL != MyProxyConfig.lpszAutoConfigUrl)
