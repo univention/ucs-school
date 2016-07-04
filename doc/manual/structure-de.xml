@@ -137,6 +137,15 @@
 				übertragen.
 			</para>
 			<para>
+				Seit &ucsUAS; 4.1 R2 werden schulübergreifenden Benutzerkonten unterstützt.
+				Ein Benutzerobjekt existiert im LDAP-Verzeichnis nur einmal an seiner primären Schule.
+				An die weiteren Schulen wird nur ein Ausschnitt des LDAP-Verzeichnisses dieser Schule
+				repliziert: sein Benutzerobjekt und die Standardgruppen.
+				Verlässt der Benutzer die Schule, wird sein Benutzerobjekt dort gelöscht nicht mehr dorthin repliziert.
+				Bei der Verwendung von schulübergreifenden Benutzerkonten gilt es einige Dinge zu beachten
+				(siehe <xref linkend="school:setup:umc:user:overlapping"/>).
+			</para>
+			<para>
 				Zur Unterteilung der im LDAP-Verzeichnisdienst hinterlegten Objekte und
 				Einstellungen wird für jede Schule im LDAP-Verzeichnis eine eigene
 				<emphasis>Organisationseinheit</emphasis> (OU) angelegt. Unterhalb dieser OU
