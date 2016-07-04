@@ -8,4 +8,5 @@ desc: |
  This update addresses the following issue(s):
  * A regression that computer objects couldn't read entries at their own school
    has been fixed.
-bug: [41636]
+ * A regression that staff only users could modify shares has been fixed.
+bug: [41636,41720]
