@@ -68,15 +68,15 @@ from ucsschool.lib.schoolldap import SchoolSearchBase
 
 from univention.lib.i18n import Translation
 
-_ = Translation('ucs-school-umc-installer').translate
+_ = Translation( 'ucs-school-umc-installer' ).translate
 ucr.load()
 # switch back to default umask
-os.umask(0o022)
+os.umask(0022)
 
-RE_FQDN = re.compile('^[a-z]([a-z0-9-]*[a-z0-9])*\.([a-z0-9]([a-z0-9-]*[a-z0-9])*[.])*[a-z0-9]([a-z0-9-]*[a-z0-9])*$')
+RE_FQDN     = re.compile('^[a-z]([a-z0-9-]*[a-z0-9])*\.([a-z0-9]([a-z0-9-]*[a-z0-9])*[.])*[a-z0-9]([a-z0-9-]*[a-z0-9])*$')
 RE_HOSTNAME = re.compile('^[a-z]([a-z0-9-]*[a-z0-9])*(\.([a-z0-9]([a-z0-9-]*[a-z0-9])*[.])*[a-z0-9]([a-z0-9-]*[a-z0-9])*)?$') # keep in sync with schoolinstaller.js widgets.master.regExp
 RE_HOSTNAME_OR_EMPTY = re.compile('^([a-z]([a-z0-9-]*[a-z0-9])*(\.([a-z0-9]([a-z0-9-]*[a-z0-9])*[.])*[a-z0-9]([a-z0-9-]*[a-z0-9])*)?)?$')
-RE_OU = re.compile('^[a-zA-Z0-9](([a-zA-Z0-9_]*)([a-zA-Z0-9]$))?$')
+RE_OU       = re.compile('^[a-zA-Z0-9](([a-zA-Z0-9_]*)([a-zA-Z0-9]$))?$')
 
 CMD_ENABLE_EXEC = ['/usr/share/univention-updater/enable-apache2-umc', '--no-restart']
 CMD_DISABLE_EXEC = '/usr/share/univention-updater/disable-apache2-umc'
@@ -99,9 +99,7 @@ CERTIFICATE_PATH = '/etc/univention/ssl/ucsCA/CAcert.pem'
 #			self.raise_validation_error(_('Multi server environment not allowed on server role "%s"') % server_role)
 #		self.raise_validation_error(_('Value "%s" not allowed') % value)
 
-
 class HostSanitizer(StringSanitizer):
-
 	def _sanitize(self, value, name, further_args):
 		value = super(HostSanitizer, self)._sanitize(value, name, further_args)
 		if not value:
@@ -112,7 +110,6 @@ class HostSanitizer(StringSanitizer):
 			# invalid FQDN
 			self.raise_validation_error(_('The entered FQDN is not a valid value'))
 
-
 def get_ssh_connection(username, password, host):
 	ssh = paramiko.SSHClient()
 	ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -120,16 +117,14 @@ def get_ssh_connection(username, password, host):
 	ssh.connect(host, username=username, password=password)
 	return ssh
 
-
 def move_slave_into_ou(master, username, password, ou, slave):
 	'''Make sure that the slave object exists in the right OU.'''
 	MODULE.info('Trying to move the slave entry in the right OU structure...''')
-	result = umc(username, password, master, 'schoolwizards/schools/move_dc', {'schooldc': slave, 'schoolou': ou}, 'schoolwizards/schools')
+	result = umc(username, password, master, 'schoolwizards/schools/move_dc', {'schooldc': slave , 'schoolou': ou}, 'schoolwizards/schools')
 	if not result.get('success'):
 		MODULE.warn('Could not successfully move the slave DC into its correct OU structure:\n%s' % result.get('message'))
 		return False
 	return True
-
 
 def get_remote_ucs_school_version(username, password, master):
 	'''Verify that the correct UCS@school version (single server, multi server) is
@@ -146,7 +141,7 @@ def get_remote_ucs_school_version(username, password, master):
 
 		# match: "Status: install ok installed"
 		# TODO: double check regular expression
-		res = [i for i in stdout if regStatusInstalled.match(i)]
+		res = [ i for i in stdout if regStatusInstalled.match(i) ]
 		if res:
 			installedPackages.append(ipackage)
 		MODULE.info('package %s installed on the system? %s' % (ipackage, bool(res)))
@@ -155,7 +150,6 @@ def get_remote_ucs_school_version(username, password, master):
 		return 'singlemaster'
 	if 'ucs-school-slave' in installedPackages or 'ucs-school-master' in installedPackages:
 		return 'multiserver'
-
 
 def get_master_dns_lookup():
 	# DNS lookup for the DC master entry
@@ -207,12 +201,10 @@ def get_master_dns_lookup():
 
 regUMCResult = re.compile(r'.*^\s*RESULT\s*:\s*(?P<result>.*)', re.MULTILINE | re.DOTALL)
 
-
 def umc(username, password, master, path='', options=None, flavor=None, command='command'):
 	connection = UMCConnection(master, username, password, error_handler=MODULE.warn)
 	MODULE.info('Executing on %r: %r %r flavor=%r options=%r' % (master, command, path, flavor, options))
 	return connection.request(path or '', options, flavor, command=command)
-
 
 def get_user_dn(username, password, master):
 	"""Get the LDAP DN for the given username."""
@@ -222,7 +214,6 @@ def get_user_dn(username, password, master):
 		return result[0]
 	except IndexError:
 		pass
-
 
 def create_ou_local(ou, displayName):
 	'''Calls create_ou locally as user root (only on master).'''
@@ -243,10 +234,9 @@ def create_ou_local(ou, displayName):
 		return False
 	return True
 
-
 def create_ou_remote(master, username, password, ou, display_name, educational_slave, administrative_slave=None):
 	"""Create a school OU via the UMC interface."""
-	options = {'name': ou, 'display_name': display_name, 'dc_name': educational_slave}
+	options = {'name' : ou, 'display_name' : display_name, 'dc_name' : educational_slave}
 	if administrative_slave:
 		options['dc_name_administrative'] = administrative_slave
 	try:
@@ -255,7 +245,6 @@ def create_ou_remote(master, username, password, ou, display_name, educational_s
 		MODULE.error('Failed creating OU: %s' % (exc,))
 		return False
 	return True
-
 
 def restoreOrigCertificate(certOrigFile):
 	# try to restore the original certificate file
@@ -266,7 +255,6 @@ def restoreOrigCertificate(certOrigFile):
 		except (IOError, OSError) as err:
 			MODULE.warn('Could not restore original root certificate: %s' % err)
 		certOrigFile = None
-
 
 def retrieveRootCertificate(master):
 	'''On a slave system, download the root certificate from the specified master
@@ -309,13 +297,10 @@ def retrieveRootCertificate(master):
 	return certOrigFile
 
 # dummy function that does nothing
-
-
 def _dummyFunc(*args):
 	pass
 
-
-def system_join(username, password, info_handler=_dummyFunc, error_handler=_dummyFunc, step_handler=_dummyFunc):
+def system_join(username, password, info_handler = _dummyFunc, error_handler = _dummyFunc, step_handler = _dummyFunc):
 	# make sure we got the correct server role
 	serverRole = ucr.get('server/role')
 	assert serverRole in ('domaincontroller_slave', 'domaincontroller_backup', 'domaincontroller_master')
@@ -401,9 +386,7 @@ def system_join(username, password, info_handler=_dummyFunc, error_handler=_dumm
 		MODULE.info('enabling UMC and apache server restart')
 		subprocess.call(CMD_ENABLE_EXEC)
 
-
 class Progress(object):
-
 	def __init__(self, max_steps=100):
 		self.reset(max_steps)
 
@@ -438,12 +421,10 @@ class Progress(object):
 	def step_handler(self, steps):
 		self.steps = steps
 
-	def add_steps(self, steps=1):
+	def add_steps(self, steps = 1):
 		self.steps += steps
 
-
 class Instance(Base):
-
 	def init(self):
 		self._finishedLock = threading.Lock()
 		self._errors = []
@@ -535,12 +516,12 @@ class Instance(Base):
 			return {'success': False, 'error': str(exc)}
 
 		values = {'exists': False,
-			'school': schoolOU,
-			'classShareServer': None,
-			'homeShareServer': None,
-			'educational_slaves': [],
-			'administrative_slaves': [],
-		}
+				  'school': schoolOU,
+				  'classShareServer': None,
+				  'homeShareServer': None,
+				  'educational_slaves': [],
+				  'administrative_slaves': [],
+				  }
 
 		try:
 			# get the userDN from the master
@@ -581,6 +562,7 @@ class Instance(Base):
 
 		return {'success': True, 'schoolinfo': values}
 
+
 	@sanitize(
 		username=StringSanitizer(required=True),
 		password=StringSanitizer(required=True),
@@ -615,17 +597,16 @@ class Instance(Base):
 			master = ucr.get('ldap/master')
 
 		certOrigFile = None
-
 		def _error(msg):
 			# restore the original certificate... this is done at any error before the system join
 			restoreOrigCertificate(certOrigFile)
 
 			# finish the request with an error
-			result = {'success': False, 'error': msg}
+			result = {'success' : False, 'error' : msg}
 			self.finished(request.id, result)
 
 		# check for valid school OU
-		if ((setup == 'singlemaster' and serverRole == 'domaincontroller_master') or serverRole == 'domaincontroller_slave') and not RE_OU.match(schoolOU):
+		if ((setup == 'singlemaster' and serverRole == 'domaincontroller_master') or serverRole == 'domaincontroller_slave' ) and not RE_OU.match(schoolOU):
 			_error(_('The specified school OU is not valid.'))
 			return
 
@@ -777,7 +758,7 @@ class Instance(Base):
 					MODULE.info('created school OU')
 				else:
 					MODULE.error('Could not create school OU')
-					progress_state.error_handler(_('The UCS@school software packages have been installed, however, a school OU could not be created and consequently a re-join of the system has not been performed. Please create a new school OU structure using the UMC module "Add school" on the master and perform a domain join on this machine via the UMC module "Domain join".'))
+					progress_state.error_handler(_('The UCS@school software packages have been installed, however, a school OU could not be created and consequently a re-join of the system has not been performed. Please create a new school OU structure using the UMC module "Add school" on the master and perform a domain join on this machine via the UMC module "Domain join".' ))
 					restoreOrigCertificate(certOrigFile)
 					return success
 
@@ -811,7 +792,7 @@ class Instance(Base):
 			progress_state.info = _('finished...')
 			progress_state.finish()
 			if isinstance(result, BaseException):
-				msg = '%s\n%s: %s\n' % (''.join(traceback.format_tb(thread.exc_info[2])), thread.exc_info[0].__name__, str(thread.exc_info[1]))
+				msg = '%s\n%s: %s\n' % ( ''.join( traceback.format_tb( thread.exc_info[ 2 ] ) ), thread.exc_info[ 0 ].__name__, str( thread.exc_info[ 1 ] ) )
 				MODULE.warn('Exception during installation: %s' % msg)
 				progress_state.error_handler(_('An unexpected error occurred during installation: %s') % result)
 
@@ -823,4 +804,5 @@ class Instance(Base):
 		thread.run()
 
 		# finish request
-		self.finished(request.id, {'success': True})
+		self.finished(request.id, { 'success': True })
+
