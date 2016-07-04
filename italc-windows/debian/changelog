@@ -1,9 +1,3 @@
-italc-windows (3.0.1-1) unstable; urgency=medium
-
-  * Bug #38221: Remove iTALC Master from installer
-
- -- Florian Best <best@univention.de>  Tue, 26 Jan 2016 13:46:37 +0100
-
 italc-windows (3.0.0-1) unstable; urgency=medium
 
   * Bug #39534: Start UCS@school 4.1 development
