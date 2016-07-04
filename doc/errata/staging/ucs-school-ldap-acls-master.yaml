@@ -7,4 +7,7 @@ fix: 14.0.1-4.73.201606221442
 desc: |
  This update addresses the following issue(s):
  * A regression that staff only users could modify shares has been fixed.
-bug: [41720]
+ * Access to object classes "univentionApp",
+   "univentionVirtualMachineCloudConnection" and "univentionVirtualMachine"
+   is now more restrictive (Bug #41725).
+bug: [41720,41725]
