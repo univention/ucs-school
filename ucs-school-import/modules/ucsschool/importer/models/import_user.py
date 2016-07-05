@@ -43,6 +43,7 @@ from univention.admin import property as uadmin_property
 from ucsschool.lib.roles import role_pupil, role_teacher, role_staff
 from ucsschool.lib.models import Staff, Student, Teacher, TeachersAndStaff, User
 from ucsschool.lib.models.attributes import RecordUID, SourceUID
+from ucsschool.lib.models.utils import create_passwd
 from ucsschool.importer.configuration import Configuration
 from ucsschool.importer.factory import Factory
 from ucsschool.importer.exceptions import BadPassword, FormatError, InvalidBirthday, InvalidClassName, InvalidEmail, MissingMailDomain, MissingMandatoryAttribute, MissingSchoolName, NotSupportedError, NoUsername, NoUsernameAtAll, UniqueIdError, UnkownDisabledSetting, UnknownProperty, UsernameToLong
@@ -333,14 +334,7 @@ class ImportUser(User):
 		Create random password (if not already set).
 		"""
 		if not self.password:
-			pw = list(random.choice(string.lowercase))
-			pw.append(random.choice(string.uppercase))
-			pw.append(random.choice(string.digits))
-			pw.append(random.choice(u"@#$%^&*-_+=[]{}|\:,.?/`~();"))
-			pw.extend(random.choice(string.ascii_letters + string.digits + u"@#$%^&*-_+=[]{}|\:,.?/`~();")
-				for _ in range(self.config["password_length"] - 4))
-			random.shuffle(pw)
-			self.password = u"".join(pw)
+			self.password = create_passwd(self.config["password_length"])
 
 	def make_recordUID(self):
 		"""

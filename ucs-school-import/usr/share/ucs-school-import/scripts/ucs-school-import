@@ -79,6 +79,8 @@ import univention.lib.policy_result
 from ucsschool.lib.roles import role_pupil, role_teacher, role_staff
 from ucsschool.lib.roleshares import roleshare_home_subdir
 from ucsschool.lib.models.utils import stopped_notifier, add_stream_logger_to_schoollib
+from ucsschool.lib.models.utils import create_passwd
+
 
 ldap_errors = (ldap.LDAPError, univention.admin.uexceptions.base,)
 
@@ -1356,37 +1358,6 @@ def check_user(person, baseDN, module):
 				return 1
 	return None
 
-def create_passwd(dn):
-
-	# default
-	pwLength = 8
-
-	if dn:
-		# get baseDn pw policy
-		if not pwLengthOu.get(baseDN):
-			try:
-				results, policies = univention.lib.policy_result.policy_result(baseDN)
-				pwLengthOu[baseDN] = int(results.get("univentionPWLength", ["8"])[0])
-			except Exception:
-				pass
-		pwLength = pwLengthOu.get(baseDN, pwLength)
-
-		# get ou pw policy
-		ou = 'ou=' + dn[dn.find('ou=') + 3 :]
-		if not pwLengthOu.get(ou):
-			try:
-				results, policies = univention.lib.policy_result.policy_result(ou)
-				pwLengthOu[ou] = int(results.get("univentionPWLength", ["8"])[0])
-			except Exception:
-				pass
-		pwLength = pwLengthOu.get(ou, pwLength)
-
-	charlist = 'abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ!"$%&/()=?'
-	passwd = ''
-	for i in range(pwLength):
-		passwd += charlist[random.randrange(0,len(charlist))]
-
-	return passwd
 
 def findComputerNameWithService(service, ou):
 	computers = univention.admin.modules.lookup(computer_module, co, lo, scope='sub', base=ou, filter=univention.admin.filter.expression('univentionService', service))
@@ -1589,7 +1560,7 @@ def import_user():
 			if main_person.password:
 				passwd = main_person.password
 			else:
-				passwd = create_passwd(persons[0].getDN())
+				passwd = create_passwd(dn=persons[0].getDN())
 
 			# invoke pre hooks
 			hooks.pre( 'user', main_person.modtype, line = line )
@@ -2602,7 +2573,7 @@ def activate_groupmembers():
 
 					passwd = '*'
 					if chpasswd:
-						passwd = create_passwd(memberdn)
+						passwd = create_passwd(dn=memberdn, specials='-+.,;')
 						memberobj['password'] = passwd
 						memberobj['overridePWHistory'] = '1'
 						memberobj['overridePWLength'] = '1'
