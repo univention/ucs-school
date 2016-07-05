@@ -3,7 +3,7 @@ release: "4.1"
 version: [1]
 scope: ucs_4.1-0-ucs-school-4.1
 src: ucs-school-lib
-fix: 9.0.20-5.228.201606231012
+fix: 9.0.20-6.229.201607051230
 desc: |
  This update addresses the following issue(s):
  * A bug was fixed, that prevented staff users from being moved from one
@@ -11,4 +11,6 @@ desc: |
  * When moving a user from a school the the user is not put into the school
    classes of the old school (Bug #41620).
  * Users are now added to groups of all schools they belong to (Bug #41601).
-bug: [41609, 41620, 41601]
+ * New passwords are now guaranteed to be created from different character
+   classes (Bug #40711).
+bug: [41609, 41620, 41601, 40711]
