@@ -30,7 +30,8 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-from random import choice
+from random import choice, shuffle
+import string
 import logging
 from logging import StreamHandler, Logger, Formatter
 from logging.handlers import MemoryHandler
@@ -109,7 +110,7 @@ def add_module_logger_to_schoollib():
 
 
 _pw_length_cache = {}
-def create_passwd(length=8, dn=None):
+def create_passwd(length=8, dn=None, specials='@#$%&*-_+=\:,.;?/()'):
 	if dn:
 		# get dn pw policy
 		if not _pw_length_cache.get(dn):
@@ -130,8 +131,19 @@ def create_passwd(length=8, dn=None):
 				pass
 		length = _pw_length_cache.get(ou, length)
 
-	chars = 'abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ!"$%&/()=?'
-	return ''.join(choice(chars) for x in range(length))
+	if not specials:
+		specials = ''
+	pw = list()
+	if length >= 4:
+		pw.append(choice(string.lowercase))
+		pw.append(choice(string.uppercase))
+		pw.append(choice(string.digits))
+		if specials:
+			pw.append(choice(specials))
+		length -= len(pw)
+	pw.extend(choice(string.ascii_letters + string.digits + specials) for x in range(length))
+	shuffle(pw)
+	return ''.join(pw)
 
 def flatten(list_of_lists):
 	# return [item for sublist in list_of_lists for item in sublist]
