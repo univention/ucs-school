@@ -186,20 +186,6 @@
 		  aus dem Verzeichnisdienst entfernt.
 		</para>
 	  </section>
-	  <section id="school:setup:umc:user:overlapping">
-		<title>Schulübergreifenden Benutzerkonten</title>
-		<para>
-			Schulübergreifenden Benutzerkonten können erstellt werden, indem im UMC-Modul
-			<guimenu>Benutzer (Schulen)</guimenu> ein Benutzer zum Editieren geöffnet, und auf
-			<guimenu>Erweiterte Einstellungen</guimenu> geklickt wird. Im Reiter <guimenu>UCS@school</guimenu>
-			können Schulen hinzugefügt und entfernt werden.
-		</para>
-		<caution>
-			<para>
-				Es darf nicht die letzte Schule entfernt werden!
-			</para>
-		</caution>
-	  </section>
 	</section>
 
 	<section id="school:setup:umc:csvimport">
