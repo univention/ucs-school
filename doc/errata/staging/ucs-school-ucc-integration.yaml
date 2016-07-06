@@ -1,0 +1,11 @@
+product: ucsschool
+release: "4.1"
+version: [1]
+scope: ucs_4.1-0-ucs-school-4.1
+src: ucs-school-ucc-integration
+fix: 3.0.0-2.14.201607061136
+desc: |
+ This update addresses the following issue(s):
+ * Set timeserver in UCR policy to DC slave. Will be done only on fresh
+   installations (Bug #40705).
+bug: [40705]
