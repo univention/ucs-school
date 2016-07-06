@@ -90,3 +90,39 @@ school_dn() {
 
 	echo "$ldap_hostdn" | grep -oiE ',ou=.*$' | cut -b2-
 }
+
+servers_school_ous() {
+	# syntax: servers_school_ous [hostdn]
+	#
+	# Tries to determine all LDAP DNs of the OUs this host is responsible for.
+	# The OU DN is retrieved from the local LDAP. If no DN has been passed to
+	# the function, the hostdn of the system is used as fallback.
+	# PLEASE NOTE: This function works only on domaincontroller_slave systems!
+	#              Other systems will return an empty value!
+	#
+	# example:
+	# $ servers_school_ous
+	# ou=bar,dc=example,dc=com
+	#
+	# $ servers_school_ous cn=myslave,cn=dc,cn=server,cn=computers,ou=bar,dc=example,dc=com
+	# ou=bar,dc=example,dc=com
+	# ou=foo,dc=example,dc=com
+
+	local ldap_hostdn ldap_base
+
+	if [ -n "$1" ] ; then
+		ldap_hostdn="$1"
+	else
+		ldap_hostdn="$(/usr/sbin/univention-config-registry get ldap/hostdn)"
+	fi
+	ldap_base="$(/usr/sbin/univention-config-registry get ldap/base)"
+
+	res=""
+	for oudn in $(univention-ldapsearch -xLLL -b "$ldap_base" 'objectClass=ucsschoolOrganizationalUnit' dn | ldapsearch-wrapper | sed -nre 's/^dn: //p') ; do
+		ouname="$(school_ou "$oudn")"
+		if univention-ldapsearch -xLLL "(&(|(cn=OU${ouname}-DC-Edukativnetz)(cn=OU${ouname}-DC-Verwaltungsnetz))(uniqueMember=${ldap_hostdn}))" dn | grep -q "^dn: "; then
+			res="$res $oudn"
+		fi
+	done
+	echo -n "${res}" | sed -e 's/^[[:space:]]*//'
+}

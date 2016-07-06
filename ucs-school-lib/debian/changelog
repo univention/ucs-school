@@ -1,3 +1,9 @@
+ucs-school-lib (9.0.20-7) unstable; urgency=low
+
+  * Bug #40705: Add shell function to get the OUs a server is responsible for
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 06 Jul 2016 15:20:57 +0200
+
 ucs-school-lib (9.0.20-6) unstable; urgency=low
 
   * Bug #40711: create secure passwords
