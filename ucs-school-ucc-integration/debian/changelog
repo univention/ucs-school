@@ -1,3 +1,9 @@
+ucs-school-ucc-integration (3.0.0-3) unstable; urgency=low
+
+  * Bug #40705: use lib function to get OUs for server
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 06 Jul 2016 15:24:44 +0200
+
 ucs-school-ucc-integration (3.0.0-2) unstable; urgency=low
 
   * Bug #40705: set timeserver to school DC slave

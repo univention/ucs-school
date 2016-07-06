@@ -44,13 +44,7 @@ elif [ "$1" = "--name" ] ; then
 	oudnlist="$(univention-ldapsearch "(&(objectClass=ucsschoolOrganizationalUnit)(ou=$2))" | ldapsearch-wrapper | sed -nre 's/^dn: //p' | head -n1)"
 	shift 2 || exit 2
 elif [ "$1" = "--all" ] ; then
-	oudnlist=$(\
-	for oudn in $(univention-ldapsearch -xLLL -b "$ldap_base" 'objectClass=ucsschoolOrganizationalUnit' dn | ldapsearch-wrapper | sed -nre 's/^dn: //p') ; do
-		ouname="$(school_ou "$oudn")"
-		if univention-ldapsearch -xLLL "(&(|(cn=OU${ouname}-DC-Edukativnetz)(cn=OU${ouname}-DC-Verwaltungsnetz))(uniqueMember=$ldap_hostdn))" dn | grep -q "^dn: "; then
-			echo "$oudn"
-		fi
-	done)
+	oudnlist=$(servers_school_ous)
 	shift 1 || exit 2
 else
 	echo 'Please specifiy argument "--dn <ou_dn>" or "--name <ou_name>" or "--all"'
