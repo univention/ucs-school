@@ -54,6 +54,9 @@ class LegacyUserImportParseUserImportCmdline(ParseUserImportCmdline):
 
 			# legacy cmdline tool output emulation
 			print("infile is: {}".format(self.args.importFile))
+			if not os.access(self.args.importFile, os.R_OK):
+				print("ERROR: cannot read input data file '{}'.".format(self.args.importFile))
+				sys.exit(1)
 			if self.args.outfile:
 				if os.path.exists(self.args.outfile):
 					print("ERROR: outfile exists, will not overwrite existing file.")

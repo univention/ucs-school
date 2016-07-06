@@ -43,11 +43,6 @@ from ucsschool.importer.factory import Factory
 from ucsschool.importer.configuration import Configuration
 from ucsschool.importer.utils.logging2udebug import get_logger
 from ucsschool.importer.utils.ldap_connection import get_admin_connection
-from ucsschool.importer.utils.pyhooks_loader import PyHooksLoader
-from ucsschool.importer.utils.user_pyhook import UserPyHook
-
-
-PLUGINS_BASE_PATH = "/usr/share/ucs-school-import/pyhooks"
 
 
 class UserImport(object):
@@ -66,8 +61,6 @@ class UserImport(object):
 		self.connection, self.position = get_admin_connection()
 		self.factory = Factory()
 		self.reader = self.factory.make_reader()
-		self._pyhook_cache = dict()
-		self.pyhooks = self.setup_pyhooks()
 
 	def read_input(self):
 		"""
@@ -129,7 +122,6 @@ class UserImport(object):
 
 				try:
 					if user.action == "A":
-						self.pre_create_hook(user)
 						err = CreationError
 						store = self.added_users[cls_name]
 						if self.dry_run:
@@ -138,7 +130,6 @@ class UserImport(object):
 						else:
 							success = user.create(lo=self.connection)
 					elif user.action == "M":
-						self.pre_modify_hook(user)
 						err = ModificationError
 						store = self.modified_users[cls_name]
 						if self.dry_run:
@@ -162,25 +153,6 @@ class UserImport(object):
 					raise err("Error {} {} (source_uid:{} record_uid: {}), does probably {}exist.".format(
 						action_str.lower(), user, user.source_uid, user.record_uid,
 						"not " if user.action == "M" else "already "), entry=user.entry_count, import_user=user)
-
-				if user.action in ["A", "M"]:
-					# load user from LDAP for post hooks
-					if not self.dry_run:
-						old_user = user
-						user = user.get_by_import_id(self.connection, old_user.source_uid, old_user.record_uid)
-						# Store in udm_properties only those properties that were
-						# in the original import data, but fetch them fresh
-						# from LDAP.
-						user_udm = user.get_udm_object(self.connection)
-						for k, v in old_user.udm_properties.items():
-							user.udm_properties[k] = user_udm[k]
-						user.action = old_user.action
-						user.input_data = old_user.input_data
-						user.entry_count = old_user.entry_count
-				if user.action == "A":
-					self.post_create_hook(user)
-				elif user.action == "M":
-					self.post_modify_hook(user)
 
 			except (CreationError, ModificationError) as exc:
 				self.logger.error("Entry #%d: %s",  exc.entry, exc)  # traceback useless
@@ -284,7 +256,6 @@ class UserImport(object):
 		self.logger.info("Deleting %d users...", len(users))
 		for user in users:
 			try:
-				self.pre_delete_hook(user)
 				success = self.do_delete(user)
 				if success:
 					self.logger.info("Success deleting user %r (source_uid:%s record_uid: %s).", user.name,
@@ -294,7 +265,6 @@ class UserImport(object):
 						"been deleted.".format(user.name, user.source_uid, user.record_uid), entry=user.entry_count,
 						import_user=user)
 				self.deleted_users[user.__class__.__name__].append(user)
-				self.post_delete_hook(user)
 			except UcsSchoolImportError as exc:
 				self.logger.exception("Error in entry #%d: %s",  exc.entry, exc)
 				self._add_error(exc)
@@ -310,9 +280,7 @@ class UserImport(object):
 		:return: ImportUser: user in new position, freshly fetched from LDAP
 		"""
 		self.logger.info("Moving %s from school %r to %r...", user, user.school, imported_user.school)
-		self.pre_move_hook(imported_user)
 		user = self.do_school_move(imported_user, user)
-		self.post_move_hook(user)
 		return user
 
 	def do_school_move(self, imported_user, user):
@@ -415,60 +383,3 @@ class UserImport(object):
 		self.errors.append(err)
 		if -1 < self.config["tolerate_errors"] < len(self.errors):
 			raise ToManyErrors("More than {} errors.".format(self.config["tolerate_errors"]), self.errors)
-
-	def pre_create_hook(self, user):
-		self.run_pyhooks("create", "pre", user)
-
-	def post_create_hook(self, user):
-		self.run_pyhooks("create", "post", user)
-
-	def pre_modify_hook(self, user):
-		self.run_pyhooks("modify", "pre", user)
-
-	def post_modify_hook(self, user):
-		self.run_pyhooks("modify", "post", user)
-
-	def pre_move_hook(self, user):
-		self.run_pyhooks("move", "pre", user)
-
-	def post_move_hook(self, user):
-		self.run_pyhooks("move", "post", user)
-
-	def pre_delete_hook(self, user):
-		self.run_pyhooks("remove", "pre", user)
-
-	def post_delete_hook(self, user):
-		self.run_pyhooks("remove", "post", user)
-
-	def run_pyhooks(self, action, when, import_user):
-		import_user.in_hook = True
-		meth_name = "{}_{}".format(when, action)
-		try:
-			for func in self._pyhook_cache.get(meth_name, []):
-				self.logger.info("Running %s hook %s for %s...", meth_name, func, import_user)
-				if self.dry_run:
-					self.logger.info("Dry run - not running the hook.")
-				else:
-					func(import_user)
-		finally:
-			import_user.in_hook = False
-
-	def setup_pyhooks(self):
-		self.pyhooks = 	[pyhook_cls(self.connection)
-			for pyhook_cls in PyHooksLoader(PLUGINS_BASE_PATH, UserPyHook).get_plugins()]
-
-		# prefill cache: find all enabled hook methods and store them sorted in the cache
-		pyhook_cache = defaultdict(list)
-		for pyhook in self.pyhooks:
-			if not hasattr(pyhook, "priority") or not isinstance(pyhook.priority, dict):
-				continue
-			for meth_name, prio in pyhook.priority.items():
-				if hasattr(pyhook, meth_name) and isinstance(pyhook.priority.get(meth_name), int):
-					pyhook_cache[meth_name].append((getattr(pyhook, meth_name), pyhook.priority[meth_name]))
-		for meth_name, meth_list in pyhook_cache.items():
-			self._pyhook_cache[meth_name] = [x[0] for x in sorted(meth_list, key=lambda x: x[1], reverse=True)]
-		self.logger.info("Registered hooks: %r.",
-			dict([(meth_name, ["{}.{}".format(m.im_class.__name__, m.im_func.func_name) for m in meths])
-				for meth_name, meths in self._pyhook_cache.items()]))
-
-		return self.pyhooks

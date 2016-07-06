@@ -32,6 +32,7 @@ Default command line frontend for import.
 # <http://www.gnu.org/licenses/>.
 
 from argparse import ArgumentParser
+import os
 
 
 class ParseUserImportCmdline(object):
@@ -94,6 +95,8 @@ class ParseUserImportCmdline(object):
 
 		settings = dict()
 		if hasattr(self.args, "infile") and self.args.infile:
+			if not os.access(self.args.infile, os.R_OK):
+				self.parser.error("Cannot read input data file '{}'.".format(self.args.infile))
 			settings["input"] = {"filename": self.args.infile}
 
 		if hasattr(self.args, "settings") and self.args.settings:

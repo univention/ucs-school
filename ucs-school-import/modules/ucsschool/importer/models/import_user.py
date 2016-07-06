@@ -31,9 +31,7 @@ Representation of a user read from a file.
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-import random
 import re
-import string
 import datetime
 from collections import defaultdict
 from ldap.filter import filter_format
@@ -48,6 +46,11 @@ from ucsschool.importer.configuration import Configuration
 from ucsschool.importer.factory import Factory
 from ucsschool.importer.exceptions import BadPassword, FormatError, InvalidBirthday, InvalidClassName, InvalidEmail, MissingMailDomain, MissingMandatoryAttribute, MissingSchoolName, NotSupportedError, NoUsername, NoUsernameAtAll, UniqueIdError, UnkownDisabledSetting, UnknownProperty, UsernameToLong
 from ucsschool.importer.utils.logging2udebug import get_logger
+from ucsschool.importer.utils.pyhooks_loader import PyHooksLoader
+from ucsschool.importer.utils.user_pyhook import UserPyHook
+
+
+PLUGINS_BASE_PATH = "/usr/share/ucs-school-import/pyhooks"
 
 
 class ImportUser(User):
@@ -76,6 +79,7 @@ class ImportUser(User):
 	username_handler = None
 	reader = None
 	logger = None
+	_pyhook_cache = dict()
 
 	def __init__(self, name=None, school=None, **kwargs):
 		self.action = None            # "A", "D" or "M"
@@ -91,6 +95,7 @@ class ImportUser(User):
 			self.reader = self.factory.make_reader()
 			self.logger = get_logger()
 			self.username_max_length = 20 - len(self.ucr.get("ucsschool/ldap/default/userprefix/exam", "exam-"))
+		self._lo = None
 		super(ImportUser, self).__init__(name, school, **kwargs)
 
 	def build_hook_line(self, hook_time, func_name):
@@ -102,6 +107,51 @@ class ImportUser(User):
 		a list as argument.
 		"""
 		return self._build_hook_line(*self.input_data)
+
+	def call_hooks(self, hook_time, func_name):
+		"""
+		Runs PyHooks, then ucs-school-libs fork hooks.
+
+		:param hook_time: str: "pre" or "post"
+		:param func_name: str: "create", "modify", "move" or "remove"
+		:return: int: return code of lib hooks
+		"""
+		if not self._pyhook_cache:
+			self.setup_pyhooks(self._lo)
+
+		if hook_time == "post" and self.action in ["A", "M"]:
+			# update self from LDAP
+			user = self.get_by_import_id(self._lo, self.source_uid, self.record_uid)
+			user_udm = user.get_udm_object(self._lo)
+			for k in self.udm_properties.keys():
+				user.udm_properties[k] = user_udm[k]
+			self.action = user.action
+			self.entry_count = user.entry_count
+			self.input_data = user.input_data
+
+		self.in_hook = True
+		meth_name = "{}_{}".format(hook_time, func_name)
+		try:
+			for func in self._pyhook_cache.get(meth_name, []):
+				self.logger.info("Running %s hook %s for %s...", meth_name, func, self)
+				func(self)
+		finally:
+			self.in_hook = False
+
+		return super(ImportUser, self).call_hooks(hook_time, func_name)
+
+	def create(self, lo, validate=True):
+		self._lo = lo
+		if self.in_hook:
+			# prevent recursion
+			return self.create_without_hooks(lo, validate)
+		else:
+			return super(ImportUser, self).create(lo, validate)
+
+	def create_without_hooks(self, lo, validate):
+		success = super(ImportUser, self).create_without_hooks(lo, validate)
+		self.store_udm_properties(lo)
+		return success
 
 	@classmethod
 	def get_by_import_id(cls, connection, source_uid, record_uid, superordinate=None):
@@ -429,6 +479,25 @@ class ImportUser(User):
 			self.username_handler = self.factory.make_username_handler(self.username_max_length)
 		self.name = self.username_handler.format_username(self.name)
 
+	def modify(self, lo, validate=True, move_if_necessary=None):
+		self._lo = lo
+		if self.in_hook:
+			# prevent recursion
+			return self.modify_without_hooks(lo, validate, move_if_necessary)
+		else:
+			return super(ImportUser, self).modify(lo, validate, move_if_necessary)
+
+	def modify_without_hooks(self, lo, validate=True, move_if_necessary=None):
+		# must set udm_properties first, as they contain overridePWHistory and
+		# overridePWLength
+		self.store_udm_properties(lo)
+		success = super(ImportUser, self).modify_without_hooks(lo, validate, move_if_necessary)
+		return success
+
+	def move(self, lo, udm_obj=None, force=False):
+		self._lo = lo
+		return super(ImportUser, self).move(lo, udm_obj, force)
+
 	@staticmethod
 	def normalize(s):
 		"""
@@ -470,6 +539,10 @@ class ImportUser(User):
 		"""
 		self.expire(connection, "")
 		self.disabled = "none"
+
+	def remove(self, lo):
+		self._lo = lo
+		return super(ImportUser, self).remove(lo)
 
 	def run_checks(self, check_username=False):
 		"""
@@ -619,31 +692,32 @@ class ImportUser(User):
 			self.make_classes()
 		return super(ImportUser, self).get_school_class_objs()
 
-	def create(self, lo, validate=True):
-		if self.in_hook:
-			# prevent recursion
-			return self.create_without_hooks(lo, validate)
-		else:
-			return super(ImportUser, self).create(lo, validate)
+	def setup_pyhooks(self, lo):
+		"""
+		Initialize PyHooks and sort by priority.
 
-	def create_without_hooks(self, lo, validate):
-		success = super(ImportUser, self).create_without_hooks(lo, validate)
-		self.store_udm_properties(lo)
-		return success
+		:param lo: LDAP connection object for hooks
+		:return: list: loaded PyHook objects
+		"""
+		pyhooks = [pyhook_cls(lo)
+			for pyhook_cls in PyHooksLoader(PLUGINS_BASE_PATH, UserPyHook).get_plugins()]
 
-	def modify(self, lo, validate=True, move_if_necessary=None):
-		if self.in_hook:
-			# prevent recursion
-			return self.modify_without_hooks(lo, validate, move_if_necessary)
-		else:
-			return super(ImportUser, self).modify(lo, validate, move_if_necessary)
+		# fill cache: find all enabled hook methods
+		pyhook_cache = defaultdict(list)
+		for pyhook in pyhooks:
+			if not hasattr(pyhook, "priority") or not isinstance(pyhook.priority, dict):
+				continue
+			for meth_name, prio in pyhook.priority.items():
+				if hasattr(pyhook, meth_name) and isinstance(pyhook.priority.get(meth_name), int):
+					pyhook_cache[meth_name].append((getattr(pyhook, meth_name), pyhook.priority[meth_name]))
+		# sort by priority
+		for meth_name, meth_list in pyhook_cache.items():
+			self._pyhook_cache[meth_name] = [x[0] for x in sorted(meth_list, key=lambda x: x[1], reverse=True)]
 
-	def modify_without_hooks(self, lo, validate=True, move_if_necessary=None):
-		# must set udm_properties first, as they contain overridePWHistory and
-		# overridePWLength
-		self.store_udm_properties(lo)
-		success = super(ImportUser, self).modify_without_hooks(lo, validate, move_if_necessary)
-		return success
+		self.logger.info("Registered hooks: %r.",
+			dict([(meth_name, ["{}.{}".format(m.im_class.__name__, m.im_func.func_name) for m in meths])
+				for meth_name, meths in self._pyhook_cache.items()]))
+		return pyhooks
 
 	def store_udm_properties(self, connection):
 		"""
