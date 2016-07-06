@@ -1,3 +1,9 @@
+ucs-school-import (14.0.15-5) unstable; urgency=low
+
+  * Bug #41572: forgotten import
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 06 Jul 2016 17:57:05 +0200
+
 ucs-school-import (14.0.15-4) unstable; urgency=low
 
   * Bug #41572: move python hook code into ImportUser class

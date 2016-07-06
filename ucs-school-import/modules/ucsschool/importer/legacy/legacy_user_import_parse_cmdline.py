@@ -32,6 +32,7 @@ Legacy command line frontend for user import.
 # <http://www.gnu.org/licenses/>.
 
 import sys
+import os
 import os.path
 from argparse import ArgumentParser
 
