@@ -2541,7 +2541,7 @@ def activate_groupmembers():
 		# get group
 		objects = univention.admin.modules.lookup(group_module, co, lo, scope='sub', superordinate=superordinate, base=baseDN,
 												  filter=univention.admin.filter.expression('cn',actgrp))
-		out_line = ('%%s%(sep)s' * 7 + '\n') % {'sep':sepchar}
+		out_line = ('%%s%(sep)s' * 8 + '\n') % {'sep': sepchar}
 		for grp in objects:
 
 			# get group members
@@ -2584,7 +2584,7 @@ def activate_groupmembers():
 					# write csv line
 					snr = memberdn[ memberdn.find('ou=') + 3 : ]
 					snr = snr[ : snr.find(',') ]
-					outf.write(out_line % (snr, actgrp, memberobj['firstname'], memberobj['lastname'], passwd, memberobj['mailPrimaryAddress'], membergrplist))
+					outf.write(out_line % (snr, actgrp, memberobj['username'], memberobj['firstname'], memberobj['lastname'], passwd, memberobj['mailPrimaryAddress'], membergrplist))
 
 					print
 
