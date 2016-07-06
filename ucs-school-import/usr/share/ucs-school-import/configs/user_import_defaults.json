@@ -20,17 +20,12 @@
 		"recordUID": "<email>",
 		"username": {
 			"allow_rename": false,
-			"default": "<:umlauts><firstname>[0].<lastname>[COUNTER2]"
+			"default": "<:umlauts><firstname>[0].<lastname><:lower>[COUNTER2]"
 		}
 	},
 	"maildomain": null,
 	"mandatory_attributes": ["firstname", "lastname", "name", "school"],
 	"no_delete": false,
-	"outdated_users": {
-		"delete": true,
-		"deactivate": false,
-		"waiting_period": 0
-	},
 	"output": {
 		"new_user_passwords": null,
 		"user_import_summary": "/var/lib/ucs-school-import/user_import_summary_%Y-%m-%d_%H:%M:%S.csv"

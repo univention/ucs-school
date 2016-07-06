@@ -43,7 +43,7 @@ After that follow
 	"teacher_and_staff": bool [3]: if the new user should be activated
 },
 "csv": {
-	"delimiter": str: character that separates the cells of two columns (defaults to ',')
+	"delimiter": str: character that separates the cells of two columns, will be auto-detected if not set
 	"header_lines": int: how many line to skip, if 1, first line will be used to create keys for dict
 	"incell-delimiter": {
 		"default":               str [2]: multi-value field separator symbol, separates two values inside a cell
@@ -52,7 +52,7 @@ After that follow
 	"mapping": {
 		key: value -> str: str
 		           -> 'value' must be either the name of an Attribute as supported by the ImportUser class
-		              or it will used as a key in a dict 'udm_attribute'. Data from  'udm_attribute' will
+		              or it will used as a key in a dict 'udm_attribute'. Data from 'udm_attribute' will
 		              be written to the underlying UDM object.
 	}
 },
@@ -73,11 +73,6 @@ After that follow
 "maildomain": str: value of 'maildomain' variable that can be used in scheme->email. If unset will try to find one in system.
 "mandatory_attributes": list: list of UDM attribute names that must be set by the import
 "no_delete": bool: if set to True, users missing in the input will not be deleted in LDAP.
-"outdated_users": {
-	"delete": bool:
-	"deactivate": bool:
-	"waiting_period": int:
-},
 "output": {
 	"new_user_passwords": str: path to the new users passwords file, datetime.strftime() will be used on
 	                           it to format any time format strings
@@ -86,9 +81,9 @@ After that follow
 "password_length": int [1]: length of the random password generated for new users
 "school": str: name (abbreviation) of school this import is for, if not available from input
 "sourceUID": str [1]: UID of source database
-"tolerate_errors": int [1]: number of non-fatal UcsSchoolImportErrors to tolerate before aborting, -1 means unlimited
+"tolerate_errors": int [1]: number of non-fatal errors to tolerate before aborting, -1 means unlimited
 "user_deletion": {
-	"delete":	bool: if the user should be deleted (false -> it will be deactivated)
+	"delete":	bool: if a user scheduled to be deleted, should actually be deleted (false -> it will be deactivated)
 	"expiration": int: number of days before the account will be deleted or deactivated
 },
 "user_role": str: if set, all new users from input will have that role (student|staff|teacher|teacher_and_staff)

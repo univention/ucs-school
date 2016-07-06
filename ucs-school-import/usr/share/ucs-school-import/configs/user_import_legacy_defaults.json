@@ -50,11 +50,6 @@
 		}
 	},
 	"no_delete": false,
-	"outdated_users": {
-		"delete": false,
-		"deactivate": false,
-		"waiting_period": 45
-	},
 	"password_length": 8,
 	"sourceUID": "LegacyDB",
 	"tolerate_errors": -1
