@@ -28,6 +28,7 @@
 # <http://www.gnu.org/licenses/>.
 
 . /usr/share/univention-lib/all.sh
+. /usr/share/ucs-school-lib/base.sh
 
 if [ -z "$1" -o "$1" = "-h" -o "$1" = "--help" ] ; then
    echo "syntax: $(basename "$0") [--help] [--dn <oudn>|--name <ou>|--all] [--binddn <dn> --bindpwd <password>]"
@@ -43,7 +44,13 @@ elif [ "$1" = "--name" ] ; then
 	oudnlist="$(univention-ldapsearch "(&(objectClass=ucsschoolOrganizationalUnit)(ou=$2))" | ldapsearch-wrapper | sed -nre 's/^dn: //p' | head -n1)"
 	shift 2 || exit 2
 elif [ "$1" = "--all" ] ; then
-	oudnlist="$(univention-ldapsearch objectClass=ucsschoolOrganizationalUnit | ldapsearch-wrapper | sed -nre 's/^dn: //p')"
+	oudnlist=$(\
+	for oudn in $(univention-ldapsearch -xLLL -b "$ldap_base" 'objectClass=ucsschoolOrganizationalUnit' dn | ldapsearch-wrapper | sed -nre 's/^dn: //p') ; do
+		ouname="$(school_ou "$oudn")"
+		if univention-ldapsearch -xLLL "(&(|(cn=OU${ouname}-DC-Edukativnetz)(cn=OU${ouname}-DC-Verwaltungsnetz))(uniqueMember=$ldap_hostdn))" dn | grep -q "^dn: "; then
+			echo "$oudn"
+		fi
+	done)
 	shift 1 || exit 2
 else
 	echo 'Please specifiy argument "--dn <ou_dn>" or "--name <ou_name>" or "--all"'
@@ -59,7 +66,8 @@ fi
 # set default squid port if unset
 [ -z "$squid_httpport" ] && squid_httpport=3128
 
-# Update all OUs this host is responsible for (all OUs the host can read)
+# Update all OUs this host is responsible for
+
 IFS="
 "
 for oudn in $oudnlist ; do
@@ -78,7 +86,8 @@ for oudn in $oudnlist ; do
      	--append "registry=ucc/proxy/http http://${hostname}.${domainname}:${squid_httpport}" \
      	--append "registry=ucc/cups/server ${hostname}.${domainname}" \
      	--append "registry=ucc/italc/key/sambasource \\\\${hostname}\\netlogon" \
-     	--append "registry=ucc/italc/key/filename italc-key_${hostname}.pub"
+     	--append "registry=ucc/italc/key/filename italc-key_${hostname}.pub" \
+     	--append "registry=ucc/timeserver ${hostname}.${domainname}"
 
     # link to OU
     univention-directory-manager container/ou modify "$@" \

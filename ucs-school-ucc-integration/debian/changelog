@@ -1,3 +1,11 @@
+ucs-school-ucc-integration (3.0.0-2) unstable; urgency=low
+
+  * Bug #40705: set timeserver to school DC slave
+  * adapt to changes caused by ou-overlapping users: create UCR policy only
+    for OUs we are responsible for, not all we can read
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 06 Jul 2016 09:26:25 +0200
+
 ucs-school-ucc-integration (3.0.0-1) unstable; urgency=medium
 
   * Bug #39534: Start UCS@school 4.1 development

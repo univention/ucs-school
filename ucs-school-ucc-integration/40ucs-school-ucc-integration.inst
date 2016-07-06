@@ -44,7 +44,7 @@ if ! is_ucr_true "ucsschool/import/generate/policy/ucc/settings" ; then
 fi
 
 # Update all OUs this host is responsible for (all OUs the host can read)
-/usr/share/ucs-school-ucc-integration/add_ucc_settings_to_ou --all "$@"
+/usr/share/ucs-school-ucc-integration/add_ucc_settings_to_ou --all "$@" || die
 
 echo "$(basename $0): added/updated UCR policy cn=ou-default-ucr-policy,cn=policies,ou=${ou}${district},${ldap_base} at OU ou=${ou}${district},${ldap_base}"
 joinscript_save_current_version
