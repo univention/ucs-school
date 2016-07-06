@@ -202,17 +202,8 @@ if is_ucr_true "ucsschool/import/generate/policy/dhcp/dns/set_per_ou" ; then
 	IFS="
 "
 	# determine list of available OUs
-	for oudn in $(univention-ldapsearch -xLLL -b "$ldap_base" 'objectClass=ucsschoolOrganizationalUnit' dn | ldapsearch-wrapper | sed -nre 's/^dn: //p') ; do
+	for oudn in $(servers_school_ous) ; do
 		ouname="$(school_ou "$oudn")"
-		if [ -z "$ouname" ] ; then
-			echo "Cannot determine OU name - using fallback 'server'"
-			ouname="server"
-		fi
-
-		# check if we are member of the OU
-		if ! univention-ldapsearch -xLLL "(&(|(cn=OU${ouname}-DC-Edukativnetz)(cn=OU${ouname}-DC-Verwaltungsnetz))(uniqueMember=$ldap_hostdn))" dn | grep -q "^dn: "; then
-			continue
-		fi
 
 		# create dhcp dns policy if missing
 		udm policies/dhcp_dns create "$@" --ignore_exists \

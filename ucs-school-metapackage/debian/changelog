@@ -1,3 +1,9 @@
+ucs-school-metapackage (9.0.1-2) unstable; urgency=low
+
+  * Bug #40705: use lib function to get OUs for server
+
+ -- Daniel Troeder <troeder@univention.de>  Wed, 06 Jul 2016 15:23:28 +0200
+
 ucs-school-metapackage (9.0.1-1) unstable; urgency=low
 
   * Bug #41297: added update of LDAP indices

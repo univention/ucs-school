@@ -38,18 +38,14 @@ eval "$(ucr shell)"
 . /usr/share/univention-lib/all.sh
 . /usr/share/ucs-school-lib/base.sh
 
-HOST_DN="$(univention-ldapsearch -LLL -h "$ldap_master" -p "$ldap_master_port" "(&(objectclass=univentionHost)(cn=$hostname))" dn |
-		ldapsearch-wrapper |
-		ldapsearch-decode64 |
-		sed -ne 's/^dn: //p;T;q')"
-OU="$(school_ou "$HOST_DN")"
+OU="$(school_ou "$ldap_hostdn")"
 
 if [ -z "$OU" ]; then
 	echo "ERROR: The computer object for this host isn't inside a school OU and therefore at the wrong place."
 	exit 1
 fi
 
-if [ -z  "$(univention-ldapsearch -LLL -h "$ldap_master" -p "$ldap_master_port" "(&(objectclass=univentionGroup)(|(cn=OU${OU}-DC-Edukativnetz)(cn=OU${OU}-DC-Verwaltungsnetz))(uniqueMember=$ldap_hostdn))" dn | sed -ne 's/^dn: //p')" ]; then
+if [ -z  "$(servers_school_ous)" ]; then
 	echo "ERROR: This host has no permission for the OU he is stored in."
 	exit 1
 fi
