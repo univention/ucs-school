@@ -209,6 +209,7 @@ class ITALC_Computer(notifier.signals.Provider, QObject):
 		self.signal_new('system-tray-icon')
 		self._vnc = None
 		self._core = None
+		self._core_ready = False
 		self._computer = computer
 		self._dn = self._computer.dn
 		self.objectType = self._computer.module
@@ -243,6 +244,7 @@ class ITALC_Computer(notifier.signals.Provider, QObject):
 			# WARNING: destructor of iTalcCoreConnection calls iTalcVncConnection->stop() ; do not call the stop() function again!
 			del self._core
 			self._core = None
+			self._core_ready = False
 		elif self._vnc:
 			self._vnc.stop()
 		del self._vnc
@@ -254,13 +256,19 @@ class ITALC_Computer(notifier.signals.Provider, QObject):
 		self._state.set(ITALC_Computer.CONNECTION_STATES[state])
 
 		if not self._core and self._state.current == 'connected' and self._state.old != 'connected':
+			MODULE.info('%s: VNC connection established' % (self.ipAddress,))
 			self._core = italc.ItalcCoreConnection(self._vnc)
 			self._core.receivedUserInfo.connect(self._userInfo)
 			self._core.receivedSlaveStateFlags.connect(self._slaveStateFlags)
-			self.signal_emit('connected', self)
+			self._core_ready = False
 			self.start()
+		elif self._core and self._state.current == 'connected' and self._state.old != 'connected':
+			MODULE.info('%s: iTALC connection on top of VNC connection established' % (self.ipAddress,))
+			self._core_ready = True
+			self.signal_emit('connected', self)
 		# lost connection ...
 		elif self._state.current != 'connected' and self._state.old == 'connected':
+			self._core_ready = False
 			self._username.reset()
 			self._homedir.reset()
 			self._flags.reset()
@@ -438,7 +446,7 @@ class ITALC_Computer(notifier.signals.Provider, QObject):
 
 	@property
 	def connected(self):
-		return self._core and self._vnc.isConnected()
+		return self._core and self._vnc.isConnected() and self._state.current == 'connected' and self._core_ready
 
 	# iTalc: screenshots
 	@property
