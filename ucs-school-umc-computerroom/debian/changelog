@@ -5,6 +5,7 @@ ucs-school-umc-computerroom (8.0.3-1) unstable; urgency=low
     - emit signal "connected" if iTALC connection is really established
     - do not raise an exception if iTALC client connection has been lost
       but leave a log entry
+    - improved log output
 
  -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Thu, 07 Jul 2016 10:42:04 +0200
 
