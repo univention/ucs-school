@@ -42,6 +42,8 @@ import univention.admin.uldap
 from ucsschool.lib.schoolldap import SchoolSearchBase
 from univention.lib.umc_connection import UMCConnection
 from ldap.filter import escape_filter_chars
+from socket import error as SocketError
+from ldap import LDAPError
 
 
 LOGFILE = '/var/log/univention/ucs-school-exam-cleanup.log'
@@ -61,11 +63,27 @@ class ExamCleanupHelper(object):
 
 	def get_LDAP_connection(self):
 		ud.debug(ud.MAIN, ud.INFO, 'Opening LDAP connection')
-		return univention.uldap.getMachineConnection(ldap_master=False)
+		try:
+			return univention.uldap.getMachineConnection(ldap_master=False)
+		except LDAPError as exc:
+			ud.debug(ud.MAIN, ud.ERROR, 'Could not connect to LDAP: %s' % exc)
+			sys.exit(1)
 
 	def get_UMCP_connection(self):
 		ud.debug(ud.MAIN, ud.INFO, 'Opening UMCP connection to %s with machine account' % (self.hostname,))
-		return UMCConnection.get_machine_connection()
+		con = UMCConnection(self.hostname)
+		username = '%s$' % self.hostname
+		try:
+			with open('/etc/machine.secret') as machine_file:
+				password = machine_file.readline().strip()
+			con.auth(username, password)
+		except (OSError, IOError) as exc:
+			ud.debug(ud.MAIN, ud.ERROR, 'Could not read /etc/machine.secret: %s' % exc)
+			sys.exit(1)
+		except (httplib.HTTPException, SocketError) as exc:
+			ud.debug(ud.MAIN, ud.ERROR, 'Could not connect to UMC on %s: %s' % (self.hostname, exc))
+			sys.exit(1)
+		return con
 
 	def running_exam_iter(self):
 		ou_list = self.lo.search(filter='(objectClass=ucsschoolOrganizationalUnit)')

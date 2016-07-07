@@ -3,8 +3,11 @@ release: "4.1"
 version: [1]
 scope: ucs_4.1-0-ucs-school-4.1r2
 src: ucs-school-umc-exam
-fix: 6.0.7-2.113.201606291535
+fix:
 desc: |
  This update addresses the following issue(s):
  * Remove unnecessary initialization code (Bug #41699)
-bug: [41699]
+ * Add cleanup script "exam-and-room-cleanup", that tries to shut down all
+   running exams gracefully and removes leftover users and files from LDAP
+   and disk (Bug #40213).
+bug: [41699,40213]
