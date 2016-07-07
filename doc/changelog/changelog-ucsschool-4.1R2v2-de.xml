@@ -106,5 +106,40 @@ feedback@univention.de
 				</itemizedlist>
 			</section>
 		</section>
+		<section id="changelog:umc">
+			<title>Univention Management Console</title>
+			<section id="changelog:umc:modules">
+				<title>Univention Management Console modules</title>
+				<section id="changelog:umc:modules:general">
+					<title>General</title>
+				</section>
+				<section id="changelog:umc:modules:exam">
+					<title>Exam</title>
+					<itemizedlist>
+						<listitem>
+							<simpara>
+								An error in the cleanup script <filename>/usr/share/ucs-school-umc-exam-master/exam-and-room-cleanup</filename> was fixed (<u:bug>40213</u:bug>).
+								A cron job is prepared by ucs-school-umc-exam and ucs-school-umc-exam-master each.
+								They are disabled by default and can be reenabled via UCR:
+								<programlisting language="sh">
+									ucr set ucsschool/exam/cron/cleanup="30 2 * * *"
+									ucr set ucsschool/exam/cron/cleanup-master="30 3 * * *"
+								</programlisting>
+								The cronjob on the DC master should be activated only in multiserver environments and should be
+								called with an appropriate offset after the last exam cleanup cron job has been started
+								on all school slaves. Otherwise a gracefully shutdown might not be possible, if the
+								DC master already removed the exam user objects.
+								<caution>
+									<para>
+										Please note that if the exam shutdown did not succeed, exam users can only be
+										removed on the DC master/DC backup.
+									</para>
+								</caution>
+							</simpara>
+						</listitem>
+					</itemizedlist>
+				</section>
+			</section>
+		</section>
 	</chapter>
 </book>
