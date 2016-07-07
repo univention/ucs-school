@@ -3,8 +3,10 @@ ucs-school-umc-computerroom (8.0.3-1) unstable; urgency=low
   * Bug #41752:
     - use deepcopy() instead of just plain copy() in LockableAttribute
     - emit signal "connected" if iTALC connection is really established
+    - do not raise an exception if iTALC client connection has been lost
+      but leave a log entry
 
- -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Thu, 07 Jul 2016 18:14:46 +0200
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Thu, 07 Jul 2016 10:42:04 +0200
 
 ucs-school-umc-computerroom (8.0.2-5) unstable; urgency=medium
 
