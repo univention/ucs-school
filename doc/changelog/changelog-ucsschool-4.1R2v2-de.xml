@@ -110,9 +110,17 @@ feedback@univention.de
 			<title>Univention Management Console</title>
 			<section id="changelog:umc:modules">
 				<title>Univention Management Console modules</title>
+<!--
 				<section id="changelog:umc:modules:general">
 					<title>General</title>
+					<itemizedlist>
+						<listitem>
+							<simpara>
+							</simpara>
+						</listitem>
+					</itemizedlist>
 				</section>
+-->
 				<section id="changelog:umc:modules:exam">
 					<title>Exam</title>
 					<itemizedlist>
