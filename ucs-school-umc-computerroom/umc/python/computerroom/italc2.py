@@ -132,7 +132,7 @@ class LockableAttribute( object ):
 		self._lock = locking and threading.Lock() or None
 		MODULE.info( 'Locking object: %s' % self._lock )
 		self._old = initial_value
-		self._current = copy.copy( initial_value )
+		self._current = copy.deepcopy(initial_value)
 
 	def lock( self ):
 		if self._lock is None: return
@@ -146,14 +146,14 @@ class LockableAttribute( object ):
 	@property
 	def current( self ):
 		self.lock()
-		tmp = copy.copy( self._current )
+		tmp = copy.deepcopy(self._current)
 		self.unlock()
 		return tmp
 
 	@property
 	def old( self ):
 		self.lock()
-		tmp = copy.copy( self._old )
+		tmp = copy.deepcopy(self._old)
 		self.unlock()
 		return tmp
 
@@ -168,21 +168,21 @@ class LockableAttribute( object ):
 	def hasChanged( self ):
 		self.lock()
 		diff = self._old != self._current
-		self._old = copy.copy( self._current )
+		self._old = copy.deepcopy(self._current)
 		self.unlock()
 		return diff
 
 	def reset( self, inital_value = None ):
 		self.lock()
-		self._old = copy.copy( inital_value )
-		self._current = copy.copy( inital_value )
+		self._old = copy.deepcopy(inital_value)
+		self._current = copy.deepcopy(inital_value)
 		self.unlock()
 
 	def set( self, value ):
 		self.lock()
 		if value != self._current:
-			self._old = copy.copy( self._current )
-			self._current = copy.copy( value )
+			self._old = copy.deepcopy(self._current)
+			self._current = copy.deepcopy(value)
 		self.unlock()
 
 class ITALC_Computer( notifier.signals.Provider, QObject ):

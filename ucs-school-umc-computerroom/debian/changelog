@@ -1,3 +1,10 @@
+ucs-school-umc-computerroom (5.0.10-1) unstable; urgency=medium
+
+  * Bug #41752:
+    - use deepcopy() instead of just plain copy() in LockableAttribute
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Thu, 07 Jul 2016 18:14:46 +0200
+
 ucs-school-umc-computerroom (5.0.9-1) unstable; urgency=medium
 
   * Bug #40777: fixed logic of menu item "switch on computer"
