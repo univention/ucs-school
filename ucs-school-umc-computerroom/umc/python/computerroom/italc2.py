@@ -134,10 +134,11 @@ class LockableAttribute( object ):
 		self._old = initial_value
 		self._current = copy.deepcopy(initial_value)
 
-	def lock( self ):
-		if self._lock is None: return
-		if not self._lock.acquire( 1000 ):
-			raise ITALC_Error( 'Could not lock attribute' )
+	def lock(self):
+		if self._lock is None:
+			return
+		if not self._lock.acquire(3000):
+			raise ITALC_Error('Could not lock attribute')
 
 	def unlock( self ):
 		if self._lock is None: return
@@ -485,31 +486,45 @@ class ITALC_Computer( notifier.signals.Provider, QObject ):
 		return self._vnc.image()
 
 	# iTalc: screen locking
-	def lockScreen( self, value ):
+	def lockScreen(self, value):
+		if not self.connected:
+			MODULE.error('%s: not connected - skipping lockScreen' % (self.ipAddress,))
+			return
 		if value:
 			self._core.lockScreen()
 		else:
 			self._core.unlockScreen()
 
 	# iTalc: input device locking
-	def lockInput( self, value ):
+	def lockInput(self, value):
+		if not self.connected:
+			MODULE.error('%s: not connected - skipping lockInput' % (self.ipAddress,))
+			return
 		if value:
 			self._core.lockInput()
 		else:
 			self._core.unlockInput()
 
 	# iTalc: message box
-	def message( self, text ):
-		self._core.displayTextMessage( text )
-
+	def message(self, text):
+		if not self.connected:
+			MODULE.warn('%s: not connected - skipping message' % (self.ipAddress,))
+			return
+		self._core.displayTextMessage(text)
 
 	# iTalc: Demo
-	def denyClients( self ):
-		for client in self._allowedClients[ : ]:
-			self._core.demoServerUnallowHost( client.ipAddress )
-			self._allowedClients.remove( client )
+	def denyClients(self):
+		if not self.connected:
+			MODULE.error('%s: not connected - skipping denyClients' % (self.ipAddress,))
+			return
+		for client in self._allowedClients[:]:
+			self._core.demoServerUnallowHost(client.ipAddress)
+			self._allowedClients.remove(client)
 
-	def allowClients( self, clients ):
+	def allowClients(self, clients):
+		if not self.connected:
+			MODULE.error('%s: not connected - skipping allowClients' % (self.ipAddress,))
+			return
 		self.denyClients()
 		for client in clients:
 			self._core.demoServerAllowHost( client.ipAddress )
@@ -517,45 +532,62 @@ class ITALC_Computer( notifier.signals.Provider, QObject ):
 
 	def startDemoServer( self, allowed_clients = [] ):
 		if not self.connected:
-			raise ITALC_Error( 'not connected' )
+			MODULE.error('%s: not connected - skipping startDemoServer' % (self.ipAddress,))
+			return
 		self._core.stopDemoServer()
 		self._core.startDemoServer( ITALC_VNC_PORT, ITALC_DEMO_PORT )
 		self.allowClients( allowed_clients )
 
-	def stopDemoServer( self ):
+	def stopDemoServer(self):
+		if not self.connected:
+			MODULE.warn('%s: not connected - skipping stopDemoServer' % (self.ipAddress,))
+			return
 		self.denyClients()
 		self._core.stopDemoServer()
 
-	def startDemoClient( self, server, fullscreen = True ):
+	def startDemoClient(self, server, fullscreen=True):
+		if not self.connected:
+			MODULE.error('%s: not connected - skipping startDemoClient' % (self.ipAddress,))
+			return
 		self._core.stopDemo()
 		self._core.unlockScreen()
 		self._core.unlockInput()
 		self._core.startDemo( server.ipAddress, ITALC_DEMO_PORT, fullscreen )
 
-	def stopDemoClient( self ):
+	def stopDemoClient(self):
+		if not self.connected:
+			MODULE.warn('%s: not connected - skipping stopDemoClient' % (self.ipAddress,))
+			return
 		self._core.stopDemo()
 
 	# iTalc: computer control
-	def powerOff( self ):
-		if self._core:
-			self._core.powerDownComputer()
+	def powerOff(self):
+		if not self.connected:
+			MODULE.warn('%s: not connected - skipping powerOff' % (self.ipAddress,))
+			return
+		self._core.powerDownComputer()
 
 	def powerOn( self ):
 		# do not use the italc trick
 		# if self._core and self.macAddress:
 		# 	self._core.powerOnComputer( self.macAddress )
-
 		if self.macAddress:
-			subprocess.Popen( [ '/usr/bin/wakeonlan', self.macAddress ] )
+			subprocess.Popen(['/usr/bin/wakeonlan', self.macAddress])
+		else:
+			MODULE.error('%s: no MAC address set - skipping powerOn' % (self.ipAddress,))
 
-	def restart( self ):
-		if self._core:
-			self._core.restartComputer()
+	def restart(self):
+		if not self.connected:
+			MODULE.error('%s: not connected - skipping restart' % (self.ipAddress,))
+			return
+		self._core.restartComputer()
 
 	# iTalc: user functions
-	def logOut( self ):
-		if self._core:
-			self._core.logoutUser()
+	def logOut(self):
+		if not self.connected:
+			MODULE.error('%s: not connected - skipping logOut' % (self.ipAddress,))
+			return
+		self._core.logoutUser()
 
 
 class ITALC_Manager( dict, notifier.signals.Provider ):
