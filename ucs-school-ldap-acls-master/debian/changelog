@@ -1,3 +1,10 @@
+ucs-school-ldap-acls-master (14.0.1-8) unstable; urgency=medium
+
+  * Bug #41725: restrict access to cn=WMIPolicy,cn=system,
+  	cn=policies,cn=system, sambaDomain objects and cn=idmap,cn=univention
+
+ -- Florian Best <best@univention.de>  Wed, 06 Jul 2016 12:07:00 +0200
+
 ucs-school-ldap-acls-master (14.0.1-7) unstable; urgency=medium
 
   * Bug #41725: restrict access to UVMM and AppCenter object classes
